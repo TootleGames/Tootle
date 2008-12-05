@@ -1,0 +1,6 @@
+* Ignore this "pattern" in tortoise; Trying to commit the recycle bin goes wrong in many ways
+	RECYCLER
+
+* We don't want to add debug/release files, temporary files, and the builds (libs/exes) so
+ goto $/Tootle/Code and right click properties, and import the properties from $/Tootle/Notes/Code.svnprops.
+ This will ignore everything we want to
