@@ -41,7 +41,8 @@ public:
 	s32						CreateInstance(TPtr<TYPE>& pNewInstance,TRefRef InstanceRef,TRefRef TypeRef=TRef());						//	create a new instance and add to the list
 	Bool					RemoveInstance(TRefRef InstanceRef);			//	remove an instance from the list
 
-	const TPtrArray<TYPE>&	GetArray() const								{	return *this;	}
+	TPtrArray<TYPE>&		GetInstanceArray()								{	return *this;	}
+	const TPtrArray<TYPE>&	GetInstanceArray() const						{	return *this;	}
 
 protected:
 	virtual TYPE*			CreateObject(TRefRef InstanceRef,TRefRef TypeRef) = 0;
@@ -63,6 +64,8 @@ public:
 public:
 	TObjectFactory(TSortFunc* pSortFunc=NULL) : TClassFactory<TYPE>	( pSortFunc )	{	}
 	~TObjectFactory()		{	ShutdownObjects();	}
+
+	virtual SyncBool		Shutdown()			{	return ShutdownObjects();	}
 
 	virtual void			UpdateObjects();
 	virtual SyncBool		ShutdownObjects();

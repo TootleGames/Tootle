@@ -91,7 +91,7 @@ void TSceneNode_Emitter::DoUpdate(float fTimestep)
 Bool TSceneNode_Emitter::EmitObject()
 {
 	// Create a new object via the scenegraph
-	TPtr<TSceneNode> pNode = TLScene::g_pScenegraph->GetInstance(m_refNodeIDCurrent , m_refNodeTypeToEmit);
+	TPtr<TSceneNode> pNode = TLScene::g_pScenegraph->CreateInstance(m_refNodeIDCurrent , m_refNodeTypeToEmit);
 
 	if(pNode)
 	{

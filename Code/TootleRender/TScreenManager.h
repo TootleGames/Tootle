@@ -11,11 +11,18 @@ namespace TLRender
 	extern TPtr<TScreenManager> g_pScreenManager;
 }
 
-class TLRender::TScreenManager : public TManager, public TClassFactory<TLRender::TScreen>
+class TLRender::TScreenManager : public TManager, public TObjectFactory<TLRender::TScreen>
 {
 public:
 	TScreenManager(TRefRef refManagerID);
+	
+	virtual SyncBool		Update(float fTimeStep);
+	virtual SyncBool		Shutdown();
+	
+	virtual void			ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);	//	process messages
+	virtual void			OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
 
+protected:
 	virtual TScreen*		CreateObject(TRefRef InstanceRef,TRefRef TypeRef);
 };
 

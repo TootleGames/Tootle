@@ -26,11 +26,11 @@ public:
 	}
 
 	// Message sending
-	Bool			QueueMessage(TPtr<TMessage> pMessage)						
+	Bool			QueueMessage(TPtr<TMessage>& pMessage)						
 	{
 		// NOTE: Will need to wait for a mutex if mutlithreading is used
-		if(pMessage.IsValid())
-			return (m_MessageQueue.Add(pMessage) != -1);
+		if ( pMessage.IsValid() )
+			return (  m_MessageQueue.Add(pMessage) != -1 );
 
 		return FALSE;
 	}

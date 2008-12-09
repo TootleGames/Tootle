@@ -108,7 +108,7 @@ Bool TScenegraph::IsNodeWithinRange(TPtr<TSceneNode>& pNode, const TLMaths::TLin
 	return FALSE;
 }
 
-TPtr<TSceneNode> TScenegraph::GetInstance(TRef refNodeID, TRef refTypeID)
+TPtr<TSceneNode> TScenegraph::CreateInstance(TRefRef NodeRef,TRefRef TypeRef)
 {
 	// Go through the factory list and try to create the specified node type
 	for(u32 uIndex = 0; uIndex < m_pFactories.GetSize(); uIndex++)
@@ -116,7 +116,7 @@ TPtr<TSceneNode> TScenegraph::GetInstance(TRef refNodeID, TRef refTypeID)
 		TPtr<TSceneNodeFactory>& pFactory = m_pFactories.ElementAt(uIndex);
 
 		TPtr<TSceneNode> pNewNode;
-		pFactory->CreateInstance( pNewNode, refNodeID, refTypeID );
+		pFactory->CreateInstance( pNewNode, NodeRef, TypeRef );
 
 		// If a node was created then return that node
 		if(pNewNode)

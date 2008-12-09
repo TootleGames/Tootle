@@ -45,7 +45,7 @@ protected:
 
 	virtual void	ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
 
-	virtual void	OnEventChannelAdded(TRef& refPublisherID, TRef& refChannelID);
+	virtual void	OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
 
 	
 private:

@@ -42,14 +42,14 @@ public:
 	}
 
 	// Node searching
-	Bool	GetNearestNodes(const TLMaths::TLine& Line, const float& fDistance, TPtrArray<TSceneNode_Transform>& pArray);
-	void	GetNearestNodes(TPtr<TSceneNode>& pNode, const TLMaths::TLine& Line, const float& fDistance, TPtrArray<TSceneNode_Transform>& pArray);
+	Bool				GetNearestNodes(const TLMaths::TLine& Line, const float& fDistance, TPtrArray<TSceneNode_Transform>& pArray);
+	void				GetNearestNodes(TPtr<TSceneNode>& pNode, const TLMaths::TLine& Line, const float& fDistance, TPtrArray<TSceneNode_Transform>& pArray);
 
-	Bool	IsNodeWithinRange(TPtr<TSceneNode>& pNode, const TLMaths::TLine& Line, const float& fDistance);
+	Bool				IsNodeWithinRange(TPtr<TSceneNode>& pNode, const TLMaths::TLine& Line, const float& fDistance);
 
-	TPtr<TSceneNode>	GetInstance(TRef refNodeID, TRef refTypeID);	//	gr: CREATE instance
+	TPtr<TSceneNode>	CreateInstance(TRefRef NodeRef,TRefRef TypeRef);	//	gr: CREATE an instance from the factories. does no initialisation or adding. Use TLScene::CreateNode
 
-	Bool	AddFactory(TPtr<TLScene::TSceneNodeFactory> pFactory)	{ return (m_pFactories.Add(pFactory) != -1); }
+	Bool				AddFactory(TPtr<TLScene::TSceneNodeFactory> pFactory)	{ return (m_pFactories.Add(pFactory) != -1); }
 
 protected:
 	virtual SyncBool			Initialise();

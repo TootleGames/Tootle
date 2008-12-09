@@ -239,7 +239,7 @@ TLAsset::TAsset* TLAsset::TAssetFactory::CreateObject(TRefRef InstanceRef,TRefRe
 }
 
 
-void TLAsset::TAssetFactory::OnEventChannelAdded(TRef& refPublisherID, TRef& refChannelID)
+void TLAsset::TAssetFactory::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID)
 {
 	if(refPublisherID == "CORE")
 	{

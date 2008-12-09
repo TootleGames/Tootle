@@ -58,7 +58,7 @@ protected:
 
 	void			SetState(TLManager::ManagerState NewState);
 	
-	virtual void	OnEventChannelAdded(TRef& refPublisherID, TRef& refChannelID);
+	virtual void	OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
 
 private:
 	TRef					m_refManagerID;	// Manager unique ID

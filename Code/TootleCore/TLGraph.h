@@ -76,6 +76,8 @@ public:
 #else
 	TPtrRef						FindNode(const TRef& NodeRef)			{	return NodeRef.IsValid() ? FindNodeMatch( NodeRef ) : TPtrNull;	}
 #endif
+	TRef						GetFreeNodeRef(TRefRef BaseRef=TRef());	//	find an unused ref for a node - returns the ref
+	TRefRef						GetFreeNodeRef(TRef& Ref);				//	find an unused ref for a node, modifies the ref provided
 
 	// Graph change requests
 	Bool						AddNode(TPtr<T> pNode, TPtr<T> pParent=NULL);	//	returns the ref of the object. You can't always have the ref we constructed with :)
@@ -100,7 +102,7 @@ protected:
 	Bool						IsInQueue(TPtr<T>& pNode);
 
 	virtual void				ProcessMessageFromQueue(TPtr<TLMessaging::TMessage>& pMessage);
-	virtual void				OnEventChannelAdded(TRef& refPublisherID, TRef& refChannelID);
+	virtual void				OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
 	
 	TPtrRef						FindPtr(const TGraphNode<T>* pNode) const;					//	find a TPtr in the graph that matches the node - workaround for non intrusive pointers
 
@@ -804,7 +806,7 @@ SyncBool TLGraph::TGraph<T>::Initialise()
 }
 
 template<class T>
-void TLGraph::TGraph<T>::OnEventChannelAdded(TRef& refPublisherID, TRef& refChannelID)
+void TLGraph::TGraph<T>::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID)
 {
 	if(refPublisherID == "CORE")
 	{
@@ -840,6 +842,41 @@ SyncBool TLGraph::TGraph<T>::Shutdown()
 }
 
 
+//---------------------------------------------------
+//	find an unused ref for a node - returns the ref
+//---------------------------------------------------
+template <class T>
+TRef TLGraph::TGraph<T>::GetFreeNodeRef(TRefRef BaseRef)
+{
+	TRef TempRef = BaseRef;
+	GetFreeNodeRef( TempRef );
+	return TempRef;
+}
+
+
+//---------------------------------------------------
+//	find an unused ref for a node, modifies the ref provided
+//---------------------------------------------------
+template <class T>
+TRefRef TLGraph::TGraph<T>::GetFreeNodeRef(TRef& Ref)
+{
+	//	keep searching through the graph for this ref whilst a node is found
+	while ( FindNode( Ref ).IsValid() )
+	{
+		//	try next ref
+		Ref.Increment();
+	}
+
+	//	if it's in the queue, it also needs changing
+	while ( m_UpdateQueue.Exists( Ref ) )
+	{
+		//	try next ref
+		Ref.Increment();
+	}
+
+	return Ref;
+}
+
 /*
 	Requests a node to be added to the graph.  The node will be added at a 'safe' time so is not immediate
 */
@@ -862,30 +899,20 @@ Bool TLGraph::TGraph<T>::AddNode(TPtr<T> pNode, TPtr<T> pParent)
 	}
 
 	//	if node ref is already in use, change it
-	while ( FindNode( pNode->GetNodeRef() ).IsValid() )
-	{
-		TRef NewRef = pNode->GetNodeRef();
-		NewRef.Increment();
-		pNode->SetNodeRef( NewRef );
-	}
+	TRefRef NodeRef = pNode->GetNodeRef();
+	TRef NewRef = GetFreeNodeRef( pNode->GetNodeRef() );
 
-	TRef OldRef = pNode->GetNodeRef();
-
-	//	if it's in the queue, it also needs changing
-	while ( m_UpdateQueue.Exists( pNode->GetNodeRef() ) )
+	if ( NewRef != NodeRef )
 	{
-		TRef NewRef = pNode->GetNodeRef();
-		NewRef.Increment();
-		pNode->SetNodeRef( NewRef );
-	}
-
-	if ( pNode->GetNodeRef() != OldRef )
-	{
+		TRefRef OldRef = NodeRef;
+		
 		TTempString ChangedRefString("Node ");
 		OldRef.GetString( ChangedRefString );
 		ChangedRefString.Append(" changed ref to ");
-		pNode->GetNodeRef().GetString( ChangedRefString );
+		NewRef.GetString( ChangedRefString );
 		TLDebug_Print( ChangedRefString );
+
+		pNode->SetNodeRef( NewRef );
 	}
 
 	// Valid parent node??  Check to ensure the parent is either in the queue or in the scenegraph

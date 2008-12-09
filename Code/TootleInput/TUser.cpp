@@ -24,7 +24,7 @@ SyncBool TUserManager::Initialise()
 	return SyncTrue; 
 }
 
-void TUserManager::OnEventChannelAdded(TRef& refPublisherID, TRef& refChannelID)
+void TUserManager::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID)
 {
 	if(refPublisherID == "CORE")
 	{

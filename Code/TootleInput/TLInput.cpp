@@ -33,7 +33,7 @@ SyncBool TInputManager::Initialise()
 	return SyncWait;
 }
 
-void TInputManager::OnEventChannelAdded(TRef& refPublisherID, TRef& refChannelID)
+void TInputManager::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID)
 {
 	if(refPublisherID == "CORE")
 	{

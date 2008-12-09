@@ -80,7 +80,7 @@ SyncBool TLFileSys::TFileSysFactory::Initialise()
 	return SyncTrue;
 }
 
-void TLFileSys::TFileSysFactory::OnEventChannelAdded(TRef& refPublisherID, TRef& refChannelID)
+void TLFileSys::TFileSysFactory::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID)
 {
 	if(refPublisherID == "CORE")
 	{
@@ -158,7 +158,7 @@ void TLFileSys::GetFileSys(TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef F
 	}
 
 	//	file sys ref and filesys type ref are invalid, so match any
-	FileSysList.Add( g_pFactory->GetArray() );
+	FileSysList.Add( g_pFactory->GetInstanceArray() );
 }
 
 

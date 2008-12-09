@@ -50,7 +50,7 @@ SyncBool TSchemeEditor::Initialise()
 	return SyncTrue; 
 }
 
-void TSchemeEditor::OnEventChannelAdded(TRef& refPublisherID, TRef& refChannelID)
+void TSchemeEditor::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID)
 {
 	if(refPublisherID == "USERMANAGER")
 	{

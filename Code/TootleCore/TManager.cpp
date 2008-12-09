@@ -89,7 +89,7 @@ void TManager::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 
 }
 
-void TManager::OnEventChannelAdded(TRef& refPublisherID, TRef& refChannelID)
+void TManager::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID)
 {
 	if(refPublisherID == "CORE")
 	{

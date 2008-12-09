@@ -95,7 +95,7 @@ protected:
 	virtual SyncBool Shutdown();
 
 	virtual void	ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
-	virtual void	OnEventChannelAdded(TRef& refPublisherID, TRef& refChannelID);
+	virtual void	OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
 
 	// Internal user access
 	inline Bool HasUser(TRef refUserID)  
