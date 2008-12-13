@@ -10,6 +10,7 @@
 #include "TFileSimpleVector.h"
 #include "TFileAssetMarkup.h"
 #include "TFileXml.h"
+#include "TFileWAV.h"
 
 #if defined(TL_TARGET_IPOD)
 	#include "IPod/IPodLocalFileSys.h"
@@ -264,6 +265,14 @@ TLFileSys::TFile* TLFileSys::TFileSys::CreateObject(TRefRef InstanceRef,TRefRef 
 		pFile = new TLFileSys::TFileAssetMarkup( InstanceRef, TypeRef );
 		return pFile;
 	}
+	
+	//	WAV file
+	if ( TypeRef == TRef("wav") )
+	{
+		pFile = new TLFileSys::TFileWAV( InstanceRef, TypeRef );
+		return pFile;
+	}
+	
 
 	//	generic binary file
 	pFile = new TLFileSys::TFile( InstanceRef, TypeRef );

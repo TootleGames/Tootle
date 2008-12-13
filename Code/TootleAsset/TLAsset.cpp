@@ -2,6 +2,7 @@
 #include "TMesh.h"
 #include "TFont.h"
 #include "TMenu.h"
+#include "TAudio.h"
 #include "TLoadTask.h"
 #include <TootleCore/TPtr.h>
 #include <TootleCore/TEventChannel.h>
@@ -223,6 +224,9 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef, Bool bBlocking)
 //----------------------------------------------------------
 TLAsset::TAsset* TLAsset::TAssetFactory::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 {
+	if ( TypeRef == "Audio" )
+		return new TLAsset::TAudio( InstanceRef );
+
 	if ( TypeRef == "Mesh" )
 		return new TLAsset::TMesh( InstanceRef );
 

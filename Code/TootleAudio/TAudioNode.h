@@ -28,10 +28,13 @@ class TLAudio::TAudioNode : public TLGraph::TGraphNode<TAudioNode>
 public:
 	TAudioNode(TRefRef NodeRef);
 
+	TRefRef				GetSourceRef()		const { return m_SourceRef; }
 public:
 	virtual void		UpdateAll(float Timestep)		{}	//	gr: no updates for audio nodes
 
 private:
 	TAudioProperties	m_Properties;
+	
+	TRef				m_SourceRef;		// OpenAL Source ID
 };
 

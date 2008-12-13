@@ -23,9 +23,6 @@ SyncBool TAudiograph::Initialise()
 {
 	if(TLMessaging::g_pEventChannelManager)
 	{
-		//TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerID(), "ACTION");
-		//TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerID(), "DEVICE");
-
 		if(InitDevices() != SyncTrue)
 			return SyncFalse;
 

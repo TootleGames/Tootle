@@ -1,6 +1,6 @@
 #include "IPodAudio.h"
 
-/*
+
 namespace TLAudio
 {
 	namespace Platform
@@ -8,13 +8,13 @@ namespace TLAudio
 		namespace OpenAL
 		{
 			ALboolean					g_bEAX = FALSE;
-
-			const u32					NUM_BUFFERS = 1;
-			ALuint						g_Buffers[1] = {0};
+			
+			TArray<ALuint> g_Sources;
+			TArray<ALuint> g_Buffers;
 		}
 	}
 }
-*/
+
 using namespace TLAudio;
 
 SyncBool Platform::Init()			
@@ -36,37 +36,151 @@ SyncBool Platform::Shutdown()
 
 SyncBool Platform::OpenAL::Init()
 {
-	/*
+
+
 	// Initialization
 	ALCdevice* pDevice = alcOpenDevice(NULL); // select the "preferred device"
 
-	if(pDevice) 
+	if(!pDevice)
 	{
-		ALCcontext* pContext = alcCreateContext(pDevice,NULL);
-
-		alcMakeContextCurrent(pContext);
-	}
-	else 
-	{
+		TLDebug_Print("Unable to create OpenAL device");
 		return SyncFalse;
 	}
 
+
+	ALCcontext* pContext = alcCreateContext(pDevice,NULL);
+
+/*
+	//[11/12/08] DB - Docs seem to suggest a null pointer will mean failure but seems to always fail???
+
+	if(pContext == NULL)
+	{
+		TLDebug_Print("Unable to create OpenAL context");
+		
+		ALCenum alcerror;
+
+		if((alcerror = alcGetError(pDevice)) != AL_NO_ERROR)
+		{
+			TString strerr = GetALCErrorString(alcerror);
+			TLDebug_Print(strerr);
+		}
+		
+		// Destroy the device
+		alcCloseDevice(pDevice);
+
+		return SyncFalse;
+	}
+ */
+	
+	
+	ALCboolean bSuccess = alcMakeContextCurrent(pContext);
+
+	
+	// Failed?
+	if(bSuccess == ALC_FALSE)
+	{
+		TLDebug_Print("Faied to set OpenAL context");
+
+		//TString strerr = GetALCErrorString(alcerror);
+		//TLDebug_Print(strerr);
+
+		alcMakeContextCurrent(NULL);
+		alcDestroyContext(pContext);
+		alcCloseDevice(pDevice);
+
+		return SyncFalse;
+	}
+	
 	// Check for EAX 2.0 support
 	Platform::OpenAL::g_bEAX = alIsExtensionPresent("EAX2.0");
+	
+	ALenum error;
 
-	// Generate Buffers
-	alGetError(); // clear error code
-	alGenBuffers(Platform::OpenAL::NUM_BUFFERS, Platform::OpenAL::g_Buffers);
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("Faied to check EAX2.0");
+		
+		alcMakeContextCurrent(NULL);
+		alcDestroyContext(pContext);
+		alcCloseDevice(pDevice);
+
+		return SyncFalse;
+	}
+	
+	return SyncTrue;
+}
+
+
+Bool Platform::OpenAL::CreateBuffer(ALuint& uBuffer)
+{	
+	alGenBuffers(1, &uBuffer);
+	
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+		
+		return FALSE;
+	}
+	
+	g_Buffers.Add(uBuffer);
+	
+	return TRUE;
+}
+
+
+Bool Platform::OpenAL::ReleaseBuffer(ALuint& uBuffer)
+{
+	return FALSE;
+}
+
+Bool Platform::OpenAL::CreateSource(ALuint& uSource)
+{	
+	alGenSources(1, &uSource);
+	
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+		
+		return FALSE;
+	}
+	
+	g_Sources.Add(uSource);
+	
+	return TRUE;
+}
+
+
+Bool Platform::OpenAL::AttachSourceToBuffer(ALuint& uSource, ALuint& uBuffer, const Bool bStreaming)
+{
+	if(bStreaming)
+		alSourceQueueBuffers(uSource, 1, &uBuffer);
+	else
+		alSourcei(uSource, AL_BUFFER, uBuffer);
 
 	ALenum error;
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
-		//DisplayALError("alGenBuffers :", error);
-		return SyncFalse;
+		TLDebug_Print("Failed to attach source to buffer");
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+		
+		return FALSE;
 	}
-*/
-	return SyncTrue;
+	
+	return TRUE;
 }
+
+
+
+Bool Platform::OpenAL::ReleaseSource(ALuint& uSource)
+{
+	return FALSE;
+}
+
 
 
 SyncBool Platform::OpenAL::Update()
@@ -76,7 +190,18 @@ SyncBool Platform::OpenAL::Update()
 
 SyncBool Platform::OpenAL::Shutdown()
 {
-	/*
+	
+	// TODO: The removal of the sources will be done when the nodes shutdown
+	//		 The removal of the buffers will be done when the file assets are shutdown
+	ALuint		returnedName;
+	// Delete the Sources
+	if(g_Sources.GetSize())
+		alDeleteSources(g_Sources.GetSize(), &returnedName);
+	
+	// Delete the Buffers	
+	if(g_Buffers.GetSize())
+		alDeleteBuffers(g_Buffers.GetSize(), &returnedName);
+	
 	ALCcontext* pContext = alcGetCurrentContext();
 
 	ALCdevice* pDevice = alcGetContextsDevice(pContext);
@@ -150,3 +275,60 @@ Bool Platform::OpenAL::StopAudio()
 {
 	return TRUE;
 }
+
+
+TString Platform::OpenAL::GetALErrorString(ALenum err)
+{
+    switch(err)
+    {
+        case AL_NO_ERROR:
+            return TString("AL_NO_ERROR");
+
+        case AL_INVALID_NAME:
+            return TString("AL_INVALID_NAME");
+			
+        case AL_INVALID_ENUM:
+            return TString("AL_INVALID_ENUM");
+			
+        case AL_INVALID_VALUE:
+            return TString("AL_INVALID_VALUE");
+			
+        case AL_INVALID_OPERATION:
+            return TString("AL_INVALID_OPERATION");
+			
+        case AL_OUT_OF_MEMORY:
+            return TString("AL_OUT_OF_MEMORY");			
+    };
+	
+	// Unknown
+	return TString("AL_UNKNOWN_ERROR");
+}
+
+TString Platform::OpenAL::GetALCErrorString(ALCenum err)
+{
+    switch(err)
+    {
+        case ALC_NO_ERROR:
+            return TString("AL_NO_ERROR");
+			
+        case ALC_INVALID_DEVICE:
+            return TString("ALC_INVALID_DEVICE");
+			
+        case ALC_INVALID_CONTEXT:
+            return TString("ALC_INVALID_CONTEXT");
+			
+        case ALC_INVALID_ENUM:
+            return TString("ALC_INVALID_ENUM");
+			
+        case ALC_INVALID_VALUE:
+            return TString("ALC_INVALID_VALUE");
+			
+        case ALC_OUT_OF_MEMORY:
+            return TString("ALC_OUT_OF_MEMORY");
+    };
+	
+	// Unknown
+	return TString("AL_UNKNOWN_ERROR");
+}
+
+
