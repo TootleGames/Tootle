@@ -432,6 +432,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TFileWAV.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TFileWAV.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TFileXml.cpp"
 			>
 		</File>

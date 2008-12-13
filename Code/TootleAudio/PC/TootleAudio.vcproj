@@ -180,14 +180,6 @@
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\TAudioAsset.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\TAudioAsset.h"
-			>
-		</File>
-		<File
 			RelativePath="..\TAudiograph.cpp"
 			>
 		</File>

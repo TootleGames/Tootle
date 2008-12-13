@@ -158,6 +158,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TAudio.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TAudio.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TFont.cpp"
 			>
 		</File>
