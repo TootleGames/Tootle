@@ -14,6 +14,7 @@
 //#define COLLIDE_ONCE
 #define COLLISION_ITERATIONS	1
 //#define ENABLE_NOZONE_COLLISION
+//#define ENABLE_COLLISIONTEST_TRACE
 
 
 #define ENABLE_TEST_PARENTZONENODE_INMYZONE
@@ -114,11 +115,13 @@ void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 
 	//	debug collision count
 #ifdef _DEBUG
+#ifdef ENABLE_COLLISIONTEST_TRACE
 	float ZoneTestSuccess = m_Debug_InZoneTests == 0 ? 0.f : (float)m_Debug_InZoneTestsFailed / (float)m_Debug_InZoneTests;
 	float IntersectionRate = m_Debug_CollisionTestCount == 0 ? 0.f : (float)m_Debug_CollisionIntersections / (float)m_Debug_CollisionTestCount;
 	float CollisionRateUp = m_Debug_CollisionTestCount == 0 ? 0.f : (float)m_Debug_CollisionTestsUpwards / (float)m_Debug_CollisionTestCount;
 	float CollisionRateDown = m_Debug_CollisionTestCount == 0 ? 0.f : (float)m_Debug_CollisionTestsDownwards / (float)m_Debug_CollisionTestCount;
 	TLDebug_Print( TString("Collision tests: %d (%d static, %.2f up, %.2f down) %d intersections(%.2f%%) %d zone shape tests(%.2f%%) %d zone loops", m_Debug_CollisionTestCount, m_Debug_StaticCollisionTestCount, CollisionRateUp, CollisionRateDown, m_Debug_CollisionIntersections, IntersectionRate*100.f, m_Debug_InZoneTests, ZoneTestSuccess*100.f, m_Debug_ZonesTested ) );
+#endif
 #endif
 }
 
