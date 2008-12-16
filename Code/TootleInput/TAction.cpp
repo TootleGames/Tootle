@@ -3,7 +3,9 @@
 
 using namespace TLInput;
 
-
+#ifdef _DEBUG
+//#define ENABLE_INPUTACTION_TRACE
+#endif
 
 TAction::TAction(TRef refActionID)	:
 	 m_refActionID(refActionID),
@@ -83,6 +85,17 @@ void TAction::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 
 							// Toggle the state to say the parent action is currently active/inactive
 							PAS.m_bState = (PAS.m_bState ? 0 : 1);
+							
+#ifdef ENABLE_INPUTACTION_TRACE
+							TString straction;
+							m_refActionID.GetString(straction);
+							TLDebug_Print(straction);
+							
+							TString strstate;
+							strstate.Appendf("Parent Action state set to %d", PAS.m_bState);
+							TLDebug_Print(strstate);
+#endif
+							
 						}
 					}
 				}
@@ -98,7 +111,16 @@ void TAction::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 		{
 			TParentActionState& PAS = m_bParentActionStates.ElementAt(uIndex);
 			if(PAS.m_bState != PAS.m_bCondition)
+			{
+#ifdef ENABLE_INPUTACTION_TRACE
+				TLDebug_Print("Parent Action not set");
+				TString straction;
+				m_refActionID.GetString(straction);
+				TLDebug_Print(straction);
+#endif
+				
 				return;
+			}
 		}
 	}
 
@@ -138,6 +160,12 @@ void TAction::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 
 	if(bActionOccured)
 	{
+#ifdef ENABLE_INPUTACTION_TRACE
+		TLDebug_Print("Action triggered");
+		TString straction;
+		m_refActionID.GetString(straction);
+		TLDebug_Print(straction);
+#endif
 		// Send out a new message specifying the action ID to say this action has happened.
 		TPtr<TLMessaging::TMessage> pNewMessage = new TLMessaging::TMessage("Input");
 		if ( pNewMessage.IsValid() )

@@ -100,6 +100,23 @@ s32 TInputDevice::GetSensorIndex(TRef refSensorLabel)
 	return -1;
 }
 
+/*
+TRef TInputDevice::GetSensorID(TRef refSensorLabel)
+{
+	// Go through the sensors and look up whether any have the specified sensor ref as a label
+	for(u32 uIndex = 0; uIndex < m_Sensors.GetSize(); uIndex++)
+	{
+		TPtr<TLInput::TInputSensor> pSensor = m_Sensors.ElementAt(uIndex);
+		
+		if(pSensor->GetLabel() == refSensorLabel)
+			return pSensor->m_refSensorID;
+	}
+	
+	return TRef(0);
+}
+ */
+
+
 
 
 u32	TInputDevice::GetSensorCount(TSensorType SensorType)

@@ -2,6 +2,10 @@
 
 #include <TootleCore/TLMaths.h>
 
+#ifdef _DEBUG
+//#define ENABLE_INPUTSENSOR_TRACE
+#endif
+
 using namespace TLInput;
 
 void TInputSensor::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
@@ -32,6 +36,18 @@ void TInputSensor::Process(float fRawValue)
 	// Change in value?
 	if(m_fValue != fValue)
 	{
+#ifdef ENABLE_INPUTSENSOR_TRACE
+		TString sensor;
+		m_refSensorID.GetString(sensor);
+		
+		TString sensorlabel;
+		m_refSensorLabel.GetString(sensorlabel);
+		
+		TString str;
+		str.Appendf("Sensor %s (%s) value changed - %.3f", sensor.GetData(), sensorlabel.GetData(), fValue);
+		TLDebug_Print(str);
+#endif
+		
 		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Input");
 
 		// Relay message to all subscribers

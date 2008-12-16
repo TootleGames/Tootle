@@ -1,5 +1,14 @@
 #include "IPodInput.h"
 
+#ifdef _DEBUG
+//#define ENABLE_INPUTSYSTEM_TRACE
+#endif
+
+// [16/12/08] DB -	Possible responsiveness improvement
+//					Calls the update manually from the touch events which should mean the inptu is processed immediately
+//				    instead of during the next frame update
+#define ENABLE_IMMEDIATE_TOUCHUPDATE
+
 namespace TLInput
 {
 	namespace Platform 
@@ -101,6 +110,12 @@ Bool Platform::IPod::InitialiseDevice(TPtr<TInputDevice> pDevice)
 		if(pSensor.IsValid())
 		{
 			//pSensor->SubscribeTo(pDXDevice);
+
+#ifdef ENABLE_INPUTSYSTEM_TRACE
+			TString str;
+			str.Appendf("Attached button sensor - %d", uUniqueID);
+			TLDebug_Print(str);
+#endif
 			
 			uUniqueID++;
 		}
@@ -121,28 +136,29 @@ Bool Platform::IPod::InitialiseDevice(TPtr<TInputDevice> pDevice)
 	AxisRefs.Add("AXY4");
 	AxisRefs.Add("AXZ4");
 	
-	u32 uArrayIndex = 0;
 	for(uIndex = 0; uIndex < AxisRefs.GetSize(); uIndex++)
 	{		
-		if(uIndex % 3)
-			uArrayIndex = 0;
-		
 		
 		TPtr<TInputSensor> pSensor = pDevice->AttachSensor(uUniqueID, Axis);
 		
 		if(pSensor.IsValid())
 		{
 			//pSensor->SubscribeTo(pDXDevice);
-			TRef temp = AxisRefs.ElementAt(uArrayIndex);
+			TRef temp = AxisRefs.ElementAt(uIndex);
 			stringLabel.Empty();
 			temp.GetString(stringLabel); // get the appropriate axis type x,y,z
 			refLabel = stringLabel;
 			
+#ifdef ENABLE_INPUTSYSTEM_TRACE
+			TString str;
+			str.Appendf("Attached axis sensor - %d", uUniqueID);
+			TLDebug_Print(str);
+			TLDebug_Print(stringLabel);
+#endif
+			
 			pSensor->SetLabel(refLabel);
 			uUniqueID++;
 		}
-		
-		uArrayIndex++;
 	}
 	
 	AxisRefs.Empty();
@@ -162,6 +178,14 @@ Bool Platform::IPod::InitialiseDevice(TPtr<TInputDevice> pDevice)
 			temp.GetString(stringLabel);
 			refLabel = stringLabel;
 			pSensor->SetLabel(refLabel);
+#ifdef ENABLE_INPUTSYSTEM_TRACE
+			TString str;
+			str.Appendf("Attached accelerometer sensor - %d", uUniqueID);
+			TLDebug_Print(str);
+			TLDebug_Print(stringLabel);
+
+#endif
+			
 			uUniqueID++;
 		}
 	}
@@ -210,79 +234,103 @@ void Platform::RemoveAllDevices()
 
 Bool Platform::UpdateDevice(TPtr<TLInput::TInputDevice> pDevice)
 {
-	Bool bHasInputToProcess = (IPod::g_TouchData.GetSize() > 0 || IPod::g_AccelerationData.GetSize() > 0);
+#ifdef ENABLE_INPUTSYSTEM_TRACE
+	TLDebug_Print("INPUT: Begin update");
+#endif
 	
-	while(bHasInputToProcess)
+	
+	if(IPod::g_TouchData.GetSize() > 0 )
 	{
-		if(IPod::g_TouchData.GetSize() > 0 )
-		{
-			// Process all touch data
-			IPod::ProcessTouchData(pDevice);
+		// Process all touch data
+		IPod::ProcessTouchData(pDevice);
+
+		// Processed all touch data
+		// Check to see if we still have any accelerometer data left to process
+		// If so continue through otherwise return
+		if(IPod::g_AccelerationData.GetSize() == 0)
 			return TRUE;
+	}
+	
+	
+	do
+	{
+#ifdef ENABLE_INPUTSYSTEM_TRACE
+		TLDebug_Print("INPUT: Process NON-TOUCH data");
+#endif
+		// No touch data to process, so send a basic message with the current generic device state info		
+		TPtr<TBinaryTree>& MainBuffer = pDevice->GetDataBuffer();
+		
+		MainBuffer->Empty();
+		
+		TPtr<TBinaryTree> pDataBuffer = MainBuffer->AddChild("Input");
+		
+		// Setup the button data				
+		for(u32 uButtonIndex = 0; uButtonIndex < IPod::MAX_CURSOR_POSITIONS; uButtonIndex++)
+		{
+			// Add data to the binary array - use current state information
+			pDataBuffer->Write(IPod::g_aIpodButtonState.ElementAt(uButtonIndex));
+		}
+
+		// No deltas in position this frame
+		for(u32 uAxisIndex = 0; uAxisIndex < IPod::MAX_CURSOR_POSITIONS; uAxisIndex++)
+		{
+			// No changes in position for the other axis on this run of the loop
+			pDataBuffer->Write(0.0f);
+			pDataBuffer->Write(0.0f);
+			pDataBuffer->Write(0.0f);
+		}
+		
+		// Add the acceleromter data
+		if(IPod::g_AccelerationData.GetSize() > 0)
+		{
+			TPtr<IPod::TAccelerationData> pAccelerationData =IPod::g_AccelerationData.ElementAt(0);
 			
+			pDataBuffer->Write(pAccelerationData->vAcceleration.x);
+			pDataBuffer->Write(pAccelerationData->vAcceleration.y);
+			pDataBuffer->Write(pAccelerationData->vAcceleration.z);
+			
+			// Remove fromt eh top of the list
+			IPod::g_AccelerationData.RemoveAt(0);
 		}
 		else
 		{
-			// No touch data to process, so send a basic message with the current generic device state info		
-			TPtr<TBinaryTree>& MainBuffer = pDevice->GetDataBuffer();
-			
-			MainBuffer->Empty();
-			
-			TPtr<TBinaryTree> pDataBuffer = MainBuffer->AddChild("Input");
-			
-			// Setup the button data				
-			for(u32 uButtonIndex = 0; uButtonIndex < IPod::MAX_CURSOR_POSITIONS; uButtonIndex++)
-			{
-				// Add data to the binary array - use current state information
-				pDataBuffer->Write(IPod::g_aIpodButtonState.ElementAt(uButtonIndex));
-			}
-
-			// No deltas in position this frame
-			for(u32 uAxisIndex = 0; uAxisIndex < IPod::MAX_CURSOR_POSITIONS; uAxisIndex++)
-			{
-				// No changes in position for the other axis on this run of the loop
-				pDataBuffer->Write(0.0f);
-				pDataBuffer->Write(0.0f);
-				pDataBuffer->Write(0.0f);
-			}
-			
-			// Add the acceleromter data
-			if(IPod::g_AccelerationData.GetSize() > 0)
-			{
-				TPtr<IPod::TAccelerationData> pAccelerationData =IPod::g_AccelerationData.ElementAt(0);
-				
-				pDataBuffer->Write(pAccelerationData->vAcceleration.x);
-				pDataBuffer->Write(pAccelerationData->vAcceleration.y);
-				pDataBuffer->Write(pAccelerationData->vAcceleration.z);
-				
-				// Remove fromt eh top of the list
-				IPod::g_AccelerationData.RemoveAt(0);
-			}
-			else
-			{
-				// No acceleration on this run of the loop
-				pDataBuffer->Write(0.0f);
-				pDataBuffer->Write(0.0f);
-				pDataBuffer->Write(0.0f);
-			}	
-		}
+			// No acceleration on this run of the loop
+			pDataBuffer->Write(0.0f);
+			pDataBuffer->Write(0.0f);
+			pDataBuffer->Write(0.0f);
+		}	
 		
-		// Still have any input to process??
-		bHasInputToProcess = (IPod::g_TouchData.GetSize() > 0 || IPod::g_AccelerationData.GetSize() > 0);
-	}				
-				
+		// Set the cursor information
+		//SetCursorPosition(uSensorIndex, pTouchData->uCurrentPos);
+		
+		// Tell the device to process the data
+		pDataBuffer->ResetReadPos();
+		pDevice->ForceUpdate();
+	
+	
+		// Still have any iaccelerometer data to process??
+	}while(IPod::g_AccelerationData.GetSize() > 0);				
+			
+#ifdef ENABLE_INPUTSYSTEM_TRACE
+	TLDebug_Print("INPUT: End update");
+#endif			
+	
 	return TRUE;
 }
 
 
 void Platform::IPod::ProcessTouchData(TPtr<TLInput::TInputDevice> pDevice)
-{
+{	
 	TPtr<TBinaryTree>& MainBuffer = pDevice->GetDataBuffer();
 
 	// Go through the list of touch data we have received and 
 	// process it like it was from sensors	
 	for(u32 uIndex = 0; uIndex < g_TouchData.GetSize(); uIndex++)
 	{		
+#ifdef ENABLE_INPUTSYSTEM_TRACE
+		TLDebug_Print("INPUT: Process TOUCH data");
+#endif
+		
 		MainBuffer->Empty();
 		
 		TPtr<TBinaryTree> pDataBuffer = MainBuffer->AddChild("Input");
@@ -398,20 +446,42 @@ void Platform::IPod::SetCursorPosition(u8 uIndex, int2 uPos)
 
 void TLInput::Platform::IPod::ProcessTouchBegin(TPtr<TTouchData>& pTouchData)
 {
-	//TLDebug_Print("TOUCH BEGIN");
+#ifdef ENABLE_INPUTSYSTEM_TRACE
+	TLDebug_Print("TOUCH BEGIN");
+#endif
 	g_TouchData.Add(pTouchData);
+
+#ifdef ENABLE_IMMEDIATE_TOUCHUPDATE
+	TLInput::g_pInputSystem->ForceUpdate();
+#endif
 }
 
 void TLInput::Platform::IPod::ProcessTouchMoved(TPtr<TTouchData>& pTouchData)
 {
-	//TLDebug_Print("TOUCH MOVED");
+#ifdef ENABLE_INPUTSYSTEM_TRACE
+	TLDebug_Print("TOUCH MOVED");
+	TString str;
+	str.Appendf("CurrrentPos %d %d", pTouchData->uCurrentPos.x, pTouchData->uCurrentPos.y);
+	TLDebug_Print(str);
+#endif
+	
 	g_TouchData.Add(pTouchData);
+	
+#ifdef ENABLE_IMMEDIATE_TOUCHUPDATE
+	TLInput::g_pInputSystem->ForceUpdate();
+#endif
 }
 
 void TLInput::Platform::IPod::ProcessTouchEnd(TPtr<TTouchData>& pTouchData)
 {
-	//TLDebug_Print("TOUCH END");
+#ifdef ENABLE_INPUTSYSTEM_TRACE
+	TLDebug_Print("TOUCH END");
+#endif
 	g_TouchData.Add(pTouchData);
+
+#ifdef ENABLE_IMMEDIATE_TOUCHUPDATE
+	TLInput::g_pInputSystem->ForceUpdate();
+#endif
 }
 
 void TLInput::Platform::IPod::ProcessAcceleration(TPtr<TAccelerationData>& pAccelerationData)

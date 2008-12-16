@@ -60,6 +60,11 @@ public:
 	}
 
 	Bool					GetDeviceIDs(TArray<TRef>& refArray);
+	
+	FORCEINLINE void		ForceUpdate()
+	{
+		Update(0.0f);
+	}
 
 protected:
 	virtual SyncBool		Initialise();
