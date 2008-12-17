@@ -1,0 +1,262 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		841006170EF91D8D00542F4A /* TAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 841005530EF913CE00542F4A /* TAction.cpp */; };
+		841006190EF91D8D00542F4A /* TDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 841005550EF913CE00542F4A /* TDevice.cpp */; };
+		8410061B0EF91D8D00542F4A /* TEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 841005570EF913CE00542F4A /* TEffect.cpp */; };
+		8410061D0EF91D8D00542F4A /* TLInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 841005590EF913CE00542F4A /* TLInput.cpp */; };
+		8410061F0EF91D8D00542F4A /* TSensor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8410055B0EF913CE00542F4A /* TSensor.cpp */; };
+		841006210EF91D8D00542F4A /* TUser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8410055D0EF913CE00542F4A /* TUser.cpp */; };
+		841006270EF91E0800542F4A /* IPodInput.mm in Sources */ = {isa = PBXBuildFile; fileRef = 841005600EF913E500542F4A /* IPodInput.mm */; };
+		841007860EF92CB000542F4A /* IPodInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 841007850EF92CB000542F4A /* IPodInput.h */; };
+		8410078D0EF92CC000542F4A /* TAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 841007870EF92CC000542F4A /* TAction.h */; };
+		8410078E0EF92CC000542F4A /* TDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 841007880EF92CC000542F4A /* TDevice.h */; };
+		8410078F0EF92CC000542F4A /* TEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 841007890EF92CC000542F4A /* TEffect.h */; };
+		841007900EF92CC000542F4A /* TLInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 8410078A0EF92CC000542F4A /* TLInput.h */; };
+		841007910EF92CC000542F4A /* TSensor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8410078B0EF92CC000542F4A /* TSensor.h */; };
+		841007920EF92CC000542F4A /* TUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 8410078C0EF92CC000542F4A /* TUser.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		841005530EF913CE00542F4A /* TAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAction.cpp; path = ../TAction.cpp; sourceTree = SOURCE_ROOT; };
+		841005550EF913CE00542F4A /* TDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TDevice.cpp; path = ../TDevice.cpp; sourceTree = SOURCE_ROOT; };
+		841005570EF913CE00542F4A /* TEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TEffect.cpp; path = ../TEffect.cpp; sourceTree = SOURCE_ROOT; };
+		841005590EF913CE00542F4A /* TLInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLInput.cpp; path = ../TLInput.cpp; sourceTree = SOURCE_ROOT; };
+		8410055B0EF913CE00542F4A /* TSensor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSensor.cpp; path = ../TSensor.cpp; sourceTree = SOURCE_ROOT; };
+		8410055D0EF913CE00542F4A /* TUser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TUser.cpp; path = ../TUser.cpp; sourceTree = SOURCE_ROOT; };
+		841005600EF913E500542F4A /* IPodInput.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodInput.mm; sourceTree = "<group>"; };
+		841005760EF9144200542F4A /* libTootleInput.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleInput.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		841007850EF92CB000542F4A /* IPodInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodInput.h; sourceTree = "<group>"; };
+		841007870EF92CC000542F4A /* TAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAction.h; path = ../TAction.h; sourceTree = SOURCE_ROOT; };
+		841007880EF92CC000542F4A /* TDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDevice.h; path = ../TDevice.h; sourceTree = SOURCE_ROOT; };
+		841007890EF92CC000542F4A /* TEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TEffect.h; path = ../TEffect.h; sourceTree = SOURCE_ROOT; };
+		8410078A0EF92CC000542F4A /* TLInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLInput.h; path = ../TLInput.h; sourceTree = SOURCE_ROOT; };
+		8410078B0EF92CC000542F4A /* TSensor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSensor.h; path = ../TSensor.h; sourceTree = SOURCE_ROOT; };
+		8410078C0EF92CC000542F4A /* TUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TUser.h; path = ../TUser.h; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		841005740EF9144200542F4A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8410053E0EF912FC00542F4A = {
+			isa = PBXGroup;
+			children = (
+				841006160EF91D3D00542F4A /* Code */,
+				841005770EF9144200542F4A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		841005610EF913F200542F4A /* IPod */ = {
+			isa = PBXGroup;
+			children = (
+				841007850EF92CB000542F4A /* IPodInput.h */,
+				841005600EF913E500542F4A /* IPodInput.mm */,
+			);
+			name = IPod;
+			sourceTree = "<group>";
+		};
+		841005770EF9144200542F4A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				841005760EF9144200542F4A /* libTootleInput.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		841006160EF91D3D00542F4A /* Code */ = {
+			isa = PBXGroup;
+			children = (
+				841007870EF92CC000542F4A /* TAction.h */,
+				841007880EF92CC000542F4A /* TDevice.h */,
+				841007890EF92CC000542F4A /* TEffect.h */,
+				8410078A0EF92CC000542F4A /* TLInput.h */,
+				8410078B0EF92CC000542F4A /* TSensor.h */,
+				8410078C0EF92CC000542F4A /* TUser.h */,
+				841005610EF913F200542F4A /* IPod */,
+				841005530EF913CE00542F4A /* TAction.cpp */,
+				841005550EF913CE00542F4A /* TDevice.cpp */,
+				841005570EF913CE00542F4A /* TEffect.cpp */,
+				841005590EF913CE00542F4A /* TLInput.cpp */,
+				8410055B0EF913CE00542F4A /* TSensor.cpp */,
+				8410055D0EF913CE00542F4A /* TUser.cpp */,
+			);
+			name = Code;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		841005720EF9144200542F4A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				841007860EF92CB000542F4A /* IPodInput.h in Headers */,
+				8410078D0EF92CC000542F4A /* TAction.h in Headers */,
+				8410078E0EF92CC000542F4A /* TDevice.h in Headers */,
+				8410078F0EF92CC000542F4A /* TEffect.h in Headers */,
+				841007900EF92CC000542F4A /* TLInput.h in Headers */,
+				841007910EF92CC000542F4A /* TSensor.h in Headers */,
+				841007920EF92CC000542F4A /* TUser.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		841005750EF9144200542F4A /* TootleInput */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8410057A0EF9144300542F4A /* Build configuration list for PBXNativeTarget "TootleInput" */;
+			buildPhases = (
+				841005720EF9144200542F4A /* Headers */,
+				841005730EF9144200542F4A /* Sources */,
+				841005740EF9144200542F4A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleInput;
+			productName = TootleInput;
+			productReference = 841005760EF9144200542F4A /* libTootleInput.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		841005400EF912FC00542F4A /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 841005430EF912FC00542F4A /* Build configuration list for PBXProject "TootleInput" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 0;
+			mainGroup = 8410053E0EF912FC00542F4A;
+			productRefGroup = 841005770EF9144200542F4A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				841005750EF9144200542F4A /* TootleInput */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		841005730EF9144200542F4A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				841006270EF91E0800542F4A /* IPodInput.mm in Sources */,
+				841006170EF91D8D00542F4A /* TAction.cpp in Sources */,
+				841006190EF91D8D00542F4A /* TDevice.cpp in Sources */,
+				8410061B0EF91D8D00542F4A /* TEffect.cpp in Sources */,
+				8410061D0EF91D8D00542F4A /* TLInput.cpp in Sources */,
+				8410061F0EF91D8D00542F4A /* TSensor.cpp in Sources */,
+				841006210EF91D8D00542F4A /* TUser.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		841005410EF912FC00542F4A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					FT2_BUILD_LIBRARY,
+					TL_TARGET_IPOD,
+				);
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos2.1;
+			};
+			name = Debug;
+		};
+		841005420EF912FC00542F4A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					FT2_BUILD_LIBRARY,
+					TL_TARGET_IPOD,
+				);
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos2.1;
+			};
+			name = Release;
+		};
+		841005780EF9144300542F4A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				DEPLOYMENT_LOCATION = YES;
+				DEPLOYMENT_POSTPROCESSING = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G4;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = "../..//**";
+				INSTALL_PATH = ../../Lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				PREBINDING = NO;
+				PRIVATE_HEADERS_FOLDER_PATH = TootleInputInc/PrivateHeaders;
+				PRODUCT_NAME = TootleInput;
+				PUBLIC_HEADERS_FOLDER_PATH = TootleInputInc/PublicHeaders;
+				SDKROOT = iphoneos2.1;
+				SEPARATE_STRIP = NO;
+				STRIP_STYLE = all;
+				SYMROOT = build;
+			};
+			name = Debug;
+		};
+		841005790EF9144300542F4A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				HEADER_SEARCH_PATHS = "../..//**";
+				INSTALL_PATH = ../../Lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleInput;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		841005430EF912FC00542F4A /* Build configuration list for PBXProject "TootleInput" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				841005410EF912FC00542F4A /* Debug */,
+				841005420EF912FC00542F4A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8410057A0EF9144300542F4A /* Build configuration list for PBXNativeTarget "TootleInput" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				841005780EF9144300542F4A /* Debug */,
+				841005790EF9144300542F4A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 841005400EF912FC00542F4A /* Project object */;
+}
