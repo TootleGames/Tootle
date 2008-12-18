@@ -211,7 +211,12 @@
 				<string>active-combo-popup</string>
 				<string>action</string>
 				<string>NSToolbarFlexibleSpaceItem</string>
+				<string>build</string>
+				<string>go</string>
 				<string>build-and-go</string>
+				<string>clean-target</string>
+				<string>clean</string>
+				<string>servicesModulefind</string>
 				<string>com.apple.ide.PBXToolbarStopButton</string>
 				<string>get-info</string>
 				<string>NSToolbarFlexibleSpaceItem</string>
@@ -266,8 +271,6 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateExpansionKey</key>
 							<array>
 								<string>8410053E0EF912FC00542F4A</string>
-								<string>841006160EF91D3D00542F4A</string>
-								<string>841005610EF913F200542F4A</string>
 								<string>841005770EF9144200542F4A</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C08E77C0454961000C914BD</string>
@@ -315,7 +318,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TSensor.h</string>
+								<string>TootleDebug.xcconfig</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -323,21 +326,22 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TSensor.h</string>
+										<string>TootleDebug.xcconfig</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8410084F0EF9589A00542F4A</string>
+										<string>84179CA50EFA7961005375E5</string>
 										<key>history</key>
 										<array>
-											<string>841005C70EF91B5F00542F4A</string>
-											<string>841005CE0EF91B5F00542F4A</string>
 											<string>841005CF0EF91B5F00542F4A</string>
-											<string>841005D00EF91B5F00542F4A</string>
 											<string>8410068F0EF926EF00542F4A</string>
 											<string>841006920EF926EF00542F4A</string>
-											<string>841006940EF926EF00542F4A</string>
-											<string>8410080F0EF945AF00542F4A</string>
+											<string>841008D50EF9625200542F4A</string>
+											<string>841008D60EF9625200542F4A</string>
+											<string>841008D70EF9625200542F4A</string>
+											<string>841008D80EF9625200542F4A</string>
+											<string>84179C3D0EFA74D8005375E5</string>
+											<string>84179C780EFA788C005375E5</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -348,6 +352,7 @@
 											<string>841005DD0EF91B5F00542F4A</string>
 											<string>841005DF0EF91B5F00542F4A</string>
 											<string>841005E00EF91B5F00542F4A</string>
+											<string>841008D90EF9625200542F4A</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -405,9 +410,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>841008500EF9589A00542F4A</string>
+				<string>84179CA60EFA7961005375E5</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>841008510EF9589A00542F4A</string>
+				<string>84179CA70EFA7961005375E5</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -541,6 +546,8 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>84179C510EFA7720005375E5</string>
+		<string>841005E50EF91B5F00542F4A</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleInput/IPod/TootleInput.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -621,7 +628,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>841005E50EF91B5F00542F4A</string>
-				<string>841008020EF9444300542F4A</string>
+				<string>84179C890EFA792C005375E5</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -1221,22 +1228,40 @@
 			<string>538 42 401 187 0 0 1280 1002 </string>
 		</dict>
 		<dict>
+			<key>FirstTimeWindowDisplayed</key>
+			<false/>
 			<key>Identifier</key>
 			<string>windowTool.projectFormatConflicts</string>
+			<key>IsVertical</key>
+			<true/>
 			<key>Layout</key>
 			<array>
 				<dict>
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
+							<key>ContentConfiguration</key>
+							<dict>
+								<key>PBXProjectModuleGUID</key>
+								<string>84179C500EFA7720005375E5</string>
+							</dict>
+							<key>GeometryConfiguration</key>
+							<dict>
+								<key>Frame</key>
+								<string>{{0, 0}, {664, 363}}</string>
+								<key>RubberWindowFrame</key>
+								<string>218 271 664 383 0 0 1280 778 </string>
+							</dict>
 							<key>Module</key>
 							<string>XCProjectFormatConflictsModule</string>
 							<key>Proportion</key>
-							<string>100%</string>
+							<string>363pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
-					<string>100%</string>
+					<string>363pt</string>
 				</dict>
 			</array>
 			<key>Name</key>
@@ -1246,11 +1271,21 @@
 				<string>XCProjectFormatConflictsModule</string>
 			</array>
 			<key>StatusbarIsVisible</key>
-			<integer>0</integer>
+			<false/>
+			<key>TableOfContents</key>
+			<array>
+				<string>84179C510EFA7720005375E5</string>
+				<string>84179C8A0EFA792C005375E5</string>
+				<string>84179C500EFA7720005375E5</string>
+			</array>
 			<key>WindowContentMinSize</key>
 			<string>450 300</string>
 			<key>WindowString</key>
-			<string>50 850 472 307 0 0 1440 877</string>
+			<string>218 271 664 383 0 0 1280 778 </string>
+			<key>WindowToolGUID</key>
+			<string>84179C510EFA7720005375E5</string>
+			<key>WindowToolIsVisible</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>Identifier</key>

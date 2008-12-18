@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 45;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -39,6 +39,10 @@
 		8410078A0EF92CC000542F4A /* TLInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLInput.h; path = ../TLInput.h; sourceTree = SOURCE_ROOT; };
 		8410078B0EF92CC000542F4A /* TSensor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSensor.h; path = ../TSensor.h; sourceTree = SOURCE_ROOT; };
 		8410078C0EF92CC000542F4A /* TUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TUser.h; path = ../TUser.h; sourceTree = SOURCE_ROOT; };
+		84179C2F0EFA7469005375E5 /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		84179C300EFA7469005375E5 /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		84179C310EFA7469005375E5 /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
+		84179C320EFA7469005375E5 /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +59,7 @@
 		8410053E0EF912FC00542F4A = {
 			isa = PBXGroup;
 			children = (
+				84179C340EFA7470005375E5 /* Build Configurations */,
 				841006160EF91D3D00542F4A /* Code */,
 				841005770EF9144200542F4A /* Products */,
 			);
@@ -95,6 +100,17 @@
 				8410055D0EF913CE00542F4A /* TUser.cpp */,
 			);
 			name = Code;
+			sourceTree = "<group>";
+		};
+		84179C340EFA7470005375E5 /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				84179C2F0EFA7469005375E5 /* TootleDebug.xcconfig */,
+				84179C300EFA7469005375E5 /* TootleRelease.xcconfig */,
+				84179C310EFA7469005375E5 /* TootleReleaseAdHoc.xcconfig */,
+				84179C320EFA7469005375E5 /* TootleReleaseAppStore.xcconfig */,
+			);
+			name = "Build Configurations";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -140,7 +156,7 @@
 		841005400EF912FC00542F4A /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 841005430EF912FC00542F4A /* Build configuration list for PBXProject "TootleInput" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.1";
 			hasScannedForEncodings = 0;
 			mainGroup = 8410053E0EF912FC00542F4A;
 			productRefGroup = 841005770EF9144200542F4A /* Products */;
@@ -174,10 +190,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					FT2_BUILD_LIBRARY,
-					TL_TARGET_IPOD,
-				);
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos2.1;
 			};
@@ -185,6 +197,31 @@
 		};
 		841005420EF912FC00542F4A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84179C300EFA7469005375E5 /* TootleRelease.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos2.1;
+			};
+			name = Release;
+		};
+		841005780EF9144300542F4A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84179C2F0EFA7469005375E5 /* TootleDebug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		841005790EF9144300542F4A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84179C300EFA7469005375E5 /* TootleRelease.xcconfig */;
+			buildSettings = {
+				PREBINDING = NO;
+			};
+			name = Release;
+		};
+		84179C370EFA749A005375E5 /* Release AdHoc */ = {
+			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -194,46 +231,34 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos2.1;
 			};
-			name = Release;
+			name = "Release AdHoc";
 		};
-		841005780EF9144300542F4A /* Debug */ = {
+		84179C380EFA749A005375E5 /* Release AdHoc */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84179C310EFA7469005375E5 /* TootleReleaseAdHoc.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				DEPLOYMENT_LOCATION = YES;
-				DEPLOYMENT_POSTPROCESSING = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = "../..//**";
-				INSTALL_PATH = ../../Lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				PREBINDING = NO;
-				PRIVATE_HEADERS_FOLDER_PATH = TootleInputInc/PrivateHeaders;
-				PRODUCT_NAME = TootleInput;
-				PUBLIC_HEADERS_FOLDER_PATH = TootleInputInc/PublicHeaders;
-				SDKROOT = iphoneos2.1;
-				SEPARATE_STRIP = NO;
-				STRIP_STYLE = all;
-				SYMROOT = build;
 			};
-			name = Debug;
+			name = "Release AdHoc";
 		};
-		841005790EF9144300542F4A /* Release */ = {
+		84179C390EFA74BF005375E5 /* Release AppStore */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				HEADER_SEARCH_PATHS = "../..//**";
-				INSTALL_PATH = ../../Lib;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleInput;
-				ZERO_LINK = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					FT2_BUILD_LIBRARY,
+					TL_TARGET_IPOD,
+				);
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos2.1;
 			};
-			name = Release;
+			name = "Release AppStore";
+		};
+		84179C3A0EFA74BF005375E5 /* Release AppStore */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84179C320EFA7469005375E5 /* TootleReleaseAppStore.xcconfig */;
+			buildSettings = {
+			};
+			name = "Release AppStore";
 		};
 /* End XCBuildConfiguration section */
 
@@ -243,6 +268,8 @@
 			buildConfigurations = (
 				841005410EF912FC00542F4A /* Debug */,
 				841005420EF912FC00542F4A /* Release */,
+				84179C370EFA749A005375E5 /* Release AdHoc */,
+				84179C390EFA74BF005375E5 /* Release AppStore */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -252,6 +279,8 @@
 			buildConfigurations = (
 				841005780EF9144300542F4A /* Debug */,
 				841005790EF9144300542F4A /* Release */,
+				84179C380EFA749A005375E5 /* Release AdHoc */,
+				84179C3A0EFA74BF005375E5 /* Release AppStore */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
