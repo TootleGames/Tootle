@@ -60,7 +60,7 @@
 			isa = PBXGroup;
 			children = (
 				84179C340EFA7470005375E5 /* Build Configurations */,
-				841006160EF91D3D00542F4A /* Code */,
+				841006160EF91D3D00542F4A /* Source Code */,
 				841005770EF9144200542F4A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -82,7 +82,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		841006160EF91D3D00542F4A /* Code */ = {
+		841006160EF91D3D00542F4A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
 				841007870EF92CC000542F4A /* TAction.h */,
@@ -99,7 +99,7 @@
 				8410055B0EF913CE00542F4A /* TSensor.cpp */,
 				8410055D0EF913CE00542F4A /* TUser.cpp */,
 			);
-			name = Code;
+			name = "Source Code";
 			sourceTree = "<group>";
 		};
 		84179C340EFA7470005375E5 /* Build Configurations */ = {
