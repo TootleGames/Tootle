@@ -5,6 +5,7 @@
 		activeSDKPreference = iphonesimulator2.1;
 		activeTarget = 841005750EF9144200542F4A /* TootleInput */;
 		addToTargets = (
+			841005750EF9144200542F4A /* TootleInput */,
 		);
 		breakpoints = (
 			841008D40EF9624A00542F4A /* TUser.cpp:388 */,
@@ -101,8 +102,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 251371842;
-			PBXWorkspaceStateSaveDate = 251371842;
+			PBXPerProjectTemplateStateSaveDate = 252343528;
+			PBXWorkspaceStateSaveDate = 252343528;
 		};
 		perUserProjectItems = {
 			841005CF0EF91B5F00542F4A /* PBXTextBookmark */ = 841005CF0EF91B5F00542F4A /* PBXTextBookmark */;
@@ -115,14 +116,12 @@
 			841005E00EF91B5F00542F4A /* PBXTextBookmark */ = 841005E00EF91B5F00542F4A /* PBXTextBookmark */;
 			8410068F0EF926EF00542F4A /* PBXTextBookmark */ = 8410068F0EF926EF00542F4A /* PBXTextBookmark */;
 			841006920EF926EF00542F4A /* PBXTextBookmark */ = 841006920EF926EF00542F4A /* PBXTextBookmark */;
-			841008D50EF9625200542F4A /* PBXTextBookmark */ = 841008D50EF9625200542F4A /* PBXTextBookmark */;
 			841008D60EF9625200542F4A /* PBXTextBookmark */ = 841008D60EF9625200542F4A /* PBXTextBookmark */;
 			841008D70EF9625200542F4A /* PBXTextBookmark */ = 841008D70EF9625200542F4A /* PBXTextBookmark */;
 			841008D80EF9625200542F4A /* PBXTextBookmark */ = 841008D80EF9625200542F4A /* PBXTextBookmark */;
-			841008D90EF9625200542F4A /* PBXTextBookmark */ = 841008D90EF9625200542F4A /* PBXTextBookmark */;
 			84179C3D0EFA74D8005375E5 /* PBXTextBookmark */ = 84179C3D0EFA74D8005375E5 /* PBXTextBookmark */;
-			84179CA50EFA7961005375E5 /* PBXTextBookmark */ = 84179CA50EFA7961005375E5 /* PBXTextBookmark */;
-			84179D180EFBA15E005375E5 /* PBXTextBookmark */ = 84179D180EFBA15E005375E5 /* PBXTextBookmark */;
+			84C1084A0F0A732900B2DF7A /* PBXTextBookmark */ = 84C1084A0F0A732900B2DF7A /* PBXTextBookmark */;
+			84C108920F0A74F000B2DF7A /* PBXTextBookmark */ = 84C108920F0A74F000B2DF7A /* PBXTextBookmark */;
 		};
 		sourceControlManager = 841005440EF912FC00542F4A /* Source Control */;
 		userBuildSettings = {
@@ -317,16 +316,6 @@
 		modificationTime = 251224776.924076;
 		state = 2;
 	};
-	841008D50EF9625200542F4A /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8410078B0EF92CC000542F4A /* TSensor.h */;
-		name = "TSensor.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 565;
-		vrLoc = 2;
-	};
 	841008D60EF9625200542F4A /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 841005550EF913CE00542F4A /* TDevice.cpp */;
@@ -357,23 +346,6 @@
 		vrLen = 744;
 		vrLoc = 0;
 	};
-	841008D90EF9625200542F4A /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8410078B0EF92CC000542F4A /* TSensor.h */;
-		name = "TSensor.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 565;
-		vrLoc = 2;
-	};
-	84179C2F0EFA7469005375E5 /* TootleDebug.xcconfig */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 2786}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 874}";
-		};
-	};
 	84179C3D0EFA74D8005375E5 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 8410055D0EF913CE00542F4A /* TUser.cpp */;
@@ -384,24 +356,24 @@
 		vrLen = 756;
 		vrLoc = 9182;
 	};
-	84179CA50EFA7961005375E5 /* PBXTextBookmark */ = {
+	84C1084A0F0A732900B2DF7A /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = 84179C2F0EFA7469005375E5 /* TootleDebug.xcconfig */;
-		name = "TootleDebug.xcconfig: 1";
+		fRef = 8410078B0EF92CC000542F4A /* TSensor.h */;
+		name = "TSensor.h: 1";
 		rLen = 0;
 		rLoc = 0;
 		rType = 0;
-		vrLen = 874;
-		vrLoc = 0;
+		vrLen = 565;
+		vrLoc = 2;
 	};
-	84179D180EFBA15E005375E5 /* PBXTextBookmark */ = {
+	84C108920F0A74F000B2DF7A /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = 84179C2F0EFA7469005375E5 /* TootleDebug.xcconfig */;
-		name = "TootleDebug.xcconfig: 1";
+		fRef = 8410078B0EF92CC000542F4A /* TSensor.h */;
+		name = "TSensor.h: 1";
 		rLen = 0;
 		rLoc = 0;
 		rType = 0;
-		vrLen = 874;
-		vrLoc = 0;
+		vrLen = 565;
+		vrLoc = 2;
 	};
 }

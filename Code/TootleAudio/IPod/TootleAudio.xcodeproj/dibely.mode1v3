@@ -270,14 +270,16 @@
 						<dict>
 							<key>PBXSmartGroupTreeModuleOutlineStateExpansionKey</key>
 							<array>
+								<string>84179CF10EFB9E4E005375E5</string>
 								<string>1C37FBAC04509CD000000102</string>
-								<string>84179D870EFBAE88005375E5</string>
-								<string>84179D990EFBD639005375E5</string>
-								<string>84179D9A0EFBD639005375E5</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
-							<array/>
+							<array>
+								<array>
+									<integer>0</integer>
+								</array>
+							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
 							<string>{{0, 0}, {186, 609}}</string>
 						</dict>
@@ -326,7 +328,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84179DAA0EFBD639005375E5</string>
+										<string>84C108980F0A750500B2DF7A</string>
 										<key>history</key>
 										<array>
 											<string>84179D7B0EFBAE84005375E5</string>
@@ -334,13 +336,12 @@
 											<string>84179D9C0EFBD639005375E5</string>
 											<string>84179D9E0EFBD639005375E5</string>
 											<string>84179DA00EFBD639005375E5</string>
-											<string>84179DA20EFBD639005375E5</string>
+											<string>84C1083A0F0A72D200B2DF7A</string>
 										</array>
 										<key>prevStack</key>
 										<array>
 											<string>84179D7D0EFBAE84005375E5</string>
 											<string>84179D7E0EFBAE84005375E5</string>
-											<string>84179DA30EFBD639005375E5</string>
 											<string>84179DA40EFBD639005375E5</string>
 											<string>84179DA60EFBD639005375E5</string>
 											<string>84179DA80EFBD639005375E5</string>
@@ -401,9 +402,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84179DAC0EFBD639005375E5</string>
+				<string>84C1089A0F0A750500B2DF7A</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84179DAD0EFBD639005375E5</string>
+				<string>84C1089B0F0A750500B2DF7A</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -537,7 +538,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>84179D800EFBAE84005375E5</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleAudio/IPod/TootleAudio.xcodeproj</string>
 	</array>
 	<key>WindowString</key>

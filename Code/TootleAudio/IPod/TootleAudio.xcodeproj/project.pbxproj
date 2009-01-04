@@ -31,10 +31,10 @@
 		84179D330EFBA727005375E5 /* TLAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLAudio.h; path = ../TLAudio.h; sourceTree = SOURCE_ROOT; };
 		84179D4F0EFBA767005375E5 /* IPodAudio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IPodAudio.cpp; sourceTree = "<group>"; };
 		84179D500EFBA767005375E5 /* IPodAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodAudio.h; sourceTree = "<group>"; };
-		84179D590EFBA91E005375E5 /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TootleDebug.xcconfig; sourceTree = "<group>"; };
-		84179D5A0EFBA91E005375E5 /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TootleRelease.xcconfig; sourceTree = "<group>"; };
-		84179D5B0EFBA91E005375E5 /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TootleReleaseAdHoc.xcconfig; sourceTree = "<group>"; };
-		84179D5C0EFBA91E005375E5 /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TootleReleaseAppStore.xcconfig; sourceTree = "<group>"; };
+		84C108360F0A729500B2DF7A /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = IPod/TootleDebug.xcconfig; sourceTree = "<group>"; };
+		84C108370F0A729500B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = IPod/TootleRelease.xcconfig; sourceTree = "<group>"; };
+		84C108380F0A729500B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = IPod/TootleReleaseAdHoc.xcconfig; sourceTree = "<group>"; };
+		84C108390F0A729500B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = IPod/TootleReleaseAppStore.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,7 +52,7 @@
 			isa = PBXGroup;
 			children = (
 				84179D8D0EFBAF46005375E5 /* Frameworks */,
-				84179D580EFBA91E005375E5 /* BuildConfigurations */,
+				84179D580EFBA91E005375E5 /* Build Configurations */,
 				84179D0F0EFBA135005375E5 /* Source Code */,
 				84179D0B0EFBA035005375E5 /* Products */,
 			);
@@ -91,15 +91,15 @@
 			name = IPod;
 			sourceTree = "<group>";
 		};
-		84179D580EFBA91E005375E5 /* BuildConfigurations */ = {
+		84179D580EFBA91E005375E5 /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				84179D590EFBA91E005375E5 /* TootleDebug.xcconfig */,
-				84179D5A0EFBA91E005375E5 /* TootleRelease.xcconfig */,
-				84179D5B0EFBA91E005375E5 /* TootleReleaseAdHoc.xcconfig */,
-				84179D5C0EFBA91E005375E5 /* TootleReleaseAppStore.xcconfig */,
+				84C108360F0A729500B2DF7A /* TootleDebug.xcconfig */,
+				84C108370F0A729500B2DF7A /* TootleRelease.xcconfig */,
+				84C108380F0A729500B2DF7A /* TootleReleaseAdHoc.xcconfig */,
+				84C108390F0A729500B2DF7A /* TootleReleaseAppStore.xcconfig */,
 			);
-			name = BuildConfigurations;
+			name = "Build Configurations";
 			path = ../../BuildConfigurations;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -181,7 +181,7 @@
 /* Begin XCBuildConfiguration section */
 		84179CF40EFB9E4E005375E5 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84179D590EFBA91E005375E5 /* TootleDebug.xcconfig */;
+			baseConfigurationReference = 84C108360F0A729500B2DF7A /* TootleDebug.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				SDKROOT = iphoneos2.1;
@@ -191,7 +191,7 @@
 		};
 		84179CF50EFB9E4E005375E5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84179D5A0EFBA91E005375E5 /* TootleRelease.xcconfig */;
+			baseConfigurationReference = 84C108370F0A729500B2DF7A /* TootleRelease.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
@@ -225,7 +225,7 @@
 		};
 		84179D880EFBAEB6005375E5 /* Release AdHoc */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84179D5B0EFBA91E005375E5 /* TootleReleaseAdHoc.xcconfig */;
+			baseConfigurationReference = 84C108380F0A729500B2DF7A /* TootleReleaseAdHoc.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
@@ -247,7 +247,7 @@
 		};
 		84179D8A0EFBAEBD005375E5 /* Release AppStore */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84179D5C0EFBA91E005375E5 /* TootleReleaseAppStore.xcconfig */;
+			baseConfigurationReference = 84C108390F0A729500B2DF7A /* TootleReleaseAppStore.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
