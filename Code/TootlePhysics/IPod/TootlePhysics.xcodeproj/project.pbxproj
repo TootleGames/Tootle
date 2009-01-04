@@ -1,0 +1,288 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		84C10ACA0F0A7DF900B2DF7A /* TCollisionShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10ABE0F0A7DF900B2DF7A /* TCollisionShape.cpp */; };
+		84C10ACB0F0A7DF900B2DF7A /* TCollisionShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10ABF0F0A7DF900B2DF7A /* TCollisionShape.h */; };
+		84C10ACC0F0A7DF900B2DF7A /* TCollisionZone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AC00F0A7DF900B2DF7A /* TCollisionZone.cpp */; };
+		84C10ACD0F0A7DF900B2DF7A /* TCollisionZone.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AC10F0A7DF900B2DF7A /* TCollisionZone.h */; };
+		84C10ACE0F0A7DF900B2DF7A /* TLPhysics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AC20F0A7DF900B2DF7A /* TLPhysics.cpp */; };
+		84C10ACF0F0A7DF900B2DF7A /* TLPhysics.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AC30F0A7DF900B2DF7A /* TLPhysics.h */; };
+		84C10AD00F0A7DF900B2DF7A /* TPhysicsgraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AC40F0A7DF900B2DF7A /* TPhysicsgraph.cpp */; };
+		84C10AD10F0A7DF900B2DF7A /* TPhysicsgraph.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AC50F0A7DF900B2DF7A /* TPhysicsgraph.h */; };
+		84C10AD20F0A7DF900B2DF7A /* TPhysicsNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AC60F0A7DF900B2DF7A /* TPhysicsNode.cpp */; };
+		84C10AD30F0A7DF900B2DF7A /* TPhysicsNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AC70F0A7DF900B2DF7A /* TPhysicsNode.h */; };
+		84C10AD40F0A7DF900B2DF7A /* TPhysicsNodeSphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AC80F0A7DF900B2DF7A /* TPhysicsNodeSphere.cpp */; };
+		84C10AD50F0A7DF900B2DF7A /* TPhysicsNodeSphere.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AC90F0A7DF900B2DF7A /* TPhysicsNodeSphere.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		84C10AB80F0A7DD700B2DF7A /* libTootlePhysics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootlePhysics.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		84C10ABE0F0A7DF900B2DF7A /* TCollisionShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TCollisionShape.cpp; path = ../TCollisionShape.cpp; sourceTree = SOURCE_ROOT; };
+		84C10ABF0F0A7DF900B2DF7A /* TCollisionShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCollisionShape.h; path = ../TCollisionShape.h; sourceTree = SOURCE_ROOT; };
+		84C10AC00F0A7DF900B2DF7A /* TCollisionZone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TCollisionZone.cpp; path = ../TCollisionZone.cpp; sourceTree = SOURCE_ROOT; };
+		84C10AC10F0A7DF900B2DF7A /* TCollisionZone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCollisionZone.h; path = ../TCollisionZone.h; sourceTree = SOURCE_ROOT; };
+		84C10AC20F0A7DF900B2DF7A /* TLPhysics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLPhysics.cpp; path = ../TLPhysics.cpp; sourceTree = SOURCE_ROOT; };
+		84C10AC30F0A7DF900B2DF7A /* TLPhysics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLPhysics.h; path = ../TLPhysics.h; sourceTree = SOURCE_ROOT; };
+		84C10AC40F0A7DF900B2DF7A /* TPhysicsgraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPhysicsgraph.cpp; path = ../TPhysicsgraph.cpp; sourceTree = SOURCE_ROOT; };
+		84C10AC50F0A7DF900B2DF7A /* TPhysicsgraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPhysicsgraph.h; path = ../TPhysicsgraph.h; sourceTree = SOURCE_ROOT; };
+		84C10AC60F0A7DF900B2DF7A /* TPhysicsNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPhysicsNode.cpp; path = ../TPhysicsNode.cpp; sourceTree = SOURCE_ROOT; };
+		84C10AC70F0A7DF900B2DF7A /* TPhysicsNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPhysicsNode.h; path = ../TPhysicsNode.h; sourceTree = SOURCE_ROOT; };
+		84C10AC80F0A7DF900B2DF7A /* TPhysicsNodeSphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPhysicsNodeSphere.cpp; path = ../TPhysicsNodeSphere.cpp; sourceTree = SOURCE_ROOT; };
+		84C10AC90F0A7DF900B2DF7A /* TPhysicsNodeSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPhysicsNodeSphere.h; path = ../TPhysicsNodeSphere.h; sourceTree = SOURCE_ROOT; };
+		84C10AD70F0A7E1300B2DF7A /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		84C10AD80F0A7E1300B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		84C10AD90F0A7E1300B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
+		84C10ADA0F0A7E1300B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		84C10AB60F0A7DD700B2DF7A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		84C108AC0F0A760800B2DF7A = {
+			isa = PBXGroup;
+			children = (
+				84C10AD60F0A7DFE00B2DF7A /* Build Configurations */,
+				84C10ABD0F0A7DE800B2DF7A /* Source Code */,
+				84C10AB90F0A7DD700B2DF7A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		84C10AB90F0A7DD700B2DF7A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84C10AB80F0A7DD700B2DF7A /* libTootlePhysics.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84C10ABD0F0A7DE800B2DF7A /* Source Code */ = {
+			isa = PBXGroup;
+			children = (
+				84C10ABE0F0A7DF900B2DF7A /* TCollisionShape.cpp */,
+				84C10ABF0F0A7DF900B2DF7A /* TCollisionShape.h */,
+				84C10AC00F0A7DF900B2DF7A /* TCollisionZone.cpp */,
+				84C10AC10F0A7DF900B2DF7A /* TCollisionZone.h */,
+				84C10AC20F0A7DF900B2DF7A /* TLPhysics.cpp */,
+				84C10AC30F0A7DF900B2DF7A /* TLPhysics.h */,
+				84C10AC40F0A7DF900B2DF7A /* TPhysicsgraph.cpp */,
+				84C10AC50F0A7DF900B2DF7A /* TPhysicsgraph.h */,
+				84C10AC60F0A7DF900B2DF7A /* TPhysicsNode.cpp */,
+				84C10AC70F0A7DF900B2DF7A /* TPhysicsNode.h */,
+				84C10AC80F0A7DF900B2DF7A /* TPhysicsNodeSphere.cpp */,
+				84C10AC90F0A7DF900B2DF7A /* TPhysicsNodeSphere.h */,
+			);
+			name = "Source Code";
+			sourceTree = "<group>";
+		};
+		84C10AD60F0A7DFE00B2DF7A /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				84C10AD70F0A7E1300B2DF7A /* TootleDebug.xcconfig */,
+				84C10AD80F0A7E1300B2DF7A /* TootleRelease.xcconfig */,
+				84C10AD90F0A7E1300B2DF7A /* TootleReleaseAdHoc.xcconfig */,
+				84C10ADA0F0A7E1300B2DF7A /* TootleReleaseAppStore.xcconfig */,
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		84C10AB40F0A7DD700B2DF7A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C10ACB0F0A7DF900B2DF7A /* TCollisionShape.h in Headers */,
+				84C10ACD0F0A7DF900B2DF7A /* TCollisionZone.h in Headers */,
+				84C10ACF0F0A7DF900B2DF7A /* TLPhysics.h in Headers */,
+				84C10AD10F0A7DF900B2DF7A /* TPhysicsgraph.h in Headers */,
+				84C10AD30F0A7DF900B2DF7A /* TPhysicsNode.h in Headers */,
+				84C10AD50F0A7DF900B2DF7A /* TPhysicsNodeSphere.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		84C10AB70F0A7DD700B2DF7A /* TootlePhysics */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84C10ABC0F0A7DD800B2DF7A /* Build configuration list for PBXNativeTarget "TootlePhysics" */;
+			buildPhases = (
+				84C10AB40F0A7DD700B2DF7A /* Headers */,
+				84C10AB50F0A7DD700B2DF7A /* Sources */,
+				84C10AB60F0A7DD700B2DF7A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootlePhysics;
+			productName = TootlePhysics;
+			productReference = 84C10AB80F0A7DD700B2DF7A /* libTootlePhysics.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		84C108AE0F0A760800B2DF7A /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 84C108B10F0A760800B2DF7A /* Build configuration list for PBXProject "TootlePhysics" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 0;
+			mainGroup = 84C108AC0F0A760800B2DF7A;
+			productRefGroup = 84C10AB90F0A7DD700B2DF7A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				84C10AB70F0A7DD700B2DF7A /* TootlePhysics */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		84C10AB50F0A7DD700B2DF7A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C10ACA0F0A7DF900B2DF7A /* TCollisionShape.cpp in Sources */,
+				84C10ACC0F0A7DF900B2DF7A /* TCollisionZone.cpp in Sources */,
+				84C10ACE0F0A7DF900B2DF7A /* TLPhysics.cpp in Sources */,
+				84C10AD00F0A7DF900B2DF7A /* TPhysicsgraph.cpp in Sources */,
+				84C10AD20F0A7DF900B2DF7A /* TPhysicsNode.cpp in Sources */,
+				84C10AD40F0A7DF900B2DF7A /* TPhysicsNodeSphere.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		84C108AF0F0A760800B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84C10AD70F0A7E1300B2DF7A /* TootleDebug.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				SDKROOT = iphoneos2.1;
+			};
+			name = Debug;
+		};
+		84C108B00F0A760800B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84C10AD80F0A7E1300B2DF7A /* TootleRelease.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				SDKROOT = iphoneos2.1;
+			};
+			name = Release;
+		};
+		84C10ABA0F0A7DD800B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootlePhysics;
+			};
+			name = Debug;
+		};
+		84C10ABB0F0A7DD800B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootlePhysics;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		84C110BA0F0A8C2200B2DF7A /* Release AdHoc */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84C10AD90F0A7E1300B2DF7A /* TootleReleaseAdHoc.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				SDKROOT = iphoneos2.1;
+			};
+			name = "Release AdHoc";
+		};
+		84C110BB0F0A8C2200B2DF7A /* Release AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootlePhysics;
+				ZERO_LINK = NO;
+			};
+			name = "Release AdHoc";
+		};
+		84C110BC0F0A8C2800B2DF7A /* Release AppStore */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84C10ADA0F0A7E1300B2DF7A /* TootleReleaseAppStore.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				SDKROOT = iphoneos2.1;
+			};
+			name = "Release AppStore";
+		};
+		84C110BD0F0A8C2800B2DF7A /* Release AppStore */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootlePhysics;
+				ZERO_LINK = NO;
+			};
+			name = "Release AppStore";
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		84C108B10F0A760800B2DF7A /* Build configuration list for PBXProject "TootlePhysics" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C108AF0F0A760800B2DF7A /* Debug */,
+				84C108B00F0A760800B2DF7A /* Release */,
+				84C110BA0F0A8C2200B2DF7A /* Release AdHoc */,
+				84C110BC0F0A8C2800B2DF7A /* Release AppStore */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84C10ABC0F0A7DD800B2DF7A /* Build configuration list for PBXNativeTarget "TootlePhysics" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C10ABA0F0A7DD800B2DF7A /* Debug */,
+				84C10ABB0F0A7DD800B2DF7A /* Release */,
+				84C110BB0F0A8C2200B2DF7A /* Release AdHoc */,
+				84C110BD0F0A8C2800B2DF7A /* Release AppStore */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 84C108AE0F0A760800B2DF7A /* Project object */;
+}
