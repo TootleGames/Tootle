@@ -1,0 +1,296 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		84C10A620F0A7C9700B2DF7A /* TBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10A580F0A7C9700B2DF7A /* TBox.cpp */; };
+		84C10A630F0A7C9700B2DF7A /* TBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10A590F0A7C9700B2DF7A /* TBox.h */; };
+		84C10A640F0A7C9700B2DF7A /* TCapsule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10A5A0F0A7C9700B2DF7A /* TCapsule.cpp */; };
+		84C10A650F0A7C9700B2DF7A /* TCapsule.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10A5B0F0A7C9700B2DF7A /* TCapsule.h */; };
+		84C10A660F0A7C9700B2DF7A /* TLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10A5C0F0A7C9700B2DF7A /* TLine.cpp */; };
+		84C10A670F0A7C9700B2DF7A /* TLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10A5D0F0A7C9700B2DF7A /* TLine.h */; };
+		84C10A680F0A7C9700B2DF7A /* TSphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10A5E0F0A7C9700B2DF7A /* TSphere.cpp */; };
+		84C10A690F0A7C9700B2DF7A /* TSphere.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10A5F0F0A7C9700B2DF7A /* TSphere.h */; };
+		84C10A6A0F0A7C9700B2DF7A /* TTessellate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10A600F0A7C9700B2DF7A /* TTessellate.cpp */; };
+		84C10A6B0F0A7C9700B2DF7A /* TTessellate.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10A610F0A7C9700B2DF7A /* TTessellate.h */; };
+		84C10A6F0F0A7CAC00B2DF7A /* IPodTessellate.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10A6D0F0A7CAC00B2DF7A /* IPodTessellate.h */; };
+		84C10A700F0A7CAC00B2DF7A /* IPodTessellate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C10A6E0F0A7CAC00B2DF7A /* IPodTessellate.mm */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		84C10A520F0A7C7600B2DF7A /* libTootleMaths.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleMaths.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		84C10A580F0A7C9700B2DF7A /* TBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TBox.cpp; path = ../TBox.cpp; sourceTree = SOURCE_ROOT; };
+		84C10A590F0A7C9700B2DF7A /* TBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBox.h; path = ../TBox.h; sourceTree = SOURCE_ROOT; };
+		84C10A5A0F0A7C9700B2DF7A /* TCapsule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TCapsule.cpp; path = ../TCapsule.cpp; sourceTree = SOURCE_ROOT; };
+		84C10A5B0F0A7C9700B2DF7A /* TCapsule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCapsule.h; path = ../TCapsule.h; sourceTree = SOURCE_ROOT; };
+		84C10A5C0F0A7C9700B2DF7A /* TLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLine.cpp; path = ../TLine.cpp; sourceTree = SOURCE_ROOT; };
+		84C10A5D0F0A7C9700B2DF7A /* TLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLine.h; path = ../TLine.h; sourceTree = SOURCE_ROOT; };
+		84C10A5E0F0A7C9700B2DF7A /* TSphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSphere.cpp; path = ../TSphere.cpp; sourceTree = SOURCE_ROOT; };
+		84C10A5F0F0A7C9700B2DF7A /* TSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSphere.h; path = ../TSphere.h; sourceTree = SOURCE_ROOT; };
+		84C10A600F0A7C9700B2DF7A /* TTessellate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTessellate.cpp; path = ../TTessellate.cpp; sourceTree = SOURCE_ROOT; };
+		84C10A610F0A7C9700B2DF7A /* TTessellate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTessellate.h; path = ../TTessellate.h; sourceTree = SOURCE_ROOT; };
+		84C10A6D0F0A7CAC00B2DF7A /* IPodTessellate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodTessellate.h; sourceTree = "<group>"; };
+		84C10A6E0F0A7CAC00B2DF7A /* IPodTessellate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodTessellate.mm; sourceTree = "<group>"; };
+		84C10A720F0A7CC800B2DF7A /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		84C10A730F0A7CC800B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		84C10A740F0A7CC800B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
+		84C10A750F0A7CC800B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		84C10A500F0A7C7600B2DF7A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		84C108ED0F0A772600B2DF7A = {
+			isa = PBXGroup;
+			children = (
+				84C10A710F0A7CB100B2DF7A /* Build Configurations */,
+				84C10A570F0A7C8600B2DF7A /* Source Code */,
+				84C10A530F0A7C7600B2DF7A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		84C10A530F0A7C7600B2DF7A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84C10A520F0A7C7600B2DF7A /* libTootleMaths.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84C10A570F0A7C8600B2DF7A /* Source Code */ = {
+			isa = PBXGroup;
+			children = (
+				84C10A6C0F0A7C9C00B2DF7A /* IPod */,
+				84C10A580F0A7C9700B2DF7A /* TBox.cpp */,
+				84C10A590F0A7C9700B2DF7A /* TBox.h */,
+				84C10A5A0F0A7C9700B2DF7A /* TCapsule.cpp */,
+				84C10A5B0F0A7C9700B2DF7A /* TCapsule.h */,
+				84C10A5C0F0A7C9700B2DF7A /* TLine.cpp */,
+				84C10A5D0F0A7C9700B2DF7A /* TLine.h */,
+				84C10A5E0F0A7C9700B2DF7A /* TSphere.cpp */,
+				84C10A5F0F0A7C9700B2DF7A /* TSphere.h */,
+				84C10A600F0A7C9700B2DF7A /* TTessellate.cpp */,
+				84C10A610F0A7C9700B2DF7A /* TTessellate.h */,
+			);
+			name = "Source Code";
+			sourceTree = "<group>";
+		};
+		84C10A6C0F0A7C9C00B2DF7A /* IPod */ = {
+			isa = PBXGroup;
+			children = (
+				84C10A6D0F0A7CAC00B2DF7A /* IPodTessellate.h */,
+				84C10A6E0F0A7CAC00B2DF7A /* IPodTessellate.mm */,
+			);
+			name = IPod;
+			sourceTree = "<group>";
+		};
+		84C10A710F0A7CB100B2DF7A /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				84C10A720F0A7CC800B2DF7A /* TootleDebug.xcconfig */,
+				84C10A730F0A7CC800B2DF7A /* TootleRelease.xcconfig */,
+				84C10A740F0A7CC800B2DF7A /* TootleReleaseAdHoc.xcconfig */,
+				84C10A750F0A7CC800B2DF7A /* TootleReleaseAppStore.xcconfig */,
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		84C10A4E0F0A7C7600B2DF7A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C10A630F0A7C9700B2DF7A /* TBox.h in Headers */,
+				84C10A650F0A7C9700B2DF7A /* TCapsule.h in Headers */,
+				84C10A670F0A7C9700B2DF7A /* TLine.h in Headers */,
+				84C10A690F0A7C9700B2DF7A /* TSphere.h in Headers */,
+				84C10A6B0F0A7C9700B2DF7A /* TTessellate.h in Headers */,
+				84C10A6F0F0A7CAC00B2DF7A /* IPodTessellate.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		84C10A510F0A7C7600B2DF7A /* TootleMaths */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84C10A560F0A7C7600B2DF7A /* Build configuration list for PBXNativeTarget "TootleMaths" */;
+			buildPhases = (
+				84C10A4E0F0A7C7600B2DF7A /* Headers */,
+				84C10A4F0F0A7C7600B2DF7A /* Sources */,
+				84C10A500F0A7C7600B2DF7A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleMaths;
+			productName = TootleMaths;
+			productReference = 84C10A520F0A7C7600B2DF7A /* libTootleMaths.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		84C108EF0F0A772600B2DF7A /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 84C108F20F0A772600B2DF7A /* Build configuration list for PBXProject "TootleMaths" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 0;
+			mainGroup = 84C108ED0F0A772600B2DF7A;
+			productRefGroup = 84C10A530F0A7C7600B2DF7A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				84C10A510F0A7C7600B2DF7A /* TootleMaths */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		84C10A4F0F0A7C7600B2DF7A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C10A620F0A7C9700B2DF7A /* TBox.cpp in Sources */,
+				84C10A640F0A7C9700B2DF7A /* TCapsule.cpp in Sources */,
+				84C10A660F0A7C9700B2DF7A /* TLine.cpp in Sources */,
+				84C10A680F0A7C9700B2DF7A /* TSphere.cpp in Sources */,
+				84C10A6A0F0A7C9700B2DF7A /* TTessellate.cpp in Sources */,
+				84C10A700F0A7CAC00B2DF7A /* IPodTessellate.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		84C108F00F0A772600B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84C10A720F0A7CC800B2DF7A /* TootleDebug.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				SDKROOT = iphoneos2.1;
+			};
+			name = Debug;
+		};
+		84C108F10F0A772600B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84C10A730F0A7CC800B2DF7A /* TootleRelease.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				SDKROOT = iphoneos2.1;
+			};
+			name = Release;
+		};
+		84C10A540F0A7C7600B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleMaths;
+			};
+			name = Debug;
+		};
+		84C10A550F0A7C7600B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleMaths;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		84C10B8F0F0A81E500B2DF7A /* Release AdHoc */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84C10A740F0A7CC800B2DF7A /* TootleReleaseAdHoc.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				SDKROOT = iphoneos2.1;
+			};
+			name = "Release AdHoc";
+		};
+		84C10B900F0A81E500B2DF7A /* Release AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleMaths;
+				ZERO_LINK = NO;
+			};
+			name = "Release AdHoc";
+		};
+		84C10B910F0A81EA00B2DF7A /* Release AppStore */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84C10A750F0A7CC800B2DF7A /* TootleReleaseAppStore.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				SDKROOT = iphoneos2.1;
+			};
+			name = "Release AppStore";
+		};
+		84C10B920F0A81EA00B2DF7A /* Release AppStore */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleMaths;
+				ZERO_LINK = NO;
+			};
+			name = "Release AppStore";
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		84C108F20F0A772600B2DF7A /* Build configuration list for PBXProject "TootleMaths" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C108F00F0A772600B2DF7A /* Debug */,
+				84C108F10F0A772600B2DF7A /* Release */,
+				84C10B8F0F0A81E500B2DF7A /* Release AdHoc */,
+				84C10B910F0A81EA00B2DF7A /* Release AppStore */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84C10A560F0A7C7600B2DF7A /* Build configuration list for PBXNativeTarget "TootleMaths" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C10A540F0A7C7600B2DF7A /* Debug */,
+				84C10A550F0A7C7600B2DF7A /* Release */,
+				84C10B900F0A81E500B2DF7A /* Release AdHoc */,
+				84C10B920F0A81EA00B2DF7A /* Release AppStore */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 84C108EF0F0A772600B2DF7A /* Project object */;
+}

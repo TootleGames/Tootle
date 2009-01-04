@@ -1,0 +1,248 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		84C10A8A0F0A7D3800B2DF7A /* TLNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10A880F0A7D3800B2DF7A /* TLNetwork.cpp */; };
+		84C10A8B0F0A7D3800B2DF7A /* TLNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10A890F0A7D3800B2DF7A /* TLNetwork.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		84C10A820F0A7D0F00B2DF7A /* libTootleNetwork.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleNetwork.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		84C10A880F0A7D3800B2DF7A /* TLNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLNetwork.cpp; path = ../TLNetwork.cpp; sourceTree = SOURCE_ROOT; };
+		84C10A890F0A7D3800B2DF7A /* TLNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLNetwork.h; path = ../TLNetwork.h; sourceTree = SOURCE_ROOT; };
+		84C10A8D0F0A7D5700B2DF7A /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		84C10A8E0F0A7D5700B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		84C10A8F0F0A7D5700B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
+		84C10A900F0A7D5700B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		84C10A800F0A7D0F00B2DF7A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		84C108B90F0A765A00B2DF7A = {
+			isa = PBXGroup;
+			children = (
+				84C10A8C0F0A7D3D00B2DF7A /* Build Configurations */,
+				84C10A870F0A7D2300B2DF7A /* Source Code */,
+				84C10A830F0A7D0F00B2DF7A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		84C10A830F0A7D0F00B2DF7A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84C10A820F0A7D0F00B2DF7A /* libTootleNetwork.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84C10A870F0A7D2300B2DF7A /* Source Code */ = {
+			isa = PBXGroup;
+			children = (
+				84C10A880F0A7D3800B2DF7A /* TLNetwork.cpp */,
+				84C10A890F0A7D3800B2DF7A /* TLNetwork.h */,
+			);
+			name = "Source Code";
+			sourceTree = "<group>";
+		};
+		84C10A8C0F0A7D3D00B2DF7A /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				84C10A8D0F0A7D5700B2DF7A /* TootleDebug.xcconfig */,
+				84C10A8E0F0A7D5700B2DF7A /* TootleRelease.xcconfig */,
+				84C10A8F0F0A7D5700B2DF7A /* TootleReleaseAdHoc.xcconfig */,
+				84C10A900F0A7D5700B2DF7A /* TootleReleaseAppStore.xcconfig */,
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		84C10A7E0F0A7D0F00B2DF7A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C10A8B0F0A7D3800B2DF7A /* TLNetwork.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		84C10A810F0A7D0F00B2DF7A /* TootleNetwork */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84C10A860F0A7D0F00B2DF7A /* Build configuration list for PBXNativeTarget "TootleNetwork" */;
+			buildPhases = (
+				84C10A7E0F0A7D0F00B2DF7A /* Headers */,
+				84C10A7F0F0A7D0F00B2DF7A /* Sources */,
+				84C10A800F0A7D0F00B2DF7A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleNetwork;
+			productName = TootleNetwork;
+			productReference = 84C10A820F0A7D0F00B2DF7A /* libTootleNetwork.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		84C108BB0F0A765A00B2DF7A /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 84C108BE0F0A765A00B2DF7A /* Build configuration list for PBXProject "TootleNetwork" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 0;
+			mainGroup = 84C108B90F0A765A00B2DF7A;
+			productRefGroup = 84C10A830F0A7D0F00B2DF7A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				84C10A810F0A7D0F00B2DF7A /* TootleNetwork */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		84C10A7F0F0A7D0F00B2DF7A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C10A8A0F0A7D3800B2DF7A /* TLNetwork.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		84C108BC0F0A765A00B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84C10A8D0F0A7D5700B2DF7A /* TootleDebug.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				SDKROOT = iphoneos2.1;
+			};
+			name = Debug;
+		};
+		84C108BD0F0A765A00B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84C10A8E0F0A7D5700B2DF7A /* TootleRelease.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				SDKROOT = iphoneos2.1;
+			};
+			name = Release;
+		};
+		84C10A840F0A7D0F00B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleNetwork;
+			};
+			name = Debug;
+		};
+		84C10A850F0A7D0F00B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleNetwork;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		84C110860F0A8B0000B2DF7A /* Release AdHoc */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84C10A8F0F0A7D5700B2DF7A /* TootleReleaseAdHoc.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				SDKROOT = iphoneos2.1;
+			};
+			name = "Release AdHoc";
+		};
+		84C110870F0A8B0000B2DF7A /* Release AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleNetwork;
+				ZERO_LINK = NO;
+			};
+			name = "Release AdHoc";
+		};
+		84C110880F0A8B0700B2DF7A /* Release AppStore */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84C10A900F0A7D5700B2DF7A /* TootleReleaseAppStore.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				SDKROOT = iphoneos2.1;
+			};
+			name = "Release AppStore";
+		};
+		84C110890F0A8B0700B2DF7A /* Release AppStore */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleNetwork;
+				ZERO_LINK = NO;
+			};
+			name = "Release AppStore";
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		84C108BE0F0A765A00B2DF7A /* Build configuration list for PBXProject "TootleNetwork" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C108BC0F0A765A00B2DF7A /* Debug */,
+				84C108BD0F0A765A00B2DF7A /* Release */,
+				84C110860F0A8B0000B2DF7A /* Release AdHoc */,
+				84C110880F0A8B0700B2DF7A /* Release AppStore */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84C10A860F0A7D0F00B2DF7A /* Build configuration list for PBXNativeTarget "TootleNetwork" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C10A840F0A7D0F00B2DF7A /* Debug */,
+				84C10A850F0A7D0F00B2DF7A /* Release */,
+				84C110870F0A8B0000B2DF7A /* Release AdHoc */,
+				84C110890F0A8B0700B2DF7A /* Release AppStore */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 84C108BB0F0A765A00B2DF7A /* Project object */;
+}
