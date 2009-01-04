@@ -49,14 +49,8 @@ public:
 
 	TPtr<TSceneNode>	CreateInstance(TRefRef NodeRef,TRefRef TypeRef);	//	gr: CREATE an instance from the factories. does no initialisation or adding. Use TLScene::CreateNode
 
-	Bool				AddFactory(TPtr<TLScene::TSceneNodeFactory> pFactory)	{ return (m_pFactories.Add(pFactory) != -1); }
-
 protected:
 	virtual SyncBool			Initialise();
-
-private:
-
-	TPtrArray<TLScene::TSceneNodeFactory>	m_pFactories;	// List of scene node factories
 };
 
 

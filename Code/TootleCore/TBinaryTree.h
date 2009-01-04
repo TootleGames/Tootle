@@ -25,23 +25,26 @@ public:
 
 	TPtr<TBinaryTree>&			GetChild(TRefRef DataRef)				{	return m_Children.FindPtr( DataRef );	}	//	return the first child we find
 	TPtrArray<TBinaryTree>&		GetChildren()							{	return m_Children;	}		//	return all the children as an array
+	const TPtrArray<TBinaryTree>&	GetChildren() const					{	return m_Children;	}		//	return all the children as an array
 	u32							GetChildren(TRefRef DataRef,TPtrArray<TBinaryTree>& Children)	{	return m_Children.FindAll( Children, DataRef );	}	//	get all the sections with this ref into an array
 	TPtr<TBinaryTree>&			AddChild(TRefRef ChildRef);				//	add new child
 	TPtr<TBinaryTree>&			AddChild(TPtr<TBinaryTree>& pChild)		{	s32 Index = m_Children.Add( pChild );	return (Index == -1) ? TBinaryTree::g_pNull : m_Children.ElementAt(Index);	}	//	add child
 	template <class T>
 	TPtr<TBinaryTree>&			AddChildAndData(TRefRef ChildRef, T& Obj);	// Adds a child along with an initial piece of data 
 
-	void						Empty(Bool Dealloc=FALSE)				{	TBinary::Empty(Dealloc);	m_Children.Empty(Dealloc);	}	//	delete tree
-	void						Compact();								//	compact binary data and all our children
-	TBinary&					GetData()								{	return (*this);	}
-	Bool						CopyTree(TPtr<TBinaryTree>& Data);		//	recursivly copy the tree from Data into this (clone)
+	void						Empty(Bool Dealloc=FALSE)						{	TBinary::Empty(Dealloc);	m_Children.Empty(Dealloc);	}	//	delete tree
+	void						Compact();										//	compact binary data and all our children
+	TBinary&					GetData()										{	return (*this);	}
+	const TBinary&				GetData() const									{	return (*this);	}
+	Bool						CopyDataTree(const TBinaryTree& Data,Bool OverwriteDataRef=TRUE);			//	recursivly copy the tree from Data into this (clone)
+	FORCEINLINE Bool			CopyDataTree(const TPtr<TBinaryTree>& pData,Bool OverwriteDataRef=TRUE)	{	const TBinaryTree* pBinaryTree = pData.GetObject();	return pBinaryTree ? CopyDataTree( *pBinaryTree, OverwriteDataRef ) : FALSE;	}
 
 	template<class ARRAYTYPE> 
-	Bool						ImportArrays(TRefRef ArrayRef,ARRAYTYPE& Array);
+	Bool						ImportArrays(TRefRef ArrayRef,ARRAYTYPE& Array);	//	returns FALSE if failed, WAIT if nothing imported, TRUE if something imported
 	template<class ARRAYTYPE> 
 	void						ExportArray(TRefRef ArrayRef,const ARRAYTYPE& Array,Bool WriteIfEmpty=FALSE);
 	template<typename TYPE> 
-	Bool						ImportData(TRefRef DataRef,TYPE& Data);
+	Bool						ImportData(TRefRef DataRef,TYPE& Data);			//	returns FALSE if failed, WAIT if nothing imported, TRUE if something imported
 	template<typename TYPE> 
 	void						ExportData(TRefRef DataRef,const TYPE& Data);
 
@@ -79,11 +82,15 @@ TPtr<TBinaryTree>& TBinaryTree::AddChildAndData(TRefRef ChildRef, T& Obj)
 }
 
 
-
-
+//------------------------------------------------------
+//	returns FALSE if failed, WAIT if nothing imported, TRUE if something imported
+//	gr: changed back to Bool
+//------------------------------------------------------
 template<class ARRAYTYPE> 
 Bool TBinaryTree::ImportArrays(TRefRef ArrayRef,ARRAYTYPE& Array)
 {
+	SyncBool Result = SyncWait;
+
 	//	get all the data's children with this ref
 	TPtrArray<TBinaryTree> DataArray;
 	GetChildren( ArrayRef, DataArray);
@@ -94,10 +101,13 @@ Bool TBinaryTree::ImportArrays(TRefRef ArrayRef,ARRAYTYPE& Array)
 		TPtr<TBinaryTree>& pChild = DataArray[i];
 		pChild->ResetReadPos();
 		if ( !pChild->ReadArray( Array ) )
-			return FALSE;
+			return FALSE;//SyncFalse;
+
+		//	data was read
+		Result = SyncTrue;
 	}
 
-	return TRUE;
+	return (Result==SyncTrue);
 }
 
 
@@ -114,13 +124,20 @@ void TBinaryTree::ExportArray(TRefRef ArrayRef,const ARRAYTYPE& Array,Bool Write
 
 
 
+//------------------------------------------------------
+//	returns FALSE if failed, WAIT if nothing imported, TRUE if something imported
+//	gr: changed back to Bool
+//------------------------------------------------------
 template<typename TYPE> 
 Bool TBinaryTree::ImportData(TRefRef DataRef,TYPE& Data)
 {
 	//	get the first child with this ref
 	TPtr<TBinaryTree>& pData = GetChild( DataRef );
 	if ( !pData )
-		return FALSE;
+	{
+		//	no matching child
+		return FALSE;//SyncWait;
+	}
 
 	//	read out var
 	pData->ResetReadPos();

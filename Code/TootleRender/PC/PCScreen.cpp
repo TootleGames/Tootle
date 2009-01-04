@@ -14,26 +14,44 @@ namespace TLRender
 }
 
 
-using namespace TLRender;
 
 
-
-Platform::Screen::Screen(const TRef& Ref) :
-	TLRender::TScreen	( Ref )
+TLRender::Platform::ScreenWide::ScreenWide(TRefRef ScreenRef) :
+	TLRender::Platform::Screen	( ScreenRef )
 {
+	//	swap height and width
+	s16 h = m_Size.Height();
+	s16 w = m_Size.Width();
+	m_Size.Width() = h;
+	m_Size.Height() = w;
+}
+
+
+
+
+TLRender::Platform::Screen::Screen(TRefRef ScreenRef) :
+	TLRender::TScreen	( ScreenRef )
+{
+	//	gr: default to double iphone resolution for now
+	m_Size.Width() = (s16)( 320.f * 1.5f );
+	m_Size.Height() = (s16)( 480.f * 1.5f );
 }
 
 
 //----------------------------------------------------------
 //	create window
 //----------------------------------------------------------
-SyncBool Platform::Screen::Init()
+SyncBool TLRender::Platform::Screen::Init()
 {
 	//	need to wait for win32 factory to exist
 	if ( !Win32::g_pFactory )
 		return SyncWait;
 
 	//	todo: need to work out if render system has finished initialising here...
+
+	//	already initialised with window
+	if ( m_pWindow )
+		return SyncTrue;
 
 	//	if there is a spare window use that first
 	//	when the opengl system is initialised we have to create a dummy window, so
@@ -110,7 +128,7 @@ SyncBool Platform::Screen::Init()
 //----------------------------------------------------------
 //	update window
 //----------------------------------------------------------
-SyncBool Platform::Screen::Update()
+SyncBool TLRender::Platform::Screen::Update()
 {
 	//	lost window?
 	if ( !m_pWindow )
@@ -125,7 +143,7 @@ SyncBool Platform::Screen::Update()
 }
 
 
-void Platform::Screen::Draw()
+void TLRender::Platform::Screen::Draw()
 {
 	Win32::GOpenglWindow* pWindow = GetOpenglWindow();
 
@@ -154,7 +172,7 @@ void Platform::Screen::Draw()
 //----------------------------------------------------------
 //	clean up
 //----------------------------------------------------------
-SyncBool Platform::Screen::Shutdown()
+SyncBool TLRender::Platform::Screen::Shutdown()
 {
 	m_pWindow = NULL;
 	
@@ -165,7 +183,7 @@ SyncBool Platform::Screen::Shutdown()
 //----------------------------------------------------------
 //	get size of the screen
 //----------------------------------------------------------
-Type4<s32> Platform::Screen::GetSize() const
+Type4<s32> TLRender::Platform::Screen::GetSize() const
 {
 	Type4<s32> Size = TScreen::GetSize();
 	Type4<s32> DesktopSize;
@@ -183,7 +201,7 @@ Type4<s32> Platform::Screen::GetSize() const
 //----------------------------------------------------------
 //	get the desktop dimensions
 //----------------------------------------------------------
-void Platform::Screen::GetDesktopSize(Type4<s32>& DesktopSize) const
+void TLRender::Platform::Screen::GetDesktopSize(Type4<s32>& DesktopSize) const
 {
 	DesktopSize.x = 0;
 	DesktopSize.y = 0;
@@ -195,7 +213,7 @@ void Platform::Screen::GetDesktopSize(Type4<s32>& DesktopSize) const
 //----------------------------------------------------------
 //	take a screen size and center it on the desktop
 //----------------------------------------------------------
-void Platform::Screen::GetCenteredSize(Type4<s32>& Size) const
+void TLRender::Platform::Screen::GetCenteredSize(Type4<s32>& Size) const
 {
 	Type4<s32> DesktopSize;
 	GetDesktopSize( DesktopSize );
@@ -212,7 +230,7 @@ void Platform::Screen::GetCenteredSize(Type4<s32>& Size) const
 //---------------------------------------------------------------
 //	need to max-out to client-area on the window 
 //---------------------------------------------------------------
-void Platform::Screen::GetRenderTargetMaxSize(Type4<s32>& MaxSize)
+void TLRender::Platform::Screen::GetRenderTargetMaxSize(Type4<s32>& MaxSize)
 {
 	if ( !m_pWindow )
 	{
@@ -231,7 +249,7 @@ void Platform::Screen::GetRenderTargetMaxSize(Type4<s32>& MaxSize)
 //------------------------------------------------------------
 //	return our window as an opengl window
 //------------------------------------------------------------
-Win32::GOpenglWindow* Platform::Screen::GetOpenglWindow()
+Win32::GOpenglWindow* TLRender::Platform::Screen::GetOpenglWindow()
 {
 	return m_pWindow.GetObject<Win32::GOpenglWindow>();
 }

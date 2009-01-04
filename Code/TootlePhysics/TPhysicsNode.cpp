@@ -42,8 +42,8 @@ namespace TLRef
 
 
 
-TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef) :
-	TLGraph::TGraphNode<TPhysicsNode>	( NodeRef ),
+TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
+	TLGraph::TGraphNode<TPhysicsNode>	( NodeRef, TypeRef ),
 	m_Friction					( 0.4f ),
 	m_Mass						( 1.0f ),
 	m_Bounce					( 1.0f ),
@@ -68,10 +68,11 @@ void TLPhysics::TPhysicsNode::Update(float fTimeStep)
 	m_Temp_ExtrudeTimestep = fTimeStep;
 	SetAccumulatedMovementInvalid();
 
-	if ( !HasCollision() )
+	if ( m_PhysicsFlags( Flag_CollisionExpected ) && !HasCollision() )
 		return;
 
-	if ( !m_InitialisedZone )
+	//	gr: doesn't apply if we have no zone
+	if ( m_PhysicsFlags( Flag_ZoneExpected ) &&!m_InitialisedZone )
 		return;
 
 	m_Debug_Collisions.Empty();
@@ -103,7 +104,7 @@ void TLPhysics::TPhysicsNode::Update(float fTimeStep)
 //----------------------------------------------------
 void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgraph* pGraph,TPtr<TPhysicsNode>& pThis)
 {
-	if ( !m_InitialisedZone )
+	if ( m_PhysicsFlags( Flag_ZoneExpected ) && !m_InitialisedZone )
 	{
 		if ( HasCollision() )
 		{
@@ -112,7 +113,7 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 		}
 	}
 
-	if ( !HasCollision() )
+	if ( m_PhysicsFlags( Flag_CollisionExpected ) && !HasCollision() )
 		return;
 
 	//TLDebug_Print( TString("Velocity(%3.3f,%3.3f,%3.3f) Force(%3.3f,%3.3f,%3.3f) \n", m_Velocity.x, m_Velocity.y, m_Velocity.z, m_Force.x, m_Force.y, m_Force.z ) );
@@ -170,7 +171,7 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 	}
 
 	//	update collision zone
-	if ( GetCollisionZoneNeedsUpdate() )
+	if ( m_PhysicsFlags( Flag_ZoneExpected ) && GetCollisionZoneNeedsUpdate() )
 	{
 		UpdateNodeCollisionZone( pThis, pGraph );
 

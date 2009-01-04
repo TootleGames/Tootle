@@ -206,7 +206,8 @@ Bool TLRender::TRenderTarget::GetViewportSize(Type4<s32>& ViewportSize,const Typ
 Bool TLRender::TRenderTarget::GetOrthoSize(Type4<float>& OrthoSize,const Type4<s32>& MaxSize)
 {
 	//	get the ortho camera
-	TLRender::TOrthoCamera* pCamera = GetCamera().GetObject<TLRender::TOrthoCamera>();
+	TPtr<TCamera>& pCameraPtr = GetCamera();
+	TLRender::TOrthoCamera* pCamera = pCameraPtr ? pCameraPtr.GetObject<TLRender::TOrthoCamera>() : NULL;
 	if ( !pCamera )
 		return FALSE;
 
@@ -273,7 +274,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 	TLMaths::TTransform NewSceneTransform;
 	Bool NodeTrans = pRenderNode->GetTransform().HasAnyTransform();
 	Bool SceneTrans = (pSceneTransform && !ResetScene) ? pSceneTransform->HasAnyTransform() : FALSE;
-	const TLMaths::TTransform& SceneTransform = (NodeTrans&&SceneTrans) ? NewSceneTransform : ( NodeTrans ? pRenderNode->GetTransform() : *pSceneTransform );
+	const TLMaths::TTransform& SceneTransform = (NodeTrans&&SceneTrans) ? NewSceneTransform : ( (NodeTrans||(!pSceneTransform)) ? pRenderNode->GetTransform() : *pSceneTransform );
 	if ( NodeTrans && SceneTrans )
 	{
 		NewSceneTransform = *pSceneTransform;

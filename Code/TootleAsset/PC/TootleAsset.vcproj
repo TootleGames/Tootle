@@ -206,6 +206,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TScheme.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TScheme.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TShader.h"
 			>
 		</File>

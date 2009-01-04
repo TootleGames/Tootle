@@ -26,6 +26,7 @@ namespace TLAsset
 	class TLoadTask;		//	loading-asset task
 
 	TPtr<TAsset>&		GetAsset(TRefRef AssetRef,Bool LoadedOnly=FALSE);	//	return a pointer to an asset - if LoadedOnly, returns a NULL pointer for assets that aren't loaded
+	void				GetAssetArray(TPtrArray<TAsset>& AssetArray,TRefRef AssetType,Bool LoadedOnly=FALSE);	//	get an array of assets of a certain type
 	TPtr<TAsset>&		LoadAsset(TRefRef AssetRef,  Bool bBlocking = FALSE);						//	load asset from a file systems
 	TPtr<TAsset>&		CreateAsset(TRefRef AssetRef,TRefRef AssetType);	//	return a pointer to a new asset - mostly used for runtime asssets
 	void				DeleteAsset(TRefRef AssetRef);						//	delete an asset

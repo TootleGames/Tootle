@@ -171,7 +171,7 @@ BOOL CALLBACK Platform::DirectX::CreateDevice(const DIDEVICEINSTANCE* pdidInstan
 		if(DI_OK == hr)
 		{
 			// Create the generic input object
-			TPtr<TInputDevice> pGenericDevice = g_pInputSystem->GetInstance(InstanceRef, TRUE);
+			TPtr<TInputDevice> pGenericDevice = g_pInputSystem->GetInstance(InstanceRef, TRUE, refDeviceType);
 
 			if(pGenericDevice.IsValid())
 			{
@@ -204,8 +204,8 @@ BOOL CALLBACK Platform::DirectX::CreateDevice(const DIDEVICEINSTANCE* pdidInstan
 					{
 						pMessage->AddChannelID("DEVICE");									// device information message
 						pMessage->AddChildAndData("STATE", TRef("ADDED"));					// state change
-						pMessage->AddChildAndData("DEVID", pGenericDevice->GetDeviceID());	// device ID
-						pMessage->AddChildAndData("TYPE", refDeviceType);					// device type
+						pMessage->AddChildAndData("DEVID", pGenericDevice->GetDeviceRef());	// device ID
+						pMessage->AddChildAndData("TYPE", pGenericDevice->GetDeviceType());					// device type
 
 						g_pInputSystem->PublishMessage(pMessage);
 					}
@@ -221,17 +221,17 @@ BOOL CALLBACK Platform::DirectX::CreateDevice(const DIDEVICEINSTANCE* pdidInstan
 
 
 // DB - TEST
-static u32 DeviceID = 0x45;
+static u32 HardwareDeviceID = 0x45;
 
 Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, LPDIRECTINPUTDEVICE8 lpdiDevice, u32 uDeviceType)
 {
 	// Generate a new device reference
-	TRef DeviceRef = DeviceID;
+	TRef HardwareDeviceRef = HardwareDeviceID;
 
-	DeviceID++;
+	HardwareDeviceID++;
 
 	// Create a platform specific device reference object
-	TLInputDirectXDevice* pDXDevice = new TLInputDirectXDevice(DeviceRef, lpdiDevice);
+	TLInputDirectXDevice* pDXDevice = new TLInputDirectXDevice(HardwareDeviceRef, lpdiDevice);
 
 	if(!pDXDevice)
 		return FALSE;
@@ -264,7 +264,7 @@ Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, LPDIRECTINP
 			break;
 	};
 
-	pDevice->AssignToDevice(DeviceRef);
+	pDevice->AssignToHardwareDevice(HardwareDeviceRef);
 
 	g_TLDirectInputDevices.Add(pDXDevice);
 
@@ -341,8 +341,12 @@ Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, LPDIRECTINP
 		return FALSE;
 
 	// Add button inputs
-	u32 uCount = DIDevCaps.dwButtons;
 	u32 uIndex = 0;
+	u32 uCount = DIDevCaps.dwButtons;
+	
+	//	gr: bodge so that keyboard will read all 256 keys in the sensor code
+	if(uDeviceType == DI8DEVTYPE_KEYBOARD)
+		uCount = 256;
 
 	u32 uUniqueID = 0;
 
@@ -850,6 +854,9 @@ Bool Platform::DirectX::UpdateDirectXDevice_Keyboard(TPtr<TInputDevice> pDevice,
 		// Publish the keyboard data
 		for(u32 uIndex = 0; uIndex < uSensorCount; uIndex++)
 		{
+			//	gr: the uIndex is equivelent to DIK_ESCAPE, DIK_SPACE etc... convert these to some Tootle keyboard/alphabet/keys?
+			//		the we can easily convert from input source (mac keyboard, ipod keyboard, dx keyboard) to alphabet or non-platform
+			//		specific buttons
 
 			// For every keyboard button publish it's value - if any sensors subscribe to the 
 			// keyboard buttons they will process the information

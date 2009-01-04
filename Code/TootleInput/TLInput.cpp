@@ -106,8 +106,8 @@ void TInputManager::RemoveAllDevices()
 		{
 			pMessage->AddChannelID("DEVICE");								// device information message
 			pMessage->AddChildAndData("STATE", "REMOVED");			// state change
-			pMessage->AddChildAndData("DEVID", pDevice->GetDeviceID());		// device ID
-			pMessage->AddChildAndData("TYPE", "UNKNOWN");				// device type
+			pMessage->AddChildAndData("DEVID", pDevice->GetDeviceRef());		// device ref 
+			pMessage->AddChildAndData("TYPE", pDevice->GetDeviceType() );				// device type
 
 			PublishMessage(pMessage);
 		}
@@ -123,7 +123,7 @@ void TInputManager::RemoveAllDevices()
 TInputDevice* TInputManager::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 {
 	// Create the generic device object
-	return new TInputDevice(InstanceRef);
+	return new TInputDevice(InstanceRef,TypeRef);
 }
 
 
@@ -166,7 +166,7 @@ Bool TInputManager::GetDeviceIDs(TArray<TRef>& refArray)
 	{
 		TPtr<TInputDevice> pDevice = ElementAt(uIndex);
 
-		refArray.Add(pDevice->GetDeviceID());
+		refArray.Add(pDevice->GetDeviceRef());
 	}
 
 	return TRUE;

@@ -16,8 +16,7 @@ public:
 
 protected:
 	virtual void				ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
-
-	virtual void 				DoUpdate(float fTimestep);
+	virtual void 				Update(float fTimestep);
 
 private:
 	Bool						EmitObject();

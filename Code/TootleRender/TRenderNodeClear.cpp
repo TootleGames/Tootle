@@ -2,8 +2,8 @@
 
 
 
-TLRender::TRenderNodeClear::TRenderNodeClear(TRefRef RenderNodeRef) :
-	TRenderNode	( RenderNodeRef )
+TLRender::TRenderNodeClear::TRenderNodeClear(TRefRef NodeRef,TRefRef TypeRef) :
+	TRenderNode	( NodeRef, TypeRef )
 {
 	//	set specific flags
 	m_RenderFlags.Clear( RenderFlags::DepthRead );

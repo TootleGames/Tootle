@@ -90,8 +90,8 @@ void CreateAllCollisionZoneRenderNodes(TPtr<TLPhysics::TCollisionZone>& pCollisi
 
 
 
-TLRender::TRenderNodePhysicsGraph::TRenderNodePhysicsGraph(TRefRef RenderNodeRef) :
-	TLRender::TRenderNode	( RenderNodeRef )
+TLRender::TRenderNodePhysicsGraph::TRenderNodePhysicsGraph(TRefRef NodeRef,TRefRef TypeRef) :
+	TLRender::TRenderNode	( NodeRef, TypeRef )
 {
 }
 

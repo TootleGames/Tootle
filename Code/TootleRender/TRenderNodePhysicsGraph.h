@@ -16,7 +16,7 @@ namespace TLRender
 class TLRender::TRenderNodePhysicsGraph : public TLRender::TRenderNode
 {
 public:
-	TRenderNodePhysicsGraph(TRefRef RenderNodeRef=TRef());
+	TRenderNodePhysicsGraph(TRefRef NodeRef,TRefRef TypeRef);
 
 	virtual Bool				Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList);	//	pre-draw routine for a render object
 };

@@ -22,6 +22,7 @@ namespace TLPhysics
 	class TPhysicsgraph;
 	class TIntersection;
 	class TPhysicsNode;
+	class TPhysicsNodeFactory;
 
 	extern TPtr<TPhysicsgraph> g_pPhysicsgraph;
 };
@@ -35,6 +36,7 @@ class TLPhysics::TPhysicsgraph : public TLGraph::TGraph<TLPhysics::TPhysicsNode>
 public:
 	TPhysicsgraph(TRefRef refManagerID);
 
+	virtual SyncBool		Initialise();
 	virtual void			UpdateGraph(float TimeStep);
 	
 	void					SetRootCollisionZone(TPtr<TLPhysics::TCollisionZone>& pZone);	//	set a new root collision zone
@@ -78,5 +80,17 @@ public:
 
 protected:
 	TPtr<TCollisionZone>	m_pRootCollisionZone;					//	collision zone tree
+};
+
+
+
+
+//----------------------------------------------------------
+//	Generic physics node factory
+//----------------------------------------------------------
+class TLPhysics::TPhysicsNodeFactory : public TClassFactory<TPhysicsNode,FALSE>
+{
+public:
+	virtual TPhysicsNode*	CreateObject(TRefRef InstanceRef,TRefRef TypeRef);
 };
 

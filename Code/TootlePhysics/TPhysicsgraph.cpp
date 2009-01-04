@@ -2,6 +2,7 @@
 #include "TCollisionZone.h"
 #include "TCollisionShape.h"
 #include "TPhysicsNode.h"
+#include "TPhysicsNodeSphere.h"
 
 #include <TootleCore/TLTime.h>
 
@@ -57,6 +58,18 @@ TLPhysics::TPhysicsgraph::TPhysicsgraph(TRefRef refManagerID) :
 {
 }
 
+
+SyncBool TLPhysics::TPhysicsgraph::Initialise()
+{
+	if ( TLGraph::TGraph<TLPhysics::TPhysicsNode>::Initialise() == SyncFalse )
+		return SyncFalse;
+
+	//	create generic render node factory
+	TPtr<TClassFactory<TLPhysics::TPhysicsNode,FALSE>> pFactory = new TPhysicsNodeFactory();
+	AddFactory(pFactory);
+
+	return SyncTrue;
+}
 	
 void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 {
@@ -120,7 +133,7 @@ void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 	float IntersectionRate = m_Debug_CollisionTestCount == 0 ? 0.f : (float)m_Debug_CollisionIntersections / (float)m_Debug_CollisionTestCount;
 	float CollisionRateUp = m_Debug_CollisionTestCount == 0 ? 0.f : (float)m_Debug_CollisionTestsUpwards / (float)m_Debug_CollisionTestCount;
 	float CollisionRateDown = m_Debug_CollisionTestCount == 0 ? 0.f : (float)m_Debug_CollisionTestsDownwards / (float)m_Debug_CollisionTestCount;
-	TLDebug_Print( TString("Collision tests: %d (%d static, %.2f up, %.2f down) %d intersections(%.2f%%) %d zone shape tests(%.2f%%) %d zone loops", m_Debug_CollisionTestCount, m_Debug_StaticCollisionTestCount, CollisionRateUp, CollisionRateDown, m_Debug_CollisionIntersections, IntersectionRate*100.f, m_Debug_InZoneTests, ZoneTestSuccess*100.f, m_Debug_ZonesTested ) );
+	//TLDebug_Print( TString("Collision tests: %d (%d static, %.2f up, %.2f down) %d intersections(%.2f%%) %d zone shape tests(%.2f%%) %d zone loops", m_Debug_CollisionTestCount, m_Debug_StaticCollisionTestCount, CollisionRateUp, CollisionRateDown, m_Debug_CollisionIntersections, IntersectionRate*100.f, m_Debug_InZoneTests, ZoneTestSuccess*100.f, m_Debug_ZonesTested ) );
 #endif
 #endif
 }
@@ -692,4 +705,17 @@ void TLPhysics::TPhysicsgraph::CalcWorldUpNormal()
 	g_WorldUpNormal.z = 0.f;
 }
 
+
+
+
+
+
+
+TLPhysics::TPhysicsNode* TLPhysics::TPhysicsNodeFactory::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
+{
+	if ( TypeRef == "Sphere" )
+		return new TLPhysics::TPhysicsNodeSphere(InstanceRef,TypeRef);
+
+	return NULL;
+}
 

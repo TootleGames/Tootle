@@ -23,9 +23,8 @@ public:
 
   	virtual Bool	HasTransform()	{ return TRUE; }
 
-
-	FORCEINLINE	const float3&	GetPosition() const						{	return m_Transform.GetTranslate();	}
-	FORCEINLINE void			SetPosition(const float3& fPos)			{	m_Transform.SetTranslate(fPos);	}
+	FORCEINLINE float3			GetPosition() const						{	float3 Pos( 0,0,0 );	GetPosition( Pos );	return Pos;	}
+	FORCEINLINE void			GetPosition(float3& Pos) const			{	GetTransform().TransformVector( Pos );	}	//	you can use this to get a relative offset from this node by initialising Pos to the [local] offset you want
 	FORCEINLINE	const float3&	GetTranslate() const					{	return m_Transform.GetTranslate();	}
 	FORCEINLINE void			SetTranslate(const float3& fPos)		{	m_Transform.SetTranslate(fPos);	}
 

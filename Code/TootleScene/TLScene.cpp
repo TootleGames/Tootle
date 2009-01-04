@@ -1,7 +1,7 @@
 #include "TLScene.h"
 #include "TSceneGraph.h"
 
-
+/*
 
 //-------------------------------------------------------------
 //	create a new node on the scene graph and initialise it - returns 
@@ -34,3 +34,4 @@ TRef TLScene::CreateNode(TRefRef InstanceRef,TRefRef TypeRef,TPtr<TLScene::TScen
 	return pNode->GetNodeRef();
 }
 
+*/

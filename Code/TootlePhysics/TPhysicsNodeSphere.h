@@ -21,7 +21,7 @@ namespace TLPhysics
 class TLPhysics::TPhysicsNodeSphere : public TLPhysics::TPhysicsNode
 {
 public:
-	TPhysicsNodeSphere(TRefRef NodeRef);
+	TPhysicsNodeSphere(TRefRef NodeRef,TRefRef TypeRef);
 
 	virtual const TLMaths::TTransform&	GetRenderTransform() const		{	return m_RenderTransform;	}
 

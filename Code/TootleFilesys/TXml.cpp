@@ -245,7 +245,7 @@ void TXmlTag::Debug_PrintTree(u32 TreeLevel) const
 	//	add properties
 	for ( u32 p=0;	p<m_Properties.GetSize();	p++ )
 	{
-		const TKeyArray<TTempString,TString>::PAIRTYPE& Property = m_Properties.GetPairAt(p);
+		const TKeyArray<TStringLowercase<TTempString>,TString>::PAIRTYPE& Property = m_Properties.GetPairAt(p);
 
 		TagString.Append(' ');
 		TagString.Append( Property.m_Key );

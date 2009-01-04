@@ -226,13 +226,13 @@ void TLAsset::TMesh::GenerateRainbowColours()
 //-------------------------------------------------------
 SyncBool TLAsset::TMesh::ImportData(TBinaryTree& Data)		
 {
-	if ( !Data.ImportArrays( "Verts", m_Vertexes ) )	return SyncFalse;
-	if ( !Data.ImportArrays( "Colrs", m_Colours ) )		return SyncFalse;
+	Data.ImportArrays( "Verts", m_Vertexes );
+	Data.ImportArrays( "Colrs", m_Colours );
 
-	if ( !Data.ImportArrays( "Tris", m_Triangles ) )	return SyncFalse;
-	if ( !Data.ImportArrays( "TStrp", m_Tristrips ) )	return SyncFalse;
-	if ( !Data.ImportArrays( "TFans", m_Trifans ) )		return SyncFalse;
-	if ( !Data.ImportArrays( "Lines", m_Lines ) )		return SyncFalse;
+	Data.ImportArrays( "Tris", m_Triangles );
+	Data.ImportArrays( "TStrp", m_Tristrips );
+	Data.ImportArrays( "TFans", m_Trifans );
+	Data.ImportArrays( "Lines", m_Lines );
 
 	//	import bounds
 	TLMaths::TBox& BoundsBox = GetBoundsBox();
@@ -308,6 +308,15 @@ TLMaths::TBox& TLAsset::TMesh::CalcBoundsBox(Bool ForceCalc)
 		m_BoundsBox.GetMin() -= float3( m_LineWidth, m_LineWidth, m_LineWidth );
 		m_BoundsBox.GetMax() += float3( m_LineWidth, m_LineWidth, m_LineWidth );
 	}
+
+	//	debug the bounds we created
+#ifdef _DEBUG
+	float3 BoxSize = m_BoundsBox.GetSize();
+	TTempString DebugString("Created bounds box for ");
+	GetAssetRef().GetString( DebugString );
+	DebugString.Appendf(". w: %.2f h:%.2f d:%.2f", BoxSize.x, BoxSize.y, BoxSize.z );
+	TLDebug_Print( DebugString );
+#endif
 
 	return m_BoundsBox;
 }

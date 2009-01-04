@@ -367,26 +367,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\IPod\IPodScreen.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\IPod\IPodScreen.h"
 				>
 				<FileConfiguration
@@ -481,6 +461,14 @@
 		</File>
 		<File
 			RelativePath="..\TRenderNodeText.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TRenderNodeTile.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TRenderNodeTile.h"
 			>
 		</File>
 		<File

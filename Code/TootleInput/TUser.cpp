@@ -492,3 +492,28 @@ s32 TUser::FindActionIndex(TRef refActionID)
 	// Not found
 	return -1;
 }
+
+
+//------------------------------------------------------
+//	get a ref for an action not currently in use
+//------------------------------------------------------
+TRef TUser::GetUnusedActionRef(TRef BaseRef) const
+{
+	if ( !BaseRef.IsValid() )
+		BaseRef.Increment();
+
+	while ( TRUE )
+	{
+		//	find an action with this ref
+		const TPtr<TLInput::TAction>& pAction = m_ActionMap.FindPtr( BaseRef );
+
+		//	found an unused one!
+		if ( !pAction )
+			break;
+
+		//	action already exists with this ref, try next
+		BaseRef.Increment();
+	}
+
+	return BaseRef;
+}

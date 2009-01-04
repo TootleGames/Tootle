@@ -28,7 +28,18 @@ public:
 #else
 	inline TPtr<TYPE>			FindPtr(const MATCHTYPE& val);
 #endif
-	inline TPtr<TYPE>			GetPtrLast()						{	return (TArray<TPtr<TYPE> >::GetSize()>0) ? TArray<TPtr<TYPE> >::ElementLast() : TPtr<TYPE>( NULL );	}
+		
+	template<class MATCHTYPE>
+#ifdef TPTR_ARRAY_ENABLE_NULL_PTR
+	inline const TPtr<TYPE>&	FindPtr(const MATCHTYPE& val) const;
+#else
+	inline const TPtr<TYPE>		FindPtr(const MATCHTYPE& val) const;
+#endif
+
+	inline TPtr<TYPE>&			GetPtrLast()						{	return (TArray<TPtr<TYPE> >::GetSize()>0) ? GetPtrAt( TArray<TPtr<TYPE> >::LastIndex() ) : g_pNullPtr;	}
+	inline TPtr<TYPE>&			GetPtrAt(s32 Index)					{	return (Index == -1) ? g_pNullPtr : TArray<TPtr<TYPE> >::ElementAt( Index );	}
+
+	inline TPtr<TYPE>&			AddPtr(const TPtr<TYPE>& val)		{	s32 Index = TArray<TPtr<TYPE> >::Add( val );	return GetPtrAt( Index );	}
 
 	void						RemoveNull();						//	remove all NULL pointers from array
 
@@ -87,6 +98,34 @@ inline TPtr<TYPE> TPtrArray<TYPE>::FindPtr(const MATCHTYPE& val)
 		return NULL;
 	
 	return TArray<TPtr<TYPE> >::ElementAt(Index);	
+}
+
+#endif
+
+
+
+#ifdef TPTR_ARRAY_ENABLE_NULL_PTR
+template<typename TYPE>
+template<class MATCHTYPE>
+inline const TPtr<TYPE>& TPtrArray<TYPE>::FindPtr(const MATCHTYPE& val) const
+{
+	u32 Index = FindIndex(val);
+	if ( Index == -1 )
+		return g_pNullPtr;
+	
+	return TArray<TPtr<TYPE> >::ElementAtConst(Index);	
+}
+#else
+
+template<typename TYPE>
+template<class MATCHTYPE>
+inline const TPtr<TYPE> TPtrArray<TYPE>::FindPtr(const MATCHTYPE& val) const
+{
+	u32 Index = FindIndex(val);
+	if ( Index == -1 )
+		return NULL;
+	
+	return TArray<TPtr<TYPE> >::ElementAtConst(Index);	
 }
 
 #endif

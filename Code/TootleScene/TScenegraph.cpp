@@ -38,7 +38,7 @@ SyncBool TScenegraph::Initialise()
 {
 
 	// Attach the base scene node factory by default
-	TPtr<TSceneNodeFactory> pFactory = new TSceneNodeFactory();
+	TPtr<TClassFactory<TSceneNode,FALSE>> pFactory = new TSceneNodeFactory();
 
 	if(pFactory)
 		AddFactory(pFactory);
@@ -110,21 +110,9 @@ Bool TScenegraph::IsNodeWithinRange(TPtr<TSceneNode>& pNode, const TLMaths::TLin
 
 TPtr<TSceneNode> TScenegraph::CreateInstance(TRefRef NodeRef,TRefRef TypeRef)
 {
-	// Go through the factory list and try to create the specified node type
-	for(u32 uIndex = 0; uIndex < m_pFactories.GetSize(); uIndex++)
-	{
-		TPtr<TSceneNodeFactory>& pFactory = m_pFactories.ElementAt(uIndex);
+	TRef NewNodeRef = TScenegraph::CreateNode( NodeRef, TypeRef );
 
-		TPtr<TSceneNode> pNewNode;
-		pFactory->CreateInstance( pNewNode, NodeRef, TypeRef );
-
-		// If a node was created then return that node
-		if(pNewNode)
-			return pNewNode;
-	}
-
-	// Not created
-	return NULL;
+	return TScenegraph::FindNode( NewNodeRef );
 }
 
 

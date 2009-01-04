@@ -28,30 +28,30 @@ public:
 	TSceneNode_Camera(TRefRef NodeRef,TRefRef TypeRef);
 
 	// 'Real' camera value access
-	float		GetMagnification()							{ return m_fMagnification; }
-	void		SetMagnification(float fMagnification)		{ m_fMagnification = fMagnification; }
+	float			GetMagnification()							{ return m_fMagnification; }
+	void			SetMagnification(float fMagnification)		{ m_fMagnification = fMagnification; }
 
-	float		GetLensSize()								{ return m_fLensSize; }
-	void		SetLenSize(float fLensSize)					{ m_fLensSize = fLensSize; }
+	float			GetLensSize()								{ return m_fLensSize; }
+	void			SetLenSize(float fLensSize)					{ m_fLensSize = fLensSize; }
 
-	float		GetAperture()								{ return m_fAperture; }
-	void		SetAperture(float fAperture)				{ m_fAperture = fAperture; }
+	float			GetAperture()								{ return m_fAperture; }
+	void			SetAperture(float fAperture)				{ m_fAperture = fAperture; }
 
 	// Target access
-	TRefRef		GetTargetRef()								{ return m_refTarget; }
+	TRefRef			GetTargetRef()								{ return m_refTarget; }
 	TPtr<TLScene::TSceneNode_Transform> GetTargetobject();
  
-	float		GetTargetDistance()							{ return m_fTargetDistance; }
+	float			GetTargetDistance()							{ return m_fTargetDistance; }
 
 protected:
-	virtual void Update(float fTimeStep);
+	virtual void	Update(float fTimeStep);
 
-	virtual void ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void	ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
 
 private:
 
-	void		CalculateFOV();
-	void		CalculateDOF();
+	void			CalculateFOV();
+	void			CalculateDOF();
 
 private:
 

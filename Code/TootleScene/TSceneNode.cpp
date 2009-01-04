@@ -4,7 +4,7 @@
 using namespace TLScene;
 
 TSceneNode::TSceneNode(TRefRef NodeRef,TRefRef TypeRef) :
-	TLGraph::TGraphNode<TLScene::TSceneNode>	( NodeRef ),
+	TLGraph::TGraphNode<TLScene::TSceneNode>	( NodeRef, TypeRef ),
 	m_NodeTypeRef								( TypeRef )
 {
 }
@@ -12,11 +12,8 @@ TSceneNode::TSceneNode(TRefRef NodeRef,TRefRef TypeRef) :
 
 void TSceneNode::Update(float fTimeStep)
 {
-	// Do pre-update handling
-	ProcessMessageQueue();
-
-	// Call object virtual update
-	DoUpdate(fTimeStep);
+	//	do inherited update
+	TLGraph::TGraphNode<TLScene::TSceneNode>::Update( fTimeStep );
 }
 
 

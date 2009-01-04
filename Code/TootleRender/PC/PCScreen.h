@@ -9,7 +9,7 @@
 #include "../TScreen.h"
 #include "PCWinWindow.h"
 
-using namespace TLRender;
+
 
 //	external forward declarations
 namespace TLRender 
@@ -20,6 +20,7 @@ namespace TLRender
 	namespace Platform	
 	{
 		class Screen;
+		class ScreenWide;
 	};
 };
 
@@ -29,10 +30,10 @@ namespace TLRender
 //----------------------------------------------------------
 //	win32 screen (it's actually just an opengl window)
 //----------------------------------------------------------
-class Platform::Screen : public TLRender::TScreen
+class TLRender::Platform::Screen : public TLRender::TScreen
 {
 public:
-	Screen(const TRef& Ref);
+	Screen(TRefRef ScreenRef);
 	
 	virtual SyncBool		Init();
 	virtual SyncBool		Update();
@@ -52,5 +53,12 @@ protected:
 };
 
 
+
+
+class TLRender::Platform::ScreenWide : public TLRender::Platform::Screen
+{
+public:
+	ScreenWide(TRefRef ScreenRef);
+};
 
 

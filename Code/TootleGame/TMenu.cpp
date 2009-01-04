@@ -2,30 +2,6 @@
 
 
 
-TLMenu::TMenuItem::TMenuItem(TRefRef MenuItemRef) :
-	m_MenuItemRef	( MenuItemRef )
-{
-}
-
-
-
-//----------------------------------------------
-//	create a menu item - returns NULL if duplicated menu item ref
-//----------------------------------------------
-TPtr<TLMenu::TMenuItem> TLMenu::TMenu::AddMenuItem(TRefRef MenuItemRef)
-{
-	//	check an item doesnt already exist with this ref
-	if ( m_MenuItems.Exists( MenuItemRef ) )
-		return NULL;
-
-	TPtr<TLMenu::TMenuItem> pNewItem = new TLMenu::TMenuItem( MenuItemRef );
-
-	m_MenuItems.Add( pNewItem );
-
-	return pNewItem;
-}
-
-
 
 //----------------------------------------------
 //	move onto new menu with this ref - returns false if no such menu
@@ -160,10 +136,18 @@ Bool TLMenu::TMenuController::ExecuteMenuItem(TRefRef MenuItemRef)
 TPtr<TLMenu::TMenu> TLMenu::TMenuController::CreateMenu(TRefRef MenuRef)
 {
 	//	find menu asset
+	TPtr<TLAsset::TAsset>& pMenuAsset = TLAsset::LoadAsset( MenuRef, TRUE );
+	if ( !pMenuAsset )
+		return NULL;
 
-	//	not found
-	return NULL;
+	//	not a "menu" asset
+	if ( pMenuAsset->GetAssetType() != "Menu" )
+		return NULL;
+
+	TPtr<TLMenu::TMenu> pNewMenu = new TLMenu::TMenu( pMenuAsset );
+	return pNewMenu;
 }
+
 
 //----------------------------------------------
 //	get menu item out of current menu

@@ -3,6 +3,219 @@
 #include <TootleMaths/TTessellate.h>
 
 
+namespace TLString
+{
+	Bool	ReadNextLetter(const TString& String,u32& CharIndex, char& Char);
+	Bool	ReadNextFloatArray(const TString& String,u32& CharIndex,float* pFloats,u32 FloatSize);
+
+	template<typename FLOATTYPE>
+	Bool	ReadNextFloat(const TString& String,u32& CharIndex,FLOATTYPE& FloatType);
+	template<>
+	Bool	ReadNextFloat(const TString& String,u32& CharIndex,float& FloatType);
+};
+
+
+
+
+//--------------------------------------------------------
+//	
+//--------------------------------------------------------
+Bool TLString::ReadNextLetter(const TString& String,u32& CharIndex, char& Char)
+{
+	//	step over whitespace
+	s32 NonWhitespaceIndex = String.GetCharIndexNonWhitespace( CharIndex );
+	if ( NonWhitespaceIndex == -1 )
+		return FALSE;
+
+	//	move char past whitespace
+	CharIndex = (u32)NonWhitespaceIndex;
+	const char& NextChar = String.GetCharAt(CharIndex);
+
+	//	is next char a letter?
+	if ( TLString::IsCharLetter( NextChar ) )
+	{
+		Char = NextChar;
+			
+		//	move string past this letter for next thing
+		CharIndex++;
+
+		return TRUE;
+	}
+	else
+	{
+		//	not a char, could be a number or summink
+		return FALSE;
+	}
+}
+
+
+template<typename FLOATTYPE>
+Bool TLString::ReadNextFloat(const TString& String,u32& CharIndex,FLOATTYPE& FloatType)
+{
+	return ReadNextFloatArray( String, CharIndex, FloatType.GetData(), FloatType.GetSize() );
+}
+
+template<>
+Bool TLString::ReadNextFloat(const TString& String,u32& CharIndex,float& FloatType)
+{
+	return ReadNextFloatArray( String, CharIndex, &FloatType, 1 );
+}
+
+
+//--------------------------------------------------------
+//	
+//--------------------------------------------------------
+Bool TLString::ReadNextFloatArray(const TString& String,u32& CharIndex,float* pFloats,u32 FloatSize)
+{
+	//	loop through parsing seperators and floats
+	u32 FloatIndex = 0;
+	while ( FloatIndex < FloatSize )
+	{
+		//	step over whitespace
+		s32 NonWhitespaceIndex = String.GetCharIndexNonWhitespace( CharIndex );
+
+		//	no more non-whitespace? no more floats then
+		if ( NonWhitespaceIndex == -1 )
+			return FALSE;
+
+		//	move char past whitespace
+		CharIndex = (u32)NonWhitespaceIndex;
+
+		s32 NextComma = String.GetCharIndex(',', CharIndex);
+		s32 NextWhitespace = String.GetCharIndexWhitespace( CharIndex );
+		s32 NextSplit = String.GetLength();
+
+		if ( NextComma != -1 && NextComma < NextSplit )
+			NextSplit = NextComma;
+		if ( NextWhitespace != -1 && NextWhitespace < NextSplit )
+			NextSplit = NextWhitespace;
+
+		//	split
+		TTempString Stringf;
+		Stringf.Append( String, CharIndex, NextSplit-CharIndex );
+		if ( !Stringf.GetFloat( pFloats[FloatIndex] ) )
+		{
+			TLDebug_Break("Failed to parse first float");
+			return FALSE;
+		}
+
+		//	next float
+		FloatIndex++;
+
+		//	move string along past split
+		CharIndex = NextSplit+1;
+
+		//	out of string
+		if ( CharIndex >= String.GetLength() )
+		{
+			CharIndex = String.GetLength();
+			break;
+		}
+	}
+
+	return TRUE;
+}
+
+
+/*
+
+//--------------------------------------------------------
+//	
+//--------------------------------------------------------
+Bool ReadNextFloat2(const TString& String,u32& CharIndex, float2& Float2)
+{
+	//	step over whitespace
+	s32 NonWhitespaceIndex = String.GetCharIndexNonWhitespace( CharIndex );
+	if ( NonWhitespaceIndex == -1 )
+		return FALSE;
+
+	//	move char past whitespace
+	CharIndex = (u32)NonWhitespaceIndex;
+
+	//	right, expecting a comma to seperate the two points
+	//	if we find a whitespace first then there's a problem
+	s32 NextComma = String.GetCharIndex(',', CharIndex);
+	s32 NextWhitespace = String.GetCharIndexWhitespace( CharIndex );
+
+	//	no comma at all
+	if ( NextComma == -1 )
+	{
+		TLDebug_Break("Expected to find comma for float2");
+		return FALSE;
+	}
+
+	//	no more whitespaces, make end of this as end of string
+	if ( NextWhitespace == -1 )
+		NextWhitespace = String.GetLength();
+
+	//	whitespace before comma
+	if ( NextWhitespace < NextComma )
+	{
+		TLDebug_Break("Found whitespace before comma.");
+		return FALSE;
+	}
+
+	//	right. here->comma is x, comma->whitespace is y
+	TTempString StringX;
+	StringX.Append( String, CharIndex, NextComma-CharIndex );
+	if ( !StringX.GetFloat( Float2.x ) )
+	{
+		TLDebug_Break("Failed to parse first float");
+		return FALSE;
+	}
+
+	TTempString StringY;
+	StringY.Append( String, NextComma+1, NextWhitespace-(NextComma+1) );
+	if ( !StringY.GetFloat( Float2.y ) )
+	{
+		TLDebug_Break("Failed to parse second float");
+		return FALSE;
+	}
+
+	//	all done! move along char index
+	CharIndex = NextWhitespace;
+
+	return TRUE;
+}
+
+
+
+//--------------------------------------------------------
+//	
+//--------------------------------------------------------
+Bool ReadNextFloat(const TString& String,u32& CharIndex, float& Float)
+{
+	//	step over whitespace
+	s32 NonWhitespaceIndex = String.GetCharIndexNonWhitespace( CharIndex );
+	if ( NonWhitespaceIndex == -1 )
+		return FALSE;
+
+	//	move char past whitespace
+	CharIndex = (u32)NonWhitespaceIndex;
+
+	s32 NextWhitespace = String.GetCharIndexWhitespace( CharIndex );
+
+	//	no more whitespaces, make end of this as end of string
+	if ( NextWhitespace == -1 )
+		NextWhitespace = String.GetLength();
+
+	TTempString StringFloat;
+	StringFloat.Append( String, CharIndex, NextWhitespace-CharIndex );
+	if ( !StringFloat.GetFloat( Float ) )
+	{
+		TLDebug_Break("Failed to parse first float");
+		return FALSE;
+	}
+
+	//	all done! move along char index
+	CharIndex = NextWhitespace;
+
+	return TRUE;
+}
+*/
+
+
+
 
 TLFileSys::TFileSimpleVector::TFileSimpleVector(TRefRef FileRef,TRefRef FileTypeRef) :
 	TFileXml				( FileRef, FileTypeRef ),
@@ -67,7 +280,7 @@ SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset
 	m_SvgPointScale.Set( 1.f, 1.f, 1.f );
 
 	//	find scale dimensions
-	TString* pWidthString = pSvgTag->GetProperty("width");
+	const TString* pWidthString = pSvgTag->GetProperty("width");
 	if ( pWidthString )
 	{
 		s32 Width;
@@ -76,7 +289,7 @@ SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset
 				m_SvgPointScale.x = 1.f / (float)Width;
 	}
 
-	TString* pHeightString = pSvgTag->GetProperty("height");
+	const TString* pHeightString = pSvgTag->GetProperty("height");
 	if ( pHeightString )
 	{
 		s32 Height;
@@ -94,6 +307,7 @@ SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset
 
 	//	assign resulting asset
 	pAsset = pNewMesh;
+	pNewMesh->CalcBoundsBox();
 
 	return SyncTrue;
 }
@@ -146,7 +360,7 @@ Bool TLFileSys::TFileSimpleVector::ImportMesh(TPtr<TLAsset::TMesh>& pMesh,TPtr<T
 //--------------------------------------------------------
 Bool TLFileSys::TFileSimpleVector::ImportPolygonTag(TPtr<TLAsset::TMesh>& pMesh,TPtr<TXmlTag>& pTag)
 {
-	TString* pString = pTag->GetProperty("points");
+	const TString* pString = pTag->GetProperty("points");
 	if ( !pString )
 	{
 		if ( TLDebug_Break("Expected points property of svg for <polygon>") )
@@ -217,142 +431,13 @@ Bool TLFileSys::TFileSimpleVector::ImportPolygonTag(TPtr<TLAsset::TMesh>& pMesh,
 }
 
 
-
-//--------------------------------------------------------
-//	
-//--------------------------------------------------------
-Bool ReadNextLetter(const TString& String,u32& CharIndex, char& Char)
-{
-	//	step over whitespace
-	s32 NonWhitespaceIndex = String.GetCharIndexNonWhitespace( CharIndex );
-	if ( NonWhitespaceIndex == -1 )
-		return FALSE;
-
-	//	move char past whitespace
-	CharIndex = (u32)NonWhitespaceIndex;
-	const char& NextChar = String.GetCharAt(CharIndex);
-
-	//	is next char a letter?
-	if ( TLString::IsCharLetter( NextChar ) )
-	{
-		Char = NextChar;
-			
-		//	move string past this letter for next thing
-		CharIndex++;
-
-		return TRUE;
-	}
-	else
-	{
-		//	not a char, could be a number or summink
-		return FALSE;
-	}
-}
-
-
-
-//--------------------------------------------------------
-//	
-//--------------------------------------------------------
-Bool ReadNextFloat2(const TString& String,u32& CharIndex, float2& Float2)
-{
-	//	step over whitespace
-	s32 NonWhitespaceIndex = String.GetCharIndexNonWhitespace( CharIndex );
-	if ( NonWhitespaceIndex == -1 )
-		return FALSE;
-
-	//	move char past whitespace
-	CharIndex = (u32)NonWhitespaceIndex;
-
-	//	right, expecting a comma to seperate the two points
-	//	if we find a whitespace first then there's a problem
-	s32 NextComma = String.GetCharIndex(',', CharIndex);
-	s32 NextWhitespace = String.GetCharIndexWhitespace( CharIndex );
-
-	//	no comma at all
-	if ( NextComma == -1 )
-	{
-		TLDebug_Break("Expected to find comma for float2");
-		return FALSE;
-	}
-
-	//	no more whitespaces, make end of this as end of string
-	if ( NextWhitespace == -1 )
-		NextWhitespace = String.GetLength();
-
-	//	whitespace before comma
-	if ( NextWhitespace < NextComma )
-	{
-		TLDebug_Break("Found whitespace before comma.");
-		return FALSE;
-	}
-
-	//	right. here->comma is x, comma->whitespace is y
-	TTempString StringX;
-	StringX.Append( String, CharIndex, NextComma-CharIndex );
-	if ( !StringX.GetFloat( Float2.x ) )
-	{
-		TLDebug_Break("Failed to parse first float");
-		return FALSE;
-	}
-
-	TTempString StringY;
-	StringY.Append( String, NextComma+1, NextWhitespace-(NextComma+1) );
-	if ( !StringY.GetFloat( Float2.y ) )
-	{
-		TLDebug_Break("Failed to parse second float");
-		return FALSE;
-	}
-
-	//	all done! move along char index
-	CharIndex = NextWhitespace;
-
-	return TRUE;
-}
-
-
-
-
-//--------------------------------------------------------
-//	
-//--------------------------------------------------------
-Bool ReadNextFloat(const TString& String,u32& CharIndex, float& Float)
-{
-	//	step over whitespace
-	s32 NonWhitespaceIndex = String.GetCharIndexNonWhitespace( CharIndex );
-	if ( NonWhitespaceIndex == -1 )
-		return FALSE;
-
-	//	move char past whitespace
-	CharIndex = (u32)NonWhitespaceIndex;
-
-	s32 NextWhitespace = String.GetCharIndexWhitespace( CharIndex );
-
-	//	no more whitespaces, make end of this as end of string
-	if ( NextWhitespace == -1 )
-		NextWhitespace = String.GetLength();
-
-	TTempString StringFloat;
-	StringFloat.Append( String, CharIndex, NextWhitespace-CharIndex );
-	if ( !StringFloat.GetFloat( Float ) )
-	{
-		TLDebug_Break("Failed to parse first float");
-		return FALSE;
-	}
-
-	//	all done! move along char index
-	CharIndex = NextWhitespace;
-
-	return TRUE;
-}
-
 //--------------------------------------------------------
 //	convert Polygon tag to mesh info and add to mesh
 //	http://www.w3.org/TR/SVG/paths.html#PathElement
 //--------------------------------------------------------
 Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TPtr<TXmlTag>& pTag)
 {
-	TString* pString = pTag->GetProperty("d");
+	const TString* pString = pTag->GetProperty("d");
 	if ( !pString )
 	{
 		if ( TLDebug_Break("Expected d property of svg for <path>") )
@@ -361,7 +446,7 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TPt
 		return TRUE;
 	}
 
-	TString& String = *pString;
+	const TString& String = *pString;
 
 	//	empty string.. empty polygon
 	u32 StringLength = String.GetLength();
@@ -380,7 +465,7 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TPt
 	{
 		//	read next command
 		char NewCommand;
-		if ( ReadNextLetter( String, CharIndex, NewCommand ) )
+		if ( TLString::ReadNextLetter( String, CharIndex, NewCommand ) )
 		{
 			Bool FindNewCommand = FALSE;
 
@@ -416,7 +501,7 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TPt
 
 					//	start new contour by fetching the initial pos
 					float2 InitialPos;
-					if ( !ReadNextFloat2( String, CharIndex, InitialPos ) )
+					if ( !TLString::ReadNextFloat( String, CharIndex, InitialPos ) )
 						return FALSE;
 					PathPoints.Add( CoordinateToVertexPos( InitialPos ) );
 					PathCurves.Add( TLMaths::ContourCurve_On );
@@ -468,7 +553,7 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TPt
 			if  ( LastCommand == 'L' )
 			{
 				//	read new pos
-				if ( !ReadNextFloat2( String, CharIndex, NewPos ) )
+				if ( !TLString::ReadNextFloat( String, CharIndex, NewPos ) )
 					return FALSE;
 				
 				if ( TLString::IsCharLowercase( LastCommand ) )
@@ -478,7 +563,7 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TPt
 			{
 				//	read new x
 				float NewX;
-				if ( !ReadNextFloat( String, CharIndex, NewX ) )
+				if ( !TLString::ReadNextFloat( String, CharIndex, NewX ) )
 					return FALSE;
 				if ( TLString::IsCharLowercase( LastCommand ) )
 					NewPos.x += NewX;
@@ -489,7 +574,7 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TPt
 			{
 				//	read new x
 				float NewY;
-				if ( !ReadNextFloat( String, CharIndex, NewY ) )
+				if ( !TLString::ReadNextFloat( String, CharIndex, NewY ) )
 					return FALSE;
 				if ( TLString::IsCharLowercase( LastCommand ) )
 					NewPos.y += NewY;
@@ -507,17 +592,17 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TPt
 			//	cubic curve - 
 			//	read control point A (before)
 			float2 CubicControlPointA;
-			if ( !ReadNextFloat2( String, CharIndex, CubicControlPointA ) )
+			if ( !TLString::ReadNextFloat( String, CharIndex, CubicControlPointA ) )
 				return FALSE;
 
 			//	read control point B (after)
 			float2 CubicControlPointB;
-			if ( !ReadNextFloat2( String, CharIndex, CubicControlPointB ) )
+			if ( !TLString::ReadNextFloat( String, CharIndex, CubicControlPointB ) )
 				return FALSE;
 
 			//	read end point (on)
 			float2 CubicPointPosition;
-			if ( !ReadNextFloat2( String, CharIndex, CubicPointPosition ) )
+			if ( !TLString::ReadNextFloat( String, CharIndex, CubicPointPosition ) )
 				return FALSE;
 
 			//	first cubic point is last point in points
@@ -538,6 +623,11 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TPt
 			PathCurves.Add( TLMaths::ContourCurve_On );
 
 			CurrentPosition = CubicPointPosition;
+		}
+		else if ( LastCommand == 'Z' || LastCommand == 'z' )
+		{
+			CharIndex++;
+			continue;
 		}
 		else
 		{
@@ -592,10 +682,10 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TPt
 Bool TLFileSys::TFileSimpleVector::ImportRectTag(TPtr<TLAsset::TMesh>& pMesh,TPtr<TXmlTag>& pTag)
 {
 	//	get rect strings
-	TString* pLeftString = pTag->GetProperty("x");
-	TString* pTopString = pTag->GetProperty("y");
-	TString* pWidthString = pTag->GetProperty("width");
-	TString* pHeighthString = pTag->GetProperty("height");
+	const TString* pLeftString = pTag->GetProperty("x");
+	const TString* pTopString = pTag->GetProperty("y");
+	const TString* pWidthString = pTag->GetProperty("width");
+	const TString* pHeighthString = pTag->GetProperty("height");
 
 	if ( !pWidthString || !pHeighthString || !pLeftString || !pTopString )
 	{

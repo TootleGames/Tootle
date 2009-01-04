@@ -46,6 +46,8 @@ public:
 	inline TString&				GetUserName()			{ return m_strUserName; }
 	inline void					SetUserName(TString& strUserName)	{ m_strUserName = strUserName; }
 
+	TRef						GetUnusedActionRef(TRef BaseRef=TRef()) const;		//	get a ref for an action not currently in use
+
 protected:
 
 	s32							FindActionIndex(TRef refActionID);

@@ -16,6 +16,12 @@ namespace TLFileAssetMarkup
 }
 
 
+namespace TLString
+{
+	Bool	ReadNextFloatArray(const TString& String,u32& CharIndex,float* pFloats,u32 FloatSize);
+}
+
+
 
 TLFileSys::TFileAssetMarkup::TFileAssetMarkup(TRefRef FileRef,TRefRef FileTypeRef) :
 	TFileXml				( FileRef, FileTypeRef )
@@ -53,7 +59,7 @@ SyncBool TLFileSys::TFileAssetMarkup::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,
 	}
 
 	//	get asset type
-	TString* pAssetTypeString = pTamTag->GetProperty("AssetType");
+	const TString* pAssetTypeString = pTamTag->GetProperty("AssetType");
 	if ( !pAssetTypeString )
 	{
 		TLDebug_Print("TAM tag missing asset type, e.g: <TAM AssetType=\"Mesh\">");
@@ -145,7 +151,7 @@ SyncBool TLFileSys::TFileAssetMarkup::ImportMesh_ImportTag(TPtr<TLAsset::TMesh>&
 	*/
 	//	get mesh to import
 	TRef ImportMeshRef;
-	TString* pImportMeshRefString = pImportTag->GetProperty("AssetRef");
+	const TString* pImportMeshRefString = pImportTag->GetProperty("AssetRef");
 	if ( pImportMeshRefString )
 		ImportMeshRef.Set( *pImportMeshRefString );
 	if ( !ImportMeshRef.IsValid() )
@@ -299,24 +305,74 @@ SyncBool TLFileSys::TFileAssetMarkup::ImportMesh_ImportTag_Part(TPtr<TLAsset::TM
 		AppendGeometry( pMesh->GetLines(), pImportMesh->GetLines(), FirstVertexIndex );
 	}
 
-	//	manipulate geometry
-	TString* pScaleString = pImportTag->GetProperty("Scale");
-	if ( pScaleString )
+	//	manipulate geometry using the properties
+	//	apply them in order so that we can do shader-like things
+	for ( u32 p=0;	p<pImportTag->GetPropertyCount();	p++)
 	{
-		float Scale;
-		if ( pScaleString->GetFloat( Scale ) )
-			pMesh->ScaleVerts( Scale, FirstVertexIndex, LastVertexIndex );
-	}
+		const TXmlTag::TProperty& Property = pImportTag->GetPropertyAt(p);
 
-	//	manipulate geometry
-	TString* pMultColourString = pImportTag->GetProperty("MultColourR");
-	if ( pMultColourString )
-	{
-		float Scale;
-		if ( pScaleString->GetFloat( Scale ) )
-			pMesh->ScaleVerts( Scale, FirstVertexIndex, LastVertexIndex );
-	}
+		const TStringLowercase<TTempString>& PropertyName = Property.m_Key;
+		const TString& PropertyData = Property.m_Item;
 
+		if ( PropertyName == "Scale" )
+		{
+			float Scale;
+			if ( !PropertyData.GetFloat( Scale ) )
+				continue;
+
+			pMesh->ScaleVerts( Scale, FirstVertexIndex, LastVertexIndex );
+		}
+		else if ( PropertyName == "ColourMult" )
+		{
+			float4 ColourChange;
+			u32 CharIndex = 0;
+			if ( !TLString::ReadNextFloatArray( PropertyData, CharIndex, ColourChange.GetData(), ColourChange.GetSize() ) )
+				continue;
+
+			//	go through all the colours and multiply them
+			u32 LastColourIndex = (u32)LastVertexIndex < pMesh->GetColours().GetSize() ? (u32)LastVertexIndex : pMesh->GetColours().GetSize();
+			for ( u32 v=(s32)FirstVertexIndex;	v<LastColourIndex;	v++ )
+			{
+				TColour& MeshColour = pMesh->GetColours().ElementAt(v);
+				MeshColour *= ColourChange;
+			}
+		}
+		else if ( PropertyName == "ColourAdd" )
+		{
+			float4 ColourChange;
+			u32 CharIndex = 0;
+			if ( !TLString::ReadNextFloatArray( PropertyData, CharIndex, ColourChange.GetData(), ColourChange.GetSize() ) )
+				continue;
+
+			//	go through all the colours and multiply them
+			u32 LastColourIndex = (u32)LastVertexIndex < pMesh->GetColours().GetSize() ? (u32)LastVertexIndex : pMesh->GetColours().GetSize();
+			for ( u32 v=FirstVertexIndex;	v<LastColourIndex;	v++ )
+			{
+				TColour& MeshColour = pMesh->GetColours().ElementAt(v);
+				MeshColour += ColourChange;
+			}
+		}
+		else if ( PropertyName == "ColourSub" )
+		{
+			float4 ColourChange;
+			u32 CharIndex = 0;
+			if ( !TLString::ReadNextFloatArray( PropertyData, CharIndex, ColourChange.GetData(), ColourChange.GetSize() ) )
+				continue;
+
+			//	go through all the colours and multiply them
+			u32 LastColourIndex = (u32)LastVertexIndex < pMesh->GetColours().GetSize() ? (u32)LastVertexIndex : pMesh->GetColours().GetSize();
+			for ( u32 v=FirstVertexIndex;	v<LastColourIndex;	v++ )
+			{
+				TColour& MeshColour = pMesh->GetColours().ElementAt(v);
+				MeshColour -= ColourChange;
+			}
+		}
+		else
+		{
+			//	unhandled property
+			TLDebug_Print( TString("Unknown property \"%s\" in asset data import in TAM file.", PropertyName.GetData() ) );
+		}
+	}
 	
 	return SyncTrue;
 }

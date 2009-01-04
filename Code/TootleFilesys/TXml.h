@@ -32,35 +32,40 @@ namespace TLXml
 //---------------------------------------------------------
 class TXmlTag
 {
+public:
 	friend class TXml;
+	typedef TLKeyArray::TPair<TStringLowercase<TTempString>,TString> TProperty;	
+
 public:
 	TXmlTag();
 	TXmlTag(const TString& TagName,TLXml::TagType Type);
 
 	void						SetData(const TString& Data)					{	m_Data = Data;	}
+	const TString&				GetDataString() const							{	return m_Data;	}
 	Bool						SetProperties(TString& PropertiesString);		//	set properties and parse the properties string
 	Bool						IsSelfClosed() const							{	return m_TagType != TLXml::TagType_OpenClose;	}
 	const TString&				GetTagName() const								{	return m_TagName;	}
 	const TLXml::TagType&		GetTagType() const								{	return m_TagType;	}
-	TString*					GetProperty(const TString& PropertyName)		{	return m_Properties.Find( PropertyName );	}
-
+	const TString*				GetProperty(const TString& PropertyName) const	{	return m_Properties.Find( PropertyName );	}
+	const TProperty&			GetPropertyAt(u32 Index) const					{	return m_Properties.GetPairAt( Index );	}
+	u32							GetPropertyCount() const						{	return m_Properties.GetSize();	}
 
 	TPtr<TXmlTag>				GetChild(const TString& TagName)		{	return m_Children.FindPtr( TagName );	}
 	TPtrArray<TXmlTag>&			GetChildren()							{	return m_Children;	}
 	void						AddChild(TPtr<TXmlTag>& pTag)			{	m_Children.Add( pTag );	}
 
 	inline Bool					operator<(const TXmlTag& Tag) const		{	return m_TagName < Tag.m_TagName;	}
-	inline Bool					operator==(const TXmlTag& Tag) const	{	return m_TagName == Tag.m_TagName;	}
-	inline Bool					operator==(const TString& TagName) const	{	return m_TagName == TagName;	}
+	inline Bool					operator==(const TXmlTag& Tag) const	{	return m_TagName.IsEqual( Tag.m_TagName, FALSE );	}
+	inline Bool					operator==(const TString& TagName) const	{	return m_TagName.IsEqual( TagName, FALSE );	}
 
 	void						Debug_PrintTree(u32 TreeLevel) const;	//	debug_print the tree
 
 protected:
-	TLXml::TagType					m_TagType;			//	kind of tag
-	TString							m_TagName;			//	branch's name (<TAG>)
-	TKeyArray<TTempString,TString>	m_Properties;		//	list of properties in the tag (<... x="y" ...>)
-	TString							m_Data;				//	contents of tag (<XYZ>Data</XYZ>)
-	TPtrArray<TXmlTag>				m_Children;			//	child tags
+	TLXml::TagType				m_TagType;			//	kind of tag
+	TStringLowercase<>			m_TagName;			//	branch's name (<TAG>)
+	TKeyArray<TStringLowercase<TTempString>,TString>	m_Properties;		//	list of properties in the tag (<... x="y" ...>)
+	TString						m_Data;				//	contents of tag (<XYZ>Data</XYZ>)
+	TPtrArray<TXmlTag>			m_Children;			//	child tags
 };
 
 

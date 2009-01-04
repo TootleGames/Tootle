@@ -17,7 +17,7 @@ namespace TLRender
 class TLRender::TRenderNodeClear : public TLRender::TRenderNode
 {
 public:
-	TRenderNodeClear(TRefRef RenderNodeRef=TRef());
+	TRenderNodeClear(TRefRef NodeRef,TRefRef TypeRef);
 
 	virtual void				GetMeshAsset(TPtr<TLAsset::TMesh>& pMesh) 	{	pMesh = m_pClearMesh;	}
 

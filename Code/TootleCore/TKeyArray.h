@@ -66,7 +66,7 @@ public:
 	void				Empty(Bool Dealloc=FALSE)				{	m_Array.Empty( Dealloc );	}
 
 	TYPE*				Find(const KEYTYPE& Key)				{	PAIRTYPE* pPair = m_Array.Find( Key );	return pPair ? &pPair->m_Item : NULL;	}
-	const TYPE*			Find(const KEYTYPE& Key) const			{	const PAIRTYPE* pPair = m_Array.Find( Key );	return pPair ? &pPair->m_Item : NULL;	}
+	const TYPE*			Find(const KEYTYPE& Key) const			{	const PAIRTYPE* pPair = m_Array.FindConst( Key );	return pPair ? &pPair->m_Item : NULL;	}
 	TYPE&				ElementAt(u32 Index)					{	return GetPairAt( Index ).m_Item;	}
 	const TYPE&			ElementAt(u32 Index) const				{	return GetPairAt( Index ).m_Item;	}
 	PAIRTYPE&			GetPairAt(u32 Index)					{	return m_Array.ElementAt(Index);	}

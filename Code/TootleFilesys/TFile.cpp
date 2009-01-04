@@ -44,10 +44,14 @@ void TLFileSys::TFile::SetTimestamp(const TLTime::TTimestamp& NewTimestamp)
 	if ( m_Timestamp == NewTimestamp )
 		return;
 
+	//	check in case timestamp is older
+	//	gr: check seconds, some file systems dont record millisecond timestamps (only virtual ones do!)
+	s32 SecondsDiff = m_Timestamp.GetSecondsDiff( NewTimestamp );
 	//	timestamp is older??
-	if ( NewTimestamp < m_Timestamp )
+	if ( SecondsDiff < 0 )
 	{
-		if ( !TLDebug_Break("File's timestamp is OLDER than what it was before?") )
+		s32 MilliDiff = m_Timestamp.GetMilliSecondsDiff( NewTimestamp );
+		if ( !TLDebug_Break( TString("File's timestamp is OLDER than what it was before? (%d seconds, %d milliseconds diff)", SecondsDiff, MilliDiff ) ) )
 			return;
 	}
 

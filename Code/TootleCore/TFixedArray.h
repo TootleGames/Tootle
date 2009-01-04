@@ -29,8 +29,8 @@ public:
 	//	operators
 	inline TYPE&		operator[](int Index)				{	return ElementAt(Index);	}
 	inline TYPE&		operator[](u32 Index)				{	return ElementAt(Index);	}
-	inline const TYPE&	operator[](int Index) const			{	return ElementAt(Index);	}
-	inline const TYPE&	operator[](u32 Index) const			{	return ElementAt(Index);	}
+	inline const TYPE&	operator[](int Index) const			{	return ElementAtConst(Index);	}
+	inline const TYPE&	operator[](u32 Index) const			{	return ElementAtConst(Index);	}
 
 protected:
 	//	array

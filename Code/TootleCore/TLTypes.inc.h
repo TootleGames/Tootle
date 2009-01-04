@@ -83,7 +83,7 @@ public:
 	FORCEINLINE Type2<TYPE>		Normal(float KnownLength,float NormalLength) const		{	return (*this) * (NormalLength/KnownLength);	};	//	returns the normal of thsi vector
 	FORCEINLINE void			Invert()									{	x=-x;	y=-y;	};
 //	FORCEINLINE void			Reflect(const Type2<TYPE>& UpVector);
-//	Type2<TYPE>					CrossProduct(const Type2<TYPE>& v) const;
+	Type2<TYPE>					CrossProduct(const Type2<TYPE>& v) const;
 	FORCEINLINE float			DotProduct(const Type2<TYPE>& v) const		{	return (x*v.x) + (y*v.y) ;	}
 	FORCEINLINE float			DotProduct() const							{	return (x*x) + (y*y);	}	//	same as lengthsq!
 };
@@ -285,6 +285,17 @@ template <class TYPE>
 inline void Type2<TYPE>::operator/=(const Type3<TYPE>& v)		{	x /= v.x;		y /= v.y;	};
 
 
+
+template <class TYPE>
+Type2<TYPE> Type2<TYPE>::CrossProduct(const Type2<TYPE>& v) const
+{
+	Type2<TYPE> xyz;
+
+	xyz.x = ( x * v.y ) - ( y * v.x );
+	xyz.y = ( y * v.x ) - ( x * v.y );
+
+	return xyz;
+}
 
 template <class TYPE>
 template<typename OTHERTYPE> 

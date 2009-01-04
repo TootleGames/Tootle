@@ -148,6 +148,22 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="..\TAssetBrowser.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TAssetBrowser.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TGui.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TGui.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TMenu.cpp"
 			>
 		</File>

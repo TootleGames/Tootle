@@ -35,6 +35,11 @@ TScreen* TScreenManager::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 		return new TLRender::Platform::Screen( InstanceRef );
 	}
 
+	if ( !TypeRef.IsValid() || TypeRef == "widescreen" )
+	{
+		return new TLRender::Platform::ScreenWide( InstanceRef );
+	}
+
 	return NULL;
 }
 

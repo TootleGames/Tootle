@@ -46,10 +46,12 @@ public:
 		Flag_RestOnStatic,		//	stick to floor when we hit it (stops tiny vibration bounce)
 		Flag_Static,			//	does not move when collided wtih
 		//Flag_CollideBothSides,	//	collide with inside of shape, or dont check normal in polygon 
+		Flag_CollisionExpected,	//	expecting a valid collision shape
+		Flag_ZoneExpected,		//	expecting to be in a collision zone
 	};
 
 public:
-	TPhysicsNode(TRefRef NodeRef);
+	TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef=TRef());
 
 	virtual void			Update(float Timestep);				//	physics update
 	virtual void			PostUpdate(float Timestep,TLPhysics::TPhysicsgraph* pGraph,TPtr<TLPhysics::TPhysicsNode>& pThis);			//	after collisions are handled
@@ -67,6 +69,7 @@ public:
 
 	void					AddForce(const float3& Force)		{	if ( Force.LengthSq() == 0.f )	return;	m_Force += Force;	OnForceChanged();	}
 	void					SetVelocity(const float3& Velocity)	{	m_Velocity = Velocity;	OnVelocityChanged();	}
+	const float3&			GetVelocity() const					{	return (m_Velocity);	}
 	
 	void					OnVelocityChanged()					{	SetAccumulatedMovementInvalid();	SetWorldCollisionShapeInvalid();	}
 	void					OnForceChanged()					{	SetAccumulatedMovementInvalid();	SetWorldCollisionShapeInvalid();	}
@@ -108,7 +111,6 @@ protected:
 	FORCEINLINE void			SetAccumulatedMovementInvalid()				{	m_AccumulatedMovementValid = FALSE;	}
 	FORCEINLINE Bool			IsAccumulatedMovementValid() const			{	return m_AccumulatedMovementValid;	}
 
-	const float3&				GetVelocity() const					{	return (m_Velocity);	}
 	const float3&				GetForce() const					{	return (m_Force);	}
 	float3						GetVelocityAndForce() const			{	return (m_Velocity + m_Force);	}
 

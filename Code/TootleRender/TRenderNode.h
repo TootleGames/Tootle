@@ -71,10 +71,10 @@ public:
 	};
 
 public:
-	TRenderNode(TRefRef RenderNodeRef=TRef());
-	virtual ~TRenderNode()												{};
+	TRenderNode(TRefRef RenderNodeRef=TRef(),TRefRef TypeRef=TRef());
+	virtual ~TRenderNode()					{};
 
-	virtual void							UpdateAll(float Timestep)					{	};	//	gr: render graph does no updates through the tree
+	virtual void							Initialise(TPtr<TLMessaging::TMessage>& pMessage);	//	generic render node init
 
 	FORCEINLINE const TLMaths::TTransform&	GetTransform() const						{	return m_Transform;	}
 	FORCEINLINE void						SetTransform(const TLMaths::TTransform& Transform)	{	m_Transform = Transform;	SetLocalMatrixInvalid();	}
@@ -82,6 +82,7 @@ public:
 	FORCEINLINE void						SetTranslate(const float3& Translate)		{	m_Transform.SetTranslate( Translate );	SetLocalMatrixInvalid();	}
 	FORCEINLINE const float3&				GetScale() const							{	return m_Transform.GetScale() ;	}
 	FORCEINLINE void						SetScale(const float3& Scale)				{	m_Transform.SetScale( Scale );	SetLocalMatrixInvalid();	}
+	FORCEINLINE void						SetScale(float Scale)						{	SetScale( float3( Scale, Scale, Scale ) );	}
 	FORCEINLINE const TLMaths::TQuaternion&	GetRotation() const							{	return m_Transform.GetRotation() ;	}
 	FORCEINLINE void						SetRotation(const TLMaths::TQuaternion& Rotation)	{	m_Transform.SetRotation( Rotation );	SetLocalMatrixInvalid();	}
 	FORCEINLINE float						GetLineWidth() const						{	return m_LineWidth;	}
@@ -93,7 +94,7 @@ public:
 	FORCEINLINE void						SetColour(const TColour& Colour)			{	m_Colour = Colour;	}
 	FORCEINLINE const TColour&				GetColour() const							{	return m_Colour;	}
 	FORCEINLINE const TRef&					GetMeshRef() const							{	return m_MeshRef;	}
-	FORCEINLINE void						SetMeshRef(TRefRef MeshRef)					{	if ( m_MeshRef != MeshRef )	{	m_MeshRef = MeshRef;	m_pMeshCache = NULL;	OnBoundsChanged();	}	}
+	FORCEINLINE void						SetMeshRef(TRefRef MeshRef)					{	if ( m_MeshRef != MeshRef )	{	m_MeshRef = MeshRef;	OnMeshRefChanged();	}	}
 
 	virtual void							GetMeshAsset(TPtr<TLAsset::TMesh>& pMesh);	//	default behaviour fetches the mesh from the asset lib with our mesh ref
 
@@ -133,7 +134,8 @@ public:
 	FORCEINLINE Bool						operator<(TRefRef Ref) const				{	return GetRenderNodeRef() < Ref;	}
 
 protected:
-	void						SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags=TInvalidateFlags(InvalidateLocal,InvalidateWorld,InvalidateParents,InvalidateChildren));	//	set all bounds as invalid
+	FORCEINLINE void						OnMeshRefChanged()							{	m_pMeshCache = NULL;	OnBoundsChanged();	}
+	void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags=TInvalidateFlags(InvalidateLocal,InvalidateWorld,InvalidateParents,InvalidateChildren));	//	set all bounds as invalid
 
 protected:
 	TLMaths::TTransform			m_Transform;

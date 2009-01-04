@@ -22,7 +22,7 @@ void TSceneNode_Emitter::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 
 		if(pMessage->ImportData("POS", vPos))
 		{
-			SetPosition(vPos);
+			SetTranslate(vPos);
 		}
 
 		TRef refNodeType;
@@ -57,8 +57,11 @@ void TSceneNode_Emitter::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 }
 
 
-void TSceneNode_Emitter::DoUpdate(float fTimestep)
+void TSceneNode_Emitter::Update(float fTimestep)
 {
+	//	do base update
+	TLScene::TSceneNode_Object::Update( fTimestep );
+
 	// Check to see if we have an object specified for emission.  
 	// If not then return.
 	if(!m_refNodeTypeToEmit.IsValid())

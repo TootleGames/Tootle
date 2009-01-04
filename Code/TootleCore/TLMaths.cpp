@@ -1325,6 +1325,24 @@ void TLMaths::TQuaternion::RotateVector(float3& Vector) const
 */	
 }
 
+void TLMaths::TQuaternion::UnRotateVector(float3& Vector) const
+{
+	if ( !IsValid() )
+		return;
+
+	TLMaths::TMatrix RotationMatrix;
+	RotationMatrix.SetRotation(*this);
+	RotationMatrix.Invert();
+	RotationMatrix.TransformVector( Vector );
+/*	
+	float3 This3 = float3( x, y, z );
+	//<0,w> = inv(q) * <0,v> * q
+	TLMaths::TQuaternion Inverse(*this);
+	Inverse.Invert();
+
+	Vector = Inverse * Vector * This3;
+*/	
+}
 
 void TLMaths::TQuaternion::RotateVector(float2& Vector) const
 {

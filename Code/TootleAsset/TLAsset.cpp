@@ -3,6 +3,7 @@
 #include "TFont.h"
 #include "TMenu.h"
 #include "TAudio.h"
+#include "TScheme.h"
 #include "TLoadTask.h"
 #include <TootleCore/TPtr.h>
 #include <TootleCore/TEventChannel.h>
@@ -108,6 +109,26 @@ TPtr<TLAsset::TAsset>& TLAsset::GetAsset(TRefRef AssetRef,Bool LoadedOnly)
 
 	
 	return pAsset;
+}
+
+	
+//----------------------------------------------------------
+//	get an array of assets of a certain type
+//----------------------------------------------------------
+void TLAsset::GetAssetArray(TPtrArray<TAsset>& AssetArray,TRefRef AssetType,Bool LoadedOnly)
+{
+	for ( u32 i=0;	i<g_pFactory->GetSize();	i++ )
+	{
+		TPtr<TAsset>& pAsset = g_pFactory->ElementAt(i);
+		if ( pAsset->GetAssetType() != AssetType )
+			continue;
+
+		//	loaded only?
+		if ( LoadedOnly && !pAsset->IsLoaded() )
+			continue;
+
+		AssetArray.Add( pAsset );
+	}
 }
 
 
@@ -236,6 +257,9 @@ TLAsset::TAsset* TLAsset::TAssetFactory::CreateObject(TRefRef InstanceRef,TRefRe
 	if ( TypeRef == "Menu" )
 		return new TLAsset::TMenu( InstanceRef );
 	
+	if ( TypeRef == "Scheme" )
+		return new TLAsset::TScheme( InstanceRef );
+
 	if ( TypeRef == "Temp" )
 		return new TLAsset::TTempAsset( InstanceRef );
 
@@ -295,4 +319,6 @@ TPtr<TLAsset::TLoadTask> TLAsset::GetLoadTask(TRefRef AssetRef)
 	//	
 	return g_LoadTasks.FindPtr( AssetRef );
 }
+
+
 

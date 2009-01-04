@@ -18,8 +18,9 @@ namespace TLString
 	Bool		IsCharLetter(const char& Char);
 	Bool		IsCharLowercase(const char& Char);
 	Bool		IsCharUppercase(const char& Char);
-	Bool		SetCharLowercase(char& Char);
-	Bool		SetCharUppercase(char& Char);
+	char		GetCharLowercase(const char& Char);		//	return lowercase version of this char
+	Bool		SetCharLowercase(char& Char);			//	change this char to be lower case
+	Bool		SetCharUppercase(char& Char);			//	change this char to be upper case
 	s32			GetCharInteger(const char& Char);
 	s32			GetCharHexInteger(const char& Char);
 
@@ -43,7 +44,7 @@ protected:
 
 public:
 	TString() : m_DataArray ( NULL, TLString_StringGrowBy )						{	}
-	TString(const TString& String) : m_DataArray ( NULL, TLString_StringGrowBy ){	Append( String.GetData(), String.GetLength() );	}
+	TString(const TString& String) : m_DataArray ( NULL, TLString_StringGrowBy ){	Append( String );	}
 	TString(const CHARTYPE* pString,...);										//	formatted constructor
 	virtual ~TString()															{	}
 
@@ -76,17 +77,19 @@ public:
 	s32						GetCharIndexWhitespace(u32 From=0) const;					//	find the next whitespace char
 	s32						GetLastCharIndex(const CHARTYPE& Char,s32 From=-1) const	{	return GetStringArray().FindIndexReverse( Char, From );	}
 	Bool					GetCharExists(const CHARTYPE& Char) const					{	return GetStringArray().Exists( Char );	}
-	Bool					IsEqual(const TString& String) const;						//	comparison to string
-	Bool					IsEqual(const CHARTYPE* pString,s32 Length=-1) const;		//	comparison to string
+	Bool					IsEqual(const TString& String,Bool CaseSensitive) const;	//	comparison to string
+	Bool					IsEqual(const CHARTYPE* pString,s32 Length,Bool CaseSensitive) const;	//	comparison to string
 	Bool					IsLessThan(const TString& String) const;					//	comparison to string
 	template<class STRINGTYPE>
 	Bool					Split(const CHARTYPE& SplitChar,TArray<STRINGTYPE>& StringArray) const;		//	split string by SplitChar into array. if no cases of SplitChar then FALSE is return and no strings are added to the array
 	Bool					GetInteger(s32& Integer) const;					//	turn string into an integer - fails if some non-integer stuff in it (best to trim first where possible)
 	Bool					GetFloat(float& Float) const;					//	turn string into a float
 	Bool					GetHexInteger(u32& Integer) const;				//	turn hexidecimal string into an integer (best to trim first where possible)
+	Bool					GetHexBytes(TArray<u8>& ParsedBytes) const;		//	turn hexidecimal string into an array of bytes. so string is expected to be like 0011223344aabbff etc
 
 	CHARTYPE&				GetCharAt(u32 Index)							{	return GetStringArray().ElementAt(Index);	}
 	const CHARTYPE&			GetCharAt(u32 Index) const						{	return GetStringArray().ElementAtConst(Index);	}
+	virtual CHARTYPE		GetLowercaseCharAt(u32 Index) const				{	return TLString::GetCharLowercase( GetCharAt( Index ) );	}
 	CHARTYPE				GetCharLast() const;							//	get the last char. if string is empty a terminator is returned. If the string ends with a terminator, it returns the last char before terminator (if any)
 	s32						GetCharLastIndex() const;						//	get the index of last char. -1 if empty or all terminators
 	void					RemoveCharAt(u32 Index,u32 Amount)				{	GetStringArray().RemoveAt(Index,Amount);	}
@@ -95,15 +98,17 @@ public:
 
 	inline TString&			operator=(const CHARTYPE* pString)				{	Set( pString );	return *this;	}
 	inline TString&			operator=(const TString& String)				{	Set( String );	return *this;	}
-	inline Bool				operator==(const TString& String) const			{	return IsEqual( String );	}
-	inline Bool				operator==(const CHARTYPE* pString) const		{	return IsEqual( pString );	}
-	inline Bool				operator!=(const TString& String) const			{	return !IsEqual( String );	}
-	inline Bool				operator!=(const CHARTYPE* pString) const		{	return !IsEqual( pString );	}
+	inline Bool				operator==(const TString& String) const			{	return IsEqual( String, TRUE );	}
+	inline Bool				operator==(const CHARTYPE* pString) const		{	return IsEqual( pString, -1, TRUE );	}
+	inline Bool				operator!=(const TString& String) const			{	return !IsEqual( String, TRUE );	}
+	inline Bool				operator!=(const CHARTYPE* pString) const		{	return !IsEqual( pString, -1, TRUE );	}
 	inline Bool				operator<(const TString& String) const			{	return IsLessThan( String );	}
 
 protected:
 	virtual TArray<CHARTYPE>&		GetStringArray()						{	return m_DataArray;	}
 	virtual const TArray<CHARTYPE>&	GetStringArray() const					{	return m_DataArray;	}
+	virtual void					ForceCaseSensitivity(Bool& CaseSensitive) const	{	}	//	default is whatever was passed in
+
 
 	u32							GetLength(const CHARTYPE* pString);			//	get the length from some other type of string
 
@@ -111,6 +116,7 @@ protected:
 	void						AddTerminator(Bool ForceTerminator=FALSE);		//	make sure there's a terminator on the end. ForceTerminator will overwrite the last character with a terminator if there isn't one (string wont grow)
 	void						RemoveTerminator();								//	remove terminators from end of string
 	void						SetLength(u32 NewLength,Bool ForceTerminator)	{	GetStringArray().SetSize( NewLength );	AddTerminator(ForceTerminator);	}	//	set the string to a certain size (usually for buffering)
+	virtual void				OnStringChanged(u32 FirstChanged=0,s32 LastChanged=-1)	{	}	//	post-string change call
 
 protected:
 	TArray<CHARTYPE>			m_DataArray;
@@ -120,7 +126,8 @@ protected:
 //---------------------------------------------------------
 //	same as TString but the array isn't dynamiccaly allocated, instead
 //	it's a fixed array, much more effecient CPU wise, but more
-//	expensvie memory wise
+//	expensvie memory wise - unless you make it small... the main drawback is
+//	it's limited length
 //---------------------------------------------------------
 template<int SIZE>
 class TBufferString : public TString
@@ -133,12 +140,12 @@ public:
 
 	inline const CHARTYPE&	operator[](u32 Index) const						{	return GetCharAt(Index);	}
 
-	inline TBufferString&	operator=(const CHARTYPE* pString)				{	Set( pString );	return *this;	}
-	inline TBufferString&	operator=(const TString& String)				{	Set( String );	return *this;	}
-	inline Bool				operator==(const TString& String) const			{	return IsEqual( String );	}
-	inline Bool				operator==(const CHARTYPE* pString) const		{	return IsEqual( pString );	}
-	inline Bool				operator!=(const TString& String) const			{	return !IsEqual( String );	}
-	inline Bool				operator!=(const CHARTYPE* pString) const		{	return !IsEqual( pString );	}
+	inline TString&			operator=(const CHARTYPE* pString)				{	Set( pString );	return *this;	}
+	inline TString&			operator=(const TString& String)				{	Set( String );	return *this;	}
+	inline Bool				operator==(const TString& String) const			{	return IsEqual( String, TRUE );	}
+	inline Bool				operator==(const CHARTYPE* pString) const		{	return IsEqual( pString, -1, TRUE );	}
+	inline Bool				operator!=(const TString& String) const			{	return !IsEqual( String, TRUE );	}
+	inline Bool				operator!=(const CHARTYPE* pString) const		{	return !IsEqual( pString, -1, TRUE );	}
 	inline Bool				operator<(const TString& String) const			{	return IsLessThan( String );	}
 
 protected:
@@ -150,11 +157,48 @@ protected:
 };
 
 
-
-
-
 typedef TBufferString<512> TTempString;
 
+
+
+
+
+//---------------------------------------------------------
+//	a normal string but forces all characters to be lower case
+//	this speeds up string comparisons and makes some string operations
+//	case insensitive.
+//	very good for where case is not required, eg XML processing,
+//	names of tags/properties etc
+//---------------------------------------------------------
+template<class BASESTRINGTYPE=TString>
+class TStringLowercase : public BASESTRINGTYPE
+{
+protected:
+	typedef char			CHARTYPE;
+
+public:
+	//	gr: note: do not use TString constructors as VTable isn't setup, our post-append function won't be called
+	//		so could be initialised with non-lowercase strings
+	TStringLowercase()														{	}
+	TStringLowercase(const TString& String)									{	Append( String );	}
+	TStringLowercase(const CHARTYPE* pString)								{	Append( pString );	}
+
+	virtual CHARTYPE		GetLowercaseCharAt(u32 Index) const				{	return GetCharAt( Index );	}
+
+	inline const CHARTYPE&	operator[](u32 Index) const						{	return GetCharAt(Index);	}
+
+	inline TString&			operator=(const CHARTYPE* pString)				{	Set( pString );	return *this;	}
+	inline TString&			operator=(const TString& String)				{	Set( String );	return *this;	}
+	inline Bool				operator==(const TString& String) const			{	return IsEqual( String, TRUE );	}
+	inline Bool				operator==(const CHARTYPE* pString) const		{	return IsEqual( pString, -1, TRUE );	}
+	inline Bool				operator!=(const TString& String) const			{	return !IsEqual( String, TRUE );	}
+	inline Bool				operator!=(const CHARTYPE* pString) const		{	return !IsEqual( pString, -1, TRUE );	}
+	inline Bool				operator<(const TString& String) const			{	return IsLessThan( String );	}
+
+protected:
+	virtual void			OnStringChanged(u32 FirstChanged=0,s32 LastChanged=-1);	//	post-string change call
+	virtual void			ForceCaseSensitivity(Bool& CaseSensitive) const	{	CaseSensitive = FALSE;	}	//	lowercase string is always case-insesnsitive
+};
 
 
 
@@ -211,5 +255,22 @@ Bool TString::Split(const CHARTYPE& SplitChar,TArray<STRINGTYPE>& StringArray) c
 	}
 
 	return TRUE;
+}
+
+
+//------------------------------------------------------
+//	post-string change call
+//------------------------------------------------------
+template<class BASESTRINGTYPE>
+void TStringLowercase<BASESTRINGTYPE>::OnStringChanged(u32 FirstChanged,s32 LastChanged)
+{
+	if ( LastChanged < 0 )
+		LastChanged = GetLengthWithoutTerminator();
+
+	TArray<char>& StringArray = GetStringArray();
+	for ( u32 i=FirstChanged;	i<(u32)LastChanged;	i++ )
+	{
+		TLString::SetCharLowercase( StringArray[i] );
+	}
 }
 

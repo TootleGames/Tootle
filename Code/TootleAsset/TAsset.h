@@ -44,7 +44,7 @@ public:
 	void				Import(TPtr<TLFileSys::TFileAsset>& pAssetFile);	//	load asset data out of file - get state with GetLoadingState()
 	SyncBool			Export(TPtr<TLFileSys::TFileAsset>& pAssetFile);	//	save asset to file
 
-	TPtr<TBinaryTree>	GetData(TRefRef DataRef,Bool CreateNew=FALSE);
+	TPtr<TBinaryTree>&	GetData(TRefRef DataRef,Bool CreateNew=FALSE);
 
 	inline Bool			operator==(const TRef& AssetRef) const	{	return GetAssetRef() == AssetRef;	}
 	inline Bool			operator==(const TAsset& Asset) const 	{	return GetAssetRef() == Asset.GetAssetRef();	}

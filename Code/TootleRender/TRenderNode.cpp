@@ -28,8 +28,8 @@ void Debug_PrintCalculating(const TLRender::TRenderNode* pObject,const char* pSp
 #endif
 }
 
-TLRender::TRenderNode::TRenderNode(TRefRef RenderNodeRef) :
-	TLGraph::TGraphNode<TLRender::TRenderNode>	( RenderNodeRef ),
+TLRender::TRenderNode::TRenderNode(TRefRef RenderNodeRef,TRefRef TypeRef) :
+	TLGraph::TGraphNode<TLRender::TRenderNode>	( RenderNodeRef, TypeRef ),
 	m_Colour			( 1.f, 1.f, 1.f, 1.f ),
 	m_Data				( "Data" ),
 	m_LineWidth			( 0.f )
@@ -536,6 +536,38 @@ void TLRender::TRenderNode::OnAdded()
 	{
 		SetBoundsInvalid( TInvalidateFlags( InvalidateLocal, InvalidateParents ) );
 	}
+}
+
+
+//---------------------------------------------------------
+//	generic render node init
+//---------------------------------------------------------
+void TLRender::TRenderNode::Initialise(TPtr<TLMessaging::TMessage>& pMessage)
+{
+	//	read init data
+	if ( pMessage.IsValid() )
+	{
+		TLDebug_Print("Init message data: ");
+		pMessage->Debug_PrintTree();
+
+		if ( pMessage->ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
+			m_Transform.SetTranslateValid();
+
+		if ( pMessage->ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
+			m_Transform.SetScaleValid();
+
+		if ( pMessage->ImportData("MeshRef", m_MeshRef ) == SyncTrue )
+		{
+			//	start loading the asset in case we havent loaded it already
+			TLAsset::LoadAsset( m_MeshRef );
+
+			//	mesh ref changed
+			OnMeshRefChanged();
+		}
+	}
+
+	//	do inherited init
+	TLGraph::TGraphNode<TLRender::TRenderNode>::Initialise( pMessage );
 }
 
 

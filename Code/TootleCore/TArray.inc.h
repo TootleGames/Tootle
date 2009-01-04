@@ -152,7 +152,7 @@ Bool TArray<TYPE>::RemoveAt(u32 Index)
 
 
 template<typename TYPE>
-s32 TArray<TYPE>::Insert(u32 Index, const TYPE& val, Bool ForcePosition)
+s32 TArray<TYPE>::InsertAt(u32 Index, const TYPE& val, Bool ForcePosition)
 {
 	//	need to add it onto the end
 	if ( (s32)Index > LastIndex() )
@@ -187,7 +187,7 @@ s32 TArray<TYPE>::Insert(u32 Index, const TYPE& val, Bool ForcePosition)
 
 
 template<typename TYPE>
-s32 TArray<TYPE>::Insert(u32 Index, const TYPE* val, u32 Length, Bool ForcePosition)
+s32 TArray<TYPE>::InsertAt(u32 Index, const TYPE* val, u32 Length, Bool ForcePosition)
 {
 	//	need to add it onto the end
 	if ( (s32)Index > LastIndex() )
@@ -294,7 +294,7 @@ void TArray<TYPE>::Move(u32 CurrIndex,u32 NewIndex)
 {
 	TYPE Item = ElementAt(CurrIndex);
 	RemoveAt(CurrIndex);
-	Insert(NewIndex,Item);
+	InsertAt(NewIndex,Item);
 
 	//	list may no longer be sorted
 	SetSorted(FALSE);

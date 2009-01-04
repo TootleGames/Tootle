@@ -82,13 +82,13 @@ Bool TSceneNode_Object::CreateRenderNode(TPtr<TLRender::TRenderNode> pParentRend
 }
 
 
-void TSceneNode_Object::DoUpdate(float fTimestep)
+void TSceneNode_Object::Update(float fTimestep)
 {
-	// Update the pbject using phsycis
-	UpdateObjectFromPhysics();
+	//	do base update
+	TSceneNode_Transform::Update(fTimestep);
 
-	// Super class do update
-	TSceneNode_Transform::DoUpdate(fTimestep);
+	// Update the object using phsyics
+	UpdateObjectFromPhysics();
 }
 
 

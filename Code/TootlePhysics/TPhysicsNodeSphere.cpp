@@ -11,8 +11,8 @@ namespace TLPhysics
 #define MAX_ROLL		1.f		//	cap roll on quaternion
 
 
-TLPhysics::TPhysicsNodeSphere::TPhysicsNodeSphere(TRefRef NodeRef) :
-	TPhysicsNode		( NodeRef ),
+TLPhysics::TPhysicsNodeSphere::TPhysicsNodeSphere(TRefRef NodeRef,TRefRef TypeRef) :
+	TPhysicsNode		( NodeRef, TypeRef ),
 	m_LastNormalValid	( FALSE )
 {
 }

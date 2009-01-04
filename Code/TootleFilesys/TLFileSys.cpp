@@ -11,6 +11,7 @@
 #include "TFileAssetMarkup.h"
 #include "TFileXml.h"
 #include "TFileWAV.h"
+#include "TFileScheme.h"
 
 #if defined(TL_TARGET_IPOD)
 	#include "IPod/IPodLocalFileSys.h"
@@ -270,6 +271,13 @@ TLFileSys::TFile* TLFileSys::TFileSys::CreateObject(TRefRef InstanceRef,TRefRef 
 	if ( TypeRef == TRef("wav") )
 	{
 		pFile = new TLFileSys::TFileWAV( InstanceRef, TypeRef );
+		return pFile;
+	}
+	
+	//	scheme file
+	if ( TypeRef == TRef("scheme") )
+	{
+		pFile = new TLFileSys::TFileScheme( InstanceRef, TypeRef );
 		return pFile;
 	}
 	

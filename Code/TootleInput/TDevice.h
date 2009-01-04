@@ -14,7 +14,7 @@ namespace TLInput
 
 	namespace DeviceFlags
 	{
-		const u32 Attached = 1<<0;
+		const u32 Attached = 0;		//	gr: TFlags work off indexes, not bits. bits are internal to the TFlags class
 	};
 }
 
@@ -29,8 +29,9 @@ class TLInput::TInputDevice : public TLMessaging::TRelay
 	friend class TLInput::TInputManager;
 public:
 
-	TInputDevice(TRefRef ObjID) :
-	  		m_ID(ObjID)
+	TInputDevice(TRefRef DeviceRef,TRefRef DeviceTypeRef) :
+	  	m_DeviceRef		( DeviceRef ),
+		m_DeviceType	( DeviceTypeRef )
 	{
 		m_pDeviceDataBuffer = new TBinaryTree("Buffer");
 	}
@@ -40,19 +41,19 @@ public:
 		m_pDeviceDataBuffer = NULL;
 	}
 
-	const TRef&			GetDeviceID()			const { return m_ID; }
-	const TRef&			GetHardwareDeviceID()	const { return m_DeviceID; }
+	TRefRef				GetDeviceRef() const			{	return m_DeviceRef;	}
+	TRefRef				GetHardwareDeviceID() const		{	return m_HardwareDeviceRef;	}
+	TRefRef				GetDeviceType() const			{	return m_DeviceType;	}
 
-	inline Bool			operator==(const TRef& InputRef) const {	return GetDeviceID() == InputRef;	}
-	inline Bool			operator==(const TInputDevice& InputDevice) const 	{	return GetDeviceID() == InputDevice.GetDeviceID();	}
+	inline Bool			operator==(const TRef& InputRef) const				{	return GetDeviceRef() == InputRef;	}
+	inline Bool			operator==(const TInputDevice& InputDevice) const 	{	return GetDeviceRef() == InputDevice.GetDeviceRef();	}
 
-	inline Bool			AssignToDevice(TRef refDeviceID)
+	inline Bool			AssignToHardwareDevice(TRefRef HardwareDeviceRef)
 	{
-		if(m_DeviceID.IsValid())
+		if ( GetHardwareDeviceID().IsValid() )
 			return FALSE;
 
-		m_DeviceID = refDeviceID;
-
+		m_HardwareDeviceRef = HardwareDeviceRef;
 		return TRUE;
 	}
 
@@ -79,7 +80,7 @@ public:
 	TPtr<TLInput::TInputEffect>		AttachEffect(TRef refEffectID);
 
 	// Data buffer access - sensor information from hardware
-	TPtr<TBinaryTree>&				GetDataBuffer()											{ return m_pDeviceDataBuffer; }
+	TPtr<TBinaryTree>&				GetDataBuffer()				{ return m_pDeviceDataBuffer; }
 
 	// [24 11 08] DB - On the iPod we may process multiple 'events' in a frame so need to be able to manually
 	// call the update form the ipod code.  This will need changing at some point so that all platforms work the 
@@ -92,7 +93,6 @@ public:
 #endif
 	
 private:
-
 	void						Update();
 
 	void						ProcessSensors(TPtr<TBinaryTree>& dataBuffer);
@@ -101,14 +101,15 @@ private:
 	void						RemoveAllEffects()				{}
 
 private:
-	TRef										m_ID;					// ID of the generic input device object
-	TRef										m_DeviceID;				// Reference to the physical device
+	TRef						m_DeviceRef;			// external input device ref - ID of the generic input device object
+	TRef						m_HardwareDeviceRef;	// internal hardware ref - Reference to the physical device
+	TRef						m_DeviceType;			//	device type
 
-	TPtr<TBinaryTree>							m_pDeviceDataBuffer;	// Buffer for all input from the hardware device
-	TPtrArray<TInputSensor>						m_Sensors;				// List of sensors that the device has access to
-	TPtrArray<TInputEffect>						m_Effects;				// List of (output) effects such as force, feedback (rumble) and audio
+	TPtr<TBinaryTree>			m_pDeviceDataBuffer;	// Buffer for all input from the hardware device
+	TPtrArray<TInputSensor>		m_Sensors;				// List of sensors that the device has access to
+	TPtrArray<TInputEffect>		m_Effects;				// List of (output) effects such as force, feedback (rumble) and audio
 
-	TFlags<u32>									m_Flags;				// Device flags
+	TFlags<u32>					m_Flags;				// Device flags
 };
 
 #include "TAction.h"

@@ -17,13 +17,17 @@ namespace TLRender
 
 
 	class TRendergraph;
+	class TRenderNodeFactory;
 
 	extern TPtr<TRendergraph> g_pRendergraph;
 };
 
-/*
-	TRendergraph class
-*/
+
+
+
+//----------------------------------------------------------
+//	TRendergraph class
+//----------------------------------------------------------
 class TLRender::TRendergraph : public TLGraph::TGraph<TLRender::TRenderNode>
 {
 public:
@@ -37,3 +41,16 @@ protected:
 	virtual SyncBool Update(float /*fTimeStep*/);
 	virtual SyncBool Shutdown();
 };
+
+
+
+
+//----------------------------------------------------------
+//	Generic render node factory
+//----------------------------------------------------------
+class TLRender::TRenderNodeFactory : public TClassFactory<TRenderNode,FALSE>
+{
+public:
+	virtual TRenderNode*	CreateObject(TRefRef InstanceRef,TRefRef TypeRef);
+};
+

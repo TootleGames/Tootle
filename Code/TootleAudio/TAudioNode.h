@@ -26,7 +26,7 @@ class TLAudio::TAudioNode : public TLGraph::TGraphNode<TAudioNode>
 {
 	friend class TLAudio::TAudiograph;
 public:
-	TAudioNode(TRefRef NodeRef);
+	TAudioNode(TRefRef NodeRef,TRefRef TypeRef);
 
 	TRefRef				GetSourceRef()		const { return m_SourceRef; }
 public:

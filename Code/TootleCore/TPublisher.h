@@ -38,18 +38,19 @@ public:
 		RemoveAllSubscribers();
 	}
 
-	Bool	Subscribe(TSubscriber* pSubscriber);
-	Bool	Unsubscribe(TSubscriber* pSubscriber);
+	Bool				Subscribe(TSubscriber* pSubscriber);
+	Bool				Unsubscribe(TSubscriber* pSubscriber);
 
 	// TPtr wrapper routines
-	Bool	Subscribe(TPtr<TSubscriber>& pSubscriber);
-	Bool	Unsubscribe(TPtr<TSubscriber>& pSubscriber);
+	Bool				Subscribe(TPtr<TSubscriber>& pSubscriber);
+	Bool				Unsubscribe(TPtr<TSubscriber>& pSubscriber);
 
+	FORCEINLINE Bool	HasSubscribers() const				{	return m_Subscribers.GetSize() != 0;	}
 
 	inline void	PublishMessage(TPtr<TLMessaging::TMessage>& pMessage)
 	{
 		//	Make sure there are subscribers to send to
-		if ( m_Subscribers.GetSize() )
+		if ( HasSubscribers() )
 			DoPublishMessage(pMessage);
 	}
 

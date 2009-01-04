@@ -125,7 +125,7 @@ void TLAsset::TAsset::ExportUnknownData(TBinaryTree& Data)
 
 		TPtr<TBinaryTree> pNewChild = Data.AddChild( pChild->GetDataRef() );
 
-		pNewChild->CopyTree( pChild );
+		pNewChild->CopyDataTree( pChild );
 	}
 
 }
@@ -134,16 +134,13 @@ void TLAsset::TAsset::ExportUnknownData(TBinaryTree& Data)
 //----------------------------------------------------
 //	fetch data of a specific ref
 //----------------------------------------------------
-TPtr<TBinaryTree> TLAsset::TAsset::GetData(TRefRef DataRef,Bool CreateNew)
+TPtr<TBinaryTree>& TLAsset::TAsset::GetData(TRefRef DataRef,Bool CreateNew)
 {
-	TPtr<TBinaryTree> pData = m_Data.FindPtr( DataRef );
+	TPtr<TBinaryTree>& pData = m_Data.FindPtr( DataRef );
 	if ( pData || !CreateNew )
 		return pData;
 
 	//	doesn't exist and we need to create it
-	pData = new TBinaryTree( DataRef );
-	if ( m_Data.Add( pData ) == -1 )
-		return NULL;
-
-	return pData;
+	TPtr<TBinaryTree> pNewData = new TBinaryTree( DataRef );
+	return m_Data.AddPtr( pNewData );
 }

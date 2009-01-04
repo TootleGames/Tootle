@@ -11,10 +11,13 @@
 #define TLGRAPH_NODEINDEX
 
 
+#include "TGraphBase.h"
 #include "TLMessaging.h"
 #include "TRelay.h"
 #include "TManager.h"
 #include <TootleCore/TEventChannel.h>
+#include <TootleCore/TClassFactory.h>
+#include <TootleAsset/TScheme.h>
 
 
 namespace TLGraph
@@ -49,12 +52,11 @@ namespace TLGraph
 };
 
 
-
 //--------------------------------------------------------------------
 //	TGraph class - templated graph management class
 //--------------------------------------------------------------------
 template <class T>
-class TLGraph::TGraph : public TManager, public TLMessaging::TMessageQueue
+class TLGraph::TGraph : public TManager, public TLMessaging::TMessageQueue, public TLGraph::TGraphBase
 {
 	friend class TGraphNode<T>;
 public:
@@ -72,20 +74,27 @@ public:
 	TPtrRef						FindNodeMatch(const MATCHTYPE& Value);	//	find a TPtr in the graph that matches the specified value (will use == operator of node type to match)
 
 #ifdef TLGRAPH_NODEINDEX
-	TPtrRef						FindNode(const TRef& NodeRef)			{	return NodeRef.IsValid() ? m_NodeIndex.FindPtr( NodeRef ) : TPtrNull;	}
+	TPtrRef						FindNode(const TRef& NodeRef);
 #else
 	TPtrRef						FindNode(const TRef& NodeRef)			{	return NodeRef.IsValid() ? FindNodeMatch( NodeRef ) : TPtrNull;	}
 #endif
 	TRef						GetFreeNodeRef(TRefRef BaseRef=TRef());	//	find an unused ref for a node - returns the ref
 	TRefRef						GetFreeNodeRef(TRef& Ref);				//	find an unused ref for a node, modifies the ref provided
+	virtual Bool				SendMessageToNode(TRefRef NodeRef,TPtr<TLMessaging::TMessage>& pMessage);	//	send message to node
 
 	// Graph change requests
+	virtual TRef				CreateNode(TRefRef NodeRef,TRefRef TypeRef,TRefRef ParentRef,TPtr<TLMessaging::TMessage> pInitMessage=NULL);		//	create node and add to the graph. returns ref of new node
+	TPtr<T>						CreateNode(TRefRef NodeRef,TRefRef TypeRef,TPtr<T> pParent=NULL,TPtr<TLMessaging::TMessage> pInitMessage=NULL);	//	create node and add to the graph. returns ref of new node
 	Bool						AddNode(TPtr<T> pNode, TPtr<T> pParent=NULL);	//	returns the ref of the object. You can't always have the ref we constructed with :)
-	FORCEINLINE Bool			AddNode(TPtr<T> pNode,TRefRef ParentRef)			{	return AddNode( pNode, FindNode( ParentRef ) );	}
-	FORCEINLINE Bool			RemoveNode(TRefRef NodeRef)				{	return RemoveNode( FindNode( NodeRef ) );	}
+	FORCEINLINE Bool			AddNode(TPtr<T> pNode,TRefRef ParentRef)		{	return AddNode( pNode, FindNode( ParentRef ) );	}
+	virtual Bool				RemoveNode(TRefRef NodeRef)				{	return RemoveNode( FindNode( NodeRef ) );	}
 	FORCEINLINE Bool			RemoveNode(const T* pNode)				{	return RemoveNode( FindNode( pNode->GetNodeRef() ) );	}
 	Bool						RemoveNode(TPtr<T> pNode);				//	Requests a node to be removed from the graph.  The node will be removed at a 'safe' time so is not immediate
 	Bool						RemoveChildren(TPtr<T> pNode);			//	remove pNode's children (but not pNode)
+
+	//	factory access
+	Bool						AddFactory(TPtr<TClassFactory<T,FALSE>>& pFactory)	{	return (m_NodeFactories.Add(pFactory) != -1);	}
+
 
 protected:
 	virtual SyncBool			Initialise();
@@ -146,16 +155,18 @@ private:
 
 protected:
 #ifdef TLGRAPH_REFERENCE_RETURNS
-	static TPtr<T>	g_pNullNode;			//	to return references for everything, we return this always-null pointer for NULL results... we have to return SOMETHING
+	static TPtr<T>						g_pNullNode;			//	to return references for everything, we return this always-null pointer for NULL results... we have to return SOMETHING
 #endif
 
 private:
-	TPtr<T>							m_pRootNode;			// The root of the graph
-	TPtrArray<TGraphUpdateRequest>	m_UpdateQueue;			// List of objects to add/remove from the graph
+	TPtr<T>								m_pRootNode;			// The root of the graph
+	TPtrArray<TGraphUpdateRequest>		m_UpdateQueue;			// List of objects to add/remove from the graph
 
 #ifdef TLGRAPH_NODEINDEX
-	TPtrArray<T>					m_NodeIndex;		//	list of all the nodes, used for fast node finding
+	TPtrArray<T>						m_NodeIndex;			//	list of all the nodes, used for fast node finding
 #endif
+
+	TPtrArray<TClassFactory<T,FALSE>>	m_NodeFactories;		//	array of graph node factories. if none, T is created
 };
 
 
@@ -176,17 +187,20 @@ class TLGraph::TGraphNode : public TLMessaging::TRelay, public TLMessaging::TMes
 {
 	friend class TGraph<T>;
 public:
-	TGraphNode(TRefRef NodeRef=TRef()) : m_NodeRef ( NodeRef )	{	m_NodeRef.GetString( m_Debug_NodeRefString );	}
+	TGraphNode(TRefRef NodeRef,TRefRef NodeTypeRef) : m_NodeRef ( NodeRef ), m_NodeTypeRef ( NodeTypeRef )	{	m_NodeRef.GetString( m_Debug_NodeRefString );	m_NodeTypeRef.GetString( m_Debug_NodeTypeRefString );	}
 	virtual ~TGraphNode()
 	{
 		// Ensure this node isn't in the linked list any longer
 		//Remove(this);
 	}
 
-	inline TRefRef			GetNodeRef() const							{	return m_NodeRef; }
+	inline TRefRef			GetNodeRef() const						{	return m_NodeRef; }
+	inline TRefRef			GetNodeTypeRef() const					{	return m_NodeTypeRef; }
+	Bool					IsKindOf(TRefRef TypeRef)				{	return (GetNodeTypeRef() == TypeRef) ? TRUE : IsParentKindOf( TypeRef );	}
+	FORCEINLINE Bool		IsParentKindOf(TRefRef TypeRef) const	{	return GetParent() ? GetParent()->IsKindOf(TypeRef) : FALSE;	}
 
-	virtual void			Initialise()					{}
-	virtual void 			Update(float Timestep)			{}			// Main node update called once per frame
+	virtual void			Initialise(TPtr<TLMessaging::TMessage>& pMessage)	{}
+	virtual void 			Update(float Timestep);					// Main node update called once per frame
 	virtual void			Shutdown()						{}			// Shutdown routine	- called before being removed form the graph
 
 	// Parent manipulation
@@ -273,7 +287,8 @@ private:
 #endif
 
 private:
-	TRef				m_NodeRef;			// Node unique ID
+	TRef				m_NodeRef;			//	Node unique ID
+	TRef				m_NodeTypeRef;		//	node's type
 
 	TPtr<T>				m_pParent;			// Parent item
 
@@ -289,10 +304,20 @@ private:
 #endif
 
 	TBufferString<6>	m_Debug_NodeRefString;
+	TBufferString<6>	m_Debug_NodeTypeRefString;
 };
 
 
 
+//-------------------------------------------------------
+// Main node update called once per frame
+//-------------------------------------------------------
+template <class T>
+void TLGraph::TGraphNode<T>::Update(float Timestep)			
+{
+	// Process all queued messages first
+	ProcessMessageQueue();
+}			
 
 
 //-------------------------------------------------------
@@ -777,16 +802,28 @@ Bool TLGraph::TGraphNode<T>::CheckIsThis(TPtr<T>& pThis)
 template<class T>
 void TLGraph::TGraphNode<T>::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 {
-	TRefRef refMessageID = pMessage->GetMessageRef();
+	TRefRef MessageRef = pMessage->GetMessageRef();
 
-	if(refMessageID == TLCore::InitialiseRef)
+	if(MessageRef == TLCore::InitialiseRef)
 	{
-		Initialise();
+		Initialise(pMessage);
 	}
-	else if(refMessageID == TLCore::ShutdownRef)
+	else if(MessageRef == TLCore::ShutdownRef)
 	{
 		Shutdown();
 	}
+	else 
+	{
+		TTempString DebugString("Unhandled message ");
+		MessageRef.GetString( DebugString );
+		DebugString.Append(", node: ");
+		GetNodeRef().GetString( DebugString );
+		DebugString.Append(" (");
+		GetNodeTypeRef().GetString( DebugString );
+		DebugString.Append(")");
+		TLDebug_Print( DebugString );
+	}
+		
 
 	// Super class process message
 	TLMessaging::TRelay::ProcessMessage(pMessage);
@@ -800,7 +837,7 @@ template <class T>
 SyncBool TLGraph::TGraph<T>::Initialise()
 {
 	// Create the root node
-	m_pRootNode = new T("Root");
+	m_pRootNode = new T( "Root", TRef() );
 
 	return SyncTrue;
 }
@@ -842,6 +879,30 @@ SyncBool TLGraph::TGraph<T>::Shutdown()
 }
 
 
+
+//-------------------------------------------------------
+//	find node in the graph by ref
+//-------------------------------------------------------
+template <class T>
+TPtrRef TLGraph::TGraph<T>::FindNode(const TRef& NodeRef)			
+{	
+	if ( !NodeRef.IsValid() )
+		return TPtrNull;
+	
+	//	search the graph list
+	TPtrRef pIndexNode = m_NodeIndex.FindPtr( NodeRef );
+	if ( pIndexNode )
+		return pIndexNode;
+
+	//	look in the update queue for new nodes
+	TPtr<TGraphUpdateRequest>& pMatchingUpdate = m_UpdateQueue.FindPtr( NodeRef );
+	if ( pMatchingUpdate )
+		return pMatchingUpdate->GetNode();
+
+	return TPtrNull;
+}
+
+
 //---------------------------------------------------
 //	find an unused ref for a node - returns the ref
 //---------------------------------------------------
@@ -877,9 +938,80 @@ TRefRef TLGraph::TGraph<T>::GetFreeNodeRef(TRef& Ref)
 	return Ref;
 }
 
-/*
-	Requests a node to be added to the graph.  The node will be added at a 'safe' time so is not immediate
-*/
+	
+//---------------------------------------------------------
+//	create node and add to the graph. returns ref of new node
+//---------------------------------------------------------
+template <class T>
+TRef TLGraph::TGraph<T>::CreateNode(TRefRef NodeRef,TRefRef TypeRef,TRefRef ParentRef,TPtr<TLMessaging::TMessage> pInitMessage)
+{
+	TPtr<T> pParent = FindNode( ParentRef );
+	TPtr<T> pNode = CreateNode( NodeRef, TypeRef, pParent, pInitMessage );
+
+	if ( !pNode )
+		return TRef();
+
+	return pNode->GetNodeRef();
+}
+
+
+//---------------------------------------------------------
+//	create node and add to the graph
+//---------------------------------------------------------
+template <class T>
+TPtr<T> TLGraph::TGraph<T>::CreateNode(TRefRef NodeRef,TRefRef TypeRef,TPtr<T> pParent,TPtr<TLMessaging::TMessage> pInitMessage)
+{
+	TPtr<T> pNewNode;
+
+	//	Go through the factory list and try to create the specified node type
+	for( u32 f=0;	f<m_NodeFactories.GetSize();	f++)
+	{
+		//	have factory try to create new node
+		m_NodeFactories[f]->CreateInstance( pNewNode, NodeRef, TypeRef );
+
+		// If a node was created then return that node
+		if ( pNewNode )
+			break;
+	}
+
+	//	wasn't created by factory, create default node
+	if ( !pNewNode )
+	{
+		pNewNode = new T( NodeRef, TypeRef );
+	}
+
+	//	add to graph
+	if ( !AddNode( pNewNode, pParent ) )
+	{
+		pNewNode = NULL;
+		return NULL;
+	}
+
+	//	make up init message if none provided
+	if ( !pInitMessage )
+	{
+		pInitMessage = new TLMessaging::TMessage( TLCore::InitialiseRef );
+	}
+	else if ( pInitMessage->GetMessageRef() != TLCore::InitialiseRef )
+	{
+		TTempString DebugString("Init message for node creation has wrong MessageRef (");
+		pInitMessage->GetMessageRef().GetString( DebugString );
+		DebugString.Append("), should be TLCore::InitialiseRef. Retry to correct the ref");
+		if ( TLDebug_Break( DebugString ) )
+			pInitMessage->SetMessageRef( TLCore::InitialiseRef );
+	}
+
+	//	send init message
+	pNewNode->QueueMessage( pInitMessage );
+
+	//	return ref of new node
+	return pNewNode;
+}
+
+
+//---------------------------------------------------------
+//	Requests a node to be added to the graph.  The node will be added at a 'safe' time so is not immediate
+//---------------------------------------------------------
 template <class T>
 Bool TLGraph::TGraph<T>::AddNode(TPtr<T> pNode, TPtr<T> pParent)	
 {
@@ -951,6 +1083,8 @@ Bool TLGraph::TGraph<T>::AddNode(TPtr<T> pNode, TPtr<T> pParent)
 template <class T>
 Bool TLGraph::TGraph<T>::RemoveNode(TPtr<T> pNode)
 {
+	if ( !pNode )
+		return FALSE;
 
 	// Check to make sure we aren;t trying to remove the root node - only done at shutdown
 	if(pNode == m_pRootNode)
@@ -1263,5 +1397,23 @@ void TLGraph::TGraph<T>::OnNodeAdded(TPtr<T>& pNode)
 	}
 }
 
+
+//---------------------------------------------------------
+//	send message to node
+//---------------------------------------------------------
+template<class T>
+Bool TLGraph::TGraph<T>::SendMessageToNode(TRefRef NodeRef,TPtr<TLMessaging::TMessage>& pMessage)
+{
+	//	get node to send message to
+	TPtrRef pNode = FindNode( NodeRef );
+	if ( !pNode )
+		return FALSE;
+
+	//	queue message
+	if ( !pNode->QueueMessage( pMessage ) )
+		return FALSE;
+
+	return TRUE;
+}
 
 	

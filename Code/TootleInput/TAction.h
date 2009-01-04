@@ -40,6 +40,8 @@ public:
 	Bool				HasParentAction(TRef& refParentActionID);
 	void				AddParentAction(TRef& refParentActionID, Bool bCondition = TRUE);
 
+	FORCEINLINE Bool	operator==(TRefRef ActionRef) const			{	return GetActionID() == ActionRef;	}
+
 protected:
 
 	virtual void	ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);

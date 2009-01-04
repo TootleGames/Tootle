@@ -41,6 +41,8 @@ namespace TLMaths
 	template<typename TYPE>
 	FORCEINLINE TYPE			Interp(const TYPE& From,const TYPE& To,float Interp);	//	get a value between two values
 	template<typename TYPE>
+	FORCEINLINE void			InterpThis(TYPE& From,const TYPE& To,float Interp);		//	get a value between two values
+	template<typename TYPE>
 	FORCEINLINE void			Limit(TYPE& Value,const TYPE& Min,const TYPE& Max);		//	limit to Min and Max
 	template<typename TYPE>
 	FORCEINLINE void			Wrap(TYPE& Value,const TYPE& Min,const TYPE& Max);		//	wrap a number around. 361,0,360 becomes 1
@@ -246,6 +248,7 @@ public:
 	void					LookAt(const float3& Dir,const float3& WorldUp=float3(0,1,0));
 	void					RotateVector(float3& Vector) const;
 	void					RotateVector(float2& Vector) const;
+	void					UnRotateVector(float3& Vector) const;
 
 	static float4			QuatMult(const float4& First,const float4& Second);	//	xyzw multiply for quaternions
 
@@ -285,6 +288,11 @@ public:
 	void				SetTranslateInvalid()	{	m_HasTranslate = FALSE;	m_Translate.Set( 0.f, 0.f, 0.f );	}
 	void				SetRotationInvalid()	{	m_HasRotation = FALSE;	m_Rotation.SetIdentity();	}
 
+	void				SetMatrixValid()		{	m_HasMatrix = TRUE;		}
+	void				SetScaleValid()			{	m_HasScale = TRUE;		}
+	void				SetTranslateValid()		{	m_HasTranslate = TRUE;	}
+	void				SetRotationValid()		{	m_HasRotation = TRUE;	}
+
 	Bool				HasAnyTransform() const		{	return m_HasMatrix || m_HasScale || m_HasTranslate || m_HasRotation;	}	//	bitwise OR is faster? wont really make a difference :)
 	Bool				HasMatrix() const			{	return m_HasMatrix;	}
 	Bool				HasScale() const			{	return m_HasScale;	}
@@ -297,12 +305,6 @@ public:
 	void				UntransformVector(float3& Vector) const;	//	untransform vector
 	void				UntransformVector(float2& Vector) const;	//	untransform vector
 
-protected:
-	void				SetMatrixValid()		{	m_HasMatrix = TRUE;		}
-	void				SetScaleValid()			{	m_HasScale = TRUE;		}
-	void				SetTranslateValid()		{	m_HasTranslate = TRUE;	}
-	void				SetRotationValid()		{	m_HasRotation = TRUE;	}
-	
 protected:
 	TMatrix				m_Matrix;			//	translation and rotation
 	Bool				m_HasMatrix;
@@ -354,10 +356,21 @@ private:
 template<typename TYPE>
 FORCEINLINE TYPE TLMaths::Interp(const TYPE& From,const TYPE& To,float Interp)
 {
+	TYPE NewFrom = From;
+	InterpThis( NewFrom, To, Interp );
+	return NewFrom;
+}
+
+
+//-----------------------------------------------
+//	
+//-----------------------------------------------
+template<typename TYPE>
+FORCEINLINE void TLMaths::InterpThis(TYPE& From,const TYPE& To,float Interp)
+{
 	TYPE Diff( To - From );
 	Diff *= Interp;
-	Diff += From;
-	return Diff;
+	From += Diff;
 }
 
 

@@ -424,6 +424,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TFileScheme.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TFileScheme.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TFileSimpleVector.cpp"
 			>
 		</File>

@@ -15,9 +15,9 @@
 class TBinary
 {
 public:
-	TBinary();
-	TBinary(const u8* pData,u32 DataLength);
-	TBinary(const TArray<u8>& Data);
+	TBinary(TRefRef DataTypeHint=TRef());
+	TBinary(const u8* pData,u32 DataLength,TRefRef DataTypeHint=TRef());
+	TBinary(const TArray<u8>& Data,TRefRef DataTypeHint=TRef());
 
 	template<typename TYPE> FORCEINLINE const TYPE*	ReadNoCopy()						{	if ( !CheckDataAvailible( sizeof(TYPE) ) )	return NULL;	const TYPE* pData = (const TYPE*)GetData( m_ReadPos );	MoveReadPos( sizeof(TYPE) );	return pData;	}
 	template<typename TYPE> FORCEINLINE Bool		Read(TYPE& Var)						{	return ReadData( (u8*)&Var, sizeof(TYPE) );		}
@@ -43,11 +43,13 @@ public:
 	const u8*						GetData(u32 Offset=0) const			{	return &m_Data[Offset];	}
 	TArray<u8>&						GetDataArray()						{	return m_Data;	}
 	const TArray<u8>&				GetDataArray() const				{	return m_Data;	}
+	TRefRef							GetDataTypeHint() const				{	return m_DataTypeHint;	}
+	void							SetDataTypeHint(TRefRef DataTypeHint)	{	m_DataTypeHint = DataTypeHint;	}
 
 	void							Empty(Bool Dealloc=FALSE)			{	m_Data.Empty(Dealloc);	m_ReadPos = -1;	}
 	void							Compact()							{	m_Data.Compact();	}
 
-	void							Copy(const TBinary& BinaryData)		{	GetDataArray().Copy( BinaryData.GetDataArray() );	}
+	void							Copy(const TBinary& BinaryData)		{	GetDataArray().Copy( BinaryData.GetDataArray() );	m_DataTypeHint = BinaryData.GetDataTypeHint();	}
 	u32								GetChecksum() const;				//	get the checksum for the data
 	SyncBool						Compress();							//	compress this data - data size should shrink
 	SyncBool						Decompress();						//	decompress this data. data size should increase
@@ -57,7 +59,7 @@ protected:
 	void							MoveReadPos(u32 MoveAmount)							{	m_ReadPos += MoveAmount;	}	//	move read pos along
 	Bool							ReadData(u8* pData,u32 Length,Bool CutData=FALSE);	//	read data into address - CutData cuts the read data out of the array
 	void							WriteData(const u8* pData,u32 Length)			{	m_Data.Add( pData, Length );	}	//	add data to array
-	void							WriteDataToStart(const u8* pData,u32 Length)	{	m_Data.Insert( 0, pData, Length );	}	//	add data to array
+	void							WriteDataToStart(const u8* pData,u32 Length)	{	m_Data.InsertAt( 0, pData, Length );	}	//	add data to array
 
 private:
 	void							Debug_ReadWritePointerError();		//	throw a break if we try to read or write a pointer
@@ -65,6 +67,7 @@ private:
 protected:
 	s32								m_ReadPos;			//	current read position
 	TArray<u8>						m_Data;				//	all the file binary data
+	TRef							m_DataTypeHint;		//	this tells us what kind of data is stored. this is NOT required, but merely a hint for XML output; so if the data is declared as a float[s] then it'll be turned into a readable float in XML
 };
 
 

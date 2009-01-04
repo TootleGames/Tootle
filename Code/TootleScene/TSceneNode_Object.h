@@ -52,7 +52,7 @@ protected:
 	virtual Bool					CreateRenderNode(TPtr<TLRender::TRenderNode> pParentRenderNode = NULL);
 	virtual void					OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode)	{}
 
-	virtual void 					DoUpdate(float fTimestep);
+	virtual void 					Update(float fTimestep);
 	virtual void					UpdateObjectFromPhysics();				//	update game object to match physics node
 
 	// Transformation

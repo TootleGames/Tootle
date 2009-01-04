@@ -2,8 +2,8 @@
 
 
 
-TLAudio::TAudioNode::TAudioNode(TRefRef NodeRef) :
-	TLGraph::TGraphNode<TAudioNode>		( NodeRef )
+TLAudio::TAudioNode::TAudioNode(TRefRef NodeRef,TRefRef TypeRef) :
+	TLGraph::TGraphNode<TAudioNode>		( NodeRef, TypeRef )
 {
 }
 

@@ -38,6 +38,7 @@ public:
 	const float3&	GetMin() const		{	return m_Min;	}
 	const float3&	GetMax() const		{	return m_Max;	}
 	float3			GetCenter() const;	//	get the center of the box
+	float3			GetSize() const		{	return (m_Max - m_Min);	}
 	void			GetBoxCorners(TArray<float3>& CornerPositions) const;	//	get the 8 corners of the box
 	
 	void			Set(const float3& Min,const float3& Max)	{	m_Min = Min;	m_Max = Max;	m_IsValid = TRUE;	}

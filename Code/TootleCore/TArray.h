@@ -110,9 +110,9 @@ public:
 	virtual Bool		RemoveAt(u32 Index);					//	remove an element from the array at the specified index
 	void				RemoveAt(u32 Index,u32 Amount);			//	remove a range of elements from the array
 	Bool				RemoveLast()								{	return ( GetSize() ? RemoveAt( LastIndex() ) : FALSE );	};
-	virtual s32			Insert(u32 Index, const TYPE& val,Bool ForcePosition=FALSE);
-	virtual s32			Insert(u32 Index, const TYPE* val, u32 Length, Bool ForcePosition=FALSE);
-	virtual s32			Insert(u32 Index, const TArray<TYPE>& array, Bool ForcePosition=FALSE)		{	return Insert( Index, array.GetData(), array.GetSize(), ForcePosition );	};
+	virtual s32			InsertAt(u32 Index, const TYPE& val,Bool ForcePosition=FALSE);
+	virtual s32			InsertAt(u32 Index, const TYPE* val, u32 Length, Bool ForcePosition=FALSE);
+	virtual s32			InsertAt(u32 Index, const TArray<TYPE>& array, Bool ForcePosition=FALSE)		{	return InsertAt( Index, array.GetData(), array.GetSize(), ForcePosition );	};
 	
 	FORCEINLINE void	Sort();									//	quick sort the array - this func bails out early if it doesn't need sorting
 	FORCEINLINE Bool	IsSorted() const						{	return m_Sorted;	};	//	is the list sorted?

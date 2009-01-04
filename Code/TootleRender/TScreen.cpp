@@ -19,11 +19,7 @@ TLRender::TScreen::TScreen(TRefRef Ref) :
 	m_Ref			( Ref ),
 	m_Size			( g_MaxSize,g_MaxSize,g_MaxSize,g_MaxSize )
 {
-	//	gr: default to double iphone resolution for now
-	m_Size.Width() = (s16)( 320.f * 1.5f );
-	m_Size.Height() = (s16)( 480.f * 1.5f );
-
-	//	gr: disabled for now, core manager limits frame rate...
+	//	gr: disabled for now, core manager limits frame rate instead of using hardware sync
 	//m_Flags.Set( Flag_SyncFrameRate );
 }
 

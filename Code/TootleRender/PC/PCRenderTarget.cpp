@@ -184,7 +184,7 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(const Type4<s32>& Viewport
 	{
 		if ( !m_pRenderNodeClear )
 		{
-			m_pRenderNodeClear = new TRenderNodeClear("Clear");
+			m_pRenderNodeClear = new TRenderNodeClear("Clear","Clear");
 		}
 		m_pRenderNodeClear->SetSize( OrthoSize, -1.f );
 		m_pRenderNodeClear->SetColour( m_ClearColour );

@@ -35,29 +35,30 @@ TPtr<TBinaryTree>& TBinaryTree::AddChild(TRefRef ChildRef)
 //----------------------------------------------------------------
 //	recursivly copy the tree from Data into this (clone)
 //----------------------------------------------------------------
-Bool TBinaryTree::CopyTree(TPtr<TBinaryTree>& pData)
+Bool TBinaryTree::CopyDataTree(const TBinaryTree& Data,Bool OverwriteDataRef)
 {
+	//	copy ref
+	if ( OverwriteDataRef )
+		SetDataRef( Data.GetDataRef() );
+
 	//	copy this data
-	SetDataRef( pData->GetDataRef() );
-	GetData().Copy( pData->GetData() );
+	GetData().Copy( Data.GetData() );
 
 	//	remove existing children
 	m_Children.Empty();
 
 	//	copy children
-	for ( u32 c=0;	c<pData->GetChildren().GetSize();	c++ )
+	for ( u32 c=0;	c<Data.GetChildren().GetSize();	c++ )
 	{
-		TPtr<TBinaryTree>& pChild = pData->GetChildren().ElementAt(c);
+		const TPtr<TBinaryTree>& pDataChild = Data.GetChildren().ElementAtConst(c);
 
-		//	add a child
-		TPtr<TBinaryTree>* ppNewChild = m_Children.AddNew();
-		if ( !ppNewChild )
+		//	create a new binary tree to copy into
+		TPtr<TBinaryTree> pNewChild = new TBinaryTree( TRef() );
+		if ( !pNewChild->CopyDataTree( pDataChild, TRUE ) )
 			return FALSE;
-		TPtr<TBinaryTree>& pNewChild = *ppNewChild;
 
-		//	copy child
-		if ( !pNewChild->CopyTree( pChild ) )
-			return FALSE;
+		//	add to children
+		m_Children.Add( pNewChild );
 	}
 
 	return TRUE;

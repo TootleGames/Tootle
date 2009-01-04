@@ -6,7 +6,8 @@ using namespace TLMessaging;
 
 Bool TPublisher::Subscribe(TPtr<TSubscriber>& pSubscriber)
 {
-	return Subscribe(pSubscriber.GetObject());
+	TSubscriber* pSubscriberObj = pSubscriber.GetObject();
+	return pSubscriberObj ? Subscribe( pSubscriberObj ) : FALSE;
 }
 
 Bool	TPublisher::Subscribe(TSubscriber* pSubscriber)
@@ -22,7 +23,8 @@ Bool	TPublisher::Subscribe(TSubscriber* pSubscriber)
 
 Bool TPublisher::Unsubscribe(TPtr<TSubscriber>& pSubscriber)
 {
-	return Unsubscribe(pSubscriber.GetObject());
+	TSubscriber* pSubscriberObj = pSubscriber.GetObject();
+	return pSubscriberObj ? Unsubscribe( pSubscriberObj ) : FALSE;
 }
 
 Bool	TPublisher::Unsubscribe(TSubscriber* pSubscriber)	

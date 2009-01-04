@@ -36,11 +36,11 @@ void TSceneNode_Transform::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 
 void TSceneNode_Transform::Translate(float3 vTranslation)
 {
-	float3 fPos = GetPosition();
+	float3 fPos = GetTranslate();
 
 	fPos += vTranslation;
 
-	SetPosition(fPos);
+	SetTranslate(fPos);
 }
 
 
