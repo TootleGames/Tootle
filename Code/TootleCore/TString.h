@@ -180,20 +180,20 @@ public:
 	//	gr: note: do not use TString constructors as VTable isn't setup, our post-append function won't be called
 	//		so could be initialised with non-lowercase strings
 	TStringLowercase()														{	}
-	TStringLowercase(const TString& String)									{	Append( String );	}
-	TStringLowercase(const CHARTYPE* pString)								{	Append( pString );	}
+	TStringLowercase(const TString& String)									{	BASESTRINGTYPE::Append( String );	}		
+	TStringLowercase(const CHARTYPE* pString)								{	BASESTRINGTYPE::Append( pString );	}
 
-	virtual CHARTYPE		GetLowercaseCharAt(u32 Index) const				{	return GetCharAt( Index );	}
+	virtual CHARTYPE		GetLowercaseCharAt(u32 Index) const				{	return BASESTRINGTYPE::GetCharAt( Index );	}
 
-	inline const CHARTYPE&	operator[](u32 Index) const						{	return GetCharAt(Index);	}
+	inline const CHARTYPE&	operator[](u32 Index) const						{	return BASESTRINGTYPE::GetCharAt(Index);	}
 
-	inline TString&			operator=(const CHARTYPE* pString)				{	Set( pString );	return *this;	}
-	inline TString&			operator=(const TString& String)				{	Set( String );	return *this;	}
-	inline Bool				operator==(const TString& String) const			{	return IsEqual( String, TRUE );	}
-	inline Bool				operator==(const CHARTYPE* pString) const		{	return IsEqual( pString, -1, TRUE );	}
-	inline Bool				operator!=(const TString& String) const			{	return !IsEqual( String, TRUE );	}
-	inline Bool				operator!=(const CHARTYPE* pString) const		{	return !IsEqual( pString, -1, TRUE );	}
-	inline Bool				operator<(const TString& String) const			{	return IsLessThan( String );	}
+	inline TString&			operator=(const CHARTYPE* pString)				{	BASESTRINGTYPE::Set( pString );	return *this;	}
+	inline TString&			operator=(const TString& String)				{	BASESTRINGTYPE::Set( String );	return *this;	}
+	inline Bool				operator==(const TString& String) const			{	return BASESTRINGTYPE::IsEqual( String, TRUE );	}
+	inline Bool				operator==(const CHARTYPE* pString) const		{	return BASESTRINGTYPE::IsEqual( pString, -1, TRUE );	}
+	inline Bool				operator!=(const TString& String) const			{	return !BASESTRINGTYPE::IsEqual( String, TRUE );	}
+	inline Bool				operator!=(const CHARTYPE* pString) const		{	return !BASESTRINGTYPE::IsEqual( pString, -1, TRUE );	}
+	inline Bool				operator<(const TString& String) const			{	return BASESTRINGTYPE::IsLessThan( String );	}
 
 protected:
 	virtual void			OnStringChanged(u32 FirstChanged=0,s32 LastChanged=-1);	//	post-string change call
@@ -265,9 +265,9 @@ template<class BASESTRINGTYPE>
 void TStringLowercase<BASESTRINGTYPE>::OnStringChanged(u32 FirstChanged,s32 LastChanged)
 {
 	if ( LastChanged < 0 )
-		LastChanged = GetLengthWithoutTerminator();
+		LastChanged = BASESTRINGTYPE::GetLengthWithoutTerminator();
 
-	TArray<char>& StringArray = GetStringArray();
+	TArray<char>& StringArray = BASESTRINGTYPE::GetStringArray();
 	for ( u32 i=FirstChanged;	i<(u32)LastChanged;	i++ )
 	{
 		TLString::SetCharLowercase( StringArray[i] );
