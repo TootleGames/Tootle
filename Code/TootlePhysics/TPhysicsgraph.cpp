@@ -65,7 +65,7 @@ SyncBool TLPhysics::TPhysicsgraph::Initialise()
 		return SyncFalse;
 
 	//	create generic render node factory
-	TPtr<TClassFactory<TLPhysics::TPhysicsNode,FALSE>> pFactory = new TPhysicsNodeFactory();
+	TPtr<TClassFactory<TLPhysics::TPhysicsNode,FALSE> > pFactory = new TPhysicsNodeFactory();
 	AddFactory(pFactory);
 
 	return SyncTrue;

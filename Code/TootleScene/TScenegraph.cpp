@@ -38,7 +38,7 @@ SyncBool TScenegraph::Initialise()
 {
 
 	// Attach the base scene node factory by default
-	TPtr<TClassFactory<TSceneNode,FALSE>> pFactory = new TSceneNodeFactory();
+	TPtr<TClassFactory<TSceneNode,FALSE> > pFactory = new TSceneNodeFactory();
 
 	if(pFactory)
 		AddFactory(pFactory);
