@@ -59,6 +59,7 @@ template <class T>
 class TLGraph::TGraph : public TManager, public TLMessaging::TMessageQueue, public TLGraph::TGraphBase
 {
 	friend class TGraphNode<T>;
+	
 public:
 	TGraph(TRef refManagerID) :
 		TManager	( refManagerID ),
@@ -93,7 +94,10 @@ public:
 	Bool						RemoveChildren(TPtr<T> pNode);			//	remove pNode's children (but not pNode)
 
 	//	factory access
-	Bool						AddFactory(TPtr<TClassFactory<T,FALSE>>& pFactory)	{	return (m_NodeFactories.Add(pFactory) != -1);	}
+	Bool						AddFactory(TPtr< TClassFactory<T,FALSE> >& pFactory)
+	{
+		return (m_NodeFactories.Add(pFactory) != -1);			
+	}
 
 
 protected:
@@ -166,7 +170,7 @@ private:
 	TPtrArray<T>						m_NodeIndex;			//	list of all the nodes, used for fast node finding
 #endif
 
-	TPtrArray<TClassFactory<T,FALSE>>	m_NodeFactories;		//	array of graph node factories. if none, T is created
+	TPtrArray< TClassFactory<T,FALSE> >	m_NodeFactories;		//	array of graph node factories. if none, T is created
 };
 
 
@@ -174,6 +178,8 @@ private:
 template <class T>
 TPtr<T>	TLGraph::TGraph<T>::g_pNullNode;
 #endif
+
+
 
 
 //--------------------------------------------------------------------
