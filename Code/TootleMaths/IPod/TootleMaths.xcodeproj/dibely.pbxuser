@@ -10,6 +10,20 @@
 		ignoreBreakpointsInProjectsDict = {
 		};
 		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXErrorsWarningsDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXErrorsWarningsDataSource_LocationID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					300,
+					477,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXErrorsWarningsDataSource_TypeID,
+					PBXErrorsWarningsDataSource_MessageID,
+					PBXErrorsWarningsDataSource_LocationID,
+				);
+			};
 			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
 				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
@@ -54,8 +68,12 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 252346843;
-			PBXWorkspaceStateSaveDate = 252346843;
+			PBXPerProjectTemplateStateSaveDate = 252849223;
+			PBXWorkspaceStateSaveDate = 252849223;
+		};
+		perUserProjectItems = {
+			84DE2E920F122C7300608F8C /* PBXTextBookmark */ = 84DE2E920F122C7300608F8C /* PBXTextBookmark */;
+			84DE2E970F122C7700608F8C /* PBXTextBookmark */ = 84DE2E970F122C7700608F8C /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84C108F30F0A772600B2DF7A /* Source Control */;
 		userBuildSettings = {
@@ -74,5 +92,41 @@
 	};
 	84C10A510F0A7C7600B2DF7A /* TootleMaths */ = {
 		activeExec = 0;
+	};
+	84DE2E910F122C4C00608F8C /* TString.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = TString.h;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleMaths/IPod/../../TootleCore/TString.h;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {948, 4368}}";
+			sepNavSelRange = "{10111, 72}";
+			sepNavVisRange = "{12277, 328}";
+		};
+	};
+	84DE2E920F122C7300608F8C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "error: there are no arguments to 'Append' that depend on a template parameter, so a declaration of 'Append' must be available";
+		fRef = 84DE2E910F122C4C00608F8C /* TString.h */;
+		rLen = 1;
+		rLoc = 182;
+		rType = 1;
+	};
+	84DE2E970F122C7700608F8C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84DE2E980F122C7700608F8C /* TString.h */;
+		name = "TString.h: 183";
+		rLen = 72;
+		rLoc = 10111;
+		rType = 0;
+		vrLen = 1210;
+		vrLoc = 9703;
+	};
+	84DE2E980F122C7700608F8C /* TString.h */ = {
+		isa = PBXFileReference;
+		name = TString.h;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleMaths/IPod/../../TootleCore/TString.h;
+		sourceTree = "<absolute>";
 	};
 }

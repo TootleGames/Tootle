@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		84C10A3F0F0A7C3000B2DF7A /* TMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10A3D0F0A7C3000B2DF7A /* TMenu.cpp */; };
 		84C10A400F0A7C3000B2DF7A /* TMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10A3E0F0A7C3000B2DF7A /* TMenu.h */; };
+		84DE35010F12AFED00608F8C /* TAssetBrowser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DE34FD0F12AFED00608F8C /* TAssetBrowser.cpp */; };
+		84DE35020F12AFED00608F8C /* TAssetBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DE34FE0F12AFED00608F8C /* TAssetBrowser.h */; };
+		84DE35030F12AFED00608F8C /* TGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DE34FF0F12AFED00608F8C /* TGui.cpp */; };
+		84DE35040F12AFED00608F8C /* TGui.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DE35000F12AFED00608F8C /* TGui.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +23,10 @@
 		84C10A430F0A7C4E00B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C10A440F0A7C4E00B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C10A450F0A7C4E00B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
+		84DE34FD0F12AFED00608F8C /* TAssetBrowser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAssetBrowser.cpp; path = ../TAssetBrowser.cpp; sourceTree = SOURCE_ROOT; };
+		84DE34FE0F12AFED00608F8C /* TAssetBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAssetBrowser.h; path = ../TAssetBrowser.h; sourceTree = SOURCE_ROOT; };
+		84DE34FF0F12AFED00608F8C /* TGui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGui.cpp; path = ../TGui.cpp; sourceTree = SOURCE_ROOT; };
+		84DE35000F12AFED00608F8C /* TGui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGui.h; path = ../TGui.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +60,10 @@
 		84C10A3C0F0A7C2000B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				84DE34FD0F12AFED00608F8C /* TAssetBrowser.cpp */,
+				84DE34FE0F12AFED00608F8C /* TAssetBrowser.h */,
+				84DE34FF0F12AFED00608F8C /* TGui.cpp */,
+				84DE35000F12AFED00608F8C /* TGui.h */,
 				84C10A3D0F0A7C3000B2DF7A /* TMenu.cpp */,
 				84C10A3E0F0A7C3000B2DF7A /* TMenu.h */,
 			);
@@ -77,6 +89,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				84C10A400F0A7C3000B2DF7A /* TMenu.h in Headers */,
+				84DE35020F12AFED00608F8C /* TAssetBrowser.h in Headers */,
+				84DE35040F12AFED00608F8C /* TGui.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,6 +138,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				84C10A3F0F0A7C3000B2DF7A /* TMenu.cpp in Sources */,
+				84DE35010F12AFED00608F8C /* TAssetBrowser.cpp in Sources */,
+				84DE35030F12AFED00608F8C /* TGui.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

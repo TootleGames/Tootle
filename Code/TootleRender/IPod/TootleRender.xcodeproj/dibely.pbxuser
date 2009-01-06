@@ -54,8 +54,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 252349520;
-			PBXWorkspaceStateSaveDate = 252349520;
+			PBXPerProjectTemplateStateSaveDate = 252928844;
+			PBXWorkspaceStateSaveDate = 252928844;
 		};
 		sourceControlManager = 84C1090D0F0A779700B2DF7A /* Source Control */;
 		userBuildSettings = {
@@ -74,5 +74,13 @@
 	};
 	84C10AE70F0A7E3B00B2DF7A /* TootleRender */ = {
 		activeExec = 0;
+	};
+	84C10B1C0F0A7E7400B2DF7A /* IPodScreen.mm */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1032, 6608}}";
+			sepNavSelRange = "{5630, 0}";
+			sepNavVisRange = "{6277, 500}";
+			sepNavWindowFrame = "{{153, 89}, {750, 558}}";
+		};
 	};
 }

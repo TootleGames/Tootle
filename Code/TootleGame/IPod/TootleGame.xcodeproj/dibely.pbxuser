@@ -10,12 +10,26 @@
 		ignoreBreakpointsInProjectsDict = {
 		};
 		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXErrorsWarningsDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXErrorsWarningsDataSource_LocationID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					300,
+					436.20849609375,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXErrorsWarningsDataSource_TypeID,
+					PBXErrorsWarningsDataSource_MessageID,
+					PBXErrorsWarningsDataSource_LocationID,
+				);
+			};
 			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
 				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					341,
+					546,
 					20,
 					48,
 					43,
@@ -54,8 +68,14 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 252347183;
-			PBXWorkspaceStateSaveDate = 252347183;
+			PBXPerProjectTemplateStateSaveDate = 252928457;
+			PBXWorkspaceStateSaveDate = 252928457;
+		};
+		perUserProjectItems = {
+			84DE37060F13625600608F8C /* PBXTextBookmark */ = 84DE37060F13625600608F8C /* PBXTextBookmark */;
+			84DE37070F13625600608F8C /* PBXTextBookmark */ = 84DE37070F13625600608F8C /* PBXTextBookmark */;
+			84DE37080F13625600608F8C /* PBXTextBookmark */ = 84DE37080F13625600608F8C /* PBXTextBookmark */;
+			84DE37090F13625600608F8C /* PBXTextBookmark */ = 84DE37090F13625600608F8C /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84C109000F0A775200B2DF7A /* Source Control */;
 		userBuildSettings = {
@@ -74,5 +94,64 @@
 	};
 	84C10A360F0A7C1800B2DF7A /* TootleGame */ = {
 		activeExec = 0;
+	};
+	84C10A420F0A7C4E00B2DF7A /* TootleDebug.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {798, 2716}}";
+			sepNavSelRange = "{4821, 0}";
+			sepNavVisRange = "{4346, 644}";
+		};
+	};
+	84DE2E810F122C3900608F8C /* TString.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = TString.h;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleGame/IPod/../../TootleCore/TString.h;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {834, 3976}}";
+			sepNavSelRange = "{10111, 72}";
+			sepNavVisRange = "{9717, 1037}";
+		};
+	};
+	84DE37060F13625600608F8C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84DE2E810F122C3900608F8C /* TString.h */;
+		name = "TString.h: 186";
+		rLen = 72;
+		rLoc = 10111;
+		rType = 0;
+		vrLen = 1037;
+		vrLoc = 9717;
+	};
+	84DE37070F13625600608F8C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10A420F0A7C4E00B2DF7A /* TootleDebug.xcconfig */;
+		name = "TootleDebug.xcconfig: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 460;
+		vrLoc = 1656;
+	};
+	84DE37080F13625600608F8C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84DE2E810F122C3900608F8C /* TString.h */;
+		name = "TString.h: 186";
+		rLen = 72;
+		rLoc = 10111;
+		rType = 0;
+		vrLen = 1037;
+		vrLoc = 9717;
+	};
+	84DE37090F13625600608F8C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10A420F0A7C4E00B2DF7A /* TootleDebug.xcconfig */;
+		name = "TootleDebug.xcconfig: 159";
+		rLen = 0;
+		rLoc = 4821;
+		rType = 0;
+		vrLen = 644;
+		vrLoc = 4346;
 	};
 }

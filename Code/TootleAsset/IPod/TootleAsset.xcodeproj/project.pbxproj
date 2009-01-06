@@ -22,6 +22,8 @@
 		84C109410F0A787B00B2DF7A /* TMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109320F0A787B00B2DF7A /* TMesh.cpp */; };
 		84C109420F0A787B00B2DF7A /* TMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109330F0A787B00B2DF7A /* TMesh.h */; };
 		84C109430F0A787B00B2DF7A /* TShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109340F0A787B00B2DF7A /* TShader.h */; };
+		84DE342B0F12A9C500608F8C /* TScheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DE34290F12A9C500608F8C /* TScheme.cpp */; };
+		84DE342C0F12A9C500608F8C /* TScheme.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DE342A0F12A9C500608F8C /* TScheme.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +47,8 @@
 		84C109480F0A78C600B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C109490F0A78C600B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C1094A0F0A78C600B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
+		84DE34290F12A9C500608F8C /* TScheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TScheme.cpp; path = ../TScheme.cpp; sourceTree = SOURCE_ROOT; };
+		84DE342A0F12A9C500608F8C /* TScheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TScheme.h; path = ../TScheme.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +82,8 @@
 		84C109450F0A789D00B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				84DE34290F12A9C500608F8C /* TScheme.cpp */,
+				84DE342A0F12A9C500608F8C /* TScheme.h */,
 				84C109260F0A787B00B2DF7A /* TAsset.cpp */,
 				84C109270F0A787B00B2DF7A /* TAsset.h */,
 				84C109280F0A787B00B2DF7A /* TAudio.cpp */,
@@ -123,6 +129,7 @@
 				84C109400F0A787B00B2DF7A /* TMenu.h in Headers */,
 				84C109420F0A787B00B2DF7A /* TMesh.h in Headers */,
 				84C109430F0A787B00B2DF7A /* TShader.h in Headers */,
+				84DE342C0F12A9C500608F8C /* TScheme.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -176,6 +183,7 @@
 				84C1093D0F0A787B00B2DF7A /* TLoadTask.cpp in Sources */,
 				84C1093F0F0A787B00B2DF7A /* TMenu.cpp in Sources */,
 				84C109410F0A787B00B2DF7A /* TMesh.cpp in Sources */,
+				84DE342B0F12A9C500608F8C /* TScheme.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -33,6 +33,9 @@
 		84C10B200F0A7E7400B2DF7A /* IPodRenderTarget.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C10B1A0F0A7E7400B2DF7A /* IPodRenderTarget.mm */; };
 		84C10B210F0A7E7400B2DF7A /* IPodScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10B1B0F0A7E7400B2DF7A /* IPodScreen.h */; };
 		84C10B220F0A7E7400B2DF7A /* IPodScreen.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C10B1C0F0A7E7400B2DF7A /* IPodScreen.mm */; };
+		84DE344B0F12AA6C00608F8C /* TRenderNodeTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DE34490F12AA6C00608F8C /* TRenderNodeTile.cpp */; };
+		84DE344C0F12AA6C00608F8C /* TRenderNodeTile.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DE344A0F12AA6C00608F8C /* TRenderNodeTile.h */; };
+		84DE371B0F13630600608F8C /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84DE371A0F13630600608F8C /* OpenGL.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +70,9 @@
 		84C10B250F0A7E9600B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C10B260F0A7E9600B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C10B270F0A7E9600B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
+		84DE34490F12AA6C00608F8C /* TRenderNodeTile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeTile.cpp; path = ../TRenderNodeTile.cpp; sourceTree = SOURCE_ROOT; };
+		84DE344A0F12AA6C00608F8C /* TRenderNodeTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeTile.h; path = ../TRenderNodeTile.h; sourceTree = SOURCE_ROOT; };
+		84DE371A0F13630600608F8C /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +80,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84DE371B0F13630600608F8C /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,6 +90,7 @@
 		84C109070F0A779700B2DF7A = {
 			isa = PBXGroup;
 			children = (
+				84DE37190F1362E700608F8C /* Frameworks */,
 				84C10B230F0A7E7D00B2DF7A /* Build Configurations */,
 				84C10AED0F0A7E4E00B2DF7A /* Source Code */,
 				84C10AE90F0A7E3B00B2DF7A /* Products */,
@@ -100,6 +108,8 @@
 		84C10AED0F0A7E4E00B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				84DE34490F12AA6C00608F8C /* TRenderNodeTile.cpp */,
+				84DE344A0F12AA6C00608F8C /* TRenderNodeTile.h */,
 				84C10B160F0A7E6400B2DF7A /* IPod */,
 				84C10AEE0F0A7E6000B2DF7A /* TCamera.cpp */,
 				84C10AEF0F0A7E6000B2DF7A /* TCamera.h */,
@@ -149,6 +159,14 @@
 			name = "Build Configurations";
 			sourceTree = "<group>";
 		};
+		84DE37190F1362E700608F8C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				84DE371A0F13630600608F8C /* OpenGL.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -169,6 +187,7 @@
 				84C10B1D0F0A7E7400B2DF7A /* IPodRender.h in Headers */,
 				84C10B1F0F0A7E7400B2DF7A /* IPodRenderTarget.h in Headers */,
 				84C10B210F0A7E7400B2DF7A /* IPodScreen.h in Headers */,
+				84DE344C0F12AA6C00608F8C /* TRenderNodeTile.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -228,6 +247,7 @@
 				84C10B1E0F0A7E7400B2DF7A /* IPodRender.mm in Sources */,
 				84C10B200F0A7E7400B2DF7A /* IPodRenderTarget.mm in Sources */,
 				84C10B220F0A7E7400B2DF7A /* IPodScreen.mm in Sources */,
+				84DE344B0F12AA6C00608F8C /* TRenderNodeTile.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
