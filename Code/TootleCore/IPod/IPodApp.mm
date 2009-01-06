@@ -73,6 +73,8 @@ OpenglESAppAppDelegate* g_pIpodApp;
 // IPod Initialisation
 - (void)applicationDidFinishLaunching:(UIApplication *)application 
 {
+	TLDebug_Print("applicationDidFinishLaunching");
+
 	g_pIpodApp = self;
 
 	//	inhibit the sleep/screen dimming
@@ -130,6 +132,9 @@ OpenglESAppAppDelegate* g_pIpodApp;
 	// Failed to initialise??
 	if(Result == SyncFalse)
 	{
+		TLDebug_Print("Application failed to initialise");
+		TLDebug_Print("Sending terminate message to application");
+
 		// Send terminate message to the application
 		UIApplication* app = [UIApplication sharedApplication];
 		SEL selector = @selector( terminate );
@@ -203,6 +208,8 @@ OpenglESAppAppDelegate* g_pIpodApp;
 // Ipod Shutdown
 - (void)applicationWillTerminate:(UIApplication *)application 
 {
+	TLDebug_Print("applicationWillTerminate");
+
 	shutdown = TRUE;
 	
 	// Do shutdown loop
@@ -264,6 +271,8 @@ OpenglESAppAppDelegate* g_pIpodApp;
 			
 			if(Result == SyncTrue)
 			{
+				TLDebug_Print("Sending terminate message to application");
+
 			
 				// Send terminate message to the application
 				UIApplication* app = [UIApplication sharedApplication];

@@ -509,7 +509,10 @@ SyncBool TLFileSys::CreateLocalFileSys(TRef& FileSysRef,const TString& Directory
 
 	//	failed to create
 	if ( !pFileSys )
+	{
+		TLDebug_Print("Failed to create filesystem");		
 		return SyncFalse;
+	}
 
 	//	set directory
 	TLFileSys::TLocalFileSys* pLocalFileSys = pFileSys.GetObject<TLFileSys::TLocalFileSys>();
@@ -518,6 +521,13 @@ SyncBool TLFileSys::CreateLocalFileSys(TRef& FileSysRef,const TString& Directory
 		
 	//	init
 	SyncBool Result = pFileSys->Init();
+	
+#ifdef _DEBUG
+	if(Result == SyncFalse)
+	{
+		TLDebug_Print("Failed to initialise file system");		
+	}
+#endif
 
 	return Result;
 }

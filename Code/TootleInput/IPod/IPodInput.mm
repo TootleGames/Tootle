@@ -71,7 +71,7 @@ Bool Platform::IPod::CreateDevice()
 				TRef refDeviceType = "DEFAULT";
 				pMessage->AddChannelID("DEVICE");									// device information message
 				pMessage->AddChildAndData("STATE", refState);					// state change
-				pMessage->AddChildAndData("DEVID", pGenericDevice->GetDeviceID());	// device ID
+				pMessage->AddChildAndData("DEVID", pGenericDevice->GetDeviceRef());	// device ID
 				pMessage->AddChildAndData("TYPE", refDeviceType);						// device type
 				
 				g_pInputSystem->PublishMessage(pMessage);

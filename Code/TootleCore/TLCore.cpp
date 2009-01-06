@@ -45,6 +45,8 @@ u32 TLCore::PointerToInteger(void* pAddress)
 
 void TLCore::RegisterManagers_Engine(TPtr<TCoreManager>& pManager)
 {
+	TLDebug_Print("Registering Engine Managers");
+	
 	pManager->CreateAndRegisterManager<TLRef::TRefManager>("REFMANAGER");	// NOTE: No global poitner for this manager
 	pManager->CreateAndRegisterManager<TLMessaging::TEventChannelManager>(TLMessaging::g_pEventChannelManager, "EVENTCHANNEL");
 	pManager->CreateAndRegisterManager<TLTime::TTimeManager>("TIMEMANAGER");	// NOTE: No global poitner for this manager
@@ -53,6 +55,8 @@ void TLCore::RegisterManagers_Engine(TPtr<TCoreManager>& pManager)
 // Unset all global pointers - engine side
 void TLCore::UnregisterManagers_Engine()
 {
+	TLDebug_Print("Unregistering Engine Managers");
+	
 	TLMessaging::g_pEventChannelManager = NULL;
 }
 

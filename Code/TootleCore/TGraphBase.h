@@ -34,7 +34,7 @@ public:
 	
 	virtual Bool				SendMessageToNode(TRefRef NodeRef,TPtr<TLMessaging::TMessage>& pMessage)=0;	//	send message to node
 
-	virtual TRef				CreateNode(TRefRef NodeRef,TRefRef TypeRef,TRefRef ParentRef,TPtr<TLMessaging::TMessage> pInitMessage)=0;	//	create node and add to the graph. returns ref of new node
+	virtual TRef				CreateNode(TRefRef NodeRef,TRefRef TypeRef,TRefRef ParentRef,TPtr<TLMessaging::TMessage> pInitMessage=NULL)=0;	//	create node and add to the graph. returns ref of new node
 	void						RemoveNodes(const TArray<TRef>& NodeRefs);							//	remove an array of nodes by their ref
 	virtual Bool				RemoveNode(TRefRef NodeRef)=0;										//	remove an array of nodes by their ref
 
