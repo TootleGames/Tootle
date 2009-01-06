@@ -86,6 +86,9 @@ public:
 	// Graph change requests
 	virtual TRef				CreateNode(TRefRef NodeRef,TRefRef TypeRef,TRefRef ParentRef,TPtr<TLMessaging::TMessage> pInitMessage=NULL);		//	create node and add to the graph. returns ref of new node
 
+	// [05/01/09] DB - Renamed to avoid ambiguity with ref type version of same routine
+	TPtr<T>						DoCreateNode(TRefRef NodeRef,TRefRef TypeRef,TPtr<T> pParent=NULL,TPtr<TLMessaging::TMessage> pInitMessage=NULL);	//	create node and add to the graph. returns ref of new node
+
 	Bool						AddNode(TPtr<T> pNode, TPtr<T> pParent=NULL);	//	returns the ref of the object. You can't always have the ref we constructed with :)
 	FORCEINLINE Bool			AddNode(TPtr<T> pNode,TRefRef ParentRef)		{	return AddNode( pNode, FindNode( ParentRef ) );	}
 
@@ -126,10 +129,6 @@ protected:
 	virtual void				OnNodeRemoved(TPtr<T>& pNode);				//	called after node shutdown and after being removed from parent and graph
 
 private:
-	
-	// [05/01/09] DB - Renamed to avoid ambiguity with ref type version of same routine
-	TPtr<T>						DoCreateNode(TRefRef NodeRef,TRefRef TypeRef,TPtr<T> pParent=NULL,TPtr<TLMessaging::TMessage> pInitMessage=NULL);	//	create node and add to the graph. returns ref of new node
-
 
 	// Graph structure updates
 	void						DoAddNode(TPtr<T>& pNode,TPtr<T>& pParent);		// Final stage add of the graph node
