@@ -47,7 +47,7 @@ Bool Platform::IPod::CreateDevice()
 	TRef InstanceRef = "IPOD";
 	
 	// Create the generic input object
-	TPtr<TInputDevice> pGenericDevice = g_pInputSystem->GetInstance(InstanceRef, TRUE);
+	TPtr<TInputDevice> pGenericDevice = g_pInputSystem->GetInstance(InstanceRef, TRUE, "Mouse");
 	
 	if(pGenericDevice.IsValid())
 	{
