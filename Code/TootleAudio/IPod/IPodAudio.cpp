@@ -193,6 +193,7 @@ SyncBool Platform::OpenAL::Shutdown()
 	
 	// TODO: The removal of the sources will be done when the nodes shutdown
 	//		 The removal of the buffers will be done when the file assets are shutdown
+	
 	ALuint		returnedName;
 	// Delete the Sources
 	if(g_Sources.GetSize())
@@ -226,6 +227,9 @@ SyncBool Platform::OpenAL::Shutdown()
 Bool Platform::OpenAL::StartAudio()
 {
 /*
+	ALuint buffer;
+	CreateBuffer(buffer);
+ 
 	// Load test.wav
 	loadWAVFile("test.wav",&format,&data,&size,&freq,&loop);
 	if ((error = alGetError()) != AL_NO_ERROR)
@@ -246,23 +250,25 @@ Bool Platform::OpenAL::StartAudio()
 
 	// Unload test.wav
 	unloadWAV(format,data,size,freq);
+ 
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
 		DisplayALError("alutUnloadWAV : ", error);
-		alDeleteBuffers(NUM_BUFFERS, g_Buffers);
+		//alDeleteBuffers(NUM_BUFFERS, g_Buffers);
 		return;
 	}
 
 	// Generate Sources
-	alGenSources(1,source);
+	CreateSource(source);
+ 
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
 		DisplayALError("alGenSources 1 : ", error);
 		return;
 	}
 
-	// Attach buffer 0 to source
-	alSourcei(source[0], AL_BUFFER, g_Buffers[0]);
+	// Attach buffer to source
+	AttachSourceToBuffer(source[0], AL_BUFFER, g_Buffers[0]);
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
 		DisplayALError("alSourcei AL_BUFFER 0 : ", error);
