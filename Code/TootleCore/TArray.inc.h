@@ -379,7 +379,7 @@ void TArray<TYPE>::ShiftArray(u32 From, s32 Amount )
 			//	use memmove
 			if ( MoveAmount > 0 )
 			{
-				TLMemory::MoveData( &ElementAt(CopyToFirst), &ElementAt(CopyFromFirst), (u32)AmountPositive );
+				TLMemory::MoveData( &ElementAt(CopyToFirst), &ElementAt(CopyFromFirst), (u32)MoveAmount );
 			}
 		}
 		else
