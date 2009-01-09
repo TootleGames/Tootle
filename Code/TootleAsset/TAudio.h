@@ -24,11 +24,11 @@ public:
 	u32			GetSampleRate()							const	{ return m_HeaderData.m_SampleRate; }
 	void		SetSampleRate(u32 uRate)						{ m_HeaderData.m_SampleRate = uRate; }
 	
-	u8			GetNumberOfChannels()					const	{ return m_HeaderData.m_NumChannels; }
-	void		SetNumberOfChannels(u8 uNumChannels)			{ m_HeaderData.m_NumChannels = uNumChannels; }
+	u16			GetNumberOfChannels()					const	{ return m_HeaderData.m_NumChannels; }
+	void		SetNumberOfChannels(u16 uNumChannels)			{ m_HeaderData.m_NumChannels = uNumChannels; }
 	
-	u8			GetBitsPerSample()						const	{ return m_HeaderData.m_BitsPerSample; }
-	void		SetBitsPerSample(u8 uBitsPerSample)				{ m_HeaderData.m_BitsPerSample = uBitsPerSample; }
+	u16			GetBitsPerSample()						const	{ return m_HeaderData.m_BitsPerSample; }
+	void		SetBitsPerSample(u16 uBitsPerSample)				{ m_HeaderData.m_BitsPerSample = uBitsPerSample; }
 	
 	
 	TBinary&	RawAudioDataBinary()		{ return m_RawAudioData; }
@@ -39,8 +39,8 @@ protected:
 	public:
 		u32		m_Size;				// Amount of audio data
 		u32		m_SampleRate;		// Sample rate
-		u8		m_NumChannels;		// Number of channels
-		u8		m_BitsPerSample;	// Bits per sample
+		u16		m_NumChannels;		// Number of channels
+		u16		m_BitsPerSample;	// Bits per sample
 	};
 	
 	virtual SyncBool		ImportData(TBinaryTree& Data);	//	load asset data out binary data
