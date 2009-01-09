@@ -3,28 +3,28 @@
 #include "TString.h"
 
 
-Bool TLArray::Debug::Break(const char* pErrorString,const char* pSourceFile,const int SourceLine)
+Bool TLArray::Debug::Break(const char* pErrorString,const char* pSourceFunction)
 {
 #if defined(_DEBUG)
 	if ( !TLDebug::IsEnabled() )
 		return FALSE;
 	
 	TTempString String( pErrorString );
-	return TLDebug::Break( String, pSourceFile, SourceLine );
+	return TLDebug::Break( String, pSourceFunction );
 #else
 	return FALSE;
 #endif
 }
 
 	
-void TLArray::Debug::Print(const char* pErrorString,const char* pSourceFile,const int SourceLine)
+void TLArray::Debug::Print(const char* pErrorString,const char* pSourceFunction)
 {
 #if defined(_DEBUG)
 	if ( !TLDebug::IsEnabled() )
 		return;
 	
 	TTempString String( pErrorString );
-	TLDebug::Print( String, pSourceFile, SourceLine );
+	TLDebug::Print( String, pSourceFunction );
 #endif
 }
 

@@ -35,7 +35,7 @@ SyncBool TLFileSys::TFileXml::Import()
 		return ImportResult;
 
 	//	print out parsed xml
-	m_XmlData.Debug_PrintTree( TFile::GetFilename() );
+	//m_XmlData.Debug_PrintTree( TFile::GetFilename() );
 
 	return SyncTrue;
 }

@@ -211,8 +211,8 @@ Bool TLRender::Platform::Opengl::BindFixedVertexes(const TArray<TLAsset::TFixedV
 		pVertexes = NULL;
 
 	//	already bound to this
-	if ( pVertexes == g_pBoundFixedVertexes )
-		return TRUE;
+//	if ( pVertexes == g_pBoundFixedVertexes )
+//		return TRUE;
 	
 	g_pBoundVertexes = NULL;
 	g_pBoundFixedVertexes = pVertexes;
@@ -324,6 +324,10 @@ Bool TLRender::Platform::Opengl::BindColours(const TArray<TColour>* pColours,TRe
 	if ( pColours && pColours->GetSize() == 0 )
 		pColours = NULL;
 	
+	//	already bound to this
+//	if ( pColours == g_pBoundColours )
+//		return TRUE;
+
 	//	unbind
 	if ( !pColours )
 	{
@@ -431,12 +435,28 @@ void TLRender::Platform::Opengl::DrawPrimitives(u32 GLPrimType,u32 IndexCount,co
 	if ( !IndexCount || !pIndexData )
 		return;
 
+	//	make sure we don't attempt to render vertexes that aren't bound
+#ifdef _DEBUG
+	if ( g_pBoundVertexes )
+	{
+		u32 MaxVertexIndex = g_pBoundVertexes->LastIndex();
+		for ( u32 i=0;	i<IndexCount;	i++ )
+		{
+			if ( pIndexData[i] > MaxVertexIndex )
+			{
+				TLDebug_Break("Primitive contains vertex index out of the range of vertexes that were bound");
+			}
+		}
+	}
+#endif
+
+/*
 	if ( OpenglExtensions::IsHardwareEnabled( OpenglExtensions::GHardware_DrawRangeElements ) )
 	{
 		OpenglExtensions::glDrawRangeElementsARB()( GLPrimType, 0, IndexCount, IndexCount, GL_UNSIGNED_SHORT, pIndexData );
 	}
 	else
-	{
+*/	{
 		glDrawElements( GLPrimType, IndexCount, GL_UNSIGNED_SHORT, pIndexData );
 	}
 
@@ -445,6 +465,27 @@ void TLRender::Platform::Opengl::DrawPrimitives(u32 GLPrimType,u32 IndexCount,co
 
 	Opengl::Debug_CheckForError();
 }
+
+
+//-----------------------------------------------------------
+//	draw vertexes as points
+//-----------------------------------------------------------
+void TLRender::Platform::Opengl::DrawPrimitivePoints(u32 GLPrimType,const TArray<float3>* pVertexes)
+{
+	if ( GLPrimType != GL_POINTS )
+	{
+		TLDebug_Break("Primtype for points must be GL_POINTS");
+		return;
+	}
+
+	//	make array of indexes
+	TArray<u16> AllPoints;
+	for ( u32 v=0;	v<pVertexes->GetSize();	v++ )
+		AllPoints.Add( v );
+
+	Opengl::DrawPrimitives( GLPrimType, AllPoints.GetSize(), AllPoints.GetData() );
+}
+
 
 
 //-----------------------------------------------------------

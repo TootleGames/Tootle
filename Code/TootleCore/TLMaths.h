@@ -457,4 +457,5 @@ DECLARE_TARRAY_DATATYPE( TLMaths::TBox );
 DECLARE_TARRAY_DATATYPE( TLMaths::TSphere );
 DECLARE_TARRAY_DATATYPE( TLMaths::TCapsule );
 
+TLCore_DeclareIsDataType( XYZ )
 */

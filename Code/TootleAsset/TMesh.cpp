@@ -502,3 +502,222 @@ const TArray<TLAsset::TFixedVertex>& TLAsset::TMesh::GetFixedVertexes()
 	return m_FixedVertexes;
 }
 
+
+
+//-------------------------------------------------------------------
+//	find all uses of OldVertexIndex in polygons and swap them for NewVertexIndex 
+//-------------------------------------------------------------------
+Bool TLAsset::TMesh::ReplaceVertex(u32 OldVertexIndex,u32 NewVertexIndex)
+{
+	s32 i;
+	Bool ChangedPolygon = FALSE;
+
+	//	remove and correct polygons using this index
+
+	for ( i=m_Triangles.LastIndex();	i>=0;	i-- )
+	{
+		Triangle& t = m_Triangles[i];
+
+		//	correct indexes
+		if ( t.x == OldVertexIndex )	
+		{
+			t.x = NewVertexIndex;	
+			ChangedPolygon = TRUE;	
+		}
+		
+		if ( t.y == OldVertexIndex )	
+		{
+			t.y = NewVertexIndex;	
+			ChangedPolygon = TRUE;	
+		}
+		
+		if ( t.z == OldVertexIndex )	
+		{	
+			t.z = NewVertexIndex;	
+			ChangedPolygon = TRUE;	
+		}
+	}
+
+	for ( i=m_Tristrips.LastIndex();	i>=0;	i-- )
+	{
+		Tristrip& Polygon = m_Tristrips[i];
+
+		//	correct/remove indexes in this tristrip
+		for ( s32 n=Polygon.LastIndex();	n>=0;	n-- )
+		{
+			if ( Polygon[n] == OldVertexIndex )
+			{
+				Polygon[n] = NewVertexIndex;
+				ChangedPolygon = TRUE;	
+			}
+		}
+	}
+
+	for ( i=m_Trifans.LastIndex();	i>=0;	i-- )
+	{
+		Trifan& Polygon = m_Trifans[i];
+
+		//	correct/remove indexes in this tristrip
+		for ( s32 n=Polygon.LastIndex();	n>=0;	n-- )
+		{
+			if ( Polygon[n] == OldVertexIndex )
+			{
+				Polygon[n] = NewVertexIndex;
+				ChangedPolygon = TRUE;	
+			}
+		}
+	}
+
+	
+	for ( i=m_Lines.LastIndex();	i>=0;	i-- )
+	{
+		Line& Polygon = m_Lines[i];
+
+		//	correct/remove indexes in this tristrip
+		for ( s32 n=Polygon.LastIndex();	n>=0;	n-- )
+		{
+			if ( Polygon[n] == OldVertexIndex )
+			{
+				Polygon[n] = NewVertexIndex;
+				ChangedPolygon = TRUE;	
+			}
+		}
+	}
+
+	return ChangedPolygon;
+}
+
+
+	
+//-------------------------------------------------------------------
+//	remove a vertex, remove it's colour, remove any polygons that use 
+//	this vertex, and correct the vertex indexes in polygons (anything > VI needs reducing)
+//	returns if any changes to polygons made
+//-------------------------------------------------------------------
+Bool TLAsset::TMesh::RemoveVertex(u32 VertexIndex)
+{
+	//	out of range
+	if ( VertexIndex > m_Vertexes.GetSize() )
+	{
+		TLDebug_Break("Trying to remove vertex from mesh out of range");
+		return FALSE;
+	}
+
+	u32 OldLastIndex = m_Vertexes.LastIndex();
+
+	//	remove vertex and colour
+	m_Vertexes.RemoveAt( VertexIndex );
+	if ( m_Colours.GetSize() )
+		m_Colours.RemoveAt( VertexIndex );
+
+	s32 i;
+	Bool ChangedPolygon = FALSE;
+
+
+	//	remove and correct polygons using this index
+	for ( i=m_Triangles.LastIndex();	i>=0;	i-- )
+	{
+		Triangle& t = m_Triangles[i];
+
+		//	remove if it was using this vertex
+		Bool Remove = FALSE;
+		Remove |= ( t.x == VertexIndex );
+		Remove |= ( t.y == VertexIndex );
+		Remove |= ( t.z == VertexIndex );
+		
+		if ( Remove )
+		{
+			ChangedPolygon |= TRUE;
+			m_Triangles.RemoveAt(i);	
+			continue;	
+		}
+
+		//	correct indexes
+		if ( t.x > VertexIndex )	{	t.x--;	}
+		if ( t.y > VertexIndex )	{	t.y--;	}
+		if ( t.z > VertexIndex )	{	t.z--;	}
+	}
+
+	for ( i=m_Tristrips.LastIndex();	i>=0;	i-- )
+	{
+		Tristrip& Polygon = m_Tristrips[i];
+
+		//	correct/remove indexes in this tristrip
+		for ( s32 n=Polygon.LastIndex();	n>=0;	n-- )
+		{
+			if ( Polygon[n] == VertexIndex )
+			{
+				ChangedPolygon |= TRUE;
+				Polygon.RemoveAt(n);
+			}
+			else if ( Polygon[n] > VertexIndex )
+			{
+				Polygon[n]--;
+			}
+		}
+
+		//	not enough left in this tristrip to form a triangle
+		if ( Polygon.GetSize() < 3 )
+		{
+			ChangedPolygon |= TRUE;
+			m_Tristrips.RemoveAt(i);
+		}
+	}
+
+	for ( i=m_Trifans.LastIndex();	i>=0;	i-- )
+	{
+		Trifan& Polygon = m_Trifans[i];
+
+		//	correct/remove indexes in this tristrip
+		for ( s32 n=Polygon.LastIndex();	n>=0;	n-- )
+		{
+			if ( Polygon[n] == VertexIndex )
+			{
+				ChangedPolygon |= TRUE;
+				Polygon.RemoveAt(n);
+			}
+			else if ( Polygon[n] > VertexIndex )
+			{
+				Polygon[n]--;
+			}
+		}
+
+		//	not enough left in this trifan to form a triangle
+		if ( Polygon.GetSize() < 3 )
+		{
+			ChangedPolygon |= TRUE;
+			m_Trifans.RemoveAt(i);
+		}
+	}
+
+	
+	for ( i=m_Lines.LastIndex();	i>=0;	i-- )
+	{
+		Line& Polygon = m_Lines[i];
+
+		//	correct/remove indexes in this tristrip
+		for ( s32 n=Polygon.LastIndex();	n>=0;	n-- )
+		{
+			if ( Polygon[n] == VertexIndex )
+			{
+				ChangedPolygon |= TRUE;
+				Polygon.RemoveAt(n);
+			}
+			else if ( Polygon[n] > VertexIndex )
+			{
+				Polygon[n]--;
+			}
+		}
+
+		//	not enough left in this linestrip for a line
+		if ( Polygon.GetSize() < 2 )
+		{
+			ChangedPolygon |= TRUE;
+			m_Lines.RemoveAt(i);
+		}
+	}
+
+	return ChangedPolygon;
+}
+
+

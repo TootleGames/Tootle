@@ -36,7 +36,7 @@ public:
 
 	// Time step access
 	FORCEINLINE Bool	HasTimeSteps() const									{	return (m_UpdateTimeQueue.GetSize() > 0); }
-	FORCEINLINE void	AddTimeStep(TLTime::TTimestamp UpdateTimerTime)			{	if(IsEnabled()) m_UpdateTimeQueue.Add( UpdateTimerTime ); }
+	void				AddTimeStep(const TLTime::TTimestamp& UpdateTimerTime);
 	FORCEINLINE u16		Debug_GetFramesPerSecond() const						{	return m_Debug_FramesPerSecond;	}
 	FORCEINLINE u16		Debug_GetUpdatesPerSecond() const						{	return m_Debug_UpdatesPerSecond;	}
 	FORCEINLINE float	Debug_GetFrameTimePerSecond() const						{	return m_Debug_FrameTimePerSecond;	}

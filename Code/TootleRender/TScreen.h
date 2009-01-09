@@ -56,7 +56,7 @@ public:
 	TPtr<TLRender::TRenderTarget>	CreateRenderTarget(TRefRef TargetRef);					// Creates a new render target
 	SyncBool						DeleteRenderTarget(TRefRef TargetRef);					//	shutdown a render target
 
-	TPtr<TRenderTarget>		GetRenderTarget(TRefRef TargetRef);						//	fetch render target
+	TPtr<TRenderTarget>&	GetRenderTarget(TRefRef TargetRef);						//	fetch render target
 
 	virtual void			GetRenderTargetMaxSize(Type4<s32>& MaxSize)				{	MaxSize.Set( 0, 0, GetSize().Width(), GetSize().Height() );	}
 	Bool					GetRenderTargetSize(Type4<s32>& Size,const TPtr<TRenderTarget>& pRenderTarget);	//	get the dimensions of a render target

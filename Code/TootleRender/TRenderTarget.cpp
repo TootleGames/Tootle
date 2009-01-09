@@ -59,9 +59,10 @@ void TLRender::TRenderTarget::Draw()
 	}
 
 	//	draw the root render object and the rest will follow
-	if ( m_pRootRenderNode )
+	TPtr<TRenderNode>& pRootRenderNode = GetRootRenderNode();
+	if ( pRootRenderNode )
 	{
-		DrawNode( m_pRootRenderNode.GetObject(), NULL, NULL );
+		DrawNode( pRootRenderNode.GetObject(), NULL, NULL );
 	}
 
 	//	scene count should be zero after drawing...
@@ -235,6 +236,25 @@ Bool TLRender::TRenderTarget::GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s
 	m_pCamera->GetWorldRay( WorldRay, RenderTargetPos, RenderTargetSize );
 
 	return TRUE;
+}
+
+
+
+//---------------------------------------------------------------
+//	gets the render node at the root
+//---------------------------------------------------------------
+void TLRender::TRenderTarget::SetRootRenderNode(const TPtr<TRenderNode>& pRenderNode)
+{
+	SetRootRenderNode( pRenderNode->GetNodeRef() );
+}
+
+
+//---------------------------------------------------------------
+//	gets the render node at the root
+//---------------------------------------------------------------
+TPtr<TLRender::TRenderNode>& TLRender::TRenderTarget::GetRootRenderNode() const
+{
+	return TLRender::g_pRendergraph->FindNode( m_RootRenderNodeRef );
 }
 
 

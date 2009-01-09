@@ -150,15 +150,9 @@ TPtr<TLRender::TRenderTarget> TLRender::TScreen::CreateRenderTarget(TRefRef Targ
 //---------------------------------------------------------
 //	fetch render target
 //---------------------------------------------------------
-TPtr<TLRender::TRenderTarget> TLRender::TScreen::GetRenderTarget(const TRef& TargetRef)
+TPtr<TLRender::TRenderTarget>& TLRender::TScreen::GetRenderTarget(const TRef& TargetRef)
 {
-	//	find the render target with this ref. returns pointer to the correct one so we need to turn
-	//	that into a plain ptr
-	TPtr<TLRender::TRenderTarget>* pResult = m_RenderTargets.Find( TargetRef );
-	if ( !pResult )
-		return NULL;
-
-	return *pResult;
+	return m_RenderTargets.FindPtr( TargetRef );
 }
 
 

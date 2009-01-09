@@ -36,8 +36,8 @@
 //		is per-lib, not how the Core lib is built.
 //		use TLDebug::IsEnabled() for more accurate global debug support
 #if defined(_DEBUG)
-	#define TLDebug_Break(String)					TLDebug::Break( String, (const char*)__FILE__, __LINE__ )
-	#define TLDebug_Print(String)					TLDebug::Print( String, (const char*)__FILE__, __LINE__ )
+	#define TLDebug_Break(String)					TLDebug::Break( String, (const char*)__FUNCTION__ )
+	#define TLDebug_Print(String)					TLDebug::Print( String, (const char*)__FUNCTION__ )
 #else
 	#define TLDebug_Break(String)					FALSE	//	by default do NOT continue from breaks
 	#define TLDebug_Print(String)					{}
@@ -45,9 +45,9 @@
 
 
 #if defined(_DEBUG) && defined(DEBUG_CHECK_VALUES)
-	#define TLDebug_CheckIndex(Index,Max)			TLDebug::CheckIndex( Index, Max, (const char*)__FILE__, __LINE__ )
-	#define TLDebug_CheckInRange(Value,Min,Max)		TLDebug::CheckInRange( Value, Min, Max, (const char*)__FILE__, __LINE__ )
-	#define TLDebug_CheckFloat(Value)				TLDebug::CheckFloatType( Value, (const char*)__FILE__, __LINE__ )
+	#define TLDebug_CheckIndex(Index,Max)			TLDebug::CheckIndex( Index, Max, (const char*)__FUNCTION__ )
+	#define TLDebug_CheckInRange(Value,Min,Max)		TLDebug::CheckInRange( Value, Min, Max, (const char*)__FUNCTION__ )
+	#define TLDebug_CheckFloat(Value)				TLDebug::CheckFloatType( Value, (const char*)__FUNCTION__ )
 #else
 	#define TLDebug_CheckIndex(Index,Max)			TRUE	//	by in realease just continue, assume index/value is fine
 	#define TLDebug_CheckInRange(Value,Min,Max)		TRUE	//	by in realease just continue, assume index/value is fine
@@ -75,31 +75,31 @@ namespace TLDebug
 	FORCEINLINE Bool	IsBreaking()					{	return g_IsBreaking;	}	//	check this if function callbacks or threads etc and dont do anything!
 	
 	void				GetLastBreak(TString& String);														//	get our last break position appended to this string
-	void				SetLastBreak(const char* pSourceFile,const int SourceLine);							//	note last break place in the code
+	void				SetLastBreak(const char* pSourceFunction);											//	note last break place in the code
 
-	Bool				Break(const TString& String,const char* pSourceFile,const int SourceLine);			//	halt! return TRUE to ignore the error and continue
-	inline Bool			Break(const TString& String)														{	return Break( String, NULL, -1 );	}
-	void				Print(const TString& String,const char* pSourceFile,const int SourceLine);			//	print to console
-	inline void			Print(const TString& String)														{	Print( String, NULL, -1 );	}
+	Bool				Break(const TString& String,const char* pSourceFunction);							//	halt! return TRUE to ignore the error and continue
+	inline Bool			Break(const TString& String)														{	return Break( String, NULL );	}
+	void				Print(const TString& String,const char* pSourceFunction);							//	print to console
+	inline void			Print(const TString& String)														{	Print( String, NULL );	}
 
-	FORCEINLINE Bool	CheckIndex(int Index,int Max,const char* pSourceFile,const int SourceLine);			//	check & assert if index is out of bounds. Max is NOT inclusive... Min <= N < Max
-	FORCEINLINE Bool	CheckIndex(int Index,int Max)														{	return CheckIndex( Index, Max, NULL, -1 );	}
-	FORCEINLINE Bool	CheckInRange(int Value,int Min,int Max,const char* pSourceFile,const int SourceLine);	//	check & assert if range is out of bounds. Max IS inclusive... Min <= N <= Max
-	FORCEINLINE Bool	CheckInRange(int Value,int Min,int Max)												{	return CheckInRange( Value, Min, Max, NULL, -1 );	}
+	FORCEINLINE Bool	CheckIndex(int Index,int Max,const char* pSourceFunction);							//	check & assert if index is out of bounds. Max is NOT inclusive... Min <= N < Max
+	FORCEINLINE Bool	CheckIndex(int Index,int Max)														{	return CheckIndex( Index, Max, NULL );	}
+	FORCEINLINE Bool	CheckInRange(int Value,int Min,int Max,const char* pSourceFunction);				//	check & assert if range is out of bounds. Max IS inclusive... Min <= N <= Max
+	FORCEINLINE Bool	CheckInRange(int Value,int Min,int Max)												{	return CheckInRange( Value, Min, Max, NULL );	}
 
-	Bool				CheckFloat(const float& Value,const char* pSourceFile,const int SourceLine);		//	check float is valid
-	Bool				CheckFloat(const TLMaths::TMatrix& Value,const char* pSourceFile,const int SourceLine);		//	check float is valid
-	Bool				CheckFloat(const TLMaths::TQuaternion& Value,const char* pSourceFile,const int SourceLine);		//	check float is valid
+	Bool				CheckFloat(const float& Value,const char* pSourceFunction);							//	check float is valid
+	Bool				CheckFloat(const TLMaths::TMatrix& Value,const char* pSourceFunction);				//	check float is valid
+	Bool				CheckFloat(const TLMaths::TQuaternion& Value,const char* pSourceFunction);			//	check float is valid
 
-	template<typename TYPE> Bool	CheckFloatType(const TYPE& Value,const char* pSourceFile,const int SourceLine);
-	template<> FORCEINLINE Bool		CheckFloatType(const float& Value,const char* pSourceFile,const int SourceLine)					{	return CheckFloat( Value, pSourceFile, SourceLine );	}
-	template<> FORCEINLINE Bool		CheckFloatType(const TLMaths::TMatrix& Value,const char* pSourceFile,const int SourceLine)		{	return CheckFloat( Value, pSourceFile, SourceLine );	}
-	template<> FORCEINLINE Bool		CheckFloatType(const TLMaths::TQuaternion& Value,const char* pSourceFile,const int SourceLine)	{	return CheckFloat( Value, pSourceFile, SourceLine );	}
+	template<typename TYPE> Bool	CheckFloatType(const TYPE& Value,const char* pSourceFunction);
+	template<> FORCEINLINE Bool		CheckFloatType(const float& Value,const char* pSourceFunction)					{	return CheckFloat( Value, pSourceFunction );	}
+	template<> FORCEINLINE Bool		CheckFloatType(const TLMaths::TMatrix& Value,const char* pSourceFunction)		{	return CheckFloat( Value, pSourceFunction );	}
+	template<> FORCEINLINE Bool		CheckFloatType(const TLMaths::TQuaternion& Value,const char* pSourceFunction)	{	return CheckFloat( Value, pSourceFunction );	}
 
 
 //private:
-	Bool				DoCheckIndexBreak(int Index,int Max,const char* pSourceFile,const int SourceLine);
-	Bool				DoCheckRangeBreak(int Value,int Min,int Max,const char* pSourceFile,const int SourceLine);
+	Bool				DoCheckIndexBreak(int Index,int Max,const char* pSourceFunction);
+	Bool				DoCheckRangeBreak(int Value,int Min,int Max,const char* pSourceFunction);
 
 
 	namespace Platform 
@@ -117,14 +117,14 @@ namespace TLDebug
 //	check a generic float type
 //-------------------------------------------------------
 template<typename TYPE> 
-Bool TLDebug::CheckFloatType(const TYPE& Value,const char* pSourceFile,const int SourceLine)
+Bool TLDebug::CheckFloatType(const TYPE& Value,const char* pSourceFunction)
 {
 	if ( !IsEnabled() )
 		return TRUE;
 
 	for ( u32 i=0;	i<Value.GetSize();	i++ )
 	{
-		if ( !CheckFloat( Value[i], pSourceFile, SourceLine ) )
+		if ( !CheckFloat( Value[i], pSourceFunction ) )
 			return FALSE;
 	}
 
@@ -137,7 +137,7 @@ Bool TLDebug::CheckFloatType(const TYPE& Value,const char* pSourceFile,const int
 //-------------------------------------------------------
 //	check & assert if index is out of bounds. Max is NOT inclusive... Min <= N < Max
 //-------------------------------------------------------
-FORCEINLINE Bool TLDebug::CheckIndex(int Index,int Max,const char* pSourceFile,const int SourceLine)
+FORCEINLINE Bool TLDebug::CheckIndex(int Index,int Max,const char* pSourceFunction)
 {
 	if ( !IsEnabled() )
 		return TRUE;
@@ -146,14 +146,14 @@ FORCEINLINE Bool TLDebug::CheckIndex(int Index,int Max,const char* pSourceFile,c
 	if ( Index >= 0 && Index < Max )
 		return TRUE;
 
-	return DoCheckIndexBreak( Index, Max, pSourceFile, SourceLine );
+	return DoCheckIndexBreak( Index, Max, pSourceFunction );
 }
 
 
 //-------------------------------------------------------
 //	check & assert if value is out of range. Max IS inclusive... Min <= N <= Max
 //-------------------------------------------------------
-FORCEINLINE Bool TLDebug::CheckInRange(int Value,int Min,int Max,const char* pSourceFile,const int SourceLine)
+FORCEINLINE Bool TLDebug::CheckInRange(int Value,int Min,int Max,const char* pSourceFunction)
 {
 	if ( !IsEnabled() )
 		return TRUE;
@@ -162,6 +162,6 @@ FORCEINLINE Bool TLDebug::CheckInRange(int Value,int Min,int Max,const char* pSo
 	if ( Value >= Min &&Value <= Max )
 		return TRUE;
 
-	return DoCheckRangeBreak( Value, Min, Max, pSourceFile, SourceLine );
+	return DoCheckRangeBreak( Value, Min, Max, pSourceFunction );
 
 }

@@ -61,6 +61,7 @@ namespace TLRender
 			inline void		DrawPrimitives(u32 GLPrimType,const TArray<TYPE>* pPrimitivesArray);
 			inline void		DrawPrimitives(u32 GLPrimType,const TArray<TArray<u16> >* pPrimitivesArray);
 			inline void		DrawPrimitives(u32 GLPrimType,const TArray<TArray<u16> >* pPrimitivesArray,u32 Debug_LimitPrimSize);
+			void			DrawPrimitivePoints(u32 GLPrimType,const TArray<float3>* pVertexes);	//	draw vertexes as points
 
 			void			ResetPolyCount();	//	reset counter of polygons rendered back to zero
 			u32				GetPolyCount();		//	get number of polygons rendered

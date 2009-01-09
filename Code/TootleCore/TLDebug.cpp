@@ -16,8 +16,7 @@
 
 namespace TLDebug
 {
-	const char* g_pLastBreakSourceFile = NULL;
-	s32			g_LastBreakLine = -1;
+	const char* g_pLastBreakSourceFunction = NULL;
 
 #ifdef _DEBUG
 	Bool		g_IsEnabled = TRUE;
@@ -35,10 +34,9 @@ namespace TLDebug
 //-------------------------------------------------------
 //	note last break place in the code
 //-------------------------------------------------------
-void TLDebug::SetLastBreak(const char* pSourceFile,const int SourceLine)
+void TLDebug::SetLastBreak(const char* pSourceFunction)
 {
-	g_pLastBreakSourceFile = pSourceFile;
-	g_LastBreakLine = SourceLine;
+	g_pLastBreakSourceFunction = pSourceFunction;
 }
 
 
@@ -47,13 +45,13 @@ void TLDebug::SetLastBreak(const char* pSourceFile,const int SourceLine)
 //-------------------------------------------------------
 void TLDebug::GetLastBreak(TString& String)
 {
-	if ( !g_pLastBreakSourceFile )
+	if ( !g_pLastBreakSourceFunction )
 	{
-		String.Append("???(??)");
+		String.Append("???");
 	}
 	else
 	{
-		String.Appendf("%s(%d)", g_pLastBreakSourceFile, g_LastBreakLine );
+		String.Appendf("%s", g_pLastBreakSourceFunction );
 	}
 }
 
@@ -61,7 +59,7 @@ void TLDebug::GetLastBreak(TString& String)
 //-------------------------------------------------------
 //	halt! return TRUE to ignore the error and continue
 //-------------------------------------------------------
-Bool TLDebug::Break(const TString& String,const char* pSourceFile,const int SourceLine)
+Bool TLDebug::Break(const TString& String,const char* pSourceFunction)
 {
 	if ( !IsEnabled() )
 		return FALSE;
@@ -74,7 +72,7 @@ Bool TLDebug::Break(const TString& String,const char* pSourceFile,const int Sour
 	g_IsBreaking = TRUE;
 
 	//	update last break location
-	SetLastBreak( pSourceFile, SourceLine );
+	SetLastBreak( pSourceFunction );
 
 	//	do platform debug break
 	Bool BreakResult = Platform::Break(String);
@@ -89,12 +87,12 @@ Bool TLDebug::Break(const TString& String,const char* pSourceFile,const int Sour
 //-------------------------------------------------------
 //	print to console
 //-------------------------------------------------------
-void TLDebug::Print(const TString& String,const char* pSourceFile,const int SourceLine)
+void TLDebug::Print(const TString& String,const char* pSourceFunction)
 {
 	if ( !IsEnabled() )
 		return;
 
-	SetLastBreak( pSourceFile, SourceLine );
+	SetLastBreak( pSourceFunction );
 
 	if ( !String.GetData() || !String.GetLength() )
 		return;
@@ -107,7 +105,7 @@ void TLDebug::Print(const TString& String,const char* pSourceFile,const int Sour
 //-------------------------------------------------------
 //	check & assert if float is invalid
 //-------------------------------------------------------
-Bool TLDebug::CheckFloat(const float& Value,const char* pSourceFile,const int SourceLine)
+Bool TLDebug::CheckFloat(const float& Value,const char* pSourceFunction)
 {
 	if ( !IsEnabled() )
 		return TRUE;
@@ -144,14 +142,14 @@ Bool TLDebug::CheckFloat(const float& Value,const char* pSourceFile,const int So
 //-------------------------------------------------------
 //	check floats in a matrix
 //-------------------------------------------------------
-Bool TLDebug::CheckFloat(const TLMaths::TMatrix& Value,const char* pSourceFile,const int SourceLine)
+Bool TLDebug::CheckFloat(const TLMaths::TMatrix& Value,const char* pSourceFunction)
 {
 	if ( !IsEnabled() )
 		return TRUE;
 
 	for ( u32 i=0;	i<4;	i++ )
 	{
-		if ( !CheckFloatType( Value.GetCol(i), pSourceFile, SourceLine ) )
+		if ( !CheckFloatType( Value.GetCol(i), pSourceFunction ) )
 			return FALSE;
 	}
 
@@ -162,35 +160,35 @@ Bool TLDebug::CheckFloat(const TLMaths::TMatrix& Value,const char* pSourceFile,c
 //-------------------------------------------------------
 //	check floats in quaternion
 //-------------------------------------------------------
-Bool TLDebug::CheckFloat(const TLMaths::TQuaternion& Value,const char* pSourceFile,const int SourceLine)
+Bool TLDebug::CheckFloat(const TLMaths::TQuaternion& Value,const char* pSourceFunction)
 {
 	if ( !IsEnabled() )
 		return TRUE;
 
-	return CheckFloatType( Value.GetData(), pSourceFile, SourceLine );
+	return CheckFloatType( Value.GetData(), pSourceFunction );
 }
 
 
 //-------------------------------------------------------
 //	
 //-------------------------------------------------------
-Bool TLDebug::DoCheckIndexBreak(int Index,int Max,const char* pSourceFile,const int SourceLine)
+Bool TLDebug::DoCheckIndexBreak(int Index,int Max,const char* pSourceFunction)
 {
 	//	construct a more descriptive string
 	TTempString BreakString;
 	BreakString.Appendf("Index out of bounds: 0 <= %d < %d", Index, Max );
 	
-	return Break( BreakString, pSourceFile, SourceLine );
+	return Break( BreakString, pSourceFunction );
 }
 
 //-------------------------------------------------------
 //	
 //-------------------------------------------------------
-Bool TLDebug::DoCheckRangeBreak(int Value,int Min,int Max,const char* pSourceFile,const int SourceLine)
+Bool TLDebug::DoCheckRangeBreak(int Value,int Min,int Max,const char* pSourceFunction)
 {
 	//	construct a more descriptive string
 	TTempString BreakString;
 	BreakString.Appendf("Value out of range: %d <= %d <= %d", Min, Value, Max );
 	
-	return Break( BreakString, pSourceFile, SourceLine );
+	return Break( BreakString, pSourceFunction );
 }

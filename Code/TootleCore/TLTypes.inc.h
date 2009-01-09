@@ -104,8 +104,9 @@ public:
 	Type3(const Type3<TYPE>& t) : x(t.x), y(t.y), z(t.z)				{	}
 	template<typename OTHERTYPE> Type3(const Type4<OTHERTYPE>& t);
 
-	inline static u32	GetSize() 									{	return 3;	}
-	inline void		Set(const TYPE& a, const TYPE& b, const TYPE& c)					{	x = a;	y = b;	z = c;	};
+	inline static u32	GetSize() 											{	return 3;	}
+	inline void		Set(const TYPE& a, const TYPE& b, const TYPE& c)		{	x = a;	y = b;	z = c;	};
+	inline void		Set(const Type3<TYPE>& abc)								{	x = abc.x;	y = abc.y;	z = abc.z;	};
 
 	inline TYPE		LengthSq() const				{	return (x*x) + (y*y) + (z*z);	};
 	inline TYPE		Length() const					{	return sqrtf( LengthSq() );	};

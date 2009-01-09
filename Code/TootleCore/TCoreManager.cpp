@@ -508,3 +508,16 @@ float TCoreManager::GetTimeStepDifference(TLTime::TTimestampMicro& LastTimestamp
 }
 
 
+void TCoreManager::AddTimeStep(const TLTime::TTimestamp& UpdateTimerTime)	
+{
+	if ( !IsEnabled() )
+		return;
+	
+	//	if this gets excessive, ditch old timestamps.
+	if ( m_UpdateTimeQueue.GetSize() > 10 )
+		m_UpdateTimeQueue.RemoveAt( 0 );
+
+	m_UpdateTimeQueue.Add( UpdateTimerTime ); 
+}
+
+

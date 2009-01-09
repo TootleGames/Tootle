@@ -50,6 +50,7 @@ protected:
 	virtual void					OnPhysicsObjectAdded(TPtr<TLPhysics::TPhysicsNode>& pPhysicsObject)	{}
 
 	virtual Bool					CreateRenderNode(TPtr<TLRender::TRenderNode> pParentRenderNode = NULL);
+	virtual Bool					CreateRenderNode(TRefRef ParentRenderNode);
 	virtual void					OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode)	{}
 
 	virtual void 					Update(float fTimestep);

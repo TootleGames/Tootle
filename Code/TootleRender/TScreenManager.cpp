@@ -147,3 +147,42 @@ void TScreenManager::OnEventChannelAdded(TRefRef refPublisherID,TRefRef refChann
 	//	Super event channel routine
 	TManager::OnEventChannelAdded(refPublisherID, refChannelID);
 }
+
+
+//----------------------------------------------------------
+//	find the specified render target in all our screens
+//----------------------------------------------------------
+TPtr<TLRender::TRenderTarget>& TLRender::TScreenManager::GetRenderTarget(TRefRef RenderTargetRef,TPtr<TScreen>& pScreen)
+{
+	TPtrArray<TScreen>& ScreenArray = GetInstanceArray();
+
+	//	search screens for render targets
+	for ( u32 s=0;	s<ScreenArray.GetSize();	s++ )
+	{
+		TPtr<TLRender::TScreen>& pScreenChild = ScreenArray.ElementAt( s );
+
+		//	find specified rendertarget in this screen
+		TPtr<TLRender::TRenderTarget>& pRenderTarget = pScreenChild->GetRenderTarget( RenderTargetRef );
+		if ( pRenderTarget )
+		{
+			pScreen = pScreenChild;
+			return pRenderTarget;
+		}
+	}
+
+	//	dummy NULL render target so we can return references
+	static TPtr<TLRender::TRenderTarget> g_pNullRenderTarget;
+
+	return g_pNullRenderTarget;
+}
+
+
+//----------------------------------------------------------
+//	find the specified render target in all our screens
+//----------------------------------------------------------
+TPtr<TLRender::TRenderTarget>& TLRender::TScreenManager::GetRenderTarget(TRefRef RenderTargetRef)
+{
+	TPtr<TScreen> pScreen;
+	return GetRenderTarget( RenderTargetRef, pScreen );
+}
+

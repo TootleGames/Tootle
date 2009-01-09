@@ -154,6 +154,9 @@ void TLRender::Platform::Screen::Draw()
 	//	do inherited draw
 	TScreen::Draw();
 
+	//	unbind data
+	Platform::Opengl::Unbind( TRef() );
+
 	//	flip buffers
 	SwapBuffers( pWindow->m_HDC );
 

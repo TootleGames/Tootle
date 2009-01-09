@@ -26,6 +26,7 @@ namespace TLRender
 	class TRenderTarget;
 	class TScreen;
 	class TCamera;
+	class TRenderNode;
 
 	namespace Platform
 	{
@@ -70,7 +71,10 @@ public:
 	TFlags<Flags>&			GetFlags()									{	return m_Flags;	}
 	Bool					GetFlag(TRenderTarget::Flags Flag) const	{	return m_Flags(Flag);	}
 	TColour&				GetClearColour()							{	return m_ClearColour;	}
-	TPtr<TRenderNode>&		GetRootRenderNode()							{	return m_pRootRenderNode;	}
+	void					SetRootRenderNode(TRefRef NodeRef)			{	m_RootRenderNodeRef = NodeRef;	}
+	void					SetRootRenderNode(const TPtr<TRenderNode>& pRenderNode);
+	TRefRef					GetRootRenderNodeRef() const				{	return m_RootRenderNodeRef;	}
+	TPtr<TRenderNode>&		GetRootRenderNode() const;					//	gets the render node at the root
 
 	TFlags<TRenderNode::RenderFlags::Flags>&	Debug_ForceRenderFlagsOn()	{	return m_Debug_ForceRenderFlagsOn;	}
 	TFlags<TRenderNode::RenderFlags::Flags>&	Debug_ForceRenderFlagsOff()	{	return m_Debug_ForceRenderFlagsOff;	}
@@ -111,7 +115,7 @@ protected:
 	s32								m_Debug_SceneCount;		//	to check we do Begin and EndScene in sync
 	TColour							m_ClearColour;			//	clear colour
 	TFlags<Flags>					m_Flags;				//	render target flags
-	TPtr<TLRender::TRenderNode>		m_pRootRenderNode;		//	root render object
+	TRef							m_RootRenderNodeRef;	//	root render node
 	TPtr<TRenderNodeClear>			m_pRenderNodeClear;		//	clear-screen render object
 
 	u32								m_Debug_PolyCount;

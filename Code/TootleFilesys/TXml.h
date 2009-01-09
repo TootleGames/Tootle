@@ -46,12 +46,16 @@ public:
 	Bool						IsSelfClosed() const							{	return m_TagType != TLXml::TagType_OpenClose;	}
 	const TString&				GetTagName() const								{	return m_TagName;	}
 	const TLXml::TagType&		GetTagType() const								{	return m_TagType;	}
+	const TString*				GetProperty(const TString& PropertyName)		{	return m_Properties.Find( PropertyName );	}	//	non-const version allows key array sorting
 	const TString*				GetProperty(const TString& PropertyName) const	{	return m_Properties.Find( PropertyName );	}
+	Bool						GetPropertyEquals(const TString& PropertyName,const TString& String)		{	const TString* pPropertyString = GetProperty( PropertyName );	return pPropertyString ? (*pPropertyString) == String : FALSE;	}	//	finds a property and compares with this string. if property doesnt exist it fails
+	Bool						GetPropertyEquals(const TString& PropertyName,const TString& String) const	{	const TString* pPropertyString = GetProperty( PropertyName );	return pPropertyString ? (*pPropertyString) == String : FALSE;	}	//	finds a property and compares with this string. if property doesnt exist it fails
 	const TProperty&			GetPropertyAt(u32 Index) const					{	return m_Properties.GetPairAt( Index );	}
 	u32							GetPropertyCount() const						{	return m_Properties.GetSize();	}
 
 	TPtr<TXmlTag>				GetChild(const TString& TagName)		{	return m_Children.FindPtr( TagName );	}
 	TPtrArray<TXmlTag>&			GetChildren()							{	return m_Children;	}
+	const TPtrArray<TXmlTag>&	GetChildren() const						{	return m_Children;	}
 	void						AddChild(TPtr<TXmlTag>& pTag)			{	m_Children.Add( pTag );	}
 
 	inline Bool					operator<(const TXmlTag& Tag) const		{	return m_TagName < Tag.m_TagName;	}
@@ -76,7 +80,7 @@ protected:
 class TXml
 {
 public:
-	TXml()				{}
+	TXml()									{}
 
 	SyncBool			Import(const TString& XmlString);	//	parse xml data
 

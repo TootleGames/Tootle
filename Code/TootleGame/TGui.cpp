@@ -185,16 +185,13 @@ void TLGui::TGui::ProcessQueuedClicks()
 		if ( !pRenderNode )
 		{
 			//	find the render target in a screen...
-			TPtrArray<TLRender::TScreen>& ScreenInstances = TLRender::g_pScreenManager->GetInstanceArray();
-			for ( u32 s=0;	(!pRenderTarget) && s<ScreenInstances.GetSize();	s++ )
-			{
-				pScreen = ScreenInstances.ElementAt(s);
-				pRenderTarget = pScreen->GetRenderTarget( m_RenderTargetRef );
-			}
-
+			TPtr<TLRender::TRenderTarget>& pRenderTargetPtr = TLRender::g_pScreenManager->GetRenderTarget( m_RenderTargetRef, pScreen );
 			//	didnt find the render target
-			if ( !pRenderTarget )
+			if ( !pRenderTargetPtr )
 				break;
+
+			//	
+			pRenderTarget = pRenderTargetPtr;
 
 			//	got a render target, fetch a render node
 			pRenderNode = TLRender::g_pRendergraph->FindNode( m_RenderNodeRef );

@@ -67,6 +67,8 @@ public:
 
 	s32						AddVertex(const float3& VertexPos);							//	add vertex to the list, makes up normals and colours if required
 	s32						AddVertex(const float3& VertexPos,const TColour& Colour);	//	add vertex with colour to the list, pad normals and colours if previously didnt exist
+	Bool					RemoveVertex(u32 VertexIndex);								//	remove a vertex, remove it's colour, remove any polygons that use this vertex, and correct the vertex indexes in polygons (anything > VI needs reducing). returns if any changes to polygons made
+	Bool					ReplaceVertex(u32 OldVertexIndex,u32 NewVertexIndex);		//	find all uses of OldVertexIndex in polygons and swap them for NewVertexIndex 
 	inline void				ScaleVerts(float Scale,u32 FirstVert=0,s32 LastVert=-1)				{	ScaleVerts( float3( Scale, Scale, Scale ), FirstVert, LastVert );	}
 	void					ScaleVerts(const float3& Scale,u32 FirstVert=0,s32 LastVert=-1);	//	scale all vertexes
 	void					MoveVerts(const float3& Movement,u32 FirstVert=0,s32 LastVert=-1);	//	move all verts
@@ -122,7 +124,7 @@ protected:
 	TArray<Triangle>		m_Triangles;			//	triangles in mesh
 	TArray<Tristrip>		m_Tristrips;			//	tristrips in mesh
 	TArray<Trifan>			m_Trifans;				//	trifans in mesh
-	TArray<Line>			m_Lines;				//	lines in mesh
+	TArray<Line>			m_Lines;				//	lineSTRIPS in mesh
 	
 	TLMaths::TBox			m_BoundsBox;			//	bounding box vertex extents
 	TLMaths::TSphere		m_BoundsSphere;			//	bounding sphere
@@ -132,5 +134,5 @@ protected:
 };
 
 
-template<> FORCEINLINE TLArray::ElementType TArray<TLAsset::TFixedVertex>::GetElementType() const			{	return TLArray::DataType;	}
+TLCore_DeclareIsDataType( TLAsset::TFixedVertex );
 

@@ -93,7 +93,7 @@ void TLMemory::Debug::Debug_Alloc(void* pDataAddress,u32 Size)
 	TMemoryTrack* pMemoryTrack = FindMemoryTrack( pDataAddress );
 	if ( pMemoryTrack )
 	{
-		Debug::Break("Error in memory tracking system? this address has already been allocated and not deleted...", __FILE__, __LINE__ );
+		Debug::Break("Error in memory tracking system? this address has already been allocated and not deleted...", __FUNCTION__ );
 	}
 	else
 	{
@@ -122,7 +122,7 @@ Bool TLMemory::Debug::Debug_Delete(void* pDataAddress)
 	if ( !pMemoryTrack )
 	{
 		//	stop the platform delete/free
-		if ( !Debug::Break("Potentially deleting memory twice... retry will ALLOW system to delete the memory", __FILE__, __LINE__ ) )
+		if ( !Debug::Break("Potentially deleting memory twice... retry will ALLOW system to delete the memory", __FUNCTION__ ) )
 			return FALSE;
 	}
 
@@ -144,9 +144,9 @@ Bool TLMemory::Debug::Debug_Delete(void* pDataAddress)
 //------------------------------------------------------
 //	added this wrapper for TLDebug_Break so we don't include the string type or debug header
 //------------------------------------------------------
-Bool TLMemory::Debug::Break(const char* pErrorString,const char* pSourceFile,const int SourceLine)
+Bool TLMemory::Debug::Break(const char* pErrorString,const char* pSourceFunction)
 {
 	TTempString BreakString = pErrorString;
-	return TLDebug::Break( BreakString, pSourceFile, SourceLine );
+	return TLDebug::Break( BreakString, pSourceFunction );
 }
 

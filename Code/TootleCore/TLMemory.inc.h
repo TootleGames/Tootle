@@ -46,8 +46,8 @@ template<typename TYPE>
 void TLMemory::CopyData(TYPE* pToData,const TYPE* pFromData,u32 Elements)
 {
 	//	check params
-	if ( !pToData )		{	Debug::Break("ToData expected in CopyData", __FILE__, __LINE__ );	}
-	if ( !pFromData )	{	Debug::Break("FromData expected in CopyData", __FILE__, __LINE__ );	}
+	if ( !pToData )		{	Debug::Break("ToData expected in CopyData", __FUNCTION__ );	}
+	if ( !pFromData )	{	Debug::Break("FromData expected in CopyData", __FUNCTION__ );	}
 
 	//	no work to do
 	if ( !Elements || !pToData || !pFromData )
@@ -64,8 +64,8 @@ template<typename TYPE>
 void TLMemory::MoveData(TYPE* pToData,const TYPE* pFromData,u32 Elements)
 {
 	//	check params
-	if ( !pToData )		{	Debug::Break("ToData expected in MoveData", __FILE__, __LINE__ );	}
-	if ( !pFromData )	{	Debug::Break("FromData expected in MoveData", __FILE__, __LINE__ );	}
+	if ( !pToData )		{	Debug::Break("ToData expected in MoveData", __FUNCTION__ );	}
+	if ( !pFromData )	{	Debug::Break("FromData expected in MoveData", __FUNCTION__ );	}
 
 	//	no work to do
 	if ( !Elements || !pToData || !pFromData )

@@ -33,7 +33,7 @@ namespace TLMemory
 	//	added this wrapper for TLDebug_Break so we don't include the string type or debug header
 	namespace Debug
 	{
-		Bool				Break(const char* pErrorString,const char* pSourceFile,const int SourceLine);
+		Bool				Break(const char* pErrorString,const char* pSourceFunction);
 		void				Debug_Alloc(void* pDataAddress,u32 Size);	//	log the allocation of some data (POST alloc)
 		Bool				Debug_Delete(void* pDataAddress);			//	log/debug deleting of data, return FALSE to abort the delete (PRE delete)
 	}
@@ -87,7 +87,7 @@ public:
 		void* pData = Platform::MemAlloc( Size );
 		if ( !pData )
 		{
-			TLMemory::Debug::Break("Failed to allocate memory", __FILE__, __LINE__ );
+			TLMemory::Debug::Break("Failed to allocate memory", __FUNCTION__ );
 			return NULL;
 		}
 

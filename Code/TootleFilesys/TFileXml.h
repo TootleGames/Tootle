@@ -29,6 +29,8 @@ public:
 	SyncBool			Import();					//	turn this TFile into XML
 //	SyncBool			Export();					//	export XML to binary data
 
+	TXml&				GetXmlData()				{	return m_XmlData;	}
+
 //	virtual SyncBool	Export(TPtr<TFileAsset>& pAssetFile);	//	turn XML into a more binary format. XML tags become ref's, data and properties become child binarytree's
 
 protected:

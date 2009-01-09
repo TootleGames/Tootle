@@ -409,20 +409,48 @@ TLRender::DrawResult TLRender::Platform::RenderTarget::DrawMesh(TLAsset::TMesh& 
 		pFixedVertexes = NULL;
 	
 
-	//	setup other flags
-	if ( RenderFlags(TRenderNode::RenderFlags::Debug_Wireframe) )
-	{
-		glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
-		//	remove colour list and use node colour only
-		pColours = NULL;
-		SetSceneColour( TColour(1.f,1.f,1.f,1.f) );
-		RenderFlags.Clear( TRenderNode::RenderFlags::DepthRead );
+		 
+	//	bind vertex data
+	if ( RenderFlags(TRenderNode::RenderFlags::EnableFixedVerts) && pFixedVertexes && pFixedVertexes->GetSize() )
+	{
+		Opengl::BindFixedVertexes( pFixedVertexes, VBOMeshRef );
 	}
 	else
 	{
+		Opengl::BindVertexes( pVertexes, VBOMeshRef );
+		Opengl::BindColours( pColours, VBOMeshRef );
+	}
+	
+
+	//	wireframe render
+	if ( RenderFlags( TRenderNode::RenderFlags::Debug_Wireframe ) )
+	{
+		//	force white colour by unbinding colours and setting scene colour
+		SetSceneColour( TColour(1.f,1.f,1.f,1.f) );
+		Opengl::BindColours( NULL, VBOMeshRef );
+		glLineWidth(1.f);
+
+		//	set up rendering params
+		glDisable( GL_DEPTH_TEST );
+		glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
+		//	render polygons
+		Opengl::DrawPrimitives( GL_TRIANGLES,		pTriangles );
+		Opengl::DrawPrimitives( GL_TRIANGLE_STRIP,	pTristrips );
+		Opengl::DrawPrimitives( GL_TRIANGLE_FAN,	pTrifans );
+
+		//	dont do another wireframe pass
+		RenderFlags.Clear( TRenderNode::RenderFlags::Debug_Wireframe );
+
+		//	rebind colours and re-set scene setup
+		Opengl::BindColours( pColours, VBOMeshRef );
 		glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 	}
+
+
+
+	//	normal render 
 
 	//	enable/disable depth test
 	if ( RenderFlags( TRenderNode::RenderFlags::DepthRead ) )
@@ -444,61 +472,40 @@ TLRender::DrawResult TLRender::Platform::RenderTarget::DrawMesh(TLAsset::TMesh& 
 		glDepthMask( GL_FALSE );
 	}
 
-		 
-	//	bind vertex data
-	if ( RenderFlags(TRenderNode::RenderFlags::EnableFixedVerts) && pFixedVertexes && pFixedVertexes->GetSize() )
-	{
-		Opengl::BindFixedVertexes( pFixedVertexes, VBOMeshRef );
-	}
-	else
-	{
-		Opengl::BindVertexes( pVertexes, VBOMeshRef );
-		Opengl::BindColours( pColours, VBOMeshRef );
-	}
 	
-	
-	//	debug draw points
-	if ( RenderFlags( TRenderNode::RenderFlags::Debug_Points ) && !RenderFlags( TRenderNode::RenderFlags::Debug_Wireframe ) )
+	//	setup line width if required
+	if ( pLines && pLines->GetSize() > 0 ) 
 	{
-		TArray<u16> AllPoints;
-		for ( u32 v=0;	v<pVertexes->GetSize();	v++ )
-			AllPoints.Add(v);
+		float LineWidth = pRenderNode->GetLineWidth();
+		if ( LineWidth < 1.f )
+		{
+			//	gr: need some kinda world->screen space conversion.. drawing is in pixels, widths are in world space
+			float MeshLineWidth = Mesh.GetLineWidth() * 2.f;
+			MeshLineWidth *= 320.f / 100.f;	//	ortho scale
+			LineWidth = MeshLineWidth;
 
-		glPointSize(2.f);
-		Opengl::DrawPrimitives( GL_POINTS,		AllPoints.GetSize(), AllPoints.GetData() );
-		SetSceneColour( TColour(1.f,1.f,1.f,1.f) );
-	}
-	else
-	{
-		if ( RenderFlags(TRenderNode::RenderFlags::Debug_Wireframe) )
-		{
-			glLineWidth(1.f);
-		}
-		else if( pLines && pLines->GetSize() > 0 ) 
-		{
-			float LineWidth = pRenderNode->GetLineWidth();
+			//	min width
 			if ( LineWidth < 1.f )
-			{
-				//	gr: need some kinda world->screen space conversion.. drawing is in pixels, widths are in world space
-				float MeshLineWidth = Mesh.GetLineWidth() * 2.f;
-				MeshLineWidth *= 320.f / 100.f;	//	ortho scale
-				LineWidth = MeshLineWidth;
-
-				//	min width
-				if ( LineWidth < 1.f )
-					LineWidth = 1.f;
-			}
-				
-			glLineWidth( LineWidth );
+				LineWidth = 1.f;
 		}
+			
+		glLineWidth( LineWidth );
+	}
 		
-		//	draw primitives
-		Opengl::DrawPrimitives( GL_TRIANGLES,		pTriangles );
-		Opengl::DrawPrimitives( GL_TRIANGLE_STRIP,	pTristrips );
-		Opengl::DrawPrimitives( GL_TRIANGLE_FAN,	pTrifans );
-		Opengl::DrawPrimitives( GL_LINE_STRIP,		pLines );
+	//	draw primitives
+	Opengl::DrawPrimitives( GL_TRIANGLES,		pTriangles );
+	Opengl::DrawPrimitives( GL_TRIANGLE_STRIP,	pTristrips );
+	Opengl::DrawPrimitives( GL_TRIANGLE_FAN,	pTrifans );
+	Opengl::DrawPrimitives( GL_LINE_STRIP,		pLines );
+	
+	//	draw points like a primitive
+	if ( RenderFlags( TRenderNode::RenderFlags::Debug_Points ) )
+	{
+		glPointSize(4.f);
+		Opengl::DrawPrimitivePoints( GL_POINTS, pVertexes );
 	}
 	
+
 	
 	//	drawn okay
 	return TLRender::Draw_Okay;

@@ -184,6 +184,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TQuadTree.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TQuadTree.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TSphere.cpp"
 			>
 		</File>

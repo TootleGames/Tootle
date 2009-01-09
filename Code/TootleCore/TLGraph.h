@@ -77,7 +77,7 @@ public:
 #ifdef TLGRAPH_NODEINDEX
 	TPtrRef						FindNode(const TRef& NodeRef);
 #else
-	TPtrRef						FindNode(const TRef& NodeRef)			{	return NodeRef.IsValid() ? FindNodeMatch( NodeRef ) : TPtrNull;	}
+	TPtrRef						FindNode(const TRef& NodeRef)			{	Debug_CheckNullPtrIsNull();	return NodeRef.IsValid() ? FindNodeMatch( NodeRef ) : TPtrNull;	}
 #endif
 	TRef						GetFreeNodeRef(TRefRef BaseRef=TRef());	//	find an unused ref for a node - returns the ref
 	TRefRef						GetFreeNodeRef(TRef& Ref);				//	find an unused ref for a node, modifies the ref provided
@@ -134,6 +134,11 @@ private:
 	void						DoAddNode(TPtr<T>& pNode,TPtr<T>& pParent);		// Final stage add of the graph node
 	void						DoRemoveNode(TPtr<T>& pNode,TPtr<T>& pParent);		// Final stage removal of the graph node
 
+#ifdef _DEBUG
+	FORCEINLINE static void		Debug_CheckNullPtrIsNull()						{	if ( TPtrNull.IsValid() )	{	TLDebug_Break("Graph's Null Ptr is NOT NULL");	}	}
+#else
+	FORCEINLINE static void		Debug_CheckNullPtrIsNull()						{	}
+#endif
 
 	//	gr: you don;t need another template declaration, by being inside a template class it is templated (it's TGraph<T>::TGraphRequest which is different to TGraph<X>::TGraphRequest)
 	//template <class T>
@@ -415,6 +420,7 @@ TPtrRef	TLGraph::TGraphNode<T>::FindNodeMatch(const MATCHTYPE& Value)
 	if ( *this == Value )
 	{
 		TLDebug_Break("Parent should have already caught this pointer and returned a TPtr");
+		TGraph<T>::Debug_CheckNullPtrIsNull();
 		return TPtrNull;
 	}
 
@@ -459,6 +465,7 @@ TPtrRef	TLGraph::TGraphNode<T>::FindNodeMatch(const MATCHTYPE& Value)
 #endif
 
 	//	no match
+	TGraph<T>::Debug_CheckNullPtrIsNull();
 	return TPtrNull;
 }
 
@@ -519,6 +526,7 @@ TPtrRef	TLGraph::TGraphNode<T>::FindChildMatch(const MATCHTYPE& Value)
 #endif
 
 	//	no match
+	TGraph<T>::Debug_CheckNullPtrIsNull();
 	return TPtrNull;
 }
 
@@ -870,6 +878,12 @@ void TLGraph::TGraph<T>::OnEventChannelAdded(TRefRef refPublisherID, TRefRef ref
 template <class T>
 SyncBool TLGraph::TGraph<T>::Update(float fTimeStep)
 {
+	//	check that the Null ptr is still null
+	//	if this is caught it means that somewhere, someone has had a NULL (!IsValid())
+	//	Ptr returned from the graph, then assigned it to something anyway (so missing a Pointer check)
+	Debug_CheckNullPtrIsNull();
+
+	//	update graph structure, upadte each node etc
 	UpdateGraph( fTimeStep );
 
 	return SyncTrue;
@@ -897,7 +911,10 @@ template <class T>
 TPtrRef TLGraph::TGraph<T>::FindNode(const TRef& NodeRef)			
 {	
 	if ( !NodeRef.IsValid() )
+	{
+		Debug_CheckNullPtrIsNull();
 		return TPtrNull;
+	}
 	
 	//	search the graph list
 	TPtrRef pIndexNode = m_NodeIndex.FindPtr( NodeRef );
@@ -909,6 +926,7 @@ TPtrRef TLGraph::TGraph<T>::FindNode(const TRef& NodeRef)
 	if ( pMatchingUpdate )
 		return pMatchingUpdate->GetNode();
 
+	Debug_CheckNullPtrIsNull();
 	return TPtrNull;
 }
 
@@ -931,6 +949,8 @@ TRef TLGraph::TGraph<T>::GetFreeNodeRef(TRefRef BaseRef)
 template <class T>
 TRefRef TLGraph::TGraph<T>::GetFreeNodeRef(TRef& Ref)
 {
+	Debug_CheckNullPtrIsNull();
+
 	//	keep searching through the graph for this ref whilst a node is found
 	while ( FindNode( Ref ).IsValid() )
 	{
@@ -1336,7 +1356,10 @@ TPtrRef TLGraph::TGraph<T>::FindPtr(const TGraphNode<T>* pNode) const
 		return m_pRootNode;
 
 	if ( !m_pRootNode )
+	{		
+		Debug_CheckNullPtrIsNull();
 		return TPtrNull;
+	}
 
 	return m_pRootNode->FindPtr(pNode);	
 }
@@ -1350,7 +1373,10 @@ template<typename MATCHTYPE>
 TPtrRef TLGraph::TGraph<T>::FindNodeMatch(const MATCHTYPE& Value)		
 {	
 	if ( !m_pRootNode )
+	{
+		Debug_CheckNullPtrIsNull();
 		return TPtrNull;
+	}
 
 	if ( m_pRootNode == Value )
 		return m_pRootNode;

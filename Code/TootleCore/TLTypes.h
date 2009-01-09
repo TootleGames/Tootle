@@ -103,6 +103,28 @@ typedef enum
 } SyncBool;
 
 
+namespace TLCore
+{
+	//	generic global function to tell if a type can be memcpy'd safely for arrays,
+	//	overload (by using the function below) for any dumb classes. i.e. anything 
+	//	that does NOT require a complex constructor (classes WITHOUT pointers)
+	//	and for classes with NO VIRTUAL FUNCTIONS
+	template<typename TYPE>
+	FORCEINLINE Bool	IsDataType()
+	{
+		return FALSE;
+	}
+	
+	//	use this macro to declare a type as memcpy-able
+	#define TLCore_DeclareIsDataType(T)	\
+		template<> FORCEINLINE Bool TLCore::IsDataType<T>()	{	return TRUE;	}	\
+		template<> FORCEINLINE Bool TLCore::IsDataType< Type2<T> >()	{	return TRUE;	}	\
+		template<> FORCEINLINE Bool TLCore::IsDataType< Type3<T> >()	{	return TRUE;	}	\
+		template<> FORCEINLINE Bool TLCore::IsDataType< Type4<T> >()	{	return TRUE;	}	
+}
+
+
+
 //-------------------------------------------------------
 //	collection types
 //-------------------------------------------------------
@@ -112,6 +134,23 @@ template <class TYPE>
 class Type3;
 template <class TYPE>
 class Type4;
+
+
+
+
+TLCore_DeclareIsDataType( u8 );
+TLCore_DeclareIsDataType( s8 );
+TLCore_DeclareIsDataType( u16 );
+TLCore_DeclareIsDataType( s16 );
+TLCore_DeclareIsDataType( u32 );
+TLCore_DeclareIsDataType( s32 );
+TLCore_DeclareIsDataType( float );
+TLCore_DeclareIsDataType( u64 );
+TLCore_DeclareIsDataType( SyncBool );
+
+
+
+
 
 typedef Type2<int>		int2;
 typedef Type3<int>		int3;

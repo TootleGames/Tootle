@@ -16,7 +16,7 @@ m_GrowBy		( GrowBy )
 {
 	if ( m_GrowBy == 0 )
 	{
-		TLArray::Debug::Break( "TArray GrowBy must be at least 1!", __FILE__, __LINE__ );
+		TLArray::Debug::Break( "TArray GrowBy must be at least 1!", __FUNCTION__ );
 		m_GrowBy = TArray_GrowByDefault;
 	}
 }
@@ -91,6 +91,8 @@ s32 TArray<TYPE>::Add(const TYPE* pData,u32 Length)
 	}
 	else
 	{
+		TLArray::Debug::PrintSizeWarning( m_pData[0], Length, __FUNCTION__ );
+
 		//	add each member individually
 		FirstIndex = Add( pData[0] );
 		for ( u32 i=1;	i<Length;	i++ )
@@ -275,6 +277,8 @@ Bool TArray<TYPE>::CopyElements(const TYPE* pData,u32 Length,u32 Index)
 	}
 	else
 	{
+		TLArray::Debug::PrintSizeWarning( m_pData[0], Length, __FUNCTION__ );
+
 		//	have to copy via = (or constructors would be nice...)
 		for ( u32 i=0;	i<Length;	i++ )
 		{
@@ -486,7 +490,7 @@ void TArray<TYPE>::SetAllocSize(u32 NewSize)
 	//	failed to alloc...
 	if ( !m_pData )
 	{
-		TLArray::Debug::Break("Failed to allocate array", __FILE__, __LINE__ );
+		TLArray::Debug::Break("Failed to allocate array", __FUNCTION__ );
 		NewAlloc = 0;
 	}
 
@@ -514,6 +518,8 @@ void TArray<TYPE>::SetAllocSize(u32 NewSize)
 		}
 		else
 		{
+			TLArray::Debug::PrintSizeWarning( m_pData[0], CopySize, __FUNCTION__ );
+
 			for ( u32 i=0;	i<CopySize;	i++ )
 			{
 				m_pData[i] = pOldData[i];
@@ -563,12 +569,15 @@ void TArray<TYPE>::SetAll(const TYPE& Val)
 			//	memcpy each element
 			for ( u32 i=0;	i<GetSize();	i++ )
 			{
-				TLMemory::CopyData( &ElementAt(i), &Val, sizeof(TYPE) );
+				//	gr: memcpy the Val over our 1 ELEMENT
+				TLMemory::CopyData( &ElementAt(i), &Val, 1 );
 			}
 		}
 	}
 	else
 	{
+		TLArray::Debug::PrintSizeWarning( m_pData[0], GetSize(), __FUNCTION__ );
+
 		for ( u32 i=0;	i<GetSize();	i++ )
 		{
 			ElementAt(i) = Val;
@@ -664,7 +673,7 @@ s32 TArray<TYPE>::FindIndex(const MATCHTYPE& val,u32 FromIndex) const
 	{
 		if ( !IsSorted() )
 		{
-			TLArray::Debug::Print("Warning; unsorted array cannot be sorted because of const FindIndex()", __FILE__, __LINE__ );
+			TLArray::Debug::Print("Warning; unsorted array cannot be sorted because of const FindIndex()", __FUNCTION__ );
 			//Sort();
 		}
 

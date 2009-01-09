@@ -30,17 +30,21 @@ class TBinary;
 
 namespace TLArray
 {
-	enum ElementType
-	{
-		ClassType,	//	if our elements are classes we need to construct the elements and use = to copy, DONT USE MEMCPY!
-		DataType,	//	data elements means we can use dumb mem copys, mem sets etc
-	};
-
 	//	added this wrapper for TLDebug_Break so we don't include the string type
 	namespace Debug
 	{
-		Bool	Break(const char* pErrorString,const char* pSourceFile,const int SourceLine);
-		void	Print(const char* pErrorString,const char* pSourceFile,const int SourceLine);
+		Bool	Break(const char* pErrorString,const char* pSourceFunction);
+		void	Print(const char* pErrorString,const char* pSourceFunction);
+
+		template<typename TYPE>
+		FORCEINLINE void	PrintSizeWarning(const TYPE& DummyElement,u32 ElementCount,const char* pSourceFunction)
+		{
+			#ifdef _DEBUG
+			if ( ElementCount > 300 )
+				Print("Warning: Copying/Setting over 300 elements in a non-data type array", pSourceFunction );
+			#endif
+		}
+
 	}
 
 	#define TArray_GrowByDefault	4
@@ -55,7 +59,7 @@ namespace TLArray
 	
 	//	simple type sort function
 	template<typename TYPE>
-	inline SortResult	SimpleSort(const TYPE& a,const TYPE& b,const void* pTestVal)
+	SortResult		SimpleSort(const TYPE& a,const TYPE& b,const void* pTestVal)
 	{
 		//	normally you KNOW what pTestVal's type will be and cast
 		//	as the "default" sort func, we ASSUME that pTestVal is of TYPE type.
@@ -95,6 +99,7 @@ public:
 	virtual u32			GetAllocSize() const					{	return m_Alloc;	}
 	virtual void		SetAllocSize(u32 size);					//	set new amount of allocated data
 	virtual void		Compact()								{	SetAllocSize( GetSize() );	}	//	free-up over-allocated data
+	FORCEINLINE void	SetGrowBy(u8 GrowBy)					{	m_GrowBy = (GrowBy == 0) ? TArray_GrowByDefault : GrowBy;	}
 
 	virtual TYPE&		ElementAt(u32 Index)					{	TLDebug_CheckIndex( Index, GetSize() );	return m_pData[Index];	}
 	virtual const TYPE&	ElementAtConst(u32 Index) const			{	TLDebug_CheckIndex( Index, GetSize() );	return m_pData[Index];	}
@@ -163,8 +168,7 @@ protected:
 	Bool				CopyElements(const TYPE* pData,u32 Length,u32 Index=0);
 	void				ShiftArray(u32 From, s32 Amount );			//	move blocks of data in the array
 
-	FORCEINLINE TLArray::ElementType	GetElementType() const;		//	return data or class type to decide whether to use memcpy's or constructors and = operators. it's a speed/safety thing
-	FORCEINLINE Bool					IsElementDataType() const	{	return GetElementType() == TLArray::DataType;	}
+	FORCEINLINE Bool	IsElementDataType() const					{	return TLCore::IsDataType<TYPE>();	}
 
 	virtual void		OnArrayShrink(u32 OldSize,u32 NewSize)		{	}	//	callback when the array is SHRUNK but nothing is deallocated. added so specific types can clean up as needed (e.g. NULL pointers that are "removed" but not deallocated
 
@@ -181,37 +185,14 @@ private:
 
 
 
-//	gr: some specialisations for the element type. they're here instead 
-//	of array.inc.h as they're type specific rather than just generic code
-template<typename TYPE>
-FORCEINLINE TLArray::ElementType TArray<TYPE>::GetElementType() const
+/*
+//	gr: we ignore the size warning for arrays as we cannot doing anything about it :(
+template<>
+template<typename ARRAYTYPE>
+FORCEINLINE void TLArray::Debug::PrintSizeWarning(const TArray<ARRAYTYPE>& DummyElement,u32 ElementCount,const char* pSourceFunction)
 {
-	//	default assumes we're a class. we specialise non-class ones that we can
-	return TLArray::ClassType;
 }
-
-#define DECLARE_TARRAY_DATATYPE(TYPE)	\
-	template<> FORCEINLINE TLArray::ElementType TArray<TYPE>::GetElementType() const			{	return TLArray::DataType;	}	\
-	template<> FORCEINLINE TLArray::ElementType TArray<Type2<TYPE> >::GetElementType() const	{	return TLArray::DataType;	}	\
-	template<> FORCEINLINE TLArray::ElementType TArray<Type3<TYPE> >::GetElementType() const	{	return TLArray::DataType;	}	\
-	template<> FORCEINLINE TLArray::ElementType TArray<Type4<TYPE> >::GetElementType() const	{	return TLArray::DataType;	}	
-
-
-DECLARE_TARRAY_DATATYPE( u8 )
-DECLARE_TARRAY_DATATYPE( s8 )
-DECLARE_TARRAY_DATATYPE( u16 )
-DECLARE_TARRAY_DATATYPE( s16 )
-DECLARE_TARRAY_DATATYPE( u32 )
-DECLARE_TARRAY_DATATYPE( s32 )
-DECLARE_TARRAY_DATATYPE( float )
-DECLARE_TARRAY_DATATYPE( u64 )
-
-//DECLARE_TARRAY_DATATYPE( SyncBool )
-template<> FORCEINLINE TLArray::ElementType TArray<SyncBool>::GetElementType() const			{	return TLArray::DataType;	}
-
-
-
-
+*/
 
 
 #include "TArray.inc.h"

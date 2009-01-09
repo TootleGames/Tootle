@@ -90,3 +90,4 @@ protected:
 };
 
 
+TLCore_DeclareIsDataType( TRef );
