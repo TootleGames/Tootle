@@ -134,5 +134,7 @@ protected:
 };
 
 
+namespace TLCore
+{
 TLCore_DeclareIsDataType( TLAsset::TFixedVertex );
-
+}
