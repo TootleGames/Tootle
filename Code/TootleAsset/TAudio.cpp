@@ -1,11 +1,22 @@
 #include "TAudio.h"
 
+#include <TootleAudio/TLAudio.h>
+
 using namespace TLAsset;
 
 TAudio::TAudio(const TRef& AssetRef) :
 	TAsset	( "Audio", AssetRef )
 {
 }
+
+SyncBool TAudio::Shutdown()
+{
+	// Release the audio buffer
+	TLAudio::Platform::RemoveBuffer(GetAssetRef());
+
+	return TAsset::Shutdown();	
+}
+
 
 
 //-------------------------------------------------------
@@ -37,6 +48,10 @@ SyncBool TAudio::ImportData(TBinaryTree& Data)
 	
 	pChild->ReadAll(m_RawAudioData);
 	
+	
+	// Now we have read the data create the audio buffer for this asset
+	// in the audio system
+	TLAudio::Platform::CreateBuffer(GetAssetRef());
 		
 	return SyncTrue;
 }

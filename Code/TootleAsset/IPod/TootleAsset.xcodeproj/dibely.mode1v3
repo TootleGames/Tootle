@@ -233,6 +233,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -276,6 +278,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
+									<integer>8</integer>
 									<integer>2</integer>
 									<integer>0</integer>
 								</array>
@@ -311,14 +314,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TAudio.cpp</string>
+								<string>TAudio.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -326,11 +327,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TAudio.cpp</string>
+										<string>TAudio.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>842A9F0C0F165081004BF60A</string>
+										<string>842AA2BD0F1BB48D004BF60A</string>
 										<key>history</key>
 										<array>
 											<string>84E643D90F1537BF005A4DC9</string>
@@ -344,9 +345,10 @@
 											<string>842A9EDA0F165081004BF60A</string>
 											<string>842A9EDB0F165081004BF60A</string>
 											<string>842A9EDC0F165081004BF60A</string>
-											<string>842A9EDE0F165081004BF60A</string>
 											<string>842A9EDF0F165081004BF60A</string>
-											<string>842A9EE00F165081004BF60A</string>
+											<string>842AA2660F1BB0C0004BF60A</string>
+											<string>842AA2BA0F1BB48D004BF60A</string>
+											<string>842AA2BB0F1BB48D004BF60A</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -355,42 +357,17 @@
 											<string>84E643E00F1537BF005A4DC9</string>
 											<string>84E643E10F1537BF005A4DC9</string>
 											<string>84E643E20F1537BF005A4DC9</string>
-											<string>842A9EE10F165081004BF60A</string>
-											<string>842A9EE20F165081004BF60A</string>
-											<string>842A9EE30F165081004BF60A</string>
-											<string>842A9EE40F165081004BF60A</string>
 											<string>842A9EE50F165081004BF60A</string>
-											<string>842A9EE60F165081004BF60A</string>
-											<string>842A9EE70F165081004BF60A</string>
 											<string>842A9EE80F165081004BF60A</string>
-											<string>842A9EEA0F165081004BF60A</string>
-											<string>842A9EEB0F165081004BF60A</string>
 											<string>842A9EEC0F165081004BF60A</string>
-											<string>842A9EEE0F165081004BF60A</string>
-											<string>842A9EEF0F165081004BF60A</string>
-											<string>842A9EF00F165081004BF60A</string>
-											<string>842A9EF20F165081004BF60A</string>
-											<string>842A9EF30F165081004BF60A</string>
-											<string>842A9EF50F165081004BF60A</string>
-											<string>842A9EF60F165081004BF60A</string>
-											<string>842A9EF80F165081004BF60A</string>
-											<string>842A9EF90F165081004BF60A</string>
-											<string>842A9EFA0F165081004BF60A</string>
-											<string>842A9EFB0F165081004BF60A</string>
 											<string>842A9EFD0F165081004BF60A</string>
 											<string>842A9EFE0F165081004BF60A</string>
-											<string>842A9EFF0F165081004BF60A</string>
 											<string>842A9F000F165081004BF60A</string>
 											<string>842A9F010F165081004BF60A</string>
 											<string>842A9F020F165081004BF60A</string>
-											<string>842A9F030F165081004BF60A</string>
-											<string>842A9F040F165081004BF60A</string>
-											<string>842A9F050F165081004BF60A</string>
 											<string>842A9F060F165081004BF60A</string>
-											<string>842A9F080F165081004BF60A</string>
-											<string>842A9F090F165081004BF60A</string>
-											<string>842A9F0A0F165081004BF60A</string>
-											<string>842A9F0B0F165081004BF60A</string>
+											<string>842AA26A0F1BB0C0004BF60A</string>
+											<string>842AA2BC0F1BB48D004BF60A</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -448,9 +425,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>842A9F0D0F165081004BF60A</string>
+				<string>842AA2BE0F1BB48D004BF60A</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>842A9F0E0F165081004BF60A</string>
+				<string>842AA2BF0F1BB48D004BF60A</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -584,8 +561,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1CD10A99069EF8BA00B06720</string>
-		<string>842A9F0F0F165081004BF60A</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleAsset/IPod/TootleAsset.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -666,7 +641,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>842A9F0F0F165081004BF60A</string>
-				<string>842A9F100F165081004BF60A</string>
+				<string>842AA2B60F1BB3C6004BF60A</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

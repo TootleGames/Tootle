@@ -11,6 +11,18 @@ namespace TLAudio
 
 using namespace TLAudio;
 
+/*
+TAudioNode* TAudioNodeFactory::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
+{
+	// Create engine/middleware side audio nodes
+	if(TypeRef == "Audio")
+		return new TAudioNode(InstanceRef,TypeRef);
+	
+	return NULL;
+}
+*/
+
+
 
 TAudiograph::TAudiograph(TRefRef refManagerID) :
 	TLGraph::TGraph<TLAudio::TAudioNode>	( refManagerID )
@@ -27,6 +39,19 @@ SyncBool TAudiograph::Initialise()
 			return SyncFalse;
 
 		return TLGraph::TGraph<TLAudio::TAudioNode>::Initialise();
+
+		/*
+		if(TLGraph::TGraph<TLAudio::TAudioNode>::Initialise() == SyncTrue)
+		{	
+		
+			//	create generic render node factory
+			TPtr<TClassFactory<TLAudio::TAudioNode,FALSE> > pFactory = new TAudioNodeFactory();
+			AddFactory(pFactory);
+			
+			return SyncTrue;
+		}
+		 */
+		
 	}
 
 	return SyncWait;

@@ -15,8 +15,8 @@ class TLAsset::TAudio : public TLAsset::TAsset
 {
 public:
 	TAudio(const TRef& AssetRef);
-
-	TRefRef			GetBufferRef()	const	{ return m_BufferRef; }
+	
+	virtual SyncBool	Shutdown();	
 	
 	u32			GetSize()								const	{ return m_HeaderData.m_Size; }
 	void		SetSize(u32 uSize)								{ m_HeaderData.m_Size = uSize; }
@@ -29,8 +29,7 @@ public:
 	
 	u16			GetBitsPerSample()						const	{ return m_HeaderData.m_BitsPerSample; }
 	void		SetBitsPerSample(u16 uBitsPerSample)				{ m_HeaderData.m_BitsPerSample = uBitsPerSample; }
-	
-	
+		
 	TBinary&	RawAudioDataBinary()		{ return m_RawAudioData; }
 protected:
 	
@@ -50,7 +49,4 @@ private:
 	TAudioHeader	m_HeaderData;	
 	
 	TBinary		m_RawAudioData;
-	
-	TRef	m_BufferRef;			// Audio object ID - not sure this is needed yet
-	int		m_Buffer;				// ALUint OpenAL mapping
 };

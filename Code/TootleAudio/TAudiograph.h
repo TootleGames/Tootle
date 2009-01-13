@@ -7,6 +7,8 @@
 namespace TLAudio
 {
 	class TAudiograph;
+	//class TAudioNodeFactory;
+
 
 	extern TPtr<TAudiograph> g_pAudiograph;
 };
@@ -28,3 +30,16 @@ protected:
 
 	SyncBool				InitDevices();
 };
+
+
+/*
+// [12/01/09] DB - NOT NEEDED JUST YET
+//----------------------------------------------------------
+//	Generic physics node factory
+//----------------------------------------------------------
+class TLAudio::TAudioNodeFactory : public TClassFactory<TAudioNode,FALSE>
+{
+public:
+	virtual TAudioNode*	CreateObject(TRefRef InstanceRef,TRefRef TypeRef);
+};
+*/

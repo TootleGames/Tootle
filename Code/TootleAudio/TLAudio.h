@@ -13,8 +13,21 @@ namespace TLAudio
 		SyncBool	Update();
 		SyncBool	Shutdown();
 
-		// Low level audio request
-		Bool		StartAudio();
-		Bool		StopAudio();
+		// Low level audio routines		
+		Bool		CreateSource(TRefRef SourceRef);
+		Bool		RemoveSource(TRefRef SourceRef);
+		
+		Bool		CreateBuffer(TRefRef AudioAssetRef);
+		Bool		RemoveBuffer(TRefRef AudioAssetRef);
+		
+		Bool		HasSource(TRefRef AudioSourceRef);
+		Bool		HasBuffer(TRefRef AudioAssetRef);
+		
+		Bool		AttachSourceToBuffer(TRefRef AudioSourceRef, TRefRef AudioAssetRef, Bool bStreaming);
+
+		// Audio control
+		Bool		StartAudio(TRefRef AudioSourceRef);
+		Bool		StopAudio(TRefRef AudioSourceRef);
+		Bool		PauseAudio(TRefRef AudioSourceRef);
 	}
 };
