@@ -36,6 +36,9 @@ namespace TLAudio
 			SyncBool		Update();
 			SyncBool		Shutdown();
 
+			void			RemoveAllSources();
+			void			RemoveAllBuffers();
+
 			// Low level audio routines
 			// NOTE: May be moved onto a low level audio manager at some stage
 			Bool			StartAudio(TRefRef AudioSourceRef);

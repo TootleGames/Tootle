@@ -96,14 +96,14 @@ SyncBool TAudiograph::Shutdown()
 	if(Platform::Shutdown() != SyncTrue)
 		return SyncFalse;
 
-	return TLGraph::TGraph<TLAudio::TAudioNode>::Shutdown();
+	return TGraph::Shutdown();
 }
 
 
 void TAudiograph::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 {
 	// Super class process message
-	TLGraph::TGraph<TLAudio::TAudioNode>::ProcessMessage(pMessage);
+	TGraph::ProcessMessage(pMessage);
 }
 
 SyncBool TAudiograph::InitDevices()

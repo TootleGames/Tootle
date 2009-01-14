@@ -747,14 +747,11 @@ SyncBool Platform::OpenAL::Shutdown()
 	// TODO: The removal of the sources will be done when the nodes shutdown
 	//		 The removal of the buffers will be done when the file assets are shutdown
 	
-	ALuint		returnedName;
 	// Delete the Sources
-	if(g_Sources.GetSize())
-		alDeleteSources(g_Sources.GetSize(), &returnedName);
+	RemoveAllSources();
 	
 	// Delete the Buffers	
-	if(g_Buffers.GetSize())
-		alDeleteBuffers(g_Buffers.GetSize(), &returnedName);
+	RemoveAllBuffers();
 	
 	ALCcontext* pContext = alcGetCurrentContext();
 
@@ -775,6 +772,62 @@ SyncBool Platform::OpenAL::Shutdown()
 
 	return SyncTrue;
 }
+
+
+void Platform::OpenAL::RemoveAllSources()
+{
+	for(u32 uIndex = 0; uIndex < g_Sources.GetSize(); uIndex++)
+	{
+		TPtr<AudioObj> pAO = g_Sources.ElementAt(uIndex);
+
+		alDeleteSources(1, &pAO->m_OpenALID);
+
+		ALenum error;
+		if ((error = alGetError()) != AL_NO_ERROR)
+		{
+			TLDebug_Print("alDeleteSources error: ");
+
+			TString strerr = GetALErrorString(error);
+			TLDebug_Print(strerr);
+
+			// Failed to remove a source that should exist!!!?
+			TLDebug_Break("Failed to delete audio source");
+		}
+
+		// Delete the array element
+		g_Sources.ElementAt(uIndex) = NULL;
+	}
+
+	g_Sources.Empty(TRUE);
+}
+
+void Platform::OpenAL::RemoveAllBuffers()
+{
+	for(u32 uIndex = 0; uIndex < g_Buffers.GetSize(); uIndex++)
+	{
+		TPtr<AudioObj> pAO = g_Buffers.ElementAt(uIndex);
+
+		alDeleteBuffers(1, &pAO->m_OpenALID);
+
+		ALenum error;
+		if ((error = alGetError()) != AL_NO_ERROR)
+		{
+			TLDebug_Print("alDeleteBuffers error: ");
+
+			TString strerr = GetALErrorString(error);
+			TLDebug_Print(strerr);
+
+			// Failed to remove a buffer that should exist!!!?
+			TLDebug_Break("Failed to delete audio buffer");
+		}
+
+		// Delete the array element
+		g_Buffers.ElementAt(uIndex) = NULL;
+	}
+
+	g_Buffers.Empty(TRUE);
+}
+
 
 
 Bool Platform::OpenAL::StartAudio(TRefRef AudioSourceRef)

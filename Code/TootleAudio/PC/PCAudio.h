@@ -67,6 +67,9 @@ namespace TLAudio
 			SyncBool		Update();
 			SyncBool		Shutdown();
 
+			void			RemoveAllSources();
+			void			RemoveAllBuffers();
+
 			Bool			DetermineFinishedAudio(TArray<TRef>& refArray);
 
 			// Low level audio routines
