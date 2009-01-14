@@ -38,6 +38,12 @@ SyncBool Platform::Init()
 
 SyncBool Platform::Update()		
 {	
+#if(AUDIO_SYSTEM == AUDIO_DIRECTX)
+	return DirectX::Update();	
+#else if(AUDIO_SYSTEM == AUDIO_OPENAL)
+	return OpenAL::Update();	
+#endif
+
 	return SyncTrue;	
 }
 
@@ -239,6 +245,16 @@ Bool Platform::AttachSourceToBuffer(TRefRef AudioSourceRef, TRefRef AudioAssetRe
 }
 
 
+Bool Platform::DetermineFinishedAudio(TArray<TRef>& refArray)
+{
+#if(AUDIO_SYSTEM == AUDIO_OPENAL)
+	return OpenAL::DetermineFinishedAudio(refArray);
+#endif
+	return FALSE;
+}
+
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // DirectX Audio
@@ -421,8 +437,6 @@ Bool Platform::DirectX::StopAudio()
 
 SyncBool Platform::OpenAL::Init()
 {
-
-
 	// Initialization
 	ALCdevice* pDevice = alcOpenDevice(NULL); // select the "preferred device"
 
@@ -489,6 +503,47 @@ SyncBool Platform::OpenAL::Init()
 	}
 	
 	return SyncTrue;
+}
+
+SyncBool Platform::OpenAL::Update()
+{
+	return SyncTrue;
+}
+
+Bool Platform::OpenAL::DetermineFinishedAudio(TArray<TRef>& refArray)
+{
+	if(g_Sources.GetSize() == 0)
+		return FALSE;
+
+	// Need to go through the list of audio objects and monitor for when they have finished.
+	// Once finished remove the audio and add the ref to a list so it can be sent out as 
+	// notification of the audio finishing
+	for(u32 uIndex = 0; uIndex < g_Sources.GetSize(); uIndex++)
+	{
+		TPtr<AudioObj> pAO = g_Sources.ElementAt(uIndex);
+
+		ALuint objid = pAO->m_OpenALID;
+
+		ALint state;
+		alGetSourcei(objid, AL_SOURCE_STATE, &state);
+
+		ALenum error;
+		if ((error = alGetError()) != AL_NO_ERROR)
+		{
+			TString strerr = GetALErrorString(error);
+			TLDebug_Print(strerr);
+		}
+		else
+		{
+			// Check the state
+			if(state == AL_STOPPED)
+			{
+				refArray.Add(pAO->m_AudioObjRef);
+			}
+		}
+	}
+
+	return (refArray.GetSize() > 0);
 }
 
 
@@ -665,17 +720,26 @@ Bool Platform::OpenAL::ReleaseSource(TRefRef AudioSourceRef)
 		TLDebug_Print("Failed to find audio source for release");
 		return FALSE;
 	}
-	
+
+	// Delete the source from the OpenAL system
+	alDeleteSources(1, &pAO->m_OpenALID);
+
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("Failed to delete source");
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+
+		//NOTE: This WILL leave audio objects in memory
+		TLDebug_Break("Audio Source Delete failed");
+		return FALSE;
+	}
+
 	// Remove the source object from the array
 	return g_Sources.Remove(pAO);	
 }
 
-
-
-SyncBool Platform::OpenAL::Update()
-{
-	return SyncTrue;
-}
 
 SyncBool Platform::OpenAL::Shutdown()
 {
@@ -791,6 +855,125 @@ Bool Platform::OpenAL::PauseAudio(TRefRef AudioSourceRef)
 	
 	return TRUE;
 }	
+
+
+// Pitch manipulation
+Bool Platform::OpenAL::SetPitch(TRefRef AudioSourceRef, const float fPitch)
+{
+	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	
+	if(!pAO)
+	{
+		TLDebug_Print("Failed to find audio source for setpitch request");
+		return FALSE;
+	}
+	
+	alSourcef(pAO->m_OpenALID,AL_PITCH,fPitch);
+	
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("setpitch alSourcef error: ");
+		
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+		
+		return FALSE;
+	}
+	
+	return TRUE;	
+}
+
+
+Bool Platform::OpenAL::GetPitch(TRefRef AudioSourceRef, float& fPitch)
+{
+	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	
+	if(!pAO)
+	{
+		TLDebug_Print("Failed to find audio source for getpitch request");
+		return FALSE;
+	}
+	
+	// Attempt to get the value
+	ALfloat fResult;
+	alGetSourcef(pAO->m_OpenALID,AL_PITCH, &fResult);
+	
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("getpitch alGetSourcef error: ");
+		
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+		
+		return FALSE;
+	}
+
+	// Success - write the value to the variable
+	fPitch = fResult;
+	
+	return TRUE;	
+}
+
+
+Bool Platform::OpenAL::SetPosition(TRefRef AudioSourceRef, const float3 vPosition)
+{
+	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	
+	if(!pAO)
+	{
+		TLDebug_Print("Failed to find audio source for setposition request");
+		return FALSE;
+	}
+	
+	alSourcefv(pAO->m_OpenALID,AL_POSITION,vPosition);	
+	
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("setposition alSourcefv error: ");
+		
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+		
+		return FALSE;
+	}
+		
+	return TRUE;	
+}
+
+
+Bool Platform::OpenAL::GetPosition(TRefRef AudioSourceRef, float3& vPosition)
+{
+	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	
+	if(!pAO)
+	{
+		TLDebug_Print("Failed to find audio source for getposition request");
+		return FALSE;
+	}
+	
+	// Attempt to get the values
+	ALfloat vResult[3];
+	alGetSourcefv(pAO->m_OpenALID,AL_POSITION,&vResult[0]);	
+	
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("getposition alGetSourcefv error: ");
+		
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+		
+		return FALSE;
+	}
+	
+	// Success - write the values to the variable
+	vPosition.Set(vResult[0], vResult[1], vResult[2]);
+	
+	return TRUE;	
+}
 
 
 

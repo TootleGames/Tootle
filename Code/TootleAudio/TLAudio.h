@@ -29,5 +29,7 @@ namespace TLAudio
 		Bool		StartAudio(TRefRef AudioSourceRef);
 		Bool		StopAudio(TRefRef AudioSourceRef);
 		Bool		PauseAudio(TRefRef AudioSourceRef);
+
+		Bool		DetermineFinishedAudio(TArray<TRef>& refArray);
 	}
 };

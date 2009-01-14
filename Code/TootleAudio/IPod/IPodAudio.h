@@ -42,6 +42,7 @@ namespace TLAudio
 			Bool			StopAudio(TRefRef AudioSourceRef);
 			Bool			PauseAudio(TRefRef AudioSourceRef);
 			
+			Bool			DetermineFinishedAudio(TArray<TRef>& refArray);
 			
 			TPtr<AudioObj> CreateBuffer(TRefRef AudioAssetRef);
 			Bool ReleaseBuffer(TRefRef AudioAssetRef);
@@ -50,7 +51,8 @@ namespace TLAudio
 			Bool ReleaseSource(TRefRef AudioSourceRef);
 			
 			Bool AttachSourceToBuffer(ALuint& uSource, ALuint& uBuffer, const Bool bStreaming);
-			
+	
+	
 			// Buffer property access
 			
 			
@@ -99,6 +101,8 @@ namespace TLAudio
 		Bool		StartAudio(TRefRef AudioSourceRef);
 		Bool		StopAudio(TRefRef AudioSourceRef);
 		Bool		PauseAudio(TRefRef AudioSourceRef);
+
+		Bool		DetermineFinishedAudio(TArray<TRef>& refArray);
 
 		// OpenAL access
 		Bool		GetBufferID(TRefRef AudioAssetRef, ALuint& buffer);

@@ -79,6 +79,9 @@ public:
 
 	virtual void		UpdateAll(float fTimestep)		{}	//	gr: no updates for audio nodes
 
+protected:
+	virtual void		ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+
 private:
 	
 	void				CreateSource();						// Generates the source audio data using the audio asset specified

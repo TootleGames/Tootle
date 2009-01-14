@@ -67,6 +67,8 @@ namespace TLAudio
 			SyncBool		Update();
 			SyncBool		Shutdown();
 
+			Bool			DetermineFinishedAudio(TArray<TRef>& refArray);
+
 			// Low level audio routines
 			// NOTE: May be moved onto a low level audio manager at some stage
 			Bool			StartAudio(TRefRef AudioSourceRef);
@@ -82,6 +84,31 @@ namespace TLAudio
 			
 			Bool AttachSourceToBuffer(ALuint& uSource, ALuint& uBuffer, const Bool bStreaming);
 			
+			// Buffer property access
+			
+			
+			// Source Property manipulation
+			Bool	SetPitch(TRefRef AudioSourceRef, const float fPitch);
+			Bool	GetPitch(TRefRef AudioSourceRef, float& fPitch);
+			
+			Bool	SetPosition(TRefRef AudioSourceRef, const float3 vPosition);
+			Bool	GetPosition(TRefRef AudioSourceRef, float3& vPosition);
+
+			/*
+			Could do with a nice way to set the properties via the correct routine
+			 float	- alSourcef
+			 float3 - alSourcefv or alSource3f
+			 int	- alSourcei
+			Bool	SetSourceProperty(TRefRef AudioSourceRef)
+			 {
+			 }
+			 
+			 //Same for the get property type routines
+
+			*/
+
+
+
 			// Error routines
 			TString			GetALErrorString(ALenum err);	
 			TString			GetALCErrorString(ALCenum err);
@@ -107,6 +134,10 @@ namespace TLAudio
 		Bool		StartAudio(TRefRef AudioSourceRef);
 		Bool		StopAudio(TRefRef AudioSourceRef);
 		Bool		PauseAudio(TRefRef AudioSourceRef);
+
+
+		Bool		DetermineFinishedAudio(TArray<TRef>& refArray);
+
 
 		// OpenAL access
 		Bool		GetBufferID(TRefRef AudioAssetRef, ALuint& buffer);

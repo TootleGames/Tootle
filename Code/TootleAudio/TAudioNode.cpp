@@ -9,6 +9,8 @@ using namespace TLAudio;
 TAudioNode::TAudioNode(TRefRef NodeRef,TRefRef TypeRef) :
 	TLGraph::TGraphNode<TAudioNode>		( NodeRef, TypeRef )
 {
+	TLMessaging::g_pEventChannelManager->SubscribeTo(this, "AUDIOGRAPH", "STOP"); 
+
 }
 
 // Initialise routine
@@ -28,6 +30,32 @@ void TAudioNode::Shutdown()
 	RemoveSource();
 	
 	TLGraph::TGraphNode<TAudioNode>::Shutdown();
+}
+
+void TAudioNode::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+{
+	if(pMessage->GetMessageRef() == "AUDIO")
+	{
+		if(pMessage->HasChannelID("STOP"))
+		{
+			TRef AudioRef;
+			pMessage->Read(AudioRef);
+
+			if(AudioRef == GetNodeRef())
+			{
+				// Shutdown this node
+				// NOTE: May need to test for a flag of 'auto release' at some stage as we may not want this 
+				// all of the time and the event would occur when 'Stopping' an audio object manually 
+				// as there is no distinction at a lower level
+				TLAudio::g_pAudiograph->RemoveNode(GetNodeRef());
+			}
+		}
+
+		return;
+	}
+
+	// Pass the message onto the super class
+	TGraphNode::ProcessMessage(pMessage);
 }
 
 

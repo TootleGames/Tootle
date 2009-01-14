@@ -26,7 +26,7 @@ SyncBool Platform::Init()
 
 SyncBool Platform::Update()		
 {	
-	return SyncTrue;	
+	return OpenAL::Update();	
 }
 
 
@@ -186,7 +186,10 @@ Bool Platform::AttachSourceToBuffer(TRefRef AudioSourceRef, TRefRef AudioAssetRe
 }
 
 
-
+Bool Platform::DetermineFinishedAudio(TArray<TRef>& refArray)
+{
+	return OpenAL::DetermineFinishedAudio(refArray);
+}
 
 
 //////////////////////////////////////////////////////////
@@ -271,6 +274,48 @@ SyncBool Platform::OpenAL::Init()
 	}
 	
 	return SyncTrue;
+}
+
+SyncBool Platform::OpenAL::Update()
+{
+	return SyncTrue;
+}
+
+
+Bool Platform::OpenAL::DetermineFinishedAudio(TArray<TRef>& refArray)
+{
+	if(g_Sources.GetSize() == 0)
+		return FALSE;
+
+	// Need to go through the list of audio objects and monitor for when they have finished.
+	// Once finished remove the audio and add the ref to a list so it can be sent out as 
+	// notification of the audio finishing
+	for(u32 uIndex = 0; uIndex < g_Sources.GetSize(); uIndex++)
+	{
+		TPtr<AudioObj> pAO = g_Sources.ElementAt(uIndex);
+
+		ALuint objid = pAO->m_OpenALID;
+
+		ALint state;
+		alGetSourcei(objid, AL_SOURCE_STATE, &state);
+
+		ALenum error;
+		if ((error = alGetError()) != AL_NO_ERROR)
+		{
+			TString strerr = GetALErrorString(error);
+			TLDebug_Print(strerr);
+		}
+		else
+		{
+			// Check the state
+			if(state == AL_STOPPED)
+			{
+				refArray.Add(pAO->m_AudioObjRef);
+			}
+		}
+	}
+
+	return (refArray.GetSize() > 0);
 }
 
 
@@ -447,17 +492,27 @@ Bool Platform::OpenAL::ReleaseSource(TRefRef AudioSourceRef)
 		TLDebug_Print("Failed to find audio source for release");
 		return FALSE;
 	}
+
+	// Delete the source from the OpenAL system
+	alDeleteSources(1, &pAO->m_OpenALID);
+
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("Failed to delete source");
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+
+		//NOTE: This WILL leave audio objects in memory
+		TLDebug_Break("Audio Source Delete failed");
+		return FALSE;
+	}
+
 	
 	// Remove the source object from the array
 	return g_Sources.Remove(pAO);	
 }
 
-
-
-SyncBool Platform::OpenAL::Update()
-{
-	return SyncTrue;
-}
 
 SyncBool Platform::OpenAL::Shutdown()
 {

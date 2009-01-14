@@ -38,6 +38,10 @@ SyncBool TAudiograph::Initialise()
 		if(InitDevices() != SyncTrue)
 			return SyncFalse;
 
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, "AUDIOGRAPH", "START");
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, "AUDIOGRAPH", "PAUSE");
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, "AUDIOGRAPH", "STOP");
+
 		return TLGraph::TGraph<TLAudio::TAudioNode>::Initialise();
 
 		/*
@@ -59,7 +63,32 @@ SyncBool TAudiograph::Initialise()
 
 SyncBool TAudiograph::Update(float fTimeStep)
 {
-	return SyncTrue;
+	TArray<TRef> refArray;
+
+	if(Platform::DetermineFinishedAudio(refArray))
+	{
+		// Send out notification of each audio item that has come to an end
+		for(u32 uIndex = 0; uIndex < refArray.GetSize(); uIndex++)
+		{
+			TRef AudioRef = refArray.ElementAt(uIndex);
+
+			TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("AUDIO");
+
+			if(pMessage)
+			{
+				pMessage->AddChannelID("STOP");
+				pMessage->Write(AudioRef);
+
+				PublishMessage(pMessage);
+			}
+			else
+			{
+				TLDebug_Break("Failed to create message for audio stop event so audio may be left in memory");
+			}
+		}
+	}
+
+	return TGraph::Update(fTimeStep);
 }
 
 SyncBool TAudiograph::Shutdown()
