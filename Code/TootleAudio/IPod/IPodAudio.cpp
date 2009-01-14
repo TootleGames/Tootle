@@ -575,6 +575,127 @@ Bool Platform::OpenAL::PauseAudio(TRefRef AudioSourceRef)
 }	
 
 
+// Pitch manipulation
+Bool Platform::OpenAL::SetPitch(TRefRef AudioSourceRef, const float fPitch)
+{
+	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	
+	if(!pAO)
+	{
+		TLDebug_Print("Failed to find audio source for setpitch request");
+		return FALSE;
+	}
+	
+	alSourcef(pAO->m_OpenALID,AL_PITCH,fPitch);
+	
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("setpitch alSourcef error: ");
+		
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+		
+		return FALSE;
+	}
+	
+	return TRUE;	
+}
+
+
+Bool Platform::OpenAL::GetPitch(TRefRef AudioSourceRef, float& fPitch)
+{
+	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	
+	if(!pAO)
+	{
+		TLDebug_Print("Failed to find audio source for getpitch request");
+		return FALSE;
+	}
+	
+	// Attempt to get the value
+	ALfloat fResult;
+	alGetSourcef(pAO->m_OpenALID,AL_PITCH, &fResult);
+	
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("getpitch alGetSourcef error: ");
+		
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+		
+		return FALSE;
+	}
+
+	// Success - write the value to the variable
+	fPitch = fResult;
+	
+	return TRUE;	
+}
+
+
+Bool Platform::OpenAL::SetPosition(TRefRef AudioSourceRef, const float3 vPosition)
+{
+	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	
+	if(!pAO)
+	{
+		TLDebug_Print("Failed to find audio source for setposition request");
+		return FALSE;
+	}
+	
+	alSourcefv(pAO->m_OpenALID,AL_POSITION,vPosition);	
+	
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("setposition alSourcefv error: ");
+		
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+		
+		return FALSE;
+	}
+		
+	return TRUE;	
+}
+
+
+Bool Platform::OpenAL::GetPosition(TRefRef AudioSourceRef, float3& vPosition)
+{
+	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	
+	if(!pAO)
+	{
+		TLDebug_Print("Failed to find audio source for getposition request");
+		return FALSE;
+	}
+	
+	// Attempt to get the values
+	ALfloat vResult[3];
+	alGetSourcefv(pAO->m_OpenALID,AL_POSITION,&vResult[0]);	
+	
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("getposition alGetSourcefv error: ");
+		
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+		
+		return FALSE;
+	}
+	
+	// Success - write the values to the variable
+	vPosition.Set(vResult[0], vResult[1], vResult[2]);
+	
+	return TRUE;	
+}
+
+
+
+
 
 TString Platform::OpenAL::GetALErrorString(ALenum err)
 {
