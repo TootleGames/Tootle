@@ -88,7 +88,7 @@ SyncBool TAudiograph::Update(float fTimeStep)
 		}
 	}
 
-	return TGraph::Update(fTimeStep);
+	return TLGraph::TGraph<TLAudio::TAudioNode>::Update(fTimeStep);
 }
 
 SyncBool TAudiograph::Shutdown()
@@ -96,14 +96,14 @@ SyncBool TAudiograph::Shutdown()
 	if(Platform::Shutdown() != SyncTrue)
 		return SyncFalse;
 
-	return TGraph::Shutdown();
+	return TLGraph::TGraph<TLAudio::TAudioNode>::Shutdown();
 }
 
 
 void TAudiograph::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 {
 	// Super class process message
-	TGraph::ProcessMessage(pMessage);
+	TLGraph::TGraph<TLAudio::TAudioNode>::ProcessMessage(pMessage);
 }
 
 SyncBool TAudiograph::InitDevices()

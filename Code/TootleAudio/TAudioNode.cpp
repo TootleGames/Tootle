@@ -55,7 +55,7 @@ void TAudioNode::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 	}
 
 	// Pass the message onto the super class
-	TGraphNode::ProcessMessage(pMessage);
+	TLGraph::TGraphNode<TAudioNode>::ProcessMessage(pMessage);
 }
 
 
