@@ -59,7 +59,7 @@ public:
 	void						SetString(const TString& String)	{	m_String = String;	}
 	void						SetMenuCommand(TRefRef Command)		{	m_Command = Command;	}
 	void						SetNextMenu(TRefRef NextMenu)		{	m_NextMenu = NextMenu;	SetMenuCommand("open");	};
-	void						SetMeshRef(TRefRef MenuItemRef)		{	m_MenuItemRef = MenuItemRef;	}
+	void						SetMeshRef(TRefRef MeshRef)			{	m_MeshRef = MeshRef;	}
 
 	Bool						IsHighlightable() const				{	return m_Command.IsValid();	}	
 
