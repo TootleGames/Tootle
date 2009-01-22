@@ -6,7 +6,7 @@
 //	initialise members
 //------------------------------------------------
 template<typename TYPE>
-TArray<TYPE>::TArray(TSortFunc* pSortFunc,u8 GrowBy) :
+TArray<TYPE>::TArray(TSortFunc* pSortFunc,u16 GrowBy) :
 m_Size			( 0 ),
 m_pData			( NULL ),
 m_Alloc			( 0 ),
@@ -49,7 +49,7 @@ s32 TArray<TYPE>::Add(const TYPE& val)
 	//	check to see if adding this element keeps the array sorted
 	if ( IsSorted() && GetSize() > 1 && m_pSortFunc )
 	{
-		TYPE& OldLastElement = ElementAt( LastIndex()-1 );
+		TYPE& OldLastElement = ElementAt( GetLastIndex()-1 );
 
 		//	adding this to the end would make the array unsorted
 		TLArray::SortResult Sorted = m_pSortFunc( OldLastElement, LastElement, NULL );
@@ -59,7 +59,7 @@ s32 TArray<TYPE>::Add(const TYPE& val)
 		}
 	}
 
-	return LastIndex();
+	return GetLastIndex();
 }
 
 
@@ -142,7 +142,7 @@ Bool TArray<TYPE>::Remove(const TYPE& val)
 template<typename TYPE>
 Bool TArray<TYPE>::RemoveAt(u32 Index)
 {
-	if ( (s32)Index>LastIndex() )
+	if ( (s32)Index>GetLastIndex() )
 		return FALSE;
 
 	//	gr: shifting from the NEXT element back... so shift FROM Index+1 which writes OVER Index+1-1
@@ -157,7 +157,7 @@ template<typename TYPE>
 s32 TArray<TYPE>::InsertAt(u32 Index, const TYPE& val, Bool ForcePosition)
 {
 	//	need to add it onto the end
-	if ( (s32)Index > LastIndex() )
+	if ( (s32)Index > GetLastIndex() )
 	{
 		if ( ForcePosition )
 		{
@@ -170,10 +170,10 @@ s32 TArray<TYPE>::InsertAt(u32 Index, const TYPE& val, Bool ForcePosition)
 			//	set index so its at the end
 			if ( !SetSize( GetSize()+1 ) )
 				return -1;
-			Index = LastIndex();
+			Index = GetLastIndex();
 		}
 	}
-	else if ( (s32)Index <= LastIndex() )	//	dont need to shift if its the last index
+	else if ( (s32)Index <= GetLastIndex() )	//	dont need to shift if its the last index
 	{
 		ShiftArray(Index,1);
 	}
@@ -192,7 +192,7 @@ template<typename TYPE>
 s32 TArray<TYPE>::InsertAt(u32 Index, const TYPE* val, u32 Length, Bool ForcePosition)
 {
 	//	need to add it onto the end
-	if ( (s32)Index > LastIndex() )
+	if ( (s32)Index > GetLastIndex() )
 	{
 		if ( ForcePosition )
 		{
@@ -206,10 +206,10 @@ s32 TArray<TYPE>::InsertAt(u32 Index, const TYPE* val, u32 Length, Bool ForcePos
 			Index = GetSize();
 			if ( !SetSize( GetSize()+Length ) )
 				return -1;
-			//Index = LastIndex();
+			//Index = GetLastIndex();
 		}
 	}
-	else if ( (s32)Index <= LastIndex() )
+	else if ( (s32)Index <= GetLastIndex() )
 	{
 		//	dont need to shift if its the last index
 		ShiftArray(Index,Length);
@@ -328,7 +328,8 @@ void TArray<TYPE>::ShiftArray(u32 From, s32 Amount )
 	{
 		u32 OldSize = GetSize();
 		u32 NewSize = GetSize() + Amount;
-		SetSize( GetSize()+Amount );
+		if ( !SetSize( NewSize ) )
+			NewSize = GetSize();
 
 		//	if we failed to allocate all the space we need to dont overwrite further than we can
 		Amount = NewSize - OldSize;
@@ -339,18 +340,36 @@ void TArray<TYPE>::ShiftArray(u32 From, s32 Amount )
 		{
 			//	use memmove if we can
 			u32 ToIndex = From + Amount;
-			u32 MoveAmount = OldSize;
+
+			//	gr: bugfix: we only move the elements AFTER(and including) from, not ALL the elements, 
+			//	this was moving too much memory past the end
+			//u32 MoveAmount = OldSize;
+			s32 MoveAmount = OldSize - From;
 			
 			TLMemory::MoveData( &ElementAt(ToIndex), &ElementAt(From), MoveAmount );
+
+			//	testing
+			//	gr: should be <=? this MoveData() doesnt seem to corrupt heap..
+			for ( s32 i=0;	i<(s32)MoveAmount;	i++ )
+			{
+				s32 FromIndex = From + i;
+				s32 DestIndex = ToIndex + i;
+				//ElementAt(DestIndex) = ElementAt(FromIndex);
+				TLDebug::CheckIndex( FromIndex, GetSize(), __FUNCTION__ );
+				TLDebug::CheckIndex( DestIndex, GetSize(), __FUNCTION__ );
+			}
+
+			TLMemory::Platform::MemValidate();
 		}
 		else
 		{
 			u32 ToIndex = From + Amount;
+		
 			u32 MoveAmount = OldSize;
 
 			//	warning here would be nice if amount is really really big
 			//	work in reverse so we don't overwrite things we haven't copied yet
-			//for ( s32 i=LastIndex();	i>(s32)From;	i-- )
+			//for ( s32 i=GetLastIndex();	i>(s32)From;	i-- )
 			for ( s32 i=MoveAmount-1;	i>=0;	i-- )
 			{
 				s32 FromIndex = From + i;

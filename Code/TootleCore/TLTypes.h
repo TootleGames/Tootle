@@ -117,10 +117,13 @@ namespace TLCore
 	
 	//	use this macro to declare a type as memcpy-able
 	#define TLCore_DeclareIsDataType(T)	\
-		template<> FORCEINLINE Bool IsDataType<T>()	{	return TRUE;	}	\
-		template<> FORCEINLINE Bool IsDataType< Type2<T> >()	{	return TRUE;	}	\
-		template<> FORCEINLINE Bool IsDataType< Type3<T> >()	{	return TRUE;	}	\
-		template<> FORCEINLINE Bool IsDataType< Type4<T> >()	{	return TRUE;	}	
+		namespace TLCore				\
+		{								\
+			template<> FORCEINLINE Bool IsDataType<T>()	{	return TRUE;	}	\
+			template<> FORCEINLINE Bool IsDataType< Type2<T> >()	{	return TRUE;	}	\
+			template<> FORCEINLINE Bool IsDataType< Type3<T> >()	{	return TRUE;	}	\
+			template<> FORCEINLINE Bool IsDataType< Type4<T> >()	{	return TRUE;	}	\
+		}
 }
 
 
@@ -136,8 +139,6 @@ template <class TYPE>
 class Type4;
 
 
-namespace TLCore
-{
 TLCore_DeclareIsDataType( u8 );
 TLCore_DeclareIsDataType( s8 );
 TLCore_DeclareIsDataType( u16 );
@@ -147,7 +148,7 @@ TLCore_DeclareIsDataType( s32 );
 TLCore_DeclareIsDataType( float );
 TLCore_DeclareIsDataType( u64 );
 TLCore_DeclareIsDataType( SyncBool );
-}
+
 
 
 

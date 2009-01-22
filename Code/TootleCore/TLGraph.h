@@ -1114,7 +1114,13 @@ template <class T>
 Bool TLGraph::TGraph<T>::RemoveNode(TPtr<T> pNode)
 {
 	if ( !pNode )
+	{
+		TTempString Debug_String("Attempting to remove node ");
+		pNode->GetNodeRef().GetString( Debug_String );
+		Debug_String.Append(" that doesn't exist in graph...");
+		TLDebug_Print( Debug_String );
 		return FALSE;
+	}
 
 	// Check to make sure we aren;t trying to remove the root node - only done at shutdown
 	if(pNode == m_pRootNode)
@@ -1295,6 +1301,12 @@ void TLGraph::TGraph<T>::DoRemoveNode(TPtr<T>& pNode,TPtr<T>& pParent)
 	if(bSuccess)
 	{
 		OnNodeRemoved( pNode );
+	}
+	else
+	{
+		TTempString Debug_String("Failed to remove node ");
+		pNode->GetNodeRef().GetString( Debug_String );
+		TLDebug_Print( Debug_String );
 	}
 }
 

@@ -41,13 +41,13 @@ public:
 	FORCEINLINE void				Clear(const TFlags<FLAGTYPE>& Flags)			{	m_Flags &= ~Flags.GetData();	}
 	FORCEINLINE void				Clear()											{	m_Flags = 0x0;	}
 
+	FORCEINLINE const STORAGETYPE&	GetData() const									{	return m_Flags;	}
+
 	FORCEINLINE TFlags&				operator=(const TFlags& Flags)					{	m_Flags = Flags.GetData();	return *this;	}
 
 	//	accessor - m_Flags(FlagIndex) == Bool
 	FORCEINLINE Bool				operator()(const FLAGTYPE& FlagIndex) const		{	return IsSet( FlagIndex );	}
 
-protected:
-	FORCEINLINE const STORAGETYPE&	GetData() const									{	return m_Flags;	}
 
 protected:
 	STORAGETYPE			m_Flags;

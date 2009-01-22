@@ -276,7 +276,7 @@ void TString::Append(const CHARTYPE& Char)
 	else
 	{
 		//	replace terminator
-		s32 LastIndex = StringArray.LastIndex();
+		s32 LastIndex = StringArray.GetLastIndex();
 		if ( StringArray[LastIndex] == TLString_Terminator )
 		{
 			StringArray[LastIndex] = Char;
@@ -530,7 +530,7 @@ Bool TString::IsLessThan(const TString& String) const
 //------------------------------------------------------
 //	get the index of last char. -1 if empty or all terminators
 //------------------------------------------------------
-s32 TString::GetCharLastIndex() const
+s32 TString::GetCharGetLastIndex() const
 {
 	//	empty string, return a terminator
 	if ( !GetLength() )
@@ -560,7 +560,7 @@ s32 TString::GetCharLastIndex() const
 //------------------------------------------------------
 TString::CHARTYPE TString::GetCharLast() const
 {
-	s32 LastCharIndex = GetCharLastIndex();
+	s32 LastCharIndex = GetCharGetLastIndex();
 
 	//	no chars (or all terminators)
 	if ( LastCharIndex == -1 )
@@ -599,7 +599,7 @@ Bool TString::Trim()
 	if ( !OldLength )
 		return FALSE;
 
-	s32 NewLastIndex = GetStringArray().LastIndex();
+	s32 NewLastIndex = GetStringArray().GetLastIndex();
 	while ( NewLastIndex >= 0 )
 	{
 		if ( !TLString::IsCharWhitespace( GetCharAt(NewLastIndex) ) )
@@ -679,7 +679,7 @@ Bool TString::GetInteger(s32& Integer) const
 	}
 
 	//	work backwards
-	s32 CharIndex = GetCharLastIndex();
+	s32 CharIndex = GetCharGetLastIndex();
 	if ( CharIndex == -1 )
 		return FALSE;
 
@@ -796,7 +796,7 @@ Bool TString::GetHexInteger(u32& Integer) const
 	}
 
 	//	work backwards
-	s32 CharIndex = GetCharLastIndex();
+	s32 CharIndex = GetCharGetLastIndex();
 	if ( CharIndex == -1 )
 		return FALSE;
 
@@ -854,7 +854,7 @@ Bool TString::GetHexBytes(TArray<u8>& ParsedBytes) const
 	}
 
 	//	work backwards
-	s32 CharIndex = GetCharLastIndex();
+	s32 CharIndex = GetCharGetLastIndex();
 	if ( CharIndex == -1 )
 		return FALSE;
 

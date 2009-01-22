@@ -57,8 +57,8 @@ Bool TLRender::TRenderNodeTile::Draw(TRenderTarget* pRenderTarget,TRenderNode* p
 
 	float2 ScreenScale2 = Widescreen ? float2( ScreenScale * 1.5f, ScreenScale * 1.f ) : float2( ScreenScale * 1.f, ScreenScale * 1.5f );
 
-	s32 TilesWide = ( (ScreenScale2.x*CameraZ) / TileSize.x) / 2.f;
-	s32 TilesHigh = ( (ScreenScale2.y*CameraZ) / TileSize.y) / 2.f;
+	s32 TilesWide = (s32)(( (ScreenScale2.x*CameraZ) / TileSize.x) / 2.f);
+	s32 TilesHigh = (s32)(( (ScreenScale2.y*CameraZ) / TileSize.y) / 2.f);
 	u32 NodeCount = 0;
 
 	if ( pCamera->IsOrtho() )

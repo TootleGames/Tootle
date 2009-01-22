@@ -164,6 +164,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TLGame.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TLGame.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TMenu.cpp"
 			>
 		</File>

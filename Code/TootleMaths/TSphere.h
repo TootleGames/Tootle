@@ -17,6 +17,7 @@ namespace TLMaths
 	class TBox;
 	class TBox2D;
 	class TCapsule;
+	class TLine2D;
 };
 
 
@@ -109,6 +110,7 @@ public:
 	void			Accumulate(const float3& Point)					{	Accumulate( float2( Point.x, Point.y ) );	}
 	void			Accumulate(const float2& Point);				//	grow the sphere to these extents
 	void			Accumulate(const TArray<float2>& Points);		//	get the extents of all these points
+	void			Accumulate(const TArray<float3>& Points);		//	get the extents of all these points
 
 //	void			Transform(const TLMaths::TMatrix& Matrix,const float3& Scale);	//	transform this shape by this matrix
 	void			Transform(const float2& Move)					{	m_Pos += Move;	}
@@ -118,6 +120,8 @@ public:
 	//	"intersection" is just a bool version of the distance check. (negative distance is an intersection)
 //	Bool			GetIntersection(const TCapsule& Capsule) const	{	return GetDistanceSq( Capsule ) < 0.f;	}
 //	Bool			GetIntersection(const TSphere& Sphere) const;
+	Bool			GetIntersection(const TSphere2D& Sphere) const;
+	Bool			GetIntersection(const TLine2D& Line) const;
 //	Bool			GetIntersection(const float3& Pos) const		{	return GetDistanceSq( Pos ) < 0.f;	}
 //	Bool			GetIntersection(const TBox& Box) const;
 

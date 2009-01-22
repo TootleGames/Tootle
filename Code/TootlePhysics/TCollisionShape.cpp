@@ -200,7 +200,7 @@ Bool TLPhysics::GetIntersection_SphereLineStrip(const TLMaths::TSphere& Sphere,c
 		//	tiny line!
 		if ( Line.GetDirection().LengthSq() < TLMaths::g_NearZero )
 		{
-			TLDebug_Break("Tiny line");
+			TLDebug_Print("Tiny line in linestrip");
 			continue;
 		}
 

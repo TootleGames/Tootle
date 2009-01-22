@@ -542,7 +542,7 @@ Bool TLFileSys::GetParentDir(TString& Directory)
 	char ForwardSlash = '\\';
 
 	//	get the last (non terminator) char
-	s32 LastCharIndex = Directory.GetCharLastIndex();
+	s32 LastCharIndex = Directory.GetCharGetLastIndex();
 	if ( LastCharIndex <= 0 )
 		return FALSE;
 

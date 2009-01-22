@@ -129,7 +129,7 @@ void TStateMachine::Debug_ModeLog(const TString& StateMachineName) const
 		DebugString.Appendf("%2d: %s", i, ModeRefString.GetData() );
 
 		//	if last mode append ("current") to it
-		if ( i == m_Debug_ModeLog.LastIndex() )
+		if ( i == m_Debug_ModeLog.GetLastIndex() )
 			DebugString.Append(" (current mode)");
 
 		TLDebug_Print(DebugString);

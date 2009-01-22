@@ -95,7 +95,7 @@ TLMaths::TGlutTessellator::TGlutTessellator(TPtr<TLAsset::TMesh>& pMesh) :
 //	gr: if you find polygons aren't appearing (maybe a CW/CCW issue) 
 //	then try flipping the znormal as this is dependant on the [counter]clockwise order
 //-------------------------------------------------------------
-Bool TLMaths::TGlutTessellator::GenerateTessellations(TLMaths::TLTessellator::TWindingMode WindingMode,TLMaths::TLTessellator::TOutsetType OutsetType,float zNormal,float outsetSize)
+Bool TLMaths::TGlutTessellator::GenerateTessellations(TLMaths::TLTessellator::TWindingMode WindingMode,float zNormal)
 {
 	if ( !m_pMesh )
 	{
@@ -137,34 +137,17 @@ Bool TLMaths::TGlutTessellator::GenerateTessellations(TLMaths::TLTessellator::TW
     {
         TPtr<TLMaths::TContour>& pContour = m_Contours[c];
 
-		// Build the
-        switch(OutsetType)
-        {
-			case TLMaths::TLTessellator::OutsetType_Front:	pContour->buildFrontOutset(outsetSize); break;
-            case TLMaths::TLTessellator::OutsetType_Back:	pContour->buildBackOutset(outsetSize); break;
-        }
-
         gluTessBeginContour(tobj);
 		{
-            for ( u32 p=0;	p<pContour->PointCount();	p++)
+            for ( u32 p=0;	p<pContour->GetPoints().GetSize();	p++)
             {
-				const float3* pPoint = NULL;
-                switch(OutsetType)
-                {
-                    case TLMaths::TLTessellator::OutsetType_Front:	pPoint = &pContour->FrontPoint(p); break;
-                    case TLMaths::TLTessellator::OutsetType_Back:	pPoint = &pContour->BackPoint(p); break;
-                    case TLMaths::TLTessellator::OutsetType_None:	pPoint = &pContour->Point(p); break;
-					default:										pPoint = &pContour->Point(p); break;
-                }
+				const float3& Point = pContour->Point(p);
 
-				if ( !pPoint )
+				if ( !TLDebug_CheckFloat(Point ) )
 					continue;
 
-				if ( !TLDebug_CheckFloat( *pPoint ) )
-					continue;
-
-				Type3<GLdouble> d( pPoint->x, pPoint->y, pPoint->z );
-                gluTessVertex(tobj, d.GetData(), (GLvoid*)pPoint->GetData() );
+				Type3<GLdouble> d( Point.x, Point.y, Point.z );
+                gluTessVertex( tobj, d.GetData(), (GLvoid*)Point.GetData() );
             }
 		}
         gluTessEndContour(tobj);

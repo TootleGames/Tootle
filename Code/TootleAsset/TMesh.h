@@ -7,6 +7,7 @@
 
 #include "TLAsset.h"
 #include "TAsset.h"
+#include <TootleCore/TFlags.h>
 #include <TootleCore/TArray.h>
 #include <TootleCore/TColour.h>
 #include <TootleMaths/TBox.h>
@@ -50,8 +51,15 @@ public:
 	typedef TArray<u16>	Trifan;
 	typedef TArray<u16>	Line;
 
+	enum TMeshFlags
+	{
+		MeshFlag_HasAlpha = 0,
+	};
+
 public:
 	TMesh(const TRef& AssetRef);
+
+	void					Empty();
 
 	//	manipulation
 	void					GenerateShape(const TLMaths::TBox& Box)				{	GenerateCube( Box );	}
@@ -64,7 +72,9 @@ public:
 	void					GenerateSphere(const TLMaths::TSphere& Sphere);		//	generate a sphere
 	void					GenerateCapsule(const TLMaths::TCapsule& Capsule);	//	generate a capsule
 	void					GenerateRainbowColours();							//	create colours for each vertex
+	Bool					GenerateQuad(const TArray<float3>& Outline,const TColour& VertexColour);	//	turn an outline of points into a quad/tri-strip
 
+	//	vertex manipulation
 	s32						AddVertex(const float3& VertexPos);							//	add vertex to the list, makes up normals and colours if required
 	s32						AddVertex(const float3& VertexPos,const TColour& Colour);	//	add vertex with colour to the list, pad normals and colours if previously didnt exist
 	Bool					RemoveVertex(u32 VertexIndex);								//	remove a vertex, remove it's colour, remove any polygons that use this vertex, and correct the vertex indexes in polygons (anything > VI needs reducing). returns if any changes to polygons made
@@ -72,8 +82,15 @@ public:
 	inline void				ScaleVerts(float Scale,u32 FirstVert=0,s32 LastVert=-1)				{	ScaleVerts( float3( Scale, Scale, Scale ), FirstVert, LastVert );	}
 	void					ScaleVerts(const float3& Scale,u32 FirstVert=0,s32 LastVert=-1);	//	scale all vertexes
 	void					MoveVerts(const float3& Movement,u32 FirstVert=0,s32 LastVert=-1);	//	move all verts
+	const TArray<TFixedVertex>&	GetFixedVertexes();				//	return fixed vertex array for verts. calc if required
+	void					SetFixedVertexesInvalid()			{	m_FixedVertexes.Empty();	}
+
 
 	//	data accessors
+	TFlags<TMeshFlags,u8>&	GetFlags()							{	return m_Flags;	}
+	const TFlags<TMeshFlags,u8>&	GetFlags() const			{	return m_Flags;	}
+	FORCEINLINE Bool		HasAlpha() const					{	return m_Flags( MeshFlag_HasAlpha );	}
+
 	const TArray<float3>&	GetVertexes() const					{	return m_Vertexes;	}
 	float3&					GetVertex(u32 VertIndex)			{	return m_Vertexes[VertIndex];	}
 	inline u32				GetVertexCount()			const	{	return m_Vertexes.GetSize(); }
@@ -89,9 +106,12 @@ public:
 	const TArray<Trifan>&	GetTrifans() const					{	return m_Trifans;	}
 	const TArray<Line>&		GetLines() const					{	return m_Lines;	}
 	
+	//	line stuff
 	void					SetLineWidth(float LineWidth)		{	m_LineWidth = LineWidth;	TLMaths::Limit( m_LineWidth, 0.f, 100.f );	}
 	float					GetLineWidth() const				{	return m_LineWidth;	}
+	Bool					RemoveLine(u32 VertexIndexA,u32 VertexIndexB);	//	remove any lines/parts of linestrips with these two points next to each other. returns TRUE if any changes made
 
+	//	bounds stuff
 	void					SetBoundsInvalid()					{	SetBoundsBoxInvalid();		SetBoundsSphereInvalid();		SetBoundsCapsuleInvalid();	}
 	void					CalcBounds(Bool ForceCalc=FALSE)	{	CalcBoundsBox(ForceCalc);	CalcBoundsSphere(ForceCalc);	CalcBoundsCapsule(ForceCalc);	}
 
@@ -107,14 +127,12 @@ public:
 	TLMaths::TCapsule&		CalcBoundsCapsule(Bool ForceCalc=FALSE);	//	calculate bounds box if invalid
 	TLMaths::TCapsule&		GetBoundsCapsule()					{	return m_BoundsCapsule;	}
 
-	const TArray<TFixedVertex>&	GetFixedVertexes();				//	return fixed vertex array for verts. calc if required
-	void					SetFixedVertexesInvalid()			{	m_FixedVertexes.Empty();	}
 	
 protected:
 	virtual SyncBool		ImportData(TBinaryTree& Data);	//	load asset data out binary data
 	virtual SyncBool		ExportData(TBinaryTree& Data);	//	save asset data to binary data
 
-	void					Empty();
+	void					CalcHasAlpha();			//	loop through colours to check if we have any alpha colours in the verts
 
 protected:
 	TArray<float3>			m_Vertexes;				//	vertexes of mesh
@@ -131,10 +149,9 @@ protected:
 	TLMaths::TCapsule		m_BoundsCapsule;		//	bounding capsule 
 
 	float					m_LineWidth;			//	width of lines, don't set dynamiccly just yet, only if you create the asset
+	TFlags<TMeshFlags,u8>	m_Flags;				//	mesh flags
 };
 
 
-namespace TLCore
-{
 TLCore_DeclareIsDataType( TLAsset::TFixedVertex );
-}
+

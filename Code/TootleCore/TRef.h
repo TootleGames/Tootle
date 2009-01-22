@@ -90,7 +90,5 @@ protected:
 };
 
 
-namespace TLCore
-{
+
 TLCore_DeclareIsDataType( TRef );
-}

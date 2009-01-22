@@ -566,6 +566,18 @@ void TLMaths::TBox2D::Accumulate(const TArray<float2>& Points)
 }
 
 
+//-------------------------------------------------
+//	get the extents of all these points
+//-------------------------------------------------
+void TLMaths::TBox2D::Accumulate(const TArray<float3>& Points)
+{
+	for ( u32 i=0;	i<Points.GetSize();	i++ )
+	{
+		Accumulate( Points[i] );
+	}
+}
+
+
 
 
 //-------------------------------------------------

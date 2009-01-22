@@ -158,8 +158,8 @@ float3 TSceneNode_Emitter::GetEmissionPosition()
 					// get specific indices of neighbouring vertices
 					if(uIndex == 0)
 						uIndex2 = 1;	// Second index
-					else if(uIndex == VertexArray.LastIndex())
-						uIndex2 = VertexArray.LastIndex() - 1;		// Second to last index
+					else if(uIndex == VertexArray.GetLastIndex())
+						uIndex2 = VertexArray.GetLastIndex() - 1;		// Second to last index
 					else
 					{
 						// Pick either the one before or after randomly

@@ -25,11 +25,14 @@ void TLAsset::TMesh::Empty()
 {
 	m_Vertexes.Empty();
 	m_Colours.Empty();
+	m_FixedVertexes.Empty();
 
 	m_Triangles.Empty();
 	m_Tristrips.Empty();
 	m_Trifans.Empty();
 	m_Lines.Empty();
+
+	SetBoundsInvalid();
 }
 
 
@@ -244,6 +247,13 @@ SyncBool TLAsset::TMesh::ImportData(TBinaryTree& Data)
 	TLMaths::TCapsule& BoundsCapsule = GetBoundsCapsule();
 	Data.ImportData( "BondC", BoundsCapsule );
 
+	//	read flags
+	if ( !Data.ImportData( "Flags", m_Flags.GetData() ) )
+	{
+		//	no flags in file, calc some on import
+		CalcHasAlpha();
+	}
+
 	//	store off any data we haven't read to keep this data intact
 	ImportUnknownData( Data );
 
@@ -276,6 +286,9 @@ SyncBool TLAsset::TMesh::ExportData(TBinaryTree& Data)
 	TLMaths::TCapsule& BoundsCapsule = GetBoundsCapsule();
 	if ( BoundsCapsule.IsValid() )
 		Data.ExportData( "BondC", BoundsCapsule );
+
+	//	export flags
+	Data.ExportData( "Flags", m_Flags.GetData() );
 
 	//	write back any data we didn't recognise
 	ExportUnknownData( Data );
@@ -386,7 +399,7 @@ void TLAsset::TMesh::ScaleVerts(const float3& Scale,u32 FirstVert,s32 LastVert)
 	SetBoundsBoxInvalid();
 	
 	if ( LastVert == -1 )
-		LastVert = m_Vertexes.LastIndex();
+		LastVert = m_Vertexes.GetLastIndex();
 
 	//	scale verts
 	for ( u32 v=FirstVert;	v<=(u32)LastVert;	v++ )
@@ -410,7 +423,7 @@ void TLAsset::TMesh::MoveVerts(const float3& Movement,u32 FirstVert,s32 LastVert
 	}
 
 	if ( LastVert == -1 )
-		LastVert = m_Vertexes.LastIndex();
+		LastVert = m_Vertexes.GetLastIndex();
 
 	//	move verts
 	for ( u32 v=FirstVert;	v<=(u32)LastVert;	v++ )
@@ -457,6 +470,10 @@ s32 TLAsset::TMesh::AddVertex(const float3& VertexPos,const TColour& Colour)
 
 	//	add colour
 	m_Colours.Add( Colour );
+
+	//	if this colour has alpha, enable the alpha flag
+	if ( Colour.IsTransparent() )
+		m_Flags.Set( MeshFlag_HasAlpha );
 
 	SetFixedVertexesInvalid();
 	
@@ -514,7 +531,7 @@ Bool TLAsset::TMesh::ReplaceVertex(u32 OldVertexIndex,u32 NewVertexIndex)
 
 	//	remove and correct polygons using this index
 
-	for ( i=m_Triangles.LastIndex();	i>=0;	i-- )
+	for ( i=m_Triangles.GetLastIndex();	i>=0;	i-- )
 	{
 		Triangle& t = m_Triangles[i];
 
@@ -538,12 +555,12 @@ Bool TLAsset::TMesh::ReplaceVertex(u32 OldVertexIndex,u32 NewVertexIndex)
 		}
 	}
 
-	for ( i=m_Tristrips.LastIndex();	i>=0;	i-- )
+	for ( i=m_Tristrips.GetLastIndex();	i>=0;	i-- )
 	{
 		Tristrip& Polygon = m_Tristrips[i];
 
 		//	correct/remove indexes in this tristrip
-		for ( s32 n=Polygon.LastIndex();	n>=0;	n-- )
+		for ( s32 n=Polygon.GetLastIndex();	n>=0;	n-- )
 		{
 			if ( Polygon[n] == OldVertexIndex )
 			{
@@ -553,12 +570,12 @@ Bool TLAsset::TMesh::ReplaceVertex(u32 OldVertexIndex,u32 NewVertexIndex)
 		}
 	}
 
-	for ( i=m_Trifans.LastIndex();	i>=0;	i-- )
+	for ( i=m_Trifans.GetLastIndex();	i>=0;	i-- )
 	{
 		Trifan& Polygon = m_Trifans[i];
 
 		//	correct/remove indexes in this tristrip
-		for ( s32 n=Polygon.LastIndex();	n>=0;	n-- )
+		for ( s32 n=Polygon.GetLastIndex();	n>=0;	n-- )
 		{
 			if ( Polygon[n] == OldVertexIndex )
 			{
@@ -569,12 +586,12 @@ Bool TLAsset::TMesh::ReplaceVertex(u32 OldVertexIndex,u32 NewVertexIndex)
 	}
 
 	
-	for ( i=m_Lines.LastIndex();	i>=0;	i-- )
+	for ( i=m_Lines.GetLastIndex();	i>=0;	i-- )
 	{
 		Line& Polygon = m_Lines[i];
 
 		//	correct/remove indexes in this tristrip
-		for ( s32 n=Polygon.LastIndex();	n>=0;	n-- )
+		for ( s32 n=Polygon.GetLastIndex();	n>=0;	n-- )
 		{
 			if ( Polygon[n] == OldVertexIndex )
 			{
@@ -603,7 +620,7 @@ Bool TLAsset::TMesh::RemoveVertex(u32 VertexIndex)
 		return FALSE;
 	}
 
-	u32 OldLastIndex = m_Vertexes.LastIndex();
+	u32 OldLastIndex = m_Vertexes.GetLastIndex();
 
 	//	remove vertex and colour
 	m_Vertexes.RemoveAt( VertexIndex );
@@ -615,7 +632,7 @@ Bool TLAsset::TMesh::RemoveVertex(u32 VertexIndex)
 
 
 	//	remove and correct polygons using this index
-	for ( i=m_Triangles.LastIndex();	i>=0;	i-- )
+	for ( i=m_Triangles.GetLastIndex();	i>=0;	i-- )
 	{
 		Triangle& t = m_Triangles[i];
 
@@ -638,12 +655,12 @@ Bool TLAsset::TMesh::RemoveVertex(u32 VertexIndex)
 		if ( t.z > VertexIndex )	{	t.z--;	}
 	}
 
-	for ( i=m_Tristrips.LastIndex();	i>=0;	i-- )
+	for ( i=m_Tristrips.GetLastIndex();	i>=0;	i-- )
 	{
 		Tristrip& Polygon = m_Tristrips[i];
 
 		//	correct/remove indexes in this tristrip
-		for ( s32 n=Polygon.LastIndex();	n>=0;	n-- )
+		for ( s32 n=Polygon.GetLastIndex();	n>=0;	n-- )
 		{
 			if ( Polygon[n] == VertexIndex )
 			{
@@ -664,12 +681,12 @@ Bool TLAsset::TMesh::RemoveVertex(u32 VertexIndex)
 		}
 	}
 
-	for ( i=m_Trifans.LastIndex();	i>=0;	i-- )
+	for ( i=m_Trifans.GetLastIndex();	i>=0;	i-- )
 	{
 		Trifan& Polygon = m_Trifans[i];
 
 		//	correct/remove indexes in this tristrip
-		for ( s32 n=Polygon.LastIndex();	n>=0;	n-- )
+		for ( s32 n=Polygon.GetLastIndex();	n>=0;	n-- )
 		{
 			if ( Polygon[n] == VertexIndex )
 			{
@@ -691,12 +708,12 @@ Bool TLAsset::TMesh::RemoveVertex(u32 VertexIndex)
 	}
 
 	
-	for ( i=m_Lines.LastIndex();	i>=0;	i-- )
+	for ( i=m_Lines.GetLastIndex();	i>=0;	i-- )
 	{
 		Line& Polygon = m_Lines[i];
 
 		//	correct/remove indexes in this tristrip
-		for ( s32 n=Polygon.LastIndex();	n>=0;	n-- )
+		for ( s32 n=Polygon.GetLastIndex();	n>=0;	n-- )
 		{
 			if ( Polygon[n] == VertexIndex )
 			{
@@ -721,3 +738,108 @@ Bool TLAsset::TMesh::RemoveVertex(u32 VertexIndex)
 }
 
 
+//-------------------------------------------------
+//	loop through colours to check if we have any alpha colours in the verts
+//-------------------------------------------------
+void TLAsset::TMesh::CalcHasAlpha()
+{
+	Bool HasAlpha = FALSE;
+
+	for ( u32 i=0;	i<m_Colours.GetSize();	i++ )
+	{
+		if ( m_Colours[i].IsTransparent() )
+		{
+			HasAlpha = TRUE;
+			break;
+		}
+	}
+
+	//	set/clear flag
+	GetFlags().Set( MeshFlag_HasAlpha, HasAlpha );
+}
+
+
+//-------------------------------------------------
+//	remove any lines/parts of linestrips with these two points next to each other. returns TRUE if any changes made
+//-------------------------------------------------
+Bool TLAsset::TMesh::RemoveLine(u32 VertexIndexA,u32 VertexIndexB)
+{
+	Bool ChangedPolygon = FALSE;
+
+	for ( s32 i=m_Lines.GetLastIndex();	i>=0;	i-- )
+	{
+		Line& Polygon = m_Lines[i];
+
+		Bool PrevMatchA = FALSE;
+		Bool PrevMatchB = FALSE;
+
+		//	correct/remove indexes in this tristrip
+		for ( s32 n=Polygon.GetLastIndex();	n>=0;	n-- )
+		{
+			//	matched a vertex
+			if ( Polygon[n] == VertexIndexA )
+			{
+				//	previous vertex was a match to the other vertex
+				if ( PrevMatchB )
+				{
+					ChangedPolygon |= TRUE;
+					Polygon.RemoveAt(n);	//	remove this from line
+					Polygon.RemoveAt(n+1);	//	remove prev too
+				}
+				PrevMatchA = TRUE;
+				PrevMatchB = FALSE;
+				continue;
+			}
+
+			//	matched a vertex
+			if ( Polygon[n] == VertexIndexB )
+			{
+				//	previous vertex was a match to the other vertex
+				if ( PrevMatchA )
+				{
+					ChangedPolygon |= TRUE;
+					Polygon.RemoveAt(n);	//	remove this from line
+					Polygon.RemoveAt(n+1);	//	remove prev too
+				}
+				PrevMatchB = TRUE;
+				PrevMatchA = FALSE;
+				continue;
+			}
+		}
+
+		//	not enough left in this linestrip for a line
+		if ( Polygon.GetSize() < 2 )
+		{
+			ChangedPolygon |= TRUE;
+			m_Lines.RemoveAt(i);
+		}
+	}
+
+	return ChangedPolygon;
+}
+
+
+//--------------------------------------------------------
+//	turn an outline of points into a quad/tri-strip
+//--------------------------------------------------------
+Bool TLAsset::TMesh::GenerateQuad(const TArray<float3>& Outline,const TColour& VertexColour)
+{
+	if ( Outline.GetSize() != 4 )
+	{
+		TLDebug_Break("Trying to generate quad with an outline without 4 points");
+		return FALSE;
+	}
+
+	//	create tri strip
+	Tristrip* pNewStrip = m_Tristrips.AddNew();
+	if ( !pNewStrip )
+		return FALSE;
+
+	//	add verts
+	pNewStrip->Add( AddVertex( Outline[0], VertexColour ) );
+	pNewStrip->Add( AddVertex( Outline[1], VertexColour ) );
+	pNewStrip->Add( AddVertex( Outline[3], VertexColour ) );
+	pNewStrip->Add( AddVertex( Outline[2], VertexColour ) );
+
+	return TRUE;
+}

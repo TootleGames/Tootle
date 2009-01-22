@@ -254,7 +254,7 @@ SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset
 	s32 i;
 
 	//	delete branches we dont care about
-	for ( i=pSvgTag->GetChildren().LastIndex();	i>=0;	i-- )
+	for ( i=pSvgTag->GetChildren().GetLastIndex();	i>=0;	i-- )
 	{
 		TPtr<TXmlTag>& pTag = pSvgTag->GetChildren().ElementAt(i);
 	
@@ -421,10 +421,9 @@ Bool TLFileSys::TFileSimpleVector::ImportPolygonTag(TPtr<TLAsset::TMesh>& pMesh,
 		return FALSE;
 	
 	TPtr<TLMaths::TContour> pContour = new TLMaths::TContour( OutlinePoints, NULL );
-	pContour->SetClockwise(TRUE);
 	pTessellator->AddContour(pContour);
 	
-	if ( !pTessellator->GenerateTessellations( TLMaths::TLTessellator::WindingMode_Odd, TLMaths::TLTessellator::OutsetType_None ) )
+	if ( !pTessellator->GenerateTessellations( TLMaths::TLTessellator::WindingMode_Odd ) )
 		return FALSE;
 
 	return TRUE;
@@ -664,7 +663,7 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TPt
 				pTessellator->AddContour( Contours[c] );
 			}
 			pTessellator->SetVertexColour( TagStyle.m_FillColour );
-			pTessellator->GenerateTessellations( TLMaths::TLTessellator::WindingMode_Odd, TLMaths::TLTessellator::OutsetType_None );
+			pTessellator->GenerateTessellations( TLMaths::TLTessellator::WindingMode_Odd );
 		}
 	}
 

@@ -65,7 +65,7 @@ public:
 
 	FORCEINLINE void			Empty(Bool Dealloc=FALSE)				{	m_Array.Empty( Dealloc );	}
 	FORCEINLINE void			SetAllocSize(u32 Size)					{	m_Array.SetAllocSize( Size );	}
-	FORCEINLINE void			SetGrowBy(u8 GrowBy)					{	m_Array.SetGrowBy( GrowBy );	}
+	FORCEINLINE void			SetGrowBy(u16 GrowBy)					{	m_Array.SetGrowBy( GrowBy );	}
 
 	FORCEINLINE TYPE*			Find(const KEYTYPE& Key)				{	PAIRTYPE* pPair = m_Array.Find( Key );	return pPair ? &pPair->m_Item : NULL;	}
 	FORCEINLINE const TYPE*		Find(const KEYTYPE& Key) const			{	const PAIRTYPE* pPair = m_Array.FindConst( Key );	return pPair ? &pPair->m_Item : NULL;	}
@@ -73,8 +73,8 @@ public:
 	FORCEINLINE const TYPE&		ElementAt(u32 Index) const				{	return GetPairAt( Index ).m_Item;	}
 	FORCEINLINE PAIRTYPE&		GetPairAt(u32 Index)					{	return m_Array.ElementAt(Index);	}
 	FORCEINLINE const PAIRTYPE&	GetPairAt(u32 Index) const				{	return m_Array.ElementAtConst(Index);	}
-	FORCEINLINE TYPE&			ElementLast()							{	return ElementAt( m_Array.LastIndex() );	};
-	FORCEINLINE const TYPE&		ElementLastConst() const				{	return ElementAtConst( m_Array.LastIndex() );	};
+	FORCEINLINE TYPE&			ElementLast()							{	return ElementAt( m_Array.GetLastIndex() );	};
+	FORCEINLINE const TYPE&		ElementLastConst() const				{	return ElementAtConst( m_Array.GetLastIndex() );	};
 
 	const KEYTYPE*		FindKey(const TYPE& Item,const KEYTYPE* pPreviousMatch=NULL) const;	//	find the key for a pair matching this item
 

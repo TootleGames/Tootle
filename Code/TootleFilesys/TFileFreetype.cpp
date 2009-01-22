@@ -367,7 +367,7 @@ Bool TLFileSys::TFileFreetype::VectoriseGlyph(TPtr<TLAsset::TMesh>& pMesh,const 
         // 1. Find the leftmost point.
         const float3* pleftmost = &c1->Point(0);
 
-        for(u32 n = 1; n < c1->PointCount(); n++)
+        for(u32 n = 1; n < c1->GetPoints().GetSize(); n++)
         {
             const float3& p = c1->Point(n);
             if ( p.x < pleftmost->x )
@@ -389,10 +389,10 @@ Bool TLFileSys::TFileFreetype::VectoriseGlyph(TPtr<TLAsset::TMesh>& pMesh,const 
 
             TPtr<TLMaths::TContour> c2 = Contours[j];
 
-            for(u32 n = 0; n < c2->PointCount(); n++)
+            for(u32 n = 0; n < c2->GetPoints().GetSize(); n++)
             {
                 const float3& p1 = c2->Point(n);
-                const float3& p2 = c2->Point((n + 1) % c2->PointCount());
+                const float3& p2 = c2->Point((n + 1) % c2->GetPoints().GetSize());
 
                 /* FIXME: combinations of >= > <= and < do not seem stable */
                 if((p1.y < pleftmost->y && p2.y < pleftmost->y)
@@ -423,9 +423,7 @@ Bool TLFileSys::TFileFreetype::VectoriseGlyph(TPtr<TLAsset::TMesh>& pMesh,const 
 
 
 	
-	TLMaths::TLTessellator::TOutsetType OutsetType = TLMaths::TLTessellator::OutsetType_None;
 	float ZNormal = -1.f;
-	float OutsetSize = 0.f;
 
 	TLMaths::TLTessellator::TWindingMode WindingMode = TLMaths::TLTessellator::WindingMode_NonZero;
 	if ( (Outline.flags & ft_outline_even_odd_fill) != 0x0 )
@@ -445,7 +443,7 @@ Bool TLFileSys::TFileFreetype::VectoriseGlyph(TPtr<TLAsset::TMesh>& pMesh,const 
 	}
 
 	//	tessellate!
-	if ( !pTessellator->GenerateTessellations( WindingMode, OutsetType, ZNormal, OutsetSize ) )
+	if ( !pTessellator->GenerateTessellations( WindingMode, ZNormal ) )
 		return FALSE;
 
 	return TRUE;

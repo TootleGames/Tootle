@@ -36,6 +36,27 @@ Bool TLRender::TRenderTarget::BeginDraw(const Type4<s32>& MaxSize)
 	if ( !m_pCamera )
 		return FALSE;
 
+	//	if we have no root render node, and not going to be clearing the screen, skip render
+	Bool WillClear = GetFlags()( Flag_ClearColour ) && (m_ClearColour.GetAlpha() > 0.f);
+	if ( !WillClear )
+	{
+		//	won't be clearing, so if we're missing our root node/have none, skip rendering
+		if ( !m_RootRenderNodeRef.IsValid() )
+			return FALSE;
+
+		TPtr<TRenderNode>& pRootRenderNode = GetRootRenderNode();
+		if ( !pRootRenderNode )
+		{
+			TTempString Debug_String("Warning: render target (");
+			GetRef().GetString( Debug_String );
+			Debug_String.Append(") missing root render target node (");
+			m_RootRenderNodeRef.GetString( Debug_String );
+			Debug_String.Append(")");
+			TLDebug_Print( Debug_String );
+			return FALSE;
+		}
+	}
+
 	//	clean post render list
 	m_TempPostRenderList.Empty();
 
@@ -233,9 +254,7 @@ Bool TLRender::TRenderTarget::GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s
 	if ( !m_pCamera )
 		return FALSE;
 
-	m_pCamera->GetWorldRay( WorldRay, RenderTargetPos, RenderTargetSize );
-
-	return TRUE;
+	return m_pCamera->GetWorldRay( WorldRay, RenderTargetPos, RenderTargetSize );
 }
 
 
@@ -274,12 +293,13 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 	if ( !pRenderNode->GetRenderFlags().IsSet( TLRender::TRenderNode::RenderFlags::Enabled ) )
 		return FALSE;
 
+	
 	//	merge colours
 	TColour SceneColour = pRenderNode->GetColour();
 	if ( pRenderNode->GetRenderFlags().IsSet( TLRender::TRenderNode::RenderFlags::MergeColour ) && pParentRenderNode )
 	{
 		//	merge colours
-		SceneColour *= pParentRenderNode->GetColour();
+	//	SceneColour *= pParentRenderNode->GetColour();
 	}
 
 	//	check alpha on colour
@@ -313,9 +333,6 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 		Translate( pRenderNode->GetTransform() );
 	}
 
-	//	set scene colour
-	SetSceneColour( SceneColour );
-
 	//	list of nodes to render afterwards, but not stored in the tree
 	TPtrArray<TRenderNode>& PostRenderList = m_TempPostRenderList;
 	s32 FirstRenderNodeListIndex = PostRenderList.GetSize();
@@ -336,6 +353,15 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 
 		//	array of temporary render nodes to render (debug stuff etc)
 		TLAsset::TMesh* pMesh = pMeshAsset.GetObject();
+
+		//	quick bodge, if mesh has alphas, make the scene colour slightly alpha so it'll be transparent
+		if ( pMesh && pMesh->HasAlpha() )
+		{
+		//	SceneColour.GetAlpha() *= 0.99f;
+		}
+
+		//	set scene colour
+		SetSceneColour( SceneColour );
 
 		//	draw mesh!
 		DrawMeshWrapper( pMesh, pRenderNode, SceneTransform, PostRenderList );
@@ -361,7 +387,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 	}
 
 	//	draw our post-render nodes, deleting them as we go
-	for ( s32 n=PostRenderList.LastIndex();	n>=FirstRenderNodeListIndex;	n-- )
+	for ( s32 n=PostRenderList.GetLastIndex();	n>=FirstRenderNodeListIndex;	n-- )
 	{
 		//	gr: this MUST NOT be a reference. we need to make a new TPtr to keep the reference
 		//		counting going. if DrawNode below empties the PostRenderList then this REFERENCE

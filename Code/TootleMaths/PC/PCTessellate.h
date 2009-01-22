@@ -33,7 +33,7 @@ class TLMaths::TGlutTessellator : public TLMaths::TTessellator
 public:
 	TGlutTessellator(TPtr<TLAsset::TMesh>& pMesh);
 
-	virtual Bool	GenerateTessellations(TLMaths::TLTessellator::TWindingMode WindingMode,TLMaths::TLTessellator::TOutsetType OutsetType, float zNormal=-1.f,float outsetSize=0.f);			//	generate new polygons into this mesh
+	virtual Bool	GenerateTessellations(TLMaths::TLTessellator::TWindingMode WindingMode,float zNormal=-1.f);			//	generate new polygons into this mesh
 
 	void			AddError(u32 Error)							{	m_Errors.Add( Error );	}
 

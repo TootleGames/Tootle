@@ -33,8 +33,11 @@ public:
 	Type2(const TYPE a, const TYPE b)								{	Set(a,b);	};
 	template<typename OTHERTYPE> Type2(const Type2<OTHERTYPE>& t)	{	Set( t.x, t.y );	};
 
-	inline static u32	GetSize() 						{	return 2;	}
-	inline void			Set(const TYPE& a, const TYPE& b)	{	x = a;	y = b;	};
+	inline static u32	GetSize() 									{	return 2;	}
+	inline void			Set(const TYPE& a, const TYPE& b)			{	x = a;	y = b;	};
+	inline void			Set(const Type2<TYPE>& ab)					{	x = ab.x;	y = ab.y;	};
+	inline void			Set(const Type3<TYPE>& abc)					{	x = ab.x;	y = ab.y;	};
+	inline Type3<TYPE>	xyz(const TYPE& z) const					{	return Type3<TYPE>( x, y, z );	}
 
 	inline Type2<TYPE>	operator *(const TYPE& v) const 		{	return Type2<TYPE>( x*v, y*v );	};
 	inline Type2<TYPE>	operator *(const Type2<TYPE>& v) const	{	return Type2<TYPE>( x*v.x, y*v.y );	};
@@ -104,15 +107,17 @@ public:
 	Type3(const Type3<TYPE>& t) : x(t.x), y(t.y), z(t.z)				{	}
 	template<typename OTHERTYPE> Type3(const Type4<OTHERTYPE>& t);
 
-	inline static u32	GetSize() 											{	return 3;	}
-	inline void		Set(const TYPE& a, const TYPE& b, const TYPE& c)		{	x = a;	y = b;	z = c;	};
-	inline void		Set(const Type3<TYPE>& abc)								{	x = abc.x;	y = abc.y;	z = abc.z;	};
+	inline static u32			GetSize() 											{	return 3;	}
+	inline void					Set(const TYPE& a, const TYPE& b, const TYPE& c)	{	x = a;	y = b;	z = c;	};
+	inline void					Set(const Type3<TYPE>& abc)							{	x = abc.x;	y = abc.y;	z = abc.z;	};
+	inline Type2<TYPE>&			xy()									{	return *((Type2<TYPE>*)&x);	}
+	inline const Type2<TYPE>&	xy() const								{	return *((Type2<TYPE>*)&x);	}
 
-	inline TYPE		LengthSq() const				{	return (x*x) + (y*y) + (z*z);	};
-	inline TYPE		Length() const					{	return sqrtf( LengthSq() );	};
+	inline TYPE		LengthSq() const									{	return (x*x) + (y*y) + (z*z);	};
+	inline TYPE		Length() const										{	return sqrtf( LengthSq() );	};
 
-	inline Bool		operator==(const Type3<TYPE>& v) const		{	return ( x == v.x ) && ( y == v.y ) && ( z == v.z );	};
-	inline Bool		operator<(const Type3<TYPE>& v) const		{	return ( x < v.x ) && ( y < v.y ) && ( z < v.z );	};
+	inline Bool		operator==(const Type3<TYPE>& v) const				{	return ( x == v.x ) && ( y == v.y ) && ( z == v.z );	};
+	inline Bool		operator<(const Type3<TYPE>& v) const				{	return ( x < v.x ) && ( y < v.y ) && ( z < v.z );	};
 	
 	template<typename OTHERTYPE> inline void		operator=(const Type2<OTHERTYPE>& v);
 	template<typename OTHERTYPE> inline void		operator=(const Type3<OTHERTYPE>& v);

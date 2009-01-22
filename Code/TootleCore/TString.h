@@ -49,7 +49,7 @@ public:
 	virtual ~TString()															{	}
 
 	inline u32				GetLength() const					{	return GetStringArray().GetSize();	}
-	inline u32				GetLengthWithoutTerminator() const	{	return GetCharLastIndex() + 1;	}
+	inline u32				GetLengthWithoutTerminator() const	{	return GetCharGetLastIndex() + 1;	}
 	inline const CHARTYPE*	GetData() const						{	return GetStringArray().GetData();	}
 
 	//	gr: only temporary access - todo: revoke non-const accessor
@@ -91,7 +91,7 @@ public:
 	const CHARTYPE&			GetCharAt(u32 Index) const						{	return GetStringArray().ElementAtConst(Index);	}
 	virtual CHARTYPE		GetLowercaseCharAt(u32 Index) const				{	return TLString::GetCharLowercase( GetCharAt( Index ) );	}
 	CHARTYPE				GetCharLast() const;							//	get the last char. if string is empty a terminator is returned. If the string ends with a terminator, it returns the last char before terminator (if any)
-	s32						GetCharLastIndex() const;						//	get the index of last char. -1 if empty or all terminators
+	s32						GetCharGetLastIndex() const;						//	get the index of last char. -1 if empty or all terminators
 	void					RemoveCharAt(u32 Index,u32 Amount)				{	GetStringArray().RemoveAt(Index,Amount);	}
 
 	inline const CHARTYPE&	operator[](u32 Index) const						{	return GetCharAt(Index);	}
@@ -221,7 +221,7 @@ Bool TString::Split(const CHARTYPE& SplitChar,TArray<STRINGTYPE>& StringArray) c
 	if ( SplitTo == -1 )
 		return FALSE;
 
-	u32 LastCharIndex = GetCharLastIndex();
+	u32 LastCharIndex = GetCharGetLastIndex();
 
 	while ( SplitFrom <= LastCharIndex )
 	{

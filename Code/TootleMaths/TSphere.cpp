@@ -529,5 +529,64 @@ void TLMaths::TSphere2D::Accumulate(const TArray<float2>& Points)
 	PointsBox.Accumulate( Points );
 
 	Accumulate( PointsBox );
-
 }
+
+
+//-----------------------------------------------------------
+//	get the extents of all these points
+//-----------------------------------------------------------
+void TLMaths::TSphere2D::Accumulate(const TArray<float3>& Points)
+{
+	if ( Points.GetSize() == 0 )
+		return;
+
+	if ( Points.GetSize() == 1 )
+	{
+		Accumulate( Points[0] );
+		return;
+	}
+
+	//	gr: best result is getting a box from these points then accumulating that
+	TBox2D PointsBox;
+	PointsBox.Accumulate( Points );
+
+	Accumulate( PointsBox );
+}
+
+
+//-----------------------------------------------------------
+//	
+//-----------------------------------------------------------
+Bool TLMaths::TSphere2D::GetIntersection(const TLMaths::TSphere2D& Sphere) const	
+{
+	if ( !this->IsValid() || !Sphere.IsValid() )
+	{
+		TLDebug_Break("Distance test between invalid shapes");
+		return FALSE;
+	}
+
+	float SphereTotalRad = GetRadius() + Sphere.GetRadius();
+
+	//	get the vector between the spheres
+	float2 Diff( GetPos() - Sphere.GetPos() );
+	if ( Diff.x > SphereTotalRad )	return FALSE;
+	if ( Diff.y > SphereTotalRad )	return FALSE;
+
+	//	return if diff sq is less than total rad sq
+	return Diff.LengthSq() < (SphereTotalRad*SphereTotalRad);
+}
+
+	
+//-----------------------------------------------------------
+//	
+//-----------------------------------------------------------
+Bool TLMaths::TSphere2D::GetIntersection(const TLMaths::TLine2D& Line) const
+{
+	float2 NearestPointOnLine = Line.GetNearestPoint( GetPos() );
+
+	float DistSq = ( NearestPointOnLine - GetPos() ).LengthSq();
+
+	return (DistSq <= GetRadiusSq());
+}
+
+

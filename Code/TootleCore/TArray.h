@@ -82,11 +82,12 @@ public:
 	typedef TLArray::SortResult(TSortFunc)(const TYPE&,const TYPE&,const void*);
 
 public:
-	TArray(TSortFunc* pSortFunc=NULL,u8 GrowBy=TArray_GrowByDefault);
+	TArray(TSortFunc* pSortFunc=NULL,u16 GrowBy=TArray_GrowByDefault);
 	virtual ~TArray();
 
 	virtual u32			GetSize() const							{	return m_Size;	}						//	number of elements
-	inline s32			LastIndex() const						{	return (s32)GetSize() - 1;	};
+	inline s32			GetLastIndex() const					{	return (s32)GetSize() - 1;	};
+	inline s32			GetRandIndex() const					{	return TLMaths::Rand( GetLastIndex() );	};
 	virtual TYPE*		GetData()								{	return m_pData;	}
 	virtual const TYPE*	GetData() const							{	return m_pData;	}
 	inline u32			GetDataSize() const						{	return ( GetSize() * sizeof(TYPE) );	};	//	memory consumption of elements
@@ -99,22 +100,24 @@ public:
 	virtual u32			GetAllocSize() const					{	return m_Alloc;	}
 	virtual void		SetAllocSize(u32 size);					//	set new amount of allocated data
 	virtual void		Compact()								{	SetAllocSize( GetSize() );	}	//	free-up over-allocated data
-	FORCEINLINE void	SetGrowBy(u8 GrowBy)					{	m_GrowBy = (GrowBy == 0) ? TArray_GrowByDefault : GrowBy;	}
+	FORCEINLINE void	SetGrowBy(u16 GrowBy)					{	m_GrowBy = (GrowBy == 0) ? TArray_GrowByDefault : GrowBy;	}
 
 	virtual TYPE&		ElementAt(u32 Index)					{	TLDebug_CheckIndex( Index, GetSize() );	return m_pData[Index];	}
 	virtual const TYPE&	ElementAtConst(u32 Index) const			{	TLDebug_CheckIndex( Index, GetSize() );	return m_pData[Index];	}
-	inline TYPE&		ElementLast()							{	return ElementAt( LastIndex() );	};
-	inline const TYPE&	ElementLastConst() const				{	return ElementAtConst( LastIndex() );	};
+	inline TYPE&		ElementLast()							{	return ElementAt( GetLastIndex() );	};
+	inline const TYPE&	ElementLastConst() const				{	return ElementAtConst( GetLastIndex() );	};
+	inline TYPE&		ElementRand()							{	return ElementAt( GetRandIndex() );	}
+	inline const TYPE&	ElementRandConst() const				{	return ElementAtConst( GetRandIndex() );	}
 
 	virtual s32			Add(const TYPE& val);					//	add an element onto the end of the list
 	FORCEINLINE s32		AddUnique(const TYPE& val)				{	s32 Index = FindIndex( val );	return (Index == -1) ? Add( val ) : Index;	}
 	virtual s32			Add(const TYPE* pData,u32 Length=1);	//	add a number of elements onto the end of the list
-	virtual s32			Add(const TArray<TYPE>& Array);	//	add a whole array of this type onto the end of the list
+	virtual s32			Add(const TArray<TYPE>& Array);			//	add a whole array of this type onto the end of the list
 	virtual TYPE*		AddNew();								//	add a new element onto the end of the array and return it. often fastest because if we dont need to grow there's no copying
 	Bool				Remove(const TYPE& val);				// remove the specifed object
 	virtual Bool		RemoveAt(u32 Index);					//	remove an element from the array at the specified index
 	void				RemoveAt(u32 Index,u32 Amount);			//	remove a range of elements from the array
-	Bool				RemoveLast()								{	return ( GetSize() ? RemoveAt( LastIndex() ) : FALSE );	};
+	Bool				RemoveLast()							{	return ( GetSize() ? RemoveAt( GetLastIndex() ) : FALSE );	};
 	virtual s32			InsertAt(u32 Index, const TYPE& val,Bool ForcePosition=FALSE);
 	virtual s32			InsertAt(u32 Index, const TYPE* val, u32 Length, Bool ForcePosition=FALSE);
 	virtual s32			InsertAt(u32 Index, const TArray<TYPE>& array, Bool ForcePosition=FALSE)		{	return InsertAt( Index, array.GetData(), array.GetSize(), ForcePosition );	};
@@ -180,7 +183,7 @@ protected:
 private:
 	TYPE*				m_pData;		//	array itself
 	u32					m_Alloc;		//	allocated amount of data in the array
-	u8					m_GrowBy;		//	amount to grow array by. performance benefit is worth the byte :)
+	u16					m_GrowBy;		//	amount to grow array by. performance benefit is worth the byte :)
 };			
 
 

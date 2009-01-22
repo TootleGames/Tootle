@@ -556,6 +556,8 @@ void TLRender::TRenderNode::Initialise(TPtr<TLMessaging::TMessage>& pMessage)
 		if ( pMessage->ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
 			m_Transform.SetScaleValid();
 
+		pMessage->ImportData("LineWidth", m_LineWidth );
+
 		if ( pMessage->ImportData("MeshRef", m_MeshRef ) == SyncTrue )
 		{
 			//	start loading the asset in case we havent loaded it already
@@ -564,6 +566,34 @@ void TLRender::TRenderNode::Initialise(TPtr<TLMessaging::TMessage>& pMessage)
 			//	mesh ref changed
 			OnMeshRefChanged();
 		}
+
+		//	get render flags to set
+		TPtrArray<TBinaryTree> FlagChildren;
+		if ( pMessage->GetChildren("RFSet", FlagChildren ) )
+		{
+			u32 RenderFlagIndex = 0;
+			for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
+			{
+				FlagChildren[f]->ResetReadPos();
+				if ( FlagChildren[f]->Read( RenderFlagIndex ) )
+					GetRenderFlags().Set( (RenderFlags::Flags)RenderFlagIndex );
+			}
+			FlagChildren.Empty();
+		}
+
+		//	get render flags to clear
+		if ( pMessage->GetChildren("RFClear", FlagChildren ) )
+		{
+			u32 RenderFlagIndex = 0;
+			for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
+			{
+				FlagChildren[f]->ResetReadPos();
+				if ( FlagChildren[f]->Read( RenderFlagIndex ) )
+					GetRenderFlags().Clear( (RenderFlags::Flags)RenderFlagIndex );
+			}
+			FlagChildren.Empty();
+		}
+
 	}
 
 	//	do inherited init

@@ -439,7 +439,7 @@ void TLRender::Platform::Opengl::DrawPrimitives(u32 GLPrimType,u32 IndexCount,co
 #ifdef _DEBUG
 	if ( g_pBoundVertexes )
 	{
-		u32 MaxVertexIndex = g_pBoundVertexes->LastIndex();
+		u32 MaxVertexIndex = g_pBoundVertexes->GetLastIndex();
 		for ( u32 i=0;	i<IndexCount;	i++ )
 		{
 			if ( pIndexData[i] > MaxVertexIndex )

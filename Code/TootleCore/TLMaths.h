@@ -35,6 +35,7 @@ namespace TLMaths
 	FORCEINLINE float			Sqrtf(float SquaredValue)				{	return sqrtf( SquaredValue );	}
 	FORCEINLINE float			Cosf(float RadAngle)					{	return cosf( RadAngle );	}
 	FORCEINLINE float			Sinf(float RadAngle)					{	return sinf( RadAngle );	}
+	FORCEINLINE float			Tanf(float RadAngle)					{	return tanf( RadAngle );	}
 	FORCEINLINE float			Absf(float Value)						{	return fabsf( Value );	}
 	FORCEINLINE u32				GetFixedf(float f)						{	return (u32)(f * 65536.0f);	}
 	
@@ -47,7 +48,7 @@ namespace TLMaths
 	template<typename TYPE>
 	FORCEINLINE void			Wrap(TYPE& Value,const TYPE& Min,const TYPE& Max);		//	wrap a number around. 361,0,360 becomes 1
 
-	//	gr: all random functions are max INCLUSIVE. Want a random element in an array? use GetLastIndex()!
+	//	gr: all random functions are max INCLUSIVE. Want a random element in an array? use GetGetLastIndex()!
 	FORCEINLINE float			Randf(float Max=1.f);									//	fraction between 0.f and X inclusive (float has 4 decimal places)
 	FORCEINLINE float			Randf(float Min,float Max);								//	fraction between X and Y inclusive (float has 4 decimal places)
 	FORCEINLINE u32				Rand(u32 Max);											//	number between 0 and Max inclusive
@@ -100,21 +101,36 @@ class TLMaths::TAngle
 public:
 	TAngle(float AngDegrees=0.f) : m_AngleDegrees (AngDegrees)	{}
 
-	inline float	GetDegrees() const	{	return m_AngleDegrees;	}
-	inline float	GetRadians() const	{	return DegreesToRadians( m_AngleDegrees );	}
+	FORCEINLINE float	GetDegrees() const						{	return m_AngleDegrees;	}
+	FORCEINLINE float	GetRadians() const						{	return DegreesToRadians( m_AngleDegrees );	}
 
-	inline void		SetDegrees(float AngDegrees)	{	m_AngleDegrees = AngDegrees;	}
-	inline void		SetRadians(float AngRadians)	{	m_AngleDegrees = RadiansToDegrees( AngRadians );	}
+	FORCEINLINE void	SetDegrees(float AngDegrees)			{	m_AngleDegrees = AngDegrees;	}
+	FORCEINLINE void	SetRadians(float AngRadians)			{	m_AngleDegrees = RadiansToDegrees( AngRadians );	}
 
-	static float	DegreesToRadians(float AngDegrees)	{	return AngDegrees * (PI/180.f);	}
-	static float	RadiansToDegrees(float AngRadians)	{	return AngRadians * (180.f/PI);	}
+	FORCEINLINE void	SetLimit360()							{	TLMaths::Wrap( m_AngleDegrees, 0.f, 360.f );	}	//	limit angle to 0...360
+	FORCEINLINE void	SetLimit180()							{	TLMaths::Wrap( m_AngleDegrees, -180.f, 180.f );	}	//	limit angle to -180...180
+
+	FORCEINLINE TAngle	GetAngleDiff(const TAngle& Angle) const;	//	get the difference of angles FROM this (base angle) TO Angle (new angle). So if this is zero, we will just return Angle
+
+	static float		DegreesToRadians(float AngDegrees)		{	return AngDegrees * (PI/180.f);	}
+	static float		RadiansToDegrees(float AngRadians)		{	return AngRadians * (180.f/PI);	}
 
 private:
-	float			m_AngleDegrees;		//	angle stored in degrees
+	float				m_AngleDegrees;		//	angle stored in degrees
 };
 
 
 
+
+//----------------------------------------------------------
+//	get the difference of angles FROM this (base angle) TO Angle (new angle). So if this is zero, we will just return Angle
+//----------------------------------------------------------
+FORCEINLINE TLMaths::TAngle TLMaths::TAngle::GetAngleDiff(const TLMaths::TAngle& Angle) const	
+{	
+	float Diff = Angle.GetDegrees() - m_AngleDegrees;
+	TLMaths::Wrap( Diff, -180.f, 180.f );	
+	return TAngle( Diff );
+}
 
 
 
@@ -437,7 +453,7 @@ FORCEINLINE void TLMaths::Wrap(TYPE& Value,const TYPE& Min,const TYPE& Max)
 {
 	TYPE Diff( Max - Min );
 
-	while ( Value > Max )
+	while ( Value >= Max )
 		Value -= Diff;
 
 	while ( Value < Min )

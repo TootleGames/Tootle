@@ -19,7 +19,7 @@ TLRender::TCamera::TCamera() :
 
 
 TLRender::TProjectCamera::TProjectCamera() :
-	m_Fov				( 45.f ),
+	m_HorzFov			( 45.f ),
 	m_CameraMatrixValid	( FALSE )
 {
 }
@@ -149,7 +149,7 @@ void TLRender::TProjectCamera::UpdateCameraMatrix(TLRender::TRenderTarget* pRend
 void TLRender::TProjectCamera::GetFrustumMatrix(TLMaths::TMatrix& Matrix,float AspectRatio)
 {
 	//	same as gluPerspective()
-	float top = GetNearZ() * tanf( GetFov().GetRadians() );
+	float top = GetNearZ() * TLMaths::Tanf( GetHorzFov().GetRadians() );
 	float bottom = -top;
 	float left = bottom * AspectRatio;
 	float right = top * AspectRatio;
@@ -171,6 +171,115 @@ void TLRender::TProjectCamera::GetFrustumMatrix(TLMaths::TMatrix& Matrix,float A
 	M(2,0) = 0.0f;  M(2,1) = 0.0f;  M(2,2) = c;      M(2,3) = d;
 	M(3,0) = 0.0f;  M(3,1) = 0.0f;  M(3,2) = -1.0f;  M(3,3) = 0.0f;
 }
+
+
+
+//--------------------------------------------------------------
+//	convert point on screen to a 3D ray
+//--------------------------------------------------------------
+Bool TLRender::TProjectCamera::GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize) const
+{
+	/*
+	gr: inverse view method, note: directx matrix order, which is left hand, opengl is right hand!
+VOID Camera::GetScreenRay(INT sx,INT sy, Ray *ray) // Returns ray pointing from screen into world (aka - mouse)
+{
+	Vector v;
+	v.x =  (((2.0f * sx) / ScreenWidth) - 1.0f) / Projection._11;
+	v.y = -(((2.0f * sy) / ScreenHeight) - 1.0f) / Projection._22;
+	v.z = 1.0f;
+
+	Matrix mat = MatrixInvert( View );
+
+	ray->Direction.x = (v.x * mat._11) + (v.y * mat._21) + (v.z * mat._31);
+	ray->Direction.y = (v.x * mat._12) + (v.y * mat._22) + (v.z * mat._32);
+	ray->Direction.z = (v.x * mat._13) + (v.y * mat._23) + (v.z * mat._33);
+	ray->Direction.Normalize();
+
+	ray->Position.x = mat._41;
+	ray->Position.y = mat._42;
+	ray->Position.z = mat._43;
+}
+*/
+
+
+
+
+	//	gr: correct to use this article, but we might still be able to get
+	//	away without the matrix usage using the right aspect etc
+	//	i still think something needs to be done about rotation (lookat) and 
+	//	some camera displacement though....
+	//	http://www.mvps.org/directx/articles/rayproj.htm
+
+	/*
+	public static float ConvertPixelWidthTo3DWidth(Device device, int width)
+		{
+			return ConvertPixelWidthTo3DWidth(RenderTargetSize.Width(), width);
+		}
+
+		public static float ConvertPixelWidthTo3DWidth(int backBufferWidth, int width)
+		{
+			float dx = 5.0f * (float)Math.Tan((Math.PI /4) / 2.0f);
+			float width3d = (dx*2 / (float)backBufferWidth * width);
+			return width3d;
+		}
+
+		public static float ConvertPixelHeightTo3DHeight(Device device, int height)
+		{
+			return ConvertPixelHeightTo3DHeight(RenderTargetSize.Height(),height);
+		}
+
+		public static float ConvertPixelHeightTo3DHeight(int backBufferHeight, int height)
+		{
+			float dx = 5.0f * (float)Math.Tan((Math.PI /4) / 2.0f);
+			float height3d = (dx*2 / (float)backBufferHeight * height);
+			return height3d;
+		}
+
+	public static Vector3 ConvertTo3DPosition(Device device, int left, int top,int width, int height)
+*/
+	
+
+	//	get the pos as a factor (0..1) in the render target
+	float RenderW = (float)RenderTargetSize.Width();
+	float RenderH = (float)RenderTargetSize.Height();
+	float2 Posf( (float)RenderTargetPos.x / RenderW, (float)RenderTargetPos.y / RenderH );
+
+	//	convert to -1..1
+	Posf -= float2( 0.5f, 0.5f );
+	Posf *= 2.f;
+
+	// Half of screen in 3d coordinate
+	// dx = D * tan(FOV/2)
+   // 5 is the distance from camera (-5,0,0) to center 0,0,0
+	//float CameraDistance = -5.f;
+	float CameraDistance = m_FarZ - m_NearZ;
+	//float dx = 5.f * (float)TLMaths::Tanf( (Math.PI /4.f) / 2.0f);
+	float dx = -CameraDistance * (float)TLMaths::Tanf( GetHorzFov().GetRadians() / 2.0f );	//	gr: dx is the far right (from center) at the end of our projection
+	float dy = -CameraDistance * (float)TLMaths::Tanf( GetVertFov().GetRadians() / 2.0f );	
+
+	//	get the direction by scaling down the extents
+	//	gr: i dont think this takes into account the lookat
+	//	maybe this RayDir needs to align with the lookat direction (wouldn't have to negate the Z then...)
+	float3 RayDir( dx * Posf.x, dy * Posf.y, -CameraDistance );
+
+	//	ray starts at the camera...
+	const float3& RayStart = GetPosition();
+
+	/*
+	//0.0f - 2.07f = 0,0 screen;
+	float bitmapwidth = ConvertPixelWidthTo3DWidth(device,width) / 2.0f;
+	float tw = (-1*dx)+ bitmapwidth + (dx*2 / device.PresentationParameters.BackBufferWidth * left);
+	float bitmapheight = ConvertPixelHeightTo3DHeight(device,height) / 2.0f;
+	float th = dx - bitmapheight - (dx*2 / device.PresentationParameters.BackBufferHeight * top);
+
+	*/
+
+	//	set ray
+	WorldRay.SetDir( RayStart, RayDir );
+
+	return TRUE;
+}
+
 
 
 //--------------------------------------------------------------

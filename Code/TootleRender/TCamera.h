@@ -5,6 +5,14 @@
 	All the clever generic camera maths (clip tests etc)
 	should be in here
 
+
+
+	todo:
+	3d world pos -> 2d rendertarget pos
+	http://www.gamedev.net/community/forums/topic.asp?topic_id=426094
+
+
+
 -------------------------------------------------------*/
 #pragma once
 
@@ -70,25 +78,28 @@ class TLRender::TProjectCamera : public TCamera
 public:
 	TProjectCamera();
 
-	const TLMaths::TAngle&	GetFov() const													{	return m_Fov;	}
+	const TLMaths::TAngle&	GetHorzFov() const													{	return m_HorzFov;	}
+	const TLMaths::TAngle&	GetVertFov() const													{	return GetHorzFov();	}	//	gr: todo
 
-	virtual void			SetPosition(const float3& Position)								{	m_CameraMatrixValid = FALSE;	TCamera::SetPosition( Position );	}
-	virtual void			SetLookAt(const float3& LookAt)									{	m_CameraMatrixValid = FALSE;	TCamera::SetLookAt( LookAt );	}
+	virtual void			SetPosition(const float3& Position)									{	m_CameraMatrixValid = FALSE;	TCamera::SetPosition( Position );	}
+	virtual void			SetLookAt(const float3& LookAt)										{	m_CameraMatrixValid = FALSE;	TCamera::SetLookAt( LookAt );	}
 
-	void					GetFrustumMatrix(TLMaths::TMatrix& Matrix,float AspectRatio);	//	work out a frustum matrix from this camera
-	TLMaths::TMatrix&		GetCameraMatrix(TLRender::TRenderTarget* pRenderTarget)		{	if ( !m_CameraMatrixValid )	UpdateCameraMatrix(pRenderTarget);	return m_CameraMatrix;	}
+	void					GetFrustumMatrix(TLMaths::TMatrix& Matrix,float AspectRatio);		//	work out a frustum matrix from this camera
+	TLMaths::TMatrix&		GetCameraMatrix(TLRender::TRenderTarget* pRenderTarget)				{	if ( !m_CameraMatrixValid )	UpdateCameraMatrix(pRenderTarget);	return m_CameraMatrix;	}
+	void					SetLastProjectionMatrix(const TLMaths::TMatrix& ProjectionMatrix)	{	m_LastProjectionMatrix = ProjectionMatrix;	}
 
-	virtual Bool			GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize) const	{	return FALSE;	}	//	convert point on screen to a 3D ray
-
+	virtual Bool			GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize) const;	//	convert point on screen to a 3D ray
 
 protected:
 	void					UpdateCameraMatrix(TLRender::TRenderTarget* pRenderTarget);
 
 
 protected:
-	TLMaths::TAngle			m_Fov;
+	TLMaths::TAngle			m_HorzFov;				//	HORIZONTAL field of view
 	TLMaths::TMatrix		m_CameraMatrix;			//	current camera matrix
 	Bool					m_CameraMatrixValid;	//	is camera matrix out of date?
+
+	TLMaths::TMatrix		m_LastProjectionMatrix;
 };
 
 

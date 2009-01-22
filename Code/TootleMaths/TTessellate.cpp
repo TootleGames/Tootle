@@ -28,9 +28,17 @@ u32 TLMaths::GetBezierStepCount(float LineDistance)
 	return BezierSteps;
 }
 
-	
+
+TLMaths::TContour::TContour(const TLMaths::TContour& Contour) :
+	m_IsClockwise	( Contour.IsClockwise() )
+{
+	m_Points.Copy( Contour.GetPoints() );
+}
+
+
+
 TLMaths::TContour::TContour(const TArray<float3>& Contours,const TArray<TLMaths::TContourCurve>* pContourCurves) :
-	m_Clockwise	( SyncWait )
+	m_IsClockwise	( TRUE )
 {
 	u32 n = Contours.GetSize();
 	float3 cur = Contours[(n - 1) % n];
@@ -61,7 +69,7 @@ TLMaths::TContour::TContour(const TArray<float3>& Contours,const TArray<TLMaths:
         // Only process point tags we know.
 		if ( !pContourCurves )
 		{
-			AddPoint(cur);
+			m_Points.Add(cur);
 			continue;
 		}
 		
@@ -71,7 +79,7 @@ TLMaths::TContour::TContour(const TArray<float3>& Contours,const TArray<TLMaths:
 		
 		if( n < 2 || CurveType == TLMaths::ContourCurve_On )
         {
-            AddPoint(cur);
+            m_Points.Add(cur);
         }
         else if( CurveType == TLMaths::ContourCurve_Conic )
         {
@@ -84,7 +92,7 @@ TLMaths::TContour::TContour(const TArray<float3>& Contours,const TArray<TLMaths:
             if ( PrevCurveType == TLMaths::ContourCurve_Conic)
             {
                 prev2 = (cur + prev) * 0.5f;
-                AddPoint(prev2);
+                m_Points.Add(prev2);
             }
 			
             // Next point is either the real next point or the midpoint.
@@ -110,45 +118,7 @@ TLMaths::TContour::TContour(const TArray<float3>& Contours,const TArray<TLMaths:
 	
     // If final angle is positive (+2PI), it's an anti-clockwise contour,
     // otherwise (-2PI) it's clockwise.
-	m_Clockwise = (angle < 0.0) ? SyncTrue : SyncFalse;
-}
-
-
-
-void TLMaths::TContour::AddPoint(const float3& point)
-{
-    if ( pointList.GetSize() )
-	{
-		if ( point == pointList.ElementLast() )
-			return;
-		
-		if ( point == pointList[0] )
-			return;
-	}
-	
-	TLDebug_CheckFloat(point);
-	pointList.Add(point);
-}
-
-
-void TLMaths::TContour::AddOutsetPoint(const float3& point)
-{
-	TLDebug_CheckFloat(point);
-    outsetPointList.Add(point);
-}
-
-
-void TLMaths::TContour::AddFrontPoint(const float3& point)
-{
-	TLDebug_CheckFloat(point);
-    frontPointList.Add(point);
-}
-
-
-void TLMaths::TContour::AddBackPoint(const float3& point)
-{
-	TLDebug_CheckFloat(point);
-    backPointList.Add(point);
+	m_IsClockwise = (angle < 0.0) ? SyncTrue : SyncFalse;
 }
 
 
@@ -172,7 +142,7 @@ void TLMaths::TContour::evaluateQuadraticCurve(const float3& FromOn,const float3
         float3 V = B * invt + C * t;
 		float3 Point = U * invt + V * t;
         
-		AddPoint( Point );
+		m_Points.Add( Point );
     }
 }
 
@@ -203,8 +173,131 @@ void TLMaths::TContour::evaluateCubicCurve(const float3& FromOn,const float3& Fr
 		
 		float3 Point = M * invt + N * t;
 		
-        AddPoint( Point );
+        m_Points.Add( Point );
     }
+}
+
+
+//----------------------------------------------------------
+//	scale down the shape using outset calculations
+//----------------------------------------------------------
+void TLMaths::TContour::Shrink(float OutsetDistance)
+{
+	TArray<float3> OldPoints;
+	OldPoints.Copy( m_Points );
+
+	//	get a bounds sphere for the old points and we can use that radius to detect
+	//	shrinking intersections (rather than some arbirtry massive length for the line)
+	TLMaths::TSphere2D BoundsSphere;
+	BoundsSphere.Accumulate( m_Points );
+	
+	TArray<TLMaths::TLine2D> EdgeLines;
+	GetEdgeLines( EdgeLines );
+
+	//	calculate the new outset point for each point
+	for ( s32 i=0;	i<(s32)m_Points.GetSize();	i++ )
+	{
+		OutsetPoint( i, -OutsetDistance, m_Points, OldPoints, IsClockwise() );
+
+		//	check intersection on shrink,
+		//	dont allow this line past half way in the shape...
+		//	do this by... extending the line until it hits the other side? 
+		//	WHEN it does, half the intersection distance, if we go past this point then
+		//	snap
+		float TestLineLength = (BoundsSphere.GetRadius() * 2.f);
+		float2 LineStart( OldPoints[i].xy() );
+		float2 LineDir( m_Points[i].x - LineStart.x, m_Points[i].y - LineStart.y );
+		LineDir.Normalise();
+		TLMaths::TLine2D OutsetLine( LineStart, LineStart );
+		OutsetLine.m_End += LineDir * TestLineLength;
+
+		Bool ShortestIntersectionAlongOutsetIsValid = FALSE;
+		float ShortestIntersectionAlongOutset = 0.f;
+
+		//	find shortest intersection with the old shape
+		for ( u32 e=0;	e<EdgeLines.GetSize();	e++ )
+		{
+			//	skip check if 
+			if ( LineStart == EdgeLines[e].GetStart() )
+				continue;
+			if ( LineStart == EdgeLines[e].GetEnd() )
+				continue;
+			/*
+			//	edge starts on i
+			if ( e == i )	continue;
+
+			//	edge ends on i
+			s32 iplus = i+1;
+			TLMaths::Wrap( iplus, 0, (s32)m_Points.GetSize() );
+			if ( e == iplus )	continue;
+			*/
+
+			//	check to see if our new outset intersects with this edge
+			float IntersectionAlongOutset,IntersectionAlongEdge;
+			if ( !OutsetLine.GetIntersectionPos( EdgeLines[e], IntersectionAlongOutset, IntersectionAlongEdge ) )
+				continue;
+
+			//	intersected, check to see if its the new shortest
+			if ( !ShortestIntersectionAlongOutsetIsValid || IntersectionAlongOutset<ShortestIntersectionAlongOutset )
+			{
+				ShortestIntersectionAlongOutsetIsValid = TRUE;
+				ShortestIntersectionAlongOutset = IntersectionAlongOutset;
+			}
+		}
+
+		//	didn't intersect (gr; wierd, I think we always intersect because of how far we test...)
+		if ( !ShortestIntersectionAlongOutsetIsValid )
+			continue;
+
+		//	intersected, move the outset
+		
+		//	get how far it is to the other line...
+		float IntersectionDist = ( ShortestIntersectionAlongOutset * TestLineLength );
+
+		//	half it, because that's the furthest we'd want to move...
+		//	if we hit the edge, we wanna stop half way between our old pos and this edge
+		IntersectionDist *= 0.5f;
+
+		//	we weren't going to move that far anyway!
+		if ( IntersectionDist > OutsetDistance )
+			continue;
+
+		//	get the pos of the edge we hit
+		float2 DirToIntersection = LineDir * IntersectionDist;	//	* fraction * len
+
+		m_Points[i].xy() += OldPoints[i].xy() + DirToIntersection;
+	}
+}
+
+
+//----------------------------------------------------------
+//	scale down the shape using outset calculations
+//----------------------------------------------------------
+void TLMaths::TContour::Grow(float OutsetDistance)
+{
+	TArray<float3> OldPoints;
+	OldPoints.Copy( m_Points );
+
+	//	calculate the new outset point for each point
+	for ( s32 i=0;	i<(s32)m_Points.GetSize();	i++ )
+	{
+		OutsetPoint( i, OutsetDistance, m_Points, OldPoints, IsClockwise() );
+	}
+
+}
+
+//----------------------------------------------------------
+//	move point in/out with outset
+//	static
+//----------------------------------------------------------
+void TLMaths::TContour::OutsetPoint(u32 Index,float Distance,TArray<float3>& NewPoints,const TArray<float3>& OriginalPoints,Bool ContourIsClockwise)
+{
+	s32 IndexPrev = (s32)Index-1;
+	s32 IndexNext = Index+1;
+	TLMaths::Wrap( IndexPrev, 0, (s32)OriginalPoints.GetSize() );
+	TLMaths::Wrap( IndexNext, 0, (s32)OriginalPoints.GetSize() );
+
+	NewPoints[Index] += TLMaths::TContour::ComputeOutsetPoint( OriginalPoints[IndexPrev], OriginalPoints[Index], OriginalPoints[IndexNext], Distance, ContourIsClockwise );
 }
 
 
@@ -222,29 +315,24 @@ void TLMaths::TContour::evaluateCubicCurve(const float3& FromOn,const float3& Fr
 //                 \                       \                 .
 //                C X                     C X
 //
-float3 TLMaths::TContour::ComputeOutsetPoint(const float3& A,const float3& B,const float3& C)
+//	static
+float3 TLMaths::TContour::ComputeOutsetPoint(const float3& A,const float3& B,const float3& C,float Distance,Bool ContourIsClockwise)
 {
 	TLDebug_CheckFloat( A );
 	TLDebug_CheckFloat( B );
 	TLDebug_CheckFloat( C );
 	
     /* Build the rotation matrix from 'ba' vector */
-    float3 ba = (A - B);
+    float2 ba( A.x-B.x, A.y-B.y );
 	ba.Normalise();
-    float3 bc = C - B;
-	
-	TLDebug_CheckFloat( ba );
-	TLDebug_CheckFloat( bc );
+    float2 bc( C.x-B.x, C.y-B.y );
 	
     /* Rotate bc to the left */
-    float3 tmp(bc.x * -ba.x + bc.y * -ba.y,
-			   bc.x * ba.y + bc.y * -ba.x,
-			   0.f );
-	
-	TLDebug_CheckFloat( tmp );
+    float2 tmp(bc.x * -ba.x + bc.y * -ba.y,
+			   bc.x * ba.y + bc.y * -ba.x );
 	
     /* Compute the vector bisecting 'abc' */
-    float norm = sqrt(tmp.x * tmp.x + tmp.y * tmp.y);
+	float norm = TLMaths::Sqrtf(tmp.x * tmp.x + tmp.y * tmp.y);
     
 	float dist = 0;
 	float normplusx = norm + tmp.x;
@@ -254,49 +342,135 @@ float3 TLMaths::TContour::ComputeOutsetPoint(const float3& A,const float3& B,con
 		float xdiv = normminusx / normplusx;
 		if ( xdiv != 0 )
 		{
-			float sqrtxdiv = sqrtf(xdiv);
-			dist = 64.f * sqrtxdiv;
+			float sqrtxdiv = TLMaths::Sqrtf(xdiv);
+			dist = Distance * sqrtxdiv;
 		}
 	}
+
+	//	gr: if tmp.y is positive when shrinking a poly, the new point is on the outside instead of inside
+
+    tmp.x = (tmp.y<0.f) ? dist : -dist;
+    tmp.y = Distance;
 	
-    tmp.x = tmp.y < 0.0 ? dist : -dist;
-    tmp.y = 64.f;
-	
-	TLDebug_CheckFloat( tmp );
-	
-    /* Rotate the new bc to the right */
-    return float3(tmp.x * -ba.x + tmp.y * ba.y,
+    //	Rotate the new bc to the right
+	float3 Result( tmp.x * -ba.x + tmp.y * ba.y, 
 				  tmp.x * -ba.y + tmp.y * -ba.x,
-				  0.f );
+				  B.z );
+
+	if ( !ContourIsClockwise )
+	{
+		Result.x *= -1.f;
+		Result.y *= -1.f;
+	}
+
+	return Result;
 }
+
+	
+//-------------------------------------------------------------
+//	get all the lines around the edge of the contour
+//-------------------------------------------------------------
+void TLMaths::TContour::GetEdgeLines(TArray<TLMaths::TLine>& EdgeLines) const
+{
+	//	generate the edge lines
+	for ( u32 a=0;	a<m_Points.GetSize();	a++ )
+	{
+		s32 aa = a+1;
+		
+		//	loop around
+		if ( aa == m_Points.GetSize() )
+			aa = 0;
+
+		const float3& PointA = m_Points[a];
+		const float3& PointAA = m_Points[aa];
+
+		EdgeLines.Add( TLMaths::TLine( PointA, PointAA ) );
+	}
+}
+
+
+	
+//-------------------------------------------------------------
+//	get all the lines around the edge of the contour
+//-------------------------------------------------------------
+void TLMaths::TContour::GetEdgeLines(TArray<TLMaths::TLine2D>& EdgeLines) const
+{
+	//	generate the edge lines
+	for ( u32 a=0;	a<m_Points.GetSize();	a++ )
+	{
+		s32 aa = a+1;
+		
+		//	loop around
+		if ( aa == m_Points.GetSize() )
+			aa = 0;
+
+		const float3& PointA = m_Points[a];
+		const float3& PointAA = m_Points[aa];
+
+		EdgeLines.Add( TLMaths::TLine2D( PointA, PointAA ) );
+	}
+}
+
+
+//-------------------------------------------------------------
+//	check to make sure any lines along the contour dont intersect each other (a self intersecting polygon). returns TRUE if they do
+//	gr: note: this is 2D only at the moment
+//-------------------------------------------------------------
+Bool TLMaths::TContour::HasIntersections() const
+{
+	//	generate the edge lines
+	TArray<TLMaths::TLine2D> ContourEdges;
+	GetEdgeLines( ContourEdges );
+
+	for ( u32 e=0;	e<ContourEdges.GetSize();	e++ )
+	{
+		TLMaths::TLine2D& Edgee = ContourEdges[e];
+
+		//	gr: start at +2... we don't check against the line connected directly to us (the end of the line WILL intersect)
+		for ( u32 f=0;	f<m_Points.GetSize();	f++ )
+		{
+			if ( e==f )
+				continue;
+
+			TLMaths::TLine2D& Edgef = ContourEdges[f];
+
+			if ( Edgee.GetEnd() == Edgef.GetStart() )	
+				continue;
+			if ( Edgef.GetEnd() == Edgee.GetStart() )	
+				continue;
+
+			if ( Edgee.GetIntersection( Edgef ) )
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+
+}
+
 
 
 void TLMaths::TContour::SetParity(u32 parity)
 {
-    u32 size = PointCount();
-    float3 vOutset;
+    u32 size = m_Points.GetSize();
 	
-    if(((parity & 1) && m_Clockwise==SyncTrue) || (!(parity & 1) && m_Clockwise==SyncFalse))
+    if(((parity & 1) && IsClockwise()) || (!(parity & 1) && !IsClockwise()))
     {
         // Contour orientation is wrong! We must reverse all points.
         // FIXME: could it be worth writing FTVector::reverse() for this?
         for ( u32 i=0;	i<size/2;	i++ )
         {
 			//	gr: use swap func
-			pointList.SwapElements( i, size - 1 - i );
-            //float3 tmp = pointList[i];
-            //pointList[i] = pointList[size - 1 - i];
-            //pointList[size - 1 -i] = tmp;
+			m_Points.SwapElements( i, size - 1 - i );
+            //float3 tmp = m_Points[i];
+            //m_Points[i] = m_Points[size - 1 - i];
+            //m_Points[size - 1 -i] = tmp;
         }
 		
-		//clockwise = !clockwise;
-		if ( m_Clockwise == SyncTrue )
-			m_Clockwise = SyncFalse;
-		else
-			m_Clockwise = SyncTrue;
-        
+		m_IsClockwise = !m_IsClockwise;
     }
-	
+
+/*
     for ( u32 i=0;	i<size;	i++ )
     {
         u32 prev, cur, next;
@@ -308,36 +482,28 @@ void TLMaths::TContour::SetParity(u32 parity)
 		const float3& a = Point(prev);
 		const float3& b = Point(cur);
 		const float3& c = Point(next);
-        float3 vOutset = ComputeOutsetPoint( a, b, c );
+        float3 vOutset = ComputeOutsetPoint( a, b, c, 64.f );
         AddOutsetPoint(vOutset);
     }
+	*/
 }
 
 
-void TLMaths::TContour::buildFrontOutset(float outset)
+//-----------------------------------------------
+//	get area of the shape
+//-----------------------------------------------
+float TLMaths::TContour::GetArea() const
 {
-    for( u32 i=0;	i<PointCount();	i++)
-    {
-		const float3& p = Point(i);
-		const float3& o = Outset(i);
-        AddFrontPoint(p + o * outset);
-    }
+	float Area = 0.f;
+
+	for ( s32 i=0;	i<m_Points.GetLastIndex();	i++ )
+	{
+		Area += ( m_Points[i+1].x * m_Points[i].y - m_Points[i].x * m_Points[i+1].y) * 0.5f;
+	}
+
+	//	if the shape is clockwise, Area will be negative, so abs it
+	return TLMaths::Absf( Area );
 }
-
-
-void TLMaths::TContour::buildBackOutset(float outset)
-{
-    for( u32 i=0;	i<PointCount();	i++)
-    {
-		const float3& p = Point(i);
-  		const float3& o = Outset(i);
-		AddBackPoint(p + o * outset);
-    }
-}
-
-
-
-
 
 
 
@@ -348,4 +514,26 @@ TLMaths::TTessellator::TTessellator(TPtr<TLAsset::TMesh>& pMesh) :
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+TLMaths::TSimpleTessellator::TSimpleTessellator(TPtr<TLAsset::TMesh>& pMesh) :
+	TLMaths::TTessellator	( pMesh )
+{
+}
+
+
+
+Bool TLMaths::TSimpleTessellator::GenerateTessellations(TLMaths::TLTessellator::TWindingMode WindingMode,float zNormal)
+{
+	return FALSE;
+}
 

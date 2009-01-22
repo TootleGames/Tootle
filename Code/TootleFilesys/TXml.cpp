@@ -367,7 +367,7 @@ SyncBool TXml::Import(const TString& XmlString)
 				break;
 			}
 
-			TPtr<TXmlTag>& pLastTag = TagStack.ElementAt( TagStack.LastIndex() );
+			TPtr<TXmlTag>& pLastTag = TagStack.ElementAt( TagStack.GetLastIndex() );
 
 			//	wrong type?
 			if ( pLastTag->m_TagType != TLXml::TagType_OpenClose )
@@ -387,7 +387,7 @@ SyncBool TXml::Import(const TString& XmlString)
 			//	does the last-open tag have a parent?
 			if ( TagStack.GetSize() > 1 )
 			{
-				TPtr<TXmlTag>& pLastLastTag = TagStack.ElementAt( TagStack.LastIndex()-1 );
+				TPtr<TXmlTag>& pLastLastTag = TagStack.ElementAt( TagStack.GetLastIndex()-1 );
 				pLastLastTag->AddChild( pLastTag );
 			}
 			else

@@ -36,7 +36,7 @@ public:
 	inline const TPtr<TYPE>		FindPtr(const MATCHTYPE& val) const;
 #endif
 
-	inline TPtr<TYPE>&			GetPtrLast()						{	return (TArray<TPtr<TYPE> >::GetSize()>0) ? GetPtrAt( TArray<TPtr<TYPE> >::LastIndex() ) : g_pNullPtr;	}
+	inline TPtr<TYPE>&			GetPtrLast()						{	return (TArray<TPtr<TYPE> >::GetSize()>0) ? GetPtrAt( TArray<TPtr<TYPE> >::GetLastIndex() ) : g_pNullPtr;	}
 	inline TPtr<TYPE>&			GetPtrAt(s32 Index)					{	return (Index == -1) ? g_pNullPtr : TArray<TPtr<TYPE> >::ElementAt( Index );	}
 
 	inline TPtr<TYPE>&			AddPtr(const TPtr<TYPE>& val)		{	s32 Index = TArray<TPtr<TYPE> >::Add( val );	return GetPtrAt( Index );	}
@@ -134,7 +134,7 @@ inline const TPtr<TYPE> TPtrArray<TYPE>::FindPtr(const MATCHTYPE& val) const
 template<typename TYPE>
 inline void TPtrArray<TYPE>::RemoveNull()
 {
-	for ( s32 i=TArray<TPtr<TYPE> >::LastIndex();	i>=0;	i-- )
+	for ( s32 i=TArray<TPtr<TYPE> >::GetLastIndex();	i>=0;	i-- )
 	{
 		const TPtr<TYPE>& pPtr = TArray<TPtr<TYPE> >::ElementAtConst(i);
 		if ( pPtr )
