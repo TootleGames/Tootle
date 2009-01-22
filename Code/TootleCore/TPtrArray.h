@@ -9,8 +9,6 @@
 
 
 
-#define TPTR_ARRAY_ENABLE_NULL_PTR
-
 
 
 template <typename TYPE>
@@ -23,21 +21,13 @@ public:
 	TPtrArray(TSortFunc* pSortFunc=NULL) : TArray<TPtr<TYPE> >::TArray	( pSortFunc )	{	}
 
 	template<class MATCHTYPE>
-#ifdef TPTR_ARRAY_ENABLE_NULL_PTR
 	inline TPtr<TYPE>&			FindPtr(const MATCHTYPE& val);
-#else
-	inline TPtr<TYPE>			FindPtr(const MATCHTYPE& val);
-#endif
 		
 	template<class MATCHTYPE>
-#ifdef TPTR_ARRAY_ENABLE_NULL_PTR
 	inline const TPtr<TYPE>&	FindPtr(const MATCHTYPE& val) const;
-#else
-	inline const TPtr<TYPE>		FindPtr(const MATCHTYPE& val) const;
-#endif
 
-	inline TPtr<TYPE>&			GetPtrLast()						{	return (TArray<TPtr<TYPE> >::GetSize()>0) ? GetPtrAt( TArray<TPtr<TYPE> >::GetLastIndex() ) : g_pNullPtr;	}
-	inline TPtr<TYPE>&			GetPtrAt(s32 Index)					{	return (Index == -1) ? g_pNullPtr : TArray<TPtr<TYPE> >::ElementAt( Index );	}
+	inline TPtr<TYPE>&			GetPtrLast()						{	return (TArray<TPtr<TYPE> >::GetSize()>0) ? GetPtrAt( TArray<TPtr<TYPE> >::GetLastIndex() ) : TLPtr::GetNullPtr<TYPE>();	}
+	inline TPtr<TYPE>&			GetPtrAt(s32 Index)					{	return (Index == -1) ? TLPtr::GetNullPtr<TYPE>() : TArray<TPtr<TYPE> >::ElementAt( Index );	}
 
 	inline TPtr<TYPE>&			AddPtr(const TPtr<TYPE>& val)		{	s32 Index = TArray<TPtr<TYPE> >::Add( val );	return GetPtrAt( Index );	}
 
@@ -51,16 +41,7 @@ public:
 
 protected:
 	virtual void				OnArrayShrink(u32 OldSize,u32 NewSize);	//	NULL pointers that have been "removed" but not deallocated
-
-protected:
-#ifdef TPTR_ARRAY_ENABLE_NULL_PTR
-	static TPtr<TYPE>			g_pNullPtr;
-#endif
 };
-
-
-template <typename TYPE>
-TPtr<TYPE> TPtrArray<TYPE>::g_pNullPtr;
 
 
 
@@ -76,59 +57,29 @@ void TPtrArray<TYPE>::OnArrayShrink(u32 OldSize,u32 NewSize)
 	}
 }
 
-#ifdef TPTR_ARRAY_ENABLE_NULL_PTR
 template<typename TYPE>
 template<class MATCHTYPE>
 inline TPtr<TYPE>& TPtrArray<TYPE>::FindPtr(const MATCHTYPE& val)
 {
 	u32 Index = FindIndex(val);
 	if ( Index == -1 )
-		return g_pNullPtr;
-	
-	return TArray<TPtr<TYPE> >::ElementAt(Index);	
-}
-#else
-
-template<typename TYPE>
-template<class MATCHTYPE>
-inline TPtr<TYPE> TPtrArray<TYPE>::FindPtr(const MATCHTYPE& val)
-{
-	u32 Index = FindIndex(val);
-	if ( Index == -1 )
-		return NULL;
+		return TLPtr::GetNullPtr<TYPE>();
 	
 	return TArray<TPtr<TYPE> >::ElementAt(Index);	
 }
 
-#endif
 
 
-
-#ifdef TPTR_ARRAY_ENABLE_NULL_PTR
 template<typename TYPE>
 template<class MATCHTYPE>
 inline const TPtr<TYPE>& TPtrArray<TYPE>::FindPtr(const MATCHTYPE& val) const
 {
 	u32 Index = FindIndex(val);
 	if ( Index == -1 )
-		return g_pNullPtr;
+		return TLPtr::GetNullPtr<TYPE>();
 	
 	return TArray<TPtr<TYPE> >::ElementAtConst(Index);	
 }
-#else
-
-template<typename TYPE>
-template<class MATCHTYPE>
-inline const TPtr<TYPE> TPtrArray<TYPE>::FindPtr(const MATCHTYPE& val) const
-{
-	u32 Index = FindIndex(val);
-	if ( Index == -1 )
-		return NULL;
-	
-	return TArray<TPtr<TYPE> >::ElementAtConst(Index);	
-}
-
-#endif
 
 
 template<typename TYPE>

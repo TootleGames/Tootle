@@ -50,6 +50,10 @@
 
 
 
+template <typename TYPE>
+class TPtr;
+
+
 namespace TLPtr
 {
 	//---------------------------------------------------------
@@ -79,7 +83,10 @@ namespace TLPtr
 	private:
 		void*		m_pObject;
 	};
-}
+
+	template<typename TYPE>
+	FORCEINLINE TPtr<TYPE>&	GetNullPtr();	//	get a static Null ptr for a type;
+};
 
 
 template <typename TYPE>
@@ -322,4 +329,29 @@ void TPtr<TYPE>::ReleaseObject()
 
 	//	remove our reference to this counter
 	m_pCounter = NULL;
+}
+
+
+
+
+
+
+//----------------------------------------------------
+//	get a static Null ptr for a type;
+//----------------------------------------------------
+template<typename TYPE>
+FORCEINLINE TPtr<TYPE>&	TLPtr::GetNullPtr()
+{
+	static TPtr<TYPE> g_pNull;
+	
+	#ifdef _DEBUG
+	{
+		if ( g_pNull )
+		{
+			TLDebug_Break("Null TPtr should always be NULL!");
+		}
+	}
+	#endif
+	
+	return g_pNull;
 }

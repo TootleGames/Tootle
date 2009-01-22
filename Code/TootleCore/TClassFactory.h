@@ -26,15 +26,9 @@ public:
 public:
 	TClassFactory(TSortFunc* pSortFunc=NULL) : TPtrArray<TYPE>	( pSortFunc )	{	}
 
-#ifdef TPTR_ARRAY_ENABLE_NULL_PTR
 	template<class MATCHTYPE>
 	TPtr<TYPE>&				GetInstance(const MATCHTYPE& Match)				{	return FindPtr(Match);	}
 	TPtr<TYPE>&				GetInstance(TRefRef InstanceRef,Bool CreateNew=FALSE,TRefRef TypeRef=TRef());	//	get an instance from the list. If it doesnt exist option to create a new one
-#else
-	template<class MATCHTYPE>
-	TPtr<TYPE>				GetInstance(const MATCHTYPE& Match)				{	return FindPtr(Match);	}
-	TPtr<TYPE>				GetInstance(TRefRef InstanceRef,Bool CreateNew=FALSE,TRefRef TypeRef=TRef());	//	get an instance from the list. If it doesnt exist option to create a new one
-#endif
 
 	template<class OBJECTTYPE>
 	OBJECTTYPE*				GetInstanceObject(TRefRef InstanceRef);			//	get the object of an instance and cast as desired
@@ -85,20 +79,12 @@ public:
 //	get an instance from the list. If it doesnt exist option to create a new one
 //--------------------------------------------------------------
 template<class TYPE, bool STOREINSTANCES>
-#ifdef TPTR_ARRAY_ENABLE_NULL_PTR
 TPtr<TYPE>& TClassFactory<TYPE, STOREINSTANCES>::GetInstance(TRefRef InstanceRef,Bool CreateNew,TRefRef TypeRef)
-#else
-TPtr<TYPE> TClassFactory<TYPE, STOREINSTANCES>::GetInstance(TRefRef InstanceRef,Bool CreateNew,TRefRef TypeRef)
-#endif
 {
 	if ( STOREINSTANCES )
 	{
 		//	find the existing ptr in the array and return it
-	#ifdef TPTR_ARRAY_ENABLE_NULL_PTR
 		TPtr<TYPE>& pInstance = TPtrArray<TYPE>::FindPtr( InstanceRef );
-	#else
-		TPtr<TYPE> pInstance = TPtrArray<TYPE>::FindPtr( InstanceRef );
-	#endif
 
 		if ( pInstance )
 			return pInstance;
@@ -111,12 +97,12 @@ TPtr<TYPE> TClassFactory<TYPE, STOREINSTANCES>::GetInstance(TRefRef InstanceRef,
 		s32 NewInstanceIndex = CreateInstance( pNewInstance, InstanceRef, TypeRef );
 
 		if ( NewInstanceIndex == -1 || !STOREINSTANCES )
-			return TPtrArray<TYPE>::g_pNullPtr;
+			return TLPtr::GetNullPtr<TYPE>();
 
 		return TPtrArray<TYPE>::ElementAt( NewInstanceIndex );
 	}
 
-	return TPtrArray<TYPE>::g_pNullPtr;
+	return TLPtr::GetNullPtr<TYPE>();
 }
 
 
@@ -124,11 +110,7 @@ TPtr<TYPE> TClassFactory<TYPE, STOREINSTANCES>::GetInstance(TRefRef InstanceRef,
 //	create a new instance and add to the list
 //--------------------------------------------------------------
 template<class TYPE, bool STOREINSTANCES>
-#ifdef TPTR_ARRAY_ENABLE_NULL_PTR
 s32 TClassFactory<TYPE, STOREINSTANCES>::CreateInstance(TPtr<TYPE>& pNewInstance,TRefRef InstanceRef,TRefRef TypeRef)
-#else
-s32 TClassFactory<TYPE, STOREINSTANCES>::CreateInstance(TPtr<TYPE>& pNewInstance,TRefRef InstanceRef,TRefRef TypeRef)
-#endif
 {
 	//	get the ptr's index
 	s32 InstancePtrIndex = TPtrArray<TYPE>::FindIndex( InstanceRef );
