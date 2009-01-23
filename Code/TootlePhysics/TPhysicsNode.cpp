@@ -344,7 +344,10 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode* pOtherNode)
 #endif
 
 	Bool ForceToEdge = TRUE;
-	Bool AddImpulse = FALSE;	
+	Bool AddImpulse = FALSE;
+
+	float3 vReboundForce(0,0,0);
+	float3 vImpulse(0,0,0);
 
 	//	bouncy stuff
 	if ( AddImpulse )
@@ -379,7 +382,9 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode* pOtherNode)
 				
 				//	apply power to velocity rather than force
 			//	m_Velocity -= Dist * htotal;
-				m_Velocity += CollisionForce.Normal() * htotal;
+
+				vImpulse = CollisionForce.Normal() * htotal;
+				m_Velocity += vImpulse;
 				Changes = TRUE;
 			}
 		}
@@ -435,11 +440,31 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode* pOtherNode)
 				Delta *= Factor;
 			}
 
-			m_Force += Delta;
+			vReboundForce = Delta;
+
+			m_Force += vReboundForce;
 			OnForceChanged();
 			Changes = TRUE;
 		}
 	}
+
+	// Publish a message to all subscribers to say that this node has collided with something
+	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("PHYSICS");
+
+	if(pMessage)
+	{
+		pMessage->AddChannelID("COLLISION");
+
+		pMessage->Write(GetNodeRef());
+		pMessage->Write(Changes);
+		pMessage->Write(m_Velocity);		// Velocity of object
+		pMessage->Write(vImpulse);			// Velocity change due to collision
+		pMessage->Write(vReboundForce);		// Force applied in moving this object via collision
+		pMessage->Write(pOtherNode->IsStatic());	// Is the other node static?
+
+		PublishMessage(pMessage);
+	}
+
 
 	return Changes;
 }
