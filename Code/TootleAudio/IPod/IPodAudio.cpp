@@ -225,12 +225,11 @@ SyncBool Platform::OpenAL::Init()
 
 	ALCcontext* pContext = alcCreateContext(pDevice,NULL);
 
-/*
-	//[11/12/08] DB - Docs seem to suggest a null pointer will mean failure but seems to always fail???
-
+	// If the audio fails to create a context then something is wrong and we need to bail out
 	if(pContext == NULL)
 	{
 		TLDebug_Print("Unable to create OpenAL context");
+		TLDebug_Break("Check the active executable is set to iPhone OS 2.1 and not iPhone OS 2.0");
 		
 		ALCenum alcerror;
 
@@ -245,7 +244,6 @@ SyncBool Platform::OpenAL::Init()
 
 		return SyncFalse;
 	}
- */
 	
 	
 	ALCboolean bSuccess = alcMakeContextCurrent(pContext);

@@ -17,7 +17,7 @@
 		vrLen = 944;
 		vrLoc = 1442;
 	};
-	846B66C60F277356005EB752 /* PBXTextBookmark */ = {
+	846B6E4C0F2A2672005EB752 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 846B66BF0F2744C8005EB752 /* TGameflow.h */;
 		name = "TGameflow.h: 1";
@@ -27,7 +27,7 @@
 		vrLen = 138;
 		vrLoc = 0;
 	};
-	846B69E20F27960E005EB752 /* PBXTextBookmark */ = {
+	846B711E0F2A3671005EB752 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 846B66BF0F2744C8005EB752 /* TGameflow.h */;
 		name = "TGameflow.h: 1";
@@ -38,7 +38,7 @@
 		vrLoc = 0;
 	};
 	84C108FC0F0A775200B2DF7A /* Project object */ = {
-		activeBuildConfigurationName = Debug;
+		activeBuildConfigurationName = Release;
 		activeTarget = 84C10A360F0A7C1800B2DF7A /* TootleGame */;
 		addToTargets = (
 			84C10A360F0A7C1800B2DF7A /* TootleGame */,
@@ -110,13 +110,13 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 254252547;
-			PBXWorkspaceStateSaveDate = 254252547;
+			PBXPerProjectTemplateStateSaveDate = 254424672;
+			PBXWorkspaceStateSaveDate = 254424672;
 		};
 		perUserProjectItems = {
 			846B66C30F277356005EB752 /* PBXTextBookmark */ = 846B66C30F277356005EB752 /* PBXTextBookmark */;
-			846B66C60F277356005EB752 /* PBXTextBookmark */ = 846B66C60F277356005EB752 /* PBXTextBookmark */;
-			846B69E20F27960E005EB752 /* PBXTextBookmark */ = 846B69E20F27960E005EB752 /* PBXTextBookmark */;
+			846B6E4C0F2A2672005EB752 /* PBXTextBookmark */ = 846B6E4C0F2A2672005EB752 /* PBXTextBookmark */;
+			846B711E0F2A3671005EB752 /* PBXTextBookmark */ = 846B711E0F2A3671005EB752 /* PBXTextBookmark */;
 			84E6422B0F14D0F9005A4DC9 /* PBXTextBookmark */ = 84E6422B0F14D0F9005A4DC9 /* PBXTextBookmark */;
 			84E6422D0F14D0F9005A4DC9 /* PBXTextBookmark */ = 84E6422D0F14D0F9005A4DC9 /* PBXTextBookmark */;
 			84F90F3C0F13E208007455BB /* PBXTextBookmark */ = 84F90F3C0F13E208007455BB /* PBXTextBookmark */;
@@ -196,7 +196,7 @@
 		ignoreCount = 0;
 		lineNumber = 116;
 		location = SnowWayToDraw;
-		modificationTime = 254251871.910948;
+		modificationTime = 254424857.990309;
 		state = 2;
 	};
 	84E642420F14D1EA005A4DC9 /* TGui.cpp:91 */ = {
@@ -213,7 +213,7 @@
 		ignoreCount = 0;
 		lineNumber = 91;
 		location = SnowWayToDraw;
-		modificationTime = 254251871.910957;
+		modificationTime = 254424857.990319;
 		state = 2;
 	};
 	84E642630F14D381005A4DC9 /* TGui.cpp:74 */ = {
@@ -230,7 +230,7 @@
 		ignoreCount = 0;
 		lineNumber = 74;
 		location = SnowWayToDraw;
-		modificationTime = 254251871.910963;
+		modificationTime = 254424857.990326;
 		state = 2;
 	};
 	84F90F3C0F13E208007455BB /* PBXTextBookmark */ = {

@@ -119,9 +119,9 @@ void TLDebug::Platform::Print(const TString& String)
 Bool TLDebug::Platform::Break(const TString& String)
 {
 	Print( String );
-	
-	//	gr: kernal debugger... but is there one for the iphone?
-	//Debugger();
+
+	// Drop into debugger if possible
+	Debugger();
 	
 	//	fail
 	return FALSE;

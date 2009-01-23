@@ -184,7 +184,6 @@
 			baseConfigurationReference = 84C108360F0A729500B2DF7A /* TootleDebug.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				SDKROOT = iphoneos2.1;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 			};
 			name = Debug;
