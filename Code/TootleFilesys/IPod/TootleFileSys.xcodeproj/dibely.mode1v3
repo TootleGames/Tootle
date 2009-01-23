@@ -331,7 +331,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>842AA3680F1C989A004BF60A</string>
+										<string>8491F17B0F25E74B002FE16F</string>
 										<key>history</key>
 										<array>
 											<string>84E6432C0F15293C005A4DC9</string>
@@ -349,7 +349,7 @@
 											<string>842A9E650F1629B1004BF60A</string>
 											<string>842AA35F0F1C989A004BF60A</string>
 											<string>842AA3600F1C989A004BF60A</string>
-											<string>842AA3610F1C989A004BF60A</string>
+											<string>842AA3680F1C989A004BF60A</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -369,37 +369,6 @@
 											<string>84E643C90F1537BB005A4DC9</string>
 											<string>84E643CA0F1537BB005A4DC9</string>
 											<string>84E643CB0F1537BB005A4DC9</string>
-											<string>842A9E190F162416004BF60A</string>
-											<string>842A9E1A0F162416004BF60A</string>
-											<string>842A9E1B0F162416004BF60A</string>
-											<string>842A9E1C0F162416004BF60A</string>
-											<string>842A9E1D0F162416004BF60A</string>
-											<string>842A9E1E0F162416004BF60A</string>
-											<string>842A9E1F0F162416004BF60A</string>
-											<string>842A9E200F162416004BF60A</string>
-											<string>842A9E210F162416004BF60A</string>
-											<string>842A9E220F162416004BF60A</string>
-											<string>842A9E230F162416004BF60A</string>
-											<string>842A9E240F162416004BF60A</string>
-											<string>842A9E250F162416004BF60A</string>
-											<string>842A9E260F162416004BF60A</string>
-											<string>842A9E270F162416004BF60A</string>
-											<string>842A9E500F1625B0004BF60A</string>
-											<string>842A9E510F1625B0004BF60A</string>
-											<string>842A9E520F1625B0004BF60A</string>
-											<string>842A9E530F1625B0004BF60A</string>
-											<string>842A9E540F1625B0004BF60A</string>
-											<string>842A9E550F1625B0004BF60A</string>
-											<string>842A9E680F1629B1004BF60A</string>
-											<string>842A9E690F1629B1004BF60A</string>
-											<string>842A9E6A0F1629B1004BF60A</string>
-											<string>842A9E6B0F1629B1004BF60A</string>
-											<string>842AA3620F1C989A004BF60A</string>
-											<string>842AA3630F1C989A004BF60A</string>
-											<string>842AA3640F1C989A004BF60A</string>
-											<string>842AA3650F1C989A004BF60A</string>
-											<string>842AA3660F1C989A004BF60A</string>
-											<string>842AA3670F1C989A004BF60A</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -457,9 +426,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>842A9E290F162416004BF60A</string>
+				<string>8491F17C0F25E74B002FE16F</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>842A9E2A0F162416004BF60A</string>
+				<string>8491F17D0F25E74B002FE16F</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -593,7 +562,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>84C10BF00F0A84D400B2DF7A</string>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleFilesys/IPod/TootleFileSys.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -792,8 +761,12 @@
 			<integer>0</integer>
 		</dict>
 		<dict>
+			<key>FirstTimeWindowDisplayed</key>
+			<false/>
 			<key>Identifier</key>
 			<string>windowTool.find</string>
+			<key>IsVertical</key>
+			<true/>
 			<key>Layout</key>
 			<array>
 				<dict>
@@ -808,26 +781,16 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>&lt;No Editor&gt;</string>
-										<key>PBXSplitModuleInNavigatorKey</key>
-										<dict>
-											<key>Split0</key>
-											<dict>
-												<key>PBXProjectModuleGUID</key>
-												<string>1CD0528D0623707200166675</string>
-											</dict>
-											<key>SplitCount</key>
-											<string>1</string>
-										</dict>
+										<string></string>
 										<key>StatusBarVisibility</key>
-										<integer>1</integer>
+										<true/>
 									</dict>
 									<key>GeometryConfiguration</key>
 									<dict>
 										<key>Frame</key>
-										<string>{{0, 0}, {781, 167}}</string>
+										<string>{{0, 0}, {781, 212}}</string>
 										<key>RubberWindowFrame</key>
-										<string>62 385 781 470 0 0 1440 878 </string>
+										<string>21 285 781 470 0 0 1280 778 </string>
 									</dict>
 									<key>Module</key>
 									<string>PBXNavigatorGroup</string>
@@ -836,11 +799,11 @@
 								</dict>
 							</array>
 							<key>Proportion</key>
-							<string>50%</string>
+							<string>212pt</string>
 						</dict>
 						<dict>
 							<key>BecomeActive</key>
-							<integer>1</integer>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -851,18 +814,18 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{8, 0}, {773, 254}}</string>
+								<string>{{0, 217}, {781, 212}}</string>
 								<key>RubberWindowFrame</key>
-								<string>62 385 781 470 0 0 1440 878 </string>
+								<string>21 285 781 470 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXProjectFindModule</string>
 							<key>Proportion</key>
-							<string>50%</string>
+							<string>212pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
-					<string>428pt</string>
+					<string>429pt</string>
 				</dict>
 			</array>
 			<key>Name</key>
@@ -872,23 +835,21 @@
 				<string>PBXProjectFindModule</string>
 			</array>
 			<key>StatusbarIsVisible</key>
-			<integer>1</integer>
+			<true/>
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>1C530D58069F1CE1000CFCEE</string>
-				<string>1C530D59069F1CE1000CFCEE</string>
+				<string>8491F1790F25E74A002FE16F</string>
+				<string>8491F17A0F25E74A002FE16F</string>
 				<string>1CDD528C0622207200134675</string>
-				<string>1C530D5A069F1CE1000CFCEE</string>
-				<string>1CE0B1FE06471DED0097A5F4</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>
 			<key>WindowString</key>
-			<string>62 385 781 470 0 0 1440 878 </string>
+			<string>21 285 781 470 0 0 1280 778 </string>
 			<key>WindowToolGUID</key>
 			<string>1C530D57069F1CE1000CFCEE</string>
 			<key>WindowToolIsVisible</key>
-			<integer>0</integer>
+			<false/>
 		</dict>
 		<dict>
 			<key>Identifier</key>

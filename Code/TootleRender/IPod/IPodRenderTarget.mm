@@ -123,7 +123,7 @@ Bool TLRender::Platform::RenderTarget::BeginProjectDraw(const Type4<s32>& Viewpo
 	//	do translation with this matrix to make the frustum
 	//	gr: this works... but further away than with gluperspective...
 	//	Translate( FrustumMatrix );
-	gluPerspective( pCamera->GetFov().GetDegrees(), AspectRatio, pCamera->GetNearZ(), pCamera->GetFarZ() );
+	gluPerspective( pCamera->GetHorzFov().GetDegrees(), AspectRatio, pCamera->GetNearZ(), pCamera->GetFarZ() );
 
 	//	setup camera
 	glMatrixMode(GL_MODELVIEW);

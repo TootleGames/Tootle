@@ -10,7 +10,6 @@
 #include <stdlib.h>		//	gr: platform specific? needed for rand() and srand()
 #include "TLTypes.h"
 #include "TLDebug.h"
-#include "TArray.h"
 
 #define	PI				( (float)3.14159265358979323846f )
 #define TWO_PI			((float)6.283185307f)

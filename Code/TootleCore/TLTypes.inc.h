@@ -36,7 +36,7 @@ public:
 	inline static u32	GetSize() 									{	return 2;	}
 	inline void			Set(const TYPE& a, const TYPE& b)			{	x = a;	y = b;	};
 	inline void			Set(const Type2<TYPE>& ab)					{	x = ab.x;	y = ab.y;	};
-	inline void			Set(const Type3<TYPE>& abc)					{	x = ab.x;	y = ab.y;	};
+	inline void			Set(const Type3<TYPE>& abc)					{	x = abc.x;	y = abc.y; };
 	inline Type3<TYPE>	xyz(const TYPE& z) const					{	return Type3<TYPE>( x, y, z );	}
 
 	inline Type2<TYPE>	operator *(const TYPE& v) const 		{	return Type2<TYPE>( x*v, y*v );	};

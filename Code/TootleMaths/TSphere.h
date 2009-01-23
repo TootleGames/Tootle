@@ -7,7 +7,7 @@
 #pragma once
 #include <TootleCore/TLMaths.h>
 #include <TootleCore/TLTypes.h>
-
+#include <TootleCore/TArray.h>
 
 namespace TLMaths
 {

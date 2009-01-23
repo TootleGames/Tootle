@@ -359,7 +359,10 @@ void TArray<TYPE>::ShiftArray(u32 From, s32 Amount )
 				TLDebug::CheckIndex( DestIndex, GetSize(), __FUNCTION__ );
 			}
 
+#ifdef TL_TARGET_PC
+			// Not used on iPod?
 			TLMemory::Platform::MemValidate();
+#endif
 		}
 		else
 		{

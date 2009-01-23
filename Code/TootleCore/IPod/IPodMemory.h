@@ -15,7 +15,7 @@ namespace TLMemory
 	{
 		void Initialise();
 		void Shutdown();
-
+				
 		extern NSAutoreleasePool*			g_pMemoryAutoReleasePool;
 	}
 }

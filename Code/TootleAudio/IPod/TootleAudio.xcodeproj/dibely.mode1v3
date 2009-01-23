@@ -277,7 +277,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>14</integer>
+									<integer>13</integer>
 									<integer>12</integer>
 									<integer>3</integer>
 									<integer>0</integer>
@@ -321,7 +321,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>IPodAudio.h</string>
+								<string>IPodAudio.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -329,11 +329,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>IPodAudio.h</string>
+										<string>IPodAudio.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>842AA40D0F1D129B004BF60A</string>
+										<string>846B6B050F29DAD1005EB752</string>
 										<key>history</key>
 										<array>
 											<string>84179D9C0EFBD639005375E5</string>
@@ -342,16 +342,16 @@
 											<string>84E642DA0F150513005A4DC9</string>
 											<string>842AA0230F1B6333004BF60A</string>
 											<string>842AA0240F1B6333004BF60A</string>
-											<string>842AA18D0F1B9B56004BF60A</string>
 											<string>842AA2450F1BA9C8004BF60A</string>
-											<string>842AA39F0F1C99A7004BF60A</string>
 											<string>842AA3A00F1C99A7004BF60A</string>
 											<string>842AA3A10F1C99A7004BF60A</string>
 											<string>842AA3A30F1C99A7004BF60A</string>
 											<string>842AA3A40F1C99A7004BF60A</string>
 											<string>842AA3F50F1D0BE2004BF60A</string>
-											<string>842AA3F90F1D0BE2004BF60A</string>
-											<string>842AA3FA0F1D0BE2004BF60A</string>
+											<string>846B6AFD0F29DAD1005EB752</string>
+											<string>846B6AFE0F29DAD1005EB752</string>
+											<string>846B6AFF0F29DAD1005EB752</string>
+											<string>846B6B000F29DAD1005EB752</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -370,61 +370,11 @@
 											<string>842AA05A0F1B6333004BF60A</string>
 											<string>842AA14B0F1B9A0F004BF60A</string>
 											<string>842AA2470F1BA9C8004BF60A</string>
-											<string>842AA2480F1BA9C8004BF60A</string>
-											<string>842AA2490F1BA9C8004BF60A</string>
-											<string>842AA24C0F1BA9C8004BF60A</string>
-											<string>842AA24F0F1BA9C8004BF60A</string>
-											<string>842AA2520F1BA9C8004BF60A</string>
-											<string>842AA2570F1BA9C8004BF60A</string>
-											<string>842AA25A0F1BA9C8004BF60A</string>
-											<string>842AA25B0F1BA9C8004BF60A</string>
-											<string>842AA3A60F1C99A7004BF60A</string>
-											<string>842AA3A70F1C99A7004BF60A</string>
-											<string>842AA3A80F1C99A7004BF60A</string>
-											<string>842AA3A90F1C99A7004BF60A</string>
-											<string>842AA3AA0F1C99A7004BF60A</string>
-											<string>842AA3AB0F1C99A7004BF60A</string>
-											<string>842AA3AC0F1C99A7004BF60A</string>
-											<string>842AA3AD0F1C99A7004BF60A</string>
-											<string>842AA3AE0F1C99A7004BF60A</string>
-											<string>842AA3AF0F1C99A7004BF60A</string>
-											<string>842AA3B00F1C99A7004BF60A</string>
-											<string>842AA3B10F1C99A7004BF60A</string>
-											<string>842AA3B20F1C99A7004BF60A</string>
-											<string>842AA3B30F1C99A7004BF60A</string>
-											<string>842AA3B40F1C99A7004BF60A</string>
-											<string>842AA3B50F1C99A7004BF60A</string>
-											<string>842AA3B60F1C99A7004BF60A</string>
-											<string>842AA3B80F1C99A7004BF60A</string>
-											<string>842AA3B90F1C99A7004BF60A</string>
-											<string>842AA3BA0F1C99A7004BF60A</string>
-											<string>842AA3BB0F1C99A7004BF60A</string>
-											<string>842AA3BC0F1C99A7004BF60A</string>
-											<string>842AA3BD0F1C99A7004BF60A</string>
-											<string>842AA3BE0F1C99A7004BF60A</string>
-											<string>842AA3BF0F1C99A7004BF60A</string>
-											<string>842AA3C00F1C99A7004BF60A</string>
-											<string>842AA3C10F1C99A7004BF60A</string>
-											<string>842AA3C20F1C99A7004BF60A</string>
-											<string>842AA3C30F1C99A7004BF60A</string>
-											<string>842AA3C40F1C99A7004BF60A</string>
-											<string>842AA3C50F1C99A7004BF60A</string>
-											<string>842AA3C70F1C99A7004BF60A</string>
-											<string>842AA3C80F1C99A7004BF60A</string>
-											<string>842AA3C90F1C99A7004BF60A</string>
-											<string>842AA3CA0F1C99A7004BF60A</string>
-											<string>842AA3CB0F1C99A7004BF60A</string>
-											<string>842AA3CC0F1C99A7004BF60A</string>
-											<string>842AA3CD0F1C99A7004BF60A</string>
-											<string>842AA3FB0F1D0BE2004BF60A</string>
 											<string>842AA3FC0F1D0BE2004BF60A</string>
-											<string>842AA4000F1D0BE2004BF60A</string>
-											<string>842AA4010F1D0BE2004BF60A</string>
-											<string>842AA4020F1D0BE2004BF60A</string>
-											<string>842AA4030F1D0BE2004BF60A</string>
-											<string>842AA4040F1D0BE2004BF60A</string>
-											<string>842AA4050F1D0BE2004BF60A</string>
-											<string>842AA4090F1D0BE2004BF60A</string>
+											<string>846B6B010F29DAD1005EB752</string>
+											<string>846B6B020F29DAD1005EB752</string>
+											<string>846B6B030F29DAD1005EB752</string>
+											<string>846B6B040F29DAD1005EB752</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -482,9 +432,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>842AA25D0F1BA9C8004BF60A</string>
+				<string>846B6B060F29DAD1005EB752</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>842AA25E0F1BA9C8004BF60A</string>
+				<string>846B6B070F29DAD1005EB752</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -643,7 +593,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>IPodAudio.cpp</string>
+								<string></string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -660,8 +610,6 @@
 							<string>311pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -701,7 +649,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>84179D800EFBAE84005375E5</string>
-				<string>842AA25F0F1BA9C8004BF60A</string>
+				<string>846B6B080F29DAD1005EB752</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

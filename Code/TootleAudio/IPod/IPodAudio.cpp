@@ -127,10 +127,19 @@ Bool Platform::StopAudio(TRefRef AudioSourceRef)
 
 Bool Platform::PauseAudio(TRefRef AudioSourceRef)
 {
-	// Stop the source
+	// Pause the source
 	return OpenAL::PauseAudio(AudioSourceRef);
 }
 
+Bool Platform::SetPitch(TRefRef AudioSourceRef, const float fPitch)
+{
+	return OpenAL::SetPitch(AudioSourceRef, fPitch);
+}
+
+Bool Platform::GetPitch(TRefRef AudioSourceRef, float& fPitch)
+{
+	return OpenAL::GetPitch(AudioSourceRef, fPitch);	
+}
 
 
 Bool Platform::GetBufferID(TRefRef AudioAssetRef, ALuint& buffer)

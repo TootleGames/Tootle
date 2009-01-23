@@ -1,5 +1,45 @@
 // !$*UTF8*$!
 {
+	8491EFEE0F1F9D7D002FE16F /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C107A10F0A686E00B2DF7A /* TLScene.cpp */;
+		name = "TLScene.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 969;
+		vrLoc = 0;
+	};
+	8491EFEF0F1F9D7D002FE16F /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C107AB0F0A686E00B2DF7A /* TSceneNode_Object.cpp */;
+		name = "TSceneNode_Object.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 537;
+		vrLoc = 0;
+	};
+	8491EFF00F1F9D7D002FE16F /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C107A10F0A686E00B2DF7A /* TLScene.cpp */;
+		name = "TLScene.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 969;
+		vrLoc = 0;
+	};
+	8491EFF10F1F9D7D002FE16F /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C107AB0F0A686E00B2DF7A /* TSceneNode_Object.cpp */;
+		name = "TSceneNode_Object.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 537;
+		vrLoc = 0;
+	};
 	84C107820F0A679500B2DF7A /* Project object */ = {
 		activeBuildConfigurationName = Release;
 		activeTarget = 84C1078E0F0A67BC00B2DF7A /* TootleScene */;
@@ -54,12 +94,14 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 252343088;
-			PBXWorkspaceStateSaveDate = 252343088;
+			PBXPerProjectTemplateStateSaveDate = 253730164;
+			PBXWorkspaceStateSaveDate = 253730164;
 		};
 		perUserProjectItems = {
-			84C1082D0F0A724D00B2DF7A /* PBXTextBookmark */ = 84C1082D0F0A724D00B2DF7A /* PBXTextBookmark */;
-			84C108540F0A733F00B2DF7A /* PBXTextBookmark */ = 84C108540F0A733F00B2DF7A /* PBXTextBookmark */;
+			8491EFEE0F1F9D7D002FE16F /* PBXTextBookmark */ = 8491EFEE0F1F9D7D002FE16F /* PBXTextBookmark */;
+			8491EFEF0F1F9D7D002FE16F /* PBXTextBookmark */ = 8491EFEF0F1F9D7D002FE16F /* PBXTextBookmark */;
+			8491EFF00F1F9D7D002FE16F /* PBXTextBookmark */ = 8491EFF00F1F9D7D002FE16F /* PBXTextBookmark */;
+			8491EFF10F1F9D7D002FE16F /* PBXTextBookmark */ = 8491EFF10F1F9D7D002FE16F /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84C107860F0A679500B2DF7A /* Source Control */;
 		userBuildSettings = {
@@ -83,27 +125,14 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1011, 504}}";
 			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 948}";
+			sepNavVisRange = "{0, 969}";
 		};
 	};
-	84C1082D0F0A724D00B2DF7A /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C107A10F0A686E00B2DF7A /* TLScene.cpp */;
-		name = "TLScene.cpp: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 948;
-		vrLoc = 0;
-	};
-	84C108540F0A733F00B2DF7A /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C107A10F0A686E00B2DF7A /* TLScene.cpp */;
-		name = "TLScene.cpp: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 948;
-		vrLoc = 0;
+	84C107AB0F0A686E00B2DF7A /* TSceneNode_Object.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 3206}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 537}";
+		};
 	};
 }

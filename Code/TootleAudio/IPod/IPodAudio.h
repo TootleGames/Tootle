@@ -107,6 +107,10 @@ namespace TLAudio
 
 		Bool		DetermineFinishedAudio(TArray<TRef>& refArray);
 
+		// Audio Properties
+		Bool		SetPitch(TRefRef AudioSourceRef, const float fPitch);
+		Bool		GetPitch(TRefRef AudioSourceRef, float& fPitch);		
+		
 		// OpenAL access
 		Bool		GetBufferID(TRefRef AudioAssetRef, ALuint& buffer);
 		Bool		GetSourceID(TRefRef AudioSourceRef, ALuint& source);
