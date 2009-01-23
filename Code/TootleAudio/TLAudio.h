@@ -31,5 +31,9 @@ namespace TLAudio
 		Bool		PauseAudio(TRefRef AudioSourceRef);
 
 		Bool		DetermineFinishedAudio(TArray<TRef>& refArray);
+
+		// Audio Properties
+		Bool		SetPitch(TRefRef AudioSourceRef, const float fPitch);
+		Bool		GetPitch(TRefRef AudioSourceRef, float& fPitch);
 	}
 };

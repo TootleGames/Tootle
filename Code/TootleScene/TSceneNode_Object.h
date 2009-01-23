@@ -2,6 +2,7 @@
 
 #include <TootleRender/TLRender.h>
 #include <TootlePhysics/TLPhysics.h>
+#include <TootleAudio/TAudioInterface.h>
 
 #include "TSceneNode_Transform.h"
 
@@ -18,7 +19,7 @@ namespace TLScene
 //	generic routines (update to match physics pos, then 
 //	updates render object)
 //-----------------------------------------------------
-class TLScene::TSceneNode_Object : public TLScene::TSceneNode_Transform
+class TLScene::TSceneNode_Object : public TLScene::TSceneNode_Transform, public TLAudio::TAudioInterface
 {
 public:
 	TSceneNode_Object(TRefRef NodeRef,TRefRef TypeRef) :

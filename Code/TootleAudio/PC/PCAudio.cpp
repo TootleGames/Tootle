@@ -112,14 +112,13 @@ Bool Platform::RemoveBuffer(TRefRef AudioAssetRef)
 #if(AUDIO_SYSTEM == AUDIO_OPENAL)
 
 	// Release the platform specific buffer data		
-	if(!Platform::OpenAL::ReleaseBuffer(AudioAssetRef))
-	{
-		// Failed? No low level buffer? 
-		TLDebug_Print("Failed to release low level audio buffer");
-		return FALSE;
-	}
+	if(Platform::OpenAL::ReleaseBuffer(AudioAssetRef))
+		return TRUE;
 #endif	
-	return TRUE;
+
+	// Failed? No low level buffer? 
+	TLDebug_Print("Failed to release low level audio buffer");
+	return FALSE;
 }
 
 Bool Platform::HasBuffer(TRefRef AudioAssetRef)
@@ -157,6 +156,7 @@ Bool Platform::StartAudio(TRefRef AudioSourceRef)
 	return OpenAL::StartAudio(AudioSourceRef);
 #endif
 
+	TLDebug_Break("TODO");
 	return FALSE;
 }
 
@@ -167,6 +167,7 @@ Bool Platform::StopAudio(TRefRef AudioSourceRef)
 	return OpenAL::StopAudio(AudioSourceRef);
 #endif
 
+	TLDebug_Break("TODO");
 	return FALSE;
 }
 
@@ -177,8 +178,28 @@ Bool Platform::PauseAudio(TRefRef AudioSourceRef)
 	return OpenAL::PauseAudio(AudioSourceRef);
 #endif
 
+	TLDebug_Break("TODO");
 	return FALSE;
 }
+
+
+Bool Platform::SetPitch(TRefRef AudioSourceRef, const float fPitch)
+{
+#if(AUDIO_SYSTEM == AUDIO_OPENAL)
+	// Stop the source
+	return OpenAL::SetPitch(AudioSourceRef, fPitch);
+#endif
+
+	TLDebug_Break("TODO");
+	return FALSE;
+}
+
+Bool Platform::GetPitch(TRefRef AudioSourceRef, float& fPitch)
+{
+	TLDebug_Break("TODO");
+	return FALSE;
+}
+
 
 
 

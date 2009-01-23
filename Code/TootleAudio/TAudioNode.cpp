@@ -110,11 +110,14 @@ void TAudioNode::SetFrequencyMult(float fFrequencyMult)
 void TAudioNode::SetPitch(float fPitch)
 {
 	// Clamp the frequency to within range
-	TLMaths::Limit(fPitch, 0.0f, 1.0f);
-	
+	TLMaths::Limit(fPitch, 0.0f, 10.0f);
+
 	// Try and set the pitch for the source
 	// If successful set the pitch for the node
-	m_AudioProperties.m_fPitch = fPitch;
+	if(TLAudio::Platform::SetPitch(GetNodeRef(), fPitch))
+	{
+		m_AudioProperties.m_fPitch = fPitch;
+	}
 }
 
 

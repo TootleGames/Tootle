@@ -138,8 +138,12 @@ namespace TLAudio
 		Bool		StopAudio(TRefRef AudioSourceRef);
 		Bool		PauseAudio(TRefRef AudioSourceRef);
 
-
 		Bool		DetermineFinishedAudio(TArray<TRef>& refArray);
+
+
+		// Audio properties
+		Bool		SetPitch(TRefRef AudioSourceRef, const float fPitch);
+		Bool		GetPitch(TRefRef AudioSourceRef, float& fPitch);
 
 
 		// OpenAL access
