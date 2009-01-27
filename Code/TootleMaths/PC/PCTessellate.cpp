@@ -22,7 +22,7 @@
 
 void CALLBACK ftglError(GLenum errCode, TLMaths::TGlutTessellator* pTessellator);
 void CALLBACK ftglVertex(void* data, TLMaths::TGlutTessellator* pTessellator);
-void CALLBACK ftglCombine(float coords[3], void* vertex_data[4], GLfloat weight[4], void** outData, TLMaths::TGlutTessellator* pTessellator);
+void CALLBACK ftglCombine(GLdouble coords[3], void* vertex_data[4], GLfloat weight[4], void** outData, TLMaths::TGlutTessellator* pTessellator);
 void CALLBACK ftglBegin(GLenum type, TLMaths::TGlutTessellator* pTessellator);
 void CALLBACK ftglEnd(TLMaths::TGlutTessellator* pTessellator);
 void CALLBACK ftglEdgeFlag(GLboolean EdgeFlag,TLMaths::TGlutTessellator* pTessellator);
@@ -41,6 +41,7 @@ TLMaths::TTessellator* TLMaths::Platform::CreateTessellator(TPtr<TLAsset::TMesh>
 
 void CALLBACK ftglError(GLenum errCode,TLMaths::TGlutTessellator* pTessellator)
 {
+	TLDebug_Break("Glut Tessellator error");
     pTessellator->AddError(errCode);
 }
 
@@ -53,10 +54,14 @@ void CALLBACK ftglVertex(void* data,TLMaths::TGlutTessellator* pTessellator)
 }
 
 
-void CALLBACK ftglCombine(float coords[3], void* vertex_data[4], GLfloat weight[4], void** outData,TLMaths::TGlutTessellator* pTessellator)
+void CALLBACK ftglCombine(GLdouble coords[3], void* vertex_data[4], GLfloat weight[4], void** outData,TLMaths::TGlutTessellator* pTessellator)
 {
-    const float* vertex = static_cast<const float*>(coords);
-	float3 xyz( vertex[0], vertex[1], vertex[2] );
+	//	coords is the new position that's been calculated;
+	//	it's a combination of the 4 verts passed in (weighted according to weight)
+	//	if vertex_data were the colours of 4 verts, you merge them together
+	//	we're just dealing with vertexes (no normals, colours, texcoords etc)
+	//	so we just take the coord, and the data we pass back is our-vertex-type of data associated with this new vertex (float3)
+	float3 xyz( (float)coords[0], (float)coords[1], (float)coords[2] );
 
 	float3* pTempPoint = pTessellator->AddTempVertex( xyz );
 	*outData = pTempPoint->GetData();
@@ -133,6 +138,9 @@ Bool TLMaths::TGlutTessellator::GenerateTessellations(TLMaths::TLTessellator::TW
     gluTessNormal(tobj, 0.0f, 0.0f, zNormal);
     gluTessBeginPolygon(tobj, this );
 
+	//	count vertexes, we need to pre-alloc the temp verts as it corrupts if the array data is moved during tessellation
+	u32 VertexCount = 0;
+
     for( u32 c=0;	c<m_Contours.GetSize();	c++ )
     {
         TPtr<TLMaths::TContour>& pContour = m_Contours[c];
@@ -148,10 +156,14 @@ Bool TLMaths::TGlutTessellator::GenerateTessellations(TLMaths::TLTessellator::TW
 
 				Type3<GLdouble> d( Point.x, Point.y, Point.z );
                 gluTessVertex( tobj, d.GetData(), (GLvoid*)Point.GetData() );
+				VertexCount++;
             }
 		}
         gluTessEndContour(tobj);
     }
+
+	//	pre-alloc temp verts
+	m_TempVerts.SetAllocSize( VertexCount );
 	
     gluTessEndPolygon(tobj);
     gluDeleteTess(tobj);

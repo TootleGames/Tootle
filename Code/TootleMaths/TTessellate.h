@@ -64,6 +64,7 @@ namespace TLMaths
 	//	externs
 	class TLine;
 	class TLine2D;
+	class TBox;
 }
 
 
@@ -81,7 +82,6 @@ public:
 	const TArray<float3>&	GetPoints() const				{	return m_Points;	}
 	const float3&			Point(u32 Index) const			{	return m_Points[Index];	}
 
-	//void					SetClockwise(Bool ClockWise)	{	m_Clockwise = ClockWise ? SyncTrue : SyncFalse;	}
 	Bool					IsClockwise() const				{	return m_IsClockwise;	}
 	void					SetParity(u32 parity);
 	
@@ -93,6 +93,8 @@ public:
 	Bool					HasIntersections() const;		//	check to make sure any lines along the contour dont intersect each other (a self intersecting polygon). returns TRUE if they do
 
 	float					GetArea() const;				//	get area of the shape
+	void					GetBoundsBox(TLMaths::TBox& BoundsBox);	//	get bounds of contour
+	float3					GetCenter();	//	get center of contour - from bounds, possibly not true center
 
 private:
 	void					evaluateQuadraticCurve(const float3&,const float3&,const float3&);

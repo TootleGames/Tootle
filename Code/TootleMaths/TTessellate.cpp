@@ -118,7 +118,7 @@ TLMaths::TContour::TContour(const TArray<float3>& Contours,const TArray<TLMaths:
 	
     // If final angle is positive (+2PI), it's an anti-clockwise contour,
     // otherwise (-2PI) it's clockwise.
-	m_IsClockwise = (angle < 0.0) ? SyncTrue : SyncFalse;
+	m_IsClockwise = (angle < 0.0) ? TRUE : FALSE;
 }
 
 
@@ -501,9 +501,34 @@ float TLMaths::TContour::GetArea() const
 		Area += ( m_Points[i+1].x * m_Points[i].y - m_Points[i].x * m_Points[i+1].y) * 0.5f;
 	}
 
+	TLDebug_Break("gr: don't think this is accurate... may vary based on clockwise/ccw?");
+
 	//	if the shape is clockwise, Area will be negative, so abs it
 	return TLMaths::Absf( Area );
 }
+
+
+//-----------------------------------------------
+//	get bounds of contour
+//-----------------------------------------------
+void TLMaths::TContour::GetBoundsBox(TLMaths::TBox& BoundsBox)
+{
+	BoundsBox.SetInvalid();
+	BoundsBox.Accumulate( m_Points );
+}
+
+
+//-----------------------------------------------
+//	get center of contour - from bounds, possibly not true center
+//-----------------------------------------------
+float3 TLMaths::TContour::GetCenter()
+{
+	TLMaths::TBox BoundsBox;
+	GetBoundsBox( BoundsBox );
+
+	return BoundsBox.GetCenter();
+}
+
 
 
 
