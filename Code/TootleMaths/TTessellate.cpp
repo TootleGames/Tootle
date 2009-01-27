@@ -8,7 +8,7 @@ namespace TLMaths
 	namespace TLTessellator
 	{
 		const u32	g_BezierStepMin = 1;		//	
-		const float	g_BezierStepRate = 1.0f;	//	make beizer step count relative to the lngth of the curve.  a bezier every 0.1m
+		const float	g_BezierStepRate = 0.7f;	//	make beizer step count relative to the lngth of the curve.  a bezier every 0.1m
 	}
 }
 	
