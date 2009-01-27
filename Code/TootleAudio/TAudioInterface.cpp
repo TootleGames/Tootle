@@ -56,7 +56,7 @@ Bool TAudioInterface::IsAudioPlaying(TRefRef AudioRef)
 	return pAudioNode.IsValid();
 }
 
-void TAudioInterface::SetAudioPitch(TRefRef AudioRef, float fPitch)
+void TAudioInterface::SetAudioPitch(TRefRef AudioRef, const float fPitch)
 {
 	// Find the audio node
 	TPtr<TLAudio::TAudioNode> pAudioNode = TLAudio::g_pAudiograph->FindNode(AudioRef);
@@ -64,4 +64,64 @@ void TAudioInterface::SetAudioPitch(TRefRef AudioRef, float fPitch)
 	if(pAudioNode)
 		pAudioNode->SetPitch(fPitch);
 }
+
+
+float TAudioInterface::GetAudioPitch(TRefRef AudioRef)
+{
+	// Find the audio node
+	TPtr<TLAudio::TAudioNode> pAudioNode = TLAudio::g_pAudiograph->FindNode(AudioRef);
+	
+	if(pAudioNode)
+		return pAudioNode->GetPitch();
+	
+	// Failed?
+	return -1.0f;
+}
+
+
+
+void TAudioInterface::SetAudioVolume(TRefRef AudioRef, const float fVolume)
+{
+	// Find the audio node
+	TPtr<TLAudio::TAudioNode> pAudioNode = TLAudio::g_pAudiograph->FindNode(AudioRef);
+	
+	if(pAudioNode)
+		pAudioNode->SetVolume(fVolume);
+}
+
+float TAudioInterface::GetAudioVolume(TRefRef AudioRef)
+{
+	// Find the audio node
+	TPtr<TLAudio::TAudioNode> pAudioNode = TLAudio::g_pAudiograph->FindNode(AudioRef);
+	
+	if(pAudioNode)
+		return pAudioNode->GetVolume();
+
+	return -1.0f;
+}
+
+
+void TAudioInterface::SetAudioLooping(TRefRef AudioRef, const Bool bLooping)
+{
+	// Find the audio node
+	TPtr<TLAudio::TAudioNode> pAudioNode = TLAudio::g_pAudiograph->FindNode(AudioRef);
+	
+	if(pAudioNode)
+		pAudioNode->SetLooping(bLooping);
+}
+
+
+Bool TAudioInterface::GetAudioIsLooping(TRefRef AudioRef)
+{
+	// Find the audio node
+	TPtr<TLAudio::TAudioNode> pAudioNode = TLAudio::g_pAudiograph->FindNode(AudioRef);
+	
+	if(pAudioNode)
+		return pAudioNode->GetIsLooping();
+	
+	return FALSE;
+}
+
+
+
 

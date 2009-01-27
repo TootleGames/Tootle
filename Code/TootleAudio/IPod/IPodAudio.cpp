@@ -142,6 +142,29 @@ Bool Platform::GetPitch(TRefRef AudioSourceRef, float& fPitch)
 }
 
 
+Bool Platform::SetVolume(TRefRef AudioSourceRef, const float fVolume)
+{
+	return OpenAL::SetVolume(AudioSourceRef, fVolume);
+}
+
+Bool Platform::GetVolume(TRefRef AudioSourceRef, float& fVolume)
+{
+	return OpenAL::GetVolume(AudioSourceRef, fVolume);	
+}
+
+
+Bool Platform::SetLooping(TRefRef AudioSourceRef, const Bool bLooping)
+{
+	return OpenAL::SetLooping(AudioSourceRef, bLooping);
+}
+
+Bool Platform::GetIsLooping(TRefRef AudioSourceRef, Bool& bLooping)
+{
+	return OpenAL::GetIsLooping(AudioSourceRef, bLooping);	
+}
+
+
+
 Bool Platform::GetBufferID(TRefRef AudioAssetRef, ALuint& buffer)
 {
 	TPtr<OpenAL::AudioObj> pAO = OpenAL::g_Buffers.FindPtr(AudioAssetRef);
@@ -748,6 +771,126 @@ Bool Platform::OpenAL::GetPitch(TRefRef AudioSourceRef, float& fPitch)
 	
 	return TRUE;	
 }
+
+
+
+Bool Platform::OpenAL::SetVolume(TRefRef AudioSourceRef, const float fVolume)
+{
+	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	
+	if(!pAO)
+	{
+		TLDebug_Print("Failed to find audio source for setvolume request");
+		return FALSE;
+	}
+	
+	alSourcef(pAO->m_OpenALID,AL_GAIN,fVolume);
+	
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("setvolume alSourcef error: ");
+		
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+		
+		return FALSE;
+	}
+	
+	return TRUE;	
+}
+
+
+Bool Platform::OpenAL::GetVolume(TRefRef AudioSourceRef, float& fVolume)
+{
+	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	
+	if(!pAO)
+	{
+		TLDebug_Print("Failed to find audio source for getvolume request");
+		return FALSE;
+	}
+	
+	// Attempt to get the value
+	ALfloat fResult;
+	alGetSourcef(pAO->m_OpenALID,AL_GAIN, &fResult);
+	
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("getvolume alGetSourcef error: ");
+		
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+		
+		return FALSE;
+	}
+	
+	// Success - write the value to the variable
+	fVolume = fResult;
+	
+	return TRUE;	
+}
+
+
+Bool Platform::OpenAL::SetLooping(TRefRef AudioSourceRef, const Bool bLooping)
+{
+	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	
+	if(!pAO)
+	{
+		TLDebug_Print("Failed to find audio source for setlooping request");
+		return FALSE;
+	}
+	
+	alSourcei(pAO->m_OpenALID,AL_LOOPING,bLooping);
+	
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("setlooping alSourcei error: ");
+		
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+		
+		return FALSE;
+	}
+	
+	return TRUE;	
+}
+
+
+Bool Platform::OpenAL::GetIsLooping(TRefRef AudioSourceRef, Bool& bLooping)
+{
+	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	
+	if(!pAO)
+	{
+		TLDebug_Print("Failed to find audio source for getislooping request");
+		return FALSE;
+	}
+	
+	// Attempt to get the value
+	ALint bResult;
+	alGetSourcei(pAO->m_OpenALID,AL_LOOPING, &bResult);
+	
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("getislooping alGetSourcef error: ");
+		
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+		
+		return FALSE;
+	}
+	
+	// Success - write the value to the variable
+	bLooping = bResult;
+	
+	return TRUE;	
+}
+
 
 
 Bool Platform::OpenAL::SetPosition(TRefRef AudioSourceRef, const float3 vPosition)

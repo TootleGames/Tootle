@@ -35,5 +35,11 @@ namespace TLAudio
 		// Audio Properties
 		Bool		SetPitch(TRefRef AudioSourceRef, const float fPitch);
 		Bool		GetPitch(TRefRef AudioSourceRef, float& fPitch);
+		
+		Bool		SetVolume(TRefRef AudioSourceRef, const float fVolume);
+		Bool		GetVolume(TRefRef AudioSourceRef, float& fVolume);
+
+		Bool		SetLooping(TRefRef AudioSourceRef, const Bool bLooping);
+		Bool		GetIsLooping(TRefRef AudioSourceRef, Bool& bLooping);
 	}
 };

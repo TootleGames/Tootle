@@ -43,6 +43,9 @@ public:
 	float m_fVolume;
 	float m_fFrequencyMult;		// Frequency multiplier
 	float m_fPitch;
+	
+	Bool m_bStreaming;			// Streaming flag
+	Bool m_bLooping;			// Looping flag
 };
 
 
@@ -72,6 +75,13 @@ public:
 
 	void				SetPitch(float fPitch);
 	inline float		GetPitch()		const { return m_AudioProperties.m_fPitch; }
+	
+	void				SetLooping(Bool bLooping);
+	inline Bool			GetIsLooping()		const { return m_AudioProperties.m_bLooping; }
+
+	void				SetStreaming(Bool bStreaming);
+	inline Bool			GetIsStreaming()		const { return m_AudioProperties.m_bStreaming; }
+
 
 	// Audio asset access
 	FORCEINLINE const TRef&	GetAudioAssetRef() const							{	return m_AudioAssetRef;	}

@@ -90,8 +90,10 @@ void TAudioNode::SetVolume(float fVolume)
 	
 	// Try and set the volume for the source
 	// If successful set the volume for the node
-	
-	m_AudioProperties.m_fVolume = fVolume;
+	if(TLAudio::Platform::SetVolume(GetNodeRef(), fVolume))
+	{
+		m_AudioProperties.m_fVolume = fVolume;
+	}
 }
 
 // Set the frequency of this instance
@@ -110,7 +112,7 @@ void TAudioNode::SetFrequencyMult(float fFrequencyMult)
 void TAudioNode::SetPitch(float fPitch)
 {
 	// Clamp the frequency to within range
-	TLMaths::Limit(fPitch, 0.0f, 10.0f);
+	TLMaths::Limit(fPitch, 0.1f, 100.0f);
 
 	// Try and set the pitch for the source
 	// If successful set the pitch for the node
@@ -120,6 +122,31 @@ void TAudioNode::SetPitch(float fPitch)
 	}
 }
 
+// Set this instance to be looping
+void TAudioNode::SetLooping(Bool bLooping)
+{
+	// Try and set the looping state for the source
+	// If successful set the looping state for the node
+	if(TLAudio::Platform::SetLooping(GetNodeRef(), bLooping))
+	{
+		m_AudioProperties.m_bLooping = bLooping;
+	}
+}
+
+// Set this instance to be streamed
+void TAudioNode::SetStreaming(Bool bStreamed)
+{
+	TLDebug_Break("TODO");
+	
+	/*
+	// Try and set the streaming state for the source
+	// If successful set the streaming state for the node
+	if(TLAudio::Platform::SetStreaming(GetNodeRef(), bStreaming))
+	{
+		m_AudioProperties.m_bStreaming = bStreaming;
+	}
+	*/
+}
 
 
 void TAudioNode::SetAudioAssetRef(TRefRef AssetRef)
@@ -144,7 +171,7 @@ void TAudioNode::CreateSource()
 		if(Platform::HasBuffer(m_AudioAssetRef))
 		{
 			// Bind the source to the buffer
-			Platform::AttachSourceToBuffer(GetNodeRef(), m_AudioAssetRef, FALSE);
+			Platform::AttachSourceToBuffer(GetNodeRef(), m_AudioAssetRef, GetIsStreaming());
 		}
 		else
 		{

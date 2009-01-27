@@ -63,6 +63,13 @@ namespace TLAudio
 			Bool	SetPitch(TRefRef AudioSourceRef, const float fPitch);
 			Bool	GetPitch(TRefRef AudioSourceRef, float& fPitch);
 			
+			Bool	SetVolume(TRefRef AudioSourceRef, const float fVolume);
+			Bool	GetVolume(TRefRef AudioSourceRef, float& fVolume);
+			
+			Bool	SetLooping(TRefRef AudioSourceRef, const Bool bLooping);
+			Bool	GetIsLooping(TRefRef AudioSourceRef, Bool& bLooping);
+			
+			
 			Bool	SetPosition(TRefRef AudioSourceRef, const float3 vPosition);
 			Bool	GetPosition(TRefRef AudioSourceRef, float3& vPosition);
 
@@ -109,7 +116,14 @@ namespace TLAudio
 
 		// Audio Properties
 		Bool		SetPitch(TRefRef AudioSourceRef, const float fPitch);
-		Bool		GetPitch(TRefRef AudioSourceRef, float& fPitch);		
+		Bool		GetPitch(TRefRef AudioSourceRef, float& fPitch);	
+		
+		Bool		SetVolume(TRefRef AudioSourceRef, const float fVolume);
+		Bool		GetVolume(TRefRef AudioSourceRef, float& fVolume);
+		
+		Bool		SetLooping(TRefRef AudioSourceRef, const Bool bLooping);
+		Bool		GetIsLooping(TRefRef AudioSourceRef, Bool& bLooping);
+		
 		
 		// OpenAL access
 		Bool		GetBufferID(TRefRef AudioAssetRef, ALuint& buffer);

@@ -72,12 +72,18 @@ public:
 
 	// Audio properties
 
-	void	SetAudioPitch(TRefRef AudioRef, float fPitch);
+	void	SetAudioPitch(TRefRef AudioRef, const float fPitch);
+	float	GetAudioPitch(TRefRef AudioRef);
 
-	void	SetAudioVolume(TRefRef AudioRef, float fVolume);
+
+	void	SetAudioVolume(TRefRef AudioRef, const float fVolume);
 	float	GetAudioVolume(TRefRef AudioRef);
+	
+	void	SetAudioLooping(TRefRef AudioRef, const Bool bLooping);
+	Bool	GetAudioIsLooping(TRefRef AudioRef);
+	
 
-	void	SetAudioFrequency(TRefRef AudioRef, float fFrequency);
+	void	SetAudioFrequency(TRefRef AudioRef, const float fFrequency);
 	float	GetFrequency(TRefRef AudioRef);
 
 	void					SetAudioProperties(TRefRef AudioRef, const TAudioProperties& Props);
