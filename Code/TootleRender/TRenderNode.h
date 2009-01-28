@@ -51,7 +51,6 @@ public:
 			ResetScene,					//	position and rotation are not inherited
 			CalcWorldBoundsBox,			//	always calculate world bounds box (for physics, object picking etc etc)
 			CalcWorldBoundsSphere,		//	always calculate world bounds sphere (for physics, object picking etc etc)
-			EnableVBO,					//	enable creation & usage of VBO's - remove flag for meshs that are modified often
 			UseVertexColours,			//	bind vertex colours of mesh. if not set, when rendering a mesh the colours are not bound
 			UseMeshLineWidth,			//	calculates mesh/world line width -> screen/pixel width
 	

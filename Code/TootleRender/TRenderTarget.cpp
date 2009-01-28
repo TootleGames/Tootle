@@ -835,7 +835,6 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 				TFlags<TRenderNode::RenderFlags::Flags> RenderFlags = pRenderNode->GetRenderFlags();
 				RenderFlags.Set( TRenderNode::RenderFlags::Debug_Wireframe );
 				RenderFlags.Clear( TRenderNode::RenderFlags::DepthRead );
-				RenderFlags.Clear( TRenderNode::RenderFlags::EnableVBO );
 				
 				DrawMeshShape( RenderNodeBounds, pRenderNode, RenderFlags, FALSE );
 			}
@@ -850,7 +849,6 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 				TFlags<TRenderNode::RenderFlags::Flags> RenderFlags = pRenderNode->GetRenderFlags();
 				RenderFlags.Set( TRenderNode::RenderFlags::Debug_Wireframe );
 				RenderFlags.Clear( TRenderNode::RenderFlags::DepthRead );
-				RenderFlags.Clear( TRenderNode::RenderFlags::EnableVBO );
 
 				DrawMeshShape( RenderNodeBounds, pRenderNode, RenderFlags, TRUE );
 			}
@@ -905,7 +903,6 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 				TFlags<TRenderNode::RenderFlags::Flags> RenderFlags = pRenderNode->GetRenderFlags();
 				RenderFlags.Set( TRenderNode::RenderFlags::Debug_Wireframe );
 				RenderFlags.Clear( TRenderNode::RenderFlags::DepthRead );
-				RenderFlags.Clear( TRenderNode::RenderFlags::EnableVBO );
 		
 				DrawMeshShape( RenderNodeBounds, pRenderNode, RenderFlags, FALSE );
 			}
@@ -920,7 +917,6 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 				TFlags<TRenderNode::RenderFlags::Flags> RenderFlags = pRenderNode->GetRenderFlags();
 				RenderFlags.Set( TRenderNode::RenderFlags::Debug_Wireframe );
 				RenderFlags.Clear( TRenderNode::RenderFlags::DepthRead );
-				RenderFlags.Clear( TRenderNode::RenderFlags::EnableVBO );
 
 				DrawMeshShape( RenderNodeBounds, pRenderNode, RenderFlags, TRUE );
 			}
@@ -942,19 +938,13 @@ void TLRender::TRenderTarget::DrawMesh(TLAsset::TMesh& Mesh,const TRenderNode* p
 	const TArray<TLAsset::TMesh::Trifan>* pTrifans		= &Mesh.GetTrifans();
 	const TArray<TLAsset::TMesh::Line>* pLines			= &Mesh.GetLines();
 	
-#ifdef ENABLE_VBO
-	TRef VBOMeshRef = RenderFlags(TRenderNode::RenderFlags::EnableVBO) ? Mesh.GetAssetRef() : TRef();
-#else
-	TRef VBOMeshRef;
-#endif
-	
 	//	ignore colour vertex data if flag is not set
 	if ( !RenderFlags( TRenderNode::RenderFlags::UseVertexColours ) )
 		pColours = NULL;
 
 	//	bind vertex data
-	Opengl::Platform::BindVertexes( pVertexes, VBOMeshRef );
-	Opengl::Platform::BindColours( pColours, VBOMeshRef );
+	Opengl::Platform::BindVertexes( pVertexes );
+	Opengl::Platform::BindColours( pColours );
 
 	//	enable/disable depth test
 	Opengl::EnableDepthRead( RenderFlags( TRenderNode::RenderFlags::DepthRead ) );

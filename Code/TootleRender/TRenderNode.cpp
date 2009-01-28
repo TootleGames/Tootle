@@ -135,7 +135,6 @@ TLRender::TRenderNode::TRenderNode(TRefRef RenderNodeRef,TRefRef TypeRef) :
 	//	setup defualt render flags
 	m_RenderFlags.Set( RenderFlags::DepthRead );
 	m_RenderFlags.Set( RenderFlags::DepthWrite );
-	m_RenderFlags.Set( RenderFlags::EnableVBO );
 	m_RenderFlags.Set( RenderFlags::Enabled );
 	m_RenderFlags.Set( RenderFlags::UseVertexColours );
 	m_RenderFlags.Set( RenderFlags::UseMeshLineWidth );

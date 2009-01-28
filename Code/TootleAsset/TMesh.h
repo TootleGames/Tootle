@@ -23,6 +23,9 @@ namespace TLAsset
 
 
 	//	gr:	removed, I may implement again with a more vertex-description format (define byte offset of colour/pos/normal and type of colour/pos/normal)
+	//	opengl best-performance vertex format info
+	//	https://devforums.apple.com/thread/6475?tstart=15
+
 	/*
 	class TFixedVertex
 	{

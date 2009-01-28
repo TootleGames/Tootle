@@ -7,7 +7,6 @@
 #import <OpenGLES/EAGLDrawable.h>
 
 
-//#define ENABLE_VBO
 
 
 TLRender::Platform::RenderTarget::RenderTarget(const TRef& Ref) :

@@ -21,88 +21,12 @@ namespace TLRender
 		namespace Platform
 		{
 
-			TKeyArray<TRef,TVertexBufferObject>		g_VertexBufferObjectCache;	//	for every mesh asset we have a VBO
 			const TArray<TLAsset::TFixedVertex>*	g_pBoundFixedVertexes = NULL;
 			const TArray<float3>*					g_pBoundVertexes = NULL;
 		}
 	}
 }
 
-
-
-
-//---------------------------------------------------
-//	select VBO
-//---------------------------------------------------
-Bool TLRender::Opengl::Platform::TVertexBufferObject::BindBuffer(u32 BufferObject)
-{
-	//	selecting zero (no buffer) will select no buffer
-	glBindBuffer( GL_ARRAY_BUFFER, BufferObject );
-	return (BufferObject != 0);
-}
-
-
-//---------------------------------------------------
-//	bind data to VBO - returns FALSE if failed, and/or buffer no longer exists
-//---------------------------------------------------
-Bool TLRender::Opengl::Platform::TVertexBufferObject::UploadBuffer(const void* pData,u32 DataSize,u32& BufferObject)
-{
-	if ( DataSize == 0 )
-		pData = NULL;
-
-	//	do we need to update the data?
-	Bool UpdateData = FALSE;
-
-	//	need to alloc VBO
-	if ( BufferObject == 0 )
-	{
-		//	not allocated, and no data, do nothing
-		if ( !pData )
-			return FALSE;
-		
-		//	alloc buffer
-		glGenBuffers( 1, &BufferObject );
-
-		//	new buffer, so need to update data
-		UpdateData = TRUE;
-	}
-	else
-	{
-		//	buffer already exists, and we're NULL'ing the data, so needs updating
-		if ( !pData )
-			UpdateData = TRUE;
-	}
-
-	//	bind VBO
-	if ( !BindBuffer( BufferObject ) )
-		return FALSE;
-
-	//	upload data
-	if ( UpdateData )
-	{
-		glBufferData( GL_ARRAY_BUFFER, DataSize, pData, GL_STATIC_DRAW );
-	}
-	
-	//	data has been deleted, mark VBO as gone, and bind to no buffer
-	if ( !pData )
-	{
-		BufferObject = 0;
-		glBindBuffer( GL_ARRAY_BUFFER, BufferObject );
-	}
-	
-	return (BufferObject != 0);
-}
-
-
-//---------------------------------------------------
-//	delete VBO data
-//---------------------------------------------------
-void TLRender::Opengl::Platform::TVertexBufferObject::Delete()
-{
-	//	bind to NULL to delete buffers
-	UploadVertexBuffer( NULL, 0 );
-	UploadColourBuffer( NULL, 0 );
-}
 
 
 
@@ -134,7 +58,7 @@ SyncBool TLRender::Platform::Shutdown()
 //---------------------------------------------------
 //	bind verts
 //---------------------------------------------------
-Bool TLRender::Platform::Opengl::BindFixedVertexes(const TArray<TLAsset::TFixedVertex>* pVertexes,TRefRef MeshRef)
+Bool TLRender::Platform::Opengl::BindFixedVertexes(const TArray<TLAsset::TFixedVertex>* pVertexes)
 {
 	//	remove pointer if empty
 	if ( pVertexes && pVertexes->GetSize() == 0 )
@@ -151,9 +75,6 @@ Bool TLRender::Platform::Opengl::BindFixedVertexes(const TArray<TLAsset::TFixedV
 	//	unbind
 	if ( !pVertexes )
 	{
-		//	unbind any VBO's
-		TVertexBufferObject::BindNone();
-
 		glDisableClientState( GL_VERTEX_ARRAY );
 		glDisableClientState( GL_COLOR_ARRAY );
 		Debug_CheckForError();		
@@ -161,24 +82,6 @@ Bool TLRender::Platform::Opengl::BindFixedVertexes(const TArray<TLAsset::TFixedV
 	}
 	
 	const TLAsset::TFixedVertex* pFirstVertex = &pVertexes->ElementAtConst(0);
-
-	//	add VBO for this mesh, if it exists it will be returned
-	TVertexBufferObject* pVBO = NULL;
-	if ( MeshRef.IsValid() )
-		pVBO = g_VertexBufferObjectCache.Add( MeshRef, TVertexBufferObject(), FALSE );
-
-	if ( pVBO )
-		if ( !pVBO->UploadVertexBuffer( pFirstVertex, pVertexes->GetDataSize() ) )
-			pVBO = NULL;
-
-	if ( pVBO )
-	{
-		pFirstVertex = NULL;
-	}
-	else
-	{
-		TVertexBufferObject::BindNone();
-	}
 	
 	//	enable arrays
 	glEnableClientState( GL_VERTEX_ARRAY );
@@ -198,7 +101,7 @@ Bool TLRender::Platform::Opengl::BindFixedVertexes(const TArray<TLAsset::TFixedV
 //---------------------------------------------------
 //	bind verts
 //---------------------------------------------------
-Bool TLRender::Opengl::Platform::BindVertexes(const TArray<float3>* pVertexes,TRefRef MeshRef)
+Bool TLRender::Opengl::Platform::BindVertexes(const TArray<float3>* pVertexes)
 {
 	//	remove pointer if empty
 	if ( pVertexes && pVertexes->GetSize() == 0 )
@@ -214,9 +117,6 @@ Bool TLRender::Opengl::Platform::BindVertexes(const TArray<float3>* pVertexes,TR
 	//	unbind
 	if ( !pVertexes )
 	{
-		//	unbind any VBO's
-		TVertexBufferObject::BindNone();
-
 		glDisableClientState( GL_VERTEX_ARRAY );
 		Debug_CheckForError();		
 		return TRUE;
@@ -225,24 +125,8 @@ Bool TLRender::Opengl::Platform::BindVertexes(const TArray<float3>* pVertexes,TR
 	//	enable texcoord array
 	glEnableClientState( GL_VERTEX_ARRAY );
 
-	//	add VBO for this mesh, if it exists it will be returned
-	TVertexBufferObject* pVBO = NULL;
-	if ( MeshRef.IsValid() )
-		pVBO = g_VertexBufferObjectCache.Add( MeshRef, TVertexBufferObject(), FALSE );
-
-	if ( pVBO )
-	{
-		if ( !pVBO->UploadVertexBuffer( pVertexes->GetData(), pVertexes->GetDataSize() ) )
-			pVBO = NULL;
-	}
-	
-	if ( !pVBO )
-	{
-		TVertexBufferObject::BindNone();
-	}
-
 	//	bind
-	glVertexPointer( 3, GL_FLOAT, 0, pVBO ? NULL : pVertexes->GetData() );
+	glVertexPointer( 3, GL_FLOAT, 0, pVertexes->GetData() );
 	Debug_CheckForError();		
 	
 	return TRUE;
@@ -252,7 +136,7 @@ Bool TLRender::Opengl::Platform::BindVertexes(const TArray<float3>* pVertexes,TR
 //---------------------------------------------------
 //	bind colours
 //---------------------------------------------------
-Bool TLRender::Opengl::Platform::BindColours(const TArray<TColour>* pColours,TRefRef MeshRef)
+Bool TLRender::Opengl::Platform::BindColours(const TArray<TColour>* pColours)
 {
 	//	remove pointer if empty
 	if ( pColours && pColours->GetSize() == 0 )
@@ -265,9 +149,6 @@ Bool TLRender::Opengl::Platform::BindColours(const TArray<TColour>* pColours,TRe
 	//	unbind
 	if ( !pColours )
 	{
-		//	unbind any VBO's
-		TVertexBufferObject::BindNone();
-
 		glDisableClientState( GL_COLOR_ARRAY );
 		Opengl::Platform::Debug_CheckForError();
 		return TRUE;
@@ -275,25 +156,9 @@ Bool TLRender::Opengl::Platform::BindColours(const TArray<TColour>* pColours,TRe
 	
 	//	enable texcoord array
 	glEnableClientState( GL_COLOR_ARRAY );
-
-	//	add VBO for this mesh, if it exists it will be returned
-	TVertexBufferObject* pVBO = NULL;
-	if ( MeshRef.IsValid() )
-		pVBO = g_VertexBufferObjectCache.Add( MeshRef, TVertexBufferObject(), FALSE );
-
-	if ( pVBO )
-	{
-		if ( !pVBO->UploadColourBuffer( pColours->GetData(), pColours->GetDataSize() ) )
-			pVBO = NULL;
-	}
-
-	if ( !pVBO )
-	{
-		TVertexBufferObject::BindNone();
-	}
 	
 	//	bind
-	glColorPointer( 4, GL_FLOAT, 0, pVBO ? NULL : pColours->GetData() );
+	glColorPointer( 4, GL_FLOAT, 0, pColours->GetData() );
 	
 	Debug_CheckForError();
 	

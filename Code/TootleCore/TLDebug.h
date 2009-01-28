@@ -27,7 +27,7 @@
 
 //	gr: turn this into a game/engine option or something
 //	enable this define to enable array/float/limit checks
-#define DEBUG_CHECK_VALUES
+//#define DEBUG_CHECK_VALUES
 
 
 //	macro interfaces to debug routines... why? because we want to catch the FILE and LINE where it breaks

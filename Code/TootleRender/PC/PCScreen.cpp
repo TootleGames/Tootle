@@ -154,7 +154,7 @@ void TLRender::Platform::Screen::Draw()
 	TScreen::Draw();
 
 	//	unbind data
-	TLRender::Opengl::Unbind( TRef() );
+	TLRender::Opengl::Unbind();
 
 	//	flip buffers
 	SwapBuffers( pWindow->m_HDC );

@@ -2,6 +2,12 @@
 
 	Render lib interface
 
+
+
+
+
+
+
 -------------------------------------------------------*/
 #pragma once
 
@@ -27,7 +33,7 @@ namespace TLRender
 	{
 		FORCEINLINE Bool		Debug_CheckForError();
 
-		void					Unbind(TRefRef MeshRef);			//	unbind all verts/colours etc
+		void					Unbind();			//	unbind all verts/colours etc
 		template<class TYPE>
 		FORCEINLINE void		DrawPrimitives(u16 GLPrimType,const TArray<TYPE>* pPrimitivesArray);
 		FORCEINLINE void		DrawPrimitives(u16 GLPrimType,const TArray<TArray<u16> >* pPrimitivesArray);

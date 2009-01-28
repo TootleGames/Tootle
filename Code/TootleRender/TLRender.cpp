@@ -47,17 +47,12 @@ void TLRender::Opengl::DrawPrimitivePoints(const TArray<float3>* pVertexes)
 //---------------------------------------------------
 //	unbind everything
 //---------------------------------------------------
-void TLRender::Opengl::Unbind(TRefRef MeshRef)
+void TLRender::Opengl::Unbind()
 {
 	//	unbind attribs
-	//Platform::BindFixedVertexes( NULL, MeshRef );
-	Platform::BindVertexes( NULL, MeshRef );
-	Platform::BindColours( NULL, MeshRef );
-
-	//	unbind any VBO's
-	Platform::TVertexBufferObject::BindNone();
-	
-	Debug_CheckForError();
+	//Platform::BindFixedVertexes( NULL );
+	Platform::BindVertexes( NULL );
+	Platform::BindColours( NULL );
 }
 
 
