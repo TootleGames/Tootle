@@ -23,13 +23,6 @@ SyncBool TLRender::TRendergraph::Initialise()
 	return TLRender::Platform::Init();
 }
 
-SyncBool TLRender::TRendergraph::Update(float fTimeStep)
-{
-	if ( TLGraph::TGraph<TLRender::TRenderNode>::Update(fTimeStep) == SyncFalse )
-		return SyncFalse;
-
-	return TLRender::Platform::Update();
-}
 
 SyncBool TLRender::TRendergraph::Shutdown()
 {

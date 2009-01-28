@@ -24,11 +24,21 @@ namespace TLMaths
 	class TAngle;		//	simple class to stop ambiguity between radians and degrees
 	class TQuaternion;	//	quaternion type
 	class TMatrix;		//	matrix type
-	class TLine;		//	3d line/ray
-	class TTransform;	// Transform class - encapsulates common usage of position, rotation and scale
+	class TLine;		//	3D line/ray
+	class TTransform;	//	Transform class - encapsulates common usage of position, rotation and scale
 
+	//	external types
+	class TBox;
+	class TBox2D;
+	class TLine;
+	class TLine2D;
+	class TSphere;
+	class TSphere2D;
+	class TPlane;		//	3D plane
+	class TFrustum;		//	Camera frustum, box of 6 planes really
 
 	static const float	g_NearZero = 0.0001f;
+	static const float	g_NearOne = 1.f - g_NearZero;		//	value just less than one - used to check stuff is almost at 1 when normally between 0..1
 
 	//	various maths stuff
 	FORCEINLINE float			Sqrtf(float SquaredValue)				{	return sqrtf( SquaredValue );	}
@@ -298,12 +308,14 @@ public:
 	const float3&		GetTranslate() const	{	return m_Translate;	}
 	const TQuaternion&	GetRotation() const		{	return m_Rotation;	}
 
+	void				SetInvalid()			{	m_HasMatrix = m_HasScale = m_HasTranslate = m_HasRotation = FALSE;	}
 	void				SetMatrixInvalid()		{	m_HasMatrix = FALSE;	m_Matrix.SetIdentity();	}
 	void				SetScaleInvalid()		{	m_HasScale = FALSE;		m_Scale.Set( 1.f, 1.f, 1.f );	}
 	void				SetTranslateInvalid()	{	m_HasTranslate = FALSE;	m_Translate.Set( 0.f, 0.f, 0.f );	}
 	void				SetRotationInvalid()	{	m_HasRotation = FALSE;	m_Rotation.SetIdentity();	}
 
 	void				SetMatrixValid()		{	m_HasMatrix = TRUE;		}
+	void				OrMatrixValid(Bool Valid)	{	m_HasMatrix |= Valid;		}
 	void				SetScaleValid()			{	m_HasScale = TRUE;		}
 	void				SetTranslateValid()		{	m_HasTranslate = TRUE;	}
 	void				SetRotationValid()		{	m_HasRotation = TRUE;	}
@@ -334,33 +346,6 @@ protected:
 	Bool				m_HasRotation;
 };
 
-/*
-	Transform class that encapsulates common transform information, position, rotation and scale
-	providing accessor routines as well as matrix generation where required
-
-	// LOOKS LIKE GRAHAM HAS ADDED THIS AT THE SAME TIME! :(
-
-class TLMaths::TTransform
-{
-public:
-	const float3&		GetPosition()					const	{ return m_fPosition; }
-	void				SetPosition(const float3& fPosition)	{ m_fPosition = fPosition; }
-
-	const TQuaternion&	GetRotation()					const 	{ return m_qRotation; }
-	void				SetRotation(const TQuaternion& qRot)	{ m_qRotation = qRot; }
-
-	const float3&		GetScale()						const	{ return m_fScale; }
-	void				SetScale(const float3& fScale)			{ m_fScale = fScale; }
-
-	void			GetMatrix(TMatrix&	mat);
-
-private:
-	float3			m_fPosition;
-	TQuaternion		m_qRotation;
-	float3			m_fScale;
-};
-
-*/
 
 
 

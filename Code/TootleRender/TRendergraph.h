@@ -38,7 +38,6 @@ public:
 protected:
 
 	virtual SyncBool Initialise();
-	virtual SyncBool Update(float /*fTimeStep*/);
 	virtual SyncBool Shutdown();
 };
 

@@ -2,11 +2,95 @@
 
 
 
+//	gr: because I made the platform opengl calls inline (for super speed) we have to include the platform header
+#if defined(TL_TARGET_PC)
+	#include "PC/PCRender.h"
+#elif defined(TL_TARGET_IPOD)
+	#include "IPod/IPodRender.h"
+#else
+	#error unknown platform
+#endif
+
+
+
 namespace TLRender
 {
 	const TColour	g_DebugMissingColoursColour( 1.f, 0.f, 1.f );	//	pink
 	u32				g_PolyCount = 0;
 	u32				g_VertexCount = 0;
+}
+
+
+//-----------------------------------------------------------
+//	draw vertexes as points
+//-----------------------------------------------------------
+void TLRender::Opengl::DrawPrimitivePoints(const TArray<float3>* pVertexes)
+{
+	//	have a static array of indexes and grow it as required
+	static TArray<u16> g_AllPoints;
+
+	//	grow index array as required
+	if ( g_AllPoints.GetSize() < pVertexes->GetSize() )
+	{
+		u32 OldSize = g_AllPoints.GetSize();
+		g_AllPoints.SetSize( pVertexes->GetSize() );
+		for ( u32 i=OldSize;	i<g_AllPoints.GetSize();	i++ )
+			g_AllPoints.Add( i );
+	}
+
+	//	draw points
+	Platform::DrawPrimitives( Platform::GetPrimTypePoint(), pVertexes->GetSize(), g_AllPoints.GetData() );
+}
+
+
+
+//---------------------------------------------------
+//	unbind everything
+//---------------------------------------------------
+void TLRender::Opengl::Unbind(TRefRef MeshRef)
+{
+	//	unbind attribs
+	//Platform::BindFixedVertexes( NULL, MeshRef );
+	Platform::BindVertexes( NULL, MeshRef );
+	Platform::BindColours( NULL, MeshRef );
+
+	//	unbind any VBO's
+	Platform::TVertexBufferObject::BindNone();
+	
+	Debug_CheckForError();
+}
+
+
+//---------------------------------------------------
+//	transform scene
+//---------------------------------------------------
+void TLRender::Opengl::SceneTransform(const TLMaths::TTransform& Transform)
+{
+	//	gr: do this in the same order as the Transform() functions?
+	//		currently in old-render-code-order
+	if ( Transform.HasTranslate() )
+	{
+		const float3& Trans = Transform.GetTranslate();
+		glTranslatef( Trans.x, Trans.y, Trans.z );
+	}
+
+	if ( Transform.HasScale() )
+	{
+		const float3& Scale = Transform.GetScale();
+		glScalef( Scale.x, Scale.y, Scale.z );
+	}
+
+	if ( Transform.HasMatrix() )
+	{
+		glMultMatrixf( Transform.GetMatrix().GetData() );
+	}
+
+	if ( Transform.HasRotation() )
+	{
+		TLMaths::TMatrix RotMatrix;
+		TLMaths::QuaternionToMatrix( Transform.GetRotation(), RotMatrix );
+		glMultMatrixf( RotMatrix.GetData() );
+	}
 }
 
 

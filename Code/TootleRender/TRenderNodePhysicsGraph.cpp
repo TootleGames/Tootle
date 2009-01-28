@@ -30,8 +30,7 @@ void CreateCollisionZoneRenderNode(TPtr<TLPhysics::TCollisionZone>& pCollisionZo
 			pRenderNode->GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::Debug_Wireframe );
 
 		pRenderNode->GetRenderFlags().Clear( TLRender::TRenderNode::RenderFlags::DepthRead );
-		pRenderNode->GetRenderFlags().Clear( TLRender::TRenderNode::RenderFlags::MergeColour );
-		pRenderNode->SetColour( Colour );
+		pRenderNode->SetAlpha( Colour.GetAlpha() );
 
 		ZoneRenderList.Add( pRenderNode );
 	}
@@ -45,19 +44,16 @@ void CreateCollisionZoneRenderNode(TPtr<TLPhysics::TCollisionZone>& pCollisionZo
 		pRenderNode->SetMeshRef("d_cube");
 		pRenderNode->SetTranslate( pPhysicsNode->GetPosition() );
 		pRenderNode->GetRenderFlags().Clear( TLRender::TRenderNode::RenderFlags::DepthRead );
-		pRenderNode->GetRenderFlags().Clear( TLRender::TRenderNode::RenderFlags::MergeColour );
 	
 		float Scale = 2.f;
 		if ( pPhysicsNode->m_Debug_StaticCollisions > 0 )
 		{
 			Scale = 3.f;
-			TColour TempColour = Colour;
-			TempColour.GetAlpha() = 1.f;
-			pRenderNode->SetColour( TempColour );
+			pRenderNode->SetAlpha( 1.f );
 		}
 		else
 		{
-			pRenderNode->SetColour( Colour );
+			pRenderNode->SetAlpha( Colour.GetAlpha() );
 		}
 
 		pRenderNode->SetScale( float3(Scale,Scale,Scale) );

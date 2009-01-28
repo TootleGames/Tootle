@@ -1,3 +1,4 @@
+#include "../TLRender.h"
 #include "PCRender.h"
 #include "PCWinControl.h"
 #include <TootleCore/TSyncQueue.h>
@@ -16,29 +17,28 @@ namespace TLRender
 {
 	namespace Platform
 	{
-		SyncBool	g_OpenglInitialised = SyncWait;
+		SyncBool					g_OpenglInitialised = SyncWait;
+		TPtr<Win32::GOpenglWindow>	g_pSpareWindow;
+	}
 
-		namespace Opengl
+	namespace Opengl
+	{
+		namespace Platform
 		{
-			u32			g_PolyCount = 0;
-
-			TPtr<Win32::GOpenglWindow>	g_pSpareWindow;
-
 			TKeyArray<TRef,TVertexBufferObject>		g_VertexBufferObjectCache;		//	for every mesh asset we have a VBO
-			const TArray<TLAsset::TFixedVertex>*	g_pBoundFixedVertexes = NULL;
 			const TArray<float3>*					g_pBoundVertexes = NULL;
+			const TArray<TColour>*					g_pBoundColours = NULL;
 		}
 	}
 }
 
 
-using namespace TLRender;
 
 
 //---------------------------------------------------
 //	select VBO
 //---------------------------------------------------
-Bool TLRender::Platform::Opengl::TVertexBufferObject::BindBuffer(u32 BufferObject)
+Bool TLRender::Opengl::Platform::TVertexBufferObject::BindBuffer(u32 BufferObject)
 {
 	//	selecting zero (no buffer) will select no buffer
 	OpenglExtensions::glBindBufferARB()( GL_ARRAY_BUFFER_ARB, BufferObject );
@@ -49,7 +49,7 @@ Bool TLRender::Platform::Opengl::TVertexBufferObject::BindBuffer(u32 BufferObjec
 //---------------------------------------------------
 //	bind data to VBO - returns FALSE if failed, and/or buffer no longer exists
 //---------------------------------------------------
-Bool TLRender::Platform::Opengl::TVertexBufferObject::UploadBuffer(const void* pData,u32 DataSize,u32& BufferObject)
+Bool TLRender::Opengl::Platform::TVertexBufferObject::UploadBuffer(const void* pData,u32 DataSize,u32& BufferObject)
 {
 	if ( DataSize == 0 )
 		pData = NULL;
@@ -101,7 +101,7 @@ Bool TLRender::Platform::Opengl::TVertexBufferObject::UploadBuffer(const void* p
 //---------------------------------------------------
 //	delete VBO data
 //---------------------------------------------------
-void TLRender::Platform::Opengl::TVertexBufferObject::Delete()
+void TLRender::Opengl::Platform::TVertexBufferObject::Delete()
 {
 	//	bind to NULL to delete buffers
 	UploadVertexBuffer( NULL, 0 );
@@ -115,21 +115,17 @@ void TLRender::Platform::Opengl::TVertexBufferObject::Delete()
 //---------------------------------------------------
 SyncBool TLRender::Platform::Init()
 {
+	//	setup default states
+	glEnable( GL_SCISSOR_TEST );
+	glDisable( GL_TEXTURE_2D );
+	glDisable( GL_CULL_FACE );
+
 	TSyncQueue Jobs;
 	Jobs.Add( Win32::Init, "Win32::Init", FALSE );
-	Jobs.Add( Opengl::Init, "Opengl::Init", FALSE );
+	Jobs.Add( Opengl::Platform::Init, "Opengl::Platform::Init", FALSE );
 	Jobs.Add( OpenglExtensions::Init, "OpenglExtensions::Init", FALSE );
 
 	return Jobs.Update();
-}
-
-
-//---------------------------------------------------
-//	platform/opengl update
-//---------------------------------------------------
-SyncBool TLRender::Platform::Update()
-{
-	return SyncTrue;	
 }
 
 
@@ -139,7 +135,7 @@ SyncBool TLRender::Platform::Update()
 SyncBool TLRender::Platform::Shutdown()	
 {
 	TSyncQueue Jobs;
-	Jobs.Add( Opengl::Shutdown, "Opengl::Shutdown", FALSE );
+	Jobs.Add( Opengl::Platform::Shutdown, "Opengl::Shutdown", FALSE );
 	Jobs.Add( OpenglExtensions::Shutdown, "OpenglExtensions::Shutdown", FALSE );
 	Jobs.Add( Win32::Shutdown, "Win32::Shutdown", FALSE );
 
@@ -150,7 +146,7 @@ SyncBool TLRender::Platform::Shutdown()
 //---------------------------------------------------
 //	opengl init
 //---------------------------------------------------
-SyncBool Platform::Opengl::Init()
+SyncBool TLRender::Opengl::Platform::Init()
 {
 	//	need to create a window to initialise the opengl system
 	if ( g_pSpareWindow )
@@ -171,7 +167,7 @@ SyncBool Platform::Opengl::Init()
 	//	init opengl state
 	glDisable( GL_CULL_FACE );
 
-	Opengl::Debug_CheckForError();		
+	Debug_CheckForError();		
 
 	//	all succeeded
 	return SyncTrue;
@@ -181,7 +177,7 @@ SyncBool Platform::Opengl::Init()
 //---------------------------------------------------
 //	opengl shutdown
 //---------------------------------------------------
-SyncBool Platform::Opengl::Shutdown()
+SyncBool TLRender::Opengl::Platform::Shutdown()
 {
 	//	cleanup VBO's
 	for ( u32 v=0;	v<g_VertexBufferObjectCache.GetSize();	v++ )
@@ -200,7 +196,7 @@ SyncBool Platform::Opengl::Shutdown()
 }
 
 
-
+/*
 //---------------------------------------------------
 //	bind verts
 //---------------------------------------------------
@@ -226,7 +222,7 @@ Bool TLRender::Platform::Opengl::BindFixedVertexes(const TArray<TLAsset::TFixedV
 
 		glDisableClientState( GL_VERTEX_ARRAY );
 		glDisableClientState( GL_COLOR_ARRAY );
-		Opengl::Debug_CheckForError();		
+		Debug_CheckForError();		
 		return TRUE;
 	}
 	
@@ -253,23 +249,24 @@ Bool TLRender::Platform::Opengl::BindFixedVertexes(const TArray<TLAsset::TFixedV
 	if ( pVBO )
 		pVBO->BindVertexVBO();
 	glVertexPointer( 3, GL_FLOAT, sizeof(TLAsset::TFixedVertex), &pFirstVertex->m_Position );
-	Opengl::Debug_CheckForError();
+	Debug_CheckForError();
 
 	glEnableClientState( GL_COLOR_ARRAY );
 	if ( pVBO )
 		pVBO->BindColourVBO();
 	glColorPointer( 4, GL_UNSIGNED_BYTE, sizeof(TLAsset::TFixedVertex), &pFirstVertex->m_Colour );
-	Opengl::Debug_CheckForError();
+	Debug_CheckForError();
 	
 	return TRUE;
 	
 }
+*/
 
 
 //---------------------------------------------------
 //	bind verts
 //---------------------------------------------------
-Bool TLRender::Platform::Opengl::BindVertexes(const TArray<float3>* pVertexes,TRefRef MeshRef)
+Bool TLRender::Opengl::Platform::BindVertexes(const TArray<float3>* pVertexes,TRefRef MeshRef)
 {
 	//	remove pointer if empty
 	if ( pVertexes && pVertexes->GetSize() == 0 )
@@ -279,7 +276,7 @@ Bool TLRender::Platform::Opengl::BindVertexes(const TArray<float3>* pVertexes,TR
 	if ( pVertexes == g_pBoundVertexes )
 		return TRUE;
 	
-	g_pBoundFixedVertexes = NULL;
+//	g_pBoundFixedVertexes = NULL;
 	g_pBoundVertexes = pVertexes;
 	
 	//	unbind
@@ -289,7 +286,7 @@ Bool TLRender::Platform::Opengl::BindVertexes(const TArray<float3>* pVertexes,TR
 		TVertexBufferObject::BindNone();
 
 		glDisableClientState( GL_VERTEX_ARRAY );
-		Opengl::Debug_CheckForError();		
+		Debug_CheckForError();		
 		return TRUE;
 	}
 	
@@ -306,10 +303,15 @@ Bool TLRender::Platform::Opengl::BindVertexes(const TArray<float3>* pVertexes,TR
 		if ( !pVBO->UploadVertexBuffer( pVertexes->GetData(), pVertexes->GetDataSize() ) )
 			pVBO = NULL;
 	}
+	
+	if ( !pVBO )
+	{
+		TVertexBufferObject::BindNone();
+	}
 
 	//	bind
 	glVertexPointer( 3, GL_FLOAT, 0, pVBO ? NULL : pVertexes->GetData() );
-	Opengl::Debug_CheckForError();		
+	Debug_CheckForError();		
 	
 	return TRUE;
 }
@@ -318,7 +320,7 @@ Bool TLRender::Platform::Opengl::BindVertexes(const TArray<float3>* pVertexes,TR
 //---------------------------------------------------
 //	bind colours
 //---------------------------------------------------
-Bool TLRender::Platform::Opengl::BindColours(const TArray<TColour>* pColours,TRefRef MeshRef)
+Bool TLRender::Opengl::Platform::BindColours(const TArray<TColour>* pColours,TRefRef MeshRef)
 {
 	//	remove pointer if empty
 	if ( pColours && pColours->GetSize() == 0 )
@@ -335,7 +337,7 @@ Bool TLRender::Platform::Opengl::BindColours(const TArray<TColour>* pColours,TRe
 		TVertexBufferObject::BindNone();
 
 		glDisableClientState( GL_COLOR_ARRAY );
-		Opengl::Debug_CheckForError();
+		Opengl::Platform::Debug_CheckForError();
 		return TRUE;
 	}
 	
@@ -353,36 +355,24 @@ Bool TLRender::Platform::Opengl::BindColours(const TArray<TColour>* pColours,TRe
 			pVBO = NULL;
 	}
 
+	if ( !pVBO )
+	{
+		TVertexBufferObject::BindNone();
+	}
+	
 	//	bind
 	glColorPointer( 4, GL_FLOAT, 0, pVBO ? NULL : pColours->GetData() );
 	
-	Opengl::Debug_CheckForError();
+	Debug_CheckForError();
 	
 	return TRUE;
 }
 
 
 //---------------------------------------------------
-//	unbind everything
-//---------------------------------------------------
-void TLRender::Platform::Opengl::Unbind(TRefRef MeshRef)
-{
-	//	unbind attribs
-	BindFixedVertexes( NULL, MeshRef );
-	BindVertexes( NULL, MeshRef );
-	BindColours( NULL, MeshRef );
-
-	//	unbind any VBO's
-	TVertexBufferObject::BindNone();
-	
-	Opengl::Debug_CheckForError();
-}
-
-
-//---------------------------------------------------
 //	check for opengl error - returns TRUE on error
 //---------------------------------------------------
-Bool TLRender::Platform::Opengl::Debug_CheckForError()
+Bool TLRender::Opengl::Platform::Debug_CheckForError()
 {
 	//	can't detect errors until opengl initialised
 	if ( g_OpenglInitialised != SyncTrue )
@@ -429,7 +419,7 @@ Bool TLRender::Platform::Opengl::Debug_CheckForError()
 //-----------------------------------------------------------
 //	main renderer, just needs primitive type, and the data
 //-----------------------------------------------------------
-void TLRender::Platform::Opengl::DrawPrimitives(u32 GLPrimType,u32 IndexCount,const u16* pIndexData)
+void TLRender::Opengl::Platform::DrawPrimitives(u16 GLPrimType,u32 IndexCount,const u16* pIndexData)
 {
 	//	no data to render
 	if ( !IndexCount || !pIndexData )
@@ -461,48 +451,9 @@ void TLRender::Platform::Opengl::DrawPrimitives(u32 GLPrimType,u32 IndexCount,co
 	}
 
 	//	inc poly counter
-	g_PolyCount += IndexCount;
+	TLRender::g_VertexCount += IndexCount;
+	TLRender::g_PolyCount += IndexCount / 3;
 
-	Opengl::Debug_CheckForError();
+	Debug_CheckForError();
 }
-
-
-//-----------------------------------------------------------
-//	draw vertexes as points
-//-----------------------------------------------------------
-void TLRender::Platform::Opengl::DrawPrimitivePoints(u32 GLPrimType,const TArray<float3>* pVertexes)
-{
-	if ( GLPrimType != GL_POINTS )
-	{
-		TLDebug_Break("Primtype for points must be GL_POINTS");
-		return;
-	}
-
-	//	make array of indexes
-	TArray<u16> AllPoints;
-	for ( u32 v=0;	v<pVertexes->GetSize();	v++ )
-		AllPoints.Add( v );
-
-	Opengl::DrawPrimitives( GLPrimType, AllPoints.GetSize(), AllPoints.GetData() );
-}
-
-
-
-//-----------------------------------------------------------
-//	reset counter of polygons rendered back to zero
-//-----------------------------------------------------------
-void TLRender::Platform::Opengl::ResetPolyCount()
-{
-	g_PolyCount = 0;
-}
-
-
-//-----------------------------------------------------------
-//	get number of polygons rendered
-//-----------------------------------------------------------
-u32 TLRender::Platform::Opengl::GetPolyCount()
-{
-	return g_PolyCount;
-}
-
 

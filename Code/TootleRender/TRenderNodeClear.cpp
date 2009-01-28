@@ -16,15 +16,18 @@ TLRender::TRenderNodeClear::TRenderNodeClear(TRefRef NodeRef,TRefRef TypeRef) :
 //-------------------------------------------------------
 //	resize the mesh (also creates as required)
 //-------------------------------------------------------
-void TLRender::TRenderNodeClear::SetSize(const Type4<s32>& ClearSize,float NearZ)
+void TLRender::TRenderNodeClear::SetSize(const Type4<s32>& ClearSize,float NearZ,const TColour& ClearColour)
 {
+	TLAsset::TMesh* pClearMesh = m_pClearMesh.GetObject();
+
 	//	create mesh
-	if ( !m_pClearMesh )
+	if ( !pClearMesh )
 	{
-		m_pClearMesh = new TLAsset::TMesh("Clear");
+		m_pClearMesh = TLAsset::CreateAsset( TLAsset::GetFreeAssetRef("Clear"), "Mesh" );
+		pClearMesh = m_pClearMesh.GetObject();
 
 		//	initialise clear quad
-		TLAsset::TMesh::Tristrip* pClearTristrip = m_pClearMesh->GetTristrips().AddNew();
+		TLAsset::TMesh::Tristrip* pClearTristrip = pClearMesh->GetTristrips().AddNew();
 		if ( !pClearTristrip )
 		{
 			m_pClearMesh = NULL;
@@ -34,10 +37,10 @@ void TLRender::TRenderNodeClear::SetSize(const Type4<s32>& ClearSize,float NearZ
 		ClearTristrip.SetSize(4);
 
 		//	add vert for each corner
-		ClearTristrip[0] = m_pClearMesh->AddVertex( float3(0,0,0) );
-		ClearTristrip[1] = m_pClearMesh->AddVertex( float3(0,0,0) );
-		ClearTristrip[2] = m_pClearMesh->AddVertex( float3(0,0,0) );
-		ClearTristrip[3] = m_pClearMesh->AddVertex( float3(0,0,0) );
+		ClearTristrip[0] = pClearMesh->AddVertex( float3(0,0,0), ClearColour );
+		ClearTristrip[1] = pClearMesh->AddVertex( float3(0,0,0), ClearColour );
+		ClearTristrip[2] = pClearMesh->AddVertex( float3(0,0,0), ClearColour );
+		ClearTristrip[3] = pClearMesh->AddVertex( float3(0,0,0), ClearColour );
 	}
 
 	//	update vert positions
@@ -46,9 +49,11 @@ void TLRender::TRenderNodeClear::SetSize(const Type4<s32>& ClearSize,float NearZ
 	float Bottom = (float)ClearSize.Bottom() + 10.f;
 	float Right = (float)ClearSize.Right() + 10.f;
 
-	m_pClearMesh->GetVertex(0).Set( Left, Bottom, NearZ );
-	m_pClearMesh->GetVertex(1).Set( Left, Top, NearZ );
-	m_pClearMesh->GetVertex(2).Set( Right, Bottom, NearZ );
-	m_pClearMesh->GetVertex(3).Set( Right, Top, NearZ );
+	pClearMesh->GetVertex(0).Set( Left, Bottom, NearZ );
+	pClearMesh->GetVertex(1).Set( Left, Top, NearZ );
+	pClearMesh->GetVertex(2).Set( Right, Bottom, NearZ );
+	pClearMesh->GetVertex(3).Set( Right, Top, NearZ );
+
+	pClearMesh->GetColours().SetAll( ClearColour );
 }
 

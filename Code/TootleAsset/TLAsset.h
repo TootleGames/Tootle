@@ -26,6 +26,7 @@ namespace TLAsset
 	class TLoadTask;		//	loading-asset task
 
 	TPtr<TAsset>&		GetAsset(TRefRef AssetRef,Bool LoadedOnly=FALSE);	//	return a pointer to an asset - if LoadedOnly, returns a NULL pointer for assets that aren't loaded
+	TRef				GetFreeAssetRef(TRef BaseRef=TRef());				//	get an asset ref that isn't in use (starting from base ref)
 	void				GetAssetArray(TPtrArray<TAsset>& AssetArray,TRefRef AssetType,Bool LoadedOnly=FALSE);	//	get an array of assets of a certain type
 	TPtr<TAsset>&		LoadAsset(TRefRef AssetRef,  Bool bBlocking = FALSE);						//	load asset from a file systems
 	TPtr<TAsset>&		CreateAsset(TRefRef AssetRef,TRefRef AssetType);	//	return a pointer to a new asset - mostly used for runtime asssets
@@ -50,6 +51,9 @@ public:
 		TManager						( ManagerRef ),
 		TClassFactory<TLAsset::TAsset>	( &TLAsset::AssetSort )
 	{
+		//	gr: make grow by quite big for assets - cops and robbers has thousands of assets, takes a while to init with
+		//		a small growby
+		SetGrowBy( 200 );
 	}
 
 protected:

@@ -33,6 +33,24 @@ TLArray::SortResult	TLAsset::AssetSort(const TPtr<TLAsset::TAsset>& a,const TPtr
 
 
 //----------------------------------------------------------
+//	get an asset ref that isn't in use (starting from base ref)
+//----------------------------------------------------------
+TRef TLAsset::GetFreeAssetRef(TRef BaseRef)
+{
+	//	start at a valid ref :)
+	if ( !BaseRef.IsValid() )
+		BaseRef.Increment();
+
+	while ( g_pFactory->GetInstance( BaseRef ).IsValid() )
+	{
+		BaseRef.Increment();
+	}
+
+	return BaseRef;
+}
+
+
+//----------------------------------------------------------
 //	return a pointer to an asset
 //----------------------------------------------------------
 TPtr<TLAsset::TAsset>& TLAsset::CreateAsset(TRefRef AssetRef,TRefRef AssetType)

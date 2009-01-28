@@ -17,6 +17,9 @@
 #include <TootleCore/TRef.h>
 
 
+#define TClassFactory_GrowByDefault	40
+
+
 template<class TYPE, bool STOREINSTANCES = true>
 class TClassFactory : public TPtrArray<TYPE>
 {
@@ -24,7 +27,7 @@ public:
 	typedef TLArray::SortResult(TSortFunc)(const TPtr<TYPE>&,const TPtr<TYPE>&,const void*);
 
 public:
-	TClassFactory(TSortFunc* pSortFunc=NULL) : TPtrArray<TYPE>	( pSortFunc )	{	}
+	TClassFactory(TSortFunc* pSortFunc=NULL,u16 GrowBy=TClassFactory_GrowByDefault) : TPtrArray<TYPE>	( pSortFunc, GrowBy )	{	}
 
 	template<class MATCHTYPE>
 	TPtr<TYPE>&				GetInstance(const MATCHTYPE& Match)				{	return FindPtr(Match);	}

@@ -1141,7 +1141,9 @@ Bool Platform::OpenAL::GetIsLooping(TRefRef AudioSourceRef, Bool& bLooping)
 	}
 	
 	// Success - write the value to the variable
-	bLooping = (Bool)bResult;
+	//	gr: compiler says performance warning, so changed
+	//bLooping = (Bool)bResult;
+	bLooping = (bResult==1);
 	
 	return TRUE;	
 }

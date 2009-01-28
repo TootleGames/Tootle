@@ -7,6 +7,7 @@ namespace TLDebugFile
 {
 	SyncBool		LoadDebugFile_Asset(TPtr<TLFileSys::TFile>& pFile,TPtr<TLAsset::TAsset> pAsset);	//	create a cube mesh
 	SyncBool		LoadDebugFile_MeshCube(TPtr<TLFileSys::TFile>& pFile);		//	create a cube mesh
+	SyncBool		LoadDebugFile_MeshQuad(TPtr<TLFileSys::TFile>& pFile);		//	create a cube mesh
 	SyncBool		LoadDebugFile_MeshSphere(TPtr<TLFileSys::TFile>& pFile);	//	create a cube mesh
 };
 
@@ -27,6 +28,7 @@ SyncBool TLFileSys::TVirtualFileSys::LoadFileList()
 	//	
 	CreateFileInstance("d_sphere.asset");
 	CreateFileInstance("d_cube.asset");
+	CreateFileInstance("d_quad.asset");
 
 	//	update time stamp of file list
 	FinaliseFileList();
@@ -52,6 +54,11 @@ SyncBool TLFileSys::TVirtualFileSys::LoadFile(TPtr<TLFileSys::TFile>& pFile)
 	if ( pFile->GetFileRef() == TRef("d_sphere") )
 	{
 		return TLDebugFile::LoadDebugFile_MeshSphere( pFile );
+	}
+
+	if ( pFile->GetFileRef() == TRef("d_quad") )
+	{
+		return TLDebugFile::LoadDebugFile_MeshQuad( pFile );
 	}
 
 	//	unknown debug file name
@@ -130,6 +137,27 @@ SyncBool TLDebugFile::LoadDebugFile_MeshCube(TPtr<TLFileSys::TFile>& pFile)
 	return LoadDebugFile_Asset( pFile, pMesh );
 }
 
+
+
+//---------------------------------------------------------
+//	create a quad mesh file
+//---------------------------------------------------------
+SyncBool TLDebugFile::LoadDebugFile_MeshQuad(TPtr<TLFileSys::TFile>& pFile)
+{
+	//	create a mesh asset at runtime, then turn that into a file. 
+	//	Very convuluted :) but there's reasons for it
+	TPtr<TLAsset::TMesh> pMesh = new TLAsset::TMesh( pFile->GetFileRef() );
+	
+	//	generate a cube
+	TFixedArray<float3,4> QuadOutline;
+	QuadOutline[0] = float3( 0, 0, 0 );
+	QuadOutline[1] = float3( 1, 0, 0 );
+	QuadOutline[2] = float3( 1, 1, 0 );
+	QuadOutline[3] = float3( 0, 1, 0 );
+	pMesh->GenerateQuad( QuadOutline, TColour(1.f, 1.f, 1.f, 1.f ) );
+
+	return LoadDebugFile_Asset( pFile, pMesh );
+}
 
 
 //---------------------------------------------------------

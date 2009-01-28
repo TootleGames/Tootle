@@ -7,16 +7,19 @@
 
 //#include "TLRender.h"
 #include <TootleCore/TPtrArray.h>
+#include <TootleCore/TKeyArray.h>
 #include <TootleAsset/TMesh.h>
 #include <TootleCore/TFlags.h>
-
 #include <TootleCore/TLGraph.h>
+#include <TootleMaths/TQuadTree.h>
 
 namespace TLRender
 {
 	class TRenderNode;
 	class TRenderTarget;
+	class TRenderZoneNode;
 }
+
 
 
 class TLRender::TRenderNode : public TLGraph::TGraphNode<TLRender::TRenderNode>
@@ -25,9 +28,11 @@ private:
 	enum InvalidateFlags
 	{
 		InvalidateDummy = 0,
-		InvalidateLocal,
-		InvalidateWorld,
+		InvalidateLocalBounds,
+		InvalidateWorldBounds,
+		InvalidateWorldPos,
 		InvalidateParents,
+		ForceInvalidateParents,		//	invalidate parents even if nothing has changed - I've needed this to invalidate parent's boxes even though current bounds are invalid
 		InvalidateChildren,
 	};
 	typedef TFlags<InvalidateFlags> TInvalidateFlags;
@@ -41,25 +46,17 @@ public:
 		enum Flags
 		{
 			Enabled,
-			HasShader,
-			HasNormals,
-			HasTexture,
-			HasTexture2,
-			UseVertexColours,
-			HasAlpha,
-			HasTextureAlpha,
-			HasTexture2Alpha,
-			MergeColour,		//	merge colour from parent node when rendering
-			DepthRead,			//	read from depth buffer (off draws over everything)
-			DepthWrite,			//	write to depth buffer (off means will get drawn over)
-			ResetScene,			//	position and rotation are not inherited
-			AffectsParentBounds,		//	if not set bounds of parent[s] are not invalidated or accumulated by this object (debug items usually)
+			DepthRead,					//	read from depth buffer (off draws over everything)
+			DepthWrite,					//	write to depth buffer (off means will get drawn over)
+			ResetScene,					//	position and rotation are not inherited
 			CalcWorldBoundsBox,			//	always calculate world bounds box (for physics, object picking etc etc)
 			CalcWorldBoundsSphere,		//	always calculate world bounds sphere (for physics, object picking etc etc)
-			EnableVBO,					//	enable creation & usage of VBO's
-			EnableFixedVerts,			//	enable "fixed" verts (interleaved)
-			Debug_Wireframe,
-			Debug_Points,	
+			EnableVBO,					//	enable creation & usage of VBO's - remove flag for meshs that are modified often
+			UseVertexColours,			//	bind vertex colours of mesh. if not set, when rendering a mesh the colours are not bound
+			UseMeshLineWidth,			//	calculates mesh/world line width -> screen/pixel width
+	
+			Debug_Wireframe,			//	draw in wireframe
+			Debug_Points,				//	draw a point at every vertex
 			Debug_Outline,				//	render again with wireframe on
 			Debug_LocalBoundsBox,		//	render our local bounds box
 			Debug_WorldBoundsBox,		//	render our world bounds box
@@ -77,22 +74,25 @@ public:
 	virtual void							Initialise(TPtr<TLMessaging::TMessage>& pMessage);	//	generic render node init
 
 	FORCEINLINE const TLMaths::TTransform&	GetTransform() const						{	return m_Transform;	}
-	FORCEINLINE void						SetTransform(const TLMaths::TTransform& Transform)	{	m_Transform = Transform;	SetLocalMatrixInvalid();	}
+	FORCEINLINE void						SetTransform(const TLMaths::TTransform& Transform)	{	m_Transform = Transform;	OnTransformChanged();	}
 	FORCEINLINE const float3&				GetTranslate() const						{	return m_Transform.GetTranslate() ;	}
-	FORCEINLINE void						SetTranslate(const float3& Translate)		{	m_Transform.SetTranslate( Translate );	SetLocalMatrixInvalid();	}
+	FORCEINLINE void						SetTranslate(const float3& Translate)		{	m_Transform.SetTranslate( Translate );	OnTransformChanged();	}
 	FORCEINLINE const float3&				GetScale() const							{	return m_Transform.GetScale() ;	}
-	FORCEINLINE void						SetScale(const float3& Scale)				{	m_Transform.SetScale( Scale );	SetLocalMatrixInvalid();	}
+	FORCEINLINE void						SetScale(const float3& Scale)				{	m_Transform.SetScale( Scale );	OnTransformChanged();	}
 	FORCEINLINE void						SetScale(float Scale)						{	SetScale( float3( Scale, Scale, Scale ) );	}
 	FORCEINLINE const TLMaths::TQuaternion&	GetRotation() const							{	return m_Transform.GetRotation() ;	}
-	FORCEINLINE void						SetRotation(const TLMaths::TQuaternion& Rotation)	{	m_Transform.SetRotation( Rotation );	SetLocalMatrixInvalid();	}
+	FORCEINLINE void						SetRotation(const TLMaths::TQuaternion& Rotation)	{	m_Transform.SetRotation( Rotation );	OnTransformChanged();	}
 	FORCEINLINE float						GetLineWidth() const						{	return m_LineWidth;	}
 	FORCEINLINE void						SetLineWidth(float Width)					{	m_LineWidth = Width;	}
+	FORCEINLINE const float3&				GetWorldPos() const							{	return m_WorldPos;	}
+	FORCEINLINE const float3&				GetWorldPos(Bool& IsValid) const			{	IsValid = m_WorldPosValid;	return m_WorldPos;	}
+	FORCEINLINE Bool						IsWorldPosValid() const						{	return m_WorldPosValid;	}
 
 	FORCEINLINE TFlags<RenderFlags::Flags>&	GetRenderFlags()							{	return m_RenderFlags;	}
-	FORCEINLINE const TFlags<RenderFlags::Flags>&	GetRenderFlags() const						{	return m_RenderFlags;	}
+	FORCEINLINE const TFlags<RenderFlags::Flags>&	GetRenderFlags() const				{	return m_RenderFlags;	}
 	void									ClearDebugRenderFlags();
-	FORCEINLINE void						SetColour(const TColour& Colour)			{	m_Colour = Colour;	}
-	FORCEINLINE const TColour&				GetColour() const							{	return m_Colour;	}
+	FORCEINLINE void						SetAlpha(float Alpha)						{	m_Alpha = Alpha;	}
+	FORCEINLINE float						GetAlpha() const							{	return m_Alpha;	}
 	FORCEINLINE const TRef&					GetMeshRef() const							{	return m_MeshRef;	}
 	FORCEINLINE void						SetMeshRef(TRefRef MeshRef)					{	if ( m_MeshRef != MeshRef )	{	m_MeshRef = MeshRef;	OnMeshRefChanged();	}	}
 
@@ -112,8 +112,10 @@ public:
 	//	if FALSE presumed we are doing psuedo rendering ourselves (creating RenderNodes and rendering them to the render target)
 	virtual Bool							Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList);	//	pre-draw routine for a render object
 
-	FORCEINLINE void						OnBoundsChanged()							{	SetBoundsInvalid( TInvalidateFlags( InvalidateLocal, InvalidateWorld, InvalidateParents ) );	}
-	FORCEINLINE void						SetLocalMatrixInvalid()						{	SetBoundsInvalid( TInvalidateFlags( HasChildren() ? InvalidateLocal : InvalidateDummy, InvalidateWorld, InvalidateParents, InvalidateChildren ) );	}
+	FORCEINLINE void						OnBoundsChanged()							{	SetBoundsInvalid( TInvalidateFlags( InvalidateLocalBounds, InvalidateWorldBounds, InvalidateParents ) );	}
+	FORCEINLINE void						OnTransformChanged()						{	SetBoundsInvalid( TInvalidateFlags( HasChildren() ? InvalidateLocalBounds : InvalidateDummy, InvalidateWorldPos, InvalidateWorldBounds, InvalidateParents, InvalidateChildren ) );	}
+
+	void									CalcWorldPos(const TLMaths::TTransform& SceneTransform);	//	calculate our new world position from the latest scene transform
 
 	const TLMaths::TBox&					CalcWorldBoundsBox(const TLMaths::TTransform& SceneTransform);	//	if invalid calculate our local bounds box (accumulating children) if out of date and return it
 	const TLMaths::TBox&					CalcLocalBoundsBox();						//	return our current local bounds box and calculate if invalid
@@ -130,17 +132,23 @@ public:
 	FORCEINLINE const TLMaths::TCapsule&	GetWorldBoundsCapsule() const				{	return m_WorldBoundsCapsule;	}	//	return our current local bounds box, possibly invalid
 	FORCEINLINE const TLMaths::TCapsule&	GetLocalBoundsCapsule() const				{	return m_LocalBoundsCapsule;	}	//	return our current local bounds box, possibly invalid
 
+	FORCEINLINE TPtr<TLMaths::TQuadTreeNode>*	GetRenderZoneNode(TRefRef RenderTargetRef)	{	return m_RenderZoneNodes.Find( RenderTargetRef );	}
+	FORCEINLINE TPtr<TLMaths::TQuadTreeNode>*	SetRenderZoneNode(TRefRef RenderTargetRef,TPtr<TLMaths::TQuadTreeNode>& pRenderZoneNode)	{	return m_RenderZoneNodes.Add( RenderTargetRef, pRenderZoneNode );	}
+
 	FORCEINLINE Bool						operator==(TRefRef Ref) const				{	return GetRenderNodeRef() == Ref;	}
 	FORCEINLINE Bool						operator<(TRefRef Ref) const				{	return GetRenderNodeRef() < Ref;	}
 
 protected:
 	FORCEINLINE void						OnMeshRefChanged()							{	m_pMeshCache = NULL;	OnBoundsChanged();	}
-	void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags=TInvalidateFlags(InvalidateLocal,InvalidateWorld,InvalidateParents,InvalidateChildren));	//	set all bounds as invalid
+	//void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags=TInvalidateFlags(InvalidateLocalBounds,InvalidateWorldBounds,InvalidateWorldPos,InvalidateParents,InvalidateChildren));	//	set all bounds as invalid
+	void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags);
 
 protected:
-	TLMaths::TTransform			m_Transform;
-	TColour						m_Colour;
-	float						m_LineWidth;				//	temporary until moved into mesh asset... thickness of the lines we render
+	TLMaths::TTransform			m_Transform;				//	local transform 
+	float						m_Alpha;					//	alpha of render node
+	float						m_LineWidth;				//	this is an overriding line width for rendering lines in the mesh. In pixel width. NOT like the mesh line width which is in a world-size.
+	float3						m_WorldPos;					//	we always calc the world position on render, even if we dont calc the bounds box/sphere/etc, it's quick and handy!
+	Bool						m_WorldPosValid;			//	if this is not valid then the transform of this node has changed since our last render
 
 	//	gr: todo: almagamate all these bounds shapes into a single bounds type that does all 3 or picks the best or something
 	TLMaths::TBox				m_LocalBoundsBox;			//	bounding box of self (without transformation) and children (with transformation, so relative to us)
@@ -152,9 +160,30 @@ protected:
 
 	TFlags<RenderFlags::Flags>	m_RenderFlags;
 
+	TKeyArray<TRef,TPtr<TLMaths::TQuadTreeNode> >	m_RenderZoneNodes;	//	for each render target we can have a Node for Render Zones
+
 	//	todo: turn all these into ref properties in a KeyArray to make it a bit more flexible
 	TRef						m_MeshRef;
 	TPtr<TLAsset::TMesh>		m_pMeshCache;
 
 	TBinaryTree					m_Data;					//	data attached to render object
 };
+
+
+
+//---------------------------------------------------------------
+//	QuadTreeNode for render nodes
+//---------------------------------------------------------------
+class TLRender::TRenderZoneNode : public TLMaths::TQuadTreeNode
+{
+public:
+	TRenderZoneNode(TRefRef RenderNodeRef);
+
+	void				CalcWorldBounds(TLRender::TRenderNode* pRenderNode,const TLMaths::TTransform& SceneTransform);	//	calculate all the world bounds we need to to do a zone test
+	virtual SyncBool	IsInShape(const TLMaths::TBox2D& Shape);
+
+protected:
+	TRef				m_RenderNodeRef;		//	render node that we're linked to
+};
+
+

@@ -7,6 +7,8 @@
 #import <OpenGLES/EAGLDrawable.h>
 
 
+//#define ENABLE_VBO
+
 
 TLRender::Platform::RenderTarget::RenderTarget(const TRef& Ref) :
 	TRenderTarget	( Ref )
@@ -32,7 +34,6 @@ Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& MaxSize)
 	
 	//	scissor everything outside the viewport
 	glScissor( ViewportSize.Left(), ViewportSize.Top(), ViewportSize.Width(), ViewportSize.Height() );
-	Opengl::EnableScissorTest( TRUE );
 	
 	Opengl::Debug_CheckForError();		
 	
@@ -105,28 +106,51 @@ Bool gluPerspective(float fovy, float aspect, float zNear, float zFar)
 //-------------------------------------------------------
 Bool TLRender::Platform::RenderTarget::BeginProjectDraw(const Type4<s32>& ViewportSize)
 {
-	//	init projection matrix
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	
 	//	get the camera
 	TLRender::TProjectCamera* pCamera = GetCamera().GetObject<TLRender::TProjectCamera>();
 	if ( !pCamera )
 		return FALSE;
 	
+	//	init projection matrix
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	
 	//	work out a frustum matrix for the perspective from the camera
-	float AspectRatio = (float)ViewportSize.Width() / (float)ViewportSize.Height();
-	TLMaths::TMatrix FrustumMatrix;
-	pCamera->GetFrustumMatrix( FrustumMatrix, AspectRatio );
+//	float AspectRatio = (float)ViewportSize.Width() / (float)ViewportSize.Height();
+	float AspectRatio = pCamera->GetAspectRatio();
+//	TLMaths::TMatrix FrustumMatrix;
+//	pCamera->GetFrustumMatrix( FrustumMatrix, AspectRatio );
 
 	//	do translation with this matrix to make the frustum
 	//	gr: this works... but further away than with gluperspective...
 	//	Translate( FrustumMatrix );
+	
 	gluPerspective( pCamera->GetHorzFov().GetDegrees(), AspectRatio, pCamera->GetNearZ(), pCamera->GetFarZ() );
+
+	//	update projection matrix
+	TLMaths::TMatrix& ProjectionMatrix = pCamera->GetProjectionMatrix(TRUE);
+	glGetFloatv( GL_PROJECTION_MATRIX, ProjectionMatrix );
 
 	//	setup camera
 	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	//	translate
+	m_CameraTransform.SetInvalid();
+
+	m_CameraTransform.SetTranslate( pCamera->GetPosition() * -1.f );
+
+	//	apply look at matrix (rotate)
+	const TLMaths::TMatrix& LookAtMatrix = pCamera->GetCameraLookAtMatrix();
+	m_CameraTransform.SetMatrix( LookAtMatrix );
+
+	Transform( m_CameraTransform );
+
+	//	update the modelview matrix on the camera
+	TLMaths::TMatrix& ModelViewMatrix = pCamera->GetModelViewMatrix(TRUE);
+	glGetFloatv( GL_MODELVIEW_MATRIX, ModelViewMatrix );
+
+	//	gr: redundant now, but using temporarily for testing
 	BeginSceneReset();
 
 	return TRUE;
@@ -138,12 +162,6 @@ Bool TLRender::Platform::RenderTarget::BeginProjectDraw(const Type4<s32>& Viewpo
 //-------------------------------------------------------
 void TLRender::Platform::RenderTarget::EndProjectDraw()
 {
-	//	restore projection
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-
-	//	restore scene
-	glMatrixMode(GL_MODELVIEW);
 	EndScene();
 }
 
@@ -163,7 +181,6 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(const Type4<s32>& Viewport
 
 	//	setup ortho projection
 	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
 	glLoadIdentity();
 
 	//	change orthographic projection
@@ -172,16 +189,19 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(const Type4<s32>& Viewport
 	glOrthof( OrthoSize.Left(), OrthoSize.Right(), OrthoSize.Bottom(), OrthoSize.Top(), GetCamera()->GetNearZ(), GetCamera()->GetFarZ() );
 
 	Opengl::Debug_CheckForError();		
+
+	//	update projection matrix
+	TLMaths::TMatrix& ProjectionMatrix = pCamera->GetProjectionMatrix(TRUE);
+	glGetFloatv( GL_PROJECTION_MATRIX, ProjectionMatrix );
 	
 	//	clear the screen manually if we need to apply alpha
 	if ( m_ClearColour.GetAlpha() > 0.f && m_ClearColour.IsTransparent() )
 	{
 		if ( !m_pRenderNodeClear )
 		{
-			m_pRenderNodeClear = new TRenderNodeClear("Clear");
+			m_pRenderNodeClear = new TRenderNodeClear("Clear","Clear");
 		}
-		m_pRenderNodeClear->SetSize( OrthoSize, -1.f );
-		m_pRenderNodeClear->SetColour( m_ClearColour );
+		m_pRenderNodeClear->SetSize( OrthoSize, -1.f, m_ClearColour );
 	}
 	else
 	{
@@ -191,6 +211,22 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(const Type4<s32>& Viewport
 
 	//	setup camera
 	glMatrixMode(GL_MODELVIEW);
+
+	//	translate
+	m_CameraTransform.SetInvalid();
+
+	m_CameraTransform.SetTranslate( pCamera->GetPosition() );
+
+	//	apply look at matrix (rotate)
+//	const TLMaths::TMatrix& LookAtMatrix = pCamera->GetCameraLookAtMatrix();
+//	m_CameraTransform.SetMatrix( LookAtMatrix );
+	Transform( m_CameraTransform );
+
+	//	update the modelview matrix on the camera
+	TLMaths::TMatrix& ModelViewMatrix = pCamera->GetModelViewMatrix(TRUE);
+	glGetFloatv( GL_MODELVIEW_MATRIX, ModelViewMatrix );
+
+	//	gr: redundant now, but using temporarily for testing
 	BeginSceneReset();
 
 	return TRUE;
@@ -202,12 +238,6 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(const Type4<s32>& Viewport
 //-------------------------------------------------------
 void TLRender::Platform::RenderTarget::EndOrthoDraw()
 {
-	//	restore projection
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	
-	//	restore scene
-	glMatrixMode(GL_MODELVIEW);
 	EndScene();
 }
 
@@ -238,10 +268,10 @@ void TLRender::Platform::RenderTarget::BeginScene()
 	//	save the scene
 	glPushMatrix();
 	Opengl::Debug_CheckForError();		
-	
+
 	//	keep track of how many scenes we've started to keep the pushing and popping in sync
 	m_Debug_SceneCount++;
-	
+
 }
 
 
@@ -257,7 +287,7 @@ void TLRender::Platform::RenderTarget::BeginSceneReset(Bool ApplyCamera)
 	
 	//	and reset to camera pos
 	if ( ApplyCamera )
-		TranslateCamera();
+		Transform( m_CameraTransform );
 }
 
 
@@ -298,22 +328,10 @@ u32 TLRender::Platform::RenderTarget::GetCurrentMatrixMode()
 }
 
 
-//-----------------------------------------------------------
-//	save off the current scene's camera matrix
-//-----------------------------------------------------------
-Bool TLRender::Platform::RenderTarget::GetSceneMatrix(TLMaths::TMatrix& Matrix)
-{
-	glGetFloatv( GL_MODELVIEW_MATRIX, Matrix );
-
-	return TRUE;
-}
-
-
-
 //--------------------------------------------------------------
 //	do simple transformation to the scene
 //--------------------------------------------------------------
-void TLRender::Platform::RenderTarget::Translate(const TLMaths::TTransform& Transform)
+void TLRender::Platform::RenderTarget::Transform(const TLMaths::TTransform& Transform)
 {
 	//	gr: do this in the same order as the Transform() functions?
 	//		currently in old-render-code-order
@@ -343,162 +361,6 @@ void TLRender::Platform::RenderTarget::Translate(const TLMaths::TTransform& Tran
 }
 
 
-//-------------------------------------------------------------
-//	set current render colour (glColourf)
-//-------------------------------------------------------------
-void TLRender::Platform::RenderTarget::SetSceneColour(const TColour& SceneColour)
-{
-	//	no changes
-	if ( m_SceneColour == SceneColour )
-		return;
 	
-	//	update scene colour
-	m_SceneColour = SceneColour;
-	
-	//	set scene colour
-	//	gr: can use either u8's or floats, no difference
-	glColor4f( m_SceneColour.GetRed(), m_SceneColour.GetGreen(), m_SceneColour.GetBlue(), m_SceneColour.GetAlpha() );
-//	glColor4ub( m_SceneColour.GetRed8(), m_SceneColour.GetGreen8(), m_SceneColour.GetBlue8(), m_SceneColour.GetAlpha8() ); 
-
-	//	setup alpha blending
-	if ( m_SceneColour.IsTransparent() )
-	{
-		glEnable( GL_BLEND );
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	}
-	else
-	{
-		glDisable( GL_BLEND );
-	}
-}
-
-
-//-------------------------------------------------------------
-//	render mesh asset
-//-------------------------------------------------------------
-TLRender::DrawResult TLRender::Platform::RenderTarget::DrawMesh(TLAsset::TMesh& Mesh,const TLRender::TRenderNode* pRenderNode,const TFlags<TLRender::TRenderNode::RenderFlags::Flags>* pForceFlags)
-{
-	//	get pointers to mesh data
-	const TArray<float3>* pVertexes = &Mesh.GetVertexes();
-	
-	//	check mesh has some required data
-	if ( !pVertexes->GetSize() )
-		return TLRender::Draw_Empty;
-	
-	const TArray<TLAsset::TFixedVertex>* pFixedVertexes	= &Mesh.GetFixedVertexes();
-	const TArray<TColour>* pColours						= &Mesh.GetColours();
-	const TArray<TLAsset::TMesh::Triangle>* pTriangles	= &Mesh.GetTriangles();
-	const TArray<TLAsset::TMesh::Tristrip>* pTristrips	= &Mesh.GetTristrips();
-	const TArray<TLAsset::TMesh::Trifan>* pTrifans		= &Mesh.GetTrifans();
-	const TArray<TLAsset::TMesh::Line>* pLines			= &Mesh.GetLines();
-	
-	//	list of what parts we're going to render
-	TFlags<TRenderNode::RenderFlags::Flags> RenderFlags = pForceFlags ? *pForceFlags : pRenderNode->GetRenderFlags();
-
-	//	manipulate colour usage
-	if ( !pColours )
-		RenderFlags.Clear( TRenderNode::RenderFlags::UseVertexColours );
-	if ( !RenderFlags( TRenderNode::RenderFlags::UseVertexColours ) )
-	{
-		pColours = NULL;
-		pFixedVertexes = NULL;
-	}
-	
-	//	setup other flags
-	if ( RenderFlags(TRenderNode::RenderFlags::Debug_Wireframe) )
-		return TLRender::Draw_Empty;
-	
-	TRef VBOMeshRef = RenderFlags(TRenderNode::RenderFlags::EnableVBO) ? Mesh.GetAssetRef() : TRef();
-
-	//	gr: interleaving vertex data results in glColorXX having no effect, so if the scene colour is not white, force using normal buffers and not interleaved
-	if ( m_SceneColour != TColour( 1.f, 1.f, 1.f, 1.f ) )
-		pFixedVertexes = NULL;
-	
-	//	bind vertex data
-	if ( RenderFlags(TRenderNode::RenderFlags::EnableFixedVerts) && pFixedVertexes && pFixedVertexes->GetSize() )
-	{
-		Opengl::BindFixedVertexes( pFixedVertexes, VBOMeshRef );
-	}
-	else
-	{
-		Opengl::BindVertexes( pVertexes, VBOMeshRef );
-		Opengl::BindColours( pColours, VBOMeshRef );
-	}
-	
-
-	
-	/*
-	 //	setup vertex shader
-	 if ( DrawInfo.pShader )
-	 {
-	 //	has a shader, setup a vertex buffer
-	 DrawInfo.pShader->PreDraw( this, DrawInfo,	pVertexBuffer, 
-	 pNormalBuffer,
-	 pTextureUVBuffer,
-	 pTextureUV2Buffer,
-	 pColourBuffer );
-	 }
-	 
-	 //	setup pixel shader
-	 if ( DrawInfo.pPixelShader )
-	 {
-	 DrawInfo.pPixelShader->PreDraw( this, DrawInfo,	pVertexBuffer, 
-	 pNormalBuffer,
-	 pTextureUVBuffer,
-	 pTextureUV2Buffer,
-	 pColourBuffer );
-	 }
-	 */
-	
-	//	enable/disable depth test
-	Opengl::EnableDepthRead( RenderFlags( TRenderNode::RenderFlags::DepthRead ) );
-	
-	//	enable/disable depth writing
-	Opengl::EnableDepthWrite( RenderFlags( TRenderNode::RenderFlags::DepthWrite ) );
-
-	
-	
-	//	debug draw points
-	if ( RenderFlags( TRenderNode::RenderFlags::Debug_Points ) && !RenderFlags( TRenderNode::RenderFlags::Debug_Wireframe ) )
-	{
-		return TLRender::Draw_Empty;
-	}
-	else
-	{
-		if ( RenderFlags(TRenderNode::RenderFlags::Debug_Wireframe) )
-		{
-			glLineWidth(1.f);
-		}
-		else if( pLines && pLines->GetSize() > 0 ) 
-		{
-			float LineWidth = pRenderNode->GetLineWidth();
-			if ( LineWidth < 1.f )
-			{
-				//	gr: need some kinda world->screen space conversion.. drawing is in pixels, widths are in world space
-				float MeshLineWidth = Mesh.GetLineWidth() * 2.f;
-				MeshLineWidth *= 320.f / 100.f;	//	ortho scale
-				LineWidth = MeshLineWidth;
-				
-				//	min width
-				if ( LineWidth < 1.f )
-					LineWidth = 1.f;
-			}
-			
-			glLineWidth( LineWidth );
-		}
-
-		//	draw primitives
-		Opengl::DrawPrimitives( GL_TRIANGLES,		pTriangles );
-		Opengl::DrawPrimitives( GL_TRIANGLE_STRIP,	pTristrips );
-		Opengl::DrawPrimitives( GL_TRIANGLE_FAN,	pTrifans );
-//		Opengl::DrawPrimitives( GL_POLYGON,			pPolygons );
-		
-		Opengl::DrawPrimitives( GL_LINE_STRIP,			pLines );
-	}
-	
-	
-	//	drawn okay
-	return TLRender::Draw_Okay;
-}
 
 

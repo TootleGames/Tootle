@@ -21,6 +21,9 @@ namespace TLAsset
 
 	const u32	g_MaxLineStripSize = 10;
 
+
+	//	gr:	removed, I may implement again with a more vertex-description format (define byte offset of colour/pos/normal and type of colour/pos/normal)
+	/*
 	class TFixedVertex
 	{
 	public:
@@ -36,7 +39,7 @@ namespace TLAsset
 			
 		FORCEINLINE	Bool	operator<(const TFixedVertex& Vertex) const	{	return FALSE;	}
 	};
-	
+	*/
 	
 };
 
@@ -60,6 +63,8 @@ public:
 	TMesh(const TRef& AssetRef);
 
 	void					Empty();
+	FORCEINLINE Bool		IsEmpty() const										{	return !( m_Vertexes.GetSize() || m_Colours.GetSize() || m_Triangles.GetSize() || m_Tristrips.GetSize() || m_Trifans.GetSize() || m_Lines.GetSize() );	}
+	void					Copy(const TMesh* pMesh);							//	wholly copy this mesh's contents
 
 	//	manipulation
 	void					GenerateShape(const TLMaths::TBox& Box)				{	GenerateCube( Box );	}
@@ -82,9 +87,7 @@ public:
 	inline void				ScaleVerts(float Scale,u32 FirstVert=0,s32 LastVert=-1)				{	ScaleVerts( float3( Scale, Scale, Scale ), FirstVert, LastVert );	}
 	void					ScaleVerts(const float3& Scale,u32 FirstVert=0,s32 LastVert=-1);	//	scale all vertexes
 	void					MoveVerts(const float3& Movement,u32 FirstVert=0,s32 LastVert=-1);	//	move all verts
-	const TArray<TFixedVertex>&	GetFixedVertexes();				//	return fixed vertex array for verts. calc if required
-	void					SetFixedVertexesInvalid()			{	m_FixedVertexes.Empty();	}
-
+	void					ColoursMult(const TColour& Colour);		//	multiply all colours by this colour
 
 	//	data accessors
 	TFlags<TMeshFlags,u8>&	GetFlags()							{	return m_Flags;	}
@@ -137,7 +140,6 @@ protected:
 protected:
 	TArray<float3>			m_Vertexes;				//	vertexes of mesh
 	TArray<TColour>			m_Colours;				//	vertex colours
-	TArray<TFixedVertex>	m_FixedVertexes;		//	
 
 	TArray<Triangle>		m_Triangles;			//	triangles in mesh
 	TArray<Tristrip>		m_Tristrips;			//	tristrips in mesh
@@ -153,5 +155,4 @@ protected:
 };
 
 
-TLCore_DeclareIsDataType( TLAsset::TFixedVertex );
 

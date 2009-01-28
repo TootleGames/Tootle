@@ -20,7 +20,6 @@
 #include "TRenderNode.h"
 #include "TRenderNodeClear.h"
 
-
 namespace TLRender
 {
 	class TRenderTarget;
@@ -71,31 +70,29 @@ public:
 	TFlags<Flags>&			GetFlags()									{	return m_Flags;	}
 	Bool					GetFlag(TRenderTarget::Flags Flag) const	{	return m_Flags(Flag);	}
 	TColour&				GetClearColour()							{	return m_ClearColour;	}
+	TFlags<TRenderNode::RenderFlags::Flags>&	Debug_ForceRenderFlagsOn()	{	return m_Debug_ForceRenderFlagsOn;	}
+	TFlags<TRenderNode::RenderFlags::Flags>&	Debug_ForceRenderFlagsOff()	{	return m_Debug_ForceRenderFlagsOff;	}
+
 	void					SetRootRenderNode(TRefRef NodeRef)			{	m_RootRenderNodeRef = NodeRef;	}
 	void					SetRootRenderNode(const TPtr<TRenderNode>& pRenderNode);
 	TRefRef					GetRootRenderNodeRef() const				{	return m_RootRenderNodeRef;	}
 	TPtr<TRenderNode>&		GetRootRenderNode() const;					//	gets the render node at the root
 
-	TFlags<TRenderNode::RenderFlags::Flags>&	Debug_ForceRenderFlagsOn()	{	return m_Debug_ForceRenderFlagsOn;	}
-	TFlags<TRenderNode::RenderFlags::Flags>&	Debug_ForceRenderFlagsOff()	{	return m_Debug_ForceRenderFlagsOff;	}
+	void					SetRootQuadTreeZone(const TLMaths::TBox2D& ZoneShape);
 
 	//	generic scene rendering controls
 	virtual void			BeginScene()										{	}					//	save off current scene (and optionally reset)
 	virtual void			BeginSceneReset(Bool ApplyCamera=TRUE)				{	}					//	save off current scene (and optionally reset)
-	virtual Bool			GetSceneMatrix(TLMaths::TMatrix& Matrix)			{	return FALSE;	}	//	save off the current scene's camera matrix
 	virtual void			EndScene()											{	}					//	restore previous scene
-	virtual void			Translate(const TLMaths::TTransform& Transform)		{	}					//	create a transform/rot matrix from the quaternion and apply
-	virtual void			TranslateCamera();															//	apply camera transform to the scene
-	virtual void			SetSceneColour(const TColour& SceneColour)			{	}					//	set current render colour (glColourf)
 
 	//	clever stuff
 	Bool					GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize) const;	//	get world pos from 2d point inside our rendertarget size
 
 
 protected:
-	Bool							DrawNode(TRenderNode* pRenderNode,TRenderNode* pParentRenderNode,const TLMaths::TTransform* pSceneTransform);	//	render a render object
-	Bool							DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode* pRenderNode,const TLMaths::TTransform& SceneTransform,TPtrArray<TRenderNode>& PostRenderList);	
-	virtual TLRender::DrawResult	DrawMesh(TLAsset::TMesh& Mesh,const TRenderNode* pRenderNode,const TFlags<TRenderNode::RenderFlags::Flags>* pForceFlags)			{	return TLRender::Draw_Error;	}
+	Bool							DrawNode(TRenderNode* pRenderNode,TRenderNode* pParentRenderNode,const TLMaths::TTransform* pSceneTransform,float SceneAlpha,TLMaths::TQuadTreeNode* pCameraZoneNode);	//	render a render object
+	void							DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode* pRenderNode,const TLMaths::TTransform& SceneTransform,float SceneAlpha,TPtrArray<TRenderNode>& PostRenderList);	
+	void							DrawMesh(TLAsset::TMesh& Mesh,const TRenderNode* pRenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags);
 	template<class SHAPE>
 	void							DrawMeshShape(const SHAPE& Shape,const TRenderNode* pRenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags,Bool ResetScene);
 
@@ -107,24 +104,32 @@ protected:
 	virtual Bool					BeginOrthoDraw(const Type4<s32>& ViewportSize);		//	setup ortho projection mode
 	virtual void					EndOrthoDraw();
 
+	SyncBool						IsRenderNodeVisible(TRenderNode* pRenderNode,TPtr<TLMaths::TQuadTreeNode>*& ppRenderZoneNode,TLMaths::TQuadTreeNode* pCameraZoneNode,const TLMaths::TTransform* pSceneTransform,Bool& RenderNodeIsInsideCameraZone);	//	check zone of node against camera's zone to determine visibility. if no scene transform is provided then we only do quick tests with no calculations. This can result in a SyncWait returned which means we need to do calculations to make sure of visibility
+	Bool							IsZoneVisible(TLMaths::TQuadTreeNode* pCameraZoneNode,TLMaths::TQuadTreeZone* pZone,TLMaths::TQuadTreeNode* pZoneNode,Bool& RenderNodeIsInsideCameraZone);
+
+	void							Debug_DrawZone(TPtr<TLMaths::TQuadTreeZone>& pZone,float z,TLMaths::TQuadTreeNode* pCameraZoneNode);
+
 protected:
 	TRef							m_Ref;					//	render target ref
 	Type4<s32>						m_Size;					//	pos + w + h. negative numbers mean min/max's
-
 	TPtr<TCamera>					m_pCamera;				//	camera 
-	s32								m_Debug_SceneCount;		//	to check we do Begin and EndScene in sync
+	TLMaths::TTransform				m_CameraTransform;		//	camera transform applied on every scene reset - so its the modelview transform
+
 	TColour							m_ClearColour;			//	clear colour
 	TFlags<Flags>					m_Flags;				//	render target flags
+
+	TPtr<TLMaths::TQuadTreeZone>	m_pRootQuadTreeZone;	//	root visibility zone
+
 	TRef							m_RootRenderNodeRef;	//	root render node
 	TPtr<TRenderNodeClear>			m_pRenderNodeClear;		//	clear-screen render object
+	s32								m_Debug_SceneCount;		//	to check we do Begin and EndScene in sync
+	TPtrArray<TRenderNode>			m_TempPostRenderList;	//	instead of having a local, we have a member list of post render nodes. performance saving
 
 	u32								m_Debug_PolyCount;
 	u32								m_Debug_VertexCount;	
+	u32								m_Debug_NodeCount;			//	number of nodes we've rendered
+	u32								m_Debug_NodeCulledCount;	//	number of nodes we almost rendered, but culled
 	
-	TColour							m_SceneColour;			//	current scene colour
-	
-	TPtrArray<TRenderNode>			m_TempPostRenderList;	//	instead of having a local, we have a member list of post render nodes. performance saving
-
 	TFlags<TLRender::TRenderNode::RenderFlags::Flags>	m_Debug_ForceRenderFlagsOn;	//	force render objects to render with these flags ON - like globally turning on/off debug rendering
 	TFlags<TLRender::TRenderNode::RenderFlags::Flags>	m_Debug_ForceRenderFlagsOff;	//	force render objects to render with these flags OFF
 };
@@ -149,7 +154,7 @@ void TLRender::TRenderTarget::DrawMeshShape(const SHAPE& Shape,const TLRender::T
 	ShapeMesh.GenerateShape( Shape );
 
 	//	then render our temporary mesh
-	DrawMesh( ShapeMesh, pRenderNode, &RenderFlags );
+	DrawMesh( ShapeMesh, pRenderNode, RenderFlags );
 
 	EndScene();
 }

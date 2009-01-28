@@ -18,6 +18,7 @@ TLAsset::TMesh::TMesh(const TRef& AssetRef) :
 }
 
 
+
 //-------------------------------------------------------
 //	clear mesh
 //-------------------------------------------------------
@@ -25,7 +26,6 @@ void TLAsset::TMesh::Empty()
 {
 	m_Vertexes.Empty();
 	m_Colours.Empty();
-	m_FixedVertexes.Empty();
 
 	m_Triangles.Empty();
 	m_Tristrips.Empty();
@@ -445,8 +445,6 @@ s32 TLAsset::TMesh::AddVertex(const float3& VertexPos)
 		return AddVertex( VertexPos, g_DefaultVertexColour );
 	}
 
-	SetFixedVertexesInvalid();
-
 	return m_Vertexes.Add( VertexPos );
 }
 
@@ -475,50 +473,8 @@ s32 TLAsset::TMesh::AddVertex(const float3& VertexPos,const TColour& Colour)
 	if ( Colour.IsTransparent() )
 		m_Flags.Set( MeshFlag_HasAlpha );
 
-	SetFixedVertexesInvalid();
-	
 	return VertIndex;
 }
-
-
-
-//-------------------------------------------------------
-//	return fixed vertex array for verts. calc if required
-//-------------------------------------------------------
-const TArray<TLAsset::TFixedVertex>& TLAsset::TMesh::GetFixedVertexes()
-{
-	//m_FixedVertexes.Empty();
-	
-	if ( m_FixedVertexes.GetSize() == 0 )
-	{
-		TColour DefaultColour( 1.f, 1.f, 1.f, 1.f );
-		m_FixedVertexes.SetSize( m_Vertexes.GetSize() );
-		for ( u32 v=0;	v<m_Vertexes.GetSize();	v++ )
-		{
-			TColour& Colour = m_Colours.GetSize() ? m_Colours[v] : DefaultColour;
-			float3& Position = m_Vertexes[v];
-			TFixedVertex& Vertex = m_FixedVertexes[v];
-
-#if defined(TL_TARGET_IPOD)
-			//	convert to fixed point for ipod
-			Vertex.m_PositionFixed.x = TLMaths::GetFixedf( Position.x );
-			Vertex.m_PositionFixed.y = TLMaths::GetFixedf( Position.y );
-			Vertex.m_PositionFixed.z = TLMaths::GetFixedf( Position.z );
-#endif
-	
-#if defined(TL_TARGET_PC)
-			//	normal float pos for PC
-			Vertex.m_Position = Position;
-#endif
-
-			//	u32 colour (faster!) for both
-			Vertex.m_Colour = Colour.GetRgba32();
-		}
-	}
-
-	return m_FixedVertexes;
-}
-
 
 
 //-------------------------------------------------------------------
@@ -843,3 +799,39 @@ Bool TLAsset::TMesh::GenerateQuad(const TArray<float3>& Outline,const TColour& V
 
 	return TRUE;
 }
+
+
+//--------------------------------------------------------
+//	wholly copy this mesh's contents
+//--------------------------------------------------------
+void TLAsset::TMesh::Copy(const TMesh* pMesh)
+{
+	m_Vertexes.Copy( pMesh->m_Vertexes );
+	m_Colours.Copy( pMesh->m_Colours );
+
+	m_Triangles.Copy( pMesh->m_Triangles );
+	m_Tristrips.Copy( pMesh->m_Tristrips );
+	m_Trifans.Copy( pMesh->m_Trifans );
+	m_Triangles.Copy( pMesh->m_Triangles );
+	m_Lines.Copy( pMesh->m_Lines );
+	
+	m_BoundsBox = pMesh->m_BoundsBox;
+	m_BoundsSphere = pMesh->m_BoundsSphere;
+	m_BoundsCapsule = pMesh->m_BoundsCapsule;
+
+	m_LineWidth = pMesh->m_LineWidth;
+	m_Flags = pMesh->m_Flags;
+}
+
+
+//--------------------------------------------------------
+//	multiply all colours by this colour
+//--------------------------------------------------------
+void TLAsset::TMesh::ColoursMult(const TColour& Colour)
+{
+	for ( u32 i=0;	i<m_Colours.GetSize();	i++ )
+	{
+		m_Colours[i] *= Colour;
+	}
+}
+

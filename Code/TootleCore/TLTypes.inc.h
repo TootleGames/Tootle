@@ -205,6 +205,10 @@ public:
 	inline void			Set(const TYPE& a, const TYPE& b, const TYPE& c, const TYPE& d)	{	x = a;	y = b;	z = c;	w = d;	};
 	inline void			Set(const Type3<TYPE>& v, const TYPE d)						{	Set( v.x, v.y, v.z, d );	};
 	inline void			Set(const Type4<TYPE>& v)									{	Set( v.x, v.y, v.z, v.w );	};
+	inline Type2<TYPE>&			xy()									{	return *((Type2<TYPE>*)&x);	}
+	inline const Type2<TYPE>&	xy() const								{	return *((Type2<TYPE>*)&x);	}
+	inline Type3<TYPE>&			xyz()									{	return *((Type3<TYPE>*)&x);	}
+	inline const Type3<TYPE>&	xyz() const								{	return *((Type3<TYPE>*)&x);	}
 
 	inline Bool			operator==(const Type4<TYPE>& v) const		{	return ( x == v.x ) && ( y == v.y ) && ( z == v.z ) && ( w == v.w );	};
 	inline Bool			operator<(const Type4<TYPE>& v) const		{	return ( x < v.x ) && ( y < v.y ) && ( z < v.z ) && ( w < v.w );	};

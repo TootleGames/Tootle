@@ -18,7 +18,7 @@ public:
 	typedef TLArray::SortResult(TSortFunc)(const TPtr<TYPE>&,const TPtr<TYPE>&,const void*);
 
 public:
-	TPtrArray(TSortFunc* pSortFunc=NULL) : TArray<TPtr<TYPE> >::TArray	( pSortFunc )	{	}
+	TPtrArray(TSortFunc* pSortFunc=NULL,u16 GrowBy=TArray_GrowByDefault) : TArray<TPtr<TYPE> >::TArray	( pSortFunc, GrowBy )	{	}
 
 	template<class MATCHTYPE>
 	inline TPtr<TYPE>&			FindPtr(const MATCHTYPE& val);

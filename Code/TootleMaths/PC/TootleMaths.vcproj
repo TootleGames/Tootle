@@ -176,6 +176,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TFrustum.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TFrustum.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TLine.cpp"
 			>
 		</File>

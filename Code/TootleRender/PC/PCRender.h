@@ -8,9 +8,10 @@
 #pragma once
 
 
-//	include core lib header
+#include <TootleCore/TLTypes.h>
 #include <TootleCore/TLCore.h>
 #include <TootleCore/TPtr.h>
+#include <TootleCore/TColour.h>
 
 //	include opengl stuff
 #pragma comment( lib, "Opengl32.lib" )
@@ -24,12 +25,6 @@
 //	forward declaration
 class TColour;
 
-namespace TLAsset
-{
-	class TShader;
-	class TFixedVertex;
-};
-
 
 
 namespace TLRender
@@ -37,43 +32,49 @@ namespace TLRender
 	namespace Platform
 	{
 		SyncBool		Init();			//	platform/opengl initialisation
-		SyncBool		Update();		//	platform/opengl update
 		SyncBool		Shutdown();		//	platform/opengl shutdown
 
 		extern SyncBool	g_OpenglInitialised;
+	}
 
-		namespace Opengl
+	namespace Opengl
+	{
+		namespace Platform
 		{
 			class TVertexBufferObject;
 			
-			SyncBool	Init();		//	init opengl
-			SyncBool	Shutdown();	//	cleanup opengl
+			SyncBool				Init();		//	init opengl
+			SyncBool				Shutdown();	//	cleanup opengl
 
-			Bool		Debug_CheckForError();		//	check for opengl error - returns TRUE on error
+			Bool					Debug_CheckForError();		//	check for opengl error - returns TRUE on error
 
-			Bool		BindFixedVertexes(const TArray<TLAsset::TFixedVertex>* pVertexes,TRefRef MeshRef);
-			Bool		BindVertexes(const TArray<float3>* pVertexes,TRefRef MeshRef);
-			Bool		BindColours(const TArray<TColour>* pColours,TRefRef MeshRef);
-			void		Unbind(TRefRef MeshRef);
+			//Bool					BindFixedVertexes(const TArray<TLAsset::TFixedVertex>* pVertexes,TRefRef MeshRef);
+			Bool					BindVertexes(const TArray<float3>* pVertexes,TRefRef MeshRef);
+			Bool					BindColours(const TArray<TColour>* pColours,TRefRef MeshRef);
+			void					DrawPrimitives(u32 GLPrimType,u32 IndexCount,const u16* pIndexData);	//	main renderer, just needs primitive type, and the data
+			
+			FORCEINLINE u16			GetPrimTypeTriangle()		{	return GL_TRIANGLES;	}
+			FORCEINLINE u16			GetPrimTypeTristrip()		{	return GL_TRIANGLE_STRIP;	}
+			FORCEINLINE u16			GetPrimTypeTrifan()			{	return GL_TRIANGLE_FAN;	}
+			FORCEINLINE u16			GetPrimTypeLineStrip()		{	return GL_LINE_STRIP;	}
+			FORCEINLINE u16			GetPrimTypePoint()			{	return GL_POINTS;	}
 
-			void			DrawPrimitives(u32 GLPrimType,u32 IndexCount,const u16* pIndexData);	//	main renderer, just needs primitive type, and the data
-			template<class TYPE>
-			inline void		DrawPrimitives(u32 GLPrimType,const TArray<TYPE>* pPrimitivesArray);
-			inline void		DrawPrimitives(u32 GLPrimType,const TArray<TArray<u16> >* pPrimitivesArray);
-			inline void		DrawPrimitives(u32 GLPrimType,const TArray<TArray<u16> >* pPrimitivesArray,u32 Debug_LimitPrimSize);
-			void			DrawPrimitivePoints(u32 GLPrimType,const TArray<float3>* pVertexes);	//	draw vertexes as points
-
-			void			ResetPolyCount();	//	reset counter of polygons rendered back to zero
-			u32				GetPolyCount();		//	get number of polygons rendered
-
+			FORCEINLINE void		EnableWireframe(Bool Enable)			{	glPolygonMode( GL_FRONT_AND_BACK, Enable ? GL_LINE : GL_FILL );	}
+			FORCEINLINE void		EnableAlpha(Bool Enable)				{	if ( Enable )	glEnable( GL_BLEND );		else	glDisable( GL_BLEND );	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	}
+			FORCEINLINE void		EnableDepthRead(Bool Enable)			{	if ( Enable )	glEnable( GL_DEPTH_TEST );	else	glDisable( GL_DEPTH_TEST );	}
+			FORCEINLINE void		EnableDepthWrite(Bool Enable)			{	glDepthMask( Enable ? GL_TRUE : GL_FALSE );	}
+			FORCEINLINE void		SetSceneColour(const TColour& Colour)	{	glColor4fv( Colour.GetData() );	}
+			FORCEINLINE void		SetLineWidth(float Width)				{	glLineWidth( Width );	}
+			FORCEINLINE void		SetPointSize(float Size)				{	glPointSize( Size );	}
 		}
 	}
+
 }
 
 
 
 
-class TLRender::Platform::Opengl::TVertexBufferObject
+class TLRender::Opengl::Platform::TVertexBufferObject
 {
 public:
 	TVertexBufferObject() : m_VertexVBO(0), m_ColourVBO(0)	{}
@@ -93,45 +94,4 @@ public:
 	u32		m_VertexVBO;
 	u32		m_ColourVBO;
 };
-
-
-template<class TYPE>
-inline void TLRender::Platform::Opengl::DrawPrimitives(u32 GLPrimType,const TArray<TYPE>* pPrimitivesArray)		
-{
-	if ( !pPrimitivesArray )
-		return;
-	
-	if ( !pPrimitivesArray->GetSize() )
-		return;
-
-	const TYPE& FirstPrim = pPrimitivesArray->ElementAtConst(0);
-	DrawPrimitives( GLPrimType, pPrimitivesArray->GetSize() * TYPE::GetSize(), FirstPrim.GetData() );	
-}
-
-
-inline void TLRender::Platform::Opengl::DrawPrimitives(u32 GLPrimType,const TArray<TArray<u16> >* pPrimitivesArray)
-{
-	if ( !pPrimitivesArray )
-		return;
-
-	for ( u32 i=0;	i<pPrimitivesArray->GetSize();	i++ )
-	{
-		const TArray<u16>& PrimArray = pPrimitivesArray->ElementAtConst(i);
-		DrawPrimitives( GLPrimType, PrimArray.GetSize(), PrimArray.GetData() );
-	}
-}
-
-
-inline void TLRender::Platform::Opengl::DrawPrimitives(u32 GLPrimType,const TArray<TArray<u16> >* pPrimitivesArray,u32 Debug_LimitPrimSize)
-{
-	if ( !pPrimitivesArray )
-		return;
-
-	for ( u32 i=0;	i<pPrimitivesArray->GetSize();	i++ )
-	{
-		const TArray<u16>& PrimArray = pPrimitivesArray->ElementAtConst(i);
-		u32 PrimSize = Debug_LimitPrimSize < PrimArray.GetSize() ? Debug_LimitPrimSize : PrimArray.GetSize();
-		DrawPrimitives( GLPrimType, PrimSize, PrimArray.GetData() );
-	}
-}
 

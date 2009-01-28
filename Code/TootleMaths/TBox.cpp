@@ -725,6 +725,26 @@ Bool TLMaths::TBox2D::GetIntersection(const TLMaths::TBox& Box) const
 }
 
 
+//-------------------------------------------------
+//	test to see if this line intersects our box
+//-------------------------------------------------
+Bool TLMaths::TBox2D::GetIntersection(const TLMaths::TBox2D& Box) const
+{
+	const float2& Min1 = m_Min;
+	const float2& Max1 = m_Max;
+	const float3& Min2 = Box.GetMin();
+	const float3& Max2 = Box.GetMax();
+
+	if ( Max2.x < Min1.x )	return FALSE;
+	if ( Max1.x < Min2.x )	return FALSE;
+
+	if ( Max2.y < Min1.y )	return FALSE;
+	if ( Max1.y < Min2.y )	return FALSE;
+	
+	return TRUE;
+}
+
+
 Bool TLMaths::TBox2D::GetIntersection(const float3& Pos) const
 {
 	if ( Pos.x < m_Min.x || Pos.x > m_Max.x )
@@ -889,3 +909,38 @@ Bool TLMaths::TBox2D::GetIntersection(const TCapsule& Capsule) const
 	return FALSE;
 }
 
+
+//-------------------------------------------------
+//	grow/shrink this box around its center
+//-------------------------------------------------
+void TLMaths::TBox2D::GrowBox(float Scale)
+{
+	//	get current center
+	float2 OldCenter = GetCenter();
+
+	//	center box around 0,0
+	m_Min -= OldCenter;
+	m_Max -= OldCenter;
+
+	//	scale down
+	m_Min *= Scale;
+	m_Max *= Scale;
+
+	//	move back to old center
+	m_Min += OldCenter;
+	m_Max += OldCenter;
+}
+
+
+
+
+
+
+
+
+
+
+TLMaths::TBoxOB::TBoxOB() :
+	m_IsValid	( FALSE )
+{
+}

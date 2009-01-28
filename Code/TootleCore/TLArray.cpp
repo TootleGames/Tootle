@@ -23,7 +23,9 @@ void TLArray::Debug::Print(const char* pErrorString,const char* pSourceFunction)
 	if ( !TLDebug::IsEnabled() )
 		return;
 	
+	//	gr: print the source function in array debug to quickly track down source of warnings
 	TTempString String( pErrorString );
+	String.Appendf(" (%s)", pSourceFunction );
 	TLDebug::Print( String, pSourceFunction );
 #endif
 }

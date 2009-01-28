@@ -24,6 +24,8 @@ public:
 	void				Set(const float3& Start,const float3& End)		{	m_Start = Start;	m_End = End;	}
 	void				Set(const TLine& Line)							{	m_Start = Line.GetStart();	m_End = Line.GetEnd();	}
 	void				SetDir(const float3& Start,const float3& Dir)	{	Set( Start, Start + Dir );	}
+	void				SetStart(const float3& Start)					{	m_Start = Start;	}
+	void				SetEnd(const float3& End)						{	m_End = End;	}
 
 	const float3&		GetStart() const								{	return m_Start;	}
 	const float3&		GetEnd() const									{	return m_End;	}

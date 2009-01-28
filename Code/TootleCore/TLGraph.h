@@ -41,6 +41,9 @@ namespace TLGraph
 
 };
 
+#define TGraph_DefaultGrowBy	300	//	gr: graphs get pretty big
+
+
 
 //--------------------------------------------------------------------
 //	TGraph class - templated graph management class
@@ -53,7 +56,7 @@ class TLGraph::TGraph : public TManager, public TLMessaging::TMessageQueue, publ
 public:
 	TGraph(TRef refManagerID) :
 		TManager	( refManagerID ),
-		m_NodeIndex	( &TLGraph::TPtrRefSort<T> )
+		m_NodeIndex	( &TLGraph::TPtrRefSort<T>, TGraph_DefaultGrowBy )
 	{
 	}
 	

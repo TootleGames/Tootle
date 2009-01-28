@@ -170,10 +170,7 @@ TPtr<TLRender::TRenderTarget>& TLRender::TScreenManager::GetRenderTarget(TRefRef
 		}
 	}
 
-	//	dummy NULL render target so we can return references
-	static TPtr<TLRender::TRenderTarget> g_pNullRenderTarget;
-
-	return g_pNullRenderTarget;
+	return TLPtr::GetNullPtr<TLRender::TRenderTarget>();
 }
 
 

@@ -1,18 +1,17 @@
 #include "PCScreen.h"
+#include "PCRender.h"
+#include "../TLRender.h"
 #include <TootleCore/TPtr.h>
 #include "PCOpenglExt.h"
+
 
 namespace TLRender
 {
 	namespace Platform
 	{
-		namespace Opengl
-		{
-			extern TPtr<Win32::GOpenglWindow>	g_pSpareWindow;
-		}
+		extern TPtr<Win32::GOpenglWindow>	g_pSpareWindow;
 	}
 }
-
 
 
 
@@ -56,25 +55,25 @@ SyncBool TLRender::Platform::Screen::Init()
 	//	if there is a spare window use that first
 	//	when the opengl system is initialised we have to create a dummy window, so
 	//	that one is usually spare on first screen creation
-	if ( Opengl::g_pSpareWindow )
+	if ( g_pSpareWindow )
 	{
 		//	if the spare window doesnt support multisampling, but we now know it does, 
 		//	delete this spare window and then create a new one (as if we had no spare)
-		if ( !Opengl::g_pSpareWindow->HasArbMultiSample() )
+		if ( !g_pSpareWindow->HasArbMultiSample() )
 		{
 			if ( OpenglExtensions::IsHardwareSupported( OpenglExtensions::GHardware_ARBMultiSample ) )
 			{
-				Win32::g_pFactory->RemoveInstance( Opengl::g_pSpareWindow->GetRef() );
-				Opengl::g_pSpareWindow = NULL;
+				Win32::g_pFactory->RemoveInstance( g_pSpareWindow->GetRef() );
+				g_pSpareWindow = NULL;
 			}
 		}
 	}
 
-	if ( Opengl::g_pSpareWindow )
+	if ( g_pSpareWindow )
 	{
 		//	steal spare window
-		m_pWindow = Opengl::g_pSpareWindow;
-		Opengl::g_pSpareWindow = NULL;
+		m_pWindow = g_pSpareWindow;
+		g_pSpareWindow = NULL;
 
 		//	rename ref of the spare window
 		m_pWindow->SetRef( GetRef() );
@@ -155,7 +154,7 @@ void TLRender::Platform::Screen::Draw()
 	TScreen::Draw();
 
 	//	unbind data
-	Platform::Opengl::Unbind( TRef() );
+	TLRender::Opengl::Unbind( TRef() );
 
 	//	flip buffers
 	SwapBuffers( pWindow->m_HDC );

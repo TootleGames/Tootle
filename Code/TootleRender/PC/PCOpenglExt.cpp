@@ -11,10 +11,7 @@ namespace TLRender
 {
 	namespace Platform
 	{
-		namespace Opengl
-		{
-			extern TPtr<Win32::GOpenglWindow>	g_pSpareWindow;
-		}
+		extern TPtr<Win32::GOpenglWindow>	g_pSpareWindow;
 
 		namespace OpenglExtensions
 		{
@@ -472,7 +469,7 @@ void TLRender::Platform::OpenglExtensions::InitHardwareSupport(u32 HardwareIndex
 Bool TLRender::Platform::OpenglExtensions::CreateMultiSamplePixelFormat()
 {
 	//	fetch the window to use... use the spare window which is the one we initialised the system with
-	TPtr<Win32::GOpenglWindow>& pOpenglWindow = TLRender::Platform::Opengl::g_pSpareWindow;
+	TPtr<Win32::GOpenglWindow>& pOpenglWindow = TLRender::Platform::g_pSpareWindow;
 
 	//	invalid param
 	if ( !pOpenglWindow )
