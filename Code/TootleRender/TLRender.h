@@ -56,6 +56,7 @@ namespace TLRender
 		//	gr: if your code cannot resolve these functions, include the platform header 
 		//		(eg "PC/PCRender.h") in your SOURCE FILE which uses it. This is to keep 
 		//		it all inline and fast whilst still being able to "overload" it
+		//	gr: now included below to get rid of the compile warnings on GCC
 		namespace Platform
 		{
 			SyncBool				Init();						//	init opengl
@@ -86,6 +87,15 @@ namespace TLRender
 }
 
 
+
+//	gr: because I made the platform opengl calls inline (for super speed) we have to include the platform header
+#if defined(TL_TARGET_PC)
+	#include "PC/PCRender.h"
+#elif defined(TL_TARGET_IPOD)
+	#include "IPod/IPodRender.h"
+#else
+	#error unknown platform
+#endif
 
 
 

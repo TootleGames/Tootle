@@ -2,7 +2,6 @@
 #include "../TLRender.h"
 
 #import <OpenGLES/EAGL.h>
-#import <OpenGLES/ES1/gl.h>
 #import <OpenGLES/ES1/glext.h>
 #import <OpenGLES/EAGLDrawable.h>
 
@@ -20,9 +19,7 @@ namespace TLRender
 	{
 		namespace Platform
 		{
-
-			const TArray<TLAsset::TFixedVertex>*	g_pBoundFixedVertexes = NULL;
-			const TArray<float3>*					g_pBoundVertexes = NULL;
+			const TArray<float3>*	g_pBoundVertexes = NULL;
 		}
 	}
 }

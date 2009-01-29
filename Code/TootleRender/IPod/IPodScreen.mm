@@ -445,8 +445,6 @@ SyncBool TLRender::Platform::Screen::Update()
 
 void TLRender::Platform::Screen::Draw()
 {
-	TLRender::Platform::BeginDraw();
-
 	EAGLView *glView = g_pIpodApp.glView;
 
 	[EAGLContext setCurrentContext:glView.context];
@@ -457,13 +455,11 @@ void TLRender::Platform::Screen::Draw()
 
 	//	unbind data
 	//	gr: not needed?
-//	Platform::Opengl::Unbind( TRef() );
+	Opengl::Unbind();
 
 	//	flip buffers
     glBindRenderbufferOES(GL_RENDERBUFFER_OES, glView.viewRenderbuffer);
     [glView.context presentRenderbuffer:GL_RENDERBUFFER_OES];
-
-	TLRender::Platform::EndDraw();
 }
 
 

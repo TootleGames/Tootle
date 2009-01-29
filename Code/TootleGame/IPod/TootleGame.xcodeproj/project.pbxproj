@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		846B66C10F2744C8005EB752 /* TGameflow.h in Headers */ = {isa = PBXBuildFile; fileRef = 846B66BF0F2744C8005EB752 /* TGameflow.h */; };
-		846B66C20F2744C8005EB752 /* TGameflow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 846B66C00F2744C8005EB752 /* TGameflow.cpp */; };
 		846B711C0F2A366F005EB752 /* TLGame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 846B711A0F2A366F005EB752 /* TLGame.cpp */; };
 		846B711D0F2A366F005EB752 /* TLGame.h in Headers */ = {isa = PBXBuildFile; fileRef = 846B711B0F2A366F005EB752 /* TLGame.h */; };
 		84C10A3F0F0A7C3000B2DF7A /* TMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10A3D0F0A7C3000B2DF7A /* TMenu.cpp */; };
@@ -20,8 +18,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		846B66BF0F2744C8005EB752 /* TGameflow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGameflow.h; path = ../TGameflow.h; sourceTree = SOURCE_ROOT; };
-		846B66C00F2744C8005EB752 /* TGameflow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGameflow.cpp; path = ../TGameflow.cpp; sourceTree = SOURCE_ROOT; };
 		846B711A0F2A366F005EB752 /* TLGame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLGame.cpp; path = ../TLGame.cpp; sourceTree = SOURCE_ROOT; };
 		846B711B0F2A366F005EB752 /* TLGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLGame.h; path = ../TLGame.h; sourceTree = SOURCE_ROOT; };
 		84C10A370F0A7C1800B2DF7A /* libTootleGame.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleGame.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -76,8 +72,6 @@
 				84DE35000F12AFED00608F8C /* TGui.h */,
 				84C10A3D0F0A7C3000B2DF7A /* TMenu.cpp */,
 				84C10A3E0F0A7C3000B2DF7A /* TMenu.h */,
-				846B66BF0F2744C8005EB752 /* TGameflow.h */,
-				846B66C00F2744C8005EB752 /* TGameflow.cpp */,
 			);
 			name = "Source Code";
 			sourceTree = "<group>";
@@ -103,7 +97,6 @@
 				84C10A400F0A7C3000B2DF7A /* TMenu.h in Headers */,
 				84DE35020F12AFED00608F8C /* TAssetBrowser.h in Headers */,
 				84DE35040F12AFED00608F8C /* TGui.h in Headers */,
-				846B66C10F2744C8005EB752 /* TGameflow.h in Headers */,
 				846B711D0F2A366F005EB752 /* TLGame.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -154,7 +147,6 @@
 				84C10A3F0F0A7C3000B2DF7A /* TMenu.cpp in Sources */,
 				84DE35010F12AFED00608F8C /* TAssetBrowser.cpp in Sources */,
 				84DE35030F12AFED00608F8C /* TGui.cpp in Sources */,
-				846B66C20F2744C8005EB752 /* TGameflow.cpp in Sources */,
 				846B711C0F2A366F005EB752 /* TLGame.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

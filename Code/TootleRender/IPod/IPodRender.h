@@ -13,6 +13,7 @@
 #include <TootleCore/TPtr.h>
 #include <TootleCore/TColour.h>
 
+#import <OpenGLES/ES1/gl.h>
 
 
 //	forward declaration
@@ -26,9 +27,6 @@ namespace TLRender
 	{
 		SyncBool		Init();			//	platform/opengl initialisation
 		SyncBool		Shutdown();		//	platform/opengl shutdown
-		
-		Bool			BeginDraw();	//	
-		void			EndDraw();		//	
 	}
 
 	namespace Opengl
@@ -38,7 +36,7 @@ namespace TLRender
 			SyncBool				Init();		//	init opengl
 			SyncBool				Shutdown();	//	cleanup opengl
 
-			Bool					Debug_CheckForError()	{	return FALSE;	}	//	gr: very slow on ipod, so not used
+			FORCEINLINE Bool		Debug_CheckForError()	{	return FALSE;	}	//	gr: very slow on ipod, so not used
 
 			//Bool					BindFixedVertexes(const TArray<TLAsset::TFixedVertex>* pVertexes);
 			Bool					BindVertexes(const TArray<float3>* pVertexes);
@@ -51,11 +49,11 @@ namespace TLRender
 			FORCEINLINE u16			GetPrimTypeLineStrip()		{	return GL_LINE_STRIP;	}
 			FORCEINLINE u16			GetPrimTypePoint()			{	return GL_POINTS;	}
 
-			FORCEINLINE void		EnableWireframe(Bool Enable)			{	glPolygonMode( GL_FRONT_AND_BACK, Enable ? GL_LINE : GL_FILL );	}
+			FORCEINLINE void		EnableWireframe(Bool Enable)			{	}	//	gr: line polygon modes are not supported in opengl ES. Wireframe does nothing!
 			FORCEINLINE void		EnableAlpha(Bool Enable)				{	if ( Enable )	glEnable( GL_BLEND );		else	glDisable( GL_BLEND );	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	}
 			FORCEINLINE void		EnableDepthRead(Bool Enable)			{	if ( Enable )	glEnable( GL_DEPTH_TEST );	else	glDisable( GL_DEPTH_TEST );	}
 			FORCEINLINE void		EnableDepthWrite(Bool Enable)			{	glDepthMask( Enable ? GL_TRUE : GL_FALSE );	}
-			FORCEINLINE void		SetSceneColour(const TColour& Colour)	{	glColor4f( Colour.x, Colour.y, Colour.z, Colour.w );	}
+			FORCEINLINE void		SetSceneColour(const TColour& Colour)	{	glColor4f( Colour.GetRed(), Colour.GetGreen(), Colour.GetBlue(), Colour.GetAlpha() );	}
 			FORCEINLINE void		SetLineWidth(float Width)				{	glLineWidth( Width );	}
 			FORCEINLINE void		SetPointSize(float Size)				{	glPointSize( Size );	}
 		}

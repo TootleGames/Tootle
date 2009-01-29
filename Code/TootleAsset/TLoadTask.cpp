@@ -342,11 +342,18 @@ TRef Mode_CreateAsset::Update()
 	{
 		//	create new asset from the factory
 		pAsset = TLAsset::CreateAsset( GetAssetRef(), NewAssetType );
+		//	failed to create
+		if ( !pAsset )
+			return "Failed";
 	}
+	
+	//	gr: mark asset as importing so we don't think it's failed...
+	//	this is to fix the system on the ipod (dunno why it's just the ipod that struggles like this)
+	//	but the pre-load system was checking for assets being loaded, and caught the asset at this state
+	//	ready to be imported, correct type created, but loading state still in default (which is FALSE)
+	//	maybe make default state wait? maybe that's confusing, may need to change to Init,Fail,Wait,True...
+	pAsset->SetLoadingState( SyncWait );
 				
-	//	failed to create
-	if ( !pAsset )
-		return "Failed";
 
 	return "AImport";
 }
@@ -368,6 +375,13 @@ TRef Mode_AssetImport::Update()
 	if ( ImportResult == SyncFalse )
 		return "Failed";
 
+	TTempString Debug_String("Imported asset okay ");
+	pAsset->GetAssetRef().GetString( Debug_String );
+	Debug_String.Append(" (");
+	pAsset->GetAssetType().GetString( Debug_String );
+	Debug_String.Appendf(") %x", pAsset.GetObject() );
+	TLDebug_Print( Debug_String );
+	
 	return "Finished";
 }
 

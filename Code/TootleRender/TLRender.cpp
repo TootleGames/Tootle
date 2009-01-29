@@ -2,16 +2,6 @@
 
 
 
-//	gr: because I made the platform opengl calls inline (for super speed) we have to include the platform header
-#if defined(TL_TARGET_PC)
-	#include "PC/PCRender.h"
-#elif defined(TL_TARGET_IPOD)
-	#include "IPod/IPodRender.h"
-#else
-	#error unknown platform
-#endif
-
-
 
 namespace TLRender
 {

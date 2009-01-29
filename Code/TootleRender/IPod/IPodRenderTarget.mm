@@ -143,7 +143,7 @@ Bool TLRender::Platform::RenderTarget::BeginProjectDraw(const Type4<s32>& Viewpo
 	const TLMaths::TMatrix& LookAtMatrix = pCamera->GetCameraLookAtMatrix();
 	m_CameraTransform.SetMatrix( LookAtMatrix );
 
-	Transform( m_CameraTransform );
+	Opengl::SceneTransform( m_CameraTransform );
 
 	//	update the modelview matrix on the camera
 	TLMaths::TMatrix& ModelViewMatrix = pCamera->GetModelViewMatrix(TRUE);
@@ -219,7 +219,7 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(const Type4<s32>& Viewport
 	//	apply look at matrix (rotate)
 //	const TLMaths::TMatrix& LookAtMatrix = pCamera->GetCameraLookAtMatrix();
 //	m_CameraTransform.SetMatrix( LookAtMatrix );
-	Transform( m_CameraTransform );
+	Opengl::SceneTransform( m_CameraTransform );
 
 	//	update the modelview matrix on the camera
 	TLMaths::TMatrix& ModelViewMatrix = pCamera->GetModelViewMatrix(TRUE);
@@ -286,7 +286,7 @@ void TLRender::Platform::RenderTarget::BeginSceneReset(Bool ApplyCamera)
 	
 	//	and reset to camera pos
 	if ( ApplyCamera )
-		Transform( m_CameraTransform );
+		Opengl::SceneTransform( m_CameraTransform );
 }
 
 
@@ -327,39 +327,5 @@ u32 TLRender::Platform::RenderTarget::GetCurrentMatrixMode()
 }
 
 
-//--------------------------------------------------------------
-//	do simple transformation to the scene
-//--------------------------------------------------------------
-void TLRender::Platform::RenderTarget::Transform(const TLMaths::TTransform& Transform)
-{
-	//	gr: do this in the same order as the Transform() functions?
-	//		currently in old-render-code-order
-	if ( Transform.HasTranslate() )
-	{
-		const float3& Trans = Transform.GetTranslate();
-		glTranslatef( Trans.x, Trans.y, Trans.z );
-	}
-
-	if ( Transform.HasScale() )
-	{
-		const float3& Scale = Transform.GetScale();
-		glScalef( Scale.x, Scale.y, Scale.z );
-	}
-
-	if ( Transform.HasMatrix() )
-	{
-		glMultMatrixf( Transform.GetMatrix().GetData() );
-	}
-
-	if ( Transform.HasRotation() )
-	{
-		TLMaths::TMatrix RotMatrix;
-		TLMaths::QuaternionToMatrix( Transform.GetRotation(), RotMatrix );
-		glMultMatrixf( RotMatrix.GetData() );
-	}
-}
-
-
-	
 
 

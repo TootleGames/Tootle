@@ -19,6 +19,10 @@
 		84C10A6B0F0A7C9700B2DF7A /* TTessellate.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10A610F0A7C9700B2DF7A /* TTessellate.h */; };
 		84C10A6F0F0A7CAC00B2DF7A /* IPodTessellate.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10A6D0F0A7CAC00B2DF7A /* IPodTessellate.h */; };
 		84C10A700F0A7CAC00B2DF7A /* IPodTessellate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C10A6E0F0A7CAC00B2DF7A /* IPodTessellate.mm */; };
+		BF81C41B0F30FA55001ACEC3 /* TFrustum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF81C4170F30FA55001ACEC3 /* TFrustum.cpp */; };
+		BF81C41C0F30FA55001ACEC3 /* TFrustum.h in Headers */ = {isa = PBXBuildFile; fileRef = BF81C4180F30FA55001ACEC3 /* TFrustum.h */; };
+		BF81C41D0F30FA55001ACEC3 /* TQuadTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF81C4190F30FA55001ACEC3 /* TQuadTree.cpp */; };
+		BF81C41E0F30FA55001ACEC3 /* TQuadTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BF81C41A0F30FA55001ACEC3 /* TQuadTree.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +43,10 @@
 		84C10A730F0A7CC800B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C10A740F0A7CC800B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C10A750F0A7CC800B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF81C4170F30FA55001ACEC3 /* TFrustum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFrustum.cpp; path = ../TFrustum.cpp; sourceTree = SOURCE_ROOT; };
+		BF81C4180F30FA55001ACEC3 /* TFrustum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFrustum.h; path = ../TFrustum.h; sourceTree = SOURCE_ROOT; };
+		BF81C4190F30FA55001ACEC3 /* TQuadTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TQuadTree.cpp; path = ../TQuadTree.cpp; sourceTree = SOURCE_ROOT; };
+		BF81C41A0F30FA55001ACEC3 /* TQuadTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TQuadTree.h; path = ../TQuadTree.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +80,10 @@
 		84C10A570F0A7C8600B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				BF81C4170F30FA55001ACEC3 /* TFrustum.cpp */,
+				BF81C4180F30FA55001ACEC3 /* TFrustum.h */,
+				BF81C4190F30FA55001ACEC3 /* TQuadTree.cpp */,
+				BF81C41A0F30FA55001ACEC3 /* TQuadTree.h */,
 				84C10A6C0F0A7C9C00B2DF7A /* IPod */,
 				84C10A580F0A7C9700B2DF7A /* TBox.cpp */,
 				84C10A590F0A7C9700B2DF7A /* TBox.h */,
@@ -120,6 +132,8 @@
 				84C10A690F0A7C9700B2DF7A /* TSphere.h in Headers */,
 				84C10A6B0F0A7C9700B2DF7A /* TTessellate.h in Headers */,
 				84C10A6F0F0A7CAC00B2DF7A /* IPodTessellate.h in Headers */,
+				BF81C41C0F30FA55001ACEC3 /* TFrustum.h in Headers */,
+				BF81C41E0F30FA55001ACEC3 /* TQuadTree.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -172,6 +186,8 @@
 				84C10A680F0A7C9700B2DF7A /* TSphere.cpp in Sources */,
 				84C10A6A0F0A7C9700B2DF7A /* TTessellate.cpp in Sources */,
 				84C10A700F0A7CAC00B2DF7A /* IPodTessellate.mm in Sources */,
+				BF81C41B0F30FA55001ACEC3 /* TFrustum.cpp in Sources */,
+				BF81C41D0F30FA55001ACEC3 /* TQuadTree.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

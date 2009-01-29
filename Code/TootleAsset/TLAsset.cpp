@@ -168,6 +168,9 @@ void TLAsset::DeleteAsset(TRefRef AssetRef)
 
 	TTempString DebugString("Deleting asset from factory... ");
 	AssetRef.GetString( DebugString );
+	DebugString.Append(" (");
+	pAsset->GetAssetType().GetString( DebugString );
+	DebugString.Append(")");
 	TLDebug_Print( DebugString );
 
 	//	delete from factory

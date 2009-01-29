@@ -108,8 +108,8 @@ private:
 	typedef TLKeyArray::TPair<KEYTYPE,TPtr<TYPE> > PAIRTYPE;
 
 public:
-	TPtr<TYPE>			FindPtr(const KEYTYPE& Key)				{	PAIRTYPE* pPair = TKeyArray<KEYTYPE,TPtr<TYPE> >::m_Array.Find( Key );			return pPair ? TPtr<TYPE>(pPair->m_Item) : TPtr<TYPE>(NULL);	}
-	const TPtr<TYPE>	FindPtr(const KEYTYPE& Key) const		{	const PAIRTYPE* pPair = TKeyArray<KEYTYPE,TPtr<TYPE> >::m_Array.Find( Key );	return pPair ? TPtr<TYPE>(pPair->m_Item) : TPtr<TYPE>(NULL);	}
+	TPtr<TYPE>&			FindPtr(const KEYTYPE& Key)				{	PAIRTYPE* pPair = TKeyArray<KEYTYPE,TPtr<TYPE> >::m_Array.Find( Key );			return pPair ? pPair->m_Item : TLPtr::GetNullPtr<TYPE>();	}
+	const TPtr<TYPE>&	FindPtr(const KEYTYPE& Key) const		{	const PAIRTYPE* pPair = TKeyArray<KEYTYPE,TPtr<TYPE> >::m_Array.Find( Key );	return pPair ? pPair->m_Item : TLPtr::GetNullPtr<TYPE>();	}
 };			
 
 

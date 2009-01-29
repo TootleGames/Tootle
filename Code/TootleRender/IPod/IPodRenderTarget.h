@@ -43,8 +43,6 @@ public:
 	virtual void			EndScene();											//	restore previous scene
 	
 protected:
-	virtual TLRender::DrawResult	DrawMesh(TLAsset::TMesh& Mesh,const TRenderNode* pRenderNode,const TFlags<TRenderNode::RenderFlags::Flags>* pForceFlags);
-	
 	virtual Bool					BeginProjectDraw(const Type4<s32>& ViewportSize);	//	setup projection mode
 	virtual void					EndProjectDraw();
 
