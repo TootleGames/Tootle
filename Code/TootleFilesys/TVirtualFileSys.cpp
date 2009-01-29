@@ -74,7 +74,7 @@ SyncBool TLFileSys::TVirtualFileSys::LoadFile(TPtr<TLFileSys::TFile>& pFile)
 SyncBool TLDebugFile::LoadDebugFile_Asset(TPtr<TLFileSys::TFile>& pFile,TPtr<TLAsset::TAsset> pAsset)
 {	
 	//	is "loaded" now
-	pAsset->SetLoadingState( SyncTrue );
+	pAsset->SetLoadingState( TLAsset::LoadingState_Loaded );
 
 	TPtr<TLFileSys::TFileAsset> pAssetFile;
 	if ( pFile->GetFileTypeRef() == "Asset" )

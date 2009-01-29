@@ -43,6 +43,8 @@ public:
 
 protected:
 	virtual TYPE*			CreateObject(TRefRef InstanceRef,TRefRef TypeRef) = 0;
+
+	void					Debug_CheckFactoryIntegrity();					//	make sure there are no dupes, and no NULL entries
 };
 
 
@@ -102,6 +104,8 @@ TPtr<TYPE>& TClassFactory<TYPE, STOREINSTANCES>::GetInstance(TRefRef InstanceRef
 		if ( NewInstanceIndex == -1 || !STOREINSTANCES )
 			return TLPtr::GetNullPtr<TYPE>();
 
+		Debug_CheckFactoryIntegrity();
+
 		return TPtrArray<TYPE>::ElementAt( NewInstanceIndex );
 	}
 
@@ -130,6 +134,8 @@ s32 TClassFactory<TYPE, STOREINSTANCES>::CreateInstance(TPtr<TYPE>& pNewInstance
 		{
 			//	add to the array
 			InstancePtrIndex = TPtrArray<TYPE>::Add( pObject );
+
+			Debug_CheckFactoryIntegrity();
 
 			//	clean up if failed
 			if ( InstancePtrIndex == -1 )
@@ -173,6 +179,8 @@ Bool TClassFactory<TYPE, STOREINSTANCES>::RemoveInstance(TRefRef InstanceRef)
 	if ( !TPtrArray<TYPE>::RemoveAt( InstanceIndex ) )
 		return FALSE;
 
+	Debug_CheckFactoryIntegrity();
+
 	return TRUE;
 }
 
@@ -198,6 +206,39 @@ OBJECTTYPE* TClassFactory<TYPE, STOREINSTANCES>::GetInstanceObject(TRefRef Insta
 #endif
 }
 
+
+//--------------------------------------------------------------
+//	make sure there are no dupes, and no NULL entries
+//--------------------------------------------------------------
+template<class TYPE, bool STOREINSTANCES>
+void TClassFactory<TYPE, STOREINSTANCES>::Debug_CheckFactoryIntegrity()
+{
+#ifdef _DEBUG
+	for ( s32 i=GetLastIndex();	i>=0;	i-- )
+	{
+		TPtr<TYPE>& pInstance = ElementAt(i);
+
+		//	if null...
+		if ( !pInstance.IsValid() )
+		{
+			TLDebug_Break("Null entry in class factory");
+			RemoveAt(i);
+			continue;
+		}
+
+		//	check for duplicates
+		for ( s32 d=i-1;	d>=0;	d-- )
+		{
+			if ( ElementAt(d) == pInstance )
+			{
+				TLDebug_Break("Duplicate entry in class factory");
+				RemoveAt(i);
+				break;
+			}
+		}
+	}
+#endif
+}
 
 //--------------------------------------------------------------
 //	update all the elements in the factory
@@ -259,4 +300,5 @@ SyncBool TObjectFactory<TYPE>::ShutdownObjects()
 
 	return ShutdownResult;
 }
+
 

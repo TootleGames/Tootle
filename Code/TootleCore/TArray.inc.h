@@ -321,13 +321,21 @@ void TArray<TYPE>::RemoveAt(u32 Index,u32 Amount)
 template<typename TYPE>
 void TArray<TYPE>::ShiftArray(u32 From, s32 Amount )
 {
+	//	nothing to do
 	if ( Amount == 0 )	
 		return;
-	
+
+	//	emptying the array
+	s32 NewSize = GetSize() + Amount;
+	if ( NewSize <= 0 )
+	{
+		SetSize( 0 );
+		return;
+	}
+
 	if ( Amount > 0 )
 	{
 		u32 OldSize = GetSize();
-		u32 NewSize = GetSize() + Amount;
 		if ( !SetSize( NewSize ) )
 			NewSize = GetSize();
 
@@ -383,6 +391,14 @@ void TArray<TYPE>::ShiftArray(u32 From, s32 Amount )
 	} 
 	else if ( Amount < 0 )
 	{
+		//	if from outside the array, then we dont need to move anything. 
+		//	this probably means RemoveAt() has been called to remove the last element
+		if ( (s32)From > GetLastIndex() )
+		{
+			SetSize( NewSize );
+			return;
+		}
+
 		s32 AmountPositive = -Amount;
 
 		s32 CopyFromFirst = From;
@@ -399,29 +415,30 @@ void TArray<TYPE>::ShiftArray(u32 From, s32 Amount )
 			MoveAmount--;
 		}
 
-		
-		if ( IsElementDataType() )
+		if ( MoveAmount > 0 )
 		{
-			//	use memmove
-			if ( MoveAmount > 0 )
+			if ( IsElementDataType() )
 			{
 				TLMemory::MoveData( &ElementAt(CopyToFirst), &ElementAt(CopyFromFirst), (u32)MoveAmount );
+			}
+			else
+			{
+				for ( s32 i=0;	i<MoveAmount;	i++ )
+				{
+					s32 DestIndex = CopyToFirst + i;
+					s32 FromIndex = CopyFromFirst + i;
+
+					ElementAt(DestIndex) = ElementAt(FromIndex);	//	+shift
+				}
 			}
 		}
 		else
 		{
-			for ( s32 i=0;	i<MoveAmount;	i++ )
-			{
-				s32 DestIndex = CopyToFirst + i;
-				s32 FromIndex = CopyFromFirst + i;
-
-				ElementAt(DestIndex) = ElementAt(FromIndex);	//	+shift
-			}
+			TLArray::Debug::Print("Nothing moved", __FUNCTION__ );
 		}
 
 		//	shrink size to remove the bits we cut off
-		if ( !SetSize( GetSize() - AmountPositive ) )	
-			return;
+		SetSize( NewSize );
 	}
 
 	//	list may no longer be sorted

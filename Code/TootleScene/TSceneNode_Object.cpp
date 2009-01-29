@@ -7,20 +7,31 @@ using namespace TLScene;
 
 void TSceneNode_Object::Shutdown()
 {
-	TPtr<TLPhysics::TPhysicsNode>& pPhysics = GetPhysicsObject();
+	DeletePhysicsNode();
 
-	if(pPhysics)
+	DeleteRenderNode();
+}
+
+
+void TSceneNode_Object::DeletePhysicsNode()
+{
+	if ( m_PhysicsObjectRef.IsValid() )
 	{
-		TLPhysics::g_pPhysicsgraph->RemoveNode(pPhysics);
-	}
-
-	TPtr<TLRender::TRenderNode>& pRender = GetRenderNode();
-
-	if(pRender)
-	{
-		TLRender::g_pRendergraph->RemoveNode(pRender);
+		TLPhysics::g_pPhysicsgraph->RemoveNode(m_PhysicsObjectRef);
+		m_PhysicsObjectRef.SetInvalid();
 	}
 }
+
+
+void TSceneNode_Object::DeleteRenderNode()
+{
+	if ( m_RenderNodeRef.IsValid() )
+	{
+		TLRender::g_pRendergraph->RemoveNode(m_RenderNodeRef);
+		m_RenderNodeRef.SetInvalid();
+	}
+}
+
 
 
 

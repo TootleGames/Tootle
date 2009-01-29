@@ -11,7 +11,7 @@
 TLAsset::TAsset::TAsset(const TRef& AssetType,const TRef& AssetRef) :
 	m_AssetType		( AssetType ),
 	m_AssetRef		( AssetRef ),
-	m_LoadingState	( SyncFalse )
+	m_LoadingState	( TLAsset::LoadingState_Init )
 {
 	m_AssetRef.GetString( m_Debug_AssetRefString );
 }
@@ -25,7 +25,7 @@ void TLAsset::TAsset::Import(TPtr<TLFileSys::TFileAsset>& pAssetFile)
 	if ( !pAssetFile ) 
 	{
 		TLDebug_Break("Asset file expected");
-		SetLoadingState( SyncFalse );
+		SetLoadingState( TLAsset::LoadingState_Failed );
 		return;
 	}
 
@@ -34,7 +34,7 @@ void TLAsset::TAsset::Import(TPtr<TLFileSys::TFileAsset>& pAssetFile)
 	{
 		if ( TLDebug_Break("Asset file is different type to self") )
 		{
-			SetLoadingState( SyncFalse );
+			SetLoadingState( TLAsset::LoadingState_Failed );
 			return;
 		}
 	}
@@ -49,7 +49,12 @@ void TLAsset::TAsset::Import(TPtr<TLFileSys::TFileAsset>& pAssetFile)
 	//	import the data
 	SyncBool ImportState = ImportData( pAssetFile->GetData() );
 	
-	SetLoadingState( ImportState );
+	if ( ImportState == SyncFalse )
+		SetLoadingState( TLAsset::LoadingState_Failed );
+	else if ( ImportState == SyncWait )
+		SetLoadingState( TLAsset::LoadingState_Loading );
+	else if ( ImportState == SyncTrue )
+		SetLoadingState( TLAsset::LoadingState_Loaded );
 }
 
 
@@ -58,18 +63,22 @@ void TLAsset::TAsset::Import(TPtr<TLFileSys::TFileAsset>& pAssetFile)
 //----------------------------------------------------
 SyncBool TLAsset::TAsset::Export(TPtr<TLFileSys::TFileAsset>& pAssetFile)
 {
-	//	ensure the asset is loaded before we can export it
-	SyncBool AssetLoadingState = GetLoadingState();
-	
-	//	if not loaded yet, cannot export
-	if ( AssetLoadingState != SyncTrue )
-		return AssetLoadingState;
-
 	if ( !pAssetFile )
 	{
 		TLDebug_Break("Asset file expected");
 		return SyncFalse;
 	}
+
+	//	ensure the asset is loaded before we can export it
+	TLAsset::TLoadingState AssetLoadingState = GetLoadingState();
+		
+	//	if not loaded yet, cannot export
+	if ( AssetLoadingState == TLAsset::LoadingState_Loading )
+		return SyncWait;
+
+	//	failed to load, cannot export
+	if ( AssetLoadingState == TLAsset::LoadingState_Failed || AssetLoadingState == TLAsset::LoadingState_Init )
+		return SyncFalse;
 
 	//	setup asset file header
 	TLFileSys::TFileAsset::Header& Header = pAssetFile->GetHeader();

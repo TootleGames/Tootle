@@ -500,6 +500,9 @@ Bool TLPhysics::TCollisionSphere::GetIntersection_Mesh(TLPhysics::TCollisionMesh
 	TLAsset::TMesh* pMesh = pMeshAsset.GetObject();
 	if ( !pMesh )
 	{
+		//	gr: this asserts here in snowman code when you delete a line because the mesh is deleted, but
+		//	the physics node is delayed for a frame. The solution will eventually be a message from the asset manager
+		//	to let objects/nodes/etc know when an asset has changed or has been deleted
 		TLDebug_Break("Mesh asset expected... need to catch this earlier? with isvalid?");
 		return FALSE;
 	}

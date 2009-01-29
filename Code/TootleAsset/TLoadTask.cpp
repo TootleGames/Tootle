@@ -352,7 +352,7 @@ TRef Mode_CreateAsset::Update()
 	//	but the pre-load system was checking for assets being loaded, and caught the asset at this state
 	//	ready to be imported, correct type created, but loading state still in default (which is FALSE)
 	//	maybe make default state wait? maybe that's confusing, may need to change to Init,Fail,Wait,True...
-	pAsset->SetLoadingState( SyncWait );
+	//pAsset->SetLoadingState( SyncWait );
 				
 
 	return "AImport";
@@ -368,20 +368,29 @@ TRef Mode_AssetImport::Update()
 	TPtr<TLAsset::TAsset> pAsset = GetAsset();
 	pAsset->Import( GetAssetFile() );
 
-	SyncBool ImportResult = pAsset->GetLoadingState();
-	if ( ImportResult == SyncWait )
-		return TRef();
+	//	change mode depending on loading state
+	TLAsset::TLoadingState LoadingState = pAsset->GetLoadingState();
+	switch ( LoadingState )
+	{
+		case TLAsset::LoadingState_Loaded:
+		{
+			TTempString Debug_String("Imported asset okay ");
+			pAsset->GetAssetRef().GetString( Debug_String );
+			Debug_String.Append(" (");
+			pAsset->GetAssetType().GetString( Debug_String );
+			Debug_String.Appendf(") %x", pAsset.GetObject() );
+			TLDebug_Print( Debug_String );
+		
+			return "Finished";
+		}
 
-	if ( ImportResult == SyncFalse )
-		return "Failed";
+		case TLAsset::LoadingState_Loading:
+			//	still loading
+			return TRef();
 
-	TTempString Debug_String("Imported asset okay ");
-	pAsset->GetAssetRef().GetString( Debug_String );
-	Debug_String.Append(" (");
-	pAsset->GetAssetType().GetString( Debug_String );
-	Debug_String.Appendf(") %x", pAsset.GetObject() );
-	TLDebug_Print( Debug_String );
-	
-	return "Finished";
+		default:
+		case TLAsset::LoadingState_Failed:
+			return "Failed";
+	}
 }
 

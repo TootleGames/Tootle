@@ -14,7 +14,6 @@ namespace TLAsset
 	TPtr<TLAsset::TAssetFactory>	g_pFactory;
 	TPtrArray<TLoadTask>			g_LoadTasks;
 	TPtr<TAsset>					g_pNullAsset;
-
 };
 
 
@@ -164,7 +163,7 @@ void TLAsset::DeleteAsset(TRefRef AssetRef)
 		return;
 
 	//	mark asset as unavailible
-	pAsset->SetLoadingState( SyncFalse );
+	pAsset->SetLoadingState( TLAsset::LoadingState_Deleted );
 
 	TTempString DebugString("Deleting asset from factory... ");
 	AssetRef.GetString( DebugString );

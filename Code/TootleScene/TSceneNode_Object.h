@@ -49,10 +49,12 @@ protected:
 
 	virtual Bool					CreatePhysicsObject();
 	virtual void					OnPhysicsObjectAdded(TPtr<TLPhysics::TPhysicsNode>& pPhysicsObject)	{}
+	void							DeletePhysicsNode();
 
 	virtual Bool					CreateRenderNode(TPtr<TLRender::TRenderNode> pParentRenderNode = NULL);
 	virtual Bool					CreateRenderNode(TRefRef ParentRenderNode);
 	virtual void					OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode)	{}
+	void							DeleteRenderNode();
 
 	virtual void 					Update(float fTimestep);
 	virtual void					UpdateObjectFromPhysics();				//	update game object to match physics node

@@ -90,7 +90,16 @@ SyncBool TLFileSys::TFile::Export(TPtr<TFileAsset>& pAssetFile)
 	}
 
 	//	does this file convert to an asset? if so genericlly create assetfile from asset that we create
-	Bool DoExportAsset = m_pExportAsset ? (m_pExportAsset->GetLoadingState() == SyncWait) : TRUE;
+	Bool DoExportAsset = TRUE;
+	
+	//	do we need to continue loading an existing asset?
+	if ( m_pExportAsset )
+	{
+		if ( m_pExportAsset->GetLoadingState() == TLAsset::LoadingState_Loading )
+			DoExportAsset = TRUE;
+		//	else asset doesnt need to continue being loaded
+	}
+
 	if ( DoExportAsset )
 	{
 		Bool Supported = FALSE;
@@ -99,9 +108,16 @@ SyncBool TLFileSys::TFile::Export(TPtr<TFileAsset>& pAssetFile)
 		//	is supported so see how it went... and convert
 		if ( Supported )
 		{
-			//	new mesh asset is now "loaded"
+			//	update state of existing asset
 			if ( m_pExportAsset )
-				m_pExportAsset->SetLoadingState( ExportAssetResult );
+			{
+				if ( ExportAssetResult == SyncFalse )
+					m_pExportAsset->SetLoadingState( TLAsset::LoadingState_Failed );
+				else if ( ExportAssetResult == SyncWait )
+					m_pExportAsset->SetLoadingState( TLAsset::LoadingState_Loading );
+				else if ( ExportAssetResult == SyncTrue )
+					m_pExportAsset->SetLoadingState( TLAsset::LoadingState_Loaded );
+			}
 
 			//	supported but still processing
 			if ( ExportAssetResult == SyncWait )

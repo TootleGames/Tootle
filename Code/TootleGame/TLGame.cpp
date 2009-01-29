@@ -149,6 +149,6 @@ void TLGame::TScreenRayTest::SetMeshLine(const TLMaths::TLine& Line)
 	m_pMesh->AddVertex( PosB, TColour( 0.f, 0.f, 0.f, 1.f ) );
 */
 	//	mark as loaded now it has some data in it
-	m_pMesh->SetLoadingState( SyncTrue );
+	m_pMesh->SetLoadingState( TLAsset::LoadingState_Loaded );
 }
 

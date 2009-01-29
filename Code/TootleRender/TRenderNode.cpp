@@ -49,7 +49,12 @@ SyncBool TLRender::TRenderZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
 
 	if ( !pRenderNode )
 	{
-		TLDebug_Break("TRenderZoneNode is linked to a node that doesnt exist?");
+#ifdef _DEBUG
+		TTempString Debug_String("TRenderZoneNode is linked to a node ");
+		m_RenderNodeRef.GetString( Debug_String );
+		Debug_String.Append(" that doesnt exist?");
+		TLDebug_Print(Debug_String);
+#endif
 		return SyncFalse;
 	}
 

@@ -19,6 +19,16 @@ namespace TLAsset
 {
 	class TAsset;			//	base asset type
 	class TTempAsset;		//	placeholder asset type
+
+	enum TLoadingState
+	{
+		LoadingState_Init = 0,	//	just created - nothing done to it yet
+		LoadingState_Loading,	//	currently loading
+		LoadingState_Failed,	//	failed to load corrupt file/asset
+		LoadingState_Loaded,	//	is loaded okay
+		LoadingState_Deleted,	//	asset has been formely deleted. We shouldnt really ever come across this state, debugging essentially
+	};
+
 };
 
 
@@ -30,9 +40,9 @@ class TLAsset::TAsset
 public:
 	TAsset(const TRef& AssetType,const TRef& AssetRef);
 
-	Bool				IsLoaded() const				{	return GetLoadingState() == SyncTrue;	}
-	SyncBool			GetLoadingState() const			{	return m_LoadingState;	}
-	void				SetLoadingState(SyncBool State)	{	m_LoadingState = State;	}
+	Bool				IsLoaded() const						{	return GetLoadingState() == TLAsset::LoadingState_Loaded;	}
+	TLoadingState		GetLoadingState() const					{	return m_LoadingState;	}
+	void				SetLoadingState(TLoadingState State)	{	m_LoadingState = State;	}
 
 	const TRef&			GetAssetType() const			{	return m_AssetType;	}
 	void				SetAssetRef(const TRef& Ref)	{	m_AssetRef = Ref;	}
@@ -61,7 +71,7 @@ protected:
 private:
 	TRef				m_AssetType;
 	TRef				m_AssetRef;
-	SyncBool			m_LoadingState;					//	loading state - FALSE not loaded, WAIT loading, TRUE loaded & ready
+	TLoadingState		m_LoadingState;					//	loading state 
 	TString				m_Debug_AssetRefString;	
 };
 
