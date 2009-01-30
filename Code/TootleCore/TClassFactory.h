@@ -214,25 +214,25 @@ template<class TYPE, bool STOREINSTANCES>
 void TClassFactory<TYPE, STOREINSTANCES>::Debug_CheckFactoryIntegrity()
 {
 #ifdef _DEBUG
-	for ( s32 i=GetLastIndex();	i>=0;	i-- )
+	for ( s32 i=TPtrArray<TYPE>::GetLastIndex();	i>=0;	i-- )
 	{
-		TPtr<TYPE>& pInstance = ElementAt(i);
+		TPtr<TYPE>& pInstance = TPtrArray<TYPE>::ElementAt(i);
 
 		//	if null...
 		if ( !pInstance.IsValid() )
 		{
 			TLDebug_Break("Null entry in class factory");
-			RemoveAt(i);
+			TPtrArray<TYPE>::RemoveAt(i);
 			continue;
 		}
 
 		//	check for duplicates
 		for ( s32 d=i-1;	d>=0;	d-- )
 		{
-			if ( ElementAt(d) == pInstance )
+			if ( TPtrArray<TYPE>::ElementAt(d) == pInstance )
 			{
 				TLDebug_Break("Duplicate entry in class factory");
-				RemoveAt(i);
+				TPtrArray<TYPE>::RemoveAt(i);
 				break;
 			}
 		}
