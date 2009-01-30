@@ -151,13 +151,10 @@ void TLRender::TRenderTarget::EndDraw()
 
 	//	print out node/culled count
 #ifdef _DEBUG
-	if ( m_pRootQuadTreeZone )
-	{
-		TTempString DebugString("RenderTarget ");
-		GetRef().GetString( DebugString );
-		DebugString.Appendf(" rendered %d nodes (%d culled)", m_Debug_NodeCount, m_Debug_NodeCulledCount );
-		TLDebug_Print( DebugString );
-	}
+	TTempString DebugString("RenderTarget ");
+	GetRef().GetString( DebugString );
+	DebugString.Appendf(" rendered %d nodes (%d culled)", m_Debug_NodeCount, m_Debug_NodeCulledCount );
+	TLDebug_Print( DebugString );
 #endif
 
 #if defined(DEBUG_DRAW_RENDERZONES)||defined(DEBUG_DRAW_FRUSTUM)

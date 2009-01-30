@@ -90,11 +90,9 @@ OpenglESAppAppDelegate* g_pIpodApp;
 	window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 
 	// Use a red window for debug so we can see any glitchy views of it
-#ifdef _DEBUG
-	[window setBackgroundColor:[UIColor redColor]];
-#else
-	[window setBackgroundColor:[UIColor blackColor]];	
-#endif
+	//	gr: always pink background
+	[window setBackgroundColor:[UIColor magentaColor]];
+
 	//Create the OpenGL drawing view and add it to the window
 	glView = [[EAGLView alloc] initWithFrame:CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height)]; // - kPaletteHeight 
 	[window addSubview:glView];

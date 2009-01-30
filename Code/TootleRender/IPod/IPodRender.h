@@ -36,7 +36,7 @@ namespace TLRender
 			SyncBool				Init();		//	init opengl
 			SyncBool				Shutdown();	//	cleanup opengl
 
-			FORCEINLINE Bool		Debug_CheckForError()	{	return FALSE;	}	//	gr: very slow on ipod, so not used
+			Bool					Debug_CheckForError();	
 
 			//Bool					BindFixedVertexes(const TArray<TLAsset::TFixedVertex>* pVertexes);
 			Bool					BindVertexes(const TArray<float3>* pVertexes);

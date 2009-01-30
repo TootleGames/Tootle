@@ -7,6 +7,7 @@
 #import <OpenGLES/EAGLDrawable.h>
 
 
+#define FORCE_RENDERNODE_CLEAR		//	even if our clear colour is opaque, clear with a render node regardless
 
 
 TLRender::Platform::RenderTarget::RenderTarget(const TRef& Ref) :
@@ -52,9 +53,11 @@ Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& MaxSize)
 	GLbitfield ClearMask = 0x0;
 	if ( GetFlag( Flag_ClearColour ) )
 	{
+#ifndef FORCE_RENDERNODE_CLEAR
 		//	if the clear colour has an alpha, we dont use the opengl clear as it doesnt support alpha
 		if ( !m_ClearColour.IsTransparent() )
 			ClearMask |= GL_COLOR_BUFFER_BIT;
+#endif
 	}
 
 	if ( GetFlag( Flag_ClearDepth ) )	
@@ -193,8 +196,14 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(const Type4<s32>& Viewport
 	TLMaths::TMatrix& ProjectionMatrix = pCamera->GetProjectionMatrix(TRUE);
 	glGetFloatv( GL_PROJECTION_MATRIX, ProjectionMatrix );
 	
+	Bool UseClearRenderNode = (m_ClearColour.GetAlpha() > 0.f && m_ClearColour.IsTransparent());
+	
+#ifdef FORCE_RENDERNODE_CLEAR
+	UseClearRenderNode = TRUE;
+#endif
+	
 	//	clear the screen manually if we need to apply alpha
-	if ( m_ClearColour.GetAlpha() > 0.f && m_ClearColour.IsTransparent() )
+	if ( UseClearRenderNode )
 	{
 		if ( !m_pRenderNodeClear )
 		{

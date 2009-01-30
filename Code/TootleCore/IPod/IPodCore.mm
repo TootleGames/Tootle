@@ -121,7 +121,16 @@ Bool TLDebug::Platform::Break(const TString& String)
 	Print( String );
 
 	// Drop into debugger if possible
-	Debugger();
+	//	gr: coreservices only availible on simulator, there is no coreservices framework for device
+	//		so this is only availible in simulator
+//#if TARGET_IPHONE_SIMULATOR
+//	Debugger();
+//#else 
+#if defined(_DEBUG)
+	//	gr: hacky break for debug builds
+	int* pNull = 0x0;
+	*pNull = 99;
+#endif
 	
 	//	fail
 	return FALSE;
