@@ -105,8 +105,8 @@ Bool TLRender::Opengl::Platform::BindVertexes(const TArray<float3>* pVertexes)
 		pVertexes = NULL;
 
 	//	already bound to this
-	if ( pVertexes == g_pBoundVertexes )
-		return TRUE;
+//	if ( pVertexes == g_pBoundVertexes )
+//		return TRUE;
 	
 //	g_pBoundFixedVertexes = NULL;
 	g_pBoundVertexes = pVertexes;

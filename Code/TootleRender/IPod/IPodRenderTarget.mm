@@ -210,6 +210,8 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(const Type4<s32>& Viewport
 
 	//	setup camera
 	glMatrixMode(GL_MODELVIEW);
+	//	gr: this was missing, but not techniccaly needed, I guess because we push and pop the matricies back to their original state anywa
+	glLoadIdentity();
 
 	//	translate
 	m_CameraTransform.SetInvalid();
