@@ -58,6 +58,11 @@ namespace TLCore
 - (BOOL) createFramebuffer;
 - (void) destroyFramebuffer;
 
+//- (UIImage *)saveViewToPhotoLibrary;
+- (void)saveViewToPhotoLibrary;
+- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo;
+
+
 @end
 
 
@@ -363,6 +368,111 @@ namespace TLCore
  } 
  */
 
+/*
+////////////////////////////////////////////////////////
+// Screenshot and store in photo library
+// 
+// The following apparently works but appears to be undocumented and doesn't work for me:
+// 
+// See http://my.safaribooksonline.com/9780596518554/miscellaneous_hacks_and_rec
+// UIApplication* app = [UIApplication sharedApplication]; 
+// [app _dumpScreenContents:nil];
+//
+// The following works OK for non-openGL views
+// Code from http://discussions.apple.com/thread.jspa?messageID=7983518&
+// 
+////////////////////////////////////////////////////////
+
+- (UIImage *) saveViewToPhotoLibrary {
+	
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    UIGraphicsBeginImageContext(screenRect.size);
+	
+    CGContextRef ctx = UIGraphicsGetCurrentContext();
+    [[UIColor blackColor] set];
+    CGContextFillRect(ctx, screenRect);
+    
+	//	UIView* subview = glView;
+	//    [subview.layer renderInContext:ctx];
+    //[window.layer renderInContext:ctx];
+	[self.layer renderInContext:ctx];
+	
+    
+    UIImage *screenImage = UIGraphicsGetImageFromCurrentImageContext();
+	
+	// Save to photo album
+    UIImageWriteToSavedPhotosAlbum(screenImage, nil, nil, nil);
+	
+    UIGraphicsEndImageContext();	
+	
+	return screenImage;
+}
+ 
+////////////////////////////////////////////////////////
+
+ */
+
+
+////////////////////////////////////////////////////////
+// Take screenshot of OpenGL view
+// Code from http://www.bit-101.com/blog/?p=1861
+//
+// Other possible useful sources:
+// http://discussions.apple.com/thread.jspa?messageID=8443971
+// http://discussions.apple.com/thread.jspa?messageID=8818069&#8818069
+////////////////////////////////////////////////////////
+
+// callback for CGDataProviderCreateWithData
+void releaseData(void *info, const void *data, size_t dataSize) 
+{
+	//NSLog(@”releaseData\n”);
+	free((void*)data); // free the
+}
+
+// callback for UIImageWriteToSavedPhotosAlbum
+- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
+	//NSLog(@”Save finished\n”);
+	[image release]; // release image
+}
+
+-(void)saveViewToPhotoLibrary 
+{
+	CGRect rect = [[UIScreen mainScreen] bounds];
+	int width = rect.size.width;
+	int height = rect.size.height;
+	
+	NSInteger myDataLength = width * height * 4;
+	GLubyte *buffer = (GLubyte *) malloc(myDataLength);
+	GLubyte *buffer2 = (GLubyte *) malloc(myDataLength);
+	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	for(int y = 0; y <height; y++) 
+	{
+		for(int x = 0; x <width * 4; x++) 
+		{
+			buffer2[int((height - 1 - y) * width * 4 + x)] = buffer[int(y * 4 * width + x)];
+		}
+	}
+	free(buffer); // YOU CAN FREE THIS NOW
+	
+	CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, buffer2, myDataLength, releaseData);
+	int bitsPerComponent = 8;
+	int bitsPerPixel = 32;
+	int bytesPerRow = 4 * width;
+	CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateDeviceRGB();
+	CGBitmapInfo bitmapInfo = kCGBitmapByteOrderDefault;
+	CGColorRenderingIntent renderingIntent = kCGRenderingIntentDefault;
+	CGImageRef imageRef = CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpaceRef, bitmapInfo, provider, NULL, NO, renderingIntent);
+	
+	CGColorSpaceRelease(colorSpaceRef); // YOU CAN RELEASE THIS NOW
+	CGDataProviderRelease(provider); // YOU CAN RELEASE THIS NOW
+	
+	UIImage *image = [[UIImage alloc] initWithCGImage:imageRef]; // change this to manual alloc/init instead of autorelease
+	CGImageRelease(imageRef); // YOU CAN RELEASE THIS NOW
+	
+	UIImageWriteToSavedPhotosAlbum(image, self, (SEL)@selector(image:didFinishSavingWithError:contextInfo:), nil); // add callback for finish saving
+}
+////////////////////////////////////////////////////////
+
 
 @end
 
@@ -460,6 +570,15 @@ void TLRender::Platform::Screen::Draw()
 	//	flip buffers
     glBindRenderbufferOES(GL_RENDERBUFFER_OES, glView.viewRenderbuffer);
     [glView.context presentRenderbuffer:GL_RENDERBUFFER_OES];
+    
+    
+	// Take a screenshot if flagged to do so.  
+	// I'm not sure this is the right place but...
+	if(GetFlag(Flag_TakeScreenshot))
+	{
+		[glView saveViewToPhotoLibrary];
+		m_Flags.Set(Flag_TakeScreenshot, FALSE);
+	}
 }
 
 

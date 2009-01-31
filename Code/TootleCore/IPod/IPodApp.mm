@@ -306,6 +306,18 @@ OpenglESAppAppDelegate* g_pIpodApp;
 	}
 }
 
+void TLCore::Platform::OpenWebURL(TString& urlstr)
+{
+	NSString* NSAddress = [[NSString alloc] initWithCString:urlstr.GetData() ];
+	NSURL* url = [NSURL URLWithString: NSAddress];
+	[[UIApplication sharedApplication] openURL:url];
+	
+	//[[UIApplication sharedApplication] openURL:[NSURL URLWithString: @"http://www.google.co.uk"]];
+
+	[NSAddress release];
+
+}
+
 
 @end
 

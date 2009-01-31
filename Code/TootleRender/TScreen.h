@@ -36,6 +36,7 @@ public:
 	enum Flags
 	{
 		Flag_SyncFrameRate=0,	//	synchronise frames to refresh rate
+		Flag_TakeScreenshot,	// Take a screenshot
 	};
 
 public:
@@ -66,6 +67,12 @@ public:
 
 	inline Bool				operator==(const TRef& ScreenRef)	const	{	return GetRef() == ScreenRef;	}
 	inline Bool				operator==(const TScreen& Screen)	const 	{	return GetRef() == Screen.GetRef();	}
+
+	// Screenshot request
+	inline void				RequestScreenshot()
+	{
+		m_Flags.Set(Flag_TakeScreenshot);
+	}
 
 protected:
 	TPtrArray<TRenderTarget>	m_RenderTargets;			//	list of active render targets
