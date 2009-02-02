@@ -337,7 +337,7 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode* pOtherNode)
 {
 	TIntersection& Intersection = m_Temp_Intersection;
 	const TIntersection& OtherIntersection = pOtherNode->m_Temp_Intersection;
-	Bool Changes = FALSE;
+	Bool bChanges = FALSE;
 
 #ifdef _DEBUG
 	m_Debug_Collisions.Add( m_Temp_Intersection );
@@ -385,7 +385,7 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode* pOtherNode)
 
 				vImpulse = CollisionForce.Normal() * htotal;
 				m_Velocity += vImpulse;
-				Changes = TRUE;
+				bChanges = TRUE;
 			}
 		}
 	}
@@ -444,29 +444,33 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode* pOtherNode)
 
 			m_Force += vReboundForce;
 			OnForceChanged();
-			Changes = TRUE;
+			bChanges = TRUE;
 		}
 	}
 
-	// Publish a message to all subscribers to say that this node has collided with something
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("PHYSICS");
-
-	if(pMessage)
+	// For now only send a message when colliding with static objects - this will need changing in the future but also
+	// needs to be done elsewhere
+	if(bChanges && pOtherNode->IsStatic())
 	{
-		pMessage->AddChannelID("COLLISION");
+		// Publish a message to all subscribers to say that this node has collided with something
+		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("PHYSICS");
 
-		pMessage->Write(GetNodeRef());
-		pMessage->Write(Changes);
-		pMessage->Write(m_Velocity);		// Velocity of object
-		pMessage->Write(vImpulse);			// Velocity change due to collision
-		pMessage->Write(vReboundForce);		// Force applied in moving this object via collision
-		pMessage->Write(pOtherNode->IsStatic());	// Is the other node static?
+		if(pMessage)
+		{
+			pMessage->AddChannelID("COLLISION");
 
-		PublishMessage(pMessage);
+			pMessage->Write(GetNodeRef());
+			//pMessage->Write(bChanges);
+			pMessage->Write(m_Velocity);		// Velocity of object
+			pMessage->Write(vImpulse);			// Velocity change due to collision
+			pMessage->Write(vReboundForce);		// Force applied in moving this object via collision
+			//pMessage->Write(pOtherNode->IsStatic());	// Is the other node static?
+
+			PublishMessage(pMessage);
+		}
 	}
 
-
-	return Changes;
+	return bChanges;
 }
 
 
