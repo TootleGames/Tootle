@@ -814,6 +814,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 			TFlags<TRenderNode::RenderFlags::Flags> WireframeRenderFlags = RenderNodeRenderFlags;
 			WireframeRenderFlags.Clear( TRenderNode::RenderFlags::UseVertexColours );
 			WireframeRenderFlags.Clear( TRenderNode::RenderFlags::UseMeshLineWidth );
+			WireframeRenderFlags.Clear( TRenderNode::RenderFlags::DepthRead );
 
 			DrawMesh( *pMesh, pRenderNode, WireframeRenderFlags );
 		}

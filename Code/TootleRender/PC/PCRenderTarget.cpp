@@ -216,6 +216,7 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(const Type4<s32>& Viewport
 
 	//	setup camera
 	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
 	//	translate
 	m_CameraTransform.SetInvalid();

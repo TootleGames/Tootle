@@ -100,3 +100,6 @@ inline TColour TColour::Debug_GetColour(u32 ColourIndex)
 {
 	return (TLColour::g_Debug_Colours.GetSize()==0) ? TColour() : TLColour::g_Debug_Colours[ ColourIndex % TLColour::g_Debug_Colours.GetSize() ];
 }
+
+
+TLCore_DeclareIsDataType( TColour );
