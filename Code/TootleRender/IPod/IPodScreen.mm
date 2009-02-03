@@ -13,8 +13,7 @@
 #import <OpenGLES/ES1/glext.h>
 #import <OpenGLES/EAGLDrawable.h>
 
-
-
+#define USE_TEST_EMAIL
 
 namespace TLCore
 {
@@ -470,10 +469,14 @@ void releaseData(void *info, const void *data, size_t dataSize)
 	TString tsfilename = [filename UTF8String];
 	// Now setup an email using the image details
 	//TString urlstr = "http://www.google.com";
-	TString urlstr = "mailto:duane@dibely.com";
-	//TString urlstr = "mailto:duane@dibely.com?subject=Be My Valentine&body=Roses are Red&attachment=";
 	
+	// TEST email address
+#ifdef USE_TEST_EMAIL 
+	TString urlstr = "mailto:duane@dibely.com";
+#else	
+	TString urlstr = "mailto:duane@dibely.com?subject=Be My Valentine&body=Roses are Red&attachment=";
 	urlstr.Append(tsfilename);
+#endif
 	
 	TLCore::Platform::OpenWebURL(urlstr);
 }

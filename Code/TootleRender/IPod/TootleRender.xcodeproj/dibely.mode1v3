@@ -233,8 +233,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -287,7 +285,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 115}, {242, 496}}</string>
+							<string>{{0, 0}, {242, 496}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -317,6 +315,8 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -334,7 +334,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84C1FD9D0F38A969001DC896</string>
+										<string>84C1FDA90F38C87E001DC896</string>
 										<key>history</key>
 										<array>
 											<string>846B6B7B0F29EFC4005EB752</string>
@@ -353,7 +353,7 @@
 											<string>84EB99F70F38A2C10020B52B</string>
 											<string>84C1FD7A0F38A728001DC896</string>
 											<string>84C1FD9A0F38A969001DC896</string>
-											<string>84C1FD9B0F38A969001DC896</string>
+											<string>84C1FD9D0F38A969001DC896</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -428,9 +428,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84C1FD9E0F38A969001DC896</string>
+				<string>84C1FDAA0F38C87E001DC896</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84C1FD9F0F38A969001DC896</string>
+				<string>84C1FDAB0F38C87E001DC896</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -564,6 +564,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>84EB99820F3889D60020B52B</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleRender/IPod/TootleRender.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -644,7 +645,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>84EB99820F3889D60020B52B</string>
-				<string>84C1FD870F38A728001DC896</string>
+				<string>84C1FDAC0F38C87E001DC896</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

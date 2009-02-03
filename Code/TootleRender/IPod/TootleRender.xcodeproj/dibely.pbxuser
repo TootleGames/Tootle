@@ -84,7 +84,7 @@
 		);
 		breakpoints = (
 			846B6B780F29EFA0005EB752 /* TRenderTarget.cpp:286 */,
-			84EB9A2A0F38A3E40020B52B /* IPodScreen.mm:459 */,
+			84EB9A2A0F38A3E40020B52B /* IPodScreen.mm:458 */,
 		);
 		codeSenseManager = 84C1090E0F0A779700B2DF7A /* Code sense */;
 		ignoreBreakpointsInProjectsDict = {
@@ -162,8 +162,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 255371611;
-			PBXWorkspaceStateSaveDate = 255371611;
+			PBXPerProjectTemplateStateSaveDate = 255379466;
+			PBXWorkspaceStateSaveDate = 255379466;
 		};
 		perUserProjectItems = {
 			846B6B7B0F29EFC4005EB752 /* PBXTextBookmark */ = 846B6B7B0F29EFC4005EB752 /* PBXTextBookmark */;
@@ -175,9 +175,9 @@
 			84C1FD7A0F38A728001DC896 /* PBXTextBookmark */ = 84C1FD7A0F38A728001DC896 /* PBXTextBookmark */;
 			84C1FD800F38A728001DC896 /* PBXTextBookmark */ = 84C1FD800F38A728001DC896 /* PBXTextBookmark */;
 			84C1FD9A0F38A969001DC896 /* PBXTextBookmark */ = 84C1FD9A0F38A969001DC896 /* PBXTextBookmark */;
-			84C1FD9B0F38A969001DC896 /* PBXTextBookmark */ = 84C1FD9B0F38A969001DC896 /* PBXTextBookmark */;
 			84C1FD9C0F38A969001DC896 /* PBXTextBookmark */ = 84C1FD9C0F38A969001DC896 /* PBXTextBookmark */;
 			84C1FD9D0F38A969001DC896 /* PBXTextBookmark */ = 84C1FD9D0F38A969001DC896 /* PBXTextBookmark */;
+			84C1FDA90F38C87E001DC896 /* PBXTextBookmark */ = 84C1FDA90F38C87E001DC896 /* PBXTextBookmark */;
 			84EB990A0F3786160020B52B /* PBXTextBookmark */ = 84EB990A0F3786160020B52B /* PBXTextBookmark */;
 			84EB990B0F3786160020B52B /* PBXTextBookmark */ = 84EB990B0F3786160020B52B /* PBXTextBookmark */;
 			84EB990E0F3786160020B52B /* PBXTextBookmark */ = 84EB990E0F3786160020B52B /* PBXTextBookmark */;
@@ -276,9 +276,9 @@
 	};
 	84C10B1C0F0A7E7400B2DF7A /* IPodScreen.mm */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {706, 9716}}";
-			sepNavSelRange = "{13977, 6}";
-			sepNavVisRange = "{14088, 562}";
+			sepNavIntBoundsRect = "{{0, 0}, {744, 9548}}";
+			sepNavSelRange = "{381, 0}";
+			sepNavVisRange = "{0, 476}";
 			sepNavWindowFrame = "{{153, 89}, {750, 558}}";
 		};
 	};
@@ -336,16 +336,6 @@
 		vrLen = 2020;
 		vrLoc = 2200;
 	};
-	84C1FD9B0F38A969001DC896 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84EB99BB0F3897E70020B52B /* IPodScreen.mm */;
-		name = "IPodScreen.mm: 462";
-		rLen = 6;
-		rLoc = 13977;
-		rType = 0;
-		vrLen = 706;
-		vrLoc = 13382;
-	};
 	84C1FD9C0F38A969001DC896 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84C1FD920F38A8B2001DC896 /* TString.h */;
@@ -361,10 +351,20 @@
 		fRef = 84C10B1C0F0A7E7400B2DF7A /* IPodScreen.mm */;
 		name = "IPodScreen.mm: 462";
 		rLen = 6;
-		rLoc = 13977;
+		rLoc = 13997;
 		rType = 0;
 		vrLen = 562;
 		vrLoc = 14088;
+	};
+	84C1FDA90F38C87E001DC896 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10B1C0F0A7E7400B2DF7A /* IPodScreen.mm */;
+		name = "IPodScreen.mm: 16";
+		rLen = 0;
+		rLoc = 381;
+		rType = 0;
+		vrLen = 476;
+		vrLoc = 0;
 	};
 	84EB990A0F3786160020B52B /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -472,18 +472,6 @@
 		rType = 0;
 		vrLen = 437;
 		vrLoc = 0;
-	};
-	84EB99BB0F3897E70020B52B /* IPodScreen.mm */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.cpp.objcpp;
-		name = IPodScreen.mm;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleRender/IPod/IPodScreen.mm;
-		sourceTree = "<group>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {706, 9716}}";
-			sepNavSelRange = "{13977, 6}";
-			sepNavVisRange = "{14088, 562}";
-		};
 	};
 	84EB99C30F3897FC0020B52B /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -602,7 +590,7 @@
 		fRef = 84C10B1C0F0A7E7400B2DF7A /* IPodScreen.mm */;
 		name = "IPodScreen.mm: 472";
 		rLen = 0;
-		rLoc = 15032;
+		rLoc = 15114;
 		rType = 0;
 		vrLen = 672;
 		vrLoc = 13830;
@@ -648,7 +636,7 @@
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleRender/IPod/IPodScreen.mm;
 		sourceTree = "<group>";
 	};
-	84EB9A2A0F38A3E40020B52B /* IPodScreen.mm:459 */ = {
+	84EB9A2A0F38A3E40020B52B /* IPodScreen.mm:458 */ = {
 		isa = PBXFileBreakpoint;
 		actions = (
 		);
@@ -660,7 +648,7 @@
 		functionName = "-image:didFinishSavingWithError:contextInfo:";
 		hitCount = 1;
 		ignoreCount = 0;
-		lineNumber = 459;
+		lineNumber = 458;
 		location = ValentinesLines;
 		modificationTime = 255371137.059562;
 		state = 1;
