@@ -160,7 +160,8 @@ void TAudioNode::SetAudioAssetRef(TRefRef AssetRef)
 	if( m_AudioAssetRef != AssetRef )	
 	{	
 		// Destroy current audio source info
-		RemoveSource();
+		if(IsSourceActive())
+			RemoveSource();
 		
 		m_AudioAssetRef = AssetRef;	
 				
@@ -195,6 +196,12 @@ void TAudioNode::RemoveSource()
 {
 	SetVolume(0.0f);
 	Platform::RemoveSource(GetNodeRef());	
+}
+
+// Check the low level audio system to see if a source is active with the nodes ID
+Bool TAudioNode::IsSourceActive()
+{
+	return Platform::HasSource(GetNodeRef());
 }
 
 

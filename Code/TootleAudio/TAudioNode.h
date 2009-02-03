@@ -97,6 +97,8 @@ private:
 	void				CreateSource();						// Generates the source audio data using the audio asset specified
 	void				RemoveSource();						// Removes the source audio data
 	
+	Bool				IsSourceActive();					// Checs the low level audio system to see if a source is active with the node ID
+
 private:
 	TAudioProperties	m_AudioProperties;		// Audio properties
 	

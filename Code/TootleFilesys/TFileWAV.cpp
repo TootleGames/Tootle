@@ -183,6 +183,8 @@ SyncBool TFileWAV::UpdateExport(TPtr<TLAsset::TAsset>& pAsset)
 //--------------------------------------------------------------
 Bool TFileWAV::LoadHeader(TPtr<TLAsset::TAsset>& pAsset)
 {
+	TLDebug_Print("Loading audio header");
+
 	TPtr<TLAsset::TAudio> pAudio = pAsset;
 
 	ResetReadPos();
@@ -228,10 +230,18 @@ Bool TFileWAV::LoadHeader(TPtr<TLAsset::TAsset>& pAsset)
 	if(WAVFormatData.uFormat != 1)
 		return FALSE;
 	
+	// Debug print the header info
+
 	// Everything OK so proceed to copy the actual audio header data to the asset.
 	pAudio->SetSampleRate(WAVFormatData.uSampleBitrate);
 	pAudio->SetNumberOfChannels(WAVFormatData.uNumChannels);
 	pAudio->SetBitsPerSample(WAVFormatData.uBitsPerSample);
+
+#ifdef _DEBUG
+	TLDebug_Print( TString("Bitrate: %d", WAVFormatData.uSampleBitrate) );
+	TLDebug_Print( TString("Channel Count: %d", WAVFormatData.uNumChannels) );
+	TLDebug_Print( TString("BitsPerSample: %d", WAVFormatData.uBitsPerSample) );
+#endif
 
 	// Now read the header for the actual audio data
 	audiodataheader WAVAudioHeader;
@@ -240,6 +250,8 @@ Bool TFileWAV::LoadHeader(TPtr<TLAsset::TAsset>& pAsset)
 	// Set the size of the audio data
 	pAudio->SetSize(WAVAudioHeader.uSize);
 	
+	TLDebug_Print("Audio header loaded successfully");
+
 	return TRUE;
 }
 
