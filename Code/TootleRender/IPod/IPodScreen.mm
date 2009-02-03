@@ -42,6 +42,9 @@ namespace TLCore
     
     /* OpenGL name for the depth buffer that is attached to viewFramebuffer, if it exists (0 if it does not exist) */
     GLuint depthRenderbuffer;
+
+	// Send image flag for auto emailing of images
+	Bool	bSendImage;
 }
 
 @property (nonatomic, retain) EAGLContext *context;
@@ -50,6 +53,7 @@ namespace TLCore
 @property GLuint depthRenderbuffer;
 @property GLint backingWidth;
 @property GLint backingHeight;
+@property Bool	bSendImage;
 
 - (id) initWithFrame:(CGRect)frame; //These also set the current context
 - (id) initWithFrame:(CGRect)frame pixelFormat:(GLuint)format;
@@ -58,8 +62,15 @@ namespace TLCore
 - (BOOL) createFramebuffer;
 - (void) destroyFramebuffer;
 
-//- (UIImage *)saveViewToPhotoLibrary;
+- (UIImage *)createImageFromView;
 - (void)saveViewToPhotoLibrary;
+- (void)saveViewToPhotoLibraryAndSetupEmail;
+- (void)saveImageToPhotoLibrary:(UIImage*) image;
+- (NSString*)saveViewToFile;
+- (NSString*)saveImageToFile:(UIImage*)image;
+- (void)saveImageToFileAndSetupEmail:(UIImage*)image;
+
+
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo;
 
 
@@ -94,6 +105,7 @@ namespace TLCore
 @synthesize depthRenderbuffer;
 @synthesize backingWidth;
 @synthesize backingHeight;
+@synthesize bSendImage;
 
 
 // You must implement this method
@@ -120,6 +132,8 @@ namespace TLCore
             return nil;
         }
 	}
+	
+	self.bSendImage = FALSE;
     return self;
 }
 
@@ -157,6 +171,8 @@ namespace TLCore
 			return nil;
 		}
 	}
+	
+	self.bSendImage = FALSE;
 	
 	return self;
 }
@@ -422,6 +438,9 @@ namespace TLCore
 // http://discussions.apple.com/thread.jspa?messageID=8818069&#8818069
 ////////////////////////////////////////////////////////
 
+
+
+
 // callback for CGDataProviderCreateWithData
 void releaseData(void *info, const void *data, size_t dataSize) 
 {
@@ -431,11 +450,90 @@ void releaseData(void *info, const void *data, size_t dataSize)
 
 // callback for UIImageWriteToSavedPhotosAlbum
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
+	
+	// if flagged to send the image then save it to a temp 'cache' file and
+	// attach it to an email. Means an extra file is used but you can't get the
+	// filename of the image saved in the photo library
+	if(self.bSendImage)
+	{
+		[self saveImageToFileAndSetupEmail :image];
+	}
+	
 	//NSLog(@”Save finished\n”);
 	[image release]; // release image
 }
 
--(void)saveViewToPhotoLibrary 
+-(void)saveImageToFileAndSetupEmail:(UIImage*)image
+{
+	NSString* filename = [self saveImageToFile :image];
+	
+	TString tsfilename = [filename UTF8String];
+	// Now setup an email using the image details
+	//TString urlstr = "http://www.google.com";
+	TString urlstr = "mailto:duane@dibely.com";
+	//TString urlstr = "mailto:duane@dibely.com?subject=Be My Valentine&body=Roses are Red&attachment=";
+	
+	urlstr.Append(tsfilename);
+	
+	TLCore::Platform::OpenWebURL(urlstr);
+}
+
+
+-(void)saveViewToPhotoLibrary
+{
+	UIImage *image = [self createImageFromView];
+	
+	[self saveImageToPhotoLibrary :image];	
+}
+
+-(void)saveViewToPhotoLibraryAndSetupEmail
+{
+	self.bSendImage = TRUE;
+	[self saveViewToPhotoLibrary];
+}
+
+
+
+-(void)saveImageToPhotoLibrary:(UIImage*) image
+{
+	UIImageWriteToSavedPhotosAlbum(image, self, (SEL)@selector(image:didFinishSavingWithError:contextInfo:), nil); // add callback for finish saving
+}
+
+-(NSString*) saveViewToFile
+{
+	UIImage *image = [self createImageFromView];
+	
+	return [self saveImageToFile: image];
+}
+
+-(NSString*) saveImageToFile:(UIImage*)image;
+{
+	// Get the tmp directory location
+	NSString *tmpdir = NSTemporaryDirectory();
+		
+	// Create the final filename by appending the fixed name
+	NSString *filename = [tmpdir stringByAppendingString: @"tmpimage.jpg"];
+	
+	// Get the JPG from image
+	NSData* data = UIImagePNGRepresentation(image);
+	
+	// Save to the file
+	Bool success = [data writeToFile:filename atomically:false];
+	
+	if(success)
+	{
+		TLDebug_Print("Image saved to file");
+	}
+	
+	// Cleanup
+	//[data release];
+	//[tmpdir release];
+	
+	return filename;
+}
+
+
+-(UIImage*)createImageFromView 
 {
 	CGRect rect = [[UIScreen mainScreen] bounds];
 	int width = rect.size.width;
@@ -469,7 +567,7 @@ void releaseData(void *info, const void *data, size_t dataSize)
 	UIImage *image = [[UIImage alloc] initWithCGImage:imageRef]; // change this to manual alloc/init instead of autorelease
 	CGImageRelease(imageRef); // YOU CAN RELEASE THIS NOW
 	
-	UIImageWriteToSavedPhotosAlbum(image, self, (SEL)@selector(image:didFinishSavingWithError:contextInfo:), nil); // add callback for finish saving
+	return image;
 }
 ////////////////////////////////////////////////////////
 
@@ -576,7 +674,8 @@ void TLRender::Platform::Screen::Draw()
 	// I'm not sure this is the right place but...
 	if(GetFlag(Flag_TakeScreenshot))
 	{
-		[glView saveViewToPhotoLibrary];
+		//[glView saveViewToPhotoLibrary];
+		[glView saveViewToPhotoLibraryAndSetupEmail];
 		m_Flags.Set(Flag_TakeScreenshot, FALSE);
 	}
 }
