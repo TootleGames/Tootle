@@ -43,6 +43,10 @@ void TAudioNode::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 
 			if(AudioRef == GetNodeRef())
 			{
+				// Set the volume to 0 before removing the node.  This is to try and prevent any pops and clicks
+				// that can happen via the OpenAL sysetm when stopping the source
+				SetVolume(0.0f);
+
 				// Shutdown this node
 				// NOTE: May need to test for a flag of 'auto release' at some stage as we may not want this 
 				// all of the time and the event would occur when 'Stopping' an audio object manually 
@@ -73,6 +77,8 @@ void TAudioNode::Pause()
 
 void TAudioNode::Stop()
 {
+	SetVolume(0.0f);
+
 	// Stop this audio
 	TLAudio::Platform::StopAudio(GetNodeRef());
 }
@@ -178,12 +184,17 @@ void TAudioNode::CreateSource()
 			TLDebug_Print("Audio buffer does not exist for audio node");
 		}
 	}
+	else
+	{
+		TLDebug_Print("Failed to create source for audio node");
+	}
 }
 
 // Removes the associated source via the platform specific code
 void TAudioNode::RemoveSource()
 {
-		Platform::RemoveSource(GetNodeRef());	
+	SetVolume(0.0f);
+	Platform::RemoveSource(GetNodeRef());	
 }
 
 
