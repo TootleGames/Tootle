@@ -303,6 +303,15 @@ SyncBool Platform::OpenAL::Init()
 		return SyncFalse;
 	}
 	
+	//Set the default distance model to use
+	alDistanceModel(AL_NONE);
+	
+	ALfloat data[3] = {0,0,0};
+	// Set the listener
+	alListenerfv(AL_POSITION,    data);
+    alListenerfv(AL_VELOCITY,    data);
+    alListenerfv(AL_ORIENTATION, data);
+	
 	return SyncTrue;
 }
 
