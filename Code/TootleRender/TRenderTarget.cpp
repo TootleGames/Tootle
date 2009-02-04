@@ -2,17 +2,13 @@
 #include "TScreen.h"
 #include <TootleCore/TPtr.h>
 
-//	gr: because I made the platform opengl calls inline (for super speed) we have to include the platform header
-#if defined(TL_TARGET_PC)
-	#include "PC/PCRender.h"
-#elif defined(TL_TARGET_IPOD)
-	#include "IPod/IPodRender.h"
-#else
-	#error unknown platform
+
+
+#ifdef _DEBUG
+//#define DEBUG_DRAW_RENDERZONES
+#define DEBUG_DRAW_FRUSTUM
 #endif
 
-//#define DEBUG_DRAW_RENDERZONES
-//#define DEBUG_DRAW_FRUSTUM
 #define ENABLE_ALPHA			//	enable alphas (on by default)
 
 
@@ -171,11 +167,13 @@ void TLRender::TRenderTarget::EndDraw()
 		pCamera->CalcFrustum();
 
 		//	really quick bodge
-		glLineWidth(20.f);
-		glDisable( GL_DEPTH_TEST );
-/*
+		Opengl::SetLineWidth( 2.f );
+		Opengl::EnableDepthRead( FALSE );
+		Opengl::EnableAlpha( FALSE );
+
 		glBegin(GL_LINES);
 		{	
+			/*	
 			glColor3f( 1.f, 0.f, 0.f );
 
 			//	front
@@ -190,8 +188,8 @@ void TLRender::TRenderTarget::EndDraw()
 
 			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(3) );
 			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(0) );
-
-			glColor3f( 1.f, 1.f, 1.f );
+		*/
+			glColor3f( 0.f, 1.f, 0.f );
 			//	rear
 			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(4) );
 			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(5) );
@@ -205,7 +203,9 @@ void TLRender::TRenderTarget::EndDraw()
 			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(7) );
 			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(4) );
 
+			/*
 			glColor3f( 1.f, 1.f, 0.f );
+
 			//	joins
 			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(0) );
 			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(4) );
@@ -218,10 +218,12 @@ void TLRender::TRenderTarget::EndDraw()
 
 			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(3) );
 			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(7) );
-
+		*/
 		}
 		glEnd();
-*/
+
+
+		/*
 
 		TLMaths::TBoxOB PlaneBox;
 		float worldz = 0.f;
@@ -232,9 +234,9 @@ void TLRender::TRenderTarget::EndDraw()
 
 		TArray<float2> BoxCorners;
 		Box.GetBoxCorners( BoxCorners );
-
+		Opengl::EnableAlpha( TRUE );
 		glBegin(GL_QUADS);
-		{	
+		{
 			glColor4f( 0.f, 1.f, 0.f, 0.5f );
 
 			//	front
@@ -244,6 +246,7 @@ void TLRender::TRenderTarget::EndDraw()
 			glVertex3fv( BoxCorners[2].xyz( worldz ) );
 		}
 		glEnd();
+		*/
 #endif
 
 
@@ -803,21 +806,25 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 		}
 
 		//	render wireframe and/or outline
-		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_Outline ) || RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_Wireframe ) )
+		#ifdef _DEBUG
 		{
-			//	setup specific params
-			Opengl::EnableWireframe(TRUE);
-			Opengl::SetSceneAlpha( 1.f );
-			Opengl::EnableAlpha( FALSE );
-			Opengl::SetLineWidth( 1.f );
+			if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_Outline ) || RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_Wireframe ) )
+			{
+				//	setup specific params
+				Opengl::EnableWireframe(TRUE);
+				Opengl::SetSceneAlpha( 1.f );
+				Opengl::EnableAlpha( FALSE );
+				Opengl::SetLineWidth( 1.f );
 
-			TFlags<TRenderNode::RenderFlags::Flags> WireframeRenderFlags = RenderNodeRenderFlags;
-			WireframeRenderFlags.Clear( TRenderNode::RenderFlags::UseVertexColours );
-			WireframeRenderFlags.Clear( TRenderNode::RenderFlags::UseMeshLineWidth );
-			WireframeRenderFlags.Clear( TRenderNode::RenderFlags::DepthRead );
+				TFlags<TRenderNode::RenderFlags::Flags> WireframeRenderFlags = RenderNodeRenderFlags;
+				WireframeRenderFlags.Clear( TRenderNode::RenderFlags::UseVertexColours );
+				WireframeRenderFlags.Clear( TRenderNode::RenderFlags::UseMeshLineWidth );
+				WireframeRenderFlags.Clear( TRenderNode::RenderFlags::DepthRead );
 
-			DrawMesh( *pMesh, pRenderNode, WireframeRenderFlags );
+				DrawMesh( *pMesh, pRenderNode, WireframeRenderFlags );
+			}
 		}
+		#endif
 	}
 
 
