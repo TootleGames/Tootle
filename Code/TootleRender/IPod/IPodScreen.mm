@@ -677,8 +677,8 @@ void TLRender::Platform::Screen::Draw()
 	// I'm not sure this is the right place but...
 	if(GetFlag(Flag_TakeScreenshot))
 	{
-		//[glView saveViewToPhotoLibrary];
-		[glView saveViewToPhotoLibraryAndSetupEmail];
+		[glView saveViewToPhotoLibrary];
+		//[glView saveViewToPhotoLibraryAndSetupEmail];
 		m_Flags.Set(Flag_TakeScreenshot, FALSE);
 	}
 }
