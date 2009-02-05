@@ -1,0 +1,3 @@
+Display .app signing info from the terminal;
+
+codesign -vvvv AppName.app

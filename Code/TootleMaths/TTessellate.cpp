@@ -297,73 +297,15 @@ void TLMaths::TContour::OutsetPoint(u32 Index,float Distance,TArray<float3>& New
 	TLMaths::Wrap( IndexPrev, 0, (s32)OriginalPoints.GetSize() );
 	TLMaths::Wrap( IndexNext, 0, (s32)OriginalPoints.GetSize() );
 
-	NewPoints[Index] += TLMaths::TContour::ComputeOutsetPoint( OriginalPoints[IndexPrev], OriginalPoints[Index], OriginalPoints[IndexNext], Distance, ContourIsClockwise );
-}
-
-
-// This function is a bit tricky. Given a path ABC, it returns the
-// coordinates of the outset point facing B on the left at a distance
-// of 64.0.
-//                                         M
-//                            - - - - - - X
-//                             ^         / '
-//                             | 64.0   /   '
-//  X---->-----X     ==>    X--v-------X     '
-// A          B \          A          B \   .>'
-//               \                       \<'  64.0
-//                \                       \                  .
-//                 \                       \                 .
-//                C X                     C X
-//
-//	static
-float3 TLMaths::TContour::ComputeOutsetPoint(const float3& A,const float3& B,const float3& C,float Distance,Bool ContourIsClockwise)
-{
-	TLDebug_CheckFloat( A );
-	TLDebug_CheckFloat( B );
-	TLDebug_CheckFloat( C );
-	
-    /* Build the rotation matrix from 'ba' vector */
-    float2 ba( A.x-B.x, A.y-B.y );
-	ba.Normalise();
-    float2 bc( C.x-B.x, C.y-B.y );
-	
-    /* Rotate bc to the left */
-    float2 tmp(bc.x * -ba.x + bc.y * -ba.y,
-			   bc.x * ba.y + bc.y * -ba.x );
-	
-    /* Compute the vector bisecting 'abc' */
-	float norm = TLMaths::Sqrtf(tmp.x * tmp.x + tmp.y * tmp.y);
-    
-	float dist = 0;
-	float normplusx = norm + tmp.x;
-	float normminusx = norm - tmp.x;
-	if ( normplusx != 0.0 )
-	{
-		float xdiv = normminusx / normplusx;
-		if ( xdiv != 0 )
-		{
-			float sqrtxdiv = TLMaths::Sqrtf(xdiv);
-			dist = Distance * sqrtxdiv;
-		}
-	}
-
-	//	gr: if tmp.y is positive when shrinking a poly, the new point is on the outside instead of inside
-
-    tmp.x = (tmp.y<0.f) ? dist : -dist;
-    tmp.y = Distance;
-	
-    //	Rotate the new bc to the right
-	float3 Result( tmp.x * -ba.x + tmp.y * ba.y, 
-				  tmp.x * -ba.y + tmp.y * -ba.x,
-				  B.z );
+	float3 Outset = TLMaths::GetLineStripOutset(OriginalPoints[IndexPrev], OriginalPoints[Index], OriginalPoints[IndexNext], Distance );
 
 	if ( !ContourIsClockwise )
 	{
-		Result.x *= -1.f;
-		Result.y *= -1.f;
+		Outset.x *= -1.f;
+		Outset.y *= -1.f;
 	}
 
-	return Result;
+	NewPoints[Index] += Outset;
 }
 
 	

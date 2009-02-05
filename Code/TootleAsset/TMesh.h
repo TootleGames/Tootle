@@ -81,6 +81,7 @@ public:
 	void					GenerateCapsule(const TLMaths::TCapsule& Capsule);	//	generate a capsule
 	void					GenerateRainbowColours();							//	create colours for each vertex
 	Bool					GenerateQuad(const TArray<float3>& Outline,const TColour& VertexColour);	//	turn an outline of points into a quad/tri-strip
+	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour& VertexColour);	//	turn an outline of points into a quad/tri-strip
 
 	//	vertex manipulation
 	s32						AddVertex(const float3& VertexPos);							//	add vertex to the list, makes up normals and colours if required

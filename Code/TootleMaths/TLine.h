@@ -6,6 +6,7 @@
 #pragma once
 #include <TootleCore/TLMaths.h>
 #include <TootleCore/TLTypes.h>
+#include <TootleCore/TArray.h>
 
 
 namespace TLMaths
@@ -13,6 +14,10 @@ namespace TLMaths
 	class TLine;		//	3D line shape
 	class TLine2D;		//	2D line shape
 	class TSphere2D;	//	
+
+	void		ExpandLineStrip(const TArray<float3>& LineStrip,float Width,TArray<float3>& OutsideLineStrip,TArray<float3>& InsideLineStrip);	//	create an outside and inside linestrip for an existing linestrip
+	float3		GetLineStripOutset(const float3& Start,const float3& Middle,const float3& End,float OutsetLength=1.f);	//	calculates the (normalised by default) outset for the Middle of a line strip (outset is relative)	//	gr: assumes line is clockwise. if not (and you have to detect that) then invert result
+	float3		GetLineOutset(const float3& Start,const float3& End,float OutsetLength=1.f);	//	calculates the outset for a line (outset is relative)
 };
 
 

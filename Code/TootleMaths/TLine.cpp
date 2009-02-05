@@ -4,6 +4,147 @@
 
 
 
+
+//-----------------------------------------------------------
+//	create an outside and inside linestrip for an existing linestrip
+//-----------------------------------------------------------
+void TLMaths::ExpandLineStrip(const TArray<float3>& LineStrip,float Width,TArray<float3>& OutsideLineStrip,TArray<float3>& InsideLineStrip)
+{
+	const float3* pPrevPoint = NULL;
+
+	for ( u32 i=0;	i<LineStrip.GetSize();	i++ )
+	{
+		const float3& ThisPoint = LineStrip[i];
+		const float3* pNextPoint = ((s32)i >= LineStrip.GetLastIndex()) ? NULL : &LineStrip[i+1];
+
+		float3 Outset;
+
+		//	calc outsets
+		if ( pPrevPoint && pNextPoint )
+		{
+			Outset = TLMaths::GetLineStripOutset( *pPrevPoint, ThisPoint, *pNextPoint, Width/2.f );
+		}
+		else if ( pPrevPoint )
+		{
+			Outset = TLMaths::GetLineOutset( *pPrevPoint, ThisPoint, Width/2.f );
+		}
+		else if ( pNextPoint )
+		{
+			Outset = TLMaths::GetLineOutset( ThisPoint, *pNextPoint, Width/2.f );
+		}
+		else
+		{
+			TLDebug_Break("Line strip with one point?");
+			Outset.Set( 0.f, 0.f, 0.f );
+		}
+
+		//	add to outside lines
+		OutsideLineStrip.Add( ThisPoint - Outset );
+		InsideLineStrip.Add( ThisPoint + Outset );
+
+		//	store prev point
+		pPrevPoint = &ThisPoint;
+	}	
+}
+
+
+//-----------------------------------------------------------
+//	calculates the (normalised by default) outset for the Middle of a line strip
+//	gr: assumes line is clockwise. if not (and you have to detect that) then invert result
+//	
+// This function is a bit tricky. Given a path ABC, it returns the
+// coordinates of the outset point facing B on the left at a distance
+// of 64.0.
+//                                         M
+//                            - - - - - - X
+//                             ^         / '
+//                             | 64.0   /   '
+//  X---->-----X     ==>    X--v-------X     '
+// A          B \          A          B \   .>'
+//               \                       \<'  64.0
+//                \                       \                  .
+//                 \                       \                 .
+//                C X                     C X
+//
+//-----------------------------------------------------------
+float3 TLMaths::GetLineStripOutset(const float3& Start,const float3& Middle,const float3& End,float OutsetLength)
+{
+	const float3& A = Start;
+	const float3& B = Middle;
+	const float3& C = End;
+	TLDebug_CheckFloat( A );
+	TLDebug_CheckFloat( B );
+	TLDebug_CheckFloat( C );
+	
+    //	Build the rotation matrix from 'ba' vector
+    float2 ba( A.x-B.x, A.y-B.y );
+	ba.Normalise();
+    float2 bc( C.x-B.x, C.y-B.y );
+	
+    //	Rotate bc to the left
+    float2 tmp(bc.x * -ba.x + bc.y * -ba.y,
+			   bc.x * ba.y + bc.y * -ba.x );
+	
+    //	Compute the vector bisecting 'abc'
+	float norm = TLMaths::Sqrtf(tmp.x * tmp.x + tmp.y * tmp.y);
+    
+	float dist = 0;
+	float normplusx = norm + tmp.x;
+	float normminusx = norm - tmp.x;
+	if ( normplusx != 0.0 )
+	{
+		float xdiv = normminusx / normplusx;
+		if ( xdiv != 0 )
+		{
+			float sqrtxdiv = TLMaths::Sqrtf(xdiv);
+			dist = OutsetLength * sqrtxdiv;
+		}
+	}
+
+	//	gr: if tmp.y is positive when shrinking a poly, the new point is on the outside instead of inside
+
+    tmp.x = (tmp.y<0.f) ? dist : -dist;
+    tmp.y = OutsetLength;
+	
+    //	Rotate the new bc to the right
+	float3 Result( tmp.x * -ba.x + tmp.y * ba.y, 
+				  tmp.x * -ba.y + tmp.y * -ba.x,
+				  B.z );
+
+
+	return Result;
+}
+
+
+//-----------------------------------------------------------
+//	calculates the outset for a line
+//-----------------------------------------------------------
+float3 TLMaths::GetLineOutset(const float3& Start,const float3& End,float OutsetLength)
+{
+	float3 Dir = End - Start;
+
+	//	catch non-lines
+	float LengthSq = Dir.LengthSq();
+	if ( LengthSq < TLMaths::g_NearZero )
+		return Start;
+
+	//	z is interp'd between the start and end z's. (usually same z though)
+	float z = Dir.z * 0.5f;
+
+	//	normalise dir
+	Dir.Normalise( TLMaths::Sqrtf(LengthSq), OutsetLength );
+
+	//	rotate right 90 degrees to match the 3-point outset code
+	//float3 Outset( Dir.y, -Dir.x, z );
+	float3 Outset( -Dir.y, Dir.x, z );
+
+	return Outset;
+}
+
+
+
+
+
 TLMaths::TLine::TLine(const float3& Start,const float3& End) : 
 	m_Start	( Start ),
 	m_End	( End )

@@ -105,7 +105,6 @@ private:
 	void					ComputeBisec(float3 &v);	//	Compute the vector bisecting from a vector 'v' and a distance 'd'
 
 	static void				OutsetPoint(u32 Index,float Distance,TArray<float3>& NewPoints,const TArray<float3>& OriginalPoints,Bool ContourIsClockwise);			//	move point in/out with outset
-	static float3			ComputeOutsetPoint(const float3& a,const float3& b,const float3& c,float Distance,Bool ContourIsClockwise);	//	Compute the outset point coordinates
 	
 private:
 	TArray<float3>			m_Points;

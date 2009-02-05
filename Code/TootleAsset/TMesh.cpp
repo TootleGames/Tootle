@@ -786,16 +786,26 @@ Bool TLAsset::TMesh::GenerateQuad(const TArray<float3>& Outline,const TColour& V
 		return FALSE;
 	}
 
+	return GenerateQuad( Outline[0], Outline[1], Outline[2], Outline[3], VertexColour );
+}
+
+
+//--------------------------------------------------------
+//	turn an outline of points into a quad/tri-strip
+//--------------------------------------------------------
+Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour& VertexColour)
+{
 	//	create tri strip
 	Tristrip* pNewStrip = m_Tristrips.AddNew();
 	if ( !pNewStrip )
 		return FALSE;
 
 	//	add verts
-	pNewStrip->Add( AddVertex( Outline[0], VertexColour ) );
-	pNewStrip->Add( AddVertex( Outline[1], VertexColour ) );
-	pNewStrip->Add( AddVertex( Outline[3], VertexColour ) );
-	pNewStrip->Add( AddVertex( Outline[2], VertexColour ) );
+	//	gr: note: ORDER IS 0,1,3,2 for tri strip!
+	pNewStrip->Add( AddVertex( OutlineA, VertexColour ) );
+	pNewStrip->Add( AddVertex( OutlineB, VertexColour ) );
+	pNewStrip->Add( AddVertex( OutlineD, VertexColour ) );
+	pNewStrip->Add( AddVertex( OutlineC, VertexColour ) );
 
 	return TRUE;
 }
