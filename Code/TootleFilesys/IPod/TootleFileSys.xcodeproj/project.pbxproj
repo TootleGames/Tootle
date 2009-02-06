@@ -166,6 +166,8 @@
 		84C110530F0A875F00B2DF7A /* autofit.c in Sources */ = {isa = PBXBuildFile; fileRef = 84C1104B0F0A875F00B2DF7A /* autofit.c */; };
 		84DE34100F12A94D00608F8C /* TFileScheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DE340E0F12A94D00608F8C /* TFileScheme.cpp */; };
 		84DE34110F12A94D00608F8C /* TFileScheme.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DE340F0F12A94D00608F8C /* TFileScheme.h */; };
+		84E114DE0F3C478A00471397 /* TFileCollada.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E114DC0F3C478A00471397 /* TFileCollada.cpp */; };
+		84E114DF0F3C478A00471397 /* TFileCollada.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E114DD0F3C478A00471397 /* TFileCollada.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -333,6 +335,8 @@
 		84C1104B0F0A875F00B2DF7A /* autofit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = autofit.c; path = autofit/autofit.c; sourceTree = "<group>"; };
 		84DE340E0F12A94D00608F8C /* TFileScheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileScheme.cpp; path = ../TFileScheme.cpp; sourceTree = SOURCE_ROOT; };
 		84DE340F0F12A94D00608F8C /* TFileScheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileScheme.h; path = ../TFileScheme.h; sourceTree = SOURCE_ROOT; };
+		84E114DC0F3C478A00471397 /* TFileCollada.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileCollada.cpp; path = ../TFileCollada.cpp; sourceTree = SOURCE_ROOT; };
+		84E114DD0F3C478A00471397 /* TFileCollada.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileCollada.h; path = ../TFileCollada.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -366,6 +370,8 @@
 		84C109F40F0A799D00B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				84E114DC0F3C478A00471397 /* TFileCollada.cpp */,
+				84E114DD0F3C478A00471397 /* TFileCollada.h */,
 				84DE340E0F12A94D00608F8C /* TFileScheme.cpp */,
 				84DE340F0F12A94D00608F8C /* TFileScheme.h */,
 				84C10C180F0A862B00B2DF7A /* Freetype */,
@@ -740,6 +746,7 @@
 				84C110310F0A875000B2DF7A /* ftcmru.h in Headers */,
 				84C110330F0A875000B2DF7A /* ftcsbits.h in Headers */,
 				84DE34110F12A94D00608F8C /* TFileScheme.h in Headers */,
+				84E114DF0F3C478A00471397 /* TFileCollada.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -842,6 +849,7 @@
 				84C110520F0A875F00B2DF7A /* psnames.c in Sources */,
 				84C110530F0A875F00B2DF7A /* autofit.c in Sources */,
 				84DE34100F12A94D00608F8C /* TFileScheme.cpp in Sources */,
+				84E114DE0F3C478A00471397 /* TFileCollada.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

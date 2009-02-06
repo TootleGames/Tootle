@@ -30,16 +30,6 @@
 		vrLen = 693;
 		vrLoc = 1305;
 	};
-	842AA3680F1C989A004BF60A /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C109FF0F0A79AE00B2DF7A /* TFileWAV.cpp */;
-		name = "TFileWAV.cpp: 71";
-		rLen = 2;
-		rLoc = 1580;
-		rType = 0;
-		vrLen = 559;
-		vrLoc = 2196;
-	};
 	8491F17B0F25E74B002FE16F /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84C109FF0F0A79AE00B2DF7A /* TFileWAV.cpp */;
@@ -122,15 +112,15 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 254142272;
-			PBXWorkspaceStateSaveDate = 254142272;
+			PBXPerProjectTemplateStateSaveDate = 255608698;
+			PBXWorkspaceStateSaveDate = 255608698;
 		};
 		perUserProjectItems = {
 			842A9E650F1629B1004BF60A /* PBXTextBookmark */ = 842A9E650F1629B1004BF60A /* PBXTextBookmark */;
 			842AA35F0F1C989A004BF60A /* PBXTextBookmark */ = 842AA35F0F1C989A004BF60A /* PBXTextBookmark */;
 			842AA3600F1C989A004BF60A /* PBXTextBookmark */ = 842AA3600F1C989A004BF60A /* PBXTextBookmark */;
-			842AA3680F1C989A004BF60A /* PBXTextBookmark */ = 842AA3680F1C989A004BF60A /* PBXTextBookmark */;
 			8491F17B0F25E74B002FE16F /* PBXTextBookmark */ = 8491F17B0F25E74B002FE16F /* PBXTextBookmark */;
+			84E114E10F3C479800471397 /* PBXTextBookmark */ = 84E114E10F3C479800471397 /* PBXTextBookmark */;
 			84E6432C0F15293C005A4DC9 /* PBXTextBookmark */ = 84E6432C0F15293C005A4DC9 /* PBXTextBookmark */;
 			84E6432D0F15293C005A4DC9 /* PBXTextBookmark */ = 84E6432D0F15293C005A4DC9 /* PBXTextBookmark */;
 			84E6432E0F15293C005A4DC9 /* PBXTextBookmark */ = 84E6432E0F15293C005A4DC9 /* PBXTextBookmark */;
@@ -229,7 +219,7 @@
 	};
 	84C109FF0F0A79AE00B2DF7A /* TFileWAV.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 3696}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 3892}}";
 			sepNavSelRange = "{1580, 2}";
 			sepNavVisRange = "{2196, 559}";
 		};
@@ -268,6 +258,16 @@
 			sepNavSelRange = "{0, 0}";
 			sepNavVisRange = "{0, 632}";
 		};
+	};
+	84E114E10F3C479800471397 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C109FF0F0A79AE00B2DF7A /* TFileWAV.cpp */;
+		name = "TFileWAV.cpp: 71";
+		rLen = 2;
+		rLoc = 1580;
+		rType = 0;
+		vrLen = 559;
+		vrLoc = 2196;
 	};
 	84E643140F152464005A4DC9 /* TFileWAV.cpp */ = {
 		isa = PBXFileReference;
@@ -317,7 +317,7 @@
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleFilesys/IPod/../TFileWAV.cpp;
 		sourceTree = "<absolute>";
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 3696}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 3892}}";
 			sepNavSelRange = "{1580, 2}";
 			sepNavVisRange = "{2196, 559}";
 		};
