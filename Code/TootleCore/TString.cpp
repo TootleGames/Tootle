@@ -663,9 +663,10 @@ Bool TString::SetUppercase()
 
 
 //------------------------------------------------------
-//	turn string into an integer - fails if some non-integer stuff in it
+//	turn string into an integer - fails if some non-integer stuff in it (best to trim first where possible). 
+//	The extra pIsPositive param (if not null) stores the posititivy/negativity of the number. This is needed for -0.XYZ numbers. we still need the sign for floats, but as an int -0 is just 0.
 //------------------------------------------------------
-Bool TString::GetInteger(s32& Integer) const
+Bool TString::GetInteger(s32& Integer,Bool* pIsPositive) const
 {
 	//	just a routine to see if we could correct bad cases (hence debug only)
 	if ( TLDebug::IsEnabled() )
@@ -683,6 +684,10 @@ Bool TString::GetInteger(s32& Integer) const
 	if ( CharIndex == -1 )
 		return FALSE;
 
+	//	default to positive
+	if ( pIsPositive )
+		*pIsPositive = TRUE;
+
 	//	reset int
 	Integer = 0;
 	u32 Mult = 1;
@@ -697,6 +702,10 @@ Bool TString::GetInteger(s32& Integer) const
 			//	check if it's a negative
 			if ( CharIndex == 0 && Char == '-' )
 			{
+				//	negate the result
+				if ( pIsPositive )
+					*pIsPositive = FALSE;
+
 				Integer = -Integer;
 				break;
 			}
@@ -742,11 +751,9 @@ Bool TString::GetFloat(float& Float) const
 
 	//	turn these parts into integers
 	s32 IntegerLarge;
-	if ( !FloatLargeString.GetInteger( IntegerLarge ) )
+	Bool Positive = TRUE;
+	if ( !FloatLargeString.GetInteger( IntegerLarge, &Positive ) )
 		return FALSE;
-
-	//	turn into float
-	Float = (float)IntegerLarge;
 
 	//	gr: as it's floating point, what we need to do is base the max decimal places based on the size of the 
 	//	integer. todo: lookup schematics for a float. I think it's 8 in either direction?...
@@ -754,6 +761,9 @@ Bool TString::GetFloat(float& Float) const
 	u32 MaxDecPlaces = FloatDecimalString.GetLengthWithoutTerminator();
 	if ( MaxDecPlaces > 4 )
 		MaxDecPlaces = 4;
+
+	//	turn into positive float
+	Float = (float)( Positive ? IntegerLarge : -IntegerLarge );
 
 	float DecimalDiv = 1.f * 0.1f;
 	for ( u32 i=0;	i<MaxDecPlaces;	i++ )
@@ -774,6 +784,10 @@ Bool TString::GetFloat(float& Float) const
 		//	make decimal div smaller
 		DecimalDiv *= 0.1f;
 	}
+
+	//	turn float back into a negative
+	if ( !Positive )
+		Float = -Float;
 
 	return TRUE;
 }

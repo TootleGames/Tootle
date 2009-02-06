@@ -12,6 +12,7 @@
 #include "TFileXml.h"
 #include "TFileWAV.h"
 #include "TFileScheme.h"
+#include "TFileCollada.h"
 
 #if defined(TL_TARGET_IPOD)
 	#include "IPod/IPodLocalFileSys.h"
@@ -278,6 +279,13 @@ TLFileSys::TFile* TLFileSys::TFileSys::CreateObject(TRefRef InstanceRef,TRefRef 
 	if ( TypeRef == TRef("scheme") )
 	{
 		pFile = new TLFileSys::TFileScheme( InstanceRef, TypeRef );
+		return pFile;
+	}
+	
+	//	collada xml file
+	if ( TypeRef == TRef("dae") )
+	{
+		pFile = new TLFileSys::TFileCollada( InstanceRef, TypeRef );
 		return pFile;
 	}
 	

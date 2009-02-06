@@ -260,7 +260,7 @@ SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset
 	
 		//	keep these kinds of tags
 		if ( pTag->GetTagType() == TLXml::TagType_OpenClose ||
-			 pTag->GetTagType() == TLXml::TagType_OpenClose )
+			 pTag->GetTagType() == TLXml::TagType_SelfClose )
 		{
 			continue;
 		}
@@ -342,11 +342,16 @@ Bool TLFileSys::TFileSimpleVector::ImportMesh(TPtr<TLAsset::TMesh>& pMesh,TPtr<T
 		if ( !pChildTag->GetChildren().GetSize() )
 			continue;
 
+		float OldZ = m_SvgPointMove.z;
+
 		//	every time we go deeper down the tree increment the z
 		m_SvgPointMove.z += m_SvgLayerZIncrement;
 
 		if ( !ImportMesh( pMesh, pChildTag ) )
 			return FALSE;
+
+		//	restore z
+		m_SvgPointMove.z = OldZ;
 	}
 
 

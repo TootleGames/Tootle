@@ -402,7 +402,7 @@ void TLAsset::TMesh::ScaleVerts(const float3& Scale,u32 FirstVert,s32 LastVert)
 		LastVert = m_Vertexes.GetLastIndex();
 
 	//	scale verts
-	for ( u32 v=FirstVert;	v<=(u32)LastVert;	v++ )
+	for ( s32 v=FirstVert;	v<=LastVert;	v++ )
 	{
 		float3& Vert = m_Vertexes[v];
 		Vert *= Scale;
@@ -426,7 +426,7 @@ void TLAsset::TMesh::MoveVerts(const float3& Movement,u32 FirstVert,s32 LastVert
 		LastVert = m_Vertexes.GetLastIndex();
 
 	//	move verts
-	for ( u32 v=FirstVert;	v<=(u32)LastVert;	v++ )
+	for ( s32 v=FirstVert;	v<=LastVert;	v++ )
 	{
 		float3& Vert = m_Vertexes[v];
 		Vert += Movement;

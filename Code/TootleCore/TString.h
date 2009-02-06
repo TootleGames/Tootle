@@ -82,7 +82,7 @@ public:
 	Bool					IsLessThan(const TString& String) const;					//	comparison to string
 	template<class STRINGTYPE>
 	Bool					Split(const CHARTYPE& SplitChar,TArray<STRINGTYPE>& StringArray) const;		//	split string by SplitChar into array. if no cases of SplitChar then FALSE is return and no strings are added to the array
-	Bool					GetInteger(s32& Integer) const;					//	turn string into an integer - fails if some non-integer stuff in it (best to trim first where possible)
+	Bool					GetInteger(s32& Integer,Bool* pIsPositive=NULL) const;	//	turn string into an integer - fails if some non-integer stuff in it (best to trim first where possible). The extra pIsPositive param (if not null) stores the posititivy/negativity of the number. This is needed for -0.XYZ numbers. we still need the sign for floats, but as an int -0 is just 0.
 	Bool					GetFloat(float& Float) const;					//	turn string into a float
 	Bool					GetHexInteger(u32& Integer) const;				//	turn hexidecimal string into an integer (best to trim first where possible)
 	Bool					GetHexBytes(TArray<u8>& ParsedBytes) const;		//	turn hexidecimal string into an array of bytes. so string is expected to be like 0011223344aabbff etc

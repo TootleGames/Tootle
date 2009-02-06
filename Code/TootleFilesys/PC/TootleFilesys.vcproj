@@ -416,6 +416,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TFileCollada.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TFileCollada.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TFileFreetype.cpp"
 			>
 		</File>

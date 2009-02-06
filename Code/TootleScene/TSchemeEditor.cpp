@@ -135,13 +135,14 @@ void TSchemeEditor::PickObjects(Type2<s32> CursorPosition, TRef refRenderTargetI
 {
 	TPtr<TLRender::TScreen> pScreen = TLRender::g_pScreenManager->GetInstance("Screen");
 
-#ifdef _DEBUG
 	if(!pScreen)
 	{
-		TLDebug_Break("TSchemeEditor::PickObjects - Failed to get screen!");
+		//	gr: removed break, this kept going off after screen got destroyed
+#ifdef _DEBUG
+	//	TLDebug_Break("TSchemeEditor::PickObjects - Failed to get screen!");
+#endif
 		return;
 	}
-#endif
 
 	// Get 3d world pos from cursor pos
 	// NOTE: May need multiple window checks/rays if we support 
@@ -176,13 +177,15 @@ void TSchemeEditor::AddRemoveObjects(Type2<s32> CursorPosition, TRef refRenderTa
 {
 	TPtr<TLRender::TScreen> pScreen = TLRender::g_pScreenManager->GetInstance("Screen");
 
-#ifdef _DEBUG
 	if(!pScreen)
 	{
-		TLDebug_Break("TSchemeEditor::PickObjects - Failed to get screen!");
+		//	gr: removed break, this kept going off after screen got destroyed
+#ifdef _DEBUG
+	//	TLDebug_Break("TSchemeEditor::PickObjects - Failed to get screen!");
+#endif
 		return;
 	}
-#endif
+
 
 	// Get 3d world pos from cursor pos
 	// NOTE: May need multiple window checks/rays if we support 
@@ -277,13 +280,15 @@ void TSchemeEditor::TransformSelectedNodes(TPtr<TLMessaging::TMessage>& pMessage
 			// Find world pos in 3d from 2d screen pos
 			TPtr<TLRender::TScreen> pScreen = TLRender::g_pScreenManager->GetInstance("Screen");
 
-	#ifdef _DEBUG
 			if(!pScreen)
 			{
-				TLDebug_Break("SnowmanEditor::PlotNewPoint - Failed to get screen!");
+				//	gr: removed break, this kept going off after screen got destroyed
+		#ifdef _DEBUG
+			//	TLDebug_Break("TSchemeEditor::PickObjects - Failed to get screen!");
+		#endif
 				return;
 			}
-	#endif
+
 
 			int2 PreviousCursorPosition = CursorPosition;
 			float fAmount = 0.0f;
