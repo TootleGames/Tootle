@@ -117,7 +117,7 @@ void TManager::SetState(TLManager::ManagerState NewState)
 
 		if(pMessage.IsValid())
 		{
-			pMessage->SetSenderID(GetManagerID());
+			pMessage->SetSenderID(GetManagerRef());
 			pMessage->AddChannelID("STATECHANGE");
 
 			pMessage->Write(NewState);

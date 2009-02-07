@@ -24,9 +24,9 @@ namespace TLManager
 class TManager : public TLMessaging::TRelay
 {
 public:
-	TManager(TRef refManagerID) :
-	  m_refManagerID(refManagerID),
-	  m_ManagerState(TLManager::S_None)
+	TManager(TRefRef ManagerRef) :
+	  m_ManagerRef		( ManagerRef ),
+	  m_ManagerState	( TLManager::S_None )
 	{
 	}
 
@@ -34,9 +34,9 @@ public:
 	{
 	}
 
-	inline TRef						GetManagerID()			const	{ return m_refManagerID; }
-	inline TLManager::ManagerState	GetState()				const	{ return m_ManagerState; }
-	FORCEINLINE Bool				operator<(const TManager& Manager)const	{	return (m_refManagerID < Manager.m_refManagerID);	}
+	FORCEINLINE TRefRef					GetManagerRef() const					{	return m_ManagerRef;	}
+	FORCEINLINE TLManager::ManagerState	GetState() const						{	return m_ManagerState;	}
+	FORCEINLINE Bool					operator<(const TManager& Manager)const	{	return (GetManagerRef() < Manager.GetManagerRef());	}
 
 protected:
 	virtual SyncBool Initialise() 
@@ -61,6 +61,6 @@ protected:
 	virtual void	OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
 
 private:
-	TRef					m_refManagerID;	// Manager unique ID
+	TRef					m_ManagerRef;	// Manager unique ID
 	TLManager::ManagerState	m_ManagerState; // Simple manager state handling (state machine would be OTT and involve calling an update every frame
 };

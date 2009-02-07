@@ -6,7 +6,6 @@
 
 
 #define TLGRAPH_OWN_CHILDREN
-//#define TLGRAPH_CPOINTER_TRAVERSAL
 
 
 #include "TGraphBase.h"
@@ -60,6 +59,8 @@ public:
 	{
 	}
 	
+	virtual TRefRef				GetGraphRef() const						{	return TManager::GetManagerRef();	}
+
 	//	Node access
 	inline TPtr<T>&				GetRootNode()							{	return m_pRootNode; }
 	inline TPtrArray<T>&		GetNodeList()							{	return m_NodeIndex;	}
@@ -67,7 +68,7 @@ public:
 	template<typename MATCHTYPE>
 	TPtr<T>&					FindNodeMatch(const MATCHTYPE& Value);	//	find a TPtr in the graph that matches the specified value (will use == operator of node type to match)
 
-	TPtr<T>&					FindNode(const TRef& NodeRef);
+	TPtr<T>&					FindNode(TRefRef NodeRef);				//	find a node
 	TRef						GetFreeNodeRef(TRefRef BaseRef=TRef());	//	find an unused ref for a node - returns the ref
 	TRefRef						GetFreeNodeRef(TRef& Ref);				//	find an unused ref for a node, modifies the ref provided
 	virtual Bool				SendMessageToNode(TRefRef NodeRef,TPtr<TLMessaging::TMessage>& pMessage);	//	send message to node
@@ -92,7 +93,6 @@ public:
 		return (m_NodeFactories.Add(pFactory) != -1);			
 	}
 
-
 protected:
 	virtual SyncBool			Initialise();
 	virtual SyncBool			Update(float fTimeStep);
@@ -111,6 +111,10 @@ protected:
 	virtual void				OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
 	
 	TPtr<T>&					FindPtr(const TGraphNode<T>* pNode) const;					//	find a TPtr in the graph that matches the node - workaround for non intrusive pointers
+
+	//	base graph functions
+	virtual TLGraph::TGraphNodeBase*	FindNodeBase(TRefRef NodeRef)		{	TPtr<T>& pNode = FindNode( NodeRef );	return pNode.GetObject<TLGraph::TGraphNodeBase>();	}
+	virtual TLGraph::TGraphNodeBase*	GetRootNodeBase()					{	TPtr<T>& pNode = m_pRootNode;	return pNode.GetObject<TLGraph::TGraphNodeBase>();	}
 
 	//	events
 	virtual void				OnNodeAdded(TPtr<T>& pNode);				//	called after node has been added to graph and to parent
@@ -166,25 +170,20 @@ private:
 //		use TPtr& pPtr for internal/protected functions (sibling funcs)
 //--------------------------------------------------------------------
 template <class T>
-class TLGraph::TGraphNode : public TLMessaging::TRelay, public TLMessaging::TMessageQueue
+class TLGraph::TGraphNode : public TLMessaging::TRelay, public TLMessaging::TMessageQueue, public TLGraph::TGraphNodeBase
 {
 	friend class TGraph<T>;
 public:
-	TGraphNode(TRefRef NodeRef,TRefRef NodeTypeRef) : m_NodeRef ( NodeRef ), m_NodeTypeRef ( NodeTypeRef )	{	m_NodeRef.GetString( m_Debug_NodeRefString );	m_NodeTypeRef.GetString( m_Debug_NodeTypeRefString );	}
+	TGraphNode(TRefRef NodeRef,TRefRef NodeTypeRef) : TGraphNodeBase ( NodeRef, NodeTypeRef )	{}
 	virtual ~TGraphNode()
 	{
 		// Ensure this node isn't in the linked list any longer
 		//Remove(this);
 	}
 
-	inline TRefRef			GetNodeRef() const						{	return m_NodeRef; }
-	inline TRefRef			GetNodeTypeRef() const					{	return m_NodeTypeRef; }
-	Bool					IsKindOf(TRefRef TypeRef)				{	return (GetNodeTypeRef() == TypeRef) ? TRUE : IsParentKindOf( TypeRef );	}
-	FORCEINLINE Bool		IsParentKindOf(TRefRef TypeRef) const	{	return GetParent() ? GetParent()->IsKindOf(TypeRef) : FALSE;	}
-
-	virtual void			Initialise(TPtr<TLMessaging::TMessage>& pMessage)	{}
+	virtual void			Initialise(TPtr<TLMessaging::TMessage>& pMessage);	//	Initialise message - made into virtual func as it's so commonly used
 	virtual void 			Update(float Timestep);					// Main node update called once per frame
-	virtual void			Shutdown()						{}			// Shutdown routine	- called before being removed form the graph
+	virtual void			Shutdown()							{}	// Shutdown routine	- called before being removed form the graph
 
 	// Parent manipulation
 	inline TPtr<T>&			GetParent()							{	return m_pParent;	}
@@ -197,18 +196,14 @@ public:
 	inline TPtrArray<T>&	GetChildren()						{	return m_Children;	}
 	inline const TPtrArray<T>&	GetChildren() const				{	return m_Children;	}
 
-	#ifdef TLGRAPH_CPOINTER_TRAVERSAL
-		inline TArray<T*>&		GetChildrenPointers()				{	return m_ChildrenPointers;	}
-		inline const TArray<T*>&	GetChildrenPointers() const		{	return m_ChildrenPointers;	}
-	#endif
 #else
 	inline Bool				HasChildren() const					{	return m_pChildFirst.IsValid();	}
 	inline const TPtr<T>&	GetChildFirst() const				{	return m_pChildFirst;	}			//	cant call it ChildFirst because of windows macro
 #endif
-
 	template<typename MATCHTYPE>
 	TPtr<T>&				FindChildMatch(const MATCHTYPE& Value);		//	find a TPtr in the graph that matches the specified value (will use == operator of node type to match)
 	FORCEINLINE TPtr<T>&	FindChild(const TRef& NodeRef)				{	return FindChildMatch(NodeRef);	}
+
 
 	inline Bool				operator==(const TPtr<TGraphNode<T> >& pNode) const	{	return this == pNode.GetObject();	}
 	inline Bool				operator==(const TGraphNode<T>& Node) const			{	return this == (&Node);	}
@@ -217,11 +212,11 @@ public:
 	inline Bool				operator<(const TGraphNode<T>& Node) const			{	return GetNodeRef() == Node.GetNodeRef();	}
 
 protected:
-	inline void				SetNodeRef(TRefRef NodeRef)					{	m_NodeRef = NodeRef;	m_NodeRef.GetString( m_Debug_NodeRefString );	}
+	virtual const TGraphNodeBase*	GetParentBase() const		{	return m_pParent.GetObject<TGraphNodeBase>();	}
 
-	virtual void			UpdateAll(float Timestep);					//	update tree: update self, and children and siblings
+	virtual void			UpdateAll(float Timestep);						//	update tree: update self, and children and siblings
 
-	virtual void			OnAdded()						{}			// Added routine			- called once the node has been added to the graph
+	virtual void			OnAdded()							{}			// Added routine			- called once the node has been added to the graph
 
 	// Sibling manipulation
 #ifndef TLGRAPH_OWN_CHILDREN
@@ -251,6 +246,9 @@ protected:
 
 	Bool					CheckIsThis(TPtr<T>& pThis);					//	check the node pointer is actually this, if not throws up a DebugBreak
 
+	//	base functions
+	virtual void			GetChildrenBase(TArray<TGraphNodeBase*>& ChildNodes);
+
 private:
 	virtual Bool			AddChild(TPtr<T>& pChild,TPtr<T>& pThis);		//	gr: add to END of child list
 //	virtual Bool			InsertChild(TPtr<T>& pChild,TPtr<T>& pThis)	{	return SetChildFirst( pChild, pThis );	}	//	gr: add to START of child list
@@ -270,24 +268,15 @@ private:
 #endif
 
 private:
-	TRef				m_NodeRef;			//	Node unique ID
-	TRef				m_NodeTypeRef;		//	node's type
-
 	TPtr<T>				m_pParent;			// Parent item
 
 #ifdef TLGRAPH_OWN_CHILDREN
 	TPtrArray<T>		m_Children;
-	#ifdef TLGRAPH_CPOINTER_TRAVERSAL
-		TArray<T*>		m_ChildrenPointers;	//	array parrallel to m_Children, but not using TPtr's so faster for traversal..
-	#endif
 #else
 	TPtr<T>				m_pChildFirst;		// First child
 	TPtr<T>				m_pPrevious;		//	prev sibling
 	TPtr<T>				m_pNext;			//	Next sibling
 #endif
-
-	TBufferString<6>	m_Debug_NodeRefString;
-	TBufferString<6>	m_Debug_NodeTypeRefString;
 };
 
 
@@ -300,7 +289,18 @@ void TLGraph::TGraphNode<T>::Update(float Timestep)
 {
 	// Process all queued messages first
 	ProcessMessageQueue();
-}			
+}
+
+
+//-------------------------------------------------------
+//	Initialise message - made into virtual func as it's so commonly used
+//-------------------------------------------------------
+template <class T>
+void TLGraph::TGraphNode<T>::Initialise(TPtr<TLMessaging::TMessage>& pMessage)		
+{
+	//	gr: consider...
+	//	GetNodeData().CopyTree( pMessage->GetData() );
+}
 
 
 //-------------------------------------------------------
@@ -509,12 +509,8 @@ void TLGraph::TGraphNode<T>::UpdateAll(float Timestep)
 
 	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
 	{
-		#ifdef TLGRAPH_CPOINTER_TRAVERSAL
-			m_ChildrenPointers[c]->UpdateAll( Timestep );
-		#else
-			TPtr<T>& pChild = m_Children[c];
-			pChild->UpdateAll( Timestep );
-		#endif
+		TPtr<T>& pChild = m_Children[c];
+		pChild->UpdateAll( Timestep );
 	}
 
 #else
@@ -549,10 +545,6 @@ Bool TLGraph::TGraphNode<T>::AddChild(TPtr<T>& pChild,TPtr<T>& pThis)
 	pChild->SetParent( pThis );
 	m_Children.Add( pChild );
 	
-	#ifdef TLGRAPH_CPOINTER_TRAVERSAL
-		m_ChildrenPointers.Add( pChild.GetObject() );
-	#endif
-
 #else
 
 	if ( m_pChildFirst.IsValid() )
@@ -616,9 +608,6 @@ Bool TLGraph::TGraphNode<T>::RemoveChild(TPtr<T>& pItem)
 		return FALSE;
 	
 	m_Children.RemoveAt( ChildIndex );
-	#ifdef TLGRAPH_CPOINTER_TRAVERSAL
-		m_ChildrenPointers.RemoveAt( ChildIndex );
-	#endif
 
 	return TRUE;
 
@@ -725,10 +714,6 @@ void TLGraph::TGraphNode<T>::RemoveChildren()
 
 	m_Children.Empty();	//	TPtrArray class NULL's children for us so everything gets released okay
 
-	#ifdef TLGRAPH_CPOINTER_TRAVERSAL
-		m_ChildrenPointers.Empty();
-	#endif
-
 #else
 
 	if(m_pChildFirst.IsValid())
@@ -812,6 +797,20 @@ void TLGraph::TGraphNode<T>::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessag
 	TLMessaging::TRelay::ProcessMessage(pMessage);
 }
 
+
+//---------------------------------------------------------
+//	
+//---------------------------------------------------------
+template<class T>
+void TLGraph::TGraphNode<T>::GetChildrenBase(TArray<TGraphNodeBase*>& ChildNodes)
+{
+	TPtrArray<T>& Children = GetChildren();
+
+	for ( u32 c=0;	c<Children.GetSize();	c++ )
+	{
+		ChildNodes.Add( Children[c].GetObject<TGraphNodeBase>() );
+	}
+}
 
 
 
@@ -1425,4 +1424,3 @@ Bool TLGraph::TGraph<T>::SendMessageToNode(TRefRef NodeRef,TPtr<TLMessaging::TMe
 	return TRUE;
 }
 
-	

@@ -24,8 +24,8 @@ SyncBool TInputManager::Initialise()
 	// If we have the event channel manager then register some event channels
 	if(TLMessaging::g_pEventChannelManager)
 	{
-		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerID(), "ACTION");
-		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerID(), "DEVICE");
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "ACTION");
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "DEVICE");
 
 		return Platform::Init();
 	}

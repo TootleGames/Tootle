@@ -119,10 +119,10 @@ SyncBool TCoreManager::InitialiseLoop()
 		// Create the base event channels for the core manager
 		// All managers will subscribe to the initialise and shutdown channels by default in the 
 		// base TManager::OnEventChannelAdded() rotuine
-		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerID(), InitialiseRef);
-		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerID(), UpdateRef);
-		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerID(), RenderRef);
-		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerID(), ShutdownRef);
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), InitialiseRef);
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), UpdateRef);
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), RenderRef);
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), ShutdownRef);
 
 
 		//TODO: Platform specific manager??

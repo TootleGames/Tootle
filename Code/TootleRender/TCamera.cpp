@@ -6,8 +6,9 @@
 #include <TootleInput/TLInput.h>	// TEST
 #include <TootleCore/TEventChannel.h> //TEST
 
-//#define DEBUG_SCALE_FRUSTUM_BOX		0.2f	//	scale down the frustum boxes we generate to test culling/intersections etc
-
+#ifdef _DEBUG
+#define DEBUG_SCALE_FRUSTUM_BOX		0.7f	//	scale down the frustum boxes we generate to test culling/intersections etc
+#endif
 
 TLRender::TCamera::TCamera() :
 	m_ViewLine	( float3(0.f, 0.f, 0.f), float3(0.f, 0.f, 1.f) ),

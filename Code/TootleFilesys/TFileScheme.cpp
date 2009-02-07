@@ -12,105 +12,140 @@ namespace TLString
 
 namespace TLFileScheme
 {
-	enum DataType
-	{
-		DataType_Invalid = 0,	//	invalid type
-		DataType_Float,
-		DataType_Float2,
-		DataType_Float3,
-		DataType_Float4,
-		DataType_Quaternion = DataType_Float4,
-		DataType_Colour = DataType_Float4,
-		DataType_String,		//	plain string
-		DataType_WideString,	//	plain string in wide chars, represented in hex
-		DataType_TRef,			//	string -> ref
-		DataType_Hex,			//	raw binary data in hex
-	};
-
-	DataType	GetDataTypeFromString(const TString& String);
-	SyncBool	ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TLFileScheme::DataType Type);
+	TRef		GetDataTypeFromString(const TString& String);
+	SyncBool	ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRef DataType);
 }
 
 
 
-TLFileScheme::DataType TLFileScheme::GetDataTypeFromString(const TString& String)
+TRef TLFileScheme::GetDataTypeFromString(const TString& String)
 {
-	if ( String == "float" )		return TLFileScheme::DataType_Float;
-	if ( String == "float2" )		return TLFileScheme::DataType_Float2;
-	if ( String == "float3" )		return TLFileScheme::DataType_Float3;
-	if ( String == "float4" )		return TLFileScheme::DataType_Float4;
-	if ( String == "quaternion" )	return TLFileScheme::DataType_Quaternion;
-	if ( String == "colour" )		return TLFileScheme::DataType_Colour;
-	if ( String == "string" )		return TLFileScheme::DataType_String;
-	if ( String == "widestring" )	return TLFileScheme::DataType_WideString;
-	if ( String == "tref" )			return TLFileScheme::DataType_TRef;
-	if ( String == "hex" )			return TLFileScheme::DataType_Hex;
-	
-	//	unknown type
-	TLDebug_Break("Unsupported data type in scheme file");
+	//	cache predefined ref types for a simple match
+	static TFixedArray<TRef,20> g_DataTypeRefCache(0);
+	if ( g_DataTypeRefCache.GetSize() == 0 )
+	{
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TRef>() );
 
-	return TLFileScheme::DataType_Invalid;
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<float>() );
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<float2>() );
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<float3>() );
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<float4>() );
+
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<u8>() );
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<u16>() );
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<u32>() );
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<u64>() );
+
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<s8>() );
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<s16>() );
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<s32>() );
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<s64>() );
+
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef_Hex8() );
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef_Hex16() );
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef_Hex32() );
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef_Hex64() );
+
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TLMaths::TQuaternion>() );
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TColour>() );
+	}
+
+	//	turn string into a ref and check against the ref types...
+	TRef StringRef( String );
+	if ( g_DataTypeRefCache.Exists( StringRef ) )
+	{
+		//	matches an existing data type ref
+		return StringRef;
+	}
+
+#ifdef _DEBUG
+	TTempString Debug_String("Warning: using old data type name ");
+	Debug_String.Append( String );
+	Debug_String.Append(" in Scheme ");
+	this->GetFileRef().GetString( Debug_String );
+	TLDebug_Print( Debug_String );
+#endif
+
+	//	old string -> type detection
+	if ( String == "float" )		return TLBinary::GetDataTypeRef<float>();
+	if ( String == "float2" )		return TLBinary::GetDataTypeRef<float2>();
+	if ( String == "float3" )		return TLBinary::GetDataTypeRef<float3>();
+	if ( String == "float4" )		return TLBinary::GetDataTypeRef<float4>();
+	if ( String == "quaternion" )	return TLBinary::GetDataTypeRef<TLMaths::TQuaternion>();
+	if ( String == "colour" )		return TLBinary::GetDataTypeRef<TColour>();
+	if ( String == "string" )		return TLBinary::GetDataTypeRef_String();
+	if ( String == "widestring" )	return TLBinary::GetDataTypeRef_WideString();
+
+	//	unknown type
+#ifdef _DEBUG
+	TTempString Debug_String("Unsupported data type ");
+	Debug_String.Append( String );
+	Debug_String.Append(" in Scheme ");
+	this->GetFileRef().GetString( Debug_String );
+	TLDebug_Break( Debug_String );
+#endif
+
+	return TRef();
 }
 
 
 //--------------------------------------------------------
 //	
 //--------------------------------------------------------
-SyncBool TLFileScheme::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TLFileScheme::DataType Type)
+SyncBool TLFileScheme::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRef DataType)
 {
 	//	grab data string
 	const TString& DataString = pTag->GetDataString();
 	u32 CharIndex = 0;
 
-	switch ( Type )
+	if ( DataType == TLBinary::GetDataTypeRef<float>() )
 	{
-		case DataType_Float:
-		{
-			float f;
-			if ( !TLString::ReadNextFloatArray( DataString, CharIndex, &f, 1 ) )
-				return SyncFalse;
-			BinaryData.Write( f );
-			return SyncTrue;
-		}
-
-		case DataType_Float2:
-		{
-			float2 f;
-			if ( !TLString::ReadNextFloatArray( DataString, CharIndex, f.GetData(), f.GetSize() ) )
-				return SyncFalse;
-			BinaryData.Write( f );
-			return SyncTrue;
-		}
-
-		case DataType_Float3:
-		{
-			float3 f;
-			if ( !TLString::ReadNextFloatArray( DataString, CharIndex, f.GetData(), f.GetSize() ) )
-				return SyncFalse;
-			BinaryData.Write( f );
-			return SyncTrue;
-		}
-
-		case DataType_Float4:
-		{
-			float4 f;
-			if ( !TLString::ReadNextFloatArray( DataString, CharIndex, f.GetData(), f.GetSize() ) )
-				return SyncFalse;
-			BinaryData.Write( f );
-			return SyncTrue;
-		}
-
-		case DataType_TRef:
-		{
-			TRef Ref( DataString );
-			BinaryData.Write( Ref );
-			return SyncTrue;
-		}
-
-		default:
-			TLDebug_Break("Unsupported data type in scheme file");
+		float f;
+		if ( !TLString::ReadNextFloatArray( DataString, CharIndex, &f, 1 ) )
 			return SyncFalse;
+		BinaryData.Write( f );
+		return SyncTrue;
 	}
+	else if ( DataType == TLBinary::GetDataTypeRef<float2>() )
+	{
+		float2 f;
+		if ( !TLString::ReadNextFloatArray( DataString, CharIndex, f.GetData(), f.GetSize() ) )
+			return SyncFalse;
+		BinaryData.Write( f );
+		return SyncTrue;
+	}
+	else if ( DataType == TLBinary::GetDataTypeRef<float3>() )
+	{
+		float3 f;
+		if ( !TLString::ReadNextFloatArray( DataString, CharIndex, f.GetData(), f.GetSize() ) )
+			return SyncFalse;
+		BinaryData.Write( f );
+		return SyncTrue;
+	}
+	else if ( DataType == TLBinary::GetDataTypeRef<float4>() || DataType == TLBinary::GetDataTypeRef<TColour>() )
+	{
+		float4 f;
+		if ( !TLString::ReadNextFloatArray( DataString, CharIndex, f.GetData(), f.GetSize() ) )
+			return SyncFalse;
+		BinaryData.Write( f );
+		return SyncTrue;
+	}
+	else if ( DataType == TLBinary::GetDataTypeRef<TRef>() )
+	{
+		TRef Ref( DataString );
+		BinaryData.Write( Ref );
+		return SyncTrue;
+	}
+
+#ifdef _DEBUG
+	TTempString Debug_String("Unsupported/todo data type ");
+	Debug_String.Append( String );
+	Debug_String.Append(" in Scheme ");
+	this->GetFileRef().GetString( Debug_String );
+	TLDebug_Break( Debug_String );
+#endif
+
+	return SyncFalse;
 }
 
 
@@ -394,7 +429,12 @@ SyncBool TLFileSys::TFileScheme::ImportNode_Data(TPtr<TXmlTag>& pTag,TPtr<TLAsse
 		}
 		else
 		{
-			TagImportResult = TLFileScheme::ImportBinaryData( pChildTag, NodeData, TLFileScheme::GetDataTypeFromString( pChildTag->GetTagName() ) );
+			TRef DataTypeRef = TLFileScheme::GetDataTypeFromString( pChildTag->GetTagName() );
+
+			//	update type of data
+			NodeData.SetDataTypeHint( DataTypeRef );
+
+			TagImportResult = TLFileScheme::ImportBinaryData( pChildTag, NodeData, DataTypeRef );
 		}
 
 		//	failed

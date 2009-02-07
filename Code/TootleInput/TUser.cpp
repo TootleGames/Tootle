@@ -15,8 +15,8 @@ using namespace TLUser;
 
 SyncBool TUserManager::Initialise() 
 {	
-	TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerID(), "USER");
-	TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerID(), "ACTION");
+	TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "USER");
+	TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "ACTION");
 
 	// Register a global user by default
 	RegisterUser("Global");	

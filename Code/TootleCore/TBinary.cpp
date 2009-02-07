@@ -6,24 +6,21 @@
 
 
 
-TBinary::TBinary(TRefRef DataTypeHint) :
-	m_ReadPos		( -1 ),
-	m_DataTypeHint	( DataTypeHint )
+TBinary::TBinary() :
+	m_ReadPos		( -1 )
 {
 }
 
 
-TBinary::TBinary(const u8* pData,u32 DataLength,TRefRef DataTypeHint) :
-	m_ReadPos		( -1 ),
-	m_DataTypeHint	( DataTypeHint )
+TBinary::TBinary(const u8* pData,u32 DataLength) :
+	m_ReadPos		( -1 )
 {
 	WriteData( pData, DataLength );
 }
 
 
-TBinary::TBinary(const TArray<u8>& Data,TRefRef DataTypeHint) :
-	m_ReadPos		( -1 ),
-	m_DataTypeHint	( DataTypeHint )
+TBinary::TBinary(const TArray<u8>& Data) :
+	m_ReadPos		( -1 )
 {
 	WriteArray( Data );
 }

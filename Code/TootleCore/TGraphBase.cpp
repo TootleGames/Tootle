@@ -76,6 +76,37 @@ Bool TLGraph::TGraphBase::ImportSchemeNode(const TPtr<TLAsset::TSchemeNode>& pSc
 
 
 //--------------------------------------------------------------------	
+//	export a node into a scheme node
+//--------------------------------------------------------------------	
+TPtr<TLAsset::TSchemeNode> TLGraph::TGraphBase::ExportSchemeNode(TGraphNodeBase* pNode)
+{
+	if ( !pNode )
+	{
+		TLDebug_Break("Node expected");
+		return NULL;
+	}
+
+	//	create scheme node
+	TPtr<TLAsset::TSchemeNode> pSchemeNode = new TLAsset::TSchemeNode( pNode->GetNodeRef(), GetGraphRef(), pNode->GetNodeTypeRef() );
+
+	//	export data from node to scheme node
+	const TBinaryTree& NodeData = pNode->GetNodeData( TRUE );
+	pSchemeNode->GetData().CopyDataTree( NodeData );
+
+	//	export children into this node
+	TArray<TGraphNodeBase*> RootChildren;
+	pNode->GetChildrenBase( RootChildren );
+	for ( u32 c=0;	c<RootChildren.GetSize();	c++ )
+	{
+		TPtr<TLAsset::TSchemeNode> pChildSchemeNode = ExportSchemeNode( RootChildren[c] );
+		pSchemeNode->AddChild( pChildSchemeNode );
+	}
+
+	return pSchemeNode;
+}
+
+
+//--------------------------------------------------------------------	
 //	remove an array of nodes by their ref
 //--------------------------------------------------------------------	
 void TLGraph::TGraphBase::RemoveNodes(const TArray<TRef>& NodeRefs)
@@ -84,4 +115,71 @@ void TLGraph::TGraphBase::RemoveNodes(const TArray<TRef>& NodeRefs)
 	{
 		RemoveNode( NodeRefs.ElementAtConst(n) );
 	}
+}
+
+
+//--------------------------------------------------------------------	
+//	export node tree to a scheme
+//--------------------------------------------------------------------	
+TPtr<TLAsset::TScheme> TLGraph::TGraphBase::ExportScheme(TRef SchemeAssetRef,TRef SchemeRootNode,Bool IncludeSchemeRootNode)
+{
+	TLGraph::TGraphNodeBase* pSchemeRootNode = NULL;
+
+	//	get the root node for the scheme
+	if ( SchemeRootNode.IsValid() )
+	{
+		pSchemeRootNode = FindNodeBase(SchemeRootNode);
+	}
+	else
+	{
+		//	none specified, so use graph root node
+		pSchemeRootNode = GetRootNodeBase();
+	}
+
+	//	no node
+	if ( !pSchemeRootNode )
+	{
+		TLDebug_Break("Failed to find scheme root node to export");
+		return FALSE;
+	}
+
+	//	gr: currently we're not putting this scheme asset into the asset list, so no need to
+	//		check that its free...
+	//SchemeAssetRef = TLAsset::GetFreeAssetRef( SchemeAssetRef );
+
+	//	create asset
+	TPtr<TLAsset::TScheme> pScheme = new TLAsset::TScheme(SchemeAssetRef);
+
+	//	if we're including the root node then export from that one recursively
+	if ( IncludeSchemeRootNode )
+	{
+		TPtr<TLAsset::TSchemeNode> pSchemeNode = ExportSchemeNode( pSchemeRootNode );
+		pScheme->AddNode( pSchemeNode );
+	}
+	else
+	{
+		//	only adding children of the root node
+		TArray<TGraphNodeBase*> RootChildren;
+		pSchemeRootNode->GetChildrenBase( RootChildren );
+		for ( u32 c=0;	c<RootChildren.GetSize();	c++ )
+		{
+			TPtr<TLAsset::TSchemeNode> pSchemeNode = ExportSchemeNode( RootChildren[c] );
+			pScheme->AddNode( pSchemeNode );
+		}
+	}
+
+	return pScheme;
+}
+
+
+
+
+TLGraph::TGraphNodeBase::TGraphNodeBase(TRefRef NodeRef,TRefRef NodeTypeRef) :
+	m_NodeRef		( NodeRef ),
+	m_NodeTypeRef	( NodeTypeRef ),
+	m_NodeData		( "Data" )
+{
+	//	get debug strings
+	m_NodeRef.GetString( m_Debug_NodeRefString );	
+	m_NodeTypeRef.GetString( m_Debug_NodeTypeRefString );
 }

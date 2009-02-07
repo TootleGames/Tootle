@@ -65,9 +65,14 @@ SyncBool TLRender::TRenderZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
 	const float3& WorldPos = pRenderNode->GetWorldPos( WorldPosIsValid );
 	if ( !WorldPosIsValid )
 	{
-		TLDebug_Break("World pos is not valid during RenderNode Zone test");
+		//	gr: if world pos is not valid, then MOST likely this is being called as a zone has been split and we're testing to
+		//		see if the node needs moving. As we've not rendered yet, we might be out of date... all of the other bounds
+		//		should be out of date too, so just wait and we'll move when we can...
+		//TLDebug_Break("World pos is not valid during RenderNode Zone test");
+		return SyncWait;
 	}
-	if ( WorldPosIsValid && ZoneShape.GetIntersection( WorldPos ) )
+
+	if ( ZoneShape.GetIntersection( WorldPos ) )
 		return SyncTrue;
 
 	Bool AnyBoundsValid = FALSE;
