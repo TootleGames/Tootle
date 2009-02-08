@@ -70,6 +70,11 @@
 		84C109DC0F0A793000B2DF7A /* IPodMemory.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C109D40F0A793000B2DF7A /* IPodMemory.mm */; };
 		84C109DD0F0A793000B2DF7A /* IPodTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109D50F0A793000B2DF7A /* IPodTime.h */; };
 		84C109DE0F0A793000B2DF7A /* IPodTime.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C109D60F0A793000B2DF7A /* IPodTime.mm */; };
+		84E116070F3C6C7900471397 /* TGraphBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E116040F3C6C7900471397 /* TGraphBase.cpp */; };
+		84E116080F3C6C7900471397 /* TGraphBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E116050F3C6C7900471397 /* TGraphBase.h */; };
+		84E116090F3C6C7900471397 /* TLanguage.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E116060F3C6C7900471397 /* TLanguage.h */; };
+		84E1169C0F3C9E2A00471397 /* TApplication.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E1169A0F3C9E2A00471397 /* TApplication.h */; };
+		84E1169D0F3C9E2A00471397 /* TApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E1169B0F3C9E2A00471397 /* TApplication.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -141,6 +146,11 @@
 		84C109E00F0A794A00B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C109E10F0A794A00B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C109E20F0A794A00B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
+		84E116040F3C6C7900471397 /* TGraphBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGraphBase.cpp; path = ../TGraphBase.cpp; sourceTree = SOURCE_ROOT; };
+		84E116050F3C6C7900471397 /* TGraphBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGraphBase.h; path = ../TGraphBase.h; sourceTree = SOURCE_ROOT; };
+		84E116060F3C6C7900471397 /* TLanguage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLanguage.h; path = ../TLanguage.h; sourceTree = SOURCE_ROOT; };
+		84E1169A0F3C9E2A00471397 /* TApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TApplication.h; path = ../TApplication.h; sourceTree = SOURCE_ROOT; };
+		84E1169B0F3C9E2A00471397 /* TApplication.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TApplication.cpp; path = ../TApplication.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -185,6 +195,9 @@
 		84C1095F0F0A790100B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				84E116040F3C6C7900471397 /* TGraphBase.cpp */,
+				84E116050F3C6C7900471397 /* TGraphBase.h */,
+				84E116060F3C6C7900471397 /* TLanguage.h */,
 				84C109CE0F0A791F00B2DF7A /* IPod */,
 				84C109600F0A791900B2DF7A /* TArray.h */,
 				84C109610F0A791900B2DF7A /* TArray.inc.h */,
@@ -241,6 +254,8 @@
 				84C109940F0A791900B2DF7A /* TSubscriber.h */,
 				84C109950F0A791900B2DF7A /* TSyncQueue.cpp */,
 				84C109960F0A791900B2DF7A /* TSyncQueue.h */,
+				84E1169A0F3C9E2A00471397 /* TApplication.h */,
+				84E1169B0F3C9E2A00471397 /* TApplication.cpp */,
 			);
 			name = "Source Code";
 			sourceTree = "<group>";
@@ -306,6 +321,9 @@
 				84C109D90F0A793000B2DF7A /* IPodCore.h in Headers */,
 				84C109DB0F0A793000B2DF7A /* IPodMemory.h in Headers */,
 				84C109DD0F0A793000B2DF7A /* IPodTime.h in Headers */,
+				84E116080F3C6C7900471397 /* TGraphBase.h in Headers */,
+				84E116090F3C6C7900471397 /* TLanguage.h in Headers */,
+				84E1169C0F3C9E2A00471397 /* TApplication.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -376,6 +394,8 @@
 				84C109DA0F0A793000B2DF7A /* IPodCore.mm in Sources */,
 				84C109DC0F0A793000B2DF7A /* IPodMemory.mm in Sources */,
 				84C109DE0F0A793000B2DF7A /* IPodTime.mm in Sources */,
+				84E116070F3C6C7900471397 /* TGraphBase.cpp in Sources */,
+				84E1169D0F3C9E2A00471397 /* TApplication.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

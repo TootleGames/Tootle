@@ -174,11 +174,8 @@
 			846B6B810F29EFC4005EB752 /* PBXTextBookmark */ = 846B6B810F29EFC4005EB752 /* PBXTextBookmark */;
 			84C1FD7A0F38A728001DC896 /* PBXTextBookmark */ = 84C1FD7A0F38A728001DC896 /* PBXTextBookmark */;
 			84C1FD800F38A728001DC896 /* PBXTextBookmark */ = 84C1FD800F38A728001DC896 /* PBXTextBookmark */;
-			84C1FD9A0F38A969001DC896 /* PBXTextBookmark */ = 84C1FD9A0F38A969001DC896 /* PBXTextBookmark */;
-			84C1FD9C0F38A969001DC896 /* PBXTextBookmark */ = 84C1FD9C0F38A969001DC896 /* PBXTextBookmark */;
-			84C1FDBF0F39CBBC001DC896 /* PBXTextBookmark */ = 84C1FDBF0F39CBBC001DC896 /* PBXTextBookmark */;
 			84C1FDC40F39CBD8001DC896 /* PBXTextBookmark */ = 84C1FDC40F39CBD8001DC896 /* PBXTextBookmark */;
-			84C1FDCC0F39CC51001DC896 /* PBXTextBookmark */ = 84C1FDCC0F39CC51001DC896 /* PBXTextBookmark */;
+			84C1FE510F3A626A001DC896 /* PBXTextBookmark */ = 84C1FE510F3A626A001DC896 /* PBXTextBookmark */;
 			84EB990A0F3786160020B52B /* PBXTextBookmark */ = 84EB990A0F3786160020B52B /* PBXTextBookmark */;
 			84EB990B0F3786160020B52B /* PBXTextBookmark */ = 84EB990B0F3786160020B52B /* PBXTextBookmark */;
 			84EB990E0F3786160020B52B /* PBXTextBookmark */ = 84EB990E0F3786160020B52B /* PBXTextBookmark */;
@@ -277,7 +274,7 @@
 	};
 	84C10B1C0F0A7E7400B2DF7A /* IPodScreen.mm */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {706, 9856}}";
+			sepNavIntBoundsRect = "{{0, 0}, {706, 9800}}";
 			sepNavSelRange = "{19622, 36}";
 			sepNavVisRange = "{19291, 649}";
 			sepNavWindowFrame = "{{153, 89}, {750, 558}}";
@@ -315,45 +312,6 @@
 		path = /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator2.1.sdk/System/Library/Frameworks/Foundation.framework/Versions/C/Headers/NSString.h;
 		sourceTree = "<absolute>";
 	};
-	84C1FD920F38A8B2001DC896 /* TString.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = TString.h;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleCore/TString.h;
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1386, 3710}}";
-			sepNavSelRange = "{2534, 165}";
-			sepNavVisRange = "{2200, 2020}";
-		};
-	};
-	84C1FD9A0F38A969001DC896 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C1FD920F38A8B2001DC896 /* TString.h */;
-		name = "TString.h: 66";
-		rLen = 165;
-		rLoc = 2534;
-		rType = 0;
-		vrLen = 2020;
-		vrLoc = 2200;
-	};
-	84C1FD9C0F38A969001DC896 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C1FD920F38A8B2001DC896 /* TString.h */;
-		name = "TString.h: 66";
-		rLen = 165;
-		rLoc = 2534;
-		rType = 0;
-		vrLen = 2020;
-		vrLoc = 2200;
-	};
-	84C1FDBF0F39CBBC001DC896 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C10B1C0F0A7E7400B2DF7A /* IPodScreen.mm */;
-		rLen = 35;
-		rLoc = 19622;
-		rType = 0;
-	};
 	84C1FDC40F39CBD8001DC896 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84C10B1C0F0A7E7400B2DF7A /* IPodScreen.mm */;
@@ -364,7 +322,7 @@
 		vrLen = 649;
 		vrLoc = 19291;
 	};
-	84C1FDCC0F39CC51001DC896 /* PBXTextBookmark */ = {
+	84C1FE510F3A626A001DC896 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84C10B1C0F0A7E7400B2DF7A /* IPodScreen.mm */;
 		name = "IPodScreen.mm: 681";

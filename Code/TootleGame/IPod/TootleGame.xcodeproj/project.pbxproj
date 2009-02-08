@@ -15,6 +15,8 @@
 		84DE35020F12AFED00608F8C /* TAssetBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DE34FE0F12AFED00608F8C /* TAssetBrowser.h */; };
 		84DE35030F12AFED00608F8C /* TGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DE34FF0F12AFED00608F8C /* TGui.cpp */; };
 		84DE35040F12AFED00608F8C /* TGui.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DE35000F12AFED00608F8C /* TGui.h */; };
+		84E117040F3CA26200471397 /* TGame.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E117020F3CA26200471397 /* TGame.h */; };
+		84E117050F3CA26200471397 /* TGame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E117030F3CA26200471397 /* TGame.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +33,8 @@
 		84DE34FE0F12AFED00608F8C /* TAssetBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAssetBrowser.h; path = ../TAssetBrowser.h; sourceTree = SOURCE_ROOT; };
 		84DE34FF0F12AFED00608F8C /* TGui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGui.cpp; path = ../TGui.cpp; sourceTree = SOURCE_ROOT; };
 		84DE35000F12AFED00608F8C /* TGui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGui.h; path = ../TGui.h; sourceTree = SOURCE_ROOT; };
+		84E117020F3CA26200471397 /* TGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGame.h; path = ../TGame.h; sourceTree = SOURCE_ROOT; };
+		84E117030F3CA26200471397 /* TGame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGame.cpp; path = ../TGame.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +76,8 @@
 				84DE35000F12AFED00608F8C /* TGui.h */,
 				84C10A3D0F0A7C3000B2DF7A /* TMenu.cpp */,
 				84C10A3E0F0A7C3000B2DF7A /* TMenu.h */,
+				84E117020F3CA26200471397 /* TGame.h */,
+				84E117030F3CA26200471397 /* TGame.cpp */,
 			);
 			name = "Source Code";
 			sourceTree = "<group>";
@@ -98,6 +104,7 @@
 				84DE35020F12AFED00608F8C /* TAssetBrowser.h in Headers */,
 				84DE35040F12AFED00608F8C /* TGui.h in Headers */,
 				846B711D0F2A366F005EB752 /* TLGame.h in Headers */,
+				84E117040F3CA26200471397 /* TGame.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -148,6 +155,7 @@
 				84DE35010F12AFED00608F8C /* TAssetBrowser.cpp in Sources */,
 				84DE35030F12AFED00608F8C /* TGui.cpp in Sources */,
 				846B711C0F2A366F005EB752 /* TLGame.cpp in Sources */,
+				84E117050F3CA26200471397 /* TGame.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

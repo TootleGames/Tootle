@@ -23,6 +23,10 @@
 		84C107BE0F0A686E00B2DF7A /* TSceneNode_Transform.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C107AE0F0A686E00B2DF7A /* TSceneNode_Transform.h */; };
 		84C107BF0F0A686E00B2DF7A /* TSchemeEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C107AF0F0A686E00B2DF7A /* TSchemeEditor.cpp */; };
 		84C107C00F0A686E00B2DF7A /* TSchemeEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C107B00F0A686E00B2DF7A /* TSchemeEditor.h */; };
+		84E1156C0F3C515B00471397 /* TSchemeManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E1156A0F3C515B00471397 /* TSchemeManager.h */; };
+		84E1156D0F3C515B00471397 /* TSchemeManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E1156B0F3C515B00471397 /* TSchemeManager.cpp */; };
+		84E115700F3C51DF00471397 /* TSchemeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E1156E0F3C51DF00471397 /* TSchemeNode.cpp */; };
+		84E115710F3C51DF00471397 /* TSchemeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E1156F0F3C51DF00471397 /* TSchemeNode.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +51,10 @@
 		84C107CC0F0A6A3100B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TootleRelease.xcconfig; sourceTree = "<group>"; };
 		84C107CD0F0A6A3100B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TootleReleaseAdHoc.xcconfig; sourceTree = "<group>"; };
 		84C107CE0F0A6A3100B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TootleReleaseAppStore.xcconfig; sourceTree = "<group>"; };
+		84E1156A0F3C515B00471397 /* TSchemeManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSchemeManager.h; path = ../TSchemeManager.h; sourceTree = SOURCE_ROOT; };
+		84E1156B0F3C515B00471397 /* TSchemeManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSchemeManager.cpp; path = ../TSchemeManager.cpp; sourceTree = SOURCE_ROOT; };
+		84E1156E0F3C51DF00471397 /* TSchemeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSchemeNode.cpp; path = ../TSchemeNode.cpp; sourceTree = SOURCE_ROOT; };
+		84E1156F0F3C51DF00471397 /* TSchemeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSchemeNode.h; path = ../TSchemeNode.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,22 +88,15 @@
 		84C107C10F0A687300B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				84E115610F3C4F6F00471397 /* Base Nodes */,
 				84C107A10F0A686E00B2DF7A /* TLScene.cpp */,
 				84C107A20F0A686E00B2DF7A /* TLScene.h */,
 				84C107A30F0A686E00B2DF7A /* TScenegraph.cpp */,
 				84C107A40F0A686E00B2DF7A /* TScenegraph.h */,
-				84C107A50F0A686E00B2DF7A /* TSceneNode.cpp */,
-				84C107A60F0A686E00B2DF7A /* TSceneNode.h */,
-				84C107A70F0A686E00B2DF7A /* TSceneNode_Camera.cpp */,
-				84C107A80F0A686E00B2DF7A /* TSceneNode_Camera.h */,
-				84C107A90F0A686E00B2DF7A /* TSceneNode_Emitter.cpp */,
-				84C107AA0F0A686E00B2DF7A /* TSceneNode_Emitter.h */,
-				84C107AB0F0A686E00B2DF7A /* TSceneNode_Object.cpp */,
-				84C107AC0F0A686E00B2DF7A /* TSceneNode_Object.h */,
-				84C107AD0F0A686E00B2DF7A /* TSceneNode_Transform.cpp */,
-				84C107AE0F0A686E00B2DF7A /* TSceneNode_Transform.h */,
 				84C107AF0F0A686E00B2DF7A /* TSchemeEditor.cpp */,
 				84C107B00F0A686E00B2DF7A /* TSchemeEditor.h */,
+				84E1156A0F3C515B00471397 /* TSchemeManager.h */,
+				84E1156B0F3C515B00471397 /* TSchemeManager.cpp */,
 			);
 			name = "Source Code";
 			sourceTree = "<group>";
@@ -112,6 +113,25 @@
 			path = ../../BuildConfigurations/IPod;
 			sourceTree = SOURCE_ROOT;
 		};
+		84E115610F3C4F6F00471397 /* Base Nodes */ = {
+			isa = PBXGroup;
+			children = (
+				84E1156E0F3C51DF00471397 /* TSchemeNode.cpp */,
+				84E1156F0F3C51DF00471397 /* TSchemeNode.h */,
+				84C107A50F0A686E00B2DF7A /* TSceneNode.cpp */,
+				84C107A60F0A686E00B2DF7A /* TSceneNode.h */,
+				84C107A70F0A686E00B2DF7A /* TSceneNode_Camera.cpp */,
+				84C107A80F0A686E00B2DF7A /* TSceneNode_Camera.h */,
+				84C107A90F0A686E00B2DF7A /* TSceneNode_Emitter.cpp */,
+				84C107AA0F0A686E00B2DF7A /* TSceneNode_Emitter.h */,
+				84C107AB0F0A686E00B2DF7A /* TSceneNode_Object.cpp */,
+				84C107AC0F0A686E00B2DF7A /* TSceneNode_Object.h */,
+				84C107AD0F0A686E00B2DF7A /* TSceneNode_Transform.cpp */,
+				84C107AE0F0A686E00B2DF7A /* TSceneNode_Transform.h */,
+			);
+			name = "Base Nodes";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -127,6 +147,8 @@
 				84C107BC0F0A686E00B2DF7A /* TSceneNode_Object.h in Headers */,
 				84C107BE0F0A686E00B2DF7A /* TSceneNode_Transform.h in Headers */,
 				84C107C00F0A686E00B2DF7A /* TSchemeEditor.h in Headers */,
+				84E1156C0F3C515B00471397 /* TSchemeManager.h in Headers */,
+				84E115710F3C51DF00471397 /* TSchemeNode.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -181,6 +203,8 @@
 				84C107BB0F0A686E00B2DF7A /* TSceneNode_Object.cpp in Sources */,
 				84C107BD0F0A686E00B2DF7A /* TSceneNode_Transform.cpp in Sources */,
 				84C107BF0F0A686E00B2DF7A /* TSchemeEditor.cpp in Sources */,
+				84E1156D0F3C515B00471397 /* TSchemeManager.cpp in Sources */,
+				84E115700F3C51DF00471397 /* TSchemeNode.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -2,6 +2,7 @@
 {
 	84C108D50F0A76EC00B2DF7A /* Project object */ = {
 		activeBuildConfigurationName = Debug;
+		activeSDKPreference = iphonesimulator2.2.1;
 		activeTarget = 84C109580F0A78EE00B2DF7A /* TootleCore */;
 		addToTargets = (
 			84C109580F0A78EE00B2DF7A /* TootleCore */,
@@ -10,12 +11,26 @@
 		ignoreBreakpointsInProjectsDict = {
 		};
 		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXErrorsWarningsDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXErrorsWarningsDataSource_LocationID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					300,
+					231.20849609375,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXErrorsWarningsDataSource_TypeID,
+					PBXErrorsWarningsDataSource_MessageID,
+					PBXErrorsWarningsDataSource_LocationID,
+				);
+			};
 			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
 				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					341,
+					833,
 					20,
 					48,
 					43,
@@ -54,8 +69,20 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 252350348;
-			PBXWorkspaceStateSaveDate = 252350348;
+			PBXPerProjectTemplateStateSaveDate = 255823921;
+			PBXWorkspaceStateSaveDate = 255823921;
+		};
+		perUserProjectItems = {
+			84E1169E0F3C9E4D00471397 /* PBXTextBookmark */ = 84E1169E0F3C9E4D00471397 /* PBXTextBookmark */;
+			84E116A00F3C9E4D00471397 /* PBXTextBookmark */ = 84E116A00F3C9E4D00471397 /* PBXTextBookmark */;
+			84E1184F0F3F8FBF00471397 /* PBXTextBookmark */ = 84E1184F0F3F8FBF00471397 /* PBXTextBookmark */;
+			84E118500F3F8FBF00471397 /* PBXTextBookmark */ = 84E118500F3F8FBF00471397 /* PBXTextBookmark */;
+			84E118510F3F8FBF00471397 /* PBXTextBookmark */ = 84E118510F3F8FBF00471397 /* PBXTextBookmark */;
+			84E118530F3F8FBF00471397 /* PBXTextBookmark */ = 84E118530F3F8FBF00471397 /* PBXTextBookmark */;
+			84E118550F3F8FBF00471397 /* PBXTextBookmark */ = 84E118550F3F8FBF00471397 /* PBXTextBookmark */;
+			84E118560F3F8FBF00471397 /* PBXTextBookmark */ = 84E118560F3F8FBF00471397 /* PBXTextBookmark */;
+			84E1185A0F3F8FBF00471397 /* PBXTextBookmark */ = 84E1185A0F3F8FBF00471397 /* PBXTextBookmark */;
+			84E118780F3F903A00471397 /* PBXTextBookmark */ = 84E118780F3F903A00471397 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84C108D90F0A76EC00B2DF7A /* Source Control */;
 		userBuildSettings = {
@@ -74,5 +101,140 @@
 	};
 	84C109580F0A78EE00B2DF7A /* TootleCore */ = {
 		activeExec = 0;
+	};
+	84C109910F0A791900B2DF7A /* TStateMachine.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1236, 1176}}";
+			sepNavSelRange = "{413, 0}";
+			sepNavVisRange = "{445, 1280}";
+		};
+	};
+	84C109D10F0A793000B2DF7A /* IPodCore.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 938}}";
+			sepNavSelRange = "{1345, 44}";
+			sepNavVisRange = "{1016, 687}";
+		};
+	};
+	84C109D60F0A793000B2DF7A /* IPodTime.mm */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {519, 1176}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 227}";
+		};
+	};
+	84E1169A0F3C9E2A00471397 /* TApplication.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 840}}";
+			sepNavSelRange = "{870, 0}";
+			sepNavVisRange = "{433, 866}";
+		};
+	};
+	84E1169B0F3C9E2A00471397 /* TApplication.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 742}}";
+			sepNavSelRange = "{1062, 0}";
+			sepNavVisRange = "{425, 782}";
+		};
+	};
+	84E1169E0F3C9E4D00471397 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C109D60F0A793000B2DF7A /* IPodTime.mm */;
+		name = "IPodTime.mm: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 227;
+		vrLoc = 0;
+	};
+	84E116A00F3C9E4D00471397 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C109D60F0A793000B2DF7A /* IPodTime.mm */;
+		name = "IPodTime.mm: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 227;
+		vrLoc = 0;
+	};
+	84E1184F0F3F8FBF00471397 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C109D10F0A793000B2DF7A /* IPodCore.h */;
+		name = "IPodCore.h: 57";
+		rLen = 44;
+		rLoc = 1345;
+		rType = 0;
+		vrLen = 687;
+		vrLoc = 1016;
+	};
+	84E118500F3F8FBF00471397 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C109910F0A791900B2DF7A /* TStateMachine.h */;
+		name = "TStateMachine.h: 22";
+		rLen = 0;
+		rLoc = 413;
+		rType = 0;
+		vrLen = 1280;
+		vrLoc = 445;
+	};
+	84E118510F3F8FBF00471397 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84E1169A0F3C9E2A00471397 /* TApplication.h */;
+		name = "TApplication.h: 48";
+		rLen = 0;
+		rLoc = 870;
+		rType = 0;
+		vrLen = 866;
+		vrLoc = 433;
+	};
+	84E118530F3F8FBF00471397 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84E1169A0F3C9E2A00471397 /* TApplication.h */;
+		name = "TApplication.h: 47";
+		rLen = 0;
+		rLoc = 918;
+		rType = 0;
+		vrLen = 575;
+		vrLoc = 408;
+	};
+	84E118550F3F8FBF00471397 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C109910F0A791900B2DF7A /* TStateMachine.h */;
+		name = "TStateMachine.h: 22";
+		rLen = 0;
+		rLoc = 413;
+		rType = 0;
+		vrLen = 1280;
+		vrLoc = 445;
+	};
+	84E118560F3F8FBF00471397 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84E1169B0F3C9E2A00471397 /* TApplication.cpp */;
+		name = "TApplication.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 170;
+		vrLoc = 0;
+	};
+	84E1185A0F3F8FBF00471397 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84E1169B0F3C9E2A00471397 /* TApplication.cpp */;
+		name = "TApplication.cpp: 46";
+		rLen = 0;
+		rLoc = 1062;
+		rType = 0;
+		vrLen = 770;
+		vrLoc = 437;
+	};
+	84E118780F3F903A00471397 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84E1169B0F3C9E2A00471397 /* TApplication.cpp */;
+		name = "TApplication.cpp: 47";
+		rLen = 0;
+		rLoc = 1062;
+		rType = 0;
+		vrLen = 782;
+		vrLoc = 425;
 	};
 }
