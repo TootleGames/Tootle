@@ -13,7 +13,7 @@
 namespace TLBinary
 {
 	template<typename TYPE>
-	FORCEINLINE TRefRef	GetDataTypeRef()					{	static TRef g_TypeRef();	return g_TypeRefs;	}
+	FORCEINLINE TRefRef	GetDataTypeRef()					{	static TRef g_TypeRef;	return g_TypeRef;	}	//	default unhandled type is just an invalid TRef which means no specific type
 
 	template<typename TYPE>
 	FORCEINLINE TRefRef	GetDataTypeRef(const TYPE& Var)		{	return GetDataTypeRef<TYPE>();	}

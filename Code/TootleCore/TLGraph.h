@@ -113,8 +113,8 @@ protected:
 	TPtr<T>&					FindPtr(const TGraphNode<T>* pNode) const;					//	find a TPtr in the graph that matches the node - workaround for non intrusive pointers
 
 	//	base graph functions
-	virtual TLGraph::TGraphNodeBase*	FindNodeBase(TRefRef NodeRef)		{	TPtr<T>& pNode = FindNode( NodeRef );	return pNode.GetObject<TLGraph::TGraphNodeBase>();	}
-	virtual TLGraph::TGraphNodeBase*	GetRootNodeBase()					{	TPtr<T>& pNode = m_pRootNode;	return pNode.GetObject<TLGraph::TGraphNodeBase>();	}
+	virtual TLGraph::TGraphNodeBase*	FindNodeBase(TRefRef NodeRef)		{	TPtr<T>& pNode = FindNode( NodeRef );	return pNode.GetObject();	}
+	virtual TLGraph::TGraphNodeBase*	GetRootNodeBase()					{	TPtr<T>& pNode = m_pRootNode;	return pNode.GetObject();	}
 
 	//	events
 	virtual void				OnNodeAdded(TPtr<T>& pNode);				//	called after node has been added to graph and to parent
@@ -212,7 +212,7 @@ public:
 	inline Bool				operator<(const TGraphNode<T>& Node) const			{	return GetNodeRef() == Node.GetNodeRef();	}
 
 protected:
-	virtual const TGraphNodeBase*	GetParentBase() const		{	return m_pParent.GetObject<TGraphNodeBase>();	}
+	virtual const TGraphNodeBase*	GetParentBase() const		{	return m_pParent.GetObject();	}
 
 	virtual void			UpdateAll(float Timestep);						//	update tree: update self, and children and siblings
 
@@ -808,7 +808,7 @@ void TLGraph::TGraphNode<T>::GetChildrenBase(TArray<TGraphNodeBase*>& ChildNodes
 
 	for ( u32 c=0;	c<Children.GetSize();	c++ )
 	{
-		ChildNodes.Add( Children[c].GetObject<TGraphNodeBase>() );
+		ChildNodes.Add( Children[c].GetObject() );
 	}
 }
 
