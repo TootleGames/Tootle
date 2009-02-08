@@ -18,7 +18,7 @@
 	#include "IPod/IPodLocalFileSys.h"
 #endif
 
-#if defined(TL_TARGET_PC)
+#if defined(_MSC_EXTENSIONS) && defined(TL_TARGET_PC)
 	#include "PC/PCLocalFileSys.h"
 #endif
 

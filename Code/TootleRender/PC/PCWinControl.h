@@ -5,7 +5,10 @@
 -------------------------------------------------*/
 #pragma once
 
+#if defined(_MSC_EXTENSIONS)
 #include <TootleCore/PC/PCCore.h>
+#endif
+
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/TPtrArray.h>
 #include <TootleCore/TRef.h>

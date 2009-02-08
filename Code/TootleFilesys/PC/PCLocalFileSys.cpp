@@ -1,5 +1,8 @@
 #include "PCLocalFileSys.h"
+
+#if defined(_MSC_EXTENSIONS)
 #include <TootleCore/PC/PCTime.h>
+#endif
 
 
 using namespace TLFileSys;

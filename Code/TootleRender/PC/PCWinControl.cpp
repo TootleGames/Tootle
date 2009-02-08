@@ -1,9 +1,12 @@
 #include "PCWinControl.h"
 #include <TootleCore/TLDebug.h>
 #include <TootleCore/TString.h>
-#include <TootleCore/PC/PCCore.h>
 #include <winuser.h>	//	updated core SDK
 #include "PCWinWindow.h"
+
+#if defined(_MSC_EXTENSIONS)
+#include <TootleCore/PC/PCCore.h>
+#endif
 
 //	globals
 //------------------------------------------------

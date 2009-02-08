@@ -1,7 +1,7 @@
 #include "TScreenManager.h"
 
 
-#if defined(TL_TARGET_PC)
+#if defined(TL_TARGET_PC) && defined(_MSC_EXTENSIONS)
 #include "PC/PCScreen.h"
 #endif
 

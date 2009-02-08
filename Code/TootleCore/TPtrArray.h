@@ -61,7 +61,7 @@ template<typename TYPE>
 template<class MATCHTYPE>
 inline TPtr<TYPE>& TPtrArray<TYPE>::FindPtr(const MATCHTYPE& val)
 {
-	u32 Index = FindIndex(val);
+	u32 Index = TArray<TPtr<TYPE> >::FindIndex(val);
 	if ( Index == -1 )
 		return TLPtr::GetNullPtr<TYPE>();
 	

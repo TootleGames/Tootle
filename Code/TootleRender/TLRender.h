@@ -64,9 +64,8 @@ namespace TLRender
 			
 			Bool					Debug_CheckForError();		//	check for opengl error - returns TRUE on error
 
-			//Bool					BindFixedVertexes(const TArray<TLAsset::TFixedVertex>* pVertexes,TRefRef MeshRef);
-			Bool					BindVertexes(const TArray<float3>* pVertexes,TRefRef MeshRef);
-			Bool					BindColours(const TArray<TColour>* pColours,TRefRef MeshRef);
+			Bool					BindVertexes(const TArray<float3>* pVertexes);
+			Bool					BindColours(const TArray<TColour>* pColours);
 			void					DrawPrimitives(u16 GLPrimType,u32 IndexCount,const u16* pIndexData);	//	main renderer, just needs primitive type, and the data
 
 			FORCEINLINE u16			GetPrimTypeTriangle();		//	GL_TRIANGLES
@@ -89,8 +88,10 @@ namespace TLRender
 
 
 //	gr: because I made the platform opengl calls inline (for super speed) we have to include the platform header
-#if defined(TL_TARGET_PC)
+#if defined(TL_TARGET_PC) && defined(_MSC_EXTENSIONS)
 	#include "PC/PCRender.h"
+#elif defined(TL_TARGET_PC) 
+	//	ansi build can't include any headers
 #elif defined(TL_TARGET_IPOD)
 	#include "IPod/IPodRender.h"
 #else

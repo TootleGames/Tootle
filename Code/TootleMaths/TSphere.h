@@ -42,7 +42,7 @@ public:
 	const float3&	GetPosNearestTo(const float3& Pos) const	{	return GetPos();	}
 	float&			GetRadius() 								{	return m_Radius;	}
 	const float&	GetRadius() const							{	return m_Radius;	}
-	const float		GetRadiusSq() const							{	return m_Radius*m_Radius;	}
+	float			GetRadiusSq() const							{	return m_Radius*m_Radius;	}
 	void			SetRadius(float Radius)						{	m_Radius = Radius;	}
 
 	void			Accumulate(const TCapsule& Capsule);			//	accumulate other capsule. copies other if this is invalid
@@ -100,7 +100,7 @@ public:
 	const float2&	GetPos() const								{	return m_Pos;	}
 	const float2&	GetPosNearestTo(const float2& Pos) const	{	return GetPos();	}
 	const float&	GetRadius() const							{	return m_Radius;	}
-	const float		GetRadiusSq() const							{	return m_Radius*m_Radius;	}
+	float			GetRadiusSq() const							{	return m_Radius*m_Radius;	}
 	void			SetRadius(float Radius)						{	m_Radius = Radius;	}
 
 //	void			Accumulate(const TCapsule& Capsule);			//	accumulate other capsule. copies other if this is invalid

@@ -183,7 +183,7 @@ FORCEINLINE void operator delete[](void* pObj) throw()
 
 
 //	include the platform specific header
-#if defined(TL_TARGET_PC)
+#if defined(_MSC_EXTENSIONS) && defined(TL_TARGET_PC)
 	#include "PC/PCMemory.h"
 #endif
 
