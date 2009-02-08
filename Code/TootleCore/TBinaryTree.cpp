@@ -2,8 +2,6 @@
 
 
 
-TPtr<TBinaryTree> TBinaryTree::g_pNull;
-
 
 //----------------------------------------------------------------
 //	
@@ -23,7 +21,7 @@ TPtr<TBinaryTree>& TBinaryTree::AddChild(TRefRef ChildRef)
 	//	add new ptr to the child array
 	TPtr<TBinaryTree>* pNewChildPtr = m_Children.AddNew();
 	if ( !pNewChildPtr )
-		return g_pNull;
+		return TLPtr::GetNullPtr<TBinaryTree>();
 
 	//	put new tree in ptr
 	TPtr<TBinaryTree>& pNewChild = *pNewChildPtr;

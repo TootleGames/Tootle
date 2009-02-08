@@ -7,6 +7,7 @@
 #ifdef _DEBUG
 //#define DEBUG_DRAW_RENDERZONES
 #define DEBUG_DRAW_FRUSTUM
+//#define DEBUG_NODE_RENDERED_COUNT
 #endif
 
 #define ENABLE_ALPHA			//	enable alphas (on by default)
@@ -146,7 +147,7 @@ void TLRender::TRenderTarget::EndDraw()
 
 
 	//	print out node/culled count
-#ifdef _DEBUG
+#ifdef DEBUG_NODE_RENDERED_COUNT
 	TTempString DebugString("RenderTarget ");
 	GetRef().GetString( DebugString );
 	DebugString.Appendf(" rendered %d nodes (%d culled)", m_Debug_NodeCount, m_Debug_NodeCulledCount );

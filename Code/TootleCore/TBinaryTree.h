@@ -28,7 +28,7 @@ public:
 	const TPtrArray<TBinaryTree>&	GetChildren() const					{	return m_Children;	}		//	return all the children as an array
 	u32							GetChildren(TRefRef DataRef,TPtrArray<TBinaryTree>& Children)	{	return m_Children.FindAll( Children, DataRef );	}	//	get all the sections with this ref into an array
 	TPtr<TBinaryTree>&			AddChild(TRefRef ChildRef);				//	add new child
-	TPtr<TBinaryTree>&			AddChild(TPtr<TBinaryTree>& pChild)		{	s32 Index = m_Children.Add( pChild );	return (Index == -1) ? TBinaryTree::g_pNull : m_Children.ElementAt(Index);	}	//	add child
+	TPtr<TBinaryTree>&			AddChild(TPtr<TBinaryTree>& pChild)		{	s32 Index = m_Children.Add( pChild );	return (Index == -1) ? TLPtr::GetNullPtr<TBinaryTree>() : m_Children.ElementAt(Index);	}	//	add child
 	template <class TYPE>
 	TPtr<TBinaryTree>&			AddChildAndData(TRefRef ChildRef,const TYPE& Obj);	// Adds a child along with an initial piece of data 
 
@@ -57,7 +57,6 @@ protected:
 	TPtrArray<TBinaryTree>		m_Children;								//	child binaries
 
 private:
-	static TPtr<TBinaryTree>	g_pNull;								//	NULL pointer so I can return a TPtr ref from various funcs
 	TBufferString<6>			m_Debug_DataRefString;					//	for debugging the ref as a string
 };
 
