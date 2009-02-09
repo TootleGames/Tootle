@@ -273,7 +273,7 @@ TSchemeManager::TSchemeUpdateRequest::TSchemeUpdateRequest(TRefRef SchemeRef, TR
 
 TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Init::Update()
 {	
-	TPtr<TSchemeManager::TSchemeUpdateRequest> pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
+	TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
 
 	if(pRequest->GetUpdateType() == Load)
 	{
@@ -315,7 +315,7 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Loading::Update()
 	
 	if(pMessage)
 	{
-		TPtr<TSchemeManager::TSchemeUpdateRequest> pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
+		TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
 		
 		if(pRequest)
 		{
@@ -343,7 +343,7 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_UnLoading::Update()
 	
 	if(pMessage)
 	{
-		TPtr<TSchemeManager::TSchemeUpdateRequest> pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
+		TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
 		
 		if(pRequest)
 		{
