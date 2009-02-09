@@ -61,8 +61,8 @@ TRef TLFileScheme::GetDataTypeFromString(const TString& String)
 #ifdef _DEBUG
 	TTempString Debug_String("Warning: using old data type name ");
 	Debug_String.Append( String );
-	Debug_String.Append(" in Scheme ");
-	this->GetFileRef().GetString( Debug_String );
+	//Debug_String.Append(" in Scheme ");
+	//this->GetFileRef().GetString( Debug_String );
 	TLDebug_Print( Debug_String );
 #endif
 
@@ -78,10 +78,10 @@ TRef TLFileScheme::GetDataTypeFromString(const TString& String)
 
 	//	unknown type
 #ifdef _DEBUG
-	TTempString Debug_String("Unsupported data type ");
+	Debug_String.Set("Unsupported data type ");
 	Debug_String.Append( String );
-	Debug_String.Append(" in Scheme ");
-	this->GetFileRef().GetString( Debug_String );
+	//Debug_String.Append(" in Scheme ");
+	//this->GetFileRef().GetString( Debug_String );
 	TLDebug_Break( Debug_String );
 #endif
 
@@ -139,9 +139,9 @@ SyncBool TLFileScheme::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,
 
 #ifdef _DEBUG
 	TTempString Debug_String("Unsupported/todo data type ");
-	Debug_String.Append( String );
-	Debug_String.Append(" in Scheme ");
-	this->GetFileRef().GetString( Debug_String );
+	Debug_String.Append( DataString );
+	//Debug_String.Append(" in Scheme ");
+	//this->GetFileRef().GetString( Debug_String );
 	TLDebug_Break( Debug_String );
 #endif
 

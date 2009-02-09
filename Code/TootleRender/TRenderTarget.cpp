@@ -4,7 +4,7 @@
 
 
 
-#ifdef _DEBUG
+#if defined(_DEBUG) && !defined(TL_TARGET_IPOD)
 //#define DEBUG_DRAW_RENDERZONES
 #define DEBUG_DRAW_FRUSTUM
 //#define DEBUG_NODE_RENDERED_COUNT

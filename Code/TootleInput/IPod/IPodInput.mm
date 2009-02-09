@@ -68,11 +68,10 @@ Bool Platform::IPod::CreateDevice()
 			if(pMessage.IsValid())
 			{
 				TRef refState = "ADDED";
-				TRef refDeviceType = "DEFAULT";
 				pMessage->AddChannelID("DEVICE");									// device information message
 				pMessage->AddChildAndData("STATE", refState);					// state change
-				pMessage->AddChildAndData("DEVID", pGenericDevice->GetDeviceRef());	// device ID
-				pMessage->AddChildAndData("TYPE", refDeviceType);						// device type
+				pMessage->AddChildAndData("DEVID", pGenericDevice->GetDeviceRef() );	// device ID
+				pMessage->AddChildAndData("TYPE", pGenericDevice->GetDeviceType() );						// device type
 				
 				g_pInputSystem->PublishMessage(pMessage);
 				
