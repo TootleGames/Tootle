@@ -12,18 +12,19 @@
 
 #pragma once
 
-#include "TSceneNode.h"
+#include "TSceneNode_Transform.h"
 
 namespace TLScene
 {
-	class TSchemeNode;
+	class TSceneNode_Scheme;
 };
 
 
-class TLScene::TSchemeNode
+class TLScene::TSceneNode_Scheme : public TLScene::TSceneNode_Transform
 {
 public:
-	
-private:
-	TRef	m_SchemeRef;		// The scheme ID
+	TSceneNode_Scheme(TRefRef NodeRef,TRefRef TypeRef) :
+	  TSceneNode_Transform(NodeRef,TypeRef)
+	{
+	}
 };

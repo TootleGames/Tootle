@@ -12,6 +12,7 @@
 #include <TootleAsset/TAsset.h>
 #include <TootleCore/TEventChannel.h>
 #include "TScenegraph.h"
+#include "TSchemeNode.h"
 
 namespace TLScheme
 {
@@ -270,8 +271,6 @@ TSchemeManager::TSchemeUpdateRequest::TSchemeUpdateRequest(TRefRef SchemeRef, TR
 	AddMode<TSchemeManager::TSchemeUpdateRequest::TSchemeState_UnLoading>("UnLoading");
 	AddMode<TSchemeManager::TSchemeUpdateRequest::TSchemeState_Finished>("Finished");
 	AddMode<TSchemeManager::TSchemeUpdateRequest::TSchemeState_Cancel>("Cancel");
-	
-	//SetMode("Init");
 }
 
 
@@ -332,10 +331,34 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Loading::Update()
 {
 	TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
 
+	//TODO:
 	// Load the schemes required files
 	// Wait for files to load
 
-	// Instance the scheme node we will be attaching the scheme contents to 
+	// Instance the scheme node we will be attaching the scheme contents to
+	TPtr<TLScene::TSceneNode_Scheme> pSchemeNode = TLScene::g_pScenegraph->DoCreateNode(pRequest->GetSchemeRef(), "Scheme");
+
+	if(!pSchemeNode)
+	{
+		// Failed
+		TLDebug_Break("Failed to instance scheme node");
+
+		// Broadcast message to say we are done loading - effectively bail out
+		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("LOAD");
+		
+		if(pMessage)
+		{
+			TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
+			
+			if(pRequest)
+			{
+				pMessage->ExportData("SCHEME", pRequest->GetSchemeRef());
+				pRequest->PublishMessage(pMessage);
+			}
+		}
+
+		return TRef();
+	}
 
 	// Instance the scheme
 	TPtr<TLAsset::TScheme> pScheme = TLAsset::GetAsset(pRequest->GetSchemeAssetRef(), TRUE);
@@ -347,11 +370,16 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Loading::Update()
 		return TRef();
 	}
 
-	//TLScene::g_pScenegraph->ImportScheme( pScheme, pSchemeNode->GetNodeRef() );
-	TLScene::g_pScenegraph->ImportScheme( pScheme, "" );
+	// Import scheme to scenegraph attached to the scheme node
+	TLScene::g_pScenegraph->ImportScheme( pScheme, pSchemeNode->GetNodeRef() );
 
-	// Wait for scheme to be instanced
-	// Add scheme to scenegraph
+	// TODO:
+	// From  past experience...
+	// At this point we would need to go through link nodes and alter the link ID's so that they are specific to 
+	// the parent scheme ID along with altering a nodes link reference to match - all links must reference unique 
+	// nodes and when saved would be static (non-changeable) so we would make a temp change at runtime.
+	// In the past however we didn't have control of the editor so we may be able to use alternative
+	// solutions that are built into the system rather than this sort of 'hack'
 
 	// Broadcast message to say we are done loading
 	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("LOAD");

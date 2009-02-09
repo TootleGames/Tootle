@@ -9,6 +9,7 @@
 ////////////////////////////////////////////////////
 #include "TSceneNode_Camera.h"
 #include "TSceneNode_Emitter.h"
+#include "TSchemeNode.h"
 ////////////////////////////////////////////////////
 
 
@@ -29,6 +30,9 @@ TSceneNode* TSceneNodeFactory::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 
 	if(TypeRef == "Emitter")
 		return new TSceneNode_Emitter(InstanceRef,TypeRef);
+
+	if(TypeRef == "Scheme")
+		return new TSceneNode_Scheme(InstanceRef,TypeRef);
 
 	return NULL;
 }
