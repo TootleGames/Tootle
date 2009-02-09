@@ -351,7 +351,7 @@ Bool TLFileSys::TFileSimpleVector::ImportMesh(TPtr<TLAsset::TMesh>& pMesh,TPtr<T
 			return FALSE;
 
 		//	restore z
-		m_SvgPointMove.z = OldZ;
+		//m_SvgPointMove.z = OldZ;
 	}
 
 

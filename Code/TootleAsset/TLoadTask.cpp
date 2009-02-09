@@ -5,7 +5,7 @@
 
 
 //	gr: for testing (for me at least) dont turn file into an asset file
-//#define ENABLE_OUTPUT_ASSET_FILE	//	default enabled
+#define ENABLE_OUTPUT_ASSET_FILE	//	default enabled
 
 
 namespace TLAsset
