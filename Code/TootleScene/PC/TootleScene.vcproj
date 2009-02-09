@@ -198,6 +198,14 @@
 				RelativePath="..\TSceneNode_Emitter.h"
 				>
 			</File>
+			<File
+				RelativePath="..\TSchemeNode.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\TSchemeNode.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="..\TLScene.cpp"
@@ -236,6 +244,14 @@
 					Name="VCCustomBuildTool"
 				/>
 			</FileConfiguration>
+		</File>
+		<File
+			RelativePath="..\TSchemeManager.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TSchemeManager.h"
+			>
 		</File>
 	</Files>
 	<Globals>

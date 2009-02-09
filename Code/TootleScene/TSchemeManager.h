@@ -93,7 +93,7 @@ public:
 	TRefRef				GetSchemeAssetRef()		const	{ return m_SchemeAssetRef;}
 	TSchemeUpdateType	GetUpdateType()			const	{ return m_Type; }
 		
-	inline Bool		operator==(const TRefRef SchemeRef) const	{	return (m_SchemeRef == SchemeRef);	}
+	inline Bool		operator==(TRefRef SchemeRef) const	{	return (m_SchemeRef == SchemeRef);	}
 
 private:
 	TRef				m_SchemeRef;			// SchemeRef

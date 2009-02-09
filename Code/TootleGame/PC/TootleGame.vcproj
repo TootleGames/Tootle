@@ -156,6 +156,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TGame.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TGame.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TGui.cpp"
 			>
 		</File>

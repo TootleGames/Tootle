@@ -546,6 +546,14 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath="..\TApplication.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TApplication.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TClassFactory.h"
 			>
 		</File>
