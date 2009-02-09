@@ -11,6 +11,7 @@
 
 #include <TootleAsset/TAsset.h>
 #include <TootleCore/TEventChannel.h>
+#include "TScenegraph.h"
 
 namespace TLScheme
 {
@@ -46,6 +47,9 @@ SyncBool TSchemeManager::Shutdown()
 	{
 		//NOTE: We may not need to do this as we can assume the scenegraph will shutdown and remove all nodes
 		UnloadAllSchemes();
+
+		// Call the update to be able to update the modes and requests
+		Update(0.0f);
 		
 		// Wait for all schemes to have been unloaded.
 		return SyncWait;
@@ -290,6 +294,28 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Init::Update()
 			return TRef();
 		}
 
+		// Check make sure the asset loaded is a scheme
+		if(pAsset->GetAssetType() != "scheme")
+		{
+			TLDebug_Break("Loaded asset is not a scheme");
+
+			// Broadcast message to say we are done loading - effectively bail out
+			TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("LOAD");
+			
+			if(pMessage)
+			{
+				TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
+				
+				if(pRequest)
+				{
+					pMessage->ExportData("SCHEME", pRequest->GetSchemeRef());
+					pRequest->PublishMessage(pMessage);
+				}
+			}
+
+			return TRef();
+		}
+
 		// Asset is loaded
 		return "Loading";
 	}
@@ -303,10 +329,27 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Init::Update()
 
 
 TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Loading::Update()
-{	
+{
+	TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
+
 	// Load the schemes required files
 	// Wait for files to load
+
+	// Instance the scheme node we will be attaching the scheme contents to 
+
 	// Instance the scheme
+	TPtr<TLAsset::TScheme> pScheme = TLAsset::GetAsset(pRequest->GetSchemeAssetRef(), TRUE);
+
+	// Is the asset loaded?
+	if(!pScheme)
+	{
+		TLDebug_Break("Scheme Asset is no longer loaded");
+		return TRef();
+	}
+
+	//TLScene::g_pScenegraph->ImportScheme( pScheme, pSchemeNode->GetNodeRef() );
+	TLScene::g_pScenegraph->ImportScheme( pScheme, "" );
+
 	// Wait for scheme to be instanced
 	// Add scheme to scenegraph
 
@@ -315,8 +358,6 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Loading::Update()
 	
 	if(pMessage)
 	{
-		TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
-		
 		if(pRequest)
 		{
 			pMessage->ExportData("SCHEME", pRequest->GetSchemeRef());
@@ -339,7 +380,7 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_UnLoading::Update()
 	
 	
 	// Broadcast message to say we are done loading
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("LOAD");
+	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("UNLOAD");
 	
 	if(pMessage)
 	{
