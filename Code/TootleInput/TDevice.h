@@ -45,7 +45,7 @@ public:
 	TRefRef				GetHardwareDeviceID() const		{	return m_HardwareDeviceRef;	}
 	TRefRef				GetDeviceType() const			{	return m_DeviceType;	}
 
-	inline Bool			operator==(const TRef& InputRef) const				{	return GetDeviceRef() == InputRef;	}
+	inline Bool			operator==(TRefRef InputRef) const					{	return GetDeviceRef() == InputRef;	}
 	inline Bool			operator==(const TInputDevice& InputDevice) const 	{	return GetDeviceRef() == InputDevice.GetDeviceRef();	}
 
 	inline Bool			AssignToHardwareDevice(TRefRef HardwareDeviceRef)
@@ -68,16 +68,16 @@ public:
 	}
 
 	// Sensor access
-	TPtr<TLInput::TInputSensor>	AttachSensor(TRef refSensorID, TSensorType SensorType);
-	Bool						HasSensor(TRef refSensorID);
-	TPtr<TLInput::TInputSensor>	GetSensor(TRef refSensorID);
+	TPtr<TLInput::TInputSensor>&	AttachSensor(TRefRef refSensorID, TSensorType SensorType);
+	Bool							HasSensor(TRefRef refSensorID);
+	TPtr<TLInput::TInputSensor>&	GetSensor(TRefRef refSensorID);
 
-	s32							GetSensorIndex(TRef refSensorLabel);
+	s32								GetSensorIndex(TRefRef refSensorLabel);
 
-	u32							GetSensorCount(TSensorType SensorType);
+	u32								GetSensorCount(TSensorType SensorType);
 
 	// Effects access
-	TPtr<TLInput::TInputEffect>		AttachEffect(TRef refEffectID);
+	TPtr<TLInput::TInputEffect>&	AttachEffect(TRef refEffectID);
 
 	// Data buffer access - sensor information from hardware
 	TPtr<TBinaryTree>&				GetDataBuffer()				{ return m_pDeviceDataBuffer; }

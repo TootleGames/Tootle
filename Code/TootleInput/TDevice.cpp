@@ -18,25 +18,26 @@ void TInputDevice::ProcessSensors(TPtr<TBinaryTree>& MainBuffer)
 {
 	float fValue = 0.0f;
 	TPtrArray<TBinaryTree> BufferArray;
+	BufferArray.SetAllocSize(100);
 
 	if(MainBuffer->GetChildren("Input", BufferArray))
 	{
 		for( u32 uIndex = 0; uIndex < BufferArray.GetSize(); uIndex++ )
 		{
-			TPtr<TBinaryTree> pDataBuffer = BufferArray.ElementAt(uIndex);
+			TBinaryTree* pDataBuffer = BufferArray.ElementAt(uIndex).GetObject();
 
-			if(pDataBuffer.IsValid())
+			if(!pDataBuffer)
+				continue;
+
+			pDataBuffer->ResetReadPos();
+
+			for(u32 uIndex = 0; uIndex < m_Sensors.GetSize(); uIndex++)
 			{
-				pDataBuffer->ResetReadPos();
-
-				for(u32 uIndex = 0; uIndex < m_Sensors.GetSize(); uIndex++)
+				if(pDataBuffer->Read(fValue))
 				{
-					if(pDataBuffer->Read(fValue))
-					{
-						TPtr<TInputSensor> pSensor = m_Sensors.ElementAt(uIndex);
+					TPtr<TInputSensor>& pSensor = m_Sensors.ElementAt(uIndex);
 
-						pSensor->Process(fValue);
-					}
+					pSensor->Process(fValue);
 				}
 			}
 		}
@@ -44,7 +45,7 @@ void TInputDevice::ProcessSensors(TPtr<TBinaryTree>& MainBuffer)
 }
 
 
-TPtr<TLInput::TInputSensor>	TInputDevice::AttachSensor(TRef refSensorID, TSensorType SensorType)
+TPtr<TLInput::TInputSensor>& TInputDevice::AttachSensor(TRefRef refSensorID, TSensorType SensorType)
 {
 	if(!HasSensor(refSensorID))
 	{
@@ -52,33 +53,33 @@ TPtr<TLInput::TInputSensor>	TInputDevice::AttachSensor(TRef refSensorID, TSensor
 
 		if(pSensor.IsValid())
 		{
-			m_Sensors.Add(pSensor);
-			return pSensor;
+			s32 SensorIndex = m_Sensors.Add(pSensor);
+			return m_Sensors[SensorIndex];
 		}
 	}
 
-	return NULL;
+	return TLPtr::GetNullPtr<TLInput::TInputSensor>();
 }
 
-Bool TInputDevice::HasSensor(TRef refSensorID)
+Bool TInputDevice::HasSensor(TRefRef refSensorID)
 {
-	TPtr<TInputSensor> pSensor = GetSensor(refSensorID);
+	TPtr<TInputSensor>& pSensor = GetSensor(refSensorID);
 
 	return pSensor.IsValid();
 }
 
 
-TPtr<TLInput::TInputSensor>	TInputDevice::GetSensor(TRef refSensorID)
+TPtr<TLInput::TInputSensor>& TInputDevice::GetSensor(TRefRef refSensorID)
 {
 	for(u32 uIndex = 0; uIndex < m_Sensors.GetSize(); uIndex++)
 	{
-		TPtr<TInputSensor> pSensor = m_Sensors.ElementAt(uIndex);
+		TPtr<TInputSensor>& pSensor = m_Sensors.ElementAt(uIndex);
 
 		if(pSensor->m_refSensorID == refSensorID)
 			return pSensor;
 	}
 
-	return TPtr<TInputSensor>(NULL);
+	return TLPtr::GetNullPtr<TLInput::TInputSensor>();
 }
 
 
@@ -86,12 +87,12 @@ TPtr<TLInput::TInputSensor>	TInputDevice::GetSensor(TRef refSensorID)
 // To get the sensor index for the key 'x' on a keyboard for example this routine should be used
 // The index returned is specific to the device so requesting 'x' on a mouse will return -1, not found.
 // On a gamepad, depending on the pad, it will return either -1, not found, or the index of a button labelled x.
-s32 TInputDevice::GetSensorIndex(TRef refSensorLabel)
+s32 TInputDevice::GetSensorIndex(TRefRef refSensorLabel)
 {
 	// Go through the sensors and look up whether any have the specified sensor ref as a label
 	for(u32 uIndex = 0; uIndex < m_Sensors.GetSize(); uIndex++)
 	{
-		TPtr<TLInput::TInputSensor> pSensor = m_Sensors.ElementAt(uIndex);
+		TPtr<TLInput::TInputSensor>& pSensor = m_Sensors.ElementAt(uIndex);
 
 		if(pSensor->GetLabel() == refSensorLabel)
 			return (s32) uIndex;
@@ -137,9 +138,9 @@ u32	TInputDevice::GetSensorCount(TSensorType SensorType)
 
 
 
-TPtr<TLInput::TInputEffect>	TInputDevice::AttachEffect(TRef refEffectID)
+TPtr<TLInput::TInputEffect>& TInputDevice::AttachEffect(TRef refEffectID)
 {
-	return NULL;
+	return TLPtr::GetNullPtr<TLInput::TInputEffect>();
 }
 
 

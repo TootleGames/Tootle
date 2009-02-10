@@ -1,7 +1,7 @@
 #include "IPodInput.h"
 
 #ifdef _DEBUG
-//#define ENABLE_INPUTSYSTEM_TRACE
+#define ENABLE_INPUTSYSTEM_TRACE
 #endif
 
 // [16/12/08] DB -	Possible responsiveness improvement
@@ -9,14 +9,20 @@
 //				    instead of during the next frame update
 #define ENABLE_IMMEDIATE_TOUCHUPDATE
 
+#define ACCEL_MAXPROCESS	10		//	at most, per device update only process the last N accelerometer data's
+#define ACCEL_MINCHANGE		0.025f	//	minimum amount of change on an axis to register a change. anything smaller than this will be ignored and "jitter"
+
+
+
 namespace TLInput
 {
 	namespace Platform 
 	{
 		namespace IPod 
 		{
-			TPtrArray<TTouchData> g_TouchData;
-			TPtrArray<TAccelerationData> g_AccelerationData;
+			TPtrArray<TTouchData>		g_TouchData;
+			TArray<TAccelerationData>	g_AccelerationData;
+			float3						g_LastAccelData;		//	store the last accel data in case we dont have any for some immediate touch response, we will just send the last data we had. Also reduces the amount of processing done when values changes only slightly
 			
 			const u32 MAX_CURSOR_POSITIONS = 4;
 			TFixedArray<int2, MAX_CURSOR_POSITIONS>		g_aCursorPositions;
@@ -47,7 +53,7 @@ Bool Platform::IPod::CreateDevice()
 	TRef InstanceRef = "IPOD";
 	
 	// Create the generic input object
-	TPtr<TInputDevice> pGenericDevice = g_pInputSystem->GetInstance(InstanceRef, TRUE, "Mouse");
+	TPtr<TInputDevice>& pGenericDevice = g_pInputSystem->GetInstance(InstanceRef, TRUE, "Mouse");
 	
 	if(pGenericDevice.IsValid())
 	{
@@ -63,7 +69,7 @@ Bool Platform::IPod::CreateDevice()
 		else
 		{
 			// Notify to all subscribers of the input system that a new device was added
-			TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Input");
+			TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Input");			
 			
 			if(pMessage.IsValid())
 			{
@@ -104,7 +110,7 @@ Bool Platform::IPod::InitialiseDevice(TPtr<TInputDevice> pDevice)
 		// For buttons we need to label them based on what type and the model
 		// so get this information from a function in stead which will lookup the details required
 		
-		TPtr<TInputSensor> pSensor = pDevice->AttachSensor(uUniqueID, Button);
+		TPtr<TInputSensor>& pSensor = pDevice->AttachSensor(uUniqueID, Button);
 		
 		if(pSensor.IsValid())
 		{
@@ -138,10 +144,11 @@ Bool Platform::IPod::InitialiseDevice(TPtr<TInputDevice> pDevice)
 	for(uIndex = 0; uIndex < AxisRefs.GetSize(); uIndex++)
 	{		
 		
-		TPtr<TInputSensor> pSensor = pDevice->AttachSensor(uUniqueID, Axis);
+		TPtr<TInputSensor>& pSensor = pDevice->AttachSensor(uUniqueID, Axis);
 		
 		if(pSensor.IsValid())
 		{
+			//	gr: wierd code? ref -> string -> ref ?
 			//pSensor->SubscribeTo(pDXDevice);
 			TRef temp = AxisRefs.ElementAt(uIndex);
 			stringLabel.Empty();
@@ -168,10 +175,11 @@ Bool Platform::IPod::InitialiseDevice(TPtr<TInputDevice> pDevice)
 	for(uIndex = 0; uIndex < 3; uIndex++)
 	{
 		// Add accelerometer axis
-		TPtr<TInputSensor> pSensor = pDevice->AttachSensor(uUniqueID, Axis);
+		TPtr<TInputSensor>& pSensor = pDevice->AttachSensor(uUniqueID, Axis);
 		
 		if(pSensor.IsValid())
 		{
+			//	gr: wierd code? ref -> string -> ref ?
 			TRef temp = AxisRefs.ElementAt(uIndex);
 			stringLabel.Empty();
 			temp.GetString(stringLabel);
@@ -217,7 +225,7 @@ SyncBool Platform::EnumerateDevices()
 	TRef InstanceRef = "IPOD";
 
 	// Check to see if the single ipod input device alreay exists
-	TPtr<TInputDevice> pDevice = g_pInputSystem->GetInstance(InstanceRef, FALSE);
+	TPtr<TInputDevice>& pDevice = g_pInputSystem->GetInstance(InstanceRef, FALSE);
 	
 	if(!pDevice)
 		IPod::CreateDevice();
@@ -236,7 +244,8 @@ Bool Platform::UpdateDevice(TPtr<TLInput::TInputDevice> pDevice)
 #ifdef ENABLE_INPUTSYSTEM_TRACE
 	TLDebug_Print("INPUT: Begin update");
 #endif
-	
+	TArray<IPod::TAccelerationData>& AccelerationDataArray = IPod::g_AccelerationData;
+				
 	
 	if(IPod::g_TouchData.GetSize() > 0 )
 	{
@@ -246,23 +255,42 @@ Bool Platform::UpdateDevice(TPtr<TLInput::TInputDevice> pDevice)
 		// Processed all touch data
 		// Check to see if we still have any accelerometer data left to process
 		// If so continue through otherwise return
-		if(IPod::g_AccelerationData.GetSize() == 0)
-			return TRUE;
+		//if( AccelerationData.GetSize() == 0)
+		//	return TRUE;
 	}
 	
+	//	no accel data to process
+	if ( AccelerationDataArray.GetSize() == 0 )
+		return TRUE;
 	
-	do
+	//	gr: skip excessive accelleration data;
+	u32 FirstData = 0;
+	if ( AccelerationDataArray.GetSize() > ACCEL_MAXPROCESS )
+		FirstData = AccelerationDataArray.GetLastIndex() - ACCEL_MAXPROCESS;
+	
+	//	process all our accell data
+	for ( u32 i=FirstData;	i<AccelerationDataArray.GetSize();	i++ )
 	{
+		//	gr: check to see if we can ignore minor changes first
+		IPod::TAccelerationData& AccelerationData = AccelerationDataArray.ElementAt(i);
+		float3 Diff( IPod::g_LastAccelData - AccelerationData.m_vAcceleration );
+
+		//	if every axis' change is less than the Min then skip this data
+		if ( ( Diff.x < ACCEL_MINCHANGE && Diff.x > -ACCEL_MINCHANGE ) && 
+			 ( Diff.y < ACCEL_MINCHANGE && Diff.y > -ACCEL_MINCHANGE ) && 
+			 ( Diff.z < ACCEL_MINCHANGE && Diff.z > -ACCEL_MINCHANGE ) )
+		{
+			continue;
+		}
+
 #ifdef ENABLE_INPUTSYSTEM_TRACE
-		TLDebug_Print("INPUT: Process NON-TOUCH data");
+		TLDebug_Print( TString("INPUT: Process NON-TOUCH data: %d/%d", i, AccelerationDataArray.GetSize()-1 ) );
 #endif
 		// No touch data to process, so send a basic message with the current generic device state info		
 		TPtr<TBinaryTree>& MainBuffer = pDevice->GetDataBuffer();
-		
 		MainBuffer->Empty();
-		
-		TPtr<TBinaryTree> pDataBuffer = MainBuffer->AddChild("Input");
-		
+		TPtr<TBinaryTree>& pDataBuffer = MainBuffer->AddChild("Input");
+
 		// Setup the button data				
 		for(u32 uButtonIndex = 0; uButtonIndex < IPod::MAX_CURSOR_POSITIONS; uButtonIndex++)
 		{
@@ -280,25 +308,14 @@ Bool Platform::UpdateDevice(TPtr<TLInput::TInputDevice> pDevice)
 		}
 		
 		// Add the acceleromter data
-		if(IPod::g_AccelerationData.GetSize() > 0)
-		{
-			TPtr<IPod::TAccelerationData> pAccelerationData =IPod::g_AccelerationData.ElementAt(0);
-			
-			pDataBuffer->Write(pAccelerationData->vAcceleration.x);
-			pDataBuffer->Write(pAccelerationData->vAcceleration.y);
-			pDataBuffer->Write(pAccelerationData->vAcceleration.z);
-			
-			// Remove fromt eh top of the list
-			IPod::g_AccelerationData.RemoveAt(0);
-		}
-		else
-		{
-			// No acceleration on this run of the loop
-			pDataBuffer->Write(0.0f);
-			pDataBuffer->Write(0.0f);
-			pDataBuffer->Write(0.0f);
-		}	
+		//	gr: could possibly get away with just writing the float3 but won't for now
+		pDataBuffer->Write( AccelerationData.m_vAcceleration.x );
+		pDataBuffer->Write( AccelerationData.m_vAcceleration.y );
+		pDataBuffer->Write( AccelerationData.m_vAcceleration.z );
 		
+		//	record last-used accell value
+		IPod::g_LastAccelData = AccelerationData.m_vAcceleration;
+			
 		// Set the cursor information
 		//SetCursorPosition(uSensorIndex, pTouchData->uCurrentPos);
 		
@@ -306,10 +323,11 @@ Bool Platform::UpdateDevice(TPtr<TLInput::TInputDevice> pDevice)
 		pDataBuffer->ResetReadPos();
 		pDevice->ForceUpdate();
 	
+	}
 	
-		// Still have any iaccelerometer data to process??
-	}while(IPod::g_AccelerationData.GetSize() > 0);				
-			
+	//	processed all this data
+	AccelerationDataArray.Empty();
+		
 #ifdef ENABLE_INPUTSYSTEM_TRACE
 	TLDebug_Print("INPUT: End update");
 #endif			
@@ -332,12 +350,12 @@ void Platform::IPod::ProcessTouchData(TPtr<TLInput::TInputDevice> pDevice)
 		
 		MainBuffer->Empty();
 		
-		TPtr<TBinaryTree> pDataBuffer = MainBuffer->AddChild("Input");
+		TPtr<TBinaryTree>& pDataBuffer = MainBuffer->AddChild("Input");
 		
 		if(pDataBuffer)
 		{
 			
-			TPtr<TTouchData> pTouchData = g_TouchData.ElementAt(uIndex);
+			TPtr<TTouchData>& pTouchData = g_TouchData.ElementAt(uIndex);
 			
 			// Get the index - this will correspond to both a button and axis index
 			u32 uSensorIndex = pTouchData->uIndex;
@@ -387,20 +405,21 @@ void Platform::IPod::ProcessTouchData(TPtr<TLInput::TInputDevice> pDevice)
 			// Add the acceleromter data
 			if(g_AccelerationData.GetSize() > 0)
 			{
-				TPtr<TAccelerationData> pAccelerationData = g_AccelerationData.ElementAt(0);
+				TAccelerationData& AccelerationData = g_AccelerationData.ElementAt(0);
 				
-				pDataBuffer->Write(pAccelerationData->vAcceleration.x);
-				pDataBuffer->Write(pAccelerationData->vAcceleration.y);
-				pDataBuffer->Write(pAccelerationData->vAcceleration.z);
+				pDataBuffer->Write( AccelerationData.m_vAcceleration.x );
+				pDataBuffer->Write( AccelerationData.m_vAcceleration.y );
+				pDataBuffer->Write( AccelerationData.m_vAcceleration.z );
 				
+				IPod::g_LastAccelData = AccelerationData.m_vAcceleration;
 				g_AccelerationData.RemoveAt(0);
 			}
 			else
 			{
-				// No acceleration on this run of the loop
-				pDataBuffer->Write(0.0f);
-				pDataBuffer->Write(0.0f);
-				pDataBuffer->Write(0.0f);
+				// No acceleration on this run of the loop - use the last accel values so no changes will be detected
+				pDataBuffer->Write( IPod::g_LastAccelData.x );
+				pDataBuffer->Write( IPod::g_LastAccelData.y );
+				pDataBuffer->Write( IPod::g_LastAccelData.z );
 			}
 			
 			
@@ -483,13 +502,12 @@ void TLInput::Platform::IPod::ProcessTouchEnd(TPtr<TTouchData>& pTouchData)
 #endif
 }
 
-void TLInput::Platform::IPod::ProcessAcceleration(TPtr<TAccelerationData>& pAccelerationData)
+void TLInput::Platform::IPod::ProcessAcceleration(TLInput::Platform::IPod::TAccelerationData& AccelerationData)
 {
 	// Handle acceleration data here
 	//TLDebug_Print(TString("TLInput::Platform::IPod::ProcessAcceleration - Acceleration occured (%.3f, %.3f, %.3f)", pAccelerationData->vAcceleration.x, pAccelerationData->vAcceleration.y, pAccelerationData->vAcceleration.z));
-
 	
-	g_AccelerationData.Add(pAccelerationData);
+	g_AccelerationData.Add( AccelerationData );
 }
 
 

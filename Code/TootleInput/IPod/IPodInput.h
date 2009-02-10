@@ -38,16 +38,21 @@ namespace TLInput
 				u8		uIndex;
 			};
 			
-			struct TAccelerationData
+			class TAccelerationData
 			{
-				float3 vAcceleration;
+			public:
+				TAccelerationData()										{}
+				TAccelerationData(const float3& Acceleration) : m_vAcceleration( Acceleration )	{}
+
+			public:
+				float3	m_vAcceleration;
 			};
 			
 			void ProcessTouchBegin(TPtr<TTouchData>& touchData);
 			void ProcessTouchMoved(TPtr<TTouchData>& touchData);
 			void ProcessTouchEnd(TPtr<TTouchData>& touchData);
 
-			void ProcessAcceleration(TPtr<TAccelerationData>& pAccelerationData);
+			void ProcessAcceleration(TLInput::Platform::IPod::TAccelerationData& AccelerationData);
 
 			Bool CreateDevice();
 			Bool InitialiseDevice(TPtr<TInputDevice> pDevice);
@@ -55,3 +60,6 @@ namespace TLInput
 	};
 };
 
+
+TLCore_DeclareIsDataType( TLInput::Platform::IPod::TTouchData );
+TLCore_DeclareIsDataType( TLInput::Platform::IPod::TAccelerationData );

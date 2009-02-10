@@ -7,7 +7,7 @@
 #import <OpenGLES/EAGLDrawable.h>
 
 
-#define FORCE_RENDERNODE_CLEAR		//	even if our clear colour is opaque, clear with a render node regardless
+//#define FORCE_RENDERNODE_CLEAR		//	even if our clear colour is opaque, clear with a render node regardless
 
 
 TLRender::Platform::RenderTarget::RenderTarget(const TRef& Ref) :

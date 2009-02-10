@@ -13,10 +13,8 @@ void TInputSensor::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 	if(pMessage->HasChannelID(m_refSensorID))
 	{
 		float fValue;
-
-		pMessage->Read(fValue);
-
-		Process(fValue);
+		if ( pMessage->Read(fValue) )
+			Process(fValue);
 	}
 }
 
@@ -37,15 +35,12 @@ void TInputSensor::Process(float fRawValue)
 	if(m_fValue != fValue)
 	{
 #ifdef ENABLE_INPUTSENSOR_TRACE
-		TString sensor;
-		m_refSensorID.GetString(sensor);
-		
-		TString sensorlabel;
-		m_refSensorLabel.GetString(sensorlabel);
-		
-		TString str;
-		str.Appendf("Sensor %s (%s) value changed - %.3f", sensor.GetData(), sensorlabel.GetData(), fValue);
-		TLDebug_Print(str);
+		TTempString Debug_SensorString("Sensor ");
+		m_refSensorID.GetString(Debug_SensorString);
+		Debug_SensorString.Append(" (");
+		m_refSensorLabel.GetString(Debug_SensorString);
+		Debug_SensorString.Appendf(") value changed; %.3f", fValue);
+		TLDebug_Print( Debug_SensorString );
 #endif
 		
 		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Input");

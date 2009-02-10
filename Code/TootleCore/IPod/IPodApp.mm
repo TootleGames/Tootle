@@ -295,15 +295,9 @@ OpenglESAppAppDelegate* g_pIpodApp;
     // Update the accelerometer graph view
     //[graphView updateHistoryWithX:acceleration.x Y:acceleration.y Z:acceleration.z];
 	
-	
-	TPtr<TLInput::Platform::IPod::TAccelerationData> pAccelerationData = new TLInput::Platform::IPod::TAccelerationData();
-	
-	if(pAccelerationData)
-	{
-		pAccelerationData->vAcceleration = float3(acceleration.x, acceleration.y, acceleration.z);
-		
-		TLInput::Platform::IPod::ProcessAcceleration(pAccelerationData);
-	}
+	TLInput::Platform::IPod::TAccelerationData AccelData( float3( acceleration.x, acceleration.y, acceleration.z) );
+
+	TLInput::Platform::IPod::ProcessAcceleration( AccelData );
 }
 
 void TLCore::Platform::OpenWebURL(TString& urlstr)

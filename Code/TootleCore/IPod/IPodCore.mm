@@ -128,8 +128,9 @@ Bool TLDebug::Platform::Break(const TString& String)
 //#else 
 #if defined(_DEBUG)
 	//	gr: hacky break for debug builds
+	//	gr: removed because there's no way to get out of this in xcode if we trigger it..
 	int* pNull = 0x0;
-	*pNull = 99;
+	//*pNull = 99;
 #endif
 	
 	//	fail
