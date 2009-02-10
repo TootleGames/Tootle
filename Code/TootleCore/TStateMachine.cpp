@@ -22,7 +22,7 @@ void TStateMachine::Update()
 	TRef NextModeRef = m_pCurrentMode->Update();
 
 	//	mode change requested
-	if ( NextModeRef.IsValid() )
+	if ( NextModeRef.IsValid() && (NextModeRef != m_pCurrentMode->GetModeRef()))
 	{
 		SetMode( NextModeRef );
 	}
