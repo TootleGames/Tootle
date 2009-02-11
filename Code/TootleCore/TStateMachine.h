@@ -25,6 +25,8 @@ public:
 	TPtr<TYPE>				GetMode(TRefRef ModeRef)		{	return m_Modes.FindPtr( ModeRef );	}
 	TPtr<TStateMode>		GetMode(TRefRef ModeRef)		{	return m_Modes.FindPtr( ModeRef );	}
 	
+	inline Bool				HasMode(TRefRef ModeRef)		{	return (GetMode(ModeRef).IsValid()); }
+	
 	template<class TYPE> 
 	TPtr<TYPE>				GetCurrentMode()				{	return m_pCurrentMode;	}
 	TPtr<TStateMode>		GetCurrentMode()				{	return m_pCurrentMode;	}

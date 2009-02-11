@@ -9,3 +9,14 @@
 
 #include "TGame.h"
 
+using namespace TLGame;
+
+
+SyncBool TGame::Update(float fTimeStep)
+{
+	// Update the game state machine
+	TStateMachine::Update();
+	
+	return SyncTrue;
+}
+

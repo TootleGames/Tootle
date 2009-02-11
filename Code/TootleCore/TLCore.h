@@ -25,6 +25,7 @@ namespace TLCore
 	const TRef ShutdownRef		= "Shutdown";
 	const TRef TimeStepRef		= "Timestep";
 	const TRef TimeStepModRef	= "TSMod";
+	const TRef QuitRef			= "Quit";
 
 	namespace Platform
 	{

@@ -432,7 +432,7 @@ Bool TCoreManager::PublishRenderMessage(Bool bForced)
 
 void TCoreManager::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 {
-	if ( pMessage->GetMessageRef() == "Quit" )
+	if ( pMessage->GetMessageRef() == TLCore::QuitRef )
 	{
 		// Quit
 		m_bQuit = TRUE;
@@ -469,7 +469,13 @@ Bool TCoreManager::CheckManagersInErrorState()
 	{
 		const TPtr<TManager>& pManager = m_Managers.ElementAtConst(uIndex);
 		if(pManager->GetState() == TLManager::S_Error)
+		{
+			TLDebug_Print("Manager is in error state");
+			TString ManagerName;
+			pManager->GetManagerRef().GetString(ManagerName);
+			TLDebug_Print(ManagerName);
 			return TRUE;
+		}
 	}
 
 	return FALSE;
