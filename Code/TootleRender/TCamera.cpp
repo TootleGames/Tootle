@@ -3,12 +3,12 @@
 #include "TRenderTarget.h"
 
 
-#include <TootleInput/TLInput.h>	// TEST
-#include <TootleCore/TEventChannel.h> //TEST
 
 #ifdef _DEBUG
 #define DEBUG_SCALE_FRUSTUM_BOX		0.9f	//	scale down the frustum boxes we generate to test culling/intersections etc
 #endif
+
+
 
 TLRender::TCamera::TCamera() :
 	m_ViewLine	( float3(0.f, 0.f, 0.f), float3(0.f, 0.f, 1.f) ),
@@ -27,9 +27,19 @@ TLRender::TCamera::TCamera() :
 //----------------------------------------------------
 void TLRender::TCamera::CalculateViewVectors()
 {
-	m_Forward = m_ViewLine.GetDirectionNormal();	
-	m_ViewRight = m_Forward.CrossProduct( GetWorldUp() );
-	m_ViewUp = m_ViewRight.CrossProduct( m_Forward );
+	//	get forward vector
+	m_ViewForward = m_ViewLine.GetDirectionNormal();	
+
+	//	rotate the worldup (Y axis) around z... to get the view up
+	float3 ViewUp = GetWorldUp();
+	ViewUp.RotateZ( m_CameraRoll.GetRadians() );
+
+	//	camera forward against view up = view right
+	m_ViewRight = m_ViewForward.CrossProduct( ViewUp );
+
+	//	calculate the proper view up from the view right and view forward
+	//	gr: is this the same as our rolled worldup, ViewUp?
+	m_ViewUp = m_ViewRight.CrossProduct( m_ViewForward );
 }
 
 
@@ -157,125 +167,6 @@ const TLMaths::TMatrix& TLRender::TProjectCamera::UpdateCameraLookAtMatrix()
 }
 
 
-
-/*
-
-/////////////////////////////////////////////////////////////////////////////
-// Name:           CalcCullingInfo
-// Arguments:      An eight element array of Points for each of the frustum 
-//                 corners.
-// Returns:        none
-// Side Effects:   Stores the plane information (normal and d component) for
-//                 each of the six frustum planes in the local frustumPlanes 
-//                 array.
-/////////////////////////////////////////////////////////////////////////////
-void PerspectiveCam::CalcCullingInfo(Point3 frustumCorners[]) 
-{
-    Vector3 dir = Target - Eye;
-    dir.Normalize();
-    Vector3 up(0,1,0);
-    Vector3 A;
-    A.Cross(dir, up);
-    Vector3 B;
-    B.Cross(A, dir);
-    float ch = tanf(FOV*M_PI/360);
-    float cw = ch*(float)PixelWidth/PixelHeight;
-
-    frustumCorners[0] = Eye + dir*NearClip + A*cw*NearClip + B*ch*NearClip;
-    frustumCorners[1] = Eye + dir*NearClip - A*cw*NearClip + B*ch*NearClip;
-    frustumCorners[2] = Eye + dir*NearClip - A*cw*NearClip - B*ch*NearClip;
-    frustumCorners[3] = Eye + dir*NearClip + A*cw*NearClip - B*ch*NearClip;
-
-    frustumCorners[4] = Eye + dir*FarClip + A*cw*FarClip + B*ch*FarClip;
-    frustumCorners[5] = Eye + dir*FarClip - A*cw*FarClip + B*ch*FarClip;
-    frustumCorners[6] = Eye + dir*FarClip - A*cw*FarClip - B*ch*FarClip;
-    frustumCorners[7] = Eye + dir*FarClip + A*cw*FarClip - B*ch*FarClip;
-
-    frustumPlanes[0].normal.Cross(frustumCorners[4]-frustumCorners[0], frustumCorners[5]-frustumCorners[0]);
-    frustumPlanes[0].normal.Normalize();
-    frustumPlanes[0].d = frustumPlanes[0].normal.Dot(frustumCorners[0].ToVector3());
-
-    frustumPlanes[1].normal.Cross(frustumCorners[5]-frustumCorners[1], frustumCorners[6]-frustumCorners[1]);
-    frustumPlanes[1].normal.Normalize();
-    frustumPlanes[1].d = frustumPlanes[1].normal.Dot(frustumCorners[1].ToVector3());
-
-    frustumPlanes[2].normal.Cross(frustumCorners[6]-frustumCorners[2], frustumCorners[7]-frustumCorners[2]);
-    frustumPlanes[2].normal.Normalize();
-    frustumPlanes[2].d = frustumPlanes[2].normal.Dot(frustumCorners[2].ToVector3());
-
-    frustumPlanes[3].normal.Cross(frustumCorners[7]-frustumCorners[3], frustumCorners[4]-frustumCorners[3]);
-    frustumPlanes[3].normal.Normalize();
-    frustumPlanes[3].d = frustumPlanes[3].normal.Dot(frustumCorners[3].ToVector3());
-
-    frustumPlanes[4].normal.Cross(frustumCorners[1]-frustumCorners[0], frustumCorners[2]-frustumCorners[0]);
-    frustumPlanes[4].normal.Normalize();
-    frustumPlanes[4].d = frustumPlanes[4].normal.Dot(frustumCorners[0].ToVector3());
-
-    frustumPlanes[5].normal.Cross(frustumCorners[6]-frustumCorners[4], frustumCorners[5]-frustumCorners[4]);
-    frustumPlanes[5].normal.Normalize();
-    frustumPlanes[5].d = frustumPlanes[5].normal.Dot(frustumCorners[4].ToVector3());
-}
-
-
-/////////////////////////////////////////////////////////////////////////////
-// Name:           CalcCullingInfo
-// Arguments:      An eight element array of Points for each of the frustum 
-//                 corners.
-// Returns:        none
-// Side Effects:   Stores the plane information (normal and d component) for
-//                 each of the six frustum planes in the local frustumPlanes 
-//                 array. Also fills frustumCorners with the eight corners
-//                 of the frustum
-/////////////////////////////////////////////////////////////////////////////
-void OrthographicCam::CalcCullingInfo(Point3 frustumCorners[]) 
-{
-    Vector3 dir = Target - Eye;
-    dir.Normalize();
-    Vector3 up(0,1,0);
-    Vector3 A;
-    A.Cross(dir, up);
-    Vector3 B;
-    B.Cross(A, dir);
-    float ch = Height/2;
-    float cw = ch*(float)PixelWidth/PixelHeight;
-
-    frustumCorners[0] = Eye + dir*NearClip + A*cw + B*ch;
-    frustumCorners[1] = Eye + dir*NearClip - A*cw + B*ch;
-    frustumCorners[2] = Eye + dir*NearClip - A*cw - B*ch;
-    frustumCorners[3] = Eye + dir*NearClip + A*cw - B*ch;
-
-    frustumCorners[4] = Eye + dir*FarClip + A*cw + B*ch;
-    frustumCorners[5] = Eye + dir*FarClip - A*cw + B*ch;
-    frustumCorners[6] = Eye + dir*FarClip - A*cw - B*ch;
-    frustumCorners[7] = Eye + dir*FarClip + A*cw - B*ch;
-
-    frustumPlanes[0].normal.Cross(frustumCorners[4]-frustumCorners[0], frustumCorners[5]-frustumCorners[0]);
-    frustumPlanes[0].normal.Normalize();
-    frustumPlanes[0].d = frustumPlanes[0].normal.Dot(frustumCorners[0].ToVector3());
-
-    frustumPlanes[1].normal.Cross(frustumCorners[5]-frustumCorners[1], frustumCorners[6]-frustumCorners[1]);
-    frustumPlanes[1].normal.Normalize();
-    frustumPlanes[1].d = frustumPlanes[1].normal.Dot(frustumCorners[1].ToVector3());
-
-    frustumPlanes[2].normal.Cross(frustumCorners[6]-frustumCorners[2], frustumCorners[7]-frustumCorners[2]);
-    frustumPlanes[2].normal.Normalize();
-    frustumPlanes[2].d = frustumPlanes[2].normal.Dot(frustumCorners[2].ToVector3());
-
-    frustumPlanes[3].normal.Cross(frustumCorners[7]-frustumCorners[3], frustumCorners[4]-frustumCorners[3]);
-    frustumPlanes[3].normal.Normalize();
-    frustumPlanes[3].d = frustumPlanes[3].normal.Dot(frustumCorners[3].ToVector3());
-
-    frustumPlanes[4].normal.Cross(frustumCorners[1]-frustumCorners[0], frustumCorners[2]-frustumCorners[0]);
-    frustumPlanes[4].normal.Normalize();
-    frustumPlanes[4].d = frustumPlanes[4].normal.Dot(frustumCorners[0].ToVector3());
-
-    frustumPlanes[5].normal.Cross(frustumCorners[6]-frustumCorners[4], frustumCorners[5]-frustumCorners[4]);
-    frustumPlanes[5].normal.Normalize();
-    frustumPlanes[5].d = frustumPlanes[5].normal.Dot(frustumCorners[4].ToVector3());
-
-}
-*/
-
 //-----------------------------------------------------------
 //	extract the frustum from the current view matricies
 //	http://www.crownandcutlass.com/features/technicaldetails/frustum.html
@@ -364,59 +255,105 @@ void TLRender::TProjectCamera::CalcFrustum()
 	TLMaths::TBoxOB& FrustumBox = m_Frustum.GetBox();
 	FrustumBox.GetBoxCorners().SetSize(0);
 
-	GetPlaneBoxCorners( m_NearZ, FrustumBox.GetBoxCorners() );
-	GetPlaneBoxCorners( m_FarZ, FrustumBox.GetBoxCorners() );
+	GetWorldFrustumPlaneBoxCorners( m_NearZ, FrustumBox.GetBoxCorners() );
+	GetWorldFrustumPlaneBoxCorners( m_FarZ, FrustumBox.GetBoxCorners() );
 
 
 	//	calc the shape for the zone from the frustum
-	//	get the camera frustum box at a depth of zero (this will be a bit small as its far from the camera)
-	TLMaths::TBoxOB PlaneBox;
-	float worldz = 0.f;
-	float viewz = GetPosition().z + worldz;
-	GetPlaneBox( viewz, PlaneBox );
-	//	turn this into a 2D box - note: if our box is rotated then the 2D box will be bigger than the screen
-	m_FrustumZoneShape.SetInvalid();
-	m_FrustumZoneShape.Accumulate( PlaneBox.GetBoxCorners() );
-
+	float WorldDepth = 0.f;
+	float ViewDepth = GetPosition().z + WorldDepth;
+	GetWorldFrustumPlaneBox2D( ViewDepth, m_FrustumZoneShape );
 
 
 	m_FrustumValid = TRUE;
 }
 
 
-
 //----------------------------------------------------------
-//	extract an oriented box from the frustum at a certain depth
+//	extract box and make 2D
 //----------------------------------------------------------
-void TLRender::TProjectCamera::GetPlaneBox(float ViewZDepth,TLMaths::TBoxOB& PlaneBox)
+void TLRender::TProjectCamera::GetWorldFrustumPlaneBox2D(float ViewDepth,TLMaths::TBox2D& PlaneBox2D) const
 {
-	PlaneBox.GetBoxCorners().SetSize(0);
-	GetPlaneBoxCorners( ViewZDepth, PlaneBox.GetBoxCorners() );
+	//	calc the shape for the zone from the frustum
+	//	get the camera frustum box at a depth of zero in the world (this will be a bit small as its far from the camera)
+	TLMaths::TBoxOB PlaneBox;
+	GetWorldFrustumPlaneBox( ViewDepth, PlaneBox );
+
+	//	turn this into a 2D box - note: if our box is rotated then the 2D box will be bigger than the screen
+	PlaneBox2D.SetInvalid();
+	PlaneBox2D.Accumulate( PlaneBox.GetBoxCorners() );
 }
 
 
 //----------------------------------------------------------
 //	extract an oriented box from the frustum at a certain depth
 //----------------------------------------------------------
-void TLRender::TProjectCamera::GetPlaneBoxCorners(float ViewZDepth,TArray<float3>& PlaneCorners)
+void TLRender::TProjectCamera::GetWorldFrustumPlaneBox(float ViewDepth,TLMaths::TBoxOB& PlaneBox) const
 {
-    float ch = tanf( GetHorzFov().GetRadians() / 2.f );	//	half plane height scalar
-    float cw = ch * GetAspectRatio();	//	half plane width scalar
+	PlaneBox.GetBoxCorners().SetSize(0);
+	GetWorldFrustumPlaneBoxCorners( ViewDepth, PlaneBox.GetBoxCorners() );
+}
 
+
+//----------------------------------------------------------
+//	calc new view sizes
+//----------------------------------------------------------
+void TLRender::TProjectCamera::SetViewport(const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape)
+{
+	float AspectRatio = (float)RenderTargetSize.Width() / (float)RenderTargetSize.Height();
+
+	//	calc the un-rotated screen view size
+	float ViewHalfHeight = tanf( GetHorzFov().GetRadians() / 2.f );
+	float ViewHalfWidth = ViewHalfHeight * AspectRatio;
+	m_ScreenViewBox.SetMin( float2( -ViewHalfWidth, -ViewHalfHeight ) );
+	m_ScreenViewBox.SetMax( float2( ViewHalfWidth, ViewHalfHeight ) );
+
+	//	copy the screen view into the projection view...
+	m_ProjectionViewBox = m_ScreenViewBox;
+
+	//	rotate our projected view (same as glRotatef)
+	if ( ScreenShape == TLRender::ScreenShape_WideRight || ScreenShape == TLRender::ScreenShape_WideLeft )
+	{
+		//	gr: bit of a bodge atm, just swap w and h
+		TLMaths::SwapVars( m_ProjectionViewBox.GetMin().x, m_ProjectionViewBox.GetMin().y );
+		TLMaths::SwapVars( m_ProjectionViewBox.GetMax().x, m_ProjectionViewBox.GetMax().y );
+	}
+
+	//	move the screen view forward to the nearz
+	m_ScreenViewBox.GetMin() *= GetNearZ();
+	m_ScreenViewBox.GetMax() *= GetNearZ();
+}
+
+
+//----------------------------------------------------------
+//	extract an oriented box from the frustum at a certain depth
+//----------------------------------------------------------
+void TLRender::TProjectCamera::GetWorldFrustumPlaneBoxCorners(float ViewDepth,TArray<float3>& PlaneCorners) const
+{
 	//	scale down the frustum boxes we generate to test culling/intersections etc
 #ifdef DEBUG_SCALE_FRUSTUM_BOX
-	ch *= DEBUG_SCALE_FRUSTUM_BOX;
-	cw *= DEBUG_SCALE_FRUSTUM_BOX;
+	TLMaths::TBox2D ViewBox = GetProjectionViewBox();
+	ViewBox.GrowBox( DEBUG_SCALE_FRUSTUM_BOX );
+#else
+	const TLMaths::TBox2D& ViewBox = GetProjectionViewBox();
+#endif
+
+#ifdef _DEBUG
+	if ( ViewDepth < GetNearZ() )
+	{
+		TLDebug_Break("Do not request a frustum plane behind the nearz, if ZERO will be invalid.");
+		ViewDepth = GetNearZ();
+	}
 #endif
 
 	//	precalc vectors
 	//	center of plane
 	//	gr: todo: again here... i have to negate x/y... my forward/backward numbers are wrong on the camera in a few places
-	float3 Center = (GetPosition() * float3(-1.f,-1.f,1.f)) + (m_Forward * ViewZDepth);
+	float3 Center = (GetPosition() * float3(-1.f,-1.f,1.f)) + (m_ViewForward * ViewDepth);
 
 	//	half vector extents across/up for near and far (cw/ch are half w/h)
-	float3 Horz = m_ViewRight * (cw * ViewZDepth);
-	float3 Vert = m_ViewUp * (ch * ViewZDepth);
+	float3 Horz = m_ViewRight * (ViewBox.GetHalfWidth() * ViewDepth);
+	float3 Vert = m_ViewUp * (ViewBox.GetHalfHeight() * ViewDepth);
 
 	//	top left, top right, bottom right, bottom left
 	PlaneCorners.Add( Center - Horz - Vert );
@@ -426,142 +363,20 @@ void TLRender::TProjectCamera::GetPlaneBoxCorners(float ViewZDepth,TArray<float3
 }
 
 
-/*
-//----------------------------------------------------------
-//	work out a frustum matrix from this camera
-//----------------------------------------------------------
-void TLRender::TProjectCamera::GetFrustumMatrix(TLMaths::TMatrix& Matrix,float AspectRatio)
-{
-	//	same as gluPerspective()
-	float top = GetNearZ() * TLMaths::Tanf( GetHorzFov().GetRadians() );
-	float bottom = -top;
-	float left = bottom * AspectRatio;
-	float right = top * AspectRatio;
-
-	float x, y, a, b, c, d;
-
-	x = (2.0f * GetNearZ()) / (right - left);
-	y = (2.0f * GetNearZ()) / (top - bottom);
-	a = (right + left) / (right - left);
-	b = (top + bottom) / (top - bottom);
-	c = -(GetFarZ() + GetNearZ()) / (GetFarZ() - GetNearZ());
-	d = -(2.0f * GetFarZ() * GetNearZ()) / (GetFarZ() - GetNearZ());
-
-	TLMaths::TMatrix& M = Matrix;
-	//#define M(row,col)  Matrix.Data()[col*4+row]
-
-	M(0,0) = x;     M(0,1) = 0.0f;  M(0,2) = a;      M(0,3) = 0.0f;
-	M(1,0) = 0.0f;  M(1,1) = y;     M(1,2) = b;      M(1,3) = 0.0f;
-	M(2,0) = 0.0f;  M(2,1) = 0.0f;  M(2,2) = c;      M(2,3) = d;
-	M(3,0) = 0.0f;  M(3,1) = 0.0f;  M(3,2) = -1.0f;  M(3,3) = 0.0f;
-}
-*/
-
 
 //--------------------------------------------------------------
 //	convert point on screen to a 3D ray
 //--------------------------------------------------------------
-Bool TLRender::TProjectCamera::GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize) const
+Bool TLRender::TProjectCamera::GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const
 {
-	/*
-	gr: inverse view method, note: directx matrix order, which is left hand, opengl is right hand!
-VOID Camera::GetScreenRay(INT sx,INT sy, Ray *ray) // Returns ray pointing from screen into world (aka - mouse)
-{
-	Vector v;
-	v.x =  (((2.0f * sx) / ScreenWidth) - 1.0f) / Projection._11;
-	v.y = -(((2.0f * sy) / ScreenHeight) - 1.0f) / Projection._22;
-	v.z = 1.0f;
-
-	Matrix mat = MatrixInvert( View );
-
-	ray->Direction.x = (v.x * mat._11) + (v.y * mat._21) + (v.z * mat._31);
-	ray->Direction.y = (v.x * mat._12) + (v.y * mat._22) + (v.z * mat._32);
-	ray->Direction.z = (v.x * mat._13) + (v.y * mat._23) + (v.z * mat._33);
-	ray->Direction.Normalize();
-
-	ray->Position.x = mat._41;
-	ray->Position.y = mat._42;
-	ray->Position.z = mat._43;
-}
-*/
-
-
-
-
-	//	gr: correct to use this article, but we might still be able to get
-	//	away without the matrix usage using the right aspect etc
-	//	i still think something needs to be done about rotation (lookat) and 
-	//	some camera displacement though....
-	//	http://www.mvps.org/directx/articles/rayproj.htm
-
-	/*
-	public static float ConvertPixelWidthTo3DWidth(Device device, int width)
-		{
-			return ConvertPixelWidthTo3DWidth(RenderTargetSize.Width(), width);
-		}
-
-		public static float ConvertPixelWidthTo3DWidth(int backBufferWidth, int width)
-		{
-			float dx = 5.0f * (float)Math.Tan((Math.PI /4) / 2.0f);
-			float width3d = (dx*2 / (float)backBufferWidth * width);
-			return width3d;
-		}
-
-		public static float ConvertPixelHeightTo3DHeight(Device device, int height)
-		{
-			return ConvertPixelHeightTo3DHeight(RenderTargetSize.Height(),height);
-		}
-
-		public static float ConvertPixelHeightTo3DHeight(int backBufferHeight, int height)
-		{
-			float dx = 5.0f * (float)Math.Tan((Math.PI /4) / 2.0f);
-			float height3d = (dx*2 / (float)backBufferHeight * height);
-			return height3d;
-		}
-
-	public static Vector3 ConvertTo3DPosition(Device device, int left, int top,int width, int height)
-*/
+	TLDebug_Break("GR: todo");
 	
-
-	//	get the pos as a factor (0..1) in the render target
-	float RenderW = (float)RenderTargetSize.Width();
-	float RenderH = (float)RenderTargetSize.Height();
-	float2 Posf( (float)RenderTargetPos.x / RenderW, (float)RenderTargetPos.y / RenderH );
-
-	//	convert to -1..1
-	Posf -= float2( 0.5f, 0.5f );
-	Posf *= 2.f;
-
-	// Half of screen in 3d coordinate
-	// dx = D * tan(FOV/2)
-   // 5 is the distance from camera (-5,0,0) to center 0,0,0
-	//float CameraDistance = -5.f;
-	float CameraDistance = m_FarZ - m_NearZ;
-	//float dx = 5.f * (float)TLMaths::Tanf( (Math.PI /4.f) / 2.0f);
-	float dx = -CameraDistance * (float)TLMaths::Tanf( GetHorzFov().GetRadians() / 2.0f );	//	gr: dx is the far right (from center) at the end of our projection
-	float dy = -CameraDistance * (float)TLMaths::Tanf( GetVertFov().GetRadians() / 2.0f );	
-
-	//	get the direction by scaling down the extents
-	//	gr: i dont think this takes into account the lookat
-	//	maybe this RayDir needs to align with the lookat direction (wouldn't have to negate the Z then...)
-	float3 RayDir( dx * Posf.x, dy * Posf.y, -CameraDistance );
-
-	//	ray starts at the camera...
-	const float3& RayStart = GetPosition();
-
-	/*
-	//0.0f - 2.07f = 0,0 screen;
-	float bitmapwidth = ConvertPixelWidthTo3DWidth(device,width) / 2.0f;
-	float tw = (-1*dx)+ bitmapwidth + (dx*2 / device.PresentationParameters.BackBufferWidth * left);
-	float bitmapheight = ConvertPixelHeightTo3DHeight(device,height) / 2.0f;
-	float th = dx - bitmapheight - (dx*2 / device.PresentationParameters.BackBufferHeight * top);
-
-	*/
-
-	//	set ray
-	WorldRay.SetDir( RayStart, RayDir );
-
-	return TRUE;
+	//	gr: do like; get box for near and far planes
+	//		get 0..1 of x and y from RenderTargetPos/RenderTargetSize
+	//		get that 0..1,0..1 as point in the near plane box, and far plane box...
+	//		tada! vectors in near and far planes, turn into line!
+	
+	return FALSE;
 }
 
 
@@ -587,34 +402,82 @@ const TLMaths::TBox2D& TLRender::TProjectCamera::GetZoneShape()
 
 //--------------------------------------------------------------
 //	convert render target size (pixels) to game-screen dimensions (0-100.f)
+//	calc new view sizes
 //--------------------------------------------------------------
-void TLRender::TOrthoCamera::GetOrthoSize(Type4<float>& OrthoSize,const Type4<s32>& RenderTargetSize)
+void TLRender::TOrthoCamera::SetViewport(const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape)
 {
-	OrthoSize = RenderTargetSize;
+	//	gr: note: this MIGHT be wrong for render target's offset from 0,0....
+	//			(maybe...)
+	//			Left/Top should be 0,0 and Right/Bottom should just be Width/Height...
+
+	//	set box dimensions according to screen orientation
+	if ( ScreenShape == TLRender::ScreenShape_WideRight || ScreenShape == TLRender::ScreenShape_WideLeft )
+	{
+		//	gr: currently this is the same rotation of dimensions either way around, it makes the box the right size
+		//		the actual rotation is done at projection
+		m_OrthoBox.GetLeft()	= (float)RenderTargetSize.Top();
+		m_OrthoBox.GetRight()	= (float)RenderTargetSize.Bottom();
+		m_OrthoBox.GetTop()		= (float)RenderTargetSize.Left();
+		m_OrthoBox.GetBottom()	= (float)RenderTargetSize.Right();
+	}
+	else
+	{
+		//	gr: currently this is the same rotation of dimensions
+		m_OrthoBox.GetLeft()	= (float)RenderTargetSize.Left();
+		m_OrthoBox.GetRight()	= (float)RenderTargetSize.Right();
+		m_OrthoBox.GetTop()		= (float)RenderTargetSize.Top();
+		m_OrthoBox.GetBottom()	= (float)RenderTargetSize.Bottom();
+	}
 
 	//	the screen is on a scale of 0-100 wide (height is relative to the width)
-	float OrthoScale = GetOrthoRange() / (RenderTargetSize.Width() - RenderTargetSize.Left());
-	
-	OrthoSize *= OrthoScale;
+	//	so scale the dimensions
+	float OrthoScale = GetOrthoRange() / m_OrthoBox.GetWidth();
+	m_OrthoBox *= OrthoScale;
+
+	//	altering values directly means it wont be marked as valid, so do that manually too
+	m_OrthoBox.SetValid();
 }
 
 
 //--------------------------------------------------------------
 //	convert point on screen to a 3D ray
 //--------------------------------------------------------------
-Bool TLRender::TOrthoCamera::GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize) const
+Bool TLRender::TOrthoCamera::GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const
 {
-	//	the screen is on a scale of 0-100 wide (height is relative to the width)
-	float OrthoScale = GetOrthoRange() / (RenderTargetSize.Width() - RenderTargetSize.Left());
+	//	screen -> view
+	float2 xy( (float)RenderTargetPos.x, (float)RenderTargetPos.y );
+	float2 wh( (float)RenderTargetSize.Width(), (float)RenderTargetSize.Height() );
 
-	//	rememeber pos is in world space, not screen space so apply after scale
-	float3 RayStart(	(RenderTargetPos.x * OrthoScale) - GetPosition().x, 
-						(RenderTargetPos.y * OrthoScale) - GetPosition().y,
-						m_NearZ + GetPosition().z );
+	if ( ScreenShape == TLRender::ScreenShape_WideRight )
+	{
+		float2 oldxy = xy;
+		xy.x = oldxy.y;
+		xy.y = wh.x - oldxy.x;
+		TLMaths::SwapVars( wh.x, wh.y );
+	}
+	else if ( ScreenShape == TLRender::ScreenShape_WideLeft )
+	{
+		float2 oldxy = xy;
+		xy.x = wh.y - oldxy.y;
+		xy.y = oldxy.x;
+		TLMaths::SwapVars( wh.x, wh.y );
+	}
 
+	//	scale the rendertarget pos to a pos between 0..100 (100 being GetOrthoRange - and scale is always based on width)
+	float OrthoX = (xy.x / wh.x) * GetOrthoRange();
+	float OrthoY = (xy.y / wh.x) * GetOrthoRange();
+
+	//	"ortho" x/y is now world space
+	OrthoX -= GetPosition().x;
+	OrthoY -= GetPosition().y;
+
+	//	new world pos -
+	//	gr: camera z is right? or wrong... world space cam pos + nearz.. must be right
+	float3 RayStart( OrthoX, OrthoY, m_NearZ + GetPosition().z );
+
+	//	max extent of the line is the viewable distance...
 	float ZLength = m_FarZ - m_NearZ;
 	float3 RayEnd( RayStart + (GetWorldForward() * ZLength) );
-
 
 	WorldRay.Set( RayStart, RayEnd );
 

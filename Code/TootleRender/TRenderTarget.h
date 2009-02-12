@@ -54,7 +54,7 @@ public:
 	TRenderTarget(TRefRef Ref=TRef());
 	~TRenderTarget()							{	}
 
-	virtual Bool			BeginDraw(const Type4<s32>& MaxSize);
+	virtual Bool			BeginDraw(const Type4<s32>& MaxSize,const TScreen& Screen);
 	virtual void			Draw();	
 	virtual void			EndDraw();
 
@@ -62,8 +62,9 @@ public:
 	inline Bool				operator==(const TRef& Ref) const			{	return GetRef() == Ref;	}
 
 	virtual Bool			SetSize(const Type4<s32>& Size)				{	m_Size = Size;	return TRUE;	}
-	virtual void			GetSize(Type4<s32>& Size,const Type4<s32>& MaxSize) const;				//	get the render target's dimensions. we need the screen in case dimensions are max's
-	Bool					GetOrthoSize(Type4<float>& OrthoSize,const Type4<s32>& MaxSize);	//	get the orthographic dimensions (0-100 on width). returns FALSE if not using an ortho camera
+	virtual void			GetSize(Type4<s32>& Size,const Type4<s32>& MaxSize) const;			//	get the render target's dimensions. we need the screen in case dimensions are max's
+	const TLMaths::TBox2D&	GetWorldViewBox(float WorldDepth=0.f) const;						//	the world-space box for the extents at the edges of the screen.
+	const TLMaths::TBox2D&	GetWorldViewBox(TPtr<TScreen>& pScreen,float WorldDepth=0.f);		//	same as GetWorldViewBox but can be used before a render
 
 	void					SetCamera(TPtr<TCamera>& pCamera)			{	m_pCamera = pCamera;	}
 	TPtr<TCamera>&			GetCamera()									{	return m_pCamera;	}
@@ -86,7 +87,7 @@ public:
 	virtual void			EndScene()											{	}					//	restore previous scene
 
 	//	clever stuff
-	Bool					GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize) const;	//	get world pos from 2d point inside our rendertarget size
+	Bool					GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;	//	get world pos from 2d point inside our rendertarget size
 
 
 protected:
@@ -98,11 +99,10 @@ protected:
 
 	virtual Bool					GetViewportSize(Type4<s32>& ViewportSize,const Type4<s32>& MaxSize);	//	convert our relative size to the opengl viewport size (upside down) - returns FALSE if too small to be seen
 	
-	virtual Bool					BeginProjectDraw(const Type4<s32>& ViewportSize);	//	setup projection mode
-	virtual void					EndProjectDraw();
-
-	virtual Bool					BeginOrthoDraw(const Type4<s32>& ViewportSize);		//	setup ortho projection mode
-	virtual void					EndOrthoDraw();
+	virtual Bool					BeginProjectDraw(TLRender::TProjectCamera* pCamera,TScreenShape ScreenShape)	{	return TRUE;	}	//	setup projection mode
+	virtual void					EndProjectDraw()																{	}
+	virtual Bool					BeginOrthoDraw(TLRender::TOrthoCamera* pCamera,TScreenShape ScreenShape)		{	return TRUE;	}	//	setup ortho projection mode
+	virtual void					EndOrthoDraw()																	{	}
 
 	SyncBool						IsRenderNodeVisible(TRenderNode* pRenderNode,TPtr<TLMaths::TQuadTreeNode>*& ppRenderZoneNode,TLMaths::TQuadTreeNode* pCameraZoneNode,const TLMaths::TTransform* pSceneTransform,Bool& RenderNodeIsInsideCameraZone);	//	check zone of node against camera's zone to determine visibility. if no scene transform is provided then we only do quick tests with no calculations. This can result in a SyncWait returned which means we need to do calculations to make sure of visibility
 	Bool							IsZoneVisible(TLMaths::TQuadTreeNode* pCameraZoneNode,TLMaths::TQuadTreeZone* pZone,TLMaths::TQuadTreeNode* pZoneNode,Bool& RenderNodeIsInsideCameraZone);

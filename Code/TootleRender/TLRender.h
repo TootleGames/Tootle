@@ -18,6 +18,13 @@
 
 namespace TLRender
 {
+	enum TScreenShape
+	{
+		ScreenShape_Portrait = 0,	//	portrait
+		ScreenShape_WideLeft,		//	widescreen
+		ScreenShape_WideRight,		//	widescreen, but upsidedown in case we want it a different way for the ipod - on PC this will emulate ipod mode (portrait but rendered on its side)
+	};
+
 	//	forward declaration of platform specific implementations
 	namespace Platform
 	{
@@ -40,7 +47,8 @@ namespace TLRender
 		FORCEINLINE void		DrawPrimitives(u16 GLPrimType,const TArray<TArray<u16> >* pPrimitivesArray,u32 Debug_LimitPrimSize);
 		void					DrawPrimitivePoints(const TArray<float3>* pVertexes);
 
-		void					SceneTransform(const TLMaths::TTransform& Transform);		//	transform scene
+		void					SceneTransform(const TLMaths::TTransform& Transform);				//	transform scene
+		void					SceneRotate(const TLMaths::TAngle& Rotation,const float3& Axis);	//	eular rotation on the scene - wrapper for glRotatef
 
 		//	scene settings - only calls platform implementations as required - inlined for speed
 		FORCEINLINE void		EnableWireframe(Bool Enable);

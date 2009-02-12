@@ -63,7 +63,8 @@ namespace TLMaths
 	FORCEINLINE u32				Rand(u32 Max);											//	number between 0 and Max inclusive
 	FORCEINLINE s32				Rand(s32 Min,s32 Max);									//	Min <= N <= Max (inclusive!)
 
-
+	template<typename TYPE>
+	FORCEINLINE void			SwapVars(TYPE& a,TYPE& b);								//	swap variables using a temporary
 
 	//	some conversions - should be members really
 	void			QuaternionToMatrix(const TQuaternion& Quaternion,TMatrix& Matrix);
@@ -111,10 +112,12 @@ public:
 	TAngle(float AngDegrees=0.f) : m_AngleDegrees (AngDegrees)	{}
 
 	FORCEINLINE float	GetDegrees() const						{	return m_AngleDegrees;	}
-	FORCEINLINE float	GetRadians() const						{	return DegreesToRadians( m_AngleDegrees );	}
-
 	FORCEINLINE void	SetDegrees(float AngDegrees)			{	m_AngleDegrees = AngDegrees;	}
+	FORCEINLINE void	AddDegrees(float AngDegrees)			{	m_AngleDegrees += AngDegrees;	SetLimit180();	}
+
+	FORCEINLINE float	GetRadians() const						{	return DegreesToRadians( m_AngleDegrees );	}
 	FORCEINLINE void	SetRadians(float AngRadians)			{	m_AngleDegrees = RadiansToDegrees( AngRadians );	}
+	FORCEINLINE void	AddRadians(float AngRadians)			{	m_AngleDegrees += RadiansToDegrees( AngRadians );	SetLimit180();	}
 
 	FORCEINLINE void	SetLimit360()							{	TLMaths::Wrap( m_AngleDegrees, 0.f, 360.f );	}	//	limit angle to 0...360
 	FORCEINLINE void	SetLimit180()							{	TLMaths::Wrap( m_AngleDegrees, -180.f, 180.f );	}	//	limit angle to -180...180
@@ -372,6 +375,20 @@ FORCEINLINE void TLMaths::InterpThis(TYPE& From,const TYPE& To,float Interp)
 	Diff *= Interp;
 	From += Diff;
 }
+
+
+
+//-----------------------------------------------
+//	swap variables using a temporary
+//-----------------------------------------------
+template<typename TYPE>
+FORCEINLINE void TLMaths::SwapVars(TYPE& a,TYPE& b)
+{
+	TYPE tmp = a;
+	a = b;
+	b = tmp;
+}
+
 
 
 //-----------------------------------------------

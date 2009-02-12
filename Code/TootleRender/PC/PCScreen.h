@@ -20,7 +20,8 @@ namespace TLRender
 	namespace Platform	
 	{
 		class Screen;
-		class ScreenWide;
+		class ScreenWideLeft;
+		class ScreenWideRight;
 	};
 };
 
@@ -33,7 +34,7 @@ namespace TLRender
 class TLRender::Platform::Screen : public TLRender::TScreen
 {
 public:
-	Screen(TRefRef ScreenRef);
+	Screen(TRefRef ScreenRef,TScreenShape ScreenShape);
 	
 	virtual SyncBool		Init();
 	virtual SyncBool		Update();
@@ -54,11 +55,36 @@ protected:
 
 
 
-
-class TLRender::Platform::ScreenWide : public TLRender::Platform::Screen
+//----------------------------------------------------------
+//	widescreen screen
+//----------------------------------------------------------
+class TLRender::Platform::ScreenWideLeft : public TLRender::Platform::Screen
 {
 public:
-	ScreenWide(TRefRef ScreenRef);
+	ScreenWideLeft(TRefRef ScreenRef) :
+		TLRender::Platform::Screen	( ScreenRef, TLRender::ScreenShape_WideLeft )
+	{
+		//	dont swap dimensions to emulate ipod
+	}
 };
 
+
+//----------------------------------------------------------
+//	widescreen screen
+//----------------------------------------------------------
+class TLRender::Platform::ScreenWideRight : public TLRender::Platform::Screen
+{
+public:
+	ScreenWideRight(TRefRef ScreenRef) :
+		TLRender::Platform::Screen	( ScreenRef, TLRender::ScreenShape_WideRight )
+	{
+		/*
+		//	swap height and width
+		s16 h = m_Size.Height();
+		s16 w = m_Size.Width();
+		m_Size.Width() = h;
+		m_Size.Height() = w;
+		*/
+	}
+};
 

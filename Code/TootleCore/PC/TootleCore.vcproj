@@ -574,6 +574,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TLanguage.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TLCore.cpp"
 			>
 		</File>

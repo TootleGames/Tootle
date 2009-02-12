@@ -19,33 +19,34 @@ TLRender::Platform::RenderTarget::RenderTarget(const TRef& Ref) :
 //-------------------------------------------------------
 //
 //-------------------------------------------------------
-Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& MaxSize)			
+Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& MaxSize,const TScreen& Screen)			
 {
 	//	do base checks
-	if ( !TRenderTarget::BeginDraw(MaxSize) )
+	if ( !TRenderTarget::BeginDraw(MaxSize, Screen) )
 		return FALSE;
 	
 	Type4<s32> ViewportSize;
 	if ( !GetViewportSize( ViewportSize, MaxSize ) )
 		return FALSE;
-	
-	//	setup viewport
+
+	//	setup viewport and sissor outside the viewport
 	glViewport( ViewportSize.Left(), ViewportSize.Top(), ViewportSize.Width(), ViewportSize.Height() );
-	
-	//	scissor everything outside the viewport
 	glScissor( ViewportSize.Left(), ViewportSize.Top(), ViewportSize.Width(), ViewportSize.Height() );
-	
 	Opengl::Debug_CheckForError();		
-	
+
+	//	calculate new view sizes etc for this viewport
+	TPtr<TLRender::TCamera>& pCamera = GetCamera();
+	pCamera->SetViewport( ViewportSize, Screen.GetScreenShape() );
+
 	//	do projection vs orthographic setup
 	if ( GetCamera()->IsOrtho() )
 	{
-		if ( !BeginOrthoDraw( ViewportSize ) )
+		if ( !BeginOrthoDraw( pCamera.GetObject<TLRender::TOrthoCamera>(), Screen.GetScreenShape() ) )
 			return FALSE;
 	}
 	else
 	{
-		if ( !BeginProjectDraw( ViewportSize ) )
+		if ( !BeginProjectDraw( pCamera.GetObject<TLRender::TProjectCamera>(), Screen.GetScreenShape() ) )
 			return FALSE;
 	}
 	
@@ -89,47 +90,39 @@ Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& MaxSize)
 }
 
 
-Bool gluPerspective(float fovy, float aspect, float zNear, float zFar)
-{
-	float xmin, xmax, ymin, ymax;
-	
-	ymax = zNear * tan(fovy * PI / 360.0);
-	ymin = -ymax;
-	xmin = ymin * aspect;
-	xmax = ymax * aspect;
-	
-	glFrustumf(xmin, xmax, ymin, ymax, zNear, zFar);
-	return TRUE;
-}
-
 
 //-------------------------------------------------------
 //	setup projection mode
 //-------------------------------------------------------
-Bool TLRender::Platform::RenderTarget::BeginProjectDraw(const Type4<s32>& ViewportSize)
+Bool TLRender::Platform::RenderTarget::BeginProjectDraw(TLRender::TProjectCamera* pCamera,TLRender::TScreenShape ScreenShape)
 {
 	//	get the camera
-	TLRender::TProjectCamera* pCamera = GetCamera().GetObject<TLRender::TProjectCamera>();
-	if ( !pCamera )
-		return FALSE;
-	
 	//	init projection matrix
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	
-	//	work out a frustum matrix for the perspective from the camera
-//	float AspectRatio = (float)ViewportSize.Width() / (float)ViewportSize.Height();
-	float AspectRatio = pCamera->GetAspectRatio();
-//	TLMaths::TMatrix FrustumMatrix;
-//	pCamera->GetFrustumMatrix( FrustumMatrix, AspectRatio );
 
-	//	do translation with this matrix to make the frustum
-	//	gr: this works... but further away than with gluperspective...
-	//	Translate( FrustumMatrix );
+	//	get view box
+	const TLMaths::TBox2D& ScreenViewBox = pCamera->GetScreenViewBox();
 	
-	gluPerspective( pCamera->GetHorzFov().GetDegrees(), AspectRatio, pCamera->GetNearZ(), pCamera->GetFarZ() );
+	//	set projection matrix - 
+	//	gr: note, Bottom and Top are the WRONG way around to invert opengl's upside coordinate system and makes things simpiler in our own code
+	glFrustumf( ScreenViewBox.GetLeft(), ScreenViewBox.GetRight(), ScreenViewBox.GetTop(), ScreenViewBox.GetBottom(), pCamera->GetNearZ(), pCamera->GetFarZ() );
+
+	//	rotate the view matrix so that UP is properly relative to the new screen
+	//	gr: another "thing what is backwards" - as is the -/+ of the shape rotation....
+	float ProjectionRotationDeg = -pCamera->GetCameraRoll().GetDegrees();
+
+	if ( ScreenShape == TLRender::ScreenShape_WideRight )
+		ProjectionRotationDeg -= 90.f;
+	else if ( ScreenShape == TLRender::ScreenShape_WideLeft )
+		ProjectionRotationDeg += 90.f;
+
+	//	roll around z
+	Opengl::SceneRotate( TLMaths::TAngle(ProjectionRotationDeg), float3( 0.f, 0.f, 1.f ) );
 
 	//	update projection matrix
+	//	gr: todo; calc the projection matrix in the camera (like we used to) then we don't need to
+	//		re-calculate it again for the frustum code, nor would we need this get-flaotv code
 	TLMaths::TMatrix& ProjectionMatrix = pCamera->GetProjectionMatrix(TRUE);
 	glGetFloatv( GL_PROJECTION_MATRIX, ProjectionMatrix );
 
@@ -137,9 +130,8 @@ Bool TLRender::Platform::RenderTarget::BeginProjectDraw(const Type4<s32>& Viewpo
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	//	translate
+	//	setup camera
 	m_CameraTransform.SetInvalid();
-
 	m_CameraTransform.SetTranslate( pCamera->GetPosition() * -1.f );
 
 	//	apply look at matrix (rotate)
@@ -160,7 +152,7 @@ Bool TLRender::Platform::RenderTarget::BeginProjectDraw(const Type4<s32>& Viewpo
 
 
 //-------------------------------------------------------
-//	setup projection mode
+//	clean up projection scene
 //-------------------------------------------------------
 void TLRender::Platform::RenderTarget::EndProjectDraw()
 {
@@ -171,24 +163,29 @@ void TLRender::Platform::RenderTarget::EndProjectDraw()
 //-------------------------------------------------------
 //	setup projection mode
 //-------------------------------------------------------
-Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(const Type4<s32>& ViewportSize)
+Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(TLRender::TOrthoCamera* pCamera,TLRender::TScreenShape ScreenShape)
 {
-	if ( !TRenderTarget::BeginOrthoDraw( ViewportSize ) )
-		return FALSE;
-
-	//	get the camera
-	TLRender::TOrthoCamera* pCamera = GetCamera().GetObject<TLRender::TOrthoCamera>();
-	if ( !pCamera )
-		return FALSE;
-
 	//	setup ortho projection
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	//	change orthographic projection
-	Type4<float> OrthoSize;
-	pCamera->GetOrthoSize( OrthoSize, ViewportSize );
-	glOrthof( OrthoSize.Left(), OrthoSize.Right(), OrthoSize.Bottom(), OrthoSize.Top(), GetCamera()->GetNearZ(), GetCamera()->GetFarZ() );
+	//	get ortho dimensions box
+	const TLMaths::TBox2D& OrthoBox = pCamera->GetOrthoBox();
+	
+	//	rotate the view matrix so that UP is properly relative to the new screen
+	//	gr: another "thing what is backwards" - as is the -/+ of the shape rotation....
+	float ProjectionRotationDeg = -pCamera->GetCameraRoll().GetDegrees();
+
+	if ( ScreenShape == TLRender::ScreenShape_WideRight )
+		ProjectionRotationDeg -= 90.f;
+	else if ( ScreenShape == TLRender::ScreenShape_WideLeft )
+		ProjectionRotationDeg += 90.f;
+
+	//	roll around z
+	Opengl::SceneRotate( TLMaths::TAngle(ProjectionRotationDeg), float3( 0.f, 0.f, 1.f ) );
+
+	//	set the world coordinates
+	glOrthof( OrthoBox.GetLeft(), OrthoBox.GetRight(), OrthoBox.GetBottom(), OrthoBox.GetTop(), GetCamera()->GetNearZ(), GetCamera()->GetFarZ() );
 
 	Opengl::Debug_CheckForError();		
 
@@ -201,7 +198,7 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(const Type4<s32>& Viewport
 #ifdef FORCE_RENDERNODE_CLEAR
 	UseClearRenderNode = TRUE;
 #endif
-	
+	/*
 	//	clear the screen manually if we need to apply alpha
 	if ( UseClearRenderNode )
 	{
@@ -216,10 +213,10 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(const Type4<s32>& Viewport
 		//	remove the clear object
 		m_pRenderNodeClear = NULL;
 	}
+	*/
 
 	//	setup camera
 	glMatrixMode(GL_MODELVIEW);
-	//	gr: this was missing, but not techniccaly needed, I guess because we push and pop the matricies back to their original state anywa
 	glLoadIdentity();
 
 	//	translate
@@ -244,7 +241,7 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(const Type4<s32>& Viewport
 
 
 //-------------------------------------------------------
-//	setup projection mode
+//	clean up ortho scene
 //-------------------------------------------------------
 void TLRender::Platform::RenderTarget::EndOrthoDraw()
 {
@@ -259,22 +256,6 @@ void TLRender::Platform::RenderTarget::EndOrthoDraw()
 //-----------------------------------------------------------
 void TLRender::Platform::RenderTarget::BeginScene()
 {
-	//	very expensive on ipod! so omitted, can be checked with PC as it's all logical code
-	#if !defined(TL_TARGET_IPOD)
-	{
-		//	ensure we're in the right mode... shouldn't be pushing PROJECTion matrixes
-		if ( TLDebug::IsEnabled() )
-		{
-			u32 MatrixMode = GetCurrentMatrixMode();
-			if ( MatrixMode != GL_MODELVIEW )
-			{
-				TLDebug_Break("BeginScene: In wrong GL_MATRIX_MODE");
-				glMatrixMode(GL_MODELVIEW);
-			}
-		}
-	}
-	#endif
-	
 	//	save the scene
 	glPushMatrix();
 	Opengl::Debug_CheckForError();		
@@ -297,7 +278,9 @@ void TLRender::Platform::RenderTarget::BeginSceneReset(Bool ApplyCamera)
 	
 	//	and reset to camera pos
 	if ( ApplyCamera )
+	{
 		Opengl::SceneTransform( m_CameraTransform );
+	}
 }
 
 
@@ -323,20 +306,4 @@ void TLRender::Platform::RenderTarget::EndScene()
 		m_Debug_SceneCount--;
 	}
 }
-
-
-//-----------------------------------------------------------
-//	fetch current matrix mode so we dont inadvertently switch modes
-//	maybe make this a stack?
-//-----------------------------------------------------------
-u32 TLRender::Platform::RenderTarget::GetCurrentMatrixMode()
-{
-	GLint MatrixMode;
-	glGetIntegerv( GL_MATRIX_MODE, &MatrixMode );
-	
-	return MatrixMode;
-}
-
-
-
 

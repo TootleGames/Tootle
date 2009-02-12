@@ -110,12 +110,25 @@ public:
 	float2			GetCenter() const				{	return TLMaths::Interp( m_Min, m_Max, 0.5f );	}
 	float3			GetCenter3(float z=0.f) const;	//	get the center of the box
 	void			GetBoxCorners(TArray<float2>& CornerPositions) const;	//	get the 8 corners of the box
+	const float&	GetLeft() const		{	return m_Min.x;	}
+	float&			GetLeft()			{	return m_Min.x;	}
+	const float&	GetTop() const		{	return m_Min.y;	}
+	float&			GetTop()			{	return m_Min.y;	}
+	const float&	GetRight() const	{	return m_Max.x;	}
+	float&			GetRight()			{	return m_Max.x;	}
+	const float&	GetBottom() const	{	return m_Max.y;	}
+	float&			GetBottom()			{	return m_Max.y;	}
+	float			GetWidth() const	{	return (m_Max.x - m_Min.x);	}
+	float			GetHeight() const	{	return (m_Max.y - m_Min.y);	}
+	float			GetHalfWidth() const	{	return (m_Max.x - m_Min.x) * 0.5f;	}
+	float			GetHalfHeight() const	{	return (m_Max.y - m_Min.y) * 0.5f;	}
 
 	void			Set(const float2& Min,const float2& Max)	{	m_Min = Min;	m_Max = Max;	m_IsValid = TRUE;	}
 	void			Set(const float2& MinMax)					{	m_Min = MinMax;	m_Max = MinMax;	m_IsValid = TRUE;	}
 	void			SetMin(const float2& Min)					{	m_Min = Min;	m_IsValid = TRUE;	}
 	void			SetMax(const float2& Max)					{	m_Max = Max;	m_IsValid = TRUE;	}
 	void			SetInvalid()								{	m_IsValid = FALSE;	}
+	void			SetValid(Bool Valid=TRUE)					{	m_IsValid = Valid;	}
 	Bool			IsValid() const								{	return m_IsValid;	}
 
 //	void			Accumulate(const TBox& Box);				//	accumulate other box. copies other box if this is invalid
@@ -153,6 +166,8 @@ public:
 	void			operator-=(const float2& v)		{	m_Min -= v;	m_Max -= v;	}
 	void			operator*=(const float2& v)		{	m_Min *= v;	m_Max *= v;	}
 	void			operator/=(const float2& v)		{	m_Min /= v;	m_Max /= v;	}
+	void			operator*=(float v)				{	m_Min *= v;	m_Max *= v;	}
+	void			operator/=(float v)				{	m_Min /= v;	m_Max /= v;	}
 
 protected:
 	float2		m_Min;

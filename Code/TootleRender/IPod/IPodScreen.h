@@ -20,14 +20,18 @@
 */
 
 
+//	external forward declarations
 namespace TLRender 
 {
-	namespace Platform
+	class TScreen;
+
+	//	internal forward declarations
+	namespace Platform	
 	{
 		class Screen;
-		class ScreenWide;
+		class ScreenWideLeft;
+		class ScreenWideRight;
 	};
-
 };
 
 
@@ -39,12 +43,12 @@ namespace TLRender
 class TLRender::Platform::Screen : public TLRender::TScreen
 {
 public:
-	Screen(TRefRef ScreenRef);
+	Screen(TRefRef ScreenRef,TScreenShape ScreenShape);
 	
 	virtual SyncBool		Init();
 	virtual SyncBool		Update();
 	virtual SyncBool		Shutdown();
-	
+
 	virtual void			Draw();
 	
 protected:
@@ -53,14 +57,34 @@ protected:
 
 
 //----------------------------------------------------------
-//	IPod screen  - landscape view (todo)
+//	widescreen screen
 //----------------------------------------------------------
-class TLRender::Platform::ScreenWide : public TLRender::Platform::Screen
+class TLRender::Platform::ScreenWideLeft : public TLRender::Platform::Screen
 {
 public:
-	ScreenWide(TRefRef ScreenRef) : Screen( ScreenRef )	{	}
+	ScreenWideLeft(TRefRef ScreenRef) :
+		TLRender::Platform::Screen	( ScreenRef, TLRender::ScreenShape_WideLeft )
+	{
+		/*
+		//	swap height and width
+		s16 h = m_Size.Height();
+		s16 w = m_Size.Width();
+		m_Size.Width() = h;
+		m_Size.Height() = w;
+		*/
+	}
 };
 
 
-
+//----------------------------------------------------------
+//	widescreen screen
+//----------------------------------------------------------
+class TLRender::Platform::ScreenWideRight : public TLRender::Platform::Screen
+{
+public:
+	ScreenWideRight(TRefRef ScreenRef) :
+		TLRender::Platform::Screen	( ScreenRef, TLRender::ScreenShape_WideRight )
+	{
+	}
+};
 

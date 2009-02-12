@@ -37,7 +37,7 @@ TLRender::TRenderTarget::TRenderTarget(const TRef& Ref) :
 //------------------------------------------------------------
 //	dont allow render without a camera
 //------------------------------------------------------------
-Bool TLRender::TRenderTarget::BeginDraw(const Type4<s32>& MaxSize)			
+Bool TLRender::TRenderTarget::BeginDraw(const Type4<s32>& MaxSize,const TScreen& Screen)			
 {
 	m_Debug_NodeCount = 0;
 	m_Debug_NodeCulledCount = 0;
@@ -86,8 +86,6 @@ void TLRender::TRenderTarget::Draw()
 {
 	s32 StartingSceneCount = m_Debug_SceneCount;
 
-	TPtr<TRenderNode> pNullParent;
-
 	//	render the clear object if we have it
 	if ( m_pRenderNodeClear )
 	{
@@ -130,9 +128,6 @@ void TLRender::TRenderTarget::Draw()
 //-------------------------------------------------------
 void TLRender::TRenderTarget::EndDraw()			
 {
-	if ( !GetCamera() )
-		return;
-	
 	if ( GetCamera()->IsOrtho() )
 	{
 		EndOrthoDraw();
@@ -155,7 +150,7 @@ void TLRender::TRenderTarget::EndDraw()
 #endif
 
 #if defined(DEBUG_DRAW_RENDERZONES)||defined(DEBUG_DRAW_FRUSTUM)
-	if ( !m_pCamera->IsOrtho() && m_pRootQuadTreeZone )
+	if ( !GetCamera()->IsOrtho() && m_pRootQuadTreeZone )
 	{
 		BeginSceneReset();
 
@@ -258,45 +253,6 @@ void TLRender::TRenderTarget::EndDraw()
 }
 
 
-//-------------------------------------------------------
-//	setup projection mode
-//-------------------------------------------------------
-Bool TLRender::TRenderTarget::BeginProjectDraw(const Type4<s32>& Size)
-{
-	if ( !GetCamera() )
-		return FALSE;
-
-	return TRUE;
-}
-
-//-------------------------------------------------------
-//
-//-------------------------------------------------------
-void TLRender::TRenderTarget::EndProjectDraw()
-{
-}
-
-
-//-------------------------------------------------------
-//	setup ortho projection mode
-//-------------------------------------------------------
-Bool TLRender::TRenderTarget::BeginOrthoDraw(const Type4<s32>& Size)
-{
-	if ( !GetCamera() )
-		return FALSE;
-
-	return TRUE;
-}
-
-//-------------------------------------------------------
-//
-//-------------------------------------------------------
-void TLRender::TRenderTarget::EndOrthoDraw()
-{
-}
-
-
-
 //-------------------------------------------------------------
 //	get the render target's dimensions. we need the screen in case dimensions are max's
 //-------------------------------------------------------------
@@ -333,39 +289,15 @@ Bool TLRender::TRenderTarget::GetViewportSize(Type4<s32>& ViewportSize,const Typ
 }
 
 
-//-------------------------------------------------------------
-//	get the orthographic dimensions (0-100 on width). returns FALSE if not using an ortho camera
-//-------------------------------------------------------------
-Bool TLRender::TRenderTarget::GetOrthoSize(Type4<float>& OrthoSize,const Type4<s32>& MaxSize)
-{
-	//	get the ortho camera
-	TPtr<TCamera>& pCameraPtr = GetCamera();
-	TLRender::TOrthoCamera* pCamera = pCameraPtr ? pCameraPtr.GetObject<TLRender::TOrthoCamera>() : NULL;
-	if ( !pCamera )
-		return FALSE;
-
-	if ( !pCamera->IsOrtho() )
-		return FALSE;
-
-	//	convert our size to ortho size
-	Type4<s32> Size;
-	GetSize( Size, MaxSize );
-
-	pCamera->GetOrthoSize( OrthoSize, Size );
-
-	return TRUE;
-}
-
-
 //---------------------------------------------------------------
 //	get world pos from 2d point inside our rendertarget size
 //---------------------------------------------------------------
-Bool TLRender::TRenderTarget::GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize) const
+Bool TLRender::TRenderTarget::GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const
 {
 	if ( !m_pCamera )
 		return FALSE;
 
-	return m_pCamera->GetWorldRay( WorldRay, RenderTargetPos, RenderTargetSize );
+	return m_pCamera->GetWorldRay( WorldRay, RenderTargetPos, RenderTargetSize, ScreenShape );
 }
 
 
@@ -1053,3 +985,48 @@ void TLRender::TRenderTarget::Debug_DrawZone(TPtr<TLMaths::TQuadTreeZone>& pZone
 	}
 	
 }
+
+
+//--------------------------------------------------
+//	the world-space box for the extents at the edges of the screen.
+//--------------------------------------------------
+const TLMaths::TBox2D& TLRender::TRenderTarget::GetWorldViewBox(float WorldDepth) const
+{
+	if ( m_pCamera->IsOrtho() )
+	{
+		const TOrthoCamera* pCamera = m_pCamera.GetObject<TOrthoCamera>();
+		return pCamera->GetOrthoBox();
+	}
+	else
+	{
+		//	we make this up on the fly but for the sake of keeping this function fast
+		//	for ortho we return a reference to a static box
+		static TLMaths::TBox2D g_ProjectionWorldViewBox;
+
+		//	get box at this depth
+		const TProjectCamera* pCamera = m_pCamera.GetObject<TProjectCamera>();
+		float ViewDepth = pCamera->GetPosition().z + WorldDepth;
+		pCamera->GetWorldFrustumPlaneBox2D( ViewDepth, g_ProjectionWorldViewBox );
+
+		return g_ProjectionWorldViewBox;
+	}
+}
+
+
+//--------------------------------------------------
+//	same as GetWorldViewBox but can be used before a render
+//--------------------------------------------------
+const TLMaths::TBox2D& TLRender::TRenderTarget::GetWorldViewBox(TPtr<TScreen>& pScreen,float WorldDepth)
+{
+	//	get render target size
+	Type4<s32> Size;
+	Type4<s32> MaxSize;
+	pScreen->GetRenderTargetMaxSize( MaxSize );
+	GetSize( Size, MaxSize );
+
+	//	calc viewport sizes and boxes etc will be valid
+	m_pCamera->SetViewport( Size, pScreen->GetScreenShape() );
+
+	return GetWorldViewBox( WorldDepth );
+}
+

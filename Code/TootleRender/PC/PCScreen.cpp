@@ -15,21 +15,9 @@ namespace TLRender
 
 
 
-TLRender::Platform::ScreenWide::ScreenWide(TRefRef ScreenRef) :
-	TLRender::Platform::Screen	( ScreenRef )
-{
-	//	swap height and width
-	s16 h = m_Size.Height();
-	s16 w = m_Size.Width();
-	m_Size.Width() = h;
-	m_Size.Height() = w;
-}
 
-
-
-
-TLRender::Platform::Screen::Screen(TRefRef ScreenRef) :
-	TLRender::TScreen	( ScreenRef )
+TLRender::Platform::Screen::Screen(TRefRef ScreenRef,TScreenShape ScreenShape) :
+	TLRender::TScreen	( ScreenRef, ScreenShape )
 {
 	//	gr: default to double iphone resolution for now
 	m_Size.Width() = (s16)( 320.f * 1.5f );

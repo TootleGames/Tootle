@@ -14,10 +14,11 @@
 //---------------------------------------------------------
 //	
 //---------------------------------------------------------
-TLRender::TScreen::TScreen(TRefRef Ref) :
+TLRender::TScreen::TScreen(TRefRef Ref,TScreenShape ScreenShape) :
 	m_HasShutdown	( FALSE ),
 	m_Ref			( Ref ),
-	m_Size			( g_MaxSize,g_MaxSize,g_MaxSize,g_MaxSize )
+	m_Size			( g_MaxSize,g_MaxSize,g_MaxSize,g_MaxSize ),
+	m_ScreenShape	( ScreenShape )
 {
 	//	gr: disabled for now, core manager limits frame rate instead of using hardware sync
 	//m_Flags.Set( Flag_SyncFrameRate );
@@ -117,7 +118,7 @@ void TLRender::TScreen::Draw()
 			continue;
 
 		//	begin draw of render target
-		if ( !pRenderTarget->BeginDraw(RenderTargetMaxSize) )
+		if ( !pRenderTarget->BeginDraw( RenderTargetMaxSize, *this ) )
 			continue;
 
 		//	draw
@@ -245,7 +246,7 @@ Bool TLRender::TScreen::GetWorldRayFromScreenPos(const TPtr<TRenderTarget>& pRen
 		return FALSE;
 
 	//	let render target do it's own conversions what with fancy cameras n that
-	return pRenderTarget->GetWorldRay( WorldRay, RenderTargetPos, RenderTargetSize );
+	return pRenderTarget->GetWorldRay( WorldRay, RenderTargetPos, RenderTargetSize, GetScreenShape() );
 }
 
 

@@ -20,34 +20,32 @@ namespace TLRender
 	{
 		class RenderTarget;
 	}
+
+	class TScreen;
 };
 
-using namespace TLRender;
 
 
 //---------------------------------------------------------
 //	opengl render target
 //---------------------------------------------------------
-class Platform::RenderTarget : public TRenderTarget
+class TLRender::Platform::RenderTarget : public TLRender::TRenderTarget
 {
 public:
 	RenderTarget(const TRef& Ref=TRef());
 
-	virtual Bool			BeginDraw(const Type4<s32>& MaxSize);
+	virtual Bool			BeginDraw(const Type4<s32>& MaxSize,const TScreen& Screen);
 
 	//	rendering controls
-	virtual void			BeginScene();										//	save off current scene 
-	virtual void			BeginSceneReset(Bool ApplyCamera=TRUE);				//	save off current scene and reset camera 
-	virtual void			EndScene();											//	restore previous scene
+	virtual void			BeginScene();								//	save off current scene 
+	virtual void			BeginSceneReset(Bool ApplyCamera=TRUE);		//	save off current scene and reset camera 
+	virtual void			EndScene();									//	restore previous scene
 
 protected:
-	virtual Bool			BeginProjectDraw(const Type4<s32>& ViewportSize);	//	setup projection mode
+	virtual Bool			BeginProjectDraw(TLRender::TProjectCamera* pCamera,TLRender::TScreenShape ScreenShape);	//	setup projection mode
 	virtual void			EndProjectDraw();
-
-	virtual Bool			BeginOrthoDraw(const Type4<s32>& ViewportSize);		//	setup ortho projection mode
+	virtual Bool			BeginOrthoDraw(TLRender::TOrthoCamera* pCamera,TLRender::TScreenShape ScreenShape);		//	setup ortho projection mode
 	virtual void			EndOrthoDraw();
-
-	u32						GetCurrentMatrixMode();						//	fetch the current matrix mode
 };
 
 

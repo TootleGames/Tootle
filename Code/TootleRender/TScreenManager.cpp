@@ -32,12 +32,17 @@ TScreen* TScreenManager::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 	//	default to screen
 	if ( !TypeRef.IsValid() || TypeRef == "Screen" )
 	{
-		return new TLRender::Platform::Screen( InstanceRef );
+		return new TLRender::Platform::Screen( InstanceRef, TLRender::ScreenShape_Portrait );
 	}
 
-	if ( !TypeRef.IsValid() || TypeRef == "widescreen" )
+	if ( TypeRef == "widescreen" || TypeRef == "wideleft" )
 	{
-		return new TLRender::Platform::ScreenWide( InstanceRef );
+		return new TLRender::Platform::ScreenWideLeft( InstanceRef );
+	}
+
+	if ( TypeRef == "wideright" )
+	{
+		return new TLRender::Platform::ScreenWideRight( InstanceRef );
 	}
 
 	return NULL;

@@ -229,6 +229,7 @@ Bool TApplication::TApplicationState_Bootup::OnBegin(TRefRef PreviousMode)
 	TApplication* pApp = GetStateMachine<TApplication>();
 	// TODO:
 
+	//	gr: if this fails (e.g. no logo asset) skip onto next mode
 	Bool bSuccess = CreateIntroScreen();
 	
 	if(!bSuccess)
@@ -257,37 +258,19 @@ Bool TApplication::TApplicationState_Bootup::CreateIntroScreen()
 		
 	//	create a render target 
 	TPtr<TLRender::TRenderTarget> pRenderTarget = pScreen->CreateRenderTarget( TRef("Intro") );
-	
 	if(!pRenderTarget)
 	{
 		TLDebug_Break("Error: Failed to create logo render target");
 		return FALSE;
 	}
+	pRenderTarget->GetClearColour().Set( 1.f, 1.f, 1.f, 1.f );
 	
 	
 	TPtr<TLRender::TCamera> pCamera = new TLRender::TOrthoCamera;
 	pRenderTarget->SetCamera( pCamera );
-	
-	//	gr: turns out! render target sizes arent right yet! this shows up in bottom left!?
-	//pRenderTarget->SetSize( Type4<s32>( 1, 1, 400, 400 ) );
-	
-	Type4<float> OrthoRenderTargetSize;
-	Type4<s32> MaxRenderTargetSize;
-	pScreen->GetRenderTargetMaxSize( MaxRenderTargetSize );
-	if ( !pRenderTarget->GetOrthoSize( OrthoRenderTargetSize, MaxRenderTargetSize ) )
-	{
-		TLDebug_Break("Error: Failed to get render target size");
-		return FALSE;
-	}
-	
 	pCamera->SetPosition( float3( 0, 0, -10.f ) );
-	//pCamera->SetPosition( float3( OrthoRenderTargetSize.Width()/2.f, OrthoRenderTargetSize.Height()/2.f, -10.f ) );
-	
-	//	no clear (alpha = 0)
-	pRenderTarget->GetClearColour().Set( 1.f, 1.f, 1.f, 1.f );
 	
 	TPtr<TLRender::TRenderNode> pRootRenderNode = new TLRender::TRenderNode("Intro");
-	
 	pRenderTarget->SetRootRenderNode(pRootRenderNode);
 	TLRender::g_pRendergraph->AddNode( pRootRenderNode );
 	

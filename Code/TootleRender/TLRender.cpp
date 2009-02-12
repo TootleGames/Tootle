@@ -79,3 +79,12 @@ void TLRender::Opengl::SceneTransform(const TLMaths::TTransform& Transform)
 }
 
 
+//---------------------------------------------------
+//	eular rotation on the scene - wrapper for glRotatef
+//---------------------------------------------------
+void TLRender::Opengl::SceneRotate(const TLMaths::TAngle& Rotation,const float3& Axis)
+{
+	glRotatef( Rotation.GetDegrees(), Axis.x, Axis.y, Axis.z );
+}
+
+
