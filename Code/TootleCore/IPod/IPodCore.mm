@@ -19,6 +19,7 @@ namespace TLCore
 	extern TPtr<TCoreManager>		g_pCoreManager;
 }
 
+@class OpenglESAppAppDelegate;
 
 
 
@@ -36,6 +37,7 @@ int main(int argc, char *argv[])
 	TLCore::Platform::GetString( TLCore::Platform::g_AppExe, HomeDir );
 	TLCore::Platform::g_AppExe.Append("/myapp.app");
 
+//	int retVal = UIApplicationMain(argc, argv, nil, [OpenglESAppAppDelegate class]);	//	
 	int retVal = UIApplicationMain(argc, argv, nil, @"OpenglESAppAppDelegate");	//	[OpenglESAppAppDelegate class]
 //	int retVal = UIApplicationMain(argc, argv, nil, nil);
 

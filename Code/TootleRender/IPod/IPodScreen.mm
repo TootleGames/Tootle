@@ -595,8 +595,8 @@ extern OpenglESAppAppDelegate* g_pIpodApp;
 
 
 
-TLRender::Platform::Screen::Screen(TRefRef Ref) :
-	TLRender::TScreen	( Ref )
+TLRender::Platform::Screen::Screen(TRefRef Ref,TLRender::TScreenShape ScreenShape) :
+	TLRender::TScreen	( Ref, ScreenShape )
 {
 }
 
