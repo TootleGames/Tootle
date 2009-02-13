@@ -142,15 +142,6 @@ SyncBool TApplication::Shutdown()
 //-----------------------------------------------------------
 void TApplication::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 {
-	if( pMessage->GetMessageRef() == TLCore::UpdateRef )
-	{
-		if(m_pGame)
-		{
-			// Forward any update messages onto our subscribers - i.e. the game object when it's created
-			//PublishMessage(pMessage);
-		}
-	}
-
 	
 	TManager::ProcessMessage(pMessage);
 }
@@ -173,6 +164,9 @@ SyncBool TApplication::CreateGameObject()
 
 		// Subscribe the game object to the application
 		m_pGame->SubscribeTo(this);
+		
+		// Subscribe to the core manager for update messages
+		m_pGame->SubscribeTo(TLCore::g_pCoreManager);
 		
 		// Send a message to the new game object to initialise
 		// NOTE: Currently asume this happens in a frame so may need to cater for it occuring over a number of frames
