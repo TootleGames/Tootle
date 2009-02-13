@@ -127,6 +127,10 @@ public:
 	static float		DegreesToRadians(float AngDegrees)		{	return AngDegrees * (PI/180.f);	}
 	static float		RadiansToDegrees(float AngRadians)		{	return AngRadians * (180.f/PI);	}
 
+	FORCEINLINE void	operator=(const TLMaths::TAngle& Angle)		{	SetDegrees( Angle.GetDegrees() );	}
+	FORCEINLINE void	operator+=(const TLMaths::TAngle& Angle)	{	AddDegrees( Angle.GetDegrees() );	}
+	FORCEINLINE void	operator-=(const TLMaths::TAngle& Angle)	{	AddDegrees( -Angle.GetDegrees() );	}
+	
 private:
 	float				m_AngleDegrees;		//	angle stored in degrees
 };

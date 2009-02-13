@@ -45,11 +45,12 @@ public:
 	TScreen(TRefRef ScreenRef,TScreenShape ScreenShape);
 	~TScreen();
 
-	TRefRef							GetRef() const						{	return m_Ref;	}
-	virtual Type4<s32>				GetSize() const						{	return m_Size;	}
-	TFlags<Flags>&					GetFlags()							{	return m_Flags;	}
-	Bool							GetFlag(TScreen::Flags Flag) const	{	return m_Flags(Flag);	}
-	TScreenShape					GetScreenShape() const				{	return m_ScreenShape;	}
+	FORCEINLINE TRefRef					GetRef() const						{	return m_Ref;	}
+	virtual Type4<s32>					GetSize() const						{	return m_Size;	}
+	FORCEINLINE TFlags<Flags>&			GetFlags()							{	return m_Flags;	}
+	FORCEINLINE Bool					GetFlag(TScreen::Flags Flag) const	{	return m_Flags(Flag);	}
+	FORCEINLINE TScreenShape			GetScreenShape() const				{	return m_ScreenShape;	}
+	FORCEINLINE const TLMaths::TAngle&	GetScreenAngle() const				{	return TLRender::GetScreenAngle( GetScreenShape() );	}
 
 	virtual SyncBool				Init();
 	virtual SyncBool				Update();
@@ -68,8 +69,7 @@ public:
 
 	Bool							GetWorldRayFromScreenPos(const TPtr<TRenderTarget>& pRenderTarget,TLMaths::TLine& WorldRay,const Type2<s32>& ScreenPos);
 
-	// Screenshot request
-	FORCEINLINE void				RequestScreenshot()							{	m_Flags.Set(Flag_TakeScreenshot);	}
+	FORCEINLINE void				RequestScreenshot()							{	m_Flags.Set(Flag_TakeScreenshot);	}	// Screenshot request
 
 	FORCEINLINE Bool				operator==(const TRef& ScreenRef)	const	{	return GetRef() == ScreenRef;	}
 	FORCEINLINE Bool				operator==(const TScreen& Screen)	const 	{	return GetRef() == Screen.GetRef();	}

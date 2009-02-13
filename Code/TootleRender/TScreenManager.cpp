@@ -188,3 +188,25 @@ TPtr<TLRender::TRenderTarget>& TLRender::TScreenManager::GetRenderTarget(TRefRef
 	return GetRenderTarget( RenderTargetRef, pScreen );
 }
 
+
+//----------------------------------------------------------
+//	returns the screen angle for the FIRST screen. this is just to make it easier and saves us fetching the right screen
+//----------------------------------------------------------
+const TLMaths::TAngle& TLRender::TScreenManager::GetScreenAngle()
+{
+	TPtrArray<TScreen>& ScreenArray = GetInstanceArray();
+	
+	//	no screens... erk
+	if ( !ScreenArray.GetSize() )
+	{
+		TLDebug_Break("No screens in screen manager");
+		static TLMaths::TAngle DummyAngle(0.f);
+		return DummyAngle;
+	}
+	
+	//	get rotation of first screen
+	TPtr<TLRender::TScreen>& pFirstScreen = ScreenArray.ElementAt( 0 );
+	return pFirstScreen->GetScreenAngle();
+}
+
+

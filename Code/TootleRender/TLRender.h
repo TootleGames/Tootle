@@ -24,6 +24,9 @@ namespace TLRender
 		ScreenShape_WideLeft,		//	widescreen
 		ScreenShape_WideRight,		//	widescreen, but upsidedown in case we want it a different way for the ipod - on PC this will emulate ipod mode (portrait but rendered on its side)
 	};
+	
+	FORCEINLINE const TLMaths::TAngle&	GetScreenAngle(TScreenShape ScreenShape);	//	get the angle that the screenshape is rotated to
+	
 
 	//	forward declaration of platform specific implementations
 	namespace Platform
@@ -249,4 +252,22 @@ FORCEINLINE void TLRender::Opengl::DrawPrimitives(u16 GLPrimType,const TArray<TA
 		}
 	}
 }
+
+
+
+//---------------------------------------------------
+//	get the angle that the screenshape is rotated to
+//---------------------------------------------------
+FORCEINLINE const TLMaths::TAngle& TLRender::GetScreenAngle(TScreenShape ScreenShape)
+{
+	static TLMaths::TAngle g_Angles[3] = 
+	{
+		0.f,	//	Portrait
+		-90.f,	//	Left
+		90.f,	//	Right
+	};
+	
+	return g_Angles[ ScreenShape ];
+}
+
 

@@ -23,6 +23,8 @@ public:
 	virtual void			ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);	//	process messages
 	virtual void			OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
 
+	const TLMaths::TAngle&	GetScreenAngle();													//	returns the screen angle for the FIRST screen. this is just to make it easier and saves us fetching the right screen
+	
 	TPtr<TRenderTarget>&	GetRenderTarget(TRefRef RenderTargetRef);							//	find the specified render target in all our screens
 	TPtr<TRenderTarget>&	GetRenderTarget(TRefRef RenderTargetRef,TPtr<TScreen>& pScreen);	//	find the specified render target in all our screens - also sets the screen pointer
 

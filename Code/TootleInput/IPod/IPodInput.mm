@@ -271,18 +271,6 @@ Bool Platform::UpdateDevice(TPtr<TLInput::TInputDevice> pDevice)
 	//	process all our accell data
 	for ( u32 i=FirstData;	i<AccelerationDataArray.GetSize();	i++ )
 	{
-		//	gr: check to see if we can ignore minor changes first
-		IPod::TAccelerationData& AccelerationData = AccelerationDataArray.ElementAt(i);
-		float3 Diff( IPod::g_LastAccelData - AccelerationData.m_vAcceleration );
-
-		//	if every axis' change is less than the Min then skip this data
-		if ( ( Diff.x < ACCEL_MINCHANGE && Diff.x > -ACCEL_MINCHANGE ) && 
-			 ( Diff.y < ACCEL_MINCHANGE && Diff.y > -ACCEL_MINCHANGE ) && 
-			 ( Diff.z < ACCEL_MINCHANGE && Diff.z > -ACCEL_MINCHANGE ) )
-		{
-			continue;
-		}
-
 #ifdef ENABLE_INPUTSYSTEM_TRACE
 		TLDebug_Print( TString("INPUT: Process NON-TOUCH data: %d/%d", i, AccelerationDataArray.GetSize()-1 ) );
 #endif
@@ -308,14 +296,13 @@ Bool Platform::UpdateDevice(TPtr<TLInput::TInputDevice> pDevice)
 		}
 		
 		// Add the acceleromter data
+		IPod::TAccelerationData& AccelerationData = AccelerationDataArray.ElementAt(i);
+
 		//	gr: could possibly get away with just writing the float3 but won't for now
 		pDataBuffer->Write( AccelerationData.m_vAcceleration.x );
 		pDataBuffer->Write( AccelerationData.m_vAcceleration.y );
 		pDataBuffer->Write( AccelerationData.m_vAcceleration.z );
 		
-		//	record last-used accell value
-		IPod::g_LastAccelData = AccelerationData.m_vAcceleration;
-			
 		// Set the cursor information
 		//SetCursorPosition(uSensorIndex, pTouchData->uCurrentPos);
 		
@@ -411,12 +398,11 @@ void Platform::IPod::ProcessTouchData(TPtr<TLInput::TInputDevice> pDevice)
 				pDataBuffer->Write( AccelerationData.m_vAcceleration.y );
 				pDataBuffer->Write( AccelerationData.m_vAcceleration.z );
 				
-				IPod::g_LastAccelData = AccelerationData.m_vAcceleration;
 				g_AccelerationData.RemoveAt(0);
 			}
 			else
 			{
-				// No acceleration on this run of the loop - use the last accel values so no changes will be detected
+				//	No new acceleration data, the last accel values so no changes will be detected in the sensors
 				pDataBuffer->Write( IPod::g_LastAccelData.x );
 				pDataBuffer->Write( IPod::g_LastAccelData.y );
 				pDataBuffer->Write( IPod::g_LastAccelData.z );
@@ -504,10 +490,23 @@ void TLInput::Platform::IPod::ProcessTouchEnd(TPtr<TTouchData>& pTouchData)
 
 void TLInput::Platform::IPod::ProcessAcceleration(TLInput::Platform::IPod::TAccelerationData& AccelerationData)
 {
-	// Handle acceleration data here
-	//TLDebug_Print(TString("TLInput::Platform::IPod::ProcessAcceleration - Acceleration occured (%.3f, %.3f, %.3f)", pAccelerationData->vAcceleration.x, pAccelerationData->vAcceleration.y, pAccelerationData->vAcceleration.z));
+	//	gr: moved the comparison with the last-data to here so minor changes don't even get close to the
+	//		accell data buffer
+	float3 Diff( IPod::g_LastAccelData - AccelerationData.m_vAcceleration );
 	
+	//	if every axis' change is less than the Min then ignore this data
+	if ( ( Diff.x < ACCEL_MINCHANGE && Diff.x > -ACCEL_MINCHANGE ) && 
+		( Diff.y < ACCEL_MINCHANGE && Diff.y > -ACCEL_MINCHANGE ) && 
+		( Diff.z < ACCEL_MINCHANGE && Diff.z > -ACCEL_MINCHANGE ) )
+	{
+		return;
+	}
+	
+	//	significant change, add the accelleration data
 	g_AccelerationData.Add( AccelerationData );
+
+	//	record last-used accell value
+	IPod::g_LastAccelData = AccelerationData.m_vAcceleration;
 }
 
 
