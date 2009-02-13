@@ -45,7 +45,7 @@ public:
 	TBinary(const u8* pData,u32 DataLength);
 	TBinary(const TArray<u8>& Data);
 
-	template<typename TYPE> FORCEINLINE const TYPE*	ReadNoCopy()						{	if ( !CheckDataAvailible( sizeof(TYPE) ) )	return NULL;	const TYPE* pData = (const TYPE*)GetData( m_ReadPos );	MoveReadPos( sizeof(TYPE) );	return pData;	}
+	template<typename TYPE> FORCEINLINE TYPE*		ReadNoCopy();						//	"read" the data for this next type, but return it as a pointer to the data. and move along the read pos too
 	template<typename TYPE> FORCEINLINE Bool		Read(TYPE& Var)						{	return ReadData( (u8*)&Var, sizeof(TYPE) );		}
 	template<typename TYPE> FORCEINLINE Bool		Read(TArray<TYPE>& Array)			{	return ReadArray( Array );	}
 	template<typename TYPE> FORCEINLINE Bool		ReadAndCut(TYPE& Var)				{	return ReadData( (u8*)&Var, sizeof(TYPE), TRUE );	}
@@ -170,6 +170,27 @@ void TBinary::WriteArray(const TArray<TYPE>& Array)
 		}
 	}
 }
+
+
+//--------------------------------------------------------------------
+//	"read" the data for this next type, but return it as a pointer to the data
+//	and move along the read pos too
+//--------------------------------------------------------------------
+template<typename TYPE> 
+FORCEINLINE TYPE* TBinary::ReadNoCopy()						
+{
+	if ( !CheckDataAvailible( sizeof(TYPE) ) )	
+		return NULL;	
+	
+	TYPE* pData = (TYPE*)GetData( m_ReadPos );	
+	MoveReadPos( sizeof(TYPE) );	
+	return pData;	
+}
+
+
+
+
+
 
 
 TLBinary_DeclareDataTypeRef( u8,	"u8" );

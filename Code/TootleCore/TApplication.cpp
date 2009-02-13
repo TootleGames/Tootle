@@ -217,6 +217,23 @@ SyncBool TApplication::DestroyGameObject()
 }
 
 
+//--------------------------------------------------
+//	notify subscribers when option changes - and do any specific option stuff
+//--------------------------------------------------
+void TApplication::OnOptionChanged(TRefRef OptionRef)
+{
+	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("OptChanged");
+	pMessage->Write( OptionRef );
+	
+	PublishMessage( pMessage );
+}
+
+
+
+
+
+
+
 
 
 // Application States
