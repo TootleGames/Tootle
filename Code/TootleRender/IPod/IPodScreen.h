@@ -1,8 +1,12 @@
-/*------------------------------------------------------
- 
-	screen implementation on IPod - opengl ES
- 
--------------------------------------------------------*/
+/*
+ *  IPodScreen.h
+ *  TootleRender
+ *
+ *  Created by Graham Reeves on 01/09/2008.
+ *  Copyright 2008 Tootle. All rights reserved.
+ *
+ */
+
 #pragma once
 
 #include "../TScreen.h"

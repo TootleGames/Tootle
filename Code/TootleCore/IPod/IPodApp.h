@@ -5,7 +5,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class EAGLView;
+#import <TootleRender/Ipod/IPodView.h>
 
 @interface OpenglESAppAppDelegate : NSObject <UIAccelerometerDelegate> {
 //@interface OpenglESAppAppDelegate : NSObject <UIApplicationDelegate> {
