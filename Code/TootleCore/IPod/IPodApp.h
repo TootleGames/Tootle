@@ -1,11 +1,9 @@
 #pragma once
 
-
-
-
 #import <UIKit/UIKit.h>
-
 #import <TootleRender/Ipod/IPodView.h>
+
+
 
 @interface OpenglESAppAppDelegate : NSObject <UIAccelerometerDelegate> {
 //@interface OpenglESAppAppDelegate : NSObject <UIApplicationDelegate> {
@@ -22,6 +20,16 @@
 @property (nonatomic, retain) IBOutlet EAGLView *glView;
 
 @end
+
+
+
+namespace TLCore
+{
+	namespace Platform
+	{
+		extern OpenglESAppAppDelegate* g_pIPodApp;
+	}
+}
 
 
 

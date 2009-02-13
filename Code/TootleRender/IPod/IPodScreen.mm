@@ -10,6 +10,7 @@
 #include "IPodScreen.h"
 
 #include <TootleCore/TCoreManager.h>
+#import <TootleCore/IPod/IPodApp.h>
 
 
 #define USE_TEST_EMAIL
@@ -20,11 +21,6 @@ namespace TLCore
 }
 
 
-
-#import <TootleCore/IPod/IPodApp.h>
-
-
-extern OpenglESAppAppDelegate* g_pIpodApp;
 
 
 
@@ -40,7 +36,7 @@ TLRender::Platform::Screen::Screen(TRefRef Ref,TLRender::TScreenShape ScreenShap
 SyncBool TLRender::Platform::Screen::Init()
 {
 	//	no gl view? fail!
-	EAGLView *glView = g_pIpodApp.glView;
+	EAGLView *glView = TLCore::Platform::g_pIPodApp.glView;
 	if ( !glView )
 		return SyncFalse;
 
@@ -89,7 +85,7 @@ SyncBool TLRender::Platform::Screen::Update()
 
 void TLRender::Platform::Screen::Draw()
 {
-	EAGLView *glView = g_pIpodApp.glView;
+	EAGLView *glView = TLCore::Platform::g_pIPodApp.glView;
 
 	[EAGLContext setCurrentContext:glView.context];
 	glBindFramebufferOES(GL_FRAMEBUFFER_OES, glView.viewFramebuffer);
