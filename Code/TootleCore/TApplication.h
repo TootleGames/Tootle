@@ -21,10 +21,10 @@ namespace TLCore
 {
 	class TApplication;
 
-	TRef	g_LanguageRef_Eng	= "eng";
-	TRef	g_LanguageRef_Usa	= "usa";
-	TRef	g_LanguageRef_Fre	= "fre";
 };
+
+
+#include "TLanguage.h"
 
 class TLCore::TApplication : public TManager, public TStateMachine
 {
@@ -46,7 +46,7 @@ public:
 	
 	//	global options
 	FORCEINLINE void	SetLanguage(TRefRef LanguageRef)	{	SetOption("Lang", LanguageRef );	}
-	FORCEINLINE TRef	GetLanguage()						{	return GetOption("Lang", TLCore::g_LanguageRef_Eng );	}
+	FORCEINLINE TRef	GetLanguage()						{	return GetOption("Lang", TLanguage::g_LanguageRef_Eng );	}
 	FORCEINLINE void	SetSoundVolume(u8 Volume)			{	SetOption("sfxvol", Volume );	}
 	FORCEINLINE TRef	GetSoundVolume()					{	return GetOption<u8>("sfxvol", 100 );	}
 	FORCEINLINE void	SetMusicVolume(u8 Volume)			{	SetOption("musvol", Volume );	}
@@ -73,6 +73,8 @@ protected:
 	
 	virtual void				ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);	//	process messages
 	
+	virtual void				OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
+
 	virtual void				GetPreloadFiles(TArray<TRef>& PreloadFiles)		{} // builds a list of files to load at boot up
 
 	virtual TTempString			GetName()	const = 0;		// Name of application - must be specified

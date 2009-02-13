@@ -317,7 +317,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TGame.h</string>
+								<string>TGame.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -325,11 +325,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TGame.h</string>
+										<string>TGame.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84D694810F431B21002CFFE1</string>
+										<string>84D69D620F449C7F002CFFE1</string>
 										<key>history</key>
 										<array>
 											<string>84F90F3C0F13E208007455BB</string>
@@ -341,8 +341,8 @@
 											<string>84E117AA0F3CBBAB00471397</string>
 											<string>84E117AB0F3CBBAB00471397</string>
 											<string>84E117AC0F3CBBAB00471397</string>
+											<string>84D69D600F449C7F002CFFE1</string>
 											<string>84D68F8A0F41C786002CFFE1</string>
-											<string>84D6917A0F42E123002CFFE1</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -356,6 +356,7 @@
 											<string>84E117BA0F3CBBAB00471397</string>
 											<string>84E117BB0F3CBBAB00471397</string>
 											<string>84E118650F3F8FDF00471397</string>
+											<string>84D69D610F449C7F002CFFE1</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -413,9 +414,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84D694820F431B21002CFFE1</string>
+				<string>84D69D640F449C7F002CFFE1</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84D694830F431B21002CFFE1</string>
+				<string>84D69D650F449C7F002CFFE1</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>

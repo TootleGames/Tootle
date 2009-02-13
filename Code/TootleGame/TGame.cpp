@@ -12,6 +12,14 @@
 using namespace TLGame;
 
 
+SyncBool TGame::Initialise()
+{
+	AddModes();
+	
+	return SyncTrue;
+}
+
+
 SyncBool TGame::Update(float fTimeStep)
 {
 	// Update the game state machine

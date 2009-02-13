@@ -32,7 +32,10 @@ public:
 	
 
 protected:
-	virtual SyncBool Update(float fTimeStep);
 	
+	virtual SyncBool Initialise();
+	virtual SyncBool Update(float fTimeStep);
+
+	virtual void AddModes()	{}
 };
 

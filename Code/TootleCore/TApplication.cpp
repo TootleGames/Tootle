@@ -156,6 +156,14 @@ void TApplication::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 }
 
 
+void TApplication::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID)
+{
+
+	TManager::OnEventChannelAdded(refPublisherID, refChannelID);
+}
+
+
+
 SyncBool TApplication::CreateGameObject()
 {
 	// Already have a game object? Create one if not

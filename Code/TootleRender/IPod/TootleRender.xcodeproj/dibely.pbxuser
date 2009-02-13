@@ -77,7 +77,7 @@
 		vrLoc = 0;
 	};
 	84C109090F0A779700B2DF7A /* Project object */ = {
-		activeBuildConfigurationName = Release;
+		activeBuildConfigurationName = Debug;
 		activeTarget = 84C10AE70F0A7E3B00B2DF7A /* TootleRender */;
 		addToTargets = (
 			84C10AE70F0A7E3B00B2DF7A /* TootleRender */,
@@ -576,9 +576,9 @@
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleRender/IPod/IPodView.h;
 		sourceTree = "<absolute>";
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {955, 994}}";
+			sepNavIntBoundsRect = "{{0, 0}, {955, 1078}}";
 			sepNavSelRange = "{199, 0}";
-			sepNavVisRange = "{0, 726}";
+			sepNavVisRange = "{0, 698}";
 		};
 	};
 	84DC8A4B0F45845D00532109 /* PBXTextBookmark */ = {
