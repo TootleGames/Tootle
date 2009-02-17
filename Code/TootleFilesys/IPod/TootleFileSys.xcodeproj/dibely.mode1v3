@@ -330,7 +330,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84E11B720F408B1B00471397</string>
+										<string>8418E6C50F4B18CB00B956C9</string>
 										<key>history</key>
 										<array>
 											<string>84E6432C0F15293C005A4DC9</string>
@@ -349,7 +349,7 @@
 											<string>842AA35F0F1C989A004BF60A</string>
 											<string>842AA3600F1C989A004BF60A</string>
 											<string>84E11B6F0F408B1B00471397</string>
-											<string>84E11B700F408B1B00471397</string>
+											<string>84E11B720F408B1B00471397</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -369,7 +369,6 @@
 											<string>84E643C90F1537BB005A4DC9</string>
 											<string>84E643CA0F1537BB005A4DC9</string>
 											<string>84E643CB0F1537BB005A4DC9</string>
-											<string>84E11B710F408B1B00471397</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -427,9 +426,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84E11B730F408B1B00471397</string>
+				<string>8418E6C60F4B18CB00B956C9</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84E11B740F408B1B00471397</string>
+				<string>8418E6C70F4B18CB00B956C9</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -563,7 +562,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleFilesys/IPod/TootleFileSys.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
