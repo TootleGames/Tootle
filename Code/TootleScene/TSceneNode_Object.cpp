@@ -17,6 +17,12 @@ void TSceneNode_Object::DeletePhysicsNode()
 {
 	if ( m_PhysicsObjectRef.IsValid() )
 	{
+#ifdef _DEBUG
+		TTempString Debug_String("Attempting to remove physics for node ");
+		GetNodeRef().GetString( Debug_String );
+		TLDebug_Break(Debug_String);
+#endif
+		
 		TLPhysics::g_pPhysicsgraph->RemoveNode(m_PhysicsObjectRef);
 		m_PhysicsObjectRef.SetInvalid();
 	}
@@ -26,7 +32,13 @@ void TSceneNode_Object::DeletePhysicsNode()
 void TSceneNode_Object::DeleteRenderNode()
 {
 	if ( m_RenderNodeRef.IsValid() )
-	{
+	{		
+#ifdef _DEBUG
+		TTempString Debug_String("Attempting to remove render object for node ");
+		GetNodeRef().GetString( Debug_String );
+		TLDebug_Break(Debug_String);
+#endif
+		
 		TLRender::g_pRendergraph->RemoveNode(m_RenderNodeRef);
 		m_RenderNodeRef.SetInvalid();
 	}
