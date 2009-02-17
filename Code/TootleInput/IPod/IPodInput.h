@@ -56,22 +56,12 @@ namespace TLInput
 				int2						uStartPosition;			// Starting position of the touch object
 				TFlags<TouchFlags, u8>		uFlags;					// Flags for this touh obejct
 			};
-			
-			class TAccelerationData
-			{
-			public:
-				TAccelerationData()										{}
-				TAccelerationData(const float3& Acceleration) : m_vAcceleration( Acceleration )	{}
-
-			public:
-				float3	m_vAcceleration;
-			};
-			
+						
 			void ProcessTouchBegin(const TTouchData& touchData);
 			void ProcessTouchMoved(const TTouchData& touchData);
 			void ProcessTouchEnd(const TTouchData& touchData);
 
-			void ProcessAcceleration(TLInput::Platform::IPod::TAccelerationData& AccelerationData);
+			void ProcessAcceleration(const float3& vAccelerationData);
 
 			Bool CreateDevice();
 			Bool InitialiseDevice(TPtr<TInputDevice> pDevice);
@@ -81,4 +71,3 @@ namespace TLInput
 
 
 TLCore_DeclareIsDataType( TLInput::Platform::IPod::TTouchData );
-TLCore_DeclareIsDataType( TLInput::Platform::IPod::TAccelerationData );

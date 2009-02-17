@@ -389,7 +389,7 @@ void TLMemory::Platform::MemMove(void* pDest,const void* pSrc,u32 Size)
     // Update the accelerometer graph view
     //[graphView updateHistoryWithX:acceleration.x Y:acceleration.y Z:acceleration.z];
 	
-	TLInput::Platform::IPod::TAccelerationData AccelData( float3( acceleration.x, acceleration.y, acceleration.z) );
+	float3 AccelData(acceleration.x, acceleration.y, acceleration.z);
 
 	TLInput::Platform::IPod::ProcessAcceleration( AccelData );
 }

@@ -233,8 +233,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -279,10 +277,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>11</integer>
-									<integer>9</integer>
-									<integer>2</integer>
-									<integer>0</integer>
+									<integer>22</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
@@ -316,12 +311,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>IPodInput.mm</string>
+								<string>IPodInput.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -329,11 +326,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>IPodInput.mm</string>
+										<string>IPodInput.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8418E4E50F4AD26000B956C9</string>
+										<string>8418E5A60F4ADFC800B956C9</string>
 										<key>history</key>
 										<array>
 											<string>841005CF0EF91B5F00542F4A</string>
@@ -343,8 +340,7 @@
 											<string>84179C3D0EFA74D8005375E5</string>
 											<string>842A9FAC0F17D5EA004BF60A</string>
 											<string>84DC8FE80F45F52400532109</string>
-											<string>8418E4E30F4AD26000B956C9</string>
-											<string>8418E4A00F4AD05000B956C9</string>
+											<string>8418E5A30F4ADFC800B956C9</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -356,8 +352,8 @@
 											<string>841005E00EF91B5F00542F4A</string>
 											<string>842A9FAF0F17D5EA004BF60A</string>
 											<string>842AA01D0F1A3A82004BF60A</string>
-											<string>8418E4A30F4AD05000B956C9</string>
-											<string>8418E4E40F4AD26000B956C9</string>
+											<string>8418E5A40F4ADFC800B956C9</string>
+											<string>8418E5A50F4ADFC800B956C9</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -415,9 +411,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>8418E4E60F4AD26000B956C9</string>
+				<string>8418E5A70F4ADFC800B956C9</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>8418E4E70F4AD26000B956C9</string>
+				<string>8418E5A80F4ADFC800B956C9</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -551,6 +547,8 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>841005E50EF91B5F00542F4A</string>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleInput/IPod/TootleInput.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -631,7 +629,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>841005E50EF91B5F00542F4A</string>
-				<string>8418E4A70F4AD05000B956C9</string>
+				<string>8418E5A90F4ADFC800B956C9</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -762,14 +760,12 @@
 							<key>Dock</key>
 							<array>
 								<dict>
-									<key>BecomeActive</key>
-									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>IPodInput.mm</string>
+										<string>IPodInput.h</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -790,6 +786,8 @@
 							<string>212pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -825,8 +823,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>84DC8FE60F45F52000532109</string>
-				<string>84DC8FE70F45F52000532109</string>
+				<string>8418E55F0F4AD9E900B956C9</string>
+				<string>8418E5600F4AD9E900B956C9</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>
@@ -835,7 +833,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C530D57069F1CE1000CFCEE</string>
 			<key>WindowToolIsVisible</key>
-			<false/>
+			<true/>
 		</dict>
 		<dict>
 			<key>Identifier</key>
