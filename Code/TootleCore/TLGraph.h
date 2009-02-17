@@ -1081,10 +1081,13 @@ Bool TLGraph::TGraph<T>::RemoveNode(TPtr<T> pNode)
 {
 	if ( !pNode )
 	{
+#ifdef _DEBUG		
 		TTempString Debug_String("Attempting to remove node ");
 		pNode->GetNodeRef().GetString( Debug_String );
 		Debug_String.Append(" that doesn't exist in graph...");
 		TLDebug_Print( Debug_String );
+#endif
+		
 		return FALSE;
 	}
 
@@ -1099,6 +1102,12 @@ Bool TLGraph::TGraph<T>::RemoveNode(TPtr<T> pNode)
 	if(IsInQueue(pNode))
 	{
 		//TODO: Check to see if the node is to be added or removed?
+#ifdef _DEBUG
+		TTempString Debug_String("Attempting to remove node already in queue");
+		pNode->GetNodeRef().GetString( Debug_String );
+		TLDebug_Break(Debug_String);
+#endif
+
 		return FALSE;
 	}
 
@@ -1112,7 +1121,15 @@ Bool TLGraph::TGraph<T>::RemoveNode(TPtr<T> pNode)
 		{
 			// In the graph heirarchy?? Ok to proceed if so
 			if(!IsInGraph(pParent))
+			{
+#ifdef _DEBUG
+				TTempString Debug_String("Attempting to remove node with parent not in graph ");
+				pNode->GetNodeRef().GetString( Debug_String );
+				TLDebug_Break(Debug_String);
+#endif
+				
 				return FALSE;
+			}
 		}
 		else
 		{
@@ -1125,6 +1142,12 @@ Bool TLGraph::TGraph<T>::RemoveNode(TPtr<T> pNode)
 	}
 
 
+#ifdef _DEBUG
+	TTempString Debug_String("Attempting to remove node ");
+	pNode->GetNodeRef().GetString( Debug_String );
+	TLDebug_Break(Debug_String);
+#endif
+	
 	// No - Add the node to the queue
 	TPtr<TGraphUpdateRequest> pUpdateRequest = new TGraphUpdateRequest(pNode, pParent, TRUE);
 
@@ -1266,14 +1289,22 @@ void TLGraph::TGraph<T>::DoRemoveNode(TPtr<T>& pNode,TPtr<T>& pParent)
 
 	if(bSuccess)
 	{
+#ifdef _DEBUG
+		TTempString Debug_String("Removed node from graph:");
+		pNode->GetNodeRef().GetString( Debug_String );
+		TLDebug_Break(Debug_String);
+#endif
+		
 		OnNodeRemoved( pNode );
 	}
+#ifdef _DEBUG		
 	else
 	{
 		TTempString Debug_String("Failed to remove node ");
 		pNode->GetNodeRef().GetString( Debug_String );
 		TLDebug_Print( Debug_String );
 	}
+#endif
 }
 
 
