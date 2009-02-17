@@ -1,7 +1,7 @@
 #include "IPodInput.h"
 
 #ifdef _DEBUG
-#define ENABLE_INPUTSYSTEM_TRACE
+	#define ENABLE_INPUTSYSTEM_TRACE
 #endif
 
 // [16/12/08] DB -	Possible responsiveness improvement
@@ -20,7 +20,7 @@ namespace TLInput
 	{
 		namespace IPod 
 		{
-			TPtrArray<TTouchData>		g_TouchData;
+			TArray<TTouchData>			g_TouchData;
 			TArray<TAccelerationData>	g_AccelerationData;
 			float3						g_LastAccelData;		//	store the last accel data in case we dont have any for some immediate touch response, we will just send the last data we had. Also reduces the amount of processing done when values changes only slightly
 			
@@ -342,10 +342,10 @@ void Platform::IPod::ProcessTouchData(TPtr<TLInput::TInputDevice> pDevice)
 		if(pDataBuffer)
 		{
 			
-			TPtr<TTouchData>& pTouchData = g_TouchData.ElementAt(uIndex);
+			const TTouchData& TouchData = g_TouchData.ElementAt(uIndex);
 			
 			// Get the index - this will correspond to both a button and axis index
-			u32 uSensorIndex = pTouchData->uIndex;
+			u32 uSensorIndex = 0; //TouchData.uIndex;
 			
 			// Setup the button data				
 			for(u32 uButtonIndex = 0; uButtonIndex < IPod::MAX_CURSOR_POSITIONS; uButtonIndex++)
@@ -357,7 +357,7 @@ void Platform::IPod::ProcessTouchData(TPtr<TLInput::TInputDevice> pDevice)
 				// if it was a begin or moved message write 1.0f to say the button is down/was pressed
 				if(uButtonIndex == uSensorIndex)
 				{
-					if(pTouchData->uPhase == IPod::Begin || pTouchData->uPhase == IPod::Move)
+					if(TouchData.uPhase == IPod::TTouchData::Begin || TouchData.uPhase == IPod::TTouchData::Move)
 						g_aIpodButtonState.ElementAt(uButtonIndex) = 1.0f;
 					else
 						g_aIpodButtonState.ElementAt(uButtonIndex) = 0.0f;
@@ -374,7 +374,7 @@ void Platform::IPod::ProcessTouchData(TPtr<TLInput::TInputDevice> pDevice)
 				if(uAxisIndex == uSensorIndex)
 				{
 					// Change in position
-					int2	uDelta = pTouchData->uCurrentPos - pTouchData->uPreviousPos;
+					int2	uDelta = TouchData.uCurrentPos - TouchData.uPreviousPos;
 					
 					pDataBuffer->Write((float)uDelta.x);
 					pDataBuffer->Write((float)uDelta.y);
@@ -410,7 +410,7 @@ void Platform::IPod::ProcessTouchData(TPtr<TLInput::TInputDevice> pDevice)
 			
 			
 			// Set the cursor information
-			SetCursorPosition(uSensorIndex, pTouchData->uCurrentPos);
+			SetCursorPosition(uSensorIndex, TouchData.uCurrentPos);
 			
 			 // Tell the device to process the data
 			 pDataBuffer->ResetReadPos();
@@ -448,44 +448,48 @@ void Platform::IPod::SetCursorPosition(u8 uIndex, int2 uPos)
 
 
 
-void TLInput::Platform::IPod::ProcessTouchBegin(TPtr<TTouchData>& pTouchData)
+void TLInput::Platform::IPod::ProcessTouchBegin(const TTouchData& TouchData)
 {
 #ifdef ENABLE_INPUTSYSTEM_TRACE
 	TLDebug_Print("TOUCH BEGIN");
 #endif
-	g_TouchData.Add(pTouchData);
-
+	g_TouchData.Add(TouchData);
+/*
 #ifdef ENABLE_IMMEDIATE_TOUCHUPDATE
 	TLInput::g_pInputSystem->ForceUpdate();
 #endif
+ */
 }
 
-void TLInput::Platform::IPod::ProcessTouchMoved(TPtr<TTouchData>& pTouchData)
+void TLInput::Platform::IPod::ProcessTouchMoved(const TTouchData& TouchData)
 {
 #ifdef ENABLE_INPUTSYSTEM_TRACE
 	TLDebug_Print("TOUCH MOVED");
 	TString str;
-	str.Appendf("CurrrentPos %d %d", pTouchData->uCurrentPos.x, pTouchData->uCurrentPos.y);
+	str.Appendf("CurrrentPos %d %d", TouchData.uCurrentPos.x, TouchData.uCurrentPos.y);
 	TLDebug_Print(str);
 #endif
 	
-	g_TouchData.Add(pTouchData);
+	g_TouchData.Add(TouchData);
 	
+	/*
 #ifdef ENABLE_IMMEDIATE_TOUCHUPDATE
 	TLInput::g_pInputSystem->ForceUpdate();
 #endif
+	 */
 }
 
-void TLInput::Platform::IPod::ProcessTouchEnd(TPtr<TTouchData>& pTouchData)
+void TLInput::Platform::IPod::ProcessTouchEnd(const TTouchData& TouchData)
 {
 #ifdef ENABLE_INPUTSYSTEM_TRACE
 	TLDebug_Print("TOUCH END");
 #endif
-	g_TouchData.Add(pTouchData);
-
+	g_TouchData.Add(TouchData);
+/*
 #ifdef ENABLE_IMMEDIATE_TOUCHUPDATE
 	TLInput::g_pInputSystem->ForceUpdate();
 #endif
+ */
 }
 
 void TLInput::Platform::IPod::ProcessAcceleration(TLInput::Platform::IPod::TAccelerationData& AccelerationData)

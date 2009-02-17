@@ -21,21 +21,40 @@ namespace TLInput
 		
 		namespace IPod
 		{			
-			typedef enum TouchPhase
+			// Base touch data - used for the persistent TouchObject class and as temp data passed form the
+			// ipod touch system to the engine input system
+			class TTouchData
 			{
-				Begin = 0,
-				Move,
-				End,
-				Cancel,
+			public:
+				enum TouchPhase
+				{
+					Begin = 0,
+					Move,
+					End,
+					Cancel,
+				};
+				
+			public:
+				int2						uCurrentPos;			// Current position of the touch event
+				int2						uPreviousPos;			// Previous position of the touch event
+				float						fTimestamp;				// Timestamp
+				TouchPhase					uPhase;					// Currrent touch phase 
+				u8							uTapCount;				// Number of taps for a particular touch event
 			};
 			
-			struct TTouchData
+			// Engine side persistent touch object class
+			class TTouchObject : public TTouchData
 			{
-				int2	uCurrentPos;
-				int2	uPreviousPos;
-				u32		uTimestamp;
-				u8		uPhase;
-				u8		uIndex;
+			public:
+				enum TouchFlags
+				{
+					Changed = 0,
+					Remove,	
+				};
+				
+			public:
+				int2						uStartPosition;			// Starting position of the touch object
+				TFlags<TouchFlags, u8>		uFlags;					// Flags for this touh obejct
 			};
 			
 			class TAccelerationData
@@ -48,9 +67,9 @@ namespace TLInput
 				float3	m_vAcceleration;
 			};
 			
-			void ProcessTouchBegin(TPtr<TTouchData>& touchData);
-			void ProcessTouchMoved(TPtr<TTouchData>& touchData);
-			void ProcessTouchEnd(TPtr<TTouchData>& touchData);
+			void ProcessTouchBegin(const TTouchData& touchData);
+			void ProcessTouchMoved(const TTouchData& touchData);
+			void ProcessTouchEnd(const TTouchData& touchData);
 
 			void ProcessAcceleration(TLInput::Platform::IPod::TAccelerationData& AccelerationData);
 

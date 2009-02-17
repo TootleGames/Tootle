@@ -51,6 +51,9 @@
         }
 	}
 	
+	// Enable multitouch support
+	[self setMultipleTouchEnabled:YES];
+	
 	self.bSendImage = FALSE;
     return self;
 }
@@ -89,6 +92,9 @@
 			return nil;
 		}
 	}
+	
+	// Enable multitouch support
+	[self setMultipleTouchEnabled:YES];
 	
 	self.bSendImage = FALSE;
 	
@@ -175,26 +181,31 @@
 }
 
 
+
 // Pass on the touch began event to the input system for handling
 - (void)touchesBegan:(NSSet*)touches withEvent:(UIEvent*)event {
 	
-	// TODO: Get pos for touch and send it to the routine
-	//		 Define some kind of ID for each touch - to allow for multiple presses 
-	//		 in multiple locations
+	// Essentially we copy the data from each touch event into our own custom object and pass it onto the input system
 	
-	UITouch *touch = [touches anyObject]; 
-	CGPoint currentTouchPosition = [touch locationInView:self]; 
+	// The 'touch' object is unique and persistent whilst a finger is touching the screen
+	// so we can use that to determine an index for the touch object
 	
-	TPtr<TLInput::Platform::IPod::TTouchData> pTouchData = new TLInput::Platform::IPod::TTouchData();
-	
-	if(pTouchData)
-	{
-		pTouchData->uIndex = 0;
-		pTouchData->uPreviousPos = int2((s32)currentTouchPosition.x, (s32)currentTouchPosition.y);
-		pTouchData->uCurrentPos = int2((s32)currentTouchPosition.x, (s32)currentTouchPosition.y);
-		pTouchData->uPhase = TLInput::Platform::IPod::Begin;
+    NSSet *alltouches = [event allTouches];
+    for (UITouch *touch in alltouches)
+    {
+		CGPoint currentTouchPosition = [touch locationInView:self]; 
+		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
-		TLInput::Platform::IPod::ProcessTouchBegin(pTouchData);
+		TLInput::Platform::IPod::TTouchData TouchData;
+		
+		TouchData.uCurrentPos = int2((s32)currentTouchPosition.x, (s32)currentTouchPosition.y);
+		TouchData.fTimestamp = (float) [touch timestamp ];
+		TouchData.uTapCount = [touch tapCount];
+		
+		TouchData.uPhase = TLInput::Platform::IPod::TTouchData::Begin;
+		TouchData.uPreviousPos = int2((s32)currentTouchPosition.x, (s32)currentTouchPosition.y);	
+		
+		TLInput::Platform::IPod::ProcessTouchBegin(TouchData);
 	}
 }
 
@@ -202,22 +213,27 @@
 // Pass on the touch moved event to the input system for handling
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event 
 { 
-	// TODO: Get previous and current pos and send it through to the input system
-	UITouch *touch = [touches anyObject]; 
-	CGPoint currentTouchPosition = [touch locationInView:self]; 
-	CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
+	// Essentially we copy the data from each touch event into our own custom object and pass it onto the input system
 	
+	// The 'touch' object is unique and persistent whilst a finger is touching the screen
+	// so we can use that to determine an index for the touch object
 	
-	TPtr<TLInput::Platform::IPod::TTouchData> pTouchData = new TLInput::Platform::IPod::TTouchData();
-	
-	if(pTouchData)
-	{
-		pTouchData->uIndex = 0;
-		pTouchData->uPreviousPos = int2((s32)previousTouchPosition.x, (s32)previousTouchPosition.y);
-		pTouchData->uCurrentPos = int2((s32)currentTouchPosition.x, (s32)currentTouchPosition.y);
-		pTouchData->uPhase = TLInput::Platform::IPod::Move;
+    NSSet *alltouches = [event allTouches];
+    for (UITouch *touch in alltouches)
+    {
+		CGPoint currentTouchPosition = [touch locationInView:self]; 
+		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
-		TLInput::Platform::IPod::ProcessTouchMoved(pTouchData);
+		TLInput::Platform::IPod::TTouchData TouchData;
+		
+		TouchData.uCurrentPos = int2((s32)currentTouchPosition.x, (s32)currentTouchPosition.y);
+		TouchData.fTimestamp = (float) [touch timestamp ];
+		TouchData.uTapCount = [touch tapCount];
+		
+		TouchData.uPhase = TLInput::Platform::IPod::TTouchData::Move;
+		TouchData.uPreviousPos = int2((s32)previousTouchPosition.x, (s32)previousTouchPosition.y);
+		
+		TLInput::Platform::IPod::ProcessTouchMoved(TouchData);
 	}
 }
 
@@ -225,44 +241,58 @@
 // Pass on the touch end event to the input system for handling
 - (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event {
 	
-	//TODO: Get the previous and current positions and send it through to the input system
-	UITouch *touch = [touches anyObject]; 
-	CGPoint currentTouchPosition = [touch locationInView:self]; 
-	CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
+	// Essentially we copy the data from each touch event into our own custom object and pass it onto the input system
 	
-	TPtr<TLInput::Platform::IPod::TTouchData> pTouchData = new TLInput::Platform::IPod::TTouchData();
+	// The 'touch' object is unique and persistent whilst a finger is touching the screen
+	// so we can use that to determine an index for the touch object
 	
-	if(pTouchData)
-	{
-		pTouchData->uIndex = 0;
-		pTouchData->uPreviousPos = int2((s32)previousTouchPosition.x, (s32)previousTouchPosition.y);
-		pTouchData->uCurrentPos = int2((s32)currentTouchPosition.x, (s32)currentTouchPosition.y);
-		pTouchData->uPhase = TLInput::Platform::IPod::End;
+    NSSet *alltouches = [event allTouches];
+    for (UITouch *touch in alltouches)
+    {
+		CGPoint currentTouchPosition = [touch locationInView:self]; 
+		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
-		TLInput::Platform::IPod::ProcessTouchEnd(pTouchData);
+		TLInput::Platform::IPod::TTouchData TouchData;
+		
+		TouchData.uCurrentPos = int2((s32)currentTouchPosition.x, (s32)currentTouchPosition.y);
+		TouchData.fTimestamp = (float) [touch timestamp ];
+		TouchData.uTapCount = [touch tapCount];
+		
+		TouchData.uPhase = TLInput::Platform::IPod::TTouchData::End;
+		TouchData.uPreviousPos = int2((s32)previousTouchPosition.x, (s32)previousTouchPosition.y);
+		
+		TLInput::Platform::IPod::ProcessTouchEnd(TouchData);
 	}
 }
 
 // Pass on the touch cancelled event to the input system for handling
 - (void)touchesCancelled:(NSSet*)touches withEvent:(UIEvent*)event {
 	
-	//TODO: Get the previous and current positions and send it through to the input system
-	UITouch *touch = [touches anyObject]; 
-	CGPoint currentTouchPosition = [touch locationInView:self]; 
-	CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
+	// Essentially we copy the data from each touch event into our own custom object and pass it onto the input system
 	
-	TPtr<TLInput::Platform::IPod::TTouchData> pTouchData = new TLInput::Platform::IPod::TTouchData();
+	// The 'touch' object is unique and persistent whilst a finger is touching the screen
+	// so we can use that to determine an index for the touch object
 	
-	if(pTouchData)
-	{
-		pTouchData->uIndex = 0;
-		pTouchData->uPreviousPos = int2((s32)previousTouchPosition.x, (s32)previousTouchPosition.y);
-		pTouchData->uCurrentPos = int2((s32)currentTouchPosition.x, (s32)currentTouchPosition.y);
-		pTouchData->uPhase = TLInput::Platform::IPod::Cancel;
+    NSSet *alltouches = [event allTouches];
+    for (UITouch *touch in alltouches)
+    {
+		CGPoint currentTouchPosition = [touch locationInView:self]; 
+		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
-		TLInput::Platform::IPod::ProcessTouchEnd(pTouchData);
+		TLInput::Platform::IPod::TTouchData TouchData;
+		
+		TouchData.uCurrentPos = int2((s32)currentTouchPosition.x, (s32)currentTouchPosition.y);
+		TouchData.fTimestamp = (float) [touch timestamp ];
+		TouchData.uTapCount = [touch tapCount];
+		
+				
+		TouchData.uPhase = TLInput::Platform::IPod::TTouchData::Cancel;
+		TouchData.uPreviousPos = int2((s32)previousTouchPosition.x, (s32)previousTouchPosition.y);
+		
+		TLInput::Platform::IPod::ProcessTouchEnd(TouchData);	
 	}
 }
+
 
 
 /*
