@@ -7,7 +7,7 @@
 #include "TLTypes.h"
 #include "TArray.h"
 #include "TPtr.h"
-
+#include "TString.h"
 
 
 namespace TLBinary
@@ -30,8 +30,8 @@ namespace TLBinary
 	FORCEINLINE TRef	GetDataTypeRef_Hex16()				{	return TRef("Hex16");	}
 	FORCEINLINE TRef	GetDataTypeRef_Hex32()				{	return TRef("Hex32");	}
 	FORCEINLINE TRef	GetDataTypeRef_Hex64()				{	return TRef("Hex64");	}
-	FORCEINLINE TRef	GetDataTypeRef_String()				{	return TRef("Str");	}
-	FORCEINLINE TRef	GetDataTypeRef_WideString()			{	return TRef("WStr");	}
+	FORCEINLINE TRef	GetDataTypeRef_String()				{	return TRef("String");	}
+	FORCEINLINE TRef	GetDataTypeRef_WideString()			{	return TRef("WString");	}
 };
 
 
@@ -48,6 +48,7 @@ public:
 	template<typename TYPE> FORCEINLINE TYPE*		ReadNoCopy();						//	"read" the data for this next type, but return it as a pointer to the data. and move along the read pos too
 	template<typename TYPE> FORCEINLINE Bool		Read(TYPE& Var)						{	return ReadData( (u8*)&Var, sizeof(TYPE) );		}
 	template<typename TYPE> FORCEINLINE Bool		Read(TArray<TYPE>& Array)			{	return ReadArray( Array );	}
+	template<typename TYPE> FORCEINLINE Bool		Read(TString& String)				{	return ReadArray( String.GetStringArray() );	}
 	template<typename TYPE> FORCEINLINE Bool		ReadAndCut(TYPE& Var)				{	return ReadData( (u8*)&Var, sizeof(TYPE), TRUE );	}
 	template<typename TYPE> FORCEINLINE Bool		ReadArray(TArray<TYPE>& Array);		//	reads out the size of the array from our data then the array elements
 	FORCEINLINE Bool								ReadAll(TBinary& Data)				{	return Read( Data, GetSizeUnread() );	}	//	read the remaining data into this binary data
@@ -55,6 +56,7 @@ public:
 
 	template<typename TYPE> FORCEINLINE void	Write(const TYPE& Var)				{	WriteData( (u8*)&Var, sizeof(TYPE) );		}
 	template<typename TYPE> FORCEINLINE void	Write(const TArray<TYPE>& Array)	{	WriteArray( Array );	}
+	template<typename TYPE> FORCEINLINE void	Write(const TString& String)		{	WriteArray( String.GetStringArray() );	}
 	template<typename TYPE> FORCEINLINE void	Write(const TPtr<TYPE>& Pointer)	{	Debug_ReadWritePointerError();	}	//	cant read/write a pointer
 	template<typename TYPE> FORCEINLINE void	Write(const TYPE*& Pointer)			{	Debug_ReadWritePointerError();	}	//	cant read/write a pointer
 	template<typename TYPE> FORCEINLINE void	WriteToStart(const TYPE& Var)		{	WriteDataToStart( (u8*)&Var, sizeof(TYPE) );	}

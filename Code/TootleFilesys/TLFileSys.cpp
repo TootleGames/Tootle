@@ -13,6 +13,7 @@
 #include "TFileWAV.h"
 #include "TFileScheme.h"
 #include "TFileCollada.h"
+#include "TFileMenu.h"
 
 #if defined(TL_TARGET_IPOD)
 	#include "IPod/IPodLocalFileSys.h"
@@ -286,6 +287,13 @@ TLFileSys::TFile* TLFileSys::TFileSys::CreateObject(TRefRef InstanceRef,TRefRef 
 	if ( TypeRef == TRef("dae") )
 	{
 		pFile = new TLFileSys::TFileCollada( InstanceRef, TypeRef );
+		return pFile;
+	}
+	
+	//	menu xml file
+	if ( TypeRef == TRef("menu") )
+	{
+		pFile = new TLFileSys::TFileMenu( InstanceRef, TypeRef );
 		return pFile;
 	}
 	

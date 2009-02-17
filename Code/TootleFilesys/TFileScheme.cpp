@@ -136,6 +136,11 @@ SyncBool TLFileScheme::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,
 		BinaryData.Write( Ref );
 		return SyncTrue;
 	}
+	else if ( DataType == TLBinary::GetDataTypeRef_String() )
+	{
+		BinaryData.Write( DataString );
+		return SyncTrue;
+	}
 
 #ifdef _DEBUG
 	TTempString Debug_String("Unsupported/todo data type ");

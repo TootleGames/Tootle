@@ -149,6 +149,11 @@ public:
 	template<class MATCHTYPE>
 	inline Bool			Exists(const MATCHTYPE& val)				{	return FindIndex(val)!=-1;	};
 
+	template<typename FUNCTIONPOINTER>
+	FORCEINLINE void	FunctionAll(FUNCTIONPOINTER pFunc);				//	execute this function on every member. will fail if the TYPE isn't a pointer of somekind
+	template<typename FUNCTIONPOINTER>
+	FORCEINLINE void	FunctionAllAsParam(FUNCTIONPOINTER pFunc);		//	execute this function for every member as a parameter. Like FunctionAll but can be used with other types of elements.
+
 	//	operators
 	inline TYPE&		operator[](s32 Index)						{	return ElementAt(Index);	}
 	inline TYPE&		operator[](u32 Index)						{	return ElementAt(Index);	}

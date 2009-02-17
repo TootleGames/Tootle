@@ -795,3 +795,33 @@ u32 TArray<TYPE>::FindAll(TArray<TYPE>& Array,const MATCHTYPE& val)
 
 	return Array.GetSize() - InitialSize;
 }
+
+
+//----------------------------------------------------------------------
+//	execute this function on every member. will fail if the TYPE isn't a pointer of somekind
+//----------------------------------------------------------------------
+template<typename TYPE>
+template<typename FUNCTIONPOINTER>
+FORCEINLINE void TArray<TYPE>::FunctionAll(FUNCTIONPOINTER pFunc)
+{
+	for ( u32 i=0;	i<GetSize();	i++ )
+	{
+		TYPE& Element = ElementAt(i);
+		(Element->*pFunc)();
+	}
+}
+
+
+//----------------------------------------------------------------------
+//	execute this function for every member as a parameter. Like FunctionAll but can be used with other types of elements.
+//----------------------------------------------------------------------
+template<typename TYPE>
+template<typename FUNCTIONPOINTER>
+FORCEINLINE void TArray<TYPE>::FunctionAllAsParam(FUNCTIONPOINTER pFunc)
+{
+	for ( u32 i=0;	i<GetSize();	i++ )
+	{
+		TYPE& Element = ElementAt(i);
+		(*pFunc)( Element );
+	}
+}

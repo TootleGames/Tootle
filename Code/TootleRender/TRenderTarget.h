@@ -68,9 +68,11 @@ public:
 
 	void					SetCamera(TPtr<TCamera>& pCamera)			{	m_pCamera = pCamera;	}
 	TPtr<TCamera>&			GetCamera()									{	return m_pCamera;	}
+	TColour&				GetClearColour()							{	return m_ClearColour;	}
 	TFlags<Flags>&			GetFlags()									{	return m_Flags;	}
 	Bool					GetFlag(TRenderTarget::Flags Flag) const	{	return m_Flags(Flag);	}
-	TColour&				GetClearColour()							{	return m_ClearColour;	}
+	FORCEINLINE void		SetEnabled(Bool Enabled)					{	m_Flags.Set( Flag_Enabled, Enabled );	}
+	FORCEINLINE Bool		IsEnabled() const							{	return m_Flags( Flag_Enabled );	}
 	TFlags<TRenderNode::RenderFlags::Flags>&	Debug_ForceRenderFlagsOn()	{	return m_Debug_ForceRenderFlagsOn;	}
 	TFlags<TRenderNode::RenderFlags::Flags>&	Debug_ForceRenderFlagsOff()	{	return m_Debug_ForceRenderFlagsOff;	}
 

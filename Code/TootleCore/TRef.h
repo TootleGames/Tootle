@@ -49,34 +49,36 @@ public:
 	static const u32	g_CharsPerRef = 5;
 
 public:
-	TRef()													:	m_Ref	( 0 )	{	}
+	TRef() 													:	m_Ref	( 0 )	{	}
 	TRef(u32 Ref)											:	m_Ref	( Ref )	{	}
-	TRef(const TString& RefString) 							{	Set( RefString );	}
-	TRef(const char* pRefString) 							{	Set( pRefString );	}
-	TRef(const TRef& Ref)									{	Set( Ref );	}
-	TRef(const TArray<char>& RefStringChars)				{	Set( RefStringChars );	}
+	TRef(const TRef& Ref)									:	m_Ref	( Ref.GetData() )	{	}
+	TRef(const TString& RefString) 							:	m_Ref	( 0 )	{	Set( RefString );	}
+	TRef(const TString* pRefString) 						:	m_Ref	( 0 )	{	if ( pRefString )	Set( *pRefString );	}
+	TRef(const char* pRefString) 							:	m_Ref	( 0 )	{	Set( pRefString );	}
+	TRef(const TArray<char>& RefStringChars)				:	m_Ref	( 0 )	{	Set( RefStringChars );	}
 
-	void				SetInvalid()							{	Set( (u32)0 );	}
+	void				SetInvalid()							{	m_Ref = 0;	}
 	void				Set(u32 Ref)							{	m_Ref = Ref;	}
-	void				Set(const TRef& Ref)					{	Set( Ref.GetRef32() );	}
+	void				Set(const TRef& Ref)					{	Set( Ref.GetData() );	}
 	void				Set(const TString& RefString);			//	pull out 5 characters and set from this string
 	void				Set(const char* pRefString);			//	pull out 5 characters and set from this string
 	void				Set(const TArray<char>& RefStringChars);	//	set from array of 5 chars
 
 	void				Increment();							//	increment the reference - don't just increment the u32 though! do it systematticly
 
-	u32					GetRef32() const						{	return m_Ref;	}
+	const u32&			GetData() const							{	return m_Ref;	}
 	void				GetString(TString& RefString) const;	//	convert ref to a string
 	Bool				IsValid() const;						//	check for invalid bits being set etc
 
-	inline Bool			operator<(const TRef& Ref) const		{	return GetRef32() < Ref.GetRef32();	}
+	inline Bool			operator<(const TRef& Ref) const		{	return GetData() < Ref.GetData();	}
 	inline void			operator=(u32 Ref)						{	Set( Ref );	}
 	inline void			operator=(const TRef& Ref)				{	Set( Ref );	}
 	inline void			operator=(const char* pString)			{	Set( pString );	}
 	inline void			operator=(const TString& RefString)		{	Set( RefString );	}
+	inline void			operator=(const TString* pRefString)	{	if ( pRefString ) Set( *pRefString ); else SetInvalid();	}
 
-	inline Bool			operator==(const TRef& Ref) const		{	return GetRef32() == Ref.GetRef32();	}
-	inline Bool			operator!=(const TRef& Ref) const		{	return GetRef32() != Ref.GetRef32();	}
+	inline Bool			operator==(const TRef& Ref) const		{	return GetData() == Ref.GetData();	}
+	inline Bool			operator!=(const TRef& Ref) const		{	return GetData() != Ref.GetData();	}
 
 private:
 	u32					CharToRefAlphabet(const char& Char,u32 RefCharIndex=0);		//	convert a char to ref-alphabet bits

@@ -31,18 +31,21 @@ TScreen* TScreenManager::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 {
 	//	default to screen
 	if ( !TypeRef.IsValid() || TypeRef == "Screen" )
-	{
 		return new TLRender::Platform::Screen( InstanceRef, TLRender::ScreenShape_Portrait );
-	}
 
-	if ( TypeRef == "widescreen" || TypeRef == "wideleft" )
-	{
-		return new TLRender::Platform::ScreenWideLeft( InstanceRef );
-	}
+	if ( TypeRef == "wideleft" )
+		return new TLRender::Platform::Screen( InstanceRef, TLRender::ScreenShape_WideLeft );
 
 	if ( TypeRef == "wideright" )
+		return new TLRender::Platform::Screen( InstanceRef, TLRender::ScreenShape_WideRight );
+
+	if ( TypeRef == "widescreen" )
 	{
-		return new TLRender::Platform::ScreenWideRight( InstanceRef );
+#if defined(TL_TARGET_PC)
+		return new TLRender::Platform::ScreenWide( InstanceRef );
+#elif defined(TL_TARGET_IPOD)
+		return new TLRender::Platform::Screen( InstanceRef, TLRender::ScreenShape_WideRight );
+#endif
 	}
 
 	return NULL;
@@ -190,14 +193,35 @@ TPtr<TLRender::TRenderTarget>& TLRender::TScreenManager::GetRenderTarget(TRefRef
 
 
 //----------------------------------------------------------
+//	find this render target and delete it
+//----------------------------------------------------------
+Bool TLRender::TScreenManager::DeleteRenderTarget(TRefRef RenderTargetRef)
+{
+	TPtrArray<TScreen>& ScreenArray = GetInstanceArray();
+
+	for ( u32 s=0;	s<ScreenArray.GetSize();	s++ )
+	{
+		TPtr<TLRender::TScreen>& pScreenChild = ScreenArray.ElementAt( s );
+
+		//	find specified rendertarget in this screen
+		if ( pScreenChild->DeleteRenderTarget( RenderTargetRef ) != SyncFalse )
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+
+
+//----------------------------------------------------------
 //	returns the screen angle for the FIRST screen. this is just to make it easier and saves us fetching the right screen
 //----------------------------------------------------------
 const TLMaths::TAngle& TLRender::TScreenManager::GetScreenAngle()
 {
-	TPtrArray<TScreen>& ScreenArray = GetInstanceArray();
-	
+	TPtr<TLRender::TScreen>& pDefaultScreen = GetDefaultScreen();
+
 	//	no screens... erk
-	if ( !ScreenArray.GetSize() )
+	if ( !pDefaultScreen )
 	{
 		TLDebug_Break("No screens in screen manager");
 		static TLMaths::TAngle DummyAngle(0.f);
@@ -205,8 +229,7 @@ const TLMaths::TAngle& TLRender::TScreenManager::GetScreenAngle()
 	}
 	
 	//	get rotation of first screen
-	TPtr<TLRender::TScreen>& pFirstScreen = ScreenArray.ElementAt( 0 );
-	return pFirstScreen->GetScreenAngle();
+	return pDefaultScreen->GetScreenAngle();
 }
 
 

@@ -1081,13 +1081,7 @@ Bool TLGraph::TGraph<T>::RemoveNode(TPtr<T> pNode)
 {
 	if ( !pNode )
 	{
-#ifdef _DEBUG		
-		TTempString Debug_String("Attempting to remove node ");
-		pNode->GetNodeRef().GetString( Debug_String );
-		Debug_String.Append(" that doesn't exist in graph...");
-		TLDebug_Print( Debug_String );
-#endif
-		
+		TLDebug_Print("Attempting to remove NULL node");
 		return FALSE;
 	}
 
@@ -1145,7 +1139,7 @@ Bool TLGraph::TGraph<T>::RemoveNode(TPtr<T> pNode)
 #ifdef _DEBUG
 	TTempString Debug_String("Attempting to remove node ");
 	pNode->GetNodeRef().GetString( Debug_String );
-	TLDebug_Break(Debug_String);
+	TLDebug_Print(Debug_String);
 #endif
 	
 	// No - Add the node to the queue
@@ -1292,19 +1286,19 @@ void TLGraph::TGraph<T>::DoRemoveNode(TPtr<T>& pNode,TPtr<T>& pParent)
 #ifdef _DEBUG
 		TTempString Debug_String("Removed node from graph:");
 		pNode->GetNodeRef().GetString( Debug_String );
-		TLDebug_Break(Debug_String);
+		TLDebug_Print(Debug_String);
 #endif
 		
 		OnNodeRemoved( pNode );
 	}
-#ifdef _DEBUG		
 	else
 	{
+#ifdef _DEBUG		
 		TTempString Debug_String("Failed to remove node ");
 		pNode->GetNodeRef().GetString( Debug_String );
 		TLDebug_Print( Debug_String );
-	}
 #endif
+	}
 }
 
 

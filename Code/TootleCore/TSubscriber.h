@@ -8,74 +8,40 @@ class TLMessaging::TSubscriber
 	friend class TLMessaging::TPublisher;
 public:
 	TSubscriber()					{}
+	virtual ~TSubscriber()			{	Shutdown();	}
 
-	virtual ~TSubscriber()		
-	{
-		UnsubscribeAll();
-	}
+	FORCEINLINE void	Shutdown()										{	UnsubscribeAll();	}
 
-	inline Bool SubscribeTo(TPublisher* pPublisher)
-	{
-		return pPublisher->Subscribe(this);
-	}
-
-	inline Bool UnsubscribeFrom(TPublisher* pPublisher)
-	{
-		return pPublisher->Unsubscribe(this);
-	}
-
-
-	inline Bool SubscribeTo(TPtr<TPublisher> pPublisher)
-	{
-		if ( !pPublisher )
-		{
-			TLDebug_Break("Attempted to subscribe to NULL publisher");
-			return FALSE;
-		}
-		
-		return pPublisher->Subscribe(this);
-	}
-
-	inline Bool UnsubscribeFrom(TPtr<TPublisher> pPublisher)
-	{
-		return pPublisher->Unsubscribe(this);
-	}
-
+	FORCEINLINE Bool	SubscribeTo(TPublisher* pPublisher)				{	return pPublisher->Subscribe(this);	}
+	FORCEINLINE Bool	SubscribeTo(TPtr<TPublisher> pPublisher)		{	return SubscribeTo( pPublisher.GetObject() );	}
+	FORCEINLINE Bool	UnsubscribeFrom(TPublisher* pPublisher)			{	return pPublisher->Unsubscribe(this);	}
+	FORCEINLINE Bool	UnsubscribeFrom(TPtr<TPublisher> pPublisher)	{	return UnsubscribeFrom( pPublisher.GetObject() );	}
 
 protected:
-
 	virtual void		ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage) = 0;
 
 private:
-
-	inline Bool				AddPublisher(TPublisher* pPublisher)
-	{
-		m_Publishers.Add(pPublisher);
-		return TRUE;
-	}
-
-	inline Bool				RemovePublisher(TPublisher* pPublisher)
-	{
-		return m_Publishers.Remove(pPublisher);
-	}
-
-	void						UnsubscribeAll()
-	{
-		// Unsubscribe from all publishers
-		for(u32 uIndex = 0; uIndex < m_Publishers.GetSize(); uIndex++)
-		{
-			TPublisher* pPublisher = m_Publishers.ElementAt(uIndex);
-
-			pPublisher->RemoveSubscriber(this);
-		}
-
-		// Empty the list
-		m_Publishers.Empty();
-	}
-
+	FORCEINLINE Bool	AddPublisher(TPublisher* pPublisher)		{	return m_Publishers.Add(pPublisher) != -1;	}
+	FORCEINLINE Bool	RemovePublisher(TPublisher* pPublisher)		{	return m_Publishers.Remove(pPublisher);	}
+	FORCEINLINE void	UnsubscribeAll();							// Unsubscribe from all publishers
 
 private:
-	TArray<TLMessaging::TPublisher*>		m_Publishers;		// List of publishers
+	TArray<TLMessaging::TPublisher*>		m_Publishers;			// List of publishers
 };
 
+
+
+
+FORCEINLINE void TLMessaging::TSubscriber::UnsubscribeAll()
+{
+	// Unsubscribe from all publishers
+	for(u32 uIndex = 0; uIndex < m_Publishers.GetSize(); uIndex++)
+	{
+		TPublisher* pPublisher = m_Publishers.ElementAt(uIndex);
+		pPublisher->RemoveSubscriber(this);
+	}
+
+	// Empty the list
+	m_Publishers.Empty();
+}
 

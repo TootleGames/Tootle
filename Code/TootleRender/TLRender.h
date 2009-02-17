@@ -21,8 +21,9 @@ namespace TLRender
 	enum TScreenShape
 	{
 		ScreenShape_Portrait = 0,	//	portrait
-		ScreenShape_WideLeft,		//	widescreen
-		ScreenShape_WideRight,		//	widescreen, but upsidedown in case we want it a different way for the ipod - on PC this will emulate ipod mode (portrait but rendered on its side)
+		ScreenShape_WideLeft,		//	widescreen, portrait but rendered sideways to the left
+		ScreenShape_WideRight,		//	widescreen, portrait but rendered sideways to the right
+		ScreenShape_Wide,			//	widescreen
 	};
 	
 	FORCEINLINE const TLMaths::TAngle&	GetScreenAngle(TScreenShape ScreenShape);	//	get the angle that the screenshape is rotated to

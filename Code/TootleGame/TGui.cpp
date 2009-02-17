@@ -8,57 +8,41 @@
 #include <TootleRender/TLRender.h>
 #include <TootleRender/TScreenManager.h>
 #include <TootleRender/TRendergraph.h>
-
-
-namespace TLGui
-{
-	TPtr<TGuiFactory> g_pFactory;
-};
+#include <TootleCore/TCoreManager.h>
 
 
 
-//-------------------------------------------------
-//	
-//-------------------------------------------------
-void TLGui::Init()
-{
-	g_pFactory = new TGuiFactory();
-}
-
-
-//-------------------------------------------------
-//
-//-------------------------------------------------
-void TLGui::Shutdown()
-{
-	g_pFactory = NULL;
-}
-
-
-
-TLGui::TGui::TGui(TRefRef GuiRef) : 
+TLGui::TGui::TGui(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp)  : 
 	m_InitialisedRenderNodes	( FALSE ),
 	m_Subscribed				( FALSE ),
-	m_GuiRef					( GuiRef ),  
-	m_ActionIsDown				( FALSE )	
+	m_ActionIsDown				( FALSE ),
+	m_RenderTargetRef			( RenderTargetRef ),
+	m_RenderNodeRef				( RenderNodeRef ),
+	m_UserRef					( UserRef),
+	m_ActionOutDown				( ActionOutDown ),
+	m_ActionOutUp				( ActionOutUp )
 {
+	//	no actions going out means this TGui wont do anything
+	if ( !m_ActionOutDown.IsValid() && !m_ActionOutUp.IsValid() )
+	{
+		TLDebug_Break("TGui created that won't send out actions");
+	}
+
+	//	start initialise
+	SyncBool InitResult = Initialise();
+	if ( InitResult == SyncWait )
+	{
+		//	init not finished yet, subscribe to updates until initialised
+		TLCore::g_pCoreManager->Subscribe(this);
+	}
 }
 
 
-//-------------------------------------------------
-//	keeps subscribing to the appropriate channels until everything is done
-//-------------------------------------------------
-SyncBool TLGui::TGui::Initialise(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp)
+TLGui::TGui::~TGui()
 {
-	//	set vars
-	m_RenderTargetRef	= RenderTargetRef;
-	m_RenderNodeRef		= RenderNodeRef;
-	m_UserRef			= UserRef;
-	m_ActionOutDown		= ActionOutDown;
-	m_ActionOutUp		= ActionOutUp;
-
-	//	continue initialisation
-	return Initialise();
+	TTempString Debug_String("TGui destructed ");
+	m_RenderNodeRef.GetString( Debug_String );
+	TLDebug_Print( Debug_String );
 }
 
 
@@ -89,7 +73,12 @@ SyncBool TLGui::TGui::Initialise()
 
 			//	make up action for this device
 			pUser->AddAction("Simple", m_ActionIn );
-			pUser->MapAction( m_ActionIn, pInputDevice->GetDeviceRef(), (u32)0 );	//	left mouse button
+			//	left mouse button
+			if ( !pUser->MapAction( m_ActionIn, pInputDevice->GetDeviceRef(), (u32)0 ) )
+			{
+				TLDebug_Break("Failed to map action to gui");
+				continue;
+			}
 			CreatedAction = TRUE;
 		}
 
@@ -113,6 +102,7 @@ SyncBool TLGui::TGui::Initialise()
 			return SyncWait;
 
 		//	enable bounds-calc flags
+		pRenderNode->GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::Debug_WorldBoundsBox );
 		pRenderNode->GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::CalcWorldBoundsBox );
 		pRenderNode->GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::CalcWorldBoundsSphere );
 
@@ -122,6 +112,17 @@ SyncBool TLGui::TGui::Initialise()
 	return SyncTrue;
 }
 
+
+//-------------------------------------------------
+//	shutdown code - just unsubscribes from publishers - this is to release all the TPtr's so we can be destructed
+//-------------------------------------------------
+void TLGui::TGui::Shutdown()
+{
+	TLMessaging::TPublisher::Shutdown();
+	TLMessaging::TSubscriber::Shutdown();
+}
+
+
 //-------------------------------------------------
 //	
 //-------------------------------------------------
@@ -129,7 +130,14 @@ void TLGui::TGui::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 {
 	if(pMessage->GetMessageRef() == "Input")
 	{
-		if( HasSubscribers() && pMessage->HasChannelID("Action"))
+		if ( !HasSubscribers() )
+		{
+			TTempString Debug_String("TGui ");
+			m_RenderNodeRef.GetString( Debug_String );
+			Debug_String.Append(" has no subscribers");
+			TLDebug_Warning( Debug_String );
+		}
+		else if( pMessage->HasChannelID("Action"))
 		{
 			TRef ActionRef;
 			float RawValue = 0.f;
@@ -147,6 +155,15 @@ void TLGui::TGui::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 					ProcessQueuedClicks();
 				}
 			}
+		}
+	}
+	else if ( pMessage->GetMessageRef() == TLCore::UpdateRef )
+	{
+		//	keep doing initialise
+		if ( Initialise() != SyncWait )
+		{
+			//	initialise finished, no need to update any more
+			TLCore::g_pCoreManager->Unsubscribe(this);
 		}
 	}
 }
@@ -188,6 +205,10 @@ void TLGui::TGui::ProcessQueuedClicks()
 			TPtr<TLRender::TRenderTarget>& pRenderTargetPtr = TLRender::g_pScreenManager->GetRenderTarget( m_RenderTargetRef, pScreen );
 			//	didnt find the render target
 			if ( !pRenderTargetPtr )
+				break;
+
+			//	render target isnt enabled, ignore
+			if ( !pRenderTargetPtr->IsEnabled() )
 				break;
 
 			//	
@@ -271,10 +292,17 @@ void TLGui::TGui::SendActionMessage(Bool ActionDown)
 	TRef ActionOutRef = ActionDown ? m_ActionOutDown : m_ActionOutUp;
 	float RawDataValue = ActionDown ? 1.f : 0.f;
 
-	TLDebug_Print( TString("Gui click message %s", ActionDown ? "down" : "up" ) );
+#ifdef _DEBUG
+	TTempString Debug_String("TGui (");
+	m_RenderNodeRef.GetString( Debug_String );
+	Debug_String.Append(") outgoing click message ");
+	ActionOutRef.GetString( Debug_String );
+	Debug_String.Appendf(": %s", ActionDown ? "down" : "up" );
+	TLDebug_Print( Debug_String );
+#endif
+
 	if ( ActionOutRef.IsValid() )
 	{
-
 		//	make up fake input message
 		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Input");
 		pMessage->AddChannelID("Action");

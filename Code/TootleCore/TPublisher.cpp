@@ -1,43 +1,40 @@
-
 #include "TPublisher.h"
 #include "TSubscriber.h"
 
-using namespace TLMessaging;
 
-Bool TPublisher::Subscribe(TPtr<TSubscriber>& pSubscriber)
+
+
+Bool TLMessaging::TPublisher::Subscribe(TSubscriber* pSubscriber)
 {
-	TSubscriber* pSubscriberObj = pSubscriber.GetObject();
-	return pSubscriberObj ? Subscribe( pSubscriberObj ) : FALSE;
-}
-
-Bool	TPublisher::Subscribe(TSubscriber* pSubscriber)
-{
-	if(AddSubscriber(pSubscriber))
-	{
-		return pSubscriber->AddPublisher(this);
-	}
-
-	return FALSE;
+	if ( !AddSubscriber(pSubscriber) )
+		return FALSE;
+	
+	return pSubscriber->AddPublisher(this);
 }
 
 
-Bool TPublisher::Unsubscribe(TPtr<TSubscriber>& pSubscriber)
+Bool TLMessaging::TPublisher::Unsubscribe(TSubscriber* pSubscriber)	
 {
-	TSubscriber* pSubscriberObj = pSubscriber.GetObject();
-	return pSubscriberObj ? Unsubscribe( pSubscriberObj ) : FALSE;
+	if ( !RemoveSubscriber(pSubscriber) )
+		return FALSE;
+	
+	return pSubscriber->RemovePublisher(this);
 }
 
-Bool	TPublisher::Unsubscribe(TSubscriber* pSubscriber)	
-{
-	if(RemoveSubscriber(pSubscriber))
-	{
-		return pSubscriber->RemovePublisher(this);
-	}
 
-	return FALSE;
+Bool TLMessaging::TPublisher::Subscribe(TPtr<TSubscriber>& pSubscriber)
+{	
+	return Subscribe( pSubscriber.GetObject() );	
 }
 
-void TPublisher::DoPublishMessage(TPtr<TMessage>& pMessage)		
+
+Bool TLMessaging::TPublisher::Unsubscribe(TPtr<TSubscriber>& pSubscriber)	
+{	
+	return Unsubscribe( pSubscriber.GetObject() );	
+}
+
+
+void TLMessaging::TPublisher::DoPublishMessage(TPtr<TMessage>& pMessage)		
 {
 	for(u32 uIndex = 0; uIndex < m_Subscribers.GetSize(); uIndex++)
 	{
@@ -50,7 +47,7 @@ void TPublisher::DoPublishMessage(TPtr<TMessage>& pMessage)
 	}
 }
 
-void TPublisher::RemoveAllSubscribers()
+void TLMessaging::TPublisher::RemoveAllSubscribers()
 {
 	for(u32 uIndex = 0; uIndex < m_Subscribers.GetSize(); uIndex++)
 	{

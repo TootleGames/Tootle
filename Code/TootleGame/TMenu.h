@@ -30,13 +30,14 @@ public:
 	TMenu(TPtr<TLAsset::TMenu> pMenuAsset) :	m_pMenuAsset ( pMenuAsset )				{	}
 		
 	FORCEINLINE TRefRef						GetMenuRef()								{	return m_pMenuAsset->GetAssetRef();	}
-
+	
 	FORCEINLINE TPtrArray<TMenuItem>&		GetMenuItems()								{	return m_pMenuAsset->GetMenuItems();	}
 	FORCEINLINE const TPtrArray<TMenuItem>&	GetMenuItems() const						{	return m_pMenuAsset->GetMenuItems();	}
 	FORCEINLINE TPtr<TMenuItem>&		GetMenuItem(TRefRef MenuItemRef)				{	return GetMenuItems().FindPtr( MenuItemRef );	}
 	FORCEINLINE TPtr<TMenuItem>&		GetCurrentMenuItem(TRefRef MenuItemRef)			{	return GetMenuItem( m_HighlightMenuItem );	}
 	FORCEINLINE Bool					GetMenuItemExists(TRefRef MenuItemRef) const	{	return GetMenuItems().Exists( MenuItemRef );	}
 	FORCEINLINE Bool					GetMenuItemExists(TRefRef MenuItemRef)			{	return GetMenuItems().Exists( MenuItemRef );	}
+	FORCEINLINE TRefRef					GetSchemeRef()									{	return m_pMenuAsset->GetSchemeRef();	}
 
 	FORCEINLINE void					SetHighlightedMenuItem(TRefRef MenuItemRef)		{	m_HighlightMenuItem = MenuItemRef;	}
 	
@@ -55,6 +56,8 @@ class TLMenu::TMenuController : public TLMessaging::TPublisher, public TLMessagi
 public:
 	TMenuController()	{};
 	
+	void				Shutdown()								{	TLMessaging::TPublisher::Shutdown();	TLMessaging::TSubscriber::Shutdown();	}
+
 	//	external commands
 	TPtr<TMenu>&		GetCurrentMenu()						{	return m_MenuStack.GetPtrLast();	}	//	check IsMenuOpen() before accessing first
 	Bool				IsMenuOpen() const						{	return m_MenuStack.GetSize() > 0;	}
@@ -75,11 +78,11 @@ protected:
 	virtual void		ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
 
 	//	outgoing events
-	void				OnMenuOpen();						//	moved onto new menu
-	void				OnMenuClose();						//	moved to previous menu
-	void				OnMenuCloseAll();					//	closed all menus
-	void				OnMenuItemHighlighted();			//	highlighted menu item
-	void				OnMenuItemExecuted(TRefRef MenuCommand);	//	menu item executed
+	virtual void		OnMenuOpen();						//	moved onto new menu
+	virtual void		OnMenuClose();						//	moved to previous menu
+	virtual void		OnMenuCloseAll();					//	closed all menus
+	virtual void		OnMenuItemHighlighted();			//	highlighted menu item
+	virtual void		OnMenuItemExecuted(TRefRef MenuCommand);	//	menu item executed
 
 protected:
 	TPtrArray<TMenu>	m_MenuStack;						//	menu stack

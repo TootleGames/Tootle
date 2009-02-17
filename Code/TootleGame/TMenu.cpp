@@ -46,7 +46,8 @@ void TLMenu::TMenuController::CloseMenu()
 		OnMenuClose();
 
 	//	we have a new menu item at top, so "reopen" that
-	OnMenuOpen();
+	if ( GetCurrentMenu() )
+		OnMenuOpen();
 }
 
 
@@ -135,14 +136,26 @@ Bool TLMenu::TMenuController::ExecuteMenuItem(TRefRef MenuItemRef)
 //----------------------------------------------
 TPtr<TLMenu::TMenu> TLMenu::TMenuController::CreateMenu(TRefRef MenuRef)
 {
-	//	find menu asset
+	//	find menu asset - note: this has to be block loaded because its not too easy to make this an async operation
 	TPtr<TLAsset::TAsset>& pMenuAsset = TLAsset::LoadAsset( MenuRef, TRUE );
 	if ( !pMenuAsset )
+	{
+		TTempString Debug_String("Failed to find menu asset ");
+		MenuRef.GetString( Debug_String );
+		TLDebug_Warning( Debug_String );
 		return NULL;
+	}
 
 	//	not a "menu" asset
 	if ( pMenuAsset->GetAssetType() != "Menu" )
+	{
+		TTempString Debug_String("Menu asset ");
+		MenuRef.GetString( Debug_String );
+		Debug_String.Append(" is not a Menu, its a ");
+		pMenuAsset->GetAssetType().GetString( Debug_String );
+		TLDebug_Warning( Debug_String );
 		return NULL;
+	}
 
 	TPtr<TLMenu::TMenu> pNewMenu = new TLMenu::TMenu( pMenuAsset );
 	return pNewMenu;

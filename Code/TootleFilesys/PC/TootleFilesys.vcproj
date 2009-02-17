@@ -432,6 +432,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TFileMenu.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TFileMenu.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TFileScheme.cpp"
 			>
 		</File>

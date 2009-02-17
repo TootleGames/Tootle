@@ -15,6 +15,21 @@ namespace TLAsset
 
 using namespace TLLoadTask;
 
+
+
+
+//------------------------------------------------------------
+//	print out some debug info for this step
+//------------------------------------------------------------
+void TLLoadTask::TLoadTaskMode::Debug_PrintStep(const char* pStepString)
+{
+	TTempString Debug_String("Loading ");
+	GetAssetRef().GetString( Debug_String );
+	Debug_String.Appendf(": %s", pStepString );
+	TLDebug_Print( Debug_String );
+}
+
+
 //------------------------------------------------------------
 //	
 //------------------------------------------------------------
@@ -195,6 +210,7 @@ TPtr<TLFileSys::TFileAsset> Mode_PlainFileCreateAssetFile::CreateFile(TRefRef Fi
 //------------------------------------------------------------
 TRef Mode_PlainFileExport::Update()
 {
+	Debug_PrintStep("Exporting plain file to asset file");
 	SyncBool ExportResult = GetPlainFile()->Export( GetAssetFile() );
 
 	if ( ExportResult == SyncWait )
@@ -225,6 +241,7 @@ TRef Mode_GetAssetFile::Update()
 	//	no asset file, need to find a plain file to load to convert first
 	if ( !GetAssetFile() )
 	{
+		Debug_PrintStep("No asset file, looking for plain file");
 		return "PFGet";
 	}
 
@@ -244,6 +261,8 @@ TRef Mode_GetAssetFile::Update()
 //------------------------------------------------------------
 TRef Mode_AssetFileImport::Update()
 {
+	Debug_PrintStep("Importing asset file");
+
 	if ( !GetAssetFile() )
 	{
 		TLDebug_Break("Asset file expected");
@@ -269,6 +288,8 @@ TRef Mode_AssetFileImport::Update()
 //------------------------------------------------------------
 TRef Mode_AssetFileExport::Update()
 {
+	Debug_PrintStep("Exporting asset file to plain file");
+
 	//	attempt to write our new file back into our filesytem
 	//	convert the asset file to a plain file first, then write that
 	SyncBool ExportResult = GetAssetFile()->Export();
@@ -312,6 +333,8 @@ TRef Mode_AssetFileWrite::Update()
 //------------------------------------------------------------
 TRef Mode_CreateAsset::Update()
 {
+	Debug_PrintStep("Creating asset");
+
 	if ( !GetAssetFile() )
 	{
 		TLDebug_Break("no asset file");
@@ -364,6 +387,8 @@ TRef Mode_CreateAsset::Update()
 //------------------------------------------------------------
 TRef Mode_AssetImport::Update()
 {
+	Debug_PrintStep("Importing asset file to asset");
+
 	//	export from assetfile to asset
 	TPtr<TLAsset::TAsset> pAsset = GetAsset();
 	pAsset->Import( GetAssetFile() );

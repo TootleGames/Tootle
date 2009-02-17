@@ -19,12 +19,6 @@
 namespace TLGui
 {
 	class TGui;
-	class TGuiFactory;
-
-	void		Init();
-	void		Shutdown();
-
-	extern TPtr<TGuiFactory>	g_pFactory;	//	gr: i'll probably move the TGui's into something else (like the TRenderGraph or the User) when I've determined the bottle neck (if any)
 };
 
 
@@ -57,13 +51,11 @@ protected:
 	};
 
 public:
-	TGui(TRefRef GuiRef);
+	TGui(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef());
+	~TGui();
 	
-	SyncBool					Initialise(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef());	//	keeps subscribing to the appropriate channels until everything is done
 	SyncBool					Initialise();						//	continue initialising
-	FORCEINLINE TRefRef			GetGuiRef() const					{	return m_GuiRef;	}
-
-	FORCEINLINE Bool			operator==(TRefRef GuiRef) const	{	return GetGuiRef() == GuiRef;	}
+	void						Shutdown();							//	shutdown code - just unsubscribes from publishers - this is to release all the TPtr's so we can be destructed
 
 protected:
 	void						QueueClick(const int2& CursorPos,float ActionValue)		{	m_QueuedClicks.Add( TClick( CursorPos, ActionValue ) );	}
@@ -74,24 +66,14 @@ protected:
 protected:
 	Bool						m_Subscribed;				//	have created actions and subscribed to user input
 	Bool						m_InitialisedRenderNodes;	//	have setup render nodes to be clickable
-	TRef						m_GuiRef;
 	TRef						m_RenderTargetRef;
 	TRef						m_RenderNodeRef;
 	TRef						m_UserRef;
 	TRef						m_ActionIn;
 	Bool						m_ActionIsDown;			//	we store when we did get an action(which clicked), so if we keep holding, and go out of the zone, we can send an up message
-	TRef						m_ActionOutDown;
-	TRef						m_ActionOutUp;
+	TRef						m_ActionOutDown;		//	action to send out when mouse goes down over render node
+	TRef						m_ActionOutUp;			//	action to send out when mouse is relesed/not over render node
 	TArray<TClick>				m_QueuedClicks;			//	action's we had to wait for
 };
 
-
-
-class TLGui::TGuiFactory : public TClassFactory<TLGui::TGui,TRUE>
-{
-public:
-
-protected:
-	virtual TLGui::TGui*	CreateObject(TRefRef InstanceRef,TRefRef TypeRef)	{	return new TGui(InstanceRef);	}
-};
 

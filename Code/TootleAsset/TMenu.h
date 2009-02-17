@@ -33,9 +33,17 @@ public:
 	FORCEINLINE Bool				GetMenuItemExists(TRefRef MenuItemRef) const	{	return GetMenuItems().Exists( MenuItemRef );	}
 	FORCEINLINE Bool				GetMenuItemExists(TRefRef MenuItemRef)			{	return GetMenuItems().Exists( MenuItemRef );	}
 
-	TPtr<TMenuItem>					AddMenuItem(TRefRef MenuItemRef);				//	create a menu item - returns NULL if duplicated menu item ref
+	TPtr<TMenuItem>&				AddMenuItem(TRefRef MenuItemRef);				//	create a menu item - returns NULL if duplicated menu item ref
+
+	FORCEINLINE TRefRef				GetSchemeRef() const							{	return m_SchemeRef;	}
+	FORCEINLINE void				SetSchemeRef(TRefRef SchemeRef)					{	m_SchemeRef = SchemeRef;	}
 
 protected:
+	virtual SyncBool				ImportData(TBinaryTree& Data);	//	load asset data out binary data
+	virtual SyncBool				ExportData(TBinaryTree& Data);	//	save asset data to binary data
+
+protected:
+	TRef							m_SchemeRef;									//	ref of a scheme associated with the menu
 	TPtrArray<TMenuItem>			m_MenuItems;									//	list of menu items
 };
 
@@ -48,15 +56,20 @@ protected:
 class TLAsset::TMenu::TMenuItem
 {
 public:
+	friend class TMenu;
+
+public:
 	TMenuItem(TRefRef MenuItemRef);
 
-	TRefRef						GetMenuItemRef() const	{	return m_MenuItemRef;	}
-	TString&					GetString()				{	return m_String;	}
-	TRefRef						GetMenuCommand()		{	return m_Command;	}
-	TRefRef						GetNextMenu()			{	return m_NextMenu;	}
-	TRefRef						GetMeshRef()			{	return m_MeshRef; }
+	TRefRef						GetMenuItemRef() const		{	return m_MenuItemRef;	}
+	const TString&				GetText() const				{	return m_Text;	}
+	const TString&				GetString() const DEPRECATED	{	return m_Text;	}
+	TRefRef						GetMenuCommand() const		{	return m_Command;	}
+	TRefRef						GetNextMenu() const			{	return m_NextMenu;	}
+	TRefRef						GetMeshRef() const			{	return m_MeshRef; }
 
-	void						SetString(const TString& String)	{	m_String = String;	}
+	void						SetString(const TString& String) DEPRECATED		{	m_Text = String;	}
+	void						SetText(const TString& String)		{	m_Text = String;	}
 	void						SetMenuCommand(TRefRef Command)		{	m_Command = Command;	}
 	void						SetNextMenu(TRefRef NextMenu)		{	m_NextMenu = NextMenu;	SetMenuCommand("open");	};
 	void						SetMeshRef(TRefRef MeshRef)			{	m_MeshRef = MeshRef;	}
@@ -70,7 +83,7 @@ protected:
 	TRef						m_Command;			//	menu command, invalid commands cannot be highlighted
 
 	//	todo: gr: replace all this with TBinaryData?
-	TString						m_String;			//	string displayed on menu
+	TString						m_Text;				//	string displayed on menu
 	TRef						m_NextMenu;			//	if menu command is "open" then this is the menu we open
 	TRef						m_MeshRef;			//	Mesh icon reference - for use instead of a string
 };

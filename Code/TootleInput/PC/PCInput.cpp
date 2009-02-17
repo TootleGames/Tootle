@@ -325,7 +325,7 @@ Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, LPDIRECTINP
 
 #ifdef DX_USE_ENUMOBJECTS
 	// Enum objects
-	hr = lpdiDevice->EnumObjects(EnumDeviceObject, (void*)pDevice->GetDeviceID().GetRef32(), DIDFT_ALL);
+	hr = lpdiDevice->EnumObjects(EnumDeviceObject, (void*)pDevice->GetDeviceID().GetData(), DIDFT_ALL);
 
 	if(DI_OK != hr)
 		return FALSE;

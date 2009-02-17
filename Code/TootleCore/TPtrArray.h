@@ -32,6 +32,9 @@ public:
 	inline TPtr<TYPE>&			AddPtr(const TPtr<TYPE>& val)		{	s32 Index = TArray<TPtr<TYPE> >::Add( val );	return GetPtrAt( Index );	}
 
 	void						RemoveNull();						//	remove all NULL pointers from array
+	
+	template<typename FUNCTIONPOINTER>
+	FORCEINLINE void			FunctionAll(FUNCTIONPOINTER pFunc);	//	execute this function on every member. will fail if the TYPE isn't a pointer of somekind
 
 	//	operators
 	inline TPtr<TYPE>&			operator[](s32 Index)				{	return TArray<TPtr<TYPE> >::ElementAt(Index);	}
@@ -93,6 +96,23 @@ inline void TPtrArray<TYPE>::RemoveNull()
 
 		//	is null, remove
 		TArray<TPtr<TYPE> >::RemoveAt(i);
+	}
+}
+
+
+
+//----------------------------------------------------------------------
+//	execute this function on every member. will fail if the TYPE isn't a pointer of somekind
+//----------------------------------------------------------------------
+template<typename TYPE>
+template<typename FUNCTIONPOINTER>
+FORCEINLINE void TPtrArray<TYPE>::FunctionAll(FUNCTIONPOINTER pFunc)
+{
+	for ( u32 i=0;	i<TArray<TPtr<TYPE> >::GetSize();	i++ )
+	{
+		TPtr<TYPE>& pPtr = TArray<TPtr<TYPE> >::ElementAt(i);
+		TYPE* pObject = pPtr.GetObject();
+		(pObject->*pFunc)();
 	}
 }
 

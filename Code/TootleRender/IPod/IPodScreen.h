@@ -69,13 +69,6 @@ public:
 	ScreenWideLeft(TRefRef ScreenRef) :
 		TLRender::Platform::Screen	( ScreenRef, TLRender::ScreenShape_WideLeft )
 	{
-		/*
-		//	swap height and width
-		s16 h = m_Size.Height();
-		s16 w = m_Size.Width();
-		m_Size.Width() = h;
-		m_Size.Height() = w;
-		*/
 	}
 };
 
@@ -89,6 +82,24 @@ public:
 	ScreenWideRight(TRefRef ScreenRef) :
 		TLRender::Platform::Screen	( ScreenRef, TLRender::ScreenShape_WideRight )
 	{
+	}
+};
+
+
+//----------------------------------------------------------
+//	widescreen screen
+//----------------------------------------------------------
+class TLRender::Platform::ScreenWide : public TLRender::Platform::Screen
+{
+public:
+	ScreenWide(TRefRef ScreenRef) :
+		TLRender::Platform::Screen	( ScreenRef, TLRender::ScreenShape_Wide )
+	{
+		//	swap height and width
+		s16 h = m_Size.Height();
+		s16 w = m_Size.Width();
+		m_Size.Width() = h;
+		m_Size.Height() = w;
 	}
 };
 

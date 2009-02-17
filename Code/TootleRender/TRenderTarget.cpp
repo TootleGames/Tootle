@@ -772,6 +772,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 			{
 				TFlags<TRenderNode::RenderFlags::Flags> RenderFlags = pRenderNode->GetRenderFlags();
 				RenderFlags.Set( TRenderNode::RenderFlags::Debug_Wireframe );
+				RenderFlags.Set( TRenderNode::RenderFlags::Debug_Outline );
 				RenderFlags.Clear( TRenderNode::RenderFlags::DepthRead );
 				
 				DrawMeshShape( RenderNodeBounds, pRenderNode, RenderFlags, FALSE );
@@ -785,8 +786,12 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 			if ( RenderNodeBounds.IsValid() )
 			{
 				TFlags<TRenderNode::RenderFlags::Flags> RenderFlags = pRenderNode->GetRenderFlags();
-				RenderFlags.Set( TRenderNode::RenderFlags::Debug_Wireframe );
-				RenderFlags.Clear( TRenderNode::RenderFlags::DepthRead );
+			
+				//	setup specific params
+				Opengl::EnableWireframe(TRUE);
+				Opengl::SetSceneAlpha( 1.f );
+				Opengl::EnableAlpha( FALSE );
+				Opengl::SetLineWidth( 1.f );
 
 				DrawMeshShape( RenderNodeBounds, pRenderNode, RenderFlags, TRUE );
 			}

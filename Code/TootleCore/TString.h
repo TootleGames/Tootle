@@ -40,6 +40,7 @@ namespace TLString
 class TString
 {
 protected:
+	friend class TBinary;	//	gr: allow access to GetStringArray 
 	typedef char			CHARTYPE;
 
 public:

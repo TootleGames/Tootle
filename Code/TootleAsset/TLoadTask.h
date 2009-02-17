@@ -55,6 +55,8 @@ namespace TLLoadTask
 		TPtr<TLFileSys::TFileAsset>&	GetAssetFile()		{	return GetLoadTask()->m_pAssetFile;	}
 		TRef&							GetAssetRef() 		{	return GetLoadTask()->m_AssetRef;	}	
 		TPtr<TLAsset::TAsset>			GetAsset() 			{	return GetLoadTask()->GetAsset();	}
+
+		void							Debug_PrintStep(const char* pStepString);	//	print out some debug info for this step
 	};
 
 	//	first mode to decide what to do
