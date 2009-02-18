@@ -5,12 +5,37 @@
 
 
 
-TLRender::TRenderNodeText::TRenderNodeText(TRefRef RenderNodeRef) :
-	TRenderNode	( RenderNodeRef ),
+TLRender::TRenderNodeText::TRenderNodeText(TRefRef RenderNodeRef,TRefRef TypeRef) :
+	TRenderNode		( RenderNodeRef, TypeRef ),
 	m_GlyphsChanged	( TRUE )
 {
 }
 
+
+//---------------------------------------------------------
+//	text render node init
+//---------------------------------------------------------
+void TLRender::TRenderNodeText::Initialise(TPtr<TLMessaging::TMessage>& pMessage)
+{
+	//	read init data
+	if ( pMessage.IsValid() )
+	{
+		//	import font - if one specified then load
+		if ( pMessage->ImportData("FontRef", m_FontRef ) )
+		{
+			TLAsset::LoadAsset( m_FontRef );
+		}
+
+		//	import text - if we do, make sure we make a note the glyphs need building
+		if ( pMessage->ImportDataString("Text", m_String ) )
+		{
+			m_GlyphsChanged = TRUE;
+		}
+	}
+
+	//	do inherited init
+	TRenderNode::Initialise( pMessage );
+}
 
 //--------------------------------------------------------------------
 //	setup new string

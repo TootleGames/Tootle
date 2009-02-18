@@ -138,7 +138,7 @@ SyncBool TLFileScheme::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,
 	}
 	else if ( DataType == TLBinary::GetDataTypeRef_String() )
 	{
-		BinaryData.Write( DataString );
+		BinaryData.WriteString( DataString );
 		return SyncTrue;
 	}
 

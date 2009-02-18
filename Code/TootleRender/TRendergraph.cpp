@@ -1,5 +1,6 @@
 #include "TRendergraph.h"
 #include "TRenderNodeTile.h"
+#include "TRenderNodeText.h"
 
 
 
@@ -45,6 +46,9 @@ TLRender::TRenderNode* TLRender::TRenderNodeFactory::CreateObject(TRefRef Instan
 {
 	if ( TypeRef == "Tile" )
 		return new TLRender::TRenderNodeTile(InstanceRef,TypeRef);
+
+	if ( TypeRef == "Text" )
+		return new TLRender::TRenderNodeText(InstanceRef,TypeRef);
 
 	return NULL;
 }

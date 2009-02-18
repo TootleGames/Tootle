@@ -48,19 +48,21 @@ public:
 	template<typename TYPE> FORCEINLINE TYPE*		ReadNoCopy();						//	"read" the data for this next type, but return it as a pointer to the data. and move along the read pos too
 	template<typename TYPE> FORCEINLINE Bool		Read(TYPE& Var)						{	return ReadData( (u8*)&Var, sizeof(TYPE) );		}
 	template<typename TYPE> FORCEINLINE Bool		Read(TArray<TYPE>& Array)			{	return ReadArray( Array );	}
-	template<typename TYPE> FORCEINLINE Bool		Read(TString& String)				{	return ReadArray( String.GetStringArray() );	}
+	template<typename> FORCEINLINE Bool				Read(TString& String)				{	return ReadString( String );	}
 	template<typename TYPE> FORCEINLINE Bool		ReadAndCut(TYPE& Var)				{	return ReadData( (u8*)&Var, sizeof(TYPE), TRUE );	}
 	template<typename TYPE> FORCEINLINE Bool		ReadArray(TArray<TYPE>& Array);		//	reads out the size of the array from our data then the array elements
 	FORCEINLINE Bool								ReadAll(TBinary& Data)				{	return Read( Data, GetSizeUnread() );	}	//	read the remaining data into this binary data
 	Bool											Read(TBinary& Data,u32 Length);		//	read a chunk of data into this binary data
+	FORCEINLINE Bool								ReadString(TString& String)			{	return ReadArray( String.GetStringArray() );	}
 
 	template<typename TYPE> FORCEINLINE void	Write(const TYPE& Var)				{	WriteData( (u8*)&Var, sizeof(TYPE) );		}
 	template<typename TYPE> FORCEINLINE void	Write(const TArray<TYPE>& Array)	{	WriteArray( Array );	}
-	template<typename TYPE> FORCEINLINE void	Write(const TString& String)		{	WriteArray( String.GetStringArray() );	}
+	template<typename> FORCEINLINE void			Write(const TString& String)		{	WriteString( String );	}
 	template<typename TYPE> FORCEINLINE void	Write(const TPtr<TYPE>& Pointer)	{	Debug_ReadWritePointerError();	}	//	cant read/write a pointer
 	template<typename TYPE> FORCEINLINE void	Write(const TYPE*& Pointer)			{	Debug_ReadWritePointerError();	}	//	cant read/write a pointer
 	template<typename TYPE> FORCEINLINE void	WriteToStart(const TYPE& Var)		{	WriteDataToStart( (u8*)&Var, sizeof(TYPE) );	}
 	template<typename TYPE> void				WriteArray(const TArray<TYPE>& Array);	//	write an array to the data. we write the element count into the data too to save doing it client side
+	FORCEINLINE void							WriteString(const TString& String)	{	WriteArray( String.GetStringArray() );	}
 
 	FORCEINLINE Bool				SetSize(u32 NewSize)				{	return m_Data.SetSize( NewSize );	}
 	FORCEINLINE u32					GetSize() const						{	return m_Data.GetSize();	}

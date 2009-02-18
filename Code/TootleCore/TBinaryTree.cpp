@@ -106,3 +106,39 @@ void TBinaryTree::Compact()
 		m_Children[c]->Compact();
 	}
 }
+
+
+
+
+//------------------------------------------------------
+//	returns FALSE if failed, WAIT if nothing imported, TRUE if something imported
+//	gr: changed back to Bool
+//------------------------------------------------------
+Bool TBinaryTree::ImportDataString(TRefRef DataRef,TString& DataString)
+{
+	//	get the first child with this ref
+	TPtr<TBinaryTree>& pData = GetChild( DataRef );
+	if ( !pData )
+	{
+		//	no matching child
+		return FALSE;//SyncWait;
+	}
+
+	//	read out var
+	pData->ResetReadPos();
+	if ( !pData->ReadString( DataString ) )
+		return FALSE;
+
+	return TRUE;
+}
+
+
+//------------------------------------------------------
+//	
+//------------------------------------------------------
+void TBinaryTree::ExportDataString(TRefRef DataRef,const TString& DataString)
+{
+	//	create a child
+	TPtr<TBinaryTree>& pData = AddChild( DataRef );
+	pData->WriteString( DataString );
+}

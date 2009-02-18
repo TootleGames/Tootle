@@ -44,9 +44,11 @@ public:
 	template<class ARRAYTYPE> 
 	void						ExportArray(TRefRef ArrayRef,const ARRAYTYPE& Array,Bool WriteIfEmpty=FALSE);
 	template<typename TYPE> 
-	Bool						ImportData(TRefRef DataRef,TYPE& Data);			//	returns FALSE if failed, WAIT if nothing imported, TRUE if something imported
+	Bool						ImportData(TRefRef DataRef,TYPE& Data);					//	returns FALSE if failed, WAIT if nothing imported, TRUE if something imported
+	Bool						ImportDataString(TRefRef DataRef,TString& DataString);	//	gr: remove if I can get Read/Write() to work with a TString in TBinary
 	template<typename TYPE> 
 	void						ExportData(TRefRef DataRef,const TYPE& Data);
+	void						ExportDataString(TRefRef DataRef,const TString& DataString);	//	gr: remove if I can get Read/Write() to work with a TString in TBinary
 
 	inline Bool					operator==(TRefRef DataRef)const		{	return GetDataRef() == DataRef;	}
 
@@ -147,6 +149,9 @@ Bool TBinaryTree::ImportData(TRefRef DataRef,TYPE& Data)
 }
 
 
+//------------------------------------------------------
+//	
+//------------------------------------------------------
 template<typename TYPE> 
 void TBinaryTree::ExportData(TRefRef DataRef,const TYPE& Data)
 {
@@ -154,3 +159,4 @@ void TBinaryTree::ExportData(TRefRef DataRef,const TYPE& Data)
 	TPtr<TBinaryTree>& pData = AddChild( DataRef );
 	pData->Write( Data );
 }
+

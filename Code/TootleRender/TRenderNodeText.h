@@ -52,7 +52,9 @@ public:
 	};
 
 public:
-	TRenderNodeText(TRefRef RenderNodeRef=TRef());
+	TRenderNodeText(TRefRef RenderNodeRef,TRefRef TypeRef);
+
+	virtual void			Initialise(TPtr<TLMessaging::TMessage>& pMessage);	//	generic render node init
 
 	TFlags<TextFlags>&		GetTextFlags()						{	return m_TextFlags;	}
 	TRefRef					GetFontRef() const					{	return m_FontRef;	}
