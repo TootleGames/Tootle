@@ -136,10 +136,11 @@ Bool TLDebug::Platform::Break(const TString& String)
 	// Drop into debugger if possible
 	//	gr: coreservices only availible on simulator, there is no coreservices framework for device
 	//		so this is only availible in simulator
-//#if TARGET_IPHONE_SIMULATOR
-//	Debugger();
-//#else 
-#if defined(_DEBUG)
+	// DB: To enable this create a new target which is Simulator specific and add the preprocessor
+	// TL_BUILD_SIMULATOR and make sure it's linked ot the coreservices lib.
+#if defined(TL_BUILD_SIMULATOR)
+	Debugger();
+#elif defined(_DEBUG)
 	//	gr: hacky break for debug builds
 	//	gr: removed because there's no way to get out of this in xcode if we trigger it..
 	int* pNull = 0x0;
