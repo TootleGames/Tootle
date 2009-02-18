@@ -83,20 +83,15 @@ Bool TSceneNode_Object::CreatePhysicsObject()
 //--------------------------------------------------------
 Bool TSceneNode_Object::CreateRenderNode(TPtr<TLRender::TRenderNode> pParentRenderNode)
 {
-	//TLMemory::Platform::MemValidate();
 	TPtr<TLRender::TRenderNode> pRenderNode = new TLRender::TRenderNode( GetNodeRef() );
-	//TLMemory::Platform::MemValidate();
 
 	if ( TLRender::g_pRendergraph->AddNode( pRenderNode, pParentRenderNode ) )
 	{
-	//TLMemory::Platform::MemValidate();
 		SetRenderNode(pRenderNode->GetNodeRef());
-	//TLMemory::Platform::MemValidate();
 
 		// NOTE: This may eventually become an async type routine
 		//		 so no guarantees it happens on the same frmae of creation
 		OnRenderNodeAdded(pRenderNode);
-	//TLMemory::Platform::MemValidate();
 
 		return TRUE;
 	}
@@ -110,20 +105,15 @@ Bool TSceneNode_Object::CreateRenderNode(TPtr<TLRender::TRenderNode> pParentRend
 //--------------------------------------------------------
 Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef)
 {
-	//TLMemory::Platform::MemValidate();
 	TPtr<TLRender::TRenderNode> pRenderNode = new TLRender::TRenderNode( GetNodeRef() );
-	//TLMemory::Platform::MemValidate();
 
 	if ( TLRender::g_pRendergraph->AddNode( pRenderNode, ParentRenderNodeRef ) )
 	{
-	//TLMemory::Platform::MemValidate();
 		SetRenderNode(pRenderNode->GetNodeRef());
-	//TLMemory::Platform::MemValidate();
 
 		// NOTE: This may eventually become an async type routine
 		//		 so no guarantees it happens on the same frmae of creation
 		OnRenderNodeAdded(pRenderNode);
-	//TLMemory::Platform::MemValidate();
 
 		return TRUE;
 	}

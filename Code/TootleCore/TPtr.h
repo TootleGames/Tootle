@@ -117,6 +117,7 @@ public:
 	FORCEINLINE OBJTYPE*		GetObject()									{	return m_pCounter->GetObject<OBJTYPE>();	}	//	note: no pointer check here for efficieny
 	template<typename OBJTYPE>
 	FORCEINLINE const OBJTYPE*	GetObject() const							{	return m_pCounter->GetObject<OBJTYPE>();	}	//	note: no pointer check here for efficieny
+	FORCEINLINE					operator TYPE*() const						{	return m_pCounter ? m_pCounter->GetObject<TYPE>() : NULL;	}
 
 	template<typename OBJTYPE>
 	FORCEINLINE TPtr<TYPE>&		operator=(const TPtr<OBJTYPE>& Ptr)			{	AssignToPtr( Ptr );	return *this;	}			//	assign this pointer to an existing smart pointer

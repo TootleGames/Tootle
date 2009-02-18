@@ -444,6 +444,28 @@ void TLRender::TOrthoCamera::SetViewport(const Type4<s32>& RenderTargetSize,TScr
 //--------------------------------------------------------------
 Bool TLRender::TOrthoCamera::GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const
 {
+	//	re-use the get pos code to get the start of the ray
+	float RayStartDepth = m_NearZ + GetPosition().z;
+	float3 RayStart;
+	
+	if ( !GetWorldPos( RayStart, RayStartDepth, RenderTargetPos, RenderTargetSize, ScreenShape ) )
+		return FALSE;
+
+	//	max extent of the line is the viewable distance...
+	float ZLength = m_FarZ - m_NearZ;
+	float3 RayEnd( RayStart + (GetWorldForward() * ZLength) );
+
+	WorldRay.Set( RayStart, RayEnd );
+
+	return TRUE;
+}
+
+
+//--------------------------------------------------------------
+//	convert point on screen to a 3D pos
+//--------------------------------------------------------------
+Bool TLRender::TOrthoCamera::GetWorldPos(float3& WorldPos,float WorldDepth,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const
+{
 	//	screen -> view
 	float2 xy( (float)RenderTargetPos.x, (float)RenderTargetPos.y );
 	float2 wh( (float)RenderTargetSize.Width(), (float)RenderTargetSize.Height() );
@@ -473,14 +495,8 @@ Bool TLRender::TOrthoCamera::GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s3
 
 	//	new world pos -
 	//	gr: camera z is right? or wrong... world space cam pos + nearz.. must be right
-	float3 RayStart( OrthoX, OrthoY, m_NearZ + GetPosition().z );
-
-	//	max extent of the line is the viewable distance...
-	float ZLength = m_FarZ - m_NearZ;
-	float3 RayEnd( RayStart + (GetWorldForward() * ZLength) );
-
-	WorldRay.Set( RayStart, RayEnd );
+	//	gr: no complex z stuff in ortho...
+	WorldPos.Set( OrthoX, OrthoY, WorldDepth );
 
 	return TRUE;
 }
-

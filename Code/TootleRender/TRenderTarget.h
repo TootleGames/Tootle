@@ -63,8 +63,6 @@ public:
 
 	virtual Bool			SetSize(const Type4<s32>& Size)				{	m_Size = Size;	return TRUE;	}
 	virtual void			GetSize(Type4<s32>& Size,const Type4<s32>& MaxSize) const;			//	get the render target's dimensions. we need the screen in case dimensions are max's
-	const TLMaths::TBox2D&	GetWorldViewBox(float WorldDepth=0.f) const;						//	the world-space box for the extents at the edges of the screen.
-	const TLMaths::TBox2D&	GetWorldViewBox(TPtr<TScreen>& pScreen,float WorldDepth=0.f);		//	same as GetWorldViewBox but can be used before a render
 
 	void					SetCamera(TPtr<TCamera>& pCamera)			{	m_pCamera = pCamera;	}
 	TPtr<TCamera>&			GetCamera()									{	return m_pCamera;	}
@@ -90,6 +88,9 @@ public:
 
 	//	clever stuff
 	Bool					GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;	//	get world pos from 2d point inside our rendertarget size
+	Bool					GetWorldPos(float3& WorldPos,float WorldDepth,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;	//	get world pos from 2d point inside our rendertarget size
+	const TLMaths::TBox2D&	GetWorldViewBox(float WorldDepth=0.f) const;						//	the world-space box for the extents at the edges of the screen.
+	const TLMaths::TBox2D&	GetWorldViewBox(TPtr<TScreen>& pScreen,float WorldDepth=0.f);		//	same as GetWorldViewBox but can be used before a render
 
 
 protected:

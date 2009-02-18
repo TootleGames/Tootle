@@ -231,11 +231,21 @@ Bool TLRender::TScreen::GetWorldRayFromScreenPos(const TPtr<TRenderTarget>& pRen
 		return FALSE;
 	}
 
+	return GetWorldRayFromScreenPos( *pRenderTarget.GetObject(), WorldRay, ScreenPos );
+}
+
+
+
+//---------------------------------------------------------
+//	get a world position from this screen posiiton
+//---------------------------------------------------------
+Bool TLRender::TScreen::GetWorldRayFromScreenPos(const TRenderTarget& RenderTarget,TLMaths::TLine& WorldRay,const Type2<s32>& ScreenPos)
+{
 	//	convert screen pos to render target pos
 	Type4<s32> MaxRenderTargetSize;
 	GetRenderTargetMaxSize( MaxRenderTargetSize );
 	Type4<s32> RenderTargetSize;
-	pRenderTarget->GetSize( RenderTargetSize, MaxRenderTargetSize );
+	RenderTarget.GetSize( RenderTargetSize, MaxRenderTargetSize );
 
 	Type2<s32> RenderTargetPos( ScreenPos );
 	RenderTargetPos.x -= RenderTargetSize.Left();
@@ -246,7 +256,46 @@ Bool TLRender::TScreen::GetWorldRayFromScreenPos(const TPtr<TRenderTarget>& pRen
 		return FALSE;
 
 	//	let render target do it's own conversions what with fancy cameras n that
-	return pRenderTarget->GetWorldRay( WorldRay, RenderTargetPos, RenderTargetSize, GetScreenShape() );
+	return RenderTarget.GetWorldRay( WorldRay, RenderTargetPos, RenderTargetSize, GetScreenShape() );
+}
+
+
+//---------------------------------------------------------
+//	
+//---------------------------------------------------------
+Bool TLRender::TScreen::GetWorldPosFromScreenPos(const TRenderTarget& RenderTarget,float3& WorldPos,float WorldDepth,const Type2<s32>& ScreenPos)
+{
+	//	convert screen pos to render target pos
+	Type4<s32> MaxRenderTargetSize;
+	GetRenderTargetMaxSize( MaxRenderTargetSize );
+	Type4<s32> RenderTargetSize;
+	RenderTarget.GetSize( RenderTargetSize, MaxRenderTargetSize );
+
+	Type2<s32> RenderTargetPos( ScreenPos );
+	RenderTargetPos.x -= RenderTargetSize.Left();
+	RenderTargetPos.y -= RenderTargetSize.Top();
+
+	//	outside render target, aint gonna find nowt
+	if ( !RenderTargetSize.GetIsInside( RenderTargetPos ) )
+		return FALSE;
+
+	//	let render target do it's own conversions what with fancy cameras n that
+	return RenderTarget.GetWorldPos( WorldPos, WorldDepth, RenderTargetPos, RenderTargetSize, GetScreenShape() );
+}
+
+
+//---------------------------------------------------------
+//	
+//---------------------------------------------------------
+Bool TLRender::TScreen::GetWorldPosFromScreenPos(const TPtr<TRenderTarget>& pRenderTarget,float3& WorldPos,float WorldDepth,const Type2<s32>& ScreenPos)
+{
+	if ( !pRenderTarget )
+	{
+		TLDebug_Break("RenderTarget expected");
+		return FALSE;
+	}
+
+	return GetWorldPosFromScreenPos( *pRenderTarget.GetObject(), WorldPos, WorldDepth, ScreenPos );
 }
 
 

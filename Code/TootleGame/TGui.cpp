@@ -33,7 +33,7 @@ TLGui::TGui::TGui(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,
 	if ( InitResult == SyncWait )
 	{
 		//	init not finished yet, subscribe to updates until initialised
-		TLCore::g_pCoreManager->Subscribe(this);
+		this->SubscribeTo( TLCore::g_pCoreManager );
 	}
 }
 
@@ -51,6 +51,38 @@ TLGui::TGui::~TGui()
 //-------------------------------------------------
 SyncBool TLGui::TGui::Initialise()
 {
+	//	setup render nodes
+	if ( !m_InitialisedRenderNodes )
+	{
+		u32 ValidRenderNodeCount = 0;
+		TFixedArray<TRef,100> RenderNodeArray(0);
+		GetRenderNodes( RenderNodeArray );
+
+		//	get render node
+		for ( u32 i=0;	i<RenderNodeArray.GetSize();	i++ )
+		{
+			TRefRef RenderNodeRef = RenderNodeArray[i];
+			if ( !RenderNodeRef.IsValid() )
+				continue;
+
+			TPtr<TLRender::TRenderNode>& pRenderNode = TLRender::g_pRendergraph->FindNode( RenderNodeRef );
+			if ( !pRenderNode )
+				return SyncWait;
+
+			//	enable bounds-calc flags
+			pRenderNode->GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::Debug_WorldBoundsBox );
+			pRenderNode->GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::CalcWorldBoundsBox );
+			pRenderNode->GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::CalcWorldBoundsSphere );
+
+			ValidRenderNodeCount++;
+		}
+
+		//	to get around the problem of lack of vtables... as this function is called from a constructor
+		//	if none of the render nodes were valid, we'll try again on the next init
+		if ( ValidRenderNodeCount > 0 )
+			m_InitialisedRenderNodes = TRUE;
+	}
+
 	//	setup input actions
 	if ( !m_Subscribed )
 	{
@@ -93,23 +125,22 @@ SyncBool TLGui::TGui::Initialise()
 		m_Subscribed = TRUE;
 	}
 
-	//	setup render nodes
-	if ( !m_InitialisedRenderNodes )
-	{
-		//	get render node
-		TPtr<TLRender::TRenderNode>& pRenderNode = TLRender::g_pRendergraph->FindNode( m_RenderNodeRef );
-		if ( !pRenderNode )
-			return SyncWait;
+	//	still waiting
+	if ( !m_Subscribed || !m_InitialisedRenderNodes )
+		return SyncWait;
 
-		//	enable bounds-calc flags
-		pRenderNode->GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::Debug_WorldBoundsBox );
-		pRenderNode->GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::CalcWorldBoundsBox );
-		pRenderNode->GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::CalcWorldBoundsSphere );
-
-		m_InitialisedRenderNodes = TRUE;
-	}
-
+	//	notify init has finished
+	OnInitialised();
 	return SyncTrue;
+}
+
+
+//-------------------------------------------------
+//	get array of all the render nodes we're using
+//-------------------------------------------------
+void TLGui::TGui::GetRenderNodes(TArray<TRef>& RenderNodeArray)
+{
+	RenderNodeArray.Add( m_RenderNodeRef );
 }
 
 
@@ -159,13 +190,26 @@ void TLGui::TGui::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 	}
 	else if ( pMessage->GetMessageRef() == TLCore::UpdateRef )
 	{
-		//	keep doing initialise
-		if ( Initialise() != SyncWait )
+		if ( !Update() )
 		{
-			//	initialise finished, no need to update any more
 			TLCore::g_pCoreManager->Unsubscribe(this);
 		}
 	}
+}
+
+
+
+//-------------------------------------------------
+//	update routine - return FALSE if we don't need updates any more
+//-------------------------------------------------
+Bool TLGui::TGui::Update()
+{
+	//	keep doing initialise
+	if ( Initialise() == SyncWait )
+		return TRUE;
+
+	//	initialise finished, no need to update any more
+	return FALSE;
 }
 
 
@@ -181,94 +225,33 @@ void TLGui::TGui::ProcessQueuedClicks()
 		return;
 	}
 
-	//	get render target as we need it (but hold onto the pointer to save getting it more than once)
-	TPtr<TLRender::TRenderNode> pRenderNode;
+	//	find the render target in a screen...
 	TPtr<TLRender::TScreen> pScreen;
-	TPtr<TLRender::TRenderTarget> pRenderTarget;
+	TPtr<TLRender::TRenderTarget>& pRenderTarget = TLRender::g_pScreenManager->GetRenderTarget( m_RenderTargetRef, pScreen );
+
+	//	didnt find the render target
+	if ( !pRenderTarget )
+		return;
+
+	//	render target isnt enabled, ignore
+	if ( !pRenderTarget->IsEnabled() )
+		return;
+
+	//	got a render target, fetch a render node
+	TPtr<TLRender::TRenderNode>& pRenderNode = m_RenderNodeRef.IsValid() ? TLRender::g_pRendergraph->FindNode( m_RenderNodeRef ) : TLPtr::GetNullPtr<TLRender::TRenderNode>();
+
+	//	gr: for support of those that don't use this base render node variable, only check if the ref is valid
+	if ( m_RenderNodeRef.IsValid() && !pRenderNode )
+		return;
+
 
 	while ( m_QueuedClicks.GetSize() )
 	{
 		TClick& Click = m_QueuedClicks[0];
 
-		//	don't need a render target if it's a mouse-release
-		if ( Click.m_ActionValue == 0.f )
-		{
-			SendActionMessage( FALSE );
-			m_QueuedClicks.RemoveAt( 0 );
-			continue;
-		}
-
-		//	is a mouse-down... fetch render target if we need it
-		if ( !pRenderNode )
-		{
-			//	find the render target in a screen...
-			TPtr<TLRender::TRenderTarget>& pRenderTargetPtr = TLRender::g_pScreenManager->GetRenderTarget( m_RenderTargetRef, pScreen );
-			//	didnt find the render target
-			if ( !pRenderTargetPtr )
-				break;
-
-			//	render target isnt enabled, ignore
-			if ( !pRenderTargetPtr->IsEnabled() )
-				break;
-
-			//	
-			pRenderTarget = pRenderTargetPtr;
-
-			//	got a render target, fetch a render node
-			pRenderNode = TLRender::g_pRendergraph->FindNode( m_RenderNodeRef );
-			if ( !pRenderNode )
-				break;
-		}
-
-		//	test for click on the collision shapes on the render node
-		TLMaths::TLine WorldRay;
-
-		//	see if ray intersects our object - check all our collision objects to get closest hit.
-		SyncBool Intersection = SyncWait;
-
-		if ( !pScreen->GetWorldRayFromScreenPos( pRenderTarget, WorldRay, Click.m_CursorPos ) )
-		{
-			//	click was out of the render target so we couldnt get a ray
-			Intersection = SyncFalse;
-		}
-
-		//	fastest order!
-
-/*		//	if valid and we havent already decided click has missed
-		if ( pRenderNode->GetWorldBoundsSphere().IsValid() && Intersection != SyncFalse )
-		{
-			if ( pRenderNode->GetWorldBoundsSphere().GetIntersection( WorldRay ) )
-				Intersection = SyncTrue;
-			else
-				Intersection = SyncFalse;
-		}
-
-		//	if valid and we havent already decided click has missed
-		if ( pRenderNode->GetWorldBoundsCapsule().IsValid() && Intersection != SyncFalse )
-		{
-			if ( pRenderNode->GetWorldBoundsCapsule().GetIntersection( WorldRay ) )
-				Intersection = SyncTrue;
-			else
-				Intersection = SyncFalse;
-		}
-*/
-		//	if valid and we havent already decided click has missed
-		if ( pRenderNode->GetWorldBoundsBox().IsValid() && Intersection != SyncFalse )
-		{
-			if ( pRenderNode->GetWorldBoundsBox().GetIntersection( WorldRay ) )
-				Intersection = SyncTrue;
-			else
-				Intersection = SyncFalse;
-		}
-
-		//	failed to check - no valid bounds? might have to wait till next frame
-		if ( Intersection == SyncWait )
+		if ( ProcessClick( Click, *pScreen.GetObject(), *pRenderTarget.GetObject(), pRenderNode ) == SyncWait )
 			break;
 
-		//	
-		SendActionMessage( Intersection == SyncTrue );
-
-		//	done this click
 		m_QueuedClicks.RemoveAt( 0 );
 	}
 
@@ -278,9 +261,79 @@ void TLGui::TGui::ProcessQueuedClicks()
 
 
 //-------------------------------------------------
+//	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
+//-------------------------------------------------
+SyncBool TLGui::TGui::ProcessClick(const TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TPtr<TLRender::TRenderNode>& pRenderNode)
+{
+	if ( Click.m_ActionValue == 0.f )
+	{
+		SendActionMessage( FALSE, 0.f );
+		return SyncTrue;
+	}
+
+	//	test for click on the collision shapes on the render node
+	TLMaths::TLine WorldRay;
+
+	//	see if ray intersects our object - check all our collision objects to get closest hit.
+	SyncBool Intersection = SyncWait;
+
+	if ( !Screen.GetWorldRayFromScreenPos( RenderTarget, WorldRay, Click.m_CursorPos ) )
+	{
+		//	click was out of the render target so we couldnt get a ray
+		Intersection = SyncFalse;
+	}
+
+	//	fastest order!
+
+/*		//	if valid and we havent already decided click has missed
+	if ( pRenderNode->GetWorldBoundsSphere().IsValid() && Intersection != SyncFalse )
+	{
+		if ( pRenderNode->GetWorldBoundsSphere().GetIntersection( WorldRay ) )
+			Intersection = SyncTrue;
+		else
+			Intersection = SyncFalse;
+	}
+
+	//	if valid and we havent already decided click has missed
+	if ( pRenderNode->GetWorldBoundsCapsule().IsValid() && Intersection != SyncFalse )
+	{
+		if ( pRenderNode->GetWorldBoundsCapsule().GetIntersection( WorldRay ) )
+			Intersection = SyncTrue;
+		else
+			Intersection = SyncFalse;
+	}
+*/
+	//	if valid and we havent already decided click has missed
+	if ( pRenderNode->GetWorldBoundsBox().IsValid() && Intersection != SyncFalse )
+	{
+		if ( pRenderNode->GetWorldBoundsBox().GetIntersection( WorldRay ) )
+			Intersection = SyncTrue;
+		else
+			Intersection = SyncFalse;
+	}
+
+	//	failed to check - no valid bounds? might have to wait till next frame
+	if ( Intersection == SyncWait )
+		return SyncWait;
+
+	//	send out click/no click message
+	if ( Intersection == SyncTrue )
+	{
+		SendActionMessage( TRUE, 1.f );
+	}
+	else
+	{
+		SendActionMessage( FALSE, 0.f );
+	}
+
+	return SyncTrue;
+}
+
+
+//-------------------------------------------------
 //	when click has been validated action message is sent to subscribers
 //-------------------------------------------------
-void TLGui::TGui::SendActionMessage(Bool ActionDown)
+void TLGui::TGui::SendActionMessage(Bool ActionDown,float RawData)
 {
 	if ( !HasSubscribers() )
 		return;
@@ -290,7 +343,6 @@ void TLGui::TGui::SendActionMessage(Bool ActionDown)
 //		return;
 
 	TRef ActionOutRef = ActionDown ? m_ActionOutDown : m_ActionOutUp;
-	float RawDataValue = ActionDown ? 1.f : 0.f;
 
 #ifdef _DEBUG
 	TTempString Debug_String("TGui (");
@@ -307,7 +359,7 @@ void TLGui::TGui::SendActionMessage(Bool ActionDown)
 		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Input");
 		pMessage->AddChannelID("Action");
 		pMessage->Write( ActionOutRef );
-		pMessage->ExportData("RawData", RawDataValue );
+		pMessage->ExportData("RawData", RawData );
 
 		//	send message
 		PublishMessage( pMessage );

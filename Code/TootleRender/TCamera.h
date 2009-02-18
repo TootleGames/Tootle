@@ -70,6 +70,7 @@ public:
 
 	//	camera virtual
 	virtual Bool				GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const	{	return FALSE;	}	//	convert point on screen to a 3D ray
+	virtual Bool				GetWorldPos(float3& WorldPos,float WorldDepth,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const	{	return FALSE;	}	//	convert point on screen to a 3D position
 
 	//	only for render targets
 	TLMaths::TMatrix&			GetModelViewMatrix(Bool SetValid)	{	m_ModelViewMatrixValid |= SetValid;	return m_ModelViewMatrix;	}
@@ -160,6 +161,7 @@ public:
 
 	const TLMaths::TBox2D&	GetOrthoBox() const		{	return m_OrthoBox;	}
 	virtual Bool			GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;			//	convert point on screen to a 3D ray
+	virtual Bool			GetWorldPos(float3& WorldPos,float WorldDepth,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;	//	convert point on screen to a 3D position
 
 protected:
 	float					GetOrthoRange() const	{	return 100.f;	}

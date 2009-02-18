@@ -22,18 +22,6 @@ Bool TLMessaging::TPublisher::Unsubscribe(TSubscriber* pSubscriber)
 }
 
 
-Bool TLMessaging::TPublisher::Subscribe(TPtr<TSubscriber>& pSubscriber)
-{	
-	return Subscribe( pSubscriber.GetObject() );	
-}
-
-
-Bool TLMessaging::TPublisher::Unsubscribe(TPtr<TSubscriber>& pSubscriber)	
-{	
-	return Unsubscribe( pSubscriber.GetObject() );	
-}
-
-
 void TLMessaging::TPublisher::DoPublishMessage(TPtr<TMessage>& pMessage)		
 {
 	for(u32 uIndex = 0; uIndex < m_Subscribers.GetSize(); uIndex++)

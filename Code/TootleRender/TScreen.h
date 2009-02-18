@@ -67,7 +67,11 @@ public:
 	Bool							GetRenderTargetSize(Type4<s32>& Size,const TPtr<TRenderTarget>& pRenderTarget);	//	get the dimensions of a render target
 	FORCEINLINE Bool				GetRenderTargetSize(Type4<s32>& Size,TRefRef TargetRef) {	return GetRenderTargetSize( Size, GetRenderTarget( TargetRef ) );	}
 
+	Bool							GetWorldRayFromScreenPos(const TRenderTarget& RenderTarget,TLMaths::TLine& WorldRay,const Type2<s32>& ScreenPos);
 	Bool							GetWorldRayFromScreenPos(const TPtr<TRenderTarget>& pRenderTarget,TLMaths::TLine& WorldRay,const Type2<s32>& ScreenPos);
+	Bool							GetWorldPosFromScreenPos(const TRenderTarget& RenderTarget,float3& WorldPos,float WorldDepth,const Type2<s32>& ScreenPos);
+	Bool							GetWorldPosFromScreenPos(const TPtr<TRenderTarget>& pRenderTarget,float3& WorldPos,float WorldDepth,const Type2<s32>& ScreenPos);
+
 
 	FORCEINLINE void				RequestScreenshot()							{	m_Flags.Set(Flag_TakeScreenshot);	}	// Screenshot request
 

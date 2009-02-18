@@ -301,6 +301,17 @@ Bool TLRender::TRenderTarget::GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s
 }
 
 
+//---------------------------------------------------------------
+//	get world pos from 2d point inside our rendertarget size
+//---------------------------------------------------------------
+Bool TLRender::TRenderTarget::GetWorldPos(float3& WorldPos,float WorldDepth,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const
+{
+	if ( !m_pCamera )
+		return FALSE;
+
+	return m_pCamera->GetWorldPos( WorldPos, WorldDepth, RenderTargetPos, RenderTargetSize, ScreenShape );
+}
+
 
 //---------------------------------------------------------------
 //	gets the render node at the root

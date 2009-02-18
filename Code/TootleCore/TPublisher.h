@@ -38,15 +38,13 @@ public:
 	void				Shutdown()										{	RemoveAllSubscribers();	}
 
 	Bool				Subscribe(TSubscriber* pSubscriber);
-	Bool				Subscribe(TPtr<TSubscriber>& pSubscriber);		//	gr: not inlined because of use of TSubscriber
 	Bool				Unsubscribe(TSubscriber* pSubscriber);
-	Bool				Unsubscribe(TPtr<TSubscriber>& pSubscriber);	//	gr: not inlined because of use of TSubscriber
 
 	FORCEINLINE Bool	HasSubscribers() const							{	return m_Subscribers.GetSize() != 0;	}
 	FORCEINLINE void	PublishMessage(TPtr<TLMessaging::TMessage>& pMessage);	//	send message to subscribers if we have any
 
 private:
-	FORCEINLINE Bool	AddSubscriber(TSubscriber* pSubscriber)			{	return pSubscriber ? m_Subscribers.Add(pSubscriber)!=-1 : FALSE;	}
+	FORCEINLINE Bool	AddSubscriber(TSubscriber* pSubscriber)			{	return pSubscriber ? m_Subscribers.AddUnique(pSubscriber)!=-1 : FALSE;	}
 	FORCEINLINE Bool	RemoveSubscriber(TSubscriber* pSubscriber)		{	return m_Subscribers.Remove(pSubscriber);	}
 
 	void				RemoveAllSubscribers();

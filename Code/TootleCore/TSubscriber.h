@@ -13,15 +13,13 @@ public:
 	FORCEINLINE void	Shutdown()										{	UnsubscribeAll();	}
 
 	FORCEINLINE Bool	SubscribeTo(TPublisher* pPublisher)				{	return pPublisher->Subscribe(this);	}
-	FORCEINLINE Bool	SubscribeTo(TPtr<TPublisher> pPublisher)		{	return SubscribeTo( pPublisher.GetObject() );	}
 	FORCEINLINE Bool	UnsubscribeFrom(TPublisher* pPublisher)			{	return pPublisher->Unsubscribe(this);	}
-	FORCEINLINE Bool	UnsubscribeFrom(TPtr<TPublisher> pPublisher)	{	return UnsubscribeFrom( pPublisher.GetObject() );	}
 
 protected:
 	virtual void		ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage) = 0;
 
 private:
-	FORCEINLINE Bool	AddPublisher(TPublisher* pPublisher)		{	return m_Publishers.Add(pPublisher) != -1;	}
+	FORCEINLINE Bool	AddPublisher(TPublisher* pPublisher)		{	return m_Publishers.AddUnique(pPublisher) != -1;	}
 	FORCEINLINE Bool	RemovePublisher(TPublisher* pPublisher)		{	return m_Publishers.Remove(pPublisher);	}
 	FORCEINLINE void	UnsubscribeAll();							// Unsubscribe from all publishers
 
