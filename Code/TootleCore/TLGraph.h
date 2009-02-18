@@ -83,7 +83,7 @@ public:
 	FORCEINLINE Bool			AddNode(TPtr<T> pNode,TRefRef ParentRef)		{	return AddNode( pNode, FindNode( ParentRef ) );	}
 
 	virtual Bool				RemoveNode(TRefRef NodeRef)				{	return RemoveNode( FindNode( NodeRef ) );	}
-	FORCEINLINE Bool			RemoveNode(const T* pNode)				{	return RemoveNode( FindNode( pNode->GetNodeRef() ) );	}
+//	FORCEINLINE Bool			RemoveNode(const T* pNode)				{	return RemoveNode( FindNode( pNode->GetNodeRef() ) );	}
 	Bool						RemoveNode(TPtr<T> pNode);				//	Requests a node to be removed from the graph.  The node will be removed at a 'safe' time so is not immediate
 	Bool						RemoveChildren(TPtr<T> pNode);			//	remove pNode's children (but not pNode)
 
