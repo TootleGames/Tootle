@@ -1,0 +1,261 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8418F0120F4DB7F400B956C9 /* TAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F0060F4DB7F400B956C9 /* TAction.cpp */; };
+		8418F0130F4DB7F400B956C9 /* TAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F0070F4DB7F400B956C9 /* TAction.h */; };
+		8418F0140F4DB7F400B956C9 /* TDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F0080F4DB7F400B956C9 /* TDevice.cpp */; };
+		8418F0150F4DB7F400B956C9 /* TDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F0090F4DB7F400B956C9 /* TDevice.h */; };
+		8418F0160F4DB7F400B956C9 /* TEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F00A0F4DB7F400B956C9 /* TEffect.cpp */; };
+		8418F0170F4DB7F400B956C9 /* TEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F00B0F4DB7F400B956C9 /* TEffect.h */; };
+		8418F0180F4DB7F400B956C9 /* TLInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F00C0F4DB7F400B956C9 /* TLInput.cpp */; };
+		8418F0190F4DB7F400B956C9 /* TLInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F00D0F4DB7F400B956C9 /* TLInput.h */; };
+		8418F01A0F4DB7F400B956C9 /* TSensor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F00E0F4DB7F400B956C9 /* TSensor.cpp */; };
+		8418F01B0F4DB7F400B956C9 /* TSensor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F00F0F4DB7F400B956C9 /* TSensor.h */; };
+		8418F01C0F4DB7F400B956C9 /* TUser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F0100F4DB7F400B956C9 /* TUser.cpp */; };
+		8418F01D0F4DB7F400B956C9 /* TUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F0110F4DB7F400B956C9 /* TUser.h */; };
+		8418F18D0F4DBA6F00B956C9 /* MacInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F18B0F4DBA6F00B956C9 /* MacInput.h */; };
+		8418F18E0F4DBA6F00B956C9 /* MacInput.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8418F18C0F4DBA6F00B956C9 /* MacInput.mm */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		8418EE9E0F4DAB3500B956C9 /* libTootleInput.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleInput.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8418F0060F4DB7F400B956C9 /* TAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAction.cpp; path = ../TAction.cpp; sourceTree = SOURCE_ROOT; };
+		8418F0070F4DB7F400B956C9 /* TAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAction.h; path = ../TAction.h; sourceTree = SOURCE_ROOT; };
+		8418F0080F4DB7F400B956C9 /* TDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TDevice.cpp; path = ../TDevice.cpp; sourceTree = SOURCE_ROOT; };
+		8418F0090F4DB7F400B956C9 /* TDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDevice.h; path = ../TDevice.h; sourceTree = SOURCE_ROOT; };
+		8418F00A0F4DB7F400B956C9 /* TEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TEffect.cpp; path = ../TEffect.cpp; sourceTree = SOURCE_ROOT; };
+		8418F00B0F4DB7F400B956C9 /* TEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TEffect.h; path = ../TEffect.h; sourceTree = SOURCE_ROOT; };
+		8418F00C0F4DB7F400B956C9 /* TLInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLInput.cpp; path = ../TLInput.cpp; sourceTree = SOURCE_ROOT; };
+		8418F00D0F4DB7F400B956C9 /* TLInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLInput.h; path = ../TLInput.h; sourceTree = SOURCE_ROOT; };
+		8418F00E0F4DB7F400B956C9 /* TSensor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSensor.cpp; path = ../TSensor.cpp; sourceTree = SOURCE_ROOT; };
+		8418F00F0F4DB7F400B956C9 /* TSensor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSensor.h; path = ../TSensor.h; sourceTree = SOURCE_ROOT; };
+		8418F0100F4DB7F400B956C9 /* TUser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TUser.cpp; path = ../TUser.cpp; sourceTree = SOURCE_ROOT; };
+		8418F0110F4DB7F400B956C9 /* TUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TUser.h; path = ../TUser.h; sourceTree = SOURCE_ROOT; };
+		8418F18B0F4DBA6F00B956C9 /* MacInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacInput.h; sourceTree = "<group>"; };
+		8418F18C0F4DBA6F00B956C9 /* MacInput.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacInput.mm; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8418EE9C0F4DAB3500B956C9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8418ECF60F4DA63E00B956C9 = {
+			isa = PBXGroup;
+			children = (
+				8418F0050F4DB7DD00B956C9 /* Build Configurations */,
+				8418F0040F4DB7D600B956C9 /* Source Code */,
+				8418F0030F4DB7D100B956C9 /* Frameworks */,
+				8418ED0E0F4DA70B00B956C9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8418ED0E0F4DA70B00B956C9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8418EE9E0F4DAB3500B956C9 /* libTootleInput.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8418F0030F4DB7D100B956C9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8418F0040F4DB7D600B956C9 /* Source Code */ = {
+			isa = PBXGroup;
+			children = (
+				8418F1880F4DBA4700B956C9 /* Mac */,
+				8418F0060F4DB7F400B956C9 /* TAction.cpp */,
+				8418F0070F4DB7F400B956C9 /* TAction.h */,
+				8418F0080F4DB7F400B956C9 /* TDevice.cpp */,
+				8418F0090F4DB7F400B956C9 /* TDevice.h */,
+				8418F00A0F4DB7F400B956C9 /* TEffect.cpp */,
+				8418F00B0F4DB7F400B956C9 /* TEffect.h */,
+				8418F00C0F4DB7F400B956C9 /* TLInput.cpp */,
+				8418F00D0F4DB7F400B956C9 /* TLInput.h */,
+				8418F00E0F4DB7F400B956C9 /* TSensor.cpp */,
+				8418F00F0F4DB7F400B956C9 /* TSensor.h */,
+				8418F0100F4DB7F400B956C9 /* TUser.cpp */,
+				8418F0110F4DB7F400B956C9 /* TUser.h */,
+			);
+			name = "Source Code";
+			sourceTree = "<group>";
+		};
+		8418F0050F4DB7DD00B956C9 /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+		8418F1880F4DBA4700B956C9 /* Mac */ = {
+			isa = PBXGroup;
+			children = (
+				8418F18B0F4DBA6F00B956C9 /* MacInput.h */,
+				8418F18C0F4DBA6F00B956C9 /* MacInput.mm */,
+			);
+			name = Mac;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		8418EE9A0F4DAB3500B956C9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8418F0130F4DB7F400B956C9 /* TAction.h in Headers */,
+				8418F0150F4DB7F400B956C9 /* TDevice.h in Headers */,
+				8418F0170F4DB7F400B956C9 /* TEffect.h in Headers */,
+				8418F0190F4DB7F400B956C9 /* TLInput.h in Headers */,
+				8418F01B0F4DB7F400B956C9 /* TSensor.h in Headers */,
+				8418F01D0F4DB7F400B956C9 /* TUser.h in Headers */,
+				8418F18D0F4DBA6F00B956C9 /* MacInput.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		8418EE9D0F4DAB3500B956C9 /* TootleInput */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8418EEA30F4DAB3700B956C9 /* Build configuration list for PBXNativeTarget "TootleInput" */;
+			buildPhases = (
+				8418EE9A0F4DAB3500B956C9 /* Headers */,
+				8418EE9B0F4DAB3500B956C9 /* Sources */,
+				8418EE9C0F4DAB3500B956C9 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleInput;
+			productName = TootleInput;
+			productReference = 8418EE9E0F4DAB3500B956C9 /* libTootleInput.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8418ECF80F4DA63E00B956C9 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 8418ECFB0F4DA63E00B956C9 /* Build configuration list for PBXProject "TootleInput" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 0;
+			mainGroup = 8418ECF60F4DA63E00B956C9;
+			productRefGroup = 8418ED0E0F4DA70B00B956C9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8418EE9D0F4DAB3500B956C9 /* TootleInput */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8418EE9B0F4DAB3500B956C9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8418F0120F4DB7F400B956C9 /* TAction.cpp in Sources */,
+				8418F0140F4DB7F400B956C9 /* TDevice.cpp in Sources */,
+				8418F0160F4DB7F400B956C9 /* TEffect.cpp in Sources */,
+				8418F0180F4DB7F400B956C9 /* TLInput.cpp in Sources */,
+				8418F01A0F4DB7F400B956C9 /* TSensor.cpp in Sources */,
+				8418F01C0F4DB7F400B956C9 /* TUser.cpp in Sources */,
+				8418F18E0F4DBA6F00B956C9 /* MacInput.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		8418ECF90F4DA63E00B956C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = TL_TARGET_MAC;
+				HEADER_SEARCH_PATHS = ../..;
+			};
+			name = Debug;
+		};
+		8418ECFA0F4DA63E00B956C9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = TL_TARGET_MAC;
+				HEADER_SEARCH_PATHS = ../..;
+			};
+			name = Release;
+		};
+		8418EE9F0F4DAB3500B956C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleInput;
+			};
+			name = Debug;
+		};
+		8418EEA00F4DAB3500B956C9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleInput;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8418ECFB0F4DA63E00B956C9 /* Build configuration list for PBXProject "TootleInput" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8418ECF90F4DA63E00B956C9 /* Debug */,
+				8418ECFA0F4DA63E00B956C9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8418EEA30F4DAB3700B956C9 /* Build configuration list for PBXNativeTarget "TootleInput" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8418EE9F0F4DAB3500B956C9 /* Debug */,
+				8418EEA00F4DAB3500B956C9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8418ECF80F4DA63E00B956C9 /* Project object */;
+}

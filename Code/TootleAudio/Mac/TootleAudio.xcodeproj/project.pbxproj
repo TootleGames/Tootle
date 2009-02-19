@@ -1,0 +1,245 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8418F1120F4DB89D00B956C9 /* TAudiograph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F10A0F4DB89D00B956C9 /* TAudiograph.cpp */; };
+		8418F1130F4DB89D00B956C9 /* TAudiograph.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F10B0F4DB89D00B956C9 /* TAudiograph.h */; };
+		8418F1140F4DB89D00B956C9 /* TAudioInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F10C0F4DB89D00B956C9 /* TAudioInterface.cpp */; };
+		8418F1150F4DB89D00B956C9 /* TAudioInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F10D0F4DB89D00B956C9 /* TAudioInterface.h */; };
+		8418F1160F4DB89D00B956C9 /* TAudioNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F10E0F4DB89D00B956C9 /* TAudioNode.cpp */; };
+		8418F1170F4DB89D00B956C9 /* TAudioNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F10F0F4DB89D00B956C9 /* TAudioNode.h */; };
+		8418F1180F4DB89D00B956C9 /* TLAudio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F1100F4DB89D00B956C9 /* TLAudio.cpp */; };
+		8418F1190F4DB89D00B956C9 /* TLAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F1110F4DB89D00B956C9 /* TLAudio.h */; };
+		8418F1540F4DB94D00B956C9 /* MacAudio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F1520F4DB94D00B956C9 /* MacAudio.cpp */; };
+		8418F1550F4DB94D00B956C9 /* MacAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F1530F4DB94D00B956C9 /* MacAudio.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		8418EEE20F4DAB7E00B956C9 /* libTootleAudio.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleAudio.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8418F10A0F4DB89D00B956C9 /* TAudiograph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAudiograph.cpp; path = ../TAudiograph.cpp; sourceTree = SOURCE_ROOT; };
+		8418F10B0F4DB89D00B956C9 /* TAudiograph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAudiograph.h; path = ../TAudiograph.h; sourceTree = SOURCE_ROOT; };
+		8418F10C0F4DB89D00B956C9 /* TAudioInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAudioInterface.cpp; path = ../TAudioInterface.cpp; sourceTree = SOURCE_ROOT; };
+		8418F10D0F4DB89D00B956C9 /* TAudioInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAudioInterface.h; path = ../TAudioInterface.h; sourceTree = SOURCE_ROOT; };
+		8418F10E0F4DB89D00B956C9 /* TAudioNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAudioNode.cpp; path = ../TAudioNode.cpp; sourceTree = SOURCE_ROOT; };
+		8418F10F0F4DB89D00B956C9 /* TAudioNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAudioNode.h; path = ../TAudioNode.h; sourceTree = SOURCE_ROOT; };
+		8418F1100F4DB89D00B956C9 /* TLAudio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLAudio.cpp; path = ../TLAudio.cpp; sourceTree = SOURCE_ROOT; };
+		8418F1110F4DB89D00B956C9 /* TLAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLAudio.h; path = ../TLAudio.h; sourceTree = SOURCE_ROOT; };
+		8418F1520F4DB94D00B956C9 /* MacAudio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacAudio.cpp; sourceTree = "<group>"; };
+		8418F1530F4DB94D00B956C9 /* MacAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacAudio.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8418EEE00F4DAB7E00B956C9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8418ECF60F4DA63E00B956C9 = {
+			isa = PBXGroup;
+			children = (
+				8418F1090F4DB88F00B956C9 /* Build Configurations */,
+				8418F1080F4DB88900B956C9 /* Source Code */,
+				8418F1070F4DB88300B956C9 /* Frameworks */,
+				8418ED0E0F4DA70B00B956C9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8418ED0E0F4DA70B00B956C9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8418EEE20F4DAB7E00B956C9 /* libTootleAudio.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8418F1070F4DB88300B956C9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8418F1080F4DB88900B956C9 /* Source Code */ = {
+			isa = PBXGroup;
+			children = (
+				8418F1510F4DB94000B956C9 /* Mac */,
+				8418F10A0F4DB89D00B956C9 /* TAudiograph.cpp */,
+				8418F10B0F4DB89D00B956C9 /* TAudiograph.h */,
+				8418F10C0F4DB89D00B956C9 /* TAudioInterface.cpp */,
+				8418F10D0F4DB89D00B956C9 /* TAudioInterface.h */,
+				8418F10E0F4DB89D00B956C9 /* TAudioNode.cpp */,
+				8418F10F0F4DB89D00B956C9 /* TAudioNode.h */,
+				8418F1100F4DB89D00B956C9 /* TLAudio.cpp */,
+				8418F1110F4DB89D00B956C9 /* TLAudio.h */,
+			);
+			name = "Source Code";
+			sourceTree = "<group>";
+		};
+		8418F1090F4DB88F00B956C9 /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+		8418F1510F4DB94000B956C9 /* Mac */ = {
+			isa = PBXGroup;
+			children = (
+				8418F1520F4DB94D00B956C9 /* MacAudio.cpp */,
+				8418F1530F4DB94D00B956C9 /* MacAudio.h */,
+			);
+			name = Mac;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		8418EEDE0F4DAB7E00B956C9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8418F1130F4DB89D00B956C9 /* TAudiograph.h in Headers */,
+				8418F1150F4DB89D00B956C9 /* TAudioInterface.h in Headers */,
+				8418F1170F4DB89D00B956C9 /* TAudioNode.h in Headers */,
+				8418F1190F4DB89D00B956C9 /* TLAudio.h in Headers */,
+				8418F1550F4DB94D00B956C9 /* MacAudio.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		8418EEE10F4DAB7E00B956C9 /* TootleAudio */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8418EEE70F4DAB8100B956C9 /* Build configuration list for PBXNativeTarget "TootleAudio" */;
+			buildPhases = (
+				8418EEDE0F4DAB7E00B956C9 /* Headers */,
+				8418EEDF0F4DAB7E00B956C9 /* Sources */,
+				8418EEE00F4DAB7E00B956C9 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleAudio;
+			productName = TootleAudio;
+			productReference = 8418EEE20F4DAB7E00B956C9 /* libTootleAudio.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8418ECF80F4DA63E00B956C9 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 8418ECFB0F4DA63E00B956C9 /* Build configuration list for PBXProject "TootleAudio" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 0;
+			mainGroup = 8418ECF60F4DA63E00B956C9;
+			productRefGroup = 8418ED0E0F4DA70B00B956C9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8418EEE10F4DAB7E00B956C9 /* TootleAudio */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8418EEDF0F4DAB7E00B956C9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8418F1120F4DB89D00B956C9 /* TAudiograph.cpp in Sources */,
+				8418F1140F4DB89D00B956C9 /* TAudioInterface.cpp in Sources */,
+				8418F1160F4DB89D00B956C9 /* TAudioNode.cpp in Sources */,
+				8418F1180F4DB89D00B956C9 /* TLAudio.cpp in Sources */,
+				8418F1540F4DB94D00B956C9 /* MacAudio.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		8418ECF90F4DA63E00B956C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = TL_TARGET_MAC;
+				HEADER_SEARCH_PATHS = ../..;
+			};
+			name = Debug;
+		};
+		8418ECFA0F4DA63E00B956C9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = TL_TARGET_MAC;
+				HEADER_SEARCH_PATHS = ../..;
+			};
+			name = Release;
+		};
+		8418EEE30F4DAB7F00B956C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleAudio;
+			};
+			name = Debug;
+		};
+		8418EEE40F4DAB7F00B956C9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleAudio;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8418ECFB0F4DA63E00B956C9 /* Build configuration list for PBXProject "TootleAudio" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8418ECF90F4DA63E00B956C9 /* Debug */,
+				8418ECFA0F4DA63E00B956C9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8418EEE70F4DAB8100B956C9 /* Build configuration list for PBXNativeTarget "TootleAudio" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8418EEE30F4DAB7F00B956C9 /* Debug */,
+				8418EEE40F4DAB7F00B956C9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8418ECF80F4DA63E00B956C9 /* Project object */;
+}

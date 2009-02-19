@@ -1,0 +1,269 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8418EFEF0F4DB7C400B956C9 /* TBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EFE10F4DB7C400B956C9 /* TBox.cpp */; };
+		8418EFF00F4DB7C400B956C9 /* TBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EFE20F4DB7C400B956C9 /* TBox.h */; };
+		8418EFF10F4DB7C400B956C9 /* TCapsule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EFE30F4DB7C400B956C9 /* TCapsule.cpp */; };
+		8418EFF20F4DB7C400B956C9 /* TCapsule.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EFE40F4DB7C400B956C9 /* TCapsule.h */; };
+		8418EFF30F4DB7C400B956C9 /* TFrustum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EFE50F4DB7C400B956C9 /* TFrustum.cpp */; };
+		8418EFF40F4DB7C400B956C9 /* TFrustum.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EFE60F4DB7C400B956C9 /* TFrustum.h */; };
+		8418EFF50F4DB7C400B956C9 /* TLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EFE70F4DB7C400B956C9 /* TLine.cpp */; };
+		8418EFF60F4DB7C400B956C9 /* TLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EFE80F4DB7C400B956C9 /* TLine.h */; };
+		8418EFF70F4DB7C400B956C9 /* TQuadTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EFE90F4DB7C400B956C9 /* TQuadTree.cpp */; };
+		8418EFF80F4DB7C400B956C9 /* TQuadTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EFEA0F4DB7C400B956C9 /* TQuadTree.h */; };
+		8418EFF90F4DB7C400B956C9 /* TSphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EFEB0F4DB7C400B956C9 /* TSphere.cpp */; };
+		8418EFFA0F4DB7C400B956C9 /* TSphere.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EFEC0F4DB7C400B956C9 /* TSphere.h */; };
+		8418EFFB0F4DB7C400B956C9 /* TTessellate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EFED0F4DB7C400B956C9 /* TTessellate.cpp */; };
+		8418EFFC0F4DB7C400B956C9 /* TTessellate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EFEE0F4DB7C400B956C9 /* TTessellate.h */; };
+		8418F1960F4DBAB500B956C9 /* MacTessellate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F1940F4DBAB500B956C9 /* MacTessellate.h */; };
+		8418F1970F4DBAB500B956C9 /* MacTessellate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8418F1950F4DBAB500B956C9 /* MacTessellate.mm */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		8418EE8D0F4DAB2600B956C9 /* libTootleMaths.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleMaths.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8418EFE10F4DB7C400B956C9 /* TBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TBox.cpp; path = ../TBox.cpp; sourceTree = SOURCE_ROOT; };
+		8418EFE20F4DB7C400B956C9 /* TBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBox.h; path = ../TBox.h; sourceTree = SOURCE_ROOT; };
+		8418EFE30F4DB7C400B956C9 /* TCapsule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TCapsule.cpp; path = ../TCapsule.cpp; sourceTree = SOURCE_ROOT; };
+		8418EFE40F4DB7C400B956C9 /* TCapsule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCapsule.h; path = ../TCapsule.h; sourceTree = SOURCE_ROOT; };
+		8418EFE50F4DB7C400B956C9 /* TFrustum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFrustum.cpp; path = ../TFrustum.cpp; sourceTree = SOURCE_ROOT; };
+		8418EFE60F4DB7C400B956C9 /* TFrustum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFrustum.h; path = ../TFrustum.h; sourceTree = SOURCE_ROOT; };
+		8418EFE70F4DB7C400B956C9 /* TLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLine.cpp; path = ../TLine.cpp; sourceTree = SOURCE_ROOT; };
+		8418EFE80F4DB7C400B956C9 /* TLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLine.h; path = ../TLine.h; sourceTree = SOURCE_ROOT; };
+		8418EFE90F4DB7C400B956C9 /* TQuadTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TQuadTree.cpp; path = ../TQuadTree.cpp; sourceTree = SOURCE_ROOT; };
+		8418EFEA0F4DB7C400B956C9 /* TQuadTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TQuadTree.h; path = ../TQuadTree.h; sourceTree = SOURCE_ROOT; };
+		8418EFEB0F4DB7C400B956C9 /* TSphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSphere.cpp; path = ../TSphere.cpp; sourceTree = SOURCE_ROOT; };
+		8418EFEC0F4DB7C400B956C9 /* TSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSphere.h; path = ../TSphere.h; sourceTree = SOURCE_ROOT; };
+		8418EFED0F4DB7C400B956C9 /* TTessellate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTessellate.cpp; path = ../TTessellate.cpp; sourceTree = SOURCE_ROOT; };
+		8418EFEE0F4DB7C400B956C9 /* TTessellate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTessellate.h; path = ../TTessellate.h; sourceTree = SOURCE_ROOT; };
+		8418F1940F4DBAB500B956C9 /* MacTessellate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacTessellate.h; sourceTree = "<group>"; };
+		8418F1950F4DBAB500B956C9 /* MacTessellate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacTessellate.mm; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8418EE8B0F4DAB2600B956C9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8418ECF60F4DA63E00B956C9 = {
+			isa = PBXGroup;
+			children = (
+				8418EFE00F4DB7AC00B956C9 /* Build Configurations */,
+				8418EFDF0F4DB7A600B956C9 /* Source Code */,
+				8418EFDE0F4DB79F00B956C9 /* Frameworks */,
+				8418ED0E0F4DA70B00B956C9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8418ED0E0F4DA70B00B956C9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8418EE8D0F4DAB2600B956C9 /* libTootleMaths.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8418EFDE0F4DB79F00B956C9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8418EFDF0F4DB7A600B956C9 /* Source Code */ = {
+			isa = PBXGroup;
+			children = (
+				8418F1930F4DBAA300B956C9 /* Mac */,
+				8418EFE10F4DB7C400B956C9 /* TBox.cpp */,
+				8418EFE20F4DB7C400B956C9 /* TBox.h */,
+				8418EFE30F4DB7C400B956C9 /* TCapsule.cpp */,
+				8418EFE40F4DB7C400B956C9 /* TCapsule.h */,
+				8418EFE50F4DB7C400B956C9 /* TFrustum.cpp */,
+				8418EFE60F4DB7C400B956C9 /* TFrustum.h */,
+				8418EFE70F4DB7C400B956C9 /* TLine.cpp */,
+				8418EFE80F4DB7C400B956C9 /* TLine.h */,
+				8418EFE90F4DB7C400B956C9 /* TQuadTree.cpp */,
+				8418EFEA0F4DB7C400B956C9 /* TQuadTree.h */,
+				8418EFEB0F4DB7C400B956C9 /* TSphere.cpp */,
+				8418EFEC0F4DB7C400B956C9 /* TSphere.h */,
+				8418EFED0F4DB7C400B956C9 /* TTessellate.cpp */,
+				8418EFEE0F4DB7C400B956C9 /* TTessellate.h */,
+			);
+			name = "Source Code";
+			sourceTree = "<group>";
+		};
+		8418EFE00F4DB7AC00B956C9 /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+		8418F1930F4DBAA300B956C9 /* Mac */ = {
+			isa = PBXGroup;
+			children = (
+				8418F1940F4DBAB500B956C9 /* MacTessellate.h */,
+				8418F1950F4DBAB500B956C9 /* MacTessellate.mm */,
+			);
+			name = Mac;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		8418EE890F4DAB2600B956C9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8418EFF00F4DB7C400B956C9 /* TBox.h in Headers */,
+				8418EFF20F4DB7C400B956C9 /* TCapsule.h in Headers */,
+				8418EFF40F4DB7C400B956C9 /* TFrustum.h in Headers */,
+				8418EFF60F4DB7C400B956C9 /* TLine.h in Headers */,
+				8418EFF80F4DB7C400B956C9 /* TQuadTree.h in Headers */,
+				8418EFFA0F4DB7C400B956C9 /* TSphere.h in Headers */,
+				8418EFFC0F4DB7C400B956C9 /* TTessellate.h in Headers */,
+				8418F1960F4DBAB500B956C9 /* MacTessellate.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		8418EE8C0F4DAB2600B956C9 /* TootleMaths */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8418EE920F4DAB2800B956C9 /* Build configuration list for PBXNativeTarget "TootleMaths" */;
+			buildPhases = (
+				8418EE890F4DAB2600B956C9 /* Headers */,
+				8418EE8A0F4DAB2600B956C9 /* Sources */,
+				8418EE8B0F4DAB2600B956C9 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleMaths;
+			productName = TootleMaths;
+			productReference = 8418EE8D0F4DAB2600B956C9 /* libTootleMaths.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8418ECF80F4DA63E00B956C9 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 8418ECFB0F4DA63E00B956C9 /* Build configuration list for PBXProject "TootleMaths" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 0;
+			mainGroup = 8418ECF60F4DA63E00B956C9;
+			productRefGroup = 8418ED0E0F4DA70B00B956C9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8418EE8C0F4DAB2600B956C9 /* TootleMaths */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8418EE8A0F4DAB2600B956C9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8418EFEF0F4DB7C400B956C9 /* TBox.cpp in Sources */,
+				8418EFF10F4DB7C400B956C9 /* TCapsule.cpp in Sources */,
+				8418EFF30F4DB7C400B956C9 /* TFrustum.cpp in Sources */,
+				8418EFF50F4DB7C400B956C9 /* TLine.cpp in Sources */,
+				8418EFF70F4DB7C400B956C9 /* TQuadTree.cpp in Sources */,
+				8418EFF90F4DB7C400B956C9 /* TSphere.cpp in Sources */,
+				8418EFFB0F4DB7C400B956C9 /* TTessellate.cpp in Sources */,
+				8418F1970F4DBAB500B956C9 /* MacTessellate.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		8418ECF90F4DA63E00B956C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = TL_TARGET_MAC;
+				HEADER_SEARCH_PATHS = ../..;
+			};
+			name = Debug;
+		};
+		8418ECFA0F4DA63E00B956C9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = TL_TARGET_MAC;
+				HEADER_SEARCH_PATHS = ../..;
+			};
+			name = Release;
+		};
+		8418EE8E0F4DAB2700B956C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleMaths;
+			};
+			name = Debug;
+		};
+		8418EE8F0F4DAB2700B956C9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleMaths;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8418ECFB0F4DA63E00B956C9 /* Build configuration list for PBXProject "TootleMaths" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8418ECF90F4DA63E00B956C9 /* Debug */,
+				8418ECFA0F4DA63E00B956C9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8418EE920F4DAB2800B956C9 /* Build configuration list for PBXNativeTarget "TootleMaths" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8418EE8E0F4DAB2700B956C9 /* Debug */,
+				8418EE8F0F4DAB2700B956C9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8418ECF80F4DA63E00B956C9 /* Project object */;
+}
