@@ -134,11 +134,11 @@ Bool TLDebug::Platform::Break(const TString& String)
 	Print( String );
 
 	// Drop into debugger if possible
-	//	gr: coreservices only availible on simulator, there is no coreservices framework for device
-	//		so this is only availible in simulator
-	// DB: To enable this create a new target which is Simulator specific and add the preprocessor
-	// TL_BUILD_SIMULATOR and make sure it's linked ot the coreservices lib.
-#if defined(TL_BUILD_SIMULATOR)
+	// DB:	Found solution to getting the CoreServices linked *only* for the iphone simulator build
+	//		In the target's info goto the Linking->Other Link Flags option and add -framework CoreServices
+	//		via the cog at the bottom of the pane (add build setting condition) then select Any iPhone Simulator for the SDK option
+	// and this should link correctly only on a simulator build :)
+#if !TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
 	Debugger();
 #elif defined(_DEBUG)
 	//	gr: hacky break for debug builds

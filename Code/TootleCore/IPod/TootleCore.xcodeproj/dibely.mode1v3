@@ -233,8 +233,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -273,17 +271,20 @@
 								<string>84C108D30F0A76EC00B2DF7A</string>
 								<string>84C1095E0F0A78F800B2DF7A</string>
 								<string>84C1095F0F0A790100B2DF7A</string>
+								<string>84C109CE0F0A791F00B2DF7A</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
+									<integer>42</integer>
+									<integer>8</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {186, 609}}</string>
+							<string>{{0, 359}, {186, 609}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -313,12 +314,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TGraphBase.cpp</string>
+								<string>TLMaths.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -326,11 +329,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TGraphBase.cpp</string>
+										<string>TLMaths.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8418E8BA0F4C30C600B956C9</string>
+										<string>8418EC470F4C88D500B956C9</string>
 										<key>history</key>
 										<array>
 											<string>84E1169E0F3C9E4D00471397</string>
@@ -356,12 +359,14 @@
 											<string>8418E57A0F4ADC4100B956C9</string>
 											<string>8418E7680F4C110700B956C9</string>
 											<string>8418E7690F4C110700B956C9</string>
-											<string>8418E85B0F4C173C00B956C9</string>
 											<string>8418E8A00F4C2DFF00B956C9</string>
 											<string>8418E8A10F4C2DFF00B956C9</string>
 											<string>8418E8A20F4C2DFF00B956C9</string>
 											<string>8418E8B70F4C30C600B956C9</string>
-											<string>8418E8B80F4C30C600B956C9</string>
+											<string>8418E9CC0F4C6AF100B956C9</string>
+											<string>8418E9E50F4C6F8500B956C9</string>
+											<string>8418EB9C0F4C7FCF00B956C9</string>
+											<string>8418EC460F4C88D500B956C9</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -392,7 +397,8 @@
 											<string>8418E8A50F4C2DFF00B956C9</string>
 											<string>8418E8A60F4C2DFF00B956C9</string>
 											<string>8418E8A70F4C2DFF00B956C9</string>
-											<string>8418E8B90F4C30C600B956C9</string>
+											<string>8418E9CD0F4C6AF100B956C9</string>
+											<string>8418EB9E0F4C7FCF00B956C9</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -450,9 +456,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>8418E8BB0F4C30C600B956C9</string>
+				<string>8418EBA00F4C7FCF00B956C9</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>8418E8BC0F4C30C600B956C9</string>
+				<string>8418EBA10F4C7FCF00B956C9</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -587,6 +593,7 @@
 	<key>WindowOrderList</key>
 	<array>
 		<string>84E1160F0F3C6C8900471397</string>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleCore/IPod/TootleCore.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -667,7 +674,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>84E1160F0F3C6C8900471397</string>
-				<string>8418E8BD0F4C30C600B956C9</string>
+				<string>8418EC480F4C88D500B956C9</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -820,12 +827,14 @@
 							<key>Dock</key>
 							<array>
 								<dict>
+									<key>BecomeActive</key>
+									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TLGraph.h</string>
+										<string>TLMaths.cpp</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -846,8 +855,6 @@
 							<string>348pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -883,8 +890,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>8418E6560F4B181900B956C9</string>
-				<string>8418E6570F4B181900B956C9</string>
+				<string>8418EB970F4C7FB900B956C9</string>
+				<string>8418EB980F4C7FB900B956C9</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>
