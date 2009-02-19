@@ -86,11 +86,11 @@ public:
 	//	vertex manipulation
 	s32						AddVertex(const float3& VertexPos);							//	add vertex to the list, makes up normals and colours if required
 	s32						AddVertex(const float3& VertexPos,const TColour& Colour);	//	add vertex with colour to the list, pad normals and colours if previously didnt exist
-	Bool					RemoveVertex(u32 VertexIndex);								//	remove a vertex, remove it's colour, remove any polygons that use this vertex, and correct the vertex indexes in polygons (anything > VI needs reducing). returns if any changes to polygons made
-	Bool					ReplaceVertex(u32 OldVertexIndex,u32 NewVertexIndex);		//	find all uses of OldVertexIndex in polygons and swap them for NewVertexIndex 
-	inline void				ScaleVerts(float Scale,u32 FirstVert=0,s32 LastVert=-1)				{	ScaleVerts( float3( Scale, Scale, Scale ), FirstVert, LastVert );	}
-	void					ScaleVerts(const float3& Scale,u32 FirstVert=0,s32 LastVert=-1);	//	scale all vertexes
-	void					MoveVerts(const float3& Movement,u32 FirstVert=0,s32 LastVert=-1);	//	move all verts
+	Bool					RemoveVertex(u16 VertexIndex);								//	remove a vertex, remove it's colour, remove any polygons that use this vertex, and correct the vertex indexes in polygons (anything > VI needs reducing). returns if any changes to polygons made
+	Bool					ReplaceVertex(u16 OldVertexIndex,u16 NewVertexIndex);		//	find all uses of OldVertexIndex in polygons and swap them for NewVertexIndex 
+	inline void				ScaleVerts(float Scale,u16 FirstVert=0,s32 LastVert=-1)				{	ScaleVerts( float3( Scale, Scale, Scale ), FirstVert, LastVert );	}
+	void					ScaleVerts(const float3& Scale,u16 FirstVert=0,s32 LastVert=-1);	//	scale all vertexes
+	void					MoveVerts(const float3& Movement,u16 FirstVert=0,s32 LastVert=-1);	//	move all verts
 	void					ColoursMult(const TColour& Colour);		//	multiply all colours by this colour
 
 	//	data accessors
@@ -122,9 +122,9 @@ public:
 	void					SetBoundsInvalid()					{	SetBoundsBoxInvalid();		SetBoundsSphereInvalid();		SetBoundsCapsuleInvalid();	}
 	void					CalcBounds(Bool ForceCalc=FALSE)	{	CalcBoundsBox(ForceCalc);	CalcBoundsSphere(ForceCalc);	CalcBoundsCapsule(ForceCalc);	}
 
-	void					SetBoundsBoxInvalid()			{	m_BoundsBox.SetInvalid();	}
+	void					SetBoundsBoxInvalid()				{	m_BoundsBox.SetInvalid();	}
 	TLMaths::TBox&			CalcBoundsBox(Bool ForceCalc=FALSE);	//	calculate bounds box if invalid
-	TLMaths::TBox&			GetBoundsBox()					{	return m_BoundsBox;	}
+	TLMaths::TBox&			GetBoundsBox()						{	return m_BoundsBox;	}
 	
 	void					SetBoundsSphereInvalid()			{	m_BoundsSphere.SetInvalid();	}
 	TLMaths::TSphere&		CalcBoundsSphere(Bool ForceCalc=FALSE);	//	calculate bounds Sphere if invalid
@@ -136,10 +136,12 @@ public:
 
 	
 protected:
-	virtual SyncBool		ImportData(TBinaryTree& Data);	//	load asset data out binary data
-	virtual SyncBool		ExportData(TBinaryTree& Data);	//	save asset data to binary data
+	virtual SyncBool		ImportData(TBinaryTree& Data);		//	load asset data out binary data
+	virtual SyncBool		ExportData(TBinaryTree& Data);		//	save asset data to binary data
 
-	void					CalcHasAlpha();			//	loop through colours to check if we have any alpha colours in the verts
+	void					CalcHasAlpha();						//	loop through colours to check if we have any alpha colours in the verts
+
+	void					OnPrimitivesChanged();				//	just a check to make sure the integrety of all the polygons indexes are valid
 
 protected:
 	TArray<float3>			m_Vertexes;				//	vertexes of mesh

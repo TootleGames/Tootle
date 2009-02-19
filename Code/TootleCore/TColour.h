@@ -41,8 +41,8 @@ public:
 	FORCEINLINE u8				GetBlue8() const						{	return MakeComponent8( GetBlue() );	}
 	FORCEINLINE u8				GetAlpha8() const						{	return MakeComponent8( GetAlpha() );	}
 
-	FORCEINLINE Bool			IsVisible() const						{	return GetAlpha() >= TLMaths::g_NearZero;	}
-	FORCEINLINE Bool			IsTransparent() const					{	return GetAlpha() <= (1.f - TLMaths::g_NearZero);	}
+	FORCEINLINE Bool			IsVisible() const						{	return GetAlpha() > TLMaths::g_NearZero;	}
+	FORCEINLINE Bool			IsTransparent() const					{	return GetAlpha() < TLMaths::g_NearOne;	}
 	FORCEINLINE const float*	GetData() const							{	return GetRgba().GetData();	}
 
 	FORCEINLINE void			Set(float r,float g,float b,float a)	{	m_Rgba.Set( r,g,b,a );	}

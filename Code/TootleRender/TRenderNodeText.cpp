@@ -27,7 +27,7 @@ void TLRender::TRenderNodeText::Initialise(TPtr<TLMessaging::TMessage>& pMessage
 		}
 
 		//	import text - if we do, make sure we make a note the glyphs need building
-		if ( pMessage->ImportDataString("Text", m_String ) )
+		if ( pMessage->ImportDataString("Text", m_Text ) )
 		{
 			m_GlyphsChanged = TRUE;
 		}
@@ -40,13 +40,14 @@ void TLRender::TRenderNodeText::Initialise(TPtr<TLMessaging::TMessage>& pMessage
 //--------------------------------------------------------------------
 //	setup new string
 //--------------------------------------------------------------------
-void TLRender::TRenderNodeText::SetString(const TString& String)
+void TLRender::TRenderNodeText::SetText(const TString& Text)
 {
 	//	no change
-	if ( m_String == String )
+	if ( m_Text == Text )
 		return;
 
-	m_String = String;
+	//	text changed, update glyphs
+	m_Text = Text;
 	m_GlyphsChanged = TRUE;
 }
 
@@ -54,14 +55,8 @@ void TLRender::TRenderNodeText::SetString(const TString& String)
 //--------------------------------------------------------------------
 //	
 //--------------------------------------------------------------------
-void TLRender::TRenderNodeText::SetGlyph(TPtr<TRenderNodeGlyph>& pRenderGlyph,TPtr<TLAsset::TFont>& pFont,float3& GlyphPos,u16 Char)
+void TLRender::TRenderNodeText::SetGlyph(TRenderNodeGlyph& RenderGlyph,TLAsset::TFont& Font,float3& GlyphPos,u16 Char)
 {
-	if ( !pRenderGlyph )
-	{
-		TLDebug_Break("RenderGlyph expected");
-		return;
-	}
-
 	Bool Changed = FALSE;
 
 	//	check for line feed
@@ -70,17 +65,23 @@ void TLRender::TRenderNodeText::SetGlyph(TPtr<TRenderNodeGlyph>& pRenderGlyph,TP
 		LineFeed = TRUE;
 
 	//	set character
-	Changed |= (pRenderGlyph->m_Character != Char);
-	pRenderGlyph->m_Character = Char;
+	Changed |= (RenderGlyph.m_Character != Char);
+
+	//	update changed character
+	if ( Changed )
+	{
+		RenderGlyph.m_Character = Char;
 	
-	//	get the glyph for this character
-	TPtr<TLAsset::TMesh> pGlyph = LineFeed ? TPtr<TLAsset::TMesh>(NULL) : pFont->GetGlyph( Char );
+		//	update glyph mesh
+		RenderGlyph.m_pGlyphMesh = LineFeed ? TLPtr::GetNullPtr<TLAsset::TMesh>() : Font.GetGlyph( Char );
+	}
 
 	//	get the mesh's lead in/out box
 	const TLMaths::TBox* pLeadInOutBox = NULL;
-	if( pGlyph )
+	TLAsset::TMesh* pGlyphMesh = RenderGlyph.m_pGlyphMesh.GetObject();
+	if ( pGlyphMesh )
 	{
-		TPtr<TBinaryTree> pLeadInOutBoxData = pGlyph->GetData("LeadBox");
+		TPtr<TBinaryTree>& pLeadInOutBoxData = pGlyphMesh->GetData("LeadBox");
 		if ( pLeadInOutBoxData )
 		{
 			pLeadInOutBoxData->ResetReadPos();
@@ -91,7 +92,7 @@ void TLRender::TRenderNodeText::SetGlyph(TPtr<TRenderNodeGlyph>& pRenderGlyph,TP
 		
 		//	no data, use our bounding box
 		if ( !pLeadInOutBox )
-			pLeadInOutBox = &pGlyph->GetBoundsBox();
+			pLeadInOutBox = &pGlyphMesh->GetBoundsBox();
 	}
 
 	//	move back for lead in
@@ -100,13 +101,13 @@ void TLRender::TRenderNodeText::SetGlyph(TPtr<TRenderNodeGlyph>& pRenderGlyph,TP
 		GlyphPos.x -= pLeadInOutBox->GetMin().x;
 	}
 
-	//	simple spacing atm
-	if ( pRenderGlyph->GetTranslate() != GlyphPos )
+	//	simple spacing atm - update node position
+	if ( RenderGlyph.GetTranslate() != GlyphPos )
 	{
-		pRenderGlyph->SetTranslate( GlyphPos );
+		RenderGlyph.SetTranslate( GlyphPos );
 	}
 
-	//	move along by the 
+	//	move along by the lead box
 	if ( pLeadInOutBox )
 	{
 		GlyphPos.x += pLeadInOutBox->GetMax().x;
@@ -115,7 +116,7 @@ void TLRender::TRenderNodeText::SetGlyph(TPtr<TRenderNodeGlyph>& pRenderGlyph,TP
 	if ( LineFeed )
 	{
 		//	gr: need to find some way of getting an accurate line feed... currently use the bounds box height of 'A'
-		TPtr<TLAsset::TMesh> pLineFeedGlyph = pFont->GetGlyph('A');
+		TPtr<TLAsset::TMesh>& pLineFeedGlyph = Font.GetGlyph('A');
 		if ( pLineFeedGlyph )
 		{
 			TLMaths::TBox& Bounds = pLineFeedGlyph->CalcBoundsBox();
@@ -131,7 +132,7 @@ void TLRender::TRenderNodeText::SetGlyph(TPtr<TRenderNodeGlyph>& pRenderGlyph,TP
 	//	reset bounds if object has changed
 	if ( Changed )
 	{
-		pRenderGlyph->OnBoundsChanged();
+		RenderGlyph.OnBoundsChanged();
 	}
 }
 
@@ -142,9 +143,10 @@ void TLRender::TRenderNodeText::SetGlyph(TPtr<TRenderNodeGlyph>& pRenderGlyph,TP
 void TLRender::TRenderNodeText::SetGlyphs()
 {
 	//	grab our font
-	TPtr<TLAsset::TFont> pFont = TLAsset::GetAsset( m_FontRef, TRUE );
-	if ( !pFont )
+	TPtr<TLAsset::TAsset>& pFontAsset = TLAsset::GetAsset( m_FontRef, TRUE );
+	if ( !pFontAsset )
 		return;
+	TLAsset::TFont& Font = *pFontAsset.GetObject<TLAsset::TFont>();
 
 	//	relative to parent so start at 0,0,0
 	float3 GlyphPos(0,0,0);
@@ -162,12 +164,11 @@ void TLRender::TRenderNodeText::SetGlyphs()
 	while ( pChild )
 	{
 #endif
+		//	gr: just set not enabled?
 		//	remove children we dont need any more
-		if ( charindex >= m_String.GetLengthWithoutTerminator() )
+		if ( charindex >= m_Text.GetLengthWithoutTerminator() )
 		{
-			TPtr<TRenderNode> pRemoveChild = pChild;
-
-			TLRender::g_pRendergraph->RemoveNode( pRemoveChild );
+			TLRender::g_pRendergraph->RemoveNode( pChild );
 			//RemoveChild( pRemoveChild );
 
 			#ifndef TLGRAPH_OWN_CHILDREN
@@ -177,10 +178,14 @@ void TLRender::TRenderNodeText::SetGlyphs()
 		}
 
 		//	setup existing child
-		TPtr<TRenderNodeGlyph> pRenderGlyph = pChild;
+		TRenderNodeGlyph& RenderGlyph = *pChild.GetObject<TRenderNodeGlyph>();
 
-		SetGlyph( pRenderGlyph, pFont, GlyphPos, m_String[charindex] );
-	
+		//	update glyph
+		SetGlyph( RenderGlyph, Font, GlyphPos, m_Text[charindex] );
+		
+		//	take parents render flags
+		RenderGlyph.GetRenderFlags() = this->GetRenderFlags();
+
 		#ifndef TLGRAPH_OWN_CHILDREN
 		pChild = pChild->GetNext();
 		#endif
@@ -188,15 +193,15 @@ void TLRender::TRenderNodeText::SetGlyphs()
 	}
 	
 	//	need to add more children
-	while ( charindex<m_String.GetLengthWithoutTerminator() )
+	while ( charindex<m_Text.GetLengthWithoutTerminator() )
 	{
 		//	cast to glyph
 		TTempString GlyphName;
-		GlyphName.Appendf("g- %c", m_String[charindex] );
+		GlyphName.Appendf("g- %c", m_Text[charindex] );
 
-		TPtr<TRenderNodeGlyph> pRenderGlyph = new TRenderNodeGlyph( GlyphName );
+		TPtr<TRenderNodeGlyph> pRenderGlyph = new TRenderNodeGlyph( GlyphName, "Glyph" );
 		TLRender::g_pRendergraph->AddNode( pRenderGlyph, this->GetNodeRef() );
-		SetGlyph( pRenderGlyph, pFont, GlyphPos, m_String[charindex] );
+		SetGlyph( *pRenderGlyph.GetObject(), Font, GlyphPos, m_Text[charindex] );
 	
 		charindex++;
 	}
@@ -211,49 +216,17 @@ void TLRender::TRenderNodeText::SetGlyphs()
 //--------------------------------------------------------------------
 Bool TLRender::TRenderNodeText::Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList)
 {
-	//	grab our font
-	TPtr<TLAsset::TFont> pFont = TLAsset::GetAsset( m_FontRef, TRUE );
-	if ( !pFont )
-		return FALSE;
-	
+	//	setup glyphs if they are out of date
 	if ( m_GlyphsChanged )
 		SetGlyphs();
 
-	//	make sure each child glyph has correct mesh assigned
-#ifdef TLGRAPH_OWN_CHILDREN
-	TPtrArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
-	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
-	{
-		TPtr<TLRender::TRenderNode>& pChild = NodeChildren[c];
-#else
-	TPtr<TRenderNode> pChild = GetChildFirst();
-	while ( pChild )
-	{
-#endif
-		TPtr<TRenderNodeGlyph> pRenderGlyph = pChild;
-
-		//	get the glyph for this character
-		TPtr<TLAsset::TMesh> pGlyph = pFont->GetGlyph( pRenderGlyph->m_Character );
-
-		//	set the mesh ptr
-		pRenderGlyph->m_pGlyphMesh = pGlyph;
-
-		//	merge render flags
-		pRenderGlyph->GetRenderFlags() = this->GetRenderFlags();
-		
-		#ifndef TLGRAPH_OWN_CHILDREN
-		pChild = pChild->GetNext();
-		#endif
-	}
-
-	//	do normal render... just renders children
 	return TRUE;
 }
 
 
 
-TLRender::TRenderNodeGlyph::TRenderNodeGlyph(TRefRef RenderNodeRef) :
-	TRenderNode	( RenderNodeRef ),
+TLRender::TRenderNodeGlyph::TRenderNodeGlyph(TRefRef RenderNodeRef,TRefRef TypeRef) :
+	TRenderNode		( RenderNodeRef, TypeRef ),
 	m_Character		( 0 )
 {
 }

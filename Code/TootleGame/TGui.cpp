@@ -51,6 +51,10 @@ TLGui::TGui::~TGui()
 //-------------------------------------------------
 SyncBool TLGui::TGui::Initialise()
 {
+	//	already initialised
+	if ( m_Subscribed && m_InitialisedRenderNodes )
+		return SyncTrue;
+
 	//	setup render nodes
 	if ( !m_InitialisedRenderNodes )
 	{

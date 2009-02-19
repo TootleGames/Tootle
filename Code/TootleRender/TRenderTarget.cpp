@@ -10,8 +10,6 @@
 //#define DEBUG_NODE_RENDERED_COUNT
 #endif
 
-#define ENABLE_ALPHA			//	enable alphas (on by default)
-
 
 //-----------------------------------------------------------
 //	
@@ -89,7 +87,7 @@ void TLRender::TRenderTarget::Draw()
 	//	render the clear object if we have it
 	if ( m_pRenderNodeClear )
 	{
-		DrawNode( m_pRenderNodeClear.GetObject(), NULL, NULL, 1.f, NULL );
+		DrawNode( m_pRenderNodeClear.GetObject(), NULL, NULL, TColour( 1.f, 1.f, 1.f, 1.f ), NULL );
 	}
 
 	//	update the camera's zone
@@ -110,7 +108,7 @@ void TLRender::TRenderTarget::Draw()
 		TPtr<TRenderNode>& pRootRenderNode = GetRootRenderNode();
 		if ( pRootRenderNode )
 		{
-			DrawNode( pRootRenderNode.GetObject(), NULL, NULL, 1.f, m_pRootQuadTreeZone ? m_pCamera.GetObject<TLMaths::TQuadTreeNode>() : NULL );
+			DrawNode( pRootRenderNode.GetObject(), NULL, NULL, TColour( 1.f, 1.f, 1.f, 1.f ), m_pRootQuadTreeZone ? m_pCamera.GetObject<TLMaths::TQuadTreeNode>() : NULL );
 		}
 	}
 
@@ -170,7 +168,7 @@ void TLRender::TRenderTarget::EndDraw()
 		glBegin(GL_LINES);
 		{	
 			/*	
-			glColor3f( 1.f, 0.f, 0.f );
+			Opengl::SetSceneColour( TColour( 1.f, 0.f, 0.f, 1.f ) );
 
 			//	front
 			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(0) );
@@ -185,7 +183,8 @@ void TLRender::TRenderTarget::EndDraw()
 			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(3) );
 			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(0) );
 		*/
-			glColor3f( 0.f, 1.f, 0.f );
+			Opengl::SetSceneColour( TColour( 0.f, 1.f, 0.f, 1.f ) );
+
 			//	rear
 			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(4) );
 			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(5) );
@@ -200,7 +199,7 @@ void TLRender::TRenderTarget::EndDraw()
 			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(4) );
 
 			/*
-			glColor3f( 1.f, 1.f, 0.f );
+			Opengl::SetSceneColour( TColour( 1.f, 1.f, 0.f, 1.f ) );
 
 			//	joins
 			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(0) );
@@ -544,7 +543,7 @@ Bool TLRender::TRenderTarget::IsZoneVisible(TLMaths::TQuadTreeNode* pCameraZoneN
 //---------------------------------------------------------------
 //	render a render node
 //---------------------------------------------------------------
-Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pParentRenderNode,const TLMaths::TTransform* pSceneTransform,float SceneAlpha,TLMaths::TQuadTreeNode* pCameraZoneNode)
+Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pParentRenderNode,const TLMaths::TTransform* pSceneTransform,TColour SceneColour,TLMaths::TQuadTreeNode* pCameraZoneNode)
 {
 	if ( !pRenderNode )
 	{
@@ -552,47 +551,70 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 		return FALSE;
 	}
 
-	//	not enabled, dont render
-	if ( !pRenderNode->GetRenderFlags().IsSet( TLRender::TRenderNode::RenderFlags::Enabled ) )
-		return FALSE;
-
 	const TFlags<TRenderNode::RenderFlags::Flags>& RenderNodeRenderFlags = pRenderNode->GetRenderFlags();
-	Bool ResetScene = RenderNodeRenderFlags.IsSet(TLRender::TRenderNode::RenderFlags::ResetScene);
 
-	if ( ResetScene )
-		SceneAlpha = 1.f;
-	
-	//	merge alpha of scene
-	SceneAlpha *= pRenderNode->GetAlpha();
-
-	//	alpha'd out
-	if ( SceneAlpha < TLMaths::g_NearZero )
+	//	not enabled, dont render
+	if ( !RenderNodeRenderFlags.IsSet( TLRender::TRenderNode::RenderFlags::Enabled ) )
 		return FALSE;
+
+	Bool ResetScene = RenderNodeRenderFlags.IsSet(TLRender::TRenderNode::RenderFlags::ResetScene);
+	if ( ResetScene )
+	{
+		SceneColour = pRenderNode->GetColour();
+	}
+	else
+	{
+		//	merge colour of scene
+		if ( pRenderNode->IsColourValid() )
+		{
+			SceneColour *= pRenderNode->GetColour();
+
+			//	alpha'd out (only applies if we're applying our colour, a la - IsColourValid)
+			if ( SceneColour.GetAlpha() < TLMaths::g_NearZero )
+				return FALSE;
+		}
+	}
 
 	//	check visibility of node, if not visible then skip render (and of children)
 	TPtr<TLMaths::TQuadTreeNode>* ppRenderZoneNode = NULL;
-
-	//	pass in NULL as the scene transform to do a very quick zone test
 	Bool RenderNodeIsInsideCameraZone = FALSE;
-	SyncBool IsInCameraRenderZone = IsRenderNodeVisible( pRenderNode, ppRenderZoneNode, pCameraZoneNode, NULL, RenderNodeIsInsideCameraZone );
+	SyncBool IsInCameraRenderZone = SyncWait;
 
-	//	after quick check we know the node is in a zone the camera cannot see
-	if ( IsInCameraRenderZone == SyncFalse )
+	//	do cull test if enabled on node
+	if ( pCameraZoneNode && RenderNodeRenderFlags.IsSet( TLRender::TRenderNode::RenderFlags::EnableCull ) )
 	{
-		m_Debug_NodeCulledCount++;
-		return FALSE;
+		//	pass in NULL as the scene transform to do a very quick zone test - skips calculating bounds etc
+		IsInCameraRenderZone = IsRenderNodeVisible( pRenderNode, ppRenderZoneNode, pCameraZoneNode, NULL, RenderNodeIsInsideCameraZone );
+
+		//	after quick check we know the node is in a zone the camera cannot see
+		if ( IsInCameraRenderZone == SyncFalse )
+		{
+			m_Debug_NodeCulledCount++;
+			return FALSE;
+		}
+	}
+	else
+	{
+		//	no cull testing, set as visible and mark as inside zone so we won't do any tests further down the tree
+		IsInCameraRenderZone = SyncTrue;
+		RenderNodeIsInsideCameraZone = TRUE;
 	}
 
 	//	do minimal calcuations to calc scene transformation - yes code is a bit of a pain, but this is very good for us :)
 	//	only problem is, we can't reuse this code in another func as we lose the reference initialisation, which is the whole speed saving
 	TLMaths::TTransform NewSceneTransform;
-	Bool NodeTrans = pRenderNode->GetTransform().HasAnyTransform();
+	const TLMaths::TTransform& NodeTransform = pRenderNode->GetTransform();
+	Bool NodeTrans = NodeTransform.HasAnyTransform();
 	Bool SceneTrans = (pSceneTransform && !ResetScene) ? pSceneTransform->HasAnyTransform() : FALSE;
-	const TLMaths::TTransform& SceneTransform = (NodeTrans&&SceneTrans) ? NewSceneTransform : ( (NodeTrans||(!pSceneTransform)) ? pRenderNode->GetTransform() : *pSceneTransform );
+	
+	//	work out which transform we are actually using... 
+	const TLMaths::TTransform& SceneTransform = (NodeTrans&&SceneTrans) ? NewSceneTransform : ( (NodeTrans||!pSceneTransform) ? NodeTransform : *pSceneTransform );
+
+	//	using a new scene transform, so calculate it
 	if ( NodeTrans && SceneTrans )
 	{
 		NewSceneTransform = *pSceneTransform;
-		NewSceneTransform.Transform( pRenderNode->GetTransform() );
+		NewSceneTransform.Transform( NodeTransform );
 	}
 
 	//	calc latest world pos for node
@@ -620,7 +642,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 			BeginSceneReset();
 
 			//	transform scene
-			if ( &pRenderNode->GetTransform() != &SceneTransform )
+			if ( &NodeTransform != &SceneTransform )
 			{
 				TLDebug_Break("Im pretty sure these should be the same - in which case use SceneTransform");
 			}
@@ -631,7 +653,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 		}
 
 		//	transform scene by node's transofrm
-		Opengl::SceneTransform( pRenderNode->GetTransform() );
+		Opengl::SceneTransform( NodeTransform );
 	}
 
 	//	count node as rendered
@@ -645,8 +667,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 	if ( pRenderNode->Draw( this, pParentRenderNode, PostRenderList ) )
 	{
 		//	get mesh
-		TPtr<TLAsset::TMesh> pMeshAsset;
-		pRenderNode->GetMeshAsset( pMeshAsset );
+		TPtr<TLAsset::TMesh>& pMeshAsset = pRenderNode->GetMeshAsset();
 		
 		//	always calculate some things
 		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::CalcWorldBoundsBox ) )
@@ -656,13 +677,17 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 			pRenderNode->CalcWorldBoundsSphere( SceneTransform );
 
 		//	draw mesh!
-		DrawMeshWrapper( pMeshAsset.GetObject(), pRenderNode, SceneTransform, SceneAlpha, PostRenderList );
+		DrawMeshWrapper( pMeshAsset.GetObject(), pRenderNode, SceneTransform, SceneColour, PostRenderList );
 	}
 
 	//	if this render node is in a zone under the camera's zone, then we KNOW the child nodes are going to be visible, so we dont need to provide the camera's
 	//	render zone. Will just mean we can skip render zone checks
-	//TPtr<TLMaths::TQuadTreeZone>& pChildCameraRenderZone = RenderNodeIsInsideCameraZone ? TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>() : pCameraRenderZone;
+	//	gr: this isn't quite right atm, just check the flag for now
+	//TLMaths::TQuadTreeNode* pChildCameraZoneNode = RenderNodeIsInsideCameraZone ? NULL : pCameraZoneNode;
+	//TLMaths::TQuadTreeNode* pChildCameraZoneNode = pCameraZoneNode;
 	TLMaths::TQuadTreeNode* pChildCameraZoneNode = pCameraZoneNode;
+	if ( !RenderNodeRenderFlags.IsSet( TLRender::TRenderNode::RenderFlags::EnableCull ) )
+		pChildCameraZoneNode = NULL;
 
 	//	render children
 #ifdef TLGRAPH_OWN_CHILDREN
@@ -676,7 +701,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 	{
 #endif
 		//	draw child
-		DrawNode( pChild.GetObject(), pRenderNode, &SceneTransform, SceneAlpha, pChildCameraZoneNode );
+		DrawNode( pChild.GetObject(), pRenderNode, &SceneTransform, SceneColour, pChildCameraZoneNode );
 
 		#ifndef TLGRAPH_OWN_CHILDREN
 		pChild = pChild->GetNext();
@@ -692,16 +717,17 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 		//TPtr<TLRender::TRenderNode>& pChild = PostRenderList[c];
 		TPtr<TLRender::TRenderNode> pChild = PostRenderList[n];
 
+		//	gr: redundant? dont need a temp... this transform wont be changed...
 		TLMaths::TTransform TempSceneTransform = SceneTransform;
 
 		//	draw child
-		DrawNode( pChild.GetObject(), pRenderNode, &TempSceneTransform, SceneAlpha, pChildCameraZoneNode );
+		DrawNode( pChild.GetObject(), pRenderNode, &TempSceneTransform, SceneColour, pChildCameraZoneNode );
 
 		//	remove from list
 		PostRenderList.RemoveAt(n);
 	}
 
-	//	clean up scene
+	//	clean up/restore scene
 	if ( NodeTrans )
 	{
 		EndScene();
@@ -714,7 +740,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 //-------------------------------------------------------------
 //	
 //-------------------------------------------------------------
-void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode* pRenderNode,const TLMaths::TTransform& SceneTransform,float SceneAlpha,TPtrArray<TRenderNode>& PostRenderList)
+void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode* pRenderNode,const TLMaths::TTransform& SceneTransform,TColour SceneColour,TPtrArray<TRenderNode>& PostRenderList)
 {
 #ifdef _DEBUG
 	TFlags<TRenderNode::RenderFlags::Flags> RenderNodeRenderFlags = pRenderNode->GetRenderFlags();
@@ -725,7 +751,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 #else
 	TFlags<TRenderNode::RenderFlags::Flags>& RenderNodeRenderFlags = pRenderNode->GetRenderFlags();
 #endif
-	
+
 	//	mesh renders
 	if ( pMesh && !pMesh->IsEmpty() )
 	{
@@ -735,16 +761,8 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 			//	make sure wireframe is off
 			Opengl::EnableWireframe(FALSE);
 
-			#ifdef ENABLE_ALPHA
-			{
-				//	enable alpha - update the scene alpha (recursing alpha)
-				if ( SceneAlpha < TLMaths::g_NearOne )
-					Opengl::SetSceneAlpha( SceneAlpha );
-				else
-					//	full-opaque scene colour, but might need to enable alpha for the mesh
-					Opengl::EnableAlpha( pMesh->HasAlpha() );
-			}
-			#endif
+			//	set the scene colour, and force enable alpha if the mesh needs it
+			Opengl::SetSceneColour( SceneColour, pMesh->HasAlpha() );
 
 			DrawMesh( *pMesh, pRenderNode, RenderNodeRenderFlags );
 		}
@@ -756,8 +774,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 			{
 				//	setup specific params
 				Opengl::EnableWireframe(TRUE);
-				Opengl::SetSceneAlpha( 1.f );
-				Opengl::EnableAlpha( FALSE );
+				Opengl::SetSceneColour( TColour( 1.f, 1.f, 1.f, 1.f ) );
 				Opengl::SetLineWidth( 1.f );
 
 				TFlags<TRenderNode::RenderFlags::Flags> WireframeRenderFlags = RenderNodeRenderFlags;
@@ -800,8 +817,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 			
 				//	setup specific params
 				Opengl::EnableWireframe(TRUE);
-				Opengl::SetSceneAlpha( 1.f );
-				Opengl::EnableAlpha( FALSE );
+				Opengl::SetSceneColour( TColour( 1.f, 1.f, 1.f, 1.f ) );
 				Opengl::SetLineWidth( 1.f );
 
 				DrawMeshShape( RenderNodeBounds, pRenderNode, RenderFlags, TRUE );

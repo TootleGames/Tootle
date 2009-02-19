@@ -211,6 +211,7 @@ public:
 	inline const Type3<TYPE>&	xyz() const								{	return *((Type3<TYPE>*)&x);	}
 
 	inline Bool			operator==(const Type4<TYPE>& v) const		{	return ( x == v.x ) && ( y == v.y ) && ( z == v.z ) && ( w == v.w );	};
+	inline Bool			operator!=(const Type4<TYPE>& v) const		{	return ( x != v.x ) || ( y != v.y ) || ( z != v.z ) || ( w != v.w );	};
 	inline Bool			operator<(const Type4<TYPE>& v) const		{	return ( x < v.x ) && ( y < v.y ) && ( z < v.z ) && ( w < v.w );	};
 
 	template<typename OTHERTYPE> inline void		operator=(const Type2<OTHERTYPE>& v);

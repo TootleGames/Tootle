@@ -59,7 +59,7 @@ namespace TLRender
 		FORCEINLINE void		EnableAlpha(Bool Enable);
 		FORCEINLINE void		EnableDepthRead(Bool Enable);
 		FORCEINLINE void		EnableDepthWrite(Bool Enable);
-		FORCEINLINE void		SetSceneAlpha(float Alpha);		//	if < 1 then it will enable alpha too
+		FORCEINLINE void		SetSceneColour(const TColour& Colour,Bool ForceEnableAlpha=FALSE);		//	if alpha < 1 then it will enable alpha too
 		FORCEINLINE void		SetLineWidth(float Width);
 		FORCEINLINE void		SetPointSize(float Size);
 		
@@ -178,15 +178,25 @@ FORCEINLINE void TLRender::Opengl::EnableDepthWrite(Bool Enable)
 //---------------------------------------------------
 //	if < 1 then it will enable alpha too
 //---------------------------------------------------
-void TLRender::Opengl::SetSceneAlpha(float Alpha)
+void TLRender::Opengl::SetSceneColour(const TColour& Colour,Bool ForceEnableAlpha)
 {
-	static float g_SceneAlpha = 1.f;
-	
-	if ( g_SceneAlpha != Alpha )
+	static TColour g_SceneColour( 1.f, 1.f, 1.f, 1.f );
+
+	if ( g_SceneColour != Colour )
 	{
-		Platform::SetSceneColour( TColour( 1.f, 1.f, 1.f, Alpha ) );
-		EnableAlpha( Alpha < TLMaths::g_NearOne );
-		g_SceneAlpha = Alpha;
+		Platform::SetSceneColour( Colour );
+		EnableAlpha( ForceEnableAlpha || Colour.IsTransparent() );
+		g_SceneColour = Colour;
+	}
+	else if ( ForceEnableAlpha )
+	{
+		//	no colour change, but alpha needs to be forced on so enable it
+		EnableAlpha( ForceEnableAlpha );
+	}
+	else if ( !Colour.IsTransparent() )
+	{
+		//	if a parent forced alpha on, but it's off now, turn it off again
+		EnableAlpha( FALSE );
 	}
 }
 

@@ -5,7 +5,7 @@
 
 
 #ifdef _DEBUG
-#define DEBUG_SCALE_FRUSTUM_BOX		0.9f	//	scale down the frustum boxes we generate to test culling/intersections etc
+#define DEBUG_SCALE_FRUSTUM_BOX		0.4f	//	scale down the frustum boxes we generate to test culling/intersections etc
 #endif
 
 

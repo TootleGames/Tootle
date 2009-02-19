@@ -54,7 +54,7 @@ public:
 
 	//	options access
 	template<typename TYPE>
-	Bool				GetOption(TRefRef OptionRef,TYPE& Value,const TYPE& DefaultValue);	//	get option value - if it doesnt exist FALSE is return and Value is set to DefaultValue
+	Bool				GetOption(TRefRef OptionRef,TYPE& Value,const TYPE& DefaultValue,Bool SetDefault=FALSE);	//	get option value - if it doesnt exist FALSE is return and Value is set to DefaultValue
 	template<typename TYPE>
 	FORCEINLINE TYPE	GetOption(TRefRef OptionRef,const TYPE& DefaultValue)				{	TYPE Value;	GetOption( OptionRef, Value, DefaultValue );	return Value;	}
 	template<typename TYPE>
@@ -163,13 +163,20 @@ public:
 //	get option value - if it doesnt exist FALSE is return and Value is set to DefaultValue
 //--------------------------------------------------
 template<typename TYPE>
-Bool TLCore::TApplication::GetOption(TRefRef OptionRef,TYPE& Value,const TYPE& DefaultValue)
+Bool TLCore::TApplication::GetOption(TRefRef OptionRef,TYPE& Value,const TYPE& DefaultValue,Bool SetDefault)
 {
 	if ( m_Options.ImportData( OptionRef, Value ) )
 		return TRUE;
 
 	//	no existing settings, return default
 	Value = DefaultValue;
+
+	//	set the default
+	if ( SetDefault )
+	{
+		SetOption( OptionRef, Value );
+	}
+
 	return FALSE;
 }
 

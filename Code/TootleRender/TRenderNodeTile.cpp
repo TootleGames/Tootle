@@ -16,8 +16,7 @@ TLRender::TRenderNodeTile::TRenderNodeTile(TRefRef RenderNodeRef,TRefRef TypeRef
 Bool TLRender::TRenderNodeTile::Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList)
 {
 	//	get our mesh's bounding box so we know how big each tile is
-	TPtr<TLAsset::TMesh> pTileMesh;
-	GetMeshAsset( pTileMesh );
+	TPtr<TLAsset::TMesh>& pTileMesh = GetMeshAsset();
 	if ( !pTileMesh )
 		return FALSE;
 

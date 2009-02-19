@@ -26,6 +26,8 @@ class TLGui::TWidgetScrollbar : public TLGui::TGui
 public:
 	TWidgetScrollbar(TRefRef RenderTargetRef,TRefRef ScrollBarRenderNode,TRefRef SliderRenderNode,TRefRef UserRef,TRefRef ActionOut,float InitialScrollValue=0.f);
 
+	FORCEINLINE void		PublishScrollValue()								{	SendActionMessage( TRUE, m_ScrollValue );	}
+
 protected:
 	virtual Bool			Update();											//	update routine - return FALSE if we don't need updates any more
 	virtual SyncBool		ProcessClick(const TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TPtr<TLRender::TRenderNode>& pRenderNode);	//	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again

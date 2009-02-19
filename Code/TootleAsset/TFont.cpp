@@ -21,27 +21,25 @@ TLAsset::TFont::TFont(const TRef& AssetRef) :
 //-------------------------------------------------------
 //	add a new glyph to the font
 //-------------------------------------------------------
-TPtr<TLAsset::TMesh> TLAsset::TFont::AddGlyph(u16 Character)
+TPtr<TLAsset::TMesh>& TLAsset::TFont::AddGlyph(u16 Character)
 {
 	//	create a new mesh and add
 	TPtr<TLAsset::TMesh> pGlyphMesh = new TLAsset::TMesh( TRef() );
 
 	//	add (this sets up the mesh)
-	AddGlyph( Character, pGlyphMesh );
-
-	return pGlyphMesh;
+	return AddGlyph( Character, pGlyphMesh );
 }
 
 
 //-------------------------------------------------------
 //	add a new glyph to the font
 //-------------------------------------------------------
-void TLAsset::TFont::AddGlyph(u16 Character,TPtr<TLAsset::TMesh>& pMesh)
+TPtr<TLAsset::TMesh>& TLAsset::TFont::AddGlyph(u16 Character,TPtr<TLAsset::TMesh>& pMesh)
 {
 	if ( !pMesh )
 	{
 		TLDebug_Break("Mesh expected");
-		return;
+		return TLPtr::GetNullPtr<TLAsset::TMesh>();
 	}
 
 	//	make up a better ref
@@ -51,16 +49,25 @@ void TLAsset::TFont::AddGlyph(u16 Character,TPtr<TLAsset::TMesh>& pMesh)
 	//	add glyph data to the mesh
 	TPtr<TBinaryTree> pGlyphData = pMesh->GetData("Glyph", TRUE );
 	if ( !pGlyphData )
-		return;
+	{
+		TLDebug_Break("Mesh is missing glyph information");
+		return TLPtr::GetNullPtr<TLAsset::TMesh>();
+	}
+
 	u16 GlyphChar = Character;
 	pGlyphData->Empty(FALSE);
 	pGlyphData->Write( GlyphChar );
 
 	//	add mesh to the glyph list
-	if ( !m_Glyphs.Add( Character, pMesh ) )
+	TPtr<TLAsset::TMesh>* pAddedMesh = m_Glyphs.Add( Character, pMesh );
+
+	if ( !pAddedMesh )
 	{
 		TLDebug_Print( TString("Warning: overwriting existing glyph character %c(0x%04x) in font", (char)Character, Character ) );
+		return TLPtr::GetNullPtr<TLAsset::TMesh>();
 	}
+
+	return *pAddedMesh;
 }
 
 
@@ -144,7 +151,7 @@ SyncBool TLAsset::TFont::ExportData(TBinaryTree& Data)
 		TPtr<TLAsset::TMesh>& pChildMesh = m_Glyphs.ElementAt(c);
 
 		//	ensure each glyph mesh has it's glyph data
-		TPtr<TBinaryTree> pChildMeshGlyph = pChildMesh->GetData("Glyph");
+		TPtr<TBinaryTree>& pChildMeshGlyph = pChildMesh->GetData("Glyph");
 		if ( !pChildMeshGlyph )
 		{
 			if ( !TLDebug_Break("Glyph child mesh of font is missing Glyph data") )
@@ -152,7 +159,7 @@ SyncBool TLAsset::TFont::ExportData(TBinaryTree& Data)
 		}
 
 		//	add to exporting data
-		TPtr<TBinaryTree> pChildData = Data.AddChild("Glyph");
+		TPtr<TBinaryTree>& pChildData = Data.AddChild("Glyph");
 		if ( !pChildData )
 		{
 			TLDebug_Break("Failed to create child");

@@ -24,11 +24,11 @@ class TLAsset::TFont : public TLAsset::TAsset
 public:
 	TFont(const TRef& AssetRef);
 
-	TPtr<TLAsset::TMesh>	GetGlyph(u16 Character)		{	return m_Glyphs.FindPtr(Character);	}
-	TPtr<TLAsset::TMesh>	GetGlyph(char Character)	{	u16 Char16 = ((u16)Character) & 0x00ff;	return GetGlyph( Char16);	}
+	TPtr<TLAsset::TMesh>&	GetGlyph(u16 Character)		{	return m_Glyphs.FindPtr(Character);	}
+	TPtr<TLAsset::TMesh>&	GetGlyph(char Character)	{	u16 Char16 = ((u16)Character) & 0x00ff;	return GetGlyph( Char16);	}
 	u32						GetGlyphCount() const		{	return m_Glyphs.GetSize();	}
-	TPtr<TLAsset::TMesh>	AddGlyph(u16 Character);	//	add a new glyph to the font
-	void					AddGlyph(u16 Character,TPtr<TLAsset::TMesh>& pMesh);	//	add a new glyph to the font
+	TPtr<TLAsset::TMesh>&	AddGlyph(u16 Character);	//	add a new glyph to the font
+	TPtr<TLAsset::TMesh>&	AddGlyph(u16 Character,TPtr<TLAsset::TMesh>& pMesh);	//	add a new glyph to the font
 
 protected:
 	virtual SyncBool		ImportData(TBinaryTree& Data);	//	load asset data out binary data

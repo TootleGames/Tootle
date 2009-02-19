@@ -3,7 +3,7 @@
 
 
 #define LINE_PADDING_HALF	(1.f)
-
+#define GENERATE_QUADS_AS_TRIANGLES
 
 namespace TLAsset
 {
@@ -70,6 +70,8 @@ void TLAsset::TMesh::GenerateCube(const TLMaths::TBox& Box)
 	//	bottom
 	m_Triangles.Add( Triangle( 4, 5, 6 ) );	
 	m_Triangles.Add( Triangle( 6, 7, 4 ) );
+
+	OnPrimitivesChanged();
 }
 
 
@@ -184,6 +186,8 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere& Sphere)
 	
 	m_Vertexes.Add( Verts );
 	m_Triangles.Add( Triangles );
+
+	OnPrimitivesChanged();
 }
 
 
@@ -193,6 +197,7 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere& Sphere)
 void TLAsset::TMesh::GenerateCapsule(const TLMaths::TCapsule& Capsule)
 {
 	TLDebug_Break("todo");
+	OnPrimitivesChanged();
 }
 
 //-------------------------------------------------------
@@ -236,6 +241,8 @@ SyncBool TLAsset::TMesh::ImportData(TBinaryTree& Data)
 	Data.ImportArrays( "TStrp", m_Tristrips );
 	Data.ImportArrays( "TFans", m_Trifans );
 	Data.ImportArrays( "Lines", m_Lines );
+
+	OnPrimitivesChanged();
 
 	//	import bounds
 	TLMaths::TBox& BoundsBox = GetBoundsBox();
@@ -390,7 +397,7 @@ TLMaths::TCapsule& TLAsset::TMesh::CalcBoundsCapsule(Bool ForceCalc)
 //-------------------------------------------------------
 //	scale all vertexes
 //-------------------------------------------------------
-void TLAsset::TMesh::ScaleVerts(const float3& Scale,u32 FirstVert,s32 LastVert)
+void TLAsset::TMesh::ScaleVerts(const float3& Scale,u16 FirstVert,s32 LastVert)
 {
 	if ( Scale == float3(1.f, 1.f, 1.f ) )
 		return;
@@ -413,7 +420,7 @@ void TLAsset::TMesh::ScaleVerts(const float3& Scale,u32 FirstVert,s32 LastVert)
 //-------------------------------------------------------
 //	move all verts
 //-------------------------------------------------------
-void TLAsset::TMesh::MoveVerts(const float3& Movement,u32 FirstVert,s32 LastVert)
+void TLAsset::TMesh::MoveVerts(const float3& Movement,u16 FirstVert,s32 LastVert)
 {
 	//	move bounds box if valid
 	if ( m_BoundsBox.IsValid() )
@@ -439,6 +446,12 @@ void TLAsset::TMesh::MoveVerts(const float3& Movement,u32 FirstVert,s32 LastVert
 //-------------------------------------------------------
 s32 TLAsset::TMesh::AddVertex(const float3& VertexPos)
 {
+	if ( m_Vertexes.GetSize() >= 0xffff )
+	{
+		TLDebug_Break("Mesh has reached it's max (u16) number of vertexes");
+		return -1;
+	}
+
 	//	need to supply a colour so use other func with a default colour
 	if ( m_Colours.GetSize() )
 	{
@@ -454,6 +467,12 @@ s32 TLAsset::TMesh::AddVertex(const float3& VertexPos)
 //-------------------------------------------------------
 s32 TLAsset::TMesh::AddVertex(const float3& VertexPos,const TColour& Colour)
 {
+	if ( m_Vertexes.GetSize() >= 0xffff )
+	{
+		TLDebug_Break("Mesh has reached it's max (u16) number of vertexes");
+		return -1;
+	}
+
 	//	don't have colours yet, so pad up the buffer with a default colour
 	if ( m_Colours.GetSize() < m_Vertexes.GetSize() )
 	{
@@ -480,7 +499,7 @@ s32 TLAsset::TMesh::AddVertex(const float3& VertexPos,const TColour& Colour)
 //-------------------------------------------------------------------
 //	find all uses of OldVertexIndex in polygons and swap them for NewVertexIndex 
 //-------------------------------------------------------------------
-Bool TLAsset::TMesh::ReplaceVertex(u32 OldVertexIndex,u32 NewVertexIndex)
+Bool TLAsset::TMesh::ReplaceVertex(u16 OldVertexIndex,u16 NewVertexIndex)
 {
 	s32 i;
 	Bool ChangedPolygon = FALSE;
@@ -557,6 +576,9 @@ Bool TLAsset::TMesh::ReplaceVertex(u32 OldVertexIndex,u32 NewVertexIndex)
 		}
 	}
 
+	if ( ChangedPolygon )
+		OnPrimitivesChanged();
+
 	return ChangedPolygon;
 }
 
@@ -567,7 +589,7 @@ Bool TLAsset::TMesh::ReplaceVertex(u32 OldVertexIndex,u32 NewVertexIndex)
 //	this vertex, and correct the vertex indexes in polygons (anything > VI needs reducing)
 //	returns if any changes to polygons made
 //-------------------------------------------------------------------
-Bool TLAsset::TMesh::RemoveVertex(u32 VertexIndex)
+Bool TLAsset::TMesh::RemoveVertex(u16 VertexIndex)
 {
 	//	out of range
 	if ( VertexIndex > m_Vertexes.GetSize() )
@@ -690,6 +712,9 @@ Bool TLAsset::TMesh::RemoveVertex(u32 VertexIndex)
 		}
 	}
 
+	if ( ChangedPolygon )
+		OnPrimitivesChanged();
+
 	return ChangedPolygon;
 }
 
@@ -771,6 +796,9 @@ Bool TLAsset::TMesh::RemoveLine(u32 VertexIndexA,u32 VertexIndexB)
 		}
 	}
 
+	if ( ChangedPolygon )
+		OnPrimitivesChanged();
+
 	return ChangedPolygon;
 }
 
@@ -795,6 +823,27 @@ Bool TLAsset::TMesh::GenerateQuad(const TArray<float3>& Outline,const TColour& V
 //--------------------------------------------------------
 Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour& VertexColour)
 {
+#ifdef GENERATE_QUADS_AS_TRIANGLES
+
+	TFixedArray<s32,4> VertIndexes;
+	VertIndexes[0] = AddVertex( OutlineA, VertexColour );
+	VertIndexes[1] = AddVertex( OutlineB, VertexColour );
+	VertIndexes[2] = AddVertex( OutlineC, VertexColour );
+	VertIndexes[3] = AddVertex( OutlineD, VertexColour );
+
+	//	create tri strip
+	Triangle* pTriangleA = m_Triangles.AddNew();
+	Triangle* pTriangleB = m_Triangles.AddNew();
+
+	pTriangleA->x = VertIndexes[0];
+	pTriangleA->y = VertIndexes[1];
+	pTriangleA->z = VertIndexes[2];
+
+	pTriangleB->x = VertIndexes[2];
+	pTriangleB->y = VertIndexes[3];
+	pTriangleB->z = VertIndexes[0];
+
+#else
 	//	create tri strip
 	Tristrip* pNewStrip = m_Tristrips.AddNew();
 	if ( !pNewStrip )
@@ -806,6 +855,9 @@ Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,
 	pNewStrip->Add( AddVertex( OutlineB, VertexColour ) );
 	pNewStrip->Add( AddVertex( OutlineD, VertexColour ) );
 	pNewStrip->Add( AddVertex( OutlineC, VertexColour ) );
+#endif
+
+	OnPrimitivesChanged();
 
 	return TRUE;
 }
@@ -825,6 +877,8 @@ void TLAsset::TMesh::Copy(const TMesh* pMesh)
 	m_Triangles.Copy( pMesh->m_Triangles );
 	m_Lines.Copy( pMesh->m_Lines );
 	
+	OnPrimitivesChanged();
+
 	m_BoundsBox = pMesh->m_BoundsBox;
 	m_BoundsSphere = pMesh->m_BoundsSphere;
 	m_BoundsCapsule = pMesh->m_BoundsCapsule;
@@ -844,4 +898,54 @@ void TLAsset::TMesh::ColoursMult(const TColour& Colour)
 		m_Colours[i] *= Colour;
 	}
 }
+
+
+//--------------------------------------------------------
+//	just a check to make sure the integrety of all the polygons indexes are valid
+//--------------------------------------------------------
+void TLAsset::TMesh::OnPrimitivesChanged()
+{
+#ifdef _DEBUG
+	u32 VertexCount = m_Vertexes.GetSize();
+	u32 i;
+
+	//	remove and correct polygons using this index
+	for ( i=0;	i<m_Triangles.GetSize();	i++ )
+	{
+		Triangle& t = m_Triangles[i];
+		TLDebug_CheckIndex( t.x, VertexCount );
+		TLDebug_CheckIndex( t.y, VertexCount );
+		TLDebug_CheckIndex( t.z, VertexCount );
+	}
+
+	for ( i=0;	i<m_Tristrips.GetSize();	i++ )
+	{
+		Tristrip& Polygon = m_Tristrips[i];
+		for ( s32 n=0;	n<Polygon.GetSize();	n++ )
+		{
+			TLDebug_CheckIndex( Polygon[n], VertexCount );
+		}
+	}
+
+	for ( i=0;	i<m_Trifans.GetSize();	i++ )
+	{
+		Trifan& Polygon = m_Trifans[i];
+		for ( s32 n=0;	n<Polygon.GetSize();	n++ )
+		{
+			TLDebug_CheckIndex( Polygon[n], VertexCount );
+		}
+	}
+	
+	for ( i=0;	i<m_Lines.GetSize();	i++ )
+	{
+		Line& Polygon = m_Lines[i];
+		for ( s32 n=0;	n<Polygon.GetSize();	n++ )
+		{
+			TLDebug_CheckIndex( Polygon[n], VertexCount );
+		}
+	}
+	
+#endif
+}
+
 

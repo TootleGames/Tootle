@@ -51,8 +51,10 @@ public:
 			ResetScene,					//	position and rotation are not inherited
 			CalcWorldBoundsBox,			//	always calculate world bounds box (for physics, object picking etc etc)
 			CalcWorldBoundsSphere,		//	always calculate world bounds sphere (for physics, object picking etc etc)
-			UseVertexColours,			//	bind vertex colours of mesh. if not set, when rendering a mesh the colours are not bound
+			UseVertexColours,			//	bind vertex colours of mesh. if not set when rendering, a mesh the colours are not bound
 			UseMeshLineWidth,			//	calculates mesh/world line width -> screen/pixel width
+			UseNodeColour,				//	set when colour is something other than 1,1,1,1 to save some processing (off by default!)
+			EnableCull,					//	enable camera/frustum/zone culling. if disabled, the whole tree below is disabled
 	
 			Debug_Wireframe,			//	draw in wireframe
 			Debug_Points,				//	draw a point at every vertex
@@ -90,12 +92,16 @@ public:
 	FORCEINLINE TFlags<RenderFlags::Flags>&	GetRenderFlags()							{	return m_RenderFlags;	}
 	FORCEINLINE const TFlags<RenderFlags::Flags>&	GetRenderFlags() const				{	return m_RenderFlags;	}
 	void									ClearDebugRenderFlags();
-	FORCEINLINE void						SetAlpha(float Alpha)						{	m_Alpha = Alpha;	}
-	FORCEINLINE float						GetAlpha() const							{	return m_Alpha;	}
+	FORCEINLINE void						SetAlpha(float Alpha)						{	if ( m_Colour.GetAlpha() != Alpha )	{	m_Colour.GetAlpha() = Alpha;	OnColourChanged();	}	}
+	FORCEINLINE float						GetAlpha() const							{	return m_Colour.GetAlpha();	}
+	FORCEINLINE void						SetColour(const TColour& Colour)			{	m_Colour = Colour;	OnColourChanged();	}
+	FORCEINLINE const TColour&				GetColour() const							{	return m_Colour;	}
+	FORCEINLINE Bool						IsColourValid() const						{	return m_RenderFlags( RenderFlags::UseNodeColour );	}
+	FORCEINLINE void						OnColourChanged();							//	enable node colour if non-white
 	FORCEINLINE const TRef&					GetMeshRef() const							{	return m_MeshRef;	}
 	FORCEINLINE void						SetMeshRef(TRefRef MeshRef)					{	if ( m_MeshRef != MeshRef )	{	m_MeshRef = MeshRef;	OnMeshRefChanged();	}	}
 
-	virtual void							GetMeshAsset(TPtr<TLAsset::TMesh>& pMesh);	//	default behaviour fetches the mesh from the asset lib with our mesh ref
+	virtual TPtr<TLAsset::TMesh>&			GetMeshAsset();								//	default behaviour fetches the mesh from the asset lib with our mesh ref
 
 	FORCEINLINE void						SetRenderNodeRef(TRefRef Ref)				{	SetNodeRef( Ref );	}
 	FORCEINLINE const TRef&					GetRenderNodeRef() const					{	return GetNodeRef();	}
@@ -119,6 +125,7 @@ public:
 	const TLMaths::TBox&					CalcWorldBoundsBox(const TLMaths::TTransform& SceneTransform);	//	if invalid calculate our local bounds box (accumulating children) if out of date and return it
 	const TLMaths::TBox&					CalcLocalBoundsBox();						//	return our current local bounds box and calculate if invalid
 	FORCEINLINE const TLMaths::TBox&		GetWorldBoundsBox() const					{	return m_WorldBoundsBox;	}	//	return our current local bounds box, possibly invalid
+	FORCEINLINE const TLMaths::TBox&		GetLastWorldBoundsBox() const				{	return m_WorldBoundsBox.IsValid() ? m_WorldBoundsBox : m_LastWorldBoundsBox;	}	
 	FORCEINLINE const TLMaths::TBox&		GetLocalBoundsBox() const					{	return m_LocalBoundsBox;	}	//	return our current local bounds box, possibly invalid
 
 	const TLMaths::TSphere&					CalcWorldBoundsSphere(const TLMaths::TTransform& SceneTransform);	//	if invalid calculate our local bounds box (accumulating children) if out of date and return it
@@ -144,7 +151,7 @@ protected:
 
 protected:
 	TLMaths::TTransform			m_Transform;				//	local transform 
-	float						m_Alpha;					//	alpha of render node
+	TColour						m_Colour;					//	colour of render node - only works if UseNodeColour is set
 	float						m_LineWidth;				//	this is an overriding line width for rendering lines in the mesh. In pixel width. NOT like the mesh line width which is in a world-size.
 	float3						m_WorldPos;					//	we always calc the world position on render, even if we dont calc the bounds box/sphere/etc, it's quick and handy!
 	Bool						m_WorldPosValid;			//	if this is not valid then the transform of this node has changed since our last render
@@ -152,10 +159,13 @@ protected:
 	//	gr: todo: almagamate all these bounds shapes into a single bounds type that does all 3 or picks the best or something
 	TLMaths::TBox				m_LocalBoundsBox;			//	bounding box of self (without transformation) and children (with transformation, so relative to us)
 	TLMaths::TBox				m_WorldBoundsBox;			//	bounding box of self in world space
+	TLMaths::TBox				m_LastWorldBoundsBox;		//	last valid world bounds box
 	TLMaths::TSphere			m_LocalBoundsSphere;		//	bounding sphere Shape of self (without transformation) and children (with transformation, so relative to us)
 	TLMaths::TSphere			m_WorldBoundsSphere;		//	bounding sphere Shape of self in world space
+	TLMaths::TSphere			m_LastWorldBoundsSphere;	//	
 	TLMaths::TCapsule			m_LocalBoundsCapsule;		//	bounding capsule Shape of self (without transformation) and children (with transformation, so relative to us)
 	TLMaths::TCapsule			m_WorldBoundsCapsule;		//	bounding capsule shape of self in world space
+	TLMaths::TCapsule			m_LastWorldBoundsCapsule;	//	
 
 	TFlags<RenderFlags::Flags>	m_RenderFlags;
 
@@ -184,5 +194,28 @@ public:
 protected:
 	TRef				m_RenderNodeRef;		//	render node that we're linked to
 };
+
+
+
+
+
+
+//---------------------------------------------------------------
+//	enable node colour if non-white
+//---------------------------------------------------------------
+FORCEINLINE void TLRender::TRenderNode::OnColourChanged()
+{
+	if ( m_Colour.GetRed() > TLMaths::g_NearOne &&
+		m_Colour.GetGreen() > TLMaths::g_NearOne &&
+		m_Colour.GetBlue() > TLMaths::g_NearOne &&
+		m_Colour.GetAlpha() > TLMaths::g_NearOne )
+	{
+		m_RenderFlags.Clear( RenderFlags::UseNodeColour );
+	}
+	else
+	{
+		m_RenderFlags.Set( RenderFlags::UseNodeColour );
+	}
+}
 
 

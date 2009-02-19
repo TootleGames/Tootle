@@ -10,6 +10,10 @@
 #include <TootleCore/TKeyArray.h>
 
 
+#ifdef _DEBUG
+	//#define DEBUG_CHECK_PRIMITIVE_INDEXES	//	check indexes of all the primitives are within bound vertex range
+#endif
+
 //---------------------------------------------------
 //	globals
 //---------------------------------------------------
@@ -277,7 +281,7 @@ void TLRender::Opengl::Platform::DrawPrimitives(u16 GLPrimType,u32 IndexCount,co
 		return;
 
 	//	make sure we don't attempt to render vertexes that aren't bound
-#ifdef _DEBUG
+#ifdef DEBUG_CHECK_PRIMITIVE_INDEXES
 	if ( g_pBoundVertexes )
 	{
 		u32 MaxVertexIndex = g_pBoundVertexes->GetLastIndex();

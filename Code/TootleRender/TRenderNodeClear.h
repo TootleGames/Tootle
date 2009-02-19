@@ -19,10 +19,10 @@ class TLRender::TRenderNodeClear : public TLRender::TRenderNode
 public:
 	TRenderNodeClear(TRefRef NodeRef,TRefRef TypeRef=TRef());
 
-	virtual void				GetMeshAsset(TPtr<TLAsset::TMesh>& pMesh) 	{	pMesh = m_pClearMesh;	}
+	virtual TPtr<TLAsset::TMesh>&	GetMeshAsset() 		{	return m_pClearMesh;	}
 
-	void						SetSize(const Type4<s32>& ClearSize,float NearZ,const TColour& ClearColour);	//	resize the mesh (also creates as required)
+	void							SetSize(const Type4<s32>& ClearSize,float NearZ,const TColour& ClearColour);	//	resize the mesh (also creates as required)
 
 public:
-	TPtr<TLAsset::TMesh>		m_pClearMesh;		//	just a quad
+	TPtr<TLAsset::TMesh>			m_pClearMesh;		//	just a quad
 };

@@ -1,6 +1,9 @@
 #include "TXml.h"
 
 
+#define CULL_HIDDEN_TAGS	//	gr: i dont think we ever have a need to include hidden tags at runtime
+
+
 namespace TLXml
 {
 	//	parse string to new tag
@@ -356,6 +359,16 @@ SyncBool TXml::Import(const TString& XmlString)
 			SyntaxError = TRUE;
 			break;
 		}
+
+		//	skip over hidden tags
+#ifdef CULL_HIDDEN_TAGS
+		if ( pNewTag->m_TagType == TLXml::TagType_Hidden )
+		{
+			//	goto next tag
+			CharIndex = TagCloseIndex;
+			continue;
+		}
+#endif
 
 		//	closing tag for the tag on the end of the stack (tag names should match)
 		if ( pNewTag->m_TagType == TLXml::TagType_Close )

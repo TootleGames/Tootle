@@ -292,10 +292,6 @@ SyncBool TLFileSys::TFileScheme::ImportGraph(TPtr<TXmlTag>& pTag,TPtr<TLAsset::T
 	{
 		TPtr<TXmlTag>& pChildTag = pTag->GetChildren().ElementAt(c);
 
-		//	ignore comments
-		if ( pChildTag->GetTagType() == TLXml::TagType_Hidden )
-			continue;
-
 		SyncBool TagImportResult = SyncFalse;
 		if ( pChildTag->GetTagName() == "node" )
 		{
@@ -356,7 +352,7 @@ SyncBool TLFileSys::TFileScheme::ImportNode(TPtr<TXmlTag>& pTag,TRefRef GraphRef
 	for ( u32 c=0;	c<pTag->GetChildren().GetSize();	c++ )
 	{
 		TPtr<TXmlTag>& pChildTag = pTag->GetChildren().ElementAt(c);
-
+	
 		SyncBool TagImportResult = SyncFalse;
 		if ( pChildTag->GetTagName() == "node" )
 		{

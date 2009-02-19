@@ -27,9 +27,9 @@ class TLRender::TRenderNodeGlyph : public TLRender::TRenderNode
 	friend class TLRender::TRenderNodeText;
 
 protected:
-	TRenderNodeGlyph(TRefRef RenderNodeRef=TRef());
+	TRenderNodeGlyph(TRefRef RenderNodeRef,TRefRef TypeRef);
 
-	virtual void			GetMeshAsset(TPtr<TLAsset::TMesh>& pMesh) 	{	pMesh = m_pGlyphMesh;	}
+	virtual TPtr<TLAsset::TMesh>&	GetMeshAsset() 	{	return m_pGlyphMesh;	}
 
 public:
 	TPtr<TLAsset::TMesh>	m_pGlyphMesh;
@@ -44,35 +44,25 @@ public:
 class TLRender::TRenderNodeText : public TLRender::TRenderNode
 {
 public:
-	enum TextFlags
-	{
-		Centered,
-		StretchToBoxHeight,	//	use render object's bounding box to stretch the height to. if StrethToBoxWidth not set then width is aspect
-		StrethToBoxWidth,	//	use render object's bounding box to stretch the WIDTH to. if StrethToBoxHeight not set then height is aspect - if both are set then box is filled
-	};
-
-public:
 	TRenderNodeText(TRefRef RenderNodeRef,TRefRef TypeRef);
 
 	virtual void			Initialise(TPtr<TLMessaging::TMessage>& pMessage);	//	generic render node init
 
-	TFlags<TextFlags>&		GetTextFlags()						{	return m_TextFlags;	}
 	TRefRef					GetFontRef() const					{	return m_FontRef;	}
 	void					SetFontRef(TRefRef FontRef)			{	m_FontRef = FontRef;	}
-	const TString&			GetString() const					{	return m_String;	}
-	void					SetString(const TString& String);	//	setup new string
+	const TString&			GetText() const						{	return m_Text;	}
+	void					SetText(const TString& Text);		//	setup new string
 
 	virtual Bool			Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList);	//	our overloaded renderer
 
 protected:
 	void					SetGlyphs();			//	setup child glyph render objects
-	void					SetGlyph(TPtr<TRenderNodeGlyph>& pRenderGlyph,TPtr<TLAsset::TFont>& pFont,float3& GlyphPos,u16 Char);
+	void					SetGlyph(TRenderNodeGlyph& RenderGlyph,TLAsset::TFont& Font,float3& GlyphPos,u16 Char);
 
 protected:
-	TFlags<TextFlags>		m_TextFlags;
 	TRef					m_FontRef;
-	TString					m_String;
-	Bool					m_GlyphsChanged;					//	if TRUE we need to re-generate glyphs
+	TString					m_Text;
+	Bool					m_GlyphsChanged;		//	if TRUE we need to re-generate glyphs
 };
 
 

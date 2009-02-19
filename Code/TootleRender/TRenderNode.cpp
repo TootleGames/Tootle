@@ -99,8 +99,7 @@ SyncBool TLRender::TRenderZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
 	{
 #ifdef _DEBUG
 		//	if there is no mesh, then this is understandable and wont throw up an error
-		TPtr<TLAsset::TMesh> pMesh;
-		pRenderNode->GetMeshAsset( pMesh );
+		TPtr<TLAsset::TMesh>& pMesh = pRenderNode->GetMeshAsset();
 		if ( pMesh )
 		{
 			//	gr: if we get here whilst the zone we're in is splitting, then we return Wait, 
@@ -137,10 +136,10 @@ void TLRender::TRenderZoneNode::CalcWorldBounds(TLRender::TRenderNode* pRenderNo
 
 TLRender::TRenderNode::TRenderNode(TRefRef RenderNodeRef,TRefRef TypeRef) :
 	TLGraph::TGraphNode<TLRender::TRenderNode>	( RenderNodeRef, TypeRef ),
-	m_Alpha				( 1.f  ),
 	m_Data				( "Data" ),
 	m_LineWidth			( 0.f ),
-	m_WorldPosValid		( FALSE )
+	m_WorldPosValid		( FALSE ),
+	m_Colour			( 1.f, 1.f, 1.f, 1.f )
 {
 	//	setup defualt render flags
 	m_RenderFlags.Set( RenderFlags::DepthRead );
@@ -148,6 +147,7 @@ TLRender::TRenderNode::TRenderNode(TRefRef RenderNodeRef,TRefRef TypeRef) :
 	m_RenderFlags.Set( RenderFlags::Enabled );
 	m_RenderFlags.Set( RenderFlags::UseVertexColours );
 	m_RenderFlags.Set( RenderFlags::UseMeshLineWidth );
+	m_RenderFlags.Set( RenderFlags::EnableCull );
 }
 
 
@@ -158,7 +158,7 @@ TLRender::TRenderNode::TRenderNode(TRefRef RenderNodeRef,TRefRef TypeRef) :
 void TLRender::TRenderNode::Copy(const TRenderNode& OtherRenderNode)
 {
 	m_Transform				= OtherRenderNode.m_Transform;
-	m_Alpha					= OtherRenderNode.m_Alpha;
+	m_Colour				= OtherRenderNode.m_Colour;
 	m_LocalBoundsBox		= OtherRenderNode.m_LocalBoundsBox;
 	m_WorldBoundsBox		= OtherRenderNode.m_WorldBoundsBox;
 	m_LocalBoundsSphere		= OtherRenderNode.m_LocalBoundsSphere;
@@ -175,18 +175,27 @@ void TLRender::TRenderNode::Copy(const TRenderNode& OtherRenderNode)
 //------------------------------------------------------------
 //	default behaviour fetches the mesh from the asset lib with our mesh ref
 //------------------------------------------------------------
-void TLRender::TRenderNode::GetMeshAsset(TPtr<TLAsset::TMesh>& pMesh)
+TPtr<TLAsset::TMesh>& TLRender::TRenderNode::GetMeshAsset()
 {
-	if ( !m_pMeshCache && GetMeshRef().IsValid() )
+	//	re-fetch mesh if we need to
+	if ( GetMeshRef().IsValid() && !m_pMeshCache )
 	{
 		m_pMeshCache = TLAsset::GetAsset( GetMeshRef(), TRUE );
 		
+		//	got a mesh, check it's the right type
+#ifdef _DEBUG
 		if ( m_pMeshCache )
+		{
 			if ( m_pMeshCache->GetAssetType() != "mesh" )
+			{
+				TLDebug_Break("MeshRef of render node is not a mesh");
 				m_pMeshCache = NULL;
+			}
+		}
+#endif
 	}
 
-	pMesh = m_pMeshCache;
+	return m_pMeshCache;
 }
 
 
@@ -223,7 +232,9 @@ const TLMaths::TBox& TLRender::TRenderNode::CalcWorldBoundsBox(const TLMaths::TT
 
 	//	transform box
 	m_WorldBoundsBox.Transform( SceneTransform );
-	//TransformBounds( m_WorldBoundsBox, *pSceneMatrix, *pSceneScale );
+	
+	//	copy last valid bounds box
+	m_LastWorldBoundsBox = m_WorldBoundsBox;
 
 	//	invalidate parent's bounds if our world bounds have changed
 	/*
@@ -252,8 +263,7 @@ const TLMaths::TBox& TLRender::TRenderNode::CalcLocalBoundsBox()
 	Debug_PrintCalculating( this, "local", "box" );
 
 	//	get bounds from mesh
-	TPtr<TLAsset::TMesh> pMesh;
-	GetMeshAsset( pMesh );
+	TPtr<TLAsset::TMesh>& pMesh = GetMeshAsset();
 	if ( pMesh )
 	{
 		TLMaths::TBox& MeshBounds = pMesh->CalcBoundsBox();
@@ -305,13 +315,6 @@ const TLMaths::TBox& TLRender::TRenderNode::CalcLocalBoundsBox()
 		{
 			//	gr: need to omit translate?
 			ChildBounds.Transform( pChild->GetTransform() );
-			/*
-			//	transform the child by it's own matrix (not ours)
-			TLMaths::TMatrix ChildMatrix;
-			pChild->GetMatrix( ChildMatrix );
-			float3 ChildScale = pChild->GetScale();
-			pChild->TransformBounds( ChildBounds, ChildMatrix, ChildScale );
-			*/
 
 			//	accumulate child
 			m_LocalBoundsBox.Accumulate( ChildBounds );
@@ -493,6 +496,9 @@ const TLMaths::TSphere& TLRender::TRenderNode::CalcWorldBoundsSphere(const TLMat
 
 	//	transform box
 	m_WorldBoundsSphere.Transform( SceneTransform );
+	
+	//	copy last valid bounds sphere
+	m_LastWorldBoundsSphere = m_WorldBoundsSphere;
 
 	return m_WorldBoundsSphere;
 }
@@ -518,6 +524,9 @@ const TLMaths::TCapsule& TLRender::TRenderNode::CalcWorldBoundsCapsule(const TLM
 
 	//	transform box
 	m_WorldBoundsCapsule.Transform( SceneTransform );
+	
+	//	copy last valid bounds sphere
+	m_LastWorldBoundsCapsule = m_WorldBoundsCapsule;
 
 	return m_WorldBoundsCapsule;
 }
@@ -533,8 +542,7 @@ const TLMaths::TSphere& TLRender::TRenderNode::CalcLocalBoundsSphere()
 		return m_LocalBoundsSphere;
 
 	//	get bounds from mesh
-	TPtr<TLAsset::TMesh> pMesh;
-	GetMeshAsset( pMesh );
+	TPtr<TLAsset::TMesh>& pMesh = GetMeshAsset();
 	if ( pMesh )
 	{
 		TLMaths::TSphere& MeshBounds = pMesh->CalcBoundsSphere();
@@ -600,8 +608,7 @@ const TLMaths::TCapsule& TLRender::TRenderNode::CalcLocalBoundsCapsule()
 		return m_LocalBoundsCapsule;
 
 	//	get bounds from mesh
-	TPtr<TLAsset::TMesh> pMesh;
-	GetMeshAsset( pMesh );
+	TPtr<TLAsset::TMesh>& pMesh = GetMeshAsset();
 	if ( pMesh )
 	{
 		TLMaths::TCapsule& MeshBounds = pMesh->CalcBoundsCapsule();
@@ -672,7 +679,6 @@ void TLRender::TRenderNode::ClearDebugRenderFlags()
 }
 
 
-	
 void TLRender::TRenderNode::OnAdded()
 {
 	TLGraph::TGraphNode<TLRender::TRenderNode>::OnAdded();
@@ -761,6 +767,9 @@ void TLRender::TRenderNode::Initialise(TPtr<TLMessaging::TMessage>& pMessage)
 			FlagChildren.Empty();
 		}
 
+		//	import colour
+		if ( pMessage->ImportData("Colour", m_Colour ) )
+			OnColourChanged();
 	}
 
 	//	do inherited init
