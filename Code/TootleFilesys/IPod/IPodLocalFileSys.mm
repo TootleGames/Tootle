@@ -9,7 +9,8 @@ using namespace TLFileSys;
 
 
 Platform::LocalFileSys::LocalFileSys(TRefRef FileSysRef,TRefRef FileSysTypeRef) :
-TFileSys			( FileSysRef, FileSysTypeRef )
+	TFileSys			( FileSysRef, FileSysTypeRef ),
+	m_IsWritable		( TRUE )
 {
 }
 
@@ -295,9 +296,8 @@ Bool Platform::LocalFileSys::IsDirectoryValid()
 		[pDirString release];
 		return FALSE;
 	}
-	
 
-		
+	//	gr: todo, see if we can check if this directory is read-only... see the PC local file sys IsDirectoryValid()
 	/*	
 	BOOL isDirectory = NO;
 
@@ -337,6 +337,15 @@ void Platform::LocalFileSys::SetDirectory(const TString& Directory)
 			TLFileSys::GetParentDir( NewDirectory );
 	}
 
+	//	gr: should really be using this; but with our own paths somehow
+	/*
+	NSString *documentsDirectory;
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	if ([paths count] > 0)  
+	{
+	    documentsDirectory = [paths objectAtIndex:0];
+	}
+	*/
 
 	//	get the root directory all directories come from
 	NSString *HomeDir = NSHomeDirectory();
@@ -360,6 +369,11 @@ void Platform::LocalFileSys::SetDirectory(const TString& Directory)
 //---------------------------------------------------------
 TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filename,TRefRef FileTypeRef)
 {
+	//	not allowed to write to this file sys
+	if ( !m_IsWritable )
+		return NULL;
+		
+	TLDebug_Break("todo: file creation code like below/PC");
 	return NULL;
 /*	
 	//	look for existing file
@@ -424,6 +438,10 @@ SyncBool Platform::LocalFileSys::WriteFile(TPtr<TFile>& pFile)
 		return SyncFalse;
 	}
 	
+	//	not allowed to write to this file sys
+	if ( !m_IsWritable )
+		return SyncFalse;
+
 	TTempString FullFilename = m_Directory;
 	FullFilename.Append( pFile->GetFilename() );
 	

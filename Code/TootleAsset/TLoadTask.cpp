@@ -158,21 +158,52 @@ TRef Mode_PlainFileCreateAssetFile::Update()
 	//	create a new asset file
 	TPtr<TLFileSys::TFileAsset> pNewFile;
 
-	//	put asset file into the file system that the file came from...
-#ifdef ENABLE_OUTPUT_ASSET_FILE
-	pNewFile = CreateFile( GetPlainFile()->GetFileSysRef() );
-#endif
+	//	make a list of file systems to try and write to
+	TPtrArray<TLFileSys::TFileSys> FileSystems;
+	//	first try and put asset file into the file system that the file came from...
+	TLFileSys::GetFileSys( FileSystems, GetPlainFile()->GetFileSysRef(), TRef() );
+	//	then any local file sys
+	TLFileSys::GetFileSys( FileSystems, TRef(), "Local" );
+	//	and finally resort to the virtual file sys
+	TLFileSys::GetFileSys( FileSystems, "Virtual", "Virtual" );
 
-	//	if that didnt work, try putting it in the virtual file sys
-	if ( !pNewFile )
+	//	make up new filename (with the right extension)
+	TString NewFilename = GetPlainFile()->GetFilename();
+	NewFilename.Append(".");
+	TRef("asset").GetString( NewFilename );
+
+	//	loop through file systems and try and create file
+	for ( u32 i=0;	i<FileSystems.GetSize();	i++ )
 	{
-		pNewFile = CreateFile("Virtual");
+		TLFileSys::TFileSys& FileSys = *FileSystems[i];
+
+		//	try and create file
+		pNewFile = FileSys.CreateFile( NewFilename, "asset" );
+
+		//	created file, break out of loop
+		if ( pNewFile )
+		{
+			#ifdef _DEBUG
+			{
+				TTempString Debug_String("Created new .asset file ");
+				Debug_String.Append( pNewFile->GetFilename() );
+				Debug_String.Append(" in file sys ");
+				FileSys.GetFileSysRef().GetString( Debug_String );
+				Debug_String.Append(" (");
+				FileSys.GetFileSysTypeRef().GetString( Debug_String );
+				Debug_String.Append(")");
+				TLDebug_Print( Debug_String );
+			}
+			#endif
+			break;
+		}
 	}
 
-	//	failed to create (even into the virtual file sys?)
+	//	failed to create file in any file sys
 	if ( !pNewFile )
 	{
 		//	failed to create new file
+		TLDebug_Break("Failed to put new .asset file in ANY file sys!");
 		return "Failed";
 	}
 
@@ -181,26 +212,6 @@ TRef Mode_PlainFileCreateAssetFile::Update()
 
 	//	export plain file
 	return "PFExport";
-}
-
-
-TPtr<TLFileSys::TFileAsset> Mode_PlainFileCreateAssetFile::CreateFile(TRefRef FileSysRef)
-{
-	//	get the file sys
-	TPtr<TLFileSys::TFileSys> pFileSys = TLFileSys::GetFileSys( FileSysRef );
-	if ( !pFileSys )
-	{
-		return NULL;
-	}
-
-	//	make up new filename (with the right extension)
-	TString NewFilename = GetPlainFile()->GetFilename();
-	NewFilename.Append(".");
-	TRef("asset").GetString( NewFilename );
-
-	//	create file
-	TPtr<TLFileSys::TFileAsset> pNewFile = pFileSys->CreateFile( NewFilename, "asset" );
-	return pNewFile;
 }
 
 

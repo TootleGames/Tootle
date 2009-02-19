@@ -72,7 +72,7 @@ protected:
 	virtual void				OnInitialised()										{	};
 
 private:
-	void						QueueClick(const int2& CursorPos,float ActionValue)		{	m_QueuedClicks.Add( TClick( CursorPos, ActionValue ) );	}
+	void						QueueClick(const int2& CursorPos,float ActionValue);	//	put a click in the queue
 	void						ProcessQueuedClicks();	//	go through queued-up (unhandled) clicks and respond to them
 
 protected:

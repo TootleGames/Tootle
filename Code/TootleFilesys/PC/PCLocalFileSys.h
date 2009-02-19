@@ -33,6 +33,7 @@ public:
 	virtual SyncBool		Shutdown();
 
 	void					SetDirectory(const TString& Directory);
+	void					SetIsWritable(Bool IsWritable)		{	m_IsWritable = IsWritable;	}
 
 protected:
 	Bool					IsDirectoryValid();					//	returns FALSE if m_Directory isn't a directory
@@ -43,7 +44,8 @@ protected:
 	Bool					LoadFileList(const char* pFileSearch);	//	load files with a filter, returns number of files found. -1 on error
 
 protected:
-	TString					m_Directory;
+	Bool					m_IsWritable;						//	overriding readonly setting
+	TString					m_Directory;						//	path to dir
 	HANDLE					m_FileFindHandle;					//	current handle for the file list
 	WIN32_FIND_DATA			m_FileFindData;						//	current file find data
 };

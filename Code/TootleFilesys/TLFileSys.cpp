@@ -118,13 +118,13 @@ SyncBool TLFileSys::TFileSysFactory::Shutdown()
 //----------------------------------------------------------
 //	return a file system
 //----------------------------------------------------------
-TPtr<TLFileSys::TFileSys> TLFileSys::GetFileSys(TRefRef FileSysRef)
+TPtr<TLFileSys::TFileSys>& TLFileSys::GetFileSys(TRefRef FileSysRef)
 {
 	//	missing factory
 	if ( !g_pFactory )
 	{
 		TLDebug_Break("FileSysFactory expected");
-		return NULL;
+		return TLPtr::GetNullPtr<TLFileSys::TFileSys>();
 	}
 
 	return g_pFactory->GetInstance( FileSysRef );
@@ -146,7 +146,7 @@ void TLFileSys::GetFileSys(TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef F
 	//	if ref is valid, just get that one
 	if ( FileSysRef.IsValid() )
 	{
-		FileSysList.Add( g_pFactory->GetInstance( FileSysRef ) );
+		FileSysList.AddUnique( g_pFactory->GetInstance( FileSysRef ) );
 		return;
 	}
 
@@ -160,13 +160,17 @@ void TLFileSys::GetFileSys(TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef F
 				continue;
 
 			if ( pFileSys->GetFileSysTypeRef() == FileSysTypeRef )
-				FileSysList.Add( pFileSys );
+				FileSysList.AddUnique( pFileSys );
 		}
 		return;
 	}
 
 	//	file sys ref and filesys type ref are invalid, so match any
-	FileSysList.Add( g_pFactory->GetInstanceArray() );
+	//FileSysList.Add( g_pFactory->GetInstanceArray() );
+	for ( u32 f=0;	f<g_pFactory->GetInstanceArray().GetSize();	f++ )
+	{
+		FileSysList.AddUnique( g_pFactory->GetInstanceArray().ElementAt(f) );
+	}
 }
 
 
@@ -501,7 +505,7 @@ void TLFileSys::TFileSys::GetFileRef(const TString& Filename,TRef& FileRef)
 //	async create a local filesystem for the specified path. 
 //	FileSysRef is set to the new file system's ref for the purposes of asynchronousness so keep using it when async calling this func
 //----------------------------------------------------------
-SyncBool TLFileSys::CreateLocalFileSys(TRef& FileSysRef,const TString& Directory)
+SyncBool TLFileSys::CreateLocalFileSys(TRef& FileSysRef,const TString& Directory,Bool IsWritable)
 {
 	//	factory (and therefore lib) haven't been setup yet
 	if ( !g_pFactory )
@@ -537,7 +541,10 @@ SyncBool TLFileSys::CreateLocalFileSys(TRef& FileSysRef,const TString& Directory
 	//	set directory
 	TLFileSys::TLocalFileSys* pLocalFileSys = pFileSys.GetObject<TLFileSys::TLocalFileSys>();
 	if ( pLocalFileSys )
+	{
 		pLocalFileSys->SetDirectory( Directory );
+		pLocalFileSys->SetIsWritable( IsWritable );
+	}
 		
 	//	init
 	SyncBool Result = pFileSys->Init();

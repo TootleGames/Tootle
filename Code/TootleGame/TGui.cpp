@@ -204,6 +204,25 @@ void TLGui::TGui::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 
 
 //-------------------------------------------------
+//	put a click in the queue
+//-------------------------------------------------
+void TLGui::TGui::QueueClick(const int2& CursorPos,float ActionValue)		
+{
+	//	if this "click" is a mouse up, and the previous was too, then dont add it
+	if ( m_QueuedClicks.GetSize() > 0 )
+	{
+		//	both this and prev action values were "off" so skip adding to the queue
+		if ( ActionValue < TLMaths::g_NearZero && m_QueuedClicks.ElementLast().m_ActionValue < TLMaths::g_NearZero )
+			return;
+	}
+
+	//	add to queue
+	m_QueuedClicks.Add( TClick( CursorPos, ActionValue ) );
+}
+
+
+
+//-------------------------------------------------
 //	update routine - return FALSE if we don't need updates any more
 //-------------------------------------------------
 Bool TLGui::TGui::Update()

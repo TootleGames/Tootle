@@ -16,14 +16,14 @@ namespace TLFileSys
 	class TFileSys;			//	base file system type
 	class TFileSysFactory;	//	file system class factory
 
-	TPtr<TLFileSys::TFileSys>	GetFileSys(TRefRef FileSysRef);		//	return a file system
+	TPtr<TLFileSys::TFileSys>&	GetFileSys(TRefRef FileSysRef);		//	return a file system
 	void						GetFileSys(TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef FileSysRef,TRefRef FileSysTypeRef);	//	return all matching file systems to these refs/types
 
 	//	find the newest file [of a specific type] in the specified file systems
 	TPtr<TFile>					FindFile(TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef FileRef,TRefRef FileTypeRef=TRef());	//	invalid type ref matches any type
 
 	//	create a local file system
-	SyncBool					CreateLocalFileSys(TRef& FileSysRef,const TString& Directory);	//	async create a local filesystem for the specified path. FileSysRef is set to the new file system's ref for the purposes of asynchronousness so keep using it when async calling this func
+	SyncBool					CreateLocalFileSys(TRef& FileSysRef,const TString& Directory,Bool IsWritable);	//	async create a local filesystem for the specified path. FileSysRef is set to the new file system's ref for the purposes of asynchronousness so keep using it when async calling this func
 
 	Bool						GetParentDir(TString& Directory);	//	directory manipulation - turns filename to dir, then chops off a dir at a time
 

@@ -10,7 +10,8 @@ using namespace TLFileSys;
 
 Platform::LocalFileSys::LocalFileSys(TRefRef FileSysRef,TRefRef FileSysTypeRef) :
 	TFileSys			( FileSysRef, FileSysTypeRef ),
-	m_FileFindHandle	( INVALID_HANDLE_VALUE )
+	m_FileFindHandle	( INVALID_HANDLE_VALUE ),
+	m_IsWritable		( TRUE )
 {
 }
 
@@ -264,6 +265,10 @@ Bool Platform::LocalFileSys::IsDirectoryValid()
 	if ( (DirAttribs & FILE_ATTRIBUTE_DIRECTORY) == 0x0 )
 		return FALSE;
 
+	//	check if the directory is read-only, if it is, disable writing
+	if ( (DirAttribs & FILE_ATTRIBUTE_READONLY) != 0x0 )
+		SetIsWritable( FALSE );
+
 	return TRUE;
 }
 
@@ -430,6 +435,10 @@ void Platform::LocalFileSys::UpdateFileInstance(TPtr<TFile>& pFile,const WIN32_F
 //---------------------------------------------------------
 TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filename,TRefRef FileTypeRef)
 {
+	//	not allowed to write to this file sys
+	if ( !m_IsWritable )
+		return NULL;
+
 	//	look for existing file
 	TPtr<TFile> pFile = GetFile( Filename, FALSE );
 	if ( pFile )
@@ -489,6 +498,10 @@ SyncBool Platform::LocalFileSys::WriteFile(TPtr<TFile>& pFile)
 		TLDebug_Break("File expected");
 		return SyncFalse;
 	}
+
+	//	not allowed to write to this file sys
+	if ( !m_IsWritable )
+		return SyncFalse;
 
 	TTempString FullFilename = m_Directory;
 	FullFilename.Append( pFile->GetFilename() );

@@ -85,9 +85,6 @@ namespace TLLoadTask
 	{
 	protected:
 		virtual TRef				Update();
-
-	private:
-		TPtr<TLFileSys::TFileAsset>	CreateFile(TRefRef FileSysRef);
 	};
 
 	//	convert plain file to asset file

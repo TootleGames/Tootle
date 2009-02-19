@@ -294,8 +294,8 @@ public:
 class TLMaths::TTransform
 {
 public:
-	TTransform()		{	SetMatrixInvalid();	SetScaleInvalid();	SetTranslateInvalid();	SetRotationInvalid();	}
-//	TTransform() : m_HasMatrix(FALSE), m_HasTranslate(FALSE), m_HasScale(FALSE), m_HasRotation(FALSE)	{}
+//	TTransform()		{	SetMatrixInvalid();	SetScaleInvalid();	SetTranslateInvalid();	SetRotationInvalid();	}
+	TTransform() : m_HasMatrix(FALSE), m_HasTranslate(FALSE), m_HasScale(FALSE), m_HasRotation(FALSE)	{}
 //	TTransform(const TMatrix& Matrix) : m_HasMatrix(TRUE), m_Matrix(Matrix), m_HasTranslate(FALSE), m_HasScale(FALSE)	{}
 //	TTransform(const TMatrix& Matrix,const float3& Scale) : m_HasMatrix(TRUE), m_Matrix(Matrix), m_HasTranslate(FALSE), m_HasScale(TRUE), m_Scale(Scale)	{}
 //	TTransform(const float3& Translate) : m_HasMatrix(FALSE), m_HasTranslate(TRUE), m_Translate(Translate), m_HasScale(FALSE)	{}
@@ -316,10 +316,10 @@ public:
 	const TQuaternion&	GetRotation() const		{	return m_Rotation;	}
 
 	void				SetInvalid()			{	m_HasMatrix = m_HasScale = m_HasTranslate = m_HasRotation = FALSE;	}
-	void				SetMatrixInvalid()		{	m_HasMatrix = FALSE;	m_Matrix.SetIdentity();	}
-	void				SetScaleInvalid()		{	m_HasScale = FALSE;		m_Scale.Set( 1.f, 1.f, 1.f );	}
-	void				SetTranslateInvalid()	{	m_HasTranslate = FALSE;	m_Translate.Set( 0.f, 0.f, 0.f );	}
-	void				SetRotationInvalid()	{	m_HasRotation = FALSE;	m_Rotation.SetIdentity();	}
+	void				SetMatrixInvalid()		{	m_HasMatrix = FALSE;	/*m_Matrix.SetIdentity();*/	}
+	void				SetScaleInvalid()		{	m_HasScale = FALSE;		/*m_Scale.Set( 1.f, 1.f, 1.f );*/	}
+	void				SetTranslateInvalid()	{	m_HasTranslate = FALSE;	/*m_Translate.Set( 0.f, 0.f, 0.f );*/	}
+	void				SetRotationInvalid()	{	m_HasRotation = FALSE;	/*m_Rotation.SetIdentity();*/	}
 
 	void				SetMatrixValid()		{	m_HasMatrix = TRUE;		}
 	void				OrMatrixValid(Bool Valid)	{	m_HasMatrix |= Valid;		}

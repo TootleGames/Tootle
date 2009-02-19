@@ -77,7 +77,9 @@ protected:
 
 	virtual void				GetPreloadFiles(TArray<TRef>& PreloadFiles)		{} // builds a list of files to load at boot up
 
-	virtual TTempString			GetName()	const = 0;		// Name of application - must be specified
+	virtual TTempString			GetName()	const = 0;			// Name of application - must be specified
+	virtual void				GetName(TString& String) const	{	String.Append( GetName() );	}
+	virtual TRef				GetDefaultScreenType() const	{	return "Screen";	}
 	
 	// Game object creation and destruction
 	virtual SyncBool			CreateGameObject();
@@ -91,7 +93,9 @@ protected:
 	void						OnOptionChanged(TRefRef OptionRef);		//	notify subscribers when option changes - and do any specific option stuff
 	
 protected:	
-	TPtr<TLGame::TGame>		m_pGame;		//	The application's game object
+	TPtr<TLGame::TGame>		m_pGame;				//	The application's game object
+	TRef					m_LocalFileSysRef;		//	ref of local file sys
+	TRef					m_UserFileSysRef;		//	ref of local file sys user's runtime assets/save files etc
 	
 private:
 	TBinaryTree				m_Options;		//	Global & app specific preferences
@@ -102,6 +106,7 @@ private:
 class TLCore::TApplication::TApplicationState_Bootup : public TStateMode
 {
 public:
+	TApplicationState_Bootup();
 	virtual Bool			OnBegin(TRefRef PreviousMode);
 	virtual TRef			Update();
 	virtual void			OnEnd(TRefRef NextMode);
@@ -116,6 +121,7 @@ protected:
 private:
 	TArray<TRef>	m_PreloadFiles;
 	float			m_fTimer;
+	Bool			m_SkipBootup;		//	skip bootup if we failed to create rendernode/screen/logo etc
 };
 
 // Front End state

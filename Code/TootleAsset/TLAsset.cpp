@@ -4,6 +4,7 @@
 #include "TMenu.h"
 #include "TAudio.h"
 #include "TScheme.h"
+#include "TPath.h"
 #include "TLoadTask.h"
 #include <TootleCore/TPtr.h>
 #include <TootleCore/TEventChannel.h>
@@ -280,6 +281,14 @@ TLAsset::TAsset* TLAsset::TAssetFactory::CreateObject(TRefRef InstanceRef,TRefRe
 	if ( TypeRef == "Scheme" )
 		return new TLAsset::TScheme( InstanceRef );
 
+	if ( TypeRef == "PathNetwork" )
+		return new TLAsset::TPathNetwork( InstanceRef );
+
+	//	gr: dumb asset - just stores data - consider turning this into a specific TBinaryTree/"Data" asset
+	if ( TypeRef == "Asset" )
+		return new TLAsset::TAsset( InstanceRef, TypeRef );
+
+	//	"nothing" asset - used as a placeholder whilst we convert file into a real asset
 	if ( TypeRef == "Temp" )
 		return new TLAsset::TTempAsset( InstanceRef );
 

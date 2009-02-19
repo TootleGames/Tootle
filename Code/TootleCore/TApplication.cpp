@@ -33,27 +33,81 @@ using namespace TLCore;
 //	Application initialisation
 //-----------------------------------------------------------
 SyncBool TApplication::Initialise()
-{		
-	//	create a local file sys in our asset dir
-#if defined(TL_TARGET_PC)
-	TTempString AssetDir = "Assets\\";
-#elif defined(TL_TARGET_MAC)
-	TTempString AssetDir = "Assets\\";
-#elif defined(TL_TARGET_IPOD)
-	TTempString AppName = GetName();
-	
-	TTempString AssetDir = AppName;	
-	AssetDir.Append(".app/");
-#endif
-	
-	TRef FileSysRef;
-	SyncBool Result = TLFileSys::CreateLocalFileSys( FileSysRef, AssetDir );
-	if ( Result != SyncTrue )
+{
+	Bool Waiting = FALSE;
+
+	//	create file systems
+	if ( !m_LocalFileSysRef.IsValid() )
 	{
-		TLDebug_Print("Error: Failed to create local file system");
-		return Result;
+		#if defined(TL_TARGET_PC)
+			TTempString AssetDir = "Assets\\";
+		#elif defined(TL_TARGET_MAC)
+			TTempString AssetDir = "Assets\\";
+		#elif defined(TL_TARGET_IPOD)
+			TTempString AppName = GetName();
+			TTempString AssetDir = AppName;	
+			AssetDir.Append(".app/");
+		#endif
+
+		TLFileSys::CreateLocalFileSys( m_LocalFileSysRef, AssetDir, FALSE );
 	}
+
+	//	continue init of file system
+	if ( m_LocalFileSysRef.IsValid() )
+	{
+		SyncBool Result = SyncFalse;
+
+		TPtr<TLFileSys::TFileSys>& pFileSys = TLFileSys::GetFileSys( m_LocalFileSysRef );
+		if ( pFileSys )
+			Result = pFileSys->Init();
+
+		if ( Result == SyncFalse )
+		{
+			//	gr: fail if asset dir cannot be opened
+			TLDebug_Break("failed to create local file sys");
+			m_LocalFileSysRef.SetInvalid();
+			return SyncFalse;
+		}
+			
+		Waiting |= (Result == SyncWait);
+	}
+
+
+
+	//	create docs file sys
+	if ( !m_UserFileSysRef.IsValid() )
+	{
+		#if defined(TL_TARGET_PC)
+			TTempString AssetDir = "Assets\\User\\";
+		#elif defined(TL_TARGET_MAC)
+			TTempString AssetDir = "Assets\\User\\";
+		#elif defined(TL_TARGET_IPOD)
+			TTempString AssetDir = "Documents/";	//	gr: I'm pretty sure the documents dir is above the app dir
+		#endif
+
+		TLFileSys::CreateLocalFileSys( m_UserFileSysRef, AssetDir, TRUE );
+	}	
 	
+	//	continue init of file system
+	if ( m_UserFileSysRef.IsValid() )
+	{
+		SyncBool Result = SyncFalse;
+
+		TPtr<TLFileSys::TFileSys>& pFileSys = TLFileSys::GetFileSys( m_UserFileSysRef );
+		if ( pFileSys )
+			Result = pFileSys->Init();
+
+		if ( Result == SyncFalse )
+		{
+			//	gr: let system continue if this dir cannot be used
+			TLDebug_Print("failed to create local file sys");
+			m_UserFileSysRef.SetInvalid();
+		}
+			
+		Waiting |= (Result == SyncWait);
+	}
+
+
 	//	subscribe to screen manager to get screen-deleted messages
 	SubscribeTo( TLRender::g_pScreenManager );
 	
@@ -62,8 +116,7 @@ SyncBool TApplication::Initialise()
 	
 	//	create screen
 	//	gr: todo: turn this into some factory? or an alias for platform screen?
-	TPtr<TLRender::TScreen> pScreen = TLRender::g_pScreenManager->GetInstance(TRef("Screen"), TRUE, TRef("Screen") );
-	
+	TPtr<TLRender::TScreen>& pScreen = TLRender::g_pScreenManager->GetInstance(TRef("Screen"), TRUE, GetDefaultScreenType() );
 	if(!pScreen)
 	{
 		TLDebug_Print("Failed to create main screen object");
@@ -71,8 +124,7 @@ SyncBool TApplication::Initialise()
 	}
 	
 	// Initialise the screen object
-	Result = pScreen->Init();
-	
+	SyncBool Result = pScreen->Init();
 	if ( Result != SyncTrue )
 	{
 		TLDebug_Print("Error: Failed to initialise screen");
@@ -267,10 +319,18 @@ Bool TApplication::TApplicationState_Bootup::OnBegin(TRefRef PreviousMode)
 	return TStateMode::OnBegin(PreviousMode);
 }
 
+
+TApplication::TApplicationState_Bootup::TApplicationState_Bootup() :
+	m_fTimer		( 0.f ),
+	m_SkipBootup	( FALSE )
+{
+}
+
 Bool TApplication::TApplicationState_Bootup::CreateIntroScreen()
 {
-	TPtr<TLRender::TScreen> pScreen = TLRender::g_pScreenManager->GetInstance(TRef("Screen"), TRUE, TRef("Screen") );
-	
+	m_SkipBootup = FALSE;
+
+	TPtr<TLRender::TScreen>& pScreen = TLRender::g_pScreenManager->GetDefaultScreen();	
 	if(!pScreen)
 	{
 		TLDebug_Break("Error: Failed to get screen");
@@ -278,7 +338,7 @@ Bool TApplication::TApplicationState_Bootup::CreateIntroScreen()
 	}
 		
 	//	create a render target 
-	TPtr<TLRender::TRenderTarget> pRenderTarget = pScreen->CreateRenderTarget( TRef("Intro") );
+	TPtr<TLRender::TRenderTarget>& pRenderTarget = pScreen->CreateRenderTarget( TRef("Intro") );
 	if(!pRenderTarget)
 	{
 		TLDebug_Break("Error: Failed to create logo render target");
@@ -309,8 +369,11 @@ Bool TApplication::TApplicationState_Bootup::CreateIntroScreen()
 	}
 	else
 	{
-		TLDebug_Break("Error: Failed to load logo asset");
-		return FALSE;
+		//TLDebug_Break("Error: Failed to load logo asset");
+		m_SkipBootup = TRUE;
+
+		//	gr: this will just go into a "no mode" mode.
+		//return FALSE;
 	}	
 	
 	// All done
@@ -320,10 +383,9 @@ Bool TApplication::TApplicationState_Bootup::CreateIntroScreen()
 
 TRef TApplication::TApplicationState_Bootup::Update()
 {
-
 	m_fTimer += 1/60.0f;//fTimeStep;
 	
-	if((m_fTimer > BOOTUP_TIME_MIN) && ArePreloadFilesLoaded())
+	if ( m_SkipBootup || (m_fTimer > BOOTUP_TIME_MIN) && ArePreloadFilesLoaded() )
 	{
 		TApplication* pApp = GetStateMachine<TApplication>();
 		
