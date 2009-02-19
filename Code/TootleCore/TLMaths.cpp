@@ -709,7 +709,10 @@ void TLMaths::TMatrix::SetOrientation(float3& Foward,float3& Up,float3& Left)
 void TLMaths::TQuaternion::Set(const float3& Axis,float RadAngle)
 {
 	float Temp1,Temp2;
-	Temp1 = Axis.LengthSq();
+	
+	// [18 02 09] DB - LengthSq appears to return a NAN on the iPod in debug.  Not sure if it's an issue or not (?) but the same code gives the correct result
+	Temp1 = (Axis.x * Axis.x) + (Axis.y * Axis.y) + (Axis.z * Axis.z); 
+	//Temp1 = Axis.LengthSq();
 	
 	if ( Temp1 == 0.f )
 	{
