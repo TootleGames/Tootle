@@ -2,11 +2,11 @@
 #include "TRenderTarget.h"
 
 #if defined(TL_TARGET_PC)
-#include "PC/PCRenderTarget.h"
-#endif
-
-#if defined(TL_TARGET_IPOD)
-#include "IPod/IPodRenderTarget.h"
+	#include "PC/PCRenderTarget.h"
+#elif defined(TL_TARGET_IPOD)
+	#include "IPod/IPodRenderTarget.h"
+#elif defined(TL_TARGET_MAC)
+	#include "IPod/IPodRenderTarget.h"
 #endif
 
 

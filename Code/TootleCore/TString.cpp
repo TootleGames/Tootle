@@ -180,6 +180,8 @@ TString::TString(const CHARTYPE* pString,...) :
 	SetLength( BufferSize );
 #if defined(TL_TARGET_IPOD)
 	int NewLength = vsprintf( GetData(), pString, v );
+#elif defined(TL_TARGET_MAC)
+	int NewLength = vsprintf( GetData(), pString, v );
 #else
 	int NewLength = vsprintf_s( GetData(), GetLength(), pString, v );
 #endif
@@ -319,6 +321,8 @@ void TString::Appendf(const CHARTYPE* pString,...)
 	TBufferString<512> Buffer;
 	Buffer.SetLength(512);
 #if defined(TL_TARGET_IPOD)
+	int BufferStringLength = vsprintf( Buffer.GetData(), pString, v );
+#elif defined(TL_TARGET_MAC)
 	int BufferStringLength = vsprintf( Buffer.GetData(), pString, v );
 #else
 	int BufferStringLength = vsprintf_s( Buffer.GetData(), Buffer.GetLength(), pString, v );

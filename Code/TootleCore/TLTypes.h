@@ -51,6 +51,12 @@ typedef long unsigned int	u64;
 typedef long signed int		s64;
 #endif
 
+#if defined(TL_TARGET_MAC)
+typedef long unsigned int	u64;
+typedef long signed int		s64;
+#endif
+
+
 
 #ifndef TRUE
 	#define TRUE				true

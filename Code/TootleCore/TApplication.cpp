@@ -37,6 +37,8 @@ SyncBool TApplication::Initialise()
 	//	create a local file sys in our asset dir
 #if defined(TL_TARGET_PC)
 	TTempString AssetDir = "Assets\\";
+#elif defined(TL_TARGET_MAC)
+	TTempString AssetDir = "Assets\\";
 #elif defined(TL_TARGET_IPOD)
 	TTempString AppName = GetName();
 	

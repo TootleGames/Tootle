@@ -106,6 +106,8 @@ namespace TLRender
 	//	ansi build can't include any headers
 #elif defined(TL_TARGET_IPOD)
 	#include "IPod/IPodRender.h"
+#elif defined(TL_TARGET_MAC)
+	#include "Mac/MacRender.h"
 #else
 	#error unknown platform
 #endif
