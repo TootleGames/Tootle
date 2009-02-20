@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8418F8CB0F4EB9C200B956C9 /* TPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F8C90F4EB9C200B956C9 /* TPath.cpp */; };
+		8418F8CC0F4EB9C200B956C9 /* TPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F8CA0F4EB9C200B956C9 /* TPath.h */; };
 		84C109350F0A787B00B2DF7A /* TAsset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109260F0A787B00B2DF7A /* TAsset.cpp */; };
 		84C109360F0A787B00B2DF7A /* TAsset.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109270F0A787B00B2DF7A /* TAsset.h */; };
 		84C109370F0A787B00B2DF7A /* TAudio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109280F0A787B00B2DF7A /* TAudio.cpp */; };
@@ -27,6 +29,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8418F8C90F4EB9C200B956C9 /* TPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPath.cpp; path = ../TPath.cpp; sourceTree = SOURCE_ROOT; };
+		8418F8CA0F4EB9C200B956C9 /* TPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPath.h; path = ../TPath.h; sourceTree = SOURCE_ROOT; };
 		84C1091F0F0A785200B2DF7A /* libTootleAsset.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleAsset.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C109260F0A787B00B2DF7A /* TAsset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAsset.cpp; path = ../TAsset.cpp; sourceTree = SOURCE_ROOT; };
 		84C109270F0A787B00B2DF7A /* TAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAsset.h; path = ../TAsset.h; sourceTree = SOURCE_ROOT; };
@@ -82,6 +86,8 @@
 		84C109450F0A789D00B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				8418F8C90F4EB9C200B956C9 /* TPath.cpp */,
+				8418F8CA0F4EB9C200B956C9 /* TPath.h */,
 				84DE34290F12A9C500608F8C /* TScheme.cpp */,
 				84DE342A0F12A9C500608F8C /* TScheme.h */,
 				84C109260F0A787B00B2DF7A /* TAsset.cpp */,
@@ -130,6 +136,7 @@
 				84C109420F0A787B00B2DF7A /* TMesh.h in Headers */,
 				84C109430F0A787B00B2DF7A /* TShader.h in Headers */,
 				84DE342C0F12A9C500608F8C /* TScheme.h in Headers */,
+				8418F8CC0F4EB9C200B956C9 /* TPath.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -184,6 +191,7 @@
 				84C1093F0F0A787B00B2DF7A /* TMenu.cpp in Sources */,
 				84C109410F0A787B00B2DF7A /* TMesh.cpp in Sources */,
 				84DE342B0F12A9C500608F8C /* TScheme.cpp in Sources */,
+				8418F8CB0F4EB9C200B956C9 /* TPath.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
