@@ -500,6 +500,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TFileSys.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TFileSys.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TFileWAV.cpp"
 			>
 		</File>

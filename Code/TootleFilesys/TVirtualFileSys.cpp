@@ -77,7 +77,7 @@ SyncBool TLDebugFile::LoadDebugFile_Asset(TPtr<TLFileSys::TFile>& pFile,TPtr<TLA
 	pAsset->SetLoadingState( TLAsset::LoadingState_Loaded );
 
 	TPtr<TLFileSys::TFileAsset> pAssetFile;
-	if ( pFile->GetFileTypeRef() == "Asset" )
+	if ( pFile->GetTypeRef() == "Asset" )
 	{
 		pAssetFile = pFile;
 	}
@@ -176,10 +176,10 @@ SyncBool TLDebugFile::LoadDebugFile_MeshSphere(TPtr<TLFileSys::TFile>& pFile)
 //---------------------------------------------------------
 //	create a new empty file into file system if possible - if the filesys is read-only we cannot add external files and this fails
 //---------------------------------------------------------
-TPtr<TLFileSys::TFile> TLFileSys::TVirtualFileSys::CreateFile(const TString& Filename,TRefRef FileTypeRef)
+TPtr<TLFileSys::TFile> TLFileSys::TVirtualFileSys::CreateFile(const TString& Filename,TRef TypeRef)
 {
 	//	create/get existing file
-	TPtr<TLFileSys::TFile> pNewFile = CreateFileInstance( Filename, FileTypeRef );
+	TPtr<TLFileSys::TFile> pNewFile = CreateFileInstance( Filename, TypeRef );
 
 	//	error creating file
 	if ( !pNewFile )
@@ -227,10 +227,18 @@ SyncBool TLFileSys::TVirtualFileSys::WriteFile(TPtr<TFile>& pFile)
 //---------------------------------------------------------
 //	delete file from file sys
 //---------------------------------------------------------
-SyncBool TLFileSys::TVirtualFileSys::DeleteFile(TRefRef FileRef)
+SyncBool TLFileSys::TVirtualFileSys::DeleteFile(const TFileRef& FileRef)
 {
+	//	gr: out of safety this pFile isn't a ref. it will be invalid after RemoveFileInstance()
+	TPtr<TFile> pFile = GetFile( FileRef );
+	if ( !pFile )
+	{
+		TLDebug_Break("or should this be SyncTrue?");
+		return SyncFalse;
+	}
+
 	//	just remove from file list
-	if ( !RemoveInstance( FileRef ) )
+	if ( !RemoveFileInstance( pFile ) )
 		return SyncFalse;
 
 	return SyncTrue;

@@ -36,10 +36,13 @@ public:
 	template<class OBJECTTYPE>
 	OBJECTTYPE*				GetInstanceObject(TRefRef InstanceRef);			//	get the object of an instance and cast as desired
 	s32						CreateInstance(TPtr<TYPE>& pNewInstance,TRefRef InstanceRef,TRefRef TypeRef=TRef());						//	create a new instance and add to the list
-	Bool					RemoveInstance(TRefRef InstanceRef);			//	remove an instance from the list
+	template<class MATCHTYPE>
+	Bool					RemoveInstance(const MATCHTYPE& Match);			//	remove an instance from the list
 
 	TPtrArray<TYPE>&		GetInstanceArray()								{	return *this;	}
 	const TPtrArray<TYPE>&	GetInstanceArray() const						{	return *this;	}
+
+	TRef					GetFreeInstanceRef(TRef BaseRef=TRef()) const;	//	get an unused ref for an instance
 
 protected:
 	virtual TYPE*			CreateObject(TRefRef InstanceRef,TRefRef TypeRef) = 0;
@@ -164,9 +167,10 @@ s32 TClassFactory<TYPE, STOREINSTANCES>::CreateInstance(TPtr<TYPE>& pNewInstance
 //	remove an instance from the list
 //--------------------------------------------------------------
 template<class TYPE, bool STOREINSTANCES>
-Bool TClassFactory<TYPE, STOREINSTANCES>::RemoveInstance(TRefRef InstanceRef)
+template<typename MATCHTYPE>
+Bool TClassFactory<TYPE, STOREINSTANCES>::RemoveInstance(const MATCHTYPE& Match)
 {
-	s32 InstanceIndex = TPtrArray<TYPE>::FindIndex( InstanceRef );
+	s32 InstanceIndex = TPtrArray<TYPE>::FindIndex( Match );
 
 	//	doesnt exist
 	if ( InstanceIndex == -1 )
@@ -204,6 +208,29 @@ OBJECTTYPE* TClassFactory<TYPE, STOREINSTANCES>::GetInstanceObject(TRefRef Insta
 	//	gr: not sure why this doesn't compile on gcc...
 	return pInstance.GetObject < OBJECTTYPE > ( );
 #endif
+}
+
+
+//--------------------------------------------------------------
+//	get an unused ref for an instance
+//--------------------------------------------------------------
+template<class TYPE, bool STOREINSTANCES>
+TRef TClassFactory<TYPE, STOREINSTANCES>::GetFreeInstanceRef(TRef BaseRef) const
+{
+	//	if we don't store instances we can't do much here
+	if ( !STOREINSTANCES )
+	{
+		TLDebug_Break("Cannot search for a free ref on a factory that doesn't store the instances");
+		return TRef();	//	return BaseRef;
+	}
+
+	//	keep searching until we find one unused
+	while ( GetInstanceArray().Exists( BaseRef ) )
+	{
+		BaseRef.Increment();
+	}
+
+	return BaseRef;
 }
 
 

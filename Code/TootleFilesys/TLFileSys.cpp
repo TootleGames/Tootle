@@ -29,476 +29,13 @@
 
 namespace TLFileSys
 {
-	TPtr<TLFileSys::TFileSysFactory>	g_pFactory = NULL;
+	TPtr<TLFileSys::TFileSysFactory>	g_pFactory;		//	factory for filesystems
+	TPtr<TLFileSys::TFileFactory>		g_pFileFactory;	//	factory for all the files we have, seperated from individual file systems now
 }
 
 
 
 
-
-
-//----------------------------------------------------------
-//	instance a file system
-//----------------------------------------------------------
-TLFileSys::TFileSys* TLFileSys::TFileSysFactory::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
-{
-	TRef VirtualRef("Virtual");
-	TRef LocalRef("Local");
-
-	if ( TypeRef == VirtualRef || InstanceRef == VirtualRef )
-	{
-		return new TLFileSys::TVirtualFileSys( InstanceRef, TypeRef );
-	}
-
-	if ( TypeRef == LocalRef || InstanceRef == LocalRef )
-	{
-		return new TLFileSys::TLocalFileSys( InstanceRef, TypeRef );
-	}
-
-	return NULL;
-}
-
-
-SyncBool TLFileSys::TFileSysFactory::Initialise()
-{
-	//	list of file systems to create (maybe take this from the app as a param)
-	TArray<TRef> FileSystemRefs;
-	FileSystemRefs.Add("Virtual");
-
-	SyncBool Result = SyncTrue;
-
-	//	create file systems
-	for ( u32 i=0;	i<FileSystemRefs.GetSize();	i++ )
-	{
-		//	create/get file system
-		TPtr<TFileSys> pFileSys = g_pFactory->GetInstance( FileSystemRefs[i], TRUE, FileSystemRefs[i] );
-		if ( !pFileSys )
-			return SyncFalse;
-
-		//	init
-		Result = pFileSys->Init();
-
-		//	if failed, abort
-		if ( Result == SyncFalse )
-			return Result;
-
-		//	success/wait just go to next one
-	}
-	
-	return SyncTrue;
-}
-
-void TLFileSys::TFileSysFactory::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID)
-{
-	if(refPublisherID == "CORE")
-	{
-		// Subscribe to the update messages
-		if(refChannelID == TLCore::UpdateRef)
-			TLMessaging::g_pEventChannelManager->SubscribeTo(this, refPublisherID, refChannelID); 
-	}
-	
-	// Super event channel routine
-	TManager::OnEventChannelAdded(refPublisherID, refChannelID);
-}
-
-
-SyncBool TLFileSys::TFileSysFactory::Update()
-{
-	UpdateObjects();
-
-	return SyncTrue;
-}
-
-SyncBool TLFileSys::TFileSysFactory::Shutdown()
-{
-	return ShutdownObjects();
-}
-
-
-//----------------------------------------------------------
-//	return a file system
-//----------------------------------------------------------
-TPtr<TLFileSys::TFileSys>& TLFileSys::GetFileSys(TRefRef FileSysRef)
-{
-	//	missing factory
-	if ( !g_pFactory )
-	{
-		TLDebug_Break("FileSysFactory expected");
-		return TLPtr::GetNullPtr<TLFileSys::TFileSys>();
-	}
-
-	return g_pFactory->GetInstance( FileSysRef );
-}
-
-
-//----------------------------------------------------------
-//	return all matching file systems to these refs/types
-//----------------------------------------------------------
-void TLFileSys::GetFileSys(TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef FileSysRef,TRefRef FileSysTypeRef)
-{
-	//	missing factory
-	if ( !g_pFactory )
-	{
-		TLDebug_Break("FileSysFactory expected");
-		return;
-	}
-
-	//	if ref is valid, just get that one
-	if ( FileSysRef.IsValid() )
-	{
-		FileSysList.AddUnique( g_pFactory->GetInstance( FileSysRef ) );
-		return;
-	}
-
-	//	if type is specified get all the file systems of that type
-	if ( FileSysTypeRef.IsValid() )
-	{
-		for ( u32 f=0;	f<g_pFactory->GetSize();	f++ )
-		{
-			TPtr<TLFileSys::TFileSys>& pFileSys = g_pFactory->ElementAt(f);
-			if ( !pFileSys )
-				continue;
-
-			if ( pFileSys->GetFileSysTypeRef() == FileSysTypeRef )
-				FileSysList.AddUnique( pFileSys );
-		}
-		return;
-	}
-
-	//	file sys ref and filesys type ref are invalid, so match any
-	//FileSysList.Add( g_pFactory->GetInstanceArray() );
-	for ( u32 f=0;	f<g_pFactory->GetInstanceArray().GetSize();	f++ )
-	{
-		FileSysList.AddUnique( g_pFactory->GetInstanceArray().ElementAt(f) );
-	}
-}
-
-
-//----------------------------------------------------------
-//	constructor
-//----------------------------------------------------------
-TLFileSys::TFileSys::TFileSys(TRefRef FileSysRef,TRefRef FileSysTypeRef) :
-	m_FileSysRef		( FileSysRef ),
-	m_FileSysTypeRef	( FileSysTypeRef )
-{
-}
-
-
-//----------------------------------------------------------
-//	fetch file based on filename
-//----------------------------------------------------------
-TPtr<TLFileSys::TFile> TLFileSys::TFileSys::GetFile(const TString& Filename,Bool Load)
-{
-	TPtr<TLFileSys::TFile> pFile = GetInstance( Filename );
-
-	//	no such file
-	if ( !pFile )
-		return pFile;
-
-	//	invoke load if required
-	if ( Load && pFile->IsLoaded() != SyncTrue )
-	{
-		SyncBool LoadState = LoadFile( pFile );
-
-		//	loading has failed - still return the file?
-		if ( LoadState == SyncFalse )
-			return pFile;
-	}
-	
-	return pFile;
-}
-
-
-//----------------------------------------------------------
-//	return a file from the file list
-//----------------------------------------------------------
-TPtr<TLFileSys::TFile> TLFileSys::TFileSys::GetFile(TRefRef FileRef,Bool Load)
-{
-	//	find the file
-	TPtr<TLFileSys::TFile> pFile = GetInstance(FileRef);
-
-	//	no such file
-	if ( !pFile )
-		return pFile;
-
-	//	invoke load if required
-	if ( Load && pFile->IsLoaded() != SyncTrue )
-	{
-		SyncBool LoadState = LoadFile( pFile );
-
-		//	loading has failed - still return the file?
-		if ( LoadState == SyncFalse )
-			return pFile;
-	}
-		
-	return pFile;
-}
-
-
-//----------------------------------------------------------
-//	overloaded from class factory
-//----------------------------------------------------------
-TLFileSys::TFile* TLFileSys::TFileSys::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
-{
-	TLFileSys::TFile* pFile = NULL;
-
-	//	tootle asset type
-	if ( TypeRef == TRef("asset") )
-	{
-		pFile = new TLFileSys::TFileAsset( InstanceRef, TypeRef );
-		return pFile;
-	}
-
-	//	freetype compatible font
-	if ( TypeRef == TRef("ttf") )
-	{
-		pFile = new TLFileSys::TFileFreetype( InstanceRef, TypeRef );
-		return pFile;
-	}
-
-	//	xml file
-	if ( TypeRef == TRef("xml") )
-	{
-		pFile = new TLFileSys::TFileXml( InstanceRef, TypeRef );
-		return pFile;
-	}
-
-	//	svg file
-	if ( TypeRef == TRef("svg") )
-	{
-		pFile = new TLFileSys::TFileSimpleVector( InstanceRef, TypeRef );
-		return pFile;
-	}
-
-	//	TAM file
-	if ( TypeRef == TRef("tam") )
-	{
-		pFile = new TLFileSys::TFileAssetMarkup( InstanceRef, TypeRef );
-		return pFile;
-	}
-	
-	//	WAV file
-	if ( TypeRef == TRef("wav") )
-	{
-		pFile = new TLFileSys::TFileWAV( InstanceRef, TypeRef );
-		return pFile;
-	}
-	
-	//	scheme file
-	if ( TypeRef == TRef("scheme") )
-	{
-		pFile = new TLFileSys::TFileScheme( InstanceRef, TypeRef );
-		return pFile;
-	}
-	
-	//	collada xml file
-	if ( TypeRef == TRef("dae") )
-	{
-		pFile = new TLFileSys::TFileCollada( InstanceRef, TypeRef );
-		return pFile;
-	}
-	
-	//	menu xml file
-	if ( TypeRef == TRef("menu") )
-	{
-		pFile = new TLFileSys::TFileMenu( InstanceRef, TypeRef );
-		return pFile;
-	}
-	
-
-	//	generic binary file
-	pFile = new TLFileSys::TFile( InstanceRef, TypeRef );
-	return pFile;
-}
-
-
-//----------------------------------------------------------
-//	create new file into the file list - returns existing file if it already exists
-//----------------------------------------------------------
-TPtr<TLFileSys::TFile> TLFileSys::TFileSys::CreateFileInstance(const TString& Filename,TRef TypeRef)
-{
-	//	see if this file already exists
-	TPtr<TFile> pFile = GetFile( Filename, FALSE );
-
-	//	already created just return
-	if ( pFile )
-		return pFile;
-
-	//	generate a ref from the file name
-	TRef FileRef;
-
-	//	if we're extracting the extension for a typeref, then dont include that in the filename
-	if ( !TypeRef.IsValid() )
-	{
-		GetFileRef( Filename, FileRef, TypeRef );
-	}
-	else
-	{
-		GetFileRef( Filename, FileRef );
-	}
-
-	//	as this is a new file, we want to make sure we're not overwriting the fileref of
-	//	another file. 
-	//	this means LongFileName1 and LongFileName2 can both exist and generate different refs
-	if ( !pFile )
-	{
-		//	see if there's a file with this file ref
-		TPtr<TFile> pDupeFile = GetFile( FileRef, FALSE );
-		while ( pDupeFile )
-		{
-			FileRef.Increment();
-			pDupeFile = GetFile( FileRef, FALSE );
-		}
-	}
-
-	//	create new file
-	CreateInstance( pFile, FileRef, TypeRef );
-
-	//	failed to create
-	if ( !pFile )
-		return pFile;
-
-	//	init
-	if ( !pFile->Init( GetFileSysRef(), Filename ) )
-	{
-		RemoveInstance( FileRef );
-		return NULL;
-	}
-
-	return pFile;
-}
-
-
-//----------------------------------------------------------
-//	update file list if it's out of date.
-//	returns FALSE if no changes, WAIT if possible changes,
-//	TRUE if there were any changes
-//----------------------------------------------------------
-SyncBool TLFileSys::TFileSys::UpdateFileList()
-{
-	Bool ReloadFilelist = FALSE;
-
-	//	if timestamp is valid compare with current time
-	if ( m_LastFileListUpdate.IsValid() )
-	{
-		TLTime::TTimestamp TimeNow = TLTime::GetTimeNow();
-		if ( m_LastFileListUpdate.GetSecondsDiff( TimeNow ) > (s32)GetFilelistTimeoutSecs() )
-		{
-			ReloadFilelist = TRUE;
-		}
-	}
-	else
-	{
-		//	timestamp is invalid, get filelist
-		ReloadFilelist = TRUE;
-	}
-
-	//	file list doesnt need reloading, return no changes
-	if ( !ReloadFilelist )
-		return SyncFalse;
-	
-	//	reload file list, if failed return no change
-	SyncBool LoadResult = LoadFileList();
-
-	if ( LoadResult == SyncFalse )
-		return SyncFalse;
-
-	return SyncWait;
-}
-
-
-//----------------------------------------------------------
-//	update timestamp and flush missing files
-//----------------------------------------------------------
-void TLFileSys::TFileSys::FinaliseFileList()
-{
-	//	update time stamp of file list
-	m_LastFileListUpdate.SetTimestampNow();
-
-	//	flush missing/null files
-	for ( s32 f=GetSize()-1;	f>=0;	f-- )
-	{
-		TPtr<TFile>& pFile = ElementAt(f);
-
-		//	if flagged missing, null (will then be removed)
-		if ( pFile->GetFlags()( TFile::Lost ) )
-			pFile = NULL;
-
-		//	file gone, remove
-		if ( !pFile )
-			RemoveAt( f );
-	}
-}
-
-
-//----------------------------------------------------------
-//	generate file ref and type ref from filename
-//----------------------------------------------------------
-void TLFileSys::TFileSys::GetFileRef(const TString& Filename,TRef& FileRef,TRef& TypeRef)
-{	
-	//	extract a file type from the extension of the filename if it's not been provided
-	TArray<TString> FilenameParts;
-	
-	//	no .'s in the filename, so use invalid file type and generate filename in the normal way
-	if ( !Filename.Split('.',FilenameParts) )
-	{
-		TypeRef.SetInvalid();
-		GetFileRef( Filename, FileRef );
-		return;
-	}
-
-	//	only one entry (probably named File.<nothing>) so treat as no split
-	if ( FilenameParts.GetSize() <= 1 )
-	{
-		TypeRef.SetInvalid();
-		GetFileRef( FilenameParts[0], FileRef );
-		return;
-	}
-
-	//	turn last part (the file extension) into a ref
-	TypeRef.Set( FilenameParts.ElementLastConst() );
-	FilenameParts.RemoveLast();
-	
-	//	join the rest of the filename parts together and generate a file ref from that
-	/*
-	// [27 11 08] DB - Removed as this caused smaller than 5 letter filenames to have the svg as part fo their name
-	for ( u32 i=1;	i<FilenameParts.GetSize();	i++ )
-	{
-		FilenameParts[0].Append( FilenameParts[i] );
-	}
-	 */
-
-	//	now set file ref from our filename (without the extension)
-	GetFileRef( FilenameParts[0], FileRef );
-}
-
-
-//----------------------------------------------------------
-//	generate file ref from filename
-//----------------------------------------------------------
-void TLFileSys::TFileSys::GetFileRef(const TString& Filename,TRef& FileRef)
-{
-	s32 DotCharIndex = Filename.GetCharIndex('.');
-	if ( DotCharIndex != -1 )
-	{
-		TTempString NewFilename;
-		NewFilename.Append( Filename, DotCharIndex );
-		FileRef.Set( NewFilename );
-	}
-	else
-	{
-		FileRef.Set( Filename );
-	}
-	
-	//	a valid fileref hasn't been generated
-	//	filename is blank maybe? 
-	//	make a last-resort ref
-	if ( !FileRef.IsValid() )
-	{
-		if ( !TLDebug_Break( TString("Failed to generate a file ref from the filename %s", Filename.GetData() ) ) )
-			FileRef.Set(1);
-	}
-}
 
 
 //----------------------------------------------------------
@@ -528,25 +65,32 @@ SyncBool TLFileSys::CreateLocalFileSys(TRef& FileSysRef,const TString& Directory
 		}
 	}
 
-	//	create/get this file system
-	TPtr<TFileSys> pFileSys = g_pFactory->GetInstance( FileSysRef, TRUE, "Local" );
-
-	//	failed to create
-	if ( !pFileSys )
+	//	get existing file sys
+	TPtr<TFileSys> pFileSys = g_pFactory->GetInstance( FileSysRef );
+	Bool NewFileSys = !pFileSys.IsValid();
+	
+	if ( NewFileSys )
 	{
-		TLDebug_Print("Failed to create filesystem");		
-		return SyncFalse;
-	}
+		//	create new file system
+		pFileSys = g_pFactory->GetInstance( FileSysRef, TRUE, "Local" );
 
-	//	set directory
-	TLFileSys::TLocalFileSys* pLocalFileSys = pFileSys.GetObject<TLFileSys::TLocalFileSys>();
-	if ( pLocalFileSys )
-	{
-		pLocalFileSys->SetDirectory( Directory );
-		pLocalFileSys->SetIsWritable( IsWritable );
+		//	failed to create
+		if ( !pFileSys )
+		{
+			TLDebug_Print("Failed to create filesystem");		
+			return SyncFalse;
+		}
+
+		//	set directory
+		TLFileSys::TLocalFileSys* pLocalFileSys = pFileSys.GetObject<TLFileSys::TLocalFileSys>();
+		if ( pLocalFileSys )
+		{
+			pLocalFileSys->SetDirectory( Directory );
+			pLocalFileSys->SetIsWritable( IsWritable );
+		}
 	}
 		
-	//	init
+	//	[continue] init
 	SyncBool Result = pFileSys->Init();
 	
 #ifdef _DEBUG
@@ -634,79 +178,459 @@ Bool UpdateNewestFile(TPtr<TLFileSys::TFile>& pNewestFile,const TPtr<TLFileSys::
 //----------------------------------------------------------
 //	find the newest file [of a specific type] in the specified file systems
 //----------------------------------------------------------
-TPtr<TLFileSys::TFile> TLFileSys::FindFile(TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef FileRef,TRefRef FileTypeRef)
+TPtr<TLFileSys::TFile>& TLFileSys::GetFile(TRefRef FileRef,TRefRef FileTypeRef)
 {
-	//	empty file list, fail immedietly
-	if ( !FileSysList.GetSize() )
-		return NULL;
-
-	TTempString DebugString;
-	DebugString.Append("FindFile ");
-	FileRef.GetString( DebugString );
-	DebugString.Append(" (");
-	FileTypeRef.GetString( DebugString );
-	DebugString.Append(")");
-	TLDebug_Print(DebugString);
-
-	//	loop through file systems to find matches - keep the newest one
-	TPtr<TLFileSys::TFile> pNewestFile = NULL;
-
-	//	check through matching file systems for the file
-	for ( u32 f=0;	f<FileSysList.GetSize();	f++ )
+	//	no factory
+	if ( !TLFileSys::g_pFileFactory )
 	{
-		TPtr<TLFileSys::TFileSys>& pFileSys = FileSysList[f];
-		if ( !pFileSys )
-			continue;
-
-		//	grab the file
-		TPtr<TLFileSys::TFile> pFile = pFileSys->GetFile( FileRef, TRUE );
-
-		//	if the filetype is specified, make sure it's the right type
-		if ( pFile && FileTypeRef.IsValid() )
-		{
-			//	wrong type, but the file exists, skip to next file sys
-			if ( pFile->GetFileTypeRef() != FileTypeRef )
-			{
-				TTempString RefString;
-				FileRef.GetString( RefString );
-				TTempString TypeString;
-				FileTypeRef.GetString( TypeString );
-
-				TTempString FoundTypeString;
-				pFile->GetFileTypeRef().GetString ( FoundTypeString );
-				TLDebug_Print( TString("Found matching file for %s, but type is %s, we're looking for %s", RefString.GetData(), FoundTypeString.GetData(), TypeString.GetData() ) );
-				continue;
-			}
-		}
-
-		//	see if this file is newer...
-		if ( UpdateNewestFile( pNewestFile, pFile ) )
-			continue;
-
-		//	it wasn't, or didn't exist, see if filesys needs updating and try again
-		if ( pFileSys->UpdateFileList() == SyncFalse )
-		{
-			//	no changes to file sys
-			continue;
-		}
-
-		//	try and grab file again
-		pFile = pFileSys->GetFile( FileRef, TRUE );
-		
-		//	if the filetype is specified, make sure it's the right type
-		if ( pFile && FileTypeRef.IsValid() )
-		{
-			//	wrong type, but the file exists, skip to next file sys
-			if ( pFile->GetFileTypeRef() != FileTypeRef )
-				continue;
-		}
-
-		//	see if this file is newer...
-		if ( UpdateNewestFile( pNewestFile, pFile ) )
-			continue;
+		TLDebug_Break("FileSys factory expected - maybe looking for a file too soon :)");
+		return TLPtr::GetNullPtr<TLFileSys::TFile>();
 	}
 
-	//	return the newest matching file we could find
-	return pNewestFile;
+	//	get file group for this file
+	TPtr<TFileGroup>& pFileGroup = TLFileSys::g_pFileFactory->GetFileGroup( FileRef );
+	if ( pFileGroup )
+	{
+		//	find file
+		TPtr<TLFileSys::TFile>& pFile = pFileGroup->GetNewestFile( FileTypeRef );
+		if ( pFile )
+			return pFile;
+	}
+
+	//	didnt find, update the file lists
+	Bool FileListsChanged = TLFileSys::g_pFactory->UpdateFileLists();
+
+	//	nothing changed with file lists, obviously no file!
+	if ( !FileListsChanged )
+		return TLPtr::GetNullPtr<TLFileSys::TFile>();
+
+	//	gr: maybe some kinda counter limit to stop recursive calls...
+	return GetFile( FileRef, FileTypeRef );
 }
 
+
+//----------------------------------------------------------
+//	create file factory in file sys constructor
+//----------------------------------------------------------
+TLFileSys::TFileSysFactory::TFileSysFactory(TRefRef ManagerRef) :
+	TManager	( ManagerRef )
+{
+	if ( TLFileSys::g_pFileFactory )
+	{
+		TLDebug_Break("File factory should be null here");
+	}
+	else
+	{
+		TLFileSys::g_pFileFactory = new TLFileSys::TFileFactory();
+	}
+}
+
+		
+//----------------------------------------------------------
+//	clean up
+//----------------------------------------------------------
+SyncBool TLFileSys::TFileSysFactory::Shutdown()
+{
+	if ( TLFileSys::g_pFileFactory )
+	{
+		//if ( TLFileSys::g_pFileFactory->Shutdown() == SyncWait )
+		//	return SyncWait;
+		
+		TLFileSys::g_pFileFactory = NULL;
+	}
+
+	return SyncTrue;
+}
+
+
+
+
+//----------------------------------------------------------
+//	instance a file system
+//----------------------------------------------------------
+TLFileSys::TFileSys* TLFileSys::TFileSysFactory::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
+{
+	TRef VirtualRef("Virtual");
+	TRef LocalRef("Local");
+
+	if ( TypeRef == VirtualRef || InstanceRef == VirtualRef )
+	{
+		return new TLFileSys::TVirtualFileSys( InstanceRef, TypeRef );
+	}
+
+	if ( TypeRef == LocalRef || InstanceRef == LocalRef )
+	{
+		return new TLFileSys::TLocalFileSys( InstanceRef, TypeRef );
+	}
+
+	return NULL;
+}
+
+
+SyncBool TLFileSys::TFileSysFactory::Initialise()
+{
+	//	list of file systems to create (maybe take this from the app as a param)
+	TArray<TRef> FileSystemRefs;
+	FileSystemRefs.Add("Virtual");
+
+	SyncBool Result = SyncTrue;
+
+	//	create file systems
+	for ( u32 i=0;	i<FileSystemRefs.GetSize();	i++ )
+	{
+		//	create/get file system
+		TPtr<TFileSys> pFileSys = g_pFactory->GetInstance( FileSystemRefs[i], TRUE, FileSystemRefs[i] );
+		if ( !pFileSys )
+			return SyncFalse;
+
+		//	init
+		Result = pFileSys->Init();
+
+		//	if failed, abort
+		if ( Result == SyncFalse )
+			return Result;
+
+		//	success/wait just go to next one
+	}
+	
+	return SyncTrue;
+}
+
+void TLFileSys::TFileSysFactory::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID)
+{
+	if(refPublisherID == "CORE")
+	{
+		// Subscribe to the update messages
+		if(refChannelID == TLCore::UpdateRef)
+			TLMessaging::g_pEventChannelManager->SubscribeTo(this, refPublisherID, refChannelID); 
+	}
+	
+	// Super event channel routine
+	TManager::OnEventChannelAdded(refPublisherID, refChannelID);
+}
+
+
+
+
+
+//----------------------------------------------------------
+//	update file lists of the file systems, return TRUE if any changed
+//----------------------------------------------------------
+Bool TLFileSys::TFileSysFactory::UpdateFileLists()
+{
+	Bool AnyChanged = FALSE;
+
+	//	update all file systems
+	for ( u32 f=0;	f<GetSize();	f++ )
+	{
+		TPtr<TFileSys>& pFileSys = ElementAt(f);
+		
+		if ( pFileSys->UpdateFileList() == SyncTrue)
+			AnyChanged = TRUE;
+	}
+
+	return AnyChanged;
+}
+
+
+//----------------------------------------------------------
+//	return a file system
+//----------------------------------------------------------
+TPtr<TLFileSys::TFileSys>& TLFileSys::GetFileSys(TRefRef FileSysRef)
+{
+	//	missing factory
+	if ( !g_pFactory )
+	{
+		TLDebug_Break("FileSysFactory expected");
+		return TLPtr::GetNullPtr<TLFileSys::TFileSys>();
+	}
+
+	return g_pFactory->GetInstance( FileSysRef );
+}
+
+
+//----------------------------------------------------------
+//	return all matching file systems to these refs/types
+//----------------------------------------------------------
+void TLFileSys::GetFileSys(TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef FileSysRef,TRefRef FileSysTypeRef)
+{
+	//	missing factory
+	if ( !g_pFactory )
+	{
+		TLDebug_Break("FileSysFactory expected");
+		return;
+	}
+
+	//	if ref is valid, just get that one
+	if ( FileSysRef.IsValid() )
+	{
+		FileSysList.AddUnique( g_pFactory->GetInstance( FileSysRef ) );
+		return;
+	}
+
+	//	if type is specified get all the file systems of that type
+	if ( FileSysTypeRef.IsValid() )
+	{
+		for ( u32 f=0;	f<g_pFactory->GetSize();	f++ )
+		{
+			TPtr<TLFileSys::TFileSys>& pFileSys = g_pFactory->ElementAt(f);
+			if ( !pFileSys )
+				continue;
+
+			if ( pFileSys->GetFileSysTypeRef() == FileSysTypeRef )
+				FileSysList.AddUnique( pFileSys );
+		}
+		return;
+	}
+
+	//	file sys ref and filesys type ref are invalid, so match any
+	//FileSysList.Add( g_pFactory->GetInstanceArray() );
+	for ( u32 f=0;	f<g_pFactory->GetInstanceArray().GetSize();	f++ )
+	{
+		FileSysList.AddUnique( g_pFactory->GetInstanceArray().ElementAt(f) );
+	}
+}
+
+
+
+
+
+//------------------------------------------------------------
+//
+//------------------------------------------------------------
+TLFileSys::TFileGroup::TFileGroup(TRefRef FileRef) :
+	m_FileRef	( FileRef )
+{
+}
+
+
+//------------------------------------------------------------
+//	add file to group
+//------------------------------------------------------------
+void TLFileSys::TFileGroup::Add(TPtr<TLFileSys::TFile>& pFile)
+{
+	//	wrong file ref!
+	if ( pFile->GetFileRef() != m_FileRef )
+	{
+		TLDebug_Break("Adding file of wrong file ref to group");
+		return;
+	}
+
+	//	add to list
+	m_Files.AddUnique( pFile );
+}
+
+
+//------------------------------------------------------------
+//	remove file from group
+//------------------------------------------------------------
+void TLFileSys::TFileGroup::Remove(TPtr<TLFileSys::TFile>& pFile)
+{
+	m_Files.Remove( pFile );
+}
+
+
+//------------------------------------------------------------
+//	get file with newest timestamp
+//------------------------------------------------------------
+TPtr<TLFileSys::TFile>& TLFileSys::TFileGroup::GetNewestFile(TRefRef FileType)
+{
+	s32 NewestIndex = -1;
+	TLTime::TTimestamp NewestTimestamp;
+
+	//	search through the files to find the one with the newest timestamp
+	for ( u32 i=0;	i<m_Files.GetSize();	i++ )
+	{
+		TFile& File = *m_Files[i];
+
+		//	looking for specific file type
+		if ( FileType.IsValid() && File.GetTypeRef() != FileType )
+			continue;
+
+		//	is it newer? (or first hit)
+		if ( NewestIndex == -1 || File.GetTimestamp() > NewestTimestamp )
+		{
+			NewestIndex = i;
+			NewestTimestamp = File.GetTimestamp();
+		}
+	}
+
+	//	failed to find any files
+	if ( NewestIndex == -1 )
+		return TLPtr::GetNullPtr<TFile>();
+
+	return m_Files[NewestIndex];
+}
+
+
+
+
+//------------------------------------------------------------
+//	create file
+//------------------------------------------------------------
+TLFileSys::TFile* TLFileSys::TFileFactory::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
+{
+	TLFileSys::TFile* pFile = NULL;
+
+	//	tootle asset type
+	if ( TypeRef == TRef("asset") )
+	{
+		pFile = new TLFileSys::TFileAsset( InstanceRef, TypeRef );
+		return pFile;
+	}
+
+	//	freetype compatible font
+	if ( TypeRef == TRef("ttf") )
+	{
+		pFile = new TLFileSys::TFileFreetype( InstanceRef, TypeRef );
+		return pFile;
+	}
+
+	//	xml file
+	if ( TypeRef == TRef("xml") )
+	{
+		pFile = new TLFileSys::TFileXml( InstanceRef, TypeRef );
+		return pFile;
+	}
+
+	//	svg file
+	if ( TypeRef == TRef("svg") )
+	{
+		pFile = new TLFileSys::TFileSimpleVector( InstanceRef, TypeRef );
+		return pFile;
+	}
+
+	//	TAM file
+	if ( TypeRef == TRef("tam") )
+	{
+		pFile = new TLFileSys::TFileAssetMarkup( InstanceRef, TypeRef );
+		return pFile;
+	}
+	
+	//	WAV file
+	if ( TypeRef == TRef("wav") )
+	{
+		pFile = new TLFileSys::TFileWAV( InstanceRef, TypeRef );
+		return pFile;
+	}
+	
+	//	scheme file
+	if ( TypeRef == TRef("scheme") )
+	{
+		pFile = new TLFileSys::TFileScheme( InstanceRef, TypeRef );
+		return pFile;
+	}
+	
+	//	collada xml file
+	if ( TypeRef == TRef("dae") )
+	{
+		pFile = new TLFileSys::TFileCollada( InstanceRef, TypeRef );
+		return pFile;
+	}
+	
+	//	menu xml file
+	if ( TypeRef == TRef("menu") )
+	{
+		pFile = new TLFileSys::TFileMenu( InstanceRef, TypeRef );
+		return pFile;
+	}
+	
+
+	//	generic binary file
+	pFile = new TLFileSys::TFile( InstanceRef, TypeRef );
+	return pFile;
+}
+
+
+//------------------------------------------------------------
+//	create instance, init, add to group
+//------------------------------------------------------------
+TPtr<TLFileSys::TFile>& TLFileSys::TFileFactory::CreateFileInstance(const TFileRef& FileRef,TRefRef FileSysRef,const TString& Filename)
+{
+	//	get a unique instance ref (based on filename)
+	//	gr: currently NOT based on filename to stay away from confusion
+	//TRef InstanceRef = TClassFactory::GetFreeInstanceRef( FileRef.GetFileRef() );
+	TRef InstanceRef = TClassFactory::GetFreeInstanceRef();
+
+	TPtr<TLFileSys::TFile>& pNewFile = GetInstance( InstanceRef, TRUE, FileRef.GetTypeRef() );
+	if ( !pNewFile )
+		return pNewFile;
+
+	//	init
+	if ( !pNewFile->Init( FileRef.GetFileRef(), FileSysRef, Filename ) )
+	{
+		RemoveInstance( InstanceRef );
+		return TLPtr::GetNullPtr<TLFileSys::TFile>();
+	}
+
+	//	add to group
+	OnFileAdded( pNewFile );
+
+	return pNewFile;
+}
+
+
+//------------------------------------------------------------
+//	delete instance, remove from group
+//------------------------------------------------------------
+Bool TLFileSys::TFileFactory::RemoveFileInstance(TPtr<TLFileSys::TFile>& pFile)
+{
+	if ( !pFile )
+	{
+		TLDebug_Break("File expected");
+		return FALSE;
+	}
+
+	//	remove from groups
+	OnFileRemoved( pFile );
+
+	//	remove instance using it's instance ref
+	return RemoveInstance( pFile->GetInstanceRef() );
+}
+
+
+//----------------------------------------------------------
+//	file was found in a file system, put it into it's group
+//----------------------------------------------------------
+void TLFileSys::TFileFactory::OnFileAdded(TPtr<TFile>& pFile)
+{
+	//	get existing group index
+	s32 GroupIndex = m_FileGroups.FindIndex( pFile->GetFileRef() );
+
+	//	create new group
+	if ( GroupIndex == -1 )
+	{
+		TPtr<TFileGroup> pNewFileGroup = new TFileGroup( pFile->GetFileRef() );
+		GroupIndex = m_FileGroups.Add( pNewFileGroup );
+	}
+
+	//	get group
+	TPtr<TFileGroup>& pFileGroup = m_FileGroups[GroupIndex];
+	pFileGroup->Add( pFile );
+}
+
+ 
+//----------------------------------------------------------
+//	file removed from a file system, remove from it's group
+//----------------------------------------------------------
+void TLFileSys::TFileFactory::OnFileRemoved(TPtr<TFile>& pFile)
+{
+	//	get group for file
+	s32 GroupIndex = m_FileGroups.FindIndex( pFile->GetFileRef() );
+	if ( GroupIndex == -1 )
+		return;
+
+	TPtr<TFileGroup>& pFileGroup = m_FileGroups[GroupIndex];
+	if ( !pFileGroup )
+	{
+		TLDebug_Break("File group shouldnt be null");
+		return;
+	}
+
+	//	remove from group
+	pFileGroup->Remove( pFile );
+
+	//	if group is empty, remove the group
+	if ( pFileGroup->IsEmpty() )
+		m_FileGroups.RemoveAt( GroupIndex );
+}

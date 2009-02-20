@@ -28,7 +28,7 @@ public:
 	virtual SyncBool		Init();								//	check directory exists
 	virtual SyncBool		LoadFileList();						//	search for all files
 	virtual SyncBool		LoadFile(TPtr<TFile>& pFile);		//	load a file
-	virtual TPtr<TFile>		CreateFile(const TString& Filename,TRefRef FileTypeRef);
+	virtual TPtr<TFile>		CreateFile(const TString& Filename,TRef TypeRef);
 	virtual SyncBool		WriteFile(TPtr<TFile>& pFile);
 	virtual SyncBool		Shutdown();
 
@@ -38,8 +38,8 @@ public:
 protected:
 	Bool					IsDirectoryValid();					//	returns FALSE if m_Directory isn't a directory
 	TPtr<TFile>				CreateFileInstance(const WIN32_FIND_DATA& FileData,Bool LostIfEmpty);						//	create a new file from find data
-	void					UpdateFileInstance(TPtr<TFile>& pFile,Bool LostIfEmpty);										//	update file info by doing a win32 search for it and fetching its file details
-	void					UpdateFileInstance(TPtr<TFile>& pFile,const WIN32_FIND_DATA* pFileData,Bool LostIfEmpty);	//	update file info by doing a win32 search for it and fetching its file details
+	void					UpdateFileInstance(TPtr<TFile> pFile,Bool LostIfEmpty);										//	update file info by doing a win32 search for it and fetching its file details
+	void					UpdateFileInstance(TPtr<TFile> pFile,const WIN32_FIND_DATA* pFileData,Bool LostIfEmpty);	//	update file info by doing a win32 search for it and fetching its file details
 
 	Bool					LoadFileList(const char* pFileSearch);	//	load files with a filter, returns number of files found. -1 on error
 

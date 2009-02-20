@@ -57,20 +57,14 @@ SyncBool Platform::LocalFileSys::LoadFileList()
 {
 	//	mark all the current files as missing, then any files we dont 
 	//	re-find when scanning the dir we remove
-	for ( u32 f=0;	f<this->GetSize();	f++ )
+	for ( u32 f=0;	f<GetFileList().GetSize();	f++ )
 	{
-		TPtr<TFile>& pFile = this->ElementAt( f );
+		TPtr<TFile>& pFile = GetFileList().ElementAt( f );
 		if ( pFile )
 			pFile->GetFlags().Set( TFile::Lost );
 	}
 
-	//	search for asset files first to make the file ref's match the filename as a priority
-	if ( !Platform::LocalFileSys::LoadFileList("*.asset") )
-	{
-		return SyncFalse;
-	}
-
-	//	now search for all the other file types
+	//	search for all the file types
 	if ( !Platform::LocalFileSys::LoadFileList("*.*") )
 	{
 		return SyncFalse;
@@ -299,7 +293,21 @@ void Platform::LocalFileSys::SetDirectory(const TString& Directory)
 	if ( m_Directory != NewDirectory )
 	{
 		m_Directory = NewDirectory;
-		Empty(TRUE);
+
+		//	remove current files
+		for ( s32 f=GetFileList().GetLastIndex();	f>=0;	f-- )
+		{
+			RemoveFileInstance( GetFileList().ElementAt(f) );
+		}
+		
+		//	should be empty anyway
+		if ( GetFileList().GetSize() > 0 )
+		{
+			TLDebug_Break("Expected instance array to be empty now");
+			GetFileList().Empty(TRUE);
+		}
+
+		//	reset last-update timestamp
 		m_LastFileListUpdate.SetInvalid();
 	}
 }
@@ -324,7 +332,6 @@ TPtr<TFile> Platform::LocalFileSys::CreateFileInstance(const WIN32_FIND_DATA& Fi
 	if ( !pFile )
 		return pFile;
 
-
 	//	update info on file
 	UpdateFileInstance( pFile, &FileData, LostIfEmpty );
 
@@ -332,8 +339,9 @@ TPtr<TFile> Platform::LocalFileSys::CreateFileInstance(const WIN32_FIND_DATA& Fi
 	//	then remove it straight away
 	if ( pFile->GetFlags().IsSet( TFile::Lost ) )
 	{
-		if ( TFileSys::RemoveInstance( pFile->GetFileRef() ) )
+		if ( TFileSys::RemoveFileInstance( pFile ) )
 		{
+			//	file removed
 			pFile = NULL;
 			return NULL;
 		}
@@ -347,7 +355,7 @@ TPtr<TFile> Platform::LocalFileSys::CreateFileInstance(const WIN32_FIND_DATA& Fi
 //---------------------------------------------------------
 //	update file info by doing a win32 search for it and fetching its file details
 //---------------------------------------------------------
-void Platform::LocalFileSys::UpdateFileInstance(TPtr<TFile>& pFile,Bool LostIfEmpty)
+void Platform::LocalFileSys::UpdateFileInstance(TPtr<TFile> pFile,Bool LostIfEmpty)
 {
 	if ( !pFile )
 	{
@@ -382,7 +390,7 @@ void Platform::LocalFileSys::UpdateFileInstance(TPtr<TFile>& pFile,Bool LostIfEm
 //---------------------------------------------------------
 //	update file info by doing a win32 search for it and fetching its file details
 //---------------------------------------------------------
-void Platform::LocalFileSys::UpdateFileInstance(TPtr<TFile>& pFile,const WIN32_FIND_DATA* pFileData,Bool LostIfEmpty)
+void Platform::LocalFileSys::UpdateFileInstance(TPtr<TFile> pFile,const WIN32_FIND_DATA* pFileData,Bool LostIfEmpty)
 {
 	if ( !pFile )
 	{
@@ -433,16 +441,27 @@ void Platform::LocalFileSys::UpdateFileInstance(TPtr<TFile>& pFile,const WIN32_F
 //---------------------------------------------------------
 //	create a new empty file into file system if possible - if the filesys is read-only we cannot add external files and this fails
 //---------------------------------------------------------
-TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filename,TRefRef FileTypeRef)
+TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filename,TRef TypeRef)
 {
 	//	not allowed to write to this file sys
 	if ( !m_IsWritable )
 		return NULL;
 
+	TFileRef FileRef = GetFileRef( Filename, TypeRef );
+
 	//	look for existing file
-	TPtr<TFile> pFile = GetFile( Filename, FALSE );
+	TPtr<TFile>& pFile = GetFile( FileRef );
 	if ( pFile )
+	{
+		if ( pFile->GetFilename().IsEqual( Filename, FALSE ) )
+		{
+			TLDebug_Break("Called CreateFile(), new FileRef matches existing file, BUT filename is different. Conflict here. Aborting file creation");
+			//return TLPtr::GetNullPtr<TLFileSys::TFile>();
+			return NULL;
+		}
+
 		return pFile;
+	}
 
 	//	cant create a file if directory is invalid
 	if ( !IsDirectoryValid() )
@@ -480,6 +499,17 @@ TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filenam
 
 	//	create instance
 	TPtr<TLFileSys::TFile> pNewFile = CreateFileInstance( FileFindData, FALSE );
+	if ( !pNewFile )
+	{
+		TLDebug_Break("failed to find newly created file?");
+		return NULL;
+	}
+
+	//	check type returned matches up
+	if ( pNewFile->GetFileRefObject() != FileRef )
+	{
+		TLDebug_Break("Created new file, but file ref doesn't match to what we expected");
+	}
 
 	//	return new instance if it worked
 	return pNewFile;
@@ -513,6 +543,7 @@ SyncBool Platform::LocalFileSys::WriteFile(TPtr<TFile>& pFile)
 	//	failed to open
 	if ( Result != 0 )
 	{
+		TLDebug_Break("gr: update file instance null should set loaded to false anyway? follow this code");
 		UpdateFileInstance( pFile, NULL );
 		pFile->SetIsLoaded( SyncFalse );
 		return SyncFalse;

@@ -367,7 +367,7 @@ void Platform::LocalFileSys::SetDirectory(const TString& Directory)
 //---------------------------------------------------------
 //	create a new empty file into file system if possible - if the filesys is read-only we cannot add external files and this fails
 //---------------------------------------------------------
-TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filename,TRefRef FileTypeRef)
+TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filename,TRef TypeRef)
 {
 	//	not allowed to write to this file sys
 	if ( !m_IsWritable )

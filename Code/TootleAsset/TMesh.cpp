@@ -921,7 +921,7 @@ void TLAsset::TMesh::OnPrimitivesChanged()
 	for ( i=0;	i<m_Tristrips.GetSize();	i++ )
 	{
 		Tristrip& Polygon = m_Tristrips[i];
-		for ( s32 n=0;	n<Polygon.GetSize();	n++ )
+		for ( u32 n=0;	n<Polygon.GetSize();	n++ )
 		{
 			TLDebug_CheckIndex( Polygon[n], VertexCount );
 		}
@@ -930,7 +930,7 @@ void TLAsset::TMesh::OnPrimitivesChanged()
 	for ( i=0;	i<m_Trifans.GetSize();	i++ )
 	{
 		Trifan& Polygon = m_Trifans[i];
-		for ( s32 n=0;	n<Polygon.GetSize();	n++ )
+		for ( u32 n=0;	n<Polygon.GetSize();	n++ )
 		{
 			TLDebug_CheckIndex( Polygon[n], VertexCount );
 		}
@@ -939,7 +939,7 @@ void TLAsset::TMesh::OnPrimitivesChanged()
 	for ( i=0;	i<m_Lines.GetSize();	i++ )
 	{
 		Line& Polygon = m_Lines[i];
-		for ( s32 n=0;	n<Polygon.GetSize();	n++ )
+		for ( u32 n=0;	n<Polygon.GetSize();	n++ )
 		{
 			TLDebug_CheckIndex( Polygon[n], VertexCount );
 		}

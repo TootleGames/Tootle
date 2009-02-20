@@ -101,6 +101,13 @@ namespace TLLoadTask
 		virtual TRef			Update();
 	};
 
+	//	load asset file
+	class Mode_AssetFileLoad : public TLoadTaskMode
+	{
+	protected:
+		virtual TRef			Update();
+	};
+
 	//	turn plain file into asset file
 	class Mode_AssetFileImport : public TLoadTaskMode
 	{

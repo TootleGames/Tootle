@@ -43,6 +43,7 @@ TLAsset::TLoadTask::TLoadTask(TRefRef AssetRef) :
 	AddMode<Mode_PlainFileCreateAssetFile>("PFcAF");
 	AddMode<Mode_PlainFileExport>("PFexport");
 	AddMode<Mode_GetAssetFile>("AFGet");
+	AddMode<Mode_AssetFileLoad>("AFLoad");
 	AddMode<Mode_AssetFileImport>("AFImport");
 	AddMode<Mode_AssetFileExport>("AFExport");
 	AddMode<Mode_AssetFileWrite>("AFWrite");
@@ -71,7 +72,14 @@ SyncBool TLAsset::TLoadTask::Update(Bool Blocking)
 
 		//	if in failed mode... or no mode, failed
 		if ( !CurrentModeRef.IsValid() || CurrentModeRef == "Failed" )
+		{
+			#ifdef _DEBUG
+			TTempString Debug_String("Failed to load asset ");
+			GetAssetRef().GetString( Debug_String );
+			TLDebug_Warning( Debug_String );
+			#endif
 			return SyncFalse;
+		}
 	}
 	while ( Blocking );
 
@@ -108,12 +116,8 @@ TRef Mode_Init::Update()
 //------------------------------------------------------------
 TRef Mode_GetPlainFile::Update()
 {
-	//	get list of file systems to check through
-	TPtrArray<TLFileSys::TFileSys> FileSysList;
-	TLFileSys::GetFileSys( FileSysList, TRef(), TRef() );
-
 	//	get the plain file for this asset
-	GetPlainFile() = TLFileSys::FindFile( FileSysList, GetAssetRef() );
+	GetPlainFile() = TLFileSys::GetFile( GetAssetRef() );
 
 	//	didn't find a file to convert, there is no file with this ref at all
 	if ( !GetPlainFile() )
@@ -129,6 +133,7 @@ TRef Mode_GetPlainFile::Update()
 
 	return "PFcAF";
 }
+
 
 
 //------------------------------------------------------------
@@ -183,6 +188,13 @@ TRef Mode_PlainFileCreateAssetFile::Update()
 		//	created file, break out of loop
 		if ( pNewFile )
 		{
+			//	check file ref matches the one we based it from/our asset
+			if ( pNewFile->GetFileRef() != GetPlainFile()->GetFileRef() )
+			{
+				TLDebug_Break("Newly created .asset file's file ref doesn't match the one it was based on");
+			}
+
+			//	debug info
 			#ifdef _DEBUG
 			{
 				TTempString Debug_String("Created new .asset file ");
@@ -240,14 +252,31 @@ TRef Mode_PlainFileExport::Update()
 //------------------------------------------------------------
 TRef Mode_GetAssetFile::Update()
 {
-	//	get the asset file for this asset
+	#ifdef _DEBUG
+	{
+		TTempString Debug_String("Looking for ");
+		GetAssetRef().GetString( Debug_String );
+		Debug_String.Append(" asset file...");
+		TLDebug_Print( Debug_String );
+	}
+	#endif
 
-	//	get list of file systems to check through
-	TPtrArray<TLFileSys::TFileSys> FileSysList;
-	TLFileSys::GetFileSys( FileSysList, TRef(), TRef() );
+	//	get latest file for this asset ref
+	TPtr<TLFileSys::TFile>& pFile = TLFileSys::GetFile( GetAssetRef() );
 
-	//	find matching asset file
-	GetAssetFile() = TLFileSys::FindFile( FileSysList, GetAssetRef(), "Asset" );
+	//	if the latest file is an asset file, then assign it, otherwise leave it null and we'll attempt to convert
+	if ( pFile && pFile->GetTypeRef() == "Asset" )
+	{
+		GetAssetFile() = pFile;
+	}
+	else if ( pFile )
+	{
+		TTempString Debug_String("Found newest file for ");
+		GetAssetRef().GetString( Debug_String );
+		Debug_String.Append(", but newest is type ");
+		pFile->GetTypeRef().GetString( Debug_String );
+		TLDebug_Print( Debug_String );
+	}
 
 	//	no asset file, need to find a plain file to load to convert first
 	if ( !GetAssetFile() )
@@ -256,14 +285,53 @@ TRef Mode_GetAssetFile::Update()
 		return "PFGet";
 	}
 
+	//	need to load file
+	if ( GetAssetFile()->IsLoaded() != SyncTrue || GetAssetFile()->GetFlags()( TLFileSys::TFile::OutOfDate ) )
+	{
+		return "AFLoad";
+	}
+
+	//	do export/create
 	//	if our new asset file needs to be written back to a normal file, do that
 	if ( GetAssetFile()->GetNeedsExport() )
 	{
 		return "AFExport";
 	}
+	else
+	{
+		//	just export to asset
+		return "Acreate";
+	}
+}
 
-	//	just export to asset
-	return "Acreate";
+
+
+//------------------------------------------------------------
+//	load asset file from file sys
+//------------------------------------------------------------
+TRef Mode_AssetFileLoad::Update()
+{
+	//	load the file
+	TPtr<TLFileSys::TFileSys> pFileSys = GetAssetFile()->GetFileSys();
+	TPtr<TLFileSys::TFile> pAssetFile = GetAssetFile();
+	SyncBool LoadResult = pFileSys->LoadFile( pAssetFile );
+	if ( LoadResult == SyncWait )
+		return TRef();
+	
+	if ( LoadResult == SyncFalse )
+		return "Failed";
+
+	//	do export/create (same path as end of Mode_GetAssetFile)
+	//	if our new asset file needs to be written back to a normal file, do that
+	if ( GetAssetFile()->GetNeedsExport() )
+	{
+		return "AFExport";
+	}
+	else
+	{
+		//	just export to asset
+		return "Acreate";
+	}
 }
 
 

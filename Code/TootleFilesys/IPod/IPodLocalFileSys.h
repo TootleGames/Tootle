@@ -28,7 +28,7 @@ public:
 	virtual SyncBool		Init();								//	check directory exists
 	virtual SyncBool		LoadFileList();						//	search for all files
 	virtual SyncBool		LoadFile(TPtr<TFile>& pFile);		//	load a file
-	virtual TPtr<TFile>		CreateFile(const TString& Filename,TRefRef FileTypeRef);
+	virtual TPtr<TFile>		CreateFile(const TString& Filename,TRef TypeRef);
 	virtual SyncBool		WriteFile(TPtr<TFile>& pFile);
 	virtual SyncBool		Shutdown();
 	

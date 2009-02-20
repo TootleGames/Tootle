@@ -7,20 +7,28 @@
 
 
 
-TLFileSys::TFile::TFile(TRefRef FileRef,TRefRef FileTypeRef) :
+TLFileSys::TFile::TFile(TRefRef InstanceRef,TRefRef TypeRef) :
 	m_FileSize		( -1 ),
-	m_FileRef		( FileRef ),
-	m_IsLoaded		( SyncFalse ),
-	m_FileTypeRef	( FileTypeRef )
+	m_InstanceRef	( InstanceRef ),
+	m_FileRef		( TRef(), TypeRef ),
+	m_IsLoaded		( SyncFalse )
 {
 }
 
 
 //-----------------------------------------------------------
-//	initialise the file - this should check the file header
+//	initialise the file
 //-----------------------------------------------------------
-SyncBool TLFileSys::TFile::Init(TRefRef FileSysRef,const TString& Filename)
+SyncBool TLFileSys::TFile::Init(TRefRef FileRef,TRefRef FileSysRef,const TString& Filename)
 {
+	//	the file ref should be invalid at this point
+	if ( m_FileRef.GetFileRef().IsValid() )
+	{
+		TLDebug_Break("Expected file's FileRef to be invalid, as it is NOT assigned at construction");
+	}
+
+	//	set params
+	m_FileRef.SetFileRef( FileRef );
 	m_FileSysRef = FileSysRef;
 	m_Filename = Filename;
 
