@@ -43,9 +43,9 @@ SyncBool Platform::LocalFileSys::LoadFileList()
 {
 	//	mark all the current files as missing, then any files we dont 
 	//	re-find when scanning the dir we remove
-	for ( u32 f=0;	f<this->GetSize();	f++ )
+	for ( u32 f=0;	f < GetFileList().GetSize();	f++ )
 	{
-		TPtr<TFile>& pFile = this->ElementAt( f );
+		TPtr<TFile>& pFile = GetFileList().ElementAt( f );
 		if ( pFile )
 			pFile->GetFlags().Set( TFile::Lost );
 	}
@@ -111,7 +111,7 @@ Bool Platform::LocalFileSys::LoadFileList(const char* pFileSearch)
 				TTempString DebugString("Created new file instance ");
 				pFile->GetFileRef().GetString( DebugString );
 				DebugString.Append(", type: ");
-				pFile->GetFileTypeRef().GetString( DebugString );
+				pFile->GetTypeRef().GetString( DebugString );
 				TLDebug_Print( DebugString );
 			}		
 			
@@ -359,7 +359,7 @@ void Platform::LocalFileSys::SetDirectory(const TString& Directory)
 	if ( m_Directory != RootDirectory )
 	{
 		m_Directory = RootDirectory;
-		Empty(TRUE);
+		GetFileList().Empty(TRUE);
 		m_LastFileListUpdate.SetInvalid();
 	}
 }
