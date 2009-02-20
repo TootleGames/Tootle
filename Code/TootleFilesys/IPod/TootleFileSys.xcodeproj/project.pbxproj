@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		8418E6C30F4B18C700B956C9 /* TFileMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418E6C10F4B18C700B956C9 /* TFileMenu.cpp */; };
 		8418E6C40F4B18C700B956C9 /* TFileMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418E6C20F4B18C700B956C9 /* TFileMenu.h */; };
+		8418FCF50F4F4D5900B956C9 /* TFileSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418FCF30F4F4D5900B956C9 /* TFileSys.cpp */; };
+		8418FCF60F4F4D5900B956C9 /* TFileSys.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418FCF40F4F4D5900B956C9 /* TFileSys.h */; };
 		84C10A0B0F0A79AE00B2DF7A /* TFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109F50F0A79AE00B2DF7A /* TFile.cpp */; };
 		84C10A0C0F0A79AE00B2DF7A /* TFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109F60F0A79AE00B2DF7A /* TFile.h */; };
 		84C10A0D0F0A79AE00B2DF7A /* TFileAsset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109F70F0A79AE00B2DF7A /* TFileAsset.cpp */; };
@@ -175,6 +177,8 @@
 /* Begin PBXFileReference section */
 		8418E6C10F4B18C700B956C9 /* TFileMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileMenu.cpp; path = ../TFileMenu.cpp; sourceTree = SOURCE_ROOT; };
 		8418E6C20F4B18C700B956C9 /* TFileMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileMenu.h; path = ../TFileMenu.h; sourceTree = SOURCE_ROOT; };
+		8418FCF30F4F4D5900B956C9 /* TFileSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileSys.cpp; path = ../TFileSys.cpp; sourceTree = SOURCE_ROOT; };
+		8418FCF40F4F4D5900B956C9 /* TFileSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileSys.h; path = ../TFileSys.h; sourceTree = SOURCE_ROOT; };
 		84C109EF0F0A799500B2DF7A /* libTootleFileSys.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleFileSys.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C109F50F0A79AE00B2DF7A /* TFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFile.cpp; path = ../TFile.cpp; sourceTree = SOURCE_ROOT; };
 		84C109F60F0A79AE00B2DF7A /* TFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFile.h; path = ../TFile.h; sourceTree = SOURCE_ROOT; };
@@ -357,6 +361,8 @@
 		84C108E00F0A770B00B2DF7A = {
 			isa = PBXGroup;
 			children = (
+				8418FCF30F4F4D5900B956C9 /* TFileSys.cpp */,
+				8418FCF40F4F4D5900B956C9 /* TFileSys.h */,
 				84C10A260F0A79C800B2DF7A /* Build Configurations */,
 				84C109F40F0A799D00B2DF7A /* Source Code */,
 				84C109F00F0A799500B2DF7A /* Products */,
@@ -754,6 +760,7 @@
 				84DE34110F12A94D00608F8C /* TFileScheme.h in Headers */,
 				84E114DF0F3C478A00471397 /* TFileCollada.h in Headers */,
 				8418E6C40F4B18C700B956C9 /* TFileMenu.h in Headers */,
+				8418FCF60F4F4D5900B956C9 /* TFileSys.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -858,6 +865,7 @@
 				84DE34100F12A94D00608F8C /* TFileScheme.cpp in Sources */,
 				84E114DE0F3C478A00471397 /* TFileCollada.cpp in Sources */,
 				8418E6C30F4B18C700B956C9 /* TFileMenu.cpp in Sources */,
+				8418FCF50F4F4D5900B956C9 /* TFileSys.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
