@@ -337,8 +337,8 @@ Bool TApplication::TApplicationState_Bootup::CreateIntroScreen()
 		return FALSE;
 	}
 		
-	//	create a render target 
-	TPtr<TLRender::TRenderTarget>& pRenderTarget = pScreen->CreateRenderTarget( TRef("Intro") );
+	//	create a render target
+	TPtr<TLRender::TRenderTarget> pRenderTarget = pScreen->CreateRenderTarget( TRef("Intro") );
 	if(!pRenderTarget)
 	{
 		TLDebug_Break("Error: Failed to create logo render target");
