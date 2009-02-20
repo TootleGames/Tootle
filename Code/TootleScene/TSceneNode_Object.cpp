@@ -62,16 +62,20 @@ TPtr<TLRender::TRenderNode>& TSceneNode_Object::GetRenderNode()
 //--------------------------------------------------------
 Bool TSceneNode_Object::CreatePhysicsObject()
 {
-	TPtr<TLPhysics::TPhysicsNode> pPhysicsObject = new TLPhysics::TPhysicsNode( GetNodeRef() );
-	if ( TLPhysics::g_pPhysicsgraph->AddNode( pPhysicsObject ) )
+	// [20/02/09] DB - Currently we only allow one physics node to be associated with the object node
+	if(!m_PhysicsObjectRef.IsValid())
 	{
-		SetPhysicsObject(pPhysicsObject->GetNodeRef());
+		TPtr<TLPhysics::TPhysicsNode> pPhysicsObject = new TLPhysics::TPhysicsNode( GetNodeRef() );
+		if ( TLPhysics::g_pPhysicsgraph->AddNode( pPhysicsObject ) )
+		{
+			SetPhysicsObject(pPhysicsObject->GetNodeRef());
 
-		// NOTE: This may eventually become an async type routine
-		//		 so no guarantees it happens on the same frmae of creation
-		OnPhysicsObjectAdded(pPhysicsObject);
+			// NOTE: This may eventually become an async type routine
+			//		 so no guarantees it happens on the same frmae of creation
+			OnPhysicsObjectAdded(pPhysicsObject);
 
-		return TRUE;
+			return TRUE;
+		}
 	}
 
 	return FALSE;
@@ -83,17 +87,22 @@ Bool TSceneNode_Object::CreatePhysicsObject()
 //--------------------------------------------------------
 Bool TSceneNode_Object::CreateRenderNode(TPtr<TLRender::TRenderNode> pParentRenderNode)
 {
-	TPtr<TLRender::TRenderNode> pRenderNode = new TLRender::TRenderNode( GetNodeRef() );
-
-	if ( TLRender::g_pRendergraph->AddNode( pRenderNode, pParentRenderNode ) )
+	// [20/02/09] DB - Currently we only allow one render node to be associated with the object node
+	if(!m_RenderNodeRef.IsValid())
 	{
-		SetRenderNode(pRenderNode->GetNodeRef());
 
-		// NOTE: This may eventually become an async type routine
-		//		 so no guarantees it happens on the same frmae of creation
-		OnRenderNodeAdded(pRenderNode);
+		TPtr<TLRender::TRenderNode> pRenderNode = new TLRender::TRenderNode( GetNodeRef() );
 
-		return TRUE;
+		if ( TLRender::g_pRendergraph->AddNode( pRenderNode, pParentRenderNode ) )
+		{
+			SetRenderNode(pRenderNode->GetNodeRef());
+
+			// NOTE: This may eventually become an async type routine
+			//		 so no guarantees it happens on the same frmae of creation
+			OnRenderNodeAdded(pRenderNode);
+
+			return TRUE;
+		}
 	}
 
 	return FALSE;
