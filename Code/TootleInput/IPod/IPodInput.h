@@ -34,7 +34,17 @@ namespace TLInput
 					Cancel,
 				};
 				
+				TTouchData()	{}
+				TTouchData(TRefRef TouchDataRef) :
+					TouchRef(TouchDataRef)
+				{
+				}
+				
+				
+				inline Bool			operator==(const TRef& TouchDataRef)				const	{	return TouchRef == TouchDataRef;	}
+				
 			public:
+				TRef						TouchRef;				// ID of the touch data
 				int2						uCurrentPos;			// Current position of the touch event
 				int2						uPreviousPos;			// Previous position of the touch event
 				float						fTimestamp;				// Timestamp
@@ -51,6 +61,27 @@ namespace TLInput
 					Changed = 0,
 					Remove,	
 				};
+				
+				TTouchObject()	{}
+				TTouchObject(TRefRef TouchDataRef) :
+					TTouchData(TouchDataRef)
+				{
+				}
+				
+				
+				inline TTouchObject&			operator=(const TTouchData& TouchData)					
+				{	
+					uCurrentPos		= TouchData.uCurrentPos;			// Current position of the touch event
+					uPreviousPos	= TouchData.uPreviousPos;			// Previous position of the touch event
+					fTimestamp		= TouchData.fTimestamp;				// Timestamp
+					uPhase			= TouchData.uPhase;					// Currrent touch phase 
+					uTapCount		= TouchData.uTapCount;				// Number of taps for a particular touch event
+					
+					uStartPosition	= TouchData.uCurrentPos;			// Starting position of the touch object
+					
+					return *this;
+				}
+
 				
 			public:
 				int2						uStartPosition;			// Starting position of the touch object

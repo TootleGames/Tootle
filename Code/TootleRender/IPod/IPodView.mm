@@ -196,7 +196,8 @@
 		CGPoint currentTouchPosition = [touch locationInView:self]; 
 		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
-		TLInput::Platform::IPod::TTouchData TouchData;
+		TRef TouchRef = (s32)(&touch);	// Use the address of the ipod touch obejct for the ID
+		TLInput::Platform::IPod::TTouchData TouchData(TouchRef);
 		
 		TouchData.uCurrentPos = int2((s32)currentTouchPosition.x, (s32)currentTouchPosition.y);
 		TouchData.fTimestamp = (float) [touch timestamp ];
@@ -224,7 +225,8 @@
 		CGPoint currentTouchPosition = [touch locationInView:self]; 
 		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
-		TLInput::Platform::IPod::TTouchData TouchData;
+		TRef TouchRef = (s32)(&touch);	// Use the address of the ipod touch obejct for the ID	
+		TLInput::Platform::IPod::TTouchData TouchData(TouchRef);
 		
 		TouchData.uCurrentPos = int2((s32)currentTouchPosition.x, (s32)currentTouchPosition.y);
 		TouchData.fTimestamp = (float) [touch timestamp ];
@@ -252,7 +254,8 @@
 		CGPoint currentTouchPosition = [touch locationInView:self]; 
 		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
-		TLInput::Platform::IPod::TTouchData TouchData;
+		TRef TouchRef = (s32)(&touch);	// Use the address of the ipod touch obejct for the ID
+		TLInput::Platform::IPod::TTouchData TouchData(TouchRef);
 		
 		TouchData.uCurrentPos = int2((s32)currentTouchPosition.x, (s32)currentTouchPosition.y);
 		TouchData.fTimestamp = (float) [touch timestamp ];
@@ -279,7 +282,8 @@
 		CGPoint currentTouchPosition = [touch locationInView:self]; 
 		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
-		TLInput::Platform::IPod::TTouchData TouchData;
+		TRef TouchRef = (s32)(&touch);	// Use the address of the ipod touch obejct for the ID
+		TLInput::Platform::IPod::TTouchData TouchData(TouchRef);
 		
 		TouchData.uCurrentPos = int2((s32)currentTouchPosition.x, (s32)currentTouchPosition.y);
 		TouchData.fTimestamp = (float) [touch timestamp ];
