@@ -48,7 +48,7 @@ Bool TLPath::TPathNode::ExportData(TBinaryTree& Data)
 
 
 TLAsset::TPathNetwork::TPathNetwork(TRefRef AssetRef) :
-	TAsset	( AssetRef, "PathNetwork" )
+	TAsset	( "PathNetwork", AssetRef )
 {
 }
 
@@ -68,13 +68,20 @@ TRef TLAsset::TPathNetwork::GetFreeNodeRef(TRef FromRef) const
 }
 
 //--------------------------------------------------
-//	create a new road node
+//	create a new node, returns NULL if it fails, e.g. if NodeRef already exists
 //--------------------------------------------------
 TLPath::TPathNode* TLAsset::TPathNetwork::AddNode(TRef NodeRef,const float2& NodePos)
 {
 	//	no ref specified, find an unused noderef
 	if ( !NodeRef.IsValid() )
+	{
 		NodeRef = GetFreeNodeRef();
+	}
+	else if ( m_Nodes.Exists( NodeRef ) ) //	check if this ref is already used
+	{
+		TLDebug_Break("NodeRef already used in PathNetwork");
+		return NULL;
+	}
 
 	TLPath::TPathNode NewNode( NodeRef, NodePos );
 	TLDebug::CheckFloatType( NodePos, __FUNCTION__ );
@@ -88,6 +95,27 @@ TLPath::TPathNode* TLAsset::TPathNetwork::AddNode(TRef NodeRef,const float2& Nod
 
 
 	return &m_Nodes[Index];
+}
+
+
+//--------------------------------------------------
+//	remove node and clear up links
+//--------------------------------------------------
+void TLAsset::TPathNetwork::RemoveNode(TRef NodeRef)
+{
+	TLPath::TPathNode* pNode = GetNode( NodeRef );
+	if ( !pNode )
+		return;
+
+	//	clean up all the links
+	for ( s32 l=pNode->GetLinks().GetLastIndex();	l>=0;	l-- )
+	{
+		TLPath::TPathNode* pLinkNode = GetNode( pNode->GetLinks().ElementAt(l) );
+		UnlinkNodes( *pNode, *pLinkNode );
+	}
+
+	//	delete node
+	m_Nodes.Remove( NodeRef );
 }
 
 
@@ -123,9 +151,9 @@ void TLAsset::TPathNetwork::LinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode
 
 
 //--------------------------------------------------
-//
+//	returns FALSE if they weren't linked
 //--------------------------------------------------
-void TLAsset::TPathNetwork::UnlinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB)
+Bool TLAsset::TPathNetwork::UnlinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB)
 {
 	Bool Changed = FALSE;
 	Changed |= NodeA.RemoveLink( NodeB );
@@ -134,16 +162,22 @@ void TLAsset::TPathNetwork::UnlinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNo
 	//	callback if changed
 	if ( Changed )
 		OnNodesUnlinked( NodeA, NodeB );
+	
+	return Changed;
 }
 
 
 //--------------------------------------------------
 //	split a line, adds a new node in between these two - returns ref of new node
 //--------------------------------------------------
-TRef TLAsset::TPathNetwork::DivideLink(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB,float2* pDividePos)
+TLPath::TPathNode* TLAsset::TPathNetwork::DivideLink(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB,float2* pDividePos)
 {
 	//	unlink the nodes
-	UnlinkNodes( NodeA, NodeB );
+	if ( !UnlinkNodes( NodeA, NodeB ) )
+	{
+		TLDebug_Break("Trying to divide link between two nodes that aren't linked");
+		return NULL;
+	}
 
 	TLPath::TPathNode* pNewNode = NULL;
 
@@ -166,7 +200,7 @@ TRef TLAsset::TPathNetwork::DivideLink(TLPath::TPathNode& NodeA,TLPath::TPathNod
 
 	//	failed to create
 	if ( !pNewNode )
-		return TRef();
+		return NULL;
 
 	//	link the new node to the other two
 	LinkNodes( NodeA, *pNewNode );
@@ -175,7 +209,7 @@ TRef TLAsset::TPathNetwork::DivideLink(TLPath::TPathNode& NodeA,TLPath::TPathNod
 	//	call back
 	OnNodeLinkDivided( NodeA, *pNewNode, NodeB );
 
-	return pNewNode->GetNodeRef();
+	return pNewNode;
 }
 
 

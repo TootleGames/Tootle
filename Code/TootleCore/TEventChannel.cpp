@@ -13,7 +13,7 @@ using namespace TLMessaging;
 /*
 	Adds an event channel for the specified publisher
 */
-Bool TEventChannelManager::RegisterEventChannel(TPublisher* pPublisher, TRef refPublisherID, TRef refChannelID)
+Bool TEventChannelManager::RegisterEventChannel(TPublisher* pPublisher, TRefRef refPublisherID, TRefRef refChannelID)
 {
 	// Does the group exist?
 	TPtr<TEventChannelGroup> pEventChannelGroup = FindEventChannelGroup(refPublisherID);
@@ -30,10 +30,7 @@ Bool TEventChannelManager::RegisterEventChannel(TPublisher* pPublisher, TRef ref
 	else
 	{
 		// Create the group
-		s32 sIndex = m_EventChannelGroups.Add(new TEventChannelGroup(refPublisherID));
-
-		pEventChannelGroup = m_EventChannelGroups.ElementAt(sIndex);
-
+		pEventChannelGroup = m_EventChannelGroups.AddPtr(new TEventChannelGroup(refPublisherID));
 	}
 
 	// Create the channel for the group
@@ -47,14 +44,13 @@ Bool TEventChannelManager::RegisterEventChannel(TPublisher* pPublisher, TRef ref
 	
 	// Send a message to all subscribers saying that a new event channel has been created
 	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Channel");
+	if ( !pMessage)
+		return FALSE;
 	
-	if(pMessage)
-	{
-		pMessage->Write(TRef("Added"));
-		pMessage->Write(refPublisherID);
-		pMessage->Write(refChannelID);
-		PublishMessage(pMessage);
-	}
+	pMessage->Write(TRef("Added"));
+	pMessage->Write(refPublisherID);
+	pMessage->Write(refChannelID);
+	PublishMessage(pMessage);
 
 	return TRUE;
 }
@@ -62,10 +58,10 @@ Bool TEventChannelManager::RegisterEventChannel(TPublisher* pPublisher, TRef ref
 /*
 	Removes the specified event channel for the publisher
 */
-Bool TEventChannelManager::UnregisterEventChannel(TPublisher* pPublisher, TRef refPublisherID, TRef refChannelID)
+Bool TEventChannelManager::UnregisterEventChannel(TPublisher* pPublisher, TRefRef refPublisherID, TRefRef refChannelID)
 {
 	// Does the group exist?
-	TPtr<TEventChannelGroup> pEventChannelGroup = FindEventChannelGroup(refPublisherID);
+	TPtr<TEventChannelGroup>& pEventChannelGroup = FindEventChannelGroup(refPublisherID);
 	
 	if(!pEventChannelGroup.IsValid())
 		return FALSE;
@@ -80,7 +76,7 @@ Bool TEventChannelManager::UnregisterEventChannel(TPublisher* pPublisher, TRef r
 		if(!pEventChannelGroup->HasEventChannels())
 		{
 			// Remove the group
-			m_EventChannelGroups.Remove(pEventChannelGroup.GetObject());
+			m_EventChannelGroups.Remove( pEventChannelGroup->GetPublisherID() );
 			pEventChannelGroup = NULL;
 		}
 	}
@@ -90,9 +86,9 @@ Bool TEventChannelManager::UnregisterEventChannel(TPublisher* pPublisher, TRef r
 
 /*
 */
-Bool TEventChannelManager::SubscribeTo(TSubscriber* pSubscriber, TRef refPublisherID, TRef refChannelID)
+Bool TEventChannelManager::SubscribeTo(TSubscriber* pSubscriber, TRefRef refPublisherID, TRefRef refChannelID)
 {
-	TPtr<TEventChannel> pEventChannel = FindEventChannel(refPublisherID, refChannelID);
+	TPtr<TEventChannel>& pEventChannel = FindEventChannel(refPublisherID, refChannelID);
 
 	if(!pEventChannel.IsValid())
 		return FALSE;
@@ -102,9 +98,9 @@ Bool TEventChannelManager::SubscribeTo(TSubscriber* pSubscriber, TRef refPublish
 
 /*
 */
-Bool TEventChannelManager::UnsubscribeFrom(TSubscriber* pSubscriber, TRef refPublisherID, TRef refChannelID)
+Bool TEventChannelManager::UnsubscribeFrom(TSubscriber* pSubscriber, TRefRef refPublisherID, TRefRef refChannelID)
 {
-	TPtr<TEventChannel> pEventChannel = FindEventChannel(refPublisherID, refChannelID);
+	TPtr<TEventChannel>& pEventChannel = FindEventChannel(refPublisherID, refChannelID);
 
 	if(!pEventChannel.IsValid())
 		return FALSE;
@@ -113,9 +109,9 @@ Bool TEventChannelManager::UnsubscribeFrom(TSubscriber* pSubscriber, TRef refPub
 }
 
 
-Bool TEventChannelManager::BroadcastMessage(TPtr<TMessage> pData, TRef refPublisherID, TRef refChannelID)
+Bool TEventChannelManager::BroadcastMessage(TPtr<TMessage>& pData, TRefRef refPublisherID, TRefRef refChannelID)
 {
-	TPtr<TEventChannel> pEventChannel = FindEventChannel(refPublisherID, refChannelID);
+	TPtr<TEventChannel>& pEventChannel = FindEventChannel(refPublisherID, refChannelID);
 
 	if(!pEventChannel.IsValid())
 		return FALSE;
@@ -128,13 +124,13 @@ Bool TEventChannelManager::BroadcastMessage(TPtr<TMessage> pData, TRef refPublis
 /*
 	Finds the event channel with the specified ID within the specified channel group
 */
-TPtr<TEventChannel>	TEventChannelManager::FindEventChannel(TRef refPublisherID, TRef refChannelID)
+TPtr<TEventChannel>& TEventChannelManager::FindEventChannel(TRefRef refPublisherID, TRefRef refChannelID)
 {
-	TPtr<TEventChannelGroup> pGroup = FindEventChannelGroup(refPublisherID);
+	TPtr<TEventChannelGroup>& pGroup = FindEventChannelGroup(refPublisherID);
 
 	// Was the group found?
 	if(!pGroup.IsValid())
-		return NULL;
+		return TLPtr::GetNullPtr<TEventChannel>();
 
 	// Find the event channel
 	return pGroup->FindEventChannel(refChannelID);
@@ -143,9 +139,9 @@ TPtr<TEventChannel>	TEventChannelManager::FindEventChannel(TRef refPublisherID, 
 /*
 	Finds the event channel index with the specified ID within the specified channel group
 */
-s32	TEventChannelManager::FindEventChannelIndex(TRef refPublisherID, TRef refChannelID)
+s32	TEventChannelManager::FindEventChannelIndex(TRefRef refPublisherID, TRefRef refChannelID)
 {
-	TPtr<TEventChannelGroup> pGroup = FindEventChannelGroup(refPublisherID);
+	TPtr<TEventChannelGroup>& pGroup = FindEventChannelGroup(refPublisherID);
 
 	// Was the group found?
 	if(!pGroup.IsValid())
@@ -155,81 +151,4 @@ s32	TEventChannelManager::FindEventChannelIndex(TRef refPublisherID, TRef refCha
 	return pGroup->FindEventChannelIndex(refChannelID);
 }
 
-
-/*
-	Finds the event channel groupassociated witht eh specified publisher ID
-*/
-TPtr<TEventChannelGroup> TEventChannelManager::FindEventChannelGroup(TRef refPublisherID)
-{
-	//	gr: use the array functions! they will be faster than a for loop in the future :)
-	return m_EventChannelGroups.FindPtr( refPublisherID );
-	/*
-	for(u32 uIndex = 0; uIndex < m_EventChannelGroups.GetSize(); uIndex++)
-	{
-		TPtr<TEventChannelGroup> pGroup = m_EventChannelGroups.ElementAt(uIndex);
-
-		if(pGroup->GetPublisherID() == refPublisherID)
-			return pGroup;
-	}
-
-	// Not found
-	return NULL;
-	*/
-}
-
-
-/*
-	Finds the event channel groupassociated witht eh specified publisher ID
-*/
-s32 TEventChannelManager::FindEventChannelGroupIndex(TRef refPublisherID)
-{
-	//	gr: use the array functions! they will be faster than a for loop in the future :)
-	return m_EventChannelGroups.FindIndex( refPublisherID );
-/*	for(u32 uIndex = 0; uIndex < m_EventChannelGroups.GetSize(); uIndex++)
-	{
-		TPtr<TEventChannelGroup> pGroup = m_EventChannelGroups.ElementAt(uIndex);
-
-		if(pGroup->GetPublisherID() == refPublisherID)
-			return (s32) uIndex;
-	}
-
-	// Not found
-	return -1;
-	*/
-}
-
-
-/*
-	Finds a specified event channel within the group
-*/
-TPtr<TEventChannel> TEventChannelGroup::FindEventChannel(TRef refChannelID)
-{
-	for(u32 uIndex = 0; uIndex < m_EventChannels.GetSize(); uIndex++)
-	{
-		TPtr<TEventChannel> pChannel = m_EventChannels.ElementAt(uIndex);
-
-		if(pChannel->GetChannelID() == refChannelID)
-			return pChannel;
-	}
-
-	// Not found
-	return NULL;
-}
-
-/*
-	Finds the index of the specified event channel
-*/
-s32 TEventChannelGroup::FindEventChannelIndex(TRef refChannelID)
-{
-	for(u32 uIndex = 0; uIndex < m_EventChannels.GetSize(); uIndex++)
-	{
-		TPtr<TEventChannel> pChannel = m_EventChannels.ElementAt(uIndex);
-
-		if(pChannel->GetChannelID() == refChannelID)
-			return (s32) uIndex;
-	}
-
-	// Not found
-	return -1;
-}
 

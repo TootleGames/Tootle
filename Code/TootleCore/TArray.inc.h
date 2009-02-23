@@ -124,7 +124,8 @@ TYPE* TArray<TYPE>::AddNew()
 //	remove an element explicitly
 //-------------------------------------------------------------------------
 template<typename TYPE>
-Bool TArray<TYPE>::Remove(const TYPE& val)
+template<typename MATCHTYPE>
+Bool TArray<TYPE>::Remove(const MATCHTYPE& val)
 {
 	u32 uIndex = FindIndex(val);
 

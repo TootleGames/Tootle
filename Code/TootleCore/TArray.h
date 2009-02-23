@@ -114,7 +114,8 @@ public:
 	virtual s32			Add(const TYPE* pData,u32 Length=1);	//	add a number of elements onto the end of the list
 	virtual s32			Add(const TArray<TYPE>& Array);			//	add a whole array of this type onto the end of the list
 	virtual TYPE*		AddNew();								//	add a new element onto the end of the array and return it. often fastest because if we dont need to grow there's no copying
-	Bool				Remove(const TYPE& val);				// remove the specifed object
+	template <class MATCHTYPE>
+	FORCEINLINE Bool	Remove(const MATCHTYPE& val);				// remove the specifed object
 	virtual Bool		RemoveAt(u32 Index);					//	remove an element from the array at the specified index
 	void				RemoveAt(u32 Index,u32 Amount);			//	remove a range of elements from the array
 	Bool				RemoveLast()							{	return ( GetSize() ? RemoveAt( GetLastIndex() ) : FALSE );	};

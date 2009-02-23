@@ -14,7 +14,6 @@ namespace TLAsset
 {
 	TPtr<TLAsset::TAssetFactory>	g_pFactory;
 	TPtrArray<TLoadTask>			g_LoadTasks;
-	TPtr<TAsset>					g_pNullAsset;
 };
 
 
@@ -58,7 +57,7 @@ TPtr<TLAsset::TAsset>& TLAsset::CreateAsset(TRefRef AssetRef,TRefRef AssetType)
 	if ( !g_pFactory )
 	{
 		TLDebug_Break("Asset factory expected");
-		return g_pNullAsset;
+		return TLPtr::GetNullPtr<TLAsset::TAsset>();
 	}
 
 	TPtr<TAsset>& pNewAsset = g_pFactory->GetInstance( AssetRef, TRUE, AssetType );
@@ -70,7 +69,7 @@ TPtr<TLAsset::TAsset>& TLAsset::CreateAsset(TRefRef AssetRef,TRefRef AssetType)
 		AssetType.GetString( DebugString );
 		DebugString.Append(")");
 		TLDebug_Print( DebugString );
-		return g_pNullAsset;
+		return TLPtr::GetNullPtr<TLAsset::TAsset>();
 	}
 	else
 	{
@@ -85,6 +84,7 @@ TPtr<TLAsset::TAsset>& TLAsset::CreateAsset(TRefRef AssetRef,TRefRef AssetType)
 	//	ensure it's the right type
 	if ( pNewAsset->GetAssetType() != AssetType )
 	{
+#ifdef _DEBUG
 		TTempString DebugString("Created/found asset ");
 		pNewAsset->GetAssetRef().GetString( DebugString );
 		DebugString.Append(" but is type ");
@@ -92,7 +92,9 @@ TPtr<TLAsset::TAsset>& TLAsset::CreateAsset(TRefRef AssetRef,TRefRef AssetType)
 		DebugString.Append(". Expected type ");
 		AssetType.GetString( DebugString );
 		TLDebug_Print( DebugString );
-		return g_pNullAsset;
+#endif
+		TLDebug_Break("Wrong type of asset. If this is a new asset type, check the TAsset constructor in your asset types constructor.");
+		return TLPtr::GetNullPtr<TLAsset::TAsset>();
 	}
 
 	return pNewAsset;
@@ -107,7 +109,7 @@ TPtr<TLAsset::TAsset>& TLAsset::GetAsset(TRefRef AssetRef,Bool LoadedOnly)
 	if ( !g_pFactory )
 	{
 		TLDebug_Break("Asset factory expected");
-		return g_pNullAsset;
+		return TLPtr::GetNullPtr<TLAsset::TAsset>();
 	}
 	
 	TPtr<TLAsset::TAsset>& pAsset = g_pFactory->GetInstance( AssetRef );
@@ -115,7 +117,7 @@ TPtr<TLAsset::TAsset>& TLAsset::GetAsset(TRefRef AssetRef,Bool LoadedOnly)
 	if ( LoadedOnly )
 	{
 		if ( pAsset && !pAsset->IsLoaded() )
-			return g_pNullAsset;
+			return TLPtr::GetNullPtr<TLAsset::TAsset>();
 	}
 
 	if ( !pAsset && AssetRef.IsValid() )
@@ -191,7 +193,7 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef, Bool bBlocking)
 	if ( !g_pFactory )
 	{
 		TLDebug_Break("Asset factory expected");
-		return g_pNullAsset;
+		return TLPtr::GetNullPtr<TLAsset::TAsset>();
 	}
 
 	//	check it doesnt already exist
@@ -215,7 +217,7 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef, Bool bBlocking)
 
 	//	missing task (failed to alloc?)
 	if ( !pLoadTask )
-		return g_pNullAsset;
+		return TLPtr::GetNullPtr<TLAsset::TAsset>();
 
 	//	do first update, if it fails then we can abort early and fail immedietly
 	SyncBool FirstUpdateResult = pLoadTask->Update( bBlocking );
@@ -238,7 +240,7 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef, Bool bBlocking)
 	if ( FirstUpdateResult == SyncFalse )
 	{
 		pLoadTask = NULL;
-		return g_pNullAsset;
+		return TLPtr::GetNullPtr<TLAsset::TAsset>();
 	}
 
 	//	finished already! dont need to add the task to the queue

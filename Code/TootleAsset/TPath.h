@@ -41,6 +41,9 @@ public:
 	Bool					RemoveLink(TRefRef NodeRef)					{	return m_Links.Remove( NodeRef );	}
 	Bool					RemoveLink(TPathNode& Node)					{	return m_Links.Remove( Node.GetNodeRef() );	}
 
+	TArray<TRef>&			GetLinks()									{	return m_Links;	}
+	const TArray<TRef>&		GetLinks() const							{	return m_Links;	}
+
 	FORCEINLINE Bool		operator==(TRefRef NodeRef) const			{	return GetNodeRef() == NodeRef;	}
 	FORCEINLINE Bool		operator==(const TPathNode& Node) const		{	return GetNodeRef() == Node.GetNodeRef();	}
 
@@ -70,12 +73,13 @@ public:
 	TRef						GetRandomNode()												{	return m_Nodes.ElementRand().GetNodeRef();	}
 	TRef						GetFreeNodeRef(TRef FromRef=TRef()) const;					//	return a ref for a node that isn't currently used
 
-	TLPath::TPathNode*			AddNode(TRef NodeRef,const float2& NodePos);				//	create a new road node
+	TLPath::TPathNode*			AddNode(TRef NodeRef,const float2& NodePos);				//	create a new node, returns NULL if it fails, e.g. if NodeRef already exists
+	void						RemoveNode(TRef NodeRef);									//	remove node and clear up links
 
 	void						LinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB);		
-	void						UnlinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB);	
+	Bool						UnlinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB);		//	returns FALSE if they weren't linked
 
-	TRef						DivideLink(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB,float2* pDividePos=NULL);	//	split a line, adds a new node in between these two
+	TLPath::TPathNode*			DivideLink(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB,float2* pDividePos=NULL);	//	split a line, adds a new node in between these two
 
 protected:
 	virtual SyncBool			ImportData(TBinaryTree& Data);

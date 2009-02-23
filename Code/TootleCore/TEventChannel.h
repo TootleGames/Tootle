@@ -21,16 +21,19 @@ namespace TLMessaging
 class TLMessaging::TEventChannel : public TRelay
 {
 public:
-	TEventChannel(TRef refChannel) :
-	  m_refChannelID(refChannel)
+	TEventChannel(TRefRef refChannel) :
+		m_refChannelID(refChannel)
 	{
 	}
 
-	inline	TRef				GetChannelID()	const	{ return m_refChannelID; }
+	FORCEINLINE TRefRef	GetChannelID()	const					{	return m_refChannelID; }
+	FORCEINLINE TRefRef	GetChannelRef()	const					{	return m_refChannelID; }
+
+	FORCEINLINE Bool	operator==(TRefRef ChannelRef) const	{	return GetChannelRef() == ChannelRef;	}
 
 protected:
 
-	virtual void			ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+	virtual void		ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 	{
 		// Is the message available for our channel?
 		if(pMessage->HasChannelID(GetChannelID()))
@@ -41,55 +44,37 @@ protected:
 	}
 
 private:
-	TRef						m_refChannelID;
+	TRef				m_refChannelID;
 };
 
 
 class TLMessaging::TEventChannelGroup
 {
 public:
-	TEventChannelGroup(TRef refPublisherID) :
-	  m_refPublisherID(refPublisherID)
-	  {
-	  }
-
-	inline TRef													GetPublisherID()		const	{ return m_refPublisherID; }
-
-	// Registers an event channel with the group and returns a pointer tot he new event channel
-	TPtr<TEventChannel>									RegisterEventChannel(TRef refChannelID)
+	TEventChannelGroup(TRefRef refPublisherID) :
+		m_refPublisherID(refPublisherID)
 	{
-		s32 iIndex = m_EventChannels.Add(new TEventChannel(refChannelID));
-
-		// Failed - return null
-		if(iIndex == -1)
-			return NULL;
-
-		// Return the newly created element
-		return m_EventChannels.ElementAt(iIndex);
 	}
 
-	// Unregisters an event channel from the group
-	Bool															UnregisterEventChannel(TRef refChannelID)
-	{
-		s32 sIndex = FindEventChannelIndex(refChannelID);
+	FORCEINLINE TRefRef					GetPublisherID() const						{ return m_refPublisherID; }
 
-		if(sIndex != -1)
-			return m_EventChannels.RemoveAt(sIndex);
+	FORCEINLINE TPtr<TEventChannel>&	RegisterEventChannel(TRefRef refChannelID);		// Registers an event channel with the group and returns a pointer tot he new event channel
+	FORCEINLINE Bool					UnregisterEventChannel(TRefRef refChannelID);	// Unregisters an event channel from the group
 
-		return FALSE;
-	}
+	FORCEINLINE Bool					HasEventChannels() const						{	return (m_EventChannels.GetSize() > 0); }
+	FORCEINLINE TPtr<TEventChannel>&	FindEventChannel(TRefRef refChannelID)			{	return m_EventChannels.FindPtr( refChannelID );	}
+	FORCEINLINE s32						FindEventChannelIndex(TRefRef refChannelID)		{	return m_EventChannels.FindIndex( refChannelID );	}
 
-	inline Bool													HasEventChannels()	const { return (m_EventChannels.GetSize() > 0); }
-
-	TPtr<TLMessaging::TEventChannel>			FindEventChannel(TRef refChannelID);
-	s32															FindEventChannelIndex(TRef refChannelID);
-
-	inline Bool									operator==(TRefRef PublisherRef) const		{	return m_refPublisherID == PublisherRef;	}
+	FORCEINLINE Bool					operator==(const TEventChannelGroup& Group)		{	return GetPublisherID() == Group.GetPublisherID();	}
+	FORCEINLINE Bool					operator==(TRefRef PublisherRef) const			{	return GetPublisherID() == PublisherRef;	}
 
 private:
-	TRef																m_refPublisherID;			// ID of the publisher that will publish events to these channels
-	TPtrArray<TLMessaging::TEventChannel>		m_EventChannels;		// The filtered event channels
+	TRef						m_refPublisherID;			// ID of the publisher that will publish events to these channels
+	TPtrArray<TEventChannel>	m_EventChannels;			// The filtered event channels
 };
+
+
+
 
 /*
 	Event Channel Manager - keeps track of events channels
@@ -97,44 +82,69 @@ private:
 class TLMessaging::TEventChannelManager : public TManager
 {
 public:
-
-	TEventChannelManager(TRef refManagerID) :
-	  TManager(refManagerID)
-	  {
-	  }
+	TEventChannelManager(TRefRef refManagerID) :
+		TManager(refManagerID)
+	{
+	}
 
 	// Channel management
-	Bool				RegisterEventChannel(TPublisher* pPublisher, TRef refPublisherID, TRef refChannelID);
-	Bool				UnregisterEventChannel(TPublisher* pPublisher, TRef refPublisherID, TRef refChannelID);
+	Bool							RegisterEventChannel(TPublisher* pPublisher, TRefRef refPublisherID, TRefRef refChannelID);
+	Bool							UnregisterEventChannel(TPublisher* pPublisher, TRefRef refPublisherID, TRefRef refChannelID);
 
 	// Subscription management
-	Bool				SubscribeTo(TSubscriber* pSubscriber, TRef refPublisherID, TRef refChannelID);
-	
+	Bool							SubscribeTo(TSubscriber* pSubscriber, TRefRef refPublisherID, TRefRef refChannelID);
 	template <class T>
-	Bool			SubscribeTo(TPtr<T> pSubscriber, TRef refPublisherID, TRef refChannelID)
-	{
-		TSubscriber* pSubscriberPtr = dynamic_cast<TSubscriber*>(pSubscriber.GetObject());
-		return SubscribeTo(pSubscriberPtr, refPublisherID, refChannelID);
-	}
+	FORCEINLINE Bool				SubscribeTo(TPtr<T>& pSubscriber, TRefRef refPublisherID, TRefRef refChannelID);
 
-	Bool				UnsubscribeFrom(TSubscriber* pSubscriber, TRef refPublisherID, TRef refChannelID);
-	inline Bool			UnsubscribeFrom(TPtr<TSubscriber> pSubscriber, TRef refPublisherID, TRef refChannelID)
-	{
-		return UnsubscribeFrom(pSubscriber.GetObject(), refPublisherID, refChannelID);
-	}
+	Bool							UnsubscribeFrom(TSubscriber* pSubscriber, TRefRef refPublisherID, TRefRef refChannelID);
+	FORCEINLINE Bool				UnsubscribeFrom(TPtr<TSubscriber>& pSubscriber, TRefRef refPublisherID, TRefRef refChannelID);
 
 	// Message sending
-	Bool				BroadcastMessage(TPtr<TMessage> pData, TRef refPublisherID, TRef refChannelID);
+	Bool							BroadcastMessage(TPtr<TMessage>& pData, TRefRef refPublisherID, TRefRef refChannelID);
 
 private:
 
-	TPtr<TLMessaging::TEventChannelGroup>				FindEventChannelGroup(TRef refPublisherID);
-	s32																		FindEventChannelGroupIndex(TRef refPublisherID);
+	FORCEINLINE TPtr<TEventChannelGroup>&		FindEventChannelGroup(TRefRef refPublisherID)				{	return m_EventChannelGroups.FindPtr( refPublisherID );	}
+	FORCEINLINE s32								FindEventChannelGroupIndex(TRefRef refPublisherID)			{	return m_EventChannelGroups.FindIndex( refPublisherID );	}
 
-
-	TPtr<TLMessaging::TEventChannel>						FindEventChannel(TRef refPublisherID, TRef refChannelID );
-	s32																		FindEventChannelIndex(TRef refPublisherID, TRef refChannelID);
+	TPtr<TEventChannel>&			FindEventChannel(TRefRef refPublisherID, TRefRef refChannelID );
+	s32								FindEventChannelIndex(TRefRef refPublisherID, TRefRef refChannelID);
 
 private:
-	TPtrArray<TLMessaging::TEventChannelGroup>			m_EventChannelGroups;
+	TPtrArray<TEventChannelGroup>	m_EventChannelGroups;
 };
+
+
+
+
+FORCEINLINE Bool TLMessaging::TEventChannelManager::UnsubscribeFrom(TPtr<TSubscriber>& pSubscriber,TRefRef refPublisherID,TRefRef refChannelID)
+{
+	return UnsubscribeFrom(pSubscriber.GetObject(), refPublisherID, refChannelID);
+}
+
+
+template <class T>
+FORCEINLINE Bool TLMessaging::TEventChannelManager::SubscribeTo(TPtr<T>& pSubscriber, TRefRef refPublisherID, TRefRef refChannelID)
+{
+	TSubscriber* pSubscriberPtr = dynamic_cast<TSubscriber*>(pSubscriber.GetObject());
+	return SubscribeTo(pSubscriberPtr, refPublisherID, refChannelID);
+}
+
+//------------------------------------------------
+// Registers an event channel with the group and returns a pointer tot he new event channel
+//------------------------------------------------
+FORCEINLINE TPtr<TLMessaging::TEventChannel>& TLMessaging::TEventChannelGroup::RegisterEventChannel(TRefRef refChannelID)	
+{
+	TPtr<TLMessaging::TEventChannel> pChannel = new TEventChannel( refChannelID );
+	return m_EventChannels.AddPtr( pChannel );
+}
+
+
+//------------------------------------------------
+// Unregisters an event channel from the group
+//------------------------------------------------
+FORCEINLINE Bool TLMessaging::TEventChannelGroup::UnregisterEventChannel(TRefRef refChannelID)	
+{
+	TPtr<TLMessaging::TEventChannel> pChannel = new TEventChannel( refChannelID );
+	return m_EventChannels.Remove( refChannelID );
+}
