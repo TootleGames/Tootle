@@ -116,13 +116,16 @@ TRef Mode_Init::Update()
 //------------------------------------------------------------
 TRef Mode_GetPlainFile::Update()
 {
-	//	get the plain file for this asset
-	GetPlainFile() = TLFileSys::GetFile( GetAssetRef() );
-
-	//	didn't find a file to convert, there is no file with this ref at all
+	//	get the plain file for this asset (if we haven't already located it)
 	if ( !GetPlainFile() )
 	{
-		return "Failed";
+		GetPlainFile() = TLFileSys::GetFile( GetAssetRef() );
+
+		//	didn't find a file to convert, there is no file with this ref at all
+		if ( !GetPlainFile() )
+		{
+			return "Failed";
+		}
 	}
 
 	//	is the file out of date?? reload it!
@@ -276,13 +279,17 @@ TRef Mode_GetAssetFile::Update()
 		Debug_String.Append(", but newest is type ");
 		pFile->GetTypeRef().GetString( Debug_String );
 		TLDebug_Print( Debug_String );
-	}
 
-	//	no asset file, need to find a plain file to load to convert first
-	if ( !GetAssetFile() )
-	{
-		Debug_PrintStep("No asset file, looking for plain file");
+		//	save fetching it again
+		GetPlainFile() = pFile;
+
+		//	load (if required) then convert plain file
 		return "PFGet";
+	}
+	else
+	{
+		//	no file at all with a matching name
+		return "Failed";
 	}
 
 	//	need to load file

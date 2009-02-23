@@ -147,6 +147,11 @@ SyncBool TLFileSys::TFileSys::UpdateFileList()
 		{
 			ReloadFilelist = TRUE;
 		}
+		else
+		{
+			//	file list doesn't need updating
+			TLDebug_Print("File list of file sys doesn't need updating");
+		}
 	}
 	else
 	{
@@ -161,10 +166,32 @@ SyncBool TLFileSys::TFileSys::UpdateFileList()
 	//	reload file list, if failed return no change
 	SyncBool LoadResult = LoadFileList();
 
+	//	update timestamp
+	m_LastFileListUpdate.SetTimestampNow();
+
 	if ( LoadResult == SyncFalse )
 		return SyncFalse;
 
-	return SyncWait;
+#ifdef _DEBUG
+	TTempString Debug_String("New file list for file sys: ");
+	this->GetFileSysRef().GetString( Debug_String );
+	Debug_String.Appendf(". %d files: \n", GetFileList().GetSize() );
+	for ( u32 f=0;	f<GetFileList().GetSize();	f++ )
+	{
+		TLFileSys::TFile& File = *(GetFileList().ElementAt(f));
+		TRefRef FileRef = File.GetFileRef();
+		TRefRef TypeRef = File.GetTypeRef();
+
+		FileRef.GetString( Debug_String );
+		Debug_String.Append(".");
+		TypeRef.GetString( Debug_String );
+		Debug_String.Append("\n");
+	}
+	TLDebug_Print( Debug_String );
+#endif
+
+	//	gr: was SyncWait... not sure why, now when it returns SyncTrue we 
+	return LoadResult;
 }
 
 
