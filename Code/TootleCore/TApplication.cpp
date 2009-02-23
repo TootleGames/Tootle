@@ -101,7 +101,7 @@ SyncBool TApplication::Initialise()
 		if ( Result == SyncFalse )
 		{
 			//	gr: let system continue if this dir cannot be used
-			TLDebug_Print("failed to create local file sys");
+			TLDebug_Print("failed to create local user file sys");
 			m_UserFileSysRef.SetInvalid();
 		}
 			
@@ -309,11 +309,17 @@ Bool TApplication::TApplicationState_Bootup::OnBegin(TRefRef PreviousMode)
 	if(!bSuccess)
 		return FALSE;
 	
+	// TODO:
 	// Setup language
 	// Setup Audio - language specific
 	// Load Text - language specific
 	// Setup global settings
+
 	// Obtain list of files to load at startup
+	pApp->GetPreloadFiles(m_PreloadFiles);
+
+	if(m_PreloadFiles.GetSize() > 0)
+		PreloadFiles();
 	
 	m_fTimer = 0.0f;
 	

@@ -62,7 +62,10 @@ public:
 
 	
 	// Game object access
-	const TPtr<TLGame::TGame>&		GetGameObject()		const	{ return m_pGame; }
+	//TPtr<TLGame::TGame>		GetGameObject()		const	{ return m_pGame; }
+
+	template <class TYPE>
+	TYPE*						GetGameObject()				{ return static_cast<TYPE*>(m_pGame.GetObject()); }
 
 protected:
 	virtual SyncBool			Initialise();
