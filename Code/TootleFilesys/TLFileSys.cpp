@@ -550,7 +550,7 @@ TPtr<TLFileSys::TFile>& TLFileSys::TFileFactory::CreateFileInstance(const TFileR
 	//	get a unique instance ref (based on filename)
 	//	gr: currently NOT based on filename to stay away from confusion
 	//TRef InstanceRef = TClassFactory::GetFreeInstanceRef( FileRef.GetFileRef() );
-	TRef InstanceRef = TClassFactory::GetFreeInstanceRef();
+	TRef InstanceRef = GetFreeInstanceRef();
 
 	TPtr<TLFileSys::TFile>& pNewFile = GetInstance( InstanceRef, TRUE, FileRef.GetTypeRef() );
 	if ( !pNewFile )
