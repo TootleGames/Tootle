@@ -188,6 +188,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TPath.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TPath.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TWidgetScrollbar.cpp"
 			>
 		</File>

@@ -1535,3 +1535,15 @@ void TLMaths::TTransform::GetMatrix(TMatrix& Matrix)
 	}
 }
 */
+
+
+//-----------------------------------------------------------
+//	get angle from a vector
+//-----------------------------------------------------------
+void TLMaths::TAngle::SetAngle(const float2& Direction)
+{
+	float AngRad = atan2f( Direction.x, Direction.y );
+	SetRadians( AngRad );
+}
+
+

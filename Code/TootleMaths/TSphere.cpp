@@ -576,7 +576,31 @@ Bool TLMaths::TSphere2D::GetIntersection(const TLMaths::TSphere2D& Sphere) const
 	return Diff.LengthSq() < (SphereTotalRad*SphereTotalRad);
 }
 
-	
+
+
+//-----------------------------------------------------------
+//	
+//-----------------------------------------------------------
+Bool TLMaths::TSphere2D::GetIntersection(const float2& Pos) const	
+{
+	if ( !this->IsValid() )
+	{
+		TLDebug_Break("Distance test between invalid shapes");
+		return FALSE;
+	}
+
+	float SphereRad = GetRadius();
+
+	//	get the vector between the spheres
+	float2 Diff( GetPos() - Pos );
+	if ( Diff.x > SphereRad )	return FALSE;
+	if ( Diff.y > SphereRad )	return FALSE;
+
+	//	return if diff sq is less than total rad sq
+	return Diff.LengthSq() < (SphereRad*SphereRad);
+}
+
+
 //-----------------------------------------------------------
 //	
 //-----------------------------------------------------------

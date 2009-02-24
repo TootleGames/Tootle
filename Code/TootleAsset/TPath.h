@@ -18,7 +18,6 @@ namespace TLAsset
 
 namespace TLPath
 {
-	class TPath;
 	class TPathNode;
 };
 
@@ -26,13 +25,13 @@ namespace TLPath
 //--------------------------------------------------
 //	node on a path/path network
 //--------------------------------------------------
-class TLPath::TPathNode
+class TLPath::TPathNode : public TBinaryTree
 {
 	friend class TLAsset::TPathNetwork;
 public:
 	TPathNode(TRefRef NodeRef=TRef(),const float2& NodePos=float2());
 
-	TRefRef					GetNodeRef() const							{	return m_NodeRef;	}
+	TRefRef					GetNodeRef() const							{	return TBinaryTree::GetDataRef();	}
 	FORCEINLINE Bool		IsJunction() const							{	return (m_Links.GetSize() >= 3);	}
 	const float2&			GetPosition() const							{	return m_Position;	}
 
@@ -40,6 +39,9 @@ public:
 	Bool					AddLink(TPathNode& Node)					{	return m_Links.AddUnique( Node.GetNodeRef() ) != -1;	}
 	Bool					RemoveLink(TRefRef NodeRef)					{	return m_Links.Remove( NodeRef );	}
 	Bool					RemoveLink(TPathNode& Node)					{	return m_Links.Remove( Node.GetNodeRef() );	}
+
+	TBinaryTree&			GetData()									{	return *this;	}
+	const TBinaryTree&		GetData() const								{	return *this;	}
 
 	TArray<TRef>&			GetLinks()									{	return m_Links;	}
 	const TArray<TRef>&		GetLinks() const							{	return m_Links;	}
@@ -51,8 +53,10 @@ protected:
 	Bool					ImportData(TBinaryTree& Data);
 	Bool					ExportData(TBinaryTree& Data);
 
+private:
+	void					SetNodeRef(TRefRef NodeRef)					{	return TBinaryTree::SetDataRef( NodeRef );	}
+
 protected:
-	TRef					m_NodeRef;			//	node ref
 	float2					m_Position;			//	node position
 	TArray<TRef>			m_Links;			//	links to other nodes
 };
@@ -68,47 +72,34 @@ class TLAsset::TPathNetwork : public TLAsset::TAsset
 public:
 	TPathNetwork(TRefRef AssetRef);
 
-	TLPath::TPathNode*			GetNode(TRefRef NodeRef)									{	return m_Nodes.Find( NodeRef );	}
-	TArray<TLPath::TPathNode>&	GetNodeArray()												{	return m_Nodes;	}
-	TRef						GetRandomNode()												{	return m_Nodes.ElementRand().GetNodeRef();	}
-	TRef						GetFreeNodeRef(TRef FromRef=TRef()) const;					//	return a ref for a node that isn't currently used
+	TPtr<TLPath::TPathNode>&		GetNode(TRefRef NodeRef)									{	return m_Nodes.FindPtr( NodeRef );	}
+	TPtr<TLPath::TPathNode>&		GetRandomNode()												{	return m_Nodes.ElementRand();	}
+	TPtr<TLPath::TPathNode>&		GetNearestNode(const float2& Position);						//	find the nearest node to this position
+	TPtr<TLPath::TPathNode>&		GetNearestNode(const float3& Position)						{	return GetNearestNode( Position.xy() );	}
+	TPtrArray<TLPath::TPathNode>&	GetNodeArray()												{	return m_Nodes;	}
+	TRef							GetFreeNodeRef(TRef FromRef=TRef()) const;					//	return a ref for a node that isn't currently used
 
-	TLPath::TPathNode*			AddNode(TRef NodeRef,const float2& NodePos);				//	create a new node, returns NULL if it fails, e.g. if NodeRef already exists
-	void						RemoveNode(TRef NodeRef);									//	remove node and clear up links
+	TPtr<TLPath::TPathNode>&		AddNode(TRef NodeRef,const float2& NodePos);				//	create a new node, returns NULL if it fails, e.g. if NodeRef already exists
+	void							RemoveNode(TRef NodeRef);									//	remove node and clear up links
 
-	void						LinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB);		
-	Bool						UnlinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB);		//	returns FALSE if they weren't linked
+	void							LinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB);		
+	Bool							UnlinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB);		//	returns FALSE if they weren't linked
 
-	TLPath::TPathNode*			DivideLink(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB,float2* pDividePos=NULL);	//	split a line, adds a new node in between these two
-
-protected:
-	virtual SyncBool			ImportData(TBinaryTree& Data);
-	virtual SyncBool			ExportData(TBinaryTree& Data);
-
-	virtual void				OnNodeAdded(TLPath::TPathNode& NewNode);
-	virtual void				OnNodesLinked(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB)	{	}
-	virtual void				OnNodesUnlinked(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB)	{	}
-	virtual void				OnNodeLinkDivided(TLPath::TPathNode& NodeA,TLPath::TPathNode& NewNode,TLPath::TPathNode& NodeB)	{	}
+	TPtr<TLPath::TPathNode>&		DivideLink(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB,float2* pDividePos=NULL);	//	split a line, adds a new node in between these two
 
 protected:
-	TArray<TLPath::TPathNode>	m_Nodes;				//	
-	TLMaths::TBox2D				m_BoundsBox;			//	bounding box vertex extents
-	TLMaths::TSphere2D			m_BoundsSphere;			//	bounding sphere
+	virtual SyncBool				ImportData(TBinaryTree& Data);
+	virtual SyncBool				ExportData(TBinaryTree& Data);
+
+	virtual void					OnNodeAdded(TPtr<TLPath::TPathNode>& pNewNode);
+	virtual void					OnNodesLinked(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB)	{	}
+	virtual void					OnNodesUnlinked(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB)	{	}
+	virtual void					OnNodeLinkDivided(TLPath::TPathNode& NodeA,TLPath::TPathNode& NewNode,TLPath::TPathNode& NodeB)	{	}
+
+protected:
+	TPtrArray<TLPath::TPathNode>	m_Nodes;				//	todo: sort these
+	TLMaths::TBox2D					m_BoundsBox;			//	bounding box vertex extents
+	TLMaths::TSphere2D				m_BoundsSphere;			//	bounding sphere
 };
 
-
-
-
-//--------------------------------------------------
-//	path in a network - could be an asset? no need at the moment
-//--------------------------------------------------
-class TLPath::TPath
-{
-public:
-	TPath(TRefRef PathNetwork);
-
-protected:
-	TRef					m_PathNetwork;			//	ref of path network asset
-	TArray<TRef>			m_PathNodes;			//	list of nodes along the network to make up the path
-};
 

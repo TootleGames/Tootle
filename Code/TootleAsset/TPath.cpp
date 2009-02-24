@@ -6,7 +6,7 @@
 
 
 TLPath::TPathNode::TPathNode(TRefRef NodeRef,const float2& NodePos) :
-	m_NodeRef	( NodeRef ),
+	TBinaryTree	( NodeRef ),
 	m_Position	( NodePos )
 {
 
@@ -18,7 +18,7 @@ TLPath::TPathNode::TPathNode(TRefRef NodeRef,const float2& NodePos) :
 //--------------------------------------------------
 Bool TLPath::TPathNode::ImportData(TBinaryTree& Data)
 {
-	if ( !Data.Read( m_NodeRef ) )	
+	if ( !Data.Read( GetNodeRef() ) )	
 		return FALSE;
 
 	if ( !Data.ImportData( "Pos", m_Position ) )	
@@ -37,7 +37,7 @@ Bool TLPath::TPathNode::ImportData(TBinaryTree& Data)
 //--------------------------------------------------
 Bool TLPath::TPathNode::ExportData(TBinaryTree& Data)
 {
-	Data.Write( m_NodeRef );
+	Data.Write( GetNodeRef() );
 	Data.ExportData( "Pos", m_Position );
 	Data.ExportArray( "Links", m_Links );
 
@@ -70,7 +70,7 @@ TRef TLAsset::TPathNetwork::GetFreeNodeRef(TRef FromRef) const
 //--------------------------------------------------
 //	create a new node, returns NULL if it fails, e.g. if NodeRef already exists
 //--------------------------------------------------
-TLPath::TPathNode* TLAsset::TPathNetwork::AddNode(TRef NodeRef,const float2& NodePos)
+TPtr<TLPath::TPathNode>& TLAsset::TPathNetwork::AddNode(TRef NodeRef,const float2& NodePos)
 {
 	//	no ref specified, find an unused noderef
 	if ( !NodeRef.IsValid() )
@@ -80,21 +80,20 @@ TLPath::TPathNode* TLAsset::TPathNetwork::AddNode(TRef NodeRef,const float2& Nod
 	else if ( m_Nodes.Exists( NodeRef ) ) //	check if this ref is already used
 	{
 		TLDebug_Break("NodeRef already used in PathNetwork");
-		return NULL;
+		return TLPtr::GetNullPtr<TLPath::TPathNode>();
 	}
 
-	TLPath::TPathNode NewNode( NodeRef, NodePos );
+	TPtr<TLPath::TPathNode> pNewNode = new TLPath::TPathNode( NodeRef, NodePos );
 	TLDebug::CheckFloatType( NodePos, __FUNCTION__ );
 
 	//	add to list
-	s32 Index = m_Nodes.Add( NewNode );
-	if ( Index == -1 )
-		return NULL;
+	TPtr<TLPath::TPathNode>& pNewNodeRef = m_Nodes.AddPtr( pNewNode );
+	if ( pNewNodeRef )
+	{
+		OnNodeAdded( pNewNodeRef );
+	}
 
-	OnNodeAdded( m_Nodes[Index] );
-
-
-	return &m_Nodes[Index];
+	return pNewNodeRef;
 }
 
 
@@ -122,10 +121,10 @@ void TLAsset::TPathNetwork::RemoveNode(TRef NodeRef)
 //--------------------------------------------------
 //	callback when node added
 //--------------------------------------------------
-void TLAsset::TPathNetwork::OnNodeAdded(TLPath::TPathNode& Node)
+void TLAsset::TPathNetwork::OnNodeAdded(TPtr<TLPath::TPathNode>& pNewNode)
 {
-	m_BoundsBox.Accumulate( Node.GetPosition() );
-	m_BoundsSphere.Accumulate( Node.GetPosition() );
+	m_BoundsBox.Accumulate( pNewNode->GetPosition() );
+	m_BoundsSphere.Accumulate( pNewNode->GetPosition() );
 }
 
 
@@ -170,13 +169,13 @@ Bool TLAsset::TPathNetwork::UnlinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNo
 //--------------------------------------------------
 //	split a line, adds a new node in between these two - returns ref of new node
 //--------------------------------------------------
-TLPath::TPathNode* TLAsset::TPathNetwork::DivideLink(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB,float2* pDividePos)
+TPtr<TLPath::TPathNode>& TLAsset::TPathNetwork::DivideLink(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB,float2* pDividePos)
 {
 	//	unlink the nodes
 	if ( !UnlinkNodes( NodeA, NodeB ) )
 	{
 		TLDebug_Break("Trying to divide link between two nodes that aren't linked");
-		return NULL;
+		return TLPtr::GetNullPtr<TLPath::TPathNode>();
 	}
 
 	TLPath::TPathNode* pNewNode = NULL;
@@ -200,7 +199,7 @@ TLPath::TPathNode* TLAsset::TPathNetwork::DivideLink(TLPath::TPathNode& NodeA,TL
 
 	//	failed to create
 	if ( !pNewNode )
-		return NULL;
+		return TLPtr::GetNullPtr<TLPath::TPathNode>();
 
 	//	link the new node to the other two
 	LinkNodes( NodeA, *pNewNode );
@@ -209,7 +208,9 @@ TLPath::TPathNode* TLAsset::TPathNetwork::DivideLink(TLPath::TPathNode& NodeA,TL
 	//	call back
 	OnNodeLinkDivided( NodeA, *pNewNode, NodeB );
 
-	return pNewNode;
+	//	need to get ref back to the new node
+	//return pNewNode;
+	return GetNode( pNewNode->GetNodeRef() );
 }
 
 
@@ -229,16 +230,16 @@ SyncBool TLAsset::TPathNetwork::ImportData(TBinaryTree& Data)
 	for ( u32 n=0;	n<NodeDataArray.GetSize();	n++ )
 	{
 		//	alloc node
-		TLPath::TPathNode NewNode;
+		TPtr<TLPath::TPathNode> pNewNode = new TLPath::TPathNode();
 
 		//	import data
 		TPtr<TBinaryTree>& pNodeData = NodeDataArray[n];
 		pNodeData->ResetReadPos();
-		if ( !NewNode.ImportData( *pNodeData ) )
+		if ( !pNewNode->ImportData( *pNodeData ) )
 			return SyncFalse;
 
 		//	add to array of nodes
-		m_Nodes.Add( NewNode );
+		m_Nodes.Add( pNewNode );
 	}
 
 	//	import other data
@@ -262,7 +263,7 @@ SyncBool TLAsset::TPathNetwork::ExportData(TBinaryTree& Data)
 	//	export nodes
 	for ( u32 n=0;	n<m_Nodes.GetSize();	n++ )
 	{
-		TLPath::TPathNode& Node = m_Nodes[n];
+		TLPath::TPathNode& Node = *m_Nodes[n];
 
 		//	add data for node
 		TPtr<TBinaryTree>& pNodeData = Data.AddChild("Node");
@@ -278,12 +279,15 @@ SyncBool TLAsset::TPathNetwork::ExportData(TBinaryTree& Data)
 }
 
 
-
-
-
-
-TLPath::TPath::TPath(TRefRef PathNetwork) :
-	m_PathNetwork	( PathNetwork )
+//--------------------------------------------------
+//	find the nearest node to this position
+//--------------------------------------------------
+TPtr<TLPath::TPathNode>& TLAsset::TPathNetwork::GetNearestNode(const float2& Position)
 {
+	TLDebug_Break("Todo");
+	return m_Nodes[0];
 }
+
+
+
 
