@@ -2,6 +2,24 @@
 
 
 
+namespace TLPath
+{
+	TLArray::SortResult	NodeSort_ByRef(const TPtr<TPathNode>& a,const TPtr<TPathNode>& b,const void* pTestRef);	//	node sorting by ref
+};
+
+
+//----------------------------------------------------------
+//	node sorting by ref
+//----------------------------------------------------------
+TLArray::SortResult	TLPath::NodeSort_ByRef(const TPtr<TLPath::TPathNode>& a,const TPtr<TLPath::TPathNode>& b,const void* pTestRef)
+{
+	const TRef& aRef = a->GetNodeRef();
+	const TRef& bRef = pTestRef ? *(const TRef*)pTestRef : b->GetNodeRef();
+	
+	//	== turns into 0 (is greater) or 1(equals)
+	return aRef < bRef ? TLArray::IsLess : (TLArray::SortResult)(aRef==bRef);	
+}
+
 
 
 
@@ -48,7 +66,8 @@ Bool TLPath::TPathNode::ExportData(TBinaryTree& Data)
 
 
 TLAsset::TPathNetwork::TPathNetwork(TRefRef AssetRef) :
-	TAsset	( "PathNetwork", AssetRef )
+	TAsset	( "PathNetwork", AssetRef ),
+	m_Nodes	( &TLPath::NodeSort_ByRef )
 {
 }
 

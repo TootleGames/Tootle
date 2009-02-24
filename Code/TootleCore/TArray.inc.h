@@ -682,12 +682,16 @@ void TArray<TYPE>::QuickSort(s32 First, s32 Last)
 //----------------------------------------------------------------------
 template<typename TYPE>
 template<class MATCHTYPE>
-s32 TArray<TYPE>::FindIndexSorted(const MATCHTYPE& val,s32 Low,s32 High) const
+s32 TArray<TYPE>::FindIndexSorted(const MATCHTYPE& val,u32 Low,s32 High) const
 {
-	if ( High < Low )
+	if ( High < (s32)Low )
 		return -1;
 
-	s32 Mid = (Low + High) / 2;
+	u32 Mid = (Low + (u32)High) / 2;
+
+	//	gr: i think the algorithm is wrong somewhere, array of size 3 gets here with low and high == 3, mid becomes 3, which is out of range!
+	if ( Mid >= GetSize() )
+		return -1;
 
 	//	see if we've found the element...
 	const TYPE& MidElement = ElementAtConst( Mid );

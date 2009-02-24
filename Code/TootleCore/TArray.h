@@ -171,7 +171,7 @@ protected:
 
 	//	binary chop search
 	template<class MATCHTYPE>
-	s32					FindIndexSorted(const MATCHTYPE& val,s32 Low,s32 High) const;
+	s32					FindIndexSorted(const MATCHTYPE& val,u32 Low,s32 High) const;
 
 	virtual void		Move(u32 CurrIndex,u32 NewIndex);			//	remove from list in one place and insert it back in
 	Bool				CopyElements(const TYPE* pData,u32 Length,u32 Index=0);

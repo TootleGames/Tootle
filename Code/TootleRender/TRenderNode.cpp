@@ -725,6 +725,12 @@ void TLRender::TRenderNode::Initialise(TPtr<TLMessaging::TMessage>& pMessage)
 			TransformChanged = TRUE;
 		}
 
+		if ( pMessage->ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
+		{
+			m_Transform.SetRotationValid();
+			TransformChanged = TRUE;
+		}
+
 		//	transform has been set
 		if ( TransformChanged )
 			OnTransformChanged();
