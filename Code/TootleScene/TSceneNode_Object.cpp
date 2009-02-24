@@ -4,6 +4,13 @@
 
 using namespace TLScene;
 
+TSceneNode_Object::TSceneNode_Object(TRefRef NodeRef,TRefRef TypeRef) :
+	TSceneNode_Transform	(NodeRef,TypeRef)
+{
+}
+
+
+
 
 void TSceneNode_Object::Shutdown()
 {
@@ -85,49 +92,46 @@ Bool TSceneNode_Object::CreatePhysicsObject()
 //--------------------------------------------------------
 //	Requests a render object to be created
 //--------------------------------------------------------
-Bool TSceneNode_Object::CreateRenderNode(TPtr<TLRender::TRenderNode> pParentRenderNode)
+Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TPtr<TLMessaging::TMessage> pInitMessage)
 {
 	// [20/02/09] DB - Currently we only allow one render node to be associated with the object node
-	if(!m_RenderNodeRef.IsValid())
+	if( m_RenderNodeRef.IsValid() )
+		return FALSE;
+
+	//	no init message? make one up
+	if ( !pInitMessage )
 	{
+		pInitMessage = new TLMessaging::TMessage( TLCore::InitialiseRef );
 
-		TPtr<TLRender::TRenderNode> pRenderNode = new TLRender::TRenderNode( GetNodeRef() );
+		//	add transform info from this scene node
+		const TLMaths::TTransform& Transform = GetTransform();
 
-		if ( TLRender::g_pRendergraph->AddNode( pRenderNode, pParentRenderNode ) )
-		{
-			SetRenderNode(pRenderNode->GetNodeRef());
+		if ( Transform.HasTranslate() )
+			pInitMessage->AddChildAndData("Translate", Transform.GetTranslate() );
 
-			// NOTE: This may eventually become an async type routine
-			//		 so no guarantees it happens on the same frmae of creation
-			OnRenderNodeAdded(pRenderNode);
+		if ( Transform.HasScale() )
+			pInitMessage->AddChildAndData("Scale", Transform.GetScale() );
 
-			return TRUE;
-		}
+		if ( Transform.HasRotation() )
+			pInitMessage->AddChildAndData("Rotation", Transform.GetRotation() );
 	}
 
-	return FALSE;
-}
+	//	gr: specify in params?
+	TRef RenderNodeType = TRef();
 
+	//	create node
+	m_RenderNodeRef = TLRender::g_pRendergraph->CreateNode( GetNodeRef(), RenderNodeType, ParentRenderNodeRef, pInitMessage );
 
-//--------------------------------------------------------
-//	Requests a render object to be created
-//--------------------------------------------------------
-Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef)
-{
-	TPtr<TLRender::TRenderNode> pRenderNode = new TLRender::TRenderNode( GetNodeRef() );
+	//	failed
+	if ( !m_RenderNodeRef.IsValid() )
+		return FALSE;
 
-	if ( TLRender::g_pRendergraph->AddNode( pRenderNode, ParentRenderNodeRef ) )
-	{
-		SetRenderNode(pRenderNode->GetNodeRef());
+	// NOTE: This may eventually become an async type routine
+	//		 so no guarantees it happens on the same frmae of creation
+	TPtr<TLRender::TRenderNode>& pRenderNode = TLRender::g_pRendergraph->FindNode( m_RenderNodeRef );
+	OnRenderNodeAdded( pRenderNode );
 
-		// NOTE: This may eventually become an async type routine
-		//		 so no guarantees it happens on the same frmae of creation
-		OnRenderNodeAdded(pRenderNode);
-
-		return TRUE;
-	}
-
-	return FALSE;
+	return TRUE;
 }
 
 

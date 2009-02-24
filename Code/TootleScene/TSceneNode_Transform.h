@@ -21,12 +21,13 @@ public:
 	{
 	}
 
-  	virtual Bool	HasTransform()	{ return TRUE; }
+	virtual void				Initialise(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual Bool				HasTransform()	{ return TRUE; }
 
 	FORCEINLINE float3			GetPosition() const						{	float3 Pos( 0,0,0 );	GetPosition( Pos );	return Pos;	}
 	FORCEINLINE void			GetPosition(float3& Pos) const			{	GetTransform().TransformVector( Pos );	}	//	you can use this to get a relative offset from this node by initialising Pos to the [local] offset you want
 	FORCEINLINE	const float3&	GetTranslate() const					{	return m_Transform.GetTranslate();	}
-	FORCEINLINE void			SetTranslate(const float3& fPos)		{	m_Transform.SetTranslate(fPos);	}
+	FORCEINLINE void			SetTranslate(const float3& fPos)		{	m_Transform.SetTranslate(fPos);	OnTransformChanged();	}
 
 	const TLMaths::TTransform&	GetTransform() const								{	return m_Transform;	}
 	void						SetTransform(const TLMaths::TTransform& Transform)	{	m_Transform = Transform;	}	
@@ -40,6 +41,7 @@ protected:
 	virtual void				Translate(float3 vTranslation);
 	//virtual void				Rotate(float3 vRotation);
 	//virtual void				Scale(float3 vScale);
+	virtual void				OnTransformChanged();
 
 private:
 	TLMaths::TTransform			m_Transform;

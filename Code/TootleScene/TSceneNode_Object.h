@@ -22,10 +22,7 @@ namespace TLScene
 class TLScene::TSceneNode_Object : public TLScene::TSceneNode_Transform, public TLAudio::TAudioInterface
 {
 public:
-	TSceneNode_Object(TRefRef NodeRef,TRefRef TypeRef) :
-	  TSceneNode_Transform	(NodeRef,TypeRef)
-	{
-	}
+	TSceneNode_Object(TRefRef NodeRef,TRefRef TypeRef);
 
 	virtual Bool	HasRender()		{ return TRUE; }
 	virtual Bool	HasPhysics()	{ return TRUE; }
@@ -51,8 +48,8 @@ protected:
 	virtual void					OnPhysicsObjectAdded(TPtr<TLPhysics::TPhysicsNode>& pPhysicsObject)	{}
 	void							DeletePhysicsNode();
 
-	virtual Bool					CreateRenderNode(TPtr<TLRender::TRenderNode> pParentRenderNode = NULL);
-	virtual Bool					CreateRenderNode(TRefRef ParentRenderNode);
+	FORCEINLINE Bool				CreateRenderNode(TPtr<TLRender::TRenderNode> pParentRenderNode)	{	return CreateRenderNode( pParentRenderNode ? pParentRenderNode->GetNodeRef() : TRef() );	}
+	virtual Bool					CreateRenderNode(TRefRef ParentRenderNode,TPtr<TLMessaging::TMessage> pInitMessage=NULL);
 	virtual void					OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode)	{}
 	void							DeleteRenderNode();
 
