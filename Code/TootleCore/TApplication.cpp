@@ -431,23 +431,38 @@ Bool TApplication::TApplicationState_Bootup::ArePreloadFilesLoaded()
 			continue;
 		}
 		
-		//	waiting to load
-		if ( pAsset->GetLoadingState() == TLAsset::LoadingState_Loading )
-			return FALSE;
-		
+		TLAsset::TLoadingState AssetLoadingState = pAsset->GetLoadingState();
+
 		//	file failed to load
-		if ( pAsset->GetLoadingState() == TLAsset::LoadingState_Failed )
+		if ( AssetLoadingState == TLAsset::LoadingState_Failed )
 		{
 			TTempString DebugString("Preload: Asset failed to load: ");
 			refFileID.GetString( DebugString );
+			DebugString.Appendf(" %x", pAsset.GetObject() );
 			TLDebug_Print( DebugString );
 			continue;
 		}
+		else if ( AssetLoadingState == TLAsset::LoadingState_Loaded )
+		{
+			//	is loaded
+			continue;
+		}
+		else
+		{
+			//	still waiting for this asset
+			TTempString DebugString("Preload: Waiting for asset to load... ");
+			refFileID.GetString( DebugString );
+			DebugString.Append(" (");
+			pAsset->GetAssetType().GetString( DebugString );
+			DebugString.Append(")");
+			TLDebug_Print( DebugString );
+			return FALSE;
+		}
 	}
+
 	
 	return TRUE;
 }
-
 
 
 void TApplication::TApplicationState_Bootup::OnEnd(TRefRef NextMode)
