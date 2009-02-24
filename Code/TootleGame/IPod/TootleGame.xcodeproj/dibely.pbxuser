@@ -1,8 +1,8 @@
 // !$*UTF8*$!
 {
-	8418EB1A0F4C769C00B956C9 /* PBXTextBookmark */ = {
+	840DECDB0F545DC6005C7CFF /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = 8418EB1B0F4C769C00B956C9 /* TGame.cpp */;
+		fRef = 840DECDC0F545DC6005C7CFF /* TGame.cpp */;
 		name = "TGame.cpp: 10";
 		rLen = 0;
 		rLoc = 161;
@@ -10,8 +10,25 @@
 		vrLen = 405;
 		vrLoc = 0;
 	};
-	8418EB1B0F4C769C00B956C9 /* TGame.cpp */ = {
+	840DECDC0F545DC6005C7CFF /* TGame.cpp */ = {
 		isa = PBXFileReference;
+		name = TGame.cpp;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleGame/IPod/../TGame.cpp;
+		sourceTree = "<absolute>";
+	};
+	8418F8B20F4EB96E00B956C9 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8418F8B30F4EB96E00B956C9 /* TGame.cpp */;
+		name = "TGame.cpp: 10";
+		rLen = 0;
+		rLoc = 161;
+		rType = 0;
+		vrLen = 405;
+		vrLoc = 0;
+	};
+	8418F8B30F4EB96E00B956C9 /* TGame.cpp */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.cpp.cpp;
 		name = TGame.cpp;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleGame/IPod/../TGame.cpp;
 		sourceTree = "<absolute>";
@@ -113,14 +130,14 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 256669321;
-			PBXWorkspaceStateSaveDate = 256669321;
+			PBXPerProjectTemplateStateSaveDate = 257187221;
+			PBXWorkspaceStateSaveDate = 257187221;
 		};
 		perUserProjectItems = {
-			8418EB1A0F4C769C00B956C9 /* PBXTextBookmark */ = 8418EB1A0F4C769C00B956C9 /* PBXTextBookmark */;
+			840DECDB0F545DC6005C7CFF /* PBXTextBookmark */ = 840DECDB0F545DC6005C7CFF /* PBXTextBookmark */;
+			8418F8B20F4EB96E00B956C9 /* PBXTextBookmark */ = 8418F8B20F4EB96E00B956C9 /* PBXTextBookmark */;
 			846B6E4C0F2A2672005EB752 /* PBXTextBookmark */ = 846B6E4C0F2A2672005EB752 /* PBXTextBookmark */;
 			84D69D600F449C7F002CFFE1 /* PBXTextBookmark */ = 84D69D600F449C7F002CFFE1 /* PBXTextBookmark */;
-			84D69D620F449C7F002CFFE1 /* PBXTextBookmark */ = 84D69D620F449C7F002CFFE1 /* PBXTextBookmark */;
 			84E1155A0F3C4F5000471397 /* PBXTextBookmark */ = 84E1155A0F3C4F5000471397 /* PBXTextBookmark */;
 			84E116540F3C884700471397 /* PBXTextBookmark */ = 84E116540F3C884700471397 /* PBXTextBookmark */;
 			84E1165F0F3C884700471397 /* PBXTextBookmark */ = 84E1165F0F3C884700471397 /* PBXTextBookmark */;
@@ -188,23 +205,6 @@
 		rType = 0;
 		vrLen = 601;
 		vrLoc = 202;
-	};
-	84D69D620F449C7F002CFFE1 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84D69D630F449C7F002CFFE1 /* TGame.cpp */;
-		name = "TGame.cpp: 10";
-		rLen = 0;
-		rLoc = 161;
-		rType = 0;
-		vrLen = 405;
-		vrLoc = 0;
-	};
-	84D69D630F449C7F002CFFE1 /* TGame.cpp */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.cpp.cpp;
-		name = TGame.cpp;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleGame/IPod/../TGame.cpp;
-		sourceTree = "<absolute>";
 	};
 	84DE34FD0F12AFED00608F8C /* TAssetBrowser.cpp */ = {
 		uiCtxt = {
