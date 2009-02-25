@@ -24,8 +24,8 @@ class TLInput::TInputSensor : public TLMessaging::TRelay
 {
 	friend class TInputDevice;
 public:
-	explicit TInputSensor(TRef refSensorID, TSensorType SensorType)	:
-		m_refSensorID(refSensorID),
+	explicit TInputSensor(TRefRef SensorRef, TSensorType SensorType)	:
+		m_SensorRef(SensorRef),
 			m_Type(SensorType),
 			m_fValue(0.0f),
 			m_fRangeLow(-1.0f),
@@ -33,11 +33,23 @@ public:
 			m_fDeadZone(0.0f)
 	{}
 
-	inline Bool			operator==(const TRef& SensorRef)				const	{	return m_refSensorID == SensorRef;	}
-	inline Bool			operator==(const TInputSensor& InputSensor)		const 	{	return m_refSensorID == InputSensor.m_refSensorID;	}
+	inline Bool			operator==(const TRef& SensorRef)				const	{	return m_SensorRef == SensorRef;	}
+	inline Bool			operator==(const TInputSensor& InputSensor)		const 	{	return m_SensorRef == InputSensor.m_SensorRef;	}
 
-	inline void			SetLabel(const TRef& refLabel)		{ m_refSensorLabel = refLabel; }
-	inline TRef			GetLabel()					const	{ return m_refSensorLabel; }
+	inline void			AddLabel(const TRef& refLabel)		
+	{ 
+		m_SensorLabels.Add(refLabel); 
+#ifdef _DEBUG
+		// Print out the label being set
+		TString inputinfo = "Sensor label added: ";
+		TString label;
+		refLabel.GetString(label);
+		inputinfo.Append(label);
+		TLDebug::Print(inputinfo);
+#endif
+	}
+
+	inline Bool			HasLabel(TRefRef LabelRef)	{ return m_SensorLabels.Exists(LabelRef); }
 	
 	inline void			SetRanges(float fLow, float fHigh)	{ m_fRangeLow = fLow; m_fRangeHigh = fHigh; }
 	inline void			SetDeadZone(float fZone)			{ m_fDeadZone = fZone; }
@@ -50,12 +62,12 @@ protected:
 
 public:
 
-	TRef		m_refSensorID;			// ID of the sensor - maps to hardware device sensor index, NOTE: Not sure this is totally needed?
-	TRef		m_refSensorLabel;		// Key type label - 'x', 'ctrl' 'start' 'axis1'.  Might be slow to use :(
-	TSensorType	m_Type;					// Sensor type - button, axes etc
-	float		m_fValue;				// Current value
-	float		m_fRangeLow;			// Lowest possible value
-	float		m_fRangeHigh;			// Highest possible value
-	float		m_fDeadZone;			// Absolute deadzone value - values < m_fDeadZone are ignored.  0.0f ( deadzone < range low == not used)
+	TRef			m_SensorRef;			// ID of the sensor - maps to hardware device sensor index, NOTE: Not sure this is totally needed?
+	TArray<TRef>	m_SensorLabels;			// Key type labels - 'x', 'ctrl' 'start' 'axis1'.
+	TSensorType		m_Type;					// Sensor type - button, axes etc
+	float			m_fValue;				// Current value
+	float			m_fRangeLow;			// Lowest possible value
+	float			m_fRangeHigh;			// Highest possible value
+	float			m_fDeadZone;			// Absolute deadzone value - values < m_fDeadZone are ignored.  0.0f ( deadzone < range low == not used)
 };
 

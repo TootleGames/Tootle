@@ -2,6 +2,7 @@
 #pragma once
 
 #include <TootleCore/TLCore.h>
+#include <TootleCore/TKeyArray.h>
 
 #include "../TLInput.h"
 
@@ -24,14 +25,14 @@ namespace TLInput
 
 			BOOL CALLBACK CreateDevice(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext);		// Create device callback when the devices are enumerated
 			BOOL CALLBACK EnumDeviceObject(const DIDEVICEOBJECTINSTANCE* pdidObjectInstance, VOID* pContext);	// Object enumeration callback - enumerates buttons, axes, pov's effects etc
-			Bool InitialiseDevice(TPtr<TInputDevice> pDevice, LPDIRECTINPUTDEVICE8 lpdiDevice, u32 uDeviceType);
+			Bool InitialiseDevice(TPtr<TInputDevice> pDevice, const LPDIRECTINPUTDEVICE8 lpdiDevice, const DIDEVICEINSTANCE* pdidInstance);
 
 			Bool	UpdateDevice(TPtr<TInputDevice> pDevice);
 
 			class TLInputDirectXDevice;
 
 			extern LPDIRECTINPUT8									g_pTLDirectInputInterface;	// Global direct input interface pointer
-			extern TPtrArray<TLInputDirectXDevice>				g_TLDirectInputDevices;		// Global array of direct device pointers
+			extern TPtrArray<TLInputDirectXDevice>					g_TLDirectInputDevices;		// Global array of direct device pointers
 
 			/*
 			Special update routines for devices in DirectX.  Hopefully at some point I can remove these as this shouldn't really be necessary.

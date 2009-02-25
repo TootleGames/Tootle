@@ -10,7 +10,7 @@ using namespace TLInput;
 
 void TInputSensor::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 {
-	if(pMessage->HasChannelID(m_refSensorID))
+	if(pMessage->HasChannelID(m_SensorRef))
 	{
 		float fValue;
 		if ( pMessage->Read(fValue) )

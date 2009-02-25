@@ -14,7 +14,12 @@
 //#define DX_USE_ENUMOBJECTS 
 
 // DB - Quick define to allow switching buffred and non-buffered mouse data
-//#define DX_USE_BUFFERED_MOUSE_DATA
+//#define DX_USE_BUFFERED_DATA
+
+// User the enum objects if we are going to use buffered data
+#ifdef DX_USE_BUFFERED_DATA
+	#define DX_USE_ENUMOBJECTS 
+#endif
 
 // Globals
 namespace TLInput
@@ -27,6 +32,21 @@ namespace TLInput
 			TPtrArray<TLInputDirectXDevice>			g_TLDirectInputDevices;					// Global array of direct device pointers
 
 			TPtr<TLInputDirectXDevice>					FindDirectXDevice(TRef DirectXDeviceRef);
+
+			TKeyArray<u32, TRef>					g_KeyboardRefMap;
+
+			TArray<TRef>							g_Xbox360PadButtonRefs;	// XBox 360 pad button refs
+			TArray<TRef>							g_WiimoteButtonRefs;		// Wiimote button refs
+			TArray<TRef>							g_PS2PadButtonRefs;		// PS2 pad button refs
+
+			void	InitialiseKeyboadRefMap();
+			void	InitialiseGamePadRefMaps();
+
+			void	InitialiseXBox360PadRefMap();
+			void	InitialiseWiimoteRefMap();
+			void	InitialisePS2PadRefMap();
+
+			Bool	GetSpecificGamepadButtonRef(const u32& uIndex, const u32& uProductID, TRef& LabelRef);
 		};
 	};
 
@@ -62,6 +82,9 @@ int2 Platform::GetCursorPosition(u8 uIndex)
 //---------------------------------------------------
 SyncBool Platform::DirectX::Init()
 {
+	InitialiseKeyboadRefMap();
+	InitialiseGamePadRefMaps();
+
 	if(g_pTLDirectInputInterface)
 		return SyncTrue;
 
@@ -95,6 +118,256 @@ SyncBool Platform::DirectX::Init()
 	return SyncTrue;
 }
 
+
+void Platform::DirectX::InitialiseKeyboadRefMap()
+{
+	g_KeyboardRefMap.Add(DIK_ESCAPE, "K_ESC");
+	g_KeyboardRefMap.Add(DIK_1, "K_1");
+	g_KeyboardRefMap.Add(DIK_2, "K_2");
+	g_KeyboardRefMap.Add(DIK_3, "K_3");
+	g_KeyboardRefMap.Add(DIK_4, "K_4");
+	g_KeyboardRefMap.Add(DIK_5, "K_5");
+	g_KeyboardRefMap.Add(DIK_6, "K_6");
+	g_KeyboardRefMap.Add(DIK_7, "K_7");
+	g_KeyboardRefMap.Add(DIK_8, "K_8");
+	g_KeyboardRefMap.Add(DIK_9, "K_9");
+	g_KeyboardRefMap.Add(DIK_0, "K_0");
+	g_KeyboardRefMap.Add(DIK_MINUS, "K_MINUS");
+	g_KeyboardRefMap.Add(DIK_EQUALS, "K_EQUALS");
+	g_KeyboardRefMap.Add(DIK_BACK, "K_BACK");
+	g_KeyboardRefMap.Add(DIK_TAB, "K_TAB");
+	g_KeyboardRefMap.Add(DIK_Q, "K_Q");
+	g_KeyboardRefMap.Add(DIK_W, "K_W");
+	g_KeyboardRefMap.Add(DIK_E, "K_E");
+	g_KeyboardRefMap.Add(DIK_R, "K_R");
+	g_KeyboardRefMap.Add(DIK_T, "K_T");
+	g_KeyboardRefMap.Add(DIK_Y, "K_Y");
+	g_KeyboardRefMap.Add(DIK_U, "K_U");
+	g_KeyboardRefMap.Add(DIK_I, "K_I");
+	g_KeyboardRefMap.Add(DIK_O, "K_O");
+	g_KeyboardRefMap.Add(DIK_P, "K_P");
+	g_KeyboardRefMap.Add(DIK_LBRACKET, "K_LBRACKET");
+	g_KeyboardRefMap.Add(DIK_RBRACKET, "K_RBRACKET");
+	g_KeyboardRefMap.Add(DIK_RETURN, "K_RETURN");
+	g_KeyboardRefMap.Add(DIK_LCONTROL, "K_LCTRL");
+	g_KeyboardRefMap.Add(DIK_A, "K_A");
+	g_KeyboardRefMap.Add(DIK_S, "K_S");
+	g_KeyboardRefMap.Add(DIK_D, "K_D");
+	g_KeyboardRefMap.Add(DIK_F, "K_F");
+	g_KeyboardRefMap.Add(DIK_G, "K_G");
+	g_KeyboardRefMap.Add(DIK_H, "K_H");
+	g_KeyboardRefMap.Add(DIK_J, "K_J");
+	g_KeyboardRefMap.Add(DIK_K, "K_K");
+	g_KeyboardRefMap.Add(DIK_L, "K_L");
+	g_KeyboardRefMap.Add(DIK_SEMICOLON, "K_COLON");
+	g_KeyboardRefMap.Add(DIK_APOSTROPHE, "K_APOSTROPHE");
+	g_KeyboardRefMap.Add(DIK_GRAVE, "K_GRAVE");
+	g_KeyboardRefMap.Add(DIK_LSHIFT, "K_LSHIFT");
+	g_KeyboardRefMap.Add(DIK_BACKSLASH, "K_BACKSLASH");
+	g_KeyboardRefMap.Add(DIK_Z, "K_Z");
+	g_KeyboardRefMap.Add(DIK_X, "K_X");
+	g_KeyboardRefMap.Add(DIK_C, "K_C");
+	g_KeyboardRefMap.Add(DIK_V, "K_V");
+	g_KeyboardRefMap.Add(DIK_B, "K_B");
+	g_KeyboardRefMap.Add(DIK_N, "K_N");
+	g_KeyboardRefMap.Add(DIK_M, "K_M");
+	g_KeyboardRefMap.Add(DIK_COMMA, "K_,");
+	g_KeyboardRefMap.Add(DIK_PERIOD, "K_.");
+	g_KeyboardRefMap.Add(DIK_SLASH, "K_FORWARDSLASH");
+	g_KeyboardRefMap.Add(DIK_RSHIFT, "K_RSHIFT");
+	g_KeyboardRefMap.Add(DIK_MULTIPLY, "K_MULTIPLY");
+	g_KeyboardRefMap.Add(DIK_LMENU, "K_MENU");
+	g_KeyboardRefMap.Add(DIK_SPACE, "K_SPACE");
+	g_KeyboardRefMap.Add(DIK_CAPITAL, "K_CAPS");
+	g_KeyboardRefMap.Add(DIK_F1, "K_F1");
+	g_KeyboardRefMap.Add(DIK_F2, "K_F2");
+	g_KeyboardRefMap.Add(DIK_F3, "K_F3");
+	g_KeyboardRefMap.Add(DIK_F4, "K_F4");
+	g_KeyboardRefMap.Add(DIK_F5, "K_F5");
+	g_KeyboardRefMap.Add(DIK_F6, "K_F6");
+	g_KeyboardRefMap.Add(DIK_F7, "K_F7");
+	g_KeyboardRefMap.Add(DIK_F8, "K_F8");
+	g_KeyboardRefMap.Add(DIK_F9, "K_F9");
+	g_KeyboardRefMap.Add(DIK_F10, "K_F10");
+	g_KeyboardRefMap.Add(DIK_NUMLOCK, "K_NUMLOCK");
+	g_KeyboardRefMap.Add(DIK_SCROLL, "K_SCROLL");
+	g_KeyboardRefMap.Add(DIK_NUMPAD7, "K_NP7");
+	g_KeyboardRefMap.Add(DIK_NUMPAD8, "K_NP8");
+	g_KeyboardRefMap.Add(DIK_NUMPAD9, "K_NP9");
+	g_KeyboardRefMap.Add(DIK_SUBTRACT, "K_SUBTRACT");
+	g_KeyboardRefMap.Add(DIK_NUMPAD4, "K_NP4");
+	g_KeyboardRefMap.Add(DIK_NUMPAD5, "K_NP5");
+	g_KeyboardRefMap.Add(DIK_NUMPAD6, "K_NP6");
+	g_KeyboardRefMap.Add(DIK_ADD, "K_ADD");
+	g_KeyboardRefMap.Add(DIK_NUMPAD1, "K_NP1");
+	g_KeyboardRefMap.Add(DIK_NUMPAD2, "K_NP2");
+	g_KeyboardRefMap.Add(DIK_NUMPAD3, "K_NP3");
+	g_KeyboardRefMap.Add(DIK_NUMPAD0, "K_NP0");
+	g_KeyboardRefMap.Add(DIK_DECIMAL, "K_DECIMAL");
+	g_KeyboardRefMap.Add(DIK_OEM_102, "K_OEM");
+	g_KeyboardRefMap.Add(DIK_F11, "K_F11");
+	g_KeyboardRefMap.Add(DIK_F12, "K_F12");
+	g_KeyboardRefMap.Add(DIK_F13, "K_F13");
+	g_KeyboardRefMap.Add(DIK_F14, "K_F14");
+	g_KeyboardRefMap.Add(DIK_F15, "K_F15");
+	g_KeyboardRefMap.Add(DIK_KANA, "");
+	g_KeyboardRefMap.Add(DIK_ABNT_C1, "");
+	g_KeyboardRefMap.Add(DIK_CONVERT, "");
+	g_KeyboardRefMap.Add(DIK_NOCONVERT, "");
+	g_KeyboardRefMap.Add(DIK_YEN, "");
+	g_KeyboardRefMap.Add(DIK_ABNT_C2, "");
+	g_KeyboardRefMap.Add(DIK_NUMPADEQUALS, "");
+	g_KeyboardRefMap.Add(DIK_PREVTRACK, "");
+	g_KeyboardRefMap.Add(DIK_AT, "");
+	g_KeyboardRefMap.Add(DIK_COLON, "");
+	g_KeyboardRefMap.Add(DIK_UNDERLINE, "");
+	g_KeyboardRefMap.Add(DIK_KANJI, "");
+	g_KeyboardRefMap.Add(DIK_STOP, "");   
+	g_KeyboardRefMap.Add(DIK_AX, "");
+	g_KeyboardRefMap.Add(DIK_UNLABELED, "");
+	g_KeyboardRefMap.Add(DIK_NEXTTRACK, "");
+	g_KeyboardRefMap.Add(DIK_NUMPADENTER, "");
+	g_KeyboardRefMap.Add(DIK_RCONTROL, "K_RCTRL");
+	g_KeyboardRefMap.Add(DIK_MUTE, "K_MUTE");
+	g_KeyboardRefMap.Add(DIK_CALCULATOR, "");
+	g_KeyboardRefMap.Add(DIK_PLAYPAUSE, "");
+	g_KeyboardRefMap.Add(DIK_MEDIASTOP, "");
+	g_KeyboardRefMap.Add(DIK_VOLUMEDOWN, "K_VDOWN");
+	g_KeyboardRefMap.Add(DIK_VOLUMEUP, "K_VUP");
+	g_KeyboardRefMap.Add(DIK_WEBHOME, "");
+	g_KeyboardRefMap.Add(DIK_NUMPADCOMMA, "");
+	g_KeyboardRefMap.Add(DIK_DIVIDE, "");
+	g_KeyboardRefMap.Add(DIK_SYSRQ, "");
+	g_KeyboardRefMap.Add(DIK_RMENU, "");
+	g_KeyboardRefMap.Add(DIK_PAUSE, "K_PAUSE");
+	g_KeyboardRefMap.Add(DIK_HOME, "K_HOME");
+	g_KeyboardRefMap.Add(DIK_UP, "K_UP");
+	g_KeyboardRefMap.Add(DIK_PRIOR, "");
+	g_KeyboardRefMap.Add(DIK_LEFT, "K_LEFT");    
+	g_KeyboardRefMap.Add(DIK_RIGHT, "K_RIGHT");
+	g_KeyboardRefMap.Add(DIK_END, "K_END");
+	g_KeyboardRefMap.Add(DIK_DOWN, "K_DOWN");
+	g_KeyboardRefMap.Add(DIK_NEXT, "K_NEXT");
+	g_KeyboardRefMap.Add(DIK_INSERT, "K_INSERT");
+	g_KeyboardRefMap.Add(DIK_DELETE, "K_DELETE");
+	g_KeyboardRefMap.Add(DIK_LWIN, "");
+	g_KeyboardRefMap.Add(DIK_RWIN, "");
+	g_KeyboardRefMap.Add(DIK_APPS, "");
+	g_KeyboardRefMap.Add(DIK_POWER, "K_POWER");
+	g_KeyboardRefMap.Add(DIK_SLEEP, "K_SLEEP");
+	g_KeyboardRefMap.Add(DIK_WAKE, "K_WAKE");
+	g_KeyboardRefMap.Add(DIK_WEBSEARCH, "");
+	g_KeyboardRefMap.Add(DIK_WEBFAVORITES, "");
+	g_KeyboardRefMap.Add(DIK_WEBREFRESH, "");
+	g_KeyboardRefMap.Add(DIK_WEBSTOP, "");
+	g_KeyboardRefMap.Add(DIK_WEBFORWARD, "");
+	g_KeyboardRefMap.Add(DIK_WEBBACK, "");
+	g_KeyboardRefMap.Add(DIK_MYCOMPUTER, "");
+	g_KeyboardRefMap.Add(DIK_MAIL, "");
+	g_KeyboardRefMap.Add(DIK_MEDIASELECT, "");
+
+/*
+ *  Alternate names for keys, to facilitate transition from DOS.
+#define DIK_BACKSPACE       DIK_BACK            /* backspace 
+#define DIK_NUMPADSTAR      DIK_MULTIPLY        /* * on numeric keypad 
+#define DIK_LALT            DIK_LMENU           /* left Alt 
+#define DIK_CAPSLOCK        DIK_CAPITAL         /* CapsLock 
+#define DIK_NUMPADMINUS     DIK_SUBTRACT        /* - on numeric keypad 
+#define DIK_NUMPADPLUS      DIK_ADD             /* + on numeric keypad 
+#define DIK_NUMPADPERIOD    DIK_DECIMAL         /* . on numeric keypad 
+#define DIK_NUMPADSLASH     DIK_DIVIDE          /* / on numeric keypad 
+#define DIK_RALT            DIK_RMENU           /* right Alt 
+#define DIK_UPARROW         DIK_UP              /* UpArrow on arrow keypad 
+#define DIK_PGUP            DIK_PRIOR           /* PgUp on arrow keypad 
+#define DIK_LEFTARROW       DIK_LEFT            /* LeftArrow on arrow keypad 
+#define DIK_RIGHTARROW      DIK_RIGHT           /* RightArrow on arrow keypad 
+#define DIK_DOWNARROW       DIK_DOWN            /* DownArrow on arrow keypad 
+#define DIK_PGDN            DIK_NEXT            /* PgDn on arrow keypad 
+ */
+}
+
+
+void Platform::DirectX::InitialiseGamePadRefMaps()
+{
+	//TODO: Add individual arrays per gamepad type we support
+	// These should be added to a generic array or manager or something rather than having a g_XXXarray
+	// then we can have a list of pads that are supported too for easy identification and setup
+	InitialiseXBox360PadRefMap();
+	InitialiseWiimoteRefMap();
+	InitialisePS2PadRefMap();
+}
+
+void Platform::DirectX::InitialiseXBox360PadRefMap()
+{
+	g_Xbox360PadButtonRefs.Add("A");
+	g_Xbox360PadButtonRefs.Add("B");
+	g_Xbox360PadButtonRefs.Add("X");
+	g_Xbox360PadButtonRefs.Add("Y");
+	g_Xbox360PadButtonRefs.Add("START");
+	g_Xbox360PadButtonRefs.Add("BACK");
+	g_Xbox360PadButtonRefs.Add("RB");
+	g_Xbox360PadButtonRefs.Add("RT");
+	g_Xbox360PadButtonRefs.Add("LB");
+	g_Xbox360PadButtonRefs.Add("LT");
+}
+
+void Platform::DirectX::InitialiseWiimoteRefMap()
+{
+	g_WiimoteButtonRefs.Add("A");
+	g_WiimoteButtonRefs.Add("1");
+	g_WiimoteButtonRefs.Add("2");
+	g_WiimoteButtonRefs.Add("B");
+	g_WiimoteButtonRefs.Add("PLUS");
+	g_WiimoteButtonRefs.Add("MINUS");
+	g_WiimoteButtonRefs.Add("HOME");
+	g_WiimoteButtonRefs.Add("POWER");
+	g_WiimoteButtonRefs.Add("C");
+	g_WiimoteButtonRefs.Add("Z");
+}
+
+void Platform::DirectX::InitialisePS2PadRefMap()
+{
+	g_PS2PadButtonRefs.Add("CROSS");
+	g_PS2PadButtonRefs.Add("CIRCLE");
+	g_PS2PadButtonRefs.Add("SQUARE");
+	g_PS2PadButtonRefs.Add("TRIANGLE");
+	g_PS2PadButtonRefs.Add("START");
+	g_PS2PadButtonRefs.Add("SELECT");
+	g_PS2PadButtonRefs.Add("ANALOG");
+	g_PS2PadButtonRefs.Add("R1");
+	g_PS2PadButtonRefs.Add("L1");
+	g_PS2PadButtonRefs.Add("R2");
+	g_PS2PadButtonRefs.Add("L2");
+	g_PS2PadButtonRefs.Add("R3");
+	g_PS2PadButtonRefs.Add("L3");
+}
+
+
+Bool Platform::DirectX::GetSpecificGamepadButtonRef(const u32& uIndex, const u32& uProductID, TRef& LabelRef)
+{
+	// Test the product ID for known I'ds
+	TArray<TRef>* pArray = NULL;
+
+	switch(uProductID)
+	{
+		case 0x028e045e:	// XBox 360 pad
+			pArray = &g_Xbox360PadButtonRefs;
+			break;
+	}
+
+	if(pArray && (uIndex < pArray->GetSize() ))
+	{
+		LabelRef = pArray->ElementAt(uIndex);
+		return TRUE;
+	}
+
+	// No label found
+	return FALSE;
+}
+
+
+
+
 SyncBool Platform::DirectX::EnumerateDevices()
 {
 	// Enumarate the attached devices
@@ -121,8 +394,9 @@ BOOL CALLBACK Platform::DirectX::CreateDevice(const DIDEVICEINSTANCE* pdidInstan
 	// Set a unique ID for the generic input device - using the directx GUID data for now.
 	// NOTE: A single device may actually call the callback multiple times for different elements i.e. a keyboard with a mouse built into it
 	//			  but they will both have the same GUID.
-	u32 uid = pdidInstance->guidInstance.Data1;
-	TRef InstanceRef = uid;
+	u32 uDeviceID = pdidInstance->guidInstance.Data1;	// Unique instance ID (unique for each device)
+
+	TRef InstanceRef = uDeviceID;
 
 	TArray<TRef> refArray;
 	if(g_pInputSystem->GetDeviceIDs(refArray))
@@ -147,7 +421,7 @@ BOOL CALLBACK Platform::DirectX::CreateDevice(const DIDEVICEINSTANCE* pdidInstan
 	// Check the device type and only process the ones we want to be processed
 	switch(uDeviceType)
 	{
-	case DI8DEVTYPE_MOUSE:
+		case DI8DEVTYPE_MOUSE:
 			refDeviceType = "MOUSE";
 			bProcessDevice = TRUE;
 			break;
@@ -159,6 +433,30 @@ BOOL CALLBACK Platform::DirectX::CreateDevice(const DIDEVICEINSTANCE* pdidInstan
 			refDeviceType = "GAMEPAD";
 			bProcessDevice = TRUE;
 			break;
+
+			/*
+			// [25/02/09] DB -
+			// In DirectX a connected Wiimote appears as a Device with a Supplemental for the nunchuck.
+			// Neither are actually usable via DirectX unfortunately as they never provide any buttons or axes.
+			// I *believe* under Vista a Wiimote should function correctly as a gamepad but at this time I am using
+			// WinXP. I will look into alternatives using a Wiimote library of some sort that I have come across
+			// but these have drawback sin that most are for windows only so wouldn't work on the Max. :(
+		case DI8DEVTYPE_DEVICE:
+			refDeviceType = "GAMEPAD";
+			bProcessDevice = TRUE;
+			break;
+		case DI8DEVTYPE_SUPPLEMENTAL:
+			refDeviceType = "GAMEPAD";
+			bProcessDevice = TRUE;
+			break;
+			*/
+#ifdef _DEBUG
+		default:
+			TString str("Unhandled device type:");
+			str.Appendf("%d %d", uDeviceType, uDeviceSubtype);
+			TLDebug::Print(str);
+			break;
+#endif
 	};
 
 	if(bProcessDevice)
@@ -175,7 +473,7 @@ BOOL CALLBACK Platform::DirectX::CreateDevice(const DIDEVICEINSTANCE* pdidInstan
 
 			if(pGenericDevice.IsValid())
 			{
-				if(!InitialiseDevice(pGenericDevice, lpdiDevice, uDeviceType))
+				if(!InitialiseDevice(pGenericDevice, lpdiDevice, pdidInstance))
 				{
 					// Failed to initialise the input device data
 
@@ -213,6 +511,10 @@ BOOL CALLBACK Platform::DirectX::CreateDevice(const DIDEVICEINSTANCE* pdidInstan
 			}
 		}
 	}
+	else
+	{
+		TLDebug::Print("Unknown input device found - ignoring");
+	}
 
 	return DIENUM_CONTINUE;
 
@@ -223,7 +525,7 @@ BOOL CALLBACK Platform::DirectX::CreateDevice(const DIDEVICEINSTANCE* pdidInstan
 // DB - TEST
 static u32 HardwareDeviceID = 0x45;
 
-Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, LPDIRECTINPUTDEVICE8 lpdiDevice, u32 uDeviceType)
+Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, const LPDIRECTINPUTDEVICE8 lpdiDevice, const DIDEVICEINSTANCE* pdidInstance)
 {
 	// Generate a new device reference
 	TRef HardwareDeviceRef = HardwareDeviceID;
@@ -236,15 +538,23 @@ Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, LPDIRECTINP
 	if(!pDXDevice)
 		return FALSE;
 
+	u8 uDeviceType = GET_DIDEVICE_TYPE(pdidInstance->dwDevType);
+	u8 uDeviceSubtype = GET_DIDEVICE_SUBTYPE(pdidInstance->dwDevType);
+
+	u32 uProductID = pdidInstance->guidProduct.Data1;	// Unique product ID (same for all instances of the same devices)
+
 	// Set quick access tot he device type without having to go through the directx interface
 	pDXDevice->SetDeviceType(uDeviceType);
 
 	// Default to bakcground non exclusive access 
 	DWORD dwExclusivity = DISCL_NONEXCLUSIVE | DISCL_BACKGROUND;
 
+
 	// Check the device type and determine the dataformat to use
 	switch(uDeviceType)
 	{
+//		case DI8DEVTYPE_DEVICE:
+//		case DI8DEVTYPE_SUPPLEMENTAL:
 		case DI8DEVTYPE_GAMEPAD:
 			{
 				pDXDevice->SetDataFormat(&c_dfDIJoystick2);
@@ -287,7 +597,7 @@ Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, LPDIRECTINP
 	if(DI_OK != hr)
 		return FALSE;
 
-	if(uDeviceType == DI8DEVTYPE_GAMEPAD)
+	if((uDeviceType == DI8DEVTYPE_GAMEPAD))
 	{
 		// Now set the ranges for X Y and Z axes
 		DIPROPRANGE range;
@@ -304,7 +614,7 @@ Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, LPDIRECTINP
 		if(DI_OK != hr)
 			return FALSE;
 	}
-//#ifdef DX_USE_BUFFERED_MOUSE_DATA
+//#ifdef DX_USE_BUFFERED_DATA
 	else if(uDeviceType == DI8DEVTYPE_MOUSE)
 	{
 		// Setup the mouse data buffer
@@ -343,26 +653,45 @@ Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, LPDIRECTINP
 	// Add button inputs
 	u32 uIndex = 0;
 	u32 uCount = DIDevCaps.dwButtons;
-	
-	//	gr: bodge so that keyboard will read all 256 keys in the sensor code
+
+	// Force 256 buttons to be added.  This ensures the button range for the DIK values are used correctly
 	if(uDeviceType == DI8DEVTYPE_KEYBOARD)
 		uCount = 256;
 
+	
 	u32 uUniqueID = 0;
 
 	TString stringLabel;
 	TRef refLabel;
 
-
 	for(uIndex = 0; uIndex < uCount; uIndex++)
 	{
 		// For buttons we need to label them based on what type and the model
-		// so get this information from a function in stead which will lookup the details required
-
+		// so get this information from a function instead which will lookup the details required
 		TPtr<TInputSensor> pSensor = pDevice->AttachSensor(uUniqueID, Button);
 
 		if(pSensor.IsValid())
 		{
+			refLabel = GetDefaultButtonRef(uIndex);
+
+			pSensor->AddLabel(refLabel);
+
+			if(uDeviceType == DI8DEVTYPE_KEYBOARD)
+			{
+				u32 dikvalue = uIndex;
+				TRef* pKeyLabel = g_KeyboardRefMap.Find(dikvalue);
+				
+				if(pKeyLabel)
+					pSensor->AddLabel(*pKeyLabel);
+			}
+			else if(uDeviceType == DI8DEVTYPE_GAMEPAD)
+			{
+				if(GetSpecificGamepadButtonRef(uIndex, uProductID, refLabel))
+				{
+					pSensor->AddLabel(refLabel);
+				}
+			}
+
 			pSensor->SubscribeTo(pDXDevice);
 
 			uUniqueID++;
@@ -372,48 +701,18 @@ Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, LPDIRECTINP
 	// Add axes inputs
 	uCount = DIDevCaps.dwAxes;
 
-	TArray<TRef> AxisRefs;
-
-	AxisRefs.Add("AXX1");
-	AxisRefs.Add("AXY1");
-	AxisRefs.Add("AXZ1");
-	AxisRefs.Add("AXX2");
-	AxisRefs.Add("AXY2");
-	AxisRefs.Add("AXZ2");
-	AxisRefs.Add("AXX3");
-	AxisRefs.Add("AXY3");
-	AxisRefs.Add("AXZ3");
-	AxisRefs.Add("AXX4");
-	AxisRefs.Add("AXY4");
-	AxisRefs.Add("AXZ4");
-
-	u32 uArrayIndex = 0;
 	for(uIndex = 0; uIndex < uCount; uIndex++)
 	{
-		// FILTHY HACK FOR NOW UNTIL I GET BETTER REF BUILDING
-		if(uIndex > AxisRefs.GetSize())
-		{
-			TLDebug_Break("Exceeded temp ref array size");
-			break;
-		}
-
-		if(uIndex % 3)
-			uArrayIndex = 0;
-
-		AxisRefs.ElementAt(uArrayIndex).GetString(stringLabel); // get the appropriate axis type x,y,z
-
-		refLabel = stringLabel;
-
 		TPtr<TInputSensor> pSensor = pDevice->AttachSensor(uUniqueID, Axis);
 
 		if(pSensor.IsValid())
 		{
-			pSensor->SetLabel(refLabel);
+			refLabel = GetDefaultAxisRef(uIndex);
+
+			pSensor->AddLabel(refLabel);
 			pSensor->SubscribeTo(pDXDevice);
 			uUniqueID++;
 		}
-
-		uArrayIndex++;
 	}
 
 	// Add point of view inputs - cap axes on top of joysticks
@@ -421,15 +720,13 @@ Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, LPDIRECTINP
 
 	for(uIndex = 0; uIndex < uCount; uIndex++)
 	{
-		stringLabel = "POV";
-		stringLabel.Appendf("%d", uCount);
-		refLabel = stringLabel;
-
 		TPtr<TInputSensor> pSensor = pDevice->AttachSensor(uUniqueID, POV);
 
 		if(pSensor.IsValid())
 		{
-			pSensor->SetLabel(refLabel);
+			refLabel = GetDefaultPOVRef(uIndex);
+
+			pSensor->AddLabel(refLabel);
 			pSensor->SubscribeTo(pDXDevice);
 			uUniqueID++;
 		}
@@ -451,6 +748,7 @@ Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, LPDIRECTINP
 	return TRUE;
 }
 
+
 BOOL CALLBACK Platform::DirectX::EnumDeviceObject(const DIDEVICEOBJECTINSTANCE* pdidObjectInstance, VOID* pContext)
 {
 	TRef refDeviceID = (u32)pContext;
@@ -467,22 +765,26 @@ BOOL CALLBACK Platform::DirectX::EnumDeviceObject(const DIDEVICEOBJECTINSTANCE* 
 			// Now setup the hardware device object for the generic device
 
 			TSensorType SensorType = Unknown;
+			TRef	DefaultLabel;
 			switch(DIDFT_GETTYPE(pdidObjectInstance->dwType))
 			{
 			case DIDFT_PSHBUTTON:
 			case DIDFT_TGLBUTTON:
 			case DIDFT_BUTTON:
 				SensorType = Button;
+				DefaultLabel = GetDefaultButtonRef(pDevice->GetSensorCount(SensorType));
 				break;
 
 			case DIDFT_RELAXIS:
 			case DIDFT_ABSAXIS:
 			case DIDFT_AXIS:
 				SensorType = Axis;
+				DefaultLabel = GetDefaultAxisRef(pDevice->GetSensorCount(SensorType));
 				break;
 
 			case DIDFT_POV:
 				SensorType = POV;
+				DefaultLabel = GetDefaultPOVRef(pDevice->GetSensorCount(SensorType));
 				break;
 			}
 
@@ -494,6 +796,7 @@ BOOL CALLBACK Platform::DirectX::EnumDeviceObject(const DIDEVICEOBJECTINSTANCE* 
 
 				if(pSensor.IsValid())
 				{
+					pSensor->AddLabel(DefaultLabel);
 					pSensor->SubscribeTo(pDXDevice);
 				}
 			}
@@ -502,7 +805,6 @@ BOOL CALLBACK Platform::DirectX::EnumDeviceObject(const DIDEVICEOBJECTINSTANCE* 
 
 	return DIENUM_CONTINUE;
 }
-
 
 
 Bool Platform::DirectX::UpdateDevice(TPtr<TInputDevice> pDevice)
@@ -555,7 +857,7 @@ TPtr<Platform::DirectX::TLInputDirectXDevice> Platform::DirectX::FindDirectXDevi
 
 
 
-#ifdef DX_USE_BUFFERED_MOUSE_DATA
+#ifdef DX_USE_BUFFERED_DATA
 
 Bool Platform::DirectX::UpdateDirectXDevice_Mouse(TPtr<TInputDevice> pDevice, TPtr<TLInputDirectXDevice> pTLDirectInputDevice)
 {
@@ -565,108 +867,101 @@ Bool Platform::DirectX::UpdateDirectXDevice_Mouse(TPtr<TInputDevice> pDevice, TP
 	if(lpdiDevice == 0)
 		return FALSE;
 
-	// Try and aqcuire the device
-	 HRESULT hr = lpdiDevice->Acquire(); 
 
-	 if(FAILED(hr))
- 	 {
-		while(hr == DIERR_NOTACQUIRED)
-			hr = lpdiDevice->Acquire();
+	lpdiDevice->Poll();
 
-		 return FALSE;
-	 }
+	// Now read some data
+	DIDEVICEOBJECTDATA		rgdod[16];
+	DWORD					dwItems = 16;
 
-	 lpdiDevice->Poll();
+	HRESULT hr = lpdiDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), rgdod, &dwItems, 0);
 
-	// Success - now read some data
+	if (SUCCEEDED(hr)) 
+	{ 
+	    // dwItems = Number of elements read (could be zero).
 
- 	DIMOUSESTATE2 dims;      // DirectInput mouse state structure
+		if (hr == DI_BUFFEROVERFLOW) 
+		{	
+			// Buffer had overflowed. 
+			TLDebug::Print("Input Buffer overflow");
+		} 
 
-	// Get the input's device state, and put the state in dims
-	ZeroMemory( &dims, sizeof( dims ) );
-	hr = lpdiDevice->GetDeviceState( sizeof( DIMOUSESTATE2 ), &dims );
 
-	if( FAILED( hr ) )
-	{
-		// DirectInput may be telling us that the input stream has been
-		// interrupted.  We aren't tracking any state between polls, so
-		// we don't have any special reset that needs to be done.
-		// We just re-acquire and try again next time.
-
-		// Update the dialog text 
-		if( hr == DIERR_OTHERAPPHASPRIO ||
-			hr == DIERR_NOTACQUIRED )
-		{
-			
-		}
-
-		//hr == DIERR_INPUTLOST
-
-		// hr may be DIERR_OTHERAPPHASPRIO or other errors.  This
-		// may occur when the app is minimized or in the process of 
-		// switching, so just try again later 
-	}
-	else
-	{
 		/////////////////////////////////////////////////////////////
 		// Copy data from the physical device to the generic input device for the sensors to use
 		/////////////////////////////////////////////////////////////
 
-		DIDEVICEOBJECTDATA		rgdod[16];
-		DWORD					dwItems;
+#ifdef _DEBUG
+		TString inputinfo = "Mouse processing buffer: ";
+		inputinfo.Appendf("%d items", dwItems);
+		TLDebug::Print(inputinfo);
+#endif
 
-		hr = lpdiDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), rgdod, &dwItems, 0);
 
-		if( FAILED( hr ) )
-			dwItems = 0;
-
-		TPtr<TBinaryTree>& MainBuffer = pDevice->GetDataBuffer();
-
-		MainBuffer->Empty();
-
-		TPtr<TBinaryTree> pDataBuffer = MainBuffer->AddChild("Input");
-
-		if(pDataBuffer.IsValid())
+		for(u32 uCount = 0; uCount < dwItems; uCount++)
 		{
-			u32 uSensorCount = pDevice->GetSensorCount(Button);
+			// Go through all of the buffered data
 
-			// Write the button data to the buffer
-			for(u32 uIndex = 0; uIndex < uSensorCount; uIndex++)
+			TPtr<TBinaryTree>& MainBuffer = pDevice->GetDataBuffer();
+
+			MainBuffer->Empty();
+
+			TPtr<TBinaryTree> pDataBuffer = MainBuffer->AddChild("Input");
+
+			if(pDataBuffer.IsValid())
 			{
-				float fValue = (dims.rgbButtons[uIndex] == 0 ? 0.0f : 1.0f);
-				pDataBuffer->Write( fValue );
+				u32 uSensorCount = pDevice->GetSensorCount(Button);
+
+				for(u32 uIndex = 0; uIndex < uSensorCount; uIndex++)
+				{
+					u32 ButtonOffset = (FIELD_OFFSET(DIMOUSESTATE, rgbButtons) + uIndex);
+
+					// Assume a zero value
+					float fValue = 0.0f;
+
+					if(rgdod[uCount].dwOfs == ButtonOffset)
+					{
+						// get the data from the buffer
+						fValue = (float)(rgdod[uCount].dwData);
+
+						TLDebug::Print("Buffer Data");
+					}
+
+					pDataBuffer->Write( fValue );
+
+#ifdef _DEBUG
+					// In debug print what button was pressed
+					TString inputinfo = "Mouse input: ";
+					inputinfo.Appendf("%d %.2f", uIndex, fValue);
+					TLDebug::Print(inputinfo);
+#endif
+
+				}
+
+				if(rgdod[uCount].dwOfs == DIMOFS_X)
+					pDataBuffer->Write( (float)(rgdod[uCount].dwData) );
+				else
+					pDataBuffer->Write(0.0f);
+
+				if(rgdod[uCount].dwOfs == DIMOFS_Y)
+					pDataBuffer->Write( (float)(rgdod[uCount].dwData) );		
+				else
+					pDataBuffer->Write(0.0f);
+
+
+				if(rgdod[uCount].dwOfs == DIMOFS_Y)
+					pDataBuffer->Write( (float)(rgdod[uCount].dwData) );		
+				else
+					pDataBuffer->Write(0.0f);
 			}
 
-			// Accumulate mouse data from buffer
-			s32 uMouseX = 0;
-			s32 uMouseY = 0;
-			for(u32 uIndex = 0; uIndex < dwItems; uIndex++)
-			{
-				// Increment the mouse X axis 
-				if(rgdod[uIndex].dwOfs == DIMOFS_X)
-					uMouseX += rgdod[uIndex].dwData;
-				// Increment the mouse X axis 
-				if(rgdod[uIndex].dwOfs == DIMOFS_Y)
-					uMouseY += rgdod[uIndex].dwData;
-			}
-
-			// Write the axis data to the buffer - values are relative (and in pixels?)
-			// Prioritise the mouse buffer axis data over the immediate data
-			if(dims.lX > uMouseX)
-				uMouseX = dims.lX;
-
-			if(dims.lY > uMouseY)
-				uMouseY = dims.lY;
-
-			pDataBuffer->Write( (float)(uMouseX) );
-			pDataBuffer->Write( (float)(uMouseY) );		
-	
-			pDataBuffer->Write( (float)(dims.lZ) );		
+			// Tell the device to process the data
+			pDataBuffer->ResetReadPos();
+			pDevice->ForceUpdate();
 		}
 
-
-
 		/////////////////////////////////////////////////////////////
+
 	}
 
 	return (hr == DI_OK);
@@ -684,18 +979,6 @@ Bool Platform::DirectX::UpdateDirectXDevice_Mouse(TPtr<TInputDevice> pDevice, TP
 	// If valid poll and acquire the device ensuring no errors.
 	if(lpdiDevice == 0)
 		return FALSE;
-
-	/*
-	// Try and aqcuire the device
-	 HRESULT hr = lpdiDevice->Acquire(); 
-
-	 if(FAILED(hr))
-	 {
- 		while(hr == DIERR_INPUTLOST)
-			hr = lpdiDevice->Acquire();
-		//return FALSE;
-	 }
-	 */
 
 	lpdiDevice->Poll();
 
@@ -994,6 +1277,8 @@ SyncBool Platform::DirectX::Shutdown()
 		g_pTLDirectInputInterface->Release(); 
 		g_pTLDirectInputInterface = NULL; 
 	} 
+
+	g_KeyboardRefMap.Empty();
 
 	return SyncTrue;
 }

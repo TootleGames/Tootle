@@ -12,6 +12,54 @@ namespace TLInput
 using namespace TLInput;
 
 
+
+TRef TLInput::GetDefaultAxisRef(u32 uObjectIndex)
+{
+	TRef LabelRef;
+
+	TString stringLabel = "AX";
+
+	u32 uLetterIndex = uObjectIndex%3;					// Get value of 0, 1 or 2 to represent x, y, or z
+	u32 uAxisIndex = (uObjectIndex / 3);				// Axis index increments every 3rd one starting at 0, so AXX0, AXY0, AXZ0 etc
+	if(uLetterIndex == 0)
+		stringLabel.Appendf("X%d", uAxisIndex);
+	else if(uLetterIndex == 1)
+		stringLabel.Appendf("Y%d", uAxisIndex);
+	else if(uLetterIndex == 2)
+		stringLabel.Appendf("Z%d", uAxisIndex);
+
+	LabelRef = stringLabel;
+
+	return LabelRef;
+}
+
+
+TRef TLInput::GetDefaultPOVRef(u32 uObjectIndex)
+{
+	TRef LabelRef;
+
+	TString stringLabel = "POV";
+	stringLabel.Appendf("%d", uObjectIndex);
+	LabelRef = stringLabel;
+
+	return LabelRef;
+}
+
+TRef TLInput::GetDefaultButtonRef(u32 uObjectIndex)
+{
+	TRef LabelRef;
+
+	TString stringLabel = "BN";
+	stringLabel.Appendf("%d", uObjectIndex);
+	LabelRef = stringLabel;
+
+	return LabelRef;
+}
+
+
+
+
+
 TInputManager::TInputManager(TRef refManagerID) :
 	TManager(refManagerID),
 	m_fDeviceCheckTimer(0.0f)

@@ -382,7 +382,7 @@ Bool TUser::MapActionParentPtr(TPtr<TLInput::TAction> pAction, TPtr<TLInput::TAc
 	return FALSE;
 }
 
-
+/*
 Bool TUser::MapAction(TRef refActionID, TRef refDeviceID, TRef refSensorID)
 {
 	TPtr<TLInput::TAction> pAction = GetAction(refActionID);
@@ -403,9 +403,9 @@ Bool TUser::MapAction(TRef refActionID, TRef refDeviceID, TRef refSensorID)
 	// Assign the sensor to the action
 	return pAction->SubscribeTo(pSensor);
 }
+*/
 
-
-Bool TUser::MapActionLabel(TRef refActionID, TRef refDeviceID, TRef refSensorLabel)
+Bool TUser::MapAction(TRef refActionID, TRef refDeviceID, TRef SensorRef)
 {
 	TPtr<TLInput::TAction> pAction = GetAction(refActionID);
 
@@ -417,7 +417,7 @@ Bool TUser::MapActionLabel(TRef refActionID, TRef refDeviceID, TRef refSensorLab
 	if(!pDevice.IsValid())
 		return FALSE;
 
-	s32 sSensorIndex = pDevice->GetSensorIndex(refSensorLabel);
+	s32 sSensorIndex = pDevice->GetSensorIndex(SensorRef);
 
 	if(sSensorIndex == -1)
 		return FALSE;

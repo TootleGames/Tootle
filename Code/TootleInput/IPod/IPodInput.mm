@@ -120,53 +120,22 @@ Bool Platform::IPod::InitialiseDevice(TPtr<TInputDevice> pDevice)
 		
 		if(pSensor.IsValid())
 		{
-			//pSensor->SubscribeTo(pDXDevice);
-
-#ifdef ENABLE_INPUTSYSTEM_TRACE
-			TString str;
-			str.Appendf("Attached button sensor - %d", uUniqueID);
-			TLDebug_Print(str);
-#endif
-			
+		
+			refLabel = GetDefaultButtonRef(uIndex);
+			pSensor->SetLabel(refLabel);
 			uUniqueID++;
 		}
 	}
 		
-	TArray<TRef> AxisRefs;
-	
-	AxisRefs.Add("AXX1");
-	AxisRefs.Add("AXY1");
-	AxisRefs.Add("AXZ1");
-	AxisRefs.Add("AXX2");
-	AxisRefs.Add("AXY2");
-	AxisRefs.Add("AXZ2");
-	AxisRefs.Add("AXX3");
-	AxisRefs.Add("AXY3");
-	AxisRefs.Add("AXZ3");
-	AxisRefs.Add("AXX4");
-	AxisRefs.Add("AXY4");
-	AxisRefs.Add("AXZ4");
-	
-	for(uIndex = 0; uIndex < AxisRefs.GetSize(); uIndex++)
+
+	for(uIndex = 0; uIndex < IPod::MAX_CURSOR_POSITIONS; uIndex++)
 	{		
 		
 		TPtr<TInputSensor>& pSensor = pDevice->AttachSensor(uUniqueID, Axis);
 		
 		if(pSensor.IsValid())
 		{
-			//pSensor->SubscribeTo(pDXDevice);
-			refLabel = AxisRefs.ElementAt(uIndex);
-			
-#ifdef ENABLE_INPUTSYSTEM_TRACE
-			TString str;
-			str.Appendf("Attached axis sensor - %d", uUniqueID);
-			TLDebug_Print(str);
-
-			stringLabel.Empty();
-			refLabel.GetString(stringLabel); // get the appropriate axis type x,y,z
-			TLDebug_Print(stringLabel);
-#endif
-			
+			refLabel = GetDefaultAxisRef(uIndex);
 			pSensor->SetLabel(refLabel);
 			uUniqueID++;
 		}
@@ -186,24 +155,12 @@ Bool Platform::IPod::InitialiseDevice(TPtr<TInputDevice> pDevice)
 		{
 			TRef refLabel = AxisRefs.ElementAt(uIndex);
 			pSensor->SetLabel(refLabel);
-#ifdef ENABLE_INPUTSYSTEM_TRACE
-			TString str;
-			str.Appendf("Attached accelerometer sensor - %d", uUniqueID);
-			TLDebug_Print(str);
-			
-			stringLabel.Empty();
-			refLabel.GetString(stringLabel);
-			TLDebug_Print(stringLabel);
-
-#endif
-			
 			uUniqueID++;
 		}
 	}
 	
 	return TRUE;
 }
-
 
 
 SyncBool Platform::Update()		

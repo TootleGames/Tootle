@@ -31,8 +31,7 @@ public:
 	Bool						AddAction(TRef refActionType, TRef refActionID, TArray<TRef>& refParentActionIDs);
 	Bool						RemoveAction(TRef refActionID);
 
-	Bool						MapAction(TRef refActionID, TRef refDeviceID, TRef refSensorID);
-	Bool						MapActionLabel(TRef refActionID, TRef refDeviceID, TRef refSensorLabel);
+	Bool						MapAction(TRef refActionID, TRef refDeviceID, TRef SensorRef);
 	
 	Bool						MapActionCondition(TRef refActionID, TLInput::TActionCondition uCondition, float fThreshold);
 

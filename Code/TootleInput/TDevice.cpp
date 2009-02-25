@@ -45,15 +45,22 @@ void TInputDevice::ProcessSensors(TPtr<TBinaryTree>& MainBuffer)
 }
 
 
-TPtr<TLInput::TInputSensor>& TInputDevice::AttachSensor(TRefRef refSensorID, TSensorType SensorType)
+TPtr<TLInput::TInputSensor>& TInputDevice::AttachSensor(TRefRef SensorRef, TSensorType SensorType)
 {
-	if(!HasSensor(refSensorID))
+	if(!HasSensor(SensorRef))
 	{
-		TPtr<TInputSensor> pSensor = new TInputSensor(refSensorID, SensorType);
+		TPtr<TInputSensor> pSensor = new TInputSensor(SensorRef, SensorType);
 
 		if(pSensor.IsValid())
 		{
 			s32 SensorIndex = m_Sensors.Add(pSensor);
+
+#ifdef _DEBUG
+			TString str;
+			str.Appendf("Attached sensor to device - %d %d", SensorRef, SensorType);
+			TLDebug_Print(str);
+#endif
+
 			return m_Sensors[SensorIndex];
 		}
 	}
@@ -61,21 +68,21 @@ TPtr<TLInput::TInputSensor>& TInputDevice::AttachSensor(TRefRef refSensorID, TSe
 	return TLPtr::GetNullPtr<TLInput::TInputSensor>();
 }
 
-Bool TInputDevice::HasSensor(TRefRef refSensorID)
+Bool TInputDevice::HasSensor(TRefRef SensorRef)
 {
-	TPtr<TInputSensor>& pSensor = GetSensor(refSensorID);
+	TPtr<TInputSensor>& pSensor = GetSensor(SensorRef);
 
 	return pSensor.IsValid();
 }
 
 
-TPtr<TLInput::TInputSensor>& TInputDevice::GetSensor(TRefRef refSensorID)
+TPtr<TLInput::TInputSensor>& TInputDevice::GetSensor(TRefRef SensorRef)
 {
 	for(u32 uIndex = 0; uIndex < m_Sensors.GetSize(); uIndex++)
 	{
 		TPtr<TInputSensor>& pSensor = m_Sensors.ElementAt(uIndex);
 
-		if(pSensor->m_refSensorID == refSensorID)
+		if(pSensor->m_SensorRef == SensorRef)
 			return pSensor;
 	}
 
@@ -94,7 +101,7 @@ s32 TInputDevice::GetSensorIndex(TRefRef refSensorLabel)
 	{
 		TPtr<TLInput::TInputSensor>& pSensor = m_Sensors.ElementAt(uIndex);
 
-		if(pSensor->GetLabel() == refSensorLabel)
+		if(pSensor->HasLabel(refSensorLabel))
 			return (s32) uIndex;
 	}
 
@@ -109,7 +116,7 @@ TRef TInputDevice::GetSensorID(TRef refSensorLabel)
 	{
 		TPtr<TLInput::TInputSensor> pSensor = m_Sensors.ElementAt(uIndex);
 		
-		if(pSensor->GetLabel() == refSensorLabel)
+		if(pSensor->HasLabel(refSensorLabel))
 			return pSensor->m_refSensorID;
 	}
 	

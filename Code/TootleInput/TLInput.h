@@ -44,6 +44,12 @@ namespace TLInput
 		Type2<s32>	GetCursorPosition(u8 uIndex);
 	};
 
+
+	// Helper routines
+	TRef GetDefaultAxisRef(u32 uObjectIndex);
+	TRef GetDefaultButtonRef(u32 uObjectIndex);
+	TRef GetDefaultPOVRef(u32 uObjectIndex);
+
 };
 
 

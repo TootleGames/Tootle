@@ -110,7 +110,7 @@ SyncBool TLGui::TGui::Initialise()
 			//	make up action for this device
 			pUser->AddAction("Simple", m_ActionIn );
 			//	left mouse button
-			if ( !pUser->MapAction( m_ActionIn, pInputDevice->GetDeviceRef(), (u32)0 ) )
+			if ( !pUser->MapAction( m_ActionIn, pInputDevice->GetDeviceRef(), "BN0" ) )
 			{
 				TLDebug_Break("Failed to map action to gui");
 				continue;

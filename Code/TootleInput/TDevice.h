@@ -68,9 +68,9 @@ public:
 	}
 
 	// Sensor access
-	TPtr<TLInput::TInputSensor>&	AttachSensor(TRefRef refSensorID, TSensorType SensorType);
-	Bool							HasSensor(TRefRef refSensorID);
-	TPtr<TLInput::TInputSensor>&	GetSensor(TRefRef refSensorID);
+	TPtr<TLInput::TInputSensor>&	AttachSensor(TRefRef SensorRef, TSensorType SensorType);
+	Bool							HasSensor(TRefRef SensorRef);
+	TPtr<TLInput::TInputSensor>&	GetSensor(TRefRef SensorRef);
 
 	s32								GetSensorIndex(TRefRef refSensorLabel);
 
