@@ -122,7 +122,7 @@ Bool Platform::IPod::InitialiseDevice(TPtr<TInputDevice> pDevice)
 		{
 		
 			refLabel = GetDefaultButtonRef(uIndex);
-			pSensor->SetLabel(refLabel);
+			pSensor->AddLabel(refLabel);
 			uUniqueID++;
 		}
 	}
@@ -136,12 +136,12 @@ Bool Platform::IPod::InitialiseDevice(TPtr<TInputDevice> pDevice)
 		if(pSensor.IsValid())
 		{
 			refLabel = GetDefaultAxisRef(uIndex);
-			pSensor->SetLabel(refLabel);
+			pSensor->AddLabel(refLabel);
 			uUniqueID++;
 		}
 	}
 	
-	AxisRefs.Empty();
+	TArray<TRef> AxisRefs;
 	AxisRefs.Add("ACCX");
 	AxisRefs.Add("ACCY");
 	AxisRefs.Add("ACCZ");
@@ -154,7 +154,7 @@ Bool Platform::IPod::InitialiseDevice(TPtr<TInputDevice> pDevice)
 		if(pSensor.IsValid())
 		{
 			TRef refLabel = AxisRefs.ElementAt(uIndex);
-			pSensor->SetLabel(refLabel);
+			pSensor->AddLabel(refLabel);
 			uUniqueID++;
 		}
 	}
