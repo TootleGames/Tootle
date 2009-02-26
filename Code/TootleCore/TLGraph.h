@@ -1032,6 +1032,9 @@ Bool TLGraph::TGraph<T>::AddNode(TPtr<T> pNode, TPtr<T> pParent)
 
 	if ( NewRef != NodeRef )
 	{
+		//	gr: removed as it's printing out a bit much atm
+		/*
+#ifdef _DEBUG
 		TRefRef OldRef = NodeRef;
 		
 		TTempString ChangedRefString("Node ");
@@ -1039,7 +1042,8 @@ Bool TLGraph::TGraph<T>::AddNode(TPtr<T> pNode, TPtr<T> pParent)
 		ChangedRefString.Append(" changed ref to ");
 		NewRef.GetString( ChangedRefString );
 		TLDebug_Print( ChangedRefString );
-
+#endif
+		*/
 		pNode->SetNodeRef( NewRef );
 	}
 

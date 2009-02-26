@@ -160,6 +160,11 @@ void TSceneNode_Object::UpdateObjectFromPhysics()
 	//	update render node from game object
 	if ( pRenderNode )
 	{
+		//	gr: note - this causes a LOT of excess processing as we're blindly updating the transform
+		//		which invalidates bounding boxes etc. This NEEDS to change to a system which 
+		//		only change translation if translation changes, only changes rotation if rotation changes etc.
+		//		messages?
+		//		same issue with physics, but a lot less severe
 		pRenderNode->SetTransform( GetTransform() );
 	}
 }

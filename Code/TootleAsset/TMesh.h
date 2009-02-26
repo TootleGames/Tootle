@@ -79,6 +79,9 @@ public:
 	void					GenerateCapsule(float Radius,const float3& Start,const float3& End);	//	generate a capsule
 	void					GenerateSphere(const TLMaths::TSphere& Sphere);		//	generate a sphere
 	void					GenerateCapsule(const TLMaths::TCapsule& Capsule);	//	generate a capsule
+	void					GenerateLine(const TLMaths::TLine& LineShape,const TColour& Colour)		{	GenerateLine( LineShape, Colour, Colour );	}
+	void					GenerateLine(const TLMaths::TLine& LineShape,const TColour& ColourStart,const TColour& ColourEnd);	//	generate a line
+	void					GenerateLine(const TArray<float3>& LinePoints,const TColour& Colour);	//	generate a line
 	void					GenerateRainbowColours();							//	create colours for each vertex
 	Bool					GenerateQuad(const TArray<float3>& Outline,const TColour& VertexColour);	//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour& VertexColour);	//	turn an outline of points into a quad/tri-strip

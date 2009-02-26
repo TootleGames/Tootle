@@ -334,7 +334,7 @@ void TRef::GetString(TString& RefString) const
 //---------------------------------------------------------
 //	increment the reference - don't just increment the u32 though! do it systematticly
 //---------------------------------------------------------
-void TRef::Increment()
+const TRef& TRef::Increment()
 {
 	//	gather indexes
 	TFixedArray<u32,TRef::g_CharsPerRef> CharIndexes;
@@ -366,6 +366,8 @@ void TRef::Increment()
 
 	//	now re-set the ref
 	Set( CharIndexes );
+
+	return *this;
 }
 
 

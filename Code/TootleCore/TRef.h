@@ -64,7 +64,7 @@ public:
 	void				Set(const char* pRefString);			//	pull out 5 characters and set from this string
 	void				Set(const TArray<char>& RefStringChars);	//	set from array of 5 chars
 
-	void				Increment();							//	increment the reference - don't just increment the u32 though! do it systematticly
+	const TRef&			Increment();							//	increment the reference - don't just increment the u32 though! do it systematticly - returns itself so you can construct another TRef from the incremented version of this
 
 	const u32&			GetData() const							{	return m_Ref;	}
 	void				GetString(TString& RefString) const;	//	convert ref to a string

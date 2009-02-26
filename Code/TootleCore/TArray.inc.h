@@ -127,7 +127,7 @@ template<typename TYPE>
 template<typename MATCHTYPE>
 Bool TArray<TYPE>::Remove(const MATCHTYPE& val)
 {
-	u32 uIndex = FindIndex(val);
+	s32 uIndex = FindIndex(val);
 
 	if(uIndex==-1)
 		return FALSE;

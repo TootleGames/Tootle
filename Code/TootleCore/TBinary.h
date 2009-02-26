@@ -64,6 +64,8 @@ public:
 	template<typename TYPE> void				WriteArray(const TArray<TYPE>& Array);	//	write an array to the data. we write the element count into the data too to save doing it client side
 	FORCEINLINE void							WriteString(const TString& String)	{	WriteArray( String.GetStringArray() );	}
 
+	template<typename TYPE> FORCEINLINE void	AllocData(u32 Elements)				{	m_Data.AddAllocSize( Elements * sizeof(TYPE) );	}
+	
 	FORCEINLINE Bool				SetSize(u32 NewSize)				{	return m_Data.SetSize( NewSize );	}
 	FORCEINLINE u32					GetSize() const						{	return m_Data.GetSize();	}
 	FORCEINLINE void				ResetReadPos()						{	m_ReadPos = 0;	}

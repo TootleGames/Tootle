@@ -370,6 +370,7 @@ Bool Platform::DirectX::GetSpecificGamepadButtonRef(const u32& uIndex, const u32
 
 SyncBool Platform::DirectX::EnumerateDevices()
 {
+	//	gr: slow! - 80% of the input update
 	// Enumarate the attached devices
 	HRESULT hr = g_pTLDirectInputInterface->EnumDevices(DI8DEVCLASS_ALL, CreateDevice, NULL, DIEDFL_ATTACHEDONLY);
 
@@ -513,7 +514,7 @@ BOOL CALLBACK Platform::DirectX::CreateDevice(const DIDEVICEINSTANCE* pdidInstan
 	}
 	else
 	{
-		TLDebug::Print("Unknown input device found - ignoring");
+		TLDebug_Print("Unknown input device found - ignoring");
 	}
 
 	return DIENUM_CONTINUE;
@@ -1127,12 +1128,16 @@ Bool Platform::DirectX::UpdateDirectXDevice_Keyboard(TPtr<TInputDevice> pDevice,
 
 	MainBuffer->Empty();
 
-	TPtr<TBinaryTree> pDataBuffer = MainBuffer->AddChild("Input");
+	TPtr<TBinaryTree>& pDataBuffer = MainBuffer->AddChild("Input");
 
 	if(pDataBuffer.IsValid())
 	{
-
+		TBinaryTree& DataBuffer = *pDataBuffer;
 		u32 uSensorCount = pDevice->GetSensorCount(Button);
+
+		//	gr: 256 pDataBuffer->Write( fValue ); 's are expensive (lots of re-allocs)
+		//		so pre-alloc memory
+		DataBuffer.AllocData<float>( uSensorCount );
 
 		// Publish the keyboard data
 		for(u32 uIndex = 0; uIndex < uSensorCount; uIndex++)
@@ -1145,7 +1150,7 @@ Bool Platform::DirectX::UpdateDirectXDevice_Keyboard(TPtr<TInputDevice> pDevice,
 			// keyboard buttons they will process the information
 			float fValue = (diks[uIndex] & 0x80) ? 1.0f : 0.0f;
 		
-			pDataBuffer->Write( fValue );
+			DataBuffer.Write( fValue );
 
 #ifdef _DEBUG
 			// In debug print what key was pressed

@@ -148,6 +148,7 @@ TLRender::TRenderNode::TRenderNode(TRefRef RenderNodeRef,TRefRef TypeRef) :
 	m_RenderFlags.Set( RenderFlags::UseVertexColours );
 	m_RenderFlags.Set( RenderFlags::UseMeshLineWidth );
 	m_RenderFlags.Set( RenderFlags::EnableCull );
+	m_RenderFlags.Set( RenderFlags::InvalidateBoundsByChildren );
 }
 
 
@@ -301,23 +302,21 @@ const TLMaths::TBox& TLRender::TRenderNode::CalcLocalBoundsBox()
 	while ( pChild )
 	{
 #endif
-		//	get child's bounds
-		TLMaths::TBox ChildBounds = pChild->CalcLocalBoundsBox();
-		if ( !ChildBounds.IsValid() )
-		{
-			#ifndef TLGRAPH_OWN_CHILDREN
-			pChild = pChild->GetNext();
-			#endif
-			continue;
-		}
+		TLRender::TRenderNode& Child = *pChild;
 
-		if ( ChildBounds.IsValid() && !pChild->GetRenderFlags().IsSet(RenderFlags::ResetScene) )
+		//	don't accumualte a child that is does not have an inherited transform
+		if ( !Child.GetRenderFlags().IsSet(RenderFlags::ResetScene) )
 		{
-			//	gr: need to omit translate?
-			ChildBounds.Transform( pChild->GetTransform() );
+			//	get child's bounds
+			TLMaths::TBox ChildBounds = Child.CalcLocalBoundsBox();
+			if ( ChildBounds.IsValid() )
+			{
+				//	gr: need to omit translate?
+				ChildBounds.Transform( pChild->GetTransform() );
 
-			//	accumulate child
-			m_LocalBoundsBox.Accumulate( ChildBounds );
+				//	accumulate child
+				m_LocalBoundsBox.Accumulate( ChildBounds );
+			}
 		}
 
 		#ifndef TLGRAPH_OWN_CHILDREN
@@ -335,16 +334,54 @@ const TLMaths::TBox& TLRender::TRenderNode::CalcLocalBoundsBox()
 //------------------------------------------------------------
 void TLRender::TRenderNode::SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags)
 {
+	//	if we're set NOT to invalidate on child changes, dont
+	if ( InvalidateFlags( FromChild ) && !GetRenderFlags().IsSet( RenderFlags::InvalidateBoundsByChildren ) )
+	{
+		//	unless it's forced
+		if ( !InvalidateFlags( ForceInvalidateParentsLocalBounds ) )
+			return;
+	}
+
+	Bool InvWorld = InvalidateFlags(InvalidateWorldBounds);
+	Bool InvLocal = InvalidateFlags(InvalidateLocalBounds);
+	Bool InvPos = InvalidateFlags(InvalidateWorldPos);
+
 	//	no change
-	if ( !InvalidateFlags(InvalidateLocalBounds) && !InvalidateFlags(InvalidateWorldBounds) && !InvalidateFlags(InvalidateWorldPos) )
+	if ( !InvLocal && !InvWorld && !InvPos )
 		return;
 
 	Bool ThisLocalBoundsChanged = FALSE;
 	Bool ThisWorldBoundsChanged = FALSE;
 	Bool HasSetRenderZoneInvalid = FALSE;
 
-	//	if invalidating local, world must be invalidated
-	if ( InvalidateFlags(InvalidateWorldBounds) || InvalidateFlags(InvalidateLocalBounds) )
+
+	//	invalidate local bounds
+	if ( InvLocal )
+	{
+		if ( m_LocalBoundsBox.IsValid()  )
+		{
+			Debug_PrintInvalidate( this, "local", "box" );
+			m_LocalBoundsBox.SetInvalid();
+			ThisLocalBoundsChanged = TRUE;
+		}
+
+		if ( m_LocalBoundsSphere.IsValid()  )
+		{
+			Debug_PrintInvalidate( this, "local", "Sphere" );
+			m_LocalBoundsSphere.SetInvalid();
+			ThisLocalBoundsChanged = TRUE;
+		}
+
+		if ( m_LocalBoundsCapsule.IsValid()  )
+		{
+			Debug_PrintInvalidate( this, "local", "Capsule" );
+			m_LocalBoundsCapsule.SetInvalid();
+			ThisLocalBoundsChanged = TRUE;
+		}
+	}
+
+	//	if invalidating local, world must be invalidated (but only do it if the local bounds were changed)
+	if ( InvWorld || (InvLocal&&ThisLocalBoundsChanged) )
 	{
 		if ( m_WorldBoundsBox.IsValid() )
 		{
@@ -378,7 +415,7 @@ void TLRender::TRenderNode::SetBoundsInvalid(const TInvalidateFlags& InvalidateF
 	}
 
 	//	invalidate world pos
-	if ( InvalidateFlags(InvalidateWorldPos) )
+	if ( InvPos )
 	{
 		m_WorldPosValid = FALSE;
 		if ( !HasSetRenderZoneInvalid )
@@ -389,62 +426,52 @@ void TLRender::TRenderNode::SetBoundsInvalid(const TInvalidateFlags& InvalidateF
 		}
 	}
 
-	//	invalidate local bounds
-	if ( InvalidateFlags(InvalidateLocalBounds) )
-	{
-		if ( m_LocalBoundsBox.IsValid()  )
-		{
-			Debug_PrintInvalidate( this, "local", "box" );
-			m_LocalBoundsBox.SetInvalid();
-			ThisLocalBoundsChanged = TRUE;
-		}
-
-		if ( m_LocalBoundsSphere.IsValid()  )
-		{
-			Debug_PrintInvalidate( this, "local", "Sphere" );
-			m_LocalBoundsSphere.SetInvalid();
-			ThisLocalBoundsChanged = TRUE;
-		}
-
-		if ( m_LocalBoundsCapsule.IsValid()  )
-		{
-			Debug_PrintInvalidate( this, "local", "Capsule" );
-			m_LocalBoundsCapsule.SetInvalid();
-			ThisLocalBoundsChanged = TRUE;
-		}
-	}
-
 	//	invalidate parent if local changes
-	//	gr: invalidate if either change
-	if ( ( ThisLocalBoundsChanged || ThisWorldBoundsChanged || InvalidateFlags(ForceInvalidateParents) ) && InvalidateFlags(InvalidateParents) )
+	if ( InvalidateFlags(InvalidateParentLocalBounds) || InvalidateFlags(ForceInvalidateParentsLocalBounds) )
 	{
-		TPtr<TRenderNode> pParent = GetParent();
+		TRenderNode* pParent = GetParent();
 		if ( pParent )
 		{
-			//	when invalidating our world bounds, the parent's LOCAL must invalidate, but not it's world
-			TInvalidateFlags ParentInvalidateFlags = InvalidateFlags;
-			if ( InvalidateFlags(InvalidateWorldBounds) )
-			{
-				ParentInvalidateFlags.Set( InvalidateLocalBounds );
-				ParentInvalidateFlags.Clear( InvalidateWorldBounds );
-			}
+			//	get parent's invalidate flags
+			TInvalidateFlags ParentInvalidateFlags;
+			ParentInvalidateFlags.Set( FromChild );
+			ParentInvalidateFlags.Set( InvalidateLocalBounds );
 
+			//	gr: unless explicitly set, dont invalidate all of the parent's children
+			if ( ParentInvalidateFlags(InvalidateParentsChildrenWorldBounds) )
+				ParentInvalidateFlags.Set( InvalidateChildWorldBounds );
+			if ( ParentInvalidateFlags(InvalidateParentsChildrenWorldPos) )
+				ParentInvalidateFlags.Set( InvalidateChildWorldPos );
+
+			//	invalidate parent
 			pParent->SetBoundsInvalid(ParentInvalidateFlags);
 		}
 	}
 
 	//	invalidate world bounds of children
-	if ( InvalidateFlags(InvalidateChildren) && HasChildren() )
+	if ( HasChildren() && (InvalidateFlags(InvalidateChildWorldBounds) || InvalidateFlags(InvalidateChildWorldPos) )  )
 	{
-		//	stop recursion overflow by not getting children to try and invalidate us again
-		TInvalidateFlags ChildInvalidateFlags = InvalidateFlags;
-		ChildInvalidateFlags.Clear( InvalidateParents );
+		//	calculate child's invalidate flags
+		TInvalidateFlags ChildInvalidateFlags;
+		ChildInvalidateFlags.Set( FromParent );
+
+		if ( InvalidateFlags(InvalidateChildWorldBounds) )
+		{
+			ChildInvalidateFlags.Set( InvalidateWorldBounds );
+			ChildInvalidateFlags.Set( InvalidateChildWorldBounds );
+		}
+
+		if ( InvalidateFlags(InvalidateChildWorldPos) )
+		{
+			ChildInvalidateFlags.Set( InvalidateWorldPos );
+			ChildInvalidateFlags.Set( InvalidateChildWorldPos );
+		}
 
 #ifdef TLGRAPH_OWN_CHILDREN
 		TPtrArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
 		for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 		{
-			TPtr<TLRender::TRenderNode>& pChild = NodeChildren[c];
+			TLRender::TRenderNode* pChild = NodeChildren[c];
 #else
 		TPtr<TRenderNode> pChild = GetChildFirst();
 		while ( pChild )
@@ -682,16 +709,18 @@ void TLRender::TRenderNode::ClearDebugRenderFlags()
 void TLRender::TRenderNode::OnAdded()
 {
 	TLGraph::TGraphNode<TLRender::TRenderNode>::OnAdded();
-
+/*	//	gr: printing out too often atm
+#ifdef _DEBUG
 	TTempString RefString;
 	GetRenderNodeRef().GetString( RefString );
 	RefString.Append(" added to graph... invalidating...");
 	TLDebug_Print( RefString );
-
+#endif
+*/
 	//	invalidate bounds of self IF child affects bounds
 	if ( !GetRenderFlags().IsSet( RenderFlags::ResetScene ) )
 	{
-		SetBoundsInvalid( TInvalidateFlags( InvalidateLocalBounds, InvalidateParents, ForceInvalidateParents ) );
+		SetBoundsInvalid( TInvalidateFlags( InvalidateLocalBounds, ForceInvalidateParentsLocalBounds ) );
 	}
 }
 

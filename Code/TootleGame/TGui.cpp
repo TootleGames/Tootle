@@ -74,7 +74,7 @@ SyncBool TLGui::TGui::Initialise()
 				return SyncWait;
 
 			//	enable bounds-calc flags
-			pRenderNode->GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::Debug_WorldBoundsBox );
+		//	pRenderNode->GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::Debug_WorldBoundsBox );
 			pRenderNode->GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::CalcWorldBoundsBox );
 			pRenderNode->GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::CalcWorldBoundsSphere );
 

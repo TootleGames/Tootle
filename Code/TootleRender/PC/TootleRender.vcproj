@@ -448,6 +448,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TRenderNodeDebugMesh.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TRenderNodeDebugMesh.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TRenderNodePhysicsGraph.cpp"
 			>
 		</File>

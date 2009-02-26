@@ -9,10 +9,39 @@
 //	#define CULL_EMPTY_ZONES	//	delete child zones if theyre all empty
 
 
+namespace TLMaths
+{
+	namespace TLQuadTree
+	{
+		FORCEINLINE TLArray::SortResult	SortNodes(const TPtr<TLMaths::TQuadTreeNode>& a,const TPtr<TLMaths::TQuadTreeNode>& b,const void* pTestVal);
+
+		TRef		g_NextQuadTreeNodeRef;	//	unique ref for tree nodes which is automaticcaly incremented
+	}
+}
+
+
+
+//	node sorting
+FORCEINLINE TLArray::SortResult	TLMaths::TLQuadTree::SortNodes(const TPtr<TLMaths::TQuadTreeNode>& a,const TPtr<TLMaths::TQuadTreeNode>& b,const void* pTestVal)
+{
+	//	cast test val
+	const TPtr<TLMaths::TQuadTreeNode>* ppTestNode = (const TPtr<TLMaths::TQuadTreeNode>*)pTestVal;
+
+	//	if pTestVal provided it's the ref
+	TRefRef aRef = a->GetQuadTreeNodeRef();
+	TRefRef bRef = pTestVal ? (*ppTestNode)->GetQuadTreeNodeRef() : b->GetQuadTreeNodeRef();
+		
+	//	== turns into 0 (is greater) or 1(equals)
+	return aRef < bRef ? TLArray::IsLess : (TLArray::SortResult)(aRef==bRef);	
+}
+
+
+
 
 
 TLMaths::TQuadTreeNode::TQuadTreeNode() : 
-	m_IsZoneOutofDate		( TRUE )
+	m_IsZoneOutofDate		( TRUE ),
+	m_QuadTreeNodeRef		( TLMaths::TLQuadTree::g_NextQuadTreeNodeRef.Increment() )
 {
 }
 
@@ -177,8 +206,9 @@ const TLMaths::TBox2D& TLMaths::TQuadTreeNode::GetZoneShape()
 
 
 TLMaths::TQuadTreeZone::TQuadTreeZone(const TLMaths::TBox2D& ZoneShape,TPtr<TLMaths::TQuadTreeZone>& pParent) :
-	m_pParent				( pParent ),
-	m_Shape					( ZoneShape )
+	m_pParent	( pParent ),
+	m_Shape		( ZoneShape ),
+	m_Nodes		( &TLMaths::TLQuadTree::SortNodes )
 {
 }
 

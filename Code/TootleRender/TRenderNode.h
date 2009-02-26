@@ -31,9 +31,14 @@ private:
 		InvalidateLocalBounds,
 		InvalidateWorldBounds,
 		InvalidateWorldPos,
-		InvalidateParents,
-		ForceInvalidateParents,		//	invalidate parents even if nothing has changed - I've needed this to invalidate parent's boxes even though current bounds are invalid
-		InvalidateChildren,
+		InvalidateParentLocalBounds,
+		ForceInvalidateParentsLocalBounds,		//	invalidate parents even if nothing has changed - I've needed this to invalidate parent's boxes even though current bounds are invalid
+		InvalidateChildWorldBounds,				//	
+		InvalidateChildWorldPos,				//	
+		InvalidateParentsChildrenWorldBounds,	//	explicitly invalidate our parents' children - by default do not (otherwise we end up invalidating the whole tree as it goes up to the root down)
+		InvalidateParentsChildrenWorldPos,		//	as above, but for pos
+		FromChild,								//	child has instigated this invalidation
+		FromParent,								//	parent has instigated this invalidation
 	};
 	typedef TFlags<InvalidateFlags> TInvalidateFlags;
 
@@ -45,7 +50,7 @@ public:
 		//	flags for all the parts of the mesh we're drawing/processing
 		enum Flags
 		{
-			Enabled,
+			Enabled,					//	when not enabled, this (and tree) is not rendered
 			DepthRead,					//	read from depth buffer (off draws over everything)
 			DepthWrite,					//	write to depth buffer (off means will get drawn over)
 			ResetScene,					//	position and rotation are not inherited
@@ -55,6 +60,8 @@ public:
 			UseMeshLineWidth,			//	calculates mesh/world line width -> screen/pixel width
 			UseNodeColour,				//	set when colour is something other than 1,1,1,1 to save some processing (off by default!)
 			EnableCull,					//	enable camera/frustum/zone culling. if disabled, the whole tree below is disabled
+			ForceCullTestChildren,		//	if we are not culled, still do a cull test with children. By default, when not culled, we don't test children as they should be encapsulated within our bounds
+			InvalidateBoundsByChildren,	//	default behaviour is to invalidate our bounding box when child CHANGES. we can disable this for certain cases - eg. root objects, which when invalidated cause the entire tree to recalculate stuff - still invalidated when a child is ADDED to the tree (this may have to change to "first-calculation of bounds")
 	
 			Debug_Wireframe,			//	draw in wireframe
 			Debug_Points,				//	draw a point at every vertex
@@ -75,14 +82,16 @@ public:
 	virtual void							Initialise(TPtr<TLMessaging::TMessage>& pMessage);	//	generic render node init
 
 	FORCEINLINE const TLMaths::TTransform&	GetTransform() const						{	return m_Transform;	}
-	FORCEINLINE void						SetTransform(const TLMaths::TTransform& Transform)	{	m_Transform = Transform;	OnTransformChanged();	}
 	FORCEINLINE const float3&				GetTranslate() const						{	return m_Transform.GetTranslate() ;	}
-	FORCEINLINE void						SetTranslate(const float3& Translate)		{	m_Transform.SetTranslate( Translate );	OnTransformChanged();	}
 	FORCEINLINE const float3&				GetScale() const							{	return m_Transform.GetScale() ;	}
-	FORCEINLINE void						SetScale(const float3& Scale)				{	m_Transform.SetScale( Scale );	OnTransformChanged();	}
-	FORCEINLINE void						SetScale(float Scale)						{	SetScale( float3( Scale, Scale, Scale ) );	}
 	FORCEINLINE const TLMaths::TQuaternion&	GetRotation() const							{	return m_Transform.GetRotation() ;	}
-	FORCEINLINE void						SetRotation(const TLMaths::TQuaternion& Rotation)	{	m_Transform.SetRotation( Rotation );	OnTransformChanged();	}
+
+	FORCEINLINE void						SetTransform(const TLMaths::TTransform& Transform);
+	FORCEINLINE void						SetTranslate(const float3& Translate,Bool Invalidate=TRUE);
+	FORCEINLINE void						SetScale(const float3& Scale,Bool Invalidate=TRUE);
+	FORCEINLINE void						SetScale(float Scale,Bool Invalidate=TRUE)	{	SetScale( float3( Scale, Scale, Scale ), Invalidate );	}
+	FORCEINLINE void						SetRotation(const TLMaths::TQuaternion& Rotation,Bool Invalidate=TRUE);
+	
 	FORCEINLINE float						GetLineWidth() const						{	return m_LineWidth;	}
 	FORCEINLINE void						SetLineWidth(float Width)					{	m_LineWidth = Width;	}
 	FORCEINLINE const float3&				GetWorldPos() const							{	return m_WorldPos;	}
@@ -117,8 +126,9 @@ public:
 	//	if FALSE presumed we are doing psuedo rendering ourselves (creating RenderNodes and rendering them to the render target)
 	virtual Bool							Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList);	//	pre-draw routine for a render object
 
-	FORCEINLINE void						OnBoundsChanged()							{	SetBoundsInvalid( TInvalidateFlags( InvalidateLocalBounds, InvalidateWorldBounds, InvalidateParents ) );	}
-	FORCEINLINE void						OnTransformChanged()						{	SetBoundsInvalid( TInvalidateFlags( HasChildren() ? InvalidateLocalBounds : InvalidateDummy, InvalidateWorldPos, InvalidateWorldBounds, InvalidateParents, InvalidateChildren ) );	}
+	FORCEINLINE void						OnTransformChanged();						//	invalidate bounds
+	FORCEINLINE void						OnMeshChanged();							//	invalidate bounds
+	FORCEINLINE void						OnBoundsChanged()							{	OnMeshChanged();	}
 
 	void									CalcWorldPos(const TLMaths::TTransform& SceneTransform);	//	calculate our new world position from the latest scene transform
 
@@ -145,7 +155,7 @@ public:
 	FORCEINLINE Bool						operator<(TRefRef Ref) const				{	return GetRenderNodeRef() < Ref;	}
 
 protected:
-	FORCEINLINE void						OnMeshRefChanged()							{	m_pMeshCache = NULL;	OnBoundsChanged();	}
+	FORCEINLINE void						OnMeshRefChanged()							{	m_pMeshCache = NULL;	OnMeshChanged();	}
 	//void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags=TInvalidateFlags(InvalidateLocalBounds,InvalidateWorldBounds,InvalidateWorldPos,InvalidateParents,InvalidateChildren));	//	set all bounds as invalid
 	void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags);
 
@@ -218,4 +228,64 @@ FORCEINLINE void TLRender::TRenderNode::OnColourChanged()
 	}
 }
 
+
+
+FORCEINLINE void TLRender::TRenderNode::SetTransform(const TLMaths::TTransform& Transform)
+{
+	//	gr: note, no checks using this function atm...
+	m_Transform = Transform;	
+	OnTransformChanged();
+}
+
+FORCEINLINE void TLRender::TRenderNode::SetTranslate(const float3& Translate,Bool Invalidate)				
+{	
+	m_Transform.SetTranslate( Translate );
+
+	if ( Invalidate )	
+		OnTransformChanged();	
+}
+
+FORCEINLINE void TLRender::TRenderNode::SetScale(const float3& Scale,Bool Invalidate)						
+{	
+	m_Transform.SetScale( Scale );	
+
+	if ( Invalidate )	
+		OnTransformChanged();	
+}
+
+FORCEINLINE void TLRender::TRenderNode::SetRotation(const TLMaths::TQuaternion& Rotation,Bool Invalidate)	
+{	
+	m_Transform.SetRotation( Rotation );	
+
+	if ( Invalidate )	
+		OnTransformChanged();	
+}
+
+//---------------------------------------------------------------
+//	invalidate bounds when pos/rot/scale
+//---------------------------------------------------------------
+FORCEINLINE void TLRender::TRenderNode::OnTransformChanged()						
+{	
+	SetBoundsInvalid( TInvalidateFlags( 
+						//HasChildren() ? InvalidateLocalBounds : InvalidateDummy, //	gr: not needed?
+						InvalidateWorldPos,				//	world pos must have changed - may be able to reduce this to just Translate changes
+						InvalidateWorldBounds,			//	shape of mesh must have changed
+						InvalidateParentLocalBounds,	//	our parent's LOCAL bounds has now changed as it's based on it's children (this)
+						InvalidateChildWorldBounds,		//	invalidate the children's world bounds
+						InvalidateChildWorldPos		//	invalidate the children's world pos too
+					) );	
+}
+
+
+//---------------------------------------------------------------
+//	invalidate bounds when mesh has changed
+//---------------------------------------------------------------
+FORCEINLINE void TLRender::TRenderNode::OnMeshChanged()								
+{	
+	SetBoundsInvalid( TInvalidateFlags( 
+						InvalidateLocalBounds,			//	our local shape has probbaly changed
+						InvalidateWorldBounds,			//	this also affects world bounds
+						InvalidateParentLocalBounds		//	and so shape of parents may have changed as it encapsulates us
+						) );	
+}
 

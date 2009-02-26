@@ -214,6 +214,40 @@ void TLAsset::TMesh::GenerateCube(float Scale)
 
 
 //-------------------------------------------------------
+//	generate a line
+//-------------------------------------------------------
+void TLAsset::TMesh::GenerateLine(const TLMaths::TLine& LineShape,const TColour& ColourStart,const TColour& ColourEnd)
+{
+	//	add vertexes
+	s32 StartVertex = AddVertex( LineShape.GetStart(), ColourStart );
+	s32 EndVertex = AddVertex( LineShape.GetEnd(), ColourEnd );
+
+	//	add line
+	Line* pLine = m_Lines.AddNew();
+	pLine->Add( StartVertex );
+	pLine->Add( EndVertex );
+}
+
+//-------------------------------------------------------
+//	generate a line
+//-------------------------------------------------------
+void TLAsset::TMesh::GenerateLine(const TArray<float3>& LinePoints,const TColour& Colour)
+{
+	if ( LinePoints.GetSize() == 0 )
+		return;
+
+	//	add line
+	Line* pLine = m_Lines.AddNew();
+	
+	for ( u32 i=0;	i<LinePoints.GetSize();	i++ )
+	{
+		s32 VertexIndex = AddVertex( LinePoints[i], Colour );
+		pLine->Add( (u16)VertexIndex );
+	}
+}
+
+
+//-------------------------------------------------------
 //	create colours for each vertex
 //-------------------------------------------------------
 void TLAsset::TMesh::GenerateRainbowColours()
@@ -330,6 +364,7 @@ TLMaths::TBox& TLAsset::TMesh::CalcBoundsBox(Bool ForceCalc)
 	}
 
 	//	debug the bounds we created
+	/*
 #ifdef _DEBUG
 	float3 BoxSize = m_BoundsBox.GetSize();
 	TTempString DebugString("Created bounds box for ");
@@ -337,6 +372,7 @@ TLMaths::TBox& TLAsset::TMesh::CalcBoundsBox(Bool ForceCalc)
 	DebugString.Appendf(". w: %.2f h:%.2f d:%.2f", BoxSize.x, BoxSize.y, BoxSize.z );
 	TLDebug_Print( DebugString );
 #endif
+	*/
 
 	return m_BoundsBox;
 }

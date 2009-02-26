@@ -686,7 +686,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 	//TLMaths::TQuadTreeNode* pChildCameraZoneNode = RenderNodeIsInsideCameraZone ? NULL : pCameraZoneNode;
 	//TLMaths::TQuadTreeNode* pChildCameraZoneNode = pCameraZoneNode;
 	TLMaths::TQuadTreeNode* pChildCameraZoneNode = pCameraZoneNode;
-	if ( !RenderNodeRenderFlags.IsSet( TLRender::TRenderNode::RenderFlags::EnableCull ) )
+	if ( !RenderNodeRenderFlags.IsSet( TLRender::TRenderNode::RenderFlags::EnableCull ) && !RenderNodeRenderFlags.IsSet( TLRender::TRenderNode::RenderFlags::ForceCullTestChildren ) )
 		pChildCameraZoneNode = NULL;
 
 	//	render children
@@ -748,6 +748,10 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 	//	modify render object flags for debug stuff
 	RenderNodeRenderFlags.Set( Debug_ForceRenderFlagsOn() );
 	RenderNodeRenderFlags.Clear( Debug_ForceRenderFlagsOff() );
+
+	//	render everything's bound box
+	//RenderNodeRenderFlags.Set( TRenderNode::RenderFlags::Debug_WorldBoundsBox );
+
 #else
 	TFlags<TRenderNode::RenderFlags::Flags>& RenderNodeRenderFlags = pRenderNode->GetRenderFlags();
 #endif

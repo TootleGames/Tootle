@@ -1,6 +1,7 @@
 #include "TRendergraph.h"
 #include "TRenderNodeTile.h"
 #include "TRenderNodeText.h"
+#include "TRenderNodeDebugMesh.h"
 
 
 
@@ -49,6 +50,9 @@ TLRender::TRenderNode* TLRender::TRenderNodeFactory::CreateObject(TRefRef Instan
 
 	if ( TypeRef == "Text" )
 		return new TLRender::TRenderNodeText(InstanceRef,TypeRef);
+
+	if ( TypeRef == "DbgMesh" )
+		return new TLRender::TRenderNodeDebugMesh(InstanceRef,TypeRef);
 
 	return NULL;
 }

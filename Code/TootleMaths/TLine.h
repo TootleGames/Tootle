@@ -26,6 +26,7 @@ class TLMaths::TLine
 public:
 	TLine()				{	}
 	TLine(const float3& Start,const float3& End);
+	TLine(const TLine2D& Line,float z=0.f);
 	void				Set(const float3& Start,const float3& End)		{	m_Start = Start;	m_End = End;	}
 	void				Set(const TLine& Line)							{	m_Start = Line.GetStart();	m_End = Line.GetEnd();	}
 	void				SetDir(const float3& Start,const float3& Dir)	{	Set( Start, Start + Dir );	}
@@ -60,6 +61,8 @@ public:
 	TLine2D()				{	}
 	TLine2D(const float2& Start,const float2& End);
 	TLine2D(const float3& Start,const float3& End);
+	TLine2D(const TLine& Line);
+
 	void				Set(const float2& Start,const float2& End)		{	m_Start = Start;	m_End = End;	}
 	void				Set(const TLine2D& Line)						{	m_Start = Line.GetStart();	m_End = Line.GetEnd();	}
 	void				Set(const TLine& Line)							{	m_Start = Line.GetStart();	m_End = Line.GetEnd();	}
@@ -81,8 +84,9 @@ public:
 	Bool				GetIntersection(const TLine2D& Line) const;		//	simple intersection test
 	float				GetDistance(const float2& Pos) const			{	return TLMaths::Sqrtf( GetDistanceSq( Pos ) );	}
 	float				GetDistanceSq(const float2& Pos) const;			//	get the distance from point to the line. returns ZERO if on the line (no mathematical way of doing a negative result)
-	float2				GetNearestPoint(const float2& Pos) const;		//	get a point along the line nearest to this point
-	float2				GetNearestPoint(const float3& Pos) const;		//	get a point along the line nearest to this point
+	float2				GetNearestPoint(const float2& Pos) const		{	float pal;	return GetNearestPoint( Pos, pal );	}
+	float2				GetNearestPoint(const float2& Pos,float& PointAlongLine) const;		//	get a point along the line nearest to this point
+	float2				GetNearestPoint(const float3& Pos) const		{	return GetNearestPoint( Pos.xy() );	}
 	
 	void				Transform(const float2& Move)					{	m_Start += Move;	m_End += Move;	}
 	void				Transform(const float3& Move)					{	m_Start += Move;	m_End += Move;	}

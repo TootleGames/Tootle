@@ -95,10 +95,11 @@ public:
 	virtual void		Copy(const TArray<TYPE>& Array);	//	make this a copy of the specified array
 	void				SetAll(const TYPE& Val);				//	set all elements to match this one (uses = operator)
 
-	virtual Bool		SetSize(s32 size);
+	virtual Bool		SetSize(s32 Size);
 	void				Empty(Bool Dealloc=FALSE)				{	SetSize(0);	if ( Dealloc )	SetAllocSize(0);	};
 	virtual u32			GetAllocSize() const					{	return m_Alloc;	}
-	virtual void		SetAllocSize(u32 size);					//	set new amount of allocated data
+	virtual void		SetAllocSize(u32 Size);					//	set new amount of allocated data
+	FORCEINLINE void	AddAllocSize(u32 Size)					{	SetAllocSize( GetSize() + Size );	}	//	alloc N extra data than we already have
 	virtual void		Compact()								{	SetAllocSize( GetSize() );	}	//	free-up over-allocated data
 	FORCEINLINE void	SetGrowBy(u16 GrowBy)					{	m_GrowBy = (GrowBy == 0) ? TArray_GrowByDefault : GrowBy;	}
 

@@ -343,17 +343,15 @@ public:
 	void				UntransformVector(float2& Vector) const;	//	untransform vector
 
 protected:
-	TMatrix				m_Matrix;			//	translation and rotation
+	Bool				m_HasTranslate;
+	Bool				m_HasRotation;
+	Bool				m_HasScale;
 	Bool				m_HasMatrix;
 
-	float3				m_Scale;			//	scale
-	Bool				m_HasScale;
-
 	float3				m_Translate;		//	simple translation
-	Bool				m_HasTranslate;
-	
 	TQuaternion			m_Rotation;			//	human-usable rotation
-	Bool				m_HasRotation;
+	float3				m_Scale;			//	scale
+	TMatrix				m_Matrix;			//	translation and rotation
 };
 
 

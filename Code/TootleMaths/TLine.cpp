@@ -152,6 +152,13 @@ TLMaths::TLine::TLine(const float3& Start,const float3& End) :
 }
 
 
+TLMaths::TLine::TLine(const TLMaths::TLine2D& Line,float z) : 
+	m_Start	( Line.GetStart().xyz(z) ),
+	m_End	( Line.GetEnd().xyz(z) )
+{
+}
+
+
 
 	
 //-----------------------------------------------------------
@@ -219,20 +226,23 @@ TLMaths::TLine2D::TLine2D(const float3& Start,const float3& End) :
 //-----------------------------------------------------------
 //	find the point along the line closest to Position
 //-----------------------------------------------------------
-float2 TLMaths::TLine2D::GetNearestPoint(const float2& Position) const
+float2 TLMaths::TLine2D::GetNearestPoint(const float2& Position,float& PointAlongLine) const
 {
 	float2 LineDir = GetDirection();
 	float LineDirDotProduct = LineDir.DotProduct(LineDir);
 	
 	//	avoid div by zero
 	if ( LineDirDotProduct == 0.f )
+	{
+		PointAlongLine = 0.f;
 		return GetStart();
+	}
 
 	float2 Dist = Position - GetStart();
 
 	float LineDirDotProductDist = LineDir.DotProduct(Dist);
 
-	float PointAlongLine = LineDirDotProductDist / LineDirDotProduct;
+	PointAlongLine = LineDirDotProductDist / LineDirDotProduct;
 
 	if ( PointAlongLine <= 0.f )
 		return GetStart();
@@ -244,33 +254,6 @@ float2 TLMaths::TLine2D::GetNearestPoint(const float2& Position) const
 }
 
 	
-//-----------------------------------------------------------
-//	find the point along the line closest to Position
-//-----------------------------------------------------------
-float2 TLMaths::TLine2D::GetNearestPoint(const float3& Position) const
-{
-	float2 LineDir = GetDirection();
-	float LineDirDotProduct = LineDir.DotProduct(LineDir);
-	
-	//	avoid div by zero
-	if ( LineDirDotProduct == 0.f )
-		return GetStart();
-
-	float2 Dist(Position.x, Position.y);
-	Dist -= GetStart();
-
-	float LineDirDotProductDist = LineDir.DotProduct(Dist);
-
-	float PointAlongLine = LineDirDotProductDist / LineDirDotProduct;
-
-	if ( PointAlongLine <= 0.f )
-		return GetStart();
-
-	if ( PointAlongLine >= 1.f )
-		return GetEnd();
-
-	return GetStart() + LineDir * PointAlongLine;
-}
 
 //-----------------------------------------------------------
 //	gr: this needs testing

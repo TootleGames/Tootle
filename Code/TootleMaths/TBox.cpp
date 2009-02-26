@@ -194,7 +194,8 @@ void TLMaths::TBox::Transform(const TLMaths::TMatrix& Matrix,const float3& Scale
 //-------------------------------------------------
 void TLMaths::TBox::Transform(const TLMaths::TTransform& Transform)
 {
-	if ( !IsValid() )
+	//	not valid, or not going to make any changes... skip
+	if ( !IsValid() || !Transform.HasAnyTransform() )
 		return;
 
 	//	gr: I'm pretty sure transforming the min & max wont work quite right, so transform each point
@@ -586,7 +587,8 @@ void TLMaths::TBox2D::Accumulate(const TArray<float3>& Points)
 //-------------------------------------------------
 void TLMaths::TBox2D::Transform(const TLMaths::TTransform& Transform)
 {
-	if ( !IsValid() )
+	//	not valid, or not going to make any changes... skip
+	if ( !IsValid() || !Transform.HasAnyTransform() )
 		return;
 
 	//	gr: I'm pretty sure transforming the min & max wont work quite right, so transform each point
