@@ -37,8 +37,8 @@ public:
 		m_fThreshold = fThreshold; 
 	}
 
-	Bool				HasParentAction(TRef& refParentActionID);
-	void				AddParentAction(TRef& refParentActionID, Bool bCondition = TRUE);
+	inline Bool			HasParentAction(TRefRef ParentActionRef)	const	{ return m_refParentActions.Exists(ParentActionRef); }
+	void				AddParentAction(TRefRef ParentActionRef, Bool bCondition = TRUE);
 
 	FORCEINLINE Bool	operator==(TRefRef ActionRef) const			{	return GetActionID() == ActionRef;	}
 

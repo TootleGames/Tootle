@@ -3,12 +3,15 @@
 #include <TootleCore/TFlags.h>
 #include <TootleCore/TPtrArray.h>
 #include <TootleCore/TRelay.h>
+#include <TootleCore/TRef.h>
 
 #include "TSensor.h"
 #include "TEffect.h"
 
 namespace TLInput
 {
+	class TInputData;
+
 	class TInputDevice;
 	class TInputManager;
 
@@ -17,6 +20,18 @@ namespace TLInput
 		const u32 Attached = 0;		//	gr: TFlags work off indexes, not bits. bits are internal to the TFlags class
 	};
 }
+
+/*
+	Structure use for the input data for a specific sensor object button/axis/POV etc
+*/
+class TLInput::TInputData
+{
+public:
+	TRef	m_SensorRef;			// The ref of the input device sensor
+	float	m_fData;				// Data for the sensor
+};
+
+//TLCore_DeclareIsDataType(TInputData);
 
 /*
 	Generic input device that will be created per physical device
@@ -33,12 +48,11 @@ public:
 	  	m_DeviceRef		( DeviceRef ),
 		m_DeviceType	( DeviceTypeRef )
 	{
-		m_pDeviceDataBuffer = new TBinaryTree("Buffer");
 	}
 
 	~TInputDevice()
 	{
-		m_pDeviceDataBuffer = NULL;
+		m_InputBuffer.Empty();
 	}
 
 	TRefRef				GetDeviceRef() const			{	return m_DeviceRef;	}
@@ -72,30 +86,22 @@ public:
 	Bool							HasSensor(TRefRef SensorRef);
 	TPtr<TLInput::TInputSensor>&	GetSensor(TRefRef SensorRef);
 
-	s32								GetSensorIndex(TRefRef refSensorLabel);
+	TPtr<TLInput::TInputSensor>&	GetSensorFromLabel(TRefRef SensorLabelRef);
+	Bool							GetSensorRefFromLabel(TRef SensorLabelRef, TRef& SensorRef);
 
 	u32								GetSensorCount(TSensorType SensorType);
+	u32								GetTotalSensorCount()		const	{ return m_Sensors.GetSize(); }
 
 	// Effects access
 	TPtr<TLInput::TInputEffect>&	AttachEffect(TRef refEffectID);
 
 	// Data buffer access - sensor information from hardware
-	TPtr<TBinaryTree>&				GetDataBuffer()				{ return m_pDeviceDataBuffer; }
+	TArray<TInputData>&				GetInputBuffer()				{ return m_InputBuffer; }
 
-	// [24 11 08] DB - On the iPod we may process multiple 'events' in a frame so need to be able to manually
-	// call the update form the ipod code.  This will need changing at some point so that all platforms work the 
-	// same way and without explicit calls to the update.
-#ifdef TL_TARGET_IPOD
-	void							ForceUpdate()
-	{
-		Update();
-	}
-#endif
-	
 private:
 	void						Update();
 
-	void						ProcessSensors(TPtr<TBinaryTree>& dataBuffer);
+	void						ProcessSensors();
 
 	void						RemoveAllSensors()				{}
 	void						RemoveAllEffects()				{}
@@ -105,7 +111,7 @@ private:
 	TRef						m_HardwareDeviceRef;	// internal hardware ref - Reference to the physical device
 	TRef						m_DeviceType;			//	device type
 
-	TPtr<TBinaryTree>			m_pDeviceDataBuffer;	// Buffer for all input from the hardware device
+	TArray<TInputData>			m_InputBuffer;			// Buffer for all input from the hardware device
 	TPtrArray<TInputSensor>		m_Sensors;				// List of sensors that the device has access to
 	TPtrArray<TInputEffect>		m_Effects;				// List of (output) effects such as force, feedback (rumble) and audio
 

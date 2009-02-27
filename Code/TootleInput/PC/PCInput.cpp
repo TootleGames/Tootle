@@ -10,16 +10,9 @@
 #include <TootleCore/TPtr.h>
 #include <TootleCore/TEventChannel.h> //TEST
 
-// DB - Quick define to switch between using the enum objects to instance buttons, axes, etc.
-//#define DX_USE_ENUMOBJECTS 
 
-// DB - Quick define to allow switching buffred and non-buffered mouse data
-//#define DX_USE_BUFFERED_DATA
+#define INPUT_BUFFER_SIZE 16
 
-// User the enum objects if we are going to use buffered data
-#ifdef DX_USE_BUFFERED_DATA
-	#define DX_USE_ENUMOBJECTS 
-#endif
 
 // Globals
 namespace TLInput
@@ -31,22 +24,26 @@ namespace TLInput
 			LPDIRECTINPUT8									g_pTLDirectInputInterface = NULL;	// Global direct input interface pointer
 			TPtrArray<TLInputDirectXDevice>			g_TLDirectInputDevices;					// Global array of direct device pointers
 
-			TPtr<TLInputDirectXDevice>					FindDirectXDevice(TRef DirectXDeviceRef);
-
 			TKeyArray<u32, TRef>					g_KeyboardRefMap;
+			TKeyArray<u32, TRef>					g_MouseRefMap;
 
-			TArray<TRef>							g_Xbox360PadButtonRefs;	// XBox 360 pad button refs
-			TArray<TRef>							g_WiimoteButtonRefs;		// Wiimote button refs
-			TArray<TRef>							g_PS2PadButtonRefs;		// PS2 pad button refs
+			// For now we have specifically created keyarrays for the extra button references on gamepads
+			// Eventually this should be an array of arrays where we can 'plugin' the pads supported
+			// via an XML data file rather than using specific initialise routines.
+			// This could also apply to the keyboard and mouse ref maps as they will owrk in a similar fashion
+			TKeyArray<u32, TRef>					g_Xbox360PadButtonRefs;		// XBox 360 pad button refs
+			TKeyArray<u32, TRef>					g_WiimoteButtonRefs;		// Wiimote button refs
+			TKeyArray<u32, TRef>					g_PS2PadButtonRefs;			// PS2 pad button refs
 
 			void	InitialiseKeyboadRefMap();
+			void	InitialiseMouseRefMap();
 			void	InitialiseGamePadRefMaps();
 
 			void	InitialiseXBox360PadRefMap();
 			void	InitialiseWiimoteRefMap();
 			void	InitialisePS2PadRefMap();
 
-			Bool	GetSpecificGamepadButtonRef(const u32& uIndex, const u32& uProductID, TRef& LabelRef);
+			Bool	GetSpecificButtonRef(const u32& uButtonID, TRefRef DeviceType, const u32& uProductID, TRef& LabelRef);
 		};
 	};
 
@@ -83,6 +80,7 @@ int2 Platform::GetCursorPosition(u8 uIndex)
 SyncBool Platform::DirectX::Init()
 {
 	InitialiseKeyboadRefMap();
+	InitialiseMouseRefMap();
 	InitialiseGamePadRefMaps();
 
 	if(g_pTLDirectInputInterface)
@@ -287,6 +285,17 @@ void Platform::DirectX::InitialiseKeyboadRefMap()
 }
 
 
+void Platform::DirectX::InitialiseMouseRefMap()
+{
+	g_MouseRefMap.Add(DIMOFS_BUTTON0, "LMB");
+	g_MouseRefMap.Add(DIMOFS_BUTTON1, "RMB");
+	g_MouseRefMap.Add(DIMOFS_BUTTON2, "WHEEL");
+	g_MouseRefMap.Add(DIMOFS_BUTTON3, "LMB2");
+	g_MouseRefMap.Add(DIMOFS_BUTTON4, "RMB2");
+}
+
+
+
 void Platform::DirectX::InitialiseGamePadRefMaps()
 {
 	//TODO: Add individual arrays per gamepad type we support
@@ -299,66 +308,83 @@ void Platform::DirectX::InitialiseGamePadRefMaps()
 
 void Platform::DirectX::InitialiseXBox360PadRefMap()
 {
-	g_Xbox360PadButtonRefs.Add("A");
-	g_Xbox360PadButtonRefs.Add("B");
-	g_Xbox360PadButtonRefs.Add("X");
-	g_Xbox360PadButtonRefs.Add("Y");
-	g_Xbox360PadButtonRefs.Add("START");
-	g_Xbox360PadButtonRefs.Add("BACK");
-	g_Xbox360PadButtonRefs.Add("RB");
-	g_Xbox360PadButtonRefs.Add("RT");
-	g_Xbox360PadButtonRefs.Add("LB");
-	g_Xbox360PadButtonRefs.Add("LT");
+	g_Xbox360PadButtonRefs.Add(DIJOFS_BUTTON0, "A");
+	g_Xbox360PadButtonRefs.Add(DIJOFS_BUTTON1, "B");
+	g_Xbox360PadButtonRefs.Add(DIJOFS_BUTTON2, "X");
+	g_Xbox360PadButtonRefs.Add(DIJOFS_BUTTON3, "Y");
+	g_Xbox360PadButtonRefs.Add(DIJOFS_BUTTON4, "START");
+	g_Xbox360PadButtonRefs.Add(DIJOFS_BUTTON5, "BACK");
+	g_Xbox360PadButtonRefs.Add(DIJOFS_BUTTON6, "RB");
+	g_Xbox360PadButtonRefs.Add(DIJOFS_BUTTON7, "RT");
+	g_Xbox360PadButtonRefs.Add(DIJOFS_BUTTON8, "LB");
+	g_Xbox360PadButtonRefs.Add(DIJOFS_BUTTON9, "LT");
 }
 
 void Platform::DirectX::InitialiseWiimoteRefMap()
 {
-	g_WiimoteButtonRefs.Add("A");
-	g_WiimoteButtonRefs.Add("1");
-	g_WiimoteButtonRefs.Add("2");
-	g_WiimoteButtonRefs.Add("B");
-	g_WiimoteButtonRefs.Add("PLUS");
-	g_WiimoteButtonRefs.Add("MINUS");
-	g_WiimoteButtonRefs.Add("HOME");
-	g_WiimoteButtonRefs.Add("POWER");
-	g_WiimoteButtonRefs.Add("C");
-	g_WiimoteButtonRefs.Add("Z");
+	g_WiimoteButtonRefs.Add(DIJOFS_BUTTON0, "A");
+	g_WiimoteButtonRefs.Add(DIJOFS_BUTTON1, "1");
+	g_WiimoteButtonRefs.Add(DIJOFS_BUTTON2, "2");
+	g_WiimoteButtonRefs.Add(DIJOFS_BUTTON3, "B");
+	g_WiimoteButtonRefs.Add(DIJOFS_BUTTON4, "PLUS");
+	g_WiimoteButtonRefs.Add(DIJOFS_BUTTON5, "MINUS");
+	g_WiimoteButtonRefs.Add(DIJOFS_BUTTON6, "HOME");
+	g_WiimoteButtonRefs.Add(DIJOFS_BUTTON7, "POWER");
+	g_WiimoteButtonRefs.Add(DIJOFS_BUTTON8, "C");
+	g_WiimoteButtonRefs.Add(DIJOFS_BUTTON9, "Z");
 }
 
 void Platform::DirectX::InitialisePS2PadRefMap()
 {
-	g_PS2PadButtonRefs.Add("CROSS");
-	g_PS2PadButtonRefs.Add("CIRCLE");
-	g_PS2PadButtonRefs.Add("SQUARE");
-	g_PS2PadButtonRefs.Add("TRIANGLE");
-	g_PS2PadButtonRefs.Add("START");
-	g_PS2PadButtonRefs.Add("SELECT");
-	g_PS2PadButtonRefs.Add("ANALOG");
-	g_PS2PadButtonRefs.Add("R1");
-	g_PS2PadButtonRefs.Add("L1");
-	g_PS2PadButtonRefs.Add("R2");
-	g_PS2PadButtonRefs.Add("L2");
-	g_PS2PadButtonRefs.Add("R3");
-	g_PS2PadButtonRefs.Add("L3");
+	g_PS2PadButtonRefs.Add(DIJOFS_BUTTON0, "CROSS");
+	g_PS2PadButtonRefs.Add(DIJOFS_BUTTON1, "CIRCLE");
+	g_PS2PadButtonRefs.Add(DIJOFS_BUTTON2, "SQUARE");
+	g_PS2PadButtonRefs.Add(DIJOFS_BUTTON3, "TRIANGLE");
+	g_PS2PadButtonRefs.Add(DIJOFS_BUTTON4, "START");
+	g_PS2PadButtonRefs.Add(DIJOFS_BUTTON5, "SELECT");
+	g_PS2PadButtonRefs.Add(DIJOFS_BUTTON6, "ANALOG");
+	g_PS2PadButtonRefs.Add(DIJOFS_BUTTON7, "R1");
+	g_PS2PadButtonRefs.Add(DIJOFS_BUTTON8, "L1");
+	g_PS2PadButtonRefs.Add(DIJOFS_BUTTON9, "R2");
+	g_PS2PadButtonRefs.Add(DIJOFS_BUTTON10, "L2");
+	g_PS2PadButtonRefs.Add(DIJOFS_BUTTON11, "R3");
+	g_PS2PadButtonRefs.Add(DIJOFS_BUTTON12, "L3");
 }
 
 
-Bool Platform::DirectX::GetSpecificGamepadButtonRef(const u32& uIndex, const u32& uProductID, TRef& LabelRef)
+Bool Platform::DirectX::GetSpecificButtonRef(const u32& uButtonID, TRefRef DeviceType, const u32& uProductID, TRef& LabelRef)
 {
-	// Test the product ID for known I'ds
-	TArray<TRef>* pArray = NULL;
+	TKeyArray<u32, TRef>* pArray = NULL;
 
-	switch(uProductID)
+	if(DeviceType == "KEYBOARD")
 	{
-		case 0x028e045e:	// XBox 360 pad
-			pArray = &g_Xbox360PadButtonRefs;
-			break;
+		pArray = &g_KeyboardRefMap;
+	}
+	else if(DeviceType == "MOUSE")
+	{
+		pArray = &g_MouseRefMap;
+	}
+	else if(DeviceType == "GAMEPAD")
+	{
+		// Test the product ID for known I'ds
+		switch(uProductID)
+		{
+			case 0x028e045e:	// XBox 360 pad
+				pArray = &g_Xbox360PadButtonRefs;
+				break;
+		}
 	}
 
-	if(pArray && (uIndex < pArray->GetSize() ))
+	if(pArray != NULL)
 	{
-		LabelRef = pArray->ElementAt(uIndex);
-		return TRUE;
+		// Look for the specified ID
+		TRef* pRef = pArray->Find(uButtonID);
+
+		if(pRef)
+		{
+			LabelRef = *pRef;
+			return TRUE;
+		}
 	}
 
 	// No label found
@@ -370,7 +396,6 @@ Bool Platform::DirectX::GetSpecificGamepadButtonRef(const u32& uIndex, const u32
 
 SyncBool Platform::DirectX::EnumerateDevices()
 {
-	//	gr: slow! - 80% of the input update
 	// Enumarate the attached devices
 	HRESULT hr = g_pTLDirectInputInterface->EnumDevices(DI8DEVCLASS_ALL, CreateDevice, NULL, DIEDFL_ATTACHEDONLY);
 
@@ -514,7 +539,7 @@ BOOL CALLBACK Platform::DirectX::CreateDevice(const DIDEVICEINSTANCE* pdidInstan
 	}
 	else
 	{
-		TLDebug_Print("Unknown input device found - ignoring");
+		TLDebug::Print("Unknown input device found - ignoring");
 	}
 
 	return DIENUM_CONTINUE;
@@ -542,7 +567,7 @@ Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, const LPDIR
 	u8 uDeviceType = GET_DIDEVICE_TYPE(pdidInstance->dwDevType);
 	u8 uDeviceSubtype = GET_DIDEVICE_SUBTYPE(pdidInstance->dwDevType);
 
-	u32 uProductID = pdidInstance->guidProduct.Data1;	// Unique product ID (same for all instances of the same devices)
+	pDXDevice->SetProductID(pdidInstance->guidProduct.Data1);	// Unique product ID (same for all instances of the same devices)
 
 	// Set quick access tot he device type without having to go through the directx interface
 	pDXDevice->SetDeviceType(uDeviceType);
@@ -600,14 +625,14 @@ Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, const LPDIR
 
 	if((uDeviceType == DI8DEVTYPE_GAMEPAD))
 	{
-		// Now set the ranges for X Y and Z axes
+		// Set the ranges for X Y and Z axes
 		DIPROPRANGE range;
 		range.diph.dwSize       = sizeof(range);
 		range.diph.dwHeaderSize = sizeof(range.diph);
+		range.diph.dwObj = 0;
 		range.diph.dwHow	  = DIPH_DEVICE;
 		range.lMin		  = -(s32)AXIS_SCALE;
 		range.lMax		  = +(s32)AXIS_SCALE;
-		range.diph.dwObj = 0;
 
 		hr = lpdiDevice->SetProperty(DIPROP_RANGE, &range.diph);
 
@@ -615,32 +640,26 @@ Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, const LPDIR
 		if(DI_OK != hr)
 			return FALSE;
 	}
-//#ifdef DX_USE_BUFFERED_DATA
-	else if(uDeviceType == DI8DEVTYPE_MOUSE)
-	{
-		// Setup the mouse data buffer
-		DIPROPDWORD dipdw;
-		dipdw.diph.dwSize			= sizeof(dipdw);
-		dipdw.diph.dwHeaderSize		= sizeof(dipdw.diph);
-		dipdw.diph.dwObj			= 0;
-		dipdw.diph.dwHow			= DIPH_DEVICE;
-		dipdw.dwData				= 16;	// Buffer size
 
-		hr = lpdiDevice->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
+	// Setup the data buffer
+	DIPROPDWORD dipdw;
+	dipdw.diph.dwSize			= sizeof(dipdw);
+	dipdw.diph.dwHeaderSize		= sizeof(dipdw.diph);
+	dipdw.diph.dwObj			= 0;
+	dipdw.diph.dwHow			= DIPH_DEVICE;
+	dipdw.dwData				= INPUT_BUFFER_SIZE;
 
-		// Only return if failed
-		if(DI_OK != hr)
-			return FALSE;
-	}
-//#endif
+	hr = lpdiDevice->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
 
-#ifdef DX_USE_ENUMOBJECTS
+	// Only return if failed
+	if(DI_OK != hr)
+		return FALSE;
 	// Enum objects
-	hr = lpdiDevice->EnumObjects(EnumDeviceObject, (void*)pDevice->GetDeviceID().GetData(), DIDFT_ALL);
+	hr = lpdiDevice->EnumObjects(EnumDeviceObject, (void*)pDevice->GetDeviceRef().GetData(), DIDFT_ALL);
 
 	if(DI_OK != hr)
 		return FALSE;
-#else
+/*
 
 	// Get the device's capabilities.  This data will be used to determine what sensors to attach to the generic input device.
 	DIDEVCAPS DIDevCaps;
@@ -660,34 +679,27 @@ Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, const LPDIR
 		uCount = 256;
 
 	
-	u32 uUniqueID = 0;
-
 	TString stringLabel;
 	TRef refLabel;
 
 	for(uIndex = 0; uIndex < uCount; uIndex++)
 	{
+		u32 uUniqueID = DIJOFS_BUTTON(uIndex);
+
 		// For buttons we need to label them based on what type and the model
 		// so get this information from a function instead which will lookup the details required
 		TPtr<TInputSensor> pSensor = pDevice->AttachSensor(uUniqueID, Button);
 
 		if(pSensor.IsValid())
 		{
-			refLabel = GetDefaultButtonRef(uIndex);
+			refLabel = GetDefaultButtonRef(uUniqueID);
 
 			pSensor->AddLabel(refLabel);
 
-			if(uDeviceType == DI8DEVTYPE_KEYBOARD)
+			if(	(uDeviceType == DI8DEVTYPE_KEYBOARD) ||
+				(uDeviceType == DI8DEVTYPE_GAMEPAD))
 			{
-				u32 dikvalue = uIndex;
-				TRef* pKeyLabel = g_KeyboardRefMap.Find(dikvalue);
-				
-				if(pKeyLabel)
-					pSensor->AddLabel(*pKeyLabel);
-			}
-			else if(uDeviceType == DI8DEVTYPE_GAMEPAD)
-			{
-				if(GetSpecificGamepadButtonRef(uIndex, uProductID, refLabel))
+				if(GetSpecificButtonRef(uUniqueID, pDevice->GetDeviceType(), pDXDevice->GetProductID(), refLabel))
 				{
 					pSensor->AddLabel(refLabel);
 				}
@@ -702,13 +714,31 @@ Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, const LPDIR
 	// Add axes inputs
 	uCount = DIDevCaps.dwAxes;
 
+	TArray<u32> AxisOffsets;
+
+	AxisOffsets.Add((u32)DIJOFS_X);
+	AxisOffsets.Add((u32)DIJOFS_Y);
+	AxisOffsets.Add((u32)DIJOFS_Z);
+	AxisOffsets.Add((u32)DIJOFS_RX);
+	AxisOffsets.Add((u32)DIJOFS_RY);
+	AxisOffsets.Add((u32)DIJOFS_RZ);
+
 	for(uIndex = 0; uIndex < uCount; uIndex++)
 	{
+#ifdef _DEBUG
+		if(uIndex >= AxisOffsets.GetSize())
+		{
+			TLDebug_Break("Axis count greater than axis offsets available");
+		}
+#endif
+
+		u32 uUniqueID = AxisOffsets.ElementAt(uIndex);
+
 		TPtr<TInputSensor> pSensor = pDevice->AttachSensor(uUniqueID, Axis);
 
 		if(pSensor.IsValid())
 		{
-			refLabel = GetDefaultAxisRef(uIndex);
+			refLabel = GetDefaultAxisRef(uUniqueID);
 
 			pSensor->AddLabel(refLabel);
 			pSensor->SubscribeTo(pDXDevice);
@@ -721,26 +751,21 @@ Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, const LPDIR
 
 	for(uIndex = 0; uIndex < uCount; uIndex++)
 	{
+		u32 uUniqueID = DIJOFS_POV(uIndex);
+
 		TPtr<TInputSensor> pSensor = pDevice->AttachSensor(uUniqueID, POV);
 
 		if(pSensor.IsValid())
 		{
-			refLabel = GetDefaultPOVRef(uIndex);
+			refLabel = GetDefaultPOVRef(uUniqueID);
 
 			pSensor->AddLabel(refLabel);
 			pSensor->SubscribeTo(pDXDevice);
 			uUniqueID++;
 		}
 	}
-#endif
+*/
 
-	// TODO: Add effects i.e. force feedback, speakers, etc
-	/*
-	for(uIndex = 0; uIndex < uButtonCount; uIndex++)
-	{
-		pDevice->AttachEffect();
-	}
-	*/
 	pDevice->SetAttached(TRUE);
 
 	lpdiDevice->Acquire();
@@ -758,7 +783,7 @@ BOOL CALLBACK Platform::DirectX::EnumDeviceObject(const DIDEVICEOBJECTINSTANCE* 
 
 	if(pDevice.IsValid())
 	{
-		TPtr<TLInputDirectXDevice> pDXDevice = FindDirectXDevice(pDevice->GetHardwareDeviceID());
+		TPtr<TLInputDirectXDevice> pDXDevice = g_TLDirectInputDevices.FindPtr(pDevice->GetHardwareDeviceID());
 
 		if(pDXDevice.IsValid())
 		{
@@ -766,39 +791,60 @@ BOOL CALLBACK Platform::DirectX::EnumDeviceObject(const DIDEVICEOBJECTINSTANCE* 
 			// Now setup the hardware device object for the generic device
 
 			TSensorType SensorType = Unknown;
-			TRef	DefaultLabel;
+			TRef	LabelRef;
 			switch(DIDFT_GETTYPE(pdidObjectInstance->dwType))
 			{
 			case DIDFT_PSHBUTTON:
 			case DIDFT_TGLBUTTON:
 			case DIDFT_BUTTON:
 				SensorType = Button;
-				DefaultLabel = GetDefaultButtonRef(pDevice->GetSensorCount(SensorType));
+				LabelRef = GetDefaultButtonRef(pDevice->GetSensorCount(SensorType));
 				break;
 
 			case DIDFT_RELAXIS:
 			case DIDFT_ABSAXIS:
 			case DIDFT_AXIS:
 				SensorType = Axis;
-				DefaultLabel = GetDefaultAxisRef(pDevice->GetSensorCount(SensorType));
+				LabelRef = GetDefaultAxisRef(pDevice->GetSensorCount(SensorType));
 				break;
 
 			case DIDFT_POV:
 				SensorType = POV;
-				DefaultLabel = GetDefaultPOVRef(pDevice->GetSensorCount(SensorType));
+				LabelRef = GetDefaultPOVRef(pDevice->GetSensorCount(SensorType));
 				break;
 			}
 
 			if(SensorType != Unknown)
 			{
-				u32 uInstanceID = DIDFT_GETINSTANCE(pdidObjectInstance->dwType);
+				//u32 uInstanceID = DIDFT_GETINSTANCE(pdidObjectInstance->dwType);
+				// Use the offset as the ID
+				u32 uInstanceID = pdidObjectInstance->dwOfs;
 
 				TPtr<TInputSensor> pSensor = pDevice->AttachSensor(uInstanceID, SensorType);
 
 				if(pSensor.IsValid())
 				{
-					pSensor->AddLabel(DefaultLabel);
+					pSensor->AddLabel(LabelRef);
 					pSensor->SubscribeTo(pDXDevice);
+
+
+					if(SensorType == Button)
+					{
+						// Calcualte the index of the button - used for when accessing the 
+						// button specific arrays as they can only be accessed via index
+						// because the ID isn;t know in advance
+						//u32	uIndex = pDevice->GetSensorCount(SensorType);
+
+						// Add any additional labels
+						if(GetSpecificButtonRef(uInstanceID, pDevice->GetDeviceType(), pDXDevice->GetProductID(), LabelRef))
+						{
+							pSensor->AddLabel(LabelRef);
+						}
+						else
+						{
+							//TLDebug::Break("Failed to find additional label for sensor");
+						}
+					}
 				}
 			}
 		}
@@ -814,7 +860,7 @@ Bool Platform::DirectX::UpdateDevice(TPtr<TInputDevice> pDevice)
 	TRef DeviceID = pDevice->GetHardwareDeviceID();
 
 	// Find the physical device from the platform based list
-	TPtr<TLInputDirectXDevice> pTLDirectInputDevice = FindDirectXDevice(DeviceID);
+	TPtr<TLInputDirectXDevice> pTLDirectInputDevice = g_TLDirectInputDevices.FindPtr(DeviceID);
 
 	Bool bResult = FALSE;
 
@@ -837,28 +883,6 @@ Bool Platform::DirectX::UpdateDevice(TPtr<TInputDevice> pDevice)
 	return bResult;
 }
 
-TPtr<Platform::DirectX::TLInputDirectXDevice> Platform::DirectX::FindDirectXDevice(TRef DirectXDeviceRef)
-{
-	TPtr<TLInputDirectXDevice> pResult = NULL;
-	
-	for(u32 uIndex = 0; uIndex < g_TLDirectInputDevices.GetSize(); uIndex++)
-	{
-		TPtr<TLInputDirectXDevice> pDXDevice = g_TLDirectInputDevices.ElementAtConst(uIndex);
-	
-		if(pDXDevice->GetDeviceID() == DirectXDeviceRef)
-		{
-			// Found the paltform specific device data
-			pResult = pDXDevice;
-			break;
-		}
-	}
-
-	return pResult;
-}
-
-
-
-#ifdef DX_USE_BUFFERED_DATA
 
 Bool Platform::DirectX::UpdateDirectXDevice_Mouse(TPtr<TInputDevice> pDevice, TPtr<TLInputDirectXDevice> pTLDirectInputDevice)
 {
@@ -872,107 +896,298 @@ Bool Platform::DirectX::UpdateDirectXDevice_Mouse(TPtr<TInputDevice> pDevice, TP
 	lpdiDevice->Poll();
 
 	// Now read some data
-	DIDEVICEOBJECTDATA		rgdod[16];
-	DWORD					dwItems = 16;
+	DIDEVICEOBJECTDATA		rgdod[INPUT_BUFFER_SIZE];
+	DWORD					dwItems = INPUT_BUFFER_SIZE;
 
 	HRESULT hr = lpdiDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), rgdod, &dwItems, 0);
 
-	if (SUCCEEDED(hr)) 
+	if(FAILED(hr) || (dwItems == 0)) 
 	{ 
-	    // dwItems = Number of elements read (could be zero).
+		return FALSE;
+	}
 
-		if (hr == DI_BUFFEROVERFLOW) 
-		{	
-			// Buffer had overflowed. 
-			TLDebug::Print("Input Buffer overflow");
-		} 
+	// dwItems = Number of elements read (could be zero).
+	if (hr == DI_BUFFEROVERFLOW) 
+	{	
+		// Buffer had overflowed. 
+		TLDebug::Print("Mouse Input Buffer overflow");
+	} 
 
-
-		/////////////////////////////////////////////////////////////
-		// Copy data from the physical device to the generic input device for the sensors to use
-		/////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////
+	// Copy data from the physical device to the generic input device for the sensors to use
+	/////////////////////////////////////////////////////////////
 
 #ifdef _DEBUG
-		TString inputinfo = "Mouse processing buffer: ";
-		inputinfo.Appendf("%d items", dwItems);
-		TLDebug::Print(inputinfo);
+	TString inputinfo = "Mouse processing buffer: ";
+	inputinfo.Appendf("%d items", dwItems);
+	TLDebug::Print(inputinfo);
 #endif
 
 
-		for(u32 uCount = 0; uCount < dwItems; uCount++)
+	TArray<TInputData>& InputBuffer = pDevice->GetInputBuffer();
+
+	TInputData data;
+
+	for(u32 uCount = 0; uCount < dwItems; uCount++)
+	{
+		// get the data from the buffer
+		float fValue = 0.0f;
+
+		// Check for the axes and scale down the value
+		if(	(rgdod[uCount].dwOfs == DIMOFS_X) ||
+			(rgdod[uCount].dwOfs == DIMOFS_Y) ||
+			(rgdod[uCount].dwOfs == DIMOFS_Z))
 		{
-			// Go through all of the buffered data
 
-			TPtr<TBinaryTree>& MainBuffer = pDevice->GetDataBuffer();
+			s32 sValue = rgdod[uCount].dwData;
 
-			MainBuffer->Empty();
+			// Get the granularity
+			DIPROPDWORD dipdw;
+			dipdw.diph.dwSize			= sizeof(dipdw);
+			dipdw.diph.dwHeaderSize		= sizeof(dipdw.diph);
+			dipdw.diph.dwObj			= rgdod[uCount].dwOfs;
+			dipdw.diph.dwHow			= DIPH_BYOFFSET;
+			dipdw.dwData				= 0;
 
-			TPtr<TBinaryTree> pDataBuffer = MainBuffer->AddChild("Input");
+			hr = lpdiDevice->GetProperty(DIPROP_GRANULARITY, &dipdw.diph);
 
-			if(pDataBuffer.IsValid())
+
+			Bool bSuccess = FALSE;
+
+			// Only return if failed
+			if(SUCCEEDED(hr))
 			{
-				u32 uSensorCount = pDevice->GetSensorCount(Button);
+				// Divide by the granularity - most often this is 1 but for the Z axis 
+				// it's usually something else like 20
+				fValue = ((float)sValue / (float)dipdw.dwData);
 
-				for(u32 uIndex = 0; uIndex < uSensorCount; uIndex++)
+				//Simple scale of the value instead of doing a percentage
+				fValue /= 100.0f;
+
+				bSuccess = TRUE;
+				/*
+				// Get the range of the mouse axis
+				DIPROPRANGE range;
+				range.diph.dwSize       = sizeof(range);
+				range.diph.dwHeaderSize = sizeof(range.diph);
+				range.diph.dwObj		= rgdod[uCount].dwOfs;
+				range.diph.dwHow		= DIPH_BYOFFSET;
+
+				hr = lpdiDevice->GetProperty(DIPROP_RANGE, &range.diph);
+
+				if(SUCCEEDED(hr))
 				{
-					u32 ButtonOffset = (FIELD_OFFSET(DIMOUSESTATE, rgbButtons) + uIndex);
-
-					// Assume a zero value
-					float fValue = 0.0f;
-
-					if(rgdod[uCount].dwOfs == ButtonOffset)
+					// Get value as a percentage of total range possible
+					// Divide by the max range
+					if(fValue > 0.0f)
 					{
-						// get the data from the buffer
-						fValue = (float)(rgdod[uCount].dwData);
-
-						TLDebug::Print("Buffer Data");
+						s32 sMax = range.lMax;
+						float fMax = (float)(sMax);
+						fValue /= fMax;
 					}
+					else
+					{
+						s32 sMin = range.lMin;
+						float fMin = (float)(sMin);
+						fValue /= TLMaths::Absf(fMin);
+					}
+					fValue /= 100.0f;
 
-					pDataBuffer->Write( fValue );
-
-#ifdef _DEBUG
-					// In debug print what button was pressed
-					TString inputinfo = "Mouse input: ";
-					inputinfo.Appendf("%d %.2f", uIndex, fValue);
-					TLDebug::Print(inputinfo);
-#endif
-
+					bSuccess = TRUE;
 				}
-
-				if(rgdod[uCount].dwOfs == DIMOFS_X)
-					pDataBuffer->Write( (float)(rgdod[uCount].dwData) );
-				else
-					pDataBuffer->Write(0.0f);
-
-				if(rgdod[uCount].dwOfs == DIMOFS_Y)
-					pDataBuffer->Write( (float)(rgdod[uCount].dwData) );		
-				else
-					pDataBuffer->Write(0.0f);
-
-
-				if(rgdod[uCount].dwOfs == DIMOFS_Y)
-					pDataBuffer->Write( (float)(rgdod[uCount].dwData) );		
-				else
-					pDataBuffer->Write(0.0f);
+				*/
 			}
-
-			// Tell the device to process the data
-			pDataBuffer->ResetReadPos();
-			pDevice->ForceUpdate();
+	
+			// If we couldn't get the value as a percentage just return raw value
+			if(!bSuccess)
+			{
+				fValue = (float)sValue;
+			}
+		}
+		else
+		{
+			fValue = (rgdod[uCount].dwData > 0.0f ? 1.0f : 0.0f);
 		}
 
-		/////////////////////////////////////////////////////////////
+		data.m_SensorRef = rgdod[uCount].dwOfs;
+		data.m_fData = fValue;
+		InputBuffer.Add(data);
+
+#ifdef _DEBUG
+		// In debug print what button was pressed
+		TString inputinfo = "Mouse input: ";
+		inputinfo.Appendf("%d %.4f", rgdod[uCount].dwOfs, fValue);
+		TLDebug::Print(inputinfo);
+
+		if(fValue > 10000.0f)
+		{
+			TLDebug::Break("HUGE number");
+		}
+#endif
 
 	}
 
 	return (hr == DI_OK);
 }
 
-#else
 
 /*	
-	Special update routine for a mouse using directx
+	Special update routine for a keyboard using directx
 */
+Bool Platform::DirectX::UpdateDirectXDevice_Keyboard(TPtr<TInputDevice> pDevice, TPtr<TLInputDirectXDevice> pTLDirectInputDevice)
+{
+	LPDIRECTINPUTDEVICE8 lpdiDevice = pTLDirectInputDevice->GetDevice();
+
+		// If valid poll and acquire the device ensuring no errors.
+	if(lpdiDevice == 0)
+		return FALSE;
+
+	// Acquire the device
+	HRESULT hr = lpdiDevice->Acquire(); 
+
+	if(FAILED( hr ))
+		return FALSE;
+
+	lpdiDevice->Poll();
+
+
+	// Now read some data
+	DIDEVICEOBJECTDATA		rgdod[INPUT_BUFFER_SIZE];
+	DWORD					dwItems = INPUT_BUFFER_SIZE;
+
+	hr = lpdiDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), rgdod, &dwItems, 0);
+
+
+	if( FAILED( hr ) || (dwItems == 0) )
+	{
+		// DirectInput may be telling us that the input stream has been
+		// interrupted.  We aren't tracking any state between polls, so
+		// we don't have any special reset that needs to be done.
+		// We just re-acquire and try again.
+		return FALSE;
+	}
+
+	// dwItems = Number of elements read (could be zero).
+	if (hr == DI_BUFFEROVERFLOW) 
+	{	
+		// Buffer had overflowed. 
+		TLDebug::Print("Keyboard Input Buffer overflow");
+	} 
+
+	
+#ifdef _DEBUG
+	TString inputinfo = "Keyboard processing buffer: ";
+	inputinfo.Appendf("%d items", dwItems);
+	TLDebug::Print(inputinfo);
+#endif
+
+	TArray<TInputData>& InputBuffer = pDevice->GetInputBuffer();
+
+	TInputData data;
+
+	// Publish the keyboard data
+	for(u32 uIndex = 0; uIndex < dwItems; uIndex++)
+	{
+		data.m_SensorRef = rgdod[uIndex].dwOfs;
+
+		// For every keyboard button publish it's value - if any sensors subscribe to the 
+		// keyboard buttons they will process the information
+		float fValue = (rgdod[uIndex].dwData & 0x80) ? 1.0f : 0.0f;
+		data.m_fData = fValue;
+
+		// Add to the buffer
+		InputBuffer.Add( data );
+
+#ifdef _DEBUG
+		// In debug print what key was pressed
+		TString inputinfo = "Keyboard input: ";
+		inputinfo.Appendf("%d %.2f", rgdod[uIndex].dwOfs, fValue);
+		TLDebug::Print(inputinfo);
+#endif
+	}
+
+	return TRUE;
+}
+
+/*	
+	Special update routine for a joypad
+*/
+Bool Platform::DirectX::UpdateDirectXDevice_Gamepad(TPtr<TInputDevice> pDevice, TPtr<TLInputDirectXDevice> pTLDirectInputDevice)
+{
+	LPDIRECTINPUTDEVICE8 lpdiDevice = pTLDirectInputDevice->GetDevice();
+
+		// If valid poll and acquire the device ensuring no errors.
+	if(lpdiDevice == 0)
+		return FALSE;
+
+	// Poll and acquire the device
+	HRESULT hr = lpdiDevice->Acquire(); 
+
+	if(FAILED(hr))
+		return FALSE;
+
+	// NOTE: May need to test for DIERR_INPUTLOST
+	hr = lpdiDevice->Poll(); 
+
+	if(FAILED(hr))
+		return FALSE;
+
+
+	// Now read some data
+	DIDEVICEOBJECTDATA		rgdod[INPUT_BUFFER_SIZE];
+	DWORD					dwItems = INPUT_BUFFER_SIZE;
+
+	hr = lpdiDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), rgdod, &dwItems, 0);
+
+
+	if( FAILED( hr ) || (dwItems == 0) )
+	{
+		return FALSE;
+	}
+
+	// dwItems = Number of elements read (could be zero).
+	if (hr == DI_BUFFEROVERFLOW) 
+	{	
+		// Buffer had overflowed. 
+		TLDebug::Print("Gamepad Input Buffer overflow");
+	} 
+
+
+#ifdef _DEBUG
+	TString inputinfo = "Gamepad processing buffer: ";
+	inputinfo.Appendf("%d items", dwItems);
+	TLDebug::Print(inputinfo);
+#endif
+
+	TArray<TInputData>& InputBuffer = pDevice->GetInputBuffer();
+
+	TInputData data;
+
+	for(u32 uIndex = 0; uIndex < dwItems; uIndex++)
+	{
+		data.m_SensorRef = rgdod[uIndex].dwOfs;
+
+		float fValue = ((rgdod[uIndex].dwData == 0) ? 0.0f : 1.0f);
+		data.m_fData = fValue;
+
+		// Add to the buffer
+		InputBuffer.Add( data );
+#ifdef _DEBUG
+		TString inputinfo = "Gamepad input: ";
+		inputinfo.Appendf("%d %.2f", rgdod[uIndex].dwOfs, fValue);
+		TLDebug::Print(inputinfo);
+#endif
+	}
+
+	return (hr == DI_OK);
+}
+
+
+
+
+/*
+
+//	Special update routine for a mouse using directx
 Bool Platform::DirectX::UpdateDirectXDevice_Mouse(TPtr<TInputDevice> pDevice, TPtr<TLInputDirectXDevice> pTLDirectInputDevice)
 {
 	LPDIRECTINPUTDEVICE8 lpdiDevice = pTLDirectInputDevice->GetDevice();
@@ -1021,78 +1236,83 @@ Bool Platform::DirectX::UpdateDirectXDevice_Mouse(TPtr<TInputDevice> pDevice, TP
 	// Copy data from the physical device to the generic input device for the sensors to use
 	/////////////////////////////////////////////////////////////
 
-	TPtr<TBinaryTree>& MainBuffer = pDevice->GetDataBuffer();
+	u32 uSensorCount = pDevice->GetTotalSensorCount();
 
-	MainBuffer->Empty();
+	TArray<TInputData>& InputBuffer = pDevice->GetInputBuffer();
+	InputBuffer.SetAllocSize(uSensorCount);
 
-	TPtr<TBinaryTree> pDataBuffer = MainBuffer->AddChild("Input");
+	TInputData data;
 
-	if(pDataBuffer.IsValid())
+	uSensorCount = pDevice->GetSensorCount(Button);
+
+	// Write the button data to the buffer
+	for(u32 uIndex = 0; uIndex < uSensorCount; uIndex++)
 	{
+		data.m_SensorRef = GetDefaultButtonRef(uIndex);
 
-		u32 uSensorCount = pDevice->GetSensorCount(Button);
+		float fValue = (dims.rgbButtons[uIndex] == 0 ? 0.0f : 1.0f);
+		data.m_fData = fValue;
 
-		// Write the button data to the buffer
-		for(u32 uIndex = 0; uIndex < uSensorCount; uIndex++)
+		// Add to the buffer
+		InputBuffer.Add( data );
+
+#ifdef _DEBUG
+		// In debug print what button was pressed
+		if(fValue > 0.0f)
 		{
-			float fValue = (dims.rgbButtons[uIndex] == 0 ? 0.0f : 1.0f);
-			pDataBuffer->Write( fValue );
-
-#ifdef _DEBUG
-			// In debug print what button was pressed
-			if(fValue > 0.0f)
-			{
-				TString inputinfo = "Mouse input: ";
-				inputinfo.Appendf("%d %.2f", uIndex, fValue);
-				TLDebug::Print(inputinfo);
-			}
-#endif
-
-
+			TString inputinfo = "Mouse input: ";
+			inputinfo.Appendf("%d %.2f", uIndex, fValue);
+			TLDebug::Print(inputinfo);
 		}
-
-#ifdef _DEBUG
-			// In debug print what axis movements occured
-			if(dims.lX > 0)
-			{
-				TString inputinfo = "Mouse X-Axis input: ";
-				inputinfo.Appendf("%.2f, %.2f", (float)dims.lX, (float)dims.lX/100.0f);
-				TLDebug::Print(inputinfo);
-			}
-
-			if(dims.lY > 0)
-			{
-				TString inputinfo = "Mouse Y-Axis input: ";
-				inputinfo.Appendf("%.2f, %.2f", (float)dims.lY, (float)dims.lY/100.0f);
-				TLDebug::Print(inputinfo);
-			}
-
-			if(dims.lZ > 0)
-			{
-				TString inputinfo = "Mouse Z-Axis input: ";
-				inputinfo.Appendf("%.2f, %.2f", (float)dims.lZ, (float)dims.lZ/100.0f);
-				TLDebug::Print(inputinfo);
-			}
-
 #endif
 
 
-		// Write the axis data to the buffer - values are relative (and in pixels?)
-		pDataBuffer->Write( (float)(dims.lX)/100.0f );		
-		pDataBuffer->Write( (float)(dims.lY)/100.0f );		
-		pDataBuffer->Write( (float)(dims.lZ)/100.0f );		
 	}
+
+#ifdef _DEBUG
+	// In debug print what axis movements occured
+	if(dims.lX > 0)
+	{
+		TString inputinfo = "Mouse X-Axis input: ";
+		inputinfo.Appendf("%.2f, %.2f", (float)dims.lX, (float)dims.lX/100.0f);
+		TLDebug::Print(inputinfo);
+	}
+
+	if(dims.lY > 0)
+	{
+		TString inputinfo = "Mouse Y-Axis input: ";
+		inputinfo.Appendf("%.2f, %.2f", (float)dims.lY, (float)dims.lY/100.0f);
+		TLDebug::Print(inputinfo);
+	}
+
+	if(dims.lZ > 0)
+	{
+		TString inputinfo = "Mouse Z-Axis input: ";
+		inputinfo.Appendf("%.2f, %.2f", (float)dims.lZ, (float)dims.lZ/100.0f);
+		TLDebug::Print(inputinfo);
+	}
+#endif
+
+
+	// Write the axis data to the buffer - values are relative (and in pixels?)
+	data.m_SensorRef = GetDefaultAxisRef(0);
+	data.m_fData = ( (float)(dims.lX)/100.0f );
+	InputBuffer.Add( data );	
+
+	data.m_SensorRef = GetDefaultAxisRef(1);
+	data.m_fData = ( (float)(dims.lY)/100.0f );
+	InputBuffer.Add( data );	
+
+	data.m_SensorRef = GetDefaultAxisRef(2);
+	data.m_fData = ( (float)(dims.lZ)/100.0f );
+	InputBuffer.Add( data );	
 
 	/////////////////////////////////////////////////////////////
 
 	return TRUE;
 }
 
-#endif
-
-/*	
-	Special update routine for a keyboard using directx
-*/
+//	Special update routine for a keyboard using directx
 Bool Platform::DirectX::UpdateDirectXDevice_Keyboard(TPtr<TInputDevice> pDevice, TPtr<TLInputDirectXDevice> pTLDirectInputDevice)
 {
 	LPDIRECTINPUTDEVICE8 lpdiDevice = pTLDirectInputDevice->GetDevice();
@@ -1123,53 +1343,44 @@ Bool Platform::DirectX::UpdateDirectXDevice_Keyboard(TPtr<TInputDevice> pDevice,
 		// We just re-acquire and try again.
 		return FALSE;
 	}
-	
-	TPtr<TBinaryTree>& MainBuffer = pDevice->GetDataBuffer();
 
-	MainBuffer->Empty();
+	u32 uSensorCount = pDevice->GetSensorCount(Button);
 
-	TPtr<TBinaryTree>& pDataBuffer = MainBuffer->AddChild("Input");
+	TArray<TInputData>& InputBuffer = pDevice->GetInputBuffer();
+	InputBuffer.SetAllocSize(uSensorCount);
 
-	if(pDataBuffer.IsValid())
+	TInputData data;
+
+
+	// Publish the keyboard data
+	for(u32 uIndex = 0; uIndex < uSensorCount; uIndex++)
 	{
-		TBinaryTree& DataBuffer = *pDataBuffer;
-		u32 uSensorCount = pDevice->GetSensorCount(Button);
+		data.m_SensorRef = uIndex;
 
-		//	gr: 256 pDataBuffer->Write( fValue ); 's are expensive (lots of re-allocs)
-		//		so pre-alloc memory
-		DataBuffer.AllocData<float>( uSensorCount );
+		// For every keyboard button publish it's value - if any sensors subscribe to the 
+		// keyboard buttons they will process the information
+		float fValue = (diks[uIndex] & 0x80) ? 1.0f : 0.0f;
+		data.m_fData = fValue;
 
-		// Publish the keyboard data
-		for(u32 uIndex = 0; uIndex < uSensorCount; uIndex++)
-		{
-			//	gr: the uIndex is equivelent to DIK_ESCAPE, DIK_SPACE etc... convert these to some Tootle keyboard/alphabet/keys?
-			//		the we can easily convert from input source (mac keyboard, ipod keyboard, dx keyboard) to alphabet or non-platform
-			//		specific buttons
+		// Add to the buffer
+		InputBuffer.Add( data );
 
-			// For every keyboard button publish it's value - if any sensors subscribe to the 
-			// keyboard buttons they will process the information
-			float fValue = (diks[uIndex] & 0x80) ? 1.0f : 0.0f;
-		
-			DataBuffer.Write( fValue );
 
 #ifdef _DEBUG
-			// In debug print what key was pressed
-			if(fValue > 0.0f)
-			{
-				TString inputinfo = "Keyboard input: ";
-				inputinfo.Appendf("%d %.2f", uIndex, fValue);
-				TLDebug::Print(inputinfo);
-			}
-#endif
+		// In debug print what key was pressed
+		if(fValue > 0.0f)
+		{
+			TString inputinfo = "Keyboard input: ";
+			inputinfo.Appendf("%d %.2f", uIndex, fValue);
+			TLDebug::Print(inputinfo);
 		}
+#endif
 	}
 
 	return TRUE;
 }
 
-/*	
-	Special update routine for a joypad
-*/
+//	Special update routine for a joypad
 Bool Platform::DirectX::UpdateDirectXDevice_Gamepad(TPtr<TInputDevice> pDevice, TPtr<TLInputDirectXDevice> pTLDirectInputDevice)
 {
 	LPDIRECTINPUTDEVICE8 lpdiDevice = pTLDirectInputDevice->GetDevice();
@@ -1199,59 +1410,73 @@ Bool Platform::DirectX::UpdateDirectXDevice_Gamepad(TPtr<TInputDevice> pDevice, 
     if( FAILED( hr) )
 	{
 
+		return FALSE;
 	}
-	else
+
+	u32 uSensorCount = pDevice->GetTotalSensorCount();
+
+	TArray<TInputData>& InputBuffer = pDevice->GetInputBuffer();
+	InputBuffer.SetAllocSize(uSensorCount);
+
+	TInputData data;
+
+	uSensorCount = pDevice->GetSensorCount(Button);
+
+	// Write the button data to the buffer
+	for(u32 uIndex = 0; uIndex < uSensorCount; uIndex++)
 	{
-		TPtr<TBinaryTree>& MainBuffer = pDevice->GetDataBuffer();
+		data.m_SensorRef = (u32)DIJOFS_BUTTON(uIndex);
 
-		MainBuffer->Empty();
+		float fValue = ((js.rgbButtons[uIndex] == 0) ? 0.0f : 1.0f);
+		data.m_fData = fValue;
 
-		TPtr<TBinaryTree> pDataBuffer = MainBuffer->AddChild("Input");
-
-		if(pDataBuffer.IsValid())
-		{
-
-			u32 uSensorCount = pDevice->GetSensorCount(Button);
-
-			// Write the button data to the buffer
-			for(u32 uIndex = 0; uIndex < uSensorCount; uIndex++)
-			{
-				float fValue = ((js.rgbButtons[uIndex] == 0) ? 0.0f : 1.0f);
-				pDataBuffer->Write( fValue );
-
+		// Add to the buffer
+		InputBuffer.Add( data );
 #ifdef _DEBUG
-			// In debug print what button was pressed
-			if(fValue > 0.0f)
-			{
-				TString inputinfo = "Gamepad input: ";
-				inputinfo.Appendf("%d %.2f", uIndex, fValue);
-				TLDebug::Print(inputinfo);
-			}
-#endif
-
-			}
-
-			// Write the axis data to the buffer
-			pDataBuffer->Write( (float)(js.lX / AXIS_SCALE) );		// Left analogue stick on XB360 pad
-			pDataBuffer->Write( (float)(js.lY / AXIS_SCALE) );		// Left analogue stick on XB360 pad
-
-			pDataBuffer->Write( (float)(js.lRx / AXIS_SCALE) );		// Right analogue stick on XB360 pad
-			pDataBuffer->Write( (float)(js.lRy / AXIS_SCALE) );		// Right analogue stick on XB360 pad
-
-			pDataBuffer->Write( (float)(js.lZ / AXIS_SCALE) );		// L+R analogue buttons combined on XB360 pad
-
-			// Write POV data
-			// float fValue = js.POV[0];		// D-Pad on XB360 Pad
-			//dataBuffer->Write( fValue );						
-			pDataBuffer->Write( 0.0f );		// D-Pad on XB360 Pad - not sure how we use one value for the whole pad which essentially has 2 axes?				
+		// In debug print what button was pressed
+		if(fValue > 0.0f)
+		{
+			TString inputinfo = "Gamepad input: ";
+			inputinfo.Appendf("%d %.2f", uIndex, fValue);
+			TLDebug::Print(inputinfo);
 		}
-
-		// TODO: Copy data from the generic device to the physical device for the effects output?
+#endif
 	}
+
+	// Write the axis data to the buffer
+	data.m_SensorRef = (u32)DIJOFS_X;
+	data.m_fData = (float)(js.lX / AXIS_SCALE); // Left analogue stick on XB360 pad
+	InputBuffer.Add( data );
+
+	data.m_SensorRef =  (u32)DIJOFS_Y;
+	data.m_fData = (float)(js.lY / AXIS_SCALE); // Left analogue stick on XB360 pad
+	InputBuffer.Add( data );
+
+	data.m_SensorRef = (u32)DIJOFS_Z;
+	data.m_fData = (float)(js.lZ / AXIS_SCALE); // L+R analogue buttons combined on XB360 pad
+	InputBuffer.Add( data );
+
+	data.m_SensorRef =  (u32)DIJOFS_RX;
+	data.m_fData = (float)(js.lRx / AXIS_SCALE); // Right analogue stick on XB360 pad
+	InputBuffer.Add( data );
+
+	data.m_SensorRef =  (u32)DIJOFS_RY;
+	data.m_fData = (float)(js.lRy / AXIS_SCALE); // Right analogue stick on XB360 pad
+	InputBuffer.Add( data );
+
+
+	// Write POV data
+	data.m_SensorRef = (u32)DIJOFS_POV(0);
+	// float fValue = js.POV[0];		// D-Pad on XB360 Pad
+	data.m_fData = (float)( 0.0f );		// D-Pad on XB360 Pad - not sure how we use one value for the whole pad which essentially has 2 axes?
+	InputBuffer.Add( data );
+
+	// TODO: Copy data from the generic device to the physical device for the effects output?
 
 	return (hr == DI_OK);
 }
 
+*/
 
 
 void TLInput::Platform::DirectX::TLInputDirectXDevice::PublishData(u32 uUniqueID, float fValue)
@@ -1284,6 +1509,11 @@ SyncBool Platform::DirectX::Shutdown()
 	} 
 
 	g_KeyboardRefMap.Empty();
+	g_MouseRefMap;
+
+	g_Xbox360PadButtonRefs;		
+	g_WiimoteButtonRefs;		
+	g_PS2PadButtonRefs;			
 
 	return SyncTrue;
 }

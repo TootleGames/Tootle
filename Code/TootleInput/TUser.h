@@ -26,16 +26,16 @@ public:
 	TUser(TRef refUserID);
 
 	// Action Mapping
-	Bool						AddAction(TRef refActionType, TRef refActionID);
-	Bool						AddAction(TRef refActionType, TRef refActionID, TRef refParentActionID);
-	Bool						AddAction(TRef refActionType, TRef refActionID, TArray<TRef>& refParentActionIDs);
-	Bool						RemoveAction(TRef refActionID);
+	Bool						AddAction(TRefRef refActionType, TRefRef refActionID);
+	Bool						AddAction(TRefRef refActionType, TRefRef refActionID, TRefRef refParentActionID);
+	Bool						AddAction(TRefRef refActionType, TRefRef refActionID, TArray<TRef>& refParentActionIDs);
+	Bool						RemoveAction(TRefRef refActionID);
 
-	Bool						MapAction(TRef refActionID, TRef refDeviceID, TRef SensorRef);
+	Bool						MapAction(TRefRef refActionID, TRefRef refDeviceID, TRefRef SensorRef);
 	
-	Bool						MapActionCondition(TRef refActionID, TLInput::TActionCondition uCondition, float fThreshold);
+	Bool						MapActionCondition(TRefRef refActionID, TLInput::TActionCondition uCondition, float fThreshold);
 
-	Bool						MapActionParent(TRef refActionID, TRef refParentActionID, Bool bCondition = TRUE);
+	Bool						MapActionParent(TRefRef refActionID, TRefRef refParentActionID, Bool bCondition = TRUE);
 
 	// User information access
 	inline TRefRef				GetUserID()		const	{ return m_refUserID; }

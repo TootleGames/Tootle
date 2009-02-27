@@ -59,8 +59,8 @@ class TLInput::Platform::DirectX::TLInputDirectXDevice : public TLMessaging::TPu
 {
 public:
 
-	TLInputDirectXDevice(TRef refID, LPDIRECTINPUTDEVICE8 pDirectXDevice) :
-		m_DeviceID(refID),
+	TLInputDirectXDevice(TRefRef DeviceRef, LPDIRECTINPUTDEVICE8 pDirectXDevice) :
+		m_DeviceRef(DeviceRef),
 		m_pDevice(pDirectXDevice),
 		m_uDeviceType(0)
 	{
@@ -77,7 +77,11 @@ public:
 			}
 	}
 
-	const	TRef&								GetDeviceID()															const	{ return m_DeviceID; }
+	inline Bool			operator==(TRefRef DXDeviceRef)							const	{	return GetDeviceRef() == DXDeviceRef;	}
+	inline Bool			operator==(const TLInputDirectXDevice& DXInputDevice)	const 	{	return GetDeviceRef() == DXInputDevice.GetDeviceRef();	}
+
+
+	const	TRef&								GetDeviceRef()														const	{ return m_DeviceRef; }
 	const 	LPDIRECTINPUTDEVICE8				GetDevice()															const	{ return m_pDevice; }
 
 	const	u32									GetDeviceType()														const	{ return m_uDeviceType; }
@@ -88,10 +92,12 @@ public:
 
 	void										PublishData(u32 uUniqueID, float fValue);
 
+	inline void									SetProductID(u32 uProductID)			{ m_uProductID = uProductID; }
+	inline u32									GetProductID()					const	{ return m_uProductID; }
 private:
-	TRef									m_DeviceID;
+	TRef									m_DeviceRef;
 	LPDIRECTINPUTDEVICE8					m_pDevice;
 	u32										m_uDeviceType;
+	u32										m_uProductID;
 	DIDATAFORMAT*							m_pDataFormat;
 };
-

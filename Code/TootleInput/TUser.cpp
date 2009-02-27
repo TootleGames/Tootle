@@ -263,7 +263,7 @@ void TUser::UpdateCursorPosition()
 /*
 	Adds an action to the action map
 */
-Bool TUser::AddAction(TRef refActionType, TRef refActionID)
+Bool TUser::AddAction(TRefRef refActionType, TRefRef refActionID)
 {
 	if(FindActionIndex(refActionID) == -1)
 	{
@@ -294,7 +294,7 @@ Bool TUser::AddAction(TRef refActionType, TRef refActionID)
 }
 
 
-Bool TUser::AddAction(TRef refActionType, TRef refActionID, TRef refParentActionID)
+Bool TUser::AddAction(TRefRef refActionType, TRefRef refActionID, TRefRef refParentActionID)
 {
 	if(AddAction(refActionType, refActionID))
 	{
@@ -305,7 +305,7 @@ Bool TUser::AddAction(TRef refActionType, TRef refActionID, TRef refParentAction
 	return FALSE;
 }
 
-Bool TUser::AddAction(TRef refActionType, TRef refActionID, TArray<TRef>& refParentActionIDs)
+Bool TUser::AddAction(TRefRef refActionType, TRefRef refActionID, TArray<TRef>& refParentActionIDs)
 {
 	if(AddAction(refActionType, refActionID))
 	{
@@ -345,7 +345,7 @@ Bool TUser::AddAction(TRef refActionType, TRef refActionID, TArray<TRef>& refPar
 	return FALSE;
 }
 
-Bool TUser::MapActionParent(TRef refActionID, TRef refParentActionID, Bool bCondition)
+Bool TUser::MapActionParent(TRefRef refActionID, TRefRef refParentActionID, Bool bCondition)
 {
 		// Get the new action
 	TPtr<TLInput::TAction> pAction = GetAction(refActionID);
@@ -405,7 +405,7 @@ Bool TUser::MapAction(TRef refActionID, TRef refDeviceID, TRef refSensorID)
 }
 */
 
-Bool TUser::MapAction(TRef refActionID, TRef refDeviceID, TRef SensorRef)
+Bool TUser::MapAction(TRefRef refActionID, TRefRef refDeviceID, TRefRef SensorLabelRef)
 {
 	TPtr<TLInput::TAction> pAction = GetAction(refActionID);
 
@@ -417,13 +417,8 @@ Bool TUser::MapAction(TRef refActionID, TRef refDeviceID, TRef SensorRef)
 	if(!pDevice.IsValid())
 		return FALSE;
 
-	s32 sSensorIndex = pDevice->GetSensorIndex(SensorRef);
 
-	if(sSensorIndex == -1)
-		return FALSE;
-
-	TRef refSensorID = (u32)sSensorIndex;
-	TPtr<TLInput::TInputSensor> pSensor = pDevice->GetSensor(refSensorID);
+	TPtr<TLInput::TInputSensor> pSensor = pDevice->GetSensorFromLabel(SensorLabelRef);
 
 	if(!pSensor.IsValid())
 		return FALSE;
@@ -434,7 +429,7 @@ Bool TUser::MapAction(TRef refActionID, TRef refDeviceID, TRef SensorRef)
 
 
 
-Bool TUser::MapActionCondition(TRef refActionID, TLInput::TActionCondition uCondition, float fThreshold)
+Bool TUser::MapActionCondition(TRefRef refActionID, TLInput::TActionCondition uCondition, float fThreshold)
 {
 	TPtr<TLInput::TAction> pAction = GetAction(refActionID);
 
@@ -450,7 +445,7 @@ Bool TUser::MapActionCondition(TRef refActionID, TLInput::TActionCondition uCond
 /*
 	Removes an action from the action map
 */
-Bool TUser::RemoveAction(TRef refActionID)
+Bool TUser::RemoveAction(TRefRef refActionID)
 {
 	s32 iIndex = FindActionIndex(refActionID);
 

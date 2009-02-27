@@ -10,39 +10,61 @@ void TInputDevice::Update()
 {
 	// The hardware information should be up to date
 	// Update the sensors which will send out the data if changes have occured
-	GetDataBuffer()->ResetReadPos();
-	ProcessSensors(GetDataBuffer());
+	ProcessSensors();
 }
 
-void TInputDevice::ProcessSensors(TPtr<TBinaryTree>& MainBuffer)
+
+void TInputDevice::ProcessSensors()
 {
-	float fValue = 0.0f;
-	TPtrArray<TBinaryTree> BufferArray;
-	BufferArray.SetAllocSize(100);
-
-	if(MainBuffer->GetChildren("Input", BufferArray))
+	for( u32 uIndex = 0; uIndex < m_InputBuffer.GetSize(); uIndex++ )
 	{
-		for( u32 uIndex = 0; uIndex < BufferArray.GetSize(); uIndex++ )
+		const TInputData& data = m_InputBuffer.ElementAt(uIndex);
+
+		// Find the sensor with the required ID
+
+		TPtr<TInputSensor>& pSensor = m_Sensors.FindPtr(data.m_SensorRef);
+
+		if(pSensor.IsValid())
 		{
-			TBinaryTree* pDataBuffer = BufferArray.ElementAt(uIndex).GetObject();
-
-			if(!pDataBuffer)
-				continue;
-
-			pDataBuffer->ResetReadPos();
-
-			for(u32 uIndex = 0; uIndex < m_Sensors.GetSize(); uIndex++)
-			{
-				if(pDataBuffer->Read(fValue))
-				{
-					TPtr<TInputSensor>& pSensor = m_Sensors.ElementAt(uIndex);
-
-					pSensor->Process(fValue);
-				}
-			}
+			pSensor->Process(data.m_fData);
+		}
+		else
+		{
+			TLDebug::Break("Sensor not found");
 		}
 	}
+
+	m_InputBuffer.Empty();
 }
+
+/*
+
+// In non-buffered mode each input that comes in is the same amount as the number of sensors and 
+// is also in the same order.
+void TInputDevice::ProcessSensors()
+{
+#ifdef _DEBUG
+	// Non-buffered mode the input buffer size should match the sensor size
+	if(m_InputBuffer.GetSize() != m_Sensors.GetSize())
+	{
+		TLDebug::Break("Input buffer is different to number of sensors in non-buffered mode");
+	}
+#endif
+
+	for( u32 uIndex = 0; uIndex < m_InputBuffer.GetSize(); uIndex++ )
+	{
+		const TInputData& data = m_InputBuffer.ElementAt(uIndex);
+
+		// Get the sensor
+		TPtr<TInputSensor> pSensor = m_Sensors.ElementAt(uIndex);
+
+		pSensor->Process(data.m_fData);
+	}
+
+	m_InputBuffer.Empty();
+}
+
+*/
 
 
 TPtr<TLInput::TInputSensor>& TInputDevice::AttachSensor(TRefRef SensorRef, TSensorType SensorType)
@@ -90,39 +112,43 @@ TPtr<TLInput::TInputSensor>& TInputDevice::GetSensor(TRefRef SensorRef)
 }
 
 
-// Returns a sensor index of a given sensor 'key' 'button' 'axis' reference or label
-// To get the sensor index for the key 'x' on a keyboard for example this routine should be used
-// The index returned is specific to the device so requesting 'x' on a mouse will return -1, not found.
-// On a gamepad, depending on the pad, it will return either -1, not found, or the index of a button labelled x.
-s32 TInputDevice::GetSensorIndex(TRefRef refSensorLabel)
+// Returns a sensor object for a given 'key' 'button' 'axis' reference or label
+// To get the sensor for the key 'x' on a keyboard for example this routine should be used
+// The sensor object returned is specific to the device so requesting 'x' on a mouse will return null, not found.
+// On a gamepad, depending on the pad, it will return either null, not found, or the sensor object of a button labelled x.
+TPtr<TLInput::TInputSensor>& TInputDevice::GetSensorFromLabel(TRefRef SensorLabelRef)
 {
-	// Go through the sensors and look up whether any have the specified sensor ref as a label
 	for(u32 uIndex = 0; uIndex < m_Sensors.GetSize(); uIndex++)
 	{
-		TPtr<TLInput::TInputSensor>& pSensor = m_Sensors.ElementAt(uIndex);
+		TPtr<TInputSensor>& pSensor = m_Sensors.ElementAt(uIndex);
 
-		if(pSensor->HasLabel(refSensorLabel))
-			return (s32) uIndex;
+		if(pSensor->HasLabel(SensorLabelRef))
+		{
+			return pSensor;
+		}
 	}
 
-	return -1;
+	return TLPtr::GetNullPtr<TLInput::TInputSensor>();
 }
 
-/*
-TRef TInputDevice::GetSensorID(TRef refSensorLabel)
+
+Bool TInputDevice::GetSensorRefFromLabel(TRef SensorLabelRef, TRef& SensorRef)
 {
 	// Go through the sensors and look up whether any have the specified sensor ref as a label
 	for(u32 uIndex = 0; uIndex < m_Sensors.GetSize(); uIndex++)
 	{
 		TPtr<TLInput::TInputSensor> pSensor = m_Sensors.ElementAt(uIndex);
 		
-		if(pSensor->HasLabel(refSensorLabel))
-			return pSensor->m_refSensorID;
+		if(pSensor->HasLabel(SensorLabelRef))
+		{
+			SensorRef = pSensor->m_SensorRef;
+			return TRUE;
+		}
 	}
 	
-	return TRef(0);
+	// Not found
+	return FALSE;
 }
- */
 
 
 

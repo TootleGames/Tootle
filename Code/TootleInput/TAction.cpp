@@ -15,25 +15,12 @@ TAction::TAction(TRef refActionID)	:
 }
 
 
-Bool TAction::HasParentAction(TRef& refParentActionID)
-{
-		// Check to see if the Action Parent already exists
-	for(u32 uIndex = 0; uIndex < m_refParentActions.GetSize(); uIndex++)
-	{
-		if(m_refParentActions.ElementAt(uIndex) == refParentActionID)
-			return TRUE;
-	}
-
-	return FALSE;
-}
-
-
-void TAction::AddParentAction(TRef& refParentActionID, Bool bCondition)
+void TAction::AddParentAction(TRefRef ParentActionRef, Bool bCondition)
 {
 	// Check to see if the Action Parent already exists
 	for(u32 uIndex = 0; uIndex < m_refParentActions.GetSize(); uIndex++)
 	{
-		if(m_refParentActions.ElementAt(uIndex) == refParentActionID)
+		if(m_refParentActions.ElementAt(uIndex) == ParentActionRef)
 		{
 			// Parent action exists already - check the condition
 			TParentActionState& PAS = m_bParentActionStates.ElementAt(uIndex);
@@ -50,7 +37,7 @@ void TAction::AddParentAction(TRef& refParentActionID, Bool bCondition)
 	}
 
 	// Add a new action and associated state
-	m_refParentActions.Add(refParentActionID);
+	m_refParentActions.Add(ParentActionRef);
 
 	TParentActionState PAS;
 	PAS.m_bState = FALSE;

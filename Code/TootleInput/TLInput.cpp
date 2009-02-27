@@ -6,7 +6,7 @@ namespace TLInput
 {
 	TPtr<TInputManager>	g_pInputSystem = NULL;	// The input system
 
-	const float INPUT_DEVICE_CHECK_TIME = 3.0f;			// Device check interval time in seconds
+	const float INPUT_DEVICE_CHECK_TIME = 10.0f;			// Device check interval time in seconds
 }
 
 using namespace TLInput;
