@@ -30,6 +30,15 @@ void TInputDevice::ProcessSensors()
 		}
 		else
 		{
+#ifdef _DEBUG			
+			TString str;
+			str.Appendf("Unable to find sensor - %d ", data.m_SensorRef.GetData());			
+			TString sensorstr;
+			data.m_SensorRef.GetString(sensorstr);
+			str.Append(sensorstr);
+			TLDebug_Print(str);
+#endif
+			
 			TLDebug::Break("Sensor not found");
 		}
 	}
@@ -79,7 +88,10 @@ TPtr<TLInput::TInputSensor>& TInputDevice::AttachSensor(TRefRef SensorRef, TSens
 
 #ifdef _DEBUG
 			TString str;
-			str.Appendf("Attached sensor to device - %d %d", SensorRef, SensorType);
+			str.Appendf("Attached sensor to device - %d %d - ", SensorRef.GetData(), SensorType);
+			TString sensorstr;
+			SensorRef.GetString(sensorstr);
+			str.Append(sensorstr);
 			TLDebug_Print(str);
 #endif
 

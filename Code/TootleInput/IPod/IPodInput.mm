@@ -4,10 +4,6 @@
 //	#define ENABLE_INPUTSYSTEM_TRACE
 #endif
 
-// [16/12/08] DB -	Possible responsiveness improvement
-//					Calls the update manually from the touch events which should mean the inptu is processed immediately
-//				    instead of during the next frame update
-//#define ENABLE_IMMEDIATE_TOUCHUPDATE
 
 #define ACCEL_MAXPROCESS	10		//	at most, per device update only process the last N accelerometer data's
 #define ACCEL_MINCHANGE		0.025f	//	minimum amount of change on an axis to register a change. anything smaller than this will be ignored and "jitter"
@@ -29,11 +25,11 @@ namespace TLInput
 			
 			const u32 MAX_CURSOR_POSITIONS = 4;
 			TFixedArray<int2, MAX_CURSOR_POSITIONS>					g_aCursorPositions;
-			TFixedArray<float, MAX_CURSOR_POSITIONS>				g_aIpodButtonState;		// DB - MAY BE ABLE TO REMOVE THIS AND USE THE NEW TOUCH OBJECT ARRAY
+			//TFixedArray<float, MAX_CURSOR_POSITIONS>				g_aIpodButtonState;		// DB - MAY BE ABLE TO REMOVE THIS AND USE THE NEW TOUCH OBJECT ARRAY
 						
 			TFixedArray< TRef, MAX_CURSOR_POSITIONS>				g_ActiveTouchObjects;	// Fixed array of touch object ID's
 			TArray<TTouchObject>									g_TouchObjects;			// Dynamic array of touch objects that persist over time
-			
+						
 			void	SetCursorPosition(u8 uIndex, int2 uPos);
 			
 			void	ProcessTouchData(TPtr<TLInput::TInputDevice> pDevice);
@@ -126,16 +122,28 @@ Bool Platform::IPod::InitialiseDevice(TPtr<TInputDevice> pDevice)
 			uUniqueID++;
 		}
 	}
-		
 
+	u32 uAxisIndex = 0;
 	for(uIndex = 0; uIndex < IPod::MAX_CURSOR_POSITIONS; uIndex++)
 	{		
+		uAxisIndex = uIndex * 3;
 		
-		TPtr<TInputSensor>& pSensor = pDevice->AttachSensor(uUniqueID, Axis);
+		// Add X axis sensor
+		TPtr<TInputSensor> pSensor = pDevice->AttachSensor(TRef(uUniqueID), Axis);
 		
 		if(pSensor.IsValid())
 		{
-			refLabel = GetDefaultAxisRef(uIndex);
+			refLabel = GetDefaultAxisRef(uAxisIndex);
+			pSensor->AddLabel(refLabel);
+			uUniqueID++;			
+		}
+		
+		// Add Y axis sensor
+		pSensor = pDevice->AttachSensor(uUniqueID, Axis);
+		
+		if(pSensor.IsValid())
+		{
+			refLabel = GetDefaultAxisRef(uAxisIndex+1);
 			pSensor->AddLabel(refLabel);
 			uUniqueID++;
 		}
@@ -203,6 +211,184 @@ void Platform::RemoveAllDevices()
 }
 
 
+
+Bool Platform::UpdateDevice(TPtr<TLInput::TInputDevice> pDevice)
+{
+	// No touch or acceleration data?  nothing to do
+	if((IPod::g_TouchData.GetSize() == 0) &&
+		(IPod::g_AccelerationData.GetSize() == 0))
+	{
+		return FALSE;
+	}
+	
+	// Get reference to the device input buffer
+	TArray<TInputData>& InputBuffer = pDevice->GetInputBuffer();
+	
+	TInputData data;
+	
+	if(IPod::g_TouchData.GetSize() > 0)
+	{
+#ifdef _DEBUG
+		TString inputinfo = "Input processing ";
+		inputinfo.Appendf("%d touch items", IPod::g_TouchData.GetSize());
+		TLDebug::Print(inputinfo);
+#endif				
+			
+		// Process the touch data
+		for(u32 uIndex = 0; uIndex < IPod::g_TouchData.GetSize(); uIndex++)
+		{
+			const IPod::TTouchData& TouchData = IPod::g_TouchData.ElementAt(uIndex);
+			
+#ifdef ENABLE_MULTI_TOUCH
+			// Find the index using the touch object arrays
+			s32 sTouchIndex = g_ActiveTouchObjects.FindIndex(TouchData.TouchRef);
+			
+			if(sTouchIndex == -1)
+			{
+				// If the index is invalid then we have touch data but no corresponding 
+				// touch object in the arrays.  This may be because the touch object has been removed 
+				// before it has had chance to be processed.  In this casea  deffered removal mechanism may be in order
+				// but then we may run into issues where we run out of slots if lots of fingers are being pressed at once.
+				TLDebug_Break("Touch data with no corresponding touch object");
+			}
+			
+#else
+			// Always use sensor index 0
+			s32 sTouchIndex = 0;			
+#endif
+			u32 uButtonIndex = (u32)sTouchIndex;
+			
+			data.m_SensorRef = uButtonIndex;
+			
+			// If the touch is a begin the data is a 1.0f for the button to represent 'pressed'
+			// If the touch event is a cancel or end the data is a 0.0f for the button to represent 'released'			
+			if(TouchData.uPhase == IPod::TTouchData::Begin)
+			{
+				data.m_fData = 1.0f;
+				InputBuffer.Add(data);
+#ifdef _DEBUG
+				// In debug print what button was pressed
+				TString inputinfo = "Touch input: ";
+				inputinfo.Appendf("%d %.4f", uButtonIndex, data.m_fData);
+				TLDebug::Print(inputinfo);
+				
+#endif
+				
+			}
+			else if((TouchData.uPhase == IPod::TTouchData::End) ||
+					(TouchData.uPhase == IPod::TTouchData::Cancel))
+			{
+				data.m_fData = 0.0f;
+				InputBuffer.Add(data);
+#ifdef _DEBUG
+				// In debug print what button was pressed
+				TString inputinfo = "Touch input: ";
+				inputinfo.Appendf("%d %.4f", uButtonIndex, data.m_fData);
+				TLDebug::Print(inputinfo);
+#endif
+			}
+			
+			
+			// Change in position
+			int2	uDelta = TouchData.uCurrentPos - TouchData.uPreviousPos;
+			
+			// Increment the sensor index to match the axis index for the touch x axis sensor
+			u32 uAxisIndex = 4 + (uButtonIndex * 2);
+			
+			if(uDelta.x != 0.0f)
+			{
+				// Movement in the x axis so add to the buffer
+				data.m_SensorRef = uAxisIndex;
+				data.m_fData = uDelta.x/100.0f;
+				InputBuffer.Add(data);
+#ifdef _DEBUG
+				TString inputinfo = "Touch X-axis movement: ";
+				inputinfo.Appendf("%d %.4f", uAxisIndex, data.m_fData);
+				TLDebug::Print(inputinfo);
+#endif				
+			}
+			
+			uAxisIndex++;
+			
+			if(uDelta.y != 0.0f)
+			{
+				// Movement in the y axis so add to the buffer
+				data.m_SensorRef = uAxisIndex;
+				data.m_fData = uDelta.y/100.0f;
+				InputBuffer.Add(data);
+#ifdef _DEBUG
+				TString inputinfo = "Touch Y-axis movement: ";
+				inputinfo.Appendf("%d %.4f", uAxisIndex, data.m_fData);
+				TLDebug::Print(inputinfo);				
+#endif
+			}
+			
+			// Set the cursor information
+			//TODO: This needs updating as it means we only do one update regardless of number of touch events processed
+			IPod::SetCursorPosition(sTouchIndex, TouchData.uCurrentPos);
+			
+			// Check to see if we need to remove the touch objects
+			IPod::CheckRemoveTouchObjects();
+				
+		}
+	
+		// Empty the touch data array
+		IPod::g_TouchData.Empty();
+	}
+	
+	if(IPod::g_AccelerationData.GetSize() > 0)
+	{
+#ifdef _DEBUG
+		TString inputinfo = "Input processing ";
+		inputinfo.Appendf("%d accelerometer items", IPod::g_AccelerationData.GetSize());
+		TLDebug::Print(inputinfo);
+#endif				
+		
+		
+		//	Process the acceleration data
+		for(u32 uIndex = 0; uIndex < IPod::g_AccelerationData.GetSize(); uIndex++)
+		{
+			const float3& vAccelerationData = IPod::g_AccelerationData.ElementAt(uIndex);
+			
+			// The accelerometer indexes are:
+			// X - 12
+			// Y - 13
+			// Z - 14
+			
+			u32 uAccIndex = 12;
+			data.m_SensorRef = uAccIndex;
+			data.m_fData = vAccelerationData.x;
+			InputBuffer.Add(data);
+			uAccIndex++;
+
+			data.m_SensorRef = uAccIndex;
+			data.m_fData = vAccelerationData.y;
+			InputBuffer.Add(data);
+			uAccIndex++;
+
+			data.m_SensorRef = uAccIndex;
+			data.m_fData = vAccelerationData.z;
+			InputBuffer.Add(data);
+
+#ifdef _DEBUG
+			// In debug print the accelermoeter data
+			TString inputinfo = "Touch accelerometer: ";
+			inputinfo.Appendf("%.3f %.3f %.3f", vAccelerationData.x, vAccelerationData.y, vAccelerationData.z);
+			TLDebug::Print(inputinfo);
+#endif				
+			
+
+		}
+
+		// Empty the accelerometer data
+		IPod::g_AccelerationData.Empty();
+	}
+	
+	
+	return TRUE;	
+}
+
+/*
 Bool Platform::UpdateDevice(TPtr<TLInput::TInputDevice> pDevice)
 {
 #ifdef ENABLE_INPUTSYSTEM_TRACE
@@ -403,7 +589,7 @@ void Platform::IPod::ProcessTouchData(TPtr<TLInput::TInputDevice> pDevice)
 	//Clear the touch data array
 	IPod::g_TouchData.Empty();
 }
-
+*/
 
 int2 Platform::GetCursorPosition(u8 uIndex)
 {
@@ -478,9 +664,6 @@ void TLInput::Platform::IPod::ProcessTouchBegin(const TTouchData& TouchData)
 	}
 #endif
 
-#ifdef ENABLE_IMMEDIATE_TOUCHUPDATE
-	TLInput::g_pInputSystem->ForceUpdate();
-#endif
 }
 
 void TLInput::Platform::IPod::ProcessTouchMoved(const TTouchData& TouchData)
@@ -494,10 +677,6 @@ void TLInput::Platform::IPod::ProcessTouchMoved(const TTouchData& TouchData)
 	
 	g_TouchData.Add(TouchData);
 	
-	
-#ifdef ENABLE_IMMEDIATE_TOUCHUPDATE
-	TLInput::g_pInputSystem->ForceUpdate();
-#endif
 }
 
 void TLInput::Platform::IPod::ProcessTouchEnd(const TTouchData& TouchData)
@@ -525,10 +704,6 @@ void TLInput::Platform::IPod::ProcessTouchEnd(const TTouchData& TouchData)
 	}
 #endif
 	
-	
-#ifdef ENABLE_IMMEDIATE_TOUCHUPDATE
-	TLInput::g_pInputSystem->ForceUpdate();
-#endif
 }
 
 void TLInput::Platform::IPod::ProcessAcceleration(const float3& vAccelerationData)
