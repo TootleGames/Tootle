@@ -80,6 +80,7 @@ public:
 	virtual ~TRenderNode()					{};
 
 	virtual void							Initialise(TPtr<TLMessaging::TMessage>& pMessage);	//	generic render node init
+	virtual void							Shutdown();									//	clean-up any TPtrs back to us so we will be deallocated
 
 	FORCEINLINE const TLMaths::TTransform&	GetTransform() const						{	return m_Transform;	}
 	FORCEINLINE const float3&				GetTranslate() const						{	return m_Transform.GetTranslate() ;	}
@@ -179,7 +180,7 @@ protected:
 
 	TFlags<RenderFlags::Flags>	m_RenderFlags;
 
-	TKeyArray<TRef,TPtr<TLMaths::TQuadTreeNode> >	m_RenderZoneNodes;	//	for each render target we can have a Node for Render Zones
+	TKeyArray<TRef,TPtr<TLMaths::TQuadTreeNode> >	m_RenderZoneNodes;	//	for each render target we can have a Node(TRenderZoneNode) for Render Zones
 
 	//	todo: turn all these into ref properties in a KeyArray to make it a bit more flexible
 	TRef						m_MeshRef;
@@ -203,6 +204,7 @@ public:
 
 protected:
 	TRef				m_RenderNodeRef;		//	render node that we're linked to
+	TPtr<TRenderNode>	m_pRenderNode;			//	cache of render node
 };
 
 

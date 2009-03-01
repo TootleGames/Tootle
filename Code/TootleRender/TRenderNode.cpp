@@ -34,7 +34,8 @@ void Debug_PrintCalculating(const TLRender::TRenderNode* pObject,const char* pSp
 
 
 TLRender::TRenderZoneNode::TRenderZoneNode(TRefRef RenderNodeRef) :
-	m_RenderNodeRef		( RenderNodeRef )
+	m_RenderNodeRef		( RenderNodeRef ),
+	m_pRenderNode		( TLRender::g_pRendergraph->FindNode( m_RenderNodeRef ) )
 {
 }
 
@@ -44,9 +45,14 @@ TLRender::TRenderZoneNode::TRenderZoneNode(TRefRef RenderNodeRef) :
 //------------------------------------------------------------------
 SyncBool TLRender::TRenderZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
 {
-	//	grab render node
-	TPtr<TLRender::TRenderNode>& pRenderNode = TLRender::g_pRendergraph->FindNode( m_RenderNodeRef );
+	//	grab render node if we don't have it
+	if ( !m_pRenderNode )
+	{
+		m_pRenderNode = TLRender::g_pRendergraph->FindNode( m_RenderNodeRef );
+	}
 
+	//	get c-pointer
+	TLRender::TRenderNode* pRenderNode = m_pRenderNode;
 	if ( !pRenderNode )
 	{
 #ifdef _DEBUG
@@ -76,7 +82,7 @@ SyncBool TLRender::TRenderZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
 		return SyncTrue;
 
 	Bool AnyBoundsValid = FALSE;
-/*
+
 	//	find a valid world bounds to test with (go in fastest order...)
 	const TLMaths::TSphere& WorldBoundsSphere = pRenderNode->GetWorldBoundsSphere();
 	if ( WorldBoundsSphere.IsValid() )
@@ -85,7 +91,7 @@ SyncBool TLRender::TRenderZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
 			return SyncTrue;
 		AnyBoundsValid = TRUE;
 	}
-*/
+
 	const TLMaths::TBox& WorldBoundsBox = pRenderNode->GetWorldBoundsBox();
 	if ( WorldBoundsBox.IsValid() )
 	{
@@ -292,36 +298,26 @@ const TLMaths::TBox& TLRender::TRenderNode::CalcLocalBoundsBox()
 	}
 
 	//	accumulate children's bounds
-#ifdef TLGRAPH_OWN_CHILDREN
 	TPtrArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
 	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 	{
-		TPtr<TLRender::TRenderNode>& pChild = NodeChildren[c];
-#else
-	TPtr<TRenderNode> pChild = GetChildFirst();
-	while ( pChild )
-	{
-#endif
-		TLRender::TRenderNode& Child = *pChild;
+		TLRender::TRenderNode& Child = *NodeChildren[c];
 
 		//	don't accumualte a child that is does not have an inherited transform
-		if ( !Child.GetRenderFlags().IsSet(RenderFlags::ResetScene) )
-		{
-			//	get child's bounds
-			TLMaths::TBox ChildBounds = Child.CalcLocalBoundsBox();
-			if ( ChildBounds.IsValid() )
-			{
-				//	gr: need to omit translate?
-				ChildBounds.Transform( pChild->GetTransform() );
+		if ( Child.GetRenderFlags().IsSet(RenderFlags::ResetScene) )
+			continue;
+			
+		//	get child's bounds
+		const TLMaths::TBox& ChildBounds = Child.CalcLocalBoundsBox();
+		if ( !ChildBounds.IsValid() )
+			continue;
 
-				//	accumulate child
-				m_LocalBoundsBox.Accumulate( ChildBounds );
-			}
-		}
+		//	gr: need to omit translate?
+		TLMaths::TBox TransformedChildBounds = ChildBounds;
+		TransformedChildBounds.Transform( Child.GetTransform() );
 
-		#ifndef TLGRAPH_OWN_CHILDREN
-		pChild = pChild->GetNext();
-		#endif
+		//	accumulate child
+		m_LocalBoundsBox.Accumulate( TransformedChildBounds );
 	}
 
 	//	all done! invalid or not, this is our bounds
@@ -572,9 +568,8 @@ const TLMaths::TSphere& TLRender::TRenderNode::CalcLocalBoundsSphere()
 	TPtr<TLAsset::TMesh>& pMesh = GetMeshAsset();
 	if ( pMesh )
 	{
-		TLMaths::TSphere& MeshBounds = pMesh->CalcBoundsSphere();
-		
 		//	copy bounds of mesh to use as our own
+		const TLMaths::TSphere& MeshBounds = pMesh->CalcBoundsSphere();	
 		if ( MeshBounds.IsValid() )
 		{
 			m_LocalBoundsSphere = MeshBounds;
@@ -586,38 +581,25 @@ const TLMaths::TSphere& TLRender::TRenderNode::CalcLocalBoundsSphere()
 		return m_LocalBoundsSphere;
 
 	//	accumulate children's bounds
-#ifdef TLGRAPH_OWN_CHILDREN
 	TPtrArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
 	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 	{
-		TPtr<TLRender::TRenderNode>& pChild = NodeChildren[c];
-#else
-	TPtr<TRenderNode> pChild = GetChildFirst();
-	while ( pChild )
-	{
-#endif
-		//	get child's bounds
-		TLMaths::TSphere ChildBounds = pChild->CalcLocalBoundsSphere();
-		if ( !ChildBounds.IsValid() )
-		{
-			#ifndef TLGRAPH_OWN_CHILDREN
-			pChild = pChild->GetNext();
-			#endif
+		TLRender::TRenderNode& Child = *NodeChildren[c];
+		
+		if ( Child.GetRenderFlags().IsSet(RenderFlags::ResetScene) )
 			continue;
-		}
 
-		if ( ChildBounds.IsValid() && !pChild->GetRenderFlags().IsSet(RenderFlags::ResetScene) )
-		{
-			//	gr: omit translate?
-			ChildBounds.Transform( pChild->GetTransform() );
+		//	get child's bounds
+		const TLMaths::TSphere& ChildBounds = Child.CalcLocalBoundsSphere();
+		if ( !ChildBounds.IsValid() )
+			continue;
 
-			//	accumulate child
-			m_LocalBoundsSphere.Accumulate( ChildBounds );
-		}
+		//	gr: omit translate?
+		TLMaths::TSphere TransformedChildBounds = ChildBounds;
+		TransformedChildBounds.Transform( Child.GetTransform() );
 
-		#ifndef TLGRAPH_OWN_CHILDREN
-		pChild = pChild->GetNext();
-		#endif
+		//	accumulate child
+		m_LocalBoundsSphere.Accumulate( TransformedChildBounds );
 	}
 
 	//	all done! invalid or not, this is our bounds
@@ -638,9 +620,8 @@ const TLMaths::TCapsule& TLRender::TRenderNode::CalcLocalBoundsCapsule()
 	TPtr<TLAsset::TMesh>& pMesh = GetMeshAsset();
 	if ( pMesh )
 	{
-		TLMaths::TCapsule& MeshBounds = pMesh->CalcBoundsCapsule();
-		
 		//	copy bounds of mesh to use as our own
+		const TLMaths::TCapsule& MeshBounds = pMesh->CalcBoundsCapsule();
 		if ( MeshBounds.IsValid() )
 		{
 			m_LocalBoundsCapsule = MeshBounds;
@@ -652,38 +633,25 @@ const TLMaths::TCapsule& TLRender::TRenderNode::CalcLocalBoundsCapsule()
 		return m_LocalBoundsCapsule;
 
 	//	accumulate children's bounds
-#ifdef TLGRAPH_OWN_CHILDREN
 	TPtrArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
 	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 	{
-		TPtr<TLRender::TRenderNode>& pChild = NodeChildren[c];
-#else
-	TPtr<TRenderNode> pChild = GetChildFirst();
-	while ( pChild )
-	{
-#endif
-		//	get child's bounds
-		TLMaths::TCapsule ChildBounds = pChild->CalcLocalBoundsCapsule();
-		if ( !ChildBounds.IsValid() )
-		{
-			#ifndef TLGRAPH_OWN_CHILDREN
-			pChild = pChild->GetNext();
-			#endif
+		TLRender::TRenderNode& Child = *NodeChildren[c];
+		
+		if ( Child.GetRenderFlags().IsSet(RenderFlags::ResetScene) )
 			continue;
-		}
 
-		if ( ChildBounds.IsValid() && !pChild->GetRenderFlags().IsSet(RenderFlags::ResetScene) )
-		{
-			//	gr: omit translate?
-			ChildBounds.Transform( pChild->GetTransform() );
+		//	get child's bounds
+		const TLMaths::TCapsule& ChildBounds = Child.CalcLocalBoundsCapsule();
+		if ( !ChildBounds.IsValid() )
+			continue;
 
-			//	accumulate child
-			m_LocalBoundsCapsule.Accumulate( ChildBounds );
-		}
+		//	gr: omit translate?
+		TLMaths::TCapsule TransformedChildBounds = ChildBounds;		
+		TransformedChildBounds.Transform( Child.GetTransform() );
 
-		#ifndef TLGRAPH_OWN_CHILDREN
-		pChild = pChild->GetNext();
-		#endif
+		//	accumulate child
+		m_LocalBoundsCapsule.Accumulate( TransformedChildBounds );
 	}
 
 	//	all done! invalid or not, this is our bounds
@@ -811,4 +779,17 @@ void TLRender::TRenderNode::Initialise(TPtr<TLMessaging::TMessage>& pMessage)
 	TLGraph::TGraphNode<TLRender::TRenderNode>::Initialise( pMessage );
 }
 
+
+
+//---------------------------------------------------------
+//	clean-up any TPtrs back to us so we will be deallocated
+//---------------------------------------------------------
+void TLRender::TRenderNode::Shutdown()
+{
+	//	these contain TPtr's back to us, so we need to clear them
+	m_RenderZoneNodes.Empty();
+
+	//	inherited cleanup
+	TLGraph::TGraphNode<TLRender::TRenderNode>::Shutdown();
+}
 

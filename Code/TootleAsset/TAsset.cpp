@@ -134,7 +134,7 @@ void TLAsset::TAsset::ExportUnknownData(TBinaryTree& Data)
 
 		TPtr<TBinaryTree> pNewChild = Data.AddChild( pChild->GetDataRef() );
 
-		pNewChild->CopyDataTree( pChild );
+		pNewChild->ReferenceDataTree( pChild );
 	}
 
 }

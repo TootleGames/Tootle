@@ -212,7 +212,7 @@ void Platform::RemoveAllDevices()
 
 
 
-Bool Platform::UpdateDevice(TPtr<TLInput::TInputDevice> pDevice)
+Bool Platform::UpdateDevice(TLInput::TInputDevice& Device)
 {
 	// No touch or acceleration data?  nothing to do
 	if((IPod::g_TouchData.GetSize() == 0) &&
@@ -222,14 +222,18 @@ Bool Platform::UpdateDevice(TPtr<TLInput::TInputDevice> pDevice)
 	}
 	
 	// Get reference to the device input buffer
-	TArray<TInputData>& InputBuffer = pDevice->GetInputBuffer();
+	TArray<TInputData>& InputBuffer = Device.GetInputBuffer();
+	
+	//	prealloc array data
+	InputBuffer.AddAllocSize( IPod::g_TouchData.GetSize() );
+	InputBuffer.AddAllocSize( IPod::g_AccelerationData.GetSize() );
 	
 	TInputData data;
 	
 	if(IPod::g_TouchData.GetSize() > 0)
 	{
 #ifdef _DEBUG
-		TString inputinfo = "Input processing ";
+		TTempString inputinfo = "Input processing ";
 		inputinfo.Appendf("%d touch items", IPod::g_TouchData.GetSize());
 		TLDebug::Print(inputinfo);
 #endif				
@@ -241,7 +245,7 @@ Bool Platform::UpdateDevice(TPtr<TLInput::TInputDevice> pDevice)
 			
 #ifdef ENABLE_MULTI_TOUCH
 			// Find the index using the touch object arrays
-			s32 sTouchIndex = g_ActiveTouchObjects.FindIndex(TouchData.TouchRef);
+			s32 sTouchIndex = IPod::g_ActiveTouchObjects.FindIndex(TouchData.TouchRef);
 			
 			if(sTouchIndex == -1)
 			{
@@ -268,7 +272,7 @@ Bool Platform::UpdateDevice(TPtr<TLInput::TInputDevice> pDevice)
 				InputBuffer.Add(data);
 #ifdef _DEBUG
 				// In debug print what button was pressed
-				TString inputinfo = "Touch input: ";
+				TTempString inputinfo = "Touch input: ";
 				inputinfo.Appendf("%d %.4f", uButtonIndex, data.m_fData);
 				TLDebug::Print(inputinfo);
 				
@@ -282,7 +286,7 @@ Bool Platform::UpdateDevice(TPtr<TLInput::TInputDevice> pDevice)
 				InputBuffer.Add(data);
 #ifdef _DEBUG
 				// In debug print what button was pressed
-				TString inputinfo = "Touch input: ";
+				TTempString inputinfo = "Touch input: ";
 				inputinfo.Appendf("%d %.4f", uButtonIndex, data.m_fData);
 				TLDebug::Print(inputinfo);
 #endif
@@ -302,7 +306,7 @@ Bool Platform::UpdateDevice(TPtr<TLInput::TInputDevice> pDevice)
 				data.m_fData = uDelta.x/100.0f;
 				InputBuffer.Add(data);
 #ifdef _DEBUG
-				TString inputinfo = "Touch X-axis movement: ";
+				TTempString inputinfo = "Touch X-axis movement: ";
 				inputinfo.Appendf("%d %.4f", uAxisIndex, data.m_fData);
 				TLDebug::Print(inputinfo);
 #endif				
@@ -317,7 +321,7 @@ Bool Platform::UpdateDevice(TPtr<TLInput::TInputDevice> pDevice)
 				data.m_fData = uDelta.y/100.0f;
 				InputBuffer.Add(data);
 #ifdef _DEBUG
-				TString inputinfo = "Touch Y-axis movement: ";
+				TTempString inputinfo = "Touch Y-axis movement: ";
 				inputinfo.Appendf("%d %.4f", uAxisIndex, data.m_fData);
 				TLDebug::Print(inputinfo);				
 #endif
@@ -339,7 +343,7 @@ Bool Platform::UpdateDevice(TPtr<TLInput::TInputDevice> pDevice)
 	if(IPod::g_AccelerationData.GetSize() > 0)
 	{
 #ifdef _DEBUG
-		TString inputinfo = "Input processing ";
+		TTempString inputinfo = "Input processing ";
 		inputinfo.Appendf("%d accelerometer items", IPod::g_AccelerationData.GetSize());
 		TLDebug::Print(inputinfo);
 #endif				
@@ -372,7 +376,7 @@ Bool Platform::UpdateDevice(TPtr<TLInput::TInputDevice> pDevice)
 
 #ifdef _DEBUG
 			// In debug print the accelermoeter data
-			TString inputinfo = "Touch accelerometer: ";
+			TTempString inputinfo = "Touch accelerometer: ";
 			inputinfo.Appendf("%.3f %.3f %.3f", vAccelerationData.x, vAccelerationData.y, vAccelerationData.z);
 			TLDebug::Print(inputinfo);
 #endif				

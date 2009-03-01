@@ -5,7 +5,7 @@
 //--------------------------------------------------------------------	
 //	import scheme into this graph
 //--------------------------------------------------------------------	
-Bool TLGraph::TGraphBase::ImportScheme(const TPtr<TLAsset::TScheme>& pScheme,TRefRef ParentNodeRef)
+Bool TLGraph::TGraphBase::ImportScheme(const TPtr<TLAsset::TScheme>& pScheme,TRefRef ParentNodeRef,Bool StrictNodeRefs)
 {
 	if ( !pScheme )
 	{
@@ -13,14 +13,16 @@ Bool TLGraph::TGraphBase::ImportScheme(const TPtr<TLAsset::TScheme>& pScheme,TRe
 		return FALSE;
 	}
 
+	const TLAsset::TScheme& Scheme = *pScheme;
+
 	//	keep track of all the node's we've imported so we can remove them again if it fails
 	TArray<TRef> ImportedNodes;
-	const TPtrArray<TLAsset::TSchemeNode>& SchemeNodes = pScheme->GetNodes();
+	const TPtrArray<TLAsset::TSchemeNode>& SchemeNodes = Scheme.GetNodes();
 
 	for ( u32 n=0;	n<SchemeNodes.GetSize();	n++ )
 	{
 		TArray<TRef> NodeImportedNodes;
-		if ( !ImportSchemeNode( SchemeNodes[n], ParentNodeRef, NodeImportedNodes ) )
+		if ( !ImportSchemeNode( *SchemeNodes[n], ParentNodeRef, NodeImportedNodes, StrictNodeRefs ) )
 		{
 			//	remove nodes we added 
 			RemoveNodes( NodeImportedNodes );
@@ -31,10 +33,12 @@ Bool TLGraph::TGraphBase::ImportScheme(const TPtr<TLAsset::TScheme>& pScheme,TRe
 		ImportedNodes.Add( NodeImportedNodes );
 	}
 
+#ifdef _DEBUG
 	TTempString DebugString("Scheme ");
-	pScheme->GetAssetRef().GetString( DebugString );
+	Scheme.GetAssetRef().GetString( DebugString );
 	DebugString.Appendf(" %d nodes into graph", ImportedNodes.GetSize() );
 	TLDebug_Print( DebugString );
+#endif
 
 	//	if no nodes added, fail
 	if ( !ImportedNodes.GetSize() )
@@ -47,14 +51,14 @@ Bool TLGraph::TGraphBase::ImportScheme(const TPtr<TLAsset::TScheme>& pScheme,TRe
 //--------------------------------------------------------------------	
 //	import scheme node (tree) into this graph
 //--------------------------------------------------------------------	
-Bool TLGraph::TGraphBase::ImportSchemeNode(const TPtr<TLAsset::TSchemeNode>& pSchemeNode,TRefRef ParentRef,TArray<TRef>& ImportedNodes)
+Bool TLGraph::TGraphBase::ImportSchemeNode(const TLAsset::TSchemeNode& SchemeNode,TRefRef ParentRef,TArray<TRef>& ImportedNodes,Bool StrictNodeRefs)
 {
 	//	create an init message with all the data in the SchemeNode
 	TPtr<TLMessaging::TMessage>	pInitMessage = new TLMessaging::TMessage( TLCore::InitialiseRef );
-	pInitMessage->CopyDataTree( pSchemeNode->GetData(), FALSE );
+	pInitMessage->ReferenceDataTree( SchemeNode.GetData(), FALSE );
 
 	//	create node
-	TRef NewNodeRef = CreateNode( pSchemeNode->GetNodeRef(), pSchemeNode->GetTypeRef(), ParentRef, pInitMessage );
+	TRef NewNodeRef = CreateNode( SchemeNode.GetNodeRef(), SchemeNode.GetTypeRef(), ParentRef, pInitMessage, StrictNodeRefs );
 
 	//	failed to create node
 	if ( !NewNodeRef.IsValid() )
@@ -64,10 +68,12 @@ Bool TLGraph::TGraphBase::ImportSchemeNode(const TPtr<TLAsset::TSchemeNode>& pSc
 	ImportedNodes.Add( NewNodeRef );
 
 	//	import child nodes
-	const TPtrArray<TLAsset::TSchemeNode>& ChildSchemeNodes = pSchemeNode->GetChildren();
+	const TPtrArray<TLAsset::TSchemeNode>& ChildSchemeNodes = SchemeNode.GetChildren();
 	for ( u32 n=0;	n<ChildSchemeNodes.GetSize();	n++ )
 	{
-		if ( !ImportSchemeNode( ChildSchemeNodes[n], NewNodeRef, ImportedNodes ) )
+		const TPtr<TLAsset::TSchemeNode>& pChildSchemeNode = ChildSchemeNodes[n];
+
+		if ( !ImportSchemeNode( *pChildSchemeNode, NewNodeRef, ImportedNodes, StrictNodeRefs ) )
 			return FALSE;
 	}
 
@@ -91,7 +97,7 @@ TPtr<TLAsset::TSchemeNode> TLGraph::TGraphBase::ExportSchemeNode(TGraphNodeBase*
 
 	//	export data from node to scheme node
 	const TBinaryTree& NodeData = pNode->GetNodeData( TRUE );
-	pSchemeNode->GetData().CopyDataTree( NodeData );
+	pSchemeNode->GetData().ReferenceDataTree( NodeData );
 
 	//	export children into this node
 	TArray<TGraphNodeBase*> RootChildren;

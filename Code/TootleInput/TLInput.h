@@ -39,7 +39,7 @@ namespace TLInput
 		SyncBool	EnumerateDevices();
 		void		RemoveAllDevices();
 
-		Bool	UpdateDevice(TPtr<TInputDevice> pDevice);
+		Bool		UpdateDevice(TInputDevice& Device);
 
 		Type2<s32>	GetCursorPosition(u8 uIndex);
 	};

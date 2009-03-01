@@ -368,3 +368,22 @@ Bool TLMaths::TLine2D::GetIntersectionPos(const TLine2D& Line,float& Intersectio
 
 	return TRUE;
 }
+
+
+//-----------------------------------------------------------
+//	calculate angle of line
+//-----------------------------------------------------------
+TLMaths::TAngle TLMaths::TLine2D::GetAngle() const
+{
+	float2 Direction = GetDirection();
+
+	//	gr: not sure why but have to invert this
+	float AngRad = atan2f( -Direction.x, -Direction.y );
+
+	TLMaths::TAngle Angle;
+	Angle.SetRadians( AngRad );
+	Angle.SetLimit180();
+
+	return Angle;
+}
+

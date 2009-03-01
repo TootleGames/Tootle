@@ -28,29 +28,6 @@ TBinary::TBinary(const TArray<u8>& Data) :
 
 
 //-----------------------------------------------------------
-//	see if this amount of data is readable
-//-----------------------------------------------------------
-Bool TBinary::CheckDataAvailible(u32 DataSize) const
-{
-	//	read position hasn't been initialised
-	if ( m_ReadPos < 0 )
-	{
-		TLDebug_Break("Binary read position hasn't been reset");
-		return FALSE;
-	}
-
-	//	have we got this amount of data left?
-	if ( GetSizeUnread() < DataSize )
-	{
-		TLDebug_Break( TString("Trying to read more data(%d bytes) than we have remaining(%d bytes)", DataSize, GetSizeUnread() ) );
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
-
-//-----------------------------------------------------------
 //	read data into address
 //-----------------------------------------------------------
 Bool TBinary::ReadData(u8* pData,u32 Length,Bool CutData)
@@ -139,20 +116,6 @@ SyncBool TBinary::Decompress()
 	return SyncFalse;
 }
 
-	
-//--------------------------------------------------------------------
-//	
-//--------------------------------------------------------------------
-u32 TBinary::GetSizeUnread() const			
-{	
-	if ( m_ReadPos == -1 )
-	{
-		TLDebug_Break("Invalid Readpos");	
-		return 0;
-	}
-	
-	return GetSize() - m_ReadPos;
-}
 
 
 //--------------------------------------------------------------------

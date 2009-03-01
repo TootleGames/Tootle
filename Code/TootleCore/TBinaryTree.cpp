@@ -64,6 +64,38 @@ Bool TBinaryTree::CopyDataTree(const TBinaryTree& Data,Bool OverwriteDataRef)
 
 
 //----------------------------------------------------------------
+//	copy the tree by re-using the TPtr's to the data. The data is re-used and saves us allocating and copying data but without fear of deletion
+//----------------------------------------------------------------
+Bool TBinaryTree::ReferenceDataTree(const TBinaryTree& Data,Bool OverwriteDataRef)
+{
+	//	copy ref
+	if ( OverwriteDataRef )
+		SetDataRef( Data.GetDataRef() );
+
+	//	still have to copy the root data
+	GetData().Copy( Data.GetData() );
+
+	//	remove existing children
+	m_Children.Empty();
+
+	//	pre-alloc array in case it's big
+	u32 DataChildCount = Data.GetChildren().GetSize();
+	m_Children.AddAllocSize( DataChildCount );
+
+	//	reference the children of Data. We don't need to do this recursivly as obviously the children are the same, and still pointing at THEIR children :)
+	for ( u32 c=0;	c<DataChildCount;	c++ )
+	{
+		const TPtr<TBinaryTree>& pDataChild = Data.GetChildren().ElementAtConst(c);
+
+		//	add to children
+		m_Children.Add( pDataChild );
+	}
+
+	return TRUE;
+}
+
+
+//----------------------------------------------------------------
 //	debug_print the tree
 //----------------------------------------------------------------
 void TBinaryTree::Debug_PrintTree(u32 TreeLevel) const

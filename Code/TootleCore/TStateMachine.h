@@ -21,6 +21,8 @@ public:
 	
 	void					Update();						//	update current mode
 	
+	Bool					SetMode(TRefRef NextModeRef);	//	change current mode
+
 	template<class TYPE> 
 	TPtr<TYPE>				GetMode(TRefRef ModeRef)		{	return m_Modes.FindPtr( ModeRef );	}
 	TPtr<TStateMode>		GetMode(TRefRef ModeRef)		{	return m_Modes.FindPtr( ModeRef );	}
@@ -42,7 +44,6 @@ public:
 
 private:
 	TRef					GetUnusedModeRef() const;		//	generate a ref that isn't currently used
-	Bool					SetMode(TRefRef NextModeRef);	//	change current mode
 
 protected:
 	TPtrArray<TStateMode>	m_Modes;

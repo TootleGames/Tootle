@@ -13,7 +13,7 @@ namespace TLInput
 		SyncBool		Update();
 		SyncBool		Shutdown();
 		
-		Bool			UpdateDevice(TPtr<TInputDevice> pDevice);
+		Bool			UpdateDevice(TInputDevice& Device);
 		int2			GetCursorPosition(u8 uIndex);
 		
 		SyncBool		EnumerateDevices();

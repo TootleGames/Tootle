@@ -59,6 +59,10 @@ void TLRender::TRenderNodeText::SetGlyph(TRenderNodeGlyph& RenderGlyph,TLAsset::
 {
 	Bool Changed = FALSE;
 
+	//	setup some flags on the render node
+	//	don't do cull tests - parent's cull test is enough as it encapsulates all the children
+	RenderGlyph.GetRenderFlags().Clear( TLRender::TRenderNode::RenderFlags::EnableCull );
+
 	//	check for line feed
 	Bool LineFeed = FALSE;
 	if ( Char == '\n' )
@@ -197,11 +201,16 @@ void TLRender::TRenderNodeText::SetGlyphs()
 	{
 		//	cast to glyph
 		TTempString GlyphName;
-		GlyphName.Appendf("g- %c", m_Text[charindex] );
+		GlyphName.Append( m_Text[charindex] );
+		GlyphName.Append("glyph");
+		TRef GlyphRef( GlyphName );
+		GlyphRef = TLRender::g_pRendergraph->GetFreeNodeRef( GlyphRef );
 
-		TPtr<TRenderNodeGlyph> pRenderGlyph = new TRenderNodeGlyph( GlyphName, "Glyph" );
-		TLRender::g_pRendergraph->AddNode( pRenderGlyph, this->GetNodeRef() );
-		SetGlyph( *pRenderGlyph.GetObject(), Font, GlyphPos, m_Text[charindex] );
+		TPtr<TRenderNode> pRenderGlyphPtr = new TRenderNodeGlyph( GlyphRef, "Glyph" );
+		TLRender::g_pRendergraph->AddNode( pRenderGlyphPtr, this->GetNodeRef() );
+
+		TRenderNodeGlyph* pRenderGlyph = pRenderGlyphPtr.GetObject<TRenderNodeGlyph>();
+		SetGlyph( *pRenderGlyph, Font, GlyphPos, m_Text[charindex] );
 	
 		charindex++;
 	}

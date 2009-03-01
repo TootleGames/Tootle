@@ -64,6 +64,8 @@ public:
 	TLine2D(const TLine& Line);
 
 	void				Set(const float2& Start,const float2& End)		{	m_Start = Start;	m_End = End;	}
+	void				SetStart(const float2& Start)					{	m_Start = Start;	}
+	void				SetEnd(const float2& End)						{	m_End = End;	}
 	void				Set(const TLine2D& Line)						{	m_Start = Line.GetStart();	m_End = Line.GetEnd();	}
 	void				Set(const TLine& Line)							{	m_Start = Line.GetStart();	m_End = Line.GetEnd();	}
 	void				SetDir(const float2& Start,const float2& Dir)	{	Set( Start, Start + Dir );	}
@@ -75,6 +77,7 @@ public:
 	float3				GetDirection(float z) const						{	return (m_End - m_Start).xyz(z);	}
 	float				GetLengthSq() const								{	return GetDirection().LengthSq();	}
 	float				GetLength() const								{	return GetDirection().Length();	}
+	TLMaths::TAngle		GetAngle() const;								//	calculate angle of line
 
 	Bool				GetIntersectionPos(const TLine2D& Line,float2& IntersectionPos) const;	//	get the point where this line crosses the other
 	Bool				GetIntersectionPos(const TLine2D& Line,float& IntersectionAlongThis,float& IntersectionAlongLine) const;	//	checks for intersection and returns where along the line on both cases where it intersects

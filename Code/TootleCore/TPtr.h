@@ -345,14 +345,10 @@ FORCEINLINE TPtr<TYPE>&	TLPtr::GetNullPtr()
 {
 	static TPtr<TYPE> g_pNull;
 	
-	#ifdef _DEBUG
+	if ( g_pNull )
 	{
-		if ( g_pNull )
-		{
-			TLDebug_Break("Null TPtr should always be NULL!");
-		}
+		TLDebug_Break("Null TPtr should always be NULL!");
 	}
-	#endif
 	
 	return g_pNull;
 }

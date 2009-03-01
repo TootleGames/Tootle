@@ -70,7 +70,7 @@ public:
 	FORCEINLINE u32					GetSize() const						{	return m_Data.GetSize();	}
 	FORCEINLINE void				ResetReadPos()						{	m_ReadPos = 0;	}
 	FORCEINLINE s32					GetReadPos() const					{	return m_ReadPos;	}
-	u32								GetSizeUnread() const;
+	FORCEINLINE u32					GetSizeUnread() const;
 	FORCEINLINE u8*					GetData(u32 Offset=0)				{	return &m_Data[Offset];	}
 	FORCEINLINE const u8*			GetData(u32 Offset=0) const			{	return &m_Data[Offset];	}
 	FORCEINLINE TArray<u8>&			GetDataArray()						{	return m_Data;	}
@@ -87,7 +87,7 @@ public:
 	SyncBool						Decompress();						//	decompress this data. data size should increase
 
 protected:
-	Bool							CheckDataAvailible(u32 DataSize) const;				//	see if this amount of data is readable
+	FORCEINLINE Bool				CheckDataAvailible(u32 DataSize) const;				//	see if this amount of data is readable
 	FORCEINLINE void				MoveReadPos(u32 MoveAmount)							{	m_ReadPos += MoveAmount;	}	//	move read pos along
 	Bool							ReadData(u8* pData,u32 Length,Bool CutData=FALSE);	//	read data into address - CutData cuts the read data out of the array
 	FORCEINLINE void				WriteData(const u8* pData,u32 Length)			{	m_Data.Add( pData, Length );	}	//	add data to array
@@ -107,8 +107,15 @@ protected:
 //--------------------------------------------------------------------
 //	function specialisations
 //--------------------------------------------------------------------
-template<> FORCEINLINE Bool TBinary::Read(TBinary& Data)				{	return ReadArray( Data.GetDataArray() );	}
-template<> FORCEINLINE void TBinary::Write(const TBinary& Data)			{	WriteArray( Data.GetDataArray() );	}
+template<> FORCEINLINE Bool TBinary::Read(TBinary& Data)				
+{
+	return ReadArray( Data.GetDataArray() );	
+}
+
+template<> FORCEINLINE void TBinary::Write(const TBinary& Data)
+{	
+	WriteArray( Data.GetDataArray() );	
+}
 
 
 //--------------------------------------------------------------------
@@ -193,8 +200,42 @@ FORCEINLINE TYPE* TBinary::ReadNoCopy()
 	return pData;	
 }
 
+//--------------------------------------------------------------------
+//	
+//--------------------------------------------------------------------
+FORCEINLINE u32 TBinary::GetSizeUnread() const			
+{	
+	if ( m_ReadPos == -1 )
+	{
+		TLDebug_Break("Invalid Readpos");	
+		return 0;
+	}
+	
+	return GetSize() - m_ReadPos;
+}
 
 
+//-----------------------------------------------------------
+//	see if this amount of data is readable
+//-----------------------------------------------------------
+FORCEINLINE Bool TBinary::CheckDataAvailible(u32 DataSize) const
+{
+	//	read position hasn't been initialised
+	if ( m_ReadPos < 0 )
+	{
+		TLDebug_Break("Binary read position hasn't been reset");
+		return FALSE;
+	}
+
+	//	have we got this amount of data left?
+	if ( GetSizeUnread() < DataSize )
+	{
+		TLDebug_Break( TString("Trying to read more data(%d bytes) than we have remaining(%d bytes)", DataSize, GetSizeUnread() ) );
+		return FALSE;
+	}
+
+	return TRUE;
+}
 
 
 

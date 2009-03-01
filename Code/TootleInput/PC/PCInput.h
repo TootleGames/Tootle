@@ -27,7 +27,7 @@ namespace TLInput
 			BOOL CALLBACK EnumDeviceObject(const DIDEVICEOBJECTINSTANCE* pdidObjectInstance, VOID* pContext);	// Object enumeration callback - enumerates buttons, axes, pov's effects etc
 			Bool InitialiseDevice(TPtr<TInputDevice> pDevice, const LPDIRECTINPUTDEVICE8 lpdiDevice, const DIDEVICEINSTANCE* pdidInstance);
 
-			Bool	UpdateDevice(TPtr<TInputDevice> pDevice);
+			Bool		UpdateDevice(TInputDevice& Device);
 
 			class TLInputDirectXDevice;
 
@@ -37,9 +37,9 @@ namespace TLInput
 			/*
 			Special update routines for devices in DirectX.  Hopefully at some point I can remove these as this shouldn't really be necessary.
 			*/
-			Bool UpdateDirectXDevice_Mouse(TPtr<TInputDevice> pDevice, TPtr<TLInputDirectXDevice> pTLDirectInputDevice);
-			Bool UpdateDirectXDevice_Keyboard(TPtr<TInputDevice> pDevice, TPtr<TLInputDirectXDevice> pTLDirectInputDevice);
-			Bool UpdateDirectXDevice_Gamepad(TPtr<TInputDevice> pDevice, TPtr<TLInputDirectXDevice> pTLDirectInputDevice);
+			Bool UpdateDirectXDevice_Mouse(TInputDevice& Device, TLInputDirectXDevice& TLDirectInputDevice);
+			Bool UpdateDirectXDevice_Keyboard(TInputDevice& Device, TLInputDirectXDevice& TLDirectInputDevice);
+			Bool UpdateDirectXDevice_Gamepad(TInputDevice& Device, TLInputDirectXDevice& TLDirectInputDevice);
 		}
 
 
@@ -50,7 +50,7 @@ namespace TLInput
 		SyncBool		EnumerateDevices()		{ return DirectX::EnumerateDevices(); }
 		void			RemoveAllDevices()		{ DirectX::RemoveAllDevices(); }
 
-		Bool			UpdateDevice(TPtr<TInputDevice> pDevice);
+		Bool			UpdateDevice(TInputDevice& Device);
 		int2			GetCursorPosition(u8 uIndex);
 	};
 };

@@ -111,13 +111,13 @@ SyncBool TInputManager::Update(float fTimeStep)
 
 	for(u32 uIndex = 0; uIndex < uNumberOfDevices; uIndex++)
 	{
-		TPtr<TInputDevice> pDevice = ElementAtConst(uIndex);
+		TInputDevice& Device = *ElementAt(uIndex);
 
 		// Update the hardware device - data from buttons etc and information about device itself  
-		if(TLInput::Platform::UpdateDevice(pDevice))
+		if ( TLInput::Platform::UpdateDevice( Device ) )
 		{
 			// No update the generic device information - process the sensors etc
-			pDevice->Update();
+			Device.Update();
 		}
 	}
 
@@ -145,7 +145,7 @@ void TInputManager::RemoveAllDevices()
 {
 	for(u32 uIndex = 0; uIndex <  GetSize(); uIndex++)
 	{
-		TPtr<TLInput::TInputDevice> pDevice = ElementAt(uIndex);
+		TLInput::TInputDevice& Device = *ElementAt(uIndex);
 
 		// Send a message to say the device is being removed
 		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Input");
@@ -154,8 +154,8 @@ void TInputManager::RemoveAllDevices()
 		{
 			pMessage->AddChannelID("DEVICE");								// device information message
 			pMessage->AddChildAndData("STATE", "REMOVED");			// state change
-			pMessage->AddChildAndData("DEVID", pDevice->GetDeviceRef());		// device ref 
-			pMessage->AddChildAndData("TYPE", pDevice->GetDeviceType() );				// device type
+			pMessage->AddChildAndData("DEVID", Device.GetDeviceRef() );		// device ref 
+			pMessage->AddChildAndData("TYPE", Device.GetDeviceType() );				// device type
 
 			PublishMessage(pMessage);
 		}
@@ -212,9 +212,9 @@ Bool TInputManager::GetDeviceIDs(TArray<TRef>& refArray)
 
 	for(u32 uIndex = 0; uIndex < GetSize(); uIndex++)
 	{
-		TPtr<TInputDevice> pDevice = ElementAt(uIndex);
+		TInputDevice& Device = *ElementAt(uIndex);
 
-		refArray.Add(pDevice->GetDeviceRef());
+		refArray.Add( Device.GetDeviceRef() );
 	}
 
 	return TRUE;

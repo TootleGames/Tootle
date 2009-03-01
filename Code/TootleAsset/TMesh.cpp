@@ -37,39 +37,70 @@ void TLAsset::TMesh::Empty()
 
 
 //-------------------------------------------------------
+//	generate a square mesh from a 2d box
+//-------------------------------------------------------
+void TLAsset::TMesh::GenerateQuad(const TLMaths::TBox2D& Box,const TColour& Colour,float z)
+{
+	float3 TopLeft = Box.GetMin().xyz( z );
+	float3 BottomRight = Box.GetMin().xyz( z );
+	float3 TopRight( BottomRight.x, TopLeft.y, z );
+	float3 BottomLeft( TopLeft.x, BottomRight.y, z );
+
+	//	generate quad with outline
+	GenerateQuad( TopLeft, TopRight, BottomRight, BottomLeft, Colour );
+}
+
+
+//-------------------------------------------------------
+//	generate a square mesh around a point
+//-------------------------------------------------------
+void TLAsset::TMesh::GenerateQuad(const float2& Center,float Size,const TColour& Colour,float z)
+{
+	float HalfSize = Size * 0.5f;
+	float3 TopLeft		( Center.x - HalfSize, Center.y - HalfSize, z );
+	float3 TopRight		( Center.x + HalfSize, Center.y - HalfSize, z );
+	float3 BottomLeft	( Center.x - HalfSize, Center.y + HalfSize, z );
+	float3 BottomRight	( Center.x + HalfSize, Center.y + HalfSize, z );
+
+	//	generate quad with outline
+	GenerateQuad( TopLeft, TopRight, BottomRight, BottomLeft, Colour );
+}
+
+
+//-------------------------------------------------------
 //	generate a cube mesh from a math box
 //-------------------------------------------------------
 void TLAsset::TMesh::GenerateCube(const TLMaths::TBox& Box)
 {
-	Empty();
+	u16 FirstVert = m_Vertexes.GetSize();
 
 	//	for vertex order, see TLMaths::TBox::GetBoxCorners
 	Box.GetBoxCorners( m_Vertexes );
 
 	//	triangles
 	//	top
-	m_Triangles.Add( Triangle( 0, 1, 2 ) );	
-	m_Triangles.Add( Triangle( 2, 3, 0 ) );
+	m_Triangles.Add( Triangle( FirstVert+0, FirstVert+1, FirstVert+2 ) );	
+	m_Triangles.Add( Triangle( FirstVert+2, FirstVert+3, FirstVert+0 ) );
 
 	//	front
-	m_Triangles.Add( Triangle( 3, 2, 6 ) );	
-	m_Triangles.Add( Triangle( 6, 7, 3 ) );
+	m_Triangles.Add( Triangle( FirstVert+3, FirstVert+2, FirstVert+6 ) );	
+	m_Triangles.Add( Triangle( FirstVert+6, FirstVert+7, FirstVert+3 ) );
 
 	//	back
-	m_Triangles.Add( Triangle( 0, 1, 5 ) );	
-	m_Triangles.Add( Triangle( 5, 4, 0 ) );
+	m_Triangles.Add( Triangle( FirstVert+0, FirstVert+1, FirstVert+5 ) );	
+	m_Triangles.Add( Triangle( FirstVert+5, FirstVert+4, FirstVert+0 ) );
 
 	//	right
-	m_Triangles.Add( Triangle( 2, 1, 5 ) );	
-	m_Triangles.Add( Triangle( 5, 2, 6 ) );
+	m_Triangles.Add( Triangle( FirstVert+2, FirstVert+1, FirstVert+5 ) );	
+	m_Triangles.Add( Triangle( FirstVert+5, FirstVert+2, FirstVert+6 ) );
 
 	//	left
-	m_Triangles.Add( Triangle( 0, 3, 7 ) );	
-	m_Triangles.Add( Triangle( 7, 4, 0 ) );
+	m_Triangles.Add( Triangle( FirstVert+0, FirstVert+3, FirstVert+7 ) );	
+	m_Triangles.Add( Triangle( FirstVert+7, FirstVert+4, FirstVert+0 ) );
 
 	//	bottom
-	m_Triangles.Add( Triangle( 4, 5, 6 ) );	
-	m_Triangles.Add( Triangle( 6, 7, 4 ) );
+	m_Triangles.Add( Triangle( FirstVert+4, FirstVert+5, FirstVert+6 ) );	
+	m_Triangles.Add( Triangle( FirstVert+6, FirstVert+7, FirstVert+4 ) );
 
 	OnPrimitivesChanged();
 }

@@ -126,6 +126,7 @@ public:
 	FORCEINLINE void	SetAngle(const float2& From,const float2& To)	{	SetAngle( To - From );	}
 	void				SetAngle(const float2& Direction);				//	get angle from a vector
 	FORCEINLINE TAngle	GetAngleDiff(const TAngle& Angle) const;	//	get the difference of angles FROM this (base angle) TO Angle (new angle). So if this is zero, we will just return Angle
+	FORCEINLINE TAngle	GetAngleAbsDiff(const TAngle& Angle) const;	//	get the difference of angles FROM this (base angle) TO Angle (new angle). So if this is zero, we will just return Angle
 
 	static float		DegreesToRadians(float AngDegrees)		{	return AngDegrees * (PI/180.f);	}
 	static float		RadiansToDegrees(float AngRadians)		{	return AngRadians * (180.f/PI);	}
@@ -152,6 +153,16 @@ FORCEINLINE TLMaths::TAngle TLMaths::TAngle::GetAngleDiff(const TLMaths::TAngle&
 }
 
 
+//----------------------------------------------------------
+//	get the asbsolute difference of angles FROM this (base angle) TO Angle (new angle). So if this is zero, we will just return Angle
+//----------------------------------------------------------
+FORCEINLINE TLMaths::TAngle TLMaths::TAngle::GetAngleAbsDiff(const TLMaths::TAngle& Angle) const	
+{	
+	float Diff = Angle.GetDegrees() - m_AngleDegrees;
+	TLMaths::Wrap( Diff, -180.f, 180.f );
+
+	return TAngle( Diff < 0.f ? -Diff : Diff );
+}
 
 
 //-------------------------------------------------------------------

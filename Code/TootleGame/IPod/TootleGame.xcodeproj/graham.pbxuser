@@ -1,7 +1,7 @@
 // !$*UTF8*$!
 {
 	84C108FC0F0A775200B2DF7A /* Project object */ = {
-		activeBuildConfigurationName = Release;
+		activeBuildConfigurationName = "Release AdHoc";
 		activeTarget = 84C10A360F0A7C1800B2DF7A /* TootleGame */;
 		codeSenseManager = BF81C3D10F30F8AC001ACEC3 /* Code sense */;
 		perUserDictionary = {
@@ -10,9 +10,9 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					341,
+					557,
 					20,
-					48.16259765625,
+					48,
 					43,
 					43,
 					20,
@@ -27,8 +27,12 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 254867616;
-			PBXWorkspaceStateSaveDate = 254867616;
+			PBXPerProjectTemplateStateSaveDate = 257470729;
+			PBXWorkspaceStateSaveDate = 257470729;
+		};
+		perUserProjectItems = {
+			BF66834F0F58B1B00038DDA9 /* PBXTextBookmark */ = BF66834F0F58B1B00038DDA9 /* PBXTextBookmark */;
+			BF6683500F58B1B00038DDA9 /* PBXTextBookmark */ = BF6683500F58B1B00038DDA9 /* PBXTextBookmark */;
 		};
 		sourceControlManager = BF81C3D00F30F8AC001ACEC3 /* Source Control */;
 		userBuildSettings = {
@@ -36,6 +40,33 @@
 	};
 	84C10A360F0A7C1800B2DF7A /* TootleGame */ = {
 		activeExec = 0;
+	};
+	84DE34FF0F12AFED00608F8C /* TGui.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1404, 6624}}";
+			sepNavSelRange = "{4170, 0}";
+			sepNavVisRange = "{3611, 638}";
+		};
+	};
+	BF66834F0F58B1B00038DDA9 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84DE34FF0F12AFED00608F8C /* TGui.cpp */;
+		name = "TGui.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 234;
+		vrLoc = 0;
+	};
+	BF6683500F58B1B00038DDA9 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84DE34FF0F12AFED00608F8C /* TGui.cpp */;
+		name = "TGui.cpp: 131";
+		rLen = 0;
+		rLoc = 4170;
+		rType = 0;
+		vrLen = 638;
+		vrLoc = 3611;
 	};
 	BF81C3D00F30F8AC001ACEC3 /* Source Control */ = {
 		isa = PBXSourceControlManager;

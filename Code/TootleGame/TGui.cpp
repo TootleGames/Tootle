@@ -115,6 +115,25 @@ SyncBool TLGui::TGui::Initialise()
 				TLDebug_Break("Failed to map action to gui");
 				continue;
 			}
+			
+			if ( !pUser->MapAction( m_ActionIn, pInputDevice->GetDeviceRef(), "BN1" ) )
+			{
+				TLDebug_Break("Failed to map action to gui");
+				continue;
+			}
+
+			if ( !pUser->MapAction( m_ActionIn, pInputDevice->GetDeviceRef(), "BN2" ) )
+			{
+				TLDebug_Break("Failed to map action to gui");
+				continue;
+			}
+			
+			if ( !pUser->MapAction( m_ActionIn, pInputDevice->GetDeviceRef(), "BN3" ) )
+			{
+				TLDebug_Break("Failed to map action to gui");
+				continue;
+			}
+			
 			CreatedAction = TRUE;
 		}
 

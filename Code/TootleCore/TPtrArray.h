@@ -26,10 +26,11 @@ public:
 	template<class MATCHTYPE>
 	inline const TPtr<TYPE>&	FindPtr(const MATCHTYPE& val) const;
 
-	inline TPtr<TYPE>&			GetPtrLast()						{	return (TArray<TPtr<TYPE> >::GetSize()>0) ? GetPtrAt( TArray<TPtr<TYPE> >::GetLastIndex() ) : TLPtr::GetNullPtr<TYPE>();	}
-	inline TPtr<TYPE>&			GetPtrAt(s32 Index)					{	return (Index == -1) ? TLPtr::GetNullPtr<TYPE>() : TArray<TPtr<TYPE> >::ElementAt( Index );	}
+	FORCEINLINE TPtr<TYPE>&		GetPtrLast();						//	fast version to return the last TPtr
+	FORCEINLINE TPtr<TYPE>&		GetPtrAt(s32 Index);				//	fast version to return TPtr reference at index
 
-	inline TPtr<TYPE>&			AddPtr(const TPtr<TYPE>& val)		{	s32 Index = TArray<TPtr<TYPE> >::Add( val );	return GetPtrAt( Index );	}
+	FORCEINLINE TPtr<TYPE>&		AddPtr(const TPtr<TYPE>& val);		//	add TPtr to array and return the new [more permanant] TPtr reference
+	FORCEINLINE TPtr<TYPE>&		AddNewPtr(TYPE* pVal);				//	add a pointer to the array, this is quite fast, but ONLY use it for pointers that are NOT in TPtr's already. use like; AddNewPtr( new TObject() );. CANNOT be a const pointer. This should stop us using this function for pointers that might already be in a TPtr
 
 	void						RemoveNull();						//	remove all NULL pointers from array
 	
@@ -114,5 +115,59 @@ FORCEINLINE void TPtrArray<TYPE>::FunctionAll(FUNCTIONPOINTER pFunc)
 		TYPE* pObject = pPtr.GetObject();
 		(pObject->*pFunc)();
 	}
+}
+
+
+
+//----------------------------------------------------------------------
+//	fast version to return the last TPtr
+//----------------------------------------------------------------------
+template<typename TYPE>
+FORCEINLINE TPtr<TYPE>& TPtrArray<TYPE>::GetPtrLast()
+{	
+	return (TArray<TPtr<TYPE> >::GetSize()>0) ? GetPtrAt( TArray<TPtr<TYPE> >::GetLastIndex() ) : TLPtr::GetNullPtr<TYPE>();	
+}
+
+
+//----------------------------------------------------------------------
+//	fast version to return TPtr reference at index
+//----------------------------------------------------------------------
+template<typename TYPE>
+FORCEINLINE TPtr<TYPE>& TPtrArray<TYPE>::GetPtrAt(s32 Index)
+{	
+	return (Index == -1) ? TLPtr::GetNullPtr<TYPE>() : TArray<TPtr<TYPE> >::ElementAt( Index );	
+}
+
+
+//----------------------------------------------------------------------
+//	add TPtr to array and return the new [more permanant] TPtr reference
+//----------------------------------------------------------------------
+template<typename TYPE>
+FORCEINLINE TPtr<TYPE>& TPtrArray<TYPE>::AddPtr(const TPtr<TYPE>& val)
+{
+	s32 Index = TArray<TPtr<TYPE> >::Add( val );	
+	return GetPtrAt( Index );	
+}
+
+//----------------------------------------------------------------------
+//	add a pointer to the array, this is quite fast, but ONLY use it for pointers that are NOT in TPtr's already. use like; AddNewPtr( new TObject() );
+//----------------------------------------------------------------------
+template<typename TYPE>
+FORCEINLINE TPtr<TYPE>& TPtrArray<TYPE>::AddNewPtr(TYPE* pVal)	
+{	
+	//	get a new TPtr to use...
+	TPtr<TYPE>* ppNewPtr = TArray<TPtr<TYPE> >::AddNew();
+
+	//	failed to grow array?
+	if ( !ppNewPtr )
+		return TLPtr::GetNullPtr<TYPE>();
+
+	//	set the contents of this pointer we have allocated for ourselves
+	TPtr<TYPE>& pNewPtr = *ppNewPtr;
+
+	//	setup TPtr, this should create the new counter
+	pNewPtr = pVal;
+
+	return pNewPtr;
 }
 

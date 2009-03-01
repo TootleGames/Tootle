@@ -60,9 +60,9 @@ using namespace TLInput;
 
 
 
-Bool Platform::UpdateDevice(TPtr<TInputDevice> pDevice)
+Bool Platform::UpdateDevice(TInputDevice& Device)
 {
-	return DirectX::UpdateDevice(pDevice);
+	return DirectX::UpdateDevice( Device );
 }
 
 int2 Platform::GetCursorPosition(u8 uIndex)
@@ -762,39 +762,39 @@ BOOL CALLBACK Platform::DirectX::EnumDeviceObject(const DIDEVICEOBJECTINSTANCE* 
 }
 
 
-Bool Platform::DirectX::UpdateDevice(TPtr<TInputDevice> pDevice)
+Bool Platform::DirectX::UpdateDevice(TInputDevice& Device)
 {
 	// Get the physical device ID
-	TRef DeviceID = pDevice->GetHardwareDeviceID();
+	TRef DeviceID = Device.GetHardwareDeviceID();
 
 	// Find the physical device from the platform based list
-	TPtr<TLInputDirectXDevice> pTLDirectInputDevice = g_TLDirectInputDevices.FindPtr(DeviceID);
+	TPtr<TLInputDirectXDevice>& pTLDirectInputDevice = g_TLDirectInputDevices.FindPtr(DeviceID);
+
+	if ( !pTLDirectInputDevice )
+		return FALSE;
 
 	Bool bResult = FALSE;
 
-	if(pTLDirectInputDevice.IsValid())
+	switch(pTLDirectInputDevice->GetDeviceType())
 	{
-		switch(pTLDirectInputDevice->GetDeviceType())
-		{
-		case DI8DEVTYPE_MOUSE:
-				bResult = UpdateDirectXDevice_Mouse(pDevice, pTLDirectInputDevice);
-				break;
-		case DI8DEVTYPE_KEYBOARD:
-				bResult = UpdateDirectXDevice_Keyboard(pDevice, pTLDirectInputDevice);
-				break;
-		case DI8DEVTYPE_GAMEPAD:
-				bResult = UpdateDirectXDevice_Gamepad(pDevice, pTLDirectInputDevice);
-				break;
-		}
+	case DI8DEVTYPE_MOUSE:
+			bResult = UpdateDirectXDevice_Mouse( Device, *pTLDirectInputDevice );
+			break;
+	case DI8DEVTYPE_KEYBOARD:
+			bResult = UpdateDirectXDevice_Keyboard( Device, *pTLDirectInputDevice );
+			break;
+	case DI8DEVTYPE_GAMEPAD:
+			bResult = UpdateDirectXDevice_Gamepad( Device, *pTLDirectInputDevice );
+			break;
 	}
 
 	return bResult;
 }
 
 
-Bool Platform::DirectX::UpdateDirectXDevice_Mouse(TPtr<TInputDevice> pDevice, TPtr<TLInputDirectXDevice> pTLDirectInputDevice)
+Bool Platform::DirectX::UpdateDirectXDevice_Mouse(TInputDevice& Device,TLInputDirectXDevice& TLDirectInputDevice)
 {
-	LPDIRECTINPUTDEVICE8 lpdiDevice = pTLDirectInputDevice->GetDevice();
+	LPDIRECTINPUTDEVICE8 lpdiDevice = TLDirectInputDevice.GetDevice();
 
 	// If valid poll and acquire the device ensuring no errors.
 	if(lpdiDevice == 0)
@@ -818,7 +818,7 @@ Bool Platform::DirectX::UpdateDirectXDevice_Mouse(TPtr<TInputDevice> pDevice, TP
 	if (hr == DI_BUFFEROVERFLOW) 
 	{	
 		// Buffer had overflowed. 
-		TLDebug::Print("Mouse Input Buffer overflow");
+		TLDebug_Print("Mouse Input Buffer overflow");
 	} 
 
 	/////////////////////////////////////////////////////////////
@@ -826,13 +826,14 @@ Bool Platform::DirectX::UpdateDirectXDevice_Mouse(TPtr<TInputDevice> pDevice, TP
 	/////////////////////////////////////////////////////////////
 
 #ifdef _DEBUG
-	TString inputinfo = "Mouse processing buffer: ";
+	TTempString inputinfo = "Mouse processing buffer: ";
 	inputinfo.Appendf("%d items", dwItems);
 	TLDebug::Print(inputinfo);
 #endif
 
 
-	TArray<TInputData>& InputBuffer = pDevice->GetInputBuffer();
+	TArray<TInputData>& InputBuffer = Device.GetInputBuffer();
+	InputBuffer.AddAllocSize( dwItems );
 
 	TInputData data;
 
@@ -942,9 +943,9 @@ Bool Platform::DirectX::UpdateDirectXDevice_Mouse(TPtr<TInputDevice> pDevice, TP
 /*	
 	Special update routine for a keyboard using directx
 */
-Bool Platform::DirectX::UpdateDirectXDevice_Keyboard(TPtr<TInputDevice> pDevice, TPtr<TLInputDirectXDevice> pTLDirectInputDevice)
+Bool Platform::DirectX::UpdateDirectXDevice_Keyboard(TInputDevice& Device,TLInputDirectXDevice& TLDirectInputDevice)
 {
-	LPDIRECTINPUTDEVICE8 lpdiDevice = pTLDirectInputDevice->GetDevice();
+	LPDIRECTINPUTDEVICE8 lpdiDevice = TLDirectInputDevice.GetDevice();
 
 		// If valid poll and acquire the device ensuring no errors.
 	if(lpdiDevice == 0)
@@ -979,17 +980,18 @@ Bool Platform::DirectX::UpdateDirectXDevice_Keyboard(TPtr<TInputDevice> pDevice,
 	if (hr == DI_BUFFEROVERFLOW) 
 	{	
 		// Buffer had overflowed. 
-		TLDebug::Print("Keyboard Input Buffer overflow");
+		TLDebug_Print("Keyboard Input Buffer overflow");
 	} 
 
 	
 #ifdef _DEBUG
-	TString inputinfo = "Keyboard processing buffer: ";
+	TTempString inputinfo = "Keyboard processing buffer: ";
 	inputinfo.Appendf("%d items", dwItems);
 	TLDebug::Print(inputinfo);
 #endif
 
-	TArray<TInputData>& InputBuffer = pDevice->GetInputBuffer();
+	TArray<TInputData>& InputBuffer = Device.GetInputBuffer();
+	InputBuffer.AddAllocSize( dwItems );
 
 	TInputData data;
 
@@ -1020,9 +1022,9 @@ Bool Platform::DirectX::UpdateDirectXDevice_Keyboard(TPtr<TInputDevice> pDevice,
 /*	
 	Special update routine for a joypad
 */
-Bool Platform::DirectX::UpdateDirectXDevice_Gamepad(TPtr<TInputDevice> pDevice, TPtr<TLInputDirectXDevice> pTLDirectInputDevice)
+Bool Platform::DirectX::UpdateDirectXDevice_Gamepad(TInputDevice& Device,TLInputDirectXDevice& TLDirectInputDevice)
 {
-	LPDIRECTINPUTDEVICE8 lpdiDevice = pTLDirectInputDevice->GetDevice();
+	LPDIRECTINPUTDEVICE8 lpdiDevice = TLDirectInputDevice.GetDevice();
 
 		// If valid poll and acquire the device ensuring no errors.
 	if(lpdiDevice == 0)
@@ -1057,7 +1059,7 @@ Bool Platform::DirectX::UpdateDirectXDevice_Gamepad(TPtr<TInputDevice> pDevice, 
 	if (hr == DI_BUFFEROVERFLOW) 
 	{	
 		// Buffer had overflowed. 
-		TLDebug::Print("Gamepad Input Buffer overflow");
+		TLDebug_Print("Gamepad Input Buffer overflow");
 	} 
 
 
@@ -1067,7 +1069,8 @@ Bool Platform::DirectX::UpdateDirectXDevice_Gamepad(TPtr<TInputDevice> pDevice, 
 	TLDebug::Print(inputinfo);
 #endif
 
-	TArray<TInputData>& InputBuffer = pDevice->GetInputBuffer();
+	TArray<TInputData>& InputBuffer = Device.GetInputBuffer();
+	InputBuffer.AddAllocSize( dwItems );
 
 	TInputData data;
 

@@ -36,8 +36,10 @@ public:
 	void						Compact();										//	compact binary data and all our children
 	TBinary&					GetData()										{	return (*this);	}
 	const TBinary&				GetData() const									{	return (*this);	}
-	Bool						CopyDataTree(const TBinaryTree& Data,Bool OverwriteDataRef=TRUE);			//	recursivly copy the tree from Data into this (clone)
+	Bool						CopyDataTree(const TBinaryTree& Data,Bool OverwriteDataRef=TRUE);			//	recursivly copy the tree from Data into this (allocs new data and copies the data)
 	FORCEINLINE Bool			CopyDataTree(const TPtr<TBinaryTree>& pData,Bool OverwriteDataRef=TRUE)	{	const TBinaryTree* pBinaryTree = pData.GetObject();	return pBinaryTree ? CopyDataTree( *pBinaryTree, OverwriteDataRef ) : FALSE;	}
+	Bool						ReferenceDataTree(const TBinaryTree& Data,Bool OverwriteDataRef=TRUE);			//	copy the tree by re-using the TPtr's to the data. The data is re-used and saves us allocating and copying data but without fear of deletion
+	FORCEINLINE Bool			ReferenceDataTree(const TPtr<TBinaryTree>& pData,Bool OverwriteDataRef=TRUE)	{	const TBinaryTree* pBinaryTree = pData.GetObject();	return pBinaryTree ? ReferenceDataTree( *pBinaryTree, OverwriteDataRef ) : FALSE;	}
 
 	template<class ARRAYTYPE> 
 	Bool						ImportArrays(TRefRef ArrayRef,ARRAYTYPE& Array);	//	returns FALSE if failed, WAIT if nothing imported, TRUE if something imported
