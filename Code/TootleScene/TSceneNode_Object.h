@@ -35,8 +35,8 @@ public:
 	void						SetAllNodesTranslate(const float3& Translate);
 
 	// Physics Object access
-	TRefRef							GetPhysicsObjectRef()					{ return m_PhysicsObjectRef; }
-	TPtr<TLPhysics::TPhysicsNode>&	GetPhysicsObject();
+	TRefRef							GetPhysicsNodeRef()					{ return m_PhysicsNodeRef; }
+	TPtr<TLPhysics::TPhysicsNode>&	GetPhysicsNode();
 
 	// Render object access
 	TRefRef							GetRenderNodeRef()					{ return m_RenderNodeRef; }
@@ -44,8 +44,8 @@ public:
 
 protected:
 
-	virtual Bool					CreatePhysicsObject();
-	virtual void					OnPhysicsObjectAdded(TPtr<TLPhysics::TPhysicsNode>& pPhysicsObject)	{}
+	virtual Bool					CreatePhysicsNode(TRefRef PhysicsNodeType=TRef());
+	virtual void					OnPhysicsNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode)	{}
 	void							DeletePhysicsNode();
 
 	FORCEINLINE Bool				CreateRenderNode(TPtr<TLRender::TRenderNode> pParentRenderNode)	{	return CreateRenderNode( pParentRenderNode ? pParentRenderNode->GetNodeRef() : TRef() );	}
@@ -61,10 +61,10 @@ protected:
 
 protected:
 	void					SetRenderNode(TRefRef RenderNodeRef)		{	m_RenderNodeRef = RenderNodeRef;	}
-	void					SetPhysicsObject(TRefRef PhysicsObjectRef)	{	m_PhysicsObjectRef = PhysicsObjectRef;	}
+	void					SetPhysicsObject(TRefRef PhysicsNodeRef)	{	m_PhysicsNodeRef = PhysicsNodeRef;	}
 
 private:
 	TRef					m_RenderNodeRef;
-	TRef					m_PhysicsObjectRef;
+	TRef					m_PhysicsNodeRef;
 };
 

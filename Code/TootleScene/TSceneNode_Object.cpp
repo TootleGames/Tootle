@@ -22,7 +22,7 @@ void TSceneNode_Object::Shutdown()
 
 void TSceneNode_Object::DeletePhysicsNode()
 {
-	if ( m_PhysicsObjectRef.IsValid() )
+	if ( m_PhysicsNodeRef.IsValid() )
 	{
 #ifdef _DEBUG
 		TTempString Debug_String("Attempting to remove physics for node ");
@@ -30,8 +30,8 @@ void TSceneNode_Object::DeletePhysicsNode()
 		TLDebug_Print(Debug_String);
 #endif
 		
-		TLPhysics::g_pPhysicsgraph->RemoveNode(m_PhysicsObjectRef);
-		m_PhysicsObjectRef.SetInvalid();
+		TLPhysics::g_pPhysicsgraph->RemoveNode(m_PhysicsNodeRef);
+		m_PhysicsNodeRef.SetInvalid();
 	}
 }
 
@@ -54,9 +54,9 @@ void TSceneNode_Object::DeleteRenderNode()
 
 
 
-TPtr<TLPhysics::TPhysicsNode>& TSceneNode_Object::GetPhysicsObject()
+TPtr<TLPhysics::TPhysicsNode>& TSceneNode_Object::GetPhysicsNode()
 {
-	return TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsObjectRef );
+	return TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef );
 }
 
 TPtr<TLRender::TRenderNode>& TSceneNode_Object::GetRenderNode()
@@ -67,25 +67,47 @@ TPtr<TLRender::TRenderNode>& TSceneNode_Object::GetRenderNode()
 //--------------------------------------------------------
 //	Requests a physics node to be created
 //--------------------------------------------------------
-Bool TSceneNode_Object::CreatePhysicsObject()
+Bool TSceneNode_Object::CreatePhysicsNode(TRefRef PhysicsNodeType)
 {
-	// [20/02/09] DB - Currently we only allow one physics node to be associated with the object node
-	if(!m_PhysicsObjectRef.IsValid())
+	// [20/02/09] DB - Currently we only allow one render node to be associated with the object node
+	if( m_PhysicsNodeRef.IsValid() )
+		return FALSE;
+
+	TPtr<TLMessaging::TMessage> pInitMessage;
+
+	//	no init message? make one up
+	if ( !pInitMessage )
 	{
-		TPtr<TLPhysics::TPhysicsNode> pPhysicsObject = new TLPhysics::TPhysicsNode( GetNodeRef() );
-		if ( TLPhysics::g_pPhysicsgraph->AddNode( pPhysicsObject ) )
-		{
-			SetPhysicsObject(pPhysicsObject->GetNodeRef());
+		pInitMessage = new TLMessaging::TMessage( TLCore::InitialiseRef );
 
-			// NOTE: This may eventually become an async type routine
-			//		 so no guarantees it happens on the same frmae of creation
-			OnPhysicsObjectAdded(pPhysicsObject);
+		//	add transform info from this scene node
+		const TLMaths::TTransform& Transform = GetTransform();
 
-			return TRUE;
-		}
+		if ( Transform.HasTranslate() )
+			pInitMessage->AddChildAndData("Translate", Transform.GetTranslate() );
+
+		if ( Transform.HasScale() )
+			pInitMessage->AddChildAndData("Scale", Transform.GetScale() );
+
+		if ( Transform.HasRotation() )
+			pInitMessage->AddChildAndData("Rotation", Transform.GetRotation() );
 	}
 
-	return FALSE;
+	//	create node
+	TRef ParentNode = TRef();
+
+	m_PhysicsNodeRef = TLPhysics::g_pPhysicsgraph->CreateNode( GetNodeRef(), PhysicsNodeType, ParentNode, pInitMessage );
+
+	//	failed
+	if ( !m_PhysicsNodeRef.IsValid() )
+		return FALSE;
+
+	// NOTE: This may eventually become an async type routine
+	//		 so no guarantees it happens on the same frmae of creation
+	TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef );
+	OnPhysicsNodeAdded( pPhysicsNode );
+
+	return TRUE;
 }
 
 
@@ -147,7 +169,7 @@ void TSceneNode_Object::Update(float fTimestep)
 
 void TSceneNode_Object::UpdateObjectFromPhysics()
 {
-	TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = GetPhysicsObject();
+	TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = GetPhysicsNode();
 	TPtr<TLRender::TRenderNode>& pRenderNode = GetRenderNode();
 
 	//	update game object from physics node
@@ -173,7 +195,7 @@ void TSceneNode_Object::UpdateObjectFromPhysics()
 void TSceneNode_Object::Translate(float3 vTranslation)
 {
 	// Manipulate the physics by adding a force in the direction required
-	TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = GetPhysicsObject();
+	TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = GetPhysicsNode();
 
 	//	update game object from physics node
 	if ( pPhysicsNode )
@@ -240,7 +262,7 @@ void TSceneNode_Object::SetAllNodesTranslate(const float3& Translate)
 	if ( pRenderNode )
 		pRenderNode->SetTranslate( Translate );
 
-	TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = GetPhysicsObject();
+	TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = GetPhysicsNode();
 	if ( pPhysicsNode )
 		pPhysicsNode->SetPosition( Translate );
 

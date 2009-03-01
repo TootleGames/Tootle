@@ -13,6 +13,16 @@ Bool TLGraph::TGraphBase::ImportScheme(const TPtr<TLAsset::TScheme>& pScheme,TRe
 		return FALSE;
 	}
 
+	if ( pScheme->GetAssetType() != "Scheme" )
+	{
+		TTempString Debug_String("Trying to import scheme asset ");
+		pScheme->GetAssetRef().GetString( Debug_String );
+		Debug_String.Append(" but is wrong asset type: ");
+		pScheme->GetAssetType().GetString( Debug_String );
+		TLDebug_Break( Debug_String );
+		return FALSE;
+	}
+
 	const TLAsset::TScheme& Scheme = *pScheme;
 
 	//	keep track of all the node's we've imported so we can remove them again if it fails
