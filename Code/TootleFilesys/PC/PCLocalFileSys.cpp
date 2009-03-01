@@ -453,7 +453,7 @@ TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filenam
 	TPtr<TFile>& pFile = GetFile( FileRef );
 	if ( pFile )
 	{
-		if ( pFile->GetFilename().IsEqual( Filename, FALSE ) )
+		if ( !pFile->GetFilename().IsEqual( Filename, FALSE ) )
 		{
 			TLDebug_Break("Called CreateFile(), new FileRef matches existing file, BUT filename is different. Conflict here. Aborting file creation");
 			//return TLPtr::GetNullPtr<TLFileSys::TFile>();
