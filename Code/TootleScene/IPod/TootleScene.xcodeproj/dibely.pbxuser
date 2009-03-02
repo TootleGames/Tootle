@@ -1,14 +1,126 @@
 // !$*UTF8*$!
 {
-	8491EFEE0F1F9D7D002FE16F /* PBXTextBookmark */ = {
+	8461C21C0F5C2BED00ED9509 /* TSceneNode_Camera.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = TSceneNode_Camera.h;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleScene/IPod/../TSceneNode_Camera.h;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {962, 1512}}";
+			sepNavSelRange = "{2953, 0}";
+			sepNavVisRange = "{2283, 749}";
+		};
+	};
+	8461C2700F5C2F8D00ED9509 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8461C21C0F5C2BED00ED9509 /* TSceneNode_Camera.h */;
+		name = "TSceneNode_Camera.h: 100";
+		rLen = 0;
+		rLoc = 2953;
+		rType = 0;
+		vrLen = 749;
+		vrLoc = 2283;
+	};
+	8461C28D0F5C305B00ED9509 /* TSceneNode_Camera.cpp:109 */ = {
+		isa = PBXFileBreakpoint;
+		actions = (
+		);
+		breakpointStyle = 0;
+		continueAfterActions = 0;
+		countType = 0;
+		delayBeforeContinue = 0;
+		fileReference = 84C107A70F0A686E00B2DF7A /* TSceneNode_Camera.cpp */;
+		functionName = "TSceneNode_Camera::UpdateRenderTargetCamera()";
+		hitCount = 0;
+		ignoreCount = 0;
+		lineNumber = 109;
+		location = FindFritz;
+		modificationTime = 257701488.240264;
+		state = 2;
+	};
+	8461C2AD0F5C308600ED9509 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84C107A10F0A686E00B2DF7A /* TLScene.cpp */;
 		name = "TLScene.cpp: 1";
 		rLen = 0;
 		rLoc = 0;
 		rType = 0;
-		vrLen = 969;
+		vrLen = 815;
+		vrLoc = 248;
+	};
+	8461C2AE0F5C308600ED9509 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C107A20F0A686E00B2DF7A /* TLScene.h */;
+		name = "TLScene.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 242;
 		vrLoc = 0;
+	};
+	8461C2B20F5C308600ED9509 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C107A20F0A686E00B2DF7A /* TLScene.h */;
+		name = "TLScene.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 242;
+		vrLoc = 0;
+	};
+	8461C2B90F5C311100ED9509 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C107A30F0A686E00B2DF7A /* TScenegraph.cpp */;
+		name = "TScenegraph.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 626;
+		vrLoc = 368;
+	};
+	8461C2BA0F5C311100ED9509 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C107A30F0A686E00B2DF7A /* TScenegraph.cpp */;
+		name = "TScenegraph.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 626;
+		vrLoc = 368;
+	};
+	8461C3160F5C367800ED9509 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8461C3170F5C367800ED9509 /* TSceneNode_Camera.cpp */;
+		name = "TSceneNode_Camera.cpp: 23";
+		rLen = 0;
+		rLoc = 707;
+		rType = 0;
+		vrLen = 550;
+		vrLoc = 4477;
+	};
+	8461C3170F5C367800ED9509 /* TSceneNode_Camera.cpp */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.cpp.cpp;
+		name = TSceneNode_Camera.cpp;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleScene/IPod/../TSceneNode_Camera.cpp;
+		sourceTree = "<absolute>";
+	};
+	8461C3200F5C368900ED9509 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8461C3210F5C368900ED9509 /* TSceneNode_Camera.cpp */;
+		name = "TSceneNode_Camera.cpp: 23";
+		rLen = 0;
+		rLoc = 707;
+		rType = 0;
+		vrLen = 550;
+		vrLoc = 4477;
+	};
+	8461C3210F5C368900ED9509 /* TSceneNode_Camera.cpp */ = {
+		isa = PBXFileReference;
+		name = TSceneNode_Camera.cpp;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleScene/IPod/../TSceneNode_Camera.cpp;
+		sourceTree = "<absolute>";
 	};
 	8491EFF00F1F9D7D002FE16F /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -28,13 +140,7 @@
 			84C1078E0F0A67BC00B2DF7A /* TootleScene */,
 		);
 		breakpoints = (
-			84E11A910F4066BB00471397 /* TSchemeManager.cpp:188 */,
-			84E11B4F0F40893300471397 /* TSchemeManager.cpp:146 */,
-			84E11B510F40893A00471397 /* TSchemeManager.cpp:222 */,
-			84E11B530F40894200471397 /* TSchemeManager.cpp:240 */,
-			84E11B550F40895800471397 /* TSchemeManager.cpp:281 */,
-			84E11B5B0F4089A000471397 /* TSchemeManager.cpp:276 */,
-			84E11B5D0F4089B200471397 /* TSchemeManager.cpp:71 */,
+			8461C28D0F5C305B00ED9509 /* TSceneNode_Camera.cpp:109 */,
 		);
 		codeSenseManager = 84C107870F0A679500B2DF7A /* Code sense */;
 		ignoreBreakpointsInProjectsDict = {
@@ -46,7 +152,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
 					449,
-					525,
+					525.20849609375,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXErrorsWarningsDataSource_TypeID,
@@ -81,7 +187,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					793,
+					744,
 					60,
 					20,
 					48,
@@ -98,17 +204,26 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 255979600;
-			PBXWorkspaceStateSaveDate = 255979600;
+			PBXPerProjectTemplateStateSaveDate = 257701503;
+			PBXWorkspaceStateSaveDate = 257701503;
 		};
 		perUserProjectItems = {
-			8491EFEE0F1F9D7D002FE16F /* PBXTextBookmark */ = 8491EFEE0F1F9D7D002FE16F /* PBXTextBookmark */;
+			8461C2700F5C2F8D00ED9509 /* PBXTextBookmark */ = 8461C2700F5C2F8D00ED9509 /* PBXTextBookmark */;
+			8461C2AD0F5C308600ED9509 /* PBXTextBookmark */ = 8461C2AD0F5C308600ED9509 /* PBXTextBookmark */;
+			8461C2AE0F5C308600ED9509 /* PBXTextBookmark */ = 8461C2AE0F5C308600ED9509 /* PBXTextBookmark */;
+			8461C2B20F5C308600ED9509 /* PBXTextBookmark */ = 8461C2B20F5C308600ED9509 /* PBXTextBookmark */;
+			8461C2B90F5C311100ED9509 /* PBXTextBookmark */ = 8461C2B90F5C311100ED9509 /* PBXTextBookmark */;
+			8461C2BA0F5C311100ED9509 /* PBXTextBookmark */ = 8461C2BA0F5C311100ED9509 /* PBXTextBookmark */;
+			8461C3160F5C367800ED9509 /* PBXTextBookmark */ = 8461C3160F5C367800ED9509 /* PBXTextBookmark */;
+			8461C3200F5C368900ED9509 /* PBXTextBookmark */ = 8461C3200F5C368900ED9509 /* PBXTextBookmark */;
 			8491EFF00F1F9D7D002FE16F /* PBXTextBookmark */ = 8491EFF00F1F9D7D002FE16F /* PBXTextBookmark */;
 			84D690850F41F05A002CFFE1 /* PBXTextBookmark */ = 84D690850F41F05A002CFFE1 /* PBXTextBookmark */;
-			84D690860F41F05A002CFFE1 /* PBXTextBookmark */ = 84D690860F41F05A002CFFE1 /* PBXTextBookmark */;
-			84D690870F41F05A002CFFE1 /* PBXTextBookmark */ = 84D690870F41F05A002CFFE1 /* PBXTextBookmark */;
-			84D690880F41F05A002CFFE1 /* PBXTextBookmark */ = 84D690880F41F05A002CFFE1 /* PBXTextBookmark */;
-			84E1157C0F3C5B0200471397 /* PBXTextBookmark */ = 84E1157C0F3C5B0200471397 /* PBXTextBookmark */;
+			84DC8FF30F45F71300532109 /* PBXTextBookmark */ = 84DC8FF30F45F71300532109 /* PBXTextBookmark */;
+			84DC92AB0F49D73E00532109 /* PBXTextBookmark */ = 84DC92AB0F49D73E00532109 /* PBXTextBookmark */;
+			84DC92AC0F49D73E00532109 /* PBXTextBookmark */ = 84DC92AC0F49D73E00532109 /* PBXTextBookmark */;
+			84DC92AD0F49D73E00532109 /* PBXTextBookmark */ = 84DC92AD0F49D73E00532109 /* PBXTextBookmark */;
+			84DC92B30F49D73E00532109 /* PBXTextBookmark */ = 84DC92B30F49D73E00532109 /* PBXTextBookmark */;
+			84DC92B40F49D73E00532109 /* PBXTextBookmark */ = 84DC92B40F49D73E00532109 /* PBXTextBookmark */;
 			84E115800F3C5B0200471397 /* PBXTextBookmark */ = 84E115800F3C5B0200471397 /* PBXTextBookmark */;
 			84E115810F3C5B0200471397 /* PBXTextBookmark */ = 84E115810F3C5B0200471397 /* PBXTextBookmark */;
 			84E1158B0F3C5B0200471397 /* PBXTextBookmark */ = 84E1158B0F3C5B0200471397 /* PBXTextBookmark */;
@@ -123,19 +238,15 @@
 			84E1159E0F3C5B0200471397 /* PBXTextBookmark */ = 84E1159E0F3C5B0200471397 /* PBXTextBookmark */;
 			84E115A70F3C5B0200471397 /* PBXTextBookmark */ = 84E115A70F3C5B0200471397 /* PBXTextBookmark */;
 			84E1177F0F3CB45800471397 /* PBXTextBookmark */ = 84E1177F0F3CB45800471397 /* PBXTextBookmark */;
-			84E117800F3CB45800471397 /* PBXTextBookmark */ = 84E117800F3CB45800471397 /* PBXTextBookmark */;
 			84E118700F3F901F00471397 /* PBXTextBookmark */ = 84E118700F3F901F00471397 /* PBXTextBookmark */;
 			84E118710F3F901F00471397 /* PBXTextBookmark */ = 84E118710F3F901F00471397 /* PBXTextBookmark */;
 			84E118730F3F901F00471397 /* PBXTextBookmark */ = 84E118730F3F901F00471397 /* PBXTextBookmark */;
-			84E119110F40449C00471397 /* PBXTextBookmark */ = 84E119110F40449C00471397 /* PBXTextBookmark */;
 			84E119120F40449C00471397 /* PBXTextBookmark */ = 84E119120F40449C00471397 /* PBXTextBookmark */;
 			84E119130F40449C00471397 /* PBXTextBookmark */ = 84E119130F40449C00471397 /* PBXTextBookmark */;
 			84E11A290F40610500471397 /* PBXTextBookmark */ = 84E11A290F40610500471397 /* PBXTextBookmark */;
 			84E11A380F40610500471397 /* PBXTextBookmark */ = 84E11A380F40610500471397 /* PBXTextBookmark */;
 			84E11B2C0F40880900471397 /* PBXTextBookmark */ = 84E11B2C0F40880900471397 /* PBXTextBookmark */;
 			84E11B360F40880900471397 /* PBXTextBookmark */ = 84E11B360F40880900471397 /* PBXTextBookmark */;
-			84E11C090F40908700471397 /* PBXTextBookmark */ = 84E11C090F40908700471397 /* PBXTextBookmark */;
-			84E11C0E0F40908700471397 /* PBXTextBookmark */ = 84E11C0E0F40908700471397 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84C107860F0A679500B2DF7A /* Source Control */;
 		userBuildSettings = {
@@ -157,9 +268,24 @@
 	};
 	84C107A10F0A686E00B2DF7A /* TLScene.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 504}}";
+			sepNavIntBoundsRect = "{{0, 0}, {962, 532}}";
 			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 969}";
+			sepNavVisRange = "{248, 815}";
+			sepNavWindowFrame = "{{84, 152}, {750, 558}}";
+		};
+	};
+	84C107A20F0A686E00B2DF7A /* TLScene.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {962, 417}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 242}";
+		};
+	};
+	84C107A30F0A686E00B2DF7A /* TScenegraph.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {962, 1890}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{368, 626}";
 		};
 	};
 	84C107A40F0A686E00B2DF7A /* TScenegraph.h */ = {
@@ -179,15 +305,29 @@
 	84C107A60F0A686E00B2DF7A /* TSceneNode.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {962, 504}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 874}";
+			sepNavSelRange = "{289, 10}";
+			sepNavVisRange = "{51, 969}";
+		};
+	};
+	84C107A70F0A686E00B2DF7A /* TSceneNode_Camera.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {962, 3080}}";
+			sepNavSelRange = "{707, 0}";
+			sepNavVisRange = "{196, 854}";
+		};
+	};
+	84C107A80F0A686E00B2DF7A /* TSceneNode_Camera.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {962, 1470}}";
+			sepNavSelRange = "{2906, 0}";
+			sepNavVisRange = "{2218, 694}";
 		};
 	};
 	84C107AB0F0A686E00B2DF7A /* TSceneNode_Object.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 3374}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 505}";
+			sepNavIntBoundsRect = "{{0, 0}, {962, 3206}}";
+			sepNavSelRange = "{699, 0}";
+			sepNavVisRange = "{2087, 1023}";
 		};
 	};
 	84C107AC0F0A686E00B2DF7A /* TSceneNode_Object.h */ = {
@@ -207,8 +347,8 @@
 	84C107AE0F0A686E00B2DF7A /* TSceneNode_Transform.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1398, 672}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 903}";
+			sepNavSelRange = "{230, 10}";
+			sepNavVisRange = "{2, 982}";
 		};
 	};
 	84C107B00F0A686E00B2DF7A /* TSchemeEditor.h */ = {
@@ -228,27 +368,7 @@
 		vrLen = 813;
 		vrLoc = 3124;
 	};
-	84D690860F41F05A002CFFE1 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84E11A8F0F4066BB00471397 /* TSchemeManager.cpp */;
-		name = "TSchemeManager.cpp: 437";
-		rLen = 0;
-		rLoc = 10947;
-		rType = 0;
-		vrLen = 1185;
-		vrLoc = 6000;
-	};
-	84D690870F41F05A002CFFE1 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84E1156A0F3C515B00471397 /* TSchemeManager.h */;
-		name = "TSchemeManager.h: 136";
-		rLen = 175;
-		rLoc = 3762;
-		rType = 0;
-		vrLen = 813;
-		vrLoc = 3124;
-	};
-	84D690880F41F05A002CFFE1 /* PBXTextBookmark */ = {
+	84DC8FF30F45F71300532109 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84E1156B0F3C515B00471397 /* TSchemeManager.cpp */;
 		name = "TSchemeManager.cpp: 279";
@@ -257,6 +377,56 @@
 		rType = 0;
 		vrLen = 1185;
 		vrLoc = 6000;
+	};
+	84DC92AB0F49D73E00532109 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C107AB0F0A686E00B2DF7A /* TSceneNode_Object.cpp */;
+		name = "TSceneNode_Object.cpp: 37";
+		rLen = 0;
+		rLoc = 699;
+		rType = 0;
+		vrLen = 1023;
+		vrLoc = 2087;
+	};
+	84DC92AC0F49D73E00532109 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C107AE0F0A686E00B2DF7A /* TSceneNode_Transform.h */;
+		name = "TSceneNode_Transform.h: 16";
+		rLen = 10;
+		rLoc = 230;
+		rType = 0;
+		vrLen = 982;
+		vrLoc = 2;
+	};
+	84DC92AD0F49D73E00532109 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C107A60F0A686E00B2DF7A /* TSceneNode.h */;
+		name = "TSceneNode.h: 14";
+		rLen = 10;
+		rLoc = 289;
+		rType = 0;
+		vrLen = 969;
+		vrLoc = 51;
+	};
+	84DC92B30F49D73E00532109 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C107A70F0A686E00B2DF7A /* TSceneNode_Camera.cpp */;
+		name = "TSceneNode_Camera.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 623;
+		vrLoc = 980;
+	};
+	84DC92B40F49D73E00532109 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C107A80F0A686E00B2DF7A /* TSceneNode_Camera.h */;
+		name = "TSceneNode_Camera.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 925;
+		vrLoc = 0;
 	};
 	84E1156A0F3C515B00471397 /* TSchemeManager.h */ = {
 		uiCtxt = {
@@ -267,7 +437,7 @@
 	};
 	84E1156B0F3C515B00471397 /* TSchemeManager.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {962, 6076}}";
+			sepNavIntBoundsRect = "{{0, 0}, {962, 6034}}";
 			sepNavSelRange = "{6744, 108}";
 			sepNavVisRange = "{6000, 1185}";
 		};
@@ -285,16 +455,6 @@
 			sepNavSelRange = "{439, 0}";
 			sepNavVisRange = "{0, 505}";
 		};
-	};
-	84E1157C0F3C5B0200471397 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C107AB0F0A686E00B2DF7A /* TSceneNode_Object.cpp */;
-		name = "TSceneNode_Object.cpp: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 505;
-		vrLoc = 0;
 	};
 	84E115800F3C5B0200471397 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -436,16 +596,6 @@
 		vrLen = 542;
 		vrLoc = 0;
 	};
-	84E117800F3CB45800471397 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C107A60F0A686E00B2DF7A /* TSceneNode.h */;
-		name = "TSceneNode.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 874;
-		vrLoc = 0;
-	};
 	84E118700F3F901F00471397 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84C107B00F0A686E00B2DF7A /* TSchemeEditor.h */;
@@ -476,16 +626,6 @@
 		vrLen = 678;
 		vrLoc = 0;
 	};
-	84E119110F40449C00471397 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C107AE0F0A686E00B2DF7A /* TSceneNode_Transform.h */;
-		name = "TSceneNode_Transform.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 903;
-		vrLoc = 0;
-	};
 	84E119120F40449C00471397 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84E1156F0F3C51DF00471397 /* TSchemeNode.h */;
@@ -505,13 +645,6 @@
 		rType = 0;
 		vrLen = 180;
 		vrLoc = 0;
-	};
-	84E1192A0F40449C00471397 /* TStateMachine.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = TStateMachine.h;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleCore/TStateMachine.h;
-		sourceTree = "<absolute>";
 	};
 	84E11A290F40610500471397 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -547,30 +680,6 @@
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleAsset/TScheme.h;
 		sourceTree = "<absolute>";
 	};
-	84E11A8F0F4066BB00471397 /* TSchemeManager.cpp */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.cpp.cpp;
-		name = TSchemeManager.cpp;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleScene/TSchemeManager.cpp;
-		sourceTree = "<group>";
-	};
-	84E11A910F4066BB00471397 /* TSchemeManager.cpp:188 */ = {
-		isa = PBXFileBreakpoint;
-		actions = (
-		);
-		breakpointStyle = 0;
-		continueAfterActions = 0;
-		countType = 0;
-		delayBeforeContinue = 0;
-		fileReference = 84E11A8F0F4066BB00471397 /* TSchemeManager.cpp */;
-		functionName = "TSchemeManager::RequestUpdateScheme(TRefRef SchemeRef, TRefRef SchemeAssetRef, TSchemeUpdateType UpdateType)";
-		hitCount = 0;
-		ignoreCount = 0;
-		lineNumber = 188;
-		location = TestGame;
-		modificationTime = 256063697.362636;
-		state = 2;
-	};
 	84E11B2C0F40880900471397 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84E11B2D0F40880900471397 /* TLAsset.h */;
@@ -604,132 +713,5 @@
 		name = TLAsset.h;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleAsset/TLAsset.h;
 		sourceTree = "<absolute>";
-	};
-	84E11B4D0F40893300471397 /* TSchemeManager.cpp */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.cpp.cpp;
-		name = TSchemeManager.cpp;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleScene/TSchemeManager.cpp;
-		sourceTree = "<group>";
-	};
-	84E11B4F0F40893300471397 /* TSchemeManager.cpp:146 */ = {
-		isa = PBXFileBreakpoint;
-		actions = (
-		);
-		breakpointStyle = 0;
-		continueAfterActions = 0;
-		countType = 0;
-		delayBeforeContinue = 0;
-		fileReference = 84E11B4D0F40893300471397 /* TSchemeManager.cpp */;
-		functionName = "TSchemeManager::RequestUpdateScheme(TRefRef SchemeRef, TRefRef SchemeAssetRef, TSchemeUpdateType UpdateType)";
-		hitCount = 0;
-		ignoreCount = 0;
-		lineNumber = 146;
-		modificationTime = 256063698.157216;
-		state = 0;
-	};
-	84E11B510F40893A00471397 /* TSchemeManager.cpp:222 */ = {
-		isa = PBXFileBreakpoint;
-		actions = (
-		);
-		breakpointStyle = 0;
-		continueAfterActions = 0;
-		countType = 0;
-		delayBeforeContinue = 0;
-		fileReference = 84E11B4D0F40893300471397 /* TSchemeManager.cpp */;
-		functionName = "TSchemeManager::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)";
-		hitCount = 0;
-		ignoreCount = 0;
-		lineNumber = 222;
-		location = TestGame;
-		modificationTime = 256063697.363952;
-		state = 2;
-	};
-	84E11B530F40894200471397 /* TSchemeManager.cpp:240 */ = {
-		isa = PBXFileBreakpoint;
-		actions = (
-		);
-		breakpointStyle = 0;
-		continueAfterActions = 0;
-		countType = 0;
-		delayBeforeContinue = 0;
-		fileReference = 84E11B4D0F40893300471397 /* TSchemeManager.cpp */;
-		functionName = "TSchemeManager::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)";
-		hitCount = 0;
-		ignoreCount = 0;
-		lineNumber = 240;
-		modificationTime = 256063698.16508;
-		state = 0;
-	};
-	84E11B550F40895800471397 /* TSchemeManager.cpp:281 */ = {
-		isa = PBXFileBreakpoint;
-		actions = (
-		);
-		breakpointStyle = 0;
-		continueAfterActions = 0;
-		countType = 0;
-		delayBeforeContinue = 0;
-		fileReference = 84E11B4D0F40893300471397 /* TSchemeManager.cpp */;
-		functionName = "TSchemeManager::TSchemeUpdateRequest::TSchemeState_Init::Update()";
-		hitCount = 0;
-		ignoreCount = 0;
-		lineNumber = 281;
-		location = TestGame;
-		modificationTime = 256063697.364584;
-		state = 2;
-	};
-	84E11B5B0F4089A000471397 /* TSchemeManager.cpp:276 */ = {
-		isa = PBXFileBreakpoint;
-		actions = (
-		);
-		breakpointStyle = 0;
-		continueAfterActions = 0;
-		countType = 0;
-		delayBeforeContinue = 0;
-		fileReference = 84E11B4D0F40893300471397 /* TSchemeManager.cpp */;
-		functionName = "TSchemeManager::TSchemeUpdateRequest::TSchemeState_Init::Update()";
-		hitCount = 0;
-		ignoreCount = 0;
-		lineNumber = 276;
-		location = TestGame;
-		modificationTime = 256063697.365123;
-		state = 2;
-	};
-	84E11B5D0F4089B200471397 /* TSchemeManager.cpp:71 */ = {
-		isa = PBXFileBreakpoint;
-		actions = (
-		);
-		breakpointStyle = 0;
-		continueAfterActions = 0;
-		countType = 0;
-		delayBeforeContinue = 0;
-		fileReference = 84E11B4D0F40893300471397 /* TSchemeManager.cpp */;
-		functionName = "TSchemeManager::Update(float fTimeStep)";
-		hitCount = 0;
-		ignoreCount = 0;
-		lineNumber = 71;
-		location = TestGame;
-		modificationTime = 256063697.370337;
-		state = 2;
-	};
-	84E11C090F40908700471397 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84E1192A0F40449C00471397 /* TStateMachine.h */;
-		name = "TStateMachine.h: 61";
-		rLen = 12;
-		rLoc = 1958;
-		rType = 0;
-		vrLen = 1098;
-		vrLoc = 1701;
-	};
-	84E11C0E0F40908700471397 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84E1192A0F40449C00471397 /* TStateMachine.h */;
-		name = "TStateMachine.h: 61";
-		rLen = 12;
-		rLoc = 1958;
-		rType = 0;
-		vrLen = 1098;
-		vrLoc = 1701;
 	};
 }

@@ -1,17 +1,13 @@
 
 #pragma once
 
+#include <TootleCore/TStateMachine.h>
+
 #include "TSceneNode_Transform.h"
 
 namespace TLScene
 {
-		class TSceneNode_Camera;
-
-		typedef enum TCameraMode
-		{
-			Manual = 0,		// Manual mode	- The camera will not alter the settings that have been manually configured
-			Auto,			// Auto mode	- The camera will adjust the camera settings to keep the target in focus at all times
-		};
+	class TSceneNode_Camera;
 };
 
 /*
@@ -22,8 +18,11 @@ namespace TLScene
 	These will then propagate as information that will be used for rendering such as depth of field, 
 	field of view etc which will be calculated and won't be explicitly editable
 */
-class TLScene::TSceneNode_Camera : public TLScene::TSceneNode_Transform
+class TLScene::TSceneNode_Camera : public TLScene::TSceneNode_Transform, public TStateMachine
 {
+	class TCameraState_Auto;
+	class TCameraState_Manual;
+	
 public:
 	TSceneNode_Camera(TRefRef NodeRef,TRefRef TypeRef);
 
@@ -38,15 +37,20 @@ public:
 	void			SetAperture(float fAperture)				{ m_fAperture = fAperture; }
 
 	// Target access
-	TRefRef			GetTargetRef()								{ return m_refTarget; }
-	TPtr<TLScene::TSceneNode_Transform> GetTargetobject();
+	TRefRef			GetTargetRef()								{ return m_TargetNodeRef; }
+	TPtr<TLScene::TSceneNode_Transform> GetTargetObject();
  
 	float			GetTargetDistance()							{ return m_fTargetDistance; }
 
 protected:
+
+	virtual void	Initialise(TPtr<TLMessaging::TMessage>& pMessage);	//	Initialise message - made into virtual func as it's so commonly used
+
 	virtual void	Update(float fTimeStep);
 
 	virtual void	ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	
+	void			UpdateRenderTargetCamera(); // DB - TEMP UNTIL I ADD A CAMERA MANAGER.
 
 private:
 
@@ -56,17 +60,17 @@ private:
 private:
 
 	// Target information
-	TRef			m_refTarget;			// Target reference
+	TRef			m_TargetNodeRef;		// Target object reference
+	TRef			m_RenderTargetRef;		// Render target reference
+	
 	float			m_fTargetDistance;		// Calculated distance to target
-
+	
 	// 'Real' camera information
 	float			m_fMagnification;		// Zoom
 	float			m_fLensSize;			// Lens size - 35mm etc 
 	float			m_fFNumber;				// f-number - ratio of focal length to aperture width
 	float			m_fFocalLength;			// The focal length of the camera
 	float			m_fAperture;			// Aperture size
-
-	TCameraMode		m_Mode;					// Camera mode - auto, manual
 
 	// Calculated FOV
 	float			m_fHFOV;				// Horizontal field of view
@@ -77,3 +81,27 @@ private:
 	float			m_fDOFNear;				// Depth of field - near
 	float			m_fDOFFar;				// Depth of field - far
 };
+
+
+class TLScene::TSceneNode_Camera::TCameraState_Auto : public TStateMode
+{
+public:
+	virtual Bool			OnBegin(TRefRef PreviousMode);
+	virtual TRef			Update();			
+};
+
+
+class TLScene::TSceneNode_Camera::TCameraState_Manual : public TStateMode, public TLMessaging::TSubscriber
+{
+public:
+	virtual Bool			OnBegin(TRefRef PreviousMode);
+	virtual TRef			Update();
+	virtual void			OnEnd(TRefRef NextMode);	
+protected:
+	virtual void		ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+
+};
+
+
+
+
