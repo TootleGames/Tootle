@@ -22,6 +22,20 @@ void TAudioNode::Initialise(TPtr<TLMessaging::TMessage>& pMessage)
 // Main node update called once per frame
 void TAudioNode::Update(float fTimestep)
 {
+	// Is the audio node flagged to try and create the source?  If so try again...
+	if(m_AudioFlags.IsSet(Release))
+	{
+		// Set the volume to 0 before removing the node.  This is to try and prevent any pops and clicks
+		// that can happen via the OpenAL sysetm when stopping the source
+		SetVolume(0.0f);
+
+		// Request shutdown of this node
+		TLAudio::g_pAudiograph->RemoveNode(GetNodeRef());
+
+		return;
+	}
+
+
 	TLGraph::TGraphNode<TAudioNode>::Update(fTimestep);
 }
 // Shutdown routine	- called before being removed form the graph
@@ -38,20 +52,22 @@ void TAudioNode::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 	{
 		if(pMessage->HasChannelID("STOP"))
 		{
-			TRef AudioRef;
-			pMessage->Read(AudioRef);
-
-			if(AudioRef == GetNodeRef())
+			if(!m_AudioFlags.IsSet(Release))
 			{
-				// Set the volume to 0 before removing the node.  This is to try and prevent any pops and clicks
-				// that can happen via the OpenAL sysetm when stopping the source
-				SetVolume(0.0f);
-
-				// Shutdown this node
 				// NOTE: May need to test for a flag of 'auto release' at some stage as we may not want this 
 				// all of the time and the event would occur when 'Stopping' an audio object manually 
 				// as there is no distinction at a lower level
-				TLAudio::g_pAudiograph->RemoveNode(GetNodeRef());
+				//if(m_AudioFlags.IsSet(AutoRelease)
+				{
+					TRef AudioRef;
+					pMessage->Read(AudioRef);
+
+					if(AudioRef == GetNodeRef())
+					{
+						// Flag the node to release
+						m_AudioFlags.Set(Release, TRUE);
+					}
+				}
 			}
 		}
 
@@ -63,10 +79,25 @@ void TAudioNode::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 }
 
 
-void TAudioNode::Play()
+Bool TAudioNode::Play()
 {
+	if(m_AudioFlags.IsSet(Release)) 
+	{
+		// Source is flagged to release so ignore request to play
+		return FALSE;
+	}
+
+
 	// Play this audio
-	TLAudio::Platform::StartAudio(GetNodeRef());
+	if(!TLAudio::Platform::StartAudio(GetNodeRef()))
+	{
+		// Failed to play - falg the node to release
+		//TODO: May need to check for the auto-release flag
+		m_AudioFlags.Set(Release, TRUE);
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 void TAudioNode::Pause()
@@ -155,22 +186,23 @@ void TAudioNode::SetStreaming(Bool bStreamed)
 }
 
 
-void TAudioNode::SetAudioAssetRef(TRefRef AssetRef)
+Bool TAudioNode::SetAudioAssetRef(TRefRef AssetRef)
 {	
-	if( m_AudioAssetRef != AssetRef )	
-	{	
-		// Destroy current audio source info
-		if(IsSourceActive())
-			RemoveSource();
-		
-		m_AudioAssetRef = AssetRef;	
-				
-		// Create the new audio source info and bind to audio buffer
-		CreateSource();
-	}
+	if( m_AudioAssetRef == AssetRef )	
+		return TRUE;
+
+	// Destroy current audio source info
+	if(IsSourceActive())
+		RemoveSource();
+	
+	m_AudioAssetRef = AssetRef;	
+			
+	// Create the new audio source info and bind to audio buffer
+	return CreateSource();
 }
+
 // Generates the source audio data using the audio asset specified
-void TAudioNode::CreateSource()
+Bool TAudioNode::CreateSource()
 {
 	if(Platform::CreateSource(GetNodeRef()))
 	{
@@ -178,17 +210,23 @@ void TAudioNode::CreateSource()
 		if(Platform::HasBuffer(m_AudioAssetRef))
 		{
 			// Bind the source to the buffer
-			Platform::AttachSourceToBuffer(GetNodeRef(), m_AudioAssetRef, GetIsStreaming());
+			return Platform::AttachSourceToBuffer(GetNodeRef(), m_AudioAssetRef, GetIsStreaming());
 		}
 		else
 		{
 			TLDebug_Print("Audio buffer does not exist for audio node");
+			//TODO: May need to check for the auto-release flag
+			m_AudioFlags.Set(Release, TRUE);
 		}
 	}
 	else
 	{
 		TLDebug_Print("Failed to create source for audio node");
+		//TODO: May need to check for the auto-release flag
+		m_AudioFlags.Set(Release, TRUE);
 	}
+
+	return FALSE;
 }
 
 // Removes the associated source via the platform specific code

@@ -49,9 +49,16 @@ public:
 };
 
 
-class TLAudio::TAudioNode : public TLGraph::TGraphNode<TAudioNode>
+class TLAudio::TAudioNode : public TLGraph::TGraphNode<TAudioNode>, public TLMaths::TTransform
 {
 	friend class TLAudio::TAudiograph;
+
+	enum AudioFlags
+	{
+		AutoRelease = 0,			// Auto release flag which will allow this node to automatically remove itself when the associated audio has stopped
+		Release,					// Release node - triggers request to remove node from graph
+	};
+
 public:
 	TAudioNode(TRefRef NodeRef,TRefRef TypeRef);
 	
@@ -61,7 +68,7 @@ public:
 			
 	void				GetAudioAsset(TPtr<TLAsset::TAudio>& pAudio);						//	returns the audio asset from the asset library with the asset reference
 	
-	void				Play();
+	Bool				Play();
 	void				Pause();
 	void				Stop();
 	void				Reset();
@@ -85,16 +92,14 @@ public:
 
 	// Audio asset access
 	FORCEINLINE const TRef&	GetAudioAssetRef() const							{	return m_AudioAssetRef;	}
-	void					SetAudioAssetRef(TRefRef AssetRef);
-
-	virtual void		UpdateAll(float fTimestep)		{}	//	gr: no updates for audio nodes
+	Bool					SetAudioAssetRef(TRefRef AssetRef);
 
 protected:
 	virtual void		ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
 
 private:
 	
-	void				CreateSource();						// Generates the source audio data using the audio asset specified
+	Bool				CreateSource();						// Generates the source audio data using the audio asset specified
 	void				RemoveSource();						// Removes the source audio data
 	
 	Bool				IsSourceActive();					// Checs the low level audio system to see if a source is active with the node ID
@@ -103,5 +108,7 @@ private:
 	TAudioProperties	m_AudioProperties;		// Audio properties
 	
 	TRef				m_AudioAssetRef;		// Audio asset to use
+
+	TFlags<AudioFlags>	m_AudioFlags;
 };
 

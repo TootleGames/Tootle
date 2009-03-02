@@ -66,24 +66,25 @@ public:
 	Bool	StartAudio(TRefRef AudioRef, TRefRef AudioAsset);
 	Bool	StopAudio(TRefRef AudioRef);
 
-	Bool	PauseAudio(TRefRef AudioRef, Bool bPause);
+	Bool	PauseAudio(TRefRef AudioRef, const Bool& bPause);
 
 	Bool	IsAudioPlaying(TRefRef AudioRef);
 
-	// Audio properties
+	// Audio transform access
+	void	SetAudioTranslate(TRefRef AudioRef, const float3& vTranslate);
+	float3	GetAudioTranslate(TRefRef AudioRef);
 
-	void	SetAudioPitch(TRefRef AudioRef, const float fPitch);
+	// Audio properties
+	void	SetAudioPitch(TRefRef AudioRef, const float& fPitch);
 	float	GetAudioPitch(TRefRef AudioRef);
 
-
-	void	SetAudioVolume(TRefRef AudioRef, const float fVolume);
+	void	SetAudioVolume(TRefRef AudioRef, const float& fVolume);
 	float	GetAudioVolume(TRefRef AudioRef);
 	
-	void	SetAudioLooping(TRefRef AudioRef, const Bool bLooping);
+	void	SetAudioLooping(TRefRef AudioRef, const Bool& bLooping);
 	Bool	GetAudioIsLooping(TRefRef AudioRef);
 	
-
-	void	SetAudioFrequency(TRefRef AudioRef, const float fFrequency);
+	void	SetAudioFrequency(TRefRef AudioRef, const float& fFrequency);
 	float	GetFrequency(TRefRef AudioRef);
 
 	void					SetAudioProperties(TRefRef AudioRef, const TAudioProperties& Props);
