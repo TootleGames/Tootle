@@ -456,6 +456,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TRenderNodePathNetwork.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TRenderNodePathNetwork.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TRenderNodePhysicsGraph.cpp"
 			>
 		</File>

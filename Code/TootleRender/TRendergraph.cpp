@@ -2,6 +2,7 @@
 #include "TRenderNodeTile.h"
 #include "TRenderNodeText.h"
 #include "TRenderNodeDebugMesh.h"
+#include "TRenderNodePathNetwork.h"
 
 
 
@@ -53,6 +54,9 @@ TLRender::TRenderNode* TLRender::TRenderNodeFactory::CreateObject(TRefRef Instan
 
 	if ( TypeRef == "DbgMesh" )
 		return new TLRender::TRenderNodeDebugMesh(InstanceRef,TypeRef);
+
+	if ( TypeRef == "DbgPath" )
+		return new TLRender::TRenderNodePathNetwork(InstanceRef,TypeRef);
 
 	return NULL;
 }

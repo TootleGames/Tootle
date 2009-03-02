@@ -23,9 +23,13 @@ void TLRender::Opengl::DrawPrimitivePoints(const TArray<float3>* pVertexes)
 	if ( g_AllPoints.GetSize() < pVertexes->GetSize() )
 	{
 		u32 OldSize = g_AllPoints.GetSize();
+		
+		//	alloc points
 		g_AllPoints.SetSize( pVertexes->GetSize() );
+
+		//	set new entries
 		for ( u32 i=OldSize;	i<g_AllPoints.GetSize();	i++ )
-			g_AllPoints.Add( i );
+			g_AllPoints[i] = i;
 	}
 
 	//	draw points

@@ -47,6 +47,22 @@ namespace TLKeyArray
 };
 
 
+
+//-------------------------------------------------------
+//	declare the Pair type as a Data type if both key and item are data types
+//-------------------------------------------------------
+/*
+namespace TLCore
+{
+	template<>
+	template<typename KEYTYPE,typename TYPE>
+	FORCEINLINE Bool IsDataType<TLKeyArray::TPair<KEYTYPE,TYPE> >()	
+	{
+		return TLCore::IsDataType<KEYTYPE>() && TLCore::IsDataType<TYPE>();	
+	}
+}
+*/
+
 //-------------------------------------------------------
 //	key array type. access everything via your key (could be a
 //	integer, float or specific other types)
