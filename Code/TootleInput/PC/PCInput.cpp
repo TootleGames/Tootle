@@ -1118,12 +1118,12 @@ SyncBool Platform::DirectX::Shutdown()
 		g_pTLDirectInputInterface = NULL; 
 	} 
 
-	g_KeyboardRefMap.Empty();
-	g_MouseRefMap;
+	g_KeyboardRefMap.Empty(TRUE);
+	g_MouseRefMap.Empty(TRUE);
 
-	g_Xbox360PadButtonRefs;		
-	g_WiimoteButtonRefs;		
-	g_PS2PadButtonRefs;			
+	g_Xbox360PadButtonRefs.Empty(TRUE);		
+	g_WiimoteButtonRefs.Empty(TRUE);		
+	g_PS2PadButtonRefs.Empty(TRUE);			
 
 	return SyncTrue;
 }
