@@ -43,14 +43,12 @@ Bool TEventChannelManager::RegisterEventChannel(TPublisher* pPublisher, TRefRef 
 	pEventChannel->SubscribeTo(pPublisher);
 	
 	// Send a message to all subscribers saying that a new event channel has been created
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Channel");
-	if ( !pMessage)
-		return FALSE;
+	TLMessaging::TMessage Message("Channel");
 	
-	pMessage->Write(TRef("Added"));
-	pMessage->Write(refPublisherID);
-	pMessage->Write(refChannelID);
-	PublishMessage(pMessage);
+	Message.Write(TRef("Added"));
+	Message.Write(refPublisherID);
+	Message.Write(refChannelID);
+	PublishMessage(Message);
 
 	return TRUE;
 }
@@ -109,7 +107,7 @@ Bool TEventChannelManager::UnsubscribeFrom(TSubscriber* pSubscriber, TRefRef ref
 }
 
 
-Bool TEventChannelManager::BroadcastMessage(TPtr<TMessage>& pData, TRefRef refPublisherID, TRefRef refChannelID)
+Bool TEventChannelManager::BroadcastMessage(TLMessaging::TMessage& pData, TRefRef refPublisherID, TRefRef refChannelID)
 {
 	TPtr<TEventChannel>& pEventChannel = FindEventChannel(refPublisherID, refChannelID);
 

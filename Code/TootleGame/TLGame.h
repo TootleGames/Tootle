@@ -34,7 +34,7 @@ public:
 	TScreenRayTest(TRefRef RenderTargetRef);
 	~TScreenRayTest();							//	delete mesh and render node created
 
-	virtual void			ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);	//	
+	virtual void			ProcessMessage(TLMessaging::TMessage& Message);	//	
 	Bool					SetScreenPos(const Type2<s32>& ScreenPos);				//	screen pos has changed, get new projection Ray and update mesh
 
 protected:

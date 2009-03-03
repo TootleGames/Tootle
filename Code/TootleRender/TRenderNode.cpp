@@ -696,87 +696,84 @@ void TLRender::TRenderNode::OnAdded()
 //---------------------------------------------------------
 //	generic render node init
 //---------------------------------------------------------
-void TLRender::TRenderNode::Initialise(TPtr<TLMessaging::TMessage>& pMessage)
+void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 {
 	//	read init data
-	if ( pMessage.IsValid() )
-	{
-		/*
+	/*
 #ifdef _DEBUG
 		TLDebug_Print("Init message data: ");
-		pMessage->Debug_PrintTree();
+		Message.Debug_PrintTree();
 #endif
 		*/
 
-		Bool TransformChanged = FALSE;
+	Bool TransformChanged = FALSE;
 
-		if ( pMessage->ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
-		{
-			m_Transform.SetTranslateValid();
-			TransformChanged = TRUE;
-		}
-
-		if ( pMessage->ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
-		{
-			m_Transform.SetScaleValid();
-			TransformChanged = TRUE;
-		}
-
-		if ( pMessage->ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
-		{
-			m_Transform.SetRotationValid();
-			TransformChanged = TRUE;
-		}
-
-		//	transform has been set
-		if ( TransformChanged )
-			OnTransformChanged();
-
-		pMessage->ImportData("LineWidth", m_LineWidth );
-
-		if ( pMessage->ImportData("MeshRef", m_MeshRef ) == SyncTrue )
-		{
-			//	start loading the asset in case we havent loaded it already
-			TLAsset::LoadAsset( m_MeshRef );
-
-			//	mesh ref changed
-			OnMeshRefChanged();
-		}
-
-		//	get render flags to set
-		TPtrArray<TBinaryTree> FlagChildren;
-		if ( pMessage->GetChildren("RFSet", FlagChildren ) )
-		{
-			u32 RenderFlagIndex = 0;
-			for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
-			{
-				FlagChildren[f]->ResetReadPos();
-				if ( FlagChildren[f]->Read( RenderFlagIndex ) )
-					GetRenderFlags().Set( (RenderFlags::Flags)RenderFlagIndex );
-			}
-			FlagChildren.Empty();
-		}
-
-		//	get render flags to clear
-		if ( pMessage->GetChildren("RFClear", FlagChildren ) )
-		{
-			u32 RenderFlagIndex = 0;
-			for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
-			{
-				FlagChildren[f]->ResetReadPos();
-				if ( FlagChildren[f]->Read( RenderFlagIndex ) )
-					GetRenderFlags().Clear( (RenderFlags::Flags)RenderFlagIndex );
-			}
-			FlagChildren.Empty();
-		}
-
-		//	import colour
-		if ( pMessage->ImportData("Colour", m_Colour ) )
-			OnColourChanged();
+	if ( Message.ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
+	{
+		m_Transform.SetTranslateValid();
+		TransformChanged = TRUE;
 	}
 
+	if ( Message.ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
+	{
+		m_Transform.SetScaleValid();
+		TransformChanged = TRUE;
+	}
+
+	if ( Message.ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
+	{
+		m_Transform.SetRotationValid();
+		TransformChanged = TRUE;
+	}
+
+	//	transform has been set
+	if ( TransformChanged )
+		OnTransformChanged();
+
+	Message.ImportData("LineWidth", m_LineWidth );
+
+	if ( Message.ImportData("MeshRef", m_MeshRef ) == SyncTrue )
+	{
+		//	start loading the asset in case we havent loaded it already
+		TLAsset::LoadAsset( m_MeshRef );
+
+		//	mesh ref changed
+		OnMeshRefChanged();
+	}
+
+	//	get render flags to set
+	TPtrArray<TBinaryTree> FlagChildren;
+	if ( Message.GetChildren("RFSet", FlagChildren ) )
+	{
+		u32 RenderFlagIndex = 0;
+		for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
+		{
+			FlagChildren[f]->ResetReadPos();
+			if ( FlagChildren[f]->Read( RenderFlagIndex ) )
+				GetRenderFlags().Set( (RenderFlags::Flags)RenderFlagIndex );
+		}
+		FlagChildren.Empty();
+	}
+
+	//	get render flags to clear
+	if ( Message.GetChildren("RFClear", FlagChildren ) )
+	{
+		u32 RenderFlagIndex = 0;
+		for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
+		{
+			FlagChildren[f]->ResetReadPos();
+			if ( FlagChildren[f]->Read( RenderFlagIndex ) )
+				GetRenderFlags().Clear( (RenderFlags::Flags)RenderFlagIndex );
+		}
+		FlagChildren.Empty();
+	}
+
+	//	import colour
+	if ( Message.ImportData("Colour", m_Colour ) )
+		OnColourChanged();
+
 	//	do inherited init
-	TLGraph::TGraphNode<TLRender::TRenderNode>::Initialise( pMessage );
+	TLGraph::TGraphNode<TLRender::TRenderNode>::Initialise( Message );
 }
 
 

@@ -31,9 +31,9 @@ TSceneNode_Camera::TSceneNode_Camera(TRefRef NodeRef,TRefRef TypeRef) :
 }
 
 
-void TSceneNode_Camera::Initialise(TPtr<TLMessaging::TMessage>& pMessage)
+void TSceneNode_Camera::Initialise(TLMessaging::TMessage& Message)
 {
-	TSceneNode_Transform::Initialise(pMessage);
+	TSceneNode_Transform::Initialise(Message);
 }
 
 void TSceneNode_Camera::Update(float fTimeStep)
@@ -44,9 +44,9 @@ void TSceneNode_Camera::Update(float fTimeStep)
 	UpdateRenderTargetCamera();
 }
 
-void TSceneNode_Camera::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TSceneNode_Camera::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	TSceneNode_Transform::ProcessMessage(pMessage);
+	TSceneNode_Transform::ProcessMessage(Message);
 }
 
 /*
@@ -171,17 +171,17 @@ TRef TSceneNode_Camera::TCameraState_Manual::Update()
 }
 
 
-void TSceneNode_Camera::TCameraState_Manual::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TSceneNode_Camera::TCameraState_Manual::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	TRef refInputAction;
-	if(pMessage->Read(refInputAction))
+	if(Message.Read(refInputAction))
 	{
 		TSceneNode_Camera* pCamera = GetStateMachine<TSceneNode_Camera>();
 
 		float fValue;
 		
 		// move the camera
-		if(pMessage->ImportData("RAWDATA", fValue))
+		if(Message.ImportData("RAWDATA", fValue))
 		{
 			float3 vTranslate = pCamera->GetTranslate();
 			

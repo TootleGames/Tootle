@@ -12,10 +12,10 @@ TLRender::TRenderNodeDebugMesh::TRenderNodeDebugMesh(TRefRef RenderNodeRef,TRefR
 //---------------------------------------------------------
 //	init - create our mesh
 //---------------------------------------------------------
-void TLRender::TRenderNodeDebugMesh::Initialise(TPtr<TLMessaging::TMessage>& pMessage)
+void TLRender::TRenderNodeDebugMesh::Initialise(TLMessaging::TMessage& Message)
 {
 	//	do inherited init
-	TRenderNode::Initialise( pMessage );
+	TRenderNode::Initialise( Message );
 
 	//	make up mesh
 	m_pDebugMesh = new TLAsset::TMesh("Debug");

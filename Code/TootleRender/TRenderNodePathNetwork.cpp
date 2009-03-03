@@ -14,21 +14,21 @@ TLRender::TRenderNodePathNetwork::TRenderNodePathNetwork(TRefRef RenderNodeRef,T
 //---------------------------------------------------------
 //	init 
 //---------------------------------------------------------
-void TLRender::TRenderNodePathNetwork::Initialise(TPtr<TLMessaging::TMessage>& pMessage)
+void TLRender::TRenderNodePathNetwork::Initialise(TLMessaging::TMessage& Message)
 {
 	//	do inherited init first to create mesh etc
-	TRenderNodeDebugMesh::Initialise( pMessage );
+	TRenderNodeDebugMesh::Initialise( Message );
 
 	//	debug the points on the path
 //	GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::Debug_Points );
 	GetRenderFlags().Clear( TLRender::TRenderNode::RenderFlags::EnableCull );
 
 	//	read out colour
-	pMessage->ImportData("Colour", m_PathColour );
+	Message.ImportData("Colour", m_PathColour );
 
 	//	see if a path network asset has been specified (do this last!)
 	TRef PathNetworkRef;
-	if ( pMessage->ImportData("PathNetwork", PathNetworkRef ) )
+	if ( Message.ImportData("PathNetwork", PathNetworkRef ) )
 		SetPathNetwork( PathNetworkRef );
 }
 
@@ -73,10 +73,10 @@ void TLRender::TRenderNodePathNetwork::SetPathNetwork(TRefRef PathNetworkRef)
 //---------------------------------------------------------
 //	catch asset changes
 //---------------------------------------------------------
-void TLRender::TRenderNodePathNetwork::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TLRender::TRenderNodePathNetwork::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	//	handle inherited messages
-	TRenderNodeDebugMesh::ProcessMessage( pMessage );
+	TRenderNodeDebugMesh::ProcessMessage( Message );
 }
 
 

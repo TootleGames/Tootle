@@ -180,9 +180,9 @@ void TLGui::TGui::Shutdown()
 //-------------------------------------------------
 //	
 //-------------------------------------------------
-void TLGui::TGui::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TLGui::TGui::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(pMessage->GetMessageRef() == "Input")
+	if(Message.GetMessageRef() == "Input")
 	{
 		if ( !HasSubscribers() )
 		{
@@ -191,16 +191,16 @@ void TLGui::TGui::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 			Debug_String.Append(" has no subscribers");
 			TLDebug_Warning( Debug_String );
 		}
-		else if( pMessage->HasChannelID("Action"))
+		else if( Message.HasChannelID("Action"))
 		{
 			TRef ActionRef;
 			float RawValue = 0.f;
-			if ( pMessage->Read(ActionRef) && pMessage->ImportData("RawData", RawValue) )
+			if ( Message.Read(ActionRef) && Message.ImportData("RawData", RawValue) )
 			{
 				if ( ActionRef == m_ActionIn )
 				{
 					int2 CursorPosition;
-					pMessage->ImportData("CURSOR", CursorPosition );
+					Message.ImportData("CURSOR", CursorPosition );
 					
 					//	queue up this click
 					QueueClick( CursorPosition, RawValue );
@@ -211,7 +211,7 @@ void TLGui::TGui::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 			}
 		}
 	}
-	else if ( pMessage->GetMessageRef() == TLCore::UpdateRef )
+	else if ( Message.GetMessageRef() == TLCore::UpdateRef )
 	{
 		if ( !Update() )
 		{
@@ -398,13 +398,13 @@ void TLGui::TGui::SendActionMessage(Bool ActionDown,float RawData)
 	if ( ActionOutRef.IsValid() )
 	{
 		//	make up fake input message
-		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Input");
-		pMessage->AddChannelID("Action");
-		pMessage->Write( ActionOutRef );
-		pMessage->ExportData("RawData", RawData );
+		TLMessaging::TMessage Message("Input");
+		Message.AddChannelID("Action");
+		Message.Write( ActionOutRef );
+		Message.ExportData("RawData", RawData );
 
 		//	send message
-		PublishMessage( pMessage );
+		PublishMessage( Message );
 	}
 
 	//	update current action state

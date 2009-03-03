@@ -453,21 +453,18 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode* pOtherNode)
 	if(bChanges && pOtherNode->IsStatic())
 	{
 		// Publish a message to all subscribers to say that this node has collided with something
-		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("PHYSICS");
+		TLMessaging::TMessage Message("PHYSICS");
 
-		if(pMessage)
-		{
-			pMessage->AddChannelID("COLLISION");
+		Message.AddChannelID("COLLISION");
 
-			pMessage->Write(GetNodeRef());
-			//pMessage->Write(bChanges);
-			pMessage->Write(m_Velocity);		// Velocity of object
-			pMessage->Write(vImpulse);			// Velocity change due to collision
-			pMessage->Write(vReboundForce);		// Force applied in moving this object via collision
-			//pMessage->Write(pOtherNode->IsStatic());	// Is the other node static?
+		Message.Write(GetNodeRef());
+		//Message.Write(bChanges);
+		Message.Write(m_Velocity);		// Velocity of object
+		Message.Write(vImpulse);			// Velocity change due to collision
+		Message.Write(vReboundForce);		// Force applied in moving this object via collision
+		//Message.Write(pOtherNode->IsStatic());	// Is the other node static?
 
-			PublishMessage(pMessage);
-		}
+		PublishMessage(Message);
 	}
 
 	return bChanges;

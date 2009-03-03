@@ -17,9 +17,9 @@ void TSceneNode::Update(float fTimeStep)
 }
 
 
-void TSceneNode::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TSceneNode::ProcessMessage(TLMessaging::TMessage& Message)
 {
 
 	// Super class process message
-	TLGraph::TGraphNode<TSceneNode>::ProcessMessage(pMessage);
+	TLGraph::TGraphNode<TSceneNode>::ProcessMessage(Message);
 }

@@ -33,13 +33,13 @@ public:
 
 protected:
 
-	virtual void		ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+	virtual void		ProcessMessage(TLMessaging::TMessage& Message)
 	{
 		// Is the message available for our channel?
-		if(pMessage->HasChannelID(GetChannelID()))
+		if(Message.HasChannelID(GetChannelID()))
 		{
 			// Yes - relay the message onot our subscribers
-			PublishMessage(pMessage);
+			PublishMessage(Message);
 		}
 	}
 
@@ -100,7 +100,7 @@ public:
 	FORCEINLINE Bool				UnsubscribeFrom(TPtr<TSubscriber>& pSubscriber, TRefRef refPublisherID, TRefRef refChannelID);
 
 	// Message sending
-	Bool							BroadcastMessage(TPtr<TMessage>& pData, TRefRef refPublisherID, TRefRef refChannelID);
+	Bool							BroadcastMessage(TLMessaging::TMessage& pData, TRefRef refPublisherID, TRefRef refChannelID);
 
 private:
 

@@ -44,7 +44,7 @@ public:
 
 protected:
 
-	virtual void	ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void	ProcessMessage(TLMessaging::TMessage& Message);
 
 	// Internal parent action state info
 	class TParentActionState

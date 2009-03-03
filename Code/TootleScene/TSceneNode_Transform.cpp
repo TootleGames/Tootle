@@ -8,61 +8,58 @@ using namespace TLScene;
 //---------------------------------------------------------
 //	generic initialise data
 //---------------------------------------------------------
-void TLScene::TSceneNode_Transform::Initialise(TPtr<TLMessaging::TMessage>& pMessage)
+void TLScene::TSceneNode_Transform::Initialise(TLMessaging::TMessage& Message)
 {
-	if ( pMessage )
+	//	read transform info (same as render node's init)
+	Bool TransformChanged = FALSE;
+
+	if ( Message.ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
 	{
-		//	read transform info (same as render node's init)
-		Bool TransformChanged = FALSE;
-
-		if ( pMessage->ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
-		{
-			m_Transform.SetTranslateValid();
-			TransformChanged = TRUE;
-		}
-
-		if ( pMessage->ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
-		{
-			m_Transform.SetScaleValid();
-			TransformChanged = TRUE;
-		}
-
-		if ( pMessage->ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
-		{
-			m_Transform.SetRotationValid();
-			TransformChanged = TRUE;
-		}
-
-		//	transform has been set
-		if ( TransformChanged )
-			OnTransformChanged();
+		m_Transform.SetTranslateValid();
+		TransformChanged = TRUE;
 	}
 
+	if ( Message.ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
+	{
+		m_Transform.SetScaleValid();
+		TransformChanged = TRUE;
+	}
+
+	if ( Message.ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
+	{
+		m_Transform.SetRotationValid();
+		TransformChanged = TRUE;
+	}
+
+	//	transform has been set
+	if ( TransformChanged )
+		OnTransformChanged();
+
 	//	do inherited initialise
-	TLScene::TSceneNode::Initialise( pMessage );
+	TLScene::TSceneNode::Initialise( Message );
 }
 
 
-void TSceneNode_Transform::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(pMessage->GetMessageRef() == "TRANSFORM")
+	if(Message.GetMessageRef() == "TRANSFORM")
 	{
 		float3 vTransform;
 
 		//	gr: note "translate" in init messages is explicit rather than change. change this to MoveTranslate, MoveRotate, MoveScale?
-		if(pMessage->ImportData("TRANSLATE", vTransform))
+		if(Message.ImportData("TRANSLATE", vTransform))
 		{
 			// Apply translation
 			Translate(vTransform);
 		}
 		
-		if(pMessage->ImportData("ROTATE", vTransform))
+		if(Message.ImportData("ROTATE", vTransform))
 		{
 			//Apply rotation
 			TLDebug_Break("Rotate message received - needs implementing");
 		}
 		
-		if(pMessage->ImportData("SCALE", vTransform))
+		if(Message.ImportData("SCALE", vTransform))
 		{
 			// Apply scale
 			TLDebug_Break("Scale message received - needs implementing");
@@ -71,7 +68,7 @@ void TSceneNode_Transform::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 	}
 
 	// Super class process message
-	TSceneNode::ProcessMessage(pMessage);
+	TSceneNode::ProcessMessage(Message);
 }
 
 

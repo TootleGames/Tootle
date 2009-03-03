@@ -82,14 +82,11 @@ SyncBool TLRender::Platform::Screen::Init()
 		}
 
 		// The window has changed.  Notify to all subscribers.
-		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("SCREEN");
+		TLMessaging::TMessage Message("SCREEN");
 
-		if(pMessage.IsValid())
-		{
-			TRef change = "NEW";
-			pMessage->Write(change);
-			PublishMessage(pMessage);
-		}
+		TRef change = "NEW";
+		Message.Write(change);
+		PublishMessage(Message);
 	}
 
 	//	failed to be created

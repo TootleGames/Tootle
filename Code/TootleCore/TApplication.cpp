@@ -195,10 +195,10 @@ SyncBool TApplication::Shutdown()
 //-----------------------------------------------------------
 //	process messages
 //-----------------------------------------------------------
-void TApplication::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TApplication::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	
-	TManager::ProcessMessage(pMessage);
+	TManager::ProcessMessage(Message);
 }
 
 
@@ -225,10 +225,9 @@ SyncBool TApplication::CreateGameObject()
 		
 		// Send a message to the new game object to initialise
 		// NOTE: Currently asume this happens in a frame so may need to cater for it occuring over a number of frames
-		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage(TLCore::InitialiseRef);
+		TLMessaging::TMessage Message(TLCore::InitialiseRef);
 		
-		if(pMessage)
-			PublishMessage(pMessage);
+		PublishMessage(Message);
 		
 		/*
 		 // NOTE: I'm not sure this is a good plan.  The managers list in the core manager
@@ -258,10 +257,9 @@ SyncBool TApplication::DestroyGameObject()
 	
 	// Send a shutdown message to the game object
 	// NOTE: Currently asume this happens in a frame so may need to cater for it occuring over a number of frames
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage(TLCore::ShutdownRef);
+	TLMessaging::TMessage Message(TLCore::ShutdownRef);
 	
-	if(pMessage)
-		PublishMessage(pMessage);
+	PublishMessage(Message);
 			
 	m_pGame = NULL;
 	
@@ -279,10 +277,10 @@ SyncBool TApplication::DestroyGameObject()
 //--------------------------------------------------
 void TApplication::OnOptionChanged(TRefRef OptionRef)
 {
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("OptChanged");
-	pMessage->Write( OptionRef );
+	TLMessaging::TMessage Message("OptChanged");
+	Message.Write( OptionRef );
 	
-	PublishMessage( pMessage );
+	PublishMessage( Message );
 }
 
 

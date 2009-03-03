@@ -148,17 +148,14 @@ void TInputManager::RemoveAllDevices()
 		TLInput::TInputDevice& Device = *ElementAt(uIndex);
 
 		// Send a message to say the device is being removed
-		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Input");
+		TLMessaging::TMessage Message("Input");
 
-		if(pMessage.IsValid())
-		{
-			pMessage->AddChannelID("DEVICE");								// device information message
-			pMessage->AddChildAndData("STATE", "REMOVED");			// state change
-			pMessage->AddChildAndData("DEVID", Device.GetDeviceRef() );		// device ref 
-			pMessage->AddChildAndData("TYPE", Device.GetDeviceType() );				// device type
+		Message.AddChannelID("DEVICE");								// device information message
+		Message.AddChildAndData("STATE", "REMOVED");			// state change
+		Message.AddChildAndData("DEVID", Device.GetDeviceRef() );		// device ref 
+		Message.AddChildAndData("TYPE", Device.GetDeviceType() );				// device type
 
-			PublishMessage(pMessage);
-		}
+		PublishMessage(Message);
 	}
 
 	Empty();
@@ -176,14 +173,14 @@ TInputDevice* TInputManager::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 
 
 
-void TInputManager::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TInputManager::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(pMessage->GetMessageRef() == "SCREEN")
+	if(Message.GetMessageRef() == "SCREEN")
 	{
 		TRef change;
 		TRef test = "NEW";
 
-		if(pMessage->Read(change))
+		if(Message.Read(change))
 		{
 			if(change == test)
 				RemoveAllDevices();
@@ -194,10 +191,10 @@ void TInputManager::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 	}
 
 	// Relay message to all subscribers
-	PublishMessage(pMessage);
+	PublishMessage(Message);
 
 	// Process base manager messages
-	TManager::ProcessMessage(pMessage);
+	TManager::ProcessMessage(Message);
 }
 
 

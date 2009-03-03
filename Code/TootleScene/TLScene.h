@@ -7,6 +7,6 @@ namespace TLScene
 {
 	class TSceneNode;
 
-//	TRef	CreateNode(TRefRef InstanceRef,TRefRef TypeRef,TPtr<TLScene::TSceneNode> pParentNode=NULL,TPtr<TLMessaging::TMessage> pInitMessage=NULL);
+//	TRef	CreateNode(TRefRef InstanceRef,TRefRef TypeRef,TPtr<TLScene::TSceneNode> pParentNode=NULL,TLMessaging::TMessage& pInitMessage=NULL);
 }
 

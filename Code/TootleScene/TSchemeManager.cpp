@@ -215,16 +215,16 @@ void TSchemeManager::UnloadAllSchemes()
 	}
 }
 
-void TSchemeManager::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TSchemeManager::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	TRef MessageRef = pMessage->GetMessageRef();
+	TRef MessageRef = Message.GetMessageRef();
 
 	// Handle request update messages
 	if(MessageRef == "LOAD")
 	{
 		TRef SchemeRef;
 		
-		if(pMessage->ImportData("SCHEME", SchemeRef))
+		if(Message.ImportData("SCHEME", SchemeRef))
 		{
 			// If complete then add the scheme to our list of instanced schemes
 			// and remove from the schemeupdate list
@@ -242,7 +242,7 @@ void TSchemeManager::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 		// and remove from the schemeupdate list
 		TRef SchemeRef;
 		
-		if(pMessage->ImportData("SCHEME", SchemeRef))
+		if(Message.ImportData("SCHEME", SchemeRef))
 		{
 			// If complete then add the scheme to our list of instanced schemes
 			// and remove from the schemeupdate list			
@@ -254,7 +254,7 @@ void TSchemeManager::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 		return;
 	}
 	
-	TManager::ProcessMessage(pMessage);
+	TManager::ProcessMessage(Message);
 }
 
 
@@ -299,17 +299,14 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Init::Update()
 			TLDebug_Break("Loaded asset is not a scheme");
 
 			// Broadcast message to say we are done loading - effectively bail out
-			TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("LOAD");
+			TLMessaging::TMessage Message("LOAD");
 			
-			if(pMessage)
+			TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
+			
+			if(pRequest)
 			{
-				TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
-				
-				if(pRequest)
-				{
-					pMessage->ExportData("SCHEME", pRequest->GetSchemeRef());
-					pRequest->PublishMessage(pMessage);
-				}
+				Message.ExportData("SCHEME", pRequest->GetSchemeRef());
+				pRequest->PublishMessage(Message);
 			}
 
 			return TRef();
@@ -344,17 +341,14 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Loading::Update()
 		TLDebug_Break("Failed to instance scheme node");
 
 		// Broadcast message to say we are done loading - effectively bail out
-		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("LOAD");
+		TLMessaging::TMessage Message("LOAD");
 		
-		if(pMessage)
+		TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
+		
+		if(pRequest)
 		{
-			TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
-			
-			if(pRequest)
-			{
-				pMessage->ExportData("SCHEME", pRequest->GetSchemeRef());
-				pRequest->PublishMessage(pMessage);
-			}
+			Message.ExportData("SCHEME", pRequest->GetSchemeRef());
+			pRequest->PublishMessage(Message);
 		}
 
 		return TRef();
@@ -382,15 +376,12 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Loading::Update()
 	// solutions that are built into the system rather than this sort of 'hack'
 
 	// Broadcast message to say we are done loading
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("LOAD");
+	TLMessaging::TMessage Message("LOAD");
 	
-	if(pMessage)
+	if(pRequest)
 	{
-		if(pRequest)
-		{
-			pMessage->ExportData("SCHEME", pRequest->GetSchemeRef());
-			pRequest->PublishMessage(pMessage);
-		}
+		Message.ExportData("SCHEME", pRequest->GetSchemeRef());
+		pRequest->PublishMessage(Message);
 	}
 
 	// All done	
@@ -408,17 +399,14 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_UnLoading::Update()
 	
 	
 	// Broadcast message to say we are done loading
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("UNLOAD");
+	TLMessaging::TMessage Message("UNLOAD");
 	
-	if(pMessage)
+	TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
+	
+	if(pRequest)
 	{
-		TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
-		
-		if(pRequest)
-		{
-			pMessage->ExportData("SCHEME", pRequest->GetSchemeRef());
-			pRequest->PublishMessage(pMessage);
-		}
+		Message.ExportData("SCHEME", pRequest->GetSchemeRef());
+		pRequest->PublishMessage(Message);
 	}
 	
 	// All done

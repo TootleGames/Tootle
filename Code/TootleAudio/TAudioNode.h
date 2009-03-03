@@ -62,7 +62,7 @@ class TLAudio::TAudioNode : public TLGraph::TGraphNode<TAudioNode>, public TLMat
 public:
 	TAudioNode(TRefRef NodeRef,TRefRef TypeRef);
 	
-	virtual void			Initialise(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void			Initialise(TLMessaging::TMessage& Message);
 	virtual void 			Update(float fTimestep);					
 	virtual void			Shutdown();									
 			
@@ -95,7 +95,7 @@ public:
 	Bool					SetAudioAssetRef(TRefRef AssetRef);
 
 protected:
-	virtual void		ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void		ProcessMessage(TLMessaging::TMessage& Message);
 
 private:
 	

@@ -16,7 +16,7 @@ public:
 	FORCEINLINE Bool	UnsubscribeFrom(TPublisher* pPublisher)			{	return pPublisher->Unsubscribe(this);	}
 
 protected:
-	virtual void		ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage) = 0;
+	virtual void		ProcessMessage(TLMessaging::TMessage& Message) = 0;
 
 private:
 	FORCEINLINE Bool	AddPublisher(TPublisher* pPublisher)		{	return m_Publishers.AddUnique(pPublisher) != -1;	}

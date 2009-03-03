@@ -15,26 +15,23 @@ TLRender::TRenderNodeText::TRenderNodeText(TRefRef RenderNodeRef,TRefRef TypeRef
 //---------------------------------------------------------
 //	text render node init
 //---------------------------------------------------------
-void TLRender::TRenderNodeText::Initialise(TPtr<TLMessaging::TMessage>& pMessage)
+void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 {
 	//	read init data
-	if ( pMessage.IsValid() )
+	//	import font - if one specified then load
+	if ( Message.ImportData("FontRef", m_FontRef ) )
 	{
-		//	import font - if one specified then load
-		if ( pMessage->ImportData("FontRef", m_FontRef ) )
-		{
-			TLAsset::LoadAsset( m_FontRef );
-		}
+		TLAsset::LoadAsset( m_FontRef );
+	}
 
-		//	import text - if we do, make sure we make a note the glyphs need building
-		if ( pMessage->ImportDataString("Text", m_Text ) )
-		{
-			m_GlyphsChanged = TRUE;
-		}
+	//	import text - if we do, make sure we make a note the glyphs need building
+	if ( Message.ImportDataString("Text", m_Text ) )
+	{
+		m_GlyphsChanged = TRUE;
 	}
 
 	//	do inherited init
-	TRenderNode::Initialise( pMessage );
+	TRenderNode::Initialise( Message );
 }
 
 //--------------------------------------------------------------------

@@ -5,9 +5,9 @@
 /*
 	Process basic messages a manager will receive
 */
-void TManager::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TManager::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	TRefRef MessageRef = pMessage->GetMessageRef();
+	TRefRef MessageRef = Message.GetMessageRef();
 
 	if ( MessageRef == TLCore::InitialiseRef )
 	{
@@ -34,8 +34,8 @@ void TManager::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 		//	get timestep
 		float ThisTimestep = 0.f;
 		float fThisTimeStepModifier = 1.0f;
-		pMessage->ImportData( TLCore::TimeStepRef, ThisTimestep );
-		pMessage->ImportData( TLCore::TimeStepModRef, fThisTimeStepModifier );
+		Message.ImportData( TLCore::TimeStepRef, ThisTimestep );
+		Message.ImportData( TLCore::TimeStepModRef, fThisTimeStepModifier );
 		
 		// Check to see if this manager uses the modifier.  If so apply it tot he timestep now
 		//if()
@@ -73,15 +73,15 @@ void TManager::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 	{
 		// Event channel changes
 		TRef refChange;
-		pMessage->Read(refChange);
+		Message.Read(refChange);
 		
 		if(refChange == "Added")
 		{
 			TRef refPublisherID;
 			TRef refChannelID;
 			
-			pMessage->Read(refPublisherID);
-			pMessage->Read(refChannelID);
+			Message.Read(refPublisherID);
+			Message.Read(refChannelID);
 		
 			OnEventChannelAdded(refPublisherID, refChannelID);
 		}
@@ -113,16 +113,13 @@ void TManager::SetState(TLManager::ManagerState NewState)
 		m_ManagerState = NewState; 
 
 		// Broadcast a message telling things the managers state has changed
-		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Manager");
+		TLMessaging::TMessage Message("Manager");
 
-		if(pMessage.IsValid())
-		{
-			pMessage->SetSenderID(GetManagerRef());
-			pMessage->AddChannelID("STATECHANGE");
+		Message.SetSenderID(GetManagerRef());
+		Message.AddChannelID("STATECHANGE");
 
-			pMessage->Write(NewState);
-			PublishMessage( pMessage );
-		}
+		Message.Write(NewState);
+		PublishMessage( Message );
 	}
 }
 

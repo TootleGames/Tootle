@@ -8,12 +8,12 @@
 
 using namespace TLInput;
 
-void TInputSensor::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TInputSensor::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(pMessage->HasChannelID(m_SensorRef))
+	if(Message.HasChannelID(m_SensorRef))
 	{
 		float fValue;
-		if ( pMessage->Read(fValue) )
+		if ( Message.Read(fValue) )
 			Process(fValue);
 	}
 }
@@ -43,22 +43,19 @@ void TInputSensor::Process(float fRawValue)
 		TLDebug_Print( Debug_SensorString );
 #endif
 		
-		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Input");
+		TLMessaging::TMessage Message("Input");
 
 		// Relay message to all subscribers
-		if(pMessage.IsValid())
-		{
-			pMessage->Write(fValue);
+		Message.Write(fValue);
 
-			// Add the raw data to the message - for things that may need access to this information
-			pMessage->AddChildAndData("RAWDATA", fRawValue);
+		// Add the raw data to the message - for things that may need access to this information
+		Message.AddChildAndData("RAWDATA", fRawValue);
 
-			// Add the sensor type so things know what type of sensor sent the information
-			//pMessage->AddChildAndData("SENSOR", m_Type);
-					
-			PublishMessage(pMessage);
+		// Add the sensor type so things know what type of sensor sent the information
+		//Message.AddChildAndData("SENSOR", m_Type);
+				
+		PublishMessage(Message);
 
-			m_fValue = fValue;
-		}
+		m_fValue = fValue;
 	}
 }

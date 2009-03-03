@@ -15,9 +15,9 @@ namespace TLMessaging
 class TLMessaging::TRelay : public TPublisher, public TSubscriber
 {
 protected:
-	virtual void				ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+	virtual void				ProcessMessage(TLMessaging::TMessage& Message)
 	{
 		// Relay message to all subscribers
-		PublishMessage(pMessage);
+		PublishMessage(Message);
 	}
 };

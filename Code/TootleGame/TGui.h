@@ -65,7 +65,7 @@ public:
 
 protected:
 	virtual Bool				Update();											//	update routine - return FALSE if we don't need updates any more
-	virtual void				ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);	//	
+	virtual void				ProcessMessage(TLMessaging::TMessage& Message);	//	
 	virtual SyncBool			ProcessClick(const TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TPtr<TLRender::TRenderNode>& pRenderNode);	//	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
 	void						SendActionMessage(Bool ActionDown,float RawData);	//	when click has been validated action message is sent to subscribers
 	virtual void				GetRenderNodes(TArray<TRef>& RenderNodeArray);		//	get array of all the render nodes we're using

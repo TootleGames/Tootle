@@ -186,9 +186,9 @@ Bool TLGame::TAssetBrowser::ExecuteCommand(TRefRef MenuCommand)
 //----------------------------------------------
 //	handle messages to and from the menu system, from input system etc
 //----------------------------------------------
-void TLGame::TAssetBrowser::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TLGame::TAssetBrowser::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	TRefRef MessageRef = pMessage->GetMessageRef();
+	TRefRef MessageRef = Message.GetMessageRef();
 
 	//	update animations
 	if ( MessageRef == "Update" )
@@ -220,7 +220,7 @@ void TLGame::TAssetBrowser::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage
 	}
 	
 	//	do default message handling
-	TLMenu::TMenuController::ProcessMessage( pMessage );
+	TLMenu::TMenuController::ProcessMessage( Message );
 }
 
 

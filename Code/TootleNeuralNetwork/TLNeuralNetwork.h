@@ -33,7 +33,7 @@ public:
 	inline float		GetThreshold()			const	{ return m_fThreshold; }
 
 protected:
-	virtual void	ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void	ProcessMessage(TLMessaging::TMessage& Message);
 
 private:
 //	TRef					m_refNeuronID;
@@ -59,28 +59,25 @@ public:
 	  inline void		SetWeight(float fWeight)					{ m_fWeight = fWeight; }
 
 protected:
-	virtual void	ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+	virtual void	ProcessMessage(TLMessaging::TMessage& Message)
 	{
 		// If we receive a pulse multiply the pulse by our weighting and send a new message
-		if(pMessage->GetMessageRef() == "PULSE")
+		if(Message.GetMessageRef() == "PULSE")
 		{
 			float fInput = 0.0f;
 
-			if(pMessage->Read(fInput))
+			if(Message.Read(fInput))
 			{
 				
 				// NOTE: This may not want to be done immediately.  If there are any circular links we cold end up 
 				// getting stuck in a BIG loop and overflow the stack.  Assuming all Axons end up getting
 				// linked to neurons we should be OK as the neurons do not process the data immediately
-				TPtr<TLMessaging::TMessage> pNewMessage = new TLMessaging::TMessage("PULSE");
-				if ( pNewMessage.IsValid() )
-				{
+				TLMessaging::TMessage Message("PULSE");
 				
-					float fWeightedPulse = fInput * GetWeight();
-					pNewMessage->Write(fWeightedPulse);
+				float fWeightedPulse = fInput * GetWeight();
+				Message.Write(fWeightedPulse);
 
-					PublishMessage(pNewMessage);
-				}
+				PublishMessage(Message);
 			}
 		}
 	}

@@ -31,7 +31,7 @@ public:
 	virtual SyncBool			Update(float fTimeStep);
 	virtual SyncBool			Shutdown();
 	
-	virtual void				ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);	//	process messages
+	virtual void				ProcessMessage(TLMessaging::TMessage& Message);	//	process messages
 	virtual void				OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
 
 	const TLMaths::TAngle&		GetScreenAngle();			//	returns the screen angle for the FIRST screen. this is just to make it easier and saves us fetching the right screen

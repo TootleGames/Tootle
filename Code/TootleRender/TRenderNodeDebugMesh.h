@@ -27,7 +27,7 @@ public:
 	virtual TPtr<TLAsset::TMesh>&	GetMeshAsset()		{	return m_pDebugMesh;	}
 
 protected:
-	virtual void			Initialise(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void			Initialise(TLMessaging::TMessage& Message);
 
 public:
 	TPtr<TLAsset::TMesh>	m_pDebugMesh;

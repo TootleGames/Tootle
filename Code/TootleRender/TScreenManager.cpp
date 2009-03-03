@@ -55,9 +55,9 @@ TScreen* TScreenManager::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 //----------------------------------------------------------
 //	render screens
 //----------------------------------------------------------
-void TScreenManager::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TScreenManager::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	TRefRef MessageRef = pMessage->GetMessageRef();
+	TRefRef MessageRef = Message.GetMessageRef();
 
 	if ( MessageRef == "Render" )
 	{
@@ -69,7 +69,7 @@ void TScreenManager::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 		}
 	}
 
-	TManager::ProcessMessage( pMessage );
+	TManager::ProcessMessage( Message );
 }
 
 
@@ -99,9 +99,9 @@ SyncBool TScreenManager::Update(float fTimeStep)
 		if ( ScreenUpdate == SyncFalse )
 		{
 			//	create message
-			TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Deleted", "ScreenManager" );
-			pMessage->AddChannelID("ScreenManager");
-			pMessage->AddChildAndData("ScreenRef", pScreen->GetRef() );
+			TLMessaging::TMessage Message("Deleted", "ScreenManager" );
+			Message.AddChannelID("ScreenManager");
+			Message.AddChildAndData("ScreenRef", pScreen->GetRef() );
 
 			//	shutdown and delete
 			pScreen->Shutdown();
@@ -109,7 +109,7 @@ SyncBool TScreenManager::Update(float fTimeStep)
 			TObjectFactory<TLRender::TScreen>::RemoveAt( i );
 
 			//	send out message
-			PublishMessage( pMessage );
+			PublishMessage( Message );
 		}
 	}
 

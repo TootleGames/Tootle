@@ -14,9 +14,9 @@ TAudioNode::TAudioNode(TRefRef NodeRef,TRefRef TypeRef) :
 }
 
 // Initialise routine
-void TAudioNode::Initialise(TPtr<TLMessaging::TMessage>& pMessage)	
+void TAudioNode::Initialise(TLMessaging::TMessage& Message)	
 {
-	TLGraph::TGraphNode<TAudioNode>::Initialise(pMessage);
+	TLGraph::TGraphNode<TAudioNode>::Initialise(Message);
 }
 
 // Main node update called once per frame
@@ -46,11 +46,11 @@ void TAudioNode::Shutdown()
 	TLGraph::TGraphNode<TAudioNode>::Shutdown();
 }
 
-void TAudioNode::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TAudioNode::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(pMessage->GetMessageRef() == "AUDIO")
+	if(Message.GetMessageRef() == "AUDIO")
 	{
-		if(pMessage->HasChannelID("STOP"))
+		if(Message.HasChannelID("STOP"))
 		{
 			if(!m_AudioFlags.IsSet(Release))
 			{
@@ -60,7 +60,7 @@ void TAudioNode::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 				//if(m_AudioFlags.IsSet(AutoRelease)
 				{
 					TRef AudioRef;
-					pMessage->Read(AudioRef);
+					Message.Read(AudioRef);
 
 					if(AudioRef == GetNodeRef())
 					{
@@ -75,7 +75,7 @@ void TAudioNode::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 	}
 
 	// Pass the message onto the super class
-	TLGraph::TGraphNode<TAudioNode>::ProcessMessage(pMessage);
+	TLGraph::TGraphNode<TAudioNode>::ProcessMessage(Message);
 }
 
 

@@ -38,7 +38,7 @@ protected:
 
 	virtual TPtr<TLMenu::TMenu>		CreateMenu(TRefRef MenuRef);
 	virtual Bool					ExecuteCommand(TRefRef MenuCommand);
-	virtual void					ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void					ProcessMessage(TLMessaging::TMessage& Message);
 
 	void							CreateAssetRenderMenu();
 	void							CloseAssetRenderMenu();

@@ -24,15 +24,12 @@ void	TNeuron::Update()
 	if(fSum > m_fThreshold)
 	{
 		// Perform action by sending message to allsubscribers
-		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("PULSE");
+		TLMessaging::TMessage Message("PULSE");
 
-		if(pMessage)
-		{
-			// TODO: Cater for prohibitive neurons here
-			//pMessage->SetSenderID(GetNeuronID());
-			pMessage->Write(1.0f);
-			PublishMessage(pMessage);
-		}
+		// TODO: Cater for prohibitive neurons here
+		//Message.SetSenderID(GetNeuronID());
+		Message.Write(1.0f);
+		PublishMessage(Message);
 	}
 
 	/*
@@ -49,14 +46,14 @@ void	TNeuron::Update()
 
 /*
 */
-void TNeuron::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TNeuron::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	// Check the message coming in and if it is a pulse then add the pulse to our inputs
-	if(pMessage->GetMessageRef() == "PULSE")
+	if(Message.GetMessageRef() == "PULSE")
 	{
 		float fInput = 0.0f;
 
-		if(pMessage->Read(fInput))
+		if(Message.Read(fInput))
 			m_fInputs.Add(fInput);
 	}
 }

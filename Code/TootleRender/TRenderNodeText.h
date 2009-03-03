@@ -46,7 +46,7 @@ class TLRender::TRenderNodeText : public TLRender::TRenderNode
 public:
 	TRenderNodeText(TRefRef RenderNodeRef,TRefRef TypeRef);
 
-	virtual void			Initialise(TPtr<TLMessaging::TMessage>& pMessage);	//	generic render node init
+	virtual void			Initialise(TLMessaging::TMessage& Message);	//	generic render node init
 
 	TRefRef					GetFontRef() const					{	return m_FontRef;	}
 	void					SetFontRef(TRefRef FontRef)			{	m_FontRef = FontRef;	}

@@ -79,7 +79,7 @@ public:
 	TRenderNode(TRefRef RenderNodeRef=TRef(),TRefRef TypeRef=TRef());
 	virtual ~TRenderNode()					{};
 
-	virtual void							Initialise(TPtr<TLMessaging::TMessage>& pMessage);	//	generic render node init
+	virtual void							Initialise(TLMessaging::TMessage& Message);	//	generic render node init
 	virtual void							Shutdown();									//	clean-up any TPtrs back to us so we will be deallocated
 
 	FORCEINLINE const TLMaths::TTransform&	GetTransform() const						{	return m_Transform;	}

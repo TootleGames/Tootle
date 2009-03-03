@@ -181,15 +181,15 @@ TPtr<TLMenu::TMenuItem> TLMenu::TMenuController::GetMenuItem(TRefRef MenuItemRef
 //----------------------------------------------
 //	
 //----------------------------------------------
-void TLMenu::TMenuController::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TLMenu::TMenuController::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	TRefRef MessageRef = pMessage->GetMessageRef();
+	TRefRef MessageRef = Message.GetMessageRef();
 	
 	//	open new menu
 	if ( MessageRef == "Open" )
 	{
 		TRef MenuRef;
-		if ( pMessage->ImportData( "MenuRef", MenuRef ) )
+		if ( Message.ImportData( "MenuRef", MenuRef ) )
 		{
 			OpenMenu( MenuRef );
 		}
@@ -214,7 +214,7 @@ void TLMenu::TMenuController::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessa
 	if ( MessageRef == "Highlight" )
 	{
 		TRef MenuItemRef;
-		if ( pMessage->ImportData( "ItemRef", MenuItemRef ) )
+		if ( Message.ImportData( "ItemRef", MenuItemRef ) )
 		{
 			HighlightMenuItem( MenuItemRef );
 		}
@@ -225,7 +225,7 @@ void TLMenu::TMenuController::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessa
 	if ( MessageRef == "Execute" )
 	{
 		TRef MenuItemRef;
-		if ( pMessage->ImportData( "ItemRef", MenuItemRef ) )
+		if ( Message.ImportData( "ItemRef", MenuItemRef ) )
 		{
 			ExecuteMenuItem( MenuItemRef );
 		}
@@ -241,8 +241,8 @@ void TLMenu::TMenuController::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessa
 //----------------------------------------------
 void TLMenu::TMenuController::OnMenuOpen()
 {
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Open");
-	PublishMessage( pMessage );
+	TLMessaging::TMessage Message("Open");
+	PublishMessage( Message );
 }
 
 //----------------------------------------------
@@ -250,8 +250,8 @@ void TLMenu::TMenuController::OnMenuOpen()
 //----------------------------------------------
 void TLMenu::TMenuController::OnMenuClose()
 {
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Close");
-	PublishMessage( pMessage );
+	TLMessaging::TMessage Message("Close");
+	PublishMessage( Message );
 }
 
 
@@ -260,8 +260,8 @@ void TLMenu::TMenuController::OnMenuClose()
 //----------------------------------------------
 void TLMenu::TMenuController::OnMenuCloseAll()
 {
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("CloseAll");
-	PublishMessage( pMessage );
+	TLMessaging::TMessage Message("CloseAll");
+	PublishMessage( Message );
 }
 
 
@@ -270,8 +270,8 @@ void TLMenu::TMenuController::OnMenuCloseAll()
 //----------------------------------------------
 void TLMenu::TMenuController::OnMenuItemHighlighted()
 {
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Highlight");
-	PublishMessage( pMessage );
+	TLMessaging::TMessage Message("Highlight");
+	PublishMessage( Message );
 }
 
 
@@ -280,12 +280,12 @@ void TLMenu::TMenuController::OnMenuItemHighlighted()
 //----------------------------------------------
 void TLMenu::TMenuController::OnMenuItemExecuted(TRefRef MenuCommand)
 {
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Execute");
+	TLMessaging::TMessage Message("Execute");
 	
 	//	write the command into the message
-	pMessage->ExportData("Command", MenuCommand );
+	Message.ExportData("Command", MenuCommand );
 
-	PublishMessage( pMessage );
+	PublishMessage( Message );
 }
 
 

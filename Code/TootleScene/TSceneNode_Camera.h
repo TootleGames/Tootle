@@ -44,11 +44,11 @@ public:
 
 protected:
 
-	virtual void	Initialise(TPtr<TLMessaging::TMessage>& pMessage);	//	Initialise message - made into virtual func as it's so commonly used
+	virtual void	Initialise(TLMessaging::TMessage& Message);	//	Initialise message - made into virtual func as it's so commonly used
 
 	virtual void	Update(float fTimeStep);
 
-	virtual void	ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void	ProcessMessage(TLMessaging::TMessage& Message);
 	
 	void			UpdateRenderTargetCamera(); // DB - TEMP UNTIL I ADD A CAMERA MANAGER.
 
@@ -98,7 +98,7 @@ public:
 	virtual TRef			Update();
 	virtual void			OnEnd(TRefRef NextMode);	
 protected:
-	virtual void		ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void		ProcessMessage(TLMessaging::TMessage& Message);
 
 };
 

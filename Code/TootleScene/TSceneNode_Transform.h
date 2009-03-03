@@ -21,7 +21,7 @@ public:
 	{
 	}
 
-	virtual void				Initialise(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void				Initialise(TLMessaging::TMessage& Message);
 	virtual Bool				HasTransform()	{ return TRUE; }
 
 	FORCEINLINE float3			GetPosition() const						{	float3 Pos( 0,0,0 );	GetPosition( Pos );	return Pos;	}
@@ -36,7 +36,7 @@ public:
 	virtual float				GetDistanceTo(const TLMaths::TLine& Line);
 
 protected:
-	virtual void				ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void				ProcessMessage(TLMessaging::TMessage& Message);
 
 	virtual void				Translate(float3 vTranslation);
 	//virtual void				Rotate(float3 vRotation);

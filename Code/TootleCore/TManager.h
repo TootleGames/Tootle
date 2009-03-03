@@ -54,7 +54,7 @@ protected:
 		return SyncTrue;
 	}
 
-	virtual void	ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void	ProcessMessage(TLMessaging::TMessage& Message);
 
 	void			SetState(TLManager::ManagerState NewState);
 	

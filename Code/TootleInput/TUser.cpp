@@ -65,16 +65,13 @@ Bool TUserManager::RegisterUser(TRef refUserID)
 		if(SubscribeTo(pUser))
 		{
 			// Broadcast message to say a new user has been added to the system
-			TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("USER");
+			TLMessaging::TMessage Message("USER");
 
-			if(pMessage )
-			{
-				pMessage->AddChannelID("USER");			// User change channel
-				pMessage->Write("ADDED");				// User added message
-				pMessage->Write(pUser.GetObject());		// User being added
+			Message.AddChannelID("USER");			// User change channel
+			Message.Write("ADDED");				// User added message
+			Message.Write(pUser.GetObject());		// User being added
 
-				PublishMessage(pMessage);
-			}
+			PublishMessage(Message);
 
 			return TRUE;
 		}
@@ -93,16 +90,13 @@ Bool TUserManager::UnregisterUser(TRef refUserID)
 	TPtr<TUser> pUser = m_Users.ElementAt(sUserIndex);
 
 	// Broadcast message to say a user is being removed from the system
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("USER");
+	TLMessaging::TMessage Message("USER");
 
-	if(pMessage )
-	{
-		pMessage->AddChannelID("USER");			// User change channel
-		pMessage->Write("REMOVED");				// User removed message
-		pMessage->Write(pUser.GetObject());		// User being removed
+	Message.AddChannelID("USER");			// User change channel
+	Message.Write("REMOVED");				// User removed message
+	Message.Write(pUser.GetObject());		// User being removed
 
-		PublishMessage(pMessage);
-	}
+	PublishMessage(Message);
 
 	// Remove the user
 	return m_Users.RemoveAt(sUserIndex);
@@ -116,16 +110,13 @@ void TUserManager::UnregisterAllUsers()
 		TPtr<TUser> pUser = m_Users.ElementAt((s32)uIndex);
 
 		// Broadcast message to say a user is being removed from the system
-		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("USER");
+		TLMessaging::TMessage Message("USER");
 
-		if(pMessage )
-		{
-			pMessage->AddChannelID("USER");			// User change channel
-			pMessage->Write("REMOVED");				// User removed message
-			pMessage->Write(pUser.GetObject());		// User being removed
+		Message.AddChannelID("USER");			// User change channel
+		Message.Write("REMOVED");				// User removed message
+		Message.Write(pUser.GetObject());		// User being removed
 
-			PublishMessage(pMessage);
-		}
+		PublishMessage(Message);
 	}
 
 	// Remove all user objects
@@ -162,19 +153,19 @@ TPtr<TUser> TUserManager::FindUser(TRef refUserID)
 }
 
 
-void TUserManager::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TUserManager::ProcessMessage(TLMessaging::TMessage& Message)
 {
 
-	TRefRef MessageRef = pMessage->GetMessageRef();
+	TRefRef MessageRef = Message.GetMessageRef();
 
 	if(MessageRef == "INPUT")
 	{
-		if(pMessage->HasChannelID("DEVICE"))
+		if(Message.HasChannelID("DEVICE"))
 		{
 			// Device message form the input system
 			// Check for if the device has been added or removed
 			TRef refState;
-			if(pMessage->ImportData("STATE", refState))
+			if(Message.ImportData("STATE", refState))
 			{
 				if(refState == TRef("ADDED"))
 				{
@@ -197,10 +188,10 @@ void TUserManager::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 
 
 	// Do manager based message checking
-	TManager::ProcessMessage(pMessage);
+	TManager::ProcessMessage(Message);
 
 	// Relay the message on
-	TRelay::ProcessMessage(pMessage);
+	TRelay::ProcessMessage(Message);
 }
 
 
@@ -236,19 +227,19 @@ TUser::TUser(TRef refUserID) :
 }
 
 
-void TUser::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TUser::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	// Add the user ID to the message so things know 'who' it came from
-	pMessage->AddChildAndData("USERID", m_refUserID);
+	Message.AddChildAndData("USERID", m_refUserID);
 
 	// Update the cursor position to ensure it's the latest one before being passed on
 	UpdateCursorPosition();
 	
 	// Add the users cursor information to make it quicker to access
-	pMessage->AddChildAndData("CURSOR", m_CursorPosition);
+	Message.AddChildAndData("CURSOR", m_CursorPosition);
 
 	// Relay the message on
-	TRelay::ProcessMessage(pMessage);
+	TRelay::ProcessMessage(Message);
 }
 
 

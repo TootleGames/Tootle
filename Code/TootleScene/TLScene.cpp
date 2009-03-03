@@ -7,7 +7,7 @@
 //	create a new node on the scene graph and initialise it - returns 
 //	the new node's ref if successfully created and added
 //-------------------------------------------------------------
-TRef TLScene::CreateNode(TRefRef InstanceRef,TRefRef TypeRef,TPtr<TLScene::TSceneNode> pParentNode,TPtr<TLMessaging::TMessage> pInitMessage)
+TRef TLScene::CreateNode(TRefRef InstanceRef,TRefRef TypeRef,TPtr<TLScene::TSceneNode> pParentNode,TLMessaging::TMessage& pInitMessage)
 {
 	//	Create a new node via the scenegraph
 	TPtr<TSceneNode> pNode = TLScene::g_pScenegraph->CreateInstance( InstanceRef, TypeRef );
@@ -17,7 +17,7 @@ TRef TLScene::CreateNode(TRefRef InstanceRef,TRefRef TypeRef,TPtr<TLScene::TScen
 	//	make up initialise message if we havent provided one
 	if ( !pInitMessage )
 	{
-		pInitMessage = new TLMessaging::TMessage( TLCore::InitialiseRef );
+		pInitMessage = new TLMessaging::TMessage Message( TLCore::InitialiseRef );
 	}
 
 	//	send init message

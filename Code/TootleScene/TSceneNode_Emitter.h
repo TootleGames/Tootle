@@ -15,7 +15,7 @@ public:
 	TSceneNode_Emitter(TRef refNodeID,TRefRef TypeRef);
 
 protected:
-	virtual void				ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void				ProcessMessage(TLMessaging::TMessage& Message);
 	virtual void 				Update(float fTimestep);
 
 private:

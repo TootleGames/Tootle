@@ -28,7 +28,7 @@ public:
 protected:
 	virtual void 	Update(float fTimestep);	//	base scene node update
 
-	virtual void	ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void	ProcessMessage(TLMessaging::TMessage& Message);
 
 protected:
 	TRef			m_NodeTypeRef;		//	node type ref used in factory

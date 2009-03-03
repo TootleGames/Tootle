@@ -74,7 +74,7 @@ protected:
 	
 	virtual void				AddModes();
 	
-	virtual void				ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);	//	process messages
+	virtual void				ProcessMessage(TLMessaging::TMessage& Message);	//	process messages
 	
 	virtual void				OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
 

@@ -44,7 +44,7 @@ TLGame::TScreenRayTest::~TScreenRayTest()
 //-------------------------------------------------------
 //	
 //-------------------------------------------------------
-void TLGame::TScreenRayTest::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TLGame::TScreenRayTest::ProcessMessage(TLMessaging::TMessage& Message)
 {
 }
 
@@ -97,12 +97,12 @@ Bool TLGame::TScreenRayTest::CreateRenderNode(TPtr<TLRender::TRenderTarget>& pRe
 	//	create render node
 	if ( !m_RenderNodeRef.IsValid() )
 	{
-		TPtr<TLMessaging::TMessage> pInitMessage = new TLMessaging::TMessage( TLCore::InitialiseRef );
-		pInitMessage->AddChildAndData("MeshRef", m_pMesh->GetAssetRef() );
-		pInitMessage->AddChildAndData("RFSet", (u32)TLRender::TRenderNode::RenderFlags::ResetScene );
-		pInitMessage->AddChildAndData("RFSet", (u32)TLRender::TRenderNode::RenderFlags::Debug_Points );
-		pInitMessage->AddChildAndData("LineWidth", 4.f );
-		m_RenderNodeRef = TLRender::g_pRendergraph->CreateNode("ray", TRef(), pRenderTarget->GetRootRenderNodeRef(), pInitMessage );
+		TLMessaging::TMessage Message( TLCore::InitialiseRef );
+		Message.AddChildAndData("MeshRef", m_pMesh->GetAssetRef() );
+		Message.AddChildAndData("RFSet", (u32)TLRender::TRenderNode::RenderFlags::ResetScene );
+		Message.AddChildAndData("RFSet", (u32)TLRender::TRenderNode::RenderFlags::Debug_Points );
+		Message.AddChildAndData("LineWidth", 4.f );
+		m_RenderNodeRef = TLRender::g_pRendergraph->CreateNode("ray", TRef(), pRenderTarget->GetRootRenderNodeRef(), &Message );
 	}
 
 	return TRUE;

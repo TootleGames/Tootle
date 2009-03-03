@@ -13,32 +13,32 @@ TSceneNode_Emitter::TSceneNode_Emitter(TRef refNodeID,TRefRef TypeRef) :
 }
 
 
-void TSceneNode_Emitter::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TSceneNode_Emitter::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(pMessage->GetMessageRef() == "SETPROPERTIES")
+	if(Message.GetMessageRef() == "SETPROPERTIES")
 	{
 		// Set position
 		float3 vPos;
 
-		if(pMessage->ImportData("POS", vPos))
+		if(Message.ImportData("POS", vPos))
 		{
 			SetTranslate(vPos);
 		}
 
 		TRef refNodeType;
-		if(pMessage->ImportData("TYPE", refNodeType))
+		if(Message.ImportData("TYPE", refNodeType))
 		{
 			m_refNodeTypeToEmit = refNodeType;
 		}
 
-		if(pMessage->ImportData("NAME", refNodeType))
+		if(Message.ImportData("NAME", refNodeType))
 		{
 			m_refNodeIDBase = refNodeType;
 			m_refNodeIDCurrent = m_refNodeIDBase;
 		}
 
 		float fRate = 0.0f; 
-		if(pMessage->ImportData("RATE", fRate))
+		if(Message.ImportData("RATE", fRate))
 		{
 			// Invert the rate passed in due to how we calculate the amount in the update
 			// Eg if we have a rate of 3 that's interpreted as 3 per second so due to time being
@@ -47,13 +47,13 @@ void TSceneNode_Emitter::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 			m_fEmissionRate = 1.0f / fRate;	
 		}
 
-		if(pMessage->ImportData("MESH", refNodeType))
+		if(Message.ImportData("MESH", refNodeType))
 			m_refMeshToEmitFrom = refNodeType;
 	}
 
 
 	// Super class process message 
-	TSceneNode_Object::ProcessMessage(pMessage);
+	TSceneNode_Object::ProcessMessage(Message);
 }
 
 
@@ -99,21 +99,17 @@ Bool TSceneNode_Emitter::EmitObject()
 	if(pNode)
 	{
 		// Send a property set message
-		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("SETPROPERTIES");
+		TLMessaging::TMessage Message("SETPROPERTIES");
 
-		if(pMessage)
-		{
-			float3 vPos = GetEmissionPosition(); 
-			pMessage->AddChildAndData("POS", vPos);
+		float3 vPos = GetEmissionPosition(); 
+		Message.AddChildAndData("POS", vPos);
 
-			pNode->QueueMessage(pMessage);
-		}
+		pNode->QueueMessage(Message);
 
 		// Send it an initialise message
-		pMessage = new TLMessaging::TMessage(TLCore::InitialiseRef);
+		Message = TLMessaging::TMessage(TLCore::InitialiseRef);
 
-		if(pMessage)
-			pNode->QueueMessage(pMessage);
+		pNode->QueueMessage(Message);
 
 		m_refNodeIDCurrent.Increment();
 

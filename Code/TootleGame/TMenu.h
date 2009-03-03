@@ -75,7 +75,7 @@ protected:
 	TPtr<TMenuItem>		GetMenuItem(TRefRef MenuItemRef);	//	get menu item out of current menu
 
 	//	incoming events
-	virtual void		ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void		ProcessMessage(TLMessaging::TMessage& Message);
 
 	//	outgoing events
 	virtual void		OnMenuOpen();						//	moved onto new menu

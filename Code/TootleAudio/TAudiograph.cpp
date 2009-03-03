@@ -72,19 +72,12 @@ SyncBool TAudiograph::Update(float fTimeStep)
 		{
 			TRef AudioRef = refArray.ElementAt(uIndex);
 
-			TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("AUDIO");
+			TLMessaging::TMessage Message("AUDIO");
 
-			if(pMessage)
-			{
-				pMessage->AddChannelID("STOP");
-				pMessage->Write(AudioRef);
+			Message.AddChannelID("STOP");
+			Message.Write(AudioRef);
 
-				PublishMessage(pMessage);
-			}
-			else
-			{
-				TLDebug_Break("Failed to create message for audio stop event so audio may be left in memory");
-			}
+			PublishMessage(Message);
 		}
 	}
 
@@ -100,10 +93,10 @@ SyncBool TAudiograph::Shutdown()
 }
 
 
-void TAudiograph::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TAudiograph::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	// Super class process message
-	TLGraph::TGraph<TLAudio::TAudioNode>::ProcessMessage(pMessage);
+	TLGraph::TGraph<TLAudio::TAudioNode>::ProcessMessage(Message);
 }
 
 SyncBool TAudiograph::InitDevices()

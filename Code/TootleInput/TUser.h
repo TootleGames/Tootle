@@ -52,7 +52,7 @@ protected:
 	s32							FindActionIndex(TRef refActionID);
 	TPtr<TLInput::TAction>		GetAction(TRef refActionID);
 
-	virtual void				ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void				ProcessMessage(TLMessaging::TMessage& Message);
 
 	void						UpdateCursorPosition();
 
@@ -95,7 +95,7 @@ protected:
 	virtual SyncBool Update(float /*fTimeStep*/);		
 	virtual SyncBool Shutdown();
 
-	virtual void	ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void	ProcessMessage(TLMessaging::TMessage& Message);
 	virtual void	OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
 
 	// Internal user access

@@ -73,30 +73,24 @@ Bool TSceneNode_Object::CreatePhysicsNode(TRefRef PhysicsNodeType)
 	if( m_PhysicsNodeRef.IsValid() )
 		return FALSE;
 
-	TPtr<TLMessaging::TMessage> pInitMessage;
+	TLMessaging::TMessage Message( TLCore::InitialiseRef );
 
-	//	no init message? make one up
-	if ( !pInitMessage )
-	{
-		pInitMessage = new TLMessaging::TMessage( TLCore::InitialiseRef );
+	//	add transform info from this scene node
+	const TLMaths::TTransform& Transform = GetTransform();
 
-		//	add transform info from this scene node
-		const TLMaths::TTransform& Transform = GetTransform();
+	if ( Transform.HasTranslate() )
+		Message.AddChildAndData("Translate", Transform.GetTranslate() );
 
-		if ( Transform.HasTranslate() )
-			pInitMessage->AddChildAndData("Translate", Transform.GetTranslate() );
+	if ( Transform.HasScale() )
+		Message.AddChildAndData("Scale", Transform.GetScale() );
 
-		if ( Transform.HasScale() )
-			pInitMessage->AddChildAndData("Scale", Transform.GetScale() );
-
-		if ( Transform.HasRotation() )
-			pInitMessage->AddChildAndData("Rotation", Transform.GetRotation() );
-	}
+	if ( Transform.HasRotation() )
+		Message.AddChildAndData("Rotation", Transform.GetRotation() );
 
 	//	create node
 	TRef ParentNode = TRef();
 
-	m_PhysicsNodeRef = TLPhysics::g_pPhysicsgraph->CreateNode( GetNodeRef(), PhysicsNodeType, ParentNode, pInitMessage );
+	m_PhysicsNodeRef = TLPhysics::g_pPhysicsgraph->CreateNode( GetNodeRef(), PhysicsNodeType, ParentNode, &Message );
 
 	//	failed
 	if ( !m_PhysicsNodeRef.IsValid() )
@@ -114,35 +108,40 @@ Bool TSceneNode_Object::CreatePhysicsNode(TRefRef PhysicsNodeType)
 //--------------------------------------------------------
 //	Requests a render object to be created
 //--------------------------------------------------------
-Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TPtr<TLMessaging::TMessage> pInitMessage)
+Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TLMessaging::TMessage* pInitMessage)
 {
 	// [20/02/09] DB - Currently we only allow one render node to be associated with the object node
 	if( m_RenderNodeRef.IsValid() )
 		return FALSE;
 
+	//	gr: specify in params?
+	TRef RenderNodeType = TRef();
+
 	//	no init message? make one up
 	if ( !pInitMessage )
 	{
-		pInitMessage = new TLMessaging::TMessage( TLCore::InitialiseRef );
+		TLMessaging::TMessage Message( TLCore::InitialiseRef );
 
 		//	add transform info from this scene node
 		const TLMaths::TTransform& Transform = GetTransform();
 
 		if ( Transform.HasTranslate() )
-			pInitMessage->AddChildAndData("Translate", Transform.GetTranslate() );
+			Message.AddChildAndData("Translate", Transform.GetTranslate() );
 
 		if ( Transform.HasScale() )
-			pInitMessage->AddChildAndData("Scale", Transform.GetScale() );
+			Message.AddChildAndData("Scale", Transform.GetScale() );
 
 		if ( Transform.HasRotation() )
-			pInitMessage->AddChildAndData("Rotation", Transform.GetRotation() );
+			Message.AddChildAndData("Rotation", Transform.GetRotation() );
+
+		//	create node
+		m_RenderNodeRef = TLRender::g_pRendergraph->CreateNode( GetNodeRef(), RenderNodeType, ParentRenderNodeRef, &Message );
 	}
-
-	//	gr: specify in params?
-	TRef RenderNodeType = TRef();
-
-	//	create node
-	m_RenderNodeRef = TLRender::g_pRendergraph->CreateNode( GetNodeRef(), RenderNodeType, ParentRenderNodeRef, pInitMessage );
+	else
+	{
+		//	create node
+		m_RenderNodeRef = TLRender::g_pRendergraph->CreateNode( GetNodeRef(), RenderNodeType, ParentRenderNodeRef, pInitMessage );
+	}
 
 	//	failed
 	if ( !m_RenderNodeRef.IsValid() )

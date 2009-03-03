@@ -47,14 +47,14 @@ void TAction::AddParentAction(TRefRef ParentActionRef, Bool bCondition)
 }
 
 
-void TAction::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TAction::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	// Does this action have any parent actions?  If so handle those first
 
 	if(m_refParentActions.GetSize())
 	{
 		TRef refChannelID;
-		if(pMessage->ImportData("CHANNELID", refChannelID))
+		if(Message.ImportData("CHANNELID", refChannelID))
 		{
 			// Check to see if the message coming in is for a parent action
 			if(refChannelID == "ACTION")
@@ -62,7 +62,7 @@ void TAction::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 				// Get the action ID
 				TRef refActionID;
 
-				if(pMessage->Read(refActionID))
+				if(Message.Read(refActionID))
 				{
 					for(u32 uIndex = 0; uIndex < m_refParentActions.GetSize(); uIndex++)
 					{
@@ -118,7 +118,7 @@ void TAction::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 	{
 		float fRawValue = 1.0f;
 
-		if(pMessage->ImportData("RAWDATA", fRawValue))
+		if(Message.ImportData("RAWDATA", fRawValue))
 		{
 			// Assume failed
 			bActionOccured = FALSE;
@@ -154,20 +154,18 @@ void TAction::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 		TLDebug_Print(straction);
 #endif
 		// Send out a new message specifying the action ID to say this action has happened.
-		TPtr<TLMessaging::TMessage> pNewMessage = new TLMessaging::TMessage("Input");
-		if ( pNewMessage.IsValid() )
-		{
-			pNewMessage->AddChannelID("ACTION");
-			pNewMessage->Write(m_refActionID);			// The action performed
+		TLMessaging::TMessage NewMessage("Input");
 
-			TPtr<TBinaryTree> pChild = pMessage->GetChild("RAWDATA");
+		NewMessage.AddChannelID("ACTION");
+		NewMessage.Write(m_refActionID);			// The action performed
 
-			// Copy the raw data value to the new message if it exists
-			if(pChild.IsValid())
-				pNewMessage->AddChild(pChild);
+		TPtr<TBinaryTree> pChild = Message.GetChild("RAWDATA");
 
-			PublishMessage(pNewMessage);
-		}
+		// Copy the raw data value to the new message if it exists
+		if(pChild.IsValid())
+			NewMessage.AddChild(pChild);
+
+		PublishMessage(NewMessage);
 	}
 }
 

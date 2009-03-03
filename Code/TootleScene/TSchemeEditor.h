@@ -43,7 +43,7 @@ protected:
 	SyncBool		Initialise();
 	SyncBool		Shutdown();
 
-	virtual void	ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void	ProcessMessage(TLMessaging::TMessage& Message);
 
 	virtual void	OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
 
@@ -56,7 +56,7 @@ private:
 	void			CreateNodeTransformTools();
 	void			RemoveNodeTransformTools();
 
-	void			TransformSelectedNodes(TPtr<TLMessaging::TMessage>& pMessage, TransformAxis uAxis);
+	void			TransformSelectedNodes(TLMessaging::TMessage& Message, TransformAxis uAxis);
 	void			TransformSelectedNodes(float fAmount, TransformAxis uAxis);
 
 	void			TranslateSelectedNodes(float fAmount, TransformAxis uAxis);

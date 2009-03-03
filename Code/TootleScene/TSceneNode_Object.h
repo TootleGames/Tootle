@@ -49,7 +49,7 @@ protected:
 	void							DeletePhysicsNode();
 
 	FORCEINLINE Bool				CreateRenderNode(TPtr<TLRender::TRenderNode> pParentRenderNode)	{	return CreateRenderNode( pParentRenderNode ? pParentRenderNode->GetNodeRef() : TRef() );	}
-	virtual Bool					CreateRenderNode(TRefRef ParentRenderNode,TPtr<TLMessaging::TMessage> pInitMessage=NULL);
+	virtual Bool					CreateRenderNode(TRefRef ParentRenderNode,TLMessaging::TMessage* pInitMessage=NULL);
 	virtual void					OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode)	{}
 	void							DeleteRenderNode();
 

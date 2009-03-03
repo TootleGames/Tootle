@@ -66,8 +66,8 @@ protected:
 	FORCEINLINE float	GetRenderTimeStepDifference(const TLTime::TTimestampMicro& TimeNow)		{	return GetTimeStepDifference( m_LastRenderTime, TimeNow );	}	//	work out timestep for render
 	float				GetTimeStepDifference(TLTime::TTimestampMicro& LastTimestamp,const TLTime::TTimestampMicro& TimeNow);	//	work out timestep for update
 
-	virtual void		ProcessMessageFromQueue(TPtr<TLMessaging::TMessage>& pMessage)			{	ProcessMessage( pMessage );	}
-	virtual void		ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void		ProcessMessageFromQueue(TLMessaging::TMessage& Message)			{	ProcessMessage( Message );	}
+	virtual void		ProcessMessage(TLMessaging::TMessage& Message);
 	void				UnregisterAllManagers()				{	}
 
 private:

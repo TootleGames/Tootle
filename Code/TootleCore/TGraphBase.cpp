@@ -64,11 +64,11 @@ Bool TLGraph::TGraphBase::ImportScheme(const TPtr<TLAsset::TScheme>& pScheme,TRe
 Bool TLGraph::TGraphBase::ImportSchemeNode(const TLAsset::TSchemeNode& SchemeNode,TRefRef ParentRef,TArray<TRef>& ImportedNodes,Bool StrictNodeRefs)
 {
 	//	create an init message with all the data in the SchemeNode
-	TPtr<TLMessaging::TMessage>	pInitMessage = new TLMessaging::TMessage( TLCore::InitialiseRef );
-	pInitMessage->ReferenceDataTree( SchemeNode.GetData(), FALSE );
+	TLMessaging::TMessage	Message( TLCore::InitialiseRef );
+	Message.ReferenceDataTree( SchemeNode.GetData(), FALSE );
 
 	//	create node
-	TRef NewNodeRef = CreateNode( SchemeNode.GetNodeRef(), SchemeNode.GetTypeRef(), ParentRef, pInitMessage, StrictNodeRefs );
+	TRef NewNodeRef = CreateNode( SchemeNode.GetNodeRef(), SchemeNode.GetTypeRef(), ParentRef, &Message, StrictNodeRefs );
 
 	//	failed to create node
 	if ( !NewNodeRef.IsValid() )

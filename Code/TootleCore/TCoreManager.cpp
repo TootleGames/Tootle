@@ -253,10 +253,10 @@ SyncBool TCoreManager::UpdateShutdown()
 //-------------------------------------------
 void TCoreManager::PublishInitMessage()
 {
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage(InitialiseRef);
-	pMessage->AddChannelID(InitialiseRef);
+	TLMessaging::TMessage Message(InitialiseRef);
+	Message.AddChannelID(InitialiseRef);
 	
-	PublishMessage( pMessage );
+	PublishMessage( Message );
 }
 
 
@@ -265,10 +265,10 @@ void TCoreManager::PublishInitMessage()
 //-------------------------------------------
 void TCoreManager::PublishShutdownMessage()
 {
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage(ShutdownRef);
-	pMessage->AddChannelID(ShutdownRef);
+	TLMessaging::TMessage Message(ShutdownRef);
+	Message.AddChannelID(ShutdownRef);
 	
-	PublishMessage( pMessage );
+	PublishMessage( Message );
 }
 
 
@@ -301,18 +301,18 @@ Bool TCoreManager::PublishUpdateMessage(Bool bForced)
 	m_LastUpdateTime = TimeNow;
 
 	//	create an update message
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage(UpdateRef);
-	pMessage->AddChannelID(UpdateRef);
+	TLMessaging::TMessage Message(UpdateRef);
+	Message.AddChannelID(UpdateRef);
 
 	//	add timestep data
-	pMessage->AddChildAndData( TLCore::TimeStepRef, fTimeStep );
+	Message.AddChildAndData( TLCore::TimeStepRef, fTimeStep );
 
 	//	add timestep modifier data
 	float fModifier = GetTimeStepModifier();
-	pMessage->AddChildAndData( TLCore::TimeStepModRef, fModifier );
+	Message.AddChildAndData( TLCore::TimeStepModRef, fModifier );
 
 	//	send message
-	PublishMessage( pMessage );
+	PublishMessage( Message );
 
 	m_Debug_CurrentFrameTimePerSecond += fTimeStep;
 	m_Debug_CurrentUpdatesPerSecond++;
@@ -417,11 +417,11 @@ Bool TCoreManager::PublishRenderMessage(Bool bForced)
 	m_LastRenderTime = TimeNow;
 
 	//	make up render message to send
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage(RenderRef);
-	pMessage->AddChannelID(RenderRef);
+	TLMessaging::TMessage Message(RenderRef);
+	Message.AddChannelID(RenderRef);
 	
 	//	send out render message
-	PublishMessage( pMessage );
+	PublishMessage( Message );
 
 	m_Debug_CurrentFramesPerSecond++;
 
@@ -430,15 +430,15 @@ Bool TCoreManager::PublishRenderMessage(Bool bForced)
 
 
 
-void TCoreManager::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TCoreManager::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if ( pMessage->GetMessageRef() == TLCore::QuitRef )
+	if ( Message.GetMessageRef() == TLCore::QuitRef )
 	{
 		// Quit
 		m_bQuit = TRUE;
 	}
 
-	TManager::ProcessMessage(pMessage);
+	TManager::ProcessMessage(Message);
 }
 
 //-------------------------------------------

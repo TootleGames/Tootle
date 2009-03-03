@@ -41,14 +41,14 @@ public:
 	Bool				Unsubscribe(TSubscriber* pSubscriber);
 
 	FORCEINLINE Bool	HasSubscribers() const							{	return m_Subscribers.GetSize() != 0;	}
-	FORCEINLINE void	PublishMessage(TPtr<TLMessaging::TMessage>& pMessage);	//	send message to subscribers if we have any
+	FORCEINLINE void	PublishMessage(TLMessaging::TMessage& Message);	//	send message to subscribers if we have any
 
 private:
 	FORCEINLINE Bool	AddSubscriber(TSubscriber* pSubscriber)			{	return pSubscriber ? m_Subscribers.AddUnique(pSubscriber)!=-1 : FALSE;	}
 	FORCEINLINE Bool	RemoveSubscriber(TSubscriber* pSubscriber)		{	return m_Subscribers.Remove(pSubscriber);	}
 
 	void				RemoveAllSubscribers();
-	void				DoPublishMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	void				DoPublishMessage(TLMessaging::TMessage& Message);
 
 private:
 	TArray<TLMessaging::TSubscriber*>		m_Subscribers;
@@ -59,11 +59,11 @@ private:
 
 
 
-FORCEINLINE void TLMessaging::TPublisher::PublishMessage(TPtr<TLMessaging::TMessage>& pMessage)
+FORCEINLINE void TLMessaging::TPublisher::PublishMessage(TLMessaging::TMessage& Message)
 {
 	//	Make sure there are subscribers to send to before sending message
 	if ( HasSubscribers() )
 	{
-		DoPublishMessage(pMessage);
+		DoPublishMessage(Message);
 	}
 }

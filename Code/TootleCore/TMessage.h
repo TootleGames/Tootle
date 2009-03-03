@@ -19,8 +19,9 @@ namespace TLMessaging
 class TLMessaging::TMessage : public TBinaryTree
 {
 public:
+	TMessage()	: TBinaryTree("None") {}
 	TMessage(TRefRef MessageRef) : TBinaryTree(MessageRef)									{  }
-	explicit TMessage(TRefRef MessageRef, TRefRef SenderRef) : TBinaryTree(MessageRef)		{	SetSenderID(SenderRef);	}
+	TMessage(TRefRef MessageRef, TRefRef SenderRef) : TBinaryTree(MessageRef)				{	SetSenderID(SenderRef);	}
 
 	FORCEINLINE TRefRef		GetMessageRef() const											{	return TBinaryTree::GetDataRef();	} // use binary tree's ref
 	FORCEINLINE void		SetMessageRef(TRefRef MessageRef)								{	TBinaryTree::SetDataRef( MessageRef );	} // use binary tree's ref

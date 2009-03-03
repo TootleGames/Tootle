@@ -37,13 +37,13 @@ class TLRender::TRenderNodePathNetwork : public TLRender::TRenderNodeDebugMesh
 public:
 	TRenderNodePathNetwork(TRefRef RenderNodeRef,TRefRef TypeRef);
 
-	virtual void			Initialise(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void			Initialise(TLMessaging::TMessage& Message);
 	virtual void			Shutdown()									{	SetPathNetwork( TRef() );	}
 
 	void					SetPathNetwork(TRefRef PathNetworkRef);		//	change the path network asset
 
 protected:
-	virtual void			ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void			ProcessMessage(TLMessaging::TMessage& Message);
 	
 	void					InitMeshFromPathNetwork(TLAsset::TPathNetwork& PathNetwork);				//	create the debug mesh for the asset
 	s32						GetPathNodeVertex(TLAsset::TPathNetwork& PathNetwork,TLPath::TPathNode& PathNode);		//	return vertex for this path node - if it doesn't exist, create it

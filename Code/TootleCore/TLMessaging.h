@@ -26,13 +26,10 @@ public:
 	}
 
 	// Message sending
-	Bool			QueueMessage(TPtr<TMessage>& pMessage)						
+	Bool			QueueMessage(TLMessaging::TMessage& Message)						
 	{
 		// NOTE: Will need to wait for a mutex if mutlithreading is used
-		if ( pMessage.IsValid() )
-			return (  m_MessageQueue.Add(pMessage) != -1 );
-
-		return FALSE;
+		return (  m_MessageQueue.Add(Message) != -1 );
 	}
 
 	inline u32			NumberOfMessages()			const	{ return m_MessageQueue.GetSize(); }
@@ -40,7 +37,7 @@ public:
 
 protected:
 
-	virtual void ProcessMessageFromQueue(TPtr<TLMessaging::TMessage>& pMessage)	= 0;		// Individual message processing - behaviour dependent on where it is used
+	virtual void ProcessMessageFromQueue(TLMessaging::TMessage& Message)	= 0;		// Individual message processing - behaviour dependent on where it is used
 
 	// inline wrapper for the main message queue process call
 	inline void ProcessMessageQueue()
@@ -59,10 +56,9 @@ private:
 		// NOTE: Will need to lock the message queue when we are updating it if using threads
 		for(u32 uIndex = 0; uIndex < uNumberOfMessages; uIndex++)
 		{
-			TPtr<TLMessaging::TMessage>&	pMessage = m_MessageQueue.ElementAt(uIndex);
+			TLMessaging::TMessage&	Message = m_MessageQueue.ElementAt(uIndex);
 
-			if(pMessage.IsValid())
-				ProcessMessageFromQueue(pMessage);
+			ProcessMessageFromQueue(Message);
 		}
 
 		// Finished now remove the messages from the queue
@@ -70,15 +66,12 @@ private:
 	}
 
 	// Remove all messages from the queue
-	void			RemoveAllMessages()
+	inline void		RemoveAllMessages()
 	{
-		for(u32 uIndex = 0; uIndex < m_MessageQueue.GetSize(); uIndex++)
-			m_MessageQueue.ElementAt(uIndex) = NULL;
-
-		m_MessageQueue.Empty();
+		m_MessageQueue.Empty(TRUE);
 	}
 
 
 protected:
-	TPtrArray<TLMessaging::TMessage>		m_MessageQueue;
+	TArray<TLMessaging::TMessage>		m_MessageQueue;
 };

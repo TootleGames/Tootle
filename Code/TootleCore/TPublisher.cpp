@@ -22,16 +22,16 @@ Bool TLMessaging::TPublisher::Unsubscribe(TSubscriber* pSubscriber)
 }
 
 
-void TLMessaging::TPublisher::DoPublishMessage(TPtr<TMessage>& pMessage)		
+void TLMessaging::TPublisher::DoPublishMessage(TLMessaging::TMessage& Message)		
 {
 	for(u32 uIndex = 0; uIndex < m_Subscribers.GetSize(); uIndex++)
 	{
 		// Reset the read pos for each subscriber so they read from the start
-		pMessage->ResetReadPos();
+		Message.ResetReadPos();
 
 		TSubscriber* pSubscriber = m_Subscribers.ElementAt(uIndex);
 
-		pSubscriber->ProcessMessage(pMessage);
+		pSubscriber->ProcessMessage(Message);
 	}
 }
 

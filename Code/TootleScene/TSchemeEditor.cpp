@@ -71,14 +71,14 @@ SyncBool TSchemeEditor::Shutdown()
 	return SyncTrue; 
 }
 
-void TSchemeEditor::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
+void TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	TRefRef MessageRef = pMessage->GetMessageRef();
+	TRefRef MessageRef = Message.GetMessageRef();
 
 	if(MessageRef == "Input")
 	{
 		TRef refInputAction;
-		if(pMessage->Read(refInputAction))
+		if(Message.Read(refInputAction))
 		{
 			if(IsEnabled())
 			{
@@ -89,7 +89,7 @@ void TSchemeEditor::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 
 					int2 CursorPosition;
 
-					if(pMessage->ImportData("CURSOR", CursorPosition))
+					if(Message.ImportData("CURSOR", CursorPosition))
 					{
 						PickObjects(CursorPosition, "Balls");
 					}
@@ -99,18 +99,18 @@ void TSchemeEditor::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 					// Add/Remove nodes
 					int2 CursorPosition;
 
-					if(pMessage->ImportData("CURSOR", CursorPosition))
+					if(Message.ImportData("CURSOR", CursorPosition))
 					{
 						AddRemoveObjects(CursorPosition, "Balls");
 					}
 				}
 				else if(refInputAction == "EDYTRANSFORM")
 				{
-					TransformSelectedNodes(pMessage, AXIS_Y);
+					TransformSelectedNodes(Message, AXIS_Y);
 				}
 				else if(refInputAction == "EDXTRANSFORM")
 				{
-					TransformSelectedNodes(pMessage, AXIS_X);
+					TransformSelectedNodes(Message, AXIS_X);
 				}
 				else if(refInputAction == "EDDEL")
 				{
@@ -128,7 +128,7 @@ void TSchemeEditor::ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage)
 		}
 	}
 
-	TManager::ProcessMessage(pMessage);
+	TManager::ProcessMessage(Message);
 }
 
 void TSchemeEditor::PickObjects(Type2<s32> CursorPosition, TRef refRenderTargetID)
@@ -250,7 +250,7 @@ void TSchemeEditor::RemoveNodeTransformTools()
 }
 
 
-void TSchemeEditor::TransformSelectedNodes(TPtr<TLMessaging::TMessage>& pMessage, TransformAxis uAxis)
+void TSchemeEditor::TransformSelectedNodes(TLMessaging::TMessage& Message, TransformAxis uAxis)
 {
 	if(m_pSelectedNodes.GetSize() > 0)
 	{
@@ -259,7 +259,7 @@ void TSchemeEditor::TransformSelectedNodes(TPtr<TLMessaging::TMessage>& pMessage
 		// Get the amount to transform the nodes by from the message
 		float fAmount = 0.0f;
 
-		if(pMessage->ImportData("RAWDATA", fAmount))
+		if(Message.ImportData("RAWDATA", fAmount))
 		{
 			// NOTE: Scale the value up - axis values are scaled down
 			//fAmount *= 100.0f;
@@ -275,7 +275,7 @@ void TSchemeEditor::TransformSelectedNodes(TPtr<TLMessaging::TMessage>& pMessage
 
 		int2	CursorPosition;
 
-		if(pMessage->ImportData("CURSOR", CursorPosition))
+		if(Message.ImportData("CURSOR", CursorPosition))
 		{
 			// Find world pos in 3d from 2d screen pos
 			TPtr<TLRender::TScreen> pScreen = TLRender::g_pScreenManager->GetInstance("Screen");
@@ -292,7 +292,7 @@ void TSchemeEditor::TransformSelectedNodes(TPtr<TLMessaging::TMessage>& pMessage
 
 			int2 PreviousCursorPosition = CursorPosition;
 			float fAmount = 0.0f;
-			if(pMessage->ImportData("RAWDATA", fAmount))
+			if(Message.ImportData("RAWDATA", fAmount))
 			{
 				fAmount *= 100.0f;
 
@@ -373,15 +373,12 @@ void TSchemeEditor::TranslateSelectedNodes(float fAmount, TransformAxis uAxis)
 		if(pNode->HasTransform())
 		{
 			// Send the node a message to say we want to move the node
-			TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("TRANSFORM");
+			TLMessaging::TMessage Message("TRANSFORM");
 
-			if(pMessage.IsValid())
-			{
-				pMessage->AddChildAndData("TRANSLATE", vTranslation);
+			Message.AddChildAndData("TRANSLATE", vTranslation);
 
-				// NOTE: Should really send this message via the scenegraph rather than directly.
-				pNode->QueueMessage(pMessage);
-			}
+			// NOTE: Should really send this message via the scenegraph rather than directly.
+			pNode->QueueMessage(Message);
 		}
 	}
 }
@@ -410,15 +407,12 @@ void TSchemeEditor::RotateSelectedNodes(float fAmount, TransformAxis uAxis)
 		if(pNode->HasTransform())
 		{
 			// Send the node a message to say we want to move the node
-			TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("TRANSFORM");
+			TLMessaging::TMessage Message("TRANSFORM");
 
-			if(pMessage.IsValid())
-			{
-				pMessage->AddChildAndData("ROTATE", qRotation);
+			Message.AddChildAndData("ROTATE", qRotation);
 
-				// NOTE: Should really send this message via the scenegraph rather than directly.
-				pNode->QueueMessage(pMessage);
-			}
+			// NOTE: Should really send this message via the scenegraph rather than directly.
+			pNode->QueueMessage(Message);
 		}
 	}
 
@@ -444,15 +438,12 @@ void TSchemeEditor::ScaleSelectedNodes(float fAmount, TransformAxis uAxis)
 		if(pNode->HasTransform())
 		{
 			// Send the node a message to say we want to move the node
-			TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("TRANSFORM");
+			TLMessaging::TMessage Message("TRANSFORM");
 
-			if(pMessage.IsValid())
-			{
-				pMessage->AddChildAndData("SCALE", vScale);
+			Message.AddChildAndData("SCALE", vScale);
 
-				// NOTE: Should really send this message via the scenegraph rather than directly.
-				pNode->QueueMessage(pMessage);
-			}
+			// NOTE: Should really send this message via the scenegraph rather than directly.
+			pNode->QueueMessage(Message);
 		}
 	}
 }
@@ -466,11 +457,11 @@ void TSchemeEditor::DeleteSelectedNodes()
 
 		/*
 		// Send the node a message to say we want the node to shutdown
-		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("SHUTDOWN");
+		TLMessaging::TMessage Message("SHUTDOWN");
 
 		// NOTE: Should really send this message via the scenegraph rather than directly.
-		if(pMessage.IsValid())
-			pNode->QueueMessage(pMessage);
+		if(Message.IsValid())
+			pNode->QueueMessage(Message);
 		*/
 
 		// Tell the scenegraph to remove the node

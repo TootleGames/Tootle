@@ -56,7 +56,7 @@ public:
 
 protected:
 
-	virtual void	ProcessMessage(TPtr<TLMessaging::TMessage>& pMessage);
+	virtual void	ProcessMessage(TLMessaging::TMessage& Message);
 
 	void			Process(float fValue);
 
