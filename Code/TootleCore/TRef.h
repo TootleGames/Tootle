@@ -37,6 +37,7 @@ namespace TLRef
 {
 	//	gr: extern this if you want to use it... sorry!
 //	TLArray::SortResult		RefSort(const TRef& aRef,const TRef& bRef,const void* pTestVal);	//	simple ref-sort func - for arrays of TRef's
+	extern u32				g_InvalidRefMask;
 }
 
 
@@ -50,7 +51,7 @@ public:
 
 public:
 	TRef() 													:	m_Ref	( 0 )	{	}
-	TRef(u32 Ref)											:	m_Ref	( Ref )	{	}
+	TRef(u32 Ref)											:	m_Ref	( Ref )	{	IsValid();	}	//	gr: call IsValid() to check for invalid values
 	TRef(const TRef& Ref)									:	m_Ref	( Ref.GetData() )	{	}
 	TRef(const TString& RefString) 							:	m_Ref	( 0 )	{	Set( RefString );	}
 	TRef(const TString* pRefString) 						:	m_Ref	( 0 )	{	if ( pRefString )	Set( *pRefString );	}
@@ -58,7 +59,7 @@ public:
 	TRef(const TArray<char>& RefStringChars)				:	m_Ref	( 0 )	{	Set( RefStringChars );	}
 
 	void				SetInvalid()							{	m_Ref = 0;	}
-	void				Set(u32 Ref)							{	m_Ref = Ref;	}
+	void				Set(u32 Ref)							{	m_Ref = Ref;	IsValid();	}	//	gr: call IsValid() to check for invalid values
 	void				Set(const TRef& Ref)					{	Set( Ref.GetData() );	}
 	void				Set(const TString& RefString);			//	pull out 5 characters and set from this string
 	void				Set(const char* pRefString);			//	pull out 5 characters and set from this string
@@ -68,7 +69,7 @@ public:
 
 	const u32&			GetData() const							{	return m_Ref;	}
 	void				GetString(TString& RefString) const;	//	convert ref to a string
-	Bool				IsValid() const;						//	check for invalid bits being set etc
+	FORCEINLINE Bool	IsValid() const;						//	check for invalid bits being set etc
 
 	inline Bool			operator<(const TRef& Ref) const		{	return GetData() < Ref.GetData();	}
 	inline void			operator=(u32 Ref)						{	Set( Ref );	}
@@ -85,11 +86,34 @@ private:
 	u32					GetRefCharIndex(u32 Index) const;							//	pull out the alphabet index from a ref
 	void				Set(const TArray<u32>& RefIndexes);		//	set from array of ref indexes
 
-	void				Debug_TruncatedRefString(const TString& RefString);			//	debug that the specified string was truncated to fit in as a ref
+	void				Debug_TruncatedRefString(const TString& RefString) const;	//	debug that the specified string was truncated to fit in as a ref
+	void				Debug_BreakInvalidRef() const;								//	break with invalid ref message
 
 protected:
 	u32					m_Ref;
 };
+
+
+
+
+//---------------------------------------------------------
+//	check for invalid bits being set etc
+//---------------------------------------------------------
+FORCEINLINE Bool TRef::IsValid() const
+{
+	//	not valid if zero
+	if ( m_Ref == 0x0 )
+		return FALSE;
+
+	//	break if ref is invalid - probably invalidly-generated
+	if ( (m_Ref & TLRef::g_InvalidRefMask) != 0x0 )
+	{
+		Debug_BreakInvalidRef();
+	}
+
+	//	check for no invalid bits
+	return (m_Ref & TLRef::g_InvalidRefMask) == 0x0;
+}
 
 
 

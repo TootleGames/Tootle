@@ -139,9 +139,9 @@ const KEYTYPE* TKeyArray<KEYTYPE,TYPE>::FindKey(const TYPE& Item,const KEYTYPE* 
 	Bool FoundLastMatch = pPreviousMatch ? FALSE : TRUE;
 	
 	//	loop through the list and match item
-	for ( u32 i=0;	i<m_Array.Size();	i++ )
+	for ( u32 i=0;	i<m_Array.GetSize();	i++ )
 	{
-		PAIRTYPE& Pair = m_Array[i];
+		const PAIRTYPE& Pair = m_Array[i];
 
 		//	not this one, next!
 		if ( Pair.m_Item != Item )

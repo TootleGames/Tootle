@@ -1,4 +1,6 @@
 #include "TMenu.h"
+#include <TootleAsset/TScheme.h>
+#include <TootleRender/TRendergraph.h>
 
 
 
@@ -289,3 +291,84 @@ void TLMenu::TMenuController::OnMenuItemExecuted(TRefRef MenuCommand)
 }
 
 
+
+
+
+
+//---------------------------------------------------
+//	create menu/render nodes etc
+//---------------------------------------------------
+TLGame::TMenuWrapper::TMenuWrapper(TLMenu::TMenuController* pMenuController,TRefRef SchemeRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef)
+{
+	TPtr<TLMenu::TMenu>& pMenu = pMenuController->GetCurrentMenu();
+	m_MenuRef = pMenu->GetMenuRef();
+
+	//	load scheme under this node
+	if ( SchemeRef.IsValid() )
+	{
+		//	load asset
+		TPtr<TLAsset::TScheme> pScheme = TLAsset::LoadAsset( SchemeRef, TRUE );
+		if ( pScheme && pScheme->GetAssetType() != "Scheme" )
+			pScheme = NULL;
+
+		if ( !pScheme )
+		{
+#ifdef _DEBUG
+			TTempString Debug_String("failed to find scheme ");
+			SchemeRef.GetString( Debug_String );
+			Debug_String.Append(" for menu ");
+			m_MenuRef.GetString( Debug_String );
+			TLDebug_Break( Debug_String );
+#endif
+			return;
+		}
+
+		//	create empty root render node to put scheme under
+		m_RenderNode = TLRender::g_pRendergraph->CreateNode( m_MenuRef, TRef(), ParentRenderNodeRef );
+
+		//	import scheme
+		TLRender::g_pRendergraph->ImportScheme( pScheme, m_RenderNode );
+	}
+
+	//	create TGui's for each menu item
+	const TPtrArray<TLMenu::TMenuItem>& MenuItems = pMenu->GetMenuItems();
+	for ( u32 i=0;	i<MenuItems.GetSize();	i++ )
+	{
+		//	get render node ref usable for the TGui
+		TRefRef MenuItemRenderNodeRef = MenuItems[i]->GetMeshRef();
+		if ( !MenuItemRenderNodeRef.IsValid() )
+			continue;
+
+		//	make the rendernode of this menu item clickable, the action coming out of the TGui
+		//	is the ref of the menu item that was clicked
+		TPtr<TLGui::TGui> pGui = new TLGui::TGui( RenderTargetRef, MenuItemRenderNodeRef, "global", MenuItems[i]->GetMenuItemRef() );
+
+		//	subscribe the menu controller to the gui to get the clicked messages
+		if ( pMenuController->SubscribeTo( pGui.GetObject() ) )
+		{
+			m_Guis.Add( pGui );
+		}
+	}
+
+}
+
+
+//---------------------------------------------------
+//	delete render nodes
+//---------------------------------------------------
+TLGame::TMenuWrapper::~TMenuWrapper()
+{
+	//	delete render node
+	if ( m_RenderNode.IsValid() )
+	{
+		TLRender::g_pRendergraph->RemoveNode( m_RenderNode );
+		m_RenderNode.SetInvalid();
+	}
+	
+	//	
+	m_MenuRef.SetInvalid();
+
+	//	dealloc guis - shut them down first to make sure all TPtr's are released
+	m_Guis.FunctionAll( &TLGui::TGui::Shutdown );
+	m_Guis.Empty();
+}

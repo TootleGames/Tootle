@@ -27,7 +27,7 @@ namespace TLInput
 	{
 		namespace DirectX
 		{
-			LPDIRECTINPUT8									g_pTLDirectInputInterface = NULL;	// Global direct input interface pointer
+			LPDIRECTINPUT8							g_pTLDirectInputInterface = NULL;	// Global direct input interface pointer
 			TPtrArray<TLInputDirectXDevice>			g_TLDirectInputDevices;					// Global array of direct device pointers
 
 			TKeyArray<u32, TRef>					g_KeyboardRefMap;
@@ -41,6 +41,8 @@ namespace TLInput
 			TKeyArray<u32, TRef>					g_WiimoteButtonRefs;		// Wiimote button refs
 			TKeyArray<u32, TRef>					g_PS2PadButtonRefs;			// PS2 pad button refs
 
+			TKeyArray<u32, TRef>					g_DirectXDeviceProductIDRefs;	//	table mapping DX device ProductID to TRefs - the Guids are not always valid TRef's (we use 30 bits exclusivly) - so this keeps an internal Ref<->Guid map
+
 			void	InitialiseKeyboadRefMap();
 			void	InitialiseMouseRefMap();
 			void	InitialiseGamePadRefMaps();
@@ -50,6 +52,9 @@ namespace TLInput
 			void	InitialisePS2PadRefMap();
 
 			Bool	GetSpecificButtonRef(const u32& uButtonID, TRefRef DeviceType, const u32& uProductID, TRef& LabelRef);
+		
+			u32		GetDeviceProductIDFromRef(TRefRef DeviceRef);				//	get the ProductID thats mapped to this ref. ZERO returned is assumed invalid
+			TRef	GetDeviceRefFromProductID(u32 ProductID,Bool CreateNew);	//	get the ref thats mapped to this device ProductID. Optionally create a new entry
 		};
 	};
 
@@ -291,6 +296,39 @@ void Platform::DirectX::InitialiseKeyboadRefMap()
 }
 
 
+//---------------------------------------------------
+//	get the ProductID thats mapped to this ref. ZERO returned is assumed invalid
+//---------------------------------------------------
+u32 Platform::DirectX::GetDeviceProductIDFromRef(TRefRef DeviceRef)
+{
+	const u32* pGuid = g_DirectXDeviceProductIDRefs.FindKey( DeviceRef );
+	if ( !pGuid )
+		return 0;
+
+	return *pGuid;
+}
+
+//---------------------------------------------------
+//	get the ref thats mapped to this device ProductID. Optionally create a new entry
+//---------------------------------------------------
+TRef Platform::DirectX::GetDeviceRefFromProductID(u32 DeviceGuid,Bool CreateNew)
+{
+	const TRef* pRef = g_DirectXDeviceProductIDRefs.Find( DeviceGuid );
+	if ( pRef )
+		return *pRef;
+	
+	//	no entry - and not creating a new one
+	if ( !CreateNew )
+		return TRef();
+
+	//	get new device ref
+	TRef NewDeviceRef = TLInput::GetFreeDeviceRef();
+	pRef = g_DirectXDeviceProductIDRefs.Add( DeviceGuid, NewDeviceRef );
+
+	return *pRef;
+}
+
+
 void Platform::DirectX::InitialiseMouseRefMap()
 {
 	g_MouseRefMap.Add(DIMOFS_BUTTON0, "LMB");
@@ -426,25 +464,24 @@ BOOL CALLBACK Platform::DirectX::CreateDevice(const DIDEVICEINSTANCE* pdidInstan
 	// Set a unique ID for the generic input device - using the directx GUID data for now.
 	// NOTE: A single device may actually call the callback multiple times for different elements i.e. a keyboard with a mouse built into it
 	//			  but they will both have the same GUID.
-	u32 uDeviceID = pdidInstance->guidInstance.Data1;	// Unique instance ID (unique for each device)
+	//	gr: I've renamed this ProductID as that's what it's called on the TLInputDirectXDevice
+	u32 uDeviceProductID = pdidInstance->guidInstance.Data1;	// Unique instance ID (unique for each device)
 
-	TRef InstanceRef = uDeviceID;
+	//	get device ref mapped to this guid
+	TRef InstanceRef = TLInput::Platform::DirectX::GetDeviceRefFromProductID( uDeviceProductID, TRUE );
 
-	TArray<TRef> refArray;
-	if(g_pInputSystem->GetDeviceIDs(refArray))
+	//	if device already exists, skip over (as per comments above)
+	if ( InstanceRef.IsValid() )
 	{
-		// Check to see if the device has already been registered for use
-		for(u32 uIndex = 0; uIndex < refArray.GetSize(); uIndex++)
+		//	there is a GUID<->DeviceRef link, but check there is an ACTUAL device that's been created - we could have mapping, but no device
+		TPtr<TLInput::TInputDevice>& pDevice = TLInput::GetDevice( InstanceRef );
+		if ( pDevice )
 		{
-			if(refArray.ElementAt(uIndex) == InstanceRef)
-			{
-				// Device exists
-				// return continue
-				return DIENUM_CONTINUE;
-			}
+			// Device exists
+			// return continue
+			return DIENUM_CONTINUE;
 		}
 	}
-
 
 	// Initialise the DirectX specific data required for mapping the generic device to the physical device
 	Bool bProcessDevice = FALSE;
@@ -1124,6 +1161,8 @@ SyncBool Platform::DirectX::Shutdown()
 	g_Xbox360PadButtonRefs.Empty(TRUE);		
 	g_WiimoteButtonRefs.Empty(TRUE);		
 	g_PS2PadButtonRefs.Empty(TRUE);			
+
+	g_DirectXDeviceProductIDRefs.Empty(TRUE);
 
 	return SyncTrue;
 }

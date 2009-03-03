@@ -342,35 +342,16 @@ Bool TApplication::TApplicationState_Bootup::CreateIntroScreen()
 		return FALSE;
 	}
 		
-	//	create a render target
-	TPtr<TLRender::TRenderTarget> pRenderTarget = pScreen->CreateRenderTarget( TRef("Intro") );
-	if(!pRenderTarget)
-	{
-		TLDebug_Break("Error: Failed to create logo render target");
-		return FALSE;
-	}
-	pRenderTarget->GetClearColour().Set( 1.f, 1.f, 1.f, 1.f );
-	
-	
-	TPtr<TLRender::TCamera> pCamera = new TLRender::TOrthoCamera;
-	pRenderTarget->SetCamera( pCamera );
-	pCamera->SetPosition( float3( 0, 0, -10.f ) );
-	
-	TPtr<TLRender::TRenderNode> pRootRenderNode = new TLRender::TRenderNode("Intro");
-	pRenderTarget->SetRootRenderNode(pRootRenderNode);
-	TLRender::g_pRendergraph->AddNode( pRootRenderNode );
-	
-	
 	//	create background graphic
 	TPtr<TLAsset::TAsset>& pBgAsset = TLAsset::LoadAsset("logo", TRUE);
 	if ( pBgAsset )
 	{
-		TPtr<TLRender::TRenderNode> pBgNode = new TLRender::TRenderNode("logo");
-		pBgNode->SetMeshRef( pBgAsset->GetAssetRef() );
-		pBgNode->SetTranslate( float3( 0.f, 0.f, -50.f ) );
-		pBgNode->SetLineWidth( 3.f );
-		
-		TLRender::g_pRendergraph->AddNode( pBgNode, pRootRenderNode );
+		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
+		InitMessage.AddChildAndData("MeshRef", pBgAsset->GetAssetRef() );
+		InitMessage.AddChildAndData("Translate", float3( 0.f, 0.f, -50.f ) );
+		InitMessage.AddChildAndData("LineWidth", 3.f );
+
+		m_LogoRenderNode = TLRender::g_pRendergraph->CreateNode("logo", TRef(), TRef(), &InitMessage );
 	}
 	else
 	{
@@ -379,7 +360,26 @@ Bool TApplication::TApplicationState_Bootup::CreateIntroScreen()
 
 		//	gr: this will just go into a "no mode" mode.
 		//return FALSE;
-	}	
+	}
+
+	//	create a render target if we created a render node
+	if ( m_LogoRenderNode.IsValid() )
+	{
+		TPtr<TLRender::TRenderTarget> pRenderTarget = pScreen->CreateRenderTarget( TRef("Intro") );
+		if(!pRenderTarget)
+		{
+			TLDebug_Break("Error: Failed to create logo render target");
+			return FALSE;
+		}
+	
+		m_RenderTarget = pRenderTarget->GetRef();
+		pRenderTarget->GetClearColour().Set( 1.f, 1.f, 1.f, 1.f );
+	
+		TPtr<TLRender::TCamera> pCamera = new TLRender::TOrthoCamera;
+		pRenderTarget->SetCamera( pCamera );
+		pCamera->SetPosition( float3( 0, 0, -10.f ) );
+		pRenderTarget->SetRootRenderNode( m_LogoRenderNode );
+	}
 	
 	// All done
 	return TRUE;
@@ -465,23 +465,21 @@ Bool TApplication::TApplicationState_Bootup::ArePreloadFilesLoaded()
 
 void TApplication::TApplicationState_Bootup::OnEnd(TRefRef NextMode)
 {
-	// Remove the intro screen
-	TPtr<TLRender::TRenderNode>& pRootObject = TLRender::g_pRendergraph->FindNode("Intro");
-	
-	if(pRootObject)
+	//	delete node
+	if ( m_LogoRenderNode.IsValid() )
 	{
-		// Remove render graph nodes
-		TLRender::g_pRendergraph->RemoveNode( pRootObject );
+		TLRender::g_pRendergraph->RemoveNode( m_LogoRenderNode );
+		m_LogoRenderNode.SetInvalid();
 	}
 
-	TPtr<TLRender::TScreen> pScreen = TLRender::g_pScreenManager->GetInstance(TRef("Screen"), TRUE, TRef("Screen") );
-
-	if(pScreen)
+	//	delete render target
+	if ( m_RenderTarget.IsValid() )
 	{
-		// Remove render target
-		pScreen->DeleteRenderTarget( TRef("Intro") );
+		TLRender::g_pScreenManager->DeleteRenderTarget( m_RenderTarget );
+		m_RenderTarget.SetInvalid();
 	}
 
+	//	delete asset
 	TLAsset::DeleteAsset("logo");
 }
 

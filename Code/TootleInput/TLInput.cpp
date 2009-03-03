@@ -57,7 +57,45 @@ TRef TLInput::GetDefaultButtonRef(u32 uObjectIndex)
 }
 
 
+//---------------------------------------------
+//	fetch device with this ref
+//---------------------------------------------
+TPtr<TLInput::TInputDevice>& TLInput::GetDevice(TRefRef DeviceRef)
+{
+	if ( !g_pInputSystem )
+		return TLPtr::GetNullPtr<TLInput::TInputDevice>();
 
+	//	get device
+	TPtr<TLInput::TInputDevice>& pDevice = g_pInputSystem->GetInstance( DeviceRef );
+	
+	return pDevice;
+}
+
+
+//---------------------------------------------
+//	get an unused ref for a device
+//---------------------------------------------
+TRef TLInput::GetFreeDeviceRef(TRef BaseRef)
+{
+	if ( !g_pInputSystem )
+		return TRef();
+
+	if ( !BaseRef.IsValid() )
+		BaseRef.Increment();
+
+	while ( TRUE )
+	{
+		//	get device with this ref
+		TPtr<TLInput::TInputDevice>& pDevice = g_pInputSystem->GetInstance( BaseRef );
+		if ( !pDevice )
+			break;
+
+		//	try next
+		BaseRef.Increment();
+	}
+
+	return BaseRef;
+}
 
 
 TInputManager::TInputManager(TRef refManagerID) :

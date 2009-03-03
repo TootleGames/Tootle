@@ -50,6 +50,8 @@ namespace TLInput
 	TRef GetDefaultButtonRef(u32 uObjectIndex);
 	TRef GetDefaultPOVRef(u32 uObjectIndex);
 
+	TPtr<TLInput::TInputDevice>&	GetDevice(TRefRef DeviceRef);			//	fetch device with this ref
+	TRef							GetFreeDeviceRef(TRef BaseRef=TRef());	//	get an unused ref for a device
 };
 
 

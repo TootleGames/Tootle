@@ -9,6 +9,7 @@
 #include <TootleAsset/TMenu.h>
 #include <TootleCore/TPublisher.h>
 #include <TootleCore/TSubscriber.h>
+#include "TGui.h"
 
 
 namespace TLMenu
@@ -19,6 +20,10 @@ namespace TLMenu
 	typedef TLAsset::TMenu::TMenuItem TMenuItem;
 };
 
+namespace TLGame
+{
+	class TMenuWrapper;
+}
 
 
 //----------------------------------------------
@@ -88,3 +93,24 @@ protected:
 	TPtrArray<TMenu>	m_MenuStack;						//	menu stack
 };
 
+
+
+//----------------------------------------------
+//	gr: this class puts a menu and a scheme together to create clickable menu items.
+//	todo: rename this and sort all these classes out into one simple, but overloadable system
+//	this class will probably get renamed too
+//----------------------------------------------
+class TLGame::TMenuWrapper
+{
+public:
+	TMenuWrapper(TLMenu::TMenuController* pMenuController,TRefRef SchemeRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef);	//	create menu/render nodes etc
+	virtual ~TMenuWrapper();
+
+	Bool					IsValid()			{	return m_MenuRef.IsValid();	}
+	void					SetInvalid()		{	m_MenuRef.SetInvalid();	}
+
+public:
+	TRef					m_MenuRef;
+	TRef					m_RenderNode;		//	root render node
+	TPtrArray<TLGui::TGui>	m_Guis;				//	guis
+};

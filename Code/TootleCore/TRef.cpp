@@ -371,24 +371,12 @@ const TRef& TRef::Increment()
 }
 
 
-//---------------------------------------------------------
-//	check for invalid bits being set etc
-//---------------------------------------------------------
-Bool TRef::IsValid() const
-{
-	//	not valid if zero
-	if ( m_Ref == 0x0 )
-		return FALSE;
-
-	//	check for no invalid bits
-	return (m_Ref & TLRef::g_InvalidRefMask) == 0x0;
-}
 
 
 //---------------------------------------------------------
 //	debug that the specified string was truncated to fit in as a ref
 //---------------------------------------------------------
-void TRef::Debug_TruncatedRefString(const TString& RefString)
+void TRef::Debug_TruncatedRefString(const TString& RefString) const
 {
 	TTempString DebugString("Ref string truncated from ");
 	DebugString.Append( RefString );
@@ -397,4 +385,14 @@ void TRef::Debug_TruncatedRefString(const TString& RefString)
 
 	TLDebug_Print( DebugString );
 }
+
+
+//---------------------------------------------------------
+//	break with invalid ref message
+//---------------------------------------------------------
+void TRef::Debug_BreakInvalidRef() const
+{
+	TLDebug_Break("Invalid ref - created at runtime and doesn't fit ref mask?");
+}
+
 

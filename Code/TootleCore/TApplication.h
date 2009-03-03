@@ -26,10 +26,18 @@ namespace TLCore
 
 #include "TLanguage.h"
 
+
+//---------------------------------------------------------
+//	base application type
+//---------------------------------------------------------
 class TLCore::TApplication : public TManager, public TStateMachine
 {
 protected:
 	// Internal applicaiton states
+	//	gr: can we rename these to something more usable... 
+	//	their typenames are TLCore::TApplication::TApplicationState_Bootup
+	//		TLCore::TApplication::Mode_Bootup would be a bit nicer :)
+	class Mode_Base;					//	base mode - just eases access back to app
 	class TApplicationState_Bootup;
 	class TApplicationState_FrontEnd;
 	class TApplicationState_EnterGame;
@@ -105,8 +113,26 @@ private:
 };
 
 
+
+
+
+//---------------------------------------------------------
+//	base application mode - just gives easy access back to app
+//---------------------------------------------------------
+class TLCore::TApplication::Mode_Base : public TStateMode
+{
+public:
+	template<class APPTYPE>
+	FORCEINLINE APPTYPE*				GetApplication()		{	return TStateMode::GetStateMachine<APPTYPE>();	}
+	//template<>
+	//FORCEINLINE TLCore::TApplication*	GetApplication()		{	return TStateMachine::GetStateMachine<TLCore::TApplication>();	}
+};
+
+
+//---------------------------------------------------------
 // Bootup state
-class TLCore::TApplication::TApplicationState_Bootup : public TStateMode
+//---------------------------------------------------------
+class TLCore::TApplication::TApplicationState_Bootup : public TLCore::TApplication::Mode_Base
 {
 public:
 	TApplicationState_Bootup();
@@ -122,49 +148,69 @@ protected:
 	Bool		ArePreloadFilesLoaded();
 	
 private:
+	TRef			m_LogoRenderNode;	//	
+	TRef			m_RenderTarget;		//	our render target
 	TArray<TRef>	m_PreloadFiles;
 	float			m_fTimer;
 	Bool			m_SkipBootup;		//	skip bootup if we failed to create rendernode/screen/logo etc
 };
 
+
+//---------------------------------------------------------
 // Front End state
-class TLCore::TApplication::TApplicationState_FrontEnd : public TStateMode
+//---------------------------------------------------------
+class TLCore::TApplication::TApplicationState_FrontEnd : public TLCore::TApplication::Mode_Base
 {
 public:
 	virtual Bool			OnBegin(TRefRef PreviousMode);
 	virtual TRef			Update();			
 };
 
+
+//---------------------------------------------------------
 // Enter Game transitional state
-class TLCore::TApplication::TApplicationState_EnterGame : public TStateMode
+//---------------------------------------------------------
+class TLCore::TApplication::TApplicationState_EnterGame : public TLCore::TApplication::Mode_Base
 {
 public:
 	virtual Bool			OnBegin(TRefRef PreviousMode);
 	virtual TRef			Update();			
 };
 
+
+//---------------------------------------------------------
 // Game active state
-class TLCore::TApplication::TApplicationState_Game : public TStateMode
+//---------------------------------------------------------
+class TLCore::TApplication::TApplicationState_Game : public TLCore::TApplication::Mode_Base
 {
 public:
 	virtual TRef			Update();			
 };
 
+
+//---------------------------------------------------------
 // Game paused state
-class TLCore::TApplication::TApplicationState_Pause : public TStateMode
+//---------------------------------------------------------
+class TLCore::TApplication::TApplicationState_Pause : public TLCore::TApplication::Mode_Base
 {
 public:
 	virtual TRef			Update();			
 };
 
+
+//---------------------------------------------------------
 // Exit Game transitional state
-class TLCore::TApplication::TApplicationState_ExitGame : public TStateMode
+//---------------------------------------------------------
+class TLCore::TApplication::TApplicationState_ExitGame : public TLCore::TApplication::Mode_Base
 {
 public:
 	virtual Bool			OnBegin(TRefRef PreviousMode);
 	virtual TRef			Update();
 	virtual void			OnEnd(TRefRef NextMode);	
 };
+
+
+
 
 
 
