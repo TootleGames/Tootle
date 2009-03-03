@@ -387,3 +387,30 @@ TLMaths::TAngle TLMaths::TLine2D::GetAngle() const
 	return Angle;
 }
 
+
+//-----------------------------------------------------------
+//	move the start point along the direction by an amount (NOT a factor)
+//-----------------------------------------------------------
+void TLMaths::TLine2D::MoveStart(float Distance)
+{
+	//	no change
+	if ( Distance == 0.f )
+		return;
+
+	float2 DirectionNormal = GetDirectionNormal( Distance );
+	m_Start += DirectionNormal;
+}
+
+
+//-----------------------------------------------------------
+//	move the end point along the direction by an amount (NOT a factor)
+//-----------------------------------------------------------
+void TLMaths::TLine2D::MoveEnd(float Distance)
+{
+	//	no change
+	if ( Distance == 0.f )
+		return;
+
+	float2 DirectionNormal = GetDirectionNormal( Distance );
+	m_End += DirectionNormal;
+}

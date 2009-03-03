@@ -89,6 +89,11 @@ public:
 	Type2<TYPE>					CrossProduct(const Type2<TYPE>& v) const;
 	FORCEINLINE float			DotProduct(const Type2<TYPE>& v) const		{	return (x*v.x) + (y*v.y) ;	}
 	FORCEINLINE float			DotProduct() const							{	return (x*x) + (y*y);	}	//	same as lengthsq!
+
+	FORCEINLINE void			RotateAntiClockwise()						{	float2 oldxy(x,y);	x = oldxy.y;	y = -oldxy.x;	}
+	FORCEINLINE void			RotateClockwise()							{	float2 oldxy(x,y);	x = -oldxy.y;	y = oldxy.x;	}
+	FORCEINLINE Type2<TYPE>		GetAntiClockwise()							{	return Type2<TYPE>( y, -x );	}
+	FORCEINLINE Type2<TYPE>		GetClockwise()								{	return Type2<TYPE>( -y, x );	}
 };
 
 

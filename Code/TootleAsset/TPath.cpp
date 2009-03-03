@@ -87,6 +87,20 @@ TRef TLAsset::TPathNetwork::GetFreeNodeRef(TRef FromRef) const
 }
 
 //--------------------------------------------------
+//	non-const version so sorting is availible
+//--------------------------------------------------
+TRef TLAsset::TPathNetwork::GetFreeNodeRef(TRef FromRef)
+{
+	if ( !FromRef.IsValid() )
+		FromRef.Increment();
+
+	while ( m_Nodes.Exists(FromRef) )
+		FromRef.Increment();
+
+	return FromRef;
+}
+
+//--------------------------------------------------
 //	create a new node, returns NULL if it fails, e.g. if NodeRef already exists
 //--------------------------------------------------
 TPtr<TLPath::TPathNode>& TLAsset::TPathNetwork::AddNode(TRef NodeRef,const float2& NodePos)
@@ -144,6 +158,32 @@ void TLAsset::TPathNetwork::OnNodeAdded(TPtr<TLPath::TPathNode>& pNewNode)
 {
 	m_BoundsBox.Accumulate( pNewNode->GetPosition() );
 	m_BoundsSphere.Accumulate( pNewNode->GetPosition() );
+}
+
+
+//--------------------------------------------------
+//	
+//--------------------------------------------------
+void TLAsset::TPathNetwork::LinkNodes(TRefRef NodeARef,TRefRef NodeBRef)
+{
+	if ( NodeARef == NodeBRef )
+	{
+		TLDebug_Break("Attempting to link node to self");
+		return;
+	}
+
+	//	get nodes
+	TPtr<TLPath::TPathNode>& pNodeA = GetNode( NodeARef );
+	TPtr<TLPath::TPathNode>& pNodeB = GetNode( NodeBRef );
+
+	if ( !pNodeA || !pNodeB )
+	{
+		TLDebug_Break("Missing Node when linking nodes");
+		return;
+	}
+
+	//	do link
+	LinkNodes( *pNodeA, *pNodeB );
 }
 
 
@@ -308,5 +348,34 @@ TPtr<TLPath::TPathNode>& TLAsset::TPathNetwork::GetNearestNode(const float2& Pos
 }
 
 
+//--------------------------------------------------
+//	change position of a node, returns TRUE if changed and invokes a changed message
+//--------------------------------------------------
+Bool TLAsset::TPathNetwork::SetNodePosition(TRefRef NodeRef,const float2& NewPos)
+{
+	TPtr<TLPath::TPathNode>& pPathNode = GetNode( NodeRef );
+	if ( !pPathNode )
+		return FALSE;
+	
+	return SetNodePosition( *pPathNode, NewPos );
+}
 
+
+//--------------------------------------------------
+//	change position of a node, returns TRUE if changed and invokes a changed message
+//--------------------------------------------------
+Bool TLAsset::TPathNetwork::SetNodePosition(TLPath::TPathNode& Node,const float2& NewPos)
+{
+	//	not much of a change
+	if ( Node.GetPosition() == NewPos )
+		return FALSE;
+
+	//	change pos
+	Node.SetPosition( NewPos );
+
+	//	do notification
+	OnNodePosChanged( Node );
+
+	return TRUE;
+}
 

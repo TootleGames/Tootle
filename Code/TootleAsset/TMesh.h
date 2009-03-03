@@ -85,8 +85,10 @@ public:
 	void					GenerateRainbowColours();							//	create colours for each vertex
 	void					GenerateQuad(const TLMaths::TBox2D& Box,const TColour& Colour,float z=0.f);		//	generate a square mesh from a 2d box
 	void					GenerateQuad(const float2& Center,float Size,const TColour& Colour,float z=0.f);			//	generate a square mesh around a point
-	Bool					GenerateQuad(const TArray<float3>& Outline,const TColour& Colour);	//	turn an outline of points into a quad/tri-strip
+	Bool					GenerateQuad(const TArray<float3>& Outline,const TColour& Colour);			//	turn an outline of points into a quad/tri-strip
+	Bool					GenerateQuad(const TArray<float3>& Outline,const TArray<TColour>& Colours);	//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour& Colour);	//	turn an outline of points into a quad/tri-strip
+	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour& ColourA,const TColour& ColourB,const TColour& ColourC,const TColour& ColourD);	//	turn an outline of points into a quad/tri-strip
 
 	//	vertex manipulation
 	s32						AddVertex(const float3& VertexPos);							//	add vertex to the list, makes up normals and colours if required

@@ -34,6 +34,7 @@ public:
 	TRefRef					GetNodeRef() const							{	return TBinaryTree::GetDataRef();	}
 	FORCEINLINE Bool		IsJunction() const							{	return (m_Links.GetSize() >= 3);	}
 	const float2&			GetPosition() const							{	return m_Position;	}
+	FORCEINLINE void		SetPosition(TLAsset::TPathNetwork& PathNetwork,const float2& NewPos);
 
 	Bool					AddLink(TRefRef NodeRef)					{	return m_Links.AddUnique( NodeRef ) != -1;	}
 	Bool					AddLink(TPathNode& Node)					{	return m_Links.AddUnique( Node.GetNodeRef() ) != -1;	}
@@ -52,6 +53,8 @@ public:
 protected:
 	Bool					ImportData(TBinaryTree& Data);
 	Bool					ExportData(TBinaryTree& Data);
+	
+	FORCEINLINE void		SetPosition(const float2& NewPos)			{	m_Position = NewPos;	}	//	
 
 private:
 	void					SetNodeRef(TRefRef NodeRef)					{	return TBinaryTree::SetDataRef( NodeRef );	}
@@ -78,14 +81,19 @@ public:
 	TPtr<TLPath::TPathNode>&		GetNearestNode(const float3& Position)						{	return GetNearestNode( Position.xy() );	}
 	TPtrArray<TLPath::TPathNode>&	GetNodeArray()												{	return m_Nodes;	}
 	TRef							GetFreeNodeRef(TRef FromRef=TRef()) const;					//	return a ref for a node that isn't currently used
+	TRef							GetFreeNodeRef(TRef FromRef=TRef());						//	non-const version enables sorting
 
 	TPtr<TLPath::TPathNode>&		AddNode(TRef NodeRef,const float2& NodePos);				//	create a new node, returns NULL if it fails, e.g. if NodeRef already exists
 	void							RemoveNode(TRef NodeRef);									//	remove node and clear up links
 
 	void							LinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB);		
+	void							LinkNodes(TRefRef NodeARef,TRefRef NodeBRef);		
 	Bool							UnlinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB);		//	returns FALSE if they weren't linked
 
 	TPtr<TLPath::TPathNode>&		DivideLink(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB,float2* pDividePos=NULL);	//	split a line, adds a new node in between these two
+
+	Bool							SetNodePosition(TRefRef NodeRef,const float2& NewPos);			//	change position of a node, returns TRUE if changed and invokes a changed message
+	Bool							SetNodePosition(TLPath::TPathNode& Node,const float2& NewPos);	//	change position of a node, returns TRUE if changed and invokes a changed message
 
 protected:
 	virtual SyncBool				ImportData(TBinaryTree& Data);
@@ -95,11 +103,25 @@ protected:
 	virtual void					OnNodesLinked(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB)	{	}
 	virtual void					OnNodesUnlinked(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB)	{	}
 	virtual void					OnNodeLinkDivided(TLPath::TPathNode& NodeA,TLPath::TPathNode& NewNode,TLPath::TPathNode& NodeB)	{	}
+	virtual void					OnNodePosChanged(TLPath::TPathNode& Node)							{	}
 
 protected:
 	TPtrArray<TLPath::TPathNode>	m_Nodes;				//	todo: sort these
 	TLMaths::TBox2D					m_BoundsBox;			//	bounding box vertex extents
 	TLMaths::TSphere2D				m_BoundsSphere;			//	bounding sphere
 };
+
+
+
+
+
+
+//----------------------------------------------
+//	
+//----------------------------------------------
+FORCEINLINE void TLPath::TPathNode::SetPosition(TLAsset::TPathNetwork& PathNetwork,const float2& NewPos)
+{	
+	PathNetwork.SetNodePosition( *this, NewPos );
+}
 
 

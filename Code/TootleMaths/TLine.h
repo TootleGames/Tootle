@@ -37,7 +37,7 @@ public:
 	const float3&		GetEnd() const									{	return m_End;	}
 	float3				GetCenter() const								{	return (m_Start + m_End) * 0.5f;	}
 	float3				GetDirection() const							{	return m_End - m_Start;	}
-	float3				GetDirectionNormal() const						{	return (m_End - m_Start).Normal();	}
+	float3				GetDirectionNormal(float NormalLength=1.f) const	{	return (m_End - m_Start).Normal(NormalLength);	}
 	float				GetLengthSq() const								{	return GetDirection().LengthSq();	}
 	float				GetLength() const								{	return GetDirection().Length();	}
 
@@ -75,6 +75,7 @@ public:
 	float2				GetCenter() const								{	return (m_Start + m_End) * 0.5f;	}
 	float2				GetDirection() const							{	return m_End - m_Start;	}
 	float3				GetDirection(float z) const						{	return (m_End - m_Start).xyz(z);	}
+	float2				GetDirectionNormal(float NormalLength=1.f) const	{	return (m_End - m_Start).Normal(NormalLength);	}
 	float				GetLengthSq() const								{	return GetDirection().LengthSq();	}
 	float				GetLength() const								{	return GetDirection().Length();	}
 	TLMaths::TAngle		GetAngle() const;								//	calculate angle of line
@@ -91,6 +92,9 @@ public:
 	float2				GetNearestPoint(const float2& Pos,float& PointAlongLine) const;		//	get a point along the line nearest to this point
 	float2				GetNearestPoint(const float3& Pos) const		{	return GetNearestPoint( Pos.xy() );	}
 	
+	void				MoveStart(float Distance);						//	move the start point along the direction by an amount (NOT a factor)
+	void				MoveEnd(float Distance);						//	move the end point along the direction by an amount (NOT a factor)
+
 	void				Transform(const float2& Move)					{	m_Start += Move;	m_End += Move;	}
 	void				Transform(const float3& Move)					{	m_Start += Move;	m_End += Move;	}
 

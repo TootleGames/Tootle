@@ -20,7 +20,7 @@ void TLRender::TRenderNodePathNetwork::Initialise(TLMessaging::TMessage& Message
 	TRenderNodeDebugMesh::Initialise( Message );
 
 	//	debug the points on the path
-//	GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::Debug_Points );
+	GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::Debug_Points );
 	GetRenderFlags().Clear( TLRender::TRenderNode::RenderFlags::EnableCull );
 
 	//	read out colour
@@ -49,6 +49,10 @@ void TLRender::TRenderNodePathNetwork::SetPathNetwork(TRefRef PathNetworkRef)
 
 	//	set new ref
 	m_PathNetworkRef = PathNetworkRef;
+
+	//	been set to no-path, so nothing to do
+	if ( !m_PathNetworkRef.IsValid() )
+		return;
 
 	//	get the path network asset
 	TPtr<TLAsset::TPathNetwork> pPathNetwork = TLAsset::GetAsset( m_PathNetworkRef, TRUE );

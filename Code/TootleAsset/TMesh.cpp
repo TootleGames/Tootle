@@ -888,15 +888,39 @@ Bool TLAsset::TMesh::GenerateQuad(const TArray<float3>& Outline,const TColour& V
 //--------------------------------------------------------
 //	turn an outline of points into a quad/tri-strip
 //--------------------------------------------------------
+Bool TLAsset::TMesh::GenerateQuad(const TArray<float3>& Outline,const TArray<TColour>& Colours)
+{
+	if ( Outline.GetSize() != 4 || Colours.GetSize() != 4 )
+	{
+		TLDebug_Break("Trying to generate quad with an outline without 4 points");
+		return FALSE;
+	}
+
+	return GenerateQuad( Outline[0], Outline[1], Outline[2], Outline[3], Colours[0], Colours[1], Colours[2], Colours[3] );
+}
+
+
+//--------------------------------------------------------
+//	turn an outline of points into a quad/tri-strip
+//--------------------------------------------------------
 Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour& VertexColour)
+{
+	return GenerateQuad( OutlineA, OutlineB, OutlineC, OutlineD, VertexColour, VertexColour, VertexColour, VertexColour );
+}
+
+
+//--------------------------------------------------------
+//	turn an outline of points into a quad/tri-strip
+//--------------------------------------------------------
+Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour& ColourA,const TColour& ColourB,const TColour& ColourC,const TColour& ColourD)
 {
 #ifdef GENERATE_QUADS_AS_TRIANGLES
 
 	TFixedArray<s32,4> VertIndexes;
-	VertIndexes[0] = AddVertex( OutlineA, VertexColour );
-	VertIndexes[1] = AddVertex( OutlineB, VertexColour );
-	VertIndexes[2] = AddVertex( OutlineC, VertexColour );
-	VertIndexes[3] = AddVertex( OutlineD, VertexColour );
+	VertIndexes[0] = AddVertex( OutlineA, ColourA );
+	VertIndexes[1] = AddVertex( OutlineB, ColourB );
+	VertIndexes[2] = AddVertex( OutlineC, ColourC );
+	VertIndexes[3] = AddVertex( OutlineD, ColourD );
 
 	//	create tri strip
 	Triangle* pTriangleA = m_Triangles.AddNew();
