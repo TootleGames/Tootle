@@ -71,21 +71,18 @@ Bool Platform::IPod::CreateDevice()
 		else
 		{
 			// Notify to all subscribers of the input system that a new device was added
-			TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Input");			
+			TLMessaging::TMessage Message("Input");			
 			
-			if(pMessage.IsValid())
-			{
-				TRef refState = "ADDED";
-				pMessage->AddChannelID("DEVICE");									// device information message
-				pMessage->AddChildAndData("STATE", refState);					// state change
-				pMessage->AddChildAndData("DEVID", pGenericDevice->GetDeviceRef() );	// device ID
-				pMessage->AddChildAndData("TYPE", pGenericDevice->GetDeviceType() );						// device type
+			TRef refState = "ADDED";
+			Message.AddChannelID("DEVICE");									// device information message
+			Message.AddChildAndData("STATE", refState);					// state change
+			Message.AddChildAndData("DEVID", pGenericDevice->GetDeviceRef() );	// device ID
+			Message.AddChildAndData("TYPE", pGenericDevice->GetDeviceType() );						// device type
+			
+			g_pInputSystem->PublishMessage(Message);
 				
-				g_pInputSystem->PublishMessage(pMessage);
-				
-				// Success
-				return TRUE;
-			}
+			// Success
+			return TRUE;
 		}
 	}
 	

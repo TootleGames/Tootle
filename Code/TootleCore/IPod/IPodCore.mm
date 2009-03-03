@@ -89,16 +89,9 @@ SyncBool TLCore::Platform::Shutdown()
 void TLCore::Platform::DoQuit()
 {
 	// Send a message to the core manager telling it to quit
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Quit");
+	TLMessaging::TMessage Message("Quit");
 	
-	if(pMessage.IsValid())
-	{
-		TLCore::g_pCoreManager->QueueMessage(pMessage);
-	}
-	else
-	{
-		TLDebug_Break("Unable to send quit message");
-	}	
+	TLCore::g_pCoreManager->QueueMessage(Message);
 }
 
 
