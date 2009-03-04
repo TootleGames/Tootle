@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8461C3ED0F5E8DCB00ED9509 /* TShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8461C3EB0F5E8DCB00ED9509 /* TShape.cpp */; };
+		8461C3EE0F5E8DCB00ED9509 /* TShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 8461C3EC0F5E8DCB00ED9509 /* TShape.h */; };
 		84C10A620F0A7C9700B2DF7A /* TBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10A580F0A7C9700B2DF7A /* TBox.cpp */; };
 		84C10A630F0A7C9700B2DF7A /* TBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10A590F0A7C9700B2DF7A /* TBox.h */; };
 		84C10A640F0A7C9700B2DF7A /* TCapsule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10A5A0F0A7C9700B2DF7A /* TCapsule.cpp */; };
@@ -26,6 +28,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8461C3EB0F5E8DCB00ED9509 /* TShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TShape.cpp; path = ../TShape.cpp; sourceTree = SOURCE_ROOT; };
+		8461C3EC0F5E8DCB00ED9509 /* TShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TShape.h; path = ../TShape.h; sourceTree = SOURCE_ROOT; };
 		84C10A520F0A7C7600B2DF7A /* libTootleMaths.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleMaths.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C10A580F0A7C9700B2DF7A /* TBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TBox.cpp; path = ../TBox.cpp; sourceTree = SOURCE_ROOT; };
 		84C10A590F0A7C9700B2DF7A /* TBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBox.h; path = ../TBox.h; sourceTree = SOURCE_ROOT; };
@@ -80,6 +84,8 @@
 		84C10A570F0A7C8600B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				8461C3EB0F5E8DCB00ED9509 /* TShape.cpp */,
+				8461C3EC0F5E8DCB00ED9509 /* TShape.h */,
 				BF81C4170F30FA55001ACEC3 /* TFrustum.cpp */,
 				BF81C4180F30FA55001ACEC3 /* TFrustum.h */,
 				BF81C4190F30FA55001ACEC3 /* TQuadTree.cpp */,
@@ -134,6 +140,7 @@
 				84C10A6F0F0A7CAC00B2DF7A /* IPodTessellate.h in Headers */,
 				BF81C41C0F30FA55001ACEC3 /* TFrustum.h in Headers */,
 				BF81C41E0F30FA55001ACEC3 /* TQuadTree.h in Headers */,
+				8461C3EE0F5E8DCB00ED9509 /* TShape.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -188,6 +195,7 @@
 				84C10A700F0A7CAC00B2DF7A /* IPodTessellate.mm in Sources */,
 				BF81C41B0F30FA55001ACEC3 /* TFrustum.cpp in Sources */,
 				BF81C41D0F30FA55001ACEC3 /* TQuadTree.cpp in Sources */,
+				8461C3ED0F5E8DCB00ED9509 /* TShape.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

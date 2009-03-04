@@ -1,5 +1,59 @@
 // !$*UTF8*$!
 {
+	8461C4020F5E8E6100ED9509 /* TMesh.h */ = {
+		isa = PBXFileReference;
+		name = TMesh.h;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleMaths/IPod/../../TootleAsset/TMesh.h;
+		sourceTree = "<absolute>";
+	};
+	8461C4040F5E8E6100ED9509 /* TMesh.h */ = {
+		isa = PBXFileReference;
+		name = TMesh.h;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleMaths/IPod/../../TootleAsset/TMesh.h;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1722, 3038}}";
+			sepNavSelRange = "{8249, 109}";
+			sepNavVisRange = "{6996, 1477}";
+		};
+	};
+	8461C4050F5E8E6500ED9509 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10A590F0A7C9700B2DF7A /* TBox.h */;
+		name = "TBox.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 659;
+		vrLoc = 0;
+	};
+	8461C4060F5E8E6500ED9509 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8461C4020F5E8E6100ED9509 /* TMesh.h */;
+		rLen = 1;
+		rLoc = 154;
+		rType = 1;
+	};
+	8461C4070F5E8E6500ED9509 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10A590F0A7C9700B2DF7A /* TBox.h */;
+		name = "TBox.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 659;
+		vrLoc = 0;
+	};
+	8461C4080F5E8E6500ED9509 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8461C4040F5E8E6100ED9509 /* TMesh.h */;
+		name = "TMesh.h: 155";
+		rLen = 109;
+		rLoc = 8249;
+		rType = 0;
+		vrLen = 1477;
+		vrLoc = 6996;
+	};
 	846B6B650F29DE15005EB752 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84DE2E910F122C4C00608F8C /* TString.h */;
@@ -10,10 +64,6 @@
 		vrLen = 1457;
 		vrLoc = 9637;
 	};
-	846B6B660F29DE15005EB752 /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = 84C10A590F0A7C9700B2DF7A /* TBox.h */;
-	};
 	846B6B670F29DE15005EB752 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84DE2E910F122C4C00608F8C /* TString.h */;
@@ -23,16 +73,6 @@
 		rType = 0;
 		vrLen = 1457;
 		vrLoc = 9637;
-	};
-	846B6BC10F2A102C005EB752 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C10A590F0A7C9700B2DF7A /* TBox.h */;
-		name = "TBox.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 438;
-		vrLoc = 84;
 	};
 	84C108EF0F0A772600B2DF7A /* Project object */ = {
 		activeBuildConfigurationName = Debug;
@@ -50,7 +90,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
 					300,
-					477.20849609375,
+					477,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXErrorsWarningsDataSource_TypeID,
@@ -102,14 +142,16 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 254400703;
-			PBXWorkspaceStateSaveDate = 254400703;
+			PBXPerProjectTemplateStateSaveDate = 257854992;
+			PBXWorkspaceStateSaveDate = 257854992;
 		};
 		perUserProjectItems = {
+			8461C4050F5E8E6500ED9509 /* PBXTextBookmark */ = 8461C4050F5E8E6500ED9509 /* PBXTextBookmark */;
+			8461C4060F5E8E6500ED9509 /* PBXTextBookmark */ = 8461C4060F5E8E6500ED9509 /* PBXTextBookmark */;
+			8461C4070F5E8E6500ED9509 /* PBXTextBookmark */ = 8461C4070F5E8E6500ED9509 /* PBXTextBookmark */;
+			8461C4080F5E8E6500ED9509 /* PBXTextBookmark */ = 8461C4080F5E8E6500ED9509 /* PBXTextBookmark */;
 			846B6B650F29DE15005EB752 /* PBXTextBookmark */ = 846B6B650F29DE15005EB752 /* PBXTextBookmark */;
-			846B6B660F29DE15005EB752 /* PBXBookmark */ = 846B6B660F29DE15005EB752 /* PBXBookmark */;
 			846B6B670F29DE15005EB752 /* PBXTextBookmark */ = 846B6B670F29DE15005EB752 /* PBXTextBookmark */;
-			846B6BC10F2A102C005EB752 /* PBXTextBookmark */ = 846B6BC10F2A102C005EB752 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84C108F30F0A772600B2DF7A /* Source Control */;
 		userBuildSettings = {
@@ -131,9 +173,9 @@
 	};
 	84C10A590F0A7C9700B2DF7A /* TBox.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {810, 2310}}";
+			sepNavIntBoundsRect = "{{0, 0}, {765, 4620}}";
 			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{84, 438}";
+			sepNavVisRange = "{0, 659}";
 		};
 	};
 	84DE2E910F122C4C00608F8C /* TString.h */ = {
@@ -142,10 +184,5 @@
 		name = TString.h;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleMaths/IPod/../../TootleCore/TString.h;
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {948, 3990}}";
-			sepNavSelRange = "{10111, 72}";
-			sepNavVisRange = "{9637, 1457}";
-		};
 	};
 }
