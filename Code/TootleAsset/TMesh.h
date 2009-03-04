@@ -152,7 +152,7 @@ public:
 	Bool					DatumExists(TRefRef DatumRef) const	{	return m_Datums.Exists( DatumRef );	}
 	TPtr<TLMaths::TShape>&	GetDatum(TRefRef DatumRef)			{	return m_Datums.FindPtr( DatumRef );	}
 	template<class SHAPETYPE>
-	SHAPETYPE*				GetDatum(TRefRef DatumRef)			{	return m_Datums.FindPtr( DatumRef ).GetObject<SHAPETYPE>();	}
+	SHAPETYPE*				GetDatum(TRefRef DatumRef);
 	Bool					CreateDatum(const TArray<float3>& PolygonPoints,TRefRef DatumRef,TRefRef DatumShapeType);
 
 protected:
@@ -198,4 +198,17 @@ FORCEINLINE TPtr<TLMaths::TShape>& TLAsset::TMesh::AddDatum(TRefRef DatumRef,TPt
 		return TLPtr::GetNullPtr<TLMaths::TShape>();
 
 	return *ppShape;
+}
+
+
+template<class SHAPETYPE>
+SHAPETYPE* TLAsset::TMesh::GetDatum(TRefRef DatumRef)			
+{	
+	TPtr<TLMaths::TShape>& pShapePtr = GetDatum( DatumRef );
+	if ( !pShapePtr )
+		return NULL;
+
+	//	cast down
+	SHAPETYPE* pShape = pShapePtr.GetObject<SHAPETYPE>();	
+	return pShape;
 }
