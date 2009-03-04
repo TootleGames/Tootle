@@ -2,6 +2,7 @@
 #include <TootleCore/TString.h>
 #include "TRenderTarget.h"
 
+#include <TootleAudio/TLAudio.h>	// Needed to set the audio listener properties in CalculateViewVectors()
 
 
 #ifdef _DEBUG
@@ -40,6 +41,18 @@ void TLRender::TCamera::CalculateViewVectors()
 	//	calculate the proper view up from the view right and view forward
 	//	gr: is this the same as our rolled worldup, ViewUp?
 	m_ViewUp = m_ViewRight.CrossProduct( m_ViewForward );
+
+	// [03/02/09] DB - Set the lister details for the audio system
+	// Not sure this is the right place for this but for now it should work as required.
+
+	TLAudio::TListenerProperties Props;
+
+	Props.m_vPosition = GetPosition();
+	Props.m_vVelocity = (Props.m_vPosition - m_vPreviousPos);
+	Props.m_vUp = GetViewUp();
+	Props.m_vLookAt = GetLookAt();
+
+	TLAudio::Platform::SetListener(Props);
 }
 
 

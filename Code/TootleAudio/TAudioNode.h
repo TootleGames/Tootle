@@ -36,13 +36,19 @@ public:
 	TAudioProperties() :
 		m_fVolume(1.0f),
 		m_fFrequencyMult(1.0f),
-		m_fPitch(1.0f)
+		m_fPitch(1.0f),
+		m_fMinRange(0.0f),
+		m_fRateOfDecay(0.0f),
+		m_bStreaming(FALSE),
+		m_bLooping(FALSE)
 	{
 	}
 	
 	float m_fVolume;
 	float m_fFrequencyMult;		// Frequency multiplier
 	float m_fPitch;
+	float m_fMinRange;			// Range within which the audio is full volume
+	float m_fRateOfDecay;		// Rate of decay of the audio volume past the min range			
 	
 	Bool m_bStreaming;			// Streaming flag
 	Bool m_bLooping;			// Looping flag
@@ -82,17 +88,26 @@ public:
 
 	void				SetPitch(float fPitch);
 	inline float		GetPitch()		const { return m_AudioProperties.m_fPitch; }
-	
-	void				SetLooping(Bool bLooping);
+
+	void				SetMinRange(float fDistance);
+	inline float		GetMinRange()		const { return m_AudioProperties.m_fMinRange; }
+
+	void				SetRateOfDecay(float fRateOfDecay);
+	inline float		GetRateOfDecay()		const { return m_AudioProperties.m_fRateOfDecay; }
+
+
+	void				SetLooping(const Bool& bLooping);
 	inline Bool			GetIsLooping()		const { return m_AudioProperties.m_bLooping; }
 
-	void				SetStreaming(Bool bStreaming);
+	void				SetStreaming(const Bool& bStreaming);
 	inline Bool			GetIsStreaming()		const { return m_AudioProperties.m_bStreaming; }
 
 
 	// Audio asset access
 	FORCEINLINE const TRef&	GetAudioAssetRef() const							{	return m_AudioAssetRef;	}
 	Bool					SetAudioAssetRef(TRefRef AssetRef);
+
+	void				UpdatePreviousPos()	{ m_vPreviousPos = GetTranslate(); }
 
 protected:
 	virtual void		ProcessMessage(TLMessaging::TMessage& Message);
@@ -106,6 +121,7 @@ private:
 
 private:
 	TAudioProperties	m_AudioProperties;		// Audio properties
+	float3				m_vPreviousPos;			// Previous Audio node position
 	
 	TRef				m_AudioAssetRef;		// Audio asset to use
 

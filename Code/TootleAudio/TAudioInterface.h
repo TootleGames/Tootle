@@ -64,6 +64,8 @@ public:
 
 	// General Audio requests
 	Bool	StartAudio(TRefRef AudioRef, TRefRef AudioAsset);
+	Bool	StartAudio(TRefRef AudioRef, TRefRef AudioAsset, const TAudioProperties& Props);
+
 	Bool	StopAudio(TRefRef AudioRef);
 
 	Bool	PauseAudio(TRefRef AudioRef, const Bool& bPause);

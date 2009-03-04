@@ -16,6 +16,49 @@ TAudioNode::TAudioNode(TRefRef NodeRef,TRefRef TypeRef) :
 // Initialise routine
 void TAudioNode::Initialise(TLMessaging::TMessage& Message)	
 {
+	// Setup audio properties first
+	TAudioProperties Props;
+
+	Bool bHasProps = Message.ImportData("Props", Props);
+
+	// Set Pre-Source creation properties
+	if(bHasProps)
+	{
+		SetStreaming(Props.m_bStreaming);
+	}
+
+	TRef AudioAsset;
+	if(Message.ImportData("Asset", AudioAsset))
+	{
+		SetAudioAssetRef(AudioAsset);
+	}
+
+	// Set Post-Source creation properties
+	if(bHasProps)
+	{
+		SetFrequencyMult(Props.m_fFrequencyMult);
+		SetPitch(Props.m_fPitch);
+		SetVolume(Props.m_fVolume);
+		SetMinRange(Props.m_fMinRange);
+		SetRateOfDecay(Props.m_fRateOfDecay);
+		SetLooping(Props.m_bLooping);
+	}
+
+	float3 vPosition;
+	if(Message.ImportData("POS", vPosition))
+	{
+		SetTranslate(vPosition);
+	}
+
+
+	Bool bPlay;
+	if(Message.ImportData("Asset", bPlay))
+	{
+		Play();
+	}
+
+
+
 	TLGraph::TGraphNode<TAudioNode>::Initialise(Message);
 }
 
@@ -35,6 +78,11 @@ void TAudioNode::Update(float fTimestep)
 		return;
 	}
 
+	// Set the low level audio position
+	TLAudio::Platform::SetPosition(GetNodeRef(), GetTranslate());
+
+	float3 vVelocity = (GetTranslate() - m_vPreviousPos);
+	TLAudio::Platform::SetVelocity(GetNodeRef(), vVelocity);
 
 	TLGraph::TGraphNode<TAudioNode>::Update(fTimestep);
 }
@@ -125,11 +173,14 @@ void TAudioNode::SetVolume(float fVolume)
 	// Clamp the volume to within range
 	TLMaths::Limit(fVolume, 0.0f, 1.0f);
 	
-	// Try and set the volume for the source
-	// If successful set the volume for the node
-	if(TLAudio::Platform::SetVolume(GetNodeRef(), fVolume))
+	if(m_AudioProperties.m_fVolume != fVolume)
 	{
-		m_AudioProperties.m_fVolume = fVolume;
+		// Try and set the volume for the source
+		// If successful set the volume for the node
+		if(TLAudio::Platform::SetVolume(GetNodeRef(), fVolume))
+		{
+			m_AudioProperties.m_fVolume = fVolume;
+		}
 	}
 }
 
@@ -138,11 +189,16 @@ void TAudioNode::SetFrequencyMult(float fFrequencyMult)
 {
 	// Clamp the frequency to within range
 	TLMaths::Limit(fFrequencyMult, 0.0f, 10.0f);
-	
-	// Try and set the frequency for the source
-	// If successful set the frequency for the node
-	
-	m_AudioProperties.m_fFrequencyMult = fFrequencyMult;
+
+	if(m_AudioProperties.m_fFrequencyMult != fFrequencyMult)
+	{
+		// Try and set the frequency for the source
+		// If successful set the frequency for the node
+		//if(TLAudio::Platform::SetFrequencyMult(GetNodeRef(), fFrequencyMult))
+		{
+			m_AudioProperties.m_fFrequencyMult = fFrequencyMult;
+		}
+	}
 }
 
 // Set the frequency of this instance
@@ -151,38 +207,72 @@ void TAudioNode::SetPitch(float fPitch)
 	// Clamp the frequency to within range
 	TLMaths::Limit(fPitch, 0.1f, 100.0f);
 
-	// Try and set the pitch for the source
-	// If successful set the pitch for the node
-	if(TLAudio::Platform::SetPitch(GetNodeRef(), fPitch))
+	if(m_AudioProperties.m_fPitch != fPitch)
 	{
-		m_AudioProperties.m_fPitch = fPitch;
+		// Try and set the pitch for the source
+		// If successful set the pitch for the node
+		if(TLAudio::Platform::SetPitch(GetNodeRef(), fPitch))
+		{
+			m_AudioProperties.m_fPitch = fPitch;
+		}
 	}
 }
 
-// Set this instance to be looping
-void TAudioNode::SetLooping(Bool bLooping)
+
+// Set the min range of this instance
+void TAudioNode::SetMinRange(float fDistance)
 {
-	// Try and set the looping state for the source
-	// If successful set the looping state for the node
-	if(TLAudio::Platform::SetLooping(GetNodeRef(), bLooping))
+	// Clamp the min range to within range
+	TLMaths::Limit(fDistance, 0.0f, 100.0f);
+
+	if(m_AudioProperties.m_fMinRange != fDistance)
 	{
-		m_AudioProperties.m_bLooping = bLooping;
+		// Try and set the min range for the source
+		// If successful set the min range for the node
+		if(TLAudio::Platform::SetMinRange(GetNodeRef(), fDistance))
+		{
+			m_AudioProperties.m_fMinRange = fDistance;
+		}
+	}
+}
+
+
+// Set the rate of volume decay of this instance
+void TAudioNode::SetRateOfDecay(float fRateOfDecay)
+{
+	// Clamp the rate of decay to within range
+	TLMaths::Limit(fRateOfDecay, 0.01f, 1.0f);
+
+	if(m_AudioProperties.m_fRateOfDecay != fRateOfDecay)
+	{
+		// Try and set the rate of decay for the source
+		// If successful set the rate of decay for the node
+		if(TLAudio::Platform::SetRateOfDecay(GetNodeRef(), fRateOfDecay))
+		{
+			m_AudioProperties.m_fRateOfDecay = fRateOfDecay;
+		}
+	}
+}
+
+
+// Set this instance to be looping
+void TAudioNode::SetLooping(const Bool& bLooping)
+{
+	if(m_AudioProperties.m_bLooping != bLooping)
+	{
+		// Try and set the looping state for the source
+		// If successful set the looping state for the node
+		if(TLAudio::Platform::SetLooping(GetNodeRef(), bLooping))
+		{
+			m_AudioProperties.m_bLooping = bLooping;
+		}
 	}
 }
 
 // Set this instance to be streamed
-void TAudioNode::SetStreaming(Bool bStreamed)
+void TAudioNode::SetStreaming(const Bool& bStreaming)
 {
-	TLDebug_Break("TODO");
-	
-	/*
-	// Try and set the streaming state for the source
-	// If successful set the streaming state for the node
-	if(TLAudio::Platform::SetStreaming(GetNodeRef(), bStreaming))
-	{
-		m_AudioProperties.m_bStreaming = bStreaming;
-	}
-	*/
+	m_AudioProperties.m_bStreaming = bStreaming;
 }
 
 

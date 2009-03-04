@@ -159,11 +159,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PCAudioDirectX.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PCAudioDirectX.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PCAudioItem.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\PCAudioItem.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PCAudioOpenAL.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PCAudioOpenAL.h"
 				>
 			</File>
 		</Filter>
@@ -177,6 +193,90 @@
 			<File
 				RelativePath="..\TAudioNode.h"
 				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Ipod Source Files"
+			>
+			<File
+				RelativePath="..\IPod\IPodAudio.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\IPod\IPodAudio.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\IPod\IPodAudioOpenAL.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\IPod\IPodAudioOpenAL.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<File

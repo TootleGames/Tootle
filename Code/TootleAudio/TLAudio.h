@@ -7,6 +7,8 @@
 
 namespace TLAudio
 {
+	class TListenerProperties;
+
 	namespace Platform
 	{
 		SyncBool	Init();
@@ -41,5 +43,28 @@ namespace TLAudio
 
 		Bool		SetLooping(TRefRef AudioSourceRef, const Bool bLooping);
 		Bool		GetIsLooping(TRefRef AudioSourceRef, Bool& bLooping);
+
+		Bool		SetPosition(TRefRef AudioSourceRef, const float3 vPosition);
+		Bool		GetPosition(TRefRef AudioSourceRef, float3& vPosition);
+
+		Bool		SetVelocity(TRefRef AudioSourceRef, const float3 vVelocity);
+		Bool		GetVelocity(TRefRef AudioSourceRef, float3& vVelocity);
+
+		Bool		SetMinRange(TRefRef AudioSourceRef, const float fDistance);
+		Bool		SetRateOfDecay(TRefRef AudioSourceRef, const float fRateOfDecay);
+
+
+		// Audio system listener (aka a virtual microphone)	
+		void SetListener(const TListenerProperties& Props);
 	}
+};
+
+// Data for the audio system listener
+class TLAudio::TListenerProperties
+{
+public:
+	float3		m_vPosition;
+	float3		m_vVelocity;
+	float3		m_vLookAt;
+	float3		m_vUp;
 };

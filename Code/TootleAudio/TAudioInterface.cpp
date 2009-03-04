@@ -7,20 +7,32 @@ using namespace TLAudio;
 
 Bool TAudioInterface::StartAudio(TRefRef AudioRef, TRefRef AudioAsset)
 {
+	TLMessaging::TMessage Message(TLCore::InitialiseRef);
+
+	Message.ExportData("Asset", AudioAsset);
+	Message.ExportData("Play", TRUE);
+
 	// Create an audio node for the specified audio reference
-	TPtr<TLAudio::TAudioNode> pAudioNode = TLAudio::g_pAudiograph->DoCreateNode(AudioRef, "Audio");
+	TLAudio::g_pAudiograph->CreateNode(AudioRef, "Audio", "Root", &Message);
 
-	if(pAudioNode)
-	{
-		if(pAudioNode->SetAudioAssetRef(AudioAsset))
-		{
-			if(pAudioNode->Play())
-				return TRUE;
-		}
-	}
-
-	return FALSE;
+	return TRUE;
 }
+
+
+Bool TAudioInterface::StartAudio(TRefRef AudioRef, TRefRef AudioAsset, const TAudioProperties& Props)
+{
+	TLMessaging::TMessage Message(TLCore::InitialiseRef);
+
+	Message.ExportData("Asset", AudioAsset);
+	Message.ExportData("Play", TRUE);
+	Message.ExportData("Props", Props);
+
+	// Create an audio node for the specified audio reference
+	TLAudio::g_pAudiograph->CreateNode(AudioRef, "Audio", "Root", &Message);
+
+	return TRUE;
+}
+
 
 Bool TAudioInterface::StopAudio(TRefRef AudioRef)
 {
@@ -65,7 +77,10 @@ void TAudioInterface::SetAudioTranslate(TRefRef AudioRef, const float3& vTransla
 	TPtr<TLAudio::TAudioNode> pAudioNode = TLAudio::g_pAudiograph->FindNode(AudioRef);
 	
 	if(pAudioNode)
+	{
+		pAudioNode->UpdatePreviousPos();
 		pAudioNode->SetTranslate(vTranslate);
+	}
 }
 
 float3 TAudioInterface::GetAudioTranslate(TRefRef AudioRef)

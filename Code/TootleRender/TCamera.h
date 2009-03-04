@@ -56,7 +56,7 @@ public:
 	const TLMaths::TAngle&		GetCameraRoll() const	{	return m_CameraRoll;	}
 	void						SetCameraRoll(const TLMaths::TAngle& RollAngle) {	m_CameraRoll = RollAngle;	OnCameraChanged();	}
 
-	virtual void				SetPosition(const float3& Position)	{	m_ViewLine.SetStart( Position );	OnCameraChanged();	}
+	virtual void				SetPosition(const float3& Position)	{	m_vPreviousPos = GetPosition(); m_ViewLine.SetStart( Position );	OnCameraChanged();	}
 	virtual void				SetLookAt(const float3& LookAt)		{	m_ViewLine.SetEnd( LookAt );	OnCameraChanged();	}
 	virtual void				SetViewport(const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape)	{	}	//	calc new view sizes
 
@@ -87,6 +87,7 @@ protected:
 	float3					m_ViewUp;		//	world dir cross view right = view up
 	float3					m_ViewRight;	//	world dir coss world up = view right
 	float3					m_ViewForward;	//	direction of Pos->lookat
+	float3					m_vPreviousPos;	// Previous camera position
 
 	float					m_NearZ;
 	float					m_FarZ;
