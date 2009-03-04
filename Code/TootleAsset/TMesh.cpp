@@ -326,6 +326,15 @@ SyncBool TLAsset::TMesh::ImportData(TBinaryTree& Data)
 		CalcHasAlpha();
 	}
 
+	//	read datums
+	TPtrArray<TBinaryTree> DatumChildrenData;
+	Data.GetChildren("Datum", DatumChildrenData );
+	for ( u32 i=0;	i<DatumChildrenData.GetSize();	i++ )
+	{
+		if ( !ImportDatum( *DatumChildrenData[i] ) )
+			return SyncFalse;
+	}
+
 	//	store off any data we haven't read to keep this data intact
 	ImportUnknownData( Data );
 
@@ -361,6 +370,19 @@ SyncBool TLAsset::TMesh::ExportData(TBinaryTree& Data)
 
 	//	export flags
 	Data.ExportData( "Flags", m_Flags.GetData() );
+
+	//	export datums
+	for ( u32 i=0;	i<m_Datums.GetSize();	i++ )
+	{
+		TLKeyArray::TPair<TRef,TPtr<TLMaths::TShape> >& Datum = m_Datums.GetPairAt(i);
+
+		//	create child data
+		TPtr<TBinaryTree>& DatumData = Data.AddChild("Datum");
+
+		//	export
+		if ( !ExportDatum( *DatumData, Datum.m_Key, Datum.m_Item ) )
+			return SyncFalse;
+	}
 
 	//	write back any data we didn't recognise
 	ExportUnknownData( Data );
@@ -914,25 +936,50 @@ Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,
 //--------------------------------------------------------
 Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour& ColourA,const TColour& ColourB,const TColour& ColourC,const TColour& ColourD)
 {
-#ifdef GENERATE_QUADS_AS_TRIANGLES
-
 	TFixedArray<s32,4> VertIndexes;
 	VertIndexes[0] = AddVertex( OutlineA, ColourA );
 	VertIndexes[1] = AddVertex( OutlineB, ColourB );
 	VertIndexes[2] = AddVertex( OutlineC, ColourC );
 	VertIndexes[3] = AddVertex( OutlineD, ColourD );
 
+	return GenerateQuad( VertIndexes );
+}
+
+
+
+//--------------------------------------------------------
+//	turn an outline of points into a quad/tri-strip
+//--------------------------------------------------------
+Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD)
+{
+	TFixedArray<s32,4> VertIndexes;
+	VertIndexes[0] = AddVertex( OutlineA );
+	VertIndexes[1] = AddVertex( OutlineB );
+	VertIndexes[2] = AddVertex( OutlineC );
+	VertIndexes[3] = AddVertex( OutlineD );
+
+	return GenerateQuad( VertIndexes );
+}
+
+
+
+//--------------------------------------------------------
+//	turn an outline of points into a quad/tri-strip
+//--------------------------------------------------------
+Bool TLAsset::TMesh::GenerateQuad(const TFixedArray<s32,4> OutlineVertIndexes)
+{
+#ifdef GENERATE_QUADS_AS_TRIANGLES
 	//	create tri strip
 	Triangle* pTriangleA = m_Triangles.AddNew();
 	Triangle* pTriangleB = m_Triangles.AddNew();
 
-	pTriangleA->x = VertIndexes[0];
-	pTriangleA->y = VertIndexes[1];
-	pTriangleA->z = VertIndexes[2];
+	pTriangleA->x = OutlineVertIndexes[0];
+	pTriangleA->y = OutlineVertIndexes[1];
+	pTriangleA->z = OutlineVertIndexes[2];
 
-	pTriangleB->x = VertIndexes[2];
-	pTriangleB->y = VertIndexes[3];
-	pTriangleB->z = VertIndexes[0];
+	pTriangleB->x = OutlineVertIndexes[2];
+	pTriangleB->y = OutlineVertIndexes[3];
+	pTriangleB->z = OutlineVertIndexes[0];
 
 #else
 	//	create tri strip
@@ -942,16 +989,17 @@ Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,
 
 	//	add verts
 	//	gr: note: ORDER IS 0,1,3,2 for tri strip!
-	pNewStrip->Add( AddVertex( OutlineA, VertexColour ) );
-	pNewStrip->Add( AddVertex( OutlineB, VertexColour ) );
-	pNewStrip->Add( AddVertex( OutlineD, VertexColour ) );
-	pNewStrip->Add( AddVertex( OutlineC, VertexColour ) );
+	pNewStrip->Add( OutlineVertIndexes[0] );
+	pNewStrip->Add( OutlineVertIndexes[1] );
+	pNewStrip->Add( OutlineVertIndexes[3] );
+	pNewStrip->Add( OutlineVertIndexes[2] );
 #endif
 
 	OnPrimitivesChanged();
 
 	return TRUE;
 }
+
 
 
 //--------------------------------------------------------
@@ -1040,3 +1088,95 @@ void TLAsset::TMesh::OnPrimitivesChanged()
 }
 
 
+//--------------------------------------------------------
+//	
+//--------------------------------------------------------
+Bool TLAsset::TMesh::ImportDatum(TBinaryTree& Data)
+{
+	Data.ResetReadPos();
+
+	//	read ref
+	TRef DatumRef;
+	if ( !Data.Read( DatumRef ) )
+		return FALSE;
+
+	//	read type of shape
+	TRef ShapeRef;
+	if ( !Data.Read( ShapeRef ) )
+		return FALSE;
+
+	//	import specific shape
+	if ( ShapeRef == "sph2" )
+	{
+		TLMaths::TSphere2D Shape;
+		if ( !Data.Read( Shape ) )
+			return FALSE;
+		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeSphere2D( Shape );
+		AddDatum( DatumRef, pShape );
+		return TRUE;
+	}
+
+	TLDebug_Break("Unknown datum shape type");
+	return FALSE;
+}
+
+//--------------------------------------------------------
+//	
+//--------------------------------------------------------
+Bool TLAsset::TMesh::ExportDatum(TBinaryTree& Data,TRefRef DatumRef,TPtr<TLMaths::TShape>& pShape)
+{
+	TRefRef ShapeRef = pShape->GetShapeType();
+
+	//	write ref
+	Data.Write( DatumRef );
+
+	//	write type of shape
+	Data.Write( ShapeRef );
+
+	//	export specific data
+	if ( ShapeRef == "sph2" )
+	{
+		const TLMaths::TSphere2D& Shape = pShape.GetObject<TLMaths::TShapeSphere2D>()->GetSphere();
+		Data.Write( Shape );
+		return TRUE;
+	}
+
+	TLDebug_Break("Unknown datum shape type");
+	return FALSE;
+}
+
+
+//--------------------------------------------------------
+//	
+//--------------------------------------------------------
+Bool TLAsset::TMesh::CreateDatum(const TArray<float3>& PolygonPoints,TRefRef DatumRef,TRefRef DatumShapeType)
+{
+	if ( PolygonPoints.GetSize() < 2 )
+	{
+		TLDebug_Break("Not enough points to generate datum from");
+		return FALSE;
+	}
+
+	if ( DatumShapeType == "sph2" )
+	{
+		//	get box of points for extents
+		TLMaths::TBox2D Box;
+		Box.Accumulate( PolygonPoints );
+
+		//	work out radius (NOT the diagonal!)
+		float HalfWidth = Box.GetHalfWidth();
+		float HalfHeight = Box.GetHalfHeight();
+		float Radius = (HalfWidth>HalfHeight) ? HalfWidth : HalfHeight;
+
+		//	make up sphere and shape
+		TLMaths::TSphere2D Sphere( Box.GetCenter(), Radius );
+		TPtr<TLMaths::TShape> pSphereShape = new TLMaths::TShapeSphere2D( Sphere );
+
+		//	add datum
+		AddDatum( DatumRef, pSphereShape );
+		return TRUE;
+	}
+
+	TLDebug_Break("Unknown shape type");
+	return FALSE;
+}

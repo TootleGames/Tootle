@@ -200,6 +200,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TShape.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TShape.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TSphere.cpp"
 			>
 		</File>

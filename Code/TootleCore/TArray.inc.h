@@ -93,6 +93,9 @@ s32 TArray<TYPE>::Add(const TYPE* pData,u32 Length)
 	{
 		TLArray::Debug::PrintSizeWarning( m_pData[0], Length, __FUNCTION__ );
 
+		//	pre-alloc data
+		AddAllocSize( Length );
+
 		//	add each member individually
 		FirstIndex = Add( pData[0] );
 		for ( u32 i=1;	i<Length;	i++ )

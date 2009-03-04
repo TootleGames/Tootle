@@ -256,11 +256,11 @@ SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset
 	//	delete branches we dont care about
 	for ( i=pSvgTag->GetChildren().GetLastIndex();	i>=0;	i-- )
 	{
-		TPtr<TXmlTag>& pTag = pSvgTag->GetChildren().ElementAt(i);
+		TXmlTag& Tag = *pSvgTag->GetChildren().ElementAt(i);
 	
 		//	keep these kinds of tags
-		if ( pTag->GetTagType() == TLXml::TagType_OpenClose ||
-			 pTag->GetTagType() == TLXml::TagType_SelfClose )
+		if ( Tag.GetTagType() == TLXml::TagType_OpenClose ||
+			 Tag.GetTagType() == TLXml::TagType_SelfClose )
 		{
 			continue;
 		}
@@ -302,7 +302,7 @@ SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset
 	m_SvgPointMove.Set( 0.f, 0.f, 0.f );
 
 	//	parse xml to mesh (and it's children)
-	if ( !ImportMesh( pNewMesh, pSvgTag ) )
+	if ( !ImportMesh( pNewMesh, *pSvgTag ) )
 		return SyncFalse;
 
 	//	assign resulting asset
@@ -316,30 +316,30 @@ SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset
 //--------------------------------------------------------
 //	generate mesh data from this SVG tag
 //--------------------------------------------------------
-Bool TLFileSys::TFileSimpleVector::ImportMesh(TPtr<TLAsset::TMesh>& pMesh,TPtr<TXmlTag>& pTag)
+Bool TLFileSys::TFileSimpleVector::ImportMesh(TPtr<TLAsset::TMesh>& pMesh,TXmlTag& Tag)
 {
 	//	deal with child tags
-	for ( u32 c=0;	c<pTag->GetChildren().GetSize();	c++ )
+	for ( u32 c=0;	c<Tag.GetChildren().GetSize();	c++ )
 	{
-		TPtr<TXmlTag>& pChildTag = pTag->GetChildren().ElementAt(c);
-		if ( pChildTag->GetTagName() == "polygon" )
+		TXmlTag& ChildTag = *Tag.GetChildren().ElementAt(c);
+		if ( ChildTag.GetTagName() == "polygon" )
 		{
-			if ( !ImportPolygonTag( pMesh, pChildTag ) )
+			if ( !ImportPolygonTag( pMesh, ChildTag ) )
 				return FALSE;
 		}
-		else if ( pChildTag->GetTagName() == "path" )
+		else if ( ChildTag.GetTagName() == "path" )
 		{
-			if ( !ImportPathTag( pMesh, pChildTag ) )
+			if ( !ImportPathTag( pMesh, ChildTag ) )
 				return FALSE;
 		}
-		else if ( pChildTag->GetTagName() == "rect" )
+		else if ( ChildTag.GetTagName() == "rect" )
 		{
-			if ( !ImportRectTag( pMesh, pChildTag ) )
+			if ( !ImportRectTag( pMesh, ChildTag ) )
 				return FALSE;
 		}
 
 		//	unknown type, make a new child out of it
-		if ( !pChildTag->GetChildren().GetSize() )
+		if ( !ChildTag.GetChildren().GetSize() )
 			continue;
 
 		float OldZ = m_SvgPointMove.z;
@@ -347,7 +347,7 @@ Bool TLFileSys::TFileSimpleVector::ImportMesh(TPtr<TLAsset::TMesh>& pMesh,TPtr<T
 		//	every time we go deeper down the tree increment the z
 		m_SvgPointMove.z += m_SvgLayerZIncrement;
 
-		if ( !ImportMesh( pMesh, pChildTag ) )
+		if ( !ImportMesh( pMesh, ChildTag ) )
 			return FALSE;
 
 		//	restore z
@@ -363,9 +363,9 @@ Bool TLFileSys::TFileSimpleVector::ImportMesh(TPtr<TLAsset::TMesh>& pMesh,TPtr<T
 //--------------------------------------------------------
 //	convert Polygon tag to mesh info and add to mesh
 //--------------------------------------------------------
-Bool TLFileSys::TFileSimpleVector::ImportPolygonTag(TPtr<TLAsset::TMesh>& pMesh,TPtr<TXmlTag>& pTag)
+Bool TLFileSys::TFileSimpleVector::ImportPolygonTag(TPtr<TLAsset::TMesh>& pMesh,TXmlTag& Tag)
 {
-	const TString* pString = pTag->GetProperty("points");
+	const TString* pString = Tag.GetProperty("points");
 	if ( !pString )
 	{
 		if ( TLDebug_Break("Expected points property of svg for <polygon>") )
@@ -420,16 +420,29 @@ Bool TLFileSys::TFileSimpleVector::ImportPolygonTag(TPtr<TLAsset::TMesh>& pMesh,
 		OutlinePoints.Add( VertexPos );
 	}
 
-	//	turn into a polygon in the mesh
-	TLMaths::TTessellator* pTessellator = TLMaths::Platform::CreateTessellator( pMesh );
-	if ( !pTessellator )
-		return FALSE;
-	
-	TPtr<TLMaths::TContour> pContour = new TLMaths::TContour( OutlinePoints, NULL );
-	pTessellator->AddContour(pContour);
-	
-	if ( !pTessellator->GenerateTessellations( TLMaths::TLTessellator::WindingMode_Odd ) )
-		return FALSE;
+	//	empty, but not invalid, nothing to create
+	if ( OutlinePoints.GetSize() == 0 )
+		return TRUE;
+
+	//	turn into datum instead of geometry
+	TRef DatumRef,DatumShapeType;
+	if ( IsTagDatum( Tag, DatumRef, DatumShapeType ) )
+	{
+		pMesh->CreateDatum( OutlinePoints, DatumRef, DatumShapeType );
+	}
+	else
+	{
+		//	turn into a polygon in the mesh
+		TLMaths::TTessellator* pTessellator = TLMaths::Platform::CreateTessellator( pMesh );
+		if ( !pTessellator )
+			return FALSE;
+		
+		TPtr<TLMaths::TContour> pContour = new TLMaths::TContour( OutlinePoints, NULL );
+		pTessellator->AddContour(pContour);
+		
+		if ( !pTessellator->GenerateTessellations( TLMaths::TLTessellator::WindingMode_Odd ) )
+			return FALSE;
+	}
 
 	return TRUE;
 }
@@ -439,9 +452,9 @@ Bool TLFileSys::TFileSimpleVector::ImportPolygonTag(TPtr<TLAsset::TMesh>& pMesh,
 //	convert Polygon tag to mesh info and add to mesh
 //	http://www.w3.org/TR/SVG/paths.html#PathElement
 //--------------------------------------------------------
-Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TPtr<TXmlTag>& pTag)
+Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXmlTag& Tag)
 {
-	const TString* pString = pTag->GetProperty("d");
+	const TString* pString = Tag.GetProperty("d");
 	if ( !pString )
 	{
 		if ( TLDebug_Break("Expected d property of svg for <path>") )
@@ -653,29 +666,51 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TPt
 	if ( !Contours.GetSize() )
 		return FALSE;
 
-	//	get style
-	Style TagStyle( pTag->GetProperty("style") );
-
-	//	if a filled vector then create tesselations from the outline
-	if ( TagStyle.m_HasFill )
+	//	turn into datum instead of geometry
+	TRef DatumRef,DatumShapeType;
+	if ( IsTagDatum( Tag, DatumRef, DatumShapeType ) )
 	{
-		//	tesselate those bad boys!
-		TLMaths::TTessellator* pTessellator = TLMaths::Platform::CreateTessellator( pMesh );
-		if ( pTessellator )
+		if ( Contours.GetSize() == 1 )
 		{
+			pMesh->CreateDatum( Contours[0]->GetPoints(), DatumRef, DatumShapeType );
+		}
+		else
+		{
+			//	put all contour points into one array of points
+			TArray<float3> ContourPoints;
 			for ( u32 c=0;	c<Contours.GetSize();	c++ )
+				ContourPoints.Add( Contours[c]->GetPoints() );
+			
+			pMesh->CreateDatum( ContourPoints, DatumRef, DatumShapeType );
+		}
+	}
+	else	//	create geometry
+	{
+		//	get style
+		Style TagStyle( Tag.GetProperty("style") );
+
+		//	if a filled vector then create tesselations from the outline
+		if ( TagStyle.m_HasFill )
+		{
+			//	tesselate those bad boys!
+			TLMaths::TTessellator* pTessellator = TLMaths::Platform::CreateTessellator( pMesh );
+			if ( pTessellator )
 			{
-				pTessellator->AddContour( Contours[c] );
+				for ( u32 c=0;	c<Contours.GetSize();	c++ )
+				{
+					pTessellator->AddContour( Contours[c] );
+				}
+				pTessellator->SetVertexColour( TagStyle.m_FillColour );
+				pTessellator->GenerateTessellations( TLMaths::TLTessellator::WindingMode_Odd );
 			}
-			pTessellator->SetVertexColour( TagStyle.m_FillColour );
-			pTessellator->GenerateTessellations( TLMaths::TLTessellator::WindingMode_Odd );
+		}
+
+		if ( TagStyle.m_HasStroke )
+		{
+			CreateMeshLines( *pMesh, Contours, TagStyle );
 		}
 	}
 
-	if ( TagStyle.m_HasStroke )
-	{
-		CreateMeshLines( pMesh, Contours, TagStyle );
-	}
 	return TRUE;
 }
 
@@ -683,13 +718,13 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TPt
 //--------------------------------------------------------
 //	convert rect tag into a polygon
 //--------------------------------------------------------
-Bool TLFileSys::TFileSimpleVector::ImportRectTag(TPtr<TLAsset::TMesh>& pMesh,TPtr<TXmlTag>& pTag)
+Bool TLFileSys::TFileSimpleVector::ImportRectTag(TPtr<TLAsset::TMesh>& pMesh,TXmlTag& Tag)
 {
 	//	get rect strings
-	const TString* pLeftString = pTag->GetProperty("x");
-	const TString* pTopString = pTag->GetProperty("y");
-	const TString* pWidthString = pTag->GetProperty("width");
-	const TString* pHeighthString = pTag->GetProperty("height");
+	const TString* pLeftString = Tag.GetProperty("x");
+	const TString* pTopString = Tag.GetProperty("y");
+	const TString* pWidthString = Tag.GetProperty("width");
+	const TString* pHeighthString = Tag.GetProperty("height");
 
 	if ( !pWidthString || !pHeighthString || !pLeftString || !pTopString )
 	{
@@ -700,7 +735,7 @@ Bool TLFileSys::TFileSimpleVector::ImportRectTag(TPtr<TLAsset::TMesh>& pMesh,TPt
 	}
 
 	//	get style
-	Style TagStyle( pTag->GetProperty("style") );
+	Style TagStyle( Tag.GetProperty("style") );
 
 	//	create rect
 	float4 Rect;
@@ -723,54 +758,36 @@ Bool TLFileSys::TFileSimpleVector::ImportRectTag(TPtr<TLAsset::TMesh>& pMesh,TPt
 	float2 PointBottomLeft( Rect.Left(), Rect.Bottom() );
 	float2 PointBottomRight( Rect.Right(), Rect.Bottom() );
 
-	float3 VertexTopLeft = CoordinateToVertexPos( PointTopLeft );
-	float3 VertexTopRight = CoordinateToVertexPos( PointTopRight );
-	float3 VertexBottomLeft = CoordinateToVertexPos( PointBottomLeft );
-	float3 VertexBottomRight = CoordinateToVertexPos( PointBottomRight );
+	//	vertex outline
+	TFixedArray<float3,4> Vertexes;
+	Vertexes[0] = CoordinateToVertexPos( PointTopLeft );
+	Vertexes[1] = CoordinateToVertexPos( PointTopRight );
+	Vertexes[2] = CoordinateToVertexPos( PointBottomRight );
+	Vertexes[3] = CoordinateToVertexPos( PointBottomLeft );
 
-	//	create polygons
-	if ( TagStyle.m_HasFill || TagStyle.m_HasStroke )
+	//	turn into datum instead of geometry
+	TRef DatumRef,DatumShapeType;
+	if ( IsTagDatum( Tag, DatumRef, DatumShapeType ) )
 	{
-		Bool DifferentVertexes = (TagStyle.m_FillColour != TagStyle.m_StrokeColour) && (TagStyle.m_HasFill != TagStyle.m_HasStroke);
-
-		//	add vertexes
-		TFixedArray<s32,4> Vertexes;
-		Vertexes[0] = pMesh->AddVertex( VertexBottomLeft,	TagStyle.m_HasFill ? TagStyle.m_FillColour : TagStyle.m_StrokeColour );
-		Vertexes[1] = pMesh->AddVertex( VertexTopLeft,		TagStyle.m_HasFill ? TagStyle.m_FillColour : TagStyle.m_StrokeColour );
-		Vertexes[2] = pMesh->AddVertex( VertexTopRight,	TagStyle.m_HasFill ? TagStyle.m_FillColour : TagStyle.m_StrokeColour );
-		Vertexes[3] = pMesh->AddVertex( VertexBottomRight,	TagStyle.m_HasFill ? TagStyle.m_FillColour : TagStyle.m_StrokeColour );
-
-		//	create tristrip
+		pMesh->CreateDatum( Vertexes, DatumRef, DatumShapeType );
+	}
+	else if ( TagStyle.m_HasFill || TagStyle.m_HasStroke )	//	create polygons
+	{
+		//	create quad
 		if ( TagStyle.m_HasFill )
 		{
-			TLAsset::TMesh::Tristrip* pNewTristrip = pMesh->GetTristrips().AddNew();
-			TLAsset::TMesh::Tristrip& NewTristrip = *pNewTristrip;
-			NewTristrip.SetSize(4);
-			NewTristrip[0] = Vertexes[0];
-			NewTristrip[1] = Vertexes[1];
-			NewTristrip[2] = Vertexes[3];
-			NewTristrip[3] = Vertexes[2];
+			pMesh->GenerateQuad( Vertexes, TagStyle.m_FillColour );
 		}
 
 		//	create line strip
 		if ( TagStyle.m_HasStroke )
 		{
-			//	colours are different so we need to make up new verts
-			if ( DifferentVertexes )
-			{
-				Vertexes[0] = pMesh->AddVertex( VertexBottomLeft,	TagStyle.m_StrokeColour );
-				Vertexes[1] = pMesh->AddVertex( VertexTopLeft,		TagStyle.m_StrokeColour );
-				Vertexes[2] = pMesh->AddVertex( VertexTopRight,		TagStyle.m_StrokeColour );
-				Vertexes[3] = pMesh->AddVertex( VertexBottomRight,	TagStyle.m_StrokeColour );
-			}
-
 			TLAsset::TMesh::Line* pNewLinestrip = pMesh->GetLines().AddNew();
 			TLAsset::TMesh::Tristrip& NewLinestrip = *pNewLinestrip;
-			NewLinestrip.SetSize(4);
-			NewLinestrip[0] = Vertexes[0];
-			NewLinestrip[1] = Vertexes[1];
-			NewLinestrip[2] = Vertexes[2];
-			NewLinestrip[3] = Vertexes[3];
+			NewLinestrip.Add( pMesh->AddVertex( Vertexes[0], TagStyle.m_StrokeColour ) );
+			NewLinestrip.Add( pMesh->AddVertex( Vertexes[1], TagStyle.m_StrokeColour ) );
+			NewLinestrip.Add( pMesh->AddVertex( Vertexes[2], TagStyle.m_StrokeColour ) );
+			NewLinestrip.Add( pMesh->AddVertex( Vertexes[3], TagStyle.m_StrokeColour ) );
 		}
 	}
 
@@ -796,11 +813,11 @@ float3 TLFileSys::TFileSimpleVector::CoordinateToVertexPos(const float2& Coordin
 //--------------------------------------------------------
 //	create line strips on mesh from a list of contours
 //--------------------------------------------------------
-void TLFileSys::TFileSimpleVector::CreateMeshLines(TPtr<TLAsset::TMesh>& pMesh,TPtrArray<TLMaths::TContour>& Contours,Style& LineStyle)
+void TLFileSys::TFileSimpleVector::CreateMeshLines(TLAsset::TMesh& Mesh,TPtrArray<TLMaths::TContour>& Contours,Style& LineStyle)
 {
 	for ( u32 c=0;	c<Contours.GetSize();	c++ )
 	{
-		CreateMeshLineStrip( pMesh, Contours[c], LineStyle );
+		CreateMeshLineStrip( Mesh, *Contours[c], LineStyle );
 	}
 }
 
@@ -808,11 +825,11 @@ void TLFileSys::TFileSimpleVector::CreateMeshLines(TPtr<TLAsset::TMesh>& pMesh,T
 //--------------------------------------------------------
 //	create line strip on mesh from a contour
 //--------------------------------------------------------
-void TLFileSys::TFileSimpleVector::CreateMeshLineStrip(TPtr<TLAsset::TMesh>& pMesh,TPtr<TLMaths::TContour>& pContour,Style& LineStyle)
+void TLFileSys::TFileSimpleVector::CreateMeshLineStrip(TLAsset::TMesh& Mesh,TLMaths::TContour& Contour,Style& LineStyle)
 {
-	const TArray<float3>& ContourPoints = pContour->GetPoints();
+	const TArray<float3>& ContourPoints = Contour.GetPoints();
 
-	TLAsset::TMesh::Line* pNewLine = pMesh->GetLines().AddNew();
+	TLAsset::TMesh::Line* pNewLine = Mesh.GetLines().AddNew();
 	if ( !pNewLine )
 		return;
 
@@ -833,7 +850,7 @@ void TLFileSys::TFileSimpleVector::CreateMeshLineStrip(TPtr<TLAsset::TMesh>& pMe
 		}
 		else
 		{
-			VertexIndex = pMesh->AddVertex( ContourPoints[p], LineStyle.m_StrokeColour );
+			VertexIndex = Mesh.AddVertex( ContourPoints[p], LineStyle.m_StrokeColour );
 		}
 
 		pNewLine->Add( VertexIndex );
@@ -845,7 +862,7 @@ void TLFileSys::TFileSimpleVector::CreateMeshLineStrip(TPtr<TLAsset::TMesh>& pMe
 		if ( p < ContourPoints.GetSize() && pNewLine->GetSize() >= TLAsset::g_MaxLineStripSize )
 		{
 			//	make new line
-			pNewLine = pMesh->GetLines().AddNew();
+			pNewLine = Mesh.GetLines().AddNew();
 			if ( !pNewLine )
 				break;
 			
@@ -856,7 +873,48 @@ void TLFileSys::TFileSimpleVector::CreateMeshLineStrip(TPtr<TLAsset::TMesh>& pMe
 
 }
 
+//--------------------------------------------------------
+//	check if tag marked as a datum
+//--------------------------------------------------------
+Bool TLFileSys::TFileSimpleVector::IsTagDatum(TXmlTag& Tag,TRef& DatumRef,TRef& ShapeType)
+{
+	//	get the "id" property
+	const TString* pIDString = Tag.GetProperty("id");
+	if ( !pIDString )
+		return FALSE;
 
+	//	split the string - max at 4 splits, if it splits 4 times, there's too many parts
+	TFixedArray<TStringLowercase<TTempString>, 4> StringParts(0);
+	if ( !pIDString->Split( '_', StringParts ) )
+	{
+		//	didn't split at all, can't be valid
+		return FALSE;
+	}
+
+	//	check first part is named "datum"
+	if ( StringParts[0] != "datum" )
+		return FALSE;
+
+	//	should be 3 parts
+	if ( StringParts.GetSize() != 3 )
+	{
+		TLDebug_Break( TString("Malformed Datum name (%s) on SVG geometry. Should be Datum_SHAPE_REF", pIDString->GetData() ) );
+		return FALSE;
+	}
+
+	//	make shape ref from 2nd string
+	ShapeType.Set( StringParts[1] );
+	DatumRef.Set( StringParts[2] );
+	
+	//	if either are invalid, fail
+	if ( !ShapeType.IsValid() || !DatumRef.IsValid() )
+	{
+		TLDebug_Break( TString("Failed to set valid Ref's from Datum identifier: %s", pIDString->GetData() ) );
+		return FALSE;
+	}
+
+	return TRUE;
+}
 
 
 TLFileSys::TFileSimpleVector::Style::Style(const TString* pStyleString) :

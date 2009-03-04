@@ -57,15 +57,17 @@ public:
 	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);			//	import the XML and convert from SVG to mesh
 
 protected:
-	Bool				ImportMesh(TPtr<TLAsset::TMesh>& pMesh,TPtr<TXmlTag>& pTag);		//	generate mesh data from this SVG tag
-	Bool				ImportPolygonTag(TPtr<TLAsset::TMesh>& pMesh,TPtr<TXmlTag>& pTag);	//	convert Polygon tag to mesh info and add to mesh
-	Bool				ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TPtr<TXmlTag>& pTag);		//	convert path tag to mesh info and add to mesh
-	Bool				ImportRectTag(TPtr<TLAsset::TMesh>& pMesh,TPtr<TXmlTag>& pTag);		//	convert rect tag to mesh info and add to mesh
+	Bool				ImportMesh(TPtr<TLAsset::TMesh>& pMesh,TXmlTag& Tag);			//	generate mesh data from this SVG tag
+	Bool				ImportPolygonTag(TPtr<TLAsset::TMesh>& pMesh,TXmlTag& Tag);	//	convert Polygon tag to mesh info and add to mesh
+	Bool				ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXmlTag& Tag);		//	convert path tag to mesh info and add to mesh
+	Bool				ImportRectTag(TPtr<TLAsset::TMesh>& pMesh,TXmlTag& Tag);		//	convert rect tag to mesh info and add to mesh
 
-	float3				CoordinateToVertexPos(const float2& Coordinate);					//	move & scale coordinate and convert to float3
+	float3				CoordinateToVertexPos(const float2& Coordinate);			//	move & scale coordinate and convert to float3
 
-	void				CreateMeshLines(TPtr<TLAsset::TMesh>& pMesh,TPtrArray<TLMaths::TContour>& Contours,Style& LineStyle);	//	create line strips on mesh from a list of contours
-	void				CreateMeshLineStrip(TPtr<TLAsset::TMesh>& pMesh,TPtr<TLMaths::TContour>& pContour,Style& LineStyle);	//	create line strip on mesh from a contour
+	void				CreateMeshLines(TLAsset::TMesh& Mesh,TPtrArray<TLMaths::TContour>& Contours,Style& LineStyle);	//	create line strips on mesh from a list of contours
+	void				CreateMeshLineStrip(TLAsset::TMesh& Mesh,TLMaths::TContour& Contour,Style& LineStyle);	//	create line strip on mesh from a contour
+
+	Bool				IsTagDatum(TXmlTag& Tag,TRef& DatumRef,TRef& ShapeType);	//	check if tag marked as a datum
 
 protected:
 	float				m_SvgLayerZIncrement;	//	every layer we increase the Z position of meshes we generate to avoid Z fighting, this is how much we increment by

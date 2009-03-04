@@ -91,11 +91,12 @@ public:
 	FORCEINLINE const PAIRTYPE&	GetPairAt(u32 Index) const				{	return m_Array.ElementAtConst(Index);	}
 	FORCEINLINE TYPE&			ElementLast()							{	return ElementAt( m_Array.GetLastIndex() );	};
 	FORCEINLINE const TYPE&		ElementLastConst() const				{	return ElementAtConst( m_Array.GetLastIndex() );	};
+	FORCEINLINE Bool			Exists(const KEYTYPE& Key)				{	return m_Array.Exists( Key );	}
+	FORCEINLINE Bool			Exists(const KEYTYPE& Key) const		{	return m_Array.Exists( Key );	}
 
-	const KEYTYPE*		FindKey(const TYPE& Item,const KEYTYPE* pPreviousMatch=NULL) const;	//	find the key for a pair matching this item
-
-	TYPE*				Add(const KEYTYPE& Key,const TYPE& Item,Bool Overwrite=TRUE);	//	add an item with this key. if the key already exists the item is overwritten if specified, returns the item for the key, overwritten or not. NULL if failed
-	Bool				Remove(const KEYTYPE& Key);				//	remove the item with this key. returns if anything was removed
+	const KEYTYPE*				FindKey(const TYPE& Item,const KEYTYPE* pPreviousMatch=NULL) const;	//	find the key for a pair matching this item
+	TYPE*						Add(const KEYTYPE& Key,const TYPE& Item,Bool Overwrite=TRUE);	//	add an item with this key. if the key already exists the item is overwritten if specified, returns the item for the key, overwritten or not. NULL if failed
+	Bool						Remove(const KEYTYPE& Key);				//	remove the item with this key. returns if anything was removed
 
 protected:
 	TArray<TLKeyArray::TPair<KEYTYPE,TYPE> >		m_Array;		//	array of pairs

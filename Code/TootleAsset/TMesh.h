@@ -13,6 +13,9 @@
 #include <TootleMaths/TBox.h>
 #include <TootleMaths/TSphere.h>
 #include <TootleMaths/TCapsule.h>
+#include <TootleMaths/TShape.h>
+#include <TootleCore/TKeyArray.h>
+
 
 namespace TLAsset
 {
@@ -89,6 +92,8 @@ public:
 	Bool					GenerateQuad(const TArray<float3>& Outline,const TArray<TColour>& Colours);	//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour& Colour);	//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour& ColourA,const TColour& ColourB,const TColour& ColourC,const TColour& ColourD);	//	turn an outline of points into a quad/tri-strip
+	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD);		//	turn an outline of points into a quad/tri-strip
+	Bool					GenerateQuad(const TFixedArray<s32,4> OutlineVertIndexes);		//	turn an outline of points into a quad/tri-strip
 
 	//	vertex manipulation
 	s32						AddVertex(const float3& VertexPos);							//	add vertex to the list, makes up normals and colours if required
@@ -141,10 +146,21 @@ public:
 	TLMaths::TCapsule&		CalcBoundsCapsule(Bool ForceCalc=FALSE);	//	calculate bounds box if invalid
 	TLMaths::TCapsule&		GetBoundsCapsule()					{	return m_BoundsCapsule;	}
 
-	
+	//	datum access
+	FORCEINLINE TPtr<TLMaths::TShape>&	AddDatum(TRefRef DatumRef,TPtr<TLMaths::TShape>& pShape);
+	Bool					RemoveDatum(TRefRef DatumRef) 		{	return m_Datums.Remove( DatumRef );	}
+	Bool					DatumExists(TRefRef DatumRef) const	{	return m_Datums.Exists( DatumRef );	}
+	TPtr<TLMaths::TShape>&	GetDatum(TRefRef DatumRef)			{	return m_Datums.FindPtr( DatumRef );	}
+	template<class SHAPETYPE>
+	SHAPETYPE*				GetDatum(TRefRef DatumRef)			{	return m_Datums.FindPtr( DatumRef ).GetObject<SHAPETYPE>();	}
+	Bool					CreateDatum(const TArray<float3>& PolygonPoints,TRefRef DatumRef,TRefRef DatumShapeType);
+
 protected:
 	virtual SyncBool		ImportData(TBinaryTree& Data);		//	load asset data out binary data
 	virtual SyncBool		ExportData(TBinaryTree& Data);		//	save asset data to binary data
+
+	Bool					ImportDatum(TBinaryTree& Data);
+	Bool					ExportDatum(TBinaryTree& Data,TRefRef DatumRef,TPtr<TLMaths::TShape>& pShape);
 
 	void					CalcHasAlpha();						//	loop through colours to check if we have any alpha colours in the verts
 
@@ -159,6 +175,9 @@ protected:
 	TArray<Trifan>			m_Trifans;				//	trifans in mesh
 	TArray<Line>			m_Lines;				//	lineSTRIPS in mesh
 	
+	TPtrKeyArray<TRef,TLMaths::TShape>	m_Datums;	//	datum shapes on mesh
+
+	//	todo: replace with named Datums
 	TLMaths::TBox			m_BoundsBox;			//	bounding box vertex extents
 	TLMaths::TSphere		m_BoundsSphere;			//	bounding sphere
 	TLMaths::TCapsule		m_BoundsCapsule;		//	bounding capsule 
@@ -169,3 +188,14 @@ protected:
 
 
 
+
+FORCEINLINE TPtr<TLMaths::TShape>& TLAsset::TMesh::AddDatum(TRefRef DatumRef,TPtr<TLMaths::TShape>& pShape) 
+{
+	TPtr<TLMaths::TShape>* ppShape = m_Datums.Add( DatumRef, pShape, TRUE );
+
+	//	failed to add, return null Ptr
+	if ( !ppShape )
+		return TLPtr::GetNullPtr<TLMaths::TShape>();
+
+	return *ppShape;
+}
