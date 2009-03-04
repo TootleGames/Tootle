@@ -62,15 +62,15 @@ public:
 	virtual TRefRef				GetGraphRef() const						{	return TManager::GetManagerRef();	}
 
 	//	Node access
-	inline TPtr<T>&				GetRootNode()							{	return m_pRootNode; }
-	inline TPtrArray<T>&		GetNodeList()							{	return m_NodeIndex;	}
-	inline u32					GetNodeCount() const					{	return m_NodeIndex.GetSize();	}
+	FORCEINLINE TPtr<T>&		GetRootNode()							{	return m_pRootNode; }
+	FORCEINLINE TPtrArray<T>&	GetNodeList()							{	return m_NodeIndex;	}
+	FORCEINLINE u32				GetNodeCount() const					{	return m_NodeIndex.GetSize();	}
 	template<typename MATCHTYPE>
-	TPtr<T>&					FindNodeMatch(const MATCHTYPE& Value);	//	find a TPtr in the graph that matches the specified value (will use == operator of node type to match)
-
-	TPtr<T>&					FindNode(TRefRef NodeRef);				//	find a node
+	TPtr<T>&					FindNodeMatch(const MATCHTYPE& Value,Bool CheckRequestQueue=TRUE);	//	find a TPtr in the graph that matches the specified value (will use == operator of node type to match)
+	TPtr<T>&					FindNode(TRefRef NodeRef,Bool CheckRequestQueue=TRUE);				//	find a node
 	TRef						GetFreeNodeRef(TRefRef BaseRef=TRef());	//	find an unused ref for a node - returns the ref
 	TRefRef						GetFreeNodeRef(TRef& Ref);				//	find an unused ref for a node, modifies the ref provided
+
 	virtual Bool				SendMessageToNode(TRefRef NodeRef,TLMessaging::TMessage& Message);	//	send message to node
 
 	// Graph change requests
@@ -104,14 +104,20 @@ protected:
 	void						UpdateGraphStructure();							// Adds/removes nodes that have been queued up for update
 
 	template<typename MATCHTYPE>
-	Bool						IsInGraph(const MATCHTYPE& Value)		{	return FindNodeMatch( Value ).IsValid();	}
-	Bool						IsInGraph(TRefRef NodeRef)				{	return FindNode( NodeRef ).IsValid();	}
-	Bool						IsInQueue(TPtr<T>& pNode);
+	FORCEINLINE Bool			IsInGraph(const MATCHTYPE& Value,Bool CheckRequestQueue=TRUE)		{	return FindNodeMatch( Value, CheckRequestQueue ).IsValid();	}
+	FORCEINLINE Bool			IsInGraph(TRefRef NodeRef,Bool CheckRequestQueue=TRUE)				{	return FindNode( NodeRef, CheckRequestQueue ).IsValid();	}
+	FORCEINLINE Bool			IsInGraph(TPtr<T>& pNode,Bool CheckRequestQueue=TRUE)			{	return FindNode( pNode->GetNodeRef(), CheckRequestQueue ).IsValid();	}
+	FORCEINLINE Bool			IsInRequestQueue(TPtr<T>& pNode) const		{	return IsInRequestQueue( pNode->GetNodeRef() );	}
+	FORCEINLINE Bool			IsInRequestQueue(TRefRef NodeRef) const		{	return m_RequestQueue.Exists( NodeRef );	}
+	FORCEINLINE Bool			IsInAddQueue(TPtr<T>& pNode) const			{	return IsInAddQueue( pNode->GetNodeRef() );	}
+	Bool						IsInAddQueue(TRefRef NodeRef) const;		//	is in the request queue and marked to Add
+	FORCEINLINE Bool			IsInRemoveQueue(TPtr<T>& pNode) const		{	return IsInRemoveQueue( pNode->GetNodeRef() );	}
+	Bool						IsInRemoveQueue(TRefRef NodeRef) const;		//	is in the request queue and marked to remove
 
 	virtual void				ProcessMessageFromQueue(TLMessaging::TMessage& Message);
 	virtual void				OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
 	
-	TPtr<T>&					FindPtr(const TGraphNode<T>* pNode) const;					//	find a TPtr in the graph that matches the node - workaround for non intrusive pointers
+	FORCEINLINE TPtr<T>&		FindPtr(const TGraphNode<T>* pNode) const	{	return FindNode( pNode->GetNodeRef() );	}
 
 	//	base graph functions
 	virtual TLGraph::TGraphNodeBase*	FindNodeBase(TRefRef NodeRef)		{	TPtr<T>& pNode = FindNode( NodeRef );	return pNode.GetObject();	}
@@ -126,7 +132,7 @@ private:
 
 	// Graph structure updates
 	void						DoAddNode(TPtr<T>& pNode,TPtr<T>& pParent);		// Final stage add of the graph node
-	void						DoRemoveNode(TPtr<T>& pNode,TPtr<T>& pParent);		// Final stage removal of the graph node
+	void						DoRemoveNode(TPtr<T>& pNode,TPtr<T>& pParent);	// Final stage removal of the graph node
 
 	//	gr: you don;t need another template declaration, by being inside a template class it is templated (it's TGraph<T>::TGraphRequest which is different to TGraph<X>::TGraphRequest)
 	//template <class T>
@@ -142,6 +148,7 @@ private:
 
 		FORCEINLINE TPtr<T>&	GetNode()			{	return m_pNode;	}
 		FORCEINLINE TPtr<T>&	GetNodeParent()		{	return m_pNodeParent;	}
+		FORCEINLINE Bool		IsAddRequest()		{	return !m_bRemoveNode;	}
 		FORCEINLINE Bool		IsRemoveRequest()	{	return m_bRemoveNode;	}
 
 		FORCEINLINE Bool		operator==(TRefRef NodeRef) const					{	return m_pNode == NodeRef;	}
@@ -155,8 +162,8 @@ private:
 	};
 
 private:
-	TPtr<T>								m_pRootNode;			// The root of the graph
-	TPtrArray<TGraphUpdateRequest>		m_UpdateQueue;			// List of objects to add/remove from the graph
+	TPtr<T>								m_pRootNode;			//	The root of the graph
+	TPtrArray<TGraphUpdateRequest>		m_RequestQueue;			//	List of objects to add/remove from the graph
 	TPtrArray<T>						m_NodeIndex;			//	list of all the nodes, used for fast node finding
 
 	TPtrArray< TClassFactory<T,FALSE> >	m_NodeFactories;		//	array of graph node factories. if none, T is created
@@ -240,7 +247,7 @@ protected:
 		Message.ResetReadPos();
 		ProcessMessage(Message);	
 	}
-	
+
 	// Parent manipulation
 	virtual void			SetParent(TPtr<T>& pNode);						//	gr: needs to make sure removes self from former parent?
 	TPtr<T>&				FindPtr(const TGraphNode<T>* pNode) const;		//	find a child/sibling matching this node and return our TPtr to it - workaround for non intrusive smart pointers
@@ -384,7 +391,7 @@ TPtr<T>& TLGraph::TGraphNode<T>::FindPtr(const TGraphNode<T>* pNode) const
 //---------------------------------------------------------
 template <class T>
 template<typename MATCHTYPE>
-TPtr<T>&	TLGraph::TGraphNode<T>::FindNodeMatch(const MATCHTYPE& Value)		
+TPtr<T>& TLGraph::TGraphNode<T>::FindNodeMatch(const MATCHTYPE& Value)		
 {	
 	if ( *this == Value )
 	{
@@ -880,22 +887,24 @@ SyncBool TLGraph::TGraph<T>::Shutdown()
 //	find node in the graph by ref
 //-------------------------------------------------------
 template <class T>
-TPtr<T>& TLGraph::TGraph<T>::FindNode(const TRef& NodeRef)			
+TPtr<T>& TLGraph::TGraph<T>::FindNode(TRefRef NodeRef,Bool CheckRequestQueue)			
 {	
+	//	invalid ref is not gonna be in the graph
 	if ( !NodeRef.IsValid() )
-	{
 		return TLPtr::GetNullPtr<T>();
-	}
 	
 	//	search the graph list
 	TPtr<T>& pIndexNode = m_NodeIndex.FindPtr( NodeRef );
 	if ( pIndexNode )
 		return pIndexNode;
 
-	//	look in the update queue for new nodes
-	TPtr<TGraphUpdateRequest>& pMatchingUpdate = m_UpdateQueue.FindPtr( NodeRef );
-	if ( pMatchingUpdate )
-		return pMatchingUpdate->GetNode();
+	//	look in the update queue for new nodes (will be doing redundant checks for the nodes being removed, but never mind
+	if ( CheckRequestQueue )
+	{
+		TPtr<TGraphUpdateRequest>& pMatchingUpdate = m_RequestQueue.FindPtr( NodeRef );
+		if ( pMatchingUpdate )
+			return pMatchingUpdate->GetNode();
+	}
 
 	return TLPtr::GetNullPtr<T>();
 }
@@ -937,7 +946,7 @@ TRefRef TLGraph::TGraph<T>::GetFreeNodeRef(TRef& Ref)
 	}
 
 	//	if it's in the queue, it also needs changing
-	while ( m_UpdateQueue.Exists( Ref ) )
+	while ( m_RequestQueue.Exists( Ref ) )
 	{
 #ifdef _DEBUG
 		//	gr: call the GetNullPtr func to detect Non-NULL null TPtr's
@@ -1097,27 +1106,50 @@ Bool TLGraph::TGraph<T>::AddNode(TPtr<T>& pNode,TPtr<T>& pParent)
 		return FALSE;
 	}
 
+	//	gr: FindNode searches the request queue so this is redundant 
+	//	- kept in for debug just in case this changes or isn't right
+#ifdef _DEBUG
 	// Check to see if the node is already in the queue
-	if ( IsInQueue(pNode) )
+	if ( IsInRequestQueue( pNode ) )
 	{
-		//TODO: Check to see if the node is to be added or removed?
+		TLDebug_Break("Matching node ref unexpectedly found in request queue, should have been found in FindNode()");
+		return FALSE;
+	}
+#endif
+
+	//	check parent's validity
+	TPtr<TGraphUpdateRequest>& pRequest = m_RequestQueue.FindPtr( pParent->GetNodeRef() );
+	if ( pRequest )
+	{
+		//	check to see if the parent is in the to-remove queue? abort add if it is
+		if ( pRequest->IsRemoveRequest() )
+		{
+#ifdef _DEBUG
+			TTempString Debug_String("Trying to add node ");
+			pNode->GetNodeRef().GetString( Debug_String );
+			Debug_String.Append(" to parent node ");
+			pParent->GetNodeRef().GetString( Debug_String );
+			Debug_String.Append(" which is in the remove queue. Aborting add.");
+			TLDebug_Warning( Debug_String );
+#endif
+			return FALSE;
+		}
+	}
+	else if ( !IsInGraph( pParent, FALSE ) )
+	{
+#ifdef _DEBUG
+		TTempString Debug_String("Trying to add node ");
+		pNode->GetNodeRef().GetString( Debug_String );
+		Debug_String.Append(" to parent node ");
+		pParent->GetNodeRef().GetString( Debug_String );
+		Debug_String.Append(" which is not in the graph. Aborting add.");
+		TLDebug_Break( Debug_String );
+#endif
 		return FALSE;
 	}
 
-	// In the to-add queue? OK to proceed if so
-	if ( !IsInQueue(pParent) )
-	{
-		// In the graph heirarchy?? Ok to proceed if so
-		if ( !IsInGraph(pParent) )
-			return FALSE;
-	}
-	else
-	{
-		//TODO: Check to see if the parent is to be added or removed?  Need to ensure we attach to a valid node
-	}
-
 	//	add the node to the requet queue
-	m_UpdateQueue.AddNewPtr( new TGraphUpdateRequest(pNode, pParent, FALSE) );
+	m_RequestQueue.AddNewPtr( new TGraphUpdateRequest(pNode, pParent, FALSE) );
 
 	return TRUE;
 }
@@ -1142,55 +1174,62 @@ Bool TLGraph::TGraph<T>::RemoveNode(TPtr<T> pNode)
 	}
 
 	// Check to see if the node is already in the queue
-	if(IsInQueue(pNode))
+	TPtr<TGraphUpdateRequest>& pRequest = m_RequestQueue.FindPtr( pNode->GetNodeRef() );
+	if ( pRequest )
 	{
-		//TODO: Check to see if the node is to be added or removed?
 #ifdef _DEBUG
-		TTempString Debug_String("Attempting to remove node already in queue");
+		TTempString Debug_String("Attempting to remove node ");
 		pNode->GetNodeRef().GetString( Debug_String );
-		TLDebug_Break(Debug_String);
+
+		if ( pRequest->IsAddRequest() )
+		{
+			Debug_String.Append(" which is in the graph ADD queue");
+			TLDebug_Warning( Debug_String );
+		}
+		else
+		{
+			Debug_String.Append(" which is already in the graph REMOVE queue");
+			TLDebug_Warning( Debug_String );
+		}
 #endif
 
 		return FALSE;
 	}
 
-	// Valid parent node??  Check to ensure the parent is either in the queue or in the scenegraph
-	// If not valid then attach to the root node by default (which shoudl *ALWAYS* be valid
+	//	if the parent is being removed, save some time/space etc by not adding to the queue
 	TPtr<T>& pParent = pNode->GetParent();
-	if(pParent.IsValid())
-	{
-		// In the queue? OK to proceed if so
-		if(!IsInQueue(pParent))
-		{
-			// In the graph heirarchy?? Ok to proceed if so
-			if(!IsInGraph(pParent))
-			{
-				//	gr: changed to warning
-#ifdef _DEBUG
-				TTempString Debug_String("Attempting to remove node ");
-				pNode->GetNodeRef().GetString( Debug_String );
-				Debug_String.Append(" from graph ");
-				GetGraphRef().GetString( Debug_String );
-				Debug_String.Append(" but parent is not in graph (maybe already removed)" );
-				TLDebug_Warning(Debug_String);
-#endif
+	TPtr<TGraphUpdateRequest>& pParentRequest = m_RequestQueue.FindPtr( pParent->GetNodeRef() );
 
-				//	gr: added shutdown routine for node so it's still cleaned up, shouldnt be any harm doing this
-				pNode->Shutdown();
-				
-				return FALSE;
-			}
+	if ( pParentRequest )
+	{
+		if ( pParentRequest->IsRemoveRequest() )
+		{
+			TLDebug_Print("Not adding node to remove queue as parent is already queued for removal.");
+			return TRUE;
 		}
 		else
 		{
-			//TODO: Check to see if the parent is to be added or removed? Need to ensure it will be added to a valid node
+			//	parent is in the ADD queue - work out how to handle this when we come to it..
+			//	just remove from parent and shutdown? or do remove routines too?
+			TLDebug_Break("Removing node from graph, but parent is being added. Need to handle this properly - NODE NOT REMOVED");
+			return FALSE;
 		}
 	}
-	else
+	else if ( !IsInGraph( pParent, FALSE ) )
 	{
-		pParent = m_pRootNode;
+#ifdef _DEBUG
+		TTempString Debug_String("Attempting to remove node ");
+		pNode->GetNodeRef().GetString( Debug_String );
+		Debug_String.Append(" from graph ");
+		GetGraphRef().GetString( Debug_String );
+		Debug_String.Append(" but parent is not in graph (maybe already removed)" );
+		TLDebug_Warning(Debug_String);
+#endif
+		
+		//	gr: added shutdown routine for node so it's still cleaned up, shouldnt be any harm doing this
+		pNode->Shutdown();
+		return TRUE;
 	}
-
 
 #ifdef _DEBUG
 	TTempString Debug_String("Requesting remove node ");
@@ -1199,7 +1238,7 @@ Bool TLGraph::TGraph<T>::RemoveNode(TPtr<T> pNode)
 #endif
 	
 	// No - Add the node to the queue
-	m_UpdateQueue.AddNewPtr( new TGraphUpdateRequest(pNode, pParent, TRUE) );
+	m_RequestQueue.AddNewPtr( new TGraphUpdateRequest(pNode, pParent, TRUE) );
 
 	return TRUE;
 }
@@ -1229,22 +1268,33 @@ Bool TLGraph::TGraph<T>::RemoveChildren(TPtr<T> pNode)
 }
 
 
-/*
-	Checks to see if a node is in the list of nodes to be updated
-*/
+//-------------------------------------------------------------
+//	find a request for a node and see if it's an ADD request
+//-------------------------------------------------------------
 template <class T>
-Bool TLGraph::TGraph<T>::IsInQueue(TPtr<T>& pNode)
+Bool TLGraph::TGraph<T>::IsInAddQueue(TRefRef NodeRef) const
 {
-	for(u32 uIndex = 0; uIndex < m_UpdateQueue.GetSize(); uIndex++)
-	{
-		TPtr<TGraphUpdateRequest>& pUpdateRequest = m_UpdateQueue.ElementAt(uIndex);
+	//	get request
+	TPtr<TGraphUpdateRequest>& pUpdateRequest = m_RequestQueue.FindPtr( NodeRef );
+	if ( !pUpdateRequest )
+		return FALSE;
 
-		if(pUpdateRequest->GetNode() == pNode)
-			return TRUE;
-	}
+	return pUpdateRequest->IsAddRequest();
+}
 
-	// Not in the queue
-	return FALSE;
+
+//-------------------------------------------------------------
+//	find a request for a node and see if it's a REMOVE request
+//-------------------------------------------------------------
+template <class T>
+Bool TLGraph::TGraph<T>::IsInRemoveQueue(TRefRef NodeRef) const
+{
+	//	get request
+	TPtr<TGraphUpdateRequest>& pUpdateRequest = m_RequestQueue.FindPtr( NodeRef );
+	if ( !pUpdateRequest )
+		return FALSE;
+
+	return pUpdateRequest->IsRemoveRequest();
 }
 
 
@@ -1268,9 +1318,9 @@ template <class T>
 void TLGraph::TGraph<T>::UpdateGraphStructure()
 {
 	// Go through the queue and make the changes required
-	for(u32 uIndex = 0; uIndex < m_UpdateQueue.GetSize(); uIndex++)
+	for(u32 uIndex = 0; uIndex < m_RequestQueue.GetSize(); uIndex++)
 	{
-		TGraphUpdateRequest& Request = *m_UpdateQueue.ElementAt(uIndex);
+		TGraphUpdateRequest& Request = *m_RequestQueue.ElementAt(uIndex);
 
 		// Add/Remvoe the node
 		if ( Request.IsRemoveRequest() )
@@ -1284,7 +1334,7 @@ void TLGraph::TGraph<T>::UpdateGraphStructure()
 	}
 
 	// Empty queue
-	m_UpdateQueue.Empty();
+	m_RequestQueue.Empty();
 }
 
 /*
@@ -1374,65 +1424,38 @@ void TLGraph::TGraph<T>::DoRemoveNode(TPtr<T>& pNode,TPtr<T>& pParent)
 template <class T>
 void TLGraph::TGraph<T>::ProcessMessageFromQueue(TLMessaging::TMessage& Message)
 {
-	TArray<TRef> TargetList;
-
-	Bool bNoMoreTargets = FALSE;
+	//	gr: speed up, this list is rarely going to be big, so use a non-allocated array on the stack
+	//	increase fixed size if we really ever have a big list
+	TFixedArray<TRef,10> TargetList(0);
 
 	// Get all target ID's
-	do
+	while ( TRUE )
 	{
-		TPtr<TBinaryTree> pData = Message.GetChild("TARGETID");
+		TPtr<TBinaryTree>& pData = Message.GetChild("TARGETID");
+		if ( !pData )
+			break;
 
-		if(pData.IsValid())
+		TRef refTargetID;
+		if ( pData->Read(refTargetID) )
+			TargetList.Add(refTargetID);
+	}
+
+	// Go through and find the target to send the message to
+	for( u32 uIndex=0;	uIndex<TargetList.GetSize();	uIndex++)
+	{
+		TRefRef refTargetID = TargetList.ElementAt(uIndex);
+
+		TPtr<T>& pNode = FindNode(refTargetID);
+		if (  pNode.IsValid() )
 		{
-			TRef refTargetID;
-
-			if(pData->Read(refTargetID))
-				TargetList.Add(refTargetID);
+			pNode->QueueMessage(Message);
 		}
 		else
-			bNoMoreTargets = TRUE;
-
-	} while(!bNoMoreTargets);
-
-	if(TargetList.GetSize() > 0)
-	{
-		// Go through and find the target to send the message to
-		for(u32 uIndex = 0; uIndex < TargetList.GetSize(); uIndex++)
 		{
-			TRef refTargetID = TargetList.ElementAt(uIndex);
-
-			TPtr<T> pNode = FindNode(refTargetID);
-
-			if(pNode.IsValid())
-			{
-				pNode->QueueMessage(Message);
-			}
-			else
-			{
-				// Not found.  Could bring up an error message here or just ignore...
-			}
+			// Not found.  Could bring up an error message here or just ignore...
+			TLDebug_Break("Graph Message for node that doesn't exist... what to do?");
 		}
 	}
-}
-
-
-
-//---------------------------------------------------------
-//	find a TPtr in the graph that matches the node - workaround for non intrusive pointers
-//---------------------------------------------------------
-template <class T>
-TPtr<T>& TLGraph::TGraph<T>::FindPtr(const TGraphNode<T>* pNode) const		
-{	
-	if ( pNode == m_pRootNode.GetObject() )
-		return m_pRootNode;
-
-	if ( !m_pRootNode )
-	{		
-		return TLPtr::GetNullPtr<T>();
-	}
-
-	return m_pRootNode->FindPtr(pNode);	
 }
 
 
@@ -1441,17 +1464,22 @@ TPtr<T>& TLGraph::TGraph<T>::FindPtr(const TGraphNode<T>* pNode) const
 //---------------------------------------------------------
 template<class T>
 template<typename MATCHTYPE>
-TPtr<T>& TLGraph::TGraph<T>::FindNodeMatch(const MATCHTYPE& Value)		
+TPtr<T>& TLGraph::TGraph<T>::FindNodeMatch(const MATCHTYPE& Value,Bool CheckRequestQueue)		
 {	
-	if ( !m_pRootNode )
+	//	search the graph list
+	TPtr<T>& pIndexNode = m_NodeIndex.FindPtr( Value );
+	if ( pIndexNode )
+		return pIndexNode;
+
+	//	look in the update queue for new nodes (will be doing redundant checks for the nodes being removed, but never mind
+	if ( CheckRequestQueue )
 	{
-		return TLPtr::GetNullPtr<T>();
+		TPtr<TGraphUpdateRequest>& pMatchingUpdate = m_RequestQueue.FindPtr( Value );
+		if ( pMatchingUpdate )
+			return pMatchingUpdate->GetNode();
 	}
 
-	if ( m_pRootNode == Value )
-		return m_pRootNode;
-
-	return m_pRootNode->FindNodeMatch( Value );	
+	return TLPtr::GetNullPtr<T>();
 }
 
 
