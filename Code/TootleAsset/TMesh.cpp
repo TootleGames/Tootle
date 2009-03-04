@@ -1115,6 +1115,15 @@ Bool TLAsset::TMesh::ImportDatum(TBinaryTree& Data)
 		AddDatum( DatumRef, pShape );
 		return TRUE;
 	}
+	else if ( ShapeRef == "sph" )
+	{
+		TLMaths::TSphere Shape;
+		if ( !Data.Read( Shape ) )
+			return FALSE;
+		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeSphere( Shape );
+		AddDatum( DatumRef, pShape );
+		return TRUE;
+	}
 
 	TLDebug_Break("Unknown datum shape type");
 	return FALSE;
@@ -1137,6 +1146,12 @@ Bool TLAsset::TMesh::ExportDatum(TBinaryTree& Data,TRefRef DatumRef,TPtr<TLMaths
 	if ( ShapeRef == "sph2" )
 	{
 		const TLMaths::TSphere2D& Shape = pShape.GetObject<TLMaths::TShapeSphere2D>()->GetSphere();
+		Data.Write( Shape );
+		return TRUE;
+	}
+	else if ( ShapeRef == "sph" )
+	{
+		const TLMaths::TSphere& Shape = pShape.GetObject<TLMaths::TShapeSphere>()->GetSphere();
 		Data.Write( Shape );
 		return TRUE;
 	}
@@ -1171,6 +1186,26 @@ Bool TLAsset::TMesh::CreateDatum(const TArray<float3>& PolygonPoints,TRefRef Dat
 		//	make up sphere and shape
 		TLMaths::TSphere2D Sphere( Box.GetCenter(), Radius );
 		TPtr<TLMaths::TShape> pSphereShape = new TLMaths::TShapeSphere2D( Sphere );
+
+		//	add datum
+		AddDatum( DatumRef, pSphereShape );
+		return TRUE;
+	}
+	else if ( DatumShapeType == "sph" )
+	{
+		//	get box of points for extents
+		TLMaths::TBox Box;
+		Box.Accumulate( PolygonPoints );
+
+		//	work out radius (NOT the diagonal!)
+		float3 HalfSize = Box.GetSize() * 0.5f;
+		float Radius = HalfSize.x;
+		if ( HalfSize.y > Radius )	Radius = HalfSize.y;
+		if ( HalfSize.z > Radius )	Radius = HalfSize.z;
+
+		//	make up sphere and shape
+		TLMaths::TSphere Sphere( Box.GetCenter(), Radius );
+		TPtr<TLMaths::TShape> pSphereShape = new TLMaths::TShapeSphere( Sphere );
 
 		//	add datum
 		AddDatum( DatumRef, pSphereShape );

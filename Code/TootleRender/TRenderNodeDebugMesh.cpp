@@ -18,8 +18,11 @@ void TLRender::TRenderNodeDebugMesh::Initialise(TLMessaging::TMessage& Message)
 	TRenderNode::Initialise( Message );
 
 	//	make up mesh
-	m_pDebugMesh = new TLAsset::TMesh("Debug");
-	m_pDebugMesh->SetLoadingState( TLAsset::LoadingState_Loaded );
+	if ( !m_pDebugMesh )
+	{
+		m_pDebugMesh = new TLAsset::TMesh("Debug");
+		m_pDebugMesh->SetLoadingState( TLAsset::LoadingState_Loaded );
+	}
 }
 
 

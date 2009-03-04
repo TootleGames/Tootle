@@ -13,6 +13,7 @@ namespace TLMaths
 {
 	class TShape;			//	base shape type
 	class TShapeSphere2D;	//	sphere shape
+	class TShapeSphere;		//	sphere shape
 
 	class TIntersection;	//	resulting intersection information of two shapes
 }
@@ -86,4 +87,23 @@ protected:
 	TLMaths::TSphere2D				m_Sphere;			//	sphere collision object
 };
 
+
+
+
+class TLMaths::TShapeSphere : public TLMaths::TShape
+{
+public:
+	TShapeSphere()															{}
+	TShapeSphere(const TLMaths::TSphere& Sphere) : m_Sphere ( Sphere )		{}
+
+	virtual TRef					GetShapeType() const						{	return "sph";	}
+	virtual Bool					IsValid() const								{	return GetSphere().IsValid();	}
+	virtual float3					GetCenter() const							{	return GetSphere().GetPos();	}
+	
+	void							SetSphere(const TLMaths::TSphere& Sphere)	{	m_Sphere = Sphere;	}
+	const TLMaths::TSphere&			GetSphere() const							{	return m_Sphere;	}
+
+protected:
+	TLMaths::TSphere				m_Sphere;			//	sphere collision object
+};
 

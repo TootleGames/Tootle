@@ -8,6 +8,9 @@ Bool TLMaths::TShape::HasIntersection(TShape& OtherShape)
 
 	if ( OtherShapeType == "sph2" )
 		return HasIntersection( static_cast<TShapeSphere2D&>(OtherShape) );
+	
+	if ( OtherShapeType == "sph" )
+		return HasIntersection( static_cast<TShapeSphere&>(OtherShape) );
 
 	TLDebug_Break("unknown shape type");
 	return FALSE;
@@ -20,6 +23,9 @@ Bool TLMaths::TShape::GetIntersection(TShape& OtherShape,TIntersection& Intersec
 
 	if ( OtherShapeType == "sph2" )
 		return GetIntersection( static_cast<TShapeSphere2D&>(OtherShape), Intersection );
+
+	if ( OtherShapeType == "sph" )
+		return GetIntersection( static_cast<TShapeSphere&>(OtherShape), Intersection );
 
 	TLDebug_Break("unknown shape type");
 	return FALSE;
