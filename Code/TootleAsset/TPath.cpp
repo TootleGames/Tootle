@@ -65,6 +65,21 @@ Bool TLPath::TPathNode::ExportData(TBinaryTree& Data)
 
 
 
+TLPath::TPathLink::TPathLink() :
+	m_Direction	( TLPath::TDirection::Any )
+{
+}
+
+TLPath::TPathLink::TPathLink(TRefRef LinkNodeRef,TLPath::TDirection::Type Direction) :
+	m_LinkNodeRef	( LinkNodeRef ),
+	m_Direction		( Direction )
+{
+}
+
+
+	
+
+
 TLAsset::TPathNetwork::TPathNetwork(TRefRef AssetRef) :
 	TAsset	( "PathNetwork", AssetRef ),
 	m_Nodes	( &TLPath::NodeSort_ByRef )
@@ -142,7 +157,7 @@ void TLAsset::TPathNetwork::RemoveNode(TRef NodeRef)
 	//	clean up all the links
 	for ( s32 l=pNode->GetLinks().GetLastIndex();	l>=0;	l-- )
 	{
-		TLPath::TPathNode* pLinkNode = GetNode( pNode->GetLinks().ElementAt(l) );
+		TLPath::TPathNode* pLinkNode = GetNode( pNode->GetLinkRef(l) );
 		UnlinkNodes( *pNode, *pLinkNode );
 	}
 
@@ -162,9 +177,9 @@ void TLAsset::TPathNetwork::OnNodeAdded(TPtr<TLPath::TPathNode>& pNewNode)
 
 
 //--------------------------------------------------
-//	
+//	if OneWayDirection is specified, the one-way direction goes from A to B
 //--------------------------------------------------
-void TLAsset::TPathNetwork::LinkNodes(TRefRef NodeARef,TRefRef NodeBRef)
+void TLAsset::TPathNetwork::LinkNodes(TRefRef NodeARef,TRefRef NodeBRef,Bool OneWayDirection)
 {
 	if ( NodeARef == NodeBRef )
 	{
@@ -183,14 +198,14 @@ void TLAsset::TPathNetwork::LinkNodes(TRefRef NodeARef,TRefRef NodeBRef)
 	}
 
 	//	do link
-	LinkNodes( *pNodeA, *pNodeB );
+	LinkNodes( *pNodeA, *pNodeB, OneWayDirection );
 }
 
 
 //--------------------------------------------------
-//	
+//	if OneWayDirection is specified, the one-way direction goes from A to B
 //--------------------------------------------------
-void TLAsset::TPathNetwork::LinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB)
+void TLAsset::TPathNetwork::LinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB,Bool OneWayDirection)
 {
 	if ( NodeA == NodeB )
 	{
@@ -199,8 +214,8 @@ void TLAsset::TPathNetwork::LinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode
 	}
 
 	Bool Changed = FALSE;
-	Changed |= NodeA.AddLink( NodeB );
-	Changed |= NodeB.AddLink( NodeA );
+	Changed |= NodeA.AddLink( NodeB, OneWayDirection ? TLPath::TDirection::Forward : TLPath::TDirection::Any );		//	A -> B == Foward
+	Changed |= NodeB.AddLink( NodeA, OneWayDirection ? TLPath::TDirection::Backward : TLPath::TDirection::Any );	//	B -> A == Backward
 
 	//	callback
 	if ( Changed )
@@ -230,6 +245,17 @@ Bool TLAsset::TPathNetwork::UnlinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNo
 //--------------------------------------------------
 TPtr<TLPath::TPathNode>& TLAsset::TPathNetwork::DivideLink(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB,float2* pDividePos)
 {
+	//	store the original link
+	const TLPath::TPathLink* pLink = NodeA.GetLink( NodeB.GetNodeRef() );
+	if ( !pLink )
+	{
+		TLDebug_Break("Trying to divide link between two nodes that aren't linked");
+		return TLPtr::GetNullPtr<TLPath::TPathNode>();
+	}
+
+	//	copy it as we're about to delete the link
+	TLPath::TPathLink OldLinkAB = *pLink;
+
 	//	unlink the nodes
 	if ( !UnlinkNodes( NodeA, NodeB ) )
 	{
@@ -261,8 +287,25 @@ TPtr<TLPath::TPathNode>& TLAsset::TPathNetwork::DivideLink(TLPath::TPathNode& No
 		return TLPtr::GetNullPtr<TLPath::TPathNode>();
 
 	//	link the new node to the other two
-	LinkNodes( NodeA, *pNewNode );
-	LinkNodes( *pNewNode, NodeB );
+	//	work out the old direction, and continue it
+	if ( OldLinkAB.GetDirection() == TLPath::TDirection::Forward )
+	{
+		LinkNodes( NodeA, *pNewNode, TRUE );
+		LinkNodes( *pNewNode, NodeB, TRUE );
+	}
+	else if ( OldLinkAB.GetDirection() == TLPath::TDirection::Backward )
+	{
+		//	reverse order
+		LinkNodes( NodeB, *pNewNode, TRUE );
+		LinkNodes( *pNewNode, NodeA, TRUE );
+	}
+	else
+	{
+		//	no directional link
+		LinkNodes( NodeA, *pNewNode, FALSE );
+		LinkNodes( *pNewNode, NodeB, FALSE );
+	}
+
 
 	//	call back
 	OnNodeLinkDivided( NodeA, *pNewNode, NodeB );
@@ -378,4 +421,5 @@ Bool TLAsset::TPathNetwork::SetNodePosition(TLPath::TPathNode& Node,const float2
 
 	return TRUE;
 }
+
 

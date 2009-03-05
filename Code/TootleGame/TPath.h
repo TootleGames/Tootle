@@ -47,6 +47,7 @@ public:
 	FORCEINLINE const TArray<TRef>&	GetNodes() const			{	return m_Nodes;	}
 
 	SyncBool						FindPath(TRefRef StartNode,TRefRef EndNode,TLPath::TPathMode::Type PathMode, Bool Blocking);	//	create a find path spider
+	SyncBool						FindPathRandom(TRefRef StartNode,u32 NodesInRoute, Bool Blocking);	//	just follow N random nodes to make a path
 	SyncBool						UpdateFindPath();			//	continue updating find path spider
 
 protected:

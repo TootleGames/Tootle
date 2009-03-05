@@ -941,7 +941,7 @@ Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,
 	VertIndexes[1] = AddVertex( OutlineB, ColourB );
 	VertIndexes[2] = AddVertex( OutlineC, ColourC );
 	VertIndexes[3] = AddVertex( OutlineD, ColourD );
-
+	
 	return GenerateQuad( VertIndexes );
 }
 
@@ -971,12 +971,11 @@ Bool TLAsset::TMesh::GenerateQuad(const TFixedArray<s32,4> OutlineVertIndexes)
 #ifdef GENERATE_QUADS_AS_TRIANGLES
 	//	create tri strip
 	Triangle* pTriangleA = m_Triangles.AddNew();
-	Triangle* pTriangleB = m_Triangles.AddNew();
-
 	pTriangleA->x = OutlineVertIndexes[0];
 	pTriangleA->y = OutlineVertIndexes[1];
 	pTriangleA->z = OutlineVertIndexes[2];
 
+	Triangle* pTriangleB = m_Triangles.AddNew();
 	pTriangleB->x = OutlineVertIndexes[2];
 	pTriangleB->y = OutlineVertIndexes[3];
 	pTriangleB->z = OutlineVertIndexes[0];

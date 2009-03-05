@@ -19,6 +19,40 @@ namespace TLAsset
 namespace TLPath
 {
 	class TPathNode;
+	class TPathLink;
+
+	namespace TDirection
+	{
+		enum Type
+		{
+			Any			= 0,
+			Forward		= 1,
+			Backward	= 2
+		};
+	}
+};
+
+
+
+
+//--------------------------------------------------
+//	link to another node - always contained within a node
+//--------------------------------------------------
+class TLPath::TPathLink
+{
+public:
+	TPathLink();
+	TPathLink(TRefRef LinkNodeRef,TDirection::Type Direction);
+
+	FORCEINLINE TRefRef				GetLinkNodeRef() const		{	return m_LinkNodeRef;	}
+	FORCEINLINE TDirection::Type 	GetDirection() const		{	return (TDirection::Type)m_Direction;	}
+
+	FORCEINLINE Bool				operator==(TRefRef NodeRef) const			{	return GetLinkNodeRef() == NodeRef;	}
+	FORCEINLINE Bool				operator==(const TPathLink& Link) const		{	return GetLinkNodeRef() == Link.GetLinkNodeRef();	}
+
+protected:
+	TRef					m_LinkNodeRef;		//	
+	u8						m_Direction;		//	stored as a u8 so we can just Write/Read this class as a Data type
 };
 
 
@@ -31,37 +65,41 @@ class TLPath::TPathNode : public TBinaryTree
 public:
 	TPathNode(TRefRef NodeRef=TRef(),const float2& NodePos=float2());
 
-	TRefRef					GetNodeRef() const							{	return TBinaryTree::GetDataRef();	}
-	FORCEINLINE Bool		IsJunction() const							{	return (m_Links.GetSize() >= 3);	}
-	const float2&			GetPosition() const							{	return m_Position;	}
-	FORCEINLINE void		SetPosition(TLAsset::TPathNetwork& PathNetwork,const float2& NewPos);
+	TRefRef						GetNodeRef() const							{	return TBinaryTree::GetDataRef();	}
+	FORCEINLINE Bool			IsJunction() const							{	return (m_Links.GetSize() >= 3);	}
+	const float2&				GetPosition() const							{	return m_Position;	}
+	FORCEINLINE void			SetPosition(TLAsset::TPathNetwork& PathNetwork,const float2& NewPos);
 
-	Bool					AddLink(TRefRef NodeRef)					{	return m_Links.AddUnique( NodeRef ) != -1;	}
-	Bool					AddLink(TPathNode& Node)					{	return m_Links.AddUnique( Node.GetNodeRef() ) != -1;	}
-	Bool					RemoveLink(TRefRef NodeRef)					{	return m_Links.Remove( NodeRef );	}
-	Bool					RemoveLink(TPathNode& Node)					{	return m_Links.Remove( Node.GetNodeRef() );	}
+	TBinaryTree&				GetData()									{	return *this;	}
+	const TBinaryTree&			GetData() const								{	return *this;	}
 
-	TBinaryTree&			GetData()									{	return *this;	}
-	const TBinaryTree&		GetData() const								{	return *this;	}
+	TRefRef						GetLinkRef(u32 Index) const					{	return m_Links[Index].GetLinkNodeRef();	}
+	const TPathLink&			GetLinkAt(u32 Index) const					{	return m_Links[Index];	}
+	const TPathLink*			GetLink(TRefRef LinkNodeRef) const			{	return m_Links.FindConst( LinkNodeRef );	}
+	TArray<TPathLink>&			GetLinks()									{	return m_Links;	}
+	const TArray<TPathLink>&	GetLinks() const							{	return m_Links;	}
 
-	TArray<TRef>&			GetLinks()									{	return m_Links;	}
-	const TArray<TRef>&		GetLinks() const							{	return m_Links;	}
-
-	FORCEINLINE Bool		operator==(TRefRef NodeRef) const			{	return GetNodeRef() == NodeRef;	}
-	FORCEINLINE Bool		operator==(const TPathNode& Node) const		{	return GetNodeRef() == Node.GetNodeRef();	}
+	FORCEINLINE Bool			operator==(TRefRef NodeRef) const			{	return GetNodeRef() == NodeRef;	}
+	FORCEINLINE Bool			operator==(const TPathNode& Node) const		{	return GetNodeRef() == Node.GetNodeRef();	}
 
 protected:
-	Bool					ImportData(TBinaryTree& Data);
-	Bool					ExportData(TBinaryTree& Data);
+	Bool						ImportData(TBinaryTree& Data);
+	Bool						ExportData(TBinaryTree& Data);
 	
-	FORCEINLINE void		SetPosition(const float2& NewPos)			{	m_Position = NewPos;	}	//	
+	FORCEINLINE void			SetPosition(const float2& NewPos)			{	m_Position = NewPos;	}	//	
+
+	//	only accessible through the owner as it links both ways
+	FORCEINLINE Bool			AddLink(TRefRef NodeRef,TDirection::Type Direction)	{	return m_Links.AddUnique( TPathLink( NodeRef, Direction ) ) != -1;	}
+	FORCEINLINE Bool			AddLink(TPathNode& Node,TDirection::Type Direction)	{	return m_Links.AddUnique( TPathLink( Node.GetNodeRef(), Direction ) ) != -1;	}
+	FORCEINLINE Bool			RemoveLink(TRefRef NodeRef)							{	return m_Links.Remove( NodeRef );	}
+	FORCEINLINE Bool			RemoveLink(TPathNode& Node)							{	return m_Links.Remove( Node.GetNodeRef() );	}
 
 private:
-	void					SetNodeRef(TRefRef NodeRef)					{	return TBinaryTree::SetDataRef( NodeRef );	}
+	FORCEINLINE void			SetNodeRef(TRefRef NodeRef)					{	return TBinaryTree::SetDataRef( NodeRef );	}
 
 protected:
-	float2					m_Position;			//	node position
-	TArray<TRef>			m_Links;			//	links to other nodes
+	float2						m_Position;			//	node position
+	TArray<TPathLink>			m_Links;			//	links to other nodes
 };
 
 
@@ -86,8 +124,8 @@ public:
 	TPtr<TLPath::TPathNode>&		AddNode(TRef NodeRef,const float2& NodePos);				//	create a new node, returns NULL if it fails, e.g. if NodeRef already exists
 	void							RemoveNode(TRef NodeRef);									//	remove node and clear up links
 
-	void							LinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB);		
-	void							LinkNodes(TRefRef NodeARef,TRefRef NodeBRef);		
+	void							LinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB,Bool OneWayDirection);	//	if OneWayDirection is specified, the one-way direction goes from A to B
+	void							LinkNodes(TRefRef NodeARef,TRefRef NodeBRef,Bool OneWayDirection);					//	if OneWayDirection is specified, the one-way direction goes from A to B
 	Bool							UnlinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB);		//	returns FALSE if they weren't linked
 
 	TPtr<TLPath::TPathNode>&		DivideLink(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB,float2* pDividePos=NULL);	//	split a line, adds a new node in between these two

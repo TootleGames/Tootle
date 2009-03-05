@@ -87,7 +87,7 @@ public:
 
 	virtual u32			GetSize() const							{	return m_Size;	}						//	number of elements
 	inline s32			GetLastIndex() const					{	return (s32)GetSize() - 1;	};
-	inline s32			GetRandIndex() const					{	return TLMaths::Rand( GetLastIndex() );	};
+	inline s32			GetRandIndex() const					{	return TLMaths::Rand( GetSize() );	};
 	virtual TYPE*		GetData()								{	return m_pData;	}
 	virtual const TYPE*	GetData() const							{	return m_pData;	}
 	inline u32			GetDataSize() const						{	return ( GetSize() * sizeof(TYPE) );	};	//	memory consumption of elements

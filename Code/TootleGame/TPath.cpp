@@ -56,6 +56,113 @@ SyncBool TLPath::TPath::FindPath(TRefRef StartNode,TRefRef EndNode,TLPath::TPath
 }
 
 
+
+
+//---------------------------------------------------------
+//	just follow N random nodes to make a path
+//---------------------------------------------------------
+SyncBool TLPath::TPath::FindPathRandom(TRefRef StartNode,u32 NodesInRoute, Bool Blocking)
+{
+	if ( !Blocking )
+	{
+		TLDebug_Break("Note; no async version yet");
+	}
+
+	//	get network path asset
+	TPtr<TLAsset::TAsset>& pPathNetworkAsset = TLAsset::GetAsset( m_PathNetworkRef );
+	if ( !pPathNetworkAsset )
+	{
+		TLDebug_Break("FindPath failed, missing path network");
+		return SyncFalse;
+	}
+
+	if ( pPathNetworkAsset->GetAssetType() != "PathNetwork" )
+	{
+		TLDebug_Break("FindPath failed, asset is not path network");
+		return SyncFalse;
+	}
+	
+	//	cast ptr
+	TPtr<TLAsset::TPathNetwork> pPathNetwork = pPathNetworkAsset;
+
+	//	get starting node
+	TPtr<TLPath::TPathNode> pNode = pPathNetwork->GetNode( StartNode );
+	if ( !pNode )
+	{
+		TLDebug_Break("failed to find start node");
+		return SyncFalse;
+	}
+
+	//	add start node to the route
+	m_Nodes.Add( pNode->GetNodeRef() );
+
+	//	now follow random links until we've got enough nodes
+	while ( m_Nodes.GetSize() < NodesInRoute )
+	{
+		//	just to make sure we don't get stuck, make a list of all the possible links then pick one at random
+		TArray<TLPath::TPathLink>& NodeLinks = pNode->GetLinks();
+		TFixedArray<TLPath::TPathLink*,100> ValidNodeLinks(0);
+		TLPath::TPathLink* pLastResort = NULL;
+		for ( u32 i=0;	i<NodeLinks.GetSize();	i++ )
+		{
+			TLPath::TPathLink& Link = NodeLinks[i];
+			
+			//	if this is a backwards link we cannot follow it
+			if ( Link.GetDirection() == TLPath::TDirection::Backward )
+				continue;
+
+			//	try to avoid going back where we came from
+			if ( m_Nodes.GetSize() >= 2 )
+			{
+				//	get the node before pNode
+				TRefRef PrevNode = m_Nodes.ElementAt( m_Nodes.GetLastIndex() -1 );
+				if ( PrevNode == Link.GetLinkNodeRef() )
+				{
+					pLastResort = &Link;
+					continue;
+				}
+			}
+
+			ValidNodeLinks.Add( &Link );
+		}
+
+		//	if no links, and we have a last resort, use that
+		if ( pLastResort && ValidNodeLinks.GetSize() == 0 )
+		{
+			TLDebug_Print("Using last resort (going back down route) when generating random path");
+			ValidNodeLinks.Add( pLastResort );
+		}
+
+		//	no valid links to follow
+		if ( ValidNodeLinks.GetSize() == 0 )
+		{
+			TLDebug_Warning("Hit dead end when generating random path");
+			break;
+		}
+
+		//	pick a link to follow
+		TLPath::TPathLink* pFollowLink = ValidNodeLinks.ElementRand();
+		pNode = pPathNetwork->GetNode( pFollowLink->GetLinkNodeRef() );
+		if ( !pNode )
+		{
+			TLDebug_Break("Link following node is missing from PathNetwork... Corrupt network/node?");
+			break;
+		}
+
+		//	add this link to the route
+		m_Nodes.Add( pNode->GetNodeRef() );
+	}
+
+	if ( m_Nodes.GetSize() < 2 )
+	{
+		TLDebug_Break("Generated a route that's too short");
+		return SyncFalse;
+	}
+
+	return SyncTrue;
+}
+
+
 //---------------------------------------------------------
 //	continue updating find path spider
 //---------------------------------------------------------
@@ -164,7 +271,7 @@ void TLPath::TPathSpider::DoSpiderNode(TRefRef RoadNodeRef,s32& MaxLinksToProces
 	//	spider out to this node's links
 	for ( u32 i=0;	i<pRoadNode->GetLinks().GetSize();	i++ )
 	{
-		TPtr<TLPath::TPathNode>& pLinkNode = m_pPathNetwork->GetNode( pRoadNode->GetLinks()[i] );
+		TPtr<TLPath::TPathNode>& pLinkNode = m_pPathNetwork->GetNode( pRoadNode->GetLinkRef(i) );
 		
 		//	add this link as a new end node to process
 		if ( !m_CompletedNodes.Find( pLinkNode->GetNodeRef() ) )
@@ -317,7 +424,7 @@ SyncBool TLPath::TPathSpider_Path::Update()
 	//	loop through links to find valid links we can follow
 	for ( u32 i=0;	i<pEndNode->GetLinks().GetSize();	i++ )
 	{
-		TPtr<TLPath::TPathNode>& pLinkNode = m_pPathNetwork->GetNode( pEndNode->GetLinks()[i] );
+		TPtr<TLPath::TPathNode>& pLinkNode = m_pPathNetwork->GetNode( pEndNode->GetLinkRef(i) );
 		TRefRef LinkRef = pLinkNode->GetNodeRef();
 
 		//	if we have visited this link before in this path, then skip this link
