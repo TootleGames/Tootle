@@ -1,4 +1,5 @@
 #include "IPodAudio.h"
+#include "IPodAudioOpenAL.h"
 
 #include <TootleAsset/TAsset.h>
 #include <TootleAsset/TAudio.h>

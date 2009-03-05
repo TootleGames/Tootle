@@ -81,22 +81,12 @@ Bool Platform::RemoveBuffer(TRefRef AudioAssetRef)
 
 Bool Platform::HasBuffer(TRefRef AudioAssetRef)
 {
-	TPtr<OpenAL::AudioObj> pAO = OpenAL::g_Buffers.FindPtr(AudioAssetRef);
-	
-	if(pAO)
-		return TRUE;
-	
-	return FALSE;		
+	return OpenAL::HasBuffer(AudioAssetRef);		
 }
 
 Bool Platform::HasSource(TRefRef AudioSourceRef)
 {
-	TPtr<OpenAL::AudioObj> pAO = OpenAL::g_Sources.FindPtr(AudioSourceRef);
-	
-	if(pAO)
-		return TRUE;
-	
-	return FALSE;		
+	return OpenAL::HasSource(AudioSourceRef);		
 }
 
 
@@ -188,13 +178,13 @@ Bool Platform::AttachSourceToBuffer(TRefRef AudioSourceRef, TRefRef AudioAssetRe
 	// Get the buffer and source OpenAL ID's
 	ALuint uBuffer, uSource;
 	
-	if(!GetBufferID(AudioAssetRef, uBuffer))
+	if(!OpenAL::GetBufferID(AudioAssetRef, uBuffer))
 	{
 		TLDebug_Print("Failed to find audio buffer ID");
 		return FALSE;
 	}
 	
-	if(!GetSourceID(AudioSourceRef, uSource))
+	if(!OpenAL::GetSourceID(AudioSourceRef, uSource))
 	{
 		TLDebug_Print("Failed to find audio source ID");
 		return FALSE;
