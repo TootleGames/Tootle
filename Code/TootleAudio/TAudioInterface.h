@@ -58,6 +58,10 @@ private:
 //template <class AudioPolicy>
 //class TLAudio::TAudioInterface : public AudioPolicy
 
+/*
+
+// [04/02/09] DB - Removed as it's not flexible enough for sending messages between nodes
+
 class TLAudio::TAudioInterface
 {
 public:
@@ -92,3 +96,5 @@ public:
 	void					SetAudioProperties(TRefRef AudioRef, const TAudioProperties& Props);
 	const TAudioProperties&	GetAudioProperties(TRefRef AudioRef);
 };
+
+*/

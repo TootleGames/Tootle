@@ -73,7 +73,13 @@ public:
 	
 	void					OnVelocityChanged()					{	SetAccumulatedMovementInvalid();	SetWorldCollisionShapeInvalid();	}
 	void					OnForceChanged()					{	SetAccumulatedMovementInvalid();	SetWorldCollisionShapeInvalid();	}
-	void					OnTransformChanged()				{	SetWorldCollisionShapeInvalid();	}
+	void					OnTransformChanged();
+
+	// Translation only change - want individual routines for change in translation/rotation/scale
+	// rather than one for all to reduce amount of data sent in the message.
+	void					OnTranslationChanged();
+	void					OnRotationChanged();	
+	void					OnScaleChanged();
 
 	Bool					HasCollision() const				{	return m_pCollisionShape.IsValid() ? m_pCollisionShape->IsValid() : FALSE;	}
 	void					SetCollisionNone()					{	m_pCollisionShape = NULL;	SetWorldCollisionShapeInvalid();	SetCollisionZoneNeedsUpdate();	}

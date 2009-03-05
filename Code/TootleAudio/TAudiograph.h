@@ -3,12 +3,12 @@
 
 #include <TootleCore/TLGraph.h>
 #include "TAudioNode.h"
+#include "TAudioNode_Music.h"
 
 namespace TLAudio
 {
 	class TAudiograph;
-	//class TAudioNodeFactory;
-
+	class TAudioNodeFactory;
 
 	extern TPtr<TAudiograph> g_pAudiograph;
 };
@@ -21,6 +21,15 @@ class TLAudio::TAudiograph : public TLGraph::TGraph<TLAudio::TAudioNode>
 public:
 	TAudiograph(TRefRef refManagerID);
 
+	// Music access
+	Bool					StartMusic(TRefRef AudioAsset);
+
+	// Volume access
+	FORCEINLINE float		GetMusicVolume()	const	{ return m_fMusicVolume; }
+	FORCEINLINE float		GetEffectsVolume()	const	{ return m_fEffectsVolume; }
+
+	FORCEINLINE Bool		IsPaused()			const	{ return m_bPause; }
+
 protected:
 	virtual SyncBool		Initialise();
 	virtual SyncBool		Update(float fTimeStep);
@@ -29,17 +38,28 @@ protected:
 	virtual void			ProcessMessage(TLMessaging::TMessage& Message);
 
 	SyncBool				InitDevices();
+
+	void					OnMusicVolumeChanged();
+	void					OnEffectsVolumeChanged();
+	void					OnPauseStateChanged();
+
+	TPtr<TAudioNode_Music>	GetMusicNode()	{ return FindNode(m_MusicRef); }
+
+private:
+	TRef					m_MusicRef;			// Music node reference
+
+	float					m_fMusicVolume;		// Audio system master music volume
+	float					m_fEffectsVolume;	// Audio system master effects volume
+
+	Bool					m_bPause;			// Audio system pause
 };
 
 
-/*
-// [12/01/09] DB - NOT NEEDED JUST YET
 //----------------------------------------------------------
-//	Generic physics node factory
+//	Generic audio node factory
 //----------------------------------------------------------
 class TLAudio::TAudioNodeFactory : public TClassFactory<TAudioNode,FALSE>
 {
 public:
 	virtual TAudioNode*	CreateObject(TRefRef InstanceRef,TRefRef TypeRef);
 };
-*/

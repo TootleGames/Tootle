@@ -87,6 +87,8 @@ Bool TSceneNode_Object::CreatePhysicsNode(TRefRef PhysicsNodeType)
 	if ( Transform.HasRotation() )
 		Message.AddChildAndData("Rotation", Transform.GetRotation() );
 
+	Message.ExportData("Owner", this);
+
 	//	create node
 	TRef ParentNode = TRef();
 
@@ -134,6 +136,8 @@ Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TLMessaging
 		if ( Transform.HasRotation() )
 			Message.AddChildAndData("Rotation", Transform.GetRotation() );
 
+		Message.ExportData("Owner", this);
+
 		//	create node
 		m_RenderNodeRef = TLRender::g_pRendergraph->CreateNode( GetNodeRef(), RenderNodeType, ParentRenderNodeRef, &Message );
 	}
@@ -156,39 +160,38 @@ Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TLMessaging
 }
 
 
-void TSceneNode_Object::Update(float fTimestep)
+TRef TSceneNode_Object::CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset)
 {
-	//	do base update
-	TSceneNode_Transform::Update(fTimestep);
+	TLMessaging::TMessage Message(TLCore::InitialiseRef);
 
-	// Update the object using phsyics
-	UpdateObjectFromPhysics();
+	Message.ExportData("Asset", AudioAsset);
+	Message.ExportData("Play", TRUE);
+	Message.ExportData("Pos", GetTranslate());
+	Message.ExportData("Owner", this);
+
+	// Create an audio node for the specified audio reference
+	return TLAudio::g_pAudiograph->CreateNode(AudioRef, "Audio", "Root", &Message);
 }
 
-
-void TSceneNode_Object::UpdateObjectFromPhysics()
+TRef TSceneNode_Object::CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset, const TLAudio::TAudioProperties& Props)
 {
-	TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = GetPhysicsNode();
-	TPtr<TLRender::TRenderNode>& pRenderNode = GetRenderNode();
+	TLMessaging::TMessage Message(TLCore::InitialiseRef);
 
-	//	update game object from physics node
-	if ( pPhysicsNode )
-	{
-		//	set pos to (new) physics pos
-		SetTransform( pPhysicsNode->GetRenderTransform() );
-	}
+	Message.ExportData("Asset", AudioAsset);
+	Message.ExportData("Play", TRUE);
+	Message.ExportData("Props", Props);
+	Message.ExportData("Pos", GetTranslate());
+	Message.ExportData("Owner", this);
 
-	//	update render node from game object
-	if ( pRenderNode )
-	{
-		//	gr: note - this causes a LOT of excess processing as we're blindly updating the transform
-		//		which invalidates bounding boxes etc. This NEEDS to change to a system which 
-		//		only change translation if translation changes, only changes rotation if rotation changes etc.
-		//		messages?
-		//		same issue with physics, but a lot less severe
-		pRenderNode->SetTransform( GetTransform() );
-	}
+	// Create an audio node for the specified audio reference
+	return TLAudio::g_pAudiograph->CreateNode(AudioRef, "Audio", "Root", &Message);
 }
+
+Bool TSceneNode_Object::RemoveAudioNode(TRefRef AudioRef)
+{
+	return TLAudio::g_pAudiograph->RemoveNode(AudioRef);
+}
+
 
 
 void TSceneNode_Object::Translate(float3 vTranslation)
@@ -254,17 +257,4 @@ float TSceneNode_Object::GetDistanceTo(const TLMaths::TLine& Line)
 }
 
 
-	
-void TSceneNode_Object::SetAllNodesTranslate(const float3& Translate)
-{
-	TPtr<TLRender::TRenderNode>& pRenderNode = GetRenderNode();
-	if ( pRenderNode )
-		pRenderNode->SetTranslate( Translate );
-
-	TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = GetPhysicsNode();
-	if ( pPhysicsNode )
-		pPhysicsNode->SetPosition( Translate );
-
-	SetTranslate( Translate );
-}
 

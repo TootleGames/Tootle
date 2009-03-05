@@ -160,6 +160,8 @@ protected:
 	//void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags=TInvalidateFlags(InvalidateLocalBounds,InvalidateWorldBounds,InvalidateWorldPos,InvalidateParents,InvalidateChildren));	//	set all bounds as invalid
 	void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags);
 
+	virtual void							ProcessMessage(TLMessaging::TMessage& Message);
+
 protected:
 	TLMaths::TTransform			m_Transform;				//	local transform 
 	TColour						m_Colour;					//	colour of render node - only works if UseNodeColour is set

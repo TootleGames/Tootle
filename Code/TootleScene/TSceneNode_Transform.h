@@ -26,11 +26,18 @@ public:
 
 	FORCEINLINE float3			GetPosition() const						{	float3 Pos( 0,0,0 );	GetPosition( Pos );	return Pos;	}
 	FORCEINLINE void			GetPosition(float3& Pos) const			{	GetTransform().TransformVector( Pos );	}	//	you can use this to get a relative offset from this node by initialising Pos to the [local] offset you want
+
 	FORCEINLINE	const float3&	GetTranslate() const					{	return m_Transform.GetTranslate();	}
-	FORCEINLINE void			SetTranslate(const float3& fPos)		{	m_Transform.SetTranslate(fPos);	OnTransformChanged();	}
+	FORCEINLINE void			SetTranslate(const float3& vPos)		{	m_Transform.SetTranslate(vPos);	OnTranslationChanged();	}
+
+	FORCEINLINE	const TLMaths::TQuaternion&		GetRotation() const						{	return m_Transform.GetRotation();	}
+	FORCEINLINE void							SetRotation(const TLMaths::TQuaternion& qRot)	{	m_Transform.SetRotation(qRot);	OnRotationChanged();	}
+
+	FORCEINLINE	const float3&	GetScale() const					{	return m_Transform.GetScale();	}
+	FORCEINLINE void			SetScale(const float3& vScale)		{	m_Transform.SetScale(vScale);	OnScaleChanged();	}
 
 	const TLMaths::TTransform&	GetTransform() const								{	return m_Transform;	}
-	void						SetTransform(const TLMaths::TTransform& Transform)	{	m_Transform = Transform;	}	
+	void						SetTransform(const TLMaths::TTransform& Transform)	{	m_Transform = Transform; OnTransformChanged(); }	
 
 	// Distance checks
 	virtual float				GetDistanceTo(const TLMaths::TLine& Line);
@@ -41,7 +48,11 @@ protected:
 	virtual void				Translate(float3 vTranslation);
 	//virtual void				Rotate(float3 vRotation);
 	//virtual void				Scale(float3 vScale);
-	virtual void				OnTransformChanged();
+
+	void						OnTranslationChanged();
+	void						OnRotationChanged();
+	void						OnScaleChanged();
+	void						OnTransformChanged();
 
 private:
 	TLMaths::TTransform			m_Transform;

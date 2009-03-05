@@ -10,7 +10,7 @@ TAudioNode::TAudioNode(TRefRef NodeRef,TRefRef TypeRef) :
 	TLGraph::TGraphNode<TAudioNode>		( NodeRef, TypeRef )
 {
 	TLMessaging::g_pEventChannelManager->SubscribeTo(this, "AUDIOGRAPH", "STOP"); 
-
+	TLMessaging::g_pEventChannelManager->SubscribeTo(this, "AUDIOGRAPH", "VOLUME"); 
 }
 
 // Initialise routine
@@ -45,7 +45,7 @@ void TAudioNode::Initialise(TLMessaging::TMessage& Message)
 	}
 
 	float3 vPosition;
-	if(Message.ImportData("POS", vPosition))
+	if(Message.ImportData("Pos", vPosition))
 	{
 		SetTranslate(vPosition);
 	}
@@ -56,8 +56,6 @@ void TAudioNode::Initialise(TLMessaging::TMessage& Message)
 	{
 		Play();
 	}
-
-
 
 	TLGraph::TGraphNode<TAudioNode>::Initialise(Message);
 }
@@ -77,12 +75,6 @@ void TAudioNode::Update(float fTimestep)
 
 		return;
 	}
-
-	// Set the low level audio position
-	TLAudio::Platform::SetPosition(GetNodeRef(), GetTranslate());
-
-	float3 vVelocity = (GetTranslate() - m_vPreviousPos);
-	TLAudio::Platform::SetVelocity(GetNodeRef(), vVelocity);
 
 	TLGraph::TGraphNode<TAudioNode>::Update(fTimestep);
 }
@@ -118,12 +110,81 @@ void TAudioNode::ProcessMessage(TLMessaging::TMessage& Message)
 				}
 			}
 		}
+		else if(Message.HasChannelID("VOLUME"))
+		{
+			// Update the nodes audio volume
+			float fVolume;
+
+			if(Message.ImportData("Effects", fVolume))
+			{
+				// The volume change is passed through via the messaging so simply update
+				// the volume for the paltform audio object
+				float fFinalVolume = GetVolume() * fVolume;
+				TLAudio::Platform::SetVolume(GetNodeRef(), fFinalVolume);
+			}
+		}
+		else if(Message.HasChannelID("PAUSE"))
+		{
+			Bool bState;
+			if(Message.ImportData("State", bState))
+			{
+				if(bState)
+				{
+					// Pause the audio
+					TLAudio::Platform::PauseAudio(GetNodeRef());
+				}
+				else
+				{
+					// Unpause the audio
+					TLAudio::Platform::StartAudio(GetNodeRef());
+				}
+			}
+
+		}
+
+		return;
+	}
+	else if(Message.GetMessageRef() == "TRANSFORM")
+	{
+		float3 vVector;
+		if(Message.ImportData("Translate", vVector))
+		{
+			UpdatePreviousPos();
+			SetTranslate(vVector);
+
+			// Set the low level audio position
+			TLAudio::Platform::SetPosition(GetNodeRef(), vVector);
+
+			float3 vVelocity = (vVector - m_vPreviousPos);
+			TLAudio::Platform::SetVelocity(GetNodeRef(), vVelocity);
+		}
+
+		/*
+		if(Message.ImportData("Rotate", vVector))
+		{
+			UpdatePreviousPos();
+			SetTranslate(vVector);
+
+			// Set the low level audio position
+			TLAudio::Platform::SetPosition(GetNodeRef(), vVector);
+
+			float3 vVelocity = (vVector - m_vPreviousPos);
+			TLAudio::Platform::SetVelocity(GetNodeRef(), vVelocity);
+		}
+		*/
+
 
 		return;
 	}
 
-	// Pass the message onto the super class
-	TLGraph::TGraphNode<TAudioNode>::ProcessMessage(Message);
+	// Only pass on messages that might actually be processed otherwise we will relay the message
+	// to subscribers and potentially enter an infinite loop
+	if(	(Message.GetMessageRef() == TLCore::InitialiseRef) ||
+		(Message.GetMessageRef() == TLCore::ShutdownRef))
+	{
+		// Pass the message onto the super class
+		TLGraph::TGraphNode<TAudioNode>::ProcessMessage(Message);
+	}
 }
 
 
@@ -175,14 +236,25 @@ void TAudioNode::SetVolume(float fVolume)
 	
 	if(m_AudioProperties.m_fVolume != fVolume)
 	{
+		// Get the global audio volume (effects or music) and multiply the new volume by the global volume
+		float fEffectsVolume = GetGlobalVolume();
+
+		float fFinalVolume = fVolume * fEffectsVolume;
+
 		// Try and set the volume for the source
 		// If successful set the volume for the node
-		if(TLAudio::Platform::SetVolume(GetNodeRef(), fVolume))
+		if(TLAudio::Platform::SetVolume(GetNodeRef(), fFinalVolume))
 		{
 			m_AudioProperties.m_fVolume = fVolume;
 		}
 	}
 }
+
+float TAudioNode::GetGlobalVolume()
+{ 
+	return TLAudio::g_pAudiograph->GetEffectsVolume(); 
+}
+
 
 // Set the frequency of this instance
 void TAudioNode::SetFrequencyMult(float fFrequencyMult)

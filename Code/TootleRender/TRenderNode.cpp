@@ -790,3 +790,40 @@ void TLRender::TRenderNode::Shutdown()
 	TLGraph::TGraphNode<TLRender::TRenderNode>::Shutdown();
 }
 
+
+
+void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
+{
+
+	if(Message.GetMessageRef() == "TRANSFORM")
+	{
+		Bool TransformChanged = FALSE;
+
+		if ( Message.ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
+		{
+			m_Transform.SetTranslateValid();
+			TransformChanged = TRUE;
+		}
+
+		if ( Message.ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
+		{
+			m_Transform.SetScaleValid();
+			TransformChanged = TRUE;
+		}
+
+		if ( Message.ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
+		{
+			m_Transform.SetRotationValid();
+			TransformChanged = TRUE;
+		}
+
+		//	transform has been set
+		if ( TransformChanged )
+			OnTransformChanged();
+
+		return;
+	}
+
+	//	do inherited init
+	TLGraph::TGraphNode<TLRender::TRenderNode>::ProcessMessage( Message );
+}

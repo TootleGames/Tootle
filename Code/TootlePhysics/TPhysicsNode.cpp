@@ -206,7 +206,7 @@ void TLPhysics::TPhysicsNode::SetPosition(const float3& Position)
 
 	m_Transform.SetTranslate( Position );
 
-	OnTransformChanged();
+	OnTranslationChanged();
 
 	//	after moving node, mark that the zone needs updating
 	SetCollisionZoneNeedsUpdate();
@@ -243,13 +243,58 @@ void TLPhysics::TPhysicsNode::MovePosition(const float3& Movement,float Timestep
 
 	if ( MovementLengthSq > 0.1f )
 	{
-		//	transform has changed
-		OnTransformChanged();
+		OnTranslationChanged();
 
 		//	after moving node, mark that the zone needs updating
 		SetCollisionZoneNeedsUpdate();
 	}
 }
+
+
+// [05/03/09] DB - Publish a message to say the physics position has changed
+// This should propagate to the scene node which will then pass it onto the render node
+void TLPhysics::TPhysicsNode::OnTranslationChanged()
+{
+	SetWorldCollisionShapeInvalid();	
+
+	TLMessaging::TMessage Message("TRANSFORM");
+	Message.ExportData("Translate", m_Transform.GetTranslate());
+	PublishMessage(Message);
+}
+
+
+// Rotation changed
+void TLPhysics::TPhysicsNode::OnRotationChanged()
+{
+	SetWorldCollisionShapeInvalid();	
+
+	TLMessaging::TMessage Message("TRANSFORM");
+	Message.ExportData("Rotate", m_Transform.GetRotation());
+	PublishMessage(Message);
+}
+
+// Scale changed
+void TLPhysics::TPhysicsNode::OnScaleChanged()
+{
+	SetWorldCollisionShapeInvalid();
+
+	TLMessaging::TMessage Message("TRANSFORM");
+	Message.ExportData("Scale", m_Transform.GetScale());
+	PublishMessage(Message);
+}
+
+// Entire transform hads changed
+void TLPhysics::TPhysicsNode::OnTransformChanged()	
+{	
+	SetWorldCollisionShapeInvalid();	
+
+	TLMessaging::TMessage Message("TRANSFORM");
+	Message.ExportData("Translate", m_Transform.GetTranslate());
+	Message.ExportData("Rotate", m_Transform.GetRotation());
+	Message.ExportData("Scale", m_Transform.GetScale());
+	PublishMessage(Message);
+}
+
 
 
 //----------------------------------------------------------

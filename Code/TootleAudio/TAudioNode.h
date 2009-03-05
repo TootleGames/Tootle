@@ -5,7 +5,6 @@
 
 #include <TootleAsset/TAudio.h>
 
-
 /*
  
 	The TAudioNode is the main object controling audio in game.
@@ -34,7 +33,7 @@ class TLAudio::TAudioProperties
 {
 public:
 	TAudioProperties() :
-		m_fVolume(1.0f),
+		m_fVolume(0.0f),
 		m_fFrequencyMult(1.0f),
 		m_fPitch(1.0f),
 		m_fMinRange(0.0f),
@@ -67,11 +66,12 @@ class TLAudio::TAudioNode : public TLGraph::TGraphNode<TAudioNode>, public TLMat
 
 public:
 	TAudioNode(TRefRef NodeRef,TRefRef TypeRef);
-	
+
 	virtual void			Initialise(TLMessaging::TMessage& Message);
 	virtual void 			Update(float fTimestep);					
 	virtual void			Shutdown();									
-			
+
+protected:
 	void				GetAudioAsset(TPtr<TLAsset::TAudio>& pAudio);						//	returns the audio asset from the asset library with the asset reference
 	
 	Bool				Play();
@@ -109,8 +109,9 @@ public:
 
 	void				UpdatePreviousPos()	{ m_vPreviousPos = GetTranslate(); }
 
-protected:
 	virtual void		ProcessMessage(TLMessaging::TMessage& Message);
+
+	virtual float		GetGlobalVolume();
 
 private:
 	

@@ -194,6 +194,14 @@
 				RelativePath="..\TAudioNode.h"
 				>
 			</File>
+			<File
+				RelativePath="..\TAudioNode_Music.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\TAudioNode_Music.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Ipod Source Files"

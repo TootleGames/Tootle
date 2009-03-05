@@ -178,7 +178,7 @@ private:
 //		use TPtr& pPtr for internal/protected functions (sibling funcs)
 //--------------------------------------------------------------------
 template <class T>
-class TLGraph::TGraphNode : public TLMessaging::TRelay, public TLMessaging::TMessageQueue, public TLGraph::TGraphNodeBase
+class TLGraph::TGraphNode : public TLMessaging::TPublisherSubscriber, public TLMessaging::TMessageQueue, public TLGraph::TGraphNodeBase
 {
 	friend class TGraph<T>;
 public:
@@ -782,11 +782,22 @@ void TLGraph::TGraphNode<T>::ProcessMessage(TLMessaging::TMessage& Message)
 
 	if(MessageRef == TLCore::InitialiseRef)
 	{
+		// Process the owner setup first
+		TLMessaging::TPublisherSubscriber* pOwner;
+		if(Message.ImportData("Owner", pOwner))
+		{
+			pOwner->SubscribeTo(this);
+			SubscribeTo(pOwner);
+		}
+
+		// Now initialise
 		Initialise(Message);
+		return;
 	}
 	else if(MessageRef == TLCore::ShutdownRef)
 	{
 		Shutdown();
+		return;
 	}
 	else 
 	{
@@ -799,10 +810,6 @@ void TLGraph::TGraphNode<T>::ProcessMessage(TLMessaging::TMessage& Message)
 		DebugString.Append(")");
 		TLDebug_Print( DebugString );
 	}
-		
-
-	// Super class process message
-	TLMessaging::TRelay::ProcessMessage(Message);
 }
 
 

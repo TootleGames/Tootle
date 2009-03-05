@@ -2,7 +2,7 @@
 
 #include <TootleRender/TLRender.h>
 #include <TootlePhysics/TLPhysics.h>
-#include <TootleAudio/TAudioInterface.h>
+#include <TootleAudio/TLAudio.h>
 
 #include "TSceneNode_Transform.h"
 
@@ -19,7 +19,7 @@ namespace TLScene
 //	generic routines (update to match physics pos, then 
 //	updates render object)
 //-----------------------------------------------------
-class TLScene::TSceneNode_Object : public TLScene::TSceneNode_Transform, public TLAudio::TAudioInterface
+class TLScene::TSceneNode_Object : public TLScene::TSceneNode_Transform
 {
 public:
 	TSceneNode_Object(TRefRef NodeRef,TRefRef TypeRef);
@@ -31,8 +31,6 @@ public:
 
 	// Distance checks
 	virtual float				GetDistanceTo(const TLMaths::TLine& Line);
-
-	void						SetAllNodesTranslate(const float3& Translate);
 
 	// Physics Object access
 	TRefRef							GetPhysicsNodeRef()					{ return m_PhysicsNodeRef; }
@@ -53,8 +51,9 @@ protected:
 	virtual void					OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode)	{}
 	void							DeleteRenderNode();
 
-	virtual void 					Update(float fTimestep);
-	virtual void					UpdateObjectFromPhysics();				//	update game object to match physics node
+	TRef							CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset);
+	TRef							CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset, const TLAudio::TAudioProperties& Props);
+	Bool							RemoveAudioNode(TRefRef AudioRef);
 
 	// Transformation
 	virtual void					Translate(float3 vTranslation);
