@@ -160,7 +160,7 @@ void TAudioNode::ProcessMessage(TLMessaging::TMessage& Message)
 		}
 
 		/*
-		if(Message.ImportData("Rotate", vVector))
+		if(Message.ImportData("Rotation", vVector))
 		{
 			UpdatePreviousPos();
 			SetTranslate(vVector);

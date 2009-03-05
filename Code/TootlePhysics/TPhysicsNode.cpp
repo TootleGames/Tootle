@@ -269,7 +269,7 @@ void TLPhysics::TPhysicsNode::OnRotationChanged()
 	SetWorldCollisionShapeInvalid();	
 
 	TLMessaging::TMessage Message("TRANSFORM");
-	Message.ExportData("Rotate", m_Transform.GetRotation());
+	Message.ExportData("Rotation", m_Transform.GetRotation());
 	PublishMessage(Message);
 }
 
@@ -290,7 +290,7 @@ void TLPhysics::TPhysicsNode::OnTransformChanged()
 
 	TLMessaging::TMessage Message("TRANSFORM");
 	Message.ExportData("Translate", m_Transform.GetTranslate());
-	Message.ExportData("Rotate", m_Transform.GetRotation());
+	Message.ExportData("Rotation", m_Transform.GetRotation());
 	Message.ExportData("Scale", m_Transform.GetScale());
 	PublishMessage(Message);
 }

@@ -19,6 +19,7 @@ public:
 	// Virtual properties that are only available on inherited classes
 	// Saves u having to either add unnecessary properties to base classes or
 	// the use of RTTI IsKindOf etc
+	//	gr: maybe consider renaming these... slight ambiguity between a node type having a POSSIBLE transform, and validity of a transform? (ie. TLMaths::TTransform::HasAnyTransform/HasTranslate/HasScale etc)
 	virtual Bool		HasTransform()			{	return FALSE; }
 	virtual Bool		HasRender()				{	return FALSE; }
 	virtual Bool		HasPhysics()			{	return FALSE; }

@@ -409,7 +409,7 @@ void TSchemeEditor::RotateSelectedNodes(float fAmount, TransformAxis uAxis)
 			// Send the node a message to say we want to move the node
 			TLMessaging::TMessage Message("TRANSFORM");
 
-			Message.AddChildAndData("ROTATE", qRotation);
+			Message.AddChildAndData("Rotation", qRotation);
 
 			// NOTE: Should really send this message via the scenegraph rather than directly.
 			pNode->QueueMessage(Message);

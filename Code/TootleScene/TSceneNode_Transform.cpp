@@ -57,14 +57,14 @@ void TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Message)
 			//SetTranslate(vVector);
 		}
 
-		if(Message.ImportData("Rotate", qRot))
+		if(Message.ImportData("Rotation", qRot))
 		{
 			m_Transform.SetRotation(qRot);
 			bTranformChanged = TRUE;
 			//SetRotation(qRot);
 		}
 
-		if(Message.ImportData("Translate", vVector))
+		if(Message.ImportData("Scale", vVector))
 		{
 			m_Transform.SetScale(vVector);
 			bTranformChanged = TRUE;
@@ -74,6 +74,10 @@ void TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Message)
 		// If any part of the transform changed forward the message on
 		if(bTranformChanged)
 		{
+			//	gr: inject our ref so subscriber knows what node has changed
+			Message.AddChildAndData("SNRef", this->GetNodeRef() );
+			Message.AddChildAndData("SNType", this->GetNodeTypeRef() );
+
 			PublishMessage(Message);
 		}
 
@@ -116,7 +120,7 @@ void TSceneNode_Transform::OnTranslationChanged()
 void TSceneNode_Transform::OnRotationChanged()
 {
 	TLMessaging::TMessage Message("TRANSFORM");
-	Message.ExportData("Rotate", GetRotation());
+	Message.ExportData("Rotation", GetRotation());
 	PublishMessage(Message);
 }
 
