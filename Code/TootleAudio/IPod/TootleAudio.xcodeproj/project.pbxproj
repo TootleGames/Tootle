@@ -17,6 +17,8 @@
 		84179D3B0EFBA727005375E5 /* TLAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 84179D330EFBA727005375E5 /* TLAudio.h */; };
 		84179D540EFBA767005375E5 /* IPodAudio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84179D4F0EFBA767005375E5 /* IPodAudio.cpp */; };
 		84179D550EFBA767005375E5 /* IPodAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 84179D500EFBA767005375E5 /* IPodAudio.h */; };
+		842617CF0F60521B002812BA /* TAudioNode_Music.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 842617CD0F60521B002812BA /* TAudioNode_Music.cpp */; };
+		842617D00F60521B002812BA /* TAudioNode_Music.h in Headers */ = {isa = PBXBuildFile; fileRef = 842617CE0F60521B002812BA /* TAudioNode_Music.h */; };
 		8461C59B0F5EE2A800ED9509 /* IPodAudioOpenAL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8461C5990F5EE2A800ED9509 /* IPodAudioOpenAL.cpp */; };
 		8461C59C0F5EE2A800ED9509 /* IPodAudioOpenAL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8461C59A0F5EE2A800ED9509 /* IPodAudioOpenAL.h */; };
 /* End PBXBuildFile section */
@@ -33,6 +35,8 @@
 		84179D330EFBA727005375E5 /* TLAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLAudio.h; path = ../TLAudio.h; sourceTree = SOURCE_ROOT; };
 		84179D4F0EFBA767005375E5 /* IPodAudio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IPodAudio.cpp; sourceTree = "<group>"; };
 		84179D500EFBA767005375E5 /* IPodAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodAudio.h; sourceTree = "<group>"; };
+		842617CD0F60521B002812BA /* TAudioNode_Music.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAudioNode_Music.cpp; path = ../TAudioNode_Music.cpp; sourceTree = SOURCE_ROOT; };
+		842617CE0F60521B002812BA /* TAudioNode_Music.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAudioNode_Music.h; path = ../TAudioNode_Music.h; sourceTree = SOURCE_ROOT; };
 		8461C5990F5EE2A800ED9509 /* IPodAudioOpenAL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IPodAudioOpenAL.cpp; sourceTree = "<group>"; };
 		8461C59A0F5EE2A800ED9509 /* IPodAudioOpenAL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodAudioOpenAL.h; sourceTree = "<group>"; };
 		84C108360F0A729500B2DF7A /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = IPod/TootleDebug.xcconfig; sourceTree = "<group>"; };
@@ -73,6 +77,8 @@
 		84179D0F0EFBA135005375E5 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				842617CD0F60521B002812BA /* TAudioNode_Music.cpp */,
+				842617CE0F60521B002812BA /* TAudioNode_Music.h */,
 				84179D2C0EFBA727005375E5 /* TAudiograph.cpp */,
 				84179D2D0EFBA727005375E5 /* TAudiograph.h */,
 				84179D2E0EFBA727005375E5 /* TAudioInterface.cpp */,
@@ -129,6 +135,7 @@
 				84179D3B0EFBA727005375E5 /* TLAudio.h in Headers */,
 				84179D550EFBA767005375E5 /* IPodAudio.h in Headers */,
 				8461C59C0F5EE2A800ED9509 /* IPodAudioOpenAL.h in Headers */,
+				842617D00F60521B002812BA /* TAudioNode_Music.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -181,6 +188,7 @@
 				84179D3A0EFBA727005375E5 /* TLAudio.cpp in Sources */,
 				84179D540EFBA767005375E5 /* IPodAudio.cpp in Sources */,
 				8461C59B0F5EE2A800ED9509 /* IPodAudioOpenAL.cpp in Sources */,
+				842617CF0F60521B002812BA /* TAudioNode_Music.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
