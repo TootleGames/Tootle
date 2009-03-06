@@ -11,7 +11,8 @@
 
 TLRender::TRenderNodePathNetwork::TRenderNodePathNetwork(TRefRef RenderNodeRef,TRefRef TypeRef) :
 	TRenderNodeDebugMesh	( RenderNodeRef, TypeRef ),
-	m_PathColour			( 1.f, 1.f, 1.f, 1.f )
+	m_PathColour			( 1.f, 1.f, 1.f, 1.f ),
+	m_EnableMarkers			( TRUE )
 {
 }
 
@@ -30,6 +31,9 @@ void TLRender::TRenderNodePathNetwork::Initialise(TLMessaging::TMessage& Message
 
 	//	read out colour
 	Message.ImportData("Colour", m_PathColour );
+
+	//	read marker setting
+	Message.ImportData("Markers", m_EnableMarkers );
 
 	//	see if a path network asset has been specified (do this last!)
 	TRef PathNetworkRef;
@@ -129,67 +133,69 @@ void TLRender::TRenderNodePathNetwork::InitMeshFromPathNetwork(TLAsset::TPathNet
 			pLine->Add( Vertex );
 			pLine->Add( LinkVertex );
 
-
-			//	draw markers along the line
-			//	if the link is one way, then add arrows along the line
-			TLPath::TDirection::Type Direction = PathLink.GetDirection();
-			
-			//	reverse line direction if direction is backwards
-			const float2& FromPos = (Direction != TLPath::TDirection::Backward) ? PathNode.GetPosition() : LinkPathNode.GetPosition();
-			const float2& ToPos = (Direction != TLPath::TDirection::Backward) ? LinkPathNode.GetPosition() : PathNode.GetPosition();
-
-			//	get dir and length
-			float2 LineDir( ToPos - FromPos );
-			float LineLength = LineDir.Length();
-			LineDir.Normalise();
-
-			TArray<float> ArrowOffsets;
-
-			//	not gonna fit on more than 1 arrow, just add one in the middle
-			if ( LineLength <= PATH_DIRECTION_ARROW_RATE )
+			if ( m_EnableMarkers )
 			{
-				ArrowOffsets.Add( LineLength * 0.5f );
-			}
-			else
-			{
-				//	add an arrow every so often...
-				float ArrowCountf = LineLength / PATH_DIRECTION_ARROW_RATE;
-				u32 ArrowCount = (u32)ArrowCountf;
-				float Offset = (ArrowCountf - (float)ArrowCount) / 2.f;	//	use remainder to center arrows along line
+				//	draw markers along the line
+				//	if the link is one way, then add arrows along the line
+				TLPath::TDirection::Type Direction = PathLink.GetDirection();
 				
-				//	offset half way as well
-				Offset += PATH_DIRECTION_ARROW_RATE / 2.f;
+				//	reverse line direction if direction is backwards
+				const float2& FromPos = (Direction != TLPath::TDirection::Backward) ? PathNode.GetPosition() : LinkPathNode.GetPosition();
+				const float2& ToPos = (Direction != TLPath::TDirection::Backward) ? LinkPathNode.GetPosition() : PathNode.GetPosition();
 
-				for ( u32 i=0;	i<ArrowCount;	i++ )
-					ArrowOffsets.Add( Offset + ((float)i*PATH_DIRECTION_ARROW_RATE) );
-			}
+				//	get dir and length
+				float2 LineDir( ToPos - FromPos );
+				float LineLength = LineDir.Length();
+				LineDir.Normalise();
 
-			//	draw an arrow along the path
-			for ( u32 i=0;	i<ArrowOffsets.GetSize();	i++ )
-			{
-				float2 ArrowHeadPos = FromPos + (LineDir * (ArrowOffsets[i] + PATH_DIRECTION_ARROW_LENGTH) );
-				float2 ArrowTailPos = FromPos + (LineDir * ArrowOffsets[i] );
-				float2 ArrowLeft = LineDir.GetAntiClockwise() * PATH_DIRECTION_ARROW_HALFWIDTH;
-				float2 ArrowTailLeft = ArrowTailPos + ArrowLeft;
-				float2 ArrowTailRight = ArrowTailPos - ArrowLeft;
+				TArray<float> ArrowOffsets;
 
-				if ( Direction == TLPath::TDirection::Any )
+				//	not gonna fit on more than 1 arrow, just add one in the middle
+				if ( LineLength <= PATH_DIRECTION_ARROW_RATE )
 				{
-					//	draw a quad instead of an arrow when it's any direction
-					float2 ArrowHeadLeft = ArrowHeadPos + ArrowLeft;
-					float2 ArrowHeadRight = ArrowHeadPos - ArrowLeft;
-
-					//	make up quad
-					//	this line is corrupting mem!
-					Mesh.GenerateQuad( ArrowHeadLeft.xyz(0.f), ArrowHeadRight.xyz(0.f), ArrowTailRight.xyz(0.f), ArrowTailLeft.xyz(0.f), m_PathColour );
+					ArrowOffsets.Add( LineLength * 0.5f );
 				}
 				else
 				{
-					//	make up triangle
-					TLAsset::TMesh::Triangle* pTriangle = Mesh.GetTriangles().AddNew();
-					pTriangle->x = Mesh.AddVertex( ArrowHeadPos.xyz(0.f), m_PathColour );
-					pTriangle->y = Mesh.AddVertex( ArrowTailLeft.xyz(0.f), m_PathColour );
-					pTriangle->z = Mesh.AddVertex( ArrowTailRight.xyz(0.f), m_PathColour );
+					//	add an arrow every so often...
+					float ArrowCountf = LineLength / PATH_DIRECTION_ARROW_RATE;
+					u32 ArrowCount = (u32)ArrowCountf;
+					float Offset = (ArrowCountf - (float)ArrowCount) / 2.f;	//	use remainder to center arrows along line
+					
+					//	offset half way as well
+					Offset += PATH_DIRECTION_ARROW_RATE / 2.f;
+
+					for ( u32 i=0;	i<ArrowCount;	i++ )
+						ArrowOffsets.Add( Offset + ((float)i*PATH_DIRECTION_ARROW_RATE) );
+				}
+
+				//	draw an arrow along the path
+				for ( u32 i=0;	i<ArrowOffsets.GetSize();	i++ )
+				{
+					float2 ArrowHeadPos = FromPos + (LineDir * (ArrowOffsets[i] + PATH_DIRECTION_ARROW_LENGTH) );
+					float2 ArrowTailPos = FromPos + (LineDir * ArrowOffsets[i] );
+					float2 ArrowLeft = LineDir.GetAntiClockwise() * PATH_DIRECTION_ARROW_HALFWIDTH;
+					float2 ArrowTailLeft = ArrowTailPos + ArrowLeft;
+					float2 ArrowTailRight = ArrowTailPos - ArrowLeft;
+
+					if ( Direction == TLPath::TDirection::Any )
+					{
+						//	draw a quad instead of an arrow when it's any direction
+						float2 ArrowHeadLeft = ArrowHeadPos + ArrowLeft;
+						float2 ArrowHeadRight = ArrowHeadPos - ArrowLeft;
+
+						//	make up quad
+						//	this line is corrupting mem!
+						Mesh.GenerateQuad( ArrowHeadLeft.xyz(0.f), ArrowHeadRight.xyz(0.f), ArrowTailRight.xyz(0.f), ArrowTailLeft.xyz(0.f), m_PathColour );
+					}
+					else
+					{
+						//	make up triangle
+						TLAsset::TMesh::Triangle* pTriangle = Mesh.GetTriangles().AddNew();
+						pTriangle->x = Mesh.AddVertex( ArrowHeadPos.xyz(0.f), m_PathColour );
+						pTriangle->y = Mesh.AddVertex( ArrowTailLeft.xyz(0.f), m_PathColour );
+						pTriangle->z = Mesh.AddVertex( ArrowTailRight.xyz(0.f), m_PathColour );
+					}
 				}
 			}
 		}

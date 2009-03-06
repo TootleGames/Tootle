@@ -92,3 +92,28 @@ void TLRender::Opengl::SceneRotate(const TLMaths::TAngle& Rotation,const float3&
 }
 
 
+//---------------------------------------------------
+//	get render target's viewport size from the size and the screen size
+//---------------------------------------------------
+void TLRender::Opengl::GetViewportSize(Type4<s32>& ViewportSize,const Type4<s32>& RenderTargetSize,const Type4<s32>& ScreenSize,TScreenShape ScreenShape)
+{
+	if ( ScreenShape == ScreenShape_WideLeft )
+	{
+		TLDebug_Break("Todo! rotate viewport!");
+	}
+	else if ( ScreenShape == ScreenShape_WideRight )
+	{
+		TLDebug_Break("Todo! rotate viewport!");
+	}
+	else	//	no rotation involved
+	{
+		//	0,0 is bottom left, next two sizes in Scissor() and Viewport() are still widht and height, just upside down
+		ViewportSize.Left() = RenderTargetSize.Left();
+		ViewportSize.Top() = ScreenSize.Height() - RenderTargetSize.Top() - RenderTargetSize.Height();
+	
+		//	no change
+		ViewportSize.Width() = RenderTargetSize.Width();
+		ViewportSize.Height() = RenderTargetSize.Height();
+	}
+}
+

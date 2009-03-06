@@ -67,6 +67,7 @@ public:
 	FORCEINLINE TRefRef			GetNodeRef() const						{	return m_NodeRef; }
 	FORCEINLINE TRefRef			GetNodeTypeRef() const					{	return m_NodeTypeRef; }
 
+	//	gr: just realised... this is wrong. why would we check our parent's type?
 	Bool						IsKindOf(TRefRef TypeRef) const			{	return (GetNodeTypeRef() == TypeRef) ? TRUE : IsParentKindOf( TypeRef );	}
 	FORCEINLINE Bool			IsParentKindOf(TRefRef TypeRef) const	{	return GetParentBase() ? GetParentBase()->IsKindOf(TypeRef) : FALSE;	}
 	

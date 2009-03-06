@@ -22,34 +22,11 @@ TLRender::Platform::RenderTarget::RenderTarget(const TRef& Ref) :
 //-------------------------------------------------------
 Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& MaxSize,const TScreen& Screen)			
 {
-	//	do base checks
+	//	do base stuff
 	if ( !TRenderTarget::BeginDraw(MaxSize, Screen) )
 		return FALSE;
-	
-	Type4<s32> ViewportSize;
-	if ( !GetViewportSize( ViewportSize, MaxSize ) )
-		return FALSE;
 
-	//	setup viewport and sissor outside the viewport
-	glViewport( ViewportSize.Left(), ViewportSize.Top(), ViewportSize.Width(), ViewportSize.Height() );
-	glScissor( ViewportSize.Left(), ViewportSize.Top(), ViewportSize.Width(), ViewportSize.Height() );
-	Opengl::Debug_CheckForError();		
-
-	//	calculate new view sizes etc for this viewport
-	TPtr<TLRender::TCamera>& pCamera = GetCamera();
-	pCamera->SetViewport( ViewportSize, Screen.GetScreenShape() );
-
-	//	do projection vs orthographic setup
-	if ( GetCamera()->IsOrtho() )
-	{
-		if ( !BeginOrthoDraw( pCamera.GetObject<TLRender::TOrthoCamera>(), Screen.GetScreenShape() ) )
-			return FALSE;
-	}
-	else
-	{
-		if ( !BeginProjectDraw( pCamera.GetObject<TLRender::TProjectCamera>(), Screen.GetScreenShape() ) )
-			return FALSE;
-	}
+	//	platform specific stuff...
 	
 	//	clear render target (viewport has been set)
 	GLbitfield ClearMask = 0x0;

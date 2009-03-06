@@ -99,8 +99,6 @@ protected:
 	template<class SHAPE>
 	void							DrawMeshShape(const SHAPE& Shape,const TRenderNode* pRenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags,Bool ResetScene);
 
-	virtual Bool					GetViewportSize(Type4<s32>& ViewportSize,const Type4<s32>& MaxSize);	//	convert our relative size to the opengl viewport size (upside down) - returns FALSE if too small to be seen
-	
 	virtual Bool					BeginProjectDraw(TLRender::TProjectCamera* pCamera,TScreenShape ScreenShape)	{	return TRUE;	}	//	setup projection mode
 	virtual void					EndProjectDraw()																{	}
 	virtual Bool					BeginOrthoDraw(TLRender::TOrthoCamera* pCamera,TScreenShape ScreenShape)		{	return TRUE;	}	//	setup ortho projection mode

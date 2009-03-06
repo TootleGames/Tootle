@@ -48,6 +48,12 @@ Bool TLRender::TRenderTarget::BeginDraw(const Type4<s32>& MaxSize,const TScreen&
 	if ( !m_pCamera )
 		return FALSE;
 
+	//	get the size... fails if it's too small to be of any use
+	Type4<s32> RenderTargetSize;
+	GetSize( RenderTargetSize, MaxSize );
+	if ( RenderTargetSize.Width() <= 2 || RenderTargetSize.Height() <= 2 )
+		return FALSE;
+
 	//	if we have no root render node, and not going to be clearing the screen, skip render
 	Bool WillClear = GetFlags()( Flag_ClearColour ) && (m_ClearColour.GetAlpha() > 0.f);
 	if ( !WillClear )
@@ -72,6 +78,34 @@ Bool TLRender::TRenderTarget::BeginDraw(const Type4<s32>& MaxSize,const TScreen&
 	//	clean post render list
 	m_TempPostRenderList.Empty();
 
+	//	setup viewport and sissor outside the viewport
+	Type4<s32> ViewportSize;
+	Opengl::GetViewportSize( ViewportSize, RenderTargetSize, MaxSize, Screen.GetScreenShape() );
+	glViewport( ViewportSize.Left(), ViewportSize.Top(), ViewportSize.Width(), ViewportSize.Height() );
+	Opengl::Debug_CheckForError();
+
+	//	todo: only enable if size is not full screen
+	Opengl::EnableScissor( TRUE );
+	glScissor( ViewportSize.Left(), ViewportSize.Top(), ViewportSize.Width(), ViewportSize.Height() );
+	Opengl::Debug_CheckForError();
+
+	//	calculate new view sizes etc for this viewport
+	TPtr<TLRender::TCamera>& pCamera = GetCamera();
+	pCamera->SetViewport( RenderTargetSize, Screen.GetScreenShape() );
+
+	//	do projection vs orthographic setup
+	if ( GetCamera()->IsOrtho() )
+	{
+		if ( !BeginOrthoDraw( pCamera.GetObject<TLRender::TOrthoCamera>(), Screen.GetScreenShape() ) )
+			return FALSE;
+	}
+	else
+	{
+		if ( !BeginProjectDraw( pCamera.GetObject<TLRender::TProjectCamera>(), Screen.GetScreenShape() ) )
+			return FALSE;
+	}
+
+	//	overloaded code should do platform specific stuff now
 
 	return TRUE;	
 }
@@ -264,27 +298,6 @@ void TLRender::TRenderTarget::GetSize(Type4<s32>& Size,const Type4<s32>& MaxSize
 	if ( Size.y == g_MaxSize )			Size.y  = MaxSize.y;
 	if ( Size.Width() == g_MaxSize )	Size.Width()  = MaxSize.Width();
 	if ( Size.Height() == g_MaxSize )	Size.Height()  = MaxSize.Height();
-}
-
-
-//-------------------------------------------------------------
-//	convert our relative size to the opengl viewport size (upside down) - returns FALSE if too small to be seen
-//-------------------------------------------------------------
-Bool TLRender::TRenderTarget::GetViewportSize(Type4<s32>& ViewportSize,const Type4<s32>& MaxSize)
-{
-	//	work out the render target's rendering size (viewport)
-	GetSize( ViewportSize, MaxSize );
-
-	//	opengl viewport goes from bottom to top, so realign inside the parent rect
-	//	gr: this is wrong I think... reinvestigate when I work out what i needs to do
-//	ViewportSize.y = MaxSize.y - ( Size.y + Size.Height() );
-//	ViewportSize.Height() = Size.Height();
-
-	//	too small to render into!
-	if ( ViewportSize.Width() <= 1 || ViewportSize.Height() <= 1 )
-		return FALSE;
-
-	return TRUE;
 }
 
 

@@ -54,11 +54,14 @@ namespace TLRender
 		void					SceneTransform(const TLMaths::TTransform& Transform);				//	transform scene
 		void					SceneRotate(const TLMaths::TAngle& Rotation,const float3& Axis);	//	eular rotation on the scene - wrapper for glRotatef
 
+		void					GetViewportSize(Type4<s32>& ViewportSize,const Type4<s32>& RenderTargetSize,const Type4<s32>& ScreenSize,TScreenShape ScreenShape);	//	get render target's viewport size from the size and the screen size
+	
 		//	scene settings - only calls platform implementations as required - inlined for speed
 		FORCEINLINE void		EnableWireframe(Bool Enable);
 		FORCEINLINE void		EnableAlpha(Bool Enable);
 		FORCEINLINE void		EnableDepthRead(Bool Enable);
 		FORCEINLINE void		EnableDepthWrite(Bool Enable);
+		FORCEINLINE void		EnableScissor(Bool Enable);
 		FORCEINLINE void		SetSceneColour(const TColour& Colour,Bool ForceEnableAlpha=FALSE);		//	if alpha < 1 then it will enable alpha too
 		FORCEINLINE void		SetLineWidth(float Width);
 		FORCEINLINE void		SetPointSize(float Size);
@@ -90,6 +93,7 @@ namespace TLRender
 			FORCEINLINE void		EnableAlpha(Bool Enable);
 			FORCEINLINE void		EnableDepthRead(Bool Enable);
 			FORCEINLINE void		EnableDepthWrite(Bool Enable);
+			FORCEINLINE void		EnableScissor(Bool Enable);
 			FORCEINLINE void		SetSceneColour(const TColour& Colour);
 			FORCEINLINE void		SetLineWidth(float Width);
 			FORCEINLINE void		SetPointSize(float Size);
@@ -172,6 +176,19 @@ FORCEINLINE void TLRender::Opengl::EnableDepthWrite(Bool Enable)
 	if ( NewEnabled != g_SceneEnabled )
 	{
 		Platform::EnableDepthWrite( Enable );
+		g_SceneEnabled = NewEnabled;
+	}
+}
+
+
+FORCEINLINE void TLRender::Opengl::EnableScissor(Bool Enable)
+{
+	static SyncBool g_SceneEnabled = SyncWait;
+	SyncBool NewEnabled = Enable ? SyncTrue : SyncFalse;
+
+	if ( NewEnabled != g_SceneEnabled )
+	{
+		Platform::EnableScissor( Enable );
 		g_SceneEnabled = NewEnabled;
 	}
 }

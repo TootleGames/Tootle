@@ -49,6 +49,7 @@ protected:
 	s32						GetPathNodeVertex(TLAsset::TPathNetwork& PathNetwork,TLPath::TPathNode& PathNode);		//	return vertex for this path node - if it doesn't exist, create it
 
 public:
+	Bool					m_EnableMarkers;	//	enable directional arrows etc
 	TColour					m_PathColour;		//	colour of vertexes for the lines
 	TRef					m_PathNetworkRef;	//	asset ref of path network
 	TKeyArray<TRef,u16>		m_PathNodeVertex;	//	there's a vertex for each path node, this keeps track of it
