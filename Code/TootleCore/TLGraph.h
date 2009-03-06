@@ -75,18 +75,7 @@ public:
 
 	// Graph change requests
 	virtual TRef				CreateNode(TRefRef NodeRef,TRefRef TypeRef,TRefRef ParentRef,TLMessaging::TMessage* pInitMessage=NULL,Bool StrictNodeRef=FALSE);		//	create node and add to the graph. returns ref of new node
-
-	// [05/01/09] DB - Renamed to avoid ambiguity with ref type version of same routine
-	TPtr<T>						DoCreateNode(TRef NodeRef,TRefRef TypeRef,TPtr<T> pParent=NULL,TLMessaging::TMessage* pInitMessage=NULL, Bool StrictNodeRef=FALSE);	//	create node and add to the graph. returns ref of new node
-
-	Bool						AddNode(TPtr<T>& pNode,TPtr<T>& pParent);		//	returns the ref of the object. You can't always have the ref we constructed with :)
-	FORCEINLINE Bool			AddNode(TPtr<T>& pNode)							{	return AddNode( pNode, m_pRootNode );	}
-	FORCEINLINE Bool			AddNode(TPtr<T>& pNode,TRefRef ParentRef)		{	return AddNode( pNode, FindNode( ParentRef ) );	}
-
 	virtual Bool				RemoveNode(TRefRef NodeRef)				{	return RemoveNode( FindNode( NodeRef ) );	}
-//	FORCEINLINE Bool			RemoveNode(const T* pNode)				{	return RemoveNode( FindNode( pNode->GetNodeRef() ) );	}
-	Bool						RemoveNode(TPtr<T> pNode);				//	Requests a node to be removed from the graph.  The node will be removed at a 'safe' time so is not immediate
-	Bool						RemoveChildren(TPtr<T> pNode);			//	remove pNode's children (but not pNode)
 
 	//	factory access
 	Bool						AddFactory(TPtr< TClassFactory<T,FALSE> >& pFactory)
@@ -102,7 +91,23 @@ protected:
 	// Main update of the graph
 	virtual void				UpdateGraph(float fTimeStep);
 	void						UpdateGraphStructure();							// Adds/removes nodes that have been queued up for update
+public:
+	///////////////////////////////////////////////////////////////////////////////////
+	// These should be private.  A couple of places need updating before we can 
+	// make this change.
+	///////////////////////////////////////////////////////////////////////////////////
+	TPtr<T>						DoCreateNode(TRef NodeRef,TRefRef TypeRef,TPtr<T> pParent=NULL,TLMessaging::TMessage* pInitMessage=NULL, Bool StrictNodeRef=FALSE);	//	create node and add to the graph. returns ref of new node
 
+	Bool						AddNode(TPtr<T>& pNode,TPtr<T>& pParent);		//	returns the ref of the object. You can't always have the ref we constructed with :)
+	FORCEINLINE Bool			AddNode(TPtr<T>& pNode)							{	return AddNode( pNode, m_pRootNode );	}
+	FORCEINLINE Bool			AddNode(TPtr<T>& pNode,TRefRef ParentRef)		{	return AddNode( pNode, FindNode( ParentRef ) );	}
+
+
+//	FORCEINLINE Bool			RemoveNode(const T* pNode)				{	return RemoveNode( FindNode( pNode->GetNodeRef() ) );	}
+	Bool						RemoveNode(TPtr<T> pNode);				//	Requests a node to be removed from the graph.  The node will be removed at a 'safe' time so is not immediate
+	Bool						RemoveChildren(TPtr<T> pNode);			//	remove pNode's children (but not pNode)
+	///////////////////////////////////////////////////////////////////////////////////
+protected:
 	template<typename MATCHTYPE>
 	FORCEINLINE Bool			IsInGraph(const MATCHTYPE& Value,Bool CheckRequestQueue=TRUE)		{	return FindNodeMatch( Value, CheckRequestQueue ).IsValid();	}
 	FORCEINLINE Bool			IsInGraph(TRefRef NodeRef,Bool CheckRequestQueue=TRUE)				{	return FindNode( NodeRef, CheckRequestQueue ).IsValid();	}

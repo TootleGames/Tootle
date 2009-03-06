@@ -169,7 +169,7 @@ void TLRender::TRenderNodeText::SetGlyphs()
 		//	remove children we dont need any more
 		if ( charindex >= m_Text.GetLengthWithoutTerminator() )
 		{
-			TLRender::g_pRendergraph->RemoveNode( pChild );
+			TLRender::g_pRendergraph->RemoveNode( pChild->GetNodeRef() );
 			//RemoveChild( pRemoveChild );
 
 			#ifndef TLGRAPH_OWN_CHILDREN
@@ -203,11 +203,22 @@ void TLRender::TRenderNodeText::SetGlyphs()
 		TRef GlyphRef( GlyphName );
 		GlyphRef = TLRender::g_pRendergraph->GetFreeNodeRef( GlyphRef );
 
+		///////////////////////////////////////////////////////////////////////////////
+		// This needs changing to use the following:
+		//		TLMessaging::TMessage Message;
+		//		Message.ExportData("Glyph", pRenderGlyph); // NOTE: Should be an ID rather than pointer
+		//		Message.ExportData("Font", Font);
+		//		Message.ExportData("Translate", GlyphPos);
+		//		Message.ExportData("Char", m_Text[charindex]);
+		//		TLRender::g_pRendergraph->CreateNode(GlyphRef, "Glyph", "Root");
+		///////////////////////////////////////////////////////////////////////////////
 		TPtr<TRenderNode> pRenderGlyphPtr = new TRenderNodeGlyph( GlyphRef, "Glyph" );
 		TLRender::g_pRendergraph->AddNode( pRenderGlyphPtr, this->GetNodeRef() );
 
 		TRenderNodeGlyph* pRenderGlyph = pRenderGlyphPtr.GetObject<TRenderNodeGlyph>();
 		SetGlyph( *pRenderGlyph, Font, GlyphPos, m_Text[charindex] );
+
+		///////////////////////////////////////////////////////////////////////////////
 	
 		charindex++;
 	}

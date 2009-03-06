@@ -86,7 +86,9 @@ void TLPhysics::TPhysicsNodeSphere::RollTransform(const float3& MovementForce,co
 		if ( m_RenderTransform.HasRotation() )
 			Rotation *= RollQuat;
 		else
+		{
 			m_RenderTransform.SetRotation( RollQuat );
+		}
 
 		//	normalise rotation
 		Rotation.Normalise();
@@ -106,7 +108,9 @@ void TLPhysics::TPhysicsNodeSphere::PostUpdate(float Timestep,TLPhysics::TPhysic
 
 	//	copy bits out of normal transform
 	if ( m_Transform.HasTranslate() )
+	{
 		m_RenderTransform.SetTranslate( m_Transform.GetTranslate() );
+	}
 	else
 		m_RenderTransform.SetTranslateInvalid();
 
@@ -117,6 +121,17 @@ void TLPhysics::TPhysicsNodeSphere::PostUpdate(float Timestep,TLPhysics::TPhysic
 		RollTransform( Movement, m_LastNormal, 1.f );
 	}
 
+	// Broadcast transform change
+	OnRenderTransformChange();
+}
+
+// [06/03/09] DB - Specific sphere physics transform change
+void TLPhysics::TPhysicsNodeSphere::OnRenderTransformChange()
+{
+	TLMessaging::TMessage Message("TRANSFORM");
+	Message.ExportData("Translate", m_RenderTransform.GetTranslate());
+	Message.ExportData("Rotation", m_RenderTransform.GetRotation());
+	PublishMessage(Message);
 }
 
 

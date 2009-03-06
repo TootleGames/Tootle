@@ -20,7 +20,7 @@ void TSceneNode_Emitter::ProcessMessage(TLMessaging::TMessage& Message)
 		// Set position
 		float3 vPos;
 
-		if(Message.ImportData("POS", vPos))
+		if(Message.ImportData("Translate", vPos))
 		{
 			SetTranslate(vPos);
 		}
@@ -93,31 +93,15 @@ void TSceneNode_Emitter::Update(float fTimestep)
 
 Bool TSceneNode_Emitter::EmitObject()
 {
+	TLMessaging::TMessage Message(TLCore::InitialiseRef);
+
+	Message.ExportData("Translate", GetEmissionPosition());
+
 	// Create a new object via the scenegraph
-	TPtr<TSceneNode> pNode = TLScene::g_pScenegraph->CreateInstance(m_refNodeIDCurrent , m_refNodeTypeToEmit);
+	TRef Obj = TLScene::g_pScenegraph->CreateNode(m_refNodeIDCurrent , m_refNodeTypeToEmit, "Root", &Message);
 
-	if(pNode)
-	{
-		// Send a property set message
-		TLMessaging::TMessage Message("SETPROPERTIES");
-
-		float3 vPos = GetEmissionPosition(); 
-		Message.AddChildAndData("POS", vPos);
-
-		pNode->QueueMessage(Message);
-
-		// Send it an initialise message
-		Message = TLMessaging::TMessage(TLCore::InitialiseRef);
-
-		pNode->QueueMessage(Message);
-
+	if(Obj.IsValid())
 		m_refNodeIDCurrent.Increment();
-
-		// Find parent node to add the emitter to
-
-		// Add to scenegraph
-		return TLScene::g_pScenegraph->AddNode(pNode);
-	}
 
 	return FALSE;
 }

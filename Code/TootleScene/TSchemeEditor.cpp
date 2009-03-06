@@ -66,7 +66,7 @@ void TSchemeEditor::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChann
 
 SyncBool TSchemeEditor::Shutdown()
 { 
-	m_pSelectedNodes.Empty();
+	m_SelectedNodes.Empty();
 
 	return SyncTrue; 
 }
@@ -85,7 +85,7 @@ void TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 				if(refInputAction == "EDSELECT")
 				{
 					// Clear the selected objects list first
-					m_pSelectedNodes.Empty();
+					m_SelectedNodes.Empty();
 
 					int2 CursorPosition;
 
@@ -114,7 +114,7 @@ void TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 				}
 				else if(refInputAction == "EDDEL")
 				{
-					if(m_pSelectedNodes.GetSize() > 0)
+					if(m_SelectedNodes.GetSize() > 0)
 					{
 						// Delete selected object(s)
 						DeleteSelectedNodes();
@@ -162,7 +162,7 @@ void TSchemeEditor::PickObjects(Type2<s32> CursorPosition, TRef refRenderTargetI
 
 			for(u32 uIndex = 0; uIndex < pNodes.GetSize(); uIndex++)
 			{
-				m_pSelectedNodes.Add(pNodes.ElementAt(uIndex));
+				m_SelectedNodes.Add(pNodes.ElementAt(uIndex)->GetNodeRef());
 
 				// Highlight the nodes with a marker that can be used to move the
 				// nodes around
@@ -208,11 +208,11 @@ void TSchemeEditor::AddRemoveObjects(Type2<s32> CursorPosition, TRef refRenderTa
 				TPtr<TLScene::TSceneNode_Transform> pNode = pNodes.ElementAt(uIndex);
 
 				s32 uNodeIndex = -1;
-				for(u32 uIndex2 = 0; uIndex2 < m_pSelectedNodes.GetSize(); uIndex2++)
+				for(u32 uIndex2 = 0; uIndex2 < m_SelectedNodes.GetSize(); uIndex2++)
 				{
 					// Search for the node already being in the list of nodes
 					// If it is then set the index and allow it to be removed
-					if(m_pSelectedNodes.ElementAt(uIndex2) == pNode)
+					if(m_SelectedNodes.ElementAt(uIndex2) == pNode->GetNodeRef())
 					{
 						uNodeIndex = (s32) uIndex2;
 						break;
@@ -221,11 +221,11 @@ void TSchemeEditor::AddRemoveObjects(Type2<s32> CursorPosition, TRef refRenderTa
 
 				if(uNodeIndex == -1)
 				{
-					m_pSelectedNodes.Add(pNode);
+					m_SelectedNodes.Add(pNode->GetNodeRef());
 				}
 				else 
 				{
-					m_pSelectedNodes.Remove(pNode);
+					m_SelectedNodes.Remove(pNode->GetNodeRef());
 				}
 			}
 
@@ -252,7 +252,7 @@ void TSchemeEditor::RemoveNodeTransformTools()
 
 void TSchemeEditor::TransformSelectedNodes(TLMessaging::TMessage& Message, TransformAxis uAxis)
 {
-	if(m_pSelectedNodes.GetSize() > 0)
+	if(m_SelectedNodes.GetSize() > 0)
 	{
 		/*
 		//OLD METHOD - 2d transform doesn;t work in 3d
@@ -366,16 +366,18 @@ void TSchemeEditor::TranslateSelectedNodes(float fAmount, TransformAxis uAxis)
 	else
 		vTranslation.z = fAmount;
 
-	for(u32 uIndex = 0; uIndex < m_pSelectedNodes.GetSize(); uIndex++)
+	for(u32 uIndex = 0; uIndex < m_SelectedNodes.GetSize(); uIndex++)
 	{
-		TPtr<TLScene::TSceneNode> pNode = m_pSelectedNodes.ElementAt(uIndex);
+		TRef NodeRef = m_SelectedNodes.ElementAt(uIndex);
 
-		if(pNode->HasTransform())
+		TPtr<TLScene::TSceneNode> pNode = TLScene::g_pScenegraph->FindNode(NodeRef);
+
+		if(pNode && pNode->HasTransform())
 		{
 			// Send the node a message to say we want to move the node
 			TLMessaging::TMessage Message("TRANSFORM");
 
-			Message.AddChildAndData("TRANSLATE", vTranslation);
+			Message.AddChildAndData("ReqTranslate", vTranslation);
 
 			// NOTE: Should really send this message via the scenegraph rather than directly.
 			pNode->QueueMessage(Message);
@@ -400,16 +402,18 @@ void TSchemeEditor::RotateSelectedNodes(float fAmount, TransformAxis uAxis)
 	{
 	}
 
-	for(u32 uIndex = 0; uIndex < m_pSelectedNodes.GetSize(); uIndex++)
+	for(u32 uIndex = 0; uIndex < m_SelectedNodes.GetSize(); uIndex++)
 	{
-		TPtr<TLScene::TSceneNode> pNode = m_pSelectedNodes.ElementAt(uIndex);
+		TRef NodeRef = m_SelectedNodes.ElementAt(uIndex);
 
-		if(pNode->HasTransform())
+		TPtr<TLScene::TSceneNode> pNode = TLScene::g_pScenegraph->FindNode(NodeRef);
+
+		if(pNode && pNode->HasTransform())
 		{
 			// Send the node a message to say we want to move the node
 			TLMessaging::TMessage Message("TRANSFORM");
 
-			Message.AddChildAndData("Rotation", qRotation);
+			Message.AddChildAndData("ReqRotation", qRotation);
 
 			// NOTE: Should really send this message via the scenegraph rather than directly.
 			pNode->QueueMessage(Message);
@@ -431,16 +435,18 @@ void TSchemeEditor::ScaleSelectedNodes(float fAmount, TransformAxis uAxis)
 	else
 		vScale.z = fAmount;
 
-	for(u32 uIndex = 0; uIndex < m_pSelectedNodes.GetSize(); uIndex++)
+	for(u32 uIndex = 0; uIndex < m_SelectedNodes.GetSize(); uIndex++)
 	{
-		TPtr<TLScene::TSceneNode> pNode = m_pSelectedNodes.ElementAt(uIndex);
+		TRef NodeRef = m_SelectedNodes.ElementAt(uIndex);
 
-		if(pNode->HasTransform())
+		TPtr<TLScene::TSceneNode> pNode = TLScene::g_pScenegraph->FindNode(NodeRef);
+
+		if(pNode && pNode->HasTransform())
 		{
 			// Send the node a message to say we want to move the node
 			TLMessaging::TMessage Message("TRANSFORM");
 
-			Message.AddChildAndData("SCALE", vScale);
+			Message.AddChildAndData("ReqScale", vScale);
 
 			// NOTE: Should really send this message via the scenegraph rather than directly.
 			pNode->QueueMessage(Message);
@@ -451,23 +457,14 @@ void TSchemeEditor::ScaleSelectedNodes(float fAmount, TransformAxis uAxis)
 
 void TSchemeEditor::DeleteSelectedNodes()
 {
-	for(u32 uIndex = 0; uIndex < m_pSelectedNodes.GetSize(); uIndex++)
+	for(u32 uIndex = 0; uIndex < m_SelectedNodes.GetSize(); uIndex++)
 	{
-		TPtr<TLScene::TSceneNode> pNode = m_pSelectedNodes.ElementAt(uIndex);
-
-		/*
-		// Send the node a message to say we want the node to shutdown
-		TLMessaging::TMessage Message("SHUTDOWN");
-
-		// NOTE: Should really send this message via the scenegraph rather than directly.
-		if(Message.IsValid())
-			pNode->QueueMessage(Message);
-		*/
+		TRef NodeRef = m_SelectedNodes.ElementAt(uIndex);
 
 		// Tell the scenegraph to remove the node
-		TLScene::g_pScenegraph->RemoveNode(pNode);
+		TLScene::g_pScenegraph->RemoveNode(NodeRef);
 	}
 
-	m_pSelectedNodes.Empty();
+	m_SelectedNodes.Empty();
 }
 

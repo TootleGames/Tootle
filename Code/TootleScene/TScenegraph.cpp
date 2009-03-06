@@ -112,14 +112,6 @@ Bool TScenegraph::IsNodeWithinRange(TPtr<TSceneNode>& pNode, const TLMaths::TLin
 	return FALSE;
 }
 
-TPtr<TSceneNode> TScenegraph::CreateInstance(TRefRef NodeRef,TRefRef TypeRef)
-{
-	TRef NewNodeRef = CreateNode( NodeRef, TypeRef, "Root");
-
-	return FindNode( NewNodeRef );
-}
-
-
 
 
 

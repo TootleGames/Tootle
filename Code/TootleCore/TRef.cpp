@@ -41,6 +41,7 @@ namespace TLRef
 	inline u32	GetRefBitsFromChar(char Char,u32 Index,Bool CheckIndex);
 
 	void		GenerateCharLookupTable();
+	void		DestroyCharLookupTable();
 
 	TLArray::SortResult		RefSort(const TRef& aRef,const TRef& bRef,const void* pTestVal);	//	simple ref-sort func - for arrays of TRef's
 }
@@ -101,6 +102,11 @@ void TLRef::GenerateCharLookupTable()
 	g_InvalidRefMask = ~ValidMask;
 
 	g_RefCharLookupValid = TRUE;
+}
+
+void TLRef::DestroyCharLookupTable()
+{
+	g_RefCharLookup.Empty(TRUE);
 }
 
 

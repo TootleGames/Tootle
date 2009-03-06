@@ -7,6 +7,7 @@ namespace TLRef
 	class TRefManager;
 
 	extern void GenerateCharLookupTable();
+	extern void DestroyCharLookupTable();
 };
 
 class TLRef::TRefManager : public TManager
@@ -15,6 +16,11 @@ public:
 	TRefManager(TRef refManagerID) :
 	  TManager(refManagerID)
 	{
+	}
+
+	virtual ~TRefManager()
+	{
+		TLRef::DestroyCharLookupTable();
 	}
 
 protected:

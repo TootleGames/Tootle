@@ -66,7 +66,7 @@ private:
 	void			DeleteSelectedNodes();
 
 private:
-	TPtrArray<TLScene::TSceneNode>	m_pSelectedNodes;
+	TArray<TRef>	m_SelectedNodes;
 
 	TransformMode	m_uTransformMode;
 

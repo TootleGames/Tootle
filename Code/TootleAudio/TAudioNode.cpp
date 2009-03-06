@@ -45,7 +45,7 @@ void TAudioNode::Initialise(TLMessaging::TMessage& Message)
 	}
 
 	float3 vPosition;
-	if(Message.ImportData("Pos", vPosition))
+	if(Message.ImportData("Translate", vPosition))
 	{
 		SetTranslate(vPosition);
 	}
@@ -356,7 +356,11 @@ Bool TAudioNode::SetAudioAssetRef(TRefRef AssetRef)
 	// Destroy current audio source info
 	if(IsSourceActive())
 		RemoveSource();
-	
+#ifdef _DEBUG	
+	TString str = "Setting AudioAsset: ";
+	AssetRef.GetString(str);
+	TLDebug_Print(str);
+#endif
 	m_AudioAssetRef = AssetRef;	
 			
 	// Create the new audio source info and bind to audio buffer

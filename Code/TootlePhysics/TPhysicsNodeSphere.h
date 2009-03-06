@@ -33,6 +33,8 @@ public:
 protected:
 	void			RollTransform(const float3& MovementForce,const float3& Normal,float Timestep);	//	roll our transform. Movement is FORCE (not timestepped) movement. Normal is surface normal that we've rolled on. Assume valid
 
+	void			OnRenderTransformChange();
+
 protected:
 	TLMaths::TTransform	m_RenderTransform;
 

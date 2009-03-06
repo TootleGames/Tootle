@@ -166,7 +166,7 @@ TRef TSceneNode_Object::CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset)
 
 	Message.ExportData("Asset", AudioAsset);
 	Message.ExportData("Play", TRUE);
-	Message.ExportData("Pos", GetTranslate());
+	Message.ExportData("Translate", GetTranslate());
 	Message.ExportData("Owner", this);
 
 	// Create an audio node for the specified audio reference
@@ -180,7 +180,7 @@ TRef TSceneNode_Object::CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset, co
 	Message.ExportData("Asset", AudioAsset);
 	Message.ExportData("Play", TRUE);
 	Message.ExportData("Props", Props);
-	Message.ExportData("Pos", GetTranslate());
+	Message.ExportData("Translate", GetTranslate());
 	Message.ExportData("Owner", this);
 
 	// Create an audio node for the specified audio reference

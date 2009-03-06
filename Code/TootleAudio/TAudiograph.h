@@ -21,6 +21,10 @@ class TLAudio::TAudiograph : public TLGraph::TGraph<TLAudio::TAudioNode>
 public:
 	TAudiograph(TRefRef refManagerID);
 
+	////////////////////////////////////////////////////////
+	// Audio system access
+	////////////////////////////////////////////////////////
+
 	// Music access
 	Bool					StartMusic(TRefRef AudioAsset);
 
@@ -29,6 +33,22 @@ public:
 	FORCEINLINE float		GetEffectsVolume()	const	{ return m_fEffectsVolume; }
 
 	FORCEINLINE Bool		IsPaused()			const	{ return m_bPause; }
+	////////////////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////
+	// Audio object access
+	////////////////////////////////////////////////////////
+
+	FORCEINLINE Bool		IsAudioPlaying(TRefRef AudioRef)	{ return IsInGraph(AudioRef);}
+
+	// Audio Properties
+	void	SetAudioPitch(TRefRef AudioRef, const float& fPitch);
+	float	GetAudioPitch(TRefRef AudioRef);
+
+	void	SetAudioVolume(TRefRef AudioRef, const float& fVolume);
+	float	GetAudioVolume(TRefRef AudioRef);
+
+	////////////////////////////////////////////////////////
 
 protected:
 	virtual SyncBool		Initialise();

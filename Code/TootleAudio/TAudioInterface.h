@@ -81,12 +81,6 @@ public:
 	float3	GetAudioTranslate(TRefRef AudioRef);
 
 	// Audio properties
-	void	SetAudioPitch(TRefRef AudioRef, const float& fPitch);
-	float	GetAudioPitch(TRefRef AudioRef);
-
-	void	SetAudioVolume(TRefRef AudioRef, const float& fVolume);
-	float	GetAudioVolume(TRefRef AudioRef);
-	
 	void	SetAudioLooping(TRefRef AudioRef, const Bool& bLooping);
 	Bool	GetAudioIsLooping(TRefRef AudioRef);
 	

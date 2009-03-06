@@ -47,8 +47,6 @@ public:
 
 	Bool				IsNodeWithinRange(TPtr<TSceneNode>& pNode, const TLMaths::TLine& Line, const float& fDistance);
 
-	TPtr<TSceneNode>	CreateInstance(TRefRef NodeRef,TRefRef TypeRef);	//	gr: CREATE an instance from the factories. does no initialisation or adding. Use TLScene::CreateNode
-
 protected:
 	virtual SyncBool			Initialise();
 };

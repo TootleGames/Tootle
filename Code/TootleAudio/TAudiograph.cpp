@@ -175,6 +175,57 @@ Bool TAudiograph::StartMusic(TRefRef AudioAsset)
 }
 
 
+
+void TAudiograph::SetAudioPitch(TRefRef AudioRef, const float& fPitch)
+{
+	// Find the audio node
+	TPtr<TLAudio::TAudioNode> pAudioNode = FindNode(AudioRef);
+
+	if(pAudioNode)
+		pAudioNode->SetPitch(fPitch);
+}
+
+
+float TAudiograph::GetAudioPitch(TRefRef AudioRef)
+{
+	// Find the audio node
+	TPtr<TLAudio::TAudioNode> pAudioNode = FindNode(AudioRef);
+	
+	if(pAudioNode)
+		return pAudioNode->GetPitch();
+	
+	// Failed?
+	return -1.0f;
+}
+
+
+
+void TAudiograph::SetAudioVolume(TRefRef AudioRef, const float& fVolume)
+{
+	// Find the audio node
+	TPtr<TLAudio::TAudioNode> pAudioNode = FindNode(AudioRef);
+	
+	if(pAudioNode)
+		pAudioNode->SetVolume(fVolume);
+}
+
+float TAudiograph::GetAudioVolume(TRefRef AudioRef)
+{
+	// Find the audio node
+	TPtr<TLAudio::TAudioNode> pAudioNode = FindNode(AudioRef);
+	
+	if(pAudioNode)
+		return pAudioNode->GetVolume();
+
+	return -1.0f;
+}
+
+
+
+
+
+
+
 void TAudiograph::OnMusicVolumeChanged()
 {
 	TLMessaging::TMessage Message("AUDIO");

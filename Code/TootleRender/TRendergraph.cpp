@@ -52,6 +52,11 @@ TLRender::TRenderNode* TLRender::TRenderNodeFactory::CreateObject(TRefRef Instan
 	if ( TypeRef == "Text" )
 		return new TLRender::TRenderNodeText(InstanceRef,TypeRef);
 
+// [06/03/09] DB - The glyph render node needs changing to be publicly creatable.  
+// This is the only render node that has this issue
+//	if ( TypeRef == "Glyph" )
+//		return new TLRender::TRenderNodeGlyph(InstanceRef,TypeRef);
+
 	if ( TypeRef == "DbgMesh" )
 		return new TLRender::TRenderNodeDebugMesh(InstanceRef,TypeRef);
 
