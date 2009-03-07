@@ -804,8 +804,11 @@ void TLGraph::TGraphNode<T>::ProcessMessage(TLMessaging::TMessage& Message)
 		Shutdown();
 		return;
 	}
-	else 
+	else
 	{
+		//	gr: this is a bit expensive. I'm sending small messages around now when car control changes. 
+		//	this gets to the physics node, which doesnt do anything with it - which is fine - but this then prints out and game slows to a crawl
+		/*
 		TTempString DebugString("Unhandled message ");
 		MessageRef.GetString( DebugString );
 		DebugString.Append(", node: ");
@@ -814,6 +817,7 @@ void TLGraph::TGraphNode<T>::ProcessMessage(TLMessaging::TMessage& Message)
 		GetNodeTypeRef().GetString( DebugString );
 		DebugString.Append(")");
 		TLDebug_Print( DebugString );
+		*/
 	}
 }
 

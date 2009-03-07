@@ -17,9 +17,11 @@ TRef TMessage::GetSenderID()
 	TRef refID;
 
 	TPtr<TBinaryTree>& pData = GetChild( TLMessaging::g_SenderIDRef );
-
-	if(pData.IsValid())
+	if ( pData.IsValid() )
+	{
+		pData->ResetReadPos();
 		pData->Read(refID);
+	}
 
 	return refID;
 }
