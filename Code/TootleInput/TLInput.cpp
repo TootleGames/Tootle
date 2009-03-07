@@ -71,6 +71,26 @@ TPtr<TLInput::TInputDevice>& TLInput::GetDevice(TRefRef DeviceRef)
 	return pDevice;
 }
 
+//---------------------------------------------
+//	find the (first) device of this type
+//---------------------------------------------
+TPtr<TLInput::TInputDevice>& TLInput::GetDeviceOfType(TRefRef DeviceType)
+{
+	if ( !g_pInputSystem )
+		return TLPtr::GetNullPtr<TLInput::TInputDevice>();
+
+	//	loop through devices until we find a matching one
+	TPtrArray<TLInput::TInputDevice>& Devices = g_pInputSystem->GetInstanceArray();
+	for ( u32 d=0;	d<Devices.GetSize();	d++ )
+	{
+		TPtr<TLInput::TInputDevice>& pDevice = Devices[d];
+		if ( pDevice->GetDeviceType() == DeviceType )
+			return pDevice;
+	}
+	
+	return TLPtr::GetNullPtr<TLInput::TInputDevice>();
+}
+
 
 //---------------------------------------------
 //	get an unused ref for a device

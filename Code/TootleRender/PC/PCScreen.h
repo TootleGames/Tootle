@@ -45,7 +45,7 @@ public:
 protected:
 	void					GetDesktopSize(Type4<s32>& DesktopSize) const;	//	get the desktop dimensions
 	void					GetCenteredSize(Type4<s32>& Size) const;		//	take a screen size and center it on the desktop
-	virtual void			GetRenderTargetMaxSize(Type4<s32>& MaxSize);	//	need to max-out to client-area on the window 
+	virtual void			GetViewportMaxSize(Type4<s32>& MaxSize);	//	need to max-out to client-area on the window 
 	Win32::GOpenglWindow*	GetOpenglWindow();
 
 protected:

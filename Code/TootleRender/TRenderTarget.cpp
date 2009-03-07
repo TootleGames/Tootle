@@ -1,6 +1,7 @@
 #include "TRenderTarget.h"
 #include "TScreen.h"
 #include <TootleCore/TPtr.h>
+#include "TScreenManager.h"
 
 
 
@@ -28,6 +29,9 @@ TLRender::TRenderTarget::TRenderTarget(const TRef& Ref) :
 	m_Flags.Set( Flag_ClearColour );
 	m_Flags.Set( Flag_ClearDepth );
 	m_Flags.Set( Flag_AntiAlias );
+
+	//	calc initial size
+	OnSizeChanged();
 }
 
 
@@ -35,7 +39,7 @@ TLRender::TRenderTarget::TRenderTarget(const TRef& Ref) :
 //------------------------------------------------------------
 //	dont allow render without a camera
 //------------------------------------------------------------
-Bool TLRender::TRenderTarget::BeginDraw(const Type4<s32>& MaxSize,const TScreen& Screen)			
+Bool TLRender::TRenderTarget::BeginDraw(const Type4<s32>& RenderTargetMaxSize,const Type4<s32>& ViewportMaxSize,const TScreen& Screen)			
 {
 	m_Debug_NodeCount = 0;
 	m_Debug_NodeCulledCount = 0;
@@ -50,7 +54,7 @@ Bool TLRender::TRenderTarget::BeginDraw(const Type4<s32>& MaxSize,const TScreen&
 
 	//	get the size... fails if it's too small to be of any use
 	Type4<s32> RenderTargetSize;
-	GetSize( RenderTargetSize, MaxSize );
+	GetSize( RenderTargetSize, RenderTargetMaxSize );
 	if ( RenderTargetSize.Width() <= 2 || RenderTargetSize.Height() <= 2 )
 		return FALSE;
 
@@ -80,18 +84,19 @@ Bool TLRender::TRenderTarget::BeginDraw(const Type4<s32>& MaxSize,const TScreen&
 
 	//	setup viewport and sissor outside the viewport
 	Type4<s32> ViewportSize;
-	Opengl::GetViewportSize( ViewportSize, RenderTargetSize, MaxSize, Screen.GetScreenShape() );
+	Opengl::GetViewportSize( ViewportSize, ViewportMaxSize, RenderTargetSize, RenderTargetMaxSize, Screen.GetScreenShape() );
 	glViewport( ViewportSize.Left(), ViewportSize.Top(), ViewportSize.Width(), ViewportSize.Height() );
 	Opengl::Debug_CheckForError();
 
-	//	todo: only enable if size is not full screen
+	//	todo: only enable if size is not full screen - maybe cache current scene viewport?
 	Opengl::EnableScissor( TRUE );
 	glScissor( ViewportSize.Left(), ViewportSize.Top(), ViewportSize.Width(), ViewportSize.Height() );
 	Opengl::Debug_CheckForError();
 
 	//	calculate new view sizes etc for this viewport
 	TPtr<TLRender::TCamera>& pCamera = GetCamera();
-	pCamera->SetViewport( RenderTargetSize, Screen.GetScreenShape() );
+	pCamera->SetViewportSize( ViewportSize, Screen.GetScreenShape() );
+	pCamera->SetRenderTargetSize( RenderTargetSize, Screen.GetScreenShape() );
 
 	//	do projection vs orthographic setup
 	if ( GetCamera()->IsOrtho() )
@@ -298,6 +303,31 @@ void TLRender::TRenderTarget::GetSize(Type4<s32>& Size,const Type4<s32>& MaxSize
 	if ( Size.y == g_MaxSize )			Size.y  = MaxSize.y;
 	if ( Size.Width() == g_MaxSize )	Size.Width()  = MaxSize.Width();
 	if ( Size.Height() == g_MaxSize )	Size.Height()  = MaxSize.Height();
+}
+
+
+//-------------------------------------------------------------
+//	do any recalculations we need to when the render target's size changes
+//-------------------------------------------------------------
+void TLRender::TRenderTarget::OnSizeChanged()
+{
+	//	initialise the ortho camera's box (useful for when we want to use the box straight after initialisation but before we do a render)
+	TPtr<TCamera>& pCamera = GetCamera();
+	if ( pCamera )
+	{
+		//	calc render target size
+		//	todo: replace this screen pointer with proper one when screen owner gets stored on render target
+		TPtr<TLRender::TScreen>& pScreen = TLRender::g_pScreenManager->GetDefaultScreen();
+		if ( pScreen )
+		{
+			Type4<s32> RenderTargetMaxSize;
+			pScreen->GetRenderTargetMaxSize( RenderTargetMaxSize );
+			Type4<s32> RenderTargetSize;
+			GetSize( RenderTargetSize, RenderTargetMaxSize );
+			pCamera->SetRenderTargetSize( RenderTargetSize, pScreen->GetScreenShape() );
+		}
+	}
+
 }
 
 
@@ -809,6 +839,23 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 	//	non-mesh debug renders
 	#ifdef _DEBUG
 	{
+		//	render a cross at 0,0,0 (center of node)
+		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_Position ) )
+		{
+			//	setup specific params
+			Opengl::EnableWireframe( FALSE );
+			Opengl::SetLineWidth( 2.f );
+			Opengl::EnableAlpha( FALSE );
+
+			//	get the debug cross
+			TPtr<TLAsset::TAsset>& pAsset = TLAsset::GetAsset("d_cross",TRUE);
+			if ( pAsset && pAsset->GetAssetType() == "mesh" )
+			{
+				TLAsset::TMesh* pMesh = pAsset.GetObject<TLAsset::TMesh>();
+				DrawMesh( *pMesh, pRenderNode, RenderNodeRenderFlags );
+			}
+		}
+
 		//	render local bounds box in current [render object's] transform
 		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsBox ) )
 		{
@@ -1044,7 +1091,7 @@ const TLMaths::TBox2D& TLRender::TRenderTarget::GetWorldViewBox(float WorldDepth
 	if ( m_pCamera->IsOrtho() )
 	{
 		const TOrthoCamera* pCamera = m_pCamera.GetObject<TOrthoCamera>();
-		return pCamera->GetOrthoBox();
+		return pCamera->GetOrthoRenderTargetBox();
 	}
 	else
 	{
@@ -1074,7 +1121,7 @@ const TLMaths::TBox2D& TLRender::TRenderTarget::GetWorldViewBox(TPtr<TScreen>& p
 	GetSize( Size, MaxSize );
 
 	//	calc viewport sizes and boxes etc will be valid
-	m_pCamera->SetViewport( Size, pScreen->GetScreenShape() );
+	m_pCamera->SetRenderTargetSize( Size, pScreen->GetScreenShape() );
 
 	return GetWorldViewBox( WorldDepth );
 }

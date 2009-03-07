@@ -34,7 +34,7 @@ class TLRender::Platform::RenderTarget : public TLRender::TRenderTarget
 public:
 	RenderTarget(const TRef& Ref=TRef());
 
-	virtual Bool			BeginDraw(const Type4<s32>& MaxSize,const TScreen& Screen);
+	virtual Bool			BeginDraw(const Type4<s32>& RenderTargetMaxSize,const Type4<s32>& ViewportMaxSize,const TScreen& Screen);
 
 	//	rendering controls
 	virtual void			BeginScene();								//	save off current scene 

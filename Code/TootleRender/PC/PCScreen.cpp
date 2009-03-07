@@ -217,11 +217,11 @@ void TLRender::Platform::Screen::GetCenteredSize(Type4<s32>& Size) const
 //---------------------------------------------------------------
 //	need to max-out to client-area on the window 
 //---------------------------------------------------------------
-void TLRender::Platform::Screen::GetRenderTargetMaxSize(Type4<s32>& MaxSize)
+void TLRender::Platform::Screen::GetViewportMaxSize(Type4<s32>& MaxSize)
 {
 	if ( !m_pWindow )
 	{
-		TScreen::GetRenderTargetMaxSize( MaxSize );
+		TScreen::GetViewportMaxSize( MaxSize );
 		return;
 	}
 

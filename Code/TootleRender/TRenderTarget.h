@@ -54,17 +54,17 @@ public:
 	TRenderTarget(TRefRef Ref=TRef());
 	~TRenderTarget()							{	}
 
-	virtual Bool			BeginDraw(const Type4<s32>& MaxSize,const TScreen& Screen);
+	virtual Bool			BeginDraw(const Type4<s32>& RenderTargetMaxSize,const Type4<s32>& ViewportMaxSize,const TScreen& Screen);
 	virtual void			Draw();	
 	virtual void			EndDraw();
 
 	const TRef&				GetRef() const								{	return m_Ref;	}
 	inline Bool				operator==(const TRef& Ref) const			{	return GetRef() == Ref;	}
 
-	virtual Bool			SetSize(const Type4<s32>& Size)				{	m_Size = Size;	return TRUE;	}
-	virtual void			GetSize(Type4<s32>& Size,const Type4<s32>& MaxSize) const;			//	get the render target's dimensions. we need the screen in case dimensions are max's
+	Bool					SetSize(const Type4<s32>& Size)				{	m_Size = Size;	OnSizeChanged();	return TRUE;	}
+	void					GetSize(Type4<s32>& Size,const Type4<s32>& RenderTargetMaxSize) const;			//	get the render target's dimensions. we need the screen in case dimensions are max's
 
-	void					SetCamera(TPtr<TCamera>& pCamera)			{	m_pCamera = pCamera;	}
+	void					SetCamera(TPtr<TCamera>& pCamera)			{	m_pCamera = pCamera;	OnSizeChanged();	}	//	gr: call OnSizeChanged to do camera some initialisation - specficcly for the ortho
 	TPtr<TCamera>&			GetCamera()									{	return m_pCamera;	}
 	TColour&				GetClearColour()							{	return m_ClearColour;	}
 	TFlags<Flags>&			GetFlags()									{	return m_Flags;	}
@@ -106,6 +106,8 @@ protected:
 
 	SyncBool						IsRenderNodeVisible(TRenderNode* pRenderNode,TPtr<TLMaths::TQuadTreeNode>*& ppRenderZoneNode,TLMaths::TQuadTreeNode* pCameraZoneNode,const TLMaths::TTransform* pSceneTransform,Bool& RenderNodeIsInsideCameraZone);	//	check zone of node against camera's zone to determine visibility. if no scene transform is provided then we only do quick tests with no calculations. This can result in a SyncWait returned which means we need to do calculations to make sure of visibility
 	Bool							IsZoneVisible(TLMaths::TQuadTreeNode* pCameraZoneNode,TLMaths::TQuadTreeZone* pZone,TLMaths::TQuadTreeNode* pZoneNode,Bool& RenderNodeIsInsideCameraZone);
+
+	void							OnSizeChanged();		//	do any recalculations we need to when the render target's size changes
 
 	void							Debug_DrawZone(TPtr<TLMaths::TQuadTreeZone>& pZone,float z,TLMaths::TQuadTreeNode* pCameraZoneNode);
 

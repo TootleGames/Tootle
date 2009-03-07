@@ -76,6 +76,11 @@ public:
 	inline				operator TYPE*()				{	return GetData();	};
 	inline				operator const TYPE*() const	{	return GetData();	};
 
+	FORCEINLINE TYPE&			Left()										{	return x;	}
+	FORCEINLINE TYPE&			Top()						{	return y;	}
+	FORCEINLINE const TYPE&		Left() const				{	return x;	}
+	FORCEINLINE const TYPE&		Top() const					{	return y;	}
+
 	//	vector functions
 	FORCEINLINE TYPE			LengthSq() const				{	return (x*x) + (y*y);	};
 	FORCEINLINE TYPE			Length() const					{	return TLMaths::Sqrtf( LengthSq() );	};
@@ -92,8 +97,8 @@ public:
 
 	FORCEINLINE void			RotateAntiClockwise()						{	float2 oldxy(x,y);	x = oldxy.y;	y = -oldxy.x;	}
 	FORCEINLINE void			RotateClockwise()							{	float2 oldxy(x,y);	x = -oldxy.y;	y = oldxy.x;	}
-	FORCEINLINE Type2<TYPE>		GetAntiClockwise()							{	return Type2<TYPE>( y, -x );	}
-	FORCEINLINE Type2<TYPE>		GetClockwise()								{	return Type2<TYPE>( -y, x );	}
+	FORCEINLINE Type2<TYPE>		GetAntiClockwise() const					{	return Type2<TYPE>( y, -x );	}
+	FORCEINLINE Type2<TYPE>		GetClockwise() const						{	return Type2<TYPE>( -y, x );	}
 };
 
 

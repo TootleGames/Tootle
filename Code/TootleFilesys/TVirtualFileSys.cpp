@@ -9,6 +9,7 @@ namespace TLDebugFile
 	SyncBool		LoadDebugFile_MeshCube(TPtr<TLFileSys::TFile>& pFile);		//	create a cube mesh
 	SyncBool		LoadDebugFile_MeshQuad(TPtr<TLFileSys::TFile>& pFile);		//	create a cube mesh
 	SyncBool		LoadDebugFile_MeshSphere(TPtr<TLFileSys::TFile>& pFile);	//	create a cube mesh
+	SyncBool		LoadDebugFile_MeshCross(TPtr<TLFileSys::TFile>& pFile);		//	Axis cross
 };
 
 
@@ -29,6 +30,7 @@ SyncBool TLFileSys::TVirtualFileSys::LoadFileList()
 	CreateFileInstance("d_sphere.asset");
 	CreateFileInstance("d_cube.asset");
 	CreateFileInstance("d_quad.asset");
+	CreateFileInstance("d_cross.asset");
 
 	//	update time stamp of file list
 	FinaliseFileList();
@@ -59,6 +61,11 @@ SyncBool TLFileSys::TVirtualFileSys::LoadFile(TPtr<TLFileSys::TFile>& pFile)
 	if ( pFile->GetFileRef() == TRef("d_quad") )
 	{
 		return TLDebugFile::LoadDebugFile_MeshQuad( pFile );
+	}
+
+	if ( pFile->GetFileRef() == TRef("d_cross") )
+	{
+		return TLDebugFile::LoadDebugFile_MeshCross( pFile );
 	}
 
 	//	unknown debug file name
@@ -169,6 +176,30 @@ SyncBool TLDebugFile::LoadDebugFile_MeshSphere(TPtr<TLFileSys::TFile>& pFile)
 	
 	//	generate a cube
 	pMesh->GenerateSphere( 1.f );
+
+	return LoadDebugFile_Asset( pFile, pMesh );
+}
+
+//---------------------------------------------------------
+//	create a cross mesh file
+//---------------------------------------------------------
+SyncBool TLDebugFile::LoadDebugFile_MeshCross(TPtr<TLFileSys::TFile>& pFile)
+{
+	TPtr<TLAsset::TMesh> pMesh = new TLAsset::TMesh( pFile->GetFileRef() );
+	TLAsset::TMesh& Mesh = *pMesh;
+
+	//	generate a cross...
+	TLAsset::TMesh::Line* pLineX = Mesh.GetLines().AddNew();
+	pLineX->Add( Mesh.AddVertex( float3( -1.f, 0.f, 0.f ), TColour( 1.f, 0.f, 0.f, 1.f ) ) );
+	pLineX->Add( Mesh.AddVertex( float3(  1.f, 0.f, 0.f ), TColour( 1.f, 0.f, 0.f, 1.f ) ) );
+
+	TLAsset::TMesh::Line* pLineY = Mesh.GetLines().AddNew();
+	pLineY->Add( Mesh.AddVertex( float3( 0.f, -1.f, 0.f ), TColour( 0.f, 1.f, 0.f, 1.f ) ) );
+	pLineY->Add( Mesh.AddVertex( float3( 0.f,  1.f, 0.f ), TColour( 0.f, 1.f, 0.f, 1.f ) ) );
+
+	TLAsset::TMesh::Line* pLineZ = Mesh.GetLines().AddNew();
+	pLineZ->Add( Mesh.AddVertex( float3( 0.f, 0.f, -1.f ), TColour( 0.f, 0.f, 1.f, 1.f ) ) );
+	pLineZ->Add( Mesh.AddVertex( float3( 0.f, 0.f,  1.f ), TColour( 0.f, 0.f, 1.f, 1.f ) ) );
 
 	return LoadDebugFile_Asset( pFile, pMesh );
 }

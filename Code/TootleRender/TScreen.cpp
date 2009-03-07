@@ -108,6 +108,8 @@ void TLRender::TScreen::Draw()
 {
 	Type4<s32> RenderTargetMaxSize;
 	GetRenderTargetMaxSize( RenderTargetMaxSize );
+	Type4<s32> ViewportMaxSize;
+	GetViewportMaxSize( ViewportMaxSize );
 
 	//	render each render target
 	for ( u32 r=0;	r<m_RenderTargets.GetSize();	r++ )
@@ -118,7 +120,7 @@ void TLRender::TScreen::Draw()
 			continue;
 
 		//	begin draw of render target
-		if ( !pRenderTarget->BeginDraw( RenderTargetMaxSize, *this ) )
+		if ( !pRenderTarget->BeginDraw( RenderTargetMaxSize, ViewportMaxSize, *this ) )
 			continue;
 
 		//	draw
@@ -237,22 +239,60 @@ Bool TLRender::TScreen::GetWorldRayFromScreenPos(const TPtr<TRenderTarget>& pRen
 
 
 //---------------------------------------------------------
+//	Get a render target-relative cursor position from a screen pos - fails if outside render target box
+//---------------------------------------------------------
+Bool TLRender::TScreen::GetRenderTargetPosFromScreenPos(const TRenderTarget& RenderTarget,Type2<s32>& RenderTargetPos,Type4<s32>& RenderTargetSize,const Type2<s32>& ScreenPos)
+{
+	//	check the point is inside the screen viewport
+	Type4<s32> ViewportMaxSize;
+	GetViewportMaxSize( ViewportMaxSize );
+
+	if ( !ViewportMaxSize.GetIsInside( ScreenPos ) )
+		return FALSE;
+
+	//	convert screen(viewport) pos to render target pos by rotating it inside the viewport
+	RenderTargetPos = ScreenPos;
+
+	Type4<s32> MaxRenderTargetSize;
+	GetRenderTargetMaxSize( MaxRenderTargetSize );
+
+	//	rotate screen pos to be in "render target" space
+	if ( GetScreenShape() == TLRender::ScreenShape_WideLeft )
+	{
+		//	rotate RIGHT
+		RenderTargetPos.Left() = MaxRenderTargetSize.Right()  - ScreenPos.Top();
+	//	RenderTargetPos.Left() = ViewportMaxSize.Right()  - ScreenPos.Top();
+		RenderTargetPos.Top() = ScreenPos.Left();
+	}
+	else if ( GetScreenShape() == TLRender::ScreenShape_WideRight )
+	{
+		//	rotate LEFT
+		RenderTargetPos.Left() = ScreenPos.Top();
+	//	RenderTargetPos.Top() = ViewportMaxSize.Bottom() - ScreenPos.Left();
+		RenderTargetPos.Top() = MaxRenderTargetSize.Bottom() - ScreenPos.Left();
+	}
+
+	//	make relative to render target
+	RenderTarget.GetSize( RenderTargetSize, MaxRenderTargetSize );
+
+	RenderTargetPos.Left() -= RenderTargetSize.Left();
+	RenderTargetPos.Top() -= RenderTargetSize.Top();
+
+	//	outside render target, fail
+	if ( !RenderTargetSize.GetIsInside( RenderTargetPos ) )
+		return FALSE;
+
+	return TRUE;
+}
+
+//---------------------------------------------------------
 //	get a world position from this screen posiiton
 //---------------------------------------------------------
 Bool TLRender::TScreen::GetWorldRayFromScreenPos(const TRenderTarget& RenderTarget,TLMaths::TLine& WorldRay,const Type2<s32>& ScreenPos)
 {
-	//	convert screen pos to render target pos
-	Type4<s32> MaxRenderTargetSize;
-	GetRenderTargetMaxSize( MaxRenderTargetSize );
+	Type2<s32> RenderTargetPos;
 	Type4<s32> RenderTargetSize;
-	RenderTarget.GetSize( RenderTargetSize, MaxRenderTargetSize );
-
-	Type2<s32> RenderTargetPos( ScreenPos );
-	RenderTargetPos.x -= RenderTargetSize.Left();
-	RenderTargetPos.y -= RenderTargetSize.Top();
-
-	//	outside render target, aint gonna find nowt
-	if ( !RenderTargetSize.GetIsInside( RenderTargetPos ) )
+	if ( !GetRenderTargetPosFromScreenPos( RenderTarget, RenderTargetPos, RenderTargetSize, ScreenPos ) )
 		return FALSE;
 
 	//	let render target do it's own conversions what with fancy cameras n that
@@ -265,18 +305,9 @@ Bool TLRender::TScreen::GetWorldRayFromScreenPos(const TRenderTarget& RenderTarg
 //---------------------------------------------------------
 Bool TLRender::TScreen::GetWorldPosFromScreenPos(const TRenderTarget& RenderTarget,float3& WorldPos,float WorldDepth,const Type2<s32>& ScreenPos)
 {
-	//	convert screen pos to render target pos
-	Type4<s32> MaxRenderTargetSize;
-	GetRenderTargetMaxSize( MaxRenderTargetSize );
+	Type2<s32> RenderTargetPos;
 	Type4<s32> RenderTargetSize;
-	RenderTarget.GetSize( RenderTargetSize, MaxRenderTargetSize );
-
-	Type2<s32> RenderTargetPos( ScreenPos );
-	RenderTargetPos.x -= RenderTargetSize.Left();
-	RenderTargetPos.y -= RenderTargetSize.Top();
-
-	//	outside render target, aint gonna find nowt
-	if ( !RenderTargetSize.GetIsInside( RenderTargetPos ) )
+	if ( !GetRenderTargetPosFromScreenPos( RenderTarget, RenderTargetPos, RenderTargetSize, ScreenPos ) )
 		return FALSE;
 
 	//	let render target do it's own conversions what with fancy cameras n that
@@ -298,4 +329,39 @@ Bool TLRender::TScreen::GetWorldPosFromScreenPos(const TPtr<TRenderTarget>& pRen
 	return GetWorldPosFromScreenPos( *pRenderTarget.GetObject(), WorldPos, WorldDepth, ScreenPos );
 }
 
+
+//---------------------------------------------------------
+//	get the render target max size (in "render target space") - this is the viewport size, but rotated
+//---------------------------------------------------------
+void TLRender::TScreen::GetRenderTargetMaxSize(Type4<s32>& MaxSize)
+{
+	GetViewportMaxSize( MaxSize );
+
+	//	rotate render target so it's in "render target" space
+	if ( GetScreenShape() == TLRender::ScreenShape_WideLeft )
+	{
+		Type4<s32> ViewportMaxSize = MaxSize;
+
+		//	rotate left
+	//	topleft = bottomleft
+	//	topright = topleft
+	//	bottomright = topright
+	//	bottomleft = bottomright
+		MaxSize.x = ViewportMaxSize.Height() - ViewportMaxSize.Bottom();
+		MaxSize.y = ViewportMaxSize.Left();
+		MaxSize.Width() = ViewportMaxSize.Height();
+		MaxSize.Height() = ViewportMaxSize.Width();
+	}
+	else if ( GetScreenShape() == TLRender::ScreenShape_WideRight )
+	{
+		Type4<s32> ViewportMaxSize = MaxSize;
+
+		//	rotate right
+		MaxSize.x = ViewportMaxSize.Top();
+		MaxSize.y = ViewportMaxSize.Width() - ViewportMaxSize.Right();
+		MaxSize.Width() = ViewportMaxSize.Height();
+		MaxSize.Height() = ViewportMaxSize.Width();
+	}
+
+}
 

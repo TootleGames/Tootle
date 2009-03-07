@@ -324,34 +324,36 @@ SyncBool TLGui::TGui::ProcessClick(const TClick& Click,TLRender::TScreen& Screen
 		//	click was out of the render target so we couldnt get a ray
 		Intersection = SyncFalse;
 	}
-
-	//	fastest order!
-
-/*		//	if valid and we havent already decided click has missed
-	if ( pRenderNode->GetWorldBoundsSphere().IsValid() && Intersection != SyncFalse )
+	else
 	{
-		if ( pRenderNode->GetWorldBoundsSphere().GetIntersection( WorldRay ) )
-			Intersection = SyncTrue;
-		else
-			Intersection = SyncFalse;
-	}
+		//	fastest order!
 
-	//	if valid and we havent already decided click has missed
-	if ( pRenderNode->GetWorldBoundsCapsule().IsValid() && Intersection != SyncFalse )
-	{
-		if ( pRenderNode->GetWorldBoundsCapsule().GetIntersection( WorldRay ) )
-			Intersection = SyncTrue;
-		else
-			Intersection = SyncFalse;
-	}
-*/
-	//	if valid and we havent already decided click has missed
-	if ( pRenderNode->GetWorldBoundsBox().IsValid() && Intersection != SyncFalse )
-	{
-		if ( pRenderNode->GetWorldBoundsBox().GetIntersection( WorldRay ) )
-			Intersection = SyncTrue;
-		else
-			Intersection = SyncFalse;
+	/*		//	if valid and we havent already decided click has missed
+		if ( pRenderNode->GetWorldBoundsSphere().IsValid() )
+		{
+			if ( pRenderNode->GetWorldBoundsSphere().GetIntersection( WorldRay ) )
+				Intersection = SyncTrue;
+			else
+				Intersection = SyncFalse;
+		}
+
+		//	if valid and we havent already decided click has missed
+		if ( pRenderNode->GetWorldBoundsCapsule().IsValid() )
+		{
+			if ( pRenderNode->GetWorldBoundsCapsule().GetIntersection( WorldRay ) )
+				Intersection = SyncTrue;
+			else
+				Intersection = SyncFalse;
+		}
+	*/
+		//	if valid and we havent already decided click has missed
+		if ( pRenderNode->GetWorldBoundsBox().IsValid() )
+		{
+			if ( pRenderNode->GetWorldBoundsBox().GetIntersection( WorldRay ) )
+				Intersection = SyncTrue;
+			else
+				Intersection = SyncFalse;
+		}
 	}
 
 	//	failed to check - no valid bounds? might have to wait till next frame

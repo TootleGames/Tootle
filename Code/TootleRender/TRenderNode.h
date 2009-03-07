@@ -66,6 +66,7 @@ public:
 			Debug_Wireframe,			//	draw in wireframe
 			Debug_Points,				//	draw a point at every vertex
 			Debug_Outline,				//	render again with wireframe on
+			Debug_Position,				//	draws a 3axis cross at 0,0,0 on the render node
 			Debug_LocalBoundsBox,		//	render our local bounds box
 			Debug_WorldBoundsBox,		//	render our world bounds box
 			Debug_LocalBoundsSphere,	//	render our local bounds sphere

@@ -58,7 +58,8 @@ public:
 
 	virtual void				SetPosition(const float3& Position)	{	m_vPreviousPos = GetPosition(); m_ViewLine.SetStart( Position );	OnCameraChanged();	}
 	virtual void				SetLookAt(const float3& LookAt)		{	m_ViewLine.SetEnd( LookAt );	OnCameraChanged();	}
-	virtual void				SetViewport(const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape)	{	}	//	calc new view sizes
+	virtual void				SetRenderTargetSize(const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape)	{	}	//	calc new view sizes
+	virtual void				SetViewportSize(const Type4<s32>& ViewportSize,TScreenShape ScreenShape)	{	}	//	calc new view sizes
 
 	virtual Bool				IsOrtho() const			{	return FALSE;	}
 
@@ -112,7 +113,8 @@ public:
 
 	const TLMaths::TAngle&	GetHorzFov() const													{	return m_HorzFov;	}
 //	const TLMaths::TAngle&	GetVertFov() const													{	return GetHorzFov();	}	//	gr: todo
-	virtual void			SetViewport(const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape);	//	calc new view sizes
+	virtual void			SetRenderTargetSize(const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape);	//	calc new view sizes
+	virtual void			SetViewportSize(const Type4<s32>& ViewportSize,TScreenShape ScreenShape);	//	calc new view sizes
 
 	const TLMaths::TBox2D&	GetScreenViewBox() const											{	return m_ScreenViewBox;	}		//	view dimensions - NOT rotated
 	const TLMaths::TBox2D&	GetProjectionViewBox() const										{	return m_ProjectionViewBox;	}	//	view dimensions - rotated!
@@ -158,16 +160,18 @@ public:
 	TOrthoCamera()			{}
 
 	virtual Bool			IsOrtho() const			{	return TRUE;	}
-	virtual void			SetViewport(const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape);	//	calc new view sizes
+	virtual void			SetRenderTargetSize(const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape);	//	calc new view sizes
+	virtual void			SetViewportSize(const Type4<s32>& ViewportSize,TScreenShape ScreenShape);		//	calc new view sizes
 
-	const TLMaths::TBox2D&	GetOrthoBox() const		{	return m_OrthoBox;	}
+	const TLMaths::TBox2D&	GetOrthoViewportBox() const			{	return m_OrthoViewportBox;	}
+	const TLMaths::TBox2D&	GetOrthoRenderTargetBox() const		{	return m_OrthoRenderTargetBox;	}
+	float					GetOrthoRange() const	{	return 100.f;	}
+
 	virtual Bool			GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;			//	convert point on screen to a 3D ray
 	virtual Bool			GetWorldPos(float3& WorldPos,float WorldDepth,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;	//	convert point on screen to a 3D position
 
 protected:
-	float					GetOrthoRange() const	{	return 100.f;	}
-
-protected:
-	TLMaths::TBox2D			m_OrthoBox;			//	ortho dimensions as a box
+	TLMaths::TBox2D			m_OrthoViewportBox;		//	ortho viewport dimensions as a box
+	TLMaths::TBox2D			m_OrthoRenderTargetBox;	//	ortho render target dimensions as a box
 };
 

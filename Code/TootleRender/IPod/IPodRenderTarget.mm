@@ -20,7 +20,7 @@ TLRender::Platform::RenderTarget::RenderTarget(const TRef& Ref) :
 //-------------------------------------------------------
 //
 //-------------------------------------------------------
-Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& MaxSize,const TScreen& Screen)			
+Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& RenderTargetMaxSize,const Type4<s32>& ViewportMaxSize,const TScreen& Screen)			
 {
 	//	do base stuff
 	if ( !TRenderTarget::BeginDraw(MaxSize, Screen) )

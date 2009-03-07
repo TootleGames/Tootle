@@ -63,7 +63,8 @@ public:
 
 	TPtr<TRenderTarget>&			GetRenderTarget(TRefRef TargetRef);						//	fetch render target
 
-	virtual void					GetRenderTargetMaxSize(Type4<s32>& MaxSize)				{	MaxSize.Set( 0, 0, GetSize().Width(), GetSize().Height() );	}
+	void							GetRenderTargetMaxSize(Type4<s32>& MaxSize);			//	get the render target max size (in "render target space") - this is the viewport size, but rotated
+	virtual void					GetViewportMaxSize(Type4<s32>& MaxSize)					{	MaxSize.Set( 0, 0, GetSize().Width(), GetSize().Height() );	}
 	Bool							GetRenderTargetSize(Type4<s32>& Size,const TPtr<TRenderTarget>& pRenderTarget);	//	get the dimensions of a render target
 	FORCEINLINE Bool				GetRenderTargetSize(Type4<s32>& Size,TRefRef TargetRef) {	return GetRenderTargetSize( Size, GetRenderTarget( TargetRef ) );	}
 
@@ -78,13 +79,15 @@ public:
 	FORCEINLINE Bool				operator==(const TRef& ScreenRef)	const	{	return GetRef() == ScreenRef;	}
 	FORCEINLINE Bool				operator==(const TScreen& Screen)	const 	{	return GetRef() == Screen.GetRef();	}
 
+protected:
+	Bool							GetRenderTargetPosFromScreenPos(const TRenderTarget& RenderTarget,Type2<s32>& RenderTargetPos,Type4<s32>& RenderTargetSize,const Type2<s32>& ScreenPos);	//	Get a render target-relative cursor position from a screen pos - fails if outside render target box
 
 protected:
 	TPtrArray<TRenderTarget>		m_RenderTargets;			//	list of active render targets
 	TPtrArray<TRenderTarget>		m_ShutdownRenderTargets;	//	list of render targets we're destroying
 	Bool							m_HasShutdown;				//	
 	TRef							m_Ref;						//	reference to screen
-	Type4<s32>						m_Size;						//	pos + w + h
+	Type4<s32>						m_Size;						//	pos + w + h. Note viewport maybe smaller (ie. because of window borders in windows)
 	TFlags<Flags>					m_Flags;					//	screen flags
 	TScreenShape					m_ScreenShape;				//	screen orientation
 };

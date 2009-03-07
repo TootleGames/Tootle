@@ -54,7 +54,7 @@ namespace TLRender
 		void					SceneTransform(const TLMaths::TTransform& Transform);				//	transform scene
 		void					SceneRotate(const TLMaths::TAngle& Rotation,const float3& Axis);	//	eular rotation on the scene - wrapper for glRotatef
 
-		void					GetViewportSize(Type4<s32>& ViewportSize,const Type4<s32>& RenderTargetSize,const Type4<s32>& ScreenSize,TScreenShape ScreenShape);	//	get render target's viewport size from the size and the screen size
+		void					GetViewportSize(Type4<s32>& ViewportSize,const Type4<s32>& ViewportTargetMaxSize,const Type4<s32>& RenderTargetSize,const Type4<s32>& RenderTargetMaxSize,TScreenShape ScreenShape);	//	get render target's viewport size from the size and the screen size
 	
 		//	scene settings - only calls platform implementations as required - inlined for speed
 		FORCEINLINE void		EnableWireframe(Bool Enable);
