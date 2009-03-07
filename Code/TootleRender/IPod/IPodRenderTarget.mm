@@ -23,7 +23,7 @@ TLRender::Platform::RenderTarget::RenderTarget(const TRef& Ref) :
 Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& RenderTargetMaxSize,const Type4<s32>& ViewportMaxSize,const TScreen& Screen)			
 {
 	//	do base stuff
-	if ( !TRenderTarget::BeginDraw(MaxSize, Screen) )
+	if ( !TRenderTarget::BeginDraw(RenderTargetMaxSize, ViewportMaxSize, Screen) )
 		return FALSE;
 
 	//	platform specific stuff...
@@ -148,7 +148,7 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(TLRender::TOrthoCamera* pC
 	glLoadIdentity();
 
 	//	get ortho dimensions box
-	const TLMaths::TBox2D& OrthoBox = pCamera->GetOrthoBox();
+	const TLMaths::TBox2D& OrthoBox = pCamera->GetOrthoRenderTargetBox();
 	
 	//	rotate the view matrix so that UP is properly relative to the new screen
 	//	gr: another "thing what is backwards" - as is the -/+ of the shape rotation....

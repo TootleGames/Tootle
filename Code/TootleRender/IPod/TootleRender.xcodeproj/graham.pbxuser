@@ -1,7 +1,7 @@
 // !$*UTF8*$!
 {
 	84C109090F0A779700B2DF7A /* Project object */ = {
-		activeBuildConfigurationName = Debug;
+		activeBuildConfigurationName = "Release AdHoc";
 		activeTarget = 84C10AE70F0A7E3B00B2DF7A /* TootleRender */;
 		codeSenseManager = BF81C3A30F30F633001ACEC3 /* Code sense */;
 		perUserDictionary = {
@@ -110,6 +110,13 @@
 			sepNavIntBoundsRect = "{{0, 0}, {1500, 4384}}";
 			sepNavSelRange = "{595, 0}";
 			sepNavVisRange = "{156, 882}";
+		};
+	};
+	84C10AFC0F0A7E6000B2DF7A /* TRenderTarget.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1024, 18112}}";
+			sepNavSelRange = "{2759, 0}";
+			sepNavVisRange = "{2239, 861}";
 		};
 	};
 	84C10AFD0F0A7E6000B2DF7A /* TRenderTarget.h */ = {
