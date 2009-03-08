@@ -24,26 +24,18 @@ namespace TLInput
 class TLInput::TAction : public TLMessaging::TRelay
 {
 public:
-	explicit TAction(TRef refActionID);
+	explicit TAction(TRefRef refActionID);
 
-//		inline Bool	operator<(const TAction&) const { return FALSE; }
-//		inline Bool	operator==(const TAction& Action) const { return (Action.GetActionID() == GetActionID()); }
+	FORCEINLINE TRefRef		GetActionID() const								{	return m_refActionID; }
 
-	inline TRefRef		GetActionID()		const	{ return m_refActionID; }
+	FORCEINLINE void		SetCondition(TActionCondition uActionCondition, float fThreshold)	{	m_uActionCondition = uActionCondition;	m_fThreshold = fThreshold; 	}
 
-	void				SetCondition(TActionCondition uActionCondition, float fThreshold)
-	{
-		m_uActionCondition = uActionCondition;
-		m_fThreshold = fThreshold; 
-	}
+	FORCEINLINE Bool		HasParentAction(TRefRef ParentActionRef) const	{	return m_refParentActions.Exists(ParentActionRef); }
+	void					AddParentAction(TRefRef ParentActionRef, Bool bCondition = TRUE);
 
-	inline Bool			HasParentAction(TRefRef ParentActionRef)	const	{ return m_refParentActions.Exists(ParentActionRef); }
-	void				AddParentAction(TRefRef ParentActionRef, Bool bCondition = TRUE);
-
-	FORCEINLINE Bool	operator==(TRefRef ActionRef) const			{	return GetActionID() == ActionRef;	}
+	FORCEINLINE Bool	operator==(TRefRef ActionRef) const					{	return GetActionID() == ActionRef;	}
 
 protected:
-
 	virtual void	ProcessMessage(TLMessaging::TMessage& Message);
 
 	// Internal parent action state info
@@ -79,9 +71,8 @@ public:
 	Bool						CreateDefaultButtonNeuralNetwork(TRef refDeviceID, TRef refSensorID);
 
 private:
-
 	// Internal Neural Network manipulation
-	TPtr<TLNeuralNetwork::TNeuron>						AddNeuralNetworkInput(TPtr<TInputSensor> pSensor);
+	TPtr<TLNeuralNetwork::TNeuron>				AddNeuralNetworkInput(TPtr<TInputSensor> pSensor);
 
 private:
 	TPtr<TLNeuralNetwork::TNeuralNetwork>		m_pNeuralNetwork;

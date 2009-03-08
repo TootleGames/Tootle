@@ -76,7 +76,7 @@ public:
 	TShapeSphere2D()															{}
 	TShapeSphere2D(const TLMaths::TSphere2D& Sphere) : m_Sphere ( Sphere )		{}
 
-	virtual TRef					GetShapeType() const						{	return "sph2";	}
+	virtual TRef					GetShapeType() const						{	return TLMaths::TSphere2D::GetTypeRef();	}
 	virtual Bool					IsValid() const								{	return GetSphere().IsValid();	}
 	virtual float3					GetCenter() const							{	return GetSphere().GetPos();	}
 	
@@ -96,7 +96,7 @@ public:
 	TShapeSphere()															{}
 	TShapeSphere(const TLMaths::TSphere& Sphere) : m_Sphere ( Sphere )		{}
 
-	virtual TRef					GetShapeType() const						{	return "sph";	}
+	virtual TRef					GetShapeType() const						{	return TLMaths::TSphere::GetTypeRef();	}
 	virtual Bool					IsValid() const								{	return GetSphere().IsValid();	}
 	virtual float3					GetCenter() const							{	return GetSphere().GetPos();	}
 	

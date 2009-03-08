@@ -6,15 +6,13 @@
 #pragma once
 #include <TootleCore/TLMaths.h>
 #include <TootleCore/TFixedArray.h>
-#include "TBox.h"
+#include "TOblong.h"
 
 
 namespace TLMaths
 {
 	class TFrustum;
 	class TPlane;
-
-	class TBox2D;
 };
 
 
@@ -68,8 +66,8 @@ public:
 	TPlane&			GetFarPlane()			{	return m_Planes[5];	}
 	const TPlane&	GetFarPlane() const		{	return m_Planes[5];	}
 
-	TBoxOB&			GetBox()				{	return m_Box;	}
-	const TBoxOB&	GetBox() const			{	return m_Box;	}
+	TOblong&		GetBox()				{	return m_Box;	}
+	const TOblong&	GetBox() const			{	return m_Box;	}
 
 	Bool			HasIntersection(const float3& Point) const;			//	check if this point is inside the frustum
 	Bool			HasIntersection(const float2& Point) const;			//	check if this 2D point is inside the frustum
@@ -82,7 +80,7 @@ protected:
 	float					m_Near;		//	near z - should be able to extract this from the plane really...
 	float					m_Far;		//	far z - should be able to extract this from the plane really...
 
-	TBoxOB					m_Box;		//	3D frustum box
+	TOblong					m_Box;		//	3D frustum box
 };
 
 

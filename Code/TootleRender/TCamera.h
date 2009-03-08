@@ -36,7 +36,7 @@ namespace TLRender
 
 namespace TLMaths
 {
-	class TBoxOB;
+	class TOblong;
 }
 
 
@@ -120,7 +120,7 @@ public:
 	const TLMaths::TBox2D&	GetProjectionViewBox() const										{	return m_ProjectionViewBox;	}	//	view dimensions - rotated!
 
 	const TLMaths::TMatrix&	GetCameraLookAtMatrix()												{	return (!m_CameraLookAtMatrixValid) ? UpdateCameraLookAtMatrix() : m_CameraLookAtMatrix;	}
-	void					GetWorldFrustumPlaneBox(float ViewZDepth,TLMaths::TBoxOB& PlaneBox) const;			//	extract an oriented box from the frustum at a certain depth
+	void					GetWorldFrustumPlaneBox(float ViewZDepth,TLMaths::TOblong& PlaneBox) const;			//	extract an oriented box from the frustum at a certain depth
 	void					GetWorldFrustumPlaneBox2D(float ViewZDepth,TLMaths::TBox2D& PlaneBox2D) const;		//	extract box and make 2D
 
 	virtual Bool			GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;	//	convert point on screen to a 3D ray

@@ -192,6 +192,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TOblong.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TOblong.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TQuadTree.cpp"
 			>
 		</File>

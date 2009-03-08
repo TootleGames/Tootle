@@ -7,10 +7,10 @@ using namespace TLInput;
 //#define ENABLE_INPUTACTION_TRACE
 #endif
 
-TAction::TAction(TRef refActionID)	:
-	 m_refActionID(refActionID),
-	 m_uActionCondition(None),
-	 m_fThreshold(0.0f)
+TAction::TAction(TRefRef refActionID)	:
+	 m_refActionID		( refActionID ),
+	 m_uActionCondition	( None ),
+	 m_fThreshold		( 0.0f )
 {
 }
 
@@ -159,7 +159,7 @@ void TAction::ProcessMessage(TLMessaging::TMessage& Message)
 		NewMessage.AddChannelID("ACTION");
 		NewMessage.Write(m_refActionID);			// The action performed
 
-		TPtr<TBinaryTree> pChild = Message.GetChild("RAWDATA");
+		TPtr<TBinaryTree>& pChild = Message.GetChild("RAWDATA");
 
 		// Copy the raw data value to the new message if it exists
 		if(pChild.IsValid())
@@ -172,7 +172,7 @@ void TAction::ProcessMessage(TLMessaging::TMessage& Message)
 
 
 TAction_Gesture::TAction_Gesture(TRef refActionID) :
-  TAction(refActionID)
+	TAction		(refActionID)
 {
 	// Create a new neural network by default
 	m_pNeuralNetwork = new TLNeuralNetwork::TNeuralNetwork("ACTIONNETWORK");

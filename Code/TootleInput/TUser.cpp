@@ -218,10 +218,10 @@ SyncBool TUserManager::Shutdown()
 
 
 
-TUser::TUser(TRef refUserID) : 
-  m_refUserID(refUserID),
-  m_strUserName("Unknown"),
-  m_uLocalUserIndex(0)
+TUser::TUser(TRefRef refUserID) : 
+	m_refUserID			(refUserID),
+	m_strUserName		("Unknown"),
+	m_uLocalUserIndex	(0)
 {
 	m_CursorPosition.Set(0,0);
 }
@@ -303,7 +303,7 @@ Bool TUser::AddAction(TRefRef refActionType, TRefRef refActionID, TArray<TRef>& 
 		// Now set the action to have some parent actions
 
 		// Get the new action
-		TPtr<TLInput::TAction> pAction = GetAction(refActionID);
+		TPtr<TLInput::TAction>& pAction = GetAction(refActionID);
 
 		if(!pAction.IsValid())
 			return FALSE;
@@ -313,7 +313,7 @@ Bool TUser::AddAction(TRefRef refActionType, TRefRef refActionID, TArray<TRef>& 
 		TPtrArray<TLInput::TAction> pParentActions;
 		for(u32 uIndex = 0; uIndex < refParentActionIDs.GetSize(); uIndex++)
 		{
-			TPtr<TLInput::TAction> pParentAction = GetAction(refParentActionIDs.ElementAt(uIndex));
+			TPtr<TLInput::TAction>& pParentAction = GetAction(refParentActionIDs.ElementAt(uIndex));
 
 			if(!pParentAction.IsValid())
 				return FALSE;
@@ -324,7 +324,7 @@ Bool TUser::AddAction(TRefRef refActionType, TRefRef refActionID, TArray<TRef>& 
 		// Now subscribe to the actions and add the parent action ID
 		for(u32 uIndex = 0; uIndex < pParentActions.GetSize(); uIndex++)
 		{
-			TPtr<TLInput::TAction> pParentAction = pParentActions.ElementAt(uIndex);
+			TPtr<TLInput::TAction>& pParentAction = pParentActions.ElementAt(uIndex);
 			
 			if(!MapActionParentPtr(pAction, pParentAction))
 				return FALSE;
@@ -339,13 +339,13 @@ Bool TUser::AddAction(TRefRef refActionType, TRefRef refActionID, TArray<TRef>& 
 Bool TUser::MapActionParent(TRefRef refActionID, TRefRef refParentActionID, Bool bCondition)
 {
 		// Get the new action
-	TPtr<TLInput::TAction> pAction = GetAction(refActionID);
+	TPtr<TLInput::TAction>& pAction = GetAction(refActionID);
 
 	if(!pAction.IsValid())
 		return FALSE;
 
 	// Get the parent action
-	TPtr<TLInput::TAction> pParentAction = GetAction(refParentActionID);
+	TPtr<TLInput::TAction>& pParentAction = GetAction(refParentActionID);
 
 	if(!pParentAction.IsValid())
 		return FALSE;
@@ -354,8 +354,14 @@ Bool TUser::MapActionParent(TRefRef refActionID, TRefRef refParentActionID, Bool
 }
 
 
-Bool TUser::MapActionParentPtr(TPtr<TLInput::TAction> pAction, TPtr<TLInput::TAction> pParentAction, Bool bCondition)
+Bool TUser::MapActionParentPtr(TLInput::TAction* pAction,TLInput::TAction* pParentAction, Bool bCondition)
 {
+	if ( !pAction || !pParentAction )
+	{
+		TLDebug_Break("Action and parent action expected");
+		return FALSE;
+	}
+
 	TRef refParentActionID = pParentAction->GetActionID();
 
 	if(!pAction->HasParentAction(refParentActionID))
@@ -417,61 +423,13 @@ Bool TUser::MapAction(TRefRef refActionID,TPtr<TLInput::TInputSensor>& pSensor)
 
 Bool TUser::MapActionCondition(TRefRef refActionID, TLInput::TActionCondition uCondition, float fThreshold)
 {
-	TPtr<TLInput::TAction> pAction = GetAction(refActionID);
+	TPtr<TLInput::TAction>& pAction = GetAction(refActionID);
 
 	if(!pAction.IsValid())
 		return FALSE;
 
 	pAction->SetCondition(uCondition, fThreshold);
 	return TRUE;
-}
-
-
-
-/*
-	Removes an action from the action map
-*/
-Bool TUser::RemoveAction(TRefRef refActionID)
-{
-	s32 iIndex = FindActionIndex(refActionID);
-
-	if(iIndex != -1)
-			return m_ActionMap.RemoveAt(iIndex);
-
-	return FALSE;
-}
-
-/*
-	Gets an input action with the specified ID
-*/
-TPtr<TLInput::TAction> TUser::GetAction(TRef refActionID)
-{
-	s32 iIndex = FindActionIndex(refActionID);
-
-	if(iIndex != -1)
-			return m_ActionMap.ElementAt(iIndex);
-
-	// Not found
-	return TPtr<TLInput::TAction>(NULL);
-}
-
-
-/*
-	Finds an action within the action map with the specified action ID
-*/
-s32 TUser::FindActionIndex(TRef refActionID)
-{
-	for(u32 uIndex = 0; uIndex < m_ActionMap.GetSize(); uIndex++)
-	{
-		TPtr<TLInput::TAction> pAction = m_ActionMap.ElementAt(uIndex);
-
-		if(pAction->GetActionID() == refActionID)
-			return (s32) uIndex;
-
-	}
-
-	// Not found
-	return -1;
 }
 
 

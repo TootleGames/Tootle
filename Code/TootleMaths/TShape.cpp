@@ -6,10 +6,10 @@ Bool TLMaths::TShape::HasIntersection(TShape& OtherShape)
 {
 	TRefRef OtherShapeType = OtherShape.GetShapeType();
 
-	if ( OtherShapeType == "sph2" )
+	if ( OtherShapeType == TLMaths::TSphere2D::GetTypeRef() )
 		return HasIntersection( static_cast<TShapeSphere2D&>(OtherShape) );
 	
-	if ( OtherShapeType == "sph" )
+	if ( OtherShapeType == TLMaths::TSphere::GetTypeRef() )
 		return HasIntersection( static_cast<TShapeSphere&>(OtherShape) );
 
 	TLDebug_Break("unknown shape type");
@@ -21,10 +21,10 @@ Bool TLMaths::TShape::GetIntersection(TShape& OtherShape,TIntersection& Intersec
 {
 	TRefRef OtherShapeType = OtherShape.GetShapeType();
 
-	if ( OtherShapeType == "sph2" )
+	if ( OtherShapeType == TLMaths::TSphere2D::GetTypeRef() )
 		return GetIntersection( static_cast<TShapeSphere2D&>(OtherShape), Intersection );
 
-	if ( OtherShapeType == "sph" )
+	if ( OtherShapeType == TLMaths::TSphere::GetTypeRef() )
 		return GetIntersection( static_cast<TShapeSphere&>(OtherShape), Intersection );
 
 	TLDebug_Break("unknown shape type");

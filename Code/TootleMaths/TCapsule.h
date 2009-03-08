@@ -29,6 +29,8 @@ class TLMaths::TCapsule
 public:
 	TCapsule();
 
+	static TRef		GetTypeRef()											{	return "Cap";	}
+
 	void			Set(const TLine& Line,float Radius)						{	m_Line = Line;	m_Radius = Radius;	}
 	void			Set(const float3& Start,const float3& End,float Radius)	{	m_Line.Set( Start, End );	m_Radius = Radius;	}
 	void			Set(const TCapsule& Capsule)							{	m_Line.Set( Capsule.GetLine() );	m_Radius = Capsule.GetRadius();	}

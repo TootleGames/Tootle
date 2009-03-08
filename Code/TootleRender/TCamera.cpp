@@ -265,7 +265,7 @@ void TLRender::TProjectCamera::CalcFrustum()
 
 
 	//	calc the box
-	TLMaths::TBoxOB& FrustumBox = m_Frustum.GetBox();
+	TLMaths::TOblong& FrustumBox = m_Frustum.GetBox();
 	FrustumBox.GetBoxCorners().SetSize(0);
 
 	GetWorldFrustumPlaneBoxCorners( m_NearZ, FrustumBox.GetBoxCorners() );
@@ -289,7 +289,7 @@ void TLRender::TProjectCamera::GetWorldFrustumPlaneBox2D(float ViewDepth,TLMaths
 {
 	//	calc the shape for the zone from the frustum
 	//	get the camera frustum box at a depth of zero in the world (this will be a bit small as its far from the camera)
-	TLMaths::TBoxOB PlaneBox;
+	TLMaths::TOblong PlaneBox;
 	GetWorldFrustumPlaneBox( ViewDepth, PlaneBox );
 
 	//	turn this into a 2D box - note: if our box is rotated then the 2D box will be bigger than the screen
@@ -301,7 +301,7 @@ void TLRender::TProjectCamera::GetWorldFrustumPlaneBox2D(float ViewDepth,TLMaths
 //----------------------------------------------------------
 //	extract an oriented box from the frustum at a certain depth
 //----------------------------------------------------------
-void TLRender::TProjectCamera::GetWorldFrustumPlaneBox(float ViewDepth,TLMaths::TBoxOB& PlaneBox) const
+void TLRender::TProjectCamera::GetWorldFrustumPlaneBox(float ViewDepth,TLMaths::TOblong& PlaneBox) const
 {
 	PlaneBox.GetBoxCorners().SetSize(0);
 	GetWorldFrustumPlaneBoxCorners( ViewDepth, PlaneBox.GetBoxCorners() );

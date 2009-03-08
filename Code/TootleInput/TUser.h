@@ -23,35 +23,32 @@ class TLUser::TUser : public TLMessaging::TRelay
 	friend class TLUser::TUserManager;
 
 public:
-	TUser(TRef refUserID);
+	TUser(TRefRef refUserID);
 
 	// Action Mapping
 	Bool						AddAction(TRefRef refActionType, TRefRef refActionID);
 	Bool						AddAction(TRefRef refActionType, TRefRef refActionID, TRefRef refParentActionID);
 	Bool						AddAction(TRefRef refActionType, TRefRef refActionID, TArray<TRef>& refParentActionIDs);
-	Bool						RemoveAction(TRefRef refActionID);
+	FORCEINLINE Bool			RemoveAction(TRefRef refActionID)			{	return m_ActionMap.Remove( refActionID );	}
 
 	Bool						MapAction(TRefRef refActionID, TRefRef refDeviceID, TRefRef SensorRef);
 	Bool						MapAction(TRefRef refActionID,TPtr<TLInput::TInputSensor>& pSensor);	
-	
 	Bool						MapActionCondition(TRefRef refActionID, TLInput::TActionCondition uCondition, float fThreshold);
-
 	Bool						MapActionParent(TRefRef refActionID, TRefRef refParentActionID, Bool bCondition = TRUE);
 
 	// User information access
-	inline TRefRef				GetUserID()		const	{ return m_refUserID; }
-	inline u8					GetUserIndex()	const	{ return m_uLocalUserIndex; }
-	inline Type2<s32>			GetCursorPosition()		{ return m_CursorPosition; }
+	FORCEINLINE TRefRef				GetUserID()		const					{	return m_refUserID;	}
+	FORCEINLINE u8					GetUserIndex()	const					{	return m_uLocalUserIndex;	}
+	FORCEINLINE const Type2<s32>&	GetCursorPosition() const				{	return m_CursorPosition;	}
 
-	inline TString&				GetUserName()			{ return m_strUserName; }
-	inline void					SetUserName(TString& strUserName)	{ m_strUserName = strUserName; }
+	FORCEINLINE const TString&		GetUserName() const 					{	return m_strUserName;	}
+	FORCEINLINE void				SetUserName(const TString& strUserName)	{	m_strUserName = strUserName;	}
 
-	TRef						GetUnusedActionRef(TRef BaseRef=TRef()) const;		//	get a ref for an action not currently in use
+	TRef							GetUnusedActionRef(TRef BaseRef=TRef()) const;		//	get a ref for an action not currently in use
 
 protected:
-
-	s32							FindActionIndex(TRef refActionID);
-	TPtr<TLInput::TAction>		GetAction(TRef refActionID);
+	FORCEINLINE s32						FindActionIndex(TRefRef refActionID)		{	return m_ActionMap.FindIndex( refActionID );	}
+	FORCEINLINE TPtr<TLInput::TAction>&	GetAction(TRefRef refActionID)				{	return m_ActionMap.FindPtr( refActionID );	}
 
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);
 
@@ -62,7 +59,7 @@ protected:
 private:
 	void						RemoveAllActions()				{}
 
-	Bool						MapActionParentPtr(TPtr<TLInput::TAction> pAction, TPtr<TLInput::TAction> pParentAction, Bool bCondition = TRUE);
+	Bool						MapActionParentPtr(TLInput::TAction* pAction,TLInput::TAction* pParentAction, Bool bCondition = TRUE);
 
 private:
 	TRef							m_refUserID;	// Unique ID of the user

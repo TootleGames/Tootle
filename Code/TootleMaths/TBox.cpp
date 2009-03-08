@@ -938,11 +938,3 @@ void TLMaths::TBox2D::GrowBox(float Scale)
 
 
 
-
-
-
-
-TLMaths::TBoxOB::TBoxOB() :
-	m_IsValid	( FALSE )
-{
-}

@@ -1105,7 +1105,7 @@ Bool TLAsset::TMesh::ImportDatum(TBinaryTree& Data)
 		return FALSE;
 
 	//	import specific shape
-	if ( ShapeRef == "sph2" )
+	if ( ShapeRef == TLMaths::TSphere2D::GetTypeRef() )
 	{
 		TLMaths::TSphere2D Shape;
 		if ( !Data.Read( Shape ) )
@@ -1114,7 +1114,7 @@ Bool TLAsset::TMesh::ImportDatum(TBinaryTree& Data)
 		AddDatum( DatumRef, pShape );
 		return TRUE;
 	}
-	else if ( ShapeRef == "sph" )
+	else if ( ShapeRef == TLMaths::TSphere::GetTypeRef() )
 	{
 		TLMaths::TSphere Shape;
 		if ( !Data.Read( Shape ) )
@@ -1124,7 +1124,12 @@ Bool TLAsset::TMesh::ImportDatum(TBinaryTree& Data)
 		return TRUE;
 	}
 
-	TLDebug_Break("Unknown datum shape type");
+#ifdef _DEBUG
+	TTempString Debug_String("Unknown datum shape type ");
+	ShapeRef.GetString( Debug_String );
+	TLDebug_Break(Debug_String);
+#endif
+
 	return FALSE;
 }
 
@@ -1142,13 +1147,13 @@ Bool TLAsset::TMesh::ExportDatum(TBinaryTree& Data,TRefRef DatumRef,TPtr<TLMaths
 	Data.Write( ShapeRef );
 
 	//	export specific data
-	if ( ShapeRef == "sph2" )
+	if ( ShapeRef == TLMaths::TSphere2D::GetTypeRef() )
 	{
 		const TLMaths::TSphere2D& Shape = pShape.GetObject<TLMaths::TShapeSphere2D>()->GetSphere();
 		Data.Write( Shape );
 		return TRUE;
 	}
-	else if ( ShapeRef == "sph" )
+	else if ( ShapeRef == TLMaths::TSphere::GetTypeRef() )
 	{
 		const TLMaths::TSphere& Shape = pShape.GetObject<TLMaths::TShapeSphere>()->GetSphere();
 		Data.Write( Shape );
@@ -1171,7 +1176,7 @@ Bool TLAsset::TMesh::CreateDatum(const TArray<float3>& PolygonPoints,TRefRef Dat
 		return FALSE;
 	}
 
-	if ( DatumShapeType == "sph2" )
+	if ( DatumShapeType == TLMaths::TSphere2D::GetTypeRef() )
 	{
 		//	get box of points for extents
 		TLMaths::TBox2D Box;
@@ -1190,7 +1195,7 @@ Bool TLAsset::TMesh::CreateDatum(const TArray<float3>& PolygonPoints,TRefRef Dat
 		AddDatum( DatumRef, pSphereShape );
 		return TRUE;
 	}
-	else if ( DatumShapeType == "sph" )
+	else if ( DatumShapeType == TLMaths::TSphere::GetTypeRef() )
 	{
 		//	get box of points for extents
 		TLMaths::TBox Box;
