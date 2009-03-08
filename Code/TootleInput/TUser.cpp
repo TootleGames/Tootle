@@ -373,45 +373,40 @@ Bool TUser::MapActionParentPtr(TPtr<TLInput::TAction> pAction, TPtr<TLInput::TAc
 	return FALSE;
 }
 
-/*
-Bool TUser::MapAction(TRef refActionID, TRef refDeviceID, TRef refSensorID)
-{
-	TPtr<TLInput::TAction> pAction = GetAction(refActionID);
-
-	if(!pAction.IsValid())
-		return FALSE;
-
-	TPtr<TLInput::TInputDevice> pDevice = TLInput::g_pInputSystem->GetInstance(refDeviceID);
-
-	if(!pDevice.IsValid())
-		return FALSE;
-
-	TPtr<TLInput::TInputSensor> pSensor = pDevice->GetSensor(refSensorID);
-
-	if(!pSensor.IsValid())
-		return FALSE;
-
-	// Assign the sensor to the action
-	return pAction->SubscribeTo(pSensor);
-}
-*/
 
 Bool TUser::MapAction(TRefRef refActionID, TRefRef refDeviceID, TRefRef SensorLabelRef)
 {
-	TPtr<TLInput::TAction> pAction = GetAction(refActionID);
-
-	if(!pAction.IsValid())
+	TPtr<TLInput::TInputDevice>& pDevice = TLInput::GetDevice( refDeviceID );
+	if ( !pDevice.IsValid() )
+	{
+		TLDebug_Break("Unknown device");
 		return FALSE;
+	}
 
-	TPtr<TLInput::TInputDevice> pDevice = TLInput::g_pInputSystem->GetInstance(refDeviceID);
-
-	if(!pDevice.IsValid())
+	//	get the sensor
+	TPtr<TLInput::TInputSensor>& pSensor = pDevice->GetSensorFromLabel(SensorLabelRef);
+	if ( !pSensor.IsValid() )
+	{
+		TLDebug_Break("Unknown sensor");
 		return FALSE;
+	}
+
+	//	Assign the sensor to the action
+	return MapAction( refActionID, pSensor );
+}
 
 
-	TPtr<TLInput::TInputSensor> pSensor = pDevice->GetSensorFromLabel(SensorLabelRef);
+Bool TUser::MapAction(TRefRef refActionID,TPtr<TLInput::TInputSensor>& pSensor)
+{
+	if ( !pSensor )
+	{
+		TLDebug_Break("Sensor expected");
+		return FALSE;
+	}
 
-	if(!pSensor.IsValid())
+	//	get the action
+	TPtr<TLInput::TAction>& pAction = GetAction(refActionID);
+	if ( !pAction.IsValid() )
 		return FALSE;
 
 	// Assign the sensor to the action

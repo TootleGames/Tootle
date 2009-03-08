@@ -32,6 +32,7 @@ public:
 	Bool						RemoveAction(TRefRef refActionID);
 
 	Bool						MapAction(TRefRef refActionID, TRefRef refDeviceID, TRefRef SensorRef);
+	Bool						MapAction(TRefRef refActionID,TPtr<TLInput::TInputSensor>& pSensor);	
 	
 	Bool						MapActionCondition(TRefRef refActionID, TLInput::TActionCondition uCondition, float fThreshold);
 

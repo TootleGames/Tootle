@@ -54,6 +54,8 @@ public:
 	inline void			SetRanges(float fLow, float fHigh)	{ m_fRangeLow = fLow; m_fRangeHigh = fHigh; }
 	inline void			SetDeadZone(float fZone)			{ m_fDeadZone = fZone; }
 
+	const TSensorType&	GetSensorType() const				{	return m_Type;	}
+
 protected:
 
 	virtual void	ProcessMessage(TLMessaging::TMessage& Message);

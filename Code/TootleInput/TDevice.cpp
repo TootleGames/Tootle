@@ -102,26 +102,6 @@ TPtr<TLInput::TInputSensor>& TInputDevice::AttachSensor(TRefRef SensorRef, TSens
 	return TLPtr::GetNullPtr<TLInput::TInputSensor>();
 }
 
-Bool TInputDevice::HasSensor(TRefRef SensorRef)
-{
-	TPtr<TInputSensor>& pSensor = GetSensor(SensorRef);
-
-	return pSensor.IsValid();
-}
-
-
-TPtr<TLInput::TInputSensor>& TInputDevice::GetSensor(TRefRef SensorRef)
-{
-	for(u32 uIndex = 0; uIndex < m_Sensors.GetSize(); uIndex++)
-	{
-		TPtr<TInputSensor>& pSensor = m_Sensors.ElementAt(uIndex);
-
-		if(pSensor->m_SensorRef == SensorRef)
-			return pSensor;
-	}
-
-	return TLPtr::GetNullPtr<TLInput::TInputSensor>();
-}
 
 
 // Returns a sensor object for a given 'key' 'button' 'axis' reference or label
@@ -149,7 +129,7 @@ Bool TInputDevice::GetSensorRefFromLabel(TRef SensorLabelRef, TRef& SensorRef)
 	// Go through the sensors and look up whether any have the specified sensor ref as a label
 	for(u32 uIndex = 0; uIndex < m_Sensors.GetSize(); uIndex++)
 	{
-		TPtr<TLInput::TInputSensor> pSensor = m_Sensors.ElementAt(uIndex);
+		TPtr<TLInput::TInputSensor>& pSensor = m_Sensors.ElementAt(uIndex);
 		
 		if(pSensor->HasLabel(SensorLabelRef))
 		{

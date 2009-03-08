@@ -43,16 +43,10 @@ class TLInput::TInputDevice : public TLMessaging::TRelay
 {
 	friend class TLInput::TInputManager;
 public:
-
 	TInputDevice(TRefRef DeviceRef,TRefRef DeviceTypeRef) :
 	  	m_DeviceRef		( DeviceRef ),
 		m_DeviceType	( DeviceTypeRef )
 	{
-	}
-
-	~TInputDevice()
-	{
-		m_InputBuffer.Empty();
 	}
 
 	TRefRef				GetDeviceRef() const			{	return m_DeviceRef;	}
@@ -62,29 +56,15 @@ public:
 	inline Bool			operator==(TRefRef InputRef) const					{	return GetDeviceRef() == InputRef;	}
 	inline Bool			operator==(const TInputDevice& InputDevice) const 	{	return GetDeviceRef() == InputDevice.GetDeviceRef();	}
 
-	inline Bool			AssignToHardwareDevice(TRefRef HardwareDeviceRef)
-	{
-		if ( GetHardwareDeviceID().IsValid() )
-			return FALSE;
-
-		m_HardwareDeviceRef = HardwareDeviceRef;
-		return TRUE;
-	}
-
-	inline void							SetAttached(Bool bAttached)
-	{
-		m_Flags.Set(DeviceFlags::Attached, bAttached);
-	}
-
-	inline Bool							IsAttached()	const
-	{
-		return m_Flags.IsSet(DeviceFlags::Attached);
-	}
+	FORCEINLINE void	SetAttached(Bool bAttached)			{	m_Flags.Set(DeviceFlags::Attached, bAttached);	}
+	FORCEINLINE Bool	IsAttached()	const				{	return m_Flags.IsSet(DeviceFlags::Attached);	}
+	FORCEINLINE Bool	AssignToHardwareDevice(TRefRef HardwareDeviceRef);
 
 	// Sensor access
 	TPtr<TLInput::TInputSensor>&	AttachSensor(TRefRef SensorRef, TSensorType SensorType);
-	Bool							HasSensor(TRefRef SensorRef);
-	TPtr<TLInput::TInputSensor>&	GetSensor(TRefRef SensorRef);
+	Bool							HasSensor(TRefRef SensorRef)	{	return m_Sensors.Exists( SensorRef );	}
+	TPtr<TLInput::TInputSensor>&	GetSensor(TRefRef SensorRef)	{	return m_Sensors.FindPtr( SensorRef );	}
+	TPtrArray<TInputSensor>&		GetSensors()					{	return m_Sensors;	}
 
 	TPtr<TLInput::TInputSensor>&	GetSensorFromLabel(TRefRef SensorLabelRef);
 	Bool							GetSensorRefFromLabel(TRef SensorLabelRef, TRef& SensorRef);
@@ -118,4 +98,20 @@ private:
 	TFlags<u32>					m_Flags;				// Device flags
 };
 
+
+
+
+FORCEINLINE Bool TLInput::TInputDevice::AssignToHardwareDevice(TRefRef HardwareDeviceRef)	
+{
+	if ( GetHardwareDeviceID().IsValid() )
+		return FALSE;
+
+	m_HardwareDeviceRef = HardwareDeviceRef;
+	return TRUE;
+}
+
+
+
 #include "TAction.h"
+
+

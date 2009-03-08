@@ -95,57 +95,50 @@ SyncBool TLGui::TGui::Initialise()
 		if ( !pUser )
 			return SyncWait;
 
-		//	just some ref we know of. Could be randomly generated or some unused value on the user...
-		//	has to be unique on the user though
-		m_ActionIn = pUser->GetUnusedActionRef("click");
-		Bool CreatedAction = FALSE;
-
-		//	find all the mouse devices
-		for ( u32 d=0;	d<TLInput::g_pInputSystem->GetSize();	d++ )
+		//	create action
+		if ( !m_ActionIn.IsValid() )
 		{
-			TPtr<TLInput::TInputDevice>& pInputDevice = TLInput::g_pInputSystem->ElementAt( d );
-			if ( pInputDevice->GetDeviceType() != "Mouse" )
-				continue;
-
+			//	just some ref we know of. Could be randomly generated or some unused value on the user...
+			//	has to be unique on the user though
+			TRef NewActionRef = pUser->GetUnusedActionRef("click");
+			
 			//	make up action for this device
-			pUser->AddAction("Simple", m_ActionIn );
-			//	left mouse button
-			if ( !pUser->MapAction( m_ActionIn, pInputDevice->GetDeviceRef(), "BN0" ) )
+			if ( !pUser->AddAction("Simple", NewActionRef ) )
 			{
-				TLDebug_Break("Failed to map action to gui");
-				continue;
-			}
-			
-			if ( !pUser->MapAction( m_ActionIn, pInputDevice->GetDeviceRef(), "BN1" ) )
-			{
-				TLDebug_Break("Failed to map action to gui");
-				continue;
+				TLDebug_Break("Failed to create new action on user");
+				return SyncWait;
 			}
 
-			if ( !pUser->MapAction( m_ActionIn, pInputDevice->GetDeviceRef(), "BN2" ) )
-			{
-				TLDebug_Break("Failed to map action to gui");
-				continue;
-			}
-			
-			if ( !pUser->MapAction( m_ActionIn, pInputDevice->GetDeviceRef(), "BN3" ) )
-			{
-				TLDebug_Break("Failed to map action to gui");
-				continue;
-			}
-			
-			CreatedAction = TRUE;
+			m_ActionIn = NewActionRef;
+		
+			//	subscribe to user's actions
+			SubscribeTo( pUser );
 		}
 
-		//	wait until we've created some actions
-		if ( !CreatedAction )
-			return SyncWait;
+		//	map action to at least one mouse device
+		for ( u32 d=0;	d<TLInput::g_pInputSystem->GetSize();	d++ )
+		{
+			TLInput::TInputDevice& InputDevice = *(TLInput::g_pInputSystem->ElementAt( d ));
+			if ( InputDevice.GetDeviceType() != "Mouse" )
+				continue;
 
-		//	subscribe to user's actions
-		SubscribeTo( pUser );
+			//	subscribe to all of the button sensors
+			TPtrArray<TLInput::TInputSensor>& InputDeviceSensors = InputDevice.GetSensors();
+
+			for ( u32 s=0;	s<InputDeviceSensors.GetSize();	s++ )
+			{
+				TPtr<TLInput::TInputSensor>& pSensor = InputDeviceSensors[s];
+				if ( pSensor->GetSensorType() != TLInput::Button )
+					continue;
+
+				//	map this action to this button sensor
+				m_Subscribed |= pUser->MapAction( m_ActionIn, pSensor );
+			}
+		}
 
 		//	mark as subscribed
-		m_Subscribed = TRUE;
+		if ( !m_Subscribed )
+			return SyncWait;
 	}
 
 	//	still waiting
