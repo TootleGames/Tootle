@@ -1,5 +1,7 @@
 #include "TMesh.h"
 #include <TootleCore/TBinaryTree.h>
+#include <TootleMaths/TOblong.h>
+#include <TootleMaths/TCapsule.h>
 
 
 #define LINE_PADDING_HALF	(1.f)
@@ -1123,6 +1125,19 @@ Bool TLAsset::TMesh::ImportDatum(TBinaryTree& Data)
 		AddDatum( DatumRef, pShape );
 		return TRUE;
 	}
+	else if ( ShapeRef == TLMaths::TOblong2D::GetTypeRef() )
+	{
+		TLMaths::TOblong2D Shape;
+		Bool IsValid;
+		if ( !Data.Read( IsValid ) )
+			return FALSE;
+		Shape.SetValid( IsValid );
+		if ( !Data.ReadArray( Shape.GetBoxCorners() ) )
+			return FALSE;
+		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeOblong2D( Shape );
+		AddDatum( DatumRef, pShape );
+		return TRUE;
+	}
 
 #ifdef _DEBUG
 	TTempString Debug_String("Unknown datum shape type ");
@@ -1159,8 +1174,19 @@ Bool TLAsset::TMesh::ExportDatum(TBinaryTree& Data,TRefRef DatumRef,TPtr<TLMaths
 		Data.Write( Shape );
 		return TRUE;
 	}
+	else if ( ShapeRef == TLMaths::TOblong2D::GetTypeRef() )
+	{
+		const TLMaths::TOblong2D& Shape = pShape.GetObject<TLMaths::TShapeOblong2D>()->GetOblong();
+		Data.Write( Shape.IsValid() );
+		Data.WriteArray( Shape.GetBoxCorners() );
+		return TRUE;
+	}
 
-	TLDebug_Break("Unknown datum shape type");
+#ifdef _DEBUG
+	TTempString Debug_String("Unknown datum shape type ");
+	ShapeRef.GetString( Debug_String );
+	TLDebug_Break(Debug_String);
+#endif
 	return FALSE;
 }
 
@@ -1215,7 +1241,34 @@ Bool TLAsset::TMesh::CreateDatum(const TArray<float3>& PolygonPoints,TRefRef Dat
 		AddDatum( DatumRef, pSphereShape );
 		return TRUE;
 	}
+	else if ( DatumShapeType == TLMaths::TOblong2D::GetTypeRef() )
+	{
+		//	gr: currently, simple mehtod just works with 4-point meshes
+		if ( PolygonPoints.GetSize() != 4 )
+		{
+			TLDebug_Break("Cannot create an oblong datum shape from a polygon/outline with other than 4 points");
+			return FALSE;
+		}
 
-	TLDebug_Break("Unknown shape type");
+		TLMaths::TOblong2D Oblong;
+		TFixedArray<float2,4>& Corners = Oblong.GetBoxCorners();
+		Corners[0] = PolygonPoints[0].xy();
+		Corners[1] = PolygonPoints[1].xy();
+		Corners[2] = PolygonPoints[2].xy();
+		Corners[3] = PolygonPoints[3].xy();
+
+		TPtr<TLMaths::TShape> pOblongShape = new TLMaths::TShapeOblong2D( Oblong );
+
+		//	add datum
+		AddDatum( DatumRef, pOblongShape );
+		return TRUE;
+	}
+
+#ifdef _DEBUG
+	TTempString Debug_String("Unknown datum shape type ");
+	DatumShapeType.GetString( Debug_String );
+	TLDebug_Break(Debug_String);
+#endif
+
 	return FALSE;
 }

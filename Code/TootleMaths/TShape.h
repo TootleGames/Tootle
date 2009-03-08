@@ -7,6 +7,7 @@
 
 #include "TSphere.h"
 #include "TBox.h"
+#include "TOblong.h"
 
 
 namespace TLMaths
@@ -14,6 +15,7 @@ namespace TLMaths
 	class TShape;			//	base shape type
 	class TShapeSphere2D;	//	sphere shape
 	class TShapeSphere;		//	sphere shape
+	class TShapeOblong2D;	//	oblong shape
 
 	class TIntersection;	//	resulting intersection information of two shapes
 }
@@ -105,5 +107,23 @@ public:
 
 protected:
 	TLMaths::TSphere				m_Sphere;			//	sphere collision object
+};
+
+
+class TLMaths::TShapeOblong2D : public TLMaths::TShape
+{
+public:
+	TShapeOblong2D()															{}
+	TShapeOblong2D(const TLMaths::TOblong2D& Oblong) : m_Oblong ( Oblong )		{}
+
+	virtual TRef					GetShapeType() const						{	return TLMaths::TOblong2D::GetTypeRef();	}
+	virtual Bool					IsValid() const								{	return GetOblong().IsValid();	}
+	virtual float3					GetCenter() const							{	return GetOblong().GetCenter();	}
+	
+	void							SetOblong(const TLMaths::TOblong2D& Oblong)	{	m_Oblong = Oblong;	}
+	const TLMaths::TOblong2D&		GetOblong() const							{	return m_Oblong;	}
+
+protected:
+	TLMaths::TOblong2D				m_Oblong;
 };
 

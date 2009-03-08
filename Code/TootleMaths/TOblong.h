@@ -102,17 +102,10 @@ public:
 
 	static TRef		GetTypeRef()		{	return "Obl2";	}
 
-/*
-	const float*	GetData() const		{	return m_MinMax[0].GetData();	}
-	float3&			GetMin() 			{	return m_Min;	}
-	float3&			GetMax() 			{	return m_Max;	}
-	const float3&	GetMin() const		{	return m_Min;	}
-	const float3&	GetMax() const		{	return m_Max;	}
-	float3			GetCenter() const;	//	get the center of the box
-	float3			GetSize() const		{	return (m_Max - m_Min);	}
-*/	
-	TFixedArray<float3,4>&			GetBoxCorners();	//	get the 8 corners of the box
-	const TFixedArray<float3,4>&	GetBoxCorners() const;	//	get the 8 corners of the box
+	float2			GetCenter() const;	//	get the center of the box
+
+	TFixedArray<float2,4>&			GetBoxCorners()				{	return m_Corners;	}
+	const TFixedArray<float2,4>&	GetBoxCorners() const		{	return m_Corners;	}
 /*	
 	void			Set(const float3& Min,const float3& Max)	{	m_Min = Min;	m_Max = Max;	m_IsValid = TRUE;	}
 	void			Set(const float3& MinMax)					{	m_Min = MinMax;	m_Max = MinMax;	m_IsValid = TRUE;	}
@@ -152,7 +145,7 @@ public:
 	void			operator/=(const float3& v)		{	m_Min /= v;	m_Max /= v;	}
 */
 protected:
-	TFixedArray<float3,4>	m_Corners;
+	TFixedArray<float2,4>	m_Corners;			//	the corners are in quad/outline-format. TopLeft,TopRight,BottomRight,BottomLeft.
 	Bool					m_IsValid;			//	validity of bounding box is stored on the box... much easier for us
 };
 

@@ -12,6 +12,9 @@
 #include <TootleCore/TFlags.h>
 #include <TootleCore/TLGraph.h>
 #include <TootleMaths/TQuadTree.h>
+#include <TootleMaths/TCapsule.h>
+
+
 
 namespace TLRender
 {
