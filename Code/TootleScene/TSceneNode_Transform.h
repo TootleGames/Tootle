@@ -37,7 +37,7 @@ public:
 	FORCEINLINE void			SetScale(const float3& vScale)		{	m_Transform.SetScale(vScale);	OnScaleChanged();	}
 
 	const TLMaths::TTransform&	GetTransform() const								{	return m_Transform;	}
-	void						SetTransform(const TLMaths::TTransform& Transform)	{	m_Transform = Transform; OnTransformChanged(); }	
+	void						SetTransform(const TLMaths::TTransform& Transform)	{	m_Transform = Transform; OnTransformChanged(TRUE, TRUE, TRUE); }	
 
 	// Distance checks
 	virtual float				GetDistanceTo(const TLMaths::TLine& Line);
@@ -49,10 +49,11 @@ protected:
 	//virtual void				Rotate(float3 vRotation);
 	//virtual void				Scale(float3 vScale);
 
-	void						OnTranslationChanged();
-	void						OnRotationChanged();
-	void						OnScaleChanged();
-	void						OnTransformChanged();
+	FORCEINLINE void			OnTranslationChanged()		{ OnTransformChanged(TRUE, FALSE, FALSE); }
+	FORCEINLINE void			OnRotationChanged()			{ OnTransformChanged(FALSE, TRUE, FALSE); }
+	FORCEINLINE void			OnScaleChanged()			{ OnTransformChanged(FALSE, FALSE, TRUE); }
+
+	void						OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);
 
 private:
 	TLMaths::TTransform			m_Transform;

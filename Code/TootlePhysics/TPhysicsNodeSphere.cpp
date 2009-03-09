@@ -128,7 +128,8 @@ void TLPhysics::TPhysicsNodeSphere::PostUpdate(float Timestep,TLPhysics::TPhysic
 // [06/03/09] DB - Specific sphere physics transform change
 void TLPhysics::TPhysicsNodeSphere::OnRenderTransformChange()
 {
-	TLMessaging::TMessage Message("TRANSFORM");
+	TLMessaging::TMessage Message("Physics");
+	Message.AddChannelID("OnTransform");
 	Message.ExportData("Translate", m_RenderTransform.GetTranslate());
 	Message.ExportData("Rotation", m_RenderTransform.GetRotation());
 	PublishMessage(Message);

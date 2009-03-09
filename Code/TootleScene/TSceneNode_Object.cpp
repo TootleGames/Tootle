@@ -87,7 +87,7 @@ Bool TSceneNode_Object::CreatePhysicsNode(TRefRef PhysicsNodeType)
 	if ( Transform.HasRotation() )
 		Message.AddChildAndData("Rotation", Transform.GetRotation() );
 
-	Message.ExportData("Owner", this);
+	Message.ExportData("Owner", GetNodeRef());
 
 	//	create node
 	TRef ParentNode = TRef();
@@ -136,7 +136,7 @@ Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TLMessaging
 		if ( Transform.HasRotation() )
 			Message.AddChildAndData("Rotation", Transform.GetRotation() );
 
-		Message.ExportData("Owner", this);
+		Message.ExportData("Owner", GetNodeRef());
 
 		//	create node
 		m_RenderNodeRef = TLRender::g_pRendergraph->CreateNode( GetNodeRef(), RenderNodeType, ParentRenderNodeRef, &Message );
@@ -167,7 +167,7 @@ TRef TSceneNode_Object::CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset)
 	Message.ExportData("Asset", AudioAsset);
 	Message.ExportData("Play", TRUE);
 	Message.ExportData("Translate", GetTranslate());
-	Message.ExportData("Owner", this);
+	Message.ExportData("Owner", GetNodeRef());
 
 	// Create an audio node for the specified audio reference
 	return TLAudio::g_pAudiograph->CreateNode(AudioRef, "Audio", "Root", &Message);
@@ -181,7 +181,7 @@ TRef TSceneNode_Object::CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset, co
 	Message.ExportData("Play", TRUE);
 	Message.ExportData("Props", Props);
 	Message.ExportData("Translate", GetTranslate());
-	Message.ExportData("Owner", this);
+	Message.ExportData("Owner", GetNodeRef());
 
 	// Create an audio node for the specified audio reference
 	return TLAudio::g_pAudiograph->CreateNode(AudioRef, "Audio", "Root", &Message);

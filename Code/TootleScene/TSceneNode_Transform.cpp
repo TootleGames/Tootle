@@ -10,30 +10,38 @@ using namespace TLScene;
 //---------------------------------------------------------
 void TLScene::TSceneNode_Transform::Initialise(TLMessaging::TMessage& Message)
 {
+	// Add event channel for the transform message
+	TPtr<TLMessaging::TEventChannel> pEventChannel = RegisterEventChannel("OnTransform");	
+
+	if(pEventChannel)
+		pEventChannel->SubscribeTo(this);
+
+
 	//	read transform info (same as render node's init)
-	Bool TransformChanged = FALSE;
+	Bool bTranslation, bRotation, bScale;
+	bTranslation = bRotation = bScale = FALSE;
 
 	if ( Message.ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
 	{
 		m_Transform.SetTranslateValid();
-		TransformChanged = TRUE;
-	}
-
-	if ( Message.ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
-	{
-		m_Transform.SetScaleValid();
-		TransformChanged = TRUE;
+		bTranslation = TRUE;
 	}
 
 	if ( Message.ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
 	{
 		m_Transform.SetRotationValid();
-		TransformChanged = TRUE;
+		bRotation = TRUE;
 	}
 
-	//	transform has been set
-	if ( TransformChanged )
-		OnTransformChanged();
+	if ( Message.ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
+	{
+		m_Transform.SetScaleValid();
+		bScale = TRUE;
+	}
+
+	//	Has transform been changed?
+	if( bTranslation || bRotation || bScale )
+		OnTransformChanged(bTranslation, bRotation, bScale);
 
 	//	do inherited initialise
 	TLScene::TSceneNode::Initialise( Message );
@@ -42,60 +50,58 @@ void TLScene::TSceneNode_Transform::Initialise(TLMessaging::TMessage& Message)
 
 void TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(Message.GetMessageRef() == "TRANSFORM")
+	if(Message.GetMessageRef() == "Physics")
 	{
-
 		float3 vVector;
 		TLMaths::TQuaternion qRot;
-		Bool bTranformChanged = FALSE;
+		Bool bTranslation, bRotation, bScale;
+		bTranslation = bRotation = bScale = FALSE;
 
 		// Absolute position/rotation/scale setting
 		if(Message.ImportData("Translate", vVector))
 		{
 			m_Transform.SetTranslate(vVector);
-			bTranformChanged = TRUE;
-			//SetTranslate(vVector);
+			bTranslation = TRUE;
 		}
 
 		if(Message.ImportData("Rotation", qRot))
 		{
 			m_Transform.SetRotation(qRot);
-			bTranformChanged = TRUE;
-			//SetRotation(qRot);
+			bRotation = TRUE;
 		}
 
 		if(Message.ImportData("Scale", vVector))
 		{
 			m_Transform.SetScale(vVector);
-			bTranformChanged = TRUE;
-			//SetScale(vVector);
+			bScale = TRUE;
 		}
 
 		// If any part of the transform changed forward the message on
-		if(bTranformChanged)
+		if(bTranslation || bRotation || bScale)
 		{
-			//	gr: inject our ref so subscriber knows what node has changed
-			Message.AddChildAndData("SNRef", this->GetNodeRef() );
-			Message.AddChildAndData("SNType", this->GetNodeTypeRef() );
-
-			PublishMessage(Message);
+			// Publish a new message with 'Node' ID
+			OnTransformChanged(bTranslation, bRotation, bScale);
 		}
-
+	}
+	else if(Message.GetMessageRef() == "Editor")
+	{
+		float3 vVector;
+		TLMaths::TQuaternion qRot;
 
 		// Delta position/rotation/scale that are requested from other things i.e. editor
-		if(Message.ImportData("ReqTranslate", vVector))
+		if(Message.ImportData("Translate", vVector))
 		{
 			// Apply translation
 			Translate(vVector);
 		}
 
-		if(Message.ImportData("ReqRotate", qRot))
+		if(Message.ImportData("Rotate", qRot))
 		{
 			//Apply rotation
 			TLDebug_Break("Rotate message received - needs implementing");
 		}
 		
-		if(Message.ImportData("ReqScale", vVector))
+		if(Message.ImportData("Scale", vVector))
 		{
 			// Apply scale
 			TLDebug_Break("Scale message received - needs implementing");
@@ -108,37 +114,26 @@ void TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Message)
 	TSceneNode::ProcessMessage(Message);
 }
 
-// Translation changed
-void TSceneNode_Transform::OnTranslationChanged()
-{
-	TLMessaging::TMessage Message("TRANSFORM");
-	Message.ExportData("Translate", GetTranslate());
-	PublishMessage(Message);
-}
 
-// Rotation changed
-void TSceneNode_Transform::OnRotationChanged()
+// Transform changed
+void TSceneNode_Transform::OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale)
 {
-	TLMessaging::TMessage Message("TRANSFORM");
-	Message.ExportData("Rotation", GetRotation());
-	PublishMessage(Message);
-}
+	TLMessaging::TMessage Message("Node");
+	Message.AddChannelID("OnTransform");
 
-// Scale changed
-void TSceneNode_Transform::OnScaleChanged()
-{
-	TLMessaging::TMessage Message("TRANSFORM");
-	Message.ExportData("Scale", GetScale());
-	PublishMessage(Message);
-}
+	if(bTranslation)
+		Message.ExportData("Translate", GetTranslate());
 
-// Entire transform changed
-void TSceneNode_Transform::OnTransformChanged()
-{
-	TLMessaging::TMessage Message("TRANSFORM");
-	Message.ExportData("Translate", GetTranslate());
-	Message.ExportData("Rotation", GetRotation());
-	Message.ExportData("Scale", GetScale());
+	if(bRotation)
+		Message.ExportData("Rotation", GetRotation());
+
+	if(bScale)
+		Message.ExportData("Scale", GetScale());
+
+	//	gr: inject our ref so subscriber knows what node has changed
+	Message.AddChildAndData("SNRef", GetNodeRef() );
+	Message.AddChildAndData("SNType", GetNodeTypeRef() );
+
 	PublishMessage(Message);
 }
 

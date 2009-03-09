@@ -3,6 +3,10 @@
 #include <TootleCore/TLMaths.h>
 #include <TootleCore/TLTime.h>
 
+#include <TootleScene/TScenegraph.h>
+#include <TootleCore/TEventChannel.h>
+
+
 
 //	if something moves less than this amount then dont apply the change - 
 //	this stops the world collision sphere from being invalidated more than we need to
@@ -56,6 +60,34 @@ TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 #ifdef CACHE_ACCUMULATED_MOVEMENT
 	m_AccumulatedMovementValid = FALSE;
 #endif
+}
+
+void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
+{
+	TRef	OwnerRef;
+
+	if(Message.ImportData("Owner", OwnerRef))
+	{
+		// Get the scenegraph node
+		TPtr<TLScene::TSceneNode> pOwner = TLScene::g_pScenegraph->FindNode(OwnerRef);
+
+		if(pOwner.IsValid())
+		{
+			TPtr<TLMessaging::TEventChannel>& pEventChannel = pOwner->FindEventChannel("OnTransform");
+
+			if(pEventChannel)
+			{
+				// Subscribe to the scene node owners transform channel
+				SubscribeTo(pEventChannel);
+
+				// Subscribe the 'scene' node owner to this node so we can sen audio change messages
+				pOwner->SubscribeTo(this);
+			}
+		}
+	}
+
+
+	TLGraph::TGraphNode<TPhysicsNode>::Initialise(Message);
 }
 
 	
@@ -251,47 +283,23 @@ void TLPhysics::TPhysicsNode::MovePosition(const float3& Movement,float Timestep
 }
 
 
-// [05/03/09] DB - Publish a message to say the physics position has changed
-// This should propagate to the scene node which will then pass it onto the render node
-void TLPhysics::TPhysicsNode::OnTranslationChanged()
-{
-	SetWorldCollisionShapeInvalid();	
-
-	TLMessaging::TMessage Message("TRANSFORM");
-	Message.ExportData("Translate", m_Transform.GetTranslate());
-	PublishMessage(Message);
-}
-
-
-// Rotation changed
-void TLPhysics::TPhysicsNode::OnRotationChanged()
-{
-	SetWorldCollisionShapeInvalid();	
-
-	TLMessaging::TMessage Message("TRANSFORM");
-	Message.ExportData("Rotation", m_Transform.GetRotation());
-	PublishMessage(Message);
-}
-
-// Scale changed
-void TLPhysics::TPhysicsNode::OnScaleChanged()
-{
-	SetWorldCollisionShapeInvalid();
-
-	TLMessaging::TMessage Message("TRANSFORM");
-	Message.ExportData("Scale", m_Transform.GetScale());
-	PublishMessage(Message);
-}
-
 // Entire transform hads changed
-void TLPhysics::TPhysicsNode::OnTransformChanged()	
+void TLPhysics::TPhysicsNode::OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale)	
 {	
 	SetWorldCollisionShapeInvalid();	
 
-	TLMessaging::TMessage Message("TRANSFORM");
-	Message.ExportData("Translate", m_Transform.GetTranslate());
-	Message.ExportData("Rotation", m_Transform.GetRotation());
-	Message.ExportData("Scale", m_Transform.GetScale());
+	TLMessaging::TMessage Message("Physics");
+	Message.AddChannelID("OnTransform");
+
+	if(bTranslation)
+		Message.ExportData("Translate", m_Transform.GetTranslate());
+
+	if(bRotation)
+		Message.ExportData("Rotation", m_Transform.GetRotation());
+
+	if(bScale)
+		Message.ExportData("Scale", m_Transform.GetScale());
+
 	PublishMessage(Message);
 }
 

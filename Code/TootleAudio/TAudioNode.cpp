@@ -4,6 +4,9 @@
 
 #include <TootleCore/TLMaths.h>
 
+#include <TootleScene/TScenegraph.h>
+
+
 using namespace TLAudio;
 
 TAudioNode::TAudioNode(TRefRef NodeRef,TRefRef TypeRef) :
@@ -16,6 +19,29 @@ TAudioNode::TAudioNode(TRefRef NodeRef,TRefRef TypeRef) :
 // Initialise routine
 void TAudioNode::Initialise(TLMessaging::TMessage& Message)	
 {
+	// Process the owner setup first
+	TRef	OwnerRef;
+
+	if(Message.ImportData("Owner", OwnerRef))
+	{
+		// Get the scenegraph node
+		TPtr<TLScene::TSceneNode> pOwner = TLScene::g_pScenegraph->FindNode(OwnerRef);
+
+		if(pOwner.IsValid())
+		{
+			TPtr<TLMessaging::TEventChannel>& pEventChannel = pOwner->FindEventChannel("OnTransform");
+
+			if(pEventChannel)
+			{
+				// Subscribe tot he scene node owners ontransform channel
+				SubscribeTo(pEventChannel);
+
+				// Subscribe the 'scene' node owner to this node so we can sen audio change messages
+				pOwner->SubscribeTo(this);
+			}
+		}
+	}
+
 	// Setup audio properties first
 	TAudioProperties Props;
 
@@ -144,8 +170,10 @@ void TAudioNode::ProcessMessage(TLMessaging::TMessage& Message)
 
 		return;
 	}
-	else if(Message.GetMessageRef() == "TRANSFORM")
+	else if(Message.GetMessageRef() == "Node")
 	{
+		// NOTE: Only need to check the channelID if we subscribe to other channels on a node. 
+		//if(Message.HasChannelID() == "OnTransform")
 		float3 vVector;
 		if(Message.ImportData("Translate", vVector))
 		{

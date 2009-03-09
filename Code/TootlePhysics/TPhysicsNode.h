@@ -73,13 +73,12 @@ public:
 	
 	void					OnVelocityChanged()					{	SetAccumulatedMovementInvalid();	SetWorldCollisionShapeInvalid();	}
 	void					OnForceChanged()					{	SetAccumulatedMovementInvalid();	SetWorldCollisionShapeInvalid();	}
-	void					OnTransformChanged();
 
-	// Translation only change - want individual routines for change in translation/rotation/scale
-	// rather than one for all to reduce amount of data sent in the message.
-	void					OnTranslationChanged();
-	void					OnRotationChanged();	
-	void					OnScaleChanged();
+	FORCEINLINE void		OnTranslationChanged()	{ OnTransformChanged(TRUE, FALSE, FALSE); }
+	FORCEINLINE void		OnRotationChanged()		{ OnTransformChanged(FALSE, TRUE, FALSE); }
+	FORCEINLINE void		OnScaleChanged()		{ OnTransformChanged(FALSE, FALSE, TRUE); }
+
+	void					OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);
 
 	Bool					HasCollision() const				{	return m_pCollisionShape.IsValid() ? m_pCollisionShape->IsValid() : FALSE;	}
 	void					SetCollisionNone()					{	m_pCollisionShape = NULL;	SetWorldCollisionShapeInvalid();	SetCollisionZoneNeedsUpdate();	}
@@ -108,6 +107,9 @@ public:
 	void						UpdateNodeCollisionZone(TPtr<TLPhysics::TPhysicsNode>& pThis,TLPhysics::TPhysicsgraph* pGraph);	//	update what collision zone we're in
 
 protected:
+
+	virtual void				Initialise(TLMessaging::TMessage& Message);
+
 	const float3&				GetWorldUp() const							{	return HasParent() ? GetParent()->GetWorldUp() : TLPhysics::g_WorldUpNormal;	}
 	
 	void						PostUpdateAll(float Timestep,TLPhysics::TPhysicsgraph* pGraph,TPtr<TLPhysics::TPhysicsNode>& pThis);		//	update tree: update self, and children and siblings

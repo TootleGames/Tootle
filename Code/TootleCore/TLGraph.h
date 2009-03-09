@@ -183,7 +183,7 @@ private:
 //		use TPtr& pPtr for internal/protected functions (sibling funcs)
 //--------------------------------------------------------------------
 template <class T>
-class TLGraph::TGraphNode : public TLMessaging::TPublisherSubscriber, public TLMessaging::TMessageQueue, public TLGraph::TGraphNodeBase
+class TLGraph::TGraphNode : public TLMessaging::TPublisherSubscriber, public TLMessaging::TEventChannelInterface, public TLMessaging::TMessageQueue, public TLGraph::TGraphNodeBase
 {
 	friend class TGraph<T>;
 public:
@@ -787,14 +787,6 @@ void TLGraph::TGraphNode<T>::ProcessMessage(TLMessaging::TMessage& Message)
 
 	if(MessageRef == TLCore::InitialiseRef)
 	{
-		// Process the owner setup first
-		TLMessaging::TPublisherSubscriber* pOwner;
-		if(Message.ImportData("Owner", pOwner))
-		{
-			pOwner->SubscribeTo(this);
-			SubscribeTo(pOwner);
-		}
-
 		// Now initialise
 		Initialise(Message);
 		return;
@@ -1507,8 +1499,8 @@ void TLGraph::TGraph<T>::OnNodeRemoved(TRefRef NodeRef)
 {
 	// Send the removed node notificaiton
 	TLMessaging::TMessage Message("GRAPHCHANGE");
-	Message.Write( NodeRef );
-
+	Message.AddChannelID("Removed");
+	Message.ExportData("NodeRef", NodeRef);
 	PublishMessage(Message);
 }
 
@@ -1526,6 +1518,8 @@ void TLGraph::TGraph<T>::OnNodeAdded(TPtr<T>& pNode)
 
 	// Send the added node notificaiton
 	TLMessaging::TMessage Message("GRAPHCHANGE");
+	Message.AddChannelID("Added");
+	Message.ExportData("NodeRef", pNode->GetNodeRef());
 
 	PublishMessage(Message);
 }

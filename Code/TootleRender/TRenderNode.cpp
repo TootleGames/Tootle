@@ -1,11 +1,9 @@
 #include "TRenderNode.h"
 #include "TRendergraph.h"
 
+#include <TootleScene/TScenegraph.h>
 
 //#define DEBUG_PrintBoundsInvalidationChanges
-
-
-
 
 
 void Debug_PrintInvalidate(const TLRender::TRenderNode* pObject,const char* pSpaceType,const char* pShapeType)
@@ -705,6 +703,30 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 		Message.Debug_PrintTree();
 #endif
 		*/
+	TRef	OwnerRef;
+
+	if(Message.ImportData("Owner", OwnerRef))
+	{
+		// Get the scenegraph node
+		TPtr<TLScene::TSceneNode> pOwner = TLScene::g_pScenegraph->FindNode(OwnerRef);
+
+		if(pOwner.IsValid())
+		{
+			TPtr<TLMessaging::TEventChannel>& pEventChannel = pOwner->FindEventChannel("OnTransform");
+
+			if(pEventChannel)
+			{
+				// Subscribe to the scene node owners transform channel
+				SubscribeTo(pEventChannel);
+
+				// Subscribe the 'scene' node owner to this node so we can sen audio change messages
+				pOwner->SubscribeTo(this);
+			}
+		}
+	}
+
+
+
 
 	Bool TransformChanged = FALSE;
 
@@ -794,34 +816,37 @@ void TLRender::TRenderNode::Shutdown()
 
 void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 {
-
-	if(Message.GetMessageRef() == "TRANSFORM")
+	if(Message.GetMessageRef() == "Node")
 	{
-		Bool TransformChanged = FALSE;
-
-		if ( Message.ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
+		// NOTE: Only need to check the channelID if we subscribe to other channels on a node.
+		//if(Message.HasChannelID("OnTransform"))
 		{
-			m_Transform.SetTranslateValid();
-			TransformChanged = TRUE;
+			Bool TransformChanged = FALSE;
+
+			if ( Message.ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
+			{
+				m_Transform.SetTranslateValid();
+				TransformChanged = TRUE;
+			}
+
+			if ( Message.ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
+			{
+				m_Transform.SetScaleValid();
+				TransformChanged = TRUE;
+			}
+
+			if ( Message.ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
+			{
+				m_Transform.SetRotationValid();
+				TransformChanged = TRUE;
+			}
+
+			//	transform has been set
+			if ( TransformChanged )
+				OnTransformChanged();
+
+			return;
 		}
-
-		if ( Message.ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
-		{
-			m_Transform.SetScaleValid();
-			TransformChanged = TRUE;
-		}
-
-		if ( Message.ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
-		{
-			m_Transform.SetRotationValid();
-			TransformChanged = TRUE;
-		}
-
-		//	transform has been set
-		if ( TransformChanged )
-			OnTransformChanged();
-
-		return;
 	}
 
 	//	do inherited init
