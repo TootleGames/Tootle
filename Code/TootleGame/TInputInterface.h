@@ -16,9 +16,9 @@
 #include <TootleCore/TClassFactory.h>
 
 
-namespace TLGui
+namespace TLInput
 {
-	class TGui;
+	class TInputInterface;
 };
 
 namespace TLRender
@@ -34,7 +34,7 @@ namespace TLRender
 //	consider turning the GUI (this) into another input device that 
 //	piggy backs on the mouse input?
 //----------------------------------------------
-class TLGui::TGui : public TLMessaging::TPublisher, public TLMessaging::TSubscriber
+class TLInput::TInputInterface : public TLMessaging::TPublisher, public TLMessaging::TSubscriber
 {
 protected:
 	class TClick
@@ -57,8 +57,8 @@ protected:
 	};
 
 public:
-	TGui(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef());
-	~TGui();
+	TInputInterface(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef());
+	~TInputInterface();
 	
 	SyncBool					Initialise();						//	continue initialising
 	void						Shutdown();							//	shutdown code - just unsubscribes from publishers - this is to release all the TPtr's so we can be destructed

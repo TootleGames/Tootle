@@ -8,7 +8,7 @@
 -------------------------------------------------------*/
 #pragma once
 
-#include "TGui.h"
+#include "TInputInterface.h"
 
 
 namespace TLGui
@@ -19,9 +19,9 @@ namespace TLGui
 
 
 //----------------------------------------------
-//	scroll bar derives from the TGui, catches clicks then updates the scroll value
+//	scroll bar derives from the TInputInterface, catches clicks then updates the scroll value
 //----------------------------------------------
-class TLGui::TWidgetScrollbar : public TLGui::TGui
+class TLGui::TWidgetScrollbar : public TLInput::TInputInterface
 {
 public:
 	TWidgetScrollbar(TRefRef RenderTargetRef,TRefRef ScrollBarRenderNode,TRefRef SliderRenderNode,TRefRef UserRef,TRefRef ActionOut,float InitialScrollValue=0.f);

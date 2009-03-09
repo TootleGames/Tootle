@@ -10,7 +10,7 @@ TLGui::TWidgetScrollbar::TWidgetScrollbar(TRefRef RenderTargetRef,TRefRef Scroll
 	m_ScrollBarRenderNode	( ScrollBarRenderNode ),
 	m_SliderRenderNode		( SliderRenderNode ),
 	m_SliderPosValid		( FALSE ),
-	TGui					( RenderTargetRef, TRef(), UserRef, ActionOut )
+	TInputInterface					( RenderTargetRef, TRef(), UserRef, ActionOut )
 {
 	//	check an invalid scroll value provided is valid
 	if ( m_ScrollValue < 0.f || m_ScrollValue > 1.f )
@@ -83,7 +83,7 @@ SyncBool TLGui::TWidgetScrollbar::ProcessClick(const TClick& Click,TLRender::TSc
 //-------------------------------------------------
 Bool TLGui::TWidgetScrollbar::Update()
 {
-	Bool NeedsUpdate = TGui::Update();
+	Bool NeedsUpdate = TInputInterface::Update();
 
 	//	update slider pos
 	if ( !m_SliderPosValid )

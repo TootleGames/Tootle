@@ -64,7 +64,6 @@ public:
 	TPtr<TLInput::TInputSensor>&	AttachSensor(TRefRef SensorRef, TSensorType SensorType);
 	Bool							HasSensor(TRefRef SensorRef)	{	return m_Sensors.Exists( SensorRef );	}
 	TPtr<TLInput::TInputSensor>&	GetSensor(TRefRef SensorRef)	{	return m_Sensors.FindPtr( SensorRef );	}
-	TPtrArray<TInputSensor>&		GetSensors()					{	return m_Sensors;	}
 
 	TPtr<TLInput::TInputSensor>&	GetSensorFromLabel(TRefRef SensorLabelRef);
 	Bool							GetSensorRefFromLabel(TRef SensorLabelRef, TRef& SensorRef);

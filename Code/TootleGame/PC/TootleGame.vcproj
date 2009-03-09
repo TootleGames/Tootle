@@ -164,11 +164,19 @@
 			>
 		</File>
 		<File
-			RelativePath="..\TGui.cpp"
+			RelativePath="..\TGuiManager.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\TGui.h"
+			RelativePath="..\TGuiManager.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TInputInterface.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TInputInterface.h"
 			>
 		</File>
 		<File

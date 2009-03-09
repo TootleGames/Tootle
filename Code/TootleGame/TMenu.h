@@ -9,7 +9,7 @@
 #include <TootleAsset/TMenu.h>
 #include <TootleCore/TPublisher.h>
 #include <TootleCore/TSubscriber.h>
-#include "TGui.h"
+#include "TInputInterface.h"
 
 
 namespace TLMenu
@@ -112,5 +112,5 @@ public:
 public:
 	TRef					m_MenuRef;
 	TRef					m_RenderNode;		//	root render node
-	TPtrArray<TLGui::TGui>	m_Guis;				//	guis
+	TPtrArray<TLInput::TInputInterface>	m_Guis;				//	guis
 };

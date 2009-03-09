@@ -1,4 +1,4 @@
-#include "TGui.h"
+#include "TInputInterface.h"
 #include <TootleInput/TUser.h>
 #include <TootleInput/TLInput.h>
 #include <TootleInput/TDevice.h>
@@ -12,7 +12,7 @@
 
 
 
-TLGui::TGui::TGui(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp)  : 
+TLInput::TInputInterface::TInputInterface(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp)  : 
 	m_InitialisedRenderNodes	( FALSE ),
 	m_Subscribed				( FALSE ),
 	m_ActionIsDown				( FALSE ),
@@ -22,10 +22,10 @@ TLGui::TGui::TGui(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,
 	m_ActionOutDown				( ActionOutDown ),
 	m_ActionOutUp				( ActionOutUp )
 {
-	//	no actions going out means this TGui wont do anything
+	//	no actions going out means this TInputInterface wont do anything
 	if ( !m_ActionOutDown.IsValid() && !m_ActionOutUp.IsValid() )
 	{
-		TLDebug_Break("TGui created that won't send out actions");
+		TLDebug_Break("TInputInterface created that won't send out actions");
 	}
 
 	//	start initialise
@@ -38,9 +38,9 @@ TLGui::TGui::TGui(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,
 }
 
 
-TLGui::TGui::~TGui()
+TLInput::TInputInterface::~TInputInterface()
 {
-	TTempString Debug_String("TGui destructed ");
+	TTempString Debug_String("TInputInterface destructed ");
 	m_RenderNodeRef.GetString( Debug_String );
 	TLDebug_Print( Debug_String );
 }
@@ -49,7 +49,7 @@ TLGui::TGui::~TGui()
 //-------------------------------------------------
 //	keeps subscribing to the appropriate channels until everything is done
 //-------------------------------------------------
-SyncBool TLGui::TGui::Initialise()
+SyncBool TLInput::TInputInterface::Initialise()
 {
 	//	already initialised
 	if ( m_Subscribed && m_InitialisedRenderNodes )
@@ -123,16 +123,14 @@ SyncBool TLGui::TGui::Initialise()
 				continue;
 
 			//	subscribe to all of the button sensors
-			TPtrArray<TLInput::TInputSensor>& InputDeviceSensors = InputDevice.GetSensors();
+			u32 NumberOfButtons = InputDevice.GetSensorCount(TLInput::Button);
 
-			for ( u32 s=0;	s<InputDeviceSensors.GetSize();	s++ )
+			for ( u32 s=0; s < NumberOfButtons ;s++ )
 			{
-				TPtr<TLInput::TInputSensor>& pSensor = InputDeviceSensors[s];
-				if ( pSensor->GetSensorType() != TLInput::Button )
-					continue;
+				TRef ButtonRef = TLInput::GetDefaultButtonRef(s);
 
 				//	map this action to this button sensor
-				m_Subscribed |= pUser->MapAction( m_ActionIn, pSensor );
+				m_Subscribed |= pUser->MapAction( m_ActionIn, InputDevice.GetDeviceRef(), ButtonRef );
 			}
 		}
 
@@ -154,7 +152,7 @@ SyncBool TLGui::TGui::Initialise()
 //-------------------------------------------------
 //	get array of all the render nodes we're using
 //-------------------------------------------------
-void TLGui::TGui::GetRenderNodes(TArray<TRef>& RenderNodeArray)
+void TLInput::TInputInterface::GetRenderNodes(TArray<TRef>& RenderNodeArray)
 {
 	RenderNodeArray.Add( m_RenderNodeRef );
 }
@@ -163,7 +161,7 @@ void TLGui::TGui::GetRenderNodes(TArray<TRef>& RenderNodeArray)
 //-------------------------------------------------
 //	shutdown code - just unsubscribes from publishers - this is to release all the TPtr's so we can be destructed
 //-------------------------------------------------
-void TLGui::TGui::Shutdown()
+void TLInput::TInputInterface::Shutdown()
 {
 	TLMessaging::TPublisher::Shutdown();
 	TLMessaging::TSubscriber::Shutdown();
@@ -173,13 +171,13 @@ void TLGui::TGui::Shutdown()
 //-------------------------------------------------
 //	
 //-------------------------------------------------
-void TLGui::TGui::ProcessMessage(TLMessaging::TMessage& Message)
+void TLInput::TInputInterface::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	if(Message.GetMessageRef() == "Input")
 	{
 		if ( !HasSubscribers() )
 		{
-			TTempString Debug_String("TGui ");
+			TTempString Debug_String("TInputInterface ");
 			m_RenderNodeRef.GetString( Debug_String );
 			Debug_String.Append(" has no subscribers");
 			TLDebug_Warning( Debug_String );
@@ -218,7 +216,7 @@ void TLGui::TGui::ProcessMessage(TLMessaging::TMessage& Message)
 //-------------------------------------------------
 //	put a click in the queue
 //-------------------------------------------------
-void TLGui::TGui::QueueClick(const int2& CursorPos,float ActionValue)		
+void TLInput::TInputInterface::QueueClick(const int2& CursorPos,float ActionValue)		
 {
 	//	if this "click" is a mouse up, and the previous was too, then dont add it
 	if ( m_QueuedClicks.GetSize() > 0 )
@@ -237,7 +235,7 @@ void TLGui::TGui::QueueClick(const int2& CursorPos,float ActionValue)
 //-------------------------------------------------
 //	update routine - return FALSE if we don't need updates any more
 //-------------------------------------------------
-Bool TLGui::TGui::Update()
+Bool TLInput::TInputInterface::Update()
 {
 	//	keep doing initialise
 	if ( Initialise() == SyncWait )
@@ -251,7 +249,7 @@ Bool TLGui::TGui::Update()
 //-------------------------------------------------
 //	go through queued-up (unhandled) clicks and respond to them
 //-------------------------------------------------
-void TLGui::TGui::ProcessQueuedClicks()
+void TLInput::TInputInterface::ProcessQueuedClicks()
 {
 	//	if we have no subscribers we can just ditch the clicks...
 	if ( !HasSubscribers() )
@@ -298,7 +296,7 @@ void TLGui::TGui::ProcessQueuedClicks()
 //-------------------------------------------------
 //	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
 //-------------------------------------------------
-SyncBool TLGui::TGui::ProcessClick(const TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TPtr<TLRender::TRenderNode>& pRenderNode)
+SyncBool TLInput::TInputInterface::ProcessClick(const TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TPtr<TLRender::TRenderNode>& pRenderNode)
 {
 	if ( Click.m_ActionValue == 0.f )
 	{
@@ -370,7 +368,7 @@ SyncBool TLGui::TGui::ProcessClick(const TClick& Click,TLRender::TScreen& Screen
 //-------------------------------------------------
 //	when click has been validated action message is sent to subscribers
 //-------------------------------------------------
-void TLGui::TGui::SendActionMessage(Bool ActionDown,float RawData)
+void TLInput::TInputInterface::SendActionMessage(Bool ActionDown,float RawData)
 {
 	if ( !HasSubscribers() )
 		return;
@@ -382,7 +380,7 @@ void TLGui::TGui::SendActionMessage(Bool ActionDown,float RawData)
 	TRef ActionOutRef = ActionDown ? m_ActionOutDown : m_ActionOutUp;
 
 #ifdef _DEBUG
-	TTempString Debug_String("TGui (");
+	TTempString Debug_String("TInputInterface (");
 	m_RenderNodeRef.GetString( Debug_String );
 	Debug_String.Append(") outgoing click message ");
 	ActionOutRef.GetString( Debug_String );

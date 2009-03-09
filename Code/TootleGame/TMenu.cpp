@@ -330,18 +330,18 @@ TLGame::TMenuWrapper::TMenuWrapper(TLMenu::TMenuController* pMenuController,TRef
 		TLRender::g_pRendergraph->ImportScheme( pScheme, m_RenderNode );
 	}
 
-	//	create TGui's for each menu item
+	//	create TInputInterface's for each menu item
 	const TPtrArray<TLMenu::TMenuItem>& MenuItems = pMenu->GetMenuItems();
 	for ( u32 i=0;	i<MenuItems.GetSize();	i++ )
 	{
-		//	get render node ref usable for the TGui
+		//	get render node ref usable for the TInputInterface
 		TRefRef MenuItemRenderNodeRef = MenuItems[i]->GetMeshRef();
 		if ( !MenuItemRenderNodeRef.IsValid() )
 			continue;
 
-		//	make the rendernode of this menu item clickable, the action coming out of the TGui
+		//	make the rendernode of this menu item clickable, the action coming out of the TInputInterface
 		//	is the ref of the menu item that was clicked
-		TPtr<TLGui::TGui> pGui = new TLGui::TGui( RenderTargetRef, MenuItemRenderNodeRef, "global", MenuItems[i]->GetMenuItemRef() );
+		TPtr<TLInput::TInputInterface> pGui = new TLInput::TInputInterface( RenderTargetRef, MenuItemRenderNodeRef, "global", MenuItems[i]->GetMenuItemRef() );
 
 		//	subscribe the menu controller to the gui to get the clicked messages
 		if ( pMenuController->SubscribeTo( pGui.GetObject() ) )
@@ -369,6 +369,6 @@ TLGame::TMenuWrapper::~TMenuWrapper()
 	m_MenuRef.SetInvalid();
 
 	//	dealloc guis - shut them down first to make sure all TPtr's are released
-	m_Guis.FunctionAll( &TLGui::TGui::Shutdown );
+	m_Guis.FunctionAll( &TLInput::TInputInterface::Shutdown );
 	m_Guis.Empty();
 }

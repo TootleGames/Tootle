@@ -32,7 +32,6 @@ public:
 	FORCEINLINE Bool			RemoveAction(TRefRef refActionID)			{	return m_ActionMap.Remove( refActionID );	}
 
 	Bool						MapAction(TRefRef refActionID, TRefRef refDeviceID, TRefRef SensorRef);
-	Bool						MapAction(TRefRef refActionID,TPtr<TLInput::TInputSensor>& pSensor);	
 	Bool						MapActionCondition(TRefRef refActionID, TLInput::TActionCondition uCondition, float fThreshold);
 	Bool						MapActionParent(TRefRef refActionID, TRefRef refParentActionID, Bool bCondition = TRUE);
 
@@ -55,6 +54,8 @@ protected:
 	void						UpdateCursorPosition();
 
 	inline void					SetUserIndex(u8 uIndex)				{ m_uLocalUserIndex = uIndex; }
+
+	Bool						MapAction(TRefRef refActionID,TPtr<TLInput::TInputSensor>& pSensor);	
 
 private:
 	void						RemoveAllActions()				{}
