@@ -75,6 +75,8 @@ public:
 	void				Set(const TLine& Line)							{	m_Start = Line.GetStart();	m_End = Line.GetEnd();	}
 	void				SetDir(const float2& Start,const float2& Dir)	{	Set( Start, Start + Dir );	}
 
+	float2&				GetStart()										{	return m_Start;	}
+	float2&				GetEnd()										{	return m_End;	}
 	const float2&		GetStart() const								{	return m_Start;	}
 	const float2&		GetEnd() const									{	return m_End;	}
 	float2				GetCenter() const								{	return (m_Start + m_End) * 0.5f;	}
@@ -96,12 +98,17 @@ public:
 	float2				GetNearestPoint(const float2& Pos) const		{	float pal;	return GetNearestPoint( Pos, pal );	}
 	float2				GetNearestPoint(const float2& Pos,float& PointAlongLine) const;		//	get a point along the line nearest to this point
 	float2				GetNearestPoint(const float3& Pos) const		{	return GetNearestPoint( Pos.xy() );	}
+	float				GetDistanceSq(const TLine2D& Line) const;		//	get distance to another line
 	
 	void				MoveStart(float Distance);						//	move the start point along the direction by an amount (NOT a factor)
 	void				MoveEnd(float Distance);						//	move the end point along the direction by an amount (NOT a factor)
 
 	void				Transform(const float2& Move)					{	m_Start += Move;	m_End += Move;	}
 	void				Transform(const float3& Move)					{	m_Start += Move;	m_End += Move;	}
+	void				Transform(const TLMaths::TTransform& Transform);
+
+private:
+	SyncBool			GetIntersectionDistance(const TLine2D& Line,float& IntersectionAlongThis,float& IntersectionAlongLine) const;	//	like GetIntersectionPos... return WAIT if the lines intersect past their extents
 
 public:
 	float2				m_Start;	//	line start

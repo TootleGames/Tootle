@@ -121,13 +121,13 @@ void TSceneNode_Transform::OnTransformChanged(Bool bTranslation, Bool bRotation,
 	TLMessaging::TMessage Message("Node");
 	Message.AddChannelID("OnTransform");
 
-	if(bTranslation)
+	if(bTranslation && m_Transform.HasTranslate() )
 		Message.ExportData("Translate", GetTranslate());
 
-	if(bRotation)
+	if(bRotation && m_Transform.HasRotation() )
 		Message.ExportData("Rotation", GetRotation());
 
-	if(bScale)
+	if(bScale && m_Transform.HasScale() )
 		Message.ExportData("Scale", GetScale());
 
 	//	gr: inject our ref so subscriber knows what node has changed
@@ -140,9 +140,17 @@ void TSceneNode_Transform::OnTransformChanged(Bool bTranslation, Bool bRotation,
 
 void TSceneNode_Transform::Translate(float3 vTranslation)
 {
-	float3 fPos = GetTranslate();
-	fPos += vTranslation;
-	SetTranslate(fPos);
+	//	no change
+	if ( vTranslation.LengthSq() == 0.f )
+		return;
+
+	//	if the current translate is valid, move it, else explicitly set new translate.
+	if ( GetTransform().HasTranslate() )
+	{
+		vTranslation += GetTranslate();
+	}
+	
+	SetTranslate( vTranslation );
 }
 
 

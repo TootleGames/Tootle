@@ -311,7 +311,7 @@ void TLGraph::TGraphNode<T>::Update(float Timestep)
 template <class T>
 void TLGraph::TGraphNode<T>::Initialise(TLMessaging::TMessage& Message)		
 {
-	//	gr: consider...
+	//	gr: consider this to initialise reflection...
 	//	GetNodeData().CopyTree( Message.GetData() );
 }
 
@@ -787,6 +787,14 @@ void TLGraph::TGraphNode<T>::ProcessMessage(TLMessaging::TMessage& Message)
 
 	if(MessageRef == TLCore::InitialiseRef)
 	{
+		//	Process the owner setup first - gr: so that there is no order-issues with the initialise? maybe need some way to ensure Initialise isn't called before this
+		TLMessaging::TPublisherSubscriber* pOwner;
+		if(Message.ImportData("Owner", pOwner))
+		{
+			pOwner->SubscribeTo(this);
+			SubscribeTo(pOwner);
+		}
+
 		// Now initialise
 		Initialise(Message);
 		return;
@@ -1501,6 +1509,11 @@ void TLGraph::TGraph<T>::OnNodeRemoved(TRefRef NodeRef)
 	TLMessaging::TMessage Message("GRAPHCHANGE");
 	Message.AddChannelID("Removed");
 	Message.ExportData("NodeRef", NodeRef);
+/*
+	Message.Write( NodeRef );
+	Message.Write( GetGraphRef() );
+	Message.Write( (Bool)FALSE );
+*/
 	PublishMessage(Message);
 }
 
@@ -1520,7 +1533,11 @@ void TLGraph::TGraph<T>::OnNodeAdded(TPtr<T>& pNode)
 	TLMessaging::TMessage Message("GRAPHCHANGE");
 	Message.AddChannelID("Added");
 	Message.ExportData("NodeRef", pNode->GetNodeRef());
-
+/*
+	Message.Write( pNode->GetNodeRef() );
+	Message.Write( GetGraphRef() );
+	Message.Write( (Bool)TRUE );
+*/
 	PublishMessage(Message);
 }
 

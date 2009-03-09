@@ -53,9 +53,10 @@ public:
 public:
 	TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef=TRef());
 
-	virtual void			Update(float Timestep);				//	physics update
-	virtual void			PostUpdate(float Timestep,TLPhysics::TPhysicsgraph* pGraph,TPtr<TLPhysics::TPhysicsNode>& pThis);			//	after collisions are handled
-	virtual Bool			PostIteration(u32 Iteration);		//	called after iteration, return TRUE to do another iteration
+	virtual void				Initialise(TLMessaging::TMessage& Message);	//	phsyics node init
+	virtual void				Update(float Timestep);						//	physics update
+	virtual void				PostUpdate(float Timestep,TLPhysics::TPhysicsgraph* pGraph,TPtr<TLPhysics::TPhysicsNode>& pThis);			//	after collisions are handled
+	virtual Bool				PostIteration(u32 Iteration);				//	called after iteration, return TRUE to do another iteration
 
 	float3						GetPosition() const;
 	void						SetPosition(const float3& Position);
@@ -84,8 +85,8 @@ public:
 	void					SetCollisionNone()					{	m_pCollisionShape = NULL;	SetWorldCollisionShapeInvalid();	SetCollisionZoneNeedsUpdate();	}
 	void					SetCollisionShape(TRefRef MeshRef);						//	setup polygon collision with a mesh
 	void					SetCollisionShape(const TLMaths::TSphere& Sphere);		//	setup a sphere collision
-	//void					SetCollisionShape(const TLMaths::TBox& Box);			//	setup a box collision
-	//void					SetCollisionShape(const TLMaths::TCapsule& Capsule);	//	setup a capsule collision
+	void					SetCollisionShape(const TLMaths::TCapsule2D& Capsule);	//	setup a capsule collision
+	void					SetCollisionShape(const TLMaths::TOblong2D& Oblong);	//	setup an oblong collision
 	TLMaths::TTransform&	GetCollisionShapeTransform()					{	return m_Transform;	}
 	TPtr<TCollisionShape>&	GetCollisionShape()								{	return m_pCollisionShape;	}
 	
@@ -119,8 +120,9 @@ protected:
 	FORCEINLINE void			SetAccumulatedMovementInvalid()				{	m_AccumulatedMovementValid = FALSE;	}
 	FORCEINLINE Bool			IsAccumulatedMovementValid() const			{	return m_AccumulatedMovementValid;	}
 
-	const float3&				GetForce() const					{	return (m_Force);	}
-	float3						GetVelocityAndForce() const			{	return (m_Velocity + m_Force);	}
+	const float3&				GetForce() const							{	return (m_Force);	}
+	float3						GetVelocityAndForce() const					{	return (m_Velocity + m_Force);	}
+	virtual float				GetFriction() const							{	return m_Friction;	}
 
 public:
 	float					m_Friction;			//	

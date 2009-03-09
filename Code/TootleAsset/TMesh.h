@@ -210,5 +210,19 @@ SHAPETYPE* TLAsset::TMesh::GetDatum(TRefRef DatumRef)
 
 	//	cast down
 	SHAPETYPE* pShape = pShapePtr.GetObject<SHAPETYPE>();	
+
+	//	gr: unfortunetly as it's templated has to be in the header, so this check will only work if the calling file's project is debug
+#ifdef _DEBUG
+	if ( pShape->GetShapeType() != SHAPETYPE::GetShapeType_Static() )
+	{
+		TTempString Debug_String("Shape ");
+		pShape->GetShapeType().GetString( Debug_String );
+		Debug_String.Append(" tried to be cast to ");
+		SHAPETYPE::GetShapeType_Static().GetString( Debug_String );
+		TLDebug_Break( Debug_String );
+		return NULL;
+	}
+#endif
+
 	return pShape;
 }

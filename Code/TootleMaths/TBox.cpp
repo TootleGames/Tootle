@@ -706,6 +706,38 @@ Bool TLMaths::TBox2D::GetIntersection(const TLine& Line) const
 	return FALSE;
 }
 
+/*
+//-------------------------------------------------
+//	test to see if this line intersects our box
+//-------------------------------------------------
+Bool TLMaths::TBox2D::GetIntersection(const TCapsule2D& Capsule) const
+{
+	const float3& v1 = Capsule.GetLine().GetStart();
+	const float3& v2 = Capsule.GetLine().GetEnd();
+
+	//	early check if either point of the line is inside the box
+	if ( GetIntersection( v1 ) )	return TRUE;
+	if ( GetIntersection( v2 ) )	return TRUE;
+
+	// check each line for intersection
+	float3 v2MinusV1( v2 - v1 );
+	float v1xMinusLeft = v1.x-m_Min.x;
+	float v1yMinusTop = v1.y-m_Min.y;
+	float BoxHeight = m_Max.y-m_Min.y;
+	if (LineIntersectLine( v2MinusV1, float2( v1xMinusLeft, v1yMinusTop ),		0.f,		BoxHeight ) ) return TRUE;
+
+	float v1yMinusBottom = v1.y-m_Max.y;
+	float BoxWidth = m_Max.x-m_Min.x;
+	if (LineIntersectLine( v2MinusV1, float2( v1xMinusLeft, v1yMinusBottom ),	BoxWidth,	0.f			) ) return TRUE;
+
+	if (LineIntersectLine( v2MinusV1, float2( v1xMinusLeft, v1yMinusTop ),		BoxWidth,	0.f			) ) return TRUE;
+
+	float v1xMinusRight = v1.x-m_Max.x;
+	if (LineIntersectLine( v2MinusV1, float2( v1xMinusRight, v1yMinusTop ),		0.f,		BoxHeight ) ) return TRUE;
+		
+	return FALSE;
+}
+*/
 
 //-------------------------------------------------
 //	test to see if this line intersects our box
@@ -881,33 +913,44 @@ Bool TempInBox(const TLMaths::TSphere2D& HitSphere,const float2& Min, const floa
 //-------------------------------------------------
 //	test to see if this line intersects our box
 //-------------------------------------------------
-Bool TLMaths::TBox2D::GetIntersection(const TCapsule& Capsule) const
+Bool TLMaths::TBox2D::GetIntersection(const TCapsule2D& Capsule) const
 {
-	const float2& B1 = m_Min;
-	const float2& B2 = m_Max;
-	const float3& L1 = Capsule.GetLine().GetStart();
-	const float3& L2 = Capsule.GetLine().GetEnd();
-	float Rad = Capsule.GetRadius();
-	TSphere2D Hit;
-	Hit.SetRadius( Rad );
+	const TLMaths::TLine2D& CapsuleLine = Capsule.GetLine();
 
-	if (L2.x+Rad < B1.x && L1.x+Rad < B1.x) return FALSE;
-	if (L2.x-Rad > B2.x && L1.x-Rad > B2.x) return FALSE;
-	if (L2.y+Rad < B1.y && L1.y+Rad < B1.y) return FALSE;
-	if (L2.y-Rad > B2.y && L1.y-Rad > B2.y) return FALSE;
-	
-/*	if ( GetIntersection( L1 ) )
+	//	quick is-inside test
+	if ( GetIntersection( CapsuleLine.GetStart() ) || GetIntersection( CapsuleLine.GetEnd() ) )
 		return TRUE;
 
-	if ( TempGetIntersection( L1.x-B1.x, L2.x-B1.x, L1, L2, Hit.GetPos()) && TempInBox( Hit, B1, B2, 1 ) )
+	//	do our "last chance" inside box test first as it's quite a good general test...
+	float2 BoxCenter = GetCenter();
+	float2 NearestPoint = CapsuleLine.GetNearestPoint( BoxCenter );
+	if ( (NearestPoint - BoxCenter).LengthSq() <= Capsule.GetRadiusSq() )
 		return TRUE;
-	if ( TempGetIntersection( L1.y-B1.y, L2.y-B1.y, L1, L2, Hit.GetPos()) && TempInBox( Hit, B1, B2, 2 ) )
+
+	//	do line intersection tests
+	float2 TopLeft(		m_Min.x, m_Min.y );
+	float2 TopRight(	m_Max.x, m_Min.y );
+	float2 BottomRight(	m_Max.x, m_Max.y );
+	float2 BottomLeft(	m_Min.x, m_Max.y );
+
+	float EdgeDistSq;
+
+	EdgeDistSq = CapsuleLine.GetDistanceSq( TLMaths::TLine2D( TopLeft, TopRight ) );
+	if ( EdgeDistSq <= Capsule.GetRadiusSq() )
 		return TRUE;
-	if ( TempGetIntersection( L1.x-B2.x, L2.x-B2.x, L1, L2, Hit.GetPos()) && TempInBox( Hit, B1, B2, 1 ) )
+
+	EdgeDistSq = CapsuleLine.GetDistanceSq( TLMaths::TLine2D( TopRight, BottomRight ) );
+	if ( EdgeDistSq <= Capsule.GetRadiusSq() )
 		return TRUE;
-	if ( TempGetIntersection( L1.y-B2.y, L2.y-B2.y, L1, L2, Hit.GetPos()) && TempInBox( Hit, B1, B2, 2 ) )
+
+	EdgeDistSq = CapsuleLine.GetDistanceSq( TLMaths::TLine2D( BottomRight, BottomLeft ) );
+	if ( EdgeDistSq <= Capsule.GetRadiusSq() )
 		return TRUE;
-*/
+
+	EdgeDistSq = CapsuleLine.GetDistanceSq( TLMaths::TLine2D( BottomLeft, TopLeft ) );
+	if ( EdgeDistSq <= Capsule.GetRadiusSq() )
+		return TRUE;
+
 	return FALSE;
 }
 

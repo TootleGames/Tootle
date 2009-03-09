@@ -37,7 +37,7 @@ namespace TLRef
 	TKeyArray<char,u32>	g_RefCharLookup;				//	lookup table for char->refchar
 
 	inline u32	GetRefCharIndex(char c);					//	get a refchar index from a string character
-	inline char	GetCharFromRefCharIndex(u32 Index);			//	get a string character from a refchar index
+	inline char	GetCharFromRefCharIndex(u32 Index,Bool Uppercase=FALSE);			//	get a string character from a refchar index
 	inline u32	GetRefBitsFromChar(char Char,u32 Index,Bool CheckIndex);
 
 	void		GenerateCharLookupTable();
@@ -149,13 +149,13 @@ inline u32 TLRef::GetRefCharIndex(char c)
 //---------------------------------------------------
 //	get a string character from a refchar index
 //---------------------------------------------------
-inline char TLRef::GetCharFromRefCharIndex(u32 Index)
+inline char TLRef::GetCharFromRefCharIndex(u32 Index,Bool Uppercase)
 {
 	//	invalid index
 	if ( Index >= g_RefCharTable_Size )
 		return 0;
 
-	return g_RefCharTable[Index];
+	return Uppercase ? g_RefCharTableAlt[Index] : g_RefCharTable[Index];
 }
 
 
@@ -331,7 +331,8 @@ void TRef::GetString(TString& RefString) const
 		u32 RefCharIndex = GetRefCharIndex( i );
 
 		//	convert index to character
-		char RefChar = TLRef::GetCharFromRefCharIndex( RefCharIndex );
+		//	gr: just to make them a little nicer to read, I've made the first character in the string uppercase
+		char RefChar = TLRef::GetCharFromRefCharIndex( RefCharIndex, (i==0) );
 		RefString.Append( RefChar );
 	}
 }

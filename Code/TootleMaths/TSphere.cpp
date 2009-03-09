@@ -360,6 +360,12 @@ void TLMaths::TSphere::Transform(const TLMaths::TMatrix& Matrix,const float3& Sc
 //--------------------------------------------------------
 void TLMaths::TSphere::Transform(const TLMaths::TTransform& Transform)
 {
+	if ( !IsValid() )
+	{
+		TLDebug_Break("Transforming invalid capsule");
+		return;
+	}
+
 	if ( Transform.HasScale() )
 	{
 		const float3& Scale = Transform.GetScale();

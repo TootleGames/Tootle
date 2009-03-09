@@ -898,7 +898,7 @@ Bool TLFileSys::TFileSimpleVector::IsTagDatum(TXmlTag& Tag,TRef& DatumRef,TRef& 
 	//	should be 3 parts
 	if ( StringParts.GetSize() != 3 )
 	{
-		TLDebug_Break( TString("Malformed Datum name (%s) on SVG geometry. Should be Datum_SHAPE_REF", pIDString->GetData() ) );
+		TLDebug_Break( TString("Malformed Datum name (%s) on SVG geometry. Should be Datum_SHAPEREF_DATUMREF", pIDString->GetData() ) );
 		return FALSE;
 	}
 

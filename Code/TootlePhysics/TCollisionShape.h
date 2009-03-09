@@ -28,18 +28,15 @@ namespace TLPhysics
 	class TCollisionSphere;			//	sphere collision shape
 	class TCollisionBox;			//	box collision shape
 	class TCollisionBox2D;			//	2D box collision shape
+	class TCollisionOblong2D;		//	2D oblong box collision shape
+	class TCollisionCapsule2D;
 	class TCollisionMesh;			//	collision type that uses a mesh asset to test intersections with
 	class TCollisionMeshWithBounds;	//	mesh collision type with transformed bounds sphere/box
 
-	enum ShapeType
-	{
-		Shape_Sphere,
-		Shape_Box,
-		Shape_Box2D,
-		Shape_Mesh,
-		Shape_MeshWithBounds,
-	};
 
+	//	non standard "shape" type refs
+	FORCEINLINE TRef		GetMeshShapeTypeRef()			{	return "Msh";	}
+	FORCEINLINE TRef		GetMeshWithBoundsShapeTypeRef()	{	return "MshWB";	}
 }
 
 
@@ -82,7 +79,7 @@ public:
 	TCollisionShape()															{	}
 	virtual ~TCollisionShape()													{	}
 
-	virtual TLPhysics::ShapeType	GetShapeType() const = 0;					//	return a shape type
+	virtual TRef					GetShapeType() const = 0;					//	return a shape type
 
 	virtual Bool					IsValid() const = 0;						//	check if the shape is valid
 	virtual float3					GetCenter() const = 0;						//	get the center of the shape
@@ -90,22 +87,28 @@ public:
 	virtual TPtr<TCollisionShape>	Transform(const TLMaths::TTransform& Transform,TPtr<TLPhysics::TCollisionShape>& pThis,TPtr<TLPhysics::TCollisionShape>& pOldShape)	{	return NULL;	}	//	transform this collision shape into a world-relative shape
 
 	Bool							HasIntersection(TCollisionShape* pCollisionShape);
+	Bool							GetIntersection(TCollisionShape* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 
 protected:
-	//	simple fast intersection tests which don't need intersection information
-	virtual Bool					HasIntersection_Sphere(TCollisionSphere* pCollisionShape);
-	virtual Bool					HasIntersection_Box(TCollisionBox* pCollisionShape);
-	virtual Bool					HasIntersection_Box2D(TCollisionBox2D* pCollisionShape);
-	virtual Bool					HasIntersection_Mesh(TCollisionMesh* pCollisionMesh);
-	virtual Bool					HasIntersection_MeshWithBounds(TCollisionMeshWithBounds* pCollisionMesh);
+	//	simple fast intersection tests which don't need intersection information - default behaviour uses more expensive "GetIntersection" code
+	virtual Bool					HasIntersection_Sphere(TCollisionSphere* pCollisionShape)					{	TIntersection a,b;	return GetIntersection_Sphere( pCollisionShape, a, b );	}
+	virtual Bool					HasIntersection_Box(TCollisionBox* pCollisionShape)							{	TIntersection a,b;	return GetIntersection_Box( pCollisionShape, a, b );	}
+	virtual Bool					HasIntersection_Box2D(TCollisionBox2D* pCollisionShape)						{	TIntersection a,b;	return GetIntersection_Box2D( pCollisionShape, a, b );	}
+	virtual Bool					HasIntersection_Oblong2D(TCollisionOblong2D* pCollisionShape)				{	TIntersection a,b;	return GetIntersection_Oblong2D( pCollisionShape, a, b );	}
+	virtual Bool					HasIntersection_Capsule2D(TCollisionCapsule2D* pCollisionShape)				{	TIntersection a,b;	return GetIntersection_Capsule2D( pCollisionShape, a, b );	}
+	virtual Bool					HasIntersection_Mesh(TCollisionMesh* pCollisionShape)						{	TIntersection a,b;	return GetIntersection_Mesh( pCollisionShape, a, b );	}
+	virtual Bool					HasIntersection_MeshWithBounds(TCollisionMeshWithBounds* pCollisionShape)	{	TIntersection a,b;	return GetIntersection_MeshWithBounds( pCollisionShape, a, b );	}
 
 	//	full intersection tests which return intersection info
-	Bool							GetIntersection(TCollisionShape* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 	virtual Bool					GetIntersection_Sphere(TCollisionSphere* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 	virtual Bool					GetIntersection_Box(TCollisionBox* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 	virtual Bool					GetIntersection_Box2D(TCollisionBox2D* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
+	virtual Bool					GetIntersection_Oblong2D(TCollisionOblong2D* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
+	virtual Bool					GetIntersection_Capsule2D(TCollisionCapsule2D* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 	virtual Bool					GetIntersection_Mesh(TCollisionMesh* pCollisionMesh,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 	virtual Bool					GetIntersection_MeshWithBounds(TCollisionMeshWithBounds* pCollisionMesh,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
+
+	Bool							Debug_IntersectionTodo(TRefRef WithShapeType);
 
 protected:
 };
@@ -119,7 +122,7 @@ public:
 	TCollisionSphere()															{}
 	TCollisionSphere(const TLMaths::TSphere& Sphere) : m_Sphere ( Sphere )		{}
 
-	virtual TLPhysics::ShapeType	GetShapeType() const						{	return TLPhysics::Shape_Sphere;	}
+	virtual TRef					GetShapeType() const						{	return TLMaths::TSphere::GetTypeRef();	}
 
 	void							SetSphere(const TLMaths::TSphere& Sphere)	{	m_Sphere = Sphere;	}
 	const TLMaths::TSphere&			GetSphere() const							{	return m_Sphere;	}
@@ -145,7 +148,7 @@ public:
 	TCollisionBox()												{}
 	TCollisionBox(const TLMaths::TBox& Box) : m_Box ( Box )		{	GenerateBoundsSphere();	}
 
-	virtual TLPhysics::ShapeType	GetShapeType() const						{	return TLPhysics::Shape_Box;	}
+	virtual TRef					GetShapeType() const						{	return TLMaths::TBox::GetTypeRef();	}
 
 	void							SetBox(const TLMaths::TBox& Box)			{	m_Box = Box;	GenerateBoundsSphere();	}
 	const TLMaths::TBox&			GetBox() const								{	return m_Box;	}
@@ -175,7 +178,7 @@ public:
 	TCollisionBox2D()												{}
 	TCollisionBox2D(const TLMaths::TBox2D& Box) : m_Box ( Box )		{	GenerateBoundsSphere();	}
 
-	virtual TLPhysics::ShapeType	GetShapeType() const						{	return TLPhysics::Shape_Box;	}
+	virtual TRef					GetShapeType() const						{	return TLMaths::TBox2D::GetTypeRef();	}
 
 	void							SetBox(const TLMaths::TBox2D& Box)			{	m_Box = Box;	GenerateBoundsSphere();	}
 	const TLMaths::TBox2D&			GetBox() const								{	return m_Box;	}
@@ -191,6 +194,7 @@ protected:
 	virtual Bool					HasIntersection_Sphere(TCollisionSphere* pCollisionShape);
 	virtual Bool					HasIntersection_Mesh(TCollisionMesh* pCollisionMesh);
 	virtual Bool					HasIntersection_MeshWithBounds(TCollisionMeshWithBounds* pCollisionMesh);
+	virtual Bool					HasIntersection_Capsule2D(TCollisionCapsule2D* pCollisionShape);
 
 //	virtual Bool					GetIntersection_Sphere(TCollisionSphere* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 //	virtual Bool					GetIntersection_Box(TCollisionBox* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
@@ -205,13 +209,61 @@ protected:
 
 
 
+class TLPhysics::TCollisionOblong2D : public TLPhysics::TCollisionShape
+{
+public:
+	TCollisionOblong2D()												{}
+	TCollisionOblong2D(const TLMaths::TOblong2D& Oblong) : m_Oblong ( Oblong )	{	OnOblongChanged();	}
+
+	virtual TRef					GetShapeType() const						{	return TLMaths::TOblong2D::GetTypeRef();	}
+
+	void							SetOblong(const TLMaths::TOblong2D& Oblong)	{	m_Oblong = Oblong;	OnOblongChanged();	}
+	const TLMaths::TOblong2D&		GetOblong() const							{	return m_Oblong;	}
+	virtual Bool					IsValid() const								{	return GetOblong().IsValid();	}
+	virtual float3					GetCenter() const							{	return m_Center;	}
+
+//	virtual TPtr<TCollisionShape>	Transform(const TLMaths::TTransform& Transform,TPtr<TLPhysics::TCollisionShape>& pThis,TPtr<TLPhysics::TCollisionShape>& pOldShape);
+
+protected:
+	void							OnOblongChanged()							{	m_BoundsSphere.SetInvalid();	m_BoundsSphere.Accumulate( GetOblong().GetBoxCorners() );	m_Center = m_Oblong.GetCenter();	}
+
+protected:
+	TLMaths::TSphere2D				m_BoundsSphere;	//	private faster sphere to test with before we do boxs test
+	TLMaths::TOblong2D				m_Oblong;		//	box collision object
+	float2							m_Center;		//	"cached" center for the oblong
+};
+
+
+class TLPhysics::TCollisionCapsule2D : public TLPhysics::TCollisionShape
+{
+public:
+	TCollisionCapsule2D()												{}
+	TCollisionCapsule2D(const TLMaths::TCapsule2D& Capsule) : m_Capsule ( Capsule )	{	}
+
+	virtual TRef					GetShapeType() const						{	return TLMaths::TCapsule2D::GetTypeRef();	}
+
+	void							SetCapsule(const TLMaths::TCapsule2D& Capsule)	{	m_Capsule = Capsule;	}
+	const TLMaths::TCapsule2D&		GetCapsule() const							{	return m_Capsule;	}
+	virtual Bool					IsValid() const								{	return GetCapsule().IsValid();	}
+	virtual float3					GetCenter() const							{	return GetCapsule().GetCenter();	}
+
+	virtual TPtr<TCollisionShape>	Transform(const TLMaths::TTransform& Transform,TPtr<TLPhysics::TCollisionShape>& pThis,TPtr<TLPhysics::TCollisionShape>& pOldShape);
+
+protected:
+	virtual Bool					GetIntersection_Capsule2D(TCollisionCapsule2D* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
+
+protected:
+	TLMaths::TCapsule2D				m_Capsule;		//	capsule shape
+};
+
+
 class TLPhysics::TCollisionMesh : public TLPhysics::TCollisionShape
 {
 public:
 	TCollisionMesh()											{	}
 	TCollisionMesh(TRefRef MeshRef) : m_MeshRef ( MeshRef )		{	}
 
-	virtual TLPhysics::ShapeType	GetShapeType() const		{	return TLPhysics::Shape_Mesh;	}
+	virtual TRef					GetShapeType() const		{	return TLPhysics::GetMeshShapeTypeRef();	}
 
 	TRefRef							GetMeshRef() const			{	return m_MeshRef;	}
 	void							SetMeshRef(TRefRef MeshRef)	{	m_MeshRef = MeshRef;		m_pMeshCache = NULL;	}
@@ -238,7 +290,7 @@ protected:
 class TLPhysics::TCollisionMeshWithBounds : public TLPhysics::TCollisionMesh
 {
 public:
-	virtual TLPhysics::ShapeType	GetShapeType() const						{	return TLPhysics::Shape_MeshWithBounds;	}
+	virtual TRef					GetShapeType() const						{	return TLPhysics::GetMeshWithBoundsShapeTypeRef();	}
 	
 	void							SetSphere(const TLMaths::TSphere& Sphere)	{	m_BoundsSphere = Sphere;	}
 	const TLMaths::TSphere&			GetSphere() const							{	return m_BoundsSphere;	}

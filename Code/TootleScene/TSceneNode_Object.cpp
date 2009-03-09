@@ -52,6 +52,67 @@ void TSceneNode_Object::DeleteRenderNode()
 }
 
 
+void TSceneNode_Object::ProcessMessage(TLMessaging::TMessage& Message)
+{
+	//	catch when our render node or physics node has been added to the graph
+	if ( Message.GetMessageRef() == "GraphChange" )
+	{
+		//	read node, graph, and added/removed state
+		TRef NodeRef,GraphRef;
+		Bool WasAdded;
+		Bool ReadFailed = FALSE;	//	double negative :(
+
+		ReadFailed |= !Message.Read( NodeRef );
+		ReadFailed |= !Message.Read( GraphRef );
+		ReadFailed |= !Message.Read( WasAdded );
+
+		if ( ReadFailed )
+		{
+			TLDebug_Break("Error reading graph change message");
+			return;
+		}
+
+		if ( GraphRef == "RenderGraph" && NodeRef == m_RenderNodeRef )
+		{
+			if ( WasAdded )
+			{
+				//	gr: change OnRenderNodeAdded to just take a TRef so functions that don't overload it skip this node search... or just make the callback an option to save the original subscription
+				TPtr<TLRender::TRenderNode>& pRenderNode = TLRender::g_pRendergraph->FindNode( NodeRef );
+				OnRenderNodeAdded( pRenderNode );
+				
+				//	no need to subscribe to this graph any more
+				this->UnsubscribeFrom( TLRender::g_pRendergraph );
+			}
+			else
+			{
+				m_RenderNodeRef.SetInvalid();
+				OnRenderNodeRemoved( NodeRef );
+			}
+			return;
+		}
+		else if ( GraphRef == "PhysicsGraph" && NodeRef == m_PhysicsNodeRef )
+		{
+			if ( WasAdded )
+			{
+				//	gr: change OnRenderNodeAdded to just take a TRef so functions that don't overload it skip this node search... or just make the callback an option to save the original subscription
+				TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( NodeRef );
+				OnPhysicsNodeAdded( pPhysicsNode );
+				
+				//	no need to subscribe to this graph any more
+				this->UnsubscribeFrom( TLPhysics::g_pPhysicsgraph );
+			}
+			else
+			{
+				m_PhysicsNodeRef.SetInvalid();
+				OnPhysicsNodeRemoved( NodeRef );
+			}
+			return;
+		}
+	}
+
+	//	do normal process
+	TSceneNode_Transform::ProcessMessage( Message );
+}
 
 
 TPtr<TLPhysics::TPhysicsNode>& TSceneNode_Object::GetPhysicsNode()
@@ -98,10 +159,8 @@ Bool TSceneNode_Object::CreatePhysicsNode(TRefRef PhysicsNodeType)
 	if ( !m_PhysicsNodeRef.IsValid() )
 		return FALSE;
 
-	// NOTE: This may eventually become an async type routine
-	//		 so no guarantees it happens on the same frmae of creation
-	TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef );
-	OnPhysicsNodeAdded( pPhysicsNode );
+	//	subscribe to the physics graph to catch when our node has been added
+	this->SubscribeTo( TLPhysics::g_pPhysicsgraph );
 
 	return TRUE;
 }
@@ -119,42 +178,42 @@ Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TLMessaging
 	//	gr: specify in params?
 	TRef RenderNodeType = TRef();
 
+	//	gr; changed to "merge" messages
+	TLMessaging::TMessage TempMessage( TLCore::InitialiseRef );
+
 	//	no init message? make one up
 	if ( !pInitMessage )
 	{
-		TLMessaging::TMessage Message( TLCore::InitialiseRef );
+		pInitMessage = &TempMessage;
+	}
 
-		//	add transform info from this scene node
+	//	add standard scene node object stuff
+	//	add transform info from this scene node
+	if ( GetTransform().HasAnyTransform() )
+	{
 		const TLMaths::TTransform& Transform = GetTransform();
 
 		if ( Transform.HasTranslate() )
-			Message.AddChildAndData("Translate", Transform.GetTranslate() );
+			pInitMessage->AddChildAndData("Translate", Transform.GetTranslate() );
 
 		if ( Transform.HasScale() )
-			Message.AddChildAndData("Scale", Transform.GetScale() );
+			pInitMessage->AddChildAndData("Scale", Transform.GetScale() );
 
 		if ( Transform.HasRotation() )
-			Message.AddChildAndData("Rotation", Transform.GetRotation() );
+			pInitMessage->AddChildAndData("Rotation", Transform.GetRotation() );
+	}
 
 		Message.ExportData("Owner", GetNodeRef());
 
-		//	create node
-		m_RenderNodeRef = TLRender::g_pRendergraph->CreateNode( GetNodeRef(), RenderNodeType, ParentRenderNodeRef, &Message );
-	}
-	else
-	{
-		//	create node
-		m_RenderNodeRef = TLRender::g_pRendergraph->CreateNode( GetNodeRef(), RenderNodeType, ParentRenderNodeRef, pInitMessage );
-	}
+	//	create node
+	m_RenderNodeRef = TLRender::g_pRendergraph->CreateNode( GetNodeRef(), RenderNodeType, ParentRenderNodeRef, pInitMessage );
 
 	//	failed
 	if ( !m_RenderNodeRef.IsValid() )
 		return FALSE;
 
-	// NOTE: This may eventually become an async type routine
-	//		 so no guarantees it happens on the same frmae of creation
-	TPtr<TLRender::TRenderNode>& pRenderNode = TLRender::g_pRendergraph->FindNode( m_RenderNodeRef );
-	OnRenderNodeAdded( pRenderNode );
+	//	subscribe to the render graph to catch when our node has been added
+	this->SubscribeTo( TLRender::g_pRendergraph );
 
 	return TRUE;
 }

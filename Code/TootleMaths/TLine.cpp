@@ -330,9 +330,48 @@ Bool TLMaths::TLine2D::GetIntersection(const TLine2D& Line) const
 
 
 //-----------------------------------------------------------
-//	checks for intersection and returns where along the line on both cases where it intersects
+//	get distance to another line
 //-----------------------------------------------------------
-Bool TLMaths::TLine2D::GetIntersectionPos(const TLine2D& Line,float& IntersectionAlongThis,float& IntersectionAlongLine) const
+float TLMaths::TLine2D::GetDistanceSq(const TLMaths::TLine2D& Line) const
+{
+	//	first, see if they intersect
+	float IntersectionAlongThis, IntersectionAlongLine;
+	SyncBool Intersection = GetIntersectionDistance( Line, IntersectionAlongThis, IntersectionAlongLine );
+
+	//	intersected, distance is 0.
+	if ( Intersection == SyncTrue )
+		return 0.f;
+
+	//	if lines keep going then they will intersect at some point
+	if ( Intersection == SyncWait )
+	{
+		//	get distance as a factor
+		//	if <0 then negate, if >1 then the distance from the end is the "extra"
+		float Distance = ( IntersectionAlongThis < 0.f ) ? -IntersectionAlongThis : 1.f - IntersectionAlongThis;
+		
+		//	scale to line's length
+		//	gr: can use LengthSq here i think
+		Distance *= Line.GetLength();
+
+		return (Distance * Distance);
+	}
+
+	//	no possible intersection, find nearest point to either end and return shortest distance
+	float2 StartNearest = GetNearestPoint( Line.GetStart() );
+	float2 EndNearest = GetNearestPoint( Line.GetEnd() );
+
+	float StartDistanceSq = (StartNearest - Line.GetStart()).LengthSq();
+	float EndDistanceSq = (EndNearest - Line.GetEnd()).LengthSq();
+
+	//	return shortest
+	return (StartDistanceSq < EndDistanceSq) ? StartDistanceSq : EndDistanceSq;
+}
+
+
+//-----------------------------------------------------------
+//	like GetIntersectionPos... return WAIT if the lines intersect past their extents
+//-----------------------------------------------------------
+SyncBool TLMaths::TLine2D::GetIntersectionDistance(const TLMaths::TLine2D& Line,float& IntersectionAlongThis,float& IntersectionAlongLine) const	
 {
 	const float2& v1 = GetStart();
 	const float2& v2 = GetEnd();
@@ -351,9 +390,9 @@ Bool TLMaths::TLine2D::GetIntersectionPos(const TLine2D& Line,float& Intersectio
     {
         if ( numerator == 0.0f && numerator2 == 0.0f )
         {
-            return FALSE;//COINCIDENT;
+            return SyncFalse;//COINCIDENT;
         }
-        return FALSE;// PARALLEL;
+        return SyncFalse;// PARALLEL;
     }
 
 	float& ua = IntersectionAlongThis;
@@ -363,10 +402,22 @@ Bool TLMaths::TLine2D::GetIntersectionPos(const TLine2D& Line,float& Intersectio
     ub = numerator2/ denom;
 
 	//	intersection will be past the ends of these lines
-	if ( ua < 0.f || ua > 1.f )	return FALSE;
-	if ( ub < 0.f || ub > 1.f )	return FALSE;
+	if ( ua < 0.f || ua > 1.f )	return SyncWait;
+	if ( ub < 0.f || ub > 1.f )	return SyncWait;
 
-	return TRUE;
+	return SyncTrue;
+}
+
+
+
+//-----------------------------------------------------------
+//	checks for intersection and returns where along the line on both cases where it intersects
+//-----------------------------------------------------------
+Bool TLMaths::TLine2D::GetIntersectionPos(const TLine2D& Line,float& IntersectionAlongThis,float& IntersectionAlongLine) const
+{
+	SyncBool IntersectionResult = GetIntersectionDistance( Line, IntersectionAlongThis, IntersectionAlongLine );
+
+	return ( IntersectionResult == SyncTrue );
 }
 
 
@@ -414,3 +465,17 @@ void TLMaths::TLine2D::MoveEnd(float Distance)
 	float2 DirectionNormal = GetDirectionNormal( Distance );
 	m_End += DirectionNormal;
 }
+
+//-----------------------------------------------------------
+//	transform points of line
+//-----------------------------------------------------------
+void TLMaths::TLine2D::Transform(const TLMaths::TTransform& Transform)
+{
+	if ( Transform.HasAnyTransform() )
+	{
+		Transform.TransformVector( m_Start );
+		Transform.TransformVector( m_End );
+	}
+}
+
+

@@ -91,6 +91,67 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 }
 
 	
+//---------------------------------------------------------
+//	generic render node init
+//---------------------------------------------------------
+void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
+{
+	Bool TransformChanged = FALSE;
+
+	if ( Message.ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
+	{
+		m_Transform.SetTranslateValid();
+		TransformChanged = TRUE;
+	}
+
+	if ( Message.ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
+	{
+		m_Transform.SetScaleValid();
+		TransformChanged = TRUE;
+	}
+
+	if ( Message.ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
+	{
+		m_Transform.SetRotationValid();
+		TransformChanged = TRUE;
+	}
+
+	//	transform has been set
+	if ( TransformChanged )
+		OnTransformChanged();
+
+	//	get physics flags to set
+	TPtrArray<TBinaryTree> FlagChildren;
+	if ( Message.GetChildren("PFSet", FlagChildren ) )
+	{
+		u32 FlagIndex = 0;
+		for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
+		{
+			FlagChildren[f]->ResetReadPos();
+			if ( FlagChildren[f]->Read( FlagIndex ) )
+				GetPhysicsFlags().Set( (Flags)FlagIndex );
+		}
+		FlagChildren.Empty();
+	}
+
+	//	get render flags to clear
+	if ( Message.GetChildren("PFClear", FlagChildren ) )
+	{
+		u32 FlagIndex = 0;
+		for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
+		{
+			FlagChildren[f]->ResetReadPos();
+			if ( FlagChildren[f]->Read( FlagIndex ) )
+				GetPhysicsFlags().Clear( (Flags)FlagIndex );
+		}
+		FlagChildren.Empty();
+	}
+
+	//	do inherited init
+	TLGraph::TGraphNode<TLPhysics::TPhysicsNode>::Initialise( Message );
+}
+
+
 //----------------------------------------------------
 //	before collisions are processed
 //----------------------------------------------------
@@ -169,8 +230,7 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 
 	//	reduce velocity
 	DEBUG_FLOAT_CHECK( m_Velocity );
-	//float Dampening = 1.f - ( m_Friction * fFrameStep );
-	float Dampening = 1.f - ( m_Friction * fTimeStep);
+	float Dampening = 1.f - ( GetFriction() * fTimeStep);
 	if ( Dampening >= 1.f )
 	{
 		if ( Dampening > 1.f )
@@ -384,6 +444,36 @@ void TLPhysics::TPhysicsNode::SetCollisionShape(const TLMaths::TSphere& Sphere)
 
 
 //----------------------------------------------------------
+//	setup an oblong collision shape
+//----------------------------------------------------------
+void TLPhysics::TPhysicsNode::SetCollisionShape(const TLMaths::TOblong2D& Oblong)
+{
+	//	todo: see if it's already an oblong and just update it
+	TPtr<TCollisionOblong2D> pCollisionShape = new TCollisionOblong2D( Oblong );
+	m_pCollisionShape = pCollisionShape;
+
+	//	invalidate zone
+	SetCollisionZoneNeedsUpdate();
+
+	SetWorldCollisionShapeInvalid();
+}
+
+//----------------------------------------------------------
+//	setup a capsule collision shape
+//----------------------------------------------------------
+void TLPhysics::TPhysicsNode::SetCollisionShape(const TLMaths::TCapsule2D& Capsule)
+{
+	//	todo: see if it's already an oblong and just update it
+	TPtr<TCollisionCapsule2D> pCollisionShape = new TCollisionCapsule2D( Capsule );
+	m_pCollisionShape = pCollisionShape;
+
+	//	invalidate zone
+	SetCollisionZoneNeedsUpdate();
+
+	SetWorldCollisionShapeInvalid();
+}
+
+//----------------------------------------------------------
 //	handle collision with other object - returns TRUE if we changed anything in the collison
 //----------------------------------------------------------
 Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode* pOtherNode)
@@ -580,6 +670,19 @@ TLPhysics::TCollisionShape* TLPhysics::TPhysicsNode::CalcWorldCollisionShape()
 	if ( m_pWorldCollisionShape )
 	{
 		m_pLastWorldCollisionShape = NULL;
+	}
+	else
+	{
+#ifdef _DEBUG
+		TTempString Debug_String("Failed to transform collision shape type ");
+		m_pCollisionShape->GetShapeType().GetString( Debug_String );
+		Debug_String.Append(" on node ");
+		GetNodeRef().GetString( Debug_String );
+		Debug_String.Append('(');
+		GetNodeTypeRef().GetString( Debug_String );
+		Debug_String.Append(')');
+		TLDebug_Break( Debug_String );
+#endif
 	}
 
 	return m_pWorldCollisionShape.GetObject();

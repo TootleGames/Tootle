@@ -41,15 +41,18 @@ public:
 	TPtr<TLRender::TRenderNode>&	GetRenderNode();
 
 protected:
+	virtual void					ProcessMessage(TLMessaging::TMessage& Message);
 
 	virtual Bool					CreatePhysicsNode(TRefRef PhysicsNodeType=TRef());
 	virtual void					OnPhysicsNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode)	{}
 	void							DeletePhysicsNode();
+	virtual void					OnPhysicsNodeRemoved(TRefRef PhysicsNodeRef)			{}	//	called when we get a message from the graph that our node has been removed - NOT invoked by DeletePhysicsNode()
 
 	FORCEINLINE Bool				CreateRenderNode(TPtr<TLRender::TRenderNode> pParentRenderNode)	{	return CreateRenderNode( pParentRenderNode ? pParentRenderNode->GetNodeRef() : TRef() );	}
 	virtual Bool					CreateRenderNode(TRefRef ParentRenderNode,TLMessaging::TMessage* pInitMessage=NULL);
 	virtual void					OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode)	{}
 	void							DeleteRenderNode();
+	virtual void					OnRenderNodeRemoved(TRefRef RenderNodeRef)			{}	//	called when we get a message from the graph that our node has been removed - NOT invoked by DeleteRenderNode()
 
 	TRef							CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset);
 	TRef							CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset, const TLAudio::TAudioProperties& Props);

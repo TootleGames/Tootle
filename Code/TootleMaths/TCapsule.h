@@ -76,3 +76,40 @@ protected:
 };
 
 
+
+
+
+//---------------------------------------------------------
+//	capsule shape
+//---------------------------------------------------------
+class TLMaths::TCapsule2D
+{
+public:
+	TCapsule2D();
+
+	static TRef		GetTypeRef()											{	return "Cap2";	}
+
+	void			Set(const TLine2D& Line,float Radius)					{	m_Line = Line;	m_Radius = Radius;	}
+	void			Set(const float2& Start,const float2& End,float Radius)	{	m_Line.Set( Start, End );	m_Radius = Radius;	}
+	void			Set(const TLMaths::TBox2D& Box);						//	create a capsule out of a box - gr: note this function doesn't envelope the box, it uses it's extents as dimensions. always use ACCUMULATE functions for bounding shapes
+	void			SetInvalid()											{	m_Radius = -1.f;	}
+	Bool			IsValid() const											{	return m_Radius >= 0.f;	}
+
+	float2			GetCenter() const								{	return m_Line.GetCenter();	}
+	float2			GetPos() const									{	return GetCenter();	}
+	TLine2D&		GetLine()										{	return m_Line;	}
+	const TLine2D&	GetLine() const									{	return m_Line;	}
+	float2			GetPosNearestTo(const float2& Pos) const		{	return GetLine().GetNearestPoint( Pos );	}
+	float&			GetRadius()										{	return m_Radius;	}
+	float			GetRadiusSq() const								{	return m_Radius*m_Radius;	}
+	const float&	GetRadius() const								{	return m_Radius;	}
+	void			SetRadius(float Radius)							{	m_Radius = Radius;	}
+	
+	void			Transform(const TLMaths::TTransform& Transform);	//	transform capsule
+
+protected:
+	TLine2D			m_Line;				//	start and end of capsule
+	float			m_Radius;			//	radius of capsule
+};
+
+

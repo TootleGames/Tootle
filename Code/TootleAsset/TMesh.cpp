@@ -1138,6 +1138,15 @@ Bool TLAsset::TMesh::ImportDatum(TBinaryTree& Data)
 		AddDatum( DatumRef, pShape );
 		return TRUE;
 	}
+	else if ( ShapeRef == TLMaths::TCapsule2D::GetTypeRef() )
+	{
+		TLMaths::TCapsule2D Shape;
+		if ( !Data.Read( Shape ) )
+			return FALSE;
+		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeCapsule2D( Shape );
+		AddDatum( DatumRef, pShape );
+		return TRUE;
+	}
 
 #ifdef _DEBUG
 	TTempString Debug_String("Unknown datum shape type ");
@@ -1179,6 +1188,12 @@ Bool TLAsset::TMesh::ExportDatum(TBinaryTree& Data,TRefRef DatumRef,TPtr<TLMaths
 		const TLMaths::TOblong2D& Shape = pShape.GetObject<TLMaths::TShapeOblong2D>()->GetOblong();
 		Data.Write( Shape.IsValid() );
 		Data.WriteArray( Shape.GetBoxCorners() );
+		return TRUE;
+	}
+	else if ( ShapeRef == TLMaths::TCapsule2D::GetTypeRef() )
+	{
+		const TLMaths::TCapsule2D& Shape = pShape.GetObject<TLMaths::TShapeCapsule2D>()->GetCapsule();
+		Data.Write( Shape );
 		return TRUE;
 	}
 
@@ -1257,10 +1272,29 @@ Bool TLAsset::TMesh::CreateDatum(const TArray<float3>& PolygonPoints,TRefRef Dat
 		Corners[2] = PolygonPoints[2].xy();
 		Corners[3] = PolygonPoints[3].xy();
 
-		TPtr<TLMaths::TShape> pOblongShape = new TLMaths::TShapeOblong2D( Oblong );
+		//	set as explicitly valid
+		Oblong.SetValid();
+
+		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeOblong2D( Oblong );
 
 		//	add datum
-		AddDatum( DatumRef, pOblongShape );
+		AddDatum( DatumRef, pShape );
+		return TRUE;
+	}
+	else if ( DatumShapeType == TLMaths::TCapsule2D::GetTypeRef() )
+	{
+		//	get box of points for extents
+		TLMaths::TBox2D Box;
+		Box.Accumulate( PolygonPoints );
+
+		//	create capsule from box
+		TLMaths::TCapsule2D Capsule;
+		Capsule.Set( Box );
+
+		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeCapsule2D( Capsule );
+
+		//	add datum
+		AddDatum( DatumRef, pShape );
 		return TRUE;
 	}
 

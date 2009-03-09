@@ -24,6 +24,12 @@ TLMaths::TOblong2D::TOblong2D() :
 //----------------------------------------
 float2 TLMaths::TOblong2D::GetCenter() const
 {
+	if ( !IsValid() )
+	{
+		TLDebug_Break("GetCenter() for invalid oblong shape");
+		return float2( 0.f, 0.f );
+	}
+
 	//	gr: not sure if this is the best way of doing it... but it's some way.
 	//	take a line from top left, to bottom right
 	//	then from top right to bottom left

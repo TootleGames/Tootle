@@ -18,6 +18,7 @@ namespace TLMaths
 	class TSphere;
 	class TSphere2D;
 	class TCapsule;
+	class TCapsule2D;
 	class TMatrix;
 	class TTransform;
 
@@ -154,6 +155,7 @@ public:
 	Bool			GetIntersection(const TSphere& Sphere) const;
 	Bool			GetIntersection(const TSphere2D& Sphere) const;
 	Bool			GetIntersection(const TCapsule& Capsule) const;
+	Bool			GetIntersection(const TCapsule2D& Capsule) const;
 	Bool			GetIntersection(const TBox2D& Box) const;
 	Bool			GetIntersection(const TBox& Box) const;
 

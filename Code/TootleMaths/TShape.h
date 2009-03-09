@@ -8,6 +8,7 @@
 #include "TSphere.h"
 #include "TBox.h"
 #include "TOblong.h"
+#include "TCapsule.h"
 
 
 namespace TLMaths
@@ -16,6 +17,7 @@ namespace TLMaths
 	class TShapeSphere2D;	//	sphere shape
 	class TShapeSphere;		//	sphere shape
 	class TShapeOblong2D;	//	oblong shape
+	class TShapeCapsule2D;	//	capsule shape
 
 	class TIntersection;	//	resulting intersection information of two shapes
 }
@@ -78,6 +80,7 @@ public:
 	TShapeSphere2D()															{}
 	TShapeSphere2D(const TLMaths::TSphere2D& Sphere) : m_Sphere ( Sphere )		{}
 
+	static TRef						GetShapeType_Static()						{	return GetShapeType_Static();	}
 	virtual TRef					GetShapeType() const						{	return TLMaths::TSphere2D::GetTypeRef();	}
 	virtual Bool					IsValid() const								{	return GetSphere().IsValid();	}
 	virtual float3					GetCenter() const							{	return GetSphere().GetPos();	}
@@ -98,7 +101,8 @@ public:
 	TShapeSphere()															{}
 	TShapeSphere(const TLMaths::TSphere& Sphere) : m_Sphere ( Sphere )		{}
 
-	virtual TRef					GetShapeType() const						{	return TLMaths::TSphere::GetTypeRef();	}
+	static TRef						GetShapeType_Static() 						{	return TLMaths::TSphere::GetTypeRef();	}
+	virtual TRef					GetShapeType() const						{	return GetShapeType_Static();	}
 	virtual Bool					IsValid() const								{	return GetSphere().IsValid();	}
 	virtual float3					GetCenter() const							{	return GetSphere().GetPos();	}
 	
@@ -116,7 +120,8 @@ public:
 	TShapeOblong2D()															{}
 	TShapeOblong2D(const TLMaths::TOblong2D& Oblong) : m_Oblong ( Oblong )		{}
 
-	virtual TRef					GetShapeType() const						{	return TLMaths::TOblong2D::GetTypeRef();	}
+	static TRef						GetShapeType_Static()						{	return TLMaths::TOblong2D::GetTypeRef();	}
+	virtual TRef					GetShapeType() const						{	return GetShapeType_Static();	}
 	virtual Bool					IsValid() const								{	return GetOblong().IsValid();	}
 	virtual float3					GetCenter() const							{	return GetOblong().GetCenter();	}
 	
@@ -125,5 +130,24 @@ public:
 
 protected:
 	TLMaths::TOblong2D				m_Oblong;
+};
+
+
+
+class TLMaths::TShapeCapsule2D : public TLMaths::TShape
+{
+public:
+	TShapeCapsule2D()															{}
+	TShapeCapsule2D(const TLMaths::TCapsule2D& Capsule) : m_Capsule ( Capsule )	{}
+
+	static TRef						GetShapeType_Static()						{	return TLMaths::TCapsule2D::GetTypeRef();	}
+	virtual TRef					GetShapeType() const						{	return GetShapeType_Static();	}
+	virtual Bool					IsValid() const								{	return GetCapsule().IsValid();	}
+	virtual float3					GetCenter() const							{	return GetCapsule().GetCenter();	}
+	
+	const TLMaths::TCapsule2D&		GetCapsule() const							{	return m_Capsule;	}
+
+protected:
+	TLMaths::TCapsule2D				m_Capsule;
 };
 

@@ -1,6 +1,7 @@
 #include "TCapsule.h"
 #include "TSphere.h"
 #include <TootleCore/TString.h>
+#include "TBox.h"
 
 
 
@@ -177,4 +178,112 @@ void TLMaths::TCapsule::Accumulate(const TArray<float3>& Points)
 		Accumulate( Points[i] );
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+TLMaths::TCapsule2D::TCapsule2D() :
+	m_Radius	( -1.f )
+{
+}
+
+//---------------------------------------------------------
+//	create a capsule out of a box
+//---------------------------------------------------------
+void TLMaths::TCapsule2D::Set(const TLMaths::TBox2D& Box)
+{
+	if ( !Box.IsValid() )
+	{
+		TLDebug_Break("Attempted to accumulate invalid box into capsule");
+		return;
+	}
+
+	//	get the longest sides to work out capsule line length/radius
+	float2 BoxSize = Box.GetSize();
+	float Width = BoxSize.x;
+	float HalfWidth = Width / 2.f;
+	float Height = BoxSize.y;
+	float HalfHeight = Height / 2.f;
+	const float2& BoxMin = Box.GetMin();
+	const float2& BoxMax = Box.GetMax();
+
+	if ( Height > Width )
+	{
+		//	set radius
+		m_Radius = HalfWidth;
+
+		//	create initial line
+		float2 LineStart( BoxMin.x + HalfWidth, BoxMin.y );
+		float2 LineEnd( BoxMin.x + HalfWidth, BoxMax.y );
+
+		//	shorten line so that the edge of the radius meets the edge of the line
+		LineStart.y += m_Radius;
+		LineEnd.y -= m_Radius;
+
+		m_Line.Set( LineStart, LineEnd );
+
+	}
+	else
+	{
+		//	set radius
+		m_Radius = HalfHeight;
+
+		//	create initial line
+		float2 LineStart( BoxMin.x, BoxMin.y + HalfHeight );
+		float2 LineEnd( BoxMax.x, BoxMin.y + HalfHeight );
+
+		//	shorten line so that the edge of the radius meets the edge of the line
+		LineStart.x += m_Radius;
+		LineEnd.x -= m_Radius;
+
+		m_Line.Set( LineStart, LineEnd );
+	}
+
+}
+
+
+//---------------------------------------------------------
+//	transform capsule
+//---------------------------------------------------------
+void TLMaths::TCapsule2D::Transform(const TLMaths::TTransform& Transform)
+{
+	if ( !IsValid() )
+	{
+		TLDebug_Break("Transforming invalid capsule");
+		return;
+	}
+
+	//	skip jumping to line's transform code
+	if ( !Transform.HasAnyTransform() )
+		return;
+
+	//	apply transforms to the line
+	m_Line.Transform( Transform );
+
+	if ( Transform.HasScale() )
+	{
+		//	scale radius by biggest value of the scale
+		const float3& Scale = Transform.GetScale();
+		float BigScale = (Scale.x>Scale.y) ? Scale.x : Scale.y;
+		BigScale = (Scale.z>BigScale) ? Scale.z : BigScale;
+
+		m_Radius *= BigScale;
+	}
+
+	if ( Transform.HasMatrix() )
+	{
+		TLDebug_Break("Need to apply scale in matrix to radius of capsule");
+	}
+}
+
+
 
