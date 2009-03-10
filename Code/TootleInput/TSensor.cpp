@@ -43,7 +43,7 @@ void TInputSensor::Process(float fRawValue)
 		TLDebug_Print( Debug_SensorString );
 #endif
 		
-		TLMessaging::TMessage Message("Action");
+		TLMessaging::TMessage Message("OnInput");
 
 		// Relay message to all subscribers
 		Message.Write(fValue);
