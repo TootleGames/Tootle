@@ -12,14 +12,17 @@ TRef TStateMachine::GetCurrentModeRef() const
 //-----------------------------------------------------------
 //	update current mode
 //-----------------------------------------------------------
-void TStateMachine::Update()
+void TStateMachine::Update(float Timestep)
 {
 	//	not in any mode
 	if ( !m_pCurrentMode )
 		return;
 
+	//	private pre-update
+	m_pCurrentMode->PreUpdate( Timestep );
+
 	//	do update
-	TRef NextModeRef = m_pCurrentMode->Update();
+	TRef NextModeRef = m_pCurrentMode->Update( Timestep );
 
 	//	mode change requested
 	if ( NextModeRef.IsValid() && (NextModeRef != m_pCurrentMode->GetModeRef()))
@@ -50,6 +53,8 @@ Bool TStateMachine::SetMode(TRefRef NextModeRef)
 	//	begin new mode (if failed we'll go onto no mode)
 	if ( pNextMode )
 	{
+		pNextMode->PreBegin();
+
 		if ( !pNextMode->OnBegin( CurrentModeRef ) )
 			pNextMode = NULL;
 	}
@@ -136,6 +141,12 @@ void TStateMachine::Debug_ModeLog(const TString& StateMachineName) const
 	}
 }
 
+
+TStateMode::TStateMode() : 
+	m_pStateMachine ( NULL ),
+	m_Timer			( 0.f )
+{
+}
 
 
 //-----------------------------------------------------------

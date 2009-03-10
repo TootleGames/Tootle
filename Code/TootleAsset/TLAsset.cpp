@@ -220,7 +220,7 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef, Bool bBlocking)
 		return TLPtr::GetNullPtr<TLAsset::TAsset>();
 
 	//	do first update, if it fails then we can abort early and fail immedietly
-	SyncBool FirstUpdateResult = pLoadTask->Update( bBlocking );
+	SyncBool FirstUpdateResult = pLoadTask->Update( 0.f, bBlocking );
 
 	//	get loading/loaded asset
 	TPtr<TAsset>& pLoadingAsset = pLoadTask->GetAsset();
@@ -327,7 +327,7 @@ SyncBool TLAsset::TAssetFactory::Update(float fTimeStep)
 			continue;
 
 		//	update task
-		SyncBool UpdateResult = pTask->Update( FALSE );
+		SyncBool UpdateResult = pTask->Update( 0.f, FALSE );
 
 		//	all complete!
 		if ( UpdateResult == SyncTrue )

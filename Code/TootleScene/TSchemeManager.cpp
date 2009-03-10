@@ -82,7 +82,7 @@ SyncBool TSchemeManager::Update(float fTimeStep)
 		{
 			TPtr<TSchemeUpdateRequest> pRequest = m_SchemeUpdateRequests.ElementAt(uIndex);			
 
-			pRequest->Update();
+			pRequest->Update( fTimeStep );
 		}
 	}
 
@@ -274,7 +274,7 @@ TSchemeManager::TSchemeUpdateRequest::TSchemeUpdateRequest(TRefRef SchemeRef, TR
 }
 
 
-TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Init::Update()
+TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Init::Update(float Timestep)
 {	
 	TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
 
@@ -324,7 +324,7 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Init::Update()
 }	
 
 
-TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Loading::Update()
+TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Loading::Update(float Timestep)
 {
 	TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
 
@@ -391,7 +391,7 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Loading::Update()
 
 
 
-TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_UnLoading::Update()
+TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_UnLoading::Update(float Timestep)
 {	
 	// Find scheme node in scenegraph
 	// Shutdown the scheme node
@@ -414,7 +414,7 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_UnLoading::Update()
 }	
 
 
-TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Cancel::Update()
+TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Cancel::Update(float Timestep)
 {	
 	return TRef();	
 }	

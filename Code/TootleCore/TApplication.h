@@ -137,7 +137,7 @@ class TLCore::TApplication::TApplicationState_Bootup : public TLCore::TApplicati
 public:
 	TApplicationState_Bootup();
 	virtual Bool			OnBegin(TRefRef PreviousMode);
-	virtual TRef			Update();
+	virtual TRef			Update(float Timestep);
 	virtual void			OnEnd(TRefRef NextMode);
 
 protected:	
@@ -151,7 +151,6 @@ private:
 	TRef			m_LogoRenderNode;	//	
 	TRef			m_RenderTarget;		//	our render target
 	TArray<TRef>	m_PreloadFiles;
-	float			m_fTimer;
 	Bool			m_SkipBootup;		//	skip bootup if we failed to create rendernode/screen/logo etc
 };
 
@@ -163,7 +162,7 @@ class TLCore::TApplication::TApplicationState_FrontEnd : public TLCore::TApplica
 {
 public:
 	virtual Bool			OnBegin(TRefRef PreviousMode);
-	virtual TRef			Update();			
+	virtual TRef			Update(float Timestep);			
 };
 
 
@@ -174,7 +173,7 @@ class TLCore::TApplication::TApplicationState_EnterGame : public TLCore::TApplic
 {
 public:
 	virtual Bool			OnBegin(TRefRef PreviousMode);
-	virtual TRef			Update();			
+	virtual TRef			Update(float Timestep);			
 };
 
 
@@ -184,7 +183,7 @@ public:
 class TLCore::TApplication::TApplicationState_Game : public TLCore::TApplication::Mode_Base
 {
 public:
-	virtual TRef			Update();			
+	virtual TRef			Update(float Timestep);			
 };
 
 
@@ -194,7 +193,7 @@ public:
 class TLCore::TApplication::TApplicationState_Pause : public TLCore::TApplication::Mode_Base
 {
 public:
-	virtual TRef			Update();			
+	virtual TRef			Update(float Timestep);			
 };
 
 
@@ -205,7 +204,7 @@ class TLCore::TApplication::TApplicationState_ExitGame : public TLCore::TApplica
 {
 public:
 	virtual Bool			OnBegin(TRefRef PreviousMode);
-	virtual TRef			Update();
+	virtual TRef			Update(float Timestep);
 	virtual void			OnEnd(TRefRef NextMode);	
 };
 

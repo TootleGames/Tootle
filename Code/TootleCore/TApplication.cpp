@@ -173,7 +173,7 @@ void TApplication::AddModes()
 SyncBool TApplication::Update(float fTimeStep)
 {
 	// Udpate the state machine
-	TStateMachine::Update();
+	TStateMachine::Update(fTimeStep);
 		
 	return TManager::Update(fTimeStep);
 }
@@ -337,14 +337,11 @@ Bool TApplication::TApplicationState_Bootup::OnBegin(TRefRef PreviousMode)
 	if(m_PreloadFiles.GetSize() > 0)
 		PreloadFiles();
 	
-	m_fTimer = 0.0f;
-	
 	return TStateMode::OnBegin(PreviousMode);
 }
 
 
 TApplication::TApplicationState_Bootup::TApplicationState_Bootup() :
-	m_fTimer		( 0.f ),
 	m_SkipBootup	( FALSE )
 {
 }
@@ -404,11 +401,9 @@ Bool TApplication::TApplicationState_Bootup::CreateIntroScreen()
 }
 
 
-TRef TApplication::TApplicationState_Bootup::Update()
+TRef TApplication::TApplicationState_Bootup::Update(float Timestep)
 {
-	m_fTimer += 1/60.0f;//fTimeStep;
-	
-	if ( m_SkipBootup || (m_fTimer > BOOTUP_TIME_MIN) && ArePreloadFilesLoaded() )
+	if ( m_SkipBootup || (GetModeTime() > BOOTUP_TIME_MIN) && ArePreloadFilesLoaded() )
 	{
 		TApplication* pApp = GetStateMachine<TApplication>();
 		
@@ -512,7 +507,7 @@ Bool TApplication::TApplicationState_FrontEnd::OnBegin(TRefRef PreviousMode)
 	return TStateMode::OnBegin(PreviousMode);
 }
 
-TRef TApplication::TApplicationState_FrontEnd::Update()
+TRef TApplication::TApplicationState_FrontEnd::Update(float Timestep)
 {
 	// Essentially wait until the app is signalled for what mode to change into
 	return TRef();
@@ -534,7 +529,7 @@ Bool TApplication::TApplicationState_EnterGame::OnBegin(TRefRef PreviousMode)
 	return TStateMode::OnBegin(PreviousMode);
 }
 
-TRef TApplication::TApplicationState_EnterGame::Update()
+TRef TApplication::TApplicationState_EnterGame::Update(float Timestep)
 {	
 	// Wait for game files to laod
 	return "Game";
@@ -543,7 +538,7 @@ TRef TApplication::TApplicationState_EnterGame::Update()
 
 
 // Game active state
-TRef TApplication::TApplicationState_Game::Update()
+TRef TApplication::TApplicationState_Game::Update(float Timestep)
 {
 	return TRef();
 };
@@ -551,7 +546,7 @@ TRef TApplication::TApplicationState_Game::Update()
 
 
 // Game paused state - may be moved to a state on the TGame object instead
-TRef TApplication::TApplicationState_Pause::Update()
+TRef TApplication::TApplicationState_Pause::Update(float Timestep)
 {
 	// Pause game
 	return TRef();
@@ -569,7 +564,7 @@ Bool TApplication::TApplicationState_ExitGame::OnBegin(TRefRef PreviousMode)
 	return TStateMode::OnBegin(PreviousMode);
 }
 
-TRef TApplication::TApplicationState_ExitGame::Update()
+TRef TApplication::TApplicationState_ExitGame::Update(float Timestep)
 {
 	// Wait for transition to be ready
 	// return TRef();

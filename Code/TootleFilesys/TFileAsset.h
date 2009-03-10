@@ -124,13 +124,13 @@ namespace TLFileSys
 		class Mode_Init : public Mode_Base
 		{
 		protected:
-			virtual TRef			Update();
+			virtual TRef			Update(float Timestep);
 		};
 
 		class Mode_Decompress : public Mode_Base
 		{
 		protected:
-			virtual TRef			Update();
+			virtual TRef			Update(float Timestep);
 		};
 
 		class Mode_ImportChild : public Mode_Base
@@ -138,7 +138,7 @@ namespace TLFileSys
 		public:
 			Mode_ImportChild() : m_CurrentChild (-1)	{}
 		protected:
-			virtual TRef			Update();
+			virtual TRef			Update(float Timestep);
 		protected:
 			s32						m_CurrentChild;
 		};

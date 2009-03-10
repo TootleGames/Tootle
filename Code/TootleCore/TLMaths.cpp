@@ -657,7 +657,7 @@ void TLMaths::TMatrix::TransformVector(float2& v) const
 {
 	float vector[4];
 
-	TLDebug_Break("Not tested");
+//	TLDebug_Break("Not tested");
 //	vector[0] = v[0]*Get(0)+v[1]*Get(4)+v[2]*Get(8)+Get(12);
 //	vector[1] = v[0]*Get(1)+v[1]*Get(5)+v[2]*Get(9)+Get(13);
 	vector[0] = v[0]*Get(0)+v[1]*Get(4)+Get(12);

@@ -57,12 +57,12 @@ TLAsset::TLoadTask::TLoadTask(TRefRef AssetRef) :
 //------------------------------------------------------------
 //	update load
 //------------------------------------------------------------
-SyncBool TLAsset::TLoadTask::Update(Bool Blocking)
+SyncBool TLAsset::TLoadTask::Update(float Timestep,Bool Blocking)
 {
 	do
 	{
 		//	update state machine
-		TStateMachine::Update();
+		TStateMachine::Update(Timestep);
 
 		TRef CurrentModeRef = GetCurrentModeRef();
 
@@ -94,7 +94,7 @@ SyncBool TLAsset::TLoadTask::Update(Bool Blocking)
 //------------------------------------------------------------
 //	fetch the plain file
 //------------------------------------------------------------
-TRef Mode_Init::Update()
+TRef Mode_Init::Update(float Timestep)
 {
 	//	if no asset, create a placeholder asset
 	TPtr<TLAsset::TAsset> pAsset = GetAsset();
@@ -114,7 +114,7 @@ TRef Mode_Init::Update()
 //------------------------------------------------------------
 //	fetch the plain file
 //------------------------------------------------------------
-TRef Mode_GetPlainFile::Update()
+TRef Mode_GetPlainFile::Update(float Timestep)
 {
 	//	get the plain file for this asset (if we haven't already located it)
 	if ( !GetPlainFile() )
@@ -142,7 +142,7 @@ TRef Mode_GetPlainFile::Update()
 //------------------------------------------------------------
 //	load plain file from file sys
 //------------------------------------------------------------
-TRef Mode_PlainFileLoad::Update()
+TRef Mode_PlainFileLoad::Update(float Timestep)
 {
 	//	load the plain file
 	TPtr<TLFileSys::TFileSys> pFileSys = GetPlainFile()->GetFileSys();
@@ -161,7 +161,7 @@ TRef Mode_PlainFileLoad::Update()
 //------------------------------------------------------------
 //	create asset file from plain file
 //------------------------------------------------------------
-TRef Mode_PlainFileCreateAssetFile::Update()
+TRef Mode_PlainFileCreateAssetFile::Update(float Timestep)
 {
 	//	create a new asset file
 	TPtr<TLFileSys::TFileAsset> pNewFile;
@@ -234,7 +234,7 @@ TRef Mode_PlainFileCreateAssetFile::Update()
 //------------------------------------------------------------
 //	convert plain file to asset file
 //------------------------------------------------------------
-TRef Mode_PlainFileExport::Update()
+TRef Mode_PlainFileExport::Update(float Timestep)
 {
 	Debug_PrintStep("Exporting plain file to asset file");
 	SyncBool ExportResult = GetPlainFile()->Export( GetAssetFile() );
@@ -253,7 +253,7 @@ TRef Mode_PlainFileExport::Update()
 //------------------------------------------------------------
 //	fetch asset file
 //------------------------------------------------------------
-TRef Mode_GetAssetFile::Update()
+TRef Mode_GetAssetFile::Update(float Timestep)
 {
 	#ifdef _DEBUG
 	{
@@ -316,7 +316,7 @@ TRef Mode_GetAssetFile::Update()
 //------------------------------------------------------------
 //	load asset file from file sys
 //------------------------------------------------------------
-TRef Mode_AssetFileLoad::Update()
+TRef Mode_AssetFileLoad::Update(float Timestep)
 {
 	//	load the file
 	TPtr<TLFileSys::TFileSys> pFileSys = GetAssetFile()->GetFileSys();
@@ -345,7 +345,7 @@ TRef Mode_AssetFileLoad::Update()
 //------------------------------------------------------------
 //	turn asset file back to plain file
 //------------------------------------------------------------
-TRef Mode_AssetFileImport::Update()
+TRef Mode_AssetFileImport::Update(float Timestep)
 {
 	Debug_PrintStep("Importing asset file");
 
@@ -372,7 +372,7 @@ TRef Mode_AssetFileImport::Update()
 //------------------------------------------------------------
 //	turn asset file back to plain file
 //------------------------------------------------------------
-TRef Mode_AssetFileExport::Update()
+TRef Mode_AssetFileExport::Update(float Timestep)
 {
 	Debug_PrintStep("Exporting asset file to plain file");
 
@@ -391,7 +391,7 @@ TRef Mode_AssetFileExport::Update()
 //------------------------------------------------------------
 //	save asset file back to file sys
 //------------------------------------------------------------
-TRef Mode_AssetFileWrite::Update()
+TRef Mode_AssetFileWrite::Update(float Timestep)
 {
 	if ( !GetAssetFile() )
 	{
@@ -417,7 +417,7 @@ TRef Mode_AssetFileWrite::Update()
 //------------------------------------------------------------
 //	create new asset
 //------------------------------------------------------------
-TRef Mode_CreateAsset::Update()
+TRef Mode_CreateAsset::Update(float Timestep)
 {
 	Debug_PrintStep("Creating asset");
 
@@ -471,7 +471,7 @@ TRef Mode_CreateAsset::Update()
 //------------------------------------------------------------
 //	turn asset file into asset
 //------------------------------------------------------------
-TRef Mode_AssetImport::Update()
+TRef Mode_AssetImport::Update(float Timestep)
 {
 	Debug_PrintStep("Importing asset file to asset");
 

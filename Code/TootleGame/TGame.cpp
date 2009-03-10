@@ -23,7 +23,7 @@ SyncBool TGame::Initialise()
 SyncBool TGame::Update(float fTimeStep)
 {
 	// Update the game state machine
-	TStateMachine::Update();
+	TStateMachine::Update(fTimeStep);
 	
 	return SyncTrue;
 }

@@ -479,3 +479,16 @@ void TLMaths::TLine2D::Transform(const TLMaths::TTransform& Transform)
 }
 
 
+//-----------------------------------------------------------
+//	get a point along the line from 0..1 (factor)
+//-----------------------------------------------------------
+void TLMaths::TLine2D::GetPointAlongLine(float2& PointAlongLine,float Factor) const
+{
+	//	set to direction
+	PointAlongLine = GetEnd();
+	PointAlongLine -= GetStart();	//	point is now dir from start to end
+	PointAlongLine *= Factor;		//	scale line to the factor
+	PointAlongLine += GetStart();	//	move back to relative to the line start
+}
+
+

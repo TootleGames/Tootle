@@ -652,9 +652,10 @@ TLPhysics::TCollisionShape* TLPhysics::TPhysicsNode::CalcWorldCollisionShape()
 			Transform.SetTranslate( Movement );
 		}
 	}
-	
-	if ( Transform.HasRotation() )
-		Transform.SetRotationInvalid();
+
+	//	gr: rotation was ignored for the old snowway-spheres, but needed now
+//	if ( Transform.HasRotation() )
+//		Transform.SetRotationInvalid();
 
 	//	gr: scale in the shape transform was what was breaking the positional/intersection stuff of the spheres...
 	if ( Transform.HasScale() )

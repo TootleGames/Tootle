@@ -89,7 +89,7 @@ SyncBool TLFileSys::TFileAsset::Import()
 	}
 
 	//	update importer
-	m_pImporter->Update();
+	m_pImporter->Update(0.f);
 	SyncBool ImportResult = m_pImporter->GetResult();
 
 	//	finished processing, cleanup importer
@@ -224,7 +224,7 @@ Bool TLFileSys::TFileAsset::Header::IsValid() const
 //---------------------------------------------------------
 //	
 //---------------------------------------------------------
-TRef TLFileSys::TLFileAssetImporter::Mode_Init::Update()
+TRef TLFileSys::TLFileAssetImporter::Mode_Init::Update(float Timestep)
 {
 	TLFileSys::TFile* pFile = GetFile();
 
@@ -261,7 +261,7 @@ TRef TLFileSys::TLFileAssetImporter::Mode_Init::Update()
 //---------------------------------------------------------
 //	
 //---------------------------------------------------------
-TRef TLFileSys::TLFileAssetImporter::Mode_Decompress::Update()
+TRef TLFileSys::TLFileAssetImporter::Mode_Decompress::Update(float Timestep)
 {
 	//	no decompression needed, skip!
 	if ( !GetHeader().m_Flags( TFileAsset::Compressed ) )
@@ -284,7 +284,7 @@ TRef TLFileSys::TLFileAssetImporter::Mode_Decompress::Update()
 //---------------------------------------------------------
 //	
 //---------------------------------------------------------
-TRef TLFileSys::TLFileAssetImporter::Mode_ImportChild::Update()
+TRef TLFileSys::TLFileAssetImporter::Mode_ImportChild::Update(float Timestep)
 {
 	TLFileSys::TFile* pFile = GetFile();
 	TLFileSys::TFileAsset* pAssetFile = GetAssetFile();

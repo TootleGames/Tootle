@@ -113,19 +113,19 @@ private:
 // Scheme update state modes
 class TLScheme::TSchemeManager::TSchemeUpdateRequest::TSchemeState_Init : public TStateMode
 {
-	virtual TRef			Update();			
+	virtual TRef			Update(float Timestep);			
 };
 
 // Handles loading a scheme
 class TLScheme::TSchemeManager::TSchemeUpdateRequest::TSchemeState_Loading : public TStateMode
 {
-	virtual TRef			Update();			
+	virtual TRef			Update(float Timestep);			
 };
 
 // Handles unloading a scheme
 class TLScheme::TSchemeManager::TSchemeUpdateRequest::TSchemeState_UnLoading : public TStateMode
 {
-	virtual TRef			Update();
+	virtual TRef			Update(float Timestep);
 };
 
 // Holding state mode for when the scheme update is finished
@@ -136,5 +136,5 @@ class TLScheme::TSchemeManager::TSchemeUpdateRequest::TSchemeState_Finished : pu
 // Handles cancelling a load or unload request
 class TLScheme::TSchemeManager::TSchemeUpdateRequest::TSchemeState_Cancel : public TStateMode
 {
-	virtual TRef			Update();			
+	virtual TRef			Update(float Timestep);			
 };

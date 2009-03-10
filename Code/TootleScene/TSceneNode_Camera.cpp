@@ -38,7 +38,7 @@ void TSceneNode_Camera::Initialise(TLMessaging::TMessage& Message)
 
 void TSceneNode_Camera::Update(float fTimeStep)
 {
-	TStateMachine::Update();
+	TStateMachine::Update(fTimeStep);
 	
 	// Update the camera on the render target
 	UpdateRenderTargetCamera();

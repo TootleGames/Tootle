@@ -1127,7 +1127,128 @@ TPtr<TLPhysics::TCollisionShape> TLPhysics::TCollisionCapsule2D::Transform(const
 //----------------------------------------------------------
 Bool TLPhysics::TCollisionCapsule2D::GetIntersection_Capsule2D(TCollisionCapsule2D* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)
 {
-	TLDebug_Break("todo");
+	const TLMaths::TCapsule2D& ThisCapsule = this->GetCapsule();
+	const TLMaths::TCapsule2D& ShapeCapsule = pCollisionShape->GetCapsule();
+
+	float IntersectionAlongThis,IntersectionAlongLine;
+	SyncBool IntersectionResult = ThisCapsule.GetLine().GetIntersectionDistance( ShapeCapsule.GetLine(), IntersectionAlongThis, IntersectionAlongLine );
+
+	//	lines of the capsules intersected
+	if ( IntersectionResult == SyncTrue )
+	{
+		//	get the point along the capsule line where we intersected
+		const TLMaths::TLine2D& ThisCapsuleLine = ThisCapsule.GetLine();
+		ThisCapsuleLine.GetPointAlongLine( NodeAIntersection.m_Intersection.xy(), IntersectionAlongThis );
+		NodeAIntersection.m_Intersection.z = 0.f;
+
+		//	set B's intersection
+		NodeBIntersection.m_Intersection = NodeAIntersection.m_Intersection;
+
+		return TRUE;
+	}
+
+	//	if extended, the lines WILL intersect, so we see if the sphere's on the end intersect (if a capsule doesnt intersect then the nearest two points on the lines MUST be end points)
+	if ( IntersectionResult == SyncWait )
+	{
+		//	work out the nearest point on This
+		const float2& ThisCapsuleEnd = IntersectionAlongThis <= 0.f ? ThisCapsule.GetLine().GetStart() : ThisCapsule.GetLine().GetEnd();
+		const float2& ShapeCapsuleEnd = IntersectionAlongLine <= 0.f ? ShapeCapsule.GetLine().GetStart() : ShapeCapsule.GetLine().GetEnd();
+
+		//	get interesction point of these two 
+		TLMaths::TSphere2D ThisCapsuleEndSphere( ThisCapsuleEnd, ThisCapsule.GetRadius() );
+		TLMaths::TSphere2D ShapeCapsuleEndSphere( ShapeCapsuleEnd, ShapeCapsule.GetRadius() );
+		
+		//	get the vector between the spheres
+		float2 Diff( ShapeCapsuleEndSphere.GetPos() - ThisCapsuleEndSphere.GetPos() );
+
+		//	get distance
+		float DiffLengthSq = Diff.LengthSq();
+		float TotalRadSq = ThisCapsuleEndSphere.GetRadiusSq() + ShapeCapsuleEndSphere.GetRadiusSq();
+
+		//	not intersecting - the two nearest ends are too far away
+		if ( DiffLengthSq > TotalRadSq )
+			return FALSE;
+
+		float DiffLength = TLMaths::Sqrtf( DiffLengthSq );
+
+		//	intersected, work out the intersection points
+		float NormalMultA = ThisCapsuleEndSphere.GetRadius() / DiffLength;
+		NodeAIntersection.m_Intersection = ThisCapsuleEndSphere.GetPos() + (Diff * NormalMultA);
+
+		float NormalMultB = ShapeCapsuleEndSphere.GetRadius() / DiffLength;
+		NodeBIntersection.m_Intersection = ShapeCapsuleEndSphere.GetPos() - (Diff * NormalMultB);
+
+		return TRUE;
+	}
+
+	//	lines will never intersect, so paralel, so we need to do some sort of box intersection test to see if they're close enough when side by side
+	if ( IntersectionResult == SyncFalse )
+	{
+		//	gr: if these are exactly parallel, then can I compare either start or end... (depending on orentation of capsules)
+		//		and check the difference? then set intersection point as the average middle?
+		const TLMaths::TLine2D& ThisCapsuleLine = ThisCapsule.GetLine();
+		const TLMaths::TLine2D& ShapeCapsuleLine = ShapeCapsule.GetLine();
+
+		//	work out which two ends are closest to each other
+		float StartStartDistSq = (ThisCapsuleLine.GetStart() - ShapeCapsuleLine.GetStart()).LengthSq();
+		float StartEndDistSq = (ThisCapsuleLine.GetStart() - ShapeCapsuleLine.GetEnd()).LengthSq();
+		float EndStartDistSq = (ThisCapsuleLine.GetEnd() - ShapeCapsuleLine.GetStart()).LengthSq();
+		float EndEndDistSq = (ThisCapsuleLine.GetEnd() - ShapeCapsuleLine.GetEnd()).LengthSq();
+
+		//	assume is start/start at first
+		const float2* pThisNearPoint = &ThisCapsuleLine.GetStart();
+		const float2* pShapeNearPoint = &ShapeCapsuleLine.GetStart();
+		float* pNearestDistSq = &StartStartDistSq;
+
+		//	get total radius sq, if a length is greater than this, then it won't intersect
+		float TotalRadSq = ThisCapsule.GetRadiusSq() + ShapeCapsule.GetRadiusSq();
+
+		//	work out two nearest ends
+		if ( StartEndDistSq < *pNearestDistSq && StartEndDistSq <= TotalRadSq )
+		{
+			pThisNearPoint = &ThisCapsuleLine.GetStart();
+			pShapeNearPoint = &ShapeCapsuleLine.GetEnd();
+			pNearestDistSq = &StartEndDistSq;
+		}
+		
+		if ( EndStartDistSq < *pNearestDistSq && EndStartDistSq <= TotalRadSq )
+		{
+			pThisNearPoint = &ThisCapsuleLine.GetEnd();
+			pShapeNearPoint = &ShapeCapsuleLine.GetStart();
+			pNearestDistSq = &EndStartDistSq;
+		}
+		
+		if ( EndEndDistSq < *pNearestDistSq && EndEndDistSq <= TotalRadSq )
+		{
+			pThisNearPoint = &ThisCapsuleLine.GetEnd();
+			pShapeNearPoint = &ShapeCapsuleLine.GetEnd();
+			pNearestDistSq = &EndEndDistSq;
+		}
+		
+		//	got two nearest points - check distance (this will only fail if all the pointers were too far away, and start/start is too far away too, 
+		//	so this is really a distance check for start/start
+		if ( (*pNearestDistSq) > TotalRadSq )
+			return FALSE;
+
+		//	must be within range of each other - work out the intersection points using sphere code
+		//	get interesction point of these two 
+		TLMaths::TSphere2D ThisCapsuleEndSphere( *pThisNearPoint, ThisCapsule.GetRadius() );
+		TLMaths::TSphere2D ShapeCapsuleEndSphere( *pShapeNearPoint, ShapeCapsule.GetRadius() );
+
+		//	get the vector between the spheres
+		float2 Diff( ShapeCapsuleEndSphere.GetPos() - ThisCapsuleEndSphere.GetPos() );
+		float DiffLength = TLMaths::Sqrtf( *pNearestDistSq );
+
+		//	intersected, work out the intersection points
+		float NormalMultA = ThisCapsuleEndSphere.GetRadius() / DiffLength;
+		NodeAIntersection.m_Intersection = ThisCapsuleEndSphere.GetPos() + (Diff * NormalMultA);
+
+		float NormalMultB = ShapeCapsuleEndSphere.GetRadius() / DiffLength;
+		NodeBIntersection.m_Intersection = ShapeCapsuleEndSphere.GetPos() - (Diff * NormalMultB);
+	
+		return TRUE;
+	}
+
 	return FALSE;
 }
 
