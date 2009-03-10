@@ -86,39 +86,29 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 		}
 	}
 
-
-	TLGraph::TGraphNode<TPhysicsNode>::Initialise(Message);
-}
-
-	
-//---------------------------------------------------------
-//	generic render node init
-//---------------------------------------------------------
-void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
-{
-	Bool TransformChanged = FALSE;
-
+	Bool TranslateChanged = FALSE;
 	if ( Message.ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
 	{
 		m_Transform.SetTranslateValid();
-		TransformChanged = TRUE;
+		TranslateChanged = TRUE;
 	}
 
+	Bool ScaleChanged = FALSE;
 	if ( Message.ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
 	{
 		m_Transform.SetScaleValid();
-		TransformChanged = TRUE;
+		ScaleChanged = TRUE;
 	}
 
+	Bool RotationChanged = FALSE;
 	if ( Message.ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
 	{
 		m_Transform.SetRotationValid();
-		TransformChanged = TRUE;
+		RotationChanged = TRUE;
 	}
 
-	//	transform has been set
-	if ( TransformChanged )
-		OnTransformChanged();
+	//	notify on transform change
+	OnTransformChanged( TranslateChanged, ScaleChanged, RotationChanged );
 
 	//	get physics flags to set
 	TPtrArray<TBinaryTree> FlagChildren;
@@ -147,8 +137,7 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 		FlagChildren.Empty();
 	}
 
-	//	do inherited init
-	TLGraph::TGraphNode<TLPhysics::TPhysicsNode>::Initialise( Message );
+	TLGraph::TGraphNode<TPhysicsNode>::Initialise(Message);
 }
 
 

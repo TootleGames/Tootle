@@ -62,6 +62,7 @@ void TSceneNode_Object::ProcessMessage(TLMessaging::TMessage& Message)
 		Bool WasAdded;
 		Bool ReadFailed = FALSE;	//	double negative :(
 
+		Message.ResetReadPos();
 		ReadFailed |= !Message.Read( NodeRef );
 		ReadFailed |= !Message.Read( GraphRef );
 		ReadFailed |= !Message.Read( WasAdded );
@@ -203,7 +204,7 @@ Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TLMessaging
 			pInitMessage->AddChildAndData("Rotation", Transform.GetRotation() );
 	}
 
-		Message.ExportData("Owner", GetNodeRef());
+	pInitMessage->ExportData("Owner", GetNodeRef());
 
 	//	create node
 	m_RenderNodeRef = TLRender::g_pRendergraph->CreateNode( GetNodeRef(), RenderNodeType, ParentRenderNodeRef, pInitMessage );

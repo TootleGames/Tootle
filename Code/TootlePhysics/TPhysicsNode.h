@@ -108,9 +108,6 @@ public:
 	void						UpdateNodeCollisionZone(TPtr<TLPhysics::TPhysicsNode>& pThis,TLPhysics::TPhysicsgraph* pGraph);	//	update what collision zone we're in
 
 protected:
-
-	virtual void				Initialise(TLMessaging::TMessage& Message);
-
 	const float3&				GetWorldUp() const							{	return HasParent() ? GetParent()->GetWorldUp() : TLPhysics::g_WorldUpNormal;	}
 	
 	void						PostUpdateAll(float Timestep,TLPhysics::TPhysicsgraph* pGraph,TPtr<TLPhysics::TPhysicsNode>& pThis);		//	update tree: update self, and children and siblings
