@@ -13,9 +13,9 @@
 #include <TootleCore/TPtrArray.h>
 #include <TootleCore/TRef.h>
 #include <TootleCore/TClassFactory.h>
+#include <TootleCore/TPublisher.h>
 #include <COMMCTRL.H>
 #include "PCRender.h"
-
 
 
 using namespace TLRender::Platform;
@@ -87,7 +87,7 @@ class Win32::GMenuItem
 //------------------------------------------------
 //	base win32 control/window class
 //------------------------------------------------
-class Win32::GWinControl
+class Win32::GWinControl : public TLMessaging::TPublisher
 {
 public:
 	static u32			g_MouseWheelMsg;	//	mouse wheel's message ID
@@ -145,6 +145,8 @@ public:
 	virtual Bool			OnHide()									{	return FALSE;	};	//	window is now hidden
 	virtual Bool			OnMouseMove(int2 MousePos, Bool InClientArea)	{	return FALSE;	};	//	mouse has been moved in window
 	virtual void			OnTimer(WPARAM TimerID)						{	};					//	timer caught
+	virtual void			OnActivate();
+	virtual void			OnDeactivate();
 
 	//	generic win32 stuff
 	virtual Bool				CreateClass();													//	create class

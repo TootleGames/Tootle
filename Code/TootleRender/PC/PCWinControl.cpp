@@ -741,6 +741,21 @@ int Win32::GWinControl::HandleNotifyMessage(u32 message, NMHDR* pNotifyData)
 	return 0;
 }
 
+void Win32::GWinControl::OnActivate()
+{
+	TLMessaging::TMessage Message("OnWindowChanged");
+	Message.ExportData("State", TRef("Activate"));
+	PublishMessage(Message);
+}
+
+void Win32::GWinControl::OnDeactivate()
+{	
+	TLMessaging::TMessage Message("OnWindowChanged");
+	Message.ExportData("State", TRef("Deactivate"));
+	PublishMessage(Message);
+}
+
+
 
 
 
@@ -1075,10 +1090,19 @@ LRESULT CALLBACK Win32::Win32CallBack(HWND hwnd, UINT message, WPARAM wParam, LP
 			}
 			break;
 
+		case WM_ACTIVATE:
+			if(pControl)
+			{
+				if (WA_INACTIVE == wParam)
+					pControl->OnDeactivate();
+				else
+					pControl->OnActivate();
+			}
+			break;
+
 		case WM_SETCURSOR:
 		case WM_NCACTIVATE:
 		case WM_GETTEXT:
-		case WM_ACTIVATE:
 		case WM_ACTIVATEAPP:
 		case WM_KILLFOCUS:
 		case WM_MOVING:

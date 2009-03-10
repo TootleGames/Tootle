@@ -106,6 +106,9 @@ SyncBool TLRender::Platform::Screen::Init()
 	//	make the window visible
 	m_pWindow->Show();
 
+	// Subscirbe to the window
+	SubscribeTo(m_pWindow);
+
 	return TLRender::TScreen::Init();
 }
 

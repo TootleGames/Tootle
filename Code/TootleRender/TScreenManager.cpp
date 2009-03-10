@@ -29,26 +29,31 @@ TScreenManager::TScreenManager(TRefRef refManagerID) :
 //----------------------------------------------------------
 TScreen* TScreenManager::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 {
+	TScreen* pScreen = NULL;
+
 	//	default to screen
 	if ( !TypeRef.IsValid() || TypeRef == "Screen" )
-		return new TLRender::Platform::Screen( InstanceRef, TLRender::ScreenShape_Portrait );
-
-	if ( TypeRef == "wideleft" )
-		return new TLRender::Platform::Screen( InstanceRef, TLRender::ScreenShape_WideLeft );
-
-	if ( TypeRef == "wideright" )
-		return new TLRender::Platform::Screen( InstanceRef, TLRender::ScreenShape_WideRight );
-
-	if ( TypeRef == "widescreen" )
+		pScreen = new TLRender::Platform::Screen( InstanceRef, TLRender::ScreenShape_Portrait );
+	else if ( TypeRef == "wideleft" )
+		pScreen = new TLRender::Platform::Screen( InstanceRef, TLRender::ScreenShape_WideLeft );
+	else if ( TypeRef == "wideright" )
+		pScreen = new TLRender::Platform::Screen( InstanceRef, TLRender::ScreenShape_WideRight );
+	else if ( TypeRef == "widescreen" )
 	{
 #if defined(TL_TARGET_PC)
-		return new TLRender::Platform::ScreenWide( InstanceRef );
+		pScreen = new TLRender::Platform::ScreenWide( InstanceRef );
 #elif defined(TL_TARGET_IPOD)
-		return new TLRender::Platform::Screen( InstanceRef, TLRender::ScreenShape_WideRight );
+		pScreen = new TLRender::Platform::Screen( InstanceRef, TLRender::ScreenShape_WideRight );
 #endif
 	}
 
-	return NULL;
+	if(pScreen)
+	{
+		// Subscribe to the screen so we can get the screen messages
+		SubscribeTo(pScreen);
+	}
+
+	return pScreen;
 }
 
 
@@ -67,6 +72,11 @@ void TScreenManager::ProcessMessage(TLMessaging::TMessage& Message)
 		{
 			Screens[s]->Draw();
 		}
+	}
+	else if(MessageRef == "OnWindowChanged")
+	{
+		// Forward on any window messages
+		PublishMessage(Message);
 	}
 
 	TManager::ProcessMessage( Message );

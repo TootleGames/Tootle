@@ -75,6 +75,8 @@ public:
 		Update(0.0f);
 	}
 
+	FORCEINLINE Bool		IsEnabled()		const		{ return m_bEnabled; }
+
 protected:
 	virtual SyncBool		Initialise();
 	virtual SyncBool		Update(float fTimeStep);
@@ -92,4 +94,5 @@ private:
 
 private:
 	float					m_fDeviceCheckTimer;		// Interval timer between checks for devices
+	Bool					m_bEnabled;
 };

@@ -32,7 +32,7 @@ namespace TLRender
 //---------------------------------------------------------
 //	base screen type
 //---------------------------------------------------------
-class TLRender::TScreen : public TLMessaging::TPublisher
+class TLRender::TScreen : public TLMessaging::TRelay
 {
 public:
 	enum Flags

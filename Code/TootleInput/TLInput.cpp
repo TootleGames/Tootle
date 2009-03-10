@@ -120,7 +120,8 @@ TRef TLInput::GetFreeDeviceRef(TRef BaseRef)
 
 TInputManager::TInputManager(TRef refManagerID) :
 	TManager(refManagerID),
-	m_fDeviceCheckTimer(0.0f)
+	m_fDeviceCheckTimer(0.0f),
+	m_bEnabled(TRUE) 
 {
 }
 
@@ -155,6 +156,9 @@ void TInputManager::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChann
 
 SyncBool TInputManager::Update(float fTimeStep)
 {
+	if(!IsEnabled())
+		return SyncTrue;
+
 	// Need to test for new devices and initialise them as required
 	m_fDeviceCheckTimer -= fTimeStep;
 
@@ -231,7 +235,9 @@ TInputDevice* TInputManager::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 
 void TInputManager::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(Message.GetMessageRef() == "ScreenChanged")
+	TRef MessageRef = Message.GetMessageRef();
+
+	if(MessageRef == "ScreenChanged")
 	{
 		TRef State;
 
@@ -243,6 +249,20 @@ void TInputManager::ProcessMessage(TLMessaging::TMessage& Message)
 
 		// No need to pass this sort of message on...
 		return;
+	}
+	else if(MessageRef == "OnWindowChanged")
+	{
+		TRef State;
+
+		if(Message.ImportData("State", State))
+		{
+			if(State == "Deactivate")
+				m_bEnabled = FALSE;
+			else
+				m_bEnabled = TRUE;
+
+			return;
+		}
 	}
 
 	// Relay message to all subscribers
