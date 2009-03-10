@@ -13,12 +13,16 @@
 		8418EB190F4C769A00B956C9 /* TWidgetScrollbar.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EB170F4C769A00B956C9 /* TWidgetScrollbar.h */; };
 		846B711C0F2A366F005EB752 /* TLGame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 846B711A0F2A366F005EB752 /* TLGame.cpp */; };
 		846B711D0F2A366F005EB752 /* TLGame.h in Headers */ = {isa = PBXBuildFile; fileRef = 846B711B0F2A366F005EB752 /* TLGame.h */; };
+		847FFF4E0F66BE1300121D77 /* TInputInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 847FFF480F66BE1300121D77 /* TInputInterface.cpp */; };
+		847FFF4F0F66BE1300121D77 /* TInputInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 847FFF490F66BE1300121D77 /* TInputInterface.h */; };
+		847FFF500F66BE1300121D77 /* TWidgetButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 847FFF4A0F66BE1300121D77 /* TWidgetButton.cpp */; };
+		847FFF510F66BE1300121D77 /* TWidgetButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 847FFF4B0F66BE1300121D77 /* TWidgetButton.h */; };
+		847FFF520F66BE1300121D77 /* TWidgetManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 847FFF4C0F66BE1300121D77 /* TWidgetManager.cpp */; };
+		847FFF530F66BE1300121D77 /* TWidgetManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 847FFF4D0F66BE1300121D77 /* TWidgetManager.h */; };
 		84C10A3F0F0A7C3000B2DF7A /* TMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10A3D0F0A7C3000B2DF7A /* TMenu.cpp */; };
 		84C10A400F0A7C3000B2DF7A /* TMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10A3E0F0A7C3000B2DF7A /* TMenu.h */; };
 		84DE35010F12AFED00608F8C /* TAssetBrowser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DE34FD0F12AFED00608F8C /* TAssetBrowser.cpp */; };
 		84DE35020F12AFED00608F8C /* TAssetBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DE34FE0F12AFED00608F8C /* TAssetBrowser.h */; };
-		84DE35030F12AFED00608F8C /* TGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DE34FF0F12AFED00608F8C /* TGui.cpp */; };
-		84DE35040F12AFED00608F8C /* TGui.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DE35000F12AFED00608F8C /* TGui.h */; };
 		84E117040F3CA26200471397 /* TGame.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E117020F3CA26200471397 /* TGame.h */; };
 		84E117050F3CA26200471397 /* TGame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E117030F3CA26200471397 /* TGame.cpp */; };
 /* End PBXBuildFile section */
@@ -30,6 +34,12 @@
 		8418EB170F4C769A00B956C9 /* TWidgetScrollbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWidgetScrollbar.h; path = ../TWidgetScrollbar.h; sourceTree = SOURCE_ROOT; };
 		846B711A0F2A366F005EB752 /* TLGame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLGame.cpp; path = ../TLGame.cpp; sourceTree = SOURCE_ROOT; };
 		846B711B0F2A366F005EB752 /* TLGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLGame.h; path = ../TLGame.h; sourceTree = SOURCE_ROOT; };
+		847FFF480F66BE1300121D77 /* TInputInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TInputInterface.cpp; path = ../TInputInterface.cpp; sourceTree = SOURCE_ROOT; };
+		847FFF490F66BE1300121D77 /* TInputInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TInputInterface.h; path = ../TInputInterface.h; sourceTree = SOURCE_ROOT; };
+		847FFF4A0F66BE1300121D77 /* TWidgetButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidgetButton.cpp; path = ../TWidgetButton.cpp; sourceTree = SOURCE_ROOT; };
+		847FFF4B0F66BE1300121D77 /* TWidgetButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWidgetButton.h; path = ../TWidgetButton.h; sourceTree = SOURCE_ROOT; };
+		847FFF4C0F66BE1300121D77 /* TWidgetManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidgetManager.cpp; path = ../TWidgetManager.cpp; sourceTree = SOURCE_ROOT; };
+		847FFF4D0F66BE1300121D77 /* TWidgetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWidgetManager.h; path = ../TWidgetManager.h; sourceTree = SOURCE_ROOT; };
 		84C10A370F0A7C1800B2DF7A /* libTootleGame.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleGame.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C10A3D0F0A7C3000B2DF7A /* TMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TMenu.cpp; path = ../TMenu.cpp; sourceTree = SOURCE_ROOT; };
 		84C10A3E0F0A7C3000B2DF7A /* TMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TMenu.h; path = ../TMenu.h; sourceTree = SOURCE_ROOT; };
@@ -39,8 +49,6 @@
 		84C10A450F0A7C4E00B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
 		84DE34FD0F12AFED00608F8C /* TAssetBrowser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAssetBrowser.cpp; path = ../TAssetBrowser.cpp; sourceTree = SOURCE_ROOT; };
 		84DE34FE0F12AFED00608F8C /* TAssetBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAssetBrowser.h; path = ../TAssetBrowser.h; sourceTree = SOURCE_ROOT; };
-		84DE34FF0F12AFED00608F8C /* TGui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGui.cpp; path = ../TGui.cpp; sourceTree = SOURCE_ROOT; };
-		84DE35000F12AFED00608F8C /* TGui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGui.h; path = ../TGui.h; sourceTree = SOURCE_ROOT; };
 		84E117020F3CA26200471397 /* TGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGame.h; path = ../TGame.h; sourceTree = SOURCE_ROOT; };
 		84E117030F3CA26200471397 /* TGame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGame.cpp; path = ../TGame.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -76,6 +84,12 @@
 		84C10A3C0F0A7C2000B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				847FFF480F66BE1300121D77 /* TInputInterface.cpp */,
+				847FFF490F66BE1300121D77 /* TInputInterface.h */,
+				847FFF4A0F66BE1300121D77 /* TWidgetButton.cpp */,
+				847FFF4B0F66BE1300121D77 /* TWidgetButton.h */,
+				847FFF4C0F66BE1300121D77 /* TWidgetManager.cpp */,
+				847FFF4D0F66BE1300121D77 /* TWidgetManager.h */,
 				840DECD60F545DAE005C7CFF /* TPath.cpp */,
 				840DECD70F545DAE005C7CFF /* TPath.h */,
 				8418EB160F4C769A00B956C9 /* TWidgetScrollbar.cpp */,
@@ -84,8 +98,6 @@
 				846B711B0F2A366F005EB752 /* TLGame.h */,
 				84DE34FD0F12AFED00608F8C /* TAssetBrowser.cpp */,
 				84DE34FE0F12AFED00608F8C /* TAssetBrowser.h */,
-				84DE34FF0F12AFED00608F8C /* TGui.cpp */,
-				84DE35000F12AFED00608F8C /* TGui.h */,
 				84C10A3D0F0A7C3000B2DF7A /* TMenu.cpp */,
 				84C10A3E0F0A7C3000B2DF7A /* TMenu.h */,
 				84E117020F3CA26200471397 /* TGame.h */,
@@ -114,11 +126,13 @@
 			files = (
 				84C10A400F0A7C3000B2DF7A /* TMenu.h in Headers */,
 				84DE35020F12AFED00608F8C /* TAssetBrowser.h in Headers */,
-				84DE35040F12AFED00608F8C /* TGui.h in Headers */,
 				846B711D0F2A366F005EB752 /* TLGame.h in Headers */,
 				84E117040F3CA26200471397 /* TGame.h in Headers */,
 				8418EB190F4C769A00B956C9 /* TWidgetScrollbar.h in Headers */,
 				840DECD90F545DAE005C7CFF /* TPath.h in Headers */,
+				847FFF4F0F66BE1300121D77 /* TInputInterface.h in Headers */,
+				847FFF510F66BE1300121D77 /* TWidgetButton.h in Headers */,
+				847FFF530F66BE1300121D77 /* TWidgetManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -167,11 +181,13 @@
 			files = (
 				84C10A3F0F0A7C3000B2DF7A /* TMenu.cpp in Sources */,
 				84DE35010F12AFED00608F8C /* TAssetBrowser.cpp in Sources */,
-				84DE35030F12AFED00608F8C /* TGui.cpp in Sources */,
 				846B711C0F2A366F005EB752 /* TLGame.cpp in Sources */,
 				84E117050F3CA26200471397 /* TGame.cpp in Sources */,
 				8418EB180F4C769A00B956C9 /* TWidgetScrollbar.cpp in Sources */,
 				840DECD80F545DAE005C7CFF /* TPath.cpp in Sources */,
+				847FFF4E0F66BE1300121D77 /* TInputInterface.cpp in Sources */,
+				847FFF500F66BE1300121D77 /* TWidgetButton.cpp in Sources */,
+				847FFF520F66BE1300121D77 /* TWidgetManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
