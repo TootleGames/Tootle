@@ -68,7 +68,7 @@ public:
 	const TRef&			Increment();							//	increment the reference - don't just increment the u32 though! do it systematticly - returns itself so you can construct another TRef from the incremented version of this
 
 	const u32&			GetData() const							{	return m_Ref;	}
-	void				GetString(TString& RefString) const;	//	convert ref to a string
+	void				GetString(TString& RefString,Bool Capitalise=FALSE) const;	//	convert ref to a string
 	FORCEINLINE Bool	IsValid() const;						//	check for invalid bits being set etc
 
 	inline Bool			operator<(const TRef& Ref) const		{	return GetData() < Ref.GetData();	}

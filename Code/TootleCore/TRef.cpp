@@ -323,7 +323,7 @@ u32 TRef::GetRefCharIndex(u32 Index) const
 //-----------------------------------------------------
 //	convert ref to a string
 //-----------------------------------------------------
-void TRef::GetString(TString& RefString) const
+void TRef::GetString(TString& RefString,Bool Capitalise) const
 {
 	for ( u32 i=0;	i<TRef::g_CharsPerRef;	i++ )
 	{
@@ -332,7 +332,7 @@ void TRef::GetString(TString& RefString) const
 
 		//	convert index to character
 		//	gr: just to make them a little nicer to read, I've made the first character in the string uppercase
-		char RefChar = TLRef::GetCharFromRefCharIndex( RefCharIndex, (i==0) );
+		char RefChar = TLRef::GetCharFromRefCharIndex( RefCharIndex, Capitalise && (i==0) );
 		RefString.Append( RefChar );
 	}
 }
