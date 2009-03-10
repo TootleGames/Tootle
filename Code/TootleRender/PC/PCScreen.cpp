@@ -82,10 +82,11 @@ SyncBool TLRender::Platform::Screen::Init()
 		}
 
 		// The window has changed.  Notify to all subscribers.
-		TLMessaging::TMessage Message("SCREEN");
+		TLMessaging::TMessage Message("ScreenChanged", "ScreenManager");
 
-		TRef change = "NEW";
-		Message.Write(change);
+		TRef change = "Added";
+		Message.ExportData("State", change);
+		Message.ExportData("ScreenRef", GetRef() );
 		PublishMessage(Message);
 	}
 

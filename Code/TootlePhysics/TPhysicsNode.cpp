@@ -62,6 +62,11 @@ TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 #endif
 }
 
+
+	
+//---------------------------------------------------------
+//	generic render node init
+//---------------------------------------------------------
 void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 {
 	TRef	OwnerRef;
@@ -73,6 +78,10 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 
 		if(pOwner.IsValid())
 		{
+			pOwner->SubscribeTo(this);
+			SubscribeTo(pOwner);
+
+			/*
 			TPtr<TLMessaging::TEventChannel>& pEventChannel = pOwner->FindEventChannel("OnTransform");
 
 			if(pEventChannel)
@@ -83,32 +92,36 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 				// Subscribe the 'scene' node owner to this node so we can sen audio change messages
 				pOwner->SubscribeTo(this);
 			}
+			*/
 		}
 	}
 
-	Bool TranslateChanged = FALSE;
+	Bool bTranslation, bRotation, bScale;
+	bTranslation = bRotation = bScale = FALSE;
+
 	if ( Message.ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
 	{
 		m_Transform.SetTranslateValid();
-		TranslateChanged = TRUE;
+		bTranslation = TRUE;
 	}
 
 	Bool ScaleChanged = FALSE;
 	if ( Message.ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
 	{
 		m_Transform.SetScaleValid();
-		ScaleChanged = TRUE;
+		bScale = TRUE;
 	}
 
 	Bool RotationChanged = FALSE;
 	if ( Message.ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
 	{
 		m_Transform.SetRotationValid();
-		RotationChanged = TRUE;
+		bRotation = TRUE;
 	}
 
-	//	notify on transform change
-	OnTransformChanged( TranslateChanged, ScaleChanged, RotationChanged );
+	//	transform has been set
+	if ( bTranslation || bRotation || bScale )
+		OnTransformChanged(bTranslation, bRotation, bScale);
 
 	//	get physics flags to set
 	TPtrArray<TBinaryTree> FlagChildren;
@@ -337,8 +350,7 @@ void TLPhysics::TPhysicsNode::OnTransformChanged(Bool bTranslation, Bool bRotati
 {	
 	SetWorldCollisionShapeInvalid();	
 
-	TLMessaging::TMessage Message("Physics");
-	Message.AddChannelID("OnTransform");
+	TLMessaging::TMessage Message("OnTransform");
 
 	if(bTranslation)
 		Message.ExportData("Translate", m_Transform.GetTranslate());
@@ -585,9 +597,7 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode* pOtherNode)
 	if(bChanges && pOtherNode->IsStatic())
 	{
 		// Publish a message to all subscribers to say that this node has collided with something
-		TLMessaging::TMessage Message("PHYSICS");
-
-		Message.AddChannelID("COLLISION");
+		TLMessaging::TMessage Message("COLLISION");
 
 		Message.Write(GetNodeRef());
 		//Message.Write(bChanges);

@@ -99,9 +99,9 @@ SyncBool TScreenManager::Update(float fTimeStep)
 		if ( ScreenUpdate == SyncFalse )
 		{
 			//	create message
-			TLMessaging::TMessage Message("Deleted", "ScreenManager" );
-			Message.AddChannelID("ScreenManager");
-			Message.AddChildAndData("ScreenRef", pScreen->GetRef() );
+			TLMessaging::TMessage Message("ScreenChanged", "ScreenManager");
+			Message.ExportData("State", TRef("Deleted") );
+			Message.ExportData("ScreenRef", pScreen->GetRef() );
 
 			//	shutdown and delete
 			pScreen->Shutdown();

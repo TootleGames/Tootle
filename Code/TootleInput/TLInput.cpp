@@ -130,8 +130,8 @@ SyncBool TInputManager::Initialise()
 	// If we have the event channel manager then register some event channels
 	if(TLMessaging::g_pEventChannelManager)
 	{
-		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "ACTION");
-		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "DEVICE");
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "Action");
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "DeviceChanged");
 
 		return Platform::Init();
 	}
@@ -206,10 +206,8 @@ void TInputManager::RemoveAllDevices()
 		TLInput::TInputDevice& Device = *ElementAt(uIndex);
 
 		// Send a message to say the device is being removed
-		TLMessaging::TMessage Message("Input");
-
-		Message.AddChannelID("DEVICE");								// device information message
-		Message.AddChildAndData("STATE", "REMOVED");			// state change
+		TLMessaging::TMessage Message("DeviceChanged");
+		Message.AddChildAndData("State", "REMOVED");			// state change
 		Message.AddChildAndData("DEVID", Device.GetDeviceRef() );		// device ref 
 		Message.AddChildAndData("TYPE", Device.GetDeviceType() );				// device type
 
@@ -233,14 +231,13 @@ TInputDevice* TInputManager::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 
 void TInputManager::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(Message.GetMessageRef() == "SCREEN")
+	if(Message.GetMessageRef() == "ScreenChanged")
 	{
-		TRef change;
-		TRef test = "NEW";
+		TRef State;
 
-		if(Message.Read(change))
+		if(Message.ImportData("State", State))
 		{
-			if(change == test)
+			if(State == "Added")
 				RemoveAllDevices();
 		}
 

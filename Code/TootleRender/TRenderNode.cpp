@@ -712,6 +712,10 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 
 		if(pOwner.IsValid())
 		{
+			pOwner->SubscribeTo(this);
+			SubscribeTo(pOwner);
+
+			/*
 			TPtr<TLMessaging::TEventChannel>& pEventChannel = pOwner->FindEventChannel("OnTransform");
 
 			if(pEventChannel)
@@ -722,6 +726,7 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 				// Subscribe the 'scene' node owner to this node so we can sen audio change messages
 				pOwner->SubscribeTo(this);
 			}
+			*/
 		}
 	}
 
@@ -816,37 +821,33 @@ void TLRender::TRenderNode::Shutdown()
 
 void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(Message.GetMessageRef() == "Node")
+	if(Message.GetMessageRef() == "OnTransform")
 	{
-		// NOTE: Only need to check the channelID if we subscribe to other channels on a node.
-		//if(Message.HasChannelID("OnTransform"))
+		Bool TransformChanged = FALSE;
+
+		if ( Message.ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
 		{
-			Bool TransformChanged = FALSE;
-
-			if ( Message.ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
-			{
-				m_Transform.SetTranslateValid();
-				TransformChanged = TRUE;
-			}
-
-			if ( Message.ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
-			{
-				m_Transform.SetScaleValid();
-				TransformChanged = TRUE;
-			}
-
-			if ( Message.ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
-			{
-				m_Transform.SetRotationValid();
-				TransformChanged = TRUE;
-			}
-
-			//	transform has been set
-			if ( TransformChanged )
-				OnTransformChanged();
-
-			return;
+			m_Transform.SetTranslateValid();
+			TransformChanged = TRUE;
 		}
+
+		if ( Message.ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
+		{
+			m_Transform.SetScaleValid();
+			TransformChanged = TRUE;
+		}
+
+		if ( Message.ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
+		{
+			m_Transform.SetRotationValid();
+			TransformChanged = TRUE;
+		}
+
+		//	transform has been set
+		if ( TransformChanged )
+			OnTransformChanged();
+
+		return;
 	}
 
 	//	do inherited init

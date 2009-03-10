@@ -197,7 +197,25 @@ SyncBool TApplication::Shutdown()
 //-----------------------------------------------------------
 void TApplication::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	
+	if ( Message.GetMessageRef() == "ScreenChanged" ) 
+	{
+		TRef State;
+
+		if(Message.ImportData("State", State))
+		{
+			//	screen was deleted
+			if ( State == "Deleted" )
+			{
+				//	if there are no screens left, close app
+				if ( TLRender::g_pScreenManager->GetSize() == 0 )
+				{
+					TLMessaging::TMessage Message(TLCore::QuitRef);
+					PublishMessage( Message );
+				}
+			}
+		}
+	}
+
 	TManager::ProcessMessage(Message);
 }
 

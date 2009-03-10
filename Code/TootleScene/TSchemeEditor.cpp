@@ -55,7 +55,7 @@ void TSchemeEditor::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChann
 	if(refPublisherID == "USERMANAGER")
 	{
 		// Subscribe to the input action messages
-		if(refChannelID == "ACTION")
+		if(refChannelID == "Action")
 			TLMessaging::g_pEventChannelManager->SubscribeTo(this, refPublisherID, refChannelID); 
 	}
 	
@@ -75,7 +75,7 @@ void TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	TRefRef MessageRef = Message.GetMessageRef();
 
-	if(MessageRef == "Input")
+	if(MessageRef == "Action")
 	{
 		TRef refInputAction;
 		if(Message.Read(refInputAction))
@@ -375,8 +375,7 @@ void TSchemeEditor::TranslateSelectedNodes(float fAmount, TransformAxis uAxis)
 		if(pNode && pNode->HasTransform())
 		{
 			// Send the node a message to say we want to move the node
-			TLMessaging::TMessage Message("Editor");
-			Message.AddChannelID("Transform");
+			TLMessaging::TMessage Message("ReqTransform", "Editor");
 			Message.AddChildAndData("Translate", vTranslation);
 
 			// NOTE: Should really send this message via the scenegraph rather than directly.
@@ -411,8 +410,7 @@ void TSchemeEditor::RotateSelectedNodes(float fAmount, TransformAxis uAxis)
 		if(pNode && pNode->HasTransform())
 		{
 			// Send the node a message to say we want to move the node
-			TLMessaging::TMessage Message("Editor");
-			Message.AddChannelID("Transform");
+			TLMessaging::TMessage Message("ReqTransform", "Editor");
 			Message.AddChildAndData("Rotation", qRotation);
 
 			// NOTE: Should really send this message via the scenegraph rather than directly.
@@ -444,8 +442,7 @@ void TSchemeEditor::ScaleSelectedNodes(float fAmount, TransformAxis uAxis)
 		if(pNode && pNode->HasTransform())
 		{
 			// Send the node a message to say we want to move the node
-			TLMessaging::TMessage Message("Editor");
-			Message.AddChannelID("Transform");
+			TLMessaging::TMessage Message("ReqTransform", "Editor");
 			Message.AddChildAndData("Scale", vScale);
 
 			// NOTE: Should really send this message via the scenegraph rather than directly.

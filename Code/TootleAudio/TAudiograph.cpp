@@ -41,10 +41,10 @@ SyncBool TAudiograph::Initialise()
 		if(InitDevices() != SyncTrue)
 			return SyncFalse;
 
-		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, "AUDIOGRAPH", "START");
-		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, "AUDIOGRAPH", "STOP");
-		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, "AUDIOGRAPH", "PAUSE");
-		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, "AUDIOGRAPH", "VOLUME");
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, "AUDIOGRAPH", "Start");
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, "AUDIOGRAPH", "Stop");
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, "AUDIOGRAPH", "Pause");
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, "AUDIOGRAPH", "OnVolumeChanged");
 
 		if(TLGraph::TGraph<TLAudio::TAudioNode>::Initialise() == SyncTrue)
 		{	
@@ -84,9 +84,7 @@ SyncBool TAudiograph::Update(float fTimeStep)
 		{
 			TRef AudioRef = refArray.ElementAt(uIndex);
 
-			TLMessaging::TMessage Message("AUDIO");
-
-			Message.AddChannelID("STOP");
+			TLMessaging::TMessage Message("Stop");
 			Message.Write(AudioRef);
 
 			PublishMessage(Message);
@@ -107,7 +105,7 @@ SyncBool TAudiograph::Shutdown()
 
 void TAudiograph::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(Message.GetMessageRef() == "SETVOL")
+	if(Message.GetMessageRef() == "SetVolume")
 	{
 		float fVolume; 
 		if(Message.ImportData("Effects", fVolume))
@@ -130,13 +128,13 @@ void TAudiograph::ProcessMessage(TLMessaging::TMessage& Message)
 
 		return;
 	}
-	else if(Message.GetMessageRef() == "PAUSE")
+	else if(Message.GetMessageRef() == "Pause")
 	{
 		m_bPause = TRUE;
 		OnPauseStateChanged();
 		return;
 	}
-	else if(Message.GetMessageRef() == "UNPAUSE")
+	else if(Message.GetMessageRef() == "UnPause")
 	{
 		m_bPause = FALSE;
 		OnPauseStateChanged();
@@ -228,20 +226,16 @@ float TAudiograph::GetAudioVolume(TRefRef AudioRef)
 
 void TAudiograph::OnMusicVolumeChanged()
 {
-	TLMessaging::TMessage Message("AUDIO");
-
-	Message.AddChannelID("VOLUME");
-	Message.ExportData("Effects", GetMusicVolume());
+	TLMessaging::TMessage Message("OnVolumeChanged");
+	Message.ExportData("Volume", GetMusicVolume());
 
 	PublishMessage(Message);
 }
 
 void TAudiograph::OnEffectsVolumeChanged()
 {
-	TLMessaging::TMessage Message("AUDIO");
-
-	Message.AddChannelID("VOLUME");
-	Message.ExportData("Effects", GetEffectsVolume());
+	TLMessaging::TMessage Message("OnVolumeChanged");
+	Message.ExportData("Volume", GetEffectsVolume());
 
 	PublishMessage(Message);
 }
@@ -250,9 +244,7 @@ void TAudiograph::OnEffectsVolumeChanged()
 void TAudiograph::OnPauseStateChanged()
 {
 	// Broadcast pause message to all subscribers
-	TLMessaging::TMessage Message("AUDIO");
-
-	Message.AddChannelID("PAUSE");
+	TLMessaging::TMessage Message("Pause", "Audio");
 	Message.ExportData("State", m_bPause);
 
 	PublishMessage(Message);

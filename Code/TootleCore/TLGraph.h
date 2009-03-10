@@ -1498,15 +1498,8 @@ template<class T>
 void TLGraph::TGraph<T>::OnNodeRemoved(TRefRef NodeRef)
 {
 	// Send the removed node notificaiton
-	TLMessaging::TMessage Message("GRAPHCHANGE");
-	Message.AddChannelID("Removed");
-	Message.ExportData("NodeRef", NodeRef);
-
-	//	gr: mix of both methods, channel and data
-	Message.Write( NodeRef );
-	Message.Write( GetGraphRef() );
-	Message.Write( (Bool)FALSE );
-
+	TLMessaging::TMessage Message("NodeRemoved", GetGraphRef());
+	Message.Write(NodeRef);
 
 	PublishMessage(Message);
 }
@@ -1524,14 +1517,8 @@ void TLGraph::TGraph<T>::OnNodeAdded(TPtr<T>& pNode)
 	pNode->ProcessMessageQueue();
 
 	// Send the added node notificaiton
-	TLMessaging::TMessage Message("GRAPHCHANGE");
-	Message.AddChannelID("Added");
-	Message.ExportData("NodeRef", pNode->GetNodeRef());
-
-	//	gr: mix of both methods, channel and data
-	Message.Write( pNode->GetNodeRef() );
-	Message.Write( GetGraphRef() );
-	Message.Write( (Bool)TRUE );
+	TLMessaging::TMessage Message("NodeAdded", GetGraphRef());
+	Message.Write(pNode->GetNodeRef());
 
 	PublishMessage(Message);
 }

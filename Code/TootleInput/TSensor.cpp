@@ -10,7 +10,7 @@ using namespace TLInput;
 
 void TInputSensor::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(Message.HasChannelID(m_SensorRef))
+	if(Message.GetMessageRef() == m_SensorRef)
 	{
 		float fValue;
 		if ( Message.Read(fValue) )
@@ -43,7 +43,7 @@ void TInputSensor::Process(float fRawValue)
 		TLDebug_Print( Debug_SensorString );
 #endif
 		
-		TLMessaging::TMessage Message("Input");
+		TLMessaging::TMessage Message("Action");
 
 		// Relay message to all subscribers
 		Message.Write(fValue);

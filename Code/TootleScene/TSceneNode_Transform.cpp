@@ -50,7 +50,7 @@ void TLScene::TSceneNode_Transform::Initialise(TLMessaging::TMessage& Message)
 
 void TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(Message.GetMessageRef() == "Physics")
+	if(Message.GetMessageRef() == "OnTransform")
 	{
 		float3 vVector;
 		TLMaths::TQuaternion qRot;
@@ -83,7 +83,7 @@ void TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Message)
 			OnTransformChanged(bTranslation, bRotation, bScale);
 		}
 	}
-	else if(Message.GetMessageRef() == "Editor")
+	else if(Message.GetMessageRef() == "ReqTransform")
 	{
 		float3 vVector;
 		TLMaths::TQuaternion qRot;
@@ -118,9 +118,7 @@ void TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Message)
 // Transform changed
 void TSceneNode_Transform::OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale)
 {
-	TLMessaging::TMessage Message("Node");
-	Message.AddChannelID("OnTransform");
-
+	TLMessaging::TMessage Message("OnTransform", GetNodeRef());
 	if(bTranslation && m_Transform.HasTranslate() )
 		Message.ExportData("Translate", GetTranslate());
 
@@ -129,10 +127,6 @@ void TSceneNode_Transform::OnTransformChanged(Bool bTranslation, Bool bRotation,
 
 	if(bScale && m_Transform.HasScale() )
 		Message.ExportData("Scale", GetScale());
-
-	//	gr: inject our ref so subscriber knows what node has changed
-	Message.AddChildAndData("SNRef", GetNodeRef() );
-	Message.AddChildAndData("SNType", GetNodeTypeRef() );
 
 	PublishMessage(Message);
 }

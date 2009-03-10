@@ -27,7 +27,6 @@ public:
 	{
 	}
 
-	FORCEINLINE TRefRef	GetChannelID()	const					{	return m_refChannelID; }
 	FORCEINLINE TRefRef	GetChannelRef()	const					{	return m_refChannelID; }
 
 	FORCEINLINE Bool	operator==(TRefRef ChannelRef) const	{	return GetChannelRef() == ChannelRef;	}
@@ -37,7 +36,7 @@ protected:
 	virtual void		ProcessMessage(TLMessaging::TMessage& Message)
 	{
 		// Is the message available for our channel?
-		if(Message.HasChannelID(GetChannelID()))
+		if(Message.GetMessageRef() == GetChannelRef())
 		{
 			// Yes - relay the message onot our subscribers
 			PublishMessage(Message);

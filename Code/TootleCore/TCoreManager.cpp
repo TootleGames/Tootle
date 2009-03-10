@@ -254,7 +254,6 @@ SyncBool TCoreManager::UpdateShutdown()
 void TCoreManager::PublishInitMessage()
 {
 	TLMessaging::TMessage Message(InitialiseRef);
-	Message.AddChannelID(InitialiseRef);
 	
 	PublishMessage( Message );
 }
@@ -266,7 +265,6 @@ void TCoreManager::PublishInitMessage()
 void TCoreManager::PublishShutdownMessage()
 {
 	TLMessaging::TMessage Message(ShutdownRef);
-	Message.AddChannelID(ShutdownRef);
 	
 	PublishMessage( Message );
 }
@@ -302,7 +300,6 @@ Bool TCoreManager::PublishUpdateMessage(Bool bForced)
 
 	//	create an update message
 	TLMessaging::TMessage Message(UpdateRef);
-	Message.AddChannelID(UpdateRef);
 
 	//	add timestep data
 	Message.AddChildAndData( TLCore::TimeStepRef, fTimeStep );
@@ -418,7 +415,6 @@ Bool TCoreManager::PublishRenderMessage(Bool bForced)
 
 	//	make up render message to send
 	TLMessaging::TMessage Message(RenderRef);
-	Message.AddChannelID(RenderRef);
 	
 	//	send out render message
 	PublishMessage( Message );

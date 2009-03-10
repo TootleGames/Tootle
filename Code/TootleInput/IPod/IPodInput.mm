@@ -71,11 +71,10 @@ Bool Platform::IPod::CreateDevice()
 		else
 		{
 			// Notify to all subscribers of the input system that a new device was added
-			TLMessaging::TMessage Message("Input");			
+			TLMessaging::TMessage Message("DeviceChanged");			
 			
 			TRef refState = "ADDED";
-			Message.AddChannelID("DEVICE");									// device information message
-			Message.AddChildAndData("STATE", refState);					// state change
+			Message.AddChildAndData("State", refState);					// state change
 			Message.AddChildAndData("DEVID", pGenericDevice->GetDeviceRef() );	// device ID
 			Message.AddChildAndData("TYPE", pGenericDevice->GetDeviceType() );						// device type
 			

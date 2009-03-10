@@ -69,7 +69,15 @@ protected:
 	virtual SyncBool			ProcessClick(const TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TPtr<TLRender::TRenderNode>& pRenderNode);	//	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
 	void						SendActionMessage(Bool ActionDown,float RawData);	//	when click has been validated action message is sent to subscribers
 	virtual void				GetRenderNodes(TArray<TRef>& RenderNodeArray);		//	get array of all the render nodes we're using
+	
 	virtual void				OnInitialised()										{	};
+
+	virtual void				OnClickBegin();
+	virtual void				OnClickEnd();
+
+	virtual void				OnCursorMove();		
+	virtual void				OnCursorHoverOn()	{}
+	virtual void				OnCursorHoverOff()	{}
 
 private:
 	void						QueueClick(const int2& CursorPos,float ActionValue);	//	put a click in the queue
@@ -78,6 +86,7 @@ private:
 protected:
 	TRef						m_RenderTargetRef;
 	TRef						m_RenderNodeRef;
+
 	TRef						m_ActionOutDown;		//	action to send out when mouse goes down over render node
 	TRef						m_ActionOutUp;			//	action to send out when mouse is relesed/not over render node
 
@@ -86,7 +95,6 @@ private:
 	Bool						m_InitialisedRenderNodes;	//	have setup render nodes to be clickable
 	TRef						m_UserRef;
 	TRef						m_ActionIn;
-	Bool						m_ActionIsDown;			//	we store when we did get an action(which clicked), so if we keep holding, and go out of the zone, we can send an up message
 	TArray<TClick>				m_QueuedClicks;			//	action's we had to wait for
 };
 

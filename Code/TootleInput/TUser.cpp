@@ -16,7 +16,7 @@ using namespace TLUser;
 SyncBool TUserManager::Initialise() 
 {	
 	TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "USER");
-	TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "ACTION");
+	TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "Action");
 
 	// Register a global user by default
 	RegisterUser("Global");	
@@ -35,7 +35,7 @@ void TUserManager::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChanne
 	else if(refPublisherID == "INPUT")
 	{
 		// Subscribe to the update messages
-		if(refChannelID == "DEVICE")
+		if(refChannelID == "DeviceChanged")
 			TLMessaging::g_pEventChannelManager->SubscribeTo(this, refPublisherID, refChannelID); 
 	}
 	
@@ -66,8 +66,6 @@ Bool TUserManager::RegisterUser(TRef refUserID)
 		{
 			// Broadcast message to say a new user has been added to the system
 			TLMessaging::TMessage Message("USER");
-
-			Message.AddChannelID("USER");			// User change channel
 			Message.Write("ADDED");				// User added message
 			Message.Write(pUser.GetObject());		// User being added
 
@@ -91,8 +89,6 @@ Bool TUserManager::UnregisterUser(TRef refUserID)
 
 	// Broadcast message to say a user is being removed from the system
 	TLMessaging::TMessage Message("USER");
-
-	Message.AddChannelID("USER");			// User change channel
 	Message.Write("REMOVED");				// User removed message
 	Message.Write(pUser.GetObject());		// User being removed
 
@@ -111,8 +107,6 @@ void TUserManager::UnregisterAllUsers()
 
 		// Broadcast message to say a user is being removed from the system
 		TLMessaging::TMessage Message("USER");
-
-		Message.AddChannelID("USER");			// User change channel
 		Message.Write("REMOVED");				// User removed message
 		Message.Write(pUser.GetObject());		// User being removed
 
@@ -158,30 +152,27 @@ void TUserManager::ProcessMessage(TLMessaging::TMessage& Message)
 
 	TRefRef MessageRef = Message.GetMessageRef();
 
-	if(MessageRef == "INPUT")
+	if(MessageRef == "DeviceChanged")
 	{
-		if(Message.HasChannelID("DEVICE"))
+		// Device message form the input system
+		// Check for if the device has been added or removed
+		TRef refState;
+		if(Message.ImportData("State", refState))
 		{
-			// Device message form the input system
-			// Check for if the device has been added or removed
-			TRef refState;
-			if(Message.ImportData("STATE", refState))
+			if(refState == TRef("ADDED"))
 			{
-				if(refState == TRef("ADDED"))
-				{
-					// New device
-					
+				// New device
+				
 
-					// return - no need to pass this message on
-					return;
-				}
-				else if(refState == TRef("REMOVED"))
-				{
-					// Device removed
+				// return - no need to pass this message on
+				return;
+			}
+			else if(refState == TRef("REMOVED"))
+			{
+				// Device removed
 
-					// return - no need to pass this message on
-					return;
-				}
+				// return - no need to pass this message on
+				return;
 			}
 		}
 	}

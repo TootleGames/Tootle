@@ -27,7 +27,7 @@ void	TNeuron::Update()
 		TLMessaging::TMessage Message("PULSE");
 
 		// TODO: Cater for prohibitive neurons here
-		//Message.SetSenderID(GetNeuronID());
+		//Message.SetSenderRef(GetNeuronID());
 		Message.Write(1.0f);
 		PublishMessage(Message);
 	}

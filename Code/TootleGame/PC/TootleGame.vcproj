@@ -196,6 +196,22 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TWidgetButton.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TWidgetButton.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TWidgetManager.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TWidgetManager.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TWidgetScrollbar.cpp"
 			>
 		</File>

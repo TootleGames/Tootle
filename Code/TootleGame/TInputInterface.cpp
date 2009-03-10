@@ -15,7 +15,6 @@
 TLInput::TInputInterface::TInputInterface(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp)  : 
 	m_InitialisedRenderNodes	( FALSE ),
 	m_Subscribed				( FALSE ),
-	m_ActionIsDown				( FALSE ),
 	m_RenderTargetRef			( RenderTargetRef ),
 	m_RenderNodeRef				( RenderNodeRef ),
 	m_UserRef					( UserRef),
@@ -95,6 +94,8 @@ SyncBool TLInput::TInputInterface::Initialise()
 		if ( !pUser )
 			return SyncWait;
 
+// Old system
+
 		//	create action
 		if ( !m_ActionIn.IsValid() )
 		{
@@ -133,6 +134,46 @@ SyncBool TLInput::TInputInterface::Initialise()
 				m_Subscribed |= pUser->MapAction( m_ActionIn, InputDevice.GetDeviceRef(), ButtonRef );
 			}
 		}
+
+// NEW SYTEM
+/*
+		//	create action
+		if ( !m_ActionIn.IsValid() )
+		{
+			// NOTE: There is a BClick generic event too which will need to be processed for when you
+			// click 'press' on an object.
+			// The EClick is for release and is more correct because you could click and move the cusor
+			// and hence not actually want to click on the object.
+			m_ActionIn = "EClick";
+		
+			//	subscribe to user's actions
+			SubscribeTo( pUser );
+
+			m_Subscribed = TRUE;
+		}
+		else
+		{
+
+			//	map action to at least one mouse device
+			for ( u32 d=0;	d<TLInput::g_pInputSystem->GetSize();	d++ )
+			{
+				TLInput::TInputDevice& InputDevice = *(TLInput::g_pInputSystem->ElementAt( d ));
+				if ( InputDevice.GetDeviceType() != "Mouse" )
+					continue;
+
+				//	subscribe to all of the button sensors
+				u32 NumberOfButtons = InputDevice.GetSensorCount(TLInput::Button);
+
+				for ( u32 s=0; s < NumberOfButtons ;s++ )
+				{
+					TRef ButtonRef = TLInput::GetDefaultButtonRef(s);
+
+					//	map this action to this button sensor
+					m_Subscribed |= pUser->MapAction( m_ActionIn, InputDevice.GetDeviceRef(), ButtonRef );
+				}
+			}
+		}
+*/
 
 		//	mark as subscribed
 		if ( !m_Subscribed )
@@ -173,7 +214,7 @@ void TLInput::TInputInterface::Shutdown()
 //-------------------------------------------------
 void TLInput::TInputInterface::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(Message.GetMessageRef() == "Input")
+	if(Message.GetMessageRef() == "Action")
 	{
 		if ( !HasSubscribers() )
 		{
@@ -182,7 +223,7 @@ void TLInput::TInputInterface::ProcessMessage(TLMessaging::TMessage& Message)
 			Debug_String.Append(" has no subscribers");
 			TLDebug_Warning( Debug_String );
 		}
-		else if( Message.HasChannelID("Action"))
+		else 
 		{
 			TRef ActionRef;
 			float RawValue = 0.f;
@@ -365,6 +406,21 @@ SyncBool TLInput::TInputInterface::ProcessClick(const TClick& Click,TLRender::TS
 }
 
 
+void TLInput::TInputInterface::OnClickBegin()
+{
+
+}
+void TLInput::TInputInterface::OnClickEnd()
+{
+}
+
+void TLInput::TInputInterface::OnCursorMove()
+{
+
+}
+
+
+
 //-------------------------------------------------
 //	when click has been validated action message is sent to subscribers
 //-------------------------------------------------
@@ -373,10 +429,6 @@ void TLInput::TInputInterface::SendActionMessage(Bool ActionDown,float RawData)
 	if ( !HasSubscribers() )
 		return;
 	
-	//	if action is "up" and we're already "up" dont need to send the message
-//	if ( !ActionDown && !m_ActionIsDown )
-//		return;
-
 	TRef ActionOutRef = ActionDown ? m_ActionOutDown : m_ActionOutUp;
 
 #ifdef _DEBUG
@@ -391,16 +443,12 @@ void TLInput::TInputInterface::SendActionMessage(Bool ActionDown,float RawData)
 	if ( ActionOutRef.IsValid() )
 	{
 		//	make up fake input message
-		TLMessaging::TMessage Message("Input");
-		Message.AddChannelID("Action");
+		TLMessaging::TMessage Message("Action");
 		Message.Write( ActionOutRef );
 		Message.ExportData("RawData", RawData );
 
 		//	send message
 		PublishMessage( Message );
 	}
-
-	//	update current action state
-	m_ActionIsDown = ActionDown;
 }
 

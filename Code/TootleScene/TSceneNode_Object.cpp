@@ -55,58 +55,64 @@ void TSceneNode_Object::DeleteRenderNode()
 void TSceneNode_Object::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	//	catch when our render node or physics node has been added to the graph
-	if ( Message.GetMessageRef() == "GraphChange" )
+	if ( Message.GetMessageRef() == "NodeAdded" )
 	{
 		//	read node, graph, and added/removed state
-		TRef NodeRef,GraphRef;
-		Bool WasAdded;
-		Bool ReadFailed = FALSE;	//	double negative :(
-
-		Message.ResetReadPos();
-		ReadFailed |= !Message.Read( NodeRef );
-		ReadFailed |= !Message.Read( GraphRef );
-		ReadFailed |= !Message.Read( WasAdded );
-
-		if ( ReadFailed )
+		TRef NodeRef;
+		
+		if( !Message.Read( NodeRef ) )
 		{
 			TLDebug_Break("Error reading graph change message");
 			return;
 		}
 
-		if ( GraphRef == "RenderGraph" && NodeRef == m_RenderNodeRef )
+		// Get the graph reference
+		TRef GraphRef = Message.GetSenderRef();
+
+		if(NodeRef == m_RenderNodeRef && GraphRef == "RenderGraph" )
 		{
-			if ( WasAdded )
-			{
-				//	gr: change OnRenderNodeAdded to just take a TRef so functions that don't overload it skip this node search... or just make the callback an option to save the original subscription
-				TPtr<TLRender::TRenderNode>& pRenderNode = TLRender::g_pRendergraph->FindNode( NodeRef );
-				OnRenderNodeAdded( pRenderNode );
-				
-				//	no need to subscribe to this graph any more
-				this->UnsubscribeFrom( TLRender::g_pRendergraph );
-			}
-			else
-			{
-				m_RenderNodeRef.SetInvalid();
-				OnRenderNodeRemoved( NodeRef );
-			}
+			//	gr: change OnRenderNodeAdded to just take a TRef so functions that don't overload it skip this node search... or just make the callback an option to save the original subscription
+			TPtr<TLRender::TRenderNode>& pRenderNode = TLRender::g_pRendergraph->FindNode( NodeRef );
+			OnRenderNodeAdded( pRenderNode );
+			
+			//	no need to subscribe to this graph any more
+			this->UnsubscribeFrom( TLRender::g_pRendergraph );
 			return;
 		}
-		else if ( GraphRef == "PhysicsGraph" && NodeRef == m_PhysicsNodeRef )
+		else if(NodeRef == m_PhysicsNodeRef && GraphRef == "PhysicsGraph" )
 		{
-			if ( WasAdded )
-			{
-				//	gr: change OnRenderNodeAdded to just take a TRef so functions that don't overload it skip this node search... or just make the callback an option to save the original subscription
-				TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( NodeRef );
-				OnPhysicsNodeAdded( pPhysicsNode );
-				
-				//	no need to subscribe to this graph any more
-				this->UnsubscribeFrom( TLPhysics::g_pPhysicsgraph );
-			}
-			else
-			{
-				m_PhysicsNodeRef.SetInvalid();
-				OnPhysicsNodeRemoved( NodeRef );
-			}
+			//	gr: change OnRenderNodeAdded to just take a TRef so functions that don't overload it skip this node search... or just make the callback an option to save the original subscription
+			TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( NodeRef );
+			OnPhysicsNodeAdded( pPhysicsNode );
+			
+			//	no need to subscribe to this graph any more
+			this->UnsubscribeFrom( TLPhysics::g_pPhysicsgraph );
+			return;
+		}
+	}
+	else if( Message.GetMessageRef() == "NodeRemoved" )
+	{
+		//	read node, graph, and added/removed state
+		TRef NodeRef;
+
+		if ( !Message.Read( NodeRef ) )
+		{
+			TLDebug_Break("Error reading graph change message");
+			return;
+		}
+
+		TRef GraphRef = Message.GetSenderRef();
+
+		if(NodeRef == m_RenderNodeRef && GraphRef == "RenderGraph")
+		{
+			m_RenderNodeRef.SetInvalid();
+			OnRenderNodeRemoved( NodeRef );
+			return;
+		}
+		else if ( NodeRef == m_PhysicsNodeRef && GraphRef == "PhysicsGraph" )
+		{
+			m_PhysicsNodeRef.SetInvalid();
+			OnPhysicsNodeRemoved( NodeRef );
 			return;
 		}
 	}

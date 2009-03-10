@@ -50,46 +50,41 @@ void TAction::AddParentAction(TRefRef ParentActionRef, Bool bCondition)
 void TAction::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	// Does this action have any parent actions?  If so handle those first
-
 	if(m_refParentActions.GetSize())
 	{
-		TRef refChannelID;
-		if(Message.ImportData("CHANNELID", refChannelID))
+		// Check to see if the message coming in is for a parent action
+		if(Message.GetMessageRef() == "Action")
 		{
-			// Check to see if the message coming in is for a parent action
-			if(refChannelID == "ACTION")
+			// Get the action ID
+			TRef refActionID;
+
+			if(Message.Read(refActionID))
 			{
-				// Get the action ID
-				TRef refActionID;
-
-				if(Message.Read(refActionID))
+				for(u32 uIndex = 0; uIndex < m_refParentActions.GetSize(); uIndex++)
 				{
-					for(u32 uIndex = 0; uIndex < m_refParentActions.GetSize(); uIndex++)
+					if(m_refParentActions.ElementAt(uIndex) == refActionID)
 					{
-						if(m_refParentActions.ElementAt(uIndex) == refActionID)
-						{
-							TParentActionState& PAS = m_bParentActionStates.ElementAt(uIndex);
+						TParentActionState& PAS = m_bParentActionStates.ElementAt(uIndex);
 
-							// Toggle the state to say the parent action is currently active/inactive
-							PAS.m_bState = (PAS.m_bState ? 0 : 1);
-							
+						// Toggle the state to say the parent action is currently active/inactive
+						PAS.m_bState = (PAS.m_bState ? 0 : 1);
+						
 #ifdef ENABLE_INPUTACTION_TRACE
-							TString straction;
-							m_refActionID.GetString(straction);
-							TLDebug_Print(straction);
-							
-							TString strstate;
-							strstate.Appendf("Parent Action state set to %d", PAS.m_bState);
-							TLDebug_Print(strstate);
+						TString straction;
+						m_refActionID.GetString(straction);
+						TLDebug_Print(straction);
+						
+						TString strstate;
+						strstate.Appendf("Parent Action state set to %d", PAS.m_bState);
+						TLDebug_Print(strstate);
 #endif
-							
-						}
+						
 					}
 				}
-
-				// We don't need to process htis message any further
-				return;
 			}
+
+			// We don't need to process htis message any further
+			return;
 		}
 
 		// Check the parent action states
@@ -154,9 +149,7 @@ void TAction::ProcessMessage(TLMessaging::TMessage& Message)
 		TLDebug_Print(straction);
 #endif
 		// Send out a new message specifying the action ID to say this action has happened.
-		TLMessaging::TMessage NewMessage("Input");
-
-		NewMessage.AddChannelID("ACTION");
+		TLMessaging::TMessage NewMessage("Action");
 		NewMessage.Write(m_refActionID);			// The action performed
 
 		TPtr<TBinaryTree>& pChild = Message.GetChild("RAWDATA");

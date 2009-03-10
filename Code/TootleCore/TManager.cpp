@@ -113,11 +113,7 @@ void TManager::SetState(TLManager::ManagerState NewState)
 		m_ManagerState = NewState; 
 
 		// Broadcast a message telling things the managers state has changed
-		TLMessaging::TMessage Message("Manager");
-
-		Message.SetSenderID(GetManagerRef());
-		Message.AddChannelID("STATECHANGE");
-
+		TLMessaging::TMessage Message("StateChange", GetManagerRef());
 		Message.Write(NewState);
 		PublishMessage( Message );
 	}

@@ -565,10 +565,8 @@ BOOL CALLBACK Platform::DirectX::CreateDevice(const DIDEVICEINSTANCE* pdidInstan
 				else
 				{
 					// Notify to all subscribers of the input system that a new device was added
-					TLMessaging::TMessage Message("Input");
-
-					Message.AddChannelID("DEVICE");									// device information message
-					Message.AddChildAndData("STATE", TRef("ADDED"));					// state change
+					TLMessaging::TMessage Message("DeviceChanged");
+					Message.AddChildAndData("State", TRef("ADDED"));					// state change
 					Message.AddChildAndData("DEVID", pGenericDevice->GetDeviceRef());	// device ID
 					Message.AddChildAndData("TYPE", pGenericDevice->GetDeviceType());					// device type
 
@@ -1131,9 +1129,7 @@ Bool Platform::DirectX::UpdateDirectXDevice_Gamepad(TInputDevice& Device,TLInput
 
 void TLInput::Platform::DirectX::TLInputDirectXDevice::PublishData(u32 uUniqueID, float fValue)
 {
-	TLMessaging::TMessage Message("Input");
-
-	Message.AddChannelID(uUniqueID);						// Sensor ID which we want to publish to
+	TLMessaging::TMessage Message(uUniqueID);
 	Message.Write(fValue);									// Value from sensor
 	PublishMessage(Message);
 }

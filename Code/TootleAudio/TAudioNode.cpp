@@ -12,8 +12,8 @@ using namespace TLAudio;
 TAudioNode::TAudioNode(TRefRef NodeRef,TRefRef TypeRef) :
 	TLGraph::TGraphNode<TAudioNode>		( NodeRef, TypeRef )
 {
-	TLMessaging::g_pEventChannelManager->SubscribeTo(this, "AUDIOGRAPH", "STOP"); 
-	TLMessaging::g_pEventChannelManager->SubscribeTo(this, "AUDIOGRAPH", "VOLUME"); 
+	TLMessaging::g_pEventChannelManager->SubscribeTo(this, "AUDIOGRAPH", "Stop"); 
+	TLMessaging::g_pEventChannelManager->SubscribeTo(this, "AUDIOGRAPH", "OnVolumeChanged"); 
 }
 
 // Initialise routine
@@ -29,6 +29,10 @@ void TAudioNode::Initialise(TLMessaging::TMessage& Message)
 
 		if(pOwner.IsValid())
 		{
+			pOwner->SubscribeTo(this);
+			SubscribeTo(pOwner);
+
+			/*
 			TPtr<TLMessaging::TEventChannel>& pEventChannel = pOwner->FindEventChannel("OnTransform");
 
 			if(pEventChannel)
@@ -39,6 +43,7 @@ void TAudioNode::Initialise(TLMessaging::TMessage& Message)
 				// Subscribe the 'scene' node owner to this node so we can sen audio change messages
 				pOwner->SubscribeTo(this);
 			}
+			*/
 		}
 	}
 
@@ -114,66 +119,62 @@ void TAudioNode::Shutdown()
 
 void TAudioNode::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(Message.GetMessageRef() == "AUDIO")
+	if(Message.GetMessageRef() == "Stop")
 	{
-		if(Message.HasChannelID("STOP"))
+		if(!m_AudioFlags.IsSet(Release))
 		{
-			if(!m_AudioFlags.IsSet(Release))
+			// NOTE: May need to test for a flag of 'auto release' at some stage as we may not want this 
+			// all of the time and the event would occur when 'Stopping' an audio object manually 
+			// as there is no distinction at a lower level
+			//if(m_AudioFlags.IsSet(AutoRelease)
 			{
-				// NOTE: May need to test for a flag of 'auto release' at some stage as we may not want this 
-				// all of the time and the event would occur when 'Stopping' an audio object manually 
-				// as there is no distinction at a lower level
-				//if(m_AudioFlags.IsSet(AutoRelease)
-				{
-					TRef AudioRef;
-					Message.Read(AudioRef);
+				TRef AudioRef;
+				Message.Read(AudioRef);
 
-					if(AudioRef == GetNodeRef())
-					{
-						// Flag the node to release
-						m_AudioFlags.Set(Release, TRUE);
-					}
+				if(AudioRef == GetNodeRef())
+				{
+					// Flag the node to release
+					m_AudioFlags.Set(Release, TRUE);
 				}
 			}
 		}
-		else if(Message.HasChannelID("VOLUME"))
-		{
-			// Update the nodes audio volume
-			float fVolume;
+	}
+	else if(Message.GetMessageRef() == "OnVolumeChanged")
+	{
+		// Update the nodes audio volume
+		float fVolume;
 
-			if(Message.ImportData("Effects", fVolume))
-			{
-				// The volume change is passed through via the messaging so simply update
-				// the volume for the paltform audio object
-				float fFinalVolume = GetVolume() * fVolume;
-				TLAudio::Platform::SetVolume(GetNodeRef(), fFinalVolume);
-			}
-		}
-		else if(Message.HasChannelID("PAUSE"))
+		if(Message.ImportData("Effects", fVolume))
 		{
-			Bool bState;
-			if(Message.ImportData("State", bState))
-			{
-				if(bState)
-				{
-					// Pause the audio
-					TLAudio::Platform::PauseAudio(GetNodeRef());
-				}
-				else
-				{
-					// Unpause the audio
-					TLAudio::Platform::StartAudio(GetNodeRef());
-				}
-			}
-
+			// The volume change is passed through via the messaging so simply update
+			// the volume for the paltform audio object
+			float fFinalVolume = GetVolume() * fVolume;
+			TLAudio::Platform::SetVolume(GetNodeRef(), fFinalVolume);
 		}
 
 		return;
 	}
-	else if(Message.GetMessageRef() == "Node")
+	else if(Message.GetMessageRef() == "Pause")
 	{
-		// NOTE: Only need to check the channelID if we subscribe to other channels on a node. 
-		//if(Message.HasChannelID() == "OnTransform")
+		Bool bState;
+		if(Message.ImportData("State", bState))
+		{
+			if(bState)
+			{
+				// Pause the audio
+				TLAudio::Platform::PauseAudio(GetNodeRef());
+			}
+			else
+			{
+				// Unpause the audio
+				TLAudio::Platform::StartAudio(GetNodeRef());
+			}
+		}
+
+		return;
+	}
+	else if(Message.GetMessageRef() == "OnTransform")
+	{
 		float3 vVector;
 		if(Message.ImportData("Translate", vVector))
 		{
