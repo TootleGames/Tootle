@@ -3,7 +3,7 @@
 #include "TPhysicsGraph.h"
 
 
-#define MAX_NODES_PER_ZONE	1
+#define MAX_NODES_PER_ZONE	2
 #define MIN_ZONE_SIZE		4.f	//	box width or height must be at least this big (best would be a bit bigger than smallest collision object)
 
 //	gr: faster with culling empty zones

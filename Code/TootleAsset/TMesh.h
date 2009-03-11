@@ -76,16 +76,24 @@ public:
 	void					GenerateShape(const TLMaths::TBox& Box)				{	GenerateCube( Box );	}
 	void					GenerateShape(const TLMaths::TSphere& Sphere)		{	GenerateSphere( Sphere );	}
 	void					GenerateShape(const TLMaths::TCapsule& Capsule)		{	GenerateCapsule( Capsule );	}
+
 	void					GenerateCube(float Scale);							//	generate a cube mesh
 	void					GenerateCube(const TLMaths::TBox& Box);				//	generate a cube mesh from a math box
+
 	void					GenerateSphere(float Radius,const float3& Center=float3(0,0,0));		//	generate a sphere
-	void					GenerateCapsule(float Radius,const float3& Start,const float3& End);	//	generate a capsule
-	void					GenerateSphere(const TLMaths::TSphere& Sphere);		//	generate a sphere
-	void					GenerateCapsule(const TLMaths::TCapsule& Capsule);	//	generate a capsule
+	void					GenerateSphere(const TLMaths::TSphere& Sphere,const TColour& Colour)		{	GenerateSphere( Sphere, &Colour );	}
+	void					GenerateSphere(const TLMaths::TSphere& Sphere,const TColour* pColour=NULL);		//	generate a sphere
+	void					GenerateSphere(const TLMaths::TSphere2D& Sphere,const TColour* pColour=NULL,float z=0.f);	//	generate a 2D spehere (x/y)
+
+	void					GenerateCapsule(float Radius,const float3& Start,const float3& End,const TColour& Colour);	//	generate a capsule
+	void					GenerateCapsule(const TLMaths::TCapsule& Capsule,const TColour& Colour)			{	GenerateCapsule( Capsule, &Colour );	}
+	void					GenerateCapsule(const TLMaths::TCapsule& Capsule,const TColour* pColour=NULL);	//	generate a capsule
+	void					GenerateCapsule(const TLMaths::TCapsule2D& Capsule,const TColour& Colour,float z=0.f);	//	generate a capsule
+
 	void					GenerateLine(const TLMaths::TLine& LineShape,const TColour& Colour)		{	GenerateLine( LineShape, Colour, Colour );	}
 	void					GenerateLine(const TLMaths::TLine& LineShape,const TColour& ColourStart,const TColour& ColourEnd);	//	generate a line
 	void					GenerateLine(const TArray<float3>& LinePoints,const TColour& Colour);	//	generate a line
-	void					GenerateRainbowColours();							//	create colours for each vertex
+
 	void					GenerateQuad(const TLMaths::TBox2D& Box,const TColour& Colour,float z=0.f);		//	generate a square mesh from a 2d box
 	void					GenerateQuad(const float2& Center,float Size,const TColour& Colour,float z=0.f);			//	generate a square mesh around a point
 	Bool					GenerateQuad(const TArray<float3>& Outline,const TColour& Colour);			//	turn an outline of points into a quad/tri-strip
@@ -94,6 +102,8 @@ public:
 	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour& ColourA,const TColour& ColourB,const TColour& ColourC,const TColour& ColourD);	//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD);		//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const TFixedArray<s32,4> OutlineVertIndexes);		//	turn an outline of points into a quad/tri-strip
+
+	void					GenerateRainbowColours();							//	create colours for each vertex
 
 	//	vertex manipulation
 	s32						AddVertex(const float3& VertexPos);							//	add vertex to the list, makes up normals and colours if required

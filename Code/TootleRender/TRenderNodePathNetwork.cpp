@@ -26,7 +26,7 @@ void TLRender::TRenderNodePathNetwork::Initialise(TLMessaging::TMessage& Message
 	TRenderNodeDebugMesh::Initialise( Message );
 
 	//	debug the points on the path
-	GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::Debug_Points );
+	GetRenderFlags().Clear( TLRender::TRenderNode::RenderFlags::DepthRead );
 	GetRenderFlags().Clear( TLRender::TRenderNode::RenderFlags::EnableCull );
 
 	//	read out colour

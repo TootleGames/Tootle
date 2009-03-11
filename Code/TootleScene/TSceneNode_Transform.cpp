@@ -50,7 +50,8 @@ void TLScene::TSceneNode_Transform::Initialise(TLMessaging::TMessage& Message)
 
 void TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(Message.GetMessageRef() == "OnTransform")
+	//	gr: only apply change if explicitly sent to change
+	if(Message.GetMessageRef() == "DoTransform")
 	{
 		float3 vVector;
 		TLMaths::TQuaternion qRot;

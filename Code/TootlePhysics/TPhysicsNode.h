@@ -57,6 +57,8 @@ public:
 	virtual void				PostUpdate(float Timestep,TLPhysics::TPhysicsgraph* pGraph,TPtr<TLPhysics::TPhysicsNode>& pThis);			//	after collisions are handled
 	virtual Bool				PostIteration(u32 Iteration);				//	called after iteration, return TRUE to do another iteration
 
+	FORCEINLINE TRefRef			GetOwnerSceneNodeRef() const				{	return m_OwnerSceneNode;	}
+
 	float3						GetPosition() const;
 	void						SetPosition(const float3& Position);
 	void						MovePosition(const float3& Movement,float Timestep);
@@ -92,7 +94,7 @@ public:
 	TPtr<TCollisionShape>&			GetWorldCollisionShape()				{	return m_pWorldCollisionShape;	}
 	const TPtr<TCollisionShape>&	GetWorldCollisionShape() const			{	return m_pWorldCollisionShape;	}
 	TCollisionShape*				CalcWorldCollisionShape();				//	calculate transformed collision shape 
-	FORCEINLINE void				SetWorldCollisionShapeInvalid()			{	if ( m_pWorldCollisionShape )	m_pLastWorldCollisionShape = m_pWorldCollisionShape;	m_pWorldCollisionShape = NULL;	}
+	FORCEINLINE void				SetWorldCollisionShapeInvalid()			{	if ( m_pWorldCollisionShape )	m_pLastWorldCollisionShape = m_pWorldCollisionShape;	m_pWorldCollisionShape = NULL;	m_WorldCollisionShapeChanged = TRUE;	}
 
 	virtual Bool				OnCollision(const TPhysicsNode* pOtherNode);	//	handle collision with other object
 
@@ -140,6 +142,7 @@ protected:
 	float3					m_Force;
 	float3					m_GravityForce;				//	gravity force applied this frame
 
+	Bool					m_WorldCollisionShapeChanged;	//	bool to say if the collision shape changed during the physics update. reset at node pre update, and message is sent in post update
 	TPtr<TCollisionShape>	m_pCollisionShape;			//	collision shape
 	TPtr<TCollisionShape>	m_pWorldCollisionShape;		//	transformed collision shape, delete/invalidated when pos or collision shape changes
 	TPtr<TCollisionShape>	m_pLastWorldCollisionShape;	//	to save re-allocations of the same object, when we invalidate the world collision shape we set it to this. then when we recalc it, we try to reuse this pointer
@@ -152,5 +155,7 @@ protected:
 	float					m_Temp_ExtrudeTimestep;		//	timestep for this frame... just saves passing around, used when calculating world collision shape for this frame
 	TIntersection			m_Temp_Intersection;		//	current intersection. assume is invalid unless we're in an OnCollision func
 	Bool					m_AccumulatedMovementValid;	//	accumulated movement float3 is now in m_Temp_Intersection, this bool dictates if it needs to be updated
+
+	TRef					m_OwnerSceneNode;			//	"Owner" scene node - if this is set then we automaticcly process some stuff
 };
 

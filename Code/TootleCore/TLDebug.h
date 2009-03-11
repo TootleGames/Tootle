@@ -27,6 +27,7 @@
 
 //	gr: turn this into a game/engine option or something
 //	enable this define to enable array/float/limit checks
+//#define DEBUG_CHECK_INDEXES
 //#define DEBUG_CHECK_VALUES
 
 
@@ -46,13 +47,17 @@
 #endif
 
 
-#if defined(_DEBUG) && defined(DEBUG_CHECK_VALUES)
+#if defined(_DEBUG) && defined(DEBUG_CHECK_INDEXES)
 	#define TLDebug_CheckIndex(Index,Max)			TLDebug::CheckIndex( Index, Max, (const char*)__FUNCTION__ )
 	#define TLDebug_CheckInRange(Value,Min,Max)		TLDebug::CheckInRange( Value, Min, Max, (const char*)__FUNCTION__ )
-	#define TLDebug_CheckFloat(Value)				TLDebug::CheckFloatType( Value, (const char*)__FUNCTION__ )
 #else
 	#define TLDebug_CheckIndex(Index,Max)			TRUE	//	by in realease just continue, assume index/value is fine
 	#define TLDebug_CheckInRange(Value,Min,Max)		TRUE	//	by in realease just continue, assume index/value is fine
+#endif
+
+#if defined(_DEBUG) && defined(DEBUG_CHECK_VALUES)
+	#define TLDebug_CheckFloat(Value)				TLDebug::CheckFloatType( Value, (const char*)__FUNCTION__ )
+#else
 	#define TLDebug_CheckFloat(Value)				TRUE	//	by in realease just continue, assume index/value is fine
 #endif
 

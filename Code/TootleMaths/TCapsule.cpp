@@ -285,5 +285,3 @@ void TLMaths::TCapsule2D::Transform(const TLMaths::TTransform& Transform)
 	}
 }
 
-
-

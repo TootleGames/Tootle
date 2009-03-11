@@ -647,7 +647,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 	//	only problem is, we can't reuse this code in another func as we lose the reference initialisation, which is the whole speed saving
 	TLMaths::TTransform NewSceneTransform;
 	const TLMaths::TTransform& NodeTransform = pRenderNode->GetTransform();
-	Bool NodeTrans = NodeTransform.HasAnyTransform();
+	Bool NodeTrans = NodeTransform.HasAnyTransform() || ResetScene;
 	Bool SceneTrans = (pSceneTransform && !ResetScene) ? pSceneTransform->HasAnyTransform() : FALSE;
 	
 	//	work out which transform we are actually using... 
@@ -821,7 +821,10 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 			{
 				//	setup specific params
 				Opengl::EnableWireframe(TRUE);
-				Opengl::SetSceneColour( TColour( 1.f, 1.f, 1.f, 1.f ) );
+				
+				if ( !RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_ColourWireframe ) )
+					Opengl::SetSceneColour( TColour( 1.f, 1.f, 1.f, 1.f ) );
+
 				Opengl::SetLineWidth( 1.f );
 
 				TFlags<TRenderNode::RenderFlags::Flags> WireframeRenderFlags = RenderNodeRenderFlags;

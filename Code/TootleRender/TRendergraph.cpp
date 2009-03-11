@@ -3,6 +3,7 @@
 #include "TRenderNodeText.h"
 #include "TRenderNodeDebugMesh.h"
 #include "TRenderNodePathNetwork.h"
+#include "TRenderNodePhysicsNode.h"
 
 
 
@@ -62,6 +63,9 @@ TLRender::TRenderNode* TLRender::TRenderNodeFactory::CreateObject(TRefRef Instan
 
 	if ( TypeRef == "DbgPath" )
 		return new TLRender::TRenderNodePathNetwork(InstanceRef,TypeRef);
+
+	if ( TypeRef == "DbgPhys" )
+		return new TLRender::TRenderNodePhysicsNode(InstanceRef,TypeRef);
 
 	return NULL;
 }

@@ -48,14 +48,15 @@ namespace TLRef
 
 TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 	TLGraph::TGraphNode<TPhysicsNode>	( NodeRef, TypeRef ),
-	m_Friction					( 0.4f ),
-	m_Mass						( 1.0f ),
-	m_Bounce					( 1.0f ),
-	m_Squidge					( 0.f ),
-	m_CollisionZoneNeedsUpdate	( FALSE ),
-	m_Temp_ExtrudeTimestep		( 0.f ),
-	m_InitialisedZone			( FALSE ),
-	m_Debug_StaticCollisions	( 0 )
+	m_Friction						( 0.4f ),
+	m_Mass							( 1.0f ),
+	m_Bounce						( 1.0f ),
+	m_Squidge						( 0.f ),
+	m_CollisionZoneNeedsUpdate		( FALSE ),
+	m_Temp_ExtrudeTimestep			( 0.f ),
+	m_InitialisedZone				( FALSE ),
+	m_Debug_StaticCollisions		( 0 ),
+	m_WorldCollisionShapeChanged	( FALSE )
 {
 #ifdef CACHE_ACCUMULATED_MOVEMENT
 	m_AccumulatedMovementValid = FALSE;
@@ -69,12 +70,10 @@ TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 //---------------------------------------------------------
 void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 {
-	TRef	OwnerRef;
-
-	if(Message.ImportData("Owner", OwnerRef))
+	if(Message.ImportData("Owner", m_OwnerSceneNode))
 	{
 		// Get the scenegraph node
-		TPtr<TLScene::TSceneNode> pOwner = TLScene::g_pScenegraph->FindNode(OwnerRef);
+		TPtr<TLScene::TSceneNode> pOwner = TLScene::g_pScenegraph->FindNode(m_OwnerSceneNode);
 
 		if(pOwner.IsValid())
 		{
@@ -159,6 +158,7 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 //----------------------------------------------------
 void TLPhysics::TPhysicsNode::Update(float fTimeStep)
 {
+	m_WorldCollisionShapeChanged = FALSE;
 	m_Debug_StaticCollisions = 0;
 	m_Temp_ExtrudeTimestep = fTimeStep;
 	SetAccumulatedMovementInvalid();
@@ -272,6 +272,20 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 		//	no longer needs update
 		SetCollisionZoneNeedsUpdate( FALSE );
 	}
+
+	//	notify that world collison shape has changed
+	if ( m_WorldCollisionShapeChanged )
+	{
+		TLMessaging::TMessage Message("ColShape", GetNodeRef() );
+
+		//	write whether we have a shape - if not, then we've invalidated our shape, but no use for it yet so it hasnt been re-calculated
+		Bool HasShape = GetWorldCollisionShape().IsValid();
+		Message.Write( HasShape );
+
+		PublishMessage( Message );
+
+		m_WorldCollisionShapeChanged = FALSE;
+	}
 }
 
 
@@ -335,7 +349,7 @@ void TLPhysics::TPhysicsNode::MovePosition(const float3& Movement,float Timestep
 	}
 
 
-	if ( MovementLengthSq > 0.1f )
+	//if ( MovementLengthSq > 0.1f )
 	{
 		OnTranslationChanged();
 
@@ -347,19 +361,39 @@ void TLPhysics::TPhysicsNode::MovePosition(const float3& Movement,float Timestep
 
 // Entire transform hads changed
 void TLPhysics::TPhysicsNode::OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale)	
-{	
+{
+	//	rule is "cant have changed if invalid value" - need to cater for when it has changed TO an invalid value...
+	//	so this removes a change if the value is invalid
+	bTranslation = (bTranslation && m_Transform.HasTranslate());
+	bRotation = (bRotation && m_Transform.HasRotation());
+	bScale = (bScale && m_Transform.HasScale());
+
+	//	no changes
+	if ( !bTranslation && !bRotation && !bScale )
+		return;
+
+	//	invalidate shape
 	SetWorldCollisionShapeInvalid();	
 
-	TLMessaging::TMessage Message("OnTransform");
+	TLMessaging::TMessage Message("OnTransform", GetNodeRef() );
 
-	if(bTranslation)
+	if ( bTranslation )
+	{
 		Message.ExportData("Translate", m_Transform.GetTranslate());
+		TLDebug_CheckFloat( m_Transform.GetTranslate() );
+	}
 
-	if(bRotation)
+	if( bRotation )
+	{
 		Message.ExportData("Rotation", m_Transform.GetRotation());
+		TLDebug_CheckFloat( m_Transform.GetRotation() );
+	}
 
-	if(bScale)
+	if( bScale )
+	{
 		Message.ExportData("Scale", m_Transform.GetScale());
+		TLDebug_CheckFloat( m_Transform.GetScale() );
+	}
 
 	PublishMessage(Message);
 }
@@ -666,9 +700,9 @@ TLPhysics::TCollisionShape* TLPhysics::TPhysicsNode::CalcWorldCollisionShape()
 	//	transform the collision shape into a new shape
 	m_pWorldCollisionShape = m_pCollisionShape->Transform( Transform, m_pCollisionShape, m_pLastWorldCollisionShape );
 
-	//	whether it was used or not, the last world collision shape is now redundant
 	if ( m_pWorldCollisionShape )
 	{
+		//	whether it was used or not, the last world collision shape is now redundant
 		m_pLastWorldCollisionShape = NULL;
 	}
 	else

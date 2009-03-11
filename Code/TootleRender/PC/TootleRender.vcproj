@@ -472,6 +472,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TRenderNodePhysicsNode.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TRenderNodePhysicsNode.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TRenderNodeText.cpp"
 			>
 		</File>

@@ -54,8 +54,42 @@ void TSceneNode_Object::DeleteRenderNode()
 
 void TSceneNode_Object::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	//	catch when our render node or physics node has been added to the graph
-	if ( Message.GetMessageRef() == "NodeAdded" )
+	//	gr: apply change from physics node ONLY
+	if(Message.GetMessageRef() == "OnTransform" && Message.GetSenderRef() == m_PhysicsNodeRef )
+	{
+		float3 vVector;
+		TLMaths::TQuaternion qRot;
+		Bool bTranslation, bRotation, bScale;
+		bTranslation = bRotation = bScale = FALSE;
+
+		// Absolute position/rotation/scale setting
+		if(Message.ImportData("Translate", vVector))
+		{
+			GetTransform().SetTranslate(vVector);
+			bTranslation = TRUE;
+		}
+
+		if(Message.ImportData("Rotation", qRot))
+		{
+			GetTransform().SetRotation(qRot);
+			bRotation = TRUE;
+		}
+
+		if(Message.ImportData("Scale", vVector))
+		{
+			GetTransform().SetScale(vVector);
+			bScale = TRUE;
+		}
+
+		// If any part of the transform changed forward the message on
+		if(bTranslation || bRotation || bScale)
+		{
+			//	send out notification our transform has changed
+			OnTransformChanged(bTranslation, bRotation, bScale);
+		}
+		
+	}
+	else if ( Message.GetMessageRef() == "NodeAdded" )	//	catch when our render node or physics node has been added to the graph
 	{
 		//	read node, graph, and added/removed state
 		TRef NodeRef;

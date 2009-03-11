@@ -23,6 +23,12 @@ void TLRender::TRenderNodeDebugMesh::Initialise(TLMessaging::TMessage& Message)
 		m_pDebugMesh = new TLAsset::TMesh("Debug");
 		m_pDebugMesh->SetLoadingState( TLAsset::LoadingState_Loaded );
 	}
+/*
+	//	default debuggy flags
+	GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::Debug_Wireframe );
+	GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::Debug_ColourWireframe );
+	GetRenderFlags().Clear( TLRender::TRenderNode::RenderFlags::DepthRead );
+*/
 }
 
 

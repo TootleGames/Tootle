@@ -21,12 +21,10 @@ TAudioNode::TAudioNode(TRefRef NodeRef,TRefRef TypeRef) :
 void TAudioNode::Initialise(TLMessaging::TMessage& Message)	
 {
 	// Process the owner setup first
-	TRef	OwnerRef;
-
-	if(Message.ImportData("Owner", OwnerRef))
+	if(Message.ImportData("Owner", m_OwnerSceneNode))
 	{
 		// Get the scenegraph node
-		TPtr<TLScene::TSceneNode> pOwner = TLScene::g_pScenegraph->FindNode(OwnerRef);
+		TPtr<TLScene::TSceneNode> pOwner = TLScene::g_pScenegraph->FindNode(m_OwnerSceneNode);
 
 		if(pOwner.IsValid())
 		{

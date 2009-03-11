@@ -48,6 +48,7 @@ protected:
 	virtual void				Translate(float3 vTranslation);
 	//virtual void				Rotate(float3 vRotation);
 	//virtual void				Scale(float3 vScale);
+	TLMaths::TTransform&		GetTransform() 							{	return m_Transform;	}
 
 	FORCEINLINE void			OnTranslationChanged()		{ OnTransformChanged(TRUE, FALSE, FALSE); }
 	FORCEINLINE void			OnRotationChanged()			{ OnTransformChanged(FALSE, TRUE, FALSE); }

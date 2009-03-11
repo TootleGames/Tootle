@@ -703,12 +703,11 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 		Message.Debug_PrintTree();
 #endif
 		*/
-	TRef	OwnerRef;
 
-	if(Message.ImportData("Owner", OwnerRef))
+	if(Message.ImportData("Owner", m_OwnerSceneNode))
 	{
 		// Get the scenegraph node
-		TPtr<TLScene::TSceneNode> pOwner = TLScene::g_pScenegraph->FindNode(OwnerRef);
+		TPtr<TLScene::TSceneNode> pOwner = TLScene::g_pScenegraph->FindNode(m_OwnerSceneNode);
 
 		if(pOwner.IsValid())
 		{
@@ -821,7 +820,8 @@ void TLRender::TRenderNode::Shutdown()
 
 void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(Message.GetMessageRef() == "OnTransform")
+	//	gr: only apply the change if it comes from our owner scene node
+	if ( Message.GetMessageRef() == "OnTransform" && Message.GetSenderRef() == GetOwnerSceneNodeRef() && GetOwnerSceneNodeRef().IsValid() )
 	{
 		Bool TransformChanged = FALSE;
 

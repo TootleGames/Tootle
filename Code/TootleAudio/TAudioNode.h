@@ -104,8 +104,10 @@ protected:
 
 
 	// Audio asset access
-	FORCEINLINE const TRef&	GetAudioAssetRef() const							{	return m_AudioAssetRef;	}
-	Bool					SetAudioAssetRef(TRefRef AssetRef);
+	FORCEINLINE TRefRef	GetAudioAssetRef() const							{	return m_AudioAssetRef;	}
+	Bool				SetAudioAssetRef(TRefRef AssetRef);
+
+	FORCEINLINE TRefRef	GetOwnerSceneNodeRef() const				{	return m_OwnerSceneNode;	}
 
 	void				UpdatePreviousPos()	{ m_vPreviousPos = GetTranslate(); }
 
@@ -125,6 +127,8 @@ private:
 	float3				m_vPreviousPos;			// Previous Audio node position
 	
 	TRef				m_AudioAssetRef;		// Audio asset to use
+
+	TRef				m_OwnerSceneNode;			//	"Owner" scene node - if this is set then we automaticcly process some stuff
 
 	TFlags<AudioFlags>	m_AudioFlags;
 };

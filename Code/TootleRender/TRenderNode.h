@@ -66,7 +66,8 @@ public:
 			ForceCullTestChildren,		//	if we are not culled, still do a cull test with children. By default, when not culled, we don't test children as they should be encapsulated within our bounds
 			InvalidateBoundsByChildren,	//	default behaviour is to invalidate our bounding box when child CHANGES. we can disable this for certain cases - eg. root objects, which when invalidated cause the entire tree to recalculate stuff - still invalidated when a child is ADDED to the tree (this may have to change to "first-calculation of bounds")
 	
-			Debug_Wireframe,			//	draw in wireframe
+			Debug_Wireframe,			//	draw in wireframe (all white outlines)
+			Debug_ColourWireframe,		//	when drawing in wireframe keep colours
 			Debug_Points,				//	draw a point at every vertex
 			Debug_Outline,				//	render again with wireframe on
 			Debug_Position,				//	draws a 3axis cross at 0,0,0 on the render node
@@ -118,7 +119,8 @@ public:
 	virtual TPtr<TLAsset::TMesh>&			GetMeshAsset();								//	default behaviour fetches the mesh from the asset lib with our mesh ref
 
 	FORCEINLINE void						SetRenderNodeRef(TRefRef Ref)				{	SetNodeRef( Ref );	}
-	FORCEINLINE const TRef&					GetRenderNodeRef() const					{	return GetNodeRef();	}
+	FORCEINLINE TRefRef						GetRenderNodeRef() const					{	return GetNodeRef();	}
+	FORCEINLINE TRefRef						GetOwnerSceneNodeRef() const				{	return m_OwnerSceneNode;	}
 
 	virtual void							OnAdded();
 	void									Copy(const TRenderNode& OtherRenderNode);	//	copy render object DOES NOT COPY CHILDREN or parent! just properties
@@ -193,6 +195,8 @@ protected:
 	TPtr<TLAsset::TMesh>		m_pMeshCache;
 
 	TBinaryTree					m_Data;					//	data attached to render object
+
+	TRef						m_OwnerSceneNode;		//	"Owner" scene node - if this is set then we automaticcly process some stuff (ie. catching OnTransform of a scene node we set our transform)
 };
 
 

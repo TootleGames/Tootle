@@ -143,6 +143,48 @@ float3 TLMaths::GetLineOutset(const float3& Start,const float3& End,float Outset
 
 
 
+//-----------------------------------------------------------
+//	work out which two ends of these lines are closest. Set's a combination of bools to TRUE when it's a start, FALSE if its nearer the end
+//	returns the distance sq of the nearest points too
+//-----------------------------------------------------------
+void TLMaths::GetNearestLinePoints(const TLMaths::TLine2D& LineA,const TLMaths::TLine2D& LineB,Bool& LineANearStart,Bool& LineBNearStart,float& DistanceSq)
+{
+	//	work out which two ends are closest to each other
+	float StartStartDistSq = (LineA.GetStart() - LineB.GetStart()).LengthSq();
+	float StartEndDistSq = (LineA.GetStart() - LineB.GetEnd()).LengthSq();
+	float EndStartDistSq = (LineA.GetEnd() - LineB.GetStart()).LengthSq();
+	float EndEndDistSq = (LineA.GetEnd() - LineB.GetEnd()).LengthSq();
+
+	//	assume is start/start at first
+	LineANearStart = TRUE;
+	LineBNearStart = TRUE;
+	DistanceSq = StartStartDistSq;
+
+	//	see if any other pair of corners are nearer
+	if ( StartEndDistSq < DistanceSq )
+	{
+		LineANearStart = TRUE;
+		LineBNearStart = FALSE;
+		DistanceSq = StartEndDistSq;
+	}
+	
+	if ( EndStartDistSq < DistanceSq )
+	{
+		LineANearStart = FALSE;
+		LineBNearStart = TRUE;
+		DistanceSq = EndStartDistSq;
+	}
+	
+	if ( EndEndDistSq < DistanceSq )
+	{
+		LineANearStart = FALSE;
+		LineBNearStart = FALSE;
+		DistanceSq = EndEndDistSq;
+	}
+	
+
+}
+
 
 
 TLMaths::TLine::TLine(const float3& Start,const float3& End) : 
@@ -351,9 +393,10 @@ float TLMaths::TLine2D::GetDistanceSq(const TLMaths::TLine2D& Line) const
 		
 		//	scale to line's length
 		//	gr: can use LengthSq here i think
-		Distance *= Line.GetLength();
-
-		return (Distance * Distance);
+		//	gr: changed - should be THIS's length, not line's length
+		//Distance *= Line.GetLength();
+		Distance *= GetLengthSq();
+		return Distance;
 	}
 
 	//	no possible intersection, find nearest point to either end and return shortest distance
@@ -491,4 +534,28 @@ void TLMaths::TLine2D::GetPointAlongLine(float2& PointAlongLine,float Factor) co
 	PointAlongLine += GetStart();	//	move back to relative to the line start
 }
 
+
+//-----------------------------------------------------------
+//	return whether this point is nearer to the start, or to the end. DistanceSq is set to the distance (commonly used afterwards)
+//-----------------------------------------------------------
+Bool TLMaths::TLine2D::GetIsPointNearestToStart(const float2& Pos,float& DistanceSq) const
+{
+	//	get distance to start
+	float DistToStartSq = (Pos - m_Start).LengthSq();
+
+	//	get distance to end
+	DistanceSq = (Pos - m_End).LengthSq();
+
+	//	is start closer?
+	if ( DistToStartSq < DistanceSq )
+	{
+		DistanceSq = DistToStartSq;
+		return TRUE;
+	}
+	else
+	{
+		//	closer to end
+		return FALSE;
+	}
+}
 

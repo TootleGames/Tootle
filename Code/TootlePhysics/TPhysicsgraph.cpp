@@ -610,6 +610,9 @@ void TLPhysics::TPhysicsgraph::DoCollision(TLPhysics::TPhysicsNode* pNodeA,TLPhy
 	if ( !pNodeAWorldCollisionShape->GetIntersection( pNodeBWorldCollisionShape, pNodeA->m_Temp_Intersection, pNodeB->m_Temp_Intersection ) )
 		return;
 	
+	TLDebug_CheckFloat( pNodeA->m_Temp_Intersection.m_Intersection );
+	TLDebug_CheckFloat( pNodeB->m_Temp_Intersection.m_Intersection );
+
 	//	actual intersection
 	m_Debug_CollisionIntersections++;
 	

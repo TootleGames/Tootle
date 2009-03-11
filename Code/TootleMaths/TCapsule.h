@@ -105,6 +105,8 @@ public:
 	const float&	GetRadius() const								{	return m_Radius;	}
 	void			SetRadius(float Radius)							{	m_Radius = Radius;	}
 	
+//	Bool			GetIntersection(const TBox2D& Box) const;
+
 	void			Transform(const TLMaths::TTransform& Transform);	//	transform capsule
 
 protected:

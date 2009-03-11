@@ -18,6 +18,7 @@ namespace TLMaths
 	void		ExpandLineStrip(const TArray<float3>& LineStrip,float Width,TArray<float3>& OutsideLineStrip,TArray<float3>& InsideLineStrip);	//	create an outside and inside linestrip for an existing linestrip
 	float3		GetLineStripOutset(const float3& Start,const float3& Middle,const float3& End,float OutsetLength=1.f);	//	calculates the (normalised by default) outset for the Middle of a line strip (outset is relative)	//	gr: assumes line is clockwise. if not (and you have to detect that) then invert result
 	float3		GetLineOutset(const float3& Start,const float3& End,float OutsetLength=1.f);	//	calculates the outset for a line (outset is relative)
+	void		GetNearestLinePoints(const TLMaths::TLine2D& LineA,const TLMaths::TLine2D& LineB,Bool& LineANearStart,Bool& LineBNearStart,float& DistanceSq);	//	work out which two ends of these lines are closest. Set's a combination of bools to TRUE when it's a start, FALSE if its nearer the end, returns the distance sq of the nearest points too
 };
 
 
@@ -83,8 +84,8 @@ public:
 	float2				GetDirection() const							{	return m_End - m_Start;	}
 	float3				GetDirection(float z) const						{	return (m_End - m_Start).xyz(z);	}
 	float2				GetDirectionNormal(float NormalLength=1.f) const	{	return (m_End - m_Start).Normal(NormalLength);	}
-	float				GetLengthSq() const								{	return GetDirection().LengthSq();	}
-	float				GetLength() const								{	return GetDirection().Length();	}
+	float				GetLengthSq() const								{	return (m_End - m_Start).LengthSq();	}
+	float				GetLength() const								{	return (m_End - m_Start).Length();	}
 	TLMaths::TAngle		GetAngle() const;								//	calculate angle of line
 
 	Bool				GetIntersectionPos(const TLine2D& Line,float2& IntersectionPos) const;	//	get the point where this line crosses the other
@@ -100,7 +101,8 @@ public:
 	float2				GetNearestPoint(const float2& Pos,float& PointAlongLine) const;		//	get a point along the line nearest to this point
 	float2				GetNearestPoint(const float3& Pos) const		{	return GetNearestPoint( Pos.xy() );	}
 	float				GetDistanceSq(const TLine2D& Line) const;		//	get distance to another line
-	
+	Bool				GetIsPointNearestToStart(const float2& Pos,float& DistanceSq) const;	//	return whether this point is nearer to the start, or to the end. DistanceSq is set to the distance (commonly used afterwards)
+
 	void				GetPointAlongLine(float2& PointAlongLine,float Factor) const;	//	get a point along the line from 0..1 (factor)
 	void				MoveStart(float Distance);						//	move the start point along the direction by an amount (NOT a factor)
 	void				MoveEnd(float Distance);						//	move the end point along the direction by an amount (NOT a factor)

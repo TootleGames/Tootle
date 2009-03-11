@@ -123,31 +123,52 @@ void TLAsset::TMesh::GenerateSphere(float Radius,const float3& Center)
 //-------------------------------------------------------
 //	generate a capsule
 //-------------------------------------------------------
-void TLAsset::TMesh::GenerateCapsule(float Radius,const float3& Start,const float3& End)
+void TLAsset::TMesh::GenerateCapsule(float Radius,const float3& Start,const float3& End,const TColour& Colour)
 {
 	TLMaths::TCapsule Capsule;
 	Capsule.Set( Start, End, Radius );
 
-	GenerateCapsule( Capsule );
+	GenerateCapsule( Capsule, Colour );
 }
 
 //-------------------------------------------------------
 //	generate a sphere
 //-------------------------------------------------------
-void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere& Sphere)
+void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere& Sphere,const TColour* pColour)
 {
-	Empty();
-
 	//	generate section/detail from size of shape
 	Type2<u32> Segments( 8, 8 );
 
 	TArray<float3> Verts;
 	TArray<float3> Normals;
 	TArray<float2> TextureUV;
-	TArray<Triangle> Triangles;
+	TArray<TColour> Colours;
+
 	Verts.SetSize( Segments.x * Segments.y );
 	Normals.SetSize( Segments.x * Segments.y );
 	TextureUV.SetSize( Segments.x * Segments.y );
+
+	u16 FirstVertex = m_Vertexes.GetSize();
+
+	TColour TempColour(1.f,1.f,1.f,1.f);
+
+	//	mesh has no colours
+	if ( m_Vertexes.GetSize() != m_Colours.GetSize() )
+	{
+		pColour = NULL;
+	}
+	else if ( m_Colours.GetSize() && !pColour )	//	needs a colour
+	{
+		pColour = &TempColour;
+	}
+
+	//	alloc colours
+	if ( pColour )
+	{
+		Colours.SetSize( Segments.x * Segments.y );
+		Colours.SetAll( *pColour );
+	}
+
 
 	float2 Mult;
 	Mult.x = 1.f / (float)( Segments.x-1 );
@@ -209,25 +230,96 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere& Sphere)
 			v3 += Sphere.GetPos();
 			v4 += Sphere.GetPos();
 
-			Triangle Tri1( vi[0], vi[1], vi[3] );
-			Triangle Tri2( vi[1], vi[2], vi[3] );
+			Triangle Tri1( vi[0] + FirstVertex, vi[1] + FirstVertex, vi[3] + FirstVertex );
+			Triangle Tri2( vi[1] + FirstVertex, vi[2] + FirstVertex, vi[3] + FirstVertex );
 
 			m_Triangles.Add( Tri1 );
 			m_Triangles.Add( Tri2 );
 		}
 	}
+
 	
+	if ( pColour )
+		m_Colours.Add( Colours );
 	m_Vertexes.Add( Verts );
-	m_Triangles.Add( Triangles );
 
 	OnPrimitivesChanged();
 }
 
 
 //-------------------------------------------------------
+//	generate a 2D sphere
+//-------------------------------------------------------
+void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere2D& Sphere,const TColour* pColour,float z)
+{
+	float Segments = 8;
+
+	TColour TempColour(1.f,1.f,1.f,1.f);
+
+	//	mesh has no colours
+	if ( m_Vertexes.GetSize() != m_Colours.GetSize() )
+	{
+		pColour = NULL;
+	}
+	else if ( m_Colours.GetSize() && !pColour )	//	needs a colour
+	{
+		pColour = &TempColour;
+	}
+
+	TFixedArray<float3,100> LineStripPoints(0);
+
+	//	create linestrip points
+	float AngleStep = 360.f / (float)Segments;
+	for ( float AngleDeg=0.f;	AngleDeg<360.f;	AngleDeg+=AngleStep )
+	{
+		float AngleRad = TLMaths::TAngle::DegreesToRadians( AngleDeg );
+		
+		float3 Pos( Sphere.GetPos().xyz( z ) );
+		
+		Pos.x += cosf( AngleRad ) * Sphere.GetRadius();
+		Pos.y += sinf( AngleRad ) * Sphere.GetRadius();
+
+		LineStripPoints.Add( Pos );
+	}
+
+	//	complete the loop
+	LineStripPoints.Add( LineStripPoints[0] );
+
+	//	create the geometry
+	GenerateLine( LineStripPoints, *pColour );
+}
+
+
+
+//-------------------------------------------------------
 //	generate a capsule
 //-------------------------------------------------------
-void TLAsset::TMesh::GenerateCapsule(const TLMaths::TCapsule& Capsule)
+void TLAsset::TMesh::GenerateCapsule(const TLMaths::TCapsule2D& Capsule,const TColour& Colour,float z)
+{
+	const TLMaths::TLine2D& CapsuleLine = Capsule.GetLine();
+	TFixedArray<float3,2> Line;
+	Line[0] = CapsuleLine.GetStart().xyz( z );
+	Line[1] = CapsuleLine.GetEnd().xyz( z );
+
+	TFixedArray<float3,2> LineOutside(0);
+	TFixedArray<float3,2> LineInside(0);
+
+	TLMaths::ExpandLineStrip( Line, Capsule.GetRadius()*2.f, LineOutside, LineInside );
+
+	//	draw the capsule's out lines
+	GenerateLine( LineOutside, Colour );
+	GenerateLine( LineInside, Colour );
+
+	//	draw a sphere at each end of the capsule
+	GenerateSphere( TLMaths::TSphere2D( CapsuleLine.GetStart(), Capsule.GetRadius() ), &Colour, z );
+	GenerateSphere( TLMaths::TSphere2D( CapsuleLine.GetEnd(), Capsule.GetRadius() ), &Colour, z );
+}
+
+
+//-------------------------------------------------------
+//	generate a capsule
+//-------------------------------------------------------
+void TLAsset::TMesh::GenerateCapsule(const TLMaths::TCapsule& Capsule,const TColour* pColour)
 {
 	TLDebug_Break("todo");
 	OnPrimitivesChanged();
@@ -271,6 +363,11 @@ void TLAsset::TMesh::GenerateLine(const TArray<float3>& LinePoints,const TColour
 
 	//	add line
 	Line* pLine = m_Lines.AddNew();
+
+	//	pre-alloc data
+	m_Vertexes.AddAllocSize( LinePoints.GetSize() );
+	m_Colours.AddAllocSize( LinePoints.GetSize() );
+	pLine->AddAllocSize( LinePoints.GetSize() );
 	
 	for ( u32 i=0;	i<LinePoints.GetSize();	i++ )
 	{
