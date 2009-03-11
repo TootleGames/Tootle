@@ -56,6 +56,9 @@ namespace TLAudio
 
 		// Audio system listener (aka a virtual microphone)	
 		void SetListener(const TListenerProperties& Props);
+
+		Bool Enable();
+		Bool Disable();
 	}
 };
 

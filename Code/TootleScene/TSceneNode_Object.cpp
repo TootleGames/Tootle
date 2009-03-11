@@ -236,7 +236,7 @@ TRef TSceneNode_Object::CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset)
 	Message.ExportData("Owner", GetNodeRef());
 
 	// Create an audio node for the specified audio reference
-	return TLAudio::g_pAudiograph->CreateNode(AudioRef, "Audio", "Root", &Message);
+	return TLAudio::g_pAudiograph->StartAudio(AudioRef, Message);
 }
 
 TRef TSceneNode_Object::CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset, const TLAudio::TAudioProperties& Props)
@@ -250,8 +250,9 @@ TRef TSceneNode_Object::CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset, co
 	Message.ExportData("Owner", GetNodeRef());
 
 	// Create an audio node for the specified audio reference
-	return TLAudio::g_pAudiograph->CreateNode(AudioRef, "Audio", "Root", &Message);
+	return TLAudio::g_pAudiograph->StartAudio(AudioRef, Message);
 }
+
 
 Bool TSceneNode_Object::RemoveAudioNode(TRefRef AudioRef)
 {

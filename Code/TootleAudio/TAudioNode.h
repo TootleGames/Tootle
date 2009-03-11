@@ -80,7 +80,7 @@ protected:
 	void				Reset();
 	
 	// Audio properties
-	void				SetVolume(float fVolume);			// Set the volume of this instance
+	void				SetVolume(float fVolume, const Bool& bForced = FALSE);			// Set the volume of this instance
 	inline float		GetVolume()		const { return m_AudioProperties.m_fVolume; }
 	
 	void				SetFrequencyMult(float fFrequencyMult);		// Set the frequency multiplier of this instance

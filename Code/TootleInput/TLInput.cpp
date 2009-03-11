@@ -148,6 +148,16 @@ void TInputManager::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChann
 		if(refChannelID == TLCore::UpdateRef)
 			TLMessaging::g_pEventChannelManager->SubscribeTo(this, refPublisherID, refChannelID); 
 	}
+	else if(refPublisherID == "SCREENMANAGER")
+	{
+		// Subscribe to the update messages
+		if((refChannelID == "OnWindowChanged") ||
+			(refChannelID == "ScreenChanged"))
+		{
+			TLMessaging::g_pEventChannelManager->SubscribeTo(this, refPublisherID, refChannelID);
+		}
+	}
+
 	
 	// Super event channel routine
 	TManager::OnEventChannelAdded(refPublisherID, refChannelID);

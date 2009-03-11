@@ -304,3 +304,22 @@ void Platform::SetListener(const TListenerProperties& Props)
 	OpenAL::SetListener(Props);
 #endif
 }
+
+
+Bool Platform::Enable()
+{
+#if(AUDIO_SYSTEM == AUDIO_OPENAL)
+	return OpenAL::Enable();
+#endif
+
+	return FALSE;
+}
+
+Bool Platform::Disable()
+{
+#if(AUDIO_SYSTEM == AUDIO_OPENAL)
+	return OpenAL::Disable();
+#endif
+
+	return FALSE;
+}

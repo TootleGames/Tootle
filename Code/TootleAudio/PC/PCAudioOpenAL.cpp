@@ -201,6 +201,50 @@ Bool Platform::OpenAL::DetermineFinishedAudio(TArray<TRef>& refArray)
 	return (refArray.GetSize() > 0);
 }
 
+Bool Platform::OpenAL::Enable()
+{
+	ALCcontext* pContext = alcGetCurrentContext();
+
+	if(pContext)
+	{
+		ALCdevice* pDevice = alcGetContextsDevice(pContext);
+
+		if(pDevice)
+		{
+			alcProcessContext(pContext);
+
+			// Success?
+			ALCenum error;
+			if ((error = alcGetError(pDevice)) == ALC_NO_ERROR)
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+Bool Platform::OpenAL::Disable()
+{
+	ALCcontext* pContext = alcGetCurrentContext();
+
+	if(pContext)
+	{
+		ALCdevice* pDevice = alcGetContextsDevice(pContext);
+
+		if(pDevice)
+		{
+			alcSuspendContext(pContext);
+
+			ALCenum error;
+			if ((error = alcGetError(pDevice)) == ALC_NO_ERROR)
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+
+}
+
 
 TPtr<Platform::OpenAL::AudioObj> Platform::OpenAL::CreateBuffer(TRefRef AudioAssetRef)
 {
@@ -410,20 +454,17 @@ SyncBool Platform::OpenAL::Shutdown()
 	
 	ALCcontext* pContext = alcGetCurrentContext();
 
-	ALCdevice* pDevice = alcGetContextsDevice(pContext);
-
-	alcMakeContextCurrent(NULL);
-
-	alcDestroyContext(pContext);
-	alcCloseDevice(pDevice);
-
-/*
-	// Delete the callback handler
-	if(Platform::g_pAudioEngineCallback)
+	if(pContext)
 	{
-		Platform::g_pAudioEngineCallback = NULL;
+		alcMakeContextCurrent(NULL);
+		
+		ALCdevice* pDevice = alcGetContextsDevice(pContext);
+
+		alcDestroyContext(pContext);
+	
+		if(pDevice)
+			alcCloseDevice(pDevice);
 	}
-*/
 
 	return SyncTrue;
 }

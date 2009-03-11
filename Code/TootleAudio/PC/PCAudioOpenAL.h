@@ -101,6 +101,9 @@ namespace TLAudio
 
 			// Set listener details - in OpenAL there is only ever one listener
 			void SetListener(const TListenerProperties& Props);
+
+			Bool Enable();
+			Bool Disable();
 		}
 	}
 }

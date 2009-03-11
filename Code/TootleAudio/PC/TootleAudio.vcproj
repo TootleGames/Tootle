@@ -296,14 +296,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\TAudioInterface.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\TAudioInterface.h"
-			>
-		</File>
-		<File
 			RelativePath="..\TLAudio.cpp"
 			>
 		</File>

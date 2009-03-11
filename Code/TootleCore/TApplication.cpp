@@ -131,22 +131,6 @@ SyncBool TApplication::Initialise()
 		TLDebug_Print("Error: Failed to initialise screen");
 		return Result;
 	}
-
-	/////////////////////////////////////////////////////////////
-	// DB - Needs to be moved/removed from here
-	// NOTE: Should be able to intercept the screen creation by subscribing the input 
-	// to the screen manager instead and subscribing when that occurs
-	/////////////////////////////////////////////////////////////
-	// Subscribe the input system to the screen
-	if(TLInput::g_pInputSystem.IsValid())
-	{
-		// DB - Subscribe the input system to the screen (should be the manager but only one screen atm)
-		// The input system will then be notified if changes to the 'display' occur which is needed because the devices 
-		// need access to this at the platform specific level.
-		TLInput::g_pInputSystem->SubscribeTo(pScreen);
-	}
-	/////////////////////////////////////////////////////////////
-	
 	
 	// Add the application modes
 	AddModes();

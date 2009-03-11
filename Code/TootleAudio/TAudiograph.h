@@ -2,6 +2,7 @@
 #pragma once
 
 #include <TootleCore/TLGraph.h>
+#include <TootleInput/TUser.h>
 #include "TAudioNode.h"
 #include "TAudioNode_Music.h"
 
@@ -33,13 +34,24 @@ public:
 	FORCEINLINE float		GetEffectsVolume()	const	{ return m_fEffectsVolume; }
 
 	FORCEINLINE Bool		IsPaused()			const	{ return m_bPause; }
+	FORCEINLINE Bool		IsEnabled()			const	{ return m_bEnabled; }
+	FORCEINLINE Bool		IsMuted()			const	{ return m_bMute; }
 	////////////////////////////////////////////////////////
 
 	////////////////////////////////////////////////////////
 	// Audio object access
 	////////////////////////////////////////////////////////
+	TRef	StartAudio(TRefRef AudioRef, TRefRef AudioAddet);
+	TRef	StartAudio(TRefRef AudioRef, TLMessaging::TMessage& Message);	
+
+	Bool	StopAudio(TRefRef AudioRef);
+	Bool	PauseAudio(TRefRef AudioRef, const Bool& bPause);
 
 	FORCEINLINE Bool		IsAudioPlaying(TRefRef AudioRef)	{ return IsInGraph(AudioRef);}
+
+	// Audio transform access
+	void	SetAudioTranslate(TRefRef AudioRef, const float3& vTranslate);
+	float3	GetAudioTranslate(TRefRef AudioRef);
 
 	// Audio Properties
 	void	SetAudioPitch(TRefRef AudioRef, const float& fPitch);
@@ -48,6 +60,21 @@ public:
 	void	SetAudioVolume(TRefRef AudioRef, const float& fVolume);
 	float	GetAudioVolume(TRefRef AudioRef);
 
+	void	SetAudioLooping(TRefRef AudioRef, const Bool& bLooping);
+	Bool	GetAudioIsLooping(TRefRef AudioRef);
+
+	// Audio offset access
+	void	SetAudioOffsetNormalised(TRefRef AudioRef, float& fOffset);
+	float	GetAudioOffsetNormalised(TRefRef AudioRef);
+
+	void	SetAudioOffsetSeconds(TRefRef AudioRef, const float& fSeconds);
+	float	GetAudioOffsetSeconds(TRefRef AudioRef);
+
+	float	GetAudioLengthSeconds(TRefRef AudioRef);
+
+	void					SetAudioProperties(TRefRef AudioRef, const TAudioProperties& Props);
+	const TAudioProperties&	GetAudioProperties(TRefRef AudioRef);
+
 	////////////////////////////////////////////////////////
 
 protected:
@@ -55,7 +82,11 @@ protected:
 	virtual SyncBool		Update(float fTimeStep);
 	virtual SyncBool		Shutdown();
 
+	void					Enable();
+	void					Disable();
+
 	virtual void			ProcessMessage(TLMessaging::TMessage& Message);
+	virtual void			OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);	
 
 	SyncBool				InitDevices();
 
@@ -65,13 +96,22 @@ protected:
 
 	TPtr<TAudioNode_Music>	GetMusicNode()	{ return FindNode(m_MusicRef); }
 
+	void					OnInputDeviceAdded(TRefRef DeviceRef,TRefRef DeviceTypeRef);
+	void					MapActions_Keyboard(TRefRef DeviceRef, TPtr<TLUser::TUser> pUser);
+
+	FORCEINLINE	void		ToggleMute()	{ m_bMute = !m_bMute; OnMuteChanged(); }
+	void					OnMuteChanged();
+
+
 private:
 	TRef					m_MusicRef;			// Music node reference
 
 	float					m_fMusicVolume;		// Audio system master music volume
 	float					m_fEffectsVolume;	// Audio system master effects volume
 
-	Bool					m_bPause;			// Audio system pause
+	Bool					m_bPause;			// Audio system pause - system will pause all audio
+	Bool					m_bEnabled;			// Audio system enabled - system completely stopped from generating audio
+	Bool					m_bMute;			// Audio system muted - all audio not audible
 };
 
 

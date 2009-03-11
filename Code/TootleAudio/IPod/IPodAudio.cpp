@@ -206,4 +206,14 @@ void Platform::SetListener(const TListenerProperties& Props)
 	OpenAL::SetListener(Props);
 }
 
+Bool Platform::Enable()
+{
+	// Not used on the iPod
+	return FALSE;
+}
 
+Bool Platform::Disable()
+{
+	// Not used on the iPod
+	return FALSE;
+}

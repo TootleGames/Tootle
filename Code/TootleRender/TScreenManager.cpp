@@ -23,6 +23,19 @@ TScreenManager::TScreenManager(TRefRef refManagerID) :
 {
 }
 
+SyncBool TScreenManager::Initialise() 
+{	
+	if(TLMessaging::g_pEventChannelManager)
+	{
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "ScreenChanged");
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "OnWindowChanged");
+
+		return SyncTrue;
+	}
+
+	return SyncWait; 
+}
+
 
 //----------------------------------------------------------
 //	instance an asset

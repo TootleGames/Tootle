@@ -14,6 +14,7 @@ TAudioNode::TAudioNode(TRefRef NodeRef,TRefRef TypeRef) :
 {
 	TLMessaging::g_pEventChannelManager->SubscribeTo(this, "AUDIOGRAPH", "Stop"); 
 	TLMessaging::g_pEventChannelManager->SubscribeTo(this, "AUDIOGRAPH", "OnVolumeChanged"); 
+	TLMessaging::g_pEventChannelManager->SubscribeTo(this, "AUDIOGRAPH", "OnMuteChanged"); 
 }
 
 // Initialise routine
@@ -69,7 +70,7 @@ void TAudioNode::Initialise(TLMessaging::TMessage& Message)
 	{
 		SetFrequencyMult(Props.m_fFrequencyMult);
 		SetPitch(Props.m_fPitch);
-		SetVolume(Props.m_fVolume);
+		SetVolume(Props.m_fVolume, TRUE);
 		SetMinRange(Props.m_fMinRange);
 		SetRateOfDecay(Props.m_fRateOfDecay);
 		SetLooping(Props.m_bLooping);
@@ -119,7 +120,8 @@ void TAudioNode::Shutdown()
 
 void TAudioNode::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(Message.GetMessageRef() == "Stop")
+	TRef MessageRef = Message.GetMessageRef();
+	if(MessageRef == "Stop")
 	{
 		if(!m_AudioFlags.IsSet(Release))
 		{
@@ -139,7 +141,7 @@ void TAudioNode::ProcessMessage(TLMessaging::TMessage& Message)
 			}
 		}
 	}
-	else if(Message.GetMessageRef() == "OnVolumeChanged")
+	else if(MessageRef == "OnVolumeChanged")
 	{
 		// Update the nodes audio volume
 		float fVolume;
@@ -147,14 +149,21 @@ void TAudioNode::ProcessMessage(TLMessaging::TMessage& Message)
 		if(Message.ImportData("Effects", fVolume))
 		{
 			// The volume change is passed through via the messaging so simply update
-			// the volume for the paltform audio object
+			// the volume for the paltform audio object.
+			// NOTE: Don't store this as the volume change is for the system and not the node itself
 			float fFinalVolume = GetVolume() * fVolume;
 			TLAudio::Platform::SetVolume(GetNodeRef(), fFinalVolume);
 		}
 
 		return;
 	}
-	else if(Message.GetMessageRef() == "Pause")
+	else if(MessageRef == "OnMuteChanged")
+	{
+		// Force an update of the current volume
+		SetVolume(GetVolume(), TRUE);
+		return;
+	}
+	else if(MessageRef == "Pause")
 	{
 		Bool bState;
 		if(Message.ImportData("State", bState))
@@ -173,7 +182,7 @@ void TAudioNode::ProcessMessage(TLMessaging::TMessage& Message)
 
 		return;
 	}
-	else if(Message.GetMessageRef() == "OnTransform")
+	else if(MessageRef == "OnTransform")
 	{
 		float3 vVector;
 		if(Message.ImportData("Translate", vVector))
@@ -208,8 +217,8 @@ void TAudioNode::ProcessMessage(TLMessaging::TMessage& Message)
 
 	// Only pass on messages that might actually be processed otherwise we will relay the message
 	// to subscribers and potentially enter an infinite loop
-	if(	(Message.GetMessageRef() == TLCore::InitialiseRef) ||
-		(Message.GetMessageRef() == TLCore::ShutdownRef))
+	if(	(MessageRef == TLCore::InitialiseRef) ||
+		(MessageRef == TLCore::ShutdownRef))
 	{
 		// Pass the message onto the super class
 		TLGraph::TGraphNode<TAudioNode>::ProcessMessage(Message);
@@ -258,17 +267,25 @@ void TAudioNode::Reset()
 }
 
 // Set the volume of this instance
-void TAudioNode::SetVolume(float fVolume)
+void TAudioNode::SetVolume(float fVolume, const Bool& bForced)
 {
 	// Clamp the volume to within range
 	TLMaths::Limit(fVolume, 0.0f, 1.0f);
 	
-	if(m_AudioProperties.m_fVolume != fVolume)
+	if(bForced || m_AudioProperties.m_fVolume != fVolume)
 	{
-		// Get the global audio volume (effects or music) and multiply the new volume by the global volume
-		float fEffectsVolume = GetGlobalVolume();
+		float fFinalVolume = 0.0f;
 
-		float fFinalVolume = fVolume * fEffectsVolume;
+		// When muted we will set the source volume to zero.
+		// Otherwise calculate the new volume based on the nodes volume 
+		// and the system volume for this type of node
+		if(!TLAudio::g_pAudiograph->IsMuted())
+		{
+			// Get the global audio volume (effects or music) and multiply the new volume by the global volume
+			float fEffectsVolume = GetGlobalVolume();
+
+			fFinalVolume = fVolume * fEffectsVolume;
+		}
 
 		// Try and set the volume for the source
 		// If successful set the volume for the node

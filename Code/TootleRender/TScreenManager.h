@@ -28,12 +28,6 @@ class TLRender::TScreenManager : public TManager, public TObjectFactory<TLRender
 public:
 	TScreenManager(TRefRef refManagerID);
 	
-	virtual SyncBool			Update(float fTimeStep);
-	virtual SyncBool			Shutdown();
-	
-	virtual void				ProcessMessage(TLMessaging::TMessage& Message);	//	process messages
-	virtual void				OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
-
 	const TLMaths::TAngle&		GetScreenAngle();			//	returns the screen angle for the FIRST screen. this is just to make it easier and saves us fetching the right screen
 	TPtr<TLRender::TScreen>&	GetDefaultScreen()	{	return (GetInstanceArray().GetSize() > 0) ? GetInstanceArray().ElementAt( 0 ) : TLPtr::GetNullPtr<TLRender::TScreen>();	}	//	returns the default (first) screen
 	
@@ -42,6 +36,13 @@ public:
 	Bool						DeleteRenderTarget(TRefRef RenderTargetRef);						//	find this render target and delete it
 
 protected:
+	virtual SyncBool			Initialise(); 
+	virtual SyncBool			Update(float fTimeStep);
+	virtual SyncBool			Shutdown();
+	
+	virtual void				ProcessMessage(TLMessaging::TMessage& Message);	//	process messages
+	virtual void				OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
+
 	virtual TScreen*			CreateObject(TRefRef InstanceRef,TRefRef TypeRef);
 };
 
