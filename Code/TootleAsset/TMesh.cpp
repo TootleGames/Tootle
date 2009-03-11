@@ -250,6 +250,49 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere& Sphere,const TColour
 //-------------------------------------------------------
 //	generate a 2D sphere
 //-------------------------------------------------------
+void TLAsset::TMesh::GenerateSphereOutline(const TLMaths::TSphere2D& Sphere,const TColour* pColour,float z)
+{
+	float Segments = 8;
+
+	TColour TempColour(1.f,1.f,1.f,1.f);
+
+	//	mesh has no colours
+	if ( m_Vertexes.GetSize() != m_Colours.GetSize() )
+	{
+		pColour = NULL;
+	}
+	else if ( m_Colours.GetSize() && !pColour )	//	needs a colour
+	{
+		pColour = &TempColour;
+	}
+
+	TFixedArray<float3,100> Outline(0);
+
+	//	create linestrip points
+	float AngleStep = 360.f / (float)Segments;
+	for ( float AngleDeg=0.f;	AngleDeg<360.f;	AngleDeg+=AngleStep )
+	{
+		float AngleRad = TLMaths::TAngle::DegreesToRadians( AngleDeg );
+		
+		float3 Pos( Sphere.GetPos().xyz( z ) );
+		
+		Pos.x += cosf( AngleRad ) * Sphere.GetRadius();
+		Pos.y += sinf( AngleRad ) * Sphere.GetRadius();
+
+		Outline.Add( Pos );
+	}
+
+	//	complete the loop
+	Outline.Add( Outline[0] );
+
+	//	create the geometry
+	GenerateLine( Outline, *pColour );
+}
+
+
+//-------------------------------------------------------
+//	generate a 2D sphere
+//-------------------------------------------------------
 void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere2D& Sphere,const TColour* pColour,float z)
 {
 	float Segments = 8;
@@ -266,9 +309,12 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere2D& Sphere,const TColo
 		pColour = &TempColour;
 	}
 
-	TFixedArray<float3,100> LineStripPoints(0);
+	TFixedArray<u16,100> OutlineVerts(0);
 
-	//	create linestrip points
+	float3 Center3 = Sphere.GetPos().xyz( z );
+	u16 CenterVert = pColour ? AddVertex( Center3, *pColour ) : AddVertex( Center3 );
+
+	//	create outline points
 	float AngleStep = 360.f / (float)Segments;
 	for ( float AngleDeg=0.f;	AngleDeg<360.f;	AngleDeg+=AngleStep )
 	{
@@ -279,16 +325,23 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere2D& Sphere,const TColo
 		Pos.x += cosf( AngleRad ) * Sphere.GetRadius();
 		Pos.y += sinf( AngleRad ) * Sphere.GetRadius();
 
-		LineStripPoints.Add( Pos );
+		u16 Vertex = pColour ? AddVertex( Pos, *pColour ) : AddVertex( Pos );
+		s32 VertexIndex = OutlineVerts.Add( Vertex );
+
+		//	make triangles when we have at least 2 outline points
+		if ( OutlineVerts.GetSize() <= 1 )
+			continue;
+
+		TLAsset::TMesh::Triangle Triangle( OutlineVerts[VertexIndex-1], OutlineVerts[VertexIndex], CenterVert );
+		m_Triangles.Add( Triangle );
 	}
 
-	//	complete the loop
-	LineStripPoints.Add( LineStripPoints[0] );
+	//	complete the loop by linking first and last vertexes
+	TLAsset::TMesh::Triangle Triangle( OutlineVerts[0], OutlineVerts.ElementLast(), CenterVert );
+	m_Triangles.Add( Triangle );
 
-	//	create the geometry
-	GenerateLine( LineStripPoints, *pColour );
+	OnPrimitivesChanged();
 }
-
 
 
 //-------------------------------------------------------
@@ -311,8 +364,8 @@ void TLAsset::TMesh::GenerateCapsule(const TLMaths::TCapsule2D& Capsule,const TC
 	GenerateLine( LineInside, Colour );
 
 	//	draw a sphere at each end of the capsule
-	GenerateSphere( TLMaths::TSphere2D( CapsuleLine.GetStart(), Capsule.GetRadius() ), &Colour, z );
-	GenerateSphere( TLMaths::TSphere2D( CapsuleLine.GetEnd(), Capsule.GetRadius() ), &Colour, z );
+	GenerateSphereOutline( TLMaths::TSphere2D( CapsuleLine.GetStart(), Capsule.GetRadius() ), &Colour, z );
+	GenerateSphereOutline( TLMaths::TSphere2D( CapsuleLine.GetEnd(), Capsule.GetRadius() ), &Colour, z );
 }
 
 

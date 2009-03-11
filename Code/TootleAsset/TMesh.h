@@ -83,6 +83,7 @@ public:
 	void					GenerateSphere(float Radius,const float3& Center=float3(0,0,0));		//	generate a sphere
 	void					GenerateSphere(const TLMaths::TSphere& Sphere,const TColour& Colour)		{	GenerateSphere( Sphere, &Colour );	}
 	void					GenerateSphere(const TLMaths::TSphere& Sphere,const TColour* pColour=NULL);		//	generate a sphere
+	void					GenerateSphereOutline(const TLMaths::TSphere2D& Sphere,const TColour* pColour=NULL,float z=0.f);	//	generate a 2D spehere (x/y) out of lines
 	void					GenerateSphere(const TLMaths::TSphere2D& Sphere,const TColour* pColour=NULL,float z=0.f);	//	generate a 2D spehere (x/y)
 
 	void					GenerateCapsule(float Radius,const float3& Start,const float3& End,const TColour& Colour);	//	generate a capsule
