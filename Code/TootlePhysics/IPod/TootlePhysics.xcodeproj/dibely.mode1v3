@@ -233,6 +233,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -276,11 +278,11 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>19</integer>
+									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 14}, {186, 445}}</string>
+							<string>{{0, 0}, {186, 445}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -310,14 +312,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TPhysicsNode.cpp</string>
+								<string>TCollisionShape.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -325,14 +325,19 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TPhysicsNode.cpp</string>
+										<string>TCollisionShape.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84EB98A50F3724C40020B52B</string>
+										<string>8477D5BA0F697E590023454C</string>
 										<key>history</key>
 										<array>
-											<string>84EB98A40F3724C40020B52B</string>
+											<string>8461C1310F5C142700ED9509</string>
+											<string>8461C1360F5C1A9D00ED9509</string>
+										</array>
+										<key>prevStack</key>
+										<array>
+											<string>8461C1320F5C142700ED9509</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -390,9 +395,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84EB98A60F3724C40020B52B</string>
+				<string>8477D5BB0F697E590023454C</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84EB98A70F3724C40020B52B</string>
+				<string>8477D5BC0F697E590023454C</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -526,8 +531,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>84EB98A80F3724C40020B52B</string>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootlePhysics/IPod/TootlePhysics.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -746,7 +749,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TPhysicsNode.cpp</string>
+										<string>TCollisionShape.h</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -802,8 +805,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>84EB989C0F3724B30020B52B</string>
-				<string>84EB989D0F3724B30020B52B</string>
+				<string>8461C12F0F5C142500ED9509</string>
+				<string>8461C1300F5C142500ED9509</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>

@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		84C10ACA0F0A7DF900B2DF7A /* TCollisionShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10ABE0F0A7DF900B2DF7A /* TCollisionShape.cpp */; };
 		84C10ACB0F0A7DF900B2DF7A /* TCollisionShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10ABF0F0A7DF900B2DF7A /* TCollisionShape.h */; };
-		84C10ACC0F0A7DF900B2DF7A /* TCollisionZone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AC00F0A7DF900B2DF7A /* TCollisionZone.cpp */; };
-		84C10ACD0F0A7DF900B2DF7A /* TCollisionZone.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AC10F0A7DF900B2DF7A /* TCollisionZone.h */; };
 		84C10ACE0F0A7DF900B2DF7A /* TLPhysics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AC20F0A7DF900B2DF7A /* TLPhysics.cpp */; };
 		84C10ACF0F0A7DF900B2DF7A /* TLPhysics.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AC30F0A7DF900B2DF7A /* TLPhysics.h */; };
 		84C10AD00F0A7DF900B2DF7A /* TPhysicsgraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AC40F0A7DF900B2DF7A /* TPhysicsgraph.cpp */; };
@@ -25,8 +23,6 @@
 		84C10AB80F0A7DD700B2DF7A /* libTootlePhysics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootlePhysics.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C10ABE0F0A7DF900B2DF7A /* TCollisionShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TCollisionShape.cpp; path = ../TCollisionShape.cpp; sourceTree = SOURCE_ROOT; };
 		84C10ABF0F0A7DF900B2DF7A /* TCollisionShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCollisionShape.h; path = ../TCollisionShape.h; sourceTree = SOURCE_ROOT; };
-		84C10AC00F0A7DF900B2DF7A /* TCollisionZone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TCollisionZone.cpp; path = ../TCollisionZone.cpp; sourceTree = SOURCE_ROOT; };
-		84C10AC10F0A7DF900B2DF7A /* TCollisionZone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCollisionZone.h; path = ../TCollisionZone.h; sourceTree = SOURCE_ROOT; };
 		84C10AC20F0A7DF900B2DF7A /* TLPhysics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLPhysics.cpp; path = ../TLPhysics.cpp; sourceTree = SOURCE_ROOT; };
 		84C10AC30F0A7DF900B2DF7A /* TLPhysics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLPhysics.h; path = ../TLPhysics.h; sourceTree = SOURCE_ROOT; };
 		84C10AC40F0A7DF900B2DF7A /* TPhysicsgraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPhysicsgraph.cpp; path = ../TPhysicsgraph.cpp; sourceTree = SOURCE_ROOT; };
@@ -74,8 +70,6 @@
 			children = (
 				84C10ABE0F0A7DF900B2DF7A /* TCollisionShape.cpp */,
 				84C10ABF0F0A7DF900B2DF7A /* TCollisionShape.h */,
-				84C10AC00F0A7DF900B2DF7A /* TCollisionZone.cpp */,
-				84C10AC10F0A7DF900B2DF7A /* TCollisionZone.h */,
 				84C10AC20F0A7DF900B2DF7A /* TLPhysics.cpp */,
 				84C10AC30F0A7DF900B2DF7A /* TLPhysics.h */,
 				84C10AC40F0A7DF900B2DF7A /* TPhysicsgraph.cpp */,
@@ -107,7 +101,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				84C10ACB0F0A7DF900B2DF7A /* TCollisionShape.h in Headers */,
-				84C10ACD0F0A7DF900B2DF7A /* TCollisionZone.h in Headers */,
 				84C10ACF0F0A7DF900B2DF7A /* TLPhysics.h in Headers */,
 				84C10AD10F0A7DF900B2DF7A /* TPhysicsgraph.h in Headers */,
 				84C10AD30F0A7DF900B2DF7A /* TPhysicsNode.h in Headers */,
@@ -159,7 +152,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				84C10ACA0F0A7DF900B2DF7A /* TCollisionShape.cpp in Sources */,
-				84C10ACC0F0A7DF900B2DF7A /* TCollisionZone.cpp in Sources */,
 				84C10ACE0F0A7DF900B2DF7A /* TLPhysics.cpp in Sources */,
 				84C10AD00F0A7DF900B2DF7A /* TPhysicsgraph.cpp in Sources */,
 				84C10AD20F0A7DF900B2DF7A /* TPhysicsNode.cpp in Sources */,

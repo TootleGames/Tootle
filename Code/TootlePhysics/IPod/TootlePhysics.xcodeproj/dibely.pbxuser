@@ -1,7 +1,47 @@
 // !$*UTF8*$!
 {
+	8461C1310F5C142700ED9509 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10AC60F0A7DF900B2DF7A /* TPhysicsNode.cpp */;
+		name = "TPhysicsNode.cpp: 402";
+		rLen = 0;
+		rLoc = 11280;
+		rType = 0;
+		vrLen = 703;
+		vrLoc = 10984;
+	};
+	8461C1320F5C142700ED9509 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10AC60F0A7DF900B2DF7A /* TPhysicsNode.cpp */;
+		name = "TPhysicsNode.cpp: 402";
+		rLen = 0;
+		rLoc = 11280;
+		rType = 0;
+		vrLen = 703;
+		vrLoc = 10984;
+	};
+	8461C1360F5C1A9D00ED9509 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10ABF0F0A7DF900B2DF7A /* TCollisionShape.h */;
+		name = "TCollisionShape.h: 27";
+		rLen = 15;
+		rLoc = 469;
+		rType = 0;
+		vrLen = 764;
+		vrLoc = 1863;
+	};
+	8477D5BA0F697E590023454C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10ABF0F0A7DF900B2DF7A /* TCollisionShape.h */;
+		name = "TCollisionShape.h: 26";
+		rLen = 15;
+		rLoc = 469;
+		rType = 0;
+		vrLen = 706;
+		vrLoc = 1920;
+	};
 	84C108AE0F0A760800B2DF7A /* Project object */ = {
-		activeBuildConfigurationName = Release;
+		activeBuildConfigurationName = Debug;
 		activeTarget = 84C10AB70F0A7DD700B2DF7A /* TootlePhysics */;
 		addToTargets = (
 			84C10AB70F0A7DD700B2DF7A /* TootlePhysics */,
@@ -16,7 +56,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
 					300,
-					231,
+					231.20849609375,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXErrorsWarningsDataSource_TypeID,
@@ -68,12 +108,14 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 255271850;
-			PBXWorkspaceStateSaveDate = 255271850;
+			PBXPerProjectTemplateStateSaveDate = 258571815;
+			PBXWorkspaceStateSaveDate = 258571815;
 		};
 		perUserProjectItems = {
-			84EB98A40F3724C40020B52B /* PBXTextBookmark */ = 84EB98A40F3724C40020B52B /* PBXTextBookmark */;
-			84EB98A50F3724C40020B52B /* PBXTextBookmark */ = 84EB98A50F3724C40020B52B /* PBXTextBookmark */;
+			8461C1310F5C142700ED9509 /* PBXTextBookmark */ = 8461C1310F5C142700ED9509 /* PBXTextBookmark */;
+			8461C1320F5C142700ED9509 /* PBXTextBookmark */ = 8461C1320F5C142700ED9509 /* PBXTextBookmark */;
+			8461C1360F5C1A9D00ED9509 /* PBXTextBookmark */ = 8461C1360F5C1A9D00ED9509 /* PBXTextBookmark */;
+			8477D5BA0F697E590023454C /* PBXTextBookmark */ = 8477D5BA0F697E590023454C /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84C108B20F0A760800B2DF7A /* Source Control */;
 		userBuildSettings = {
@@ -93,46 +135,18 @@
 	84C10AB70F0A7DD700B2DF7A /* TootlePhysics */ = {
 		activeExec = 0;
 	};
+	84C10ABF0F0A7DF900B2DF7A /* TCollisionShape.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1536, 4480}}";
+			sepNavSelRange = "{469, 15}";
+			sepNavVisRange = "{1920, 706}";
+		};
+	};
 	84C10AC60F0A7DF900B2DF7A /* TPhysicsNode.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {792, 9772}}";
-			sepNavSelRange = "{13929, 0}";
-			sepNavVisRange = "{13079, 474}";
-		};
-	};
-	84EB98A00F3724B90020B52B /* TPhysicsNode.cpp */ = {
-		isa = PBXFileReference;
-		name = TPhysicsNode.cpp;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootlePhysics/IPod/../TPhysicsNode.cpp;
-		sourceTree = "<absolute>";
-	};
-	84EB98A20F3724B90020B52B /* TPhysicsNode.cpp */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.cpp.cpp;
-		name = TPhysicsNode.cpp;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootlePhysics/IPod/../TPhysicsNode.cpp;
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {792, 9828}}";
+			sepNavIntBoundsRect = "{{0, 0}, {792, 9520}}";
 			sepNavSelRange = "{11280, 0}";
-			sepNavVisRange = "{11001, 607}";
+			sepNavVisRange = "{10984, 703}";
 		};
-	};
-	84EB98A40F3724C40020B52B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84EB98A00F3724B90020B52B /* TPhysicsNode.cpp */;
-		rLen = 1;
-		rLoc = 387;
-		rType = 1;
-	};
-	84EB98A50F3724C40020B52B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84EB98A20F3724B90020B52B /* TPhysicsNode.cpp */;
-		name = "TPhysicsNode.cpp: 388";
-		rLen = 0;
-		rLoc = 11280;
-		rType = 0;
-		vrLen = 607;
-		vrLoc = 11001;
 	};
 }
