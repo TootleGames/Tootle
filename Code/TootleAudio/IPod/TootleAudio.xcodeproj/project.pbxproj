@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		84179D340EFBA727005375E5 /* TAudiograph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84179D2C0EFBA727005375E5 /* TAudiograph.cpp */; };
 		84179D350EFBA727005375E5 /* TAudiograph.h in Headers */ = {isa = PBXBuildFile; fileRef = 84179D2D0EFBA727005375E5 /* TAudiograph.h */; };
-		84179D360EFBA727005375E5 /* TAudioInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84179D2E0EFBA727005375E5 /* TAudioInterface.cpp */; };
-		84179D370EFBA727005375E5 /* TAudioInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 84179D2F0EFBA727005375E5 /* TAudioInterface.h */; };
 		84179D380EFBA727005375E5 /* TAudioNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84179D300EFBA727005375E5 /* TAudioNode.cpp */; };
 		84179D390EFBA727005375E5 /* TAudioNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 84179D310EFBA727005375E5 /* TAudioNode.h */; };
 		84179D3A0EFBA727005375E5 /* TLAudio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84179D320EFBA727005375E5 /* TLAudio.cpp */; };
@@ -27,8 +25,6 @@
 		84179D0A0EFBA035005375E5 /* libTootleAudio.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleAudio.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84179D2C0EFBA727005375E5 /* TAudiograph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAudiograph.cpp; path = ../TAudiograph.cpp; sourceTree = SOURCE_ROOT; };
 		84179D2D0EFBA727005375E5 /* TAudiograph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAudiograph.h; path = ../TAudiograph.h; sourceTree = SOURCE_ROOT; };
-		84179D2E0EFBA727005375E5 /* TAudioInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAudioInterface.cpp; path = ../TAudioInterface.cpp; sourceTree = SOURCE_ROOT; };
-		84179D2F0EFBA727005375E5 /* TAudioInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAudioInterface.h; path = ../TAudioInterface.h; sourceTree = SOURCE_ROOT; };
 		84179D300EFBA727005375E5 /* TAudioNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAudioNode.cpp; path = ../TAudioNode.cpp; sourceTree = SOURCE_ROOT; };
 		84179D310EFBA727005375E5 /* TAudioNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAudioNode.h; path = ../TAudioNode.h; sourceTree = SOURCE_ROOT; };
 		84179D320EFBA727005375E5 /* TLAudio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLAudio.cpp; path = ../TLAudio.cpp; sourceTree = SOURCE_ROOT; };
@@ -81,8 +77,6 @@
 				842617CE0F60521B002812BA /* TAudioNode_Music.h */,
 				84179D2C0EFBA727005375E5 /* TAudiograph.cpp */,
 				84179D2D0EFBA727005375E5 /* TAudiograph.h */,
-				84179D2E0EFBA727005375E5 /* TAudioInterface.cpp */,
-				84179D2F0EFBA727005375E5 /* TAudioInterface.h */,
 				84179D300EFBA727005375E5 /* TAudioNode.cpp */,
 				84179D310EFBA727005375E5 /* TAudioNode.h */,
 				84179D320EFBA727005375E5 /* TLAudio.cpp */,
@@ -130,7 +124,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				84179D350EFBA727005375E5 /* TAudiograph.h in Headers */,
-				84179D370EFBA727005375E5 /* TAudioInterface.h in Headers */,
 				84179D390EFBA727005375E5 /* TAudioNode.h in Headers */,
 				84179D3B0EFBA727005375E5 /* TLAudio.h in Headers */,
 				84179D550EFBA767005375E5 /* IPodAudio.h in Headers */,
@@ -183,7 +176,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				84179D340EFBA727005375E5 /* TAudiograph.cpp in Sources */,
-				84179D360EFBA727005375E5 /* TAudioInterface.cpp in Sources */,
 				84179D380EFBA727005375E5 /* TAudioNode.cpp in Sources */,
 				84179D3A0EFBA727005375E5 /* TLAudio.cpp in Sources */,
 				84179D540EFBA767005375E5 /* IPodAudio.cpp in Sources */,
