@@ -127,7 +127,7 @@ SyncBool TLRender::TRenderZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
 //---------------------------------------------------------------
 void TLRender::TRenderZoneNode::CalcWorldBounds(TLRender::TRenderNode* pRenderNode,const TLMaths::TTransform& SceneTransform)
 {
-	pRenderNode->CalcWorldBoundsBox( SceneTransform );
+//	pRenderNode->CalcWorldBoundsBox( SceneTransform );
 	pRenderNode->CalcWorldBoundsSphere( SceneTransform );
 	//pRenderNode->CalcWorldBoundsCapsule( SceneTransform );
 }

@@ -158,32 +158,26 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 		}
 	}
 
-	Bool bTranslation, bRotation, bScale;
-	bTranslation = bRotation = bScale = FALSE;
-
 	if ( Message.ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
 	{
 		m_Transform.SetTranslateValid();
-		bTranslation = TRUE;
+		OnTranslationChanged();
 	}
 
-	Bool ScaleChanged = FALSE;
 	if ( Message.ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
 	{
 		m_Transform.SetScaleValid();
-		bScale = TRUE;
+		OnScaleChanged();
 	}
 
-	Bool RotationChanged = FALSE;
 	if ( Message.ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
 	{
 		m_Transform.SetRotationValid();
-		bRotation = TRUE;
+		OnRotationChanged();
 	}
 
-	//	transform has been set
-	if ( bTranslation || bRotation || bScale )
-		OnTransformChanged(bTranslation, bRotation, bScale);
+	//	broadcast changes in transform NOW
+	PublishTransformChanges();
 
 	//	get physics flags to set
 	TPtrArray<TBinaryTree> FlagChildren;
@@ -272,7 +266,10 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 	}
 
 	if ( m_PhysicsFlags( Flag_CollisionExpected ) && !HasCollision() )
+	{
+		PublishTransformChanges();
 		return;
+	}
 
 	//TLDebug_Print( TString("Velocity(%3.3f,%3.3f,%3.3f) Force(%3.3f,%3.3f,%3.3f) \n", m_Velocity.x, m_Velocity.y, m_Velocity.z, m_Force.x, m_Force.y, m_Force.z ) );
 
@@ -349,6 +346,9 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 
 		m_WorldCollisionShapeChanged = FALSE;
 	}
+
+	//	send out transform-changed messages
+	PublishTransformChanges();
 }
 
 
@@ -422,37 +422,40 @@ void TLPhysics::TPhysicsNode::MovePosition(const float3& Movement,float Timestep
 }
 
 
-// Entire transform hads changed
-void TLPhysics::TPhysicsNode::OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale)	
+
+//----------------------------------------------------
+//	send transform changes as per m_TransformChanges
+//----------------------------------------------------
+void TLPhysics::TPhysicsNode::PublishTransformChanges()
 {
 	//	rule is "cant have changed if invalid value" - need to cater for when it has changed TO an invalid value...
 	//	so this removes a change if the value is invalid
-	bTranslation = (bTranslation && m_Transform.HasTranslate());
-	bRotation = (bRotation && m_Transform.HasRotation());
-	bScale = (bScale && m_Transform.HasScale());
+	Bool TranslationChanged = m_TransformChanges[0] && m_Transform.HasTranslate();
+	Bool RotationChanged = m_TransformChanges[1] && m_Transform.HasRotation();
+	Bool ScaleChanged = m_TransformChanges[2] && m_Transform.HasScale();
+
+	//	un-mark changes now that we've got what changes we're gonna send
+	m_TransformChanges.SetAll( FALSE );
 
 	//	no changes
-	if ( !bTranslation && !bRotation && !bScale )
+	if ( !TranslationChanged && !RotationChanged && !ScaleChanged )
 		return;
-
-	//	invalidate shape
-	SetWorldCollisionShapeInvalid();	
 
 	TLMessaging::TMessage Message("OnTransform", GetNodeRef() );
 
-	if ( bTranslation )
+	if ( TranslationChanged )
 	{
 		Message.ExportData("Translate", m_Transform.GetTranslate());
 		TLDebug_CheckFloat( m_Transform.GetTranslate() );
 	}
 
-	if( bRotation )
+	if( RotationChanged )
 	{
 		Message.ExportData("Rotation", m_Transform.GetRotation());
 		TLDebug_CheckFloat( m_Transform.GetRotation() );
 	}
 
-	if( bScale )
+	if( ScaleChanged )
 	{
 		Message.ExportData("Scale", m_Transform.GetScale());
 		TLDebug_CheckFloat( m_Transform.GetScale() );

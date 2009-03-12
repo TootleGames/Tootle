@@ -74,11 +74,11 @@ public:
 	void					OnVelocityChanged()					{	SetAccumulatedMovementInvalid();	SetWorldCollisionShapeInvalid();	}
 	void					OnForceChanged()					{	SetAccumulatedMovementInvalid();	SetWorldCollisionShapeInvalid();	}
 
-	FORCEINLINE void		OnTranslationChanged()	{ OnTransformChanged(TRUE, FALSE, FALSE); }
-	FORCEINLINE void		OnRotationChanged()		{ OnTransformChanged(FALSE, TRUE, FALSE); }
-	FORCEINLINE void		OnScaleChanged()		{ OnTransformChanged(FALSE, FALSE, TRUE); }
+	FORCEINLINE void		OnTranslationChanged()				{	m_TransformChanges[0] = TRUE;	SetWorldCollisionShapeInvalid();	}
+	FORCEINLINE void		OnRotationChanged()					{	m_TransformChanges[1] = TRUE;	SetWorldCollisionShapeInvalid();	}
+	FORCEINLINE void		OnScaleChanged()					{	m_TransformChanges[2] = TRUE;	SetWorldCollisionShapeInvalid();	}
 
-	void					OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);
+	//void					OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);
 
 	Bool					HasCollision() const				{	return m_pCollisionShape.IsValid() ? m_pCollisionShape->IsValid() : FALSE;	}
 	void					SetCollisionNone()					{	m_pCollisionShape = NULL;	SetWorldCollisionShapeInvalid();	SetCollisionZoneNeedsUpdate();	}
@@ -132,6 +132,8 @@ protected:
 	TLPhysics::TPhysicsZoneNode&	GetPhysicsZoneNode()					{	return *m_pZoneNode.GetObject<TLPhysics::TPhysicsZoneNode>();	}
 	TPtr<TLMaths::TQuadTreeNode>&	GetZoneNodePtr()						{	return m_pZoneNode;	}
 
+	void						PublishTransformChanges();					//	send transform changes as per m_TransformChanges
+
 public:
 	float					m_Friction;			//	
 	float					m_Mass;				//	used for varying impact of two objects, larger object bounces less
@@ -142,7 +144,8 @@ public:
 	u32						m_Debug_StaticCollisions;	//	
 
 protected:
-	TLMaths::TTransform		m_Transform;			//	world transform of shape
+	TLMaths::TTransform		m_Transform;				//	world transform of shape
+	TFixedArray<Bool,3>		m_TransformChanges;			//	dont broadcast trasnform changes until post update
 
 	TFlags<Flags>			m_PhysicsFlags;
 	float3					m_Velocity;

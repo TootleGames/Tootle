@@ -60,8 +60,8 @@ void TLMaths::TQuadTreeNode::UpdateZone(TPtr<TLMaths::TQuadTreeNode> pThis,TPtr<
 	//	in our new zone (or Null zone)
 	m_IsZoneOutofDate = FALSE;
 
-#define ENABLE_FAST_CHECK
-#define ENABLE_FAST_GOTO_SMALLER_ZONE
+//#define ENABLE_FAST_CHECK
+//#define ENABLE_FAST_GOTO_SMALLER_ZONE
 
 
 #ifdef ENABLE_FAST_CHECK
@@ -96,8 +96,8 @@ void TLMaths::TQuadTreeNode::UpdateZone(TPtr<TLMaths::TQuadTreeNode> pThis,TPtr<
 			//	not in a sibling, see if we can go down to a smaller zone
 #ifdef ENABLE_FAST_GOTO_SMALLER_ZONE
 			pCurrentZone->AddNode( pThis, pThis->GetZone(), FALSE );
-#endif
 			return;
+#endif
 		}
 		else
 		{
