@@ -464,19 +464,19 @@
 			>
 		</File>
 		<File
-			RelativePath="..\TRenderNodePhysicsGraph.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\TRenderNodePhysicsGraph.h"
-			>
-		</File>
-		<File
 			RelativePath="..\TRenderNodePhysicsNode.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\TRenderNodePhysicsNode.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TRenderNodeQuadTree.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TRenderNodeQuadTree.h"
 			>
 		</File>
 		<File

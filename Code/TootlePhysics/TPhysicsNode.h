@@ -10,8 +10,7 @@
 #include <TootleCore/TFlags.h>
 #include <TootleCore/TLMaths.h>
 #include "TCollisionShape.h"
-#include "TCollisionZone.h"
-
+#include <TootleMaths/TQuadTree.h>
 
 
 namespace TLMaths
@@ -25,8 +24,8 @@ namespace TLPhysics
 {
 	class TPhysicsNode;
 	class TPhysicsgraph;
-	class TCollisionZone;
 	class TIntersection;
+	class TPhysicsZoneNode;
 
 	extern float3		g_WorldUp;		//	gr: currently a global, change to be on the graph, or per node at some point so individual nodes can have their own gravity direction. Depends on what we need it for
 	extern float3		g_WorldUpNormal;		//	gr: currently a global, change to be on the graph, or per node at some point so individual nodes can have their own gravity direction. Depends on what we need it for
@@ -34,11 +33,9 @@ namespace TLPhysics
 
 
 
-
-class TLPhysics::TPhysicsNode : public TLGraph::TGraphNode<TPhysicsNode>
+class TLPhysics::TPhysicsNode : public TLGraph::TGraphNode<TLPhysics::TPhysicsNode>
 {
 	friend class TLPhysics::TPhysicsgraph;
-	friend class TLPhysics::TCollisionZone;
 public:
 	enum Flags
 	{
@@ -54,6 +51,7 @@ public:
 	TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef=TRef());
 
 	virtual void				Update(float Timestep);						//	physics update
+	virtual void				Shutdown();									//	cleanup
 	virtual void				PostUpdate(float Timestep,TLPhysics::TPhysicsgraph* pGraph,TPtr<TLPhysics::TPhysicsNode>& pThis);			//	after collisions are handled
 	virtual Bool				PostIteration(u32 Iteration);				//	called after iteration, return TRUE to do another iteration
 
@@ -98,15 +96,19 @@ public:
 
 	virtual Bool				OnCollision(const TPhysicsNode* pOtherNode);	//	handle collision with other object
 
-	Bool						SetCollisionZone(TPtr<TCollisionZone>& pCollisionZone,TPtr<TPhysicsNode> pThis,const TFixedArray<u32,4>* pChildZoneList);
-	TPtr<TCollisionZone>&		GetCollisionZone()										{	return m_pCollisionZone;	}
-	TFixedArray<u32,4>&			GetChildCollisionZones()								{	return m_ChildCollisionZones;	}
-	void						SetChildZonesNone()										{	m_ChildCollisionZones.Empty();	}
-	void						SetChildZones(const TFixedArray<u32,4>& InZones);		//	
+//	Bool						SetCollisionZone(TPtr<TLMaths::TQuadTreeZone>& pCollisionZone,TPtr<TPhysicsNode> pThis,const TFixedArray<u32,4>* pChildZoneList);
 
-	FORCEINLINE void			SetCollisionZoneNeedsUpdate(Bool NeedsUpdate=TRUE)		{	m_CollisionZoneNeedsUpdate = NeedsUpdate;	}
-	FORCEINLINE Bool			GetCollisionZoneNeedsUpdate() const						{	return m_CollisionZoneNeedsUpdate;	}
-	void						UpdateNodeCollisionZone(TPtr<TLPhysics::TPhysicsNode>& pThis,TLPhysics::TPhysicsgraph* pGraph);	//	update what collision zone we're in
+	FORCEINLINE void						SetCollisionZoneNeedsUpdate(Bool NeedsUpdate=TRUE)		{	GetZoneNode().SetZoneOutOfDate( NeedsUpdate );	}
+	FORCEINLINE Bool						GetCollisionZoneNeedsUpdate() const						{	return GetZoneNode().IsZoneOutOfDate();	}
+	void									UpdateNodeCollisionZone(TPtr<TLPhysics::TPhysicsNode>& pThis,TLPhysics::TPhysicsgraph* pGraph);	//	update what collision zone we're in
+	FORCEINLINE TPtr<TLMaths::TQuadTreeZone>&		GetZone()								{	return GetZoneNode().GetZone();	}
+	FORCEINLINE const TPtr<TLMaths::TQuadTreeZone>&	GetZone() const							{	return GetZoneNode().GetZone();	}
+	FORCEINLINE TFixedArray<u32,4>&			GetChildZones()							{	return GetZoneNode().GetChildZones();	}
+	FORCEINLINE const TFixedArray<u32,4>&	GetChildZones() const					{	return GetZoneNode().GetChildZones();	}
+	FORCEINLINE TRefRef			GetQuadTreeNodeRef() const							{	return GetZoneNode().GetQuadTreeNodeRef();	}
+	void						SetZoneNone();	//pNode->GetZoneNode().SetZone( pNullZone, pQuadTreeNode, NULL );
+
+	FORCEINLINE Bool			operator==(TRefRef Ref) const							{	return GetNodeRef() == Ref;	}
 
 protected:
 
@@ -124,6 +126,11 @@ protected:
 	const float3&				GetForce() const							{	return (m_Force);	}
 	float3						GetVelocityAndForce() const					{	return (m_Velocity + m_Force);	}
 	virtual float				GetFriction() const							{	return m_Friction;	}
+
+	TLMaths::TQuadTreeNode&		GetZoneNode()								{	return *m_pZoneNode;	}
+	const TLMaths::TQuadTreeNode&	GetZoneNode() const						{	return *m_pZoneNode;	}
+	TLPhysics::TPhysicsZoneNode&	GetPhysicsZoneNode()					{	return *m_pZoneNode.GetObject<TLPhysics::TPhysicsZoneNode>();	}
+	TPtr<TLMaths::TQuadTreeNode>&	GetZoneNodePtr()						{	return m_pZoneNode;	}
 
 public:
 	float					m_Friction;			//	
@@ -147,10 +154,8 @@ protected:
 	TPtr<TCollisionShape>	m_pWorldCollisionShape;		//	transformed collision shape, delete/invalidated when pos or collision shape changes
 	TPtr<TCollisionShape>	m_pLastWorldCollisionShape;	//	to save re-allocations of the same object, when we invalidate the world collision shape we set it to this. then when we recalc it, we try to reuse this pointer
 
-	Bool					m_CollisionZoneNeedsUpdate;	//	does the collision zone need updating?
-	TPtr<TCollisionZone>	m_pCollisionZone;			//	collision zone we're in
-	TFixedArray<u32,4>		m_ChildCollisionZones;		//	collision zone we're intersecting, these are direct children of m_pCollisionZone
 	Bool					m_InitialisedZone;			//	
+	TPtr<TLMaths::TQuadTreeNode>	m_pZoneNode;		//	should always be allocated - stored in TPtr so nothing else releases it
 
 	float					m_Temp_ExtrudeTimestep;		//	timestep for this frame... just saves passing around, used when calculating world collision shape for this frame
 	TIntersection			m_Temp_Intersection;		//	current intersection. assume is invalid unless we're in an OnCollision func
@@ -159,3 +164,28 @@ protected:
 	TRef					m_OwnerSceneNode;			//	"Owner" scene node - if this is set then we automaticcly process some stuff
 };
 
+
+//---------------------------------------------------------------
+//	QuadTreeNode for render nodes
+//---------------------------------------------------------------
+class TLPhysics::TPhysicsZoneNode : public TLMaths::TQuadTreeNode
+{
+	friend class TLPhysics::TPhysicsNode;
+public:
+	TPhysicsZoneNode(TRefRef PhysicsNodeRef) : m_PhysicsNodeRef ( PhysicsNodeRef )	{	GetPhysicsNode();	}
+
+	//	quadtreenode virtual
+	virtual Bool		IsStatic() 								{	return GetPhysicsNode() ? m_pPhysicsNode->IsStatic() : FALSE;	}
+	virtual SyncBool	IsInShape(const TLMaths::TBox2D& Shape);
+
+	TPtr<TPhysicsNode>&	GetPhysicsNode();
+
+protected:
+	FORCEINLINE Bool	SetZone(TPtr<TLMaths::TQuadTreeZone>& pZone,TPtr<TLMaths::TQuadTreeNode>& pThis,const TFixedArray<u32,4>* pChildZoneList)	{	return TLMaths::TQuadTreeNode::SetZone( pZone, pThis, pChildZoneList );	}
+
+protected:
+	TRef				m_PhysicsNodeRef;		//	render node that we're linked to
+	TPtr<TPhysicsNode>	m_pPhysicsNode;			//	cache of render node
+};
+
+	

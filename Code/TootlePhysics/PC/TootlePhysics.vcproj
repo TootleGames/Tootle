@@ -156,14 +156,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\TCollisionZone.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\TCollisionZone.h"
-			>
-		</File>
-		<File
 			RelativePath="..\TLPhysics.cpp"
 			>
 		</File>

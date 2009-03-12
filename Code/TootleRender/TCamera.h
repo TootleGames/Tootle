@@ -47,7 +47,7 @@ class TLRender::TCamera : public TLMaths::TQuadTreeNode
 {
 public:
 	TCamera();
-
+	
 	virtual const float3&		GetPosition() const		{	return m_ViewLine.GetStart();	}
 	virtual const float3&		GetLookAt() const		{	return m_ViewLine.GetEnd();	}
 	virtual float3				GetViewForward() const	{	return m_ViewForward;	}//m_ViewLine.GetDirectionNormal();	}

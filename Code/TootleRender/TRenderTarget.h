@@ -80,6 +80,7 @@ public:
 	TPtr<TRenderNode>&		GetRootRenderNode() const;					//	gets the render node at the root
 
 	void					SetRootQuadTreeZone(const TLMaths::TBox2D& ZoneShape);
+	TPtr<TLMaths::TQuadTreeZone>&	GetRootQuadTreeZone()				{	return m_pRootQuadTreeZone;	}
 
 	//	generic scene rendering controls
 	virtual void			BeginScene()										{	}					//	save off current scene (and optionally reset)

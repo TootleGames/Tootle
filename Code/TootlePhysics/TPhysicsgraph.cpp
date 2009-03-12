@@ -1,5 +1,4 @@
 #include "TPhysicsgraph.h"
-#include "TCollisionZone.h"
 #include "TCollisionShape.h"
 #include "TPhysicsNode.h"
 #include "TPhysicsNodeSphere.h"
@@ -33,6 +32,8 @@ Collision tests: 2618 (207 static) 435 intersections(16.62%) 1510 zone tests(62.
 BOTH:
 Collision tests: 1763 (136 static) 441 intersections(25.01%) 3066 zone tests(54.96%)
 */
+
+//#define PREDIVIDE_COLLISION_ZONES
 
 namespace TLPhysics
 {
@@ -142,12 +143,12 @@ void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 //----------------------------------------------------------
 //	
 //----------------------------------------------------------
-void TLPhysics::TPhysicsgraph::DoCollisionsByZone(TLPhysics::TCollisionZone* pCollisionZone)
+void TLPhysics::TPhysicsgraph::DoCollisionsByZone(TLMaths::TQuadTreeZone* pCollisionZone)
 {
-	TPtrArray<TPhysicsNode>& ZoneNodes = pCollisionZone->GetNodes();
+	TPtrArray<TLMaths::TQuadTreeNode>& ZoneNodes = pCollisionZone->GetNodes();
 	for ( u32 n=0;	n<ZoneNodes.GetSize();	n++ )
 	{
-		TPhysicsNode* pNode = ZoneNodes[n].GetObject();
+		TLMaths::TQuadTreeNode* pNode = ZoneNodes[n].GetObject();
 		//if ( pNode->IsStatic() )
 		//	continue;
 
@@ -156,7 +157,7 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByZone(TLPhysics::TCollisionZone* pCo
 	}
 
 	//	now do child zones
-	TPtrArray<TCollisionZone>& ZoneChildZonesWithNodes = pCollisionZone->GetChildZonesWithNodes();
+	TPtrArray<TLMaths::TQuadTreeZone>& ZoneChildZonesWithNodes = pCollisionZone->GetChildZonesWithNodes();
 	for ( u32 c=0;	c<ZoneChildZonesWithNodes.GetSize();	c++ )
 	{
 		DoCollisionsByZone( ZoneChildZonesWithNodes[c].GetObject() );
@@ -168,7 +169,7 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByZone(TLPhysics::TCollisionZone* pCo
 //----------------------------------------------------------
 //	do collisons with each node in this zone, then go to zone's child zones
 //----------------------------------------------------------
-void TLPhysics::TPhysicsgraph::DoCollisionsByZone(TLPhysics::TCollisionZone* pCollisionZone,TLPhysics::TPhysicsNode* pNode,Bool IsNodesZone,u32 FirstNode)
+void TLPhysics::TPhysicsgraph::DoCollisionsByZone(TLMaths::TQuadTreeZone* pCollisionZone,TLMaths::TQuadTreeNode* pNode,Bool IsNodesZone,u32 FirstNode)
 {
 	Bool NodeIsStatic = pNode->IsStatic();
 
@@ -190,24 +191,29 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByZone(TLPhysics::TCollisionZone* pCo
 	m_Debug_ZonesTested++;
 
 	//	collide with nodes in this zone
-	TPtrArray<TPhysicsNode>& ZoneNodes = TestStaticNodes ? pCollisionZone->GetNodes() : pCollisionZone->GetNonStaticNodes();
+	TPtrArray<TLMaths::TQuadTreeNode>& ZoneNodes = TestStaticNodes ? pCollisionZone->GetNodes() : pCollisionZone->GetNonStaticNodes();
 	for ( u32 o=FirstNode;	o<ZoneNodes.GetSize();	o++ )
 	{
-		TPhysicsNode* pOtherNode = ZoneNodes[o].GetObject();
+		TLMaths::TQuadTreeNode* pOtherNode = ZoneNodes[o].GetObject();
 	
 		if ( IsNodesZone && pNode==pOtherNode )
 			continue;
 
-		Bool OtherNodeIsStatic = pOtherNode->IsStatic();
+		TLPhysics::TPhysicsNode* pPhysicsNode = static_cast<TLPhysics::TPhysicsZoneNode*>( pNode )->GetPhysicsNode();
+		TLPhysics::TPhysicsNode* pOtherPhysicsNode = static_cast<TLPhysics::TPhysicsZoneNode*>( pOtherNode )->GetPhysicsNode();
+		if ( !pOtherPhysicsNode )
+			continue;
+
+		Bool OtherNodeIsStatic = pOtherPhysicsNode->IsStatic();
 	
 		//	do node collisions
 		if ( !NodeIsStatic && OtherNodeIsStatic )
 		{
-			DoStaticCollision( pNode, pOtherNode );
+			DoStaticCollision( pPhysicsNode, pOtherPhysicsNode );
 		}
 		else if ( NodeIsStatic && !OtherNodeIsStatic )
 		{
-			DoStaticCollision( pOtherNode, pNode );
+			DoStaticCollision( pOtherPhysicsNode, pPhysicsNode );
 		}
 		else if ( NodeIsStatic && OtherNodeIsStatic )
 		{
@@ -215,19 +221,19 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByZone(TLPhysics::TCollisionZone* pCo
 		}
 		else
 		{
-			DoCollision( pNode, pOtherNode );
+			DoCollision( pPhysicsNode, pOtherPhysicsNode );
 		}
 	}
 
 	//	collide with nodes in child zones - this is using the list of zones we know that this zone overlaps (will be at least 2)
-	TPtrArray<TCollisionZone>& ZoneChildZones = pCollisionZone->GetChildZones();
-	TPtrArray<TCollisionZone>& ZoneChildZonesWithNodes = NodeIsStatic ? pCollisionZone->GetChildZonesWithNonStaticNodes() : pCollisionZone->GetChildZonesWithNodes();
+	TPtrArray<TLMaths::TQuadTreeZone>& ZoneChildZones = pCollisionZone->GetChildZones();
+	TPtrArray<TLMaths::TQuadTreeZone>& ZoneChildZonesWithNodes = NodeIsStatic ? pCollisionZone->GetChildZonesWithNonStaticNodes() : pCollisionZone->GetChildZonesWithNodes();
 	if ( IsNodesZone && ZoneChildZones.GetSize() )
 	{
-		TFixedArray<u32,4>& NodeChildZones = pNode->GetChildCollisionZones();
+		TFixedArray<u32,4>& NodeChildZones = pNode->GetChildZones();
 		for ( u32 c=0;	c<NodeChildZones.GetSize();	c++ )
 		{
-			TCollisionZone* pNodeChildZone = ZoneChildZones[NodeChildZones[c]].GetObject();
+			TLMaths::TQuadTreeZone* pNodeChildZone = ZoneChildZones[NodeChildZones[c]].GetObject();
 			
 			//	if we're a static node, and this child zone only has static nodes, dont do the collision tests
 			if ( NodeIsStatic && !pNodeChildZone->HasAnyNonStaticNodesTotal() )
@@ -237,7 +243,7 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByZone(TLPhysics::TCollisionZone* pCo
 			if ( !pNodeChildZone->HasAnyNodesTotal() )
 				continue;
 
-			if ( !pNodeChildZone->IsNodeInZoneShape( pNode, FALSE ) )
+			if ( !pNodeChildZone->IsNodeInZoneShape( pNode/*, FALSE*/ ) )
 			{
 			//	TLDebug_Break("Should be intersecting this zone");
 				continue;
@@ -251,10 +257,10 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByZone(TLPhysics::TCollisionZone* pCo
 		//	don't know what child zones our node intersects, so check all the child zones with any nodes in them
 		for ( u32 c=0;	c<ZoneChildZonesWithNodes.GetSize();	c++ )
 		{
-			TCollisionZone* pNodeChildZone = ZoneChildZonesWithNodes[c].GetObject();
+			TLMaths::TQuadTreeZone* pNodeChildZone = ZoneChildZonesWithNodes[c].GetObject();
 
 			//	check our node intersects with this child zone
-			if ( pNodeChildZone->IsNodeInZoneShape( pNode, TRUE ) )
+			if ( pNodeChildZone->IsNodeInZoneShape( pNode/*, TRUE*/ ) )
 				DoCollisionsByZone( pNodeChildZone, pNode, FALSE, 0 );
 		}
 	}
@@ -291,7 +297,7 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByNode(TPtr<TLPhysics::TPhysicsNode>&
 {
 	//	get our zone
 	TPhysicsNode* pNodeObject = pNode.GetObject();
-	TCollisionZone* pNodeCollisionZone = pNodeObject->m_pCollisionZone.GetObject();
+	TLMaths::TQuadTreeZone* pNodeCollisionZone = pNodeObject->GetZone().GetObject();
 
 	//	no zone? dont know what to test with...
 	if ( !pNodeCollisionZone )
@@ -302,16 +308,16 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByNode(TPtr<TLPhysics::TPhysicsNode>&
 	DoCollisionsByNode( pNodeObject, pNodeCollisionZone, pNodeCollisionZone, NULL, FALSE, FALSE, DummyCounter );
 
 	//	collide with the multiple child zones we intersect (saving here is say only doing 2/4 child-zone checks)
-	TFixedArray<u32,4>& ChildCollisionZones = pNodeObject->GetChildCollisionZones();
+	TFixedArray<u32,4>& ChildCollisionZones = pNodeObject->GetChildZones();
 	if ( ChildCollisionZones.GetSize() && pNodeCollisionZone->HasChildrenAnyNodes() )
 	{
-		TPtrArray<TCollisionZone>& NodeZoneChildZones = pNodeCollisionZone->GetChildZones();
+		TPtrArray<TLMaths::TQuadTreeZone>& NodeZoneChildZones = pNodeCollisionZone->GetChildZones();
 
 		//	gr: when culling, for some reason NodeZoneChildZones becomes empty, but the child list on our node... doesnt...
 		for ( u32 c=0;	c<ChildCollisionZones.GetSize()/* && NodeZoneChildZones.GetSize()*/;	c++ )
 		{
 			u32 ChildZoneIndex = ChildCollisionZones[c];
-			TCollisionZone* pChildCollisionZone = NodeZoneChildZones[ChildZoneIndex].GetObject();
+			TLMaths::TQuadTreeZone* pChildCollisionZone = NodeZoneChildZones[ChildZoneIndex].GetObject();
 
 			//	if child zone has no nodes, dont check
 			if ( !pChildCollisionZone->HasAnyNodesTotal() )
@@ -322,8 +328,8 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByNode(TPtr<TLPhysics::TPhysicsNode>&
 	}
 
 	//	now collide with nodes in the parent zone (nodes in the parent zone are overlapping
-	TCollisionZone* pPrevParentCollisionZone = pNodeCollisionZone;
-	TCollisionZone* pParentCollisionZone = pNodeCollisionZone->GetParentZone().GetObject();
+	TLMaths::TQuadTreeZone* pPrevParentCollisionZone = pNodeCollisionZone;
+	TLMaths::TQuadTreeZone* pParentCollisionZone = pNodeCollisionZone->GetParentZone().GetObject();
 	while ( pParentCollisionZone )
 	{
 		DoCollisionsByNode( pNodeObject, pParentCollisionZone, pNodeCollisionZone, pPrevParentCollisionZone, FALSE, TRUE, m_Debug_CollisionTestsUpwards );
@@ -336,7 +342,7 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByNode(TPtr<TLPhysics::TPhysicsNode>&
 //----------------------------------------------------------
 //	
 //----------------------------------------------------------
-void TLPhysics::TPhysicsgraph::DoCollisionsByNode(TLPhysics::TPhysicsNode* pNode,TLPhysics::TCollisionZone* pCollisionZone,TLPhysics::TCollisionZone* pNodeZone,TLPhysics::TCollisionZone* pPreviousParentZone,Bool TestChildZones,Bool TestNodeZone,u32& CollisionTestCounter)
+void TLPhysics::TPhysicsgraph::DoCollisionsByNode(TLPhysics::TPhysicsNode* pNode,TLMaths::TQuadTreeZone* pCollisionZone,TLMaths::TQuadTreeZone* pNodeZone,TLMaths::TQuadTreeZone* pPreviousParentZone,Bool TestChildZones,Bool TestNodeZone,u32& CollisionTestCounter)
 {
 	if ( TestNodeZone && pNodeZone == pCollisionZone )
 		TestNodeZone = FALSE;
@@ -344,14 +350,14 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByNode(TLPhysics::TPhysicsNode* pNode
 	m_Debug_ZonesTested++;
 
 	//	collide with all the nodes in this zone
-	TPtrArray<TPhysicsNode>& ZoneNodes = pCollisionZone->GetNodes();
+	TPtrArray<TLMaths::TQuadTreeNode>& ZoneNodes = pCollisionZone->GetNodes();
 	for ( u32 n=0;	n<ZoneNodes.GetSize();	n++ )
 	{
-		TPtr<TLPhysics::TPhysicsNode>& pOtherNodePtr = ZoneNodes[n];
-		TLPhysics::TPhysicsNode* pOtherNode = pOtherNodePtr.GetObject();
+		TPtr<TLMaths::TQuadTreeNode>& pOtherNodePtr = ZoneNodes[n];
+		TLMaths::TQuadTreeNode* pOtherNode = pOtherNodePtr.GetObject();
 
 		//	dont collide with self!
-		if ( pNode->GetNodeRef() == pOtherNode->GetNodeRef() )
+		if ( pNode->GetQuadTreeNodeRef() == pOtherNode->GetQuadTreeNodeRef() )
 			continue;
 		
 		//	to save some collision time, check to see if this OtherNode intersects our node's zone 
@@ -361,13 +367,13 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByNode(TLPhysics::TPhysicsNode* pNode
 #ifdef ENABLE_TEST_PARENTZONENODE_INPREVIOUSPARENTZONE
 			if ( pPreviousParentZone )
 			{
-				TFixedArray<u32,4>& OtherNodeChildZones = pOtherNode->m_ChildCollisionZones;
+				TFixedArray<u32,4>& OtherNodeChildZones = pOtherNode->GetChildZones();
 				if ( OtherNodeChildZones.GetSize() )
 				{
 					Bool IsInPrevParentZone = FALSE;
 					for ( u32 c=0;	c<OtherNodeChildZones.GetSize();	c++ )
 					{
-						TPtr<TCollisionZone>& pOtherNodeChildZone = pCollisionZone->GetChildZones().ElementAt( OtherNodeChildZones[c] );
+						TPtr<TLMaths::TQuadTreeZone>& pOtherNodeChildZone = pCollisionZone->GetChildZones().ElementAt( OtherNodeChildZones[c] );
 						if ( pOtherNodeChildZone.GetObject() == pPreviousParentZone )
 						{
 							IsInPrevParentZone = TRUE;
@@ -381,16 +387,18 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByNode(TLPhysics::TPhysicsNode* pNode
 			}
 #endif
 #ifdef ENABLE_TEST_PARENTZONENODE_INMYZONE
-			if ( !pNodeZone->IsNodeInZoneShape( pOtherNode, TRUE ) )
+			if ( !pNodeZone->IsNodeInZoneShape( pOtherNode/*, TRUE*/ ) )
 				continue;
 #endif
 		}
 
+		TLPhysics::TPhysicsNode* pOtherPhysicsNode = static_cast<TLPhysics::TPhysicsZoneNode*>( pOtherNode )->GetPhysicsNode();
+
 		//	do node collisions
-		if ( pOtherNode->IsStatic() )
-			DoStaticCollision( pNode, pOtherNode );
+		if ( pOtherPhysicsNode->IsStatic() )
+			DoStaticCollision( pNode, pOtherPhysicsNode );
 		else
-			DoCollision( pNode, pOtherNode );
+			DoCollision( pNode, pOtherPhysicsNode );
 		CollisionTestCounter++;
 	}
 
@@ -404,10 +412,10 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByNode(TLPhysics::TPhysicsNode* pNode
 	{
 		for ( u32 c=0;	c<pCollisionZone->GetChildZonesWithNodes().GetSize();	c++ )
 		{
-			TPtr<TCollisionZone>& pChildCollisionZone = pCollisionZone->GetChildZones().ElementAt(c);
+			TPtr<TLMaths::TQuadTreeZone>& pChildCollisionZone = pCollisionZone->GetChildZones().ElementAt(c);
 
 			//	test against this zone to see if we're intersecting it
-			if ( !pChildCollisionZone->IsNodeInZoneShape( pNode, TRUE ) )
+			if ( !pChildCollisionZone->IsNodeInZoneShape( &pNode->GetZoneNode()/*, TRUE*/ ) )
 				continue;
 
 			//	do collisions with nodes in child zone
@@ -450,7 +458,7 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByNodeUpwards(TPtr<TLPhysics::TPhysic
 {
 	//	get our zone
 	TPhysicsNode* pNodeObject = pNode.GetObject();
-	TCollisionZone* pNodeCollisionZone = pNodeObject->m_pCollisionZone.GetObject();
+	TLMaths::TQuadTreeZone* pNodeCollisionZone = pNodeObject->GetZone().GetObject();
 
 	//	no zone? dont know what to test with...
 	if ( !pNodeCollisionZone )
@@ -461,8 +469,8 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByNodeUpwards(TPtr<TLPhysics::TPhysic
 	DoCollisionsByNodeUpwards( pNodeObject, pNodeCollisionZone, pNodeCollisionZone, NULL, FALSE, FALSE, DummyCounter );
 
 	//	now collide with nodes in the parent zone (nodes in the parent zone are overlapping
-	TCollisionZone* pPrevParentCollisionZone = pNodeCollisionZone;
-	TCollisionZone* pParentCollisionZone = pNodeCollisionZone->GetParentZone().GetObject();
+	TLMaths::TQuadTreeZone* pPrevParentCollisionZone = pNodeCollisionZone;
+	TLMaths::TQuadTreeZone* pParentCollisionZone = pNodeCollisionZone->GetParentZone().GetObject();
 	while ( pParentCollisionZone )
 	{
 		DoCollisionsByNodeUpwards( pNodeObject, pParentCollisionZone, pNodeCollisionZone, pPrevParentCollisionZone, FALSE, TRUE, m_Debug_CollisionTestsUpwards );
@@ -475,7 +483,7 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByNodeUpwards(TPtr<TLPhysics::TPhysic
 //----------------------------------------------------------
 //	
 //----------------------------------------------------------
-void TLPhysics::TPhysicsgraph::DoCollisionsByNodeUpwards(TLPhysics::TPhysicsNode* pNode,TLPhysics::TCollisionZone* pCollisionZone,TLPhysics::TCollisionZone* pNodeZone,TLPhysics::TCollisionZone* pPreviousParentZone,Bool TestChildZones,Bool TestNodeZone,u32& CollisionTestCounter)
+void TLPhysics::TPhysicsgraph::DoCollisionsByNodeUpwards(TLPhysics::TPhysicsNode* pNode,TLMaths::TQuadTreeZone* pCollisionZone,TLMaths::TQuadTreeZone* pNodeZone,TLMaths::TQuadTreeZone* pPreviousParentZone,Bool TestChildZones,Bool TestNodeZone,u32& CollisionTestCounter)
 {
 	Bool NodeIsStatic = pNode->IsStatic();
 
@@ -485,11 +493,11 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByNodeUpwards(TLPhysics::TPhysicsNode
 	m_Debug_ZonesTested++;
 
 	//	collide with all the nodes in this zone
-	TPtrArray<TPhysicsNode>& ZoneNodes = NodeIsStatic ? pCollisionZone->GetNonStaticNodes() : pCollisionZone->GetNodes();
+	TPtrArray<TLMaths::TQuadTreeNode>& ZoneNodes = NodeIsStatic ? pCollisionZone->GetNonStaticNodes() : pCollisionZone->GetNodes();
 	for ( u32 n=0;	n<ZoneNodes.GetSize();	n++ )
 	{
-		TPtr<TLPhysics::TPhysicsNode>& pOtherNodePtr = ZoneNodes[n];
-		TLPhysics::TPhysicsNode* pOtherNode = pOtherNodePtr.GetObject();
+		TPtr<TLMaths::TQuadTreeNode>& pOtherNodePtr = ZoneNodes[n];
+		TLPhysics::TPhysicsNode* pOtherNode = pOtherNodePtr.GetObject<TLPhysics::TPhysicsNode>();
 
 		//	dont collide with self!
 		if ( pNode->GetNodeRef() == pOtherNode->GetNodeRef() )
@@ -643,8 +651,10 @@ void TLPhysics::TPhysicsgraph::DoStaticCollision(TLPhysics::TPhysicsNode* pNodeA
 void TLPhysics::TPhysicsgraph::OnNodeRemoving(TPtr<TLPhysics::TPhysicsNode>& pNode)
 {
 	//	remove node from zones
-	TPtr<TCollisionZone> pNullZone;
-	pNode->SetCollisionZone( pNullZone, pNode, NULL );
+	//TPtr<TLMaths::TQuadTreeZone> pNullZone;
+	//TPtr<TLMaths::TQuadTreeNode> pQuadTreeNode = pNode;
+	//pNode->GetZoneNode().SetZone( pNullZone, pQuadTreeNode, NULL );
+	pNode->SetZoneNone();
 
 	//	inherited OnRemoving()
 	TLGraph::TGraph<TLPhysics::TPhysicsNode>::OnNodeRemoving( pNode );
@@ -663,7 +673,7 @@ void TLPhysics::TPhysicsgraph::OnNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pNode)
 	//	initialise zone
 	if ( m_pRootCollisionZone )
 	{
-		m_pRootCollisionZone->AddNode( pNode, m_pRootCollisionZone, TRUE );
+		m_pRootCollisionZone->AddNode( pNode->GetZoneNodePtr(), m_pRootCollisionZone, TRUE );
 	}
 
 	//	inherited OnAdded()
@@ -674,7 +684,7 @@ void TLPhysics::TPhysicsgraph::OnNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pNode)
 //----------------------------------------------------------
 //	set a new root collision zone
 //----------------------------------------------------------
-void TLPhysics::TPhysicsgraph::SetRootCollisionZone(TPtr<TLPhysics::TCollisionZone>& pZone)
+void TLPhysics::TPhysicsgraph::SetRootCollisionZone(TPtr<TLMaths::TQuadTreeZone>& pZone)
 {
 	//	clean up old zone tree
 	if ( m_pRootCollisionZone && pZone )
@@ -685,6 +695,15 @@ void TLPhysics::TPhysicsgraph::SetRootCollisionZone(TPtr<TLPhysics::TCollisionZo
 
 	//	set new root zone
 	m_pRootCollisionZone = pZone;
+
+	//	pre-divide tree
+#ifdef PREDIVIDE_COLLISION_ZONES
+	if ( m_pRootCollisionZone )
+	{
+		m_pRootCollisionZone->DivideAll( m_pRootCollisionZone );
+	}
+#endif
+
 }
 
 

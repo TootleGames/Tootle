@@ -9,7 +9,7 @@
 
 namespace TLAsset
 {
-	const TColour	g_DefaultVertexColour;
+	const TColour	g_DefaultVertexColour( 0.5f, 0.5f, 0.5f, 1.f );
 }
 
 
@@ -66,6 +66,27 @@ void TLAsset::TMesh::GenerateQuad(const float2& Center,float Size,const TColour&
 
 	//	generate quad with outline
 	GenerateQuad( TopLeft, TopRight, BottomRight, BottomLeft, Colour );
+}
+
+
+//-------------------------------------------------------
+//	generate a box's outline
+//-------------------------------------------------------
+void TLAsset::TMesh::GenerateQuadOutline(const TLMaths::TBox2D& Box,const TColour* pColour,float z)
+{
+	TFixedArray<float3,4> Outline;
+	float3& TopLeft = Outline[0];
+	float3& BottomRight = Outline[2];
+	float3& TopRight = Outline[1];
+	float3& BottomLeft = Outline[3];
+
+	TopLeft = Box.GetMin().xyz( z );
+	BottomRight = Box.GetMin().xyz( z );
+	TopRight = float3( BottomRight.x, TopLeft.y, z );
+	BottomLeft = float3( TopLeft.x, BottomRight.y, z );
+	
+	//	generate oultine
+	GenerateLine( Outline, pColour );
 }
 
 
@@ -137,7 +158,13 @@ void TLAsset::TMesh::GenerateCapsule(float Radius,const float3& Start,const floa
 void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere& Sphere,const TColour* pColour)
 {
 	//	generate section/detail from size of shape
-	Type2<u32> Segments( 8, 8 );
+	//	number of segments relative to size of sphere
+	float Segmentsf = 5.f * Sphere.GetRadius();
+	Type2<u32> Segments( (u32)Segmentsf, (u32)Segmentsf );
+
+	//	min of 5 segments - 4 would be a cube
+	if ( Segments.x < 5 )	Segments.x = 5;
+	if ( Segments.y < 5 )	Segments.y = 5;
 
 	TArray<float3> Verts;
 	TArray<float3> Normals;
@@ -150,17 +177,8 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere& Sphere,const TColour
 
 	u16 FirstVertex = m_Vertexes.GetSize();
 
-	TColour TempColour(1.f,1.f,1.f,1.f);
-
-	//	mesh has no colours
-	if ( m_Vertexes.GetSize() != m_Colours.GetSize() )
-	{
-		pColour = NULL;
-	}
-	else if ( m_Colours.GetSize() && !pColour )	//	needs a colour
-	{
-		pColour = &TempColour;
-	}
+	//	correct colour usage
+	pColour = GetGenerationColour( pColour );
 
 	//	alloc colours
 	if ( pColour )
@@ -252,7 +270,10 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere& Sphere,const TColour
 //-------------------------------------------------------
 void TLAsset::TMesh::GenerateSphereOutline(const TLMaths::TSphere2D& Sphere,const TColour* pColour,float z)
 {
-	float Segments = 8;
+	float Segments = 5.f * Sphere.GetRadius();
+	//	min of 5 segments, 4 would be a quad
+	if ( Segments < 5.f )
+		Segments = 5.f;
 
 	TColour TempColour(1.f,1.f,1.f,1.f);
 
@@ -409,10 +430,13 @@ void TLAsset::TMesh::GenerateLine(const TLMaths::TLine& LineShape,const TColour&
 //-------------------------------------------------------
 //	generate a line
 //-------------------------------------------------------
-void TLAsset::TMesh::GenerateLine(const TArray<float3>& LinePoints,const TColour& Colour)
+void TLAsset::TMesh::GenerateLine(const TArray<float3>& LinePoints,const TColour* pColour)
 {
 	if ( LinePoints.GetSize() == 0 )
 		return;
+
+	//	correct colour pointer
+	pColour = GetGenerationColour( pColour );
 
 	//	add line
 	Line* pLine = m_Lines.AddNew();
@@ -424,7 +448,7 @@ void TLAsset::TMesh::GenerateLine(const TArray<float3>& LinePoints,const TColour
 	
 	for ( u32 i=0;	i<LinePoints.GetSize();	i++ )
 	{
-		s32 VertexIndex = AddVertex( LinePoints[i], Colour );
+		s32 VertexIndex = pColour ? AddVertex( LinePoints[i], *pColour ) : AddVertex( LinePoints[i] );
 		pLine->Add( (u16)VertexIndex );
 	}
 }
@@ -1455,4 +1479,24 @@ Bool TLAsset::TMesh::CreateDatum(const TArray<float3>& PolygonPoints,TRefRef Dat
 #endif
 
 	return FALSE;
+}
+
+
+
+//--------------------------------------------------------
+//	returns a valid colour pointer if we expect one (mesh already has colours) - NULL's if we dont have colours - returns the original pointer if we can have colours
+//--------------------------------------------------------
+const TColour* TLAsset::TMesh::GetGenerationColour(const TColour* pColour)
+{
+	//	mesh has no colours
+	if ( m_Vertexes.GetSize() != m_Colours.GetSize() )
+		return NULL;
+	
+	//	needs a colour and none provided
+	if ( m_Colours.GetSize() && !pColour )	
+	{
+		return &TLAsset::g_DefaultVertexColour;
+	}
+
+	return pColour;
 }

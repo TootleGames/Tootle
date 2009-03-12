@@ -4,6 +4,7 @@
 #include "TRenderNodeDebugMesh.h"
 #include "TRenderNodePathNetwork.h"
 #include "TRenderNodePhysicsNode.h"
+#include "TRenderNodeQuadTree.h"
 
 
 
@@ -66,6 +67,9 @@ TLRender::TRenderNode* TLRender::TRenderNodeFactory::CreateObject(TRefRef Instan
 
 	if ( TypeRef == "DbgPhys" )
 		return new TLRender::TRenderNodePhysicsNode(InstanceRef,TypeRef);
+
+	if ( TypeRef == "DbgQuad" )
+		return new TLRender::TRenderNodeQuadTreeZone(InstanceRef,TypeRef);
 
 	return NULL;
 }

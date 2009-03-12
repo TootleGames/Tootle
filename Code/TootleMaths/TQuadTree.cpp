@@ -1,8 +1,8 @@
 #include "TQuadTree.h"
 
 
-#define MAX_NODES_PER_ZONE	1
-#define MIN_ZONE_SIZE		1.5f	//	box width or height must be at least this big (best would be a bit bigger than smallest collision object)
+#define MAX_NODES_PER_ZONE	2
+#define MIN_ZONE_SIZE		6.0f	//	box width or height must be at least this big (best would be a bit bigger than smallest collision object)
 
 //	gr: faster with culling empty zones
 //	gr: some issue after DoAddNode where we delete the children too early, whilst we're adding a node to it...
@@ -40,7 +40,7 @@ FORCEINLINE TLArray::SortResult	TLMaths::TLQuadTree::SortNodes(const TPtr<TLMath
 
 
 TLMaths::TQuadTreeNode::TQuadTreeNode() : 
-	m_IsZoneOutofDate		( TRUE ),
+//	m_IsZoneOutofDate		( TRUE ),
 	m_QuadTreeNodeRef		( TLMaths::TLQuadTree::g_NextQuadTreeNodeRef.Increment() )
 {
 }
@@ -56,7 +56,59 @@ void TLMaths::TQuadTreeNode::UpdateZone(TPtr<TLMaths::TQuadTreeNode> pThis,TPtr<
 		TLDebug_Print("Unneccesary zone update on node?");
 	}
 
-	//	simple mode
+	//	gr: moved to start - assume we will change our zone as appropriately
+	//	in our new zone (or Null zone)
+	m_IsZoneOutofDate = FALSE;
+
+#define ENABLE_FAST_CHECK
+#define ENABLE_FAST_GOTO_SMALLER_ZONE
+
+
+#ifdef ENABLE_FAST_CHECK
+	//	are we still in our parents zone?
+	TQuadTreeZone* pCurrentZone = pThis->GetZone();
+	if ( pCurrentZone )
+	{
+		if ( pCurrentZone->IsNodeInZoneShape( pThis ) )
+		{
+			//	yes... see if we've crossed over to one of our parent's sibling zones
+			if ( pCurrentZone->HasSiblingZones() )
+			{
+				Bool InSibling0 = pCurrentZone->GetSiblingZone(0)->IsNodeInZoneShape( pThis ) == SyncTrue;
+				Bool InSibling1 = pCurrentZone->GetSiblingZone(1)->IsNodeInZoneShape( pThis ) == SyncTrue;
+				Bool InSibling2 = pCurrentZone->GetSiblingZone(2)->IsNodeInZoneShape( pThis ) == SyncTrue;
+
+				//	crossed over so we're now in multiple zones... need to move UP a level
+				if ( InSibling0 || InSibling1 || InSibling2 )
+				{
+					//	make list of zones we're intersecting in of the current zone's parent
+					TFixedArray<u32,4> ChildZoneList(0);
+					ChildZoneList.Add( pCurrentZone->GetParentsChildIndex() );
+					if ( InSibling0 )	ChildZoneList.Add( pCurrentZone->GetSiblingParentsChildIndex(0) );
+					if ( InSibling1 )	ChildZoneList.Add( pCurrentZone->GetSiblingParentsChildIndex(1) );
+					if ( InSibling2 )	ChildZoneList.Add( pCurrentZone->GetSiblingParentsChildIndex(2) );
+	
+					SetZone( pCurrentZone->GetParentZone(), pThis, &ChildZoneList );
+					return;
+				}
+			}
+
+			//	not in a sibling, see if we can go down to a smaller zone
+#ifdef ENABLE_FAST_GOTO_SMALLER_ZONE
+			pCurrentZone->AddNode( pThis, pThis->GetZone(), FALSE );
+#endif
+			return;
+		}
+		else
+		{
+			//	no longer in current zone
+			//	keep going up the tree till we find a zone we're in... then go down
+			//	...
+		}
+	}
+#endif
+
+	//	simple brute force mode
 	TPtr<TQuadTreeZone> pParentZone = pRootZone;
 
 	//	re-add to parent to evaluate if we now span multiple zones
@@ -75,8 +127,6 @@ void TLMaths::TQuadTreeNode::UpdateZone(TPtr<TLMaths::TQuadTreeNode> pThis,TPtr<
 		}
 	}
 
-	//	in our new zone (or Null zone)
-	m_IsZoneOutofDate = FALSE;
 }
 
 //-------------------------------------------------------------
@@ -208,7 +258,10 @@ const TLMaths::TBox2D& TLMaths::TQuadTreeNode::GetZoneShape()
 TLMaths::TQuadTreeZone::TQuadTreeZone(const TLMaths::TBox2D& ZoneShape,TPtr<TLMaths::TQuadTreeZone>& pParent) :
 	m_pParent	( pParent ),
 	m_Shape		( ZoneShape ),
-	m_Nodes		( &TLMaths::TLQuadTree::SortNodes )
+	m_Nodes		( &TLMaths::TLQuadTree::SortNodes ),
+	m_SiblingZoneIndexes	( 0 ),
+	m_SiblingIndex			( -1 )
+
 {
 }
 
@@ -276,33 +329,8 @@ Bool TLMaths::TQuadTreeZone::AddNode(TPtr<TLMaths::TQuadTreeNode>& pNode,TPtr<TL
 	//	gr: changed this from >= to >
 	if ( NewSize > MAX_NODES_PER_ZONE && m_Children.GetSize() == 0 )
 	{
-		//	split zone
-		const TLMaths::TBox2D& CollisionBox = m_Shape;
-		const float2& BoxMin = CollisionBox.GetMin();
-		const float2& BoxMax = CollisionBox.GetMax();
-
-		//	gr: note, this is 2D, Z size is same as before, need 8 boxes for 3D
-		float2 BoxHalf = BoxMax - BoxMin;
-		BoxHalf *= 0.5f;
-
-		//	dont create children if child boxes will be too small
-		if ( BoxHalf.x > MIN_ZONE_SIZE && BoxHalf.y > MIN_ZONE_SIZE )
+		if ( Divide(pThis) )
 		{
-			float2 BoxMinTL( BoxMin.x,				BoxMin.y );
-			float2 BoxMinTR( BoxMin.x + BoxHalf.x,	BoxMin.y );
-			float2 BoxMinBL( BoxMin.x,				BoxMin.y + BoxHalf.y );
-			float2 BoxMinBR( BoxMin.x + BoxHalf.x,	BoxMin.y + BoxHalf.y );
-
-			TLMaths::TBox2D BoxTL( BoxMinTL, BoxMinTL + BoxHalf );
-			TLMaths::TBox2D BoxTR( BoxMinTR, BoxMinTR + BoxHalf );
-			TLMaths::TBox2D BoxBL( BoxMinBL, BoxMinBL + BoxHalf );
-			TLMaths::TBox2D BoxBR( BoxMinBR, BoxMinBR + BoxHalf );
-
-			m_Children.Add( new TQuadTreeZone( BoxTL, pThis ) );
-			m_Children.Add( new TQuadTreeZone( BoxTR, pThis ) );
-			m_Children.Add( new TQuadTreeZone( BoxBL, pThis ) );
-			m_Children.Add( new TQuadTreeZone( BoxBR, pThis ) );
-
 			//	if we process pNode in this code then we dont need to do it later
 			Bool DoneNode = FALSE;
 
@@ -549,4 +577,117 @@ u32 TLMaths::TQuadTreeZone::GetNonStaticNodeCountTotal()
 	return NodeCount;
 }
 
+
+//-----------------------------------------------------------------
+//	if we subdivide, or delete child zones etc, then call this func - will go up to the root then notify subscribers of the change
+//-----------------------------------------------------------------
+void TLMaths::TQuadTreeZone::OnZoneStructureChanged()
+{
+	//	go up to root...
+	if ( GetParentZone() )
+	{
+		GetParentZone()->OnZoneStructureChanged();
+		return;
+	}
+
+	//	we are the root, send out a changed message
+	TLMessaging::TMessage ChangedMessage("OnChanged");
+	PublishMessage( ChangedMessage );
+}
+
+
+
+//-----------------------------------------------------------------
+//	assign sibling
+//-----------------------------------------------------------------
+void TLMaths::TQuadTreeZone::SetSiblingZones(TPtrArray<TQuadTreeZone>& Siblings)
+{
+	if ( HasSiblingZones() )
+	{
+		TLDebug_Break("Siblings already assigned");
+		return;
+	}
+
+	for ( u32 s=0;	s<Siblings.GetSize();	s++ )
+	{
+		TPtr<TQuadTreeZone>& pSibling = Siblings.ElementAt(s);
+
+		//	if this new sibling is us, then store our index
+		if ( pSibling.GetObject() == this )
+		{
+			m_SiblingIndex = s;
+			continue;
+		}
+
+		//	add to list of siblings
+		m_SiblingZones.Add( pSibling );
+		m_SiblingZoneIndexes.Add( s );
+	}
+}
+
+
+//---------------------------------------------------
+//	subdivide zone
+//---------------------------------------------------
+Bool TLMaths::TQuadTreeZone::Divide(TPtr<TLMaths::TQuadTreeZone>& pThis)
+{
+	//	split shape
+	const TLMaths::TBox2D& CollisionBox = m_Shape;
+	const float2& BoxMin = CollisionBox.GetMin();
+	const float2& BoxMax = CollisionBox.GetMax();
+
+	//	gr: note, this is 2D, Z size is same as before, need 8 boxes for 3D
+	float2 BoxHalf = BoxMax - BoxMin;
+	BoxHalf *= 0.5f;
+
+	//	dont create children if child boxes will be too small
+	if ( BoxHalf.x < MIN_ZONE_SIZE || BoxHalf.y < MIN_ZONE_SIZE )
+		return FALSE;
+
+	float2 BoxMinTL( BoxMin.x,				BoxMin.y );
+	float2 BoxMinTR( BoxMin.x + BoxHalf.x,	BoxMin.y );
+	float2 BoxMinBL( BoxMin.x,				BoxMin.y + BoxHalf.y );
+	float2 BoxMinBR( BoxMin.x + BoxHalf.x,	BoxMin.y + BoxHalf.y );
+
+	TLMaths::TBox2D BoxTL( BoxMinTL, BoxMinTL + BoxHalf );
+	TLMaths::TBox2D BoxTR( BoxMinTR, BoxMinTR + BoxHalf );
+	TLMaths::TBox2D BoxBL( BoxMinBL, BoxMinBL + BoxHalf );
+	TLMaths::TBox2D BoxBR( BoxMinBR, BoxMinBR + BoxHalf );
+
+	m_Children.Add( new TQuadTreeZone( BoxTL, pThis ) );
+	m_Children.Add( new TQuadTreeZone( BoxTR, pThis ) );
+	m_Children.Add( new TQuadTreeZone( BoxBL, pThis ) );
+	m_Children.Add( new TQuadTreeZone( BoxBR, pThis ) );
+
+	//	set sibling information
+	m_Children[0]->SetSiblingZones( m_Children );
+	m_Children[1]->SetSiblingZones( m_Children );
+	m_Children[2]->SetSiblingZones( m_Children );
+	m_Children[3]->SetSiblingZones( m_Children );
+
+	//	notify change of zone structure
+	OnZoneStructureChanged();
+
+	return TRUE;
+}
+
+
+//---------------------------------------------------
+//	recursively divide until we're at our minimum size leafs
+//---------------------------------------------------
+Bool TLMaths::TQuadTreeZone::DivideAll(TPtr<TLMaths::TQuadTreeZone>& pThis)
+{
+	//	divide this, if we cant (would be too small) then break out
+	if ( !Divide( pThis ) )
+		return FALSE;
+
+	//	divided, devide children again
+	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
+	{
+		TPtr<TLMaths::TQuadTreeZone>& pChild = m_Children[c];
+		pChild->DivideAll( pChild );
+	}
+
+	return TRUE;
+}
 

@@ -284,10 +284,10 @@ void TPtr<TYPE>::AssignToPtr(const TPtr<OBJTYPE>& Ptr)
 	{
 		//	note: if TYPE and OBJTYPE are different (even if related) you lose the RTTI. the VTable is still valid 
 		//		see header notes
-		m_pCounter = static_cast<CounterType*>( Ptr.GetRefCounter() );
+//		m_pCounter = static_cast<CounterType*>( Ptr.GetRefCounter() );
 		//m_pCounter = dynamic_cast<CounterType*>( Ptr.GetRefCounter() );		//	fails to cast even though is valid
 		//m_pCounter = reinterpret_cast<CounterType*>( Ptr.GetRefCounter() );
-		//m_pCounter = (CounterType*)( Ptr.GetRefCounter() );
+		m_pCounter = (CounterType*)( Ptr.GetRefCounter() );
 
 		if ( !m_pCounter )
 		{

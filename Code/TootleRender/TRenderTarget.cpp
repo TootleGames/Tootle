@@ -12,6 +12,9 @@
 #endif
 
 
+//#define PREDIVIDE_RENDER_ZONES
+
+
 //-----------------------------------------------------------
 //	
 //-----------------------------------------------------------
@@ -1039,6 +1042,11 @@ void TLRender::TRenderTarget::SetRootQuadTreeZone(const TLMaths::TBox2D& ZoneSha
 
 	//	create new root zone
 	m_pRootQuadTreeZone = new TLMaths::TQuadTreeZone( ZoneShape, TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>() );
+
+#ifdef PREDIVIDE_RENDER_ZONES
+	//	divide it all now
+	m_pRootQuadTreeZone->DivideAll( m_pRootQuadTreeZone );
+#endif
 
 	//	invalidate camera's zone
 	m_pCamera->SetZoneOutOfDate();

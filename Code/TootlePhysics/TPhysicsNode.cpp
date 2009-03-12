@@ -46,13 +46,64 @@ namespace TLRef
 
 
 
+
+
+//-------------------------------------------------------------
+//	
+//-------------------------------------------------------------
+SyncBool TLPhysics::TPhysicsZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
+{
+	//	this fetches latest node ptr
+	TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode();
+	if ( !pPhysicsNode )
+		return SyncWait;
+
+	//	not yet initialised with a collision shape
+	if ( !pPhysicsNode->HasCollision() )
+	{
+		//	wait for it
+		if ( pPhysicsNode->GetPhysicsFlags()( TLPhysics::TPhysicsNode::Flag_CollisionExpected ) )
+			return SyncWait;
+
+		//	has no collision...
+		return SyncFalse;
+	}
+
+	TLPhysics::TCollisionShape* pShape = pPhysicsNode->CalcWorldCollisionShape();
+
+	//	no shape atm, wait
+	if ( !pShape )
+		return SyncWait;
+
+	TLPhysics::TCollisionBox2D ShapeCollisionShape( Shape );
+	if ( !pShape->HasIntersection( &ShapeCollisionShape ) )
+		return SyncFalse;
+
+	return SyncTrue;
+}
+
+
+//---------------------------------------------------------------
+//	
+//---------------------------------------------------------------	
+TPtr<TLPhysics::TPhysicsNode>& TLPhysics::TPhysicsZoneNode::GetPhysicsNode()
+{	
+	if ( !m_pPhysicsNode )
+		m_pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef );
+
+	return m_pPhysicsNode;
+}
+
+
+
+
+
 TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 	TLGraph::TGraphNode<TPhysicsNode>	( NodeRef, TypeRef ),
 	m_Friction						( 0.4f ),
 	m_Mass							( 1.0f ),
 	m_Bounce						( 1.0f ),
 	m_Squidge						( 0.f ),
-	m_CollisionZoneNeedsUpdate		( FALSE ),
 	m_Temp_ExtrudeTimestep			( 0.f ),
 	m_InitialisedZone				( FALSE ),
 	m_Debug_StaticCollisions		( 0 ),
@@ -61,8 +112,20 @@ TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 #ifdef CACHE_ACCUMULATED_MOVEMENT
 	m_AccumulatedMovementValid = FALSE;
 #endif
+
+	//	always have a zone node
+	m_pZoneNode = new TLPhysics::TPhysicsZoneNode( NodeRef );
 }
 
+//---------------------------------------------------------
+//	cleanup
+//---------------------------------------------------------
+void TLPhysics::TPhysicsNode::Shutdown()
+{
+	m_pZoneNode = NULL;
+
+	TLGraph::TGraphNode<TLPhysics::TPhysicsNode>::Shutdown();
+}
 
 	
 //---------------------------------------------------------
@@ -728,6 +791,11 @@ TLPhysics::TCollisionShape* TLPhysics::TPhysicsNode::CalcWorldCollisionShape()
 //----------------------------------------------------------
 void TLPhysics::TPhysicsNode::UpdateNodeCollisionZone(TPtr<TLPhysics::TPhysicsNode>& pThis,TLPhysics::TPhysicsgraph* pGraph)
 {
+	//	use the generic quad tree zone update
+	TPtr<TLMaths::TQuadTreeNode>& pThisZoneNode = pThis->GetZoneNodePtr();
+	pThisZoneNode->UpdateZone( pThisZoneNode, pGraph->GetRootCollisionZone() );
+
+	/*
 #ifdef NEW_UPDATE_ZONE
 
 
@@ -735,19 +803,20 @@ void TLPhysics::TPhysicsNode::UpdateNodeCollisionZone(TPtr<TLPhysics::TPhysicsNo
 
 #ifdef SIMPLE_UPDATE_ZONE
 	//	simple mode
-	TPtr<TCollisionZone> pParentZone = pGraph->GetRootCollisionZone();
+	TPtr<TLMaths::TQuadTreeZone> pParentZone = pGraph->GetRootCollisionZone();
 
 	//	re-add to parent to evaluate if we now span multiple zones
 	if ( pParentZone )
 	{
-		while ( !pParentZone->AddNode( pThis, pParentZone, TRUE ) )
+		while ( !pParentZone->AddNode( pThis->GetZoneNodePtr(), pParentZone, TRUE ) )
 		{
 			//	no longer in parent zone, try parent of parent
 			pParentZone = pParentZone->GetParentZone();
 			if ( !pParentZone )
 			{
 				//	not in ANY zone any more
-				SetCollisionZone( pParentZone, pThis, NULL );
+				GetPhysicsZoneNode().SetZone( pParentZone, pThis->GetZoneNodePtr(), NULL );
+				//SetCollisionZone( pParentZone, pThisQuadTreeNode, NULL );
 				return;
 			}
 		}
@@ -819,17 +888,19 @@ void TLPhysics::TPhysicsNode::UpdateNodeCollisionZone(TPtr<TLPhysics::TPhysicsNo
 	SetCollisionZone( pInZone, pThis, NULL );
 
 #endif
+	*/
 }
 
+/*
 
 //-------------------------------------------------------------
 //	attempt to add this node to this zone. checks with children 
 //	first to see if it fits into just one child better. returns FALSE if not in this zone
 //-------------------------------------------------------------
-Bool TLPhysics::TPhysicsNode::SetCollisionZone(TPtr<TCollisionZone>& pCollisionZone,TPtr<TPhysicsNode> pThis,const TFixedArray<u32,4>* pChildZoneList)
+Bool TLPhysics::TPhysicsNode::SetCollisionZone(TPtr<TLMaths::TQuadTreeZone>& pCollisionZone,TPtr<TPhysicsNode> pThis,const TFixedArray<u32,4>* pChildZoneList)
 {
 	//	already in this zone
-	TPtr<TCollisionZone>& pOldZone = GetCollisionZone();
+	TPtr<TLMaths::TQuadTreeZone>& pOldZone = GetZone();
 	if ( pOldZone == pCollisionZone )
 	{
 		//	just update child list
@@ -844,7 +915,8 @@ Bool TLPhysics::TPhysicsNode::SetCollisionZone(TPtr<TCollisionZone>& pCollisionZ
 	//	remove from old zone
 	if ( pOldZone )
 	{
-		pOldZone->DoRemoveNode( pThis );
+		TPtr<TLMaths::TQuadTreeNode> pThisQuadTreeNode = pThis;
+		pOldZone->DoRemoveNode( pThisQuadTreeNode );
 	}
 
 	//	add to this zone
@@ -857,7 +929,8 @@ Bool TLPhysics::TPhysicsNode::SetCollisionZone(TPtr<TCollisionZone>& pCollisionZ
 		else
 		{
 			//	add node to collision zone
-			pCollisionZone->DoAddNode( pThis );
+			TPtr<TLMaths::TQuadTreeNode> pThisQuadTreeNode = pThis;
+			pCollisionZone->DoAddNode( pThisQuadTreeNode );
 		}
 	}
 
@@ -873,8 +946,9 @@ Bool TLPhysics::TPhysicsNode::SetCollisionZone(TPtr<TCollisionZone>& pCollisionZ
 
 	return TRUE;
 }
-
+*/
 	
+/*
 //-------------------------------------------------------------
 //	
 //-------------------------------------------------------------
@@ -894,6 +968,17 @@ void TLPhysics::TPhysicsNode::SetChildZones(const TFixedArray<u32,4>& InZones)
 
 	//	add child zones
 	m_ChildCollisionZones = InZones;
+}
+*/
+
+
+//-------------------------------------------------------------
+//
+//-------------------------------------------------------------
+void TLPhysics::TPhysicsNode::SetZoneNone()
+{
+	GetPhysicsZoneNode().SetZone( TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>(), m_pZoneNode, NULL );
+	//pNode->GetZoneNode().SetZone( pNullZone, pQuadTreeNode, NULL );
 }
 
 

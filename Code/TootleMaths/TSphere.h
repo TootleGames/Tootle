@@ -98,6 +98,7 @@ public:
 	void			Set(const float2& Pos,float Radius)			{	m_Pos = Pos;	m_Radius = Radius;	}
 	void			Set(const TSphere2D& Sphere)				{	m_Pos = Sphere.GetPos();	m_Radius = Sphere.GetRadius();	}
 	void			Set(const TSphere& Sphere)					{	m_Pos = Sphere.GetPos();	m_Radius = Sphere.GetRadius();	}
+	void			Set(const TBox2D& Box);						//	use the box's extents to create the biggest sphere that will fit in the box
 	void			SetInvalid()								{	m_Radius = -1.f;	}
 	Bool			IsValid() const								{	return m_Radius >= 0.f;	}
 

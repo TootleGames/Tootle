@@ -9,7 +9,6 @@
 
 #include <TootleCore/TLGraph.h>
 #include "TPhysicsNode.h"
-#include "TCollisionZone.h"
 
 
 #define DO_COLLISIONS_BY_ZONE
@@ -39,8 +38,8 @@ public:
 	virtual SyncBool		Initialise();
 	virtual void			UpdateGraph(float TimeStep);
 	
-	void					SetRootCollisionZone(TPtr<TLPhysics::TCollisionZone>& pZone);	//	set a new root collision zone
-	TPtr<TCollisionZone>&	GetRootCollisionZone()											{	return m_pRootCollisionZone;	}
+	void							SetRootCollisionZone(TPtr<TLMaths::TQuadTreeZone>& pZone);	//	set a new root collision zone
+	TPtr<TLMaths::TQuadTreeZone>&	GetRootCollisionZone()											{	return m_pRootCollisionZone;	}
 
 	// Test routines
 	FORCEINLINE void		SetGravityX(float fValue)	{	if ( g_WorldUp.x == fValue )	return;		g_WorldUp.x = fValue;	CalcWorldUpNormal();	}
@@ -53,14 +52,14 @@ protected:
 
 	void					DoCollisionsByNode();							//	do all the object-object collison iterations
 	void					DoCollisionsByNode(TPtr<TLPhysics::TPhysicsNode>& pNode);		//	do collision tests for this node
-	void					DoCollisionsByNode(TLPhysics::TPhysicsNode* pNode,TLPhysics::TCollisionZone* pCollisionZone,TLPhysics::TCollisionZone* pNodeZone,TLPhysics::TCollisionZone* pPreviousParentZone,Bool TestChildZones,Bool TestNodeZone,u32& CollisionTestCounter);	//	do collision tests for this node
+	void					DoCollisionsByNode(TLPhysics::TPhysicsNode* pNode,TLMaths::TQuadTreeZone* pCollisionZone,TLMaths::TQuadTreeZone* pNodeZone,TLMaths::TQuadTreeZone* pPreviousParentZone,Bool TestChildZones,Bool TestNodeZone,u32& CollisionTestCounter);	//	do collision tests for this node
 
 	void					DoCollisionsByNodeUpwards();
 	void					DoCollisionsByNodeUpwards(TPtr<TLPhysics::TPhysicsNode>& pNode);		//	do collision tests for this node
-	void					DoCollisionsByNodeUpwards(TLPhysics::TPhysicsNode* pNode,TLPhysics::TCollisionZone* pCollisionZone,TLPhysics::TCollisionZone* pNodeZone,TLPhysics::TCollisionZone* pPreviousParentZone,Bool TestChildZones,Bool TestNodeZone,u32& CollisionTestCounter);	//	do collision tests for this node
+	void					DoCollisionsByNodeUpwards(TLPhysics::TPhysicsNode* pNode,TLMaths::TQuadTreeZone* pCollisionZone,TLMaths::TQuadTreeZone* pNodeZone,TLMaths::TQuadTreeZone* pPreviousParentZone,Bool TestChildZones,Bool TestNodeZone,u32& CollisionTestCounter);	//	do collision tests for this node
 
-	void					DoCollisionsByZone(TLPhysics::TCollisionZone* pCollisionZone);
-	void					DoCollisionsByZone(TLPhysics::TCollisionZone* pCollisionZone,TLPhysics::TPhysicsNode* pNode,Bool IsNodesZone,u32 FirstNode);
+	void					DoCollisionsByZone(TLMaths::TQuadTreeZone* pCollisionZone);
+	void					DoCollisionsByZone(TLMaths::TQuadTreeZone* pCollisionZone,TLMaths::TQuadTreeNode* pNode,Bool IsNodesZone,u32 FirstNode);
 
 	void					DoCollision(TLPhysics::TPhysicsNode* pNodeA,TLPhysics::TPhysicsNode* pNodeB);
 	void					DoStaticCollision(TLPhysics::TPhysicsNode* pNodeA,TLPhysics::TPhysicsNode* pStaticNode);
@@ -79,7 +78,7 @@ public:
 	u32						m_Debug_ZonesTested;					//	total number of zones that were looped through for collisions
 
 protected:
-	TPtr<TCollisionZone>	m_pRootCollisionZone;					//	collision zone tree
+	TPtr<TLMaths::TQuadTreeZone>	m_pRootCollisionZone;					//	collision zone tree
 };
 
 

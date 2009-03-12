@@ -111,6 +111,8 @@ public:
 	void				Transform(const float3& Move)					{	m_Start += Move;	m_End += Move;	}
 	void				Transform(const TLMaths::TTransform& Transform);
 
+	float				GetDistanceSq(const TLine2D& Line,float2& TempPoint,const float2** ppNearestOnThis,const float2** ppNearestOnLine,SyncBool IntersectionResult,float IntersectionAlongThis,float IntersectionAlongLine) const;	//	complex distance-to-line check - gets the distance and returns a pointer to the nearest point on each line. TempPoint is used if one of the lines' nearest point is not a start/end
+
 public:
 	float2				m_Start;	//	line start
 	float2				m_End;		//	line end

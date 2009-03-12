@@ -93,7 +93,8 @@ public:
 
 	void					GenerateLine(const TLMaths::TLine& LineShape,const TColour& Colour)		{	GenerateLine( LineShape, Colour, Colour );	}
 	void					GenerateLine(const TLMaths::TLine& LineShape,const TColour& ColourStart,const TColour& ColourEnd);	//	generate a line
-	void					GenerateLine(const TArray<float3>& LinePoints,const TColour& Colour);	//	generate a line
+	void					GenerateLine(const TArray<float3>& LinePoints,const TColour& Colour)	{	GenerateLine( LinePoints, &Colour );	}
+	void					GenerateLine(const TArray<float3>& LinePoints,const TColour* pColour);	//	generate a line
 
 	void					GenerateQuad(const TLMaths::TBox2D& Box,const TColour& Colour,float z=0.f);		//	generate a square mesh from a 2d box
 	void					GenerateQuad(const float2& Center,float Size,const TColour& Colour,float z=0.f);			//	generate a square mesh around a point
@@ -103,6 +104,7 @@ public:
 	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour& ColourA,const TColour& ColourB,const TColour& ColourC,const TColour& ColourD);	//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD);		//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const TFixedArray<s32,4> OutlineVertIndexes);		//	turn an outline of points into a quad/tri-strip
+	void					GenerateQuadOutline(const TLMaths::TBox2D& Box,const TColour* pColour,float z=0.f);		//	generate a square mesh from a 2d box
 
 	void					GenerateRainbowColours();							//	create colours for each vertex
 
@@ -176,6 +178,10 @@ protected:
 	void					CalcHasAlpha();						//	loop through colours to check if we have any alpha colours in the verts
 
 	void					OnPrimitivesChanged();				//	just a check to make sure the integrety of all the polygons indexes are valid
+
+private:
+	const TColour*			GetGenerationColour(const TColour* pColour);	//	returns a valid colour pointer if we expect one (mesh already has colours) - NULL's if we dont have colours - returns the original pointer if we can have colours
+
 
 protected:
 	TArray<float3>			m_Vertexes;				//	vertexes of mesh

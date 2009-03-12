@@ -384,18 +384,39 @@ float TLMaths::TLine2D::GetDistanceSq(const TLMaths::TLine2D& Line) const
 	if ( Intersection == SyncTrue )
 		return 0.f;
 
+	const float2* pNearestPointOnThis = NULL;
+	const float2* pNearestPointOnLine = NULL;
+	float2 TempPoint;
+
+	//	use the capsule distance func to get distance and points
+	float DistanceSq = GetDistanceSq( Line, TempPoint, &pNearestPointOnThis, &pNearestPointOnLine, Intersection, IntersectionAlongThis, IntersectionAlongLine );
+
+	return DistanceSq;
+
+	/*
 	//	if lines keep going then they will intersect at some point
 	if ( Intersection == SyncWait )
 	{
 		//	get distance as a factor
+		float Distance = IntersectionAlongThis;
+
 		//	if <0 then negate, if >1 then the distance from the end is the "extra"
-		float Distance = ( IntersectionAlongThis < 0.f ) ? -IntersectionAlongThis : 1.f - IntersectionAlongThis;
+		if ( IntersectionAlongThis < 0.f )
+			Distance = -IntersectionAlongThis;
+		else if ( IntersectionAlongThis >= 1.f )
+			Distance = 1.f - IntersectionAlongThis;
 		
 		//	scale to line's length
 		//	gr: can use LengthSq here i think
 		//	gr: changed - should be THIS's length, not line's length
 		//Distance *= Line.GetLength();
 		Distance *= GetLengthSq();
+
+		if ( Distance < 0.f )
+		{
+			TLDebug_Break("Distance should not be negative");
+		}
+
 		return Distance;
 	}
 
@@ -408,6 +429,7 @@ float TLMaths::TLine2D::GetDistanceSq(const TLMaths::TLine2D& Line) const
 
 	//	return shortest
 	return (StartDistanceSq < EndDistanceSq) ? StartDistanceSq : EndDistanceSq;
+	*/
 }
 
 
@@ -558,4 +580,128 @@ Bool TLMaths::TLine2D::GetIsPointNearestToStart(const float2& Pos,float& Distanc
 		return FALSE;
 	}
 }
+
+
+//-----------------------------------------------------------
+//	
+//-----------------------------------------------------------
+float TLMaths::TLine2D::GetDistanceSq(const TLMaths::TLine2D& Line,float2& TempPoint,const float2** ppNearestOnThis,const float2** ppNearestOnLine,SyncBool IntersectionResult,float IntersectionAlongThis,float IntersectionAlongLine) const
+{
+	const float2*& pNearestPointOnThis = *ppNearestOnThis;
+	const float2*& pNearestPointOnShape = *ppNearestOnLine;
+	//float2 TempPoint;	//	use temp point when we're not using a start or end
+
+	//	distance between the two nearest points
+	float DistanceSq = 0.f;
+
+	const TLMaths::TLine2D& ThisCapsuleLine = *this;
+	const TLMaths::TLine2D& ShapeCapsuleLine = Line;
+
+	//	if extended, the lines WILL intersect, so we see if the sphere's on the end intersect (if a capsule doesnt intersect then the nearest two points on the lines MUST be end points)
+	if ( IntersectionResult == SyncWait )
+	{
+		Bool OnThisLine = (IntersectionAlongThis>=0.f) && (IntersectionAlongThis<=1.f);
+		Bool OnShapeLine = (IntersectionAlongLine>=0.f) && (IntersectionAlongLine<=1.f);
+
+		//	shouldnt get this case
+		if ( OnThisLine && OnShapeLine )
+		{
+			TLDebug_Break("error: lines are intersecting??");
+		}
+		
+		if ( OnThisLine )
+		{
+			//	work out nearest end of ShapeLine to the point on ThisLine
+			ThisCapsuleLine.GetPointAlongLine( TempPoint, IntersectionAlongThis );
+			pNearestPointOnThis = &TempPoint;
+
+			//	work out if start or end is closest
+			Bool ShapeNearStart = ShapeCapsuleLine.GetIsPointNearestToStart( *pNearestPointOnThis, DistanceSq );
+
+			//	do early distance check - and check we're not too embedded (eg. capsule are positioned exactly the same)
+		//	if ( DistanceSq > TotalRadiusSq || DistanceSq < TLMaths::g_NearZero )
+		//		return FALSE;
+
+			pNearestPointOnShape = ShapeNearStart ? &ShapeCapsuleLine.GetStart() : &ShapeCapsuleLine.GetEnd();
+			/*
+			float RearNearestAlong;
+			float2 RealNearest = ThisCapsuleLine.GetNearestPoint( *pNearestPointOnShape, RearNearestAlong );
+			if ( fabsf(RearNearestAlong - IntersectionAlongThis) > 0.1f )
+				TLDebug_Print("err");
+				*/
+		}
+		else if ( OnShapeLine )
+		{
+			//	work out nearest end of ThisLine to the point on ShapeLine
+			ShapeCapsuleLine.GetPointAlongLine( TempPoint, IntersectionAlongLine );
+			pNearestPointOnShape = &TempPoint;
+
+			//	work out if start or end is closest
+			Bool ThisNearStart = ThisCapsuleLine.GetIsPointNearestToStart( *pNearestPointOnShape, DistanceSq );
+			
+			//	do early distance check - and check we're not too embedded (eg. capsule are positioned exactly the same)
+		//	if ( DistanceSq > TotalRadiusSq || DistanceSq < TLMaths::g_NearZero )
+		//		return FALSE;
+
+			pNearestPointOnThis = ThisNearStart ? &ThisCapsuleLine.GetStart() : &ThisCapsuleLine.GetEnd();
+
+			/*
+			//	see if this really is the nearest point along SHAPE
+			float RearNearestAlong;
+			float2 RealNearest = ShapeCapsuleLine.GetNearestPoint( *pNearestPointOnThis, RearNearestAlong );
+			if ( fabsf(RearNearestAlong - IntersectionAlongShape) > 0.1f )
+				TLDebug_Print("err");
+				*/
+		}
+		else
+		{
+			//	work out the nearest points of both lines
+			Bool ThisNearStart = TRUE;
+			Bool ShapeNearStart = TRUE;
+			TLMaths::GetNearestLinePoints( ThisCapsuleLine, ShapeCapsuleLine, ThisNearStart, ShapeNearStart, DistanceSq );
+			
+			//	do early distance check - and check we're not too embedded (eg. capsule are positioned exactly the same)
+		//	if ( DistanceSq > TotalRadiusSq || DistanceSq < TLMaths::g_NearZero )
+		//		return FALSE;
+
+			pNearestPointOnThis = ThisNearStart ? &ThisCapsuleLine.GetStart() : &ThisCapsuleLine.GetEnd();
+			pNearestPointOnShape = ShapeNearStart ? &ShapeCapsuleLine.GetStart() : &ShapeCapsuleLine.GetEnd();
+		}
+	}
+	else if ( IntersectionResult == SyncFalse )	//	lines will never intersect, so paralel, so we need to do some sort of box intersection test to see if they're close enough when side by side
+	{
+		//	work out the nearest points of both lines
+		Bool ThisNearStart = TRUE;
+		Bool ShapeNearStart = TRUE;
+		TLMaths::GetNearestLinePoints( ThisCapsuleLine, ShapeCapsuleLine, ThisNearStart, ShapeNearStart, DistanceSq );
+
+		//	do early distance check - and check we're not too embedded (eg. capsule are positioned exactly the same)
+	//	if ( DistanceSq > TotalRadiusSq || DistanceSq < TLMaths::g_NearZero )
+	//		return FALSE;
+
+		pNearestPointOnThis = ThisNearStart ? &ThisCapsuleLine.GetStart() : &ThisCapsuleLine.GetEnd();
+		pNearestPointOnShape = ShapeNearStart ? &ShapeCapsuleLine.GetStart() : &ShapeCapsuleLine.GetEnd();
+	}
+	else
+	{
+		TLDebug_Break("Invalid Intersection result");
+		return 0.f;
+	}
+
+	if ( !pNearestPointOnThis || !pNearestPointOnShape )
+	{
+		TLDebug_Break("Missing pointer assignment");
+	}
+
+	/*
+	//	do distance check to see if we intersect - and check we're not too embedded (eg. capsule are positioned exactly the same)
+	if ( DistanceSq > TotalRadiusSq || DistanceSq < TLMaths::g_NearZero )
+	{
+		TLDebug_Break("This should have already been caught");
+		return FALSE;
+	}
+	*/
+	return DistanceSq;
+}
+
 

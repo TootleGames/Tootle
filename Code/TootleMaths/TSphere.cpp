@@ -620,3 +620,18 @@ Bool TLMaths::TSphere2D::GetIntersection(const TLMaths::TLine2D& Line) const
 }
 
 
+//-----------------------------------------------------------
+//	use the box's extents to create the biggest sphere that will fit in the box
+//-----------------------------------------------------------
+void TLMaths::TSphere2D::Set(const TBox2D& Box)
+{
+	//	set center to center of the box
+	m_Pos = Box.GetCenter();
+
+	//	use the smallest extent as the radius
+	float2 BoxSize = Box.GetSize();
+	m_Radius = BoxSize.x < BoxSize.y ? BoxSize.x : BoxSize.y;
+
+	//	half the radius (box extent is diameter)
+	m_Radius *= 0.5f;
+}

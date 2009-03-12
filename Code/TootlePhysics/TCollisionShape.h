@@ -22,7 +22,6 @@ namespace TLPhysics
 {
 	class TPhysicsgraph;
 	class TIntersection;
-	class TCollisionZone;
 
 	class TCollisionShape;			//	base collision type
 	class TCollisionSphere;			//	sphere collision shape
@@ -74,7 +73,6 @@ public:
 class TLPhysics::TCollisionShape
 {
 	friend class TLPhysics::TPhysicsgraph;
-	friend class TLPhysics::TCollisionZone;
 public:
 	TCollisionShape()															{	}
 	virtual ~TCollisionShape()													{	}
@@ -174,6 +172,7 @@ protected:
 
 class TLPhysics::TCollisionBox2D : public TLPhysics::TCollisionShape
 {
+	friend class TLPhysics::TCollisionCapsule2D;
 public:
 	TCollisionBox2D()												{}
 	TCollisionBox2D(const TLMaths::TBox2D& Box) : m_Box ( Box )		{	GenerateBoundsSphere();	}
@@ -250,6 +249,8 @@ public:
 	virtual TPtr<TCollisionShape>	Transform(const TLMaths::TTransform& Transform,TPtr<TLPhysics::TCollisionShape>& pThis,TPtr<TLPhysics::TCollisionShape>& pOldShape);
 
 protected:
+	virtual Bool					HasIntersection_Box2D(TCollisionBox2D* pCollisionShape)		{	return pCollisionShape->HasIntersection_Capsule2D( this );	}
+
 	virtual Bool					GetIntersection_Capsule2D(TCollisionCapsule2D* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 
 protected:
