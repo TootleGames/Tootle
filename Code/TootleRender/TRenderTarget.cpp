@@ -404,9 +404,6 @@ SyncBool TLRender::TRenderTarget::IsRenderNodeVisible(TRenderNode* pRenderNode,T
 			TRenderZoneNode* pRenderZoneNode = new TRenderZoneNode( pRenderNode->GetNodeRef() );
 			TPtr<TLMaths::TQuadTreeNode> pRenderZoneNodePtr = pRenderZoneNode;
 	
-			//	update scene transform before we update our zone to ensure correct(latest) bounds is calculated
-			pRenderZoneNode->CalcWorldBounds( pRenderNode, *pSceneTransform );
-
 			//	add node to the zone tree
 			if ( !m_pRootQuadTreeZone->AddNode( pRenderZoneNodePtr, m_pRootQuadTreeZone, TRUE ) )
 			{
@@ -455,9 +452,6 @@ SyncBool TLRender::TRenderTarget::IsRenderNodeVisible(TRenderNode* pRenderNode,T
 		if ( QuickTest )
 			return SyncWait;
 
-		//	update scene transform before we update our zone to ensure correct(latest) bounds is calculated
-		pRenderZoneNode->CalcWorldBounds( pRenderNode, *pSceneTransform );
-
 		//	update zone
 		pRenderZoneNode->UpdateZone( *ppRenderZoneNode, m_pRootQuadTreeZone );
 
@@ -490,9 +484,6 @@ SyncBool TLRender::TRenderTarget::IsRenderNodeVisible(TRenderNode* pRenderNode,T
 	//	one final actual frustum culling test
 	if ( !QuickTest )
 	{
-		//	update scene transform before we update our zone to ensure correct(latest) bounds is calculated
-		pRenderZoneNode->CalcWorldBounds( pRenderNode, *pSceneTransform );
-
 		SyncBool NodeInZoneShape = pRenderZoneNode->IsInShape( pCameraZoneNode->GetZoneShape() );
 		if ( NodeInZoneShape == SyncWait )
 		{
@@ -663,11 +654,8 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 		NewSceneTransform.Transform( NodeTransform );
 	}
 
-	//	calc latest world pos for node
-	if ( !pRenderNode->IsWorldPosValid() )
-	{
-		pRenderNode->CalcWorldPos( SceneTransform );
-	}
+	//	set latest world/scene transform
+	pRenderNode->SetWorldTransform( SceneTransform );
 
 	//	check visibility of node, if not visible then skip render (and of children)
 	if ( IsInCameraRenderZone == SyncWait )
@@ -714,13 +702,6 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 	{
 		//	get mesh
 		TPtr<TLAsset::TMesh>& pMeshAsset = pRenderNode->GetMeshAsset();
-		
-		//	always calculate some things
-		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::CalcWorldBoundsBox ) )
-			pRenderNode->CalcWorldBoundsBox( SceneTransform );
-
-		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::CalcWorldBoundsSphere ) )
-			pRenderNode->CalcWorldBoundsSphere( SceneTransform );
 
 		//	draw mesh!
 		DrawMeshWrapper( pMeshAsset.GetObject(), pRenderNode, SceneTransform, SceneColour, PostRenderList );
@@ -880,7 +861,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 		//	render world bounds box (outside current transform)
 		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_WorldBoundsBox ) )
 		{
-			const TLMaths::TBox& RenderNodeBounds = pRenderNode->CalcWorldBoundsBox( SceneTransform );
+			const TLMaths::TBox& RenderNodeBounds = pRenderNode->GetWorldBoundsBox();
 			if ( RenderNodeBounds.IsValid() )
 			{
 				TFlags<TRenderNode::RenderFlags::Flags> RenderFlags = pRenderNode->GetRenderFlags();
@@ -917,7 +898,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 		//	render world bounds box (outside current transform)
 		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_WorldBoundsSphere ) )
 		{
-			const TLMaths::TSphere& RenderNodeBounds = pRenderNode->CalcWorldBoundsSphere( SceneTransform );
+			const TLMaths::TSphere& RenderNodeBounds = pRenderNode->GetWorldBoundsSphere();
 			if ( RenderNodeBounds.IsValid() )
 			{
 				TPtr<TRenderNode> pTempRenderNode = new TRenderNode;
@@ -934,33 +915,6 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 
 		}
 
-		//	render local bounds box in current [render object's] transform
-		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsCapsule ) )
-		{
-			const TLMaths::TCapsule& RenderNodeBounds = pRenderNode->CalcLocalBoundsCapsule();
-			if ( RenderNodeBounds.IsValid() )
-			{
-				TFlags<TRenderNode::RenderFlags::Flags> RenderFlags = pRenderNode->GetRenderFlags();
-				RenderFlags.Set( TRenderNode::RenderFlags::Debug_Wireframe );
-				RenderFlags.Clear( TRenderNode::RenderFlags::DepthRead );
-		
-				DrawMeshShape( RenderNodeBounds, pRenderNode, RenderFlags, FALSE );
-			}
-		}
-
-		//	render world bounds box (outside current transform)
-		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_WorldBoundsCapsule ) )
-		{
-			const TLMaths::TCapsule& RenderNodeBounds = pRenderNode->CalcWorldBoundsCapsule( SceneTransform );
-			if ( RenderNodeBounds.IsValid() )
-			{
-				TFlags<TRenderNode::RenderFlags::Flags> RenderFlags = pRenderNode->GetRenderFlags();
-				RenderFlags.Set( TRenderNode::RenderFlags::Debug_Wireframe );
-				RenderFlags.Clear( TRenderNode::RenderFlags::DepthRead );
-
-				DrawMeshShape( RenderNodeBounds, pRenderNode, RenderFlags, TRUE );
-			}
-		}
 	}
 	#endif
 }

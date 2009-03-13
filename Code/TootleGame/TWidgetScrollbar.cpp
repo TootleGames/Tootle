@@ -24,7 +24,7 @@ TLGui::TWidgetScrollbar::TWidgetScrollbar(TRefRef RenderTargetRef,TRefRef Scroll
 //-------------------------------------------------
 //	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
 //-------------------------------------------------
-SyncBool TLGui::TWidgetScrollbar::ProcessClick(const TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TPtr<TLRender::TRenderNode>& pRenderNode)
+SyncBool TLGui::TWidgetScrollbar::ProcessClick(const TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode)
 {
 	//	mouse up, dont need to do anything
 	if ( Click.m_ActionValue == 0.f )
@@ -36,7 +36,7 @@ SyncBool TLGui::TWidgetScrollbar::ProcessClick(const TClick& Click,TLRender::TSc
 		return SyncWait;
 
 	//	bounds aren't valid, wait till next time
-	const TLMaths::TBox& BoundsBox3 = pScrollBarRenderNode->GetLastWorldBoundsBox();
+	const TLMaths::TBox& BoundsBox3 = pScrollBarRenderNode->GetWorldBoundsBox();
 	if ( !BoundsBox3.IsValid() )
 	{
 		return SyncWait;
@@ -161,7 +161,7 @@ void TLGui::TWidgetScrollbar::UpdateSliderPos()
 		return;
 
 	//	bounds aren't valid, wait till next time
-	const TLMaths::TBox& BoundsBox3 = pScrollBarRenderNode->GetLastWorldBoundsBox();
+	const TLMaths::TBox& BoundsBox3 = pScrollBarRenderNode->GetWorldBoundsBox();
 	if ( !BoundsBox3.IsValid() )
 		return;
 

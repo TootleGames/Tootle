@@ -66,7 +66,7 @@ public:
 protected:
 	virtual Bool				Update();											//	update routine - return FALSE if we don't need updates any more
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);	//	
-	virtual SyncBool			ProcessClick(const TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TPtr<TLRender::TRenderNode>& pRenderNode);	//	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
+	virtual SyncBool			ProcessClick(const TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode);	//	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
 	void						SendActionMessage(Bool ActionDown,float RawData);	//	when click has been validated action message is sent to subscribers
 	virtual void				GetRenderNodes(TArray<TRef>& RenderNodeArray);		//	get array of all the render nodes we're using
 	
@@ -91,8 +91,7 @@ protected:
 	TRef						m_ActionOutUp;			//	action to send out when mouse is relesed/not over render node
 
 private:
-	Bool						m_Subscribed;				//	have created actions and subscribed to user input
-	Bool						m_InitialisedRenderNodes;	//	have setup render nodes to be clickable
+	SyncBool					m_Initialised;			//	have created actions and subscribed to user input
 	TRef						m_UserRef;
 	TRef						m_ActionIn;
 	TArray<TClick>				m_QueuedClicks;			//	action's we had to wait for

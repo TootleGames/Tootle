@@ -13,8 +13,7 @@
 
 
 TLInput::TInputInterface::TInputInterface(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp)  : 
-	m_InitialisedRenderNodes	( FALSE ),
-	m_Subscribed				( FALSE ),
+	m_Initialised				( SyncWait ),
 	m_RenderTargetRef			( RenderTargetRef ),
 	m_RenderNodeRef				( RenderNodeRef ),
 	m_UserRef					( UserRef),
@@ -50,90 +49,57 @@ TLInput::TInputInterface::~TInputInterface()
 //-------------------------------------------------
 SyncBool TLInput::TInputInterface::Initialise()
 {
-	//	already initialised
-	if ( m_Subscribed && m_InitialisedRenderNodes )
-		return SyncTrue;
+	//	init done alreayd
+	if ( m_Initialised != SyncWait )
+		return m_Initialised;
 
-	//	setup render nodes
-	if ( !m_InitialisedRenderNodes )
-	{
-		u32 ValidRenderNodeCount = 0;
-		TFixedArray<TRef,100> RenderNodeArray(0);
-		GetRenderNodes( RenderNodeArray );
-
-		//	get render node
-		for ( u32 i=0;	i<RenderNodeArray.GetSize();	i++ )
-		{
-			TRefRef RenderNodeRef = RenderNodeArray[i];
-			if ( !RenderNodeRef.IsValid() )
-				continue;
-
-			TPtr<TLRender::TRenderNode>& pRenderNode = TLRender::g_pRendergraph->FindNode( RenderNodeRef );
-			if ( !pRenderNode )
-				return SyncWait;
-
-			//	enable bounds-calc flags
-		//	pRenderNode->GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::Debug_WorldBoundsBox );
-			pRenderNode->GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::CalcWorldBoundsBox );
-			pRenderNode->GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::CalcWorldBoundsSphere );
-
-			ValidRenderNodeCount++;
-		}
-
-		//	to get around the problem of lack of vtables... as this function is called from a constructor
-		//	if none of the render nodes were valid, we'll try again on the next init
-		if ( ValidRenderNodeCount > 0 )
-			m_InitialisedRenderNodes = TRUE;
-	}
-
-	//	setup input actions
-	if ( !m_Subscribed )
-	{
-		//	get user
-		TPtr<TLUser::TUser>	pUser = TLUser::g_pUserManager->GetUser( m_UserRef );
-		if ( !pUser )
-			return SyncWait;
+	//	get user
+	TPtr<TLUser::TUser>	pUser = TLUser::g_pUserManager->GetUser( m_UserRef );
+	if ( !pUser )
+		return SyncWait;
 
 // Old system
 
-		//	create action
-		if ( !m_ActionIn.IsValid() )
-		{
-			//	just some ref we know of. Could be randomly generated or some unused value on the user...
-			//	has to be unique on the user though
-			TRef NewActionRef = pUser->GetUnusedActionRef("click");
-			
-			//	make up action for this device
-			if ( !pUser->AddAction("Simple", NewActionRef ) )
-			{
-				TLDebug_Break("Failed to create new action on user");
-				return SyncWait;
-			}
-
-			m_ActionIn = NewActionRef;
+	//	create action
+	if ( !m_ActionIn.IsValid() )
+	{
+		//	just some ref we know of. Could be randomly generated or some unused value on the user...
+		//	has to be unique on the user though
+		TRef NewActionRef = pUser->GetUnusedActionRef("click");
 		
-			//	subscribe to user's actions
-			SubscribeTo( pUser );
-		}
-
-		//	map action to at least one mouse device
-		for ( u32 d=0;	d<TLInput::g_pInputSystem->GetSize();	d++ )
+		//	make up action for this device
+		if ( !pUser->AddAction("Simple", NewActionRef ) )
 		{
-			TLInput::TInputDevice& InputDevice = *(TLInput::g_pInputSystem->ElementAt( d ));
-			if ( InputDevice.GetDeviceType() != "Mouse" )
-				continue;
-
-			//	subscribe to all of the button sensors
-			u32 NumberOfButtons = InputDevice.GetSensorCount(TLInput::Button);
-
-			for ( u32 s=0; s < NumberOfButtons ;s++ )
-			{
-				TRef ButtonRef = TLInput::GetDefaultButtonRef(s);
-
-				//	map this action to this button sensor
-				m_Subscribed |= pUser->MapAction( m_ActionIn, InputDevice.GetDeviceRef(), ButtonRef );
-			}
+			TLDebug_Break("Failed to create new action on user");
+			return SyncWait;
 		}
+
+		m_ActionIn = NewActionRef;
+	
+		//	subscribe to user's actions
+		SubscribeTo( pUser );
+	}
+
+	Bool SubscribedToAnyAction = FALSE;
+
+	//	map action to at least one mouse device
+	for ( u32 d=0;	d<TLInput::g_pInputSystem->GetSize();	d++ )
+	{
+		TLInput::TInputDevice& InputDevice = *(TLInput::g_pInputSystem->ElementAt( d ));
+		if ( InputDevice.GetDeviceType() != "Mouse" )
+			continue;
+
+		//	subscribe to all of the button sensors
+		u32 NumberOfButtons = InputDevice.GetSensorCount(TLInput::Button);
+
+		for ( u32 s=0; s < NumberOfButtons ;s++ )
+		{
+			TRef ButtonRef = TLInput::GetDefaultButtonRef(s);
+
+			//	map this action to this button sensor
+			SubscribedToAnyAction |= pUser->MapAction( m_ActionIn, InputDevice.GetDeviceRef(), ButtonRef );
+		}
+	}
 
 // NEW SYTEM
 /*
@@ -175,18 +141,17 @@ SyncBool TLInput::TInputInterface::Initialise()
 		}
 */
 
-		//	mark as subscribed
-		if ( !m_Subscribed )
-			return SyncWait;
-	}
-
-	//	still waiting
-	if ( !m_Subscribed || !m_InitialisedRenderNodes )
+	//	failed to subscribe to any actions
+	if ( !SubscribedToAnyAction )
 		return SyncWait;
+
+	//	all done
+	m_Initialised = SyncTrue;
 
 	//	notify init has finished
 	OnInitialised();
-	return SyncTrue;
+
+	return m_Initialised;
 }
 
 
@@ -278,12 +243,21 @@ void TLInput::TInputInterface::QueueClick(const int2& CursorPos,float ActionValu
 //-------------------------------------------------
 Bool TLInput::TInputInterface::Update()
 {
+	Bool ContinueUpdate = FALSE;
+
 	//	keep doing initialise
 	if ( Initialise() == SyncWait )
-		return TRUE;
+		ContinueUpdate |= TRUE;
+
+	//	process any queued up clicks
+	ProcessQueuedClicks();
+
+	//	some clicks still need processing
+	if ( m_QueuedClicks.GetSize() > 0 )
+		ContinueUpdate |= TRUE;
 
 	//	initialise finished, no need to update any more
-	return FALSE;
+	return ContinueUpdate;
 }
 
 
@@ -292,6 +266,10 @@ Bool TLInput::TInputInterface::Update()
 //-------------------------------------------------
 void TLInput::TInputInterface::ProcessQueuedClicks()
 {
+	//	no queue
+	if ( m_QueuedClicks.GetSize() == 0 )
+		return;
+
 	//	if we have no subscribers we can just ditch the clicks...
 	if ( !HasSubscribers() )
 	{
@@ -319,25 +297,30 @@ void TLInput::TInputInterface::ProcessQueuedClicks()
 		return;
 
 
+	TLRender::TScreen& Screen = *pScreen;
+	TLRender::TRenderTarget& RenderTarget = *pRenderTarget;
+	TLRender::TRenderNode& RenderNode = *pRenderNode;
+
 	while ( m_QueuedClicks.GetSize() )
 	{
 		TClick& Click = m_QueuedClicks[0];
 
-		if ( ProcessClick( Click, *pScreen.GetObject(), *pRenderTarget.GetObject(), pRenderNode ) == SyncWait )
+		if ( ProcessClick( Click, Screen, RenderTarget, RenderNode ) == SyncWait )
 			break;
 
 		m_QueuedClicks.RemoveAt( 0 );
 	}
 
-	//	gr: todo: if we don't process a click (and have a queue) subscribe to a core update
-	//			so we can keep trying until we empty the queue
+	//	need to process this click again later so subscribe to updates to process them next time we can
+	if ( m_QueuedClicks.GetSize() > 0 )
+		this->SubscribeTo( TLCore::g_pCoreManager );
 }
 
 
 //-------------------------------------------------
 //	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
 //-------------------------------------------------
-SyncBool TLInput::TInputInterface::ProcessClick(const TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TPtr<TLRender::TRenderNode>& pRenderNode)
+SyncBool TLInput::TInputInterface::ProcessClick(const TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode)
 {
 	if ( Click.m_ActionValue == 0.f )
 	{
@@ -358,33 +341,22 @@ SyncBool TLInput::TInputInterface::ProcessClick(const TClick& Click,TLRender::TS
 	}
 	else
 	{
-		//	fastest order!
+		//	check for a click in the fastest order...
 
-	/*		//	if valid and we havent already decided click has missed
-		if ( pRenderNode->GetWorldBoundsSphere().IsValid() )
+		//	if we haven't already failed a check, test again bounds sphere
+		if ( Intersection != SyncFalse )
 		{
-			if ( pRenderNode->GetWorldBoundsSphere().GetIntersection( WorldRay ) )
-				Intersection = SyncTrue;
-			else
-				Intersection = SyncFalse;
+			const TLMaths::TSphere& WorldBoundsSphere = RenderNode.GetWorldBoundsSphere();
+			if ( WorldBoundsSphere.IsValid() )
+				Intersection = WorldBoundsSphere.GetIntersection( WorldRay ) ? SyncTrue : SyncFalse;
 		}
 
-		//	if valid and we havent already decided click has missed
-		if ( pRenderNode->GetWorldBoundsCapsule().IsValid() )
+		//	if we haven't already failed a check, test again bounds box
+		if ( Intersection != SyncFalse )
 		{
-			if ( pRenderNode->GetWorldBoundsCapsule().GetIntersection( WorldRay ) )
-				Intersection = SyncTrue;
-			else
-				Intersection = SyncFalse;
-		}
-	*/
-		//	if valid and we havent already decided click has missed
-		if ( pRenderNode->GetWorldBoundsBox().IsValid() )
-		{
-			if ( pRenderNode->GetWorldBoundsBox().GetIntersection( WorldRay ) )
-				Intersection = SyncTrue;
-			else
-				Intersection = SyncFalse;
+			const TLMaths::TBox& WorldBoundsBox = RenderNode.GetWorldBoundsBox();
+			if ( WorldBoundsBox.IsValid() )
+				Intersection = WorldBoundsBox.GetIntersection( WorldRay ) ? SyncTrue : SyncFalse;
 		}
 	}
 
@@ -397,7 +369,7 @@ SyncBool TLInput::TInputInterface::ProcessClick(const TClick& Click,TLRender::TS
 	{
 		SendActionMessage( TRUE, 1.f );
 	}
-	else
+	else // == SyncFalse
 	{
 		SendActionMessage( FALSE, 0.f );
 	}

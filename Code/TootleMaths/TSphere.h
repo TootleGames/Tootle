@@ -65,6 +65,7 @@ public:
 	Bool			GetIntersection(const TSphere& Sphere) const;
 	Bool			GetIntersection(const float3& Pos) const		{	return GetDistanceSq( Pos ) < 0.f;	}
 	Bool			GetIntersection(const TBox& Box) const;
+	Bool			GetIntersection(const TLine& Line) const;		//	get ray intersection
 
 	//	if a distance returns negative then it's overlapping by that amount - otherwise it's the distance from the edge of each shape
 	float			GetDistance(const TCapsule& Capsule) const		{	return TLMaths::Sqrtf( GetDistanceSq( Capsule ) );	}

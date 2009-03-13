@@ -334,6 +334,20 @@ float TLMaths::TSphere::GetDistanceSq(const TCapsule& Capsule) const
 
 
 //--------------------------------------------------------
+//	get ray intersection
+//--------------------------------------------------------
+Bool TLMaths::TSphere::GetIntersection(const TLine& Line) const
+{
+	float DistanceSq = Line.GetDistanceSq( m_Pos );
+
+	if ( DistanceSq > GetRadiusSq() )
+		return FALSE;
+
+	return TRUE;
+}
+
+
+//--------------------------------------------------------
 //	transform this shape by this matrix
 //--------------------------------------------------------
 void TLMaths::TSphere::Transform(const TLMaths::TMatrix& Matrix,const float3& Scale)

@@ -90,6 +90,8 @@ SyncBool TLRender::TRenderZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
 		AnyBoundsValid = TRUE;
 	}
 
+	//	gr: this is so expensive, we're not going to use it
+	/*
 	const TLMaths::TBox& WorldBoundsBox = pRenderNode->GetWorldBoundsBox();
 	if ( WorldBoundsBox.IsValid() )
 	{
@@ -97,6 +99,7 @@ SyncBool TLRender::TRenderZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
 			return SyncTrue;
 		AnyBoundsValid = TRUE;
 	}
+	*/
 
 	//	none of the bounds are valid, this is bad
 	if ( !AnyBoundsValid )
@@ -122,16 +125,6 @@ SyncBool TLRender::TRenderZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
 }
 
 
-//---------------------------------------------------------------
-//	calculate all the world bounds we need to to do a zone test
-//---------------------------------------------------------------
-void TLRender::TRenderZoneNode::CalcWorldBounds(TLRender::TRenderNode* pRenderNode,const TLMaths::TTransform& SceneTransform)
-{
-//	pRenderNode->CalcWorldBoundsBox( SceneTransform );
-	pRenderNode->CalcWorldBoundsSphere( SceneTransform );
-	//pRenderNode->CalcWorldBoundsCapsule( SceneTransform );
-}
-
 
 
 
@@ -140,10 +133,13 @@ void TLRender::TRenderZoneNode::CalcWorldBounds(TLRender::TRenderNode* pRenderNo
 
 TLRender::TRenderNode::TRenderNode(TRefRef RenderNodeRef,TRefRef TypeRef) :
 	TLGraph::TGraphNode<TLRender::TRenderNode>	( RenderNodeRef, TypeRef ),
-	m_Data				( "Data" ),
-	m_LineWidth			( 0.f ),
-	m_WorldPosValid		( FALSE ),
-	m_Colour			( 1.f, 1.f, 1.f, 1.f )
+	m_Data						( "Data" ),
+	m_LineWidth					( 0.f ),
+	m_WorldPosValid				( SyncFalse ),
+	m_WorldBoundsBoxValid		( SyncFalse ),
+	m_WorldBoundsSphereValid	( SyncFalse ),
+	m_WorldTransformValid		( SyncFalse ),
+	m_Colour					( 1.f, 1.f, 1.f, 1.f )
 {
 	//	setup defualt render flags
 	m_RenderFlags.Set( RenderFlags::DepthRead );
@@ -162,19 +158,20 @@ TLRender::TRenderNode::TRenderNode(TRefRef RenderNodeRef,TRefRef TypeRef) :
 //------------------------------------------------------------
 void TLRender::TRenderNode::Copy(const TRenderNode& OtherRenderNode)
 {
+	TLDebug_Break("still used? - code is out of date");
+	/*
 	m_Transform				= OtherRenderNode.m_Transform;
 	m_Colour				= OtherRenderNode.m_Colour;
 	m_LocalBoundsBox		= OtherRenderNode.m_LocalBoundsBox;
 	m_WorldBoundsBox		= OtherRenderNode.m_WorldBoundsBox;
 	m_LocalBoundsSphere		= OtherRenderNode.m_LocalBoundsSphere;
 	m_WorldBoundsSphere		= OtherRenderNode.m_WorldBoundsSphere;
-	m_LocalBoundsCapsule	= OtherRenderNode.m_LocalBoundsCapsule;
-	m_WorldBoundsCapsule	= OtherRenderNode.m_WorldBoundsCapsule;
 	m_RenderFlags			= OtherRenderNode.m_RenderFlags;
 	m_MeshRef				= OtherRenderNode.m_MeshRef;
 	m_Data					= OtherRenderNode.m_Data;
 
 	SetRenderNodeRef( OtherRenderNode.GetRenderNodeRef() );
+	*/
 }
 
 //------------------------------------------------------------
@@ -217,40 +214,38 @@ Bool TLRender::TRenderNode::Draw(TRenderTarget* pRenderTarget,TRenderNode* pPare
 //	calculate our local bounds box (accumulating children) if out of date and return it
 //	SceneMatrix and SceneScale include OUR local matrix/scale
 //------------------------------------------------------------
-const TLMaths::TBox& TLRender::TRenderNode::CalcWorldBoundsBox(const TLMaths::TTransform& SceneTransform)
+const TLMaths::TBox& TLRender::TRenderNode::GetWorldBoundsBox()
 {
-	//	world bounds is valid
-	if ( m_WorldBoundsBox.IsValid() )
+	//	world bounds is up to date
+	if ( m_WorldBoundsBoxValid == m_WorldTransformValid )
 		return m_WorldBoundsBox;
 
-	Debug_PrintCalculating( this, "world", "box" );
+	//	world transform isn't calculated
+	if ( m_WorldTransformValid == SyncFalse )
+	{
+		//	gr: shouldn't be valid...
+		m_WorldBoundsBox.SetInvalid();
+		return m_WorldBoundsBox;
+	}
+
+	//	... world transform must be valid (or old/wait) and our bounds are not this new, so recalculate
 
 	//	get/recalc local bounds box
-	CalcLocalBoundsBox();
-
-	//	if bounds is invalid, it's not going to affect the world bounds
-	if ( !m_LocalBoundsBox.IsValid() )
+	if ( !CalcLocalBoundsBox().IsValid() )
+	{
+		//	gr: shouldn't be valid...
+		m_WorldBoundsBox.SetInvalid();
 		return m_WorldBoundsBox;
+	}
+	
+	Debug_PrintCalculating( this, "world", "box" );
 
 	//	tranform our local bounds into the world bounds
 	m_WorldBoundsBox = m_LocalBoundsBox;
-
-	//	transform box
-	m_WorldBoundsBox.Transform( SceneTransform );
+	m_WorldBoundsBox.Transform( m_WorldTransform );
 	
-	//	copy last valid bounds box
-	m_LastWorldBoundsBox = m_WorldBoundsBox;
-
-	//	invalidate parent's bounds if our world bounds have changed
-	/*
-	if ( TRUE )
-	{
-		if ( GetParent() )
-		{
-			SetBoundsInvalid(
-		}
-	}
-	*/
+	//	update state (matches world transform state)
+	m_WorldBoundsBoxValid = m_WorldTransformValid;
 
 	return m_WorldBoundsBox;
 }
@@ -365,38 +360,14 @@ void TLRender::TRenderNode::SetBoundsInvalid(const TInvalidateFlags& InvalidateF
 			m_LocalBoundsSphere.SetInvalid();
 			ThisLocalBoundsChanged = TRUE;
 		}
-
-		if ( m_LocalBoundsCapsule.IsValid()  )
-		{
-			Debug_PrintInvalidate( this, "local", "Capsule" );
-			m_LocalBoundsCapsule.SetInvalid();
-			ThisLocalBoundsChanged = TRUE;
-		}
 	}
 
 	//	if invalidating local, world must be invalidated (but only do it if the local bounds were changed)
 	if ( InvWorld || (InvLocal&&ThisLocalBoundsChanged) )
 	{
-		if ( m_WorldBoundsBox.IsValid() )
-		{
-			Debug_PrintInvalidate( this, "world", "box" );
-			m_WorldBoundsBox.SetInvalid();
-			ThisWorldBoundsChanged = TRUE;
-		}
-
-		if ( m_WorldBoundsSphere.IsValid() )
-		{
-			Debug_PrintInvalidate( this, "world", "sphere" );
-			m_WorldBoundsSphere.SetInvalid();
-			ThisWorldBoundsChanged = TRUE;
-		}
-
-		if ( m_WorldBoundsCapsule.IsValid() )
-		{
-			Debug_PrintInvalidate( this, "world", "capsule" );
-			m_WorldBoundsCapsule.SetInvalid();
-			ThisWorldBoundsChanged = TRUE;
-		}
+		//	downgrade validation of world shapes
+		SetWorldTransformOld();
+		Debug_PrintInvalidate( this, "local", "all" );
 
 		//	invalidate the zone of our RenderNodeZones - if our world bounds has changed then we
 		//	may have moved to a new zone
@@ -411,7 +382,9 @@ void TLRender::TRenderNode::SetBoundsInvalid(const TInvalidateFlags& InvalidateF
 	//	invalidate world pos
 	if ( InvPos )
 	{
-		m_WorldPosValid = FALSE;
+		if ( m_WorldPosValid == SyncTrue )
+			m_WorldPosValid = SyncWait;
+
 		if ( !HasSetRenderZoneInvalid )
 		{
 			for ( u32 z=0;	z<m_RenderZoneNodes.GetSize();	z++ )
@@ -484,72 +457,73 @@ void TLRender::TRenderNode::SetBoundsInvalid(const TInvalidateFlags& InvalidateF
 //------------------------------------------------------------
 //	calculate our new world position from the latest scene transform
 //------------------------------------------------------------
-void TLRender::TRenderNode::CalcWorldPos(const TLMaths::TTransform& SceneTransform)
+const float3& TLRender::TRenderNode::GetWorldPos()
 {
-	//	"center" of local node
-	m_WorldPos.Set( m_Transform.GetTranslate() );
-	
-	//	transform
-	SceneTransform.TransformVector( m_WorldPos );
+	//	validity up to date
+	if ( m_WorldPosValid == m_WorldTransformValid )
+		return m_WorldPos;
 
-	//	is valid!
-	m_WorldPosValid = TRUE;
+	//	cant calculate
+	if ( m_WorldTransformValid == SyncFalse )
+	{
+		m_WorldPosValid = SyncFalse;
+		return m_WorldPos;
+	}
+
+	//	calc new world pos
+
+	//	"center" of local node is the base world position
+	if ( m_Transform.HasTranslate() )
+		m_WorldPos.Set( m_Transform.GetTranslate() );
+	else
+		m_WorldPos.Set( 0.f, 0.f, 0.f );
+
+	//	transform
+	m_WorldTransform.TransformVector( m_WorldPos );
+
+	//	is as valid as the transform we just applied
+	m_WorldPosValid = m_WorldTransformValid;
+
+	return m_WorldPos;
 }
 
 //------------------------------------------------------------
 //	
 //------------------------------------------------------------
-const TLMaths::TSphere& TLRender::TRenderNode::CalcWorldBoundsSphere(const TLMaths::TTransform& SceneTransform)
+const TLMaths::TSphere& TLRender::TRenderNode::GetWorldBoundsSphere()
 {
-	//	world bounds is already valid
-	if ( m_WorldBoundsSphere.IsValid() )
+	//	world bounds is up to date
+	if ( m_WorldBoundsSphereValid == m_WorldTransformValid )
 		return m_WorldBoundsSphere;
+
+	//	world transform isn't calculated
+	if ( m_WorldTransformValid == SyncFalse )
+	{
+		//	gr: shouldn't be valid...
+		m_WorldBoundsSphere.SetInvalid();
+		return m_WorldBoundsSphere;
+	}
+
+	//	... world transform must be valid (or old/wait) and our bounds are not this new, so recalculate
 
 	//	get/recalc local bounds box
-	CalcLocalBoundsSphere();
-
-	//	if bounds is invalid, it's not going to affect the world bounds
-	if ( !m_LocalBoundsSphere.IsValid() )
+	if ( !CalcLocalBoundsSphere().IsValid() )
+	{
+		//	gr: shouldn't be valid...
+		m_WorldBoundsSphere.SetInvalid();
 		return m_WorldBoundsSphere;
+	}
+
+	Debug_PrintCalculating( this, "world", "sphere" );
 
 	//	tranform our local bounds into the world bounds
 	m_WorldBoundsSphere = m_LocalBoundsSphere;
-
-	//	transform box
-	m_WorldBoundsSphere.Transform( SceneTransform );
+	m_WorldBoundsSphere.Transform( m_WorldTransform );
 	
-	//	copy last valid bounds sphere
-	m_LastWorldBoundsSphere = m_WorldBoundsSphere;
+	//	update state (matches world transform state)
+	m_WorldBoundsSphereValid = m_WorldTransformValid;
 
 	return m_WorldBoundsSphere;
-}
-
-//------------------------------------------------------------
-//	
-//------------------------------------------------------------
-const TLMaths::TCapsule& TLRender::TRenderNode::CalcWorldBoundsCapsule(const TLMaths::TTransform& SceneTransform)
-{
-	//	world bounds is valid
-	if ( m_WorldBoundsCapsule.IsValid() )
-		return m_WorldBoundsCapsule;
-
-	//	get/recalc local bounds box
-	CalcLocalBoundsCapsule();
-
-	//	if bounds is invalid, it's not going to affect the world bounds
-	if ( !m_LocalBoundsCapsule.IsValid() )
-		return m_WorldBoundsCapsule;
-
-	//	tranform our local bounds into the world bounds
-	m_WorldBoundsCapsule = m_LocalBoundsCapsule;
-
-	//	transform box
-	m_WorldBoundsCapsule.Transform( SceneTransform );
-	
-	//	copy last valid bounds sphere
-	m_LastWorldBoundsCapsule = m_WorldBoundsCapsule;
-
-	return m_WorldBoundsCapsule;
 }
 
 
@@ -605,58 +579,6 @@ const TLMaths::TSphere& TLRender::TRenderNode::CalcLocalBoundsSphere()
 }
 
 
-//------------------------------------------------------------
-//	
-//------------------------------------------------------------
-const TLMaths::TCapsule& TLRender::TRenderNode::CalcLocalBoundsCapsule()
-{
-	//	if bounds is valid, doesnt need recalculating
-	if ( m_LocalBoundsCapsule.IsValid() )
-		return m_LocalBoundsCapsule;
-
-	//	get bounds from mesh
-	TPtr<TLAsset::TMesh>& pMesh = GetMeshAsset();
-	if ( pMesh )
-	{
-		//	copy bounds of mesh to use as our own
-		const TLMaths::TCapsule& MeshBounds = pMesh->CalcBoundsCapsule();
-		if ( MeshBounds.IsValid() )
-		{
-			m_LocalBoundsCapsule = MeshBounds;
-		}
-	}
-
-	//	no children, just return what we have
-	if ( !HasChildren() )
-		return m_LocalBoundsCapsule;
-
-	//	accumulate children's bounds
-	TPtrArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
-	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
-	{
-		TLRender::TRenderNode& Child = *NodeChildren[c];
-		
-		if ( Child.GetRenderFlags().IsSet(RenderFlags::ResetScene) )
-			continue;
-
-		//	get child's bounds
-		const TLMaths::TCapsule& ChildBounds = Child.CalcLocalBoundsCapsule();
-		if ( !ChildBounds.IsValid() )
-			continue;
-
-		//	gr: omit translate?
-		TLMaths::TCapsule TransformedChildBounds = ChildBounds;		
-		TransformedChildBounds.Transform( Child.GetTransform() );
-
-		//	accumulate child
-		m_LocalBoundsCapsule.Accumulate( TransformedChildBounds );
-	}
-
-	//	all done! invalid or not, this is our bounds
-	return m_LocalBoundsCapsule;
-}
-
-
 void TLRender::TRenderNode::ClearDebugRenderFlags()						
 {
 	m_RenderFlags.Clear( RenderFlags::Debug_Wireframe );
@@ -667,8 +589,6 @@ void TLRender::TRenderNode::ClearDebugRenderFlags()
 	m_RenderFlags.Clear( RenderFlags::Debug_WorldBoundsBox );
 	m_RenderFlags.Clear( RenderFlags::Debug_LocalBoundsSphere );
 	m_RenderFlags.Clear( RenderFlags::Debug_WorldBoundsSphere );
-	m_RenderFlags.Clear( RenderFlags::Debug_LocalBoundsCapsule );
-	m_RenderFlags.Clear( RenderFlags::Debug_WorldBoundsCapsule );
 }
 
 
@@ -817,7 +737,9 @@ void TLRender::TRenderNode::Shutdown()
 }
 
 
-
+//---------------------------------------------------------
+//	
+//---------------------------------------------------------
 void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	//	gr: only apply the change if it comes from our owner scene node
@@ -853,3 +775,46 @@ void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 	//	do inherited init
 	TLGraph::TGraphNode<TLRender::TRenderNode>::ProcessMessage( Message );
 }
+
+
+//---------------------------------------------------------
+//	set new world transform
+//---------------------------------------------------------
+void TLRender::TRenderNode::SetWorldTransform(const TLMaths::TTransform& SceneTransform)
+{
+	//	if old transform is still valid, dont do anything
+	if ( m_WorldTransformValid == SyncTrue )
+	{
+		//	SceneTransform should match our m_WorldTransform
+		return;
+	}
+
+	//	downgrade the valid status of our world shapes/datums (to "old") if they were valid...
+	SetWorldTransformOld();
+
+	//	store new world transform
+	m_WorldTransform = SceneTransform;
+	m_WorldTransformValid = SyncTrue;
+
+}
+
+
+//---------------------------------------------------------
+//	downgrade all world shape/transform states from valid to old
+//---------------------------------------------------------
+void TLRender::TRenderNode::SetWorldTransformOld()
+{
+	if ( m_WorldTransformValid == SyncTrue )
+		m_WorldTransformValid = SyncWait;
+
+	if ( m_WorldPosValid == SyncTrue )
+		m_WorldPosValid = SyncWait;
+
+	if ( m_WorldBoundsBoxValid == SyncTrue )
+		m_WorldBoundsBoxValid = SyncWait;
+
+	if ( m_WorldBoundsSphereValid == SyncTrue )
+		m_WorldBoundsSphereValid = SyncWait;
+
+}
+

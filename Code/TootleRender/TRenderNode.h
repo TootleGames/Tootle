@@ -57,8 +57,6 @@ public:
 			DepthRead,					//	read from depth buffer (off draws over everything)
 			DepthWrite,					//	write to depth buffer (off means will get drawn over)
 			ResetScene,					//	position and rotation are not inherited
-			CalcWorldBoundsBox,			//	always calculate world bounds box (for physics, object picking etc etc)
-			CalcWorldBoundsSphere,		//	always calculate world bounds sphere (for physics, object picking etc etc)
 			UseVertexColours,			//	bind vertex colours of mesh. if not set when rendering, a mesh the colours are not bound
 			UseMeshLineWidth,			//	calculates mesh/world line width -> screen/pixel width
 			UseNodeColour,				//	set when colour is something other than 1,1,1,1 to save some processing (off by default!)
@@ -75,8 +73,6 @@ public:
 			Debug_WorldBoundsBox,		//	render our world bounds box
 			Debug_LocalBoundsSphere,	//	render our local bounds sphere
 			Debug_WorldBoundsSphere,	//	render our world bounds sphere
-			Debug_LocalBoundsCapsule,	//	render our local bounds capsule
-			Debug_WorldBoundsCapsule,	//	render our world bounds capsule
 		};
 	};
 
@@ -100,9 +96,6 @@ public:
 	
 	FORCEINLINE float						GetLineWidth() const						{	return m_LineWidth;	}
 	FORCEINLINE void						SetLineWidth(float Width)					{	m_LineWidth = Width;	}
-	FORCEINLINE const float3&				GetWorldPos() const							{	return m_WorldPos;	}
-	FORCEINLINE const float3&				GetWorldPos(Bool& IsValid) const			{	IsValid = m_WorldPosValid;	return m_WorldPos;	}
-	FORCEINLINE Bool						IsWorldPosValid() const						{	return m_WorldPosValid;	}
 
 	FORCEINLINE TFlags<RenderFlags::Flags>&	GetRenderFlags()							{	return m_RenderFlags;	}
 	FORCEINLINE const TFlags<RenderFlags::Flags>&	GetRenderFlags() const				{	return m_RenderFlags;	}
@@ -137,23 +130,17 @@ public:
 	FORCEINLINE void						OnMeshChanged();							//	invalidate bounds
 	FORCEINLINE void						OnBoundsChanged()							{	OnMeshChanged();	}
 
-	void									CalcWorldPos(const TLMaths::TTransform& SceneTransform);	//	calculate our new world position from the latest scene transform
+	void									SetWorldTransform(const TLMaths::TTransform& SceneTransform);	//	set new world transform
+	void									SetWorldTransformOld();						//	downgrade all world shape/transform states from valid to old
 
-	const TLMaths::TBox&					CalcWorldBoundsBox(const TLMaths::TTransform& SceneTransform);	//	if invalid calculate our local bounds box (accumulating children) if out of date and return it
+	const float3&							GetWorldPos();								//	calculate our new world position from the latest scene transform
+	FORCEINLINE const float3&				GetWorldPos(Bool& IsValid) 					{	GetWorldPos();	IsValid = (m_WorldPosValid != SyncFalse);	return m_WorldPos;	}
+
+	const TLMaths::TBox&					GetWorldBoundsBox();						//	if invalid calculate our local bounds box (accumulating children) if out of date and return it
 	const TLMaths::TBox&					CalcLocalBoundsBox();						//	return our current local bounds box and calculate if invalid
-	FORCEINLINE const TLMaths::TBox&		GetWorldBoundsBox() const					{	return m_WorldBoundsBox;	}	//	return our current local bounds box, possibly invalid
-	FORCEINLINE const TLMaths::TBox&		GetLastWorldBoundsBox() const				{	return m_WorldBoundsBox.IsValid() ? m_WorldBoundsBox : m_LastWorldBoundsBox;	}	
-	FORCEINLINE const TLMaths::TBox&		GetLocalBoundsBox() const					{	return m_LocalBoundsBox;	}	//	return our current local bounds box, possibly invalid
 
-	const TLMaths::TSphere&					CalcWorldBoundsSphere(const TLMaths::TTransform& SceneTransform);	//	if invalid calculate our local bounds box (accumulating children) if out of date and return it
+	const TLMaths::TSphere&					GetWorldBoundsSphere();						//	if invalid calculate our local bounds box (accumulating children) if out of date and return it
 	const TLMaths::TSphere&					CalcLocalBoundsSphere();					//	return our current local bounds box and calculate if invalid
-	FORCEINLINE const TLMaths::TSphere&		GetWorldBoundsSphere() const				{	return m_WorldBoundsSphere;	}	//	return our current local bounds box, possibly invalid
-	FORCEINLINE const TLMaths::TSphere&		GetLocalBoundsSphere() const				{	return m_LocalBoundsSphere;	}	//	return our current local bounds box, possibly invalid
-
-	const TLMaths::TCapsule&				CalcWorldBoundsCapsule(const TLMaths::TTransform& SceneTransform);	//	if invalid calculate our local bounds box (accumulating children) if out of date and return it
-	const TLMaths::TCapsule&				CalcLocalBoundsCapsule();					//	return our current local bounds box and calculate if invalid
-	FORCEINLINE const TLMaths::TCapsule&	GetWorldBoundsCapsule() const				{	return m_WorldBoundsCapsule;	}	//	return our current local bounds box, possibly invalid
-	FORCEINLINE const TLMaths::TCapsule&	GetLocalBoundsCapsule() const				{	return m_LocalBoundsCapsule;	}	//	return our current local bounds box, possibly invalid
 
 	FORCEINLINE TPtr<TLMaths::TQuadTreeNode>*	GetRenderZoneNode(TRefRef RenderTargetRef)	{	return m_RenderZoneNodes.Find( RenderTargetRef );	}
 	FORCEINLINE TPtr<TLMaths::TQuadTreeNode>*	SetRenderZoneNode(TRefRef RenderTargetRef,TPtr<TLMaths::TQuadTreeNode>& pRenderZoneNode)	{	return m_RenderZoneNodes.Add( RenderTargetRef, pRenderZoneNode );	}
@@ -169,22 +156,23 @@ protected:
 	virtual void							ProcessMessage(TLMessaging::TMessage& Message);
 
 protected:
-	TLMaths::TTransform			m_Transform;				//	local transform 
+	TLMaths::TTransform			m_Transform;				//	local transform of node
+	TLMaths::TTransform			m_WorldTransform;			//	last SceneTransform
+	SyncBool					m_WorldTransformValid;		//	m_WorldTransform is... false - invalid (never calculated before). Wait - Last one is valid, but needs updating on next render. True - most update to date and doesnt need updating again
+
 	TColour						m_Colour;					//	colour of render node - only works if UseNodeColour is set
 	float						m_LineWidth;				//	this is an overriding line width for rendering lines in the mesh. In pixel width. NOT like the mesh line width which is in a world-size.
 	float3						m_WorldPos;					//	we always calc the world position on render, even if we dont calc the bounds box/sphere/etc, it's quick and handy!
-	Bool						m_WorldPosValid;			//	if this is not valid then the transform of this node has changed since our last render
+	SyncBool					m_WorldPosValid;			//	if this is not valid then the transform of this node has changed since our last render
 
 	//	gr: todo: almagamate all these bounds shapes into a single bounds type that does all 3 or picks the best or something
-	TLMaths::TBox				m_LocalBoundsBox;			//	bounding box of self (without transformation) and children (with transformation, so relative to us)
+	TLMaths::TBox				m_LocalBoundsBox;			//	(Datum) bounding box of self (without transformation) and children (with transformation, so relative to us)
 	TLMaths::TBox				m_WorldBoundsBox;			//	bounding box of self in world space
-	TLMaths::TBox				m_LastWorldBoundsBox;		//	last valid world bounds box
-	TLMaths::TSphere			m_LocalBoundsSphere;		//	bounding sphere Shape of self (without transformation) and children (with transformation, so relative to us)
+	SyncBool					m_WorldBoundsBoxValid;		//	Validity of bounds box - SyncWait if valid, but old
+
+	TLMaths::TSphere			m_LocalBoundsSphere;		//	(Datum) bounding sphere Shape of self (without transformation) and children (with transformation, so relative to us)
 	TLMaths::TSphere			m_WorldBoundsSphere;		//	bounding sphere Shape of self in world space
-	TLMaths::TSphere			m_LastWorldBoundsSphere;	//	
-	TLMaths::TCapsule			m_LocalBoundsCapsule;		//	bounding capsule Shape of self (without transformation) and children (with transformation, so relative to us)
-	TLMaths::TCapsule			m_WorldBoundsCapsule;		//	bounding capsule shape of self in world space
-	TLMaths::TCapsule			m_LastWorldBoundsCapsule;	//	
+	SyncBool					m_WorldBoundsSphereValid;	//	Validity of bounds box - SyncWait if valid, but old
 
 	TFlags<RenderFlags::Flags>	m_RenderFlags;
 
@@ -209,7 +197,6 @@ class TLRender::TRenderZoneNode : public TLMaths::TQuadTreeNode
 public:
 	TRenderZoneNode(TRefRef RenderNodeRef);
 
-	void				CalcWorldBounds(TLRender::TRenderNode* pRenderNode,const TLMaths::TTransform& SceneTransform);	//	calculate all the world bounds we need to to do a zone test
 	virtual SyncBool	IsInShape(const TLMaths::TBox2D& Shape);
 
 protected:
