@@ -315,6 +315,16 @@ void TAudiograph::MapActions_Keyboard(TRefRef DeviceRef, TPtr<TLUser::TUser> pUs
 }
 
 
+void TAudiograph::SetListener(const TListenerProperties& Props)
+{
+	// Copy the properties so the audio graph can use them
+	m_Listener = Props;
+
+	// Now pass on the info to the low level audio system
+	Platform::SetListener(Props);
+}
+
+
 Bool TAudiograph::StartMusic(TRefRef AudioAsset)
 {
 	if(!IsEnabled())
@@ -335,6 +345,7 @@ Bool TAudiograph::StartMusic(TRefRef AudioAsset)
 	TLAudio::TAudioProperties Props;
 
 	Props.m_bStreaming = TRUE;
+	Props.m_bLooping = TRUE;
 	Props.m_fVolume = 1.0f;
 	Message.ExportData("Props", Props);
 

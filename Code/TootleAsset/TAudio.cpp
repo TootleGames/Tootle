@@ -51,9 +51,11 @@ SyncBool TAudio::ImportData(TBinaryTree& Data)
 	
 	// Now we have read the data create the audio buffer for this asset
 	// in the audio system
-	TLAudio::Platform::CreateBuffer(GetAssetRef());
+	if(!TLAudio::Platform::CreateBuffer(GetAssetRef()))
+		return SyncFalse;	
 		
 	return SyncTrue;
+
 }
 
 

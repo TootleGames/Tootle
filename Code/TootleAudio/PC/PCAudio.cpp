@@ -40,17 +40,13 @@ SyncBool Platform::Shutdown()
 Bool Platform::CreateSource(TRefRef AudioSourceRef)
 {
 #if(AUDIO_SYSTEM == AUDIO_OPENAL)
-	TPtr<OpenAL::AudioObj> pAO = OpenAL::CreateSource(AudioSourceRef);
-	
-	if(pAO)
+	if(!OpenAL::CreateSource(AudioSourceRef))
 	{
-		TLDebug_Print("Audio source created successfully");	
-		return TRUE;
+		TLDebug_Print("Failed to create source for audio");	
+		return FALSE;
 	}
+	return TRUE;
 #endif
-	
-	
-	TLDebug_Print("Failed to create source for audio");	
 	return FALSE;
 }
 
@@ -73,16 +69,14 @@ Bool Platform::RemoveSource(TRefRef AudioSourceRef)
 Bool Platform::CreateBuffer(TRefRef AudioAssetRef)
 {
 #if(AUDIO_SYSTEM == AUDIO_OPENAL)
-
-	TPtr<OpenAL::AudioObj> pAO = OpenAL::CreateBuffer(AudioAssetRef);
-	
-	if(pAO)
+	if(!OpenAL::CreateBuffer(AudioAssetRef))
 	{
-		return TRUE;
+		TLDebug_Print("Failed to create buffer for audio");	
+		return FALSE;
 	}
+	return TRUE;
 #endif
 
-	TLDebug_Print("Failed to create buffer for audio");	
 	return FALSE;
 }
 
@@ -247,6 +241,16 @@ Bool Platform::SetMinRange(TRefRef AudioSourceRef, const float fDistance)
 {
 #if(AUDIO_SYSTEM == AUDIO_OPENAL)
 	return OpenAL::SetReferenceDistance(AudioSourceRef, fDistance);
+#endif
+
+	return FALSE;
+}
+
+
+Bool Platform::SetMaxRange(TRefRef AudioSourceRef, const float fDistance)
+{
+#if(AUDIO_SYSTEM == AUDIO_OPENAL)
+	return OpenAL::SetMaxDistance(AudioSourceRef, fDistance);
 #endif
 
 	return FALSE;

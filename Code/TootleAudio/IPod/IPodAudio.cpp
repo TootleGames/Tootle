@@ -26,17 +26,12 @@ SyncBool Platform::Shutdown()
 
 Bool Platform::CreateSource(TRefRef AudioSourceRef)
 {
-	TPtr<OpenAL::AudioObj> pAO = OpenAL::CreateSource(AudioSourceRef);
-	
-	if(pAO)
+	if(!OpenAL::CreateSource(AudioSourceRef))
 	{
-		TLDebug_Print("Audio source created successfully");	
-		return TRUE;
+		TLDebug_Print("Failed to create source for audio");	
+		return FALSE;
 	}
-	
-	
-	TLDebug_Print("Failed to create source for audio");	
-	return FALSE;
+	return TRUE;
 }
 
 Bool Platform::RemoveSource(TRefRef AudioSourceRef)
@@ -54,16 +49,12 @@ Bool Platform::RemoveSource(TRefRef AudioSourceRef)
 
 Bool Platform::CreateBuffer(TRefRef AudioAssetRef)
 {
-	TPtr<OpenAL::AudioObj> pAO = OpenAL::CreateBuffer(AudioAssetRef);
-	
-	if(pAO)
+	if(!OpenAL::CreateBuffer(AudioAssetRef))
 	{
-		return TRUE;
+		TLDebug_Print("Failed to create buffer for audio");	
+		return FALSE;
 	}
-
-
-	TLDebug_Print("Failed to create buffer for audio");	
-	return FALSE;
+	return TRUE;
 }
 
 Bool Platform::RemoveBuffer(TRefRef AudioAssetRef)
@@ -166,6 +157,12 @@ Bool Platform::SetMinRange(TRefRef AudioSourceRef, const float fDistance)
 {
 	return OpenAL::SetReferenceDistance(AudioSourceRef, fDistance);
 }
+
+Bool Platform::SetMaxRange(TRefRef AudioSourceRef, const float fDistance)
+{
+	return OpenAL::SetMaxDistance(AudioSourceRef, fDistance);
+}
+
 
 Bool Platform::SetRateOfDecay(TRefRef AudioSourceRef, const float fRateOfDecay)
 {

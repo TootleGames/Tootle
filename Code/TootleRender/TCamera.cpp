@@ -52,7 +52,7 @@ void TLRender::TCamera::CalculateViewVectors()
 	Props.m_vUp = GetViewUp();
 	Props.m_vLookAt = GetLookAt();
 
-	TLAudio::Platform::SetListener(Props);
+	TLAudio::g_pAudiograph->SetListener(Props);
 }
 
 

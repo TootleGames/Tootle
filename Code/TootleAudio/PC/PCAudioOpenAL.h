@@ -44,10 +44,10 @@ namespace TLAudio
 			Bool			PauseAudio(TRefRef AudioSourceRef);
 			
 			
-			TPtr<AudioObj> CreateBuffer(TRefRef AudioAssetRef);
+			Bool CreateBuffer(TRefRef AudioAssetRef);
 			Bool ReleaseBuffer(TRefRef AudioAssetRef);
 			
-			TPtr<AudioObj> CreateSource(TRefRef AudioSourceRef);
+			Bool CreateSource(TRefRef AudioSourceRef);
 			Bool ReleaseSource(TRefRef AudioSourceRef);
 			
 			Bool AttachSourceToBuffer(ALuint& uSource, ALuint& uBuffer, const Bool bStreaming);
@@ -72,6 +72,7 @@ namespace TLAudio
 			Bool	GetVelocity(TRefRef AudioSourceRef, float3& vPosition);
 
 			Bool	SetReferenceDistance(TRefRef AudioSourceRef, const float fDistance);
+			Bool	SetMaxDistance(TRefRef AudioSourceRef, const float fDistance);
 			Bool	SetRollOffFactor(TRefRef AudioSourceRef, const float fRollOffFactor);
 
 			/*

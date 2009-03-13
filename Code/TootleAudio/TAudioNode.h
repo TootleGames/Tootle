@@ -37,6 +37,7 @@ public:
 		m_fFrequencyMult(1.0f),
 		m_fPitch(1.0f),
 		m_fMinRange(0.0f),
+		m_fMaxRange(0.0f),
 		m_fRateOfDecay(0.0f),
 		m_bStreaming(FALSE),
 		m_bLooping(FALSE)
@@ -47,6 +48,7 @@ public:
 	float m_fFrequencyMult;		// Frequency multiplier
 	float m_fPitch;
 	float m_fMinRange;			// Range within which the audio is full volume
+	float m_fMaxRange;			// Range outside which the audio will be silent and potentially culled
 	float m_fRateOfDecay;		// Rate of decay of the audio volume past the min range			
 	
 	Bool m_bStreaming;			// Streaming flag
@@ -81,33 +83,37 @@ protected:
 	
 	// Audio properties
 	void				SetVolume(float fVolume, const Bool& bForced = FALSE);			// Set the volume of this instance
-	inline float		GetVolume()		const { return m_AudioProperties.m_fVolume; }
+	FORCEINLINE float	GetVolume()					const		{ return m_AudioProperties.m_fVolume; }
 	
 	void				SetFrequencyMult(float fFrequencyMult);		// Set the frequency multiplier of this instance
-	inline float		GetFrequencyMult()		const { return m_AudioProperties.m_fFrequencyMult; }
+	FORCEINLINE float	GetFrequencyMult()			const		{ return m_AudioProperties.m_fFrequencyMult; }
 
 	void				SetPitch(float fPitch);
-	inline float		GetPitch()		const { return m_AudioProperties.m_fPitch; }
+	FORCEINLINE float	GetPitch()					const		{ return m_AudioProperties.m_fPitch; }
 
 	void				SetMinRange(float fDistance);
-	inline float		GetMinRange()		const { return m_AudioProperties.m_fMinRange; }
+	FORCEINLINE float	GetMinRange()				const		{ return m_AudioProperties.m_fMinRange; }
+
+	void				SetMaxRange(float fDistance);
+	FORCEINLINE float	GetMaxRange()				const		{ return m_AudioProperties.m_fMaxRange; }
+
 
 	void				SetRateOfDecay(float fRateOfDecay);
-	inline float		GetRateOfDecay()		const { return m_AudioProperties.m_fRateOfDecay; }
+	FORCEINLINE float	GetRateOfDecay()			const		{ return m_AudioProperties.m_fRateOfDecay; }
 
 
 	void				SetLooping(const Bool& bLooping);
-	inline Bool			GetIsLooping()		const { return m_AudioProperties.m_bLooping; }
+	FORCEINLINE Bool	GetIsLooping()				const		{ return m_AudioProperties.m_bLooping; }
 
 	void				SetStreaming(const Bool& bStreaming);
-	inline Bool			GetIsStreaming()		const { return m_AudioProperties.m_bStreaming; }
+	FORCEINLINE Bool	GetIsStreaming()			const		{ return m_AudioProperties.m_bStreaming; }
 
 
 	// Audio asset access
-	FORCEINLINE TRefRef	GetAudioAssetRef() const							{	return m_AudioAssetRef;	}
+	FORCEINLINE TRefRef	GetAudioAssetRef()			const		{	return m_AudioAssetRef;	}
 	Bool				SetAudioAssetRef(TRefRef AssetRef);
 
-	FORCEINLINE TRefRef	GetOwnerSceneNodeRef() const				{	return m_OwnerSceneNode;	}
+	FORCEINLINE TRefRef	GetOwnerSceneNodeRef()		const		{	return m_OwnerSceneNode;	}
 
 	void				UpdatePreviousPos()	{ m_vPreviousPos = GetTranslate(); }
 

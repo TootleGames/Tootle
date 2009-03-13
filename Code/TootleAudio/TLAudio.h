@@ -7,8 +7,6 @@
 
 namespace TLAudio
 {
-	class TListenerProperties;
-
 	namespace Platform
 	{
 		SyncBool	Init();
@@ -51,6 +49,7 @@ namespace TLAudio
 		Bool		GetVelocity(TRefRef AudioSourceRef, float3& vVelocity);
 
 		Bool		SetMinRange(TRefRef AudioSourceRef, const float fDistance);
+		Bool		SetMaxRange(TRefRef AudioSourceRef, const float fDistance);
 		Bool		SetRateOfDecay(TRefRef AudioSourceRef, const float fRateOfDecay);
 
 
@@ -62,12 +61,4 @@ namespace TLAudio
 	}
 };
 
-// Data for the audio system listener
-class TLAudio::TListenerProperties
-{
-public:
-	float3		m_vPosition;
-	float3		m_vVelocity;
-	float3		m_vLookAt;
-	float3		m_vUp;
-};
+

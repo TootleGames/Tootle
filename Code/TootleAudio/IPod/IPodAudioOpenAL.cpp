@@ -12,18 +12,19 @@ namespace TLAudio
 		{
 			ALboolean					g_bEAX = FALSE;
 						
-			TPtrArray<AudioObj> g_Sources;
-			TPtrArray<AudioObj> g_Buffers;
+			TArray<AudioObj> g_Sources;
+			TArray<AudioObj> g_Buffers;
 		}
 	}
 }
+
+// Define to enable some extra debug traces
+//#define ENABLE_AUDIO_TRACE
 
 using namespace TLAudio;
 
 SyncBool Platform::OpenAL::Init()
 {
-
-
 	// Initialization
 	ALCdevice* pDevice = alcOpenDevice(NULL); // select the "preferred device"
 
@@ -176,9 +177,9 @@ Bool Platform::OpenAL::DetermineFinishedAudio(TArray<TRef>& refArray)
 	// notification of the audio finishing
 	for(u32 uIndex = 0; uIndex < g_Sources.GetSize(); uIndex++)
 	{
-		TPtr<AudioObj> pAO = g_Sources.ElementAt(uIndex);
+		AudioObj& AO = g_Sources.ElementAt(uIndex);
 
-		ALuint objid = pAO->m_OpenALID;
+		ALuint objid = AO.m_OpenALID;
 
 		ALint state;
 		alGetSourcei(objid, AL_SOURCE_STATE, &state);
@@ -194,7 +195,7 @@ Bool Platform::OpenAL::DetermineFinishedAudio(TArray<TRef>& refArray)
 			// Check the state
 			if(state == AL_STOPPED)
 			{
-				refArray.Add(pAO->m_AudioObjRef);
+				refArray.Add(AO.m_AudioObjRef);
 			}
 		}
 	}
@@ -203,14 +204,14 @@ Bool Platform::OpenAL::DetermineFinishedAudio(TArray<TRef>& refArray)
 }
 
 
-TPtr<Platform::OpenAL::AudioObj> Platform::OpenAL::CreateBuffer(TRefRef AudioAssetRef)
+Bool Platform::OpenAL::CreateBuffer(TRefRef AudioAssetRef)
 {
 	// Test to see if we already have a buffer for the audio asset
 	// If so return that
-	TPtr<AudioObj> pAO = g_Buffers.FindPtr(AudioAssetRef);
+	AudioObj* pAO = g_Buffers.Find(AudioAssetRef);
 	
 	if(pAO)
-		return pAO;
+		return TRUE;
 	
 	ALuint uBufferID;
 	
@@ -224,7 +225,7 @@ TPtr<Platform::OpenAL::AudioObj> Platform::OpenAL::CreateBuffer(TRefRef AudioAss
 		TLDebug_Print(strerr);
 		
 		// Failed
-		return TPtr<AudioObj>(NULL);
+		return FALSE;
 	}
 	
 	
@@ -241,7 +242,7 @@ TPtr<Platform::OpenAL::AudioObj> Platform::OpenAL::CreateBuffer(TRefRef AudioAss
 	if(!pAsset.IsValid())
 	{
 		TLDebug_Print("Failed to find audio asset for buffer creation");
-		return TPtr<AudioObj>(NULL);
+		return FALSE;
 	}
 	
 	TLAsset::TAudio* pAudioAsset = static_cast<TLAsset::TAudio*>(pAsset.GetObject());
@@ -269,7 +270,7 @@ TPtr<Platform::OpenAL::AudioObj> Platform::OpenAL::CreateBuffer(TRefRef AudioAss
 		TLDebug_Print(strerr);
 		
 		// Failed
-		return TPtr<AudioObj>(NULL);
+		return FALSE;
 	}
 
  
@@ -278,42 +279,56 @@ TPtr<Platform::OpenAL::AudioObj> Platform::OpenAL::CreateBuffer(TRefRef AudioAss
 	
 	
 	// Success - add to the array
-	pAO = new AudioObj;
+	AudioObj AO;
 	
-	if(pAO)
-	{
-		pAO->m_AudioObjRef = AudioAssetRef;
-		pAO->m_OpenALID = uBufferID;
-		
-		g_Buffers.Add(pAO);
-	}
+	AO.m_AudioObjRef = AudioAssetRef;
+	AO.m_OpenALID = uBufferID;
 	
-	return pAO;
+	g_Buffers.Add(AO);
+	
+	return TRUE;
 }
 
 
 Bool Platform::OpenAL::ReleaseBuffer(TRefRef AudioAssetRef)
 {
-	
-	TPtr<AudioObj> pAO = g_Buffers.FindPtr(AudioAssetRef);
-	
-	if(!pAO)
-	{
+	s32 sIndex = g_Buffers.FindIndex(AudioAssetRef);
+
+	if(sIndex == -1)
+	{	
 		TLDebug_Print("Failed to find audio buffer for release");
 		return FALSE;
 	}
 	
+	AudioObj& AO = g_Buffers.ElementAt(sIndex);
+
+	alDeleteBuffers(1, &AO.m_OpenALID);
+
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("alDeleteBuffers error: ");
+
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+
+		// Failed to remove a buffer that should exist!!!?
+		TLDebug_Break("Failed to delete audio buffer");
+
+		return FALSE;
+	}
+	
 	// Remove the buffer from the array
-	return g_Buffers.Remove(pAO);
+	return g_Buffers.RemoveAt(sIndex);
 }
 
-TPtr<Platform::OpenAL::AudioObj> Platform::OpenAL::CreateSource(TRefRef AudioSourceRef)
+Bool Platform::OpenAL::CreateSource(TRefRef AudioSourceRef)
 {
 	// Check to see if the source already exists and return that if so
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
 	
 	if(pAO)
-		return pAO;
+		return TRUE;
 
 	// Create the source
 	ALuint uSourceID;
@@ -326,21 +341,18 @@ TPtr<Platform::OpenAL::AudioObj> Platform::OpenAL::CreateSource(TRefRef AudioSou
 		TLDebug_Print(strerr);
 		
 		// Failed
-		return TPtr<AudioObj>(NULL);
+		return FALSE;
 	}
 	
 	// Success add to the array
-	pAO = new AudioObj;
+	AudioObj AO;
 	
-	if(pAO)
-	{
-		pAO->m_AudioObjRef = AudioSourceRef;
-		pAO->m_OpenALID = uSourceID;
+	AO.m_AudioObjRef = AudioSourceRef;
+	AO.m_OpenALID = uSourceID;
 
-		g_Sources.Add(pAO);
-	}
+	g_Sources.Add(AO);
 	
-	return pAO;
+	return TRUE;
 }
 
 
@@ -369,16 +381,18 @@ Bool Platform::OpenAL::AttachSourceToBuffer(ALuint& uSource, ALuint& uBuffer, co
 
 Bool Platform::OpenAL::ReleaseSource(TRefRef AudioSourceRef)
 {
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
-	
-	if(!pAO)
+	s32 sIndex = g_Sources.FindIndex(AudioSourceRef);
+
+	if(sIndex == -1)
 	{
 		TLDebug_Print("Failed to find audio source for release");
 		return FALSE;
 	}
 
+	AudioObj& AO = g_Sources.ElementAt(sIndex);
+
 	// Delete the source from the OpenAL system
-	alDeleteSources(1, &pAO->m_OpenALID);
+	alDeleteSources(1, &AO.m_OpenALID);
 
 	ALenum error;
 	if ((error = alGetError()) != AL_NO_ERROR)
@@ -392,9 +406,8 @@ Bool Platform::OpenAL::ReleaseSource(TRefRef AudioSourceRef)
 		return FALSE;
 	}
 
-	
 	// Remove the source object from the array
-	return g_Sources.Remove(pAO);	
+	return g_Sources.RemoveAt(sIndex);	
 }
 
 
@@ -412,20 +425,17 @@ SyncBool Platform::OpenAL::Shutdown()
 
 	ALCcontext* pContext = alcGetCurrentContext();
 
-	ALCdevice* pDevice = alcGetContextsDevice(pContext);
-
-	alcMakeContextCurrent(NULL);
-
-	alcDestroyContext(pContext);
-	alcCloseDevice(pDevice);
-
-/*
-	// Delete the callback handler
-	if(Platform::g_pAudioEngineCallback)
+	if(pContext)
 	{
-		Platform::g_pAudioEngineCallback = NULL;
+		alcMakeContextCurrent(NULL);
+		
+		ALCdevice* pDevice = alcGetContextsDevice(pContext);
+
+		alcDestroyContext(pContext);
+	
+		if(pDevice)
+			alcCloseDevice(pDevice);
 	}
-*/
 
 	return SyncTrue;
 }
@@ -435,9 +445,9 @@ void Platform::OpenAL::RemoveAllSources()
 {
 	for(u32 uIndex = 0; uIndex < g_Sources.GetSize(); uIndex++)
 	{
-		TPtr<AudioObj> pAO = g_Sources.ElementAt(uIndex);
+		AudioObj& AO = g_Sources.ElementAt(uIndex);
 
-		alDeleteSources(1, &pAO->m_OpenALID);
+		alDeleteSources(1, &AO.m_OpenALID);
 
 		ALenum error;
 		if ((error = alGetError()) != AL_NO_ERROR)
@@ -450,9 +460,6 @@ void Platform::OpenAL::RemoveAllSources()
 			// Failed to remove a source that should exist!!!?
 			TLDebug_Break("Failed to delete audio source");
 		}
-
-		// Delete the array element
-		g_Sources.ElementAt(uIndex) = NULL;
 	}
 
 	g_Sources.Empty(TRUE);
@@ -462,9 +469,9 @@ void Platform::OpenAL::RemoveAllBuffers()
 {
 	for(u32 uIndex = 0; uIndex < g_Buffers.GetSize(); uIndex++)
 	{
-		TPtr<AudioObj> pAO = g_Buffers.ElementAt(uIndex);
+		AudioObj& AO = g_Buffers.ElementAt(uIndex);
 
-		alDeleteBuffers(1, &pAO->m_OpenALID);
+		alDeleteBuffers(1, &AO.m_OpenALID);
 
 		ALenum error;
 		if ((error = alGetError()) != AL_NO_ERROR)
@@ -477,9 +484,6 @@ void Platform::OpenAL::RemoveAllBuffers()
 			// Failed to remove a buffer that should exist!!!?
 			TLDebug_Break("Failed to delete audio buffer");
 		}
-
-		// Delete the array element
-		g_Buffers.ElementAt(uIndex) = NULL;
 	}
 
 	g_Buffers.Empty(TRUE);
@@ -489,7 +493,7 @@ void Platform::OpenAL::RemoveAllBuffers()
 
 Bool Platform::OpenAL::StartAudio(TRefRef AudioSourceRef)
 {
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
 	
 	if(!pAO)
 	{
@@ -515,7 +519,7 @@ Bool Platform::OpenAL::StartAudio(TRefRef AudioSourceRef)
 
 Bool Platform::OpenAL::StopAudio(TRefRef AudioSourceRef)
 {
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
 	
 	if(!pAO)
 	{
@@ -542,7 +546,7 @@ Bool Platform::OpenAL::StopAudio(TRefRef AudioSourceRef)
 
 Bool Platform::OpenAL::PauseAudio(TRefRef AudioSourceRef)
 {
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
 	
 	if(!pAO)
 	{
@@ -570,7 +574,7 @@ Bool Platform::OpenAL::PauseAudio(TRefRef AudioSourceRef)
 // Pitch manipulation
 Bool Platform::OpenAL::SetPitch(TRefRef AudioSourceRef, const float fPitch)
 {
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
 	
 	if(!pAO)
 	{
@@ -597,7 +601,7 @@ Bool Platform::OpenAL::SetPitch(TRefRef AudioSourceRef, const float fPitch)
 
 Bool Platform::OpenAL::GetPitch(TRefRef AudioSourceRef, float& fPitch)
 {
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
 	
 	if(!pAO)
 	{
@@ -627,10 +631,9 @@ Bool Platform::OpenAL::GetPitch(TRefRef AudioSourceRef, float& fPitch)
 }
 
 
-
 Bool Platform::OpenAL::SetVolume(TRefRef AudioSourceRef, const float fVolume)
 {
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
 	
 	if(!pAO)
 	{
@@ -657,7 +660,7 @@ Bool Platform::OpenAL::SetVolume(TRefRef AudioSourceRef, const float fVolume)
 
 Bool Platform::OpenAL::GetVolume(TRefRef AudioSourceRef, float& fVolume)
 {
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
 	
 	if(!pAO)
 	{
@@ -689,7 +692,7 @@ Bool Platform::OpenAL::GetVolume(TRefRef AudioSourceRef, float& fVolume)
 
 Bool Platform::OpenAL::SetLooping(TRefRef AudioSourceRef, const Bool bLooping)
 {
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
 	
 	if(!pAO)
 	{
@@ -716,7 +719,7 @@ Bool Platform::OpenAL::SetLooping(TRefRef AudioSourceRef, const Bool bLooping)
 
 Bool Platform::OpenAL::GetIsLooping(TRefRef AudioSourceRef, Bool& bLooping)
 {
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
 	
 	if(!pAO)
 	{
@@ -740,7 +743,9 @@ Bool Platform::OpenAL::GetIsLooping(TRefRef AudioSourceRef, Bool& bLooping)
 	}
 	
 	// Success - write the value to the variable
-	bLooping = bResult;
+	//	gr: compiler says performance warning, so changed
+	//bLooping = (Bool)bResult;
+	bLooping = (bResult==1);
 	
 	return TRUE;	
 }
@@ -749,7 +754,7 @@ Bool Platform::OpenAL::GetIsLooping(TRefRef AudioSourceRef, Bool& bLooping)
 
 Bool Platform::OpenAL::SetPosition(TRefRef AudioSourceRef, const float3 vPosition)
 {
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
 	
 	if(!pAO)
 	{
@@ -770,9 +775,9 @@ Bool Platform::OpenAL::SetPosition(TRefRef AudioSourceRef, const float3 vPositio
 		return FALSE;
 	}
 
-#ifdef _DEBUG
-	TString	str = "Audio Pos: ";
-	str.Appendf("%d (%.2f, %.2f)", pAO->m_OpenALID, vPosition.x, vPosition.y);
+#ifdef ENABLE_AUDIO_TRACE
+	TString	str = "Set Audio Pos: ";
+	str.Appendf("%d (%.2f, %.2f, %.2f)", pAO->m_OpenALID, vPosition.x, vPosition.y, vPosition.z);
 	TLDebug_Print(str);
 #endif
 
@@ -782,7 +787,7 @@ Bool Platform::OpenAL::SetPosition(TRefRef AudioSourceRef, const float3 vPositio
 
 Bool Platform::OpenAL::GetPosition(TRefRef AudioSourceRef, float3& vPosition)
 {
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
 	
 	if(!pAO)
 	{
@@ -814,7 +819,7 @@ Bool Platform::OpenAL::GetPosition(TRefRef AudioSourceRef, float3& vPosition)
 
 Bool Platform::OpenAL::SetVelocity(TRefRef AudioSourceRef, const float3 vVelocity)
 {
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
 	
 	if(!pAO)
 	{
@@ -841,7 +846,7 @@ Bool Platform::OpenAL::SetVelocity(TRefRef AudioSourceRef, const float3 vVelocit
 
 Bool Platform::OpenAL::GetVelocity(TRefRef AudioSourceRef, float3& vVelocity)
 {
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
 	
 	if(!pAO)
 	{
@@ -873,7 +878,7 @@ Bool Platform::OpenAL::GetVelocity(TRefRef AudioSourceRef, float3& vVelocity)
 
 Bool Platform::OpenAL::SetReferenceDistance(TRefRef AudioSourceRef, const float fDistance)
 {
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
 	
 	if(!pAO)
 	{
@@ -897,10 +902,36 @@ Bool Platform::OpenAL::SetReferenceDistance(TRefRef AudioSourceRef, const float 
 	return TRUE;	
 }
 
+Bool Platform::OpenAL::SetMaxDistance(TRefRef AudioSourceRef, const float fDistance)
+{
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
+	
+	if(!pAO)
+	{
+		TLDebug_Print("Failed to find audio source for setmaxdistance request");
+		return FALSE;
+	}
+	
+	alSourcef(pAO->m_OpenALID,AL_MAX_DISTANCE, fDistance);	
+	
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("setmaxdistance alSourcef error: ");
+		
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+		
+		return FALSE;
+	}
+		
+	return TRUE;	
+
+}
 
 Bool Platform::OpenAL::SetRollOffFactor(TRefRef AudioSourceRef, const float fRollOffFactor)
 {
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
 	
 	if(!pAO)
 	{
@@ -929,7 +960,7 @@ Bool Platform::OpenAL::SetRollOffFactor(TRefRef AudioSourceRef, const float fRol
 
 Bool Platform::OpenAL::HasBuffer(TRefRef AudioAssetRef)
 {
-	TPtr<AudioObj> pAO = g_Buffers.FindPtr(AudioAssetRef);
+	AudioObj* pAO = g_Buffers.Find(AudioAssetRef);
 	
 	if(pAO)
 		return TRUE;
@@ -939,7 +970,7 @@ Bool Platform::OpenAL::HasBuffer(TRefRef AudioAssetRef)
 
 Bool Platform::OpenAL::HasSource(TRefRef AudioSourceRef)
 {
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
 	
 	if(pAO)
 		return TRUE;
@@ -950,7 +981,7 @@ Bool Platform::OpenAL::HasSource(TRefRef AudioSourceRef)
 
 Bool Platform::OpenAL::GetBufferID(TRefRef AudioAssetRef, ALuint& buffer)
 {
-	TPtr<AudioObj> pAO = g_Buffers.FindPtr(AudioAssetRef);
+	AudioObj* pAO = g_Buffers.Find(AudioAssetRef);
 	
 	if(pAO)
 	{
@@ -965,7 +996,7 @@ Bool Platform::OpenAL::GetBufferID(TRefRef AudioAssetRef, ALuint& buffer)
 
 Bool Platform::OpenAL::GetSourceID(TRefRef AudioSourceRef, ALuint& source)
 {
-	TPtr<AudioObj> pAO = g_Sources.FindPtr(AudioSourceRef);
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
 	
 	if(pAO)
 	{

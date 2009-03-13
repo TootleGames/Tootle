@@ -70,6 +70,7 @@ void TAudioNode::Initialise(TLMessaging::TMessage& Message)
 		SetPitch(Props.m_fPitch);
 		SetVolume(Props.m_fVolume, TRUE);
 		SetMinRange(Props.m_fMinRange);
+		SetMaxRange(Props.m_fMaxRange);
 		SetRateOfDecay(Props.m_fRateOfDecay);
 		SetLooping(Props.m_bLooping);
 	}
@@ -351,6 +352,24 @@ void TAudioNode::SetMinRange(float fDistance)
 		}
 	}
 }
+
+// Set the min range of this instance
+void TAudioNode::SetMaxRange(float fDistance)
+{
+	// Clamp the min range to within range
+	TLMaths::Limit(fDistance, GetMinRange(), 100000.0f);
+
+	if(m_AudioProperties.m_fMaxRange != fDistance)
+	{
+		// Try and set the min range for the source
+		// If successful set the min range for the node
+		if(TLAudio::Platform::SetMaxRange(GetNodeRef(), fDistance))
+		{
+			m_AudioProperties.m_fMaxRange = fDistance;
+		}
+	}
+}
+
 
 
 // Set the rate of volume decay of this instance

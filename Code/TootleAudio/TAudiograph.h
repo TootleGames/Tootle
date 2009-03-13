@@ -8,11 +8,25 @@
 
 namespace TLAudio
 {
+	class TListenerProperties;
+
 	class TAudiograph;
 	class TAudioNodeFactory;
 
 	extern TPtr<TAudiograph> g_pAudiograph;
 };
+
+
+// Data for the audio system listener
+class TLAudio::TListenerProperties
+{
+public:
+	float3		m_vPosition;
+	float3		m_vVelocity;
+	float3		m_vLookAt;
+	float3		m_vUp;
+};
+
 
 /*
 	TAudiograph class
@@ -77,6 +91,14 @@ public:
 
 	////////////////////////////////////////////////////////
 
+	////////////////////////////////////////////////////////
+	// Audio listener
+	////////////////////////////////////////////////////////
+
+	void			SetListener(const TListenerProperties& Props);
+
+	////////////////////////////////////////////////////////
+
 protected:
 	virtual SyncBool		Initialise();
 	virtual SyncBool		Update(float fTimeStep);
@@ -108,6 +130,8 @@ private:
 
 	float					m_fMusicVolume;		// Audio system master music volume
 	float					m_fEffectsVolume;	// Audio system master effects volume
+
+	TListenerProperties		m_Listener;			// The audio listener aka microphone
 
 	Bool					m_bPause;			// Audio system pause - system will pause all audio
 	Bool					m_bEnabled;			// Audio system enabled - system completely stopped from generating audio
