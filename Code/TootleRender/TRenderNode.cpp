@@ -624,10 +624,42 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 #endif
 		*/
 
+	TRef SceneNodeRef;
+
+	//	need to subscribe to a scene node - todo: expand to get all children like this
+	if ( Message.ImportData("SubTo",SceneNodeRef) )
+	{
+		TPtr<TLScene::TSceneNode>& pSceneNode = TLScene::g_pScenegraph->FindNode(SceneNodeRef);
+		if ( pSceneNode )
+		{
+			this->SubscribeTo( pSceneNode );
+		}
+		else
+		{
+			TLDebug_Break("Node instructed to subscribe to a scene node that doesn't exist");
+		}
+	}
+
+	//	need to publish to a scene node - todo: expand to get all children like this
+	if ( Message.ImportData("PubTo",SceneNodeRef) )
+	{
+		TPtr<TLScene::TSceneNode>& pSceneNode = TLScene::g_pScenegraph->FindNode(SceneNodeRef);
+		if ( pSceneNode )
+		{
+			pSceneNode->SubscribeTo( this );
+		}
+		else
+		{
+			TLDebug_Break("Node instructed to publish to a scene node that doesn't exist");
+		}
+	}
+
+
+
 	if(Message.ImportData("Owner", m_OwnerSceneNode))
 	{
 		// Get the scenegraph node
-		TPtr<TLScene::TSceneNode> pOwner = TLScene::g_pScenegraph->FindNode(m_OwnerSceneNode);
+		TPtr<TLScene::TSceneNode>& pOwner = TLScene::g_pScenegraph->FindNode(m_OwnerSceneNode);
 
 		if(pOwner.IsValid())
 		{

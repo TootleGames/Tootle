@@ -133,6 +133,37 @@ void TLPhysics::TPhysicsNode::Shutdown()
 //---------------------------------------------------------
 void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 {
+	TRef SceneNodeRef;
+
+	//	need to subscribe to a scene node - todo: expand to get all children like this
+	if ( Message.ImportData("SubTo",SceneNodeRef) )
+	{
+		TPtr<TLScene::TSceneNode>& pSceneNode = TLScene::g_pScenegraph->FindNode(SceneNodeRef);
+		if ( pSceneNode )
+		{
+			this->SubscribeTo( pSceneNode );
+		}
+		else
+		{
+			TLDebug_Break("Node instructed to subscribe to a scene node that doesn't exist");
+		}
+	}
+
+	//	need to publish to a scene node - todo: expand to get all children like this
+	if ( Message.ImportData("PubTo",SceneNodeRef) )
+	{
+		TPtr<TLScene::TSceneNode>& pSceneNode = TLScene::g_pScenegraph->FindNode(SceneNodeRef);
+		if ( pSceneNode )
+		{
+			pSceneNode->SubscribeTo( this );
+		}
+		else
+		{
+			TLDebug_Break("Node instructed to publish to a scene node that doesn't exist");
+		}
+	}
+
+
 	if(Message.ImportData("Owner", m_OwnerSceneNode))
 	{
 		// Get the scenegraph node
@@ -226,8 +257,6 @@ void TLPhysics::TPhysicsNode::Update(float fTimeStep)
 	//	gr: doesn't apply if we have no zone
 	if ( m_PhysicsFlags( Flag_ZoneExpected ) &&!m_InitialisedZone )
 		return;
-
-	m_Debug_Collisions.Empty();
 
 	//	set the pre-update pos
 //	m_LastPosition = m_Position;
@@ -349,6 +378,9 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 
 	//	send out transform-changed messages
 	PublishTransformChanges();
+
+	//	send out collision messages
+	PublishCollisions();
 }
 
 
@@ -582,10 +614,6 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode* pOtherNode)
 	TIntersection& Intersection = m_Temp_Intersection;
 	const TIntersection& OtherIntersection = pOtherNode->m_Temp_Intersection;
 	Bool bChanges = FALSE;
-
-#ifdef _DEBUG
-	m_Debug_Collisions.Add( m_Temp_Intersection );
-#endif
 
 	Bool ForceToEdge = TRUE;
 	Bool AddImpulse = FALSE;
@@ -982,6 +1010,61 @@ void TLPhysics::TPhysicsNode::SetZoneNone()
 {
 	GetPhysicsZoneNode().SetZone( TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>(), m_pZoneNode, NULL );
 	//pNode->GetZoneNode().SetZone( pNullZone, pQuadTreeNode, NULL );
+}
+
+
+//-------------------------------------------------------------
+//	
+//-------------------------------------------------------------
+void TLPhysics::TPhysicsNode::AddCollisionInfo(const TLPhysics::TPhysicsNode& OtherNode,const TIntersection& Intersection)
+{
+	//	alloc a new info
+	TCollisionInfo* pCollisionInfo = m_Collisions.AddNew();
+	if ( !pCollisionInfo )
+		return;
+
+	//	set collision info
+	pCollisionInfo->Set( OtherNode, Intersection );
+}
+
+
+
+//----------------------------------------------------
+//	send transform changes as per m_TransformChanges
+//----------------------------------------------------
+void TLPhysics::TPhysicsNode::PublishCollisions()
+{
+	//	no collisions occured
+	if ( !m_Collisions.GetSize() )
+		return;
+
+	//	if no subscribers, just ditch the data
+	if ( !HasSubscribers() )
+	{
+		m_Collisions.Empty();
+		return;
+	}
+
+	//	make message
+	TLMessaging::TMessage Message("Collision", GetNodeRef() );
+	
+	//	write our owner to the message
+	Message.Write( GetOwnerSceneNodeRef() );
+
+	//	add an entry for each collision
+	for ( u32 c=0;	c<m_Collisions.GetSize();	c++ )
+	{
+		TPtr<TBinaryTree>& pCollisionData = Message.AddChild("Collision");
+
+		//	write data
+		m_Collisions[c].ExportData( *pCollisionData );
+	}
+
+	//	send!
+	PublishMessage( Message );
+
+	//	reset array list
+	m_Collisions.Empty();
 }
 
 

@@ -1,9 +1,7 @@
-
 #pragma once
 
-#include "TPhysicsgraph.h"
-
 #include <TootleCore/TLTypes.h>
+#include <TootleCore/TBinaryTree.h>
 
 /*
 
@@ -26,6 +24,10 @@ Rubber on Concrete (wet)					0.25	0.3
 
 namespace TLPhysics
 {
+	class TCollisionInfo;		//	collision info which is sent to subscribers - merge with intersection info?
+	class TIntersection;
+	class TPhysicsNode;
+
 	/*
 	// Force
 	inline float		Force(float fMass, float fAcceleration);
@@ -56,6 +58,8 @@ namespace TLPhysics
 	inline float3		SpringVelocity( float fRestorationConstant);
 	*/
 };
+
+TLCore_DeclareIsDataType( TLPhysics::TCollisionInfo );
 
 
 /*
@@ -182,4 +186,27 @@ inline float3 TLPhysics::SpringVelocity( float fRestorationConstant)
 	return float3(0,0,0);
 }
 */
+
+
+
+//------------------------------------------------------
+//	collision info which is sent to subscribers - merge with intersection info?	
+//------------------------------------------------------
+class TLPhysics::TCollisionInfo
+{
+public:
+	TCollisionInfo() : m_OtherNodeStatic ( FALSE )	{}
+
+	void		Set(const TLPhysics::TPhysicsNode& OtherNode,const TIntersection& Intersection);
+
+	void		ExportData(TBinaryTree& Data);		//	export this collision info into a BinaryData
+	Bool		ImportData(TBinaryTree& Data);		//	get collision info from a BinaryData
+
+protected:
+	TRef		m_OtherNode;			//	ref of other physics node
+	TRef		m_OtherNodeOwner;		//	ref of other physics node's owner (ie. what scene node we collided with)
+	Bool		m_OtherNodeStatic;		//	other node is static
+	float3		m_Intersection;			//	intersection on this object in world space
+};
+
 

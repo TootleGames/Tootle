@@ -626,10 +626,30 @@ void TLPhysics::TPhysicsgraph::DoCollision(TLPhysics::TPhysicsNode* pNodeA,TLPhy
 	
 	//	re-act to collision
 	if ( !pNodeA->GetPhysicsFlags().IsSet( TLPhysics::TPhysicsNode::Flag_Static ) )
-		pNodeA->OnCollision( pNodeB );
+	{
+		if ( pNodeA->OnCollision( pNodeB ) )
+		{
+			pNodeA->AddCollisionInfo( *pNodeB, pNodeA->m_Temp_Intersection );
+		}
+	}
+	else
+	{
+		pNodeA->AddCollisionInfo( *pNodeB, pNodeA->m_Temp_Intersection );
+	}
+
 
 	if ( !pNodeB->GetPhysicsFlags().IsSet( TLPhysics::TPhysicsNode::Flag_Static ) )
-		pNodeB->OnCollision( pNodeA );
+	{
+		if ( pNodeB->OnCollision( pNodeA ) )
+		{
+			pNodeB->AddCollisionInfo( *pNodeA, pNodeB->m_Temp_Intersection );
+		}
+	}
+	else
+	{
+		pNodeB->AddCollisionInfo( *pNodeA, pNodeB->m_Temp_Intersection );
+	}
+
 	
 }
 

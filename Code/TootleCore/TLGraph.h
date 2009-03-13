@@ -196,7 +196,7 @@ public:
 
 	virtual void			Initialise(TLMessaging::TMessage& Message);	//	Initialise message - made into virtual func as it's so commonly used
 	virtual void 			Update(float Timestep);					// Main node update called once per frame
-	virtual void			Shutdown()							{}	// Shutdown routine	- called before being removed form the graph
+	virtual void			Shutdown();							// Shutdown routine	- called before being removed form the graph. Base code sends out a shutdown message to our subscribers
 
 	// Parent manipulation
 	inline TPtr<T>&			GetParent()							{	return m_pParent;	}
@@ -230,6 +230,8 @@ protected:
 	virtual void			UpdateAll(float Timestep);						//	update tree: update self, and children and siblings
 
 	virtual void			OnAdded()							{}			// Added routine			- called once the node has been added to the graph
+
+	virtual void			GetShutdownMessageData(TLMessaging::TMessage& ShutdownMessage)	{	}	//	add additional data to the shutdown message
 
 	// Sibling manipulation
 #ifndef TLGRAPH_OWN_CHILDREN
@@ -315,6 +317,25 @@ void TLGraph::TGraphNode<T>::Initialise(TLMessaging::TMessage& Message)
 	//	GetNodeData().CopyTree( Message.GetData() );
 }
 
+
+//-------------------------------------------------------
+// Shutdown routine	- called before being removed form the graph. Base code sends out a shutdown message to our subscribers
+//-------------------------------------------------------
+template <class T>
+void TLGraph::TGraphNode<T>::Shutdown()
+{
+	if ( HasSubscribers() )
+	{
+		//	this is "OnShutdown" to differentiate from the "Shutdown" COMMAND for the core (and maybe future "Shutdown" commands we might want to send to nodes)
+		TLMessaging::TMessage ShutdownMessage( "OnShutdown", GetNodeRef() );
+		ShutdownMessage.ExportData("Type", GetNodeTypeRef() );
+
+		//	add node-type-specific shutdown data
+		GetShutdownMessageData( ShutdownMessage );
+
+		PublishMessage( ShutdownMessage );
+	}
+}
 
 //-------------------------------------------------------
 //	gr: needs to make sure removes self from former parent?

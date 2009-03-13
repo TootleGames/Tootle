@@ -11,6 +11,7 @@
 #include <TootleCore/TLMaths.h>
 #include "TCollisionShape.h"
 #include <TootleMaths/TQuadTree.h>
+#include "TLPhysics.h"
 
 
 namespace TLMaths
@@ -27,12 +28,14 @@ namespace TLPhysics
 	class TIntersection;
 	class TPhysicsZoneNode;
 
-	extern float3		g_WorldUp;		//	gr: currently a global, change to be on the graph, or per node at some point so individual nodes can have their own gravity direction. Depends on what we need it for
-	extern float3		g_WorldUpNormal;		//	gr: currently a global, change to be on the graph, or per node at some point so individual nodes can have their own gravity direction. Depends on what we need it for
+	extern float3		g_WorldUp;			//	gr: currently a global, change to be on the graph, or per node at some point so individual nodes can have their own gravity direction. Depends on what we need it for
+	extern float3		g_WorldUpNormal;	//	gr: currently a global, change to be on the graph, or per node at some point so individual nodes can have their own gravity direction. Depends on what we need it for
 };
 
 
-
+//------------------------------------------------------
+//	
+//------------------------------------------------------
 class TLPhysics::TPhysicsNode : public TLGraph::TGraphNode<TLPhysics::TPhysicsNode>
 {
 	friend class TLPhysics::TPhysicsgraph;
@@ -94,8 +97,6 @@ public:
 	TCollisionShape*				CalcWorldCollisionShape();				//	calculate transformed collision shape 
 	FORCEINLINE void				SetWorldCollisionShapeInvalid()			{	if ( m_pWorldCollisionShape )	m_pLastWorldCollisionShape = m_pWorldCollisionShape;	m_pWorldCollisionShape = NULL;	m_WorldCollisionShapeChanged = TRUE;	}
 
-	virtual Bool				OnCollision(const TPhysicsNode* pOtherNode);	//	handle collision with other object
-
 //	Bool						SetCollisionZone(TPtr<TLMaths::TQuadTreeZone>& pCollisionZone,TPtr<TPhysicsNode> pThis,const TFixedArray<u32,4>* pChildZoneList);
 
 	FORCEINLINE void						SetCollisionZoneNeedsUpdate(Bool NeedsUpdate=TRUE)		{	GetZoneNode().SetZoneOutOfDate( NeedsUpdate );	}
@@ -111,17 +112,15 @@ public:
 	FORCEINLINE Bool			operator==(TRefRef Ref) const							{	return GetNodeRef() == Ref;	}
 
 protected:
-
 	virtual void				Initialise(TLMessaging::TMessage& Message);	
-
-	const float3&				GetWorldUp() const							{	return HasParent() ? GetParent()->GetWorldUp() : TLPhysics::g_WorldUpNormal;	}
-	
 	void						PostUpdateAll(float Timestep,TLPhysics::TPhysicsgraph* pGraph,TPtr<TLPhysics::TPhysicsNode>& pThis);		//	update tree: update self, and children and siblings
+	const float3&				GetWorldUp() const							{	return HasParent() ? GetParent()->GetWorldUp() : TLPhysics::g_WorldUpNormal;	}
 
 	FORCEINLINE const float3&	GetAccumulatedMovement()					{	return m_AccumulatedMovementValid ? m_Temp_Intersection.m_Movement : CalcAccumulatedMovement();	}
 	FORCEINLINE const float3&	CalcAccumulatedMovement()				 	{	m_AccumulatedMovementValid = TRUE;	return (m_Temp_Intersection.m_Movement = (m_Velocity + m_Force)*m_Temp_ExtrudeTimestep );	}
 	FORCEINLINE void			SetAccumulatedMovementInvalid()				{	m_AccumulatedMovementValid = FALSE;	}
 	FORCEINLINE Bool			IsAccumulatedMovementValid() const			{	return m_AccumulatedMovementValid;	}
+	void						PublishTransformChanges();					//	send transform changes as per m_TransformChanges
 
 	const float3&				GetForce() const							{	return (m_Force);	}
 	float3						GetVelocityAndForce() const					{	return (m_Velocity + m_Force);	}
@@ -132,7 +131,9 @@ protected:
 	TLPhysics::TPhysicsZoneNode&	GetPhysicsZoneNode()					{	return *m_pZoneNode.GetObject<TLPhysics::TPhysicsZoneNode>();	}
 	TPtr<TLMaths::TQuadTreeNode>&	GetZoneNodePtr()						{	return m_pZoneNode;	}
 
-	void						PublishTransformChanges();					//	send transform changes as per m_TransformChanges
+	virtual Bool				OnCollision(const TPhysicsNode* pOtherNode);	//	handle collision with other object
+	void						AddCollisionInfo(const TLPhysics::TPhysicsNode& OtherNode,const TIntersection& Intersection);
+	void						PublishCollisions();						//	send out our list of collisions
 
 public:
 	float					m_Friction;			//	
@@ -140,7 +141,6 @@ public:
 	float					m_Bounce;			//	elasticity :)
 	float					m_Squidge;			//	the amount (factor) the collision shape can be overlapped by (opposite to rigiditty)
 
-	TArray<TIntersection>	m_Debug_Collisions;		//	temporary for debugging - list of all the collisions on the last physics update
 	u32						m_Debug_StaticCollisions;	//	
 
 protected:
@@ -156,6 +156,7 @@ protected:
 	TPtr<TCollisionShape>	m_pCollisionShape;			//	collision shape
 	TPtr<TCollisionShape>	m_pWorldCollisionShape;		//	transformed collision shape, delete/invalidated when pos or collision shape changes
 	TPtr<TCollisionShape>	m_pLastWorldCollisionShape;	//	to save re-allocations of the same object, when we invalidate the world collision shape we set it to this. then when we recalc it, we try to reuse this pointer
+	TArray<TCollisionInfo>	m_Collisions;				//	list of collisions during our last update - published in PostUpdate to subscribers
 
 	Bool					m_InitialisedZone;			//	
 	TPtr<TLMaths::TQuadTreeNode>	m_pZoneNode;		//	should always be allocated - stored in TPtr so nothing else releases it
@@ -166,6 +167,8 @@ protected:
 
 	TRef					m_OwnerSceneNode;			//	"Owner" scene node - if this is set then we automaticcly process some stuff
 };
+
+
 
 
 //---------------------------------------------------------------

@@ -97,6 +97,7 @@ public:
 	const KEYTYPE*				FindKey(const TYPE& Item,const KEYTYPE* pPreviousMatch=NULL) const;	//	find the key for a pair matching this item
 	TYPE*						Add(const KEYTYPE& Key,const TYPE& Item,Bool Overwrite=TRUE);	//	add an item with this key. if the key already exists the item is overwritten if specified, returns the item for the key, overwritten or not. NULL if failed
 	Bool						Remove(const KEYTYPE& Key);				//	remove the item with this key. returns if anything was removed
+	Bool						RemoveItem(const TYPE& Item,Bool RemoveAllMatches=FALSE);	//	remove matching item. (for when we dont know the key) returns if anything was removed
 
 protected:
 	TArray<TLKeyArray::TPair<KEYTYPE,TYPE> >		m_Array;		//	array of pairs
@@ -209,4 +210,36 @@ Bool TKeyArray<KEYTYPE,TYPE>::Remove(const KEYTYPE& Key)
 	return TRUE;
 }
 
+
+
+
+//-------------------------------------------------------
+//	remove matching item. (for when we dont know the key) returns if anything was removed
+//-------------------------------------------------------
+template<typename KEYTYPE,typename TYPE>
+Bool TKeyArray<KEYTYPE,TYPE>::RemoveItem(const TYPE& Item,Bool RemoveAllMatches)
+{
+	Bool AnyRemoved = FALSE;
+
+	//	loop through the list and remove matched items
+	for ( s32 i=m_Array.GetLastIndex();	i>=0;	i-- )
+	{
+		const PAIRTYPE& Pair = m_Array[i];
+
+		//	not this one, next!
+		if ( Pair.m_Item != Item )
+			continue;
+
+		//	is a match, remove
+		m_Array.RemoveAt( i );
+
+		AnyRemoved |= TRUE;
+
+		//	only remove first match
+		if ( !RemoveAllMatches )
+			break;
+	}
+
+	return AnyRemoved;
+}
 
