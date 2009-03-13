@@ -1091,3 +1091,27 @@ const TLMaths::TBox2D& TLRender::TRenderTarget::GetWorldViewBox(TPtr<TScreen>& p
 	return GetWorldViewBox( WorldDepth );
 }
 
+
+TColour& TLRender::TRenderTarget::GetClearColour()							
+{
+	TLDebug_Break("Old code, please use SetClearColour()");
+	return m_ClearColour;	
+}
+
+
+//--------------------------------------------------
+//	
+//--------------------------------------------------
+void TLRender::TRenderTarget::SetClearColour(const TColour& Colour)
+{
+	//	update colour of clear node
+	if ( m_pRenderNodeClear )
+	{
+		m_pRenderNodeClear->SetColour( Colour );
+	}
+	
+	//	set new clear colour
+	m_ClearColour = Colour;
+}
+
+

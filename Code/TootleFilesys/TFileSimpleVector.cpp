@@ -220,7 +220,8 @@ Bool ReadNextFloat(const TString& String,u32& CharIndex, float& Float)
 TLFileSys::TFileSimpleVector::TFileSimpleVector(TRefRef FileRef,TRefRef FileTypeRef) :
 	TFileXml				( FileRef, FileTypeRef ),
 	m_SvgPointScale			( 1.f, 1.f, 1.f ),
-	m_SvgLayerZIncrement	( 0.5f )
+	m_SvgLayerZIncrement	( 0.5f ),
+	m_VertexColoursEnabled	( TRUE )
 {
 }
 
@@ -300,6 +301,11 @@ SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset
 
 	//	init offset
 	m_SvgPointMove.Set( 0.f, 0.f, 0.f );
+
+	//	check for options
+	const TString* pVertexColoursProperty = pSvgTag->GetProperty("TootleVertexColours");
+	if ( pVertexColoursProperty )
+		m_VertexColoursEnabled = !pVertexColoursProperty->IsEqual("false",FALSE);
 
 	//	parse xml to mesh (and it's children)
 	if ( !ImportMesh( pNewMesh, *pSvgTag ) )
@@ -700,7 +706,7 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 				{
 					pTessellator->AddContour( Contours[c] );
 				}
-				pTessellator->SetVertexColour( TagStyle.m_FillColour );
+				pTessellator->SetVertexColour( m_VertexColoursEnabled ? &TagStyle.m_FillColour : NULL );
 				pTessellator->GenerateTessellations( TLMaths::TLTessellator::WindingMode_Odd );
 			}
 		}
@@ -776,7 +782,7 @@ Bool TLFileSys::TFileSimpleVector::ImportRectTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 		//	create quad
 		if ( TagStyle.m_HasFill )
 		{
-			pMesh->GenerateQuad( Vertexes, TagStyle.m_FillColour );
+			pMesh->GenerateQuad( Vertexes, m_VertexColoursEnabled ? &TagStyle.m_FillColour : NULL );
 		}
 
 		//	create line strip
@@ -784,10 +790,10 @@ Bool TLFileSys::TFileSimpleVector::ImportRectTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 		{
 			TLAsset::TMesh::Line* pNewLinestrip = pMesh->GetLines().AddNew();
 			TLAsset::TMesh::Tristrip& NewLinestrip = *pNewLinestrip;
-			NewLinestrip.Add( pMesh->AddVertex( Vertexes[0], TagStyle.m_StrokeColour ) );
-			NewLinestrip.Add( pMesh->AddVertex( Vertexes[1], TagStyle.m_StrokeColour ) );
-			NewLinestrip.Add( pMesh->AddVertex( Vertexes[2], TagStyle.m_StrokeColour ) );
-			NewLinestrip.Add( pMesh->AddVertex( Vertexes[3], TagStyle.m_StrokeColour ) );
+			NewLinestrip.Add( pMesh->AddVertex( Vertexes[0], m_VertexColoursEnabled ? &TagStyle.m_StrokeColour : NULL ) );
+			NewLinestrip.Add( pMesh->AddVertex( Vertexes[1], m_VertexColoursEnabled ? &TagStyle.m_StrokeColour : NULL ) );
+			NewLinestrip.Add( pMesh->AddVertex( Vertexes[2], m_VertexColoursEnabled ? &TagStyle.m_StrokeColour : NULL ) );
+			NewLinestrip.Add( pMesh->AddVertex( Vertexes[3], m_VertexColoursEnabled ? &TagStyle.m_StrokeColour : NULL ) );
 		}
 	}
 
@@ -850,7 +856,7 @@ void TLFileSys::TFileSimpleVector::CreateMeshLineStrip(TLAsset::TMesh& Mesh,TLMa
 		}
 		else
 		{
-			VertexIndex = Mesh.AddVertex( ContourPoints[p], LineStyle.m_StrokeColour );
+			VertexIndex = Mesh.AddVertex( ContourPoints[p], m_VertexColoursEnabled ? &LineStyle.m_StrokeColour : NULL );
 		}
 
 		pNewLine->Add( VertexIndex );

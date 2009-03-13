@@ -96,21 +96,20 @@ public:
 	void					GenerateLine(const TArray<float3>& LinePoints,const TColour& Colour)	{	GenerateLine( LinePoints, &Colour );	}
 	void					GenerateLine(const TArray<float3>& LinePoints,const TColour* pColour);	//	generate a line
 
-	void					GenerateQuad(const TLMaths::TBox2D& Box,const TColour& Colour,float z=0.f);		//	generate a square mesh from a 2d box
-	void					GenerateQuad(const float2& Center,float Size,const TColour& Colour,float z=0.f);			//	generate a square mesh around a point
-	Bool					GenerateQuad(const TArray<float3>& Outline,const TColour& Colour);			//	turn an outline of points into a quad/tri-strip
+	void					GenerateQuad(const TLMaths::TBox2D& Box,const TColour* pColour=NULL,float z=0.f);		//	generate a square mesh from a 2d box
+	void					GenerateQuad(const float2& Center,float Size,const TColour* pColour=NULL,float z=0.f);			//	generate a square mesh around a point
+	Bool					GenerateQuad(const TArray<float3>& Outline,const TColour* pColour=NULL);			//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const TArray<float3>& Outline,const TArray<TColour>& Colours);	//	turn an outline of points into a quad/tri-strip
-	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour& Colour);	//	turn an outline of points into a quad/tri-strip
-	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour& ColourA,const TColour& ColourB,const TColour& ColourC,const TColour& ColourD);	//	turn an outline of points into a quad/tri-strip
-	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD);		//	turn an outline of points into a quad/tri-strip
+	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour* pColour=NULL);	//	turn an outline of points into a quad/tri-strip
+	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour* pColourA,const TColour* pColourB,const TColour* pColourC,const TColour* pColourD);	//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const TFixedArray<s32,4> OutlineVertIndexes);		//	turn an outline of points into a quad/tri-strip
-	void					GenerateQuadOutline(const TLMaths::TBox2D& Box,const TColour* pColour,float z=0.f);		//	generate a square mesh from a 2d box
+	void					GenerateQuadOutline(const TLMaths::TBox2D& Box,const TColour* pColour=NULL,float z=0.f);		//	generate a square mesh from a 2d box
 
 	void					GenerateRainbowColours();							//	create colours for each vertex
 
 	//	vertex manipulation
-	s32						AddVertex(const float3& VertexPos);							//	add vertex to the list, makes up normals and colours if required
-	s32						AddVertex(const float3& VertexPos,const TColour& Colour);	//	add vertex with colour to the list, pad normals and colours if previously didnt exist
+	s32						AddVertex(const float3& VertexPos,const TColour* pColour=NULL);	//	add vertex to the list, makes up normals and colours if required
+	FORCEINLINE s32			AddVertex(const float3& VertexPos,const TColour& Colour)		{	return AddVertex( VertexPos, &Colour );	}
 	Bool					RemoveVertex(u16 VertexIndex);								//	remove a vertex, remove it's colour, remove any polygons that use this vertex, and correct the vertex indexes in polygons (anything > VI needs reducing). returns if any changes to polygons made
 	Bool					ReplaceVertex(u16 OldVertexIndex,u16 NewVertexIndex);		//	find all uses of OldVertexIndex in polygons and swap them for NewVertexIndex 
 	inline void				ScaleVerts(float Scale,u16 FirstVert=0,s32 LastVert=-1)				{	ScaleVerts( float3( Scale, Scale, Scale ), FirstVert, LastVert );	}

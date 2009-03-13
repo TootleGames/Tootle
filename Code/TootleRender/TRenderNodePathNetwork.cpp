@@ -11,7 +11,6 @@
 
 TLRender::TRenderNodePathNetwork::TRenderNodePathNetwork(TRefRef RenderNodeRef,TRefRef TypeRef) :
 	TRenderNodeDebugMesh	( RenderNodeRef, TypeRef ),
-	m_PathColour			( 1.f, 1.f, 1.f, 1.f ),
 	m_EnableMarkers			( TRUE )
 {
 }
@@ -28,9 +27,6 @@ void TLRender::TRenderNodePathNetwork::Initialise(TLMessaging::TMessage& Message
 	//	debug the points on the path
 	GetRenderFlags().Clear( TLRender::TRenderNode::RenderFlags::DepthRead );
 	GetRenderFlags().Clear( TLRender::TRenderNode::RenderFlags::EnableCull );
-
-	//	read out colour
-	Message.ImportData("Colour", m_PathColour );
 
 	//	read marker setting
 	Message.ImportData("Markers", m_EnableMarkers );
@@ -186,15 +182,15 @@ void TLRender::TRenderNodePathNetwork::InitMeshFromPathNetwork(TLAsset::TPathNet
 
 						//	make up quad
 						//	this line is corrupting mem!
-						Mesh.GenerateQuad( ArrowHeadLeft.xyz(0.f), ArrowHeadRight.xyz(0.f), ArrowTailRight.xyz(0.f), ArrowTailLeft.xyz(0.f), m_PathColour );
+						Mesh.GenerateQuad( ArrowHeadLeft.xyz(0.f), ArrowHeadRight.xyz(0.f), ArrowTailRight.xyz(0.f), ArrowTailLeft.xyz(0.f) );
 					}
 					else
 					{
 						//	make up triangle
 						TLAsset::TMesh::Triangle* pTriangle = Mesh.GetTriangles().AddNew();
-						pTriangle->x = Mesh.AddVertex( ArrowHeadPos.xyz(0.f), m_PathColour );
-						pTriangle->y = Mesh.AddVertex( ArrowTailLeft.xyz(0.f), m_PathColour );
-						pTriangle->z = Mesh.AddVertex( ArrowTailRight.xyz(0.f), m_PathColour );
+						pTriangle->x = Mesh.AddVertex( ArrowHeadPos.xyz(0.f) );
+						pTriangle->y = Mesh.AddVertex( ArrowTailLeft.xyz(0.f) );
+						pTriangle->z = Mesh.AddVertex( ArrowTailRight.xyz(0.f) );
 					}
 				}
 			}
@@ -218,7 +214,7 @@ s32 TLRender::TRenderNodePathNetwork::GetPathNodeVertex(TLAsset::TPathNetwork& P
 
 	//	doesn't exist, create new vertex...
 	//	add vertex to mesh
-	s32 VertexIndex = GetMeshAsset()->AddVertex( PathNode.GetPosition().xyz(0.f), m_PathColour );
+	s32 VertexIndex = GetMeshAsset()->AddVertex( PathNode.GetPosition().xyz(0.f) );
 
 	//	failed to add vertex?
 	if ( VertexIndex == -1 )

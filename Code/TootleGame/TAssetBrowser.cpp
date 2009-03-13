@@ -60,7 +60,7 @@ SyncBool TLGame::TAssetBrowser::Initialise()
 	m_RenderTargetRef = pRenderTarget->GetRef();
 
 	//	setup render target
-	pRenderTarget->GetClearColour().Set( 0.0f, 0.0f, 0.0f, 0.7f );
+	pRenderTarget->SetClearColour( TColour( 0.0f, 0.0f, 0.0f, 0.7f ) );
 	
 	//	create camera
 	TPtr<TLRender::TCamera> pCamera = new TLRender::TOrthoCamera;

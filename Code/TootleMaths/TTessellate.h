@@ -117,17 +117,18 @@ class TLMaths::TTessellator
 public:
 	TTessellator(TPtr<TLAsset::TMesh>& pMesh);
 		
-	void			AddContour(TPtr<TLMaths::TContour>& pContour)	{	m_Contours.Add( pContour );	}
+	void				AddContour(TPtr<TLMaths::TContour>& pContour)	{	m_Contours.Add( pContour );	}
 		
-	virtual Bool	GenerateTessellations(TLMaths::TLTessellator::TWindingMode WindingMode,float zNormal=-1.f)	{	return FALSE;	}			//	generate new polygons into this mesh
+	virtual Bool		GenerateTessellations(TLMaths::TLTessellator::TWindingMode WindingMode,float zNormal=-1.f)	{	return FALSE;	}			//	generate new polygons into this mesh
 		
-	void			SetVertexColour(const TColour& Colour)		{	m_VertexColour = Colour;	m_VertexColourValid = TRUE;	}
+	FORCEINLINE void	SetVertexColour(const TColour& Colour)		{	m_VertexColour = Colour;	m_VertexColourValid = TRUE;	}
+	FORCEINLINE void	SetVertexColour(const TColour* pColour)		{	m_VertexColourValid = (pColour!=NULL);	if ( pColour )	m_VertexColour = *pColour;	}
 
 public:
 	TPtrArray<TLMaths::TContour>	m_Contours;
 	TPtr<TLAsset::TMesh>			m_pMesh;
 	TColour							m_VertexColour;			//	vertexes get coloured to this
-	Bool							m_VertexColourValid;	//	polygon HAS any colour
+	Bool							m_VertexColourValid;	//	polygon HAS any colour - if not, we dont add colours to vertexes
 };
 
 

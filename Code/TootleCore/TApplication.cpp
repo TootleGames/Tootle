@@ -372,7 +372,7 @@ Bool TApplication::TApplicationState_Bootup::CreateIntroScreen()
 		}
 	
 		m_RenderTarget = pRenderTarget->GetRef();
-		pRenderTarget->GetClearColour().Set( 1.f, 1.f, 1.f, 1.f );
+		pRenderTarget->SetClearColour( TColour( 1.f, 1.f, 1.f, 1.f ) );
 	
 		TPtr<TLRender::TCamera> pCamera = new TLRender::TOrthoCamera;
 		pRenderTarget->SetCamera( pCamera );

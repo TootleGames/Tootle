@@ -161,7 +161,7 @@ SyncBool TLDebugFile::LoadDebugFile_MeshQuad(TPtr<TLFileSys::TFile>& pFile)
 	QuadOutline[1] = float3( 1, 0, 0 );
 	QuadOutline[2] = float3( 1, 1, 0 );
 	QuadOutline[3] = float3( 0, 1, 0 );
-	pMesh->GenerateQuad( QuadOutline, TColour(1.f, 1.f, 1.f, 1.f ) );
+	pMesh->GenerateQuad( QuadOutline );
 
 	return LoadDebugFile_Asset( pFile, pMesh );
 }

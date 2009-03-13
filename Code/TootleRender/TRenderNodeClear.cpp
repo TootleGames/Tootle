@@ -16,7 +16,7 @@ TLRender::TRenderNodeClear::TRenderNodeClear(TRefRef NodeRef,TRefRef TypeRef) :
 //-------------------------------------------------------
 //	resize the mesh (also creates as required)
 //-------------------------------------------------------
-void TLRender::TRenderNodeClear::SetSize(const Type4<s32>& ClearSize,float NearZ,const TColour& ClearColour)
+void TLRender::TRenderNodeClear::SetSize(const Type4<s32>& ClearSize,float NearZ)
 {
 	TLAsset::TMesh* pClearMesh = m_pClearMesh.GetObject();
 
@@ -37,10 +37,10 @@ void TLRender::TRenderNodeClear::SetSize(const Type4<s32>& ClearSize,float NearZ
 		ClearTristrip.SetSize(4);
 
 		//	add vert for each corner
-		ClearTristrip[0] = pClearMesh->AddVertex( float3(0,0,0), ClearColour );
-		ClearTristrip[1] = pClearMesh->AddVertex( float3(0,0,0), ClearColour );
-		ClearTristrip[2] = pClearMesh->AddVertex( float3(0,0,0), ClearColour );
-		ClearTristrip[3] = pClearMesh->AddVertex( float3(0,0,0), ClearColour );
+		ClearTristrip[0] = pClearMesh->AddVertex( float3(0,0,0) );
+		ClearTristrip[1] = pClearMesh->AddVertex( float3(0,0,0) );
+		ClearTristrip[2] = pClearMesh->AddVertex( float3(0,0,0) );
+		ClearTristrip[3] = pClearMesh->AddVertex( float3(0,0,0) );
 	}
 
 	//	update vert positions
@@ -53,7 +53,5 @@ void TLRender::TRenderNodeClear::SetSize(const Type4<s32>& ClearSize,float NearZ
 	pClearMesh->GetVertex(1).Set( Left, Top, NearZ );
 	pClearMesh->GetVertex(2).Set( Right, Bottom, NearZ );
 	pClearMesh->GetVertex(3).Set( Right, Top, NearZ );
-
-	pClearMesh->GetColours().SetAll( ClearColour );
 }
 

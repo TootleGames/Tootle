@@ -50,7 +50,6 @@ protected:
 
 public:
 	Bool					m_EnableMarkers;	//	enable directional arrows etc
-	TColour					m_PathColour;		//	colour of vertexes for the lines
 	TRef					m_PathNetworkRef;	//	asset ref of path network
 	TKeyArray<TRef,u16>		m_PathNodeVertex;	//	there's a vertex for each path node, this keeps track of it
 };

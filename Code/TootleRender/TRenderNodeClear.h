@@ -21,7 +21,7 @@ public:
 
 	virtual TPtr<TLAsset::TMesh>&	GetMeshAsset() 		{	return m_pClearMesh;	}
 
-	void							SetSize(const Type4<s32>& ClearSize,float NearZ,const TColour& ClearColour);	//	resize the mesh (also creates as required)
+	void							SetSize(const Type4<s32>& ClearSize,float NearZ);	//	resize the mesh (also creates as required)
 
 public:
 	TPtr<TLAsset::TMesh>			m_pClearMesh;		//	just a quad

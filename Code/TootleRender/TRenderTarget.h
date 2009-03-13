@@ -66,7 +66,9 @@ public:
 
 	void					SetCamera(TPtr<TCamera>& pCamera)			{	m_pCamera = pCamera;	OnSizeChanged();	}	//	gr: call OnSizeChanged to do camera some initialisation - specficcly for the ortho
 	TPtr<TCamera>&			GetCamera()									{	return m_pCamera;	}
-	TColour&				GetClearColour()							{	return m_ClearColour;	}
+	TColour&				GetClearColour();
+	const TColour&			GetClearColour() const						{	return m_ClearColour;	}
+	void					SetClearColour(const TColour& Colour);		//	set new clear colour
 	TFlags<Flags>&			GetFlags()									{	return m_Flags;	}
 	Bool					GetFlag(TRenderTarget::Flags Flag) const	{	return m_Flags(Flag);	}
 	FORCEINLINE void		SetEnabled(Bool Enabled)					{	m_Flags.Set( Flag_Enabled, Enabled );	}
