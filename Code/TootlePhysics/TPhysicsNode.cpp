@@ -473,6 +473,10 @@ void TLPhysics::TPhysicsNode::PublishTransformChanges()
 	if ( !TranslationChanged && !RotationChanged && !ScaleChanged )
 		return;
 
+	//	no one to send a message to 
+	if ( !HasSubscribers() )
+		return;
+
 	TLMessaging::TMessage Message("OnTransform", GetNodeRef() );
 
 	if ( TranslationChanged )

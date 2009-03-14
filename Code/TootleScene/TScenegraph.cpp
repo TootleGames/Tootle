@@ -52,6 +52,19 @@ SyncBool TScenegraph::Initialise()
 
 
 
+SyncBool TScenegraph::Shutdown()
+{
+	if ( m_pRootZone )
+	{
+		m_pRootZone->Shutdown();
+		m_pRootZone = NULL;
+	}
+
+	return TLGraph::TGraph<TSceneNode>::Shutdown();
+}
+
+
+
 Bool TScenegraph::GetNearestNodes(const TLMaths::TLine& Line, const float& fDistance, TPtrArray<TSceneNode_Transform>& pArray)
 {
 	TPtr<TSceneNode> pRootNode = GetRootNode();
@@ -113,5 +126,13 @@ Bool TScenegraph::IsNodeWithinRange(TPtr<TSceneNode>& pNode, const TLMaths::TLin
 }
 
 
+//---------------------------------------------------
+//	set a new root zone	
+//---------------------------------------------------
+void TLScene::TScenegraph::SetRootZone(TPtr<TLMaths::TQuadTreeZone>& pZone)
+{
+	m_pRootZone = pZone;
 
-
+	m_pRootZone->DivideAll( m_pRootZone );
+}
+	

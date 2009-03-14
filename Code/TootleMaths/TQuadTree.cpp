@@ -1,12 +1,9 @@
 #include "TQuadTree.h"
 
 
-#define MAX_NODES_PER_ZONE	2
-#define MIN_ZONE_SIZE		6.0f	//	box width or height must be at least this big (best would be a bit bigger than smallest collision object)
 
-//	gr: faster with culling empty zones
-//	gr: some issue after DoAddNode where we delete the children too early, whilst we're adding a node to it...
-//	#define CULL_EMPTY_ZONES	//	delete child zones if theyre all empty
+//	gr: currently disabled as there are some ptr issues
+//#define ENABLE_CULL_EMPTY_ZONES
 
 
 namespace TLMaths
@@ -252,7 +249,14 @@ const TLMaths::TBox2D& TLMaths::TQuadTreeNode::GetZoneShape()
 
 
 
-
+TLMaths::TQuadTreeZone::TQuadTreeZone(const TLMaths::TBox2D& ZoneShape,const TLMaths::TQuadTreeParams& ZoneParams) :
+	m_Shape					( ZoneShape ),
+	m_Nodes					( &TLMaths::TLQuadTree::SortNodes ),
+	m_SiblingZoneIndexes	( 0 ),
+	m_SiblingIndex			( -1 ),
+	m_ZoneParams			( ZoneParams )
+{
+}
 
 
 TLMaths::TQuadTreeZone::TQuadTreeZone(const TLMaths::TBox2D& ZoneShape,TPtr<TLMaths::TQuadTreeZone>& pParent) :
@@ -261,8 +265,15 @@ TLMaths::TQuadTreeZone::TQuadTreeZone(const TLMaths::TBox2D& ZoneShape,TPtr<TLMa
 	m_Nodes		( &TLMaths::TLQuadTree::SortNodes ),
 	m_SiblingZoneIndexes	( 0 ),
 	m_SiblingIndex			( -1 )
-
 {
+	if ( !pParent )
+	{
+		TLDebug_Break("Wrong constructor for Zone. If root use the other one, if not, parent missing.");
+		return;
+	}
+
+	//	copy parent's params
+	m_ZoneParams = pParent->m_ZoneParams;
 }
 
 
@@ -327,7 +338,7 @@ Bool TLMaths::TQuadTreeZone::AddNode(TPtr<TLMaths::TQuadTreeNode>& pNode,TPtr<TL
 
 	//	fits in this zone, if we have X children already, we need to split
 	//	gr: changed this from >= to >
-	if ( NewSize > MAX_NODES_PER_ZONE && m_Children.GetSize() == 0 )
+	if ( NewSize > m_ZoneParams.m_MaxNodesPerZone && m_Children.GetSize() == 0 )
 	{
 		if ( Divide(pThis) )
 		{
@@ -512,22 +523,25 @@ void TLMaths::TQuadTreeZone::OnChildZoneNodesChanged()
 	m_ChildrenWithNodes.SetSize( WithNodesIndex );
 	m_ChildrenWithNonStaticNodes.SetSize( WithNonStaticNodesIndex );
 
-#ifdef CULL_EMPTY_ZONES
-	//	if we have ANY nodes below us in the tree, abort cull
-	if ( !HasChildrenAnyNodes() )
+#ifdef ENABLE_CULL_EMPTY_ZONES
+	if ( m_ZoneParams.m_CullEmptyZones )
 	{
-		//	children are empty, remove them!
-		m_Children.Empty();
-
-		m_ChildrenWithNodes.Empty();
-
-		//	need to remove child lists in nodes for our node-is-intersecting-multiple-child-zones thing
-		for ( u32 n=0;	n<m_Nodes.GetSize();	n++ )
+		//	if we have ANY nodes below us in the tree, abort cull
+		if ( !HasChildrenAnyNodes() )
 		{
-			m_Nodes[n]->SetChildZonesNone();
+			//	children are empty, remove them!
+			m_Children.Empty();
+
+			m_ChildrenWithNodes.Empty();
+
+			//	need to remove child lists in nodes for our node-is-intersecting-multiple-child-zones thing
+			for ( u32 n=0;	n<m_Nodes.GetSize();	n++ )
+			{
+				m_Nodes[n]->SetChildZonesNone();
+			}
 		}
 	}
-#endif
+#endif // ENABLE_CULL_EMPTY_ZONES
 
 	//	update parent's children-with-nodes status too
 	TQuadTreeZone* pParentZone = GetParentZone().GetObject();
@@ -631,28 +645,28 @@ void TLMaths::TQuadTreeZone::SetSiblingZones(TPtrArray<TQuadTreeZone>& Siblings)
 //---------------------------------------------------
 Bool TLMaths::TQuadTreeZone::Divide(TPtr<TLMaths::TQuadTreeZone>& pThis)
 {
+	//	gr: note, this is 2D, Z size is same as before, need 8 boxes for 3D
 	//	split shape
 	const TLMaths::TBox2D& CollisionBox = m_Shape;
+	float2 BoxHalfSize = CollisionBox.GetSize() * 0.5f;
+
+	//	dont create children if child boxes will be too small
+	if ( BoxHalfSize.x < m_ZoneParams.m_MinZoneSize || BoxHalfSize.y < m_ZoneParams.m_MinZoneSize )
+		return FALSE;
+
+	//	gr: this can all be sped up, but it's not a big deal
 	const float2& BoxMin = CollisionBox.GetMin();
 	const float2& BoxMax = CollisionBox.GetMax();
 
-	//	gr: note, this is 2D, Z size is same as before, need 8 boxes for 3D
-	float2 BoxHalf = BoxMax - BoxMin;
-	BoxHalf *= 0.5f;
-
-	//	dont create children if child boxes will be too small
-	if ( BoxHalf.x < MIN_ZONE_SIZE || BoxHalf.y < MIN_ZONE_SIZE )
-		return FALSE;
-
 	float2 BoxMinTL( BoxMin.x,				BoxMin.y );
-	float2 BoxMinTR( BoxMin.x + BoxHalf.x,	BoxMin.y );
-	float2 BoxMinBL( BoxMin.x,				BoxMin.y + BoxHalf.y );
-	float2 BoxMinBR( BoxMin.x + BoxHalf.x,	BoxMin.y + BoxHalf.y );
+	float2 BoxMinTR( BoxMin.x + BoxHalfSize.x,	BoxMin.y );
+	float2 BoxMinBL( BoxMin.x,				BoxMin.y + BoxHalfSize.y );
+	float2 BoxMinBR( BoxMin.x + BoxHalfSize.x,	BoxMin.y + BoxHalfSize.y );
 
-	TLMaths::TBox2D BoxTL( BoxMinTL, BoxMinTL + BoxHalf );
-	TLMaths::TBox2D BoxTR( BoxMinTR, BoxMinTR + BoxHalf );
-	TLMaths::TBox2D BoxBL( BoxMinBL, BoxMinBL + BoxHalf );
-	TLMaths::TBox2D BoxBR( BoxMinBR, BoxMinBR + BoxHalf );
+	TLMaths::TBox2D BoxTL( BoxMinTL, BoxMinTL + BoxHalfSize );
+	TLMaths::TBox2D BoxTR( BoxMinTR, BoxMinTR + BoxHalfSize );
+	TLMaths::TBox2D BoxBL( BoxMinBL, BoxMinBL + BoxHalfSize );
+	TLMaths::TBox2D BoxBR( BoxMinBR, BoxMinBR + BoxHalfSize );
 
 	m_Children.Add( new TQuadTreeZone( BoxTL, pThis ) );
 	m_Children.Add( new TQuadTreeZone( BoxTR, pThis ) );

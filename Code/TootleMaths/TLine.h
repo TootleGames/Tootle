@@ -62,10 +62,11 @@ public:
 class TLMaths::TLine2D
 {
 public:
-	TLine2D()				{	}
-	TLine2D(const float2& Start,const float2& End);
-	TLine2D(const float3& Start,const float3& End);
-	TLine2D(const TLine& Line);
+	TLine2D()										: m_Start ( 0.f, 0.f ), m_End ( 0.f, 0.f )		{}
+	TLine2D(const float2& Start,const float2& End)	: m_Start ( Start ), m_End ( End )				{}
+	TLine2D(const float3& Start,const float3& End)	: m_Start ( Start.xy() ), m_End ( End.xy() )	{}
+	TLine2D(const TLine& Line)						: m_Start ( Line.GetStart().xy() ), m_End ( Line.GetEnd().xy() )	{}
+	TLine2D(const TLine2D& Line)					: m_Start ( Line.GetStart() ), m_End ( Line.GetEnd() )	{}
 
 	static TRef			GetTypeRef()									{	return "Line2";	}
 

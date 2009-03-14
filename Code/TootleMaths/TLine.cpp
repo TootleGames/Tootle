@@ -247,23 +247,6 @@ float TLMaths::TLine::GetDistanceSq(const float3& Position) const
 }
 
 
-
-
-
-TLMaths::TLine2D::TLine2D(const float2& Start,const float2& End) : 
-	m_Start	( Start ),
-	m_End	( End )
-{
-}
-
-TLMaths::TLine2D::TLine2D(const float3& Start,const float3& End) : 
-	m_Start	( Start.x, Start.y ),
-	m_End	( End.x, End.y )
-{
-}
-
-
-
 	
 //-----------------------------------------------------------
 //	find the point along the line closest to Position

@@ -7,6 +7,14 @@
 
 #define TLGRAPH_OWN_CHILDREN
 
+//#define DEBUG_PRINT_GRAPH_CHANGES	//	enable "removing node XXX" and "requesting remove node XX" etc prints
+
+
+//	if enabled we check the parent heirachy on AddNode() - if a parent is being removed we dont ADD the node. 
+//	Means more request-list checks - but means we WONT have potentially non-added nodes in the ADD request list
+//	if disabled it's blindly added, and adds potentially non-added nodes to the add list. But much less list checks
+//#define DONT_ADD_NODE_WHERE_PARENT_IS_BEING_REMOVED
+
 
 #include "TGraphBase.h"
 #include "TLMessaging.h"
@@ -1146,25 +1154,44 @@ Bool TLGraph::TGraph<T>::AddNode(TPtr<T>& pNode,TPtr<T>& pParent)
 	}
 #endif
 
-	//	check parent's validity
-	TPtr<TGraphUpdateRequest>& pRequest = m_RequestQueue.FindPtr( pParent->GetNodeRef() );
-	if ( pRequest )
+#ifdef DONT_ADD_NODE_WHERE_PARENT_IS_BEING_REMOVED
+	Bool CheckParentIsInGraph = TRUE;
+
+	//	check UP the tree to see if a parent is going to be removed (not just parent, but parent's parent etc)
+	T* pCurrentParent = pParent;
+	while ( pCurrentParent )
 	{
-		//	check to see if the parent is in the to-remove queue? abort add if it is
-		if ( pRequest->IsRemoveRequest() )
+		//	check parent's validity
+		TPtr<TGraphUpdateRequest>& pRequest = m_RequestQueue.FindPtr( pCurrentParent->GetNodeRef() );
+		if ( pRequest )
 		{
-#ifdef _DEBUG
-			TTempString Debug_String("Trying to add node ");
-			pNode->GetNodeRef().GetString( Debug_String );
-			Debug_String.Append(" to parent node ");
-			pParent->GetNodeRef().GetString( Debug_String );
-			Debug_String.Append(" which is in the remove queue. Aborting add.");
-			TLDebug_Warning( Debug_String );
-#endif
-			return FALSE;
+			//	check to see if the parent is in the to-remove queue? abort add if it is
+			if ( pRequest->IsRemoveRequest() )
+			{
+	#ifdef _DEBUG
+				TTempString Debug_String("Trying to add node ");
+				pNode->GetNodeRef().GetString( Debug_String );
+				Debug_String.Append(" to parent node ");
+				pParent->GetNodeRef().GetString( Debug_String );
+				Debug_String.Append(" which is in the remove queue. Aborting add.");
+				TLDebug_Warning( Debug_String );
+	#endif
+				return FALSE;
+			}
+			else
+			{
+				//	parent is about to be added, so treat as okay
+				CheckParentIsInGraph = FALSE;
+				break;
+			}
 		}
+
+		//	try next parent
+		pCurrentParent = pCurrentParent->GetParent();
 	}
-	else if ( !IsInGraph( pParent, FALSE ) )
+
+	//	there is no add/remove request for a parent, so check it's in the graph
+	if ( CheckParentIsInGraph && !IsInGraph( pParent, FALSE ) )
 	{
 #ifdef _DEBUG
 		TTempString Debug_String("Trying to add node ");
@@ -1176,6 +1203,7 @@ Bool TLGraph::TGraph<T>::AddNode(TPtr<T>& pNode,TPtr<T>& pParent)
 #endif
 		return FALSE;
 	}
+#endif
 
 	//	add the node to the requet queue
 	m_RequestQueue.AddNewPtr( new TGraphUpdateRequest(pNode, pParent, FALSE) );
@@ -1260,7 +1288,7 @@ Bool TLGraph::TGraph<T>::RemoveNode(TPtr<T> pNode)
 		return TRUE;
 	}
 
-#ifdef _DEBUG
+#if defined(_DEBUG) && defined(DEBUG_PRINT_GRAPH_CHANGES)
 	TTempString Debug_String("Requesting remove node ");
 	pNode->GetNodeRef().GetString( Debug_String );
 	TLDebug_Print(Debug_String);
@@ -1375,8 +1403,19 @@ void TLGraph::TGraph<T>::DoAddNode(TPtr<T>& pNode, TPtr<T>& pParent)
 	// Final check to ensure the parent node is in the graph
 	if(!IsInGraph(pParent))
 	{
-		// Should not get here...
-		TLDebug_Break("Parent isnt in graph(any more?)");
+		#if defined(_DEBUG)
+		{
+			#ifdef DONT_ADD_NODE_WHERE_PARENT_IS_BEING_REMOVED
+				//	Should not get here...
+				TLDebug_Break("Parent isnt in graph(any more?)");
+			#else
+				//	Should not get here...
+				TTempString Debug_String("Parent isn't in graph(any more?) upon add of ");
+				pNode->GetNodeRef().GetString( Debug_String );
+				TLDebug_Warning( Debug_String );
+			#endif
+		}
+		#endif
 		return;
 	}
 
@@ -1415,7 +1454,7 @@ void TLGraph::TGraph<T>::DoRemoveNode(TPtr<T>& pNode,TPtr<T>& pParent)
 	//	save off node ref to avoid any possible NULL accesses
 	TRef NodeRef = pNode->GetNodeRef();
 
-#ifdef _DEBUG
+#if defined(_DEBUG) && defined(DEBUG_PRINT_GRAPH_CHANGES)
 	TTempString Debug_String("Removing node ");
 	NodeRef.GetString( Debug_String );
 	Debug_String.Append(" from graph ");

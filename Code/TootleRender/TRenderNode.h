@@ -23,10 +23,41 @@ namespace TLRender
 	class TRenderZoneNode;
 }
 
+namespace TLMaths
+{
+	template<class SHAPETYPE>
+	class TBoundsShape;
+}
+
+
+template<class SHAPETYPE>
+class TLMaths::TBoundsShape
+{
+public:
+	typedef const SHAPETYPE& (TLRender::TRenderNode::*TCalcLocalBoundsFunc)();
+public:
+	TBoundsShape() : m_Valid ( SyncFalse )	{}
+
+	const SHAPETYPE&	CalcWorldShape(TLRender::TRenderNode& RenderNode,TCalcLocalBoundsFunc pCalcLocalBoundsFunc);	//	if invalid calculate our local bounds box (accumulating children) if out of date and return it
+	FORCEINLINE void	SetShapeOld()			{	if ( m_Valid == SyncTrue )	m_Valid = SyncWait;	}	//	if up-to-date (TRUE) then make old (WAIT)
+	FORCEINLINE Bool	SetLocalShapeInvalid()	{	if ( !m_LocalShape.IsValid() )	return FALSE;	m_LocalShape.SetInvalid();	return TRUE;	}
+
+public:
+	SyncBool		m_Valid;		//	Validity of bounds box - SyncWait if valid, but old
+	SHAPETYPE		m_LocalShape;	//	
+	SHAPETYPE		m_WorldShape;	//	
+};
+
 
 
 class TLRender::TRenderNode : public TLGraph::TGraphNode<TLRender::TRenderNode>
 {
+public:
+	friend class TLMaths::TBoundsShape<TLMaths::TBox>;
+	friend class TLMaths::TBoundsShape<TLMaths::TBox2D>;
+	friend class TLMaths::TBoundsShape<TLMaths::TSphere>;
+	friend class TLMaths::TBoundsShape<TLMaths::TSphere2D>;
+
 private:
 	enum InvalidateFlags
 	{
@@ -136,11 +167,22 @@ public:
 	const float3&							GetWorldPos();								//	calculate our new world position from the latest scene transform
 	FORCEINLINE const float3&				GetWorldPos(Bool& IsValid) 					{	GetWorldPos();	IsValid = (m_WorldPosValid != SyncFalse);	return m_WorldPos;	}
 
-	const TLMaths::TBox&					GetWorldBoundsBox();						//	if invalid calculate our local bounds box (accumulating children) if out of date and return it
-	const TLMaths::TBox&					CalcLocalBoundsBox();						//	return our current local bounds box and calculate if invalid
+	//	get world shapes/datums - recalculates if old
+	const TLMaths::TBox&					GetWorldBoundsBox()		{	return m_BoundsBox.CalcWorldShape( *this, &TLRender::TRenderNode::CalcLocalBoundsBox );	}
+	const TLMaths::TBox2D&					GetWorldBoundsBox2D()		{	return m_BoundsBox2D.CalcWorldShape( *this, &TLRender::TRenderNode::CalcLocalBoundsBox2D );	}
+	const TLMaths::TSphere&					GetWorldBoundsSphere()		{	return m_BoundsSphere.CalcWorldShape( *this, &TLRender::TRenderNode::CalcLocalBoundsSphere );	}
+	const TLMaths::TSphere2D&				GetWorldBoundsSphere2D()	{	return m_BoundsSphere2D.CalcWorldShape( *this, &TLRender::TRenderNode::CalcLocalBoundsSphere2D );	}
 
-	const TLMaths::TSphere&					GetWorldBoundsSphere();						//	if invalid calculate our local bounds box (accumulating children) if out of date and return it
+	//	get world shape/datum - no recalcualtion, also returns age (False=Invalid, Wait=Old, True=UpToDate)
+	const TLMaths::TBox&					GetWorldBoundsBox(SyncBool& Validity) const			{	Validity = m_BoundsBox.m_Valid;			return m_BoundsBox.m_WorldShape;	}
+	const TLMaths::TBox2D&					GetWorldBoundsBox2D(SyncBool& Validity) const		{	Validity = m_BoundsBox2D.m_Valid;		return m_BoundsBox2D.m_WorldShape;	}
+	const TLMaths::TSphere&					GetWorldBoundsSphere(SyncBool& Validity) const		{	Validity = m_BoundsSphere.m_Valid;		return m_BoundsSphere.m_WorldShape;	}
+	const TLMaths::TSphere2D&				GetWorldBoundsSphere2D(SyncBool& Validity) const	{	Validity = m_BoundsSphere2D.m_Valid;	return m_BoundsSphere2D.m_WorldShape;	}
+
+	const TLMaths::TBox&					CalcLocalBoundsBox();						//	return our current local bounds box and calculate if invalid
+	const TLMaths::TBox2D&					CalcLocalBoundsBox2D();						//	return our current local bounds box and calculate if invalid
 	const TLMaths::TSphere&					CalcLocalBoundsSphere();					//	return our current local bounds box and calculate if invalid
+	const TLMaths::TSphere2D&				CalcLocalBoundsSphere2D();					//	return our current local bounds box and calculate if invalid
 
 	FORCEINLINE TPtr<TLMaths::TQuadTreeNode>*	GetRenderZoneNode(TRefRef RenderTargetRef)	{	return m_RenderZoneNodes.Find( RenderTargetRef );	}
 	FORCEINLINE TPtr<TLMaths::TQuadTreeNode>*	SetRenderZoneNode(TRefRef RenderTargetRef,TPtr<TLMaths::TQuadTreeNode>& pRenderZoneNode)	{	return m_RenderZoneNodes.Add( RenderTargetRef, pRenderZoneNode );	}
@@ -166,13 +208,10 @@ protected:
 	SyncBool					m_WorldPosValid;			//	if this is not valid then the transform of this node has changed since our last render
 
 	//	gr: todo: almagamate all these bounds shapes into a single bounds type that does all 3 or picks the best or something
-	TLMaths::TBox				m_LocalBoundsBox;			//	(Datum) bounding box of self (without transformation) and children (with transformation, so relative to us)
-	TLMaths::TBox				m_WorldBoundsBox;			//	bounding box of self in world space
-	SyncBool					m_WorldBoundsBoxValid;		//	Validity of bounds box - SyncWait if valid, but old
-
-	TLMaths::TSphere			m_LocalBoundsSphere;		//	(Datum) bounding sphere Shape of self (without transformation) and children (with transformation, so relative to us)
-	TLMaths::TSphere			m_WorldBoundsSphere;		//	bounding sphere Shape of self in world space
-	SyncBool					m_WorldBoundsSphereValid;	//	Validity of bounds box - SyncWait if valid, but old
+	TLMaths::TBoundsShape<TLMaths::TBox>		m_BoundsBox;
+	TLMaths::TBoundsShape<TLMaths::TBox2D>		m_BoundsBox2D;
+	TLMaths::TBoundsShape<TLMaths::TSphere>		m_BoundsSphere;
+	TLMaths::TBoundsShape<TLMaths::TSphere2D>	m_BoundsSphere2D;
 
 	TFlags<RenderFlags::Flags>	m_RenderFlags;
 
@@ -287,4 +326,54 @@ FORCEINLINE void TLRender::TRenderNode::OnMeshChanged()
 						InvalidateParentLocalBounds		//	and so shape of parents may have changed as it encapsulates us
 						) );	
 }
+
+
+
+
+
+
+template<class SHAPETYPE>
+const SHAPETYPE& TLMaths::TBoundsShape<SHAPETYPE>::CalcWorldShape(TLRender::TRenderNode& RenderNode,TCalcLocalBoundsFunc pCalcLocalBoundsFunc)
+{
+	//	... world transform must be valid (or old/wait) and our bounds are not this new, so recalculate
+	SyncBool IsWorldTransformValid = RenderNode.m_WorldTransformValid;
+
+	//	check validity synchronoisation is correct
+	if ( m_Valid == SyncTrue && IsWorldTransformValid != SyncTrue )
+	{
+		TLDebug_Break("Mis-match in age of world shape - shape should always be same or older as the transform");
+		m_Valid = IsWorldTransformValid;
+	}
+
+	//	world bounds is up to date
+	if ( m_Valid == IsWorldTransformValid )
+		return m_WorldShape;
+
+	//	world transform isn't valid at all
+	if ( IsWorldTransformValid == SyncFalse )
+	{
+		//	gr: shouldn't be valid...
+		m_WorldShape.SetInvalid();
+		return m_WorldShape;
+	}
+
+	//	get/recalc local bounds box
+	const SHAPETYPE& LocalShape = ((&RenderNode)->*pCalcLocalBoundsFunc)();
+	if ( !LocalShape.IsValid() )
+	{
+		//	gr: shouldn't be valid...
+		m_WorldShape.SetInvalid();
+		return m_WorldShape;
+	}
+
+	//	tranform our local bounds into the world bounds
+	m_WorldShape = LocalShape;
+	m_WorldShape.Transform( RenderNode.m_WorldTransform );
+	
+	//	update state (matches world transform state)
+	m_Valid = IsWorldTransformValid;
+
+	return m_WorldShape;
+}
+
 

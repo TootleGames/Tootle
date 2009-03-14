@@ -81,7 +81,7 @@ public:
 	TRefRef					GetRootRenderNodeRef() const				{	return m_RootRenderNodeRef;	}
 	TPtr<TRenderNode>&		GetRootRenderNode() const;					//	gets the render node at the root
 
-	void					SetRootQuadTreeZone(const TLMaths::TBox2D& ZoneShape);
+	void					SetRootQuadTreeZone(TPtr<TLMaths::TQuadTreeZone>& pQuadTreeZone);
 	TPtr<TLMaths::TQuadTreeZone>&	GetRootQuadTreeZone()				{	return m_pRootQuadTreeZone;	}
 
 	//	generic scene rendering controls

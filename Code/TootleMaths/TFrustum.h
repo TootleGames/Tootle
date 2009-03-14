@@ -53,30 +53,10 @@ public:
 
 	void			SetNearFar(float Near,float Far)	{	m_Near = Near;	m_Far = Far;	}
 
-	TPlane&			GetLeftPlane()			{	return m_Planes[0];	}
-	const TPlane&	GetLeftPlane() const	{	return m_Planes[0];	}
-	TPlane&			GetRightPlane()			{	return m_Planes[1];	}
-	const TPlane&	GetRightPlane() const	{	return m_Planes[1];	}
-	TPlane&			GetTopPlane()			{	return m_Planes[2];	}
-	const TPlane&	GetTopPlane() const		{	return m_Planes[2];	}
-	TPlane&			GetBottomPlane()		{	return m_Planes[3];	}
-	const TPlane&	GetBottomPlane() const	{	return m_Planes[3];	}
-	TPlane&			GetNearPlane()			{	return m_Planes[4];	}
-	const TPlane&	GetNearPlane() const	{	return m_Planes[4];	}
-	TPlane&			GetFarPlane()			{	return m_Planes[5];	}
-	const TPlane&	GetFarPlane() const		{	return m_Planes[5];	}
-
 	TOblong&		GetBox()				{	return m_Box;	}
 	const TOblong&	GetBox() const			{	return m_Box;	}
 
-	Bool			HasIntersection(const float3& Point) const;			//	check if this point is inside the frustum
-	Bool			HasIntersection(const float2& Point) const;			//	check if this 2D point is inside the frustum
-	Bool			HasIntersection(const TSphere& Sphere) const;		//	check if sphere is inside frustum
-	Bool			HasIntersection(const TLMaths::TBox2D& Box) const;	//	check to see if this box is inside/clipping the frustum - 2D so only checks against top/left/right/bottom
-	Bool			HasIntersection(const TLMaths::TBox& Box,Bool TestNearFarPlanes=TRUE) const;	//	check to see if this box is the frustum at all
-
 protected:
-	TFixedArray<TPlane,6>	m_Planes;
 	float					m_Near;		//	near z - should be able to extract this from the plane really...
 	float					m_Far;		//	far z - should be able to extract this from the plane really...
 

@@ -131,7 +131,7 @@ public:
 protected:
 	const TLMaths::TMatrix&	UpdateCameraLookAtMatrix();
 
-	virtual void			OnCameraChanged()		{	TCamera::OnCameraChanged();	m_FrustumValid = FALSE;	m_CameraLookAtMatrixValid = FALSE;	}
+	virtual void			OnCameraChanged();
 	void					CalcFrustum();			//	extract the frustum from the current view matricies
 
 	void					GetWorldFrustumPlaneBoxCorners(float ViewZDepth,TArray<float3>& PlaneCorners) const;			//	extract an oriented box from the frustum at a certain depth
@@ -144,9 +144,10 @@ protected:
 
 	TLMaths::TBox2D			m_ScreenViewBox;		//	screen's frustum view box in view/screen space, unrotated and moved to nearZ
 	TLMaths::TBox2D			m_ProjectionViewBox;	//	screen view, but rotated as per screen orientation
-	TLMaths::TFrustum		m_Frustum;				//	current camera frustum
-	Bool					m_FrustumValid;			//	is the frustum out of date? (camera moved)
-	TLMaths::TBox2D			m_FrustumZoneShape;		//	
+
+	TLMaths::TOblong		m_FrustumOblong;		//	current camera frustum shape. Most accurate shape
+	TLMaths::TBox2D			m_FrustumBox;			//	frustum shape in a box for 2D culling - less accurate but infinately faster
+	SyncBool				m_FrustumShapeValid;	//	is the frustum out of date? (camera moved) - FALSE if invalid, syncwait if out of date
 };
 
 

@@ -81,7 +81,7 @@ void TLAsset::TMesh::GenerateQuadOutline(const TLMaths::TBox2D& Box,const TColou
 	float3& BottomLeft = Outline[3];
 
 	TopLeft = Box.GetMin().xyz( z );
-	BottomRight = Box.GetMin().xyz( z );
+	BottomRight = Box.GetMax().xyz( z );
 	TopRight = float3( BottomRight.x, TopLeft.y, z );
 	BottomLeft = float3( TopLeft.x, BottomRight.y, z );
 	

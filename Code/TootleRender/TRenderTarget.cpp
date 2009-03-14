@@ -207,55 +207,35 @@ void TLRender::TRenderTarget::EndDraw()
 		Opengl::EnableDepthRead( FALSE );
 		Opengl::EnableAlpha( FALSE );
 
-		glBegin(GL_LINES);
-		{	
-			/*	
-			Opengl::SetSceneColour( TColour( 1.f, 0.f, 0.f, 1.f ) );
+		TFixedArray<float3,8>& FrustumOblongCorners = pCamera->m_FrustumOblong.GetBoxCorners();
 
-			//	front
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(0) );
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(1) );
+		//	calc the shape for the zone from the frustum
+		TLMaths::TBox2D FrustumBox;
+		float WorldDepth = 0.f;
+		float ViewDepth = pCamera->GetPosition().z + WorldDepth;
+		pCamera->GetWorldFrustumPlaneBox2D( ViewDepth, FrustumBox );
+		TFixedArray<float3,4> FrustumBoxCorners(0);
+		FrustumBox.GetBoxCorners( FrustumBoxCorners, WorldDepth );
 
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(1) );
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(2) );
+		//	green for oblong frustum
+		Opengl::SetSceneColour( TColour( 0.f, 1.f, 0.f, 1.f ) );
+		glBegin(GL_LINE_LOOP);
+		{
+			glVertex3fv( FrustumOblongCorners.ElementAt(4) );
+			glVertex3fv( FrustumOblongCorners.ElementAt(5) );
+			glVertex3fv( FrustumOblongCorners.ElementAt(6) );
+			glVertex3fv( FrustumOblongCorners.ElementAt(7) );
+		}
+		glEnd();
 
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(2) );
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(3) );
-
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(3) );
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(0) );
-		*/
-			Opengl::SetSceneColour( TColour( 0.f, 1.f, 0.f, 1.f ) );
-
-			//	rear
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(4) );
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(5) );
-
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(5) );
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(6) );
-
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(6) );
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(7) );
-
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(7) );
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(4) );
-
-			/*
-			Opengl::SetSceneColour( TColour( 1.f, 1.f, 0.f, 1.f ) );
-
-			//	joins
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(0) );
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(4) );
-
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(1) );
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(5) );
-
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(2) );
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(6) );
-
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(3) );
-			glVertex3fv( pCamera->m_Frustum.GetBox().GetBoxCorners().ElementAt(7) );
-		*/
+		//	red for 2D box frustum
+		Opengl::SetSceneColour( TColour( 1.f, 0.f, 0.f, 1.f ) );
+		glBegin(GL_LINE_LOOP);
+		{
+			glVertex3fv( FrustumBoxCorners.ElementAt(0) );
+			glVertex3fv( FrustumBoxCorners.ElementAt(1) );
+			glVertex3fv( FrustumBoxCorners.ElementAt(2) );
+			glVertex3fv( FrustumBoxCorners.ElementAt(3) );
 		}
 		glEnd();
 
@@ -985,8 +965,11 @@ void TLRender::TRenderTarget::DrawMesh(TLAsset::TMesh& Mesh,const TRenderNode* p
 //-------------------------------------------------------------
 //	
 //-------------------------------------------------------------
-void TLRender::TRenderTarget::SetRootQuadTreeZone(const TLMaths::TBox2D& ZoneShape)
+void TLRender::TRenderTarget::SetRootQuadTreeZone(TPtr<TLMaths::TQuadTreeZone>& pQuadTreeZone)
 {
+	if ( m_pRootQuadTreeZone == pQuadTreeZone )
+		return;
+
 	//	clean up the old one
 	if ( m_pRootQuadTreeZone )
 	{
@@ -995,12 +978,15 @@ void TLRender::TRenderTarget::SetRootQuadTreeZone(const TLMaths::TBox2D& ZoneSha
 	}
 
 	//	create new root zone
-	m_pRootQuadTreeZone = new TLMaths::TQuadTreeZone( ZoneShape, TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>() );
+	m_pRootQuadTreeZone = pQuadTreeZone;
 
+	if ( m_pRootQuadTreeZone )
+	{
 #ifdef PREDIVIDE_RENDER_ZONES
-	//	divide it all now
-	m_pRootQuadTreeZone->DivideAll( m_pRootQuadTreeZone );
+		//	divide it all now
+		m_pRootQuadTreeZone->DivideAll( m_pRootQuadTreeZone );
 #endif
+	}
 
 	//	invalidate camera's zone
 	m_pCamera->SetZoneOutOfDate();

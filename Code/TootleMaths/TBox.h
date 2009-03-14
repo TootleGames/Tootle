@@ -113,6 +113,7 @@ public:
 	float2			GetCenter() const				{	return TLMaths::Interp( m_Min, m_Max, 0.5f );	}
 	float3			GetCenter3(float z=0.f) const;	//	get the center of the box
 	void			GetBoxCorners(TArray<float2>& CornerPositions) const;	//	get the 8 corners of the box
+	void			GetBoxCorners(TArray<float3>& CornerPositions,float z) const;	//	get the 8 corners of the box
 	const float&	GetLeft() const		{	return m_Min.x;	}
 	float&			GetLeft()			{	return m_Min.x;	}
 	const float&	GetTop() const		{	return m_Min.y;	}
@@ -128,12 +129,14 @@ public:
 
 	void			Set(const float2& Min,const float2& Max)	{	m_Min = Min;	m_Max = Max;	m_IsValid = TRUE;	}
 	void			Set(const float2& MinMax)					{	m_Min = MinMax;	m_Max = MinMax;	m_IsValid = TRUE;	}
+	void			Set(const TBox& Box)						{	m_Min = Box.GetMin().xy();	m_Max = Box.GetMax().xy();	m_IsValid = Box.IsValid();	}
 	void			SetMin(const float2& Min)					{	m_Min = Min;	m_IsValid = TRUE;	}
 	void			SetMax(const float2& Max)					{	m_Max = Max;	m_IsValid = TRUE;	}
 	void			SetInvalid()								{	m_IsValid = FALSE;	}
 	void			SetValid(Bool Valid=TRUE)					{	m_IsValid = Valid;	}
 	Bool			IsValid() const								{	return m_IsValid;	}
 
+	void			Accumulate(const TBox2D& Box);				//	accumulate other box. copies other box if this is invalid
 //	void			Accumulate(const TBox& Box);				//	accumulate other box. copies other box if this is invalid
 //	void			Accumulate(const TSphere& Sphere);			//	accumulate sphere
 	void			Accumulate(const float2& Point);			//	grow the box to these extents
@@ -165,7 +168,6 @@ public:
 	float			GetDistanceSq(const TLine& Line) const;
 	float			GetDistanceSq(const float2& Pos) const;
 	
-	void			operator=(const TBox2D& Box)	{	m_Min = Box.m_Min;	m_Max = Box.m_Max;	}
 	void			operator+=(const float2& v)		{	m_Min += v;	m_Max += v;	}
 	void			operator-=(const float2& v)		{	m_Min -= v;	m_Max -= v;	}
 	void			operator*=(const float2& v)		{	m_Min *= v;	m_Max *= v;	}

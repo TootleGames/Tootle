@@ -232,6 +232,12 @@ void TLMaths::TBox::Untransform(const TLMaths::TTransform& Transform)
 		//Transform.m_Matrix.UnTransformVector( m_Pos );
 	}
 
+	if ( Transform.HasRotation() )
+	{
+		TLDebug_Break("todo: undo rotaion transform box");
+		//Transform.m_Matrix.UnTransformVector( m_Pos );
+	}
+
 	if ( Transform.HasScale() )
 	{
 		const float3& Scale = Transform.GetScale();
@@ -581,33 +587,6 @@ void TLMaths::TBox2D::Accumulate(const TArray<float3>& Points)
 
 
 
-//-------------------------------------------------
-//	transform box - this transforms each corner, then gets
-//	a new/min max and hence a new box
-//-------------------------------------------------
-void TLMaths::TBox2D::Transform(const TLMaths::TTransform& Transform)
-{
-	//	not valid, or not going to make any changes... skip
-	if ( !IsValid() || !Transform.HasAnyTransform() )
-		return;
-
-	//	gr: I'm pretty sure transforming the min & max wont work quite right, so transform each point
-	//		and make a new bounds box
-	TFixedArray<float2,8> BoundsPoints(0);
-	GetBoxCorners( BoundsPoints );
-
-	//	transform the points
-	for ( u32 i=0;	i<BoundsPoints.GetSize();	i++ )
-	{
-		Transform.TransformVector( BoundsPoints[i] );
-	}
-
-	//	make new bounds
-	SetInvalid();
-	Accumulate( BoundsPoints );
-}
-
-
 //--------------------------------------------------------
 //	untransform box
 //	note: must be opposite order to transform!
@@ -647,6 +626,21 @@ void TLMaths::TBox2D::GetBoxCorners(TArray<float2>& CornerPositions) const
 	//	box bottom
 	CornerPositions.Add( float2( m_Min.x,	m_Max.y ) );
 	CornerPositions.Add( float2( m_Max.x,	m_Max.y ) );
+}
+
+
+//-------------------------------------------------
+//	get the 4 corners of the box
+//-------------------------------------------------
+void TLMaths::TBox2D::GetBoxCorners(TArray<float3>& CornerPositions,float z) const
+{
+	//	box top
+	CornerPositions.Add( float3( m_Min.x, m_Min.y, z ) );
+	CornerPositions.Add( float3( m_Max.x, m_Min.y, z ) );
+
+	//	box bottom
+	CornerPositions.Add( float3( m_Max.x, m_Max.y, z ) );
+	CornerPositions.Add( float3( m_Min.x, m_Max.y, z ) );
 }
 
 
@@ -977,7 +971,54 @@ void TLMaths::TBox2D::GrowBox(float Scale)
 }
 
 
+//-------------------------------------------------
+//	merge two boxes, box will only get bigger
+//-------------------------------------------------
+void TLMaths::TBox2D::Accumulate(const TBox2D& Box)			
+{
+	//	source box is not valid!
+	if ( !Box.IsValid() )
+	{
+		if ( !TLDebug_Break("Accumulating invalid box") )
+			return;
+	}
+
+	//	if we're not valid, just copy the box
+	if ( !IsValid() )
+	{
+		Set( Box.GetMin(), Box.GetMax() );
+	}
+	else
+	{
+		Accumulate( Box.GetMin() );	
+		Accumulate( Box.GetMax() );	
+	}
+}	
 
 
 
+//-------------------------------------------------
+//	transform box - this transforms each corner, then gets
+//	a new/min max and hence a new box
+//-------------------------------------------------
+void TLMaths::TBox2D::Transform(const TLMaths::TTransform& Transform)
+{
+	//	not valid, or not going to make any changes... skip
+	if ( !IsValid() || !Transform.HasAnyTransform() )
+		return;
 
+	//	gr: I'm pretty sure transforming the min & max wont work quite right, so transform each point
+	//		and make a new bounds box
+	TFixedArray<float2,4> BoundsPoints(0);
+	GetBoxCorners( BoundsPoints );
+
+	//	transform the points
+	for ( u32 i=0;	i<BoundsPoints.GetSize();	i++ )
+	{
+		Transform.TransformVector( BoundsPoints[i] );
+	}
+
+	//	make new bounds
+	SetInvalid();
+	Accumulate( BoundsPoints );
+}

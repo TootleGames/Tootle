@@ -1,9 +1,10 @@
-
 #pragma once
 
 #include <TootleCore/TLMaths.h>
-
+#include <TootleMaths/TQuadTree.h>
 #include "TSceneNode.h"
+
+
 
 namespace TLScene
 {
@@ -13,7 +14,7 @@ namespace TLScene
 /*
 	TSceneNode_Transform class
 */
-class TLScene::TSceneNode_Transform : public TLScene::TSceneNode
+class TLScene::TSceneNode_Transform : public TLScene::TSceneNode, public TLMaths::TQuadTreeNode
 {
 public:
 	TSceneNode_Transform(TRefRef NodeRef,TRefRef TypeRef) :

@@ -119,17 +119,30 @@ void TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Message)
 // Transform changed
 void TSceneNode_Transform::OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale)
 {
+	bTranslation = bTranslation && m_Transform.HasTranslate();
+	bRotation = bRotation && m_Transform.HasRotation();
+	bScale = bScale && m_Transform.HasScale();
+
+	//	no changes
+	if ( !bTranslation && !bRotation && !bScale )
+		return;
+
+	//	no one to send a message to 
+	if ( !HasSubscribers() )
+		return;
+
 	TLMessaging::TMessage Message("OnTransform", GetNodeRef());
-	if(bTranslation && m_Transform.HasTranslate() )
+	if ( bTranslation )
 		Message.ExportData("Translate", GetTranslate());
 
-	if(bRotation && m_Transform.HasRotation() )
+	if ( bRotation )
 		Message.ExportData("Rotation", GetRotation());
 
-	if(bScale && m_Transform.HasScale() )
+	if(  bScale )
 		Message.ExportData("Scale", GetScale());
 
 	PublishMessage(Message);
+
 }
 
 

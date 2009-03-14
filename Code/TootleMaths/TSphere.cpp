@@ -649,3 +649,96 @@ void TLMaths::TSphere2D::Set(const TBox2D& Box)
 	//	half the radius (box extent is diameter)
 	m_Radius *= 0.5f;
 }
+
+
+
+
+//-----------------------------------------------------------
+//	grow the box to these extents
+//-----------------------------------------------------------
+void TLMaths::TSphere2D::Accumulate(const TSphere2D& Sphere)
+{
+	if ( !IsValid() )
+	{
+		Set( Sphere );
+		return;
+	}
+
+	//	get furthest point on both spheres from each other
+	float2 DirToSphere( Sphere.GetPos() - GetPos() );
+	DirToSphere.Normalise();
+	float2 FurthestPointOnSphere = Sphere.GetPos() + DirToSphere.Normal( Sphere.GetRadius() );
+	float2 FurthestPointOnThis = GetPos() - DirToSphere.Normal( GetRadius() );
+
+	//	new sphere center is midpoint between furthest points
+	m_Pos = (FurthestPointOnSphere + FurthestPointOnThis) * 0.5f;
+
+	//	new radius is half length from furthest point to furthest point
+	m_Radius = (FurthestPointOnSphere - FurthestPointOnThis).Length() * 0.5f;
+}
+
+
+//-----------------------------------------------------------
+//	grow the box to these extents
+//-----------------------------------------------------------
+void TLMaths::TSphere2D::Accumulate(const TSphere& Sphere)
+{
+	if ( !IsValid() )
+	{
+		Set( Sphere );
+		return;
+	}
+
+	//	get furthest point on both spheres from each other
+	float2 DirToSphere( Sphere.GetPos().xy() - GetPos() );
+	DirToSphere.Normalise();
+	float2 FurthestPointOnSphere = Sphere.GetPos().xy() + DirToSphere.Normal( Sphere.GetRadius() );
+	float2 FurthestPointOnThis = GetPos() - DirToSphere.Normal( GetRadius() );
+
+	//	new sphere center is midpoint between furthest points
+	m_Pos = (FurthestPointOnSphere + FurthestPointOnThis) * 0.5f;
+
+	//	new radius is half length from furthest point to furthest point
+	m_Radius = (FurthestPointOnSphere - FurthestPointOnThis).Length() * 0.5f;
+}
+
+
+
+//--------------------------------------------------------
+//	transform sphere
+//--------------------------------------------------------
+void TLMaths::TSphere2D::Transform(const TLMaths::TTransform& Transform)
+{
+	if ( !IsValid() )
+	{
+		TLDebug_Break("Transforming invalid capsule");
+		return;
+	}
+
+	if ( Transform.HasScale() )
+	{
+		const float2& Scale = Transform.GetScale().xy();
+		m_Pos *= Scale;
+
+		//	scale radius by biggest value of the scale
+		float BigScale = (Scale.x>Scale.y) ? Scale.x : Scale.y;
+
+		m_Radius *= BigScale;
+	}
+
+	if ( Transform.HasRotation() )
+	{
+		Transform.GetRotation().RotateVector( m_Pos );
+	}
+
+	if ( Transform.HasMatrix() )
+	{
+		Transform.GetMatrix().TransformVector( m_Pos );
+	}
+
+	if ( Transform.HasTranslate() )
+	{
+		m_Pos += Transform.GetTranslate();
+	}
+}
+

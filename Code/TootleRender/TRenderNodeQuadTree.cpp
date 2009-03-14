@@ -2,6 +2,7 @@
 #include <TootlePhysics/TPhysicsgraph.h>
 #include <TootleRender/TRenderTarget.h>
 #include <TootleRender/TScreenManager.h>
+#include <TootleScene/TScenegraph.h>
 
 
 
@@ -69,12 +70,21 @@ void TLRender::TRenderNodeQuadTreeZone::Initialise(TLMessaging::TMessage& Messag
 			TPtr<TLMaths::TQuadTreeZone> pZone = TLPhysics::g_pPhysicsgraph->GetRootCollisionZone();
 			SetQuadTreeZone( pZone );
 		}
+		else if ( ZoneRef == "Scene" )
+		{
+			//	physic's graph's root zone
+			TPtr<TLMaths::TQuadTreeZone> pZone = TLScene::g_pScenegraph->GetRootZone();
+			SetQuadTreeZone( pZone );
+		}
 		else
 		{
 			//	find a render target with this ref and use it's zone
 			TPtr<TLRender::TRenderTarget>& pRenderTarget = TLRender::g_pScreenManager->GetRenderTarget( ZoneRef );
-			TPtr<TLMaths::TQuadTreeZone> pZone = pRenderTarget->GetRootQuadTreeZone();
-			SetQuadTreeZone( pZone );
+			if ( pRenderTarget )
+			{
+				TPtr<TLMaths::TQuadTreeZone> pZone = pRenderTarget->GetRootQuadTreeZone();
+				SetQuadTreeZone( pZone );
+			}
 		}
 	}
 

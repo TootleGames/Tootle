@@ -71,12 +71,22 @@ void TLRender::TCamera::OnCameraChanged()
 
 
 
-
 TLRender::TProjectCamera::TProjectCamera() :
 	m_HorzFov					( 45.f ),
 	m_CameraLookAtMatrixValid	( FALSE ),
-	m_FrustumValid				( FALSE )
+	m_FrustumShapeValid			( SyncFalse )
 {
+}
+
+
+void TLRender::TProjectCamera::OnCameraChanged()		
+{	
+	TCamera::OnCameraChanged();	
+	
+	if ( m_FrustumShapeValid == SyncTrue ) 
+		m_FrustumShapeValid = SyncWait;	
+	
+	m_CameraLookAtMatrixValid = FALSE;	
 }
 
 
@@ -186,99 +196,18 @@ const TLMaths::TMatrix& TLRender::TProjectCamera::UpdateCameraLookAtMatrix()
 //-----------------------------------------------------------
 void TLRender::TProjectCamera::CalcFrustum()
 {
-	if ( !m_ProjectionMatrixValid || !m_ModelViewMatrixValid )
-	{
-		TLDebug_Break("Can't calculate frustrum with invalid matricies");
-		return;
-	}
+	//	calc the frustum oblong
+	m_FrustumOblong.GetBoxCorners().SetSize(0);
+	GetWorldFrustumPlaneBoxCorners( m_NearZ, m_FrustumOblong.GetBoxCorners() );
+	GetWorldFrustumPlaneBoxCorners( m_FarZ, m_FrustumOblong.GetBoxCorners() );
 
-	float* proj = m_ProjectionMatrix.GetData();
-	float* modl = m_ModelViewMatrix.GetData();
-
-	float   clip[16];
-
-	//	Combine the two matrices (multiply projection by modelview) 
-	clip[ 0] = modl[ 0] * proj[ 0] + modl[ 1] * proj[ 4] + modl[ 2] * proj[ 8] + modl[ 3] * proj[12];
-	clip[ 1] = modl[ 0] * proj[ 1] + modl[ 1] * proj[ 5] + modl[ 2] * proj[ 9] + modl[ 3] * proj[13];
-	clip[ 2] = modl[ 0] * proj[ 2] + modl[ 1] * proj[ 6] + modl[ 2] * proj[10] + modl[ 3] * proj[14];
-	clip[ 3] = modl[ 0] * proj[ 3] + modl[ 1] * proj[ 7] + modl[ 2] * proj[11] + modl[ 3] * proj[15];
-
-	clip[ 4] = modl[ 4] * proj[ 0] + modl[ 5] * proj[ 4] + modl[ 6] * proj[ 8] + modl[ 7] * proj[12];
-	clip[ 5] = modl[ 4] * proj[ 1] + modl[ 5] * proj[ 5] + modl[ 6] * proj[ 9] + modl[ 7] * proj[13];
-	clip[ 6] = modl[ 4] * proj[ 2] + modl[ 5] * proj[ 6] + modl[ 6] * proj[10] + modl[ 7] * proj[14];
-	clip[ 7] = modl[ 4] * proj[ 3] + modl[ 5] * proj[ 7] + modl[ 6] * proj[11] + modl[ 7] * proj[15];
-
-	clip[ 8] = modl[ 8] * proj[ 0] + modl[ 9] * proj[ 4] + modl[10] * proj[ 8] + modl[11] * proj[12];
-	clip[ 9] = modl[ 8] * proj[ 1] + modl[ 9] * proj[ 5] + modl[10] * proj[ 9] + modl[11] * proj[13];
-	clip[10] = modl[ 8] * proj[ 2] + modl[ 9] * proj[ 6] + modl[10] * proj[10] + modl[11] * proj[14];
-	clip[11] = modl[ 8] * proj[ 3] + modl[ 9] * proj[ 7] + modl[10] * proj[11] + modl[11] * proj[15];
-
-	clip[12] = modl[12] * proj[ 0] + modl[13] * proj[ 4] + modl[14] * proj[ 8] + modl[15] * proj[12];
-	clip[13] = modl[12] * proj[ 1] + modl[13] * proj[ 5] + modl[14] * proj[ 9] + modl[15] * proj[13];
-	clip[14] = modl[12] * proj[ 2] + modl[13] * proj[ 6] + modl[14] * proj[10] + modl[15] * proj[14];
-	clip[15] = modl[12] * proj[ 3] + modl[13] * proj[ 7] + modl[14] * proj[11] + modl[15] * proj[15];
-
-	//	Extract the numbers for the RIGHT plane
-	m_Frustum.GetRightPlane().x() = clip[ 3] - clip[ 0];
-	m_Frustum.GetRightPlane().y() = clip[ 7] - clip[ 4];
-	m_Frustum.GetRightPlane().z() = clip[11] - clip[ 8];
-	m_Frustum.GetRightPlane().w() = clip[15] - clip[12];
-	m_Frustum.GetRightPlane().xyzw().Normalise();
-
-	// Extract the numbers for the LEFT plane
-	m_Frustum.GetLeftPlane().x() = clip[ 3] + clip[ 0];
-	m_Frustum.GetLeftPlane().y() = clip[ 7] + clip[ 4];
-	m_Frustum.GetLeftPlane().z() = clip[11] + clip[ 8];
-	m_Frustum.GetLeftPlane().w() = clip[15] + clip[12];
-	m_Frustum.GetLeftPlane().xyzw().Normalise();
-
-	// Extract the BOTTOM plane
-	m_Frustum.GetBottomPlane().x() = clip[ 3] + clip[ 1];
-	m_Frustum.GetBottomPlane().y() = clip[ 7] + clip[ 5];
-	m_Frustum.GetBottomPlane().z() = clip[11] + clip[ 9];
-	m_Frustum.GetBottomPlane().w() = clip[15] + clip[13];
-	m_Frustum.GetBottomPlane().xyzw().Normalise();
-
-	// Extract the TOP plane
-	m_Frustum.GetTopPlane().x() = clip[ 3] - clip[ 1];
-	m_Frustum.GetTopPlane().y() = clip[ 7] - clip[ 5];
-	m_Frustum.GetTopPlane().z() = clip[11] - clip[ 9];
-	m_Frustum.GetTopPlane().w() = clip[15] - clip[13];
-	m_Frustum.GetTopPlane().xyzw().Normalise();
-
-	// Extract the FAR plane
-	m_Frustum.GetFarPlane().x() = clip[ 3] - clip[ 2];
-	m_Frustum.GetFarPlane().y() = clip[ 7] - clip[ 6];
-	m_Frustum.GetFarPlane().z() = clip[11] - clip[10];
-	m_Frustum.GetFarPlane().w() = clip[15] - clip[14];
-	m_Frustum.GetFarPlane().xyzw().Normalise();
-
-	// Extract the NEAR plane
-	m_Frustum.GetNearPlane().x() = clip[ 3] + clip[ 2];
-	m_Frustum.GetNearPlane().y() = clip[ 7] + clip[ 6];
-	m_Frustum.GetNearPlane().z() = clip[11] + clip[10];
-	m_Frustum.GetNearPlane().w() = clip[15] + clip[14];
-	m_Frustum.GetNearPlane().xyzw().Normalise();
-
-	//	store off the near/far values
-	m_Frustum.SetNearFar( m_NearZ, m_FarZ );
-
-
-	//	calc the box
-	TLMaths::TOblong& FrustumBox = m_Frustum.GetBox();
-	FrustumBox.GetBoxCorners().SetSize(0);
-
-	GetWorldFrustumPlaneBoxCorners( m_NearZ, FrustumBox.GetBoxCorners() );
-	GetWorldFrustumPlaneBoxCorners( m_FarZ, FrustumBox.GetBoxCorners() );
-
-
-	//	calc the shape for the zone from the frustum
+	//	calc (cache) a 2D zone shape from the frustum
 	float WorldDepth = 0.f;
 	float ViewDepth = GetPosition().z + WorldDepth;
-	GetWorldFrustumPlaneBox2D( ViewDepth, m_FrustumZoneShape );
+	GetWorldFrustumPlaneBox2D( ViewDepth, m_FrustumBox );
 
-
-	m_FrustumValid = TRUE;
+	//	shapes are now valid
+	m_FrustumShapeValid = SyncTrue;
 }
 
 
@@ -430,18 +359,19 @@ Bool TLRender::TProjectCamera::GetWorldRay(TLMaths::TLine& WorldRay,const Type2<
 //----------------------------------------------------
 const TLMaths::TBox2D& TLRender::TProjectCamera::GetZoneShape()
 {
-	if ( !m_FrustumValid )
+	if ( m_FrustumShapeValid != SyncTrue )
 	{
 		CalcFrustum();
 	}
 
-	if ( !m_FrustumValid )
+	//	state is invalid, so ensure the shape we return is invalid
+	if ( m_FrustumShapeValid == SyncFalse )
 	{
 		TLDebug_Break("frustum is invalid!");
-		m_FrustumZoneShape.SetInvalid();
+		m_FrustumBox.SetInvalid();
 	}
 
-	return m_FrustumZoneShape;
+	return m_FrustumBox;
 }
 
 

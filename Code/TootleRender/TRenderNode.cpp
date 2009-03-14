@@ -6,6 +6,12 @@
 //#define DEBUG_PrintBoundsInvalidationChanges
 
 
+//	if defined we re-calculate the bounds box of the render node. Need to balance this CPU vs GPU cost.
+//	if not defined we only do a box test if the current one is up to date (i.e. something else needed it so it's calculated)
+#define RECALC_BOX_FOR_RENDERZONE_TEST
+
+
+
 void Debug_PrintInvalidate(const TLRender::TRenderNode* pObject,const char* pSpaceType,const char* pShapeType)
 {
 #ifdef DEBUG_PrintBoundsInvalidationChanges
@@ -79,30 +85,12 @@ SyncBool TLRender::TRenderZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
 	if ( ZoneShape.GetIntersection( WorldPos ) )
 		return SyncTrue;
 
-	Bool AnyBoundsValid = FALSE;
+	//	test sphere first as it's fastest
+	const TLMaths::TSphere2D& WorldBoundsSphere = pRenderNode->GetWorldBoundsSphere2D();
 
-	//	find a valid world bounds to test with (go in fastest order...)
-	const TLMaths::TSphere& WorldBoundsSphere = pRenderNode->GetWorldBoundsSphere();
-	if ( WorldBoundsSphere.IsValid() )
-	{
-		if ( ZoneShape.GetIntersection( WorldBoundsSphere ) )
-			return SyncTrue;
-		AnyBoundsValid = TRUE;
-	}
-
-	//	gr: this is so expensive, we're not going to use it
-	/*
-	const TLMaths::TBox& WorldBoundsBox = pRenderNode->GetWorldBoundsBox();
-	if ( WorldBoundsBox.IsValid() )
-	{
-		if ( ZoneShape.GetIntersection( WorldBoundsBox ) )
-			return SyncTrue;
-		AnyBoundsValid = TRUE;
-	}
-	*/
-
-	//	none of the bounds are valid, this is bad
-	if ( !AnyBoundsValid )
+	//	if bounds are not valid then we probably don't have a LOCAL bounds inside the render node, 
+	//	so cannot produce a world bounds. Most likely means we have no mesh
+	if ( !WorldBoundsSphere.IsValid() )
 	{
 #ifdef _DEBUG
 		//	if there is no mesh, then this is understandable and wont throw up an error
@@ -120,8 +108,29 @@ SyncBool TLRender::TRenderZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
 #endif
 	}
 
-	//	none of our bounds shapes intersected this zone's shape
-	return SyncFalse;
+	//	outside sphere - so fail
+	if ( !ZoneShape.GetIntersection( WorldBoundsSphere ) )
+		return SyncFalse;
+
+
+	SyncBool BoundsBoxValid;
+#ifdef RECALC_BOX_FOR_RENDERZONE_TEST
+	//	get latest bounds box (may need calculation)
+	const TLMaths::TBox2D& WorldBoundsBox = pRenderNode->GetWorldBoundsBox2D();
+	BoundsBoxValid = WorldBoundsBox.IsValid() ? SyncTrue : SyncFalse;
+#else
+	//	get current box - may be out of date (syncwait) or uncalculated (false)
+	const TLMaths::TBox2D& WorldBoundsBox = pRenderNode->GetWorldBoundsBox2D(BoundsBoxValid);
+#endif
+	if ( BoundsBoxValid == SyncTrue )
+	{
+		//	outside box - not visible
+		if ( !ZoneShape.GetIntersection( WorldBoundsBox ) )
+			return SyncFalse;
+	}
+
+	//	inside sphere, and inside box
+	return SyncTrue;
 }
 
 
@@ -136,9 +145,6 @@ TLRender::TRenderNode::TRenderNode(TRefRef RenderNodeRef,TRefRef TypeRef) :
 	m_Data						( "Data" ),
 	m_LineWidth					( 0.f ),
 	m_WorldPosValid				( SyncFalse ),
-	m_WorldBoundsBoxValid		( SyncFalse ),
-	m_WorldBoundsSphereValid	( SyncFalse ),
-	m_WorldTransformValid		( SyncFalse ),
 	m_Colour					( 1.f, 1.f, 1.f, 1.f )
 {
 	//	setup defualt render flags
@@ -210,46 +216,6 @@ Bool TLRender::TRenderNode::Draw(TRenderTarget* pRenderTarget,TRenderNode* pPare
 	return TRUE;
 }		
 
-//------------------------------------------------------------
-//	calculate our local bounds box (accumulating children) if out of date and return it
-//	SceneMatrix and SceneScale include OUR local matrix/scale
-//------------------------------------------------------------
-const TLMaths::TBox& TLRender::TRenderNode::GetWorldBoundsBox()
-{
-	//	world bounds is up to date
-	if ( m_WorldBoundsBoxValid == m_WorldTransformValid )
-		return m_WorldBoundsBox;
-
-	//	world transform isn't calculated
-	if ( m_WorldTransformValid == SyncFalse )
-	{
-		//	gr: shouldn't be valid...
-		m_WorldBoundsBox.SetInvalid();
-		return m_WorldBoundsBox;
-	}
-
-	//	... world transform must be valid (or old/wait) and our bounds are not this new, so recalculate
-
-	//	get/recalc local bounds box
-	if ( !CalcLocalBoundsBox().IsValid() )
-	{
-		//	gr: shouldn't be valid...
-		m_WorldBoundsBox.SetInvalid();
-		return m_WorldBoundsBox;
-	}
-	
-	Debug_PrintCalculating( this, "world", "box" );
-
-	//	tranform our local bounds into the world bounds
-	m_WorldBoundsBox = m_LocalBoundsBox;
-	m_WorldBoundsBox.Transform( m_WorldTransform );
-	
-	//	update state (matches world transform state)
-	m_WorldBoundsBoxValid = m_WorldTransformValid;
-
-	return m_WorldBoundsBox;
-}
-
 
 //------------------------------------------------------------
 //	return our current local bounds box and calculate if invalid
@@ -257,8 +223,8 @@ const TLMaths::TBox& TLRender::TRenderNode::GetWorldBoundsBox()
 const TLMaths::TBox& TLRender::TRenderNode::CalcLocalBoundsBox()
 {
 	//	if bounds is valid, doesnt need recalculating
-	if ( m_LocalBoundsBox.IsValid() )
-		return m_LocalBoundsBox;
+	if ( m_BoundsBox.m_LocalShape.IsValid() )
+		return m_BoundsBox.m_LocalShape;
 	
 	Debug_PrintCalculating( this, "local", "box" );
 
@@ -271,7 +237,7 @@ const TLMaths::TBox& TLRender::TRenderNode::CalcLocalBoundsBox()
 		//	copy bounds of mesh to use as our own
 		if ( MeshBounds.IsValid() )
 		{
-			m_LocalBoundsBox = MeshBounds;
+			m_BoundsBox.m_LocalShape = MeshBounds;
 		}
 	}
 
@@ -287,7 +253,7 @@ const TLMaths::TBox& TLRender::TRenderNode::CalcLocalBoundsBox()
 		}
 		*/
 		
-		return m_LocalBoundsBox;
+		return m_BoundsBox.m_LocalShape;
 	}
 
 	//	accumulate children's bounds
@@ -310,12 +276,183 @@ const TLMaths::TBox& TLRender::TRenderNode::CalcLocalBoundsBox()
 		TransformedChildBounds.Transform( Child.GetTransform() );
 
 		//	accumulate child
-		m_LocalBoundsBox.Accumulate( TransformedChildBounds );
+		m_BoundsBox.m_LocalShape.Accumulate( TransformedChildBounds );
 	}
 
 	//	all done! invalid or not, this is our bounds
-	return m_LocalBoundsBox;
+	return m_BoundsBox.m_LocalShape;
 }
+
+
+//------------------------------------------------------------
+//	
+//------------------------------------------------------------
+const TLMaths::TSphere& TLRender::TRenderNode::CalcLocalBoundsSphere()
+{
+	//	if bounds is valid, doesnt need recalculating
+	if ( m_BoundsSphere.m_LocalShape.IsValid() )
+		return m_BoundsSphere.m_LocalShape;
+
+	//	get bounds from mesh
+	TPtr<TLAsset::TMesh>& pMesh = GetMeshAsset();
+	if ( pMesh )
+	{
+		//	copy bounds of mesh to use as our own
+		const TLMaths::TSphere& MeshBounds = pMesh->CalcBoundsSphere();	
+		if ( MeshBounds.IsValid() )
+		{
+			m_BoundsSphere.m_LocalShape = MeshBounds;
+		}
+	}
+
+	//	no children, just return what we have
+	if ( !HasChildren() )
+		return m_BoundsSphere.m_LocalShape;
+
+	//	accumulate children's bounds
+	TPtrArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
+	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
+	{
+		TLRender::TRenderNode& Child = *NodeChildren[c];
+		
+		if ( Child.GetRenderFlags().IsSet(RenderFlags::ResetScene) )
+			continue;
+
+		//	get child's bounds
+		const TLMaths::TSphere& ChildBounds = Child.CalcLocalBoundsSphere();
+		if ( !ChildBounds.IsValid() )
+			continue;
+
+		//	gr: omit translate?
+		TLMaths::TSphere TransformedChildBounds = ChildBounds;
+		TransformedChildBounds.Transform( Child.GetTransform() );
+
+		//	accumulate child
+		m_BoundsSphere.m_LocalShape.Accumulate( TransformedChildBounds );
+	}
+
+	//	all done! invalid or not, this is our bounds
+	return m_BoundsSphere.m_LocalShape;
+}
+
+//------------------------------------------------------------
+//	return our current local bounds box and calculate if invalid
+//------------------------------------------------------------
+const TLMaths::TBox2D& TLRender::TRenderNode::CalcLocalBoundsBox2D()
+{
+	//	if bounds is valid, doesnt need recalculating
+	if ( m_BoundsBox2D.m_LocalShape.IsValid() )
+		return m_BoundsBox2D.m_LocalShape;
+	
+	Debug_PrintCalculating( this, "local", "box" );
+
+	//	get bounds from mesh
+	TPtr<TLAsset::TMesh>& pMesh = GetMeshAsset();
+	if ( pMesh )
+	{
+		TLMaths::TBox& MeshBounds = pMesh->CalcBoundsBox();
+		
+		//	copy bounds of mesh to use as our own
+		if ( MeshBounds.IsValid() )
+		{
+			m_BoundsBox2D.m_LocalShape.Set( MeshBounds );
+		}
+	}
+
+	//	no children, just return what we have
+	if ( !HasChildren() )
+	{
+		/*//	gr: this doesnt work, doesnt get invalidated when mesh does turn up...
+		//	no bounds from mesh, and no children, so make up a VALID, but empty bounds box
+		if ( !m_LocalBoundsBox.IsValid() )
+		{
+			Debug_PrintCalculating( this, "local", "EMPTY BOX" );
+			m_LocalBoundsBox.Set( float3(0,0,0), float3(0,0,0) );
+		}
+		*/
+		
+		return m_BoundsBox2D.m_LocalShape;
+	}
+
+	//	accumulate children's bounds
+	TPtrArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
+	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
+	{
+		TLRender::TRenderNode& Child = *NodeChildren[c];
+
+		//	don't accumualte a child that is does not have an inherited transform
+		if ( Child.GetRenderFlags().IsSet(RenderFlags::ResetScene) )
+			continue;
+			
+		//	get child's bounds
+		const TLMaths::TBox2D& ChildBounds = Child.CalcLocalBoundsBox2D();
+		if ( !ChildBounds.IsValid() )
+			continue;
+
+		//	gr: need to omit translate?
+		TLMaths::TBox2D TransformedChildBounds = ChildBounds;
+		TransformedChildBounds.Transform( Child.GetTransform() );
+
+		//	accumulate child
+		m_BoundsBox2D.m_LocalShape.Accumulate( TransformedChildBounds );
+	}
+
+	//	all done! invalid or not, this is our bounds
+	return m_BoundsBox2D.m_LocalShape;
+}
+
+
+//------------------------------------------------------------
+//	
+//------------------------------------------------------------
+const TLMaths::TSphere2D& TLRender::TRenderNode::CalcLocalBoundsSphere2D()
+{
+	//	if bounds is valid, doesnt need recalculating
+	if ( m_BoundsSphere2D.m_LocalShape.IsValid() )
+		return m_BoundsSphere2D.m_LocalShape;
+
+	//	get bounds from mesh
+	TPtr<TLAsset::TMesh>& pMesh = GetMeshAsset();
+	if ( pMesh )
+	{
+		//	copy bounds of mesh to use as our own
+		const TLMaths::TSphere& MeshBounds = pMesh->CalcBoundsSphere();	
+		if ( MeshBounds.IsValid() )
+		{
+			m_BoundsSphere2D.m_LocalShape.Set( MeshBounds );
+		}
+	}
+
+	//	no children, just return what we have
+	if ( !HasChildren() )
+		return m_BoundsSphere2D.m_LocalShape;
+
+	//	accumulate children's bounds
+	TPtrArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
+	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
+	{
+		TLRender::TRenderNode& Child = *NodeChildren[c];
+		
+		if ( Child.GetRenderFlags().IsSet(RenderFlags::ResetScene) )
+			continue;
+
+		//	get child's bounds
+		const TLMaths::TSphere& ChildBounds = Child.CalcLocalBoundsSphere();
+		if ( !ChildBounds.IsValid() )
+			continue;
+
+		//	gr: omit translate?
+		TLMaths::TSphere TransformedChildBounds = ChildBounds;
+		TransformedChildBounds.Transform( Child.GetTransform() );
+
+		//	accumulate child
+		m_BoundsSphere2D.m_LocalShape.Accumulate( TransformedChildBounds );
+	}
+
+	//	all done! invalid or not, this is our bounds
+	return m_BoundsSphere2D.m_LocalShape;
+}
+
 
 
 //------------------------------------------------------------
@@ -347,19 +484,10 @@ void TLRender::TRenderNode::SetBoundsInvalid(const TInvalidateFlags& InvalidateF
 	//	invalidate local bounds
 	if ( InvLocal )
 	{
-		if ( m_LocalBoundsBox.IsValid()  )
-		{
-			Debug_PrintInvalidate( this, "local", "box" );
-			m_LocalBoundsBox.SetInvalid();
-			ThisLocalBoundsChanged = TRUE;
-		}
-
-		if ( m_LocalBoundsSphere.IsValid()  )
-		{
-			Debug_PrintInvalidate( this, "local", "Sphere" );
-			m_LocalBoundsSphere.SetInvalid();
-			ThisLocalBoundsChanged = TRUE;
-		}
+		ThisLocalBoundsChanged |= m_BoundsBox.SetLocalShapeInvalid();
+		ThisLocalBoundsChanged |= m_BoundsBox2D.SetLocalShapeInvalid();
+		ThisLocalBoundsChanged |= m_BoundsSphere.SetLocalShapeInvalid();
+		ThisLocalBoundsChanged |= m_BoundsSphere2D.SetLocalShapeInvalid();
 	}
 
 	//	if invalidating local, world must be invalidated (but only do it if the local bounds were changed)
@@ -487,96 +615,6 @@ const float3& TLRender::TRenderNode::GetWorldPos()
 	return m_WorldPos;
 }
 
-//------------------------------------------------------------
-//	
-//------------------------------------------------------------
-const TLMaths::TSphere& TLRender::TRenderNode::GetWorldBoundsSphere()
-{
-	//	world bounds is up to date
-	if ( m_WorldBoundsSphereValid == m_WorldTransformValid )
-		return m_WorldBoundsSphere;
-
-	//	world transform isn't calculated
-	if ( m_WorldTransformValid == SyncFalse )
-	{
-		//	gr: shouldn't be valid...
-		m_WorldBoundsSphere.SetInvalid();
-		return m_WorldBoundsSphere;
-	}
-
-	//	... world transform must be valid (or old/wait) and our bounds are not this new, so recalculate
-
-	//	get/recalc local bounds box
-	if ( !CalcLocalBoundsSphere().IsValid() )
-	{
-		//	gr: shouldn't be valid...
-		m_WorldBoundsSphere.SetInvalid();
-		return m_WorldBoundsSphere;
-	}
-
-	Debug_PrintCalculating( this, "world", "sphere" );
-
-	//	tranform our local bounds into the world bounds
-	m_WorldBoundsSphere = m_LocalBoundsSphere;
-	m_WorldBoundsSphere.Transform( m_WorldTransform );
-	
-	//	update state (matches world transform state)
-	m_WorldBoundsSphereValid = m_WorldTransformValid;
-
-	return m_WorldBoundsSphere;
-}
-
-
-//------------------------------------------------------------
-//	
-//------------------------------------------------------------
-const TLMaths::TSphere& TLRender::TRenderNode::CalcLocalBoundsSphere()
-{
-	//	if bounds is valid, doesnt need recalculating
-	if ( m_LocalBoundsSphere.IsValid() )
-		return m_LocalBoundsSphere;
-
-	//	get bounds from mesh
-	TPtr<TLAsset::TMesh>& pMesh = GetMeshAsset();
-	if ( pMesh )
-	{
-		//	copy bounds of mesh to use as our own
-		const TLMaths::TSphere& MeshBounds = pMesh->CalcBoundsSphere();	
-		if ( MeshBounds.IsValid() )
-		{
-			m_LocalBoundsSphere = MeshBounds;
-		}
-	}
-
-	//	no children, just return what we have
-	if ( !HasChildren() )
-		return m_LocalBoundsSphere;
-
-	//	accumulate children's bounds
-	TPtrArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
-	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
-	{
-		TLRender::TRenderNode& Child = *NodeChildren[c];
-		
-		if ( Child.GetRenderFlags().IsSet(RenderFlags::ResetScene) )
-			continue;
-
-		//	get child's bounds
-		const TLMaths::TSphere& ChildBounds = Child.CalcLocalBoundsSphere();
-		if ( !ChildBounds.IsValid() )
-			continue;
-
-		//	gr: omit translate?
-		TLMaths::TSphere TransformedChildBounds = ChildBounds;
-		TransformedChildBounds.Transform( Child.GetTransform() );
-
-		//	accumulate child
-		m_LocalBoundsSphere.Accumulate( TransformedChildBounds );
-	}
-
-	//	all done! invalid or not, this is our bounds
-	return m_LocalBoundsSphere;
-}
 
 
 void TLRender::TRenderNode::ClearDebugRenderFlags()						
@@ -842,11 +880,9 @@ void TLRender::TRenderNode::SetWorldTransformOld()
 	if ( m_WorldPosValid == SyncTrue )
 		m_WorldPosValid = SyncWait;
 
-	if ( m_WorldBoundsBoxValid == SyncTrue )
-		m_WorldBoundsBoxValid = SyncWait;
-
-	if ( m_WorldBoundsSphereValid == SyncTrue )
-		m_WorldBoundsSphereValid = SyncWait;
-
+	m_BoundsBox.SetShapeOld();
+	m_BoundsBox2D.SetShapeOld();
+	m_BoundsSphere.SetShapeOld();
+	m_BoundsSphere2D.SetShapeOld();
 }
 

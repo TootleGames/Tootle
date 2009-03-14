@@ -110,7 +110,8 @@ public:
 	void			SetRadius(float Radius)						{	m_Radius = Radius;	}
 
 //	void			Accumulate(const TCapsule& Capsule);			//	accumulate other capsule. copies other if this is invalid
-//	void			Accumulate(const TSphere& Sphere);				//	grow the sphere to these extents
+	void			Accumulate(const TSphere2D& Sphere);			//	grow the sphere to these extents
+	void			Accumulate(const TSphere& Sphere);				//	grow the sphere to these extents
 //	void			Accumulate(const TBox& Box);					//	grow the sphere to these extents
 	void			Accumulate(const TBox2D& Box);					//	grow the sphere to these extents
 	void			Accumulate(const float3& Point)					{	Accumulate( float2( Point.x, Point.y ) );	}

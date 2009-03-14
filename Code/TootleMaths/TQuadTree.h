@@ -26,9 +26,31 @@
 
 namespace TLMaths
 {
-	class TQuadTreeZone;	//	A zone in the quad tree
-	class TQuadTreeNode;	//	member of a zone
+	class TQuadTreeZone;		//	A zone in the quad tree
+	class TQuadTreeNode;		//	member of a zone
+	class TQuadTreeParams;		//	various configurationy things wrapped up in a class to make it easier to pass around
 }
+
+
+//---------------------------------------------------------------
+//	
+//---------------------------------------------------------------
+class TLMaths::TQuadTreeParams
+{
+public:
+	TQuadTreeParams(u32 MaxNodesPerZone=2,float MinZoneSize=6.f,Bool CullEmptyZones=FALSE) : 
+		m_MaxNodesPerZone	( MaxNodesPerZone ),
+		m_MinZoneSize		( MinZoneSize ),
+		m_CullEmptyZones	( CullEmptyZones )
+	{
+	};
+
+public:
+	u32			m_MaxNodesPerZone;	//	if we have [or could have] more than this number of nodes in a zone we divide it
+	float		m_MinZoneSize;		//	zone cannot be smaller than this upon divide
+	Bool		m_CullEmptyZones;	//	delete zones if empty
+};
+
 
 
 //---------------------------------------------------------------
@@ -80,6 +102,7 @@ class TLMaths::TQuadTreeZone : public TLMessaging::TPublisher
 	friend class TLMaths::TQuadTreeNode;
 public:
 	TQuadTreeZone(const TLMaths::TBox2D& ZoneShape,TPtr<TQuadTreeZone>& pParent);
+	TQuadTreeZone(const TLMaths::TBox2D& ZoneShape,const TLMaths::TQuadTreeParams& ZoneParams);
 	~TQuadTreeZone()			{	Shutdown();	}
 
 	void						Shutdown();				//	because of backwards referencing, we should shutdown before NULL'ing otherwise nothing will get released until graphs/nodes etc are.
@@ -144,6 +167,8 @@ protected:
 	TPtrArray<TQuadTreeZone>	m_SiblingZones;			//	zones next to us (also children of our parent)
 	TFixedArray<u32,3>			m_SiblingZoneIndexes;	//	m_SiblingZoneIndexes[SiblingIndex] == Parent's Child[Index]
 	s32							m_SiblingIndex;			//	our index in our parent's children. -1 when no parent
+
+	TQuadTreeParams				m_ZoneParams;			//	zone parameters - copied from parent
 };
 
 
