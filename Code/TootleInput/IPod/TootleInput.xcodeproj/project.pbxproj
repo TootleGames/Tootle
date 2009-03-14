@@ -38,7 +38,7 @@
 		841007890EF92CC000542F4A /* TEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TEffect.h; path = ../TEffect.h; sourceTree = SOURCE_ROOT; };
 		8410078A0EF92CC000542F4A /* TLInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLInput.h; path = ../TLInput.h; sourceTree = SOURCE_ROOT; };
 		8410078B0EF92CC000542F4A /* TSensor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSensor.h; path = ../TSensor.h; sourceTree = SOURCE_ROOT; };
-		8410078C0EF92CC000542F4A /* TUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TUser.h; path = ../TUser.h; sourceTree = SOURCE_ROOT; };
+		8410078C0EF92CC000542F4A /* TUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TUser.h; path = ../TUser.h; sourceTree = SOURCE_ROOT; };
 		8461BD320F5816C500ED9509 /* PCInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCInput.cpp; path = ../PC/PCInput.cpp; sourceTree = SOURCE_ROOT; };
 		8461BD330F5816C500ED9509 /* PCInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCInput.h; path = ../PC/PCInput.h; sourceTree = SOURCE_ROOT; };
 		84C108440F0A72FE00B2DF7A /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
