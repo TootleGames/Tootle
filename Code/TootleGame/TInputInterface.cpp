@@ -19,6 +19,7 @@ TLInput::TInputInterface::TInputInterface(TRefRef RenderTargetRef,TRefRef Render
 	m_UserRef					( UserRef),
 	m_ActionOutDown				( ActionOutDown ),
 	m_ActionOutUp				( ActionOutUp )
+	//m_ClickCount				( 0 )
 {
 	//	no actions going out means this TInputInterface wont do anything
 	if ( !m_ActionOutDown.IsValid() && !m_ActionOutUp.IsValid() )
@@ -322,19 +323,38 @@ void TLInput::TInputInterface::ProcessQueuedClicks()
 //-------------------------------------------------
 SyncBool TLInput::TInputInterface::ProcessClick(const TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode)
 {
-	if ( Click.m_ActionValue == 0.f )
+	//	see if ray intersects our object - check all our collision objects to get closest hit.
+	SyncBool Intersection = IsIntersecting(Screen, RenderTarget, RenderNode, Click.m_CursorPos);
+
+	//	failed to check - no valid bounds? might have to wait till next frame
+	if ( Intersection == SyncWait )
+		return SyncWait;
+
+	//	send out click/no click message
+	if ( Intersection == SyncTrue )
 	{
-		SendActionMessage( FALSE, 0.f );
-		return SyncTrue;
+		if(Click.m_ActionValue == 0.0f)
+			OnClickEnd();
+		else
+			OnClickBegin();
 	}
+	else // == SyncFalse
+	{
+		OnClickEnd();
+	}
+
+	return SyncTrue;
+}
+
+
+SyncBool TLInput::TInputInterface::IsIntersecting(TLRender::TScreen& Screen, TLRender::TRenderTarget& RenderTarget, TLRender::TRenderNode& RenderNode, const int2& Pos)
+{
+	SyncBool Intersection = SyncWait;
 
 	//	test for click on the collision shapes on the render node
 	TLMaths::TLine WorldRay;
 
-	//	see if ray intersects our object - check all our collision objects to get closest hit.
-	SyncBool Intersection = SyncWait;
-
-	if ( !Screen.GetWorldRayFromScreenPos( RenderTarget, WorldRay, Click.m_CursorPos ) )
+	if ( !Screen.GetWorldRayFromScreenPos( RenderTarget, WorldRay, Pos ) )
 	{
 		//	click was out of the render target so we couldnt get a ray
 		Intersection = SyncFalse;
@@ -360,30 +380,25 @@ SyncBool TLInput::TInputInterface::ProcessClick(const TClick& Click,TLRender::TS
 		}
 	}
 
-	//	failed to check - no valid bounds? might have to wait till next frame
-	if ( Intersection == SyncWait )
-		return SyncWait;
-
-	//	send out click/no click message
-	if ( Intersection == SyncTrue )
-	{
-		SendActionMessage( TRUE, 1.f );
-	}
-	else // == SyncFalse
-	{
-		SendActionMessage( FALSE, 0.f );
-	}
-
-	return SyncTrue;
+	return Intersection;
 }
+
 
 
 void TLInput::TInputInterface::OnClickBegin()
 {
+	//if(m_ClickCount == 0)
+		SendActionMessage( TRUE, 1.f );
 
+	//m_ClickCount++;
 }
+
 void TLInput::TInputInterface::OnClickEnd()
 {
+	//m_ClickCount--;
+
+	//if(m_ClickCount == 0)
+		SendActionMessage( FALSE, 0.f );
 }
 
 void TLInput::TInputInterface::OnCursorMove()

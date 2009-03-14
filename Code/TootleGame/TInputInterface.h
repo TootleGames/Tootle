@@ -70,6 +70,8 @@ protected:
 	void						SendActionMessage(Bool ActionDown,float RawData);	//	when click has been validated action message is sent to subscribers
 	virtual void				GetRenderNodes(TArray<TRef>& RenderNodeArray);		//	get array of all the render nodes we're using
 	
+	SyncBool					IsIntersecting(TLRender::TScreen& Screen, TLRender::TRenderTarget& RenderTarget, TLRender::TRenderNode& RenderNode, const int2& Pos);
+
 	virtual void				OnInitialised()										{	};
 
 	virtual void				OnClickBegin();
@@ -95,5 +97,6 @@ private:
 	TRef						m_UserRef;
 	TRef						m_ActionIn;
 	TArray<TClick>				m_QueuedClicks;			//	action's we had to wait for
+	//u8						m_ClickCount;			// Click count - used because we can receive multiple begin click messages from different device buttons
 };
 
