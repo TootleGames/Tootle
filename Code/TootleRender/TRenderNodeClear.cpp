@@ -16,7 +16,7 @@ TLRender::TRenderNodeClear::TRenderNodeClear(TRefRef NodeRef,TRefRef TypeRef) :
 //-------------------------------------------------------
 //	resize the mesh (also creates as required)
 //-------------------------------------------------------
-void TLRender::TRenderNodeClear::SetSize(const Type4<s32>& ClearSize,float NearZ)
+void TLRender::TRenderNodeClear::SetSize(const TLMaths::TBox2D& ClearBox,float NearZ)
 {
 	TLAsset::TMesh* pClearMesh = m_pClearMesh.GetObject();
 
@@ -43,11 +43,14 @@ void TLRender::TRenderNodeClear::SetSize(const Type4<s32>& ClearSize,float NearZ
 		ClearTristrip[3] = pClearMesh->AddVertex( float3(0,0,0) );
 	}
 
+	//	stretch past borders to cope with float precision
+	float Overlap = 1.f;
+
 	//	update vert positions
-	float Top = (float)ClearSize.Top() - 10.f;
-	float Left = (float)ClearSize.Left() - 10.f;
-	float Bottom = (float)ClearSize.Bottom() + 10.f;
-	float Right = (float)ClearSize.Right() + 10.f;
+	float Top = ClearBox.GetTop() - Overlap;
+	float Left = ClearBox.GetLeft() - Overlap;
+	float Bottom = ClearBox.GetBottom() + Overlap;
+	float Right = ClearBox.GetRight() + Overlap;
 
 	pClearMesh->GetVertex(0).Set( Left, Bottom, NearZ );
 	pClearMesh->GetVertex(1).Set( Left, Top, NearZ );

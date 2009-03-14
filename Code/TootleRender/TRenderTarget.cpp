@@ -25,7 +25,8 @@ TLRender::TRenderTarget::TRenderTarget(const TRef& Ref) :
 	m_Debug_PolyCount	( 0 ),
 	m_Debug_VertexCount	( 0 ),
 	m_Debug_NodeCount	( 0 ),
-	m_Debug_NodeCulledCount	( 0 )
+	m_Debug_NodeCulledCount	( 0 ),
+	m_pCameraMatrix		( NULL )
 {
 	//	set default flags
 	m_Flags.Set( Flag_Enabled );
@@ -1076,14 +1077,6 @@ const TLMaths::TBox2D& TLRender::TRenderTarget::GetWorldViewBox(TPtr<TScreen>& p
 
 	return GetWorldViewBox( WorldDepth );
 }
-
-
-TColour& TLRender::TRenderTarget::GetClearColour()							
-{
-	TLDebug_Break("Old code, please use SetClearColour()");
-	return m_ClearColour;	
-}
-
 
 //--------------------------------------------------
 //	

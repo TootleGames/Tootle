@@ -86,11 +86,6 @@ void TLMaths::TCapsule::Transform(const TLMaths::TTransform& Transform)
 		TLDebug_Break("todo");
 	}
 
-	if ( Transform.HasMatrix() )
-	{
-		TLDebug_Break("todo");
-	}
-
 	if ( Transform.HasRotation() )
 	{
 		TLDebug_Break("todo");
@@ -279,9 +274,5 @@ void TLMaths::TCapsule2D::Transform(const TLMaths::TTransform& Transform)
 		m_Radius *= BigScale;
 	}
 
-	if ( Transform.HasMatrix() )
-	{
-		TLDebug_Break("Need to apply scale in matrix to radius of capsule");
-	}
 }
 

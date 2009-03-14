@@ -402,7 +402,7 @@ float3 TLPhysics::TPhysicsNode::GetPosition() const
 //----------------------------------------------------
 void TLPhysics::TPhysicsNode::SetPosition(const float3& Position) 
 {
-	if ( GetCollisionShapeTransform().HasMatrix() || GetCollisionShapeTransform().HasScale() )
+	if ( GetCollisionShapeTransform().HasScale() )
 	{
 		TLDebug_Break("handle this...");
 	}

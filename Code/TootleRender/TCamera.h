@@ -73,10 +73,6 @@ public:
 	virtual Bool				GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const	{	return FALSE;	}	//	convert point on screen to a 3D ray
 	virtual Bool				GetWorldPos(float3& WorldPos,float WorldDepth,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const	{	return FALSE;	}	//	convert point on screen to a 3D position
 
-	//	only for render targets
-	TLMaths::TMatrix&			GetModelViewMatrix(Bool SetValid)	{	m_ModelViewMatrixValid |= SetValid;	return m_ModelViewMatrix;	}
-	TLMaths::TMatrix&			GetProjectionMatrix(Bool SetValid)	{	m_ProjectionMatrixValid |= SetValid;	return m_ProjectionMatrix;	}
-
 protected:
 	virtual void				OnCameraChanged();			//	
 	void						CalculateViewVectors();		//	calculate new view vectors
@@ -93,11 +89,6 @@ protected:
 	float					m_NearZ;
 	float					m_FarZ;
 	TLMaths::TAngle			m_CameraRoll;				//	camera rotation
-
-	TLMaths::TMatrix		m_ProjectionMatrix;			//	projection matrix
-	Bool					m_ProjectionMatrixValid;	//	projection matrix is valid
-	TLMaths::TMatrix		m_ModelViewMatrix;			//	modelview matrix
-	Bool					m_ModelViewMatrixValid;		//	modelview matrix is valid
 };
 
 

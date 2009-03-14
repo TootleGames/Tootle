@@ -635,6 +635,14 @@ Bool TLPhysics::TCollisionSphere::GetIntersection_MeshWithBounds(TLPhysics::TCol
 }
 
 
+//----------------------------------------------------------
+//
+//----------------------------------------------------------
+Bool TLPhysics::TCollisionSphere::HasIntersection_Box2D(TCollisionBox2D* pCollisionShape)						
+{	
+	return pCollisionShape->GetBox().GetIntersection( this->GetSphere() );
+}
+
 
 //----------------------------------------------------------
 //	

@@ -134,6 +134,8 @@ protected:
 	virtual Bool					GetIntersection_Mesh(TCollisionMesh* pCollisionMesh,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 	virtual Bool					GetIntersection_MeshWithBounds(TCollisionMeshWithBounds* pCollisionMesh,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 
+	virtual Bool					HasIntersection_Box2D(TCollisionBox2D* pCollisionShape);
+
 protected:
 	TLMaths::TSphere				m_Sphere;	//	sphere collision object
 };

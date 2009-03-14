@@ -1410,18 +1410,6 @@ void TLMaths::TTransform::Transform(const TLMaths::TTransform& Trans)
 		
 		TLDebug_CheckFloat( m_Rotation );
 	}
-
-	if ( Trans.HasMatrix() )
-	{
-		if ( HasMatrix() )
-			m_Matrix *= Trans.m_Matrix;
-		else
-			SetMatrix( Trans.m_Matrix );
-
-		TLDebug_CheckFloat( m_Matrix );
-	}
-
-
 }
 
 //-----------------------------------------------------------
@@ -1431,22 +1419,20 @@ void TLMaths::TTransform::TransformVector(float3& Vector) const
 {
 	TLDebug_CheckFloat( Vector );
 
-	if ( HasScale() )
+	//	if we're transforming a vector that is 0,0,0 then scale and rotation will do nothing
+	if ( Vector.IsNonZero() )
 	{
-		Vector *= GetScale();
-		TLDebug_CheckFloat( Vector );
-	}
+		if ( HasScale() )
+		{
+			Vector *= GetScale();
+			TLDebug_CheckFloat( Vector );
+		}
 
-	if ( HasRotation() )
-	{
-		GetRotation().RotateVector( Vector );
-		TLDebug_CheckFloat( Vector );
-	}
-
-	if ( HasMatrix() )
-	{
-		GetMatrix().TransformVector( Vector );
-		TLDebug_CheckFloat( Vector );
+		if ( HasRotation() )
+		{
+			GetRotation().RotateVector( Vector );
+			TLDebug_CheckFloat( Vector );
+		}
 	}
 
 	if ( HasTranslate() )
@@ -1463,22 +1449,20 @@ void TLMaths::TTransform::TransformVector(float2& Vector) const
 {
 	TLDebug_CheckFloat( Vector );
 
-	if ( HasScale() )
+	//	if we're transforming a vector that is 0,0,0 then scale and rotation will do nothing
+	if ( Vector.IsNonZero() )
 	{
-		Vector *= GetScale();
-		TLDebug_CheckFloat( Vector );
-	}
+		if ( HasScale() )
+		{
+			Vector *= GetScale();
+			TLDebug_CheckFloat( Vector );
+		}
 
-	if ( HasRotation() )
-	{
-		GetRotation().RotateVector( Vector );
-		TLDebug_CheckFloat( Vector );
-	}
-
-	if ( HasMatrix() )
-	{
-		GetMatrix().TransformVector( Vector );
-		TLDebug_CheckFloat( Vector );
+		if ( HasRotation() )
+		{
+			GetRotation().RotateVector( Vector );
+			TLDebug_CheckFloat( Vector );
+		}
 	}
 
 	if ( HasTranslate() )
@@ -1508,13 +1492,6 @@ void TLMaths::TTransform::UntransformVector(float3& Vector) const
 		TLDebug_CheckFloat( Vector );
 	}
 
-	if ( HasMatrix() )
-	{
-		TLDebug_Break("todo: undo transform vector");
-		//GetMatrix().UnTransformVector( m_Pos );
-		TLDebug_CheckFloat( Vector );
-	}
-
 	if ( HasScale() )
 	{
 		Vector /= GetScale();
@@ -1522,21 +1499,14 @@ void TLMaths::TTransform::UntransformVector(float3& Vector) const
 	}
 }
 
-/*
-void TLMaths::TTransform::GetMatrix(TMatrix& Matrix)
-{
-	QuaternionToMatrix( m_qRotation, Matrix );
 
-	Matrix.SetTranslate( m_fPosition );
-	
-	//	gr: need to implement scale!
-	if ( m_fScale.LengthSq() != 1.f )
-	{
-		//TLDebug_Print("Scale not yet implemented in matrix...");
-		//Matrix.SetScale( m_Scale );
-	}
+//-----------------------------------------------------------
+//	assert handler
+//-----------------------------------------------------------
+void TLMaths::TTransform::Debug_Assert(const char* pString) const
+{
+	TLDebug_Break( pString );
 }
-*/
 
 
 //-----------------------------------------------------------

@@ -14,9 +14,7 @@
 TLRender::TCamera::TCamera() :
 	m_ViewLine	( float3(0.f, 0.f, 0.f), float3(0.f, 0.f, 1.f) ),
 	m_NearZ		( 0.01f ),
-	m_FarZ		( 100.f ),
-	m_ProjectionMatrixValid	( FALSE ),
-	m_ModelViewMatrixValid	( FALSE )
+	m_FarZ		( 100.f )
 {
 	//	init view vectors
 	CalculateViewVectors();
@@ -52,7 +50,8 @@ void TLRender::TCamera::CalculateViewVectors()
 	Props.m_vUp = GetViewUp();
 	Props.m_vLookAt = GetLookAt();
 
-	TLAudio::g_pAudiograph->SetListener(Props);
+	if ( TLAudio::g_pAudiograph )
+		TLAudio::g_pAudiograph->SetListener(Props);
 }
 
 
@@ -61,8 +60,6 @@ void TLRender::TCamera::CalculateViewVectors()
 //----------------------------------------------------
 void TLRender::TCamera::OnCameraChanged()		
 {	
-	m_ProjectionMatrixValid = FALSE;	
-	m_ModelViewMatrixValid = FALSE;	
 	TLMaths::TQuadTreeNode::SetZoneOutOfDate(TRUE);	
 	CalculateViewVectors();
 }

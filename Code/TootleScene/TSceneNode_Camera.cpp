@@ -119,8 +119,7 @@ void TSceneNode_Camera::UpdateRenderTargetCamera()
 		return;
 	}
 	
-	float3 NodePos;
-	GetPosition( NodePos );
+	float3 NodePos = GetPosition();
 	
 	float3 CamPos = pRenderTarget->GetCamera()->GetPosition();
 	CamPos.x = -NodePos.x;
@@ -131,7 +130,7 @@ void TSceneNode_Camera::UpdateRenderTargetCamera()
 	TPtr<TLScene::TSceneNode_Transform> pTarget = GetTargetObject();
 	if(pTarget)
 	{
-		pTarget->GetPosition(NodePos);
+		NodePos = pTarget->GetPosition();
 	}
 	
 	

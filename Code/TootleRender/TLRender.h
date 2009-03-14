@@ -51,7 +51,7 @@ namespace TLRender
 		FORCEINLINE void		DrawPrimitives(u16 GLPrimType,const TArray<TArray<u16> >* pPrimitivesArray,u32 Debug_LimitPrimSize);
 		void					DrawPrimitivePoints(const TArray<float3>* pVertexes);
 
-		void					SceneTransform(const TLMaths::TTransform& Transform);				//	transform scene
+		void					SceneTransform(const TLMaths::TTransform& Transform,const TLMaths::TMatrix* pMatrix=NULL);	//	transform scene
 		void					SceneRotate(const TLMaths::TAngle& Rotation,const float3& Axis);	//	eular rotation on the scene - wrapper for glRotatef
 
 		void					GetViewportSize(Type4<s32>& ViewportSize,const Type4<s32>& ViewportTargetMaxSize,const Type4<s32>& RenderTargetSize,const Type4<s32>& RenderTargetMaxSize,TScreenShape ScreenShape);	//	get render target's viewport size from the size and the screen size

@@ -25,8 +25,8 @@ public:
 	virtual void				Initialise(TLMessaging::TMessage& Message);
 	virtual Bool				HasTransform()	{ return TRUE; }
 
-	FORCEINLINE float3			GetPosition() const												{	float3 Pos( 0,0,0 );	GetPosition( Pos );	return Pos;	}
-	FORCEINLINE void			GetPosition(float3& Pos) const									{	GetTransform().TransformVector( Pos );	}	//	you can use this to get a relative offset from this node by initialising Pos to the [local] offset you want
+	FORCEINLINE const float3&	GetPosition() const												{	return GetTranslate();	}					//	our position will be 
+	FORCEINLINE void			GetLocalPosition(float3& Pos) const								{	GetTransform().TransformVector( Pos );	}	//	get a position relative to the scene node
 
 	FORCEINLINE	const float3&	GetTranslate() const											{	return m_Transform.GetTranslate();	}
 	FORCEINLINE void			SetTranslate(const float3& vPos)								{	m_Transform.SetTranslate(vPos);	OnTranslationChanged();	}
@@ -51,9 +51,9 @@ protected:
 	//virtual void				Scale(float3 vScale);
 	TLMaths::TTransform&		GetTransform() 							{	return m_Transform;	}
 
-	FORCEINLINE void			OnTranslationChanged()		{ OnTransformChanged(TRUE, FALSE, FALSE); }
-	FORCEINLINE void			OnRotationChanged()			{ OnTransformChanged(FALSE, TRUE, FALSE); }
-	FORCEINLINE void			OnScaleChanged()			{ OnTransformChanged(FALSE, FALSE, TRUE); }
+	FORCEINLINE void			OnTranslationChanged()		{	TLMaths::TQuadTreeNode::SetZoneOutOfDate();	OnTransformChanged(TRUE, FALSE, FALSE);	}
+	FORCEINLINE void			OnRotationChanged()			{	OnTransformChanged(FALSE, TRUE, FALSE);	}
+	FORCEINLINE void			OnScaleChanged()			{	OnTransformChanged(FALSE, FALSE, TRUE);	}
 
 	void						OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);
 

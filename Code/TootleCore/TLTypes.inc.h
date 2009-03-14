@@ -38,6 +38,8 @@ public:
 	inline void			Set(const Type2<TYPE>& ab)					{	x = ab.x;	y = ab.y;	};
 	inline void			Set(const Type3<TYPE>& abc)					{	x = abc.x;	y = abc.y; };
 	inline Type3<TYPE>	xyz(const TYPE& z) const					{	return Type3<TYPE>( x, y, z );	}
+	FORCEINLINE Bool	IsZero() const								{	return (x==0) && (y==0);	}	//	could also use {	return DotProduct() == 0;	}	
+	FORCEINLINE Bool	IsNonZero() const							{	return (x!=0) || (y!=0);	}	//	could also use {	return DotProduct() != 0;	}	
 
 	inline Type2<TYPE>	operator *(const TYPE& v) const 		{	return Type2<TYPE>( x*v, y*v );	};
 	inline Type2<TYPE>	operator *(const Type2<TYPE>& v) const	{	return Type2<TYPE>( x*v.x, y*v.y );	};
@@ -122,6 +124,8 @@ public:
 	inline void					Set(const Type3<TYPE>& abc)							{	x = abc.x;	y = abc.y;	z = abc.z;	};
 	inline Type2<TYPE>&			xy()									{	return *((Type2<TYPE>*)&x);	}
 	inline const Type2<TYPE>&	xy() const								{	return *((Type2<TYPE>*)&x);	}
+	FORCEINLINE Bool			IsZero() const							{	return (x==0) && (y==0) && (z==0);	}	//	could also use {	return DotProduct() == 0;	}	
+	FORCEINLINE Bool			IsNonZero() const						{	return (x!=0) || (y!=0) || (z!=0);	}	//	could also use {	return DotProduct() != 0;	}	
 
 	inline TYPE		LengthSq() const									{	return (x*x) + (y*y) + (z*z);	};
 	inline TYPE		Length() const										{	return sqrtf( LengthSq() );	};
@@ -219,6 +223,8 @@ public:
 	inline const Type2<TYPE>&	xy() const								{	return *((Type2<TYPE>*)&x);	}
 	inline Type3<TYPE>&			xyz()									{	return *((Type3<TYPE>*)&x);	}
 	inline const Type3<TYPE>&	xyz() const								{	return *((Type3<TYPE>*)&x);	}
+	FORCEINLINE Bool			IsZero() const							{	return (x==0) && (y==0) && (z==0) && (w==0);	}	//	could also use {	return DotProduct() == 0;	}	
+	FORCEINLINE Bool			IsNonZero() const						{	return (x!=0) || (y!=0) || (z!=0) || (w!=0);	}	//	could also use {	return DotProduct() != 0;	}	
 
 	inline Bool			operator==(const Type4<TYPE>& v) const		{	return ( x == v.x ) && ( y == v.y ) && ( z == v.z ) && ( w == v.w );	};
 	inline Bool			operator!=(const Type4<TYPE>& v) const		{	return ( x != v.x ) || ( y != v.y ) || ( z != v.z ) || ( w != v.w );	};

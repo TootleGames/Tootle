@@ -226,12 +226,6 @@ void TLMaths::TBox::Untransform(const TLMaths::TTransform& Transform)
 		m_Max -= Transform.GetTranslate();
 	}
 
-	if ( Transform.HasMatrix() )
-	{
-		TLDebug_Break("todo: undo transform box");
-		//Transform.m_Matrix.UnTransformVector( m_Pos );
-	}
-
 	if ( Transform.HasRotation() )
 	{
 		TLDebug_Break("todo: undo rotaion transform box");
@@ -599,10 +593,9 @@ void TLMaths::TBox2D::Untransform(const TLMaths::TTransform& Transform)
 		m_Max -= Transform.GetTranslate();
 	}
 
-	if ( Transform.HasMatrix() )
+	if ( Transform.HasRotation() )
 	{
 		TLDebug_Break("todo: undo transform box");
-		//Transform.m_Matrix.UnTransformVector( m_Pos );
 	}
 
 	if ( Transform.HasScale() )

@@ -15,6 +15,9 @@
 #define TWO_PI			((float)6.283185307f)
 #define HALF_PI			((float)1.570796326794895f)
 
+#define TRANSFORM_BIT_TRANSLATE	(1<<0)
+#define TRANSFORM_BIT_ROTATION	(1<<1)
+#define TRANSFORM_BIT_SCALE		(1<<2)
 
 namespace TLMaths
 {
@@ -308,44 +311,33 @@ public:
 class TLMaths::TTransform
 {
 public:
-//	TTransform()		{	SetMatrixInvalid();	SetScaleInvalid();	SetTranslateInvalid();	SetRotationInvalid();	}
-	TTransform() : m_HasMatrix(FALSE), m_HasTranslate(FALSE), m_HasScale(FALSE), m_HasRotation(FALSE)	{}
-//	TTransform(const TMatrix& Matrix) : m_HasMatrix(TRUE), m_Matrix(Matrix), m_HasTranslate(FALSE), m_HasScale(FALSE)	{}
-//	TTransform(const TMatrix& Matrix,const float3& Scale) : m_HasMatrix(TRUE), m_Matrix(Matrix), m_HasTranslate(FALSE), m_HasScale(TRUE), m_Scale(Scale)	{}
-//	TTransform(const float3& Translate) : m_HasMatrix(FALSE), m_HasTranslate(TRUE), m_Translate(Translate), m_HasScale(FALSE)	{}
+	TTransform() : m_Valid ( 0x0 )			{	}
 
-	void				SetMatrix(const TMatrix& Matrix)						{	m_Matrix = Matrix;	SetMatrixValid();	}
-	void				SetMatrix(const TMatrix& Matrix,const float3& Scale)	{	m_Matrix = Matrix;	SetMatrixValid();	m_Scale = Scale;	SetScaleValid();	}
-	void				SetScale(const float3& Scale)							{	m_Scale = Scale;	SetScaleValid();	}
-	void				SetTranslate(const float3& Translate)					{	m_Translate = Translate;	m_HasTranslate = ( Translate.DotProduct() != 0.f );	}
-	void				SetRotation(const TQuaternion& Rotation)				{	m_Rotation = Rotation;	SetRotationValid();	}
+	FORCEINLINE void				SetScale(const float3& Scale)							{	m_Scale = Scale;			SetScaleValid();	}
+	FORCEINLINE void				SetTranslate(const float3& Translate)					{	m_Translate = Translate;	SetTranslateValid( Translate.IsNonZero() );	}
+	FORCEINLINE void				SetRotation(const TQuaternion& Rotation)				{	m_Rotation = Rotation;		SetRotationValid();	}
 
-	TMatrix&			GetMatrix()				{	return m_Matrix;	}	//	only use if HasMatrix()
-	float3&				GetScale()				{	return m_Scale;	}		//	only use if HasScale()
-	float3&				GetTranslate() 			{	return m_Translate;	}	//	only use if HasTranslate()
-	TQuaternion&		GetRotation() 			{	return m_Rotation;	}	//	only use if HasRotation()
-	const TMatrix&		GetMatrix() const		{	return m_Matrix;	}
-	const float3&		GetScale() const		{	return m_Scale;	}
-	const float3&		GetTranslate() const	{	return m_Translate;	}
-	const TQuaternion&	GetRotation() const		{	return m_Rotation;	}
+	FORCEINLINE float3&				GetTranslate() 			{	return m_Translate;	}	//	only use if HasTranslate()
+	FORCEINLINE float3&				GetScale()				{	return m_Scale;	}		//	only use if HasScale()
+	FORCEINLINE TQuaternion&		GetRotation() 			{	return m_Rotation;	}	//	only use if HasRotation()
+	FORCEINLINE const float3&		GetTranslate() const	{	Debug_Assert( HasTranslate(), "Translate accessed but is invalid");	return m_Translate;	}
+	FORCEINLINE const float3&		GetScale() const		{	Debug_Assert( HasScale(), "Scale accessed but is invalid");			return m_Scale;	}
+	FORCEINLINE const TQuaternion&	GetRotation() const		{	Debug_Assert( HasRotation(), "Rotation accessed but is invalid");	return m_Rotation;	}
 
-	void				SetInvalid()			{	m_HasMatrix = m_HasScale = m_HasTranslate = m_HasRotation = FALSE;	}
-	void				SetMatrixInvalid()		{	m_HasMatrix = FALSE;	/*m_Matrix.SetIdentity();*/	}
-	void				SetScaleInvalid()		{	m_HasScale = FALSE;		/*m_Scale.Set( 1.f, 1.f, 1.f );*/	}
-	void				SetTranslateInvalid()	{	m_HasTranslate = FALSE;	/*m_Translate.Set( 0.f, 0.f, 0.f );*/	}
-	void				SetRotationInvalid()	{	m_HasRotation = FALSE;	/*m_Rotation.SetIdentity();*/	}
+	FORCEINLINE void				SetInvalid()			{	m_Valid = 0x0;	}
+	FORCEINLINE void				SetTranslateInvalid()	{	m_Valid &= ~TRANSFORM_BIT_TRANSLATE;	/*m_Translate.Set( 0.f, 0.f, 0.f );*/	}
+	FORCEINLINE void				SetScaleInvalid()		{	m_Valid &= ~TRANSFORM_BIT_SCALE;		/*m_Scale.Set( 1.f, 1.f, 1.f );*/	}
+	FORCEINLINE void				SetRotationInvalid()	{	m_Valid &= ~TRANSFORM_BIT_ROTATION;		/*m_Rotation.SetIdentity();*/	}
 
-	void				SetMatrixValid()		{	m_HasMatrix = TRUE;		}
-	void				OrMatrixValid(Bool Valid)	{	m_HasMatrix |= Valid;		}
-	void				SetScaleValid()			{	m_HasScale = TRUE;		}
-	void				SetTranslateValid()		{	m_HasTranslate = TRUE;	}
-	void				SetRotationValid()		{	m_HasRotation = TRUE;	}
+	FORCEINLINE void				SetTranslateValid()				{	m_Valid |= TRANSFORM_BIT_TRANSLATE;	}
+	FORCEINLINE void				SetTranslateValid(Bool Valid)	{	if ( Valid )	SetTranslateValid();	else SetTranslateInvalid();	}
+	FORCEINLINE void				SetScaleValid()					{	m_Valid |= TRANSFORM_BIT_SCALE;		}
+	FORCEINLINE void				SetRotationValid()				{	m_Valid |= TRANSFORM_BIT_ROTATION;	}
 
-	Bool				HasAnyTransform() const		{	return m_HasMatrix || m_HasScale || m_HasTranslate || m_HasRotation;	}	//	bitwise OR is faster? wont really make a difference :)
-	Bool				HasMatrix() const			{	return m_HasMatrix;	}
-	Bool				HasScale() const			{	return m_HasScale;	}
-	Bool				HasTranslate() const		{	return m_HasTranslate;	}
-	Bool				HasRotation() const			{	return m_HasRotation;	}
+	FORCEINLINE Bool				HasAnyTransform() const			{	return (m_Valid != 0x0);	}
+	FORCEINLINE Bool				HasTranslate() const			{	return (m_Valid & TRANSFORM_BIT_TRANSLATE) != 0x0;	}
+	FORCEINLINE Bool				HasScale() const				{	return (m_Valid & TRANSFORM_BIT_SCALE) != 0x0;	}
+	FORCEINLINE Bool				HasRotation() const				{	return (m_Valid & TRANSFORM_BIT_ROTATION) != 0x0;	}
 
 	void				Transform(const TLMaths::TTransform& Trans);	//	transform this
 	void				TransformVector(float3& Vector) const;		//	transform vector
@@ -353,16 +345,20 @@ public:
 	void				UntransformVector(float3& Vector) const;	//	untransform vector
 	void				UntransformVector(float2& Vector) const;	//	untransform vector
 
-protected:
-	Bool				m_HasTranslate;
-	Bool				m_HasRotation;
-	Bool				m_HasScale;
-	Bool				m_HasMatrix;
+private:
+#ifdef _DEBUG
+	FORCEINLINE void	Debug_Assert(Bool Condition,const char* pString) const		{	if ( !Condition )	Debug_Assert( pString );	}
+#else
+	FORCEINLINE void	Debug_Assert(Bool Condition,const char* pString) const		{	}
+#endif
+	
+	void				Debug_Assert(const char* pString) const;
 
+protected:
 	float3				m_Translate;		//	simple translation
-	TQuaternion			m_Rotation;			//	human-usable rotation
 	float3				m_Scale;			//	scale
-	TMatrix				m_Matrix;			//	translation and rotation
+	TQuaternion			m_Rotation;			//	human-usable rotation
+	u8					m_Valid;			//	bit mask of validity.	TRANSFORM_BIT_XXX - last for byte alignment
 };
 
 

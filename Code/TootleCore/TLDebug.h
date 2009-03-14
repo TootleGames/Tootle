@@ -38,9 +38,11 @@
 //		use TLDebug::IsEnabled() for more accurate global debug support
 #if defined(_DEBUG)
 	#define TLDebug_Break(String)					TLDebug::Break( String, (const char*)__FUNCTION__ )
+	#define TLDebug_Assert(Condition,String)		( (Condition) ? TRUE : TLDebug::Break( String, (const char*)__FUNCTION__ ) )
 	#define TLDebug_Print(String)					TLDebug::Print( String, (const char*)__FUNCTION__ )
 	#define TLDebug_Warning(String)					TLDebug::Print( String, (const char*)__FUNCTION__ )
 #else
+	#define TLDebug_Assert(Conditon,String)			FALSE	
 	#define TLDebug_Break(String)					FALSE	//	by default do NOT continue from breaks
 	#define TLDebug_Print(String)					{}
 	#define TLDebug_Warning(String)					{}

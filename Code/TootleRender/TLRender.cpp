@@ -53,7 +53,7 @@ void TLRender::Opengl::Unbind()
 //---------------------------------------------------
 //	transform scene
 //---------------------------------------------------
-void TLRender::Opengl::SceneTransform(const TLMaths::TTransform& Transform)
+void TLRender::Opengl::SceneTransform(const TLMaths::TTransform& Transform,const TLMaths::TMatrix* pMatrix)
 {
 	//	gr: do this in the same order as the Transform() functions?
 	//		currently in old-render-code-order
@@ -69,9 +69,9 @@ void TLRender::Opengl::SceneTransform(const TLMaths::TTransform& Transform)
 		glScalef( Scale.x, Scale.y, Scale.z );
 	}
 
-	if ( Transform.HasMatrix() )
+	if ( pMatrix )
 	{
-		glMultMatrixf( Transform.GetMatrix().GetData() );
+		glMultMatrixf( pMatrix->GetData() );
 	}
 
 	if ( Transform.HasRotation() )

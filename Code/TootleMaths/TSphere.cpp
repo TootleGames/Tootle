@@ -285,12 +285,6 @@ void TLMaths::TSphere::Untransform(const TLMaths::TTransform& Transform)
 		m_Pos -= Transform.GetTranslate();
 	}
 
-	if ( Transform.HasMatrix() )
-	{
-		TLDebug_Break("todo: undo transform sphere");
-		//Transform.m_Matrix.UnTransformVector( m_Pos );
-	}
-
 	if ( Transform.HasScale() )
 	{
 		const float3& Scale = Transform.GetScale();
@@ -395,11 +389,6 @@ void TLMaths::TSphere::Transform(const TLMaths::TTransform& Transform)
 	if ( Transform.HasRotation() )
 	{
 		Transform.GetRotation().RotateVector( m_Pos );
-	}
-
-	if ( Transform.HasMatrix() )
-	{
-		Transform.GetMatrix().TransformVector( m_Pos );
 	}
 
 	if ( Transform.HasTranslate() )
@@ -729,11 +718,6 @@ void TLMaths::TSphere2D::Transform(const TLMaths::TTransform& Transform)
 	if ( Transform.HasRotation() )
 	{
 		Transform.GetRotation().RotateVector( m_Pos );
-	}
-
-	if ( Transform.HasMatrix() )
-	{
-		Transform.GetMatrix().TransformVector( m_Pos );
 	}
 
 	if ( Transform.HasTranslate() )

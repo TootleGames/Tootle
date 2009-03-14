@@ -98,12 +98,6 @@ Bool TLRender::Platform::RenderTarget::BeginProjectDraw(TLRender::TProjectCamera
 	//	roll around z
 	Opengl::SceneRotate( TLMaths::TAngle(ProjectionRotationDeg), float3( 0.f, 0.f, 1.f ) );
 
-	//	update projection matrix
-	//	gr: todo; calc the projection matrix in the camera (like we used to) then we don't need to
-	//		re-calculate it again for the frustum code, nor would we need this get-flaotv code
-	TLMaths::TMatrix& ProjectionMatrix = pCamera->GetProjectionMatrix(TRUE);
-	glGetFloatv( GL_PROJECTION_MATRIX, ProjectionMatrix );
-
 	//	setup camera
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -114,16 +108,9 @@ Bool TLRender::Platform::RenderTarget::BeginProjectDraw(TLRender::TProjectCamera
 
 	//	apply look at matrix (rotate)
 	const TLMaths::TMatrix& LookAtMatrix = pCamera->GetCameraLookAtMatrix();
-	m_CameraTransform.SetMatrix( LookAtMatrix );
+	m_pCameraMatrix = &LookAtMatrix;
 
 	Opengl::SceneTransform( m_CameraTransform );
-
-	//	update the modelview matrix on the camera
-	TLMaths::TMatrix& ModelViewMatrix = pCamera->GetModelViewMatrix(TRUE);
-	glGetFloatv( GL_MODELVIEW_MATRIX, ModelViewMatrix );
-
-	//	gr: redundant now, but using temporarily for testing
-	BeginSceneReset();
 
 	return TRUE;
 }
@@ -134,7 +121,6 @@ Bool TLRender::Platform::RenderTarget::BeginProjectDraw(TLRender::TProjectCamera
 //-------------------------------------------------------
 void TLRender::Platform::RenderTarget::EndProjectDraw()
 {
-	EndScene();
 }
 
 
@@ -167,16 +153,11 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(TLRender::TOrthoCamera* pC
 
 	Opengl::Debug_CheckForError();		
 
-	//	update projection matrix
-	TLMaths::TMatrix& ProjectionMatrix = pCamera->GetProjectionMatrix(TRUE);
-	glGetFloatv( GL_PROJECTION_MATRIX, ProjectionMatrix );
-	
 	Bool UseClearRenderNode = (m_ClearColour.GetAlpha() > 0.f && m_ClearColour.IsTransparent());
 	
 #ifdef FORCE_RENDERNODE_CLEAR
 	UseClearRenderNode = TRUE;
 #endif
-	/*
 	//	clear the screen manually if we need to apply alpha
 	if ( UseClearRenderNode )
 	{
@@ -184,14 +165,15 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(TLRender::TOrthoCamera* pC
 		{
 			m_pRenderNodeClear = new TRenderNodeClear("Clear","Clear");
 		}
-		m_pRenderNodeClear->SetSize( OrthoSize, -1.f, m_ClearColour );
+		m_pRenderNodeClear->SetSize( OrthoSize, -1.f );
+		m_pRenderNodeClear->SetColour( m_ClearColour );
 	}
 	else
 	{
 		//	remove the clear object
 		m_pRenderNodeClear = NULL;
 	}
-	*/
+
 
 	//	setup camera
 	glMatrixMode(GL_MODELVIEW);
@@ -207,13 +189,6 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(TLRender::TOrthoCamera* pC
 //	m_CameraTransform.SetMatrix( LookAtMatrix );
 	Opengl::SceneTransform( m_CameraTransform );
 
-	//	update the modelview matrix on the camera
-	TLMaths::TMatrix& ModelViewMatrix = pCamera->GetModelViewMatrix(TRUE);
-	glGetFloatv( GL_MODELVIEW_MATRIX, ModelViewMatrix );
-
-	//	gr: redundant now, but using temporarily for testing
-	BeginSceneReset();
-
 	return TRUE;
 }
 
@@ -223,7 +198,6 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(TLRender::TOrthoCamera* pC
 //-------------------------------------------------------
 void TLRender::Platform::RenderTarget::EndOrthoDraw()
 {
-	EndScene();
 }
 
 
