@@ -340,7 +340,7 @@ SyncBool TLInput::TInputInterface::ProcessClick(const TClick& Click,TLRender::TS
 	}
 	else // == SyncFalse
 	{
-		OnClickEnd();
+		//OnClickEnd();
 	}
 
 	return SyncTrue;
