@@ -4,13 +4,40 @@
 #include <TootleMaths/TCapsule.h>
 
 
-#define LINE_PADDING_HALF	(1.f)
-#define GENERATE_QUADS_AS_TRIANGLES
+#define LINE_PADDING_HALF			(1.f)
+
+//#define GENERATE_QUADS_AS_TRIANGLES	//	if not defined, tri-strips are created
+
+#define SPHERE_SEGMENT_SCALE		5.f	//	* Radius = segment count. 
+#define SPHERE_SEGMENT_MIN			((u32)SPHERE_SEGMENT_SCALE)
+#define SPHERE_SEGMENT_MAX			(SPHERE_SEGMENT_MIN*3)
+
 
 namespace TLAsset
 {
 	const TColour	g_DefaultVertexColour( 0.5f, 0.5f, 0.5f, 1.f );
+
+
+	namespace TLMesh
+	{
+		FORCEINLINE u32			GetSphereSegmentCount(float Radius);
+	}
 }
+
+
+
+FORCEINLINE u32 TLAsset::TLMesh::GetSphereSegmentCount(float Radius)
+{
+	u32 SegmentCount = (u32)(Radius * SPHERE_SEGMENT_SCALE);
+	if ( SegmentCount < SPHERE_SEGMENT_MIN )
+		return SPHERE_SEGMENT_MIN;
+	
+	if ( SegmentCount > SPHERE_SEGMENT_MAX )
+		return SPHERE_SEGMENT_MAX;
+
+	return SegmentCount;
+}
+
 
 
 TLAsset::TMesh::TMesh(const TRef& AssetRef) :
@@ -157,14 +184,8 @@ void TLAsset::TMesh::GenerateCapsule(float Radius,const float3& Start,const floa
 //-------------------------------------------------------
 void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere& Sphere,const TColour* pColour)
 {
-	//	generate section/detail from size of shape
-	//	number of segments relative to size of sphere
-	float Segmentsf = 5.f * Sphere.GetRadius();
-	Type2<u32> Segments( (u32)Segmentsf, (u32)Segmentsf );
-
-	//	min of 5 segments - 4 would be a cube
-	if ( Segments.x < 5 )	Segments.x = 5;
-	if ( Segments.y < 5 )	Segments.y = 5;
+	u32 SegmentCount = TLAsset::TLMesh::GetSphereSegmentCount( Sphere.GetRadius() );
+	Type2<u32> Segments( SegmentCount, SegmentCount );
 
 	TArray<float3> Verts;
 	TArray<float3> Normals;
@@ -270,10 +291,7 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere& Sphere,const TColour
 //-------------------------------------------------------
 void TLAsset::TMesh::GenerateSphereOutline(const TLMaths::TSphere2D& Sphere,const TColour* pColour,float z)
 {
-	float Segments = 5.f * Sphere.GetRadius();
-	//	min of 5 segments, 4 would be a quad
-	if ( Segments < 5.f )
-		Segments = 5.f;
+	u32 SegmentCount = TLAsset::TLMesh::GetSphereSegmentCount( Sphere.GetRadius() );
 
 	TColour TempColour(1.f,1.f,1.f,1.f);
 
@@ -290,7 +308,7 @@ void TLAsset::TMesh::GenerateSphereOutline(const TLMaths::TSphere2D& Sphere,cons
 	TFixedArray<float3,100> Outline(0);
 
 	//	create linestrip points
-	float AngleStep = 360.f / (float)Segments;
+	float AngleStep = 360.f / (float)SegmentCount;
 	for ( float AngleDeg=0.f;	AngleDeg<360.f;	AngleDeg+=AngleStep )
 	{
 		float AngleRad = TLMaths::TAngle::DegreesToRadians( AngleDeg );
@@ -316,7 +334,7 @@ void TLAsset::TMesh::GenerateSphereOutline(const TLMaths::TSphere2D& Sphere,cons
 //-------------------------------------------------------
 void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere2D& Sphere,const TColour* pColour,float z)
 {
-	float Segments = 8;
+	u32 SegmentCount = TLAsset::TLMesh::GetSphereSegmentCount( Sphere.GetRadius() );
 
 	TColour TempColour(1.f,1.f,1.f,1.f);
 
@@ -326,7 +344,7 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere2D& Sphere,const TColo
 	u16 CenterVert = AddVertex( Center3, pColour );
 
 	//	create outline points
-	float AngleStep = 360.f / (float)Segments;
+	float AngleStep = 360.f / (float)SegmentCount;
 	for ( float AngleDeg=0.f;	AngleDeg<360.f;	AngleDeg+=AngleStep )
 	{
 		float AngleRad = TLMaths::TAngle::DegreesToRadians( AngleDeg );
