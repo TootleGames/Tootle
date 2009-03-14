@@ -188,11 +188,13 @@ void TUserManager::ProcessMessage(TLMessaging::TMessage& Message)
 
 SyncBool TUserManager::Update(float /*fTimeStep*/)		
 {
+	/*
 	// Update the cursor position for all users
 	for(u32 uIndex = 0; uIndex < m_Users.GetSize(); uIndex++)
 	{
-		m_Users.ElementAt(uIndex)->UpdateCursorPosition();
+		m_Users.ElementAt(uIndex)->UpdateCursorPosition(0);
 	}
+	*/
 
 	return SyncTrue;
 }
@@ -220,11 +222,23 @@ TUser::TUser(TRefRef refUserID) :
 
 void TUser::ProcessMessage(TLMessaging::TMessage& Message)
 {
+	u8 uCursorIndex = GetUserIndex();
+
+#ifdef TL_TARGET_IPOD		
+	// [13/03/09] DB - On the iPod we can have upto four cursor positions for one user
+	// unlike PC where we have one cursor position for one user.
+	// So to be able to pass on the right cursor I now attach a marker to the message at the sensor level
+	// to say which index to use
+	if(!Message.ImportData("CIDX", uCursorIndex))
+		uCursorIndex = GetUserIndex();
+#endif	
+	
+	// Update the cursor position to ensure it's the latest one before being passed on
+	UpdateCursorPosition(uCursorIndex);
+	
 	// Add the user ID to the message so things know 'who' it came from
 	Message.AddChildAndData("USERID", m_refUserID);
 
-	// Update the cursor position to ensure it's the latest one before being passed on
-	UpdateCursorPosition();
 	
 	// Add the users cursor information to make it quicker to access
 	Message.AddChildAndData("CURSOR", m_CursorPosition);
@@ -234,9 +248,19 @@ void TUser::ProcessMessage(TLMessaging::TMessage& Message)
 }
 
 
-void TUser::UpdateCursorPosition()
+void TUser::UpdateCursorPosition(u8 uCursorIndex)
 {
-	int2 sPos = TLInput::Platform::GetCursorPosition(GetUserIndex());
+#ifdef _DEBUG
+	
+	if(uCursorIndex != 0)
+	{
+		TTempString Debug_SensorString("Updating cursor pos for index: ");
+		Debug_SensorString.Appendf("%d", uCursorIndex);
+		TLDebug_Print( Debug_SensorString );
+	}
+	
+#endif	
+	int2 sPos = TLInput::Platform::GetCursorPosition(uCursorIndex);
 
 	m_CursorPosition = sPos;
 }

@@ -30,13 +30,14 @@ public:
 			m_fValue(0.0f),
 			m_fRangeLow(-1.0f),
 			m_fRangeHigh(1.0f),
-			m_fDeadZone(0.0f)
+			m_fDeadZone(0.0f),
+			m_uCursorIndex(0)
 	{}
 
 	inline Bool			operator==(const TRef& SensorRef)				const	{	return m_SensorRef == SensorRef;	}
 	inline Bool			operator==(const TInputSensor& InputSensor)		const 	{	return m_SensorRef == InputSensor.m_SensorRef;	}
 
-	inline void			AddLabel(const TRef& refLabel)		
+	FORCEINLINE void			AddLabel(const TRef& refLabel)		
 	{ 
 		m_SensorLabels.Add(refLabel); 
 #ifdef _DEBUG
@@ -49,12 +50,14 @@ public:
 #endif
 	}
 
-	inline Bool			HasLabel(TRefRef LabelRef)	{ return m_SensorLabels.Exists(LabelRef); }
+	FORCEINLINE Bool			HasLabel(TRefRef LabelRef)				{ return m_SensorLabels.Exists(LabelRef); }
 	
-	inline void			SetRanges(float fLow, float fHigh)	{ m_fRangeLow = fLow; m_fRangeHigh = fHigh; }
-	inline void			SetDeadZone(float fZone)			{ m_fDeadZone = fZone; }
+	FORCEINLINE void			SetRanges(float fLow, float fHigh)		{ m_fRangeLow = fLow; m_fRangeHigh = fHigh; }
+	FORCEINLINE void			SetDeadZone(float fZone)				{ m_fDeadZone = fZone; }
 
-	const TSensorType&	GetSensorType() const				{	return m_Type;	}
+	FORCEINLINE const TSensorType&	GetSensorType() const				{ return m_Type;	}
+	FORCEINLINE const u8&			GetCursorIndex() const				{ return m_uCursorIndex;	}
+	FORCEINLINE void				SetCursorIndex(u8 uCursorIndex)		{ m_uCursorIndex = uCursorIndex; }
 
 protected:
 
@@ -71,5 +74,6 @@ public:
 	float			m_fRangeLow;			// Lowest possible value
 	float			m_fRangeHigh;			// Highest possible value
 	float			m_fDeadZone;			// Absolute deadzone value - values < m_fDeadZone are ignored.  0.0f ( deadzone < range low == not used)
+	u8				m_uCursorIndex;			// Associated cursor for the sensor
 };
 

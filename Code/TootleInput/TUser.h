@@ -51,7 +51,7 @@ protected:
 
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);
 
-	void						UpdateCursorPosition();
+	void						UpdateCursorPosition(u8 uCursorIndex);
 
 	inline void					SetUserIndex(u8 uIndex)				{ m_uLocalUserIndex = uIndex; }
 

@@ -190,13 +190,30 @@
 	// The 'touch' object is unique and persistent whilst a finger is touching the screen
 	// so we can use that to determine an index for the touch object
 	
-    NSSet *alltouches = [event allTouches];
-    for (UITouch *touch in alltouches)
+	// [13/03/09] DB - OK the alltouches set will give us literally that - all touch objects not 
+	// just the ones that triggered the event.  So as we only want the ones that triggered the event
+	// we use the touches set instead.  if we use the alltouches set we need to check the touchphase
+	// otherwise we could send a touch object that is not ending as if it was ended.
+    //NSSet *alltouches = [event allTouches];
+	//for (UITouch *touch in alltouches)
+	
+    for (UITouch *touch in touches)
     {
 		CGPoint currentTouchPosition = [touch locationInView:self]; 
 		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
-		TRef TouchRef = (s32)(&touch);	// Use the address of the ipod touch obejct for the ID
+		// Use the address of the ipod touch obejct for the ID masked to ensure it's valid
+		TRef TouchRef = TLRef::CreateValidTRef((s32)(touch));	
+		
+		/*
+#ifdef _DEBUG
+		TString str;
+		str.Appendf("Event Touch Begin: %d, (%d)", TouchRef.GetData(), touch );
+		TLDebug_Print(str);	
+#endif
+		 */
+		
+		
 		TLInput::Platform::IPod::TTouchData TouchData(TouchRef);
 		
 		TouchData.uCurrentPos = int2((s32)currentTouchPosition.x, (s32)currentTouchPosition.y);
@@ -219,14 +236,29 @@
 	// The 'touch' object is unique and persistent whilst a finger is touching the screen
 	// so we can use that to determine an index for the touch object
 	
-    NSSet *alltouches = [event allTouches];
-    for (UITouch *touch in alltouches)
+	// [13/03/09] DB - OK the alltouches set will give us literally that - all touch objects not 
+	// just the ones that triggered the event.  So as we only want the ones that triggered the event
+	// we use the touches set instead.  if we use the alltouches set we need to check the touchphase
+	// otherwise we could send a touch object that is not ending as if it was ended.
+    //NSSet *alltouches = [event allTouches];
+	//for (UITouch *touch in alltouches)
+	
+    for (UITouch *touch in touches)
     {
 		CGPoint currentTouchPosition = [touch locationInView:self]; 
 		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
-		TRef TouchRef = (s32)(&touch);	// Use the address of the ipod touch obejct for the ID	
+		// Use the address of the ipod touch obejct for the ID masked to ensure it's valid
+		TRef TouchRef = TLRef::CreateValidTRef((s32)(touch));	
 		TLInput::Platform::IPod::TTouchData TouchData(TouchRef);
+		/*
+#ifdef _DEBUG
+		TString str;
+		str.Appendf("Event Touch Move: %d, (%d)", TouchRef.GetData(), touch );
+		TLDebug_Print(str);	
+#endif
+		 */
+		
 		
 		TouchData.uCurrentPos = int2((s32)currentTouchPosition.x, (s32)currentTouchPosition.y);
 		TouchData.fTimestamp = (float) [touch timestamp ];
@@ -246,15 +278,31 @@
 	// Essentially we copy the data from each touch event into our own custom object and pass it onto the input system
 	
 	// The 'touch' object is unique and persistent whilst a finger is touching the screen
-	// so we can use that to determine an index for the touch object
+	// so we can use that to determine an index for the touch object	
+
+	// [13/03/09] DB - OK the alltouches set will give us literally that - all touch objects not 
+	// just the ones that triggered the event.  So as we only want the ones that triggered the event
+	// we use the touches set instead.  if we use the alltouches set we need to check the touchphase
+	// otherwise we could send a touch object that is not ending as if it was ended.
+    //NSSet *alltouches = [event allTouches];
+	//for (UITouch *touch in alltouches)
 	
-    NSSet *alltouches = [event allTouches];
-    for (UITouch *touch in alltouches)
+    for (UITouch *touch in touches)
     {
 		CGPoint currentTouchPosition = [touch locationInView:self]; 
 		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
-		TRef TouchRef = (s32)(&touch);	// Use the address of the ipod touch obejct for the ID
+		// Use the address of the ipod touch obejct for the ID masked to ensure it's valid
+		TRef TouchRef = TLRef::CreateValidTRef((s32)(touch));	
+
+		/*
+#ifdef _DEBUG
+		TString str;
+		str.Appendf("Event Touch End: %d, (%d)", TouchRef.GetData(), touch );
+		TLDebug_Print(str);	
+#endif
+		*/
+		
 		TLInput::Platform::IPod::TTouchData TouchData(TouchRef);
 		
 		TouchData.uCurrentPos = int2((s32)currentTouchPosition.x, (s32)currentTouchPosition.y);
@@ -275,14 +323,29 @@
 	
 	// The 'touch' object is unique and persistent whilst a finger is touching the screen
 	// so we can use that to determine an index for the touch object
+
+	// [13/03/09] DB - OK the alltouches set will give us literally that - all touch objects not 
+	// just the ones that triggered the event.  So as we only want the ones that triggered the event
+	// we use the touches set instead.  if we use the alltouches set we need to check the touchphase
+	// otherwise we could send a touch object that is not ending as if it was ended.
+    //NSSet *alltouches = [event allTouches];
+	//for (UITouch *touch in alltouches)
 	
-    NSSet *alltouches = [event allTouches];
-    for (UITouch *touch in alltouches)
+    for (UITouch *touch in touches)
     {
 		CGPoint currentTouchPosition = [touch locationInView:self]; 
 		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
-		TRef TouchRef = (s32)(&touch);	// Use the address of the ipod touch obejct for the ID
+		// Use the address of the ipod touch obejct for the ID masked to ensure it's valid
+		TRef TouchRef = TLRef::CreateValidTRef((s32)(touch));
+		/*
+#ifdef _DEBUG
+		TString str;
+		str.Appendf("Event Touch Cancel: %d, (%d)", TouchRef.GetData(), touch );
+		TLDebug_Print(str);	
+#endif
+		 */
+		
 		TLInput::Platform::IPod::TTouchData TouchData(TouchRef);
 		
 		TouchData.uCurrentPos = int2((s32)currentTouchPosition.x, (s32)currentTouchPosition.y);

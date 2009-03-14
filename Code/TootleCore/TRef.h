@@ -38,7 +38,12 @@ namespace TLRef
 	//	gr: extern this if you want to use it... sorry!
 //	TLArray::SortResult		RefSort(const TRef& aRef,const TRef& bRef,const void* pTestVal);	//	simple ref-sort func - for arrays of TRef's
 	extern u32				g_InvalidRefMask;
+
+	// Use the g_InvalidRefMask to validate a tref ensuring it is valid
+	FORCEINLINE s32 CreateValidTRef(s32 sValue)		{ return (sValue&(~g_InvalidRefMask)); }
 }
+
+
 
 
 //---------------------------------------------------------

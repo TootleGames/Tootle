@@ -55,13 +55,7 @@ namespace TLInput
 			// Engine side persistent touch object class
 			class TTouchObject : public TTouchData
 			{
-			public:
-				enum TouchFlags
-				{
-					Changed = 0,
-					Remove,	
-				};
-				
+			public:				
 				TTouchObject()	{}
 				TTouchObject(TRefRef TouchDataRef) :
 					TTouchData(TouchDataRef)
@@ -85,7 +79,6 @@ namespace TLInput
 				
 			public:
 				int2						uStartPosition;			// Starting position of the touch object
-				TFlags<TouchFlags, u8>		uFlags;					// Flags for this touh obejct
 			};
 						
 			void ProcessTouchBegin(const TTouchData& touchData);

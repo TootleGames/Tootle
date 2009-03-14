@@ -49,8 +49,14 @@ void TInputSensor::Process(float fRawValue)
 		Message.Write(fValue);
 
 		// Add the raw data to the message - for things that may need access to this information
-		Message.AddChildAndData("RAWDATA", fRawValue);
-
+		Message.ExportData("RAWDATA", fRawValue);
+		
+#ifdef TL_TARGET_IPOD
+		
+		Message.ExportData("CIDX", GetCursorIndex());
+		
+#endif
+		
 		// Add the sensor type so things know what type of sensor sent the information
 		//Message.AddChildAndData("SENSOR", m_Type);
 				

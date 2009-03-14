@@ -157,6 +157,14 @@ void TAction::ProcessMessage(TLMessaging::TMessage& Message)
 		// Copy the raw data value to the new message if it exists
 		if(pChild.IsValid())
 			NewMessage.AddChild(pChild);
+		
+#ifdef TL_TARGET_IPOD		
+		TPtr<TBinaryTree>& pChild2 = Message.GetChild("CIDX");
+		
+		// Copy the cursor index value to the new message if it exists
+		if(pChild2.IsValid())
+			NewMessage.AddChild(pChild2);
+#endif
 
 		PublishMessage(NewMessage);
 	}
