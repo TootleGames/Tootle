@@ -340,7 +340,7 @@ void TAudioNode::SetPitch(float fPitch)
 void TAudioNode::SetMinRange(float fDistance)
 {
 	// Clamp the min range to within range
-	TLMaths::Limit(fDistance, 0.0f, 100.0f);
+	TLMaths::Limit(fDistance, 0.0f, GetMaxRange());
 
 	if(m_AudioProperties.m_fMinRange != fDistance)
 	{
