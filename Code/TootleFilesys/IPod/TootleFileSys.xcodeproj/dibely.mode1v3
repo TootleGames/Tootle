@@ -233,6 +233,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -270,7 +272,6 @@
 							<array>
 								<string>84C108E00F0A770B00B2DF7A</string>
 								<string>84C109F40F0A799D00B2DF7A</string>
-								<string>84C10A210F0A79B400B2DF7A</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C08E77C0454961000C914BD</string>
 								<string>1C37FABC05509CD000000102</string>
@@ -278,11 +279,13 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>41</integer>
+									<integer>27</integer>
+									<integer>4</integer>
+									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 258}, {186, 609}}</string>
+							<string>{{0, 0}, {186, 609}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -312,8 +315,6 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -331,7 +332,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8418FD5B0F4F535C00B956C9</string>
+										<string>84C0CAA80F6D70DB0080B167</string>
 										<key>history</key>
 										<array>
 											<string>84E6432C0F15293C005A4DC9</string>
@@ -343,7 +344,6 @@
 											<string>84E643330F15293C005A4DC9</string>
 											<string>84E643340F15293C005A4DC9</string>
 											<string>84E643350F15293C005A4DC9</string>
-											<string>84E643380F15293C005A4DC9</string>
 											<string>84E643C60F1537BB005A4DC9</string>
 											<string>842A9E650F1629B1004BF60A</string>
 											<string>842AA35F0F1C989A004BF60A</string>
@@ -352,7 +352,18 @@
 											<string>8418FD480F4F52C900B956C9</string>
 											<string>8418FD490F4F52C900B956C9</string>
 											<string>8418FD4A0F4F52C900B956C9</string>
-											<string>8418FD4B0F4F52C900B956C9</string>
+											<string>84C0CA260F6D6C250080B167</string>
+											<string>84C0CA290F6D6C250080B167</string>
+											<string>84C0CA2A0F6D6C250080B167</string>
+											<string>84C0CA2B0F6D6C250080B167</string>
+											<string>84C0CA8C0F6D70DB0080B167</string>
+											<string>84C0CA8D0F6D70DB0080B167</string>
+											<string>84C0CA8E0F6D70DB0080B167</string>
+											<string>84C0CA8F0F6D70DB0080B167</string>
+											<string>84C0CA900F6D70DB0080B167</string>
+											<string>84C0CA910F6D70DB0080B167</string>
+											<string>84C0CA920F6D70DB0080B167</string>
+											<string>84C0CA930F6D70DB0080B167</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -373,12 +384,35 @@
 											<string>8418FD4C0F4F52C900B956C9</string>
 											<string>8418FD4D0F4F52C900B956C9</string>
 											<string>8418FD4E0F4F52C900B956C9</string>
-											<string>8418FD500F4F52C900B956C9</string>
 											<string>8418FD510F4F52C900B956C9</string>
-											<string>8418FD520F4F52C900B956C9</string>
-											<string>8418FD530F4F52C900B956C9</string>
-											<string>8418FD540F4F52C900B956C9</string>
-											<string>8418FD550F4F52C900B956C9</string>
+											<string>84C0CA300F6D6C250080B167</string>
+											<string>84C0CA310F6D6C250080B167</string>
+											<string>84C0CA320F6D6C250080B167</string>
+											<string>84C0CA330F6D6C250080B167</string>
+											<string>84C0CA340F6D6C250080B167</string>
+											<string>84C0CA350F6D6C250080B167</string>
+											<string>84C0CA360F6D6C250080B167</string>
+											<string>84C0CA390F6D6C250080B167</string>
+											<string>84C0CA3A0F6D6C250080B167</string>
+											<string>84C0CA3B0F6D6C250080B167</string>
+											<string>84C0CA3E0F6D6C250080B167</string>
+											<string>84C0CA950F6D70DB0080B167</string>
+											<string>84C0CA960F6D70DB0080B167</string>
+											<string>84C0CA970F6D70DB0080B167</string>
+											<string>84C0CA990F6D70DB0080B167</string>
+											<string>84C0CA9A0F6D70DB0080B167</string>
+											<string>84C0CA9B0F6D70DB0080B167</string>
+											<string>84C0CA9C0F6D70DB0080B167</string>
+											<string>84C0CA9D0F6D70DB0080B167</string>
+											<string>84C0CA9E0F6D70DB0080B167</string>
+											<string>84C0CA9F0F6D70DB0080B167</string>
+											<string>84C0CAA10F6D70DB0080B167</string>
+											<string>84C0CAA20F6D70DB0080B167</string>
+											<string>84C0CAA30F6D70DB0080B167</string>
+											<string>84C0CAA40F6D70DB0080B167</string>
+											<string>84C0CAA50F6D70DB0080B167</string>
+											<string>84C0CAA60F6D70DB0080B167</string>
+											<string>84C0CAA70F6D70DB0080B167</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -436,9 +470,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>8418FD570F4F52C900B956C9</string>
+				<string>84C0CAAA0F6D70DB0080B167</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>8418FD580F4F52C900B956C9</string>
+				<string>84C0CAAB0F6D70DB0080B167</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -572,7 +606,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>84C10BF00F0A84D400B2DF7A</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleFilesys/IPod/TootleFileSys.xcodeproj</string>
 	</array>
@@ -598,7 +631,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TLFileSys.cpp</string>
+								<string></string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -615,8 +648,6 @@
 							<string>218pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -656,7 +687,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>84C10BF00F0A84D400B2DF7A</string>
-				<string>8418FD2E0F4F522100B956C9</string>
+				<string>84C0CAAC0F6D70DB0080B167</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

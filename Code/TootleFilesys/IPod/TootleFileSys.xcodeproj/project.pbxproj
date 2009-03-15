@@ -11,6 +11,10 @@
 		8418E6C40F4B18C700B956C9 /* TFileMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418E6C20F4B18C700B956C9 /* TFileMenu.h */; };
 		8418FCF50F4F4D5900B956C9 /* TFileSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418FCF30F4F4D5900B956C9 /* TFileSys.cpp */; };
 		8418FCF60F4F4D5900B956C9 /* TFileSys.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418FCF40F4F4D5900B956C9 /* TFileSys.h */; };
+		84C0CA1F0F6D6A0B0080B167 /* TFileAssetScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C0CA1D0F6D6A0B0080B167 /* TFileAssetScript.h */; };
+		84C0CA200F6D6A0B0080B167 /* TFileAssetScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C0CA1E0F6D6A0B0080B167 /* TFileAssetScript.cpp */; };
+		84C0CA230F6D6BE80080B167 /* TFileTextDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C0CA210F6D6BE80080B167 /* TFileTextDatabase.h */; };
+		84C0CA240F6D6BE80080B167 /* TFileTextDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C0CA220F6D6BE80080B167 /* TFileTextDatabase.cpp */; };
 		84C10A0B0F0A79AE00B2DF7A /* TFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109F50F0A79AE00B2DF7A /* TFile.cpp */; };
 		84C10A0C0F0A79AE00B2DF7A /* TFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109F60F0A79AE00B2DF7A /* TFile.h */; };
 		84C10A0D0F0A79AE00B2DF7A /* TFileAsset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109F70F0A79AE00B2DF7A /* TFileAsset.cpp */; };
@@ -179,6 +183,10 @@
 		8418E6C20F4B18C700B956C9 /* TFileMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileMenu.h; path = ../TFileMenu.h; sourceTree = SOURCE_ROOT; };
 		8418FCF30F4F4D5900B956C9 /* TFileSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileSys.cpp; path = ../TFileSys.cpp; sourceTree = SOURCE_ROOT; };
 		8418FCF40F4F4D5900B956C9 /* TFileSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileSys.h; path = ../TFileSys.h; sourceTree = SOURCE_ROOT; };
+		84C0CA1D0F6D6A0B0080B167 /* TFileAssetScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileAssetScript.h; path = ../TFileAssetScript.h; sourceTree = SOURCE_ROOT; };
+		84C0CA1E0F6D6A0B0080B167 /* TFileAssetScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileAssetScript.cpp; path = ../TFileAssetScript.cpp; sourceTree = SOURCE_ROOT; };
+		84C0CA210F6D6BE80080B167 /* TFileTextDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileTextDatabase.h; path = ../TFileTextDatabase.h; sourceTree = SOURCE_ROOT; };
+		84C0CA220F6D6BE80080B167 /* TFileTextDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileTextDatabase.cpp; path = ../TFileTextDatabase.cpp; sourceTree = SOURCE_ROOT; };
 		84C109EF0F0A799500B2DF7A /* libTootleFileSys.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleFileSys.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C109F50F0A79AE00B2DF7A /* TFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFile.cpp; path = ../TFile.cpp; sourceTree = SOURCE_ROOT; };
 		84C109F60F0A79AE00B2DF7A /* TFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFile.h; path = ../TFile.h; sourceTree = SOURCE_ROOT; };
@@ -410,6 +418,10 @@
 				84C10A080F0A79AE00B2DF7A /* TVirtualFileSys.h */,
 				84C10A090F0A79AE00B2DF7A /* TXml.cpp */,
 				84C10A0A0F0A79AE00B2DF7A /* TXml.h */,
+				84C0CA1D0F6D6A0B0080B167 /* TFileAssetScript.h */,
+				84C0CA1E0F6D6A0B0080B167 /* TFileAssetScript.cpp */,
+				84C0CA210F6D6BE80080B167 /* TFileTextDatabase.h */,
+				84C0CA220F6D6BE80080B167 /* TFileTextDatabase.cpp */,
 			);
 			name = "Source Code";
 			sourceTree = "<group>";
@@ -761,6 +773,8 @@
 				84E114DF0F3C478A00471397 /* TFileCollada.h in Headers */,
 				8418E6C40F4B18C700B956C9 /* TFileMenu.h in Headers */,
 				8418FCF60F4F4D5900B956C9 /* TFileSys.h in Headers */,
+				84C0CA1F0F6D6A0B0080B167 /* TFileAssetScript.h in Headers */,
+				84C0CA230F6D6BE80080B167 /* TFileTextDatabase.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -866,6 +880,8 @@
 				84E114DE0F3C478A00471397 /* TFileCollada.cpp in Sources */,
 				8418E6C30F4B18C700B956C9 /* TFileMenu.cpp in Sources */,
 				8418FCF50F4F4D5900B956C9 /* TFileSys.cpp in Sources */,
+				84C0CA200F6D6A0B0080B167 /* TFileAssetScript.cpp in Sources */,
+				84C0CA240F6D6BE80080B167 /* TFileTextDatabase.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

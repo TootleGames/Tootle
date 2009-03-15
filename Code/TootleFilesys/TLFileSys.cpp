@@ -14,6 +14,8 @@
 #include "TFileScheme.h"
 #include "TFileCollada.h"
 #include "TFileMenu.h"
+#include "TFileAssetScript.h"
+#include "TFileTextDatabase.h"
 
 #if defined(TL_TARGET_IPOD)
 	#include "IPod/IPodLocalFileSys.h"
@@ -532,6 +534,21 @@ TLFileSys::TFile* TLFileSys::TFileFactory::CreateObject(TRefRef InstanceRef,TRef
 	if ( TypeRef == TRef("menu") )
 	{
 		pFile = new TLFileSys::TFileMenu( InstanceRef, TypeRef );
+		return pFile;
+	}
+	
+	//	tootle asset script xml file
+	if ( TypeRef == TRef("tas") )
+	{
+		pFile = new TLFileSys::TFileAssetScript( InstanceRef, TypeRef );
+		return pFile;
+	}
+	
+	
+	//	tootle text database xml file
+	if ( TypeRef == TRef("ttd") )
+	{
+		pFile = new TLFileSys::TFileTextDatabase( InstanceRef, TypeRef );
 		return pFile;
 	}
 	
