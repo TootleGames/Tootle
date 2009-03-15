@@ -20,7 +20,15 @@ void CreateZoneMesh(TLAsset::TMesh& Mesh,const TPtr<TLMaths::TQuadTreeZone>& pZo
 	ZoneShapeSphere.Set( ZoneShapeBox );
 
 	ZoneColour.GetAlpha() = 0.5f;
-	Mesh.GenerateSphere( ZoneShapeSphere, &ZoneColour, z );
+	//	filled if active
+	if ( pZone->IsActive() )
+	{
+		Mesh.GenerateSphere( ZoneShapeSphere, &ZoneColour, z );
+	}
+	else
+	{
+		Mesh.GenerateSphereOutline( ZoneShapeSphere, &ZoneColour, z );
+	}
 
 	//	draw box outline still
 	ZoneColour.GetAlpha() = 1.0f;

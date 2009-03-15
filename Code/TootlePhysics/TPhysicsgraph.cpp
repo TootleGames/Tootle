@@ -497,12 +497,14 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByNodeUpwards(TLPhysics::TPhysicsNode
 	for ( u32 n=0;	n<ZoneNodes.GetSize();	n++ )
 	{
 		TPtr<TLMaths::TQuadTreeNode>& pOtherNodePtr = ZoneNodes[n];
-		TLPhysics::TPhysicsNode* pOtherNode = pOtherNodePtr.GetObject<TLPhysics::TPhysicsNode>();
+		TLPhysics::TPhysicsZoneNode* pOtherNodeZoneNode = pOtherNodePtr.GetObject<TLPhysics::TPhysicsZoneNode>();
 
 		//	dont collide with self!
-		if ( pNode->GetNodeRef() == pOtherNode->GetNodeRef() )
+		if ( pNode->GetNodeRef() == pOtherNodeZoneNode->GetPhysicsNodeRef() )
 			continue;
 		
+		TLPhysics::TPhysicsNode* pOtherNode = pOtherNodeZoneNode->GetPhysicsNode();
+	
 		/*
 		//	to save some collision time, check to see if this OtherNode intersects our node's zone 
 		//	this is to skip collision checks with a node in a parent(or parent parent) zone that might be far away

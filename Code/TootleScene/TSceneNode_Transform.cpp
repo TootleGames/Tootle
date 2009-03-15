@@ -1,5 +1,6 @@
 #include "TSceneNode_Transform.h"
 #include <TootleMaths/TLine.h>
+#include "TScenegraph.h"
 
 using namespace TLScene;
 
@@ -170,4 +171,31 @@ float TSceneNode_Transform::GetDistanceTo(const TLMaths::TLine& Line)
 	return Line.GetDistanceSq(vPos);
 }
 
+
+//------------------------------------------------------
+//	
+//------------------------------------------------------
+void TSceneNode_Transform::PostUpdate(float fTimestep)
+{
+	//	update zone if out of date
+	if ( IsZoneOutOfDate() )
+	{
+		TPtr<TLMaths::TQuadTreeZone>& pRootZone = TLScene::g_pScenegraph->GetRootZone();
+		if ( pRootZone )
+		{
+			//	get our ptr
+			TPtr<TLScene::TSceneNode>& pThisSceneNode = TLScene::g_pScenegraph->FindNode( GetNodeRef() );
+			if ( pThisSceneNode )
+			{
+				TPtr<TLScene::TSceneNode_Transform> pThisSceneNodeTransform = pThisSceneNode;
+				TPtr<TLMaths::TQuadTreeNode> pThisQuadTreeNode = pThisSceneNodeTransform;
+				UpdateZone( pThisQuadTreeNode, pRootZone );
+			}
+			else
+			{
+				TLDebug_Break("Failed to find TPtr for this!");
+			}
+		}
+	}
+}
 

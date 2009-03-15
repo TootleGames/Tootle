@@ -184,6 +184,7 @@ public:
 	virtual Bool		IsStatic() 								{	return GetPhysicsNode() ? m_pPhysicsNode->IsStatic() : FALSE;	}
 	virtual SyncBool	IsInShape(const TLMaths::TBox2D& Shape);
 
+	FORCEINLINE TRefRef	GetPhysicsNodeRef() const				{	return m_PhysicsNodeRef;	}
 	TPtr<TPhysicsNode>&	GetPhysicsNode();
 
 protected:

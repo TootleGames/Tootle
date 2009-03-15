@@ -63,11 +63,13 @@ public:
 	TQuadTreeNode();
 	virtual ~TQuadTreeNode()		{}
 
-	virtual Bool					IsStatic()									{	return FALSE;	}	//	if static we can assume this node won't be traversing zones. Only really used for filtering whne accessing the zones, i.e. by the physics for specific traversal
+	virtual Bool					IsStatic()										{	return FALSE;	}	//	if static we can assume this node won't be traversing zones. Only really used for filtering whne accessing the zones, i.e. by the physics for specific traversal
 	virtual SyncBool				IsInZone(const TLMaths::TQuadTreeZone& Zone);	//	do your object's test to see if it intersects at all with this zone's shape, default does shape/shape but you might want something more complex
 	virtual SyncBool				IsInShape(const TLMaths::TBox2D& Shape);		//	do your object's test to see if it intersects at all with this zone's shape, default does shape/shape but you might want something more complex
 	virtual const TLMaths::TBox2D&	GetZoneShape();									//	get the shape of this node
-	FORCEINLINE TRefRef				GetQuadTreeNodeRef() const					{	return m_QuadTreeNodeRef;	}
+	FORCEINLINE TRefRef				GetQuadTreeNodeRef() const						{	return m_QuadTreeNodeRef;	}
+	virtual void					OnZoneWake()									{	}	//	notifcation when zone is set to active (from non-active)
+	virtual void					OnZoneSleep()									{	}	//	notifcation when zone is set to non-active (from active)
 
 	FORCEINLINE TPtr<TQuadTreeZone>&		GetZone()								{	return m_pZone;	}
 	FORCEINLINE const TPtr<TQuadTreeZone>&	GetZone() const							{	return m_pZone;	}
@@ -142,6 +144,9 @@ public:
 
 	Bool						DivideAll(TPtr<TLMaths::TQuadTreeZone>& pThis);		//	recursively divide until we're at our minimum size leafs
 
+	FORCEINLINE Bool			IsActive() const									{	return m_Active;	}
+	void						SetActive(Bool Active,Bool SetChildren);			//	sets this zone and all it's child zones as active
+
 protected:
 	void						GetInChildZones(TQuadTreeNode* pNode,TFixedArray<u32,4>& InZones);			//	return which child zone we're in, -1 if none
 	void						OnChildZoneNodesChanged();							//	list of nodes in a child has changed
@@ -150,6 +155,7 @@ protected:
 	void						DoRemoveNode(TPtr<TQuadTreeNode>& pNode);			//	remove node from this zone's list
 
 	void						OnZoneStructureChanged();							//	if we subdivide, or delete child zones etc, then call this func - will go up to the root then notify subscribers of the change
+	void						OnZoneActiveChanged(Bool Active);					//	zone has gone to sleep/woken up
 
 private:
 	Bool						Divide(TPtr<TLMaths::TQuadTreeZone>& pThis);		//	subdivide ourselves into 4 children
@@ -169,6 +175,8 @@ protected:
 	s32							m_SiblingIndex;			//	our index in our parent's children. -1 when no parent
 
 	TQuadTreeParams				m_ZoneParams;			//	zone parameters - copied from parent
+	
+	Bool						m_Active;				//	currently just used for the scene graph as this type doesnt get overloaded
 };
 
 

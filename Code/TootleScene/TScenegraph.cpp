@@ -133,6 +133,12 @@ void TLScene::TScenegraph::SetRootZone(TPtr<TLMaths::TQuadTreeZone>& pZone)
 {
 	m_pRootZone = pZone;
 
+	//	predivide all the zones to their smallest level
 	m_pRootZone->DivideAll( m_pRootZone );
+
+	//	set active zone as the root by default so everything is active (it's default state
+	m_pActiveZone = m_pRootZone;
 }
-	
+
+
+

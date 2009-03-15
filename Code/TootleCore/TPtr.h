@@ -54,35 +54,19 @@ template <typename TYPE>
 class TPtr;
 
 
+namespace TLDebug
+{
+	Bool				Break(const TString& String,const char* pSourceFunction);
+}
+
+
 namespace TLPtr
 {
 	//---------------------------------------------------------
-	//	gr: counter is now outside TPtr, this makes it easier to assign 
-	//	TPtr's to the same object, but cast differently
-	//
-	//	refcounter type - owns original pointer and has a counter. Saves having a RefCount in every object we
-	//	want to use a smart pointer for. A pointer to this counter is passed around. 
+	//	to sort various issues, and speed things up the counter type is now just a u32
 	//---------------------------------------------------------
-	class Counter
-	{
-	public:
-		Counter(void* pObject) :
-			m_pObject	( pObject ),
-			m_Count		( 1 )
-		{
-		}
+	typedef u32 TCounter;
 
-		template<typename TYPE>
-		FORCEINLINE TYPE*	GetObject()			{	return static_cast<TYPE*>( m_pObject );	}
-		//virtual void		DeleteObject()		{	TLMemory::Delete( m_pObject );	}
-		virtual void		DeleteObject()		{	m_pObject = NULL;	}
-
-	public:
-		u32			m_Count;
-
-	private:
-		void*		m_pObject;
-	};
 
 	template<typename TYPE>
 	FORCEINLINE TPtr<TYPE>&	GetNullPtr();	//	get a static Null ptr for a type;
@@ -96,28 +80,28 @@ class TPtr
 
 public:
 	template<typename OBJTYPE>
-	FORCEINLINE TPtr(OBJTYPE* pObject)		: m_pCounter ( NULL )			{	AssignToObject( static_cast<TYPE*>(pObject) );	}
-	FORCEINLINE TPtr(TYPE* pObject)			: m_pCounter ( NULL )			{	AssignToObject( static_cast<TYPE*>(pObject) );	}
-	FORCEINLINE TPtr()						: m_pCounter ( NULL )			{	}
+	FORCEINLINE TPtr(OBJTYPE* pObject)		: m_pCounter ( NULL ), m_pObject ( NULL )			{	AssignToObject( static_cast<TYPE*>(pObject) );	}
+	FORCEINLINE TPtr(TYPE* pObject)			: m_pCounter ( NULL ), m_pObject ( NULL )			{	AssignToObject( static_cast<TYPE*>(pObject) );	}
+	FORCEINLINE TPtr()						: m_pCounter ( NULL ), m_pObject ( NULL )			{	}
 	template<typename OBJTYPE>
-	FORCEINLINE TPtr(const TPtr<OBJTYPE>& Ptr)	: m_pCounter ( NULL )		{	AssignToPtr( Ptr );	}
-	FORCEINLINE TPtr(const TPtr<TYPE>& Ptr)		: m_pCounter ( NULL )		{	AssignToPtr( Ptr );	}	//	gr: NEED to implement TYPE even though it should be covered by the templated OBJTYPE version otherwise it calls some other function entirely
-	~TPtr()																	{	ReleaseObject();	}
+	FORCEINLINE TPtr(const TPtr<OBJTYPE>& Ptr)	: m_pCounter ( NULL ), m_pObject ( NULL )		{	AssignToPtr( Ptr );	}
+	FORCEINLINE TPtr(const TPtr<TYPE>& Ptr)		: m_pCounter ( NULL ), m_pObject ( NULL )		{	AssignToPtr( Ptr );	}	//	gr: NEED to implement TYPE even though it should be covered by the templated OBJTYPE version otherwise it calls some other function entirely
+	~TPtr()																						{	ReleaseObject();	}
 	
 	//	accessors
 	FORCEINLINE Bool			IsValid() const								{	return (m_pCounter != NULL);	}
-	FORCEINLINE u32				GetRefCount() const							{	return m_pCounter ? m_pCounter->m_Count : 0;	}
+	FORCEINLINE u32				GetRefCount() const							{	return m_pCounter ? *m_pCounter : 0;	}
 
 	//FORCEINLINE TYPE&			operator*()	const							{	return *GetObject();	}	//	gr: safer not to have this... unless required?? easier, safer and clearer to use GetPtr()
-	FORCEINLINE TYPE*			operator->()								{	return m_pCounter->GetObject<TYPE>();	}	//	note: no pointer check here for efficieny
-	FORCEINLINE const TYPE*		operator->() const							{	return m_pCounter->GetObject<TYPE>();	}	//	note: no pointer check here for efficieny
-	FORCEINLINE TYPE*			GetObject()									{	return m_pCounter ? m_pCounter->GetObject<TYPE>() : NULL;	}
-	FORCEINLINE const TYPE*		GetObject() const							{	return m_pCounter ? m_pCounter->GetObject<TYPE>() : NULL;	}
+	FORCEINLINE TYPE*			operator->()								{	return m_pObject;	}	//	note: no pointer check here for efficieny
+	FORCEINLINE const TYPE*		operator->() const							{	return m_pObject;	}	//	note: no pointer check here for efficieny
+	FORCEINLINE TYPE*			GetObject()									{	return m_pObject;	}	//	note: no pointer check here for efficieny
+	FORCEINLINE const TYPE*		GetObject() const							{	return m_pObject;	}	//	note: no pointer check here for efficieny
 	template<typename OBJTYPE>
-	FORCEINLINE OBJTYPE*		GetObject()									{	return m_pCounter->GetObject<OBJTYPE>();	}	//	note: no pointer check here for efficieny
+	FORCEINLINE OBJTYPE*		GetObject()									{	return static_cast<OBJTYPE*>( m_pObject );	}	//	note: no pointer check here for efficieny
 	template<typename OBJTYPE>
-	FORCEINLINE const OBJTYPE*	GetObject() const							{	return m_pCounter->GetObject<OBJTYPE>();	}	//	note: no pointer check here for efficieny
-	FORCEINLINE					operator TYPE*() const						{	return m_pCounter ? m_pCounter->GetObject<TYPE>() : NULL;	}
+	FORCEINLINE const OBJTYPE*	GetObject() const							{	return static_cast<const OBJTYPE*>( m_pObject );	}	//	note: no pointer check here for efficieny
+	FORCEINLINE					operator TYPE*() const						{	return m_pObject;	}
 
 	template<typename OBJTYPE>
 	FORCEINLINE TPtr<TYPE>&		operator=(const TPtr<OBJTYPE>& Ptr)			{	AssignToPtr( Ptr );	return *this;	}			//	assign this pointer to an existing smart pointer
@@ -129,14 +113,14 @@ public:
 	template<typename OBJTYPE>
 	FORCEINLINE Bool			operator==(const OBJTYPE& Object) const;	//	gr: GENIUS! now == operators in our TYPE type work through TPtr! :)
 	template<typename OBJTYPE>
-	FORCEINLINE Bool			operator==(const TPtr<OBJTYPE>& Ptr) const	{	return GetObject() == Ptr.GetObject<TYPE>();	}
-	FORCEINLINE Bool			operator==(const TPtr<TYPE>& Ptr) const		{	return GetObject() == Ptr.GetObject();	}
-	FORCEINLINE Bool			operator==(const TYPE* pObject) const		{	return GetObject() == pObject;	}
+	FORCEINLINE Bool			operator==(const TPtr<OBJTYPE>& Ptr) const	{	return m_pObject == Ptr.GetObject<TYPE>();	}
+	FORCEINLINE Bool			operator==(const TPtr<TYPE>& Ptr) const		{	return m_pObject == Ptr.GetObject();	}
+	FORCEINLINE Bool			operator==(const TYPE* pObject) const		{	return m_pObject == pObject;	}
 
 	template<typename OBJTYPE>
-	FORCEINLINE Bool			operator!=(const TPtr<OBJTYPE>& Ptr) const	{	return GetObject() != Ptr.GetObject<TYPE>();	}
-	FORCEINLINE Bool			operator!=(const TPtr<TYPE>& Ptr) const		{	return GetObject() != Ptr.GetObject();	}
-	FORCEINLINE Bool			operator!=(const TYPE* pObject) const		{	return GetObject() != pObject;	}
+	FORCEINLINE Bool			operator!=(const TPtr<OBJTYPE>& Ptr) const	{	return m_pObject != Ptr.GetObject<TYPE>();	}
+	FORCEINLINE Bool			operator!=(const TPtr<TYPE>& Ptr) const		{	return m_pObject != Ptr.GetObject();	}
+	FORCEINLINE Bool			operator!=(const TYPE* pObject) const		{	return m_pObject != pObject;	}
 /*
 	template<typename OBJTYPE>
 	FORCEINLINE Bool			operator<(const OBJTYPE& Object) const;
@@ -145,36 +129,20 @@ public:
 	FORCEINLINE Bool			operator<(const TPtr<TYPE>& Ptr) const;
 	FORCEINLINE Bool			operator<(const TYPE* pObject) const;
 */
-	FORCEINLINE operator Bool	() const									{	return GetObject() != NULL;	} 
+	FORCEINLINE operator Bool	() const									{	return m_pObject != NULL;	} //	gr: compiler usually uses the TYPE* operator for if ( Ptr ) checks now
 
 protected:
-	FORCEINLINE TLPtr::Counter*	GetRefCounter() const						{	return m_pCounter;	}
+	FORCEINLINE TLPtr::TCounter*	GetRefCounter() const					{	return m_pCounter;	}
 
 private:
 	template<typename OBJTYPE>
-	void		AssignToPtr(const TPtr<OBJTYPE>& Ptr);			//	link to counter and increment
-	void		AssignToObject(TYPE* pObject);					//	create a counter and link to this object
-	void		ReleaseObject();								//	decrement the counter and delete if this is the last reference
+	void				AssignToPtr(const TPtr<OBJTYPE>& Ptr);			//	link to counter and increment
+	void				AssignToObject(TYPE* pObject);					//	create a counter and link to this object
+	void				ReleaseObject();								//	decrement the counter and delete if this is the last reference
 
 private:
-	//	gr: I've overloaded the counter, per-type, so when we're debugging we dont need to cast the void pointer
-	class CounterType : public TLPtr::Counter
-	{
-	public:
-		CounterType(TYPE* pObject) : 
-			Counter			( pObject ), 
-			m_pObjectType	( pObject )
-		{
-		}
-
-		virtual void	DeleteObject()		{	TLMemory::Delete(m_pObjectType);	Counter::DeleteObject();	m_pObjectType = GetObject<TYPE>();	}	//	DO NOT DELETE m_pObjectType, just NULL it. parent class deletes
-
-	private:
-		TYPE*			m_pObjectType;	//	dont read or delete or modify this for anything, only used to read for debugging
-	};
-
-private:
-	CounterType*		m_pCounter;		//	our actual counter object
+	TLPtr::TCounter*	m_pCounter;		//	this is a pointer to the global counter (a u32)
+	TYPE*				m_pObject;		//	this is a pointer to the real object. its stored in our type. due to the way the new system works, this poitner could be non-null but deleted. But if you always use isvalid/etc(m_pCounter should be null) then not a problem! The theory goes that this will be valid anyway, if we reach zero count, then this should be the last pointer!
 };
 
 
@@ -189,41 +157,7 @@ Bool TPtr<TYPE>::operator==(const OBJTYPE& Object) const
 	const TYPE* pObjectA = GetObject();	
 	return pObjectA ? (*pObjectA) == Object : FALSE;		
 }
-/*
-template <typename TYPE>
-template<typename OBJTYPE>	
-FORCEINLINE Bool TPtr<TYPE>::operator<(const OBJTYPE& Object) const	
-{
-	const TYPE* pObjectA = GetObject();	
-	return pObjectA ? (*pObjectA) < Object : FALSE;	
-}
 
-template <typename TYPE>
-template<typename OBJTYPE>
-FORCEINLINE Bool TPtr<TYPE>::operator<(const TPtr<OBJTYPE>& Ptr) const
-{	
-	const TYPE* pObjectA = GetObject();	
-	const TYPE* pObjectB = Ptr.GetObject<TYPE>();	
-	return (pObjectA && pObjectB) ? (*pObjectA) < (*pObjectB) : FALSE;	
-}
-
-template <typename TYPE>
-FORCEINLINE Bool TPtr<TYPE>::operator<(const TPtr<TYPE>& Ptr) const	
-{	
-	const TYPE* pObjectA = GetObject();	
-	const TYPE* pObjectB = Ptr.GetObject();	
-	return (pObjectA && pObjectB) ? (*pObjectA) < (*pObjectB) : FALSE;	
-}
-
-template <typename TYPE>
-FORCEINLINE Bool TPtr<TYPE>::operator<(const TYPE* pObject) const	
-{	
-	const TYPE* pObjectA = GetObject();	
-	const TYPE* pObjectB = pObject;
-	return (pObjectA && pObjectB) ? (*pObjectA) < (*pObjectB) : FALSE;	
-}
-
-*/
 
 //----------------------------------------------------------
 //	take ownership of this pointer
@@ -235,24 +169,28 @@ void TPtr<TYPE>::AssignToObject(TYPE* pObject)
 	if ( m_pCounter )
 	{
 		//	already assigned to this
-		if ( m_pCounter->GetObject<TYPE>() == pObject )
+		if ( m_pObject == pObject )
 			return;
 
 		//	assigned to something else, release current counter
 		ReleaseObject();
 	}
 
-	if ( m_pCounter )
+	if ( m_pCounter || m_pObject )
 	{
-		TLDebug_Break( TString("Unexpected TPtr counter") );
+		TLDebug_Break( TString("Unexpected TPtr counter/object") );
 	}
 
 	//	nothing to assign to
 	if ( !pObject )
 		return;
 
-	//	create a new counter to link to this object
-	m_pCounter = new CounterType( pObject );
+	//	create a new counter...
+	m_pCounter = new TLPtr::TCounter;
+	*m_pCounter = 1;
+
+	//	store pointer to object
+	m_pObject = pObject;
 
 	return;	
 }
@@ -265,13 +203,6 @@ template<typename TYPE>
 template<typename OBJTYPE>
 void TPtr<TYPE>::AssignToPtr(const TPtr<OBJTYPE>& Ptr)
 {
-#if defined(_DEBUG) && !defined(TL_TARGET_IPOD)
-	//	gr: simple line to test compatibility of types at compile time
-	OBJTYPE* pTestPointerFrom = NULL;
-	TYPE* pTestPointerTo = static_cast<TYPE*>( pTestPointerFrom );
-	pTestPointerTo;	//	gr: get rid of unused variable warning
-#endif
-
 	//	we are already assigned to this object... no change
 	if ( GetRefCounter() == Ptr.GetRefCounter() )
 		return;
@@ -279,25 +210,41 @@ void TPtr<TYPE>::AssignToPtr(const TPtr<OBJTYPE>& Ptr)
 	//	counter is different, release the current assignment (if any)
 	ReleaseObject();
 
-	//	now assign to this new counter...
+	//	now assign ourselves to this new counter...
 	if ( Ptr.GetRefCounter() )
 	{
-		//	note: if TYPE and OBJTYPE are different (even if related) you lose the RTTI. the VTable is still valid 
-		//		see header notes
-//		m_pCounter = static_cast<CounterType*>( Ptr.GetRefCounter() );
-		//m_pCounter = dynamic_cast<CounterType*>( Ptr.GetRefCounter() );		//	fails to cast even though is valid
-		//m_pCounter = reinterpret_cast<CounterType*>( Ptr.GetRefCounter() );
-		m_pCounter = (CounterType*)( Ptr.GetRefCounter() );
+		//	and store pointer to the actual object
+		//	use a static_cast to allow TPtr<B> (derived from A) = TPtr<A>
+		//	dynamic_cast is a runtime-type check
+#ifdef _DEBUG
+		const TYPE* pConstObject = dynamic_cast<const TYPE*>( Ptr.GetObject() );
 
-		if ( !m_pCounter )
+		//	cast failed, break and static cast if we continue
+		if ( !pConstObject )
 		{
-			TLDebug_Break("Pointer conversion has failed type check");
+			if ( TLDebug::Break("Failed to cast pointer type to other type", __FUNCTION__ ) )
+			{
+				pConstObject = static_cast<const TYPE*>( Ptr.GetObject() );
+			}
+		}
+#else
+		const TYPE* pConstObject = static_cast<const TYPE*>( Ptr.GetObject() );
+#endif
+
+		//	cast succeeded
+		if ( pConstObject )
+		{
+			//	special case to allow a cast down, technically we shouldn't allow TYPE* p = const TYPE* o though...
+			//	maybe we should change this so we can't assign a const TPtr to a TPtr...
+			m_pObject = const_cast<TYPE*>( pConstObject );
+		
+			//	store pointer to counter
+			m_pCounter = Ptr.GetRefCounter();
+
+			//	... and increment pointer counter
+			(*m_pCounter)++;
 		}
 	}
-
-	//	... and increment pointer counter (if valid, m_pCounter could be happily be NULL here!)
-	if ( m_pCounter )
-		m_pCounter->m_Count++;
 }
 
 
@@ -312,24 +259,21 @@ void TPtr<TYPE>::ReleaseObject()
 		return;
 
 	//	decrement counter
-	m_pCounter->m_Count--;
+	(*m_pCounter)--;
 
-	//	release if needbe
-	if ( m_pCounter->m_Count == 0 )
+	//	delete object if needbe
+	if ( (*m_pCounter) == 0 )
 	{
-		//	gr: remove pointer before deletion to avoid anything checking to see if this is non-null during destructors
-		CounterType* pCounter = m_pCounter;
-		m_pCounter = NULL;
-
-		//	delete the object
-		pCounter->DeleteObject();
-
-		//	delete the object's counter
-		TLMemory::Delete( pCounter );
+		//	delete data and null pointers
+		TLMemory::Delete( m_pCounter );
+		TLMemory::Delete( m_pObject );
 	}
-
-	//	remove our reference to this counter
-	m_pCounter = NULL;
+	else
+	{
+		//	just un-associate ourselves with this object and counter as counter is > 0 so something is still using them
+		m_pCounter = NULL;
+		m_pObject = NULL;
+	}
 }
 
 

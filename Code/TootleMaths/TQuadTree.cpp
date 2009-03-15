@@ -254,7 +254,8 @@ TLMaths::TQuadTreeZone::TQuadTreeZone(const TLMaths::TBox2D& ZoneShape,const TLM
 	m_Nodes					( &TLMaths::TLQuadTree::SortNodes ),
 	m_SiblingZoneIndexes	( 0 ),
 	m_SiblingIndex			( -1 ),
-	m_ZoneParams			( ZoneParams )
+	m_ZoneParams			( ZoneParams ),
+	m_Active				( TRUE )
 {
 }
 
@@ -610,6 +611,15 @@ void TLMaths::TQuadTreeZone::OnZoneStructureChanged()
 }
 
 
+//-----------------------------------------------------------------
+//	if we subdivide, or delete child zones etc, then call this func - will go up to the root then notify subscribers of the change
+//-----------------------------------------------------------------
+void TLMaths::TQuadTreeZone::OnZoneActiveChanged(Bool Active)
+{
+	//	gr: for now, just notify structure change to rebuild debug render nodes
+	OnZoneStructureChanged();
+}
+
 
 //-----------------------------------------------------------------
 //	assign sibling
@@ -703,5 +713,38 @@ Bool TLMaths::TQuadTreeZone::DivideAll(TPtr<TLMaths::TQuadTreeZone>& pThis)
 	}
 
 	return TRUE;
+}
+
+
+//---------------------------------------------------
+//	sets this zone and all it's child zones as active
+//---------------------------------------------------
+void TLMaths::TQuadTreeZone::SetActive(Bool Active,Bool SetChildren)
+{
+	//	gr: don't do children if no change?
+	if ( m_Active != Active )
+	{
+		m_Active = Active;
+
+		//	notify change to nodes
+		for ( u32 n=0;	n<m_Nodes.GetSize();	n++ )
+		{
+			TLMaths::TQuadTreeNode& Node = *(m_Nodes[n]);
+			if ( m_Active )
+				Node.OnZoneWake();
+			else
+				Node.OnZoneSleep();
+		}
+
+		//	do any on-zone-activation changed notification
+		OnZoneActiveChanged( m_Active );
+	}
+
+	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
+	{
+		TPtr<TLMaths::TQuadTreeZone>& pChild = m_Children[c];
+
+		pChild->SetActive( Active, SetChildren );
+	}
 }
 

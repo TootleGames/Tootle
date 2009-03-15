@@ -8,12 +8,16 @@
 
 namespace TLScene
 {
-		class TSceneNode_Transform;
+	class TSceneNode_Transform;
 };
 
-/*
-	TSceneNode_Transform class
-*/
+
+
+//------------------------------------------------------------------
+//	TSceneNode_Transform class
+//	gr: this node type (with positional information) is derived from a quad 
+//	tree node so it can be placed in a zone
+//------------------------------------------------------------------
 class TLScene::TSceneNode_Transform : public TLScene::TSceneNode, public TLMaths::TQuadTreeNode
 {
 public:
@@ -22,7 +26,6 @@ public:
 	{
 	}
 
-	virtual void				Initialise(TLMessaging::TMessage& Message);
 	virtual Bool				HasTransform()	{ return TRUE; }
 
 	FORCEINLINE const float3&	GetPosition() const												{	return GetTranslate();	}					//	our position will be 
@@ -44,6 +47,9 @@ public:
 	virtual float				GetDistanceTo(const TLMaths::TLine& Line);			//	gr: note, this returns SQUARED distance! bad function naming!
 
 protected:
+	virtual void				Initialise(TLMessaging::TMessage& Message);
+	virtual void				PostUpdate(float fTimestep);
+
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);
 
 	virtual void				Translate(float3 vTranslation);
@@ -51,11 +57,13 @@ protected:
 	//virtual void				Scale(float3 vScale);
 	TLMaths::TTransform&		GetTransform() 							{	return m_Transform;	}
 
-	FORCEINLINE void			OnTranslationChanged()		{	TLMaths::TQuadTreeNode::SetZoneOutOfDate();	OnTransformChanged(TRUE, FALSE, FALSE);	}
-	FORCEINLINE void			OnRotationChanged()			{	OnTransformChanged(FALSE, TRUE, FALSE);	}
-	FORCEINLINE void			OnScaleChanged()			{	OnTransformChanged(FALSE, FALSE, TRUE);	}
-
+	FORCEINLINE void			OnTranslationChanged()					{	TLMaths::TQuadTreeNode::SetZoneOutOfDate();	OnTransformChanged(TRUE, FALSE, FALSE);	}
+	FORCEINLINE void			OnRotationChanged()						{	OnTransformChanged(FALSE, TRUE, FALSE);	}
+	FORCEINLINE void			OnScaleChanged()						{	OnTransformChanged(FALSE, FALSE, TRUE);	}
 	void						OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);
+
+	virtual void				OnZoneWake()							{	}	//	notifcation when zone is set to active (from non-active). SceneNode will now be updated
+	virtual void				OnZoneSleep()							{	}	//	notifcation when zone is set to non-active (from active). SceneNode will now NOT be updated
 
 private:
 	TLMaths::TTransform			m_Transform;

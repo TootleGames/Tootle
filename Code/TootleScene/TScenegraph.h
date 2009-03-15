@@ -56,7 +56,9 @@ protected:
 	virtual SyncBool				Shutdown();
 
 protected:
-	TPtr<TLMaths::TQuadTreeZone>	m_pRootZone;
+	TPtr<TLMaths::TQuadTreeZone>	m_pRootZone;			//	root zone for the zone quad tree
+	TPtr<TLMaths::TQuadTreeZone>	m_pActiveZone;			//	the currently active zone
+	TRef							m_ActiveZoneTrackNode;	//	if set this sets m_ActiveZone to follow this node and set the zone
 };
 
 

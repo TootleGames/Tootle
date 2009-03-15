@@ -1,25 +1,51 @@
 #include "TSceneNode.h"
 
 
-using namespace TLScene;
 
-TSceneNode::TSceneNode(TRefRef NodeRef,TRefRef TypeRef) :
-	TLGraph::TGraphNode<TLScene::TSceneNode>	( NodeRef, TypeRef ),
-	m_NodeTypeRef								( TypeRef )
+TLScene::TSceneNode::TSceneNode(TRefRef NodeRef,TRefRef TypeRef) :
+	TLGraph::TGraphNode<TLScene::TSceneNode>	( NodeRef, TypeRef )
 {
 }
 
+//-------------------------------------------------------
+//
+//-------------------------------------------------------
+void TLScene::TSceneNode::UpdateAll(float Timestep)
+{
+	// Update this
+	Update( Timestep );
+	PostUpdate( Timestep );
 
-void TSceneNode::Update(float fTimeStep)
+	//	update tree
+	TPtrArray<TLScene::TSceneNode>& Children = GetChildren();
+	for ( u32 c=0;	c<Children.GetSize();	c++ )
+	{
+		TPtr<TLScene::TSceneNode>& pChild = Children[c];
+		pChild->UpdateAll( Timestep );
+	}
+
+}
+
+
+
+void TLScene::TSceneNode::ProcessMessage(TLMessaging::TMessage& Message)
+{
+
+	// Super class process message
+	TLGraph::TGraphNode<TSceneNode>::ProcessMessage(Message);
+}
+
+
+
+void TLScene::TSceneNode::Update(float fTimeStep)
 {
 	//	do inherited update
 	TLGraph::TGraphNode<TLScene::TSceneNode>::Update( fTimeStep );
 }
 
 
-void TSceneNode::ProcessMessage(TLMessaging::TMessage& Message)
+void TLScene::TSceneNode::PostUpdate(float fTimestep)
 {
-
-	// Super class process message
-	TLGraph::TGraphNode<TSceneNode>::ProcessMessage(Message);
 }
+
+

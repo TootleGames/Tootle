@@ -5,8 +5,18 @@
 
 namespace TLScene
 {
-		class TSceneNode;
+	class TSceneNode;
+
+	namespace TSceneNodeFlags
+	{
+		enum Type
+		{
+			AlwaysAwake = 0,	//	when zone is asleep, we still do a SceneNodeUpdate
+		};
+	};
 };
+
+
 
 //---------------------------------------------------------
 //	TSceneNode class
@@ -16,6 +26,8 @@ class TLScene::TSceneNode : public TLGraph::TGraphNode<TLScene::TSceneNode>
 public:
 	TSceneNode(TRefRef NodeRef,TRefRef TypeRef=TRef());
 
+	virtual void		UpdateAll(float Timestep);		//	overloaded to force a PostUpdate() after the normal Update()
+
 	// Virtual properties that are only available on inherited classes
 	// Saves u having to either add unnecessary properties to base classes or
 	// the use of RTTI IsKindOf etc
@@ -23,13 +35,11 @@ public:
 	virtual Bool		HasRender()				{	return FALSE; }
 	virtual Bool		HasPhysics()			{	return FALSE; }
 
-	FORCEINLINE TRefRef	GetNodeTypeRef() const	{	return m_NodeTypeRef;	}
-
 protected:
-	virtual void 	Update(float fTimestep);	//	base scene node update
+	virtual void 		Update(float fTimestep);		//	base scene node update
+	virtual void		PostUpdate(float fTimestep);	//
 
-	virtual void	ProcessMessage(TLMessaging::TMessage& Message);
-
-protected:
-	TRef			m_NodeTypeRef;		//	node type ref used in factory
+	virtual void		ProcessMessage(TLMessaging::TMessage& Message);
 };
+
+
