@@ -165,7 +165,7 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(TLRender::TOrthoCamera* pC
 		{
 			m_pRenderNodeClear = new TRenderNodeClear("Clear","Clear");
 		}
-		m_pRenderNodeClear->SetSize( OrthoSize, -1.f );
+		m_pRenderNodeClear->SetSize( OrthoBox, -1.f );
 		m_pRenderNodeClear->SetColour( m_ClearColour );
 	}
 	else
