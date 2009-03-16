@@ -158,6 +158,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TAssetScript.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TAssetScript.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TAudio.cpp"
 			>
 		</File>
@@ -223,6 +231,14 @@
 		</File>
 		<File
 			RelativePath="..\TShader.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TText.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TText.h"
 			>
 		</File>
 	</Files>
