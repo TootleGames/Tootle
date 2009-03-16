@@ -60,16 +60,18 @@ protected:
 
 	// Transformation
 	virtual void					Translate(float3 vTranslation);
+	virtual void					OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);	//	this checks to see if we're asleep first and delays sending a transform until we are awake
 	
 	virtual void					OnZoneWake();							//	re-enable physics and render nodes
 	virtual void					OnZoneSleep();							//	disable physics and render nodes
 
 protected:
-	void					SetRenderNode(TRefRef RenderNodeRef)		{	m_RenderNodeRef = RenderNodeRef;	}
-	void					SetPhysicsObject(TRefRef PhysicsNodeRef)	{	m_PhysicsNodeRef = PhysicsNodeRef;	}
+//	void					SetRenderNode(TRefRef RenderNodeRef)		{	m_RenderNodeRef = RenderNodeRef;	}
+//	void					SetPhysicsObject(TRefRef PhysicsNodeRef)	{	m_PhysicsNodeRef = PhysicsNodeRef;	}
 
 private:
 	TRef					m_RenderNodeRef;
 	TRef					m_PhysicsNodeRef;
+	u8						m_PublishTransformOnWake;		//	TTransform bitmask - true if our transform was changed by the physics whilst we were asleep. When we wake, we send our latest transform to the render node
 };
 

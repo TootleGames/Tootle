@@ -8,7 +8,8 @@
 using namespace TLScene;
 
 TSceneNode_Object::TSceneNode_Object(TRefRef NodeRef,TRefRef TypeRef) :
-	TSceneNode_Transform	(NodeRef,TypeRef)
+	TSceneNode_Transform		( NodeRef, TypeRef ),
+	m_PublishTransformOnWake	( 0x0 )
 {
 }
 
@@ -416,6 +417,15 @@ void TLScene::TSceneNode_Object::OnZoneWake()
 			Message.ExportData("RFSet", TLRender::TRenderNode::RenderFlags::Enabled );
 			TLRender::g_pRendergraph->SendMessageToNode( GetRenderNodeRef(), Message );
 		}
+
+		//	transform has changed whilst we were asleep, send transform-changed message to render node
+		if ( m_PublishTransformOnWake != 0x0 )
+		{
+			Bool TranslateChanged = (m_PublishTransformOnWake & TRANSFORM_BIT_TRANSLATE) != 0x0;
+			Bool RotationChanged = (m_PublishTransformOnWake & TRANSFORM_BIT_ROTATION) != 0x0;
+			Bool ScaleChanged = (m_PublishTransformOnWake & TRANSFORM_BIT_SCALE) != 0x0;
+			OnTransformChanged( TranslateChanged, RotationChanged, ScaleChanged );
+		}
 	}
 
 }
@@ -464,6 +474,37 @@ void TLScene::TSceneNode_Object::OnZoneSleep()
 	}
 #endif
 
+}
+
+
+//--------------------------------------------------------
+//	this checks to see if we're asleep first and delays sending a transform until we are awake
+//--------------------------------------------------------
+void TLScene::TSceneNode_Object::OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale)
+{
+	//	gr: this still needs doing even if we're asleep
+	//	if translation changed then set zone out of date
+	if ( bTranslation )
+		TLMaths::TQuadTreeNode::SetZoneOutOfDate();	
+
+	//	don't send and don't save off a change if we have no subscribers
+	if ( !HasSubscribers() )
+		return;
+
+	//	if asleep then don't send a message until we wake up again
+	if ( !IsAwake() )
+	{
+		m_PublishTransformOnWake |= bTranslation ? TRANSFORM_BIT_TRANSLATE : 0x0;
+		m_PublishTransformOnWake |= bRotation ? TRANSFORM_BIT_ROTATION : 0x0;
+		m_PublishTransformOnWake |= bScale ? TRANSFORM_BIT_SCALE : 0x0;
+		return;
+	}
+
+	//	publish transform changes
+	TSceneNode_Transform::OnTransformChanged( bTranslation, bRotation, bScale );
+
+	//	subscribers are up to date
+	m_PublishTransformOnWake = 0x0;
 }
 
 

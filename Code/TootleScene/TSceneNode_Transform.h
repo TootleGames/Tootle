@@ -57,16 +57,28 @@ protected:
 	FORCEINLINE void			OnTranslationChanged()					{	OnTransformChanged(TRUE, FALSE, FALSE);	}
 	FORCEINLINE void			OnRotationChanged()						{	OnTransformChanged(FALSE, TRUE, FALSE);	}
 	FORCEINLINE void			OnScaleChanged()						{	OnTransformChanged(FALSE, FALSE, TRUE);	}
-	void						OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);
+	virtual void				OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);
 
 	virtual void				OnZoneWake()							{	}	//	notifcation when zone is set to active (from non-active). SceneNode will now be updated
 	virtual void				OnZoneSleep()							{	}	//	notifcation when zone is set to non-active (from active). SceneNode will now NOT be updated
 	virtual void				OnZoneChanged(TPtr<TLMaths::TQuadTreeZone>& pOldZone);	//	our zone has changed - if we're the node being tracked in the graph, change the active zone
 	virtual SyncBool			IsInShape(const TLMaths::TBox2D& Shape);
+	FORCEINLINE Bool			IsAwake() const;						//	checks to see if this node is awake (NOT THE SAME AS IsEnabled!) - currently gets our zone and checks it's active state - shouldnt be a need to store the sleep/awake state
 	void						InitialiseZone();						//	if zone isn't initialised, initialise it
 
 private:
 	TLMaths::TTransform			m_Transform;
 	Bool						m_ZoneInitialised;					//	first time we initialise, (or change transform) if the zone hasn't been initialised then we do an initial zone calculation
 };
+
+
+
+
+
+FORCEINLINE Bool TLScene::TSceneNode_Transform::IsAwake() const							
+{	
+	TLMaths::TQuadTreeZone* pZone = GetZone();
+	return pZone ? pZone->IsActive() : FALSE;
+}	
+
 
