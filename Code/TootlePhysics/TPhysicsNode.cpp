@@ -48,56 +48,6 @@ namespace TLRef
 
 
 
-//-------------------------------------------------------------
-//	
-//-------------------------------------------------------------
-SyncBool TLPhysics::TPhysicsZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
-{
-	//	this fetches latest node ptr
-	TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode();
-	if ( !pPhysicsNode )
-		return SyncWait;
-
-	//	not yet initialised with a collision shape
-	if ( !pPhysicsNode->HasCollision() )
-	{
-		//	wait for it
-		if ( pPhysicsNode->GetPhysicsFlags()( TLPhysics::TPhysicsNode::Flag_CollisionExpected ) )
-			return SyncWait;
-
-		//	has no collision...
-		return SyncFalse;
-	}
-
-	TLPhysics::TCollisionShape* pShape = pPhysicsNode->CalcWorldCollisionShape();
-
-	//	no shape atm, wait
-	if ( !pShape )
-		return SyncWait;
-
-	TLPhysics::TCollisionBox2D ShapeCollisionShape( Shape );
-	if ( !pShape->HasIntersection( &ShapeCollisionShape ) )
-		return SyncFalse;
-
-	return SyncTrue;
-}
-
-
-//---------------------------------------------------------------
-//	
-//---------------------------------------------------------------	
-TPtr<TLPhysics::TPhysicsNode>& TLPhysics::TPhysicsZoneNode::GetPhysicsNode()
-{	
-	if ( !m_pPhysicsNode )
-		m_pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef );
-
-	return m_pPhysicsNode;
-}
-
-
-
-
-
 TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 	TLGraph::TGraphNode<TPhysicsNode>	( NodeRef, TypeRef ),
 	m_Friction						( 0.4f ),
@@ -112,9 +62,7 @@ TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 #ifdef CACHE_ACCUMULATED_MOVEMENT
 	m_AccumulatedMovementValid = FALSE;
 #endif
-
-	//	always have a zone node
-	m_pZoneNode = new TLPhysics::TPhysicsZoneNode( NodeRef );
+	m_PhysicsFlags.Set( TPhysicsNode::Flag_Enabled );
 }
 
 //---------------------------------------------------------
@@ -122,8 +70,6 @@ TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 //---------------------------------------------------------
 void TLPhysics::TPhysicsNode::Shutdown()
 {
-	m_pZoneNode = NULL;
-
 	TLGraph::TGraphNode<TLPhysics::TPhysicsNode>::Shutdown();
 }
 
@@ -246,6 +192,16 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 //----------------------------------------------------
 void TLPhysics::TPhysicsNode::Update(float fTimeStep)
 {
+	if ( !IsEnabled() )
+	{
+		TLDebug_Print("Shouldnt get here");
+		return;
+	}
+
+	//	do base update to process messages
+	TLGraph::TGraphNode<TLPhysics::TPhysicsNode>::Update( fTimeStep );
+
+	//	init per-frame stuff
 	m_WorldCollisionShapeChanged = FALSE;
 	m_Debug_StaticCollisions = 0;
 	m_Temp_ExtrudeTimestep = fTimeStep;
@@ -507,6 +463,9 @@ void TLPhysics::TPhysicsNode::PublishTransformChanges()
 //----------------------------------------------------------
 void TLPhysics::TPhysicsNode::PostUpdateAll(float fTimestep,TLPhysics::TPhysicsgraph* pGraph,TPtr<TLPhysics::TPhysicsNode>& pThis)
 {
+	if ( !IsEnabled() )
+		return;
+
 	// Update this
 	PostUpdate( fTimestep, pGraph, pThis );
 
@@ -613,10 +572,10 @@ void TLPhysics::TPhysicsNode::SetCollisionShape(const TLMaths::TCapsule2D& Capsu
 //----------------------------------------------------------
 //	handle collision with other object - returns TRUE if we changed anything in the collison
 //----------------------------------------------------------
-Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode* pOtherNode)
+Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode& OtherNode)
 {
 	TIntersection& Intersection = m_Temp_Intersection;
-	const TIntersection& OtherIntersection = pOtherNode->m_Temp_Intersection;
+	const TIntersection& OtherIntersection = OtherNode.m_Temp_Intersection;
 	Bool bChanges = FALSE;
 
 	Bool ForceToEdge = TRUE;
@@ -639,7 +598,7 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode* pOtherNode)
 			Dist /= sqrtf(DistDot2);  
 			
 			// relative velocity of ball2 to ball1   
-			float3 CollisionForce = pOtherNode->GetVelocity() - this->GetVelocity();
+			float3 CollisionForce = OtherNode.GetVelocity() - this->GetVelocity();
 			float VdotN = CollisionForce.DotProduct(Dist);        
 
 			// balls are separating, no need to add impulse 
@@ -649,8 +608,8 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode* pOtherNode)
 			if ( VdotN < -TLMaths::g_NearZero ) 
 			{
 				// calculate the amount of impulse
-				float BounceFactor = m_Bounce + pOtherNode->m_Bounce;
-				float htotal = (-BounceFactor * VdotN) / (m_Mass + pOtherNode->m_Mass); 
+				float BounceFactor = m_Bounce + OtherNode.m_Bounce;
+				float htotal = (-BounceFactor * VdotN) / (m_Mass + OtherNode.m_Mass); 
 			//	float htotal = (-BounceFactor * VdotN) / (m_Mass); 
 
 				//	hit strength relative to mass of other object
@@ -676,7 +635,7 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode* pOtherNode)
 		float Factor = 0.f;
 
 		//	if colliding with something that doesn't move then force ourselves to move as far as possible(the required amoutn)
-		if ( pOtherNode->IsStatic() )
+		if ( OtherNode.IsStatic() )
 		{
 			//	gr: no squidge against static objects...
 			Factor = 1.0f;
@@ -726,7 +685,7 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode* pOtherNode)
 
 	// For now only send a message when colliding with static objects - this will need changing in the future but also
 	// needs to be done elsewhere
-	if(bChanges && pOtherNode->IsStatic())
+	if(bChanges && OtherNode.IsStatic())
 	{
 		// Publish a message to all subscribers to say that this node has collided with something
 		TLMessaging::TMessage Message("COLLISION");
@@ -827,7 +786,7 @@ TLPhysics::TCollisionShape* TLPhysics::TPhysicsNode::CalcWorldCollisionShape()
 void TLPhysics::TPhysicsNode::UpdateNodeCollisionZone(TPtr<TLPhysics::TPhysicsNode>& pThis,TLPhysics::TPhysicsgraph* pGraph)
 {
 	//	use the generic quad tree zone update
-	TPtr<TLMaths::TQuadTreeNode>& pThisZoneNode = pThis->GetZoneNodePtr();
+	TPtr<TLMaths::TQuadTreeNode> pThisZoneNode = pThis;
 	pThisZoneNode->UpdateZone( pThisZoneNode, pGraph->GetRootCollisionZone() );
 
 	/*
@@ -1007,15 +966,6 @@ void TLPhysics::TPhysicsNode::SetChildZones(const TFixedArray<u32,4>& InZones)
 */
 
 
-//-------------------------------------------------------------
-//
-//-------------------------------------------------------------
-void TLPhysics::TPhysicsNode::SetZoneNone()
-{
-	GetPhysicsZoneNode().SetZone( TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>(), m_pZoneNode, NULL );
-	//pNode->GetZoneNode().SetZone( pNullZone, pQuadTreeNode, NULL );
-}
-
 
 //-------------------------------------------------------------
 //	
@@ -1070,5 +1020,39 @@ void TLPhysics::TPhysicsNode::PublishCollisions()
 	//	reset array list
 	m_Collisions.Empty();
 }
+
+
+
+//-------------------------------------------------------------
+//	
+//-------------------------------------------------------------
+SyncBool TLPhysics::TPhysicsNode::IsInShape(const TLMaths::TBox2D& Shape)
+{
+	//	not yet initialised with a collision shape
+	if ( !HasCollision() )
+	{
+		//	wait for it
+		if ( GetPhysicsFlags()( TLPhysics::TPhysicsNode::Flag_CollisionExpected ) )
+			return SyncWait;
+
+		//	has no collision...
+		return SyncFalse;
+	}
+
+	TLPhysics::TCollisionShape* pShape = CalcWorldCollisionShape();
+
+	//	no shape atm, wait
+	if ( !pShape )
+		return SyncWait;
+
+	TLPhysics::TCollisionBox2D ShapeCollisionShape( Shape );
+	if ( !pShape->HasIntersection( &ShapeCollisionShape ) )
+		return SyncFalse;
+
+	return SyncTrue;
+}
+
+
+
 
 

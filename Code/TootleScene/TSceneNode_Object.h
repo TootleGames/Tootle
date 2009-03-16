@@ -34,11 +34,11 @@ public:
 
 	// Physics Object access
 	TRefRef							GetPhysicsNodeRef()					{ return m_PhysicsNodeRef; }
-	TPtr<TLPhysics::TPhysicsNode>&	GetPhysicsNode();
+	TPtr<TLPhysics::TPhysicsNode>&	GetPhysicsNode(Bool InitialisedOnly=FALSE);
 
 	// Render object access
 	TRefRef							GetRenderNodeRef()					{ return m_RenderNodeRef; }
-	TPtr<TLRender::TRenderNode>&	GetRenderNode();
+	TPtr<TLRender::TRenderNode>&	GetRenderNode(Bool InitialisedOnly=FALSE);
 
 protected:
 	virtual void					ProcessMessage(TLMessaging::TMessage& Message);
@@ -60,6 +60,9 @@ protected:
 
 	// Transformation
 	virtual void					Translate(float3 vTranslation);
+	
+	virtual void					OnZoneWake();							//	re-enable physics and render nodes
+	virtual void					OnZoneSleep();							//	disable physics and render nodes
 
 protected:
 	void					SetRenderNode(TRefRef RenderNodeRef)		{	m_RenderNodeRef = RenderNodeRef;	}

@@ -59,10 +59,10 @@ protected:
 	void					DoCollisionsByNodeUpwards(TLPhysics::TPhysicsNode* pNode,TLMaths::TQuadTreeZone* pCollisionZone,TLMaths::TQuadTreeZone* pNodeZone,TLMaths::TQuadTreeZone* pPreviousParentZone,Bool TestChildZones,Bool TestNodeZone,u32& CollisionTestCounter);	//	do collision tests for this node
 
 	void					DoCollisionsByZone(TLMaths::TQuadTreeZone* pCollisionZone);
-	void					DoCollisionsByZone(TLMaths::TQuadTreeZone* pCollisionZone,TLMaths::TQuadTreeNode* pNode,Bool IsNodesZone,u32 FirstNode);
+	void					DoCollisionsByZone(TLMaths::TQuadTreeZone* pCollisionZone,TPhysicsNode& Node,Bool IsNodesZone,u32 FirstNode);
 
-	void					DoCollision(TLPhysics::TPhysicsNode* pNodeA,TLPhysics::TPhysicsNode* pNodeB);
-	void					DoStaticCollision(TLPhysics::TPhysicsNode* pNodeA,TLPhysics::TPhysicsNode* pStaticNode);
+	void					DoCollision(TLPhysics::TPhysicsNode& NodeA,TLPhysics::TPhysicsNode& NodeB);
+	void					DoStaticCollision(TLPhysics::TPhysicsNode& NodeA,TLPhysics::TPhysicsNode& StaticNode);
 
 	void					CalcWorldUpNormal();					//	world up has changed, recalc the normal
 	

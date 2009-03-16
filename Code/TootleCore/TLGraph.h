@@ -278,6 +278,9 @@ private:
 	Bool					RemoveChild(TPtr<T>& pItem);
 	void					RemoveChildren();
 
+	T&						This()												{	return *static_cast<T*>( this );	}
+	const T&				This() const										{	return *static_cast<const T*>( this );	}
+
 	// Sibling manipulation
 #ifdef TLGRAPH_OWN_CHILDREN
 
@@ -544,6 +547,14 @@ TPtr<T>&	TLGraph::TGraphNode<T>::FindChildMatch(const MATCHTYPE& Value)
 template <class T>
 void TLGraph::TGraphNode<T>::UpdateAll(float Timestep)
 {
+	//	call the IsEnabled() function on T. Saves using virtuals :)
+	if ( !This().IsEnabled() )
+	{
+		//	still process messages in the queue though - eg. enable messages
+		ProcessMessageQueue();
+		return;
+	}
+
 	// Update this
 	Update( Timestep );
 
@@ -1593,7 +1604,10 @@ Bool TLGraph::TGraph<T>::SendMessageToNode(TRefRef NodeRef,TLMessaging::TMessage
 	//	get node to send message to
 	TPtr<T>& pNode = FindNode( NodeRef );
 	if ( !pNode )
+	{
+		TLDebug_Break("Sent message to a node that doesn't exist... add to a lost queue?");
 		return FALSE;
+	}
 
 	//	queue message
 	if ( !pNode->QueueMessage( Message ) )

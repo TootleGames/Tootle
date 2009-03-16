@@ -72,10 +72,12 @@ public:
 	virtual void			Initialise(TLMessaging::TMessage& Message);
 	virtual void 			Update(float fTimestep);					
 	virtual void			Shutdown();									
+	
+	FORCEINLINE Bool		IsEnabled() const				{	return TRUE;	}	//	for the graph templating - audio nodes aren't explicitly disabled... (yet)
 
 protected:
 	void				GetAudioAsset(TPtr<TLAsset::TAudio>& pAudio);						//	returns the audio asset from the asset library with the asset reference
-	
+
 	Bool				Play();
 	void				Pause();
 	void				Stop();

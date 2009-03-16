@@ -19,20 +19,23 @@ void CreateZoneMesh(TLAsset::TMesh& Mesh,const TPtr<TLMaths::TQuadTreeZone>& pZo
 	TLMaths::TSphere2D ZoneShapeSphere;
 	ZoneShapeSphere.Set( ZoneShapeBox );
 
-	ZoneColour.GetAlpha() = 0.5f;
 	//	filled if active
 	if ( pZone->IsActive() )
 	{
+		ZoneColour.GetAlpha() = 0.5f;
 		Mesh.GenerateSphere( ZoneShapeSphere, &ZoneColour, z );
 	}
 	else
 	{
-		Mesh.GenerateSphereOutline( ZoneShapeSphere, &ZoneColour, z );
+		TColour ZoneColour = TColour::Debug_GetColour( 0 );
+		ZoneColour.GetAlpha() = 0.1f;
+		//Mesh.GenerateSphereOutline( ZoneShapeSphere, &ZoneColour, z );
+		Mesh.GenerateSphere( ZoneShapeSphere, &ZoneColour, z );
 	}
 
 	//	draw box outline still
 	ZoneColour.GetAlpha() = 1.0f;
-	Mesh.GenerateQuadOutline( ZoneShapeBox, &ZoneColour, z );
+//	Mesh.GenerateQuadOutline( ZoneShapeBox, &ZoneColour, z );
 
 	//	do children
 	const TPtrArray<TLMaths::TQuadTreeZone>& ChildZones = pZone->GetChildZones();

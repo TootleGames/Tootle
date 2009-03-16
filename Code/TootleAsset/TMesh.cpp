@@ -60,6 +60,8 @@ void TLAsset::TMesh::Empty()
 	m_Tristrips.Empty();
 	m_Trifans.Empty();
 	m_Lines.Empty();
+	
+	m_Datums.Empty();
 
 	SetBoundsInvalid();
 }
@@ -293,18 +295,6 @@ void TLAsset::TMesh::GenerateSphereOutline(const TLMaths::TSphere2D& Sphere,cons
 {
 	u32 SegmentCount = TLAsset::TLMesh::GetSphereSegmentCount( Sphere.GetRadius() );
 
-	TColour TempColour(1.f,1.f,1.f,1.f);
-
-	//	mesh has no colours
-	if ( m_Vertexes.GetSize() != m_Colours.GetSize() )
-	{
-		pColour = NULL;
-	}
-	else if ( m_Colours.GetSize() && !pColour )	//	needs a colour
-	{
-		pColour = &TempColour;
-	}
-
 	TFixedArray<float3,100> Outline(0);
 
 	//	create linestrip points
@@ -325,7 +315,7 @@ void TLAsset::TMesh::GenerateSphereOutline(const TLMaths::TSphere2D& Sphere,cons
 	Outline.Add( Outline[0] );
 
 	//	create the geometry
-	GenerateLine( Outline, *pColour );
+	GenerateLine( Outline, pColour );
 }
 
 

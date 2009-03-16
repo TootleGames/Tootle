@@ -2,10 +2,16 @@
 #include <TootleMaths/TLine.h>
 #include "TScenegraph.h"
 
-using namespace TLScene;
 
 
-	
+TLScene::TSceneNode_Transform::TSceneNode_Transform(TRefRef NodeRef,TRefRef TypeRef) :
+	TSceneNode			( NodeRef, TypeRef ),
+	m_ZoneInitialised	( FALSE )
+{
+}
+
+
+
 //---------------------------------------------------------
 //	generic initialise data
 //---------------------------------------------------------
@@ -46,10 +52,13 @@ void TLScene::TSceneNode_Transform::Initialise(TLMessaging::TMessage& Message)
 
 	//	do inherited initialise
 	TLScene::TSceneNode::Initialise( Message );
+
+	//	initialise zone
+	InitialiseZone();
 }
 
 
-void TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Message)
+void TLScene::TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	//	gr: only apply change if explicitly sent to change
 	if(Message.GetMessageRef() == "DoTransform")
@@ -118,8 +127,12 @@ void TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Message)
 
 
 // Transform changed
-void TSceneNode_Transform::OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale)
+void TLScene::TSceneNode_Transform::OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale)
 {
+	//	if translation changed then set zone out of date
+	if ( bTranslation )
+		TLMaths::TQuadTreeNode::SetZoneOutOfDate();	
+
 	bTranslation = bTranslation && m_Transform.HasTranslate();
 	bRotation = bRotation && m_Transform.HasRotation();
 	bScale = bScale && m_Transform.HasScale();
@@ -147,7 +160,7 @@ void TSceneNode_Transform::OnTransformChanged(Bool bTranslation, Bool bRotation,
 }
 
 
-void TSceneNode_Transform::Translate(float3 vTranslation)
+void TLScene::TSceneNode_Transform::Translate(float3 vTranslation)
 {
 	//	no change
 	if ( vTranslation.LengthSq() == 0.f )
@@ -163,7 +176,7 @@ void TSceneNode_Transform::Translate(float3 vTranslation)
 }
 
 
-float TSceneNode_Transform::GetDistanceTo(const TLMaths::TLine& Line)
+float TLScene::TSceneNode_Transform::GetDistanceTo(const TLMaths::TLine& Line)
 {
 	float3 vPos = GetPosition();
 
@@ -175,7 +188,7 @@ float TSceneNode_Transform::GetDistanceTo(const TLMaths::TLine& Line)
 //------------------------------------------------------
 //	
 //------------------------------------------------------
-void TSceneNode_Transform::PostUpdate(float fTimestep)
+void TLScene::TSceneNode_Transform::PostUpdate(float fTimestep)
 {
 	//	update zone if out of date
 	if ( IsZoneOutOfDate() )
@@ -197,5 +210,77 @@ void TSceneNode_Transform::PostUpdate(float fTimestep)
 			}
 		}
 	}
+}
+
+
+//------------------------------------------------------
+//	our zone has changed - if we're the node being tracked in the graph, change the active zone
+//------------------------------------------------------
+void TLScene::TSceneNode_Transform::OnZoneChanged(TPtr<TLMaths::TQuadTreeZone>& pOldZone)
+{
+	TPtr<TLMaths::TQuadTreeZone>& pNewZone = GetZone();
+
+	//	are we the tracked zone node
+	if ( TLScene::g_pScenegraph->GetActiveZoneTrackNode() == GetNodeRef() )
+	{
+		TLScene::g_pScenegraph->SetActiveZone( pNewZone );
+	}
+
+	//	check for change of zone activity now that we've changed zone
+	Bool OldZoneActive = pOldZone ? pOldZone->IsActive() : FALSE;
+	Bool NewZoneActive = pNewZone ? pNewZone->IsActive() : FALSE;
+
+	if ( NewZoneActive )
+	{
+		//	pushed into new zone by other node perhaps? or initialise
+		if ( !OldZoneActive )
+			OnZoneWake();
+	}
+	else
+	{
+		//	probably moved out of range
+		if ( OldZoneActive )
+			OnZoneSleep();
+	}
+}
+
+
+//------------------------------------------------------
+//	
+//------------------------------------------------------
+SyncBool TLScene::TSceneNode_Transform::IsInShape(const TLMaths::TBox2D& Shape)
+{
+	if ( Shape.GetIntersection( GetPosition() ) )
+		return SyncTrue;
+	else
+		return SyncFalse;
+}
+
+
+//------------------------------------------------------
+//	if zone isn't initialised, initialise it
+//------------------------------------------------------
+void TLScene::TSceneNode_Transform::InitialiseZone()
+{
+	//	transform has been set for the first time, initialise zone
+	if ( m_ZoneInitialised )
+		return;
+
+	TPtr<TLScene::TSceneNode_Transform> pThis = TLScene::g_pScenegraph->FindNode( GetNodeRef() );
+	TPtr<TLMaths::TQuadTreeNode> pQuadTreeThis = pThis;
+	TLMaths::TQuadTreeNode::UpdateZone( pQuadTreeThis, TLScene::g_pScenegraph->GetRootZone() );
+
+	//	if our initial zone is inactive, sleep
+	TPtr<TLMaths::TQuadTreeZone>& pZone = GetZone();
+	if ( pZone && !pZone->IsActive() )
+	{
+		OnZoneSleep();
+	}
+	else if ( !pZone )
+	{
+		OnZoneSleep();
+	}
+
+	m_ZoneInitialised = TRUE;
 }
 

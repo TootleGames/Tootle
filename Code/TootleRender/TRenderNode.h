@@ -131,6 +131,9 @@ public:
 	FORCEINLINE TFlags<RenderFlags::Flags>&	GetRenderFlags()							{	return m_RenderFlags;	}
 	FORCEINLINE const TFlags<RenderFlags::Flags>&	GetRenderFlags() const				{	return m_RenderFlags;	}
 	void									ClearDebugRenderFlags();
+	FORCEINLINE Bool						IsEnabled() const							{	return m_RenderFlags( RenderFlags::Enabled );	}
+	FORCEINLINE void						SetEnabled(Bool Enabled)					{	m_RenderFlags.Set( RenderFlags::Enabled, Enabled );	}
+
 	FORCEINLINE void						SetAlpha(float Alpha)						{	if ( m_Colour.GetAlpha() != Alpha )	{	m_Colour.GetAlpha() = Alpha;	OnColourChanged();	}	}
 	FORCEINLINE float						GetAlpha() const							{	return m_Colour.GetAlpha();	}
 	FORCEINLINE void						SetColour(const TColour& Colour)			{	m_Colour = Colour;	OnColourChanged();	}

@@ -2,6 +2,8 @@
 #include <TootlePhysics/TPhysicsGraph.h>
 
 
+#define DISABLE_RENDER_ON_SLEEP
+
 
 using namespace TLScene;
 
@@ -157,14 +159,14 @@ void TSceneNode_Object::ProcessMessage(TLMessaging::TMessage& Message)
 }
 
 
-TPtr<TLPhysics::TPhysicsNode>& TSceneNode_Object::GetPhysicsNode()
+TPtr<TLPhysics::TPhysicsNode>& TSceneNode_Object::GetPhysicsNode(Bool InitialisedOnly)
 {
-	return TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef );
+	return TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef, !InitialisedOnly );
 }
 
-TPtr<TLRender::TRenderNode>& TSceneNode_Object::GetRenderNode()
+TPtr<TLRender::TRenderNode>& TSceneNode_Object::GetRenderNode(Bool InitialisedOnly)
 {
-	return TLRender::g_pRendergraph->FindNode( m_RenderNodeRef );
+	return TLRender::g_pRendergraph->FindNode( m_RenderNodeRef, !InitialisedOnly );
 }
 
 //--------------------------------------------------------
@@ -190,7 +192,15 @@ Bool TSceneNode_Object::CreatePhysicsNode(TRefRef PhysicsNodeType)
 	if ( Transform.HasRotation() )
 		Message.AddChildAndData("Rotation", Transform.GetRotation() );
 
+	//	export ownership info
 	Message.ExportData("Owner", GetNodeRef());
+
+	//	if we're in a zone, and the zone is asleep, disable node at initialise
+	TPtr<TLMaths::TQuadTreeZone>& pZone = GetZone();
+	if ( pZone && !pZone->IsActive() )
+	{
+		Message.ExportData("PFClear", TLPhysics::TPhysicsNode::Flag_Enabled );
+	}
 
 	//	create node
 	TRef ParentNode = TRef();
@@ -245,7 +255,15 @@ Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TLMessaging
 			pInitMessage->AddChildAndData("Rotation", Transform.GetRotation() );
 	}
 
+	//	export scene-node-ownership info
 	pInitMessage->ExportData("Owner", GetNodeRef());
+
+	//	if we're in a zone, and the zone is asleep, disable node at initialise
+	TPtr<TLMaths::TQuadTreeZone>& pZone = GetZone();
+	if ( pZone && !pZone->IsActive() )
+	{
+		pInitMessage->ExportData("RFClear", TLRender::TRenderNode::RenderFlags::Enabled );
+	}
 
 	//	create node
 	m_RenderNodeRef = TLRender::g_pRendergraph->CreateNode( GetNodeRef(), RenderNodeType, ParentRenderNodeRef, pInitMessage );
@@ -358,5 +376,94 @@ float TSceneNode_Object::GetDistanceTo(const TLMaths::TLine& Line)
 	return fDistance;
 }
 
+
+//--------------------------------------------------------
+//	re-enable physics and render nodes
+//--------------------------------------------------------
+void TLScene::TSceneNode_Object::OnZoneWake()
+{
+	//	enable physics node
+	if ( GetPhysicsNodeRef().IsValid() )
+	{
+		//	enable node directly if we have it
+		TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode(TRUE);
+		if ( pPhysicsNode )
+		{
+			pPhysicsNode->SetEnabled( TRUE );
+		}
+		else
+		{
+			//	send message to disable
+			TLMessaging::TMessage Message(TLCore::InitialiseRef);
+			Message.ExportData("PFSet", TLPhysics::TPhysicsNode::Flag_Enabled );
+			TLPhysics::g_pPhysicsgraph->SendMessageToNode( GetPhysicsNodeRef(), Message );
+		}
+	}
+
+	//	enable render node
+	if ( GetRenderNodeRef().IsValid() )
+	{
+		//	enable node directly if we have it
+		TLRender::TRenderNode* pRenderNode = GetRenderNode(TRUE);
+		if ( pRenderNode )
+		{
+			pRenderNode->SetEnabled( TRUE );
+		}
+		else
+		{
+			//	send message to disable
+			TLMessaging::TMessage Message(TLCore::InitialiseRef);
+			Message.ExportData("RFSet", TLRender::TRenderNode::RenderFlags::Enabled );
+			TLRender::g_pRendergraph->SendMessageToNode( GetRenderNodeRef(), Message );
+		}
+	}
+
+}
+
+
+//--------------------------------------------------------
+//	disable physics and render nodes
+//--------------------------------------------------------
+void TLScene::TSceneNode_Object::OnZoneSleep()
+{
+	//	disable physics node
+	if ( GetPhysicsNodeRef().IsValid() )
+	{
+		//	disable node directly if we have it
+		TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode(TRUE);
+		if ( pPhysicsNode )
+		{
+			pPhysicsNode->SetEnabled( FALSE );
+		}
+		else
+		{
+			//	send message to disable
+			TLMessaging::TMessage Message(TLCore::InitialiseRef);
+			Message.ExportData("PFClear", TLPhysics::TPhysicsNode::Flag_Enabled );
+			TLPhysics::g_pPhysicsgraph->SendMessageToNode( GetPhysicsNodeRef(), Message );
+		}
+	}
+
+#ifdef DISABLE_RENDER_ON_SLEEP
+	//	disable render node
+	if ( GetRenderNodeRef().IsValid() )
+	{
+		//	disable node directly if we have it
+		TLRender::TRenderNode* pRenderNode = GetRenderNode(TRUE);
+		if ( pRenderNode )
+		{
+			pRenderNode->SetEnabled( FALSE );
+		}
+		else
+		{
+			//	send message to disable
+			TLMessaging::TMessage Message(TLCore::InitialiseRef);
+			Message.ExportData("RFClear", TLRender::TRenderNode::RenderFlags::Enabled );
+			TLRender::g_pRendergraph->SendMessageToNode( GetRenderNodeRef(), Message );
+		}
+	}
+#endif
+
+}
 
 

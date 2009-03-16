@@ -143,9 +143,9 @@ void TLPhysics::TPhysicsNodeSphere::OnRenderTransformChange()
 //----------------------------------------------------
 //	handle collision with other object
 //----------------------------------------------------
-Bool TLPhysics::TPhysicsNodeSphere::OnCollision(const TPhysicsNode* pOtherNode)
+Bool TLPhysics::TPhysicsNodeSphere::OnCollision(const TPhysicsNode& OtherNode)
 {
-	if ( !TPhysicsNode::OnCollision( pOtherNode ) )
+	if ( !TPhysicsNode::OnCollision( OtherNode ) )
 		return FALSE;
 	
 	
@@ -153,14 +153,14 @@ Bool TLPhysics::TPhysicsNodeSphere::OnCollision(const TPhysicsNode* pOtherNode)
 	TIntersection& Intersection = m_Temp_Intersection;
 	if ( Intersection.m_HasNormal )
 	{
-		if ( !m_LastNormalIsStatic || pOtherNode->IsStatic() )
+		if ( !m_LastNormalIsStatic || OtherNode.IsStatic() )
 		{
 			if ( Intersection.m_Normal.LengthSq() > 0.f )
 			{
 				m_LastNormal = Intersection.m_Normal.Normal();
 				TLDebug_CheckFloat( m_LastNormal );
 				m_LastNormalValid = TRUE;
-				m_LastNormalIsStatic = pOtherNode->IsStatic();
+				m_LastNormalIsStatic = OtherNode.IsStatic();
 				//RollTransform( Intersection.m_PostCollisionDelta, Intersection.m_Normal.Normal(), m_Temp_ExtrudeTimestep );
 			}
 		}

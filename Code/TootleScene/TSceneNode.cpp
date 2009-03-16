@@ -12,6 +12,12 @@ TLScene::TSceneNode::TSceneNode(TRefRef NodeRef,TRefRef TypeRef) :
 //-------------------------------------------------------
 void TLScene::TSceneNode::UpdateAll(float Timestep)
 {
+	if ( !IsEnabled() )
+	{
+		ProcessMessageQueue();
+		return;
+	}
+
 	// Update this
 	Update( Timestep );
 	PostUpdate( Timestep );

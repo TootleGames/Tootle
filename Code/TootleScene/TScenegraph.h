@@ -51,9 +51,17 @@ public:
 	void							SetRootZone(TPtr<TLMaths::TQuadTreeZone>& pZone);	//	set a new root zone
 	TPtr<TLMaths::TQuadTreeZone>&	GetRootZone()										{	return m_pRootZone;	}
 
+	TPtr<TLMaths::TQuadTreeZone>&	GetActiveZone()										{	return m_pActiveZone;	}
+	void							SetActiveZone(TPtr<TLMaths::TQuadTreeZone>& pZone);	//	change active zone
+	FORCEINLINE TRefRef				GetActiveZoneTrackNode() const						{	return m_ActiveZoneTrackNode;	}
+	void							SetActiveZoneTrackNode(TRefRef SceneNodeRef);		//	change (and re-initialise) the scene node we're tracking for the active zone
+
 protected:
 	virtual SyncBool				Initialise();
 	virtual SyncBool				Shutdown();
+	virtual void					UpdateGraph(float TimeStep);			//	special scene graph update
+
+	void							UpdateNodesByZone(float TimeStep,TLMaths::TQuadTreeZone& Zone,Bool UpdateNeighbours);	//	update all the nodes in a zone. then update that's zones neighbours if required
 
 protected:
 	TPtr<TLMaths::TQuadTreeZone>	m_pRootZone;			//	root zone for the zone quad tree

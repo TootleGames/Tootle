@@ -21,10 +21,7 @@ namespace TLScene
 class TLScene::TSceneNode_Transform : public TLScene::TSceneNode, public TLMaths::TQuadTreeNode
 {
 public:
-	TSceneNode_Transform(TRefRef NodeRef,TRefRef TypeRef) :
-	  TSceneNode(NodeRef,TypeRef)
-	{
-	}
+	TSceneNode_Transform(TRefRef NodeRef,TRefRef TypeRef);
 
 	virtual Bool				HasTransform()	{ return TRUE; }
 
@@ -57,15 +54,19 @@ protected:
 	//virtual void				Scale(float3 vScale);
 	TLMaths::TTransform&		GetTransform() 							{	return m_Transform;	}
 
-	FORCEINLINE void			OnTranslationChanged()					{	TLMaths::TQuadTreeNode::SetZoneOutOfDate();	OnTransformChanged(TRUE, FALSE, FALSE);	}
+	FORCEINLINE void			OnTranslationChanged()					{	OnTransformChanged(TRUE, FALSE, FALSE);	}
 	FORCEINLINE void			OnRotationChanged()						{	OnTransformChanged(FALSE, TRUE, FALSE);	}
 	FORCEINLINE void			OnScaleChanged()						{	OnTransformChanged(FALSE, FALSE, TRUE);	}
 	void						OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);
 
 	virtual void				OnZoneWake()							{	}	//	notifcation when zone is set to active (from non-active). SceneNode will now be updated
 	virtual void				OnZoneSleep()							{	}	//	notifcation when zone is set to non-active (from active). SceneNode will now NOT be updated
+	virtual void				OnZoneChanged(TPtr<TLMaths::TQuadTreeZone>& pOldZone);	//	our zone has changed - if we're the node being tracked in the graph, change the active zone
+	virtual SyncBool			IsInShape(const TLMaths::TBox2D& Shape);
+	void						InitialiseZone();						//	if zone isn't initialised, initialise it
 
 private:
 	TLMaths::TTransform			m_Transform;
+	Bool						m_ZoneInitialised;					//	first time we initialise, (or change transform) if the zone hasn't been initialised then we do an initial zone calculation
 };
 

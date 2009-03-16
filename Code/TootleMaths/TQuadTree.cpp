@@ -156,8 +156,7 @@ void TLMaths::TQuadTreeNode::SetChildZones(const TFixedArray<u32,4>& InZones)
 Bool TLMaths::TQuadTreeNode::SetZone(TPtr<TQuadTreeZone>& pZone,TPtr<TLMaths::TQuadTreeNode>& pThis,const TFixedArray<u32,4>* pChildZoneList)
 {
 	//	already in this zone
-	TPtr<TQuadTreeZone>& pOldZone = GetZone();
-	if ( pOldZone == pZone )
+	if ( GetZone() == pZone )
 	{
 		//	just update child list
 		if ( !pChildZoneList )
@@ -169,6 +168,7 @@ Bool TLMaths::TQuadTreeNode::SetZone(TPtr<TQuadTreeZone>& pZone,TPtr<TLMaths::TQ
 	}
 
 	//	remove from old zone
+	TPtr<TQuadTreeZone> pOldZone = GetZone();
 	if ( pOldZone )
 	{
 		pOldZone->DoRemoveNode( pThis );
@@ -197,6 +197,9 @@ Bool TLMaths::TQuadTreeNode::SetZone(TPtr<TQuadTreeZone>& pZone,TPtr<TLMaths::TQ
 		SetChildZonesNone();
 	else
 		SetChildZones( *pChildZoneList );
+
+	//	notify change of zone
+	OnZoneChanged( pOldZone );
 
 	return TRUE;
 }

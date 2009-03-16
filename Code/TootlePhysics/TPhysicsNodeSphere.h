@@ -28,7 +28,7 @@ public:
 	virtual void	Update(float Timestep);				//	physics update
 	virtual void	PostUpdate(float Timestep,TLPhysics::TPhysicsgraph* pGraph,TPtr<TLPhysics::TPhysicsNode>& pThis);			//	after collisions are handled
 
-	virtual Bool	OnCollision(const TPhysicsNode* pOtherNode);	//	handle collision with other object
+	virtual Bool	OnCollision(const TPhysicsNode& OtherNode);	//	handle collision with other object
 
 protected:
 	void			RollTransform(const float3& MovementForce,const float3& Normal,float Timestep);	//	roll our transform. Movement is FORCE (not timestepped) movement. Normal is surface normal that we've rolled on. Assume valid

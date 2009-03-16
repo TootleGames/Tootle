@@ -86,6 +86,7 @@ protected:
 	Bool									SetZone(TPtr<TQuadTreeZone>& pZone,TPtr<TQuadTreeNode>& pThis,const TFixedArray<u32,4>* pChildZoneList);
 	FORCEINLINE void						SetChildZonesNone()									{	m_ChildZones.Empty();	}
 	void									SetChildZones(const TFixedArray<u32,4>& InZones);	//	
+	virtual void							OnZoneChanged(TPtr<TQuadTreeZone>& pOldZone)	{	}	//	zone has changed
 
 protected:
 	TPtr<TQuadTreeZone>		m_pZone;			//	collision zone we're in
