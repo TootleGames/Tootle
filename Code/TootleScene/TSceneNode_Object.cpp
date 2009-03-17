@@ -493,3 +493,66 @@ void TLScene::TSceneNode_Object::EnableRenderNode(Bool Enable)
 	}
 
 }
+
+
+//--------------------------------------------------------
+//	when we do an explicit transform on our node - change the physics' transform too
+//--------------------------------------------------------
+void TLScene::TSceneNode_Object::SetTransform(const TLMaths::TTransform& Transform)
+{
+	//	do inherited change
+	TSceneNode_Transform::SetTransform( Transform );
+
+	//	change physics
+	TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode();
+	if ( pPhysicsNode )
+		pPhysicsNode->SetTransform( GetTransform(), FALSE );
+}
+
+
+//--------------------------------------------------------
+//	when we do an explicit transform on our node - change the physics' transform too
+//--------------------------------------------------------
+void TLScene::TSceneNode_Object::SetTranslate(const float3& Translate)
+{
+	//	do inherited change
+	TSceneNode_Transform::SetTranslate( Translate );
+
+	//	change physics
+	TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode();
+	if ( pPhysicsNode )
+		pPhysicsNode->SetTransform( GetTransform(), FALSE );
+}
+
+
+//--------------------------------------------------------
+//	when we do an explicit transform on our node - change the physics' transform too
+//--------------------------------------------------------
+void TLScene::TSceneNode_Object::SetRotation(const TLMaths::TQuaternion& Rotation)
+{
+	//	do inherited change
+	TSceneNode_Transform::SetRotation( Rotation );
+
+	//	change physics
+	TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode();
+	if ( pPhysicsNode )
+		pPhysicsNode->SetTransform( GetTransform(), FALSE );
+}
+
+
+//--------------------------------------------------------
+//	when we do an explicit transform on our node - change the physics' transform too
+//--------------------------------------------------------
+void TLScene::TSceneNode_Object::SetScale(const float3& Scale)
+{
+	//	do inherited change
+	TSceneNode_Transform::SetScale( Scale );
+
+	//	change physics
+	TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode();
+	if ( pPhysicsNode )
+		pPhysicsNode->SetTransform( GetTransform(), FALSE );
+}
+
+
+

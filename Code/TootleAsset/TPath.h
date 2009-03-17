@@ -118,6 +118,7 @@ public:
 	TPtr<TLPath::TPathNode>&		GetNearestNode(const float2& Position);						//	find the nearest node to this position
 	TPtr<TLPath::TPathNode>&		GetNearestNode(const float3& Position)						{	return GetNearestNode( Position.xy() );	}
 	TPtrArray<TLPath::TPathNode>&	GetNodeArray()												{	return m_Nodes;	}
+	const TPtrArray<TLPath::TPathNode>&	GetNodeArray() const									{	return m_Nodes;	}
 	TRef							GetFreeNodeRef(TRef FromRef=TRef()) const;					//	return a ref for a node that isn't currently used
 	TRef							GetFreeNodeRef(TRef FromRef=TRef());						//	non-const version enables sorting
 

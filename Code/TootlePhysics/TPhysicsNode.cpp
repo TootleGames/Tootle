@@ -1053,6 +1053,23 @@ SyncBool TLPhysics::TPhysicsNode::IsInShape(const TLMaths::TBox2D& Shape)
 }
 
 
+//-------------------------------------------------------------
+//	explicit change of transform
+//-------------------------------------------------------------
+void TLPhysics::TPhysicsNode::SetTransform(const TLMaths::TTransform& NewTransform,Bool PublishChanges)
+{
+	//	copy transform
+	m_Transform = NewTransform;
 
+	//	invalidate stuff
+	if ( PublishChanges )
+	{
+		OnTransformChanged( TRUE, TRUE, TRUE );
+	}
+	else
+	{
+		OnTransformChangedNoPublish();
+	}
+}
 
 

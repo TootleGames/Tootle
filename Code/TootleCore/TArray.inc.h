@@ -265,6 +265,44 @@ void TArray<TYPE>::Copy(const TArray<TYPE>& Array)
 	CopyElements( Array.GetData(), Array.GetSize(), 0 );
 }
 
+
+
+template<typename TYPE>
+template <typename OTHERTYPE>
+s32 TArray<TYPE>::Add(const TArray<OTHERTYPE>& Array)
+{
+	Empty();
+
+	//	pre-alloc data
+	AddAllocSize( Array.GetSize() );
+
+	s32 FirstIndex = -1;
+	for ( u32 i=0;	i<Array.GetSize();	i++ )
+	{
+		s32 AddIndex = Add( Array[i] );
+		if ( FirstIndex == -1 )
+			FirstIndex = AddIndex;
+	}
+
+	return FirstIndex;
+}
+
+template<typename TYPE>
+template<typename OTHERTYPE>
+void TArray<TYPE>::Copy(const TArray<OTHERTYPE>& Array)
+{
+	Empty();
+
+	//	pre-alloc data
+	AddAllocSize( Array.GetSize() );
+
+	for ( u32 i=0;	i<Array.GetSize();	i++ )
+	{
+		if ( Add( Array[i] ) == -1 )
+			break;
+	}
+}
+
 //-------------------------------------------------------------------------
 //	copy Length elements from another source into our array at Index
 //-------------------------------------------------------------------------

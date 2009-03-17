@@ -63,6 +63,7 @@ public:
 	float3						GetPosition() const;
 	void						SetPosition(const float3& Position);
 	void						MovePosition(const float3& Movement,float Timestep);
+	void						SetTransform(const TLMaths::TTransform& NewTransform,Bool PublishChanges=TRUE);	//	explicit change of transform
 	const TLMaths::TTransform&	GetTransform() const					{	return m_Transform;	}
 	virtual const TLMaths::TTransform&	GetRenderTransform() const		{	return GetTransform();	}
 
@@ -79,6 +80,8 @@ public:
 	void					OnVelocityChanged()					{	SetAccumulatedMovementInvalid();	SetWorldCollisionShapeInvalid();	}
 	void					OnForceChanged()					{	SetAccumulatedMovementInvalid();	SetWorldCollisionShapeInvalid();	}
 
+	FORCEINLINE void		OnTransformChanged(Bool TransChanged,Bool ScaleChanged,Bool RotationChanged)	{	m_TransformChanges[0] = TransChanged;	m_TransformChanges[1] = ScaleChanged;	m_TransformChanges[2] = RotationChanged;	SetWorldCollisionShapeInvalid();	}
+	FORCEINLINE void		OnTransformChangedNoPublish()		{	SetWorldCollisionShapeInvalid();	}
 	FORCEINLINE void		OnTranslationChanged()				{	m_TransformChanges[0] = TRUE;	SetWorldCollisionShapeInvalid();	}
 	FORCEINLINE void		OnRotationChanged()					{	m_TransformChanges[1] = TRUE;	SetWorldCollisionShapeInvalid();	}
 	FORCEINLINE void		OnScaleChanged()					{	m_TransformChanges[2] = TRUE;	SetWorldCollisionShapeInvalid();	}

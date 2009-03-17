@@ -1103,3 +1103,43 @@ TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::GetSiblingFromZonePosition
 
 	return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
 }
+
+	
+//----------------------------------------------
+//	search the tree to find the existing zone at this position - todo: expand to use shape
+//----------------------------------------------
+const TLMaths::TQuadTreeZone* TLMaths::TQuadTreeZone::GetZoneAt(const float2& Position) const
+{
+	//	not in this shape - fail
+	if ( !GetShape().GetIntersection( Position ) )
+		return NULL;
+
+	const TLMaths::TQuadTreeZone* pInChildZone = NULL;
+
+	//	in this shape, are we in a child (or multiple children)
+	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
+	{
+		//	do the test with the child, if we get NULL then it's not in this child
+		const TLMaths::TQuadTreeZone* pChildZoneResult = m_Children[c]->GetZoneAt( Position );
+		if ( !pChildZoneResult )
+			continue;
+
+		//	is in this child... (or a childs child)
+		
+		//	have we intersected multiple children? if so, just return this
+		if ( pInChildZone )
+			return this;
+
+		//	nope, first time, store the result
+		pInChildZone = pChildZoneResult;
+	}
+
+	//	are we in a child?
+	if ( pInChildZone )
+		return pInChildZone;
+
+	//	no, just in this
+	return this;
+}
+
+

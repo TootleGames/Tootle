@@ -29,8 +29,14 @@ public:
 
 	virtual void	Shutdown();
 
+	//	explicit changes change the physics nodes transform
+	virtual void					SetTransform(const TLMaths::TTransform& Transform);
+	virtual void					SetTranslate(const float3& Translate);
+	virtual void					SetRotation(const TLMaths::TQuaternion& Rotation);
+	virtual void					SetScale(const float3& Scale);
+
 	// Distance checks
-	virtual float				GetDistanceTo(const TLMaths::TLine& Line);
+	virtual float					GetDistanceTo(const TLMaths::TLine& Line);
 
 	// Physics Object access
 	TRefRef							GetPhysicsNodeRef()					{ return m_PhysicsNodeRef; }

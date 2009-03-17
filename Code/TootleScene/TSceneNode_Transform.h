@@ -28,17 +28,16 @@ public:
 	FORCEINLINE const float3&	GetPosition() const												{	return GetTranslate();	}					//	our position will be 
 	FORCEINLINE void			GetLocalPosition(float3& Pos) const								{	GetTransform().TransformVector( Pos );	}	//	get a position relative to the scene node
 
+	const TLMaths::TTransform&	GetTransform() const											{	return m_Transform;	}
 	FORCEINLINE	const float3&	GetTranslate() const											{	return m_Transform.GetTranslate();	}
-	FORCEINLINE void			SetTranslate(const float3& vPos)								{	m_Transform.SetTranslate(vPos);	OnTranslationChanged();	}
-
 	FORCEINLINE	const TLMaths::TQuaternion&		GetRotation() const								{	return m_Transform.GetRotation();	}
-	FORCEINLINE void							SetRotation(const TLMaths::TQuaternion& qRot)	{	m_Transform.SetRotation(qRot);	OnRotationChanged();	}
-
 	FORCEINLINE	const float3&	GetScale() const												{	return m_Transform.GetScale();	}
-	FORCEINLINE void			SetScale(const float3& vScale)									{	m_Transform.SetScale(vScale);	OnScaleChanged();	}
 
-	const TLMaths::TTransform&	GetTransform() const								{	return m_Transform;	}
-	void						SetTransform(const TLMaths::TTransform& Transform)	{	m_Transform = Transform; OnTransformChanged(TRUE, TRUE, TRUE); }	
+	//	explicit changes
+	virtual void				SetTransform(const TLMaths::TTransform& Transform)				{	m_Transform = Transform; OnTransformChanged(TRUE, TRUE, TRUE); }	
+	virtual void				SetTranslate(const float3& Translate)							{	m_Transform.SetTranslate(Translate);	OnTranslationChanged();	}
+	virtual void				SetRotation(const TLMaths::TQuaternion& Rotation)				{	m_Transform.SetRotation(Rotation);	OnRotationChanged();	}
+	virtual void				SetScale(const float3& Scale)									{	m_Transform.SetScale(Scale);	OnScaleChanged();	}
 
 	// Distance checks
 	virtual float				GetDistanceTo(const TLMaths::TLine& Line);			//	gr: note, this returns SQUARED distance! bad function naming!

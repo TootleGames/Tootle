@@ -92,7 +92,9 @@ public:
 	virtual const TYPE*	GetData() const							{	return m_pData;	}
 	inline u32			GetDataSize() const						{	return ( GetSize() * sizeof(TYPE) );	};	//	memory consumption of elements
 
-	virtual void		Copy(const TArray<TYPE>& Array);	//	make this a copy of the specified array
+	template <typename OTHERTYPE>
+	void				Copy(const TArray<OTHERTYPE>& Array);	//	make this a copy of the specified array
+	virtual void		Copy(const TArray<TYPE>& Array);		//	make this a copy of the specified array
 	void				SetAll(const TYPE& Val);				//	set all elements to match this one (uses = operator)
 
 	virtual Bool		SetSize(s32 Size);
@@ -114,6 +116,8 @@ public:
 	FORCEINLINE s32		AddUnique(const TYPE& val)				{	s32 Index = FindIndex( val );	return (Index == -1) ? Add( val ) : Index;	}
 	virtual s32			Add(const TYPE* pData,u32 Length=1);	//	add a number of elements onto the end of the list
 	virtual s32			Add(const TArray<TYPE>& Array);			//	add a whole array of this type onto the end of the list
+	template <typename OTHERTYPE>
+	s32					Add(const TArray<OTHERTYPE>& Array);	//	add a whole array of this type onto the end of the list
 	s32					AddUnique(const TArray<TYPE>& Array);	//	add each element from an array using AddUnique
 	virtual TYPE*		AddNew();								//	add a new element onto the end of the array and return it. often fastest because if we dont need to grow there's no copying
 	template <class MATCHTYPE>
