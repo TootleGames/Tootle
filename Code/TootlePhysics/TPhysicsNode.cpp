@@ -207,7 +207,7 @@ void TLPhysics::TPhysicsNode::Update(float fTimeStep)
 	m_Temp_ExtrudeTimestep = fTimeStep;
 	SetAccumulatedMovementInvalid();
 
-	if ( m_PhysicsFlags( Flag_CollisionExpected ) && !HasCollision() )
+	if ( m_PhysicsFlags( Flag_HasCollision ) && !HasCollision() )
 		return;
 
 	//	gr: doesn't apply if we have no zone
@@ -250,7 +250,7 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 		}
 	}
 
-	if ( m_PhysicsFlags( Flag_CollisionExpected ) && !HasCollision() )
+	if ( m_PhysicsFlags( Flag_HasCollision ) && !HasCollision() )
 	{
 		PublishTransformChanges();
 		return;
@@ -1032,7 +1032,7 @@ SyncBool TLPhysics::TPhysicsNode::IsInShape(const TLMaths::TBox2D& Shape)
 	if ( !HasCollision() )
 	{
 		//	wait for it
-		if ( GetPhysicsFlags()( TLPhysics::TPhysicsNode::Flag_CollisionExpected ) )
+		if ( GetPhysicsFlags()( TLPhysics::TPhysicsNode::Flag_HasCollision ) )
 			return SyncWait;
 
 		//	has no collision...

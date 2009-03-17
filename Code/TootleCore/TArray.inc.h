@@ -241,6 +241,22 @@ s32 TArray<TYPE>::Add(const TArray<TYPE>& Array)
 
 
 template<typename TYPE>
+s32 TArray<TYPE>::AddUnique(const TArray<TYPE>& Array)
+{
+	s32 FirstPos = -1;
+
+	for ( u32 i=0;	i<Array.GetSize();	i++ )
+	{
+		s32 NewIndex = AddUnique( Array[i] );
+		if ( NewIndex != -1 )
+			FirstPos = NewIndex;
+	}
+
+	return FirstPos;
+}
+
+
+template<typename TYPE>
 void TArray<TYPE>::Copy(const TArray<TYPE>& Array)
 {
 	if ( !SetSize(Array.GetSize()) )

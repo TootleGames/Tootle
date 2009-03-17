@@ -12,7 +12,10 @@ namespace TLMaths
 	{
 		FORCEINLINE TLArray::SortResult	SortNodes(const TPtr<TLMaths::TQuadTreeNode>& a,const TPtr<TLMaths::TQuadTreeNode>& b,const void* pTestVal);
 
-		TRef		g_NextQuadTreeNodeRef;	//	unique ref for tree nodes which is automaticcaly incremented
+		TZonePos		GetMirrorPosition_Vertical(TZonePos Position);
+		TZonePos		GetMirrorPosition_Horizontal(TZonePos Position);
+
+		TRef			g_NextQuadTreeNodeRef;	//	unique ref for tree nodes which is automaticcaly incremented
 	}
 }
 
@@ -258,7 +261,7 @@ TLMaths::TQuadTreeZone::TQuadTreeZone(const TLMaths::TBox2D& ZoneShape,const TLM
 	m_SiblingZoneIndexes	( 0 ),
 	m_SiblingIndex			( -1 ),
 	m_ZoneParams			( ZoneParams ),
-	m_Active				( TRUE )
+	m_Active				( SyncTrue )
 {
 }
 
@@ -617,7 +620,7 @@ void TLMaths::TQuadTreeZone::OnZoneStructureChanged()
 //-----------------------------------------------------------------
 //	if we subdivide, or delete child zones etc, then call this func - will go up to the root then notify subscribers of the change
 //-----------------------------------------------------------------
-void TLMaths::TQuadTreeZone::OnZoneActiveChanged(Bool Active)
+void TLMaths::TQuadTreeZone::OnZoneActiveChanged(SyncBool Active)
 {
 	//	gr: for now, just notify structure change to rebuild debug render nodes
 	OnZoneStructureChanged();
@@ -681,6 +684,7 @@ Bool TLMaths::TQuadTreeZone::Divide(TPtr<TLMaths::TQuadTreeZone>& pThis)
 	TLMaths::TBox2D BoxBL( BoxMinBL, BoxMinBL + BoxHalfSize );
 	TLMaths::TBox2D BoxBR( BoxMinBR, BoxMinBR + BoxHalfSize );
 
+	//	gr: order should match the TZonePos_XXX order
 	m_Children.Add( new TQuadTreeZone( BoxTL, pThis ) );
 	m_Children.Add( new TQuadTreeZone( BoxTR, pThis ) );
 	m_Children.Add( new TQuadTreeZone( BoxBL, pThis ) );
@@ -722,32 +726,380 @@ Bool TLMaths::TQuadTreeZone::DivideAll(TPtr<TLMaths::TQuadTreeZone>& pThis)
 //---------------------------------------------------
 //	sets this zone and all it's child zones as active
 //---------------------------------------------------
-void TLMaths::TQuadTreeZone::SetActive(Bool Active,Bool SetChildren)
+void TLMaths::TQuadTreeZone::SetActive(SyncBool Active,Bool SetChildren)
 {
 	//	gr: don't do children if no change?
 	if ( m_Active != Active )
 	{
+		//	change state
 		m_Active = Active;
 
-		//	notify change to nodes
+		//	notify change to nodes if awake/sleep state changed
 		for ( u32 n=0;	n<m_Nodes.GetSize();	n++ )
 		{
 			TLMaths::TQuadTreeNode& Node = *(m_Nodes[n]);
-			if ( m_Active )
-				Node.OnZoneWake();
-			else
+			if ( m_Active == SyncFalse )
 				Node.OnZoneSleep();
+			else
+				Node.OnZoneWake( m_Active );
 		}
 
 		//	do any on-zone-activation changed notification
 		OnZoneActiveChanged( m_Active );
 	}
 
-	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
+	if ( SetChildren )
 	{
-		TPtr<TLMaths::TQuadTreeZone>& pChild = m_Children[c];
+		for ( u32 c=0;	c<m_Children.GetSize();	c++ )
+		{
+			TPtr<TLMaths::TQuadTreeZone>& pChild = m_Children[c];
 
-		pChild->SetActive( Active, SetChildren );
+			pChild->SetActive( Active, SetChildren );
+		}
 	}
 }
 
+
+//---------------------------------------------------
+//	recursive call to FindNeighbours to sort out all the neighbours in the tree
+//---------------------------------------------------
+void TLMaths::TQuadTreeZone::FindNeighboursAll(TPtr<TLMaths::TQuadTreeZone>& pThis)
+{
+	//	find neighbours...
+	FindNeighbours( pThis );
+
+	//	do same for children
+	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
+	{
+		TPtr<TLMaths::TQuadTreeZone>& pChildZone = m_Children[c];
+		pChildZone->FindNeighboursAll( pChildZone );
+	}
+}
+
+
+//---------------------------------------------------
+//	calculate neighbours of ourselves
+//---------------------------------------------------
+void TLMaths::TQuadTreeZone::FindNeighbours(TPtr<TLMaths::TQuadTreeZone>& pThis)
+{
+	//	do we have all our neighbour zones calculated already?
+	if ( m_NeighbourZones.GetSize() >= TQUADTREEZONE_MAX_NEIGHBOUR_ZONES )
+		return;
+
+	//	add neighbours
+	m_NeighbourZones.AddUnique( FindNeighbourZone_NorthWest() );
+	m_NeighbourZones.AddUnique( FindNeighbourZone_North() );
+	m_NeighbourZones.AddUnique( FindNeighbourZone_NorthEast() );
+	m_NeighbourZones.AddUnique( FindNeighbourZone_East() );
+	m_NeighbourZones.AddUnique( FindNeighbourZone_SouthEast() );
+	m_NeighbourZones.AddUnique( FindNeighbourZone_South() );
+	m_NeighbourZones.AddUnique( FindNeighbourZone_SouthWest() );
+	m_NeighbourZones.AddUnique( FindNeighbourZone_West() );
+
+	//	remove null entries
+	m_NeighbourZones.RemoveNull();
+
+	//	too many neighbours!
+	if ( m_NeighbourZones.GetSize() > TQUADTREEZONE_MAX_NEIGHBOUR_ZONES )
+	{
+		TLDebug_Break("Calculated too many neighbours for zone!");
+		m_NeighbourZones.Empty();
+		return;
+	}
+}
+
+
+TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::GetParentsNeighbourChild(TPtr<TLMaths::TQuadTreeZone>* ppParentNeighbour,TLMaths::TLQuadTree::TZonePos ParentNeighbourChildPositon)
+{
+	//	parent is on an edge so nothing at the position we want
+	if ( !ppParentNeighbour )
+		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+
+	TLMaths::TQuadTreeZone* pParentNeighbour = *ppParentNeighbour;
+	if ( !pParentNeighbour )
+		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+
+	//	now find that child
+	return pParentNeighbour->GetChildFromZonePosition( ParentNeighbourChildPositon );
+}
+
+
+TLMaths::TLQuadTree::TZonePos TLMaths::TLQuadTree::GetMirrorPosition_Vertical(TLMaths::TLQuadTree::TZonePos Position)
+{
+	if ( Position == TLMaths::TLQuadTree::ZonePos_TopLeft )		return TLMaths::TLQuadTree::ZonePos_BottomLeft;
+	if ( Position == TLMaths::TLQuadTree::ZonePos_TopRight )	return TLMaths::TLQuadTree::ZonePos_BottomRight;
+	if ( Position == TLMaths::TLQuadTree::ZonePos_BottomLeft )	return TLMaths::TLQuadTree::ZonePos_TopLeft;
+	if ( Position == TLMaths::TLQuadTree::ZonePos_BottomRight )	return TLMaths::TLQuadTree::ZonePos_TopRight;
+
+	return TLMaths::TLQuadTree::ZonePos_Invalid;
+}
+
+TLMaths::TLQuadTree::TZonePos TLMaths::TLQuadTree::GetMirrorPosition_Horizontal(TLMaths::TLQuadTree::TZonePos Position)
+{
+	if ( Position == TLMaths::TLQuadTree::ZonePos_TopLeft )		return TLMaths::TLQuadTree::ZonePos_TopRight;
+	if ( Position == TLMaths::TLQuadTree::ZonePos_TopRight )	return TLMaths::TLQuadTree::ZonePos_TopLeft;
+	if ( Position == TLMaths::TLQuadTree::ZonePos_BottomLeft )	return TLMaths::TLQuadTree::ZonePos_BottomRight;
+	if ( Position == TLMaths::TLQuadTree::ZonePos_BottomRight )	return TLMaths::TLQuadTree::ZonePos_BottomLeft;
+
+	return TLMaths::TLQuadTree::ZonePos_Invalid;
+}
+
+
+
+TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_West()
+{
+	//	is a sibling
+	TLQuadTree::TZonePos MirrorPositon = GetMirrorPosition_Horizontal( GetZonePos() );
+	if ( GetZonePos() == TLMaths::TLQuadTree::ZonePos_TopRight || GetZonePos() == TLMaths::TLQuadTree::ZonePos_BottomRight )
+		return GetSiblingFromZonePosition( MirrorPositon );
+
+	//	looking for a node outside of the parent, so go into parent...
+	TQuadTreeZone* pParent = GetParentZone();
+	if ( !pParent )
+		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+
+	//	now work out where the neighbour will be 
+	TPtr<TQuadTreeZone>* pParentNeighbour = &pParent->FindNeighbourZone_West();
+	return GetParentsNeighbourChild( pParentNeighbour, MirrorPositon );
+}
+
+
+
+TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_North()
+{
+	//	is a sibling
+	TLQuadTree::TZonePos MirrorPositon = GetMirrorPosition_Vertical( GetZonePos() );
+	if ( GetZonePos() == TLMaths::TLQuadTree::ZonePos_BottomLeft || GetZonePos() == TLMaths::TLQuadTree::ZonePos_BottomRight )
+		return GetSiblingFromZonePosition( MirrorPositon );
+
+	//	looking for a node outside of the parent, so go into parent...
+	TQuadTreeZone* pParent = GetParentZone();
+	if ( !pParent )
+		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+
+	//	now work out where the neighbour will be 
+	TPtr<TQuadTreeZone>* pParentNeighbour = &pParent->FindNeighbourZone_North();
+	return GetParentsNeighbourChild( pParentNeighbour, MirrorPositon );
+}
+
+
+
+
+TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_East()
+{
+	//	is a sibling
+	TLQuadTree::TZonePos MirrorPositon = GetMirrorPosition_Horizontal( GetZonePos() );
+	if ( GetZonePos() == TLMaths::TLQuadTree::ZonePos_TopLeft || GetZonePos() == TLMaths::TLQuadTree::ZonePos_BottomLeft )
+		return GetSiblingFromZonePosition( MirrorPositon );
+
+	//	looking for a node outside of the parent, so go into parent...
+	TQuadTreeZone* pParent = GetParentZone();
+	if ( !pParent )
+		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+
+	//	now work out where the neighbour will be 
+	TPtr<TQuadTreeZone>* pParentNeighbour = &pParent->FindNeighbourZone_East();
+	return GetParentsNeighbourChild( pParentNeighbour, MirrorPositon );
+}
+
+
+
+TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_South()
+{
+	//	is a sibling
+	TLQuadTree::TZonePos MirrorPositon = GetMirrorPosition_Vertical( GetZonePos() );
+	if ( GetZonePos() == TLMaths::TLQuadTree::ZonePos_TopLeft || GetZonePos() == TLMaths::TLQuadTree::ZonePos_TopRight )
+		return GetSiblingFromZonePosition( MirrorPositon );
+
+	//	looking for a node outside of the parent, so go into parent...
+	TQuadTreeZone* pParent = GetParentZone();
+	if ( !pParent )
+		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+
+	//	now work out where the neighbour will be 
+	TPtr<TQuadTreeZone>* pParentNeighbour = &pParent->FindNeighbourZone_South();
+	return GetParentsNeighbourChild( pParentNeighbour, MirrorPositon );
+}
+
+
+
+
+TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_SouthWest()
+{
+	//	is a sibling
+	if ( GetZonePos() == TLMaths::TLQuadTree::ZonePos_TopRight )
+		return GetSiblingFromZonePosition( TLMaths::TLQuadTree::ZonePos_BottomLeft );
+
+	//	looking for a node outside of the parent, so go into parent...
+	TQuadTreeZone* pParent = GetParentZone();
+	if ( !pParent )
+		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+
+	//	now work out where the neighbour will be 
+	TPtr<TQuadTreeZone>* pParentNeighbour = NULL;
+	TLQuadTree::TZonePos ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_Invalid;
+
+	switch ( GetZonePos() )
+	{
+	case TLMaths::TLQuadTree::ZonePos_TopLeft:
+		//	get parent's WEST neighbour
+		pParentNeighbour = &pParent->FindNeighbourZone_West();
+		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_BottomRight;
+		break;
+
+	case TLMaths::TLQuadTree::ZonePos_BottomLeft:
+		//	get parent's SOUTH WEST neighbour
+		pParentNeighbour = &pParent->FindNeighbourZone_SouthWest();
+		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_TopRight;
+		break;
+
+	case TLMaths::TLQuadTree::ZonePos_BottomRight:
+		//	get parent's SOUTH neighbour
+		pParentNeighbour = &pParent->FindNeighbourZone_South();
+		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_TopLeft;
+		break;
+	}
+
+	return GetParentsNeighbourChild( pParentNeighbour, ParentNeighbourChildPositon );
+}
+
+
+
+
+
+TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_NorthWest()
+{
+	//	is a sibling
+	if ( GetZonePos() == TLMaths::TLQuadTree::ZonePos_BottomRight )
+		return GetSiblingFromZonePosition( TLMaths::TLQuadTree::ZonePos_TopLeft );
+
+	//	looking for a node outside of the parent, so go into parent...
+	TQuadTreeZone* pParent = GetParentZone();
+	if ( !pParent )
+		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+
+	//	now work out where the neighbour will be 
+	TPtr<TQuadTreeZone>* pParentNeighbour = NULL;
+	TLQuadTree::TZonePos ParentNeighbourChildPositon = TLQuadTree::ZonePos_Invalid;
+
+	switch ( GetZonePos() )
+	{
+	case TLMaths::TLQuadTree::ZonePos_TopLeft:
+		//	get parent's neighbour
+		pParentNeighbour = &pParent->FindNeighbourZone_NorthWest();
+		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_BottomRight;
+		break;
+
+	case TLMaths::TLQuadTree::ZonePos_BottomLeft:
+		//	get parent's neighbour
+		pParentNeighbour = &pParent->FindNeighbourZone_West();
+		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_TopRight;
+		break;
+
+	case TLMaths::TLQuadTree::ZonePos_TopRight:
+		//	get parent's neighbour
+		pParentNeighbour = &pParent->FindNeighbourZone_North();
+		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_BottomLeft;
+		break;
+	}
+
+	return GetParentsNeighbourChild( pParentNeighbour, ParentNeighbourChildPositon );
+}
+
+
+
+
+TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_NorthEast()
+{
+	//	is a sibling
+	if ( GetZonePos() == TLMaths::TLQuadTree::ZonePos_BottomLeft )
+		return GetSiblingFromZonePosition( TLMaths::TLQuadTree::ZonePos_TopRight );
+
+	//	looking for a node outside of the parent, so go into parent...
+	TQuadTreeZone* pParent = GetParentZone();
+	if ( !pParent )
+		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+
+	//	now work out where the neighbour will be 
+	TPtr<TQuadTreeZone>* pParentNeighbour = NULL;
+	TLQuadTree::TZonePos ParentNeighbourChildPositon = TLQuadTree::ZonePos_Invalid;
+
+	switch ( GetZonePos() )
+	{
+	case TLMaths::TLQuadTree::ZonePos_TopLeft:
+		//	get parent's neighbour
+		pParentNeighbour = &pParent->FindNeighbourZone_North();
+		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_BottomRight;
+		break;
+
+	case TLMaths::TLQuadTree::ZonePos_BottomRight:
+		//	get parent's neighbour
+		pParentNeighbour = &pParent->FindNeighbourZone_East();
+		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_TopLeft;
+		break;
+
+	case TLMaths::TLQuadTree::ZonePos_TopRight:
+		//	get parent's neighbour
+		pParentNeighbour = &pParent->FindNeighbourZone_NorthEast();
+		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_BottomLeft;
+		break;
+	}
+
+	return GetParentsNeighbourChild( pParentNeighbour, ParentNeighbourChildPositon );
+}
+
+
+TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_SouthEast()
+{
+	//	is a sibling
+	if ( GetZonePos() == TLMaths::TLQuadTree::ZonePos_TopLeft )
+		return GetSiblingFromZonePosition( TLMaths::TLQuadTree::ZonePos_BottomRight );
+
+	//	looking for a node outside of the parent, so go into parent...
+	TQuadTreeZone* pParent = GetParentZone();
+	if ( !pParent )
+		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+
+	//	now work out where the neighbour will be 
+	TPtr<TQuadTreeZone>* pParentNeighbour = NULL;
+	TLQuadTree::TZonePos ParentNeighbourChildPositon = TLQuadTree::ZonePos_Invalid;
+
+	switch ( GetZonePos() )
+	{
+	case TLMaths::TLQuadTree::ZonePos_BottomLeft:
+		//	get parent's neighbour
+		pParentNeighbour = &pParent->FindNeighbourZone_South();
+		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_TopRight;
+		break;
+
+	case TLMaths::TLQuadTree::ZonePos_BottomRight:
+		//	get parent's neighbour
+		pParentNeighbour = &pParent->FindNeighbourZone_SouthEast();
+		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_TopLeft;
+		break;
+
+	case TLMaths::TLQuadTree::ZonePos_TopRight:
+		//	get parent's neighbour
+		pParentNeighbour = &pParent->FindNeighbourZone_East();
+		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_BottomLeft;
+		break;
+	}
+
+	return GetParentsNeighbourChild( pParentNeighbour, ParentNeighbourChildPositon );
+}
+
+
+//----------------------------------------------
+//	find the sibling with this sibling index (ie. where in the parent they are placed)
+//----------------------------------------------
+TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::GetSiblingFromZonePosition(TLMaths::TLQuadTree::TZonePos Position)
+{
+	for ( u32 s=0;	s<m_SiblingZones.GetSize();	s++ )
+	{
+		TPtr<TLMaths::TQuadTreeZone>& pSiblingZone = m_SiblingZones[s];
+		if ( pSiblingZone->GetZonePos() == Position )
+			return pSiblingZone;
+	}
+
+	return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+}

@@ -23,6 +23,9 @@ void TLScene::TSceneNode_Transform::Initialise(TLMessaging::TMessage& Message)
 	if(pEventChannel)
 		pEventChannel->SubscribeTo(this);
 
+	//	gr: moved to be done FIRST to initialise flags (ie. if disabled)
+	//	do inherited initialise
+	TLScene::TSceneNode::Initialise( Message );
 
 	//	read transform info (same as render node's init)
 	Bool bTranslation, bRotation, bScale;
@@ -49,9 +52,6 @@ void TLScene::TSceneNode_Transform::Initialise(TLMessaging::TMessage& Message)
 	//	Has transform been changed?
 	if( bTranslation || bRotation || bScale )
 		OnTransformChanged(bTranslation, bRotation, bScale);
-
-	//	do inherited initialise
-	TLScene::TSceneNode::Initialise( Message );
 
 	//	initialise zone
 	InitialiseZone();
@@ -227,20 +227,19 @@ void TLScene::TSceneNode_Transform::OnZoneChanged(TPtr<TLMaths::TQuadTreeZone>& 
 	}
 
 	//	check for change of zone activity now that we've changed zone
-	Bool OldZoneActive = pOldZone ? pOldZone->IsActive() : FALSE;
-	Bool NewZoneActive = pNewZone ? pNewZone->IsActive() : FALSE;
+	SyncBool OldZoneActive = pOldZone ? pOldZone->IsActive() : SyncFalse;
+	SyncBool NewZoneActive = pNewZone ? pNewZone->IsActive() : SyncFalse;
 
-	if ( NewZoneActive )
+	if ( OldZoneActive != NewZoneActive )
 	{
-		//	pushed into new zone by other node perhaps? or initialise
-		if ( !OldZoneActive )
-			OnZoneWake();
-	}
-	else
-	{
-		//	probably moved out of range
-		if ( OldZoneActive )
+		if ( NewZoneActive == SyncFalse )
+		{
 			OnZoneSleep();
+		}
+		else
+		{
+			OnZoneWake( NewZoneActive );
+		}
 	}
 }
 
@@ -283,4 +282,5 @@ void TLScene::TSceneNode_Transform::InitialiseZone()
 
 	m_ZoneInitialised = TRUE;
 }
+
 

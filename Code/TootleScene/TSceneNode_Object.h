@@ -44,15 +44,17 @@ protected:
 	virtual void					ProcessMessage(TLMessaging::TMessage& Message);
 
 	virtual Bool					CreatePhysicsNode(TRefRef PhysicsNodeType=TRef());
-	virtual void					OnPhysicsNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode)	{}
+	virtual void					OnPhysicsNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode);
 	void							DeletePhysicsNode();
 	virtual void					OnPhysicsNodeRemoved(TRefRef PhysicsNodeRef)			{}	//	called when we get a message from the graph that our node has been removed - NOT invoked by DeletePhysicsNode()
+	void							EnablePhysicsNode(Bool Enable,Bool EnableCollision);		//	enable/disable physics node - can seperately enable collision
 
 	FORCEINLINE Bool				CreateRenderNode(TPtr<TLRender::TRenderNode> pParentRenderNode)	{	return CreateRenderNode( pParentRenderNode ? pParentRenderNode->GetNodeRef() : TRef() );	}
 	virtual Bool					CreateRenderNode(TRefRef ParentRenderNode,TLMessaging::TMessage* pInitMessage=NULL);
-	virtual void					OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode)	{}
+	virtual void					OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode);
 	void							DeleteRenderNode();
 	virtual void					OnRenderNodeRemoved(TRefRef RenderNodeRef)			{}	//	called when we get a message from the graph that our node has been removed - NOT invoked by DeleteRenderNode()
+	void							EnableRenderNode(Bool Enable);						//	enable/disable render node
 
 	TRef							CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset);
 	TRef							CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset, const TLAudio::TAudioProperties& Props);
@@ -62,12 +64,8 @@ protected:
 	virtual void					Translate(float3 vTranslation);
 	virtual void					OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);	//	this checks to see if we're asleep first and delays sending a transform until we are awake
 	
-	virtual void					OnZoneWake();							//	re-enable physics and render nodes
+	virtual void					OnZoneWake(SyncBool ZoneActive);		//	re-enable physics and render nodes
 	virtual void					OnZoneSleep();							//	disable physics and render nodes
-
-protected:
-//	void					SetRenderNode(TRefRef RenderNodeRef)		{	m_RenderNodeRef = RenderNodeRef;	}
-//	void					SetPhysicsObject(TRefRef PhysicsNodeRef)	{	m_PhysicsNodeRef = PhysicsNodeRef;	}
 
 private:
 	TRef					m_RenderNodeRef;

@@ -45,7 +45,7 @@ public:
 		Flag_RestOnStatic,		//	stick to floor when we hit it (stops tiny vibration bounce)
 		Flag_Static,			//	does not move when collided wtih
 		//Flag_CollideBothSides,	//	collide with inside of shape, or dont check normal in polygon 
-		Flag_CollisionExpected,	//	expecting a valid collision shape
+		Flag_HasCollision,		//	expecting a valid collision shape - clear this to DISABLE collision, but still keep shape etc
 		Flag_ZoneExpected,		//	expecting to be in a collision zone
 		Flag_Enabled,			//	if not enabled, graph does not update this node
 	};
@@ -85,7 +85,8 @@ public:
 
 	//void					OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);
 
-	Bool					HasCollision() const				{	return m_pCollisionShape.IsValid() ? IsEnabled() && m_pCollisionShape->IsValid() : FALSE;	}
+	Bool					HasCollision() const				{	return (IsEnabled() && HasCollisionFlag() && m_pCollisionShape.IsValid()) ? m_pCollisionShape->IsValid() : FALSE;	}
+	Bool					HasCollisionFlag() const			{	return m_PhysicsFlags( Flag_HasCollision );	}
 	void					SetCollisionNone()					{	m_pCollisionShape = NULL;	SetWorldCollisionShapeInvalid();	SetCollisionZoneNeedsUpdate();	}
 	void					SetCollisionShape(TRefRef MeshRef);						//	setup polygon collision with a mesh
 	void					SetCollisionShape(const TLMaths::TSphere& Sphere);		//	setup a sphere collision

@@ -196,13 +196,6 @@ Bool TSceneNode_Object::CreatePhysicsNode(TRefRef PhysicsNodeType)
 	//	export ownership info
 	Message.ExportData("Owner", GetNodeRef());
 
-	//	if we're in a zone, and the zone is asleep, disable node at initialise
-	TPtr<TLMaths::TQuadTreeZone>& pZone = GetZone();
-	if ( pZone && !pZone->IsActive() )
-	{
-		Message.ExportData("PFClear", TLPhysics::TPhysicsNode::Flag_Enabled );
-	}
-
 	//	create node
 	TRef ParentNode = TRef();
 
@@ -259,13 +252,6 @@ Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TLMessaging
 	//	export scene-node-ownership info
 	pInitMessage->ExportData("Owner", GetNodeRef());
 
-	//	if we're in a zone, and the zone is asleep, disable node at initialise
-	TPtr<TLMaths::TQuadTreeZone>& pZone = GetZone();
-	if ( pZone && !pZone->IsActive() )
-	{
-		pInitMessage->ExportData("RFClear", TLRender::TRenderNode::RenderFlags::Enabled );
-	}
-
 	//	create node
 	m_RenderNodeRef = TLRender::g_pRendergraph->CreateNode( GetNodeRef(), RenderNodeType, ParentRenderNodeRef, pInitMessage );
 
@@ -277,6 +263,32 @@ Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TLMessaging
 	this->SubscribeTo( TLRender::g_pRendergraph );
 
 	return TRUE;
+}
+
+
+void TSceneNode_Object::OnPhysicsNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode)
+{
+	//	re-enable/disable physics node based on zone state
+	TPtr<TLMaths::TQuadTreeZone>& pZone = GetZone();
+	SyncBool ZoneActive = pZone ? pZone->IsActive() : SyncFalse;
+
+	if ( ZoneActive == SyncFalse )
+		OnZoneSleep();
+	else
+		OnZoneWake( ZoneActive );
+}
+
+
+void TSceneNode_Object::OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode)
+{
+	//	re-enable/disable render node based on zone state
+	TPtr<TLMaths::TQuadTreeZone>& pZone = GetZone();
+	SyncBool ZoneActive = pZone ? pZone->IsActive() : SyncFalse;
+
+	if ( ZoneActive == SyncFalse )
+		OnZoneSleep();
+	else
+		OnZoneWake( ZoneActive );
 }
 
 
@@ -381,53 +393,11 @@ float TSceneNode_Object::GetDistanceTo(const TLMaths::TLine& Line)
 //--------------------------------------------------------
 //	re-enable physics and render nodes
 //--------------------------------------------------------
-void TLScene::TSceneNode_Object::OnZoneWake()
+void TLScene::TSceneNode_Object::OnZoneWake(SyncBool ZoneActive)
 {
-	//	enable physics node
-	if ( GetPhysicsNodeRef().IsValid() )
-	{
-		//	enable node directly if we have it
-		TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode(TRUE);
-		if ( pPhysicsNode )
-		{
-			pPhysicsNode->SetEnabled( TRUE );
-		}
-		else
-		{
-			//	send message to disable
-			TLMessaging::TMessage Message(TLCore::InitialiseRef);
-			Message.ExportData("PFSet", TLPhysics::TPhysicsNode::Flag_Enabled );
-			TLPhysics::g_pPhysicsgraph->SendMessageToNode( GetPhysicsNodeRef(), Message );
-		}
-	}
-
-	//	enable render node
-	if ( GetRenderNodeRef().IsValid() )
-	{
-		//	enable node directly if we have it
-		TLRender::TRenderNode* pRenderNode = GetRenderNode(TRUE);
-		if ( pRenderNode )
-		{
-			pRenderNode->SetEnabled( TRUE );
-		}
-		else
-		{
-			//	send message to disable
-			TLMessaging::TMessage Message(TLCore::InitialiseRef);
-			Message.ExportData("RFSet", TLRender::TRenderNode::RenderFlags::Enabled );
-			TLRender::g_pRendergraph->SendMessageToNode( GetRenderNodeRef(), Message );
-		}
-
-		//	transform has changed whilst we were asleep, send transform-changed message to render node
-		if ( m_PublishTransformOnWake != 0x0 )
-		{
-			Bool TranslateChanged = (m_PublishTransformOnWake & TRANSFORM_BIT_TRANSLATE) != 0x0;
-			Bool RotationChanged = (m_PublishTransformOnWake & TRANSFORM_BIT_ROTATION) != 0x0;
-			Bool ScaleChanged = (m_PublishTransformOnWake & TRANSFORM_BIT_SCALE) != 0x0;
-			OnTransformChanged( TranslateChanged, RotationChanged, ScaleChanged );
-		}
-	}
-
+	EnablePhysicsNode( TRUE, TRUE );
+	
+	EnableRenderNode( TRUE );
 }
 
 
@@ -436,44 +406,11 @@ void TLScene::TSceneNode_Object::OnZoneWake()
 //--------------------------------------------------------
 void TLScene::TSceneNode_Object::OnZoneSleep()
 {
-	//	disable physics node
-	if ( GetPhysicsNodeRef().IsValid() )
-	{
-		//	disable node directly if we have it
-		TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode(TRUE);
-		if ( pPhysicsNode )
-		{
-			pPhysicsNode->SetEnabled( FALSE );
-		}
-		else
-		{
-			//	send message to disable
-			TLMessaging::TMessage Message(TLCore::InitialiseRef);
-			Message.ExportData("PFClear", TLPhysics::TPhysicsNode::Flag_Enabled );
-			TLPhysics::g_pPhysicsgraph->SendMessageToNode( GetPhysicsNodeRef(), Message );
-		}
-	}
+	EnablePhysicsNode( FALSE, FALSE );
 
 #ifdef DISABLE_RENDER_ON_SLEEP
-	//	disable render node
-	if ( GetRenderNodeRef().IsValid() )
-	{
-		//	disable node directly if we have it
-		TLRender::TRenderNode* pRenderNode = GetRenderNode(TRUE);
-		if ( pRenderNode )
-		{
-			pRenderNode->SetEnabled( FALSE );
-		}
-		else
-		{
-			//	send message to disable
-			TLMessaging::TMessage Message(TLCore::InitialiseRef);
-			Message.ExportData("RFClear", TLRender::TRenderNode::RenderFlags::Enabled );
-			TLRender::g_pRendergraph->SendMessageToNode( GetRenderNodeRef(), Message );
-		}
-	}
+	EnableRenderNode( FALSE );
 #endif
-
 }
 
 
@@ -492,7 +429,7 @@ void TLScene::TSceneNode_Object::OnTransformChanged(Bool bTranslation, Bool bRot
 		return;
 
 	//	if asleep then don't send a message until we wake up again
-	if ( !IsAwake() )
+	if ( IsAwake() == SyncFalse )
 	{
 		m_PublishTransformOnWake |= bTranslation ? TRANSFORM_BIT_TRANSLATE : 0x0;
 		m_PublishTransformOnWake |= bRotation ? TRANSFORM_BIT_ROTATION : 0x0;
@@ -508,3 +445,51 @@ void TLScene::TSceneNode_Object::OnTransformChanged(Bool bTranslation, Bool bRot
 }
 
 
+//--------------------------------------------------------
+//	enable/disable physics node - can seperately enable collision
+//--------------------------------------------------------
+void TLScene::TSceneNode_Object::EnablePhysicsNode(Bool Enable,Bool EnableCollision)
+{
+	//	enable physics node
+	if ( !GetPhysicsNodeRef().IsValid() )
+		return;
+
+	//	get node
+	TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode();
+	if ( !pPhysicsNode )
+		return;
+
+	//	enable/disable collision
+	pPhysicsNode->GetPhysicsFlags().Set( TLPhysics::TPhysicsNode::Flag_HasCollision, EnableCollision );
+
+	//	enable/disable
+	pPhysicsNode->SetEnabled( Enable );
+}
+
+
+//--------------------------------------------------------
+//	enable/disable render node
+//--------------------------------------------------------
+void TLScene::TSceneNode_Object::EnableRenderNode(Bool Enable)
+{
+	if ( !GetRenderNodeRef().IsValid() )
+		return;
+
+	//	enable node directly if we have it
+	TLRender::TRenderNode* pRenderNode = GetRenderNode();
+	if ( !pRenderNode )
+		return;
+
+	//	enable
+	pRenderNode->SetEnabled( Enable );
+
+	//	transform has changed whilst we were asleep, send transform-changed message to render node
+	if ( Enable && (m_PublishTransformOnWake != 0x0) )
+	{
+		Bool TranslateChanged = (m_PublishTransformOnWake & TRANSFORM_BIT_TRANSLATE) != 0x0;
+		Bool RotationChanged = (m_PublishTransformOnWake & TRANSFORM_BIT_ROTATION) != 0x0;
+		Bool ScaleChanged = (m_PublishTransformOnWake & TRANSFORM_BIT_SCALE) != 0x0;
+		OnTransformChanged( TranslateChanged, RotationChanged, ScaleChanged );
+	}
+
+}

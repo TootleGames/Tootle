@@ -114,6 +114,7 @@ public:
 	FORCEINLINE s32		AddUnique(const TYPE& val)				{	s32 Index = FindIndex( val );	return (Index == -1) ? Add( val ) : Index;	}
 	virtual s32			Add(const TYPE* pData,u32 Length=1);	//	add a number of elements onto the end of the list
 	virtual s32			Add(const TArray<TYPE>& Array);			//	add a whole array of this type onto the end of the list
+	s32					AddUnique(const TArray<TYPE>& Array);	//	add each element from an array using AddUnique
 	virtual TYPE*		AddNew();								//	add a new element onto the end of the array and return it. often fastest because if we dont need to grow there's no copying
 	template <class MATCHTYPE>
 	FORCEINLINE Bool	Remove(const MATCHTYPE& val);				// remove the specifed object

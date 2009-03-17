@@ -56,6 +56,10 @@ public:
 	FORCEINLINE TRefRef				GetActiveZoneTrackNode() const						{	return m_ActiveZoneTrackNode;	}
 	void							SetActiveZoneTrackNode(TRefRef SceneNodeRef);		//	change (and re-initialise) the scene node we're tracking for the active zone
 
+	FORCEINLINE Bool				IsAlwaysUpdateNode(TRefRef NodeRef) const			{	return m_AlwaysUpdateNodes.Exists( NodeRef );	}
+	FORCEINLINE void				AddAlwaysUpdateNode(TRefRef NodeRef) 				{	m_AlwaysUpdateNodes.AddUnique( NodeRef );	}
+	FORCEINLINE void				RemoveAlwaysUpdateNode(TRefRef NodeRef)				{	m_AlwaysUpdateNodes.Remove( NodeRef );	}
+
 protected:
 	virtual SyncBool				Initialise();
 	virtual SyncBool				Shutdown();
@@ -67,6 +71,7 @@ protected:
 	TPtr<TLMaths::TQuadTreeZone>	m_pRootZone;			//	root zone for the zone quad tree
 	TPtr<TLMaths::TQuadTreeZone>	m_pActiveZone;			//	the currently active zone
 	TRef							m_ActiveZoneTrackNode;	//	if set this sets m_ActiveZone to follow this node and set the zone
+	TArray<TRef>					m_AlwaysUpdateNodes;	//	list of nodes to always update, regardless of zone
 };
 
 

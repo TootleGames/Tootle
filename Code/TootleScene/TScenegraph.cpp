@@ -54,11 +54,18 @@ SyncBool TScenegraph::Initialise()
 
 SyncBool TScenegraph::Shutdown()
 {
+	//	remove active zone
+	m_pActiveZone = NULL;
+
+	//	remove zones
 	if ( m_pRootZone )
 	{
 		m_pRootZone->Shutdown();
 		m_pRootZone = NULL;
 	}
+
+	//	clean node array
+	m_AlwaysUpdateNodes.Empty();
 
 	return TLGraph::TGraph<TSceneNode>::Shutdown();
 }
@@ -135,6 +142,7 @@ void TLScene::TScenegraph::SetRootZone(TPtr<TLMaths::TQuadTreeZone>& pZone)
 
 	//	predivide all the zones to their smallest level
 	m_pRootZone->DivideAll( m_pRootZone );
+	m_pRootZone->FindNeighboursAll( m_pRootZone );
 
 	//	set active zone as the root by default so everything is active (it's default state
 	SetActiveZone( m_pRootZone );
@@ -146,21 +154,60 @@ void TLScene::TScenegraph::SetRootZone(TPtr<TLMaths::TQuadTreeZone>& pZone)
 //---------------------------------------------------
 void TLScene::TScenegraph::SetActiveZone(TPtr<TLMaths::TQuadTreeZone>& pZone)	
 {
-	//	de-activate old zone
+	u32 z;
+
+	//	collect zones to enable and disable so that we don't turn a zone off and on
+	TFixedArray<TLMaths::TQuadTreeZone*,9> ZonesOff(0);
+	TFixedArray<TLMaths::TQuadTreeZone*,9> ZonesOnWait(0);
+	TFixedArray<TLMaths::TQuadTreeZone*,9> ZonesOn(0);
+
+	//	collect nodes to disable from old zone
 	if ( m_pActiveZone )
 	{
-		m_pActiveZone->SetActive( FALSE, TRUE );
+		ZonesOff.Add( m_pActiveZone );
+
+		//	and it's neighbours
+		TPtrArray<TLMaths::TQuadTreeZone>& ZoneNeighbours = m_pActiveZone->GetNeighbourZones();
+		for ( z=0;	z<ZoneNeighbours.GetSize();	z++ )
+		{
+			TLMaths::TQuadTreeZone* pNeighbourZone = ZoneNeighbours[z];
+			ZonesOff.Add( pNeighbourZone );
+		}
+	}
+
+	//	un-assign zone (just so we don't accidently use it below)
+	m_pActiveZone = NULL;
+
+	//	collect nodes from new zone
+	if ( pZone )
+	{
+		ZonesOff.Remove( pZone );
+		ZonesOn.Add( pZone );
+
+		//	and it's neighbours
+		TPtrArray<TLMaths::TQuadTreeZone>& ZoneNeighbours = pZone->GetNeighbourZones();
+		for ( z=0;	z<ZoneNeighbours.GetSize();	z++ )
+		{
+			TLMaths::TQuadTreeZone* pNeighbourZone = ZoneNeighbours[z];
+			ZonesOff.Remove( pNeighbourZone );
+			ZonesOnWait.Add( pNeighbourZone );
+		}
 	}
 
 	//	assign new zone...
 	m_pActiveZone = pZone;
 
-	//	...and activate
-	if ( m_pActiveZone )
-	{
-		m_pActiveZone->SetActive( TRUE, TRUE );
-	}
-	
+	//	deactivate old zones
+	for ( z=0;	z<ZonesOff.GetSize();	z++ )
+		ZonesOff[z]->SetActive( SyncFalse, TRUE );
+
+	//	activate new zones
+	for ( z=0;	z<ZonesOn.GetSize();	z++ )
+		ZonesOn[z]->SetActive( SyncTrue, TRUE );
+
+	//	activate not-fully-on zones
+	for ( z=0;	z<ZonesOnWait.GetSize();	z++ )
+		ZonesOnWait[z]->SetActive( SyncWait, TRUE );
 }
 
 
@@ -180,13 +227,19 @@ void TLScene::TScenegraph::UpdateGraph(float TimeStep)
 	}
 	else
 	{
+		//	update always-updated nodes
+		for ( u32 n=0;	n<m_AlwaysUpdateNodes.GetSize();	n++ )
+		{
+			//	get node
+			TPtr<TSceneNode>& pNode = FindNode( m_AlwaysUpdateNodes[n] );
+			pNode->UpdateAll( TimeStep );
+		}
+
 		//	update from active zone
 		if ( m_pActiveZone )
 		{
 			UpdateNodesByZone( TimeStep, *m_pActiveZone, TRUE );
 		}
-
-		//	update non-zoned nodes...
 	}
 
 	// Update the graph structure with any changes
@@ -205,6 +258,10 @@ void TLScene::TScenegraph::UpdateNodesByZone(float TimeStep,TLMaths::TQuadTreeZo
 		TPtr<TLMaths::TQuadTreeNode>& pQuadTreeNode = ZoneNodes[n];
 		TLScene::TSceneNode_Transform& SceneNode = *pQuadTreeNode.GetObject<TLScene::TSceneNode_Transform>();
 
+		//	node that is already updated
+		if ( IsAlwaysUpdateNode( SceneNode.GetNodeRef() ) )
+			continue;
+
 		//	update this scene node and it's children
 		SceneNode.UpdateAll( TimeStep );		
 	}
@@ -212,7 +269,12 @@ void TLScene::TScenegraph::UpdateNodesByZone(float TimeStep,TLMaths::TQuadTreeZo
 	//	update neighbour zones
 	if ( UpdateNeighbours )
 	{
-		//for ( u32 z=0;
+		TPtrArray<TLMaths::TQuadTreeZone>& NeighbourZones = Zone.GetNeighbourZones();
+		for ( u32 z=0;	z<NeighbourZones.GetSize();	z++ )
+		{
+			//	update neighbour, but not it's neighbours otherwise we'll get stuck in a loop
+			UpdateNodesByZone( TimeStep, *NeighbourZones[z], FALSE );
+		}
 	}
 }
 
