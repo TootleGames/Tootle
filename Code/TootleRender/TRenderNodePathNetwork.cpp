@@ -107,10 +107,10 @@ void TLRender::TRenderNodePathNetwork::InitMeshFromPathNetwork(TLAsset::TPathNet
 			continue;
 
 		//	create lines to the links
-		TArray<TLPath::TPathLink>& NodeLinks = PathNode.GetLinks();
+		TArray<TLPath::TPathNodeLink>& NodeLinks = PathNode.GetLinks();
 		for ( u32 i=0;	i<NodeLinks.GetSize();	i++ )
 		{
-			TLPath::TPathLink& PathLink = NodeLinks[i];
+			TLPath::TPathNodeLink& PathLink = NodeLinks[i];
 
 			//	get the index of the link, if it's less than N then we've already processed this node, and therefore
 			//	we already have a line connecting them both.

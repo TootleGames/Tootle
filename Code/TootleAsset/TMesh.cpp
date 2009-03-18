@@ -3,14 +3,17 @@
 #include <TootleMaths/TOblong.h>
 #include <TootleMaths/TCapsule.h>
 
+#ifdef _DEBUG
+//#define DEBUG_CHECK_PRIMITIVES
+#endif
 
 #define LINE_PADDING_HALF			(1.f)
 
 //#define GENERATE_QUADS_AS_TRIANGLES	//	if not defined, tri-strips are created
 
-#define SPHERE_SEGMENT_SCALE		5.f	//	* Radius = segment count. 
-#define SPHERE_SEGMENT_MIN			((u32)SPHERE_SEGMENT_SCALE)
-#define SPHERE_SEGMENT_MAX			(SPHERE_SEGMENT_MIN*3)
+#define SPHERE_SEGMENT_SCALE		0.3f	//	* Radius = segment count. 
+#define SPHERE_SEGMENT_MIN			((u32)6)
+#define SPHERE_SEGMENT_MAX			(20)
 
 
 namespace TLAsset
@@ -1193,7 +1196,7 @@ void TLAsset::TMesh::ColoursMult(const TColour& Colour)
 //--------------------------------------------------------
 void TLAsset::TMesh::OnPrimitivesChanged()
 {
-#ifdef _DEBUG
+#ifdef DEBUG_CHECK_PRIMITIVES
 	u32 VertexCount = m_Vertexes.GetSize();
 	u32 i;
 

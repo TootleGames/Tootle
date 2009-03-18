@@ -63,7 +63,7 @@ public:
 	float3						GetPosition() const;
 	void						SetPosition(const float3& Position);
 	void						MovePosition(const float3& Movement,float Timestep);
-	void						SetTransform(const TLMaths::TTransform& NewTransform,Bool PublishChanges=TRUE);	//	explicit change of transform
+	virtual void				SetTransform(const TLMaths::TTransform& NewTransform,Bool PublishChanges=TRUE);	//	explicit change of transform
 	const TLMaths::TTransform&	GetTransform() const					{	return m_Transform;	}
 	virtual const TLMaths::TTransform&	GetRenderTransform() const		{	return GetTransform();	}
 

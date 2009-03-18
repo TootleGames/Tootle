@@ -8,6 +8,8 @@ TLScene::TSceneNode_Transform::TSceneNode_Transform(TRefRef NodeRef,TRefRef Type
 	TSceneNode			( NodeRef, TypeRef ),
 	m_ZoneInitialised	( FALSE )
 {
+	//	gr: initialise the transform so that the translate (and therefore Position of Transform node) is always valid
+	m_Transform.SetTranslate( float3( 0.f, 0.f, 0.f ) );
 }
 
 

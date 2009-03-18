@@ -96,6 +96,7 @@ public:
 
 	const KEYTYPE*				FindKey(const TYPE& Item,const KEYTYPE* pPreviousMatch=NULL) const;	//	find the key for a pair matching this item
 	TYPE*						Add(const KEYTYPE& Key,const TYPE& Item,Bool Overwrite=TRUE);	//	add an item with this key. if the key already exists the item is overwritten if specified, returns the item for the key, overwritten or not. NULL if failed
+	TYPE*						AddNew(const KEYTYPE& Key);				//	add a new key and un-set item to the list - returns NULL if the key already exists. returns the item for the key
 	Bool						Remove(const KEYTYPE& Key);				//	remove the item with this key. returns if anything was removed
 	Bool						RemoveItem(const TYPE& Item,Bool RemoveAllMatches=FALSE);	//	remove matching item. (for when we dont know the key) returns if anything was removed
 
@@ -184,6 +185,26 @@ TYPE* TKeyArray<KEYTYPE,TYPE>::Add(const KEYTYPE& Key,const TYPE& Item,Bool Over
 
 	//	add new pair
 	s32 AddIndex = m_Array.Add( PAIRTYPE( Key, Item ) );
+	if ( AddIndex == -1 )
+		return NULL;
+
+	return &ElementAt( AddIndex );
+}
+
+
+//-------------------------------------------------------
+//	add a new key and un-set item to the list - returns NULL if the key already exists. returns the item for the key
+//-------------------------------------------------------
+template<typename KEYTYPE,typename TYPE>
+TYPE* TKeyArray<KEYTYPE,TYPE>::AddNew(const KEYTYPE& Key)
+{
+	//	have we already got a pair for this key?
+	PAIRTYPE* pPair = m_Array.Find( Key );
+	if ( pPair )
+		return NULL;
+
+	//	add new pair
+	s32 AddIndex = m_Array.Add( PAIRTYPE( Key, TYPE() ) );
 	if ( AddIndex == -1 )
 		return NULL;
 

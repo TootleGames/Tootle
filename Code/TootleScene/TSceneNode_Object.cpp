@@ -3,6 +3,7 @@
 
 
 #define DISABLE_RENDER_ON_SLEEP
+#define DISABLE_RENDER_ON_HALFWAKE
 
 
 using namespace TLScene;
@@ -397,7 +398,11 @@ void TLScene::TSceneNode_Object::OnZoneWake(SyncBool ZoneActive)
 {
 	EnablePhysicsNode( TRUE, TRUE );
 	
+#ifdef DISABLE_RENDER_ON_HALFWAKE
+	EnableRenderNode( ZoneActive == SyncTrue );
+#else
 	EnableRenderNode( TRUE );
+#endif
 }
 
 

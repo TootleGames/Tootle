@@ -65,12 +65,12 @@ Bool TLPath::TPathNode::ExportData(TBinaryTree& Data)
 
 
 
-TLPath::TPathLink::TPathLink() :
+TLPath::TPathNodeLink::TPathNodeLink() :
 	m_Direction	( TLPath::TDirection::Any )
 {
 }
 
-TLPath::TPathLink::TPathLink(TRefRef LinkNodeRef,TLPath::TDirection::Type Direction) :
+TLPath::TPathNodeLink::TPathNodeLink(TRefRef LinkNodeRef,TLPath::TDirection::Type Direction) :
 	m_LinkNodeRef	( LinkNodeRef ),
 	m_Direction		( Direction )
 {
@@ -217,6 +217,11 @@ void TLAsset::TPathNetwork::LinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNode
 	Changed |= NodeA.AddLink( NodeB, OneWayDirection ? TLPath::TDirection::Forward : TLPath::TDirection::Any );		//	A -> B == Foward
 	Changed |= NodeB.AddLink( NodeA, OneWayDirection ? TLPath::TDirection::Backward : TLPath::TDirection::Any );	//	B -> A == Backward
 
+	//	create a path link - ALWAYS in this order - if there is a OneWayDirection it'll be a->b. If not, it doesn't matter
+	TLPath::TPathLink NewLink( NodeA, NodeB );
+	TLDebug_Assert( NewLink.IsValid(), "New link isn't valid");
+	m_Links.AddUnique( NewLink );
+
 	//	callback
 	if ( Changed )
 		OnNodesLinked( NodeA, NodeB );
@@ -232,6 +237,10 @@ Bool TLAsset::TPathNetwork::UnlinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNo
 	Changed |= NodeA.RemoveLink( NodeB );
 	Changed |= NodeB.RemoveLink( NodeA );
 
+	//	remove matching link
+	TLPath::TPathLink NewLink( NodeA.GetNodeRef(), NodeB.GetNodeRef() );
+	m_Links.Remove( NewLink );
+
 	//	callback if changed
 	if ( Changed )
 		OnNodesUnlinked( NodeA, NodeB );
@@ -246,7 +255,7 @@ Bool TLAsset::TPathNetwork::UnlinkNodes(TLPath::TPathNode& NodeA,TLPath::TPathNo
 TPtr<TLPath::TPathNode>& TLAsset::TPathNetwork::DivideLink(TLPath::TPathNode& NodeA,TLPath::TPathNode& NodeB,float2* pDividePos)
 {
 	//	store the original link
-	const TLPath::TPathLink* pLink = NodeA.GetLink( NodeB.GetNodeRef() );
+	const TLPath::TPathNodeLink* pLink = NodeA.GetLink( NodeB.GetNodeRef() );
 	if ( !pLink )
 	{
 		TLDebug_Break("Trying to divide link between two nodes that aren't linked");
@@ -254,7 +263,7 @@ TPtr<TLPath::TPathNode>& TLAsset::TPathNetwork::DivideLink(TLPath::TPathNode& No
 	}
 
 	//	copy it as we're about to delete the link
-	TLPath::TPathLink OldLinkAB = *pLink;
+	TLPath::TPathNodeLink OldLinkAB = *pLink;
 
 	//	unlink the nodes
 	if ( !UnlinkNodes( NodeA, NodeB ) )
@@ -420,6 +429,98 @@ Bool TLAsset::TPathNetwork::SetNodePosition(TLPath::TPathNode& Node,const float2
 	OnNodePosChanged( Node );
 
 	return TRUE;
+}
+
+
+//--------------------------------------------------
+//	
+//--------------------------------------------------
+void TLAsset::TPathNetwork::OnNodePosChanged(TLPath::TPathNode& Node)
+{
+	//	re-init data of path links
+	for ( u32 i=0;	i<m_Links.GetSize();	i++ )
+	{
+		TLPath::TPathLink& Link = m_Links[i];
+		if ( !Link.HasNode( Node.GetNodeRef() ) )
+			continue;
+
+		//	get the "other" node
+		//	gr: order of OnNodePosChanged doesnt matter, but in case it matters in future...
+		if ( Link.GetNodeA() == Node.GetNodeRef() )
+		{
+			TPtr<TLPath::TPathNode>& pOtherNode = GetNode( Link.GetNodeB() );
+			Link.OnNodePosChanged( Node, *pOtherNode );
+		}
+		else
+		{
+			TPtr<TLPath::TPathNode>& pOtherNode = GetNode( Link.GetNodeA() );
+			Link.OnNodePosChanged( *pOtherNode, Node );
+		}
+	}
+}
+
+
+
+
+
+
+TLPath::TPathLink::TPathLink() :
+	m_CacheValid	( FALSE )
+{
+}
+
+
+TLPath::TPathLink::TPathLink(TRefRef NodeA,TRefRef NodeB) :
+	m_CacheValid	( FALSE )
+{
+	m_Nodes[0] = NodeA;
+	m_Nodes[1] = NodeB;
+
+	TLDebug_Assert( IsValid(), "Nodes provided to TPathLink are invalid" );
+}
+
+
+TLPath::TPathLink::TPathLink(const TPathNode& NodeA,const TPathNode& NodeB) :
+	m_CacheValid	( FALSE )
+{
+	m_Nodes[0] = NodeA.GetNodeRef();
+	m_Nodes[1] = NodeB.GetNodeRef();
+
+	//	calc cache stuff
+	OnNodePosChanged( NodeA, NodeB );
+}
+
+
+//--------------------------------------------------
+//	if either node position changes recalc cache info (line/sphere/etc)
+//--------------------------------------------------
+void TLPath::TPathLink::OnNodePosChanged(const TPathNode& NodeA,const TPathNode& NodeB)
+{
+	//	set line
+	m_LinkLine.Set( NodeA.GetPosition(), NodeB.GetPosition() );
+
+	//	set bounds sphere
+	float Radius = m_LinkLine.GetLength() / 2.f;
+	m_LinkBoundsSphere.Set( m_LinkLine.GetCenter(), Radius );
+
+	//	all up to date
+	m_CacheValid = TRUE;
+}
+
+
+//--------------------------------------------------
+//	
+//--------------------------------------------------
+void TLPath::TPathLink::GetTransformOnLink(TLMaths::TTransform& Transform,float AlongLine)
+{
+	//	work out translate
+	GetLinkLine().GetPointAlongLine( Transform.GetTranslate().xy(), AlongLine );
+	Transform.GetTranslate().z = 0.f;
+	Transform.SetTranslateValid();
+
+	//	reposition node along the path
+	TLMaths::TAngle DirectionAngle = GetLinkLine().GetAngle();
+	Transform.SetRotation( TLMaths::TQuaternion( float3( 0.f, 0.f, 1.f ), DirectionAngle.GetRadians() ) );
 }
 
 

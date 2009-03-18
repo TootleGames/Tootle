@@ -56,6 +56,8 @@ SyncBool TScenegraph::Shutdown()
 {
 	//	remove active zone
 	m_pActiveZone = NULL;
+	m_ActiveZoneList.Empty();
+	m_HalfActiveZoneList.Empty();
 
 	//	remove zones
 	if ( m_pRootZone )
@@ -157,57 +159,85 @@ void TLScene::TScenegraph::SetActiveZone(TPtr<TLMaths::TQuadTreeZone>& pZone)
 	u32 z;
 
 	//	collect zones to enable and disable so that we don't turn a zone off and on
-	TFixedArray<TLMaths::TQuadTreeZone*,9> ZonesOff(0);
-	TFixedArray<TLMaths::TQuadTreeZone*,9> ZonesOnWait(0);
-	TFixedArray<TLMaths::TQuadTreeZone*,9> ZonesOn(0);
+	TFixedArray<TLMaths::TQuadTreeZone*,100> ZonesOff(0);
+	TFixedArray<TLMaths::TQuadTreeZone*,100> ZonesOnWait(0);
+	TFixedArray<TLMaths::TQuadTreeZone*,100> ZonesOn(0);
 
-	//	collect nodes to disable from old zone
-	if ( m_pActiveZone )
-	{
-		ZonesOff.Add( m_pActiveZone );
-
-		//	and it's neighbours
-		TPtrArray<TLMaths::TQuadTreeZone>& ZoneNeighbours = m_pActiveZone->GetNeighbourZones();
-		for ( z=0;	z<ZoneNeighbours.GetSize();	z++ )
-		{
-			TLMaths::TQuadTreeZone* pNeighbourZone = ZoneNeighbours[z];
-			ZonesOff.Add( pNeighbourZone );
-		}
-	}
-
-	//	un-assign zone (just so we don't accidently use it below)
-	m_pActiveZone = NULL;
-
-	//	collect nodes from new zone
-	if ( pZone )
-	{
-		ZonesOff.Remove( pZone );
-		ZonesOn.Add( pZone );
-
-		//	and it's neighbours
-		TPtrArray<TLMaths::TQuadTreeZone>& ZoneNeighbours = pZone->GetNeighbourZones();
-		for ( z=0;	z<ZoneNeighbours.GetSize();	z++ )
-		{
-			TLMaths::TQuadTreeZone* pNeighbourZone = ZoneNeighbours[z];
-			ZonesOff.Remove( pNeighbourZone );
-			ZonesOnWait.Add( pNeighbourZone );
-		}
-	}
+	//	get list of zones to turn off...
+	ZonesOff.Add( m_ActiveZoneList );
 
 	//	assign new zone...
 	m_pActiveZone = pZone;
 
-	//	deactivate old zones
-	for ( z=0;	z<ZonesOff.GetSize();	z++ )
-		ZonesOff[z]->SetActive( SyncFalse, TRUE );
+	//	clear old list
+	m_ActiveZoneList.Empty();
+	m_HalfActiveZoneList.Empty();
+
+
+	//	collect nodes from new zone
+	if ( m_pActiveZone )
+	{
+		ZonesOff.Remove( m_pActiveZone );
+		ZonesOn.Add( m_pActiveZone );
+
+		//	set neighbours as active...
+		TPtrArray<TLMaths::TQuadTreeZone>& ZoneNeighbours = m_pActiveZone->GetNeighbourZones();
+		for ( z=0;	z<ZoneNeighbours.GetSize();	z++ )
+		{
+			TLMaths::TQuadTreeZone* pNeighbourZone = ZoneNeighbours[z];
+			ZonesOff.Remove( pNeighbourZone );
+			ZonesOn.AddUnique( pNeighbourZone );
+			ZonesOnWait.Remove( pNeighbourZone );
+
+			//	and neighbours's neighbours as half-on
+			TPtrArray<TLMaths::TQuadTreeZone>& NeighbourNeighbours = pNeighbourZone->GetNeighbourZones();
+			for ( u32 i=0;	i<NeighbourNeighbours.GetSize();	i++ )
+			{
+				TLMaths::TQuadTreeZone* pNeighbourNeighbourZone = NeighbourNeighbours[i];
+
+				//	if already in the on/onwait list, just skip
+				if ( ZonesOn.Exists( pNeighbourNeighbourZone ) )
+					continue;
+
+				if ( ZonesOnWait.Exists( pNeighbourNeighbourZone ) )
+					continue;
+
+				//	add to half-on list
+				ZonesOnWait.Add( pNeighbourNeighbourZone );
+				ZonesOff.Remove( pNeighbourNeighbourZone );
+			}
+		}
+	}
+
+
+	//	gr: because this is not atomic (or because the Sleep/Wake of the nodes in the zones isn't async)
+	//	we have to do this in a specific order... ENABLE zones first, THEN sleep old ones. I have cases
+	//	with recycling cars when zones are made inactive... but there are no active zones to respawn into
 
 	//	activate new zones
 	for ( z=0;	z<ZonesOn.GetSize();	z++ )
+	{
+		m_ActiveZoneList.Add( ZonesOn[z] );
 		ZonesOn[z]->SetActive( SyncTrue, TRUE );
+	}
 
-	//	activate not-fully-on zones
+	//	activate half asleep zones
 	for ( z=0;	z<ZonesOnWait.GetSize();	z++ )
+	{
+		m_ActiveZoneList.Add( ZonesOnWait[z] );
+		m_HalfActiveZoneList.Add( ZonesOnWait[z] );
 		ZonesOnWait[z]->SetActive( SyncWait, TRUE );
+	}	
+	
+	//	deactivate old zones
+	for ( z=0;	z<ZonesOff.GetSize();	z++ )
+	{
+		ZonesOff[z]->SetActive( SyncFalse, TRUE );
+	}
+
+	//	send out "active zone changed" message
+	TLMessaging::TMessage Message("ActZoneChange");
+	PublishMessage( Message );
 }
 
 
@@ -235,10 +265,10 @@ void TLScene::TScenegraph::UpdateGraph(float TimeStep)
 			pNode->UpdateAll( TimeStep );
 		}
 
-		//	update from active zone
-		if ( m_pActiveZone )
+		//	update active zones
+		for ( u32 z=0;	z<m_ActiveZoneList.GetSize();	z++ )
 		{
-			UpdateNodesByZone( TimeStep, *m_pActiveZone, TRUE );
+			UpdateNodesByZone( TimeStep, *(m_ActiveZoneList[z]) );
 		}
 	}
 
@@ -250,7 +280,7 @@ void TLScene::TScenegraph::UpdateGraph(float TimeStep)
 //----------------------------------------------------
 //	update all the nodes in a zone. then update that's zones neighbours if required
 //----------------------------------------------------
-void TLScene::TScenegraph::UpdateNodesByZone(float TimeStep,TLMaths::TQuadTreeZone& Zone,Bool UpdateNeighbours)
+void TLScene::TScenegraph::UpdateNodesByZone(float TimeStep,TLMaths::TQuadTreeZone& Zone)
 {
 	TPtrArray<TLMaths::TQuadTreeNode>& ZoneNodes = Zone.GetNodes();
 	for ( u32 n=0;	n<ZoneNodes.GetSize();	n++ )
@@ -264,17 +294,6 @@ void TLScene::TScenegraph::UpdateNodesByZone(float TimeStep,TLMaths::TQuadTreeZo
 
 		//	update this scene node and it's children
 		SceneNode.UpdateAll( TimeStep );		
-	}
-
-	//	update neighbour zones
-	if ( UpdateNeighbours )
-	{
-		TPtrArray<TLMaths::TQuadTreeZone>& NeighbourZones = Zone.GetNeighbourZones();
-		for ( u32 z=0;	z<NeighbourZones.GetSize();	z++ )
-		{
-			//	update neighbour, but not it's neighbours otherwise we'll get stuck in a loop
-			UpdateNodesByZone( TimeStep, *NeighbourZones[z], FALSE );
-		}
 	}
 }
 

@@ -51,7 +51,9 @@ public:
 	void							SetRootZone(TPtr<TLMaths::TQuadTreeZone>& pZone);	//	set a new root zone
 	TPtr<TLMaths::TQuadTreeZone>&	GetRootZone()										{	return m_pRootZone;	}
 
-	TPtr<TLMaths::TQuadTreeZone>&	GetActiveZone()										{	return m_pActiveZone;	}
+	const TLMaths::TQuadTreeZone*	GetActiveZone() const								{	return m_pActiveZone;	}
+	const TArray<TLMaths::TQuadTreeZone*>&	GetActiveZones() const						{	return m_ActiveZoneList;	}
+	const TArray<TLMaths::TQuadTreeZone*>&	GetHalfActiveZones() const					{	return m_HalfActiveZoneList;	}
 	void							SetActiveZone(TPtr<TLMaths::TQuadTreeZone>& pZone);	//	change active zone
 	FORCEINLINE TRefRef				GetActiveZoneTrackNode() const						{	return m_ActiveZoneTrackNode;	}
 	void							SetActiveZoneTrackNode(TRefRef SceneNodeRef);		//	change (and re-initialise) the scene node we're tracking for the active zone
@@ -65,13 +67,17 @@ protected:
 	virtual SyncBool				Shutdown();
 	virtual void					UpdateGraph(float TimeStep);			//	special scene graph update
 
-	void							UpdateNodesByZone(float TimeStep,TLMaths::TQuadTreeZone& Zone,Bool UpdateNeighbours);	//	update all the nodes in a zone. then update that's zones neighbours if required
+	void							UpdateNodesByZone(float TimeStep,TLMaths::TQuadTreeZone& Zone);	//	update all the nodes in a zone. then update that's zones neighbours if required
 
 protected:
-	TPtr<TLMaths::TQuadTreeZone>	m_pRootZone;			//	root zone for the zone quad tree
-	TPtr<TLMaths::TQuadTreeZone>	m_pActiveZone;			//	the currently active zone
-	TRef							m_ActiveZoneTrackNode;	//	if set this sets m_ActiveZone to follow this node and set the zone
-	TArray<TRef>					m_AlwaysUpdateNodes;	//	list of nodes to always update, regardless of zone
+	TPtr<TLMaths::TQuadTreeZone>		m_pRootZone;			//	root zone for the zone quad tree
+	TRef								m_ActiveZoneTrackNode;	//	if set this sets m_ActiveZone to follow this node and set the zone
+	TArray<TRef>						m_AlwaysUpdateNodes;	//	list of nodes to always update, regardless of zone
+
+private:
+	TLMaths::TQuadTreeZone*				m_pActiveZone;			//	the currently active zone
+	TArray<TLMaths::TQuadTreeZone*>		m_ActiveZoneList;		//	list of ALL the zones that are active (includes m_pActiveZone)
+	TArray<TLMaths::TQuadTreeZone*>		m_HalfActiveZoneList;	//	list of half-awake zones in m_ActiveZoneList
 };
 
 

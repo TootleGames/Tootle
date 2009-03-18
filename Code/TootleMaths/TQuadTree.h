@@ -134,6 +134,8 @@ public:
 	FORCEINLINE Bool			IsInZone(const TPtr<TQuadTreeNode>& pNode)			{	return m_Nodes.Exists( pNode.GetObject() );	}	//	test to see if node exists in this zone
 	FORCEINLINE Bool			IsInZone(const TQuadTreeNode& Node)					{	return m_Nodes.Exists( &Node );	}	//	test to see if node exists in this zone
 	const TQuadTreeZone*		GetZoneAt(const float2& Position) const;			//	search the tree to find the existing zone at this position - todo: expand to use shape
+	void						GetIntersectingLeafZones(const TLMaths::TLine2D& Shape,TArray<const TLMaths::TQuadTreeZone*>& IntersectZones);	//	get a list of all leaf zones that this shape intersects
+
 	TPtr<TQuadTreeZone>&		GetParentZone()										{	return m_pParent;	}
 	const TPtr<TQuadTreeZone>&	GetParentZone() const								{	return m_pParent;	}
 

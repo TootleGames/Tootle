@@ -1143,3 +1143,28 @@ const TLMaths::TQuadTreeZone* TLMaths::TQuadTreeZone::GetZoneAt(const float2& Po
 }
 
 
+//----------------------------------------------
+//	get a list of all leaf zones that this shape intersects
+//----------------------------------------------
+void TLMaths::TQuadTreeZone::GetIntersectingLeafZones(const TLMaths::TLine2D& Shape,TArray<const TLMaths::TQuadTreeZone*>& IntersectZones)
+{
+	//	check shape is in my shape
+	if ( !GetShape().GetIntersection( Shape ) )
+		return;
+
+	//	am i a leaf?
+	if ( !m_Children.GetSize() )
+	{
+		//	i am! add me to list
+		IntersectZones.Add( this );
+		return;
+	}
+
+	//	no.. go into children
+	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
+	{
+		m_Children[c]->GetIntersectingLeafZones( Shape, IntersectZones );
+	}
+}
+
+

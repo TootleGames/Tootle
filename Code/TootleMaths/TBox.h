@@ -153,6 +153,7 @@ public:
 
 	//	"intersection" is just a bool version of the distance check. (negative distance is an intersection)
 	Bool			GetIntersection(const TLine& Line) const;
+	Bool			GetIntersection(const TLine2D& Line) const;
 	Bool			GetIntersection(const float2& Pos) const;
 	Bool			GetIntersection(const float3& Pos) const;
 	Bool			GetIntersection(const TSphere& Sphere) const;

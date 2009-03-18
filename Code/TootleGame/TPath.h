@@ -10,13 +10,15 @@
 
 #include <TootleAsset/TPath.h>
 #include <TootleCore/TKeyArray.h>
+#include <TootleMaths/TQuadTree.h>
+
 
 namespace TLPath
 {
-	class TPath;			//	linear path (route) of a path network
-	class TPathSpider;		//	base route finder
-	class TPathSpider_Path;	//	path finder
-
+	class TPath;				//	linear path (route) of a path network
+	class TPathSpider;			//	base route finder
+	class TPathSpider_Path;		//	path finder
+	class TPathNetworkZones;	//	class that links a quadtree to a path network for fast zone<->path lookup
 
 	namespace TPathMode
 	{
@@ -107,4 +109,47 @@ protected:
 	TArray<TRef>						m_DeadEnds;			//	dead ends we've found
 };
 
+
+
+//------------------------------------------------------------
+//	class that links a quadtree to a path network for fast zone<->path lookup
+//------------------------------------------------------------
+class TLPath::TPathNetworkZones
+{
+public:	//	gr: public so we can declare them as data types
+	class TPathLinkZones
+	{
+	public:
+		TPathLinkZones() : m_Zones(0)	{}
+
+		TFixedArray<const TLMaths::TQuadTreeZone*,10>	m_Zones;
+	};
+
+	class TZonePathLinks
+	{
+	public:
+		TZonePathLinks() : m_PathLinks(0)	{}
+
+		TFixedArray<TLPath::TPathLink,10>	m_PathLinks;
+	};
+
+public:
+	TPathNetworkZones(TPtr<TLAsset::TPathNetwork>& pPathNetwork,TPtr<TLMaths::TQuadTreeZone>& pRootZone,Bool LeafsOnly);
+
+	const TArray<const TLMaths::TQuadTreeZone*>*	GetPathLinkZones(const TLPath::TPathLink& PathLink);
+	const TArray<TLPath::TPathLink>*				GetZonePathLinks(const TLMaths::TQuadTreeZone* pZone);
+
+	Bool											GetRandomPathPositionInRandomZone(TLMaths::TTransform& NewTransform,TLPath::TPathLink& PathLink,const TArray<TLMaths::TQuadTreeZone*>& ZoneList);
+
+protected:
+	TPtr<TLAsset::TPathNetwork>			m_pPathNetwork;
+	TPtr<TLMaths::TQuadTreeZone>		m_pRootZone;
+	Bool								m_LeafsOnly;
+	TKeyArray<TPathLink,TPathLinkZones>					m_PathLinkZones;		//	lookup pathlink -> zone list
+	TKeyArray<const TLMaths::TQuadTreeZone*,TZonePathLinks>	m_ZonePathLinks;		//	lookup zone -> pathlink list
+};
+
+
+TLCore_DeclareIsDataType( TLPath::TPathNetworkZones::TPathLinkZones );
+TLCore_DeclareIsDataType( TLPath::TPathNetworkZones::TZonePathLinks );
 

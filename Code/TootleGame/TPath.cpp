@@ -100,12 +100,12 @@ SyncBool TLPath::TPath::FindPathRandom(TRefRef StartNode,u32 NodesInRoute, Bool 
 	while ( m_Nodes.GetSize() < NodesInRoute )
 	{
 		//	just to make sure we don't get stuck, make a list of all the possible links then pick one at random
-		TArray<TLPath::TPathLink>& NodeLinks = pNode->GetLinks();
-		TFixedArray<TLPath::TPathLink*,100> ValidNodeLinks(0);
-		TLPath::TPathLink* pLastResort = NULL;
+		TArray<TLPath::TPathNodeLink>& NodeLinks = pNode->GetLinks();
+		TFixedArray<TLPath::TPathNodeLink*,100> ValidNodeLinks(0);
+		TLPath::TPathNodeLink* pLastResort = NULL;
 		for ( u32 i=0;	i<NodeLinks.GetSize();	i++ )
 		{
-			TLPath::TPathLink& Link = NodeLinks[i];
+			TLPath::TPathNodeLink& Link = NodeLinks[i];
 			
 			//	if this is a backwards link we cannot follow it
 			if ( Link.GetDirection() == TLPath::TDirection::Backward )
@@ -141,7 +141,7 @@ SyncBool TLPath::TPath::FindPathRandom(TRefRef StartNode,u32 NodesInRoute, Bool 
 		}
 
 		//	pick a link to follow
-		TLPath::TPathLink* pFollowLink = ValidNodeLinks.ElementRand();
+		TLPath::TPathNodeLink* pFollowLink = ValidNodeLinks.ElementRand();
 		pNode = pPathNetwork->GetNode( pFollowLink->GetLinkNodeRef() );
 		if ( !pNode )
 		{
@@ -570,5 +570,142 @@ void TLPath::TPathSpider_Path::RemoveEndNode(TRefRef EndNodeRef)
 	m_EndNodeLength.Remove( EndNodeRef );
 	m_EndNodePaths.Remove( EndNodeRef );
 
+}
+
+
+
+
+//-----------------------------------------------
+//	
+//-----------------------------------------------
+TLPath::TPathNetworkZones::TPathNetworkZones(TPtr<TLAsset::TPathNetwork>& pPathNetwork,TPtr<TLMaths::TQuadTreeZone>& pRootZone,Bool LeafsOnly) :
+	m_pPathNetwork	( pPathNetwork ),
+	m_pRootZone		( pRootZone ),
+	m_LeafsOnly		( LeafsOnly )
+{
+	//	init zoning information...
+	if ( !m_pPathNetwork )
+	{
+		TLDebug_Break("Path network expected");
+		return;
+	}
+
+
+	const TArray<TLPath::TPathLink>& PathLinks = pPathNetwork->GetLinks();
+	for ( u32 i=0;	i<PathLinks.GetSize();	i++ )
+	{
+		const TPathLink& PathLink = PathLinks[i];
+
+		//	make an entry in the table for this link
+		TPathLinkZones* pLinkZones = m_PathLinkZones.AddNew(PathLink);
+		
+		//	get all the zones it intersects
+		m_pRootZone->GetIntersectingLeafZones( PathLink.GetLinkLine(), pLinkZones->m_Zones );
+
+		//	now reverse that lookup for zone -> links
+		for ( u32 z=0;	z<pLinkZones->m_Zones.GetSize();	z++ )
+		{
+			//	get the zone->links entry
+			const TLMaths::TQuadTreeZone* pZone = pLinkZones->m_Zones[z];
+			TZonePathLinks* pZoneLinks = m_ZonePathLinks.Find( pZone );
+			if ( !pZoneLinks )
+				pZoneLinks = m_ZonePathLinks.AddNew( pZone );
+
+			//	add path link to that zone
+			pZoneLinks->m_PathLinks.Add( PathLink );
+		}
+	}
+}
+
+
+
+//-----------------------------------------------
+//	
+//-----------------------------------------------
+const TArray<const TLMaths::TQuadTreeZone*>* TLPath::TPathNetworkZones::GetPathLinkZones(const TLPath::TPathLink& PathLink)
+{
+	//	find entry
+	TPathLinkZones* pPathLinkZones = m_PathLinkZones.Find( PathLink );
+
+	//	return array within
+	return pPathLinkZones ? &pPathLinkZones->m_Zones : NULL;
+}
+
+	
+//-----------------------------------------------
+//	
+//-----------------------------------------------
+const TArray<TLPath::TPathLink>* TLPath::TPathNetworkZones::GetZonePathLinks(const TLMaths::TQuadTreeZone* pZone)
+{
+	//	find entry
+	TZonePathLinks* pZonePathLinks = m_ZonePathLinks.Find( pZone );
+
+	//	return array within
+	return pZonePathLinks ? &pZonePathLinks->m_PathLinks : NULL;
+}
+
+
+
+//-----------------------------------------------
+//	
+//-----------------------------------------------
+Bool TLPath::TPathNetworkZones::GetRandomPathPositionInRandomZone(TLMaths::TTransform& NewTransform,TLPath::TPathLink& PathLink,const TArray<TLMaths::TQuadTreeZone*>& ZoneList)
+{
+	//	no zones provided
+	if ( ZoneList.GetSize() == 0 )
+		return FALSE;
+
+	//	copy list and pick a zone at random
+	TFixedArray<TLMaths::TQuadTreeZone*,100> TempZoneList;
+	TempZoneList.Copy( ZoneList );
+
+	//	find a random zone with some path links in it
+	const TArray<TLPath::TPathLink>* pPathLinksInZone = NULL;
+	const TLMaths::TQuadTreeZone* pPathLinkZone = NULL;
+	while ( !pPathLinksInZone && TempZoneList.GetSize() )
+	{
+		s32 ZoneIndex = TempZoneList.GetRandIndex();
+		pPathLinkZone = TempZoneList[ZoneIndex];
+		pPathLinksInZone = GetZonePathLinks( pPathLinkZone );
+		
+		//	ignore entries with no path links in them
+		if ( pPathLinksInZone && pPathLinksInZone->GetSize() == 0 )
+			pPathLinksInZone = NULL;
+
+		//	zone has no path links, remove and try again
+		if ( !pPathLinksInZone )
+		{
+			TempZoneList.RemoveAt( ZoneIndex );
+			continue;
+		}
+	}
+
+	//	couldnt find a pathlink in an appropriate zone
+	if ( !pPathLinksInZone )
+		return FALSE;
+
+	//	k now pick a random path from the list
+	const TLPath::TPathLink& FoundPathLink = pPathLinksInZone->ElementRandConst();
+	const TLMaths::TLine2D& PathLinkLine = FoundPathLink.GetLinkLine();
+
+	//	now find a point along the path that's in the zone
+	float AlongLine = TLMaths::Randf();
+	float2 PointAlongLine;
+	PathLinkLine.GetPointAlongLine( PointAlongLine, AlongLine );
+	while ( !pPathLinkZone->GetShape().GetIntersection( PointAlongLine ) )
+	{
+		//	pick another
+		AlongLine = TLMaths::Randf();
+		PathLinkLine.GetPointAlongLine( PointAlongLine, AlongLine );
+	}
+
+	//	gr: error here... can put placed into a zone that's syncfalse.... i THINK it's because we're placed right on the edge of a zone, as it mostly goes wrong when going left/up
+	//	most maybe find some way of ensuring the new transform is away from the edge of it's zone
+	PathLink = FoundPathLink;
+
+	//	reposition node along the path
+	PathLink.GetTransformOnLink( NewTransform, AlongLine );
+
+	return TRUE;
 }
 

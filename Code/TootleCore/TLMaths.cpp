@@ -1368,6 +1368,20 @@ void TLMaths::TQuaternion::RotateVector(float2& Vector) const
 }
 
 
+//-----------------------------------------------------------
+//	extract a eular angle in degrees from the quaternion. Is is based on an axis of 0,0,1. probably better ways to do it to get 3D angles...
+//-----------------------------------------------------------
+TLMaths::TAngle TLMaths::TQuaternion::GetAngle2D() const
+{
+	float2 Up( 0.f, -1.f );
+	RotateVector( Up );
+
+	TLMaths::TAngle Result;
+	Result.SetAngle( Up );
+
+	return Result;
+}
+
 
 //-----------------------------------------------------------
 //	transform this by Trans.
@@ -1517,5 +1531,6 @@ void TLMaths::TAngle::SetAngle(const float2& Direction)
 	float AngRad = atan2f( Direction.x, Direction.y );
 	SetRadians( AngRad );
 }
+
 
 

@@ -103,7 +103,7 @@ void TLRender::TRenderNodeText::SetGlyph(TRenderNodeGlyph& RenderGlyph,TLAsset::
 	}
 
 	//	simple spacing atm - update node position
-	if ( RenderGlyph.GetTranslate() != GlyphPos )
+	if ( !RenderGlyph.GetTransform().HasTranslate() || RenderGlyph.GetTranslate() != GlyphPos )
 	{
 		RenderGlyph.SetTranslate( GlyphPos );
 	}

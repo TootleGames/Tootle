@@ -77,6 +77,7 @@ public:
 	FORCEINLINE Bool	IsValid() const;						//	check for invalid bits being set etc
 
 	inline Bool			operator<(const TRef& Ref) const		{	return GetData() < Ref.GetData();	}
+	inline Bool			operator>(const TRef& Ref) const		{	return GetData() > Ref.GetData();	}
 	inline void			operator=(u32 Ref)						{	Set( Ref );	}
 	inline void			operator=(const TRef& Ref)				{	Set( Ref );	}
 	inline void			operator=(const char* pString)			{	Set( pString );	}

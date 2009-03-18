@@ -693,6 +693,38 @@ Bool TLMaths::TBox2D::GetIntersection(const TLine& Line) const
 	return FALSE;
 }
 
+
+//-------------------------------------------------
+//	test to see if this line intersects our box
+//-------------------------------------------------
+Bool TLMaths::TBox2D::GetIntersection(const TLine2D& Line) const
+{
+	const float2& v1 = Line.GetStart();
+	const float2& v2 = Line.GetEnd();
+
+	//	early check if either point of the line is inside the box
+	if ( GetIntersection( v1 ) )	return TRUE;
+	if ( GetIntersection( v2 ) )	return TRUE;
+
+	// check each line for intersection
+	float2 v2MinusV1( v2 - v1 );
+	float v1xMinusLeft = v1.x-m_Min.x;
+	float v1yMinusTop = v1.y-m_Min.y;
+	float BoxHeight = m_Max.y-m_Min.y;
+	if (LineIntersectLine( v2MinusV1, float2( v1xMinusLeft, v1yMinusTop ),		0.f,		BoxHeight ) ) return TRUE;
+
+	float v1yMinusBottom = v1.y-m_Max.y;
+	float BoxWidth = m_Max.x-m_Min.x;
+	if (LineIntersectLine( v2MinusV1, float2( v1xMinusLeft, v1yMinusBottom ),	BoxWidth,	0.f			) ) return TRUE;
+
+	if (LineIntersectLine( v2MinusV1, float2( v1xMinusLeft, v1yMinusTop ),		BoxWidth,	0.f			) ) return TRUE;
+
+	float v1xMinusRight = v1.x-m_Max.x;
+	if (LineIntersectLine( v2MinusV1, float2( v1xMinusRight, v1yMinusTop ),		0.f,		BoxHeight ) ) return TRUE;
+		
+	return FALSE;
+}
+
 /*
 //-------------------------------------------------
 //	test to see if this line intersects our box
