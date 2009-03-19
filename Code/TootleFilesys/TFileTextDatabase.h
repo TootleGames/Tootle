@@ -30,7 +30,12 @@ public:
 	TFileTextDatabase(TRefRef FileRef,TRefRef FileTypeRef);
 	
 	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);			//	import the XML and convert from Collada to mesh
-	
 protected:
+
+	SyncBool			ImportText(TPtr<TLAsset::TText> pText, TPtr<TXmlTag>& pTag);
+	SyncBool			ImportText_ImportLanguageText(TPtr<TLAsset::TText>& pText, TPtr<TXmlTag>& pImportTag, TRefRef TextRef);
+
+	SyncBool			GenerateTextAllLanguages(TPtr<TLAsset::TText>&pText, TRefRef TextRef);
+
 };
 

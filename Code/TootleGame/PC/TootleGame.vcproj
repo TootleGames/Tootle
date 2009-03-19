@@ -156,6 +156,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TAssetScriptManager.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TAssetScriptManager.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TGame.cpp"
 			>
 		</File>
@@ -193,6 +201,14 @@
 		</File>
 		<File
 			RelativePath="..\TPath.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TTextManager.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TTextManager.h"
 			>
 		</File>
 		<File

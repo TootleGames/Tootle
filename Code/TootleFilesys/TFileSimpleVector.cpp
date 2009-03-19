@@ -1,53 +1,17 @@
 #include "TFileSimpleVector.h"
 #include <TootleAsset/TMesh.h>
 #include <TootleMaths/TTessellate.h>
+#include "TLFile.h"
+
 
 
 namespace TLString
 {
-	Bool	ReadNextLetter(const TString& String,u32& CharIndex, char& Char);
-	Bool	ReadNextFloatArray(const TString& String,u32& CharIndex,float* pFloats,u32 FloatSize);
-
 	template<typename FLOATTYPE>
 	Bool	ReadNextFloat(const TString& String,u32& CharIndex,FLOATTYPE& FloatType);
 	template<>
 	Bool	ReadNextFloat(const TString& String,u32& CharIndex,float& FloatType);
 };
-
-
-
-
-//--------------------------------------------------------
-//	
-//--------------------------------------------------------
-Bool TLString::ReadNextLetter(const TString& String,u32& CharIndex, char& Char)
-{
-	//	step over whitespace
-	s32 NonWhitespaceIndex = String.GetCharIndexNonWhitespace( CharIndex );
-	if ( NonWhitespaceIndex == -1 )
-		return FALSE;
-
-	//	move char past whitespace
-	CharIndex = (u32)NonWhitespaceIndex;
-	const char& NextChar = String.GetCharAt(CharIndex);
-
-	//	is next char a letter?
-	if ( TLString::IsCharLetter( NextChar ) )
-	{
-		Char = NextChar;
-			
-		//	move string past this letter for next thing
-		CharIndex++;
-
-		return TRUE;
-	}
-	else
-	{
-		//	not a char, could be a number or summink
-		return FALSE;
-	}
-}
-
 
 template<typename FLOATTYPE>
 Bool TLString::ReadNextFloat(const TString& String,u32& CharIndex,FLOATTYPE& FloatType)
@@ -60,161 +24,6 @@ Bool TLString::ReadNextFloat(const TString& String,u32& CharIndex,float& FloatTy
 {
 	return ReadNextFloatArray( String, CharIndex, &FloatType, 1 );
 }
-
-
-//--------------------------------------------------------
-//	
-//--------------------------------------------------------
-Bool TLString::ReadNextFloatArray(const TString& String,u32& CharIndex,float* pFloats,u32 FloatSize)
-{
-	//	loop through parsing seperators and floats
-	u32 FloatIndex = 0;
-	while ( FloatIndex < FloatSize )
-	{
-		//	step over whitespace
-		s32 NonWhitespaceIndex = String.GetCharIndexNonWhitespace( CharIndex );
-
-		//	no more non-whitespace? no more floats then
-		if ( NonWhitespaceIndex == -1 )
-			return FALSE;
-
-		//	move char past whitespace
-		CharIndex = (u32)NonWhitespaceIndex;
-
-		s32 NextComma = String.GetCharIndex(',', CharIndex);
-		s32 NextWhitespace = String.GetCharIndexWhitespace( CharIndex );
-		s32 NextSplit = String.GetLength();
-
-		if ( NextComma != -1 && NextComma < NextSplit )
-			NextSplit = NextComma;
-		if ( NextWhitespace != -1 && NextWhitespace < NextSplit )
-			NextSplit = NextWhitespace;
-
-		//	split
-		TTempString Stringf;
-		Stringf.Append( String, CharIndex, NextSplit-CharIndex );
-		if ( !Stringf.GetFloat( pFloats[FloatIndex] ) )
-		{
-			TLDebug_Break("Failed to parse first float");
-			return FALSE;
-		}
-
-		//	next float
-		FloatIndex++;
-
-		//	move string along past split
-		CharIndex = NextSplit+1;
-
-		//	out of string
-		if ( CharIndex >= String.GetLength() )
-		{
-			CharIndex = String.GetLength();
-			break;
-		}
-	}
-
-	return TRUE;
-}
-
-
-/*
-
-//--------------------------------------------------------
-//	
-//--------------------------------------------------------
-Bool ReadNextFloat2(const TString& String,u32& CharIndex, float2& Float2)
-{
-	//	step over whitespace
-	s32 NonWhitespaceIndex = String.GetCharIndexNonWhitespace( CharIndex );
-	if ( NonWhitespaceIndex == -1 )
-		return FALSE;
-
-	//	move char past whitespace
-	CharIndex = (u32)NonWhitespaceIndex;
-
-	//	right, expecting a comma to seperate the two points
-	//	if we find a whitespace first then there's a problem
-	s32 NextComma = String.GetCharIndex(',', CharIndex);
-	s32 NextWhitespace = String.GetCharIndexWhitespace( CharIndex );
-
-	//	no comma at all
-	if ( NextComma == -1 )
-	{
-		TLDebug_Break("Expected to find comma for float2");
-		return FALSE;
-	}
-
-	//	no more whitespaces, make end of this as end of string
-	if ( NextWhitespace == -1 )
-		NextWhitespace = String.GetLength();
-
-	//	whitespace before comma
-	if ( NextWhitespace < NextComma )
-	{
-		TLDebug_Break("Found whitespace before comma.");
-		return FALSE;
-	}
-
-	//	right. here->comma is x, comma->whitespace is y
-	TTempString StringX;
-	StringX.Append( String, CharIndex, NextComma-CharIndex );
-	if ( !StringX.GetFloat( Float2.x ) )
-	{
-		TLDebug_Break("Failed to parse first float");
-		return FALSE;
-	}
-
-	TTempString StringY;
-	StringY.Append( String, NextComma+1, NextWhitespace-(NextComma+1) );
-	if ( !StringY.GetFloat( Float2.y ) )
-	{
-		TLDebug_Break("Failed to parse second float");
-		return FALSE;
-	}
-
-	//	all done! move along char index
-	CharIndex = NextWhitespace;
-
-	return TRUE;
-}
-
-
-
-//--------------------------------------------------------
-//	
-//--------------------------------------------------------
-Bool ReadNextFloat(const TString& String,u32& CharIndex, float& Float)
-{
-	//	step over whitespace
-	s32 NonWhitespaceIndex = String.GetCharIndexNonWhitespace( CharIndex );
-	if ( NonWhitespaceIndex == -1 )
-		return FALSE;
-
-	//	move char past whitespace
-	CharIndex = (u32)NonWhitespaceIndex;
-
-	s32 NextWhitespace = String.GetCharIndexWhitespace( CharIndex );
-
-	//	no more whitespaces, make end of this as end of string
-	if ( NextWhitespace == -1 )
-		NextWhitespace = String.GetLength();
-
-	TTempString StringFloat;
-	StringFloat.Append( String, CharIndex, NextWhitespace-CharIndex );
-	if ( !StringFloat.GetFloat( Float ) )
-	{
-		TLDebug_Break("Failed to parse first float");
-		return FALSE;
-	}
-
-	//	all done! move along char index
-	CharIndex = NextWhitespace;
-
-	return TRUE;
-}
-*/
-
-
 
 
 TLFileSys::TFileSimpleVector::TFileSimpleVector(TRefRef FileRef,TRefRef FileTypeRef) :

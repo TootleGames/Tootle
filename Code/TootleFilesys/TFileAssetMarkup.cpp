@@ -1,7 +1,7 @@
 #include "TFileAssetMarkup.h"
 #include <TootleAsset/TMesh.h>
 #include <TootleMaths/TTessellate.h>
-
+#include "TLFile.h"
 
 namespace TLFileAssetMarkup
 {
@@ -13,12 +13,6 @@ namespace TLFileAssetMarkup
 		Part_Polygons,
 		Part_Lines,
 	};
-}
-
-
-namespace TLString
-{
-	Bool	ReadNextFloatArray(const TString& String,u32& CharIndex,float* pFloats,u32 FloatSize);
 }
 
 

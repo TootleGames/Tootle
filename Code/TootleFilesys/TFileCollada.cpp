@@ -2,12 +2,11 @@
 #include <TootleAsset/TMesh.h>
 #include <TootleMaths/TTessellate.h>
 
+#include "TLFile.h"
+
 
 namespace TLString
 {
-	Bool	ReadNextLetter(const TString& String,u32& CharIndex, char& Char);
-	Bool	ReadNextFloatArray(const TString& String,u32& CharIndex,float* pFloats,u32 FloatSize);
-
 	template<typename FLOATTYPE>
 	Bool	ReadNextFloat(const TString& String,u32& CharIndex,FLOATTYPE& FloatType);
 	template<>

@@ -540,6 +540,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TLFile.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TLFile.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TLFileSys.cpp"
 			>
 		</File>

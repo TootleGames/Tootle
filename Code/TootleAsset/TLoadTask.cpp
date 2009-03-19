@@ -68,7 +68,11 @@ SyncBool TLAsset::TLoadTask::Update(float Timestep,Bool Blocking)
 
 		//	if we're in the finished mode, we're finished
 		if ( CurrentModeRef == "Finished" )
+		{
+			TRef AssetType = (m_pAssetFile ? m_pAssetFile->GetAssetTypeRef() : (u32)0);
+			TLAsset::g_pFactory->OnAssetLoad(GetAssetRef(), AssetType, TRUE);
 			return SyncTrue;
+		}
 
 		//	if in failed mode... or no mode, failed
 		if ( !CurrentModeRef.IsValid() || CurrentModeRef == "Failed" )
@@ -78,6 +82,8 @@ SyncBool TLAsset::TLoadTask::Update(float Timestep,Bool Blocking)
 			GetAssetRef().GetString( Debug_String );
 			TLDebug_Warning( Debug_String );
 			#endif
+			TRef AssetType = (m_pAssetFile ? m_pAssetFile->GetAssetTypeRef() : (u32)0);
+			TLAsset::g_pFactory->OnAssetLoad(GetAssetRef(), AssetType, FALSE);
 			return SyncFalse;
 		}
 	}

@@ -56,9 +56,14 @@ public:
 		SetGrowBy( 200 );
 	}
 
+	// Asset events - should be private but called from the LoadTask
+	void	OnAssetLoad(TRefRef AssetRef, TRefRef AssetType, Bool bStatus);
+	void	OnAssetUnload(TRefRef AssetRef, TRefRef AssetType);
+
 protected:
 	virtual TLAsset::TAsset*	CreateObject(TRefRef InstanceRef,TRefRef TypeRef);
 
+	virtual SyncBool Initialise();
 	virtual SyncBool Update(float fTimeStep);
 	virtual SyncBool Shutdown()			{	return TManager::Shutdown();	}
 	

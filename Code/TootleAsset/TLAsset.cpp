@@ -169,16 +169,25 @@ void TLAsset::DeleteAsset(TRefRef AssetRef)
 
 	//	mark asset as unavailible
 	pAsset->SetLoadingState( TLAsset::LoadingState_Deleted );
+	TRef AssetType = pAsset->GetAssetType();
 
+#ifdef _DEBUG
 	TTempString DebugString("Deleting asset from factory... ");
 	AssetRef.GetString( DebugString );
 	DebugString.Append(" (");
 	pAsset->GetAssetType().GetString( DebugString );
 	DebugString.Append(")");
 	TLDebug_Print( DebugString );
+#endif
 
 	//	delete from factory
-	if ( !g_pFactory->RemoveInstance( AssetRef ) )
+	if ( g_pFactory->RemoveInstance( AssetRef ) )
+	{
+		
+		// Do a notification to say the asset has been removed
+		g_pFactory->OnAssetUnload(AssetRef, AssetType);
+	}
+	else
 	{
 		TTempString DebugString("Deleting asset from factory... ");
 		AssetRef.GetString( DebugString );
@@ -307,6 +316,19 @@ TLAsset::TAsset* TLAsset::TAssetFactory::CreateObject(TRefRef InstanceRef,TRefRe
 	return NULL;
 }
 
+SyncBool TLAsset::TAssetFactory::Initialise() 
+{	
+	if(TLMessaging::g_pEventChannelManager)
+	{
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "OnAssetChanged");
+
+		return SyncTrue;
+	}
+
+	return SyncWait; 
+}
+
+
 
 void TLAsset::TAssetFactory::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID)
 {
@@ -320,6 +342,30 @@ void TLAsset::TAssetFactory::OnEventChannelAdded(TRefRef refPublisherID, TRefRef
 	// Super event channel routine
 	TManager::OnEventChannelAdded(refPublisherID, refChannelID);
 }
+
+
+void TLAsset::TAssetFactory::OnAssetLoad(TRefRef AssetRef, TRefRef AssetType, Bool bStatus)
+{
+	TLMessaging::TMessage Message("OnAssetChanged");
+	Message.Write(AssetRef);
+	Message.Write(AssetType);
+	Message.Write(TRef("Load"));
+	Message.Write(bStatus);		// Successful/Failed load.  Would we want to let things know if the load failed?
+
+	PublishMessage(Message);
+}
+
+void TLAsset::TAssetFactory::OnAssetUnload(TRefRef AssetRef, TRefRef AssetType)
+{
+	TLMessaging::TMessage Message("OnAssetChanged");
+	Message.Write(AssetRef);
+	Message.Write(AssetType);
+	Message.Write(TRef("Unload"));
+	Message.Write(TRUE);
+
+	PublishMessage(Message);
+}
+
 
 
 
