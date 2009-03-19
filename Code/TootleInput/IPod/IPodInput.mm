@@ -258,6 +258,7 @@ Bool Platform::UpdateDevice(TLInput::TInputDevice& Device)
 				// before it has had chance to be processed.  In this casea  deffered removal mechanism may be in order
 				// but then we may run into issues where we run out of slots if lots of fingers are being pressed at once.
 				TLDebug_Break("Touch data with no corresponding touch object");
+				continue;
 			}
 			
 #else
