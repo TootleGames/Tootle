@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		840DECD80F545DAE005C7CFF /* TPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DECD60F545DAE005C7CFF /* TPath.cpp */; };
 		840DECD90F545DAE005C7CFF /* TPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 840DECD70F545DAE005C7CFF /* TPath.h */; };
+		840EBCCF0F7296D300BA6F4C /* TAssetScriptManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840EBCCB0F7296D300BA6F4C /* TAssetScriptManager.cpp */; };
+		840EBCD00F7296D300BA6F4C /* TAssetScriptManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 840EBCCC0F7296D300BA6F4C /* TAssetScriptManager.h */; };
+		840EBCD10F7296D300BA6F4C /* TTextManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840EBCCD0F7296D300BA6F4C /* TTextManager.cpp */; };
+		840EBCD20F7296D300BA6F4C /* TTextManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 840EBCCE0F7296D300BA6F4C /* TTextManager.h */; };
 		8418EB180F4C769A00B956C9 /* TWidgetScrollbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EB160F4C769A00B956C9 /* TWidgetScrollbar.cpp */; };
 		8418EB190F4C769A00B956C9 /* TWidgetScrollbar.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EB170F4C769A00B956C9 /* TWidgetScrollbar.h */; };
 		846B711C0F2A366F005EB752 /* TLGame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 846B711A0F2A366F005EB752 /* TLGame.cpp */; };
@@ -30,6 +34,10 @@
 /* Begin PBXFileReference section */
 		840DECD60F545DAE005C7CFF /* TPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPath.cpp; path = ../TPath.cpp; sourceTree = SOURCE_ROOT; };
 		840DECD70F545DAE005C7CFF /* TPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPath.h; path = ../TPath.h; sourceTree = SOURCE_ROOT; };
+		840EBCCB0F7296D300BA6F4C /* TAssetScriptManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAssetScriptManager.cpp; path = ../TAssetScriptManager.cpp; sourceTree = SOURCE_ROOT; };
+		840EBCCC0F7296D300BA6F4C /* TAssetScriptManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAssetScriptManager.h; path = ../TAssetScriptManager.h; sourceTree = SOURCE_ROOT; };
+		840EBCCD0F7296D300BA6F4C /* TTextManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTextManager.cpp; path = ../TTextManager.cpp; sourceTree = SOURCE_ROOT; };
+		840EBCCE0F7296D300BA6F4C /* TTextManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTextManager.h; path = ../TTextManager.h; sourceTree = SOURCE_ROOT; };
 		8418EB160F4C769A00B956C9 /* TWidgetScrollbar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidgetScrollbar.cpp; path = ../TWidgetScrollbar.cpp; sourceTree = SOURCE_ROOT; };
 		8418EB170F4C769A00B956C9 /* TWidgetScrollbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWidgetScrollbar.h; path = ../TWidgetScrollbar.h; sourceTree = SOURCE_ROOT; };
 		846B711A0F2A366F005EB752 /* TLGame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLGame.cpp; path = ../TLGame.cpp; sourceTree = SOURCE_ROOT; };
@@ -84,6 +92,10 @@
 		84C10A3C0F0A7C2000B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				840EBCCB0F7296D300BA6F4C /* TAssetScriptManager.cpp */,
+				840EBCCC0F7296D300BA6F4C /* TAssetScriptManager.h */,
+				840EBCCD0F7296D300BA6F4C /* TTextManager.cpp */,
+				840EBCCE0F7296D300BA6F4C /* TTextManager.h */,
 				847FFF480F66BE1300121D77 /* TInputInterface.cpp */,
 				847FFF490F66BE1300121D77 /* TInputInterface.h */,
 				847FFF4A0F66BE1300121D77 /* TWidgetButton.cpp */,
@@ -133,6 +145,8 @@
 				847FFF4F0F66BE1300121D77 /* TInputInterface.h in Headers */,
 				847FFF510F66BE1300121D77 /* TWidgetButton.h in Headers */,
 				847FFF530F66BE1300121D77 /* TWidgetManager.h in Headers */,
+				840EBCD00F7296D300BA6F4C /* TAssetScriptManager.h in Headers */,
+				840EBCD20F7296D300BA6F4C /* TTextManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -188,6 +202,8 @@
 				847FFF4E0F66BE1300121D77 /* TInputInterface.cpp in Sources */,
 				847FFF500F66BE1300121D77 /* TWidgetButton.cpp in Sources */,
 				847FFF520F66BE1300121D77 /* TWidgetManager.cpp in Sources */,
+				840EBCCF0F7296D300BA6F4C /* TAssetScriptManager.cpp in Sources */,
+				840EBCD10F7296D300BA6F4C /* TTextManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

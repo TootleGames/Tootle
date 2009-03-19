@@ -279,7 +279,6 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>27</integer>
 									<integer>4</integer>
 									<integer>0</integer>
 								</array>
@@ -332,7 +331,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84C0CAA80F6D70DB0080B167</string>
+										<string>840EBCC30F7296BA00BA6F4C</string>
 										<key>history</key>
 										<array>
 											<string>84E6432C0F15293C005A4DC9</string>
@@ -363,7 +362,7 @@
 											<string>84C0CA900F6D70DB0080B167</string>
 											<string>84C0CA910F6D70DB0080B167</string>
 											<string>84C0CA920F6D70DB0080B167</string>
-											<string>84C0CA930F6D70DB0080B167</string>
+											<string>840EBC610F72966E00BA6F4C</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -396,23 +395,6 @@
 											<string>84C0CA3A0F6D6C250080B167</string>
 											<string>84C0CA3B0F6D6C250080B167</string>
 											<string>84C0CA3E0F6D6C250080B167</string>
-											<string>84C0CA950F6D70DB0080B167</string>
-											<string>84C0CA960F6D70DB0080B167</string>
-											<string>84C0CA970F6D70DB0080B167</string>
-											<string>84C0CA990F6D70DB0080B167</string>
-											<string>84C0CA9A0F6D70DB0080B167</string>
-											<string>84C0CA9B0F6D70DB0080B167</string>
-											<string>84C0CA9C0F6D70DB0080B167</string>
-											<string>84C0CA9D0F6D70DB0080B167</string>
-											<string>84C0CA9E0F6D70DB0080B167</string>
-											<string>84C0CA9F0F6D70DB0080B167</string>
-											<string>84C0CAA10F6D70DB0080B167</string>
-											<string>84C0CAA20F6D70DB0080B167</string>
-											<string>84C0CAA30F6D70DB0080B167</string>
-											<string>84C0CAA40F6D70DB0080B167</string>
-											<string>84C0CAA50F6D70DB0080B167</string>
-											<string>84C0CAA60F6D70DB0080B167</string>
-											<string>84C0CAA70F6D70DB0080B167</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -470,9 +452,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84C0CAAA0F6D70DB0080B167</string>
+				<string>840EBCC50F7296BA00BA6F4C</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84C0CAAB0F6D70DB0080B167</string>
+				<string>840EBCC60F7296BA00BA6F4C</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -606,7 +588,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>84C10BF00F0A84D400B2DF7A</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleFilesys/IPod/TootleFileSys.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
