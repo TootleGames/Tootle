@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\..\&quot;;&quot;$(ProjectDir)..\Freetype\Include\&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\..\&quot;;&quot;$(ProjectDir)..\..\zlib\&quot;;&quot;$(ProjectDir)..\Freetype\Include\&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;TL_TARGET_PC;FT2_BUILD_LIBRARY"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -107,7 +107,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\..\&quot;;&quot;$(ProjectDir)..\Freetype\Include\&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\..\&quot;;&quot;$(ProjectDir)..\..\zlib\&quot;;&quot;$(ProjectDir)..\Freetype\Include\&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;FT2_BUILD_LIBRARY;TL_TARGET_PC"
 				RuntimeLibrary="2"
 				DisableLanguageExtensions="false"
@@ -489,6 +489,14 @@
 		</File>
 		<File
 			RelativePath="..\TFileMenu.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TFilePng.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TFilePng.h"
 			>
 		</File>
 		<File

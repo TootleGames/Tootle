@@ -16,6 +16,7 @@
 #include "TFileMenu.h"
 #include "TFileAssetScript.h"
 #include "TFileTextDatabase.h"
+#include "TFilePng.h"
 
 #if defined(TL_TARGET_IPOD)
 	#include "IPod/IPodLocalFileSys.h"
@@ -549,6 +550,13 @@ TLFileSys::TFile* TLFileSys::TFileFactory::CreateObject(TRefRef InstanceRef,TRef
 	if ( TypeRef == TRef("ttd") )
 	{
 		pFile = new TLFileSys::TFileTextDatabase( InstanceRef, TypeRef );
+		return pFile;
+	}
+	
+	//	png texture
+	if ( TypeRef == TRef("png") )
+	{
+		pFile = new TLFileSys::TFilePng( InstanceRef, TypeRef );
 		return pFile;
 	}
 	

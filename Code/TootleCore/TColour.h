@@ -14,7 +14,7 @@
 #include "TFixedArray.h"
 
 class TColour;
-
+class TColour32;		//	32 bit RGBA colour
 
 
 class TColour
@@ -86,6 +86,73 @@ private:
 
 
 
+class TColour32
+{
+public:
+	TColour32() : m_Rgba ( 0,0,0,0 )									{	}
+	TColour32(u8 r, u8 g,u8 b,u8 a=244) : m_Rgba ( r,g,b,a )			{	}
+	TColour32(u32 rgba)													{	Set( rgba );	}
+
+	FORCEINLINE float4			GetRgbaf() const						{	return float4( MakeComponentf(GetRed8()), MakeComponentf(GetGreen8()), MakeComponentf(GetBlue8()), MakeComponentf(GetAlpha8()) );	}
+	FORCEINLINE float			GetRedf() const							{	return MakeComponentf(GetRed8());	}
+	FORCEINLINE float			GetGreenf() const						{	return MakeComponentf(GetBlue8());	}
+	FORCEINLINE float			GetBluef() const						{	return MakeComponentf(GetGreen8());	}
+	FORCEINLINE float			GetAlphaf() const						{	return MakeComponentf(GetAlpha8());	}
+	FORCEINLINE u32				GetRgba32() const						{	return *GetData32();	}
+	FORCEINLINE const u8&		GetRed8() const							{	return m_Rgba.x;	}
+	FORCEINLINE const u8&		GetGreen8() const						{	return m_Rgba.y;	}
+	FORCEINLINE const u8&		GetBlue8() const						{	return m_Rgba.z;	}
+	FORCEINLINE const u8&		GetAlpha8() const						{	return m_Rgba.w;	}
+
+	FORCEINLINE Bool			IsVisible() const						{	return GetAlpha8() > 0;	}
+	FORCEINLINE Bool			IsTransparent() const					{	return GetAlpha8() < 255;	}
+	FORCEINLINE const u8*		GetData() const							{	return m_Rgba.GetData();	}
+	FORCEINLINE const u32*		GetData32() const						{	return (u32*)m_Rgba.GetData();	}
+
+//	FORCEINLINE void			Set(float r,float g,float b,float a)	{	m_Rgba.Set( r,g,b,a );	}
+//	FORCEINLINE void			Set(const TColour& Colour)				{	m_Rgba.Set( Colour.GetRgba() );	}
+//	FORCEINLINE void			Set(u8 r,u8 g,u8 b,u8 a)				{	m_Rgba.Set( MakeComponentf(r), MakeComponentf(g), MakeComponentf(b), MakeComponentf(a) );	}
+	FORCEINLINE void			Set(u32 rgba)							{	*GetData32() = rgba;	}
+/*
+	FORCEINLINE TColour&		operator = (const TColour& Colour)		{	m_Rgba.Set( Colour.GetRgba() );	return *this;	}
+	FORCEINLINE TColour&		operator = (u32 rgba)					{	Set( GetComponent8(rgba,0), GetComponent8(rgba,1), GetComponent8(rgba,2), GetComponent8(rgba,3) );	return *this;	}
+
+	FORCEINLINE					operator const float4&() const			{	return m_Rgba;	}
+	FORCEINLINE					operator float4&()						{	return m_Rgba;	}
+
+	FORCEINLINE void			operator+=(const float4& v)					{	m_Rgba += v;	}
+	FORCEINLINE void			operator-=(const float4& v)					{	m_Rgba -= v;	}
+	FORCEINLINE void			operator*=(const float4& v)					{	m_Rgba *= v;	}
+	FORCEINLINE void			operator/=(const float4& v)					{	m_Rgba /= v;	}
+
+	FORCEINLINE void			operator+=(const float v)					{	m_Rgba += v;	}
+	FORCEINLINE void			operator-=(const float v)					{	m_Rgba -= v;	}
+	FORCEINLINE void			operator*=(const float v)					{	m_Rgba *= v;	}
+	FORCEINLINE void			operator/=(const float v)					{	m_Rgba /= v;	}
+*/
+	//	colour conversions
+	static u32					MakeRgba32(u8 r,u8 g,u8 b,u8 a)				{	return GetComponent32(r,0) | GetComponent32(g,1) | GetComponent32(b,2) |GetComponent32(a,3);	}
+	static u8					MakeComponent8(const float& c)				{	return (u8)( c * 255.f);	}
+	static float				MakeComponentf(const u8& c)					{	return ((float)c) / 255.f;	}
+	static u8					GetComponent8(u32 rgba,u32 ComponentIndex)	{	return (u8)( (rgba >> (ComponentIndex*8)) & 0xff );	}
+	static u32					GetComponent32(u8 c,u32 ComponentIndex)		{	return ((u32)c) << (ComponentIndex*8);	}
+
+	FORCEINLINE Bool			operator==(const TColour32& Colour) const	{	return GetRgba32() == Colour.GetRgba32();	}	//	required for sorting in arrays... maybe we'll have a need for this in future
+	FORCEINLINE Bool			operator!=(const TColour32& Colour) const	{	return GetRgba32() != Colour.GetRgba32();	}	//	required for sorting in arrays... maybe we'll have a need for this in future
+//	FORCEINLINE Bool			operator<(const TColour32& Colour) const	{	return FALSE;	}	//	required for sorting in arrays... maybe we'll have a need for this in future
+
+private:
+	FORCEINLINE u32*			GetData32()									{	return (u32*)m_Rgba.GetData();	}
+
+private:
+	Type4<u8>					m_Rgba;
+};
+
+
+
+
+
+
 namespace TLColour
 {
 	extern TFixedArray<TColour,8>	g_Debug_Colours;		//	static list of debug colours - initialised in TLMaths::Init
@@ -103,3 +170,4 @@ inline TColour TColour::Debug_GetColour(u32 ColourIndex)
 
 
 TLCore_DeclareIsDataType( TColour );
+TLCore_DeclareIsDataType( TColour32 );

@@ -44,6 +44,8 @@ namespace TLRender
 	{
 		FORCEINLINE Bool		Debug_CheckForError();
 
+		Bool					BindTexture(const TLAsset::TTexture* pTexture);			//	bind texture - returns FALSE if no texture is bound (either fail or expected)
+
 		void					Unbind();			//	unbind all verts/colours etc
 		template<class TYPE>
 		FORCEINLINE void		DrawPrimitives(u16 GLPrimType,const TArray<TYPE>* pPrimitivesArray);
@@ -81,6 +83,7 @@ namespace TLRender
 
 			Bool					BindVertexes(const TArray<float3>* pVertexes);
 			Bool					BindColours(const TArray<TColour>* pColours);
+			Bool					BindUVs(const TArray<float2>* pUVs);
 			void					DrawPrimitives(u16 GLPrimType,u32 IndexCount,const u16* pIndexData);	//	main renderer, just needs primitive type, and the data
 
 			FORCEINLINE u16			GetPrimTypeTriangle();		//	GL_TRIANGLES

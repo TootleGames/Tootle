@@ -31,6 +31,7 @@ namespace TLRender
 		{
 			const TArray<float3>*		g_pBoundVertexes = NULL;
 			const TArray<TColour>*		g_pBoundColours = NULL;
+			const TArray<float2>*		g_pBoundUVs = NULL;
 		}
 	}
 }
@@ -217,6 +218,39 @@ Bool TLRender::Opengl::Platform::BindColours(const TArray<TColour>* pColours)
 	
 	//	bind
 	glColorPointer( 4, GL_FLOAT, 0, pColours->GetData() );
+	
+	Debug_CheckForError();
+	
+	return TRUE;
+}
+
+
+//---------------------------------------------------
+//	bind colours
+//---------------------------------------------------
+Bool TLRender::Opengl::Platform::BindUVs(const TArray<float2>* pUVs)
+{
+	//	remove pointer if empty
+	if ( pUVs && pUVs->GetSize() == 0 )
+		pUVs = NULL;
+	
+	//	already bound to this
+//	if ( pUVs == g_pBoundUVs )
+//		return TRUE;
+
+	//	unbind
+	if ( !pUVs )
+	{
+		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+		Opengl::Platform::Debug_CheckForError();
+		return TRUE;
+	}
+
+	//	enable texcoord array
+	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+	
+	//	bind
+	glTexCoordPointer( 2, GL_FLOAT, 0, pUVs->GetData() );
 	
 	Debug_CheckForError();
 	

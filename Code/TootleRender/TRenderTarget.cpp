@@ -748,7 +748,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 //-------------------------------------------------------------
 //	
 //-------------------------------------------------------------
-void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode* pRenderNode,const TLMaths::TTransform& SceneTransform,TColour SceneColour,TPtrArray<TRenderNode>& PostRenderList)
+void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRenderNode* pRenderNode,const TLMaths::TTransform& SceneTransform,TColour SceneColour,TPtrArray<TRenderNode>& PostRenderList)
 {
 #ifdef _DEBUG
 	TFlags<TRenderNode::RenderFlags::Flags> RenderNodeRenderFlags = pRenderNode->GetRenderFlags();
@@ -770,13 +770,31 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 		//	do first non-wireframe render
 		if ( !RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_Wireframe ) )
 		{
+			Bool HasAlpha = pMesh->HasAlpha();
+
+			//	grab texture as required
+			TLAsset::TTexture* pTexture = NULL;
+			//if ( pRenderNode->HasTexture() )
+			if ( pRenderNode->GetTextureRef().IsValid() )
+			{
+				pTexture = pRenderNode->GetTextureAsset();
+
+				//	missing texture - try and use debug one
+				if ( !pTexture )
+					pTexture = TLAsset::LoadAsset("d_texture",TRUE).GetObject<TLAsset::TTexture>();
+			}
+
+			//	enable alpha if texture is alpha'd
+			if ( pTexture )
+				HasAlpha |= pTexture->HasAlphaChannel();
+
 			//	make sure wireframe is off
 			Opengl::EnableWireframe(FALSE);
 
 			//	set the scene colour, and force enable alpha if the mesh needs it
-			Opengl::SetSceneColour( SceneColour, pMesh->HasAlpha() );
+			Opengl::SetSceneColour( SceneColour, HasAlpha );
 
-			DrawMesh( *pMesh, pRenderNode, RenderNodeRenderFlags );
+			DrawMesh( *pMesh, pTexture, pRenderNode, RenderNodeRenderFlags );
 		}
 
 		//	render wireframe and/or outline
@@ -797,7 +815,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 				WireframeRenderFlags.Clear( TRenderNode::RenderFlags::UseMeshLineWidth );
 				WireframeRenderFlags.Clear( TRenderNode::RenderFlags::DepthRead );
 
-				DrawMesh( *pMesh, pRenderNode, WireframeRenderFlags );
+				DrawMesh( *pMesh, NULL, pRenderNode, WireframeRenderFlags );
 			}
 		}
 		#endif
@@ -820,7 +838,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 			if ( pAsset && pAsset->GetAssetType() == "mesh" )
 			{
 				TLAsset::TMesh* pMesh = pAsset.GetObject<TLAsset::TMesh>();
-				DrawMesh( *pMesh, pRenderNode, RenderNodeRenderFlags );
+				DrawMesh( *pMesh, NULL, pRenderNode, RenderNodeRenderFlags );
 			}
 		}
 
@@ -904,10 +922,11 @@ void TLRender::TRenderTarget::DrawMeshWrapper(TLAsset::TMesh* pMesh,TRenderNode*
 //-------------------------------------------------------------
 //	render mesh asset
 //-------------------------------------------------------------
-void TLRender::TRenderTarget::DrawMesh(TLAsset::TMesh& Mesh,const TRenderNode* pRenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags)
+void TLRender::TRenderTarget::DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset::TTexture* pTexture,const TRenderNode* pRenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags)
 {
 	const TArray<float3>* pVertexes = &Mesh.GetVertexes();
 	const TArray<TColour>* pColours						= &Mesh.GetColours();
+	const TArray<float2>* pUVs							= &Mesh.GetUVs();
 	const TArray<TLAsset::TMesh::Triangle>* pTriangles	= &Mesh.GetTriangles();
 	const TArray<TLAsset::TMesh::Tristrip>* pTristrips	= &Mesh.GetTristrips();
 	const TArray<TLAsset::TMesh::Trifan>* pTrifans		= &Mesh.GetTrifans();
@@ -917,9 +936,17 @@ void TLRender::TRenderTarget::DrawMesh(TLAsset::TMesh& Mesh,const TRenderNode* p
 	if ( !RenderFlags( TRenderNode::RenderFlags::UseVertexColours ) )
 		pColours = NULL;
 
+	//	ignore UV vertex data if flag is not set or if we have no texture
+	if ( !RenderFlags( TRenderNode::RenderFlags::UseVertexUVs ) || !pTexture )
+		pUVs = NULL;
+
 	//	bind vertex data
 	Opengl::Platform::BindVertexes( pVertexes );
 	Opengl::Platform::BindColours( pColours );
+	Opengl::Platform::BindUVs( pUVs );
+
+	//	bind texture
+	Opengl::BindTexture( pTexture );
 
 	//	enable/disable depth test
 	Opengl::EnableDepthRead( RenderFlags( TRenderNode::RenderFlags::DepthRead ) );

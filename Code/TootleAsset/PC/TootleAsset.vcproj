@@ -241,6 +241,14 @@
 			RelativePath="..\TText.h"
 			>
 		</File>
+		<File
+			RelativePath="..\TTexture.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TTexture.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

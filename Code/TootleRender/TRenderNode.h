@@ -9,6 +9,7 @@
 #include <TootleCore/TPtrArray.h>
 #include <TootleCore/TKeyArray.h>
 #include <TootleAsset/TMesh.h>
+#include <TootleAsset/TTexture.h>
 #include <TootleCore/TFlags.h>
 #include <TootleCore/TLGraph.h>
 #include <TootleMaths/TQuadTree.h>
@@ -89,6 +90,7 @@ public:
 			DepthWrite,					//	write to depth buffer (off means will get drawn over)
 			ResetScene,					//	position and rotation are not inherited
 			UseVertexColours,			//	bind vertex colours of mesh. if not set when rendering, a mesh the colours are not bound
+			UseVertexUVs,				//	bind vertex UVs of mesh. if not set when rendering we have no texture mapping
 			UseMeshLineWidth,			//	calculates mesh/world line width -> screen/pixel width
 			UseNodeColour,				//	set when colour is something other than 1,1,1,1 to save some processing (off by default!)
 			EnableCull,					//	enable camera/frustum/zone culling. if disabled, the whole tree below is disabled
@@ -142,8 +144,11 @@ public:
 	FORCEINLINE void						OnColourChanged();							//	enable node colour if non-white
 	FORCEINLINE const TRef&					GetMeshRef() const							{	return m_MeshRef;	}
 	FORCEINLINE void						SetMeshRef(TRefRef MeshRef)					{	if ( m_MeshRef != MeshRef )	{	m_MeshRef = MeshRef;	OnMeshRefChanged();	}	}
+	FORCEINLINE const TRef&					GetTextureRef() const						{	return m_TextureRef;	}
+	FORCEINLINE void						SetTextureRef(TRefRef TextureRef)			{	if ( m_TextureRef != TextureRef )	{	m_TextureRef = TextureRef;	OnTextureRefChanged();	}	}
 
 	virtual TPtr<TLAsset::TMesh>&			GetMeshAsset();								//	default behaviour fetches the mesh from the asset lib with our mesh ref
+	virtual TPtr<TLAsset::TTexture>&		GetTextureAsset();							//	default behaviour fetches the mesh from the asset lib with our mesh ref
 
 	FORCEINLINE void						SetRenderNodeRef(TRefRef Ref)				{	SetNodeRef( Ref );	}
 	FORCEINLINE TRefRef						GetRenderNodeRef() const					{	return GetNodeRef();	}
@@ -195,6 +200,7 @@ public:
 
 protected:
 	FORCEINLINE void						OnMeshRefChanged()							{	m_pMeshCache = NULL;	OnMeshChanged();	}
+	FORCEINLINE void						OnTextureRefChanged()						{	m_pTextureCache = NULL;	}
 	//void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags=TInvalidateFlags(InvalidateLocalBounds,InvalidateWorldBounds,InvalidateWorldPos,InvalidateParents,InvalidateChildren));	//	set all bounds as invalid
 	void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags);
 
@@ -223,6 +229,8 @@ protected:
 	//	todo: turn all these into ref properties in a KeyArray to make it a bit more flexible
 	TRef						m_MeshRef;
 	TPtr<TLAsset::TMesh>		m_pMeshCache;
+	TRef						m_TextureRef;
+	TPtr<TLAsset::TTexture>		m_pTextureCache;
 
 	TBinaryTree					m_Data;					//	data attached to render object
 

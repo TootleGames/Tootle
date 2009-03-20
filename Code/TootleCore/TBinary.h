@@ -54,6 +54,7 @@ public:
 	FORCEINLINE Bool								ReadAll(TBinary& Data)				{	return Read( Data, GetSizeUnread() );	}	//	read the remaining data into this binary data
 	Bool											Read(TBinary& Data,u32 Length);		//	read a chunk of data into this binary data
 	FORCEINLINE Bool								ReadString(TString& String)			{	return ReadArray( String.GetStringArray() );	}
+	Bool											ReadData(u8* pData,u32 Length,Bool CutData=FALSE);	//	read data into address - CutData cuts the read data out of the array
 
 	template<typename TYPE> FORCEINLINE void	Write(const TYPE& Var)				{	WriteData( (u8*)&Var, sizeof(TYPE) );		}
 	template<typename TYPE> FORCEINLINE void	Write(const TArray<TYPE>& Array)	{	WriteArray( Array );	}
@@ -89,7 +90,6 @@ public:
 protected:
 	FORCEINLINE Bool				CheckDataAvailible(u32 DataSize) const;				//	see if this amount of data is readable
 	FORCEINLINE void				MoveReadPos(u32 MoveAmount)							{	m_ReadPos += MoveAmount;	}	//	move read pos along
-	Bool							ReadData(u8* pData,u32 Length,Bool CutData=FALSE);	//	read data into address - CutData cuts the read data out of the array
 	FORCEINLINE void				WriteData(const u8* pData,u32 Length)			{	m_Data.Add( pData, Length );	}	//	add data to array
 	FORCEINLINE void				WriteDataToStart(const u8* pData,u32 Length)	{	m_Data.InsertAt( 0, pData, Length );	}	//	add data to array
 

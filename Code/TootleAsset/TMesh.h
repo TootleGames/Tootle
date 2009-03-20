@@ -102,13 +102,13 @@ public:
 	Bool					GenerateQuad(const TArray<float3>& Outline,const TArray<TColour>& Colours);	//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour* pColour=NULL);	//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour* pColourA,const TColour* pColourB,const TColour* pColourC,const TColour* pColourD);	//	turn an outline of points into a quad/tri-strip
-	Bool					GenerateQuad(const TFixedArray<s32,4> OutlineVertIndexes);		//	turn an outline of points into a quad/tri-strip
+	Bool					GenerateQuad(const TArray<u16>& OutlineVertIndexes);		//	turn an outline of points into a quad/tri-strip
 	void					GenerateQuadOutline(const TLMaths::TBox2D& Box,const TColour* pColour=NULL,float z=0.f);		//	generate a square mesh from a 2d box
 
 	void					GenerateRainbowColours();							//	create colours for each vertex
 
 	//	vertex manipulation
-	s32						AddVertex(const float3& VertexPos,const TColour* pColour=NULL);	//	add vertex to the list, makes up normals and colours if required
+	s32						AddVertex(const float3& VertexPos,const TColour* pColour=NULL,const float2* pUV=NULL);	//	add vertex to the list, makes up normals and colours if required
 	FORCEINLINE s32			AddVertex(const float3& VertexPos,const TColour& Colour)		{	return AddVertex( VertexPos, &Colour );	}
 	Bool					RemoveVertex(u16 VertexIndex);								//	remove a vertex, remove it's colour, remove any polygons that use this vertex, and correct the vertex indexes in polygons (anything > VI needs reducing). returns if any changes to polygons made
 	Bool					ReplaceVertex(u16 OldVertexIndex,u16 NewVertexIndex);		//	find all uses of OldVertexIndex in polygons and swap them for NewVertexIndex 
@@ -127,6 +127,8 @@ public:
 	inline u32				GetVertexCount()			const	{	return m_Vertexes.GetSize(); }
 	TArray<TColour>&		GetColours()						{	return m_Colours;	}
 	const TArray<TColour>&	GetColours() const					{	return m_Colours;	}
+	TArray<float2>&			GetUVs()							{	return m_UVs;	}
+	const TArray<float2>&	GetUVs() const						{	return m_UVs;	}
 
 	TArray<Triangle>&		GetTriangles()						{	return m_Triangles;	}
 	TArray<Tristrip>&		GetTristrips()						{	return m_Tristrips;	}
@@ -180,11 +182,13 @@ protected:
 
 private:
 	const TColour*			GetGenerationColour(const TColour* pColour);	//	returns a valid colour pointer if we expect one (mesh already has colours) - NULL's if we dont have colours - returns the original pointer if we can have colours
+	const float2*			GetGenerationUV(const float2* pUV);	//	returns a valid colour pointer if we expect one (mesh already has colours) - NULL's if we dont have colours - returns the original pointer if we can have colours
 
 
 protected:
 	TArray<float3>			m_Vertexes;				//	vertexes of mesh
 	TArray<TColour>			m_Colours;				//	vertex colours
+	TArray<float2>			m_UVs;					//	vertex texture mapping
 
 	TArray<Triangle>		m_Triangles;			//	triangles in mesh
 	TArray<Tristrip>		m_Tristrips;			//	tristrips in mesh

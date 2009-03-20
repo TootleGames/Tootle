@@ -1,5 +1,6 @@
 #include "TVirtualFileSys.h"
 #include <TootleAsset/TMesh.h>
+#include <TootleAsset/TTexture.h>
 #include <TootleFileSys/TFileAsset.h>
 
 
@@ -10,6 +11,7 @@ namespace TLDebugFile
 	SyncBool		LoadDebugFile_MeshQuad(TPtr<TLFileSys::TFile>& pFile);		//	create a cube mesh
 	SyncBool		LoadDebugFile_MeshSphere(TPtr<TLFileSys::TFile>& pFile);	//	create a cube mesh
 	SyncBool		LoadDebugFile_MeshCross(TPtr<TLFileSys::TFile>& pFile);		//	Axis cross
+	SyncBool		LoadDebugFile_TextureTest(TPtr<TLFileSys::TFile>& pFile);	//	test texture
 };
 
 
@@ -31,6 +33,7 @@ SyncBool TLFileSys::TVirtualFileSys::LoadFileList()
 	CreateFileInstance("d_cube.asset");
 	CreateFileInstance("d_quad.asset");
 	CreateFileInstance("d_cross.asset");
+	CreateFileInstance("d_Texture.asset");
 
 	//	update time stamp of file list
 	FinaliseFileList();
@@ -66,6 +69,11 @@ SyncBool TLFileSys::TVirtualFileSys::LoadFile(TPtr<TLFileSys::TFile>& pFile)
 	if ( pFile->GetFileRef() == TRef("d_cross") )
 	{
 		return TLDebugFile::LoadDebugFile_MeshCross( pFile );
+	}
+
+	if ( pFile->GetFileRef() == TRef("d_texture") )
+	{
+		return TLDebugFile::LoadDebugFile_TextureTest( pFile );
 	}
 
 	//	unknown debug file name
@@ -203,6 +211,29 @@ SyncBool TLDebugFile::LoadDebugFile_MeshCross(TPtr<TLFileSys::TFile>& pFile)
 
 	return LoadDebugFile_Asset( pFile, pMesh );
 }
+
+
+//---------------------------------------------------------
+//	create a test texture file
+//---------------------------------------------------------
+SyncBool TLDebugFile::LoadDebugFile_TextureTest(TPtr<TLFileSys::TFile>& pFile)
+{
+	TPtr<TLAsset::TTexture> pTexture = new TLAsset::TTexture( pFile->GetFileRef() );
+	TLAsset::TTexture& Texture = *pTexture;
+
+	//	set size
+	if ( !Texture.SetSize( Type2<u16>( 2, 2 ), TRUE ) )
+		return SyncFalse;
+
+	//	set pixels
+	*Texture.GetPixelData32At( 0, 0 ) = TColour32( 255,	0,		0,	255 );	//	red
+	*Texture.GetPixelData32At( 1, 0 ) = TColour32( 255,	255,	255, 255 );	//	white
+	*Texture.GetPixelData32At( 0, 1 ) = TColour32( 0,	255,	0,	255 );	//	blue
+	*Texture.GetPixelData32At( 1, 1 ) = TColour32( 255,	255,	0,	255 );	//	yellow
+
+	return LoadDebugFile_Asset( pFile, pTexture );
+}
+
 
 //---------------------------------------------------------
 //	create a new empty file into file system if possible - if the filesys is read-only we cannot add external files and this fails

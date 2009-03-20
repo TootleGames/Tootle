@@ -6,6 +6,7 @@
 #include "TScheme.h"
 #include "TPath.h"
 #include "TText.h"
+#include "TTexture.h"
 #include "TAssetScript.h"
 #include "TLoadTask.h"
 #include <TootleCore/TPtr.h>
@@ -70,7 +71,8 @@ TPtr<TLAsset::TAsset>& TLAsset::CreateAsset(TRefRef AssetRef,TRefRef AssetType)
 		DebugString.Append(" (");
 		AssetType.GetString( DebugString );
 		DebugString.Append(")");
-		TLDebug_Print( DebugString );
+		//	gr: changed to break, if this fails the factory failed to create it... invalid type?
+		TLDebug_Break( DebugString );
 		return TLPtr::GetNullPtr<TLAsset::TAsset>();
 	}
 	else
@@ -303,6 +305,8 @@ TLAsset::TAsset* TLAsset::TAssetFactory::CreateObject(TRefRef InstanceRef,TRefRe
 	if ( TypeRef == "AScript" )
 		return new TLAsset::TAssetScript( InstanceRef );
 	
+	if ( TypeRef == "Texture" )
+		return new TLAsset::TTexture( InstanceRef );	
 
 	//	gr: dumb asset - just stores data - consider turning this into a specific TBinaryTree/"Data" asset
 	if ( TypeRef == "Asset" )

@@ -19,7 +19,7 @@
 namespace TLAsset
 {
 	const TColour	g_DefaultVertexColour( 0.5f, 0.5f, 0.5f, 1.f );
-
+	const float2	g_DefaultVertexUV( 0.5f, 0.5f );
 
 	namespace TLMesh
 	{
@@ -58,6 +58,7 @@ void TLAsset::TMesh::Empty()
 {
 	m_Vertexes.Empty();
 	m_Colours.Empty();
+	m_UVs.Empty();
 
 	m_Triangles.Empty();
 	m_Tristrips.Empty();
@@ -475,6 +476,7 @@ SyncBool TLAsset::TMesh::ImportData(TBinaryTree& Data)
 {
 	Data.ImportArrays( "Verts", m_Vertexes );
 	Data.ImportArrays( "Colrs", m_Colours );
+	Data.ImportArrays( "UVs", m_UVs );
 
 	Data.ImportArrays( "Tris", m_Triangles );
 	Data.ImportArrays( "TStrp", m_Tristrips );
@@ -523,6 +525,7 @@ SyncBool TLAsset::TMesh::ExportData(TBinaryTree& Data)
 {	
 	Data.ExportArray( "Verts", m_Vertexes );
 	Data.ExportArray( "Colrs", m_Colours );
+	Data.ExportArray( "UVs", m_UVs );
 
 	Data.ExportArray( "Tris", m_Triangles );
 	Data.ExportArray( "TStrp", m_Tristrips );
@@ -707,7 +710,7 @@ void TLAsset::TMesh::MoveVerts(const float3& Movement,u16 FirstVert,s32 LastVert
 //-------------------------------------------------------
 //	add vertex with colour to the list, pad normals and colours if previously didnt exist
 //-------------------------------------------------------
-s32 TLAsset::TMesh::AddVertex(const float3& VertexPos,const TColour* pColour)
+s32 TLAsset::TMesh::AddVertex(const float3& VertexPos,const TColour* pColour,const float2* pUV)
 {
 	if ( m_Vertexes.GetSize() >= 0xffff )
 	{
@@ -715,9 +718,9 @@ s32 TLAsset::TMesh::AddVertex(const float3& VertexPos,const TColour* pColour)
 		return -1;
 	}
 
-	Bool ColourProvided = (pColour != NULL);
 	
 	//	get a colour if we require it
+	Bool ColourProvided = (pColour != NULL);
 	pColour = GetGenerationColour( pColour );
 
 	//	notification if we provided a colour... but cannot use it
@@ -726,15 +729,18 @@ s32 TLAsset::TMesh::AddVertex(const float3& VertexPos,const TColour* pColour)
 		TLDebug_Warning("AddVertex's colour that was provided was ditched as the rest of the mesh has no colour");
 	}
 
-	/*
-	//	don't have colours yet, so pad up the buffer with a default colour
-	if ( m_Colours.GetSize() < m_Vertexes.GetSize() )
-	{
-		m_Colours.SetAllocSize( m_Vertexes.GetSize() + 1 );
-		m_Colours.SetAll( g_DefaultVertexColour );
-	}
-	*/
 	
+	//	get a colour if we require it
+	pUV = GetGenerationUV( pUV );
+	Bool UVProvided = (pUV != NULL);
+
+	//	notification if we provided a colour... but cannot use it
+	if ( !pUV && UVProvided )
+	{
+		TLDebug_Warning("AddVertex's UV that was provided was ditched as the rest of the mesh has no UV");
+	}
+
+
 	//	add vertex and colour
 	s32 VertIndex = m_Vertexes.Add( VertexPos );
 	if ( VertIndex == -1 )
@@ -748,6 +754,12 @@ s32 TLAsset::TMesh::AddVertex(const float3& VertexPos,const TColour* pColour)
 		//	if this colour has alpha, enable the alpha flag
 		if ( pColour->IsTransparent() )
 			m_Flags.Set( MeshFlag_HasAlpha );
+	}
+
+	//	add UV
+	if ( pUV )
+	{
+		m_UVs.Add( *pUV );
 	}
 
 	return VertIndex;
@@ -1105,7 +1117,7 @@ Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,
 //--------------------------------------------------------
 Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour* pColourA,const TColour* pColourB,const TColour* pColourC,const TColour* pColourD)
 {
-	TFixedArray<s32,4> VertIndexes;
+	TFixedArray<u16,4> VertIndexes;
 	VertIndexes[0] = AddVertex( OutlineA, pColourA );
 	VertIndexes[1] = AddVertex( OutlineB, pColourB );
 	VertIndexes[2] = AddVertex( OutlineC, pColourC );
@@ -1119,7 +1131,7 @@ Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,
 //--------------------------------------------------------
 //	turn an outline of points into a quad/tri-strip
 //--------------------------------------------------------
-Bool TLAsset::TMesh::GenerateQuad(const TFixedArray<s32,4> OutlineVertIndexes)
+Bool TLAsset::TMesh::GenerateQuad(const TArray<u16>& OutlineVertIndexes)
 {
 #ifdef GENERATE_QUADS_AS_TRIANGLES
 	//	create tri strip
@@ -1161,6 +1173,7 @@ void TLAsset::TMesh::Copy(const TMesh* pMesh)
 {
 	m_Vertexes.Copy( pMesh->m_Vertexes );
 	m_Colours.Copy( pMesh->m_Colours );
+	m_UVs.Copy( pMesh->m_UVs );
 
 	m_Triangles.Copy( pMesh->m_Triangles );
 	m_Tristrips.Copy( pMesh->m_Tristrips );
@@ -1476,4 +1489,23 @@ const TColour* TLAsset::TMesh::GetGenerationColour(const TColour* pColour)
 	}
 
 	return pColour;
+}
+
+
+//--------------------------------------------------------
+//	returns a valid UV pointer if we expect one (mesh already has UV) - NULL's if we dont have UV - returns the original pointer if we can have UVs
+//--------------------------------------------------------
+const float2* TLAsset::TMesh::GetGenerationUV(const float2* pUV)
+{
+	//	mesh has no uvs
+	if ( m_Vertexes.GetSize() != m_UVs.GetSize() )
+		return NULL;
+	
+	//	needs a colour and none provided
+	if ( m_UVs.GetSize() && !pUV )	
+	{
+		return &TLAsset::g_DefaultVertexUV;
+	}
+
+	return pUV;
 }

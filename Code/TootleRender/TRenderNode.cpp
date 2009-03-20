@@ -152,6 +152,7 @@ TLRender::TRenderNode::TRenderNode(TRefRef RenderNodeRef,TRefRef TypeRef) :
 	m_RenderFlags.Set( RenderFlags::DepthWrite );
 	m_RenderFlags.Set( RenderFlags::Enabled );
 	m_RenderFlags.Set( RenderFlags::UseVertexColours );
+	m_RenderFlags.Set( RenderFlags::UseVertexUVs );
 	m_RenderFlags.Set( RenderFlags::UseMeshLineWidth );
 	m_RenderFlags.Set( RenderFlags::EnableCull );
 	m_RenderFlags.Set( RenderFlags::InvalidateBoundsByChildren );
@@ -204,6 +205,32 @@ TPtr<TLAsset::TMesh>& TLRender::TRenderNode::GetMeshAsset()
 	}
 
 	return m_pMeshCache;
+}
+
+//------------------------------------------------------------
+//	default behaviour fetches the mesh from the asset lib with our mesh ref
+//------------------------------------------------------------
+TPtr<TLAsset::TTexture>& TLRender::TRenderNode::GetTextureAsset()
+{
+	//	re-fetch mesh if we need to
+	if ( GetTextureRef().IsValid() && !m_pTextureCache )
+	{
+		m_pTextureCache = TLAsset::GetAsset( GetTextureRef(), TRUE );
+		
+		//	got a mesh, check it's the right type
+#ifdef _DEBUG
+		if ( m_pTextureCache )
+		{
+			if ( m_pTextureCache->GetAssetType() != "Texture" )
+			{
+				TLDebug_Break("TextureRef of render node is not a Texture");
+				m_pTextureCache = NULL;
+			}
+		}
+#endif
+	}
+
+	return m_pTextureCache;
 }
 
 
@@ -755,6 +782,15 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 
 		//	mesh ref changed
 		OnMeshRefChanged();
+	}
+
+	if ( Message.ImportData("TextureRef", m_TextureRef ) == SyncTrue )
+	{
+		//	start loading the asset in case we havent loaded it already
+		TLAsset::LoadAsset( m_TextureRef );
+
+		//	texture ref changed
+		OnTextureRefChanged();
 	}
 
 	//	get render flags to set

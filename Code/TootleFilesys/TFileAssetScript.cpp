@@ -131,7 +131,12 @@ SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportKeyframeTag(TPtr<T
 		{
 			return SyncFalse;
 		}
-	}	
+	}
+	else
+	{
+		TLDebug_Break("gr: use of uninitialised keyframe time! - keyframe property is required I assume?");
+		return SyncFalse;
+	}
 
 	// Create a new keyframe
 	TLAsset::TKeyframe* pKeyframe = pAssetScript->AddKeyframe(keyframetime);
