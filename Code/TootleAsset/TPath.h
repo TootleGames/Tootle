@@ -71,7 +71,7 @@ public:
 	TPathLink(TRefRef NodeA,TRefRef NodeB);
 	TPathLink(const TPathNode& NodeA,const TPathNode& NodeB);
 
-	FORCEINLINE Bool				IsValid() const				{	return GetNodeA().IsValid() && GetNodeB().IsValid();	}
+	FORCEINLINE Bool				IsValid() const				{	return (m_Nodes.GetSize()==2) && GetNodeA().IsValid() && GetNodeB().IsValid();	}
 	FORCEINLINE Bool				IsCacheValid() const		{	return m_CacheValid;	}
 
 	FORCEINLINE TRefRef				GetNodeA() const			{	return m_Nodes[0];	}

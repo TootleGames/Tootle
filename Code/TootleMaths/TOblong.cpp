@@ -6,7 +6,8 @@
 
 
 TLMaths::TOblong::TOblong() :
-	m_IsValid	( FALSE )
+	m_IsValid	( FALSE ),
+	m_Corners	( 8 )
 {
 }
 
@@ -14,7 +15,8 @@ TLMaths::TOblong::TOblong() :
 
 
 TLMaths::TOblong2D::TOblong2D() :
-	m_IsValid	( FALSE )
+	m_IsValid	( FALSE ),
+	m_Corners	( 4 )
 {
 }
 

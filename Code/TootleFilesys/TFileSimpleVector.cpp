@@ -575,10 +575,10 @@ Bool TLFileSys::TFileSimpleVector::ImportRectTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 
 	//	vertex outline
 	TFixedArray<float3,4> Vertexes;
-	Vertexes[0] = CoordinateToVertexPos( PointTopLeft );
-	Vertexes[1] = CoordinateToVertexPos( PointTopRight );
-	Vertexes[2] = CoordinateToVertexPos( PointBottomRight );
-	Vertexes[3] = CoordinateToVertexPos( PointBottomLeft );
+	Vertexes.Add( CoordinateToVertexPos( PointTopLeft ) );
+	Vertexes.Add( CoordinateToVertexPos( PointTopRight ) );
+	Vertexes.Add( CoordinateToVertexPos( PointBottomRight ) );
+	Vertexes.Add( CoordinateToVertexPos( PointBottomLeft ) );
 
 	//	turn into datum instead of geometry
 	TRef DatumRef,DatumShapeType;
@@ -699,7 +699,7 @@ Bool TLFileSys::TFileSimpleVector::IsTagDatum(TXmlTag& Tag,TRef& DatumRef,TRef& 
 		return FALSE;
 
 	//	split the string - max at 4 splits, if it splits 4 times, there's too many parts
-	TFixedArray<TStringLowercase<TTempString>, 4> StringParts(0);
+	TFixedArray<TStringLowercase<TTempString>, 4> StringParts;
 	if ( !pIDString->Split( '_', StringParts ) )
 	{
 		//	didn't split at all, can't be valid
@@ -765,7 +765,7 @@ Bool TLFileSys::TFileSimpleVector::Style::Parse(const TString& StyleString)
 	for ( u32 p=0;	p<PropertyStrings.GetSize();	p++ )
 	{
 		//	split property
-		TFixedArray<TTempString,2> PropertyParts(0);
+		TFixedArray<TTempString,2> PropertyParts;
 		PropertyStrings[p].Split(':', PropertyParts);
 		
 		Properties.Add( PropertyParts[0], PropertyParts[1] );

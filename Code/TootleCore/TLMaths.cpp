@@ -12,7 +12,7 @@ namespace TLMaths
 
 namespace TLColour
 {
-	TFixedArray<TColour,8>	g_Debug_Colours(0);	//	static list of debug colours
+	TFixedArray<TColour,8>	g_Debug_Colours;	//	static list of debug colours
 }
 
 

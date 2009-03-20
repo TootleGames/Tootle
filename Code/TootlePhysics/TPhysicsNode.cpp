@@ -57,7 +57,8 @@ TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 	m_Temp_ExtrudeTimestep			( 0.f ),
 	m_InitialisedZone				( FALSE ),
 	m_Debug_StaticCollisions		( 0 ),
-	m_WorldCollisionShapeChanged	( FALSE )
+	m_WorldCollisionShapeChanged	( FALSE ),
+	m_TransformChanges				( 3 )
 {
 #ifdef CACHE_ACCUMULATED_MOVEMENT
 	m_AccumulatedMovementValid = FALSE;

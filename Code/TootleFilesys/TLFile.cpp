@@ -192,7 +192,7 @@ Bool TLString::ReadNextFloatArray(const TString& String,u32& CharIndex,float* pF
 TRef TLFile::GetDataTypeFromString(const TString& String)
 {
 	//	cache predefined ref types for a simple match
-	static TFixedArray<TRef,20> g_DataTypeRefCache(0);
+	static TFixedArray<TRef,20> g_DataTypeRefCache;
 	if ( g_DataTypeRefCache.GetSize() == 0 )
 	{
 		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TRef>() );

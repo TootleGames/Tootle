@@ -120,16 +120,12 @@ public:	//	gr: public so we can declare them as data types
 	class TPathLinkZones
 	{
 	public:
-		TPathLinkZones() : m_Zones(0)	{}
-
 		TFixedArray<const TLMaths::TQuadTreeZone*,10>	m_Zones;
 	};
 
 	class TZonePathLinks
 	{
 	public:
-		TZonePathLinks() : m_PathLinks(0)	{}
-
 		TFixedArray<TLPath::TPathLink,10>	m_PathLinks;
 	};
 

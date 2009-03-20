@@ -1505,7 +1505,7 @@ void TLGraph::TGraph<T>::ProcessMessageFromQueue(TLMessaging::TMessage& Message)
 {
 	//	gr: speed up, this list is rarely going to be big, so use a non-allocated array on the stack
 	//	increase fixed size if we really ever have a big list
-	TFixedArray<TRef,10> TargetList(0);
+	TFixedArray<TRef,10> TargetList;
 
 	// Get all target ID's
 	while ( TRUE )

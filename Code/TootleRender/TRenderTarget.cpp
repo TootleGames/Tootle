@@ -215,7 +215,7 @@ void TLRender::TRenderTarget::EndDraw()
 		float WorldDepth = 0.f;
 		float ViewDepth = pCamera->GetPosition().z + WorldDepth;
 		pCamera->GetWorldFrustumPlaneBox2D( ViewDepth, FrustumBox );
-		TFixedArray<float3,4> FrustumBoxCorners(0);
+		TFixedArray<float3,4> FrustumBoxCorners;
 		FrustumBox.GetBoxCorners( FrustumBoxCorners, WorldDepth );
 
 		//	green for oblong frustum

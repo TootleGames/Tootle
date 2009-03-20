@@ -17,7 +17,7 @@ public:
 	typedef TLArray::SortResult(TSortFunc)(const TYPE&,const TYPE&,const void*);
 
 public:
-	TFixedArray(u32 InitialSize=SIZE,TSortFunc* pSortFunc=NULL) : TArray<TYPE>::TArray	( pSortFunc )	{	TArray<TYPE>::m_Size = InitialSize;	}	//	by default specify that the array is full to allocation
+	TFixedArray(u32 InitialSize=0,TSortFunc* pSortFunc=NULL) : TArray<TYPE>::TArray	( pSortFunc )	{	TArray<TYPE>::m_Size = InitialSize;	}	//	by default specify that the array is full to allocation
 
 	virtual TYPE*		GetData()							{	return &m_Data[0];	}
 	virtual const TYPE*	GetData() const						{	return &m_Data[0];	}

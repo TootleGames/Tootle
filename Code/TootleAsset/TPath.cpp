@@ -473,8 +473,8 @@ TLPath::TPathLink::TPathLink() :
 TLPath::TPathLink::TPathLink(TRefRef NodeA,TRefRef NodeB) :
 	m_CacheValid	( FALSE )
 {
-	m_Nodes[0] = NodeA;
-	m_Nodes[1] = NodeB;
+	m_Nodes.Add( NodeA );
+	m_Nodes.Add( NodeB );
 
 	TLDebug_Assert( IsValid(), "Nodes provided to TPathLink are invalid" );
 }
@@ -483,8 +483,8 @@ TLPath::TPathLink::TPathLink(TRefRef NodeA,TRefRef NodeB) :
 TLPath::TPathLink::TPathLink(const TPathNode& NodeA,const TPathNode& NodeB) :
 	m_CacheValid	( FALSE )
 {
-	m_Nodes[0] = NodeA.GetNodeRef();
-	m_Nodes[1] = NodeB.GetNodeRef();
+	m_Nodes.Add( NodeA.GetNodeRef() );
+	m_Nodes.Add( NodeB.GetNodeRef() );
 
 	//	calc cache stuff
 	OnNodePosChanged( NodeA, NodeB );

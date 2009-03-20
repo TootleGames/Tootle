@@ -107,7 +107,7 @@ void TLAsset::TMesh::GenerateQuad(const float2& Center,float Size,const TColour*
 //-------------------------------------------------------
 void TLAsset::TMesh::GenerateQuadOutline(const TLMaths::TBox2D& Box,const TColour* pColour,float z)
 {
-	TFixedArray<float3,4> Outline;
+	TFixedArray<float3,4> Outline(4);
 	float3& TopLeft = Outline[0];
 	float3& BottomRight = Outline[2];
 	float3& TopRight = Outline[1];
@@ -299,7 +299,7 @@ void TLAsset::TMesh::GenerateSphereOutline(const TLMaths::TSphere2D& Sphere,cons
 {
 	u32 SegmentCount = TLAsset::TLMesh::GetSphereSegmentCount( Sphere.GetRadius() );
 
-	TFixedArray<float3,100> Outline(0);
+	TFixedArray<float3,100> Outline;
 
 	//	create linestrip points
 	float AngleStep = 360.f / (float)SegmentCount;
@@ -332,7 +332,7 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere2D& Sphere,const TColo
 
 	TColour TempColour(1.f,1.f,1.f,1.f);
 
-	TFixedArray<u16,100> OutlineVerts(0);
+	TFixedArray<u16,100> OutlineVerts;
 
 	float3 Center3 = Sphere.GetPos().xyz( z );
 	u16 CenterVert = AddVertex( Center3, pColour );
@@ -373,12 +373,12 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere2D& Sphere,const TColo
 void TLAsset::TMesh::GenerateCapsule(const TLMaths::TCapsule2D& Capsule,const TColour& Colour,float z)
 {
 	const TLMaths::TLine2D& CapsuleLine = Capsule.GetLine();
-	TFixedArray<float3,2> Line;
+	TFixedArray<float3,2> Line(2);
 	Line[0] = CapsuleLine.GetStart().xyz( z );
 	Line[1] = CapsuleLine.GetEnd().xyz( z );
 
-	TFixedArray<float3,2> LineOutside(0);
-	TFixedArray<float3,2> LineInside(0);
+	TFixedArray<float3,2> LineOutside;
+	TFixedArray<float3,2> LineInside;
 
 	TLMaths::ExpandLineStrip( Line, Capsule.GetRadius()*2.f, LineOutside, LineInside );
 
@@ -1118,10 +1118,10 @@ Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,
 Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour* pColourA,const TColour* pColourB,const TColour* pColourC,const TColour* pColourD)
 {
 	TFixedArray<u16,4> VertIndexes;
-	VertIndexes[0] = AddVertex( OutlineA, pColourA );
-	VertIndexes[1] = AddVertex( OutlineB, pColourB );
-	VertIndexes[2] = AddVertex( OutlineC, pColourC );
-	VertIndexes[3] = AddVertex( OutlineD, pColourD );
+	VertIndexes.Add( AddVertex( OutlineA, pColourA ) );
+	VertIndexes.Add( AddVertex( OutlineB, pColourB ) );
+	VertIndexes.Add( AddVertex( OutlineC, pColourC ) );
+	VertIndexes.Add( AddVertex( OutlineD, pColourD ) );
 	
 	return GenerateQuad( VertIndexes );
 }

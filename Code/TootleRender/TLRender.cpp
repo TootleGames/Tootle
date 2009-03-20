@@ -229,7 +229,7 @@ u32 TLRender::Opengl::UploadTexture(const TLAsset::TTexture& Texture)
 	BindTextureIndex( NewTextureIndex );
 	
 	//	get filter modes
-	TFixedArray<u32,2> OpenglFilters(0);
+	TFixedArray<u32,2> OpenglFilters;
 	GetOpenglFilterTypes( OpenglFilters, Texture.IsMinFilterLinear(), Texture.IsMagFilterLinear(), Texture.IsMipMapEnabled() );
 
 	//	set filter params

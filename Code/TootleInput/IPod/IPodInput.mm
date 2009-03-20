@@ -29,10 +29,10 @@ namespace TLInput
 			float3						g_LastAccelData = float3(0,0,0);		//	store the last accel data in case we dont have any for some immediate touch response, we will just send the last data we had. Also reduces the amount of processing done when values changes only slightly
 			
 			const u32 MAX_CURSOR_POSITIONS = 4;
-			TFixedArray<int2, MAX_CURSOR_POSITIONS>					g_aCursorPositions;
+			TFixedArray<int2, MAX_CURSOR_POSITIONS>					g_aCursorPositions(MAX_CURSOR_POSITIONS);
 			//TFixedArray<float, MAX_CURSOR_POSITIONS>				g_aIpodButtonState;		// DB - MAY BE ABLE TO REMOVE THIS AND USE THE NEW TOUCH OBJECT ARRAY
 						
-			TFixedArray< TRef, MAX_CURSOR_POSITIONS>				g_ActiveTouchObjects;	// Fixed array of touch object ID's
+			TFixedArray< TRef, MAX_CURSOR_POSITIONS>				g_ActiveTouchObjects(MAX_CURSOR_POSITIONS);	// Fixed array of touch object ID's
 			TArray<TTouchObject>									g_TouchObjects;			// Dynamic array of touch objects that persist over time
 						
 			void	SetCursorPosition(u8 uIndex, int2 uPos);

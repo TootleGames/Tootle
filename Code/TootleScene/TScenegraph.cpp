@@ -159,9 +159,9 @@ void TLScene::TScenegraph::SetActiveZone(TPtr<TLMaths::TQuadTreeZone>& pZone)
 	u32 z;
 
 	//	collect zones to enable and disable so that we don't turn a zone off and on
-	TFixedArray<TLMaths::TQuadTreeZone*,100> ZonesOff(0);
-	TFixedArray<TLMaths::TQuadTreeZone*,100> ZonesOnWait(0);
-	TFixedArray<TLMaths::TQuadTreeZone*,100> ZonesOn(0);
+	TFixedArray<TLMaths::TQuadTreeZone*,100> ZonesOff;
+	TFixedArray<TLMaths::TQuadTreeZone*,100> ZonesOnWait;
+	TFixedArray<TLMaths::TQuadTreeZone*,100> ZonesOn;
 
 	//	get list of zones to turn off...
 	ZonesOff.Add( m_ActiveZoneList );

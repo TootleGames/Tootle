@@ -101,7 +101,7 @@ SyncBool TLPath::TPath::FindPathRandom(TRefRef StartNode,u32 NodesInRoute, Bool 
 	{
 		//	just to make sure we don't get stuck, make a list of all the possible links then pick one at random
 		TArray<TLPath::TPathNodeLink>& NodeLinks = pNode->GetLinks();
-		TFixedArray<TLPath::TPathNodeLink*,100> ValidNodeLinks(0);
+		TFixedArray<TLPath::TPathNodeLink*,100> ValidNodeLinks;
 		TLPath::TPathNodeLink* pLastResort = NULL;
 		for ( u32 i=0;	i<NodeLinks.GetSize();	i++ )
 		{

@@ -171,7 +171,7 @@ void TLMaths::TBox::Transform(const TLMaths::TMatrix& Matrix,const float3& Scale
 
 	//	gr: I'm pretty sure transforming the min & max wont work quite right, so transform each point
 	//		and make a new bounds box
-	TFixedArray<float3,8> BoundsPoints(0);
+	TFixedArray<float3,8> BoundsPoints;
 	GetBoxCorners( BoundsPoints );
 
 	//	transform the points
@@ -200,7 +200,7 @@ void TLMaths::TBox::Transform(const TLMaths::TTransform& Transform)
 
 	//	gr: I'm pretty sure transforming the min & max wont work quite right, so transform each point
 	//		and make a new bounds box
-	TFixedArray<float3,8> BoundsPoints(0);
+	TFixedArray<float3,8> BoundsPoints;
 	GetBoxCorners( BoundsPoints );
 
 	//	transform the points
@@ -1034,7 +1034,7 @@ void TLMaths::TBox2D::Transform(const TLMaths::TTransform& Transform)
 
 	//	gr: I'm pretty sure transforming the min & max wont work quite right, so transform each point
 	//		and make a new bounds box
-	TFixedArray<float2,4> BoundsPoints(0);
+	TFixedArray<float2,4> BoundsPoints;
 	GetBoxCorners( BoundsPoints );
 
 	//	transform the points

@@ -82,7 +82,7 @@ void TLMaths::TQuadTreeNode::UpdateZone(TPtr<TLMaths::TQuadTreeNode> pThis,TPtr<
 				if ( InSibling0 || InSibling1 || InSibling2 )
 				{
 					//	make list of zones we're intersecting in of the current zone's parent
-					TFixedArray<u32,4> ChildZoneList(0);
+					TFixedArray<u32,4> ChildZoneList;
 					ChildZoneList.Add( pCurrentZone->GetParentsChildIndex() );
 					if ( InSibling0 )	ChildZoneList.Add( pCurrentZone->GetSiblingParentsChildIndex(0) );
 					if ( InSibling1 )	ChildZoneList.Add( pCurrentZone->GetSiblingParentsChildIndex(1) );
@@ -258,7 +258,6 @@ const TLMaths::TBox2D& TLMaths::TQuadTreeNode::GetZoneShape()
 TLMaths::TQuadTreeZone::TQuadTreeZone(const TLMaths::TBox2D& ZoneShape,const TLMaths::TQuadTreeParams& ZoneParams) :
 	m_Shape					( ZoneShape ),
 	m_Nodes					( &TLMaths::TLQuadTree::SortNodes ),
-	m_SiblingZoneIndexes	( 0 ),
 	m_SiblingIndex			( -1 ),
 	m_ZoneParams			( ZoneParams ),
 	m_Active				( SyncTrue )
@@ -360,7 +359,7 @@ Bool TLMaths::TQuadTreeZone::AddNode(TPtr<TLMaths::TQuadTreeNode>& pNode,TPtr<TL
 				DoneNode |= (pNode == pChildNode);
 
 				//	see if child node is now in one of the new zones
-				TFixedArray<u32,4> InZones(0);
+				TFixedArray<u32,4> InZones;
 				GetInChildZones( pChildNode.GetObject(), InZones );
 
 				//	node is not in any of these zones... error...
@@ -397,7 +396,7 @@ Bool TLMaths::TQuadTreeZone::AddNode(TPtr<TLMaths::TQuadTreeNode>& pNode,TPtr<TL
 	}
 
 	//	loop through the child zones to see if it fits into 1 or multiple zones
-	TFixedArray<u32,4> InZones(0);
+	TFixedArray<u32,4> InZones;
 	GetInChildZones( pNode.GetObject(), InZones );
 
 	//	node is not in any of these zones... error... 
