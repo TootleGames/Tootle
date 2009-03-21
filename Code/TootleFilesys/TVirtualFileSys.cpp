@@ -197,17 +197,9 @@ SyncBool TLDebugFile::LoadDebugFile_MeshCross(TPtr<TLFileSys::TFile>& pFile)
 	TLAsset::TMesh& Mesh = *pMesh;
 
 	//	generate a cross...
-	TLAsset::TMesh::Line* pLineX = Mesh.GetLines().AddNew();
-	pLineX->Add( Mesh.AddVertex( float3( -1.f, 0.f, 0.f ), TColour( 1.f, 0.f, 0.f, 1.f ) ) );
-	pLineX->Add( Mesh.AddVertex( float3(  1.f, 0.f, 0.f ), TColour( 1.f, 0.f, 0.f, 1.f ) ) );
-
-	TLAsset::TMesh::Line* pLineY = Mesh.GetLines().AddNew();
-	pLineY->Add( Mesh.AddVertex( float3( 0.f, -1.f, 0.f ), TColour( 0.f, 1.f, 0.f, 1.f ) ) );
-	pLineY->Add( Mesh.AddVertex( float3( 0.f,  1.f, 0.f ), TColour( 0.f, 1.f, 0.f, 1.f ) ) );
-
-	TLAsset::TMesh::Line* pLineZ = Mesh.GetLines().AddNew();
-	pLineZ->Add( Mesh.AddVertex( float3( 0.f, 0.f, -1.f ), TColour( 0.f, 0.f, 1.f, 1.f ) ) );
-	pLineZ->Add( Mesh.AddVertex( float3( 0.f, 0.f,  1.f ), TColour( 0.f, 0.f, 1.f, 1.f ) ) );
+	Mesh.GenerateLine( float3( -1.f, 0.f, 0.f ), float3(  1.f, 0.f, 0.f ), &TColour( 1.f, 0.f, 0.f, 1.f ) );
+	Mesh.GenerateLine( float3( 0.f, -1.f, 0.f ), float3( 0.f,  1.f, 0.f ), &TColour( 0.f, 1.f, 0.f, 1.f ) );
+	Mesh.GenerateLine( float3( 0.f, 0.f, -1.f ), float3( 0.f, 0.f,  1.f ), &TColour( 0.f, 0.f, 1.f, 1.f ) );
 
 	return LoadDebugFile_Asset( pFile, pMesh );
 }

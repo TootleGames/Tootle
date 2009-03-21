@@ -122,7 +122,7 @@ void TLGame::TScreenRayTest::SetMeshLine(const TLMaths::TLine& Line)
 	m_pMesh->Empty();
 
 	//	create line
-	TLAsset::TMesh::Line* pNewLine = m_pMesh->GetLines().AddNew();
+	TLAsset::TMesh::Linestrip* pNewLine = m_pMesh->GetLinestrips().AddNew();
 	
 	//	split into segments
 #define STEPS	10

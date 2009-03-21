@@ -597,7 +597,7 @@ Bool TLFileSys::TFileSimpleVector::ImportRectTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 		//	create line strip
 		if ( TagStyle.m_HasStroke )
 		{
-			TLAsset::TMesh::Line* pNewLinestrip = pMesh->GetLines().AddNew();
+			TLAsset::TMesh::Linestrip* pNewLinestrip = pMesh->GetLinestrips().AddNew();
 			TLAsset::TMesh::Tristrip& NewLinestrip = *pNewLinestrip;
 			NewLinestrip.Add( pMesh->AddVertex( Vertexes[0], m_VertexColoursEnabled ? &TagStyle.m_StrokeColour : NULL ) );
 			NewLinestrip.Add( pMesh->AddVertex( Vertexes[1], m_VertexColoursEnabled ? &TagStyle.m_StrokeColour : NULL ) );
@@ -644,7 +644,7 @@ void TLFileSys::TFileSimpleVector::CreateMeshLineStrip(TLAsset::TMesh& Mesh,TLMa
 {
 	const TArray<float3>& ContourPoints = Contour.GetPoints();
 
-	TLAsset::TMesh::Line* pNewLine = Mesh.GetLines().AddNew();
+	TLAsset::TMesh::Linestrip* pNewLine = Mesh.GetLinestrips().AddNew();
 	if ( !pNewLine )
 		return;
 
@@ -677,7 +677,7 @@ void TLFileSys::TFileSimpleVector::CreateMeshLineStrip(TLAsset::TMesh& Mesh,TLMa
 		if ( p < ContourPoints.GetSize() && pNewLine->GetSize() >= TLAsset::g_MaxLineStripSize )
 		{
 			//	make new line
-			pNewLine = Mesh.GetLines().AddNew();
+			pNewLine = Mesh.GetLinestrips().AddNew();
 			if ( !pNewLine )
 				break;
 			

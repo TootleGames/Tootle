@@ -63,6 +63,7 @@ void TLAsset::TMesh::Empty()
 	m_Triangles.Empty();
 	m_Tristrips.Empty();
 	m_Trifans.Empty();
+	m_Linestrips.Empty();
 	m_Lines.Empty();
 	
 	m_Datums.Empty();
@@ -382,7 +383,7 @@ void TLAsset::TMesh::GenerateCapsule(const TLMaths::TCapsule2D& Capsule,const TC
 
 	TLMaths::ExpandLineStrip( Line, Capsule.GetRadius()*2.f, LineOutside, LineInside );
 
-	//	draw the capsule's out lines
+	//	draw the capsule's outlines
 	GenerateLine( LineOutside, Colour );
 	GenerateLine( LineInside, Colour );
 
@@ -417,28 +418,49 @@ void TLAsset::TMesh::GenerateCube(float Scale)
 //-------------------------------------------------------
 //	generate a line
 //-------------------------------------------------------
-void TLAsset::TMesh::GenerateLine(const TLMaths::TLine& LineShape,const TColour& ColourStart,const TColour& ColourEnd)
+void TLAsset::TMesh::GenerateLine(const float3& LineStart,const float3& LineEnd,const TColour* pColourStart,const TColour* pColourEnd)
 {
 	//	add vertexes
-	s32 StartVertex = AddVertex( LineShape.GetStart(), &ColourStart );
-	s32 EndVertex = AddVertex( LineShape.GetEnd(), &ColourEnd );
+	s32 StartVertex = AddVertex( LineStart, pColourStart );
+	s32 EndVertex = AddVertex( LineEnd, pColourEnd );
 
 	//	add line
-	Line* pLine = m_Lines.AddNew();
-	pLine->Add( StartVertex );
-	pLine->Add( EndVertex );
+	GenerateLine( StartVertex, EndVertex );
 }
+
+
+//-------------------------------------------------------
+//	
+//-------------------------------------------------------
+void TLAsset::TMesh::GenerateLine(u16 StartVertex,u16 EndVertex)
+{
+	//	add line
+	Line* pLine = m_Lines.AddNew();
+	pLine->x = StartVertex;
+	pLine->y = EndVertex;
+}
+
 
 //-------------------------------------------------------
 //	generate a line
 //-------------------------------------------------------
 void TLAsset::TMesh::GenerateLine(const TArray<float3>& LinePoints,const TColour* pColour)
 {
-	if ( LinePoints.GetSize() == 0 )
+	if ( LinePoints.GetSize() < 2 )
+	{
+		TLDebug_Break("Line too short");
 		return;
+	}
+
+	//	use simple line system rather than a strip when possible
+	if ( LinePoints.GetSize() == 2 )
+	{
+		GenerateLine( LinePoints[0], LinePoints[1], pColour, pColour );
+		return;
+	}
 
 	//	add line
-	Line* pLine = m_Lines.AddNew();
+	Linestrip* pLine = m_Linestrips.AddNew();
 
 	//	pre-alloc data
 	m_Vertexes.AddAllocSize( LinePoints.GetSize() );
@@ -481,7 +503,8 @@ SyncBool TLAsset::TMesh::ImportData(TBinaryTree& Data)
 	Data.ImportArrays( "Tris", m_Triangles );
 	Data.ImportArrays( "TStrp", m_Tristrips );
 	Data.ImportArrays( "TFans", m_Trifans );
-	Data.ImportArrays( "Lines", m_Lines );
+	Data.ImportArrays( "Lines", m_Linestrips );
+	Data.ImportArrays( "SmpLines", m_Lines );
 
 	OnPrimitivesChanged();
 
@@ -530,7 +553,8 @@ SyncBool TLAsset::TMesh::ExportData(TBinaryTree& Data)
 	Data.ExportArray( "Tris", m_Triangles );
 	Data.ExportArray( "TStrp", m_Tristrips );
 	Data.ExportArray( "TFans", m_Trifans );
-	Data.ExportArray( "Lines", m_Lines );
+	Data.ExportArray( "Lines", m_Linestrips );
+	Data.ExportArray( "SmpLines", m_Lines );
 
 	//	export bounds if valid
 	TLMaths::TBox& BoundsBox = GetBoundsBox();
@@ -587,7 +611,8 @@ TLMaths::TBox& TLAsset::TMesh::CalcBoundsBox(Bool ForceCalc)
 	m_BoundsBox.Accumulate( m_Vertexes );
 
 	//	todo: only apply to line verts
-	if ( GetLines().GetSize() && m_LineWidth > 0.f )
+	Bool HasLines = (GetLines().GetSize() + GetLinestrips().GetSize()) > 0;
+	if ( HasLines && m_LineWidth > 0.f )
 	{
 		m_BoundsBox.GetMin() -= float3( m_LineWidth, m_LineWidth, m_LineWidth );
 		m_BoundsBox.GetMax() += float3( m_LineWidth, m_LineWidth, m_LineWidth );
@@ -831,9 +856,9 @@ Bool TLAsset::TMesh::ReplaceVertex(u16 OldVertexIndex,u16 NewVertexIndex)
 	}
 
 	
-	for ( i=m_Lines.GetLastIndex();	i>=0;	i-- )
+	for ( i=m_Linestrips.GetLastIndex();	i>=0;	i-- )
 	{
-		Line& Polygon = m_Lines[i];
+		Linestrip& Polygon = m_Linestrips[i];
 
 		//	correct/remove indexes in this tristrip
 		for ( s32 n=Polygon.GetLastIndex();	n>=0;	n-- )
@@ -845,6 +870,24 @@ Bool TLAsset::TMesh::ReplaceVertex(u16 OldVertexIndex,u16 NewVertexIndex)
 			}
 		}
 	}
+
+	for ( i=m_Lines.GetLastIndex();	i>=0;	i-- )
+	{
+		Line& Polygon = m_Lines[i];
+
+		if ( Polygon.x == OldVertexIndex )
+		{
+			Polygon.x = NewVertexIndex;
+			ChangedPolygon = TRUE;	
+		}
+
+		if ( Polygon.y == OldVertexIndex )
+		{
+			Polygon.y = NewVertexIndex;
+			ChangedPolygon = TRUE;	
+		}
+	}
+
 
 	if ( ChangedPolygon )
 		OnPrimitivesChanged();
@@ -956,9 +999,9 @@ Bool TLAsset::TMesh::RemoveVertex(u16 VertexIndex)
 	}
 
 	
-	for ( i=m_Lines.GetLastIndex();	i>=0;	i-- )
+	for ( i=m_Linestrips.GetLastIndex();	i>=0;	i-- )
 	{
-		Line& Polygon = m_Lines[i];
+		Linestrip& Polygon = m_Linestrips[i];
 
 		//	correct/remove indexes in this tristrip
 		for ( s32 n=Polygon.GetLastIndex();	n>=0;	n-- )
@@ -978,7 +1021,41 @@ Bool TLAsset::TMesh::RemoveVertex(u16 VertexIndex)
 		if ( Polygon.GetSize() < 2 )
 		{
 			ChangedPolygon |= TRUE;
+			m_Linestrips.RemoveAt(i);
+		}
+	}
+
+
+	for ( i=m_Lines.GetLastIndex();	i>=0;	i-- )
+	{
+		Line& Polygon = m_Lines[i];
+
+		//	correct indexes in this line - if any removed we need to remove the line
+		if ( Polygon.x == VertexIndex )
+		{
+			ChangedPolygon |= TRUE;
 			m_Lines.RemoveAt(i);
+			continue;
+		}
+		
+		if ( Polygon.y == VertexIndex )
+		{
+			ChangedPolygon |= TRUE;
+			m_Lines.RemoveAt(i);
+			continue;
+		}
+		
+		//	correct indexes
+		if ( Polygon.x > VertexIndex )
+		{
+			ChangedPolygon |= TRUE;
+			Polygon.x--;
+		}
+
+		if ( Polygon.y > VertexIndex )
+		{
+			ChangedPolygon |= TRUE;
+			Polygon.y--;
 		}
 	}
 
@@ -1017,9 +1094,9 @@ Bool TLAsset::TMesh::RemoveLine(u32 VertexIndexA,u32 VertexIndexB)
 {
 	Bool ChangedPolygon = FALSE;
 
-	for ( s32 i=m_Lines.GetLastIndex();	i>=0;	i-- )
+	for ( s32 i=m_Linestrips.GetLastIndex();	i>=0;	i-- )
 	{
-		Line& Polygon = m_Lines[i];
+		Linestrip& Polygon = m_Linestrips[i];
 
 		Bool PrevMatchA = FALSE;
 		Bool PrevMatchB = FALSE;
@@ -1062,7 +1139,27 @@ Bool TLAsset::TMesh::RemoveLine(u32 VertexIndexA,u32 VertexIndexB)
 		if ( Polygon.GetSize() < 2 )
 		{
 			ChangedPolygon |= TRUE;
-			m_Lines.RemoveAt(i);
+			m_Linestrips.RemoveAt(i);
+		}
+	}
+
+	for ( s32 i=m_Lines.GetLastIndex();	i>=0;	i-- )
+	{
+		Line& Polygon = m_Lines[i];
+
+		//	match
+		if ( Polygon.x == VertexIndexA && Polygon.y == VertexIndexB )
+		{
+			ChangedPolygon |= TRUE;
+			m_Lines.RemoveAt( i );
+			continue;
+		}
+
+		if ( Polygon.x == VertexIndexB && Polygon.y == VertexIndexA )
+		{
+			ChangedPolygon |= TRUE;
+			m_Lines.RemoveAt( i );
+			continue;
 		}
 	}
 
@@ -1180,6 +1277,7 @@ void TLAsset::TMesh::Copy(const TMesh* pMesh)
 	m_Trifans.Copy( pMesh->m_Trifans );
 	m_Triangles.Copy( pMesh->m_Triangles );
 	m_Lines.Copy( pMesh->m_Lines );
+	m_Linestrips.Copy( pMesh->m_Linestrips );
 	
 	OnPrimitivesChanged();
 

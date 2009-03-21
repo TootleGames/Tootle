@@ -931,6 +931,7 @@ void TLRender::TRenderTarget::DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset:
 	const TArray<TLAsset::TMesh::Tristrip>* pTristrips	= &Mesh.GetTristrips();
 	const TArray<TLAsset::TMesh::Trifan>* pTrifans		= &Mesh.GetTrifans();
 	const TArray<TLAsset::TMesh::Line>* pLines			= &Mesh.GetLines();
+	const TArray<TLAsset::TMesh::Linestrip>* pLinestrips	= &Mesh.GetLinestrips();
 	
 	//	ignore colour vertex data if flag is not set
 	if ( !RenderFlags( TRenderNode::RenderFlags::UseVertexColours ) )
@@ -955,7 +956,9 @@ void TLRender::TRenderTarget::DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset:
 	Opengl::EnableDepthWrite( RenderFlags( TRenderNode::RenderFlags::DepthWrite ) );
 
 	//	setup line width if required
-	if ( pLines && pLines->GetSize() > 0 && RenderFlags( TRenderNode::RenderFlags::UseMeshLineWidth ) ) 
+	Bool HasLines = (pLines && pLines->GetSize() > 0);
+	HasLines |= (pLinestrips && pLinestrips->GetSize() > 0);
+	if ( HasLines && RenderFlags( TRenderNode::RenderFlags::UseMeshLineWidth ) ) 
 	{
 		float LineWidth = pRenderNode->GetLineWidth();
 		if ( LineWidth < 1.f )
@@ -977,7 +980,8 @@ void TLRender::TRenderTarget::DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset:
 	Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeTriangle(),	pTriangles );
 	Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeTristrip(),	pTristrips );
 	Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeTrifan(),		pTrifans );
-	Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeLineStrip(),	pLines );
+	Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeLinestrip(),	pLinestrips );
+	Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeLine(),		pLines );
 	
 	//	draw points like a primitive
 	if ( RenderFlags( TRenderNode::RenderFlags::Debug_Points ) )

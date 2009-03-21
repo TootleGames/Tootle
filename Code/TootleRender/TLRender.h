@@ -89,7 +89,8 @@ namespace TLRender
 			FORCEINLINE u16			GetPrimTypeTriangle();		//	GL_TRIANGLES
 			FORCEINLINE u16			GetPrimTypeTristrip();		//	GL_TRIANGLE_STRIP
 			FORCEINLINE u16			GetPrimTypeTrifan();		//	GL_TRIANGLE_FAN
-			FORCEINLINE u16			GetPrimTypeLineStrip();		//	GL_LINE_STRIP
+			FORCEINLINE u16			GetPrimTypeLinestrip();		//	GL_LINE_STRIP
+			FORCEINLINE u16			GetPrimTypeLine();			//	GL_LINES
 			FORCEINLINE u16			GetPrimTypePoint();			//	GL_POINTS
 
 			FORCEINLINE void		EnableWireframe(Bool Enable);

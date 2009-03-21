@@ -58,7 +58,8 @@ public:
 	typedef Type3<u16>	Triangle;
 	typedef TArray<u16>	Tristrip;
 	typedef TArray<u16>	Trifan;
-	typedef TArray<u16>	Line;
+	typedef TArray<u16>	Linestrip;
+	typedef Type2<u16>	Line;
 
 	enum TMeshFlags
 	{
@@ -91,10 +92,14 @@ public:
 	void					GenerateCapsule(const TLMaths::TCapsule& Capsule,const TColour* pColour=NULL);	//	generate a capsule
 	void					GenerateCapsule(const TLMaths::TCapsule2D& Capsule,const TColour& Colour,float z=0.f);	//	generate a capsule
 
-	void					GenerateLine(const TLMaths::TLine& LineShape,const TColour& Colour)		{	GenerateLine( LineShape, Colour, Colour );	}
-	void					GenerateLine(const TLMaths::TLine& LineShape,const TColour& ColourStart,const TColour& ColourEnd);	//	generate a line
-	void					GenerateLine(const TArray<float3>& LinePoints,const TColour& Colour)	{	GenerateLine( LinePoints, &Colour );	}
-	void					GenerateLine(const TArray<float3>& LinePoints,const TColour* pColour);	//	generate a line
+	void					GenerateLine(const TLMaths::TLine& LineShape,const TColour& Colour)									{	GenerateLine( LineShape.GetStart(), LineShape.GetEnd(), &Colour, &Colour );	}
+	void					GenerateLine(const TLMaths::TLine& LineShape,const TColour* pColour=NULL)							{	GenerateLine( LineShape.GetStart(), LineShape.GetEnd(), pColour, pColour );	}
+	void					GenerateLine(const TLMaths::TLine& LineShape,const TColour* pColourStart,const TColour* pColourEnd)	{	GenerateLine( LineShape.GetStart(), LineShape.GetEnd(), pColourStart, pColourEnd );	}
+	void					GenerateLine(const float3& LineStart,const float3& LineEnd,const TColour* pColour=NULL)				{	GenerateLine( LineStart, LineEnd, pColour, pColour );	}
+	void					GenerateLine(const float3& LineStart,const float3& LineEnd,const TColour* pColourStart,const TColour* pColourEnd);	//	generate a line
+	void					GenerateLine(u16 StartVertex,u16 EndVertex);
+	void					GenerateLine(const TArray<float3>& LinePoints,const TColour& Colour)								{	GenerateLine( LinePoints, &Colour );	}
+	void					GenerateLine(const TArray<float3>& LinePoints,const TColour* pColour=NULL);	//	generate a line
 
 	void					GenerateQuad(const TLMaths::TBox2D& Box,const TColour* pColour=NULL,float z=0.f);		//	generate a square mesh from a 2d box
 	void					GenerateQuad(const float2& Center,float Size,const TColour* pColour=NULL,float z=0.f);			//	generate a square mesh around a point
@@ -133,10 +138,12 @@ public:
 	TArray<Triangle>&		GetTriangles()						{	return m_Triangles;	}
 	TArray<Tristrip>&		GetTristrips()						{	return m_Tristrips;	}
 	TArray<Trifan>&			GetTrifans()						{	return m_Trifans;	}
+	TArray<Linestrip>&		GetLinestrips()						{	return m_Linestrips;	}
 	TArray<Line>&			GetLines()							{	return m_Lines;	}
 	const TArray<Triangle>&	GetTriangles() const				{	return m_Triangles;	}
 	const TArray<Tristrip>&	GetTristrips() const				{	return m_Tristrips;	}
 	const TArray<Trifan>&	GetTrifans() const					{	return m_Trifans;	}
+	const TArray<Linestrip>& GetLinestrips() const				{	return m_Linestrips;	}
 	const TArray<Line>&		GetLines() const					{	return m_Lines;	}
 	
 	//	line stuff
@@ -193,7 +200,8 @@ protected:
 	TArray<Triangle>		m_Triangles;			//	triangles in mesh
 	TArray<Tristrip>		m_Tristrips;			//	tristrips in mesh
 	TArray<Trifan>			m_Trifans;				//	trifans in mesh
-	TArray<Line>			m_Lines;				//	lineSTRIPS in mesh
+	TArray<Linestrip>		m_Linestrips;			//	lineSTRIPS in mesh
+	TArray<Line>			m_Lines;				//	lines in mesh - evaluates to one large list of verts
 	
 	TPtrKeyArray<TRef,TLMaths::TShape>	m_Datums;	//	datum shapes on mesh
 

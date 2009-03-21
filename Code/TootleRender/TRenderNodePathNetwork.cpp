@@ -125,9 +125,7 @@ void TLRender::TRenderNodePathNetwork::InitMeshFromPathNetwork(TLAsset::TPathNet
 				continue;
 
 			//	create line between nodes
-			TArray<u16>* pLine = Mesh.GetLines().AddNew();
-			pLine->Add( Vertex );
-			pLine->Add( LinkVertex );
+			Mesh.GenerateLine( Vertex, LinkVertex );
 
 			if ( m_EnableMarkers )
 			{
