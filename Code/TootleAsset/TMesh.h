@@ -127,6 +127,7 @@ public:
 	const TFlags<TMeshFlags,u8>&	GetFlags() const			{	return m_Flags;	}
 	FORCEINLINE Bool		HasAlpha() const					{	return m_Flags( MeshFlag_HasAlpha );	}
 
+	TArray<float3>&			GetVertexes() 						{	return m_Vertexes;	}
 	const TArray<float3>&	GetVertexes() const					{	return m_Vertexes;	}
 	float3&					GetVertex(u32 VertIndex)			{	return m_Vertexes[VertIndex];	}
 	inline u32				GetVertexCount()			const	{	return m_Vertexes.GetSize(); }
