@@ -463,11 +463,7 @@ Bool TApplication::TApplicationState_Bootup::ArePreloadFilesLoaded()
 void TApplication::TApplicationState_Bootup::OnEnd(TRefRef NextMode)
 {
 	//	delete node
-	if ( m_LogoRenderNode.IsValid() )
-	{
-		TLRender::g_pRendergraph->RemoveNode( m_LogoRenderNode );
-		m_LogoRenderNode.SetInvalid();
-	}
+	TLRender::g_pRendergraph->RemoveNode( m_LogoRenderNode );
 
 	//	delete render target
 	if ( m_RenderTarget.IsValid() )

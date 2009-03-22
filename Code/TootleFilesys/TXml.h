@@ -54,6 +54,7 @@ public:
 	u32							GetPropertyCount() const						{	return m_Properties.GetSize();	}
 
 	TPtr<TXmlTag>&				GetChild(const TString& TagName)		{	return m_Children.FindPtr( TagName );	}
+	void						GetChildren(const TString& TagName,TPtrArray<TXmlTag>& Children);	//	get children with mathcing tag
 	TPtrArray<TXmlTag>&			GetChildren()							{	return m_Children;	}
 	const TPtrArray<TXmlTag>&	GetChildren() const						{	return m_Children;	}
 	void						AddChild(TPtr<TXmlTag>& pTag)			{	m_Children.Add( pTag );	}

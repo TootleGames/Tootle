@@ -84,6 +84,7 @@ public:
 	// Graph change requests
 	virtual TRef				CreateNode(TRefRef NodeRef,TRefRef TypeRef,TRefRef ParentRef,TLMessaging::TMessage* pInitMessage=NULL,Bool StrictNodeRef=FALSE);		//	create node and add to the graph. returns ref of new node
 	virtual Bool				RemoveNode(TRefRef NodeRef)				{	return RemoveNode( FindNode( NodeRef ) );	}
+	FORCEINLINE Bool			RemoveNode(TRef& NodeRef);				//	simple remove node wrapper which invalidates the node ref as well
 
 	//	factory access
 	Bool						AddFactory(TPtr< TClassFactory<T,FALSE> >& pFactory)
@@ -1312,6 +1313,24 @@ Bool TLGraph::TGraph<T>::RemoveNode(TPtr<T> pNode)
 }
 
 
+//-----------------------------------------------------
+//	simple remove node wrapper which invalidates the node ref as well
+//-----------------------------------------------------
+template <class T>
+Bool TLGraph::TGraph<T>::RemoveNode(TRef& NodeRef)				
+{	
+	if ( !NodeRef.IsValid() )	
+		return FALSE;	
+	
+	//	get node and remove it
+	TPtr<T>& pNode = FindNode( NodeRef );
+	Bool Result = RemoveNode( pNode );
+	
+	//	node is now invalid - so invalidate ref
+	NodeRef.SetInvalid();
+
+	return Result;	
+}
 
 
 //-----------------------------------------------------

@@ -146,9 +146,6 @@ SyncBool TLDebugFile::LoadDebugFile_MeshCube(TPtr<TLFileSys::TFile>& pFile)
 	TLMaths::TBox Box( float3(0,0,0), float3(1,1,1) );
 	pMesh->GenerateCube( Box );
 
-	//	give it some pretty colours
-	//pMesh->GenerateRainbowColours();
-
 	return LoadDebugFile_Asset( pFile, pMesh );
 }
 
@@ -163,13 +160,9 @@ SyncBool TLDebugFile::LoadDebugFile_MeshQuad(TPtr<TLFileSys::TFile>& pFile)
 	//	Very convuluted :) but there's reasons for it
 	TPtr<TLAsset::TMesh> pMesh = new TLAsset::TMesh( pFile->GetFileRef() );
 	
-	//	generate a cube
-	TFixedArray<float3,4> QuadOutline;
-	QuadOutline.Add( float3( 0, 0, 0 ) );
-	QuadOutline.Add( float3( 1, 0, 0 ) );
-	QuadOutline.Add( float3( 1, 1, 0 ) );
-	QuadOutline.Add( float3( 0, 1, 0 ) );
-	pMesh->GenerateQuad( QuadOutline );
+	//	generate a quad
+	TLMaths::TBox2D Quad( float2(0,0), float2(1,1) );
+	pMesh->GenerateQuad( Quad );
 
 	return LoadDebugFile_Asset( pFile, pMesh );
 }

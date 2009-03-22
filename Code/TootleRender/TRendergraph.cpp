@@ -52,7 +52,16 @@ TLRender::TRenderNode* TLRender::TRenderNodeFactory::CreateObject(TRefRef Instan
 		return new TLRender::TRenderNodeTile(InstanceRef,TypeRef);
 
 	if ( TypeRef == "Text" )
-		return new TLRender::TRenderNodeText(InstanceRef,TypeRef);
+	{
+		TLDebug_Warning("Text type of render node is deprecated, please use VText for vector text now");
+		return new TLRender::TRenderNodeVectorText(InstanceRef,"VText");
+	}
+
+	if ( TypeRef == "VText" )
+		return new TLRender::TRenderNodeVectorText(InstanceRef,TypeRef);
+
+	if ( TypeRef == "TxText" )
+		return new TLRender::TRenderNodeTextureText(InstanceRef,TypeRef);
 
 // [06/03/09] DB - The glyph render node needs changing to be publicly creatable.  
 // This is the only render node that has this issue

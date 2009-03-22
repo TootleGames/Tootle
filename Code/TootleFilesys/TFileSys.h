@@ -68,7 +68,6 @@ protected:
 protected:
 	TPtr<TFile>					CreateFileInstance(const TString& Filename,TRef TypeRef=TRef());	//	create new file into the file list - returns existing file if it already exists
 	Bool						RemoveFileInstance(TPtr<TFile> pFile);								//	remove file - NULL's ptr too
-	TFileRef					GetFileRef(const TString& Filename,TRef TypeRef);					//	generate file ref with explicit type
 
 	virtual u32					GetFilelistTimeoutSecs() const										{	return 10;	}	//	update file list every N seconds
 	void						FinaliseFileList();													//	update timestamp and flush missing files

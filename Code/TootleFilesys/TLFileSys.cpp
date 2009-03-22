@@ -17,6 +17,7 @@
 #include "TFileAssetScript.h"
 #include "TFileTextDatabase.h"
 #include "TFilePng.h"
+#include "TFileFnt.h"
 
 #if defined(TL_TARGET_IPOD)
 	#include "IPod/IPodLocalFileSys.h"
@@ -141,6 +142,39 @@ Bool TLFileSys::GetParentDir(TString& Directory)
 	Directory.SetLength( LastSlashIndex+1 );	//	+1 to include the trailing slash
 
 	return TRUE;
+}
+
+
+//----------------------------------------------------------
+//	generate file ref and type ref from filename
+//----------------------------------------------------------
+TLFileSys::TFileRef TLFileSys::GetFileRef(const TString& Filename,TRef TypeRef)
+{	
+	//	extract a file type from the extension of the filename if it's not been provided
+	TArray<TString> FilenameParts;
+	TRef FileRef;
+	
+	//	no .'s in the filename, so use invalid file type and generate filename in the normal way
+	if ( !Filename.Split('.',FilenameParts) )
+	{
+		FileRef.Set( Filename );
+		//	gr: dont invalidate, just leave it as provided
+		//TypeRef.SetInvalid();	
+	}
+	else 
+	{
+		//	need a type ref...
+		if ( !TypeRef.IsValid() && FilenameParts.GetSize() > 1 )
+		{
+			TypeRef.Set( FilenameParts.ElementLastConst() );
+			FilenameParts.RemoveLast();
+		}
+
+		//	get filename from first part only - world.scheme.asset becomes just "world"
+		FileRef.Set( FilenameParts[0] );
+	}
+
+	return TFileRef( FileRef, TypeRef );
 }
 
 
@@ -560,6 +594,13 @@ TLFileSys::TFile* TLFileSys::TFileFactory::CreateObject(TRefRef InstanceRef,TRef
 		return pFile;
 	}
 	
+	//	font atlas
+	if ( TypeRef == TRef("fnt") )
+	{
+		pFile = new TLFileSys::TFileFnt( InstanceRef, TypeRef );
+		return pFile;
+	}
+	
 
 	//	generic binary file
 	pFile = new TLFileSys::TFile( InstanceRef, TypeRef );
@@ -659,3 +700,8 @@ void TLFileSys::TFileFactory::OnFileRemoved(TPtr<TFile>& pFile)
 	if ( pFileGroup->IsEmpty() )
 		m_FileGroups.RemoveAt( GroupIndex );
 }
+
+
+
+
+

@@ -28,7 +28,13 @@ SyncBool TLFileSys::TFileScheme::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool&
 	//	import xml
 	SyncBool ImportResult = TFileXml::Import();
 	if ( ImportResult != SyncTrue )
+	{
+		if ( ImportResult == SyncFalse )
+		{
+			TLDebug_Break("Failed to parse xml file");
+		}
 		return ImportResult;
+	}
 
 	//	get the root tag
 	TPtr<TXmlTag> pRootTag = m_XmlData.GetChild("Scheme");

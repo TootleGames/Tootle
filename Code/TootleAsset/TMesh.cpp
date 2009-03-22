@@ -78,7 +78,7 @@ void TLAsset::TMesh::Empty()
 void TLAsset::TMesh::GenerateQuad(const TLMaths::TBox2D& Box,const TColour* pColour,float z)
 {
 	float3 TopLeft = Box.GetMin().xyz( z );
-	float3 BottomRight = Box.GetMin().xyz( z );
+	float3 BottomRight = Box.GetMax().xyz( z );
 	float3 TopRight( BottomRight.x, TopLeft.y, z );
 	float3 BottomLeft( TopLeft.x, BottomRight.y, z );
 
@@ -902,7 +902,7 @@ Bool TLAsset::TMesh::ReplaceVertex(u16 OldVertexIndex,u16 NewVertexIndex)
 //	this vertex, and correct the vertex indexes in polygons (anything > VI needs reducing)
 //	returns if any changes to polygons made
 //-------------------------------------------------------------------
-Bool TLAsset::TMesh::RemoveVertex(u16 VertexIndex)
+Bool TLAsset::TMesh::RemoveVertex(u16 VertexIndex,Bool CheckUsage)
 {
 	//	out of range
 	if ( VertexIndex > m_Vertexes.GetSize() )
@@ -917,145 +917,149 @@ Bool TLAsset::TMesh::RemoveVertex(u16 VertexIndex)
 	m_Vertexes.RemoveAt( VertexIndex );
 	if ( m_Colours.GetSize() )
 		m_Colours.RemoveAt( VertexIndex );
+	if ( m_UVs.GetSize() )
+		m_UVs.RemoveAt( VertexIndex );
 
 	s32 i;
 	Bool ChangedPolygon = FALSE;
 
-
-	//	remove and correct polygons using this index
-	for ( i=m_Triangles.GetLastIndex();	i>=0;	i-- )
+	if ( CheckUsage )
 	{
-		Triangle& t = m_Triangles[i];
-
-		//	remove if it was using this vertex
-		Bool Remove = FALSE;
-		Remove |= ( t.x == VertexIndex );
-		Remove |= ( t.y == VertexIndex );
-		Remove |= ( t.z == VertexIndex );
-		
-		if ( Remove )
+		//	remove and correct polygons using this index
+		for ( i=m_Triangles.GetLastIndex();	i>=0;	i-- )
 		{
-			ChangedPolygon |= TRUE;
-			m_Triangles.RemoveAt(i);	
-			continue;	
-		}
+			Triangle& t = m_Triangles[i];
 
-		//	correct indexes
-		if ( t.x > VertexIndex )	{	t.x--;	}
-		if ( t.y > VertexIndex )	{	t.y--;	}
-		if ( t.z > VertexIndex )	{	t.z--;	}
-	}
-
-	for ( i=m_Tristrips.GetLastIndex();	i>=0;	i-- )
-	{
-		Tristrip& Polygon = m_Tristrips[i];
-
-		//	correct/remove indexes in this tristrip
-		for ( s32 n=Polygon.GetLastIndex();	n>=0;	n-- )
-		{
-			if ( Polygon[n] == VertexIndex )
+			//	remove if it was using this vertex
+			Bool Remove = FALSE;
+			Remove |= ( t.x == VertexIndex );
+			Remove |= ( t.y == VertexIndex );
+			Remove |= ( t.z == VertexIndex );
+			
+			if ( Remove )
 			{
 				ChangedPolygon |= TRUE;
-				Polygon.RemoveAt(n);
+				m_Triangles.RemoveAt(i);	
+				continue;	
 			}
-			else if ( Polygon[n] > VertexIndex )
+
+			//	correct indexes
+			if ( t.x > VertexIndex )	{	t.x--;	}
+			if ( t.y > VertexIndex )	{	t.y--;	}
+			if ( t.z > VertexIndex )	{	t.z--;	}
+		}
+
+		for ( i=m_Tristrips.GetLastIndex();	i>=0;	i-- )
+		{
+			Tristrip& Polygon = m_Tristrips[i];
+
+			//	correct/remove indexes in this tristrip
+			for ( s32 n=Polygon.GetLastIndex();	n>=0;	n-- )
 			{
-				Polygon[n]--;
+				if ( Polygon[n] == VertexIndex )
+				{
+					ChangedPolygon |= TRUE;
+					Polygon.RemoveAt(n);
+				}
+				else if ( Polygon[n] > VertexIndex )
+				{
+					Polygon[n]--;
+				}
 			}
-		}
 
-		//	not enough left in this tristrip to form a triangle
-		if ( Polygon.GetSize() < 3 )
-		{
-			ChangedPolygon |= TRUE;
-			m_Tristrips.RemoveAt(i);
-		}
-	}
-
-	for ( i=m_Trifans.GetLastIndex();	i>=0;	i-- )
-	{
-		Trifan& Polygon = m_Trifans[i];
-
-		//	correct/remove indexes in this tristrip
-		for ( s32 n=Polygon.GetLastIndex();	n>=0;	n-- )
-		{
-			if ( Polygon[n] == VertexIndex )
-			{
-				ChangedPolygon |= TRUE;
-				Polygon.RemoveAt(n);
-			}
-			else if ( Polygon[n] > VertexIndex )
-			{
-				Polygon[n]--;
-			}
-		}
-
-		//	not enough left in this trifan to form a triangle
-		if ( Polygon.GetSize() < 3 )
-		{
-			ChangedPolygon |= TRUE;
-			m_Trifans.RemoveAt(i);
-		}
-	}
-
-	
-	for ( i=m_Linestrips.GetLastIndex();	i>=0;	i-- )
-	{
-		Linestrip& Polygon = m_Linestrips[i];
-
-		//	correct/remove indexes in this tristrip
-		for ( s32 n=Polygon.GetLastIndex();	n>=0;	n-- )
-		{
-			if ( Polygon[n] == VertexIndex )
+			//	not enough left in this tristrip to form a triangle
+			if ( Polygon.GetSize() < 3 )
 			{
 				ChangedPolygon |= TRUE;
-				Polygon.RemoveAt(n);
+				m_Tristrips.RemoveAt(i);
 			}
-			else if ( Polygon[n] > VertexIndex )
+		}
+
+		for ( i=m_Trifans.GetLastIndex();	i>=0;	i-- )
+		{
+			Trifan& Polygon = m_Trifans[i];
+
+			//	correct/remove indexes in this tristrip
+			for ( s32 n=Polygon.GetLastIndex();	n>=0;	n-- )
 			{
-				Polygon[n]--;
+				if ( Polygon[n] == VertexIndex )
+				{
+					ChangedPolygon |= TRUE;
+					Polygon.RemoveAt(n);
+				}
+				else if ( Polygon[n] > VertexIndex )
+				{
+					Polygon[n]--;
+				}
+			}
+
+			//	not enough left in this trifan to form a triangle
+			if ( Polygon.GetSize() < 3 )
+			{
+				ChangedPolygon |= TRUE;
+				m_Trifans.RemoveAt(i);
 			}
 		}
 
-		//	not enough left in this linestrip for a line
-		if ( Polygon.GetSize() < 2 )
-		{
-			ChangedPolygon |= TRUE;
-			m_Linestrips.RemoveAt(i);
-		}
-	}
-
-
-	for ( i=m_Lines.GetLastIndex();	i>=0;	i-- )
-	{
-		Line& Polygon = m_Lines[i];
-
-		//	correct indexes in this line - if any removed we need to remove the line
-		if ( Polygon.x == VertexIndex )
-		{
-			ChangedPolygon |= TRUE;
-			m_Lines.RemoveAt(i);
-			continue;
-		}
 		
-		if ( Polygon.y == VertexIndex )
+		for ( i=m_Linestrips.GetLastIndex();	i>=0;	i-- )
 		{
-			ChangedPolygon |= TRUE;
-			m_Lines.RemoveAt(i);
-			continue;
-		}
-		
-		//	correct indexes
-		if ( Polygon.x > VertexIndex )
-		{
-			ChangedPolygon |= TRUE;
-			Polygon.x--;
+			Linestrip& Polygon = m_Linestrips[i];
+
+			//	correct/remove indexes in this tristrip
+			for ( s32 n=Polygon.GetLastIndex();	n>=0;	n-- )
+			{
+				if ( Polygon[n] == VertexIndex )
+				{
+					ChangedPolygon |= TRUE;
+					Polygon.RemoveAt(n);
+				}
+				else if ( Polygon[n] > VertexIndex )
+				{
+					Polygon[n]--;
+				}
+			}
+
+			//	not enough left in this linestrip for a line
+			if ( Polygon.GetSize() < 2 )
+			{
+				ChangedPolygon |= TRUE;
+				m_Linestrips.RemoveAt(i);
+			}
 		}
 
-		if ( Polygon.y > VertexIndex )
+
+		for ( i=m_Lines.GetLastIndex();	i>=0;	i-- )
 		{
-			ChangedPolygon |= TRUE;
-			Polygon.y--;
+			Line& Polygon = m_Lines[i];
+
+			//	correct indexes in this line - if any removed we need to remove the line
+			if ( Polygon.x == VertexIndex )
+			{
+				ChangedPolygon |= TRUE;
+				m_Lines.RemoveAt(i);
+				continue;
+			}
+			
+			if ( Polygon.y == VertexIndex )
+			{
+				ChangedPolygon |= TRUE;
+				m_Lines.RemoveAt(i);
+				continue;
+			}
+			
+			//	correct indexes
+			if ( Polygon.x > VertexIndex )
+			{
+				ChangedPolygon |= TRUE;
+				Polygon.x--;
+			}
+
+			if ( Polygon.y > VertexIndex )
+			{
+				ChangedPolygon |= TRUE;
+				Polygon.y--;
+			}
 		}
 	}
 
@@ -1167,6 +1171,37 @@ Bool TLAsset::TMesh::RemoveLine(u32 VertexIndexA,u32 VertexIndexB)
 		OnPrimitivesChanged();
 
 	return ChangedPolygon;
+}
+
+	
+void TLAsset::TMesh::RemoveTriangle(u16 TriangleIndex,Bool RemoveVertexes,Bool CheckVertexUsage)
+{
+	//	check valid triangle
+	if ( TriangleIndex >= m_Triangles.GetSize() )
+	{
+		TLDebug_Break("Tried to remove invalid triangle index");
+		return;
+	}
+
+	//	remove vertexes first
+	if ( RemoveVertexes )
+	{
+		Triangle& Tri = m_Triangles[TriangleIndex];
+
+		//	sort triangle vertex order so that we remove the largest index first without having to modify all the other vertex indexes
+		if ( !CheckVertexUsage )
+			Tri.SortComponents();
+			
+		RemoveVertex( Tri.z, CheckVertexUsage );
+		RemoveVertex( Tri.y, CheckVertexUsage );
+		RemoveVertex( Tri.x, CheckVertexUsage );
+	}
+
+	//	remove triangle
+	m_Triangles.RemoveAt( TriangleIndex );
+
+	//	check geometry
+	OnPrimitivesChanged();
 }
 
 

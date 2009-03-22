@@ -166,6 +166,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TAtlas.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TAtlas.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TAudio.cpp"
 			>
 		</File>

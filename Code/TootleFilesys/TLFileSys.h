@@ -32,6 +32,7 @@ namespace TLFileSys
 	SyncBool					CreateLocalFileSys(TRef& FileSysRef,const TString& Directory,Bool IsWritable);	//	async create a local filesystem for the specified path. FileSysRef is set to the new file system's ref for the purposes of asynchronousness so keep using it when async calling this func
 
 	Bool						GetParentDir(TString& Directory);	//	directory manipulation - turns filename to dir, then chops off a dir at a time
+	TFileRef					GetFileRef(const TString& Filename,TRef TypeRef);					//	generate file ref with explicit type
 
 	extern TPtr<TFileSysFactory>	g_pFactory;			//	extern'd as it's a manager, the file factory is not exposed
 };

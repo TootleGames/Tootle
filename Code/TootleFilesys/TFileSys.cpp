@@ -217,38 +217,3 @@ void TLFileSys::TFileSys::FinaliseFileList()
 	}
 }
 
-
-//----------------------------------------------------------
-//	generate file ref and type ref from filename
-//----------------------------------------------------------
-TLFileSys::TFileRef TLFileSys::TFileSys::GetFileRef(const TString& Filename,TRef TypeRef)
-{	
-	//	extract a file type from the extension of the filename if it's not been provided
-	TArray<TString> FilenameParts;
-	TRef FileRef;
-	
-	//	no .'s in the filename, so use invalid file type and generate filename in the normal way
-	if ( !Filename.Split('.',FilenameParts) )
-	{
-		FileRef.Set( Filename );
-		//	gr: dont invalidate, just leave it as provided
-		//TypeRef.SetInvalid();	
-	}
-	else 
-	{
-		//	need a type ref...
-		if ( !TypeRef.IsValid() && FilenameParts.GetSize() > 1 )
-		{
-			TypeRef.Set( FilenameParts.ElementLastConst() );
-			FilenameParts.RemoveLast();
-		}
-
-		//	get filename from first part only - world.scheme.asset becomes just "world"
-		FileRef.Set( FilenameParts[0] );
-	}
-
-	return TFileRef( FileRef, TypeRef );
-}
-
-
-

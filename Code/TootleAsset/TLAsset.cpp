@@ -8,6 +8,8 @@
 #include "TText.h"
 #include "TTexture.h"
 #include "TAssetScript.h"
+#include "TAtlas.h"
+
 #include "TLoadTask.h"
 #include <TootleCore/TPtr.h>
 #include <TootleCore/TEventChannel.h>
@@ -307,6 +309,9 @@ TLAsset::TAsset* TLAsset::TAssetFactory::CreateObject(TRefRef InstanceRef,TRefRe
 	
 	if ( TypeRef == "Texture" )
 		return new TLAsset::TTexture( InstanceRef );	
+
+	if ( TypeRef == "Atlas" )
+		return new TLAsset::TAtlas( InstanceRef );	
 
 	//	gr: dumb asset - just stores data - consider turning this into a specific TBinaryTree/"Data" asset
 	if ( TypeRef == "Asset" )

@@ -302,6 +302,23 @@ void TXmlTag::Debug_PrintTree(u32 TreeLevel) const
 	}
 }
 
+	
+//---------------------------------------------------------
+//	get children with mathcing tag
+//---------------------------------------------------------
+void TXmlTag::GetChildren(const TString& TagName,TPtrArray<TXmlTag>& Children)
+{
+	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
+	{
+		TPtr<TXmlTag>& pChild = m_Children[c];
+		if ( pChild->GetTagName() == TagName )
+		{
+			Children.Add( pChild );
+		}
+	}
+}
+
+
 
 //---------------------------------------------------------
 //	parse xml data
@@ -494,4 +511,5 @@ void TXml::Debug_PrintTree(const TString& XmlFilename) const
 		pChildTag->Debug_PrintTree(0);
 	}
 }
+
 

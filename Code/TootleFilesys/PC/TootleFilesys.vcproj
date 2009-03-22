@@ -476,6 +476,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TFileFnt.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TFileFnt.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TFileFreetype.cpp"
 			>
 		</File>

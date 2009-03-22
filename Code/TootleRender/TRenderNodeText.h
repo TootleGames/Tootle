@@ -10,9 +10,10 @@
 
 namespace TLRender
 {
-	class TRenderNode;
-	class TRenderNodeGlyph;
 	class TRenderNodeText;
+	class TRenderNodeVectorGlyph;
+	class TRenderNodeVectorText;
+	class TRenderNodeTextureText;
 }
 
 
@@ -22,12 +23,12 @@ namespace TLRender
 //	that it holds(per render) a direct pointer to the mesh for
 //	the glyph, rather than looking it up from the ref
 //----------------------------------------------------
-class TLRender::TRenderNodeGlyph : public TLRender::TRenderNode
+class TLRender::TRenderNodeVectorGlyph : public TLRender::TRenderNode
 {
-	friend class TLRender::TRenderNodeText;
+	friend class TLRender::TRenderNodeVectorText;
 
 protected:
-	TRenderNodeGlyph(TRefRef RenderNodeRef,TRefRef TypeRef);
+	TRenderNodeVectorGlyph(TRefRef RenderNodeRef,TRefRef TypeRef);
 
 	virtual TPtr<TLAsset::TMesh>&	GetMeshAsset() 	{	return m_pGlyphMesh;	}
 
@@ -39,7 +40,7 @@ public:
 
 
 //--------------------------------------------------------
-//	text render object which renders a string with a given font
+//	base class for text render object which renders a string with a given font
 //--------------------------------------------------------
 class TLRender::TRenderNodeText : public TLRender::TRenderNode
 {
@@ -56,13 +57,48 @@ public:
 	virtual Bool			Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList);	//	our overloaded renderer
 
 protected:
-	void					SetGlyphs();			//	setup child glyph render objects
-	void					SetGlyph(TRenderNodeGlyph& RenderGlyph,TLAsset::TFont& Font,float3& GlyphPos,u16 Char);
+	virtual Bool			SetGlyphs()=0;			//	setup child glyph render objects
 
 protected:
 	TRef					m_FontRef;
 	TString					m_Text;
-	Bool					m_GlyphsChanged;		//	if TRUE we need to re-generate glyphs
+	
+private:
+	Bool					m_GlyphsValid;			//	if TRUE we need to re-generate glyphs
+};
+
+
+
+//--------------------------------------------------------
+//	base class for text render object which renders a string with a given font
+//--------------------------------------------------------
+class TLRender::TRenderNodeVectorText : public TLRender::TRenderNodeText
+{
+public:
+	TRenderNodeVectorText(TRefRef RenderNodeRef,TRefRef TypeRef);
+
+protected:
+	virtual Bool			SetGlyphs();			//	setup child glyph render objects
+	void					SetGlyph(TRenderNodeVectorGlyph& RenderGlyph,TLAsset::TFont& Font,float3& GlyphPos,u16 Char);
+};
+
+
+
+//--------------------------------------------------------
+//	textured font text
+//--------------------------------------------------------
+class TLRender::TRenderNodeTextureText : public TLRender::TRenderNodeText
+{
+public:
+	TRenderNodeTextureText(TRefRef RenderNodeRef,TRefRef TypeRef);
+
+protected:
+	virtual Bool					SetGlyphs();			//	setup geometry
+	virtual TPtr<TLAsset::TMesh>&	GetMeshAsset()			{	return m_pMesh;	}
+	virtual void					Initialise(TLMessaging::TMessage& Message);
+
+protected:
+	TPtr<TLAsset::TMesh>	m_pMesh;				//	mesh with our "sprites" in
 };
 
 

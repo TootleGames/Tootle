@@ -32,11 +32,7 @@ TLGame::TScreenRayTest::~TScreenRayTest()
 	}
 
 	//	delete render node
-	if ( m_RenderNodeRef.IsValid() )
-	{
-		TLRender::g_pRendergraph->RemoveNode( m_RenderNodeRef );
-		m_RenderNodeRef.SetInvalid();
-	}
+	TLRender::g_pRendergraph->RemoveNode( m_RenderNodeRef );
 }
 
 

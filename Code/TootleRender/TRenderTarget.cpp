@@ -768,7 +768,9 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 	if ( pMesh && !pMesh->IsEmpty() )
 	{
 		//	do first non-wireframe render
+		#ifdef _DEBUG
 		if ( !RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_Wireframe ) )
+		#endif
 		{
 			Bool HasAlpha = pMesh->HasAlpha();
 

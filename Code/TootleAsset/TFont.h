@@ -39,3 +39,5 @@ protected:
 	u32									m_ImportChildIndex;	//	current child we're importing
 };
 
+
+

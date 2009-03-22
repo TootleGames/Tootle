@@ -29,8 +29,7 @@ public:
 public:
 	Type2()															{	Set(0,0);	};
 	Type2(const TYPE& a)											{	Set(a,a);	};
-	Type2(const TYPE a)												{	Set(a,a);	};
-	Type2(const TYPE a, const TYPE b)								{	Set(a,b);	};
+	Type2(const TYPE& a, const TYPE& b)								{	Set(a,b);	};
 	template<typename OTHERTYPE> Type2(const Type2<OTHERTYPE>& t)	{	Set( t.x, t.y );	};
 
 	inline static u32	GetSize() 									{	return 2;	}
@@ -192,6 +191,7 @@ public:
 	void			RotateY(float RadAng);
 	void			RotateZ(float RadAng);
 	void			SetRotation( float Angle, float Elevation, float Length );
+	void			SortComponents();
 
 public:
 	TYPE	x;
@@ -208,8 +208,6 @@ class Type4
 public:
 	Type4() : x(0), y(0), z(0), w(0)								{	}
 	Type4(const TYPE& a) : x(a), y(a), z(a), w(a)					{	}
-//	Type4(const TYPE a)												{	Set(a,a,a,a);	};
-//	Type4(const TYPE a, const TYPE b, const TYPE c, const TYPE d)	{	Set(a,b,c,d);	};
 	Type4(const TYPE& a, const TYPE& b, const TYPE& c, const TYPE& d) : x(a), y(b), z(c), w(d)	{}
 	Type4(TYPE* p) : x(p[0]), y(p[1]), z(p[2]), w(p[3])				{	}
 	template<typename OTHERTYPE> Type4(const Type4<OTHERTYPE>& t)	{	Set( (TYPE)t.x, (TYPE)t.y, (TYPE)t.z, (TYPE)t.w );	};	
@@ -393,6 +391,31 @@ void Type3<TYPE>::SetRotation( float Angle, float Elevation, float Length )
 	z = TLMaths::Cosf( Angle ) * Length;
 }
 
+
+template <class TYPE>
+void Type3<TYPE>::SortComponents()
+{
+	//	sort x/y
+	if ( y < x )
+	{
+		TYPE tmp = x;
+		x = y;
+		y = tmp;
+	}
+
+	if ( z < x )
+	{
+		TYPE tmp = x;
+		x = z;
+		z = tmp;
+	}
+	else if ( z < y )
+	{
+		TYPE tmp = y;
+		y = z;
+		z = tmp;
+	}
+}
 
 template<typename TYPE> template<typename OTHERTYPE> void Type2<TYPE>::operator=(const Type2<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	}
 template<typename TYPE> template<typename OTHERTYPE> void Type2<TYPE>::operator=(const Type3<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	}

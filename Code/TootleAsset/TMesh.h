@@ -115,8 +115,9 @@ public:
 	//	vertex manipulation
 	s32						AddVertex(const float3& VertexPos,const TColour* pColour=NULL,const float2* pUV=NULL);	//	add vertex to the list, makes up normals and colours if required
 	FORCEINLINE s32			AddVertex(const float3& VertexPos,const TColour& Colour)		{	return AddVertex( VertexPos, &Colour );	}
-	Bool					RemoveVertex(u16 VertexIndex);								//	remove a vertex, remove it's colour, remove any polygons that use this vertex, and correct the vertex indexes in polygons (anything > VI needs reducing). returns if any changes to polygons made
-	Bool					ReplaceVertex(u16 OldVertexIndex,u16 NewVertexIndex);		//	find all uses of OldVertexIndex in polygons and swap them for NewVertexIndex 
+	Bool					RemoveVertex(u16 VertexIndex,Bool CheckUsage=TRUE);				//	remove a vertex, remove it's colour, remove any polygons that use this vertex, and correct the vertex indexes in polygons (anything > VI needs reducing). returns if any changes to polygons made
+	Bool					ReplaceVertex(u16 OldVertexIndex,u16 NewVertexIndex);			//	find all uses of OldVertexIndex in polygons and swap them for NewVertexIndex 
+	void					RemoveTriangle(u16 TriangleIndex,Bool RemoveVertexes=TRUE,Bool CheckVertexUsage=TRUE);	//	
 	inline void				ScaleVerts(float Scale,u16 FirstVert=0,s32 LastVert=-1)				{	ScaleVerts( float3( Scale, Scale, Scale ), FirstVert, LastVert );	}
 	void					ScaleVerts(const float3& Scale,u16 FirstVert=0,s32 LastVert=-1);	//	scale all vertexes
 	void					MoveVerts(const float3& Movement,u16 FirstVert=0,s32 LastVert=-1);	//	move all verts
@@ -127,14 +128,16 @@ public:
 	const TFlags<TMeshFlags,u8>&	GetFlags() const			{	return m_Flags;	}
 	FORCEINLINE Bool		HasAlpha() const					{	return m_Flags( MeshFlag_HasAlpha );	}
 
-	TArray<float3>&			GetVertexes() 						{	return m_Vertexes;	}
-	const TArray<float3>&	GetVertexes() const					{	return m_Vertexes;	}
-	float3&					GetVertex(u32 VertIndex)			{	return m_Vertexes[VertIndex];	}
-	inline u32				GetVertexCount()			const	{	return m_Vertexes.GetSize(); }
-	TArray<TColour>&		GetColours()						{	return m_Colours;	}
-	const TArray<TColour>&	GetColours() const					{	return m_Colours;	}
-	TArray<float2>&			GetUVs()							{	return m_UVs;	}
-	const TArray<float2>&	GetUVs() const						{	return m_UVs;	}
+	FORCEINLINE float3&					GetVertex(u32 VertIndex)			{	return m_Vertexes[VertIndex];	}
+	FORCEINLINE float2&					GetVertexUV(u32 VertIndex)			{	return m_UVs[VertIndex];	}
+	FORCEINLINE TColour&				GetVertexColour(u32 VertIndex)		{	return m_Colours[VertIndex];	}
+	FORCEINLINE TArray<float3>&			GetVertexes() 						{	return m_Vertexes;	}
+	FORCEINLINE const TArray<float3>&	GetVertexes() const					{	return m_Vertexes;	}
+	FORCEINLINE u32						GetVertexCount() const				{	return m_Vertexes.GetSize(); }
+	FORCEINLINE TArray<TColour>&		GetColours()						{	return m_Colours;	}
+	FORCEINLINE const TArray<TColour>&	GetColours() const					{	return m_Colours;	}
+	FORCEINLINE TArray<float2>&			GetUVs()							{	return m_UVs;	}
+	FORCEINLINE const TArray<float2>&	GetUVs() const						{	return m_UVs;	}
 
 	TArray<Triangle>&		GetTriangles()						{	return m_Triangles;	}
 	TArray<Tristrip>&		GetTristrips()						{	return m_Tristrips;	}

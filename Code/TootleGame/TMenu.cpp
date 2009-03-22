@@ -359,11 +359,7 @@ TLGame::TMenuWrapper::TMenuWrapper(TLMenu::TMenuController* pMenuController,TRef
 TLGame::TMenuWrapper::~TMenuWrapper()
 {
 	//	delete render node
-	if ( m_RenderNode.IsValid() )
-	{
-		TLRender::g_pRendergraph->RemoveNode( m_RenderNode );
-		m_RenderNode.SetInvalid();
-	}
+	TLRender::g_pRendergraph->RemoveNode( m_RenderNode );
 	
 	//	
 	m_MenuRef.SetInvalid();
