@@ -25,6 +25,7 @@ namespace TLFilePng
 void TLFilePng::AllocRowData(TArray<u8*>& RowData,libpng::png_infop info_ptr,u32& RowDataSize,u32& TotalDataSize)
 {
 	RowDataSize = info_ptr->rowbytes;
+//	RowDataSize = info_ptr->width * info_ptr->channels;
 	TotalDataSize = 0;
 
 	//	alloc rows of data
@@ -140,6 +141,12 @@ TLFileSys::TFilePng::TFilePng(TRefRef FileRef,TRefRef FileTypeRef) :
 //--------------------------------------------------------------	
 SyncBool TLFileSys::TFilePng::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported)
 {
+	if ( pAsset )
+	{
+		TLDebug_Break("Async export not supported yet. asset should be NULL");
+		return SyncFalse;
+	}
+
 	Supported = TRUE;
 	
 	//	check first 8 bytes for validity
@@ -208,12 +215,12 @@ SyncBool TLFileSys::TFilePng::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Su
 		png_set_gray_1_2_4_to_8(png_ptr);
 
 	//	something about alpha channel
-	if (png_get_valid(png_ptr, info_ptr,PNG_INFO_tRNS)) 
-		png_set_tRNS_to_alpha(png_ptr);
+//	if (png_get_valid(png_ptr, info_ptr,PNG_INFO_tRNS)) 
+//		png_set_tRNS_to_alpha(png_ptr);
 
 	//	dont combine alpha with main image
-	if (info_ptr->color_type & PNG_COLOR_MASK_ALPHA)
-        png_set_strip_alpha(png_ptr);
+//	if (info_ptr->color_type & PNG_COLOR_MASK_ALPHA)
+ //       png_set_strip_alpha(png_ptr);
 
 	//	expand small bit depths to 8bit
 	if (info_ptr->bit_depth < 8)
