@@ -110,7 +110,7 @@ Bool TLRender::Platform::RenderTarget::BeginProjectDraw(TLRender::TProjectCamera
 	const TLMaths::TMatrix& LookAtMatrix = pCamera->GetCameraLookAtMatrix();
 	m_pCameraMatrix = &LookAtMatrix;
 
-	Opengl::SceneTransform( m_CameraTransform );
+	Opengl::SceneTransform( m_CameraTransform, m_pCameraMatrix);
 
 	return TRUE;
 }
@@ -231,7 +231,7 @@ void TLRender::Platform::RenderTarget::BeginSceneReset(Bool ApplyCamera)
 	//	and reset to camera pos
 	if ( ApplyCamera )
 	{
-		Opengl::SceneTransform( m_CameraTransform );
+		Opengl::SceneTransform( m_CameraTransform, m_pCameraMatrix);
 	}
 }
 
