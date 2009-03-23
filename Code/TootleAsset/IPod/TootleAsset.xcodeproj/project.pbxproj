@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		840EBDB20F777B5600BA6F4C /* TAtlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840EBDAE0F777B5600BA6F4C /* TAtlas.cpp */; };
+		840EBDB30F777B5600BA6F4C /* TAtlas.h in Headers */ = {isa = PBXBuildFile; fileRef = 840EBDAF0F777B5600BA6F4C /* TAtlas.h */; };
+		840EBDB40F777B5600BA6F4C /* TTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840EBDB00F777B5600BA6F4C /* TTexture.cpp */; };
+		840EBDB50F777B5600BA6F4C /* TTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 840EBDB10F777B5600BA6F4C /* TTexture.h */; };
 		8418F8CB0F4EB9C200B956C9 /* TPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F8C90F4EB9C200B956C9 /* TPath.cpp */; };
 		8418F8CC0F4EB9C200B956C9 /* TPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F8CA0F4EB9C200B956C9 /* TPath.h */; };
 		84C0CA490F6D6C840080B167 /* TText.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C0CA470F6D6C840080B167 /* TText.h */; };
@@ -33,6 +37,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		840EBDAE0F777B5600BA6F4C /* TAtlas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAtlas.cpp; path = ../TAtlas.cpp; sourceTree = SOURCE_ROOT; };
+		840EBDAF0F777B5600BA6F4C /* TAtlas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAtlas.h; path = ../TAtlas.h; sourceTree = SOURCE_ROOT; };
+		840EBDB00F777B5600BA6F4C /* TTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTexture.cpp; path = ../TTexture.cpp; sourceTree = SOURCE_ROOT; };
+		840EBDB10F777B5600BA6F4C /* TTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTexture.h; path = ../TTexture.h; sourceTree = SOURCE_ROOT; };
 		8418F8C90F4EB9C200B956C9 /* TPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPath.cpp; path = ../TPath.cpp; sourceTree = SOURCE_ROOT; };
 		8418F8CA0F4EB9C200B956C9 /* TPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPath.h; path = ../TPath.h; sourceTree = SOURCE_ROOT; };
 		84C0CA470F6D6C840080B167 /* TText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TText.h; path = ../TText.h; sourceTree = SOURCE_ROOT; };
@@ -94,6 +102,10 @@
 		84C109450F0A789D00B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				840EBDAE0F777B5600BA6F4C /* TAtlas.cpp */,
+				840EBDAF0F777B5600BA6F4C /* TAtlas.h */,
+				840EBDB00F777B5600BA6F4C /* TTexture.cpp */,
+				840EBDB10F777B5600BA6F4C /* TTexture.h */,
 				8418F8C90F4EB9C200B956C9 /* TPath.cpp */,
 				8418F8CA0F4EB9C200B956C9 /* TPath.h */,
 				84DE34290F12A9C500608F8C /* TScheme.cpp */,
@@ -151,6 +163,8 @@
 				8418F8CC0F4EB9C200B956C9 /* TPath.h in Headers */,
 				84C0CA490F6D6C840080B167 /* TText.h in Headers */,
 				84C0CA4D0F6D6D0F0080B167 /* TAssetScript.h in Headers */,
+				840EBDB30F777B5600BA6F4C /* TAtlas.h in Headers */,
+				840EBDB50F777B5600BA6F4C /* TTexture.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -208,6 +222,8 @@
 				8418F8CB0F4EB9C200B956C9 /* TPath.cpp in Sources */,
 				84C0CA4A0F6D6C840080B167 /* TText.cpp in Sources */,
 				84C0CA4E0F6D6D0F0080B167 /* TAssetScript.cpp in Sources */,
+				840EBDB20F777B5600BA6F4C /* TAtlas.cpp in Sources */,
+				840EBDB40F777B5600BA6F4C /* TTexture.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

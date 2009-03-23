@@ -272,19 +272,21 @@
 							<array>
 								<string>84C108E00F0A770B00B2DF7A</string>
 								<string>84C109F40F0A799D00B2DF7A</string>
+								<string>84C109F00F0A799500B2DF7A</string>
 								<string>1C37FBAC04509CD000000102</string>
+								<string>840EC1320F777CE700BA6F4C</string>
+								<string>840EC1330F777CE700BA6F4C</string>
 								<string>1C08E77C0454961000C914BD</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>4</integer>
-									<integer>0</integer>
+									<integer>54</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {186, 609}}</string>
+							<string>{{0, 445}, {186, 609}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -319,7 +321,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TLFileSys.cpp</string>
+								<string>TVirtualFileSys.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -327,11 +329,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TLFileSys.cpp</string>
+										<string>TVirtualFileSys.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>840EBCC30F7296BA00BA6F4C</string>
+										<string>840EC1370F777CE700BA6F4C</string>
 										<key>history</key>
 										<array>
 											<string>84E6432C0F15293C005A4DC9</string>
@@ -362,7 +364,8 @@
 											<string>84C0CA900F6D70DB0080B167</string>
 											<string>84C0CA910F6D70DB0080B167</string>
 											<string>84C0CA920F6D70DB0080B167</string>
-											<string>840EBC610F72966E00BA6F4C</string>
+											<string>840EC1340F777CE700BA6F4C</string>
+											<string>840EC1350F777CE700BA6F4C</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -395,6 +398,7 @@
 											<string>84C0CA3A0F6D6C250080B167</string>
 											<string>84C0CA3B0F6D6C250080B167</string>
 											<string>84C0CA3E0F6D6C250080B167</string>
+											<string>840EC1360F777CE700BA6F4C</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -452,9 +456,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>840EBCC50F7296BA00BA6F4C</string>
+				<string>840EC1380F777CE700BA6F4C</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>840EBCC60F7296BA00BA6F4C</string>
+				<string>840EC1390F777CE700BA6F4C</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -588,6 +592,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>84C10BF00F0A84D400B2DF7A</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleFilesys/IPod/TootleFileSys.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -629,6 +634,8 @@
 							<string>218pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -668,7 +675,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>84C10BF00F0A84D400B2DF7A</string>
-				<string>84C0CAAC0F6D70DB0080B167</string>
+				<string>840EC1150F777BF700BA6F4C</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
