@@ -589,6 +589,13 @@ TLPath::TPathNetworkZones::TPathNetworkZones(TPtr<TLAsset::TPathNetwork>& pPathN
 		TLDebug_Break("Path network expected");
 		return;
 	}
+	
+	if ( !m_pRootZone )
+	{
+		TLDebug_Break("Root zone expected");
+		return;
+	}
+	
 
 
 	const TArray<TLPath::TPathLink>& PathLinks = pPathNetwork->GetLinks();
