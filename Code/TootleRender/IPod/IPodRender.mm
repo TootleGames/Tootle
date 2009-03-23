@@ -198,6 +198,37 @@ void TLRender::Opengl::Platform::DrawPrimitives(u16 GLPrimType,u32 IndexCount,co
 	Debug_CheckForError();
 }
 
+//---------------------------------------------------
+//	bind UV's
+//---------------------------------------------------
+Bool TLRender::Opengl::Platform::BindUVs(const TArray<float2>* pUVs)
+{
+	//	remove pointer if empty
+	if ( pUVs && pUVs->GetSize() == 0 )
+		pUVs = NULL;
+	
+	//	already bound to this
+//	if ( pUVs == g_pBoundUVs )
+//		return TRUE;
+
+	//	unbind
+	if ( !pUVs )
+	{
+		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+		Opengl::Platform::Debug_CheckForError();
+		return TRUE;
+	}
+
+	//	enable texcoord array
+	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+	
+	//	bind
+	glTexCoordPointer( 2, GL_FLOAT, 0, pUVs->GetData() );
+	
+	Debug_CheckForError();
+	
+	return TRUE;
+}
 
 
 //---------------------------------------------------
