@@ -22,6 +22,7 @@ namespace TLCollada
 	class TGeometry;
 	class TGeometryData;
 	class VertexMap;
+	class TMaterial;
 }
 
 
@@ -74,7 +75,7 @@ class TLCollada::TGeometry
 {
 public:
 	TGeometry();
-	Bool						Import(TXmlTag& Tag);	//	import geometry data
+	Bool						Import(TXmlTag& Tag,TPtrArray<TLCollada::TMaterial>& Materials);	//	import geometry data
 
 	FORCEINLINE Bool			operator==(const TString& GeometryID) const		{	return (m_GeometryID == GeometryID);	}
 
@@ -86,6 +87,20 @@ public:
 	TPtr<TLAsset::TMesh>			m_pMesh;			//	mesh created from all the geometry data
 };
 
+
+
+
+class TLCollada::TMaterial
+{
+public:
+	Bool						Import(TXmlTag& MaterialTag,TXmlTag& LibraryEffectsTag);	//	import 
+
+	FORCEINLINE Bool			operator==(const TString& MaterialID) const		{	return (m_MaterialID == MaterialID);	}
+
+public:
+	TString						m_MaterialID;		//	unique name of the geometry (ID) - copied so we pre-pend with # to make matching id's easier
+	TColour						m_Colour;
+};
 
 
 
@@ -102,11 +117,13 @@ public:
 
 protected:
 	Bool				ImportGeometryLibraries(TXmlTag& RootTag);				//	import geometry information
+	Bool				ImportMaterialLibraries(TXmlTag& RootTag);				//	import material information
 	Bool				ImportScene(TLAsset::TMesh& Mesh,TXmlTag& RootTag);		//	
 	Bool				CreateDatum(TLAsset::TMesh& Mesh,TRefRef DatumRef,TRefRef DatumShapeType,const TLAsset::TMesh& GeometryMesh);
 
 protected:
 	TPtrArray<TLCollada::TGeometry>		m_Geometry;		//	list of geometry (meshes) we've created
+	TPtrArray<TLCollada::TMaterial>		m_Materials;	//	list of materials
 };
 
 	

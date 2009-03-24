@@ -96,7 +96,7 @@ TLCollada::TGeometry::TGeometry() :
 {
 }
 
-Bool TLCollada::TGeometry::Import(TXmlTag& Tag)
+Bool TLCollada::TGeometry::Import(TXmlTag& Tag,TPtrArray<TLCollada::TMaterial>& Materials)
 {
 	//	import names
 	m_pGeometryName = Tag.GetProperty("name");	//	optional
@@ -150,7 +150,11 @@ Bool TLCollada::TGeometry::Import(TXmlTag& Tag)
 	for ( u32 t=0;	t<TriangleTags.GetSize();	t++ )
 	{
 		TXmlTag* pTriangleTag = TriangleTags[t];
-		//const TString* pMaterial = pTriangleTag->GetProperty("Material");
+
+		//	get material
+		const TString* pMaterialID = pTriangleTag->GetProperty("Material");
+		TPtr<TLCollada::TMaterial>* ppMaterial = pMaterialID ? Materials.Find( *pMaterialID ) : NULL;
+		TLCollada::TMaterial* pMaterial = ppMaterial ? (*ppMaterial).GetObject() : NULL;
 
 		//	get all the different mappings of triangle data -> vertex data
 		u32 TriangleDataStep = 1;	//	step is the biggest offset from the inputs, + 1
@@ -193,6 +197,9 @@ Bool TLCollada::TGeometry::Import(TXmlTag& Tag)
 			TLDebug_Break("<triangles> tag is missing data tag <p>");
 			return FALSE;
 		}
+
+		//	get vertex's colour
+		TColour* pVertexColour = pMaterial ? &pMaterial->m_Colour : NULL;
 
 		TLDebug_Print("Collada: Importing geometry triangle's triangles...");
 		u32 DataIndex = 0;				//	which bit of data are we on (ie. index in the array)
@@ -237,7 +244,7 @@ Bool TLCollada::TGeometry::Import(TXmlTag& Tag)
 				}
 
 				//	create vertex
-				CurrentTriangleVertexMap.m_VertexIndex = m_pMesh->AddVertex( *pPosition, NULL, pTexCoord );
+				CurrentTriangleVertexMap.m_VertexIndex = m_pMesh->AddVertex( *pPosition, pVertexColour, pTexCoord );
 
 				//	add to list
 				s32 MapIndex = m_VertexMap.Add( CurrentTriangleVertexMap );
@@ -418,6 +425,98 @@ const float* TLCollada::TGeometryData::GetFloatData(u32 ElementIndex,u32 Element
 
 
 
+Bool TLCollada::TMaterial::Import(TXmlTag& MaterialTag,TXmlTag& LibraryEffectsTag)
+{
+	/*
+	<material id="right door" name="right door">
+		<instance_effect url="#right door-effect" />
+	</material>
+	*/
+	//	get id
+	const TString* pIDString = MaterialTag.GetProperty("id");
+	if ( !pIDString )
+	{
+		TLDebug_Break("<Material> missing id");
+		return FALSE;
+	}
+	m_MaterialID = *pIDString;
+
+	//	get effect id
+	TXmlTag* pMaterialEffectTag = MaterialTag.GetChild("Instance_effect");
+	const TString* pEffectString = pMaterialEffectTag ? pMaterialEffectTag->GetProperty("url") : NULL;
+	if ( !pEffectString )
+	{
+		TLDebug_Break("Material missing effect link");
+		return FALSE;
+	}
+
+	//	remove the # from the effect string
+	TTempString MaterialEffectID = *pEffectString;
+	if ( MaterialEffectID.GetCharAt(0) == '#' )
+		MaterialEffectID.RemoveCharAt(0,1);
+
+	//	get the effect info
+	TXmlTag* pEffectTag = NULL;
+	for ( u32 e=0;	e<LibraryEffectsTag.GetChildren().GetSize();	e++ )
+	{
+		TXmlTag* pChildEffectTag = LibraryEffectsTag.GetChildren().ElementAt(e);
+		const TString* pChildEffectID = pChildEffectTag->GetProperty("id");
+		if ( pChildEffectTag->GetTagName() != "effect" || !pChildEffectID )
+			continue;
+
+		if ( (*pChildEffectID) != MaterialEffectID )
+			continue;
+
+		//	found the effect
+		pEffectTag = pChildEffectTag;
+		break;
+	}
+
+	//	couldnt find effect tag
+	if ( !pEffectTag )
+	{
+		TLDebug_Break("Cannot find effect info for material");
+		return FALSE;
+	}
+
+	//	get profile tag
+	TXmlTag* pProfileTag = pEffectTag->GetChild("profile_COMMON");
+	TXmlTag* pTechniqueTag = pProfileTag ? pProfileTag->GetChild("technique") : NULL;
+	TXmlTag* pPhongTag = pTechniqueTag ? pTechniqueTag->GetChild("phong") : NULL;
+	if ( !pPhongTag )
+	{
+		TLDebug_Break("Couldnt find the <effect><profile_common><technique><phong> tag. Phong is the only one i know in use at the moment!");
+		return FALSE;
+	}
+
+	//	just use the ambient colour for our material colour;
+	//	http://en.wikipedia.org/wiki/Phong_shading
+	TXmlTag* pAmbientTag = pPhongTag->GetChild("ambient");
+	TXmlTag* pAmbientColourTag = pAmbientTag ? pAmbientTag->GetChild("color") : NULL;
+	if ( !pAmbientColourTag )
+	{
+		TLDebug_Break("Missing ambient/colour tag from phong effect");
+		return FALSE;
+	}
+
+	//	read out colour
+	u32 CharIndex = 0;
+	if ( !TLString::ReadNextFloat( pAmbientColourTag->GetDataString(), CharIndex, m_Colour.GetRgba() ) )
+	{
+		TLDebug_Break("Failed to read colour from phong ambient colour tag");
+		return FALSE;
+	}
+
+	return TRUE;	
+}
+
+
+
+
+
+
+
+
 
 TLFileSys::TFileCollada::TFileCollada(TRefRef FileRef,TRefRef FileTypeRef) :
 	TFileXml			( FileRef, FileTypeRef )
@@ -450,6 +549,11 @@ SyncBool TLFileSys::TFileCollada::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool
 
 	//	malformed SVG maybe
 	if ( !pRootTag )
+		return SyncFalse;
+
+	//	import material information
+	TLDebug_Print("Collada: Importing material libraries...");
+	if ( !ImportMaterialLibraries( *pRootTag ) )
 		return SyncFalse;
 
 	//	import geometry information
@@ -558,6 +662,40 @@ Bool TLFileSys::TFileCollada::ImportScene(TLAsset::TMesh& Mesh,TXmlTag& RootTag)
 
 
 //--------------------------------------------------------
+//	import material information
+//--------------------------------------------------------
+Bool TLFileSys::TFileCollada::ImportMaterialLibraries(TXmlTag& RootTag)
+{
+	//	get the library tag
+	TXmlTag* pLibraryTag = RootTag.GetChild("library_materials");
+	TXmlTag* pLibraryEffectsTag = RootTag.GetChild("library_effects");
+	if ( !pLibraryTag || !pLibraryEffectsTag )
+	{
+		TLDebug_Break("Collada has no materials and/or no effects");
+		return FALSE;
+	}
+
+	//	import all the material children
+	for ( u32 c=0;	c<pLibraryTag->GetChildren().GetSize();	c++ )
+	{
+		TXmlTag* pMaterialTag = pLibraryTag->GetChildren().ElementAt(c);
+		if ( pMaterialTag->GetTagName() != "material" )
+			continue;
+
+		//	create new geometry
+		TLDebug_Print("Collada: Importing material...");
+		TPtr<TLCollada::TMaterial> pNewMaterial = new TLCollada::TMaterial;
+		if ( !pNewMaterial->Import( *pMaterialTag, *pLibraryEffectsTag ) )
+			return FALSE;
+
+		//	add to list of geometries
+		m_Materials.Add( pNewMaterial );
+	}
+
+	return TRUE;
+}
+
+//--------------------------------------------------------
 //	import geometry information
 //--------------------------------------------------------
 Bool TLFileSys::TFileCollada::ImportGeometryLibraries(TXmlTag& RootTag)
@@ -580,7 +718,7 @@ Bool TLFileSys::TFileCollada::ImportGeometryLibraries(TXmlTag& RootTag)
 		//	create new geometry
 		TLDebug_Print("Collada: Importing geometry...");
 		TPtr<TLCollada::TGeometry> pNewGeometry = new TLCollada::TGeometry;
-		if ( !pNewGeometry->Import( *pGeometryTag ) )
+		if ( !pNewGeometry->Import( *pGeometryTag, m_Materials ) )
 			return FALSE;
 
 		//	add to list of geometries
