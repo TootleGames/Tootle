@@ -20,8 +20,8 @@ TLRender::Platform::Screen::Screen(TRefRef ScreenRef,TScreenShape ScreenShape) :
 	TLRender::TScreen	( ScreenRef, ScreenShape )
 {
 	//	gr: default to double iphone resolution for now
-	m_Size.Width() = (s16)( 320.f * 1.5f );
-	m_Size.Height() = (s16)( 480.f * 1.5f );
+	m_Size.Width() = 320;
+	m_Size.Height() = 480;
 }
 
 
