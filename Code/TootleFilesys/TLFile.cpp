@@ -34,107 +34,55 @@ Bool TLString::ReadNextLetter(const TString& String,u32& CharIndex, char& Char)
 	}
 }
 
-/*
 
 //--------------------------------------------------------
 //	
 //--------------------------------------------------------
-Bool ReadNextFloat2(const TString& String,u32& CharIndex, float2& Float2)
+Bool TLString::ReadNextInteger(const TString& String,u32& CharIndex,s32& Integer)
 {
 	//	step over whitespace
 	s32 NonWhitespaceIndex = String.GetCharIndexNonWhitespace( CharIndex );
+
+	//	no more non-whitespace? no more data then
 	if ( NonWhitespaceIndex == -1 )
 		return FALSE;
 
 	//	move char past whitespace
 	CharIndex = (u32)NonWhitespaceIndex;
 
-	//	right, expecting a comma to seperate the two points
-	//	if we find a whitespace first then there's a problem
 	s32 NextComma = String.GetCharIndex(',', CharIndex);
 	s32 NextWhitespace = String.GetCharIndexWhitespace( CharIndex );
+	s32 NextSplit = String.GetLength();
 
-	//	no comma at all
-	if ( NextComma == -1 )
+	if ( NextComma != -1 && NextComma < NextSplit )
+		NextSplit = NextComma;
+	if ( NextWhitespace != -1 && NextWhitespace < NextSplit )
+		NextSplit = NextWhitespace;
+
+	//	split
+	TTempString StringValue;
+	StringValue.Append( String, CharIndex, NextSplit-CharIndex );
+	if ( !StringValue.GetInteger( Integer ) )
 	{
-		TLDebug_Break("Expected to find comma for float2");
+		TLDebug_Break("Failed to parse integer from string");
 		return FALSE;
 	}
 
-	//	no more whitespaces, make end of this as end of string
-	if ( NextWhitespace == -1 )
-		NextWhitespace = String.GetLength();
+	//	move string along past split
+	CharIndex = NextSplit+1;
 
-	//	whitespace before comma
-	if ( NextWhitespace < NextComma )
-	{
-		TLDebug_Break("Found whitespace before comma.");
-		return FALSE;
-	}
-
-	//	right. here->comma is x, comma->whitespace is y
-	TTempString StringX;
-	StringX.Append( String, CharIndex, NextComma-CharIndex );
-	if ( !StringX.GetFloat( Float2.x ) )
-	{
-		TLDebug_Break("Failed to parse first float");
-		return FALSE;
-	}
-
-	TTempString StringY;
-	StringY.Append( String, NextComma+1, NextWhitespace-(NextComma+1) );
-	if ( !StringY.GetFloat( Float2.y ) )
-	{
-		TLDebug_Break("Failed to parse second float");
-		return FALSE;
-	}
-
-	//	all done! move along char index
-	CharIndex = NextWhitespace;
+	//	out of string
+	if ( CharIndex >= String.GetLength() )
+		CharIndex = String.GetLength();
 
 	return TRUE;
 }
 
 
-
 //--------------------------------------------------------
 //	
 //--------------------------------------------------------
-Bool ReadNextFloat(const TString& String,u32& CharIndex, float& Float)
-{
-	//	step over whitespace
-	s32 NonWhitespaceIndex = String.GetCharIndexNonWhitespace( CharIndex );
-	if ( NonWhitespaceIndex == -1 )
-		return FALSE;
-
-	//	move char past whitespace
-	CharIndex = (u32)NonWhitespaceIndex;
-
-	s32 NextWhitespace = String.GetCharIndexWhitespace( CharIndex );
-
-	//	no more whitespaces, make end of this as end of string
-	if ( NextWhitespace == -1 )
-		NextWhitespace = String.GetLength();
-
-	TTempString StringFloat;
-	StringFloat.Append( String, CharIndex, NextWhitespace-CharIndex );
-	if ( !StringFloat.GetFloat( Float ) )
-	{
-		TLDebug_Break("Failed to parse first float");
-		return FALSE;
-	}
-
-	//	all done! move along char index
-	CharIndex = NextWhitespace;
-
-	return TRUE;
-}
-*/
-
-//--------------------------------------------------------
-//	
-//--------------------------------------------------------
-Bool TLString::ReadNextFloatArray(const TString& String,u32& CharIndex,float* pFloats,u32 FloatSize)
+Bool TLString::ReadNextFloatArray(const TString& String,u32& CharIndex,float* pFloats,u32 FloatSize,Bool ReturnInvalidFloatZero)
 {
 	//	loop through parsing seperators and floats
 	u32 FloatIndex = 0;
@@ -164,8 +112,16 @@ Bool TLString::ReadNextFloatArray(const TString& String,u32& CharIndex,float* pF
 		Stringf.Append( String, CharIndex, NextSplit-CharIndex );
 		if ( !Stringf.GetFloat( pFloats[FloatIndex] ) )
 		{
-			TLDebug_Break("Failed to parse first float");
-			return FALSE;
+			//	gr: this is a work around when processing floats but encounter invalid floats in strings... say 1.1e07 (invalid floats from outputter)
+			if ( ReturnInvalidFloatZero )
+			{
+				pFloats[FloatIndex] = 0.f;
+			}
+			else
+			{
+				TLDebug_Break("Failed to parse first float");
+				return FALSE;
+			}
 		}
 
 		//	next float
@@ -324,3 +280,42 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 	return SyncFalse;
 }
 
+
+
+//--------------------------------------------------------
+//	check if string marked as a datum
+//--------------------------------------------------------
+Bool TLString::IsDatumString(const TString& String,TRef& DatumRef,TRef& ShapeType)
+{
+	//	split the string - max at 4 splits, if it splits 4 times, there's too many parts
+	TFixedArray<TStringLowercase<TTempString>, 4> StringParts;
+	if ( !String.Split( '_', StringParts ) )
+	{
+		//	didn't split at all, can't be valid
+		return FALSE;
+	}
+
+	//	check first part is named "datum"
+	if ( StringParts[0] != "datum" )
+		return FALSE;
+
+	//	should be 3 parts
+	if ( StringParts.GetSize() != 3 )
+	{
+		TLDebug_Break( TString("Malformed Datum name (%s) on SVG geometry. Should be Datum_SHAPEREF_DATUMREF", String.GetData() ) );
+		return FALSE;
+	}
+
+	//	make shape ref from 2nd string
+	ShapeType.Set( StringParts[1] );
+	DatumRef.Set( StringParts[2] );
+	
+	//	if either are invalid, fail
+	if ( !ShapeType.IsValid() || !DatumRef.IsValid() )
+	{
+		TLDebug_Break( TString("Failed to set valid Ref's from Datum identifier: %s", String.GetData() ) );
+		return FALSE;
+	}
+
+	return TRUE;
+}

@@ -836,7 +836,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 			Opengl::EnableAlpha( FALSE );
 
 			//	get the debug cross
-			TPtr<TLAsset::TAsset>& pAsset = TLAsset::GetAsset("d_cross",TRUE);
+			TPtr<TLAsset::TAsset>& pAsset = TLAsset::LoadAsset("d_cross",TRUE);
 			if ( pAsset && pAsset->GetAssetType() == "mesh" )
 			{
 				TLAsset::TMesh* pMesh = pAsset.GetObject<TLAsset::TMesh>();

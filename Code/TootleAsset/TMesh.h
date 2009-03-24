@@ -71,7 +71,8 @@ public:
 
 	void					Empty();
 	FORCEINLINE Bool		IsEmpty() const										{	return !( m_Vertexes.GetSize() || m_Colours.GetSize() || m_Triangles.GetSize() || m_Tristrips.GetSize() || m_Trifans.GetSize() || m_Lines.GetSize() );	}
-	void					Copy(const TMesh* pMesh);							//	wholly copy this mesh's contents
+	FORCEINLINE void		Copy(const TMesh& OtherMesh)						{	Empty();	Merge( OtherMesh );	}
+	void					Merge(const TMesh& OtherMesh);						//	merge othermesh into this mesh - add verts, primitives, datums etc
 
 	//	manipulation
 	void					GenerateShape(const TLMaths::TBox& Box)				{	GenerateCube( Box );	}
@@ -124,9 +125,11 @@ public:
 	void					ColoursMult(const TColour& Colour);		//	multiply all colours by this colour
 
 	//	data accessors
-	TFlags<TMeshFlags,u8>&	GetFlags()							{	return m_Flags;	}
-	const TFlags<TMeshFlags,u8>&	GetFlags() const			{	return m_Flags;	}
-	FORCEINLINE Bool		HasAlpha() const					{	return m_Flags( MeshFlag_HasAlpha );	}
+	TFlags<TMeshFlags,u8>&				GetFlags()							{	return m_Flags;	}
+	const TFlags<TMeshFlags,u8>&		GetFlags() const					{	return m_Flags;	}
+	FORCEINLINE Bool					HasAlpha() const					{	return m_Flags( MeshFlag_HasAlpha );	}
+	FORCEINLINE SyncBool				HasColours() const					{	return (!m_Vertexes.GetSize()) ? SyncWait : ( !m_Colours.GetSize() ? SyncFalse : SyncTrue );	};	//	return if we have colours - wait means unknown as we have no vertexes
+	FORCEINLINE SyncBool				HasUVs() const						{	return (!m_Vertexes.GetSize()) ? SyncWait : ( !m_UVs.GetSize() ? SyncFalse : SyncTrue );	};	//	return if we have colours - wait means unknown as we have no vertexes
 
 	FORCEINLINE float3&					GetVertex(u32 VertIndex)			{	return m_Vertexes[VertIndex];	}
 	FORCEINLINE float2&					GetVertexUV(u32 VertIndex)			{	return m_UVs[VertIndex];	}
@@ -179,6 +182,9 @@ public:
 	template<class SHAPETYPE>
 	SHAPETYPE*				GetDatum(TRefRef DatumRef);
 	Bool					CreateDatum(const TArray<float3>& PolygonPoints,TRefRef DatumRef,TRefRef DatumShapeType);
+	
+	void					OnVertexesChanged()					{	SetBoundsInvalid();	}
+	void					OnPrimitivesChanged();				//	just a check to make sure the integrety of all the polygons indexes are valid
 
 protected:
 	virtual SyncBool		ImportData(TBinaryTree& Data);		//	load asset data out binary data
@@ -188,8 +194,14 @@ protected:
 	Bool					ExportDatum(TBinaryTree& Data,TRefRef DatumRef,TPtr<TLMaths::TShape>& pShape);
 
 	void					CalcHasAlpha();						//	loop through colours to check if we have any alpha colours in the verts
+	void					PadColours();						//	ensure number of colours matches number of vertexes
+	void					PadUVs();							//	ensure number of uvs matches number of vertexes
 
-	void					OnPrimitivesChanged();				//	just a check to make sure the integrety of all the polygons indexes are valid
+	void					AddTriangles(const TArray<Triangle>& OtherPolygons,u32 OffsetVertexIndex);
+	void					AddTristrips(const TArray<Tristrip>& OtherPolygons,u32 OffsetVertexIndex);
+	void					AddTrifans(const TArray<Trifan>& OtherPolygons,u32 OffsetVertexIndex);
+	void					AddLinestrips(const TArray<Linestrip>& OtherPolygons,u32 OffsetVertexIndex);
+	void					AddLines(const TArray<Line>& OtherPolygons,u32 OffsetVertexIndex);
 
 private:
 	const TColour*			GetGenerationColour(const TColour* pColour);	//	returns a valid colour pointer if we expect one (mesh already has colours) - NULL's if we dont have colours - returns the original pointer if we can have colours

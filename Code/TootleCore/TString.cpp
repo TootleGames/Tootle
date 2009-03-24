@@ -777,7 +777,12 @@ Bool TString::GetFloat(float& Float) const
 		//	not a number and we only want numbers
 		if ( CharInteger == -1 )
 		{
-			TLDebug_Break("Non-integer character in float-string decimal part");
+#ifdef _DEBUG
+			TTempString Debug_String("Non-integer character in float-string decimal part: \"");
+			Debug_String.Append( *this );			
+			Debug_String.Append("\"");
+			TLDebug_Break( Debug_String );
+#endif
 			return FALSE;
 		}
 

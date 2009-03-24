@@ -770,7 +770,8 @@ template<typename TYPE>
 template<class MATCHTYPE>
 s32 TArray<TYPE>::FindIndex(const MATCHTYPE& val,u32 FromIndex) const
 {
-	if ( m_pSortFunc && GetSize() > 2 )
+	u32 Size = GetSize();
+	if ( m_pSortFunc && Size > 2 )
 	{
 		if ( !IsSorted() )
 		{
@@ -784,9 +785,12 @@ s32 TArray<TYPE>::FindIndex(const MATCHTYPE& val,u32 FromIndex) const
 	}
 
 	//	search elements
-	for ( u32 i=FromIndex;	i<GetSize();	i++ )
+	const TYPE* pFirstElement = &ElementAtConst(0);
+	for ( u32 i=FromIndex;	i<Size;	i++ )
 	{
-		if ( ElementAtConst(i) == val )
+		//	gr: less safe, but faster access...
+		//if ( ElementAtConst(i) == val )
+		if ( pFirstElement[i] == val )
 			return (s32)i;
 	}
 	return -1;

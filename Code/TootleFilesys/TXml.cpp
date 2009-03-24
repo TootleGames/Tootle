@@ -27,6 +27,9 @@ Bool TLXml::IsCharText(char Char)
 	if ( Char == '-' )
 		return TRUE;
 
+	if ( Char == '_' )
+		return TRUE;
+
 	return FALSE;
 }
 	

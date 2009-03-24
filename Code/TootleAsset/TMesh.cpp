@@ -1299,29 +1299,55 @@ Bool TLAsset::TMesh::GenerateQuad(const TArray<u16>& OutlineVertIndexes)
 
 
 //--------------------------------------------------------
-//	wholly copy this mesh's contents
+//	merge othermesh into this mesh - add verts, primitives, datums etc
 //--------------------------------------------------------
-void TLAsset::TMesh::Copy(const TMesh* pMesh)
+void TLAsset::TMesh::Merge(const TMesh& OtherMesh)
 {
-	m_Vertexes.Copy( pMesh->m_Vertexes );
-	m_Colours.Copy( pMesh->m_Colours );
-	m_UVs.Copy( pMesh->m_UVs );
-
-	m_Triangles.Copy( pMesh->m_Triangles );
-	m_Tristrips.Copy( pMesh->m_Tristrips );
-	m_Trifans.Copy( pMesh->m_Trifans );
-	m_Triangles.Copy( pMesh->m_Triangles );
-	m_Lines.Copy( pMesh->m_Lines );
-	m_Linestrips.Copy( pMesh->m_Linestrips );
+	u32 FirstVertex = m_Vertexes.GetSize();
+	SyncBool HadColours = HasColours();
+	SyncBool HadUVs = HasUVs();
 	
-	OnPrimitivesChanged();
+	//	copy vertexes
+	m_Vertexes.Add( OtherMesh.GetVertexes() );
+	OnVertexesChanged();
 
-	m_BoundsBox = pMesh->m_BoundsBox;
-	m_BoundsSphere = pMesh->m_BoundsSphere;
-	m_BoundsCapsule = pMesh->m_BoundsCapsule;
+	//	didnt have colours/uvs, now does, pad
+	if ( HadColours == SyncFalse && OtherMesh.HasColours() )
+		PadColours();
+	if ( HadUVs == SyncFalse && OtherMesh.HasUVs() )
+		PadUVs();
 
-	m_LineWidth = pMesh->m_LineWidth;
-	m_Flags = pMesh->m_Flags;
+	//	add colours and uvs
+	m_Colours.Add( OtherMesh.GetColours() );
+	m_UVs.Add( OtherMesh.GetUVs() );
+
+	//	pad up colours/uvs if the old mesh had colours
+	if ( HadColours == SyncTrue )
+		PadColours();
+	if ( HadUVs == SyncTrue )
+		PadUVs();
+
+	//	add geometry - but need to offset all the geometry indexes
+	AddTriangles( OtherMesh.GetTriangles(), FirstVertex );
+	AddTristrips( OtherMesh.GetTristrips(), FirstVertex );
+	AddTrifans( OtherMesh.GetTrifans(), FirstVertex );
+	AddLines( OtherMesh.GetLines(), FirstVertex );
+	AddLinestrips( OtherMesh.GetLinestrips(), FirstVertex );
+
+	//	merge flags
+//	m_Flags.Or( OtherMesh.GetFlags() );
+
+	//	merge line widths...
+	if ( OtherMesh.GetLineWidth() > m_LineWidth )
+		m_LineWidth = OtherMesh.GetLineWidth();
+
+	//	add datums - dont add duplicates
+	for ( u32 d=0;	d<OtherMesh.m_Datums.GetSize();	d++ )
+	{
+		const TPtr<TLMaths::TShape>& pOtherDataum = OtherMesh.m_Datums.ElementAt(d);
+		TRefRef OtherDatumRef = OtherMesh.m_Datums.GetKeyAt( d );
+		m_Datums.Add( OtherDatumRef, pOtherDataum, FALSE );
+	}
 }
 
 
@@ -1444,6 +1470,24 @@ Bool TLAsset::TMesh::ImportDatum(TBinaryTree& Data)
 		AddDatum( DatumRef, pShape );
 		return TRUE;
 	}
+	else if ( ShapeRef == TLMaths::TBox::GetTypeRef() )
+	{
+		TLMaths::TBox Shape;
+		if ( !Data.Read( Shape ) )
+			return FALSE;
+		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeBox( Shape );
+		AddDatum( DatumRef, pShape );
+		return TRUE;
+	}
+	else if ( ShapeRef == TLMaths::TBox2D::GetTypeRef() )
+	{
+		TLMaths::TBox2D Shape;
+		if ( !Data.Read( Shape ) )
+			return FALSE;
+		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeBox2D( Shape );
+		AddDatum( DatumRef, pShape );
+		return TRUE;
+	}
 
 #ifdef _DEBUG
 	TTempString Debug_String("Unknown datum shape type ");
@@ -1493,6 +1537,18 @@ Bool TLAsset::TMesh::ExportDatum(TBinaryTree& Data,TRefRef DatumRef,TPtr<TLMaths
 		Data.Write( Shape );
 		return TRUE;
 	}
+	else if ( ShapeRef == TLMaths::TBox::GetTypeRef() )
+	{
+		const TLMaths::TBox& Shape = pShape.GetObject<TLMaths::TShapeBox>()->GetBox();
+		Data.Write( Shape );
+		return TRUE;
+	}
+	else if ( ShapeRef == TLMaths::TBox2D::GetTypeRef() )
+	{
+		const TLMaths::TBox2D& Shape = pShape.GetObject<TLMaths::TShapeBox2D>()->GetBox();
+		Data.Write( Shape );
+		return TRUE;
+	}
 
 #ifdef _DEBUG
 	TTempString Debug_String("Unknown datum shape type ");
@@ -1519,15 +1575,7 @@ Bool TLAsset::TMesh::CreateDatum(const TArray<float3>& PolygonPoints,TRefRef Dat
 		//	get box of points for extents
 		TLMaths::TBox2D Box;
 		Box.Accumulate( PolygonPoints );
-
-		//	work out radius (NOT the diagonal!)
-		float HalfWidth = Box.GetHalfWidth();
-		float HalfHeight = Box.GetHalfHeight();
-		float Radius = (HalfWidth>HalfHeight) ? HalfWidth : HalfHeight;
-
-		//	make up sphere and shape
-		TLMaths::TSphere2D Sphere( Box.GetCenter(), Radius );
-		TPtr<TLMaths::TShape> pSphereShape = new TLMaths::TShapeSphere2D( Sphere );
+		TPtr<TLMaths::TShape> pSphereShape = new TLMaths::TShapeSphere2D( Box );
 
 		//	add datum
 		AddDatum( DatumRef, pSphereShape );
@@ -1538,16 +1586,7 @@ Bool TLAsset::TMesh::CreateDatum(const TArray<float3>& PolygonPoints,TRefRef Dat
 		//	get box of points for extents
 		TLMaths::TBox Box;
 		Box.Accumulate( PolygonPoints );
-
-		//	work out radius (NOT the diagonal!)
-		float3 HalfSize = Box.GetSize() * 0.5f;
-		float Radius = HalfSize.x;
-		if ( HalfSize.y > Radius )	Radius = HalfSize.y;
-		if ( HalfSize.z > Radius )	Radius = HalfSize.z;
-
-		//	make up sphere and shape
-		TLMaths::TSphere Sphere( Box.GetCenter(), Radius );
-		TPtr<TLMaths::TShape> pSphereShape = new TLMaths::TShapeSphere( Sphere );
+		TPtr<TLMaths::TShape> pSphereShape = new TLMaths::TShapeSphere( Box );
 
 		//	add datum
 		AddDatum( DatumRef, pSphereShape );
@@ -1583,12 +1622,7 @@ Bool TLAsset::TMesh::CreateDatum(const TArray<float3>& PolygonPoints,TRefRef Dat
 		//	get box of points for extents
 		TLMaths::TBox2D Box;
 		Box.Accumulate( PolygonPoints );
-
-		//	create capsule from box
-		TLMaths::TCapsule2D Capsule;
-		Capsule.Set( Box );
-
-		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeCapsule2D( Capsule );
+		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeCapsule2D( Box );
 
 		//	add datum
 		AddDatum( DatumRef, pShape );
@@ -1642,3 +1676,119 @@ const float2* TLAsset::TMesh::GetGenerationUV(const float2* pUV)
 
 	return pUV;
 }
+
+
+//--------------------------------------------------------
+//	ensure number of colours matches number of vertexes
+//--------------------------------------------------------
+void TLAsset::TMesh::PadColours()
+{
+	while ( m_Colours.GetSize() < m_Vertexes.GetSize() )
+	{
+		m_Colours.Add( TLAsset::g_DefaultVertexColour );
+	}
+
+	//	change size of colours if different to vertex size (ie. we have too many colours)
+	m_Colours.SetSize( m_Vertexes.GetSize() );
+}
+
+
+//--------------------------------------------------------
+//	ensure number of UVs matches number of vertexes
+//--------------------------------------------------------
+void TLAsset::TMesh::PadUVs()
+{
+	while ( m_UVs.GetSize() < m_Vertexes.GetSize() )
+	{
+		m_UVs.Add( TLAsset::g_DefaultVertexUV );
+	}
+
+	//	change size of colours if different to vertex size (ie. we have too many colours)
+	m_UVs.SetSize( m_Vertexes.GetSize() );
+}
+
+
+
+
+void TLAsset::TMesh::AddTriangles(const TArray<Triangle>& OtherPolygons,u32 OffsetVertexIndex)
+{
+	s32 FirstPoly = m_Triangles.Add( OtherPolygons );
+
+	if ( OffsetVertexIndex > 0 )
+	{
+		for ( u32 i=FirstPoly;	i<m_Triangles.GetSize();	i++ )
+		{
+			Triangle& Polygon = m_Triangles[i];
+			Polygon.x += OffsetVertexIndex;
+			Polygon.y += OffsetVertexIndex;
+			Polygon.z += OffsetVertexIndex;
+		}
+	}
+}
+
+void TLAsset::TMesh::AddTristrips(const TArray<Tristrip>& OtherPolygons,u32 OffsetVertexIndex)
+{
+	s32 FirstPoly = m_Tristrips.Add( OtherPolygons );
+
+	if ( OffsetVertexIndex > 0 )
+	{
+		for ( u32 i=FirstPoly;	i<m_Tristrips.GetSize();	i++ )
+		{
+			Tristrip& Polygon = m_Tristrips[i];
+			for ( u32 p=0;	p<Polygon.GetSize();	p++ )
+			{
+				Polygon[p] += OffsetVertexIndex;
+			}
+		}
+	}
+}
+
+void TLAsset::TMesh::AddTrifans(const TArray<Trifan>& OtherPolygons,u32 OffsetVertexIndex)
+{
+	s32 FirstPoly = m_Trifans.Add( OtherPolygons );
+
+	if ( OffsetVertexIndex > 0 )
+	{
+		for ( u32 i=FirstPoly;	i<m_Trifans.GetSize();	i++ )
+		{
+			Trifan& Polygon = m_Trifans[i];
+			for ( u32 p=0;	p<Polygon.GetSize();	p++ )
+			{
+				Polygon[p] += OffsetVertexIndex;
+			}
+		}
+	}
+}
+
+void TLAsset::TMesh::AddLinestrips(const TArray<Linestrip>& OtherPolygons,u32 OffsetVertexIndex)
+{
+	s32 FirstPoly = m_Linestrips.Add( OtherPolygons );
+
+	if ( OffsetVertexIndex > 0 )
+	{
+		for ( u32 i=FirstPoly;	i<m_Linestrips.GetSize();	i++ )
+		{
+			Linestrip& Polygon = m_Linestrips[i];
+			for ( u32 p=0;	p<Polygon.GetSize();	p++ )
+			{
+				Polygon[p] += OffsetVertexIndex;
+			}
+		}
+	}
+}
+
+void TLAsset::TMesh::AddLines(const TArray<Line>& OtherPolygons,u32 OffsetVertexIndex)
+{
+	s32 FirstPoly = m_Lines.Add( OtherPolygons );
+
+	if ( OffsetVertexIndex > 0 )
+	{
+		for ( u32 i=FirstPoly;	i<m_Lines.GetSize();	i++ )
+		{
+			Line& Polygon = m_Lines[i];
+			Polygon.x += OffsetVertexIndex;
+			Polygon.y += OffsetVertexIndex;
+		}
+	}
+}
+

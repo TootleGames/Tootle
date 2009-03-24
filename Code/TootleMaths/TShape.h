@@ -18,6 +18,8 @@ namespace TLMaths
 	class TShapeSphere;		//	sphere shape
 	class TShapeOblong2D;	//	oblong shape
 	class TShapeCapsule2D;	//	capsule shape
+	class TShapeBox;		//	box shape
+	class TShapeBox2D;		//	box shape
 
 	class TIntersection;	//	resulting intersection information of two shapes
 }
@@ -79,6 +81,7 @@ class TLMaths::TShapeSphere2D : public TLMaths::TShape
 public:
 	TShapeSphere2D()															{}
 	TShapeSphere2D(const TLMaths::TSphere2D& Sphere) : m_Sphere ( Sphere )		{}
+	TShapeSphere2D(const TLMaths::TBox2D& Box);									//	create sphere 2D from box
 
 	static TRef						GetShapeType_Static()						{	return GetShapeType_Static();	}
 	virtual TRef					GetShapeType() const						{	return TLMaths::TSphere2D::GetTypeRef();	}
@@ -100,6 +103,7 @@ class TLMaths::TShapeSphere : public TLMaths::TShape
 public:
 	TShapeSphere()															{}
 	TShapeSphere(const TLMaths::TSphere& Sphere) : m_Sphere ( Sphere )		{}
+	TShapeSphere(const TLMaths::TBox& Box);
 
 	static TRef						GetShapeType_Static() 						{	return TLMaths::TSphere::GetTypeRef();	}
 	virtual TRef					GetShapeType() const						{	return GetShapeType_Static();	}
@@ -139,6 +143,7 @@ class TLMaths::TShapeCapsule2D : public TLMaths::TShape
 public:
 	TShapeCapsule2D()															{}
 	TShapeCapsule2D(const TLMaths::TCapsule2D& Capsule) : m_Capsule ( Capsule )	{}
+	TShapeCapsule2D(const TLMaths::TBox2D& Box);
 
 	static TRef						GetShapeType_Static()						{	return TLMaths::TCapsule2D::GetTypeRef();	}
 	virtual TRef					GetShapeType() const						{	return GetShapeType_Static();	}
@@ -149,5 +154,42 @@ public:
 
 protected:
 	TLMaths::TCapsule2D				m_Capsule;
+};
+
+
+
+class TLMaths::TShapeBox : public TLMaths::TShape
+{
+public:
+	TShapeBox()															{}
+	TShapeBox(const TLMaths::TBox& Box) : m_Box ( Box )					{}
+
+	static TRef						GetShapeType_Static()						{	return TLMaths::TBox::GetTypeRef();	}
+	virtual TRef					GetShapeType() const						{	return GetShapeType_Static();	}
+	virtual Bool					IsValid() const								{	return GetBox().IsValid();	}
+	virtual float3					GetCenter() const							{	return GetBox().GetCenter();	}
+	
+	const TLMaths::TBox&			GetBox() const								{	return m_Box;	}
+
+protected:
+	TLMaths::TBox					m_Box;
+};
+
+
+class TLMaths::TShapeBox2D : public TLMaths::TShape
+{
+public:
+	TShapeBox2D()															{}
+	TShapeBox2D(const TLMaths::TBox2D& Box) : m_Box ( Box )					{}
+
+	static TRef						GetShapeType_Static()						{	return TLMaths::TBox2D::GetTypeRef();	}
+	virtual TRef					GetShapeType() const						{	return GetShapeType_Static();	}
+	virtual Bool					IsValid() const								{	return GetBox().IsValid();	}
+	virtual float3					GetCenter() const							{	return GetBox().GetCenter();	}
+	
+	const TLMaths::TBox2D&			GetBox() const								{	return m_Box;	}
+
+protected:
+	TLMaths::TBox2D					m_Box;
 };
 

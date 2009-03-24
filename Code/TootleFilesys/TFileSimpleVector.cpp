@@ -5,25 +5,6 @@
 
 
 
-namespace TLString
-{
-	template<typename FLOATTYPE>
-	Bool	ReadNextFloat(const TString& String,u32& CharIndex,FLOATTYPE& FloatType);
-	template<>
-	Bool	ReadNextFloat(const TString& String,u32& CharIndex,float& FloatType);
-};
-
-template<typename FLOATTYPE>
-Bool TLString::ReadNextFloat(const TString& String,u32& CharIndex,FLOATTYPE& FloatType)
-{
-	return ReadNextFloatArray( String, CharIndex, FloatType.GetData(), FloatType.GetSize() );
-}
-
-template<>
-Bool TLString::ReadNextFloat(const TString& String,u32& CharIndex,float& FloatType)
-{
-	return ReadNextFloatArray( String, CharIndex, &FloatType, 1 );
-}
 
 
 TLFileSys::TFileSimpleVector::TFileSimpleVector(TRefRef FileRef,TRefRef FileTypeRef) :
@@ -698,37 +679,8 @@ Bool TLFileSys::TFileSimpleVector::IsTagDatum(TXmlTag& Tag,TRef& DatumRef,TRef& 
 	if ( !pIDString )
 		return FALSE;
 
-	//	split the string - max at 4 splits, if it splits 4 times, there's too many parts
-	TFixedArray<TStringLowercase<TTempString>, 4> StringParts;
-	if ( !pIDString->Split( '_', StringParts ) )
-	{
-		//	didn't split at all, can't be valid
-		return FALSE;
-	}
-
-	//	check first part is named "datum"
-	if ( StringParts[0] != "datum" )
-		return FALSE;
-
-	//	should be 3 parts
-	if ( StringParts.GetSize() != 3 )
-	{
-		TLDebug_Break( TString("Malformed Datum name (%s) on SVG geometry. Should be Datum_SHAPEREF_DATUMREF", pIDString->GetData() ) );
-		return FALSE;
-	}
-
-	//	make shape ref from 2nd string
-	ShapeType.Set( StringParts[1] );
-	DatumRef.Set( StringParts[2] );
-	
-	//	if either are invalid, fail
-	if ( !ShapeType.IsValid() || !DatumRef.IsValid() )
-	{
-		TLDebug_Break( TString("Failed to set valid Ref's from Datum identifier: %s", pIDString->GetData() ) );
-		return FALSE;
-	}
-
-	return TRUE;
+	//	check if string marked as a datum
+	return TLString::IsDatumString( *pIDString, DatumRef, ShapeType );
 }
 
 
