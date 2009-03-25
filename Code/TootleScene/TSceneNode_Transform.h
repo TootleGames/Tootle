@@ -60,7 +60,7 @@ protected:
 
 	virtual void				OnZoneWake(SyncBool ZoneActive)			{	}	//	notifcation when zone is set to active (from non-active). SceneNode will now be updated
 	virtual void				OnZoneSleep()							{	}	//	notifcation when zone is set to non-active (from active). SceneNode will now NOT be updated
-	virtual void				OnZoneChanged(TPtr<TLMaths::TQuadTreeZone>& pOldZone);	//	our zone has changed - if we're the node being tracked in the graph, change the active zone
+	virtual void				OnZoneChanged(TLMaths::TQuadTreeZone* pOldZone);	//	our zone has changed - if we're the node being tracked in the graph, change the active zone
 	virtual SyncBool			IsInShape(const TLMaths::TBox2D& Shape);
 	FORCEINLINE SyncBool		IsZoneAwake() const;					//	get zone's active state
 	virtual SyncBool			IsAwake() const							{	return IsZoneAwake();	}	//	checks to see if this node is awake (NOT THE SAME AS IsEnabled!) - currently gets our zone and checks it's active state - shouldnt be a need to store the sleep/awake state

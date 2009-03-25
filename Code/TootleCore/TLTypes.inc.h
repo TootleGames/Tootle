@@ -96,10 +96,11 @@ public:
 	FORCEINLINE float			DotProduct(const Type2<TYPE>& v) const		{	return (x*v.x) + (y*v.y) ;	}
 	FORCEINLINE float			DotProduct() const							{	return (x*x) + (y*y);	}	//	same as lengthsq!
 
-	FORCEINLINE void			RotateAntiClockwise()						{	float2 oldxy(x,y);	x = oldxy.y;	y = -oldxy.x;	}
-	FORCEINLINE void			RotateClockwise()							{	float2 oldxy(x,y);	x = -oldxy.y;	y = oldxy.x;	}
-	FORCEINLINE Type2<TYPE>		GetAntiClockwise() const					{	return Type2<TYPE>( y, -x );	}
-	FORCEINLINE Type2<TYPE>		GetClockwise() const						{	return Type2<TYPE>( -y, x );	}
+	FORCEINLINE void			RotateAntiClockwise()							{	float2 oldxy(x,y);	x = oldxy.y;	y = -oldxy.x;	}
+	FORCEINLINE void			RotateClockwise()								{	float2 oldxy(x,y);	x = -oldxy.y;	y = oldxy.x;	}
+	FORCEINLINE void			Rotate(float AngRad);
+	FORCEINLINE Type2<TYPE>		GetAntiClockwise() const						{	return Type2<TYPE>( y, -x );	}
+	FORCEINLINE Type2<TYPE>		GetClockwise() const							{	return Type2<TYPE>( -y, x );	}
 };
 
 
@@ -321,6 +322,17 @@ Type2<TYPE> Type2<TYPE>::CrossProduct(const Type2<TYPE>& v) const
 
 	return xyz;
 }
+
+
+template <class TYPE>
+FORCEINLINE void Type2<TYPE>::Rotate(float AngleRad)
+{
+	float2 Old(x,y);
+
+	x = (cosf(AngleRad)*Old.x) - (sinf(AngleRad)*Old.y);
+	y = (sinf(AngleRad)*Old.x) + (cosf(AngleRad)*Old.y);
+}
+
 
 template <class TYPE>
 template<typename OTHERTYPE> 

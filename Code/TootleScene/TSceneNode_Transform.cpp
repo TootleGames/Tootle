@@ -218,7 +218,7 @@ void TLScene::TSceneNode_Transform::PostUpdate(float fTimestep)
 //------------------------------------------------------
 //	our zone has changed - if we're the node being tracked in the graph, change the active zone
 //------------------------------------------------------
-void TLScene::TSceneNode_Transform::OnZoneChanged(TPtr<TLMaths::TQuadTreeZone>& pOldZone)
+void TLScene::TSceneNode_Transform::OnZoneChanged(TLMaths::TQuadTreeZone* pOldZone)
 {
 	TPtr<TLMaths::TQuadTreeZone>& pNewZone = GetZone();
 

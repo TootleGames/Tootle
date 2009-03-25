@@ -13,6 +13,10 @@
 #include "TManager.h"
 
 
+
+
+
+
 namespace TLTime
 {
 	class TTimestamp;
@@ -22,10 +26,10 @@ namespace TLTime
 	const TTimestamp&		GetTimeNow();							//	return timestamp as of right now
 	const TTimestampMicro&	GetMicroTimeNow();						//	return timestamp as of right now
 
-	u32						GetUpdatesPerSecond();
-	u32						GetRendersPerSecond();
-	inline u32				GetUpdateTimeMilliSecs()			{	return 1000/GetUpdatesPerSecond();	}
-	inline float			GetUpdateTimeSeconds()				{	return 1.f/(float)GetUpdatesPerSecond();	}	//	update time as a fraction of a second
+	FORCEINLINE float		GetUpdatesPerSecondf();
+	FORCEINLINE float		GetRendersPerSecondf();
+	inline float			GetUpdateTimeMilliSecsf()			{	return 1000.f/GetUpdatesPerSecondf();	}
+	inline float			GetUpdateTimeSecondsf()				{	return 1.f/GetUpdatesPerSecondf();	}	//	update time as a fraction of a second
 
 	inline s32				MilliSecsToMicro(s32 Milliseconds)	{	return Milliseconds * 1000;	}
 	inline s32				MicroToMilliSecs(s32 Microseconds)	{	return Microseconds / 1000;	}
@@ -154,3 +158,30 @@ protected:
 	}
 };
 
+
+
+
+
+
+//---------------------------------------------------------
+//	get our application udpate rate
+//---------------------------------------------------------
+FORCEINLINE float TLTime::GetUpdatesPerSecondf()
+{	
+	return 60.f;
+}
+
+
+
+//---------------------------------------------------------
+//	get our application render rate
+//---------------------------------------------------------
+FORCEINLINE float TLTime::GetRendersPerSecondf()
+{	
+#if defined(TL_TARGET_PC)
+	return 60.f;
+#else
+	//return GetUpdatesPerSecondf();
+	return 30.f;	
+#endif
+}

@@ -8,31 +8,6 @@ namespace TLTime
 }
 
 
-
-//---------------------------------------------------------
-//	get our application udpate rate
-//---------------------------------------------------------
-u32 TLTime::GetUpdatesPerSecond()
-{	
-	return 60;	
-}
-
-
-
-//---------------------------------------------------------
-//	get our application render rate
-//---------------------------------------------------------
-u32 TLTime::GetRendersPerSecond()
-{	
-#if defined(TL_TARGET_PC)
-	return 60;
-#else
-	//return GetUpdatesPerSecond();
-	return 30;	
-#endif
-}
-
-
 //---------------------------------------------------------
 //	
 //---------------------------------------------------------

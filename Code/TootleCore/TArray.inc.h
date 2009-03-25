@@ -770,11 +770,9 @@ template<typename TYPE>
 template<class MATCHTYPE>
 s32 TArray<TYPE>::FindIndex(const MATCHTYPE& val,u32 FromIndex) const
 {
-	// No elements
-	if(GetSize() == 0)
-		return -1;
-
 	u32 Size = GetSize();
+	if ( Size == 0 )
+		return -1;
 
 	if ( m_pSortFunc && Size > 2 )
 	{
@@ -794,7 +792,6 @@ s32 TArray<TYPE>::FindIndex(const MATCHTYPE& val,u32 FromIndex) const
 	for ( u32 i=FromIndex;	i<Size;	i++ )
 	{
 		//	gr: less safe, but faster access...
-		//if ( ElementAtConst(i) == val )
 		if ( pFirstElement[i] == val )
 			return (s32)i;
 	}
@@ -809,12 +806,12 @@ template<typename TYPE>
 template<class MATCHTYPE>
 s32 TArray<TYPE>::FindIndex(const MATCHTYPE& val,u32 FromIndex)
 {
-	// No elements
-	if(GetSize() == 0)
+	u32 Size = GetSize();
+	if ( Size == 0 )
 		return -1;
 
 	//	if this is a sorted array, do a sort when we need to, then we can use a binary chop
-	if ( m_pSortFunc && GetSize() > 2 )
+	if ( m_pSortFunc && Size > 2 )
 	{
 		Sort();
 
@@ -824,9 +821,10 @@ s32 TArray<TYPE>::FindIndex(const MATCHTYPE& val,u32 FromIndex)
 	}
 
 	//	search elements
-	for ( u32 i=FromIndex;	i<GetSize();	i++ )
+	const TYPE* pFirstElement = &ElementAtConst(0);
+	for ( u32 i=FromIndex;	i<Size;	i++ )
 	{
-		if ( ElementAtConst(i) == val )
+		if ( pFirstElement[i] == val )
 			return (s32)i;
 	}
 	return -1;
@@ -840,10 +838,6 @@ template<typename TYPE>
 template<class MATCHTYPE>
 s32 TArray<TYPE>::FindIndexReverse(const MATCHTYPE& val,s32 FromIndex) const
 {
-	// No elements
-	if(GetSize() == 0)
-		return -1;
-
 	if ( FromIndex == -1 )
 		FromIndex = GetSize()-1;
 

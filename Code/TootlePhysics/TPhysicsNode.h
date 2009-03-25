@@ -80,11 +80,11 @@ public:
 	void					OnVelocityChanged()					{	SetAccumulatedMovementInvalid();	SetWorldCollisionShapeInvalid();	}
 	void					OnForceChanged()					{	SetAccumulatedMovementInvalid();	SetWorldCollisionShapeInvalid();	}
 
-	FORCEINLINE void		OnTransformChanged(Bool TransChanged,Bool ScaleChanged,Bool RotationChanged)	{	m_TransformChanges[0] = TransChanged;	m_TransformChanges[1] = ScaleChanged;	m_TransformChanges[2] = RotationChanged;	SetWorldCollisionShapeInvalid();	}
+	FORCEINLINE void		OnTransformChanged(Bool TransChanged,Bool ScaleChanged,Bool RotationChanged)	{	m_TransformChangedBits |= TransChanged * TRANSFORM_BIT_TRANSLATE;	m_TransformChangedBits = ScaleChanged * TRANSFORM_BIT_SCALE;	m_TransformChangedBits |= RotationChanged * TRANSFORM_BIT_ROTATION;	SetWorldCollisionShapeInvalid();	}
 	FORCEINLINE void		OnTransformChangedNoPublish()		{	SetWorldCollisionShapeInvalid();	}
-	FORCEINLINE void		OnTranslationChanged()				{	m_TransformChanges[0] = TRUE;	SetWorldCollisionShapeInvalid();	}
-	FORCEINLINE void		OnRotationChanged()					{	m_TransformChanges[1] = TRUE;	SetWorldCollisionShapeInvalid();	}
-	FORCEINLINE void		OnScaleChanged()					{	m_TransformChanges[2] = TRUE;	SetWorldCollisionShapeInvalid();	}
+	FORCEINLINE void		OnTranslationChanged()				{	m_TransformChangedBits |= TRANSFORM_BIT_TRANSLATE;	SetWorldCollisionShapeInvalid();	}
+	FORCEINLINE void		OnRotationChanged()					{	m_TransformChangedBits |= TRANSFORM_BIT_ROTATION;		SetWorldCollisionShapeInvalid();	}
+	FORCEINLINE void		OnScaleChanged()					{	m_TransformChangedBits |= TRANSFORM_BIT_SCALE;		SetWorldCollisionShapeInvalid();	}
 
 	//void					OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);
 
@@ -141,7 +141,7 @@ public:
 
 protected:
 	TLMaths::TTransform		m_Transform;				//	world transform of shape
-	TFixedArray<Bool,3>		m_TransformChanges;			//	dont broadcast trasnform changes until post update
+	u8						m_TransformChangedBits;		//	dont broadcast trasnform changes until post update - TRANSFORM_BIT_XXX
 
 	TFlags<Flags>			m_PhysicsFlags;
 	float3					m_Velocity;

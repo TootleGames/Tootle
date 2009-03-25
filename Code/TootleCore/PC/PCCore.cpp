@@ -70,7 +70,7 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
 SyncBool TLCore::Platform::Init()
 {
 	//	setup the update timer
-	u32 UpdateInterval = TLTime::GetUpdateTimeMilliSecs();
+	u32 UpdateInterval = (u32)TLTime::GetUpdateTimeMilliSecsf();
 
 	Bool UseMMTimer = TRUE;
 

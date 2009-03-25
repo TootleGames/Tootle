@@ -133,7 +133,7 @@ SyncBool TLCore::Update()
 	}
 
 	//	turn time since update into 1/60th of a second
-	float Timestep = ((float)TimeSinceUpdate) / (1000.f / (float)TLTime::GetUpdatesPerSecond());
+	float Timestep = ((float)TimeSinceUpdate) / (1000.f / TLTime::GetUpdatesPerSecond());
 
 	//	skip unneccasasry updates
 	if ( Timestep < 1.0f )

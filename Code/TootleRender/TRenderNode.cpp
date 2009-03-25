@@ -8,7 +8,7 @@
 
 //	if defined we re-calculate the bounds box of the render node. Need to balance this CPU vs GPU cost.
 //	if not defined we only do a box test if the current one is up to date (i.e. something else needed it so it's calculated)
-#define RECALC_BOX_FOR_RENDERZONE_TEST
+//#define RECALC_BOX_FOR_RENDERZONE_TEST
 
 
 

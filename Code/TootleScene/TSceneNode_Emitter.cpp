@@ -72,7 +72,7 @@ void TSceneNode_Emitter::Update(float fTimestep)
 		return;
 
 	// Increase the internal timer
-	m_fEmissionTime += 1.f/TLTime::GetUpdatesPerSecond();	//fTimestep;
+	m_fEmissionTime += 1.f/TLTime::GetUpdatesPerSecondf();	//fTimestep;
 
 	// Determine if we need to emit an object
 	while(m_fEmissionTime > m_fEmissionRate)

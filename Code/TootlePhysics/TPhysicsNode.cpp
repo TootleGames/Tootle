@@ -24,8 +24,8 @@
 
 //#define FORCE_SQUIDGE				0.0f
 
-#define FRICTION_SCALAR				60.f
-#define MOVEMENT_SCALAR				60.f
+#define FRICTION_SCALAR				TLTime::GetUpdatesPerSecondf()
+#define MOVEMENT_SCALAR				TLTime::GetUpdatesPerSecondf()
 
 //	gr: simple is faster, possibly could make non-simple one save doing same in-zone-shape checks over and over..
 #define SIMPLE_UPDATE_ZONE	//	changes update zone to just traverse from root down, instead of current zone up
@@ -61,7 +61,7 @@ TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 	m_InitialisedZone				( FALSE ),
 	m_Debug_StaticCollisions		( 0 ),
 	m_WorldCollisionShapeChanged	( FALSE ),
-	m_TransformChanges				( 3 )
+	m_TransformChangedBits			( 0x0 )
 {
 #ifdef CACHE_ACCUMULATED_MOVEMENT
 	m_AccumulatedMovementValid = FALSE;
@@ -272,36 +272,40 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 	}
 	
 	//	move pos
-	if ( DEBUG_FLOAT_CHECK( m_Velocity ) )
+	float VelocityLengthSq = m_Velocity.LengthSq();
+	if ( VelocityLengthSq > TLMaths::g_NearZero )
 	{
-		MovePosition( m_Velocity, fTimeStep );
-	}
-
-	//	reduce velocity
-	DEBUG_FLOAT_CHECK( m_Velocity );
-	float Dampening = 1.f - ( GetFriction() * fTimeStep * FRICTION_SCALAR );
-	if ( Dampening >= 1.f )
-	{
-		if ( Dampening > 1.f )
+		if ( DEBUG_FLOAT_CHECK( m_Velocity ) )
 		{
-			TLDebug_Break("Dampening should not increase...");
-			Dampening = 1.f;
+			MovePosition( m_Velocity, fTimeStep );
 		}
 
-		//	no change to velocity
-	}
-	else if ( Dampening < TLMaths::g_NearZero )
-	{
-		//	dampening is tiny, so stop
-		Dampening = 0.f;
-		m_Velocity.Set( 0.f, 0.f, 0.f );
-		OnVelocityChanged();
-	}
-	else
-	{
-		DEBUG_FLOAT_CHECK( Dampening );
-		m_Velocity *= Dampening;
-		OnVelocityChanged();
+		//	reduce velocity
+		DEBUG_FLOAT_CHECK( m_Velocity );
+		float Dampening = 1.f - ( GetFriction() * fTimeStep * FRICTION_SCALAR );
+		if ( Dampening >= 1.f )
+		{
+			if ( Dampening > 1.f )
+			{
+				TLDebug_Break("Dampening should not increase...");
+				Dampening = 1.f;
+			}
+
+			//	no change to velocity
+		}
+		else if ( Dampening < TLMaths::g_NearZero )
+		{
+			//	dampening is tiny, so stop
+			Dampening = 0.f;
+			m_Velocity.Set( 0.f, 0.f, 0.f );
+			OnVelocityChanged();
+		}
+		else
+		{
+			DEBUG_FLOAT_CHECK( Dampening );
+			m_Velocity *= Dampening;
+			OnVelocityChanged();
+		}
 	}
 
 	//	reset force
@@ -380,10 +384,15 @@ void TLPhysics::TPhysicsNode::SetPosition(const float3& Position)
 //----------------------------------------------------
 void TLPhysics::TPhysicsNode::MovePosition(const float3& Movement,float Timestep)
 {
+#ifdef _DEBUG
 	//	tiny change, dont apply it
 	float MovementLengthSq = Movement.LengthSq();
 	if ( MovementLengthSq < 0.0001f )
+	{
+		TLDebug_Break("Tiny movement - should have been caught by caller");
 		return;
+	}
+#endif
 
 	//	change translation
 	if ( m_Transform.HasTranslate() )
@@ -401,14 +410,11 @@ void TLPhysics::TPhysicsNode::MovePosition(const float3& Movement,float Timestep
 		m_Transform.SetTranslate( Movement * Timestep * MOVEMENT_SCALAR );
 	}
 
+	//	translation has changed
+	OnTranslationChanged();
 
-	//if ( MovementLengthSq > 0.1f )
-	{
-		OnTranslationChanged();
-
-		//	after moving node, mark that the zone needs updating
-		SetCollisionZoneNeedsUpdate();
-	}
+	//	after moving node, mark that the zone needs updating
+	SetCollisionZoneNeedsUpdate();
 }
 
 
@@ -418,14 +424,17 @@ void TLPhysics::TPhysicsNode::MovePosition(const float3& Movement,float Timestep
 //----------------------------------------------------
 void TLPhysics::TPhysicsNode::PublishTransformChanges()
 {
+	if ( m_TransformChangedBits == 0x0 )
+		return;
+
 	//	rule is "cant have changed if invalid value" - need to cater for when it has changed TO an invalid value...
 	//	so this removes a change if the value is invalid
-	Bool TranslationChanged = m_TransformChanges[0] && m_Transform.HasTranslate();
-	Bool RotationChanged = m_TransformChanges[1] && m_Transform.HasRotation();
-	Bool ScaleChanged = m_TransformChanges[2] && m_Transform.HasScale();
+	Bool TranslationChanged = ((m_TransformChangedBits & TRANSFORM_BIT_TRANSLATE)!=0x0) && m_Transform.HasTranslate();
+	Bool RotationChanged = ((m_TransformChangedBits & TRANSFORM_BIT_ROTATION)!=0x0) && m_Transform.HasRotation();
+	Bool ScaleChanged = ((m_TransformChangedBits & TRANSFORM_BIT_SCALE)!=0x0) && m_Transform.HasScale();
 
 	//	un-mark changes now that we've got what changes we're gonna send
-	m_TransformChanges.SetAll( FALSE );
+	m_TransformChangedBits = 0x0;
 
 	//	no changes
 	if ( !TranslationChanged && !RotationChanged && !ScaleChanged )

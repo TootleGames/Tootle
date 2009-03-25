@@ -171,7 +171,7 @@ Bool TLMaths::TQuadTreeNode::SetZone(TPtr<TQuadTreeZone>& pZone,TPtr<TLMaths::TQ
 	}
 
 	//	remove from old zone
-	TPtr<TQuadTreeZone> pOldZone = GetZone();
+	TQuadTreeZone* pOldZone = GetZone();
 	if ( pOldZone )
 	{
 		pOldZone->DoRemoveNode( pThis );
@@ -180,11 +180,13 @@ Bool TLMaths::TQuadTreeNode::SetZone(TPtr<TQuadTreeZone>& pZone,TPtr<TLMaths::TQ
 	//	add to this zone
 	if ( pZone )
 	{
+#ifdef _DEBUG
 		if ( pZone->GetNodes().Exists( pThis ) )
 		{
 			TLDebug_Break("Node shouldnt be in this list");
 		}
 		else
+#endif
 		{
 			//	add node to collision zone
 			pZone->DoAddNode( pThis );
@@ -340,52 +342,59 @@ Bool TLMaths::TQuadTreeZone::AddNode(TPtr<TLMaths::TQuadTreeNode>& pNode,TPtr<TL
 		}
 	}
 
-	u32 NewSize = m_Nodes.GetSize() + (m_Nodes.Exists( pNode ) ? 0 : 1);
-
-	//	fits in this zone, if we have X children already, we need to split
-	//	gr: changed this from >= to >
-	if ( NewSize > m_ZoneParams.m_MaxNodesPerZone && m_Children.GetSize() == 0 )
+	//	check to see if we need to divide our zone
+	if ( m_Children.GetSize() == 0 )
 	{
-		if ( Divide(pThis) )
+		//	gr: swapped around to do same check, but without the array traversal
+	//	Bool AlreadyInZone = m_Nodes.Exists( pNode );
+		Bool AlreadyInZone = (this == pNode->GetZone());
+		u32 NewSize = m_Nodes.GetSize() + ( AlreadyInZone ? 0 : 1);
+
+		//	fits in this zone, if we have X children already, we need to split
+		//	gr: changed this from >= to >
+		if ( NewSize > m_ZoneParams.m_MaxNodesPerZone )
 		{
-			//	if we process pNode in this code then we dont need to do it later
-			Bool DoneNode = FALSE;
-
-			//	re-evaluate existing nodes to see if they fit better in a child
-			for ( s32 n=m_Nodes.GetSize()-1;	n>=0;	n-- )
+			if ( Divide(pThis) )
 			{
-				TPtr<TQuadTreeNode> pChildNode = m_Nodes[n];
-			//	TPtr<TQuadTreeNode>& pChildNode = m_Nodes[n];
-				DoneNode |= (pNode == pChildNode);
+				//	if we process pNode in this code then we dont need to do it later
+				Bool DoneNode = FALSE;
 
-				//	see if child node is now in one of the new zones
-				TFixedArray<u32,4> InZones;
-				GetInChildZones( pChildNode.GetObject(), InZones );
-
-				//	node is not in any of these zones... error...
-				if ( InZones.GetSize() == 0 )
+				//	re-evaluate existing nodes to see if they fit better in a child
+				for ( s32 n=m_Nodes.GetSize()-1;	n>=0;	n-- )
 				{
-					//	gr: this can now occur if the node's shape cannot be determined at the moment
-					//		we should mark the node to say zone is out of date, but only need to check DOWN the tree					pChildNode->SetChildZonesNone();
-					continue;
+					TPtr<TQuadTreeNode> pChildNode = m_Nodes[n];
+				//	TPtr<TQuadTreeNode>& pChildNode = m_Nodes[n];
+					DoneNode |= (pNode == pChildNode);
+
+					//	see if child node is now in one of the new zones
+					TFixedArray<u32,4> InZones;
+					GetInChildZones( pChildNode.GetObject(), InZones );
+
+					//	node is not in any of these zones... error...
+					if ( InZones.GetSize() == 0 )
+					{
+						//	gr: this can now occur if the node's shape cannot be determined at the moment
+						//		we should mark the node to say zone is out of date, but only need to check DOWN the tree					pChildNode->SetChildZonesNone();
+						continue;
+					}
+
+					//	in multiple zones, so stay in this zone, but assign the child zones
+					if ( InZones.GetSize() > 1 )
+					{
+						pChildNode->SetChildZones( InZones );
+						continue;
+					}
+
+					//	only in 1 child zone, so move out of this zone add into this new child zone
+					TPtr<TQuadTreeZone>& pNewZone = m_Children[ InZones[0] ];
+					pChildNode->SetChildZonesNone();
+					pNewZone->AddNode( pChildNode, pNewZone, FALSE );
 				}
 
-				//	in multiple zones, so stay in this zone, but assign the child zones
-				if ( InZones.GetSize() > 1 )
-				{
-					pChildNode->SetChildZones( InZones );
-					continue;
-				}
-
-				//	only in 1 child zone, so move out of this zone add into this new child zone
-				TPtr<TQuadTreeZone>& pNewZone = m_Children[ InZones[0] ];
-				pChildNode->SetChildZonesNone();
-				pNewZone->AddNode( pChildNode, pNewZone, FALSE );
+				//	moved pNode around, don't need to do it again below
+				if ( DoneNode )
+					return TRUE;
 			}
-
-			//	moved pNode around, don't need to do it again below
-			if ( DoneNode )
-				return TRUE;
 		}
 	}
 

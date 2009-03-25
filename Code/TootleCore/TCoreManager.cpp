@@ -283,7 +283,7 @@ Bool TCoreManager::PublishUpdateMessage(Bool bForced)
 	{
 		if(!bForced)
 		{
-			float fFrameStep = fTimeStep * (float)TLTime::GetUpdatesPerSecond();
+			float fFrameStep = fTimeStep * TLTime::GetUpdatesPerSecondf();
 			if ( fFrameStep < 1.0f )
 				return FALSE;
 		}
@@ -292,7 +292,7 @@ Bool TCoreManager::PublishUpdateMessage(Bool bForced)
 	
 	if ( bForced )
 	{
-		fTimeStep = 1.f / TLTime::GetUpdatesPerSecond();
+		fTimeStep = 1.f / TLTime::GetUpdatesPerSecondf();
 	}
 	
 	//	reset last update timestamp
@@ -407,7 +407,7 @@ Bool TCoreManager::PublishRenderMessage(Bool bForced)
 
 	if ( bForced )
 	{	
-		fTimeStep = 1.f / TLTime::GetUpdatesPerSecond();
+		fTimeStep = 1.f / TLTime::GetUpdatesPerSecondf();
 	}
 
 	//	reset last render timestamp
