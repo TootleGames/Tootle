@@ -398,7 +398,7 @@ Bool TCoreManager::PublishRenderMessage(Bool bForced)
 	{
 		if(!bForced)
 		{
-			float fFrameStep = fTimeStep * (float)TLTime::GetRendersPerSecond();
+			float fFrameStep = fTimeStep * (float)TLTime::GetRendersPerSecondf();
 			if ( fFrameStep < 1.0f )
 				return FALSE;
 		}
