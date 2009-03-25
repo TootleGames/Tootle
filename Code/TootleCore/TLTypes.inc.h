@@ -329,8 +329,8 @@ FORCEINLINE void Type2<TYPE>::Rotate(float AngleRad)
 {
 	float2 Old(x,y);
 
-	x = (cosf(AngleRad)*Old.x) - (sinf(AngleRad)*Old.y);
-	y = (sinf(AngleRad)*Old.x) + (cosf(AngleRad)*Old.y);
+	x = (TLMaths::Cosf(AngleRad)*Old.x) - (TLMaths::Sinf(AngleRad)*Old.y);
+	y = (TLMaths::Sinf(AngleRad)*Old.x) + (TLMaths::Cosf(AngleRad)*Old.y);
 }
 
 
