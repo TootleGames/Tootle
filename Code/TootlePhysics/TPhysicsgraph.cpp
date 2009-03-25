@@ -16,6 +16,7 @@
 //#define ENABLE_NOZONE_COLLISION
 //#define ENABLE_COLLISIONTEST_TRACE
 
+#define MAX_PHYSICS_TIMESTEP	0.3f
 
 #define ENABLE_TEST_PARENTZONENODE_INMYZONE
 #define ENABLE_TEST_PARENTZONENODE_INPREVIOUSPARENTZONE
@@ -74,6 +75,7 @@ SyncBool TLPhysics::TPhysicsgraph::Initialise()
 	
 void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 {
+	TLMaths::Limit( fTimeStep, 0.f, MAX_PHYSICS_TIMESTEP );
 	//	reset collision test count
 	m_Debug_CollisionTestCount = 0;
 	m_Debug_StaticCollisionTestCount = 0;
@@ -85,17 +87,6 @@ void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 	m_Debug_CollisionTestsDownwards = 0;
 	m_Debug_ZonesTested = 0;
 
-	// DB - This needs removing.  Essentially the physcis is still working per-frame
-	// rather than in seconds.  
-	// Also, the collision code doesn't support any kind of time at 
-	// all so will need further changes to get the collisions working correctly.
-	float fFrameStep = fTimeStep * TLTime::GetUpdatesPerSecond();
-
-	// DB - The physics will assume a max of one frame step with the following.
-	//	gr: capping timestep for testing
-	if ( fFrameStep > 1.f )
-		fFrameStep = 1.f;
-
 	// Process all queued messages first
 	ProcessMessageQueue();
 	
@@ -104,7 +95,7 @@ void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 	if ( pRootNode )
 	{
 		//	do update
-		pRootNode->UpdateAll( fFrameStep );
+		pRootNode->UpdateAll( fTimeStep );
 
 		//	do collisions
 #ifdef DO_COLLISIONS_BY_ZONE
@@ -121,7 +112,7 @@ void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 #endif
 
 		//	do post update
-		pRootNode->PostUpdateAll( fFrameStep, this, pRootNode );
+		pRootNode->PostUpdateAll( fTimeStep, this, pRootNode );
 	}
 	
 	// Update the graph structure with any changes

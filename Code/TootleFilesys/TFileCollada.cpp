@@ -481,8 +481,8 @@ Bool TLCollada::TMaterial::Import(TXmlTag& MaterialTag,TXmlTag& LibraryEffectsTa
 
 	//	get profile tag
 	TXmlTag* pProfileTag = pEffectTag->GetChild("profile_COMMON");
-	TXmlTag* pTechniqueTag = pProfileTag ? pProfileTag->GetChild("technique") : NULL;
-	TXmlTag* pPhongTag = pTechniqueTag ? pTechniqueTag->GetChild("phong") : NULL;
+	TXmlTag* pTechniqueTag = pProfileTag ? pProfileTag->GetChild("technique").GetObject() : NULL;
+	TXmlTag* pPhongTag = pTechniqueTag ? pTechniqueTag->GetChild("phong").GetObject() : NULL;
 	if ( !pPhongTag )
 	{
 		TLDebug_Break("Couldnt find the <effect><profile_common><technique><phong> tag. Phong is the only one i know in use at the moment!");
@@ -492,7 +492,7 @@ Bool TLCollada::TMaterial::Import(TXmlTag& MaterialTag,TXmlTag& LibraryEffectsTa
 	//	just use the ambient colour for our material colour;
 	//	http://en.wikipedia.org/wiki/Phong_shading
 	TXmlTag* pAmbientTag = pPhongTag->GetChild("ambient");
-	TXmlTag* pAmbientColourTag = pAmbientTag ? pAmbientTag->GetChild("color") : NULL;
+	TXmlTag* pAmbientColourTag = pAmbientTag ? pAmbientTag->GetChild("color").GetObject() : NULL;
 	if ( !pAmbientColourTag )
 	{
 		TLDebug_Break("Missing ambient/colour tag from phong effect");

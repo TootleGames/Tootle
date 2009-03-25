@@ -24,6 +24,9 @@
 
 //#define FORCE_SQUIDGE				0.0f
 
+#define FRICTION_SCALAR				60.f
+#define MOVEMENT_SCALAR				60.f
+
 //	gr: simple is faster, possibly could make non-simple one save doing same in-zone-shape checks over and over..
 #define SIMPLE_UPDATE_ZONE	//	changes update zone to just traverse from root down, instead of current zone up
 //#define COMPLEX_UPDATE_ZONE	//	changes update zone to just traverse from root down, instead of current zone up
@@ -221,7 +224,7 @@ void TLPhysics::TPhysicsNode::Update(float fTimeStep)
 	if ( m_PhysicsFlags( Flag_HasGravity ) )
 	{
 		//	add gravity
-		float GravityPerFrame = g_GravityMetresSec * (1.f/60.f) * fTimeStep;
+		float GravityPerFrame = g_GravityMetresSec * fTimeStep;
 		m_GravityForce = g_WorldUpNormal;
 		m_GravityForce *= -GravityPerFrame;	//	negate as UP is opposite to the direction of gravity.
 
@@ -259,8 +262,6 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 
 	//TLDebug_Print( TString("Velocity(%3.3f,%3.3f,%3.3f) Force(%3.3f,%3.3f,%3.3f) \n", m_Velocity.x, m_Velocity.y, m_Velocity.z, m_Force.x, m_Force.y, m_Force.z ) );
 
-	//float fFrameStep = fTimestep * TLTime::GetUpdatesPerSecond();
-
 	//	update physics movement
 	if ( DEBUG_FLOAT_CHECK( m_Force ) && HAS_MIN_CHANGE3(m_Force) )
 	{
@@ -278,7 +279,7 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 
 	//	reduce velocity
 	DEBUG_FLOAT_CHECK( m_Velocity );
-	float Dampening = 1.f - ( GetFriction() * fTimeStep);
+	float Dampening = 1.f - ( GetFriction() * fTimeStep * FRICTION_SCALAR );
 	if ( Dampening >= 1.f )
 	{
 		if ( Dampening > 1.f )
@@ -388,7 +389,7 @@ void TLPhysics::TPhysicsNode::MovePosition(const float3& Movement,float Timestep
 	if ( m_Transform.HasTranslate() )
 	{
 		float3 NewPosition = m_Transform.GetTranslate();
-		NewPosition += Movement * Timestep;
+		NewPosition += Movement * Timestep * MOVEMENT_SCALAR;
 		if ( NewPosition.z != 0.f )
 		{
 			TLDebug_Break("z?");
@@ -397,7 +398,7 @@ void TLPhysics::TPhysicsNode::MovePosition(const float3& Movement,float Timestep
 	}
 	else
 	{
-		m_Transform.SetTranslate( Movement * Timestep );
+		m_Transform.SetTranslate( Movement * Timestep * MOVEMENT_SCALAR );
 	}
 
 

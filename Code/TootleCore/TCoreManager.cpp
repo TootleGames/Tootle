@@ -10,7 +10,7 @@ using namespace TLCore;
 
 // DB - quick define for the maximum and minimum time step modifiers we can reach
 #define TIMESTEP_MIN 0.0f
-#define TIMESTEP_MAX 10.0f
+#define TIMESTEP_MAX 3.0f
 
 #if defined(TL_TARGET_IPOD)
 	#define LIMIT_UPDATE_RATE
