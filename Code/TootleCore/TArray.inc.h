@@ -770,7 +770,12 @@ template<typename TYPE>
 template<class MATCHTYPE>
 s32 TArray<TYPE>::FindIndex(const MATCHTYPE& val,u32 FromIndex) const
 {
+	// No elements
+	if(GetSize() == 0)
+		return -1;
+
 	u32 Size = GetSize();
+
 	if ( m_pSortFunc && Size > 2 )
 	{
 		if ( !IsSorted() )
@@ -804,6 +809,10 @@ template<typename TYPE>
 template<class MATCHTYPE>
 s32 TArray<TYPE>::FindIndex(const MATCHTYPE& val,u32 FromIndex)
 {
+	// No elements
+	if(GetSize() == 0)
+		return -1;
+
 	//	if this is a sorted array, do a sort when we need to, then we can use a binary chop
 	if ( m_pSortFunc && GetSize() > 2 )
 	{
@@ -831,6 +840,10 @@ template<typename TYPE>
 template<class MATCHTYPE>
 s32 TArray<TYPE>::FindIndexReverse(const MATCHTYPE& val,s32 FromIndex) const
 {
+	// No elements
+	if(GetSize() == 0)
+		return -1;
+
 	if ( FromIndex == -1 )
 		FromIndex = GetSize()-1;
 
