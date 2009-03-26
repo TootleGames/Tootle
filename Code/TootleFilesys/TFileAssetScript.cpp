@@ -183,7 +183,7 @@ SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportNodeTag(TPtr<TLAss
 	</Node>
 	*/
 
-	TRef NodeRef;
+	TRef NodeRef, NodeGraphRef;
 	const TString* pImportkeyframeString = pImportTag->GetProperty("NodeRef");
 	if ( pImportkeyframeString )
 		NodeRef.Set(*pImportkeyframeString);
@@ -194,12 +194,33 @@ SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportNodeTag(TPtr<TLAss
 		return SyncFalse;
 	}
 
+	pImportkeyframeString = pImportTag->GetProperty("NodeGraphRef");
+	if ( pImportkeyframeString )
+		NodeGraphRef.Set(*pImportkeyframeString);
+
+	if(!NodeGraphRef.IsValid())
+	{
+		TLDebug_Print("Failed to get valid node graph ref from TAS file");
+		return SyncFalse;
+	}
+
+
+	// Create the asset script command list object
+	TPtr<TLAsset::TAssetScriptCommandList> pScriptCommandList = new TLAsset::TAssetScriptCommandList(NodeRef, NodeGraphRef);
+
+	if(!pScriptCommandList || (pKeyframe->Add(pScriptCommandList) == -1))
+	{
+		TLDebug_Print("Failed to add new script command list");
+		return SyncFalse;
+	}
+
+
 	//	find out what we need to do
 	for ( u32 c=0;	c<pImportTag->GetChildren().GetSize();	c++ )
 	{
 		TPtr<TXmlTag>& pChildTag = pImportTag->GetChildren().ElementAt(c);
 		
-		SyncBool TagImportResult = ImportAssetScript_ImportCommandTag( pAssetScript, pKeyframe, pChildTag );
+		SyncBool TagImportResult = ImportAssetScript_ImportCommandTag( pAssetScript, pScriptCommandList, pChildTag);
 
 		//	failed
 		if ( TagImportResult == SyncFalse )
@@ -218,7 +239,7 @@ SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportNodeTag(TPtr<TLAss
 }
 
 
-SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportCommandTag(TPtr<TLAsset::TAssetScript>& pAssetScript, TLAsset::TKeyframe* pKeyframe, TPtr<TXmlTag>& pImportTag)
+SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportCommandTag(TPtr<TLAsset::TAssetScript>& pAssetScript, TPtr<TLAsset::TAssetScriptCommandList>& pScriptCommandList, TPtr<TXmlTag>& pImportTag)
 {
 	TLAsset::TAssetScriptCommand* pCommand = NULL;
 
@@ -232,50 +253,12 @@ SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportCommandTag(TPtr<TL
 
 		if ( PropertyName == "DataRef" )
 		{
+			pCommand = pScriptCommandList->AddCommand(PropertyData);
 
-			if ( PropertyData == "Translate" )
+			if(!pCommand)
 			{
-				// Create the command for a transform
-				pCommand = pKeyframe->AddCommand("DoTransform");
-
-				if(!pCommand)
-				{
-					TLDebug_Print("Failed to create command for TAS file");
-					return SyncFalse;
-				}
-			}
-			else if ( PropertyData == "Rotate" )
-			{
-				pCommand = pKeyframe->AddCommand("DoTransform");
-
-				if(!pCommand)
-				{
-					TLDebug_Print("Failed to create command for TAS file");
-					return SyncFalse;
-				}
-/*
-				// Now get the actual vector for the rotation
-				float3 vector;
-				
-				u32 CharIndex = 0;
-				if ( !TLString::ReadNextFloatArray( PropertyData, CharIndex, vector.GetData(), vector.GetSize() ) )
-					continue;
-
-				TLMaths::TQuaternion qRot(vector);
-
-				pCommand->ExportData("Rotation", qRot);
-				*/
-			}
-			else if(PropertyData == "Scale")
-			{
-				pCommand = pKeyframe->AddCommand("DoTransform");
-
-				if(!pCommand)
-				{
-					TLDebug_Print("Failed to create command for TAS file");
-					return SyncFalse;
-				}
-
+				TLDebug_Print("Failed to create command for TAS file");
+				return SyncFalse;
 			}
 		}
 		else if(PropertyName == "InterpMethod")
@@ -307,7 +290,7 @@ SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportCommandTag(TPtr<TL
 
 				if(TagImportResult != SyncTrue)
 				{
-					// Failed to copy the data formt he XML file
+					// Failed to copy the data form the XML file
 					TLDebug_Print("Failed to get command data from TAS file");
 					return SyncFalse;
 				}

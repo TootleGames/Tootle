@@ -877,6 +877,40 @@ void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 
 		return;
 	}
+	else if(Message.GetMessageRef() == TRef("Rotate"))
+	{
+		TLMaths::TQuaternion qRot;
+
+		if ( Message.Read( qRot ) == SyncTrue )
+		{
+			//SetRotation(qRot);
+		}
+
+		return;
+	}
+	else if(Message.GetMessageRef() == TRef("Translate"))
+	{
+		float3 vector;
+
+		if ( Message.Read( vector ) == SyncTrue )
+		{
+			SetTranslate(vector);
+		}
+
+		return;
+	}
+	else if(Message.GetMessageRef() == TRef("Scale"))
+	{
+		float3 vector;
+
+		if ( Message.Read( vector ) == SyncTrue )
+		{
+			SetScale(vector);
+		}
+
+		return;
+	}
+
 
 	//	do inherited init
 	TLGraph::TGraphNode<TLRender::TRenderNode>::ProcessMessage( Message );

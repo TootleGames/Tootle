@@ -20,8 +20,9 @@ namespace TLFileSys
 
 namespace TLAsset
 {
-	class TAssetScript;
 	class TKeyframe;
+	class TAssetScript;
+	class TAssetScriptCommandList;
 }
 
 class TLFileSys::TFileAssetScript : public TLFileSys::TFileXml
@@ -36,5 +37,5 @@ protected:
 	SyncBool			ImportAssetScript(TPtr<TLAsset::TAssetScript> pAssetScript,TPtr<TXmlTag>& pTag);
 	SyncBool			ImportAssetScript_ImportKeyframeTag(TPtr<TLAsset::TAssetScript>& pAssetScript, TPtr<TXmlTag>& pImportTag);
 	SyncBool			ImportAssetScript_ImportNodeTag(TPtr<TLAsset::TAssetScript>& pAssetScript, TLAsset::TKeyframe* pKeyframe, TPtr<TXmlTag>& pImportTag);
-	SyncBool			ImportAssetScript_ImportCommandTag(TPtr<TLAsset::TAssetScript>& pAssetScript, TLAsset::TKeyframe* pkeyframe, TPtr<TXmlTag>& pImportTag);
+	SyncBool			ImportAssetScript_ImportCommandTag(TPtr<TLAsset::TAssetScript>& pAssetScript, TPtr<TLAsset::TAssetScriptCommandList>& pScriptCommandList, TPtr<TXmlTag>& pImportTag);
 };
