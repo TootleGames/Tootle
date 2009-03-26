@@ -8,7 +8,7 @@
 
 //	if defined we re-calculate the bounds box of the render node. Need to balance this CPU vs GPU cost.
 //	if not defined we only do a box test if the current one is up to date (i.e. something else needed it so it's calculated)
-//#define RECALC_BOX_FOR_RENDERZONE_TEST
+#define RECALC_BOX_FOR_RENDERZONE_TEST
 
 
 
@@ -71,9 +71,9 @@ SyncBool TLRender::TRenderZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
 	const TLMaths::TBox2D& ZoneShape = Shape;
 
 	//	test world pos first, quickest test :)
-	Bool WorldPosIsValid;
+	SyncBool WorldPosIsValid;
 	const float3& WorldPos = pRenderNode->GetWorldPos( WorldPosIsValid );
-	if ( !WorldPosIsValid )
+	if ( WorldPosIsValid != SyncTrue )
 	{
 		//	gr: if world pos is not valid, then MOST likely this is being called as a zone has been split and we're testing to
 		//		see if the node needs moving. As we've not rendered yet, we might be out of date... all of the other bounds
@@ -145,7 +145,8 @@ TLRender::TRenderNode::TRenderNode(TRefRef RenderNodeRef,TRefRef TypeRef) :
 	m_Data						( "Data" ),
 	m_LineWidth					( 0.f ),
 	m_WorldPosValid				( SyncFalse ),
-	m_Colour					( 1.f, 1.f, 1.f, 1.f )
+	m_Colour					( 1.f, 1.f, 1.f, 1.f ),
+	m_WorldTransformValid		( SyncFalse )
 {
 	//	setup defualt render flags
 	m_RenderFlags.Set( RenderFlags::DepthRead );
@@ -239,8 +240,11 @@ TPtr<TLAsset::TTexture>& TLRender::TRenderNode::GetTextureAsset()
 //------------------------------------------------------------
 Bool TLRender::TRenderNode::Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList)
 {
-	//	gr: todo: merge flags, colours etc from parent
-	return TRUE;
+	//	base type aborts drawing early if no mesh ref assigned
+	if ( m_MeshRef.IsValid() )
+		return TRUE;
+
+	return FALSE;
 }		
 
 

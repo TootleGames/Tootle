@@ -19,6 +19,7 @@ namespace TLRender
 {
 	class TScreen;
 	class TRenderTarget;
+	class TRenderNodeText;
 
 	namespace Platform
 	{
@@ -60,6 +61,7 @@ public:
 
 	TPtr<TLRender::TRenderTarget>	CreateRenderTarget(TRefRef TargetRef);					// Creates a new render target
 	SyncBool						DeleteRenderTarget(TRefRef TargetRef);					//	shutdown a render target
+	void							OnRenderTargetZChanged(const TRenderTarget* pRenderTarget);	//	z has changed on render target - resorts render targets
 
 	TPtr<TRenderTarget>&			GetRenderTarget(TRefRef TargetRef);						//	fetch render target
 
@@ -76,20 +78,27 @@ public:
 
 	FORCEINLINE void				RequestScreenshot()							{	m_Flags.Set(Flag_TakeScreenshot);	}	// Screenshot request
 
+	TLRender::TRenderNodeText*		Debug_GetRenderNodeText(TRefRef DebugTextRef);	//	return text render node for this debug text
+
 	FORCEINLINE Bool				operator==(const TRef& ScreenRef)	const	{	return GetRef() == ScreenRef;	}
 	FORCEINLINE Bool				operator==(const TScreen& Screen)	const 	{	return GetRef() == Screen.GetRef();	}
 
 protected:
 	Bool							GetRenderTargetPosFromScreenPos(const TRenderTarget& RenderTarget,Type2<s32>& RenderTargetPos,Type4<s32>& RenderTargetSize,const Type2<s32>& ScreenPos);	//	Get a render target-relative cursor position from a screen pos - fails if outside render target box
+	void							CreateDebugRenderTarget();
 
 protected:
 	TPtrArray<TRenderTarget>		m_RenderTargets;			//	list of active render targets
+	TPtrArray<TRenderTarget>		m_RenderTargetsZOrdered;	//	render targets sorted by depth
 	TPtrArray<TRenderTarget>		m_ShutdownRenderTargets;	//	list of render targets we're destroying
 	Bool							m_HasShutdown;				//	
 	TRef							m_Ref;						//	reference to screen
 	Type4<s32>						m_Size;						//	pos + w + h. Note viewport maybe smaller (ie. because of window borders in windows)
 	TFlags<Flags>					m_Flags;					//	screen flags
 	TScreenShape					m_ScreenShape;				//	screen orientation
+	
+	TRef							m_DebugRenderTarget;		//	debug render target
+	TKeyArray<TRef,TRef>			m_DebugRenderText;			//	keyed list of debug strings -> render nodes
 };
 
 

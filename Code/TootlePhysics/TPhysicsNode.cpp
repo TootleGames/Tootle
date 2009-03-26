@@ -24,8 +24,8 @@
 
 //#define FORCE_SQUIDGE				0.0f
 
-#define FRICTION_SCALAR				TLTime::GetUpdatesPerSecondf()
-#define MOVEMENT_SCALAR				TLTime::GetUpdatesPerSecondf()
+#define FRICTION_SCALAR				PHYSICS_SCALAR
+#define MOVEMENT_SCALAR				PHYSICS_SCALAR
 
 //	gr: simple is faster, possibly could make non-simple one save doing same in-zone-shape checks over and over..
 #define SIMPLE_UPDATE_ZONE	//	changes update zone to just traverse from root down, instead of current zone up

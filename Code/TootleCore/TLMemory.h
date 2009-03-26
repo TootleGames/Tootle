@@ -44,11 +44,11 @@ namespace TLMemory
 		void		Initialise();
 		void		Shutdown();
 		
-		void*		MemAlloc(u32 Size);								//	malloc
-		void		MemDealloc(void* pMem);							//	free
-		void		MemCopy(void* pDest,const void* pSrc,u32 Size);	//	memcpy
-		void		MemMove(void* pDest,const void* pSrc,u32 Size);	//	memmove
-		void		MemValidate(void* pMem=NULL);					//	validate memory heaps
+		FORCEINLINE void*		MemAlloc(u32 Size);								//	malloc
+		FORCEINLINE void		MemDealloc(void* pMem);							//	free
+		FORCEINLINE void		MemCopy(void* pDest,const void* pSrc,u32 Size);	//	memcpy
+		FORCEINLINE void		MemMove(void* pDest,const void* pSrc,u32 Size);	//	memmove
+		FORCEINLINE void		MemValidate(void* pMem=NULL);					//	validate memory heaps
 	}
 
 	class TMemoryTrack;								//	allocation tracking entry
@@ -185,6 +185,10 @@ FORCEINLINE void operator delete[](void* pObj) throw()
 //	include the platform specific header
 #if defined(_MSC_EXTENSIONS) && defined(TL_TARGET_PC)
 	#include "PC/PCMemory.h"
+#endif
+
+#if defined(TL_TARGET_IPOD)
+	#include "IPod/IPodMemory.h"
 #endif
 
 

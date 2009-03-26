@@ -60,11 +60,12 @@ namespace TLRender
 	
 		//	scene settings - only calls platform implementations as required - inlined for speed
 		FORCEINLINE void		EnableWireframe(Bool Enable);
-		FORCEINLINE void		EnableAlpha(Bool Enable);
+		FORCEINLINE void		EnableAlpha(Bool Enable,Bool AddBlending=FALSE);
+		FORCEINLINE void		EnableAddBlending(Bool Enable);
 		FORCEINLINE void		EnableDepthRead(Bool Enable);
 		FORCEINLINE void		EnableDepthWrite(Bool Enable);
 		FORCEINLINE void		EnableScissor(Bool Enable);
-		FORCEINLINE void		SetSceneColour(const TColour& Colour,Bool ForceEnableAlpha=FALSE);		//	if alpha < 1 then it will enable alpha too
+		FORCEINLINE void		SetSceneColour(const TColour& Colour,Bool ForceEnableAlpha=FALSE,Bool AddBlending=FALSE);		//	if alpha < 1 then it will enable alpha too
 		FORCEINLINE void		SetLineWidth(float Width);
 		FORCEINLINE void		SetPointSize(float Size);
 		
@@ -95,6 +96,7 @@ namespace TLRender
 
 			FORCEINLINE void		EnableWireframe(Bool Enable);
 			FORCEINLINE void		EnableAlpha(Bool Enable);
+			FORCEINLINE void		EnableAddBlending(Bool Enable);
 			FORCEINLINE void		EnableDepthRead(Bool Enable);
 			FORCEINLINE void		EnableDepthWrite(Bool Enable);
 			FORCEINLINE void		EnableScissor(Bool Enable);
@@ -146,7 +148,7 @@ FORCEINLINE void TLRender::Opengl::EnableWireframe(Bool Enable)
 }
 
 
-FORCEINLINE void TLRender::Opengl::EnableAlpha(Bool Enable)
+FORCEINLINE void TLRender::Opengl::EnableAlpha(Bool Enable,Bool AddBlending)
 {
 	static SyncBool g_SceneEnabled = SyncWait;
 	SyncBool NewEnabled = Enable ? SyncTrue : SyncFalse;
@@ -154,6 +156,22 @@ FORCEINLINE void TLRender::Opengl::EnableAlpha(Bool Enable)
 	if ( NewEnabled != g_SceneEnabled )
 	{
 		Platform::EnableAlpha( Enable );
+		g_SceneEnabled = NewEnabled;
+	}
+
+	//	set correct blending mode
+	if ( Enable )
+		Platform::EnableAddBlending( AddBlending );
+}
+
+FORCEINLINE void TLRender::Opengl::EnableAddBlending(Bool Enable)
+{
+	static SyncBool g_SceneEnabled = SyncWait;
+	SyncBool NewEnabled = Enable ? SyncTrue : SyncFalse;
+
+	if ( NewEnabled != g_SceneEnabled )
+	{
+		Platform::EnableAddBlending( Enable );
 		g_SceneEnabled = NewEnabled;
 	}
 }
@@ -201,20 +219,20 @@ FORCEINLINE void TLRender::Opengl::EnableScissor(Bool Enable)
 //---------------------------------------------------
 //	if < 1 then it will enable alpha too
 //---------------------------------------------------
-void TLRender::Opengl::SetSceneColour(const TColour& Colour,Bool ForceEnableAlpha)
+void TLRender::Opengl::SetSceneColour(const TColour& Colour,Bool ForceEnableAlpha,Bool AddBlending)
 {
 	static TColour g_SceneColour( 1.f, 1.f, 1.f, 1.f );
 
 	if ( g_SceneColour != Colour )
 	{
 		Platform::SetSceneColour( Colour );
-		EnableAlpha( ForceEnableAlpha || Colour.IsTransparent() );
+		EnableAlpha( ForceEnableAlpha || Colour.IsTransparent(), AddBlending );
 		g_SceneColour = Colour;
 	}
 	else if ( ForceEnableAlpha )
 	{
 		//	no colour change, but alpha needs to be forced on so enable it
-		EnableAlpha( ForceEnableAlpha );
+		EnableAlpha( ForceEnableAlpha, AddBlending );
 	}
 	else if ( !Colour.IsTransparent() )
 	{

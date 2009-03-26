@@ -74,6 +74,8 @@ public:
 	FORCEINLINE Bool		IsEnabled() const							{	return m_Flags( Flag_Enabled );	}
 	TFlags<TRenderNode::RenderFlags::Flags>&	Debug_ForceRenderFlagsOn()	{	return m_Debug_ForceRenderFlagsOn;	}
 	TFlags<TRenderNode::RenderFlags::Flags>&	Debug_ForceRenderFlagsOff()	{	return m_Debug_ForceRenderFlagsOff;	}
+	void					SetScreenZ(u8 NewZ);						//	set z and resort screen order
+	FORCEINLINE u8			GetScreenZ() const							{	return m_ScreenZ;	}
 
 	void					SetRootRenderNode(TRefRef NodeRef)			{	m_RootRenderNodeRef = NodeRef;	}
 	void					SetRootRenderNode(const TPtr<TRenderNode>& pRenderNode);
@@ -94,6 +96,9 @@ public:
 	const TLMaths::TBox2D&	GetWorldViewBox(float WorldDepth=0.f) const;						//	the world-space box for the extents at the edges of the screen.
 	const TLMaths::TBox2D&	GetWorldViewBox(TPtr<TScreen>& pScreen,float WorldDepth=0.f);		//	same as GetWorldViewBox but can be used before a render
 
+	FORCEINLINE Bool		operator<(const TRenderTarget& RenderTarget) const					{	return GetScreenZ() < RenderTarget.GetScreenZ();	}
+	FORCEINLINE Bool		operator==(const TRenderTarget& RenderTarget) const					{	return GetScreenZ() == RenderTarget.GetScreenZ();	}
+
 protected:
 	Bool							DrawNode(TRenderNode* pRenderNode,TRenderNode* pParentRenderNode,const TLMaths::TTransform* pSceneTransform,TColour SceneColour,TLMaths::TQuadTreeNode* pCameraZoneNode);	//	render a render object
 	void							DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRenderNode* pRenderNode,const TLMaths::TTransform& SceneTransform,TColour SceneColour,TPtrArray<TRenderNode>& PostRenderList);	
@@ -106,7 +111,7 @@ protected:
 	virtual Bool					BeginOrthoDraw(TLRender::TOrthoCamera* pCamera,TScreenShape ScreenShape)		{	return TRUE;	}	//	setup ortho projection mode
 	virtual void					EndOrthoDraw()																	{	}
 
-	SyncBool						IsRenderNodeVisible(TRenderNode* pRenderNode,TPtr<TLMaths::TQuadTreeNode>*& ppRenderZoneNode,TLMaths::TQuadTreeNode* pCameraZoneNode,const TLMaths::TTransform* pSceneTransform,Bool& RenderNodeIsInsideCameraZone);	//	check zone of node against camera's zone to determine visibility. if no scene transform is provided then we only do quick tests with no calculations. This can result in a SyncWait returned which means we need to do calculations to make sure of visibility
+	SyncBool						IsRenderNodeVisible(TRenderNode& RenderNode,TPtr<TLMaths::TQuadTreeNode>*& ppRenderZoneNode,TLMaths::TQuadTreeNode* pCameraZoneNode,const TLMaths::TTransform* pSceneTransform,Bool& RenderNodeIsInsideCameraZone);	//	check zone of node against camera's zone to determine visibility. if no scene transform is provided then we only do quick tests with no calculations. This can result in a SyncWait returned which means we need to do calculations to make sure of visibility
 	Bool							IsZoneVisible(TLMaths::TQuadTreeNode* pCameraZoneNode,TLMaths::TQuadTreeZone* pZone,TLMaths::TQuadTreeNode* pZoneNode,Bool& RenderNodeIsInsideCameraZone);
 
 	void							OnSizeChanged();		//	do any recalculations we need to when the render target's size changes
@@ -122,6 +127,7 @@ protected:
 
 	TColour							m_ClearColour;			//	clear colour
 	TFlags<Flags>					m_Flags;				//	render target flags
+	u8								m_ScreenZ;				//	order of render targets in screen
 
 	TPtr<TLMaths::TQuadTreeZone>	m_pRootQuadTreeZone;	//	root visibility zone
 

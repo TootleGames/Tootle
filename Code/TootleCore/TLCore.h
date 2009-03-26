@@ -45,4 +45,8 @@ namespace TLCore
 	#include "PC/PCCore.h"
 #endif
 
+#if defined(TL_TARGET_IPOD)
+	#include "IPod/IPodCore.h"
+#endif
+
 

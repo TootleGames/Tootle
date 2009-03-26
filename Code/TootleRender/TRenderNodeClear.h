@@ -20,6 +20,7 @@ public:
 	TRenderNodeClear(TRefRef NodeRef,TRefRef TypeRef=TRef());
 
 	virtual TPtr<TLAsset::TMesh>&	GetMeshAsset() 		{	return m_pClearMesh;	}
+	virtual Bool					Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList)	{	return TRUE;	}
 
 	void							SetSize(const TLMaths::TBox2D& ClearBox,float NearZ);	//	resize the mesh (also creates as required)
 

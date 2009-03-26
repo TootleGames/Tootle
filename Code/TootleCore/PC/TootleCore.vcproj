@@ -189,6 +189,14 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\PCMemory.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PCMemory.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PCThread.cpp"
 				>
 				<FileConfiguration
@@ -353,14 +361,6 @@
 			Name="Memory"
 			>
 			<File
-				RelativePath=".\PCMemory.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PCMemory.h"
-				>
-			</File>
-			<File
 				RelativePath="..\TLMemory.cpp"
 				>
 			</File>
@@ -380,54 +380,6 @@
 				RelativePath="..\TMemoryManager.h"
 				>
 			</File>
-			<Filter
-				Name="PC Source Files"
-				>
-				<File
-					RelativePath=".\PCMemory.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\PCMemory.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="IPod Source Files"
-				>
-				<File
-					RelativePath="..\IPod\IPodMemory.h"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\IPod\IPodMemory.mm"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="IPod Source Files"
@@ -494,6 +446,38 @@
 			</File>
 			<File
 				RelativePath="..\IPod\IPodCore.mm"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\IPod\IPodMemory.h"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\IPod\IPodMemory.mm"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"

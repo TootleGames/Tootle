@@ -425,10 +425,7 @@ void TArray<TYPE>::ShiftArray(u32 From, s32 Amount )
 				TLDebug::CheckIndex( DestIndex, GetSize(), __FUNCTION__ );
 			}
 
-#ifdef TL_TARGET_PC
-			// Not used on iPod?
 			TLMemory::Platform::MemValidate();
-#endif
 		}
 		else
 		{
@@ -762,6 +759,30 @@ s32 TArray<TYPE>::FindIndexSorted(const MATCHTYPE& val,u32 Low,s32 High) const
 	else //if ( Sort == TLArray::IsGreater )
 		return FindIndexSorted( val, Low, Mid-1 );
 }
+
+
+//----------------------------------------------------------------------
+//	matches elements but specificlly doesnt use sorting. Use this if you need to find a match that the array is not sorted by
+//----------------------------------------------------------------------
+template<typename TYPE>
+template<class MATCHTYPE>
+s32 TArray<TYPE>::FindIndexNoSort(const MATCHTYPE& val,u32 FromIndex) const
+{
+	u32 Size = GetSize();
+	if ( Size == 0 )
+		return -1;
+
+	//	search elements
+	const TYPE* pFirstElement = &ElementAtConst(0);
+	for ( u32 i=FromIndex;	i<Size;	i++ )
+	{
+		//	gr: less safe, but faster access...
+		if ( pFirstElement[i] == val )
+			return (s32)i;
+	}
+	return -1;
+};
+
 
 //----------------------------------------------------------------------
 //	get the index of a matching element. -1 if none matched

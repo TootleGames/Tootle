@@ -1,5 +1,6 @@
 #include "TScreen.h"
 #include "TRenderTarget.h"
+#include "TRenderNodeText.h"
 
 #if defined(TL_TARGET_PC)
 	#include "PC/PCRenderTarget.h"
@@ -11,6 +12,24 @@
 
 
 
+//----------------------------------------------------
+//	simple ref-sort func - for arrays of TRef's
+//----------------------------------------------------
+TLArray::SortResult ScreenRenderTargetSort(const TPtr<TLRender::TRenderTarget>& pRenderTargetA,const TPtr<TLRender::TRenderTarget>& pRenderTargetB,const void* pTestVal)
+{
+	if ( pTestVal )
+	{
+		TLDebug_Break("not yet implemented specific render target searching...");
+	}
+
+	const TLRender::TRenderTarget& RenderTargetA = *pRenderTargetA;
+	const TLRender::TRenderTarget& RenderTargetB = *pRenderTargetB;
+
+	//	== turns into 0 (is greater) or 1(equals)
+	return RenderTargetA < RenderTargetB ? TLArray::IsLess : (TLArray::SortResult)(RenderTargetA==RenderTargetB);	
+}
+
+
 //---------------------------------------------------------
 //	
 //---------------------------------------------------------
@@ -18,7 +37,8 @@ TLRender::TScreen::TScreen(TRefRef Ref,TScreenShape ScreenShape) :
 	m_HasShutdown	( FALSE ),
 	m_Ref			( Ref ),
 	m_Size			( g_MaxSize,g_MaxSize,g_MaxSize,g_MaxSize ),
-	m_ScreenShape	( ScreenShape )
+	m_ScreenShape	( ScreenShape ),
+	m_RenderTargetsZOrdered	( TLPtrArray::SimpleSort<TLRender::TRenderTarget> )
 {
 	//	gr: disabled for now, core manager limits frame rate instead of using hardware sync
 	//m_Flags.Set( Flag_SyncFrameRate );
@@ -41,6 +61,12 @@ TLRender::TScreen::~TScreen()
 //---------------------------------------------------------
 SyncBool TLRender::TScreen::Init()
 {
+	//	create a debug render target
+	if ( !m_DebugRenderTarget.IsValid() )
+	{
+		CreateDebugRenderTarget();
+	}
+
 	return SyncTrue;
 }
 
@@ -66,6 +92,9 @@ SyncBool TLRender::TScreen::Shutdown()
 		return SyncTrue;
 
 	SyncBool ShutdownResult = SyncTrue;
+
+	//	 empty this array first
+	m_RenderTargetsZOrdered.Empty();
 
 	//	clean up render targets
 	if ( m_RenderTargets.GetSize() )
@@ -111,11 +140,11 @@ void TLRender::TScreen::Draw()
 	Type4<s32> ViewportMaxSize;
 	GetViewportMaxSize( ViewportMaxSize );
 
-	//	render each render target
-	for ( u32 r=0;	r<m_RenderTargets.GetSize();	r++ )
+	//	render each render target in z order
+	for ( u32 r=0;	r<m_RenderTargetsZOrdered.GetSize();	r++ )
 	{
 		//	get render target
-		TPtr<TRenderTarget>& pRenderTarget = m_RenderTargets[r];
+		TPtr<TRenderTarget>& pRenderTarget = m_RenderTargetsZOrdered[r];
 		if ( !pRenderTarget.IsValid() )
 			continue;
 
@@ -146,6 +175,11 @@ TPtr<TLRender::TRenderTarget> TLRender::TScreen::CreateRenderTarget(TRefRef Targ
 
 	//	add render target to list
 	m_RenderTargets.Add( pRenderTarget );
+	m_RenderTargetsZOrdered.Add( pRenderTarget );
+
+	//	resort render targets by z
+	OnRenderTargetZChanged( pRenderTarget );
+
 	return pRenderTarget;
 }
 
@@ -183,6 +217,9 @@ SyncBool TLRender::TScreen::DeleteRenderTarget(const TRef& TargetRef)
 
 	//	remove from render target list
 	m_RenderTargets.RemoveAt( (u32)Index );
+
+	s32 zindex = m_RenderTargetsZOrdered.FindIndexNoSort( TargetRef );
+	m_RenderTargetsZOrdered.RemoveAt( zindex );
 
 	pRenderTarget = NULL;
 	/*
@@ -363,5 +400,71 @@ void TLRender::TScreen::GetRenderTargetMaxSize(Type4<s32>& MaxSize)
 		MaxSize.Height() = ViewportMaxSize.Width();
 	}
 
+}
+
+
+//---------------------------------------------------------
+//	
+//---------------------------------------------------------
+void TLRender::TScreen::CreateDebugRenderTarget()
+{
+	TPtr<TLRender::TRenderTarget> pRenderTarget = CreateRenderTarget("Debug");
+	if ( !pRenderTarget )
+		return;
+
+	pRenderTarget->SetScreenZ(99);
+	pRenderTarget->SetClearColour( TColour(0.f, 1.f, 0.f, 0.f ) );
+	
+	TPtr<TLRender::TCamera> pCamera = new TLRender::TOrthoCamera;
+	pCamera->SetPosition( float3( 0, 0, -10.f ) );
+	pRenderTarget->SetCamera( pCamera );
+
+
+	//	store render target
+	m_DebugRenderTarget = pRenderTarget->GetRef();
+
+	//	init root node
+	TRef RootRenderNode;
+	{
+		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
+		InitMessage.AddChildAndData("Scale", float3( 5.f, 5.f, 1.f ) );
+		RootRenderNode = TLRender::g_pRendergraph->CreateNode( "root", TRef(), TRef(), &InitMessage );
+		pRenderTarget->SetRootRenderNode( RootRenderNode );
+	}
+
+	//	add fps text
+	{
+		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
+		InitMessage.AddChildAndData("FontRef", TRef("fdebug") );
+		TRef FpsRenderNode = TLRender::g_pRendergraph->CreateNode( "dbgfps", "txtext", RootRenderNode, &InitMessage );
+		m_DebugRenderText.Add( "fps", FpsRenderNode );
+	}
+
+}
+
+	
+//---------------------------------------------------------
+//	return text render node for this debug text
+//---------------------------------------------------------
+TLRender::TRenderNodeText* TLRender::TScreen::Debug_GetRenderNodeText(TRefRef DebugTextRef)
+{
+	TRef* ppRenderNodeRef = m_DebugRenderText.Find( DebugTextRef );
+	if ( !ppRenderNodeRef )
+		return NULL;
+
+	TPtr<TLRender::TRenderNode>& pRenderNode = TLRender::g_pRendergraph->FindNode( *ppRenderNodeRef );
+	if ( !pRenderNode )
+		return NULL;
+
+	return pRenderNode.GetObject<TLRender::TRenderNodeText>();
+}
+
+
+//---------------------------------------------------------
+//	z has changed on render target - resorts render targets
+//---------------------------------------------------------
+void TLRender::TScreen::OnRenderTargetZChanged(const TRenderTarget* pRenderTarget)
+{
+	m_RenderTargetsZOrdered.Sort();
 }
 

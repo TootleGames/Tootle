@@ -8,6 +8,17 @@ namespace TLTime
 }
 
 
+
+
+//---------------------------------------------------------
+//	get our application udpate rate
+//---------------------------------------------------------
+float TLTime::GetUpdatesPerSecondf()
+{	
+	return 40.f;
+}
+
+
 //---------------------------------------------------------
 //	
 //---------------------------------------------------------
@@ -97,9 +108,10 @@ Bool TLTime::TTimestamp::operator>(const TTimestamp& Timestamp) const
 //	note: I've ordered these so string is constructed/copied (hopefully)
 //	BEFORE the time is recorded
 //---------------------------------------------------------
-TLTime::TScopeTimer::TScopeTimer(const TTempString& TimerName) : 
+TLTime::TScopeTimer::TScopeTimer(const TTempString& TimerName,Bool Verbose) : 
 	m_TimerName			( TimerName ),
-	m_StartTimestamp	( TRUE )
+	m_StartTimestamp	( TRUE ),
+	m_Verbose			( Verbose )
 {
 }
 
@@ -109,6 +121,10 @@ TLTime::TScopeTimer::TScopeTimer(const TTempString& TimerName) :
 //---------------------------------------------------------
 void TLTime::TScopeTimer::Debug_PrintTimerResult()
 {
+#ifndef _DEBUG
+	return;
+#endif
+
 	//	record time now (before any string operations)
 	TLTime::TTimestampMicro Now(TRUE);
 
@@ -133,6 +149,25 @@ void TLTime::TScopeTimer::Debug_PrintTimerResult()
 	TLDebug_Print( String );
 }
 
+//---------------------------------------------------------
+//	return the time spent in the timer in millisecs (.micro)
+//---------------------------------------------------------
+float TLTime::TScopeTimer::GetTimeMillisecs() const
+{
+	//	record time now (before any string operations)
+	TLTime::TTimestampMicro Now(TRUE);
+
+	s32 DiffMilliSeconds = m_StartTimestamp.GetMilliSecondsDiff( Now );
+	s32 DiffMicroSeconds = m_StartTimestamp.GetMicroSecondsDiff( Now );
+	
+	m_StartTimestamp.GetTimeDiff( Now, DiffMilliSeconds, DiffMicroSeconds );
+
+	//	make microsecs into a fraction
+	float MicroFraction = (float)DiffMicroSeconds / (float)MilliSecsToMicro(1);
+	float MilliFloat = (float)DiffMilliSeconds + MicroFraction;
+	
+	return MilliFloat;
+}
 
 
 
@@ -166,7 +201,7 @@ TLTime::TTimestampMicro::TTimestampMicro(const TTimestamp& Timestamp) :
 //---------------------------------------------------------
 //	get difference between timestamp in parts
 //---------------------------------------------------------
-void TLTime::TTimestampMicro::GetTimeDiff(const TTimestampMicro& Timestamp,s32& Secs,s32& MilliSecs,s32& MicroSecs)
+void TLTime::TTimestampMicro::GetTimeDiff(const TTimestampMicro& Timestamp,s32& Secs,s32& MilliSecs,s32& MicroSecs) const
 {
 	s32 MicroDiff = this->GetMicroSecondsDiff( Timestamp );
 	Bool Negate = (MicroDiff < 0);
@@ -190,5 +225,33 @@ void TLTime::TTimestampMicro::GetTimeDiff(const TTimestampMicro& Timestamp,s32& 
 		Secs = -Secs;
 	}
 }
+
+
+
+//---------------------------------------------------------
+//	get difference between timestamp in parts
+//---------------------------------------------------------
+void TLTime::TTimestampMicro::GetTimeDiff(const TTimestampMicro& Timestamp,s32& MilliSecs,s32& MicroSecs) const
+{
+	s32 MicroDiff = this->GetMicroSecondsDiff( Timestamp );
+	Bool Negate = (MicroDiff < 0);
+	if ( Negate )
+		MicroDiff = -MicroDiff;
+
+	//	get micro secs difference 
+	MicroSecs = MicroDiff % 1000;
+
+	//	get milli secs difference
+	s32 MilliDiff = TLTime::MicroToMilliSecs( MicroDiff - MicroSecs );
+	//MilliSecs = MilliDiff % 1000;
+
+	if ( Negate )
+	{
+		MicroSecs = -MicroSecs;
+		MilliSecs = -MilliSecs;
+	}
+}
+
+
 
 

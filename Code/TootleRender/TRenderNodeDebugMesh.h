@@ -27,7 +27,8 @@ public:
 	virtual TPtr<TLAsset::TMesh>&	GetMeshAsset()		{	return m_pDebugMesh;	}
 
 protected:
-	virtual void			Initialise(TLMessaging::TMessage& Message);
+	virtual void					Initialise(TLMessaging::TMessage& Message);
+	virtual Bool					Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList)	{	return TRUE;	}
 
 public:
 	TPtr<TLAsset::TMesh>	m_pDebugMesh;

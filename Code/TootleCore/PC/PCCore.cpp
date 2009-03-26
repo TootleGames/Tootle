@@ -88,6 +88,7 @@ SyncBool TLCore::Platform::Init()
 
 	if ( !UseMMTimer )
 	{
+		UpdateInterval = 1;
 		g_TimerUpdateID = (u32)SetTimer( NULL, 0, UpdateInterval, TLCore::Platform::UpdateTimerCallback );
 		if ( g_TimerUpdateID == 0 )
 		{
@@ -123,7 +124,8 @@ SyncBool TLCore::Platform::Update()
 			//	no more messages, and we've got updates to do so break out and let the app loop
 			if ( !PeekMessage(&msg,NULL,0,0,PM_NOREMOVE) )
 			{
-				if ( TLCore::g_pCoreManager->HasTimeSteps() )
+				//	ready for an update - break out so we can do an update
+				if ( TLCore::g_pCoreManager->IsReadyForUpdate() )
 					break;
 			}
 		}
@@ -276,11 +278,8 @@ void CALLBACK TLCore::Platform::UpdateMMTimerCallback(UINT uTimerID, UINT uMsg, 
 	if ( TLDebug::IsBreaking() )
 		return;
 
-	//	add an update timestamp to the update time queue
-	TLTime::TTimestamp UpdateTimerTime( TRUE );
-
 	if ( TLCore::g_pCoreManager )
-		TLCore::g_pCoreManager->AddTimeStep( UpdateTimerTime );
+		TLCore::g_pCoreManager->SetReadyForUpdate();
 }
 
 
@@ -305,9 +304,7 @@ void CALLBACK TLCore::Platform::UpdateTimerCallback(HWND hwnd,UINT uMsg,UINT_PTR
 		// Suggests that we are running out of a frame??
 	}
 
-	//	add an update timestamp to the update time queue
-	TLTime::TTimestamp UpdateTimerTime;
-	TLTime::Platform::GetTimestampFromTickCount( UpdateTimerTime, dwTime );
-
-	TLCore::g_pCoreManager->AddTimeStep(UpdateTimerTime);
+	//	ready for another update
+	if ( TLCore::g_pCoreManager )
+		TLCore::g_pCoreManager->SetReadyForUpdate();
 }

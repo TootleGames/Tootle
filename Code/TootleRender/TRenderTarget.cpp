@@ -11,6 +11,7 @@
 //#define DEBUG_NODE_RENDERED_COUNT
 #endif
 
+#define VISIBILITY_FRUSTUM_TEST_FIRST
 
 //#define PREDIVIDE_RENDER_ZONES
 
@@ -26,7 +27,8 @@ TLRender::TRenderTarget::TRenderTarget(const TRef& Ref) :
 	m_Debug_VertexCount	( 0 ),
 	m_Debug_NodeCount	( 0 ),
 	m_Debug_NodeCulledCount	( 0 ),
-	m_pCameraMatrix		( NULL )
+	m_pCameraMatrix		( NULL ),
+	m_ScreenZ			( 0 )
 {
 	//	set default flags
 	m_Flags.Set( Flag_Enabled );
@@ -207,6 +209,7 @@ void TLRender::TRenderTarget::EndDraw()
 		Opengl::SetLineWidth( 2.f );
 		Opengl::EnableDepthRead( FALSE );
 		Opengl::EnableAlpha( FALSE );
+		Opengl::Unbind();
 
 		TFixedArray<float3,8>& FrustumOblongCorners = pCamera->m_FrustumOblong.GetBoxCorners();
 
@@ -362,57 +365,59 @@ TPtr<TLRender::TRenderNode>& TLRender::TRenderTarget::GetRootRenderNode() const
 //	if no scene transform is provided then we only do quick tests with no calculations. 
 //	This can result in a SyncWait returned which means we need to do calculations to make sure of visibility
 //---------------------------------------------------------------
-SyncBool TLRender::TRenderTarget::IsRenderNodeVisible(TRenderNode* pRenderNode,TPtr<TLMaths::TQuadTreeNode>*& ppRenderZoneNode,TLMaths::TQuadTreeNode* pCameraZoneNode,const TLMaths::TTransform* pSceneTransform,Bool& RenderNodeIsInsideCameraZone)
+SyncBool TLRender::TRenderTarget::IsRenderNodeVisible(TRenderNode& RenderNode,TPtr<TLMaths::TQuadTreeNode>*& ppRenderZoneNode,TLMaths::TQuadTreeNode* pCameraZoneNode,const TLMaths::TTransform* pSceneTransform,Bool& RenderNodeIsInsideCameraZone)
 {
 	//	no camera zone, so must be visible (assume no culling)
 	if ( !pCameraZoneNode )
 		return SyncTrue;
 
 	Bool QuickTest = (pSceneTransform == NULL);
+	SyncBool IsTransformUpToDate = RenderNode.IsWorldTransformValid();
+	SyncBool IsZoneUpToDate = SyncWait;
+
+	TLRender::TRenderZoneNode* pRenderZoneNode = NULL;
 
 	//	find our render zone node
 	if ( !ppRenderZoneNode )
 	{
-		ppRenderZoneNode = pRenderNode->GetRenderZoneNode( GetRef() );
+		ppRenderZoneNode = RenderNode.GetRenderZoneNode( GetRef() );
 
-		//	dont have a zone yet, if we're doing a quick test then abort and we'll create one later
-		if ( !ppRenderZoneNode && QuickTest )
+		//	if we have a zone, then set the up-to-date value
+		if ( ppRenderZoneNode )
+		{
+			pRenderZoneNode = (*ppRenderZoneNode).GetObject<TLRender::TRenderZoneNode>();
+			IsZoneUpToDate = pRenderZoneNode->IsZoneOutOfDate() ? SyncFalse : SyncTrue;
+		}
+
+#ifdef VISIBILITY_FRUSTUM_TEST_FIRST
+		//	dont have a zone yet, the transform is NOT up to date, so cull test will fail anyway
+		if ( !pRenderZoneNode && IsTransformUpToDate != SyncTrue )
 			return SyncWait;
+#else
+		//	dont have a zone yet, if we're doing a quick test then abort and we'll create one later
+		if ( !pRenderZoneNode && QuickTest )
+			return SyncWait;
+#endif // VISIBILITY_FRUSTUM_TEST_FIRST
 
 		//	dont have a node for a zone yet, lets add one
 		if ( !ppRenderZoneNode )
 		{
-			TRenderZoneNode* pRenderZoneNode = new TRenderZoneNode( pRenderNode->GetNodeRef() );
+			pRenderZoneNode = new TRenderZoneNode( RenderNode.GetNodeRef() );
 			TPtr<TLMaths::TQuadTreeNode> pRenderZoneNodePtr = pRenderZoneNode;
 	
 			//	add node to the zone tree
 			if ( !m_pRootQuadTreeZone->AddNode( pRenderZoneNodePtr, m_pRootQuadTreeZone, TRUE ) )
 			{
 				//	node is outside of root zone...
-				return SyncFalse;
+				//	gr: assuming in quicktest the world scene transform of the render node is out of date so fails to be added to the quad tree...
+				if ( QuickTest )
+					return SyncWait;
+				else
+					return SyncFalse;
 			}
-
-			//	debug the added result
-			/*
-#ifdef _DEBUG
-			//	count number of zones down from the root we are
-			u32 Count=0;
-			TPtr<TLMaths::TQuadTreeZone> pZone = pRenderZoneNode->GetZone()->GetParentZone();
-			while ( pZone )
-			{
-				pZone = pZone->GetParentZone();
-				Count++;				
-			}
-
-			TTempString DebugString("Node ");
-			pRenderNode->GetNodeRef().GetString( DebugString );
-			DebugString.Appendf(" added to render zone %d down from root",Count);
-			TLDebug_Print( DebugString );
-#endif
-		*/
 
 			//	hold onto our new ZoneNode in our list
-			ppRenderZoneNode = pRenderNode->SetRenderZoneNode( GetRef(), pRenderZoneNodePtr );
+			ppRenderZoneNode = RenderNode.SetRenderZoneNode( GetRef(), pRenderZoneNodePtr );
 
 			//	failed to add
 			if ( !ppRenderZoneNode )
@@ -420,39 +425,54 @@ SyncBool TLRender::TRenderTarget::IsRenderNodeVisible(TRenderNode* pRenderNode,T
 				TLDebug_Break("Failed to add new render zone node to render node");
 				return SyncFalse;
 			}
+
+			//	update up-to-date state
+			IsZoneUpToDate = pRenderZoneNode->IsZoneOutOfDate() ? SyncFalse : SyncTrue;
 		}
 	}
+	else
+	{
+		//	de-reference existing pointer
+		pRenderZoneNode = (*ppRenderZoneNode).GetObject<TLRender::TRenderZoneNode>();
+		IsZoneUpToDate = pRenderZoneNode->IsZoneOutOfDate() ? SyncFalse : SyncTrue;
+	}
 
+	//	quick frustum test first
+#ifdef VISIBILITY_FRUSTUM_TEST_FIRST
+	if ( IsTransformUpToDate == SyncTrue )
+	{
+		const TLMaths::TBox2D& FrustumBox = GetCamera()->GetZoneShape();
+		if ( FrustumBox.IsValid() )
+		{
+			//	test bounds against frustum box
+			SyncBool NodeInZoneShape = pRenderZoneNode->IsInShape( FrustumBox );
 
-	TPtr<TLMaths::TQuadTreeNode>& pRenderZoneNodePtr = (*ppRenderZoneNode);
-	TLRender::TRenderZoneNode* pRenderZoneNode = pRenderZoneNodePtr.GetObject<TLRender::TRenderZoneNode>();
+			//	if we got a valid intersection result then return the visibility
+			if ( NodeInZoneShape != SyncWait )
+			{
+				return NodeInZoneShape;
+			}
+			else
+			{
+				//	get a syncwait if the scenetransform of the render node is out of date
+				if ( !QuickTest )
+				{
+					TLDebug_Break("This test shouldnt fail unless we're in a quick test and the render node's scene transform is out of date");
+				}
+			}
+		}
+	}
+#endif //VISIBILITY_FRUSTUM_TEST_FIRST
+
 
 	//	zone needs updating
-	if ( pRenderZoneNode->IsZoneOutOfDate() )
+	if ( !IsZoneUpToDate )
 	{
 		if ( QuickTest )
 			return SyncWait;
 
 		//	update zone
 		pRenderZoneNode->UpdateZone( *ppRenderZoneNode, m_pRootQuadTreeZone );
-
-/*
-	#ifdef _DEBUG
-		//	count number of zones down from the root we are
-		s32 Count=-1;
-		TPtr<TLMaths::TQuadTreeZone> pZone = pRenderZoneNode->GetZone();
-		while ( pZone )
-		{
-			pZone = pZone->GetParentZone();
-			Count++;				
-		}
-
-		TTempString DebugString("Node ");
-		pRenderNode->GetNodeRef().GetString( DebugString );
-		DebugString.Appendf(" in render zone %d down from root",Count);
-		TLDebug_Print( DebugString );
-#endif
-		*/
 	}
 
 	//	if the zone we are inside, is inside the camera zone, then render (this should be the most likely case)
@@ -462,6 +482,7 @@ SyncBool TLRender::TRenderTarget::IsRenderNodeVisible(TRenderNode* pRenderNode,T
 	if ( !IsZoneVisible( pCameraZoneNode, pRenderNodeZone, pRenderZoneNode, RenderNodeIsInsideCameraZone ) )
 		return SyncFalse;
 
+#ifndef VISIBILITY_FRUSTUM_TEST_FIRST
 	//	one final actual frustum culling test
 	if ( !QuickTest )
 	{
@@ -472,6 +493,7 @@ SyncBool TLRender::TRenderTarget::IsRenderNodeVisible(TRenderNode* pRenderNode,T
 		}
 		return NodeInZoneShape;
 	}
+#endif //!VISIBILITY_FRUSTUM_TEST_FIRST
 
 	return SyncWait;
 }
@@ -602,7 +624,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 	if ( pCameraZoneNode && RenderNodeRenderFlags.IsSet( TLRender::TRenderNode::RenderFlags::EnableCull ) )
 	{
 		//	pass in NULL as the scene transform to do a very quick zone test - skips calculating bounds etc
-		IsInCameraRenderZone = IsRenderNodeVisible( pRenderNode, ppRenderZoneNode, pCameraZoneNode, NULL, RenderNodeIsInsideCameraZone );
+		IsInCameraRenderZone = IsRenderNodeVisible( *pRenderNode, ppRenderZoneNode, pCameraZoneNode, NULL, RenderNodeIsInsideCameraZone );
 
 		//	after quick check we know the node is in a zone the camera cannot see
 		if ( IsInCameraRenderZone == SyncFalse )
@@ -641,7 +663,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 	//	check visibility of node, if not visible then skip render (and of children)
 	if ( IsInCameraRenderZone == SyncWait )
 	{
-		IsInCameraRenderZone = IsRenderNodeVisible( pRenderNode, ppRenderZoneNode, pCameraZoneNode, &SceneTransform, RenderNodeIsInsideCameraZone );
+		IsInCameraRenderZone = IsRenderNodeVisible( *pRenderNode, ppRenderZoneNode, pCameraZoneNode, &SceneTransform, RenderNodeIsInsideCameraZone );
 		if ( IsInCameraRenderZone == SyncFalse )
 		{
 			m_Debug_NodeCulledCount++;
@@ -694,8 +716,25 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 	//TLMaths::TQuadTreeNode* pChildCameraZoneNode = RenderNodeIsInsideCameraZone ? NULL : pCameraZoneNode;
 	//TLMaths::TQuadTreeNode* pChildCameraZoneNode = pCameraZoneNode;
 	TLMaths::TQuadTreeNode* pChildCameraZoneNode = pCameraZoneNode;
-	if ( !RenderNodeRenderFlags.IsSet( TLRender::TRenderNode::RenderFlags::EnableCull ) && !RenderNodeRenderFlags.IsSet( TLRender::TRenderNode::RenderFlags::ForceCullTestChildren ) )
-		pChildCameraZoneNode = NULL;
+
+	//	check if we can skip culling for children
+	if ( pChildCameraZoneNode )
+	{
+		//	if no culling, and children dont need to be forced to check culling, then remove camera zone for children (will skip visibility testing)
+		if ( !RenderNodeRenderFlags.IsSet( TLRender::TRenderNode::RenderFlags::EnableCull ) && !RenderNodeRenderFlags.IsSet( TLRender::TRenderNode::RenderFlags::ForceCullTestChildren ) )
+		{
+			pChildCameraZoneNode = NULL;
+		}
+		else if ( RenderNodeIsInsideCameraZone )
+		{
+			//	our node is underneath/in same zone as the camera's zone, so we know it'll be in a visible zone
+			//pChildCameraZoneNode = NULL;
+		}
+		else
+		{
+			//	our node isnt underneath the camera's zone -just visible- so we need to test again
+		}
+	}
 
 	//	render children
 #ifdef TLGRAPH_OWN_CHILDREN
@@ -790,11 +829,14 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 			if ( pTexture )
 				HasAlpha |= pTexture->HasAlphaChannel();
 
+			//	get add blend mode
+			Bool AddBlending = RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::AddBlending );
+
 			//	make sure wireframe is off
 			Opengl::EnableWireframe(FALSE);
 
 			//	set the scene colour, and force enable alpha if the mesh needs it
-			Opengl::SetSceneColour( SceneColour, HasAlpha );
+			Opengl::SetSceneColour( SceneColour, HasAlpha|AddBlending, AddBlending );
 
 			DrawMesh( *pMesh, pTexture, pRenderNode, RenderNodeRenderFlags );
 		}
@@ -1124,6 +1166,20 @@ void TLRender::TRenderTarget::SetClearColour(const TColour& Colour)
 	
 	//	set new clear colour
 	m_ClearColour = Colour;
+}
+
+
+
+//--------------------------------------------------
+//	
+//--------------------------------------------------
+void TLRender::TRenderTarget::SetScreenZ(u8 NewZ)
+{
+	if ( m_ScreenZ != NewZ )
+	{
+		m_ScreenZ = NewZ;
+		TLRender::g_pScreenManager->GetDefaultScreen()->OnRenderTargetZChanged( this );
+	}
 }
 
 

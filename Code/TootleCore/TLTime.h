@@ -26,8 +26,7 @@ namespace TLTime
 	const TTimestamp&		GetTimeNow();							//	return timestamp as of right now
 	const TTimestampMicro&	GetMicroTimeNow();						//	return timestamp as of right now
 
-	FORCEINLINE float		GetUpdatesPerSecondf();
-	FORCEINLINE float		GetRendersPerSecondf();
+	float					GetUpdatesPerSecondf();				//	get desired frame rate (eg. 60fps)
 	inline float			GetUpdateTimeMilliSecsf()			{	return 1000.f/GetUpdatesPerSecondf();	}
 	inline float			GetUpdateTimeSecondsf()				{	return 1.f/GetUpdatesPerSecondf();	}	//	update time as a fraction of a second
 
@@ -115,7 +114,8 @@ public:
 	void			SetTimestampNow()									{	TLTime::Platform::GetMicroTimeNow( *this );	}
 
 	s32				GetMicroSecondsDiff(const TTimestampMicro& Timestamp) const	{	return MilliSecsToMicro( GetMilliSecondsDiff(Timestamp) ) + (Timestamp.GetMicroSeconds() - GetMicroSeconds());	}
-	void			GetTimeDiff(const TTimestampMicro& Timestamp,s32& Secs,s32& MilliSecs,s32& MicroSecs);	//	get difference between timestamp in parts
+	void			GetTimeDiff(const TTimestampMicro& Timestamp,s32& Secs,s32& MilliSecs,s32& MicroSecs) const;	//	get difference between timestamp in parts
+	void			GetTimeDiff(const TTimestampMicro& Timestamp,s32& MilliSecs,s32& MicroSecs) const;				//	get difference between timestamp in parts
 
 protected:
 	u32				m_MicroSeconds;		//	1,000 milliseconds
@@ -133,14 +133,16 @@ protected:
 class TLTime::TScopeTimer
 {
 public:
-	TScopeTimer(const TTempString& TimerName);
-	~TScopeTimer()								{	Debug_PrintTimerResult();	}
+	TScopeTimer(const TTempString& TimerName,Bool Verbose);
+	~TScopeTimer()								{	if ( m_Verbose)	Debug_PrintTimerResult();	}
 
 	void			Debug_PrintTimerResult();	//	print out timer result (time between start and now)
+	float			GetTimeMillisecs() const;	//	return the time spent in the timer in millisecs (.micro)
 
 protected:
 	TTimestampMicro	m_StartTimestamp;			//	timestamp
 	TTempString		m_TimerName;				//	name of timer
+	Bool			m_Verbose;					//	if set, debug print the time spent in this timer
 };
 
 
@@ -159,29 +161,3 @@ protected:
 };
 
 
-
-
-
-
-//---------------------------------------------------------
-//	get our application udpate rate
-//---------------------------------------------------------
-FORCEINLINE float TLTime::GetUpdatesPerSecondf()
-{	
-	return 60.f;
-}
-
-
-
-//---------------------------------------------------------
-//	get our application render rate
-//---------------------------------------------------------
-FORCEINLINE float TLTime::GetRendersPerSecondf()
-{	
-#if defined(TL_TARGET_PC)
-	return 60.f;
-#else
-	//return GetUpdatesPerSecondf();
-	return 30.f;	
-#endif
-}

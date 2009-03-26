@@ -3,6 +3,8 @@
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/TBinaryTree.h>
 
+
+#define PHYSICS_SCALAR		60.f
 /*
 
 Friction Coefficient Table

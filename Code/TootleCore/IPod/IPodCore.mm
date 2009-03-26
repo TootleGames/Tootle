@@ -21,7 +21,9 @@ namespace TLCore
 {
 	namespace Platform
 	{
-		TString						g_AppExe;
+		TString				g_AppExe;
+		
+		void				GetString(TString& String, const NSString* pNSString);
 	}
 	
 	void RegisterManagers_Engine(TPtr<TCoreManager>& pCoreManager);
@@ -158,33 +160,14 @@ void TLCore::Platform::GetString(TString& String, const NSString* pNSString)
 }
 
 
-
-
-
-
-void* TLMemory::Platform::MemAlloc(u32 Size)								
-{	
-	return malloc( Size );
-}		
-
-
-void TLMemory::Platform::MemDealloc(void* pMem)							
+//--------------------------------------------------
+//	platform thread/process sleep
+//--------------------------------------------------
+void TLCore::Platform::Sleep(u32 Millisecs)
 {
-	free( pMem );	
+	float SleepSecs = Millisecs / 1000.f;
+	[NSThread sleepForTimeInterval:SleepSecs];
 }
-
-
-void TLMemory::Platform::MemCopy(void* pDest,const void* pSrc,u32 Size)	
-{
-	memcpy( pDest, pSrc, Size );	
-}
-
-
-void TLMemory::Platform::MemMove(void* pDest,const void* pSrc,u32 Size)	
-{
-	memmove( pDest, pSrc, Size );
-}
-
 
 
 
@@ -241,10 +224,9 @@ void TLMemory::Platform::MemMove(void* pDest,const void* pSrc,u32 Size)
 	
 	
 	
-	//	add an update timestamp to the update time queue
-	TLTime::TTimestamp UpdateTimerTime( TRUE );
+	//	mark as ready for first update
 	if ( TLCore::g_pCoreManager )
-		TLCore::g_pCoreManager->AddTimeStep( UpdateTimerTime );
+		TLCore::g_pCoreManager->SetReadyForUpdate();
 	
 	//	do init loop
 	SyncBool Result = SyncWait;
@@ -339,10 +321,9 @@ void TLMemory::Platform::MemMove(void* pDest,const void* pSrc,u32 Size)
 	// If enabled go through the update loop
 	if(TLCore::g_pCoreManager->IsEnabled())
 	{
-		//	add an update timestamp to the update time queue
-		TLTime::TTimestamp UpdateTimerTime( TRUE );
+		//	mark core as ready for another update
 		if ( TLCore::g_pCoreManager )
-			TLCore::g_pCoreManager->AddTimeStep( UpdateTimerTime );
+			TLCore::g_pCoreManager->SetReadyForUpdate();
 		
 		if ( init == NO )
 		{
@@ -389,4 +370,5 @@ void TLMemory::Platform::MemMove(void* pDest,const void* pSrc,u32 Size)
 }
 
 @end
+
 

@@ -96,6 +96,7 @@ public:
 			EnableCull,					//	enable camera/frustum/zone culling. if disabled, the whole tree below is disabled
 			ForceCullTestChildren,		//	if we are not culled, still do a cull test with children. By default, when not culled, we don't test children as they should be encapsulated within our bounds
 			InvalidateBoundsByChildren,	//	default behaviour is to invalidate our bounding box when child CHANGES. we can disable this for certain cases - eg. root objects, which when invalidated cause the entire tree to recalculate stuff - still invalidated when a child is ADDED to the tree (this may have to change to "first-calculation of bounds")
+			AddBlending,					//	will ADD when rendering colours/textures etc
 	
 			Debug_Wireframe,			//	draw in wireframe (all white outlines)
 			Debug_ColourWireframe,		//	when drawing in wireframe keep colours
@@ -171,9 +172,10 @@ public:
 
 	void									SetWorldTransform(const TLMaths::TTransform& SceneTransform);	//	set new world transform
 	void									SetWorldTransformOld();						//	downgrade all world shape/transform states from valid to old
+	FORCEINLINE SyncBool					IsWorldTransformValid() const				{	return m_WorldTransformValid;	}
 
 	const float3&							GetWorldPos();								//	calculate our new world position from the latest scene transform
-	FORCEINLINE const float3&				GetWorldPos(Bool& IsValid) 					{	GetWorldPos();	IsValid = (m_WorldPosValid != SyncFalse);	return m_WorldPos;	}
+	FORCEINLINE const float3&				GetWorldPos(SyncBool& IsValid) 				{	GetWorldPos();	IsValid = m_WorldPosValid;	return m_WorldPos;	}
 
 	//	get world shapes/datums - recalculates if old
 	const TLMaths::TBox&					GetWorldBoundsBox()		{	return m_BoundsBox.CalcWorldShape( *this, &TLRender::TRenderNode::CalcLocalBoundsBox );	}

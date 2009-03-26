@@ -4,16 +4,6 @@
 
 
 //----------------------------------------------------------------
-//	
-//----------------------------------------------------------------
-TBinaryTree::TBinaryTree(TRefRef DataRef) :
-	m_DataRef	( DataRef )
-{
-	m_DataRef.GetString(m_Debug_DataRefString);
-}
-
-
-//----------------------------------------------------------------
 //	add new child
 //----------------------------------------------------------------
 TPtr<TBinaryTree>& TBinaryTree::AddChild(TRefRef ChildRef)		

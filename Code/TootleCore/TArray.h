@@ -138,6 +138,8 @@ public:
 	s32					FindIndex(const MATCHTYPE& val,u32 FromIndex=0) const;	//	get the index of a matching element. -1 if none matched
 	template <class MATCHTYPE>
 	s32					FindIndex(const MATCHTYPE& val,u32 FromIndex=0);		//	get the index of a matching element. -1 if none matched
+	template <class MATCHTYPE>
+	s32					FindIndexNoSort(const MATCHTYPE& val,u32 FromIndex=0) const;	//	matches elements but specificlly doesnt use sorting. Use this if you need to find a match that the array is not sorted by
 
 	template <class MATCHTYPE>	
 	s32					FindIndexReverse(const MATCHTYPE& val,s32 FromIndex=-1) const;	//	same as FindIndex but works backwards through the array

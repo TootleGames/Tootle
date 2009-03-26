@@ -26,8 +26,8 @@ public:
 	SyncBool				UpdateShutdown();	// one process of Main shutdown
 	
 	// TEMP ROUTINE TO FIX ISSUE OF GLITCH ON INIT ON THE IPOD
-	inline void				ForceUpdate()	{ PublishUpdateMessage(TRUE); }
-	inline void				ForceRender()	{ PublishRenderMessage(TRUE); }
+	inline void				ForceUpdate()	{	PublishUpdateMessage(TRUE);	}
+	inline void				ForceRender()	{	PublishRenderMessage();	}
 
 	template<class T> Bool	CreateAndRegisterManager(TPtr<T>& pManager,TRefRef ManagerRef);	// Creates and registers a manager and assigns the new manager to a global pointer 
 	template<class T> Bool	CreateAndRegisterManager(TRefRef ManagerRef);	// Creates and registers a manager but doesn't assign the new manager to any global pointer 
@@ -35,64 +35,67 @@ public:
 	Bool					UnRegisterManager(TRefRef ManagerRef);
 
 	// Time step access
-	FORCEINLINE Bool	HasTimeSteps() const									{	return (m_UpdateTimeQueue.GetSize() > 0); }
-	void				AddTimeStep(const TLTime::TTimestamp& UpdateTimerTime);
-	FORCEINLINE u16		Debug_GetFramesPerSecond() const						{	return m_Debug_FramesPerSecond;	}
-	FORCEINLINE u16		Debug_GetUpdatesPerSecond() const						{	return m_Debug_UpdatesPerSecond;	}
-	FORCEINLINE float	Debug_GetFrameTimePerSecond() const						{	return m_Debug_FrameTimePerSecond;	}
+	FORCEINLINE Bool		IsReadyForUpdate() const								{	return m_TimerUpdateCount > 0;	}
+	FORCEINLINE void		SetReadyForUpdate()										{	m_TimerUpdateCount += IsEnabled() ? 1 : 0;	}
+	FORCEINLINE u16			Debug_GetFramesPerSecond() const						{	return m_Debug_FramesPerSecond;	}
+	FORCEINLINE float		Debug_GetFrameTimePerSecond() const						{	return m_Debug_FrameTimePerSecond;	}
+	FORCEINLINE float		Debug_GetUpdateCPUTimeAverage() const					{	return m_Debug_UpdateCPUTimeSecondAverage;	}
+	FORCEINLINE float		Debug_GetRenderCPUTimeAverage() const					{	return m_Debug_RenderCPUTimeSecondAverage;	}
 
-	FORCEINLINE Bool	AddTimeStepModifier(TRefRef ModiferRef, const float& fValue);
-	FORCEINLINE Bool	RemoveTimeStepModifier(TRefRef ModiferRef);
-	FORCEINLINE void	RemoveAllTimeStepModifiers();
-	FORCEINLINE Bool	HasTimeStepModifier(TRefRef ModiferRef);
+	FORCEINLINE Bool		AddTimeStepModifier(TRefRef ModiferRef, const float& fValue);
+	FORCEINLINE Bool		RemoveTimeStepModifier(TRefRef ModiferRef);
+	FORCEINLINE void		RemoveAllTimeStepModifiers();
+	FORCEINLINE Bool		HasTimeStepModifier(TRefRef ModiferRef);
 
-	Bool				SetTimeStepModifier(TRefRef ModiferRef, const float& fValue);
-	Bool				IncrementTimeStepModifier(TRefRef ModiferRef, const float& fValue = 0.1f);
-	Bool				DecrementTimeStepModifier(TRefRef ModiferRef, const float& fValue = 0.1f);
+	Bool					SetTimeStepModifier(TRefRef ModiferRef, const float& fValue);
+	Bool					IncrementTimeStepModifier(TRefRef ModiferRef, const float& fValue = 0.1f);
+	Bool					DecrementTimeStepModifier(TRefRef ModiferRef, const float& fValue = 0.1f);
 
-	Bool				GetTimeStepModifier(TRefRef ModiferRef, float& fValue);
-	float				GetTimeStepModifier();
+	Bool					GetTimeStepModifier(TRefRef ModiferRef, float& fValue);
+	float					GetTimeStepModifier();
 	
 	// Enable/Disable - should only be called by the lower level hardware interrupt routines
-	void				Enable(Bool bEnable);
-	inline Bool			IsEnabled()		const	{ return m_bEnabled; }
+	void					Enable(Bool bEnable);
+	FORCEINLINE Bool		IsEnabled() const							{	return m_bEnabled;	}
 	
 protected:
-	virtual SyncBool	Initialise();
-	virtual SyncBool	Update(float fTimeStep);
-	virtual SyncBool	Shutdown();
+	virtual SyncBool		Initialise();
+	virtual SyncBool		Update(float fTimeStep);
+	virtual SyncBool		Shutdown();
 
-	FORCEINLINE float	GetUpdateTimeStepDifference(const TLTime::TTimestampMicro& TimeNow)		{	return GetTimeStepDifference( m_LastUpdateTime, TimeNow );	}	//	work out timestep for update
-	FORCEINLINE float	GetRenderTimeStepDifference(const TLTime::TTimestampMicro& TimeNow)		{	return GetTimeStepDifference( m_LastRenderTime, TimeNow );	}	//	work out timestep for render
-	float				GetTimeStepDifference(TLTime::TTimestampMicro& LastTimestamp,const TLTime::TTimestampMicro& TimeNow);	//	work out timestep for update
+	FORCEINLINE float		GetUpdateTimeStepDifference(const TLTime::TTimestampMicro& TimeNow)		{	return GetTimeStepDifference( m_LastUpdateTime, TimeNow );	}	//	work out timestep for update
+	float					GetTimeStepDifference(TLTime::TTimestampMicro& LastTimestamp,const TLTime::TTimestampMicro& TimeNow);	//	work out timestep for update
 
-	virtual void		ProcessMessageFromQueue(TLMessaging::TMessage& Message)			{	ProcessMessage( Message );	}
-	virtual void		ProcessMessage(TLMessaging::TMessage& Message);
-	void				UnregisterAllManagers()				{	}
+	virtual void			ProcessMessageFromQueue(TLMessaging::TMessage& Message)			{	ProcessMessage( Message );	}
+	virtual void			ProcessMessage(TLMessaging::TMessage& Message);
+	void					UnregisterAllManagers()				{	}
 
-private:
-	void			PublishInitMessage();					//	publish an init
-	Bool			PublishUpdateMessage(Bool bForced = FALSE);					//	publish an update - returns FALSE if we didn't do an update (timestep too small etc)
-	Bool			PublishRenderMessage(Bool bForced = FALSE);					//	publish a render - returns FALSE if we didn't do a render (timestep too small etc)
-	void			PublishShutdownMessage();				//	publish a shutdown
-
-	Bool			CheckManagersInState(TLManager::ManagerState State);		// Checks the managers to see if they are in the specified state
-	Bool			CheckManagersInErrorState();					// Checks the managers to see if any are in the error state
-
-	void			SubscribeAllManagers();
+	FORCEINLINE void		Debug_UpdateDebugCounters();		//	update our per-second counters to detect X fps etc
 
 private:
-	TArray<TLTime::TTimestamp>	m_UpdateTimeQueue;			//	list of timestamps we haven't processed yet
-	TLTime::TTimestampMicro		m_LastUpdateTime;			//	timestamp of last update
-	TLTime::TTimestampMicro		m_LastRenderTime;			//	timestamp of last render
+	void					PublishInitMessage();						//	publish an init
+	Bool					PublishUpdateMessage(Bool bForced = FALSE);	//	publish an update - returns FALSE if we didn't do an update (timestep too small etc)
+	void					PublishRenderMessage();						//	publish a render - ALWAYS published
+	void					PublishShutdownMessage();					//	publish a shutdown
+
+	Bool					CheckManagersInState(TLManager::ManagerState State);		// Checks the managers to see if they are in the specified state
+	Bool					CheckManagersInErrorState();					// Checks the managers to see if any are in the error state
+
+	void					SubscribeAllManagers();
+
+private:
+	u16							m_TimerUpdateCount;					//	incremented every time the OS wants to trigger an update
+	TLTime::TTimestampMicro		m_LastUpdateTime;					//	timestamp of last update
 	
 	TLTime::TTimestamp			m_Debug_LastCountTime;				//	timestamp last time we recorded FPS/UPS/time counter
 	u16							m_Debug_FramesPerSecond;			//	fps counter for prev second
 	u16							m_Debug_CurrentFramesPerSecond;		//	fps counter
-	u16							m_Debug_UpdatesPerSecond;			//	update counter for prev second
-	u16							m_Debug_CurrentUpdatesPerSecond;	//	update counter
 	float						m_Debug_FrameTimePerSecond;			//	time counter for prev second
 	float						m_Debug_CurrentFrameTimePerSecond;	//	time counter
+	float						m_Debug_UpdateCPUTimeSecondAverage;			//	MS counter spent in [published]update (for prev second)
+	float						m_Debug_CurrentUpdateCPUTimePerSecond;		//	MS counter spent in [published]update
+	float						m_Debug_RenderCPUTimeSecondAverage;			//	MS counter spent in [published]update (for prev second)
+	float						m_Debug_CurrentRenderCPUTimePerSecond;		//	MS counter spent in [published]update
 
 	TPtrArray<TManager>			m_Managers;
 

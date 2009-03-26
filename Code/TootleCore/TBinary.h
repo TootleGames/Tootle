@@ -41,9 +41,9 @@ namespace TLBinary
 class TBinary
 {
 public:
-	TBinary();
-	TBinary(const u8* pData,u32 DataLength);
-	TBinary(const TArray<u8>& Data);
+	FORCEINLINE TBinary() : m_ReadPos ( -1 )								{	}
+	FORCEINLINE TBinary(const u8* pData,u32 DataLength) : m_ReadPos ( -1 )	{	WriteData( pData, DataLength );	}
+	FORCEINLINE TBinary(const TArray<u8>& Data) : m_ReadPos ( -1 )			{	WriteArray( Data );	}
 
 	template<typename TYPE> FORCEINLINE TYPE*		ReadNoCopy();						//	"read" the data for this next type, but return it as a pointer to the data. and move along the read pos too
 	template<typename TYPE> FORCEINLINE Bool		Read(TYPE& Var)						{	return ReadData( (u8*)&Var, sizeof(TYPE) );		}

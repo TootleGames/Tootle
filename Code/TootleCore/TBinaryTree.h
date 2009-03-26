@@ -15,13 +15,14 @@ class TBinaryTree;
 
 
 
+
 class TBinaryTree : public TBinary
 {
 public:
-	TBinaryTree(TRefRef DataRef);
+	TBinaryTree(TRefRef DataRef) : m_DataRef ( DataRef )				{	}
 
-	TRefRef						GetDataRef() const						{	return m_DataRef;	}
-	void						SetDataRef(TRefRef DataRef)				{	m_DataRef = DataRef;	m_DataRef.GetString(m_Debug_DataRefString);	}
+	FORCEINLINE TRefRef			GetDataRef() const						{	return m_DataRef;	}
+	FORCEINLINE void			SetDataRef(TRefRef DataRef)				{	m_DataRef = DataRef;	}
 
 	TPtr<TBinaryTree>&			GetChild(TRefRef DataRef)				{	return m_Children.FindPtr( DataRef );	}	//	return the first child we find
 	TPtrArray<TBinaryTree>&		GetChildren()							{	return m_Children;	}		//	return all the children as an array
@@ -59,9 +60,6 @@ public:
 protected:
 	TRef						m_DataRef;								//	ref of data
 	TPtrArray<TBinaryTree>		m_Children;								//	child binaries
-
-private:
-	TBufferString<6>			m_Debug_DataRefString;					//	for debugging the ref as a string
 };
 
 

@@ -14,23 +14,28 @@ using namespace TLCore;
 
 #if defined(TL_TARGET_IPOD)
 	#define LIMIT_UPDATE_RATE
-	#define LIMIT_RENDER_RATE
 #elif defined(TL_TARGET_PC)
 	#define LIMIT_UPDATE_RATE
-	//#define LIMIT_RENDER_RATE
 #endif
+
+#define STALL_UPDATE_RATE	//	if enabled stalls updates with sleep until we're the right amount of time since last one. if not defined, skips frame and waits till next timer
+
 
 TCoreManager::TCoreManager(TRefRef refManagerID) :
 	TManager							( refManagerID ),
 	m_Debug_FramesPerSecond				( 0 ),
 	m_Debug_CurrentFramesPerSecond		( 0 ),
-	m_Debug_UpdatesPerSecond			( 0 ),
-	m_Debug_CurrentUpdatesPerSecond		( 0 ),
 	m_Debug_FrameTimePerSecond			( 0.f ),
 	m_Debug_CurrentFrameTimePerSecond	( 0.f ),
+	m_Debug_UpdateCPUTimeSecondAverage		( 0.f ),
+	m_Debug_CurrentUpdateCPUTimePerSecond	( 0.f ),
+	m_Debug_RenderCPUTimeSecondAverage		( 0.f ),
+	m_Debug_CurrentRenderCPUTimePerSecond	( 0.f ),
+
 	m_ChannelsInitialised				( FALSE ),
 	m_bEnabled							( TRUE ),
-	m_bQuit								( FALSE )
+	m_bQuit								( FALSE ),
+	m_TimerUpdateCount					( 0 )
 {
 }
 
@@ -74,10 +79,8 @@ void TCoreManager::Enable(Bool bEnable)
 		// Enable the core manager updates
 		if(!m_bEnabled)
 		{
-			TLTime::TTimestampMicro TimeNow(TRUE);
-
-			m_LastUpdateTime = TimeNow;
-			m_LastRenderTime = TimeNow;
+			//	reset last-update timestamp
+			m_LastUpdateTime.SetTimestampNow();
 			
 			m_bEnabled = TRUE;
 		}
@@ -160,8 +163,6 @@ SyncBool TCoreManager::InitialiseLoop()
 //-----------------------------------------------------
 SyncBool TCoreManager::UpdateLoop()
 {
-	// Main update loop phase
-
 	// Send the update and render message
 	// Not required when using multithreading?
 	//TLTime::TScopeTimer Timer("loop");
@@ -172,56 +173,95 @@ SyncBool TCoreManager::UpdateLoop()
 		TLCore::Platform::Update();
 	}
 
-	//	only attempt a render if we do an update
-	Bool DoRender = FALSE;
+	// Main update loop phase
+	u32 TimerUpdateCount = m_TimerUpdateCount;
+	
+	//	no timer hits
+	if ( TimerUpdateCount == 0 )
+	{
+		//	update the per-second counters
+		Debug_UpdateDebugCounters();
+		return SyncWait;
+	}
+	
+	//	only do some stuff if we do an update
+	Bool DidUpdate = FALSE;
 
+	//	always do an update and see if we skipped it
 	{
 	//	TLTime::TScopeTimer Timer("update");
-		DoRender = PublishUpdateMessage();
+		DidUpdate = PublishUpdateMessage();
 	}
 
-#if !defined(LIMIT_RENDER_RATE)
-	DoRender = TRUE;
-#endif
-
-	if ( DoRender )
+	//	only render if we did an update
+	if ( DidUpdate )
 	{
 	//	TLTime::TScopeTimer Timer("render");
 		PublishRenderMessage();
 	}
 
+	// Process the message queue independant of update - this is to get network messages maybe? other "interrupt" style stuff 
 	{
-	//	TLTime::TScopeTimer Timer("queue");		// Process the message queue
+	//	TLTime::TScopeTimer Timer("queue");		
 		ProcessMessageQueue();
 	}
 
-	//	error with manager[s]
-	if ( CheckManagersInErrorState() )
-		return SyncFalse;
+	if ( DidUpdate )
+	{
+		//	increment frame counter
+		m_Debug_CurrentFramesPerSecond++;
+
+		//	covered these timer hits
+		m_TimerUpdateCount -= TimerUpdateCount;	
+		if ( m_TimerUpdateCount > 0 )
+		{
+			TLDebug_Print( TString("%d timer hits during update/render", m_TimerUpdateCount ) );
+		}
+
+		//	error with manager[s]
+		//	gr: assume no managers will fail if we did no update
+		if ( CheckManagersInErrorState() )
+			return SyncFalse;
+	}
 
 	//	if quit, return positive result
 	if ( m_bQuit )
 		return SyncTrue;
 
+	//	update the per-second counters
+	Debug_UpdateDebugCounters();
+
+	//	still updating
+	return SyncWait;
+}
+
+
+//-----------------------------------------------------
+//	
+//-----------------------------------------------------
+void TCoreManager::Debug_UpdateDebugCounters()
+{
 	//	update fps
 	TLTime::TTimestamp TimeNow(TRUE);
 	if ( !m_Debug_LastCountTime.IsValid() || m_Debug_LastCountTime.GetMilliSecondsDiff(TimeNow) > 1000 )
 	{
 		m_Debug_LastCountTime = TimeNow;
 
+		//	divide the MS counters by number of frames to get an average per call. if we don't do this
+		//	the MS is going to vary wildly when frame rate goes up and down (even by 1)
+		m_Debug_UpdateCPUTimeSecondAverage		= m_Debug_CurrentFramesPerSecond == 0 ? 0.f : m_Debug_CurrentUpdateCPUTimePerSecond / (float)m_Debug_CurrentFramesPerSecond;
+		m_Debug_CurrentUpdateCPUTimePerSecond	= 0.f;
+
+		m_Debug_RenderCPUTimeSecondAverage		= m_Debug_CurrentFramesPerSecond == 0 ? 0.f : m_Debug_CurrentRenderCPUTimePerSecond / (float)m_Debug_CurrentFramesPerSecond;
+		m_Debug_CurrentRenderCPUTimePerSecond	= 0.f;
+
 		m_Debug_FramesPerSecond			= m_Debug_CurrentFramesPerSecond;
 		m_Debug_CurrentFramesPerSecond	= 0;
-		m_Debug_UpdatesPerSecond		= m_Debug_CurrentUpdatesPerSecond;
-		m_Debug_CurrentUpdatesPerSecond	= 0;
-		m_Debug_FrameTimePerSecond		= m_Debug_CurrentFrameTimePerSecond;
-		m_Debug_CurrentFrameTimePerSecond = 0.f;
+		
+		m_Debug_FrameTimePerSecond			= m_Debug_CurrentFrameTimePerSecond;
+		m_Debug_CurrentFrameTimePerSecond	= 0.f;
+
 	}
-
-	//	empty timesteps
-	m_UpdateTimeQueue.Empty();
-
-	//	still updating
-	return SyncWait;
 }
 
 
@@ -276,7 +316,7 @@ void TCoreManager::PublishShutdownMessage()
 Bool TCoreManager::PublishUpdateMessage(Bool bForced)
 {
 	TLTime::TTimestampMicro TimeNow(TRUE);
-	float fTimeStep = GetUpdateTimeStepDifference(TimeNow);
+	float fTimeStep = bForced ? (1.f/TLTime::GetUpdatesPerSecondf()) : GetUpdateTimeStepDifference(TimeNow);
 
 	//	no need to process framesteps less than 1 frame
 	#ifdef LIMIT_UPDATE_RATE
@@ -284,22 +324,39 @@ Bool TCoreManager::PublishUpdateMessage(Bool bForced)
 		if(!bForced)
 		{
 			float fFrameStep = fTimeStep * TLTime::GetUpdatesPerSecondf();
-			if ( fFrameStep < 1.0f )
+			u32 Debug_SleepCounter = 0;
+			while ( fFrameStep < 1.0f )
+			{
+#ifdef STALL_UPDATE_RATE
+				//	stall by the time it'll take until we're ready for a frame
+				float TimeTillUpdate = (1.f / TLTime::GetUpdatesPerSecondf()) - fTimeStep;
+				u32 TimeTillUpdateMs = (u32)( TimeTillUpdate * 1000.f );
+				TLCore::Platform::Sleep( TimeTillUpdateMs );
+				Debug_SleepCounter++;
+
+				//	re-evaluate time
+				TimeNow.SetTimestampNow();
+				fTimeStep = GetUpdateTimeStepDifference(TimeNow);
+				fFrameStep = fTimeStep * TLTime::GetUpdatesPerSecondf();
+#else // STALL_UPDATE_RATE
+				//	dont stall, skip this frame as it's less than a frame
 				return FALSE;
+#endif // STALL_UPDATE_RATE
+			}
+
+			if ( Debug_SleepCounter > 1 )
+			{
+		//		TLDebug_Break("Expected sleep counter to only occur once");
+			}
 		}
 	}
 	#endif
-	
-	if ( bForced )
-	{
-		fTimeStep = 1.f / TLTime::GetUpdatesPerSecondf();
-	}
-	
+
 	//	reset last update timestamp
 	m_LastUpdateTime = TimeNow;
 
 	//	create an update message
-	TLMessaging::TMessage Message(UpdateRef);
+	TLMessaging::TMessage Message( TLCore::UpdateRef );
 
 	//	add timestep data
 	Message.AddChildAndData( TLCore::TimeStepRef, fTimeStep );
@@ -308,11 +365,17 @@ Bool TCoreManager::PublishUpdateMessage(Bool bForced)
 	float fModifier = GetTimeStepModifier();
 	Message.AddChildAndData( TLCore::TimeStepModRef, fModifier );
 
+	//	track CPU time of update
+	TLTime::TScopeTimer Timer("Update",FALSE);
+
 	//	send message
 	PublishMessage( Message );
 
+	//	increment the amount of time we've spent doing updates
+	m_Debug_CurrentUpdateCPUTimePerSecond += Timer.GetTimeMillisecs();
+	
+	//	increment the amount of frame-time we've done
 	m_Debug_CurrentFrameTimePerSecond += fTimeStep;
-	m_Debug_CurrentUpdatesPerSecond++;
 
 	return TRUE;
 }
@@ -388,40 +451,19 @@ Bool TCoreManager::DecrementTimeStepModifier(TRefRef ModiferRef, const float& fV
 //-------------------------------------------
 //	publish a render
 //-------------------------------------------
-Bool TCoreManager::PublishRenderMessage(Bool bForced)
+void TCoreManager::PublishRenderMessage()
 {
-	TLTime::TTimestampMicro TimeNow(TRUE);
-	float fTimeStep = GetRenderTimeStepDifference(TimeNow);
-
-	//	no need to process framesteps less than 1 frame
-	#ifdef LIMIT_RENDER_RATE
-	{
-		if(!bForced)
-		{
-			float fFrameStep = fTimeStep * (float)TLTime::GetRendersPerSecondf();
-			if ( fFrameStep < 1.0f )
-				return FALSE;
-		}
-	}
-	#endif
-
-	if ( bForced )
-	{	
-		fTimeStep = 1.f / TLTime::GetUpdatesPerSecondf();
-	}
-
-	//	reset last render timestamp
-	m_LastRenderTime = TimeNow;
-
 	//	make up render message to send
 	TLMessaging::TMessage Message(RenderRef);
-	
-	//	send out render message
+
+	//	track CPU time of render
+	TLTime::TScopeTimer Timer("Render",FALSE);
+
+	//	send message
 	PublishMessage( Message );
 
-	m_Debug_CurrentFramesPerSecond++;
-
-	return TRUE;
+	//	increment the amount of time we've spent doing updates
+	m_Debug_CurrentRenderCPUTimePerSecond += Timer.GetTimeMillisecs();
 }
 
 
@@ -509,17 +551,5 @@ float TCoreManager::GetTimeStepDifference(TLTime::TTimestampMicro& LastTimestamp
 	return Timestep;
 }
 
-
-void TCoreManager::AddTimeStep(const TLTime::TTimestamp& UpdateTimerTime)	
-{
-	if ( !IsEnabled() )
-		return;
-	
-	//	if this gets excessive, ditch old timestamps.
-	if ( m_UpdateTimeQueue.GetSize() > 10 )
-		m_UpdateTimeQueue.RemoveAt( 0 );
-
-	m_UpdateTimeQueue.Add( UpdateTimerTime ); 
-}
 
 

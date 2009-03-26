@@ -205,6 +205,8 @@ Bool TLRender::Opengl::Platform::BindColours(const TArray<TColour>* pColours)
 //	if ( pColours == g_pBoundColours )
 //		return TRUE;
 
+	g_pBoundColours = pColours;
+
 	//	unbind
 	if ( !pColours )
 	{
@@ -237,6 +239,8 @@ Bool TLRender::Opengl::Platform::BindUVs(const TArray<float2>* pUVs)
 	//	already bound to this
 //	if ( pUVs == g_pBoundUVs )
 //		return TRUE;
+
+	g_pBoundUVs = pUVs;
 
 	//	unbind
 	if ( !pUVs )

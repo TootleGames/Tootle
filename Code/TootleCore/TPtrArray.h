@@ -8,7 +8,23 @@
 #include "TPtr.h"
 
 
+namespace TLPtrArray
+{
+	//	simple type sort function
+	template<typename TYPE>
+	TLArray::SortResult		SimpleSort(const TPtr<TYPE>& pa,const TPtr<TYPE>& pb,const void* pTestVal)
+	{
+		//	normally you KNOW what pTestVal's type will be and cast
+		//	as the "default" sort func, we ASSUME that pTestVal is of TYPE type.
+		const TPtr<TYPE>& TestWithPtr = pTestVal ? *(const TPtr<TYPE>*)pTestVal :  pb;
 
+		const TYPE& a = *pa.GetObject();
+		const TYPE& t = *TestWithPtr.GetObject();
+
+		//	== turns into 0 (is greater) or 1(equals)
+		return a < t ? TLArray::IsLess : (TLArray::SortResult)(a==t);	
+	}
+}
 
 
 template <typename TYPE>

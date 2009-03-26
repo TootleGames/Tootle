@@ -6,27 +6,6 @@
 
 
 
-TBinary::TBinary() :
-	m_ReadPos		( -1 )
-{
-}
-
-
-TBinary::TBinary(const u8* pData,u32 DataLength) :
-	m_ReadPos		( -1 )
-{
-	WriteData( pData, DataLength );
-}
-
-
-TBinary::TBinary(const TArray<u8>& Data) :
-	m_ReadPos		( -1 )
-{
-	WriteArray( Data );
-}
-
-
-
 //-----------------------------------------------------------
 //	read data into address
 //-----------------------------------------------------------

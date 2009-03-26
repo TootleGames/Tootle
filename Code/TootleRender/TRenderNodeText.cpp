@@ -337,8 +337,25 @@ Bool TLRender::TRenderNodeTextureText::SetGlyphs()
 	//	setup geometry - currently rebuild the entire string
 	for ( u32 i=0;	i<m_Text.GetLengthWithoutTerminator();	i++ )
 	{
+	//	check for line feed
+		if ( m_Text[i] == '\n' )
+		{
+			const TLAsset::TAtlasGlyph* pGlyph = Atlas.GetGlyph('A');
+			if ( pGlyph )
+			{
+				float LineHeight = pGlyph->m_SpacingBox.GetHeight();
+				GlyphPos.y += LineHeight;
+			}
+			GlyphPos.x = 0.f;
+			continue;
+		}
+
 		//	get glyph for this char
 		const TLAsset::TAtlasGlyph* pGlyph = Atlas.GetGlyph( m_Text[i] );
+
+	
+
+
 
 		//	no character in font for this character
 		if ( !pGlyph )
@@ -353,7 +370,6 @@ Bool TLRender::TRenderNodeTextureText::SetGlyphs()
 		VertPositions.Add( GlyphPos + float3( pGlyph->m_GlyphBox.GetRight(), pGlyph->m_GlyphBox.GetBottom(), 0.f ) );
 		VertPositions.Add( GlyphPos + float3( pGlyph->m_GlyphBox.GetLeft(), pGlyph->m_GlyphBox.GetBottom(), 0.f ) );
 		
-		//	not safe, but faster
 		TFixedArray<const float2*,4> VertUVs;
 		VertUVs.Add( &pGlyph->GetUV_TopLeft() );
 		VertUVs.Add( &pGlyph->GetUV_TopRight() );
@@ -382,8 +398,8 @@ Bool TLRender::TRenderNodeTextureText::SetGlyphs()
 			m_pMesh->GetVertexUV( TriangleA.y ) = *VertUVs[1];
 			m_pMesh->GetVertexUV( TriangleA.z ) = *VertUVs[2];
 			TLAsset::TMesh::Triangle& TriangleB = Triangles[TriangleIndex+1];	//	2 3 0
-			m_pMesh->GetVertex( TriangleB.y ) = VertPositions[1];
-			m_pMesh->GetVertexUV( TriangleB.y ) = *VertUVs[1];
+			m_pMesh->GetVertex( TriangleB.y ) = VertPositions[3];
+			m_pMesh->GetVertexUV( TriangleB.y ) = *VertUVs[3];
 		}
 
 		//	move position along
@@ -394,7 +410,7 @@ Bool TLRender::TRenderNodeTextureText::SetGlyphs()
 	}
 
 	//	cull unwanted triangles & vertexes
-	while ( Triangles.GetLastIndex() > (s32)TriangleIndex )
+	while ( Triangles.GetLastIndex() >= (s32)TriangleIndex )
 	{
 		m_pMesh->RemoveTriangle( Triangles.GetLastIndex(), TRUE, FALSE );
 	}
