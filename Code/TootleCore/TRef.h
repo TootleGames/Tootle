@@ -34,7 +34,7 @@ typedef const TRef& TRefRef;	//	TRefRef is just shorthand for passing ref's arou
 
 #define TLRef_CharIndexBitMask					(41-1)
 #define TLRef_BitsPerRefChar					6	//	32bits / TRef::g_CharsPerRef
-#define TLRef_StaticCharIndex(Char)				TLRef::StaticCharIndex::##Char
+#define TLRef_StaticCharIndex(Char)				TLRef::StaticCharIndex::Index_##Char
 #define TLRef_StaticOffsetChar(CharOffset,Char)	((u32)(TLRef_StaticCharIndex(Char) << (CharOffset*TLRef_BitsPerRefChar)))
 #define TRef_Static1(a)							TRef_Static(a,SPACE,SPACE,SPACE,SPACE)
 #define TRef_Static2(a,b)						TRef_Static(a,b,SPACE,SPACE,SPACE)
@@ -57,11 +57,73 @@ namespace TLRef
 		//	const char	g_RefCharTableAlt[g_RefCharTable_Size+1]	= {	" ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?-#_"	};
 		enum
 		{
-			SPACE = 0,
-			a = 1,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,
-			A = 1,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,
-			ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE,
-			QUESTION, DASH, HASH, UNDER
+			Index_SPACE = 0,
+			Index_a = 1,
+			Index_b,
+			Index_c,
+			Index_d,
+			Index_e,
+			Index_f,
+			Index_g,
+			Index_h,
+			Index_i,
+			Index_j,
+			Index_k,
+			Index_l,
+			Index_m,
+			Index_n,
+			Index_o,
+			Index_p,
+			Index_q,
+			Index_r,
+			Index_s,
+			Index_t,
+			Index_u,
+			Index_v,
+			Index_w,
+			Index_x,
+			Index_y,
+			Index_z,
+			Index_A = 1,
+			Index_B,
+			Index_C,
+			Index_D,
+			Index_E,
+			Index_F,
+			Index_G,
+			Index_H,
+			Index_I,
+			Index_J,
+			Index_K,
+			Index_L,
+			Index_M,
+			Index_N,
+			Index_O,
+			Index_P,
+			Index_Q,
+			Index_R,
+			Index_S,
+			Index_T,
+			Index_U,
+			Index_V,
+			Index_W,
+			Index_X,
+			Index_Y,
+			Index_Z,
+			Index_ZERO, 
+			Index_ONE, 
+			Index_TWO, 
+			Index_THREE, 
+			Index_FOUR, 
+			Index_FIVE, 
+			Index_SIX, 
+			Index_SEVEN, 
+			Index_EIGHT, 
+			Index_NINE,
+			Index_QUESTION, 
+			Index_DASH, 
+			Index_HASH, 
+			Index_UNDER
 		};
 	}
 
