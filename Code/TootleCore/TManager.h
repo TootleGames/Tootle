@@ -34,6 +34,7 @@ public:
 	{
 	}
 
+	virtual TRefRef						GetSubscriberRef() const				{	return GetManagerRef();	}
 	FORCEINLINE TRefRef					GetManagerRef() const					{	return m_ManagerRef;	}
 	FORCEINLINE TLManager::ManagerState	GetState() const						{	return m_ManagerState;	}
 	FORCEINLINE Bool					operator<(const TManager& Manager)const	{	return (GetManagerRef() < Manager.GetManagerRef());	}

@@ -39,8 +39,10 @@ public:
 	FORCEINLINE void		SetReadyForUpdate()										{	m_TimerUpdateCount += IsEnabled() ? 1 : 0;	}
 	FORCEINLINE u16			Debug_GetFramesPerSecond() const						{	return m_Debug_FramesPerSecond;	}
 	FORCEINLINE float		Debug_GetFrameTimePerSecond() const						{	return m_Debug_FrameTimePerSecond;	}
-	FORCEINLINE float		Debug_GetUpdateCPUTimeAverage() const					{	return m_Debug_UpdateCPUTimeSecondAverage;	}
+	FORCEINLINE float		Debug_GetUpdateCPUTimeAverage() const					{	return Debug_GetUpdateCPUTimeAverage( TLCore::UpdateRef );	}
 	FORCEINLINE float		Debug_GetRenderCPUTimeAverage() const					{	return m_Debug_RenderCPUTimeSecondAverage;	}
+	FORCEINLINE float		Debug_GetUpdateCPUTimeAverage(TRefRef SubscriberRef) const;
+	FORCEINLINE const TKeyArray<TRef,float>&	Debug_GetUpdateCPUTimeAverageArray() const	{	return m_Debug_UpdateCPUTimeSecondAverage;	}
 
 	FORCEINLINE Bool		AddTimeStepModifier(TRefRef ModiferRef, const float& fValue);
 	FORCEINLINE Bool		RemoveTimeStepModifier(TRefRef ModiferRef);
@@ -71,6 +73,7 @@ protected:
 	void					UnregisterAllManagers()				{	}
 
 	FORCEINLINE void		Debug_UpdateDebugCounters();		//	update our per-second counters to detect X fps etc
+	FORCEINLINE void		Debug_AddCPUTimeCounter(TRefRef SubscriberRef,float Time);
 
 private:
 	void					PublishInitMessage();						//	publish an init
@@ -92,8 +95,8 @@ private:
 	u16							m_Debug_CurrentFramesPerSecond;		//	fps counter
 	float						m_Debug_FrameTimePerSecond;			//	time counter for prev second
 	float						m_Debug_CurrentFrameTimePerSecond;	//	time counter
-	float						m_Debug_UpdateCPUTimeSecondAverage;			//	MS counter spent in [published]update (for prev second)
-	float						m_Debug_CurrentUpdateCPUTimePerSecond;		//	MS counter spent in [published]update
+	TKeyArray<TRef,float>		m_Debug_UpdateCPUTimeSecondAverage;			//	MS counter spent in [published]update (for prev second)
+	TKeyArray<TRef,float>		m_Debug_CurrentUpdateCPUTimePerSecond;		//	MS counter spent in [published]update
 	float						m_Debug_RenderCPUTimeSecondAverage;			//	MS counter spent in [published]update (for prev second)
 	float						m_Debug_CurrentRenderCPUTimePerSecond;		//	MS counter spent in [published]update
 
@@ -198,4 +201,28 @@ FORCEINLINE Bool TLCore::TCoreManager::GetTimeStepModifier(TRefRef ModiferRef, f
 	fValue = *pfValue;
 	return TRUE;
 }
+
+
+//---------------------------------------------------------
+//	
+//---------------------------------------------------------
+FORCEINLINE void TLCore::TCoreManager::Debug_AddCPUTimeCounter(TRefRef SubscriberRef,float Time)		
+{
+	//	update existing counter
+	float* pCounter = m_Debug_CurrentUpdateCPUTimePerSecond.Find( SubscriberRef );	
+	if ( pCounter )	
+		*pCounter += Time;
+	else
+		m_Debug_CurrentUpdateCPUTimePerSecond.Add( SubscriberRef, Time );
+}
+
+//---------------------------------------------------------
+//	
+//---------------------------------------------------------
+FORCEINLINE float TLCore::TCoreManager::Debug_GetUpdateCPUTimeAverage(TRefRef SubscriberRef) const	
+{	
+	const float* pCounter = m_Debug_UpdateCPUTimeSecondAverage.Find( SubscriberRef );	
+	return pCounter ? *pCounter : 0.f;
+}
+
 

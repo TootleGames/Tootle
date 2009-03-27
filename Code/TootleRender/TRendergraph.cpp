@@ -14,7 +14,14 @@ namespace TLRender
 };
 
 
-	
+
+TLGraph::TNodeMessage::TNodeMessage(TRefRef NodeRef,TLMessaging::TMessage& Message) :
+	m_NodeRef	( NodeRef ),
+	m_Message	( Message )
+{
+}
+
+
 
 SyncBool TLRender::TRendergraph::Initialise()
 {
@@ -39,6 +46,52 @@ SyncBool TLRender::TRendergraph::Shutdown()
 }
 
 
+//------------------------------------------------
+//	alternative graph update
+//------------------------------------------------
+SyncBool TLRender::TRendergraph::Update(float fTimeStep)
+{
+	//	gr: NO NODE UPDATES FOR RENDER GRAPH!
+
+	//	process graph messages
+	ProcessMessageQueue();
+	
+	//	gr; update structure first, this will remove nodes first and 
+	//	mean any node messages wont do uncessacary processing
+	UpdateGraphStructure();
+
+	//	process node messages. fifo
+	u32 MessageCount = m_NodeMessages.GetSize();
+	for ( u32 m=0;	m<MessageCount;	m++ )
+	{
+		TLGraph::TNodeMessage* pMessage = m_NodeMessages[m];
+		TRenderNode* pRenderNode = FindNode( pMessage->GetNodeRef() );
+		if ( pRenderNode )
+		{
+			pMessage->GetMessage().ResetReadPos();
+			pRenderNode->ProcessMessage( pMessage->GetMessage() );
+		}
+	}
+
+	//	clear messages (dont remove all in case some kinda processing added another message to the queue
+	m_NodeMessages.RemoveAt( 0, MessageCount );
+
+	return SyncTrue;
+}
+
+//------------------------------------------------
+//	send message to node
+//------------------------------------------------
+Bool TLRender::TRendergraph::SendMessageToNode(TRefRef NodeRef,TLMessaging::TMessage& Message)
+{
+	//	add message to the node message queue
+	TPtr<TLGraph::TNodeMessage> pNodeMessage = new TLGraph::TNodeMessage( NodeRef, Message );
+	m_NodeMessages.Add( pNodeMessage );
+	//m_NodeMessages.AddNewPtr( new TLGraph::TNodeMessage( NodeRef, Message ) );
+	
+	//	assume okay - could fetch node, but thats a bit expensive
+	return TRUE;
+}
 
 
 

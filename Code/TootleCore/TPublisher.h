@@ -43,6 +43,10 @@ public:
 	FORCEINLINE Bool	HasSubscribers() const							{	return m_Subscribers.GetSize() != 0;	}
 	FORCEINLINE void	PublishMessage(TLMessaging::TMessage& Message);	//	send message to subscribers if we have any
 
+protected:
+	TArray<TSubscriber*>&	GetSubscribers()							{	return m_Subscribers;	}
+	void				DoPublishMessage(TLMessaging::TMessage& Message,TSubscriber& Subscriber);
+
 private:
 	FORCEINLINE Bool	AddSubscriber(TSubscriber* pSubscriber)			{	return pSubscriber ? m_Subscribers.AddUnique(pSubscriber)!=-1 : FALSE;	}
 	FORCEINLINE Bool	RemoveSubscriber(TSubscriber* pSubscriber)		{	return m_Subscribers.Remove(pSubscriber);	}

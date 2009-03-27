@@ -203,10 +203,6 @@ public:
 		//Remove(this);
 	}
 
-	virtual void			Initialise(TLMessaging::TMessage& Message);	//	Initialise message - made into virtual func as it's so commonly used
-	virtual void 			Update(float Timestep);					// Main node update called once per frame
-	virtual void			Shutdown();							// Shutdown routine	- called before being removed form the graph. Base code sends out a shutdown message to our subscribers
-
 	// Parent manipulation
 	inline TPtr<T>&			GetParent()							{	return m_pParent;	}
 	inline const TPtr<T>&	GetParent() const					{	return m_pParent;	}
@@ -234,6 +230,10 @@ public:
 	inline Bool				operator<(const TGraphNode<T>& Node) const			{	return GetNodeRef() == Node.GetNodeRef();	}
 
 protected:
+	virtual void			Initialise(TLMessaging::TMessage& Message);	//	Initialise message - made into virtual func as it's so commonly used
+	virtual void 			Update(float Timestep);					// Main node update called once per frame
+	virtual void			Shutdown();							// Shutdown routine	- called before being removed form the graph. Base code sends out a shutdown message to our subscribers
+
 	virtual const TGraphNodeBase*	GetParentBase() const		{	return m_pParent.GetObject();	}
 
 	virtual void			UpdateAll(float Timestep);						//	update tree: update self, and children and siblings

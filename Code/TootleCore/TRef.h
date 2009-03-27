@@ -32,6 +32,15 @@ class TString;
 class TRef;
 typedef const TRef& TRefRef;	//	TRefRef is just shorthand for passing ref's around
 
+#define TLRef_CharIndexBitMask					(41-1)
+#define TLRef_BitsPerRefChar					6	//	32bits / TRef::g_CharsPerRef
+#define TLRef_StaticCharIndex(Char)				TLRef::StaticCharIndex::##Char
+#define TLRef_StaticOffsetChar(CharOffset,Char)	((u32)(TLRef_StaticCharIndex(Char) << (CharOffset*TLRef_BitsPerRefChar)))
+#define TRef_Static1(a)							TRef_Static(a,SPACE,SPACE,SPACE,SPACE)
+#define TRef_Static2(a,b)						TRef_Static(a,b,SPACE,SPACE,SPACE)
+#define TRef_Static3(a,b,c)						TRef_Static(a,b,c,SPACE,SPACE)
+#define TRef_Static4(a,b,c,d)					TRef_Static(a,b,c,d,SPACE)
+#define TRef_Static(a,b,c,d,e)					((u32)(TLRef_StaticOffsetChar(0,a)|TLRef_StaticOffsetChar(1,b)|TLRef_StaticOffsetChar(2,c)|TLRef_StaticOffsetChar(3,d)|TLRef_StaticOffsetChar(4,e)))
 
 namespace TLRef
 {
@@ -41,6 +50,21 @@ namespace TLRef
 
 	// Use the g_InvalidRefMask to validate a tref ensuring it is valid
 	FORCEINLINE s32 CreateValidTRef(s32 sValue)		{ return (sValue&(~g_InvalidRefMask)); }
+
+	namespace StaticCharIndex
+	{
+		//	const char	g_RefCharTable[g_RefCharTable_Size+1]		= {	" abcdefghijklmnopqrstuvwxyz0123456789?-#_"	};
+		//	const char	g_RefCharTableAlt[g_RefCharTable_Size+1]	= {	" ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?-#_"	};
+		enum
+		{
+			SPACE = 0,
+			a = 1,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,
+			A = 1,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,
+			ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE,
+			QUESTION, DASH, HASH, UNDER
+		};
+	}
+
 }
 
 
@@ -124,3 +148,5 @@ FORCEINLINE Bool TRef::IsValid() const
 
 
 TLCore_DeclareIsDataType( TRef );
+
+

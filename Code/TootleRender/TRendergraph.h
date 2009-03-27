@@ -23,6 +23,22 @@ namespace TLRender
 };
 
 
+namespace TLGraph
+{
+	//	stores a message destined for a node
+	class TNodeMessage
+	{
+	public:
+		TNodeMessage(TRefRef NodeRef,TLMessaging::TMessage& Message);
+	
+		FORCEINLINE TLMessaging::TMessage&	GetMessage()		{	return m_Message;	}
+		FORCEINLINE TRefRef					GetNodeRef() const	{	return m_NodeRef;	}
+
+	protected:
+		TRef					m_NodeRef;
+		TLMessaging::TMessage	m_Message;
+	};
+};
 
 
 //----------------------------------------------------------
@@ -35,10 +51,16 @@ public:
 		TLGraph::TGraph<TLRender::TRenderNode>	(refManagerID)
 	{
 	}
-protected:
 
-	virtual SyncBool Initialise();
-	virtual SyncBool Shutdown();
+	virtual Bool				SendMessageToNode(TRefRef NodeRef,TLMessaging::TMessage& Message);	//	send message to node
+
+protected:
+	virtual SyncBool			Initialise();
+	virtual SyncBool			Update(float fTimeStep);		//	alternative graph update
+	virtual SyncBool			Shutdown();
+
+protected:
+	TPtrArray<TLGraph::TNodeMessage>	m_NodeMessages;	//	queued up messages going to nodes
 };
 
 

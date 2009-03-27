@@ -58,6 +58,7 @@ public:
 	friend class TLMaths::TBoundsShape<TLMaths::TBox2D>;
 	friend class TLMaths::TBoundsShape<TLMaths::TSphere>;
 	friend class TLMaths::TBoundsShape<TLMaths::TSphere2D>;
+	friend class TRendergraph;
 
 private:
 	enum InvalidateFlags
@@ -112,9 +113,9 @@ public:
 
 public:
 	TRenderNode(TRefRef RenderNodeRef=TRef(),TRefRef TypeRef=TRef());
-	virtual ~TRenderNode()					{};
 
 	virtual void							Initialise(TLMessaging::TMessage& Message);	//	generic render node init
+	virtual void 							Update(float Timestep);	
 	virtual void							Shutdown();									//	clean-up any TPtrs back to us so we will be deallocated
 
 	FORCEINLINE const TLMaths::TTransform&	GetTransform() const						{	return m_Transform;	}

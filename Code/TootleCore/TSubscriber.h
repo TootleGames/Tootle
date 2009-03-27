@@ -15,6 +15,8 @@ public:
 	FORCEINLINE Bool	SubscribeTo(TPublisher* pPublisher)				{	return pPublisher->Subscribe(this);	}
 	FORCEINLINE Bool	UnsubscribeFrom(TPublisher* pPublisher)			{	return pPublisher->Unsubscribe(this);	}
 
+	virtual TRefRef		GetSubscriberRef() const						{	static TRef NoRef("other");	return NoRef;	}
+
 protected:
 	virtual void		ProcessMessage(TLMessaging::TMessage& Message) = 0;
 

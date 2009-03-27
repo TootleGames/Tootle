@@ -832,6 +832,13 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 	TLGraph::TGraphNode<TLRender::TRenderNode>::Initialise( Message );
 }
 
+//---------------------------------------------------------
+//	no updates for render nodes!
+//---------------------------------------------------------
+void TLRender::TRenderNode::Update(float Timestep)
+{
+	TLDebug_Break("Render nodes should not be updated!");
+}
 
 
 //---------------------------------------------------------

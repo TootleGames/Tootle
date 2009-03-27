@@ -22,6 +22,13 @@ Bool TLMessaging::TPublisher::Unsubscribe(TSubscriber* pSubscriber)
 }
 
 
+void TLMessaging::TPublisher::DoPublishMessage(TLMessaging::TMessage& Message,TSubscriber& Subscriber)
+{
+	Message.ResetReadPos();
+	Subscriber.ProcessMessage( Message );
+}
+
+
 void TLMessaging::TPublisher::DoPublishMessage(TLMessaging::TMessage& Message)		
 {
 	for(u32 uIndex = 0; uIndex < m_Subscribers.GetSize(); uIndex++)

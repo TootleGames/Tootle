@@ -85,7 +85,7 @@ public:
 	TArray(TSortFunc* pSortFunc=NULL,u16 GrowBy=TArray_GrowByDefault);
 	virtual ~TArray();
 
-	virtual u32			GetSize() const							{	return m_Size;	}						//	number of elements
+	FORCEINLINE const u32&	GetSize() const							{	return m_Size;	}						//	number of elements
 	inline s32			GetLastIndex() const					{	return (s32)GetSize() - 1;	};
 	inline s32			GetRandIndex() const					{	return TLMaths::Rand( GetSize() );	};
 	virtual TYPE*		GetData()								{	return m_pData;	}

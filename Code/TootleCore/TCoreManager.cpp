@@ -20,6 +20,8 @@ using namespace TLCore;
 
 #define STALL_UPDATE_RATE	//	if enabled stalls updates with sleep until we're the right amount of time since last one. if not defined, skips frame and waits till next timer
 
+#define DEBUG_RECORD_SUBSCRIBER_UPDATE_TIMES
+
 
 TCoreManager::TCoreManager(TRefRef refManagerID) :
 	TManager							( refManagerID ),
@@ -27,8 +29,6 @@ TCoreManager::TCoreManager(TRefRef refManagerID) :
 	m_Debug_CurrentFramesPerSecond		( 0 ),
 	m_Debug_FrameTimePerSecond			( 0.f ),
 	m_Debug_CurrentFrameTimePerSecond	( 0.f ),
-	m_Debug_UpdateCPUTimeSecondAverage		( 0.f ),
-	m_Debug_CurrentUpdateCPUTimePerSecond	( 0.f ),
 	m_Debug_RenderCPUTimeSecondAverage		( 0.f ),
 	m_Debug_CurrentRenderCPUTimePerSecond	( 0.f ),
 
@@ -247,10 +247,22 @@ void TCoreManager::Debug_UpdateDebugCounters()
 	{
 		m_Debug_LastCountTime = TimeNow;
 
-		//	divide the MS counters by number of frames to get an average per call. if we don't do this
-		//	the MS is going to vary wildly when frame rate goes up and down (even by 1)
-		m_Debug_UpdateCPUTimeSecondAverage		= m_Debug_CurrentFramesPerSecond == 0 ? 0.f : m_Debug_CurrentUpdateCPUTimePerSecond / (float)m_Debug_CurrentFramesPerSecond;
-		m_Debug_CurrentUpdateCPUTimePerSecond	= 0.f;
+		//	update the update-counters to get per second values
+		for ( u32 c=0;	c<m_Debug_CurrentUpdateCPUTimePerSecond.GetSize();	c++ )
+		{
+			TRefRef Subscriber = m_Debug_CurrentUpdateCPUTimePerSecond.GetKeyAt(c);
+
+			//	divide the MS counters by number of frames to get an average per call. if we don't do this
+			//	the MS is going to vary wildly when frame rate goes up and down (even by 1)
+			float& Counter = m_Debug_CurrentUpdateCPUTimePerSecond.ElementAt(c);
+			Counter /= (m_Debug_CurrentFramesPerSecond == 0) ? 1 : (float)m_Debug_CurrentFramesPerSecond;
+
+			//	save to per-seond key array
+			m_Debug_UpdateCPUTimeSecondAverage.Add( Subscriber, Counter );
+
+			//	reset counter
+			Counter = 0.f;
+		}
 
 		m_Debug_RenderCPUTimeSecondAverage		= m_Debug_CurrentFramesPerSecond == 0 ? 0.f : m_Debug_CurrentRenderCPUTimePerSecond / (float)m_Debug_CurrentFramesPerSecond;
 		m_Debug_CurrentRenderCPUTimePerSecond	= 0.f;
@@ -366,13 +378,33 @@ Bool TCoreManager::PublishUpdateMessage(Bool bForced)
 	Message.AddChildAndData( TLCore::TimeStepModRef, fModifier );
 
 	//	track CPU time of update
-	TLTime::TScopeTimer Timer("Update",FALSE);
+	TLTime::TScopeTimer Timer("CoreUpdate",FALSE);
 
 	//	send message
+#ifdef DEBUG_RECORD_SUBSCRIBER_UPDATE_TIMES
+	TArray<TSubscriber*>& Subscribers = GetSubscribers();
+	for( u32 i=0;	i<Subscribers.GetSize();	i++)
+	{
+		TSubscriber* pSubscriber = Subscribers.ElementAt(i);
+
+		//	start timer
+		TLTime::TScopeTimer SubTimer("Update",FALSE);
+
+		//	send message
+		DoPublishMessage( Message, *pSubscriber );
+		
+		//	store timer result
+		TRefRef SubscriberRef = pSubscriber->GetSubscriberRef();
+		if ( SubscriberRef.IsValid() )
+			Debug_AddCPUTimeCounter( SubscriberRef, SubTimer.GetTimeMillisecs() );
+	}
+#else
+	//	simple publish
 	PublishMessage( Message );
+#endif
 
 	//	increment the amount of time we've spent doing updates
-	m_Debug_CurrentUpdateCPUTimePerSecond += Timer.GetTimeMillisecs();
+	Debug_AddCPUTimeCounter( TLCore::UpdateRef, Timer.GetTimeMillisecs() );
 	
 	//	increment the amount of frame-time we've done
 	m_Debug_CurrentFrameTimePerSecond += fTimeStep;

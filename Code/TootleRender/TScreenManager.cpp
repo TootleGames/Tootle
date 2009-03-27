@@ -77,6 +77,14 @@ void TScreenManager::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	TRefRef MessageRef = Message.GetMessageRef();
 
+	//	gr: ipod does no update in the screen - just break out now
+	#ifdef TL_TARGET_IPOD
+	{
+		if ( MessageRef == TLCore::UpdateRef )
+			return;
+	}
+	#endif // TL_TARGET_IPOD
+
 	if ( MessageRef == "Render" )
 	{
 		//	render our screens

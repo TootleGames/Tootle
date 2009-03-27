@@ -28,8 +28,13 @@ public:
 	TMessage(TRefRef MessageRef, TRefRef SenderRef) : 
 		TBinaryTree(MessageRef),
 		m_SenderRef(SenderRef)
-	{	
-	}
+	{}
+
+	TMessage(TLMessaging::TMessage& OtherMessage) :
+		TBinaryTree	( OtherMessage ),
+		m_SenderRef	( OtherMessage.m_SenderRef )
+	{}
+		
 
 	FORCEINLINE TRefRef		GetMessageRef() const											{	return TBinaryTree::GetDataRef();	} // use binary tree's ref
 	FORCEINLINE void		SetMessageRef(TRefRef MessageRef)								{	TBinaryTree::SetDataRef( MessageRef );	} // use binary tree's ref
