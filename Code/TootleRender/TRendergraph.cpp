@@ -5,6 +5,7 @@
 #include "TRenderNodePathNetwork.h"
 #include "TRenderNodePhysicsNode.h"
 #include "TRenderNodeQuadTree.h"
+#include <TootleCore/TLTime.h>
 
 
 
@@ -51,6 +52,7 @@ SyncBool TLRender::TRendergraph::Shutdown()
 //------------------------------------------------
 SyncBool TLRender::TRendergraph::Update(float fTimeStep)
 {
+	TLTime::TScopeTimer Timer( TRef_Static(R,e,n,U,p) );
 	//	gr: NO NODE UPDATES FOR RENDER GRAPH!
 
 	//	process graph messages

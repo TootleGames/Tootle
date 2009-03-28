@@ -347,7 +347,7 @@ Bool TApplication::TApplicationState_Bootup::CreateIntroScreen()
 	{
 		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
 		InitMessage.AddChildAndData("MeshRef", pBgAsset->GetAssetRef() );
-		InitMessage.AddChildAndData("Translate", float3( 0.f, 0.f, -50.f ) );
+		InitMessage.AddChildAndData(TRef_Static(T,r,a,n,s), float3( 0.f, 0.f, -50.f ) );
 		InitMessage.AddChildAndData("LineWidth", 3.f );
 
 		m_LogoRenderNode = TLRender::g_pRendergraph->CreateNode("logo", TRef(), TRef(), &InitMessage );

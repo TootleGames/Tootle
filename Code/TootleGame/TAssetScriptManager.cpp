@@ -286,8 +286,8 @@ Bool TAssetScriptInstance::SendInterpedCommandAsMessage(TLAsset::TAssetScriptCom
 			}
 		}
 	} 
-	else if((MessageRef == "Translate") ||
-			(MessageRef == "Scale"))
+	else if((MessageRef == TRef_Static(T,r,a,n,s)) ||
+			(MessageRef == TRef_Static(S,c,a,l,e)))
 	{
 		// Get the to command translation
 		float3 vFrom, vTo;

@@ -128,7 +128,7 @@ Bool TLRender::TRenderNodeVectorText::SetGlyphs()
 		//		TLMessaging::TMessage Message;
 		//		Message.ExportData("Glyph", pRenderGlyph); // NOTE: Should be an ID rather than pointer
 		//		Message.ExportData("Font", Font);
-		//		Message.ExportData("Translate", GlyphPos);
+		//		Message.ExportData(TRef_Static(T,r,a,n,s), GlyphPos);
 		//		Message.ExportData("Char", m_Text[charindex]);
 		//		TLRender::g_pRendergraph->CreateNode(GlyphRef, "Glyph", "Root");
 		///////////////////////////////////////////////////////////////////////////////

@@ -32,7 +32,7 @@ void TAudioNode::Initialise(TLMessaging::TMessage& Message)
 			SubscribeTo(pOwner);
 
 			/*
-			TPtr<TLMessaging::TEventChannel>& pEventChannel = pOwner->FindEventChannel("OnTransform");
+			TPtr<TLMessaging::TEventChannel>& pEventChannel = pOwner->FindEventChannel( TRef_Static(O,n,T,r,a) );
 
 			if(pEventChannel)
 			{
@@ -76,7 +76,7 @@ void TAudioNode::Initialise(TLMessaging::TMessage& Message)
 	}
 
 	float3 vPosition;
-	if(Message.ImportData("Translate", vPosition))
+	if(Message.ImportData(TRef_Static(T,r,a,n,s), vPosition))
 	{
 		SetTranslate(vPosition);
 	}
@@ -181,10 +181,10 @@ void TAudioNode::ProcessMessage(TLMessaging::TMessage& Message)
 
 		return;
 	}
-	else if(MessageRef == "OnTransform")
+	else if(MessageRef == TRef_Static(O,n,T,r,a) )
 	{
 		float3 vVector;
-		if(Message.ImportData("Translate", vVector))
+		if(Message.ImportData(TRef_Static(T,r,a,n,s), vVector))
 		{
 			UpdatePreviousPos();
 			SetTranslate(vVector);
@@ -197,7 +197,7 @@ void TAudioNode::ProcessMessage(TLMessaging::TMessage& Message)
 		}
 
 		/*
-		if(Message.ImportData("Rotation", vVector))
+		if(Message.ImportData(TRef_Static(R,o,t,a,t), vVector))
 		{
 			UpdatePreviousPos();
 			SetTranslate(vVector);

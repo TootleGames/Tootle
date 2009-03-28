@@ -9,8 +9,8 @@
 #pragma once
 #include "TLTypes.h"
 #include "TLDebug.h"
-#include "TString.h"
 #include "TManager.h"
+#include "TKeyArray.h"
 
 
 
@@ -22,6 +22,9 @@ namespace TLTime
 	class TTimestamp;
 	class TTimestampMicro;	//	timestamp but with micro second resolution
 	class TScopeTimer;
+
+	extern TKeyArray<TRef,float>	g_TimerCounters;		//	current elapsed time for timers
+	extern TKeyArray<TRef,float>	g_TimerAverages;		//	timer time elapsed in the last second in millisecs
 
 	const TTimestamp&		GetTimeNow();							//	return timestamp as of right now
 	const TTimestampMicro&	GetMicroTimeNow();						//	return timestamp as of right now
@@ -48,6 +51,10 @@ namespace TLTime
 
 	inline void				Debug_PrintTimestamp(const TTimestamp& Timestamp,s32 Micro=-1)		{	Platform::Debug_PrintTimestamp( Timestamp, Micro );	}
 	void					Debug_PrintTimestamp(const TTimestampMicro& Timestamp);
+
+	FORCEINLINE void							AddTimerTime(TRefRef TimerRef,float MillisecTime);	//	increment a timer counter
+	void										OnSecondElapsed(u32 FrameCount);					//	get per-second averages for timers when a second elapses
+	FORCEINLINE const TKeyArray<TRef,float>&	GetTimers()											{	return g_TimerAverages;	}	//	current elapsed time for timers
 
 	class TTimeManager;
 }
@@ -126,24 +133,32 @@ protected:
 
 
 //---------------------------------------------------------
-//	scope timer - records time when created, prints out time when 
-//	destroyed
-//	simple use of this is TLTime::TScopeTimer(__FUNCTION__)
+//	scope timer - records time when created, then when destroyed
+//	records the time in the time manager's timers list
 //---------------------------------------------------------
 class TLTime::TScopeTimer
 {
 public:
-	TScopeTimer(const TTempString& TimerName,Bool Verbose);
-	~TScopeTimer()								{	if ( m_Verbose)	Debug_PrintTimerResult();	}
-
-	void			Debug_PrintTimerResult();	//	print out timer result (time between start and now)
-	float			GetTimeMillisecs() const;	//	return the time spent in the timer in millisecs (.micro)
+	TScopeTimer(TRefRef TimerRef) :
+		m_TimerRef			( TimerRef ),
+		m_StartTimestamp	( TRUE )
+	{
+	}
+	~TScopeTimer()								
+	{	
+		OnTimerEnd();	
+	}
 
 protected:
-	TTimestampMicro	m_StartTimestamp;			//	timestamp
-	TTempString		m_TimerName;				//	name of timer
-	Bool			m_Verbose;					//	if set, debug print the time spent in this timer
+	void			OnTimerEnd();				//	timer has finished, update global counters
+	float			GetTimeMillisecs(const TTimestampMicro& EndTime=TTimestampMicro(TRUE)) const;	//	return the time spent in the timer in millisecs (.micro)
+
+protected:
+	TRef			m_TimerRef;					//	name of timer
+	TTimestampMicro	m_StartTimestamp;			//	timestamp set at start
 };
+
+
 
 
 class TLTime::TTimeManager : public TManager
@@ -153,11 +168,27 @@ public:
 	  TManager(refManagerID)
 	{
 	}
+
 protected:
 	SyncBool		Initialise()
 	{
 		return Platform::Init();
 	}
 };
+
+
+
+//------------------------------------------
+//	increment a timer counter
+//------------------------------------------
+FORCEINLINE void TLTime::AddTimerTime(TRefRef TimerRef,float MillisecTime)
+{
+	//	update existing counter
+	float* pCounter = g_TimerCounters.Find( TimerRef );	
+	if ( pCounter )	
+		*pCounter += MillisecTime;
+	else
+		g_TimerCounters.Add( TimerRef, MillisecTime );
+}
 
 

@@ -60,7 +60,7 @@ void TSceneNode_Object::DeleteRenderNode()
 void TSceneNode_Object::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	//	gr: apply change from physics node ONLY
-	if(Message.GetMessageRef() == "OnTransform" && Message.GetSenderRef() == m_PhysicsNodeRef )
+	if(Message.GetMessageRef() == TRef_Static(O,n,T,r,a) && Message.GetSenderRef() == m_PhysicsNodeRef )
 	{
 		float3 vVector;
 		TLMaths::TQuaternion qRot;
@@ -68,19 +68,19 @@ void TSceneNode_Object::ProcessMessage(TLMessaging::TMessage& Message)
 		bTranslation = bRotation = bScale = FALSE;
 
 		// Absolute position/rotation/scale setting
-		if(Message.ImportData("Translate", vVector))
+		if(Message.ImportData(TRef_Static(T,r,a,n,s), vVector))
 		{
 			GetTransform().SetTranslate(vVector);
 			bTranslation = TRUE;
 		}
 
-		if(Message.ImportData("Rotation", qRot))
+		if(Message.ImportData(TRef_Static(R,o,t,a,t), qRot))
 		{
 			GetTransform().SetRotation(qRot);
 			bRotation = TRUE;
 		}
 
-		if(Message.ImportData("Scale", vVector))
+		if(Message.ImportData(TRef_Static(S,c,a,l,e), vVector))
 		{
 			GetTransform().SetScale(vVector);
 			bScale = TRUE;
@@ -186,13 +186,13 @@ Bool TSceneNode_Object::CreatePhysicsNode(TRefRef PhysicsNodeType)
 	const TLMaths::TTransform& Transform = GetTransform();
 
 	if ( Transform.HasTranslate() )
-		Message.AddChildAndData("Translate", Transform.GetTranslate() );
+		Message.AddChildAndData(TRef_Static(T,r,a,n,s), Transform.GetTranslate() );
 
 	if ( Transform.HasScale() )
-		Message.AddChildAndData("Scale", Transform.GetScale() );
+		Message.AddChildAndData(TRef_Static(S,c,a,l,e), Transform.GetScale() );
 
 	if ( Transform.HasRotation() )
-		Message.AddChildAndData("Rotation", Transform.GetRotation() );
+		Message.AddChildAndData(TRef_Static(R,o,t,a,t), Transform.GetRotation() );
 
 	//	export ownership info
 	Message.ExportData("Owner", GetNodeRef());
@@ -241,13 +241,13 @@ Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TLMessaging
 		const TLMaths::TTransform& Transform = GetTransform();
 
 		if ( Transform.HasTranslate() )
-			pInitMessage->AddChildAndData("Translate", Transform.GetTranslate() );
+			pInitMessage->AddChildAndData(TRef_Static(T,r,a,n,s), Transform.GetTranslate() );
 
 		if ( Transform.HasScale() )
-			pInitMessage->AddChildAndData("Scale", Transform.GetScale() );
+			pInitMessage->AddChildAndData(TRef_Static(S,c,a,l,e), Transform.GetScale() );
 
 		if ( Transform.HasRotation() )
-			pInitMessage->AddChildAndData("Rotation", Transform.GetRotation() );
+			pInitMessage->AddChildAndData(TRef_Static(R,o,t,a,t), Transform.GetRotation() );
 	}
 
 	//	export scene-node-ownership info
@@ -299,7 +299,7 @@ TRef TSceneNode_Object::CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset)
 
 	Message.ExportData("Asset", AudioAsset);
 	Message.ExportData("Play", TRUE);
-	Message.ExportData("Translate", GetTranslate());
+	Message.ExportData(TRef_Static(T,r,a,n,s), GetTranslate());
 	Message.ExportData("Owner", GetNodeRef());
 
 	// Create an audio node for the specified audio reference
@@ -313,7 +313,7 @@ TRef TSceneNode_Object::CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset, co
 	Message.ExportData("Asset", AudioAsset);
 	Message.ExportData("Play", TRUE);
 	Message.ExportData("Props", Props);
-	Message.ExportData("Translate", GetTranslate());
+	Message.ExportData(TRef_Static(T,r,a,n,s), GetTranslate());
 	Message.ExportData("Owner", GetNodeRef());
 
 	// Create an audio node for the specified audio reference

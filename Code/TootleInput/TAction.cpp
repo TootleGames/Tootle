@@ -53,7 +53,7 @@ void TAction::ProcessMessage(TLMessaging::TMessage& Message)
 	if(m_refParentActions.GetSize())
 	{
 		// Check to see if the message coming in is for a parent action
-		if(Message.GetMessageRef() == "Action")
+		if(Message.GetMessageRef() == TRef_Static(A,c,t,i,o))
 		{
 			// Get the action ID
 			TRef refActionID;
@@ -149,7 +149,7 @@ void TAction::ProcessMessage(TLMessaging::TMessage& Message)
 		TLDebug_Print(straction);
 #endif
 		// Send out a new message specifying the action ID to say this action has happened.
-		TLMessaging::TMessage NewMessage("Action");
+		TLMessaging::TMessage NewMessage(TRef_Static(A,c,t,i,o));
 		NewMessage.Write(m_refActionID);			// The action performed
 
 		TPtr<TBinaryTree>& pChild = Message.GetChild("RAWDATA");

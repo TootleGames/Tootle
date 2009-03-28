@@ -1,6 +1,8 @@
-
 #include "TLInput.h"
 #include <TootleCore/TEventChannel.h>
+#include <TootleCore/TLTime.h>
+
+
 
 namespace TLInput
 {
@@ -131,7 +133,7 @@ SyncBool TInputManager::Initialise()
 	// If we have the event channel manager then register some event channels
 	if(TLMessaging::g_pEventChannelManager)
 	{
-		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "Action");
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), TRef_Static(A,c,t,i,o));
 		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "DeviceChanged");
 
 		return Platform::Init();
@@ -168,6 +170,8 @@ SyncBool TInputManager::Update(float fTimeStep)
 {
 	if(!IsEnabled())
 		return SyncTrue;
+
+	TLTime::TScopeTimer Timer( TRef_Static(I,n,p,u,t) );
 
 	// Need to test for new devices and initialise them as required
 	m_fDeviceCheckTimer -= fTimeStep;

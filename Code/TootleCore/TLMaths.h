@@ -43,10 +43,16 @@ namespace TLMaths
 	static const float	g_NearZero = 0.0001f;
 	static const float	g_NearOne = 1.f - g_NearZero;		//	value just less than one - used to check stuff is almost at 1 when normally between 0..1
 
+#define TLMATHS_LOOKUP_TO_RAD(i)	TAngle::DegreesToRadians( (float)i )	//	scale DOWN if table gets larger
+//#define TLMATHS_RAD_TO_LOOKUP(r)	((s32)TAngle::RadiansToDegrees( r ))		//	scale UP if table gets larger
+	FORCEINLINE s32					GetCosineLookupFromRad(float Radians);	
+//	extern TFixedArray<float,360>	g_SineLookupTable;
+	extern float					g_SineLookupTable[360];
+
 	//	various maths stuff
 	FORCEINLINE float			Sqrtf(float SquaredValue)				{	return sqrtf( SquaredValue );	}
-	FORCEINLINE float			Cosf(float RadAngle)					{	return cosf( RadAngle );	}
-	FORCEINLINE float			Sinf(float RadAngle)					{	return sinf( RadAngle );	}
+	FORCEINLINE float			Cosf(float RadAngle);
+	FORCEINLINE float			Sinf(float RadAngle);
 	FORCEINLINE float			Tanf(float RadAngle)					{	return tanf( RadAngle );	}
 	FORCEINLINE float			Absf(float Value)						{	return fabsf( Value );	}
 	FORCEINLINE u32				GetFixedf(float f)						{	return (u32)(f * 65536.0f);	}
@@ -475,6 +481,48 @@ FORCEINLINE void TLMaths::Wrap(TYPE& Value,const TYPE& Min,const TYPE& Max)
 		Value += Diff;
 }
 
+FORCEINLINE s32 TLMaths::GetCosineLookupFromRad(float Radians)
+{
+	if ( Radians == 0.f )
+		return 0;
+
+	float Degrees = TLMaths::TAngle::RadiansToDegrees( Radians );
+
+	if ( Degrees < 0.f )
+	{
+		Degrees -= 0.999f;
+		return (s32)Degrees;
+	}
+	else
+	{
+		Degrees += 0.999f;
+		return (s32)Degrees;
+	}
+}
+
+FORCEINLINE float TLMaths::Cosf(float RadAngle)
+{
+	return ::cosf( RadAngle );
+	/*
+	s32 Index = GetCosineLookupFromRad( RadAngle );
+	TLDebug_CheckIndex( Index, 360 );
+	if ( Index < 0 )
+		Index = -Index;
+	return g_SineLookupTable[ (Index + 90 ) % 360 ];
+	*/
+}
+
+FORCEINLINE float TLMaths::Sinf(float RadAngle)
+{
+	return ::sinf( RadAngle );
+	/*
+	s32 Index = GetCosineLookupFromRad( RadAngle );
+	TLDebug_CheckIndex( Index, 360 );
+	if ( Index < 0 )
+		Index = -Index;
+	return g_SineLookupTable[ Index % 360 ];
+	*/
+}
 
 
 

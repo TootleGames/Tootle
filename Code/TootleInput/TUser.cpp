@@ -16,7 +16,7 @@ using namespace TLUser;
 SyncBool TUserManager::Initialise() 
 {	
 	TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "USER");
-	TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "Action");
+	TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), TRef_Static(A,c,t,i,o));
 
 	// Register a global user by default
 	RegisterUser("Global");	
@@ -152,7 +152,7 @@ void TUserManager::ProcessMessage(TLMessaging::TMessage& Message)
 
 	TRefRef MessageRef = Message.GetMessageRef();
 
-	if(MessageRef == "DeviceChanged")
+	if(MessageRef == TRef_Static(D,e,v,i,c) )//"DeviceChanged")
 	{
 		// Device message form the input system
 		// Check for if the device has been added or removed

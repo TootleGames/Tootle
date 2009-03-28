@@ -1,7 +1,6 @@
-
 #include "TScenegraph.h"
-
 #include "TSceneNode_Transform.h"
+#include <TootleCore/TLTime.h>
 
 
 ////////////////////////////////////////////////////
@@ -246,6 +245,8 @@ void TLScene::TScenegraph::SetActiveZone(TPtr<TLMaths::TQuadTreeZone>& pZone)
 //----------------------------------------------------
 void TLScene::TScenegraph::UpdateGraph(float TimeStep)
 {
+	TLTime::TScopeTimer Timer( TRef_Static(s,c,e,n,e) );
+
 	// Process all queued messages first
 	ProcessMessageQueue();
 

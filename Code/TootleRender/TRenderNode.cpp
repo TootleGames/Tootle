@@ -736,7 +736,7 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 			SubscribeTo(pOwner);
 
 			/*
-			TPtr<TLMessaging::TEventChannel>& pEventChannel = pOwner->FindEventChannel("OnTransform");
+			TPtr<TLMessaging::TEventChannel>& pEventChannel = pOwner->FindEventChannel(TRef_Static(O,n,T,r,a));
 
 			if(pEventChannel)
 			{
@@ -755,19 +755,19 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 
 	Bool TransformChanged = FALSE;
 
-	if ( Message.ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
+	if ( Message.ImportData(TRef_Static(T,r,a,n,s), m_Transform.GetTranslate() ) == SyncTrue )
 	{
 		m_Transform.SetTranslateValid();
 		TransformChanged = TRUE;
 	}
 
-	if ( Message.ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
+	if ( Message.ImportData(TRef_Static(S,c,a,l,e), m_Transform.GetScale() ) == SyncTrue )
 	{
 		m_Transform.SetScaleValid();
 		TransformChanged = TRUE;
 	}
 
-	if ( Message.ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
+	if ( Message.ImportData(TRef_Static(R,o,t,a,t), m_Transform.GetRotation() ) == SyncTrue )
 	{
 		m_Transform.SetRotationValid();
 		TransformChanged = TRUE;
@@ -860,23 +860,24 @@ void TLRender::TRenderNode::Shutdown()
 void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	//	gr: only apply the change if it comes from our owner scene node
-	if ( Message.GetMessageRef() == "OnTransform" && Message.GetSenderRef() == GetOwnerSceneNodeRef() && GetOwnerSceneNodeRef().IsValid() )
+	//	"OnTransform"
+	if ( Message.GetMessageRef() == TRef_Static(O,n,T,r,a) && Message.GetSenderRef() == GetOwnerSceneNodeRef() && GetOwnerSceneNodeRef().IsValid() )
 	{
 		Bool TransformChanged = FALSE;
 
-		if ( Message.ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
+		if ( Message.ImportData( TRef_Static(T,r,a,n,s), m_Transform.GetTranslate() ) == SyncTrue )
 		{
 			m_Transform.SetTranslateValid();
 			TransformChanged = TRUE;
 		}
 
-		if ( Message.ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
+		if ( Message.ImportData( TRef_Static(S,c,a,l,e), m_Transform.GetScale() ) == SyncTrue )
 		{
 			m_Transform.SetScaleValid();
 			TransformChanged = TRUE;
 		}
 
-		if ( Message.ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
+		if ( Message.ImportData(TRef_Static(R,o,t,a,t), m_Transform.GetRotation() ) == SyncTrue )
 		{
 			m_Transform.SetRotationValid();
 			TransformChanged = TRUE;
@@ -899,7 +900,7 @@ void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 
 		return;
 	}
-	else if(Message.GetMessageRef() == TRef("Translate"))
+	else if(Message.GetMessageRef() == TRef(TRef_Static(T,r,a,n,s)))
 	{
 		float3 vector;
 
@@ -910,7 +911,7 @@ void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 
 		return;
 	}
-	else if(Message.GetMessageRef() == TRef("Scale"))
+	else if(Message.GetMessageRef() == TRef(TRef_Static(S,c,a,l,e)))
 	{
 		float3 vector;
 

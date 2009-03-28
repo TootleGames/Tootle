@@ -510,70 +510,70 @@ TLFileSys::TFile* TLFileSys::TFileFactory::CreateObject(TRefRef InstanceRef,TRef
 	TLFileSys::TFile* pFile = NULL;
 
 	//	tootle asset type
-	if ( TypeRef == TRef("asset") )
+	if ( TypeRef == TRef_Static(a,s,s,e,t) )
 	{
 		pFile = new TLFileSys::TFileAsset( InstanceRef, TypeRef );
 		return pFile;
 	}
 
 	//	freetype compatible font
-	if ( TypeRef == TRef("ttf") )
+	if ( TypeRef == TRef_Static3(t,t,f) )
 	{
 		pFile = new TLFileSys::TFileFreetype( InstanceRef, TypeRef );
 		return pFile;
 	}
 
 	//	xml file
-	if ( TypeRef == TRef("xml") )
+	if ( TypeRef == TRef_Static3(x,m,l) )
 	{
 		pFile = new TLFileSys::TFileXml( InstanceRef, TypeRef );
 		return pFile;
 	}
 
 	//	svg file
-	if ( TypeRef == TRef("svg") )
+	if ( TypeRef == TRef_Static3(s,v,g) )
 	{
 		pFile = new TLFileSys::TFileSimpleVector( InstanceRef, TypeRef );
 		return pFile;
 	}
 
 	//	TAM file
-	if ( TypeRef == TRef("tam") )
+	if ( TypeRef == TRef_Static3(t,a,m) )
 	{
 		pFile = new TLFileSys::TFileAssetMarkup( InstanceRef, TypeRef );
 		return pFile;
 	}
 	
 	//	WAV file
-	if ( TypeRef == TRef("wav") )
+	if ( TypeRef == TRef_Static3(w,a,v) )
 	{
 		pFile = new TLFileSys::TFileWAV( InstanceRef, TypeRef );
 		return pFile;
 	}
 	
 	//	scheme file
-	if ( TypeRef == TRef("scheme") )
+	if ( TypeRef == TRef_Static(s,c,h,e,m) )
 	{
 		pFile = new TLFileSys::TFileScheme( InstanceRef, TypeRef );
 		return pFile;
 	}
 	
 	//	collada xml file
-	if ( TypeRef == TRef("dae") )
+	if ( TypeRef == TRef_Static3(d,a,e) )
 	{
 		pFile = new TLFileSys::TFileCollada( InstanceRef, TypeRef );
 		return pFile;
 	}
 	
 	//	menu xml file
-	if ( TypeRef == TRef("menu") )
+	if ( TypeRef == TRef_Static4(m,e,n,u) )
 	{
 		pFile = new TLFileSys::TFileMenu( InstanceRef, TypeRef );
 		return pFile;
 	}
 	
 	//	tootle asset script xml file
-	if ( TypeRef == TRef("tas") )
+	if ( TypeRef == TRef_Static3(t,a,s) )
 	{
 		pFile = new TLFileSys::TFileAssetScript( InstanceRef, TypeRef );
 		return pFile;
@@ -581,21 +581,21 @@ TLFileSys::TFile* TLFileSys::TFileFactory::CreateObject(TRefRef InstanceRef,TRef
 	
 	
 	//	tootle text database xml file
-	if ( TypeRef == TRef("ttd") )
+	if ( TypeRef == TRef_Static3(t,t,d) )
 	{
 		pFile = new TLFileSys::TFileTextDatabase( InstanceRef, TypeRef );
 		return pFile;
 	}
 	
 	//	png texture
-	if ( TypeRef == TRef("png") )
+	if ( TypeRef == TRef_Static3(p,n,g) )
 	{
 		pFile = new TLFileSys::TFilePng( InstanceRef, TypeRef );
 		return pFile;
 	}
 	
 	//	font atlas
-	if ( TypeRef == TRef("fnt") )
+	if ( TypeRef == TRef_Static3(f,n,t) )
 	{
 		pFile = new TLFileSys::TFileFnt( InstanceRef, TypeRef );
 		return pFile;

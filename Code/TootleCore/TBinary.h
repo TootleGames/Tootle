@@ -26,12 +26,12 @@ namespace TLBinary
 	}
 	
 	//	some special types we can't get from variables
-	FORCEINLINE TRef	GetDataTypeRef_Hex8()				{	return TRef("Hex8");	}
-	FORCEINLINE TRef	GetDataTypeRef_Hex16()				{	return TRef("Hex16");	}
-	FORCEINLINE TRef	GetDataTypeRef_Hex32()				{	return TRef("Hex32");	}
-	FORCEINLINE TRef	GetDataTypeRef_Hex64()				{	return TRef("Hex64");	}
-	FORCEINLINE TRef	GetDataTypeRef_String()				{	return TRef("String");	}
-	FORCEINLINE TRef	GetDataTypeRef_WideString()			{	return TRef("WString");	}
+	FORCEINLINE TRef	GetDataTypeRef_Hex8()				{	return TRef_Static4(H,e,x,EIGHT);	}
+	FORCEINLINE TRef	GetDataTypeRef_Hex16()				{	return TRef_Static(H,e,x,ONE,SIX);	}
+	FORCEINLINE TRef	GetDataTypeRef_Hex32()				{	return TRef_Static(H,e,x,THREE,TWO);	}
+	FORCEINLINE TRef	GetDataTypeRef_Hex64()				{	return TRef_Static(H,e,x,SIX,FOUR);	}
+	FORCEINLINE TRef	GetDataTypeRef_String()				{	return TRef_Static(S,t,r,i,n);	}
+	FORCEINLINE TRef	GetDataTypeRef_WideString()			{	return TRef_Static(W,S,t,r,i);	}
 };
 
 

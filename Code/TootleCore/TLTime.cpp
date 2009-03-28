@@ -5,6 +5,9 @@ namespace TLTime
 {
 	TTimestamp		g_CurrentTime;
 	TTimestampMicro	g_CurrentMicroTime;
+
+	TKeyArray<TRef,float>	g_TimerCounters;		//	current elapsed time for timers
+	TKeyArray<TRef,float>	g_TimerAverages;		//	timer time elapsed in the last second in millisecs
 }
 
 
@@ -105,62 +108,28 @@ Bool TLTime::TTimestamp::operator>(const TTimestamp& Timestamp) const
 
 
 //---------------------------------------------------------
-//	note: I've ordered these so string is constructed/copied (hopefully)
-//	BEFORE the time is recorded
+//	timer has finished, update global counters
 //---------------------------------------------------------
-TLTime::TScopeTimer::TScopeTimer(const TTempString& TimerName,Bool Verbose) : 
-	m_TimerName			( TimerName ),
-	m_StartTimestamp	( TRUE ),
-	m_Verbose			( Verbose )
+void TLTime::TScopeTimer::OnTimerEnd()
 {
+	//	get time
+	float Time = GetTimeMillisecs();
+
+	//	update global counter
+	TLTime::AddTimerTime( m_TimerRef, Time );
 }
 
-
-//---------------------------------------------------------
-//	print out timer result (time between start and now)
-//---------------------------------------------------------
-void TLTime::TScopeTimer::Debug_PrintTimerResult()
-{
-#ifndef _DEBUG
-	return;
-#endif
-
-	//	record time now (before any string operations)
-	TLTime::TTimestampMicro Now(TRUE);
-
-	s32 DiffSeconds = m_StartTimestamp.GetSecondsDiff( Now );
-	s32 DiffMilliSeconds = m_StartTimestamp.GetMilliSecondsDiff( Now );
-	s32 DiffMicroSeconds = m_StartTimestamp.GetMicroSecondsDiff( Now );
-	m_StartTimestamp.GetTimeDiff( Now, DiffSeconds, DiffMilliSeconds, DiffMicroSeconds );
-
-	//	use a local string for speed :)
-	TTempString String( m_TimerName );
-	String.Append(" took ");
-
-	//	show seconds if it was more than 1000 millisecs :)
-	if ( DiffSeconds != 0 )
-		String.Appendf("%d secs ", DiffSeconds );
-
-	if ( DiffMilliSeconds != 0 )
-		String.Appendf("%d ms ", DiffMilliSeconds );
-	
-	String.Appendf("%d us", DiffMicroSeconds );
-
-	TLDebug_Print( String );
-}
 
 //---------------------------------------------------------
 //	return the time spent in the timer in millisecs (.micro)
 //---------------------------------------------------------
-float TLTime::TScopeTimer::GetTimeMillisecs() const
+float TLTime::TScopeTimer::GetTimeMillisecs(const TTimestampMicro& EndTime) const
 {
 	//	record time now (before any string operations)
-	TLTime::TTimestampMicro Now(TRUE);
-
-	s32 DiffMilliSeconds = m_StartTimestamp.GetMilliSecondsDiff( Now );
-	s32 DiffMicroSeconds = m_StartTimestamp.GetMicroSecondsDiff( Now );
+	s32 DiffMilliSeconds = m_StartTimestamp.GetMilliSecondsDiff( EndTime );
+	s32 DiffMicroSeconds = m_StartTimestamp.GetMicroSecondsDiff( EndTime );
 	
-	m_StartTimestamp.GetTimeDiff( Now, DiffMilliSeconds, DiffMicroSeconds );
+	m_StartTimestamp.GetTimeDiff( EndTime, DiffMilliSeconds, DiffMicroSeconds );
 
 	//	make microsecs into a fraction
 	float MicroFraction = (float)DiffMicroSeconds / (float)MilliSecsToMicro(1);
@@ -168,6 +137,8 @@ float TLTime::TScopeTimer::GetTimeMillisecs() const
 	
 	return MilliFloat;
 }
+
+
 
 
 
@@ -254,4 +225,27 @@ void TLTime::TTimestampMicro::GetTimeDiff(const TTimestampMicro& Timestamp,s32& 
 
 
 
+//---------------------------------------------------------
+//	get per-second averages for timers when a second elapses
+//---------------------------------------------------------
+void TLTime::OnSecondElapsed(u32 FrameCount)
+{
+	float FrameCountf = (FrameCount==0) ? 1.f : (float)FrameCount;
 
+	//	update the update-counters to get per second values
+	for ( u32 c=0;	c<g_TimerCounters.GetSize();	c++ )
+	{
+		TRefRef TimerRef = g_TimerCounters.GetKeyAt(c);
+
+		//	divide the MS counters by number of frames to get an average per call. if we don't do this
+		//	the MS is going to vary wildly when frame rate goes up and down (even by 1)
+		float& Counter = g_TimerCounters.ElementAt(c);
+		Counter /= FrameCountf;
+
+		//	save to per-seond key array
+		g_TimerAverages.Add( TimerRef, Counter );
+
+		//	reset counter
+		Counter = 0.f;
+	}
+}

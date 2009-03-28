@@ -1,4 +1,5 @@
 #include "TScreenManager.h"
+#include <TootleCore/TLTime.h>
 
 
 #if defined(TL_TARGET_PC) && defined(_MSC_EXTENSIONS)
@@ -85,8 +86,10 @@ void TScreenManager::ProcessMessage(TLMessaging::TMessage& Message)
 	}
 	#endif // TL_TARGET_IPOD
 
-	if ( MessageRef == "Render" )
+	if ( MessageRef == TRef_Static(R,e,n,d,e) )
 	{
+		TLTime::TScopeTimer Timer( TRef_Static4(D,r,a,w) );
+
 		//	render our screens
 		TPtrArray<TLRender::TScreen>& Screens = GetInstanceArray();
 		for ( u32 s=0;	s<Screens.GetSize();	s++ )
@@ -94,7 +97,7 @@ void TScreenManager::ProcessMessage(TLMessaging::TMessage& Message)
 			Screens[s]->Draw();
 		}
 	}
-	else if(MessageRef == "OnWindowChanged")
+	else if(MessageRef == TRef_Static(O,n,W,i,n) )	//	"OnWindowChanged"
 	{
 		// Forward on any window messages
 		PublishMessage(Message);

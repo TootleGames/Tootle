@@ -20,7 +20,7 @@ TLScene::TSceneNode_Transform::TSceneNode_Transform(TRefRef NodeRef,TRefRef Type
 void TLScene::TSceneNode_Transform::Initialise(TLMessaging::TMessage& Message)
 {
 	// Add event channel for the transform message
-	TPtr<TLMessaging::TEventChannel> pEventChannel = RegisterEventChannel("OnTransform");	
+	TPtr<TLMessaging::TEventChannel> pEventChannel = RegisterEventChannel( TRef_Static(O,n,T,r,a) );	
 
 	if(pEventChannel)
 		pEventChannel->SubscribeTo(this);
@@ -33,19 +33,19 @@ void TLScene::TSceneNode_Transform::Initialise(TLMessaging::TMessage& Message)
 	Bool bTranslation, bRotation, bScale;
 	bTranslation = bRotation = bScale = FALSE;
 
-	if ( Message.ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
+	if ( Message.ImportData(TRef_Static(T,r,a,n,s), m_Transform.GetTranslate() ) == SyncTrue )
 	{
 		m_Transform.SetTranslateValid();
 		bTranslation = TRUE;
 	}
 
-	if ( Message.ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
+	if ( Message.ImportData(TRef_Static(R,o,t,a,t), m_Transform.GetRotation() ) == SyncTrue )
 	{
 		m_Transform.SetRotationValid();
 		bRotation = TRUE;
 	}
 
-	if ( Message.ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
+	if ( Message.ImportData(TRef_Static(S,c,a,l,e), m_Transform.GetScale() ) == SyncTrue )
 	{
 		m_Transform.SetScaleValid();
 		bScale = TRUE;
@@ -63,7 +63,7 @@ void TLScene::TSceneNode_Transform::Initialise(TLMessaging::TMessage& Message)
 void TLScene::TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	//	gr: only apply change if explicitly sent to change
-	if(Message.GetMessageRef() == "DoTransform")
+	if(Message.GetMessageRef() == TRef_Static(D,o,T,r,a) )
 	{
 		float3 vVector;
 		TLMaths::TQuaternion qRot;
@@ -71,19 +71,19 @@ void TLScene::TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Messag
 		bTranslation = bRotation = bScale = FALSE;
 
 		// Absolute position/rotation/scale setting
-		if(Message.ImportData("Translate", vVector))
+		if(Message.ImportData(TRef_Static(T,r,a,n,s), vVector))
 		{
 			m_Transform.SetTranslate(vVector);
 			bTranslation = TRUE;
 		}
 
-		if(Message.ImportData("Rotation", qRot))
+		if(Message.ImportData(TRef_Static(R,o,t,a,t), qRot))
 		{
 			m_Transform.SetRotation(qRot);
 			bRotation = TRUE;
 		}
 
-		if(Message.ImportData("Scale", vVector))
+		if(Message.ImportData(TRef_Static(S,c,a,l,e), vVector))
 		{
 			m_Transform.SetScale(vVector);
 			bScale = TRUE;
@@ -96,13 +96,13 @@ void TLScene::TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Messag
 			OnTransformChanged(bTranslation, bRotation, bScale);
 		}
 	}
-	else if(Message.GetMessageRef() == "ReqTransform")
+	else if(Message.GetMessageRef() == TRef_Static(R,e,q,T,r) )
 	{
 		float3 vVector;
 		TLMaths::TQuaternion qRot;
 
 		// Delta position/rotation/scale that are requested from other things i.e. editor
-		if(Message.ImportData("Translate", vVector))
+		if(Message.ImportData(TRef_Static(T,r,a,n,s), vVector))
 		{
 			// Apply translation
 			Translate(vVector);
@@ -114,7 +114,7 @@ void TLScene::TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Messag
 			TLDebug_Break("Rotate message received - needs implementing");
 		}
 		
-		if(Message.ImportData("Scale", vVector))
+		if(Message.ImportData(TRef_Static(S,c,a,l,e), vVector))
 		{
 			// Apply scale
 			TLDebug_Break("Scale message received - needs implementing");
@@ -147,15 +147,15 @@ void TLScene::TSceneNode_Transform::OnTransformChanged(Bool bTranslation, Bool b
 	if ( !HasSubscribers() )
 		return;
 
-	TLMessaging::TMessage Message("OnTransform", GetNodeRef());
+	TLMessaging::TMessage Message( TRef_Static(O,n,T,r,a), GetNodeRef());
 	if ( bTranslation )
-		Message.ExportData("Translate", GetTranslate());
+		Message.ExportData(TRef_Static(T,r,a,n,s), GetTranslate());
 
 	if ( bRotation )
-		Message.ExportData("Rotation", GetRotation());
+		Message.ExportData(TRef_Static(R,o,t,a,t), GetRotation());
 
 	if(  bScale )
-		Message.ExportData("Scale", GetScale());
+		Message.ExportData(TRef_Static(S,c,a,l,e), GetScale());
 
 	PublishMessage(Message);
 

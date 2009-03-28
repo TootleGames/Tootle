@@ -159,7 +159,7 @@ TRef TSceneNode_Camera::TCameraState_Auto::Update()
 Bool TSceneNode_Camera::TCameraState_Manual::OnBegin(TRefRef PreviousMode)
 {
 	// Subscribe to the usermanager
-	TLMessaging::g_pEventChannelManager->SubscribeTo(this, "USERMANAGER", "Action"); 
+	TLMessaging::g_pEventChannelManager->SubscribeTo(this, "USERMANAGER", TRef_Static(A,c,t,i,o)); 
 	
 	return TRUE;
 }
@@ -210,7 +210,7 @@ void TSceneNode_Camera::TCameraState_Manual::ProcessMessage(TLMessaging::TMessag
 void TSceneNode_Camera::TCameraState_Manual::OnEnd(TRefRef NextMode)				
 {
 	// Unsubscribe from the usermanager
-	TLMessaging::g_pEventChannelManager->UnsubscribeFrom(this, "USERMANAGER", "Action"); 
+	TLMessaging::g_pEventChannelManager->UnsubscribeFrom(this, "USERMANAGER", TRef_Static(A,c,t,i,o)); 
 }	
 
 

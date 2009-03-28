@@ -20,7 +20,7 @@ void TSceneNode_Emitter::ProcessMessage(TLMessaging::TMessage& Message)
 		// Set position
 		float3 vPos;
 
-		if(Message.ImportData("Translate", vPos))
+		if(Message.ImportData(TRef_Static(T,r,a,n,s), vPos))
 		{
 			SetTranslate(vPos);
 		}
@@ -95,7 +95,7 @@ Bool TSceneNode_Emitter::EmitObject()
 {
 	TLMessaging::TMessage Message(TLCore::InitialiseRef);
 
-	Message.ExportData("Translate", GetEmissionPosition());
+	Message.ExportData(TRef_Static(T,r,a,n,s), GetEmissionPosition());
 
 	// Create a new object via the scenegraph
 	TRef Obj = TLScene::g_pScenegraph->CreateNode(m_refNodeIDCurrent , m_refNodeTypeToEmit, "Root", &Message);

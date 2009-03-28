@@ -20,7 +20,7 @@ using namespace TLCore;
 
 #define STALL_UPDATE_RATE	//	if enabled stalls updates with sleep until we're the right amount of time since last one. if not defined, skips frame and waits till next timer
 
-#define DEBUG_RECORD_SUBSCRIBER_UPDATE_TIMES
+//#define DEBUG_RECORD_SUBSCRIBER_UPDATE_TIMES
 
 
 TCoreManager::TCoreManager(TRefRef refManagerID) :
@@ -29,9 +29,6 @@ TCoreManager::TCoreManager(TRefRef refManagerID) :
 	m_Debug_CurrentFramesPerSecond		( 0 ),
 	m_Debug_FrameTimePerSecond			( 0.f ),
 	m_Debug_CurrentFrameTimePerSecond	( 0.f ),
-	m_Debug_RenderCPUTimeSecondAverage		( 0.f ),
-	m_Debug_CurrentRenderCPUTimePerSecond	( 0.f ),
-
 	m_ChannelsInitialised				( FALSE ),
 	m_bEnabled							( TRUE ),
 	m_bQuit								( FALSE ),
@@ -184,27 +181,15 @@ SyncBool TCoreManager::UpdateLoop()
 		return SyncWait;
 	}
 	
-	//	only do some stuff if we do an update
-	Bool DidUpdate = FALSE;
-
 	//	always do an update and see if we skipped it
-	{
-	//	TLTime::TScopeTimer Timer("update");
-		DidUpdate = PublishUpdateMessage();
-	}
+	Bool DidUpdate = PublishUpdateMessage();
 
 	//	only render if we did an update
 	if ( DidUpdate )
-	{
-	//	TLTime::TScopeTimer Timer("render");
 		PublishRenderMessage();
-	}
 
 	// Process the message queue independant of update - this is to get network messages maybe? other "interrupt" style stuff 
-	{
-	//	TLTime::TScopeTimer Timer("queue");		
-		ProcessMessageQueue();
-	}
+	ProcessMessageQueue();
 
 	if ( DidUpdate )
 	{
@@ -247,25 +232,8 @@ void TCoreManager::Debug_UpdateDebugCounters()
 	{
 		m_Debug_LastCountTime = TimeNow;
 
-		//	update the update-counters to get per second values
-		for ( u32 c=0;	c<m_Debug_CurrentUpdateCPUTimePerSecond.GetSize();	c++ )
-		{
-			TRefRef Subscriber = m_Debug_CurrentUpdateCPUTimePerSecond.GetKeyAt(c);
-
-			//	divide the MS counters by number of frames to get an average per call. if we don't do this
-			//	the MS is going to vary wildly when frame rate goes up and down (even by 1)
-			float& Counter = m_Debug_CurrentUpdateCPUTimePerSecond.ElementAt(c);
-			Counter /= (m_Debug_CurrentFramesPerSecond == 0) ? 1 : (float)m_Debug_CurrentFramesPerSecond;
-
-			//	save to per-seond key array
-			m_Debug_UpdateCPUTimeSecondAverage.Add( Subscriber, Counter );
-
-			//	reset counter
-			Counter = 0.f;
-		}
-
-		m_Debug_RenderCPUTimeSecondAverage		= m_Debug_CurrentFramesPerSecond == 0 ? 0.f : m_Debug_CurrentRenderCPUTimePerSecond / (float)m_Debug_CurrentFramesPerSecond;
-		m_Debug_CurrentRenderCPUTimePerSecond	= 0.f;
+		//	do the global timer elapses
+		TLTime::OnSecondElapsed( m_Debug_CurrentFramesPerSecond );
 
 		m_Debug_FramesPerSecond			= m_Debug_CurrentFramesPerSecond;
 		m_Debug_CurrentFramesPerSecond	= 0;
@@ -378,36 +346,10 @@ Bool TCoreManager::PublishUpdateMessage(Bool bForced)
 	Message.AddChildAndData( TLCore::TimeStepModRef, fModifier );
 
 	//	track CPU time of update
-	TLTime::TScopeTimer Timer("CoreUpdate",FALSE);
+	TLTime::TScopeTimer Timer( TRef_Static(U,p,d,a,t) );
 
 	//	send message
-#ifdef DEBUG_RECORD_SUBSCRIBER_UPDATE_TIMES
-	TArray<TSubscriber*>& Subscribers = GetSubscribers();
-	for( u32 i=0;	i<Subscribers.GetSize();	i++)
-	{
-		TSubscriber* pSubscriber = Subscribers.ElementAt(i);
-
-		//	start timer
-		TLTime::TScopeTimer SubTimer("Update",FALSE);
-
-		//	send message
-		DoPublishMessage( Message, *pSubscriber );
-		
-		//	store timer result
-		TRefRef SubscriberRef = pSubscriber->GetSubscriberRef();
-		if ( SubscriberRef.IsValid() )
-			Debug_AddCPUTimeCounter( SubscriberRef, SubTimer.GetTimeMillisecs() );
-	}
-#else
-	//	simple publish
 	PublishMessage( Message );
-#endif
-
-	//	increment the amount of time we've spent doing updates
-	Debug_AddCPUTimeCounter( TLCore::UpdateRef, Timer.GetTimeMillisecs() );
-	
-	//	increment the amount of frame-time we've done
-	m_Debug_CurrentFrameTimePerSecond += fTimeStep;
 
 	return TRUE;
 }
@@ -488,14 +430,8 @@ void TCoreManager::PublishRenderMessage()
 	//	make up render message to send
 	TLMessaging::TMessage Message(RenderRef);
 
-	//	track CPU time of render
-	TLTime::TScopeTimer Timer("Render",FALSE);
-
 	//	send message
 	PublishMessage( Message );
-
-	//	increment the amount of time we've spent doing updates
-	m_Debug_CurrentRenderCPUTimePerSecond += Timer.GetTimeMillisecs();
 }
 
 

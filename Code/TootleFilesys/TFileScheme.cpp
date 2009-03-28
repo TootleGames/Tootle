@@ -75,11 +75,11 @@ SyncBool TLFileSys::TFileScheme::ImportScheme(TPtr<TXmlTag>& pTag,TPtr<TLAsset::
 	<Graph GraphRef="Render">
 		<Node NodeRef="GuiRoot">
 			<Node NodeRef="LeftArrow">
-				<Data DataRef="Translate"><float3>0,40,0</float3></Data>
+				<Data DataRef=TRef_Static(T,r,a,n,s)><float3>0,40,0</float3></Data>
 				<Data DataRef="MeshRef"><TRef>LeftArrow</TRef></Data>
 			</Node>
 			<Node NodeRef="RightArrow">
-				<Data DataRef="Translate"><float3>40,40,0</float3></Data>
+				<Data DataRef=TRef_Static(T,r,a,n,s)><float3>40,40,0</float3></Data>
 				<Data DataRef="MeshRef"><TRef>RightArrow</TRef></Data>
 			</Node>
 		</Node>
@@ -126,7 +126,7 @@ SyncBool TLFileSys::TFileScheme::ImportGraph(TPtr<TXmlTag>& pTag,TPtr<TLAsset::T
 	<Graph GraphRef="Render">
 		<Node NodeRef="GuiRoot">
 			<Node NodeRef="LeftArrow">
-				<Data DataRef="Translate"><float3>0,40,0</float3></Data>
+				<Data DataRef=TRef_Static(T,r,a,n,s)><float3>0,40,0</float3></Data>
 				<Data DataRef="MeshRef"><TRef>LeftArrow</TRef></Data>
 			</Node>
 		</Node>
@@ -180,7 +180,7 @@ SyncBool TLFileSys::TFileScheme::ImportNode(TPtr<TXmlTag>& pTag,TRefRef GraphRef
 	/*
 		<Node NodeRef="GuiRoot">
 			<Node NodeRef="LeftArrow">
-				<Data DataRef="Translate"><float3>0,40,0</float3></Data>
+				<Data DataRef=TRef_Static(T,r,a,n,s)><float3>0,40,0</float3></Data>
 				<Data DataRef="MeshRef"><TRef>LeftArrow</TRef></Data>
 			</Node>
 		</Node>
@@ -244,7 +244,7 @@ SyncBool TLFileSys::TFileScheme::ImportNode(TPtr<TXmlTag>& pTag,TRefRef GraphRef
 SyncBool TLFileSys::TFileScheme::ImportNode_Data(TPtr<TXmlTag>& pTag,TPtr<TLAsset::TSchemeNode>& pNode)
 {
 	/*
-		<Data DataRef="Translate"><float3>0,40,0</float3></Data>
+		<Data DataRef=TRef_Static(T,r,a,n,s)><float3>0,40,0</float3></Data>
 	*/
 
 	//	read the data ref

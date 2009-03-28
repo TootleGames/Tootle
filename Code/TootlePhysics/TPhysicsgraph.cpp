@@ -75,6 +75,8 @@ SyncBool TLPhysics::TPhysicsgraph::Initialise()
 	
 void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 {
+	TLTime::TScopeTimer Timer( TRef_Static(P,h,y,s,c) );
+
 	TLMaths::Limit( fTimeStep, 0.f, MAX_PHYSICS_TIMESTEP );
 	//	reset collision test count
 	m_Debug_CollisionTestCount = 0;
@@ -95,12 +97,18 @@ void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 	if ( pRootNode )
 	{
 		//	do update
-		pRootNode->UpdateAll( fTimeStep );
+		{
+			TLTime::TScopeTimer Timer( TRef_Static(p,h,u,p,d) );
+			pRootNode->UpdateAll( fTimeStep );
+		}
 
 		//	do collisions
 #ifdef DO_COLLISIONS_BY_ZONE
-		if ( m_pRootCollisionZone )
-			DoCollisionsByZone( m_pRootCollisionZone.GetObject() );
+		{
+			TLTime::TScopeTimer Timer( TRef_Static(C,o,l,l,i) );
+			if ( m_pRootCollisionZone )
+				DoCollisionsByZone( m_pRootCollisionZone.GetObject() );
+		}
 #endif
 
 #ifdef DO_COLLISIONS_BY_NODE
@@ -112,7 +120,10 @@ void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 #endif
 
 		//	do post update
-		pRootNode->PostUpdateAll( fTimeStep, this, pRootNode );
+		{
+			TLTime::TScopeTimer Timer( TRef_Static(p,p,o,s,t) );
+			pRootNode->PostUpdateAll( fTimeStep, this, pRootNode );
+		}
 	}
 	
 	// Update the graph structure with any changes

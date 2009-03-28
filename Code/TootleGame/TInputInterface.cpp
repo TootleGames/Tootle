@@ -180,7 +180,7 @@ void TLInput::TInputInterface::Shutdown()
 //-------------------------------------------------
 void TLInput::TInputInterface::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(Message.GetMessageRef() == "Action")
+	if(Message.GetMessageRef() == TRef_Static(A,c,t,i,o))
 	{
 		if ( !HasSubscribers() )
 		{
@@ -431,7 +431,7 @@ void TLInput::TInputInterface::SendActionMessage(Bool ActionDown,float RawData)
 	if ( ActionOutRef.IsValid() )
 	{
 		//	make up fake input message
-		TLMessaging::TMessage Message("Action");
+		TLMessaging::TMessage Message(TRef_Static(A,c,t,i,o));
 		Message.Write( ActionOutRef );
 		Message.ExportData("RawData", RawData );
 

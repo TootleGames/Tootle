@@ -125,7 +125,7 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 			SubscribeTo(pOwner);
 
 			/*
-			TPtr<TLMessaging::TEventChannel>& pEventChannel = pOwner->FindEventChannel("OnTransform");
+			TPtr<TLMessaging::TEventChannel>& pEventChannel = pOwner->FindEventChannel(TRef_Static(O,n,T,r,a));
 
 			if(pEventChannel)
 			{
@@ -139,19 +139,19 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 		}
 	}
 
-	if ( Message.ImportData("Translate", m_Transform.GetTranslate() ) == SyncTrue )
+	if ( Message.ImportData(TRef_Static(T,r,a,n,s), m_Transform.GetTranslate() ) == SyncTrue )
 	{
 		m_Transform.SetTranslateValid();
 		OnTranslationChanged();
 	}
 
-	if ( Message.ImportData("Scale", m_Transform.GetScale() ) == SyncTrue )
+	if ( Message.ImportData(TRef_Static(S,c,a,l,e), m_Transform.GetScale() ) == SyncTrue )
 	{
 		m_Transform.SetScaleValid();
 		OnScaleChanged();
 	}
 
-	if ( Message.ImportData("Rotation", m_Transform.GetRotation() ) == SyncTrue )
+	if ( Message.ImportData(TRef_Static(R,o,t,a,t), m_Transform.GetRotation() ) == SyncTrue )
 	{
 		m_Transform.SetRotationValid();
 		OnRotationChanged();
@@ -444,23 +444,23 @@ void TLPhysics::TPhysicsNode::PublishTransformChanges()
 	if ( !HasSubscribers() )
 		return;
 
-	TLMessaging::TMessage Message("OnTransform", GetNodeRef() );
+	TLMessaging::TMessage Message(TRef_Static(O,n,T,r,a), GetNodeRef() );
 
 	if ( TranslationChanged )
 	{
-		Message.ExportData("Translate", m_Transform.GetTranslate());
+		Message.ExportData(TRef_Static(T,r,a,n,s), m_Transform.GetTranslate());
 		TLDebug_CheckFloat( m_Transform.GetTranslate() );
 	}
 
 	if( RotationChanged )
 	{
-		Message.ExportData("Rotation", m_Transform.GetRotation());
+		Message.ExportData(TRef_Static(R,o,t,a,t), m_Transform.GetRotation());
 		TLDebug_CheckFloat( m_Transform.GetRotation() );
 	}
 
 	if( ScaleChanged )
 	{
-		Message.ExportData("Scale", m_Transform.GetScale());
+		Message.ExportData(TRef_Static(S,c,a,l,e), m_Transform.GetScale());
 		TLDebug_CheckFloat( m_Transform.GetScale() );
 	}
 

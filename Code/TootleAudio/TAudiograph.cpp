@@ -1,7 +1,8 @@
-
 #include "TAudiograph.h"
 #include "TLAudio.h"
 #include <TootleCore/TEventChannel.h>
+#include <TootleCore/TLTime.h>
+
 
 namespace TLAudio
 {
@@ -91,7 +92,7 @@ void TAudiograph::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannel
 	else if(refPublisherID == "USERMANAGER")
 	{
 		// Subscribe to the input action messages
-		if(refChannelID == "Action")
+		if(refChannelID == TRef_Static(A,c,t,i,o))
 			TLMessaging::g_pEventChannelManager->SubscribeTo(this, refPublisherID, refChannelID); 
 	}
 
@@ -188,7 +189,7 @@ void TAudiograph::ProcessMessage(TLMessaging::TMessage& Message)
 		OnPauseStateChanged();
 		return;
 	}
-	else if(MessageRef == "Action")
+	else if(MessageRef == TRef_Static(A,c,t,i,o))
 	{
 		TRef InputActionRef;
 		int2 CursorPos;

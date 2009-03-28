@@ -8,6 +8,8 @@
 namespace TLMaths
 {
 	TMatrix		g_IdentityMatrix( float4(1,0,0,0), float4(0,1,0,0), float4(0,0,1,0), float4(0,0,0,1) );	//	identity matrix
+
+	float		g_SineLookupTable[360];
 }
 
 namespace TLColour
@@ -39,6 +41,37 @@ void TLMaths::Init()
 	TLColour::g_Debug_Colours.Add( TColour( 1.0f, 0.0f, 1.0f ) );	//	pink
 	TLColour::g_Debug_Colours.Add( TColour( 0.0f, 1.0f, 1.0f ) );	//	cyan
 //	TLColour::g_Debug_Colours.Add( TColour( 0.0f, 0.0f, 0.0f ) );	//	black
+
+	//	init co/sine lookup table
+	for ( u32 i=0;	i<360;	i++ )
+	{
+		//	calc value for this angle
+		float Rad = TLMATHS_LOOKUP_TO_RAD( i );
+		float Sine = ::sinf( Rad );
+		g_SineLookupTable[i] = Sine;
+	}
+
+	/*
+	for ( float f=0.f;	f<360.f;	f++ )
+	{
+		TLMaths::TAngle Angle(f);
+		float2 fastxy;
+		fastxy.x = TLMaths::Cosf( Angle.GetRadians() );
+		fastxy.y = TLMaths::Sinf( Angle.GetRadians() );
+
+		float2 realxy;
+		realxy.x = cosf( Angle.GetRadians() );
+		realxy.y = sinf( Angle.GetRadians() );
+
+		float2 diff = fastxy - realxy;
+
+		TTempString Debug_String;
+//		Debug_String.Appendf("deg: %2.2f. fast(%2.2f/%2.2f) = real(%2.2f/%2.2f)", f, fastxy.x, fastxy.y, realxy.x, realxy.y );
+		Debug_String.Appendf("deg: %2.2f. diff(%2.2f/%2.2f)", f, diff.x, diff.y );
+		TLDebug_Print( Debug_String );
+	}
+	*/
+
 }
 
 
@@ -778,9 +811,9 @@ void TLMaths::TQuaternion::operator *= (const TLMaths::TQuaternion &Other)
 
 	const float4& other = Other.xyzw;
 
-	xyzw.x = xyzw.w * other.x + xyzw.x * other.w + xyzw.y * other.z - xyzw.z * other.y,
-	xyzw.y = xyzw.w * other.y + xyzw.y * other.w + xyzw.z * other.x - xyzw.x * other.z,
-	xyzw.z = xyzw.w * other.z + xyzw.z * other.w + xyzw.x * other.y - xyzw.y * other.x,
+	xyzw.x = xyzw.w * other.x + xyzw.x * other.w + xyzw.y * other.z - xyzw.z * other.y;
+	xyzw.y = xyzw.w * other.y + xyzw.y * other.w + xyzw.z * other.x - xyzw.x * other.z;
+	xyzw.z = xyzw.w * other.z + xyzw.z * other.w + xyzw.x * other.y - xyzw.y * other.x;
 	xyzw.w = xyzw.w * other.w - xyzw.x * other.x - xyzw.y * other.y - xyzw.z * other.z; 
 }
 
