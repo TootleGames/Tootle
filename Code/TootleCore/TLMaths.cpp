@@ -846,6 +846,43 @@ void TLMaths::TQuaternion::SetEuler(float Pitch, float Yaw, float Roll)
 }
 
 
+// Quaternion to Euler conversion
+// Source: http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/index.htm
+// Returns a float 3 such that x = pitch, y = yaw and z = roll
+float3 TLMaths::TQuaternion::GetEuler()
+{
+	float3 vector;
+	float test = xyzw.x*xyzw.y + xyzw.z*xyzw.w;
+	
+	if (test > 0.499f) 
+	{ 
+		// singularity at north pole
+		vector.x = 0;
+		vector.y = 2 * atan2(xyzw.x, xyzw.w);
+		vector.z = HALF_PI;
+		return vector;
+	}
+	if (test < -0.499f) 
+	{ 
+		// singularity at south pole
+		vector.x = 0;
+		vector.y = -2 * atan2(xyzw.x,xyzw.w);
+		vector.z = - HALF_PI;
+		return vector;
+	}
+	
+    float sqx = xyzw.x*xyzw.x;
+    float sqy = xyzw.y*xyzw.y;
+    float sqz = xyzw.z*xyzw.z;
+	
+	vector.x = atan2(2*xyzw.x*xyzw.w-2*xyzw.y*xyzw.z , 1 - 2*sqx - 2*sqz);
+    vector.y = atan2(2*xyzw.y*xyzw.w-2*xyzw.x*xyzw.z , 1 - 2*sqy - 2*sqz);
+	vector.z = asin(2*test);
+	return vector;
+}
+
+
+
 //---------------------------------------------------------------------------
 //	xyzw multiply for quaternions
 //---------------------------------------------------------------------------

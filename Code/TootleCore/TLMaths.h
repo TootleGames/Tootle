@@ -284,6 +284,7 @@ public:
 	void					operator *= (const float &Scalar);// MultiplicaÁ„o com afectaÁ„o
 
 	void					SetEuler(float Pitch, float Yaw, float Roll);	//	radians
+	float3					GetEuler();
 	void					Normalise()			{	xyzw.Normalise();	}
 	float					GetLength() const	{	return xyzw.Length();	}
 //	float3&					GetAxis()			{	return xyz;	};
