@@ -30,8 +30,12 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 258233933;
-			PBXWorkspaceStateSaveDate = 258233933;
+			PBXPerProjectTemplateStateSaveDate = 259941560;
+			PBXWorkspaceStateSaveDate = 259941560;
+		};
+		perUserProjectItems = {
+			BF8889740F7E643A008581B5 /* PBXTextBookmark */ = BF8889740F7E643A008581B5 /* PBXTextBookmark */;
+			BF8889A00F7E64D1008581B5 /* PBXTextBookmark */ = BF8889A00F7E64D1008581B5 /* PBXTextBookmark */;
 		};
 		sourceControlManager = BF81C41F0F30FA55001ACEC3 /* Source Control */;
 		userBuildSettings = {
@@ -39,6 +43,14 @@
 	};
 	84C10A510F0A7C7600B2DF7A /* TootleMaths */ = {
 		activeExec = 0;
+	};
+	84C10A720F0A7CC800B2DF7A /* TootleDebug.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {554, 3232}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 132}";
+			sepNavWindowFrame = "{{15, 73}, {983, 625}}";
+		};
 	};
 	BF81C41F0F30FA55001ACEC3 /* Source Control */ = {
 		isa = PBXSourceControlManager;
@@ -50,5 +62,25 @@
 	BF81C4200F30FA55001ACEC3 /* Code sense */ = {
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
+	};
+	BF8889740F7E643A008581B5 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10A720F0A7CC800B2DF7A /* TootleDebug.xcconfig */;
+		name = "TootleDebug.xcconfig: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 132;
+		vrLoc = 0;
+	};
+	BF8889A00F7E64D1008581B5 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10A720F0A7CC800B2DF7A /* TootleDebug.xcconfig */;
+		name = "TootleDebug.xcconfig: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 132;
+		vrLoc = 0;
 	};
 }

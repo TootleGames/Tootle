@@ -203,6 +203,7 @@
 			baseConfigurationReference = 84C108440F0A72FE00B2DF7A /* TootleDebug.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				GCC_THUMB_SUPPORT = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos2.1;
 			};
@@ -213,6 +214,7 @@
 			baseConfigurationReference = 84C108450F0A72FE00B2DF7A /* TootleRelease.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				GCC_THUMB_SUPPORT = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos2.1;
 			};
@@ -240,6 +242,7 @@
 					FT2_BUILD_LIBRARY,
 					TL_TARGET_IPOD,
 				);
+				GCC_THUMB_SUPPORT = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos2.1;
 			};
@@ -260,6 +263,7 @@
 					FT2_BUILD_LIBRARY,
 					TL_TARGET_IPOD,
 				);
+				GCC_THUMB_SUPPORT = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos2.1;
 			};

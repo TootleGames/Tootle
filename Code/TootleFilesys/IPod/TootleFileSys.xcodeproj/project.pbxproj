@@ -608,8 +608,8 @@
 		840EBF7F0F777B9C00BA6F4C /* pbxindex.header */ = {isa = PBXFileReference; lastKnownFileType = file; path = pbxindex.header; sourceTree = "<group>"; };
 		840EBF800F777B9C00BA6F4C /* protocols.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; path = protocols.pbxbtree; sourceTree = "<group>"; };
 		840EBF810F777B9C00BA6F4C /* refs.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; path = refs.pbxbtree; sourceTree = "<group>"; };
-		840EBF830F777B9C00BA6F4C /* control */ = {isa = PBXFileReference; lastKnownFileType = file; path = control; sourceTree = "<group>"; };
-		840EBF840F777B9C00BA6F4C /* strings */ = {isa = PBXFileReference; lastKnownFileType = file; path = strings; sourceTree = "<group>"; };
+		840EBF830F777B9C00BA6F4C /* control */ = {isa = PBXFileReference; lastKnownFileType = text; path = control; sourceTree = "<group>"; };
+		840EBF840F777B9C00BA6F4C /* strings */ = {isa = PBXFileReference; lastKnownFileType = text; path = strings; sourceTree = "<group>"; };
 		840EBF850F777B9C00BA6F4C /* subclasses.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; path = subclasses.pbxbtree; sourceTree = "<group>"; };
 		840EBF860F777B9C00BA6F4C /* symbols0.pbxsymbols */ = {isa = PBXFileReference; lastKnownFileType = file; path = symbols0.pbxsymbols; sourceTree = "<group>"; };
 		840EBF880F777B9C00BA6F4C /* libTootleFileSys.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTootleFileSys.a; sourceTree = "<group>"; };
@@ -2076,6 +2076,7 @@
 			baseConfigurationReference = 84C10A270F0A79DE00B2DF7A /* TootleDebug.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				GCC_THUMB_SUPPORT = NO;
 				HEADER_SEARCH_PATHS = (
 					../Freetype/include,
 					../..,
@@ -2089,6 +2090,7 @@
 			baseConfigurationReference = 84C10A280F0A79DE00B2DF7A /* TootleRelease.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				GCC_THUMB_SUPPORT = NO;
 				HEADER_SEARCH_PATHS = (
 					../Freetype/include,
 					../..,
@@ -2147,6 +2149,7 @@
 			baseConfigurationReference = 84C10A290F0A79DE00B2DF7A /* TootleReleaseAdHoc.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				GCC_THUMB_SUPPORT = NO;
 				HEADER_SEARCH_PATHS = (
 					../Freetype/include,
 					../..,
@@ -2183,6 +2186,7 @@
 			baseConfigurationReference = 84C10A2A0F0A79DE00B2DF7A /* TootleReleaseAppStore.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				GCC_THUMB_SUPPORT = NO;
 				HEADER_SEARCH_PATHS = (
 					../Freetype/include,
 					../..,

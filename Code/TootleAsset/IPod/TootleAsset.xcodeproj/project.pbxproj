@@ -235,6 +235,7 @@
 			baseConfigurationReference = 84C109470F0A78C600B2DF7A /* TootleDebug.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				GCC_THUMB_SUPPORT = NO;
 				SDKROOT = iphoneos2.1;
 			};
 			name = Debug;
@@ -244,6 +245,7 @@
 			baseConfigurationReference = 84C109480F0A78C600B2DF7A /* TootleRelease.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				GCC_THUMB_SUPPORT = NO;
 				SDKROOT = iphoneos2.1;
 			};
 			name = Release;
@@ -278,6 +280,7 @@
 			baseConfigurationReference = 84C109490F0A78C600B2DF7A /* TootleReleaseAdHoc.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				GCC_THUMB_SUPPORT = NO;
 				SDKROOT = iphoneos2.1;
 			};
 			name = "Release AdHoc";
@@ -300,6 +303,7 @@
 			baseConfigurationReference = 84C1094A0F0A78C600B2DF7A /* TootleReleaseAppStore.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				GCC_THUMB_SUPPORT = NO;
 				SDKROOT = iphoneos2.1;
 			};
 			name = "Release AppStore";

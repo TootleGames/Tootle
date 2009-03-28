@@ -192,6 +192,7 @@
 			baseConfigurationReference = 84C108360F0A729500B2DF7A /* TootleDebug.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				GCC_THUMB_SUPPORT = NO;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 			};
 			name = Debug;
@@ -201,6 +202,7 @@
 			baseConfigurationReference = 84C108370F0A729500B2DF7A /* TootleRelease.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				GCC_THUMB_SUPPORT = NO;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 			};
 			name = Release;
@@ -235,6 +237,7 @@
 			baseConfigurationReference = 84C108380F0A729500B2DF7A /* TootleReleaseAdHoc.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				GCC_THUMB_SUPPORT = NO;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 			};
 			name = "Release AdHoc";
@@ -257,6 +260,7 @@
 			baseConfigurationReference = 84C108390F0A729500B2DF7A /* TootleReleaseAppStore.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				GCC_THUMB_SUPPORT = NO;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 			};
 			name = "Release AppStore";
