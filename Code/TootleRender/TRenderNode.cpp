@@ -889,36 +889,37 @@ void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 
 		return;
 	}
-	else if(Message.GetMessageRef() == TRef("Rotate"))
+	else if(Message.GetMessageRef() == TRef("SetTransform"))
 	{
-		TLMaths::TQuaternion qRot;
+		Bool TransformChanged = FALSE;
 
-		if ( Message.Read( qRot ) == SyncTrue )
+		if ( Message.ImportData( TRef_Static(T,r,a,n,s), m_Transform.GetTranslate() ) == SyncTrue )
 		{
-			//SetRotation(qRot);
+			m_Transform.SetTranslateValid();
+			TransformChanged = TRUE;
 		}
 
-		return;
-	}
-	else if(Message.GetMessageRef() == TRef(TRef_Static(T,r,a,n,s)))
-	{
-		float3 vector;
-
-		if ( Message.Read( vector ) == SyncTrue )
+		if ( Message.ImportData( TRef_Static(S,c,a,l,e), m_Transform.GetScale() ) == SyncTrue )
 		{
-			SetTranslate(vector);
+			m_Transform.SetScaleValid();
+			TransformChanged = TRUE;
 		}
 
-		return;
-	}
-	else if(Message.GetMessageRef() == TRef(TRef_Static(S,c,a,l,e)))
-	{
-		float3 vector;
-
-		if ( Message.Read( vector ) == SyncTrue )
+		// Import the rotation
+		/*
+		// [01/04/09] DB - Disabled for now whilst I fix the interpolation
+		if ( Message.ImportData(TRef_Static(R,o,t,a,t), m_Transform.GetRotation() ) == SyncTrue )
 		{
-			SetScale(vector);
+			m_Transform.SetRotationValid();
+			TransformChanged = TRUE;
 		}
+		*/
+		
+
+		//	transform has been set
+		if ( TransformChanged )
+			OnTransformChanged();
+
 
 		return;
 	}

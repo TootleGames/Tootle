@@ -289,9 +289,16 @@ public:
 	void					operator /= (const float &Scalar);// Divis„o com afectaÁ„o
 	void					operator *= (const float &Scalar);// MultiplicaÁ„o com afectaÁ„o
 
-	void					SetEuler(float Pitch, float Yaw, float Roll);	//	radians
-	float3					GetEuler();
-	void					Normalise()			{	xyzw.Normalise();	}
+	// Euler angles
+	void					SetEuler(const float& Pitch, const float& Yaw, const float& Roll);	//	radians
+	float3					GetEuler() const;
+
+	// Axis and angle
+	void					Set(const float3& Axis,const float RadAngle);
+
+	void					Normalise()		{ xyzw.Normalise();	}
+	float					DotProduct(const TQuaternion& quat)		const { return xyzw.DotProduct(quat.GetData()); }
+
 	float					GetLength() const	{	return xyzw.Length();	}
 //	float3&					GetAxis()			{	return xyz;	};
 //	float&					GetAngle()			{	return w;	}
@@ -300,12 +307,17 @@ public:
 	TLMaths::TAngle			GetAngle2D() const;	//	extract a eular angle in degrees from the quaternion. Is is based on an axis of 0,0,1. probably better ways to do it to get 3D angles...
 
 	inline void				SetIdentity()								{	SetValues( 0,0,0,1 );	};
-	void					Set(const float3& Axis,const float RadAngle);
+	
+	
 	inline void				Invert()									{	xyzw.Invert();	};
 	void					LookAt(const float3& Dir,const float3& WorldUp=float3(0,1,0));
 	void					RotateVector(float3& Vector) const;
 	void					RotateVector(float2& Vector) const;
 	void					UnRotateVector(float3& Vector) const;
+
+	// Interpolation
+	void					Slerp(const TQuaternion& From, const TQuaternion& To, const float& t);					// Spherical linear interpolation
+	void					Nlerp(const TQuaternion& From, const TQuaternion& To, const float& t);		// Normalised linear interpolation
 
 	static float4			QuatMult(const float4& First,const float4& Second);	//	xyzw multiply for quaternions
 

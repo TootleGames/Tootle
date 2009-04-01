@@ -761,7 +761,6 @@ void TLMaths::TQuaternion::Set(const float3& Axis,float RadAngle)
 }
 
 
-
 //---------------------------------------------------------------------------
 // 
 //---------------------------------------------------------------------------
@@ -839,50 +838,37 @@ void TLMaths::TQuaternion::operator *= (const float &Scalar)
 // 
 //---------------------------------------------------------------------------
 
-void TLMaths::TQuaternion::SetEuler(float Pitch, float Yaw, float Roll)
+void TLMaths::TQuaternion::SetEuler(const float& Pitch, const float& Yaw, const float& Roll)
 {
-	/*
-	float cosy = cosf(yaw / 2.0F);
-	float siny = sinf(yaw / 2.0F);
-	float cosP = cosf(Pitch / 2.0F);
-	float sinP = sinf(Pitch / 2.0F);
-	float cosR = cosf(Roll / 2.0F);
-	float sinR = sinf(Roll / 2.0F);
-	SetValues(
-		cosR * sinP * cosy + sinR * cosP * siny,
-		cosR * cosP * siny - sinR * sinP * cosy,
-		sinR * cosP * cosy - cosR * sinP * siny,
-		cosR * cosP * cosy + sinR * sinP * siny
-		);
-	return *this;
-
-  */
-	
+	// original method
 	TLMaths::TQuaternion Qx( float3(0, 0, 1), Pitch );	Qx.Normalise();
 	TLMaths::TQuaternion Qy( float3(0, 1, 0), Yaw );		Qx.Normalise();
 	TLMaths::TQuaternion Qz( float3(1, 0, 0), Roll );	Qx.Normalise();
 
-	SetValues(0,0,0,0);
+	SetValues(0,0,0,1);
 	*this *= Qx;
 	*this *= Qy;
 	*this *= Qz;
 
 	/*
-	TLMaths::TQuaternion Qx( float3(sinf(a/2), 0, 0), cosf(a/2) );
-	TLMaths::TQuaternion Qy( float3(0, sinf(b/2), 0), cosf(b/2) );
-	TLMaths::TQuaternion Qz( float3(0, 0, sinf(c/2)), cosf(c/2) );
 
-	*this = Qx;
-	*this *= Qy;
-	*this *= Qz;
+	// Method from the internet
+
+	TLMaths::TQuaternion Qx( float3(0, 0, 1), -Pitch );
+	TLMaths::TQuaternion Qy( float3(0, 1, 0), -Yaw );
+	TLMaths::TQuaternion Qz( float3(1, 0, 0), -Roll );
+
+	Qz = Qy * Qz;
+	*this = Qx * Qz;
 	*/
 }
+
 
 
 // Quaternion to Euler conversion
 // Source: http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/index.htm
 // Returns a float 3 such that x = pitch, y = yaw and z = roll
-float3 TLMaths::TQuaternion::GetEuler()
+float3 TLMaths::TQuaternion::GetEuler() const
 {
 	float3 vector;
 	float test = xyzw.x*xyzw.y + xyzw.z*xyzw.w;
@@ -975,17 +961,16 @@ TLMaths::TQuaternion RotationArc(const float3& V0,const float3& V1)
 }
 
 
-/*
 //---------------------------------------------------------------------------
 // 
 //---------------------------------------------------------------------------
-TLMaths::TQuaternion Slerp(const TLMaths::TQuaternion &From, const TLMaths::TQuaternion &To, float Interpolation)
+void TLMaths::TQuaternion::Slerp(const TLMaths::TQuaternion &From, const TLMaths::TQuaternion &To, const float& t)
 {
 	TLMaths::TQuaternion Temp;
 	float omega, cosO, sinO;
 	float scale0, scale1;
 
-	cosO = DotProduct(From, To);
+	cosO = From.DotProduct(To);
 
 	if (cosO < 0.0)
 	{
@@ -997,29 +982,201 @@ TLMaths::TQuaternion Slerp(const TLMaths::TQuaternion &From, const TLMaths::TQua
 		Temp = -To;
 	}
 
-	if ((1.0 - cosO) > ERROR_TOLERANCE)
+	if ((1.0 - cosO) > 0.0001f)
 	{
 		omega = (float)acos(cosO);
 		sinO = sinf(omega);
-		scale0 = sinf((1.0f - Interpolation) * omega) / sinO;
-		scale1 = sinf(Interpolation * omega) / sinO;
+		scale0 = sinf((1.0f - t) * omega) / sinO;
+		scale1 = sinf(t * omega) / sinO;
 	}
 	else
 	{
-		scale0 = 1.0f - Interpolation;
-		scale1 = Interpolation;
+		scale0 = 1.0f - t;
+		scale1 = t;
 	}
-	return From*scale0 + Temp*scale1 ;
+	*this = From*scale0 + Temp*scale1 ;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// DB - We seem to have quite a few quaternion slerp routines
+// I've adde dthe following two from http://www.3dkingdoms.com/weekly/quat.h
+// Very likely these are all similar or the same so we could do with tidying these up and removing
+// ones we aren't going to use.
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*
+// Spherical linear interpolation
+void TLMaths::TQuaternion::Slerp(const TQuaternion& From, const TQuaternion& To, const float& t)
+{
+	float w1, w2;
+
+	float fCosTheta = From.DotProduct(To);
+	float fTheta = acosf(fCosTheta);
+	float fSinTheta = TLMaths::Sinf(fTheta);
+
+	if( fSinTheta > 0.0001f)
+	{
+		w1 = TLMaths::Sinf( (1.0f - t) * fTheta ) / fSinTheta;
+		w2 = TLMaths::Sinf( t*fTheta) / fSinTheta;
+	}
+	else
+	{
+		w1 = 1.0f - t;
+		w2 = t;
+	}
+
+	*this = (From*w1) + (To*w2);
 }
 */
 
+// Normalised linear interpolation
+/*
+void TLMaths::TQuaternion::Nlerp(const TQuaternion& From, const TQuaternion& To, const float& t)
+{
+	float w1 = 1.0f - t;
+	*this = (From*w1) + (To*t);
+	Normalise();
+}
+*/
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+void TLMaths::TQuaternion::Nlerp(const TLMaths::TQuaternion& From, const TLMaths::TQuaternion& To, const float& t)
+{
+	if ( From == To )
+	{
+		*this = From;
+		return;
+	}
+	
+	//represent the same rotation, but when doing interpolation they are in different places in the space used for interpolation, and produce different results.
+
+	//The solution it to check how far apart the quaternions are, and if necessary flip one so they are closer. E.g. add the lines.
+
+	TLMaths::TQuaternion FlipTo( To );
+
+	//	flip to, if neccesary
+	//if (Q1.w * Q2.w + Q1.x * Q2.x + Q1.y * Q2.y + Q1.z * Q2.z < 0)
+	if ( From.xyzw.DotProduct( FlipTo.xyzw ) < 0)
+	{   
+		//Q2.w = -Q2.w;    Q2.x = -Q2.x;    Q2.y = -Q2.y;    Q2.z = -Q2.z;
+		FlipTo.Invert();
+	}
+
+	float mint = 1.f - t;
+	const TLMaths::TQuaternion& Q1 = From;
+	const TLMaths::TQuaternion& Q2 = FlipTo;
+
+	// Q = Q1*(1-Interpolation) + Q2*Interpolation;   
+
+	//	interp
+	float4 q1 = Q1.xyzw * mint;
+	float4 q2 = Q2.xyzw * t;
+
+	*this = ( q1 + q2 );
+	Normalise();
+}
 
 
+/*
+TLMaths::TQuaternion Slerp(TLMaths::TQuaternion &From, TLMaths::TQuaternion &To, float Interpolation, Bool AllowFlip)
+{ 
+	float cosAngle = (From[0]*To[0]) + (From[1]*To[1]) + (From[2]*To[2]) + (From[3]*To[3]);
 
+	float c1, c2; 
+	
+	//	Linear interpolation for close orientations 
+	if ((1.0 - fabsf(cosAngle)) < 0.01)  
+	{ 
+		c1 = 1.0f - Interpolation; 
+		c2 = Interpolation; 
+	} 
+	else
+	{  
+		// Spherical interpolation 
+		float angle    = acosf(fabsf(cosAngle)); 
+		float sinAngle = sinf(angle); 
+		c1 = sinf(angle * (1.0f - Interpolation)) / sinAngle; 
+		c2 = sinf(angle * Interpolation) / sinAngle; 
+	} 
 
+	// Use the shortest path 
+	if ((cosAngle < 0.0) && AllowFlip) 
+		c1 = -c1; 
 
+	return TLMaths::TQuaternion(c1*From[0] + c2*To[0], c1*From[1] + c2*To[1], c1*From[2] + c2*To[2], c1*From[3] + c2*To[3]); 
+} 
+  */  
+  
 
+/*
+TLMaths::TQuaternion Slerp(TLMaths::TQuaternion& From, TLMaths::TQuaternion& To, float Interpolation, Bool AllowFlip)
+{
+	TLMaths::TQuaternion Result;
 
+	// Decide if one of the quaternions is backwards
+	float a = 0, b = 0;
+
+	a += ( From.xyzw.x-To.xyzw.x )*( From.xyzw.x-To.xyzw.x );
+	a += ( From.xyzw.y-To.xyzw.y )*( From.xyzw.y-To.xyzw.y );
+	a += ( From.xyzw.z-To.xyzw.z )*( From.xyzw.x-To.xyzw.z );
+	a += ( From.xyzw.y-To.xyzw.w )*( From.xyzw.x-To.xyzw.w );
+
+	b += ( From.xyzw.x+To.xyzw.x )*( From.xyzw.x+To.xyzw.x );
+	b += ( From.xyzw.y+To.xyzw.y )*( From.xyzw.y+To.xyzw.y );
+	b += ( From.xyzw.z+To.xyzw.z )*( From.xyzw.z+To.xyzw.z );
+	b += ( From.xyzw.w+To.xyzw.w )*( From.xyzw.w+To.xyzw.w );
+
+	if ( a > b )
+		To.Invert();
+
+	//	gr: this is dot product
+//	float cosom = From[0]*To[0]+From[1]*To[1]+From[2]*To[2]+From[3]*To[3];
+	float cosom = From.xyzw.DotProduct( To.xyzw );
+	float sclFrom, sclTo;
+
+	if (( 1.0f+cosom ) > 0.00000001f )
+	{
+		if (( 1.0f-cosom ) > 0.00000001f )
+		{
+			float omega = acosf( cosom );
+			float sinom = sinf( omega );
+			sclFrom = sinf(( 1.0f-Interpolation )*omega )/sinom;
+			sclTo = sinf( Interpolation*omega )/sinom;
+		}
+		else
+		{
+			sclFrom = 1.0f-Interpolation;
+			sclTo = Interpolation;
+		}
+
+		TLDebug_CheckFloat(sclFrom);
+		TLDebug_CheckFloat(sclTo);
+		
+		Result.xyzw.x = (sclFrom*From.xyzw.x) + (sclTo*To.xyzw.x);
+		Result.xyzw.y = (sclFrom*From.xyzw.y) + (sclTo*To.xyzw.y);
+		Result.xyzw.z = (sclFrom*From.xyzw.z) + (sclTo*To.xyzw.z);
+		Result.xyzw.w = (sclFrom*From.xyzw.w) + (sclTo*To.xyzw.w);
+	}
+	else
+	{
+		Result.xyzw.x = -From.xyzw.y;
+		Result.xyzw.y =  From.xyzw.x;
+		Result.xyzw.z = -From.xyzw.w;
+		Result.xyzw.w =  From.xyzw.z;
+
+		sclFrom = sinf(( 1.0f-Interpolation )*0.5f*PI );
+		sclTo = sinf( Interpolation*0.5f*PI );
+
+		Result.xyzw.x = (sclFrom*From.xyzw.x) + (sclTo*Result.xyzw.x);
+		Result.xyzw.y = (sclFrom*From.xyzw.y) + (sclTo*Result.xyzw.y);
+		Result.xyzw.z = (sclFrom*From.xyzw.z) + (sclTo*Result.xyzw.z);
+		//	gr: no w?
+	}
+
+	return Result;
+}
+*/
 
 /*
 
@@ -1179,142 +1336,6 @@ void MatrixToQuaternion(const GMatrix &Matrix,TLMaths::TQuaternion &Quaternion)
 
 */
 
-/*
-TLMaths::TQuaternion Slerp(TLMaths::TQuaternion &From, TLMaths::TQuaternion &To, float Interpolation, Bool AllowFlip)
-{ 
-	float cosAngle = (From[0]*To[0]) + (From[1]*To[1]) + (From[2]*To[2]) + (From[3]*To[3]);
-
-	float c1, c2; 
-	
-	//	Linear interpolation for close orientations 
-	if ((1.0 - fabsf(cosAngle)) < 0.01)  
-	{ 
-		c1 = 1.0f - Interpolation; 
-		c2 = Interpolation; 
-	} 
-	else
-	{  
-		// Spherical interpolation 
-		float angle    = acosf(fabsf(cosAngle)); 
-		float sinAngle = sinf(angle); 
-		c1 = sinf(angle * (1.0f - Interpolation)) / sinAngle; 
-		c2 = sinf(angle * Interpolation) / sinAngle; 
-	} 
-
-	// Use the shortest path 
-	if ((cosAngle < 0.0) && AllowFlip) 
-		c1 = -c1; 
-
-	return TLMaths::TQuaternion(c1*From[0] + c2*To[0], c1*From[1] + c2*To[1], c1*From[2] + c2*To[2], c1*From[3] + c2*To[3]); 
-} 
-  */  
-  
-
-TLMaths::TQuaternion InterpQ(const TLMaths::TQuaternion& From, const TLMaths::TQuaternion& To, float Interpolation)
-{
-	if ( From == To )
-		return From;
-	
-	//represent the same rotation, but when doing interpolation they are in different places in the space used for interpolation, and produce different results.
-
-	//The solution it to check how far apart the quaternions are, and if necessary flip one so they are closer. E.g. add the lines.
-
-	TLMaths::TQuaternion FlipTo( To );
-
-	//	flip to, if neccesary
-	//if (Q1.w * Q2.w + Q1.x * Q2.x + Q1.y * Q2.y + Q1.z * Q2.z < 0)
-	if ( From.xyzw.DotProduct( FlipTo.xyzw ) < 0)
-	{   
-		//Q2.w = -Q2.w;    Q2.x = -Q2.x;    Q2.y = -Q2.y;    Q2.z = -Q2.z;
-		FlipTo.Invert();
-	}
-
-	float& t = Interpolation;
-	float mint = 1.f - t;
-	const TLMaths::TQuaternion& Q1 = From;
-	const TLMaths::TQuaternion& Q2 = FlipTo;
-
-	// Q = Q1*(1-Interpolation) + Q2*Interpolation;   
-
-	//	interp
-	float4 q1 = Q1.xyzw * mint;
-	float4 q2 = Q2.xyzw * t;
-
-	TLMaths::TQuaternion Result( q1 + q2 );
-	Result.Normalise();
-	
-	return Result;	
-}
-
-
-
-
-TLMaths::TQuaternion Slerp(TLMaths::TQuaternion& From, TLMaths::TQuaternion& To, float Interpolation, Bool AllowFlip)
-{
-	TLMaths::TQuaternion Result;
-
-	// Decide if one of the quaternions is backwards
-	float a = 0, b = 0;
-
-	a += ( From.xyzw.x-To.xyzw.x )*( From.xyzw.x-To.xyzw.x );
-	a += ( From.xyzw.y-To.xyzw.y )*( From.xyzw.y-To.xyzw.y );
-	a += ( From.xyzw.z-To.xyzw.z )*( From.xyzw.x-To.xyzw.z );
-	a += ( From.xyzw.y-To.xyzw.w )*( From.xyzw.x-To.xyzw.w );
-
-	b += ( From.xyzw.x+To.xyzw.x )*( From.xyzw.x+To.xyzw.x );
-	b += ( From.xyzw.y+To.xyzw.y )*( From.xyzw.y+To.xyzw.y );
-	b += ( From.xyzw.z+To.xyzw.z )*( From.xyzw.z+To.xyzw.z );
-	b += ( From.xyzw.w+To.xyzw.w )*( From.xyzw.w+To.xyzw.w );
-
-	if ( a > b )
-		To.Invert();
-
-	//	gr: this is dot product
-//	float cosom = From[0]*To[0]+From[1]*To[1]+From[2]*To[2]+From[3]*To[3];
-	float cosom = From.xyzw.DotProduct( To.xyzw );
-	float sclFrom, sclTo;
-
-	if (( 1.0f+cosom ) > 0.00000001f )
-	{
-		if (( 1.0f-cosom ) > 0.00000001f )
-		{
-			float omega = acosf( cosom );
-			float sinom = sinf( omega );
-			sclFrom = sinf(( 1.0f-Interpolation )*omega )/sinom;
-			sclTo = sinf( Interpolation*omega )/sinom;
-		}
-		else
-		{
-			sclFrom = 1.0f-Interpolation;
-			sclTo = Interpolation;
-		}
-
-		TLDebug_CheckFloat(sclFrom);
-		TLDebug_CheckFloat(sclTo);
-		
-		Result.xyzw.x = (sclFrom*From.xyzw.x) + (sclTo*To.xyzw.x);
-		Result.xyzw.y = (sclFrom*From.xyzw.y) + (sclTo*To.xyzw.y);
-		Result.xyzw.z = (sclFrom*From.xyzw.z) + (sclTo*To.xyzw.z);
-		Result.xyzw.w = (sclFrom*From.xyzw.w) + (sclTo*To.xyzw.w);
-	}
-	else
-	{
-		Result.xyzw.x = -From.xyzw.y;
-		Result.xyzw.y =  From.xyzw.x;
-		Result.xyzw.z = -From.xyzw.w;
-		Result.xyzw.w =  From.xyzw.z;
-
-		sclFrom = sinf(( 1.0f-Interpolation )*0.5f*PI );
-		sclTo = sinf( Interpolation*0.5f*PI );
-
-		Result.xyzw.x = (sclFrom*From.xyzw.x) + (sclTo*Result.xyzw.x);
-		Result.xyzw.y = (sclFrom*From.xyzw.y) + (sclTo*Result.xyzw.y);
-		Result.xyzw.z = (sclFrom*From.xyzw.z) + (sclTo*Result.xyzw.z);
-		//	gr: no w?
-	}
-
-	return Result;
-}
 
 void TLMaths::TQuaternion::LookAt(const float3& Dir,const float3& WorldUp)
 {

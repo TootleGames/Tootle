@@ -7,7 +7,7 @@
 #include "TPath.h"
 #include "TText.h"
 #include "TTexture.h"
-#include "TAssetScript.h"
+#include "TAssetTimeline.h"
 #include "TAtlas.h"
 
 #include "TLoadTask.h"
@@ -304,8 +304,8 @@ TLAsset::TAsset* TLAsset::TAssetFactory::CreateObject(TRefRef InstanceRef,TRefRe
 	if ( TypeRef == "Text" )
 		return new TLAsset::TText( InstanceRef );
 	
-	if ( TypeRef == "AScript" )
-		return new TLAsset::TAssetScript( InstanceRef );
+	if ( TypeRef == "Timeline" )
+		return new TLAsset::TAssetTimeline( InstanceRef );
 	
 	if ( TypeRef == "Texture" )
 		return new TLAsset::TTexture( InstanceRef );	

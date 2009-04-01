@@ -1,5 +1,5 @@
 /*
- *  TFileAssetScript.cpp
+ *  TFileTimeline.cpp
  *  TootleFileSys
  *
  *  Created by Duane Bradbury on 15/03/2009.
@@ -8,12 +8,12 @@
  */
 
 #include "TFileAssetScript.h"
-#include <TootleAsset/TAssetScript.h>
+#include <TootleAsset/TAssetTimeline.h>
 #include "TLFile.h"
 
 
 
-TLFileSys::TFileAssetScript::TFileAssetScript(TRefRef FileRef,TRefRef FileTypeRef) :
+TLFileSys::TFileTimeline::TFileTimeline(TRefRef FileRef,TRefRef FileTypeRef) :
 TFileXml			( FileRef, FileTypeRef )
 {
 }
@@ -23,7 +23,7 @@ TFileXml			( FileRef, FileTypeRef )
 //--------------------------------------------------------
 //	import the XML and convert from SVG to mesh
 //--------------------------------------------------------
-SyncBool TLFileSys::TFileAssetScript::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported)
+SyncBool TLFileSys::TFileTimeline::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported)
 {
 	if ( pAsset )
 	{
@@ -39,19 +39,19 @@ SyncBool TLFileSys::TFileAssetScript::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,
 		return ImportResult;
 
 	//	get the root tag
-	TPtr<TXmlTag> pTasTag = m_XmlData.GetChild("assetscript");
+	TPtr<TXmlTag> pTasTag = m_XmlData.GetChild("timeline");
 
 	//	malformed AssetScript
 	if ( !pTasTag )
 	{
-		TLDebug_Print("TAS file missing root <AssetScript> tag");
+		TLDebug_Print("TAS file missing root <Timeline> tag");
 		return SyncFalse;
 	}
 
 	//	do specific importing
-	TPtr<TLAsset::TAsset> pNewAsset = new TLAsset::TAssetScript( GetFileRef() );
+	TPtr<TLAsset::TAsset> pNewAsset = new TLAsset::TAssetTimeline( GetFileRef() );
 
-	ImportResult = ImportAssetScript( pNewAsset, pTasTag );
+	ImportResult = ImporTAssetTimeline( pNewAsset, pTasTag );
 
 	//	failed to import
 	if ( ImportResult != SyncTrue )
@@ -69,7 +69,7 @@ SyncBool TLFileSys::TFileAssetScript::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,
 //--------------------------------------------------------
 //	
 //--------------------------------------------------------
-SyncBool TLFileSys::TFileAssetScript::ImportAssetScript(TPtr<TLAsset::TAssetScript> pAssetScript, TPtr<TXmlTag>& pTag)
+SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline(TPtr<TLAsset::TAssetTimeline> pAssetTimeline, TPtr<TXmlTag>& pTag)
 {
 	/*
 	<assetscript>
@@ -88,7 +88,7 @@ SyncBool TLFileSys::TFileAssetScript::ImportAssetScript(TPtr<TLAsset::TAssetScri
 		SyncBool TagImportResult = SyncFalse;
 		if ( pChildTag->GetTagName() == "keyframe" )
 		{
-			TagImportResult = ImportAssetScript_ImportKeyframeTag( pAssetScript, pChildTag );
+			TagImportResult = ImporTAssetTimeline_ImportKeyframeTag( pAssetTimeline, pChildTag );
 		}
 		else
 		{
@@ -114,7 +114,7 @@ SyncBool TLFileSys::TFileAssetScript::ImportAssetScript(TPtr<TLAsset::TAssetScri
 //--------------------------------------------------------
 //	generate mesh TAM tag
 //--------------------------------------------------------
-SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportKeyframeTag(TPtr<TLAsset::TAssetScript>& pAssetScript,TPtr<TXmlTag>& pImportTag)
+SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportKeyframeTag(TPtr<TLAsset::TAssetTimeline>& pAssetTimeline,TPtr<TXmlTag>& pImportTag)
 {
 	/*
 	<keyframe time="0.0">
@@ -139,7 +139,7 @@ SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportKeyframeTag(TPtr<T
 	}
 
 	// Create a new keyframe
-	TLAsset::TKeyframe* pKeyframe = pAssetScript->AddKeyframe(keyframetime);
+	TLAsset::TKeyframe* pKeyframe = pAssetTimeline->AddKeyframe(keyframetime);
 
 	if(!pKeyframe)
 	{
@@ -155,9 +155,9 @@ SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportKeyframeTag(TPtr<T
 		SyncBool TagImportResult = SyncFalse;
 
 		// Deal with "node" tags
-		if ( pChildTag->GetTagName() == "node" )
+		if ( pChildTag->GetTagName() == "command" )
 		{
-			TagImportResult = ImportAssetScript_ImportNodeTag( pAssetScript, pKeyframe, pChildTag );
+			TagImportResult = ImporTAssetTimeline_ImportCommandTag( pAssetTimeline, pKeyframe, pChildTag );
 		}
 
 		//	failed
@@ -175,7 +175,7 @@ SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportKeyframeTag(TPtr<T
 	return SyncTrue;
 }
 
-SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportNodeTag(TPtr<TLAsset::TAssetScript>& pAssetScript, TLAsset::TKeyframe* pKeyframe, TPtr<TXmlTag>& pImportTag)
+SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandTag(TPtr<TLAsset::TAssetTimeline>& pAssetTimeline, TLAsset::TKeyframe* pKeyframe, TPtr<TXmlTag>& pImportTag)
 {
 	/*
 	<Node NodeRef="rarm1">		
@@ -183,8 +183,21 @@ SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportNodeTag(TPtr<TLAss
 	</Node>
 	*/
 
-	TRef NodeRef, NodeGraphRef;
-	const TString* pImportkeyframeString = pImportTag->GetProperty("NodeRef");
+	TRef CommandRef, NodeRef, NodeGraphRef;
+
+	const TString* pImportkeyframeString = pImportTag->GetProperty("CommandRef");
+	if ( pImportkeyframeString )
+		CommandRef.Set(*pImportkeyframeString);
+
+	if(!CommandRef.IsValid())
+	{
+		TLDebug_Print("Failed to get valid node ref from TAS file");
+		return SyncFalse;
+	}
+
+	// Get the node ref
+	// TODO: Make this optional?
+	pImportkeyframeString = pImportTag->GetProperty("NodeRef");
 	if ( pImportkeyframeString )
 		NodeRef.Set(*pImportkeyframeString);
 
@@ -194,6 +207,8 @@ SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportNodeTag(TPtr<TLAss
 		return SyncFalse;
 	}
 
+	// Get the node graph ref
+	// TODO: Make this optional?
 	pImportkeyframeString = pImportTag->GetProperty("NodeGraphRef");
 	if ( pImportkeyframeString )
 		NodeGraphRef.Set(*pImportkeyframeString);
@@ -204,23 +219,40 @@ SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportNodeTag(TPtr<TLAss
 		return SyncFalse;
 	}
 
+	TPtr<TLAsset::TAssetTimelineCommandList> pTimelineCommandList = pKeyframe->FindPtr(NodeRef);
 
-	// Create the asset script command list object
-	TPtr<TLAsset::TAssetScriptCommandList> pScriptCommandList = new TLAsset::TAssetScriptCommandList(NodeRef, NodeGraphRef);
-
-	if(!pScriptCommandList || (pKeyframe->Add(pScriptCommandList) == -1))
+	// Check to see if we have a command list for the specified node.  If so use it, otherwise create a new 
+	// command list with the specified node ref
+	if(!pTimelineCommandList)
 	{
-		TLDebug_Print("Failed to add new script command list");
+		// Create the asset script command list object
+		pTimelineCommandList = new TLAsset::TAssetTimelineCommandList(NodeRef, NodeGraphRef);
+
+		if(!pTimelineCommandList || (pKeyframe->Add(pTimelineCommandList) == -1))
+		{
+			TLDebug_Print("Failed to add new script command list");
+			return SyncFalse;
+		}
+	}
+
+
+	// Create the command and attach it to the asset timeline
+	TLAsset::TAssetTimelineCommand*	pCommand = pTimelineCommandList->AddCommand(CommandRef);
+
+	if(!pCommand)
+	{
+		TLDebug_Print("Failed to create command for TAS file");
 		return SyncFalse;
 	}
+
 
 
 	//	find out what we need to do
 	for ( u32 c=0;	c<pImportTag->GetChildren().GetSize();	c++ )
 	{
 		TPtr<TXmlTag>& pChildTag = pImportTag->GetChildren().ElementAt(c);
-		
-		SyncBool TagImportResult = ImportAssetScript_ImportCommandTag( pAssetScript, pScriptCommandList, pChildTag);
+
+		SyncBool TagImportResult = ImporTAssetTimeline_ImportCommandData( pAssetTimeline, pCommand, pChildTag);
 
 		//	failed
 		if ( TagImportResult == SyncFalse )
@@ -239,11 +271,11 @@ SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportNodeTag(TPtr<TLAss
 }
 
 
-SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportCommandTag(TPtr<TLAsset::TAssetScript>& pAssetScript, TPtr<TLAsset::TAssetScriptCommandList>& pScriptCommandList, TPtr<TXmlTag>& pImportTag)
+SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandData(TPtr<TLAsset::TAssetTimeline>& pAssetTimeline, TLAsset::TAssetTimelineCommand* pTimelineCommand, TPtr<TXmlTag>& pImportTag)
 {
-	TLAsset::TAssetScriptCommand* pCommand = NULL;
+	TPtr<TBinaryTree> pCommandChildData = NULL;
 
-	// Get command and all data properties
+	// Get data tag and all data properties
 	for ( u32 c=0;	c<pImportTag->GetPropertyCount();	c++ )
 	{
 		const TXmlTag::TProperty& Property = pImportTag->GetPropertyAt(c);
@@ -253,28 +285,28 @@ SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportCommandTag(TPtr<TL
 
 		if ( PropertyName == "DataRef" )
 		{
-			pCommand = pScriptCommandList->AddCommand(PropertyData);
+			// Add the data as a child of the command
+			pCommandChildData = pTimelineCommand->AddChild(PropertyData);
 
-			if(!pCommand)
+			if(!pCommandChildData)
 			{
-				TLDebug_Print("Failed to create command for TAS file");
+				TLDebug_Print("Failed to create command child data");
 				return SyncFalse;
 			}
 		}
 		else if(PropertyName == "InterpMethod")
 		{
-			if(PropertyData == "Linear")
-			{
-				pCommand->SetInterpMethod(TLAsset::TAssetScriptCommand::Linear);
-			}
-			else if(PropertyData == "SLERP")
-			{
-				pCommand->SetInterpMethod(TLAsset::TAssetScriptCommand::SLERP);
-			}
+			// Interp method.  Linear, SLERP etc.  Mainly for transform messages, rotation, translation and scale
+			pCommandChildData->ExportData(PropertyName, PropertyData);
+		}
+		else if(PropertyName == "Mode")
+		{
+			// Mode - absolute, relative.  Mainly for transforms, rotation, translation and scale
+			pCommandChildData->ExportData(PropertyName, PropertyData);
 		}
 
 		// Now get any extra data once we reach the end of the tag info
-		if((pCommand != NULL) && (c == (pImportTag->GetPropertyCount() - 1)))
+		if(pCommandChildData.IsValid() && (c == (pImportTag->GetPropertyCount() - 1)))
 		{
 			TPtr<TXmlTag>& pChildTag = pImportTag->GetChildren().ElementAt(0);
 
@@ -283,9 +315,84 @@ SyncBool TLFileSys::TFileAssetScript::ImportAssetScript_ImportCommandTag(TPtr<TL
 				TRef DataTypeRef = TLFile::GetDataTypeFromString( pChildTag->GetTagName() );
 
 				//	update type of data
-				pCommand->SetDataTypeHint( DataTypeRef );
+				pCommandChildData->SetDataTypeHint( DataTypeRef );
 
-				SyncBool TagImportResult = TLFile::ImportBinaryData( pChildTag, *pCommand, DataTypeRef );
+				SyncBool TagImportResult = SyncFalse;
+
+				// Special case for rotations
+				if(pCommandChildData->GetDataRef() == "Rotate")
+				{
+					if(DataTypeRef == TLBinary::GetDataTypeRef<float4>())
+					{
+						// float4 format so just import the data as a quaternion
+						// Can we use a <Quaternion> tag perhaps? And maybe a <AxisAngle> tag as well 
+						// so we can convert form an axis and angle
+						TagImportResult = TLFile::ImportBinaryData( pChildTag, *pCommandChildData, DataTypeRef );
+					}
+					else if(DataTypeRef == TLBinary::GetDataTypeRef<float3>())
+					{
+						// float3 format so import as Euler angles
+						// Might want to use a special tag for the the euler angles say <Euler>
+						// Then could also have <Radians> for ones already set in radians
+
+						// Get the data and convert from a float3 euler data to a quaternion
+						TBinary Data;
+						TagImportResult = TLFile::ImportBinaryData( pChildTag, Data, DataTypeRef );
+
+						if(TagImportResult == SyncTrue)
+						{
+							// Convert the data to a quaternion
+							Data.ResetReadPos();
+
+							float3 vector;
+							if(Data.Read(vector))
+							{
+								TLMaths::TQuaternion qRot;
+
+								// Vector is in degrees.  Change to radians.
+								TLMaths::TAngle pitch(vector.x);
+								TLMaths::TAngle yaw(vector.y);
+								TLMaths::TAngle roll(vector.z);
+
+								// Clamp within limits
+								//pitch.SetLimit360();
+								//yaw.SetLimit360();
+								//roll.SetLimit360();
+								TTempString str;
+								str.Appendf("Degrees: %.2f %.2f %.2f", vector.x, vector.y, vector.z);
+								TLDebug_Print(str);
+								str.Empty();
+
+								str.Appendf("Radians: %.2f %.2f %.2f", pitch.GetRadians(), yaw.GetRadians(), roll.GetRadians());
+								TLDebug_Print(str);
+								str.Empty();
+
+
+								qRot.SetEuler(pitch.GetRadians(), yaw.GetRadians(), roll.GetRadians());
+								qRot.Normalise();
+
+								str.Appendf("Quat: %.2f %.2f %.2f %.2f", qRot.GetData().x, qRot.GetData().y, qRot.GetData().z, qRot.GetData().w );
+								TLDebug_Print(str);
+								str.Empty();
+
+
+								pCommandChildData->Write(qRot); 
+
+								// Change the data type hint to quaternion
+								pCommandChildData->SetDataTypeHint(TLBinary::GetDataTypeRef<float4>());
+								//pCommand->SetDataTypeHint(TLBinary::GetDataTypeRef<TLMaths::TQuaternion>());
+							}
+						}
+						else
+						{
+							// Failed to copy the data form the XML file
+							TLDebug_Print("Failed to get (rotation) command data from TAS file");
+							return SyncFalse;
+						}
+					}
+				}
+				else
+					TagImportResult = TLFile::ImportBinaryData( pChildTag, *pCommandChildData, DataTypeRef );
 
 
 				if(TagImportResult != SyncTrue)

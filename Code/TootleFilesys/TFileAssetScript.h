@@ -15,27 +15,28 @@
 
 namespace TLFileSys
 {
-	class TFileAssetScript;
+	class TFileTimeline;
 };
 
 namespace TLAsset
 {
 	class TKeyframe;
-	class TAssetScript;
-	class TAssetScriptCommandList;
+	class TAssetTimeline;
+	class TAssetTimelineCommand;
+	class TAssetTimelineCommandList;
 }
 
-class TLFileSys::TFileAssetScript : public TLFileSys::TFileXml
+class TLFileSys::TFileTimeline : public TLFileSys::TFileXml
 {
 public:
-	TFileAssetScript(TRefRef FileRef,TRefRef FileTypeRef);
+	TFileTimeline(TRefRef FileRef,TRefRef FileTypeRef);
 	
 	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);			//	import the XML and convert from Collada to mesh
 	
 protected:
 
-	SyncBool			ImportAssetScript(TPtr<TLAsset::TAssetScript> pAssetScript,TPtr<TXmlTag>& pTag);
-	SyncBool			ImportAssetScript_ImportKeyframeTag(TPtr<TLAsset::TAssetScript>& pAssetScript, TPtr<TXmlTag>& pImportTag);
-	SyncBool			ImportAssetScript_ImportNodeTag(TPtr<TLAsset::TAssetScript>& pAssetScript, TLAsset::TKeyframe* pKeyframe, TPtr<TXmlTag>& pImportTag);
-	SyncBool			ImportAssetScript_ImportCommandTag(TPtr<TLAsset::TAssetScript>& pAssetScript, TPtr<TLAsset::TAssetScriptCommandList>& pScriptCommandList, TPtr<TXmlTag>& pImportTag);
+	SyncBool			ImporTAssetTimeline(TPtr<TLAsset::TAssetTimeline> pAssetTimeline,TPtr<TXmlTag>& pTag);
+	SyncBool			ImporTAssetTimeline_ImportKeyframeTag(TPtr<TLAsset::TAssetTimeline>& pAssetTimeline, TPtr<TXmlTag>& pImportTag);
+	SyncBool			ImporTAssetTimeline_ImportCommandTag(TPtr<TLAsset::TAssetTimeline>& pAssetTimeline, TLAsset::TKeyframe* pKeyframe, TPtr<TXmlTag>& pImportTag);
+	SyncBool			ImporTAssetTimeline_ImportCommandData(TPtr<TLAsset::TAssetTimeline>& pAssetTimeline, TLAsset::TAssetTimelineCommand* pTimelineCommand, TPtr<TXmlTag>& pImportTag);
 };

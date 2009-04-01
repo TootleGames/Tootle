@@ -212,6 +212,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TTimeline.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TTimeline.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TWidgetButton.cpp"
 			>
 		</File>

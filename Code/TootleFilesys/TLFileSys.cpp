@@ -575,7 +575,7 @@ TLFileSys::TFile* TLFileSys::TFileFactory::CreateObject(TRefRef InstanceRef,TRef
 	//	tootle asset script xml file
 	if ( TypeRef == TRef_Static3(t,a,s) )
 	{
-		pFile = new TLFileSys::TFileAssetScript( InstanceRef, TypeRef );
+		pFile = new TLFileSys::TFileTimeline( InstanceRef, TypeRef );
 		return pFile;
 	}
 	

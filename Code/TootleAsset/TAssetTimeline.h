@@ -1,5 +1,5 @@
 /*
- *  TAssetScript.h
+ *  TAssetTimeline.h
  *  TootleAsset
  *
  *  Created by Duane Bradbury on 15/03/2009.
@@ -16,75 +16,55 @@
 
 namespace TLAsset
 {
-	class TAssetScript;
+	class TAssetTimeline;
 
 	class TTempKeyframeData;
 	class TKeyframe;
 
-	class TAssetScriptCommand;
-	class TAssetScriptCommandList;
+	class TAssetTimelineCommand;
+	class TAssetTimelineCommandList;
 };
 
 
-// The asset script command is a special type of message so we can send it as-is 
-// without having to generate a message and keep track of commnand specific data
+// The timeline command is a special type of message so we can send it as-is 
+// without having to generate a message and keep track of command specific data
 // I have added an interp method as I suspect quite a few of the most common commands 
 // will require an interp such as translation, rotation, scale but if this becomes less common 
 // a property for most commands then it can simply be added to the message as a piece of data instead.
-class TLAsset::TAssetScriptCommand : public TLMessaging::TMessage
+class TLAsset::TAssetTimelineCommand : public TLMessaging::TMessage
 {
 public:
-	enum InterpMethod
-	{
-		None = 0,
-		Linear,
-		SLERP,
-	};
-
-	TAssetScriptCommand() :
-		m_uInterpMethod(None)
+	TAssetTimelineCommand()
 	{
 	}
 
-	TAssetScriptCommand(TRefRef CommandRef) :
-		TMessage(CommandRef),
-		m_uInterpMethod(None)
+	TAssetTimelineCommand(TRefRef CommandRef) :
+		TMessage(CommandRef)
 	{
 	}
-
-	FORCEINLINE void				SetInterpMethod(InterpMethod Method)	{ m_uInterpMethod = Method; }
-	FORCEINLINE InterpMethod		GetInterpMethod()				const	{ return m_uInterpMethod; }
-
-
-	//SyncBool						ImportData(TBinaryTree& Data);	//	load asset data out binary data
-	//SyncBool						ExportData(TBinaryTree& Data);	//	save asset data to binary data
-
-
-private:
-	InterpMethod					m_uInterpMethod;	// Interp method for the command
 };
 
 
 // The script command list is a container for a node ref and graph ref and list of commands that
 // for the specified node
-class TLAsset::TAssetScriptCommandList
+class TLAsset::TAssetTimelineCommandList
 {
 public:
 
-	TAssetScriptCommandList() 
+	TAssetTimelineCommandList() 
 	{
 	}
 
 
-	TAssetScriptCommandList(TRefRef NodeRef, TRefRef NodeGraphRef) :
+	TAssetTimelineCommandList(TRefRef NodeRef, TRefRef NodeGraphRef) :
 		m_NodeRef(NodeRef),
 		m_NodeGraphRef(NodeGraphRef)
 	{
 	}
 
-	TAssetScriptCommand*			AddCommand(TRefRef CommandRef)
+	TAssetTimelineCommand*			AddCommand(TRefRef CommandRef)
 	{
-		TAssetScriptCommand cmd(CommandRef);
+		TAssetTimelineCommand cmd(CommandRef);
 
 		s32 Index = m_Commands.Add(cmd);
 
@@ -95,7 +75,7 @@ public:
 	}
 
 	inline Bool			operator==(const TRef& NodeRef)						const	{	return GetNodeRef() == NodeRef;	}
-	inline Bool			operator==(const TAssetScriptCommandList& ascmd)	const 	{	return GetNodeRef() == ascmd.GetNodeRef();	}
+	inline Bool			operator==(const TAssetTimelineCommandList& ascmd)	const 	{	return GetNodeRef() == ascmd.GetNodeRef();	}
 
 
 	// Accessors
@@ -105,7 +85,7 @@ public:
 	FORCEINLINE void				SetNodeGraphRef(TRefRef NodeGraphRef)	{ m_NodeGraphRef = NodeGraphRef; }
 	FORCEINLINE TRefRef				GetNodeGraphRef()				const	{ return m_NodeGraphRef; }
 
-	TArray<TAssetScriptCommand>&	GetCommands()			{ return m_Commands; }
+	TArray<TAssetTimelineCommand>&	GetCommands()			{ return m_Commands; }
 
 	SyncBool						ImportData(TBinaryTree& Data);	//	load asset data out binary data
 	SyncBool						ExportData(TBinaryTree& Data);	//	save asset data to binary data
@@ -114,13 +94,13 @@ private:
 	TRef							m_NodeRef;			// Node associated with the commands
 	TRef							m_NodeGraphRef;		// Node graph to use 
 
-	TArray<TAssetScriptCommand>				m_Commands;			// Array of command messages
+	TArray<TAssetTimelineCommand>				m_Commands;			// Array of command messages
 };
 
 
 
 // The keyframe is essentially a list of commands for nodes organised by node
-class TLAsset::TKeyframe : public TPtrArray<TLAsset::TAssetScriptCommandList>
+class TLAsset::TKeyframe : public TPtrArray<TLAsset::TAssetTimelineCommandList>
 {
 public:
 	TKeyframe()
@@ -140,10 +120,10 @@ public:
 };
 
 
-class TLAsset::TAssetScript : public TLAsset::TAsset
+class TLAsset::TAssetTimeline : public TLAsset::TAsset
 {
 public:
-	TAssetScript(const TRef& AssetRef);
+	TAssetTimeline(const TRef& AssetRef);
 
 	//TLAsset::TKeyframe&		Addkeyframe(TRef KeyRef, float fTime)	// DB - may want an ID for each keyframe so we could do things like loop back to a specific keyframe
 	TKeyframe*		AddKeyframe(float fTime)

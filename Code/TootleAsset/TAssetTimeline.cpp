@@ -1,5 +1,5 @@
 /*
- *  TAssetScript.cpp
+ *  TAssetTimline.cpp
  *  TootleAsset
  *
  *  Created by Duane Bradbury on 15/03/2009.
@@ -7,7 +7,7 @@
  *
  */
 
-#include "TAssetScript.h"
+#include "TAssetTimeline.h"
 
 
 using namespace TLAsset;
@@ -29,7 +29,7 @@ SyncBool TKeyframe::ImportData(TBinaryTree& Data)
 			pNodeTree->ResetReadPos();
 
 			// add a new command list to the keyframe
-			TPtr<TLAsset::TAssetScriptCommandList> pCommandList = new TLAsset::TAssetScriptCommandList();
+			TPtr<TLAsset::TAssetTimelineCommandList> pCommandList = new TLAsset::TAssetTimelineCommandList();
 
 			if(!pCommandList || (Add(pCommandList) == -1))
 			{
@@ -55,7 +55,7 @@ SyncBool TKeyframe::ExportData(TBinaryTree& Data)
 		
 		if(pNodeTree)
 		{
-			TPtr<TAssetScriptCommandList>& cmdslist = ElementAt(uIndex);
+			TPtr<TAssetTimelineCommandList>& cmdslist = ElementAt(uIndex);
 
 			SyncBool CmdRes = cmdslist->ExportData(*pNodeTree);
 
@@ -70,7 +70,7 @@ SyncBool TKeyframe::ExportData(TBinaryTree& Data)
 
 
 
-SyncBool TAssetScriptCommandList::ImportData(TBinaryTree& Data)
+SyncBool TAssetTimelineCommandList::ImportData(TBinaryTree& Data)
 {
 
 	// Read the Node ref
@@ -101,27 +101,10 @@ SyncBool TAssetScriptCommandList::ImportData(TBinaryTree& Data)
 			TPtr<TBinaryTree> pCommand = pCommandData->GetChildren().ElementAt(uIndex);
 			pCommand->ResetReadPos();
 
+			TLAsset::TAssetTimelineCommand cmd;
 
-			TRef CommandRef;
-			pCommand->Read(CommandRef);
-
-			// Create the command
-			TLAsset::TAssetScriptCommand cmd(CommandRef);
-
-			// Read hte interp method
-			TLAsset::TAssetScriptCommand::InterpMethod im;
-			pCommand->Read(im);
-			cmd.SetInterpMethod(im);
-
-			// Get the data type hint
-			TRef DataTypeHint;
-			pCommand->Read(DataTypeHint);
-			cmd.SetDataTypeHint(DataTypeHint);
-
-			// Read the data? Not sure this is correct for the TBinaryTree?
-			pCommand->Read(cmd.GetData());
-			
-			//cmd.ImportData(*pCommandData);
+			cmd.CopyDataTree(pCommand);
+			//pCommand->Read(cmd);
 
 			// Add the command to the array
 			m_Commands.Add(cmd);
@@ -132,7 +115,7 @@ SyncBool TAssetScriptCommandList::ImportData(TBinaryTree& Data)
 	return SyncTrue;
 }
 
-SyncBool TAssetScriptCommandList::ExportData(TBinaryTree& Data)
+SyncBool TAssetTimelineCommandList::ExportData(TBinaryTree& Data)
 {
 	Data.Write(m_NodeRef);
 	Data.Write(m_NodeGraphRef);
@@ -143,15 +126,12 @@ SyncBool TAssetScriptCommandList::ExportData(TBinaryTree& Data)
 	{
 		for(u32 uIndex = 0; uIndex < m_Commands.GetSize(); uIndex++)
 		{
-			TAssetScriptCommand& cmd = m_Commands.ElementAt(uIndex);
+			TAssetTimelineCommand& cmd = m_Commands.ElementAt(uIndex);
 			
 			TPtr<TBinaryTree> pCommand = pCommandData->AddChild("Command");
-			pCommand->Write(cmd.GetMessageRef());
-			pCommand->Write(cmd.GetInterpMethod());
-			pCommand->Write(cmd.GetDataTypeHint());
-			pCommand->Write(cmd.GetData());
-			
-			//cmd.ExportData(*pCommandData);
+
+			pCommand->CopyDataTree(cmd);
+			//pCommand->Write(cmd);
 		}
 	}
 
@@ -159,38 +139,8 @@ SyncBool TAssetScriptCommandList::ExportData(TBinaryTree& Data)
 }
 
 
-
-/*
-SyncBool TAssetScriptCommand::ImportData(TBinaryTree& Data)
-{
-	Data.Read(m_uInterpMethod);
-
-	/*
-	TPtr<TBinaryTree> pCommandData = Data.GetChild("Command");
-
-	CopyDataTree(pCommandData);
-	//*
-
-	return SyncTrue;
-}
-
-SyncBool TAssetScriptCommand::ExportData(TBinaryTree& Data)
-{
-	Data.Write(m_uInterpMethod);
-
-	/*
-	TPtr<TBinaryTree> pCommandData = Data.AddChild("Command");
-
-	pCommandData->CopyDataTree(this);
-	//*
-
-	return SyncTrue;
-}
-*/
-
-
-TAssetScript::TAssetScript(const TRef& AssetRef) :
-TAsset	( "AScript", AssetRef )
+TAssetTimeline::TAssetTimeline(const TRef& AssetRef) :
+TAsset	( "Timeline", AssetRef )
 {
 }
 
@@ -199,7 +149,7 @@ TAsset	( "AScript", AssetRef )
 //-------------------------------------------------------
 //	load asset data out binary data
 //-------------------------------------------------------
-SyncBool TAssetScript::ImportData(TBinaryTree& Data)		
+SyncBool TAssetTimeline::ImportData(TBinaryTree& Data)		
 {
 	u32 uKeyframeCount = Data.GetChildren().GetSize();
 
@@ -240,7 +190,7 @@ SyncBool TAssetScript::ImportData(TBinaryTree& Data)
 //-------------------------------------------------------
 //	save asset data to binary data
 //-------------------------------------------------------
-SyncBool TAssetScript::ExportData(TBinaryTree& Data)				
+SyncBool TAssetTimeline::ExportData(TBinaryTree& Data)				
 {	
 	// Write each keyframe out
 	for(u32 uIndex = 0; uIndex < m_Keyframes.GetSize(); uIndex++)
@@ -264,7 +214,7 @@ SyncBool TAssetScript::ExportData(TBinaryTree& Data)
 }	
 
 
-Bool TAssetScript::GetKeyframes(const float& fTimeFrom,const float& fTimeStep, TArray<TTempKeyframeData>& pKeyframes)
+Bool TAssetTimeline::GetKeyframes(const float& fTimeFrom,const float& fTimeStep, TArray<TTempKeyframeData>& pKeyframes)
 {
 	// No timestep?  Then ther's no need to process the keyframes
 	if(fTimeStep == 0.0f)
@@ -286,7 +236,7 @@ Bool TAssetScript::GetKeyframes(const float& fTimeFrom,const float& fTimeStep, T
 
 }
 
-Bool TAssetScript::GetKeyframes_Forward(const float& fTimeFrom,const float& fTimeTo, TArray<TTempKeyframeData>& pKeyframes)
+Bool TAssetTimeline::GetKeyframes_Forward(const float& fTimeFrom,const float& fTimeTo, TArray<TTempKeyframeData>& pKeyframes)
 {
 	TTempKeyframeData firstkey;
 	Bool bAddFirstKey = TRUE;
@@ -346,7 +296,7 @@ Bool TAssetScript::GetKeyframes_Forward(const float& fTimeFrom,const float& fTim
 
 			pKeyframes.Add(data);
 
-			// We can retunr now as now more keys will match
+			// We can return now as now more keys will match
 			return TRUE;
 		}
 		else if(fTime > fTimeFrom && fTime < fTimeTo)
@@ -358,6 +308,16 @@ Bool TAssetScript::GetKeyframes_Forward(const float& fTimeFrom,const float& fTim
 			data.m_pKeyframe = Pair.m_Item.GetObject();
 
 			pKeyframes.Add(data);
+
+			// Is this the last keyframe?
+			if(uIndex == (m_Keyframes.GetSize()-1))
+			{
+				// Insert the previous key
+				if(bAddFirstKey)
+					pKeyframes.InsertAt(0, firstkey);
+
+				return TRUE;
+			}
 		}
 		else if(fTime < fTimeFrom)
 		{
@@ -365,14 +325,38 @@ Bool TAssetScript::GetKeyframes_Forward(const float& fTimeFrom,const float& fTim
 			firstkey.m_fTime = fTime;
 			firstkey.m_pKeyframe = Pair.m_Item.GetObject();
 		}
+		/*
+		else if((uIndex == (m_Keyframes.GetSize()-1)) && (fTime > fTimeFrom))
+		{
+			// Are we going beyond the range of the keyframes?
+			// If so this will be the last one to be added
+			if(bAddFirstKey)
+			{
+				pKeyframes.InsertAt(0, firstkey);
+			}
+
+			if(bAddLastKey)
+			{
+				// This is the last key we will come across that is beyond the time range so
+				// add it to the array as it may be needed for interping to as a last keyframe
+				TTempKeyframeData data;
+				data.m_fTime = fTime;
+				data.m_pKeyframe = Pair.m_Item.GetObject();
+
+				pKeyframes.Add(data);
+			}
+
+			return TRUE;
+		}
+		*/
 
 	}
 
-	return FALSE;
+	return (pKeyframes.GetSize() > 0);
 }
 
 
-Bool TAssetScript::GetKeyframes_Backward(const float& fTimeFrom,const float& fTimeTo, TArray<TTempKeyframeData>& pKeyframes)
+Bool TAssetTimeline::GetKeyframes_Backward(const float& fTimeFrom,const float& fTimeTo, TArray<TTempKeyframeData>& pKeyframes)
 {
 	// Get the keyframes that the time from and time to will span
 	for(u32 uIndex = (m_Keyframes.GetSize() - 1); uIndex >= 0; uIndex--)
