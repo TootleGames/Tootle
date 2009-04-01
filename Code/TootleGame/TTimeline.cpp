@@ -288,9 +288,14 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand& Com
 		// Handle special create and shutdown commands
 		if(MessageRef == TLCore::InitialiseRef)
 		{
+			// get the paretn ndoe ref
+			TRef ParentNodeRef;
+
+			Command.ImportData("ParentRef", ParentNodeRef);
+
 			// Create a new node via the graph and 
 			// TODO: Support sending an initialise message and setting the parent
-			TRef NewNodeRef = TLRender::g_pRendergraph->CreateNode(NodeRef, "Render", TRef(), &Command);
+			TRef NewNodeRef = TLRender::g_pRendergraph->CreateNode(NodeRef, "Render", ParentNodeRef, &Command);
 
 			if(NewNodeRef.IsValid() && (NodeRef != NewNodeRef))
 			{
