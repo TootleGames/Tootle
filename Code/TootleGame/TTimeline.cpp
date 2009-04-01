@@ -283,50 +283,81 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand& Com
 
 	TRef MessageRef = Command.GetMessageRef();
 
-	if(NodeGraphRef == "Render")
+	// Handle special create and shutdown commands
+	if(MessageRef == TLCore::InitialiseRef)
 	{
-		// Handle special create and shutdown commands
-		if(MessageRef == TLCore::InitialiseRef)
+		// get the paretn ndoe ref
+		TRef ParentNodeRef;
+
+		Command.ImportData("ParentRef", ParentNodeRef);
+
+		// Create a new node via the graph and 
+		TRef NewNodeRef;
+
+		// Create a node via the graph
+		if(NodeGraphRef == "Scene")
+			NewNodeRef = TLScene::g_pScenegraph->CreateNode(NodeRef, "Object", ParentNodeRef, &Command);
+		else if(NodeGraphRef == "Render")
+			NewNodeRef = TLRender::g_pRendergraph->CreateNode(NodeRef, "Render", ParentNodeRef, &Command);
+		else if(NodeGraphRef == "Audio")
+			NewNodeRef = TLAudio::g_pAudiograph->CreateNode(NodeRef, "Audio", ParentNodeRef, &Command);
+		else if(NodeGraphRef == "Physics")
+			NewNodeRef = TLPhysics::g_pPhysicsgraph->CreateNode(NodeRef, "Physics", ParentNodeRef, &Command);
+		else
 		{
-			// get the paretn ndoe ref
-			TRef ParentNodeRef;
-
-			Command.ImportData("ParentRef", ParentNodeRef);
-
-			// Create a new node via the graph and 
-			// TODO: Support sending an initialise message and setting the parent
-			TRef NewNodeRef = TLRender::g_pRendergraph->CreateNode(NodeRef, "Render", ParentNodeRef, &Command);
-
-			if(NewNodeRef.IsValid() && (NodeRef != NewNodeRef))
-			{
-				// Store teh reference in the key array.  This will be used as the alternative node name for 
-				// when the same node ID is used in other commands
-				m_NodeRefMap.Add(NodeRef, NewNodeRef);
-			}
-			return (NewNodeRef.IsValid());
-		}
-		else if (MessageRef == TLCore::ShutdownRef)
-		{
-			// Remove from our keyarray if it exists
-			m_NodeRefMap.RemoveItem(NodeRef);
-
-			// Shutdown a node from the graph
-			return TLRender::g_pRendergraph->RemoveNode(NodeRef);
+			// Invalid graph ref? We may need to handle special cases here.
+			return FALSE;
 		}
 
-		// Send message to the render graph
-		return TLRender::g_pRendergraph->SendMessageToNode(NodeRef, Command);
+
+		if(NewNodeRef.IsValid() && (NodeRef != NewNodeRef))
+		{
+			// Store teh reference in the key array.  This will be used as the alternative node name for 
+			// when the same node ID is used in other commands
+			m_NodeRefMap.Add(NodeRef, NewNodeRef);
+		}
+		return (NewNodeRef.IsValid());
 	}
-	else if(NodeGraphRef == "Scene")
+	else if (MessageRef == TLCore::ShutdownRef)
 	{
-		// Send message to the scenegraph
-		return TLScene::g_pScenegraph->SendMessageToNode(NodeRef, Command);
+		// Remove from our keyarray if it exists
+		m_NodeRefMap.RemoveItem(NodeRef);
+
+		// Shutdown a node from the graph
+		if(NodeGraphRef == "Scene")
+			return TLScene::g_pScenegraph->RemoveNode(NodeRef);
+		else if(NodeGraphRef == "Render")
+			return TLRender::g_pRendergraph->RemoveNode(NodeRef);
+		else if(NodeGraphRef == "Audio")
+			return TLAudio::g_pAudiograph->RemoveNode(NodeRef);
+		else if(NodeGraphRef == "Physics")
+			return TLPhysics::g_pPhysicsgraph->RemoveNode(NodeRef);
+		else
+		{
+			// Invalid graph ref? We may need to handle special cases here.
+			return FALSE;
+		}
+
 	}
 	else
 	{
-		// Invalid graph ref? We may need to handle special cases here.
 
-		return FALSE;
+		// Send message to the graph
+		if(NodeGraphRef == "Scene")
+			return TLScene::g_pScenegraph->SendMessageToNode(NodeRef, Command);
+		else if(NodeGraphRef == "Render")
+			return TLRender::g_pRendergraph->SendMessageToNode(NodeRef, Command);
+		else if(NodeGraphRef == "Audio")
+			return TLAudio::g_pAudiograph->SendMessageToNode(NodeRef, Command);
+		else if(NodeGraphRef == "Physics")
+			return TLPhysics::g_pPhysicsgraph->SendMessageToNode(NodeRef, Command);
+		else
+		{
+			// Invalid graph ref? We may need to handle special cases here.
+
+			return FALSE;
+		}
+
 	}
 }
 
