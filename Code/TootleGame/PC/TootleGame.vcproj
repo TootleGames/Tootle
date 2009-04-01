@@ -156,14 +156,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\TAssetScriptManager.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\TAssetScriptManager.h"
-			>
-		</File>
-		<File
 			RelativePath="..\TGame.cpp"
 			>
 		</File>
@@ -217,6 +209,14 @@
 		</File>
 		<File
 			RelativePath="..\TTimeline.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TTimelineManager.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TTimelineManager.h"
 			>
 		</File>
 		<File

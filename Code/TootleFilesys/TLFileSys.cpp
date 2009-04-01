@@ -14,7 +14,7 @@
 #include "TFileScheme.h"
 #include "TFileCollada.h"
 #include "TFileMenu.h"
-#include "TFileAssetScript.h"
+#include "TFileTimeline.h"
 #include "TFileTextDatabase.h"
 #include "TFilePng.h"
 #include "TFileFnt.h"
@@ -572,8 +572,8 @@ TLFileSys::TFile* TLFileSys::TFileFactory::CreateObject(TRefRef InstanceRef,TRef
 		return pFile;
 	}
 	
-	//	tootle asset script xml file
-	if ( TypeRef == TRef_Static3(t,a,s) )
+	//	tootle timeline xml file
+	if ( TypeRef == TRef_Static3(t,t,l) )
 	{
 		pFile = new TLFileSys::TFileTimeline( InstanceRef, TypeRef );
 		return pFile;

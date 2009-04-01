@@ -460,14 +460,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\TFileAssetScript.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\TFileAssetScript.h"
-			>
-		</File>
-		<File
 			RelativePath="..\TFileCollada.cpp"
 			>
 		</File>
@@ -537,6 +529,14 @@
 		</File>
 		<File
 			RelativePath="..\TFileTextDatabase.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TFileTimeline.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TFileTimeline.h"
 			>
 		</File>
 		<File

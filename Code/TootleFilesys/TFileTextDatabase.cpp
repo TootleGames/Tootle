@@ -42,7 +42,7 @@ SyncBool TLFileSys::TFileTextDatabase::ExportAsset(TPtr<TLAsset::TAsset>& pAsset
 	//	malformed AssetScript
 	if ( !pTtdTag )
 	{
-		TLDebug_Print("TAS file missing root <textdatabase> tag");
+		TLDebug_Print("TTD file missing root <textdatabase> tag");
 		return SyncFalse;
 	}
 

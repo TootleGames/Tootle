@@ -7,7 +7,7 @@
  *
  */
 
-#include "TFileAssetScript.h"
+#include "TFileTimeline.h"
 #include <TootleAsset/TAssetTimeline.h>
 #include "TLFile.h"
 
@@ -44,7 +44,7 @@ SyncBool TLFileSys::TFileTimeline::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Boo
 	//	malformed AssetScript
 	if ( !pTasTag )
 	{
-		TLDebug_Print("TAS file missing root <Timeline> tag");
+		TLDebug_Print("TTL file missing root <Timeline> tag");
 		return SyncFalse;
 	}
 
@@ -102,7 +102,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline(TPtr<TLAsset::TAssetTimel
 		//	async
 		if ( TagImportResult == SyncWait )
 		{
-			TLDebug_Break("todo: async TAS import");
+			TLDebug_Break("todo: async TTL import");
 			return SyncFalse;
 		}
 	}
@@ -143,7 +143,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportKeyframeTag(TPtr<TL
 
 	if(!pKeyframe)
 	{
-		TLDebug_Print("Unable to create keyframe for TAS asset");
+		TLDebug_Print("Unable to create keyframe for TTL asset");
 		return SyncFalse;
 	}
 
@@ -167,7 +167,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportKeyframeTag(TPtr<TL
 		//	async
 		if ( TagImportResult == SyncWait )
 		{
-			TLDebug_Break("todo: async TAS import");
+			TLDebug_Break("todo: async TTL import");
 			return SyncFalse;
 		}
 	}
@@ -191,7 +191,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandTag(TPtr<TLA
 
 	if(!CommandRef.IsValid())
 	{
-		TLDebug_Print("Failed to get valid node ref from TAS file");
+		TLDebug_Print("Failed to get valid command ref from TTL file");
 		return SyncFalse;
 	}
 
@@ -203,7 +203,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandTag(TPtr<TLA
 
 	if(!NodeRef.IsValid())
 	{
-		TLDebug_Print("Failed to get valid node ref from TAS file");
+		TLDebug_Print("Failed to get valid node ref from TTL file");
 		return SyncFalse;
 	}
 
@@ -215,7 +215,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandTag(TPtr<TLA
 
 	if(!NodeGraphRef.IsValid())
 	{
-		TLDebug_Print("Failed to get valid node graph ref from TAS file");
+		TLDebug_Print("Failed to get valid node graph ref from TTL file");
 		return SyncFalse;
 	}
 
@@ -241,7 +241,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandTag(TPtr<TLA
 
 	if(!pCommand)
 	{
-		TLDebug_Print("Failed to create command for TAS file");
+		TLDebug_Print("Failed to create command for TTL file");
 		return SyncFalse;
 	}
 
@@ -261,7 +261,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandTag(TPtr<TLA
 		//	async
 		if ( TagImportResult == SyncWait )
 		{
-			TLDebug_Break("todo: async TAS import");
+			TLDebug_Break("todo: async TTL import");
 			return SyncFalse;
 		}
 	}
@@ -386,7 +386,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandData(TPtr<TL
 						else
 						{
 							// Failed to copy the data form the XML file
-							TLDebug_Print("Failed to get (rotation) command data from TAS file");
+							TLDebug_Print("Failed to get (rotation) command data from TTL file");
 							return SyncFalse;
 						}
 					}
@@ -398,7 +398,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandData(TPtr<TL
 				if(TagImportResult != SyncTrue)
 				{
 					// Failed to copy the data form the XML file
-					TLDebug_Print("Failed to get command data from TAS file");
+					TLDebug_Print("Failed to get command data from TTL file");
 					return SyncFalse;
 				}
 			}

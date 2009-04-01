@@ -33,7 +33,7 @@ SyncBool TKeyframe::ImportData(TBinaryTree& Data)
 
 			if(!pCommandList || (Add(pCommandList) == -1))
 			{
-				TLDebug_Print("Failed to create new command list for TAS asset file");
+				TLDebug_Print("Failed to create new command list for TTL asset file");
 				return SyncFalse;
 			}
 
@@ -77,7 +77,7 @@ SyncBool TAssetTimelineCommandList::ImportData(TBinaryTree& Data)
 	if(!Data.Read(m_NodeRef))
 	{
 		// Failed to read data
-		TLDebug_Print("Failed to read node ref from TAS asset file");
+		TLDebug_Print("Failed to read node ref from TTL asset file");
 		return SyncFalse;
 	}
 
@@ -85,7 +85,7 @@ SyncBool TAssetTimelineCommandList::ImportData(TBinaryTree& Data)
 	if(!Data.Read(m_NodeGraphRef))
 	{
 		// Failed to read data
-		TLDebug_Print("Failed to read node graph ref from TAS asset file");
+		TLDebug_Print("Failed to read node graph ref from TTL asset file");
 		return SyncFalse;
 	}
 
@@ -163,7 +163,7 @@ SyncBool TAssetTimeline::ImportData(TBinaryTree& Data)
 		// Write the keyframe time
 		if(!pKeyframeTree->Read(fTime))
 		{
-			TLDebug_Print("Failed to read time from TAS asset file");
+			TLDebug_Print("Failed to read time from TTL asset file");
 			return SyncFalse;
 		}
 
@@ -171,7 +171,7 @@ SyncBool TAssetTimeline::ImportData(TBinaryTree& Data)
 
 		if(pKeyframe == NULL)
 		{
-			TLDebug_Print("Failed to create keyframe from TAS asset file");
+			TLDebug_Print("Failed to create keyframe from TTL asset file");
 			return SyncFalse;
 		}
 
