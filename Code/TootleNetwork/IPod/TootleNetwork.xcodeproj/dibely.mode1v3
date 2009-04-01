@@ -233,6 +233,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -277,6 +279,9 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
+									<integer>4</integer>
+									<integer>3</integer>
+									<integer>2</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -311,14 +316,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>FBXMLHandler.m</string>
+								<string>FBConnect.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -326,19 +329,21 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>FBXMLHandler.m</string>
+										<string>FBConnect.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>840EBAC70F6EC49100BA6F4C</string>
+										<string>848A64120F82692D007DA23B</string>
 										<key>history</key>
 										<array>
 											<string>840EBAA70F6EC27900BA6F4C</string>
-											<string>840EBABD0F6EC37200BA6F4C</string>
+											<string>848A640F0F82692D007DA23B</string>
+											<string>848A64100F82692D007DA23B</string>
 										</array>
 										<key>prevStack</key>
 										<array>
 											<string>840EBAA90F6EC27900BA6F4C</string>
+											<string>848A64110F82692D007DA23B</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -396,9 +401,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>840EBAC80F6EC49100BA6F4C</string>
+				<string>848A64130F82692D007DA23B</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>840EBAC90F6EC49100BA6F4C</string>
+				<string>848A64140F82692D007DA23B</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -532,7 +537,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>840EBAAD0F6EC27900BA6F4C</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleNetwork/IPod/TootleNetwork.xcodeproj</string>
 	</array>
 	<key>WindowString</key>

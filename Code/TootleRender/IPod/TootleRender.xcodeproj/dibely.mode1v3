@@ -233,8 +233,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -279,12 +277,11 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>3</integer>
-									<integer>0</integer>
+									<integer>45</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 169}, {242, 609}}</string>
+							<string>{{0, 0}, {242, 609}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -314,12 +311,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TRenderNodePhysicsNode.h</string>
+								<string>TLRender.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -327,14 +326,13 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TRenderNodePhysicsNode.h</string>
+										<string>TLRender.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8477D5D40F697F9E0023454C</string>
+										<string>84BF76340F7DAFFC008C3BA9</string>
 										<key>history</key>
 										<array>
-											<string>846B6B7D0F29EFC4005EB752</string>
 											<string>84EB990A0F3786160020B52B</string>
 											<string>84EB990B0F3786160020B52B</string>
 											<string>84EB99C30F3897FC0020B52B</string>
@@ -342,9 +340,7 @@
 											<string>84EB99F50F38A2C10020B52B</string>
 											<string>84EB99F70F38A2C10020B52B</string>
 											<string>84C1FD7A0F38A728001DC896</string>
-											<string>84D68F9F0F41C7DD002CFFE1</string>
 											<string>84D68FA10F41C7DD002CFFE1</string>
-											<string>84D694840F431B21002CFFE1</string>
 											<string>84D694850F431B21002CFFE1</string>
 											<string>84DC92D10F49D8FA00532109</string>
 											<string>84DC93850F4AC93900532109</string>
@@ -365,8 +361,13 @@
 											<string>8461C2510F5C2E4500ED9509</string>
 											<string>8461C2520F5C2E4500ED9509</string>
 											<string>847F008F0F67C55A00121D77</string>
-											<string>847F01C40F69044100121D77</string>
-											<string>8477D5B20F697E150023454C</string>
+											<string>84C0C49D0F6A93910080B167</string>
+											<string>84C0C4AE0F6A93B90080B167</string>
+											<string>840EC3600F77BF8700BA6F4C</string>
+											<string>840EC3610F77BF8700BA6F4C</string>
+											<string>84BF761D0F7DAFFC008C3BA9</string>
+											<string>84BF761E0F7DAFFC008C3BA9</string>
+											<string>84BF76200F7DAFFC008C3BA9</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -399,6 +400,21 @@
 											<string>8418E4F50F4AD49D00B956C9</string>
 											<string>8461C0C10F5BFBBA00ED9509</string>
 											<string>8461C1090F5C082600ED9509</string>
+											<string>84C0C4A10F6A93910080B167</string>
+											<string>84C0C4AF0F6A93B90080B167</string>
+											<string>84BF76210F7DAFFC008C3BA9</string>
+											<string>84BF76220F7DAFFC008C3BA9</string>
+											<string>84BF76230F7DAFFC008C3BA9</string>
+											<string>84BF76250F7DAFFC008C3BA9</string>
+											<string>84BF76260F7DAFFC008C3BA9</string>
+											<string>84BF76280F7DAFFC008C3BA9</string>
+											<string>84BF76290F7DAFFC008C3BA9</string>
+											<string>84BF762B0F7DAFFC008C3BA9</string>
+											<string>84BF762C0F7DAFFC008C3BA9</string>
+											<string>84BF762E0F7DAFFC008C3BA9</string>
+											<string>84BF762F0F7DAFFC008C3BA9</string>
+											<string>84BF76310F7DAFFC008C3BA9</string>
+											<string>84BF76320F7DAFFC008C3BA9</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -456,9 +472,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>8477D5D50F697F9E0023454C</string>
+				<string>84BF76350F7DAFFC008C3BA9</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>8477D5D60F697F9E0023454C</string>
+				<string>84BF76360F7DAFFC008C3BA9</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -592,6 +608,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>84EB99820F3889D60020B52B</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleRender/IPod/TootleRender.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -611,12 +628,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string></string>
+								<string>TLRender.cpp</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -672,7 +691,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>84EB99820F3889D60020B52B</string>
-				<string>847F01A80F68FF7700121D77</string>
+				<string>84BF75EB0F7DA958008C3BA9</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -832,7 +851,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TRenderNode.cpp</string>
+										<string>IPodRenderTarget.mm</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -888,8 +907,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>8461C1030F5C082000ED9509</string>
-				<string>8461C1040F5C082000ED9509</string>
+				<string>840EC35D0F77BF5800BA6F4C</string>
+				<string>840EC35E0F77BF5800BA6F4C</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>

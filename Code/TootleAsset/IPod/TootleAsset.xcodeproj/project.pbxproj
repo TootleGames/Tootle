@@ -13,10 +13,10 @@
 		840EBDB50F777B5600BA6F4C /* TTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 840EBDB10F777B5600BA6F4C /* TTexture.h */; };
 		8418F8CB0F4EB9C200B956C9 /* TPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F8C90F4EB9C200B956C9 /* TPath.cpp */; };
 		8418F8CC0F4EB9C200B956C9 /* TPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F8CA0F4EB9C200B956C9 /* TPath.h */; };
+		849E9C8B0F8385FC00037332 /* TAssetTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 849E9C890F8385FC00037332 /* TAssetTimeline.cpp */; };
+		849E9C8C0F8385FC00037332 /* TAssetTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 849E9C8A0F8385FC00037332 /* TAssetTimeline.h */; };
 		84C0CA490F6D6C840080B167 /* TText.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C0CA470F6D6C840080B167 /* TText.h */; };
 		84C0CA4A0F6D6C840080B167 /* TText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C0CA480F6D6C840080B167 /* TText.cpp */; };
-		84C0CA4D0F6D6D0F0080B167 /* TAssetScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C0CA4B0F6D6D0F0080B167 /* TAssetScript.h */; };
-		84C0CA4E0F6D6D0F0080B167 /* TAssetScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C0CA4C0F6D6D0F0080B167 /* TAssetScript.cpp */; };
 		84C109350F0A787B00B2DF7A /* TAsset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109260F0A787B00B2DF7A /* TAsset.cpp */; };
 		84C109360F0A787B00B2DF7A /* TAsset.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109270F0A787B00B2DF7A /* TAsset.h */; };
 		84C109370F0A787B00B2DF7A /* TAudio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109280F0A787B00B2DF7A /* TAudio.cpp */; };
@@ -43,10 +43,10 @@
 		840EBDB10F777B5600BA6F4C /* TTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTexture.h; path = ../TTexture.h; sourceTree = SOURCE_ROOT; };
 		8418F8C90F4EB9C200B956C9 /* TPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPath.cpp; path = ../TPath.cpp; sourceTree = SOURCE_ROOT; };
 		8418F8CA0F4EB9C200B956C9 /* TPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPath.h; path = ../TPath.h; sourceTree = SOURCE_ROOT; };
+		849E9C890F8385FC00037332 /* TAssetTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAssetTimeline.cpp; path = ../TAssetTimeline.cpp; sourceTree = SOURCE_ROOT; };
+		849E9C8A0F8385FC00037332 /* TAssetTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAssetTimeline.h; path = ../TAssetTimeline.h; sourceTree = SOURCE_ROOT; };
 		84C0CA470F6D6C840080B167 /* TText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TText.h; path = ../TText.h; sourceTree = SOURCE_ROOT; };
 		84C0CA480F6D6C840080B167 /* TText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TText.cpp; path = ../TText.cpp; sourceTree = SOURCE_ROOT; };
-		84C0CA4B0F6D6D0F0080B167 /* TAssetScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAssetScript.h; path = ../TAssetScript.h; sourceTree = SOURCE_ROOT; };
-		84C0CA4C0F6D6D0F0080B167 /* TAssetScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAssetScript.cpp; path = ../TAssetScript.cpp; sourceTree = SOURCE_ROOT; };
 		84C1091F0F0A785200B2DF7A /* libTootleAsset.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleAsset.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C109260F0A787B00B2DF7A /* TAsset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAsset.cpp; path = ../TAsset.cpp; sourceTree = SOURCE_ROOT; };
 		84C109270F0A787B00B2DF7A /* TAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAsset.h; path = ../TAsset.h; sourceTree = SOURCE_ROOT; };
@@ -102,6 +102,8 @@
 		84C109450F0A789D00B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				849E9C890F8385FC00037332 /* TAssetTimeline.cpp */,
+				849E9C8A0F8385FC00037332 /* TAssetTimeline.h */,
 				840EBDAE0F777B5600BA6F4C /* TAtlas.cpp */,
 				840EBDAF0F777B5600BA6F4C /* TAtlas.h */,
 				840EBDB00F777B5600BA6F4C /* TTexture.cpp */,
@@ -127,8 +129,6 @@
 				84C109340F0A787B00B2DF7A /* TShader.h */,
 				84C0CA470F6D6C840080B167 /* TText.h */,
 				84C0CA480F6D6C840080B167 /* TText.cpp */,
-				84C0CA4B0F6D6D0F0080B167 /* TAssetScript.h */,
-				84C0CA4C0F6D6D0F0080B167 /* TAssetScript.cpp */,
 			);
 			name = "Source Code";
 			sourceTree = "<group>";
@@ -162,9 +162,9 @@
 				84DE342C0F12A9C500608F8C /* TScheme.h in Headers */,
 				8418F8CC0F4EB9C200B956C9 /* TPath.h in Headers */,
 				84C0CA490F6D6C840080B167 /* TText.h in Headers */,
-				84C0CA4D0F6D6D0F0080B167 /* TAssetScript.h in Headers */,
 				840EBDB30F777B5600BA6F4C /* TAtlas.h in Headers */,
 				840EBDB50F777B5600BA6F4C /* TTexture.h in Headers */,
+				849E9C8C0F8385FC00037332 /* TAssetTimeline.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,9 +221,9 @@
 				84DE342B0F12A9C500608F8C /* TScheme.cpp in Sources */,
 				8418F8CB0F4EB9C200B956C9 /* TPath.cpp in Sources */,
 				84C0CA4A0F6D6C840080B167 /* TText.cpp in Sources */,
-				84C0CA4E0F6D6D0F0080B167 /* TAssetScript.cpp in Sources */,
 				840EBDB20F777B5600BA6F4C /* TAtlas.cpp in Sources */,
 				840EBDB40F777B5600BA6F4C /* TTexture.cpp in Sources */,
+				849E9C8B0F8385FC00037332 /* TAssetTimeline.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -327,10 +327,6 @@
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
 										<string>TAssetScript.cpp</string>
-										<key>_historyCapacity</key>
-										<integer>0</integer>
-										<key>bookmark</key>
-										<string>840EBDB60F777B7A00BA6F4C</string>
 										<key>history</key>
 										<array>
 											<string>84E643D90F1537BF005A4DC9</string>
@@ -351,11 +347,9 @@
 											<string>84C0CA690F6D70D60080B167</string>
 											<string>84C0CA6A0F6D70D60080B167</string>
 											<string>84C0CA6B0F6D70D60080B167</string>
-											<string>84C0CA6C0F6D70D60080B167</string>
 											<string>84C0CA6D0F6D70D60080B167</string>
 											<string>84C0CA6E0F6D70D60080B167</string>
 											<string>84C0CA6F0F6D70D60080B167</string>
-											<string>840EBCD90F7296E100BA6F4C</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -380,8 +374,6 @@
 											<string>84C0CA770F6D70D60080B167</string>
 											<string>84C0CA790F6D70D60080B167</string>
 											<string>84C0CA7A0F6D70D60080B167</string>
-											<string>84C0CA7C0F6D70D60080B167</string>
-											<string>84C0CA7E0F6D70D60080B167</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -439,9 +431,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>840EBDB70F777B7A00BA6F4C</string>
+				<string>849E9C8D0F8385FF00037332</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>840EBDB80F777B7A00BA6F4C</string>
+				<string>849E9C8E0F8385FF00037332</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
