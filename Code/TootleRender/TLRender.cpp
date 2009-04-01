@@ -94,6 +94,16 @@ void TLRender::Opengl::SceneTransform(const TLMaths::TTransform& Transform,const
 		TLMaths::TMatrix RotMatrix;
 		TLMaths::QuaternionToMatrix( Transform.GetRotation(), RotMatrix );
 		glMultMatrixf( RotMatrix.GetData() );
+
+		// Test using getting the Euler angles from the Quaternion rather than converting the quaternion to a matrix
+		//float3 vRot = Transform.GetRotation().GetEuler();
+		//glRotatef(vRot.x, 1, 0, 0);
+		//glRotatef(vRot.y, 0, 1, 0);
+		//glRotatef(vRot.z, 0, 0, 1);
+		
+		// Alternative version using angle axis from quaternion
+		// float4 vRot = Transform.GetRotation().GetAxisAngle();
+		//glRotate(vRot.w, vRot.x, vRot.y, vRot.z);
 	}
 }
 
