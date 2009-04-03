@@ -63,6 +63,9 @@ namespace TLCore
 
 		void				DoQuit();			// Notification of app quit
 		const TString&		GetAppExe();		//	get the application exe (full path)
+		
+		void				QueryHardwareInformation(TBinaryTree& Data)	{}
+		void				QueryLanguageInformation(TBinaryTree& Data)	{}
 	}
 }
 

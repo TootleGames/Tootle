@@ -4,6 +4,7 @@
 #include <TootleCore/TEventChannel.h>
 #include <TootleAsset/TLAsset.h>
 #include <TootleAsset/TText.h>
+#include <TootleCore/TCoreManager.h>
 
 namespace TLText
 {
@@ -60,6 +61,30 @@ void TTextManager::OnLanguageChanged()
 { 
 	// TODO: Send out a language changed message
 	// so things can update themselves such as text dialogues
+}
+
+
+SyncBool TTextManager::Initialise()
+{
+	// Get the language from the core manager as specified on the hardware
+	TRef LanguageRef = TLCore::g_pCoreManager->GetHardwareLanguage();
+	
+	if(IsLanguageSupported(LanguageRef))
+	{
+		SetLanguage(LanguageRef);
+	}
+	
+
+	return TManager::Initialise();
+}
+
+
+Bool TTextManager::IsLanguageSupported(TRefRef LanguageRef)
+{
+	// Go through a list of languages on the text manager and see if the specified language ref exists
+	// if so then the language is supported, ootherwise it's not and the default language or currently selected language will be used
+
+	return TRUE;
 }
 
 

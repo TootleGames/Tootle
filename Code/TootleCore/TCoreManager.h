@@ -5,6 +5,8 @@
 #include "TLTime.h"
 #include "TLMessaging.h"
 #include "TKeyArray.h"
+#include "TBinaryTree.h"
+
 
 namespace TLCore
 {
@@ -12,6 +14,7 @@ namespace TLCore
 
 	extern TPtr<TCoreManager>		g_pCoreManager;
 };
+
 
 
 // Core manager class - monitors all other managers
@@ -55,6 +58,9 @@ public:
 	// Enable/Disable - should only be called by the lower level hardware interrupt routines
 	void					Enable(Bool bEnable);
 	FORCEINLINE Bool		IsEnabled() const							{	return m_bEnabled;	}
+
+	
+	TRef					GetHardwareLanguage();
 	
 protected:
 	virtual SyncBool		Initialise();
@@ -80,7 +86,7 @@ private:
 	Bool					CheckManagersInErrorState();					// Checks the managers to see if any are in the error state
 
 	void					SubscribeAllManagers();
-
+	
 private:
 	u16							m_TimerUpdateCount;					//	incremented every time the OS wants to trigger an update
 	TLTime::TTimestampMicro		m_LastUpdateTime;					//	timestamp of last update
@@ -94,6 +100,8 @@ private:
 	TPtrArray<TManager>			m_Managers;
 
 	TKeyArray<TRef, float>		m_aTimeStepModifiers;	// Game mechanics time step modifier - allows the game to sped up/slowed down/paused etc
+	
+	TPtr<TBinaryTree>			m_pMachineData;			// Hardware specific data
 
 	Bool						m_ChannelsInitialised;	//	for the init, we do channel initialisation once
 	Bool						m_bEnabled;

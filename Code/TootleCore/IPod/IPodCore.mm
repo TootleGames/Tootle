@@ -13,6 +13,8 @@
 #import <QuartzCore/QuartzCore.h>
 #import <OpenGLES/EAGLDrawable.h>
 
+#import <UIKit/UIDevice.h>
+
 //	Constant for the number of times per second (Hertz) to sample acceleration.
 #define ACCELEROMETER_FREQUENCY     30
 
@@ -64,6 +66,80 @@ SyncBool TLCore::Platform::Init()
 {
 	
 	return SyncTrue;
+}
+
+
+// Populate the binary tree with hardware specific information
+void TLCore::Platform::QueryHardwareInformation(TBinaryTree& Data)
+{
+	TLDebug_Print("Device Information:");
+
+	/////////////////////////////////////////////////////////////
+	// Device ID, OS and type
+	/////////////////////////////////////////////////////////////	
+
+	// Write the UDID
+	NSString* pNSString = [[UIDevice currentDevice] uniqueIdentifier];		// a string unique to each device based on various hardware info.
+	const char * pString = [pNSString UTF8String];
+	TTempString devicedata(pString);	
+	Data.ExportData("UDID", devicedata);
+	
+	TLDebug_Print(devicedata);
+
+	// Write the type of device
+	pNSString = [[UIDevice currentDevice] model];					// @"iPhone", @"iPod Touch"
+	pString = [pNSString UTF8String];	
+	devicedata = pString;	
+	Data.ExportData("Type", devicedata);
+
+	TLDebug_Print(devicedata);
+	
+	// Write the OS
+	pNSString = [[UIDevice currentDevice] systemName];				// @"iPhone OS"
+	pString = [pNSString UTF8String];	
+	devicedata = pString;	
+	Data.ExportData("OS", devicedata);
+
+	TLDebug_Print(devicedata);
+
+	// Write the OS version
+	pNSString = [[UIDevice currentDevice] systemVersion];			// @"2.0"
+	pString = [pNSString UTF8String];	
+	devicedata = pString;	
+	Data.ExportData("OS", devicedata);
+
+	TLDebug_Print(devicedata);
+	
+	
+	/////////////////////////////////////////////////////////////
+	TLDebug_Print("End Device Information");
+}
+
+void TLCore::Platform::QueryLanguageInformation(TBinaryTree& Data)
+{
+	TLDebug_Print("Language Information:");
+
+	/////////////////////////////////////////////////////////////
+	// Langauge
+	/////////////////////////////////////////////////////////////
+	NSUserDefaults* defs = [NSUserDefaults standardUserDefaults];
+	
+	NSArray* languages = [defs objectForKey:@"AppleLanguages"];
+	
+	NSString* preferredLang = [languages objectAtIndex:0];
+
+	const char* pString = [preferredLang UTF8String];
+	
+	TTempString languagestr(pString);
+	TLDebug_Print(languagestr);
+	
+	// Export the language selected to the data - actual language selection will be done 
+	// via the core manager
+	Data.ExportData("Language", languagestr);
+
+	/////////////////////////////////////////////////////////////
+
+	TLDebug_Print("End Language Information");
 }
 
 
