@@ -25,6 +25,7 @@
 
 //	forward declarations
 class TString;
+class TBinaryTree;
 
 
 namespace TLDebug
