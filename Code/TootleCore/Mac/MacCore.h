@@ -64,8 +64,8 @@ namespace TLCore
 		//	ipoddy specific funcs
 		void				GetString(TString& String, const NSString* pNSString);	//	append ipod foundation string to TString
 		
-		void				QueryHardwareInformation(TBinaryTree& Data)	{}
-		void				QueryLanguageInformation(TBinaryTree& Data)	{}
+		void				QueryHardwareInformation(TBinaryTree& Data);
+		void				QueryLanguageInformation(TBinaryTree& Data);
 
 	}
 }

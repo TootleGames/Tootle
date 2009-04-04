@@ -101,6 +101,14 @@ SyncBool TLCore::Platform::Init()
 }
 
 
+void TLCore::Platform::QueryHardwareInformation(TBinaryTree& Data)	
+{
+}
+
+void TLCore::Platform::QueryLanguageInformation(TBinaryTree& Data)	
+{
+}
+
 
 //--------------------------------------------------
 //	platform update
