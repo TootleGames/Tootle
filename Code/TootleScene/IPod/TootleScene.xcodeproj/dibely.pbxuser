@@ -6,11 +6,6 @@
 		name = TSceneNode_Camera.h;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleScene/IPod/../TSceneNode_Camera.h;
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {962, 1512}}";
-			sepNavSelRange = "{2953, 0}";
-			sepNavVisRange = "{2283, 749}";
-		};
 	};
 	8461C2700F5C2F8D00ED9509 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -89,23 +84,6 @@
 		vrLen = 626;
 		vrLoc = 368;
 	};
-	8461C3160F5C367800ED9509 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8461C3170F5C367800ED9509 /* TSceneNode_Camera.cpp */;
-		name = "TSceneNode_Camera.cpp: 23";
-		rLen = 0;
-		rLoc = 707;
-		rType = 0;
-		vrLen = 550;
-		vrLoc = 4477;
-	};
-	8461C3170F5C367800ED9509 /* TSceneNode_Camera.cpp */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.cpp.cpp;
-		name = TSceneNode_Camera.cpp;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleScene/IPod/../TSceneNode_Camera.cpp;
-		sourceTree = "<absolute>";
-	};
 	8461C3200F5C368900ED9509 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 8461C3210F5C368900ED9509 /* TSceneNode_Camera.cpp */;
@@ -118,6 +96,7 @@
 	};
 	8461C3210F5C368900ED9509 /* TSceneNode_Camera.cpp */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.cpp.cpp;
 		name = TSceneNode_Camera.cpp;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleScene/IPod/../TSceneNode_Camera.cpp;
 		sourceTree = "<absolute>";
@@ -131,6 +110,22 @@
 		rType = 0;
 		vrLen = 969;
 		vrLoc = 0;
+	};
+	849EA07E0F891D9E00037332 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 849EA07F0F891D9E00037332 /* TSceneNode_Camera.cpp */;
+		name = "TSceneNode_Camera.cpp: 23";
+		rLen = 0;
+		rLoc = 707;
+		rType = 0;
+		vrLen = 548;
+		vrLoc = 4468;
+	};
+	849EA07F0F891D9E00037332 /* TSceneNode_Camera.cpp */ = {
+		isa = PBXFileReference;
+		name = TSceneNode_Camera.cpp;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleScene/IPod/../TSceneNode_Camera.cpp;
+		sourceTree = "<absolute>";
 	};
 	84C107820F0A679500B2DF7A /* Project object */ = {
 		activeBuildConfigurationName = Release;
@@ -204,8 +199,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 257701503;
-			PBXWorkspaceStateSaveDate = 257701503;
+			PBXPerProjectTemplateStateSaveDate = 260644238;
+			PBXWorkspaceStateSaveDate = 260644238;
 		};
 		perUserProjectItems = {
 			8461C2700F5C2F8D00ED9509 /* PBXTextBookmark */ = 8461C2700F5C2F8D00ED9509 /* PBXTextBookmark */;
@@ -214,9 +209,9 @@
 			8461C2B20F5C308600ED9509 /* PBXTextBookmark */ = 8461C2B20F5C308600ED9509 /* PBXTextBookmark */;
 			8461C2B90F5C311100ED9509 /* PBXTextBookmark */ = 8461C2B90F5C311100ED9509 /* PBXTextBookmark */;
 			8461C2BA0F5C311100ED9509 /* PBXTextBookmark */ = 8461C2BA0F5C311100ED9509 /* PBXTextBookmark */;
-			8461C3160F5C367800ED9509 /* PBXTextBookmark */ = 8461C3160F5C367800ED9509 /* PBXTextBookmark */;
 			8461C3200F5C368900ED9509 /* PBXTextBookmark */ = 8461C3200F5C368900ED9509 /* PBXTextBookmark */;
 			8491EFF00F1F9D7D002FE16F /* PBXTextBookmark */ = 8491EFF00F1F9D7D002FE16F /* PBXTextBookmark */;
+			849EA07E0F891D9E00037332 /* PBXTextBookmark */ = 849EA07E0F891D9E00037332 /* PBXTextBookmark */;
 			84D690850F41F05A002CFFE1 /* PBXTextBookmark */ = 84D690850F41F05A002CFFE1 /* PBXTextBookmark */;
 			84DC8FF30F45F71300532109 /* PBXTextBookmark */ = 84DC8FF30F45F71300532109 /* PBXTextBookmark */;
 			84DC92AB0F49D73E00532109 /* PBXTextBookmark */ = 84DC92AB0F49D73E00532109 /* PBXTextBookmark */;

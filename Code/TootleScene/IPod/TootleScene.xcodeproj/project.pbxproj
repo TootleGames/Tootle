@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		849EA07C0F891D9C00037332 /* TSceneNode_Timeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 849EA07A0F891D9C00037332 /* TSceneNode_Timeline.cpp */; };
+		849EA07D0F891D9C00037332 /* TSceneNode_Timeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 849EA07B0F891D9C00037332 /* TSceneNode_Timeline.h */; };
 		84C107B10F0A686E00B2DF7A /* TLScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C107A10F0A686E00B2DF7A /* TLScene.cpp */; };
 		84C107B20F0A686E00B2DF7A /* TLScene.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C107A20F0A686E00B2DF7A /* TLScene.h */; };
 		84C107B30F0A686E00B2DF7A /* TScenegraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C107A30F0A686E00B2DF7A /* TScenegraph.cpp */; };
@@ -30,6 +32,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		849EA07A0F891D9C00037332 /* TSceneNode_Timeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSceneNode_Timeline.cpp; path = ../TSceneNode_Timeline.cpp; sourceTree = SOURCE_ROOT; };
+		849EA07B0F891D9C00037332 /* TSceneNode_Timeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSceneNode_Timeline.h; path = ../TSceneNode_Timeline.h; sourceTree = SOURCE_ROOT; };
 		84C1078F0F0A67BC00B2DF7A /* libTootleScene.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleScene.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C107A10F0A686E00B2DF7A /* TLScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLScene.cpp; path = ../TLScene.cpp; sourceTree = SOURCE_ROOT; };
 		84C107A20F0A686E00B2DF7A /* TLScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLScene.h; path = ../TLScene.h; sourceTree = SOURCE_ROOT; };
@@ -116,6 +120,8 @@
 		84E115610F3C4F6F00471397 /* Base Nodes */ = {
 			isa = PBXGroup;
 			children = (
+				849EA07A0F891D9C00037332 /* TSceneNode_Timeline.cpp */,
+				849EA07B0F891D9C00037332 /* TSceneNode_Timeline.h */,
 				84E1156E0F3C51DF00471397 /* TSchemeNode.cpp */,
 				84E1156F0F3C51DF00471397 /* TSchemeNode.h */,
 				84C107A50F0A686E00B2DF7A /* TSceneNode.cpp */,
@@ -149,6 +155,7 @@
 				84C107C00F0A686E00B2DF7A /* TSchemeEditor.h in Headers */,
 				84E1156C0F3C515B00471397 /* TSchemeManager.h in Headers */,
 				84E115710F3C51DF00471397 /* TSchemeNode.h in Headers */,
+				849EA07D0F891D9C00037332 /* TSceneNode_Timeline.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,6 +212,7 @@
 				84C107BF0F0A686E00B2DF7A /* TSchemeEditor.cpp in Sources */,
 				84E1156D0F3C515B00471397 /* TSchemeManager.cpp in Sources */,
 				84E115700F3C51DF00471397 /* TSchemeNode.cpp in Sources */,
+				849EA07C0F891D9C00037332 /* TSceneNode_Timeline.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
