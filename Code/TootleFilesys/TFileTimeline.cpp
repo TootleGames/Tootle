@@ -201,23 +201,28 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandTag(TPtr<TLA
 	if ( pImportkeyframeString )
 		NodeRef.Set(*pImportkeyframeString);
 
+	/*
+	// Node ref is now optional
 	if(!NodeRef.IsValid())
 	{
 		TLDebug_Print("Failed to get valid node ref from TTL file");
 		return SyncFalse;
 	}
+	*/
 
 	// Get the node graph ref
-	// TODO: Make this optional?
 	pImportkeyframeString = pImportTag->GetProperty("NodeGraphRef");
 	if ( pImportkeyframeString )
 		NodeGraphRef.Set(*pImportkeyframeString);
 
+	/*
+	// Graph ref is now optional
 	if(!NodeGraphRef.IsValid())
 	{
 		TLDebug_Print("Failed to get valid node graph ref from TTL file");
 		return SyncFalse;
 	}
+	*/
 
 	TPtr<TLAsset::TAssetTimelineCommandList> pTimelineCommandList = pKeyframe->FindPtr(NodeRef);
 

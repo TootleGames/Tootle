@@ -41,11 +41,12 @@ void TTimelineInstance::Update(float fTimestep)
 			// Process the final keyframe as some commands may not have been processed yet and increase the time 
 			// beyond the range so that we don't get any further keyframes from this point onwards (in normal proccessing)
 			const TLAsset::TTempKeyframeData& Keyframe = pKeyframes.ElementAt(0);
-			ProcessFinalKeyframe(Keyframe);
+			if(ProcessFinalKeyframe(Keyframe))
+			{
+				m_fTime += fTimestep;
 
-			m_fTime += fTimestep;
-
-			OnEndOfTimeline();
+				OnEndOfTimeline();
+			}
 		}
 		else
 		{
@@ -81,8 +82,10 @@ void TTimelineInstance::OnEndOfTimeline()
 {
 	TLDebug_Print("Reached the end of the timeline");
 
-	// TODO: if flagged to auto-release then we need to delete this instance
-	// Otherwise send a message to subscribers to say the timeline has finished
+	// Broadcast a message to say the timeline has finished
+	TLMessaging::TMessage Message("OnComplete");
+
+	PublishMessage(Message);
 }
 
 
@@ -339,6 +342,23 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand& Com
 		}
 
 	}
+	else if(MessageRef == "TimeJump")
+	{
+		float fTime;
+		
+		if(Command.ImportData("Time", fTime))
+		{
+			// Jump to time immediately?  Or add a command object to this instance 
+			// and jump at a 'safe' time?
+			// Either way, stop the processing of the timeline instance any further
+			m_fTime = fTime;
+			return FALSE;
+		}
+
+		// Invalid time?
+		// Ignore and continue processing
+		return TRUE;
+	}
 	else
 	{
 
@@ -353,9 +373,11 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand& Com
 			return TLPhysics::g_pPhysicsgraph->SendMessageToNode(NodeRef, Command);
 		else
 		{
-			// Invalid graph ref? We may need to handle special cases here.
+			// Invalid graph ref
+			// Send the command to subscribers
+			PublishMessage(Command);
 
-			return FALSE;
+			return TRUE;
 		}
 
 	}

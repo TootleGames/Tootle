@@ -7,6 +7,7 @@
 // include files for the node factory
 ////////////////////////////////////////////////////
 #include "TSceneNode_Camera.h"
+#include "TSceneNode_Timeline.h"
 #include "TSceneNode_Emitter.h"
 #include "TSchemeNode.h"
 ////////////////////////////////////////////////////
@@ -26,6 +27,9 @@ TSceneNode* TSceneNodeFactory::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 	// Create engine/middleware side scene nodes
 	if(TypeRef == "Camera")
 		return new TSceneNode_Camera(InstanceRef,TypeRef);
+
+	if(TypeRef == "Timeline")
+		return new TSceneNode_Timeline(InstanceRef,TypeRef);
 
 	if(TypeRef == "Emitter")
 		return new TSceneNode_Emitter(InstanceRef,TypeRef);

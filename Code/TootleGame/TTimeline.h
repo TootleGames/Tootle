@@ -32,15 +32,23 @@ public:
 
 	FORCEINLINE void	BindTo(TRefRef NodeRef)	
 	{ 
-		TRef* pNodeRef = m_NodeRefMap.Find(NodeRef);
+		MapNodeRef(TRef("this"), NodeRef);
+	}
+
+	FORCEINLINE void	MapNodeRef(TRefRef FromRef, TRefRef ToRef)	
+	{ 
+		TRef* pNodeRef = m_NodeRefMap.Find(FromRef);
 		if(pNodeRef == NULL)
-			m_NodeRefMap.Add(TRef("this"), NodeRef);
+			m_NodeRefMap.Add(FromRef, ToRef);
 		else
 		{
 			// Alter the node ref to the one being passed in
-			*pNodeRef = NodeRef;
+			*pNodeRef = ToRef;
 		}
 	}
+
+
+	
 
 private:
 	TLAsset::TAssetTimeline*	GeTAssetTimeline();

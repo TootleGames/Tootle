@@ -199,6 +199,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\TSceneNode_Timeline.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\TSceneNode_Timeline.h"
+				>
+			</File>
+			<File
 				RelativePath="..\TSchemeNode.cpp"
 				>
 			</File>
