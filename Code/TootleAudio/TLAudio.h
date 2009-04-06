@@ -42,6 +42,9 @@ namespace TLAudio
 		Bool		SetLooping(TRefRef AudioSourceRef, const Bool bLooping);
 		Bool		GetIsLooping(TRefRef AudioSourceRef, Bool& bLooping);
 
+		Bool		SetRelative(TRefRef AudioSourceRef, const Bool bRelative);
+		Bool		GetIsRelative(TRefRef AudioSourceRef, Bool& bRelative);
+
 		Bool		SetPosition(TRefRef AudioSourceRef, const float3 vPosition);
 		Bool		GetPosition(TRefRef AudioSourceRef, float3& vPosition);
 

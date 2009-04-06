@@ -45,8 +45,18 @@ void TLRender::TCamera::CalculateViewVectors()
 
 	TLAudio::TListenerProperties Props;
 
-	Props.m_vPosition = GetPosition();
-	Props.m_vVelocity = (Props.m_vPosition - m_vPreviousPos);
+	float3 vPosition = GetPosition();
+	float3 vVelocity = vPosition - m_vPreviousPos;
+
+	// Invert the X and Y due to differing coordinate system
+	vPosition.x = -vPosition.x;
+	vPosition.y = -vPosition.y;
+
+	// Set the Z to be near the floor
+	vPosition.z = 5.0f;
+
+	Props.m_vPosition = vPosition;
+	Props.m_vVelocity = vVelocity;
 	Props.m_vUp = GetViewUp();
 	Props.m_vLookAt = GetLookAt();
 

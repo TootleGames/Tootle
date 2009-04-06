@@ -203,6 +203,23 @@ Bool Platform::GetIsLooping(TRefRef AudioSourceRef, Bool& bLooping)
 	return FALSE;
 }
 
+Bool Platform::SetRelative(TRefRef AudioSourceRef, const Bool bRelative)
+{
+#if(AUDIO_SYSTEM == AUDIO_OPENAL)
+	return OpenAL::SetRelative(AudioSourceRef, bRelative);
+#endif
+	return FALSE;
+}
+
+Bool Platform::GetIsRelative(TRefRef AudioSourceRef, Bool& bRelative)
+{
+#if(AUDIO_SYSTEM == AUDIO_OPENAL)
+	return OpenAL::GetIsLooping(AudioSourceRef, bRelative);	
+#endif
+	return FALSE;
+}
+
+
 
 Bool Platform::SetPosition(TRefRef AudioSourceRef, const float3 vPosition)
 {

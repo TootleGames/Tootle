@@ -36,9 +36,10 @@ public:
 		m_fVolume(0.0f),
 		m_fFrequencyMult(1.0f),
 		m_fPitch(1.0f),
-		m_fMinRange(0.0f),
-		m_fMaxRange(0.0f),
-		m_fRateOfDecay(0.0f),
+		m_fMinRange(1.0f),
+		m_fMaxRange(99999.0f),
+		m_fRateOfDecay(1.0f),
+		m_bRelative(FALSE),
 		m_bStreaming(FALSE),
 		m_bLooping(FALSE)
 	{
@@ -51,6 +52,7 @@ public:
 	float m_fMaxRange;			// Range outside which the audio will be silent and potentially culled
 	float m_fRateOfDecay;		// Rate of decay of the audio volume past the min range			
 	
+	Bool m_bRelative;			// Relative flag
 	Bool m_bStreaming;			// Streaming flag
 	Bool m_bLooping;			// Looping flag
 };
@@ -109,6 +111,9 @@ protected:
 
 	void				SetStreaming(const Bool& bStreaming);
 	FORCEINLINE Bool	GetIsStreaming()			const		{ return m_AudioProperties.m_bStreaming; }
+
+	void				SetRelative(const Bool& bRelative);
+	FORCEINLINE Bool	GetIsRelative()			const		{ return m_AudioProperties.m_bRelative; }
 
 
 	// Audio asset access

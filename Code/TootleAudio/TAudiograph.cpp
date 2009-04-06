@@ -345,10 +345,21 @@ Bool TAudiograph::StartMusic(TRefRef AudioAsset)
 
 	TLAudio::TAudioProperties Props;
 
-	Props.m_bStreaming = TRUE;
+	//Props.m_bStreaming = TRUE;
 	Props.m_bLooping = TRUE;
 	Props.m_fVolume = 1.0f;
+
+
+	// By setting the ranges and rate of decay to zero we effectively switch of the distance attenuation
+	// calculations meaning the sound will always be heard at full volume.
+	Props.m_bRelative = TRUE;
+	Props.m_fMinRange = 0.0f;
+	Props.m_fMaxRange = 0.0f;
+	Props.m_fRateOfDecay = 0.0f;
+
 	Message.ExportData("Props", Props);
+
+
 
 	m_MusicRef = CreateNode("Music", "Music", "Root", &Message); 
 

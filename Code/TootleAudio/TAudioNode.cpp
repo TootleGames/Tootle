@@ -73,17 +73,30 @@ void TAudioNode::Initialise(TLMessaging::TMessage& Message)
 		SetMaxRange(Props.m_fMaxRange);
 		SetRateOfDecay(Props.m_fRateOfDecay);
 		SetLooping(Props.m_bLooping);
+		SetRelative(Props.m_bRelative);
 	}
 
+	UpdatePreviousPos();
 	float3 vPosition;
 	if(Message.ImportData(TRef_Static(T,r,a,n,s), vPosition))
 	{
 		SetTranslate(vPosition);
 	}
+	else
+	{
+		vPosition = GetTranslate();
+	}
+
+	// Set the low level audio position
+	TLAudio::Platform::SetPosition(GetNodeRef(), vPosition);
+
+	float3 vVelocity = (vPosition - m_vPreviousPos);
+	TLAudio::Platform::SetVelocity(GetNodeRef(), vVelocity);
+
 
 
 	Bool bPlay;
-	if(Message.ImportData("Asset", bPlay))
+	if(Message.ImportData("Play", bPlay))
 	{
 		Play();
 	}
@@ -404,11 +417,28 @@ void TAudioNode::SetLooping(const Bool& bLooping)
 	}
 }
 
+
 // Set this instance to be streamed
 void TAudioNode::SetStreaming(const Bool& bStreaming)
 {
 	m_AudioProperties.m_bStreaming = bStreaming;
 }
+
+
+// Set this instance to be relative
+void TAudioNode::SetRelative(const Bool& bRelative)
+{
+	if(m_AudioProperties.m_bRelative != bRelative)
+	{
+		// Try and set the relative state for the source
+		// If successful set the relative state for the node
+		if(TLAudio::Platform::SetRelative(GetNodeRef(), bRelative))
+		{
+			m_AudioProperties.m_bRelative = bRelative;
+		}
+	}
+}
+
 
 
 Bool TAudioNode::SetAudioAssetRef(TRefRef AssetRef)

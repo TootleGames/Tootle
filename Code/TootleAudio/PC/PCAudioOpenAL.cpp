@@ -94,13 +94,14 @@ SyncBool Platform::OpenAL::Init()
 
 	//Set the default distance model to use
 	//alDistanceModel(AL_NONE);
-	alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
+	//alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
 	//alDistanceModel(AL_INVERSE_DISTANCE);
 	//alDistanceModel(AL_LINEAR_DISTANCE);
+	alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
 	
 	// Setup doppler shift
 	alDopplerFactor(1.0f);			// Set to 0.0f to switch off the doppler effect
-	alDopplerVelocity(1000.0f);
+	alDopplerVelocity(1.0f);
 
 	/*
 	alEnable(ALC_CONVERT_DATA_UPON_LOADING);
@@ -148,18 +149,12 @@ void Platform::OpenAL::SetListener(const TListenerProperties& Props)
 	// The orientation will use 6 consecutive floats which is the look at and up vectors
 	alListenerfv(AL_ORIENTATION, (ALfloat*)&Props.m_vLookAt);
 
-	float3 vPos;
-
-	vPos.x = -Props.m_vPosition.x;
-	vPos.y = -Props.m_vPosition.y;
-	vPos.z = 5.0f;
-
 	// Set listener position
-	alListenerfv(AL_POSITION, (ALfloat*)&vPos);
+	alListenerfv(AL_POSITION, (ALfloat*)&Props.m_vPosition);
 
 #ifdef ENABLE_AUDIO_TRACE
 	TString	str = "Set Listener Pos: ";
-	str.Appendf("(%.2f, %.2f, %.2f)", vPos.x, vPos.y, vPos.z);
+	str.Appendf("(%.2f, %.2f, %.2f)", Props.m_vPosition.x, Props.m_vPosition.y, Props.m_vPosition.z);
 	TLDebug_Print(str);
 #endif
 
@@ -743,13 +738,69 @@ Bool Platform::OpenAL::GetIsLooping(TRefRef AudioSourceRef, Bool& bLooping)
 	}
 	
 	// Success - write the value to the variable
-	//	gr: compiler says performance warning, so changed
-	//bLooping = (Bool)bResult;
 	bLooping = (bResult==1);
 	
 	return TRUE;	
 }
 
+
+Bool Platform::OpenAL::SetRelative(TRefRef AudioSourceRef, const Bool bRelative)
+{
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
+	
+	if(!pAO)
+	{
+		TLDebug_Print("Failed to find audio source for setrelative request");
+		return FALSE;
+	}
+	
+	alSourcei(pAO->m_OpenALID,AL_SOURCE_RELATIVE,bRelative);
+	
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("setrelative alSourcei error: ");
+		
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+		
+		return FALSE;
+	}
+	
+	return TRUE;	
+}
+
+
+Bool Platform::OpenAL::GetIsRelative(TRefRef AudioSourceRef, Bool& bRelative)
+{
+	AudioObj* pAO = g_Sources.Find(AudioSourceRef);
+	
+	if(!pAO)
+	{
+		TLDebug_Print("Failed to find audio source for getisrelative request");
+		return FALSE;
+	}
+	
+	// Attempt to get the value
+	ALint bResult;
+	alGetSourcei(pAO->m_OpenALID,AL_SOURCE_RELATIVE, &bResult);
+	
+	ALenum error;
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("getisrelative alGetSourcef error: ");
+		
+		TString strerr = GetALErrorString(error);
+		TLDebug_Print(strerr);
+		
+		return FALSE;
+	}
+	
+	// Success - write the value to the variable
+	bRelative = (bResult==1);
+	
+	return TRUE;	
+}
 
 
 Bool Platform::OpenAL::SetPosition(TRefRef AudioSourceRef, const float3 vPosition)
