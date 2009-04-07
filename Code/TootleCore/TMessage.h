@@ -44,7 +44,7 @@ public:
 	FORCEINLINE TRefRef		GetSenderRef()									const	{ return m_SenderRef; }									 	
 
 	// Timestamp access
-	TPtr<TBinaryTree>&		AddTimeStamp(TRefRef TimeStampRef);
+	void					AddTimeStamp(TRefRef TimeStampRef);
 	FORCEINLINE u32			GetTimeStamps(TRefRef TimeStampRef,TPtrArray<TBinaryTree>& TimeStamps)	{	return GetChildren( TimeStampRef, TimeStamps );	}	//	Returns all timestamps that have been added to the message
 
 private:

@@ -186,13 +186,13 @@ Bool TSceneNode_Object::CreatePhysicsNode(TRefRef PhysicsNodeType)
 	const TLMaths::TTransform& Transform = GetTransform();
 
 	if ( Transform.HasTranslate() )
-		Message.AddChildAndData(TRef_Static(T,r,a,n,s), Transform.GetTranslate() );
+		Message.ExportData(TRef_Static(T,r,a,n,s), Transform.GetTranslate() );
 
 	if ( Transform.HasScale() )
-		Message.AddChildAndData(TRef_Static(S,c,a,l,e), Transform.GetScale() );
+		Message.ExportData(TRef_Static(S,c,a,l,e), Transform.GetScale() );
 
 	if ( Transform.HasRotation() )
-		Message.AddChildAndData(TRef_Static(R,o,t,a,t), Transform.GetRotation() );
+		Message.ExportData(TRef_Static(R,o,t,a,t), Transform.GetRotation() );
 
 	//	export ownership info
 	Message.ExportData("Owner", GetNodeRef());
@@ -241,13 +241,13 @@ Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TLMessaging
 		const TLMaths::TTransform& Transform = GetTransform();
 
 		if ( Transform.HasTranslate() )
-			pInitMessage->AddChildAndData(TRef_Static(T,r,a,n,s), Transform.GetTranslate() );
+			pInitMessage->ExportData(TRef_Static(T,r,a,n,s), Transform.GetTranslate() );
 
 		if ( Transform.HasScale() )
-			pInitMessage->AddChildAndData(TRef_Static(S,c,a,l,e), Transform.GetScale() );
+			pInitMessage->ExportData(TRef_Static(S,c,a,l,e), Transform.GetScale() );
 
 		if ( Transform.HasRotation() )
-			pInitMessage->AddChildAndData(TRef_Static(R,o,t,a,t), Transform.GetRotation() );
+			pInitMessage->ExportData(TRef_Static(R,o,t,a,t), Transform.GetRotation() );
 	}
 
 	//	export scene-node-ownership info

@@ -58,7 +58,7 @@ void TInputSensor::Process(float fRawValue)
 #endif
 		
 		// Add the sensor type so things know what type of sensor sent the information
-		//Message.AddChildAndData("SENSOR", m_Type);
+		//Message.ExportData("SENSOR", m_Type);
 				
 		PublishMessage(Message);
 

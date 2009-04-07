@@ -225,9 +225,9 @@ void TInputManager::RemoveAllDevices()
 
 		// Send a message to say the device is being removed
 		TLMessaging::TMessage Message("DeviceChanged");
-		Message.AddChildAndData("State", "REMOVED");			// state change
-		Message.AddChildAndData("DEVID", Device.GetDeviceRef() );		// device ref 
-		Message.AddChildAndData("TYPE", Device.GetDeviceType() );				// device type
+		Message.ExportData("State", "REMOVED");			// state change
+		Message.ExportData("DEVID", Device.GetDeviceRef() );		// device ref 
+		Message.ExportData("TYPE", Device.GetDeviceType() );				// device type
 
 		PublishMessage(Message);
 	}

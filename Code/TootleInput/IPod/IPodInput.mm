@@ -79,9 +79,9 @@ Bool Platform::IPod::CreateDevice()
 			TLMessaging::TMessage Message("DeviceChanged");			
 			
 			TRef refState = "ADDED";
-			Message.AddChildAndData("State", refState);					// state change
-			Message.AddChildAndData("DEVID", pGenericDevice->GetDeviceRef() );	// device ID
-			Message.AddChildAndData("TYPE", pGenericDevice->GetDeviceType() );						// device type
+			Message.ExportData("State", refState);					// state change
+			Message.ExportData("DEVID", pGenericDevice->GetDeviceRef() );	// device ID
+			Message.ExportData("TYPE", pGenericDevice->GetDeviceType() );						// device type
 			
 			g_pInputSystem->PublishMessage(Message);
 				

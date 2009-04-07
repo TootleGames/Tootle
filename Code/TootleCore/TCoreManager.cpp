@@ -390,11 +390,11 @@ Bool TCoreManager::PublishUpdateMessage(Bool bForced)
 	TLMessaging::TMessage Message( TLCore::UpdateRef );
 
 	//	add timestep data
-	Message.AddChildAndData( TLCore::TimeStepRef, fTimeStep );
+	Message.ExportData( TLCore::TimeStepRef, fTimeStep );
 
 	//	add timestep modifier data
 	float fModifier = GetTimeStepModifier();
-	Message.AddChildAndData( TLCore::TimeStepModRef, fModifier );
+	Message.ExportData( TLCore::TimeStepModRef, fModifier );
 
 	//	track CPU time of update
 	TLTime::TScopeTimer Timer( TRef_Static(U,p,d,a,t) );

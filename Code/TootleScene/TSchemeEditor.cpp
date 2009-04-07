@@ -376,7 +376,7 @@ void TSchemeEditor::TranslateSelectedNodes(float fAmount, TransformAxis uAxis)
 		{
 			// Send the node a message to say we want to move the node
 			TLMessaging::TMessage Message("ReqTransform", "Editor");
-			Message.AddChildAndData(TRef_Static(T,r,a,n,s), vTranslation);
+			Message.ExportData(TRef_Static(T,r,a,n,s), vTranslation);
 
 			// NOTE: Should really send this message via the scenegraph rather than directly.
 			pNode->QueueMessage(Message);
@@ -411,7 +411,7 @@ void TSchemeEditor::RotateSelectedNodes(float fAmount, TransformAxis uAxis)
 		{
 			// Send the node a message to say we want to move the node
 			TLMessaging::TMessage Message("ReqTransform", "Editor");
-			Message.AddChildAndData(TRef_Static(R,o,t,a,t), qRotation);
+			Message.ExportData(TRef_Static(R,o,t,a,t), qRotation);
 
 			// NOTE: Should really send this message via the scenegraph rather than directly.
 			pNode->QueueMessage(Message);
@@ -443,7 +443,7 @@ void TSchemeEditor::ScaleSelectedNodes(float fAmount, TransformAxis uAxis)
 		{
 			// Send the node a message to say we want to move the node
 			TLMessaging::TMessage Message("ReqTransform", "Editor");
-			Message.AddChildAndData(TRef_Static(S,c,a,l,e), vScale);
+			Message.ExportData(TRef_Static(S,c,a,l,e), vScale);
 
 			// NOTE: Should really send this message via the scenegraph rather than directly.
 			pNode->QueueMessage(Message);

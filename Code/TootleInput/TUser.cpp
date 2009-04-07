@@ -237,11 +237,11 @@ void TUser::ProcessMessage(TLMessaging::TMessage& Message)
 	UpdateCursorPosition(uCursorIndex);
 	
 	// Add the user ID to the message so things know 'who' it came from
-	Message.AddChildAndData("USERID", m_refUserID);
+	Message.ExportData("USERID", m_refUserID);
 
 	
 	// Add the users cursor information to make it quicker to access
-	Message.AddChildAndData("CURSOR", m_CursorPosition);
+	Message.ExportData("CURSOR", m_CursorPosition);
 
 	// Relay the message on
 	TRelay::ProcessMessage(Message);

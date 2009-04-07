@@ -427,7 +427,7 @@ void TLRender::TScreen::CreateDebugRenderTarget()
 	TRef RootRenderNode;
 	{
 		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
-		InitMessage.AddChildAndData(TRef_Static(S,c,a,l,e), float3( 5.f, 5.f, 1.f ) );
+		InitMessage.ExportData(TRef_Static(S,c,a,l,e), float3( 5.f, 5.f, 1.f ) );
 		RootRenderNode = TLRender::g_pRendergraph->CreateNode( "root", TRef(), TRef(), &InitMessage );
 		pRenderTarget->SetRootRenderNode( RootRenderNode );
 	}
@@ -435,7 +435,7 @@ void TLRender::TScreen::CreateDebugRenderTarget()
 	//	add fps text
 	{
 		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
-		InitMessage.AddChildAndData("FontRef", TRef("fdebug") );
+		InitMessage.ExportData("FontRef", TRef("fdebug") );
 		TRef FpsRenderNode = TLRender::g_pRendergraph->CreateNode( "dbgfps", "txtext", RootRenderNode, &InitMessage );
 		m_DebugRenderText.Add( "fps", FpsRenderNode );
 	}

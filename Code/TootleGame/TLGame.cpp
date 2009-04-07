@@ -94,10 +94,10 @@ Bool TLGame::TScreenRayTest::CreateRenderNode(TPtr<TLRender::TRenderTarget>& pRe
 	if ( !m_RenderNodeRef.IsValid() )
 	{
 		TLMessaging::TMessage Message( TLCore::InitialiseRef );
-		Message.AddChildAndData("MeshRef", m_pMesh->GetAssetRef() );
-		Message.AddChildAndData("RFSet", (u32)TLRender::TRenderNode::RenderFlags::ResetScene );
-		Message.AddChildAndData("RFSet", (u32)TLRender::TRenderNode::RenderFlags::Debug_Points );
-		Message.AddChildAndData("LineWidth", 4.f );
+		Message.ExportData("MeshRef", m_pMesh->GetAssetRef() );
+		Message.ExportData("RFSet", (u32)TLRender::TRenderNode::RenderFlags::ResetScene );
+		Message.ExportData("RFSet", (u32)TLRender::TRenderNode::RenderFlags::Debug_Points );
+		Message.ExportData("LineWidth", 4.f );
 		m_RenderNodeRef = TLRender::g_pRendergraph->CreateNode("ray", TRef(), pRenderTarget->GetRootRenderNodeRef(), &Message );
 	}
 

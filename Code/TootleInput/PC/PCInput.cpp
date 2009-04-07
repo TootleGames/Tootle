@@ -566,9 +566,9 @@ BOOL CALLBACK Platform::DirectX::CreateDevice(const DIDEVICEINSTANCE* pdidInstan
 				{
 					// Notify to all subscribers of the input system that a new device was added
 					TLMessaging::TMessage Message("DeviceChanged");
-					Message.AddChildAndData("State", TRef("ADDED"));					// state change
-					Message.AddChildAndData("DEVID", pGenericDevice->GetDeviceRef());	// device ID
-					Message.AddChildAndData("TYPE", pGenericDevice->GetDeviceType());					// device type
+					Message.ExportData("State", TRef("ADDED"));					// state change
+					Message.ExportData("DEVID", pGenericDevice->GetDeviceRef());	// device ID
+					Message.ExportData("TYPE", pGenericDevice->GetDeviceType());					// device type
 
 					g_pInputSystem->PublishMessage(Message);
 				}

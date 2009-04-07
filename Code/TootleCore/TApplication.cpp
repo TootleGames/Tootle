@@ -346,9 +346,9 @@ Bool TApplication::TApplicationState_Bootup::CreateIntroScreen()
 	if ( pBgAsset )
 	{
 		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
-		InitMessage.AddChildAndData("MeshRef", pBgAsset->GetAssetRef() );
-		InitMessage.AddChildAndData(TRef_Static(T,r,a,n,s), float3( 0.f, 0.f, -50.f ) );
-		InitMessage.AddChildAndData("LineWidth", 3.f );
+		InitMessage.ExportData("MeshRef", pBgAsset->GetAssetRef() );
+		InitMessage.ExportData(TRef_Static(T,r,a,n,s), float3( 0.f, 0.f, -50.f ) );
+		InitMessage.ExportData("LineWidth", 3.f );
 
 		m_LogoRenderNode = TLRender::g_pRendergraph->CreateNode("logo", TRef(), TRef(), &InitMessage );
 	}
