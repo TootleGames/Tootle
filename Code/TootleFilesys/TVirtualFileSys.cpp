@@ -162,7 +162,7 @@ SyncBool TLDebugFile::LoadDebugFile_MeshQuad(TPtr<TLFileSys::TFile>& pFile)
 	
 	//	generate a quad
 	TLMaths::TBox2D Quad( float2(0,0), float2(1,1) );
-	pMesh->GenerateQuad( Quad );
+	pMesh->GenerateQuad( Quad, NULL, TRUE );
 
 	return LoadDebugFile_Asset( pFile, pMesh );
 }

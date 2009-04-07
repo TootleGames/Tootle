@@ -167,11 +167,14 @@ SyncBool TApplication::Update(float fTimeStep)
 //-----------------------------------------------------------
 SyncBool TApplication::Shutdown()
 {
+	//	gr: put this in the clean up of the game mode?
 	SyncBool Result = DestroyGameObject();
-	
 	if(Result != SyncTrue)
 		return Result;
-	
+
+	//	clean up current mode bgy ending it
+	TStateMachine::SetMode( TRef() );
+
 	return TManager::Shutdown();
 }
 

@@ -87,7 +87,7 @@ void TLAsset::TMesh::Empty()
 //-------------------------------------------------------
 //	generate a square mesh from a 2d box
 //-------------------------------------------------------
-void TLAsset::TMesh::GenerateQuad(const TLMaths::TBox2D& Box,const TColour* pColour,float z)
+void TLAsset::TMesh::GenerateQuad(const TLMaths::TBox2D& Box,const TColour* pColour,Bool GenerateUV,float z)
 {
 	float3 TopLeft = Box.GetMin().xyz( z );
 	float3 BottomRight = Box.GetMax().xyz( z );
@@ -95,7 +95,7 @@ void TLAsset::TMesh::GenerateQuad(const TLMaths::TBox2D& Box,const TColour* pCol
 	float3 BottomLeft( TopLeft.x, BottomRight.y, z );
 
 	//	generate quad with outline
-	GenerateQuad( TopLeft, TopRight, BottomRight, BottomLeft, pColour );
+	GenerateQuad( TopLeft, TopRight, BottomRight, BottomLeft, pColour, GenerateUV );
 }
 
 
@@ -1235,31 +1235,39 @@ Bool TLAsset::TMesh::GenerateQuad(const TArray<float3>& Outline,const TArray<TCo
 		TLDebug_Break("Trying to generate quad with an outline without 4 points");
 		return FALSE;
 	}
+	
+	TFixedArray<u16,4> VertIndexes;
+	VertIndexes.Add( AddVertex( Outline[0], Colours[0] ) );
+	VertIndexes.Add( AddVertex( Outline[1], Colours[1] ) );
+	VertIndexes.Add( AddVertex( Outline[2], Colours[2] ) );
+	VertIndexes.Add( AddVertex( Outline[3], Colours[3] ) );
 
-	return GenerateQuad( Outline[0], Outline[1], Outline[2], Outline[3], &Colours[0], &Colours[1], &Colours[2], &Colours[3] );
+	return GenerateQuad( VertIndexes );
 }
 
 
 //--------------------------------------------------------
 //	turn an outline of points into a quad/tri-strip
 //--------------------------------------------------------
-Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour* pColour)
-{
-	return GenerateQuad( OutlineA, OutlineB, OutlineC, OutlineD, pColour, pColour, pColour, pColour );
-}
-
-
-//--------------------------------------------------------
-//	turn an outline of points into a quad/tri-strip
-//--------------------------------------------------------
-Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour* pColourA,const TColour* pColourB,const TColour* pColourC,const TColour* pColourD)
+Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour* pColour,Bool GenerateUVs)
 {
 	TFixedArray<u16,4> VertIndexes;
-	VertIndexes.Add( AddVertex( OutlineA, pColourA ) );
-	VertIndexes.Add( AddVertex( OutlineB, pColourB ) );
-	VertIndexes.Add( AddVertex( OutlineC, pColourC ) );
-	VertIndexes.Add( AddVertex( OutlineD, pColourD ) );
-	
+
+	if ( GenerateUVs )
+	{
+		VertIndexes.Add( AddVertex( OutlineA, pColour, float2(0.f, 0.f) ) );
+		VertIndexes.Add( AddVertex( OutlineB, pColour, float2(1.f, 0.f) ) );
+		VertIndexes.Add( AddVertex( OutlineC, pColour, float2(1.f, 1.f) ) );
+		VertIndexes.Add( AddVertex( OutlineD, pColour, float2(0.f, 1.f) ) );
+	}
+	else
+	{
+		VertIndexes.Add( AddVertex( OutlineA, pColour ) );
+		VertIndexes.Add( AddVertex( OutlineB, pColour ) );
+		VertIndexes.Add( AddVertex( OutlineC, pColour ) );
+		VertIndexes.Add( AddVertex( OutlineD, pColour ) );
+	}
+
 	return GenerateQuad( VertIndexes );
 }
 
