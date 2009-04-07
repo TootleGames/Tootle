@@ -214,6 +214,8 @@ void TApplication::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChanne
 
 SyncBool TApplication::CreateGameObject()
 {
+	TLDebug_Break("Overload this! You cannot use the base func!");
+
 	// Already have a game object? Create one if not
 	if(!m_pGame)	
 	{

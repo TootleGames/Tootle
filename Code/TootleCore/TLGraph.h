@@ -204,30 +204,30 @@ public:
 	}
 
 	// Parent manipulation
-	inline TPtr<T>&			GetParent()							{	return m_pParent;	}
-	inline const TPtr<T>&	GetParent() const					{	return m_pParent;	}
-	inline Bool				HasParent() const					{	return m_pParent.IsValid();	}
+	FORCEINLINE TPtr<T>&			GetParent()							{	return m_pParent;	}
+	FORCEINLINE const TPtr<T>&	GetParent() const					{	return m_pParent;	}
+	FORCEINLINE Bool				HasParent() const					{	return m_pParent.IsValid();	}
 
 	// Child manipulation
 #ifdef TLGRAPH_OWN_CHILDREN
-	inline Bool				HasChildren() const					{	return (m_Children.GetSize() > 0);	}
-	inline TPtrArray<T>&	GetChildren()						{	return m_Children;	}
-	inline const TPtrArray<T>&	GetChildren() const				{	return m_Children;	}
+	FORCEINLINE Bool				HasChildren() const					{	return (m_Children.GetSize() > 0);	}
+	FORCEINLINE TPtrArray<T>&	GetChildren()						{	return m_Children;	}
+	FORCEINLINE const TPtrArray<T>&	GetChildren() const				{	return m_Children;	}
 
 #else
-	inline Bool				HasChildren() const					{	return m_pChildFirst.IsValid();	}
-	inline const TPtr<T>&	GetChildFirst() const				{	return m_pChildFirst;	}			//	cant call it ChildFirst because of windows macro
+	FORCEINLINE Bool				HasChildren() const					{	return m_pChildFirst.IsValid();	}
+	FORCEINLINE const TPtr<T>&	GetChildFirst() const				{	return m_pChildFirst;	}			//	cant call it ChildFirst because of windows macro
 #endif
 	template<typename MATCHTYPE>
 	TPtr<T>&				FindChildMatch(const MATCHTYPE& Value);		//	find a TPtr in the graph that matches the specified value (will use == operator of node type to match)
 	FORCEINLINE TPtr<T>&	FindChild(const TRef& NodeRef)				{	return FindChildMatch(NodeRef);	}
 
 
-	inline Bool				operator==(const TPtr<TGraphNode<T> >& pNode) const	{	return this == pNode.GetObject();	}
-	inline Bool				operator==(const TGraphNode<T>& Node) const			{	return this == (&Node);	}
-	inline Bool				operator==(TRefRef NodeRef) const					{	return GetNodeRef() == NodeRef;	}
-	inline Bool				operator<(TRefRef NodeRef) const					{	return GetNodeRef() == NodeRef;	}
-	inline Bool				operator<(const TGraphNode<T>& Node) const			{	return GetNodeRef() == Node.GetNodeRef();	}
+	FORCEINLINE Bool				operator==(const TPtr<TGraphNode<T> >& pNode) const	{	return this == pNode.GetObject();	}
+	FORCEINLINE Bool				operator==(const TGraphNode<T>& Node) const			{	return this == (&Node);	}
+	FORCEINLINE Bool				operator==(TRefRef NodeRef) const					{	return GetNodeRef() == NodeRef;	}
+	FORCEINLINE Bool				operator<(TRefRef NodeRef) const					{	return GetNodeRef() == NodeRef;	}
+	FORCEINLINE Bool				operator<(const TGraphNode<T>& Node) const			{	return GetNodeRef() == Node.GetNodeRef();	}
 
 protected:
 	virtual void			Initialise(TLMessaging::TMessage& Message);	//	Initialise message - made into virtual func as it's so commonly used
@@ -245,10 +245,10 @@ protected:
 	// Sibling manipulation
 #ifndef TLGRAPH_OWN_CHILDREN
 	Bool					HasNext() const						{	return m_pNext.IsValid();	}
-	inline TPtr<T>&			GetNext() 							{	return m_pNext;	}
-	inline TPtr<T>&			GetPrevious() 						{	return m_pPrevious;	}
-	inline const TPtr<T>&	GetNext() const						{	return m_pNext;	}
-	inline const TPtr<T>&	GetPrevious() const					{	return m_pPrevious;	}
+	FORCEINLINE TPtr<T>&			GetNext() 							{	return m_pNext;	}
+	FORCEINLINE TPtr<T>&			GetPrevious() 						{	return m_pPrevious;	}
+	FORCEINLINE const TPtr<T>&	GetNext() const						{	return m_pNext;	}
+	FORCEINLINE const TPtr<T>&	GetPrevious() const					{	return m_pPrevious;	}
 #endif
 
 	template<typename MATCHTYPE>
@@ -286,9 +286,9 @@ private:
 #ifdef TLGRAPH_OWN_CHILDREN
 
 #else
-	inline void				SetNext(const TPtr<T>& pNode)						{	m_pNext = pNode;	}	//	gr: need to correct the old m_pNext?
-	inline void				SetPrevious(const TPtr<T>& pNode)					{	m_pPrevious = pNode;	}	//	gr: need to correct the old m_pPrevious?
-	inline Bool				SetChildFirst(TPtr<T>& pNode,TPtr<T>& pThis);		//	assign node as first child
+	FORCEINLINE void				SetNext(const TPtr<T>& pNode)						{	m_pNext = pNode;	}	//	gr: need to correct the old m_pNext?
+	FORCEINLINE void				SetPrevious(const TPtr<T>& pNode)					{	m_pPrevious = pNode;	}	//	gr: need to correct the old m_pPrevious?
+	FORCEINLINE Bool				SetChildFirst(TPtr<T>& pNode,TPtr<T>& pThis);		//	assign node as first child
 	Bool					AddSibling(TPtr<T>& pSibling,TPtr<T>& pThis);		//	gr: insert adds to END of siblings...
 	Bool					RemoveSibling(TPtr<T>& pNode);
 	void					RemoveSiblings();
@@ -1624,7 +1624,11 @@ Bool TLGraph::TGraph<T>::SendMessageToNode(TRefRef NodeRef,TLMessaging::TMessage
 	TPtr<T>& pNode = FindNode( NodeRef );
 	if ( !pNode )
 	{
-		TLDebug_Break("Sent message to a node that doesn't exist... add to a lost queue?");
+#ifdef _DEBUG
+		TTempString Debug_String("Sent message to a node (");
+		NodeRef.GetString( Debug_String );
+		Debug_String.Append(") that doesn't exist... add to a lost/queue for later queue?");
+#endif
 		return FALSE;
 	}
 

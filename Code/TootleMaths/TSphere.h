@@ -32,7 +32,7 @@ public:
 	TSphere();
 	TSphere(const float3& Pos,float Radius);
 
-	static TRef		GetTypeRef()								{	return "Sph";	}
+	static TRef		GetTypeRef()								{	return TLMaths_ShapeRef(TSphere);	}
 
 	void			Set(const float3& Pos,float Radius)			{	m_Pos = Pos;	m_Radius = Radius;	}
 	void			Set(const TSphere& Sphere)					{	m_Pos = Sphere.GetPos();	m_Radius = Sphere.GetRadius();	}
@@ -94,7 +94,7 @@ public:
 	TSphere2D();
 	TSphere2D(const float2& Pos,float Radius);
 
-	static TRef		GetTypeRef()								{	return "Sph2";	}
+	static TRef		GetTypeRef()								{	return TLMaths_ShapeRef(TSphere2D);	}
 
 	void			Set(const float2& Pos,float Radius)			{	m_Pos = Pos;	m_Radius = Radius;	}
 	void			Set(const TSphere2D& Sphere)				{	m_Pos = Sphere.GetPos();	m_Radius = Sphere.GetRadius();	}

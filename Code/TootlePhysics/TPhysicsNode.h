@@ -55,7 +55,7 @@ public:
 
 	virtual void				Update(float Timestep);						//	physics update
 	virtual void				Shutdown();									//	cleanup
-	virtual void				PostUpdate(float Timestep,TLPhysics::TPhysicsgraph* pGraph,TPtr<TLPhysics::TPhysicsNode>& pThis);			//	after collisions are handled
+	virtual void				PostUpdate(float Timestep,TLPhysics::TPhysicsgraph& Graph,TPtr<TLPhysics::TPhysicsNode>& pThis);			//	after collisions are handled
 	virtual Bool				PostIteration(u32 Iteration);				//	called after iteration, return TRUE to do another iteration
 
 	FORCEINLINE TRefRef			GetOwnerSceneNodeRef() const				{	return m_OwnerSceneNode;	}
@@ -80,11 +80,11 @@ public:
 	void					OnVelocityChanged()					{	SetAccumulatedMovementInvalid();	SetWorldCollisionShapeInvalid();	}
 	void					OnForceChanged()					{	SetAccumulatedMovementInvalid();	SetWorldCollisionShapeInvalid();	}
 
-	FORCEINLINE void		OnTransformChanged(Bool TransChanged,Bool ScaleChanged,Bool RotationChanged)	{	m_TransformChangedBits |= TransChanged * TRANSFORM_BIT_TRANSLATE;	m_TransformChangedBits = ScaleChanged * TRANSFORM_BIT_SCALE;	m_TransformChangedBits |= RotationChanged * TRANSFORM_BIT_ROTATION;	SetWorldCollisionShapeInvalid();	}
+	FORCEINLINE void		OnTransformChanged(Bool TransChanged,Bool ScaleChanged,Bool RotationChanged)	{	m_TransformChangedBits |= TransChanged * TLMaths_TransformBitTranslate;	m_TransformChangedBits = ScaleChanged * TLMaths_TransformBitScale;	m_TransformChangedBits |= RotationChanged * TLMaths_TransformBitRotation;	SetWorldCollisionShapeInvalid();	}
 	FORCEINLINE void		OnTransformChangedNoPublish()		{	SetWorldCollisionShapeInvalid();	}
-	FORCEINLINE void		OnTranslationChanged()				{	m_TransformChangedBits |= TRANSFORM_BIT_TRANSLATE;	SetWorldCollisionShapeInvalid();	}
-	FORCEINLINE void		OnRotationChanged()					{	m_TransformChangedBits |= TRANSFORM_BIT_ROTATION;		SetWorldCollisionShapeInvalid();	}
-	FORCEINLINE void		OnScaleChanged()					{	m_TransformChangedBits |= TRANSFORM_BIT_SCALE;		SetWorldCollisionShapeInvalid();	}
+	FORCEINLINE void		OnTranslationChanged()				{	m_TransformChangedBits |= TLMaths_TransformBitTranslate;	SetWorldCollisionShapeInvalid();	}
+	FORCEINLINE void		OnRotationChanged()					{	m_TransformChangedBits |= TLMaths_TransformBitRotation;		SetWorldCollisionShapeInvalid();	}
+	FORCEINLINE void		OnScaleChanged()					{	m_TransformChangedBits |= TLMaths_TransformBitScale;		SetWorldCollisionShapeInvalid();	}
 
 	//void					OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);
 
@@ -107,13 +107,13 @@ public:
 
 	FORCEINLINE void						SetCollisionZoneNeedsUpdate(Bool NeedsUpdate=TRUE)		{	SetZoneOutOfDate( NeedsUpdate );	}
 	FORCEINLINE Bool						GetCollisionZoneNeedsUpdate() const						{	return IsZoneOutOfDate();	}
-	void									UpdateNodeCollisionZone(TPtr<TLPhysics::TPhysicsNode>& pThis,TLPhysics::TPhysicsgraph* pGraph);	//	update what collision zone we're in
+	void									UpdateNodeCollisionZone(TPtr<TLPhysics::TPhysicsNode>& pThis,TLPhysics::TPhysicsgraph& Graph);	//	update what collision zone we're in
 
 	FORCEINLINE Bool			operator==(TRefRef Ref) const							{	return GetNodeRef() == Ref;	}
 
 protected:
 	virtual void				Initialise(TLMessaging::TMessage& Message);	
-	void						PostUpdateAll(float Timestep,TLPhysics::TPhysicsgraph* pGraph,TPtr<TLPhysics::TPhysicsNode>& pThis);		//	update tree: update self, and children and siblings
+	void						PostUpdateAll(float Timestep,TLPhysics::TPhysicsgraph& Graph,TPtr<TLPhysics::TPhysicsNode>& pThis);		//	update tree: update self, and children and siblings
 	const float3&				GetWorldUp() const							{	return HasParent() ? GetParent()->GetWorldUp() : TLPhysics::g_WorldUpNormal;	}
 
 	FORCEINLINE const float3&	GetAccumulatedMovement()					{	return m_AccumulatedMovementValid ? m_Temp_Intersection.m_Movement : CalcAccumulatedMovement();	}
@@ -129,15 +129,15 @@ protected:
 	virtual Bool				OnCollision(const TPhysicsNode& OtherNode);	//	handle collision with other object
 	void						AddCollisionInfo(const TLPhysics::TPhysicsNode& OtherNode,const TIntersection& Intersection);
 	void						PublishCollisions();						//	send out our list of collisions
+
 	virtual SyncBool			IsInShape(const TLMaths::TBox2D& Shape);
+	virtual Bool				HasZoneShape();								//	return validity of shape for early bail out tests.
 
 public:
 	float					m_Friction;			//	
 	float					m_Mass;				//	used for varying impact of two objects, larger object bounces less
 	float					m_Bounce;			//	elasticity :)
 	float					m_Squidge;			//	the amount (factor) the collision shape can be overlapped by (opposite to rigiditty)
-
-	u32						m_Debug_StaticCollisions;	//	
 
 protected:
 	TLMaths::TTransform		m_Transform;				//	world transform of shape

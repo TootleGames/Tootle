@@ -27,10 +27,10 @@ public:
 	virtual const TYPE&	ElementAtConst(u32 Index) const		{	TLDebug_CheckIndex( Index, SIZE );	return m_Data[Index];	}
 
 	//	operators
-	inline TYPE&		operator[](int Index)				{	return ElementAt(Index);	}
-	inline TYPE&		operator[](u32 Index)				{	return ElementAt(Index);	}
-	inline const TYPE&	operator[](int Index) const			{	return ElementAtConst(Index);	}
-	inline const TYPE&	operator[](u32 Index) const			{	return ElementAtConst(Index);	}
+	FORCEINLINE TYPE&		operator[](int Index)				{	return ElementAt(Index);	}
+	FORCEINLINE TYPE&		operator[](u32 Index)				{	return ElementAt(Index);	}
+	FORCEINLINE const TYPE&	operator[](int Index) const			{	return ElementAtConst(Index);	}
+	FORCEINLINE const TYPE&	operator[](u32 Index) const			{	return ElementAtConst(Index);	}
 
 protected:
 	//	array

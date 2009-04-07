@@ -53,15 +53,17 @@ protected:
 	//virtual void				Scale(float3 vScale);
 	TLMaths::TTransform&		GetTransform() 							{	return m_Transform;	}
 
-	FORCEINLINE void			OnTranslationChanged()					{	OnTransformChanged(TRUE, FALSE, FALSE);	}
-	FORCEINLINE void			OnRotationChanged()						{	OnTransformChanged(FALSE, TRUE, FALSE);	}
-	FORCEINLINE void			OnScaleChanged()						{	OnTransformChanged(FALSE, FALSE, TRUE);	}
-	virtual void				OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);
+	FORCEINLINE void			OnTranslationChanged()					{	OnTransformChanged( TLMaths_TransformBitTranslate );	}
+	FORCEINLINE void			OnRotationChanged()						{	OnTransformChanged( TLMaths_TransformBitRotation );	}
+	FORCEINLINE void			OnScaleChanged()						{	OnTransformChanged( TLMaths_TransformBitScale );	}
+	FORCEINLINE void			OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);
+	virtual void				OnTransformChanged(u8 TransformChangedBits);
 
 	virtual void				OnZoneWake(SyncBool ZoneActive)			{	}	//	notifcation when zone is set to active (from non-active). SceneNode will now be updated
 	virtual void				OnZoneSleep()							{	}	//	notifcation when zone is set to non-active (from active). SceneNode will now NOT be updated
 	virtual void				OnZoneChanged(TLMaths::TQuadTreeZone* pOldZone);	//	our zone has changed - if we're the node being tracked in the graph, change the active zone
 	virtual SyncBool			IsInShape(const TLMaths::TBox2D& Shape);
+	virtual Bool				HasZoneShape()							{	return TRUE;	}	//	return validity of shape for early bail out tests.
 	FORCEINLINE SyncBool		IsZoneAwake() const;					//	get zone's active state
 	virtual SyncBool			IsAwake() const							{	return IsZoneAwake();	}	//	checks to see if this node is awake (NOT THE SAME AS IsEnabled!) - currently gets our zone and checks it's active state - shouldnt be a need to store the sleep/awake state
 	void						InitialiseZone();						//	if zone isn't initialised, initialise it
@@ -83,3 +85,19 @@ FORCEINLINE SyncBool TLScene::TSceneNode_Transform::IsZoneAwake() const
 	return pZone ? pZone->IsActive() : SyncFalse;
 }
 
+
+//--------------------------------------------
+//	
+//--------------------------------------------
+FORCEINLINE void TLScene::TSceneNode_Transform::OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale)
+{
+	u8 TransformBits = (TLMaths_TransformBitTranslate*bTranslation);
+	TransformBits |= (TLMaths_TransformBitRotation*bRotation);
+	TransformBits |= (TLMaths_TransformBitScale*bScale);
+
+	//	go onto real routine if there were any changes
+	if ( TransformBits != 0x0 )
+	{
+		OnTransformChanged( TransformBits );
+	}
+}

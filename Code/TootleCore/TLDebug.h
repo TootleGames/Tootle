@@ -87,9 +87,9 @@ namespace TLDebug
 	void				SetLastBreak(const char* pSourceFunction);											//	note last break place in the code
 
 	Bool				Break(const TString& String,const char* pSourceFunction);							//	halt! return TRUE to ignore the error and continue
-	inline Bool			Break(const TString& String)														{	return Break( String, NULL );	}
+	FORCEINLINE Bool			Break(const TString& String)														{	return Break( String, NULL );	}
 	void				Print(const TString& String,const char* pSourceFunction);							//	print to console
-	inline void			Print(const TString& String)														{	Print( String, NULL );	}
+	FORCEINLINE void			Print(const TString& String)														{	Print( String, NULL );	}
 
 	FORCEINLINE Bool	CheckIndex(int Index,int Max,const char* pSourceFunction);							//	check & assert if index is out of bounds. Max is NOT inclusive... Min <= N < Max
 	FORCEINLINE Bool	CheckIndex(int Index,int Max)														{	return CheckIndex( Index, Max, NULL );	}

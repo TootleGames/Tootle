@@ -30,30 +30,11 @@ void TLScene::TSceneNode_Transform::Initialise(TLMessaging::TMessage& Message)
 	TLScene::TSceneNode::Initialise( Message );
 
 	//	read transform info (same as render node's init)
-	Bool bTranslation, bRotation, bScale;
-	bTranslation = bRotation = bScale = FALSE;
-
-	if ( Message.ImportData(TRef_Static(T,r,a,n,s), m_Transform.GetTranslate() ) == SyncTrue )
-	{
-		m_Transform.SetTranslateValid();
-		bTranslation = TRUE;
-	}
-
-	if ( Message.ImportData(TRef_Static(R,o,t,a,t), m_Transform.GetRotation() ) == SyncTrue )
-	{
-		m_Transform.SetRotationValid();
-		bRotation = TRUE;
-	}
-
-	if ( Message.ImportData(TRef_Static(S,c,a,l,e), m_Transform.GetScale() ) == SyncTrue )
-	{
-		m_Transform.SetScaleValid();
-		bScale = TRUE;
-	}
+	u8 TransformChangedBits = m_Transform.ImportData( Message );
 
 	//	Has transform been changed?
-	if( bTranslation || bRotation || bScale )
-		OnTransformChanged(bTranslation, bRotation, bScale);
+	if( TransformChangedBits )
+		OnTransformChanged( TransformChangedBits );
 
 	//	initialise zone
 	InitialiseZone();
@@ -65,36 +46,8 @@ void TLScene::TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Messag
 	//	gr: only apply change if explicitly sent to change
 	if(Message.GetMessageRef() == TRef_Static(D,o,T,r,a) )
 	{
-		float3 vVector;
-		TLMaths::TQuaternion qRot;
-		Bool bTranslation, bRotation, bScale;
-		bTranslation = bRotation = bScale = FALSE;
-
-		// Absolute position/rotation/scale setting
-		if(Message.ImportData(TRef_Static(T,r,a,n,s), vVector))
-		{
-			m_Transform.SetTranslate(vVector);
-			bTranslation = TRUE;
-		}
-
-		if(Message.ImportData(TRef_Static(R,o,t,a,t), qRot))
-		{
-			m_Transform.SetRotation(qRot);
-			bRotation = TRUE;
-		}
-
-		if(Message.ImportData(TRef_Static(S,c,a,l,e), vVector))
-		{
-			m_Transform.SetScale(vVector);
-			bScale = TRUE;
-		}
-
-		// If any part of the transform changed forward the message on
-		if(bTranslation || bRotation || bScale)
-		{
-			// Publish a new message with 'Node' ID
-			OnTransformChanged(bTranslation, bRotation, bScale);
-		}
+		u8 TransformChangedBits = m_Transform.ImportData( Message );
+		OnTransformChanged( TransformChangedBits );
 	}
 	else if(Message.GetMessageRef() == TRef_Static(R,e,q,T,r) )
 	{
@@ -129,18 +82,14 @@ void TLScene::TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Messag
 
 
 // Transform changed
-void TLScene::TSceneNode_Transform::OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale)
+void TLScene::TSceneNode_Transform::OnTransformChanged(u8 TransformChangedBits)
 {
 	//	if translation changed then set zone out of date
-	if ( bTranslation )
+	if ( TransformChangedBits & TLMaths_TransformBitTranslate )
 		TLMaths::TQuadTreeNode::SetZoneOutOfDate();	
 
-	bTranslation = bTranslation && m_Transform.HasTranslate();
-	bRotation = bRotation && m_Transform.HasRotation();
-	bScale = bScale && m_Transform.HasScale();
-
 	//	no changes
-	if ( !bTranslation && !bRotation && !bScale )
+	if ( !TransformChangedBits )
 		return;
 
 	//	no one to send a message to 
@@ -148,17 +97,12 @@ void TLScene::TSceneNode_Transform::OnTransformChanged(Bool bTranslation, Bool b
 		return;
 
 	TLMessaging::TMessage Message( TRef_Static(O,n,T,r,a), GetNodeRef());
-	if ( bTranslation )
-		Message.ExportData(TRef_Static(T,r,a,n,s), GetTranslate());
 
-	if ( bRotation )
-		Message.ExportData(TRef_Static(R,o,t,a,t), GetRotation());
-
-	if(  bScale )
-		Message.ExportData(TRef_Static(S,c,a,l,e), GetScale());
-
-	PublishMessage(Message);
-
+	//	write trasform data, only publish if something was written.
+	if ( m_Transform.ExportData( Message, TransformChangedBits ) != 0x0 )
+	{
+		PublishMessage(Message);
+	}
 }
 
 
@@ -267,9 +211,14 @@ void TLScene::TSceneNode_Transform::InitialiseZone()
 	if ( m_ZoneInitialised )
 		return;
 
+	//	cannot initialise zone without a root zone...
+	TPtr<TLMaths::TQuadTreeZone>& pRootZone = TLScene::g_pScenegraph->GetRootZone();
+	if ( !pRootZone )
+		return;
+
 	TPtr<TLScene::TSceneNode_Transform> pThis = TLScene::g_pScenegraph->FindNode( GetNodeRef() );
 	TPtr<TLMaths::TQuadTreeNode> pQuadTreeThis = pThis;
-	TLMaths::TQuadTreeNode::UpdateZone( pQuadTreeThis, TLScene::g_pScenegraph->GetRootZone() );
+	TLMaths::TQuadTreeNode::UpdateZone( pQuadTreeThis, pRootZone );
 
 	//	if our initial zone is inactive, sleep
 	TPtr<TLMaths::TQuadTreeZone>& pZone = GetZone();

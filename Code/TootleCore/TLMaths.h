@@ -15,9 +15,8 @@
 #define TWO_PI			((float)6.283185307f)
 #define HALF_PI			((float)1.570796326794895f)
 
-#define TRANSFORM_BIT_TRANSLATE	(1<<0)
-#define TRANSFORM_BIT_ROTATION	(1<<1)
-#define TRANSFORM_BIT_SCALE		(1<<2)
+class TBinaryTree;
+
 
 namespace TLMaths
 {
@@ -39,9 +38,6 @@ namespace TLMaths
 	class TSphere2D;
 	class TPlane;		//	3D plane
 	class TFrustum;		//	Camera frustum, box of 6 planes really
-
-	static const float	g_NearZero = 0.0001f;
-	static const float	g_NearOne = 1.f - g_NearZero;		//	value just less than one - used to check stuff is almost at 1 when normally between 0..1
 
 #define TLMATHS_LOOKUP_TO_RAD(i)	TAngle::DegreesToRadians( (float)i )	//	scale DOWN if table gets larger
 //#define TLMATHS_RAD_TO_LOOKUP(r)	((s32)TAngle::RadiansToDegrees( r ))		//	scale UP if table gets larger
@@ -109,6 +105,26 @@ namespace TLMaths
 			Value = Max - 1;
 	}
 
+	#define TLMaths_TransformBitTranslate	(1<<0)
+	#define TLMaths_TransformBitRotation	(1<<1)
+	#define TLMaths_TransformBitScale		(1<<2)
+	#define TLMaths_TransformBitAll			(TLMaths_TransformBitTranslate|TLMaths_TransformBitRotation|TLMaths_TransformBitScale)
+	#define TLMaths_NearZero				0.0001f
+	#define TLMaths_NearOne					(1.f - TLMaths_NearZero)		//	value just less than one - used to check stuff is almost at 1 when normally between 0..1
+
+	//	gr: these macros are just here to keep the compiled ref usage, they're not NEEDED but saves us using TRef_Static(B,o,x,2) etc everywhere
+	#define TLMaths_ShapeRef_TBox			TRef_Static3(B,o,x)
+	#define TLMaths_ShapeRef_TBox2D			TRef_Static4(B,o,x,TWO)
+	#define TLMaths_ShapeRef_TCapsule		TRef_Static3(C,a,p)
+	#define TLMaths_ShapeRef_TCapsule2D		TRef_Static4(C,a,p,TWO)
+	#define TLMaths_ShapeRef_TLine			TRef_Static4(L,i,n,e)
+	#define TLMaths_ShapeRef_TLine2D		TRef_Static(L,i,n,e,TWO)
+	#define TLMaths_ShapeRef_TOblong		TRef_Static3(O,b,l)
+	#define TLMaths_ShapeRef_TOblong2D		TRef_Static4(O,b,l,TWO)
+	#define TLMaths_ShapeRef_TSphere		TRef_Static3(S,p,h)
+	#define TLMaths_ShapeRef_TSphere2D		TRef_Static4(S,p,h,TWO)
+	
+	#define TLMaths_ShapeRef(ShapeType)		TLMaths_ShapeRef_##ShapeType
 }
 
 
@@ -186,12 +202,12 @@ public:
 	TMatrix(const TMatrix& Other)						{	Copy( Other );	};
 	TMatrix(const float4& col0,const float4& col1,const float4& col2,const float4& col3);
 
-	inline u32			GetSize() const					{	return 16;	}
-//	static inline int	DataSize()		 				{	return ( sizeof(float) * 16);	};
-	inline				operator float*()				{	return GetData();	};
-	inline				operator const float*() const	{	return GetData();	};
-	inline float*		GetData()						{	return m_Column[0].GetData();	};
-	inline const float*	GetData() const					{	return m_Column[0].GetData();	};
+	FORCEINLINE u32			GetSize() const					{	return 16;	}
+//	static FORCEINLINE int	DataSize()		 				{	return ( sizeof(float) * 16);	};
+	FORCEINLINE				operator float*()				{	return GetData();	};
+	FORCEINLINE				operator const float*() const	{	return GetData();	};
+	FORCEINLINE float*		GetData()						{	return m_Column[0].GetData();	};
+	FORCEINLINE const float*	GetData() const					{	return m_Column[0].GetData();	};
 	
 //	float4				&operator [] (unsigned int Index);
 //	const float4		&operator [] (unsigned int Index) const;
@@ -203,8 +219,8 @@ public:
 	void				operator *= (float Float);
 	void				operator /= (float Float);
 /*
-	friend inline Bool	operator == (const TMatrix &V1,	const TMatrix &V2)	{	return V1.Compare(V2);	};
-	friend inline Bool	operator != (const TMatrix &V1,	const TMatrix &V2)	{	return !V1.Compare(V2);	};
+	friend FORCEINLINE Bool	operator == (const TMatrix &V1,	const TMatrix &V2)	{	return V1.Compare(V2);	};
+	friend FORCEINLINE Bool	operator != (const TMatrix &V1,	const TMatrix &V2)	{	return !V1.Compare(V2);	};
 	friend TMatrix		operator + (const TMatrix &V1,	const TMatrix &V2);
 	friend TMatrix		operator - (const TMatrix &V1,	const TMatrix &V2);
 	friend TMatrix		operator * (const TMatrix &V1,	const TMatrix &V2);
@@ -215,18 +231,18 @@ public:
 	friend TMatrix		operator * (const TMatrix &Other, const float Float);
 	friend TMatrix		operator * (const float Float,	const TMatrix &Other);
 */
-	inline float&			operator()(u32 Row,u32 Col)							{	return Get( Row, Col );	}
-	inline void				Set(int r, int c, const float& f)					{	TLDebug_CheckIndex(r,4);	GetCol(c)[r] = f;	};
-	inline void				SetCol(int c, const float4& f)						{	TLDebug_CheckIndex(c,4);	m_Column[c] = f;	};
-	inline void				SetRow(int r, const float4& f)						{	TLDebug_CheckIndex(r,4);	m_Column[0][r] = f.x;	m_Column[1][r] = f.y;	m_Column[2][r] = f.z;	m_Column[3][r] = f.w;	};
-	inline void				SetCol(int c, const float3& f, const float w)		{	TLDebug_CheckIndex(c,4);	m_Column[c].x = f.x;	m_Column[c].y = f.y;	m_Column[c].z = f.z;	m_Column[c].w = w;	};
-	inline void				SetRow(int r, const float3& f, const float w)		{	TLDebug_CheckIndex(r,4);	m_Column[0][r] = f.x;	m_Column[1][r] = f.y;	m_Column[2][r] = f.z;	m_Column[3][r] = w;	};
-	inline float&			Get(int r, int c)				{	TLDebug_CheckIndex(c,4);	TLDebug_CheckIndex(r,4);	return m_Column[c][r];	};
-	inline float4&			GetCol(int c)					{	TLDebug_CheckIndex(c,4);	return m_Column[c];	};
-	inline const float&		Get(int r, int c) const	{	TLDebug_CheckIndex(c,4);	TLDebug_CheckIndex(r,4);	return m_Column[c][r];	};
-	inline float&			Get(int i)				{	return GetData()[i];	}	//	gr: quick fix replacement for use of m_Matrix (which was an array of all the floats): todo: replace with proper column[x].y usage
-	inline const float&		Get(int i) const		{	return GetData()[i];	}	//	gr: quick fix replacement for use of m_Matrix (which was an array of all the floats): todo: replace with proper column[x].y usage
-	inline const float4&	GetCol(int c) const		{	TLDebug_CheckIndex(c,4);	return m_Column[c];	};
+	FORCEINLINE float&			operator()(u32 Row,u32 Col)							{	return Get( Row, Col );	}
+	FORCEINLINE void				Set(int r, int c, const float& f)					{	TLDebug_CheckIndex(r,4);	GetCol(c)[r] = f;	};
+	FORCEINLINE void				SetCol(int c, const float4& f)						{	TLDebug_CheckIndex(c,4);	m_Column[c] = f;	};
+	FORCEINLINE void				SetRow(int r, const float4& f)						{	TLDebug_CheckIndex(r,4);	m_Column[0][r] = f.x;	m_Column[1][r] = f.y;	m_Column[2][r] = f.z;	m_Column[3][r] = f.w;	};
+	FORCEINLINE void				SetCol(int c, const float3& f, const float w)		{	TLDebug_CheckIndex(c,4);	m_Column[c].x = f.x;	m_Column[c].y = f.y;	m_Column[c].z = f.z;	m_Column[c].w = w;	};
+	FORCEINLINE void				SetRow(int r, const float3& f, const float w)		{	TLDebug_CheckIndex(r,4);	m_Column[0][r] = f.x;	m_Column[1][r] = f.y;	m_Column[2][r] = f.z;	m_Column[3][r] = w;	};
+	FORCEINLINE float&			Get(int r, int c)				{	TLDebug_CheckIndex(c,4);	TLDebug_CheckIndex(r,4);	return m_Column[c][r];	};
+	FORCEINLINE float4&			GetCol(int c)					{	TLDebug_CheckIndex(c,4);	return m_Column[c];	};
+	FORCEINLINE const float&		Get(int r, int c) const	{	TLDebug_CheckIndex(c,4);	TLDebug_CheckIndex(r,4);	return m_Column[c][r];	};
+	FORCEINLINE float&			Get(int i)				{	return GetData()[i];	}	//	gr: quick fix replacement for use of m_Matrix (which was an array of all the floats): todo: replace with proper column[x].y usage
+	FORCEINLINE const float&		Get(int i) const		{	return GetData()[i];	}	//	gr: quick fix replacement for use of m_Matrix (which was an array of all the floats): todo: replace with proper column[x].y usage
+	FORCEINLINE const float4&	GetCol(int c) const		{	TLDebug_CheckIndex(c,4);	return m_Column[c];	};
 	
 	void				SetIdentity();
 	Bool				IsIdentity() const;
@@ -303,13 +319,13 @@ public:
 //	float3&					GetAxis()			{	return xyz;	};
 //	float&					GetAngle()			{	return w;	}
 	float3					GetTempAxis() const {	return float3( xyzw.x, xyzw.y, xyzw.z );	}	//	gr: called this "temp" to make sure I can tell if anything is using "getaxis"
-	inline Bool				IsValid() const		{	return (xyzw.w!=0.f) && (GetTempAxis().LengthSq()!=0.f);	};
+	FORCEINLINE Bool				IsValid() const		{	return (xyzw.w!=0.f) && (GetTempAxis().LengthSq()!=0.f);	};
 	TLMaths::TAngle			GetAngle2D() const;	//	extract a eular angle in degrees from the quaternion. Is is based on an axis of 0,0,1. probably better ways to do it to get 3D angles...
 
-	inline void				SetIdentity()								{	SetValues( 0,0,0,1 );	};
+	FORCEINLINE void				SetIdentity()								{	SetValues( 0,0,0,1 );	};
 	
 	
-	inline void				Invert()									{	xyzw.Invert();	};
+	FORCEINLINE void				Invert()									{	xyzw.Invert();	};
 	void					LookAt(const float3& Dir,const float3& WorldUp=float3(0,1,0));
 	void					RotateVector(float3& Vector) const;
 	void					RotateVector(float2& Vector) const;
@@ -345,25 +361,29 @@ public:
 	FORCEINLINE const TQuaternion&	GetRotation() const		{	Debug_Assert( HasRotation(), "Rotation accessed but is invalid");	return m_Rotation;	}
 
 	FORCEINLINE void				SetInvalid()			{	m_Valid = 0x0;	}
-	FORCEINLINE void				SetTranslateInvalid()	{	m_Valid &= ~TRANSFORM_BIT_TRANSLATE;	/*m_Translate.Set( 0.f, 0.f, 0.f );*/	}
-	FORCEINLINE void				SetScaleInvalid()		{	m_Valid &= ~TRANSFORM_BIT_SCALE;		/*m_Scale.Set( 1.f, 1.f, 1.f );*/	}
-	FORCEINLINE void				SetRotationInvalid()	{	m_Valid &= ~TRANSFORM_BIT_ROTATION;		/*m_Rotation.SetIdentity();*/	}
+	FORCEINLINE void				SetTranslateInvalid()	{	m_Valid &= ~TLMaths_TransformBitTranslate;	/*m_Translate.Set( 0.f, 0.f, 0.f );*/	}
+	FORCEINLINE void				SetScaleInvalid()		{	m_Valid &= ~TLMaths_TransformBitScale;		/*m_Scale.Set( 1.f, 1.f, 1.f );*/	}
+	FORCEINLINE void				SetRotationInvalid()	{	m_Valid &= ~TLMaths_TransformBitRotation;		/*m_Rotation.SetIdentity();*/	}
 
-	FORCEINLINE void				SetTranslateValid()				{	m_Valid |= TRANSFORM_BIT_TRANSLATE;	}
+	FORCEINLINE void				SetTranslateValid()				{	m_Valid |= TLMaths_TransformBitTranslate;	}
 	FORCEINLINE void				SetTranslateValid(Bool Valid)	{	if ( Valid )	SetTranslateValid();	else SetTranslateInvalid();	}
-	FORCEINLINE void				SetScaleValid()					{	m_Valid |= TRANSFORM_BIT_SCALE;		}
-	FORCEINLINE void				SetRotationValid()				{	m_Valid |= TRANSFORM_BIT_ROTATION;	}
+	FORCEINLINE void				SetScaleValid()					{	m_Valid |= TLMaths_TransformBitScale;		}
+	FORCEINLINE void				SetRotationValid()				{	m_Valid |= TLMaths_TransformBitRotation;	}
 
 	FORCEINLINE Bool				HasAnyTransform() const			{	return (m_Valid != 0x0);	}
-	FORCEINLINE Bool				HasTranslate() const			{	return (m_Valid & TRANSFORM_BIT_TRANSLATE) != 0x0;	}
-	FORCEINLINE Bool				HasScale() const				{	return (m_Valid & TRANSFORM_BIT_SCALE) != 0x0;	}
-	FORCEINLINE Bool				HasRotation() const				{	return (m_Valid & TRANSFORM_BIT_ROTATION) != 0x0;	}
+	FORCEINLINE Bool				HasTranslate() const			{	return (m_Valid & TLMaths_TransformBitTranslate) != 0x0;	}
+	FORCEINLINE Bool				HasScale() const				{	return (m_Valid & TLMaths_TransformBitScale) != 0x0;	}
+	FORCEINLINE Bool				HasRotation() const				{	return (m_Valid & TLMaths_TransformBitRotation) != 0x0;	}
+	FORCEINLINE u8					GetHasTransformBits() const		{	return m_Valid;	}
 
 	void				Transform(const TLMaths::TTransform& Trans);	//	transform this
 	void				TransformVector(float3& Vector) const;		//	transform vector
 	void				TransformVector(float2& Vector) const;		//	transform vector
 	void				UntransformVector(float3& Vector) const;	//	untransform vector
 	void				UntransformVector(float2& Vector) const;	//	untransform vector
+
+	u8					ImportData(TBinaryTree& Data);				//	import transform data from binary data/message/etc- returns bitmask of the attributes that have changed
+	u8					ExportData(TBinaryTree& Data,u8 TransformBits=TLMaths_TransformBitAll);	//	export all our valid data to this binary data- can optionally make it only write certain attributes. Returns bits of the attributes written.
 
 private:
 #ifdef _DEBUG

@@ -501,7 +501,7 @@ Bool TLCollada::TMaterial::Import(TXmlTag& MaterialTag,TXmlTag& LibraryEffectsTa
 
 	//	read out colour
 	u32 CharIndex = 0;
-	if ( !TLString::ReadNextFloat( pAmbientColourTag->GetDataString(), CharIndex, m_Colour.GetRgba() ) )
+	if ( !TLString::ReadNextFloat( pAmbientColourTag->GetDataString(), CharIndex, m_Colour.GetData4() ) )
 	{
 		TLDebug_Break("Failed to read colour from phong ambient colour tag");
 		return FALSE;

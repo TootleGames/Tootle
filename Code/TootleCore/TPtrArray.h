@@ -37,10 +37,10 @@ public:
 	TPtrArray(TSortFunc* pSortFunc=NULL,u16 GrowBy=TArray_GrowByDefault) : TArray<TPtr<TYPE> >::TArray	( pSortFunc, GrowBy )	{	}
 
 	template<class MATCHTYPE>
-	inline TPtr<TYPE>&			FindPtr(const MATCHTYPE& val);
+	FORCEINLINE TPtr<TYPE>&			FindPtr(const MATCHTYPE& val);
 		
 	template<class MATCHTYPE>
-	inline const TPtr<TYPE>&	FindPtr(const MATCHTYPE& val) const;
+	FORCEINLINE const TPtr<TYPE>&	FindPtr(const MATCHTYPE& val) const;
 
 	FORCEINLINE TPtr<TYPE>&		GetPtrLast();						//	fast version to return the last TPtr
 	FORCEINLINE TPtr<TYPE>&		GetPtrAt(s32 Index);				//	fast version to return TPtr reference at index
@@ -54,10 +54,10 @@ public:
 	FORCEINLINE void			FunctionAll(FUNCTIONPOINTER pFunc);	//	execute this function on every member. will fail if the TYPE isn't a pointer of somekind
 
 	//	operators
-	inline TPtr<TYPE>&			operator[](s32 Index)				{	return TArray<TPtr<TYPE> >::ElementAt(Index);	}
-	inline TPtr<TYPE>&			operator[](u32 Index)				{	return TArray<TPtr<TYPE> >::ElementAt(Index);	}
-	inline const TPtr<TYPE>&	operator[](s32 Index) const			{	return TArray<TPtr<TYPE> >::ElementAtConst(Index);	}
-	inline const TPtr<TYPE>&	operator[](u32 Index) const			{	return TArray<TPtr<TYPE> >::ElementAtConst(Index);	}
+	FORCEINLINE TPtr<TYPE>&			operator[](s32 Index)				{	return TArray<TPtr<TYPE> >::ElementAt(Index);	}
+	FORCEINLINE TPtr<TYPE>&			operator[](u32 Index)				{	return TArray<TPtr<TYPE> >::ElementAt(Index);	}
+	FORCEINLINE const TPtr<TYPE>&	operator[](s32 Index) const			{	return TArray<TPtr<TYPE> >::ElementAtConst(Index);	}
+	FORCEINLINE const TPtr<TYPE>&	operator[](u32 Index) const			{	return TArray<TPtr<TYPE> >::ElementAtConst(Index);	}
 
 protected:
 	virtual void				OnArrayShrink(u32 OldSize,u32 NewSize);	//	NULL pointers that have been "removed" but not deallocated
@@ -79,7 +79,7 @@ void TPtrArray<TYPE>::OnArrayShrink(u32 OldSize,u32 NewSize)
 
 template<typename TYPE>
 template<class MATCHTYPE>
-inline TPtr<TYPE>& TPtrArray<TYPE>::FindPtr(const MATCHTYPE& val)
+FORCEINLINE TPtr<TYPE>& TPtrArray<TYPE>::FindPtr(const MATCHTYPE& val)
 {
 	u32 Index = TArray<TPtr<TYPE> >::FindIndex(val);
 	if ( Index == -1 )
@@ -92,7 +92,7 @@ inline TPtr<TYPE>& TPtrArray<TYPE>::FindPtr(const MATCHTYPE& val)
 
 template<typename TYPE>
 template<class MATCHTYPE>
-inline const TPtr<TYPE>& TPtrArray<TYPE>::FindPtr(const MATCHTYPE& val) const
+FORCEINLINE const TPtr<TYPE>& TPtrArray<TYPE>::FindPtr(const MATCHTYPE& val) const
 {
 	u32 Index = FindIndex(val);
 	if ( Index == -1 )
@@ -103,7 +103,7 @@ inline const TPtr<TYPE>& TPtrArray<TYPE>::FindPtr(const MATCHTYPE& val) const
 
 
 template<typename TYPE>
-inline void TPtrArray<TYPE>::RemoveNull()
+FORCEINLINE void TPtrArray<TYPE>::RemoveNull()
 {
 	for ( s32 i=TArray<TPtr<TYPE> >::GetLastIndex();	i>=0;	i-- )
 	{

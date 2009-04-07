@@ -49,22 +49,11 @@ TLRender::TRenderZoneNode::TRenderZoneNode(TRefRef RenderNodeRef) :
 //------------------------------------------------------------------
 SyncBool TLRender::TRenderZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
 {
-	//	grab render node if we don't have it
-	if ( !m_pRenderNode )
-	{
-		m_pRenderNode = TLRender::g_pRendergraph->FindNode( m_RenderNodeRef );
-	}
-
 	//	get c-pointer
 	TLRender::TRenderNode* pRenderNode = m_pRenderNode;
 	if ( !pRenderNode )
 	{
-#ifdef _DEBUG
-		TTempString Debug_String("TRenderZoneNode is linked to a node ");
-		m_RenderNodeRef.GetString( Debug_String );
-		Debug_String.Append(" that doesnt exist?");
-		TLDebug_Print(Debug_String);
-#endif
+		TLDebug_Break("Missing render node should have been caught in HasZoneShape - if this is during a zone-split then this TPtr should be already set...");
 		return SyncFalse;
 	}
 
@@ -133,6 +122,37 @@ SyncBool TLRender::TRenderZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
 	return SyncTrue;
 }
 
+
+
+//------------------------------------------------------------------
+//	Do initial tests to see if the shape intersections will never work
+//------------------------------------------------------------------
+Bool TLRender::TRenderZoneNode::HasZoneShape()
+{
+	//	grab render node if we don't have it
+	if ( !m_pRenderNode )
+	{
+		m_pRenderNode = TLRender::g_pRendergraph->FindNode( m_RenderNodeRef );
+
+		//	no render node, never gonna intersect with the shape
+		if ( !m_pRenderNode )
+		{
+	#ifdef _DEBUG
+			TTempString Debug_String("TRenderZoneNode is linked to a node ");
+			m_RenderNodeRef.GetString( Debug_String );
+			Debug_String.Append(" that doesnt exist?");
+			TLDebug_Print(Debug_String);
+	#endif
+			return FALSE;
+		}
+	}
+
+	//	no up-to-date world transform, bail out
+	if ( m_pRenderNode->IsWorldTransformValid() != SyncTrue )
+		return FALSE;
+
+	return TRUE;
+}
 
 
 
@@ -515,25 +535,43 @@ void TLRender::TRenderNode::SetBoundsInvalid(const TInvalidateFlags& InvalidateF
 	//	invalidate local bounds
 	if ( InvLocal )
 	{
-		ThisLocalBoundsChanged |= m_BoundsBox.SetLocalShapeInvalid();
-		ThisLocalBoundsChanged |= m_BoundsBox2D.SetLocalShapeInvalid();
-		ThisLocalBoundsChanged |= m_BoundsSphere.SetLocalShapeInvalid();
-		ThisLocalBoundsChanged |= m_BoundsSphere2D.SetLocalShapeInvalid();
+		//	if any are valid, then at least must change when we invalidate them
+		ThisLocalBoundsChanged |= m_BoundsBox.IsLocalShapeValid() ||
+									m_BoundsBox2D.IsLocalShapeValid() ||
+									m_BoundsSphere.IsLocalShapeValid() ||
+									m_BoundsSphere2D.IsLocalShapeValid();
+
+		//	now just blindly invalidate shapes
+		m_BoundsBox.SetLocalShapeInvalid();
+		m_BoundsBox2D.SetLocalShapeInvalid();
+		m_BoundsSphere.SetLocalShapeInvalid();
+		m_BoundsSphere2D.SetLocalShapeInvalid();
 	}
 
-	//	if invalidating local, world must be invalidated (but only do it if the local bounds were changed)
-	if ( InvWorld || (InvLocal&&ThisLocalBoundsChanged) )
+	//	invalidating world TRANSFORM...
+	if ( InvWorld )
 	{
-		//	downgrade validation of world shapes
-		SetWorldTransformOld();
+		//	downgrade validation of world shapes, transform and pos only if requested
+		ThisWorldBoundsChanged |= SetWorldTransformOld( InvPos, TRUE, TRUE );
+	}
+	else if ( InvLocal && ThisLocalBoundsChanged )
+	{
+		//	just invalidating our world SHAPE, not our transform or pos
+		ThisWorldBoundsChanged |= SetWorldTransformOld( FALSE, FALSE, TRUE );
+	}
+
+	//	invalidate zones if required
+	if ( ThisWorldBoundsChanged )
+	{
 		Debug_PrintInvalidate( this, "local", "all" );
 
 		//	invalidate the zone of our RenderNodeZones - if our world bounds has changed then we
 		//	may have moved to a new zone
-		if ( !HasSetRenderZoneInvalid )
+		if ( !HasSetRenderZoneInvalid && m_RenderZoneNodes.GetSize() )
 		{
 			for ( u32 z=0;	z<m_RenderZoneNodes.GetSize();	z++ )
 				m_RenderZoneNodes.ElementAt(z)->SetZoneOutOfDate();
+				
 			HasSetRenderZoneInvalid = TRUE;
 		}
 	}
@@ -542,18 +580,21 @@ void TLRender::TRenderNode::SetBoundsInvalid(const TInvalidateFlags& InvalidateF
 	if ( InvPos )
 	{
 		if ( m_WorldPosValid == SyncTrue )
-			m_WorldPosValid = SyncWait;
-
-		if ( !HasSetRenderZoneInvalid )
 		{
-			for ( u32 z=0;	z<m_RenderZoneNodes.GetSize();	z++ )
-				m_RenderZoneNodes.ElementAt(z)->SetZoneOutOfDate();
-			HasSetRenderZoneInvalid = TRUE;
+			m_WorldPosValid = SyncWait;
+			ThisWorldBoundsChanged = TRUE;
+
+			if ( !HasSetRenderZoneInvalid && m_RenderZoneNodes.GetSize() )
+			{
+				for ( u32 z=0;	z<m_RenderZoneNodes.GetSize();	z++ )
+					m_RenderZoneNodes.ElementAt(z)->SetZoneOutOfDate();
+				HasSetRenderZoneInvalid = TRUE;
+			}
 		}
 	}
 
 	//	invalidate parent if local changes
-	if ( InvalidateFlags(InvalidateParentLocalBounds) || InvalidateFlags(ForceInvalidateParentsLocalBounds) )
+	if ( (ThisWorldBoundsChanged&&InvalidateFlags(InvalidateParentLocalBounds)) || InvalidateFlags(ForceInvalidateParentsLocalBounds) )
 	{
 		TRenderNode* pParent = GetParent();
 		if ( pParent )
@@ -575,8 +616,13 @@ void TLRender::TRenderNode::SetBoundsInvalid(const TInvalidateFlags& InvalidateF
 	}
 
 	//	invalidate world bounds of children
-	if ( HasChildren() && (InvalidateFlags(InvalidateChildWorldBounds) || InvalidateFlags(InvalidateChildWorldPos) )  )
+	if ( HasChildren() && ThisWorldBoundsChanged && (InvalidateFlags(InvalidateChildWorldBounds) || InvalidateFlags(InvalidateChildWorldPos) )  )
 	{
+		if ( !ThisWorldBoundsChanged )
+		{
+			//TLDebug_Break("Possible optimisation?");
+		}
+
 		//	calculate child's invalidate flags
 		TInvalidateFlags ChildInvalidateFlags;
 		ChildInvalidateFlags.Set( FromParent );
@@ -751,31 +797,10 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 	}
 
 
-
-
-	Bool TransformChanged = FALSE;
-
-	if ( Message.ImportData(TRef_Static(T,r,a,n,s), m_Transform.GetTranslate() ) == SyncTrue )
-	{
-		m_Transform.SetTranslateValid();
-		TransformChanged = TRUE;
-	}
-
-	if ( Message.ImportData(TRef_Static(S,c,a,l,e), m_Transform.GetScale() ) == SyncTrue )
-	{
-		m_Transform.SetScaleValid();
-		TransformChanged = TRUE;
-	}
-
-	if ( Message.ImportData(TRef_Static(R,o,t,a,t), m_Transform.GetRotation() ) == SyncTrue )
-	{
-		m_Transform.SetRotationValid();
-		TransformChanged = TRUE;
-	}
+	u8 TransformChangedBits = m_Transform.ImportData( Message );
 
 	//	transform has been set
-	if ( TransformChanged )
-		OnTransformChanged();
+	OnTransformChanged(TransformChangedBits);
 
 	Message.ImportData("LineWidth", m_LineWidth );
 
@@ -863,30 +888,8 @@ void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 	//	"OnTransform"
 	if ( Message.GetMessageRef() == TRef_Static(O,n,T,r,a) && Message.GetSenderRef() == GetOwnerSceneNodeRef() && GetOwnerSceneNodeRef().IsValid() )
 	{
-		Bool TransformChanged = FALSE;
-
-		if ( Message.ImportData( TRef_Static(T,r,a,n,s), m_Transform.GetTranslate() ) == SyncTrue )
-		{
-			m_Transform.SetTranslateValid();
-			TransformChanged = TRUE;
-		}
-
-		if ( Message.ImportData( TRef_Static(S,c,a,l,e), m_Transform.GetScale() ) == SyncTrue )
-		{
-			m_Transform.SetScaleValid();
-			TransformChanged = TRUE;
-		}
-
-		if ( Message.ImportData(TRef_Static(R,o,t,a,t), m_Transform.GetRotation() ) == SyncTrue )
-		{
-			m_Transform.SetRotationValid();
-			TransformChanged = TRUE;
-		}
-
-		//	transform has been set
-		if ( TransformChanged )
-			OnTransformChanged();
-
+		u8 TransformChangedBits = m_Transform.ImportData( Message );
+		OnTransformChanged(TransformChangedBits);
 		return;
 	}
 	else if(Message.GetMessageRef() == TRef("SetTransform"))
@@ -953,19 +956,38 @@ void TLRender::TRenderNode::SetWorldTransform(const TLMaths::TTransform& SceneTr
 
 
 //---------------------------------------------------------
-//	downgrade all world shape/transform states from valid to old
+//	downgrade all world shape/transform states from valid to old. returns if anything was downgraded
 //---------------------------------------------------------
-void TLRender::TRenderNode::SetWorldTransformOld()
+Bool TLRender::TRenderNode::SetWorldTransformOld(Bool SetPosOld,Bool SetTransformOld,Bool SetShapesOld)
 {
-	if ( m_WorldTransformValid == SyncTrue )
+	Bool Changed = FALSE;
+
+	if ( SetTransformOld && m_WorldTransformValid == SyncTrue )
+	{
 		m_WorldTransformValid = SyncWait;
+		Changed = TRUE;
+	}
 
-	if ( m_WorldPosValid == SyncTrue )
+	if ( SetPosOld && m_WorldPosValid == SyncTrue )
+	{
 		m_WorldPosValid = SyncWait;
+		Changed = TRUE;
+	}
 
-	m_BoundsBox.SetShapeOld();
-	m_BoundsBox2D.SetShapeOld();
-	m_BoundsSphere.SetShapeOld();
-	m_BoundsSphere2D.SetShapeOld();
+	if ( SetShapesOld )
+	{
+		//	if any of the bounds shapes WERE up to date, they won't be after this
+		Changed |= m_BoundsBox.IsWorldShapeValid() || 
+					m_BoundsBox2D.IsWorldShapeValid() || 
+					m_BoundsSphere.IsWorldShapeValid() || 
+					m_BoundsSphere2D.IsWorldShapeValid();
+
+		m_BoundsBox.SetWorldShapeOld();
+		m_BoundsBox2D.SetWorldShapeOld();
+		m_BoundsSphere.SetWorldShapeOld();
+		m_BoundsSphere2D.SetWorldShapeOld();
+	}
+
+	return Changed;
 }
 

@@ -2,18 +2,25 @@
 
 
 
+#ifdef _DEBUG
+	#define DEBUG_CHECK_PRIMITIVE_INDEXES	//	check indexes of all the primitives are within bound vertex range
+#endif
+
 
 namespace TLRender
 {
-	const TColour		g_DebugMissingColoursColour( 1.f, 0.f, 1.f );	//	pink
-	u32					g_PolyCount = 0;
-	u32					g_VertexCount = 0;
-	
-	u32					g_BoundTextureIndex = 0;						//	currently bound texture
-	TKeyArray<TRef,u32>	g_TextureIndexes;								//	Texture Asset Ref -> gl Texture index lookup table
+	u32							g_PolyCount;
+	u32							g_VertexCount;
 
 	namespace Opengl
 	{
+		const TArray<float3>*		g_pBoundVertexes = NULL;
+		//const TArray<TColour>*		g_pBoundColours = NULL;
+		const void*					g_pBoundColours = NULL;
+		const TArray<float2>*		g_pBoundUVs = NULL;
+		u32							g_BoundTextureIndex = 0;						//	currently bound texture
+		TKeyArray<TRef,u32>			g_TextureIndexes;								//	Texture Asset Ref -> gl Texture index lookup table
+
 		void				GetOpenglFilterTypes(TArray<u32>& OpenglFilters,Bool MinLinearFilter,Bool MagLinearFilter,Bool MipMapEnabled);	//	get opengl filter type from asset filter type
 		void				BindTextureIndex(u32 TextureIndex);					//	set current texture - no change if same as currently bound texture
 		void				UnbindTextureIndex(u32 TextureIndex);				//	unbind texture index if it's currently bound
@@ -46,7 +53,7 @@ void TLRender::Opengl::DrawPrimitivePoints(const TArray<float3>* pVertexes)
 	}
 
 	//	draw points
-	Platform::DrawPrimitives( Platform::GetPrimTypePoint(), pVertexes->GetSize(), g_AllPoints.GetData() );
+	DrawPrimitives( Platform::GetPrimTypePoint(), pVertexes->GetSize(), g_AllPoints.GetData() );
 }
 
 
@@ -57,10 +64,9 @@ void TLRender::Opengl::DrawPrimitivePoints(const TArray<float3>* pVertexes)
 void TLRender::Opengl::Unbind()
 {
 	//	unbind attribs
-	//Platform::BindFixedVertexes( NULL );
-	Platform::BindVertexes( NULL );
-	Platform::BindColours( NULL );
-	Platform::BindUVs( NULL );
+	BindVertexes( NULL );
+	BindColoursNull();
+	BindUVs( NULL );
 	BindTexture( NULL );
 }
 
@@ -349,5 +355,204 @@ Bool TLRender::Opengl::BindTexture(const TLAsset::TTexture* pTexture)
 	glEnable( GL_TEXTURE_2D );
 
 	return TRUE;
+}
+
+
+
+
+//---------------------------------------------------
+//	bind UV's
+//---------------------------------------------------
+Bool TLRender::Opengl::BindUVs(const TArray<float2>* pUVs)
+{
+	//	already bound to this
+	if ( pUVs == g_pBoundUVs )
+		return TRUE;
+
+	g_pBoundUVs = pUVs;
+
+	//	unbind
+	if ( !pUVs )
+	{
+		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+		Opengl::Debug_CheckForError();
+		return TRUE;
+	}
+
+	//	enable texcoord array
+	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+	
+	//	bind
+	glTexCoordPointer( 2, GL_FLOAT, 0, pUVs->GetData() );
+	
+	Debug_CheckForError();
+	
+	return TRUE;
+}
+
+
+
+//---------------------------------------------------
+//	bind colours
+//---------------------------------------------------
+Bool TLRender::Opengl::BindColours(const TArray<TColour>* pColours)
+{
+	//	already bound to this
+	if ( pColours == g_pBoundColours )
+		return TRUE;
+
+	g_pBoundColours = pColours;
+
+	//	unbind
+	if ( !pColours )
+	{
+		glDisableClientState( GL_COLOR_ARRAY );
+		Opengl::Debug_CheckForError();
+		return TRUE;
+	}
+	
+	//	enable texcoord array
+	glEnableClientState( GL_COLOR_ARRAY );
+	
+	//	bind
+	glColorPointer( 4, GL_FLOAT, 0, pColours->GetData() );
+	
+	Debug_CheckForError();
+	
+	return TRUE;
+}
+
+
+
+//---------------------------------------------------
+//	bind colours
+//---------------------------------------------------
+Bool TLRender::Opengl::BindColours(const TArray<TColour24>* pColours)
+{
+	//	already bound to this
+	if ( pColours == g_pBoundColours )
+		return TRUE;
+
+	g_pBoundColours = pColours;
+
+	//	unbind
+	if ( !pColours )
+	{
+		glDisableClientState( GL_COLOR_ARRAY );
+		Opengl::Debug_CheckForError();
+		return TRUE;
+	}
+	
+	//	enable texcoord array
+	glEnableClientState( GL_COLOR_ARRAY );
+	
+	//	bind
+	glColorPointer( 3, GL_UNSIGNED_BYTE, 0, pColours->GetData() );
+	
+	Debug_CheckForError();
+	
+	return TRUE;
+}
+
+//---------------------------------------------------
+//	bind colours
+//---------------------------------------------------
+Bool TLRender::Opengl::BindColours(const TArray<TColour32>* pColours)
+{
+	//	already bound to this
+	if ( pColours == g_pBoundColours )
+		return TRUE;
+
+	g_pBoundColours = pColours;
+
+	//	unbind
+	if ( !pColours )
+	{
+		glDisableClientState( GL_COLOR_ARRAY );
+		Opengl::Debug_CheckForError();
+		return TRUE;
+	}
+	
+	//	enable texcoord array
+	glEnableClientState( GL_COLOR_ARRAY );
+	
+	//	bind
+	glColorPointer( 4, GL_UNSIGNED_BYTE, 0, pColours->GetData() );
+	
+	Debug_CheckForError();
+	
+	return TRUE;
+}
+
+
+//---------------------------------------------------
+//	bind verts
+//---------------------------------------------------
+Bool TLRender::Opengl::BindVertexes(const TArray<float3>* pVertexes)
+{
+	//	already bound to this
+	if ( pVertexes == g_pBoundVertexes )
+		return TRUE;
+	
+//	g_pBoundFixedVertexes = NULL;
+	g_pBoundVertexes = pVertexes;
+	
+	//	unbind
+	if ( !pVertexes )
+	{
+		glDisableClientState( GL_VERTEX_ARRAY );
+		Debug_CheckForError();		
+		return TRUE;
+	}
+	
+	//	enable texcoord array
+	glEnableClientState( GL_VERTEX_ARRAY );
+
+	//	bind
+	glVertexPointer( 3, GL_FLOAT, 0, pVertexes->GetData() );
+	Debug_CheckForError();		
+	
+	return TRUE;
+}
+
+
+
+//-----------------------------------------------------------
+//	main renderer, just needs primitive type, and the data
+//-----------------------------------------------------------
+void TLRender::Opengl::DrawPrimitives(u16 GLPrimType,u32 IndexCount,const u16* pIndexData)
+{
+	//	no data to render
+#ifdef _DEBUG
+	if ( !IndexCount || !pIndexData )
+	{
+		TLDebug_Break("Shouldn't have null/zero data in primitive data");
+		return;
+	}
+#endif
+
+	//	make sure we don't attempt to render vertexes that aren't bound
+#ifdef DEBUG_CHECK_PRIMITIVE_INDEXES
+	if ( g_pBoundVertexes )
+	{
+		u32 MaxVertexIndex = g_pBoundVertexes->GetLastIndex();
+		for ( u32 i=0;	i<IndexCount;	i++ )
+		{
+			if ( pIndexData[i] > MaxVertexIndex )
+			{
+				TLDebug_Break("Primitive contains vertex index out of the range of vertexes that were bound");
+			}
+		}
+	}
+#endif //DEBUG_CHECK_PRIMITIVE_INDEXES
+	
+	//	draw
+	glDrawElements( GLPrimType, IndexCount, GL_UNSIGNED_SHORT, pIndexData );
+
+	//	inc poly counter
+	TLRender::g_VertexCount += IndexCount;
+	TLRender::g_PolyCount += IndexCount / 3;
+
+	Debug_CheckForError();
 }
 

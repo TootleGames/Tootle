@@ -1,5 +1,5 @@
 /*------------------------------------------------------
-	Expanded/inlined code for TLTypes.h
+	Expanded/FORCEINLINEd code for TLTypes.h
 
 -------------------------------------------------------*/
 
@@ -32,50 +32,51 @@ public:
 	Type2(const TYPE& a, const TYPE& b)								{	Set(a,b);	};
 	template<typename OTHERTYPE> Type2(const Type2<OTHERTYPE>& t)	{	Set( t.x, t.y );	};
 
-	inline static u32	GetSize() 									{	return 2;	}
-	inline void			Set(const TYPE& a, const TYPE& b)			{	x = a;	y = b;	};
-	inline void			Set(const Type2<TYPE>& ab)					{	x = ab.x;	y = ab.y;	};
-	inline void			Set(const Type3<TYPE>& abc)					{	x = abc.x;	y = abc.y; };
-	inline Type3<TYPE>	xyz(const TYPE& z) const					{	return Type3<TYPE>( x, y, z );	}
-	FORCEINLINE Bool	IsZero() const								{	return (x==0) && (y==0);	}	//	could also use {	return DotProduct() == 0;	}	
-	FORCEINLINE Bool	IsNonZero() const							{	return (x!=0) || (y!=0);	}	//	could also use {	return DotProduct() != 0;	}	
+	FORCEINLINE static u32		GetSize() 									{	return 2;	}
+	FORCEINLINE void			Set(const TYPE& a, const TYPE& b)			{	x = a;	y = b;	};
+	FORCEINLINE void			Set(const Type2<TYPE>& ab)					{	x = ab.x;	y = ab.y;	};
+	FORCEINLINE void			Set(const Type3<TYPE>& abc)					{	x = abc.x;	y = abc.y; };
+	FORCEINLINE Type3<TYPE>		xyz(const TYPE& z) const					{	return Type3<TYPE>( x, y, z );	}
+	FORCEINLINE Bool			IsZero() const								{	return (x==0) && (y==0);	}	//	could also use {	return DotProduct() == 0;	}	
+	FORCEINLINE Bool			IsNonZero() const							{	return (x!=0) || (y!=0);	}	//	could also use {	return DotProduct() != 0;	}	
 
-	inline Type2<TYPE>	operator *(const TYPE& v) const 		{	return Type2<TYPE>( x*v, y*v );	};
-	inline Type2<TYPE>	operator *(const Type2<TYPE>& v) const	{	return Type2<TYPE>( x*v.x, y*v.y );	};
-	inline Type2<TYPE>	operator +(const TYPE& v) const			{	return Type2<TYPE>( x+v, y+v );	};
-	inline Type2<TYPE>	operator +(const Type2<TYPE>& v) const	{	return Type2<TYPE>( x+v.x, y+v.y );	};
-	inline Type2<TYPE>	operator -(const TYPE& v) const			{	return Type2<TYPE>( x-v, y-v );	};
-	inline Type2<TYPE>	operator -(const Type2<TYPE>& v) const	{	return Type2<TYPE>( x-v.x, y-v.y );	};
-	inline Type2<TYPE>	operator /(const TYPE& v) const			{	return Type2<TYPE>( x/v, y/v );	};
-	inline Type2<TYPE>	operator /(const Type2<TYPE>& v) const	{	return Type2<TYPE>( x/v.x, y/v.y );	};
+	FORCEINLINE Type2<TYPE>		operator *(const TYPE& v) const 		{	return Type2<TYPE>( x*v, y*v );	};
+	FORCEINLINE Type2<TYPE>		operator *(const Type2<TYPE>& v) const	{	return Type2<TYPE>( x*v.x, y*v.y );	};
+	FORCEINLINE Type2<TYPE>		operator +(const TYPE& v) const			{	return Type2<TYPE>( x+v, y+v );	};
+	FORCEINLINE Type2<TYPE>		operator +(const Type2<TYPE>& v) const	{	return Type2<TYPE>( x+v.x, y+v.y );	};
+	FORCEINLINE Type2<TYPE>		operator -(const TYPE& v) const			{	return Type2<TYPE>( x-v, y-v );	};
+	FORCEINLINE Type2<TYPE>		operator -(const Type2<TYPE>& v) const	{	return Type2<TYPE>( x-v.x, y-v.y );	};
+	FORCEINLINE Type2<TYPE>		operator /(const TYPE& v) const			{	return Type2<TYPE>( x/v, y/v );	};
+	FORCEINLINE Type2<TYPE>		operator /(const Type2<TYPE>& v) const	{	return Type2<TYPE>( x/v.x, y/v.y );	};
 
-	inline Bool		operator==(const Type2<TYPE>& v) const		{	return ( x == v.x ) && ( y == v.y );	};
-	inline Bool		operator<(const Type2<TYPE>& v) const		{	return ( x < v.x ) && ( y < v.y );	};
+	FORCEINLINE Bool			operator==(const Type2<TYPE>& v) const		{	return ( x == v.x ) && ( y == v.y );	};
+	FORCEINLINE Bool			operator!=(const Type2<TYPE>& v) const		{	return ( x != v.x ) || ( y != v.y );	};
+	FORCEINLINE Bool			operator<(const Type2<TYPE>& v) const		{	return ( x < v.x ) && ( y < v.y );	};
 
-	template<typename OTHERTYPE> inline void		operator=(const Type2<OTHERTYPE>& v);
-	template<typename OTHERTYPE> inline void		operator=(const Type3<OTHERTYPE>& v);
-	template<typename OTHERTYPE> inline void		operator=(const Type4<OTHERTYPE>& v);
+	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type2<OTHERTYPE>& v);
+	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type3<OTHERTYPE>& v);
+	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type4<OTHERTYPE>& v);
 	
-	inline void		operator+=(const TYPE& v)				{	x += v;		y += v;	};
-	inline void		operator-=(const TYPE& v)				{	x -= v;		y -= v;	};
-	inline void		operator*=(const TYPE& v)				{	x *= v;		y *= v;	};
-	inline void		operator/=(const TYPE& v)				{	x /= v;		y /= v;	};
+	FORCEINLINE void		operator+=(const TYPE& v)				{	x += v;		y += v;	};
+	FORCEINLINE void		operator-=(const TYPE& v)				{	x -= v;		y -= v;	};
+	FORCEINLINE void		operator*=(const TYPE& v)				{	x *= v;		y *= v;	};
+	FORCEINLINE void		operator/=(const TYPE& v)				{	x /= v;		y /= v;	};
 
-	inline void		operator+=(const Type2<TYPE>& v)		{	x += v.x;		y += v.y;	};
-	inline void		operator-=(const Type2<TYPE>& v)		{	x -= v.x;		y -= v.y;	};
-	inline void		operator*=(const Type2<TYPE>& v)		{	x *= v.x;		y *= v.y;	};
-	inline void		operator/=(const Type2<TYPE>& v)		{	x /= v.x;		y /= v.y;	};
+	FORCEINLINE void		operator+=(const Type2<TYPE>& v)		{	x += v.x;		y += v.y;	};
+	FORCEINLINE void		operator-=(const Type2<TYPE>& v)		{	x -= v.x;		y -= v.y;	};
+	FORCEINLINE void		operator*=(const Type2<TYPE>& v)		{	x *= v.x;		y *= v.y;	};
+	FORCEINLINE void		operator/=(const Type2<TYPE>& v)		{	x /= v.x;		y /= v.y;	};
 
-	inline void		operator+=(const Type3<TYPE>& v);
-	inline void		operator-=(const Type3<TYPE>& v);
-	inline void		operator*=(const Type3<TYPE>& v);
-	inline void		operator/=(const Type3<TYPE>& v);
+	FORCEINLINE void		operator+=(const Type3<TYPE>& v);
+	FORCEINLINE void		operator-=(const Type3<TYPE>& v);
+	FORCEINLINE void		operator*=(const Type3<TYPE>& v);
+	FORCEINLINE void		operator/=(const Type3<TYPE>& v);
 
-	inline TYPE&		operator[](const int Index)		{	TLDebug::CheckIndex(Index,2);	return GetData()[Index];	};
-	inline const TYPE*	GetData() const					{	return &x;	};
-	inline TYPE*		GetData()						{	return &x;	};
-	inline				operator TYPE*()				{	return GetData();	};
-	inline				operator const TYPE*() const	{	return GetData();	};
+	FORCEINLINE TYPE&		operator[](const int Index)		{	TLDebug::CheckIndex(Index,2);	return GetData()[Index];	};
+	FORCEINLINE const TYPE*	GetData() const					{	return &x;	};
+	FORCEINLINE TYPE*		GetData()						{	return &x;	};
+	FORCEINLINE				operator TYPE*()				{	return GetData();	};
+	FORCEINLINE				operator const TYPE*() const	{	return GetData();	};
 
 	FORCEINLINE TYPE&			Left()										{	return x;	}
 	FORCEINLINE TYPE&			Top()						{	return y;	}
@@ -119,63 +120,65 @@ public:
 	Type3(const Type3<TYPE>& t) : x(t.x), y(t.y), z(t.z)				{	}
 	template<typename OTHERTYPE> Type3(const Type4<OTHERTYPE>& t);
 
-	inline static u32			GetSize() 											{	return 3;	}
-	inline void					Set(const TYPE& a, const TYPE& b, const TYPE& c)	{	x = a;	y = b;	z = c;	};
-	inline void					Set(const Type3<TYPE>& abc)							{	x = abc.x;	y = abc.y;	z = abc.z;	};
-	inline Type2<TYPE>&			xy()									{	return *((Type2<TYPE>*)&x);	}
-	inline const Type2<TYPE>&	xy() const								{	return *((Type2<TYPE>*)&x);	}
-	FORCEINLINE Bool			IsZero() const							{	return (x==0) && (y==0) && (z==0);	}	//	could also use {	return DotProduct() == 0;	}	
-	FORCEINLINE Bool			IsNonZero() const						{	return (x!=0) || (y!=0) || (z!=0);	}	//	could also use {	return DotProduct() != 0;	}	
+	FORCEINLINE static u32			GetSize() 											{	return 3;	}
+	FORCEINLINE void				Set(const TYPE& a, const TYPE& b, const TYPE& c)	{	x = a;	y = b;	z = c;	};
+	FORCEINLINE void				Set(const Type3<TYPE>& abc)							{	x = abc.x;	y = abc.y;	z = abc.z;	};
+	FORCEINLINE Type2<TYPE>&		xy()												{	return *((Type2<TYPE>*)&x);	}
+	FORCEINLINE const Type2<TYPE>&	xy() const											{	return *((Type2<TYPE>*)&x);	}
+	FORCEINLINE Type4<TYPE>			xyzw(const TYPE& w) const;
+	FORCEINLINE Bool				IsZero() const										{	return (x==0) && (y==0) && (z==0);	}	//	could also use {	return DotProduct() == 0;	}	
+	FORCEINLINE Bool				IsNonZero() const									{	return (x!=0) || (y!=0) || (z!=0);	}	//	could also use {	return DotProduct() != 0;	}	
 
-	inline TYPE		LengthSq() const									{	return (x*x) + (y*y) + (z*z);	};
-	inline TYPE		Length() const										{	return sqrtf( LengthSq() );	};
+	FORCEINLINE TYPE		LengthSq() const									{	return (x*x) + (y*y) + (z*z);	};
+	FORCEINLINE TYPE		Length() const										{	return sqrtf( LengthSq() );	};
 
-	inline Bool		operator==(const Type3<TYPE>& v) const				{	return ( x == v.x ) && ( y == v.y ) && ( z == v.z );	};
-	inline Bool		operator<(const Type3<TYPE>& v) const				{	return ( x < v.x ) && ( y < v.y ) && ( z < v.z );	};
+	FORCEINLINE Bool		operator==(const Type3<TYPE>& v) const				{	return ( x == v.x ) && ( y == v.y ) && ( z == v.z );	};
+	FORCEINLINE Bool		operator!=(const Type3<TYPE>& v) const				{	return ( x != v.x ) || ( y != v.y ) || ( z != v.z );	};
+	FORCEINLINE Bool		operator<(const Type3<TYPE>& v) const				{	return ( x < v.x ) && ( y < v.y ) && ( z < v.z );	};
 	
-	template<typename OTHERTYPE> inline void		operator=(const Type2<OTHERTYPE>& v);
-	template<typename OTHERTYPE> inline void		operator=(const Type3<OTHERTYPE>& v);
-	template<typename OTHERTYPE> inline void		operator=(const Type4<OTHERTYPE>& v);
+	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type2<OTHERTYPE>& v);
+	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type3<OTHERTYPE>& v);
+	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type4<OTHERTYPE>& v);
 
-	inline void		operator+=(const TYPE v)				{	x += v;		y += v;		z += v;	};
-	inline void		operator-=(const TYPE v)				{	x -= v;		y -= v;		z -= v;	};
-	inline void		operator*=(const TYPE v)				{	x *= v;		y *= v;		z *= v;	};
-	inline void		operator/=(const TYPE v)				{	x /= v;		y /= v;		z /= v;	};
+	FORCEINLINE void		operator+=(const TYPE v)				{	x += v;		y += v;		z += v;	};
+	FORCEINLINE void		operator-=(const TYPE v)				{	x -= v;		y -= v;		z -= v;	};
+	FORCEINLINE void		operator*=(const TYPE v)				{	x *= v;		y *= v;		z *= v;	};
+	FORCEINLINE void		operator/=(const TYPE v)				{	x /= v;		y /= v;		z /= v;	};
 
-	inline void		operator+=(const Type3<TYPE>& v)		{	x += v.x;		y += v.y;		z += v.z;	};
-	inline void		operator-=(const Type3<TYPE>& v)		{	x -= v.x;		y -= v.y;		z -= v.z;	};
-	inline void		operator*=(const Type3<TYPE>& v)		{	x *= v.x;		y *= v.y;		z *= v.z;	};
-	inline void		operator/=(const Type3<TYPE>& v)		{	x /= v.x;		y /= v.y;		z /= v.z;	};
+	FORCEINLINE void		operator+=(const Type3<TYPE>& v)		{	x += v.x;		y += v.y;		z += v.z;	};
+	FORCEINLINE void		operator-=(const Type3<TYPE>& v)		{	x -= v.x;		y -= v.y;		z -= v.z;	};
+	FORCEINLINE void		operator*=(const Type3<TYPE>& v)		{	x *= v.x;		y *= v.y;		z *= v.z;	};
+	FORCEINLINE void		operator/=(const Type3<TYPE>& v)		{	x /= v.x;		y /= v.y;		z /= v.z;	};
 
-	inline void		operator+=(const Type4<TYPE>& v)		{	x += v.x;		y += v.y;		z += v.z;	};
-	inline void		operator-=(const Type4<TYPE>& v)		{	x -= v.x;		y -= v.y;		z -= v.z;	};
-	inline void		operator*=(const Type4<TYPE>& v)		{	x *= v.x;		y *= v.y;		z *= v.z;	};
-	inline void		operator/=(const Type4<TYPE>& v)		{	x /= v.x;		y /= v.y;		z /= v.z;	};
+	FORCEINLINE void		operator+=(const Type4<TYPE>& v)		{	x += v.x;		y += v.y;		z += v.z;	};
+	FORCEINLINE void		operator-=(const Type4<TYPE>& v)		{	x -= v.x;		y -= v.y;		z -= v.z;	};
+	FORCEINLINE void		operator*=(const Type4<TYPE>& v)		{	x *= v.x;		y *= v.y;		z *= v.z;	};
+	FORCEINLINE void		operator/=(const Type4<TYPE>& v)		{	x /= v.x;		y /= v.y;		z /= v.z;	};
 
 	template<typename OPTYPE>
-	inline Type3<TYPE>	operator *(const OPTYPE& v) const		{	return Type3<TYPE>( x*v, y*v, z*v );	};
+	FORCEINLINE Type3<TYPE>	operator *(const OPTYPE& v) const		{	return Type3<TYPE>( x*v, y*v, z*v );	};
 	template<typename OPTYPE>
-	inline Type3<TYPE>	operator /(const OPTYPE& v) const		{	return Type3<TYPE>( x/v, y/v, z/v );	};
+	FORCEINLINE Type3<TYPE>	operator /(const OPTYPE& v) const		{	return Type3<TYPE>( x/v, y/v, z/v );	};
 	template<typename OPTYPE>
-	inline Type3<TYPE>	operator -(const OPTYPE& v) const		{	return Type3<TYPE>( x/v, y/v, z/v );	};
+	FORCEINLINE Type3<TYPE>	operator -(const OPTYPE& v) const		{	return Type3<TYPE>( x/v, y/v, z/v );	};
 	template<typename OPTYPE>
-	inline Type3<TYPE>	operator +(const OPTYPE& v) const		{	return Type3<TYPE>( x+v, y+v, z+v );	};
+	FORCEINLINE Type3<TYPE>	operator +(const OPTYPE& v) const		{	return Type3<TYPE>( x+v, y+v, z+v );	};
 
-	inline Type3<TYPE>	operator *(const Type3<TYPE>& v) const	{	return Type3<TYPE>( x*v.x, y*v.y, z*v.z );	};
-	inline Type3<TYPE>	operator /(const Type3<TYPE>& v) const	{	return Type3<TYPE>( x/v.x, y/v.y, z/v.z );	};
-	inline Type3<TYPE>	operator -(const Type3<TYPE>& v) const	{	return Type3<TYPE>( x-v.x, y-v.y, z-v.z );	};
-	inline Type3<TYPE>	operator +(const Type3<TYPE>& v) const	{	return Type3<TYPE>( x+v.x, y+v.y, z+v.z );	};
+	FORCEINLINE Type3<TYPE>	operator *(const Type3<TYPE>& v) const	{	return Type3<TYPE>( x*v.x, y*v.y, z*v.z );	};
+	FORCEINLINE Type3<TYPE>	operator /(const Type3<TYPE>& v) const	{	return Type3<TYPE>( x/v.x, y/v.y, z/v.z );	};
+	FORCEINLINE Type3<TYPE>	operator -(const Type3<TYPE>& v) const	{	return Type3<TYPE>( x-v.x, y-v.y, z-v.z );	};
+	FORCEINLINE Type3<TYPE>	operator +(const Type3<TYPE>& v) const	{	return Type3<TYPE>( x+v.x, y+v.y, z+v.z );	};
 
-	inline Type3<TYPE>	operator *(const Type4<TYPE>& v) const	{	return Type3<TYPE>( x*v.x, y*v.y, z*v.z );	};
-	inline Type3<TYPE>	operator /(const Type4<TYPE>& v) const	{	return Type3<TYPE>( x/v.x, y/v.y, z/v.z );	};
-	inline Type3<TYPE>	operator -(const Type4<TYPE>& v) const	{	return Type3<TYPE>( x-v.x, y-v.y, z-v.z );	};
-	inline Type3<TYPE>	operator +(const Type4<TYPE>& v) const	{	return Type3<TYPE>( x+v.x, y+v.y, z+v.z );	};
+	FORCEINLINE Type3<TYPE>	operator *(const Type4<TYPE>& v) const	{	return Type3<TYPE>( x*v.x, y*v.y, z*v.z );	};
+	FORCEINLINE Type3<TYPE>	operator /(const Type4<TYPE>& v) const	{	return Type3<TYPE>( x/v.x, y/v.y, z/v.z );	};
+	FORCEINLINE Type3<TYPE>	operator -(const Type4<TYPE>& v) const	{	return Type3<TYPE>( x-v.x, y-v.y, z-v.z );	};
+	FORCEINLINE Type3<TYPE>	operator +(const Type4<TYPE>& v) const	{	return Type3<TYPE>( x+v.x, y+v.y, z+v.z );	};
 
-	inline TYPE&		operator[](const int Index)				{	TLDebug::CheckIndex(Index,3);	return GetData()[Index];	};
-	inline const TYPE*	GetData() const							{	return &x;	};
-	inline TYPE*		GetData()								{	return &x;	};
-	inline				operator TYPE*()						{	return GetData();	};
-	inline				operator const TYPE*() const			{	return GetData();	};
+	FORCEINLINE TYPE&			operator[](const int Index)				{	TLDebug::CheckIndex(Index,3);	return GetData()[Index];	};
+	FORCEINLINE const TYPE*		GetData() const							{	return &x;	};
+	FORCEINLINE TYPE*			GetData()								{	return &x;	};
+	FORCEINLINE					operator TYPE*()						{	return GetData();	};
+	FORCEINLINE					operator const TYPE*() const			{	return GetData();	};
 
 	//	vector functions
 	FORCEINLINE void			Normalise(float NormalLength=1.f)				{	(*this) *= NormalLength/Length();	};			//	normalises vector
@@ -187,12 +190,12 @@ public:
 	Type3<TYPE>					CrossProduct(const Type3<TYPE>& v) const;
 	FORCEINLINE float			DotProduct(const Type3<TYPE>& v) const		{	return (x*v.x) + (y*v.y) + (z*v.z);	}
 	FORCEINLINE float			DotProduct() const							{	return (x*x) + (y*y) + (z*z);	}	//	same as lengthsq!
-	//Bool			InsideTriangle(Type3<TYPE>& v0, Type3<TYPE>& v1, Type3<TYPE>& v2, GRPlaneEq& Plane);
-	void			RotateX(float RadAng);
-	void			RotateY(float RadAng);
-	void			RotateZ(float RadAng);
-	void			SetRotation( float Angle, float Elevation, float Length );
-	void			SortComponents();
+	//Bool						InsideTriangle(Type3<TYPE>& v0, Type3<TYPE>& v1, Type3<TYPE>& v2, GRPlaneEq& Plane);
+	void						RotateX(float RadAng);
+	void						RotateY(float RadAng);
+	void						RotateZ(float RadAng);
+	void						SetRotation( float Angle, float Elevation, float Length );
+	void						SortComponents();
 
 public:
 	TYPE	x;
@@ -214,50 +217,50 @@ public:
 	template<typename OTHERTYPE> Type4(const Type4<OTHERTYPE>& t)	{	Set( (TYPE)t.x, (TYPE)t.y, (TYPE)t.z, (TYPE)t.w );	};	
 	template<typename OTHERTYPE> Type4(const Type3<OTHERTYPE>& t)	{	Set( (TYPE)t.x, (TYPE)t.y, (TYPE)t.z, (TYPE)0 );	};
 
-	inline static u32	GetSize() 									{	return 4;	}
-	inline void			Set(const TYPE& a, const TYPE& b, const TYPE& c, const TYPE& d)	{	x = a;	y = b;	z = c;	w = d;	};
-	inline void			Set(const Type3<TYPE>& v, const TYPE d)						{	Set( v.x, v.y, v.z, d );	};
-	inline void			Set(const Type4<TYPE>& v)									{	Set( v.x, v.y, v.z, v.w );	};
-	inline Type2<TYPE>&			xy()									{	return *((Type2<TYPE>*)&x);	}
-	inline const Type2<TYPE>&	xy() const								{	return *((Type2<TYPE>*)&x);	}
-	inline Type3<TYPE>&			xyz()									{	return *((Type3<TYPE>*)&x);	}
-	inline const Type3<TYPE>&	xyz() const								{	return *((Type3<TYPE>*)&x);	}
+	FORCEINLINE static u32	GetSize() 									{	return 4;	}
+	FORCEINLINE void			Set(const TYPE& a, const TYPE& b, const TYPE& c, const TYPE& d)	{	x = a;	y = b;	z = c;	w = d;	};
+	FORCEINLINE void			Set(const Type3<TYPE>& v, const TYPE d)						{	Set( v.x, v.y, v.z, d );	};
+	FORCEINLINE void			Set(const Type4<TYPE>& v)									{	Set( v.x, v.y, v.z, v.w );	};
+	FORCEINLINE Type2<TYPE>&			xy()									{	return *((Type2<TYPE>*)&x);	}
+	FORCEINLINE const Type2<TYPE>&	xy() const								{	return *((Type2<TYPE>*)&x);	}
+	FORCEINLINE Type3<TYPE>&			xyz()									{	return *((Type3<TYPE>*)&x);	}
+	FORCEINLINE const Type3<TYPE>&	xyz() const								{	return *((Type3<TYPE>*)&x);	}
 	FORCEINLINE Bool			IsZero() const							{	return (x==0) && (y==0) && (z==0) && (w==0);	}	//	could also use {	return DotProduct() == 0;	}	
 	FORCEINLINE Bool			IsNonZero() const						{	return (x!=0) || (y!=0) || (z!=0) || (w!=0);	}	//	could also use {	return DotProduct() != 0;	}	
 
-	inline Bool			operator==(const Type4<TYPE>& v) const		{	return ( x == v.x ) && ( y == v.y ) && ( z == v.z ) && ( w == v.w );	};
-	inline Bool			operator!=(const Type4<TYPE>& v) const		{	return ( x != v.x ) || ( y != v.y ) || ( z != v.z ) || ( w != v.w );	};
-	inline Bool			operator<(const Type4<TYPE>& v) const		{	return ( x < v.x ) && ( y < v.y ) && ( z < v.z ) && ( w < v.w );	};
+	FORCEINLINE Bool			operator==(const Type4<TYPE>& v) const		{	return ( x == v.x ) && ( y == v.y ) && ( z == v.z ) && ( w == v.w );	};
+	FORCEINLINE Bool			operator!=(const Type4<TYPE>& v) const		{	return ( x != v.x ) || ( y != v.y ) || ( z != v.z ) || ( w != v.w );	};
+	FORCEINLINE Bool			operator<(const Type4<TYPE>& v) const		{	return ( x < v.x ) && ( y < v.y ) && ( z < v.z ) && ( w < v.w );	};
 
-	template<typename OTHERTYPE> inline void		operator=(const Type2<OTHERTYPE>& v);
-	template<typename OTHERTYPE> inline void		operator=(const Type3<OTHERTYPE>& v);
-	template<typename OTHERTYPE> inline void		operator=(const Type4<OTHERTYPE>& v);
+	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type2<OTHERTYPE>& v);
+	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type3<OTHERTYPE>& v);
+	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type4<OTHERTYPE>& v);
 
-	inline void			operator+=(const Type4<TYPE>& v)		{	x += v.x;		y += v.y;		z += v.z;		w += v.w;	};
-	inline void			operator-=(const Type4<TYPE>& v)		{	x -= v.x;		y -= v.y;		z -= v.z;		w -= v.w;	};
-	inline void			operator*=(const Type4<TYPE>& v)		{	x *= v.x;		y *= v.y;		z *= v.z;		w *= v.w;	};
-	inline void			operator/=(const Type4<TYPE>& v)		{	x /= v.x;		y /= v.y;		z /= v.z;		w /= v.w;	};
+	FORCEINLINE void			operator+=(const Type4<TYPE>& v)		{	x += v.x;		y += v.y;		z += v.z;		w += v.w;	};
+	FORCEINLINE void			operator-=(const Type4<TYPE>& v)		{	x -= v.x;		y -= v.y;		z -= v.z;		w -= v.w;	};
+	FORCEINLINE void			operator*=(const Type4<TYPE>& v)		{	x *= v.x;		y *= v.y;		z *= v.z;		w *= v.w;	};
+	FORCEINLINE void			operator/=(const Type4<TYPE>& v)		{	x /= v.x;		y /= v.y;		z /= v.z;		w /= v.w;	};
 
-	inline void			operator+=(const TYPE v)				{	x += v;		y += v;		z += v;		w += v;	};
-	inline void			operator-=(const TYPE v)				{	x -= v;		y -= v;		z -= v;		w -= v;	};
-	inline void			operator*=(const TYPE v)				{	x *= v;		y *= v;		z *= v;		w *= v;	};
-	inline void			operator/=(const TYPE v)				{	x /= v;		y /= v;		z /= v;		w /= v;	};
+	FORCEINLINE void			operator+=(const TYPE v)				{	x += v;		y += v;		z += v;		w += v;	};
+	FORCEINLINE void			operator-=(const TYPE v)				{	x -= v;		y -= v;		z -= v;		w -= v;	};
+	FORCEINLINE void			operator*=(const TYPE v)				{	x *= v;		y *= v;		z *= v;		w *= v;	};
+	FORCEINLINE void			operator/=(const TYPE v)				{	x /= v;		y /= v;		z /= v;		w /= v;	};
 	
-	inline Type4<TYPE>	operator+(const Type4<TYPE>& v) const	{	return ( x + v.x,	y + v.y,	z + v.z,	w + v.w );	};
-	inline Type4<TYPE>	operator-(const Type4<TYPE>& v) const	{	return ( x - v.x,	y - v.y,	z - v.z,	w - v.w );	};
-	inline Type4<TYPE>	operator*(const Type4<TYPE>& v) const	{	return ( x * v.x,	y * v.y,	z * v.z,	w * v.w );	};
-	inline Type4<TYPE>	operator/(const Type4<TYPE>& v) const	{	return ( x / v.x,	y / v.y,	z / v.z,	w / v.w );	};
+	FORCEINLINE Type4<TYPE>	operator+(const Type4<TYPE>& v) const	{	return ( x + v.x,	y + v.y,	z + v.z,	w + v.w );	};
+	FORCEINLINE Type4<TYPE>	operator-(const Type4<TYPE>& v) const	{	return ( x - v.x,	y - v.y,	z - v.z,	w - v.w );	};
+	FORCEINLINE Type4<TYPE>	operator*(const Type4<TYPE>& v) const	{	return ( x * v.x,	y * v.y,	z * v.z,	w * v.w );	};
+	FORCEINLINE Type4<TYPE>	operator/(const Type4<TYPE>& v) const	{	return ( x / v.x,	y / v.y,	z / v.z,	w / v.w );	};
 
-	inline Type4<TYPE>	operator+(const TYPE v) const			{	return ( x + v,	y + v,	z + v,	w + v );	};
-	inline Type4<TYPE>	operator-(const TYPE v) const			{	return ( x - v,	y - v,	z - v,	w - v );	};
-	inline Type4<TYPE>	operator*(const TYPE v) const			{	return ( x * v,	y * v,	z * v,	w * v );	};
-	inline Type4<TYPE>	operator/(const TYPE v) const			{	return ( x / v,	y / v,	z / v,	w / v );	};
+	FORCEINLINE Type4<TYPE>	operator+(const TYPE v) const			{	return ( x + v,	y + v,	z + v,	w + v );	};
+	FORCEINLINE Type4<TYPE>	operator-(const TYPE v) const			{	return ( x - v,	y - v,	z - v,	w - v );	};
+	FORCEINLINE Type4<TYPE>	operator*(const TYPE v) const			{	return ( x * v,	y * v,	z * v,	w * v );	};
+	FORCEINLINE Type4<TYPE>	operator/(const TYPE v) const			{	return ( x / v,	y / v,	z / v,	w / v );	};
 
-	inline TYPE&		operator[](const int Index)		{	TLDebug::CheckIndex(Index,4);	return GetData()[Index];	};
-	inline const TYPE*	GetData() const					{	return &x;	};
-	inline TYPE*		GetData()						{	return &x;	};
-	inline				operator TYPE*()				{	return GetData();	};
-	inline				operator const TYPE*() const	{	return GetData();	};
+	FORCEINLINE TYPE&		operator[](const int Index)		{	TLDebug::CheckIndex(Index,4);	return GetData()[Index];	};
+	FORCEINLINE const TYPE*	GetData() const					{	return &x;	};
+	FORCEINLINE TYPE*		GetData()						{	return &x;	};
+	FORCEINLINE				operator TYPE*()				{	return GetData();	};
+	FORCEINLINE				operator const TYPE*() const	{	return GetData();	};
 
 	//	for use for rect's - just to clarify this.w doesnt really mean width...
 	FORCEINLINE TYPE&		Left()										{	return x;	}
@@ -276,15 +279,15 @@ public:
 	FORCEINLINE Bool		GetIsInside(const Type2<TYPE>& Pos) const	{	return (Pos.x >= Left()) && (Pos.x <= Right()) && (Pos.y >= Top()) && (Pos.y <= Bottom());	}
 
 	//	vector functions
-	inline void			Invert()									{	x=-x;	y=-y;	z=-z;	w=-w;	};	
-	inline void			Normalise(float NormalLength=1.f)			{	(*this) *= NormalLength/Length();	};			//	normalises vector
+	FORCEINLINE void			Invert()									{	x=-x;	y=-y;	z=-z;	w=-w;	};	
+	FORCEINLINE void			Normalise(float NormalLength=1.f)			{	(*this) *= NormalLength/Length();	};			//	normalises vector
 	Type4<TYPE>			Normal(float NormalLength=1.f) const		{	return (*this) * (NormalLength/Length());	};	//	returns the normal of thsi vector
-	inline TYPE			LengthSq() const							{	return (x*x) + (y*y) + (z*z) + (w*w);	};
-	inline TYPE			Length() const								{	return sqrtf( LengthSq() );	};
+	FORCEINLINE TYPE			LengthSq() const							{	return (x*x) + (y*y) + (z*z) + (w*w);	};
+	FORCEINLINE TYPE			Length() const								{	return sqrtf( LengthSq() );	};
 	float				DotProduct(const Type4<TYPE>& v) const		{	return (x * v.x) + (y * v.y) + (z * v.z) + (w * v.w);	}
 
 	//	2d functions
-	inline Bool			PointInside(const Type2<TYPE>& Point) const	{	return ( Point.x >= x && Point.y >= y && Point.x < z && Point.y < w );	};
+	FORCEINLINE Bool			PointInside(const Type2<TYPE>& Point) const	{	return ( Point.x >= x && Point.y >= y && Point.x < z && Point.y < w );	};
 
 public:
 	TYPE	x;
@@ -298,21 +301,21 @@ public:
 
 
 
-template <class TYPE>
-inline void Type2<TYPE>::operator+=(const Type3<TYPE>& v)		{	x += v.x;		y += v.y;	};
+template <typename TYPE>
+FORCEINLINE void Type2<TYPE>::operator+=(const Type3<TYPE>& v)		{	x += v.x;		y += v.y;	};
 
-template <class TYPE>
-inline void Type2<TYPE>::operator-=(const Type3<TYPE>& v)		{	x -= v.x;		y -= v.y;	};
+template <typename TYPE>
+FORCEINLINE void Type2<TYPE>::operator-=(const Type3<TYPE>& v)		{	x -= v.x;		y -= v.y;	};
 
-template <class TYPE>
-inline void Type2<TYPE>::operator*=(const Type3<TYPE>& v)		{	x *= v.x;		y *= v.y;	};
+template <typename TYPE>
+FORCEINLINE void Type2<TYPE>::operator*=(const Type3<TYPE>& v)		{	x *= v.x;		y *= v.y;	};
 
-template <class TYPE>
-inline void Type2<TYPE>::operator/=(const Type3<TYPE>& v)		{	x /= v.x;		y /= v.y;	};
+template <typename TYPE>
+FORCEINLINE void Type2<TYPE>::operator/=(const Type3<TYPE>& v)		{	x /= v.x;		y /= v.y;	};
 
 
 
-template <class TYPE>
+template <typename TYPE>
 Type2<TYPE> Type2<TYPE>::CrossProduct(const Type2<TYPE>& v) const
 {
 	Type2<TYPE> xyz;
@@ -324,7 +327,7 @@ Type2<TYPE> Type2<TYPE>::CrossProduct(const Type2<TYPE>& v) const
 }
 
 
-template <class TYPE>
+template <typename TYPE>
 FORCEINLINE void Type2<TYPE>::Rotate(float AngleRad)
 {
 	float2 Old(x,y);
@@ -334,16 +337,24 @@ FORCEINLINE void Type2<TYPE>::Rotate(float AngleRad)
 }
 
 
-template <class TYPE>
+template <typename TYPE>
 template<typename OTHERTYPE> 
-Type3<TYPE>::Type3(const Type4<OTHERTYPE>& t)
+FORCEINLINE Type3<TYPE>::Type3(const Type4<OTHERTYPE>& t)
 {
 	Set( t.x, t.y, t.z );
 }
 
 
 
-template <class TYPE>
+template <typename TYPE>
+FORCEINLINE Type4<TYPE> Type3<TYPE>::xyzw(const TYPE& w) const
+{
+	return Type4<TYPE>( x, y, z, w );
+}
+
+
+
+template <typename TYPE>
 Type3<TYPE> Type3<TYPE>::CrossProduct(const Type3<TYPE>& v) const
 {
 	Type3<TYPE> xyz;
@@ -357,7 +368,7 @@ Type3<TYPE> Type3<TYPE>::CrossProduct(const Type3<TYPE>& v) const
 
 
 template <class TYPE>
-void Type3<TYPE>::Reflect(const Type3<TYPE>& UpVector)
+FORCEINLINE void Type3<TYPE>::Reflect(const Type3<TYPE>& UpVector)
 {
 	float Prod = UpVector.DotProduct( *this );
 	(*this) -= ( UpVector * ( 2.f * Prod ) );

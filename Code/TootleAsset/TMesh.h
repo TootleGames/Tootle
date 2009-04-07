@@ -111,6 +111,9 @@ public:
 	Bool					GenerateQuad(const TArray<u16>& OutlineVertIndexes);		//	turn an outline of points into a quad/tri-strip
 	void					GenerateQuadOutline(const TLMaths::TBox2D& Box,const TColour* pColour=NULL,float z=0.f);		//	generate a square mesh from a 2d box
 
+	void					GenerateTriangle(u16 VertA,u16 VertB,u16 VertC);		//	generate triangle
+	void					GenerateTristrip(const TArray<u16>& TristripVerts);		//	generate triangle strips from points. this is IN TRISTRIP ORDER
+
 	void					GenerateRainbowColours();							//	create colours for each vertex
 
 	//	vertex manipulation
@@ -125,33 +128,46 @@ public:
 	void					ColoursMult(const TColour& Colour);		//	multiply all colours by this colour
 
 	//	data accessors
-	TFlags<TMeshFlags,u8>&				GetFlags()							{	return m_Flags;	}
-	const TFlags<TMeshFlags,u8>&		GetFlags() const					{	return m_Flags;	}
-	FORCEINLINE Bool					HasAlpha() const					{	return m_Flags( MeshFlag_HasAlpha );	}
-	FORCEINLINE SyncBool				HasColours() const					{	return (!m_Vertexes.GetSize()) ? SyncWait : ( !m_Colours.GetSize() ? SyncFalse : SyncTrue );	};	//	return if we have colours - wait means unknown as we have no vertexes
-	FORCEINLINE SyncBool				HasUVs() const						{	return (!m_Vertexes.GetSize()) ? SyncWait : ( !m_UVs.GetSize() ? SyncFalse : SyncTrue );	};	//	return if we have colours - wait means unknown as we have no vertexes
+	TFlags<TMeshFlags,u8>&				GetFlags()								{	return m_Flags;	}
+	const TFlags<TMeshFlags,u8>&		GetFlags() const						{	return m_Flags;	}
+	FORCEINLINE Bool					HasAlpha() const						{	return m_Flags( MeshFlag_HasAlpha );	}
+	FORCEINLINE SyncBool				HasColours() const						{	return (!m_Vertexes.GetSize()) ? SyncWait : ( !m_Colours.GetSize() ? SyncFalse : SyncTrue );	};	//	return if we have colours - wait means unknown as we have no vertexes
+	FORCEINLINE SyncBool				HasColours24() const					{	return (!m_Vertexes.GetSize()) ? SyncWait : ( !m_Colours24.GetSize() ? SyncFalse : SyncTrue );	};	//	return if we have colours - wait means unknown as we have no vertexes
+	FORCEINLINE SyncBool				HasColours32() const					{	return (!m_Vertexes.GetSize()) ? SyncWait : ( !m_Colours32.GetSize() ? SyncFalse : SyncTrue );	};	//	return if we have colours - wait means unknown as we have no vertexes
+	FORCEINLINE SyncBool				HasUVs() const							{	return (!m_Vertexes.GetSize()) ? SyncWait : ( !m_UVs.GetSize() ? SyncFalse : SyncTrue );	};	//	return if we have colours - wait means unknown as we have no vertexes
 
-	FORCEINLINE float3&					GetVertex(u32 VertIndex)			{	return m_Vertexes[VertIndex];	}
-	FORCEINLINE float2&					GetVertexUV(u32 VertIndex)			{	return m_UVs[VertIndex];	}
-	FORCEINLINE TColour&				GetVertexColour(u32 VertIndex)		{	return m_Colours[VertIndex];	}
-	FORCEINLINE TArray<float3>&			GetVertexes() 						{	return m_Vertexes;	}
-	FORCEINLINE const TArray<float3>&	GetVertexes() const					{	return m_Vertexes;	}
-	FORCEINLINE u32						GetVertexCount() const				{	return m_Vertexes.GetSize(); }
-	FORCEINLINE TArray<TColour>&		GetColours()						{	return m_Colours;	}
-	FORCEINLINE const TArray<TColour>&	GetColours() const					{	return m_Colours;	}
-	FORCEINLINE TArray<float2>&			GetUVs()							{	return m_UVs;	}
-	FORCEINLINE const TArray<float2>&	GetUVs() const						{	return m_UVs;	}
+	FORCEINLINE float3&						GetVertex(u32 VertIndex)			{	return m_Vertexes[VertIndex];	}
+	FORCEINLINE float2&						GetVertexUV(u32 VertIndex)			{	return m_UVs[VertIndex];	}
+	FORCEINLINE TColour&					GetVertexColour(u32 VertIndex)		{	return m_Colours[VertIndex];	}
+	FORCEINLINE TArray<float3>&				GetVertexes() 						{	return m_Vertexes;	}
+	FORCEINLINE const TArray<float3>&		GetVertexes() const					{	return m_Vertexes;	}
+	FORCEINLINE u32							GetVertexCount() const				{	return m_Vertexes.GetSize(); }
+	FORCEINLINE TArray<TColour>&			GetColours()						{	return m_Colours;	}
+	FORCEINLINE const TArray<TColour>&		GetColours() const					{	return m_Colours;	}
+	FORCEINLINE const TArray<TColour>*		GetColoursNotEmpty() const			{	return m_Colours.GetSize() ? &m_Colours : NULL;	}
+	FORCEINLINE const TArray<TColour24>&	GetColours24() const				{	return m_Colours24;	}
+	FORCEINLINE const TArray<TColour24>*	GetColours24NotEmpty() const		{	return m_Colours24.GetSize() ? &m_Colours24 : NULL;	}
+	FORCEINLINE const TArray<TColour32>&	GetColours32() const				{	return m_Colours32;	}
+	FORCEINLINE const TArray<TColour32>*	GetColours32NotEmpty() const		{	return m_Colours32.GetSize() ? &m_Colours32 : NULL;	}
+	FORCEINLINE TArray<float2>&				GetUVs()							{	return m_UVs;	}
+	FORCEINLINE const TArray<float2>&		GetUVs() const						{	return m_UVs;	}
+	FORCEINLINE const TArray<float2>*		GetUVsNotEmpty() const				{	return m_UVs.GetSize() ? &m_UVs : NULL;	}
 
-	TArray<Triangle>&		GetTriangles()						{	return m_Triangles;	}
-	TArray<Tristrip>&		GetTristrips()						{	return m_Tristrips;	}
-	TArray<Trifan>&			GetTrifans()						{	return m_Trifans;	}
-	TArray<Linestrip>&		GetLinestrips()						{	return m_Linestrips;	}
-	TArray<Line>&			GetLines()							{	return m_Lines;	}
-	const TArray<Triangle>&	GetTriangles() const				{	return m_Triangles;	}
-	const TArray<Tristrip>&	GetTristrips() const				{	return m_Tristrips;	}
-	const TArray<Trifan>&	GetTrifans() const					{	return m_Trifans;	}
-	const TArray<Linestrip>& GetLinestrips() const				{	return m_Linestrips;	}
-	const TArray<Line>&		GetLines() const					{	return m_Lines;	}
+	TArray<Triangle>&					GetTriangles()						{	return m_Triangles;	}
+	TArray<Tristrip>&					GetTristrips()						{	return m_Tristrips;	}
+	TArray<Trifan>&						GetTrifans()						{	return m_Trifans;	}
+	TArray<Linestrip>&					GetLinestrips()						{	return m_Linestrips;	}
+	TArray<Line>&						GetLines()							{	return m_Lines;	}
+	const TArray<Triangle>&				GetTriangles() const				{	return m_Triangles;	}
+	const TArray<Tristrip>&				GetTristrips() const				{	return m_Tristrips;	}
+	const TArray<Trifan>&				GetTrifans() const					{	return m_Trifans;	}
+	const TArray<Linestrip>&			GetLinestrips() const				{	return m_Linestrips;	}
+	const TArray<Line>&					GetLines() const					{	return m_Lines;	}
+	const TArray<Triangle>*				GetTrianglesNotEmpty() const		{	return m_Triangles.GetSize() ? &m_Triangles : NULL;	}
+	const TArray<Tristrip>*				GetTristripsNotEmpty() const		{	return m_Tristrips.GetSize() ? &m_Tristrips : NULL;	}
+	const TArray<Trifan>*				GetTrifansNotEmpty() const			{	return m_Trifans.GetSize() ? &m_Trifans : NULL;	}
+	const TArray<Linestrip>*			GetLinestripsNotEmpty() const		{	return m_Linestrips.GetSize() ? &m_Linestrips : NULL;	}
+	const TArray<Line>*					GetLinesNotEmpty() const			{	return m_Lines.GetSize() ? &m_Lines : NULL;	}
 	
 	//	line stuff
 	void					SetLineWidth(float LineWidth)		{	m_LineWidth = LineWidth;	TLMaths::Limit( m_LineWidth, 0.f, 100.f );	}
@@ -194,8 +210,10 @@ protected:
 	Bool					ExportDatum(TBinaryTree& Data,TRefRef DatumRef,TPtr<TLMaths::TShape>& pShape);
 
 	void					CalcHasAlpha();						//	loop through colours to check if we have any alpha colours in the verts
-	void					PadColours();						//	ensure number of colours matches number of vertexes
+	void					PadColours();						//	ensure number of colours matches number of vertexes. Also adds missing 24/32 bit colours
 	void					PadUVs();							//	ensure number of uvs matches number of vertexes
+	void					AddColour(const TColour& Colour,u16 Count=1);	//	add colour to colour arrays
+	void					RemoveColourAt(u16 VertexIndex);	//	remove a vertex colour 
 
 	void					AddTriangles(const TArray<Triangle>& OtherPolygons,u32 OffsetVertexIndex);
 	void					AddTristrips(const TArray<Tristrip>& OtherPolygons,u32 OffsetVertexIndex);
@@ -207,10 +225,11 @@ private:
 	const TColour*			GetGenerationColour(const TColour* pColour);	//	returns a valid colour pointer if we expect one (mesh already has colours) - NULL's if we dont have colours - returns the original pointer if we can have colours
 	const float2*			GetGenerationUV(const float2* pUV);	//	returns a valid colour pointer if we expect one (mesh already has colours) - NULL's if we dont have colours - returns the original pointer if we can have colours
 
-
 protected:
 	TArray<float3>			m_Vertexes;				//	vertexes of mesh
-	TArray<TColour>			m_Colours;				//	vertex colours
+	TArray<TColour>			m_Colours;				//	vertex colours - float format (4*4)
+	TArray<TColour24>		m_Colours24;			//	vertex colours - u8 format, no alpha (3*1)
+	TArray<TColour32>		m_Colours32;			//	vertex colours - u8 format (4*1)
 	TArray<float2>			m_UVs;					//	vertex texture mapping
 
 	TArray<Triangle>		m_Triangles;			//	triangles in mesh

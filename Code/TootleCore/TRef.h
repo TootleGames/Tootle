@@ -162,16 +162,16 @@ public:
 	void				GetString(TString& RefString,Bool Capitalise=FALSE) const;	//	convert ref to a string
 	FORCEINLINE Bool	IsValid() const;						//	check for invalid bits being set etc
 
-	inline Bool			operator<(const TRef& Ref) const		{	return GetData() < Ref.GetData();	}
-	inline Bool			operator>(const TRef& Ref) const		{	return GetData() > Ref.GetData();	}
-	inline void			operator=(u32 Ref)						{	Set( Ref );	}
-	inline void			operator=(const TRef& Ref)				{	Set( Ref );	}
-	inline void			operator=(const char* pString)			{	Set( pString );	}
-	inline void			operator=(const TString& RefString)		{	Set( RefString );	}
-	inline void			operator=(const TString* pRefString)	{	if ( pRefString ) Set( *pRefString ); else SetInvalid();	}
+	FORCEINLINE Bool			operator<(const TRef& Ref) const		{	return GetData() < Ref.GetData();	}
+	FORCEINLINE Bool			operator>(const TRef& Ref) const		{	return GetData() > Ref.GetData();	}
+	FORCEINLINE void			operator=(u32 Ref)						{	Set( Ref );	}
+	FORCEINLINE void			operator=(const TRef& Ref)				{	Set( Ref );	}
+	FORCEINLINE void			operator=(const char* pString)			{	Set( pString );	}
+	FORCEINLINE void			operator=(const TString& RefString)		{	Set( RefString );	}
+	FORCEINLINE void			operator=(const TString* pRefString)	{	if ( pRefString ) Set( *pRefString ); else SetInvalid();	}
 
-	inline Bool			operator==(const TRef& Ref) const		{	return GetData() == Ref.GetData();	}
-	inline Bool			operator!=(const TRef& Ref) const		{	return GetData() != Ref.GetData();	}
+	FORCEINLINE Bool			operator==(const TRef& Ref) const		{	return GetData() == Ref.GetData();	}
+	FORCEINLINE Bool			operator!=(const TRef& Ref) const		{	return GetData() != Ref.GetData();	}
 
 private:
 	u32					CharToRefAlphabet(const char& Char,u32 RefCharIndex=0);		//	convert a char to ref-alphabet bits

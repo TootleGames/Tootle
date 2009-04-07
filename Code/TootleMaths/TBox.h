@@ -35,7 +35,7 @@ public:
 	TBox();
 	TBox(const float3& Min,const float3& Max);
 
-	static TRef		GetTypeRef()		{	return "Box";	}
+	static TRef		GetTypeRef()		{	return TLMaths_ShapeRef(TBox);	}
 
 //	const float*	GetData() const		{	return m_MinMax[0].GetData();	}
 	float3&			GetMin() 			{	return m_Min;	}
@@ -102,7 +102,7 @@ public:
 	TBox2D();
 	TBox2D(const float2& Min,const float2& Max);
 
-	static TRef		GetTypeRef()		{	return "Box2";	}
+	static TRef		GetTypeRef()		{	return TLMaths_ShapeRef(TBox2D);	}
 
 //	const float*	GetData() const		{	return m_MinMax[0].GetData();	}
 	float2&			GetMin() 			{	return m_Min;	}

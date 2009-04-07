@@ -36,14 +36,8 @@ namespace TLRender
 			SyncBool				Init();		//	init opengl
 			SyncBool				Shutdown();	//	cleanup opengl
 
-			Bool					Debug_CheckForError();	
+			FORCEINLINE Bool		Debug_CheckForError()		{	return FALSE;	}
 
-			//Bool					BindFixedVertexes(const TArray<TLAsset::TFixedVertex>* pVertexes);
-			Bool					BindVertexes(const TArray<float3>* pVertexes);
-			Bool					BindColours(const TArray<TColour>* pColours);
-			Bool					BindUVs(const TArray<float2>* pUVs);
-			void					DrawPrimitives(u32 GLPrimType,u32 IndexCount,const u16* pIndexData);	//	main renderer, just needs primitive type, and the data
-			
 			FORCEINLINE u16			GetPrimTypeTriangle()		{	return GL_TRIANGLES;	}
 			FORCEINLINE u16			GetPrimTypeTristrip()		{	return GL_TRIANGLE_STRIP;	}
 			FORCEINLINE u16			GetPrimTypeTrifan()			{	return GL_TRIANGLE_FAN;	}
@@ -57,7 +51,7 @@ namespace TLRender
 			FORCEINLINE void		EnableDepthRead(Bool Enable)			{	if ( Enable )	glEnable( GL_DEPTH_TEST );	else	glDisable( GL_DEPTH_TEST );	}
 			FORCEINLINE void		EnableDepthWrite(Bool Enable)			{	glDepthMask( Enable ? GL_TRUE : GL_FALSE );	}
 			FORCEINLINE void		EnableScissor(Bool Enable)				{	if ( Enable )	glEnable( GL_SCISSOR_TEST );	else	glDisable( GL_SCISSOR_TEST );	}
-			FORCEINLINE void		SetSceneColour(const TColour& Colour)	{	glColor4f( Colour.GetRed(), Colour.GetGreen(), Colour.GetBlue(), Colour.GetAlpha() );	}
+			FORCEINLINE void		SetSceneColour(const TColour& Colour)	{	glColor4f( Colour.GetRedf(), Colour.GetGreenf(), Colour.GetBluef(), Colour.GetAlphaf() );	}
 			FORCEINLINE void		SetLineWidth(float Width)				{	glLineWidth( Width );	}
 			FORCEINLINE void		SetPointSize(float Size)				{	glPointSize( Size );	}
 		}

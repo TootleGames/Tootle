@@ -41,9 +41,9 @@ public:
 	FORCEINLINE TColour32*			GetPixelData32(u32 PixelIndex=0)				{	return HasAlphaChannel() ? (TColour32*)GetPixelData( PixelIndex ) : NULL;	}
 	FORCEINLINE TColour32*			GetPixelData32At(u32 PixelX,u32 PixelY)			{	return GetPixelData32( GetPixelIndex( PixelX, PixelY ) );	}
 	FORCEINLINE TColour32*			GetPixelData32At(const Type2<u16>& PixelXY)		{	return GetPixelData32( GetPixelIndex( PixelXY.x, PixelXY.y ) );	}
-//	FORCEINLINE TColour24*			GetPixelData24(u32 PixelIndex=0)				{	return HasAlphaChannel() ? NULL : (TColour24*)GetPixelData( PixelIndex );	}
-//	FORCEINLINE TColour24*			GetPixelData24At(u32 PixelX,u32 PixelY)			{	return GetPixelData24( GetPixelIndex( PixelX, PixelY ) );	}
-//	FORCEINLINE TColour24*			GetPixelData24At(const Type2<u16>& PixelXY)		{	return GetPixelData24( GetPixelIndex( PixelXY.x, PixelXY.y ) );	}
+	FORCEINLINE TColour24*			GetPixelData24(u32 PixelIndex=0)				{	return HasAlphaChannel() ? NULL : (TColour24*)GetPixelData( PixelIndex );	}
+	FORCEINLINE TColour24*			GetPixelData24At(u32 PixelX,u32 PixelY)			{	return GetPixelData24( GetPixelIndex( PixelX, PixelY ) );	}
+	FORCEINLINE TColour24*			GetPixelData24At(const Type2<u16>& PixelXY)		{	return GetPixelData24( GetPixelIndex( PixelXY.x, PixelXY.y ) );	}
 
 	FORCEINLINE u32					GetPixelDataSize() const					{	return HasAlphaChannel() ? 4 : 3;	}
 	FORCEINLINE TBinary&			GetPixelData()								{	return m_TextureData;	}

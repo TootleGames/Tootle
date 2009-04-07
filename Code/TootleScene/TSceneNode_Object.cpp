@@ -59,40 +59,11 @@ void TSceneNode_Object::DeleteRenderNode()
 
 void TSceneNode_Object::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	//	gr: apply change from physics node ONLY
+	//	gr: apply change from our physics node ONLY
 	if(Message.GetMessageRef() == TRef_Static(O,n,T,r,a) && Message.GetSenderRef() == m_PhysicsNodeRef )
 	{
-		float3 vVector;
-		TLMaths::TQuaternion qRot;
-		Bool bTranslation, bRotation, bScale;
-		bTranslation = bRotation = bScale = FALSE;
-
-		// Absolute position/rotation/scale setting
-		if(Message.ImportData(TRef_Static(T,r,a,n,s), vVector))
-		{
-			GetTransform().SetTranslate(vVector);
-			bTranslation = TRUE;
-		}
-
-		if(Message.ImportData(TRef_Static(R,o,t,a,t), qRot))
-		{
-			GetTransform().SetRotation(qRot);
-			bRotation = TRUE;
-		}
-
-		if(Message.ImportData(TRef_Static(S,c,a,l,e), vVector))
-		{
-			GetTransform().SetScale(vVector);
-			bScale = TRUE;
-		}
-
-		// If any part of the transform changed forward the message on
-		if(bTranslation || bRotation || bScale)
-		{
-			//	send out notification our transform has changed
-			OnTransformChanged(bTranslation, bRotation, bScale);
-		}
-		
+		u8 TransformChangedBits = GetTransform().ImportData( Message );
+		OnTransformChanged(TransformChangedBits);
 	}
 	else if ( Message.GetMessageRef() == "NodeAdded" )	//	catch when our render node or physics node has been added to the graph
 	{
@@ -422,11 +393,11 @@ void TLScene::TSceneNode_Object::OnZoneSleep()
 //--------------------------------------------------------
 //	this checks to see if we're asleep first and delays sending a transform until we are awake
 //--------------------------------------------------------
-void TLScene::TSceneNode_Object::OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale)
+void TLScene::TSceneNode_Object::OnTransformChanged(u8 TransformChangedBits)
 {
 	//	gr: this still needs doing even if we're asleep
 	//	if translation changed then set zone out of date
-	if ( bTranslation )
+	if ( TransformChangedBits & TLMaths_TransformBitTranslate )
 		TLMaths::TQuadTreeNode::SetZoneOutOfDate();	
 
 	//	don't send and don't save off a change if we have no subscribers
@@ -436,14 +407,12 @@ void TLScene::TSceneNode_Object::OnTransformChanged(Bool bTranslation, Bool bRot
 	//	if asleep then don't send a message until we wake up again
 	if ( IsAwake() == SyncFalse )
 	{
-		m_PublishTransformOnWake |= bTranslation ? TRANSFORM_BIT_TRANSLATE : 0x0;
-		m_PublishTransformOnWake |= bRotation ? TRANSFORM_BIT_ROTATION : 0x0;
-		m_PublishTransformOnWake |= bScale ? TRANSFORM_BIT_SCALE : 0x0;
+		m_PublishTransformOnWake |= TransformChangedBits;
 		return;
 	}
 
 	//	publish transform changes
-	TSceneNode_Transform::OnTransformChanged( bTranslation, bRotation, bScale );
+	TSceneNode_Transform::OnTransformChanged( TransformChangedBits );
 
 	//	subscribers are up to date
 	m_PublishTransformOnWake = 0x0;
@@ -491,10 +460,7 @@ void TLScene::TSceneNode_Object::EnableRenderNode(Bool Enable)
 	//	transform has changed whilst we were asleep, send transform-changed message to render node
 	if ( Enable && (m_PublishTransformOnWake != 0x0) )
 	{
-		Bool TranslateChanged = (m_PublishTransformOnWake & TRANSFORM_BIT_TRANSLATE) != 0x0;
-		Bool RotationChanged = (m_PublishTransformOnWake & TRANSFORM_BIT_ROTATION) != 0x0;
-		Bool ScaleChanged = (m_PublishTransformOnWake & TRANSFORM_BIT_SCALE) != 0x0;
-		OnTransformChanged( TranslateChanged, RotationChanged, ScaleChanged );
+		OnTransformChanged( m_PublishTransformOnWake );
 	}
 
 }

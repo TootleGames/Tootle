@@ -26,7 +26,7 @@ public:
 	virtual const TLMaths::TTransform&	GetRenderTransform() const		{	return m_RenderTransform;	}
 
 	virtual void	Update(float Timestep);				//	physics update
-	virtual void	PostUpdate(float Timestep,TLPhysics::TPhysicsgraph* pGraph,TPtr<TLPhysics::TPhysicsNode>& pThis);			//	after collisions are handled
+	virtual void	PostUpdate(float Timestep,TLPhysics::TPhysicsgraph& Graph,TPtr<TLPhysics::TPhysicsNode>& pThis);			//	after collisions are handled
 
 	virtual Bool	OnCollision(const TPhysicsNode& OtherNode);	//	handle collision with other object
 

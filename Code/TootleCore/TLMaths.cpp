@@ -1475,6 +1475,85 @@ TLMaths::TAngle TLMaths::TQuaternion::GetAngle2D() const
 
 
 //-----------------------------------------------------------
+//	import transform data from binary data/message/etc- ChangedBits specifies which parts have changed
+//-----------------------------------------------------------
+u8 TLMaths::TTransform::ImportData(TBinaryTree& Data)
+{
+	u8 ChangedBits = 0x0;
+
+	//	import translate
+	float3 OldTranslate = m_Translate;
+	if ( Data.ImportData( TRef_Static(T,r,a,n,s), m_Translate ) )
+	{
+		TLDebug_CheckFloat( m_Translate );
+
+		//	only consider value changed if different, or was preivously invalid
+		if ( !HasTranslate() || m_Translate != OldTranslate )
+			ChangedBits |= TLMaths_TransformBitTranslate;
+	}
+
+
+	//	import scale
+	float3 OldScale = m_Scale;
+	if ( Data.ImportData( TRef_Static(S,c,a,l,e), m_Scale ) )
+	{
+		TLDebug_CheckFloat( m_Scale );
+
+		//	only consider value changed if different, was preivously invalid
+		if ( !HasScale() || m_Scale != OldScale )
+			ChangedBits |= TLMaths_TransformBitScale;
+	}
+
+
+	//	import rotation
+	TQuaternion OldRotation = m_Rotation;
+	if ( Data.ImportData( TRef_Static(R,o,t,a,t), m_Rotation ) )
+	{
+		TLDebug_CheckFloat( m_Rotation );
+
+		//	only consider value changed if different, or was preivously invalid
+		if ( !HasRotation() || m_Rotation != OldRotation )
+			ChangedBits |= TLMaths_TransformBitRotation;
+	}
+
+	//	anything we imported is now considered valid...
+	m_Valid |= ChangedBits;
+	
+	return ChangedBits;
+}
+
+
+//-----------------------------------------------------------
+//	export all our valid data to this binary data- can optionally make it only write certain attributes. Returns attributes written
+//-----------------------------------------------------------
+u8 TLMaths::TTransform::ExportData(TBinaryTree& Data,u8 TransformBits)
+{
+	//	only write bits that are valid
+	TransformBits &= m_Valid;
+
+	if ( (TransformBits & TLMaths_TransformBitTranslate) != 0x0 )
+	{
+		TLDebug_CheckFloat( m_Translate );
+		Data.ExportData(TRef_Static(T,r,a,n,s), m_Translate );
+	}
+
+	if ( (TransformBits & TLMaths_TransformBitScale) != 0x0 )
+	{
+		TLDebug_CheckFloat( m_Scale );
+		Data.ExportData(TRef_Static(S,c,a,l,e), m_Scale );
+	}
+
+	if ( (TransformBits & TLMaths_TransformBitRotation) != 0x0 )
+	{
+		TLDebug_CheckFloat( m_Rotation );
+		Data.ExportData(TRef_Static(R,o,t,a,t), m_Rotation );
+	}
+
+	return TransformBits;
+}
+
+
+//-----------------------------------------------------------
 //	transform this by Trans.
 //	THIS is the parent, Trans is the "child" transform
 //-----------------------------------------------------------

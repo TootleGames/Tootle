@@ -29,11 +29,11 @@ namespace TLKeyArray
 		{
 		}
 
-		inline Bool	operator<(const KEYTYPE& Key) const					{	return m_Key < Key;	}
-		inline Bool	operator<(const TPair<KEYTYPE,TYPE>& Pair) const	{	return m_Key < Pair.m_Key;	}
-		inline void	operator=(const TPair<KEYTYPE,TYPE>& Pair)			{	m_Key = Pair.m_Key;	m_Item = Pair.m_Item;	}
-		inline Bool	operator==(const KEYTYPE& Key) const				{	return m_Key == Key;	}
-		inline Bool	operator==(const TPair<KEYTYPE,TYPE>& Pair) const	{	return (m_Key == Pair.m_Key) && (m_Item == Pair.m_Item);	}
+		FORCEINLINE Bool	operator<(const KEYTYPE& Key) const					{	return m_Key < Key;	}
+		FORCEINLINE Bool	operator<(const TPair<KEYTYPE,TYPE>& Pair) const	{	return m_Key < Pair.m_Key;	}
+		FORCEINLINE void	operator=(const TPair<KEYTYPE,TYPE>& Pair)			{	m_Key = Pair.m_Key;	m_Item = Pair.m_Item;	}
+		FORCEINLINE Bool	operator==(const KEYTYPE& Key) const				{	return m_Key == Key;	}
+		FORCEINLINE Bool	operator==(const TPair<KEYTYPE,TYPE>& Pair) const	{	return (m_Key == Pair.m_Key) && (m_Item == Pair.m_Item);	}
 
 	public:
 		KEYTYPE		m_Key;

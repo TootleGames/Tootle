@@ -36,9 +36,9 @@ namespace TLRef
 
 	TKeyArray<char,u32>	g_RefCharLookup;				//	lookup table for char->refchar
 
-	inline u32	GetRefCharIndex(char c);					//	get a refchar index from a string character
-	inline char	GetCharFromRefCharIndex(u32 Index,Bool Uppercase=FALSE);			//	get a string character from a refchar index
-	inline u32	GetRefBitsFromChar(char Char,u32 Index,Bool CheckIndex);
+	FORCEINLINE u32	GetRefCharIndex(char c);					//	get a refchar index from a string character
+	FORCEINLINE char	GetCharFromRefCharIndex(u32 Index,Bool Uppercase=FALSE);			//	get a string character from a refchar index
+	FORCEINLINE u32	GetRefBitsFromChar(char Char,u32 Index,Bool CheckIndex);
 
 	void		GenerateCharLookupTable();
 	void		DestroyCharLookupTable();
@@ -113,7 +113,7 @@ void TLRef::DestroyCharLookupTable()
 //---------------------------------------------------
 //	get a refchar index from a string character
 //---------------------------------------------------
-inline u32 TLRef::GetRefCharIndex(char c)
+FORCEINLINE u32 TLRef::GetRefCharIndex(char c)
 {
 	//	use key lookup table if it's been generated as it's faster
 	if ( g_RefCharLookupValid )
@@ -149,7 +149,7 @@ inline u32 TLRef::GetRefCharIndex(char c)
 //---------------------------------------------------
 //	get a string character from a refchar index
 //---------------------------------------------------
-inline char TLRef::GetCharFromRefCharIndex(u32 Index,Bool Uppercase)
+FORCEINLINE char TLRef::GetCharFromRefCharIndex(u32 Index,Bool Uppercase)
 {
 	//	invalid index
 	if ( Index >= g_RefCharTable_Size )
@@ -162,7 +162,7 @@ inline char TLRef::GetCharFromRefCharIndex(u32 Index,Bool Uppercase)
 //---------------------------------------------------
 //	get a string character from a refchar index
 //---------------------------------------------------
-inline u32 TLRef::GetRefBitsFromChar(char Char,u32 Index,Bool CheckIndex)
+FORCEINLINE u32 TLRef::GetRefBitsFromChar(char Char,u32 Index,Bool CheckIndex)
 {
 	if ( CheckIndex )
 	{

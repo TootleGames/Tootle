@@ -29,8 +29,8 @@ public:
 	SyncBool				UpdateShutdown();	// one process of Main shutdown
 	
 	// TEMP ROUTINE TO FIX ISSUE OF GLITCH ON INIT ON THE IPOD
-	inline void				ForceUpdate()	{	PublishUpdateMessage(TRUE);	}
-	inline void				ForceRender()	{	PublishRenderMessage();	}
+	FORCEINLINE void				ForceUpdate()	{	PublishUpdateMessage(TRUE);	}
+	FORCEINLINE void				ForceRender()	{	PublishRenderMessage();	}
 
 	template<class T> Bool	CreateAndRegisterManager(TPtr<T>& pManager,TRefRef ManagerRef);	// Creates and registers a manager and assigns the new manager to a global pointer 
 	template<class T> Bool	CreateAndRegisterManager(TRefRef ManagerRef);	// Creates and registers a manager but doesn't assign the new manager to any global pointer 

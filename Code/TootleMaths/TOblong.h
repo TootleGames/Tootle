@@ -32,7 +32,7 @@ class TLMaths::TOblong
 public:
 	TOblong();
 
-	static TRef		GetTypeRef()		{	return "Obl";	}
+	static TRef		GetTypeRef()		{	return TLMaths_ShapeRef(TOblong);	}
 /*
 	const float*	GetData() const		{	return m_MinMax[0].GetData();	}
 	float3&			GetMin() 			{	return m_Min;	}
@@ -100,7 +100,7 @@ class TLMaths::TOblong2D
 public:
 	TOblong2D();
 
-	static TRef		GetTypeRef()		{	return "Obl2";	}
+	static TRef		GetTypeRef()		{	return TLMaths_ShapeRef(TOblong2D);	}
 
 	float2			GetCenter() const;	//	get the center of the box
 

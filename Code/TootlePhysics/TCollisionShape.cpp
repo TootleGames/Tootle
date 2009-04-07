@@ -102,7 +102,7 @@ Bool TLPhysics::GetIntersection_SphereLineStrip(const TLMaths::TSphere& Sphere,c
 		Line.Set( LineStrip[i-1], LineStrip[i] );
 
 		//	tiny line!
-		if ( Line.GetDirection().LengthSq() < TLMaths::g_NearZero )
+		if ( Line.GetDirection().LengthSq() < TLMaths_NearZero )
 		{
 			TLDebug_Break("Tiny line");
 			continue;
@@ -198,7 +198,7 @@ Bool TLPhysics::GetIntersection_SphereLineStrip(const TLMaths::TSphere& Sphere,c
 		Line.Set( LineStrip[i-1], LineStrip[i] );
 
 		//	tiny line!
-		if ( Line.GetDirection().LengthSq() < TLMaths::g_NearZero )
+		if ( Line.GetDirection().LengthSq() < TLMaths_NearZero )
 		{
 			TLDebug_Print("Tiny line in linestrip");
 			continue;
@@ -290,37 +290,32 @@ Bool TLPhysics::TCollisionShape::HasIntersection(TLPhysics::TCollisionShape* pCo
 		return FALSE;
 	}
 
-	TRef ShapeType = pCollisionShape->GetShapeType();
+	const TRef ShapeType = pCollisionShape->GetShapeType();
 
 	//	do shape specific functions
-	if ( ShapeType == TLMaths::TSphere::GetTypeRef() )
+	switch ( ShapeType.GetData() )
 	{
-		return HasIntersection_Sphere( static_cast<TCollisionSphere*>(pCollisionShape) );
-	}
-	else if ( ShapeType == TLMaths::TBox::GetTypeRef() )
-	{
-		return HasIntersection_Box( static_cast<TCollisionBox*>(pCollisionShape) );
-	}
-	else if ( ShapeType == TLMaths::TBox2D::GetTypeRef() )
-	{
-		return HasIntersection_Box2D( static_cast<TCollisionBox2D*>(pCollisionShape) );
-	}
-	else if ( ShapeType == TLMaths::TOblong2D::GetTypeRef() )
-	{
-		return HasIntersection_Oblong2D( static_cast<TCollisionOblong2D*>(pCollisionShape) );
-	}
-	else if ( ShapeType == TLMaths::TCapsule2D::GetTypeRef() )
-	{
-		return HasIntersection_Capsule2D( static_cast<TCollisionCapsule2D*>(pCollisionShape) );
-	}
-	else if ( ShapeType == TLPhysics::GetMeshShapeTypeRef() )
-	{
-		return HasIntersection_Mesh( static_cast<TCollisionMesh*>(pCollisionShape) );
-	}
-	else if ( ShapeType == TLPhysics::GetMeshWithBoundsShapeTypeRef() )
-	{
-		return HasIntersection_MeshWithBounds( static_cast<TCollisionMeshWithBounds*>(pCollisionShape) );
-	}
+		case TLMaths_ShapeRef(TSphere):
+			return HasIntersection_Sphere( static_cast<TCollisionSphere*>(pCollisionShape) );
+
+		case TLMaths_ShapeRef(TBox):
+			return HasIntersection_Box( static_cast<TCollisionBox*>(pCollisionShape) );
+
+		case TLMaths_ShapeRef(TBox2D):
+			return HasIntersection_Box2D( static_cast<TCollisionBox2D*>(pCollisionShape) );
+
+		case TLMaths_ShapeRef(TOblong2D):
+			return HasIntersection_Oblong2D( static_cast<TCollisionOblong2D*>(pCollisionShape) );
+
+		case TLMaths_ShapeRef(TCapsule2D):
+			return HasIntersection_Capsule2D( static_cast<TCollisionCapsule2D*>(pCollisionShape) );
+
+		case TLMaths_ShapeRef(Mesh):
+			return HasIntersection_Mesh( static_cast<TCollisionMesh*>(pCollisionShape) );
+
+		case TLMaths_ShapeRef(MeshWithBounds):
+			return HasIntersection_MeshWithBounds( static_cast<TCollisionMeshWithBounds*>(pCollisionShape) );
+	};
 
 #ifdef _DEBUG
 	TTempString Debug_String("HasIntersection: Unhandled shape type ");
@@ -480,7 +475,7 @@ Bool TLPhysics::TCollisionSphere::GetIntersection_Sphere(TLPhysics::TCollisionSp
 	float DiffLengthSq = Diff.LengthSq();
 
 	//	too embedded to do anything with it 
-	if ( DiffLengthSq < TLMaths::g_NearZero )     
+	if ( DiffLengthSq < TLMaths_NearZero )     
 		return FALSE;   
 
 	float TotalRadSq = a.GetRadius() + b.GetRadius();
@@ -1220,7 +1215,7 @@ Bool TLPhysics::TCollisionCapsule2D::GetIntersection_Capsule2D(TCollisionCapsule
 	float DistanceSq = ThisCapsule.GetLine().GetDistanceSq( ShapeCapsule.GetLine(), TempPoint, &pNearestPointOnThis, &pNearestPointOnShape, IntersectionResult, IntersectionAlongThis, IntersectionAlongShape );
 
 	//	too embedded (must be exactly over each other
-	if ( DistanceSq < TLMaths::g_NearZero )
+	if ( DistanceSq < TLMaths_NearZero )
 		return FALSE;
 
 	//	too far away, not intersecting

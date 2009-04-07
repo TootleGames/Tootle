@@ -46,12 +46,6 @@ namespace TLRender
 
 			Bool					Debug_CheckForError();		//	check for opengl error - returns TRUE on error
 
-			//Bool					BindFixedVertexes(const TArray<TLAsset::TFixedVertex>* pVertexes);
-			Bool					BindVertexes(const TArray<float3>* pVertexes);
-			Bool					BindColours(const TArray<TColour>* pColours);
-			Bool					BindUVs(const TArray<float2>* pUVs);
-			void					DrawPrimitives(u32 GLPrimType,u32 IndexCount,const u16* pIndexData);	//	main renderer, just needs primitive type, and the data
-			
 			FORCEINLINE u16			GetPrimTypeTriangle()		{	return GL_TRIANGLES;	}
 			FORCEINLINE u16			GetPrimTypeTristrip()		{	return GL_TRIANGLE_STRIP;	}
 			FORCEINLINE u16			GetPrimTypeTrifan()			{	return GL_TRIANGLE_FAN;	}

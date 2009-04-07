@@ -65,7 +65,7 @@ Bool TLRender::TRenderTarget::BeginDraw(const Type4<s32>& RenderTargetMaxSize,co
 		return FALSE;
 
 	//	if we have no root render node, and not going to be clearing the screen, skip render
-	Bool WillClear = GetFlags()( Flag_ClearColour ) && (m_ClearColour.GetAlpha() > 0.f);
+	Bool WillClear = GetFlags()( Flag_ClearColour ) && (m_ClearColour.IsVisible());
 	if ( !WillClear )
 	{
 		//	won't be clearing, so if we're missing our root node/have none, skip rendering
@@ -140,7 +140,10 @@ void TLRender::TRenderTarget::Draw()
 	if ( m_pRootQuadTreeZone )
 	{
 		if ( m_pCamera->IsZoneOutOfDate() )
-			m_pCamera->UpdateZone( m_pCamera, m_pRootQuadTreeZone );
+		{
+			TPtr<TLMaths::TQuadTreeNode> pCameraQuadTreeNode = m_pCamera;
+			m_pCamera->UpdateZone( pCameraQuadTreeNode, m_pRootQuadTreeZone );
+		}
 
 		if ( !m_pCamera->GetZone() )
 			CameraInWorldZone = FALSE;
@@ -403,8 +406,28 @@ SyncBool TLRender::TRenderTarget::IsRenderNodeVisible(TRenderNode& RenderNode,TP
 		if ( !ppRenderZoneNode )
 		{
 			pRenderZoneNode = new TRenderZoneNode( RenderNode.GetNodeRef() );
+
+			//	make new TPtr
 			TPtr<TLMaths::TQuadTreeNode> pRenderZoneNodePtr = pRenderZoneNode;
-	
+
+			//	hold onto our new ZoneNode in our list
+			ppRenderZoneNode = RenderNode.SetRenderZoneNode( GetRef(), pRenderZoneNodePtr );
+			//	failed to add
+			if ( !ppRenderZoneNode )
+			{
+				TLDebug_Break("Failed to add new render zone node to render node");
+				return SyncFalse;
+			}
+
+			//	do has-shape test first
+			if ( !pRenderZoneNode->HasZoneShape() )
+			{
+				if ( QuickTest )
+					return SyncWait;
+				else
+					return SyncFalse;
+			}
+
 			//	add node to the zone tree
 			if ( !m_pRootQuadTreeZone->AddNode( pRenderZoneNodePtr, m_pRootQuadTreeZone, TRUE ) )
 			{
@@ -414,16 +437,6 @@ SyncBool TLRender::TRenderTarget::IsRenderNodeVisible(TRenderNode& RenderNode,TP
 					return SyncWait;
 				else
 					return SyncFalse;
-			}
-
-			//	hold onto our new ZoneNode in our list
-			ppRenderZoneNode = RenderNode.SetRenderZoneNode( GetRef(), pRenderZoneNodePtr );
-
-			//	failed to add
-			if ( !ppRenderZoneNode )
-			{
-				TLDebug_Break("Failed to add new render zone node to render node");
-				return SyncFalse;
 			}
 
 			//	update up-to-date state
@@ -535,7 +548,7 @@ Bool TLRender::TRenderTarget::IsZoneVisible(TLMaths::TQuadTreeNode* pCameraZoneN
 		*/
 
 		//	quick shape test...
-		if ( !pCameraZoneNode->IsInZone( *pZone ) )
+		if ( !pCameraZoneNode->IsInZoneShape( *pZone ) )
 			return FALSE;
 
 		//	render node is below camera zone
@@ -610,7 +623,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 			SceneColour *= pRenderNode->GetColour();
 
 			//	alpha'd out (only applies if we're applying our colour, a la - IsColourValid)
-			if ( SceneColour.GetAlpha() < TLMaths::g_NearZero )
+			if ( SceneColour.GetAlphaf() < TLMaths_NearZero )
 				return FALSE;
 		}
 	}
@@ -831,14 +844,15 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 
 			//	get add blend mode
 			Bool AddBlending = RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::AddBlending );
+			HasAlpha |= AddBlending;
 
 			//	make sure wireframe is off
 			Opengl::EnableWireframe(FALSE);
 
 			//	set the scene colour, and force enable alpha if the mesh needs it
-			Opengl::SetSceneColour( SceneColour, HasAlpha|AddBlending, AddBlending );
+			Opengl::SetSceneColour( SceneColour, HasAlpha, AddBlending );
 
-			DrawMesh( *pMesh, pTexture, pRenderNode, RenderNodeRenderFlags );
+			DrawMesh( *pMesh, pTexture, pRenderNode, RenderNodeRenderFlags, HasAlpha );
 		}
 
 		//	render wireframe and/or outline
@@ -859,7 +873,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 				WireframeRenderFlags.Clear( TRenderNode::RenderFlags::UseMeshLineWidth );
 				WireframeRenderFlags.Clear( TRenderNode::RenderFlags::DepthRead );
 
-				DrawMesh( *pMesh, NULL, pRenderNode, WireframeRenderFlags );
+				DrawMesh( *pMesh, NULL, pRenderNode, WireframeRenderFlags, FALSE );
 			}
 		}
 		#endif
@@ -882,7 +896,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 			if ( pAsset && pAsset->GetAssetType() == "mesh" )
 			{
 				TLAsset::TMesh* pMesh = pAsset.GetObject<TLAsset::TMesh>();
-				DrawMesh( *pMesh, NULL, pRenderNode, RenderNodeRenderFlags );
+				DrawMesh( *pMesh, NULL, pRenderNode, RenderNodeRenderFlags, FALSE );
 			}
 		}
 
@@ -966,29 +980,69 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 //-------------------------------------------------------------
 //	render mesh asset
 //-------------------------------------------------------------
-void TLRender::TRenderTarget::DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset::TTexture* pTexture,const TRenderNode* pRenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags)
+void TLRender::TRenderTarget::DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset::TTexture* pTexture,const TRenderNode* pRenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags,Bool HasAlpha)
 {
-	const TArray<float3>* pVertexes = &Mesh.GetVertexes();
-	const TArray<TColour>* pColours						= &Mesh.GetColours();
-	const TArray<float2>* pUVs							= &Mesh.GetUVs();
-	const TArray<TLAsset::TMesh::Triangle>* pTriangles	= &Mesh.GetTriangles();
-	const TArray<TLAsset::TMesh::Tristrip>* pTristrips	= &Mesh.GetTristrips();
-	const TArray<TLAsset::TMesh::Trifan>* pTrifans		= &Mesh.GetTrifans();
-	const TArray<TLAsset::TMesh::Line>* pLines			= &Mesh.GetLines();
-	const TArray<TLAsset::TMesh::Linestrip>* pLinestrips	= &Mesh.GetLinestrips();
-	
-	//	ignore colour vertex data if flag is not set
-	if ( !RenderFlags( TRenderNode::RenderFlags::UseVertexColours ) )
-		pColours = NULL;
-
-	//	ignore UV vertex data if flag is not set or if we have no texture
-	if ( !RenderFlags( TRenderNode::RenderFlags::UseVertexUVs ) || !pTexture )
-		pUVs = NULL;
+	const TArray<float3>& Vertexes = Mesh.GetVertexes();
 
 	//	bind vertex data
-	Opengl::Platform::BindVertexes( pVertexes );
-	Opengl::Platform::BindColours( pColours );
-	Opengl::Platform::BindUVs( pUVs );
+	Opengl::BindVertexes( &Vertexes );
+
+	//	ignore UV vertex data if flag is not set or if we have no texture
+	if ( pTexture && RenderFlags( TRenderNode::RenderFlags::UseVertexUVs ) )
+	{
+		Opengl::BindUVs( Mesh.GetUVsNotEmpty() );
+	}
+	else
+	{
+		Opengl::BindUVs( NULL );
+	}
+
+
+	//	ignore colour vertex data if flag is not set
+	if ( RenderFlags( TRenderNode::RenderFlags::UseVertexColours ) )
+	{
+		enum TColourMode
+		{
+			Colour_Float,
+			Colour_Rgb,
+			Colour_Rgba
+		};
+
+		//	pick most-desired mode
+		TColourMode ColourMode = HasAlpha ? Colour_Rgba : Colour_Rgb;
+		if ( RenderFlags( TRenderNode::RenderFlags::UseFloatColours ) )
+			ColourMode = Colour_Float;
+
+		//	bind to colours
+		if ( ColourMode == Colour_Rgb )
+		{
+			const TArray<TColour24>* pColours24 = Mesh.GetColours24NotEmpty();
+			if ( pColours24 )
+				Opengl::BindColours( pColours24 );
+			else
+				ColourMode = Colour_Float;
+		}
+		else if ( ColourMode == Colour_Rgba )
+		{
+			const TArray<TColour32>* pColours32 = Mesh.GetColours32NotEmpty();
+			if ( pColours32 )
+				Opengl::BindColours( pColours32 );
+			else
+				ColourMode = Colour_Float;
+		}
+
+		//	do float mode last in case we had to resort to it from lack of colours
+		if ( ColourMode == Colour_Float )
+		{
+			//	gr: always have float colours (if any at all)
+			Opengl::BindColours( Mesh.GetColoursNotEmpty() );
+		}
+	}
+	else
+	{
+		Opengl::BindColoursNull();
+	}
+
 
 	//	bind texture
 	Opengl::BindTexture( pTexture );
@@ -999,10 +1053,16 @@ void TLRender::TRenderTarget::DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset:
 	//	enable/disable depth writing
 	Opengl::EnableDepthWrite( RenderFlags( TRenderNode::RenderFlags::DepthWrite ) );
 
+
+	const TArray<TLAsset::TMesh::Triangle>* pTriangles	= Mesh.GetTrianglesNotEmpty();
+	const TArray<TLAsset::TMesh::Tristrip>* pTristrips	= Mesh.GetTristripsNotEmpty();
+	const TArray<TLAsset::TMesh::Trifan>* pTrifans			= Mesh.GetTrifansNotEmpty();
+	const TArray<TLAsset::TMesh::Line>* pLines				= Mesh.GetLinesNotEmpty();
+	const TArray<TLAsset::TMesh::Linestrip>* pLinestrips	= Mesh.GetLinestripsNotEmpty();
+
+
 	//	setup line width if required
-	Bool HasLines = (pLines && pLines->GetSize() > 0);
-	HasLines |= (pLinestrips && pLinestrips->GetSize() > 0);
-	if ( HasLines && RenderFlags( TRenderNode::RenderFlags::UseMeshLineWidth ) ) 
+	if ( (pLines || pLinestrips) && RenderFlags( TRenderNode::RenderFlags::UseMeshLineWidth ) ) 
 	{
 		float LineWidth = pRenderNode->GetLineWidth();
 		if ( LineWidth < 1.f )
@@ -1021,17 +1081,22 @@ void TLRender::TRenderTarget::DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset:
 	}
 		
 	//	draw primitives
-	Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeTriangle(),	pTriangles );
-	Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeTristrip(),	pTristrips );
-	Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeTrifan(),		pTrifans );
-	Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeLinestrip(),	pLinestrips );
-	Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeLine(),		pLines );
+	if ( pTriangles )
+		Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeTriangle(), *pTriangles );
+	if ( pTristrips )
+		Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeTristrip(), *pTristrips );
+	if ( pTrifans )
+		Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeTrifan(), *pTrifans );
+	if ( pLinestrips )
+		Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeLinestrip(), *pLinestrips );
+	if ( pLines )
+		Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeLine(), *pLines );
 	
 	//	draw points like a primitive
 	if ( RenderFlags( TRenderNode::RenderFlags::Debug_Points ) )
 	{
 		Opengl::SetPointSize( 8.f );
-		Opengl::DrawPrimitivePoints( pVertexes );
+		Opengl::DrawPrimitivePoints( &Vertexes );
 	}
 
 }
@@ -1099,7 +1164,7 @@ void TLRender::TRenderTarget::Debug_DrawZone(TPtr<TLMaths::TQuadTreeZone>& pZone
 	TempRenderNode.SetTranslate( ZoneBox.GetMin().xyz(zDepth) );
 	TempRenderNode.SetScale( ZoneBox.GetSize().xyz(1.f) );
 
-	DrawNode( &TempRenderNode, NULL, NULL, 1.f, NULL );
+	DrawNode( &TempRenderNode, NULL, NULL, TColour(1.f,1.f,1.f,1.f), NULL );
 
 	for ( u32 z=0;	z<pZone->GetChildZones().GetSize();	z++ )
 	{

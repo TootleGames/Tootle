@@ -55,7 +55,7 @@ namespace TLCore
 	{
 		extern HINSTANCE	g_HInstance;
 		extern HWND			g_HWnd;
-		inline u32			HandleWin32Message(u32 Message,WPARAM wParam,LPARAM lParam)		{	return 0;	}
+		FORCEINLINE u32			HandleWin32Message(u32 Message,WPARAM wParam,LPARAM lParam)		{	return 0;	}
 
 		SyncBool			Init();				//	platform init
 		SyncBool			Update();			//	platform update

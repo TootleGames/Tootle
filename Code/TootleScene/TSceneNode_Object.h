@@ -68,7 +68,7 @@ protected:
 
 	// Transformation
 	virtual void					Translate(float3 vTranslation);
-	virtual void					OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);	//	this checks to see if we're asleep first and delays sending a transform until we are awake
+	virtual void					OnTransformChanged(u8 TransformChangedBits);	//	this checks to see if we're asleep first and delays sending a transform until we are awake
 	
 	virtual void					OnZoneWake(SyncBool ZoneActive);		//	re-enable physics and render nodes
 	virtual void					OnZoneSleep();							//	disable physics and render nodes

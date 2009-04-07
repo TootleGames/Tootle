@@ -213,28 +213,21 @@ void TLMaths::TGlutTessellator::FinishPoly()
 		case GL_TRIANGLES:
 		{
 			//	new triangle
-			TLAsset::TMesh::Triangle* pTriangle = m_pMesh->GetTriangles().AddNew();
-			pTriangle->Set( m_CurrentPolyIndexes[0], m_CurrentPolyIndexes[1], m_CurrentPolyIndexes[2] );
+			m_pMesh->GenerateTriangle( m_CurrentPolyIndexes[0], m_CurrentPolyIndexes[1], m_CurrentPolyIndexes[2] );
 		}
 		break;
 
 		case GL_QUADS:
 		{
-			//	new quad as a tri strip
-			TLAsset::TMesh::Tristrip* pTristrip = m_pMesh->GetTristrips().AddNew();
-			pTristrip->Add( m_CurrentPolyIndexes[0] );
-			pTristrip->Add( m_CurrentPolyIndexes[1] );
-			pTristrip->Add( m_CurrentPolyIndexes[3] );
-			pTristrip->Add( m_CurrentPolyIndexes[2] );
+			//	make up new quad
+			m_pMesh->GenerateQuad( m_CurrentPolyIndexes );
 		}
 		break;
 
 		case GL_TRIANGLE_STRIP:
 		{
 			//	new tri strip
-			TLAsset::TMesh::Tristrip* pTristrip = m_pMesh->GetTristrips().AddNew();
-			for( u32 p=0;	p<m_CurrentPolyIndexes.GetSize();	p++ )
-				pTristrip->Add( m_CurrentPolyIndexes[p] );
+			m_pMesh->GenerateTristrip( m_CurrentPolyIndexes );
 		}
 		break;
 
@@ -254,6 +247,7 @@ void TLMaths::TGlutTessellator::FinishPoly()
 		case GL_TRIANGLE_FAN:
 		{
 			//	new polygon
+			//	gr: todo: change to mesh function so we can degenerate small triangle fans
 			TLAsset::TMesh::Trifan* pTrifan = m_pMesh->GetTrifans().AddNew();
 			for( u32 p=0;	p<m_CurrentPolyIndexes.GetSize();	p++ )
 				pTrifan->Add( m_CurrentPolyIndexes[p] );

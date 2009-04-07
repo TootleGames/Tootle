@@ -29,7 +29,7 @@ public:
 	TLine(const float3& Start,const float3& End);
 	TLine(const TLine2D& Line,float z=0.f);
 
-	static TRef			GetTypeRef()		{	return "Line";	}
+	static TRef			GetTypeRef()		{	return TLMaths_ShapeRef(TLine);	}
 
 	void				Set(const float3& Start,const float3& End)		{	m_Start = Start;	m_End = End;	}
 	void				Set(const TLine& Line)							{	m_Start = Line.GetStart();	m_End = Line.GetEnd();	}
@@ -68,7 +68,7 @@ public:
 	TLine2D(const TLine& Line)						: m_Start ( Line.GetStart().xy() ), m_End ( Line.GetEnd().xy() )	{}
 	TLine2D(const TLine2D& Line)					: m_Start ( Line.GetStart() ), m_End ( Line.GetEnd() )	{}
 
-	static TRef			GetTypeRef()									{	return "Line2";	}
+	static TRef			GetTypeRef()									{	return TLMaths_ShapeRef(TLine2D);	}
 
 	void				Set(const float2& Start,const float2& End)		{	m_Start = Start;	m_End = End;	}
 	void				SetStart(const float2& Start)					{	m_Start = Start;	}

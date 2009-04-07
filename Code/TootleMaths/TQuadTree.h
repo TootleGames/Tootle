@@ -81,9 +81,11 @@ public:
 	virtual ~TQuadTreeNode()		{}
 
 	virtual Bool					IsStatic()										{	return FALSE;	}	//	if static we can assume this node won't be traversing zones. Only really used for filtering whne accessing the zones, i.e. by the physics for specific traversal
-	virtual SyncBool				IsInZone(const TLMaths::TQuadTreeZone& Zone);	//	do your object's test to see if it intersects at all with this zone's shape, default does shape/shape but you might want something more complex
+	FORCEINLINE SyncBool			IsInZoneShape(const TLMaths::TQuadTreeZone& Zone);	//	wrapper to test against the zone's shape
 	virtual SyncBool				IsInShape(const TLMaths::TBox2D& Shape);		//	do your object's test to see if it intersects at all with this zone's shape, default does shape/shape but you might want something more complex
 	virtual const TLMaths::TBox2D&	GetZoneShape();									//	get the shape of this node
+	virtual Bool					HasZoneShape()									{	return GetZoneShape().IsValid();	}	//	return validity of shape for early bail out tests.
+	
 	FORCEINLINE TRefRef				GetQuadTreeNodeRef() const						{	return m_QuadTreeNodeRef;	}
 	virtual void					OnZoneWake(SyncBool ZoneActive)					{	}	//	notifcation when zone is set to active (from non-active)
 	virtual void					OnZoneSleep()									{	}	//	notifcation when zone is set to non-active (from active)
@@ -95,7 +97,7 @@ public:
 
 	FORCEINLINE Bool				IsZoneOutOfDate() const							{	return m_IsZoneOutofDate;	}
 	FORCEINLINE void				SetZoneOutOfDate(Bool OutOfDate=TRUE)			{	m_IsZoneOutofDate = OutOfDate;	}
-	void							UpdateZone(TPtr<TLMaths::TQuadTreeNode> pThis,TPtr<TLMaths::TQuadTreeZone>& pRootZone);	//	if the node has moved, update it's zone. returns TRUE if zone changed
+	void							UpdateZone(TPtr<TLMaths::TQuadTreeNode>& pThis,TPtr<TLMaths::TQuadTreeZone>& pRootZone);	//	if the node has moved, update it's zone. returns TRUE if zone changed
 
 	FORCEINLINE Bool				operator==(TRefRef NodeRef) const				{	return (GetQuadTreeNodeRef() == NodeRef);	}
 
@@ -158,8 +160,7 @@ public:
 	Bool						HasAnyNonStaticNodes()								{	return (m_NonStaticNodes.GetSize() > 0);	}
 	Bool						HasAnyNonStaticNodesTotal()							{	return (m_NonStaticNodes.GetSize() > 0) || HasChildrenAnyNonStaticNodes();	}
 
-	SyncBool					IsNodeInZoneShape(TQuadTreeNode* pNode);			//	test to see if this intersects into this zone
-	FORCEINLINE SyncBool		IsNodeInZoneShape(TPtr<TQuadTreeNode>& pNode)		{	return IsNodeInZoneShape( pNode.GetObject() );	}
+	FORCEINLINE SyncBool		IsNodeInZoneShape(TQuadTreeNode& Node);				//	test to see if this intersects into this zone
 	FORCEINLINE const TLMaths::TBox2D&	GetShape() const							{	return m_Shape;	}
 
 	void						SetSiblingZones(TPtrArray<TQuadTreeZone>& Siblings);	//	assign sibling
@@ -224,3 +225,25 @@ protected:
 };
 
 
+
+
+
+
+
+//--------------------------------------------------
+//	do your object's test to see if it intersects at all with this zone's shape, default does shape/shape but you might want something more complex
+//--------------------------------------------------
+FORCEINLINE SyncBool TLMaths::TQuadTreeNode::IsInZoneShape(const TLMaths::TQuadTreeZone& Zone)
+{
+	return IsInShape( Zone.GetShape() );
+}
+
+
+
+//-------------------------------------------------------------
+//	test to see if this intersects into this zone
+//-------------------------------------------------------------
+SyncBool TLMaths::TQuadTreeZone::IsNodeInZoneShape(TLMaths::TQuadTreeNode& Node)
+{
+	return Node.IsInZoneShape( *this );
+}

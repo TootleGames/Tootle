@@ -37,14 +37,17 @@ class TLMaths::TBoundsShape
 public:
 	typedef const SHAPETYPE& (TLRender::TRenderNode::*TCalcLocalBoundsFunc)();
 public:
-	TBoundsShape() : m_Valid ( SyncFalse )	{}
+	TBoundsShape() : m_WorldValid ( SyncFalse )	{}
 
 	const SHAPETYPE&	CalcWorldShape(TLRender::TRenderNode& RenderNode,TCalcLocalBoundsFunc pCalcLocalBoundsFunc);	//	if invalid calculate our local bounds box (accumulating children) if out of date and return it
-	FORCEINLINE void	SetShapeOld()			{	if ( m_Valid == SyncTrue )	m_Valid = SyncWait;	}	//	if up-to-date (TRUE) then make old (WAIT)
-	FORCEINLINE Bool	SetLocalShapeInvalid()	{	if ( !m_LocalShape.IsValid() )	return FALSE;	m_LocalShape.SetInvalid();	return TRUE;	}
+	FORCEINLINE Bool	IsWorldShapeValid()		{	return ( m_WorldValid == SyncTrue );	}					//	return Bool of if it's up to date
+	FORCEINLINE void	SetWorldShapeOld()		{	if ( m_WorldValid == SyncTrue )	m_WorldValid = SyncWait;	}	//	if up-to-date (TRUE) then make old (WAIT)
+	
+	FORCEINLINE Bool	IsLocalShapeValid()		{	return m_LocalShape.IsValid();	}
+	FORCEINLINE void	SetLocalShapeInvalid()	{	m_LocalShape.SetInvalid();	}
 
 public:
-	SyncBool		m_Valid;		//	Validity of bounds box - SyncWait if valid, but old
+	SyncBool		m_WorldValid;	//	Validity of world-shape - SyncWait if valid, but old
 	SHAPETYPE		m_LocalShape;	//	
 	SHAPETYPE		m_WorldShape;	//	
 };
@@ -91,13 +94,14 @@ public:
 			DepthWrite,					//	write to depth buffer (off means will get drawn over)
 			ResetScene,					//	position and rotation are not inherited
 			UseVertexColours,			//	bind vertex colours of mesh. if not set when rendering, a mesh the colours are not bound
+			UseFloatColours,			//	force system to use floating point colour buffer (slower than bytes, but better colour range as 32 bit instead of 8)
 			UseVertexUVs,				//	bind vertex UVs of mesh. if not set when rendering we have no texture mapping
 			UseMeshLineWidth,			//	calculates mesh/world line width -> screen/pixel width
 			UseNodeColour,				//	set when colour is something other than 1,1,1,1 to save some processing (off by default!)
 			EnableCull,					//	enable camera/frustum/zone culling. if disabled, the whole tree below is disabled
 			ForceCullTestChildren,		//	if we are not culled, still do a cull test with children. By default, when not culled, we don't test children as they should be encapsulated within our bounds
 			InvalidateBoundsByChildren,	//	default behaviour is to invalidate our bounding box when child CHANGES. we can disable this for certain cases - eg. root objects, which when invalidated cause the entire tree to recalculate stuff - still invalidated when a child is ADDED to the tree (this may have to change to "first-calculation of bounds")
-			AddBlending,					//	will ADD when rendering colours/textures etc
+			AddBlending,				//	will ADD when rendering colours/textures etc
 	
 			Debug_Wireframe,			//	draw in wireframe (all white outlines)
 			Debug_ColourWireframe,		//	when drawing in wireframe keep colours
@@ -138,8 +142,8 @@ public:
 	FORCEINLINE Bool						IsEnabled() const							{	return m_RenderFlags( RenderFlags::Enabled );	}
 	FORCEINLINE void						SetEnabled(Bool Enabled)					{	m_RenderFlags.Set( RenderFlags::Enabled, Enabled );	}
 
-	FORCEINLINE void						SetAlpha(float Alpha)						{	if ( m_Colour.GetAlpha() != Alpha )	{	m_Colour.GetAlpha() = Alpha;	OnColourChanged();	}	}
-	FORCEINLINE float						GetAlpha() const							{	return m_Colour.GetAlpha();	}
+	FORCEINLINE void						SetAlpha(float Alpha)						{	if ( m_Colour.GetAlphaf() != Alpha )	{	m_Colour.GetAlphaf() = Alpha;	OnColourChanged();	}	}
+	FORCEINLINE float						GetAlpha() const							{	return m_Colour.GetAlphaf();	}
 	FORCEINLINE void						SetColour(const TColour& Colour)			{	m_Colour = Colour;	OnColourChanged();	}
 	FORCEINLINE const TColour&				GetColour() const							{	return m_Colour;	}
 	FORCEINLINE Bool						IsColourValid() const						{	return m_RenderFlags( RenderFlags::UseNodeColour );	}
@@ -167,12 +171,13 @@ public:
 	//	if FALSE presumed we are doing psuedo rendering ourselves (creating RenderNodes and rendering them to the render target)
 	virtual Bool							Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList);	//	pre-draw routine for a render object
 
-	FORCEINLINE void						OnTransformChanged();						//	invalidate bounds
+	FORCEINLINE void						OnTransformChanged(u8 TransformChangedBits=TLMaths_TransformBitAll);	//	invalidate bounds
 	FORCEINLINE void						OnMeshChanged();							//	invalidate bounds
 	FORCEINLINE void						OnBoundsChanged()							{	OnMeshChanged();	}
 
 	void									SetWorldTransform(const TLMaths::TTransform& SceneTransform);	//	set new world transform
-	void									SetWorldTransformOld();						//	downgrade all world shape/transform states from valid to old
+	Bool									SetWorldTransformOld(Bool SetPosOld,Bool SetTransformOld,Bool SetShapesOld);				//	downgrade all world shape/transform states from valid to old. returns if anyhting was downgraded
+	FORCEINLINE Bool						SetWorldTransformOld()						{	return SetWorldTransformOld( TRUE, TRUE, TRUE );	}
 	FORCEINLINE SyncBool					IsWorldTransformValid() const				{	return m_WorldTransformValid;	}
 
 	const float3&							GetWorldPos();								//	calculate our new world position from the latest scene transform
@@ -185,10 +190,10 @@ public:
 	const TLMaths::TSphere2D&				GetWorldBoundsSphere2D()	{	return m_BoundsSphere2D.CalcWorldShape( *this, &TLRender::TRenderNode::CalcLocalBoundsSphere2D );	}
 
 	//	get world shape/datum - no recalcualtion, also returns age (False=Invalid, Wait=Old, True=UpToDate)
-	const TLMaths::TBox&					GetWorldBoundsBox(SyncBool& Validity) const			{	Validity = m_BoundsBox.m_Valid;			return m_BoundsBox.m_WorldShape;	}
-	const TLMaths::TBox2D&					GetWorldBoundsBox2D(SyncBool& Validity) const		{	Validity = m_BoundsBox2D.m_Valid;		return m_BoundsBox2D.m_WorldShape;	}
-	const TLMaths::TSphere&					GetWorldBoundsSphere(SyncBool& Validity) const		{	Validity = m_BoundsSphere.m_Valid;		return m_BoundsSphere.m_WorldShape;	}
-	const TLMaths::TSphere2D&				GetWorldBoundsSphere2D(SyncBool& Validity) const	{	Validity = m_BoundsSphere2D.m_Valid;	return m_BoundsSphere2D.m_WorldShape;	}
+	const TLMaths::TBox&					GetWorldBoundsBox(SyncBool& Validity) const			{	Validity = m_BoundsBox.m_WorldValid;		return m_BoundsBox.m_WorldShape;	}
+	const TLMaths::TBox2D&					GetWorldBoundsBox2D(SyncBool& Validity) const		{	Validity = m_BoundsBox2D.m_WorldValid;		return m_BoundsBox2D.m_WorldShape;	}
+	const TLMaths::TSphere&					GetWorldBoundsSphere(SyncBool& Validity) const		{	Validity = m_BoundsSphere.m_WorldValid;		return m_BoundsSphere.m_WorldShape;	}
+	const TLMaths::TSphere2D&				GetWorldBoundsSphere2D(SyncBool& Validity) const	{	Validity = m_BoundsSphere2D.m_WorldValid;	return m_BoundsSphere2D.m_WorldShape;	}
 
 	const TLMaths::TBox&					CalcLocalBoundsBox();						//	return our current local bounds box and calculate if invalid
 	const TLMaths::TBox2D&					CalcLocalBoundsBox2D();						//	return our current local bounds box and calculate if invalid
@@ -251,6 +256,7 @@ public:
 	TRenderZoneNode(TRefRef RenderNodeRef);
 
 	virtual SyncBool	IsInShape(const TLMaths::TBox2D& Shape);
+	virtual Bool		HasZoneShape();
 
 protected:
 	TRef				m_RenderNodeRef;		//	render node that we're linked to
@@ -267,10 +273,10 @@ protected:
 //---------------------------------------------------------------
 FORCEINLINE void TLRender::TRenderNode::OnColourChanged()
 {
-	if ( m_Colour.GetRed() > TLMaths::g_NearOne &&
-		m_Colour.GetGreen() > TLMaths::g_NearOne &&
-		m_Colour.GetBlue() > TLMaths::g_NearOne &&
-		m_Colour.GetAlpha() > TLMaths::g_NearOne )
+	if ( m_Colour.GetRedf() > TLMaths_NearOne &&
+		m_Colour.GetGreenf() > TLMaths_NearOne &&
+		m_Colour.GetBluef() > TLMaths_NearOne &&
+		m_Colour.GetAlphaf() > TLMaths_NearOne )
 	{
 		m_RenderFlags.Clear( RenderFlags::UseNodeColour );
 	}
@@ -294,7 +300,7 @@ FORCEINLINE void TLRender::TRenderNode::SetTranslate(const float3& Translate,Boo
 	m_Transform.SetTranslate( Translate );
 
 	if ( Invalidate )	
-		OnTransformChanged();	
+		OnTransformChanged( TLMaths_TransformBitTranslate );	
 }
 
 FORCEINLINE void TLRender::TRenderNode::SetScale(const float3& Scale,Bool Invalidate)						
@@ -302,7 +308,7 @@ FORCEINLINE void TLRender::TRenderNode::SetScale(const float3& Scale,Bool Invali
 	m_Transform.SetScale( Scale );	
 
 	if ( Invalidate )	
-		OnTransformChanged();	
+		OnTransformChanged( TLMaths_TransformBitScale );	
 }
 
 FORCEINLINE void TLRender::TRenderNode::SetRotation(const TLMaths::TQuaternion& Rotation,Bool Invalidate)	
@@ -310,22 +316,26 @@ FORCEINLINE void TLRender::TRenderNode::SetRotation(const TLMaths::TQuaternion& 
 	m_Transform.SetRotation( Rotation );	
 
 	if ( Invalidate )	
-		OnTransformChanged();	
+		OnTransformChanged( TLMaths_TransformBitRotation );	
 }
 
 //---------------------------------------------------------------
 //	invalidate bounds when pos/rot/scale
 //---------------------------------------------------------------
-FORCEINLINE void TLRender::TRenderNode::OnTransformChanged()						
-{	
-	SetBoundsInvalid( TInvalidateFlags( 
-						//HasChildren() ? InvalidateLocalBounds : InvalidateDummy, //	gr: not needed?
-						InvalidateWorldPos,				//	world pos must have changed - may be able to reduce this to just Translate changes
-						InvalidateWorldBounds,			//	shape of mesh must have changed
-						InvalidateParentLocalBounds,	//	our parent's LOCAL bounds has now changed as it's based on it's children (this)
-						InvalidateChildWorldBounds,		//	invalidate the children's world bounds
-						InvalidateChildWorldPos		//	invalidate the children's world pos too
-					) );	
+FORCEINLINE void TLRender::TRenderNode::OnTransformChanged(u8 TransformChangedBits)						
+{
+	if ( TransformChangedBits != 0x0 )
+	{
+		Bool TranslateChanged = (TransformChangedBits & TLMaths_TransformBitTranslate) != 0x0;
+		SetBoundsInvalid( TInvalidateFlags( 
+							//HasChildren() ? InvalidateLocalBounds : InvalidateDummy, //	gr: not needed?
+							TranslateChanged ? InvalidateWorldPos : InvalidateDummy,				//	world pos must have changed - may be able to reduce this to just Translate changes
+							InvalidateWorldBounds,			//	shape of mesh must have changed
+							InvalidateParentLocalBounds,	//	our parent's LOCAL bounds has now changed as it's based on it's children (this)
+							InvalidateChildWorldBounds,		//	invalidate the children's world bounds
+							InvalidateChildWorldPos		//	invalidate the children's world pos too
+						) );	
+	}
 }
 
 
@@ -353,14 +363,14 @@ const SHAPETYPE& TLMaths::TBoundsShape<SHAPETYPE>::CalcWorldShape(TLRender::TRen
 	SyncBool IsWorldTransformValid = RenderNode.m_WorldTransformValid;
 
 	//	check validity synchronoisation is correct
-	if ( m_Valid == SyncTrue && IsWorldTransformValid != SyncTrue )
+	if ( m_WorldValid == SyncTrue && IsWorldTransformValid != SyncTrue )
 	{
 		TLDebug_Break("Mis-match in age of world shape - shape should always be same or older as the transform");
-		m_Valid = IsWorldTransformValid;
+		m_WorldValid = IsWorldTransformValid;
 	}
 
 	//	world bounds is up to date
-	if ( m_Valid == IsWorldTransformValid )
+	if ( m_WorldValid == IsWorldTransformValid )
 		return m_WorldShape;
 
 	//	world transform isn't valid at all
@@ -385,7 +395,7 @@ const SHAPETYPE& TLMaths::TBoundsShape<SHAPETYPE>::CalcWorldShape(TLRender::TRen
 	m_WorldShape.Transform( RenderNode.m_WorldTransform );
 	
 	//	update state (matches world transform state)
-	m_Valid = IsWorldTransformValid;
+	m_WorldValid = IsWorldTransformValid;
 
 	return m_WorldShape;
 }

@@ -9,7 +9,17 @@
 
 #define LINE_PADDING_HALF			(1.f)
 
-//#define GENERATE_QUADS_AS_TRIANGLES	//	if not defined, tri-strips are created
+#define GENERATE_QUADS_AS_TRIANGLES			//	if not defined, tri-strips are created
+
+#define MIN_TRISTRIP_SIZE			10		//	if a tri-strip has less than this number of points (tris=points-2) then degenerate it to triangles instead. 10 is 4 faces around a cube (ie. a building :)
+//	triangle vertex(index) count = 3 * T
+//	tri-strip vertex(index) count = T + 2
+//	therefore;
+//	1triange = 3(tri) = 3(strip)
+//	2triange = 6(tri) = 4(strip)
+//	4triange = 12(tri) = 6(strip)
+//	10triange = 30(tri) = 12(strip)
+
 
 #define SPHERE_SEGMENT_SCALE		0.3f	//	* Radius = segment count. 
 #define SPHERE_SEGMENT_MIN			((u32)6)
@@ -58,6 +68,8 @@ void TLAsset::TMesh::Empty()
 {
 	m_Vertexes.Empty();
 	m_Colours.Empty();
+	m_Colours24.Empty();
+	m_Colours32.Empty();
 	m_UVs.Empty();
 
 	m_Triangles.Empty();
@@ -197,23 +209,12 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere& Sphere,const TColour
 	TArray<float3> Verts;
 	TArray<float3> Normals;
 	TArray<float2> TextureUV;
-	TArray<TColour> Colours;
 
 	Verts.SetSize( Segments.x * Segments.y );
 	Normals.SetSize( Segments.x * Segments.y );
 	TextureUV.SetSize( Segments.x * Segments.y );
 
 	u16 FirstVertex = m_Vertexes.GetSize();
-
-	//	correct colour usage
-	pColour = GetGenerationColour( pColour );
-
-	//	alloc colours
-	if ( pColour )
-	{
-		Colours.SetSize( Segments.x * Segments.y );
-		Colours.SetAll( *pColour );
-	}
 
 
 	float2 Mult;
@@ -285,8 +286,11 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere& Sphere,const TColour
 	}
 
 	
+	//	correct colour usage
+	pColour = GetGenerationColour( pColour );
 	if ( pColour )
-		m_Colours.Add( Colours );
+		AddColour( *pColour, Segments.x * Segments.y );
+
 	m_Vertexes.Add( Verts );
 
 	OnPrimitivesChanged();
@@ -482,11 +486,13 @@ void TLAsset::TMesh::GenerateRainbowColours()
 {
 	//	generate colours
 	m_Colours.Empty();
+	m_Colours24.Empty();
+	m_Colours32.Empty();
 
 	//	... for each vertex
 	for ( u32 v=0;	v<m_Vertexes.GetSize();	v++ )
 	{
-		m_Colours.Add( TColour::Debug_GetColour( v ) );
+		AddColour( TLColour::Debug_GetColour( v ) );
 	}
 }
 
@@ -498,6 +504,8 @@ SyncBool TLAsset::TMesh::ImportData(TBinaryTree& Data)
 {
 	Data.ImportArrays( "Verts", m_Vertexes );
 	Data.ImportArrays( "Colrs", m_Colours );
+	Data.ImportArrays( "Col24", m_Colours24 );
+	Data.ImportArrays( "Col32", m_Colours32 );
 	Data.ImportArrays( "UVs", m_UVs );
 
 	Data.ImportArrays( "Tris", m_Triangles );
@@ -548,6 +556,8 @@ SyncBool TLAsset::TMesh::ExportData(TBinaryTree& Data)
 {	
 	Data.ExportArray( "Verts", m_Vertexes );
 	Data.ExportArray( "Colrs", m_Colours );
+	Data.ExportArray( "Col24", m_Colours24 );
+	Data.ExportArray( "Col32", m_Colours32 );
 	Data.ExportArray( "UVs", m_UVs );
 
 	Data.ExportArray( "Tris", m_Triangles );
@@ -774,11 +784,7 @@ s32 TLAsset::TMesh::AddVertex(const float3& VertexPos,const TColour* pColour,con
 	//	add colour
 	if ( pColour )
 	{
-		m_Colours.Add( *pColour );
-
-		//	if this colour has alpha, enable the alpha flag
-		if ( pColour->IsTransparent() )
-			m_Flags.Set( MeshFlag_HasAlpha );
+		AddColour( *pColour );
 	}
 
 	//	add UV
@@ -915,8 +921,7 @@ Bool TLAsset::TMesh::RemoveVertex(u16 VertexIndex,Bool CheckUsage)
 
 	//	remove vertex and colour
 	m_Vertexes.RemoveAt( VertexIndex );
-	if ( m_Colours.GetSize() )
-		m_Colours.RemoveAt( VertexIndex );
+	RemoveColourAt( VertexIndex );
 	if ( m_UVs.GetSize() )
 		m_UVs.RemoveAt( VertexIndex );
 
@@ -1266,16 +1271,9 @@ Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,
 Bool TLAsset::TMesh::GenerateQuad(const TArray<u16>& OutlineVertIndexes)
 {
 #ifdef GENERATE_QUADS_AS_TRIANGLES
-	//	create tri strip
-	Triangle* pTriangleA = m_Triangles.AddNew();
-	pTriangleA->x = OutlineVertIndexes[0];
-	pTriangleA->y = OutlineVertIndexes[1];
-	pTriangleA->z = OutlineVertIndexes[2];
-
-	Triangle* pTriangleB = m_Triangles.AddNew();
-	pTriangleB->x = OutlineVertIndexes[2];
-	pTriangleB->y = OutlineVertIndexes[3];
-	pTriangleB->z = OutlineVertIndexes[0];
+	
+	GenerateTriangle( OutlineVertIndexes[0], OutlineVertIndexes[1], OutlineVertIndexes[2] );
+	GenerateTriangle( OutlineVertIndexes[2], OutlineVertIndexes[3], OutlineVertIndexes[0] );
 
 #else
 	//	create tri strip
@@ -1296,6 +1294,41 @@ Bool TLAsset::TMesh::GenerateQuad(const TArray<u16>& OutlineVertIndexes)
 	return TRUE;
 }
 
+
+//--------------------------------------------------------
+//	generate triangle
+//--------------------------------------------------------
+void TLAsset::TMesh::GenerateTriangle(u16 VertA,u16 VertB,u16 VertC)
+{
+	Triangle* pTriangle = m_Triangles.AddNew();
+	pTriangle->x = VertA;
+	pTriangle->y = VertB;
+	pTriangle->z = VertC;
+}
+
+
+//--------------------------------------------------------
+//	generate triangle strips from points. this is IN TRISTRIP ORDER
+//--------------------------------------------------------
+void TLAsset::TMesh::GenerateTristrip(const TArray<u16>& TristripVerts)
+{
+	//	too small, better off as a bunch of triangles...
+	if ( TristripVerts.GetSize() < MIN_TRISTRIP_SIZE )
+	{
+		for ( u32 i=2;	i<TristripVerts.GetSize();	i++ )
+		{
+			GenerateTriangle( TristripVerts[i-2], TristripVerts[i-1], TristripVerts[i] );
+		}
+	}
+	else
+	{
+		Tristrip* pTristrip = m_Tristrips.AddNew();
+		pTristrip->Add( TristripVerts );
+
+		OnPrimitivesChanged();
+	}
+
+}
 
 
 //--------------------------------------------------------
@@ -1319,6 +1352,8 @@ void TLAsset::TMesh::Merge(const TMesh& OtherMesh)
 
 	//	add colours and uvs
 	m_Colours.Add( OtherMesh.GetColours() );
+	m_Colours24.Add( OtherMesh.GetColours24() );
+	m_Colours32.Add( OtherMesh.GetColours32() );
 	m_UVs.Add( OtherMesh.GetUVs() );
 
 	//	pad up colours/uvs if the old mesh had colours
@@ -1354,11 +1389,18 @@ void TLAsset::TMesh::Merge(const TMesh& OtherMesh)
 //--------------------------------------------------------
 //	multiply all colours by this colour
 //--------------------------------------------------------
-void TLAsset::TMesh::ColoursMult(const TColour& Colour)
+void TLAsset::TMesh::ColoursMult(const TColour& MultColour)
 {
+	//	make sure other colour arrays are allocated
+	m_Colours24.SetSize( m_Colours.GetSize() );
+	m_Colours32.SetSize( m_Colours.GetSize() );
+
 	for ( u32 i=0;	i<m_Colours.GetSize();	i++ )
 	{
-		m_Colours[i] *= Colour;
+		TColour& Colour = m_Colours[i];
+		Colour *= MultColour;
+		m_Colours24[i] = Colour;
+		m_Colours32[i] = Colour;
 	}
 }
 
@@ -1678,18 +1720,72 @@ const float2* TLAsset::TMesh::GetGenerationUV(const float2* pUV)
 }
 
 
+
+//--------------------------------------------------------
+//	add a colour to the colour array
+//--------------------------------------------------------
+void TLAsset::TMesh::AddColour(const TColour& Colour,u16 Count)
+{
+	m_Colours.AddAllocSize( Count );
+	for ( u32 i=0;	i<Count;	i++ )
+		m_Colours.Add( Colour );
+
+	//	update alpha status
+	if ( Colour.IsTransparent() )
+		m_Flags.Set( MeshFlag_HasAlpha );
+
+	//	re-align colour buffer and add other colour types
+	PadColours();
+}
+
+
+
+//--------------------------------------------------------
+//	add a colour to the colour array
+//--------------------------------------------------------
+void TLAsset::TMesh::RemoveColourAt(u16 VertexIndex)
+{
+	if ( VertexIndex < m_Colours.GetSize() )
+		m_Colours.RemoveAt( VertexIndex );
+
+	if ( VertexIndex < m_Colours24.GetSize() )
+		m_Colours24.RemoveAt( VertexIndex );
+
+	if ( VertexIndex < m_Colours32.GetSize() )
+		m_Colours32.RemoveAt( VertexIndex );
+}
+
+
 //--------------------------------------------------------
 //	ensure number of colours matches number of vertexes
 //--------------------------------------------------------
 void TLAsset::TMesh::PadColours()
 {
+	//	prealloc data
+	if ( m_Colours.GetAllocSize() < m_Vertexes.GetSize() )
+		m_Colours.SetAllocSize( m_Vertexes.GetSize() );
+
+	//	add default colours
 	while ( m_Colours.GetSize() < m_Vertexes.GetSize() )
 	{
 		m_Colours.Add( TLAsset::g_DefaultVertexColour );
 	}
 
-	//	change size of colours if different to vertex size (ie. we have too many colours)
+	//	change size of colours if different to vertex size (ie. we have too many colours then shrink)
 	m_Colours.SetSize( m_Vertexes.GetSize() );
+
+	u32 i;
+
+	//	pad out other colour types
+	for ( i=m_Colours24.GetSize();	i<m_Colours.GetSize();	i++ )
+		m_Colours24.Add( m_Colours[i] );
+
+	for ( i=m_Colours32.GetSize();	i<m_Colours.GetSize();	i++ )
+		m_Colours32.Add( m_Colours[i] );
+
+	//	shrink as required
+	m_Colours24.SetSize( m_Colours.GetSize() );
+	m_Colours32.SetSize( m_Colours.GetSize() );
 }
 
 

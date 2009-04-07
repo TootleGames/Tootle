@@ -122,7 +122,7 @@ void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 		//	do post update
 		{
 			TLTime::TScopeTimer Timer( TRef_Static(p,p,o,s,t) );
-			pRootNode->PostUpdateAll( fTimeStep, this, pRootNode );
+			pRootNode->PostUpdateAll( fTimeStep, *this, pRootNode );
 		}
 	}
 	
@@ -246,7 +246,7 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByZone(TLMaths::TQuadTreeZone* pColli
 			if ( !pNodeChildZone->HasAnyNodesTotal() )
 				continue;
 
-			if ( !pNodeChildZone->IsNodeInZoneShape( &Node/*, FALSE*/ ) )
+			if ( !pNodeChildZone->IsNodeInZoneShape( Node/*, FALSE*/ ) )
 			{
 			//	TLDebug_Break("Should be intersecting this zone");
 				continue;
@@ -263,7 +263,7 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByZone(TLMaths::TQuadTreeZone* pColli
 			TLMaths::TQuadTreeZone* pNodeChildZone = ZoneChildZonesWithNodes[c].GetObject();
 
 			//	check our node intersects with this child zone
-			if ( pNodeChildZone->IsNodeInZoneShape( &Node/*, TRUE*/ ) )
+			if ( pNodeChildZone->IsNodeInZoneShape( Node/*, TRUE*/ ) )
 				DoCollisionsByZone( pNodeChildZone, Node, FALSE, 0 );
 		}
 	}
@@ -390,7 +390,7 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByNode(TLPhysics::TPhysicsNode* pNode
 			}
 #endif
 #ifdef ENABLE_TEST_PARENTZONENODE_INMYZONE
-			if ( !pNodeZone->IsNodeInZoneShape( &OtherNode/*, TRUE*/ ) )
+			if ( !pNodeZone->IsNodeInZoneShape( OtherNode/*, TRUE*/ ) )
 				continue;
 #endif
 		}
@@ -416,7 +416,7 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByNode(TLPhysics::TPhysicsNode* pNode
 			TPtr<TLMaths::TQuadTreeZone>& pChildCollisionZone = pCollisionZone->GetChildZones().ElementAt(c);
 
 			//	test against this zone to see if we're intersecting it
-			if ( !pChildCollisionZone->IsNodeInZoneShape( pNode/*, TRUE*/ ) )
+			if ( !pChildCollisionZone->IsNodeInZoneShape( *pNode/*, TRUE*/ ) )
 				continue;
 
 			//	do collisions with nodes in child zone
@@ -659,8 +659,7 @@ void TLPhysics::TPhysicsgraph::DoCollision(TLPhysics::TPhysicsNode& NodeA,TLPhys
 //----------------------------------------------------------
 void TLPhysics::TPhysicsgraph::DoStaticCollision(TLPhysics::TPhysicsNode& NodeA,TLPhysics::TPhysicsNode& StaticNode)
 {
-	m_Debug_StaticCollisionTestCount++;
-	NodeA.m_Debug_StaticCollisions++;
+	TLCounter::Increment( TRef_Static(S,C,o,l,t) );
 
 	DoCollision( NodeA, StaticNode );
 }
@@ -737,7 +736,7 @@ void TLPhysics::TPhysicsgraph::CalcWorldUpNormal()
 	float NormalLenSq = NewNormal.LengthSq();
 	
 	//	new values are too small, dont change
-	if ( NormalLenSq < TLMaths::g_NearZero )
+	if ( NormalLenSq < TLMaths_NearZero )
 		return;
 	
 	//	valid values, normalise

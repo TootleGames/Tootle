@@ -19,13 +19,13 @@ namespace TLCore
 	u32				PointerToInteger(void* pAddress);	//	convert a pointer to an integer
 	
 	// DB - Global TRef's that get used often.  Performance optimisation
-	const TRef InitialiseRef	= "Initialise";
-	const TRef UpdateRef		= "Update";
-	const TRef RenderRef		= "Render";
-	const TRef ShutdownRef		= "Shutdown";
-	const TRef TimeStepRef		= "Timestep";
-	const TRef TimeStepModRef	= "TSMod";
-	const TRef QuitRef			= "Quit";
+	const TRef InitialiseRef	= TRef_Static(I,n,i,t,i);	//"Initialise";
+	const TRef UpdateRef		= TRef_Static(U,p,d,a,t);	//"Update";
+	const TRef RenderRef		= TRef_Static(R,e,n,d,e);	//"Render";
+	const TRef ShutdownRef		= TRef_Static(S,h,u,t,d);	//"Shutdown";
+	const TRef TimeStepRef		= TRef_Static(T,i,m,e,s);	//"Timestep";
+	const TRef TimeStepModRef	= TRef_Static(T,S,M,o,d);	//"TSMod";
+	const TRef QuitRef			= TRef_Static4(Q,u,i,t);	//"Quit";
 
 	namespace Platform
 	{

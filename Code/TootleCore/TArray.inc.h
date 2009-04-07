@@ -687,7 +687,7 @@ void TArray<TYPE>::SetAll(const TYPE& Val)
 //	initial sorting func does stuff that only needs to be done once
 //-------------------------------------------------------------------------
 template<typename TYPE>
-inline void TArray<TYPE>::Sort()
+FORCEINLINE void TArray<TYPE>::Sort()
 {
 	//	already sorted or nothing to sort
 	if ( m_Sorted || GetSize() < 2 )

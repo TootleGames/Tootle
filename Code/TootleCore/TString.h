@@ -49,12 +49,12 @@ public:
 	TString(const CHARTYPE* pString,...);										//	formatted constructor
 	virtual ~TString()															{	}
 
-	inline u32				GetLength() const					{	return GetStringArray().GetSize();	}
-	inline u32				GetLengthWithoutTerminator() const	{	return GetCharGetLastIndex() + 1;	}
-	inline const CHARTYPE*	GetData() const						{	return GetStringArray().GetData();	}
+	FORCEINLINE u32				GetLength() const					{	return GetStringArray().GetSize();	}
+	FORCEINLINE u32				GetLengthWithoutTerminator() const	{	return GetCharGetLastIndex() + 1;	}
+	FORCEINLINE const CHARTYPE*	GetData() const						{	return GetStringArray().GetData();	}
 
 	//	gr: only temporary access - todo: revoke non-const accessor
-	inline CHARTYPE*		GetData()				{	return GetStringArray().GetData();	}
+	FORCEINLINE CHARTYPE*		GetData()				{	return GetStringArray().GetData();	}
 
 	//	accessors
 	void					SetLength(u32 NewLength)						{	GetStringArray().SetSize( NewLength );	AddTerminator(FALSE);	}	//	set the string to a certain size (usually for buffering)
@@ -95,15 +95,15 @@ public:
 	s32						GetCharGetLastIndex() const;						//	get the index of last char. -1 if empty or all terminators
 	void					RemoveCharAt(u32 Index,u32 Amount)				{	GetStringArray().RemoveAt(Index,Amount);	}
 
-	inline const CHARTYPE&	operator[](u32 Index) const						{	return GetCharAt(Index);	}
+	FORCEINLINE const CHARTYPE&	operator[](u32 Index) const						{	return GetCharAt(Index);	}
 
-	inline TString&			operator=(const CHARTYPE* pString)				{	Set( pString );	return *this;	}
-	inline TString&			operator=(const TString& String)				{	Set( String );	return *this;	}
-	inline Bool				operator==(const TString& String) const			{	return IsEqual( String, TRUE );	}
-	inline Bool				operator==(const CHARTYPE* pString) const		{	return IsEqual( pString, -1, TRUE );	}
-	inline Bool				operator!=(const TString& String) const			{	return !IsEqual( String, TRUE );	}
-	inline Bool				operator!=(const CHARTYPE* pString) const		{	return !IsEqual( pString, -1, TRUE );	}
-	inline Bool				operator<(const TString& String) const			{	return IsLessThan( String );	}
+	FORCEINLINE TString&			operator=(const CHARTYPE* pString)				{	Set( pString );	return *this;	}
+	FORCEINLINE TString&			operator=(const TString& String)				{	Set( String );	return *this;	}
+	FORCEINLINE Bool				operator==(const TString& String) const			{	return IsEqual( String, TRUE );	}
+	FORCEINLINE Bool				operator==(const CHARTYPE* pString) const		{	return IsEqual( pString, -1, TRUE );	}
+	FORCEINLINE Bool				operator!=(const TString& String) const			{	return !IsEqual( String, TRUE );	}
+	FORCEINLINE Bool				operator!=(const CHARTYPE* pString) const		{	return !IsEqual( pString, -1, TRUE );	}
+	FORCEINLINE Bool				operator<(const TString& String) const			{	return IsLessThan( String );	}
 
 protected:
 	virtual TArray<CHARTYPE>&		GetStringArray()						{	return m_DataArray;	}
@@ -139,15 +139,15 @@ public:
 	TBufferString(const TString& String) : m_FixedDataArray(0)				{	Append( String );	}
 	TBufferString(const CHARTYPE* pString) : m_FixedDataArray(0)			{	Append( pString );	}
 
-	inline const CHARTYPE&	operator[](u32 Index) const						{	return GetCharAt(Index);	}
+	FORCEINLINE const CHARTYPE&	operator[](u32 Index) const						{	return GetCharAt(Index);	}
 
-	inline TString&			operator=(const CHARTYPE* pString)				{	Set( pString );	return *this;	}
-	inline TString&			operator=(const TString& String)				{	Set( String );	return *this;	}
-	inline Bool				operator==(const TString& String) const			{	return IsEqual( String, TRUE );	}
-	inline Bool				operator==(const CHARTYPE* pString) const		{	return IsEqual( pString, -1, TRUE );	}
-	inline Bool				operator!=(const TString& String) const			{	return !IsEqual( String, TRUE );	}
-	inline Bool				operator!=(const CHARTYPE* pString) const		{	return !IsEqual( pString, -1, TRUE );	}
-	inline Bool				operator<(const TString& String) const			{	return IsLessThan( String );	}
+	FORCEINLINE TString&			operator=(const CHARTYPE* pString)				{	Set( pString );	return *this;	}
+	FORCEINLINE TString&			operator=(const TString& String)				{	Set( String );	return *this;	}
+	FORCEINLINE Bool				operator==(const TString& String) const			{	return IsEqual( String, TRUE );	}
+	FORCEINLINE Bool				operator==(const CHARTYPE* pString) const		{	return IsEqual( pString, -1, TRUE );	}
+	FORCEINLINE Bool				operator!=(const TString& String) const			{	return !IsEqual( String, TRUE );	}
+	FORCEINLINE Bool				operator!=(const CHARTYPE* pString) const		{	return !IsEqual( pString, -1, TRUE );	}
+	FORCEINLINE Bool				operator<(const TString& String) const			{	return IsLessThan( String );	}
 
 protected:
 	virtual TArray<CHARTYPE>&		GetStringArray()		{	return m_FixedDataArray;	}
@@ -186,15 +186,15 @@ public:
 
 	virtual CHARTYPE		GetLowercaseCharAt(u32 Index) const				{	return BASESTRINGTYPE::GetCharAt( Index );	}
 
-	inline const CHARTYPE&	operator[](u32 Index) const						{	return BASESTRINGTYPE::GetCharAt(Index);	}
+	FORCEINLINE const CHARTYPE&	operator[](u32 Index) const						{	return BASESTRINGTYPE::GetCharAt(Index);	}
 
-	inline TString&			operator=(const CHARTYPE* pString)				{	BASESTRINGTYPE::Set( pString );	return *this;	}
-	inline TString&			operator=(const TString& String)				{	BASESTRINGTYPE::Set( String );	return *this;	}
-	inline Bool				operator==(const TString& String) const			{	return BASESTRINGTYPE::IsEqual( String, TRUE );	}
-	inline Bool				operator==(const CHARTYPE* pString) const		{	return BASESTRINGTYPE::IsEqual( pString, -1, TRUE );	}
-	inline Bool				operator!=(const TString& String) const			{	return !BASESTRINGTYPE::IsEqual( String, TRUE );	}
-	inline Bool				operator!=(const CHARTYPE* pString) const		{	return !BASESTRINGTYPE::IsEqual( pString, -1, TRUE );	}
-	inline Bool				operator<(const TString& String) const			{	return BASESTRINGTYPE::IsLessThan( String );	}
+	FORCEINLINE TString&			operator=(const CHARTYPE* pString)				{	BASESTRINGTYPE::Set( pString );	return *this;	}
+	FORCEINLINE TString&			operator=(const TString& String)				{	BASESTRINGTYPE::Set( String );	return *this;	}
+	FORCEINLINE Bool				operator==(const TString& String) const			{	return BASESTRINGTYPE::IsEqual( String, TRUE );	}
+	FORCEINLINE Bool				operator==(const CHARTYPE* pString) const		{	return BASESTRINGTYPE::IsEqual( pString, -1, TRUE );	}
+	FORCEINLINE Bool				operator!=(const TString& String) const			{	return !BASESTRINGTYPE::IsEqual( String, TRUE );	}
+	FORCEINLINE Bool				operator!=(const CHARTYPE* pString) const		{	return !BASESTRINGTYPE::IsEqual( pString, -1, TRUE );	}
+	FORCEINLINE Bool				operator<(const TString& String) const			{	return BASESTRINGTYPE::IsLessThan( String );	}
 
 protected:
 	virtual void			OnStringChanged(u32 FirstChanged=0,s32 LastChanged=-1);	//	post-string change call

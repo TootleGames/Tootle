@@ -58,7 +58,7 @@ Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& RenderTargetM
 
 	//	set the clear colour
 	if ( ( ClearMask & GL_COLOR_BUFFER_BIT ) != 0x0 )
-		glClearColor( m_ClearColour.GetRed(),  m_ClearColour.GetGreen(),  m_ClearColour.GetBlue(),  m_ClearColour.GetAlpha() );
+		glClearColor( m_ClearColour.GetRedf(),  m_ClearColour.GetGreenf(),  m_ClearColour.GetBluef(),  m_ClearColour.GetAlphaf() );
 
 	//	set the clear depth
 	float ClearDepth = GetCamera()->GetFarZ();
@@ -69,7 +69,7 @@ Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& RenderTargetM
 	//	clear
 	glClear( ClearMask );
 
-	Opengl::Debug_CheckForError();		
+	Opengl::Debug_CheckForError();
 
 	return TRUE;	
 }
@@ -113,11 +113,11 @@ Bool TLRender::Platform::RenderTarget::BeginProjectDraw(TLRender::TProjectCamera
 	m_CameraTransform.SetInvalid();
 	m_CameraTransform.SetTranslate( pCamera->GetPosition() * -1.f );
 
-	//	calculate latest camera look at matrix
+	//	apply look at matrix (rotate)
 	const TLMaths::TMatrix& LookAtMatrix = pCamera->GetCameraLookAtMatrix();
 	m_pCameraMatrix = &LookAtMatrix;
 
-	Opengl::SceneTransform( m_CameraTransform, m_pCameraMatrix );
+	Opengl::SceneTransform( m_CameraTransform, m_pCameraMatrix);
 
 	return TRUE;
 }
@@ -160,7 +160,7 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(TLRender::TOrthoCamera* pC
 
 	Opengl::Debug_CheckForError();		
 
-	Bool UseClearRenderNode = (m_ClearColour.GetAlpha() > 0.f && m_ClearColour.IsTransparent());
+	Bool UseClearRenderNode = (m_ClearColour.IsVisible() && m_ClearColour.IsTransparent());
 	
 #ifdef FORCE_RENDERNODE_CLEAR
 	UseClearRenderNode = TRUE;

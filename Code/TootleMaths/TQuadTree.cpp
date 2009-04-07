@@ -1,7 +1,6 @@
 #include "TQuadTree.h"
 
 
-
 //	gr: currently disabled as there are some ptr issues
 //#define ENABLE_CULL_EMPTY_ZONES
 
@@ -49,7 +48,7 @@ TLMaths::TQuadTreeNode::TQuadTreeNode() :
 //-------------------------------------------------------------
 //	if the node has moved, update it's zone. returns TRUE if zone changed
 //-------------------------------------------------------------
-void TLMaths::TQuadTreeNode::UpdateZone(TPtr<TLMaths::TQuadTreeNode> pThis,TPtr<TLMaths::TQuadTreeZone>& pRootZone)
+void TLMaths::TQuadTreeNode::UpdateZone(TPtr<TLMaths::TQuadTreeNode>& pThis,TPtr<TLMaths::TQuadTreeZone>& pRootZone)
 {
 	if ( !IsZoneOutOfDate() )
 	{
@@ -59,6 +58,14 @@ void TLMaths::TQuadTreeNode::UpdateZone(TPtr<TLMaths::TQuadTreeNode> pThis,TPtr<
 	//	gr: moved to start - assume we will change our zone as appropriately
 	//	in our new zone (or Null zone)
 	m_IsZoneOutofDate = FALSE;
+
+	//	currently (temporary or not) has no zone shape
+	if ( !HasZoneShape() )
+	{
+		//	not in ANY zone any more
+		SetZone( TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>(), pThis, NULL );
+		return;
+	}
 
 //#define ENABLE_FAST_CHECK
 //#define ENABLE_FAST_GOTO_SMALLER_ZONE
@@ -108,8 +115,9 @@ void TLMaths::TQuadTreeNode::UpdateZone(TPtr<TLMaths::TQuadTreeNode> pThis,TPtr<
 	}
 #endif
 
-	//	simple brute force mode
-	TPtr<TQuadTreeZone> pParentZone = pRootZone;
+	//	start at the parent and add, go upwards until we're in a zone
+#ifdef ENABLE_PARENT_TEST_MODE
+	TPtr<TQuadTreeZone> pParentZone = pThis->GetParentZone();
 
 	//	re-add to parent to evaluate if we now span multiple zones
 	if ( pParentZone )
@@ -126,7 +134,14 @@ void TLMaths::TQuadTreeNode::UpdateZone(TPtr<TLMaths::TQuadTreeNode> pThis,TPtr<
 			}
 		}
 	}
+#endif
 
+	//	simple brute force mode - add directly to the root node
+	if ( !pRootZone->AddNode( pThis, pRootZone, TRUE ) )
+	{
+		//	not in ANY zone any more
+		SetZone( TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>(), pThis, NULL );
+	}
 }
 
 //-------------------------------------------------------------
@@ -210,17 +225,6 @@ Bool TLMaths::TQuadTreeNode::SetZone(TPtr<TQuadTreeZone>& pZone,TPtr<TLMaths::TQ
 }
 
 
-
-//-------------------------------------------------------------
-//	do your object's test to see if it intersects at all with this 
-//	zone's shape, default does shape/shape but you might want something more complex
-//-------------------------------------------------------------
-SyncBool TLMaths::TQuadTreeNode::IsInZone(const TQuadTreeZone& Zone)
-{
-	return IsInShape( Zone.GetShape() );
-}
-
-
 //-------------------------------------------------------------
 //	do your object's test to see if it intersects at all with this 
 //	zone's shape, default does shape/shape but you might want something more complex
@@ -241,7 +245,7 @@ SyncBool TLMaths::TQuadTreeNode::IsInShape(const TLMaths::TBox2D& Shape)
 //-------------------------------------------------------------
 const TLMaths::TBox2D& TLMaths::TQuadTreeNode::GetZoneShape()
 {
-	TLDebug_Break("GetZoneShape or IsInZone() must be overloaded for this type");
+	TLDebug_Break("GetZoneShape() or (IsInShape() and HasZoneShape()) must be overloaded for this type");
 	static TLMaths::TBox2D g_DummyBox;
 	g_DummyBox.SetInvalid();
 	return g_DummyBox;
@@ -312,16 +316,6 @@ void TLMaths::TQuadTreeZone::Shutdown()
 
 
 //-------------------------------------------------------------
-//	test to see if this intersects into this zone
-//-------------------------------------------------------------
-SyncBool TLMaths::TQuadTreeZone::IsNodeInZoneShape(TLMaths::TQuadTreeNode* pNode)
-{
-	return pNode->IsInZone( *this );
-}
-
-
-
-//-------------------------------------------------------------
 //	attempt to add this node to this zone. checks with children first 
 //	to see if it fits into just one child better. returns FALSE if not in this zone
 //-------------------------------------------------------------
@@ -330,7 +324,7 @@ Bool TLMaths::TQuadTreeZone::AddNode(TPtr<TLMaths::TQuadTreeNode>& pNode,TPtr<TL
 	//	if not in this shape, return
 	if ( DoCheckInShape )
 	{
-		SyncBool IsInShape = IsNodeInZoneShape( pNode );
+		SyncBool IsInShape = IsNodeInZoneShape( *pNode );
 		if ( IsInShape == SyncWait )
 		{
 			TLDebug_Break("todo: handle this");
@@ -436,7 +430,7 @@ void TLMaths::TQuadTreeZone::GetInChildZones(TQuadTreeNode* pNode,TFixedArray<u3
 	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
 	{
 		TPtr<TQuadTreeZone>& pChildZone = m_Children[c];
-		SyncBool IsInShape = pChildZone->IsNodeInZoneShape( pNode );
+		SyncBool IsInShape = pChildZone->IsNodeInZoneShape( *pNode );
 
 		if ( IsInShape == SyncTrue )
 		{

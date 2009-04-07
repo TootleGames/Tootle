@@ -196,33 +196,26 @@ void TAudioNode::ProcessMessage(TLMessaging::TMessage& Message)
 	}
 	else if(MessageRef == TRef_Static(O,n,T,r,a) )
 	{
+		//	gr: re-using transform code - only because I might change the transform data message format
+		TLMaths::TTransform Transform;
+		u8 TransformBits = Transform.ImportData( Message );
+		if ( TransformBits & TLMaths_TransformBitTranslate )
+		{
+			const float3& vVector = Transform.GetTranslate();
+		/*
 		float3 vVector;
 		if(Message.ImportData(TRef_Static(T,r,a,n,s), vVector))
 		{
-			UpdatePreviousPos();
-			SetTranslate(vVector);
-
-			// Set the low level audio position
-			TLAudio::Platform::SetPosition(GetNodeRef(), vVector);
-
-			float3 vVelocity = (vVector - m_vPreviousPos);
-			TLAudio::Platform::SetVelocity(GetNodeRef(), vVelocity);
-		}
-
-		/*
-		if(Message.ImportData(TRef_Static(R,o,t,a,t), vVector))
-		{
-			UpdatePreviousPos();
-			SetTranslate(vVector);
-
-			// Set the low level audio position
-			TLAudio::Platform::SetPosition(GetNodeRef(), vVector);
-
-			float3 vVelocity = (vVector - m_vPreviousPos);
-			TLAudio::Platform::SetVelocity(GetNodeRef(), vVelocity);
-		}
 		*/
+			UpdatePreviousPos();
+			SetTranslate(vVector);
 
+			// Set the low level audio position
+			TLAudio::Platform::SetPosition(GetNodeRef(), vVector);
+
+			float3 vVelocity = (vVector - m_vPreviousPos);
+			TLAudio::Platform::SetVelocity(GetNodeRef(), vVelocity);
+		}
 
 		return;
 	}

@@ -1,5 +1,5 @@
 /*------------------------------------------------------
-	Expanded/inlined code for TLMemory.h
+	Expanded/FORCEINLINEd code for TLMemory.h
 
 -------------------------------------------------------*/
 

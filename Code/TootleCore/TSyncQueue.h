@@ -53,8 +53,8 @@ protected:
 		const TLTime::TTimestamp&	GetTimestamp() const	{	return m_FirstTimestamp;	}
 		void						InitTimestamp() 		{	m_FirstTimestamp.SetTimestampNow();	}
 
-		inline Bool		operator==(const SyncJob& Job) const	{	return (m_pFunction == Job.m_pFunction) && (m_Blocking == Job.m_Blocking);	}
-		inline Bool		operator<(const SyncJob& Job) const		{	return FALSE;	}
+		FORCEINLINE Bool			operator==(const SyncJob& Job) const	{	return (m_pFunction == Job.m_pFunction) && (m_Blocking == Job.m_Blocking);	}
+		FORCEINLINE Bool			operator<(const SyncJob& Job) const		{	return FALSE;	}
 
 	protected:
 		JobFunc				m_pFunction;

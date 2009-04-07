@@ -125,7 +125,7 @@ float3 TLMaths::GetLineOutset(const float3& Start,const float3& End,float Outset
 
 	//	catch non-lines
 	float LengthSq = Dir.LengthSq();
-	if ( LengthSq < TLMaths::g_NearZero )
+	if ( LengthSq < TLMaths_NearZero )
 		return Start;
 
 	//	z is interp'd between the start and end z's. (usually same z though)
@@ -333,7 +333,7 @@ Bool TLMaths::TLine2D::GetIntersectionPos(const TLine2D& Line,float2& Intersecti
 	float2 TestIntersectionPos( Line.GetStart() );
 	TLMaths::InterpThis( TestIntersectionPos, Line.GetEnd(), IntersectionAlongLine );
 
-	if ( (TestIntersectionPos - IntersectionPos).Length() > TLMaths::g_NearZero )
+	if ( (TestIntersectionPos - IntersectionPos).Length() > TLMaths_NearZero )
 	{
 		TLDebug_Break("These intersection positions should be exactly the same...");
 	}
@@ -602,7 +602,7 @@ float TLMaths::TLine2D::GetDistanceSq(const TLMaths::TLine2D& Line,float2& TempP
 			Bool ShapeNearStart = ShapeCapsuleLine.GetIsPointNearestToStart( *pNearestPointOnThis, DistanceSq );
 
 			//	do early distance check - and check we're not too embedded (eg. capsule are positioned exactly the same)
-		//	if ( DistanceSq > TotalRadiusSq || DistanceSq < TLMaths::g_NearZero )
+		//	if ( DistanceSq > TotalRadiusSq || DistanceSq < TLMaths_NearZero )
 		//		return FALSE;
 
 			pNearestPointOnShape = ShapeNearStart ? &ShapeCapsuleLine.GetStart() : &ShapeCapsuleLine.GetEnd();
@@ -623,7 +623,7 @@ float TLMaths::TLine2D::GetDistanceSq(const TLMaths::TLine2D& Line,float2& TempP
 			Bool ThisNearStart = ThisCapsuleLine.GetIsPointNearestToStart( *pNearestPointOnShape, DistanceSq );
 			
 			//	do early distance check - and check we're not too embedded (eg. capsule are positioned exactly the same)
-		//	if ( DistanceSq > TotalRadiusSq || DistanceSq < TLMaths::g_NearZero )
+		//	if ( DistanceSq > TotalRadiusSq || DistanceSq < TLMaths_NearZero )
 		//		return FALSE;
 
 			pNearestPointOnThis = ThisNearStart ? &ThisCapsuleLine.GetStart() : &ThisCapsuleLine.GetEnd();
@@ -644,7 +644,7 @@ float TLMaths::TLine2D::GetDistanceSq(const TLMaths::TLine2D& Line,float2& TempP
 			TLMaths::GetNearestLinePoints( ThisCapsuleLine, ShapeCapsuleLine, ThisNearStart, ShapeNearStart, DistanceSq );
 			
 			//	do early distance check - and check we're not too embedded (eg. capsule are positioned exactly the same)
-		//	if ( DistanceSq > TotalRadiusSq || DistanceSq < TLMaths::g_NearZero )
+		//	if ( DistanceSq > TotalRadiusSq || DistanceSq < TLMaths_NearZero )
 		//		return FALSE;
 
 			pNearestPointOnThis = ThisNearStart ? &ThisCapsuleLine.GetStart() : &ThisCapsuleLine.GetEnd();
@@ -659,7 +659,7 @@ float TLMaths::TLine2D::GetDistanceSq(const TLMaths::TLine2D& Line,float2& TempP
 		TLMaths::GetNearestLinePoints( ThisCapsuleLine, ShapeCapsuleLine, ThisNearStart, ShapeNearStart, DistanceSq );
 
 		//	do early distance check - and check we're not too embedded (eg. capsule are positioned exactly the same)
-	//	if ( DistanceSq > TotalRadiusSq || DistanceSq < TLMaths::g_NearZero )
+	//	if ( DistanceSq > TotalRadiusSq || DistanceSq < TLMaths_NearZero )
 	//		return FALSE;
 
 		pNearestPointOnThis = ThisNearStart ? &ThisCapsuleLine.GetStart() : &ThisCapsuleLine.GetEnd();
@@ -678,7 +678,7 @@ float TLMaths::TLine2D::GetDistanceSq(const TLMaths::TLine2D& Line,float2& TempP
 
 	/*
 	//	do distance check to see if we intersect - and check we're not too embedded (eg. capsule are positioned exactly the same)
-	if ( DistanceSq > TotalRadiusSq || DistanceSq < TLMaths::g_NearZero )
+	if ( DistanceSq > TotalRadiusSq || DistanceSq < TLMaths_NearZero )
 	{
 		TLDebug_Break("This should have already been caught");
 		return FALSE;

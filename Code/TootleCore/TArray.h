@@ -86,11 +86,11 @@ public:
 	virtual ~TArray();
 
 	FORCEINLINE const u32&	GetSize() const							{	return m_Size;	}						//	number of elements
-	inline s32			GetLastIndex() const					{	return (s32)GetSize() - 1;	};
-	inline s32			GetRandIndex() const					{	return TLMaths::Rand( GetSize() );	};
+	FORCEINLINE s32			GetLastIndex() const					{	return (s32)GetSize() - 1;	};
+	FORCEINLINE s32			GetRandIndex() const					{	return TLMaths::Rand( GetSize() );	};
 	virtual TYPE*		GetData()								{	return m_pData;	}
 	virtual const TYPE*	GetData() const							{	return m_pData;	}
-	inline u32			GetDataSize() const						{	return ( GetSize() * sizeof(TYPE) );	};	//	memory consumption of elements
+	FORCEINLINE u32			GetDataSize() const						{	return ( GetSize() * sizeof(TYPE) );	};	//	memory consumption of elements
 
 	template <typename OTHERTYPE>
 	void				Copy(const TArray<OTHERTYPE>& Array);	//	make this a copy of the specified array
@@ -107,10 +107,10 @@ public:
 
 	virtual TYPE&		ElementAt(u32 Index)					{	TLDebug_CheckIndex( Index, GetSize() );	return m_pData[Index];	}
 	virtual const TYPE&	ElementAtConst(u32 Index) const			{	TLDebug_CheckIndex( Index, GetSize() );	return m_pData[Index];	}
-	inline TYPE&		ElementLast()							{	return ElementAt( GetLastIndex() );	};
-	inline const TYPE&	ElementLastConst() const				{	return ElementAtConst( GetLastIndex() );	};
-	inline TYPE&		ElementRand()							{	return ElementAt( GetRandIndex() );	}
-	inline const TYPE&	ElementRandConst() const				{	return ElementAtConst( GetRandIndex() );	}
+	FORCEINLINE TYPE&		ElementLast()							{	return ElementAt( GetLastIndex() );	};
+	FORCEINLINE const TYPE&	ElementLastConst() const				{	return ElementAtConst( GetLastIndex() );	};
+	FORCEINLINE TYPE&		ElementRand()							{	return ElementAt( GetRandIndex() );	}
+	FORCEINLINE const TYPE&	ElementRandConst() const				{	return ElementAtConst( GetRandIndex() );	}
 
 	virtual s32			Add(const TYPE& val);					//	add an element onto the end of the list
 	FORCEINLINE s32		AddUnique(const TYPE& val)				{	s32 Index = FindIndex( val );	return (Index == -1) ? Add( val ) : Index;	}
@@ -145,18 +145,18 @@ public:
 	s32					FindIndexReverse(const MATCHTYPE& val,s32 FromIndex=-1) const;	//	same as FindIndex but works backwards through the array
 
 	template <class MATCHTYPE>	
-	inline TYPE*		Find(const MATCHTYPE& val)					{	u32 Index = FindIndex(val);	return (Index==-1) ? NULL : &ElementAt(Index);	};
+	FORCEINLINE TYPE*		Find(const MATCHTYPE& val)					{	u32 Index = FindIndex(val);	return (Index==-1) ? NULL : &ElementAt(Index);	};
 
 	template<class MATCHTYPE>	
 	u32					FindAll(TArray<TYPE>& Array,const MATCHTYPE& val);		//	find all matches to this value and put them in an array
 
 	template<class MATCHTYPE>	
-	inline const TYPE*	FindConst(const MATCHTYPE& val) const		{	u32 Index = FindIndex(val);	return (Index==-1) ? NULL : &ElementAtConst(Index);	};
+	FORCEINLINE const TYPE*	FindConst(const MATCHTYPE& val) const		{	u32 Index = FindIndex(val);	return (Index==-1) ? NULL : &ElementAtConst(Index);	};
 
 	template<class MATCHTYPE>
-	inline Bool			Exists(const MATCHTYPE& val) const			{	return FindIndex(val)!=-1;	};
+	FORCEINLINE Bool			Exists(const MATCHTYPE& val) const			{	return FindIndex(val)!=-1;	};
 	template<class MATCHTYPE>
-	inline Bool			Exists(const MATCHTYPE& val)				{	return FindIndex(val)!=-1;	};
+	FORCEINLINE Bool			Exists(const MATCHTYPE& val)				{	return FindIndex(val)!=-1;	};
 
 	template<typename FUNCTIONPOINTER>
 	FORCEINLINE void	FunctionAll(FUNCTIONPOINTER pFunc);				//	execute this function on every member. will fail if the TYPE isn't a pointer of somekind
@@ -164,14 +164,14 @@ public:
 	FORCEINLINE void	FunctionAllAsParam(FUNCTIONPOINTER pFunc);		//	execute this function for every member as a parameter. Like FunctionAll but can be used with other types of elements.
 
 	//	operators
-	inline TYPE&		operator[](s32 Index)						{	return ElementAt(Index);	}
-	inline TYPE&		operator[](u32 Index)						{	return ElementAt(Index);	}
-	inline const TYPE&	operator[](s32 Index) const					{	return ElementAtConst(Index);	}
-	inline const TYPE&	operator[](u32 Index) const					{	return ElementAtConst(Index);	}
+	FORCEINLINE TYPE&		operator[](s32 Index)						{	return ElementAt(Index);	}
+	FORCEINLINE TYPE&		operator[](u32 Index)						{	return ElementAt(Index);	}
+	FORCEINLINE const TYPE&	operator[](s32 Index) const					{	return ElementAtConst(Index);	}
+	FORCEINLINE const TYPE&	operator[](u32 Index) const					{	return ElementAtConst(Index);	}
 
-	inline void			operator=(const TArray<TYPE>& Array)			{	Copy( Array );	}
-	inline Bool			operator<(const TArray<TYPE>& Array) const	{	return FALSE;	}
-	inline Bool			operator==(const TArray<TYPE>& Array) const	{	return (this == &Array);	}
+	FORCEINLINE void			operator=(const TArray<TYPE>& Array)			{	Copy( Array );	}
+	FORCEINLINE Bool			operator<(const TArray<TYPE>& Array) const	{	return FALSE;	}
+	FORCEINLINE Bool			operator==(const TArray<TYPE>& Array) const	{	return (this == &Array);	}
 
 protected:
 	void				QuickSort(s32 First, s32 Last);

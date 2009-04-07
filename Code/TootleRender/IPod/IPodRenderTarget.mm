@@ -23,7 +23,7 @@ TLRender::Platform::RenderTarget::RenderTarget(const TRef& Ref) :
 Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& RenderTargetMaxSize,const Type4<s32>& ViewportMaxSize,const TScreen& Screen)			
 {
 	//	do base stuff
-	if ( !TRenderTarget::BeginDraw(RenderTargetMaxSize, ViewportMaxSize, Screen) )
+	if ( !TRenderTarget::BeginDraw( RenderTargetMaxSize, ViewportMaxSize, Screen) )
 		return FALSE;
 
 	//	platform specific stuff...
@@ -51,7 +51,7 @@ Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& RenderTargetM
 
 	//	set the clear colour
 	if ( ( ClearMask & GL_COLOR_BUFFER_BIT ) != 0x0 )
-		glClearColor( m_ClearColour.GetRed(),  m_ClearColour.GetGreen(),  m_ClearColour.GetBlue(),  m_ClearColour.GetAlpha() );
+		glClearColor( m_ClearColour.GetRedf(),  m_ClearColour.GetGreenf(),  m_ClearColour.GetBluef(),  m_ClearColour.GetAlphaf() );
 
 	//	set the clear depth
 	float ClearDepth = GetCamera()->GetFarZ();
@@ -62,7 +62,7 @@ Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& RenderTargetM
 	//	clear
 	glClear( ClearMask );
 
-	Opengl::Debug_CheckForError();		
+	Opengl::Debug_CheckForError();
 
 	return TRUE;	
 }
@@ -149,11 +149,11 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(TLRender::TOrthoCamera* pC
 	Opengl::SceneRotate( TLMaths::TAngle(ProjectionRotationDeg), float3( 0.f, 0.f, 1.f ) );
 
 	//	set the world coordinates
-	glOrthof( OrthoBox.GetLeft(), OrthoBox.GetRight(), OrthoBox.GetBottom(), OrthoBox.GetTop(), GetCamera()->GetNearZ(), GetCamera()->GetFarZ() );
+	glOrthof( OrthoBox.GetLeft(), OrthoBox.GetRight(), OrthoBox.GetBottom(), OrthoBox.GetTop(), pCamera->GetNearZ(), pCamera->GetFarZ() );
 
 	Opengl::Debug_CheckForError();		
 
-	Bool UseClearRenderNode = (m_ClearColour.GetAlpha() > 0.f && m_ClearColour.IsTransparent());
+	Bool UseClearRenderNode = (m_ClearColour.IsVisible() && m_ClearColour.IsTransparent());
 	
 #ifdef FORCE_RENDERNODE_CLEAR
 	UseClearRenderNode = TRUE;
@@ -165,7 +165,7 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(TLRender::TOrthoCamera* pC
 		{
 			m_pRenderNodeClear = new TRenderNodeClear("Clear","Clear");
 		}
-		m_pRenderNodeClear->SetSize( OrthoBox, -1.f );
+		m_pRenderNodeClear->SetSize( OrthoBox, -1.f/*pCamera->GetNearZ()*/ );
 		m_pRenderNodeClear->SetColour( m_ClearColour );
 	}
 	else
@@ -173,7 +173,6 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(TLRender::TOrthoCamera* pC
 		//	remove the clear object
 		m_pRenderNodeClear = NULL;
 	}
-
 
 	//	setup camera
 	glMatrixMode(GL_MODELVIEW);
@@ -231,7 +230,7 @@ void TLRender::Platform::RenderTarget::BeginSceneReset(Bool ApplyCamera)
 	//	and reset to camera pos
 	if ( ApplyCamera )
 	{
-		Opengl::SceneTransform( m_CameraTransform, m_pCameraMatrix);
+		Opengl::SceneTransform( m_CameraTransform, m_pCameraMatrix );
 	}
 }
 

@@ -7,84 +7,92 @@
 */
 void TManager::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	TRefRef MessageRef = Message.GetMessageRef();
-
-	if ( MessageRef == TLCore::InitialiseRef )
+	switch ( Message.GetMessageRef().GetData() )
 	{
-		// Check to see if the manager is ready - no need to call init anymore if so
-		// Errors should be picked up at a higher level and the app should bail out
-		if(GetState() == TLManager::S_Ready)
-			return;
-
-		SyncBool Result = Initialise();
-		
-		if(Result == SyncFalse)
+		case TRef_Static(I,n,i,t,i):
 		{
-			TLCore::Platform::DoQuit();
+			// Check to see if the manager is ready - no need to call init anymore if so
+			// Errors should be picked up at a higher level and the app should bail out
+			if(GetState() == TLManager::S_Ready)
+				return;
 
-			SetState(TLManager::S_Error);
-		}
-		else if (Result == SyncWait)
-			SetState(TLManager::S_Initialising);
-		else
-			SetState(TLManager::S_Ready);
-	}
-	else if ( MessageRef == TLCore::UpdateRef )
-	{
-		//	get timestep
-		float ThisTimestep = 0.f;
-		float fThisTimeStepModifier = 1.0f;
-		Message.ImportData( TLCore::TimeStepRef, ThisTimestep );
-		Message.ImportData( TLCore::TimeStepModRef, fThisTimeStepModifier );
-		
-		// Check to see if this manager uses the modifier.  If so apply it tot he timestep now
-		//if()
-		{
-			ThisTimestep *= fThisTimeStepModifier;
-		}
-
-		SyncBool Result = Update( ThisTimestep );
-
-		if(Result == SyncTrue)
-			SetState(TLManager::S_Ready);
-		else
-		{
-			TLCore::Platform::DoQuit();
-			SetState(TLManager::S_Error);
-		}
-	}
-	else if ( MessageRef == TLCore::ShutdownRef )
-	{
-		// Check to see if the manager is shutdown - no need to process the shutdown message any further if so
-		// Errors should be handled at a higher level and the app should quit
-		if(GetState() == TLManager::S_Shutdown)
-			return;
-
-		SyncBool Result = Shutdown();
-
-		if(Result == SyncTrue)
-			SetState(TLManager::S_Shutdown);
-		else if(Result == SyncFalse)
-			SetState(TLManager::S_Error);
-		else 
-			SetState(TLManager::S_ShuttingDown);
-	}
-	else if( MessageRef == "Channel")
-	{
-		// Event channel changes
-		TRef refChange;
-		Message.Read(refChange);
-		
-		if(refChange == "Added")
-		{
-			TRef refPublisherID;
-			TRef refChannelID;
+			SyncBool Result = Initialise();
 			
-			Message.Read(refPublisherID);
-			Message.Read(refChannelID);
-		
-			OnEventChannelAdded(refPublisherID, refChannelID);
+			if(Result == SyncFalse)
+			{
+				TLCore::Platform::DoQuit();
+
+				SetState(TLManager::S_Error);
+			}
+			else if (Result == SyncWait)
+				SetState(TLManager::S_Initialising);
+			else
+				SetState(TLManager::S_Ready);
 		}
+		break;
+
+		case TRef_Static(U,p,d,a,t):
+		{
+			//	get timestep
+			float ThisTimestep = 0.f;
+			float fThisTimeStepModifier = 1.0f;
+			Message.ImportData( TLCore::TimeStepRef, ThisTimestep );
+			Message.ImportData( TLCore::TimeStepModRef, fThisTimeStepModifier );
+			
+			// Check to see if this manager uses the modifier.  If so apply it tot he timestep now
+			//if()
+			{
+				ThisTimestep *= fThisTimeStepModifier;
+			}
+
+			SyncBool Result = Update( ThisTimestep );
+
+			if(Result == SyncTrue)
+				SetState(TLManager::S_Ready);
+			else
+			{
+				TLCore::Platform::DoQuit();
+				SetState(TLManager::S_Error);
+			}
+		}
+		break;
+	
+		case TRef_Static(S,h,u,t,d):
+		{
+			// Check to see if the manager is shutdown - no need to process the shutdown message any further if so
+			// Errors should be handled at a higher level and the app should quit
+			if(GetState() == TLManager::S_Shutdown)
+				return;
+
+			SyncBool Result = Shutdown();
+
+			if(Result == SyncTrue)
+				SetState(TLManager::S_Shutdown);
+			else if(Result == SyncFalse)
+				SetState(TLManager::S_Error);
+			else 
+				SetState(TLManager::S_ShuttingDown);
+		}
+		break;
+
+		case TRef_Static(C,h,a,n,n):	//	"Channel"
+		{
+			// Event channel changes
+			TRef refChange;
+			Message.Read(refChange);
+			
+			if(refChange == "Added")
+			{
+				TRef refPublisherID;
+				TRef refChannelID;
+				
+				Message.Read(refPublisherID);
+				Message.Read(refChannelID);
+			
+				OnEventChannelAdded(refPublisherID, refChannelID);
+			}
+		}
+		break;
 	}
 
 }

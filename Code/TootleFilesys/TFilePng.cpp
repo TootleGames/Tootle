@@ -38,6 +38,7 @@ void TLFilePng::AllocRowData(TArray<u8*>& RowData,libpng::png_infop info_ptr,u32
 	}
 }
 
+
 void TLFilePng::DeleteRowData(TArray<u8*>& RowData)
 {
 	for ( u32 i=0;	i<RowData.GetSize();	i++ )

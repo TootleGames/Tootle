@@ -1,6 +1,7 @@
 #include "TLTime.h"
 
 
+
 namespace TLTime
 {
 	TTimestamp		g_CurrentTime;
@@ -10,7 +11,11 @@ namespace TLTime
 	TKeyArray<TRef,float>	g_TimerAverages;		//	timer time elapsed in the last second in millisecs
 }
 
-
+namespace TLCounter
+{
+	TKeyArray<TRef,u16>		g_Counters;
+	TKeyArray<TRef,float>	g_Averages;
+}
 
 
 //---------------------------------------------------------
@@ -247,5 +252,33 @@ void TLTime::OnSecondElapsed(u32 FrameCount)
 
 		//	reset counter
 		Counter = 0.f;
+	}
+}
+
+
+
+
+//---------------------------------------------------------
+//	get per-second averages for counters when a second elapses
+//---------------------------------------------------------
+void TLCounter::OnSecondElapsed(u32 FrameCount)
+{
+	float FrameCountf = (FrameCount==0) ? 1.f : (float)FrameCount;
+
+	//	update the update-counters to get per second values
+	for ( u32 c=0;	c<g_Counters.GetSize();	c++ )
+	{
+		TRefRef TimerRef = g_Counters.GetKeyAt(c);
+
+		//	divide the MS counters by number of frames to get an average per call. if we don't do this
+		//	the MS is going to vary wildly when frame rate goes up and down (even by 1)
+		u16& Counter = g_Counters.ElementAt(c);
+		float Counterf = (float)Counter / FrameCountf;
+
+		//	save to per-seond key array
+		g_Averages.Add( TimerRef, Counter );
+
+		//	reset counter
+		Counter = 0;
 	}
 }

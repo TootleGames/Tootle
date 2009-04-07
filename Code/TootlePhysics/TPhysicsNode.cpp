@@ -10,8 +10,8 @@
 
 //	if something moves less than this amount then dont apply the change - 
 //	this stops the world collision sphere from being invalidated more than we need to
-#define MIN_CHANGE_AMOUNT			(TLMaths::g_NearZero*1000.f)
-//#define MIN_CHANGE_AMOUNT			(TLMaths::g_NearZero)
+#define MIN_CHANGE_AMOUNT			(TLMaths_NearZero*1000.f)
+//#define MIN_CHANGE_AMOUNT			(TLMaths_NearZero)
 
 #define HAS_MIN_CHANGE3(v)			HAS_MIN_CHANGE( v.LengthSq() )
 //#define HAS_MIN_CHANGE3(v)			TRUE
@@ -59,7 +59,6 @@ TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 	m_Squidge						( 0.f ),
 	m_Temp_ExtrudeTimestep			( 0.f ),
 	m_InitialisedZone				( FALSE ),
-	m_Debug_StaticCollisions		( 0 ),
 	m_WorldCollisionShapeChanged	( FALSE ),
 	m_TransformChangedBits			( 0x0 )
 {
@@ -207,7 +206,6 @@ void TLPhysics::TPhysicsNode::Update(float fTimeStep)
 
 	//	init per-frame stuff
 	m_WorldCollisionShapeChanged = FALSE;
-	m_Debug_StaticCollisions = 0;
 	m_Temp_ExtrudeTimestep = fTimeStep;
 	SetAccumulatedMovementInvalid();
 
@@ -243,13 +241,13 @@ void TLPhysics::TPhysicsNode::Update(float fTimeStep)
 //----------------------------------------------------
 //	after collisions are handled
 //----------------------------------------------------
-void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgraph* pGraph,TPtr<TPhysicsNode>& pThis)
+void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgraph& Graph,TPtr<TPhysicsNode>& pThis)
 {
 	if ( m_PhysicsFlags( Flag_ZoneExpected ) && !m_InitialisedZone )
 	{
 		if ( HasCollision() )
 		{
-			UpdateNodeCollisionZone( pThis, pGraph );
+			UpdateNodeCollisionZone( pThis, Graph );
 			m_InitialisedZone = TRUE;
 		}
 	}
@@ -273,7 +271,7 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 	
 	//	move pos
 	float VelocityLengthSq = m_Velocity.LengthSq();
-	if ( VelocityLengthSq > TLMaths::g_NearZero )
+	if ( VelocityLengthSq > TLMaths_NearZero )
 	{
 		if ( DEBUG_FLOAT_CHECK( m_Velocity ) )
 		{
@@ -293,7 +291,7 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 
 			//	no change to velocity
 		}
-		else if ( Dampening < TLMaths::g_NearZero )
+		else if ( Dampening < TLMaths_NearZero )
 		{
 			//	dampening is tiny, so stop
 			Dampening = 0.f;
@@ -318,7 +316,7 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 	//	update collision zone
 	if ( m_PhysicsFlags( Flag_ZoneExpected ) && GetCollisionZoneNeedsUpdate() )
 	{
-		UpdateNodeCollisionZone( pThis, pGraph );
+		UpdateNodeCollisionZone( pThis, Graph );
 
 		//	no longer needs update
 		SetCollisionZoneNeedsUpdate( FALSE );
@@ -424,21 +422,17 @@ void TLPhysics::TPhysicsNode::MovePosition(const float3& Movement,float Timestep
 //----------------------------------------------------
 void TLPhysics::TPhysicsNode::PublishTransformChanges()
 {
+	//	rule is "cant have changed if invalid value" - need to cater for when it has changed TO an invalid value...
+	//	so this removes a change if the value is invalid
+	m_TransformChangedBits &= m_Transform.GetHasTransformBits();
+
+	//	no changes
 	if ( m_TransformChangedBits == 0x0 )
 		return;
 
-	//	rule is "cant have changed if invalid value" - need to cater for when it has changed TO an invalid value...
-	//	so this removes a change if the value is invalid
-	Bool TranslationChanged = ((m_TransformChangedBits & TRANSFORM_BIT_TRANSLATE)!=0x0) && m_Transform.HasTranslate();
-	Bool RotationChanged = ((m_TransformChangedBits & TRANSFORM_BIT_ROTATION)!=0x0) && m_Transform.HasRotation();
-	Bool ScaleChanged = ((m_TransformChangedBits & TRANSFORM_BIT_SCALE)!=0x0) && m_Transform.HasScale();
-
-	//	un-mark changes now that we've got what changes we're gonna send
+	//	store changes and reset changed value - done JUST IN CASE this message triggers another message which alters the physics system
+	u8 Changes = m_TransformChangedBits;
 	m_TransformChangedBits = 0x0;
-
-	//	no changes
-	if ( !TranslationChanged && !RotationChanged && !ScaleChanged )
-		return;
 
 	//	no one to send a message to 
 	if ( !HasSubscribers() )
@@ -446,25 +440,12 @@ void TLPhysics::TPhysicsNode::PublishTransformChanges()
 
 	TLMessaging::TMessage Message(TRef_Static(O,n,T,r,a), GetNodeRef() );
 
-	if ( TranslationChanged )
+	//	write out transform data - send only if something was written
+	if ( m_Transform.ExportData( Message, Changes ) != 0x0 )
 	{
-		Message.ExportData(TRef_Static(T,r,a,n,s), m_Transform.GetTranslate());
-		TLDebug_CheckFloat( m_Transform.GetTranslate() );
+		//	send out message
+		PublishMessage(Message);
 	}
-
-	if( RotationChanged )
-	{
-		Message.ExportData(TRef_Static(R,o,t,a,t), m_Transform.GetRotation());
-		TLDebug_CheckFloat( m_Transform.GetRotation() );
-	}
-
-	if( ScaleChanged )
-	{
-		Message.ExportData(TRef_Static(S,c,a,l,e), m_Transform.GetScale());
-		TLDebug_CheckFloat( m_Transform.GetScale() );
-	}
-
-	PublishMessage(Message);
 }
 
 
@@ -472,13 +453,13 @@ void TLPhysics::TPhysicsNode::PublishTransformChanges()
 //----------------------------------------------------------
 //	update tree: update self, and children and siblings
 //----------------------------------------------------------
-void TLPhysics::TPhysicsNode::PostUpdateAll(float fTimestep,TLPhysics::TPhysicsgraph* pGraph,TPtr<TLPhysics::TPhysicsNode>& pThis)
+void TLPhysics::TPhysicsNode::PostUpdateAll(float fTimestep,TLPhysics::TPhysicsgraph& Graph,TPtr<TLPhysics::TPhysicsNode>& pThis)
 {
 	if ( !IsEnabled() )
 		return;
 
 	// Update this
-	PostUpdate( fTimestep, pGraph, pThis );
+	PostUpdate( fTimestep, Graph, pThis );
 
 #ifdef TLGRAPH_OWN_CHILDREN
 
@@ -486,7 +467,7 @@ void TLPhysics::TPhysicsNode::PostUpdateAll(float fTimestep,TLPhysics::TPhysicsg
 	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 	{
 		TPtr<TPhysicsNode>& pNode = NodeChildren.ElementAt(c);
-		pNode->PostUpdateAll( fTimestep, pGraph, pNode );
+		pNode->PostUpdateAll( fTimestep, Graph, pNode );
 	}
 
 #else
@@ -603,7 +584,7 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode& OtherNode)
 		float DistDot2 = Dist.DotProduct(Dist);  
 
 		// balls are too embedded to be of any use    
-		if ( DistDot2 >= TLMaths::g_NearZero )
+		if ( DistDot2 >= TLMaths_NearZero )
 		{
 			//	normalise distance
 			Dist /= sqrtf(DistDot2);  
@@ -616,7 +597,7 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode& OtherNode)
 			// else make them bounce against each other.  
 			// there is a small threshold value in case they are moving 
 			// very very slowly towards each other.    
-			if ( VdotN < -TLMaths::g_NearZero ) 
+			if ( VdotN < -TLMaths_NearZero ) 
 			{
 				// calculate the amount of impulse
 				float BounceFactor = m_Bounce + OtherNode.m_Bounce;
@@ -794,11 +775,11 @@ TLPhysics::TCollisionShape* TLPhysics::TPhysicsNode::CalcWorldCollisionShape()
 //----------------------------------------------------------
 //	move node into/out of collision zones
 //----------------------------------------------------------
-void TLPhysics::TPhysicsNode::UpdateNodeCollisionZone(TPtr<TLPhysics::TPhysicsNode>& pThis,TLPhysics::TPhysicsgraph* pGraph)
+void TLPhysics::TPhysicsNode::UpdateNodeCollisionZone(TPtr<TLPhysics::TPhysicsNode>& pThis,TLPhysics::TPhysicsgraph& Graph)
 {
 	//	use the generic quad tree zone update
 	TPtr<TLMaths::TQuadTreeNode> pThisZoneNode = pThis;
-	pThisZoneNode->UpdateZone( pThisZoneNode, pGraph->GetRootCollisionZone() );
+	UpdateZone( pThisZoneNode, Graph.GetRootCollisionZone() );
 
 	/*
 #ifdef NEW_UPDATE_ZONE
@@ -1039,28 +1020,40 @@ void TLPhysics::TPhysicsNode::PublishCollisions()
 //-------------------------------------------------------------
 SyncBool TLPhysics::TPhysicsNode::IsInShape(const TLMaths::TBox2D& Shape)
 {
-	//	not yet initialised with a collision shape
-	if ( !HasCollision() )
-	{
-		//	wait for it
-		if ( GetPhysicsFlags()( TLPhysics::TPhysicsNode::Flag_HasCollision ) )
-			return SyncWait;
+	TCollisionShape* pWorldShape = m_pWorldCollisionShape.GetObject();
 
-		//	has no collision...
-		return SyncFalse;
+	if ( !pWorldShape )
+	{
+		TLDebug_Break("World collision shape expected; this nodes shape-testability should have already been checked with HasZoneShape()");
+		return SyncWait;
 	}
 
+	//	make up a Collision shape for the test-shape and do an intersection test with it
+	TCollisionBox2D ShapeCollisionShape( Shape );
+	
+	return ShapeCollisionShape.HasIntersection( pWorldShape ) ? SyncTrue : SyncFalse;
+}
+
+
+
+//-------------------------------------------------------------
+//	
+//-------------------------------------------------------------
+Bool TLPhysics::TPhysicsNode::HasZoneShape()
+{
+	//	not yet initialised with a collision shape
+	if ( !HasCollision() )
+		return FALSE;
+
+	//	pre-calc the world collision shape (we're going to use it anyway)
+	//	and if that fails we can't do any tests anyway
 	TLPhysics::TCollisionShape* pShape = CalcWorldCollisionShape();
 
 	//	no shape atm, wait
 	if ( !pShape )
-		return SyncWait;
+		return FALSE;
 
-	TLPhysics::TCollisionBox2D ShapeCollisionShape( Shape );
-	if ( !pShape->HasIntersection( &ShapeCollisionShape ) )
-		return SyncFalse;
-
-	return SyncTrue;
+	return TRUE;
 }
 
 

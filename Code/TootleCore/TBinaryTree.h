@@ -52,7 +52,7 @@ public:
 	void						ExportData(TRefRef DataRef,const TYPE& Data);
 	void						ExportDataString(TRefRef DataRef,const TString& DataString);	//	gr: remove if I can get Read/Write() to work with a TString in TBinary
 
-	inline Bool					operator==(TRefRef DataRef)const		{	return GetDataRef() == DataRef;	}
+	FORCEINLINE Bool					operator==(TRefRef DataRef)const		{	return GetDataRef() == DataRef;	}
 
 	void						Debug_PrintTree(u32 TreeLevel=0) const;	//	debug_print the tree
 

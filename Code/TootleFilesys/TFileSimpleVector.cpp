@@ -736,7 +736,7 @@ Bool TLFileSys::TFileSimpleVector::Style::Parse(const TString& StyleString)
 	TString* pFillAlpha = Properties.Find("fill-opacity");
 	if ( pFillAlpha )
 	{
-		pFillAlpha->GetFloat( m_FillColour.GetAlpha() );
+		pFillAlpha->GetFloat( m_FillColour.GetAlphaf() );
 	}
 
 	//	see if it has a stroke or not
@@ -757,7 +757,7 @@ Bool TLFileSys::TFileSimpleVector::Style::Parse(const TString& StyleString)
 	TString* pStrokeAlpha = Properties.Find("stroke-opacity");
 	if ( pStrokeAlpha )
 	{
-		pStrokeAlpha->GetFloat( m_StrokeColour.GetAlpha() );
+		pStrokeAlpha->GetFloat( m_StrokeColour.GetAlphaf() );
 	}
 
 	return TRUE;

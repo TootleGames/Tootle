@@ -229,7 +229,7 @@ void TLInput::TInputInterface::QueueClick(const int2& CursorPos,float ActionValu
 	if ( m_QueuedClicks.GetSize() > 0 )
 	{
 		//	both this and prev action values were "off" so skip adding to the queue
-		if ( ActionValue < TLMaths::g_NearZero && m_QueuedClicks.ElementLast().m_ActionValue < TLMaths::g_NearZero )
+		if ( ActionValue < TLMaths_NearZero && m_QueuedClicks.ElementLast().m_ActionValue < TLMaths_NearZero )
 			return;
 	}
 

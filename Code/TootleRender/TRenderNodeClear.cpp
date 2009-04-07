@@ -26,21 +26,9 @@ void TLRender::TRenderNodeClear::SetSize(const TLMaths::TBox2D& ClearBox,float N
 		m_pClearMesh = TLAsset::CreateAsset( TLAsset::GetFreeAssetRef("Clear"), "Mesh" );
 		pClearMesh = m_pClearMesh.GetObject();
 
+		float3 Zero3( 0,0,0 );
 		//	initialise clear quad
-		TLAsset::TMesh::Tristrip* pClearTristrip = pClearMesh->GetTristrips().AddNew();
-		if ( !pClearTristrip )
-		{
-			m_pClearMesh = NULL;
-			return;
-		}
-		TLAsset::TMesh::Tristrip& ClearTristrip = *pClearTristrip;
-		ClearTristrip.SetSize(4);
-
-		//	add vert for each corner
-		ClearTristrip[0] = pClearMesh->AddVertex( float3(0,0,0) );
-		ClearTristrip[1] = pClearMesh->AddVertex( float3(0,0,0) );
-		ClearTristrip[2] = pClearMesh->AddVertex( float3(0,0,0) );
-		ClearTristrip[3] = pClearMesh->AddVertex( float3(0,0,0) );
+		pClearMesh->GenerateQuad( Zero3, Zero3, Zero3, Zero3 );
 	}
 
 	//	stretch past borders to cope with float precision

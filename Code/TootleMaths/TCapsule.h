@@ -29,7 +29,7 @@ class TLMaths::TCapsule
 public:
 	TCapsule();
 
-	static TRef		GetTypeRef()											{	return "Cap";	}
+	static TRef		GetTypeRef()											{	return TLMaths_ShapeRef(TCapsule);	}
 
 	void			Set(const TLine& Line,float Radius)						{	m_Line = Line;	m_Radius = Radius;	}
 	void			Set(const float3& Start,const float3& End,float Radius)	{	m_Line.Set( Start, End );	m_Radius = Radius;	}
@@ -87,7 +87,7 @@ class TLMaths::TCapsule2D
 public:
 	TCapsule2D();
 
-	static TRef		GetTypeRef()											{	return "Cap2";	}
+	static TRef		GetTypeRef()											{	return TLMaths_ShapeRef(TCapsule2D);	}
 
 	void			Set(const TLine2D& Line,float Radius)					{	m_Line = Line;	m_Radius = Radius;	}
 	void			Set(const float2& Start,const float2& End,float Radius)	{	m_Line.Set( Start, End );	m_Radius = Radius;	}

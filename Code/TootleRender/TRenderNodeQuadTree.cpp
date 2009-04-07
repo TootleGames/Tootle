@@ -11,7 +11,7 @@ void CreateZoneMesh(TLAsset::TMesh& Mesh,const TPtr<TLMaths::TQuadTreeZone>& pZo
 {
 	//	gr: change the z so we get a 3D perspective which should help us see the gaps a bit better
 	float z = 4.f - ( (float)ZoneDepth * 0.5f );
-	TColour ZoneColour = TColour::Debug_GetColour( ZoneDepth );
+	TColour ZoneColour = TLColour::Debug_GetColour( ZoneDepth );
 	
 	//	create a sphere for this zone's shape
 	//	we use a sphere because if we did the proper quads then they'd meet at the edges and we wouldnt know where they end
@@ -23,26 +23,26 @@ void CreateZoneMesh(TLAsset::TMesh& Mesh,const TPtr<TLMaths::TQuadTreeZone>& pZo
 	SyncBool IsActive = pZone->IsActive();
 	if ( IsActive == SyncTrue )
 	{
-		ZoneColour.GetAlpha() = 0.5f;
+		ZoneColour.GetAlphaf() = 0.5f;
 		Mesh.GenerateSphere( ZoneShapeSphere, &ZoneColour, z );
 	}
 	else if ( IsActive == SyncWait )
 	{
-		TColour ZoneColour = TColour::Debug_GetColour( 0 );
-		ZoneColour.GetAlpha() = 0.4f;
+		TColour ZoneColour = TLColour::Debug_GetColour( 0 );
+		ZoneColour.GetAlphaf() = 0.4f;
 		//Mesh.GenerateSphereOutline( ZoneShapeSphere, &ZoneColour, z );
 		Mesh.GenerateSphere( ZoneShapeSphere, &ZoneColour, z );
 	}
 	else
 	{
-		TColour ZoneColour = TColour::Debug_GetColour( 0 );
-		ZoneColour.GetAlpha() = 0.1f;
+		TColour ZoneColour = TLColour::Debug_GetColour( 0 );
+		ZoneColour.GetAlphaf() = 0.1f;
 		//Mesh.GenerateSphereOutline( ZoneShapeSphere, &ZoneColour, z );
 		Mesh.GenerateSphere( ZoneShapeSphere, &ZoneColour, z );
 	}
 
 	//	draw box outline still
-	ZoneColour.GetAlpha() = 1.0f;
+	ZoneColour.GetAlphaf() = 1.0f;
 //	Mesh.GenerateQuadOutline( ZoneShapeBox, &ZoneColour, z );
 
 	//	do children

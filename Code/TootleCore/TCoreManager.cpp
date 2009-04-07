@@ -285,6 +285,7 @@ void TCoreManager::Debug_UpdateDebugCounters()
 
 		//	do the global timer elapses
 		TLTime::OnSecondElapsed( m_Debug_CurrentFramesPerSecond );
+		TLCounter::OnSecondElapsed( m_Debug_CurrentFramesPerSecond );
 
 		m_Debug_FramesPerSecond			= m_Debug_CurrentFramesPerSecond;
 		m_Debug_CurrentFramesPerSecond	= 0;

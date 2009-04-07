@@ -32,15 +32,15 @@ public:
 		return (  m_MessageQueue.Add(Message) != -1 );
 	}
 
-	inline u32			NumberOfMessages()			const	{ return m_MessageQueue.GetSize(); }
-	inline Bool			HasMessagesInQueue()		const	{ return (NumberOfMessages() > 0); }
+	FORCEINLINE u32			NumberOfMessages()			const	{ return m_MessageQueue.GetSize(); }
+	FORCEINLINE Bool			HasMessagesInQueue()		const	{ return (NumberOfMessages() > 0); }
 
 protected:
 
 	virtual void ProcessMessageFromQueue(TLMessaging::TMessage& Message)	= 0;		// Individual message processing - behaviour dependent on where it is used
 
-	// inline wrapper for the main message queue process call
-	inline void ProcessMessageQueue()
+	// FORCEINLINE wrapper for the main message queue process call
+	FORCEINLINE void ProcessMessageQueue()
 	{
 		if(HasMessagesInQueue())
 			DoProcessMessageQueue();
@@ -66,7 +66,7 @@ private:
 	}
 
 	// Remove all messages from the queue
-	inline void		RemoveAllMessages()
+	FORCEINLINE void		RemoveAllMessages()
 	{
 		m_MessageQueue.Empty(TRUE);
 	}

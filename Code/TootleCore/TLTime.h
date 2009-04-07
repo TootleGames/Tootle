@@ -30,16 +30,16 @@ namespace TLTime
 	const TTimestampMicro&	GetMicroTimeNow();						//	return timestamp as of right now
 
 	float					GetUpdatesPerSecondf();				//	get desired frame rate (eg. 60fps)
-	inline float			GetUpdateTimeMilliSecsf()			{	return 1000.f/GetUpdatesPerSecondf();	}
-	inline float			GetUpdateTimeSecondsf()				{	return 1.f/GetUpdatesPerSecondf();	}	//	update time as a fraction of a second
+	FORCEINLINE float			GetUpdateTimeMilliSecsf()			{	return 1000.f/GetUpdatesPerSecondf();	}
+	FORCEINLINE float			GetUpdateTimeSecondsf()				{	return 1.f/GetUpdatesPerSecondf();	}	//	update time as a fraction of a second
 
-	inline s32				MilliSecsToMicro(s32 Milliseconds)	{	return Milliseconds * 1000;	}
-	inline s32				MicroToMilliSecs(s32 Microseconds)	{	return Microseconds / 1000;	}
-	inline float			MicroToMilliSecsf(s32 Microseconds)	{	return Microseconds / 1000.f;	}
-	inline s32				SecsToMilliSecs(s32 Seconds)		{	return Seconds * 1000;	}
-	inline s32				MilliSecsToSecs(s32 Milliseconds)	{	return Milliseconds / 1000;	}
-	inline float			MilliSecsToSecsf(s32 Milliseconds)	{	return Milliseconds / 1000.f;	}
-	inline s32				SecsToMicroSecs(s32 Seconds)		{	return MilliSecsToMicro( SecsToMilliSecs( Seconds ) );	}
+	FORCEINLINE s32				MilliSecsToMicro(s32 Milliseconds)	{	return Milliseconds * 1000;	}
+	FORCEINLINE s32				MicroToMilliSecs(s32 Microseconds)	{	return Microseconds / 1000;	}
+	FORCEINLINE float			MicroToMilliSecsf(s32 Microseconds)	{	return Microseconds / 1000.f;	}
+	FORCEINLINE s32				SecsToMilliSecs(s32 Seconds)		{	return Seconds * 1000;	}
+	FORCEINLINE s32				MilliSecsToSecs(s32 Milliseconds)	{	return Milliseconds / 1000;	}
+	FORCEINLINE float			MilliSecsToSecsf(s32 Milliseconds)	{	return Milliseconds / 1000.f;	}
+	FORCEINLINE s32				SecsToMicroSecs(s32 Seconds)		{	return MilliSecsToMicro( SecsToMilliSecs( Seconds ) );	}
 
 	namespace Platform
 	{
@@ -49,8 +49,8 @@ namespace TLTime
 		void			Debug_PrintTimestamp(const TTimestamp& Timestamp,s32 Micro);
 	}
 
-	inline void				Debug_PrintTimestamp(const TTimestamp& Timestamp,s32 Micro=-1)		{	Platform::Debug_PrintTimestamp( Timestamp, Micro );	}
-	void					Debug_PrintTimestamp(const TTimestampMicro& Timestamp);
+	FORCEINLINE void							Debug_PrintTimestamp(const TTimestamp& Timestamp,s32 Micro=-1)		{	Platform::Debug_PrintTimestamp( Timestamp, Micro );	}
+	void										Debug_PrintTimestamp(const TTimestampMicro& Timestamp);
 
 	FORCEINLINE void							AddTimerTime(TRefRef TimerRef,float MillisecTime);	//	increment a timer counter
 	void										OnSecondElapsed(u32 FrameCount);					//	get per-second averages for timers when a second elapses
@@ -58,6 +58,29 @@ namespace TLTime
 
 	class TTimeManager;
 }
+
+
+//-----------------------------------------
+//	gr: debug counter system - better off out of the time system, but not sure where to put it
+//		assuming just for debug usage at the moment - will come up with somewhere more appropriate soon
+//		but it cannot go in the debug files, or the core...
+//		maybe a CounterManager and just make all these funcs static
+//-----------------------------------------
+namespace TLCounter
+{
+//private:
+	extern TKeyArray<TRef,u16>		g_Counters;		//	current counters, counters
+	extern TKeyArray<TRef,float>	g_Averages;		//	average counter-per-second values for counters
+
+//public:
+	FORCEINLINE void							Increment(TRefRef CounterRef,u16 Increment=1);	//	increment a counter
+	void										OnSecondElapsed(u32 FrameCount);				//	calcualate averages
+
+	FORCEINLINE const TKeyArray<TRef,float>&	GetCounters()		{	return g_Averages;	}	//	current elapsed time for timers
+
+};	
+
+
 
 
 //---------------------------------------------------------
@@ -89,9 +112,9 @@ public:
 
 	Bool			operator<(const TTimestamp& Timestamp) const;
 	Bool			operator>(const TTimestamp& Timestamp) const;
-	inline Bool		operator==(const TTimestamp& Timestamp) const		{	return (GetEpochSeconds() == Timestamp.GetEpochSeconds()) && (GetMilliSeconds() == Timestamp.GetMilliSeconds());	}
-	inline Bool		operator!=(const TTimestamp& Timestamp) const		{	return (GetEpochSeconds() != Timestamp.GetEpochSeconds()) || (GetMilliSeconds() != Timestamp.GetMilliSeconds());	}
-	inline void		operator=(const TTimestamp& Timestamp)				{	SetEpochSeconds( Timestamp.GetEpochSeconds() );	SetMilliSeconds( Timestamp.GetMilliSeconds() );	}
+	FORCEINLINE Bool		operator==(const TTimestamp& Timestamp) const		{	return (GetEpochSeconds() == Timestamp.GetEpochSeconds()) && (GetMilliSeconds() == Timestamp.GetMilliSeconds());	}
+	FORCEINLINE Bool		operator!=(const TTimestamp& Timestamp) const		{	return (GetEpochSeconds() != Timestamp.GetEpochSeconds()) || (GetMilliSeconds() != Timestamp.GetMilliSeconds());	}
+	FORCEINLINE void		operator=(const TTimestamp& Timestamp)				{	SetEpochSeconds( Timestamp.GetEpochSeconds() );	SetMilliSeconds( Timestamp.GetMilliSeconds() );	}
 
 protected:
 	u32				m_Date;				//	date in seconds (since epoch)
@@ -189,6 +212,22 @@ FORCEINLINE void TLTime::AddTimerTime(TRefRef TimerRef,float MillisecTime)
 		*pCounter += MillisecTime;
 	else
 		g_TimerCounters.Add( TimerRef, MillisecTime );
+}
+
+
+
+
+//------------------------------------------
+//	increment a counter
+//------------------------------------------
+FORCEINLINE void TLCounter::Increment(TRefRef CounterRef,u16 Increment)
+{
+	//	update existing counter
+	u16* pCounter = g_Counters.Find( CounterRef );	
+	if ( pCounter )	
+		*pCounter += Increment;
+	else
+		g_Counters.Add( CounterRef, Increment );
 }
 
 

@@ -34,8 +34,10 @@ namespace TLPhysics
 
 
 	//	non standard "shape" type refs
-	FORCEINLINE TRef		GetMeshShapeTypeRef()			{	return "Msh";	}
-	FORCEINLINE TRef		GetMeshWithBoundsShapeTypeRef()	{	return "MshWB";	}
+	#define TLMaths_ShapeRef_Mesh				TRef_Static3(M,s,h)
+	#define TLMaths_ShapeRef_MeshWithBounds		TRef_Static(M,s,h,W,B)
+	FORCEINLINE TRef		GetMeshShapeTypeRef()			{	return TLMaths_ShapeRef(Mesh);	}
+	FORCEINLINE TRef		GetMeshWithBoundsShapeTypeRef()	{	return TLMaths_ShapeRef(MeshWithBounds);	}
 }
 
 
@@ -77,7 +79,7 @@ public:
 	TCollisionShape()															{	}
 	virtual ~TCollisionShape()													{	}
 
-	virtual TRef					GetShapeType() const = 0;					//	return a shape type
+	virtual const TRef				GetShapeType() const = 0;					//	return a shape type
 
 	virtual Bool					IsValid() const = 0;						//	check if the shape is valid
 	virtual float3					GetCenter() const = 0;						//	get the center of the shape
@@ -120,7 +122,7 @@ public:
 	TCollisionSphere()															{}
 	TCollisionSphere(const TLMaths::TSphere& Sphere) : m_Sphere ( Sphere )		{}
 
-	virtual TRef					GetShapeType() const						{	return TLMaths::TSphere::GetTypeRef();	}
+	virtual const TRef				GetShapeType() const						{	return TLMaths_ShapeRef(TSphere);	}
 
 	void							SetSphere(const TLMaths::TSphere& Sphere)	{	m_Sphere = Sphere;	}
 	const TLMaths::TSphere&			GetSphere() const							{	return m_Sphere;	}
@@ -148,7 +150,7 @@ public:
 	TCollisionBox()												{}
 	TCollisionBox(const TLMaths::TBox& Box) : m_Box ( Box )		{	GenerateBoundsSphere();	}
 
-	virtual TRef					GetShapeType() const						{	return TLMaths::TBox::GetTypeRef();	}
+	virtual const TRef				GetShapeType() const						{	return TLMaths_ShapeRef(TBox);	}
 
 	void							SetBox(const TLMaths::TBox& Box)			{	m_Box = Box;	GenerateBoundsSphere();	}
 	const TLMaths::TBox&			GetBox() const								{	return m_Box;	}
@@ -179,7 +181,7 @@ public:
 	TCollisionBox2D()												{}
 	TCollisionBox2D(const TLMaths::TBox2D& Box) : m_Box ( Box )		{	GenerateBoundsSphere();	}
 
-	virtual TRef					GetShapeType() const						{	return TLMaths::TBox2D::GetTypeRef();	}
+	virtual const TRef				GetShapeType() const						{	return TLMaths_ShapeRef(TBox2D);	}
 
 	void							SetBox(const TLMaths::TBox2D& Box)			{	m_Box = Box;	GenerateBoundsSphere();	}
 	const TLMaths::TBox2D&			GetBox() const								{	return m_Box;	}
@@ -216,7 +218,7 @@ public:
 	TCollisionOblong2D()												{}
 	TCollisionOblong2D(const TLMaths::TOblong2D& Oblong) : m_Oblong ( Oblong )	{	OnOblongChanged();	}
 
-	virtual TRef					GetShapeType() const						{	return TLMaths::TOblong2D::GetTypeRef();	}
+	virtual const TRef				GetShapeType() const						{	return TLMaths_ShapeRef(TOblong2D);	}
 
 	void							SetOblong(const TLMaths::TOblong2D& Oblong)	{	m_Oblong = Oblong;	OnOblongChanged();	}
 	const TLMaths::TOblong2D&		GetOblong() const							{	return m_Oblong;	}
@@ -241,7 +243,7 @@ public:
 	TCollisionCapsule2D()												{}
 	TCollisionCapsule2D(const TLMaths::TCapsule2D& Capsule) : m_Capsule ( Capsule )	{	}
 
-	virtual TRef					GetShapeType() const						{	return TLMaths::TCapsule2D::GetTypeRef();	}
+	virtual const TRef				GetShapeType() const						{	return TLMaths_ShapeRef(TCapsule2D);	}
 
 	void							SetCapsule(const TLMaths::TCapsule2D& Capsule)	{	m_Capsule = Capsule;	}
 	const TLMaths::TCapsule2D&		GetCapsule() const							{	return m_Capsule;	}
@@ -266,7 +268,7 @@ public:
 	TCollisionMesh()											{	}
 	TCollisionMesh(TRefRef MeshRef) : m_MeshRef ( MeshRef )		{	}
 
-	virtual TRef					GetShapeType() const		{	return TLPhysics::GetMeshShapeTypeRef();	}
+	virtual const TRef				GetShapeType() const		{	return TLMaths_ShapeRef(Mesh);	}
 
 	TRefRef							GetMeshRef() const			{	return m_MeshRef;	}
 	void							SetMeshRef(TRefRef MeshRef)	{	m_MeshRef = MeshRef;		m_pMeshCache = NULL;	}
@@ -293,7 +295,7 @@ protected:
 class TLPhysics::TCollisionMeshWithBounds : public TLPhysics::TCollisionMesh
 {
 public:
-	virtual TRef					GetShapeType() const						{	return TLPhysics::GetMeshWithBoundsShapeTypeRef();	}
+	virtual const TRef				GetShapeType() const						{	return TLMaths_ShapeRef(MeshWithBounds);	}
 	
 	void							SetSphere(const TLMaths::TSphere& Sphere)	{	m_BoundsSphere = Sphere;	}
 	const TLMaths::TSphere&			GetSphere() const							{	return m_BoundsSphere;	}
