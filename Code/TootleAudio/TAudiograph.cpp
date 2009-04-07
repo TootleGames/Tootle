@@ -111,6 +111,8 @@ SyncBool TAudiograph::InitDevices()
 
 SyncBool TAudiograph::Update(float fTimeStep)
 {
+	TLTime::TScopeTimer Timer( TRef_Static(A,u,d,i,o) );
+
 	if(!IsEnabled())
 		return SyncTrue;
 
@@ -350,11 +352,8 @@ Bool TAudiograph::StartMusic(TRefRef AudioAsset)
 	Props.m_fVolume = 1.0f;
 
 
-	// By setting the ranges and rate of decay to zero we effectively switch of the distance attenuation
+	// By setting the rate of decay to zero we effectively switch of the distance attenuation
 	// calculations meaning the sound will always be heard at full volume.
-	Props.m_bRelative = TRUE;
-	Props.m_fMinRange = 0.0f;
-	Props.m_fMaxRange = 0.0f;
 	Props.m_fRateOfDecay = 0.0f;
 
 	Message.ExportData("Props", Props);
