@@ -90,8 +90,11 @@ typedef long signed int		s64;
 
 //	add warnings to deprecated functions/classes
 #ifndef DEPRECATED
-	//#define DEPRECATED	__attribute__((deprecated))
+#if defined(__GNUG__)
+	#define DEPRECATED	__attribute__((deprecated))
+#else
 	#define DEPRECATED	//	gr: defining "deprecated" conflicts with visual studio CRT include
+#endif
 #endif
 
 

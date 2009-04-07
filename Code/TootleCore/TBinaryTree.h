@@ -31,8 +31,6 @@ public:
 	u32							GetChildren(TRefRef DataRef,TPtrArray<TBinaryTree>& Children)	{	return m_Children.FindAll( Children, DataRef );	}	//	get all the sections with this ref into an array
 	TPtr<TBinaryTree>&			AddChild(TRefRef ChildRef);				//	add new child
 	TPtr<TBinaryTree>&			AddChild(TPtr<TBinaryTree>& pChild)		{	s32 Index = m_Children.Add( pChild );	return (Index == -1) ? TLPtr::GetNullPtr<TBinaryTree>() : m_Children.ElementAt(Index);	}	//	add child
-	template <class TYPE>
-	TPtr<TBinaryTree>&			AddChildAndData(TRefRef ChildRef,const TYPE& Obj) DEPRECATED;	// Adds a child along with an initial piece of data 
 
 	void						Empty(Bool Dealloc=FALSE)						{	TBinary::Empty(Dealloc);	m_Children.Empty(Dealloc);	}	//	delete tree
 	void						Compact();										//	compact binary data and all our children
@@ -64,24 +62,6 @@ protected:
 };
 
 
-
-
-
-
-
-//---------------------------------------------------------
-// Adds a child along with an initial piece of data 
-//---------------------------------------------------------
-template <class T>
-TPtr<TBinaryTree>& TBinaryTree::AddChildAndData(TRefRef ChildRef,const T& Obj)			
-{
-	TPtr<TBinaryTree>& pNewChild = AddChild( ChildRef );
-	if ( pNewChild )
-	{
-		pNewChild->Write(Obj);
-	}
-	return pNewChild;
-}
 
 
 //------------------------------------------------------
