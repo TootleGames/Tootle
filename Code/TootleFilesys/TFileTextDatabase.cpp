@@ -10,6 +10,7 @@
 #include "TFileTextDatabase.h"
 
 #include <TootleAsset/TText.h>
+#include <TootleGame/TTextManager.h>
 
 TLFileSys::TFileTextDatabase::TFileTextDatabase(TRefRef FileRef,TRefRef FileTypeRef) :
 TFileXml			( FileRef, FileTypeRef )
@@ -177,6 +178,24 @@ SyncBool TLFileSys::TFileTextDatabase::ImportText_ImportLanguageText(TPtr<TLAsse
 SyncBool TLFileSys::TFileTextDatabase::GenerateTextAllLanguages(TPtr<TLAsset::TText>&pText, TRefRef TextRef)
 {
 	// Add the text ref as text for each language
+	TArray<TRef>& SupportedLanguages = TLText::g_pTextManager->GetSupportedLanguages();
+
+	// Get the ref as a string
+	TString TextString;
+	TextRef.GetString(TextString);
+
+	for(u32 uIndex = 0; uIndex < SupportedLanguages.GetSize(); uIndex++)
+	{
+		// Get the language
+		
+		TRef LanguageRef = SupportedLanguages.ElementAt(uIndex);
+		
+		// Add to the text object
+		if(!pText->AddText(LanguageRef, TextRef, TextString))
+		{
+			TLDebug_Print("Failed to add text string to text object");
+		}
+	}
 
 	return SyncTrue;
 }

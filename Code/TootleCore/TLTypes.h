@@ -93,7 +93,7 @@ typedef long signed int		s64;
 #if defined(__GNUG__)
 	#define DEPRECATED	__attribute__((deprecated))
 #else
-	#define DEPRECATED	//	gr: defining "deprecated" conflicts with visual studio CRT include
+	#define DEPRECATED	__declspec(deprecated) 
 #endif
 #endif
 

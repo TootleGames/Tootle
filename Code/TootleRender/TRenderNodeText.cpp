@@ -2,6 +2,7 @@
 #include <TootleAsset/TFont.h>
 #include <TootleAsset/TAtlas.h>
 #include "TRenderGraph.h"
+#include <TootleGame/TTextManager.h>
 
 
 
@@ -26,10 +27,30 @@ void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 	}
 
 	//	import text - if we do, make sure we make a note the glyphs need building
+	// [07/05/09] DB - This shouldn't be used anymore.  Use a <TextRef> in place of the <Text> tag in any XML file
 	if ( Message.ImportDataString("Text", m_Text ) )
 	{
+		TLDebug_Warning("Setting text directly.  Should now use a text ref instead and lookup the text.");
 		m_GlyphsValid = FALSE;
 	}
+
+	TRef TextRef;
+	if ( Message.ImportData("TextRef", TextRef ) )
+	{
+		// Now get the string from the text manager
+		if(TLText::g_pTextManager->GetText(TextRef, m_Text))
+			m_GlyphsValid = FALSE;
+#ifdef _DEBUG
+		else
+		{
+			TTempString debugstr;
+			TextRef.GetString(debugstr);
+			TLDebug_Print(debugstr);
+			TLDebug_Break("Failed to get text");
+		}
+#endif
+	}
+
 
 	//	do inherited init
 	TRenderNode::Initialise( Message );

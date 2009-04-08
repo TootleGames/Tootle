@@ -35,6 +35,18 @@ TCoreManager::TCoreManager(TRefRef refManagerID) :
 	m_bQuit								( FALSE ),
 	m_TimerUpdateCount					( 0 )
 {
+	// Query the hardware for various hardware and OS specific data as soon as we create the core manager.
+	// Some of this data we may need in advance of creating any other managers.
+	m_pMachineData = new TBinaryTree("Machine");
+	
+	if(m_pMachineData)
+	{
+		// Query the device specific information - UDID, OS and version etc
+		TLCore::Platform::QueryHardwareInformation(*m_pMachineData.GetObject());
+	
+		// Query user selected data on the device - languages and other settings
+		TLCore::Platform::QueryLanguageInformation(*m_pMachineData.GetObject());
+	}
 }
 
 TCoreManager::~TCoreManager()
@@ -128,17 +140,6 @@ SyncBool TCoreManager::InitialiseLoop()
 
 		//TODO: Platform specific manager??
 		TLCore::Platform::Init();
-		
-		m_pMachineData = new TBinaryTree("Machine");
-		
-		if(m_pMachineData)
-		{
-			// Query the device specific information - UDID, OS and version etc
-			TLCore::Platform::QueryHardwareInformation(*m_pMachineData.GetObject());
-		
-			// Query user selected data on the device - languages and other settings
-			TLCore::Platform::QueryLanguageInformation(*m_pMachineData.GetObject());
-		}
 
 		//	other non complex one-off init's
 		TLTime::Platform::Init();
@@ -172,36 +173,10 @@ SyncBool TCoreManager::InitialiseLoop()
 // tha callee is responsible for determining whether the language selected by the hardware is appropriately supported.
 TRef TCoreManager::GetHardwareLanguage()
 {
-	TTempString languagestr;
-	
-	m_pMachineData->ImportData("Language", languagestr);
-	
-	// Test the preferredLang and store our TRef version in the data tree
-	// Defualt to english
 	TRef LanguageRef = "eng";
+
+	m_pMachineData->ImportData("Language", LanguageRef);
 	
-	// Go through the language string and return an appropriate TRef of the specified language.
-	// This will test *all* languages we will possibly support.
-	if(languagestr == "en")				// English
-		LanguageRef = "eng";
-	else if(languagestr == "fr")				// French
-		LanguageRef = "fre";
-	else if(languagestr == "ge")		// German
-		LanguageRef = "ger";
-	else if(languagestr == "sp")		// Spanish
-		LanguageRef = "spa";
-	else if(languagestr == "it")		// Italian
-		LanguageRef = "ita";
-	else if(languagestr == "nl")		// Netherlands
-		LanguageRef = "ned";
-	else if(languagestr == "ja")		// Japanese
-		LanguageRef = "jap";
-	else
-	{
-		TLDebug_Print("Hardware langauge not supported - defaulting to english");
-	}
-	
-	//TODO: Select the appropriate language on the app
 	return LanguageRef;
 }
 

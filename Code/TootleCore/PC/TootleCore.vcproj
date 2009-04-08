@@ -151,6 +151,14 @@
 			Name="PC Source Files"
 			>
 			<File
+				RelativePath=".\cpuid.c"
+				>
+			</File>
+			<File
+				RelativePath=".\cpuid.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PCCore.cpp"
 				>
 				<FileConfiguration

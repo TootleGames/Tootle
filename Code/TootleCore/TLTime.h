@@ -197,6 +197,13 @@ protected:
 	{
 		return Platform::Init();
 	}
+
+	SyncBool		Shutdown()
+	{
+		g_TimerAverages.Empty(TRUE);
+	
+		return TManager::Shutdown();
+	}
 };
 
 

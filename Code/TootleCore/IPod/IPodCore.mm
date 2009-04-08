@@ -78,6 +78,10 @@ void TLCore::Platform::QueryHardwareInformation(TBinaryTree& Data)
 	// Device ID, OS and type
 	/////////////////////////////////////////////////////////////	
 
+	// iPod and iPhone have only one ARM processor
+	// Add this to the data so it can be used at a later date
+	Data.ExportData("CPU#", 1);	
+
 	// Write the UDID
 	NSString* pNSString = [[UIDevice currentDevice] uniqueIdentifier];		// a string unique to each device based on various hardware info.
 	const char * pString = [pNSString UTF8String];
@@ -106,7 +110,7 @@ void TLCore::Platform::QueryHardwareInformation(TBinaryTree& Data)
 	pNSString = [[UIDevice currentDevice] systemVersion];			// @"2.0"
 	pString = [pNSString UTF8String];	
 	devicedata = pString;	
-	Data.ExportData("OS", devicedata);
+	Data.ExportData("OSVer", devicedata);
 
 	TLDebug_Print(devicedata);
 	
@@ -128,14 +132,42 @@ void TLCore::Platform::QueryLanguageInformation(TBinaryTree& Data)
 	
 	NSString* preferredLang = [languages objectAtIndex:0];
 
+	//Convert the string to a TRef version so we don't need to pass a string around
 	const char* pString = [preferredLang UTF8String];
 	
+#ifdef _DEBUG	
 	TTempString languagestr(pString);
 	TLDebug_Print(languagestr);
+#endif
+
+	// Test the preferredLang and store our TRef version in the data tree
+	// Default to english
+	TRef LanguageRef = "eng";
+	
+	// Go through the language string and return an appropriate TRef of the specified language.
+	// This will test *all* languages we will possibly support.
+	if(languagestr == "en")				// English
+		LanguageRef = "eng";
+	else if(languagestr == "fr")		// French
+		LanguageRef = "fre";
+	else if(languagestr == "ge")		// German
+		LanguageRef = "ger";
+	else if(languagestr == "sp")		// Spanish
+		LanguageRef = "spa";
+	else if(languagestr == "it")		// Italian
+		LanguageRef = "ita";
+	else if(languagestr == "nl")		// Netherlands
+		LanguageRef = "ned";
+	else if(languagestr == "ja")		// Japanese
+		LanguageRef = "jap";
+	else
+	{
+		TLDebug_Print("Hardware langauge not supported - defaulting to english");
+	}
 	
 	// Export the language selected to the data - actual language selection will be done 
 	// via the core manager
-	Data.ExportData("Language", languagestr);
+	Data.ExportData("Language", LanguageRef);
 
 	/////////////////////////////////////////////////////////////
 

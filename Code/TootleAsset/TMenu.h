@@ -63,12 +63,12 @@ public:
 
 	TRefRef						GetMenuItemRef() const		{	return m_MenuItemRef;	}
 	const TString&				GetText() const				{	return m_Text;	}
-	const TString&				GetString() const DEPRECATED	{	return m_Text;	}
+	DEPRECATED const TString&	GetString() const 	{	return m_Text;	}
 	TRefRef						GetMenuCommand() const		{	return m_Command;	}
 	TRefRef						GetNextMenu() const			{	return m_NextMenu;	}
 	TRefRef						GetMeshRef() const			{	return m_MeshRef; }
 
-	void						SetString(const TString& String) DEPRECATED		{	m_Text = String;	}
+	DEPRECATED void				SetString(const TString& String) 		{	m_Text = String;	}
 	void						SetText(const TString& String)		{	m_Text = String;	}
 	void						SetMenuCommand(TRefRef Command)		{	m_Command = Command;	}
 	void						SetNextMenu(TRefRef NextMenu)		{	m_NextMenu = NextMenu;	SetMenuCommand("open");	};

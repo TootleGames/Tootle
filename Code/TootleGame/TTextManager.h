@@ -25,7 +25,8 @@ public:
 	void		SetLanguage(TRefRef LanguageRef)	{ m_LanguageRef = LanguageRef; OnLanguageChanged(); }
 	TRefRef		GetLanguage()						{ return m_LanguageRef; }
 	
-	Bool		IsLanguageSupported(TRefRef LanguageRef);
+	FORCEINLINE Bool			IsLanguageSupported(TRefRef LanguageRef)	{ return m_LanguagesSupported.Exists(LanguageRef); }
+	TArray<TRef>&				GetSupportedLanguages()						{ return m_LanguagesSupported; }
 
 	// Text access
 	Bool		GetText(TRefRef TextRef, TString& Text);
@@ -43,5 +44,6 @@ protected:
 private:
 	TRef			m_LanguageRef;		// Current selected language
 
-	TArray<TRef>	m_TextFiles;		// List of text files
+	TArray<TRef>	m_TextFiles;			// List of text files
+	TArray<TRef>	m_LanguagesSupported;	// List of supported languages as Tref's
 };

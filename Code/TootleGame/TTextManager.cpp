@@ -66,6 +66,18 @@ void TTextManager::OnLanguageChanged()
 
 SyncBool TTextManager::Initialise()
 {
+	// Add some languages that we will support
+	//TODO: This will need updating so that it is either generated from
+	// the game or lists all possibly supported languages.
+	m_LanguagesSupported.Add("usa");	// US English
+	m_LanguagesSupported.Add("eng");	// UK English
+	m_LanguagesSupported.Add("fre");	// French	
+	m_LanguagesSupported.Add("ger");	// German	
+	m_LanguagesSupported.Add("spa");	// Spanish
+	m_LanguagesSupported.Add("ita");	// Italian
+	m_LanguagesSupported.Add("ned");	// Dutch
+	m_LanguagesSupported.Add("jap");	// Japanese
+
 	// Get the language from the core manager as specified on the hardware
 	TRef LanguageRef = TLCore::g_pCoreManager->GetHardwareLanguage();
 	
@@ -77,16 +89,6 @@ SyncBool TTextManager::Initialise()
 
 	return TManager::Initialise();
 }
-
-
-Bool TTextManager::IsLanguageSupported(TRefRef LanguageRef)
-{
-	// Go through a list of languages on the text manager and see if the specified language ref exists
-	// if so then the language is supported, ootherwise it's not and the default language or currently selected language will be used
-
-	return TRUE;
-}
-
 
 void TTextManager::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID)
 {
