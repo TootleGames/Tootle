@@ -183,10 +183,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\example.c"
-			>
-		</File>
-		<File
 			RelativePath="..\FAQ"
 			>
 		</File>
@@ -236,10 +232,6 @@
 		</File>
 		<File
 			RelativePath="..\Makefile.in"
-			>
-		</File>
-		<File
-			RelativePath="..\minigzip.c"
 			>
 		</File>
 		<File
