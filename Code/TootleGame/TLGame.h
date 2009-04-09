@@ -3,6 +3,7 @@
 	Mostly misc functions/class useful for games
 
 -------------------------------------------------------*/
+#pragma once
 
 #include <TootleCore/TSubscriber.h>
 #include <TootleMaths/TLine.h>

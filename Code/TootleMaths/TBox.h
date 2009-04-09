@@ -102,6 +102,7 @@ class TLMaths::TBox2D
 public:
 	TBox2D();
 	TBox2D(const float2& Min,const float2& Max);
+	TBox2D(const float2& Center,float Size);
 
 	static TRef		GetTypeRef()		{	return TLMaths_ShapeRef(TBox2D);	}
 

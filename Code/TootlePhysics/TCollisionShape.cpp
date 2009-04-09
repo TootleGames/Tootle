@@ -460,6 +460,37 @@ TPtr<TLPhysics::TCollisionShape> TLPhysics::TCollisionSphere::Transform(const TL
 
 
 //----------------------------------------------------------
+//	
+//----------------------------------------------------------
+TPtr<TLPhysics::TCollisionShape> TLPhysics::TCollisionSphere2D::Transform(const TLMaths::TTransform& Transform,TPtr<TLPhysics::TCollisionShape>& pThis,TPtr<TLPhysics::TCollisionShape>& pOldShape)
+{
+	if ( !m_Sphere.IsValid() )
+		return NULL;
+
+	//	no transform, so just use ourself
+	if ( !Transform.HasAnyTransform() )
+	{
+		return pThis;
+	}
+
+	//	copy and transform sphere
+	TLMaths::TSphere2D NewSphere( m_Sphere );
+	NewSphere.Transform( Transform );
+
+	TLDebug_CheckFloat( m_Sphere.GetPos() );
+
+	//	re-use old shape
+	if ( pOldShape && pOldShape->GetShapeType() == TLMaths::TSphere2D::GetTypeRef() )
+	{
+		pOldShape.GetObject<TCollisionSphere2D>()->SetSphere( NewSphere );
+		return pOldShape;
+	}
+
+	return new TCollisionSphere2D( NewSphere );
+}
+
+
+//----------------------------------------------------------
 //	sphere <-> sphere intersection
 //----------------------------------------------------------
 Bool TLPhysics::TCollisionSphere::GetIntersection_Sphere(TLPhysics::TCollisionSphere* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)

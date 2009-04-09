@@ -373,7 +373,7 @@ Bool TLRender::Opengl::BindUVs(const TArray<float2>* pUVs)
 #ifdef _DEBUG
 	if ( pUVs )
 	{
-		u32 BoundVertCount = g_pBoundsVerts ? g_pBoundsVerts->GetSize() : 0;
+		u32 BoundVertCount = g_pBoundVertexes ? g_pBoundVertexes->GetSize() : 0;
 		if ( pUVs->GetSize() != BoundVertCount )
 		{
 			TLDebug_Break("Binding more/less uv's than vertex positions - corrupt mesh?");
@@ -417,13 +417,13 @@ Bool TLRender::Opengl::BindColours(const TArray<TColour>* pColours)
 
 	//	check vertex count before binding
 #ifdef _DEBUG
-	if ( pUVs )
+	if ( pColours )
 	{
-		u32 BoundVertCount = g_pBoundsVerts ? g_pBoundsVerts->GetSize() : 0;
-		if ( pUVs->GetSize() != BoundVertCount )
+		u32 BoundVertCount = g_pBoundVertexes ? g_pBoundVertexes->GetSize() : 0;
+		if ( pColours->GetSize() != BoundVertCount )
 		{
 			TLDebug_Break("Binding more/less colours than vertex positions - corrupt mesh?");
-			pUVs = NULL;
+			pColours = NULL;
 		}
 	}
 #endif
@@ -463,13 +463,13 @@ Bool TLRender::Opengl::BindColours(const TArray<TColour24>* pColours)
 
 	//	check vertex count before binding
 #ifdef _DEBUG
-	if ( pUVs )
+	if ( pColours )
 	{
-		u32 BoundVertCount = g_pBoundsVerts ? g_pBoundsVerts->GetSize() : 0;
-		if ( pUVs->GetSize() != BoundVertCount )
+		u32 BoundVertCount = g_pBoundVertexes ? g_pBoundVertexes->GetSize() : 0;
+		if ( pColours->GetSize() != BoundVertCount )
 		{
 			TLDebug_Break("Binding more/less colours than vertex positions - corrupt mesh?");
-			pUVs = NULL;
+			pColours = NULL;
 		}
 	}
 #endif
@@ -508,13 +508,13 @@ Bool TLRender::Opengl::BindColours(const TArray<TColour32>* pColours)
 
 	//	check vertex count before binding
 #ifdef _DEBUG
-	if ( pUVs )
+	if ( pColours )
 	{
-		u32 BoundVertCount = g_pBoundsVerts ? g_pBoundsVerts->GetSize() : 0;
-		if ( pUVs->GetSize() != BoundVertCount )
+		u32 BoundVertCount = g_pBoundVertexes ? g_pBoundVertexes->GetSize() : 0;
+		if ( pColours->GetSize() != BoundVertCount )
 		{
 			TLDebug_Break("Binding more/less colours than vertex positions - corrupt mesh?");
-			pUVs = NULL;
+			pColours = NULL;
 		}
 	}
 #endif

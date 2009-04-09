@@ -399,6 +399,30 @@ void TLAsset::TMesh::GenerateCapsule(const TLMaths::TCapsule2D& Capsule,const TC
 	TLMaths::ExpandLineStrip( Line, Capsule.GetRadius()*2.f, LineOutside, LineInside );
 
 	//	draw the capsule's outlines
+	GenerateQuad( LineOutside[0], LineOutside[1], LineInside[1], LineInside[0], pColour );
+
+	//	draw a sphere at each end of the capsule
+	GenerateSphere( TLMaths::TSphere2D( CapsuleLine.GetStart(), Capsule.GetRadius() ), pColour, z );
+	GenerateSphere( TLMaths::TSphere2D( CapsuleLine.GetEnd(), Capsule.GetRadius() ), pColour, z );
+}
+
+
+//-------------------------------------------------------
+//	generate a capsule
+//-------------------------------------------------------
+void TLAsset::TMesh::GenerateCapsuleOutline(const TLMaths::TCapsule2D& Capsule,const TColour* pColour,float z)
+{
+	const TLMaths::TLine2D& CapsuleLine = Capsule.GetLine();
+	TFixedArray<float3,2> Line(2);
+	Line[0] = CapsuleLine.GetStart().xyz( z );
+	Line[1] = CapsuleLine.GetEnd().xyz( z );
+
+	TFixedArray<float3,2> LineOutside;
+	TFixedArray<float3,2> LineInside;
+
+	TLMaths::ExpandLineStrip( Line, Capsule.GetRadius()*2.f, LineOutside, LineInside );
+
+	//	draw the capsule's outlines
 	GenerateLine( LineOutside, pColour );
 	GenerateLine( LineInside, pColour );
 

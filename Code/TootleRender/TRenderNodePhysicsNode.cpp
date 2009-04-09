@@ -195,12 +195,16 @@ void TLRender::TRenderNodePhysicsNode::OnPhysicsNodeChanged(TLPhysics::TPhysicsN
 		//	break;
 
 			case TLMaths_ShapeRef(TSphere):
-				GetMeshAsset()->GenerateSphere( pWorldCollisionShape.GetObject<TLPhysics::TCollisionSphere>()->GetSphere(), NULL, FALSE );
+				GetMeshAsset()->GenerateSphere( pWorldCollisionShape.GetObject<TLPhysics::TCollisionSphere>()->GetSphere() );
 				break;
 
-		//	case TLMaths_ShapeRef(TSphere2D):
-		//		GetMeshAsset()->GenerateSphere( pWorldCollisionShape.GetObject<TLPhysics::TCollisionSphere2D>()->GetSphere() );
-		//		break;
+			case TLMaths_ShapeRef(TSphere2D):
+				GetMeshAsset()->GenerateSphere( pWorldCollisionShape.GetObject<TLPhysics::TCollisionSphere2D>()->GetSphere() );
+				break;
+
+			case TLMaths_ShapeRef(TBox2D):
+				GetMeshAsset()->GenerateQuad( pWorldCollisionShape.GetObject<TLPhysics::TCollisionBox2D>()->GetBox() );
+				break;
 
 			default:
 			{

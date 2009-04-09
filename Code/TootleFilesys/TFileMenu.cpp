@@ -139,7 +139,7 @@ SyncBool TLFileSys::TFileMenu::ImportMenuItem(TPtr<TXmlTag>& pTag,TPtr<TLAsset::
 	//	string
 	pString = pTag->GetProperty("Text");
 	if ( pString )
-		pItem->SetString( *pString );
+		pItem->SetText( *pString );
 
 	//	command ref
 	pString = pTag->GetProperty("CommandRef");

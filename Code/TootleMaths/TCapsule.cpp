@@ -5,11 +5,6 @@
 
 
 
-TLMaths::TCapsule::TCapsule() :
-	m_Line				( float3(0,0,0), float3(0,0,0) ),
-	m_Radius			( -1.f )	//	invalid
-{
-}
 
 
 //---------------------------------------------------------
@@ -186,10 +181,6 @@ void TLMaths::TCapsule::Accumulate(const TArray<float3>& Points)
 
 
 
-TLMaths::TCapsule2D::TCapsule2D() :
-	m_Radius	( -1.f )
-{
-}
 
 //---------------------------------------------------------
 //	create a capsule out of a box

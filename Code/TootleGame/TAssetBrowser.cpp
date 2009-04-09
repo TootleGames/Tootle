@@ -129,7 +129,7 @@ TPtr<TLMenu::TMenu> TLGame::TAssetBrowser::CreateMenu(TRefRef MenuRef)
 		
 		//	add a "refresh" menu command
 		pItem = pNewMenuAsset->AddMenuItem("Refresh");
-		pItem->SetString("Refresh");
+		pItem->SetText("Refresh");
 		pItem->SetMenuCommand("Refresh");
 
 		//	add a menu item for all the assets we have
@@ -140,7 +140,7 @@ TPtr<TLMenu::TMenu> TLGame::TAssetBrowser::CreateMenu(TRefRef MenuRef)
 			pItem = pNewMenuAsset->AddMenuItem( AssetRef );
 			TTempString AssetName;
 			AssetRef.GetString( AssetName );
-			pItem->SetString( AssetName );
+			pItem->SetText( AssetName );
 			pItem->SetNextMenu( AssetRef );
 		}
 
@@ -165,7 +165,7 @@ TPtr<TLMenu::TMenu> TLGame::TAssetBrowser::CreateMenu(TRefRef MenuRef)
 
 		//	add back menu option
 		pItem = pNewMenuAsset->AddMenuItem("Back");
-		pItem->SetString("Back");
+		pItem->SetText("Back");
 		pItem->SetMenuCommand("Close");
 
 		return pNewMenu;

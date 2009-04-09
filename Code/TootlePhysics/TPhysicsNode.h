@@ -95,8 +95,10 @@ public:
 	void					SetCollisionShape(TRefRef MeshRef);							//	setup polygon collision with a mesh
 	void					SetCollisionShape(const TPtr<TLMaths::TShape>& pShape);		//	setup collision shape from a shape
 	void					SetCollisionShape(const TLMaths::TSphere& Sphere);			//	setup a sphere collision
+	void					SetCollisionShape(const TLMaths::TSphere2D& Sphere);		//	setup a sphere collision
 	void					SetCollisionShape(const TLMaths::TCapsule2D& Capsule);		//	setup a capsule collision
 	void					SetCollisionShape(const TLMaths::TOblong2D& Oblong);		//	setup an oblong collision
+	void					SetCollisionShape(const TLMaths::TBox2D& Box);				//	setup an oblong collision
 	TLMaths::TTransform&	GetCollisionShapeTransform()					{	return m_Transform;	}
 	TPtr<TCollisionShape>&	GetCollisionShape()								{	return m_pCollisionShape;	}
 	

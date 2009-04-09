@@ -25,6 +25,7 @@ namespace TLPhysics
 
 	class TCollisionShape;			//	base collision type
 	class TCollisionSphere;			//	sphere collision shape
+	class TCollisionSphere2D;		//	sphere collision shape
 	class TCollisionBox;			//	box collision shape
 	class TCollisionBox2D;			//	2D box collision shape
 	class TCollisionOblong2D;		//	2D oblong box collision shape
@@ -140,6 +141,29 @@ protected:
 
 protected:
 	TLMaths::TSphere				m_Sphere;	//	sphere collision object
+};
+
+
+
+class TLPhysics::TCollisionSphere2D : public TLPhysics::TCollisionShape
+{
+public:
+	TCollisionSphere2D()															{}
+	TCollisionSphere2D(const TLMaths::TSphere2D& Sphere) : m_Sphere ( Sphere )		{}
+
+	virtual const TRef				GetShapeType() const						{	return TLMaths_ShapeRef(TSphere2D);	}
+
+	void							SetSphere(const TLMaths::TSphere2D& Sphere)	{	m_Sphere = Sphere;	}
+	const TLMaths::TSphere2D&		GetSphere() const							{	return m_Sphere;	}
+	virtual Bool					IsValid() const								{	return GetSphere().IsValid();	}
+	virtual float3					GetCenter() const							{	return GetSphere().GetPos();	}
+
+	virtual TPtr<TCollisionShape>	Transform(const TLMaths::TTransform& Transform,TPtr<TLPhysics::TCollisionShape>& pThis,TPtr<TLPhysics::TCollisionShape>& pOldShape);
+
+protected:
+
+protected:
+	TLMaths::TSphere2D				m_Sphere;	//	sphere collision object
 };
 
 

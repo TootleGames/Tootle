@@ -27,7 +27,9 @@ namespace TLMaths
 class TLMaths::TCapsule
 {
 public:
-	TCapsule();
+	TCapsule() : m_Radius ( -1.f )													{	}	//	invalid
+	TCapsule(const TLine2D& Line,float Radius) : m_Line ( Line ), m_Radius ( Radius )	{	}
+	TCapsule(const float3& Start,const float3& End,float Radius) : m_Line ( Start, End ), m_Radius ( Radius )	{	}
 
 	static TRef		GetTypeRef()											{	return TLMaths_ShapeRef(TCapsule);	}
 
@@ -85,7 +87,9 @@ protected:
 class TLMaths::TCapsule2D
 {
 public:
-	TCapsule2D();
+	TCapsule2D() : m_Radius ( -1.f )													{	}	//	invalid
+	TCapsule2D(const TLine2D& Line,float Radius) : m_Line ( Line ), m_Radius ( Radius )	{	}
+	TCapsule2D(const float2& Start,const float2& End,float Radius) : m_Line ( Start, End ), m_Radius ( Radius )	{	}
 
 	static TRef		GetTypeRef()											{	return TLMaths_ShapeRef(TCapsule2D);	}
 

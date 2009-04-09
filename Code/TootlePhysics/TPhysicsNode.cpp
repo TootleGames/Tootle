@@ -520,8 +520,10 @@ void TLPhysics::TPhysicsNode::SetCollisionShape(const TPtr<TLMaths::TShape>& pSh
 	switch ( pShape->GetShapeType().GetData() )
 	{
 		case TLMaths_ShapeRef_TSphere:		SetCollisionShape( pShape.GetObject<TLMaths::TShapeSphere>()->GetSphere() );	break;
+		case TLMaths_ShapeRef_TSphere2D:	SetCollisionShape( pShape.GetObject<TLMaths::TShapeSphere2D>()->GetSphere() );	break;
 		case TLMaths_ShapeRef_TOblong2D:	SetCollisionShape( pShape.GetObject<TLMaths::TShapeOblong2D>()->GetOblong() );	break;
 		case TLMaths_ShapeRef_TCapsule2D:	SetCollisionShape( pShape.GetObject<TLMaths::TShapeCapsule2D>()->GetCapsule() );	break;
+		case TLMaths_ShapeRef_TBox2D:		SetCollisionShape( pShape.GetObject<TLMaths::TShapeBox2D>()->GetBox() );	break;
 
 		default:
 		{
@@ -552,6 +554,23 @@ void TLPhysics::TPhysicsNode::SetCollisionShape(const TLMaths::TSphere& Sphere)
 
 
 //----------------------------------------------------------
+//	setup a sphere collision shape
+//----------------------------------------------------------
+void TLPhysics::TPhysicsNode::SetCollisionShape(const TLMaths::TSphere2D& Sphere)
+{
+	//	todo: see if it's already a sphere and just update it
+	TPtr<TCollisionSphere2D> pCollisionSphere = new TCollisionSphere2D;
+	m_pCollisionShape = pCollisionSphere;
+	pCollisionSphere->SetSphere( Sphere );
+
+	//	invalidate zone
+	SetCollisionZoneNeedsUpdate();
+
+	SetWorldCollisionShapeInvalid();
+}
+
+
+//----------------------------------------------------------
 //	setup an oblong collision shape
 //----------------------------------------------------------
 void TLPhysics::TPhysicsNode::SetCollisionShape(const TLMaths::TOblong2D& Oblong)
@@ -565,6 +584,23 @@ void TLPhysics::TPhysicsNode::SetCollisionShape(const TLMaths::TOblong2D& Oblong
 
 	SetWorldCollisionShapeInvalid();
 }
+
+
+//----------------------------------------------------------
+//	setup an box collision shape
+//----------------------------------------------------------
+void TLPhysics::TPhysicsNode::SetCollisionShape(const TLMaths::TBox2D& Box)
+{
+	//	todo: see if it's already an oblong and just update it
+	TPtr<TCollisionBox2D> pCollisionShape = new TCollisionBox2D( Box );
+	m_pCollisionShape = pCollisionShape;
+
+	//	invalidate zone
+	SetCollisionZoneNeedsUpdate();
+
+	SetWorldCollisionShapeInvalid();
+}
+
 
 //----------------------------------------------------------
 //	setup a capsule collision shape

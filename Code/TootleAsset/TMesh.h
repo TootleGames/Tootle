@@ -92,6 +92,7 @@ public:
 	void					GenerateCapsule(const TLMaths::TCapsule& Capsule,const TColour* pColour=NULL);	//	generate a capsule
 	void					GenerateCapsule(const TLMaths::TCapsule2D& Capsule,const TColour& Colour,float z=0.f)			{	GenerateCapsule( Capsule, &Colour, z );	}
 	void					GenerateCapsule(const TLMaths::TCapsule2D& Capsule,const TColour* pColour=NULL,float z=0.f);	//	generate a capsule
+	void					GenerateCapsuleOutline(const TLMaths::TCapsule2D& Capsule,const TColour* pColour=NULL,float z=0.f);	//	generate a capsule
 
 	void					GenerateLine(const TLMaths::TLine& LineShape,const TColour& Colour)									{	GenerateLine( LineShape.GetStart(), LineShape.GetEnd(), &Colour, &Colour );	}
 	void					GenerateLine(const TLMaths::TLine& LineShape,const TColour* pColour=NULL)							{	GenerateLine( LineShape.GetStart(), LineShape.GetEnd(), pColour, pColour );	}
