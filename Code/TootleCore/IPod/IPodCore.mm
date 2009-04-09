@@ -134,11 +134,9 @@ void TLCore::Platform::QueryLanguageInformation(TBinaryTree& Data)
 
 	//Convert the string to a TRef version so we don't need to pass a string around
 	const char* pString = [preferredLang UTF8String];
-	
-#ifdef _DEBUG	
+
 	TTempString languagestr(pString);
 	TLDebug_Print(languagestr);
-#endif
 
 	// Test the preferredLang and store our TRef version in the data tree
 	// Default to english
