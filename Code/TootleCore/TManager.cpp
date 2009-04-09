@@ -9,35 +9,15 @@ void TManager::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	switch ( Message.GetMessageRef().GetData() )
 	{
-		case TRef_Static(I,n,i,t,i):
-		{
-			// Check to see if the manager is ready - no need to call init anymore if so
-			// Errors should be picked up at a higher level and the app should bail out
-			if(GetState() == TLManager::S_Ready)
-				return;
-
-			SyncBool Result = Initialise();
-			
-			if(Result == SyncFalse)
-			{
-				TLCore::Platform::DoQuit();
-
-				SetState(TLManager::S_Error);
-			}
-			else if (Result == SyncWait)
-				SetState(TLManager::S_Initialising);
-			else
-				SetState(TLManager::S_Ready);
-		}
-		break;
-
 		case TRef_Static(U,p,d,a,t):
 		{
 			//	get timestep
 			float ThisTimestep = 0.f;
 			float fThisTimeStepModifier = 1.0f;
-			Message.ImportData( TLCore::TimeStepRef, ThisTimestep );
-			Message.ImportData( TLCore::TimeStepModRef, fThisTimeStepModifier );
+			//Message.ImportData( TLCore::TimeStepRef, ThisTimestep );
+			//Message.ImportData( TLCore::TimeStepModRef, fThisTimeStepModifier );
+			Message.Read( ThisTimestep );
+			Message.Read( fThisTimeStepModifier );
 			
 			// Check to see if this manager uses the modifier.  If so apply it tot he timestep now
 			//if()
@@ -53,6 +33,47 @@ void TManager::ProcessMessage(TLMessaging::TMessage& Message)
 			{
 				TLCore::Platform::DoQuit();
 				SetState(TLManager::S_Error);
+			}
+		}
+		break;
+			
+		case TRef_Static(I,n,i,t,i):
+		{
+			// Check to see if the manager is ready - no need to call init anymore if so
+			// Errors should be picked up at a higher level and the app should bail out
+			if(GetState() == TLManager::S_Ready)
+				return;
+			
+			SyncBool Result = Initialise();
+			
+			if(Result == SyncFalse)
+			{
+				TLCore::Platform::DoQuit();
+				
+				SetState(TLManager::S_Error);
+			}
+			else if (Result == SyncWait)
+				SetState(TLManager::S_Initialising);
+			else
+				SetState(TLManager::S_Ready);
+		}
+		break;
+			
+		case TRef_Static(C,h,a,n,n):	//	"Channel"
+		{
+			// Event channel changes
+			TRef refChange;
+			Message.Read(refChange);
+			
+			if(refChange == TRef_Static(A,d,d,e,d))
+			{
+				TRef refPublisherID;
+				TRef refChannelID;
+				
+				Message.Read(refPublisherID);
+				Message.Read(refChannelID);
+				
+				OnEventChannelAdded(refPublisherID, refChannelID);
 			}
 		}
 		break;
@@ -75,24 +96,6 @@ void TManager::ProcessMessage(TLMessaging::TMessage& Message)
 		}
 		break;
 
-		case TRef_Static(C,h,a,n,n):	//	"Channel"
-		{
-			// Event channel changes
-			TRef refChange;
-			Message.Read(refChange);
-			
-			if(refChange == "Added")
-			{
-				TRef refPublisherID;
-				TRef refChannelID;
-				
-				Message.Read(refPublisherID);
-				Message.Read(refChannelID);
-			
-				OnEventChannelAdded(refPublisherID, refChannelID);
-			}
-		}
-		break;
 	}
 
 }
