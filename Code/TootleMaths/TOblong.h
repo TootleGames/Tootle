@@ -113,6 +113,7 @@ public:
 	void			SetMax(const float3& Max)					{	m_Max = Max;	m_IsValid = TRUE;	}
 */	void			SetInvalid()								{	m_IsValid = FALSE;	}
 	void			SetValid(Bool Valid=TRUE)					{	m_IsValid = Valid;	}
+	Bool&			IsValid()									{	return m_IsValid;	}
 	Bool			IsValid() const								{	return m_IsValid;	}
 /*
 	void			Accumulate(const TBox& Box);				//	accumulate other box. copies other box if this is invalid

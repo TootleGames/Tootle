@@ -427,7 +427,8 @@ void TLRender::TScreen::CreateDebugRenderTarget()
 	TRef RootRenderNode;
 	{
 		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
-		InitMessage.ExportData(TRef_Static(S,c,a,l,e), float3( 5.f, 5.f, 1.f ) );
+		InitMessage.ExportData("Scale", float3( 5.f, 5.f, 1.f ) );
+		InitMessage.ExportData("Colour", TColour( 1.f, 1.f, 1.f, 0.8f ) );
 		RootRenderNode = TLRender::g_pRendergraph->CreateNode( "root", TRef(), TRef(), &InitMessage );
 		pRenderTarget->SetRootRenderNode( RootRenderNode );
 	}

@@ -28,6 +28,7 @@ void TLRender::TRenderNodePhysicsNode::Initialise(TLMessaging::TMessage& Message
 	//	default debuggy flags
 //	GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::Debug_Wireframe );
 	GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::Debug_ColourWireframe );
+	GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::Debug_Position );
 
 	//	physics info is in world space
 	GetRenderFlags().Set( TLRender::TRenderNode::RenderFlags::ResetScene );
@@ -77,8 +78,8 @@ SyncBool TLRender::TRenderNodePhysicsNode::SubscribeToPhysicsNode()
 	if ( !m_PhysicsNodeRef.IsValid() )
 		return SyncFalse;
 
-	//	find node
-	TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef );
+	//	find node - gr: don't search the request queue, we only want nodes that have been initialised
+	TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef, FALSE );
 
 	//	didnt find node, subscribe to the graph so we catch when it is created
 	if ( !pPhysicsNode )
@@ -164,7 +165,18 @@ void TLRender::TRenderNodePhysicsNode::OnPhysicsNodeChanged(TLPhysics::TPhysicsN
 	//	clean up old mesh
 	GetMeshAsset()->Empty();
 
+	/*
+	//	draw position
+	float3 Pos = PhysicsNode.GetPosition();
+#define CROSS_SIZE	3.f
+	TLMaths::TLine LineA( float3( Pos.x - CROSS_SIZE, Pos.y - CROSS_SIZE, Pos.z ), float3( Pos.x + CROSS_SIZE, Pos.y + CROSS_SIZE, Pos.z ) );
+	TLMaths::TLine LineB( float3( Pos.x + CROSS_SIZE, Pos.y - CROSS_SIZE, Pos.z ), float3( Pos.x - CROSS_SIZE, Pos.y + CROSS_SIZE, Pos.z ) );
+	GetMeshAsset()->GenerateLine( LineA, COLLISION_SHAPE_COLOUR );
+	GetMeshAsset()->GenerateLine( LineB, COLLISION_SHAPE_COLOUR );
+	*/
+
 	//	get the shape
+	PhysicsNode.CalcWorldCollisionShape();
 	const TPtr<TLPhysics::TCollisionShape>& pWorldCollisionShape = PhysicsNode.GetWorldCollisionShape();
 
 	//	draw a mesh of the shape
@@ -172,23 +184,32 @@ void TLRender::TRenderNodePhysicsNode::OnPhysicsNodeChanged(TLPhysics::TPhysicsN
 	{
 		TRef CollisionShapeType = pWorldCollisionShape->GetShapeType();
 
-		if ( CollisionShapeType == TLMaths::TCapsule2D::GetTypeRef() )
+		switch ( CollisionShapeType.GetData() )
 		{
-			GetMeshAsset()->GenerateCapsule( pWorldCollisionShape.GetObject<TLPhysics::TCollisionCapsule2D>()->GetCapsule(), COLLISION_SHAPE_COLOUR );
-		}
-		else
-		{
-			TTempString Debug_String("Unsupported shape type ");
-			CollisionShapeType.GetString( Debug_String );
-			TLDebug_Break( Debug_String );
-		}
+			case TLMaths_ShapeRef(TCapsule2D):
+				GetMeshAsset()->GenerateCapsule( pWorldCollisionShape.GetObject<TLPhysics::TCollisionCapsule2D>()->GetCapsule() );
+				break;
 
-		float3 Pos = PhysicsNode.GetPosition();
-#define CROSS_SIZE	3.f
-		TLMaths::TLine LineA( float3( Pos.x - CROSS_SIZE, Pos.y - CROSS_SIZE, Pos.z ), float3( Pos.x + CROSS_SIZE, Pos.y + CROSS_SIZE, Pos.z ) );
-		TLMaths::TLine LineB( float3( Pos.x + CROSS_SIZE, Pos.y - CROSS_SIZE, Pos.z ), float3( Pos.x - CROSS_SIZE, Pos.y + CROSS_SIZE, Pos.z ) );
-		GetMeshAsset()->GenerateLine( LineA, COLLISION_SHAPE_COLOUR );
-		GetMeshAsset()->GenerateLine( LineB, COLLISION_SHAPE_COLOUR );
+		//	case TLMaths_ShapeRef(TCapsule):
+		//		GetMeshAsset()->GenerateCapsule( pWorldCollisionShape.GetObject<TLPhysics::TCollisionCapsule>()->GetCapsule() );
+		//	break;
+
+			case TLMaths_ShapeRef(TSphere):
+				GetMeshAsset()->GenerateSphere( pWorldCollisionShape.GetObject<TLPhysics::TCollisionSphere>()->GetSphere(), NULL, FALSE );
+				break;
+
+		//	case TLMaths_ShapeRef(TSphere2D):
+		//		GetMeshAsset()->GenerateSphere( pWorldCollisionShape.GetObject<TLPhysics::TCollisionSphere2D>()->GetSphere() );
+		//		break;
+
+			default:
+			{
+				TTempString Debug_String("Unsupported shape type ");
+				CollisionShapeType.GetString( Debug_String );
+				TLDebug_Break( Debug_String );
+			}
+			break;
+		}
 	}
 
 

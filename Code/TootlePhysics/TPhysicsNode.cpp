@@ -138,24 +138,21 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 		}
 	}
 
-	if ( Message.ImportData(TRef_Static(T,r,a,n,s), m_Transform.GetTranslate() ) == SyncTrue )
+
+	//	read collision shape
+	TPtr<TBinaryTree>& pColShapeData = Message.GetChild("Colshape");
+	if ( pColShapeData )
 	{
-		m_Transform.SetTranslateValid();
-		OnTranslationChanged();
+		pColShapeData->ResetReadPos();
+		TPtr<TLMaths::TShape> pCollisionShape = TLMaths::ImportShapeData( *pColShapeData );
+		if ( pCollisionShape )
+			SetCollisionShape( pCollisionShape );		
 	}
 
-	if ( Message.ImportData(TRef_Static(S,c,a,l,e), m_Transform.GetScale() ) == SyncTrue )
-	{
-		m_Transform.SetScaleValid();
-		OnScaleChanged();
-	}
-
-	if ( Message.ImportData(TRef_Static(R,o,t,a,t), m_Transform.GetRotation() ) == SyncTrue )
-	{
-		m_Transform.SetRotationValid();
-		OnRotationChanged();
-	}
-
+	//	read transform
+	u8 TransformChanges = m_Transform.ImportData( Message );
+	OnTransformChanged( TransformChanges );
+	
 	//	broadcast changes in transform NOW
 	PublishTransformChanges();
 
@@ -513,6 +510,29 @@ void TLPhysics::TPhysicsNode::SetCollisionShape(TRefRef MeshRef)
 
 	SetWorldCollisionShapeInvalid();
 }
+
+	
+//----------------------------------------------------------
+//	setup collision shape from a shape
+//----------------------------------------------------------
+void TLPhysics::TPhysicsNode::SetCollisionShape(const TPtr<TLMaths::TShape>& pShape)
+{
+	switch ( pShape->GetShapeType().GetData() )
+	{
+		case TLMaths_ShapeRef_TSphere:		SetCollisionShape( pShape.GetObject<TLMaths::TShapeSphere>()->GetSphere() );	break;
+		case TLMaths_ShapeRef_TOblong2D:	SetCollisionShape( pShape.GetObject<TLMaths::TShapeOblong2D>()->GetOblong() );	break;
+		case TLMaths_ShapeRef_TCapsule2D:	SetCollisionShape( pShape.GetObject<TLMaths::TShapeCapsule2D>()->GetCapsule() );	break;
+
+		default:
+		{
+			TTempString Debug_String("Unhandled collison shape in Physics node: ");
+			pShape->GetShapeType().GetString( Debug_String );
+			TLDebug_Break( Debug_String );
+		}
+		break;
+	};
+}
+
 
 //----------------------------------------------------------
 //	setup a sphere collision shape

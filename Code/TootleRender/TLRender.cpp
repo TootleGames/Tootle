@@ -369,6 +369,20 @@ Bool TLRender::Opengl::BindUVs(const TArray<float2>* pUVs)
 	if ( pUVs == g_pBoundUVs )
 		return TRUE;
 
+	//	check vertex count before binding
+#ifdef _DEBUG
+	if ( pUVs )
+	{
+		u32 BoundVertCount = g_pBoundsVerts ? g_pBoundsVerts->GetSize() : 0;
+		if ( pUVs->GetSize() != BoundVertCount )
+		{
+			TLDebug_Break("Binding more/less uv's than vertex positions - corrupt mesh?");
+			pUVs = NULL;
+		}
+	}
+#endif
+
+	//	assign as new bound data
 	g_pBoundUVs = pUVs;
 
 	//	unbind
@@ -401,6 +415,20 @@ Bool TLRender::Opengl::BindColours(const TArray<TColour>* pColours)
 	if ( pColours == g_pBoundColours )
 		return TRUE;
 
+	//	check vertex count before binding
+#ifdef _DEBUG
+	if ( pUVs )
+	{
+		u32 BoundVertCount = g_pBoundsVerts ? g_pBoundsVerts->GetSize() : 0;
+		if ( pUVs->GetSize() != BoundVertCount )
+		{
+			TLDebug_Break("Binding more/less colours than vertex positions - corrupt mesh?");
+			pUVs = NULL;
+		}
+	}
+#endif
+
+	//	assign as new bound data	
 	g_pBoundColours = pColours;
 
 	//	unbind
@@ -433,6 +461,20 @@ Bool TLRender::Opengl::BindColours(const TArray<TColour24>* pColours)
 	if ( pColours == g_pBoundColours )
 		return TRUE;
 
+	//	check vertex count before binding
+#ifdef _DEBUG
+	if ( pUVs )
+	{
+		u32 BoundVertCount = g_pBoundsVerts ? g_pBoundsVerts->GetSize() : 0;
+		if ( pUVs->GetSize() != BoundVertCount )
+		{
+			TLDebug_Break("Binding more/less colours than vertex positions - corrupt mesh?");
+			pUVs = NULL;
+		}
+	}
+#endif
+
+	//	assign as new bound data	
 	g_pBoundColours = pColours;
 
 	//	unbind
@@ -463,6 +505,21 @@ Bool TLRender::Opengl::BindColours(const TArray<TColour32>* pColours)
 	if ( pColours == g_pBoundColours )
 		return TRUE;
 
+
+	//	check vertex count before binding
+#ifdef _DEBUG
+	if ( pUVs )
+	{
+		u32 BoundVertCount = g_pBoundsVerts ? g_pBoundsVerts->GetSize() : 0;
+		if ( pUVs->GetSize() != BoundVertCount )
+		{
+			TLDebug_Break("Binding more/less colours than vertex positions - corrupt mesh?");
+			pUVs = NULL;
+		}
+	}
+#endif
+
+	//	assign as new bound data	
 	g_pBoundColours = pColours;
 
 	//	unbind
@@ -494,7 +551,6 @@ Bool TLRender::Opengl::BindVertexes(const TArray<float3>* pVertexes)
 	if ( pVertexes == g_pBoundVertexes )
 		return TRUE;
 	
-//	g_pBoundFixedVertexes = NULL;
 	g_pBoundVertexes = pVertexes;
 	
 	//	unbind

@@ -83,15 +83,15 @@ public:
 	void					GenerateCube(const TLMaths::TBox& Box);				//	generate a cube mesh from a math box
 
 	void					GenerateSphere(float Radius,const float3& Center=float3(0,0,0));		//	generate a sphere
-	void					GenerateSphere(const TLMaths::TSphere& Sphere,const TColour& Colour)		{	GenerateSphere( Sphere, &Colour );	}
-	void					GenerateSphere(const TLMaths::TSphere& Sphere,const TColour* pColour=NULL);		//	generate a sphere
+	void					GenerateSphere(const TLMaths::TSphere& Sphere,const TColour* pColour=NULL,Bool GenerateUVs=FALSE);		//	generate a sphere
 	void					GenerateSphereOutline(const TLMaths::TSphere2D& Sphere,const TColour* pColour=NULL,float z=0.f);	//	generate a 2D spehere (x/y) out of lines
 	void					GenerateSphere(const TLMaths::TSphere2D& Sphere,const TColour* pColour=NULL,float z=0.f);	//	generate a 2D spehere (x/y)
 
 	void					GenerateCapsule(float Radius,const float3& Start,const float3& End,const TColour& Colour);	//	generate a capsule
 	void					GenerateCapsule(const TLMaths::TCapsule& Capsule,const TColour& Colour)			{	GenerateCapsule( Capsule, &Colour );	}
 	void					GenerateCapsule(const TLMaths::TCapsule& Capsule,const TColour* pColour=NULL);	//	generate a capsule
-	void					GenerateCapsule(const TLMaths::TCapsule2D& Capsule,const TColour& Colour,float z=0.f);	//	generate a capsule
+	void					GenerateCapsule(const TLMaths::TCapsule2D& Capsule,const TColour& Colour,float z=0.f)			{	GenerateCapsule( Capsule, &Colour, z );	}
+	void					GenerateCapsule(const TLMaths::TCapsule2D& Capsule,const TColour* pColour=NULL,float z=0.f);	//	generate a capsule
 
 	void					GenerateLine(const TLMaths::TLine& LineShape,const TColour& Colour)									{	GenerateLine( LineShape.GetStart(), LineShape.GetEnd(), &Colour, &Colour );	}
 	void					GenerateLine(const TLMaths::TLine& LineShape,const TColour* pColour=NULL)							{	GenerateLine( LineShape.GetStart(), LineShape.GetEnd(), pColour, pColour );	}
@@ -209,7 +209,7 @@ protected:
 	virtual SyncBool		ExportData(TBinaryTree& Data);		//	save asset data to binary data
 
 	Bool					ImportDatum(TBinaryTree& Data);
-	Bool					ExportDatum(TBinaryTree& Data,TRefRef DatumRef,TPtr<TLMaths::TShape>& pShape);
+	Bool					ExportDatum(TBinaryTree& Data,TRefRef DatumRef,TLMaths::TShape& Shape);
 
 	void					CalcHasAlpha();						//	loop through colours to check if we have any alpha colours in the verts
 	void					PadColours();						//	ensure number of colours matches number of vertexes. Also adds missing 24/32 bit colours

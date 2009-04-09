@@ -201,7 +201,7 @@ void TLAsset::TMesh::GenerateCapsule(float Radius,const float3& Start,const floa
 //-------------------------------------------------------
 //	generate a sphere
 //-------------------------------------------------------
-void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere& Sphere,const TColour* pColour)
+void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere& Sphere,const TColour* pColour,Bool GenerateUVs)
 {
 	u32 SegmentCount = TLAsset::TLMesh::GetSphereSegmentCount( Sphere.GetRadius() );
 	Type2<u32> Segments( SegmentCount, SegmentCount );
@@ -241,21 +241,21 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere& Sphere,const TColour
 			float3& v3 = Verts[vi[2]];
 			float3& v4 = Verts[vi[3]];
 						
-			v1.x = (float)sinf( fx * ( PI * 2.f )) * (float)sinf( fy * PI );
-			v1.y = (float)cosf( fy * ( PI * 1.f ));
-			v1.z = (float)cosf( fx * ( PI * 2.f )) * (float)sinf( fy * PI );
+			v1.x = TLMaths::Sinf( fx * ( PI * 2.f )) * TLMaths::Sinf( fy * PI );
+			v1.y = TLMaths::Cosf( fy * ( PI * 1.f ));
+			v1.z = TLMaths::Cosf( fx * ( PI * 2.f )) * TLMaths::Sinf( fy * PI );
 
-			v2.x = (float)sinf( fx1 * ( PI * 2.f )) * (float)sinf( fy * PI );
-			v2.y = (float)cosf( fy * ( PI * 1.f ));
-			v2.z = (float)cosf( fx1 * ( PI * 2.f )) * (float)sinf( fy * PI );
+			v2.x = TLMaths::Sinf( fx1 * ( PI * 2.f )) * TLMaths::Sinf( fy * PI );
+			v2.y = TLMaths::Cosf( fy * ( PI * 1.f ));
+			v2.z = TLMaths::Cosf( fx1 * ( PI * 2.f )) * TLMaths::Sinf( fy * PI );
 
-			v3.x = (float)sinf( fx1 * ( PI * 2.f )) * (float)sinf( fy1 * PI );
-			v3.y = (float)cosf( fy1 * ( PI * 1.f ));
-			v3.z = (float)cosf( fx1 * ( PI * 2.f )) * (float)sinf( fy1 * PI );
+			v3.x = TLMaths::Sinf( fx1 * ( PI * 2.f )) * TLMaths::Sinf( fy1 * PI );
+			v3.y = TLMaths::Cosf( fy1 * ( PI * 1.f ));
+			v3.z = TLMaths::Cosf( fx1 * ( PI * 2.f )) * TLMaths::Sinf( fy1 * PI );
 
-			v4.x = (float)sinf( fx * ( PI * 2.f )) * (float)sinf( fy1 * PI );
-			v4.y = (float)cosf( fy1 * ( PI * 1.f ));
-			v4.z = (float)cosf( fx * ( PI * 2.f )) * (float)sinf( fy1 * PI );
+			v4.x = TLMaths::Sinf( fx * ( PI * 2.f )) * TLMaths::Sinf( fy1 * PI );
+			v4.y = TLMaths::Cosf( fy1 * ( PI * 1.f ));
+			v4.z = TLMaths::Cosf( fx * ( PI * 2.f )) * TLMaths::Sinf( fy1 * PI );
 
 			Normals[vi[0]] = v1;
 			Normals[vi[1]] = v2;
@@ -286,12 +286,23 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere& Sphere,const TColour
 	}
 
 	
-	//	correct colour usage
+	//	add vertexes FIRST as colours are padded/culled to the vertex count
+	m_Vertexes.Add( Verts );
+
+	//	correct colour usage and add colours
 	pColour = GetGenerationColour( pColour );
 	if ( pColour )
+	{
 		AddColour( *pColour, Segments.x * Segments.y );
+	}
+	
+	//	if the mesh already has UV's then we must add them
+	if ( GenerateUVs || (HasUVs() == SyncTrue) )
+	{
+		m_UVs.Add( TextureUV );
+		PadUVs();
+	}
 
-	m_Vertexes.Add( Verts );
 
 	OnPrimitivesChanged();
 }
@@ -375,7 +386,7 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere2D& Sphere,const TColo
 //-------------------------------------------------------
 //	generate a capsule
 //-------------------------------------------------------
-void TLAsset::TMesh::GenerateCapsule(const TLMaths::TCapsule2D& Capsule,const TColour& Colour,float z)
+void TLAsset::TMesh::GenerateCapsule(const TLMaths::TCapsule2D& Capsule,const TColour* pColour,float z)
 {
 	const TLMaths::TLine2D& CapsuleLine = Capsule.GetLine();
 	TFixedArray<float3,2> Line(2);
@@ -388,12 +399,12 @@ void TLAsset::TMesh::GenerateCapsule(const TLMaths::TCapsule2D& Capsule,const TC
 	TLMaths::ExpandLineStrip( Line, Capsule.GetRadius()*2.f, LineOutside, LineInside );
 
 	//	draw the capsule's outlines
-	GenerateLine( LineOutside, Colour );
-	GenerateLine( LineInside, Colour );
+	GenerateLine( LineOutside, pColour );
+	GenerateLine( LineInside, pColour );
 
 	//	draw a sphere at each end of the capsule
-	GenerateSphereOutline( TLMaths::TSphere2D( CapsuleLine.GetStart(), Capsule.GetRadius() ), &Colour, z );
-	GenerateSphereOutline( TLMaths::TSphere2D( CapsuleLine.GetEnd(), Capsule.GetRadius() ), &Colour, z );
+	GenerateSphereOutline( TLMaths::TSphere2D( CapsuleLine.GetStart(), Capsule.GetRadius() ), pColour, z );
+	GenerateSphereOutline( TLMaths::TSphere2D( CapsuleLine.GetEnd(), Capsule.GetRadius() ), pColour, z );
 }
 
 
@@ -585,13 +596,14 @@ SyncBool TLAsset::TMesh::ExportData(TBinaryTree& Data)
 	//	export datums
 	for ( u32 i=0;	i<m_Datums.GetSize();	i++ )
 	{
-		TLKeyArray::TPair<TRef,TPtr<TLMaths::TShape> >& Datum = m_Datums.GetPairAt(i);
+		TRefRef DatumRef = m_Datums.GetKeyAt(i);
+		TPtr<TLMaths::TShape>& pDatumShape = m_Datums.GetItemAt(i);
 
 		//	create child data
 		TPtr<TBinaryTree>& DatumData = Data.AddChild("Datum");
 
 		//	export
-		if ( !ExportDatum( *DatumData, Datum.m_Key, Datum.m_Item ) )
+		if ( !ExportDatum( *DatumData, DatumRef, *pDatumShape ) )
 			return SyncFalse;
 	}
 
@@ -1474,138 +1486,29 @@ Bool TLAsset::TMesh::ImportDatum(TBinaryTree& Data)
 	if ( !Data.Read( DatumRef ) )
 		return FALSE;
 
-	//	read type of shape
-	TRef ShapeRef;
-	if ( !Data.Read( ShapeRef ) )
+	//	import shape
+	TPtr<TLMaths::TShape> pShape = TLMaths::ImportShapeData( Data );
+	if ( !pShape )
 		return FALSE;
 
-	//	import specific shape
-	if ( ShapeRef == TLMaths::TSphere2D::GetTypeRef() )
-	{
-		TLMaths::TSphere2D Shape;
-		if ( !Data.Read( Shape ) )
-			return FALSE;
-		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeSphere2D( Shape );
-		AddDatum( DatumRef, pShape );
-		return TRUE;
-	}
-	else if ( ShapeRef == TLMaths::TSphere::GetTypeRef() )
-	{
-		TLMaths::TSphere Shape;
-		if ( !Data.Read( Shape ) )
-			return FALSE;
-		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeSphere( Shape );
-		AddDatum( DatumRef, pShape );
-		return TRUE;
-	}
-	else if ( ShapeRef == TLMaths::TOblong2D::GetTypeRef() )
-	{
-		TLMaths::TOblong2D Shape;
-		Bool IsValid;
-		if ( !Data.Read( IsValid ) )
-			return FALSE;
-		Shape.SetValid( IsValid );
-		if ( !Data.ReadArray( Shape.GetBoxCorners() ) )
-			return FALSE;
-		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeOblong2D( Shape );
-		AddDatum( DatumRef, pShape );
-		return TRUE;
-	}
-	else if ( ShapeRef == TLMaths::TCapsule2D::GetTypeRef() )
-	{
-		TLMaths::TCapsule2D Shape;
-		if ( !Data.Read( Shape ) )
-			return FALSE;
-		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeCapsule2D( Shape );
-		AddDatum( DatumRef, pShape );
-		return TRUE;
-	}
-	else if ( ShapeRef == TLMaths::TBox::GetTypeRef() )
-	{
-		TLMaths::TBox Shape;
-		if ( !Data.Read( Shape ) )
-			return FALSE;
-		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeBox( Shape );
-		AddDatum( DatumRef, pShape );
-		return TRUE;
-	}
-	else if ( ShapeRef == TLMaths::TBox2D::GetTypeRef() )
-	{
-		TLMaths::TBox2D Shape;
-		if ( !Data.Read( Shape ) )
-			return FALSE;
-		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeBox2D( Shape );
-		AddDatum( DatumRef, pShape );
-		return TRUE;
-	}
+	//	add datum
+	AddDatum( DatumRef, pShape );
 
-#ifdef _DEBUG
-	TTempString Debug_String("Unknown datum shape type ");
-	ShapeRef.GetString( Debug_String );
-	TLDebug_Break(Debug_String);
-#endif
-
-	return FALSE;
+	return TRUE;
 }
 
 //--------------------------------------------------------
 //	
 //--------------------------------------------------------
-Bool TLAsset::TMesh::ExportDatum(TBinaryTree& Data,TRefRef DatumRef,TPtr<TLMaths::TShape>& pShape)
+Bool TLAsset::TMesh::ExportDatum(TBinaryTree& Data,TRefRef DatumRef,TLMaths::TShape& Shape)
 {
-	TRefRef ShapeRef = pShape->GetShapeType();
+	TRefRef ShapeRef = Shape.GetShapeType();
 
 	//	write ref
 	Data.Write( DatumRef );
 
-	//	write type of shape
-	Data.Write( ShapeRef );
-
-	//	export specific data
-	if ( ShapeRef == TLMaths::TSphere2D::GetTypeRef() )
-	{
-		const TLMaths::TSphere2D& Shape = pShape.GetObject<TLMaths::TShapeSphere2D>()->GetSphere();
-		Data.Write( Shape );
-		return TRUE;
-	}
-	else if ( ShapeRef == TLMaths::TSphere::GetTypeRef() )
-	{
-		const TLMaths::TSphere& Shape = pShape.GetObject<TLMaths::TShapeSphere>()->GetSphere();
-		Data.Write( Shape );
-		return TRUE;
-	}
-	else if ( ShapeRef == TLMaths::TOblong2D::GetTypeRef() )
-	{
-		const TLMaths::TOblong2D& Shape = pShape.GetObject<TLMaths::TShapeOblong2D>()->GetOblong();
-		Data.Write( Shape.IsValid() );
-		Data.WriteArray( Shape.GetBoxCorners() );
-		return TRUE;
-	}
-	else if ( ShapeRef == TLMaths::TCapsule2D::GetTypeRef() )
-	{
-		const TLMaths::TCapsule2D& Shape = pShape.GetObject<TLMaths::TShapeCapsule2D>()->GetCapsule();
-		Data.Write( Shape );
-		return TRUE;
-	}
-	else if ( ShapeRef == TLMaths::TBox::GetTypeRef() )
-	{
-		const TLMaths::TBox& Shape = pShape.GetObject<TLMaths::TShapeBox>()->GetBox();
-		Data.Write( Shape );
-		return TRUE;
-	}
-	else if ( ShapeRef == TLMaths::TBox2D::GetTypeRef() )
-	{
-		const TLMaths::TBox2D& Shape = pShape.GetObject<TLMaths::TShapeBox2D>()->GetBox();
-		Data.Write( Shape );
-		return TRUE;
-	}
-
-#ifdef _DEBUG
-	TTempString Debug_String("Unknown datum shape type ");
-	ShapeRef.GetString( Debug_String );
-	TLDebug_Break(Debug_String);
-#endif
-	return FALSE;
+	//	write shape
+	return TLMaths::ExportShapeData( Data, Shape );
 }
 
 

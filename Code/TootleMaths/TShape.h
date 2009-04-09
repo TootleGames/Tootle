@@ -9,6 +9,7 @@
 #include "TBox.h"
 #include "TOblong.h"
 #include "TCapsule.h"
+#include <TootleCore/TPtr.h>
 
 
 namespace TLMaths
@@ -22,7 +23,11 @@ namespace TLMaths
 	class TShapeBox2D;		//	box shape
 
 	class TIntersection;	//	resulting intersection information of two shapes
-}
+
+	TPtr<TShape>			ImportShapeData(TBinaryTree& Data);							//	create a shape type from TBinaryData
+	Bool					ExportShapeData(TBinaryTree& Data,const TLMaths::TShape& Shape);	//	export shape to data
+	TPtr<TShape>			CreateShapeType(TRefRef ShapeType);							//	create shape instance from ref
+};
 
 
 
@@ -46,6 +51,9 @@ protected:
 
 class TLMaths::TShape
 {
+	friend TPtr<TShape>	TLMaths::ImportShapeData(TBinaryTree& Data);
+	friend Bool			TLMaths::ExportShapeData(TBinaryTree& Data,const TLMaths::TShape& Shape);	
+
 public:
 	TShape()															{	}
 	virtual ~TShape()													{	}
@@ -58,6 +66,9 @@ public:
 	Bool							GetIntersection(TShape& OtherShape,TIntersection& Intersection);
 
 protected:
+	virtual Bool					ImportData(TBinaryTree& Data)			{	TLDebug_Break("Shape ImportData required");	return FALSE;	}
+	virtual Bool					ExportData(TBinaryTree& Data) const		{	TLDebug_Break("Shape ExportData required");	return FALSE;	}
+
 	void							Debug_BreakOverloadThis(const char* pTestType,TShape& OtherShape);
 
 protected:
@@ -92,6 +103,10 @@ public:
 	const TLMaths::TSphere2D&		GetSphere() const							{	return m_Sphere;	}
 
 protected:
+	virtual Bool					ImportData(TBinaryTree& Data);
+	virtual Bool					ExportData(TBinaryTree& Data) const;
+
+protected:
 	TLMaths::TSphere2D				m_Sphere;			//	sphere collision object
 };
 
@@ -114,6 +129,10 @@ public:
 	const TLMaths::TSphere&			GetSphere() const							{	return m_Sphere;	}
 
 protected:
+	virtual Bool					ImportData(TBinaryTree& Data);
+	virtual Bool					ExportData(TBinaryTree& Data) const;
+
+protected:
 	TLMaths::TSphere				m_Sphere;			//	sphere collision object
 };
 
@@ -131,6 +150,10 @@ public:
 	
 	void							SetOblong(const TLMaths::TOblong2D& Oblong)	{	m_Oblong = Oblong;	}
 	const TLMaths::TOblong2D&		GetOblong() const							{	return m_Oblong;	}
+
+protected:
+	virtual Bool					ImportData(TBinaryTree& Data);
+	virtual Bool					ExportData(TBinaryTree& Data) const;
 
 protected:
 	TLMaths::TOblong2D				m_Oblong;
@@ -153,6 +176,10 @@ public:
 	const TLMaths::TCapsule2D&		GetCapsule() const							{	return m_Capsule;	}
 
 protected:
+	virtual Bool					ImportData(TBinaryTree& Data);
+	virtual Bool					ExportData(TBinaryTree& Data) const;
+
+protected:
 	TLMaths::TCapsule2D				m_Capsule;
 };
 
@@ -172,6 +199,10 @@ public:
 	const TLMaths::TBox&			GetBox() const								{	return m_Box;	}
 
 protected:
+	virtual Bool					ImportData(TBinaryTree& Data);
+	virtual Bool					ExportData(TBinaryTree& Data) const;
+
+protected:
 	TLMaths::TBox					m_Box;
 };
 
@@ -188,6 +219,10 @@ public:
 	virtual float3					GetCenter() const							{	return GetBox().GetCenter();	}
 	
 	const TLMaths::TBox2D&			GetBox() const								{	return m_Box;	}
+
+protected:
+	virtual Bool					ImportData(TBinaryTree& Data);
+	virtual Bool					ExportData(TBinaryTree& Data) const;
 
 protected:
 	TLMaths::TBox2D					m_Box;

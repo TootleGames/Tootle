@@ -81,6 +81,7 @@ public:
 	void					OnForceChanged()					{	SetAccumulatedMovementInvalid();	SetWorldCollisionShapeInvalid();	}
 
 	FORCEINLINE void		OnTransformChanged(Bool TransChanged,Bool ScaleChanged,Bool RotationChanged)	{	m_TransformChangedBits |= TransChanged * TLMaths_TransformBitTranslate;	m_TransformChangedBits = ScaleChanged * TLMaths_TransformBitScale;	m_TransformChangedBits |= RotationChanged * TLMaths_TransformBitRotation;	SetWorldCollisionShapeInvalid();	}
+	FORCEINLINE void		OnTransformChanged(u8 TransformChangedBits)	{	m_TransformChangedBits |= TransformChangedBits;	}
 	FORCEINLINE void		OnTransformChangedNoPublish()		{	SetWorldCollisionShapeInvalid();	}
 	FORCEINLINE void		OnTranslationChanged()				{	m_TransformChangedBits |= TLMaths_TransformBitTranslate;	SetWorldCollisionShapeInvalid();	}
 	FORCEINLINE void		OnRotationChanged()					{	m_TransformChangedBits |= TLMaths_TransformBitRotation;		SetWorldCollisionShapeInvalid();	}
@@ -91,10 +92,11 @@ public:
 	Bool					HasCollision() const				{	return (IsEnabled() && HasCollisionFlag() && m_pCollisionShape.IsValid()) ? m_pCollisionShape->IsValid() : FALSE;	}
 	Bool					HasCollisionFlag() const			{	return m_PhysicsFlags( Flag_HasCollision );	}
 	void					SetCollisionNone()					{	m_pCollisionShape = NULL;	SetWorldCollisionShapeInvalid();	SetCollisionZoneNeedsUpdate();	}
-	void					SetCollisionShape(TRefRef MeshRef);						//	setup polygon collision with a mesh
-	void					SetCollisionShape(const TLMaths::TSphere& Sphere);		//	setup a sphere collision
-	void					SetCollisionShape(const TLMaths::TCapsule2D& Capsule);	//	setup a capsule collision
-	void					SetCollisionShape(const TLMaths::TOblong2D& Oblong);	//	setup an oblong collision
+	void					SetCollisionShape(TRefRef MeshRef);							//	setup polygon collision with a mesh
+	void					SetCollisionShape(const TPtr<TLMaths::TShape>& pShape);		//	setup collision shape from a shape
+	void					SetCollisionShape(const TLMaths::TSphere& Sphere);			//	setup a sphere collision
+	void					SetCollisionShape(const TLMaths::TCapsule2D& Capsule);		//	setup a capsule collision
+	void					SetCollisionShape(const TLMaths::TOblong2D& Oblong);		//	setup an oblong collision
 	TLMaths::TTransform&	GetCollisionShapeTransform()					{	return m_Transform;	}
 	TPtr<TCollisionShape>&	GetCollisionShape()								{	return m_pCollisionShape;	}
 	

@@ -33,7 +33,7 @@ void TLMaths::Init()
 	srand( TimeNow.GetTotalMilliSeconds() );
 
 	//	init debug colours
-	TLColour::g_Debug_Colours.Add( TColour( 1.0f, 1.0f, 1.0f ) );	//	white
+//	TLColour::g_Debug_Colours.Add( TColour( 1.0f, 1.0f, 1.0f ) );	//	white
 	TLColour::g_Debug_Colours.Add( TColour( 1.0f, 0.0f, 0.0f ) );	//	red
 	TLColour::g_Debug_Colours.Add( TColour( 0.0f, 1.0f, 0.0f ) );	//	green
 	TLColour::g_Debug_Colours.Add( TColour( 0.0f, 0.0f, 1.0f ) );	//	blue
