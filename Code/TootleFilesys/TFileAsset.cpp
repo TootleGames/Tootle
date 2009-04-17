@@ -1,14 +1,14 @@
 #include "TFileAsset.h"
 
 #ifdef _DEBUG
-#define IMPORT_CHILDREN_PER_UPDATE	10
+#define IMPORT_CHILDREN_PER_UPDATE	20
 #else
-#define IMPORT_CHILDREN_PER_UPDATE	100
+#define IMPORT_CHILDREN_PER_UPDATE	200
 #endif
 
 namespace TLFileSys
 {
-	const TRef		g_TootFileRef = "TootB";	//	serves as version type too - changing this makes old file types incompatible
+	const TRef		g_TootFileRef = TRef_Static(T,o,o,t,C);	//	serves as version type too - changing this makes old file types incompatible
 };
 
 

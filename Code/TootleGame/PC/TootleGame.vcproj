@@ -228,6 +228,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TWidgetDrag.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TWidgetDrag.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TWidgetManager.cpp"
 			>
 		</File>

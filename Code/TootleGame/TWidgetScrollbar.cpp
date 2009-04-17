@@ -24,10 +24,10 @@ TLGui::TWidgetScrollbar::TWidgetScrollbar(TRefRef RenderTargetRef,TRefRef Scroll
 //-------------------------------------------------
 //	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
 //-------------------------------------------------
-SyncBool TLGui::TWidgetScrollbar::ProcessClick(const TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode)
+SyncBool TLGui::TWidgetScrollbar::ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode)
 {
 	//	mouse up, dont need to do anything
-	if ( Click.m_ActionValue == 0.f )
+	if ( Click.GetActionValue() == 0.f )
 		return SyncFalse;
 
 	//	get render node for the scroll bar
@@ -47,11 +47,15 @@ SyncBool TLGui::TWidgetScrollbar::ProcessClick(const TClick& Click,TLRender::TSc
 
 	//	get a world position from the cursor
 	float3 WorldPos;
-	if ( !Screen.GetWorldPosFromScreenPos( RenderTarget, WorldPos, worldz, Click.m_CursorPos ) )
+	if ( !Screen.GetWorldPosFromScreenPos( RenderTarget, WorldPos, worldz, Click.GetCursorPos() ) )
 	{
 		//	click was out of the render target so we couldnt get a pos
 		return SyncFalse;
 	}
+
+	//	store the world ray
+	//	gr: todo as the routine above skips getting a ray at all
+	//Click.SetWorldPos( WorldPos );
 
 	//	flatten bounds to 2D shape
 	//	todo: 3D->2D proper conversion via screen/camera

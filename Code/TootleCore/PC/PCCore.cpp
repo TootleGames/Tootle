@@ -679,6 +679,9 @@ Bool TLDebug::Platform::Break(const TString& String)
 	//	let me know if this gets annoying when debugging and can turn it off 
 	//	if a debugger is attached to the process (I think that's possible)
 
+	//	print out message so it appears in output still after dismissing dialog
+	Print( String );
+
 	//	make up break message
 	TTempString BreakMessage = String;
 	BreakMessage.Append("\n\r \n\r");

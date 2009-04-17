@@ -156,6 +156,10 @@ void TLPhysics::TPhysicsgraph::DoCollisionsByZone(TLMaths::TQuadTreeZone* pColli
 		//if ( pNode->IsStatic() )
 		//	continue;
 
+		//	check node can do shape tests atm (could be temporary)
+		if ( !Node.HasZoneShape() )
+			continue;
+
 		//	do collisions for each node in this zone
 		DoCollisionsByZone( pCollisionZone, Node, TRUE, n+1 );
 	}
@@ -684,9 +688,18 @@ void TLPhysics::TPhysicsgraph::OnNodeRemoving(TPtr<TLPhysics::TPhysicsNode>& pNo
 //----------------------------------------------------------
 void TLPhysics::TPhysicsgraph::OnNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pNode)
 {
+	//	inherited OnAdded()
+	//	gr: do the inherited OnNodeAdded first, this means the Initialise() will be called BEFORE we
+	//		try to add it to the zone. ie. initialise collision shape from Init before using shape tests in zone code
+	//		if this is an issue for something, then just manually call ProcessMessageQueue and then move this back
+	//		to the end of OnNodeAdded
+	TLGraph::TGraph<TLPhysics::TPhysicsNode>::OnNodeAdded( pNode );
+
+#ifdef _DEBUG
 	TTempString DebugString("Added node to physics graph: ");
 	pNode->GetNodeRef().GetString( DebugString );
 	TLDebug_Print( DebugString );
+#endif
 
 	//	initialise zone
 	if ( m_pRootCollisionZone )
@@ -694,9 +707,6 @@ void TLPhysics::TPhysicsgraph::OnNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pNode)
 		TPtr<TLMaths::TQuadTreeNode> pQuadTreeNode = pNode;
 		m_pRootCollisionZone->AddNode( pQuadTreeNode, m_pRootCollisionZone, TRUE );
 	}
-
-	//	inherited OnAdded()
-	TLGraph::TGraph<TLPhysics::TPhysicsNode>::OnNodeAdded( pNode );
 }
 
 

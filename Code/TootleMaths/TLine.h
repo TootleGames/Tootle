@@ -50,6 +50,11 @@ public:
 	float				GetDistanceSq(const float3& Pos) const;			//	get the distance from point to the line. returns ZERO if on the line (no mathematical way of doing a negative result)
 	float3				GetNearestPoint(const float3& Pos) const;		//	get a point along the line nearest to this point
 	
+	float				GetFactorAlongZ(float z) const;					//	turn a Z along the line into a factor
+	void				GetPointAlongLine(float3& PointAlongLine,float Factor) const;	//	get a point along the line from 0..1 (factor)
+	void				MoveStart(float Distance);						//	move the start point along the direction by an amount (NOT a factor)
+	void				MoveEnd(float Distance);						//	move the end point along the direction by an amount (NOT a factor)
+
 	void				Transform(const float3& Move)					{	m_Start += Move;	m_End += Move;	}
 
 public:

@@ -9,7 +9,8 @@
 
 
 TLRender::TRenderNodePhysicsNode::TRenderNodePhysicsNode(TRefRef RenderNodeRef,TRefRef TypeRef) :
-	TRenderNodeDebugMesh	( RenderNodeRef, TypeRef )
+	TRenderNodeDebugMesh	( RenderNodeRef, TypeRef ),
+	m_ShapeQualityScalar	( 1.f )
 {
 }
 
@@ -37,6 +38,8 @@ void TLRender::TRenderNodePhysicsNode::Initialise(TLMessaging::TMessage& Message
 	TRef PhysicsNodeRef;
 	if ( Message.ImportData("PhNode", PhysicsNodeRef ) )
 		SetPhysicsNode( PhysicsNodeRef );
+
+	Message.ImportData("quality", m_ShapeQualityScalar );
 }
 
 
@@ -216,6 +219,8 @@ void TLRender::TRenderNodePhysicsNode::OnPhysicsNodeChanged(TLPhysics::TPhysicsN
 		}
 	}
 
+	//	mesh has changed
+	OnMeshChanged();
 
 }
 

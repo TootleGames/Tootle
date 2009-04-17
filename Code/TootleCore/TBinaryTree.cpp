@@ -99,14 +99,51 @@ void TBinaryTree::Debug_PrintTree(u32 TreeLevel) const
 	GetDataRef().GetString( String );
 	TLDebug_Print( String );
 
-	//	print out data info
 	String.Set( Indent );
-	String.Appendf(" { %d bytes }", GetSize() );
+	String.Appendf("¬ %d bytes", GetSize() );
 	TLDebug_Print( String );
 
 	String.Set( Indent );
-	String.Appendf(" { %d bytes read }", GetReadPos() );
+	String.Appendf("¬ %d bytes read", GetReadPos() );
 	TLDebug_Print( String );
+
+	//	print out data info
+	if ( GetDataTypeHint().IsValid() )
+	{
+		String.Set( Indent );
+		String.Append("¬ type: ");
+		GetDataTypeHint().GetString( String );
+
+		//	print out the actual data for some types
+		switch ( GetDataTypeHint().GetData() )
+		{
+			case TLBinary_TypeRef(u8):				String.Appendf(" [%d]", Debug_GetDataAs<u8>() );		break;
+			case TLBinary_TypeRef(s8):				String.Appendf(" [%d]", Debug_GetDataAs<s8>() );		break;
+			case TLBinary_TypeRef(u16):				String.Appendf(" [%d]", Debug_GetDataAs<u16>() );		break;
+			case TLBinary_TypeRef(s16):				String.Appendf(" [%d]", Debug_GetDataAs<s16>() );		break;
+			case TLBinary_TypeRef(u32):				String.Appendf(" [%d]", Debug_GetDataAs<u32>() );		break;
+
+			case TLBinary_TypeRef(s32):				String.Appendf(" [%d]", Debug_GetDataAs<s32>() );		break;
+			case TLBinary_TypeNRef(Type2,s32):		String.Appendf(" [%d,%d]", Debug_GetDataAs<Type2<s32>>().x, Debug_GetDataAs<Type2<s32>>().y );		break;
+			case TLBinary_TypeNRef(Type3,s32):		String.Appendf(" [%d,%d,%d]", Debug_GetDataAs<Type3<s32>>().x, Debug_GetDataAs<Type3<s32>>().y, Debug_GetDataAs<Type3<s32>>().z );		break;
+			case TLBinary_TypeNRef(Type4,s32):		String.Appendf(" [%d,%d,%d,%d]", Debug_GetDataAs<Type4<s32>>().x, Debug_GetDataAs<Type4<s32>>().y, Debug_GetDataAs<Type4<s32>>().z, Debug_GetDataAs<Type4<s32>>().w );		break;
+			
+			case TLBinary_TypeRef(float):			String.Appendf(" [%.4f]", Debug_GetDataAs<float>() );		break;
+			case TLBinary_TypeRef(float2):			String.Appendf(" [%.4f,%.4f]", Debug_GetDataAs<float2>().x, Debug_GetDataAs<float2>().y );	break;
+			case TLBinary_TypeRef(float3):			String.Appendf(" [%.4f,%.4f,%.4f]", Debug_GetDataAs<float3>().x, Debug_GetDataAs<float3>().y, Debug_GetDataAs<float3>().z );	break;
+			case TLBinary_TypeRef(float4):			String.Appendf(" [%.4f,%.4f,%.4f,%.4f]", Debug_GetDataAs<float4>().x, Debug_GetDataAs<float4>().y, Debug_GetDataAs<float4>().z, Debug_GetDataAs<float4>().w );	break;
+			case TLBinary_TypeRef(TRef):	
+			{
+				TRefRef Data = Debug_GetDataAs<TRef>();
+				String.Append(" [");
+				Data.GetString( String );
+				String.Append("]");
+			}
+			break;
+		};
+
+		TLDebug_Print( String );
+	}
 
 	//	now do the rest of the tree
 	for ( u32 c=0;	c<m_Children.GetSize();	c++ )

@@ -202,7 +202,7 @@ void TLPhysics::TPhysicsNode::Update(float fTimeStep)
 	TLGraph::TGraphNode<TLPhysics::TPhysicsNode>::Update( fTimeStep );
 
 	//	init per-frame stuff
-	m_WorldCollisionShapeChanged = FALSE;
+//	m_WorldCollisionShapeChanged = FALSE;	//	gr: not reset PER FRAME, this can be changed externally too. reset once we send out our shape-changed message
 	m_Temp_ExtrudeTimestep = fTimeStep;
 	SetAccumulatedMovementInvalid();
 
@@ -322,13 +322,16 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 	//	notify that world collison shape has changed
 	if ( m_WorldCollisionShapeChanged )
 	{
-		TLMessaging::TMessage Message("ColShape", GetNodeRef() );
+		if ( HasSubscribers() )
+		{
+			TLMessaging::TMessage Message("ColShape", GetNodeRef() );
 
-		//	write whether we have a shape - if not, then we've invalidated our shape, but no use for it yet so it hasnt been re-calculated
-		Bool HasShape = GetWorldCollisionShape().IsValid();
-		Message.Write( HasShape );
+			//	write whether we have a shape - if not, then we've invalidated our shape, but no use for it yet so it hasnt been re-calculated
+			Bool HasShape = GetWorldCollisionShape().IsValid();
+			Message.Write( HasShape );
 
-		PublishMessage( Message );
+			PublishMessage( Message );
+		}
 
 		m_WorldCollisionShapeChanged = FALSE;
 	}
@@ -805,6 +808,10 @@ TLPhysics::TCollisionShape* TLPhysics::TPhysicsNode::CalcWorldCollisionShape()
 	//	transform the collision shape into a new shape
 	m_pWorldCollisionShape = m_pCollisionShape->Transform( Transform, m_pCollisionShape, m_pLastWorldCollisionShape );
 
+	//	world collision shape has changed
+	//	gr: need a more comprehensive has-changed check?
+	m_WorldCollisionShapeChanged = TRUE;
+
 	if ( m_pWorldCollisionShape )
 	{
 		//	whether it was used or not, the last world collision shape is now redundant
@@ -1076,7 +1083,17 @@ void TLPhysics::TPhysicsNode::PublishCollisions()
 //-------------------------------------------------------------
 SyncBool TLPhysics::TPhysicsNode::IsInShape(const TLMaths::TBox2D& Shape)
 {
-	TCollisionShape* pWorldShape = m_pWorldCollisionShape.GetObject();
+#ifdef _DEBUG
+	if ( !HasZoneShape() )
+	{
+		TLDebug_Break("Doing shape test on a physics node when we shouldn't... must be missing a HasZoneShape() test");
+		return SyncWait;
+	}
+#endif
+
+	//	gr: always recalc world collision shape, previous break worked, but if the shape was invalidated between zone tests then
+	//		it wouldn't be recalculated and trigger the break below
+	TCollisionShape* pWorldShape = CalcWorldCollisionShape();
 
 	if ( !pWorldShape )
 	{

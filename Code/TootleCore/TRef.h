@@ -40,6 +40,7 @@ typedef const TRef& TRefRef;	//	TRefRef is just shorthand for passing ref's arou
 #define TRef_Static2(a,b)						TRef_Static(a,b,SPACE,SPACE,SPACE)
 #define TRef_Static3(a,b,c)						TRef_Static(a,b,c,SPACE,SPACE)
 #define TRef_Static4(a,b,c,d)					TRef_Static(a,b,c,d,SPACE)
+#define TRef_Static5(a,b,c,d,e)					TRef_Static(a,b,c,d,e)
 #define TRef_Static(a,b,c,d,e)					((u32)(TLRef_StaticOffsetChar(0,a)|TLRef_StaticOffsetChar(1,b)|TLRef_StaticOffsetChar(2,c)|TLRef_StaticOffsetChar(3,d)|TLRef_StaticOffsetChar(4,e)))
 
 namespace TLRef
@@ -123,7 +124,7 @@ namespace TLRef
 			Index_QUESTION, 
 			Index_DASH, 
 			Index_HASH, 
-			Index_UNDER
+			Index_UNDERSCORE
 		};
 	}
 
@@ -142,7 +143,7 @@ public:
 
 public:
 	TRef() 													:	m_Ref	( 0 )	{	}
-	TRef(u32 Ref)											:	m_Ref	( Ref )	{	IsValid();	}	//	gr: call IsValid() to check for invalid values
+	TRef(u32 Ref)											:	m_Ref	( Ref )	{	Debug_IsValid();	}	//	gr: call IsValid() to check for invalid values
 	TRef(const TRef& Ref)									:	m_Ref	( Ref.GetData() )	{	}
 	TRef(const TString& RefString) 							:	m_Ref	( 0 )	{	Set( RefString );	}
 	TRef(const TString* pRefString) 						:	m_Ref	( 0 )	{	if ( pRefString )	Set( *pRefString );	}
@@ -150,7 +151,7 @@ public:
 	TRef(const TArray<char>& RefStringChars)				:	m_Ref	( 0 )	{	Set( RefStringChars );	}
 
 	void				SetInvalid()							{	m_Ref = 0;	}
-	void				Set(u32 Ref)							{	m_Ref = Ref;	IsValid();	}	//	gr: call IsValid() to check for invalid values
+	void				Set(u32 Ref)							{	m_Ref = Ref;	Debug_IsValid();	}	//	gr: call IsValid() to check for invalid values
 	void				Set(const TRef& Ref)					{	Set( Ref.GetData() );	}
 	void				Set(const TString& RefString);			//	pull out 5 characters and set from this string
 	void				Set(const char* pRefString);			//	pull out 5 characters and set from this string
@@ -158,9 +159,10 @@ public:
 
 	const TRef&			Increment();							//	increment the reference - don't just increment the u32 though! do it systematticly - returns itself so you can construct another TRef from the incremented version of this
 
-	const u32&			GetData() const							{	return m_Ref;	}
-	void				GetString(TString& RefString,Bool Capitalise=FALSE) const;	//	convert ref to a string
-	FORCEINLINE Bool	IsValid() const;						//	check for invalid bits being set etc
+	const u32&					GetData() const							{	return m_Ref;	}
+	void						GetString(TString& RefString,Bool Capitalise=FALSE) const;	//	convert ref to a string
+	FORCEINLINE void			Debug_IsValid() const;					//	do a debug break on invalid refs - no release runtime functionality (use the normal one if you're checking IsValid)
+	FORCEINLINE Bool			IsValid() const;						//	check for invalid bits being set etc
 
 	FORCEINLINE Bool			operator<(const TRef& Ref) const		{	return GetData() < Ref.GetData();	}
 	FORCEINLINE Bool			operator>(const TRef& Ref) const		{	return GetData() > Ref.GetData();	}
@@ -191,17 +193,25 @@ protected:
 //---------------------------------------------------------
 //	check for invalid bits being set etc
 //---------------------------------------------------------
-FORCEINLINE Bool TRef::IsValid() const
+FORCEINLINE void TRef::Debug_IsValid() const
 {
-	//	not valid if zero
-	if ( m_Ref == 0x0 )
-		return FALSE;
-
+#ifdef _DEBUG
 	//	break if ref is invalid - probably invalidly-generated
 	if ( (m_Ref & TLRef::g_InvalidRefMask) != 0x0 )
 	{
 		Debug_BreakInvalidRef();
 	}
+#endif
+}
+
+//---------------------------------------------------------
+//	check for invalid bits being set etc
+//---------------------------------------------------------
+FORCEINLINE Bool TRef::IsValid() const
+{
+	//	not valid if zero
+	if ( m_Ref == 0x0 )
+		return FALSE;
 
 	//	check for no invalid bits
 	return (m_Ref & TLRef::g_InvalidRefMask) == 0x0;

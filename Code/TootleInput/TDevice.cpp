@@ -169,4 +169,16 @@ TPtr<TLInput::TInputEffect>& TInputDevice::AttachEffect(TRef refEffectID)
 }
 
 
+//----------------------------------------------------
+//	get a list of labels availible for all the sensors on this device
+//----------------------------------------------------
+void TInputDevice::Debug_GetSensorLabels(TArray<TRef>& LabelRefs)
+{
+	for ( u32 s=0;	s<m_Sensors.GetSize();	s++ )
+	{
+		TInputSensor& Sensor = *(m_Sensors[s]);
+		LabelRefs.Add( Sensor.GetSensorLabels() );
+	}
+}
+
 

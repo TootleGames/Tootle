@@ -298,6 +298,9 @@ Bool TLPhysics::TCollisionShape::HasIntersection(TLPhysics::TCollisionShape* pCo
 		case TLMaths_ShapeRef(TSphere):
 			return HasIntersection_Sphere( static_cast<TCollisionSphere*>(pCollisionShape) );
 
+		case TLMaths_ShapeRef(TSphere2D):
+			return HasIntersection_Sphere2D( static_cast<TCollisionSphere2D*>(pCollisionShape) );
+
 		case TLMaths_ShapeRef(TBox):
 			return HasIntersection_Box( static_cast<TCollisionBox*>(pCollisionShape) );
 
@@ -342,30 +345,32 @@ Bool TLPhysics::TCollisionShape::GetIntersection(TLPhysics::TCollisionShape* pCo
 	TRef ShapeType = pCollisionShape->GetShapeType();
 
 	//	do shape specific functions
-	if ( ShapeType == TLMaths::TSphere::GetTypeRef() )
+	switch ( ShapeType.GetData() )
 	{
-		return GetIntersection_Sphere( static_cast<TCollisionSphere*>(pCollisionShape), NodeAIntersection, NodeBIntersection );
-	}
-	else if ( ShapeType == TLMaths::TBox::GetTypeRef() )
-	{
-		return GetIntersection_Box( static_cast<TCollisionBox*>(pCollisionShape), NodeAIntersection, NodeBIntersection );
-	}
-	else if ( ShapeType == TLMaths::TOblong2D::GetTypeRef() )
-	{
-		return GetIntersection_Oblong2D( static_cast<TCollisionOblong2D*>(pCollisionShape), NodeAIntersection, NodeBIntersection );
-	}
-	else if ( ShapeType == TLMaths::TCapsule2D::GetTypeRef() )
-	{
-		return GetIntersection_Capsule2D( static_cast<TCollisionCapsule2D*>(pCollisionShape), NodeAIntersection, NodeBIntersection );
-	}
-	else if ( ShapeType == TLPhysics::GetMeshShapeTypeRef() )
-	{
-		return GetIntersection_Mesh( static_cast<TCollisionMesh*>(pCollisionShape), NodeAIntersection, NodeBIntersection );
-	}
-	else if ( ShapeType == TLPhysics::GetMeshWithBoundsShapeTypeRef() )
-	{
-		return GetIntersection_MeshWithBounds( static_cast<TCollisionMeshWithBounds*>(pCollisionShape), NodeAIntersection, NodeBIntersection );
-	}
+		case TLMaths_ShapeRef( TSphere ):
+			return GetIntersection_Sphere( static_cast<TCollisionSphere*>(pCollisionShape), NodeAIntersection, NodeBIntersection );
+		
+		case TLMaths_ShapeRef( TSphere2D ):
+			return GetIntersection_Sphere2D( static_cast<TCollisionSphere2D*>(pCollisionShape), NodeAIntersection, NodeBIntersection );
+		
+		case TLMaths_ShapeRef( TBox ):
+			return GetIntersection_Box( static_cast<TCollisionBox*>(pCollisionShape), NodeAIntersection, NodeBIntersection );
+
+		case TLMaths_ShapeRef( TBox2D ):
+			return GetIntersection_Box2D( static_cast<TCollisionBox2D*>(pCollisionShape), NodeAIntersection, NodeBIntersection );
+
+		case TLMaths_ShapeRef( TOblong2D ):
+			return GetIntersection_Oblong2D( static_cast<TCollisionOblong2D*>(pCollisionShape), NodeAIntersection, NodeBIntersection );
+		
+		case TLMaths_ShapeRef( TCapsule2D ):
+			return GetIntersection_Capsule2D( static_cast<TCollisionCapsule2D*>(pCollisionShape), NodeAIntersection, NodeBIntersection );
+		
+		case TLMaths_ShapeRef( Mesh ):
+			return GetIntersection_Mesh( static_cast<TCollisionMesh*>(pCollisionShape), NodeAIntersection, NodeBIntersection );
+		
+		case TLMaths_ShapeRef( MeshWithBounds ):
+			return GetIntersection_MeshWithBounds( static_cast<TCollisionMeshWithBounds*>(pCollisionShape), NodeAIntersection, NodeBIntersection );
+	};
 
 #ifdef _DEBUG
 	TTempString Debug_String("GetIntersection: Unhandled shape type ");
@@ -379,6 +384,11 @@ Bool TLPhysics::TCollisionShape::GetIntersection(TLPhysics::TCollisionShape* pCo
 
 
 Bool TLPhysics::TCollisionShape::GetIntersection_Sphere(TCollisionSphere* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)				
+{	
+	return Debug_IntersectionTodo( pCollisionShape->GetShapeType() );
+}
+
+Bool TLPhysics::TCollisionShape::GetIntersection_Sphere2D(TCollisionSphere2D* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)				
 {	
 	return Debug_IntersectionTodo( pCollisionShape->GetShapeType() );
 }
@@ -665,6 +675,57 @@ Bool TLPhysics::TCollisionSphere::GetIntersection_MeshWithBounds(TLPhysics::TCol
 //
 //----------------------------------------------------------
 Bool TLPhysics::TCollisionSphere::HasIntersection_Box2D(TCollisionBox2D* pCollisionShape)						
+{	
+	return pCollisionShape->GetBox().GetIntersection( this->GetSphere() );
+}
+
+
+//----------------------------------------------------------
+//	sphere <-> sphere intersection
+//----------------------------------------------------------
+Bool TLPhysics::TCollisionSphere2D::GetIntersection_Sphere2D(TLPhysics::TCollisionSphere2D* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)
+{
+	const TLMaths::TSphere2D& a = this->GetSphere();
+	const TLMaths::TSphere2D& b = pCollisionShape->GetSphere();
+	
+	//	get the vector between the spheres
+	float2 Diff( b.GetPos() );
+	Diff -= a.GetPos();
+
+	//	get length
+	float DiffLengthSq = Diff.LengthSq();
+
+	//	too embedded to do anything with it 
+	if ( DiffLengthSq < TLMaths_NearZero )     
+		return FALSE;   
+
+	float TotalRadSq = a.GetRadius() + b.GetRadius();
+
+	//	too far away to intersect
+	if ( DiffLengthSq > TotalRadSq*TotalRadSq )
+		return FALSE;
+
+	float DiffLength = TLMaths::Sqrtf( DiffLengthSq );
+
+	//	intersected, work out the intersection points
+	float NormalMultA = a.GetRadius() / DiffLength;
+	NodeAIntersection.m_Intersection.xy() = a.GetPos() + (Diff * NormalMultA);
+	NodeAIntersection.m_Intersection.z = 0.f;
+	TLDebug_CheckFloat( NodeAIntersection.m_Intersection );
+
+	float NormalMultB = b.GetRadius() / DiffLength;
+	NodeBIntersection.m_Intersection.xy() = b.GetPos() - (Diff * NormalMultB);
+	NodeBIntersection.m_Intersection.z = 0.f;
+	TLDebug_CheckFloat( NodeBIntersection.m_Intersection );
+
+	return TRUE;
+}
+
+
+//----------------------------------------------------------
+//
+//----------------------------------------------------------
+Bool TLPhysics::TCollisionSphere2D::HasIntersection_Box2D(TCollisionBox2D* pCollisionShape)						
 {	
 	return pCollisionShape->GetBox().GetIntersection( this->GetSphere() );
 }
@@ -1032,6 +1093,17 @@ TPtr<TLPhysics::TCollisionShape> TLPhysics::TCollisionBox2D::Transform(const TLM
 Bool TLPhysics::TCollisionBox2D::HasIntersection_Sphere(TCollisionSphere* pCollisionShape)
 {
 	return m_Box.GetIntersection( pCollisionShape->GetSphere() );
+}
+
+Bool TLPhysics::TCollisionBox2D::HasIntersection_Sphere2D(TCollisionSphere2D* pCollisionShape)
+{
+	return m_Box.GetIntersection( pCollisionShape->GetSphere() );
+}
+
+
+Bool TLPhysics::TCollisionBox2D::HasIntersection_Box2D(TCollisionBox2D* pCollisionShape)
+{
+	return m_Box.GetIntersection( pCollisionShape->GetBox() );
 }
 
 

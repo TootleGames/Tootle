@@ -46,9 +46,10 @@ namespace TLInput
 
 
 	// Helper routines
-	TRef GetDefaultAxisRef(u32 uObjectIndex);
-	TRef GetDefaultButtonRef(u32 uObjectIndex);
-	TRef GetDefaultPOVRef(u32 uObjectIndex);
+	TRef		GetDefaultAxisRef(u32 uObjectIndex);
+	TRef		GetDefaultAxisRef(u32 AxisIndex,const char AxisChar);
+	TRef		GetDefaultButtonRef(u32 uObjectIndex);
+	TRef		GetDefaultPOVRef(u32 uObjectIndex);
 
 	TPtr<TLInput::TInputDevice>&	GetDevice(TRefRef DeviceRef);			//	fetch device with this ref
 	TPtr<TLInput::TInputDevice>&	GetDeviceOfType(TRefRef DeviceType);	//	find the (first) device of this type

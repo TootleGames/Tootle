@@ -41,8 +41,9 @@ protected:
 	SyncBool				SubscribeToPhysicsNode();		//	keep trying to subscribe to physics node if we need to - returns wait if we still need to
 
 public:
-	TRef					m_PhysicsNodeRef;	//	node we're debugging
-	Bool					m_Subscribed;		//	subscribed to node... if failed, and node ref is valid then keep trying to subscribe
+	float					m_ShapeQualityScalar;	//	Improve the quality of spheres etc using this scalar; ref: "quality"
+	TRef					m_PhysicsNodeRef;		//	node we're debugging
+	Bool					m_Subscribed;			//	subscribed to node... if failed, and node ref is valid then keep trying to subscribe
 };
 
 

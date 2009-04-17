@@ -4,7 +4,7 @@
 using namespace TLInput;
 
 #ifdef _DEBUG
-//#define ENABLE_INPUTACTION_TRACE
+	#define ENABLE_INPUTACTION_TRACE
 #endif
 
 TAction::TAction(TRefRef refActionID)	:
@@ -49,60 +49,81 @@ void TAction::AddParentAction(TRefRef ParentActionRef, Bool bCondition)
 
 void TAction::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	// Does this action have any parent actions?  If so handle those first
-	if(m_refParentActions.GetSize())
+	if ( Message.GetMessageRef() == TRef_Static(A,c,t,i,o) )
 	{
 		// Check to see if the message coming in is for a parent action
-		if(Message.GetMessageRef() == TRef_Static(A,c,t,i,o))
-		{
-			// Get the action ID
-			TRef refActionID;
+		ProcessParentActionMessage( Message );
+	}
+	else if ( Message.GetMessageRef() == TRef_Static(O,n,I,n,p) )
+	{
+		ProcessSensorMessage( Message );
+	}
+}
 
-			if(Message.Read(refActionID))
-			{
-				for(u32 uIndex = 0; uIndex < m_refParentActions.GetSize(); uIndex++)
-				{
-					if(m_refParentActions.ElementAt(uIndex) == refActionID)
-					{
-						TParentActionState& PAS = m_bParentActionStates.ElementAt(uIndex);
+void TAction::ProcessParentActionMessage(TLMessaging::TMessage& Message)
+{
+	if ( !m_refParentActions.GetSize() )
+		return;
 
-						// Toggle the state to say the parent action is currently active/inactive
-						PAS.m_bState = (PAS.m_bState ? 0 : 1);
-						
-#ifdef ENABLE_INPUTACTION_TRACE
-						TString straction;
-						m_refActionID.GetString(straction);
-						TLDebug_Print(straction);
-						
-						TString strstate;
-						strstate.Appendf("Parent Action state set to %d", PAS.m_bState);
-						TLDebug_Print(strstate);
-#endif
-						
-					}
-				}
-			}
+	// Get the action ID
+	TRef refActionID;
+	if(!Message.Read(refActionID))
+		return;
 
-			// We don't need to process htis message any further
-			return;
-		}
-
-		// Check the parent action states
-		// If any are FALSE then this action will be oppressed
-		for(u32 uIndex = 0; uIndex < m_bParentActionStates.GetSize(); uIndex++)
+	//	gr: use find index here? better to just merge m_refParentActions & m_bParentActionStates and then Find...
+	for(u32 uIndex = 0; uIndex < m_refParentActions.GetSize(); uIndex++)
+	{
+		if(m_refParentActions.ElementAt(uIndex) == refActionID)
 		{
 			TParentActionState& PAS = m_bParentActionStates.ElementAt(uIndex);
-			if(PAS.m_bState != PAS.m_bCondition)
-			{
+
+			// Toggle the state to say the parent action is currently active/inactive
+			//	gr: this system doesn't work; I create a new condition (mouse is down) in a previous "mouse is down" message.
+			//		the ParentActionState is initialised to OFF... (even though the mouse is down)
+			//		mouse button goes up, this state is then TOGGLED to ON (even though mouse is up)
+			//		the action with this parent is then triggered at the opposite expected time. (State is ON when it should be off and vice versa)
+
+			//	to fix this.... implement a proper condition system for the parent state?
+			//					or interpret the raw data as on/off?
+			//	toggling isn't practical!
+			
+			//	gr: temp version using raw data. this works for mouse clicks. Needs changing for more complicated usage.
+			float RawData;
+			if ( !Message.ImportData("RawData", RawData ) )
+				continue;
+
+			//PAS.m_bState = !PAS.m_bState;
+			PAS.m_bState = (RawData > 0.f);
+			
 #ifdef ENABLE_INPUTACTION_TRACE
-				TLDebug_Print("Parent Action not set");
-				TString straction;
-				m_refActionID.GetString(straction);
-				TLDebug_Print(straction);
+			TTempString Debug_String("Parent action state [of ");
+			m_refActionID.GetString(Debug_String);
+			Debug_String.Appendf("] state set to %d", PAS.m_bState  );
+			TLDebug_Print(Debug_String);
 #endif
-				
-				return;
-			}
+		}
+	}
+
+}
+
+
+
+void TAction::ProcessSensorMessage(TLMessaging::TMessage& Message)
+{
+	// Check the parent action states
+	// If any are FALSE then this action will be oppressed
+	for(u32 uIndex = 0; uIndex < m_bParentActionStates.GetSize(); uIndex++)
+	{
+		TParentActionState& PAS = m_bParentActionStates.ElementAt(uIndex);
+		if(PAS.m_bState != PAS.m_bCondition)
+		{
+#ifdef ENABLE_INPUTACTION_TRACE
+			TTempString Debug_String("Parent action state [of ");
+			m_refActionID.GetString(Debug_String);
+			Debug_String.Append("] doesn't meet condition");
+			TLDebug_Print(Debug_String);
+#endif				
+			return;
 		}
 	}
 
@@ -140,34 +161,35 @@ void TAction::ProcessMessage(TLMessaging::TMessage& Message)
 		}
 	}
 
-	if(bActionOccured)
-	{
+	//	action aborted due to conditions not being met
+	if(!bActionOccured)
+		return;
+
 #ifdef ENABLE_INPUTACTION_TRACE
-		TLDebug_Print("Action triggered");
-		TString straction;
-		m_refActionID.GetString(straction);
-		TLDebug_Print(straction);
+	TTempString Debug_String("Action ");
+	m_refActionID.GetString( Debug_String );
+	Debug_String.Append(" triggered");
+	TLDebug_Print(Debug_String);
 #endif
-		// Send out a new message specifying the action ID to say this action has happened.
-		TLMessaging::TMessage NewMessage(TRef_Static(A,c,t,i,o));
-		NewMessage.Write(m_refActionID);			// The action performed
+	// Send out a new message specifying the action ID to say this action has happened.
+	TLMessaging::TMessage NewMessage(TRef_Static(A,c,t,i,o));
+	NewMessage.Write(m_refActionID);			// The action performed
 
-		TPtr<TBinaryTree>& pChild = Message.GetChild("RAWDATA");
+	TPtr<TBinaryTree>& pChild = Message.GetChild("RAWDATA");
 
-		// Copy the raw data value to the new message if it exists
-		if(pChild.IsValid())
-			NewMessage.AddChild(pChild);
-		
+	// Copy the raw data value to the new message if it exists
+	if(pChild.IsValid())
+		NewMessage.AddChild(pChild);
+	
 #ifdef TL_TARGET_IPOD		
-		TPtr<TBinaryTree>& pChild2 = Message.GetChild("CIDX");
-		
-		// Copy the cursor index value to the new message if it exists
-		if(pChild2.IsValid())
-			NewMessage.AddChild(pChild2);
+	TPtr<TBinaryTree>& pChild2 = Message.GetChild("CIDX");
+	
+	// Copy the cursor index value to the new message if it exists
+	if(pChild2.IsValid())
+		NewMessage.AddChild(pChild2);
 #endif
 
-		PublishMessage(NewMessage);
-	}
+	PublishMessage(NewMessage);
 }
 
 

@@ -61,22 +61,43 @@ SyncBool TLInput::TInputInterface::Initialise()
 
 // Old system
 
-	//	create action
-	if ( !m_ActionIn.IsValid() )
+	//	create click action
+	if ( !m_ActionInClick.IsValid() )
 	{
 		//	just some ref we know of. Could be randomly generated or some unused value on the user...
 		//	has to be unique on the user though
-		TRef NewActionRef = pUser->GetUnusedActionRef("click");
+		m_ActionInClick = pUser->GetUnusedActionRef("click");
 		
 		//	make up action for this device
-		if ( !pUser->AddAction("Simple", NewActionRef ) )
+		if ( !pUser->AddAction("Simple", m_ActionInClick ) )
 		{
 			TLDebug_Break("Failed to create new action on user");
+			m_ActionInClick.SetInvalid();
+			return SyncWait;
+		}
+	
+		//	subscribe to user's actions
+		SubscribeTo( pUser );
+	}
+	
+	//	create drag action
+	if ( !m_ActionInMove.IsValid() && m_ActionInClick.IsValid() )
+	{
+		//	just some ref we know of. Could be randomly generated or some unused value on the user...
+		//	has to be unique on the user though
+		m_ActionInMove = pUser->GetUnusedActionRef("move");
+		
+		//	make up action for this device
+		if ( !pUser->AddAction("Simple", m_ActionInMove ) )
+		{
+			TLDebug_Break("Failed to create new action on user");
+			m_ActionInMove.SetInvalid();
 			return SyncWait;
 		}
 
-		m_ActionIn = NewActionRef;
-	
+		//	depend on the click to turn the mouse move into a drag
+		pUser->MapActionParent( m_ActionInMove, m_ActionInClick );
+
 		//	subscribe to user's actions
 		SubscribeTo( pUser );
 	}
@@ -98,49 +119,21 @@ SyncBool TLInput::TInputInterface::Initialise()
 			TRef ButtonRef = TLInput::GetDefaultButtonRef(s);
 
 			//	map this action to this button sensor
-			SubscribedToAnyAction |= pUser->MapAction( m_ActionIn, InputDevice.GetDeviceRef(), ButtonRef );
-		}
-	}
-
-// NEW SYTEM
-/*
-		//	create action
-		if ( !m_ActionIn.IsValid() )
-		{
-			// NOTE: There is a BClick generic event too which will need to be processed for when you
-			// click 'press' on an object.
-			// The EClick is for release and is more correct because you could click and move the cusor
-			// and hence not actually want to click on the object.
-			m_ActionIn = "EClick";
-		
-			//	subscribe to user's actions
-			SubscribeTo( pUser );
-
-			m_Subscribed = TRUE;
-		}
-		else
-		{
-
-			//	map action to at least one mouse device
-			for ( u32 d=0;	d<TLInput::g_pInputSystem->GetSize();	d++ )
+			if ( pUser->MapAction( m_ActionInClick, InputDevice.GetDeviceRef(), ButtonRef ) )
 			{
-				TLInput::TInputDevice& InputDevice = *(TLInput::g_pInputSystem->ElementAt( d ));
-				if ( InputDevice.GetDeviceType() != "Mouse" )
-					continue;
+				SubscribedToAnyAction = TRUE;
 
-				//	subscribe to all of the button sensors
-				u32 NumberOfButtons = InputDevice.GetSensorCount(TLInput::Button);
-
-				for ( u32 s=0; s < NumberOfButtons ;s++ )
-				{
-					TRef ButtonRef = TLInput::GetDefaultButtonRef(s);
-
-					//	map this action to this button sensor
-					m_Subscribed |= pUser->MapAction( m_ActionIn, InputDevice.GetDeviceRef(), ButtonRef );
-				}
+				//	map the drag-detection
+				//	get axis sensor refs matching this button...
+				//	gr: buttons start at zero, axis' start at 1...
+				TRef AxisRef_x = TLInput::GetDefaultAxisRef( s, 'x' );
+				TRef AxisRef_y = TLInput::GetDefaultAxisRef( s, 'y' );
+			
+				pUser->MapAction( m_ActionInMove, InputDevice.GetDeviceRef(), AxisRef_x );
+				pUser->MapAction( m_ActionInMove, InputDevice.GetDeviceRef(), AxisRef_y );
 			}
 		}
-*/
+	}
 
 	//	failed to subscribe to any actions
 	if ( !SubscribedToAnyAction )
@@ -184,28 +177,40 @@ void TLInput::TInputInterface::ProcessMessage(TLMessaging::TMessage& Message)
 	{
 		if ( !HasSubscribers() )
 		{
+#ifdef _DEBUG
 			TTempString Debug_String("TInputInterface ");
 			m_RenderNodeRef.GetString( Debug_String );
 			Debug_String.Append(" has no subscribers");
 			TLDebug_Warning( Debug_String );
+#endif
 		}
 		else 
 		{
 			TRef ActionRef;
-			float RawValue = 0.f;
-			if ( Message.Read(ActionRef) && Message.ImportData("RawData", RawValue) )
-			{
-				if ( ActionRef == m_ActionIn )
-				{
-					int2 CursorPosition;
-					Message.ImportData("CURSOR", CursorPosition );
-					
-					//	queue up this click
-					QueueClick( CursorPosition, RawValue );
+			int2 CursorPosition;
 
-					//	now process ALL the queued clicks so if we have some unprocessed they're not lost and kept in order
-					ProcessQueuedClicks();
+			if ( Message.Read(ActionRef) && Message.ImportData("CURSOR", CursorPosition ) )
+			{
+				if ( ActionRef == m_ActionInClick )
+				{
+					float RawValue = 0.f;
+					if ( Message.ImportData("RawData", RawValue) )
+					{
+						//	queue up this click
+						QueueClick( CursorPosition, RawValue );
+					}
 				}
+				else if ( ActionRef == m_ActionInMove )
+				{
+					//	gr: the Move action is dependant on the parent, so assuming mouse is down.
+					//		if that changes (which would be for hover-detection, which would be windows only)
+					//		then we need to work out the button's raw state from this message...
+					float RawValue = 1.f;
+					QueueClick( CursorPosition, RawValue );
+				}
+
+				//	now process ALL the queued clicks so if we have some unprocessed they're not lost and kept in order
+				ProcessQueuedClicks();
 			}
 		}
 	}
@@ -229,7 +234,7 @@ void TLInput::TInputInterface::QueueClick(const int2& CursorPos,float ActionValu
 	if ( m_QueuedClicks.GetSize() > 0 )
 	{
 		//	both this and prev action values were "off" so skip adding to the queue
-		if ( ActionValue < TLMaths_NearZero && m_QueuedClicks.ElementLast().m_ActionValue < TLMaths_NearZero )
+		if ( ActionValue < TLMaths_NearZero && m_QueuedClicks.ElementLast().GetActionValue() < TLMaths_NearZero )
 			return;
 	}
 
@@ -321,46 +326,60 @@ void TLInput::TInputInterface::ProcessQueuedClicks()
 //-------------------------------------------------
 //	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
 //-------------------------------------------------
-SyncBool TLInput::TInputInterface::ProcessClick(const TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode)
+SyncBool TLInput::TInputInterface::ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode)
 {
 	//	see if ray intersects our object - check all our collision objects to get closest hit.
-	SyncBool Intersection = IsIntersecting(Screen, RenderTarget, RenderNode, Click.m_CursorPos);
+	SyncBool Intersection = IsIntersecting(Screen, RenderTarget, RenderNode, Click );
 
-	//	failed to check - no valid bounds? might have to wait till next frame
-	if ( Intersection == SyncWait )
-		return SyncWait;
+	
+	switch ( Intersection )
+	{
+		//	failed to check - no valid bounds? might have to wait till next frame
+		case SyncWait:
+		{
+			return SyncWait;
+		}
+		break;
+	
+		//	mouse intersected with shape, but if mouse is up then we end click
+		case SyncTrue:
+		{
+			if(Click.GetActionValue() == 0.0f)
+				OnClickEnd( Click );
+			else
+				OnClickBegin( Click );
+		}
+		break;
 
-	//	send out click/no click message
-	if ( Intersection == SyncTrue )
-	{
-		if(Click.m_ActionValue == 0.0f)
-			OnClickEnd();
-		else
-			OnClickBegin();
-	}
-	else // == SyncFalse
-	{
-		//OnClickEnd();
+		//	mouse might be down, but its not down on the render node, OR, it's released
+		case SyncFalse:
+		{
+			OnClickEnd( Click );
+		}
+		break;
 	}
 
 	return SyncTrue;
 }
 
 
-SyncBool TLInput::TInputInterface::IsIntersecting(TLRender::TScreen& Screen, TLRender::TRenderTarget& RenderTarget, TLRender::TRenderNode& RenderNode, const int2& Pos)
+SyncBool TLInput::TInputInterface::IsIntersecting(TLRender::TScreen& Screen, TLRender::TRenderTarget& RenderTarget, TLRender::TRenderNode& RenderNode,TClick& Click)
 {
 	SyncBool Intersection = SyncWait;
 
 	//	test for click on the collision shapes on the render node
 	TLMaths::TLine WorldRay;
 
-	if ( !Screen.GetWorldRayFromScreenPos( RenderTarget, WorldRay, Pos ) )
+	if ( !Screen.GetWorldRayFromScreenPos( RenderTarget, WorldRay, Click.GetCursorPos() ) )
 	{
 		//	click was out of the render target so we couldnt get a ray
 		Intersection = SyncFalse;
 	}
 	else
 	{
+		//	store the ray in the click
+		Click.SetWorldRay( WorldRay );
+
 		//	check for a click in the fastest order...
 
 		//	if we haven't already failed a check, test again bounds sphere
@@ -386,7 +405,7 @@ SyncBool TLInput::TInputInterface::IsIntersecting(TLRender::TScreen& Screen, TLR
 
 
 
-void TLInput::TInputInterface::OnClickBegin()
+void TLInput::TInputInterface::OnClickBegin(const TClick& Click)
 {
 	//if(m_ClickCount == 0)
 		SendActionMessage( TRUE, 1.f );
@@ -394,7 +413,7 @@ void TLInput::TInputInterface::OnClickBegin()
 	//m_ClickCount++;
 }
 
-void TLInput::TInputInterface::OnClickEnd()
+void TLInput::TInputInterface::OnClickEnd(const TClick& Click)
 {
 	//m_ClickCount--;
 

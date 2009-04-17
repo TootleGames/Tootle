@@ -3,7 +3,10 @@
 #import <UIKit/UIKit.h>
 #import <TootleRender/Ipod/IPodView.h>
 
-
+//	g++ defines __thumb__ 1 when building thumb code...
+#if __thumb__
+	#warning Compiling in Thumb mode
+#endif
 
 @interface OpenglESAppAppDelegate : NSObject <UIAccelerometerDelegate> {
 //@interface OpenglESAppAppDelegate : NSObject <UIApplicationDelegate> {

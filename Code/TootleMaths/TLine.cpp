@@ -246,8 +246,42 @@ float TLMaths::TLine::GetDistanceSq(const float3& Position) const
 	return fDist;
 }
 
+//-----------------------------------------------------------
+//	turn a Z along the line into a factor
+//-----------------------------------------------------------
+float TLMaths::TLine::GetFactorAlongZ(float z) const
+{
+	float Lengthz = m_End.z - m_Start.z;
+
+	//	catch div by zero
+	if ( Lengthz == 0.f )
+	{
+		return 0.f;
+	}
+
+	if ( Lengthz < 0.f )
+	{
+		TLDebug_Break("gr: check result of following code...");
+	}
+
+	z -= m_Start.z;
+	return z / Lengthz;
+}
 
 	
+
+//-----------------------------------------------------------
+//	get a point along the line from 0..1 (factor)
+//-----------------------------------------------------------
+void TLMaths::TLine::GetPointAlongLine(float3& PointAlongLine,float Factor) const
+{
+	//	set to direction
+	PointAlongLine = GetEnd();
+	PointAlongLine -= GetStart();	//	point is now dir from start to end
+	PointAlongLine *= Factor;		//	scale line to the factor
+	PointAlongLine += GetStart();	//	move back to relative to the line start
+}
+
 //-----------------------------------------------------------
 //	find the point along the line closest to Position
 //-----------------------------------------------------------

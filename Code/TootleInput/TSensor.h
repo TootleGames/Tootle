@@ -50,8 +50,9 @@ public:
 #endif
 	}
 
-	FORCEINLINE Bool			HasLabel(TRefRef LabelRef)				{ return m_SensorLabels.Exists(LabelRef); }
-	
+	FORCEINLINE Bool			HasLabel(TRefRef LabelRef)				{	return m_SensorLabels.Exists(LabelRef); }
+	const TArray<TRef>&			GetSensorLabels() const					{	return m_SensorLabels;	}
+
 	FORCEINLINE void			SetRanges(float fLow, float fHigh)		{ m_fRangeLow = fLow; m_fRangeHigh = fHigh; }
 	FORCEINLINE void			SetDeadZone(float fZone)				{ m_fDeadZone = fZone; }
 

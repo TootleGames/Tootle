@@ -37,6 +37,8 @@ public:
 
 protected:
 	virtual void	ProcessMessage(TLMessaging::TMessage& Message);
+	void			ProcessParentActionMessage(TLMessaging::TMessage& Message);
+	void			ProcessSensorMessage(TLMessaging::TMessage& Message);
 
 	// Internal parent action state info
 	class TParentActionState
@@ -52,7 +54,7 @@ private:
 	TRef				m_refActionID;
 
 	TArray<TRef>					m_refParentActions;
-	TArray<TParentActionState>		m_bParentActionStates;
+	TArray<TParentActionState>		m_bParentActionStates;	//	gr: merge these two arrays together?
 
 	TActionCondition	m_uActionCondition;
 	float				m_fThreshold;

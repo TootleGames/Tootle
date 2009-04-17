@@ -24,6 +24,7 @@ namespace TLPhysics
 	class TIntersection;
 
 	class TCollisionShape;			//	base collision type
+
 	class TCollisionSphere;			//	sphere collision shape
 	class TCollisionSphere2D;		//	sphere collision shape
 	class TCollisionBox;			//	box collision shape
@@ -93,6 +94,7 @@ public:
 protected:
 	//	simple fast intersection tests which don't need intersection information - default behaviour uses more expensive "GetIntersection" code
 	virtual Bool					HasIntersection_Sphere(TCollisionSphere* pCollisionShape)					{	TIntersection a,b;	return GetIntersection_Sphere( pCollisionShape, a, b );	}
+	virtual Bool					HasIntersection_Sphere2D(TCollisionSphere2D* pCollisionShape)				{	TIntersection a,b;	return GetIntersection_Sphere2D( pCollisionShape, a, b );	}
 	virtual Bool					HasIntersection_Box(TCollisionBox* pCollisionShape)							{	TIntersection a,b;	return GetIntersection_Box( pCollisionShape, a, b );	}
 	virtual Bool					HasIntersection_Box2D(TCollisionBox2D* pCollisionShape)						{	TIntersection a,b;	return GetIntersection_Box2D( pCollisionShape, a, b );	}
 	virtual Bool					HasIntersection_Oblong2D(TCollisionOblong2D* pCollisionShape)				{	TIntersection a,b;	return GetIntersection_Oblong2D( pCollisionShape, a, b );	}
@@ -102,6 +104,7 @@ protected:
 
 	//	full intersection tests which return intersection info
 	virtual Bool					GetIntersection_Sphere(TCollisionSphere* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
+	virtual Bool					GetIntersection_Sphere2D(TCollisionSphere2D* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 	virtual Bool					GetIntersection_Box(TCollisionBox* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 	virtual Bool					GetIntersection_Box2D(TCollisionBox2D* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 	virtual Bool					GetIntersection_Oblong2D(TCollisionOblong2D* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
@@ -161,6 +164,8 @@ public:
 	virtual TPtr<TCollisionShape>	Transform(const TLMaths::TTransform& Transform,TPtr<TLPhysics::TCollisionShape>& pThis,TPtr<TLPhysics::TCollisionShape>& pOldShape);
 
 protected:
+	virtual Bool					HasIntersection_Box2D(TCollisionBox2D* pCollisionShape);
+	virtual Bool					GetIntersection_Sphere2D(TCollisionSphere2D* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 
 protected:
 	TLMaths::TSphere2D				m_Sphere;	//	sphere collision object
@@ -219,9 +224,11 @@ protected:
 
 protected:
 	virtual Bool					HasIntersection_Sphere(TCollisionSphere* pCollisionShape);
+	virtual Bool					HasIntersection_Sphere2D(TCollisionSphere2D* pCollisionShape);
 	virtual Bool					HasIntersection_Mesh(TCollisionMesh* pCollisionMesh);
 	virtual Bool					HasIntersection_MeshWithBounds(TCollisionMeshWithBounds* pCollisionMesh);
 	virtual Bool					HasIntersection_Capsule2D(TCollisionCapsule2D* pCollisionShape);
+	virtual Bool					HasIntersection_Box2D(TCollisionBox2D* pCollisionShape);
 
 //	virtual Bool					GetIntersection_Sphere(TCollisionSphere* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 //	virtual Bool					GetIntersection_Box(TCollisionBox* pCollisionShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);

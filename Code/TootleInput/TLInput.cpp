@@ -17,24 +17,46 @@ using namespace TLInput;
 
 TRef TLInput::GetDefaultAxisRef(u32 uObjectIndex)
 {
-	TRef LabelRef;
-
-	TString stringLabel = "AX";
-
 	u32 uLetterIndex = uObjectIndex%3;					// Get value of 0, 1 or 2 to represent x, y, or z
 	u32 uAxisIndex = (uObjectIndex / 3);				// Axis index increments every 3rd one starting at 0, so AXX0, AXY0, AXZ0 etc
-	if(uLetterIndex == 0)
-		stringLabel.Appendf("X%d", uAxisIndex);
-	else if(uLetterIndex == 1)
-		stringLabel.Appendf("Y%d", uAxisIndex);
-	else if(uLetterIndex == 2)
-		stringLabel.Appendf("Z%d", uAxisIndex);
 
-	LabelRef = stringLabel;
-
-	return LabelRef;
+	if ( uLetterIndex == 0 )		return GetDefaultAxisRef( uAxisIndex, 'x' );
+	else if ( uLetterIndex == 1 )	return GetDefaultAxisRef( uAxisIndex, 'y' );
+	else							return GetDefaultAxisRef( uAxisIndex, 'z' );
 }
 
+
+TRef TLInput::GetDefaultAxisRef(u32 AxisIndex,const char AxisChar)
+{
+	if ( AxisIndex > 99 )
+	{
+		TLDebug_Break("Ref and explicit integer usage limitations mean we can't have more than 99 axis'. We CAN do AXXaa, AXXab, etc though for 41^2 axis' though");
+		return TRef();
+	}
+
+//	TTempString stringLabel = "AXX";
+//	stringLabel.Appendf("%02d",AxisIndex);
+	//	gr: faster method, not sure if speed is an issue though?
+	TFixedArray<char,5> RefStringChars(5);
+	RefStringChars[0] = 'A';
+	RefStringChars[1] = 'x';
+	RefStringChars[2] = AxisChar;
+	RefStringChars[3] = '0' + (AxisIndex / 10);
+	RefStringChars[4] = '0' + (AxisIndex % 10);
+
+	//	make AXX01 AXX1 etc
+	if ( AxisIndex < 10 )
+	{
+		RefStringChars[3] = RefStringChars[4];
+		RefStringChars.RemoveAt(4);
+	}
+
+	//	convert array of chars to ref
+	TRef AxisRef;
+	AxisRef.Set( RefStringChars );
+
+	return AxisRef;
+}
 
 TRef TLInput::GetDefaultPOVRef(u32 uObjectIndex)
 {

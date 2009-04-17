@@ -410,6 +410,7 @@ Bool TUser::MapAction(TRefRef refActionID, TRefRef refDeviceID, TRefRef SensorLa
 	TPtr<TLInput::TInputSensor>& pSensor = pDevice->GetSensorFromLabel(SensorLabelRef);
 	if ( !pSensor.IsValid() )
 	{
+#ifdef _DEBUG
 		TTempString Debug_String("Unknown sensor ");
 		SensorLabelRef.GetString( Debug_String );
 		Debug_String.Append(" on device ");
@@ -417,7 +418,23 @@ Bool TUser::MapAction(TRefRef refActionID, TRefRef refDeviceID, TRefRef SensorLa
 		Debug_String.Append("(");
 		pDevice->GetDeviceType().GetString( Debug_String );
 		Debug_String.Append(")");
-		TLDebug_Break(Debug_String);
+		TLDebug_Print(Debug_String);
+
+		//	print out all the availible sensors;
+		Debug_String.Set("Valid sensor labels; ");
+		TArray<TRef> SensorLabels;
+		pDevice->Debug_GetSensorLabels( SensorLabels );
+		if ( SensorLabels.GetSize() == 0 )
+			Debug_String.Append("(none)");
+		
+		for ( u32 i=0;	i<SensorLabels.GetSize();	i++ )
+		{
+			SensorLabels[i].GetString( Debug_String );
+			Debug_String.Append(",");
+		}
+
+		TLDebug_Print(Debug_String);
+#endif
 		return FALSE;
 	}
 

@@ -14,6 +14,7 @@
 #include <TootleCore/TPublisher.h>
 #include <TootleCore/TSubscriber.h>
 #include <TootleCore/TClassFactory.h>
+#include <TootleMaths/TLine.h>
 
 
 namespace TLInput
@@ -42,18 +43,28 @@ protected:
 	public:
 		TClick(const int2& CursorPos,float ActionValue) :
 			m_CursorPos		( CursorPos ),
-			m_ActionValue	( ActionValue )
+			m_ActionValue	( ActionValue ),
+			m_WorldRayValid	( FALSE )
 		{
 		}	
 		TClick() :
-			m_CursorPos		( 0,0 ),
-			m_ActionValue	( 0.f )
+			m_CursorPos		( -1,-1 ),
+			m_ActionValue	( 0.f ),
+			m_WorldRayValid	( FALSE )
 		{
 		}
 
-	public:
-		int2	m_CursorPos;	
-		float	m_ActionValue;
+		FORCEINLINE const int2&				GetCursorPos() const							{	return m_CursorPos;	}
+		FORCEINLINE const float&			GetActionValue() const							{	return m_ActionValue;	}
+		FORCEINLINE void					SetWorldRay(const TLMaths::TLine& WorldRay)		{	m_WorldRayValid = TRUE;	m_WorldRay = WorldRay;	}
+		FORCEINLINE const TLMaths::TLine&	GetWorldRay() const								{	return m_WorldRay;	}
+		FORCEINLINE float3					GetWorldPos(float z) const;
+
+	protected:
+		int2			m_CursorPos;	
+		float			m_ActionValue;
+		TLMaths::TLine	m_WorldRay;
+		Bool			m_WorldRayValid;
 	};
 
 public:
@@ -67,16 +78,16 @@ public:
 protected:
 	virtual Bool				Update();											//	update routine - return FALSE if we don't need updates any more
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);	//	
-	virtual SyncBool			ProcessClick(const TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode);	//	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
+	virtual SyncBool			ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode);	//	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
 	void						SendActionMessage(Bool ActionDown,float RawData);	//	when click has been validated action message is sent to subscribers
 	virtual void				GetRenderNodes(TArray<TRef>& RenderNodeArray);		//	get array of all the render nodes we're using
 	
-	SyncBool					IsIntersecting(TLRender::TScreen& Screen, TLRender::TRenderTarget& RenderTarget, TLRender::TRenderNode& RenderNode, const int2& Pos);
+	SyncBool					IsIntersecting(TLRender::TScreen& Screen, TLRender::TRenderTarget& RenderTarget, TLRender::TRenderNode& RenderNode,TClick& Click);
 
 	virtual void				OnInitialised()										{	};
 
-	virtual void				OnClickBegin();
-	virtual void				OnClickEnd();
+	virtual void				OnClickBegin(const TClick& Click);
+	virtual void				OnClickEnd(const TClick& Click);
 
 	virtual void				OnCursorMove();		
 	virtual void				OnCursorHoverOn()	{}
@@ -96,8 +107,21 @@ protected:
 private:
 	SyncBool					m_Initialised;			//	have created actions and subscribed to user input
 	TRef						m_UserRef;
-	TRef						m_ActionIn;
+	TRef						m_ActionInClick;		//	our click action
+	TRef						m_ActionInMove;			//	our drag action (only occurs when mouse is down)
 	TArray<TClick>				m_QueuedClicks;			//	action's we had to wait for
 	//u8						m_ClickCount;			// Click count - used because we can receive multiple begin click messages from different device buttons
 };
+
+
+
+
+
+FORCEINLINE float3 TLInput::TInputInterface::TClick::GetWorldPos(float z) const						
+{	
+	float Factor = m_WorldRay.GetFactorAlongZ(z);	
+	float3 Pos;	
+	m_WorldRay.GetPointAlongLine( Pos, Factor );	
+	return Pos;	
+}
 
