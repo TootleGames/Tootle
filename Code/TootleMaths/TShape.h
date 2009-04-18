@@ -21,12 +21,16 @@ namespace TLMaths
 	class TShapeCapsule2D;	//	capsule shape
 	class TShapeBox;		//	box shape
 	class TShapeBox2D;		//	box shape
+//	class TShapeMesh;		//	mesh "shape" for triangle/face, line intersection etc
 
 	class TIntersection;	//	resulting intersection information of two shapes
 
 	TPtr<TShape>			ImportShapeData(TBinaryTree& Data);							//	create a shape type from TBinaryData
 	Bool					ExportShapeData(TBinaryTree& Data,const TLMaths::TShape& Shape);	//	export shape to data
 	TPtr<TShape>			CreateShapeType(TRefRef ShapeType);							//	create shape instance from ref
+
+	#define TLMaths_ShapeRef_Mesh				TRef_Static3(M,s,h)
+	FORCEINLINE TRef		GetMeshShapeTypeRef()			{	return TLMaths_ShapeRef(Mesh);	}
 };
 
 
@@ -35,15 +39,26 @@ namespace TLMaths
 class TLMaths::TIntersection
 {
 public:
-	TIntersection(const float3& IntersectionPos) :
-		m_Position	( IntersectionPos )
+	TIntersection(const float3& IntersectionPos=float3(0,0,0)) :
+		m_Intersection	( IntersectionPos ),
+		m_HasNormal		( FALSE )
 	{
 	}
 
-	const float3&	GetPosition() const		{	return m_Position;	}
+	void			Transform(const TLMaths::TTransform& Transform);	//	transform applied to node A when we did the intersection test
+	void			Untransform(const TLMaths::TTransform& Transform);	//	undo a transform applied to node A when we did the intersection test
 
-protected:
-	float3			m_Position;		//	intersecting position
+	void			Reset()					{	m_HasNormal = FALSE;	}	//	reset vars before collision detection
+
+	const float3&	GetPosition() const		{	return m_Intersection;	}
+
+public:
+	float3		m_Intersection;			//	intersection point of NodeA
+	float3		m_Movement;				//	node's accumulated movement
+	float3		m_PostCollisionDelta;	//	the force change after collision
+	
+	Bool		m_HasNormal;			//	the intersection normal is valid
+	float3		m_Normal;				//	normal of the plane we intersected with
 };
 
 
@@ -62,8 +77,27 @@ public:
 	virtual Bool					IsValid() const = 0;						//	check if the shape is valid
 	virtual float3					GetCenter() const = 0;						//	get the center of the shape
 
-	Bool							HasIntersection(TShape& OtherShape);
-	Bool							GetIntersection(TShape& OtherShape,TIntersection& Intersection);
+	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pThis,TPtr<TShape>& pOldShape)	{	return NULL;	}	//	transform this collision shape into a world-relative shape
+
+	//	simple fast intersection tests which don't need intersection information - default behaviour uses more expensive "GetIntersection" code
+	Bool							HasIntersection(TShape& OtherShape);								//	for the low level type we use our shape refs to work out which one to call... redun
+	virtual Bool					HasIntersection(TShapeSphere& OtherShape)							{	TIntersection a,b;	return GetIntersection( OtherShape, a, b );	}
+	virtual Bool					HasIntersection(TShapeSphere2D& OtherShape)							{	TIntersection a,b;	return GetIntersection( OtherShape, a, b );	}
+	virtual Bool					HasIntersection(TShapeBox& OtherShape)								{	TIntersection a,b;	return GetIntersection( OtherShape, a, b );	}
+	virtual Bool					HasIntersection(TShapeBox2D& OtherShape)							{	TIntersection a,b;	return GetIntersection( OtherShape, a, b );	}
+	virtual Bool					HasIntersection(TShapeOblong2D& OtherShape)							{	TIntersection a,b;	return GetIntersection( OtherShape, a, b );	}
+	virtual Bool					HasIntersection(TShapeCapsule2D& OtherShape)						{	TIntersection a,b;	return GetIntersection( OtherShape, a, b );	}
+//	virtual Bool					HasIntersection(TShapeMesh* pCollisionShape)						{	TIntersection a,b;	return GetIntersection_Mesh( OtherShape, a, b );	}
+
+	//	full intersection tests which return intersection info
+	Bool							GetIntersection(TShape& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
+	virtual Bool					GetIntersection(TShapeSphere& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
+	virtual Bool					GetIntersection(TShapeSphere2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
+	virtual Bool					GetIntersection(TShapeBox& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
+	virtual Bool					GetIntersection(TShapeBox2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
+	virtual Bool					GetIntersection(TShapeOblong2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
+	virtual Bool					GetIntersection(TShapeCapsule2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
+//	virtual Bool					GetIntersection(TShapeMesh* pCollisionMesh,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 
 protected:
 	virtual Bool					ImportData(TBinaryTree& Data)			{	TLDebug_Break("Shape ImportData required");	return FALSE;	}
@@ -72,151 +106,23 @@ protected:
 	void							Debug_BreakOverloadThis(const char* pTestType,TShape& OtherShape);
 
 protected:
-	//	simple fast intersection tests which don't need intersection information
-//	virtual Bool					HasIntersection_Sphere(TShapeSphere& OtherShape);
-	virtual Bool					HasIntersection_Sphere2D(TShapeSphere2D& OtherShape);
-//	virtual Bool					HasIntersection_Box(TShapeBox& OtherShape);
-//	virtual Bool					HasIntersection_Box2D(TShapeBox2D& OtherShape);
-
-//	virtual Bool					GetIntersection_Sphere(TShapeSphere& OtherShape,TIntersection& Intersection);
-	virtual Bool					GetIntersection_Sphere2D(TShapeSphere2D& OtherShape,TIntersection& Intersection);
-//	virtual Bool					GetIntersection_Box(TShapeBox& OtherShape,TIntersection& Intersection);
-//	virtual Bool					GetIntersection_Box2D(TShapeBox2D& OtherShape,TIntersection& Intersection);
 };
 
 
 
 
-class TLMaths::TShapeSphere2D : public TLMaths::TShape
+
+/*
+class TLMaths::TShapeMesh : public TLMaths::TShape
 {
 public:
-	TShapeSphere2D()															{}
-	TShapeSphere2D(const TLMaths::TSphere2D& Sphere) : m_Sphere ( Sphere )		{}
-	TShapeSphere2D(const TLMaths::TBox2D& Box);									//	create sphere 2D from box
+	TShapeMesh()															{}
+	TShapeMesh(TRefRef MeshRef) : m_MeshRef ( MeshRef )					{}
 
-	static TRef						GetShapeType_Static()						{	return GetShapeType_Static();	}
-	virtual TRef					GetShapeType() const						{	return TLMaths::TSphere2D::GetTypeRef();	}
-	virtual Bool					IsValid() const								{	return GetSphere().IsValid();	}
-	virtual float3					GetCenter() const							{	return GetSphere().GetPos();	}
-	
-	void							SetSphere(const TLMaths::TSphere2D& Sphere)	{	m_Sphere = Sphere;	}
-	const TLMaths::TSphere2D&		GetSphere() const							{	return m_Sphere;	}
-
-protected:
-	virtual Bool					ImportData(TBinaryTree& Data);
-	virtual Bool					ExportData(TBinaryTree& Data) const;
-
-protected:
-	TLMaths::TSphere2D				m_Sphere;			//	sphere collision object
-};
-
-
-
-
-class TLMaths::TShapeSphere : public TLMaths::TShape
-{
-public:
-	TShapeSphere()															{}
-	TShapeSphere(const TLMaths::TSphere& Sphere) : m_Sphere ( Sphere )		{}
-	TShapeSphere(const TLMaths::TBox& Box);
-
-	static TRef						GetShapeType_Static() 						{	return TLMaths::TSphere::GetTypeRef();	}
-	virtual TRef					GetShapeType() const						{	return GetShapeType_Static();	}
-	virtual Bool					IsValid() const								{	return GetSphere().IsValid();	}
-	virtual float3					GetCenter() const							{	return GetSphere().GetPos();	}
-	
-	void							SetSphere(const TLMaths::TSphere& Sphere)	{	m_Sphere = Sphere;	}
-	const TLMaths::TSphere&			GetSphere() const							{	return m_Sphere;	}
-
-protected:
-	virtual Bool					ImportData(TBinaryTree& Data);
-	virtual Bool					ExportData(TBinaryTree& Data) const;
-
-protected:
-	TLMaths::TSphere				m_Sphere;			//	sphere collision object
-};
-
-
-class TLMaths::TShapeOblong2D : public TLMaths::TShape
-{
-public:
-	TShapeOblong2D()															{}
-	TShapeOblong2D(const TLMaths::TOblong2D& Oblong) : m_Oblong ( Oblong )		{}
-
-	static TRef						GetShapeType_Static()						{	return TLMaths::TOblong2D::GetTypeRef();	}
-	virtual TRef					GetShapeType() const						{	return GetShapeType_Static();	}
-	virtual Bool					IsValid() const								{	return GetOblong().IsValid();	}
-	virtual float3					GetCenter() const							{	return GetOblong().GetCenter();	}
-	
-	void							SetOblong(const TLMaths::TOblong2D& Oblong)	{	m_Oblong = Oblong;	}
-	const TLMaths::TOblong2D&		GetOblong() const							{	return m_Oblong;	}
-
-protected:
-	virtual Bool					ImportData(TBinaryTree& Data);
-	virtual Bool					ExportData(TBinaryTree& Data) const;
-
-protected:
-	TLMaths::TOblong2D				m_Oblong;
-};
-
-
-
-class TLMaths::TShapeCapsule2D : public TLMaths::TShape
-{
-public:
-	TShapeCapsule2D()															{}
-	TShapeCapsule2D(const TLMaths::TCapsule2D& Capsule) : m_Capsule ( Capsule )	{}
-	TShapeCapsule2D(const TLMaths::TBox2D& Box);
-
-	static TRef						GetShapeType_Static()						{	return TLMaths::TCapsule2D::GetTypeRef();	}
-	virtual TRef					GetShapeType() const						{	return GetShapeType_Static();	}
-	virtual Bool					IsValid() const								{	return GetCapsule().IsValid();	}
-	virtual float3					GetCenter() const							{	return GetCapsule().GetCenter();	}
-	
-	const TLMaths::TCapsule2D&		GetCapsule() const							{	return m_Capsule;	}
-
-protected:
-	virtual Bool					ImportData(TBinaryTree& Data);
-	virtual Bool					ExportData(TBinaryTree& Data) const;
-
-protected:
-	TLMaths::TCapsule2D				m_Capsule;
-};
-
-
-
-class TLMaths::TShapeBox : public TLMaths::TShape
-{
-public:
-	TShapeBox()															{}
-	TShapeBox(const TLMaths::TBox& Box) : m_Box ( Box )					{}
-
-	static TRef						GetShapeType_Static()						{	return TLMaths::TBox::GetTypeRef();	}
-	virtual TRef					GetShapeType() const						{	return GetShapeType_Static();	}
-	virtual Bool					IsValid() const								{	return GetBox().IsValid();	}
-	virtual float3					GetCenter() const							{	return GetBox().GetCenter();	}
-	
-	const TLMaths::TBox&			GetBox() const								{	return m_Box;	}
-
-protected:
-	virtual Bool					ImportData(TBinaryTree& Data);
-	virtual Bool					ExportData(TBinaryTree& Data) const;
-
-protected:
-	TLMaths::TBox					m_Box;
-};
-
-
-class TLMaths::TShapeBox2D : public TLMaths::TShape
-{
-public:
-	TShapeBox2D()															{}
-	TShapeBox2D(const TLMaths::TBox2D& Box) : m_Box ( Box )					{}
-
-	static TRef						GetShapeType_Static()						{	return TLMaths::TBox2D::GetTypeRef();	}
-	virtual TRef					GetShapeType() const						{	return GetShapeType_Static();	}
-	virtual Bool					IsValid() const								{	return GetBox().IsValid();	}
-	virtual float3					GetCenter() const							{	return GetBox().GetCenter();	}
+	static TRef						GetShapeType_Static()						{	return TLMaths_ShapeRef(Mesh);	}
+	virtual TRef					GetShapeType() const						{	return TLMaths_ShapeRef(Mesh);	}
+	virtual Bool					IsValid() const								{	return m_MeshRef.IsValid();	}
+	virtual float3					GetCenter() const							{	return float3(0,0,0);	}
 	
 	const TLMaths::TBox2D&			GetBox() const								{	return m_Box;	}
 
@@ -227,4 +133,7 @@ protected:
 protected:
 	TLMaths::TBox2D					m_Box;
 };
+
+*/
+
 

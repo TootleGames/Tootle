@@ -2,9 +2,10 @@
 #include "TPhysicsGraph.h"
 #include <TootleCore/TLMaths.h>
 #include <TootleCore/TLTime.h>
-
 #include <TootleScene/TScenegraph.h>
 #include <TootleCore/TEventChannel.h>
+#include <TootleMaths/TShapeSphere.h>
+#include <TootleMaths/TShapeBox.h>
 
 
 
@@ -498,6 +499,7 @@ Bool TLPhysics::TPhysicsNode::PostIteration(u32 Iteration)
 	return (Iteration+1 <= 1);
 }
 
+/*
 //----------------------------------------------------------
 //	setup a polygon collision shape with this mesh
 //----------------------------------------------------------
@@ -513,120 +515,31 @@ void TLPhysics::TPhysicsNode::SetCollisionShape(TRefRef MeshRef)
 
 	SetWorldCollisionShapeInvalid();
 }
+*/
 
-	
 //----------------------------------------------------------
 //	setup collision shape from a shape
 //----------------------------------------------------------
 void TLPhysics::TPhysicsNode::SetCollisionShape(const TPtr<TLMaths::TShape>& pShape)
 {
-	switch ( pShape->GetShapeType().GetData() )
-	{
-		case TLMaths_ShapeRef_TSphere:		SetCollisionShape( pShape.GetObject<TLMaths::TShapeSphere>()->GetSphere() );	break;
-		case TLMaths_ShapeRef_TSphere2D:	SetCollisionShape( pShape.GetObject<TLMaths::TShapeSphere2D>()->GetSphere() );	break;
-		case TLMaths_ShapeRef_TOblong2D:	SetCollisionShape( pShape.GetObject<TLMaths::TShapeOblong2D>()->GetOblong() );	break;
-		case TLMaths_ShapeRef_TCapsule2D:	SetCollisionShape( pShape.GetObject<TLMaths::TShapeCapsule2D>()->GetCapsule() );	break;
-		case TLMaths_ShapeRef_TBox2D:		SetCollisionShape( pShape.GetObject<TLMaths::TShapeBox2D>()->GetBox() );	break;
-
-		default:
-		{
-			TTempString Debug_String("Unhandled collison shape in Physics node: ");
-			pShape->GetShapeType().GetString( Debug_String );
-			TLDebug_Break( Debug_String );
-		}
-		break;
-	};
-}
-
-
-//----------------------------------------------------------
-//	setup a sphere collision shape
-//----------------------------------------------------------
-void TLPhysics::TPhysicsNode::SetCollisionShape(const TLMaths::TSphere& Sphere)
-{
-	//	todo: see if it's already a sphere and just update it
-	TPtr<TCollisionSphere> pCollisionSphere = new TCollisionSphere;
-	m_pCollisionShape = pCollisionSphere;
-	pCollisionSphere->SetSphere( Sphere );
+	//	set shape
+	m_pCollisionShape = pShape;
 
 	//	invalidate zone
 	SetCollisionZoneNeedsUpdate();
 
+	//	invalidate WORLD shape
 	SetWorldCollisionShapeInvalid();
 }
 
-
-//----------------------------------------------------------
-//	setup a sphere collision shape
-//----------------------------------------------------------
-void TLPhysics::TPhysicsNode::SetCollisionShape(const TLMaths::TSphere2D& Sphere)
-{
-	//	todo: see if it's already a sphere and just update it
-	TPtr<TCollisionSphere2D> pCollisionSphere = new TCollisionSphere2D;
-	m_pCollisionShape = pCollisionSphere;
-	pCollisionSphere->SetSphere( Sphere );
-
-	//	invalidate zone
-	SetCollisionZoneNeedsUpdate();
-
-	SetWorldCollisionShapeInvalid();
-}
-
-
-//----------------------------------------------------------
-//	setup an oblong collision shape
-//----------------------------------------------------------
-void TLPhysics::TPhysicsNode::SetCollisionShape(const TLMaths::TOblong2D& Oblong)
-{
-	//	todo: see if it's already an oblong and just update it
-	TPtr<TCollisionOblong2D> pCollisionShape = new TCollisionOblong2D( Oblong );
-	m_pCollisionShape = pCollisionShape;
-
-	//	invalidate zone
-	SetCollisionZoneNeedsUpdate();
-
-	SetWorldCollisionShapeInvalid();
-}
-
-
-//----------------------------------------------------------
-//	setup an box collision shape
-//----------------------------------------------------------
-void TLPhysics::TPhysicsNode::SetCollisionShape(const TLMaths::TBox2D& Box)
-{
-	//	todo: see if it's already an oblong and just update it
-	TPtr<TCollisionBox2D> pCollisionShape = new TCollisionBox2D( Box );
-	m_pCollisionShape = pCollisionShape;
-
-	//	invalidate zone
-	SetCollisionZoneNeedsUpdate();
-
-	SetWorldCollisionShapeInvalid();
-}
-
-
-//----------------------------------------------------------
-//	setup a capsule collision shape
-//----------------------------------------------------------
-void TLPhysics::TPhysicsNode::SetCollisionShape(const TLMaths::TCapsule2D& Capsule)
-{
-	//	todo: see if it's already an oblong and just update it
-	TPtr<TCollisionCapsule2D> pCollisionShape = new TCollisionCapsule2D( Capsule );
-	m_pCollisionShape = pCollisionShape;
-
-	//	invalidate zone
-	SetCollisionZoneNeedsUpdate();
-
-	SetWorldCollisionShapeInvalid();
-}
 
 //----------------------------------------------------------
 //	handle collision with other object - returns TRUE if we changed anything in the collison
 //----------------------------------------------------------
 Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode& OtherNode)
 {
-	TIntersection& Intersection = m_Temp_Intersection;
-	const TIntersection& OtherIntersection = OtherNode.m_Temp_Intersection;
+	TLMaths::TIntersection& Intersection = m_Temp_Intersection;
+	const TLMaths::TIntersection& OtherIntersection = OtherNode.m_Temp_Intersection;
 	Bool bChanges = FALSE;
 
 	Bool ForceToEdge = TRUE;
@@ -758,7 +671,7 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode& OtherNode)
 //----------------------------------------------------------
 //	calculate transformed collision shape 
 //----------------------------------------------------------
-TLPhysics::TCollisionShape* TLPhysics::TPhysicsNode::CalcWorldCollisionShape()
+TLMaths::TShape* TLPhysics::TPhysicsNode::CalcWorldCollisionShape()
 {
 	//	doesn't need calculating
 	if ( m_pWorldCollisionShape )
@@ -1025,7 +938,7 @@ void TLPhysics::TPhysicsNode::SetChildZones(const TFixedArray<u32,4>& InZones)
 //-------------------------------------------------------------
 //	
 //-------------------------------------------------------------
-void TLPhysics::TPhysicsNode::AddCollisionInfo(const TLPhysics::TPhysicsNode& OtherNode,const TIntersection& Intersection)
+void TLPhysics::TPhysicsNode::AddCollisionInfo(const TLPhysics::TPhysicsNode& OtherNode,const TLMaths::TIntersection& Intersection)
 {
 	//	alloc a new info
 	TCollisionInfo* pCollisionInfo = m_Collisions.AddNew();
@@ -1093,7 +1006,7 @@ SyncBool TLPhysics::TPhysicsNode::IsInShape(const TLMaths::TBox2D& Shape)
 
 	//	gr: always recalc world collision shape, previous break worked, but if the shape was invalidated between zone tests then
 	//		it wouldn't be recalculated and trigger the break below
-	TCollisionShape* pWorldShape = CalcWorldCollisionShape();
+	TLMaths::TShape* pWorldShape = CalcWorldCollisionShape();
 
 	if ( !pWorldShape )
 	{
@@ -1102,9 +1015,10 @@ SyncBool TLPhysics::TPhysicsNode::IsInShape(const TLMaths::TBox2D& Shape)
 	}
 
 	//	make up a Collision shape for the test-shape and do an intersection test with it
-	TCollisionBox2D ShapeCollisionShape( Shape );
+	TLMaths::TShapeBox2D ShapeCollisionShape( Shape );
 	
-	return ShapeCollisionShape.HasIntersection( pWorldShape ) ? SyncTrue : SyncFalse;
+	return pWorldShape->HasIntersection( ShapeCollisionShape ) ? SyncTrue : SyncFalse;
+//	return ShapeCollisionShape.HasIntersection( *pWorldShape ) ? SyncTrue : SyncFalse;
 }
 
 
@@ -1120,7 +1034,7 @@ Bool TLPhysics::TPhysicsNode::HasZoneShape()
 
 	//	pre-calc the world collision shape (we're going to use it anyway)
 	//	and if that fails we can't do any tests anyway
-	TLPhysics::TCollisionShape* pShape = CalcWorldCollisionShape();
+	TLMaths::TShape* pShape = CalcWorldCollisionShape();
 
 	//	no shape atm, wait
 	if ( !pShape )

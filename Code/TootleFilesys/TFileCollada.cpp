@@ -1,6 +1,10 @@
 #include "TFileCollada.h"
 #include <TootleAsset/TMesh.h>
 #include <TootleMaths/TTessellate.h>
+#include <TootleMaths/TShapeSphere.h>
+#include <TootleMaths/TShapeBox.h>
+#include <TootleMaths/TShapeCapsule.h>
+#include <TootleMaths/TShapeOblong.h>
 #include "TLFile.h"
 
 

@@ -25,7 +25,6 @@ namespace TLPhysics
 {
 	class TPhysicsNode;
 	class TPhysicsgraph;
-	class TIntersection;
 
 	extern float3		g_WorldUp;			//	gr: currently a global, change to be on the graph, or per node at some point so individual nodes can have their own gravity direction. Depends on what we need it for
 	extern float3		g_WorldUpNormal;	//	gr: currently a global, change to be on the graph, or per node at some point so individual nodes can have their own gravity direction. Depends on what we need it for
@@ -100,11 +99,11 @@ public:
 	void					SetCollisionShape(const TLMaths::TOblong2D& Oblong);		//	setup an oblong collision
 	void					SetCollisionShape(const TLMaths::TBox2D& Box);				//	setup an oblong collision
 	TLMaths::TTransform&	GetCollisionShapeTransform()					{	return m_Transform;	}
-	TPtr<TCollisionShape>&	GetCollisionShape()								{	return m_pCollisionShape;	}
+	TPtr<TLMaths::TShape>&	GetCollisionShape()								{	return m_pCollisionShape;	}
 	
-	TPtr<TCollisionShape>&			GetWorldCollisionShape()				{	return m_pWorldCollisionShape;	}
-	const TPtr<TCollisionShape>&	GetWorldCollisionShape() const			{	return m_pWorldCollisionShape;	}
-	TCollisionShape*				CalcWorldCollisionShape();				//	calculate transformed collision shape 
+	TPtr<TLMaths::TShape>&			GetWorldCollisionShape()				{	return m_pWorldCollisionShape;	}
+	const TPtr<TLMaths::TShape>&	GetWorldCollisionShape() const			{	return m_pWorldCollisionShape;	}
+	TLMaths::TShape*				CalcWorldCollisionShape();				//	calculate transformed collision shape 
 	FORCEINLINE void				SetWorldCollisionShapeInvalid()			{	if ( m_pWorldCollisionShape )	m_pLastWorldCollisionShape = m_pWorldCollisionShape;	m_pWorldCollisionShape = NULL;	m_WorldCollisionShapeChanged = TRUE;	}
 
 //	Bool						SetCollisionZone(TPtr<TLMaths::TQuadTreeZone>& pCollisionZone,TPtr<TPhysicsNode> pThis,const TFixedArray<u32,4>* pChildZoneList);
@@ -131,7 +130,7 @@ protected:
 	virtual float				GetFriction() const							{	return m_Friction;	}
 
 	virtual Bool				OnCollision(const TPhysicsNode& OtherNode);	//	handle collision with other object
-	void						AddCollisionInfo(const TLPhysics::TPhysicsNode& OtherNode,const TIntersection& Intersection);
+	void						AddCollisionInfo(const TLPhysics::TPhysicsNode& OtherNode,const TLMaths::TIntersection& Intersection);
 	void						PublishCollisions();						//	send out our list of collisions
 
 	virtual SyncBool			IsInShape(const TLMaths::TBox2D& Shape);
@@ -153,15 +152,15 @@ protected:
 	float3					m_GravityForce;				//	gravity force applied this frame
 
 	Bool					m_WorldCollisionShapeChanged;	//	bool to say if the collision shape changed during the physics update. reset at node pre update, and message is sent in post update
-	TPtr<TCollisionShape>	m_pCollisionShape;			//	collision shape
-	TPtr<TCollisionShape>	m_pWorldCollisionShape;		//	transformed collision shape, delete/invalidated when pos or collision shape changes
-	TPtr<TCollisionShape>	m_pLastWorldCollisionShape;	//	to save re-allocations of the same object, when we invalidate the world collision shape we set it to this. then when we recalc it, we try to reuse this pointer
+	TPtr<TLMaths::TShape>	m_pCollisionShape;			//	collision shape
+	TPtr<TLMaths::TShape>	m_pWorldCollisionShape;		//	transformed collision shape, delete/invalidated when pos or collision shape changes
+	TPtr<TLMaths::TShape>	m_pLastWorldCollisionShape;	//	to save re-allocations of the same object, when we invalidate the world collision shape we set it to this. then when we recalc it, we try to reuse this pointer
 	TArray<TCollisionInfo>	m_Collisions;				//	list of collisions during our last update - published in PostUpdate to subscribers
 
 	Bool					m_InitialisedZone;			//	
 
 	float					m_Temp_ExtrudeTimestep;		//	timestep for this frame... just saves passing around, used when calculating world collision shape for this frame
-	TIntersection			m_Temp_Intersection;		//	current intersection. assume is invalid unless we're in an OnCollision func
+	TLMaths::TIntersection	m_Temp_Intersection;		//	current intersection. assume is invalid unless we're in an OnCollision func
 	Bool					m_AccumulatedMovementValid;	//	accumulated movement float3 is now in m_Temp_Intersection, this bool dictates if it needs to be updated
 
 	TRef					m_OwnerSceneNode;			//	"Owner" scene node - if this is set then we automaticcly process some stuff

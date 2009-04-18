@@ -1,6 +1,6 @@
 #include "TLPhysics.h"
 #include "TPhysicsNode.h"
-
+#include <TootleMaths/TShape.h>
 
 
 
@@ -8,7 +8,7 @@
 //------------------------------------------------------
 //	set collision info against this node
 //------------------------------------------------------
-void TLPhysics::TCollisionInfo::Set(const TLPhysics::TPhysicsNode& OtherNode,const TIntersection& Intersection)
+void TLPhysics::TCollisionInfo::Set(const TLPhysics::TPhysicsNode& OtherNode,const TLMaths::TIntersection& Intersection)
 {
 	m_OtherNode = OtherNode.GetNodeRef();
 	m_OtherNodeOwner = OtherNode.GetOwnerSceneNodeRef();

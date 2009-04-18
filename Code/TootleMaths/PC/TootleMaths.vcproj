@@ -216,6 +216,38 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TShapeBox.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TShapeBox.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TShapeCapsule.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TShapeCapsule.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TShapeOblong.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TShapeOblong.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TShapeSphere.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TShapeSphere.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TSphere.cpp"
 			>
 		</File>

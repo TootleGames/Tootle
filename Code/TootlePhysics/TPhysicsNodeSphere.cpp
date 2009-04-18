@@ -1,4 +1,5 @@
 #include "TPhysicsNodeSphere.h"
+#include <TootleMaths/TShapeSphere.h>
 
 
 
@@ -37,7 +38,7 @@ void TLPhysics::TPhysicsNodeSphere::Update(float Timestep)
 void TLPhysics::TPhysicsNodeSphere::RollTransform(const float3& MovementForce,const float3& Normal,float Timestep)
 {
 	//	relative to size of sphere?
-	TCollisionSphere* pCollisionSphere = GetCollisionShape().GetObject<TCollisionSphere>();
+	TLMaths::TShapeSphere* pCollisionSphere = GetCollisionShape().GetObject<TLMaths::TShapeSphere>();
 
 	//	make the number below BIGGER to increase rotation speed (if it rolls too mch for movemnt)
 	//	make the number below SMALLER to decrease speed (if slides)
@@ -148,7 +149,7 @@ Bool TLPhysics::TPhysicsNodeSphere::OnCollision(const TPhysicsNode& OtherNode)
 	
 	
 	//	do roll if we moved during collision
-	TIntersection& Intersection = m_Temp_Intersection;
+	TLMaths::TIntersection& Intersection = m_Temp_Intersection;
 	if ( Intersection.m_HasNormal )
 	{
 		if ( !m_LastNormalIsStatic || OtherNode.IsStatic() )

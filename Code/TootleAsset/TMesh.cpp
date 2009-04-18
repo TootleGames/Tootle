@@ -1,7 +1,8 @@
 #include "TMesh.h"
 #include <TootleCore/TBinaryTree.h>
-#include <TootleMaths/TOblong.h>
-#include <TootleMaths/TCapsule.h>
+#include <TootleMaths/TShapeSphere.h>
+#include <TootleMaths/TShapeOblong.h>
+#include <TootleMaths/TShapeCapsule.h>
 
 #ifdef _DEBUG
 //#define DEBUG_CHECK_PRIMITIVES

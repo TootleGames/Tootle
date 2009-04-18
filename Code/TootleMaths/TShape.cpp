@@ -1,6 +1,21 @@
 #include "TShape.h"
+#include "TShapeSphere.h"
+#include "TShapeBox.h"
+#include "TShapeCapsule.h"
+#include "TShapeOblong.h"
 #include <TootleCore/TString.h>
 #include <TootleCore/TBinaryTree.h>
+
+
+
+
+Bool TLMaths::TShape::GetIntersection(TShapeSphere& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)		{	Debug_BreakOverloadThis("GetIntersection", static_cast<TShape&>(OtherShape) );	return FALSE;	}
+Bool TLMaths::TShape::GetIntersection(TShapeSphere2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)		{	Debug_BreakOverloadThis("GetIntersection", static_cast<TShape&>(OtherShape) );	return FALSE;	}
+Bool TLMaths::TShape::GetIntersection(TShapeBox& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)			{	Debug_BreakOverloadThis("GetIntersection", static_cast<TShape&>(OtherShape) );	return FALSE;	}
+Bool TLMaths::TShape::GetIntersection(TShapeBox2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)		{	Debug_BreakOverloadThis("GetIntersection", static_cast<TShape&>(OtherShape) );	return FALSE;	}
+Bool TLMaths::TShape::GetIntersection(TShapeOblong2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)		{	Debug_BreakOverloadThis("GetIntersection", static_cast<TShape&>(OtherShape) );	return FALSE;	}
+Bool TLMaths::TShape::GetIntersection(TShapeCapsule2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)	{	Debug_BreakOverloadThis("GetIntersection", static_cast<TShape&>(OtherShape) );	return FALSE;	}
+//Bool TLMaths::TShape::GetIntersection(TShapeMesh& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)		{	Debug_BreakOverloadThis("GetIntersection", static_cast<TShape&>(OtherShape) );	return FALSE;	}
 
 
 
@@ -75,47 +90,77 @@ TPtr<TLMaths::TShape> TLMaths::CreateShapeType(TRefRef ShapeType)
 
 
 
+
+//-----------------------------------------------------
+//	undo a transform applied to node A when we did the intersection test
+//-----------------------------------------------------
+void TLMaths::TIntersection::Transform(const TLMaths::TTransform& Transform)
+{
+	if ( Transform.HasAnyTransform() )
+		Transform.TransformVector( m_Intersection );
+}
+
+
+//-----------------------------------------------------
+//	undo a transform applied to node A when we did the intersection test	
+//-----------------------------------------------------
+void TLMaths::TIntersection::Untransform(const TLMaths::TTransform& Transform)
+{
+	if ( Transform.HasAnyTransform() )
+		Transform.UntransformVector( m_Intersection );
+}
+
+
+
 Bool TLMaths::TShape::HasIntersection(TShape& OtherShape)
 {
-	TRefRef OtherShapeType = OtherShape.GetShapeType();
+	TRef OtherShapeType = OtherShape.GetShapeType();
 
-	if ( OtherShapeType == TLMaths::TSphere2D::GetTypeRef() )
-		return HasIntersection( static_cast<TShapeSphere2D&>(OtherShape) );
-	
-	if ( OtherShapeType == TLMaths::TSphere::GetTypeRef() )
-		return HasIntersection( static_cast<TShapeSphere&>(OtherShape) );
+	//	do shape specific functions
+	switch ( OtherShapeType.GetData() )
+	{
+		case TLMaths_ShapeRef(TSphere):		return HasIntersection( static_cast<TShapeSphere&>(OtherShape) );
+		case TLMaths_ShapeRef(TSphere2D):	return HasIntersection( static_cast<TShapeSphere2D&>(OtherShape) );
+		case TLMaths_ShapeRef(TBox):		return HasIntersection( static_cast<TShapeBox&>(OtherShape) );
+		case TLMaths_ShapeRef(TBox2D):		return HasIntersection( static_cast<TShapeBox2D&>(OtherShape) );
+		case TLMaths_ShapeRef(TOblong2D):	return HasIntersection( static_cast<TShapeOblong2D&>(OtherShape) );
+		case TLMaths_ShapeRef(TCapsule2D):	return HasIntersection( static_cast<TShapeCapsule2D&>(OtherShape) );
+//		case TLMaths_ShapeRef(Mesh):		return HasIntersection( static_cast<TShapeMesh&>(OtherShape) );
+	};
 
-	TLDebug_Break("unknown shape type");
+#ifdef _DEBUG
+	TTempString Debug_String("HasIntersection: Unhandled shape type ");
+	OtherShapeType.GetString( Debug_String );
+	TLDebug_Break( Debug_String );
+#endif
+
 	return FALSE;
 }
 
 
-Bool TLMaths::TShape::GetIntersection(TShape& OtherShape,TIntersection& Intersection)
+Bool TLMaths::TShape::GetIntersection(TShape& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)
 {
-	TRefRef OtherShapeType = OtherShape.GetShapeType();
+	TRef OtherShapeType = OtherShape.GetShapeType();
 
-	if ( OtherShapeType == TLMaths::TSphere2D::GetTypeRef() )
-		return GetIntersection( static_cast<TShapeSphere2D&>(OtherShape), Intersection );
+	//	do shape specific functions
+	switch ( OtherShapeType.GetData() )
+	{
+		case TLMaths_ShapeRef(TSphere):		return GetIntersection( static_cast<TShapeSphere&>(OtherShape), NodeAIntersection, NodeBIntersection );
+		case TLMaths_ShapeRef(TSphere2D):	return GetIntersection( static_cast<TShapeSphere2D&>(OtherShape), NodeAIntersection, NodeBIntersection );
+		case TLMaths_ShapeRef(TBox):		return GetIntersection( static_cast<TShapeBox&>(OtherShape), NodeAIntersection, NodeBIntersection );
+		case TLMaths_ShapeRef(TBox2D):		return GetIntersection( static_cast<TShapeBox2D&>(OtherShape), NodeAIntersection, NodeBIntersection );
+		case TLMaths_ShapeRef(TOblong2D):	return GetIntersection( static_cast<TShapeOblong2D&>(OtherShape), NodeAIntersection, NodeBIntersection );
+		case TLMaths_ShapeRef(TCapsule2D):	return GetIntersection( static_cast<TShapeCapsule2D&>(OtherShape), NodeAIntersection, NodeBIntersection );
+//		case TLMaths_ShapeRef(Mesh):		return GetIntersection( static_cast<TShapeMesh&>(OtherShape), NodeAIntersection, NodeBIntersection );
+	};
 
-	if ( OtherShapeType == TLMaths::TSphere::GetTypeRef() )
-		return GetIntersection( static_cast<TShapeSphere&>(OtherShape), Intersection );
+#ifdef _DEBUG
+	TTempString Debug_String("GetIntersection: Unhandled shape type ");
+	OtherShapeType.GetString( Debug_String );
+	TLDebug_Break( Debug_String );
+#endif
 
-	TLDebug_Break("unknown shape type");
 	return FALSE;
-}
-
-
-Bool TLMaths::TShape::HasIntersection_Sphere2D(TShapeSphere2D& OtherShape)
-{	
-	Debug_BreakOverloadThis("HasIntersection", static_cast<TShape&>(OtherShape) );	
-	return FALSE;	
-}
-
-
-Bool TLMaths::TShape::GetIntersection_Sphere2D(TShapeSphere2D& OtherShape,TIntersection& Intersection)	
-{	
-	Debug_BreakOverloadThis("GetIntersection", static_cast<TShape&>(OtherShape) );	
-	return FALSE;	
 }
 
 
@@ -125,196 +170,13 @@ void TLMaths::TShape::Debug_BreakOverloadThis(const char* pTestType,TShape& Othe
 	TRef OtherShapeType = OtherShape.GetShapeType();
 
 	TTempString Debug_String;
-	Debug_String.Appendf("TShape ");
+	Debug_String.Appendf("Need to overload TShape; ");
 	ThisShapeType.GetString( Debug_String );
 	Debug_String.Append( pTestType );
-	Debug_String.Append(" handling needs overloading for ");
+	Debug_String.Append("( ");
 	OtherShapeType.GetString( Debug_String );
+	Debug_String.Append(")");
 
 	TLDebug_Break( Debug_String );
 }
 
-
-
-//---------------------------------------
-//	create sphere 2D from box
-//---------------------------------------
-TLMaths::TShapeSphere2D::TShapeSphere2D(const TLMaths::TBox2D& Box)
-{
-	//	work out radius (NOT the diagonal!)
-	float HalfWidth = Box.GetHalfWidth();
-	float HalfHeight = Box.GetHalfHeight();
-	float Radius = (HalfWidth>HalfHeight) ? HalfWidth : HalfHeight;
-
-	//	make up sphere and shape
-	m_Sphere.Set( Box.GetCenter(), Radius );
-}
-
-
-//---------------------------------------
-//	
-//---------------------------------------
-Bool TLMaths::TShapeSphere2D::ImportData(TBinaryTree& Data)
-{
-	if ( !Data.ImportData("Pos", m_Sphere.GetPos() ) )		return FALSE;
-	if ( !Data.ImportData("Radius", m_Sphere.GetRadius() ) )	return FALSE;
-
-	return TRUE;
-}
-
-//---------------------------------------
-//	
-//---------------------------------------
-Bool TLMaths::TShapeSphere2D::ExportData(TBinaryTree& Data) const
-{
-	Data.ExportData("Pos", m_Sphere.GetPos() );
-	Data.ExportData("Radius", m_Sphere.GetRadius() );
-
-	return TRUE;
-}
-
-
-//---------------------------------------
-//	create sphere from box
-//---------------------------------------
-TLMaths::TShapeSphere::TShapeSphere(const TLMaths::TBox& Box)
-{
-	//	work out radius (NOT the diagonal!)
-	float3 HalfSize = Box.GetSize() * 0.5f;
-	float Radius = HalfSize.x;
-	if ( HalfSize.y > Radius )	Radius = HalfSize.y;
-	if ( HalfSize.z > Radius )	Radius = HalfSize.z;
-
-	//	make up sphere and shape
-	m_Sphere.Set( Box.GetCenter(), Radius );
-}
-
-
-//---------------------------------------
-//	
-//---------------------------------------
-Bool TLMaths::TShapeSphere::ImportData(TBinaryTree& Data)
-{
-	if ( !Data.ImportData("Pos", m_Sphere.GetPos() ) )		return FALSE;
-	if ( !Data.ImportData("Radius", m_Sphere.GetRadius() ) )	return FALSE;
-
-	return TRUE;
-}
-
-//---------------------------------------
-//	
-//---------------------------------------
-Bool TLMaths::TShapeSphere::ExportData(TBinaryTree& Data) const
-{
-	Data.ExportData("Pos", m_Sphere.GetPos() );
-	Data.ExportData("Radius", m_Sphere.GetRadius() );
-
-	return TRUE;
-}
-
-
-//---------------------------------------
-//	create sphere from box
-//---------------------------------------
-TLMaths::TShapeCapsule2D::TShapeCapsule2D(const TLMaths::TBox2D& Box)
-{
-	m_Capsule.Set( Box );
-}
-
-
-//---------------------------------------
-//	
-//---------------------------------------
-Bool TLMaths::TShapeCapsule2D::ImportData(TBinaryTree& Data)
-{
-	if ( !Data.ImportData("Start", m_Capsule.GetLine().GetStart() ) )	return FALSE;
-	if ( !Data.ImportData("End", m_Capsule.GetLine().GetEnd() ) )		return FALSE;
-	if ( !Data.ImportData("Radius", m_Capsule.GetRadius() ) )	return FALSE;
-
-	return TRUE;
-}
-
-//---------------------------------------
-//	
-//---------------------------------------
-Bool TLMaths::TShapeCapsule2D::ExportData(TBinaryTree& Data) const
-{
-	Data.ExportData("Start", m_Capsule.GetLine().GetStart() );
-	Data.ExportData("End", m_Capsule.GetLine().GetEnd() );
-	Data.ExportData("Radius", m_Capsule.GetRadius() );
-
-	return TRUE;
-}
-
-
-//---------------------------------------
-//	
-//---------------------------------------
-Bool TLMaths::TShapeBox2D::ImportData(TBinaryTree& Data)
-{
-	if ( !Data.ImportData("Min", m_Box.GetMin() ) )		return FALSE;
-	if ( !Data.ImportData("Max", m_Box.GetMax() ) )		return FALSE;
-	if ( !Data.ImportData("Valid", m_Box.IsValid() ) )	return FALSE;
-
-	return TRUE;
-}
-
-//---------------------------------------
-//	
-//---------------------------------------
-Bool TLMaths::TShapeBox2D::ExportData(TBinaryTree& Data) const
-{
-	Data.ExportData("Min", m_Box.GetMin() );
-	Data.ExportData("Max", m_Box.GetMax() );
-	Data.ExportData("Valid", m_Box.IsValid() );
-
-	return TRUE;
-}
-
-
-//---------------------------------------
-//	
-//---------------------------------------
-Bool TLMaths::TShapeBox::ImportData(TBinaryTree& Data)
-{
-	if ( !Data.ImportData("Min", m_Box.GetMin() ) )		return FALSE;
-	if ( !Data.ImportData("Max", m_Box.GetMax() ) )		return FALSE;
-	if ( !Data.ImportData("Valid", m_Box.IsValid() ) )	return FALSE;
-
-	return TRUE;
-}
-
-//---------------------------------------
-//	
-//---------------------------------------
-Bool TLMaths::TShapeBox::ExportData(TBinaryTree& Data) const
-{
-	Data.ExportData("Min", m_Box.GetMin() );
-	Data.ExportData("Max", m_Box.GetMax() );
-	Data.ExportData("Valid", m_Box.IsValid() );
-
-	return TRUE;
-}
-
-
-//---------------------------------------
-//	
-//---------------------------------------
-Bool TLMaths::TShapeOblong2D::ImportData(TBinaryTree& Data)
-{
-	if ( !Data.ImportArrays("Corners", m_Oblong.GetBoxCorners() ) )		return FALSE;
-	if ( !Data.ImportData("Valid", m_Oblong.IsValid() ) )					return FALSE;
-
-	return TRUE;
-}
-
-//---------------------------------------
-//	
-//---------------------------------------
-Bool TLMaths::TShapeOblong2D::ExportData(TBinaryTree& Data) const
-{
-	Data.ExportArray("Corners", m_Oblong.GetBoxCorners() );
-	Data.ExportData("Valid", m_Oblong.IsValid() );
-
-	return TRUE;
-}

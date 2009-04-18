@@ -2,6 +2,7 @@
 
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/TBinaryTree.h>
+#include <TootleMaths/TShape.h>
 
 
 #define PHYSICS_SCALAR		60.f
@@ -27,7 +28,6 @@ Rubber on Concrete (wet)					0.25	0.3
 namespace TLPhysics
 {
 	class TCollisionInfo;		//	collision info which is sent to subscribers - merge with intersection info?
-	class TIntersection;
 	class TPhysicsNode;
 
 	/*
@@ -199,7 +199,7 @@ class TLPhysics::TCollisionInfo
 public:
 	TCollisionInfo() : m_OtherNodeStatic ( FALSE )	{}
 
-	void		Set(const TLPhysics::TPhysicsNode& OtherNode,const TIntersection& Intersection);
+	void		Set(const TLPhysics::TPhysicsNode& OtherNode,const TLMaths::TIntersection& Intersection);
 
 	void		ExportData(TBinaryTree& Data);		//	export this collision info into a BinaryData
 	Bool		ImportData(TBinaryTree& Data);		//	get collision info from a BinaryData

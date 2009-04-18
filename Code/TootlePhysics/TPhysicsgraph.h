@@ -19,7 +19,6 @@
 namespace TLPhysics
 {
 	class TPhysicsgraph;
-	class TIntersection;
 	class TPhysicsNode;
 	class TPhysicsNodeFactory;
 

@@ -1,5 +1,4 @@
 #include "TPhysicsgraph.h"
-#include "TCollisionShape.h"
 #include "TPhysicsNode.h"
 #include "TPhysicsNodeSphere.h"
 
@@ -576,8 +575,8 @@ Bool TLPhysics::Debug_CheckCollisionObjects(TLPhysics::TPhysicsNode* pNodeA,TLPh
 		return FALSE;
 	}
 
-	TPtr<TCollisionShape>& pShapePtrA = pNodeA->GetCollisionShape();
-	TPtr<TCollisionShape>& pShapePtrB = pNodeB->GetCollisionShape();
+	TPtr<TLMaths::TShape>& pShapePtrA = pNodeA->GetCollisionShape();
+	TPtr<TLMaths::TShape>& pShapePtrB = pNodeB->GetCollisionShape();
 	if ( !pShapePtrA.IsValid() || !pShapePtrB.IsValid() )
 	{
 		TLDebug_Break("Physics nodes collision objects expected");
@@ -600,11 +599,11 @@ void TLPhysics::TPhysicsgraph::DoCollision(TLPhysics::TPhysicsNode& NodeA,TLPhys
 //		return;
 
 	//	get world-collision shapes
-	TCollisionShape* pNodeAWorldCollisionShape = NodeA.CalcWorldCollisionShape();
+	TLMaths::TShape* pNodeAWorldCollisionShape = NodeA.CalcWorldCollisionShape();
 	if ( !pNodeAWorldCollisionShape )
 		return;
 
-	TCollisionShape* pNodeBWorldCollisionShape = NodeB.CalcWorldCollisionShape();
+	TLMaths::TShape* pNodeBWorldCollisionShape = NodeB.CalcWorldCollisionShape();
 	if ( !pNodeBWorldCollisionShape )
 		return;
 
@@ -620,7 +619,7 @@ void TLPhysics::TPhysicsgraph::DoCollision(TLPhysics::TPhysicsNode& NodeA,TLPhys
 	NodeB.m_Temp_Intersection.Reset();
 
 	//	do intersection test
-	if ( !pNodeAWorldCollisionShape->GetIntersection( pNodeBWorldCollisionShape, NodeA.m_Temp_Intersection, NodeB.m_Temp_Intersection ) )
+	if ( !pNodeAWorldCollisionShape->GetIntersection( *pNodeBWorldCollisionShape, NodeA.m_Temp_Intersection, NodeB.m_Temp_Intersection ) )
 		return;
 	
 	TLDebug_CheckFloat( NodeA.m_Temp_Intersection.m_Intersection );

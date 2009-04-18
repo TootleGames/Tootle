@@ -2,6 +2,9 @@
 #include <TootlePhysics/TPhysicsGraph.h>
 #include <TootlePhysics/TPhysicsNode.h>
 #include <TootlePhysics/TCollisionShape.h>
+#include <TootleMaths/TShapeCapsule.h>
+#include <TootleMaths/TShapeSphere.h>
+#include <TootleMaths/TShapeBox.h>
 
 
 #define COLLISION_SHAPE_COLOUR	TColour( 1.f, 0.f, 0.f, 1.f )
@@ -180,7 +183,7 @@ void TLRender::TRenderNodePhysicsNode::OnPhysicsNodeChanged(TLPhysics::TPhysicsN
 
 	//	get the shape
 	PhysicsNode.CalcWorldCollisionShape();
-	const TPtr<TLPhysics::TCollisionShape>& pWorldCollisionShape = PhysicsNode.GetWorldCollisionShape();
+	const TPtr<TLMaths::TShape>& pWorldCollisionShape = PhysicsNode.GetWorldCollisionShape();
 
 	//	draw a mesh of the shape
 	if ( pWorldCollisionShape )
@@ -190,23 +193,23 @@ void TLRender::TRenderNodePhysicsNode::OnPhysicsNodeChanged(TLPhysics::TPhysicsN
 		switch ( CollisionShapeType.GetData() )
 		{
 			case TLMaths_ShapeRef(TCapsule2D):
-				GetMeshAsset()->GenerateCapsule( pWorldCollisionShape.GetObject<TLPhysics::TCollisionCapsule2D>()->GetCapsule() );
+				GetMeshAsset()->GenerateCapsule( pWorldCollisionShape.GetObject<TLMaths::TShapeCapsule2D>()->GetCapsule() );
 				break;
 
 		//	case TLMaths_ShapeRef(TCapsule):
-		//		GetMeshAsset()->GenerateCapsule( pWorldCollisionShape.GetObject<TLPhysics::TCollisionCapsule>()->GetCapsule() );
+		//		GetMeshAsset()->GenerateCapsule( pWorldCollisionShape.GetObject<TLMaths::TShapeCapsule>()->GetCapsule() );
 		//	break;
 
 			case TLMaths_ShapeRef(TSphere):
-				GetMeshAsset()->GenerateSphere( pWorldCollisionShape.GetObject<TLPhysics::TCollisionSphere>()->GetSphere() );
+				GetMeshAsset()->GenerateSphere( pWorldCollisionShape.GetObject<TLMaths::TShapeSphere>()->GetSphere() );
 				break;
 
 			case TLMaths_ShapeRef(TSphere2D):
-				GetMeshAsset()->GenerateSphere( pWorldCollisionShape.GetObject<TLPhysics::TCollisionSphere2D>()->GetSphere() );
+				GetMeshAsset()->GenerateSphere( pWorldCollisionShape.GetObject<TLMaths::TShapeSphere2D>()->GetSphere() );
 				break;
 
 			case TLMaths_ShapeRef(TBox2D):
-				GetMeshAsset()->GenerateQuad( pWorldCollisionShape.GetObject<TLPhysics::TCollisionBox2D>()->GetBox() );
+				GetMeshAsset()->GenerateQuad( pWorldCollisionShape.GetObject<TLMaths::TShapeBox2D>()->GetBox() );
 				break;
 
 			default:
