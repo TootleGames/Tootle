@@ -26,7 +26,7 @@ public:
 	virtual Bool				HasTransform()	{ return TRUE; }
 
 	FORCEINLINE const float3&	GetPosition() const												{	return GetTranslate();	}					//	our position will be 
-	FORCEINLINE void			GetLocalPosition(float3& Pos) const								{	GetTransform().TransformVector( Pos );	}	//	get a position relative to the scene node
+	FORCEINLINE void			GetLocalPosition(float3& Pos) const								{	GetTransform().Transform( Pos );	}	//	get a position relative to the scene node
 
 	const TLMaths::TTransform&	GetTransform() const											{	return m_Transform;	}
 	FORCEINLINE	const float3&	GetTranslate() const											{	return m_Transform.GetTranslate();	}

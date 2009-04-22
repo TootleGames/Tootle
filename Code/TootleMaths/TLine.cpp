@@ -555,8 +555,8 @@ void TLMaths::TLine2D::Transform(const TLMaths::TTransform& Transform)
 {
 	if ( Transform.HasAnyTransform() )
 	{
-		Transform.TransformVector( m_Start );
-		Transform.TransformVector( m_End );
+		Transform.Transform( m_Start );
+		Transform.Transform( m_End );
 	}
 }
 

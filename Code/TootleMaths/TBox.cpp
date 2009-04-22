@@ -206,7 +206,7 @@ void TLMaths::TBox::Transform(const TLMaths::TTransform& Transform)
 	//	transform the points
 	for ( u32 i=0;	i<BoundsPoints.GetSize();	i++ )
 	{
-		Transform.TransformVector( BoundsPoints[i] );
+		Transform.Transform( BoundsPoints[i] );
 	}
 
 	//	make new bounds
@@ -615,35 +615,31 @@ void TLMaths::TBox2D::Untransform(const TLMaths::TTransform& Transform)
 }
 
 
+
 //-------------------------------------------------
-//	get the 4 corners of the box
+//	get the 4 corners of the box - in outline/contour/quad order
 //-------------------------------------------------
 void TLMaths::TBox2D::GetBoxCorners(TArray<float2>& CornerPositions) const
 {
-	//	box top
+	//	topleft, top right, bottom right, bottom left
 	CornerPositions.Add( float2( m_Min.x,	m_Min.y ) );
 	CornerPositions.Add( float2( m_Max.x,	m_Min.y ) );
-
-	//	box bottom
-	CornerPositions.Add( float2( m_Min.x,	m_Max.y ) );
 	CornerPositions.Add( float2( m_Max.x,	m_Max.y ) );
+	CornerPositions.Add( float2( m_Min.x,	m_Max.y ) );
 }
 
 
 //-------------------------------------------------
-//	get the 4 corners of the box
+//	get the 4 corners of the box - in outline/contour/quad order
 //-------------------------------------------------
 void TLMaths::TBox2D::GetBoxCorners(TArray<float3>& CornerPositions,float z) const
 {
 	//	box top
 	CornerPositions.Add( float3( m_Min.x, m_Min.y, z ) );
 	CornerPositions.Add( float3( m_Max.x, m_Min.y, z ) );
-
-	//	box bottom
 	CornerPositions.Add( float3( m_Max.x, m_Max.y, z ) );
 	CornerPositions.Add( float3( m_Min.x, m_Max.y, z ) );
 }
-
 
 
 //---------------------------------------------------
@@ -1048,7 +1044,7 @@ void TLMaths::TBox2D::Transform(const TLMaths::TTransform& Transform)
 	//	transform the points
 	for ( u32 i=0;	i<BoundsPoints.GetSize();	i++ )
 	{
-		Transform.TransformVector( BoundsPoints[i] );
+		Transform.Transform( BoundsPoints[i] );
 	}
 
 	//	make new bounds

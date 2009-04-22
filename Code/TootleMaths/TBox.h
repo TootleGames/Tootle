@@ -114,8 +114,8 @@ public:
 	float2			GetSize() const		{	return (m_Max - m_Min);	}
 	float2			GetCenter() const				{	return TLMaths::Interp( m_Min, m_Max, 0.5f );	}
 	float3			GetCenter3(float z=0.f) const;	//	get the center of the box
-	void			GetBoxCorners(TArray<float2>& CornerPositions) const;	//	get the 8 corners of the box
-	void			GetBoxCorners(TArray<float3>& CornerPositions,float z) const;	//	get the 8 corners of the box
+	void			GetBoxCorners(TArray<float2>& CornerPositions) const;	//	get the 4 corners of the box - in outline/contour/quad order
+	void			GetBoxCorners(TArray<float3>& CornerPositions,float z) const;	//	get the 4 corners of the box - in outline/contour/quad order
 	const float&	GetLeft() const		{	return m_Min.x;	}
 	float&			GetLeft()			{	return m_Min.x;	}
 	const float&	GetTop() const		{	return m_Min.y;	}

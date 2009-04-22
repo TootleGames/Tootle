@@ -1284,6 +1284,20 @@ Bool TLAsset::TMesh::GenerateQuad(const TArray<float3>& Outline,const TArray<TCo
 
 
 //--------------------------------------------------------
+//	
+//--------------------------------------------------------
+void TLAsset::TMesh::GenerateQuad(const TLMaths::TOblong2D& Oblong,const TColour* pColour,Bool GenerateUV,float z)
+{
+	if ( !Oblong.IsValid() )
+		return;
+
+	const TArray<float2>& OblongCorners = Oblong.GetBoxCorners();
+
+	GenerateQuad( OblongCorners[0].xyz(z), OblongCorners[1].xyz(z), OblongCorners[2].xyz(z), OblongCorners[3].xyz(z), pColour, GenerateUV );
+}
+
+
+//--------------------------------------------------------
 //	turn an outline of points into a quad/tri-strip
 //--------------------------------------------------------
 Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour* pColour,Bool GenerateUVs)

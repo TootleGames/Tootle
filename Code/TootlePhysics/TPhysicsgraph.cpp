@@ -4,6 +4,21 @@
 
 #include <TootleCore/TLTime.h>
 
+
+#define MAX_PHYSICS_TIMESTEP	0.3f	//	max step is 20/60 ish...
+
+
+#define BOX2D_ITERATIONS		10	//	constraint/collision iterations
+
+
+
+//	collision method to use
+#ifndef USE_BOX2D
+	#define DO_COLLISIONS_BY_ZONE
+	//#define DO_COLLISIONS_BY_NODE
+	//#define DO_COLLISIONS_BY_NODEUPWARDS
+#endif
+
 //	no collide once, 3 iterastions - 5.X but stable
 //	collide once, 4 iterations, 4.4, quite stable
 //	collide once, 3 iterasions, 3.4 quite stable
@@ -14,8 +29,6 @@
 #define COLLISION_ITERATIONS	1
 //#define ENABLE_NOZONE_COLLISION
 //#define ENABLE_COLLISIONTEST_TRACE
-
-#define MAX_PHYSICS_TIMESTEP	0.3f
 
 #define ENABLE_TEST_PARENTZONENODE_INMYZONE
 #define ENABLE_TEST_PARENTZONENODE_INPREVIOUSPARENTZONE
@@ -100,6 +113,21 @@ void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 			TLTime::TScopeTimer Timer( TRef_Static(p,h,u,p,d) );
 			pRootNode->UpdateAll( fTimeStep );
 		}
+
+#ifdef USE_BOX2D
+		{
+			TLTime::TScopeTimer Timer( TRef_Static(C,o,l,l,i) );
+
+			//	box2d prefers fixed timesteps... lets see how our variable rate goes...
+			float timeStep = fTimeStep;			//	1.0f / 60.0f;
+			s32 iterations = BOX2D_ITERATIONS;	//	10
+
+			if ( m_pWorld )
+			{
+				m_pWorld->Step( timeStep, iterations );
+			}
+		}
+#endif
 
 		//	do collisions
 #ifdef DO_COLLISIONS_BY_ZONE
@@ -700,6 +728,12 @@ void TLPhysics::TPhysicsgraph::OnNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pNode)
 	TLDebug_Print( DebugString );
 #endif
 
+	//	create box2d body
+	if ( m_pWorld )
+	{
+		pNode->CreateBody( *m_pWorld );
+	}
+
 	//	initialise zone
 	if ( m_pRootCollisionZone )
 	{
@@ -732,6 +766,29 @@ void TLPhysics::TPhysicsgraph::SetRootCollisionZone(TPtr<TLMaths::TQuadTreeZone>
 	}
 #endif
 
+	//	create box2d world[bounds]
+	if ( m_pRootCollisionZone )
+	{
+		const TLMaths::TBox2D& WorldShape = m_pRootCollisionZone->GetShape();
+		b2AABB WorldBox;
+		WorldBox.lowerBound.Set( WorldShape.GetLeft(), WorldShape.GetTop() );
+		WorldBox.upperBound.Set( WorldShape.GetRight(), WorldShape.GetBottom() );
+
+		//	gravity is I think is still meters/sec
+		//float2 Gravity = g_WorldUpNormal.xy() * TLPhysics::g_GravityMetresSec;
+		
+		//	gr: gravity is applied by node, not by system
+		float2 Gravity( 0.f, 0.f );
+
+		//	create box2d world with the shape of our zone
+		//	gr: note our world up is opposite to box2d...
+		m_pWorld = new b2World( WorldBox, b2Vec2( Gravity.x, -Gravity.y ), TRUE );
+	}
+	else
+	{
+		//	delete old world
+		m_pWorld = NULL;
+	}
 }
 
 

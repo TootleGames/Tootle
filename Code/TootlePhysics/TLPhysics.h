@@ -5,6 +5,8 @@
 #include <TootleMaths/TShape.h>
 
 
+#define USE_BOX2D			//	do box2d simulation and skip our own collision system
+
 #define PHYSICS_SCALAR		60.f
 /*
 
@@ -25,10 +27,19 @@ Rubber on Concrete (wet)					0.25	0.3
 
 */
 
+//	box2D forward declaration
+//	namespace Box2D
+struct b2PolygonDef;
+struct b2CircleDef;
+
+
 namespace TLPhysics
 {
 	class TCollisionInfo;		//	collision info which is sent to subscribers - merge with intersection info?
 	class TPhysicsNode;
+
+	Bool	GetCircleDefFromShape(b2CircleDef& PolygonDef,const TLMaths::TShape& Shape);		//	get a box2D polygon [definition] shape from a tootle shape
+	Bool	GetPolygonDefFromShape(b2PolygonDef& PolygonDef,const TLMaths::TShape& Shape);		//	get a box2D polygon [definition] shape from a tootle shape
 
 	/*
 	// Force

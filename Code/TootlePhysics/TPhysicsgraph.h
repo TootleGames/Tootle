@@ -8,12 +8,12 @@
 #pragma once
 
 #include <TootleCore/TLGraph.h>
+#include "TLPhysics.h"
 #include "TPhysicsNode.h"
 
 
-#define DO_COLLISIONS_BY_ZONE
-//#define DO_COLLISIONS_BY_NODE
-//#define DO_COLLISIONS_BY_NODEUPWARDS
+//namespace Box2D
+#include <box2d/include/box2d.h>
 
 
 namespace TLPhysics
@@ -38,7 +38,9 @@ public:
 	virtual void			UpdateGraph(float TimeStep);
 	
 	void							SetRootCollisionZone(TPtr<TLMaths::TQuadTreeZone>& pZone);	//	set a new root collision zone
-	TPtr<TLMaths::TQuadTreeZone>&	GetRootCollisionZone()											{	return m_pRootCollisionZone;	}
+	TPtr<TLMaths::TQuadTreeZone>&	GetRootCollisionZone()										{	return m_pRootCollisionZone;	}
+	
+	FORCEINLINE TPtr<b2World>&		GetWorld()			{	return m_pWorld;	}				//	box2d's world
 
 	// Test routines
 	FORCEINLINE void		SetGravityX(float fValue)	{	if ( g_WorldUp.x == fValue )	return;		g_WorldUp.x = fValue;	CalcWorldUpNormal();	}
@@ -77,7 +79,8 @@ public:
 	u32						m_Debug_ZonesTested;					//	total number of zones that were looped through for collisions
 
 protected:
-	TPtr<TLMaths::TQuadTreeZone>	m_pRootCollisionZone;					//	collision zone tree
+	TPtr<TLMaths::TQuadTreeZone>	m_pRootCollisionZone;			//	collision zone tree
+	TPtr<b2World>					m_pWorld;						//	box2d's world
 };
 
 

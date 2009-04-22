@@ -352,6 +352,10 @@ public:
 	FORCEINLINE void				SetScale(const float3& Scale)							{	m_Scale = Scale;			SetScaleValid();	}
 	FORCEINLINE void				SetTranslate(const float3& Translate)					{	m_Translate = Translate;	SetTranslateValid();	}
 	FORCEINLINE void				SetRotation(const TQuaternion& Rotation)				{	m_Rotation = Rotation;		SetRotationValid();	}
+	FORCEINLINE u8					SetScaleHasChanged(const float3& Scale);				//	set scale, return's the Transform bit that has changed
+	FORCEINLINE u8					SetTranslateHasChanged(const float3& Translate);		//	set translation, return's the Transform bit that has changed
+	FORCEINLINE u8					SetTranslateHasChanged(const float3& Translate,float MinChange);	//	set translation, return's the Transform bit that has changed
+	FORCEINLINE u8					SetRotationHasChanged(const TQuaternion& Rotation);		//	set rotation, return's the Transform bit that has changed
 
 	FORCEINLINE float3&				GetTranslate() 			{	return m_Translate;	}	//	only use if HasTranslate()
 	FORCEINLINE float3&				GetScale()				{	return m_Scale;	}		//	only use if HasScale()
@@ -377,10 +381,10 @@ public:
 	FORCEINLINE u8					GetHasTransformBits() const		{	return m_Valid;	}
 
 	void				Transform(const TLMaths::TTransform& Trans);	//	transform this
-	void				TransformVector(float3& Vector) const;		//	transform vector
-	void				TransformVector(float2& Vector) const;		//	transform vector
-	void				UntransformVector(float3& Vector) const;	//	untransform vector
-	void				UntransformVector(float2& Vector) const;	//	untransform vector
+	void				Transform(float3& Vector) const;				//	transform vector
+	void				Transform(float2& Vector) const;				//	transform vector
+	void				Untransform(float3& Vector) const;				//	untransform vector
+	void				Untransform(float2& Vector) const;				//	untransform vector
 
 	u8					ImportData(TBinaryTree& Data);				//	import transform data from binary data/message/etc- returns bitmask of the attributes that have changed
 	u8					ExportData(TBinaryTree& Data,u8 TransformBits=TLMaths_TransformBitAll);	//	export all our valid data to this binary data- can optionally make it only write certain attributes. Returns bits of the attributes written.
@@ -555,6 +559,95 @@ FORCEINLINE float TLMaths::Sinf(float RadAngle)
 	return g_SineLookupTable[ Index % 360 ];
 	*/
 }
+
+
+
+//--------------------------------------------------
+//	set scale, return's the Transform bit that has changed
+//--------------------------------------------------
+FORCEINLINE u8 TLMaths::TTransform::SetScaleHasChanged(const float3& Scale)
+{
+	if ( !HasScale() || Scale != m_Scale )
+	{
+		SetScale( Scale );
+		return TLMaths_TransformBitScale;
+	}
+	else
+		return 0x0;
+}
+
+
+//--------------------------------------------------
+//	set translation, return's the Transform bit that has changed
+//--------------------------------------------------
+FORCEINLINE u8 TLMaths::TTransform::SetTranslateHasChanged(const float3& Translate)
+{
+	if ( !HasTranslate() || Translate != m_Translate )
+	{
+		SetTranslate( Translate );
+		return TLMaths_TransformBitTranslate;
+	}
+	else
+		return 0x0;
+}
+
+
+
+//--------------------------------------------------
+//	set translation, return's the Transform bit that has changed
+//--------------------------------------------------
+FORCEINLINE u8 TLMaths::TTransform::SetTranslateHasChanged(const float3& Translate,float MinChange)
+{
+	if ( !HasTranslate() )
+	{
+		SetTranslate( Translate );
+		return TLMaths_TransformBitTranslate;
+	}
+	else
+	{
+		//	gr: could do a length check here...
+		/*
+		float OldLengthSq = m_Translate.LengthSq();
+		float NewLengthSq = Translate.LengthSq();
+		if ( (OldLengthSq - NewLengthSq) < -MinChange ||
+			 (OldLengthSq - NewLengthSq) > MinChange )
+		*/
+		if ( (Translate.x - m_Translate.x) < -MinChange ||
+			 (Translate.x - m_Translate.x) > MinChange ||
+			 (Translate.y - m_Translate.y) < -MinChange ||
+			 (Translate.y - m_Translate.y) > MinChange ||
+			 (Translate.z - m_Translate.z) < -MinChange ||
+			 (Translate.z - m_Translate.z) > MinChange )
+		{
+			SetTranslate( Translate );
+			return TLMaths_TransformBitTranslate;
+		}
+		else
+		{
+			//	very minor change - don't apply
+			return 0x0;
+		}
+	}
+}
+
+
+
+
+//--------------------------------------------------
+//	set rotation, return's the Transform bit that has changed
+//--------------------------------------------------
+FORCEINLINE u8 TLMaths::TTransform::SetRotationHasChanged(const TLMaths::TQuaternion& Rotation)
+{
+	if ( !HasRotation() || Rotation != m_Rotation )
+	{
+		SetRotation( Rotation );
+		return TLMaths_TransformBitRotation;
+	}
+	else
+		return 0x0;
+}
+
+
 
 
 

@@ -209,8 +209,14 @@ void TLRender::TRenderNodePhysicsNode::OnPhysicsNodeChanged(TLPhysics::TPhysicsN
 				break;
 
 			case TLMaths_ShapeRef(TBox2D):
-				GetMeshAsset()->GenerateQuad( pWorldCollisionShape.GetObject<TLMaths::TShapeBox2D>()->GetBox() );
-				break;
+			{
+				//	gr: manually convert to oblong
+				const TLMaths::TBox2D& Box = PhysicsNode.GetCollisionShape().GetObject<TLMaths::TShapeBox2D>()->GetBox();
+				TLMaths::TOblong2D Oblong( Box, PhysicsNode.GetTransform() );
+				
+				GetMeshAsset()->GenerateQuad( Oblong );
+			}
+			break;
 
 			default:
 			{

@@ -1,5 +1,6 @@
 #include "TOblong.h"
 #include "TLine.h"
+#include "TBox.h"
 #include <TootleCore/TString.h>
 
 
@@ -12,13 +13,6 @@ TLMaths::TOblong::TOblong() :
 }
 
 
-
-
-TLMaths::TOblong2D::TOblong2D() :
-	m_IsValid	( FALSE ),
-	m_Corners	( 4 )
-{
-}
 
 
 //----------------------------------------
@@ -47,6 +41,47 @@ float2 TLMaths::TOblong2D::GetCenter() const
 	}
 
 	return Intersection;
+}
+
+
+
+//-------------------------------------------------------
+//	transform this shape
+//-------------------------------------------------------
+void TLMaths::TOblong2D::Transform(const TLMaths::TTransform& Transform)
+{
+	//	transform edges
+	if ( !IsValid() || !Transform.HasAnyTransform() )
+		return;
+
+	for ( u32 i=0;	i<m_Corners.GetSize();	i++ )
+	{
+		Transform.Transform( m_Corners[i] );
+	}
+}
+
+
+//-------------------------------------------------------
+//	construct oblong from a transformed box
+//-------------------------------------------------------
+void TLMaths::TOblong2D::Set(const TLMaths::TBox2D& Box,const TLMaths::TTransform& Transform)
+{
+	if ( !Box.IsValid() )
+	{
+		TLDebug_Break("Constructing oblong from invalid box");
+		SetValid( FALSE );
+		return;
+	}
+
+	//	get initial corners
+	m_Corners.SetSize(0);
+	Box.GetBoxCorners( m_Corners );
+
+	//	is now valid
+	SetValid( TRUE );
+
+	//	transform oblong's corners
+	this->Transform( Transform );
 }
 
 

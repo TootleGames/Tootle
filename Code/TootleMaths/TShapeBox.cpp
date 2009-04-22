@@ -2,6 +2,7 @@
 #include <TootleCore/TBinaryTree.h>
 #include "TShapeSphere.h"
 #include "TShapeCapsule.h"
+#include "TShapeOblong.h"
 
 
 
@@ -67,6 +68,12 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox::Transform(const TLMaths::TTransform& T
 	if ( !Transform.HasAnyTransform() )
 	{
 		return pThis;
+	}
+
+	if ( Transform.HasRotation() )
+	{
+		TLDebug_Break("todo: need to transform into a 3D oblong (non AA box)");
+		return NULL;
 	}
 
 	//	copy and transform box
@@ -179,18 +186,38 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Transform(const TLMaths::TTransform&
 		return pThis;
 	}
 
-	//	copy and transform box
-	TLMaths::TBox2D NewBox( m_Box );
-	NewBox.Transform( Transform );
-
-	//	re-use old shape
-	if ( pOldShape && pOldShape->GetShapeType() == TLMaths::TBox2D::GetTypeRef() )
+	//	gr: todo properly
+	/*
+	//	if the transform contains a rotation then it's a complex transform into an oblong
+	if ( Transform.HasRotation() )
 	{
-		pOldShape.GetObject<TShapeBox2D>()->SetBox( NewBox );
-		return pOldShape;
-	}
+		//	create an oblong shape
+		TLMaths::TOblong2D NewOblong( m_Box, Transform );
 
-	return new TShapeBox2D( NewBox );
+		//	re-use old shape
+		if ( pOldShape && pOldShape->GetShapeType() == TLMaths::TOblong2D::GetTypeRef() )
+		{
+			pOldShape.GetObject<TShapeOblong2D>()->SetOblong( NewOblong );
+			return pOldShape;
+		}
+
+		return new TShapeOblong2D( NewOblong );
+	}
+	else*/
+	{
+		//	simple transform
+		TLMaths::TBox2D NewBox( m_Box );
+		NewBox.Transform( Transform );
+
+		//	re-use old shape
+		if ( pOldShape && pOldShape->GetShapeType() == TLMaths::TBox2D::GetTypeRef() )
+		{
+			pOldShape.GetObject<TShapeBox2D>()->SetBox( NewBox );
+			return pOldShape;
+		}
+
+		return new TShapeBox2D( NewBox );
+	}
 }
 
 

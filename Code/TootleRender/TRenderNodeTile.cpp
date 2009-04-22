@@ -36,7 +36,7 @@ Bool TLRender::TRenderNodeTile::Draw(TRenderTarget* pRenderTarget,TRenderNode* p
 		return FALSE;
 
 	float3 NodePos(0,0,0);
-	GetTransform().TransformVector( NodePos );
+	GetTransform().Transform( NodePos );
 	const float3& CameraLookAt = pCamera->GetLookAt();
 	float3 TileSize = TileBox.GetSize();
 	float3 TileStep( (CameraLookAt-NodePos) / TileSize );

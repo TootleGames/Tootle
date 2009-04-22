@@ -105,6 +105,8 @@ public:
 
 	void					GenerateQuad(const TLMaths::TBox2D& Box)															{	GenerateQuad( Box, NULL, FALSE, 0.f );	}
 	void					GenerateQuad(const TLMaths::TBox2D& Box,const TColour* pColour,Bool GenerateUV,float z=0.f);		//	generate a square mesh from a 2d box
+	void					GenerateQuad(const TLMaths::TOblong2D& Oblong)														{	GenerateQuad( Oblong, NULL, FALSE, 0.f );	}
+	void					GenerateQuad(const TLMaths::TOblong2D& Oblong,const TColour* pColour,Bool GenerateUV,float z=0.f);		//	generate a square mesh from a 2d box
 	void					GenerateQuad(const float2& Center,float Size,const TColour* pColour=NULL,float z=0.f);			//	generate a square mesh around a point
 	Bool					GenerateQuad(const TArray<float3>& Outline,const TColour* pColour=NULL);			//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const TArray<float3>& Outline,const TArray<TColour>& Colours);	//	turn an outline of points into a quad/tri-strip

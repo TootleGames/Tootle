@@ -7,6 +7,8 @@
 #include <TootleMaths/TShapeSphere.h>
 #include <TootleMaths/TShapeBox.h>
 
+//namespace Box2D
+	#include <box2d/include/box2d.h>
 
 
 //	if something moves less than this amount then dont apply the change - 
@@ -38,7 +40,7 @@ namespace TLPhysics
 {
 	float3		g_WorldUp( 0.f, -1.f, 0.f );
 	float3		g_WorldUpNormal( 0.f, -1.f, 0.f );
-	
+
 	float		g_GravityMetresSec	= 9.81f;	//	gravity in metres per second (1unit being 1metre)
 }
 
@@ -54,20 +56,26 @@ namespace TLRef
 
 TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 	TLGraph::TGraphNode<TPhysicsNode>	( NodeRef, TypeRef ),
-	m_Friction						( 0.4f ),
 	m_Mass							( 1.0f ),
 	m_Bounce						( 1.0f ),
 	m_Squidge						( 0.f ),
+#ifndef USE_BOX2D
+	m_Friction						( 0.4f ),
+#endif
 	m_Temp_ExtrudeTimestep			( 0.f ),
 	m_InitialisedZone				( FALSE ),
 	m_WorldCollisionShapeChanged	( FALSE ),
-	m_TransformChangedBits			( 0x0 )
+	m_TransformChangedBits			( 0x0 ),
+	m_pBody							( NULL )
 {
 #ifdef CACHE_ACCUMULATED_MOVEMENT
 	m_AccumulatedMovementValid = FALSE;
 #endif
 	m_PhysicsFlags.Set( TPhysicsNode::Flag_Enabled );
+
+
 }
+
 
 //---------------------------------------------------------
 //	cleanup
@@ -220,19 +228,11 @@ void TLPhysics::TPhysicsNode::Update(float fTimeStep)
 	if ( m_PhysicsFlags( Flag_HasGravity ) )
 	{
 		//	add gravity
-		float GravityPerFrame = g_GravityMetresSec * fTimeStep;
-		m_GravityForce = g_WorldUpNormal;
-		m_GravityForce *= -GravityPerFrame;	//	negate as UP is opposite to the direction of gravity.
+		//	negate as UP is opposite to the direction of gravity.
+		float3 GravityForce = g_WorldUpNormal * -g_GravityMetresSec;
 
-		m_Force += m_GravityForce;// * m_Mass;
+		AddForce( GravityForce );
 	}
-
-	//	make last force applied relative
-//	m_Force *= 1.f / 60.f;
-
-	m_Velocity += m_Force;
-	m_Force.Set(0.f,0.f,0.f);
-
 }
 
 
@@ -256,69 +256,115 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 		return;
 	}
 
-	//TLDebug_Print( TString("Velocity(%3.3f,%3.3f,%3.3f) Force(%3.3f,%3.3f,%3.3f) \n", m_Velocity.x, m_Velocity.y, m_Velocity.z, m_Force.x, m_Force.y, m_Force.z ) );
-
-	//	update physics movement
-	if ( DEBUG_FLOAT_CHECK( m_Force ) && HAS_MIN_CHANGE3(m_Force) )
+	#ifdef USE_BOX2D
 	{
-		m_Velocity += m_Force;
-		m_Force.Set( 0.f, 0.f, 0.f );
-		OnVelocityChanged();
-		OnForceChanged();
-	}
-	
-	//	move pos
-	float VelocityLengthSq = m_Velocity.LengthSq();
-	if ( VelocityLengthSq > TLMaths_NearZero )
-	{
-		if ( DEBUG_FLOAT_CHECK( m_Velocity ) )
+		//	get change in transform
+		if ( m_pBody )
 		{
-			MovePosition( m_Velocity, fTimeStep );
-		}
+			const b2Vec2& BodyPosition = m_pBody->GetPosition();
+			float32 BodyAngleRad = m_pBody->GetAngle();
 
-		//	reduce velocity
-		DEBUG_FLOAT_CHECK( m_Velocity );
-		float Dampening = 1.f - ( GetFriction() * fTimeStep * FRICTION_SCALAR );
-		if ( Dampening >= 1.f )
-		{
-			if ( Dampening > 1.f )
+			//	get new transform from box2d
+			float3 NewTranslate( BodyPosition.x, BodyPosition.y, 0.f );
+			
+			//	get new rotation; todo: store angle for quicker angle-changed test?
+			TLMaths::TQuaternion NewRotation( float3( 0.f, 0.f, -1.f ), BodyAngleRad );
+
+			u8 ChangedBits = 0x0;
+			ChangedBits |= m_Transform.SetTranslateHasChanged( NewTranslate, TLMaths_NearZero );
+			ChangedBits |= m_Transform.SetRotationHasChanged( NewRotation );
+
+			//	notify of changes
+			if ( ChangedBits != 0x0 )
 			{
-				TLDebug_Break("Dampening should not increase...");
-				Dampening = 1.f;
+				if ( ChangedBits == TLMaths_TransformBitRotation )
+				{
+					OnRotationChanged();
+				}
+				else
+				{
+					OnTransformChanged(ChangedBits);
+				}
+
+				//	after moving node, mark that the zone needs updating
+				SetCollisionZoneNeedsUpdate();
+			}
+		}
+	}
+	#else // USE_BOX2D
+	{
+		//TLDebug_Print( TString("Velocity(%3.3f,%3.3f,%3.3f) Force(%3.3f,%3.3f,%3.3f) \n", m_Velocity.x, m_Velocity.y, m_Velocity.z, m_Force.x, m_Force.y, m_Force.z ) );
+
+		//	update physics movement
+		if ( DEBUG_FLOAT_CHECK( m_Force ) && HAS_MIN_CHANGE3(m_Force) )
+		{
+			m_Velocity += m_Force;
+			m_Force.Set( 0.f, 0.f, 0.f );
+			OnVelocityChanged();
+			OnForceChanged();
+		}
+		
+		//	move pos
+		float VelocityLengthSq = m_Velocity.LengthSq();
+		if ( VelocityLengthSq > TLMaths_NearZero )
+		{
+			if ( DEBUG_FLOAT_CHECK( m_Velocity ) )
+			{
+				MovePosition( m_Velocity, fTimeStep );
 			}
 
-			//	no change to velocity
-		}
-		else if ( Dampening < TLMaths_NearZero )
-		{
-			//	dampening is tiny, so stop
-			Dampening = 0.f;
-			m_Velocity.Set( 0.f, 0.f, 0.f );
-			OnVelocityChanged();
-		}
-		else
-		{
-			DEBUG_FLOAT_CHECK( Dampening );
-			m_Velocity *= Dampening;
-			OnVelocityChanged();
-		}
-	}
+			//	reduce velocity
+			DEBUG_FLOAT_CHECK( m_Velocity );
+			float Dampening = 1.f - ( GetFriction() * fTimeStep * FRICTION_SCALAR );
+			if ( Dampening >= 1.f )
+			{
+				if ( Dampening > 1.f )
+				{
+					TLDebug_Break("Dampening should not increase...");
+					Dampening = 1.f;
+				}
 
-	//	reset force
-	if ( HAS_MIN_CHANGE3( m_Force ) )
-	{
-		m_Force.Set( 0.f, 0.f, 0.f );
-		OnForceChanged();
+				//	no change to velocity
+			}
+			else if ( Dampening < TLMaths_NearZero )
+			{
+				//	dampening is tiny, so stop
+				Dampening = 0.f;
+				m_Velocity.Set( 0.f, 0.f, 0.f );
+				OnVelocityChanged();
+			}
+			else
+			{
+				DEBUG_FLOAT_CHECK( Dampening );
+				m_Velocity *= Dampening;
+				OnVelocityChanged();
+			}
+		}
+
+		//	reset force
+		if ( HAS_MIN_CHANGE3( m_Force ) )
+		{
+			m_Force.Set( 0.f, 0.f, 0.f );
+			OnForceChanged();
+		}
 	}
+	#endif // USE_BOX2D
 
 	//	update collision zone
 	if ( m_PhysicsFlags( Flag_ZoneExpected ) && GetCollisionZoneNeedsUpdate() )
 	{
+#ifndef USE_BOX2D
 		UpdateNodeCollisionZone( pThis, Graph );
+#endif
 
 		//	no longer needs update
 		SetCollisionZoneNeedsUpdate( FALSE );
 	}
+
+
+#ifdef USE_BOX2D
+	m_WorldCollisionShapeChanged |= (m_TransformChangedBits!=0x0);
+#endif
 
 	//	notify that world collison shape has changed
 	if ( m_WorldCollisionShapeChanged )
@@ -328,7 +374,11 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 			TLMessaging::TMessage Message("ColShape", GetNodeRef() );
 
 			//	write whether we have a shape - if not, then we've invalidated our shape, but no use for it yet so it hasnt been re-calculated
-			Bool HasShape = GetWorldCollisionShape().IsValid();
+			#ifdef USE_BOX2D
+				Bool HasShape = GetCollisionShape().IsValid();
+			#else
+				Bool HasShape = GetWorldCollisionShape().IsValid();
+			#endif
 			Message.Write( HasShape );
 
 			PublishMessage( Message );
@@ -353,7 +403,7 @@ float3 TLPhysics::TPhysicsNode::GetPosition() const
 {
 	float3 Position(0,0,0);
 
-	m_Transform.TransformVector( Position );
+	m_Transform.Transform( Position );
 	
 	return Position;	
 }
@@ -368,14 +418,17 @@ void TLPhysics::TPhysicsNode::SetPosition(const float3& Position)
 		TLDebug_Break("handle this...");
 	}
 
+	//	exclusivly set transform
 	m_Transform.SetTranslate( Position );
+
+	//	set transform on box2d body
+	SetBodyTransform();
 
 	OnTranslationChanged();
 
 	//	after moving node, mark that the zone needs updating
 	SetCollisionZoneNeedsUpdate();
 }
-
 
 
 //----------------------------------------------------
@@ -530,6 +583,9 @@ void TLPhysics::TPhysicsNode::SetCollisionShape(const TPtr<TLMaths::TShape>& pSh
 
 	//	invalidate WORLD shape
 	SetWorldCollisionShapeInvalid();
+
+	//	create box2d shape
+	CreateBodyShape();
 }
 
 
@@ -583,7 +639,10 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode& OtherNode)
 			//	m_Velocity -= Dist * htotal;
 
 				vImpulse = CollisionForce.Normal() * htotal;
+
+#ifndef USE_BOX2D
 				m_Velocity += vImpulse;
+#endif
 				bChanges = TRUE;
 			}
 		}
@@ -641,8 +700,8 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode& OtherNode)
 
 			vReboundForce = Delta;
 
-			m_Force += vReboundForce;
-			OnForceChanged();
+			AddForce( vReboundForce );
+
 			bChanges = TRUE;
 		}
 	}
@@ -656,7 +715,7 @@ Bool TLPhysics::TPhysicsNode::OnCollision(const TPhysicsNode& OtherNode)
 
 		Message.Write(GetNodeRef());
 		//Message.Write(bChanges);
-		Message.Write(m_Velocity);		// Velocity of object
+		Message.Write( GetVelocity() );		// Velocity of object
 		Message.Write(vImpulse);			// Velocity change due to collision
 		Message.Write(vReboundForce);		// Force applied in moving this object via collision
 		//Message.Write(pOtherNode->IsStatic());	// Is the other node static?
@@ -684,6 +743,7 @@ TLMaths::TShape* TLPhysics::TPhysicsNode::CalcWorldCollisionShape()
 		return NULL;
 	}
 
+#ifndef USE_BOX2D
 	//	check to see if we need to add movement to the transform calculation
 	const float3& Movement = GetAccumulatedMovement();
 	Bool HasMovement = ( Movement.LengthSq() > 0.f );
@@ -717,6 +777,9 @@ TLMaths::TShape* TLPhysics::TPhysicsNode::CalcWorldCollisionShape()
 	{
 		TLDebug_Break("Collision shape transform with scale doesn't work!");
 	}
+#else
+	TLMaths::TTransform& Transform = m_Transform;
+#endif
 
 	//	transform the collision shape into a new shape
 	m_pWorldCollisionShape = m_pCollisionShape->Transform( Transform, m_pCollisionShape, m_pLastWorldCollisionShape );
@@ -756,183 +819,7 @@ void TLPhysics::TPhysicsNode::UpdateNodeCollisionZone(TPtr<TLPhysics::TPhysicsNo
 	//	use the generic quad tree zone update
 	TPtr<TLMaths::TQuadTreeNode> pThisZoneNode = pThis;
 	UpdateZone( pThisZoneNode, Graph.GetRootCollisionZone() );
-
-	/*
-#ifdef NEW_UPDATE_ZONE
-
-
-#endif
-
-#ifdef SIMPLE_UPDATE_ZONE
-	//	simple mode
-	TPtr<TLMaths::TQuadTreeZone> pParentZone = pGraph->GetRootCollisionZone();
-
-	//	re-add to parent to evaluate if we now span multiple zones
-	if ( pParentZone )
-	{
-		while ( !pParentZone->AddNode( pThis->GetZoneNodePtr(), pParentZone, TRUE ) )
-		{
-			//	no longer in parent zone, try parent of parent
-			pParentZone = pParentZone->GetParentZone();
-			if ( !pParentZone )
-			{
-				//	not in ANY zone any more
-				GetPhysicsZoneNode().SetZone( pParentZone, pThis->GetZoneNodePtr(), NULL );
-				//SetCollisionZone( pParentZone, pThisQuadTreeNode, NULL );
-				return;
-			}
-		}
-	}
-#endif 
-
-#ifdef COMPLEX_UPDATE_ZONE
-
-	TPtr<TCollisionZone>& pCurrentZone = GetCollisionZone();
-
-	//	no current zone, just try to add at the root
-	if ( !pCurrentZone )
-	{
-		TPtr<TCollisionZone>& pRootZone = pGraph->GetRootCollisionZone();
-
-		//	just return, if it worked it worked, if it didn't, we're still out of the zones
-		pRootZone->AddNode( pThis, pRootZone, TRUE );
-		return;
-	}
-
-	//	find the first zone we're in
-	TPtr<TCollisionZone> pTestZone = pCurrentZone;
-	TPtr<TCollisionZone> pInZone;
-	while ( !pInZone && pTestZone )
-	{
-		if ( pTestZone->IsNodeInZoneShape( pThis ) )
-			pInZone = pTestZone;
-		else
-			pTestZone = pTestZone->GetParentZone();
-	}
-
-	//	pInZone is the first zone we're definately in
-	while ( pInZone )
-	{
-		//	get the parent of InZone
-		TPtr<TCollisionZone> pInZoneParent = pInZone->GetParentZone();
-		if ( !pInZoneParent )
-		{
-			//	pInZone must be root. add to that and exit
-			pInZone->AddNode( pThis, pInZone, FALSE );
-			return;
-		}
-
-		//	see if we're in multiple children of the parent zone, i.e. crossing a border, if we are, go up again
-		TFixedArray<u32,4> InZoneParentChildrenZones;
-		pInZoneParent->GetInChildZones( this, InZoneParentChildrenZones );
-		if ( InZoneParentChildrenZones.GetSize() == 0 )
-		{
-			//	error, in zone, but not in any children...
-			TLDebug_Break("in zone, but not in any children...");
-			pInZone->AddNode( pThis, pInZone, FALSE );
-			return;
-		}
-
-		//	just in one zone (not crossing borders) so just add to InZone
-		//	todo: dont need to check children?
-		if ( InZoneParentChildrenZones.GetSize() == 1 )
-		{
-			pInZone->AddNode( pThis, pInZone, FALSE );
-			return;
-		}
-
-		//	crossing borders of InZone's parents, so go up again (hopefully wont be on another border...)
-		pInZone = pInZoneParent;
-	}
-
-	//	no longer in any zone, not even root
-	pInZone = NULL;
-	SetCollisionZone( pInZone, pThis, NULL );
-
-#endif
-	*/
 }
-
-/*
-
-//-------------------------------------------------------------
-//	attempt to add this node to this zone. checks with children 
-//	first to see if it fits into just one child better. returns FALSE if not in this zone
-//-------------------------------------------------------------
-Bool TLPhysics::TPhysicsNode::SetCollisionZone(TPtr<TLMaths::TQuadTreeZone>& pCollisionZone,TPtr<TPhysicsNode> pThis,const TFixedArray<u32,4>* pChildZoneList)
-{
-	//	already in this zone
-	TPtr<TLMaths::TQuadTreeZone>& pOldZone = GetZone();
-	if ( pOldZone == pCollisionZone )
-	{
-		//	just update child list
-		if ( !pChildZoneList )
-			SetChildZonesNone();
-		else
-			SetChildZones( *pChildZoneList );
-
-		return TRUE;
-	}
-
-	//	remove from old zone
-	if ( pOldZone )
-	{
-		TPtr<TLMaths::TQuadTreeNode> pThisQuadTreeNode = pThis;
-		pOldZone->DoRemoveNode( pThisQuadTreeNode );
-	}
-
-	//	add to this zone
-	if ( pCollisionZone )
-	{
-		if ( pCollisionZone->GetNodes().Exists( pThis ) )
-		{
-			TLDebug_Break("Node shouldnt be in this list");
-		}
-		else
-		{
-			//	add node to collision zone
-			TPtr<TLMaths::TQuadTreeNode> pThisQuadTreeNode = pThis;
-			pCollisionZone->DoAddNode( pThisQuadTreeNode );
-		}
-	}
-
-	//	set new zone on node
-	m_pCollisionZone = pCollisionZone;
-	m_InitialisedZone = TRUE;
-
-	//	update child list
-	if ( !pChildZoneList )
-		SetChildZonesNone();
-	else
-		SetChildZones( *pChildZoneList );
-
-	return TRUE;
-}
-*/
-	
-/*
-//-------------------------------------------------------------
-//	
-//-------------------------------------------------------------
-void TLPhysics::TPhysicsNode::SetChildZones(const TFixedArray<u32,4>& InZones)
-{
-	if ( !InZones.GetSize() )
-	{
-		m_ChildCollisionZones.Empty();
-		return;
-	}
-
-	if ( !m_pCollisionZone )
-	{
-		TLDebug_Break("Should be in a zone when trying to assign children");
-		return;
-	}
-
-	//	add child zones
-	m_ChildCollisionZones = InZones;
-}
-*/
-
 
 
 //-------------------------------------------------------------
@@ -1060,6 +947,144 @@ void TLPhysics::TPhysicsNode::SetTransform(const TLMaths::TTransform& NewTransfo
 	else
 	{
 		OnTransformChangedNoPublish();
+	}
+}
+
+
+	
+//-------------------------------------------------------------
+//	create the body in the world
+//-------------------------------------------------------------
+Bool TLPhysics::TPhysicsNode::CreateBody(b2World& World)
+{
+	const TLMaths::TTransform& Transform = GetTransform();
+
+	b2BodyDef BodyDef;
+
+	//	set initial transform
+	BodyDef.position.Set( Transform.GetTranslate().x, Transform.GetTranslate().y );
+	if ( Transform.HasRotation() )
+		BodyDef.angle = Transform.GetRotation().GetAngle2D().GetRadians();
+
+	//	set user data as a pointer back to self (could use ref...)
+	BodyDef.userData = this;
+
+	//	allocate body
+	m_pBody = World.CreateBody(&BodyDef);
+	if ( !m_pBody  )
+		return FALSE;
+
+	//	create shape definition from our existing collision shape
+	if ( m_pCollisionShape )
+	{
+		if ( !CreateBodyShape() )
+			return FALSE;
+
+	}
+
+	return TRUE;
+}
+
+
+//-------------------------------------------------------------
+//	when our collision shape changes we recreate the shape on the body
+//-------------------------------------------------------------
+Bool TLPhysics::TPhysicsNode::CreateBodyShape()
+{
+	//	need a box2d body
+	if ( !m_pBody )
+		return FALSE;
+
+	//	destroy existing shape[s]
+	b2Shape* pExistingShape = m_pBody->GetShapeList();
+	while ( pExistingShape )
+	{
+		//	store next
+		b2Shape* pNextShape = pExistingShape->GetNext();
+
+		//	remove from body
+		m_pBody->DestroyShape( pExistingShape );
+
+		pExistingShape = pNextShape;
+	}
+
+	//	no collision shape to work from
+	if ( !m_pCollisionShape )
+		return FALSE;
+
+	//	create new shape
+	if ( !m_pCollisionShape->IsValid() )
+	{
+		TLDebug_Break("Trying to create box2d shape from invalid shape");
+		return FALSE;
+	}
+
+	//	try to get a circle definition first...
+	b2CircleDef CircleDef;
+	b2PolygonDef PolygonDef;
+	b2ShapeDef* pShapeDef = NULL;
+
+	if ( TLPhysics::GetCircleDefFromShape( CircleDef, *m_pCollisionShape ) )
+	{
+		pShapeDef = &CircleDef;
+	}
+	else if ( TLPhysics::GetPolygonDefFromShape( PolygonDef, *m_pCollisionShape ) )
+	{
+		pShapeDef = &PolygonDef;
+	}
+	else
+	{
+		TLDebug_Break("Unsupported TShape -> box2d shape?");
+		return FALSE;
+	}
+
+	//	setup generic shape definition stuff
+	b2ShapeDef& ShapeDef = *pShapeDef;
+
+	//	make everything rigid
+	ShapeDef.density = 1.f;
+
+	//	gr: todo: use our node's friction values...
+	ShapeDef.friction = 0.3f;
+
+	//	create shape
+	m_pBody->CreateShape( &ShapeDef );
+
+	//	generate new mass value for the body. If static mass must be zero
+	if ( !IsStatic() )
+		m_pBody->SetMassFromShapes();
+
+	return TRUE;
+}
+
+
+//-------------------------------------------------------------
+//	reset the body's transform
+//-------------------------------------------------------------
+void TLPhysics::TPhysicsNode::SetBodyTransform()
+{
+	if ( !m_pBody )
+		return;
+
+	const TLMaths::TTransform& Transform = GetTransform();
+	float AngleRadians = Transform.GetRotation().GetAngle2D().GetRadians();
+
+	//	wake up body (Not sure if this has to be BEFORE the transforms...)
+	m_pBody->WakeUp();
+
+	//	set new transform (BEFORE refiltering contact points)
+	m_pBody->SetXForm( b2Vec2( Transform.GetTranslate().x, Transform.GetTranslate().y ), AngleRadians );
+	
+	//	refilter on world to reset contact points of the shapes
+	TPtr<b2World>& pWorld = TLPhysics::g_pPhysicsgraph->GetWorld();
+	if ( pWorld )
+	{
+		b2Shape* pShape = m_pBody->GetShapeList();
+		while ( pShape )
+		{
+			pWorld->Refilter( pShape );
+			pShape = pShape->GetNext();
+		}
 	}
 }
 

@@ -98,7 +98,8 @@ protected:
 class TLMaths::TOblong2D
 {
 public:
-	TOblong2D();
+	TOblong2D() : m_IsValid ( FALSE ), m_Corners ( 4 )																	{	}
+	TOblong2D(const TLMaths::TBox2D& Box,const TLMaths::TTransform& Transform) : m_IsValid( FALSE ), m_Corners ( 4 )	{	Set( Box, Transform );	}
 
 	static TRef		GetTypeRef()		{	return TLMaths_ShapeRef(TOblong2D);	}
 
@@ -106,7 +107,9 @@ public:
 
 	TFixedArray<float2,4>&			GetBoxCorners()				{	return m_Corners;	}
 	const TFixedArray<float2,4>&	GetBoxCorners() const		{	return m_Corners;	}
-/*	
+
+	void			Set(const TLMaths::TBox2D& Box,const TLMaths::TTransform& Transform);	//	construct oblong from a transformed box
+	/*	
 	void			Set(const float3& Min,const float3& Max)	{	m_Min = Min;	m_Max = Max;	m_IsValid = TRUE;	}
 	void			Set(const float3& MinMax)					{	m_Min = MinMax;	m_Max = MinMax;	m_IsValid = TRUE;	}
 	void			SetMin(const float3& Min)					{	m_Min = Min;	m_IsValid = TRUE;	}
@@ -123,8 +126,9 @@ public:
 	void			Accumulate(const TArray<float3>& Points);	//	get the extents of all these points
 
 	void			Transform(const TLMaths::TMatrix& Matrix,const float3& Scale);	//	transform this shape by this matrix
+*/
 	void			Transform(const TLMaths::TTransform& Transform);	//	transform this shape
-	void			Transform(const float3& Move)						{	m_Min += Move;	m_Max += Move;	}
+/*	void			Transform(const float3& Move)						{	m_Min += Move;	m_Max += Move;	}
 	void			Untransform(const TLMaths::TTransform& Transform);	//	untransform box
 
 	//	"intersection" is just a bool version of the distance check. (negative distance is an intersection)

@@ -97,7 +97,7 @@ TPtr<TLMaths::TShape> TLMaths::CreateShapeType(TRefRef ShapeType)
 void TLMaths::TIntersection::Transform(const TLMaths::TTransform& Transform)
 {
 	if ( Transform.HasAnyTransform() )
-		Transform.TransformVector( m_Intersection );
+		Transform.Transform( m_Intersection );
 }
 
 
@@ -107,7 +107,7 @@ void TLMaths::TIntersection::Transform(const TLMaths::TTransform& Transform)
 void TLMaths::TIntersection::Untransform(const TLMaths::TTransform& Transform)
 {
 	if ( Transform.HasAnyTransform() )
-		Transform.UntransformVector( m_Intersection );
+		Transform.Untransform( m_Intersection );
 }
 
 

@@ -1473,7 +1473,7 @@ TLMaths::TAngle TLMaths::TQuaternion::GetAngle2D() const
 	return Result;
 }
 
-
+	
 //-----------------------------------------------------------
 //	import transform data from binary data/message/etc- ChangedBits specifies which parts have changed
 //-----------------------------------------------------------
@@ -1491,7 +1491,6 @@ u8 TLMaths::TTransform::ImportData(TBinaryTree& Data)
 		if ( !HasTranslate() || m_Translate != OldTranslate )
 			ChangedBits |= TLMaths_TransformBitTranslate;
 	}
-
 
 	//	import scale
 	float3 OldScale = m_Scale;
@@ -1567,7 +1566,7 @@ void TLMaths::TTransform::Transform(const TLMaths::TTransform& Trans)
 		//		so the translate gets rotated, scaled etc... theres a possibility this might be wrong for other things, but Im not sure if it is or not
 		//		it's done BEFORE the merge of the rotation and the matrix of the child
 		//		the order of the other parts doesn't matter as they dont interact, where as this does
-		TransformVector( Translate );
+		Transform( Translate );
 
 		SetTranslate( Translate );
 		TLDebug_CheckFloat( Translate );
@@ -1599,7 +1598,7 @@ void TLMaths::TTransform::Transform(const TLMaths::TTransform& Trans)
 //-----------------------------------------------------------
 //	transform vector
 //-----------------------------------------------------------
-void TLMaths::TTransform::TransformVector(float3& Vector) const
+void TLMaths::TTransform::Transform(float3& Vector) const
 {
 	TLDebug_CheckFloat( Vector );
 
@@ -1629,7 +1628,7 @@ void TLMaths::TTransform::TransformVector(float3& Vector) const
 //-----------------------------------------------------------
 //	transform vector
 //-----------------------------------------------------------
-void TLMaths::TTransform::TransformVector(float2& Vector) const
+void TLMaths::TTransform::Transform(float2& Vector) const
 {
 	TLDebug_CheckFloat( Vector );
 
@@ -1659,7 +1658,7 @@ void TLMaths::TTransform::TransformVector(float2& Vector) const
 //-----------------------------------------------------------
 //	untransform vector
 //-----------------------------------------------------------
-void TLMaths::TTransform::UntransformVector(float3& Vector) const
+void TLMaths::TTransform::Untransform(float3& Vector) const
 {
 	TLDebug_CheckFloat( Vector );
 

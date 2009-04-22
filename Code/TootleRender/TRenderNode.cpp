@@ -684,7 +684,7 @@ const float3& TLRender::TRenderNode::GetWorldPos()
 		m_WorldPos.Set( 0.f, 0.f, 0.f );
 
 	//	transform
-	m_WorldTransform.TransformVector( m_WorldPos );
+	m_WorldTransform.Transform( m_WorldPos );
 
 	//	is as valid as the transform we just applied
 	m_WorldPosValid = m_WorldTransformValid;
