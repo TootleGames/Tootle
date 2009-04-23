@@ -979,7 +979,6 @@ Bool TLPhysics::TPhysicsNode::CreateBody(b2World& World)
 	{
 		if ( !CreateBodyShape() )
 			return FALSE;
-
 	}
 
 	return TRUE;
@@ -1034,7 +1033,11 @@ Bool TLPhysics::TPhysicsNode::CreateBodyShape()
 	}
 	else
 	{
-		TLDebug_Break("Unsupported TShape -> box2d shape?");
+#ifdef _DEBUG
+		TTempString Debug_String("Unsupported TShape -> box2d shape? ");
+		m_pCollisionShape->GetShapeType().GetString( Debug_String );
+		TLDebug_Print( Debug_String );
+#endif
 		return FALSE;
 	}
 

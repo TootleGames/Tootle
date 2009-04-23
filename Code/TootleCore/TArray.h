@@ -83,6 +83,12 @@ public:
 
 public:
 	TArray(TSortFunc* pSortFunc=NULL,u16 GrowBy=TArray_GrowByDefault);
+	//	gr: DO NOT IMPLEMENT THIS - the problem is that it has to make use of the virtual functions in the constructor (bad). 
+	//	When this is used with a fixed array (as self) it allocates memory and then won't use it (which doesn't cause a major problem) 
+	//	but on release it seems to corrupt the heap for some reason.
+	//	it may be possible to use it when specified as an explicit call, but it would still be using virtual functions in the constructor...
+//	TArray(const TArray<TYPE>& OtherArray);
+
 	virtual ~TArray();
 
 	FORCEINLINE const u32&	GetSize() const							{	return m_Size;	}						//	number of elements

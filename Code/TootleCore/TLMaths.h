@@ -15,7 +15,11 @@
 #define TWO_PI			((float)6.283185307f)
 #define HALF_PI			((float)1.570796326794895f)
 
+
+//	forward declarations
 class TBinaryTree;
+template<typename TYPE>
+class TArray;
 
 
 namespace TLMaths
@@ -123,7 +127,9 @@ namespace TLMaths
 	#define TLMaths_ShapeRef_TOblong2D		TRef_Static4(O,b,l,TWO)
 	#define TLMaths_ShapeRef_TSphere		TRef_Static3(S,p,h)
 	#define TLMaths_ShapeRef_TSphere2D		TRef_Static4(S,p,h,TWO)
-	
+	#define TLMaths_ShapeRef_Polygon		TRef_Static4(P,o,l,y)
+	#define TLMaths_ShapeRef_Polygon2D		TRef_Static5(P,o,l,y,TWO)
+
 	#define TLMaths_ShapeRef(ShapeType)		TLMaths_ShapeRef_##ShapeType
 }
 
@@ -383,6 +389,8 @@ public:
 	void				Transform(const TLMaths::TTransform& Trans);	//	transform this
 	void				Transform(float3& Vector) const;				//	transform vector
 	void				Transform(float2& Vector) const;				//	transform vector
+	void				Transform(TArray<float3>& VectorArray) const;
+	void				Transform(TArray<float2>& VectorArray) const;
 	void				Untransform(float3& Vector) const;				//	untransform vector
 	void				Untransform(float2& Vector) const;				//	untransform vector
 

@@ -95,13 +95,16 @@ SyncBool TLRender::TRenderZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
 			return SyncWait;
 		}
 #endif
+		//	no bounds, and world pos is not inside shape, so fail
+		return SyncFalse;
 	}
-
+		
 	//	outside sphere - so fail
 	if ( !ZoneShape.GetIntersection( WorldBoundsSphere ) )
 		return SyncFalse;
+	
 
-
+	//	even if we're inside the bounds sphere do a tighter check with the box
 	SyncBool BoundsBoxValid;
 #ifdef RECALC_BOX_FOR_RENDERZONE_TEST
 	//	get latest bounds box (may need calculation)

@@ -3,9 +3,9 @@
 #include "TShapeBox.h"
 #include "TShapeCapsule.h"
 #include "TShapeOblong.h"
+#include "TShapePolygon.h"
 #include <TootleCore/TString.h>
 #include <TootleCore/TBinaryTree.h>
-
 
 
 
@@ -77,6 +77,9 @@ TPtr<TLMaths::TShape> TLMaths::CreateShapeType(TRefRef ShapeType)
 		CASE_CREATE_SHAPE( Sphere );
 		CASE_CREATE_SHAPE( Sphere2D );
 #undef CASE_CREATE_SHAPE
+
+		//	gr: slight exception as the polygon shape doesn't begin with T as it's not a real primitive type
+		case TLMaths_ShapeRef(Polygon2D):	return new TLMaths::TShapePolygon2D();	break;
 	};
 
 #ifdef _DEBUG
@@ -126,6 +129,7 @@ Bool TLMaths::TShape::HasIntersection(TShape& OtherShape)
 		case TLMaths_ShapeRef(TOblong2D):	return HasIntersection( static_cast<TShapeOblong2D&>(OtherShape) );
 		case TLMaths_ShapeRef(TCapsule2D):	return HasIntersection( static_cast<TShapeCapsule2D&>(OtherShape) );
 //		case TLMaths_ShapeRef(Mesh):		return HasIntersection( static_cast<TShapeMesh&>(OtherShape) );
+		case TLMaths_ShapeRef(Polygon2D):	return HasIntersection( static_cast<TShapePolygon2D&>(OtherShape) );
 	};
 
 #ifdef _DEBUG
@@ -152,6 +156,7 @@ Bool TLMaths::TShape::GetIntersection(TShape& OtherShape,TIntersection& NodeAInt
 		case TLMaths_ShapeRef(TOblong2D):	return GetIntersection( static_cast<TShapeOblong2D&>(OtherShape), NodeAIntersection, NodeBIntersection );
 		case TLMaths_ShapeRef(TCapsule2D):	return GetIntersection( static_cast<TShapeCapsule2D&>(OtherShape), NodeAIntersection, NodeBIntersection );
 //		case TLMaths_ShapeRef(Mesh):		return GetIntersection( static_cast<TShapeMesh&>(OtherShape), NodeAIntersection, NodeBIntersection );
+		case TLMaths_ShapeRef(Polygon2D):	return GetIntersection( static_cast<TShapePolygon2D&>(OtherShape), NodeAIntersection, NodeBIntersection );
 	};
 
 #ifdef _DEBUG
@@ -179,4 +184,7 @@ void TLMaths::TShape::Debug_BreakOverloadThis(const char* pTestType,TShape& Othe
 
 	TLDebug_Break( Debug_String );
 }
+
+
+
 

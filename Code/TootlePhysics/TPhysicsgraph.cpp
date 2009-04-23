@@ -738,7 +738,10 @@ void TLPhysics::TPhysicsgraph::OnNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pNode)
 	if ( m_pRootCollisionZone )
 	{
 		TPtr<TLMaths::TQuadTreeNode> pQuadTreeNode = pNode;
-		m_pRootCollisionZone->AddNode( pQuadTreeNode, m_pRootCollisionZone, TRUE );
+		if ( pQuadTreeNode->HasZoneShape() )
+		{
+			m_pRootCollisionZone->AddNode( pQuadTreeNode, m_pRootCollisionZone, TRUE );
+		}
 	}
 }
 

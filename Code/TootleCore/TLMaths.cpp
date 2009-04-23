@@ -1702,4 +1702,22 @@ void TLMaths::TAngle::SetAngle(const float2& Direction)
 }
 
 
+//-----------------------------------------------------------
+//	
+//-----------------------------------------------------------
+void TLMaths::TTransform::Transform(TArray<float3>& VectorArray) const	
+{
+	for ( u32 i=0;	i<VectorArray.GetSize();	i++ )	
+		Transform( VectorArray[i] );	
+}
+
+
+//-----------------------------------------------------------
+//	
+//-----------------------------------------------------------
+void TLMaths::TTransform::Transform(TArray<float2>& VectorArray) const	
+{	
+	for ( u32 i=0;	i<VectorArray.GetSize();	i++ )
+		Transform( VectorArray[i] );
+}
 

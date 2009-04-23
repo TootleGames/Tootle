@@ -21,6 +21,22 @@ m_GrowBy		( GrowBy )
 	}
 }
 
+/*
+//------------------------------------------------
+//	initialise members and copy other array
+//------------------------------------------------
+template<typename TYPE>
+TArray<TYPE>::TArray(const TArray<TYPE>& OtherArray) :
+m_Size			( 0 ),
+m_pData			( NULL ),
+m_Alloc			( 0 ),
+m_pSortFunc		( OtherArray.m_pSortFunc ),
+m_Sorted		( OtherArray.m_Sorted ),
+m_GrowBy		( OtherArray.m_GrowBy )
+{
+	Copy( OtherArray );
+}
+*/
 
 //------------------------------------------------
 //	cleanup
@@ -633,6 +649,10 @@ void TArray<TYPE>::SetAllocSize(u32 NewSize)
 template<typename TYPE>
 void TArray<TYPE>::SwapElements(u32 a, u32 b)
 {
+	//	don't do anything when trying to swap the "same" element
+	if ( a == b )
+		return;
+
 	TYPE Tmp = ElementAt(a);
 	ElementAt(a) = ElementAt(b);
 	ElementAt(b) = Tmp;

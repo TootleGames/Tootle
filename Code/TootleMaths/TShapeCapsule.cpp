@@ -58,7 +58,7 @@ TPtr<TLMaths::TShape> TLMaths::TShapeCapsule2D::Transform(const TLMaths::TTransf
 	NewCapsule.Transform( Transform );
 
 	//	re-use old shape object
-	if ( pOldShape && pOldShape->GetShapeType() == TLMaths::TCapsule2D::GetTypeRef() )
+	if ( pOldShape && pOldShape.GetObject() != this && pOldShape->GetShapeType() == TLMaths::TCapsule2D::GetTypeRef() )
 	{
 		pOldShape.GetObject<TShapeCapsule2D>()->SetCapsule( NewCapsule );
 		return pOldShape;

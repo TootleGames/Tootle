@@ -22,6 +22,8 @@ namespace TLMaths
 	class TShapeBox;		//	box shape
 	class TShapeBox2D;		//	box shape
 //	class TShapeMesh;		//	mesh "shape" for triangle/face, line intersection etc
+	class TShapePolygon;	//	convex polygon shape
+	class TShapePolygon2D;	//	convex polygon shape
 
 	class TIntersection;	//	resulting intersection information of two shapes
 
@@ -77,6 +79,7 @@ public:
 	virtual Bool					IsValid() const = 0;						//	check if the shape is valid
 	virtual float3					GetCenter() const = 0;						//	get the center of the shape
 
+	virtual Bool					Transform(const TLMaths::TTransform& Transform)												{	return FALSE;	}	//	transform self
 	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pThis,TPtr<TShape>& pOldShape)	{	return NULL;	}	//	transform this collision shape into a world-relative shape
 
 	//	simple fast intersection tests which don't need intersection information - default behaviour uses more expensive "GetIntersection" code

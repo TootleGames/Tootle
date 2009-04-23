@@ -81,7 +81,7 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox::Transform(const TLMaths::TTransform& T
 	NewBox.Transform( Transform );
 
 	//	re-use old shape
-	if ( pOldShape && pOldShape->GetShapeType() == TLMaths::TBox::GetTypeRef() )
+	if ( pOldShape && pOldShape.GetObject() != this && pOldShape->GetShapeType() == TLMaths::TBox::GetTypeRef() )
 	{
 		pOldShape.GetObject<TShapeBox>()->SetBox( NewBox );
 		return pOldShape;
@@ -195,7 +195,7 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Transform(const TLMaths::TTransform&
 		TLMaths::TOblong2D NewOblong( m_Box, Transform );
 
 		//	re-use old shape
-		if ( pOldShape && pOldShape->GetShapeType() == TLMaths::TOblong2D::GetTypeRef() )
+		if ( pOldShape && pOldShape != this && pOldShape->GetShapeType() == TLMaths::TOblong2D::GetTypeRef() )
 		{
 			pOldShape.GetObject<TShapeOblong2D>()->SetOblong( NewOblong );
 			return pOldShape;
@@ -210,7 +210,7 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Transform(const TLMaths::TTransform&
 		NewBox.Transform( Transform );
 
 		//	re-use old shape
-		if ( pOldShape && pOldShape->GetShapeType() == TLMaths::TBox2D::GetTypeRef() )
+		if ( pOldShape && pOldShape.GetObject() != this && pOldShape->GetShapeType() == TLMaths::TBox2D::GetTypeRef() )
 		{
 			pOldShape.GetObject<TShapeBox2D>()->SetBox( NewBox );
 			return pOldShape;

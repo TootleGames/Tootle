@@ -3,6 +3,7 @@
 #include <TootleMaths/TShape.h>
 #include <TootleMaths/TShapeBox.h>
 #include <TootleMaths/TShapeSphere.h>
+#include <TootleMaths/TShapePolygon.h>
 
 //	namespace Box2D
 #include <box2d/include/box2d.h>
@@ -22,6 +23,44 @@ Bool TLPhysics::GetPolygonDefFromShape(b2PolygonDef& PolygonDef,const TLMaths::T
 			PolygonDef.SetAsBox( ShapeBox.GetHalfWidth(), ShapeBox.GetHalfHeight(), b2Vec2( ShapeBoxCenter.x, ShapeBoxCenter.y ), 0.f );
 			return TRUE;
 		}
+
+		case TLMaths_ShapeRef(Polygon2D):
+		{
+			const TLMaths::TShapePolygon2D& ShapePolygon = static_cast<const TLMaths::TShapePolygon2D&>( Shape );
+			const TArray<float2>& Outline = ShapePolygon.GetOutline();
+
+			//	if is not clockwise then create a new reversed (clockwise) shape to generate from
+			if ( !ShapePolygon.IsClockwise() )
+			{
+				TLMaths::TShapePolygon2D ReversedShapePolygon( Outline );
+				
+				ReversedShapePolygon.ReverseContour();
+
+				return GetPolygonDefFromShape( PolygonDef, ReversedShapePolygon );
+			}
+
+			//	check validity of polygon for use in box2d first
+			if ( !ShapePolygon.Debug_CheckIsConvex() )
+			{
+				if ( !TLDebug_Break("Polygon shape is concave and needs to be convex for box2d. If your shape cannot be fixed then we can implement a tesselation system that then creates multiple shapes on a body...") )
+					return FALSE;
+			}
+
+			//	gr: limit this at the shape level?
+			if ( Outline.GetSize() > b2_maxPolygonVertices )
+			{
+				TLDebug_Break("Polygon shape has too many outline points for box2d");
+				return FALSE;
+			}
+
+			//	set shape vertexes
+			PolygonDef.vertexCount = Outline.GetSize();
+			for ( u32 i=0;	i<Outline.GetSize();	i++ )
+				PolygonDef.vertices[i].Set( Outline[i].x, Outline[i].y );
+
+			return TRUE;
+		}
+		break;
 
 	};
 
