@@ -434,7 +434,7 @@ void TLScene::TSceneNode_Object::EnablePhysicsNode(Bool Enable,Bool EnableCollis
 		return;
 
 	//	enable/disable collision
-	pPhysicsNode->GetPhysicsFlags().Set( TLPhysics::TPhysicsNode::Flag_HasCollision, EnableCollision );
+	pPhysicsNode->EnableCollision( EnableCollision );
 
 	//	enable/disable
 	pPhysicsNode->SetEnabled( Enable );

@@ -47,6 +47,7 @@ namespace TLRender
 		Bool					BindColours(const TArray<TColour>* pColours);
 		Bool					BindColours(const TArray<TColour24>* pColours);
 		Bool					BindColours(const TArray<TColour32>* pColours);
+		Bool					BindColours(const TArray<TColour64>* pColours);
 		FORCEINLINE Bool		BindColoursNull()										{	return BindColours( (const TArray<TColour>*)NULL );	}	//	wrapper for ambigious use of NULL
 		Bool					BindUVs(const TArray<float2>* pUVs);
 		Bool					BindTexture(const TLAsset::TTexture* pTexture);			//	bind texture - returns FALSE if no texture is bound (either fail or expected)

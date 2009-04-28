@@ -81,6 +81,7 @@ public:
 	FORCEINLINE void			SetEnabled(Bool Enabled)			{	return m_PhysicsFlags.Set( TPhysicsNode::Flag_Enabled, Enabled );	}
 
 	FORCEINLINE void			AddForce(const float3& Force,Bool MassRelative=FALSE);
+	FORCEINLINE void			AddForceFrom(const float3& Force,const float3& ForceLocalPosition,Bool MassRelative=FALSE);
 	FORCEINLINE void			AddTorque(float AngleRadians);
 	FORCEINLINE void			SetVelocity(const float3& Velocity);
 	FORCEINLINE float3			GetVelocity() const;
@@ -98,18 +99,20 @@ public:
 
 	//void					OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);
 
-	Bool					HasCollision() const				{	return (IsEnabled() && HasCollisionFlag() && m_pCollisionShape.IsValid()) ? m_pCollisionShape->IsValid() : FALSE;	}
-	Bool					HasCollisionFlag() const			{	return m_PhysicsFlags( Flag_HasCollision );	}
-	void					SetCollisionNone()					{	m_pCollisionShape = NULL;	SetWorldCollisionShapeInvalid();	SetCollisionZoneNeedsUpdate();	}
-	void					SetCollisionShape(TRefRef MeshRef);							//	setup polygon collision with a mesh
-	void					SetCollisionShape(const TPtr<TLMaths::TShape>& pShape);		//	setup collision shape from a shape
-	void					SetCollisionShape(const TLMaths::TSphere& Sphere);			//	setup a sphere collision
-	void					SetCollisionShape(const TLMaths::TSphere2D& Sphere);		//	setup a sphere collision
-	void					SetCollisionShape(const TLMaths::TCapsule2D& Capsule);		//	setup a capsule collision
-	void					SetCollisionShape(const TLMaths::TOblong2D& Oblong);		//	setup an oblong collision
-	void					SetCollisionShape(const TLMaths::TBox2D& Box);				//	setup an oblong collision
-	TLMaths::TTransform&	GetCollisionShapeTransform()					{	return m_Transform;	}
-	TPtr<TLMaths::TShape>&	GetCollisionShape()								{	return m_pCollisionShape;	}
+	Bool							HasCollision() const				{	return (IsEnabled() && HasCollisionFlag() && m_pCollisionShape.IsValid()) ? m_pCollisionShape->IsValid() : FALSE;	}
+	Bool							HasCollisionFlag() const			{	return m_PhysicsFlags( Flag_HasCollision );	}
+	FORCEINLINE void				EnableCollision(Bool Enable=TRUE)	{	if ( m_PhysicsFlags( Flag_HasCollision ) != Enable )	{	m_PhysicsFlags.Set( Flag_HasCollision, Enable );	OnCollisionEnabledChanged( Enable );	}	}
+
+	void							SetCollisionNone()					{	m_pCollisionShape = NULL;	SetWorldCollisionShapeInvalid();	SetCollisionZoneNeedsUpdate();	}
+	void							SetCollisionShape(TRefRef MeshRef);							//	setup polygon collision with a mesh
+	void							SetCollisionShape(const TPtr<TLMaths::TShape>& pShape);		//	setup collision shape from a shape
+	void							SetCollisionShape(const TLMaths::TSphere& Sphere);			//	setup a sphere collision
+	void							SetCollisionShape(const TLMaths::TSphere2D& Sphere);		//	setup a sphere collision
+	void							SetCollisionShape(const TLMaths::TCapsule2D& Capsule);		//	setup a capsule collision
+	void							SetCollisionShape(const TLMaths::TOblong2D& Oblong);		//	setup an oblong collision
+	void							SetCollisionShape(const TLMaths::TBox2D& Box);				//	setup an oblong collision
+	TLMaths::TTransform&			GetCollisionShapeTransform()					{	return m_Transform;	}
+	TPtr<TLMaths::TShape>&			GetCollisionShape()								{	return m_pCollisionShape;	}
 	
 	TPtr<TLMaths::TShape>&			GetWorldCollisionShape()				{	return m_pWorldCollisionShape;	}
 	const TPtr<TLMaths::TShape>&	GetWorldCollisionShape() const			{	return m_pWorldCollisionShape;	}
@@ -153,6 +156,7 @@ protected:
 	virtual Bool				OnCollision(const TPhysicsNode& OtherNode);	//	handle collision with other object
 	void						AddCollisionInfo(const TLPhysics::TPhysicsNode& OtherNode,const TLMaths::TIntersection& Intersection);
 	void						PublishCollisions();						//	send out our list of collisions
+	void						OnCollisionEnabledChanged(Bool IsNowEnabled);	//	called when collision is enabled/disabled - changes group of box2D body so it won't do collision checks
 
 	virtual SyncBool			IsInShape(const TLMaths::TBox2D& Shape);
 	virtual Bool				HasZoneShape();								//	return validity of shape for early bail out tests.

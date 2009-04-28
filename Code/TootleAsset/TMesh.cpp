@@ -71,6 +71,7 @@ void TLAsset::TMesh::Empty()
 	m_Colours.Empty();
 	m_Colours24.Empty();
 	m_Colours32.Empty();
+	m_Colours64.Empty();
 	m_UVs.Empty();
 
 	m_Triangles.Empty();
@@ -524,6 +525,7 @@ void TLAsset::TMesh::GenerateRainbowColours()
 	m_Colours.Empty();
 	m_Colours24.Empty();
 	m_Colours32.Empty();
+	m_Colours64.Empty();
 
 	//	... for each vertex
 	for ( u32 v=0;	v<m_Vertexes.GetSize();	v++ )
@@ -542,7 +544,12 @@ SyncBool TLAsset::TMesh::ImportData(TBinaryTree& Data)
 	Data.ImportArrays( "Colrs", m_Colours );
 	Data.ImportArrays( "Col24", m_Colours24 );
 	Data.ImportArrays( "Col32", m_Colours32 );
+	Data.ImportArrays( "Col64", m_Colours64 );
 	Data.ImportArrays( "UVs", m_UVs );
+
+	//	add missing colour types
+	if ( m_Colours.GetSize() )
+		PadColours();
 
 	Data.ImportArrays( "Tris", m_Triangles );
 	Data.ImportArrays( "TStrp", m_Tristrips );
@@ -594,6 +601,7 @@ SyncBool TLAsset::TMesh::ExportData(TBinaryTree& Data)
 	Data.ExportArray( "Colrs", m_Colours );
 	Data.ExportArray( "Col24", m_Colours24 );
 	Data.ExportArray( "Col32", m_Colours32 );
+	Data.ExportArray( "Col64", m_Colours64 );
 	Data.ExportArray( "UVs", m_UVs );
 
 	Data.ExportArray( "Tris", m_Triangles );
@@ -1413,6 +1421,7 @@ void TLAsset::TMesh::Merge(const TMesh& OtherMesh)
 	m_Colours.Add( OtherMesh.GetColours() );
 	m_Colours24.Add( OtherMesh.GetColours24() );
 	m_Colours32.Add( OtherMesh.GetColours32() );
+	m_Colours64.Add( OtherMesh.GetColours64() );
 	m_UVs.Add( OtherMesh.GetUVs() );
 
 	//	pad up colours/uvs if the old mesh had colours
@@ -1453,6 +1462,7 @@ void TLAsset::TMesh::ColoursMult(const TColour& MultColour)
 	//	make sure other colour arrays are allocated
 	m_Colours24.SetSize( m_Colours.GetSize() );
 	m_Colours32.SetSize( m_Colours.GetSize() );
+	m_Colours64.SetSize( m_Colours.GetSize() );
 
 	for ( u32 i=0;	i<m_Colours.GetSize();	i++ )
 	{
@@ -1460,6 +1470,7 @@ void TLAsset::TMesh::ColoursMult(const TColour& MultColour)
 		Colour *= MultColour;
 		m_Colours24[i] = Colour;
 		m_Colours32[i] = Colour;
+		m_Colours64[i] = Colour;
 	}
 }
 
@@ -1703,6 +1714,9 @@ void TLAsset::TMesh::RemoveColourAt(u16 VertexIndex)
 
 	if ( VertexIndex < m_Colours32.GetSize() )
 		m_Colours32.RemoveAt( VertexIndex );
+
+	if ( VertexIndex < m_Colours64.GetSize() )
+		m_Colours64.RemoveAt( VertexIndex );
 }
 
 
@@ -1733,9 +1747,13 @@ void TLAsset::TMesh::PadColours()
 	for ( i=m_Colours32.GetSize();	i<m_Colours.GetSize();	i++ )
 		m_Colours32.Add( m_Colours[i] );
 
+	for ( i=m_Colours64.GetSize();	i<m_Colours.GetSize();	i++ )
+		m_Colours64.Add( m_Colours[i] );
+
 	//	shrink as required
 	m_Colours24.SetSize( m_Colours.GetSize() );
 	m_Colours32.SetSize( m_Colours.GetSize() );
+	m_Colours64.SetSize( m_Colours.GetSize() );
 }
 
 

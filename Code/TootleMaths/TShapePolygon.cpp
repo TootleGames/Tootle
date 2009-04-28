@@ -73,10 +73,10 @@ Bool TLMaths::TShapePolygon2D::Debug_CheckIsConvex() const
 {
 	// Compute normals. Ensure the edges have non-zero length.
 	b2Vec2 m_normals[b2_maxPolygonVertices];
-	for (int32 i = 0; i < m_Outline.GetSize(); ++i)
+	for (int32 i = 0; i <(s32)m_Outline.GetSize(); ++i)
 	{
 		int32 i1 = i;
-		int32 i2 = i + 1 < m_Outline.GetSize() ? i + 1 : 0;
+		int32 i2 = i + 1 <(s32)m_Outline.GetSize() ? i + 1 : 0;
 		float2 edge2 = m_Outline[i2] - m_Outline[i1];
 		b2Vec2 edge( edge2.x, edge2.y );
 		b2Assert(edge.LengthSquared() > B2_FLT_EPSILON * B2_FLT_EPSILON);
@@ -85,9 +85,9 @@ Bool TLMaths::TShapePolygon2D::Debug_CheckIsConvex() const
 	}
 
 	// Ensure the polygon is convex.
-	for (int32 i = 0; i < m_Outline.GetSize(); ++i)
+	for (int32 i = 0; i <(s32)m_Outline.GetSize(); ++i)
 	{
-		for (int32 j = 0; j < m_Outline.GetSize(); ++j)
+		for (int32 j = 0; j <(s32)m_Outline.GetSize(); ++j)
 		{
 			// Don't check vertices on the current edge.
 			if (j == i || j == (i + 1) % m_Outline.GetSize())
@@ -122,10 +122,10 @@ Bool TLMaths::TShapePolygon2D::IsClockwise() const
 {
 	// Compute normals. Ensure the edges have non-zero length.
 	b2Vec2 m_normals[b2_maxPolygonVertices];
-	for (int32 i = 0; i < m_Outline.GetSize(); ++i)
+	for (int32 i = 0; i <(s32)m_Outline.GetSize(); ++i)
 	{
 		int32 i1 = i;
-		int32 i2 = i + 1 < m_Outline.GetSize() ? i + 1 : 0;
+		int32 i2 = i + 1 <(s32)m_Outline.GetSize() ? i + 1 : 0;
 		float2 edge2 = m_Outline[i2] - m_Outline[i1];
 		b2Vec2 edge( edge2.x, edge2.y );
 		b2Assert(edge.LengthSquared() > B2_FLT_EPSILON * B2_FLT_EPSILON);
@@ -134,7 +134,7 @@ Bool TLMaths::TShapePolygon2D::IsClockwise() const
 	}
 
 	// Ensure the polygon is counter-clockwise.
-	for (int32 i = 1; i < m_Outline.GetSize(); ++i)
+	for (int32 i = 1; i <(s32)m_Outline.GetSize(); ++i)
 	{
 		float32 cross = b2Cross(m_normals[i-1], m_normals[i]);
 

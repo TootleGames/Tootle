@@ -27,6 +27,16 @@
 		BF81C41C0F30FA55001ACEC3 /* TFrustum.h in Headers */ = {isa = PBXBuildFile; fileRef = BF81C4180F30FA55001ACEC3 /* TFrustum.h */; };
 		BF81C41D0F30FA55001ACEC3 /* TQuadTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF81C4190F30FA55001ACEC3 /* TQuadTree.cpp */; };
 		BF81C41E0F30FA55001ACEC3 /* TQuadTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BF81C41A0F30FA55001ACEC3 /* TQuadTree.h */; };
+		BFAC1B730FA0DA2B00F69941 /* TShapeBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFAC1B690FA0DA2B00F69941 /* TShapeBox.cpp */; };
+		BFAC1B740FA0DA2B00F69941 /* TShapeBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BFAC1B6A0FA0DA2B00F69941 /* TShapeBox.h */; };
+		BFAC1B750FA0DA2B00F69941 /* TShapeCapsule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFAC1B6B0FA0DA2B00F69941 /* TShapeCapsule.cpp */; };
+		BFAC1B760FA0DA2B00F69941 /* TShapeCapsule.h in Headers */ = {isa = PBXBuildFile; fileRef = BFAC1B6C0FA0DA2B00F69941 /* TShapeCapsule.h */; };
+		BFAC1B770FA0DA2B00F69941 /* TShapeOblong.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFAC1B6D0FA0DA2B00F69941 /* TShapeOblong.cpp */; };
+		BFAC1B780FA0DA2B00F69941 /* TShapeOblong.h in Headers */ = {isa = PBXBuildFile; fileRef = BFAC1B6E0FA0DA2B00F69941 /* TShapeOblong.h */; };
+		BFAC1B790FA0DA2B00F69941 /* TShapePolygon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFAC1B6F0FA0DA2B00F69941 /* TShapePolygon.cpp */; };
+		BFAC1B7A0FA0DA2B00F69941 /* TShapePolygon.h in Headers */ = {isa = PBXBuildFile; fileRef = BFAC1B700FA0DA2B00F69941 /* TShapePolygon.h */; };
+		BFAC1B7B0FA0DA2B00F69941 /* TShapeSphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFAC1B710FA0DA2B00F69941 /* TShapeSphere.cpp */; };
+		BFAC1B7C0FA0DA2B00F69941 /* TShapeSphere.h in Headers */ = {isa = PBXBuildFile; fileRef = BFAC1B720FA0DA2B00F69941 /* TShapeSphere.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +65,16 @@
 		BF81C4180F30FA55001ACEC3 /* TFrustum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFrustum.h; path = ../TFrustum.h; sourceTree = SOURCE_ROOT; };
 		BF81C4190F30FA55001ACEC3 /* TQuadTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TQuadTree.cpp; path = ../TQuadTree.cpp; sourceTree = SOURCE_ROOT; };
 		BF81C41A0F30FA55001ACEC3 /* TQuadTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TQuadTree.h; path = ../TQuadTree.h; sourceTree = SOURCE_ROOT; };
+		BFAC1B690FA0DA2B00F69941 /* TShapeBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TShapeBox.cpp; path = ../TShapeBox.cpp; sourceTree = SOURCE_ROOT; };
+		BFAC1B6A0FA0DA2B00F69941 /* TShapeBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TShapeBox.h; path = ../TShapeBox.h; sourceTree = SOURCE_ROOT; };
+		BFAC1B6B0FA0DA2B00F69941 /* TShapeCapsule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TShapeCapsule.cpp; path = ../TShapeCapsule.cpp; sourceTree = SOURCE_ROOT; };
+		BFAC1B6C0FA0DA2B00F69941 /* TShapeCapsule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TShapeCapsule.h; path = ../TShapeCapsule.h; sourceTree = SOURCE_ROOT; };
+		BFAC1B6D0FA0DA2B00F69941 /* TShapeOblong.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TShapeOblong.cpp; path = ../TShapeOblong.cpp; sourceTree = SOURCE_ROOT; };
+		BFAC1B6E0FA0DA2B00F69941 /* TShapeOblong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TShapeOblong.h; path = ../TShapeOblong.h; sourceTree = SOURCE_ROOT; };
+		BFAC1B6F0FA0DA2B00F69941 /* TShapePolygon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TShapePolygon.cpp; path = ../TShapePolygon.cpp; sourceTree = SOURCE_ROOT; };
+		BFAC1B700FA0DA2B00F69941 /* TShapePolygon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TShapePolygon.h; path = ../TShapePolygon.h; sourceTree = SOURCE_ROOT; };
+		BFAC1B710FA0DA2B00F69941 /* TShapeSphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TShapeSphere.cpp; path = ../TShapeSphere.cpp; sourceTree = SOURCE_ROOT; };
+		BFAC1B720FA0DA2B00F69941 /* TShapeSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TShapeSphere.h; path = ../TShapeSphere.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +108,16 @@
 		84C10A570F0A7C8600B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				BFAC1B690FA0DA2B00F69941 /* TShapeBox.cpp */,
+				BFAC1B6A0FA0DA2B00F69941 /* TShapeBox.h */,
+				BFAC1B6B0FA0DA2B00F69941 /* TShapeCapsule.cpp */,
+				BFAC1B6C0FA0DA2B00F69941 /* TShapeCapsule.h */,
+				BFAC1B6D0FA0DA2B00F69941 /* TShapeOblong.cpp */,
+				BFAC1B6E0FA0DA2B00F69941 /* TShapeOblong.h */,
+				BFAC1B6F0FA0DA2B00F69941 /* TShapePolygon.cpp */,
+				BFAC1B700FA0DA2B00F69941 /* TShapePolygon.h */,
+				BFAC1B710FA0DA2B00F69941 /* TShapeSphere.cpp */,
+				BFAC1B720FA0DA2B00F69941 /* TShapeSphere.h */,
 				BF1B973F0F64566400E2B516 /* TOblong.cpp */,
 				BF1B97400F64566400E2B516 /* TOblong.h */,
 				8461C3EB0F5E8DCB00ED9509 /* TShape.cpp */,
@@ -148,6 +178,11 @@
 				BF81C41E0F30FA55001ACEC3 /* TQuadTree.h in Headers */,
 				8461C3EE0F5E8DCB00ED9509 /* TShape.h in Headers */,
 				BF1B97420F64566400E2B516 /* TOblong.h in Headers */,
+				BFAC1B740FA0DA2B00F69941 /* TShapeBox.h in Headers */,
+				BFAC1B760FA0DA2B00F69941 /* TShapeCapsule.h in Headers */,
+				BFAC1B780FA0DA2B00F69941 /* TShapeOblong.h in Headers */,
+				BFAC1B7A0FA0DA2B00F69941 /* TShapePolygon.h in Headers */,
+				BFAC1B7C0FA0DA2B00F69941 /* TShapeSphere.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,6 +239,11 @@
 				BF81C41D0F30FA55001ACEC3 /* TQuadTree.cpp in Sources */,
 				8461C3ED0F5E8DCB00ED9509 /* TShape.cpp in Sources */,
 				BF1B97410F64566400E2B516 /* TOblong.cpp in Sources */,
+				BFAC1B730FA0DA2B00F69941 /* TShapeBox.cpp in Sources */,
+				BFAC1B750FA0DA2B00F69941 /* TShapeCapsule.cpp in Sources */,
+				BFAC1B770FA0DA2B00F69941 /* TShapeOblong.cpp in Sources */,
+				BFAC1B790FA0DA2B00F69941 /* TShapePolygon.cpp in Sources */,
+				BFAC1B7B0FA0DA2B00F69941 /* TShapeSphere.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

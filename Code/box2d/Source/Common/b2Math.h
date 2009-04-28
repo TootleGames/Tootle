@@ -60,8 +60,10 @@ inline bool b2IsValid(Fixed x)
 /// not a NaN or infinity.
 inline bool b2IsValid(float32 x)
 {
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 	return _finite(x) != 0;
+#elif defined(__GNUG__)
+	return isfinite(x) != 0;
 #else
 	return finite(x) != 0;
 #endif

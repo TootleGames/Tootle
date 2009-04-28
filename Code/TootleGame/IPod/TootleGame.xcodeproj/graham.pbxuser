@@ -3,6 +3,9 @@
 	84C108FC0F0A775200B2DF7A /* Project object */ = {
 		activeBuildConfigurationName = "Release AdHoc";
 		activeTarget = 84C10A360F0A7C1800B2DF7A /* TootleGame */;
+		addToTargets = (
+			84C10A360F0A7C1800B2DF7A /* TootleGame */,
+		);
 		codeSenseManager = BF81C3D10F30F8AC001ACEC3 /* Code sense */;
 		perUserDictionary = {
 			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
@@ -27,8 +30,8 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 259941649;
-			PBXWorkspaceStateSaveDate = 259941649;
+			PBXPerProjectTemplateStateSaveDate = 262258768;
+			PBXWorkspaceStateSaveDate = 262258768;
 		};
 		sourceControlManager = BF81C3D00F30F8AC001ACEC3 /* Source Control */;
 		userBuildSettings = {

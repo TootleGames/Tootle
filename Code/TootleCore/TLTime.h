@@ -22,14 +22,23 @@ namespace TLTime
 	class TTimestamp;
 	class TTimestampMicro;	//	timestamp but with micro second resolution
 	class TScopeTimer;
+	class TScopeTimerDummy;
+
+	//	in release builds replace Debug_TScopeTimers with dummy classes that do nothing
+#ifdef _DEBUG
+	typedef TScopeTimer Debug_TScopeTimer;
+#else
+	typedef TScopeTimer Debug_TScopeTimer;
+#endif
+
 
 	extern TKeyArray<TRef,float>	g_TimerCounters;		//	current elapsed time for timers
 	extern TKeyArray<TRef,float>	g_TimerAverages;		//	timer time elapsed in the last second in millisecs
 
-	const TTimestamp&		GetTimeNow();							//	return timestamp as of right now
-	const TTimestampMicro&	GetMicroTimeNow();						//	return timestamp as of right now
+	const TTimestamp&			GetTimeNow();							//	return timestamp as of right now
+	const TTimestampMicro&		GetMicroTimeNow();						//	return timestamp as of right now
 
-	float					GetUpdatesPerSecondf();				//	get desired frame rate (eg. 60fps)
+	float						GetUpdatesPerSecondf();				//	get desired frame rate (eg. 60fps)
 	FORCEINLINE float			GetUpdateTimeMilliSecsf()			{	return 1000.f/GetUpdatesPerSecondf();	}
 	FORCEINLINE float			GetUpdateTimeSecondsf()				{	return 1.f/GetUpdatesPerSecondf();	}	//	update time as a fraction of a second
 
@@ -43,10 +52,10 @@ namespace TLTime
 
 	namespace Platform
 	{
-		SyncBool		Init();									//	init time system (records time/date at startup)
-		void			GetTimeNow(TTimestamp& Timestamp);
-		void			GetMicroTimeNow(TTimestampMicro& Timestamp);
-		void			Debug_PrintTimestamp(const TTimestamp& Timestamp,s32 Micro);
+		SyncBool			Init();									//	init time system (records time/date at startup)
+		void				GetTimeNow(TTimestamp& Timestamp);
+		void				GetMicroTimeNow(TTimestampMicro& Timestamp);
+		void				Debug_PrintTimestamp(const TTimestamp& Timestamp,s32 Micro);
 	}
 
 	FORCEINLINE void							Debug_PrintTimestamp(const TTimestamp& Timestamp,s32 Micro=-1)		{	Platform::Debug_PrintTimestamp( Timestamp, Micro );	}
@@ -73,7 +82,9 @@ namespace TLCounter
 	extern TKeyArray<TRef,float>	g_Averages;		//	average counter-per-second values for counters
 
 //public:
-	FORCEINLINE void							Increment(TRefRef CounterRef,u16 Increment=1);	//	increment a counter
+	FORCEINLINE void							Increment(TRefRef CounterRef,u16 Amount=1);		//	increment a counter
+	FORCEINLINE void							Debug_Increment(TRefRef CounterRef,u16 Amount=1);
+
 	void										OnSecondElapsed(u32 FrameCount);				//	calcualate averages
 
 	FORCEINLINE const TKeyArray<TRef,float>&	GetCounters()		{	return g_Averages;	}	//	current elapsed time for timers
@@ -183,6 +194,15 @@ protected:
 
 
 
+//---------------------------------------------------------
+//	dummy scope timer for release builds where Debug_ScopeTimer is replaced with this type
+//---------------------------------------------------------
+class TLTime::TScopeTimerDummy
+{
+};
+
+
+
 
 class TLTime::TTimeManager : public TManager
 {
@@ -227,14 +247,24 @@ FORCEINLINE void TLTime::AddTimerTime(TRefRef TimerRef,float MillisecTime)
 //------------------------------------------
 //	increment a counter
 //------------------------------------------
-FORCEINLINE void TLCounter::Increment(TRefRef CounterRef,u16 Increment)
+FORCEINLINE void TLCounter::Increment(TRefRef CounterRef,u16 Amount)
 {
 	//	update existing counter
 	u16* pCounter = g_Counters.Find( CounterRef );	
 	if ( pCounter )	
-		*pCounter += Increment;
+		*pCounter += Amount;
 	else
-		g_Counters.Add( CounterRef, Increment );
+		g_Counters.Add( CounterRef, Amount );
 }
 
+
+//------------------------------------------
+//	increment a counter
+//------------------------------------------
+FORCEINLINE void TLCounter::Debug_Increment(TRefRef CounterRef,u16 Amount)
+{
+#ifdef _DEBUG
+	Increment( CounterRef, Amount );
+#endif
+}
 

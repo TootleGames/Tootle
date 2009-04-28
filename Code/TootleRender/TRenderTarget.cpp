@@ -15,6 +15,7 @@
 
 //#define PREDIVIDE_RENDER_ZONES
 
+#define FORCE_COLOUR	Colour_TColour
 
 //-----------------------------------------------------------
 //	
@@ -1003,36 +1004,50 @@ void TLRender::TRenderTarget::DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset:
 	{
 		enum TColourMode
 		{
-			Colour_Float,
-			Colour_Rgb,
-			Colour_Rgba
+			Colour_TColour,
+			Colour_TColour24,
+			Colour_TColour32,
+			Colour_TColour64
 		};
 
 		//	pick most-desired mode
-		TColourMode ColourMode = HasAlpha ? Colour_Rgba : Colour_Rgb;
+		TColourMode ColourMode = HasAlpha ? Colour_TColour32 : Colour_TColour24;
 		if ( RenderFlags( TRenderNode::RenderFlags::UseFloatColours ) )
-			ColourMode = Colour_Float;
+			ColourMode = Colour_TColour;
 
+		//	force colour modes
+		#ifdef FORCE_COLOUR
+			ColourMode = FORCE_COLOUR;
+		#endif
+		
 		//	bind to colours
-		if ( ColourMode == Colour_Rgb )
+		if ( ColourMode == Colour_TColour24 )
 		{
 			const TArray<TColour24>* pColours24 = Mesh.GetColours24NotEmpty();
 			if ( pColours24 )
 				Opengl::BindColours( pColours24 );
 			else
-				ColourMode = Colour_Float;
+				ColourMode = Colour_TColour;
 		}
-		else if ( ColourMode == Colour_Rgba )
+		else if ( ColourMode == Colour_TColour32 )
 		{
 			const TArray<TColour32>* pColours32 = Mesh.GetColours32NotEmpty();
 			if ( pColours32 )
 				Opengl::BindColours( pColours32 );
 			else
-				ColourMode = Colour_Float;
+				ColourMode = Colour_TColour;
+		}
+		else if ( ColourMode == Colour_TColour64 )
+		{
+			const TArray<TColour64>* pColours64 = Mesh.GetColours64NotEmpty();
+			if ( pColours64 )
+				Opengl::BindColours( pColours64 );
+			else
+				ColourMode = Colour_TColour;
 		}
 
 		//	do float mode last in case we had to resort to it from lack of colours
-		if ( ColourMode == Colour_Float )
+		if ( ColourMode == Colour_TColour )
 		{
 			//	gr: always have float colours (if any at all)
 			Opengl::BindColours( Mesh.GetColoursNotEmpty() );

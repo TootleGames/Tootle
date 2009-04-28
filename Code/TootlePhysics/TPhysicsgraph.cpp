@@ -60,6 +60,33 @@ namespace TLPhysics
 
 
 
+//-----------------------------------------------------
+//	custom box2D contact filterer
+//-----------------------------------------------------
+bool TLPhysics::TPhysics_ContactFilter::ShouldCollide(b2Shape* shape1, b2Shape* shape2)
+{
+	const b2FilterData& filter1 = shape1->GetFilterData();
+	const b2FilterData& filter2 = shape2->GetFilterData();
+
+	//	increment collision test counter
+	TLCounter::Debug_Increment( TRef_Static(C,o,T,s,t) );
+
+	//	either is in a negative group... no collision
+	if ( filter1.groupIndex < 0 || filter2.groupIndex < 0 )
+		return FALSE;
+
+	if (filter1.groupIndex == filter2.groupIndex && filter1.groupIndex != 0)
+	{
+		//	always collide when in same non-zero group (default box2d behaviour)
+		return TRUE;
+	}
+
+	bool collide = (filter1.maskBits & filter2.categoryBits) != 0 && (filter1.categoryBits & filter2.maskBits) != 0;
+	return collide;
+}
+
+
+
 
 TLPhysics::TPhysicsgraph::TPhysicsgraph(TRefRef refManagerID) :
 	TLGraph::TGraph<TLPhysics::TPhysicsNode>	( refManagerID ),
@@ -786,6 +813,9 @@ void TLPhysics::TPhysicsgraph::SetRootCollisionZone(TPtr<TLMaths::TQuadTreeZone>
 		//	create box2d world with the shape of our zone
 		//	gr: note our world up is opposite to box2d...
 		m_pWorld = new b2World( WorldBox, b2Vec2( Gravity.x, -Gravity.y ), TRUE );
+
+		//	set contact filter
+		m_pWorld->SetContactFilter( &m_ContactFilter );
 	}
 	else
 	{

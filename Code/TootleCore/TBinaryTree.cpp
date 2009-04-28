@@ -124,9 +124,9 @@ void TBinaryTree::Debug_PrintTree(u32 TreeLevel) const
 			case TLBinary_TypeRef(u32):				String.Appendf(" [%d]", Debug_GetDataAs<u32>() );		break;
 
 			case TLBinary_TypeRef(s32):				String.Appendf(" [%d]", Debug_GetDataAs<s32>() );		break;
-			case TLBinary_TypeNRef(Type2,s32):		String.Appendf(" [%d,%d]", Debug_GetDataAs<Type2<s32>>().x, Debug_GetDataAs<Type2<s32>>().y );		break;
-			case TLBinary_TypeNRef(Type3,s32):		String.Appendf(" [%d,%d,%d]", Debug_GetDataAs<Type3<s32>>().x, Debug_GetDataAs<Type3<s32>>().y, Debug_GetDataAs<Type3<s32>>().z );		break;
-			case TLBinary_TypeNRef(Type4,s32):		String.Appendf(" [%d,%d,%d,%d]", Debug_GetDataAs<Type4<s32>>().x, Debug_GetDataAs<Type4<s32>>().y, Debug_GetDataAs<Type4<s32>>().z, Debug_GetDataAs<Type4<s32>>().w );		break;
+			case TLBinary_TypeNRef(Type2,s32):		String.Appendf(" [%d,%d]", Debug_GetDataAs<Type2<s32> >().x, Debug_GetDataAs<Type2<s32> >().y );		break;
+			case TLBinary_TypeNRef(Type3,s32):		String.Appendf(" [%d,%d,%d]", Debug_GetDataAs<Type3<s32> >().x, Debug_GetDataAs<Type3<s32> >().y, Debug_GetDataAs<Type3<s32> >().z );		break;
+			case TLBinary_TypeNRef(Type4,s32):		String.Appendf(" [%d,%d,%d,%d]", Debug_GetDataAs<Type4<s32> >().x, Debug_GetDataAs<Type4<s32> >().y, Debug_GetDataAs<Type4<s32> >().z, Debug_GetDataAs<Type4<s32> >().w );		break;
 			
 			case TLBinary_TypeRef(float):			String.Appendf(" [%.4f]", Debug_GetDataAs<float>() );		break;
 			case TLBinary_TypeRef(float2):			String.Appendf(" [%.4f,%.4f]", Debug_GetDataAs<float2>().x, Debug_GetDataAs<float2>().y );	break;

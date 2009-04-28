@@ -7,6 +7,10 @@
 #include <TootleMaths/TShapeSphere.h>
 #include <TootleMaths/TShapeBox.h>
 
+
+#define USE_ZERO_GROUP
+
+
 //namespace Box2D
 	#include <box2d/include/box2d.h>
 
@@ -41,7 +45,8 @@ namespace TLPhysics
 	float3		g_WorldUp( 0.f, -1.f, 0.f );
 	float3		g_WorldUpNormal( 0.f, -1.f, 0.f );
 
-	float		g_GravityMetresSec	= 9.81f;	//	gravity in metres per second (1unit being 1metre)
+	float		g_GravityMetresSec	= 20.f;	//	gravity in metres per second (1unit being 1metre)
+//	float		g_GravityMetresSec	= 9.81f;	//	gravity in metres per second (1unit being 1metre)
 }
 
 
@@ -1092,3 +1097,55 @@ void TLPhysics::TPhysicsNode::SetBodyTransform()
 }
 
 
+//-------------------------------------------------------------
+//	called when collision is enabled/disabled - changes group of box2D body so it won't do collision checks
+//-------------------------------------------------------------
+void TLPhysics::TPhysicsNode::OnCollisionEnabledChanged(Bool IsNowEnabled)
+{
+	b2Shape* pShape = GetBodyShape();
+	if ( !pShape )
+		return;
+
+	//	detect change of group index
+	s16 GroupIndex = pShape->GetFilterData().groupIndex;
+
+	//	gr: due to the use of this system, all our objects must be in group 1
+#ifndef USE_ZERO_GROUP
+	if ( GroupIndex == 0 )
+	{
+		TLDebug_Break("Gr: no objects should be in the zero group");
+		GroupIndex = 1;
+	}
+#endif
+
+	if ( IsNowEnabled && GroupIndex < 0 )
+	{
+		//	enable collision by making group positive
+		b2FilterData NewFilterData = pShape->GetFilterData();
+		#ifdef USE_ZERO_GROUP
+			NewFilterData.groupIndex = 0;
+		#else
+			NewFilterData.groupIndex = -GroupIndex;
+		#endif
+		pShape->SetFilterData( NewFilterData );
+		TLPhysics::g_pPhysicsgraph->GetWorld()->Refilter( pShape );
+	}
+#ifdef USE_ZERO_GROUP
+	else if ( !IsNowEnabled && GroupIndex >= 0 )
+#else
+	else if ( !IsNowEnabled && GroupIndex > 0 )
+#endif
+	{
+		//	disable collision by making group negative
+		b2FilterData NewFilterData = pShape->GetFilterData();
+		#ifdef USE_ZERO_GROUP
+			NewFilterData.groupIndex = -1;
+		#else
+			NewFilterData.groupIndex = -GroupIndex;
+		#endif
+		pShape->SetFilterData( NewFilterData );
+		TLPhysics::g_pPhysicsgraph->GetWorld()->Refilter( pShape );
+	}
+
+
+}

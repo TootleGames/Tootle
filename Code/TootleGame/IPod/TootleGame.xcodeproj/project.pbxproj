@@ -31,6 +31,8 @@
 		84DE35020F12AFED00608F8C /* TAssetBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DE34FE0F12AFED00608F8C /* TAssetBrowser.h */; };
 		84E117040F3CA26200471397 /* TGame.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E117020F3CA26200471397 /* TGame.h */; };
 		84E117050F3CA26200471397 /* TGame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E117030F3CA26200471397 /* TGame.cpp */; };
+		BFAC1C200FA0DE1100F69941 /* TWidgetDrag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFAC1BF80FA0DE1000F69941 /* TWidgetDrag.cpp */; };
+		BFAC1C210FA0DE1100F69941 /* TWidgetDrag.h in Headers */ = {isa = PBXBuildFile; fileRef = BFAC1BF90FA0DE1000F69941 /* TWidgetDrag.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,6 +65,8 @@
 		84DE34FE0F12AFED00608F8C /* TAssetBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAssetBrowser.h; path = ../TAssetBrowser.h; sourceTree = SOURCE_ROOT; };
 		84E117020F3CA26200471397 /* TGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGame.h; path = ../TGame.h; sourceTree = SOURCE_ROOT; };
 		84E117030F3CA26200471397 /* TGame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGame.cpp; path = ../TGame.cpp; sourceTree = SOURCE_ROOT; };
+		BFAC1BF80FA0DE1000F69941 /* TWidgetDrag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidgetDrag.cpp; path = ../TWidgetDrag.cpp; sourceTree = SOURCE_ROOT; };
+		BFAC1BF90FA0DE1000F69941 /* TWidgetDrag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWidgetDrag.h; path = ../TWidgetDrag.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +100,9 @@
 		84C10A3C0F0A7C2000B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				BFAC1B950FA0DE0C00F69941 /* IPod */,
+				BFAC1BF80FA0DE1000F69941 /* TWidgetDrag.cpp */,
+				BFAC1BF90FA0DE1000F69941 /* TWidgetDrag.h */,
 				849E9C940F83861300037332 /* TTimeline.cpp */,
 				849E9C950F83861300037332 /* TTimeline.h */,
 				849E9C960F83861300037332 /* TTimelineManager.cpp */,
@@ -135,6 +142,13 @@
 			name = "Build Configurations";
 			sourceTree = "<group>";
 		};
+		BFAC1B950FA0DE0C00F69941 /* IPod */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = IPod;
+			sourceTree = SOURCE_ROOT;
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -154,6 +168,7 @@
 				840EBCD20F7296D300BA6F4C /* TTextManager.h in Headers */,
 				849E9C990F83861300037332 /* TTimeline.h in Headers */,
 				849E9C9B0F83861300037332 /* TTimelineManager.h in Headers */,
+				BFAC1C210FA0DE1100F69941 /* TWidgetDrag.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -212,6 +227,7 @@
 				840EBCD10F7296D300BA6F4C /* TTextManager.cpp in Sources */,
 				849E9C980F83861300037332 /* TTimeline.cpp in Sources */,
 				849E9C9A0F83861300037332 /* TTimelineManager.cpp in Sources */,
+				BFAC1C200FA0DE1100F69941 /* TWidgetDrag.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,6 +261,13 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/build/Debug-iphoneos\"",
+					"\"$(SRCROOT)/build/Release AdHoc-iphoneos\"",
+					"\"$(SRCROOT)/build/Release-iphonesimulator\"",
+					"\"$(SRCROOT)/build/UninstalledProducts\"",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = TootleGame;
 			};
@@ -257,6 +280,13 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/build/Debug-iphoneos\"",
+					"\"$(SRCROOT)/build/Release AdHoc-iphoneos\"",
+					"\"$(SRCROOT)/build/Release-iphonesimulator\"",
+					"\"$(SRCROOT)/build/UninstalledProducts\"",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = TootleGame;
 				ZERO_LINK = NO;
@@ -280,6 +310,13 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/build/Debug-iphoneos\"",
+					"\"$(SRCROOT)/build/Release AdHoc-iphoneos\"",
+					"\"$(SRCROOT)/build/Release-iphonesimulator\"",
+					"\"$(SRCROOT)/build/UninstalledProducts\"",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = TootleGame;
 				ZERO_LINK = NO;
@@ -303,6 +340,13 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/build/Debug-iphoneos\"",
+					"\"$(SRCROOT)/build/Release AdHoc-iphoneos\"",
+					"\"$(SRCROOT)/build/Release-iphonesimulator\"",
+					"\"$(SRCROOT)/build/UninstalledProducts\"",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = TootleGame;
 				ZERO_LINK = NO;

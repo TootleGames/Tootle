@@ -426,8 +426,10 @@ void TLRender::TScreen::CreateDebugRenderTarget()
 	//	init root node
 	TRef RootRenderNode;
 	{
+		float DebugScale = GetScreenShape() == TLRender::ScreenShape_Portrait ? 5.f : 3.0f;
+
 		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
-		InitMessage.ExportData("Scale", float3( 5.f, 5.f, 1.f ) );
+		InitMessage.ExportData("Scale", float3( DebugScale, DebugScale, 1.f ) );
 		InitMessage.ExportData("Colour", TColour( 1.f, 1.f, 1.f, 0.8f ) );
 		RootRenderNode = TLRender::g_pRendergraph->CreateNode( "root", TRef(), TRef(), &InitMessage );
 		pRenderTarget->SetRootRenderNode( RootRenderNode );

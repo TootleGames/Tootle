@@ -23,6 +23,19 @@ namespace TLPhysics
 	class TPhysicsNodeFactory;
 
 	extern TPtr<TPhysicsgraph> g_pPhysicsgraph;
+
+	class TPhysics_ContactFilter;		//	custom box2D contact filterer
+};
+
+
+
+
+//-----------------------------------------------------
+//	custom box2D contact filterer
+//-----------------------------------------------------
+class TLPhysics::TPhysics_ContactFilter : public b2ContactFilter
+{
+	virtual bool ShouldCollide(b2Shape* shape1, b2Shape* shape2);
 };
 
 
@@ -81,6 +94,9 @@ public:
 protected:
 	TPtr<TLMaths::TQuadTreeZone>	m_pRootCollisionZone;			//	collision zone tree
 	TPtr<b2World>					m_pWorld;						//	box2d's world
+
+private:
+	TPhysics_ContactFilter			m_ContactFilter;				//	instance of our custom box2d contact filter
 };
 
 

@@ -139,6 +139,7 @@ public:
 	FORCEINLINE SyncBool				HasColours() const						{	return (!m_Vertexes.GetSize()) ? SyncWait : ( !m_Colours.GetSize() ? SyncFalse : SyncTrue );	};	//	return if we have colours - wait means unknown as we have no vertexes
 	FORCEINLINE SyncBool				HasColours24() const					{	return (!m_Vertexes.GetSize()) ? SyncWait : ( !m_Colours24.GetSize() ? SyncFalse : SyncTrue );	};	//	return if we have colours - wait means unknown as we have no vertexes
 	FORCEINLINE SyncBool				HasColours32() const					{	return (!m_Vertexes.GetSize()) ? SyncWait : ( !m_Colours32.GetSize() ? SyncFalse : SyncTrue );	};	//	return if we have colours - wait means unknown as we have no vertexes
+	FORCEINLINE SyncBool				HasColours64() const					{	return (!m_Vertexes.GetSize()) ? SyncWait : ( !m_Colours64.GetSize() ? SyncFalse : SyncTrue );	};	//	return if we have colours - wait means unknown as we have no vertexes
 	FORCEINLINE SyncBool				HasUVs() const							{	return (!m_Vertexes.GetSize()) ? SyncWait : ( !m_UVs.GetSize() ? SyncFalse : SyncTrue );	};	//	return if we have colours - wait means unknown as we have no vertexes
 
 	FORCEINLINE float3&						GetVertex(u32 VertIndex)			{	return m_Vertexes[VertIndex];	}
@@ -154,6 +155,8 @@ public:
 	FORCEINLINE const TArray<TColour24>*	GetColours24NotEmpty() const		{	return m_Colours24.GetSize() ? &m_Colours24 : NULL;	}
 	FORCEINLINE const TArray<TColour32>&	GetColours32() const				{	return m_Colours32;	}
 	FORCEINLINE const TArray<TColour32>*	GetColours32NotEmpty() const		{	return m_Colours32.GetSize() ? &m_Colours32 : NULL;	}
+	FORCEINLINE const TArray<TColour64>&	GetColours64() const				{	return m_Colours64;	}
+	FORCEINLINE const TArray<TColour64>*	GetColours64NotEmpty() const		{	return m_Colours64.GetSize() ? &m_Colours64 : NULL;	}
 	FORCEINLINE TArray<float2>&				GetUVs()							{	return m_UVs;	}
 	FORCEINLINE const TArray<float2>&		GetUVs() const						{	return m_UVs;	}
 	FORCEINLINE const TArray<float2>*		GetUVsNotEmpty() const				{	return m_UVs.GetSize() ? &m_UVs : NULL;	}
@@ -235,6 +238,7 @@ protected:
 	TArray<TColour>			m_Colours;				//	vertex colours - float format (4*4)
 	TArray<TColour24>		m_Colours24;			//	vertex colours - u8 format, no alpha (3*1)
 	TArray<TColour32>		m_Colours32;			//	vertex colours - u8 format (4*1)
+	TArray<TColour64>		m_Colours64;			//	vertex colours - u16 format (4*2)
 	TArray<float2>			m_UVs;					//	vertex texture mapping
 
 	TArray<Triangle>		m_Triangles;			//	triangles in mesh

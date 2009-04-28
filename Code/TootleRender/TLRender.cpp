@@ -7,6 +7,9 @@
 #endif
 
 
+//	gr: added this to check if it was the cause of a crash on iphone, but it's not. Colour format was the problem
+//#define REBIND_DATA	//	if defined then we re-bind data even if its the same pointer as was used before
+
 namespace TLRender
 {
 	u32							g_PolyCount;
@@ -366,8 +369,10 @@ Bool TLRender::Opengl::BindTexture(const TLAsset::TTexture* pTexture)
 Bool TLRender::Opengl::BindUVs(const TArray<float2>* pUVs)
 {
 	//	already bound to this
+#ifndef REBIND_DATA
 	if ( pUVs == g_pBoundUVs )
 		return TRUE;
+#endif
 
 	//	check vertex count before binding
 #ifdef _DEBUG
@@ -412,9 +417,11 @@ Bool TLRender::Opengl::BindUVs(const TArray<float2>* pUVs)
 Bool TLRender::Opengl::BindColours(const TArray<TColour>* pColours)
 {
 	//	already bound to this
+#ifndef REBIND_DATA
 	if ( pColours == g_pBoundColours )
 		return TRUE;
-
+#endif
+	
 	//	check vertex count before binding
 #ifdef _DEBUG
 	if ( pColours )
@@ -458,9 +465,11 @@ Bool TLRender::Opengl::BindColours(const TArray<TColour>* pColours)
 Bool TLRender::Opengl::BindColours(const TArray<TColour24>* pColours)
 {
 	//	already bound to this
+#ifndef REBIND_DATA
 	if ( pColours == g_pBoundColours )
 		return TRUE;
-
+#endif
+	
 	//	check vertex count before binding
 #ifdef _DEBUG
 	if ( pColours )
@@ -501,10 +510,11 @@ Bool TLRender::Opengl::BindColours(const TArray<TColour24>* pColours)
 //---------------------------------------------------
 Bool TLRender::Opengl::BindColours(const TArray<TColour32>* pColours)
 {
+#ifndef REBIND_DATA
 	//	already bound to this
 	if ( pColours == g_pBoundColours )
 		return TRUE;
-
+#endif
 
 	//	check vertex count before binding
 #ifdef _DEBUG
@@ -541,15 +551,63 @@ Bool TLRender::Opengl::BindColours(const TArray<TColour32>* pColours)
 	return TRUE;
 }
 
+//---------------------------------------------------
+//	bind colours
+//---------------------------------------------------
+Bool TLRender::Opengl::BindColours(const TArray<TColour64>* pColours)
+{
+#ifndef REBIND_DATA
+	//	already bound to this
+	if ( pColours == g_pBoundColours )
+		return TRUE;
+#endif
+
+	//	check vertex count before binding
+#ifdef _DEBUG
+	if ( pColours )
+	{
+		u32 BoundVertCount = g_pBoundVertexes ? g_pBoundVertexes->GetSize() : 0;
+		if ( pColours->GetSize() != BoundVertCount )
+		{
+			TLDebug_Break("Binding more/less colours than vertex positions - corrupt mesh?");
+			pColours = NULL;
+		}
+	}
+#endif
+
+	//	assign as new bound data	
+	g_pBoundColours = pColours;
+
+	//	unbind
+	if ( !pColours )
+	{
+		glDisableClientState( GL_COLOR_ARRAY );
+		Opengl::Debug_CheckForError();
+		return TRUE;
+	}
+	
+	//	enable texcoord array
+	glEnableClientState( GL_COLOR_ARRAY );
+	
+	//	bind
+	glColorPointer( 4, GL_UNSIGNED_SHORT, 0, pColours->GetData() );
+	
+	Debug_CheckForError();
+	
+	return TRUE;
+}
+
 
 //---------------------------------------------------
 //	bind verts
 //---------------------------------------------------
 Bool TLRender::Opengl::BindVertexes(const TArray<float3>* pVertexes)
 {
+#ifndef REBIND_DATA
 	//	already bound to this
 	if ( pVertexes == g_pBoundVertexes )
 		return TRUE;
+#endif
 	
 	g_pBoundVertexes = pVertexes;
 	
@@ -597,6 +655,7 @@ void TLRender::Opengl::DrawPrimitives(u16 GLPrimType,u32 IndexCount,const u16* p
 			if ( pIndexData[i] > MaxVertexIndex )
 			{
 				TLDebug_Break("Primitive contains vertex index out of the range of vertexes that were bound");
+				return;
 			}
 		}
 	}
