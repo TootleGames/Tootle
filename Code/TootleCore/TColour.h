@@ -133,8 +133,8 @@ public:
 
 	FORCEINLINE float4			GetRgbaf() const						{	return float4( GetRedf(), GetGreenf(), GetBluef(), GetAlphaf() );	}
 	FORCEINLINE float			GetRedf() const							{	return TLColour::MakeComponentf( GetRed8() );	}
-	FORCEINLINE float			GetGreenf() const						{	return TLColour::MakeComponentf( GetBlue8() );	}
-	FORCEINLINE float			GetBluef() const						{	return TLColour::MakeComponentf( GetGreen8() );	}
+	FORCEINLINE float			GetGreenf() const						{	return TLColour::MakeComponentf( GetGreen8() );	}
+	FORCEINLINE float			GetBluef() const						{	return TLColour::MakeComponentf( GetBlue8() );	}
 	FORCEINLINE float			GetAlphaf() const						{	return 1.f;	}
 	FORCEINLINE Type4<u8>		GetRgba32(u8 Alpha=255) const			{	return m_Rgb.xyzw( Alpha );	}
 	FORCEINLINE const Type3<u8>&	GetRgb24() const					{	return m_Rgb;	}
@@ -184,8 +184,8 @@ public:
 
 	FORCEINLINE float4			GetRgbaf() const						{	return float4( GetRedf(), GetGreenf(), GetBluef(), GetAlphaf() );	}
 	FORCEINLINE float			GetRedf() const							{	return TLColour::MakeComponentf( GetRed8() );	}
-	FORCEINLINE float			GetGreenf() const						{	return TLColour::MakeComponentf( GetBlue8() );	}
-	FORCEINLINE float			GetBluef() const						{	return TLColour::MakeComponentf( GetGreen8() );	}
+	FORCEINLINE float			GetGreenf() const						{	return TLColour::MakeComponentf( GetGreen8() );	}
+	FORCEINLINE float			GetBluef() const						{	return TLColour::MakeComponentf( GetBlue8() );	}
 	FORCEINLINE float			GetAlphaf() const						{	return TLColour::MakeComponentf( GetAlpha8() );	}
 	FORCEINLINE u32				GetRgba32() const						{	return *GetData32();	}
 	FORCEINLINE const u8&		GetRed8() const							{	return m_Rgba.x;	}
@@ -238,14 +238,14 @@ public:
 
 	FORCEINLINE float4			GetRgbaf() const						{	return float4( GetRedf(), GetGreenf(), GetBluef(), GetAlphaf() );	}
 	FORCEINLINE float			GetRedf() const							{	return TLColour::MakeComponentf( GetRed16() );	}
-	FORCEINLINE float			GetGreenf() const						{	return TLColour::MakeComponentf( GetBlue16() );	}
-	FORCEINLINE float			GetBluef() const						{	return TLColour::MakeComponentf( GetGreen16() );	}
+	FORCEINLINE float			GetGreenf() const						{	return TLColour::MakeComponentf( GetGreen16() );	}
+	FORCEINLINE float			GetBluef() const						{	return TLColour::MakeComponentf( GetBlue16() );	}
 	FORCEINLINE float			GetAlphaf() const						{	return TLColour::MakeComponentf( GetAlpha16() );	}
 //	FORCEINLINE u32				GetRgba32() const						{	return *GetData32();	}
 	FORCEINLINE u8				GetRed8() const							{	return TLColour::MakeComponent8( GetRed16() );	}
-	FORCEINLINE u8				GetGreen8() const						{	return TLColour::MakeComponent8( GetRed16() );	}
-	FORCEINLINE u8				GetBlue8() const						{	return TLColour::MakeComponent8( GetRed16() );	}
-	FORCEINLINE u8				GetAlpha8() const						{	return TLColour::MakeComponent8( GetRed16() );	}
+	FORCEINLINE u8				GetGreen8() const						{	return TLColour::MakeComponent8( GetGreen16() );	}
+	FORCEINLINE u8				GetBlue8() const						{	return TLColour::MakeComponent8( GetBlue16() );	}
+	FORCEINLINE u8				GetAlpha8() const						{	return TLColour::MakeComponent8( GetAlpha16() );	}
 	FORCEINLINE const u16&		GetRed16() const						{	return m_Rgba.x;	}
 	FORCEINLINE const u16&		GetGreen16() const						{	return m_Rgba.y;	}
 	FORCEINLINE const u16&		GetBlue16() const						{	return m_Rgba.z;	}
