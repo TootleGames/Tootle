@@ -10,6 +10,7 @@ namespace TLDebugFile
 	SyncBool		LoadDebugFile_MeshCube(TPtr<TLFileSys::TFile>& pFile);		//	create a cube mesh
 	SyncBool		LoadDebugFile_MeshQuad(TPtr<TLFileSys::TFile>& pFile);		//	create a cube mesh
 	SyncBool		LoadDebugFile_MeshSphere(TPtr<TLFileSys::TFile>& pFile);	//	create a cube mesh
+	SyncBool		LoadDebugFile_MeshCircle(TPtr<TLFileSys::TFile>& pFile);	//	create a cube mesh
 	SyncBool		LoadDebugFile_MeshCross(TPtr<TLFileSys::TFile>& pFile);		//	Axis cross
 	SyncBool		LoadDebugFile_TextureTest(TPtr<TLFileSys::TFile>& pFile);	//	test texture
 };
@@ -33,6 +34,7 @@ SyncBool TLFileSys::TVirtualFileSys::LoadFileList()
 	CreateFileInstance("d_cube.asset");
 	CreateFileInstance("d_quad.asset");
 	CreateFileInstance("d_cross.asset");
+	CreateFileInstance("d_circle.asset");
 	CreateFileInstance("d_Texture.asset");
 
 	//	update time stamp of file list
@@ -51,30 +53,15 @@ SyncBool TLFileSys::TVirtualFileSys::LoadFile(TPtr<TLFileSys::TFile>& pFile)
 	if ( pFile->IsLoaded() == SyncTrue )
 		return SyncTrue;
 
-	if ( pFile->GetFileRef() == TRef("d_cube") )
+	switch ( pFile->GetFileRef().GetData() )
 	{
-		return TLDebugFile::LoadDebugFile_MeshCube( pFile );
-	}
-
-	if ( pFile->GetFileRef() == TRef("d_sphere") )
-	{
-		return TLDebugFile::LoadDebugFile_MeshSphere( pFile );
-	}
-
-	if ( pFile->GetFileRef() == TRef("d_quad") )
-	{
-		return TLDebugFile::LoadDebugFile_MeshQuad( pFile );
-	}
-
-	if ( pFile->GetFileRef() == TRef("d_cross") )
-	{
-		return TLDebugFile::LoadDebugFile_MeshCross( pFile );
-	}
-
-	if ( pFile->GetFileRef() == TRef("d_texture") )
-	{
-		return TLDebugFile::LoadDebugFile_TextureTest( pFile );
-	}
+	case TRef_Static(d,UNDERSCORE,c,u,b):	return TLDebugFile::LoadDebugFile_MeshCube( pFile );
+	case TRef_Static(d,UNDERSCORE,s,p,h):	return TLDebugFile::LoadDebugFile_MeshSphere( pFile );
+	case TRef_Static(d,UNDERSCORE,c,i,r):	return TLDebugFile::LoadDebugFile_MeshCircle( pFile );
+	case TRef_Static(d,UNDERSCORE,q,u,a):	return TLDebugFile::LoadDebugFile_MeshQuad( pFile );
+	case TRef_Static(d,UNDERSCORE,c,r,o):	return TLDebugFile::LoadDebugFile_MeshCross( pFile );
+	case TRef_Static(d,UNDERSCORE,t,e,x):	return TLDebugFile::LoadDebugFile_TextureTest( pFile );
+	};
 
 	//	unknown debug file name
 	TLDebug_Break( TString("VirtualFileSys: Dont know how to create the file %s", pFile->GetFilename().GetData() ) );
@@ -177,6 +164,20 @@ SyncBool TLDebugFile::LoadDebugFile_MeshSphere(TPtr<TLFileSys::TFile>& pFile)
 	
 	//	generate a cube
 	pMesh->GenerateSphere( 1.f );
+
+	return LoadDebugFile_Asset( pFile, pMesh );
+}
+
+
+//---------------------------------------------------------
+//	create a circle mesh file
+//---------------------------------------------------------
+SyncBool TLDebugFile::LoadDebugFile_MeshCircle(TPtr<TLFileSys::TFile>& pFile)
+{
+	TPtr<TLAsset::TMesh> pMesh = new TLAsset::TMesh( pFile->GetFileRef() );
+	
+	//	generate a circle
+	pMesh->GenerateSphere( TLMaths::TSphere2D( float2(), 1.f ) ); 
 
 	return LoadDebugFile_Asset( pFile, pMesh );
 }

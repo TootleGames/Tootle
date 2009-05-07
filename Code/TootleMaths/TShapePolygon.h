@@ -16,6 +16,7 @@ class TLMaths::TShapePolygon2D : public TLMaths::TShape
 public:
 	TShapePolygon2D()																{}
 	TShapePolygon2D(const TArray<float2>& Outline)									{	m_Outline.Copy( Outline );	}
+	TShapePolygon2D(const TArray<float3>& Outline);
 
 	static TRef						GetShapeType_Static()							{	return TLMaths_ShapeRef(Polygon2D);	}
 	virtual TRef					GetShapeType() const							{	return TLMaths_ShapeRef(Polygon2D);	}

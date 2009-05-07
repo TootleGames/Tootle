@@ -45,7 +45,7 @@ namespace TLPhysics
 	float3		g_WorldUp( 0.f, -1.f, 0.f );
 	float3		g_WorldUpNormal( 0.f, -1.f, 0.f );
 
-	float		g_GravityMetresSec	= 20.f;	//	gravity in metres per second (1unit being 1metre)
+	float		g_GravityMetresSec	= 30.f;	//	gravity in metres per second (1unit being 1metre)
 //	float		g_GravityMetresSec	= 9.81f;	//	gravity in metres per second (1unit being 1metre)
 }
 
@@ -69,7 +69,6 @@ TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 #endif
 	m_Temp_ExtrudeTimestep			( 0.f ),
 	m_InitialisedZone				( FALSE ),
-	m_WorldCollisionShapeChanged	( FALSE ),
 	m_TransformChangedBits			( 0x0 ),
 	m_pBody							( NULL )
 {
@@ -87,6 +86,14 @@ TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 //---------------------------------------------------------
 void TLPhysics::TPhysicsNode::Shutdown()
 {
+	//	remove body
+	if ( m_pBody )
+	{
+		m_pBody->GetWorld()->DestroyBody( m_pBody );
+		m_pBody = NULL;
+	}
+
+	//	regular shutdown
 	TLGraph::TGraphNode<TLPhysics::TPhysicsNode>::Shutdown();
 }
 
@@ -160,7 +167,12 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 		pColShapeData->ResetReadPos();
 		TPtr<TLMaths::TShape> pCollisionShape = TLMaths::ImportShapeData( *pColShapeData );
 		if ( pCollisionShape )
-			SetCollisionShape( pCollisionShape );		
+		{
+			SetCollisionShape( pCollisionShape );
+
+			//	gr: by default we'll enable collision when a collision shape is specified
+			EnableCollision();
+		}
 	}
 
 	//	read transform
@@ -179,7 +191,12 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 		{
 			FlagChildren[f]->ResetReadPos();
 			if ( FlagChildren[f]->Read( FlagIndex ) )
+			{
 				GetPhysicsFlags().Set( (Flags)FlagIndex );
+				
+				if ( FlagIndex == Flag_HasCollision )
+					OnCollisionEnabledChanged(TRUE);
+			}
 		}
 		FlagChildren.Empty();
 	}
@@ -192,7 +209,12 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 		{
 			FlagChildren[f]->ResetReadPos();
 			if ( FlagChildren[f]->Read( FlagIndex ) )
+			{
 				GetPhysicsFlags().Clear( (Flags)FlagIndex );
+				
+				if ( FlagIndex == Flag_HasCollision )
+					OnCollisionEnabledChanged(TRUE);
+			}
 		}
 		FlagChildren.Empty();
 	}
@@ -216,7 +238,6 @@ void TLPhysics::TPhysicsNode::Update(float fTimeStep)
 	TLGraph::TGraphNode<TLPhysics::TPhysicsNode>::Update( fTimeStep );
 
 	//	init per-frame stuff
-//	m_WorldCollisionShapeChanged = FALSE;	//	gr: not reset PER FRAME, this can be changed externally too. reset once we send out our shape-changed message
 	m_Temp_ExtrudeTimestep = fTimeStep;
 	SetAccumulatedMovementInvalid();
 
@@ -277,7 +298,7 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 
 			u8 ChangedBits = 0x0;
 			ChangedBits |= m_Transform.SetTranslateHasChanged( NewTranslate, TLMaths_NearZero );
-			ChangedBits |= m_Transform.SetRotationHasChanged( NewRotation );
+			ChangedBits |= m_Transform.SetRotationHasChanged( NewRotation, TLMaths_NearZero );
 
 			//	notify of changes
 			if ( ChangedBits != 0x0 )
@@ -364,32 +385,6 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 
 		//	no longer needs update
 		SetCollisionZoneNeedsUpdate( FALSE );
-	}
-
-
-#ifdef USE_BOX2D
-	m_WorldCollisionShapeChanged |= (m_TransformChangedBits!=0x0);
-#endif
-
-	//	notify that world collison shape has changed
-	if ( m_WorldCollisionShapeChanged )
-	{
-		if ( HasSubscribers() )
-		{
-			TLMessaging::TMessage Message("ColShape", GetNodeRef() );
-
-			//	write whether we have a shape - if not, then we've invalidated our shape, but no use for it yet so it hasnt been re-calculated
-			#ifdef USE_BOX2D
-				Bool HasShape = GetCollisionShape().IsValid();
-			#else
-				Bool HasShape = GetWorldCollisionShape().IsValid();
-			#endif
-			Message.Write( HasShape );
-
-			PublishMessage( Message );
-		}
-
-		m_WorldCollisionShapeChanged = FALSE;
 	}
 
 	//	send out transform-changed messages
@@ -557,23 +552,6 @@ Bool TLPhysics::TPhysicsNode::PostIteration(u32 Iteration)
 	return (Iteration+1 <= 1);
 }
 
-/*
-//----------------------------------------------------------
-//	setup a polygon collision shape with this mesh
-//----------------------------------------------------------
-void TLPhysics::TPhysicsNode::SetCollisionShape(TRefRef MeshRef)
-{
-	//	todo: see if it's already a polygon and just update it
-	TPtr<TCollisionMesh> pCollisionMesh = new TCollisionMesh;
-	m_pCollisionShape = pCollisionMesh;
-	pCollisionMesh->SetMeshRef( MeshRef );
-
-	//	invalidate zone
-	SetCollisionZoneNeedsUpdate();
-
-	SetWorldCollisionShapeInvalid();
-}
-*/
 
 //----------------------------------------------------------
 //	setup collision shape from a shape
@@ -789,10 +767,6 @@ TLMaths::TShape* TLPhysics::TPhysicsNode::CalcWorldCollisionShape()
 	//	transform the collision shape into a new shape
 	m_pWorldCollisionShape = m_pCollisionShape->Transform( Transform, m_pCollisionShape, m_pLastWorldCollisionShape );
 
-	//	world collision shape has changed
-	//	gr: need a more comprehensive has-changed check?
-	m_WorldCollisionShapeChanged = TRUE;
-
 	if ( m_pWorldCollisionShape )
 	{
 		//	whether it was used or not, the last world collision shape is now redundant
@@ -944,6 +918,17 @@ void TLPhysics::TPhysicsNode::SetTransform(const TLMaths::TTransform& NewTransfo
 	//	copy transform
 	m_Transform = NewTransform;
 
+	//	explicit change of the body's transform
+	if ( m_pBody )
+	{
+		//	from CreateBody()
+		b2Vec2 Position = m_Transform.HasTranslate() ? b2Vec2( m_Transform.GetTranslate().x, m_Transform.GetTranslate().y ) : b2Vec2( 0.f, 0.f );
+		TLMaths::TAngle Angle = m_Transform.HasRotation() ? m_Transform.GetRotation().GetAngle2D() : 0.f;
+		Angle.AddDegrees(180.f);
+		Angle.Invert();
+		m_pBody->SetXForm( Position, Angle.GetRadians() );
+	}
+
 	//	invalidate stuff
 	if ( PublishChanges )
 	{
@@ -967,7 +952,11 @@ Bool TLPhysics::TPhysicsNode::CreateBody(b2World& World)
 	b2BodyDef BodyDef;
 
 	//	set initial transform
-	BodyDef.position.Set( Transform.GetTranslate().x, Transform.GetTranslate().y );
+	if ( Transform.HasTranslate() )
+		BodyDef.position.Set( Transform.GetTranslate().x, Transform.GetTranslate().y );
+	else
+		BodyDef.position.Set( 0.f, 0.f );
+
 	if ( Transform.HasRotation() )
 		BodyDef.angle = Transform.GetRotation().GetAngle2D().GetRadians();
 
@@ -1027,12 +1016,27 @@ Bool TLPhysics::TPhysicsNode::CreateBodyShape()
 	b2CircleDef CircleDef;
 	b2PolygonDef PolygonDef;
 	b2ShapeDef* pShapeDef = NULL;
+	TLMaths::TShape* pCollisionShape = m_pCollisionShape;
+	TPtr<TLMaths::TShape> pScaledCollisionShape = NULL;
 
-	if ( TLPhysics::GetCircleDefFromShape( CircleDef, *m_pCollisionShape ) )
+	//	gr: not decided how to do this yet... if the scale changes we will need to re-create the body shape...
+	//		as a scale doesnt come OUT of box2d body, we should retain this scale
+	//		but SCALE is the ONLY thing to apply to the shape
+	if ( GetTransform().HasScale() )
+	{
+		TLMaths::TTransform ScaleTransform;
+		ScaleTransform.SetScale( GetTransform().GetScale() );
+		pScaledCollisionShape = m_pCollisionShape->Transform( ScaleTransform, m_pCollisionShape, TLPtr::GetNullPtr<TLMaths::TShape>() );
+		pCollisionShape = pScaledCollisionShape;
+	}
+
+	//	apply scale to the shape
+
+	if ( TLPhysics::GetCircleDefFromShape( CircleDef, *pCollisionShape ) )
 	{
 		pShapeDef = &CircleDef;
 	}
-	else if ( TLPhysics::GetPolygonDefFromShape( PolygonDef, *m_pCollisionShape ) )
+	else if ( TLPhysics::GetPolygonDefFromShape( PolygonDef, *pCollisionShape ) )
 	{
 		pShapeDef = &PolygonDef;
 	}
@@ -1054,6 +1058,9 @@ Bool TLPhysics::TPhysicsNode::CreateBodyShape()
 
 	//	gr: todo: use our node's friction values...
 	ShapeDef.friction = 0.3f;
+
+	//	set initial group
+	ShapeDef.filter.groupIndex = HasCollisionFlag() ? 0 : -1;
 
 	//	create shape
 	m_pBody->CreateShape( &ShapeDef );
@@ -1149,3 +1156,29 @@ void TLPhysics::TPhysicsNode::OnCollisionEnabledChanged(Bool IsNowEnabled)
 
 
 }
+
+	
+//-------------------------------------------------------------
+//	get a more exact array of all the box 2D body shapes
+//-------------------------------------------------------------
+void TLPhysics::TPhysicsNode::GetBodyWorldShapes(TPtrArray<TLMaths::TShape>& ShapeArray)
+{
+	//	get all the bodies
+	TFixedArray<b2Body*,100> Bodies;
+	GetBodys( Bodies );
+
+	//	for each shape in each body, get a world-transformed shape
+	for ( u32 b=0;	b<Bodies.GetSize();	b++ )
+	{
+		b2Body* pBody = Bodies[b];
+		b2Shape* pBodyShape = pBody->GetShapeList();
+		while ( pBodyShape )
+		{
+			ShapeArray.Add( TLPhysics::GetShapeFromBodyShape( *pBodyShape, GetTransform() ) );
+			pBodyShape = pBodyShape->GetNext();
+		}
+	}
+
+}
+
+

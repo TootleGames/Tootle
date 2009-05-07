@@ -137,7 +137,7 @@ SyncBool TLFileSys::TFileMenu::ImportMenuItem(TPtr<TXmlTag>& pTag,TPtr<TLAsset::
 	const TString* pString = NULL;
 	
 	//	string
-	pString = pTag->GetProperty("Text");
+	pString = pTag->GetProperty("String");
 	if ( pString )
 		pItem->SetText( *pString );
 

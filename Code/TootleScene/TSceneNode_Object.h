@@ -23,6 +23,7 @@ class TLScene::TSceneNode_Object : public TLScene::TSceneNode_Transform
 {
 public:
 	TSceneNode_Object(TRefRef NodeRef,TRefRef TypeRef);
+	~TSceneNode_Object();
 
 	virtual Bool	HasRender()		{ return TRUE; }
 	virtual Bool	HasPhysics()	{ return TRUE; }
@@ -49,14 +50,14 @@ public:
 protected:
 	virtual void					ProcessMessage(TLMessaging::TMessage& Message);
 
-	virtual Bool					CreatePhysicsNode(TRefRef PhysicsNodeType=TRef());
+	virtual Bool					CreatePhysicsNode(TRefRef PhysicsNodeType=TRef(),TLMessaging::TMessage* pInitMessage=NULL);
 	virtual void					OnPhysicsNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode);
 	void							DeletePhysicsNode();
 	virtual void					OnPhysicsNodeRemoved(TRefRef PhysicsNodeRef)			{}	//	called when we get a message from the graph that our node has been removed - NOT invoked by DeletePhysicsNode()
 	void							EnablePhysicsNode(Bool Enable,Bool EnableCollision);		//	enable/disable physics node - can seperately enable collision
 
 	FORCEINLINE Bool				CreateRenderNode(TPtr<TLRender::TRenderNode> pParentRenderNode)	{	return CreateRenderNode( pParentRenderNode ? pParentRenderNode->GetNodeRef() : TRef() );	}
-	virtual Bool					CreateRenderNode(TRefRef ParentRenderNode,TLMessaging::TMessage* pInitMessage=NULL);
+	virtual Bool					CreateRenderNode(TRefRef ParentRenderNode,TRefRef RenderNodeType=TRef(),TLMessaging::TMessage* pInitMessage=NULL);
 	virtual void					OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode);
 	void							DeleteRenderNode();
 	virtual void					OnRenderNodeRemoved(TRefRef RenderNodeRef)			{}	//	called when we get a message from the graph that our node has been removed - NOT invoked by DeleteRenderNode()

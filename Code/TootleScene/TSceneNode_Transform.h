@@ -81,8 +81,10 @@ private:
 //--------------------------------------------
 FORCEINLINE SyncBool TLScene::TSceneNode_Transform::IsZoneAwake() const
 {
+	//	gr: changed this to be active when no zone set - this is for games with no zones on the scenegraph so they're still enabled.
+	//	games WITH zones should do their best to keep objects inside the zone boundries
 	TLMaths::TQuadTreeZone* pZone = GetZone();
-	return pZone ? pZone->IsActive() : SyncFalse;
+	return pZone ? pZone->IsActive() : SyncTrue;
 }
 
 

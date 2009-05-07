@@ -132,18 +132,7 @@ void TLMaths::TContour::evaluateQuadraticCurve(const float3& FromOn,const float3
 	float PointDistanceSq = (A - B).LengthSq() + (B - C).LengthSq();
 	u32 BezierSteps = GetBezierStepCount( TLMaths::Sqrtf( PointDistanceSq ) );
 	
-	//	note: starts at 1 as first point is NOT a point on the curve, it's the ON from before
-	for( u32 i=1;	i<BezierSteps;	i++)
-    {
-        float t = static_cast<float>(i) / (float)BezierSteps;
-		float invt = 1.f - t;
-		
-        float3 U = A * invt + B * t;
-        float3 V = B * invt + C * t;
-		float3 Point = U * invt + V * t;
-        
-		m_Points.Add( Point );
-    }
+	TLMaths::EvaluateQuadraticCurve( m_Points, A, B, C, BezierSteps );
 }
 
 

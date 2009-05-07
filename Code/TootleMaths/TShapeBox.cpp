@@ -186,8 +186,6 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Transform(const TLMaths::TTransform&
 		return pThis;
 	}
 
-	//	gr: todo properly
-	/*
 	//	if the transform contains a rotation then it's a complex transform into an oblong
 	if ( Transform.HasRotation() )
 	{
@@ -195,7 +193,7 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Transform(const TLMaths::TTransform&
 		TLMaths::TOblong2D NewOblong( m_Box, Transform );
 
 		//	re-use old shape
-		if ( pOldShape && pOldShape != this && pOldShape->GetShapeType() == TLMaths::TOblong2D::GetTypeRef() )
+		if ( pOldShape && pOldShape.GetObject() != this && pOldShape->GetShapeType() == TLMaths::TOblong2D::GetTypeRef() )
 		{
 			pOldShape.GetObject<TShapeOblong2D>()->SetOblong( NewOblong );
 			return pOldShape;
@@ -203,7 +201,7 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Transform(const TLMaths::TTransform&
 
 		return new TShapeOblong2D( NewOblong );
 	}
-	else*/
+	else
 	{
 		//	simple transform
 		TLMaths::TBox2D NewBox( m_Box );

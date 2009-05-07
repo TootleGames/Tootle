@@ -24,6 +24,9 @@ public:
 
 	void							SetSize(const TLMaths::TBox2D& ClearBox,float NearZ);	//	resize the mesh (also creates as required)
 
+protected:
+	virtual void					InitMesh(TLAsset::TMesh& ClearMesh);
+
 public:
 	TPtr<TLAsset::TMesh>			m_pClearMesh;		//	just a quad
 };

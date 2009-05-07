@@ -39,7 +39,7 @@ Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& RenderTargetM
 	GLbitfield ClearMask = 0x0;
 	if ( GetFlag( Flag_ClearColour ) )
 	{
-#ifndef FORCE_RENDERNODE_CLEAR
+#if !defined(TLRENDER_DISABLE_CLEAR) && !defined(FORCE_RENDERNODE_CLEAR)
 		//	if the clear colour has an alpha, we dont use the opengl clear as it doesnt support alpha
 		if ( !m_ClearColour.IsTransparent() )
 			ClearMask |= GL_COLOR_BUFFER_BIT;

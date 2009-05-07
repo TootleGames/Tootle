@@ -23,6 +23,8 @@ namespace TLMenu
 namespace TLGame
 {
 	class TMenuWrapper;
+	class TMenuWrapperScheme;
+	class TMenuWrapperText;
 }
 
 
@@ -95,22 +97,50 @@ protected:
 
 
 
+
+class TLGame::TMenuWrapper
+{
+protected:
+	virtual ~TMenuWrapper();
+
+protected:
+	TRef	m_RenderNode;		//	root render node added to the parent specified in the constructor
+};
+
+
+
 //----------------------------------------------
 //	gr: this class puts a menu and a scheme together to create clickable menu items.
 //	todo: rename this and sort all these classes out into one simple, but overloadable system
 //	this class will probably get renamed too
 //----------------------------------------------
-class TLGame::TMenuWrapper
+class TLGame::TMenuWrapperScheme : public TLGame::TMenuWrapper
 {
 public:
-	TMenuWrapper(TLMenu::TMenuController* pMenuController,TRefRef SchemeRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef);	//	create menu/render nodes etc
-	virtual ~TMenuWrapper();
+	TMenuWrapperScheme(TLMenu::TMenuController* pMenuController,TRefRef SchemeRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef);	//	create menu/render nodes etc
+	~TMenuWrapperScheme();
 
 	Bool					IsValid()			{	return m_MenuRef.IsValid();	}
 	void					SetInvalid()		{	m_MenuRef.SetInvalid();	}
 
-public:
-	TRef					m_MenuRef;
-	TRef					m_RenderNode;		//	root render node
-	TPtrArray<TLInput::TInputInterface>	m_Guis;				//	guis
+protected:
+	TRef								m_MenuRef;
+	TPtrArray<TLInput::TInputInterface>	m_Guis;		//	gui storage
 };
+
+
+//----------------------------------------------
+//	This class creates text render nodes to make 
+//	up a menu that looks like a popup menu
+//----------------------------------------------
+class TLGame::TMenuWrapperText : public TLGame::TMenuWrapper
+{
+public:
+	TMenuWrapperText(TLMenu::TMenuController* pMenuController,TRefRef FontRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef);	//	create menu/render nodes etc
+
+protected:
+	TRef								m_MenuRef;
+	TPtrArray<TLInput::TInputInterface>	m_Guis;		//	gui storage
+};
+
+

@@ -70,6 +70,19 @@ SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset
 	//	init scale
 	m_SvgPointScale.Set( 1.f, 1.f, 1.f );
 
+	//	check for options
+	const TString* pVertexColoursProperty = pSvgTag->GetProperty("TootleVertexColours");
+	if ( pVertexColoursProperty )
+		m_VertexColoursEnabled = !pVertexColoursProperty->IsEqual("false",FALSE);
+
+	float DimensionScalar = 1.f;
+
+	//	new scale format - if set then the width is relative to a ortho screen width (ie. 100 wide) instead of 1 unit wide
+	const TString* pOrthoScaleProperty = pSvgTag->GetProperty("TootleOrthoScale");
+	if ( pOrthoScaleProperty )
+		if ( !pOrthoScaleProperty->IsEqual("false",FALSE) )
+			DimensionScalar = 100.f;
+
 	//	find scale dimensions
 	const TString* pWidthString = pSvgTag->GetProperty("width");
 	if ( pWidthString )
@@ -77,7 +90,7 @@ SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset
 		s32 Width;
 		if ( pWidthString->GetInteger(Width) )
 			if ( Width != 0 )
-				m_SvgPointScale.x = 1.f / (float)Width;
+				m_SvgPointScale.x = DimensionScalar / (float)Width;
 	}
 
 	const TString* pHeightString = pSvgTag->GetProperty("height");
@@ -86,16 +99,11 @@ SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset
 		s32 Height;
 		if ( pHeightString->GetInteger(Height) )
 			if ( Height != 0 )
-				m_SvgPointScale.y = 1.f / (float)Height;
+				m_SvgPointScale.y = DimensionScalar / (float)Height;
 	}
 
 	//	init offset
 	m_SvgPointMove.Set( 0.f, 0.f, 0.f );
-
-	//	check for options
-	const TString* pVertexColoursProperty = pSvgTag->GetProperty("TootleVertexColours");
-	if ( pVertexColoursProperty )
-		m_VertexColoursEnabled = !pVertexColoursProperty->IsEqual("false",FALSE);
 
 	//	parse xml to mesh (and it's children)
 	if ( !ImportMesh( pNewMesh, *pSvgTag ) )

@@ -85,12 +85,10 @@ public:
 	virtual TRef				CreateNode(TRefRef NodeRef,TRefRef TypeRef,TRefRef ParentRef,TLMessaging::TMessage* pInitMessage=NULL,Bool StrictNodeRef=FALSE);		//	create node and add to the graph. returns ref of new node
 	virtual Bool				RemoveNode(TRefRef NodeRef)				{	return RemoveNode( FindNode( NodeRef ) );	}
 	FORCEINLINE Bool			RemoveNode(TRef& NodeRef);				//	simple remove node wrapper which invalidates the node ref as well
+	FORCEINLINE Bool			RemoveChildren(TRefRef NodeRef)			{	return RemoveChildren( FindNode( NodeRef ) );	}			//	remove pNode's children (but not pNode)
 
 	//	factory access
-	Bool						AddFactory(TPtr< TClassFactory<T,FALSE> >& pFactory)
-	{
-		return (m_NodeFactories.Add(pFactory) != -1);			
-	}
+	FORCEINLINE Bool			AddFactory(TPtr< TClassFactory<T,FALSE> >& pFactory);	//	add factory to graph
 
 protected:
 	virtual SyncBool			Initialise();
@@ -1242,6 +1240,14 @@ Bool TLGraph::TGraph<T>::RemoveNode(TPtr<T> pNode)
 		return FALSE;
 	}
 
+	//	counter is only 1? did you try and remove a c-pointer? this?
+	//	must be at least 2 because the param is NOT a reference
+	if ( pNode.GetRefCount() == 1 )
+	{
+		if ( !TLDebug_Break("RemoveNode with a new TPtr... called with a c-pointer and not a real TPtr or TRef?") )
+			return FALSE;
+	}
+
 	// Check to see if the node is already in the queue
 	TPtr<TGraphUpdateRequest>& pRequest = m_RequestQueue.FindPtr( pNode->GetNodeRef() );
 	if ( pRequest )
@@ -1639,3 +1645,11 @@ Bool TLGraph::TGraph<T>::SendMessageToNode(TRefRef NodeRef,TLMessaging::TMessage
 	return TRUE;
 }
 
+//---------------------------------------------------------
+//	add factory to graph
+//---------------------------------------------------------
+template<class T>
+Bool TLGraph::TGraph<T>::AddFactory(TPtr<TClassFactory<T,FALSE> >& pFactory)
+{
+	return (m_NodeFactories.Add(pFactory) != -1);			
+}

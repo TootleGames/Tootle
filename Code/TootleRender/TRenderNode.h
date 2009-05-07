@@ -93,6 +93,7 @@ public:
 			DepthRead,					//	read from depth buffer (off draws over everything)
 			DepthWrite,					//	write to depth buffer (off means will get drawn over)
 			ResetScene,					//	position and rotation are not inherited
+			ResetColour,				//	scene's colour is not inherited and reset to this node's colour
 			UseVertexColours,			//	bind vertex colours of mesh. if not set when rendering, a mesh the colours are not bound
 			UseFloatColours,			//	force system to use floating point colour buffer (slower than bytes, but better colour range as 32 bit instead of 8)
 			UseVertexUVs,				//	bind vertex UVs of mesh. if not set when rendering we have no texture mapping

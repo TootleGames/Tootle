@@ -5,6 +5,7 @@
 #include <TootleMaths/TShapeCapsule.h>
 #include <TootleMaths/TShapeSphere.h>
 #include <TootleMaths/TShapeBox.h>
+#include <TootleMaths/TShapeOblong.h>
 
 
 #define COLLISION_SHAPE_COLOUR	TColour( 1.f, 0.f, 0.f, 1.f )
@@ -139,24 +140,16 @@ void TLRender::TRenderNodePhysicsNode::ProcessMessage(TLMessaging::TMessage& Mes
 	}
 
 	//	catch change in collision shape
-	if ( Message.GetMessageRef() == "ColShape" && Message.GetSenderRef() == m_PhysicsNodeRef )
+	if ( Message.GetMessageRef() == TRef_Static(O,n,T,r,a) && Message.GetSenderRef() == m_PhysicsNodeRef )
 	{
-		Bool HasShape = FALSE;
-		Message.ResetReadPos();
-		Message.Read( HasShape );
-
-		//	if we no longer have a shape dont re-create the graphics
-		if ( HasShape )
+		TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef );
+		if ( pPhysicsNode )
 		{
-			TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef );
-			if ( pPhysicsNode )
-			{
-				OnPhysicsNodeChanged( *pPhysicsNode );
-			}
-			else
-			{
-				TLDebug_Break("Physics node expected");
-			}
+			OnPhysicsNodeChanged( *pPhysicsNode );
+		}
+		else
+		{
+			TLDebug_Break("Physics node expected");
 		}
 	}
 }
@@ -181,9 +174,21 @@ void TLRender::TRenderNodePhysicsNode::OnPhysicsNodeChanged(TLPhysics::TPhysicsN
 	GetMeshAsset()->GenerateLine( LineB, COLLISION_SHAPE_COLOUR );
 	*/
 
-	//	get the shape
-	PhysicsNode.CalcWorldCollisionShape();
-	const TPtr<TLMaths::TShape>& pWorldCollisionShape = PhysicsNode.GetWorldCollisionShape();
+	//	temp special system for the multi-body physics node
+	if ( PhysicsNode.HasMultipleShapes() )
+	{
+		TPtrArray<TLMaths::TShape> ShapeArray;
+		PhysicsNode.GetBodyWorldShapes( ShapeArray );
+		for ( u32 i=0;	i<ShapeArray.GetSize();	i++ )
+		{
+			GetMeshAsset()->GenerateShape( *ShapeArray.ElementAt(i) );
+		}
+		return;
+	}
+
+
+	//	get the world shape
+	const TLMaths::TShape* pWorldCollisionShape = PhysicsNode.CalcWorldCollisionShape();
 
 	//	draw a mesh of the shape
 	if ( pWorldCollisionShape )
@@ -193,30 +198,24 @@ void TLRender::TRenderNodePhysicsNode::OnPhysicsNodeChanged(TLPhysics::TPhysicsN
 		switch ( CollisionShapeType.GetData() )
 		{
 			case TLMaths_ShapeRef(TCapsule2D):
-				GetMeshAsset()->GenerateCapsule( pWorldCollisionShape.GetObject<TLMaths::TShapeCapsule2D>()->GetCapsule() );
+				GetMeshAsset()->GenerateCapsule( static_cast<const TLMaths::TShapeCapsule2D*>(pWorldCollisionShape)->GetCapsule() );
 				break;
 
-		//	case TLMaths_ShapeRef(TCapsule):
-		//		GetMeshAsset()->GenerateCapsule( pWorldCollisionShape.GetObject<TLMaths::TShapeCapsule>()->GetCapsule() );
-		//	break;
-
 			case TLMaths_ShapeRef(TSphere):
-				GetMeshAsset()->GenerateSphere( pWorldCollisionShape.GetObject<TLMaths::TShapeSphere>()->GetSphere() );
+				GetMeshAsset()->GenerateSphere( static_cast<const TLMaths::TShapeSphere*>(pWorldCollisionShape)->GetSphere() );
 				break;
 
 			case TLMaths_ShapeRef(TSphere2D):
-				GetMeshAsset()->GenerateSphere( pWorldCollisionShape.GetObject<TLMaths::TShapeSphere2D>()->GetSphere() );
+				GetMeshAsset()->GenerateSphere( static_cast<const TLMaths::TShapeSphere2D*>(pWorldCollisionShape)->GetSphere() );
 				break;
 
 			case TLMaths_ShapeRef(TBox2D):
-			{
-				//	gr: manually convert to oblong
-				const TLMaths::TBox2D& Box = PhysicsNode.GetCollisionShape().GetObject<TLMaths::TShapeBox2D>()->GetBox();
-				TLMaths::TOblong2D Oblong( Box, PhysicsNode.GetTransform() );
-				
-				GetMeshAsset()->GenerateQuad( Oblong );
-			}
-			break;
+				GetMeshAsset()->GenerateQuad( static_cast<const TLMaths::TShapeBox2D*>(pWorldCollisionShape)->GetBox() );
+				break;
+
+			case TLMaths_ShapeRef(TOblong2D):
+				GetMeshAsset()->GenerateQuad( static_cast<const TLMaths::TShapeOblong2D*>(pWorldCollisionShape)->GetOblong() );
+				break;
 
 			default:
 			{

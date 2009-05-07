@@ -39,7 +39,7 @@ SyncBool TLAsset::TMenu::ImportData(TBinaryTree& Data)
 		ItemData.ImportData("Command", pMenuItem->m_Command );
 		ItemData.ImportData("MeshRef", pMenuItem->m_MeshRef );
 		ItemData.ImportData("NextMenu", pMenuItem->m_NextMenu );
-		ItemData.ImportData("Text", pMenuItem->m_Text );
+		ItemData.ImportData("String", pMenuItem->m_Text );
 	}
 
 	//	store off any data we haven't read to keep this data intact
@@ -72,7 +72,7 @@ SyncBool TLAsset::TMenu::ExportData(TBinaryTree& Data)
 		if ( MenuItem.GetNextMenu().IsValid() )
 			ItemData->ExportData("NextMenu", MenuItem.GetNextMenu() );
 
-		ItemData->ExportData("Text", MenuItem.GetText() );
+		ItemData->ExportData("String", MenuItem.GetText() );
 	}
 
 	//	write back any data we didn't recognise

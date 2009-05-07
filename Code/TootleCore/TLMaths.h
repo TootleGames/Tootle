@@ -358,10 +358,11 @@ public:
 	FORCEINLINE void				SetScale(const float3& Scale)							{	m_Scale = Scale;			SetScaleValid();	}
 	FORCEINLINE void				SetTranslate(const float3& Translate)					{	m_Translate = Translate;	SetTranslateValid();	}
 	FORCEINLINE void				SetRotation(const TQuaternion& Rotation)				{	m_Rotation = Rotation;		SetRotationValid();	}
-	FORCEINLINE u8					SetScaleHasChanged(const float3& Scale);				//	set scale, return's the Transform bit that has changed
-	FORCEINLINE u8					SetTranslateHasChanged(const float3& Translate);		//	set translation, return's the Transform bit that has changed
-	FORCEINLINE u8					SetTranslateHasChanged(const float3& Translate,float MinChange);	//	set translation, return's the Transform bit that has changed
-	FORCEINLINE u8					SetRotationHasChanged(const TQuaternion& Rotation);		//	set rotation, return's the Transform bit that has changed
+	FORCEINLINE u8					SetScaleHasChanged(const float3& Scale);								//	set scale, return's the Transform bit that has changed
+	FORCEINLINE u8					SetTranslateHasChanged(const float3& Translate);						//	set translation, return's the Transform bit that has changed
+	FORCEINLINE u8					SetTranslateHasChanged(const float3& Translate,float MinChange);		//	set translation, return's the Transform bit that has changed
+	FORCEINLINE u8					SetRotationHasChanged(const TQuaternion& Rotation);						//	set rotation, return's the Transform bit that has changed
+	FORCEINLINE u8					SetRotationHasChanged(const TQuaternion& Rotation,float MinChange);		//	set rotation, return's the Transform bit that has changed
 
 	FORCEINLINE float3&				GetTranslate() 			{	return m_Translate;	}	//	only use if HasTranslate()
 	FORCEINLINE float3&				GetScale()				{	return m_Scale;	}		//	only use if HasScale()
@@ -613,22 +614,38 @@ FORCEINLINE u8 TLMaths::TTransform::SetTranslateHasChanged(const float3& Transla
 	}
 	else
 	{
-		//	gr: could do a length check here...
-		/*
-		float OldLengthSq = m_Translate.LengthSq();
-		float NewLengthSq = Translate.LengthSq();
-		if ( (OldLengthSq - NewLengthSq) < -MinChange ||
-			 (OldLengthSq - NewLengthSq) > MinChange )
-		*/
-		if ( (Translate.x - m_Translate.x) < -MinChange ||
-			 (Translate.x - m_Translate.x) > MinChange ||
-			 (Translate.y - m_Translate.y) < -MinChange ||
-			 (Translate.y - m_Translate.y) > MinChange ||
-			 (Translate.z - m_Translate.z) < -MinChange ||
-			 (Translate.z - m_Translate.z) > MinChange )
+		if ( m_Translate.HasDifferenceMin( Translate, MinChange ) )
 		{
 			SetTranslate( Translate );
 			return TLMaths_TransformBitTranslate;
+		}
+		else
+		{
+			//	very minor change - don't apply
+			return 0x0;
+		}
+	}
+}
+
+
+
+
+//--------------------------------------------------
+//	set rotation, return's the Transform bit that has changed
+//--------------------------------------------------
+FORCEINLINE u8 TLMaths::TTransform::SetRotationHasChanged(const TLMaths::TQuaternion& Rotation,float MinChange)
+{
+	if ( !HasRotation() )
+	{
+		SetRotation( Rotation );
+		return TLMaths_TransformBitRotation;
+	}
+	else
+	{
+		if ( m_Rotation.GetData().HasDifferenceMin( Rotation.GetData(), MinChange ) )
+		{
+			SetRotation( Rotation );
+			return TLMaths_TransformBitRotation;
 		}
 		else
 		{

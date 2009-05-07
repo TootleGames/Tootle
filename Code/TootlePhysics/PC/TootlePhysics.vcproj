@@ -180,6 +180,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TPhysicsNodeChain.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TPhysicsNodeChain.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TPhysicsNodeSphere.cpp"
 			>
 		</File>

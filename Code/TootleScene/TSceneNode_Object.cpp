@@ -15,6 +15,10 @@ TSceneNode_Object::TSceneNode_Object(TRefRef NodeRef,TRefRef TypeRef) :
 }
 
 
+TSceneNode_Object::~TSceneNode_Object()
+{
+	TLDebug_Print("debug");
+}
 
 
 void TSceneNode_Object::Shutdown()
@@ -145,33 +149,40 @@ TPtr<TLRender::TRenderNode>& TSceneNode_Object::GetRenderNode(Bool InitialisedOn
 //--------------------------------------------------------
 //	Requests a physics node to be created
 //--------------------------------------------------------
-Bool TSceneNode_Object::CreatePhysicsNode(TRefRef PhysicsNodeType)
+Bool TSceneNode_Object::CreatePhysicsNode(TRefRef PhysicsNodeType,TLMessaging::TMessage* pInitMessage)
 {
 	// [20/02/09] DB - Currently we only allow one render node to be associated with the object node
 	if( m_PhysicsNodeRef.IsValid() )
 		return FALSE;
 
-	TLMessaging::TMessage Message( TLCore::InitialiseRef );
+	//	gr: same as the render node system, merge these messages
+	TLMessaging::TMessage TempMessage( TLCore::InitialiseRef );
+
+	//	no init message? make one up
+	if ( !pInitMessage )
+	{
+		pInitMessage = &TempMessage;
+	}
 
 	//	add transform info from this scene node
 	const TLMaths::TTransform& Transform = GetTransform();
 
 	if ( Transform.HasTranslate() )
-		Message.ExportData(TRef_Static(T,r,a,n,s), Transform.GetTranslate() );
+		pInitMessage->ExportData(TRef_Static(T,r,a,n,s), Transform.GetTranslate() );
 
 	if ( Transform.HasScale() )
-		Message.ExportData(TRef_Static(S,c,a,l,e), Transform.GetScale() );
+		pInitMessage->ExportData(TRef_Static(S,c,a,l,e), Transform.GetScale() );
 
 	if ( Transform.HasRotation() )
-		Message.ExportData(TRef_Static(R,o,t,a,t), Transform.GetRotation() );
+		pInitMessage->ExportData(TRef_Static(R,o,t,a,t), Transform.GetRotation() );
 
 	//	export ownership info
-	Message.ExportData("Owner", GetNodeRef());
+	pInitMessage->ExportData("Owner", GetNodeRef());
 
 	//	create node
 	TRef ParentNode = TRef();
 
-	m_PhysicsNodeRef = TLPhysics::g_pPhysicsgraph->CreateNode( GetNodeRef(), PhysicsNodeType, ParentNode, &Message );
+	m_PhysicsNodeRef = TLPhysics::g_pPhysicsgraph->CreateNode( GetNodeRef(), PhysicsNodeType, ParentNode, pInitMessage );
 
 	//	failed
 	if ( !m_PhysicsNodeRef.IsValid() )
@@ -187,14 +198,11 @@ Bool TSceneNode_Object::CreatePhysicsNode(TRefRef PhysicsNodeType)
 //--------------------------------------------------------
 //	Requests a render object to be created
 //--------------------------------------------------------
-Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TLMessaging::TMessage* pInitMessage)
+Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TRefRef RenderNodeType,TLMessaging::TMessage* pInitMessage)
 {
 	// [20/02/09] DB - Currently we only allow one render node to be associated with the object node
 	if( m_RenderNodeRef.IsValid() )
 		return FALSE;
-
-	//	gr: specify in params?
-	TRef RenderNodeType = TRef();
 
 	//	gr; changed to "merge" messages
 	TLMessaging::TMessage TempMessage( TLCore::InitialiseRef );
@@ -240,9 +248,8 @@ Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TLMessaging
 
 void TSceneNode_Object::OnPhysicsNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode)
 {
-	//	re-enable/disable physics node based on zone state
-	TPtr<TLMaths::TQuadTreeZone>& pZone = GetZone();
-	SyncBool ZoneActive = pZone ? pZone->IsActive() : SyncFalse;
+	//	re-enable/disable render node based on zone state
+	SyncBool ZoneActive = IsZoneAwake();
 
 	if ( ZoneActive == SyncFalse )
 		OnZoneSleep();
@@ -254,8 +261,7 @@ void TSceneNode_Object::OnPhysicsNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pPhysi
 void TSceneNode_Object::OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode)
 {
 	//	re-enable/disable render node based on zone state
-	TPtr<TLMaths::TQuadTreeZone>& pZone = GetZone();
-	SyncBool ZoneActive = pZone ? pZone->IsActive() : SyncFalse;
+	SyncBool ZoneActive = IsZoneAwake();
 
 	if ( ZoneActive == SyncFalse )
 		OnZoneSleep();

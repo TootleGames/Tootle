@@ -24,3 +24,12 @@ Bool TLMaths::TShapeOblong2D::ExportData(TBinaryTree& Data) const
 
 	return TRUE;
 }
+
+
+Bool TLMaths::TShapeOblong2D::HasIntersection(TShapeBox2D& OtherShape)
+{
+	//	just to silence the currently seemingly uncessary assert...
+	TLDebug_Print("gr: todo? TShapeOblong2D::HasIntersection");
+	return FALSE;
+}
+

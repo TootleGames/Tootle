@@ -24,6 +24,8 @@ public:
 	void							SetOblong(const TLMaths::TOblong2D& Oblong)	{	m_Oblong = Oblong;	}
 	const TLMaths::TOblong2D&		GetOblong() const							{	return m_Oblong;	}
 
+	virtual Bool					HasIntersection(TShapeBox2D& OtherShape);
+
 protected:
 	virtual Bool					ImportData(TBinaryTree& Data);
 	virtual Bool					ExportData(TBinaryTree& Data) const;

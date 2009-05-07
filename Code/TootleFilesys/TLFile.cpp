@@ -175,6 +175,9 @@ TRef TLFile::GetDataTypeFromString(const TString& String)
 
 		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TLMaths::TQuaternion>() );
 		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TColour>() );
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TColour24>() );
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TColour32>() );
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TColour64>() );
 	}
 
 	//	turn string into a ref and check against the ref types...

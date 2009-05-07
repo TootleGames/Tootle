@@ -5,6 +5,7 @@
 #include "TRenderNodePathNetwork.h"
 #include "TRenderNodePhysicsNode.h"
 #include "TRenderNodeQuadTree.h"
+#include "TRenderNodeSwoosh.h"
 #include <TootleCore/TLTime.h>
 
 
@@ -134,6 +135,9 @@ TLRender::TRenderNode* TLRender::TRenderNodeFactory::CreateObject(TRefRef Instan
 
 	if ( TypeRef == "DbgQuad" )
 		return new TLRender::TRenderNodeQuadTreeZone(InstanceRef,TypeRef);
+
+	if ( TypeRef == "Swoosh" )
+		return new TLRender::TRenderNodeSwoosh(InstanceRef,TypeRef);
 
 	return NULL;
 }

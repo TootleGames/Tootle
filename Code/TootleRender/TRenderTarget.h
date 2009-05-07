@@ -20,6 +20,13 @@
 #include "TRenderNode.h"
 #include "TRenderNodeClear.h"
 
+
+
+//#define TLRENDER_DISABLE_CLEAR
+
+
+
+
 namespace TLRender
 {
 	class TRenderTarget;

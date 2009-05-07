@@ -480,6 +480,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TRenderNodeSwoosh.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TRenderNodeSwoosh.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TRenderNodeText.cpp"
 			>
 		</File>

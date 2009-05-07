@@ -263,7 +263,16 @@ FORCEINLINE Bool TBinary::CheckDataAvailible(u32 DataSize) const
 	//	have we got this amount of data left?
 	if ( GetSizeUnread() < DataSize )
 	{
-		TLDebug_Break( TString("Trying to read more data(%d bytes) than we have remaining(%d bytes)", DataSize, GetSizeUnread() ) );
+#ifdef _DEBUG
+		TString Debug_String("Trying to read more data(%d bytes) than we have remaining(%d bytes).", DataSize, GetSizeUnread() );
+		if ( GetDataTypeHint().IsValid() )
+		{
+			Debug_String.Append(" Data type: ");
+			GetDataTypeHint().GetString( Debug_String );
+		}
+
+		TLDebug_Break( Debug_String );
+#endif
 		return FALSE;
 	}
 
@@ -328,14 +337,16 @@ TLBinary_DeclareDataTypeRefAll( float );
 #include "TLMaths.h"
 #include "TColour.h"
 
-#define TLBinary_TypeRef_TColour				TRef_Static3(C,o,l)
+#define TLBinary_TypeRef_TColour				TRef_Static4(C,o,l,f)
 #define TLBinary_TypeRef_TColour24				TRef_Static5(C,o,l,TWO,FOUR)
 #define TLBinary_TypeRef_TColour32				TRef_Static5(C,o,l,THREE,TWO)
+#define TLBinary_TypeRef_TColour64				TRef_Static5(C,o,l,SIX,FOUR)
 #define TLBinary_TypeRef_TRef					TRef_Static4(T,R,e,f)
 #define TLBinary_TypeRef_TQuaternion			TRef_Static4(Q,u,a,t)
 
 TLBinary_DeclareDataTypeRef( TColour,				TLBinary_TypeRef(TColour) );
 TLBinary_DeclareDataTypeRef( TColour24,				TLBinary_TypeRef(TColour24) );
 TLBinary_DeclareDataTypeRef( TColour32,				TLBinary_TypeRef(TColour32) );
+TLBinary_DeclareDataTypeRef( TColour64,				TLBinary_TypeRef(TColour64) );
 TLBinary_DeclareDataTypeRef( TRef,					TLBinary_TypeRef(TRef) );
 TLBinary_DeclareDataTypeRef( TLMaths::TQuaternion,	TLBinary_TypeRef(TQuaternion) );

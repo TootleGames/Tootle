@@ -87,37 +87,33 @@ public:
 	FORCEINLINE float3			GetVelocity() const;
 	FORCEINLINE void			ResetForces();					//	reset all forces to zero
 	
-	void					OnVelocityChanged()					{	SetAccumulatedMovementInvalid();	SetWorldCollisionShapeInvalid();	}
-	void					OnForceChanged()					{	SetAccumulatedMovementInvalid();	SetWorldCollisionShapeInvalid();	}
+	FORCEINLINE void			OnVelocityChanged()					{	SetAccumulatedMovementInvalid();	}
+	FORCEINLINE void			OnForceChanged()					{	SetAccumulatedMovementInvalid();	}
 
-	FORCEINLINE void		OnTransformChanged(Bool TransChanged,Bool ScaleChanged,Bool RotationChanged)	{	OnTransformChanged( (TransChanged*TLMaths_TransformBitTranslate) | (ScaleChanged*TLMaths_TransformBitScale) | (RotationChanged*TLMaths_TransformBitRotation) );	}
-	FORCEINLINE void		OnTransformChanged(u8 TransformChangedBits)										{	m_TransformChangedBits |= TransformChangedBits;	if ( TransformChangedBits != 0x0 )	SetWorldCollisionShapeInvalid();	}
-	FORCEINLINE void		OnTransformChangedNoPublish()		{	SetWorldCollisionShapeInvalid();	}
-	FORCEINLINE void		OnTranslationChanged()				{	OnTransformChanged( TLMaths_TransformBitTranslate );	}
-	FORCEINLINE void		OnRotationChanged()					{	OnTransformChanged( TLMaths_TransformBitRotation );	}
-	FORCEINLINE void		OnScaleChanged()					{	OnTransformChanged( TLMaths_TransformBitScale );	}
+	FORCEINLINE void			OnTransformChanged(Bool TransChanged,Bool ScaleChanged,Bool RotationChanged)	{	OnTransformChanged( (TransChanged*TLMaths_TransformBitTranslate) | (ScaleChanged*TLMaths_TransformBitScale) | (RotationChanged*TLMaths_TransformBitRotation) );	}
+	FORCEINLINE void			OnTransformChanged(u8 TransformChangedBits)										{	m_TransformChangedBits |= TransformChangedBits;	if ( TransformChangedBits != 0x0 )	SetWorldCollisionShapeInvalid();	}
+	FORCEINLINE void			OnTransformChangedNoPublish()		{	SetWorldCollisionShapeInvalid();	}
+	FORCEINLINE void			OnTranslationChanged()				{	OnTransformChanged( TLMaths_TransformBitTranslate );	}
+	FORCEINLINE void			OnRotationChanged()					{	OnTransformChanged( TLMaths_TransformBitRotation );	}
+	FORCEINLINE void			OnScaleChanged()					{	OnTransformChanged( TLMaths_TransformBitScale );	}
+	void						PublishTransformChanges();			//	send transform changes as per m_TransformChanges
 
-	//void					OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);
+	Bool								HasCollision() const				{	return (IsEnabled() && HasCollisionFlag() && m_pCollisionShape.IsValid()) ? m_pCollisionShape->IsValid() : FALSE;	}
+	Bool								HasCollisionFlag() const			{	return m_PhysicsFlags( Flag_HasCollision );	}
+	FORCEINLINE void					EnableCollision(Bool Enable=TRUE)	{	if ( m_PhysicsFlags( Flag_HasCollision ) != Enable )	{	m_PhysicsFlags.Set( Flag_HasCollision, Enable );	OnCollisionEnabledChanged( Enable );	}	}
 
-	Bool							HasCollision() const				{	return (IsEnabled() && HasCollisionFlag() && m_pCollisionShape.IsValid()) ? m_pCollisionShape->IsValid() : FALSE;	}
-	Bool							HasCollisionFlag() const			{	return m_PhysicsFlags( Flag_HasCollision );	}
-	FORCEINLINE void				EnableCollision(Bool Enable=TRUE)	{	if ( m_PhysicsFlags( Flag_HasCollision ) != Enable )	{	m_PhysicsFlags.Set( Flag_HasCollision, Enable );	OnCollisionEnabledChanged( Enable );	}	}
-
-	void							SetCollisionNone()					{	m_pCollisionShape = NULL;	SetWorldCollisionShapeInvalid();	SetCollisionZoneNeedsUpdate();	}
-	void							SetCollisionShape(TRefRef MeshRef);							//	setup polygon collision with a mesh
-	void							SetCollisionShape(const TPtr<TLMaths::TShape>& pShape);		//	setup collision shape from a shape
-	void							SetCollisionShape(const TLMaths::TSphere& Sphere);			//	setup a sphere collision
-	void							SetCollisionShape(const TLMaths::TSphere2D& Sphere);		//	setup a sphere collision
-	void							SetCollisionShape(const TLMaths::TCapsule2D& Capsule);		//	setup a capsule collision
-	void							SetCollisionShape(const TLMaths::TOblong2D& Oblong);		//	setup an oblong collision
-	void							SetCollisionShape(const TLMaths::TBox2D& Box);				//	setup an oblong collision
-	TLMaths::TTransform&			GetCollisionShapeTransform()					{	return m_Transform;	}
-	TPtr<TLMaths::TShape>&			GetCollisionShape()								{	return m_pCollisionShape;	}
+	FORCEINLINE void					SetCollisionNone()											{	m_pCollisionShape = NULL;	SetWorldCollisionShapeInvalid();	SetCollisionZoneNeedsUpdate();	}
+	void								SetCollisionShape(const TPtr<TLMaths::TShape>& pShape);		//	setup collision shape from a shape
+	FORCEINLINE TLMaths::TTransform&	GetCollisionShapeTransform()								{	return m_Transform;	}
+	FORCEINLINE TPtr<TLMaths::TShape>&	GetCollisionShape()											{	return m_pCollisionShape;	}
 	
-	TPtr<TLMaths::TShape>&			GetWorldCollisionShape()				{	return m_pWorldCollisionShape;	}
-	const TPtr<TLMaths::TShape>&	GetWorldCollisionShape() const			{	return m_pWorldCollisionShape;	}
-	TLMaths::TShape*				CalcWorldCollisionShape();				//	calculate transformed collision shape 
-	FORCEINLINE void				SetWorldCollisionShapeInvalid()			{	if ( m_pWorldCollisionShape )	m_pLastWorldCollisionShape = m_pWorldCollisionShape;	m_pWorldCollisionShape = NULL;	m_WorldCollisionShapeChanged = TRUE;	}
+	//	gr: todo: change all this to handle multiple shapes/bodies more natively, return/get arrays of shapes
+	TPtr<TLMaths::TShape>&				GetWorldCollisionShape()				{	return m_pWorldCollisionShape;	}
+	const TPtr<TLMaths::TShape>&		GetWorldCollisionShape() const			{	return m_pWorldCollisionShape;	}
+	TLMaths::TShape*					CalcWorldCollisionShape();				//	calculate transformed collision shape 
+	FORCEINLINE void					SetWorldCollisionShapeInvalid()			{	if ( m_pWorldCollisionShape )	m_pLastWorldCollisionShape = m_pWorldCollisionShape;	m_pWorldCollisionShape = NULL;	}
+	virtual Bool						HasMultipleShapes() const				{	return FALSE;	}
+	void								GetBodyWorldShapes(TPtrArray<TLMaths::TShape>& ShapeArray);			//	get a more exact array of all the box 2D body shapes
 
 //	Bool						SetCollisionZone(TPtr<TLMaths::TQuadTreeZone>& pCollisionZone,TPtr<TPhysicsNode> pThis,const TFixedArray<u32,4>* pChildZoneList);
 
@@ -137,7 +133,6 @@ protected:
 
 	FORCEINLINE void			SetAccumulatedMovementInvalid()				{	m_AccumulatedMovementValid = FALSE;	}
 	FORCEINLINE Bool			IsAccumulatedMovementValid() const			{	return m_AccumulatedMovementValid;	}
-	void						PublishTransformChanges();					//	send transform changes as per m_TransformChanges
 
 #ifdef USE_BOX2D
 	FORCEINLINE float3			GetForce() const							{	return float3();	}
@@ -167,6 +162,7 @@ protected:
 	void						SetBodyTransform();							//	reset the body's transform
 	FORCEINLINE b2Shape*		GetBodyShape()								{	return m_pBody ? m_pBody->GetShapeList() : NULL;	}	//	quick access to the first shape on the body - assuming we only ever have one shape
 	FORCEINLINE const b2Shape*	GetBodyShape() const						{	return m_pBody ? m_pBody->GetShapeList() : NULL;	}	//	quick access to the first shape on the body - assuming we only ever have one shape
+	virtual void				GetBodys(TArray<b2Body*>& Bodies) const		{	if ( m_pBody )	Bodies.Add( m_pBody );	}
 
 public:
 	float					m_Mass;				//	used for varying impact of two objects, larger object bounces less
@@ -185,7 +181,6 @@ protected:
 	float3					m_Velocity;
 #endif
 
-	Bool					m_WorldCollisionShapeChanged;	//	bool to say if the collision shape changed during the physics update. reset at node pre update, and message is sent in post update
 	TPtr<TLMaths::TShape>	m_pCollisionShape;			//	collision shape
 	TPtr<TLMaths::TShape>	m_pWorldCollisionShape;		//	transformed collision shape, delete/invalidated when pos or collision shape changes
 	TPtr<TLMaths::TShape>	m_pLastWorldCollisionShape;	//	to save re-allocations of the same object, when we invalidate the world collision shape we set it to this. then when we recalc it, we try to reuse this pointer

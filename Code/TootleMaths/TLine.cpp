@@ -8,6 +8,55 @@
 //-----------------------------------------------------------
 //	create an outside and inside linestrip for an existing linestrip
 //-----------------------------------------------------------
+void TLMaths::ExpandLineStrip(const TArray<float3*>& LineStrip,const TArray<float*>& Widths,const TArray<float*>& Offsets,TArray<float3>& OutsideLineStrip,TArray<float3>& InsideLineStrip)
+{
+	const float3* pPrevPoint = NULL;
+
+	for ( u32 i=0;	i<LineStrip.GetSize();	i++ )
+	{
+		const float3& ThisPoint = *LineStrip[i];
+		const float3* pNextPoint = ((s32)i >= LineStrip.GetLastIndex()) ? NULL : LineStrip[i+1];
+		const float& Width = *Widths[i];
+
+		float3 Outset;
+
+		//	calc outsets
+		if ( pPrevPoint && pNextPoint )
+		{
+			Outset = TLMaths::GetLineStripOutset( *pPrevPoint, ThisPoint, *pNextPoint, Width/2.f );
+		}
+		else if ( pPrevPoint )
+		{
+			Outset = TLMaths::GetLineOutset( *pPrevPoint, ThisPoint, Width/2.f );
+		}
+		else if ( pNextPoint )
+		{
+			Outset = TLMaths::GetLineOutset( ThisPoint, *pNextPoint, Width/2.f );
+		}
+		else
+		{
+			TLDebug_Break("Line strip with one point?");
+			Outset.Set( 0.f, 0.f, 0.f );
+		}
+
+		//	offset
+		float3 Offset;
+		if ( Offsets.GetSize() )
+			Offset = Outset.Normal( *Offsets[i] );
+
+		//	add to outside lines
+		OutsideLineStrip.Add( ThisPoint + Offset - Outset );
+		InsideLineStrip.Add( ThisPoint + Offset + Outset );
+
+		//	store prev point
+		pPrevPoint = &ThisPoint;
+	}	
+}
+
+
+//-----------------------------------------------------------
+//	create an outside and inside linestrip for an existing linestrip
+//-----------------------------------------------------------
 void TLMaths::ExpandLineStrip(const TArray<float3>& LineStrip,float Width,TArray<float3>& OutsideLineStrip,TArray<float3>& InsideLineStrip)
 {
 	const float3* pPrevPoint = NULL;
@@ -722,3 +771,19 @@ float TLMaths::TLine2D::GetDistanceSq(const TLMaths::TLine2D& Line,float2& TempP
 }
 
 
+
+void TLMaths::EvaluateQuadraticCurve(TArray<float3>& BezierPoints,const float3& A,const float3& B,const float3& C,u32 BezierSteps)
+{
+	//	note: starts at 1 as first point is NOT a point on the curve, it's the ON from before
+	for( u32 i=1;	i<BezierSteps;	i++)
+    {
+        float t = (float)i / (float)BezierSteps;
+		float invt = 1.f - t;
+		
+        float3 U = A * invt + B * t;
+        float3 V = B * invt + C * t;
+		float3 Point = U * invt + V * t;
+        
+		BezierPoints.Add( Point );
+    }
+}

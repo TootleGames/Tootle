@@ -10,6 +10,46 @@
 
 
 //------------------------------------------------------
+//	create a transformed shape from a body shape
+//------------------------------------------------------
+TPtr<TLMaths::TShape> TLPhysics::GetShapeFromBodyShape(b2Shape& BodyShape,const TLMaths::TTransform& Transform)
+{
+	b2Body& Body = *BodyShape.GetBody();
+
+	if ( BodyShape.GetType() == e_polygonShape )
+	{
+		b2PolygonShape& PolyShape = (b2PolygonShape&)BodyShape;
+		const b2XForm& Bodyxf = Body.GetXForm();
+
+		//	get a list of the points
+		TFixedArray<float2,100> Points;
+		const b2Vec2* pShapeVerts = PolyShape.GetVertices();
+		for ( s32 p=0;	p<PolyShape.GetVertexCount();	p++ )
+		{
+			//	transform by bodys transform
+			b2Vec2 WorldPos = b2Mul( Bodyxf, pShapeVerts[p] );
+
+			//	gr: transform by ourtransform for scale? or instead of the box2d one? as box2d lacks scale
+			float2 WorldPos2( WorldPos.x, WorldPos.y );
+
+			Points.Add( WorldPos2 );
+		}
+
+		//	create shape
+		return new TLMaths::TShapePolygon2D( Points );
+	}
+	else if ( BodyShape.GetType() == e_circleShape )
+	{
+		TLDebug_Break("todo");
+	}
+
+	TLDebug_Break("Invalid body shape");
+	return NULL;
+}
+
+
+
+//------------------------------------------------------
 //	get a box2D polygon [definition] shape from a tootle shape
 //------------------------------------------------------
 Bool TLPhysics::GetPolygonDefFromShape(b2PolygonDef& PolygonDef,const TLMaths::TShape& Shape)

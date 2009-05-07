@@ -5,6 +5,7 @@
 
 
 
+
 #if defined(_DEBUG) && !defined(TL_TARGET_IPOD)
 //#define DEBUG_DRAW_RENDERZONES
 #define DEBUG_DRAW_FRUSTUM
@@ -131,10 +132,12 @@ void TLRender::TRenderTarget::Draw()
 	s32 StartingSceneCount = m_Debug_SceneCount;
 
 	//	render the clear object if we have it
+#ifndef TLRENDER_DISABLE_CLEAR
 	if ( m_pRenderNodeClear )
 	{
 		DrawNode( m_pRenderNodeClear.GetObject(), NULL, NULL, TColour( 1.f, 1.f, 1.f, 1.f ), NULL );
 	}
+#endif
 
 	//	update the camera's zone
 	Bool CameraInWorldZone = TRUE;
@@ -611,8 +614,8 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 	if ( !RenderNodeRenderFlags.IsSet( TLRender::TRenderNode::RenderFlags::Enabled ) )
 		return FALSE;
 
-	Bool ResetScene = RenderNodeRenderFlags.IsSet(TLRender::TRenderNode::RenderFlags::ResetScene);
-	if ( ResetScene )
+	//	if node colour is reset then set a new scene colour
+	if ( RenderNodeRenderFlags.IsSet(TLRender::TRenderNode::RenderFlags::ResetColour) )
 	{
 		SceneColour = pRenderNode->GetColour();
 	}
@@ -656,6 +659,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 
 	//	do minimal calcuations to calc scene transformation - yes code is a bit of a pain, but this is very good for us :)
 	//	only problem is, we can't reuse this code in another func as we lose the reference initialisation, which is the whole speed saving
+	Bool ResetScene = RenderNodeRenderFlags.IsSet(TLRender::TRenderNode::RenderFlags::ResetScene);
 	TLMaths::TTransform NewSceneTransform;
 	const TLMaths::TTransform& NodeTransform = pRenderNode->GetTransform();
 	Bool NodeTrans = NodeTransform.HasAnyTransform() || ResetScene;

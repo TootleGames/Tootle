@@ -26,11 +26,18 @@ void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 		TLAsset::LoadAsset( m_FontRef );
 	}
 
-	//	import text - if we do, make sure we make a note the glyphs need building
 	// [07/05/09] DB - This shouldn't be used anymore.  Use a <TextRef> in place of the <Text> tag in any XML file
 	if ( Message.ImportDataString("Text", m_Text ) )
 	{
-		TLDebug_Warning("Setting text directly.  Should now use a text ref instead and lookup the text.");
+		TLDebug_Break("Setting text directly.  Should now use a text ref instead and lookup the text. If data string, use the STRING ref");
+		m_GlyphsValid = FALSE;
+	}
+
+	//	import text - if we do, make sure we make a note the glyphs need building
+	//	gr: this IS allowed, for dynamic strings, eg, numbers, counters etc
+	//		ref changed to "string" for clarity though. "String" being data, "text" being specific text.
+	if ( Message.ImportDataString("String", m_Text ) )
+	{
 		m_GlyphsValid = FALSE;
 	}
 

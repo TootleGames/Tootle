@@ -14,6 +14,9 @@
 #include <TootleMaths/TSphere.h>
 #include <TootleMaths/TCapsule.h>
 #include <TootleMaths/TShape.h>
+#include <TootleMaths/TShapeBox.h>
+#include <TootleMaths/TShapeSphere.h>
+#include <TootleMaths/TShapePolygon.h>
 #include <TootleCore/TKeyArray.h>
 
 
@@ -75,9 +78,18 @@ public:
 	void					Merge(const TMesh& OtherMesh);						//	merge othermesh into this mesh - add verts, primitives, datums etc
 
 	//	manipulation
-	void					GenerateShape(const TLMaths::TBox& Box)				{	GenerateCube( Box );	}
-	void					GenerateShape(const TLMaths::TSphere& Sphere)		{	GenerateSphere( Sphere );	}
-	void					GenerateShape(const TLMaths::TCapsule& Capsule)		{	GenerateCapsule( Capsule );	}
+	void					GenerateShape(const TLMaths::TShape& Shape);			//	generate geometry based from a unspecified shape
+	void					GenerateShape(const TLMaths::TShapeBox& Shape)			{	GenerateShape( Shape.GetBox() );	}
+	void					GenerateShape(const TLMaths::TShapeBox2D& Shape)		{	GenerateShape( Shape.GetBox() );	}
+	void					GenerateShape(const TLMaths::TShapeSphere& Shape)		{	GenerateShape( Shape.GetSphere() );	}
+	void					GenerateShape(const TLMaths::TShapeSphere2D& Shape)		{	GenerateShape( Shape.GetSphere() );	}
+	void					GenerateShape(const TLMaths::TShapePolygon2D& Shape)	{	GenerateShape( Shape.GetOutline() );	}
+	void					GenerateShape(const TLMaths::TBox& Box)					{	GenerateCube( Box );	}
+	void					GenerateShape(const TLMaths::TBox2D& Box)				{	GenerateQuad( Box );	}
+	void					GenerateShape(const TLMaths::TSphere& Sphere)			{	GenerateSphere( Sphere );	}
+	void					GenerateShape(const TLMaths::TSphere2D& Sphere)			{	GenerateSphere( Sphere );	}
+	void					GenerateShape(const TLMaths::TCapsule& Capsule)			{	GenerateCapsule( Capsule );	}
+	void					GenerateShape(const TLMaths::TCapsule2D& Capsule)		{	GenerateCapsule( Capsule );	}
 
 	void					GenerateCube(float Scale);							//	generate a cube mesh
 	void					GenerateCube(const TLMaths::TBox& Box);				//	generate a cube mesh from a math box
@@ -111,7 +123,8 @@ public:
 	Bool					GenerateQuad(const TArray<float3>& Outline,const TColour* pColour=NULL);			//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const TArray<float3>& Outline,const TArray<TColour>& Colours);	//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour* pColour=NULL,Bool GenerateUVs=FALSE);	//	turn an outline of points into a quad/tri-strip
-	Bool					GenerateQuad(const TArray<u16>& OutlineVertIndexes);		//	turn an outline of points into a quad/tri-strip
+	Bool					GenerateQuad(const TArray<u16>& OutlineVertIndexes);			//	turn an outline of points into a quad/tri-strip
+	void					GenerateQuad(u16 VertexA,u16 VertexB,u16 VertexC,u16 VertexD);	//	
 	void					GenerateQuadOutline(const TLMaths::TBox2D& Box,const TColour* pColour=NULL,float z=0.f);		//	generate a square mesh from a 2d box
 
 	void					GenerateTriangle(u16 VertA,u16 VertB,u16 VertC);		//	generate triangle

@@ -3,6 +3,8 @@
 #include <TootleMaths/TShapeSphere.h>
 #include <TootleMaths/TShapeOblong.h>
 #include <TootleMaths/TShapeCapsule.h>
+#include <TootleMaths/TShapeBox.h>
+#include <TootleMaths/TShapePolygon.h>
 
 #ifdef _DEBUG
 //#define DEBUG_CHECK_PRIMITIVES
@@ -1331,6 +1333,20 @@ Bool TLAsset::TMesh::GenerateQuad(const float3& OutlineA,const float3& OutlineB,
 }
 
 
+//--------------------------------------------------------
+//	
+//--------------------------------------------------------
+void TLAsset::TMesh::GenerateQuad(u16 VertexA,u16 VertexB,u16 VertexC,u16 VertexD)
+{
+	TFixedArray<u16,4> OutlineVertIndexes;
+	OutlineVertIndexes.Add( VertexA );
+	OutlineVertIndexes.Add( VertexB );
+	OutlineVertIndexes.Add( VertexC );
+	OutlineVertIndexes.Add( VertexD );
+
+	GenerateQuad( OutlineVertIndexes );
+}
+
 
 //--------------------------------------------------------
 //	turn an outline of points into a quad/tri-strip
@@ -1631,7 +1647,26 @@ Bool TLAsset::TMesh::CreateDatum(const TArray<float3>& PolygonPoints,TRefRef Dat
 		AddDatum( DatumRef, pShape );
 		return TRUE;
 	}
+	else if ( DatumShapeType == TLMaths::TBox2D::GetTypeRef() )
+	{
+		//	get box of points for extents
+		TLMaths::TBox2D Box;
+		Box.Accumulate( PolygonPoints );
+		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeBox2D( Box );
 
+		//	add datum
+		AddDatum( DatumRef, pShape );
+		return TRUE;
+	}
+	else if ( DatumShapeType == TLMaths_ShapeRef_Polygon2D )
+	{
+		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapePolygon2D( PolygonPoints );
+
+		//	add datum
+		AddDatum( DatumRef, pShape );
+		return TRUE;
+	}
+	
 #ifdef _DEBUG
 	TTempString Debug_String("Unknown datum shape type ");
 	DatumShapeType.GetString( Debug_String );
@@ -1854,5 +1889,14 @@ void TLAsset::TMesh::AddLines(const TArray<Line>& OtherPolygons,u32 OffsetVertex
 			Polygon.y += OffsetVertexIndex;
 		}
 	}
+}
+
+	
+//-----------------------------------------------------------
+//	generate geometry based from a unspecified shape
+//-----------------------------------------------------------
+void TLAsset::TMesh::GenerateShape(const TLMaths::TShape& Shape)
+{
+	TLDebug_Break("todo: switch shape type and cast & call appropriately");
 }
 

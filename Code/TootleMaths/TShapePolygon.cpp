@@ -4,6 +4,13 @@
 //	for quick copy&paste of the box2d checks
 #include <box2d/include/Box2D.h>
 
+	
+
+TLMaths::TShapePolygon2D::TShapePolygon2D(const TArray<float3>& Outline)
+{
+	for ( u32 i=0;	i<Outline.GetSize();	i++ )
+		m_Outline.Add( Outline[i].xy() );
+}
 
 
 float3 TLMaths::TShapePolygon2D::GetCenter() const							

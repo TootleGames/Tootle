@@ -220,17 +220,14 @@ void TLScene::TSceneNode_Transform::InitialiseZone()
 	TPtr<TLMaths::TQuadTreeNode> pQuadTreeThis = pThis;
 	TLMaths::TQuadTreeNode::UpdateZone( pQuadTreeThis, pRootZone );
 
-	//	if our initial zone is inactive, sleep
-	TPtr<TLMaths::TQuadTreeZone>& pZone = GetZone();
-	if ( pZone && !pZone->IsActive() )
-	{
-		OnZoneSleep();
-	}
-	else if ( !pZone )
-	{
-		OnZoneSleep();
-	}
+	//	gr: replaced with IsZoneAwake() usage to cope with non-zoned scenegraphs
+	SyncBool ZoneActive = IsZoneAwake();
 
+	//	if our initial zone is inactive, sleep
+	if ( ZoneActive == SyncFalse )
+		OnZoneSleep();
+
+	//	gr: set as not-initialised if no zone?
 	m_ZoneInitialised = TRUE;
 }
 

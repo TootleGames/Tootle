@@ -26,9 +26,7 @@ void TLRender::TRenderNodeClear::SetSize(const TLMaths::TBox2D& ClearBox,float N
 		m_pClearMesh = TLAsset::CreateAsset( TLAsset::GetFreeAssetRef("Clear"), "Mesh" );
 		pClearMesh = m_pClearMesh.GetObject();
 
-		float3 Zero3( 0,0,0 );
-		//	initialise clear quad
-		pClearMesh->GenerateQuad( Zero3, Zero3, Zero3, Zero3 );
+		InitMesh( *pClearMesh );
 	}
 
 	//	stretch past borders to cope with float precision
@@ -42,7 +40,16 @@ void TLRender::TRenderNodeClear::SetSize(const TLMaths::TBox2D& ClearBox,float N
 
 	pClearMesh->GetVertex(0).Set( Left, Bottom, NearZ );
 	pClearMesh->GetVertex(1).Set( Left, Top, NearZ );
-	pClearMesh->GetVertex(2).Set( Right, Bottom, NearZ );
-	pClearMesh->GetVertex(3).Set( Right, Top, NearZ );
+	pClearMesh->GetVertex(2).Set( Right, Top, NearZ );
+	pClearMesh->GetVertex(3).Set( Right, Bottom, NearZ );
+}
+
+
+void TLRender::TRenderNodeClear::InitMesh(TLAsset::TMesh& ClearMesh)
+{
+	float3 Zero3( 0,0,0 );
+
+	//	initialise clear quad
+	ClearMesh.GenerateQuad( Zero3, Zero3, Zero3, Zero3 );
 }
 

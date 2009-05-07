@@ -128,6 +128,7 @@ public:
 	FORCEINLINE Type4<TYPE>			xyzw(const TYPE& w) const;
 	FORCEINLINE Bool				IsZero() const										{	return (x==0) && (y==0) && (z==0);	}	//	could also use {	return DotProduct() == 0;	}	
 	FORCEINLINE Bool				IsNonZero() const									{	return (x!=0) || (y!=0) || (z!=0);	}	//	could also use {	return DotProduct() != 0;	}	
+	FORCEINLINE Bool				HasDifferenceMin(const Type3<TYPE>& Other,const TYPE& MinDifference) const;			//	check difference between two instances are above a miniumum
 
 	FORCEINLINE TYPE		LengthSq() const									{	return (x*x) + (y*y) + (z*z);	};
 	FORCEINLINE TYPE		Length() const										{	return sqrtf( LengthSq() );	};
@@ -217,16 +218,17 @@ public:
 	template<typename OTHERTYPE> Type4(const Type4<OTHERTYPE>& t)	{	Set( (TYPE)t.x, (TYPE)t.y, (TYPE)t.z, (TYPE)t.w );	};	
 	template<typename OTHERTYPE> Type4(const Type3<OTHERTYPE>& t)	{	Set( (TYPE)t.x, (TYPE)t.y, (TYPE)t.z, (TYPE)0 );	};
 
-	FORCEINLINE static u32	GetSize() 									{	return 4;	}
-	FORCEINLINE void			Set(const TYPE& a, const TYPE& b, const TYPE& c, const TYPE& d)	{	x = a;	y = b;	z = c;	w = d;	};
-	FORCEINLINE void			Set(const Type3<TYPE>& v, const TYPE d)						{	Set( v.x, v.y, v.z, d );	};
-	FORCEINLINE void			Set(const Type4<TYPE>& v)									{	Set( v.x, v.y, v.z, v.w );	};
-	FORCEINLINE Type2<TYPE>&			xy()									{	return *((Type2<TYPE>*)&x);	}
+	FORCEINLINE static u32			GetSize() 									{	return 4;	}
+	FORCEINLINE void				Set(const TYPE& a, const TYPE& b, const TYPE& c, const TYPE& d)	{	x = a;	y = b;	z = c;	w = d;	};
+	FORCEINLINE void				Set(const Type3<TYPE>& v, const TYPE d)						{	Set( v.x, v.y, v.z, d );	};
+	FORCEINLINE void				Set(const Type4<TYPE>& v)									{	Set( v.x, v.y, v.z, v.w );	};
+	FORCEINLINE Type2<TYPE>&		xy()									{	return *((Type2<TYPE>*)&x);	}
 	FORCEINLINE const Type2<TYPE>&	xy() const								{	return *((Type2<TYPE>*)&x);	}
-	FORCEINLINE Type3<TYPE>&			xyz()									{	return *((Type3<TYPE>*)&x);	}
+	FORCEINLINE Type3<TYPE>&		xyz()									{	return *((Type3<TYPE>*)&x);	}
 	FORCEINLINE const Type3<TYPE>&	xyz() const								{	return *((Type3<TYPE>*)&x);	}
-	FORCEINLINE Bool			IsZero() const							{	return (x==0) && (y==0) && (z==0) && (w==0);	}	//	could also use {	return DotProduct() == 0;	}	
-	FORCEINLINE Bool			IsNonZero() const						{	return (x!=0) || (y!=0) || (z!=0) || (w!=0);	}	//	could also use {	return DotProduct() != 0;	}	
+	FORCEINLINE Bool				IsZero() const							{	return (x==0) && (y==0) && (z==0) && (w==0);	}	//	could also use {	return DotProduct() == 0;	}	
+	FORCEINLINE Bool				IsNonZero() const						{	return (x!=0) || (y!=0) || (z!=0) || (w!=0);	}	//	could also use {	return DotProduct() != 0;	}	
+	FORCEINLINE Bool				HasDifferenceMin(const Type4<TYPE>& Other,const TYPE& MinDifference) const;			//	check difference between two instances are above a miniumum
 
 	FORCEINLINE Bool			operator==(const Type4<TYPE>& v) const		{	return ( x == v.x ) && ( y == v.y ) && ( z == v.z ) && ( w == v.w );	};
 	FORCEINLINE Bool			operator!=(const Type4<TYPE>& v) const		{	return ( x != v.x ) || ( y != v.y ) || ( z != v.z ) || ( w != v.w );	};
@@ -279,15 +281,15 @@ public:
 	FORCEINLINE Bool		GetIsInside(const Type2<TYPE>& Pos) const	{	return (Pos.x >= Left()) && (Pos.x <= Right()) && (Pos.y >= Top()) && (Pos.y <= Bottom());	}
 
 	//	vector functions
-	FORCEINLINE void			Invert()									{	x=-x;	y=-y;	z=-z;	w=-w;	};	
-	FORCEINLINE void			Normalise(float NormalLength=1.f)			{	(*this) *= NormalLength/Length();	};			//	normalises vector
-	Type4<TYPE>			Normal(float NormalLength=1.f) const		{	return (*this) * (NormalLength/Length());	};	//	returns the normal of thsi vector
-	FORCEINLINE TYPE			LengthSq() const							{	return (x*x) + (y*y) + (z*z) + (w*w);	};
-	FORCEINLINE TYPE			Length() const								{	return sqrtf( LengthSq() );	};
-	float				DotProduct(const Type4<TYPE>& v) const		{	return (x * v.x) + (y * v.y) + (z * v.z) + (w * v.w);	}
+	FORCEINLINE void		Invert()									{	x=-x;	y=-y;	z=-z;	w=-w;	};	
+	FORCEINLINE void		Normalise(float NormalLength=1.f)			{	(*this) *= NormalLength/Length();	};			//	normalises vector
+	Type4<TYPE>				Normal(float NormalLength=1.f) const		{	return (*this) * (NormalLength/Length());	};	//	returns the normal of thsi vector
+	FORCEINLINE TYPE		LengthSq() const							{	return (x*x) + (y*y) + (z*z) + (w*w);	};
+	FORCEINLINE TYPE		Length() const								{	return sqrtf( LengthSq() );	};
+	float					DotProduct(const Type4<TYPE>& v) const		{	return (x * v.x) + (y * v.y) + (z * v.z) + (w * v.w);	}
 
 	//	2d functions
-	FORCEINLINE Bool			PointInside(const Type2<TYPE>& Point) const	{	return ( Point.x >= x && Point.y >= y && Point.x < z && Point.y < w );	};
+	FORCEINLINE Bool		PointInside(const Type2<TYPE>& Point) const	{	return ( Point.x >= x && Point.y >= y && Point.x < z && Point.y < w );	};
 
 public:
 	TYPE	x;
@@ -439,6 +441,49 @@ void Type3<TYPE>::SortComponents()
 		z = tmp;
 	}
 }
+
+
+template <class TYPE>
+FORCEINLINE Bool Type3<TYPE>::HasDifferenceMin(const Type3<TYPE>& Other,const TYPE& MinDifference) const
+{
+	//	gr: will give wrong results if min difference is negative!
+	//	gr: lengthsq check here might be better? or a dot product?
+	/*
+	float OldLengthSq = m_Translate.LengthSq();
+	float NewLengthSq = Translate.LengthSq();
+	if ( (OldLengthSq - NewLengthSq) < -MinChange ||
+		 (OldLengthSq - NewLengthSq) > MinChange )
+	*/
+	return ( (Other.x - x) < -MinDifference ||
+			 (Other.x - x) > MinDifference ||
+			 (Other.y - y) < -MinDifference ||
+			 (Other.y - y) > MinDifference ||
+			 (Other.z - z) < -MinDifference ||
+			 (Other.z - z) > MinDifference );
+}
+
+
+template <class TYPE>
+FORCEINLINE Bool Type4<TYPE>::HasDifferenceMin(const Type4<TYPE>& Other,const TYPE& MinDifference) const
+{
+	//	gr: will give wrong results if min difference is negative!
+	//	gr: lengthsq check here might be better? or a dot product?
+	/*
+	float OldLengthSq = m_Translate.LengthSq();
+	float NewLengthSq = Translate.LengthSq();
+	if ( (OldLengthSq - NewLengthSq) < -MinChange ||
+		 (OldLengthSq - NewLengthSq) > MinChange )
+	*/
+	return ( (Other.x - x) < -MinDifference ||
+			 (Other.x - x) > MinDifference ||
+			 (Other.y - y) < -MinDifference ||
+			 (Other.y - y) > MinDifference ||
+			 (Other.z - z) < -MinDifference ||
+			 (Other.z - z) > MinDifference ||
+			 (Other.w - w) < -MinDifference ||
+			 (Other.w - w) > MinDifference );
+}
+
 
 template<typename TYPE> template<typename OTHERTYPE> void Type2<TYPE>::operator=(const Type2<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	}
 template<typename TYPE> template<typename OTHERTYPE> void Type2<TYPE>::operator=(const Type3<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	}

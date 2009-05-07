@@ -203,7 +203,7 @@ void TLAsset::DeleteAsset(TRefRef AssetRef)
 //----------------------------------------------------------
 //	load asset from a file system
 //----------------------------------------------------------
-TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef, Bool bBlocking)
+TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef,Bool bBlocking,TRefRef ExpectedAssetType)
 {
 	if ( !g_pFactory )
 	{
@@ -216,6 +216,11 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef, Bool bBlocking)
 		TPtr<TAsset>& pAsset = GetAsset( AssetRef );
 		if ( pAsset )
 		{
+			//	check type
+			if ( ExpectedAssetType.IsValid() && pAsset->GetAssetType() != ExpectedAssetType )
+				return TLPtr::GetNullPtr<TLAsset::TAsset>();
+
+			//	if loaded, return straight away
 			if ( pAsset->IsLoaded() )
 				return pAsset;
 		}
@@ -262,6 +267,11 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef, Bool bBlocking)
 	if ( FirstUpdateResult == SyncTrue )
 	{
 		pLoadTask = NULL;
+
+		//	check type
+		if ( ExpectedAssetType.IsValid() && pLoadingAsset->GetAssetType() != ExpectedAssetType )
+			return TLPtr::GetNullPtr<TLAsset::TAsset>();
+
 		return pLoadingAsset;
 	}
 

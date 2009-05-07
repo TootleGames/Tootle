@@ -16,9 +16,15 @@ namespace TLMaths
 	class TSphere2D;	//	
 
 	void		ExpandLineStrip(const TArray<float3>& LineStrip,float Width,TArray<float3>& OutsideLineStrip,TArray<float3>& InsideLineStrip);	//	create an outside and inside linestrip for an existing linestrip
+	void		ExpandLineStrip(const TArray<float3*>& LineStrip,const TArray<float*>& LineWidths,const TArray<float*>& OutsetScalars,TArray<float3>& OutsideLineStrip,TArray<float3>& InsideLineStrip);	//	create an outside and inside linestrip for an existing linestrip
+
 	float3		GetLineStripOutset(const float3& Start,const float3& Middle,const float3& End,float OutsetLength=1.f);	//	calculates the (normalised by default) outset for the Middle of a line strip (outset is relative)	//	gr: assumes line is clockwise. if not (and you have to detect that) then invert result
 	float3		GetLineOutset(const float3& Start,const float3& End,float OutsetLength=1.f);	//	calculates the outset for a line (outset is relative)
+
 	void		GetNearestLinePoints(const TLMaths::TLine2D& LineA,const TLMaths::TLine2D& LineB,Bool& LineANearStart,Bool& LineBNearStart,float& DistanceSq);	//	work out which two ends of these lines are closest. Set's a combination of bools to TRUE when it's a start, FALSE if its nearer the end, returns the distance sq of the nearest points too
+
+	void		EvaluateQuadraticCurve(TArray<float3>& BezierPoints,const float3& A,const float3& B,const float3& C,u32 BezierSteps);
+
 };
 
 
