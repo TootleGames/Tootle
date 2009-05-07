@@ -72,7 +72,8 @@ protected:
 protected:
 	float				m_SvgLayerZIncrement;	//	every layer we increase the Z position of meshes we generate to avoid Z fighting, this is how much we increment by
 	float3				m_SvgPointMove;			//	when parsing xml we move all points by this amount
-	float3				m_SvgPointScale;		//	when parsing xml we scale all points by this
+	//float3				m_SvgPointScale;		//	when parsing xml we scale all points by this
+	float				m_SvgPointScale;		//	when parsing xml we scale all points by this
 
 	Bool				m_VertexColoursEnabled;	//	adding TootleVertexColours="FALSE" to the <svg> tag disables generation of colours on vertexes (so the mesh can be coloured by the render node)
 };

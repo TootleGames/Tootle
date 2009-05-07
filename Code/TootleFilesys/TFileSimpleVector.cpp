@@ -9,7 +9,7 @@
 
 TLFileSys::TFileSimpleVector::TFileSimpleVector(TRefRef FileRef,TRefRef FileTypeRef) :
 	TFileXml				( FileRef, FileTypeRef ),
-	m_SvgPointScale			( 1.f, 1.f, 1.f ),
+	m_SvgPointScale			( 1.f ),
 	m_SvgLayerZIncrement	( 0.5f ),
 	m_VertexColoursEnabled	( TRUE )
 {
@@ -68,7 +68,7 @@ SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset
 	TPtr<TLAsset::TMesh> pNewMesh = new TLAsset::TMesh( GetFileRef() );
 
 	//	init scale
-	m_SvgPointScale.Set( 1.f, 1.f, 1.f );
+	m_SvgPointScale = 1.f;
 
 	//	check for options
 	const TString* pVertexColoursProperty = pSvgTag->GetProperty("TootleVertexColours");
@@ -87,19 +87,10 @@ SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset
 	const TString* pWidthString = pSvgTag->GetProperty("width");
 	if ( pWidthString )
 	{
-		s32 Width;
-		if ( pWidthString->GetInteger(Width) )
-			if ( Width != 0 )
-				m_SvgPointScale.x = DimensionScalar / (float)Width;
-	}
-
-	const TString* pHeightString = pSvgTag->GetProperty("height");
-	if ( pHeightString )
-	{
-		s32 Height;
-		if ( pHeightString->GetInteger(Height) )
-			if ( Height != 0 )
-				m_SvgPointScale.y = DimensionScalar / (float)Height;
+		float Width;
+		if ( pWidthString->GetFloat(Width) )
+			if ( Width > 0.f )
+				m_SvgPointScale = DimensionScalar / Width;
 	}
 
 	//	init offset

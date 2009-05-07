@@ -56,7 +56,7 @@ protected:
 	virtual void			ProcessMessage(TLMessaging::TMessage& Message);
 	virtual Bool			Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList);
 	
-	FORCEINLINE float		GetWidth(float AlongLine)											{	return m_Tapered ? TLMaths::Interp(m_Width,2.f,AlongLine) : m_Width;	}
+	FORCEINLINE float		GetWidth(float AlongLine)											{	return m_Tapered ? TLMaths::Interp(m_Width,m_MinWidth,AlongLine) : m_Width;	}
 	void					InitControlPoints(const TArray<float3>& Positions);					//	init swoosh points if not created or update points
 	void					SetControlPoints(const TArray<float3>& Positions);					//	init swoosh points if not created or update points
 	void					SetOffsets(const TArray<float>& Offsets);							//	init swoosh points if not created or update points
@@ -68,6 +68,7 @@ protected:
 	
 protected:
 	float					m_Width;					//	line width; note runtime changes have no immediate effect
+	float					m_MinWidth;					//	width at the tapered end
 	Bool					m_Tapered;					//	line tapers to nothing at end; note runtime changes have no immediate effect
 	u32						m_BezierSteps;				//	how many steps between control points we generate for the beziers
 	TArray<TSwooshPoint>	m_LinePoints;				//	

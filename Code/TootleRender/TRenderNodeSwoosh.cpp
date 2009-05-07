@@ -8,6 +8,7 @@
 TLRender::TRenderNodeSwoosh::TRenderNodeSwoosh(TRefRef NodeRef,TRefRef TypeRef) :
 	TRenderNodeDebugMesh	( NodeRef, TypeRef ),
 	m_Width					( 1.f ),
+	m_MinWidth				( 0.f ),
 	m_Tapered				( FALSE ),
 	m_LinePointsValid		( FALSE ),
 	m_BezierSteps			( 0 )
@@ -25,6 +26,7 @@ void TLRender::TRenderNodeSwoosh::Initialise(TLMessaging::TMessage& Message)
 
 	//	read line properties
 	Message.ImportData("Width", m_Width );
+	Message.ImportData("MinWidth", m_MinWidth );
 	Message.ImportData("Tapered", m_Tapered );
 	Message.ImportData("BezSteps", m_BezierSteps );
 	
