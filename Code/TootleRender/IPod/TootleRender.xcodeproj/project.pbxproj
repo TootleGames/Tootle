@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		843B55590FB2F0E4004FAC36 /* TRenderNodeSwoosh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 843B55570FB2F0E4004FAC36 /* TRenderNodeSwoosh.cpp */; };
+		843B555A0FB2F0E4004FAC36 /* TRenderNodeSwoosh.h in Headers */ = {isa = PBXBuildFile; fileRef = 843B55580FB2F0E4004FAC36 /* TRenderNodeSwoosh.h */; };
 		8461BD700F582DA300ED9509 /* TRenderNodeDebugMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8461BD6E0F582DA300ED9509 /* TRenderNodeDebugMesh.cpp */; };
 		8461BD710F582DA300ED9509 /* TRenderNodeDebugMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 8461BD6F0F582DA300ED9509 /* TRenderNodeDebugMesh.h */; };
 		8461C13F0F5C1B6300ED9509 /* TRenderNodePathNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8461C13D0F5C1B6300ED9509 /* TRenderNodePathNetwork.cpp */; };
@@ -47,6 +49,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		843B55570FB2F0E4004FAC36 /* TRenderNodeSwoosh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeSwoosh.cpp; path = ../TRenderNodeSwoosh.cpp; sourceTree = SOURCE_ROOT; };
+		843B55580FB2F0E4004FAC36 /* TRenderNodeSwoosh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeSwoosh.h; path = ../TRenderNodeSwoosh.h; sourceTree = SOURCE_ROOT; };
 		8461BD6E0F582DA300ED9509 /* TRenderNodeDebugMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeDebugMesh.cpp; path = ../TRenderNodeDebugMesh.cpp; sourceTree = SOURCE_ROOT; };
 		8461BD6F0F582DA300ED9509 /* TRenderNodeDebugMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeDebugMesh.h; path = ../TRenderNodeDebugMesh.h; sourceTree = SOURCE_ROOT; };
 		8461C13D0F5C1B6300ED9509 /* TRenderNodePathNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodePathNetwork.cpp; path = ../TRenderNodePathNetwork.cpp; sourceTree = SOURCE_ROOT; };
@@ -124,6 +128,8 @@
 		84C10AED0F0A7E4E00B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				843B55570FB2F0E4004FAC36 /* TRenderNodeSwoosh.cpp */,
+				843B55580FB2F0E4004FAC36 /* TRenderNodeSwoosh.h */,
 				8477D5AE0F697E0F0023454C /* TRenderNodeQuadTree.cpp */,
 				8477D5AF0F697E0F0023454C /* TRenderNodeQuadTree.h */,
 				847F01BF0F69040E00121D77 /* TRenderNodePhysicsNode.cpp */,
@@ -216,6 +222,7 @@
 				8461C1400F5C1B6300ED9509 /* TRenderNodePathNetwork.h in Headers */,
 				847F01C20F69040E00121D77 /* TRenderNodePhysicsNode.h in Headers */,
 				8477D5B10F697E0F0023454C /* TRenderNodeQuadTree.h in Headers */,
+				843B555A0FB2F0E4004FAC36 /* TRenderNodeSwoosh.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,6 +287,7 @@
 				8461C13F0F5C1B6300ED9509 /* TRenderNodePathNetwork.cpp in Sources */,
 				847F01C10F69040E00121D77 /* TRenderNodePhysicsNode.cpp in Sources */,
 				8477D5B00F697E0F0023454C /* TRenderNodeQuadTree.cpp in Sources */,
+				843B55590FB2F0E4004FAC36 /* TRenderNodeSwoosh.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
