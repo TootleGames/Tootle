@@ -59,6 +59,10 @@ public:
 	FORCEINLINE float&			GetGreenf() 							{	return m_Rgba.y;	}
 	FORCEINLINE float&			GetBluef() 								{	return m_Rgba.z;	}
 	FORCEINLINE float&			GetAlphaf() 							{	return m_Rgba.w;	}
+	
+	// Added set routine because using GetAlphaf() = 0.0f causes compile error in GCC.  Probably want to remove the non-const accessors really.
+	FORCEINLINE void			SetAlphaf(const float fAlpha) 			{	m_Rgba.w = fAlpha;	}
+	
 	FORCEINLINE const float4&	GetRgbaf() const						{	return m_Rgba;	}
 	FORCEINLINE const float&	GetRedf() const							{	return m_Rgba.x;	}
 	FORCEINLINE const float&	GetGreenf() const						{	return m_Rgba.y;	}

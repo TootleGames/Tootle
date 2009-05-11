@@ -123,6 +123,19 @@ public:
 
 	FORCEINLINE Bool			operator==(TRefRef Ref) const							{	return GetNodeRef() == Ref;	}
 
+#ifdef USE_BOX2D
+	FORCEINLINE float3			GetForce() const							{	return float3();	}
+	FORCEINLINE float3			GetVelocityAndForce() const					{	return float3();	}
+	FORCEINLINE void			SetLinearDamping(float Damping);
+	FORCEINLINE void			SetAngularDamping(float Damping);
+#else
+	FORCEINLINE const float3&	GetForce() const							{	return (m_Force);	}
+	FORCEINLINE float3			GetVelocityAndForce() const					{	return (m_Velocity + m_Force);	}
+#endif
+	
+	FORCEINLINE float			GetFriction() const;
+	FORCEINLINE void			SetFriction(float Friction);
+	
 protected:
 	virtual void				Initialise(TLMessaging::TMessage& Message);	
 	void						PostUpdateAll(float Timestep,TLPhysics::TPhysicsgraph& Graph,TPtr<TLPhysics::TPhysicsNode>& pThis);		//	update tree: update self, and children and siblings
@@ -134,19 +147,6 @@ protected:
 	FORCEINLINE void			SetAccumulatedMovementInvalid()				{	m_AccumulatedMovementValid = FALSE;	}
 	FORCEINLINE Bool			IsAccumulatedMovementValid() const			{	return m_AccumulatedMovementValid;	}
 
-#ifdef USE_BOX2D
-	FORCEINLINE float3			GetForce() const							{	return float3();	}
-	FORCEINLINE float3			GetVelocityAndForce() const					{	return float3();	}
-	FORCEINLINE float			GetFriction() const;
-	FORCEINLINE void			SetFriction(float Friction);
-	FORCEINLINE void			SetLinearDamping(float Damping);
-	FORCEINLINE void			SetAngularDamping(float Damping);
-#else
-	FORCEINLINE const float3&	GetForce() const							{	return (m_Force);	}
-	FORCEINLINE float3			GetVelocityAndForce() const					{	return (m_Velocity + m_Force);	}
-	FORCEINLINE float			GetFriction() const;
-	FORCEINLINE void			SetFriction(float Friction);
-#endif
 
 	virtual Bool				OnCollision(const TPhysicsNode& OtherNode);	//	handle collision with other object
 	void						AddCollisionInfo(const TLPhysics::TPhysicsNode& OtherNode,const TLMaths::TIntersection& Intersection);
