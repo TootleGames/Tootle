@@ -93,13 +93,25 @@ Bool Platform::LocalFileSys::LoadFileList(const char* pFileSearch)
 			//	found a file! - check it's not a dir
 			NSDictionary *pFileAttribs = [direnum fileAttributes];
 			NSString *FileType = [pFileAttribs objectForKey:@"NSFileType"];
-			
+	
 			//	is a directory
 			if ( FileType == NSFileTypeDirectory )
+			{
+#ifdef _DEBUG
+				const char* pRealFilename = (const char*)[pFilename fileSystemRepresentation];
+				//TTempString Filename = pRealFilename;
+	
+				TTempString DebugString("Ignoring directory ");
+				//pFile->GetFileRef().GetString( DebugString );
+				DebugString.Append(pRealFilename);
+				TLDebug_Print( DebugString );
+#endif
 				continue;
+			}
 			
 			const char* pRealFilename = (const char*)[pFilename fileSystemRepresentation];
 			TTempString Filename = pRealFilename;
+			
 			TPtr<TFile> pFile = CreateFileInstance( Filename );
 			
 			if ( !pFile )

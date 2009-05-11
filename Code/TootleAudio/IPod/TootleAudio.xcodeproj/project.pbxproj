@@ -23,7 +23,7 @@
 
 /* Begin PBXFileReference section */
 		84179D0A0EFBA035005375E5 /* libTootleAudio.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleAudio.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		84179D2C0EFBA727005375E5 /* TAudiograph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAudiograph.cpp; path = ../TAudiograph.cpp; sourceTree = SOURCE_ROOT; };
+		84179D2C0EFBA727005375E5 /* TAudiograph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TAudiograph.cpp; path = ../TAudiograph.cpp; sourceTree = SOURCE_ROOT; };
 		84179D2D0EFBA727005375E5 /* TAudiograph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAudiograph.h; path = ../TAudiograph.h; sourceTree = SOURCE_ROOT; };
 		84179D300EFBA727005375E5 /* TAudioNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAudioNode.cpp; path = ../TAudioNode.cpp; sourceTree = SOURCE_ROOT; };
 		84179D310EFBA727005375E5 /* TAudioNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAudioNode.h; path = ../TAudioNode.h; sourceTree = SOURCE_ROOT; };

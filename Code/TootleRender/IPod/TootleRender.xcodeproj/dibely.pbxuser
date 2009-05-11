@@ -360,7 +360,7 @@
 		vrLoc = 944;
 	};
 	84C109090F0A779700B2DF7A /* Project object */ = {
-		activeBuildConfigurationName = Release;
+		activeBuildConfigurationName = Debug;
 		activeSDKPreference = iphonesimulator2.2.1;
 		activeTarget = 84C10AE70F0A7E3B00B2DF7A /* TootleRender */;
 		addToTargets = (

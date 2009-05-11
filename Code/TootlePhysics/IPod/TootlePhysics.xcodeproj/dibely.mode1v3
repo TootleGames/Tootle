@@ -233,8 +233,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -278,6 +276,8 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
+									<integer>7</integer>
+									<integer>2</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -312,12 +312,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TCollisionShape.h</string>
+								<string>TPhysicsgraph.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -325,19 +327,23 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TCollisionShape.h</string>
+										<string>TPhysicsgraph.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8477D5BA0F697E590023454C</string>
+										<string>8488F47B0F8A874D008A08AF</string>
 										<key>history</key>
 										<array>
 											<string>8461C1310F5C142700ED9509</string>
-											<string>8461C1360F5C1A9D00ED9509</string>
+											<string>8488F46B0F8A86E2008A08AF</string>
+											<string>8488F46C0F8A86E2008A08AF</string>
+											<string>8488F47A0F8A874D008A08AF</string>
 										</array>
 										<key>prevStack</key>
 										<array>
 											<string>8461C1320F5C142700ED9509</string>
+											<string>8488F46E0F8A86E2008A08AF</string>
+											<string>8488F46F0F8A86E2008A08AF</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -395,9 +401,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>8477D5BB0F697E590023454C</string>
+				<string>8488F47C0F8A874D008A08AF</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>8477D5BC0F697E590023454C</string>
+				<string>8488F47D0F8A874D008A08AF</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>

@@ -318,7 +318,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TAssetScript.cpp</string>
+								<string>TLoadTask.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -326,7 +326,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TAssetScript.cpp</string>
+										<string>TLoadTask.cpp</string>
+										<key>_historyCapacity</key>
+										<integer>0</integer>
+										<key>bookmark</key>
+										<string>843B56ED0FB3151B004FAC36</string>
 										<key>history</key>
 										<array>
 											<string>84E643D90F1537BF005A4DC9</string>
@@ -344,12 +348,12 @@
 											<string>84C0CA660F6D70D60080B167</string>
 											<string>84C0CA670F6D70D60080B167</string>
 											<string>84C0CA680F6D70D60080B167</string>
-											<string>84C0CA690F6D70D60080B167</string>
 											<string>84C0CA6A0F6D70D60080B167</string>
 											<string>84C0CA6B0F6D70D60080B167</string>
 											<string>84C0CA6D0F6D70D60080B167</string>
 											<string>84C0CA6E0F6D70D60080B167</string>
 											<string>84C0CA6F0F6D70D60080B167</string>
+											<string>843B569F0FB30EA4004FAC36</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -431,9 +435,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>849E9C8D0F8385FF00037332</string>
+				<string>843B56A90FB30EB2004FAC36</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>849E9C8E0F8385FF00037332</string>
+				<string>843B56AA0FB30EB2004FAC36</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -567,6 +571,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleAsset/IPod/TootleAsset.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -865,8 +870,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>8461BDD90F58344E00ED9509</string>
-				<string>8461BDDA0F58344E00ED9509</string>
+				<string>843B56A10FB30EA4004FAC36</string>
+				<string>843B56A20FB30EA4004FAC36</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>

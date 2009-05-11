@@ -139,7 +139,7 @@
 		84C109CF0F0A793000B2DF7A /* IPodApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodApp.h; sourceTree = "<group>"; };
 		84C109D00F0A793000B2DF7A /* IPodApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodApp.mm; sourceTree = "<group>"; };
 		84C109D10F0A793000B2DF7A /* IPodCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodCore.h; sourceTree = "<group>"; };
-		84C109D20F0A793000B2DF7A /* IPodCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodCore.mm; sourceTree = "<group>"; };
+		84C109D20F0A793000B2DF7A /* IPodCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 2; path = IPodCore.mm; sourceTree = "<group>"; };
 		84C109D30F0A793000B2DF7A /* IPodMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodMemory.h; sourceTree = "<group>"; };
 		84C109D40F0A793000B2DF7A /* IPodMemory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodMemory.mm; sourceTree = "<group>"; };
 		84C109D50F0A793000B2DF7A /* IPodTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodTime.h; sourceTree = "<group>"; };
