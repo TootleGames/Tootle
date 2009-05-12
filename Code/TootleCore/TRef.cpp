@@ -201,7 +201,7 @@ void TRef::Set(const TString& RefString)
 	}
 
 	//	reset ref
-	m_Ref = 0x0;
+	m_Ref = 0;
 	Bool CheckIndex = TLDebug::IsEnabled();
 
 	//	setup ref as we go through string
@@ -231,7 +231,7 @@ void TRef::Set(const char* pRefString)
 	}
 
 	//	reset ref
-	m_Ref = 0x0;
+	m_Ref = 0;
 	Bool CheckIndex = TLDebug::IsEnabled();
 
 	//	extract chars up to terminator
@@ -261,7 +261,7 @@ void TRef::Set(const TArray<char>& RefStringChars)
 	Bool CheckIndex = TLDebug::IsEnabled();
 
 	//	reset ref
-	m_Ref = 0x0;
+	m_Ref = 0;
 
 	u32 Size = RefStringChars.GetSize();
 	if ( Size > TRef::g_CharsPerRef )
@@ -283,7 +283,7 @@ void TRef::Set(const TArray<char>& RefStringChars)
 void TRef::Set(const TArray<u32>& RefIndexes)
 {
 	//	reset ref
-	m_Ref = 0x0;
+	m_Ref = 0;
 
 	u32 Size = RefIndexes.GetSize();
 	if ( Size > TRef::g_CharsPerRef )

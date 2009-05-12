@@ -26,8 +26,13 @@ TPtr<TLMaths::TShape> TLMaths::ImportShapeData(TBinaryTree& Data)
 {
 	//	read type
 	TRef ShapeType;
-	if ( !Data.Read( ShapeType ) )
-		return NULL;
+
+	//	gr: new method, import - for backwards compatibility do a read if there is no "type" child
+	if ( !Data.ImportData("Type", ShapeType ) )
+	{
+		if ( !Data.Read( ShapeType ) )
+			return NULL;
+	}
 
 	//	create type
 	TPtr<TLMaths::TShape> pShape = CreateShapeType( ShapeType );
@@ -36,19 +41,71 @@ TPtr<TLMaths::TShape> TLMaths::ImportShapeData(TBinaryTree& Data)
 
 	//	import data into shape
 	if ( !pShape->ImportData( Data ) )
+	{
+		#ifdef _DEBUG
+
+		//	print out the data so we might be able to see what's wrong with it.
+		Data.Debug_PrintTree();
+
+		//	break
+		TTempString Debug_String("Failed to import shape type ");
+		ShapeType.GetString( Debug_String );
+		Debug_String.Append(" from data ");
+		Data.GetDataRef().GetString( Debug_String );
+		TLDebug_Break( Debug_String );
+		#endif
 		return NULL;
+	}
 
 	return pShape;
 }
 
 
 //---------------------------------------------------
+//	create a shape type from TBinaryData
+//---------------------------------------------------
+Bool TLMaths::ImportShapeData(TBinaryTree& Data,TLMaths::TShape& Shape)
+{
+	//	read type
+	TRef ShapeType;
+	if ( !Data.Read( ShapeType ) )
+		return NULL;
+
+	//	make sure shape type matches
+	if ( ShapeType != Shape.GetShapeType() )
+	{
+		#ifdef _DEBUG
+		TTempString Debug_String("Tried to import a ");
+		ShapeType.GetString( Debug_String );
+		Debug_String.Append(" shape from data \"");
+		Data.GetDataRef().GetString( Debug_String );
+		Debug_String.Append("\" into a ");
+		Shape.GetShapeType().GetString( Debug_String );
+		Debug_String.Append(" shape.");
+		TLDebug_Break( Debug_String );
+		#endif
+		return FALSE;
+	}
+
+	//	import data into shape
+	if ( !Shape.ImportData( Data ) )
+		return FALSE;
+
+	return TRUE;
+}
+
+//---------------------------------------------------
 //	export shape to data
 //---------------------------------------------------
-Bool TLMaths::ExportShapeData(TBinaryTree& Data,const TLMaths::TShape& Shape)
+Bool TLMaths::ExportShapeData(TBinaryTree& Data,const TLMaths::TShape& Shape,Bool WriteIfInvalid)
 {
+	//	dont write if shape is invalid
+	if ( !WriteIfInvalid && !Shape.IsValid() )
+		return FALSE;
+
 	//	write type
-	Data.Write( Shape.GetShapeType() );
+	Data.ExportData("type", Shape.GetShapeType() );
+	//Data.Write(  );
 
 	//	write data
 	if ( !Shape.ExportData( Data ) )

@@ -42,16 +42,18 @@ public:
 	template<class MATCHTYPE>
 	FORCEINLINE const TPtr<TYPE>&	FindPtr(const MATCHTYPE& val) const;
 
-	FORCEINLINE TPtr<TYPE>&		GetPtrLast();						//	fast version to return the last TPtr
-	FORCEINLINE TPtr<TYPE>&		GetPtrAt(s32 Index);				//	fast version to return TPtr reference at index
+	FORCEINLINE TPtr<TYPE>&			GetPtrLast();						//	fast version to return the last TPtr
+	FORCEINLINE const TPtr<TYPE>&	GetPtrLast() const;					//	fast version to return the last TPtr
+	FORCEINLINE TPtr<TYPE>&			GetPtrAt(s32 Index);				//	fast version to return TPtr reference at index
+	FORCEINLINE const TPtr<TYPE>&	GetPtrAtConst(s32 Index) const;				//	fast version to return TPtr reference at index
 
-	FORCEINLINE TPtr<TYPE>&		AddPtr(const TPtr<TYPE>& val);		//	add TPtr to array and return the new [more permanant] TPtr reference
-	FORCEINLINE TPtr<TYPE>&		AddNewPtr(TYPE* pVal);				//	add a pointer to the array, this is quite fast, but ONLY use it for pointers that are NOT in TPtr's already. use like; AddNewPtr( new TObject() );. CANNOT be a const pointer. This should stop us using this function for pointers that might already be in a TPtr
+	FORCEINLINE TPtr<TYPE>&			AddPtr(const TPtr<TYPE>& val);		//	add TPtr to array and return the new [more permanant] TPtr reference
+	FORCEINLINE TPtr<TYPE>&			AddNewPtr(TYPE* pVal);				//	add a pointer to the array, this is quite fast, but ONLY use it for pointers that are NOT in TPtr's already. use like; AddNewPtr( new TObject() );. CANNOT be a const pointer. This should stop us using this function for pointers that might already be in a TPtr
 
-	void						RemoveNull();						//	remove all NULL pointers from array
-	
+	void							RemoveNull();						//	remove all NULL pointers from array
+		
 	template<typename FUNCTIONPOINTER>
-	FORCEINLINE void			FunctionAll(FUNCTIONPOINTER pFunc);	//	execute this function on every member. will fail if the TYPE isn't a pointer of somekind
+	FORCEINLINE void				FunctionAll(FUNCTIONPOINTER pFunc);	//	execute this function on every member. will fail if the TYPE isn't a pointer of somekind
 
 	//	operators
 	FORCEINLINE TPtr<TYPE>&			operator[](s32 Index)				{	return TArray<TPtr<TYPE> >::ElementAt(Index);	}
@@ -146,12 +148,32 @@ FORCEINLINE TPtr<TYPE>& TPtrArray<TYPE>::GetPtrLast()
 
 
 //----------------------------------------------------------------------
+//	fast version to return the last TPtr
+//----------------------------------------------------------------------
+template<typename TYPE>
+FORCEINLINE const TPtr<TYPE>& TPtrArray<TYPE>::GetPtrLast() const
+{	
+	return (TArray<TPtr<TYPE> >::GetSize()>0) ? GetPtrAtConst( TArray<TPtr<TYPE> >::GetLastIndex() ) : TLPtr::GetNullPtr<TYPE>();	
+}
+
+
+//----------------------------------------------------------------------
 //	fast version to return TPtr reference at index
 //----------------------------------------------------------------------
 template<typename TYPE>
 FORCEINLINE TPtr<TYPE>& TPtrArray<TYPE>::GetPtrAt(s32 Index)
 {	
 	return (Index == -1) ? TLPtr::GetNullPtr<TYPE>() : TArray<TPtr<TYPE> >::ElementAt( Index );	
+}
+
+
+//----------------------------------------------------------------------
+//	fast version to return TPtr reference at index
+//----------------------------------------------------------------------
+template<typename TYPE>
+FORCEINLINE const TPtr<TYPE>& TPtrArray<TYPE>::GetPtrAtConst(s32 Index) const
+{	
+	return (Index == -1) ? TLPtr::GetNullPtr<TYPE>() : TArray<TPtr<TYPE> >::ElementAtConst( Index );	
 }
 
 

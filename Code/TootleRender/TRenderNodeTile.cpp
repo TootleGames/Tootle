@@ -20,7 +20,7 @@ Bool TLRender::TRenderNodeTile::Draw(TRenderTarget* pRenderTarget,TRenderNode* p
 	if ( !pTileMesh )
 		return FALSE;
 
-	TLMaths::TBox TileBox = pTileMesh->CalcBoundsBox();
+	TLMaths::TBox TileBox = pTileMesh->GetBoundsBox();
 	if ( !TileBox.IsValid() )
 		return FALSE;
 	

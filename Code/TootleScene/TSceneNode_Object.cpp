@@ -17,7 +17,6 @@ TSceneNode_Object::TSceneNode_Object(TRefRef NodeRef,TRefRef TypeRef) :
 
 TSceneNode_Object::~TSceneNode_Object()
 {
-	TLDebug_Print("debug");
 }
 
 
@@ -353,11 +352,11 @@ float TSceneNode_Object::GetDistanceTo(const TLMaths::TLine& Line)
 
 	if(pRenderNode)
 	{
-		const TLMaths::TBox& Bounds = pRenderNode->GetWorldBoundsBox();
+		const TLMaths::TShapeBox& Bounds = pRenderNode->GetWorldBoundsBox();
 
-		if(Bounds.GetIntersection(Line))
+		if(Bounds.GetBox().GetIntersection(Line))
 		{
-			float fBoundsDistance = Bounds.GetDistanceSq(Line);
+			float fBoundsDistance = Bounds.GetBox().GetDistanceSq(Line);
 
 			if(fBoundsDistance < fDistance)
 				fDistance = fBoundsDistance;

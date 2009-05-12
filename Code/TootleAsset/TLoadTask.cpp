@@ -483,6 +483,12 @@ TRef Mode_AssetImport::Update(float Timestep)
 
 	//	export from assetfile to asset
 	TPtr<TLAsset::TAsset> pAsset = GetAsset();
+	if ( !pAsset )
+	{
+		TLDebug_Break("Asset missing for import");
+		return "failed";
+	}
+
 	pAsset->Import( GetAssetFile() );
 
 	//	change mode depending on loading state

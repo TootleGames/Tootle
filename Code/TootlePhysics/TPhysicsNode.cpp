@@ -489,10 +489,10 @@ void TLPhysics::TPhysicsNode::PublishTransformChanges()
 	m_TransformChangedBits = 0x0;
 
 	//	no one to send a message to 
-	if ( !HasSubscribers() )
+	if ( !HasSubscribers( TRef_Static(O,n,T,r,a) ) )
 		return;
 
-	TLMessaging::TMessage Message(TRef_Static(O,n,T,r,a), GetNodeRef() );
+	TLMessaging::TMessage Message( TRef_Static(O,n,T,r,a), GetNodeRef() );
 
 	//	write out transform data - send only if something was written
 	if ( m_Transform.ExportData( Message, Changes ) != 0x0 )

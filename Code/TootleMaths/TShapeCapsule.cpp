@@ -9,7 +9,7 @@
 //---------------------------------------
 TLMaths::TShapeCapsule2D::TShapeCapsule2D(const TLMaths::TBox2D& Box)
 {
-	m_Capsule.Set( Box );
+	m_Shape.Set( Box );
 }
 
 
@@ -18,9 +18,9 @@ TLMaths::TShapeCapsule2D::TShapeCapsule2D(const TLMaths::TBox2D& Box)
 //---------------------------------------
 Bool TLMaths::TShapeCapsule2D::ImportData(TBinaryTree& Data)
 {
-	if ( !Data.ImportData("Start", m_Capsule.GetLine().GetStart() ) )	return FALSE;
-	if ( !Data.ImportData("End", m_Capsule.GetLine().GetEnd() ) )		return FALSE;
-	if ( !Data.ImportData("Radius", m_Capsule.GetRadius() ) )	return FALSE;
+	if ( !Data.ImportData("Start", m_Shape.GetLine().GetStart() ) )	return FALSE;
+	if ( !Data.ImportData("End", m_Shape.GetLine().GetEnd() ) )		return FALSE;
+	if ( !Data.ImportData("Radius", m_Shape.GetRadius() ) )	return FALSE;
 
 	return TRUE;
 }
@@ -30,9 +30,9 @@ Bool TLMaths::TShapeCapsule2D::ImportData(TBinaryTree& Data)
 //---------------------------------------
 Bool TLMaths::TShapeCapsule2D::ExportData(TBinaryTree& Data) const
 {
-	Data.ExportData("Start", m_Capsule.GetLine().GetStart() );
-	Data.ExportData("End", m_Capsule.GetLine().GetEnd() );
-	Data.ExportData("Radius", m_Capsule.GetRadius() );
+	Data.ExportData("Start", m_Shape.GetLine().GetStart() );
+	Data.ExportData("End", m_Shape.GetLine().GetEnd() );
+	Data.ExportData("Radius", m_Shape.GetRadius() );
 
 	return TRUE;
 }
@@ -44,7 +44,7 @@ Bool TLMaths::TShapeCapsule2D::ExportData(TBinaryTree& Data) const
 //----------------------------------------------------------
 TPtr<TLMaths::TShape> TLMaths::TShapeCapsule2D::Transform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pThis,TPtr<TLMaths::TShape>& pOldShape)
 {
-	if ( !m_Capsule.IsValid() )
+	if ( !m_Shape.IsValid() )
 		return NULL;
 
 	//	no transform, so just use ourself
@@ -54,7 +54,7 @@ TPtr<TLMaths::TShape> TLMaths::TShapeCapsule2D::Transform(const TLMaths::TTransf
 	}
 
 	//	copy and transform capsule
-	TLMaths::TCapsule2D NewCapsule( m_Capsule );
+	TLMaths::TCapsule2D NewCapsule( m_Shape );
 	NewCapsule.Transform( Transform );
 
 	//	re-use old shape object

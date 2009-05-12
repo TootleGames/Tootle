@@ -24,7 +24,7 @@ class TLRender::TRenderNodeDebugMesh : public TLRender::TRenderNode
 public:
 	TRenderNodeDebugMesh(TRefRef RenderNodeRef,TRefRef TypeRef);
 
-	virtual TPtr<TLAsset::TMesh>&	GetMeshAsset()		{	return m_pDebugMesh;	}
+	virtual TPtr<TLAsset::TMesh>&	GetMeshAsset(Bool BlockLoad=FALSE)		{	return m_pDebugMesh;	}
 
 protected:
 	virtual void					Initialise(TLMessaging::TMessage& Message);

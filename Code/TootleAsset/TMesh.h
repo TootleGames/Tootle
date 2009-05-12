@@ -12,7 +12,6 @@
 #include <TootleCore/TColour.h>
 #include <TootleMaths/TBox.h>
 #include <TootleMaths/TSphere.h>
-#include <TootleMaths/TCapsule.h>
 #include <TootleMaths/TShape.h>
 #include <TootleMaths/TShapeBox.h>
 #include <TootleMaths/TShapeSphere.h>
@@ -142,7 +141,7 @@ public:
 	void					RemoveTriangle(u16 TriangleIndex,Bool RemoveVertexes=TRUE,Bool CheckVertexUsage=TRUE);	//	
 	inline void				ScaleVerts(float Scale,u16 FirstVert=0,s32 LastVert=-1)				{	ScaleVerts( float3( Scale, Scale, Scale ), FirstVert, LastVert );	}
 	void					ScaleVerts(const float3& Scale,u16 FirstVert=0,s32 LastVert=-1);	//	scale all vertexes
-	void					MoveVerts(const float3& Movement,u16 FirstVert=0,s32 LastVert=-1);	//	move all verts
+	void					TransformVerts(const TLMaths::TTransform& Transform,u16 FirstVert=0,s32 LastVert=-1);	//	move all verts
 	void					ColoursMult(const TColour& Colour);		//	multiply all colours by this colour
 
 	//	data accessors
@@ -196,32 +195,27 @@ public:
 	Bool					RemoveLine(u32 VertexIndexA,u32 VertexIndexB);	//	remove any lines/parts of linestrips with these two points next to each other. returns TRUE if any changes made
 
 	//	bounds stuff
-	void					SetBoundsInvalid()					{	SetBoundsBoxInvalid();		SetBoundsSphereInvalid();		SetBoundsCapsuleInvalid();	}
-	void					CalcBounds(Bool ForceCalc=FALSE)	{	CalcBoundsBox(ForceCalc);	CalcBoundsSphere(ForceCalc);	CalcBoundsCapsule(ForceCalc);	}
+	FORCEINLINE void						SetBoundsInvalid();	//	invalidate bounds shapes
+	FORCEINLINE void						CalcBounds();		//	calculate all the invalid bounds shapes
+	template<class SHAPETYPE>
+	FORCEINLINE const SHAPETYPE&			GetBounds();		//	return and recalculate[as required] a bounds shape
 
-	void					SetBoundsBoxInvalid()				{	m_BoundsBox.SetInvalid();	}
-	TLMaths::TBox&			CalcBoundsBox(Bool ForceCalc=FALSE);	//	calculate bounds box if invalid
-	TLMaths::TBox&			GetBoundsBox()						{	return m_BoundsBox;	}
-	
-	void					SetBoundsSphereInvalid()			{	m_BoundsSphere.SetInvalid();	}
-	TLMaths::TSphere&		CalcBoundsSphere(Bool ForceCalc=FALSE);	//	calculate bounds Sphere if invalid
-	TLMaths::TSphere&		GetBoundsSphere()					{	return m_BoundsSphere;	}
-	
-	void					SetBoundsCapsuleInvalid()			{	m_BoundsCapsule.SetInvalid();	}
-	TLMaths::TCapsule&		CalcBoundsCapsule(Bool ForceCalc=FALSE);	//	calculate bounds box if invalid
-	TLMaths::TCapsule&		GetBoundsCapsule()					{	return m_BoundsCapsule;	}
+	FORCEINLINE const TLMaths::TBox&		GetBoundsBox()		{	return GetBoundsShape<TLMaths::TShapeBox>().m_Shape;	}
+	FORCEINLINE const TLMaths::TBox2D&		GetBoundsBox2D()	{	return GetBoundsShape<TLMaths::TShapeBox2D>().m_Shape;	}
+	FORCEINLINE const TLMaths::TSphere&		GetBoundsSphere()	{	return GetBoundsShape<TLMaths::TShapeSphere>().m_Shape;	}
+	FORCEINLINE const TLMaths::TSphere2D&	GetBoundsSphere2D()	{	return GetBoundsShape<TLMaths::TShapeSphere2D>().m_Shape;	}
 
 	//	datum access
 	FORCEINLINE TPtr<TLMaths::TShape>&	AddDatum(TRefRef DatumRef,TPtr<TLMaths::TShape>& pShape);
-	Bool					RemoveDatum(TRefRef DatumRef) 		{	return m_Datums.Remove( DatumRef );	}
-	Bool					DatumExists(TRefRef DatumRef) const	{	return m_Datums.Exists( DatumRef );	}
-	TPtr<TLMaths::TShape>&	GetDatum(TRefRef DatumRef)			{	return m_Datums.FindPtr( DatumRef );	}
+	Bool								RemoveDatum(TRefRef DatumRef) 		{	return m_Datums.Remove( DatumRef );	}
+	Bool								DatumExists(TRefRef DatumRef) const	{	return m_Datums.Exists( DatumRef );	}
+	TPtr<TLMaths::TShape>&				GetDatum(TRefRef DatumRef)			{	return m_Datums.FindPtr( DatumRef );	}
 	template<class SHAPETYPE>
-	SHAPETYPE*				GetDatum(TRefRef DatumRef);
-	Bool					CreateDatum(const TArray<float3>& PolygonPoints,TRefRef DatumRef,TRefRef DatumShapeType);
+	SHAPETYPE*							GetDatum(TRefRef DatumRef);
+	Bool								CreateDatum(const TArray<float3>& PolygonPoints,TRefRef DatumRef,TRefRef DatumShapeType);
 	
-	void					OnVertexesChanged()					{	SetBoundsInvalid();	}
-	void					OnPrimitivesChanged();				//	just a check to make sure the integrety of all the polygons indexes are valid
+	void								OnVertexesChanged()					{	SetBoundsInvalid();	}
+	void								OnPrimitivesChanged();				//	just a check to make sure the integrety of all the polygons indexes are valid
 
 protected:
 	virtual SyncBool		ImportData(TBinaryTree& Data);		//	load asset data out binary data
@@ -229,6 +223,12 @@ protected:
 
 	Bool					ImportDatum(TBinaryTree& Data);
 	Bool					ExportDatum(TBinaryTree& Data,TRefRef DatumRef,TLMaths::TShape& Shape);
+
+	template<class SHAPETYPE> SHAPETYPE&	GetBoundsShape()	{	TLDebug_Break("Specialise this for shapes we don't currently support");	static SHAPETYPE g_DummyShape;	return g_DummyShape;	}
+	template<> TLMaths::TShapeBox&			GetBoundsShape()	{	return m_BoundsBox;	}
+	template<> TLMaths::TShapeBox2D&		GetBoundsShape()	{	return m_BoundsBox2D;	}
+	template<> TLMaths::TShapeSphere&		GetBoundsShape()	{	return m_BoundsSphere;	}
+	template<> TLMaths::TShapeSphere2D&		GetBoundsShape()	{	return m_BoundsSphere2D;	}
 
 	void					CalcHasAlpha();						//	loop through colours to check if we have any alpha colours in the verts
 	void					PadColours();						//	ensure number of colours matches number of vertexes. Also adds missing 24/32 bit colours
@@ -262,10 +262,11 @@ protected:
 	
 	TPtrKeyArray<TRef,TLMaths::TShape>	m_Datums;	//	datum shapes on mesh
 
-	//	todo: replace with named Datums
-	TLMaths::TBox			m_BoundsBox;			//	bounding box vertex extents
-	TLMaths::TSphere		m_BoundsSphere;			//	bounding sphere
-	TLMaths::TCapsule		m_BoundsCapsule;		//	bounding capsule 
+	//	todo: replace with named Datums - same as TRenderNode system
+	TLMaths::TShapeBox		m_BoundsBox;			//	bounding box vertex extents
+	TLMaths::TShapeBox2D	m_BoundsBox2D;			//	bounding box vertex extents
+	TLMaths::TShapeSphere	m_BoundsSphere;			//	bounding sphere
+	TLMaths::TShapeSphere2D	m_BoundsSphere2D;		//	bounding sphere
 
 	float					m_LineWidth;			//	width of lines, don't set dynamiccly just yet, only if you create the asset
 	TFlags<TMeshFlags,u8>	m_Flags;				//	mesh flags
@@ -311,3 +312,43 @@ SHAPETYPE* TLAsset::TMesh::GetDatum(TRefRef DatumRef)
 
 	return pShape;
 }
+
+
+//----------------------------------------------------
+//	invalidate all the bounds shapes
+//----------------------------------------------------
+FORCEINLINE void TLAsset::TMesh::SetBoundsInvalid()	
+{	
+	m_BoundsBox.SetInvalid();	
+	m_BoundsBox2D.SetInvalid();	
+	m_BoundsSphere.SetInvalid();	
+	m_BoundsSphere2D.SetInvalid();	
+}
+
+//----------------------------------------------------
+//	calculate all the invalid bounds shapes
+//----------------------------------------------------
+FORCEINLINE void TLAsset::TMesh::CalcBounds()	
+{	
+	GetBoundsBox();
+	GetBoundsBox2D();
+	GetBoundsSphere();
+	GetBoundsSphere2D();
+}
+
+
+//----------------------------------------------------
+//	invalidate all the bounds shapes
+//----------------------------------------------------
+template<class SHAPETYPE>
+FORCEINLINE const SHAPETYPE& TLAsset::TMesh::GetBounds()
+{
+	SHAPETYPE& Shape = GetBoundsShape<SHAPETYPE>();	
+
+	//	re-make shape if out of date
+	if ( !Shape.IsValid() )	
+		Shape.m_Shape.Accumulate( m_Vertexes );	
+	
+	return Shape;	
+}
+

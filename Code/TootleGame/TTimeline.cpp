@@ -17,7 +17,7 @@ void TTimelineInstance::Update(float fTimestep)
 
 
 	// Get the current and next keyframes
-	TLAsset::TAssetTimeline* pScript = GeTAssetTimeline();
+	TLAsset::TAssetTimeline* pScript = GetAssetTimeline();
 
 	if(!pScript)
 		return;
@@ -89,15 +89,12 @@ void TTimelineInstance::OnEndOfTimeline()
 }
 
 
-TLAsset::TAssetTimeline* TTimelineInstance::GeTAssetTimeline()
+TLAsset::TAssetTimeline* TTimelineInstance::GetAssetTimeline()
 {
 	// Get the asset script from the asset system
-	TPtr<TLAsset::TAssetTimeline> AssetScript = TLAsset::GetAsset(m_AssetScriptRef, TRUE);
+	TPtr<TLAsset::TAsset>& pAsset = TLAsset::LoadAsset(m_AssetScriptRef, TRUE,"Timeline");
 
-	if(AssetScript.IsValid())
-		return AssetScript.GetObject();
-
-	return NULL;
+	return pAsset.GetObject<TLAsset::TAssetTimeline>();
 }
 
 

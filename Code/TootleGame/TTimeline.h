@@ -51,7 +51,7 @@ public:
 	
 
 private:
-	TLAsset::TAssetTimeline*	GeTAssetTimeline();
+	TLAsset::TAssetTimeline*	GetAssetTimeline();
 
 	// Keyframe processing
 	Bool					ProcessKeyframes(const TLAsset::TTempKeyframeData& KeyframeFrom, const TLAsset::TTempKeyframeData& KeyframeTo, float& fTimestep);

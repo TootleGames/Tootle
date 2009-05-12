@@ -21,6 +21,7 @@ public:
 	static TRef						GetShapeType_Static()							{	return TLMaths_ShapeRef(Polygon2D);	}
 	virtual TRef					GetShapeType() const							{	return TLMaths_ShapeRef(Polygon2D);	}
 	virtual Bool					IsValid() const									{	return (m_Outline.GetSize() >= 3);	}
+	virtual void					SetInvalid()									{	m_Outline.SetSize(0);	}
 	virtual float3					GetCenter() const;
 	
 	TArray<float2>&					GetOutline()									{	return m_Outline;	}
@@ -31,7 +32,7 @@ public:
 	FORCEINLINE Bool				SetClockwise(Bool Clockwise=TRUE)				{	if ( Clockwise == IsClockwise() )	return FALSE;	ReverseContour();	return TRUE;	}
 	void							ReverseContour();								//	reverse contour order
 
-	virtual Bool					Transform(const TLMaths::TTransform& Transform)	{	Transform.Transform( m_Outline );	return TRUE;	}
+	virtual void					Transform(const TLMaths::TTransform& Transform)	{	Transform.Transform( m_Outline );	}
 	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pThis,TPtr<TShape>& pOldShape);
 
 	Bool							Debug_CheckIsConvex() const;					//	debug check that matches box2d's convex polygon check

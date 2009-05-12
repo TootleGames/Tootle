@@ -87,6 +87,10 @@ public:
 	Bool					GetFloat(float& Float) const;					//	turn string into a float
 	Bool					GetHexInteger(u32& Integer) const;				//	turn hexidecimal string into an integer (best to trim first where possible)
 	Bool					GetHexBytes(TArray<u8>& ParsedBytes) const;		//	turn hexidecimal string into an array of bytes. so string is expected to be like 0011223344aabbff etc
+	
+	//	gr: I *think* it's safe to expose these now...
+	virtual TArray<CHARTYPE>&		GetStringArray()						{	return m_DataArray;	}
+	virtual const TArray<CHARTYPE>&	GetStringArray() const					{	return m_DataArray;	}
 
 	CHARTYPE&				GetCharAt(u32 Index)							{	return GetStringArray().ElementAt(Index);	}
 	const CHARTYPE&			GetCharAt(u32 Index) const						{	return GetStringArray().ElementAtConst(Index);	}
@@ -106,10 +110,7 @@ public:
 	FORCEINLINE Bool				operator<(const TString& String) const			{	return IsLessThan( String );	}
 
 protected:
-	virtual TArray<CHARTYPE>&		GetStringArray()						{	return m_DataArray;	}
-	virtual const TArray<CHARTYPE>&	GetStringArray() const					{	return m_DataArray;	}
-	virtual void					ForceCaseSensitivity(Bool& CaseSensitive) const	{	}	//	default is whatever was passed in
-
+	virtual void				ForceCaseSensitivity(Bool& CaseSensitive) const	{	}	//	default is whatever was passed in
 
 	u32							GetLength(const CHARTYPE* pString);			//	get the length from some other type of string
 

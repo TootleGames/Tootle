@@ -306,10 +306,11 @@ TLGame::TMenuWrapper::~TMenuWrapper()
 //---------------------------------------------------
 //	create menu/render nodes etc
 //---------------------------------------------------
-TLGame::TMenuWrapperScheme::TMenuWrapperScheme(TLMenu::TMenuController* pMenuController,TRefRef SchemeRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef)
+TLGame::TMenuWrapperScheme::TMenuWrapperScheme(TLMenu::TMenuController& MenuController,TRefRef SchemeRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef) :
+	m_pMenuController	( &MenuController )
 {
-	TPtr<TLMenu::TMenu>& pMenu = pMenuController->GetCurrentMenu();
-	m_MenuRef = pMenu->GetMenuRef();
+	TLMenu::TMenu& Menu = *MenuController.GetCurrentMenu();
+	m_MenuRef = Menu.GetMenuRef();
 
 	//	load scheme under this node
 	if ( SchemeRef.IsValid() )
@@ -339,7 +340,7 @@ TLGame::TMenuWrapperScheme::TMenuWrapperScheme(TLMenu::TMenuController* pMenuCon
 	}
 
 	//	create TInputInterface's for each menu item
-	const TPtrArray<TLMenu::TMenuItem>& MenuItems = pMenu->GetMenuItems();
+	const TPtrArray<TLMenu::TMenuItem>& MenuItems = Menu.GetMenuItems();
 	for ( u32 i=0;	i<MenuItems.GetSize();	i++ )
 	{
 		//	get render node ref usable for the TInputInterface
@@ -352,7 +353,8 @@ TLGame::TMenuWrapperScheme::TMenuWrapperScheme(TLMenu::TMenuController* pMenuCon
 		TPtr<TLInput::TInputInterface> pGui = new TLInput::TInputInterface( RenderTargetRef, MenuItemRenderNodeRef, "global", MenuItems[i]->GetMenuItemRef() );
 
 		//	subscribe the menu controller to the gui to get the clicked messages
-		if ( pMenuController->SubscribeTo( pGui.GetObject() ) )
+		//	gr: THIS now gets the gui messages and handles them and invokes execution of the menu item
+		if ( this->SubscribeTo( pGui.GetObject() ) )
 		{
 			m_Guis.Add( pGui );
 		}
@@ -369,6 +371,24 @@ TLGame::TMenuWrapperScheme::~TMenuWrapperScheme()
 	//	dealloc guis - shut them down first to make sure all TPtr's are released
 	m_Guis.FunctionAll( &TLInput::TInputInterface::Shutdown );
 	m_Guis.Empty();
+}
+
+	
+//---------------------------------------------------
+//	catch gui's messages and turn them into menu item execution for our owner menu controller
+//---------------------------------------------------
+void TLGame::TMenuWrapperScheme::ProcessMessage(TLMessaging::TMessage& Message)
+{
+	//	action from a gui - match it to a menu item, then invoke the "click" of that menu item
+	if ( Message.GetMessageRef() == TRef_Static(A,c,t,i,o) )
+	{
+		TRef ActionRef;
+		if ( Message.Read( ActionRef ) )
+		{
+			TRef MenuItemRef = ActionRef;
+			m_pMenuController->ExecuteMenuItem( MenuItemRef );
+		}
+	}
 }
 
 

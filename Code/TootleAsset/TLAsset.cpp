@@ -213,16 +213,29 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef,Bool bBlocking,TR
 
 	//	check it doesnt already exist
 	{
-		TPtr<TAsset>& pAsset = GetAsset( AssetRef );
-		if ( pAsset )
+		TPtr<TAsset>& pAssetPtr = GetAsset( AssetRef );
+		TAsset* pAsset = pAssetPtr;
+
+		//	if loaded, return straight away
+		if ( pAsset && pAsset->IsLoaded() )
 		{
 			//	check type
 			if ( ExpectedAssetType.IsValid() && pAsset->GetAssetType() != ExpectedAssetType )
-				return TLPtr::GetNullPtr<TLAsset::TAsset>();
+			{
+				#ifdef _DEBUG
+				TTempString Debug_String("LoadAsset ");
+				AssetRef.GetString( Debug_String );
+				Debug_String.Append(": expected type ");
+				ExpectedAssetType.GetString( Debug_String );
+				Debug_String.Append(" but is type ");
+				pAsset->GetAssetType().GetString( Debug_String );
+				TLDebug_Print( Debug_String );
+				#endif
 
-			//	if loaded, return straight away
-			if ( pAsset->IsLoaded() )
-				return pAsset;
+				return TLPtr::GetNullPtr<TLAsset::TAsset>();
+			}
+
+			return pAssetPtr;
 		}
 	}
 
@@ -270,7 +283,19 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef,Bool bBlocking,TR
 
 		//	check type
 		if ( ExpectedAssetType.IsValid() && pLoadingAsset->GetAssetType() != ExpectedAssetType )
+		{
+			#ifdef _DEBUG
+			TTempString Debug_String("LoadAsset ");
+			AssetRef.GetString( Debug_String );
+			Debug_String.Append(": expected type ");
+			ExpectedAssetType.GetString( Debug_String );
+			Debug_String.Append(" but is type ");
+			pLoadingAsset->GetAssetType().GetString( Debug_String );
+			TLDebug_Print( Debug_String );
+			#endif
+
 			return TLPtr::GetNullPtr<TLAsset::TAsset>();
+		}
 
 		return pLoadingAsset;
 	}
@@ -283,7 +308,15 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef,Bool bBlocking,TR
 
 	//	load in progress, add task to list for asynchronous load
 	g_LoadTasks.AddUnique( pLoadTask );
-		
+
+	//	is loading, so if we have an expected type, we have to return NULL as
+	//	this type WONT be cast correctly (it will be a TempAsset) - the TPtr system will
+	//	probably not cast at all and send back a NULL TPtr anyway
+	//	we only get this case when NOT blockloading AND expecting a type
+	//if ( ExpectedAssetType.IsValid() && pLoadingAsset->GetAssetType() != ExpectedAssetType )
+	if ( ExpectedAssetType.IsValid() )
+		return TLPtr::GetNullPtr<TLAsset::TAsset>();
+
 	return pLoadingAsset;
 }
 	
@@ -414,17 +447,4 @@ SyncBool TLAsset::TAssetFactory::Update(float fTimeStep)
 
 	return SyncTrue;
 }
-
-
-
-//------------------------------------------------------------
-//	get the load task for this asset
-//------------------------------------------------------------
-TPtr<TLAsset::TLoadTask> TLAsset::GetLoadTask(TRefRef AssetRef)
-{
-	//	
-	return g_LoadTasks.FindPtr( AssetRef );
-}
-
-
 

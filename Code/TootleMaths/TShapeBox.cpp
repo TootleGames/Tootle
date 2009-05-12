@@ -11,9 +11,9 @@
 //---------------------------------------
 Bool TLMaths::TShapeBox2D::ImportData(TBinaryTree& Data)
 {
-	if ( !Data.ImportData("Min", m_Box.GetMin() ) )		return FALSE;
-	if ( !Data.ImportData("Max", m_Box.GetMax() ) )		return FALSE;
-	if ( !Data.ImportData("Valid", m_Box.IsValid() ) )	return FALSE;
+	if ( !Data.ImportData("Min", m_Shape.GetMin() ) )		return FALSE;
+	if ( !Data.ImportData("Max", m_Shape.GetMax() ) )		return FALSE;
+	if ( !Data.ImportData("Valid", m_Shape.IsValid() ) )	return FALSE;
 
 	return TRUE;
 }
@@ -23,9 +23,9 @@ Bool TLMaths::TShapeBox2D::ImportData(TBinaryTree& Data)
 //---------------------------------------
 Bool TLMaths::TShapeBox2D::ExportData(TBinaryTree& Data) const
 {
-	Data.ExportData("Min", m_Box.GetMin() );
-	Data.ExportData("Max", m_Box.GetMax() );
-	Data.ExportData("Valid", m_Box.IsValid() );
+	Data.ExportData("Min", m_Shape.GetMin() );
+	Data.ExportData("Max", m_Shape.GetMax() );
+	Data.ExportData("Valid", m_Shape.IsValid() );
 
 	return TRUE;
 }
@@ -36,9 +36,9 @@ Bool TLMaths::TShapeBox2D::ExportData(TBinaryTree& Data) const
 //---------------------------------------
 Bool TLMaths::TShapeBox::ImportData(TBinaryTree& Data)
 {
-	if ( !Data.ImportData("Min", m_Box.GetMin() ) )		return FALSE;
-	if ( !Data.ImportData("Max", m_Box.GetMax() ) )		return FALSE;
-	if ( !Data.ImportData("Valid", m_Box.IsValid() ) )	return FALSE;
+	if ( !Data.ImportData("Min", m_Shape.GetMin() ) )		return FALSE;
+	if ( !Data.ImportData("Max", m_Shape.GetMax() ) )		return FALSE;
+	if ( !Data.ImportData("Valid", m_Shape.IsValid() ) )	return FALSE;
 
 	return TRUE;
 }
@@ -48,9 +48,9 @@ Bool TLMaths::TShapeBox::ImportData(TBinaryTree& Data)
 //---------------------------------------
 Bool TLMaths::TShapeBox::ExportData(TBinaryTree& Data) const
 {
-	Data.ExportData("Min", m_Box.GetMin() );
-	Data.ExportData("Max", m_Box.GetMax() );
-	Data.ExportData("Valid", m_Box.IsValid() );
+	Data.ExportData("Min", m_Shape.GetMin() );
+	Data.ExportData("Max", m_Shape.GetMax() );
+	Data.ExportData("Valid", m_Shape.IsValid() );
 
 	return TRUE;
 }
@@ -61,7 +61,7 @@ Bool TLMaths::TShapeBox::ExportData(TBinaryTree& Data) const
 //----------------------------------------------------------
 TPtr<TLMaths::TShape> TLMaths::TShapeBox::Transform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pThis,TPtr<TLMaths::TShape>& pOldShape)
 {
-	if ( !m_Box.IsValid() )
+	if ( !m_Shape.IsValid() )
 		return NULL;
 
 	//	no transform, so just use ourself
@@ -77,7 +77,7 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox::Transform(const TLMaths::TTransform& T
 	}
 
 	//	copy and transform box
-	TLMaths::TBox NewBox( m_Box );
+	TLMaths::TBox NewBox( m_Shape );
 	NewBox.Transform( Transform );
 
 	//	re-use old shape
@@ -96,7 +96,7 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox::Transform(const TLMaths::TTransform& T
 //----------------------------------------------------------
 Bool TLMaths::TShapeBox::HasIntersection(TLMaths::TShapeSphere& CollisionShape)
 {
-	return m_Box.GetIntersection( CollisionShape.GetSphere() );
+	return m_Shape.GetIntersection( CollisionShape.GetSphere() );
 }
 
 
@@ -177,7 +177,7 @@ Bool TLMaths::TShapeBox::HasIntersection(TLMaths::TShapeMesh& CollisionMesh)
 //----------------------------------------------------------
 TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Transform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pThis,TPtr<TLMaths::TShape>& pOldShape)
 {
-	if ( !m_Box.IsValid() )
+	if ( !m_Shape.IsValid() )
 		return NULL;
 
 	//	no transform, so just use ourself
@@ -190,7 +190,7 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Transform(const TLMaths::TTransform&
 	if ( Transform.HasRotation() )
 	{
 		//	create an oblong shape
-		TLMaths::TOblong2D NewOblong( m_Box, Transform );
+		TLMaths::TOblong2D NewOblong( m_Shape, Transform );
 
 		//	re-use old shape
 		if ( pOldShape && pOldShape.GetObject() != this && pOldShape->GetShapeType() == TLMaths::TOblong2D::GetTypeRef() )
@@ -204,7 +204,7 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Transform(const TLMaths::TTransform&
 	else
 	{
 		//	simple transform
-		TLMaths::TBox2D NewBox( m_Box );
+		TLMaths::TBox2D NewBox( m_Shape );
 		NewBox.Transform( Transform );
 
 		//	re-use old shape
@@ -221,18 +221,18 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Transform(const TLMaths::TTransform&
 
 Bool TLMaths::TShapeBox2D::HasIntersection(TShapeSphere& CollisionShape)
 {
-	return m_Box.GetIntersection( CollisionShape.GetSphere() );
+	return m_Shape.GetIntersection( CollisionShape.GetSphere() );
 }
 
 Bool TLMaths::TShapeBox2D::HasIntersection(TShapeSphere2D& CollisionShape)
 {
-	return m_Box.GetIntersection( CollisionShape.GetSphere() );
+	return m_Shape.GetIntersection( CollisionShape.GetSphere() );
 }
 
 
 Bool TLMaths::TShapeBox2D::HasIntersection(TShapeBox2D& CollisionShape)
 {
-	return m_Box.GetIntersection( CollisionShape.GetBox() );
+	return m_Shape.GetIntersection( CollisionShape.GetBox() );
 }
 
 
@@ -241,7 +241,7 @@ Bool TLMaths::TShapeBox2D::HasIntersection(TShapeBox2D& CollisionShape)
 //----------------------------------------------------------
 Bool TLMaths::TShapeBox2D::HasIntersection(TShapeCapsule2D& CollisionShape)
 {
-	return m_Box.GetIntersection( CollisionShape.GetCapsule() );
+	return m_Shape.GetIntersection( CollisionShape.GetCapsule() );
 }
 
 

@@ -12,6 +12,8 @@
 namespace TLAsset
 {
 	class TLoadTask;
+	extern TPtrArray<TLoadTask>		g_LoadTasks;
+	FORCEINLINE TPtr<TLoadTask>&	GetLoadTask(TRefRef AssetRef)	{	return g_LoadTasks.FindPtr( AssetRef );	}	//	get the load task for this asset
 }
 
 namespace TLLoadTask
@@ -41,7 +43,6 @@ protected:
 	TPtr<TLFileSys::TFile>		m_pFile;			//	plain file needs converting to asset file
 	TPtr<TLFileSys::TFileAsset>	m_pAssetFile;		//	asset file needs converting to asset
 };
-
 
 
 

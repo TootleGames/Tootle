@@ -172,8 +172,7 @@ SyncBool TApplication::Shutdown()
 	if(Result != SyncTrue)
 		return Result;
 
-	//	clean up current mode bgy ending it
-	TStateMachine::SetMode( TRef() );
+	TStateMachine::Shutdown();
 
 	return TManager::Shutdown();
 }

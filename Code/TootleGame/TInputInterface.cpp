@@ -385,18 +385,18 @@ SyncBool TLInput::TInputInterface::IsIntersecting(TLRender::TScreen& Screen, TLR
 		//	if we haven't already failed a check, test again bounds sphere
 		if ( Intersection != SyncFalse )
 		{
-			const TLMaths::TSphere2D& WorldBoundsSphere = RenderNode.GetWorldBoundsSphere2D();
+			const TLMaths::TShapeSphere2D& WorldBoundsSphere = RenderNode.GetWorldBoundsSphere2D();
 			if ( WorldBoundsSphere.IsValid() )
-				Intersection = WorldBoundsSphere.GetIntersection( WorldRay ) ? SyncTrue : SyncFalse;
+				Intersection = WorldBoundsSphere.GetSphere().GetIntersection( WorldRay ) ? SyncTrue : SyncFalse;
 		}
 
 		//	if we haven't already failed a check, test again bounds box for a tighter bounds check
 		if ( Intersection != SyncFalse )
 		{
 			//	gr: test against 2D box
-			const TLMaths::TBox2D& WorldBoundsBox2D = RenderNode.GetWorldBoundsBox2D();
+			const TLMaths::TShapeBox2D& WorldBoundsBox2D = RenderNode.GetWorldBoundsBox2D();
 			if ( WorldBoundsBox2D.IsValid() )
-				Intersection = WorldBoundsBox2D.GetIntersection( WorldRay ) ? SyncTrue : SyncFalse;
+				Intersection = WorldBoundsBox2D.GetBox().GetIntersection( WorldRay ) ? SyncTrue : SyncFalse;
 		}
 	}
 

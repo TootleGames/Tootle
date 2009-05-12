@@ -41,6 +41,7 @@ public:
 	Bool				Unsubscribe(TSubscriber* pSubscriber);
 
 	FORCEINLINE Bool	HasSubscribers() const							{	return m_Subscribers.GetSize() != 0;	}
+	FORCEINLINE Bool	HasSubscribers(TRefRef MessageRef) const		{	return HasSubscribers();	}	//	gr: for future enhancement, check if any subscribers are going to recieve this specific message...
 	FORCEINLINE void	PublishMessage(TLMessaging::TMessage& Message);	//	send message to subscribers if we have any
 
 protected:

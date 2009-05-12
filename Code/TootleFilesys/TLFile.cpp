@@ -268,7 +268,19 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 	}
 	else if ( DataType == TLBinary::GetDataTypeRef_String() )
 	{
-		BinaryData.WriteString( DataString );
+		//	do string cleanup, convert "\n" to a linefeed etc
+		if ( TLString::IsStringDirty( DataString ) )
+		{
+			TString OutputString = DataString;
+			TLString::CleanString( OutputString );
+			BinaryData.WriteString( OutputString );
+		}
+		else
+		{
+			//	already clean, just write the original
+			BinaryData.WriteString( DataString );
+		}
+
 		return SyncTrue;
 	}
 
@@ -321,4 +333,40 @@ Bool TLString::IsDatumString(const TString& String,TRef& DatumRef,TRef& ShapeTyp
 	}
 
 	return TRUE;
+}
+
+
+//--------------------------------------------------------
+//	cleanup string. Convert "\n" to a linefeed, convert tabs, do other generic string-replace's etc, returns if any changes are made
+//--------------------------------------------------------
+Bool TLString::CleanString(TString& String)
+{
+	Bool Changes = FALSE;
+
+	TArray<char>& StringCharArray = String.GetStringArray();
+
+	//	run through the string until we find something we might want to change
+	for ( u32 i=0;	i<StringCharArray.GetSize();	i++ )
+	{
+		char Prevc = (i==0) ? 0 : StringCharArray.ElementAt(i-1);
+		char& c = StringCharArray.ElementAt(i);
+		Bool IsLast = (i==StringCharArray.GetLastIndex());
+
+		//	it's a slash, check the next control char - but ignore if previous char was also a slash
+		if ( c == '\\' && !IsLast && Prevc != '\\' )
+		{
+			char& Nextc = StringCharArray.ElementAt(i+1);
+
+			//	line feed, replace the 2 characters with one line feed
+			if ( Nextc == 'n' ||  Nextc == 'N' )
+			{
+				c = '\n';
+				StringCharArray.RemoveAt(i+1);
+				Changes = TRUE;
+				continue;
+			}
+		}
+	}
+
+	return Changes;
 }

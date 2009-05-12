@@ -9,22 +9,33 @@
 
 #include "TGame.h"
 
-using namespace TLGame;
 
 
-SyncBool TGame::Initialise()
+SyncBool TLGame::TGame::Initialise()
 {
 	AddModes();
 	
-	return SyncTrue;
+	//	init the manager
+	return TManager::Initialise();
 }
 
 
-SyncBool TGame::Update(float fTimeStep)
+SyncBool TLGame::TGame::Update(float fTimeStep)
 {
 	// Update the game state machine
 	TStateMachine::Update(fTimeStep);
 	
-	return SyncTrue;
+	//	update the manager
+	return TManager::Update( fTimeStep );
 }
 
+
+SyncBool TLGame::TGame::Shutdown()
+{
+	//	shutdown the state machine
+	TStateMachine::Shutdown();
+	
+	//	shutdown the manager
+	return TManager::Shutdown();
+}
+	

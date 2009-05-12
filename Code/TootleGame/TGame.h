@@ -54,10 +54,10 @@ public:
 	
 
 protected:
-	
-	virtual SyncBool Initialise();
-	virtual SyncBool Update(float fTimeStep);
+	virtual SyncBool	Initialise();
+	virtual SyncBool	Update(float fTimeStep);
+	virtual SyncBool	Shutdown();
 
-	virtual void AddModes()	{}
+	virtual void		AddModes()		{	}
 };
 

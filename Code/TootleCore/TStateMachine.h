@@ -20,6 +20,7 @@ public:
 	TStateMachine()			{}
 	
 	void					Update(float Timestep);			//	update current mode
+	void					Shutdown()						{	TStateMachine::SetMode( TRef() );	}	//	clean up current mode bgy ending it
 	
 	Bool					SetMode(TRefRef NextModeRef);	//	change current mode
 
@@ -27,7 +28,7 @@ public:
 	TPtr<TYPE>				GetMode(TRefRef ModeRef)		{	return m_Modes.FindPtr( ModeRef );	}
 	TPtr<TStateMode>		GetMode(TRefRef ModeRef)		{	return m_Modes.FindPtr( ModeRef );	}
 	
-	FORCEINLINE Bool				HasMode(TRefRef ModeRef)		{	return (GetMode(ModeRef).IsValid()); }
+	FORCEINLINE Bool		HasMode(TRefRef ModeRef)		{	return (GetMode(ModeRef).IsValid()); }
 	
 	template<class TYPE> 
 	TPtr<TYPE>				GetCurrentMode()				{	return m_pCurrentMode;	}
@@ -62,7 +63,7 @@ public:
 	virtual ~TStateMode()										{	}
 	
 	TRefRef					GetModeRef() const					{	return m_ModeRef;	}
-	FORCEINLINE Bool				operator==(TRefRef ModeRef) const	{	return GetModeRef() == ModeRef;	}
+	FORCEINLINE Bool		operator==(TRefRef ModeRef) const	{	return GetModeRef() == ModeRef;	}
 
 protected:
 	Bool					Init(TRefRef ModeRef,TStateMachine* pStateMachine);

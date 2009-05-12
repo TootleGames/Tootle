@@ -8,9 +8,12 @@
  */
 
 #include "TFileTextDatabase.h"
+#include "TLFile.h"
 
 #include <TootleAsset/TText.h>
 #include <TootleGame/TTextManager.h>
+
+
 
 TLFileSys::TFileTextDatabase::TFileTextDatabase(TRefRef FileRef,TRefRef FileTypeRef) :
 TFileXml			( FileRef, FileTypeRef )
@@ -145,6 +148,9 @@ SyncBool TLFileSys::TFileTextDatabase::ImportText_ImportLanguageText(TPtr<TLAsse
 	</Text>
 */
 
+	//	temporary string to put a cleaner data stirng into
+	TString TempString;	
+
 	// Now get the children of the text tag and process them
 	for ( u32 index=0;	index< pImportTag->GetChildren().GetSize();	index++ )
 	{
@@ -160,12 +166,23 @@ SyncBool TLFileSys::TFileTextDatabase::ImportText_ImportLanguageText(TPtr<TLAsse
 		}
 
 		// Now get the text string
-		const TString& TextString = pTextTag->GetDataString();
+		const TString& DataString = pTextTag->GetDataString();
+
+		//	if the data string is dirty (needs line feed conversion etc) then convert it into a new string
+		Bool IsDataStringDirty = TLString::IsStringDirty( DataString );
+		if ( IsDataStringDirty )
+		{
+			TempString = DataString;
+			TLString::CleanString( TempString );
+		}
+
+		//	final [clean] string
+		const TString& TextString = IsDataStringDirty ? TempString : DataString;
 
 		// And add to the text object
 		if(!pText->AddText(LanguageRef, TextRef, TextString))
 		{
-			TLDebug_Print("Failed to add text string to text object");
+			TLDebug_Break("Failed to add text string to text object");
 		}
 	}
 

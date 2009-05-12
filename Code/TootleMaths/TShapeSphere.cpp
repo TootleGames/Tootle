@@ -16,7 +16,7 @@ TLMaths::TShapeSphere2D::TShapeSphere2D(const TLMaths::TBox2D& Box)
 	float Radius = (HalfWidth>HalfHeight) ? HalfWidth : HalfHeight;
 
 	//	make up sphere and shape
-	m_Sphere.Set( Box.GetCenter(), Radius );
+	m_Shape.Set( Box.GetCenter(), Radius );
 }
 
 
@@ -25,8 +25,8 @@ TLMaths::TShapeSphere2D::TShapeSphere2D(const TLMaths::TBox2D& Box)
 //---------------------------------------
 Bool TLMaths::TShapeSphere2D::ImportData(TBinaryTree& Data)
 {
-	if ( !Data.ImportData("Pos", m_Sphere.GetPos() ) )		return FALSE;
-	if ( !Data.ImportData("Radius", m_Sphere.GetRadius() ) )	return FALSE;
+	if ( !Data.ImportData("Pos", m_Shape.GetPos() ) )		return FALSE;
+	if ( !Data.ImportData("Radius", m_Shape.GetRadius() ) )	return FALSE;
 
 	return TRUE;
 }
@@ -36,8 +36,8 @@ Bool TLMaths::TShapeSphere2D::ImportData(TBinaryTree& Data)
 //---------------------------------------
 Bool TLMaths::TShapeSphere2D::ExportData(TBinaryTree& Data) const
 {
-	Data.ExportData("Pos", m_Sphere.GetPos() );
-	Data.ExportData("Radius", m_Sphere.GetRadius() );
+	Data.ExportData("Pos", m_Shape.GetPos() );
+	Data.ExportData("Radius", m_Shape.GetRadius() );
 
 	return TRUE;
 }
@@ -49,7 +49,7 @@ Bool TLMaths::TShapeSphere2D::ExportData(TBinaryTree& Data) const
 //----------------------------------------------------------
 TPtr<TLMaths::TShape> TLMaths::TShapeSphere2D::Transform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pThis,TPtr<TLMaths::TShape>& pOldShape)
 {
-	if ( !m_Sphere.IsValid() )
+	if ( !m_Shape.IsValid() )
 		return NULL;
 
 	//	no transform, so just use ourself
@@ -59,10 +59,10 @@ TPtr<TLMaths::TShape> TLMaths::TShapeSphere2D::Transform(const TLMaths::TTransfo
 	}
 
 	//	copy and transform sphere
-	TLMaths::TSphere2D NewSphere( m_Sphere );
+	TLMaths::TSphere2D NewSphere( m_Shape );
 	NewSphere.Transform( Transform );
 
-	TLDebug_CheckFloat( m_Sphere.GetPos() );
+	TLDebug_CheckFloat( m_Shape.GetPos() );
 
 	//	re-use old shape
 	if ( pOldShape && pOldShape.GetObject() != this && pOldShape->GetShapeType() == TLMaths::TSphere2D::GetTypeRef() )
@@ -88,7 +88,7 @@ TLMaths::TShapeSphere::TShapeSphere(const TLMaths::TBox& Box)
 	if ( HalfSize.z > Radius )	Radius = HalfSize.z;
 
 	//	make up sphere and shape
-	m_Sphere.Set( Box.GetCenter(), Radius );
+	m_Shape.Set( Box.GetCenter(), Radius );
 }
 
 
@@ -97,8 +97,8 @@ TLMaths::TShapeSphere::TShapeSphere(const TLMaths::TBox& Box)
 //---------------------------------------
 Bool TLMaths::TShapeSphere::ImportData(TBinaryTree& Data)
 {
-	if ( !Data.ImportData("Pos", m_Sphere.GetPos() ) )		return FALSE;
-	if ( !Data.ImportData("Radius", m_Sphere.GetRadius() ) )	return FALSE;
+	if ( !Data.ImportData("Pos", m_Shape.GetPos() ) )		return FALSE;
+	if ( !Data.ImportData("Radius", m_Shape.GetRadius() ) )	return FALSE;
 
 	return TRUE;
 }
@@ -108,8 +108,8 @@ Bool TLMaths::TShapeSphere::ImportData(TBinaryTree& Data)
 //---------------------------------------
 Bool TLMaths::TShapeSphere::ExportData(TBinaryTree& Data) const
 {
-	Data.ExportData("Pos", m_Sphere.GetPos() );
-	Data.ExportData("Radius", m_Sphere.GetRadius() );
+	Data.ExportData("Pos", m_Shape.GetPos() );
+	Data.ExportData("Radius", m_Shape.GetRadius() );
 
 	return TRUE;
 }
@@ -122,7 +122,7 @@ Bool TLMaths::TShapeSphere::ExportData(TBinaryTree& Data) const
 //----------------------------------------------------------
 TPtr<TLMaths::TShape> TLMaths::TShapeSphere::Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pThis,TPtr<TShape>& pOldShape)
 {
-	if ( !m_Sphere.IsValid() )
+	if ( !m_Shape.IsValid() )
 		return NULL;
 
 	//	no transform, so just use ourself
@@ -132,7 +132,7 @@ TPtr<TLMaths::TShape> TLMaths::TShapeSphere::Transform(const TLMaths::TTransform
 	}
 
 	//	copy and transform sphere
-	TLMaths::TSphere NewSphere( m_Sphere );
+	TLMaths::TSphere NewSphere( m_Shape );
 	NewSphere.Transform( Transform );
 
 	TLDebug_CheckFloat( m_Sphere.GetPos() );

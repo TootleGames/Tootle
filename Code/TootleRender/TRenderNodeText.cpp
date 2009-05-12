@@ -5,11 +5,12 @@
 #include <TootleGame/TTextManager.h>
 
 
-
+	
 
 TLRender::TRenderNodeText::TRenderNodeText(TRefRef RenderNodeRef,TRefRef TypeRef) :
 	TRenderNode		( RenderNodeRef, TypeRef ),
-	m_GlyphsValid	( FALSE )
+	m_GlyphsValid	( FALSE ),
+	m_AlignMode		( TLRenderText::HAlignLeft, TLRenderText::VAlignTop )
 {
 }
 
@@ -58,6 +59,82 @@ void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 #endif
 	}
 
+	//	has text box shape
+	TPtr<TBinaryTree>& pBoxData = Message.GetChild("Box");
+	if ( pBoxData )
+	{
+		TPtr<TLMaths::TShape>& pBoxShape = TLMaths::ImportShapeData( *pBoxData );
+		if ( pBoxShape )
+			SetTextBox( pBoxShape );
+	}
+
+	//	pull text box out of another node/mesh etc
+	TRef TextBoxNode,TextBoxMesh,TextBoxDatum;
+	Message.ImportData("BoxNode", TextBoxNode );
+	Message.ImportData("BoxMesh", TextBoxMesh );
+
+	if ( Message.ImportData("BoxDatum", TextBoxDatum ) )
+	{
+		const TLMaths::TShape* pBoxShape = NULL;
+
+		if ( TextBoxNode.IsValid() )
+		{
+			//	get datum from node
+			TLRender::TRenderNode* pRenderNode = TLRender::g_pRendergraph->FindNode( TextBoxNode );
+			if ( pRenderNode )
+			{
+				//	todo: add ADDITIONAL world-transformed-datum support. For now best practise is to make this node a child of the one with the datum
+				pBoxShape = pRenderNode->GetLocalDatum(TextBoxDatum);
+				if ( !pBoxShape )
+				{
+					#ifdef _DEBUG
+					TTempString Debug_String("Missing datum ");
+					TextBoxDatum.GetString( Debug_String );
+					Debug_String.Append(" on render node ");
+					TextBoxNode.GetString( Debug_String );
+					TLDebug_Break( Debug_String );
+					#endif
+				}
+			}
+			else
+			{
+				TLDebug_Break("Node to get text box datum from not found - add async support?");
+			}
+		}
+		else if ( TextBoxMesh.IsValid() )
+		{
+			//	get datum directly from a mesh
+			TLAsset::TMesh* pMesh = TLAsset::LoadAsset(TextBoxMesh,TRUE,"mesh").GetObject<TLAsset::TMesh>();
+			if ( pMesh )
+			{
+				pBoxShape = pMesh->GetDatum(TextBoxDatum);
+				if ( !pBoxShape )
+				{
+					#ifdef _DEBUG
+					TTempString Debug_String("Missing datum ");
+					TextBoxDatum.GetString( Debug_String );
+					Debug_String.Append(" on mesh ");
+					TextBoxMesh.GetString( Debug_String );
+					TLDebug_Break( Debug_String );
+					#endif
+				}
+			}
+			else
+			{
+				TLDebug_Break("Mesh to get text box datum from not found - add async support?");
+			}
+		}
+		else
+		{
+			TLDebug_Break("BoxDatum provided for text render node, but don't know where to get the datum from. (Missing render node/mesh ref's)");
+		}
+
+		//	set text box if we managed to get a shape
+		if ( pBoxShape )
+		{
+			SetTextBox( pBoxShape );
+		}
+	}
 
 	//	do inherited init
 	TRenderNode::Initialise( Message );
@@ -75,6 +152,36 @@ void TLRender::TRenderNodeText::SetText(const TString& Text)
 	//	text changed, update glyphs
 	m_Text = Text;
 	m_GlyphsValid = FALSE;
+}
+
+
+//--------------------------------------------------------------------
+//	update box - returns TRUE if it's changed
+//--------------------------------------------------------------------
+Bool TLRender::TRenderNodeText::SetTextBox(const TLMaths::TBox2D& Box)
+{
+	//	todo: check for change
+	m_TextBox = Box;
+
+	m_GlyphsValid = FALSE;
+
+	return TRUE;
+}
+
+
+//--------------------------------------------------------------------
+//	update box - returns TRUE if it's changed
+//--------------------------------------------------------------------
+Bool TLRender::TRenderNodeText::SetTextBox(const TLMaths::TShape& Shape)
+{
+	//	can only deal with 2D box's atm
+	if ( Shape.GetShapeType() != TLMaths_ShapeRef_TBox2D )
+	{
+		TLDebug_Break("Currently TRenderNodeText's only support 2D box shapes for TextBox's");
+		return FALSE;
+	}
+
+	return SetTextBox( static_cast<const TLMaths::TShapeBox2D&>( Shape ).GetBox() );
 }
 
 
@@ -269,7 +376,7 @@ void TLRender::TRenderNodeVectorText::SetGlyph(TRenderNodeVectorGlyph& RenderGly
 		TPtr<TLAsset::TMesh>& pLineFeedGlyph = Font.GetGlyph('A');
 		if ( pLineFeedGlyph )
 		{
-			TLMaths::TBox& Bounds = pLineFeedGlyph->CalcBoundsBox();
+			const TLMaths::TBox& Bounds = pLineFeedGlyph->GetBoundsBox();
 			if ( Bounds.IsValid() )
 			{
 				float LineHeight = Bounds.GetMin().y + Bounds.GetMax().y;

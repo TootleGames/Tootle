@@ -36,14 +36,14 @@ SyncBool TLGui::TWidgetScrollbar::ProcessClick(TClick& Click,TLRender::TScreen& 
 		return SyncWait;
 
 	//	bounds aren't valid, wait till next time
-	const TLMaths::TBox& BoundsBox3 = pScrollBarRenderNode->GetWorldBoundsBox();
+	const TLMaths::TShapeBox& BoundsBox3 = pScrollBarRenderNode->GetWorldBoundsBox();
 	if ( !BoundsBox3.IsValid() )
 	{
 		return SyncWait;
 	}
 
 	//	get z center of bounds box to use as the z for the world pos from cursor
-	float worldz = BoundsBox3.GetCenter().z;
+	float worldz = BoundsBox3.GetBox().GetCenter().z;
 
 	//	get a world position from the cursor
 	float3 WorldPos;
@@ -59,7 +59,7 @@ SyncBool TLGui::TWidgetScrollbar::ProcessClick(TClick& Click,TLRender::TScreen& 
 
 	//	flatten bounds to 2D shape
 	//	todo: 3D->2D proper conversion via screen/camera
-	TLMaths::TBox2D BoundsBox( BoundsBox3.GetMin().xy(), BoundsBox3.GetMax().xy() );
+	TLMaths::TBox2D BoundsBox( BoundsBox3.GetBox().GetMin().xy(), BoundsBox3.GetBox().GetMax().xy() );
 
 	//	check the click-y is inside the box
 	if ( WorldPos.y < BoundsBox.GetTop() || WorldPos.y > BoundsBox.GetBottom() )
@@ -165,7 +165,7 @@ void TLGui::TWidgetScrollbar::UpdateSliderPos()
 		return;
 
 	//	bounds aren't valid, wait till next time
-	const TLMaths::TBox& BoundsBox3 = pScrollBarRenderNode->GetWorldBoundsBox();
+	const TLMaths::TBox& BoundsBox3 = pScrollBarRenderNode->GetWorldBoundsBox().GetBox();
 	if ( !BoundsBox3.IsValid() )
 		return;
 

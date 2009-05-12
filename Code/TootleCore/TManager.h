@@ -40,20 +40,9 @@ public:
 	FORCEINLINE Bool					operator<(const TManager& Manager)const	{	return (GetManagerRef() < Manager.GetManagerRef());	}
 
 protected:
-	virtual SyncBool Initialise() 
-	{	
-		return SyncTrue; 
-	}
-
-	virtual SyncBool Shutdown()
-	{ 
-		return SyncTrue; 
-	}
-
-	virtual SyncBool Update(float /*fTimeStep*/)		
-	{
-		return SyncTrue;
-	}
+	virtual SyncBool Initialise()					{	return SyncTrue; 	}
+	virtual SyncBool Shutdown()						{ 	return SyncTrue;	}
+	virtual SyncBool Update(float /*fTimeStep*/)	{	return SyncTrue;	}
 
 	virtual void	ProcessMessage(TLMessaging::TMessage& Message);
 

@@ -561,15 +561,11 @@ SyncBool TLAsset::TMesh::ImportData(TBinaryTree& Data)
 
 	OnPrimitivesChanged();
 
-	//	import bounds
-	TLMaths::TBox& BoundsBox = GetBoundsBox();
-	Data.ImportData( "BondB", BoundsBox );
-
-	TLMaths::TSphere& BoundsSphere = GetBoundsSphere();
-	Data.ImportData( "BondS", BoundsSphere );
-
-	TLMaths::TCapsule& BoundsCapsule = GetBoundsCapsule();
-	Data.ImportData( "BondC", BoundsCapsule );
+	//	import bounds shapes
+	TLMaths::ImportShapeData( Data.GetChild("BndB"), m_BoundsBox );
+	TLMaths::ImportShapeData( Data.GetChild("BndB2"), m_BoundsBox2D );
+	TLMaths::ImportShapeData( Data.GetChild("BndS"), m_BoundsSphere );
+	TLMaths::ImportShapeData( Data.GetChild("BndS2"), m_BoundsSphere2D );
 
 	//	read flags
 	if ( !Data.ImportData( "Flags", m_Flags.GetData() ) )
@@ -612,18 +608,18 @@ SyncBool TLAsset::TMesh::ExportData(TBinaryTree& Data)
 	Data.ExportArray( "Lines", m_Linestrips );
 	Data.ExportArray( "SmpLines", m_Lines );
 
-	//	export bounds if valid
-	TLMaths::TBox& BoundsBox = GetBoundsBox();
-	if ( BoundsBox.IsValid() )
-		Data.ExportData( "BondB", BoundsBox );
+	//	export valid bounds shapes
+	if ( m_BoundsBox.IsValid() )
+		TLMaths::ExportShapeData( Data.AddChild("BndB"), m_BoundsBox );
 
-	TLMaths::TSphere& BoundsSphere = GetBoundsSphere();
-	if ( BoundsSphere.IsValid() )
-		Data.ExportData( "BondS", BoundsSphere );
+	if ( m_BoundsBox2D.IsValid() )
+		TLMaths::ImportShapeData( Data.AddChild("BndB2"), m_BoundsBox2D );
 
-	TLMaths::TCapsule& BoundsCapsule = GetBoundsCapsule();
-	if ( BoundsCapsule.IsValid() )
-		Data.ExportData( "BondC", BoundsCapsule );
+	if ( m_BoundsSphere.IsValid() )
+		TLMaths::ImportShapeData( Data.AddChild("BndS"), m_BoundsSphere );
+
+	if ( m_BoundsSphere2D.IsValid() )
+		TLMaths::ImportShapeData( Data.AddChild("BndS2"), m_BoundsSphere2D );
 
 	//	export flags
 	Data.ExportData( "Flags", m_Flags.GetData() );
@@ -650,99 +646,6 @@ SyncBool TLAsset::TMesh::ExportData(TBinaryTree& Data)
 
 
 //-------------------------------------------------------
-//	calculate bounds box if invalid
-//-------------------------------------------------------
-TLMaths::TBox& TLAsset::TMesh::CalcBoundsBox(Bool ForceCalc)
-{
-	//	force recalculation
-	if ( ForceCalc )
-		m_BoundsBox.SetInvalid();
-
-	//	is valid, just return it
-	if ( m_BoundsBox.IsValid() )
-		return m_BoundsBox;
-	
-	//	initialise to invalid, then accumulate from verts
-	m_BoundsBox.SetInvalid();
-
-	m_BoundsBox.Accumulate( m_Vertexes );
-
-	//	todo: only apply to line verts
-	Bool HasLines = (GetLines().GetSize() + GetLinestrips().GetSize()) > 0;
-	if ( HasLines && m_LineWidth > 0.f )
-	{
-		m_BoundsBox.GetMin() -= float3( m_LineWidth, m_LineWidth, m_LineWidth );
-		m_BoundsBox.GetMax() += float3( m_LineWidth, m_LineWidth, m_LineWidth );
-	}
-
-	//	debug the bounds we created
-	/*
-#ifdef _DEBUG
-	float3 BoxSize = m_BoundsBox.GetSize();
-	TTempString DebugString("Created bounds box for ");
-	GetAssetRef().GetString( DebugString );
-	DebugString.Appendf(". w: %.2f h:%.2f d:%.2f", BoxSize.x, BoxSize.y, BoxSize.z );
-	TLDebug_Print( DebugString );
-#endif
-	*/
-
-	return m_BoundsBox;
-}
-
-
-//-------------------------------------------------------
-//	calculate bounds sphere if invalid
-//-------------------------------------------------------
-TLMaths::TSphere& TLAsset::TMesh::CalcBoundsSphere(Bool ForceCalc)
-{
-	//	force recalculation
-	if ( ForceCalc )
-		m_BoundsSphere.SetInvalid();
-
-	//	is valid, just return it
-	if ( m_BoundsSphere.IsValid() )
-		return m_BoundsSphere;
-	
-	//	initialise to invalid, then accumulate from verts
-	m_BoundsSphere.SetInvalid();
-
-	m_BoundsSphere.Accumulate( CalcBoundsBox() );
-/*
-	m_BoundsSphere.Accumulate( m_Vertexes );
-
-	//	todo: only apply to line verts
-	if ( GetLines().GetSize() && m_LineWidth > 0.f )
-	{
-		m_BoundsSphere.GetRadius() += m_LineWidth;
-	}
-*/
-	return m_BoundsSphere;
-}
-
-
-//-------------------------------------------------------
-//	calculate bounds capsule if invalid
-//-------------------------------------------------------
-TLMaths::TCapsule& TLAsset::TMesh::CalcBoundsCapsule(Bool ForceCalc)
-{
-	//	force recalculation
-	if ( ForceCalc )
-		m_BoundsCapsule.SetInvalid();
-
-	//	is valid, just return it
-	if ( m_BoundsCapsule.IsValid() )
-		return m_BoundsCapsule;
-	
-	//	initialise to invalid, then accumulate from verts
-	m_BoundsCapsule.SetInvalid();
-
-	m_BoundsCapsule.Accumulate( m_Vertexes );
-
-	return m_BoundsCapsule;
-}
-
-
-//-------------------------------------------------------
 //	scale all vertexes
 //-------------------------------------------------------
 void TLAsset::TMesh::ScaleVerts(const float3& Scale,u16 FirstVert,s32 LastVert)
@@ -751,7 +654,7 @@ void TLAsset::TMesh::ScaleVerts(const float3& Scale,u16 FirstVert,s32 LastVert)
 		return;
 
 	//	invalidate bounds box
-	SetBoundsBoxInvalid();
+	SetBoundsInvalid();
 	
 	if ( LastVert == -1 )
 		LastVert = m_Vertexes.GetLastIndex();
@@ -768,23 +671,35 @@ void TLAsset::TMesh::ScaleVerts(const float3& Scale,u16 FirstVert,s32 LastVert)
 //-------------------------------------------------------
 //	move all verts
 //-------------------------------------------------------
-void TLAsset::TMesh::MoveVerts(const float3& Movement,u16 FirstVert,s32 LastVert)
+void TLAsset::TMesh::TransformVerts(const TLMaths::TTransform& Transform,u16 FirstVert,s32 LastVert)
 {
-	//	move bounds box if valid
-	if ( m_BoundsBox.IsValid() )
+	if ( m_Datums.GetSize() )
 	{
-		m_BoundsBox.GetMin() += Movement;
-		m_BoundsBox.GetMax() += Movement;
+		TLDebug_Break("Transform datums?");
 	}
 
 	if ( LastVert == -1 )
 		LastVert = m_Vertexes.GetLastIndex();
 
+	//	transform bounds
+	if ( FirstVert == 0 && LastVert == m_Vertexes.GetLastIndex() )
+	{
+		m_BoundsBox.Transform( Transform );
+		m_BoundsBox2D.Transform( Transform );
+		m_BoundsSphere.Transform( Transform );
+		m_BoundsSphere2D.Transform( Transform );
+	}
+	else
+	{
+		//	only some verts have changed so make all the bounds recalculate
+		SetBoundsInvalid();
+	}
+
 	//	move verts
 	for ( s32 v=FirstVert;	v<=LastVert;	v++ )
 	{
 		float3& Vert = m_Vertexes[v];
-		Vert += Movement;
+		Transform.Transform( Vert );
 	}
 }
 

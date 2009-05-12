@@ -22,7 +22,12 @@ namespace TLRender
 	class TRenderNode;
 	class TRenderTarget;
 	class TRenderZoneNode;
-}
+
+#define TLRender_TRenderNode_DatumBoundsBox			TRef_Static(UNDERSCORE,B,n,b,THREE)
+#define TLRender_TRenderNode_DatumBoundsBox2D		TRef_Static(UNDERSCORE,B,n,b,TWO)
+#define TLRender_TRenderNode_DatumBoundsSphere		TRef_Static(UNDERSCORE,B,n,s,THREE)
+#define TLRender_TRenderNode_DatumBoundsSphere2D	TRef_Static(UNDERSCORE,B,n,s,TWO)
+};
 
 namespace TLMaths
 {
@@ -35,11 +40,9 @@ template<class SHAPETYPE>
 class TLMaths::TBoundsShape
 {
 public:
-	typedef const SHAPETYPE& (TLRender::TRenderNode::*TCalcLocalBoundsFunc)();
-public:
 	TBoundsShape() : m_WorldValid ( SyncFalse )	{}
 
-	const SHAPETYPE&	CalcWorldShape(TLRender::TRenderNode& RenderNode,TCalcLocalBoundsFunc pCalcLocalBoundsFunc);	//	if invalid calculate our local bounds box (accumulating children) if out of date and return it
+	const SHAPETYPE&	CalcWorldShape(TLRender::TRenderNode& RenderNode);	//	if invalid calculate our local bounds box (accumulating children) if out of date and return it
 	FORCEINLINE Bool	IsWorldShapeValid()		{	return ( m_WorldValid == SyncTrue );	}					//	return Bool of if it's up to date
 	FORCEINLINE void	SetWorldShapeOld()		{	if ( m_WorldValid == SyncTrue )	m_WorldValid = SyncWait;	}	//	if up-to-date (TRUE) then make old (WAIT)
 	
@@ -57,10 +60,10 @@ public:
 class TLRender::TRenderNode : public TLGraph::TGraphNode<TLRender::TRenderNode>
 {
 public:
-	friend class TLMaths::TBoundsShape<TLMaths::TBox>;
-	friend class TLMaths::TBoundsShape<TLMaths::TBox2D>;
-	friend class TLMaths::TBoundsShape<TLMaths::TSphere>;
-	friend class TLMaths::TBoundsShape<TLMaths::TSphere2D>;
+	friend class TLMaths::TBoundsShape<TLMaths::TShapeBox>;
+	friend class TLMaths::TBoundsShape<TLMaths::TShapeBox2D>;
+	friend class TLMaths::TBoundsShape<TLMaths::TShapeSphere>;
+	friend class TLMaths::TBoundsShape<TLMaths::TShapeSphere2D>;
 	friend class TRendergraph;
 
 private:
@@ -154,8 +157,8 @@ public:
 	FORCEINLINE const TRef&					GetTextureRef() const						{	return m_TextureRef;	}
 	FORCEINLINE void						SetTextureRef(TRefRef TextureRef)			{	if ( m_TextureRef != TextureRef )	{	m_TextureRef = TextureRef;	OnTextureRefChanged();	}	}
 
-	virtual TPtr<TLAsset::TMesh>&			GetMeshAsset();								//	default behaviour fetches the mesh from the asset lib with our mesh ref
-	virtual TPtr<TLAsset::TTexture>&		GetTextureAsset();							//	default behaviour fetches the mesh from the asset lib with our mesh ref
+	virtual TPtr<TLAsset::TMesh>&			GetMeshAsset(Bool BlockLoad=FALSE);			//	default behaviour fetches the mesh from the asset lib with our mesh ref
+	virtual TPtr<TLAsset::TTexture>&		GetTextureAsset(Bool BlockLoad=FALSE);		//	default behaviour fetches the mesh from the asset lib with our mesh ref
 
 	FORCEINLINE void						SetRenderNodeRef(TRefRef Ref)				{	SetNodeRef( Ref );	}
 	FORCEINLINE TRefRef						GetRenderNodeRef() const					{	return GetNodeRef();	}
@@ -180,26 +183,40 @@ public:
 	Bool									SetWorldTransformOld(Bool SetPosOld,Bool SetTransformOld,Bool SetShapesOld);				//	downgrade all world shape/transform states from valid to old. returns if anyhting was downgraded
 	FORCEINLINE Bool						SetWorldTransformOld()						{	return SetWorldTransformOld( TRUE, TRUE, TRUE );	}
 	FORCEINLINE SyncBool					IsWorldTransformValid() const				{	return m_WorldTransformValid;	}
+	void									CalcWorldTransform(TRenderNode* pRootNode=NULL);	//	explicitly calculate the world transform. This is a bit rendundant as it's calculated via the render but sometimes we need it outside of that. If WorldTransform is Valid(TRUE) then this is not recalculated. THe root render node should be provided (but in reality not a neccessity, see trac: http://grahamgrahamreeves.getmyip.com:1984/Trac/wiki/KnownIssues )
 
 	const float3&							GetWorldPos();								//	calculate our new world position from the latest scene transform
 	FORCEINLINE const float3&				GetWorldPos(SyncBool& IsValid) 				{	GetWorldPos();	IsValid = m_WorldPosValid;	return m_WorldPos;	}
 
 	//	get world shapes/datums - recalculates if old
-	const TLMaths::TBox&					GetWorldBoundsBox()		{	return m_BoundsBox.CalcWorldShape( *this, &TLRender::TRenderNode::CalcLocalBoundsBox );	}
-	const TLMaths::TBox2D&					GetWorldBoundsBox2D()		{	return m_BoundsBox2D.CalcWorldShape( *this, &TLRender::TRenderNode::CalcLocalBoundsBox2D );	}
-	const TLMaths::TSphere&					GetWorldBoundsSphere()		{	return m_BoundsSphere.CalcWorldShape( *this, &TLRender::TRenderNode::CalcLocalBoundsSphere );	}
-	const TLMaths::TSphere2D&				GetWorldBoundsSphere2D()	{	return m_BoundsSphere2D.CalcWorldShape( *this, &TLRender::TRenderNode::CalcLocalBoundsSphere2D );	}
+	const TLMaths::TShapeBox&				GetWorldBoundsBox()							{	return m_BoundsBox.CalcWorldShape( *this );	}
+	const TLMaths::TShapeBox2D&				GetWorldBoundsBox2D()						{	return m_BoundsBox2D.CalcWorldShape( *this );	}
+	const TLMaths::TShapeSphere&			GetWorldBoundsSphere()						{	return m_BoundsSphere.CalcWorldShape( *this );	}
+	const TLMaths::TShapeSphere2D&			GetWorldBoundsSphere2D()					{	return m_BoundsSphere2D.CalcWorldShape( *this );	}
 
 	//	get world shape/datum - no recalcualtion, also returns age (False=Invalid, Wait=Old, True=UpToDate)
-	const TLMaths::TBox&					GetWorldBoundsBox(SyncBool& Validity) const			{	Validity = m_BoundsBox.m_WorldValid;		return m_BoundsBox.m_WorldShape;	}
-	const TLMaths::TBox2D&					GetWorldBoundsBox2D(SyncBool& Validity) const		{	Validity = m_BoundsBox2D.m_WorldValid;		return m_BoundsBox2D.m_WorldShape;	}
-	const TLMaths::TSphere&					GetWorldBoundsSphere(SyncBool& Validity) const		{	Validity = m_BoundsSphere.m_WorldValid;		return m_BoundsSphere.m_WorldShape;	}
-	const TLMaths::TSphere2D&				GetWorldBoundsSphere2D(SyncBool& Validity) const	{	Validity = m_BoundsSphere2D.m_WorldValid;	return m_BoundsSphere2D.m_WorldShape;	}
+	const TLMaths::TShapeBox&				GetWorldBoundsBox(SyncBool& Validity) const			{	Validity = m_BoundsBox.m_WorldValid;		return m_BoundsBox.m_WorldShape;	}
+	const TLMaths::TShapeBox2D&				GetWorldBoundsBox2D(SyncBool& Validity) const		{	Validity = m_BoundsBox2D.m_WorldValid;		return m_BoundsBox2D.m_WorldShape;	}
+	const TLMaths::TShapeSphere&			GetWorldBoundsSphere(SyncBool& Validity) const		{	Validity = m_BoundsSphere.m_WorldValid;		return m_BoundsSphere.m_WorldShape;	}
+	const TLMaths::TShapeSphere2D&			GetWorldBoundsSphere2D(SyncBool& Validity) const	{	Validity = m_BoundsSphere2D.m_WorldValid;	return m_BoundsSphere2D.m_WorldShape;	}
 
-	const TLMaths::TBox&					CalcLocalBoundsBox();						//	return our current local bounds box and calculate if invalid
-	const TLMaths::TBox2D&					CalcLocalBoundsBox2D();						//	return our current local bounds box and calculate if invalid
-	const TLMaths::TSphere&					CalcLocalBoundsSphere();					//	return our current local bounds box and calculate if invalid
-	const TLMaths::TSphere2D&				CalcLocalBoundsSphere2D();					//	return our current local bounds box and calculate if invalid
+	template<class SHAPETYPE> const SHAPETYPE&	GetLocalBounds()							{	}
+	template<> const TLMaths::TShapeBox&		GetLocalBounds()							{	CalcLocalBounds( m_BoundsBox.m_LocalShape );		return m_BoundsBox.m_LocalShape;	}
+	template<> const TLMaths::TShapeBox2D&		GetLocalBounds()							{	CalcLocalBounds( m_BoundsBox2D.m_LocalShape );		return m_BoundsBox2D.m_LocalShape;	}
+	template<> const TLMaths::TShapeSphere&		GetLocalBounds()							{	CalcLocalBounds( m_BoundsSphere.m_LocalShape );		return m_BoundsSphere.m_LocalShape;	}
+	template<> const TLMaths::TShapeSphere2D&	GetLocalBounds()							{	CalcLocalBounds( m_BoundsSphere2D.m_LocalShape );	return m_BoundsSphere2D.m_LocalShape;	}
+
+	const TLMaths::TShapeBox&				GetLocalBoundsBox() 							{	return GetLocalBounds<TLMaths::TShapeBox>();	}
+	const TLMaths::TShapeBox2D&				GetLocalBoundsBox2D() 							{	return GetLocalBounds<TLMaths::TShapeBox2D>();	}
+	const TLMaths::TShapeSphere&			GetLocalBoundsSphere()							{	return GetLocalBounds<TLMaths::TShapeSphere>();	}
+	const TLMaths::TShapeSphere2D&			GetLocalBoundsSphere2D()						{	return GetLocalBounds<TLMaths::TShapeSphere2D>();	}
+	FORCEINLINE const TLMaths::TShape*		GetLocalDatum(TRefRef DatumRef);				//	extract a datum from our mesh - unless a special ref is used to get bounds shapes
+	
+	//	gr: not needed? if required uncomment
+	//const TLMaths::TShapeBox&				GetLocalBoundsBox() const					{	return m_BoundsBox.m_LocalShape;	}
+	//const TLMaths::TShapeBox2D&				GetLocalBoundsBox2D() const 			{	return m_BoundsBox2D.m_LocalShape;	}
+	//const TLMaths::TShapeSphere&			GetLocalBoundsSphere() const				{	return m_BoundsSphere.m_LocalShape;	}
+	//const TLMaths::TShapeSphere2D&			GetLocalBoundsSphere2D() const			{	return m_BoundsSphere2D.m_LocalShape;	}
 
 	FORCEINLINE TPtr<TLMaths::TQuadTreeNode>*	GetRenderZoneNode(TRefRef RenderTargetRef)	{	return m_RenderZoneNodes.Find( RenderTargetRef );	}
 	FORCEINLINE TPtr<TLMaths::TQuadTreeNode>*	SetRenderZoneNode(TRefRef RenderTargetRef,TPtr<TLMaths::TQuadTreeNode>& pRenderZoneNode)	{	return m_RenderZoneNodes.Add( RenderTargetRef, pRenderZoneNode );	}
@@ -214,6 +231,8 @@ protected:
 	void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags);
 
 	virtual void							ProcessMessage(TLMessaging::TMessage& Message);
+	
+	template<class SHAPETYPE> void			CalcLocalBounds(SHAPETYPE& Shape);
 
 protected:
 	TLMaths::TTransform			m_Transform;				//	local transform of node
@@ -226,10 +245,11 @@ protected:
 	SyncBool					m_WorldPosValid;			//	if this is not valid then the transform of this node has changed since our last render
 
 	//	gr: todo: almagamate all these bounds shapes into a single bounds type that does all 3 or picks the best or something
-	TLMaths::TBoundsShape<TLMaths::TBox>		m_BoundsBox;
-	TLMaths::TBoundsShape<TLMaths::TBox2D>		m_BoundsBox2D;
-	TLMaths::TBoundsShape<TLMaths::TSphere>		m_BoundsSphere;
-	TLMaths::TBoundsShape<TLMaths::TSphere2D>	m_BoundsSphere2D;
+	//	gr: also todo; turn this into datums with special refs. Then add a bounds-checking type as above
+	TLMaths::TBoundsShape<TLMaths::TShapeBox>		m_BoundsBox;
+	TLMaths::TBoundsShape<TLMaths::TShapeBox2D>		m_BoundsBox2D;
+	TLMaths::TBoundsShape<TLMaths::TShapeSphere>	m_BoundsSphere;
+	TLMaths::TBoundsShape<TLMaths::TShapeSphere2D>	m_BoundsSphere2D;
 
 	TFlags<RenderFlags::Flags>	m_RenderFlags;
 
@@ -352,13 +372,75 @@ FORCEINLINE void TLRender::TRenderNode::OnMeshChanged()
 						) );	
 }
 
+//---------------------------------------------------------------
+//	extract a datum from our mesh - unless a special ref is used to get bounds shapes
+//---------------------------------------------------------------
+FORCEINLINE const TLMaths::TShape* TLRender::TRenderNode::GetLocalDatum(TRefRef DatumRef)
+{
+	switch ( DatumRef.GetData() )
+	{
+		case TRef_Invalid:								return NULL;
+		case TLRender_TRenderNode_DatumBoundsBox:		return &m_BoundsBox.m_LocalShape;
+		case TLRender_TRenderNode_DatumBoundsBox2D:		return &m_BoundsBox2D.m_LocalShape;
+		case TLRender_TRenderNode_DatumBoundsSphere:	return &m_BoundsSphere.m_LocalShape;
+		case TLRender_TRenderNode_DatumBoundsSphere2D:	return &m_BoundsSphere2D.m_LocalShape;
+
+		default:
+		{
+			//	get datum from mesh
+			TLAsset::TMesh* pMesh = GetMeshAsset(TRUE);
+			if ( !pMesh )
+				return NULL;
+			
+			return pMesh->GetDatum( DatumRef );
+		}
+	};
+}
 
 
+template<class SHAPETYPE> 
+void TLRender::TRenderNode::CalcLocalBounds(SHAPETYPE& Shape)
+{
+	//	if bounds is valid, doesnt need recalculating
+	if ( Shape.IsValid() )
+		return;
+	
+	//	get bounds from mesh
+	TPtr<TLAsset::TMesh>& pMesh = GetMeshAsset(TRUE);
+	if ( pMesh )
+	{
+		//	copy bounds of mesh to use as our own
+		Shape = pMesh->GetBounds<SHAPETYPE>();
+	}
+
+	//	accumulate children's bounds
+	TPtrArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
+	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
+	{
+		TLRender::TRenderNode& Child = *NodeChildren[c];
+
+		//	don't accumualte a child that is does not have an inherited transform
+		if ( Child.GetRenderFlags().IsSet(RenderFlags::ResetScene) )
+			continue;
+			
+		//	get child's bounds
+		const SHAPETYPE& ChildBounds = Child.GetLocalBounds<SHAPETYPE>();
+		if ( !ChildBounds.IsValid() )
+			continue;
+
+		//	gr: need to omit translate?
+		SHAPETYPE ChildBoundsTransformed = ChildBounds;
+		ChildBoundsTransformed.m_Shape.Transform( Child.GetTransform() );
+
+		//	accumulate child
+		Shape.m_Shape.Accumulate( ChildBoundsTransformed.m_Shape );
+	}
+}
 
 
 
 template<class SHAPETYPE>
-const SHAPETYPE& TLMaths::TBoundsShape<SHAPETYPE>::CalcWorldShape(TLRender::TRenderNode& RenderNode,TCalcLocalBoundsFunc pCalcLocalBoundsFunc)
+const SHAPETYPE& TLMaths::TBoundsShape<SHAPETYPE>::CalcWorldShape(TLRender::TRenderNode& RenderNode)
 {
 	//	... world transform must be valid (or old/wait) and our bounds are not this new, so recalculate
 	SyncBool IsWorldTransformValid = RenderNode.m_WorldTransformValid;
@@ -383,8 +465,8 @@ const SHAPETYPE& TLMaths::TBoundsShape<SHAPETYPE>::CalcWorldShape(TLRender::TRen
 	}
 
 	//	get/recalc local bounds box
-	const SHAPETYPE& LocalShape = ((&RenderNode)->*pCalcLocalBoundsFunc)();
-	if ( !LocalShape.IsValid() )
+	RenderNode.CalcLocalBounds( m_LocalShape );
+	if ( !m_LocalShape.IsValid() )
 	{
 		//	gr: shouldn't be valid...
 		m_WorldShape.SetInvalid();
@@ -392,8 +474,8 @@ const SHAPETYPE& TLMaths::TBoundsShape<SHAPETYPE>::CalcWorldShape(TLRender::TRen
 	}
 
 	//	tranform our local bounds into the world bounds
-	m_WorldShape = LocalShape;
-	m_WorldShape.Transform( RenderNode.m_WorldTransform );
+	m_WorldShape = m_LocalShape;
+	m_WorldShape.m_Shape.Transform( RenderNode.m_WorldTransform );
 	
 	//	update state (matches world transform state)
 	m_WorldValid = IsWorldTransformValid;

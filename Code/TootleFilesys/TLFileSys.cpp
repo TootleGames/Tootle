@@ -507,104 +507,30 @@ TPtr<TLFileSys::TFile>& TLFileSys::TFileGroup::GetNewestFile(TRefRef FileType)
 //------------------------------------------------------------
 TLFileSys::TFile* TLFileSys::TFileFactory::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 {
-	TLFileSys::TFile* pFile = NULL;
-
 	//	tootle asset type
-	if ( TypeRef == TRef_Static(a,s,s,e,t) )
+	switch ( TypeRef.GetData() )
 	{
-		pFile = new TLFileSys::TFileAsset( InstanceRef, TypeRef );
-		return pFile;
-	}
-
-	//	freetype compatible font
-	if ( TypeRef == TRef_Static3(t,t,f) )
-	{
-		pFile = new TLFileSys::TFileFreetype( InstanceRef, TypeRef );
-		return pFile;
-	}
-
-	//	xml file
-	if ( TypeRef == TRef_Static3(x,m,l) )
-	{
-		pFile = new TLFileSys::TFileXml( InstanceRef, TypeRef );
-		return pFile;
-	}
-
-	//	svg file
-	if ( TypeRef == TRef_Static3(s,v,g) )
-	{
-		pFile = new TLFileSys::TFileSimpleVector( InstanceRef, TypeRef );
-		return pFile;
-	}
-
-	//	TAM file
-	if ( TypeRef == TRef_Static3(t,a,m) )
-	{
-		pFile = new TLFileSys::TFileAssetMarkup( InstanceRef, TypeRef );
-		return pFile;
-	}
+	case TRef_Static(a,s,s,e,t):	return new TLFileSys::TFileAsset( InstanceRef, TypeRef );			//	tootle asset type
+	case TRef_Static3(t,t,f):		return new TLFileSys::TFileFreetype( InstanceRef, TypeRef );		//	freetype compatible font
+	case TRef_Static3(x,m,l):		return new TLFileSys::TFileXml( InstanceRef, TypeRef );				//	non-specific xml file
+	case TRef_Static3(s,v,g):		return new TLFileSys::TFileSimpleVector( InstanceRef, TypeRef );	//	svg file
+	case TRef_Static(m,a,r,k,u):
+	case TRef_Static3(t,a,m):		return new TLFileSys::TFileAssetMarkup( InstanceRef, TypeRef );		//	TAM file
+	case TRef_Static3(w,a,v):		return new TLFileSys::TFileWAV( InstanceRef, TypeRef );				//	Wave file
+	case TRef_Static(s,c,h,e,m):	return new TLFileSys::TFileScheme( InstanceRef, TypeRef );			//	scheme file
+	case TRef_Static3(d,a,e):		return new TLFileSys::TFileCollada( InstanceRef, TypeRef );			//	collada xml file
+	case TRef_Static4(m,e,n,u):		return new TLFileSys::TFileMenu( InstanceRef, TypeRef );			//	menu xml file
+	case TRef_Static(t,i,m,e,l):
+	case TRef_Static3(t,t,l):		return new TLFileSys::TFileTimeline( InstanceRef, TypeRef );		//	tootle timeline xml file
+	case TRef_Static4(t,e,x,t):
+	case TRef_Static3(t,t,d):		return new TLFileSys::TFileTextDatabase( InstanceRef, TypeRef );	//	tootle text database xml file
+	case TRef_Static3(p,n,g):		return new TLFileSys::TFilePng( InstanceRef, TypeRef );				//	png texture
+	case TRef_Static3(f,n,t):		return new TLFileSys::TFileFnt( InstanceRef, TypeRef );				//	font atlas
 	
-	//	WAV file
-	if ( TypeRef == TRef_Static3(w,a,v) )
-	{
-		pFile = new TLFileSys::TFileWAV( InstanceRef, TypeRef );
-		return pFile;
+	default:
+		//	generic binary file
+		return new TLFileSys::TFile( InstanceRef, TypeRef );
 	}
-	
-	//	scheme file
-	if ( TypeRef == TRef_Static(s,c,h,e,m) )
-	{
-		pFile = new TLFileSys::TFileScheme( InstanceRef, TypeRef );
-		return pFile;
-	}
-	
-	//	collada xml file
-	if ( TypeRef == TRef_Static3(d,a,e) )
-	{
-		pFile = new TLFileSys::TFileCollada( InstanceRef, TypeRef );
-		return pFile;
-	}
-	
-	//	menu xml file
-	if ( TypeRef == TRef_Static4(m,e,n,u) )
-	{
-		pFile = new TLFileSys::TFileMenu( InstanceRef, TypeRef );
-		return pFile;
-	}
-	
-	//	tootle timeline xml file
-	if ( TypeRef == TRef_Static3(t,t,l) )
-	{
-		pFile = new TLFileSys::TFileTimeline( InstanceRef, TypeRef );
-		return pFile;
-	}
-	
-	
-	//	tootle text database xml file
-	if ( TypeRef == TRef_Static3(t,t,d) )
-	{
-		pFile = new TLFileSys::TFileTextDatabase( InstanceRef, TypeRef );
-		return pFile;
-	}
-	
-	//	png texture
-	if ( TypeRef == TRef_Static3(p,n,g) )
-	{
-		pFile = new TLFileSys::TFilePng( InstanceRef, TypeRef );
-		return pFile;
-	}
-	
-	//	font atlas
-	if ( TypeRef == TRef_Static3(f,n,t) )
-	{
-		pFile = new TLFileSys::TFileFnt( InstanceRef, TypeRef );
-		return pFile;
-	}
-	
-
-	//	generic binary file
-	pFile = new TLFileSys::TFile( InstanceRef, TypeRef );
-	return pFile;
 }
 
 

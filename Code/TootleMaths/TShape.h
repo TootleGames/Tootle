@@ -27,12 +27,14 @@ namespace TLMaths
 
 	class TIntersection;	//	resulting intersection information of two shapes
 
-	TPtr<TShape>			ImportShapeData(TBinaryTree& Data);							//	create a shape type from TBinaryData
-	Bool					ExportShapeData(TBinaryTree& Data,const TLMaths::TShape& Shape);	//	export shape to data
-	TPtr<TShape>			CreateShapeType(TRefRef ShapeType);							//	create shape instance from ref
-
-	#define TLMaths_ShapeRef_Mesh				TRef_Static3(M,s,h)
-	FORCEINLINE TRef		GetMeshShapeTypeRef()			{	return TLMaths_ShapeRef(Mesh);	}
+	TPtr<TShape>				ImportShapeData(TBinaryTree& Data);									//	create a shape type from TBinaryData
+	Bool						ImportShapeData(TBinaryTree& Data,TLMaths::TShape& Shape);			//	Import shape data from a TBinarydata into an exisiting shape type. If the types don't match this will fail
+	FORCEINLINE TPtr<TShape>	ImportShapeData(TBinaryTree* pData)									{	return pData ? ImportShapeData( *pData ) : NULL;	}
+	FORCEINLINE Bool			ImportShapeData(TBinaryTree* pData,TLMaths::TShape& Shape)			{	return pData ? ImportShapeData( *pData, Shape ) : NULL;	}
+	Bool						ImportShapeData(TBinaryTree& Data,TLMaths::TShape& Shape);			//	Import shape data from a TBinarydata into an exisiting shape type. If the types don't match this will fail
+	Bool						ExportShapeData(TBinaryTree& Data,const TLMaths::TShape& Shape,Bool WriteIfInvalid=TRUE);	//	export shape to data
+	FORCEINLINE Bool			ExportShapeData(TBinaryTree* pData,const TLMaths::TShape& Shape,Bool WriteIfInvalid=TRUE)	{	return ExportShapeData( *pData, Shape, WriteIfInvalid );	}
+	TPtr<TShape>				CreateShapeType(TRefRef ShapeType);									//	create shape instance from ref
 };
 
 
@@ -68,8 +70,11 @@ public:
 
 class TLMaths::TShape
 {
+	//	give these import/export functions access to our protected Import/Export routines. We keep these protected in 
+	//	TShapes as we do NOT want users to access them directly.
 	friend TPtr<TShape>	TLMaths::ImportShapeData(TBinaryTree& Data);
-	friend Bool			TLMaths::ExportShapeData(TBinaryTree& Data,const TLMaths::TShape& Shape);	
+	friend Bool			TLMaths::ImportShapeData(TBinaryTree& Data,TLMaths::TShape& Shape);
+	friend Bool			TLMaths::ExportShapeData(TBinaryTree& Data,const TLMaths::TShape& Shape,Bool WriteIfInvalid);	
 
 public:
 	TShape()															{	}
@@ -77,9 +82,10 @@ public:
 
 	virtual TRef					GetShapeType() const = 0;					//	return a shape type
 	virtual Bool					IsValid() const = 0;						//	check if the shape is valid
+	virtual void					SetInvalid() = 0;							//	set shape as invalid
 	virtual float3					GetCenter() const = 0;						//	get the center of the shape
 
-	virtual Bool					Transform(const TLMaths::TTransform& Transform)												{	return FALSE;	}	//	transform self
+	virtual void					Transform(const TLMaths::TTransform& Transform)												{	TLDebug_Break("Overload me");	}	//	transform self
 	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pThis,TPtr<TShape>& pOldShape)	{	return NULL;	}	//	transform this collision shape into a world-relative shape
 
 	//	simple fast intersection tests which don't need intersection information - default behaviour uses more expensive "GetIntersection" code
@@ -101,7 +107,10 @@ public:
 	virtual Bool					GetIntersection(TShapeOblong2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 	virtual Bool					GetIntersection(TShapeCapsule2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 //	virtual Bool					GetIntersection(TShapeMesh* pCollisionMesh,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
-
+	
+	//template<class TYPE> 
+	//FORCEINLINE void				operator=(const TYPE& Shape)				{	m_Box = Shape;	}
+	
 protected:
 	virtual Bool					ImportData(TBinaryTree& Data)			{	TLDebug_Break("Shape ImportData required");	return FALSE;	}
 	virtual Bool					ExportData(TBinaryTree& Data) const		{	TLDebug_Break("Shape ExportData required");	return FALSE;	}

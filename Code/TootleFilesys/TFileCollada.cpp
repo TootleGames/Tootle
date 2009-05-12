@@ -576,7 +576,9 @@ SyncBool TLFileSys::TFileCollada::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool
 
 	//	assign resulting asset
 	pAsset = pNewMesh;
-	pNewMesh->CalcBoundsBox();
+
+	//	pre-calc bounds boxes
+	pNewMesh->CalcBounds();
 
 	return SyncTrue;
 }

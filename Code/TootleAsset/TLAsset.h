@@ -32,11 +32,9 @@ namespace TLAsset
 	TPtr<TAsset>&		CreateAsset(TRefRef AssetRef,TRefRef AssetType);	//	return a pointer to a new asset - mostly used for runtime asssets
 	void				DeleteAsset(TRefRef AssetRef);						//	delete an asset
 
-	TPtr<TLoadTask>		GetLoadTask(TRefRef AssetRef);						//	get the load task for this asset
+	TLArray::SortResult	AssetSort(const TPtr<TAsset>& a,const TPtr<TAsset>& b,const void* pTestRef);	//	asset sort
 
 	extern TPtr<TLAsset::TAssetFactory>	g_pFactory;
-	
-	TLArray::SortResult	AssetSort(const TPtr<TAsset>& a,const TPtr<TAsset>& b,const void* pTestRef);	//	asset sort
 };
 
 

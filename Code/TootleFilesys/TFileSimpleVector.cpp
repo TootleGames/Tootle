@@ -102,7 +102,7 @@ SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset
 
 	//	assign resulting asset
 	pAsset = pNewMesh;
-	pNewMesh->CalcBoundsBox();
+	pNewMesh->CalcBounds();
 
 	return SyncTrue;
 }

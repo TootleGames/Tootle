@@ -908,7 +908,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 		//	render local bounds box in current [render object's] transform
 		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsBox ) )
 		{
-			const TLMaths::TBox& RenderNodeBounds = pRenderNode->CalcLocalBoundsBox();
+			const TLMaths::TShapeBox& RenderNodeBounds = pRenderNode->GetLocalBounds<TLMaths::TShapeBox>();
 			if ( RenderNodeBounds.IsValid() )
 			{
 				TFlags<TRenderNode::RenderFlags::Flags> RenderFlags = pRenderNode->GetRenderFlags();
@@ -923,7 +923,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 		//	render world bounds box (outside current transform)
 		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_WorldBoundsBox ) )
 		{
-			const TLMaths::TBox& RenderNodeBounds = pRenderNode->GetWorldBoundsBox();
+			const TLMaths::TShapeBox& RenderNodeBounds = pRenderNode->GetWorldBoundsBox();
 			if ( RenderNodeBounds.IsValid() )
 			{
 				TFlags<TRenderNode::RenderFlags::Flags> RenderFlags = pRenderNode->GetRenderFlags();
@@ -940,7 +940,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 			//	render local bounds box in current [render object's] transform
 		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsSphere ) )
 		{
-			const TLMaths::TSphere& RenderNodeBounds = pRenderNode->CalcLocalBoundsSphere();
+			const TLMaths::TShapeSphere& RenderNodeBounds = pRenderNode->GetLocalBounds<TLMaths::TShapeSphere>();
 
 			if ( RenderNodeBounds.IsValid() )
 			{
@@ -950,8 +950,8 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 				pTempRenderNode->GetRenderFlags().Set( TRenderNode::RenderFlags::Debug_Wireframe );
 				//pTempRenderNode->GetRenderFlags().Set( TRenderNode::RenderFlags::ResetScene );	//	world bounds so reset scene
 				pTempRenderNode->GetRenderFlags().Clear( TRenderNode::RenderFlags::DepthRead );
-				pTempRenderNode->SetScale( RenderNodeBounds.GetRadius() );
-				pTempRenderNode->SetTranslate( RenderNodeBounds.GetPos() );
+				pTempRenderNode->SetScale( RenderNodeBounds.GetSphere().GetRadius() );
+				pTempRenderNode->SetTranslate( RenderNodeBounds.GetSphere().GetPos() );
 				pTempRenderNode->SetMeshRef( "d_sphere" );
 				PostRenderList.Add( pTempRenderNode );
 			}
@@ -960,7 +960,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 		//	render world bounds box (outside current transform)
 		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_WorldBoundsSphere ) )
 		{
-			const TLMaths::TSphere& RenderNodeBounds = pRenderNode->GetWorldBoundsSphere();
+			const TLMaths::TShapeSphere& RenderNodeBounds = pRenderNode->GetWorldBoundsSphere();
 			if ( RenderNodeBounds.IsValid() )
 			{
 				TPtr<TRenderNode> pTempRenderNode = new TRenderNode;
@@ -969,8 +969,8 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 				pTempRenderNode->GetRenderFlags().Set( TRenderNode::RenderFlags::Debug_Wireframe );
 				pTempRenderNode->GetRenderFlags().Set( TRenderNode::RenderFlags::ResetScene );	//	world bounds so reset scene
 				pTempRenderNode->GetRenderFlags().Clear( TRenderNode::RenderFlags::DepthRead );
-				pTempRenderNode->SetScale( RenderNodeBounds.GetRadius() );
-				pTempRenderNode->SetTranslate( RenderNodeBounds.GetPos() );
+				pTempRenderNode->SetScale( RenderNodeBounds.GetSphere().GetRadius() );
+				pTempRenderNode->SetTranslate( RenderNodeBounds.GetSphere().GetPos() );
 				pTempRenderNode->SetMeshRef( "d_sphere" );
 				PostRenderList.Add( pTempRenderNode );
 			}

@@ -67,13 +67,14 @@ public:
 
 	//	external commands
 	TPtr<TMenu>&		GetCurrentMenu()						{	return m_MenuStack.GetPtrLast();	}	//	check IsMenuOpen() before accessing first
+	const TPtr<TMenu>&	GetCurrentMenu() const					{	return m_MenuStack.GetPtrLast();	}	//	check IsMenuOpen() before accessing first
 	Bool				IsMenuOpen() const						{	return m_MenuStack.GetSize() > 0;	}
 	Bool				OpenMenu(TRefRef MenuRef);				//	move onto new menu with this ref - returns false if no such menu
 	void				CloseMenu();							//	close this menu and go back to previous
 	void				CloseAllMenus();						//	clear menu stack
 	Bool				HighlightMenuItem(TRef MenuItemRef);	//	highlight a menu item
 	Bool				ExecuteMenuItem(TRefRef MenuItemRef);	//	execute menu item command
-	Bool				GetMenuItemExists(TRefRef MenuItem) const	{	return IsMenuOpen() ? m_MenuStack.ElementLastConst()->GetMenuItemExists(MenuItem) : FALSE;	}
+	Bool				GetMenuItemExists(TRefRef MenuItem) const	{	return IsMenuOpen() ? GetCurrentMenu()->GetMenuItemExists(MenuItem) : FALSE;	}
 
 protected:
 	virtual TPtr<TMenu>		CreateMenu(TRefRef MenuRef);			//	create a menu. default just loads menu definition from assets, overload to create custom menus
@@ -114,18 +115,22 @@ protected:
 //	todo: rename this and sort all these classes out into one simple, but overloadable system
 //	this class will probably get renamed too
 //----------------------------------------------
-class TLGame::TMenuWrapperScheme : public TLGame::TMenuWrapper
+class TLGame::TMenuWrapperScheme : public TLGame::TMenuWrapper, public TLMessaging::TSubscriber
 {
 public:
-	TMenuWrapperScheme(TLMenu::TMenuController* pMenuController,TRefRef SchemeRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef);	//	create menu/render nodes etc
+	TMenuWrapperScheme(TLMenu::TMenuController& MenuController,TRefRef SchemeRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef);	//	create menu/render nodes etc
 	~TMenuWrapperScheme();
 
 	Bool					IsValid()			{	return m_MenuRef.IsValid();	}
 	void					SetInvalid()		{	m_MenuRef.SetInvalid();	}
+	
+protected:
+	virtual void					ProcessMessage(TLMessaging::TMessage& Message);	//	catch gui's messages and turn them into menu item execution for our owner menu controller
 
 protected:
 	TRef								m_MenuRef;
-	TPtrArray<TLInput::TInputInterface>	m_Guis;		//	gui storage
+	TLMenu::TMenuController*			m_pMenuController;		//	owner menu controller
+	TPtrArray<TLInput::TInputInterface>	m_Guis;					//	gui storage
 };
 
 
