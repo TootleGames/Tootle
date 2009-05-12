@@ -200,10 +200,10 @@ public:
 	template<class SHAPETYPE>
 	FORCEINLINE const SHAPETYPE&			GetBounds();		//	return and recalculate[as required] a bounds shape
 
-	FORCEINLINE const TLMaths::TBox&		GetBoundsBox()		{	return GetBoundsShape<TLMaths::TShapeBox>().m_Shape;	}
-	FORCEINLINE const TLMaths::TBox2D&		GetBoundsBox2D()	{	return GetBoundsShape<TLMaths::TShapeBox2D>().m_Shape;	}
-	FORCEINLINE const TLMaths::TSphere&		GetBoundsSphere()	{	return GetBoundsShape<TLMaths::TShapeSphere>().m_Shape;	}
-	FORCEINLINE const TLMaths::TSphere2D&	GetBoundsSphere2D()	{	return GetBoundsShape<TLMaths::TShapeSphere2D>().m_Shape;	}
+	FORCEINLINE const TLMaths::TBox&		GetBoundsBox()		{	return m_BoundsBox.m_Shape;	}
+	FORCEINLINE const TLMaths::TBox2D&		GetBoundsBox2D()	{	return m_BoundsBox2D.m_Shape;	}
+	FORCEINLINE const TLMaths::TSphere&		GetBoundsSphere()	{	return m_BoundsSphere.m_Shape;	}
+	FORCEINLINE const TLMaths::TSphere2D&	GetBoundsSphere2D()	{	return m_BoundsSphere2D.m_Shape;	}
 
 	//	datum access
 	FORCEINLINE TPtr<TLMaths::TShape>&	AddDatum(TRefRef DatumRef,TPtr<TLMaths::TShape>& pShape);
@@ -224,18 +224,14 @@ protected:
 	Bool					ImportDatum(TBinaryTree& Data);
 	Bool					ExportDatum(TBinaryTree& Data,TRefRef DatumRef,TLMaths::TShape& Shape);
 
-	template<class SHAPETYPE> SHAPETYPE&	GetBoundsShape()	{	TLDebug_Break("Specialise this for shapes we don't currently support");	static SHAPETYPE g_DummyShape;	return g_DummyShape;	}
-	template<> TLMaths::TShapeBox&			GetBoundsShape()	{	return m_BoundsBox;	}
-	template<> TLMaths::TShapeBox2D&		GetBoundsShape()	{	return m_BoundsBox2D;	}
-	template<> TLMaths::TShapeSphere&		GetBoundsShape()	{	return m_BoundsSphere;	}
-	template<> TLMaths::TShapeSphere2D&		GetBoundsShape()	{	return m_BoundsSphere2D;	}
-
 	void					CalcHasAlpha();						//	loop through colours to check if we have any alpha colours in the verts
 	void					PadColours();						//	ensure number of colours matches number of vertexes. Also adds missing 24/32 bit colours
 	void					PadUVs();							//	ensure number of uvs matches number of vertexes
 	void					AddColour(const TColour& Colour,u16 Count=1);	//	add colour to colour arrays
 	void					RemoveColourAt(u16 VertexIndex);	//	remove a vertex colour 
-
+	
+	template<class SHAPETYPE> SHAPETYPE&	GetBoundsShape()	{	TLDebug_Break("Specialise this for shapes we don't currently support");	static SHAPETYPE g_DummyShape;	return g_DummyShape;	}
+	
 	void					AddTriangles(const TArray<Triangle>& OtherPolygons,u32 OffsetVertexIndex);
 	void					AddTristrips(const TArray<Tristrip>& OtherPolygons,u32 OffsetVertexIndex);
 	void					AddTrifans(const TArray<Trifan>& OtherPolygons,u32 OffsetVertexIndex);
@@ -272,7 +268,10 @@ protected:
 	TFlags<TMeshFlags,u8>	m_Flags;				//	mesh flags
 };
 
-
+template<> TLMaths::TShapeBox&			TLAsset::TMesh::GetBoundsShape()	{	return m_BoundsBox;	}
+template<> TLMaths::TShapeBox2D&		TLAsset::TMesh::GetBoundsShape()	{	return m_BoundsBox2D;	}
+template<> TLMaths::TShapeSphere&		TLAsset::TMesh::GetBoundsShape()	{	return m_BoundsSphere;	}
+template<> TLMaths::TShapeSphere2D&		TLAsset::TMesh::GetBoundsShape()	{	return m_BoundsSphere2D;	}
 
 
 FORCEINLINE TPtr<TLMaths::TShape>& TLAsset::TMesh::AddDatum(TRefRef DatumRef,TPtr<TLMaths::TShape>& pShape) 

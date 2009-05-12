@@ -200,16 +200,12 @@ public:
 	const TLMaths::TShapeSphere&			GetWorldBoundsSphere(SyncBool& Validity) const		{	Validity = m_BoundsSphere.m_WorldValid;		return m_BoundsSphere.m_WorldShape;	}
 	const TLMaths::TShapeSphere2D&			GetWorldBoundsSphere2D(SyncBool& Validity) const	{	Validity = m_BoundsSphere2D.m_WorldValid;	return m_BoundsSphere2D.m_WorldShape;	}
 
-	template<class SHAPETYPE> const SHAPETYPE&	GetLocalBounds()							{	}
-	template<> const TLMaths::TShapeBox&		GetLocalBounds()							{	CalcLocalBounds( m_BoundsBox.m_LocalShape );		return m_BoundsBox.m_LocalShape;	}
-	template<> const TLMaths::TShapeBox2D&		GetLocalBounds()							{	CalcLocalBounds( m_BoundsBox2D.m_LocalShape );		return m_BoundsBox2D.m_LocalShape;	}
-	template<> const TLMaths::TShapeSphere&		GetLocalBounds()							{	CalcLocalBounds( m_BoundsSphere.m_LocalShape );		return m_BoundsSphere.m_LocalShape;	}
-	template<> const TLMaths::TShapeSphere2D&	GetLocalBounds()							{	CalcLocalBounds( m_BoundsSphere2D.m_LocalShape );	return m_BoundsSphere2D.m_LocalShape;	}
+	template<class SHAPETYPE> const SHAPETYPE&	GetLocalBounds()							{ TLDebug_Break("Specialise this for shapes we don't currently support");	static SHAPETYPE g_DummyShape;	return g_DummyShape; }
 
-	const TLMaths::TShapeBox&				GetLocalBoundsBox() 							{	return GetLocalBounds<TLMaths::TShapeBox>();	}
-	const TLMaths::TShapeBox2D&				GetLocalBoundsBox2D() 							{	return GetLocalBounds<TLMaths::TShapeBox2D>();	}
-	const TLMaths::TShapeSphere&			GetLocalBoundsSphere()							{	return GetLocalBounds<TLMaths::TShapeSphere>();	}
-	const TLMaths::TShapeSphere2D&			GetLocalBoundsSphere2D()						{	return GetLocalBounds<TLMaths::TShapeSphere2D>();	}
+	const TLMaths::TShapeBox&				GetLocalBoundsBox() 							{	CalcLocalBounds( m_BoundsBox.m_LocalShape );			return m_BoundsBox.m_LocalShape;	}
+	const TLMaths::TShapeBox2D&				GetLocalBoundsBox2D() 							{	CalcLocalBounds( m_BoundsBox2D.m_LocalShape );			return m_BoundsBox2D.m_LocalShape;	}
+	const TLMaths::TShapeSphere&			GetLocalBoundsSphere()							{	CalcLocalBounds( m_BoundsSphere.m_LocalShape );			return m_BoundsSphere.m_LocalShape;	}
+	const TLMaths::TShapeSphere2D&			GetLocalBoundsSphere2D()						{	CalcLocalBounds( m_BoundsSphere2D.m_LocalShape );		return m_BoundsSphere2D.m_LocalShape;	}
 	FORCEINLINE const TLMaths::TShape*		GetLocalDatum(TRefRef DatumRef);				//	extract a datum from our mesh - unless a special ref is used to get bounds shapes
 	
 	//	gr: not needed? if required uncomment
@@ -266,6 +262,11 @@ protected:
 	TRef						m_OwnerSceneNode;		//	"Owner" scene node - if this is set then we automaticcly process some stuff (ie. catching OnTransform of a scene node we set our transform)
 };
 
+
+template<> const TLMaths::TShapeBox&		TLRender::TRenderNode::GetLocalBounds()							{	CalcLocalBounds( m_BoundsBox.m_LocalShape );		return m_BoundsBox.m_LocalShape;	}
+template<> const TLMaths::TShapeBox2D&		TLRender::TRenderNode::GetLocalBounds()							{	CalcLocalBounds( m_BoundsBox2D.m_LocalShape );		return m_BoundsBox2D.m_LocalShape;	}
+template<> const TLMaths::TShapeSphere&		TLRender::TRenderNode::GetLocalBounds()							{	CalcLocalBounds( m_BoundsSphere.m_LocalShape );		return m_BoundsSphere.m_LocalShape;	}
+template<> const TLMaths::TShapeSphere2D&	TLRender::TRenderNode::GetLocalBounds()							{	CalcLocalBounds( m_BoundsSphere2D.m_LocalShape );	return m_BoundsSphere2D.m_LocalShape;	}
 
 
 //---------------------------------------------------------------
