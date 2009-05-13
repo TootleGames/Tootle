@@ -30,7 +30,7 @@ namespace TLMaths
 	TPtr<TShape>				ImportShapeData(TBinaryTree& Data);									//	create a shape type from TBinaryData
 	Bool						ImportShapeData(TBinaryTree& Data,TLMaths::TShape& Shape);			//	Import shape data from a TBinarydata into an exisiting shape type. If the types don't match this will fail
 	FORCEINLINE TPtr<TShape>	ImportShapeData(TBinaryTree* pData)									{	return pData ? ImportShapeData( *pData ) : TPtr<TShape>(NULL);	}
-	FORCEINLINE Bool			ImportShapeData(TBinaryTree* pData,TLMaths::TShape& Shape)			{	return pData ? ImportShapeData( *pData, Shape ) : NULL;	}
+	FORCEINLINE Bool			ImportShapeData(TBinaryTree* pData,TLMaths::TShape& Shape)			{	return pData ? ImportShapeData( *pData, Shape ) : FALSE;	}
 	Bool						ImportShapeData(TBinaryTree& Data,TLMaths::TShape& Shape);			//	Import shape data from a TBinarydata into an exisiting shape type. If the types don't match this will fail
 	Bool						ExportShapeData(TBinaryTree& Data,const TLMaths::TShape& Shape,Bool WriteIfInvalid=TRUE);	//	export shape to data
 	FORCEINLINE Bool			ExportShapeData(TBinaryTree* pData,const TLMaths::TShape& Shape,Bool WriteIfInvalid=TRUE)	{	return ExportShapeData( *pData, Shape, WriteIfInvalid );	}

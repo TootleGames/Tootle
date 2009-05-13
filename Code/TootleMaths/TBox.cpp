@@ -582,7 +582,7 @@ void TLMaths::TBox2D::Accumulate(const TArray<float3>& Points)
 {
 	for ( u32 i=0;	i<Points.GetSize();	i++ )
 	{
-		Accumulate( Points[i] );
+		Accumulate( Points[i].xy() );
 	}
 }
 
@@ -1024,6 +1024,30 @@ void TLMaths::TBox2D::Accumulate(const TBox2D& Box)
 	}
 }	
 
+
+//-------------------------------------------------
+//	merge two boxes, box will only get bigger
+//-------------------------------------------------
+void TLMaths::TBox2D::Accumulate(const TBox& Box)			
+{
+	//	source box is not valid!
+	if ( !Box.IsValid() )
+	{
+		if ( !TLDebug_Break("Accumulating invalid box") )
+			return;
+	}
+
+	//	if we're not valid, just copy the box
+	if ( !IsValid() )
+	{
+		Set( Box.GetMin().xy(), Box.GetMax().xy() );
+	}
+	else
+	{
+		Accumulate( Box.GetMin().xy() );	
+		Accumulate( Box.GetMax().xy() );	
+	}
+}	
 
 
 //-------------------------------------------------

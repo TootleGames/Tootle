@@ -200,10 +200,10 @@ public:
 	template<class SHAPETYPE>
 	FORCEINLINE const SHAPETYPE&			GetBounds();		//	return and recalculate[as required] a bounds shape
 
-	FORCEINLINE const TLMaths::TBox&		GetBoundsBox()		{	return m_BoundsBox.m_Shape;	}
-	FORCEINLINE const TLMaths::TBox2D&		GetBoundsBox2D()	{	return m_BoundsBox2D.m_Shape;	}
-	FORCEINLINE const TLMaths::TSphere&		GetBoundsSphere()	{	return m_BoundsSphere.m_Shape;	}
-	FORCEINLINE const TLMaths::TSphere2D&	GetBoundsSphere2D()	{	return m_BoundsSphere2D.m_Shape;	}
+	FORCEINLINE const TLMaths::TBox&		GetBoundsBox()		{	CalcBounds(m_BoundsBox);		return m_BoundsBox.m_Shape;	}
+	FORCEINLINE const TLMaths::TBox2D&		GetBoundsBox2D()	{	CalcBounds(m_BoundsBox2D);		return m_BoundsBox2D.m_Shape;	}
+	FORCEINLINE const TLMaths::TSphere&		GetBoundsSphere()	{	CalcBounds(m_BoundsSphere);		return m_BoundsSphere.m_Shape;	}
+	FORCEINLINE const TLMaths::TSphere2D&	GetBoundsSphere2D()	{	CalcBounds(m_BoundsSphere2D);	return m_BoundsSphere2D.m_Shape;	}
 
 	//	datum access
 	FORCEINLINE TPtr<TLMaths::TShape>&	AddDatum(TRefRef DatumRef,TPtr<TLMaths::TShape>& pShape);
@@ -230,7 +230,8 @@ protected:
 	void					AddColour(const TColour& Colour,u16 Count=1);	//	add colour to colour arrays
 	void					RemoveColourAt(u16 VertexIndex);	//	remove a vertex colour 
 	
-	template<class SHAPETYPE> SHAPETYPE&	GetBoundsShape()	{	TLDebug_Break("Specialise this for shapes we don't currently support");	static SHAPETYPE g_DummyShape;	return g_DummyShape;	}
+	template<class SHAPETYPE> SHAPETYPE&		GetBoundsShape()				{	TLDebug_Break("Specialise this for shapes we don't currently support");	static SHAPETYPE g_DummyShape;	return g_DummyShape;	}
+	template<class SHAPETYPE> FORCEINLINE void	CalcBounds(SHAPETYPE& Shape)	{	if ( !Shape.IsValid() ) Shape.m_Shape.Accumulate( m_Vertexes );	}
 	
 	void					AddTriangles(const TArray<Triangle>& OtherPolygons,u32 OffsetVertexIndex);
 	void					AddTristrips(const TArray<Tristrip>& OtherPolygons,u32 OffsetVertexIndex);
@@ -268,10 +269,12 @@ protected:
 	TFlags<TMeshFlags,u8>	m_Flags;				//	mesh flags
 };
 
-template<> TLMaths::TShapeBox&			TLAsset::TMesh::GetBoundsShape()	{	return m_BoundsBox;	}
-template<> TLMaths::TShapeBox2D&		TLAsset::TMesh::GetBoundsShape()	{	return m_BoundsBox2D;	}
-template<> TLMaths::TShapeSphere&		TLAsset::TMesh::GetBoundsShape()	{	return m_BoundsSphere;	}
-template<> TLMaths::TShapeSphere2D&		TLAsset::TMesh::GetBoundsShape()	{	return m_BoundsSphere2D;	}
+template<> FORCEINLINE TLMaths::TShapeBox&			TLAsset::TMesh::GetBoundsShape()	{	return m_BoundsBox;	}
+template<> FORCEINLINE TLMaths::TShapeBox2D&		TLAsset::TMesh::GetBoundsShape()	{	return m_BoundsBox2D;	}
+template<> FORCEINLINE TLMaths::TShapeSphere&		TLAsset::TMesh::GetBoundsShape()	{	return m_BoundsSphere;	}
+template<> FORCEINLINE TLMaths::TShapeSphere2D&		TLAsset::TMesh::GetBoundsShape()	{	return m_BoundsSphere2D;	}
+
+
 
 
 FORCEINLINE TPtr<TLMaths::TShape>& TLAsset::TMesh::AddDatum(TRefRef DatumRef,TPtr<TLMaths::TShape>& pShape) 

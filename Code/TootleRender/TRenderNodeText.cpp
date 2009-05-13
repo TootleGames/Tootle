@@ -31,7 +31,7 @@ void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 	if ( Message.ImportDataString("Text", m_Text ) )
 	{
 		TLDebug_Break("Setting text directly.  Should now use a text ref instead and lookup the text. If data string, use the STRING ref");
-		m_GlyphsValid = FALSE;
+		OnStringChanged();
 	}
 
 	//	import text - if we do, make sure we make a note the glyphs need building
@@ -39,7 +39,7 @@ void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 	//		ref changed to "string" for clarity though. "String" being data, "text" being specific text.
 	if ( Message.ImportDataString("String", m_Text ) )
 	{
-		m_GlyphsValid = FALSE;
+		OnStringChanged();
 	}
 
 	TRef TextRef;
@@ -47,17 +47,24 @@ void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 	{
 		// Now get the string from the text manager
 		if(TLText::g_pTextManager->GetText(TextRef, m_Text))
-			m_GlyphsValid = FALSE;
-#ifdef _DEBUG
+		{
+			OnStringChanged();
+		}
 		else
 		{
+			#ifdef _DEBUG
 			TTempString debugstr;
 			TextRef.GetString(debugstr);
 			TLDebug_Print(debugstr);
 			TLDebug_Break("Failed to get text");
+			#endif
 		}
-#endif
 	}
+
+	//	import scale/alignment modes
+	Message.ImportData("HAlign", m_AlignMode.x );
+	Message.ImportData("VAlign", m_AlignMode.y );
+	Message.ImportData("SMode", m_ScaleMode );
 
 	//	has text box shape
 	TPtr<TBinaryTree>& pBoxData = Message.GetChild("Box");
@@ -143,15 +150,16 @@ void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 //--------------------------------------------------------------------
 //	setup new string
 //--------------------------------------------------------------------
-void TLRender::TRenderNodeText::SetText(const TString& Text)
+void TLRender::TRenderNodeText::SetString(const TString& Text)
 {
 	//	no change
 	if ( m_Text == Text )
 		return;
 
-	//	text changed, update glyphs
+	//	text changed
 	m_Text = Text;
-	m_GlyphsValid = FALSE;
+
+	OnStringChanged();
 }
 
 
@@ -163,6 +171,7 @@ Bool TLRender::TRenderNodeText::SetTextBox(const TLMaths::TBox2D& Box)
 	//	todo: check for change
 	m_TextBox = Box;
 
+	//	gr: bit inefficient... need a seperate flag to just re-build alignment
 	m_GlyphsValid = FALSE;
 
 	return TRUE;
@@ -185,6 +194,128 @@ Bool TLRender::TRenderNodeText::SetTextBox(const TLMaths::TShape& Shape)
 }
 
 
+//--------------------------------------------------------------------
+//	our overloaded renderer
+//--------------------------------------------------------------------
+Bool TLRender::TRenderNodeText::Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList)
+{
+	//	setup glyphs if they are out of date
+	if ( !m_GlyphsValid )
+	{
+		TLMaths::TBox2D TextBounds;
+		if ( SetGlyphs(TextBounds) )
+		{
+			//	nothing to align if no text
+			if ( GetString().GetLength() > 0 )
+				RealignGlyphs( TextBounds );
+
+			m_GlyphsValid = TRUE;
+		}
+	}
+
+	//	dont render if glyphs out of date
+	return m_GlyphsValid;
+}
+
+
+//--------------------------------------------------------------------
+//	realign the glyphs according to our bounds box - the box provided is the box the glyphs take up
+//--------------------------------------------------------------------
+void TLRender::TRenderNodeText::RealignGlyphs(TLMaths::TBox2D& TextBounds)
+{
+	if ( !TextBounds.IsValid() )
+	{
+		TLDebug_Break("Invalid glyph bounds specified for glyph realignment");
+		return;
+	}
+
+	//	build up a new transform.
+	TLMaths::TTransform NewTransform;
+
+	//	do scaling first
+	if ( m_ScaleMode.IsValid() )
+	{
+		TTempString Debug_String("todo: handle text scale mode ");
+		m_ScaleMode.GetString( Debug_String );
+		TLDebug_Break( Debug_String );
+		//	NewTransform.SetScale(xyz);
+	}
+	else
+	{
+		//	copy existing scale
+		if ( GetTransform().HasScale() )
+			NewTransform.SetScale( GetTransform().GetScale() );
+	}
+
+	//	if we don't have a text box we can still do alignment, just with our base point of 0,0
+	TLMaths::TBox2D TempBox( float2(0.f,0.f), float2(0.f,0.f) );
+	const TLMaths::TBox2D& AlignBox = m_TextBox.IsValid() ? m_TextBox : TempBox;
+
+	//	scale the glyph bounds according to our scale
+	//	note: ensure the original TextBounds isn't scaled according to our transform... it shouldn't be... it should be in local space
+	if ( NewTransform.HasScale() )
+	{
+		//	gr: NewTransform should only have scale in it at the moment
+		TextBounds.Transform( NewTransform );
+
+		//	glyph bounds world space is now relative to our text box (which is local to our parent - regardless if we got the box from our parent or not)
+	}
+
+	if ( m_TextBox.IsValid() )
+	{
+		//	now get a vector which will align us with our text box as required
+		//	defaults to top-left
+		float2 Alignment( AlignBox.GetMin() );
+
+		if ( m_AlignMode.x == TLRenderText::HAlignCenter )
+			Alignment.x += (AlignBox.GetWidth() - TextBounds.GetWidth()) / 2.f;
+		else if ( m_AlignMode.x == TLRenderText::HAlignRight )
+			Alignment.x = (AlignBox.GetRight() - TextBounds.GetWidth());
+		else if ( m_AlignMode.x != TLRenderText::HAlignLeft )
+		{
+			TTempString Debug_String("Unknown alignment mode ");
+			m_AlignMode.x.GetString( Debug_String );
+			TLDebug_Break( Debug_String );
+		}
+
+		if ( m_AlignMode.y == TLRenderText::VAlignMiddle )
+			Alignment.y += (AlignBox.GetHeight() - TextBounds.GetHeight()) / 2.f;
+		else if ( m_AlignMode.y == TLRenderText::VAlignBottom )
+			Alignment.y = (AlignBox.GetBottom() - TextBounds.GetHeight());
+		else if ( m_AlignMode.y != TLRenderText::VAlignTop )
+		{
+			TTempString Debug_String("Unknown alignment mode ");
+			m_AlignMode.y.GetString( Debug_String );
+			TLDebug_Break( Debug_String );
+		}
+
+		//	have a new alignment, apply it to the new transform...
+		NewTransform.SetTranslate( Alignment.xyz( GetTransform().GetTranslate().z ) );
+	}
+	else
+	{
+		//	gr: currently the transform is reset to 0,0,0 if we have no text box... which is bad
+		//	because usually if we dont have a text box we are setting a translate explicitly.
+		//	we could use the existing translate for the TempBox but that's not working to work right
+		//	for Center/Right align. Need to store an original offset I suppose... work this all
+		//	into the next-revision where we have a different transform for each line
+		NewTransform.SetTranslate( GetTransform().GetTranslate() );
+
+		if ( m_AlignMode.x != TLRenderText::HAlignLeft || m_AlignMode.y != TLRenderText::VAlignTop )
+		{
+			TLDebug_Break("align modes without a text box aren't supported at the moment");
+		}
+	}
+
+	//	and set our new transform
+	SetTransform( NewTransform );
+}
+
+
+
+
+
+
 
 
 TLRender::TRenderNodeVectorText::TRenderNodeVectorText(TRefRef RenderNodeRef,TRefRef TypeRef) :
@@ -196,7 +327,7 @@ TLRender::TRenderNodeVectorText::TRenderNodeVectorText(TRefRef RenderNodeRef,TRe
 //--------------------------------------------------------------------
 //	setup child glyph render objects
 //--------------------------------------------------------------------
-Bool TLRender::TRenderNodeVectorText::SetGlyphs()
+Bool TLRender::TRenderNodeVectorText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 {
 	//	grab our font
 	TPtr<TLAsset::TAsset>& pFontAsset = TLAsset::GetAsset( m_FontRef, TRUE );
@@ -237,7 +368,7 @@ Bool TLRender::TRenderNodeVectorText::SetGlyphs()
 		TRenderNodeVectorGlyph& RenderGlyph = *pChild.GetObject<TRenderNodeVectorGlyph>();
 
 		//	update glyph
-		SetGlyph( RenderGlyph, Font, GlyphPos, m_Text[charindex] );
+		SetGlyph( RenderGlyph, Font, GlyphPos, m_Text[charindex], TextBounds );
 		
 		//	take parents render flags
 		RenderGlyph.GetRenderFlags() = this->GetRenderFlags();
@@ -271,7 +402,7 @@ Bool TLRender::TRenderNodeVectorText::SetGlyphs()
 		TLRender::g_pRendergraph->AddNode( pRenderGlyphPtr, this->GetNodeRef() );
 
 		TRenderNodeVectorGlyph* pRenderGlyph = pRenderGlyphPtr.GetObject<TRenderNodeVectorGlyph>();
-		SetGlyph( *pRenderGlyph, Font, GlyphPos, m_Text[charindex] );
+		SetGlyph( *pRenderGlyph, Font, GlyphPos, m_Text[charindex], TextBounds );
 
 		///////////////////////////////////////////////////////////////////////////////
 	
@@ -283,32 +414,11 @@ Bool TLRender::TRenderNodeVectorText::SetGlyphs()
 }
 
 
-//--------------------------------------------------------------------
-//	our overloaded renderer
-//--------------------------------------------------------------------
-Bool TLRender::TRenderNodeText::Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList)
-{
-	//	setup glyphs if they are out of date
-	if ( !m_GlyphsValid )
-	{
-		if ( SetGlyphs() )
-			m_GlyphsValid = TRUE;
-	}
-
-	//	dont render if glyphs out of date
-	return m_GlyphsValid;
-}
-
-
-
-
-
-
 
 //--------------------------------------------------------------------
 //	
 //--------------------------------------------------------------------
-void TLRender::TRenderNodeVectorText::SetGlyph(TRenderNodeVectorGlyph& RenderGlyph,TLAsset::TFont& Font,float3& GlyphPos,u16 Char)
+void TLRender::TRenderNodeVectorText::SetGlyph(TRenderNodeVectorGlyph& RenderGlyph,TLAsset::TFont& Font,float3& GlyphPos,u16 Char,TLMaths::TBox2D& TextBounds)
 {
 	Bool Changed = FALSE;
 
@@ -349,11 +459,11 @@ void TLRender::TRenderNodeVectorText::SetGlyph(TRenderNodeVectorGlyph& RenderGly
 		
 		//	no data, use our bounding box
 		if ( !pLeadInOutBox )
-			pLeadInOutBox = &pGlyphMesh->GetBoundsBox();
+			pLeadInOutBox = &pGlyphMesh->GetBounds<TLMaths::TShapeBox>().GetBox();
 	}
 
 	//	move back for lead in
-	if ( pLeadInOutBox )
+	if ( pLeadInOutBox && pLeadInOutBox->IsValid() )
 	{
 		GlyphPos.x -= pLeadInOutBox->GetMin().x;
 	}
@@ -365,11 +475,29 @@ void TLRender::TRenderNodeVectorText::SetGlyph(TRenderNodeVectorGlyph& RenderGly
 	}
 
 	//	move along by the lead box
-	if ( pLeadInOutBox )
+	if ( pLeadInOutBox && pLeadInOutBox->IsValid() )
 	{
 		GlyphPos.x += pLeadInOutBox->GetMax().x;
 	}
 
+	//	accumulate size of glyph in the text
+	if ( pGlyphMesh )
+	{
+		TLMaths::TBox2D GlyphBox = pGlyphMesh->GetBounds<TLMaths::TShapeBox2D>().GetBox();
+		if ( GlyphBox.IsValid() )
+		{
+			GlyphBox.Transform( GlyphPos );
+			TextBounds.Accumulate( GlyphBox );
+		}
+	}
+
+	//	reset bounds if object has changed
+	if ( Changed )
+	{
+		RenderGlyph.OnBoundsChanged();
+	}
+
+	//	not glyph related: return the glyph position on line feeds
 	if ( LineFeed )
 	{
 		//	gr: need to find some way of getting an accurate line feed... currently use the bounds box height of 'A'
@@ -386,11 +514,6 @@ void TLRender::TRenderNodeVectorText::SetGlyph(TRenderNodeVectorGlyph& RenderGly
 		GlyphPos.x = 0.f;
 	}
 
-	//	reset bounds if object has changed
-	if ( Changed )
-	{
-		RenderGlyph.OnBoundsChanged();
-	}
 }
 
 
@@ -444,7 +567,7 @@ void TLRender::TRenderNodeTextureText::Initialise(TLMessaging::TMessage& Message
 //--------------------------------------------------------
 //	setup geometry
 //--------------------------------------------------------
-Bool TLRender::TRenderNodeTextureText::SetGlyphs()
+Bool TLRender::TRenderNodeTextureText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 {
 	//	 create mesh
 	if ( !m_pMesh )
@@ -467,7 +590,9 @@ Bool TLRender::TRenderNodeTextureText::SetGlyphs()
 	TArray<TLAsset::TMesh::Triangle>& Triangles = m_pMesh->GetTriangles();
 
 	//	relative to parent so start at 0,0,0
-	float3 GlyphPos(0,0,0);
+	//	gr: just stored as a transform to ease some other things
+	TLMaths::TTransform GlyphTransform;
+	GlyphTransform.SetTranslate( float3( 0,0,0 ) );
 
 	//	setup geometry - currently rebuild the entire string
 	for ( u32 i=0;	i<m_Text.GetLengthWithoutTerminator();	i++ )
@@ -479,18 +604,14 @@ Bool TLRender::TRenderNodeTextureText::SetGlyphs()
 			if ( pGlyph )
 			{
 				float LineHeight = pGlyph->m_SpacingBox.GetHeight();
-				GlyphPos.y += LineHeight;
+				GlyphTransform.GetTranslate().y += LineHeight;
 			}
-			GlyphPos.x = 0.f;
+			GlyphTransform.GetTranslate().x = 0.f;
 			continue;
 		}
 
 		//	get glyph for this char
 		const TLAsset::TAtlasGlyph* pGlyph = Atlas.GetGlyph( m_Text[i] );
-
-	
-
-
 
 		//	no character in font for this character
 		if ( !pGlyph )
@@ -499,11 +620,18 @@ Bool TLRender::TRenderNodeTextureText::SetGlyphs()
 			continue;
 		}
 
+		//	calculate the positioned box for this glyph
+		TLMaths::TBox2D ThisGlyphBox = pGlyph->m_GlyphBox;
+		ThisGlyphBox.Transform( GlyphTransform );
+
+		//	accumulate this into the overall box
+		TextBounds.Accumulate( ThisGlyphBox );
+
 		TFixedArray<float3,4> VertPositions;
-		VertPositions.Add( GlyphPos + float3( pGlyph->m_GlyphBox.GetLeft(), pGlyph->m_GlyphBox.GetTop(), 0.f ) );
-		VertPositions.Add( GlyphPos + float3( pGlyph->m_GlyphBox.GetRight(), pGlyph->m_GlyphBox.GetTop(), 0.f ) );
-		VertPositions.Add( GlyphPos + float3( pGlyph->m_GlyphBox.GetRight(), pGlyph->m_GlyphBox.GetBottom(), 0.f ) );
-		VertPositions.Add( GlyphPos + float3( pGlyph->m_GlyphBox.GetLeft(), pGlyph->m_GlyphBox.GetBottom(), 0.f ) );
+		VertPositions.Add( float3( ThisGlyphBox.GetLeft(), ThisGlyphBox.GetTop(), 0.f ) );
+		VertPositions.Add( float3( ThisGlyphBox.GetRight(), ThisGlyphBox.GetTop(), 0.f ) );
+		VertPositions.Add( float3( ThisGlyphBox.GetRight(), ThisGlyphBox.GetBottom(), 0.f ) );
+		VertPositions.Add( float3( ThisGlyphBox.GetLeft(), ThisGlyphBox.GetBottom(), 0.f ) );
 		
 		TFixedArray<const float2*,4> VertUVs;
 		VertUVs.Add( &pGlyph->GetUV_TopLeft() );
@@ -538,7 +666,7 @@ Bool TLRender::TRenderNodeTextureText::SetGlyphs()
 		}
 
 		//	move position along
-		GlyphPos.x += pGlyph->m_SpacingBox.GetWidth();
+		GlyphTransform.GetTranslate().x += pGlyph->m_SpacingBox.GetWidth();
 
 		//	move to next triangles
 		TriangleIndex += 2;

@@ -140,10 +140,10 @@ public:
 	Bool			IsValid() const								{	return m_IsValid;	}
 
 	void			Accumulate(const TBox2D& Box);				//	accumulate other box. copies other box if this is invalid
-//	void			Accumulate(const TBox& Box);				//	accumulate other box. copies other box if this is invalid
+	void			Accumulate(const TBox& Box);				//	accumulate other box. copies other box if this is invalid
 //	void			Accumulate(const TSphere& Sphere);			//	accumulate sphere
 	void			Accumulate(const float2& Point);			//	grow the box to these extents
-	void			Accumulate(const float3& Point)				{	Accumulate( float2( Point.x, Point.y ) );	}
+	void			Accumulate(const float3& Point)				{	Accumulate( Point.xy() );	}
 	void			Accumulate(const TArray<float2>& Points);	//	get the extents of all these points
 	void			Accumulate(const TArray<float3>& Points);	//	get the extents of all these points
 
@@ -152,6 +152,7 @@ public:
 
 	void			Transform(const TLMaths::TTransform& Transform);	//	transform this shape
 	void			Transform(const float2& Move)						{	m_Min += Move;	m_Max += Move;	}
+	void			Transform(const float3& Move)						{	m_Min += Move.xy();	m_Max += Move.xy();	}
 	void			Untransform(const TLMaths::TTransform& Transform);	//	untransform box
 
 	//	"intersection" is just a bool version of the distance check. (negative distance is an intersection)

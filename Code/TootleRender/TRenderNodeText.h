@@ -59,6 +59,17 @@ public:
 //--------------------------------------------------------
 class TLRender::TRenderNodeText : public TLRender::TRenderNode
 {
+protected:
+	/*
+	class TGlyphLine
+	{
+	public:
+		TLMaths::TBox2D		m_Bounds;				//	bounds of this LINE of glyphs
+		TArray<TRef>		m_GlyphNodes;			//	node refs of the glyph children
+		//TLMaths::TTransform	m_LineTransform;	//	transform for the line.
+	};
+	*/
+
 public:
 	TRenderNodeText(TRefRef RenderNodeRef,TRefRef TypeRef);
 
@@ -66,8 +77,10 @@ public:
 
 	TRefRef					GetFontRef() const							{	return m_FontRef;	}
 	void					SetFontRef(TRefRef FontRef)					{	m_FontRef = FontRef;	}
-	const TString&			GetText() const								{	return m_Text;	}
-	void					SetText(const TString& Text);				//	setup new string
+	const TString&			GetString() const							{	return m_Text;	}
+	DEPRECATED const TString&	GetText() const							{	return m_Text;	}
+	void					SetString(const TString& String);			//	setup new string
+	DEPRECATED void			SetText(const TString& String)				{	SetString( String );	}
 	Bool					SetTextBox(const TLMaths::TBox2D& Box);		//	update box - returns TRUE if it's changed
 	Bool					SetTextBox(const TLMaths::TShape& Shape);	//	update box - returns TRUE if it's changed
 	Bool					SetTextBox(const TLMaths::TShape* pShape)	{	return pShape ? SetTextBox( *pShape ) : SetTextBoxInvalid();	}
@@ -76,7 +89,10 @@ public:
 	virtual Bool			Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList);	//	our overloaded renderer
 
 protected:
-	virtual Bool			SetGlyphs()=0;			//	setup child glyph render objects
+	virtual Bool			SetGlyphs(TLMaths::TBox2D& TextBounds)=0;		//	setup child glyph render objects
+	void					RealignGlyphs(TLMaths::TBox2D& TextBounds);		//	realign the glyphs according to our bounds box - the box provided is the box the glyphs take up
+
+	void					OnStringChanged()							{	m_GlyphsValid = FALSE;	}
 
 protected:
 	TRef					m_FontRef;
@@ -84,7 +100,7 @@ protected:
 
 	TLMaths::TBox2D			m_TextBox;				//	currently only a box is supported
 	Type2<TRef>				m_AlignMode;			//	horizontal and vertical alignment mode
-	TRef					m_ScaleMode;			//	scale mode, if invalid no scaling applied
+	TRef					m_ScaleMode;			//	scale mode, if invalid no scaling applied. Note: if you scale the text, and then set a scale mode you will lose your original scale info (or at least on whatever axis is affected by the mode)
 
 private:
 	Bool					m_GlyphsValid;			//	if TRUE we need to re-generate glyphs
@@ -101,8 +117,8 @@ public:
 	TRenderNodeVectorText(TRefRef RenderNodeRef,TRefRef TypeRef);
 
 protected:
-	virtual Bool			SetGlyphs();			//	setup child glyph render objects
-	void					SetGlyph(TRenderNodeVectorGlyph& RenderGlyph,TLAsset::TFont& Font,float3& GlyphPos,u16 Char);
+	virtual Bool			SetGlyphs(TLMaths::TBox2D& TextBounds);			//	setup child glyph render objects
+	void					SetGlyph(TRenderNodeVectorGlyph& RenderGlyph,TLAsset::TFont& Font,float3& GlyphPos,u16 Char,TLMaths::TBox2D& GlyphBounds);
 };
 
 
@@ -116,12 +132,12 @@ public:
 	TRenderNodeTextureText(TRefRef RenderNodeRef,TRefRef TypeRef);
 
 protected:
-	virtual Bool					SetGlyphs();							//	setup geometry
+	virtual Bool					SetGlyphs(TLMaths::TBox2D& TextBounds);	//	setup geometry
 	virtual TPtr<TLAsset::TMesh>&	GetMeshAsset(Bool BlockLoad=FALSE)			{	return m_pMesh;	}
 	virtual void					Initialise(TLMessaging::TMessage& Message);
 
 protected:
-	TPtr<TLAsset::TMesh>	m_pMesh;				//	mesh with our "sprites" in
+	TPtr<TLAsset::TMesh>			m_pMesh;				//	mesh with our "sprites" in
 };
 
 
