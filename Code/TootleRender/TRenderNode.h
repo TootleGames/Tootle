@@ -263,11 +263,13 @@ protected:
 };
 
 
-template<> FORCEINLINE const TLMaths::TShapeBox&		TLRender::TRenderNode::GetLocalBounds()		{	CalcLocalBounds( m_BoundsBox.m_LocalShape );		return m_BoundsBox.m_LocalShape;	}
-template<> FORCEINLINE const TLMaths::TShapeBox2D&		TLRender::TRenderNode::GetLocalBounds()		{	CalcLocalBounds( m_BoundsBox2D.m_LocalShape );		return m_BoundsBox2D.m_LocalShape;	}
-template<> FORCEINLINE const TLMaths::TShapeSphere&		TLRender::TRenderNode::GetLocalBounds()		{	CalcLocalBounds( m_BoundsSphere.m_LocalShape );		return m_BoundsSphere.m_LocalShape;	}
-template<> FORCEINLINE const TLMaths::TShapeSphere2D&	TLRender::TRenderNode::GetLocalBounds()		{	CalcLocalBounds( m_BoundsSphere2D.m_LocalShape );	return m_BoundsSphere2D.m_LocalShape;	}
-
+namespace TLRender
+{
+	template<> FORCEINLINE const TLMaths::TShapeBox&		TRenderNode::GetLocalBounds()		{	CalcLocalBounds( m_BoundsBox.m_LocalShape );		return m_BoundsBox.m_LocalShape;	}
+	template<> FORCEINLINE const TLMaths::TShapeBox2D&		TRenderNode::GetLocalBounds()		{	CalcLocalBounds( m_BoundsBox2D.m_LocalShape );		return m_BoundsBox2D.m_LocalShape;	}
+	template<> FORCEINLINE const TLMaths::TShapeSphere&		TRenderNode::GetLocalBounds()		{	CalcLocalBounds( m_BoundsSphere.m_LocalShape );		return m_BoundsSphere.m_LocalShape;	}
+	template<> FORCEINLINE const TLMaths::TShapeSphere2D&	TRenderNode::GetLocalBounds()		{	CalcLocalBounds( m_BoundsSphere2D.m_LocalShape );	return m_BoundsSphere2D.m_LocalShape;	}
+}
 
 //---------------------------------------------------------------
 //	QuadTreeNode for render nodes

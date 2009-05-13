@@ -70,7 +70,7 @@ void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 	TPtr<TBinaryTree>& pBoxData = Message.GetChild("Box");
 	if ( pBoxData )
 	{
-		TPtr<TLMaths::TShape>& pBoxShape = TLMaths::ImportShapeData( *pBoxData );
+		const TPtr<TLMaths::TShape>& pBoxShape = TLMaths::ImportShapeData( *pBoxData );
 		if ( pBoxShape )
 			SetTextBox( pBoxShape );
 	}

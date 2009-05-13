@@ -231,6 +231,7 @@ protected:
 	void					RemoveColourAt(u16 VertexIndex);	//	remove a vertex colour 
 	
 	template<class SHAPETYPE> SHAPETYPE&		GetBoundsShape()				{	TLDebug_Break("Specialise this for shapes we don't currently support");	static SHAPETYPE g_DummyShape;	return g_DummyShape;	}
+	
 	template<class SHAPETYPE> FORCEINLINE void	CalcBounds(SHAPETYPE& Shape)	{	if ( !Shape.IsValid() ) Shape.m_Shape.Accumulate( m_Vertexes );	}
 	
 	void					AddTriangles(const TArray<Triangle>& OtherPolygons,u32 OffsetVertexIndex);
@@ -269,11 +270,13 @@ protected:
 	TFlags<TMeshFlags,u8>	m_Flags;				//	mesh flags
 };
 
-template<> FORCEINLINE TLMaths::TShapeBox&			TLAsset::TMesh::GetBoundsShape()	{	return m_BoundsBox;	}
-template<> FORCEINLINE TLMaths::TShapeBox2D&		TLAsset::TMesh::GetBoundsShape()	{	return m_BoundsBox2D;	}
-template<> FORCEINLINE TLMaths::TShapeSphere&		TLAsset::TMesh::GetBoundsShape()	{	return m_BoundsSphere;	}
-template<> FORCEINLINE TLMaths::TShapeSphere2D&		TLAsset::TMesh::GetBoundsShape()	{	return m_BoundsSphere2D;	}
-
+namespace TLAsset
+{
+	template<> FORCEINLINE TLMaths::TShapeBox&			TMesh::GetBoundsShape()	{	return m_BoundsBox;	}
+	template<> FORCEINLINE TLMaths::TShapeBox2D&		TMesh::GetBoundsShape()	{	return m_BoundsBox2D;	}
+	template<> FORCEINLINE TLMaths::TShapeSphere&		TMesh::GetBoundsShape()	{	return m_BoundsSphere;	}
+	template<> FORCEINLINE TLMaths::TShapeSphere2D&		TMesh::GetBoundsShape()	{	return m_BoundsSphere2D;	}
+}
 
 
 
