@@ -168,8 +168,11 @@ public:
 	void									Copy(const TRenderNode& OtherRenderNode);	//	copy render object DOES NOT COPY CHILDREN or parent! just properties
 
 	FORCEINLINE TBinaryTree&				GetData()									{	return m_Data;	}
-	FORCEINLINE TPtr<TBinaryTree>			GetData(TRefRef DataRef)					{	return GetData().GetChild( DataRef );	}
-	FORCEINLINE TPtr<TBinaryTree>			AddData(TRefRef DataRef)					{	return GetData().AddChild( DataRef );	}
+	FORCEINLINE TPtr<TBinaryTree>&			GetData(TRefRef DataRef)					{	return GetData().GetChild( DataRef );	}
+	FORCEINLINE TPtr<TBinaryTree>&			AddData(TRefRef DataRef)					{	return GetData().AddChild( DataRef );	}
+
+	void									SetAttachDatum(TRefRef DatumRef);			//	change the datum we're attached to. Sets the data and does an immediate translate as required
+	FORCEINLINE TRef						GetAttachDatum()							{	TRef DatumRef;	return GetData().ImportData("AttachDatum", DatumRef ) ? DatumRef : TRef();	}
 
 	//	overloaded render routine for generic stuff. if this returns TRUE then continue with default RenderNode rendering - 
 	//	if FALSE presumed we are doing psuedo rendering ourselves (creating RenderNodes and rendering them to the render target)
@@ -207,6 +210,8 @@ public:
 	const TLMaths::TShapeSphere&			GetLocalBoundsSphere()							{	CalcLocalBounds( m_BoundsSphere.m_LocalShape );			return m_BoundsSphere.m_LocalShape;	}
 	const TLMaths::TShapeSphere2D&			GetLocalBoundsSphere2D()						{	CalcLocalBounds( m_BoundsSphere2D.m_LocalShape );		return m_BoundsSphere2D.m_LocalShape;	}
 	FORCEINLINE const TLMaths::TShape*		GetLocalDatum(TRefRef DatumRef);				//	extract a datum from our mesh - unless a special ref is used to get bounds shapes
+	Bool									GetLocalDatumPos(TRefRef DatumRef,float3& Position);	//	get the position of a datum in local space. returns FALSE if no such datum
+	Bool									GetWorldDatumPos(TRefRef DatumRef,float3& Position);	//	get the position of a datum in local space. returns FALSE if no such datum. Currently will recalc the world transform if it's out of date
 	
 	//	gr: not needed? if required uncomment
 	//const TLMaths::TShapeBox&				GetLocalBoundsBox() const					{	return m_BoundsBox.m_LocalShape;	}

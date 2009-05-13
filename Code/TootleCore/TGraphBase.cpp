@@ -5,25 +5,18 @@
 //--------------------------------------------------------------------	
 //	import scheme into this graph
 //--------------------------------------------------------------------	
-Bool TLGraph::TGraphBase::ImportScheme(const TPtr<TLAsset::TScheme>& pScheme,TRefRef ParentNodeRef,Bool StrictNodeRefs)
+Bool TLGraph::TGraphBase::ImportScheme(const TLAsset::TScheme& Scheme,TRefRef ParentNodeRef,Bool StrictNodeRefs)
 {
-	if ( !pScheme )
-	{
-		TLDebug_Break("Scheme expected");
-		return FALSE;
-	}
-
-	if ( pScheme->GetAssetType() != "Scheme" )
+	//	just do a quick type check...
+	if ( Scheme.GetAssetType() != "Scheme" )
 	{
 		TTempString Debug_String("Trying to import scheme asset ");
-		pScheme->GetAssetRef().GetString( Debug_String );
+		Scheme.GetAssetRef().GetString( Debug_String );
 		Debug_String.Append(" but is wrong asset type: ");
-		pScheme->GetAssetType().GetString( Debug_String );
+		Scheme.GetAssetType().GetString( Debug_String );
 		TLDebug_Break( Debug_String );
 		return FALSE;
 	}
-
-	const TLAsset::TScheme& Scheme = *pScheme;
 
 	//	keep track of all the node's we've imported so we can remove them again if it fails
 	TArray<TRef> ImportedNodes;

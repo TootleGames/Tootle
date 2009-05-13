@@ -1030,6 +1030,15 @@ TRef TLGraph::TGraph<T>::CreateNode(TRefRef NodeRef,TRefRef TypeRef,TRefRef Pare
 template <class T>
 TPtr<T> TLGraph::TGraph<T>::DoCreateNode(TRef NodeRef,TRefRef TypeRef,TPtr<T> pParent,TLMessaging::TMessage* pInitMessage,Bool StrictNodeRef)
 {
+	//	counter is only 1? did you try and remove a c-pointer? this?
+	//	must be at least 2 because the param is NOT a reference
+	if ( pParent && pParent.GetRefCount() == 1 )
+	{
+		if ( !TLDebug_Break("DoCreateNode's parent with a new TPtr... called with a c-pointer and not a real TPtr or TRef?") )
+			return NULL;
+	}
+
+
 	TPtr<T> pNewNode;
 
 	//	if we don't have strict node refs, make sure this node ref isn't already in use
@@ -1347,6 +1356,14 @@ Bool TLGraph::TGraph<T>::RemoveChildren(TPtr<T> pNode)
 {
 	if ( !pNode )
 		return FALSE;
+
+	//	counter is only 1? did you try and remove a c-pointer? this?
+	//	must be at least 2 because the param is NOT a reference
+	if ( pNode.GetRefCount() == 1 )
+	{
+		if ( !TLDebug_Break("RemoveChildren called with a new TPtr... called with a c-pointer and not a real TPtr or TRef?") )
+			return NULL;
+	}
 
 	Bool AnyRemoved = FALSE;
 

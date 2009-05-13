@@ -594,6 +594,11 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 	if ( Message.ImportData("Colour", m_Colour ) )
 		OnColourChanged();
 
+	//	import attach datum
+	TRef AttachDatum;
+	if ( Message.ImportData("Attach", AttachDatum ) )
+		SetAttachDatum( AttachDatum );
+
 	//	do inherited init
 	TLGraph::TGraphNode<TLRender::TRenderNode>::Initialise( Message );
 }
@@ -798,3 +803,89 @@ void TLRender::TRenderNode::CalcWorldTransform(TRenderNode* pRootNode)
 	}
 }
 
+
+//---------------------------------------------------------
+//	change the datum we're attached to. Sets the data and does an immediate translate as required
+//---------------------------------------------------------
+void TLRender::TRenderNode::SetAttachDatum(TRefRef DatumRef)
+{
+	//	no longer valid, remove from data if it's there
+	if ( !DatumRef.IsValid() )
+	{
+		GetData().RemoveChild("AttachDatum");
+		return;
+	}
+
+	//	write changes to data 
+	TPtr<TBinaryTree>& pData = GetData().GetChild("AttachDatum");
+	if ( pData )
+	{
+		pData->Empty();
+		pData->Write( DatumRef );
+	}
+	else
+	{
+		GetData().ExportData("AttachDatum", DatumRef );
+	}
+
+	//	do an immediate transform if we can
+	TLRender::TRenderNode* pParent = GetParent();
+	if ( pParent )
+	{
+		//	get position of datum
+		const TLMaths::TShape* pDatum = pParent->GetLocalDatum( DatumRef );
+		if ( pDatum )
+		{
+			SetTranslate( pDatum->GetCenter() );
+		}
+		else
+		{
+			TLDebug_Break("Failed to find datum to attach to on parent render node - setup \"async attach to datum\" routine? or just wait for a OnDatumChanged message?");
+		}
+	}
+	else
+	{
+		TLDebug_Break("Set attach datum to a node with no parent...");
+	}		
+}
+
+
+//---------------------------------------------------------
+//	get the position of a datum in local space. returns FALSE if no such datum
+//---------------------------------------------------------
+Bool TLRender::TRenderNode::GetLocalDatumPos(TRefRef DatumRef,float3& Position)
+{
+	//	get datum
+	const TLMaths::TShape* pDatum = GetLocalDatum( DatumRef );
+	if ( !pDatum )
+		return FALSE;
+
+	//	get position
+	Position = pDatum->GetCenter();
+	return TRUE;
+}
+
+
+//---------------------------------------------------------
+//	get the position of a datum in local space. returns FALSE if no such datum. Currently will recalc the world transform if it's out of date
+//---------------------------------------------------------
+Bool TLRender::TRenderNode::GetWorldDatumPos(TRefRef DatumRef,float3& Position)
+{
+	//	get local pos of datum first
+	if ( !GetLocalDatumPos( DatumRef, Position ) )
+		return FALSE;
+
+	TLDebug_Break("gr: Untested code ahead");
+
+	//	get the world transform
+	CalcWorldTransform();
+
+	//	transform is out of date so cant use it
+	if ( IsWorldTransformValid() != SyncTrue )
+		return FALSE;
+
+	//	transform the position by world transform
+	m_WorldTransform.Transform( Position );
+	
+	return TRUE;
+}

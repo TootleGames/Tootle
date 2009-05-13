@@ -68,8 +68,13 @@ Bool TLMaths::ImportShapeData(TBinaryTree& Data,TLMaths::TShape& Shape)
 {
 	//	read type
 	TRef ShapeType;
-	if ( !Data.Read( ShapeType ) )
-		return NULL;
+
+	//	gr: new method, import - for backwards compatibility do a read if there is no "type" child
+	if ( !Data.ImportData("Type", ShapeType ) )
+	{
+		if ( !Data.Read( ShapeType ) )
+			return NULL;
+	}
 
 	//	make sure shape type matches
 	if ( ShapeType != Shape.GetShapeType() )

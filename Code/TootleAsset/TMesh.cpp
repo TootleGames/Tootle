@@ -613,13 +613,13 @@ SyncBool TLAsset::TMesh::ExportData(TBinaryTree& Data)
 		TLMaths::ExportShapeData( Data.AddChild("BndB"), m_BoundsBox );
 
 	if ( m_BoundsBox2D.IsValid() )
-		TLMaths::ImportShapeData( Data.AddChild("BndB2"), m_BoundsBox2D );
+		TLMaths::ExportShapeData( Data.AddChild("BndB2"), m_BoundsBox2D );
 
 	if ( m_BoundsSphere.IsValid() )
-		TLMaths::ImportShapeData( Data.AddChild("BndS"), m_BoundsSphere );
+		TLMaths::ExportShapeData( Data.AddChild("BndS"), m_BoundsSphere );
 
 	if ( m_BoundsSphere2D.IsValid() )
-		TLMaths::ImportShapeData( Data.AddChild("BndS2"), m_BoundsSphere2D );
+		TLMaths::ExportShapeData( Data.AddChild("BndS2"), m_BoundsSphere2D );
 
 	//	export flags
 	Data.ExportData( "Flags", m_Flags.GetData() );
