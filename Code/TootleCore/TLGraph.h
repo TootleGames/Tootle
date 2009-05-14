@@ -117,7 +117,7 @@ public:
 protected:
 	template<typename MATCHTYPE>
 	FORCEINLINE Bool			IsInGraph(const MATCHTYPE& Value,Bool CheckRequestQueue=TRUE)		{	return FindNodeMatch( Value, CheckRequestQueue ).IsValid();	}
-	FORCEINLINE Bool			IsInGraph(TRefRef NodeRef,Bool CheckRequestQueue=TRUE)				{	return FindNode( NodeRef, CheckRequestQueue ).IsValid();	}
+	virtual Bool				IsInGraph(TRefRef NodeRef,Bool CheckRequestQueue=TRUE)				{	return FindNode( NodeRef, CheckRequestQueue ).IsValid();	}
 	FORCEINLINE Bool			IsInGraph(TPtr<T>& pNode,Bool CheckRequestQueue=TRUE)			{	return FindNode( pNode->GetNodeRef(), CheckRequestQueue ).IsValid();	}
 	FORCEINLINE Bool			IsInRequestQueue(TPtr<T>& pNode) const		{	return IsInRequestQueue( pNode->GetNodeRef() );	}
 	FORCEINLINE Bool			IsInRequestQueue(TRefRef NodeRef) const		{	return m_RequestQueue.Exists( NodeRef );	}

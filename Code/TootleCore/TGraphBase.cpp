@@ -180,6 +180,93 @@ TPtr<TLAsset::TScheme> TLGraph::TGraphBase::ExportScheme(TRef SchemeAssetRef,TRe
 	return pScheme;
 }
 
+	
+//--------------------------------------------------------------------	
+//	re-import scheme into this graph. Nodes will be re-sent an Initialise message. 
+//	Add missing and delete new (non-scheme) nodes via params
+//--------------------------------------------------------------------	
+Bool TLGraph::TGraphBase::ReimportScheme(const TLAsset::TScheme& Scheme,TRefRef ParentNodeRef,Bool StrictNodeRefs,Bool AddMissingNodes,Bool RemoveUnknownNodes)
+{
+	if ( !StrictNodeRefs )
+	{
+		TLDebug_Break("Cannot use the ReimportScheme system if we didn't use strict node ref's the first time. Seeing as you passed in false, can only assume you didn't use strict refs orignally...");
+		return FALSE;
+	}
+
+	//	just do a quick type check...
+	if ( Scheme.GetAssetType() != "Scheme" )
+	{
+		TTempString Debug_String("Trying to import scheme asset ");
+		Scheme.GetAssetRef().GetString( Debug_String );
+		Debug_String.Append(" but is wrong asset type: ");
+		Scheme.GetAssetType().GetString( Debug_String );
+		TLDebug_Break( Debug_String );
+		return FALSE;
+	}
+
+	//	loop through all the scheme nodes
+	const TPtrArray<TLAsset::TSchemeNode>& SchemeNodes = Scheme.GetNodes();
+	for ( u32 n=0;	n<SchemeNodes.GetSize();	n++ )
+	{
+		TArray<TRef> NodeImportedNodes;
+		if ( !ReimportSchemeNode( *SchemeNodes[n], ParentNodeRef, StrictNodeRefs, AddMissingNodes, RemoveUnknownNodes ) )
+		{
+			//	remove nodes we added 
+			RemoveNodes( NodeImportedNodes );
+			continue;
+		}
+	}
+
+	return TRUE;
+}
+
+
+//--------------------------------------------------------------------	
+//	re-init and restore node tree
+//--------------------------------------------------------------------	
+Bool TLGraph::TGraphBase::ReimportSchemeNode(const TLAsset::TSchemeNode& SchemeNode,TRefRef ParentRef,Bool StrictNodeRefs,Bool AddMissingNodes,Bool RemoveUnknownNodes)
+{
+	//	create an init message with all the data in the SchemeNode
+	TLMessaging::TMessage Message( TLCore::InitialiseRef );
+	Message.ReferenceDataTree( SchemeNode.GetData(), FALSE );
+
+	//	restore node if missing
+	if ( !IsInGraph( SchemeNode.GetNodeRef() ) )
+	{
+		//	don't restore node
+		if ( !AddMissingNodes )
+			return TRUE;
+	
+		//	re-create node
+		TFixedArray<TRef,100> ImportedNodes;
+		return ImportSchemeNode( SchemeNode, ParentRef, ImportedNodes, TRUE );
+	}
+
+	//	node exists, re-init
+	SendMessageToNode( SchemeNode.GetNodeRef(), Message );
+
+	//	check for children of this node that are NOT in our scheme
+	if ( RemoveUnknownNodes )
+	{
+		TLDebug_Break("todo: gr: needs a bit of thought of how to do this without access to children...");
+	}
+
+	//	re-import child scheme nodes
+	const TPtrArray<TLAsset::TSchemeNode>& ChildSchemeNodes = SchemeNode.GetChildren();
+	for ( u32 n=0;	n<ChildSchemeNodes.GetSize();	n++ )
+	{
+		const TPtr<TLAsset::TSchemeNode>& pChildSchemeNode = ChildSchemeNodes[n];
+
+		if ( !ReimportSchemeNode( *pChildSchemeNode, SchemeNode.GetNodeRef(), StrictNodeRefs, AddMissingNodes, RemoveUnknownNodes ) )
+			return FALSE;
+	}
+
+	return TRUE;
+}
+
+
+
+
 
 
 
@@ -192,3 +279,5 @@ TLGraph::TGraphNodeBase::TGraphNodeBase(TRefRef NodeRef,TRefRef NodeTypeRef) :
 	m_NodeRef.GetString( m_Debug_NodeRefString );	
 	m_NodeTypeRef.GetString( m_Debug_NodeTypeRefString );
 }
+
+
