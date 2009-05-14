@@ -186,8 +186,8 @@ public:
 	Bool									SetWorldTransformOld(Bool SetPosOld,Bool SetTransformOld,Bool SetShapesOld);				//	downgrade all world shape/transform states from valid to old. returns if anyhting was downgraded
 	FORCEINLINE Bool						SetWorldTransformOld()						{	return SetWorldTransformOld( TRUE, TRUE, TRUE );	}
 	FORCEINLINE SyncBool					IsWorldTransformValid() const				{	return m_WorldTransformValid;	}
-	void									CalcWorldTransform(TRenderNode* pRootNode=NULL);	//	explicitly calculate the world transform. This is a bit rendundant as it's calculated via the render but sometimes we need it outside of that. If WorldTransform is Valid(TRUE) then this is not recalculated. THe root render node should be provided (but in reality not a neccessity, see trac: http://grahamgrahamreeves.getmyip.com:1984/Trac/wiki/KnownIssues )
-
+	const TLMaths::TTransform&				GetWorldTransform(TRenderNode* pRootNode=NULL);	//	return the world transform. will explicitly calculate the world transform if out of date. This is a bit rendundant as it's calculated via the render but sometimes we need it outside of that. If WorldTransform is Valid(TRUE) then this is not recalculated. THe root render node should be provided (but in reality not a neccessity, see trac: http://grahamgrahamreeves.getmyip.com:1984/Trac/wiki/KnownIssues )
+	
 	const float3&							GetWorldPos();								//	calculate our new world position from the latest scene transform
 	FORCEINLINE const float3&				GetWorldPos(SyncBool& IsValid) 				{	GetWorldPos();	IsValid = m_WorldPosValid;	return m_WorldPos;	}
 
@@ -210,6 +210,8 @@ public:
 	const TLMaths::TShapeSphere&			GetLocalBoundsSphere()							{	CalcLocalBounds( m_BoundsSphere.m_LocalShape );			return m_BoundsSphere.m_LocalShape;	}
 	const TLMaths::TShapeSphere2D&			GetLocalBoundsSphere2D()						{	CalcLocalBounds( m_BoundsSphere2D.m_LocalShape );		return m_BoundsSphere2D.m_LocalShape;	}
 	FORCEINLINE const TLMaths::TShape*		GetLocalDatum(TRefRef DatumRef);				//	extract a datum from our mesh - unless a special ref is used to get bounds shapes
+	template<class SHAPETYPE>
+	FORCEINLINE const SHAPETYPE*			GetLocalDatum(TRefRef DatumRef);				//	get a datum of a specific type - returns NULL if it doesn't exist or is of a different type
 	Bool									GetLocalDatumPos(TRefRef DatumRef,float3& Position);	//	get the position of a datum in local space. returns FALSE if no such datum
 	Bool									GetWorldDatumPos(TRefRef DatumRef,float3& Position);	//	get the position of a datum in local space. returns FALSE if no such datum. Currently will recalc the world transform if it's out of date
 	
@@ -380,6 +382,7 @@ FORCEINLINE void TLRender::TRenderNode::OnMeshChanged()
 						) );	
 }
 
+
 //---------------------------------------------------------------
 //	extract a datum from our mesh - unless a special ref is used to get bounds shapes
 //---------------------------------------------------------------
@@ -403,6 +406,24 @@ FORCEINLINE const TLMaths::TShape* TLRender::TRenderNode::GetLocalDatum(TRefRef 
 			return pMesh->GetDatum( DatumRef );
 		}
 	};
+}
+
+//---------------------------------------------------------------
+//	get a datum of a specific type - returns NULL if it doesn't exist or is of a different type
+//---------------------------------------------------------------
+template<class SHAPETYPE> 
+FORCEINLINE const SHAPETYPE* TLRender::TRenderNode::GetLocalDatum(TRefRef DatumRef)
+{
+	const TLMaths::TShape* pDatum = GetLocalDatum( DatumRef );
+	if ( !pDatum )
+		return NULL;
+
+	//	check matching type
+	if ( pDatum->GetShapeType() != SHAPETYPE::GetShapeType_Static() )
+		return NULL;
+
+	//	cast to desired type
+	return static_cast<const SHAPETYPE*>( pDatum );
 }
 
 

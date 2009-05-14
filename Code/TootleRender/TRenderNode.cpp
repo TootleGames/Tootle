@@ -745,16 +745,17 @@ Bool TLRender::TRenderNode::SetWorldTransformOld(Bool SetPosOld,Bool SetTransfor
 
 
 //---------------------------------------------------------
-//	explicitly calculate the world transform. This is a bit rendundant as it's 
+//	return the world transform. will explicitly calculate the world transform if out of date. 
+//	This is a bit rendundant as it's 
 //	calculated via the render but sometimes we need it outside of that. 
 //	If WorldTransform is Valid(TRUE) then this is not recalculated. 
 //	THe root render node should be provided (but in reality not a neccessity, see trac: http://grahamgrahamreeves.getmyip.com:1984/Trac/wiki/KnownIssues )
 //---------------------------------------------------------
-void TLRender::TRenderNode::CalcWorldTransform(TRenderNode* pRootNode)
+const TLMaths::TTransform& TLRender::TRenderNode::GetWorldTransform(TRenderNode* pRootNode)
 {
 	//	doesn't require recalculation
 	if ( m_WorldTransformValid == SyncTrue )
-		return;
+		return m_WorldTransform;
 
 	//	get our parent's world transform
 	TRenderNode* pParent = GetParent();
@@ -763,27 +764,25 @@ void TLRender::TRenderNode::CalcWorldTransform(TRenderNode* pRootNode)
 	if ( !pParent || this == pRootNode )
 	{
 		this->SetWorldTransform( GetTransform() );
-		return;
+		return m_WorldTransform;
 	}
 
 	//	if we don't inherit transforms then stop here - our world transform is the same as our local transform
 	if ( GetRenderFlags().IsSet(TLRender::TRenderNode::RenderFlags::ResetScene) )
 	{
 		SetWorldTransform( GetTransform() );
-		return;
+		return m_WorldTransform;
 	}
 	
 	//	recalculate our parent's world transform
-	pParent->CalcWorldTransform( pRootNode );
+	const TLMaths::TTransform& ParentWorldTransform = pParent->GetWorldTransform( pRootNode );
 
 	//	we can now calculate our transform based on our parent.
 	if ( pParent->IsWorldTransformValid() != SyncTrue )
 	{
 		TLDebug_Break("error - parent couldn't calculate it's world transform... we can't calcualte ours.");
-		return;
+		return m_WorldTransform;
 	}
-
-	const TLMaths::TTransform& ParentWorldTransform = pParent->m_WorldTransform;
 
 	//	just inherit parent's if no local transform
 	if ( !GetTransform().HasAnyTransform() )
@@ -801,6 +800,8 @@ void TLRender::TRenderNode::CalcWorldTransform(TRenderNode* pRootNode)
 		//	set new world transform
 		SetWorldTransform( NewWorldTransform );
 	}
+
+	return m_WorldTransform;
 }
 
 
@@ -877,15 +878,15 @@ Bool TLRender::TRenderNode::GetWorldDatumPos(TRefRef DatumRef,float3& Position)
 
 	TLDebug_Break("gr: Untested code ahead");
 
-	//	get the world transform
-	CalcWorldTransform();
+	//	get the world transform (this will recalc it if out of date)
+	const TLMaths::TTransform& WorldTransform = GetWorldTransform();
 
 	//	transform is out of date so cant use it
 	if ( IsWorldTransformValid() != SyncTrue )
 		return FALSE;
 
 	//	transform the position by world transform
-	m_WorldTransform.Transform( Position );
+	WorldTransform.Transform( Position );
 	
 	return TRUE;
 }
