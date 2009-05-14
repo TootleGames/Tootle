@@ -83,7 +83,7 @@ void TTimelineInstance::OnEndOfTimeline()
 	TLDebug_Print("Reached the end of the timeline");
 
 	// Broadcast a message to say the timeline has finished
-	TLMessaging::TMessage Message("OnComplete");
+	TLMessaging::TMessage Message("OnComplete", m_AssetScriptRef );
 
 	PublishMessage(Message);
 }

@@ -43,6 +43,12 @@ typedef const TRef& TRefRef;	//	TRefRef is just shorthand for passing ref's arou
 #define TRef_Static4(a,b,c,d)					TRef_Static(a,b,c,d,SPACE)
 #define TRef_Static5(a,b,c,d,e)					TRef_Static(a,b,c,d,e)
 #define TRef_Static(a,b,c,d,e)					((u32)(TLRef_StaticOffsetChar(0,a)|TLRef_StaticOffsetChar(1,b)|TLRef_StaticOffsetChar(2,c)|TLRef_StaticOffsetChar(3,d)|TLRef_StaticOffsetChar(4,e)))
+#define STRef1(a)								TRef_Static1(a)
+#define STRef2(a,b)								TRef_Static2(a,b)
+#define STRef3(a,b,c)							TRef_Static3(a,b,c)
+#define STRef4(a,b,c,d)							TRef_Static4(a,b,c,d)
+#define STRef5(a,b,c,d,e)						TRef_Static5(a,b,c,d,e)
+#define STRef(a,b,c,d,e)						TRef_Static(a,b,c,d,e)
 
 namespace TLRef
 {

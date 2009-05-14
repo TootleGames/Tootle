@@ -81,6 +81,7 @@ public:
 	FORCEINLINE Bool								ReadAll(TBinary& Data)				{	return Read( Data, GetSizeUnread() );	}	//	read the remaining data into this binary data
 	Bool											Read(TBinary& Data,u32 Length);		//	read a chunk of data into this binary data
 	FORCEINLINE Bool								ReadString(TString& String)			{	return ReadArray( String.GetStringArray() );	}
+//	template<typename TYPE> FORCEINLINE Bool		ReadConvert(TYPE& Var);				//	read data, if the types mis match do a conversion (= operator)
 	Bool											ReadData(u8* pData,u32 Length,Bool CutData=FALSE);	//	read data into address - CutData cuts the read data out of the array
 
 	template<typename TYPE> FORCEINLINE void	Write(const TYPE& Var)				{	SetDataTypeHint<TYPE>();	WriteData( (u8*)&Var, sizeof(TYPE) );		}
@@ -136,6 +137,32 @@ protected:
 };
 
 
+/*
+//--------------------------------------------------------------------
+//	read data, if the types mis match do a conversion (= operator)
+//--------------------------------------------------------------------
+template<typename TYPE> 
+FORCEINLINE Bool TBinary::ReadConvert(TYPE& Var)
+{
+	//	we don't know our type, we just have to read
+	if ( !GetDataTypeHint().IsValid() )
+		return Read( Var );
+
+	//	get the type of data Var is
+	TRef VarType = TLBinary::GetDataTypeRef<TYPE>();
+
+	//	is the same type anyway
+	if ( VarType == GetDataTypeHint() )
+		return Read( Var );
+
+	//	do conversion
+
+	//	gr: this was a genius idea, but need to get an instance of our HintType to copy into, or
+	//	at least cast to with ReadNoCopy... but cannot do it without some kinda ref->variable/alloc system
+	TLDebug_Break("not implemented yet");
+	return Read( Var );
+}
+*/
 
 //--------------------------------------------------------------------
 //	function specialisations

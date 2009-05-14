@@ -47,7 +47,7 @@ public:
 	template<class ARRAYTYPE> 
 	void						ExportArray(TRefRef ArrayRef,const ARRAYTYPE& Array,Bool WriteIfEmpty=FALSE);
 	template<typename TYPE> 
-	Bool						ImportData(TRefRef DataRef,TYPE& Data);					//	returns FALSE if failed, WAIT if nothing imported, TRUE if something imported
+	Bool						ImportData(TRefRef DataRef,TYPE& Data,Bool ConvertData=FALSE);					//	returns FALSE if failed, WAIT if nothing imported, TRUE if something imported
 	Bool						ImportDataString(TRefRef DataRef,TString& DataString);	//	gr: remove if I can get Read/Write() to work with a TString in TBinary
 	template<typename TYPE> 
 	void						ExportData(TRefRef DataRef,const TYPE& Data);
@@ -112,7 +112,7 @@ void TBinaryTree::ExportArray(TRefRef ArrayRef,const ARRAYTYPE& Array,Bool Write
 //	gr: changed back to Bool
 //------------------------------------------------------
 template<typename TYPE> 
-Bool TBinaryTree::ImportData(TRefRef DataRef,TYPE& Data)
+Bool TBinaryTree::ImportData(TRefRef DataRef,TYPE& Data,Bool ConvertData)
 {
 	//	get the first child with this ref
 	TPtr<TBinaryTree>& pData = GetChild( DataRef );
@@ -124,8 +124,17 @@ Bool TBinaryTree::ImportData(TRefRef DataRef,TYPE& Data)
 
 	//	read out var
 	pData->ResetReadPos();
-	if ( !pData->Read( Data ) )
-		return FALSE;
+/*
+	if ( ConvertData )
+	{
+		if ( !pData->ReadConvert( Data ) )
+			return FALSE;
+	}
+	else
+*/	{
+		if ( !pData->Read( Data ) )
+			return FALSE;
+	}
 
 	return TRUE;
 }

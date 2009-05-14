@@ -109,6 +109,31 @@ SyncBool TLFileSys::CreateLocalFileSys(TRef& FileSysRef,const TString& Directory
 
 
 //----------------------------------------------------------
+//	get a list of all files in all the file systems (gets refs out of the groups)
+//----------------------------------------------------------
+void TLFileSys::GetFileList(TArray<TRef>& FileList)
+{
+	if ( !g_pFileFactory )
+		return;
+
+	//	gr: update all file system file listings?
+
+	//	get the file groups
+	const TPtrArray<TFileGroup>& FileGroups = g_pFileFactory->GetFileGroups();
+	for ( u32 g=0;	g<FileGroups.GetSize();	g++ )
+	{
+		FileList.Add( FileGroups[g]->GetFileRef() );
+	}
+
+	//	just in case we don't find any files, maybe we need to add file list updates
+	if ( FileList.GetSize() == 0 )
+	{
+		TLDebug_Print("No files found in all file systems... file systems need file list updates?");
+	}
+}
+
+
+//----------------------------------------------------------
 //	directory manipulation - turns filename to dir, then chops off a dir at a time
 //----------------------------------------------------------
 Bool TLFileSys::GetParentDir(TString& Directory)

@@ -299,7 +299,8 @@ void TLRender::TRenderNodeText::RealignGlyphs(TLMaths::TBox2D& TextBounds)
 		//	we could use the existing translate for the TempBox but that's not working to work right
 		//	for Center/Right align. Need to store an original offset I suppose... work this all
 		//	into the next-revision where we have a different transform for each line
-		NewTransform.SetTranslate( GetTransform().GetTranslate() );
+		if ( GetTransform().HasTranslate() )
+			NewTransform.SetTranslate( GetTransform().GetTranslate() );
 
 		if ( m_AlignMode.x != TLRenderText::HAlignLeft || m_AlignMode.y != TLRenderText::VAlignTop )
 		{

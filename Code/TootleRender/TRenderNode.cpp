@@ -876,8 +876,6 @@ Bool TLRender::TRenderNode::GetWorldDatumPos(TRefRef DatumRef,float3& Position)
 	if ( !GetLocalDatumPos( DatumRef, Position ) )
 		return FALSE;
 
-	TLDebug_Break("gr: Untested code ahead");
-
 	//	get the world transform (this will recalc it if out of date)
 	const TLMaths::TTransform& WorldTransform = GetWorldTransform();
 

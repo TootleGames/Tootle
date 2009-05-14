@@ -179,7 +179,7 @@ SyncBool TLFileSys::TFile::Export(TPtr<TFileAsset>& pAssetFile)
 	{
 		//	masquerade as a generic binary file
 		pAssetFile->GetHeader().m_TootFileRef = TLFileSys::g_TootFileRef;
-		pAssetFile->GetHeader().m_AssetType = "Binary";
+		pAssetFile->GetHeader().m_AssetType = "Asset";
 
 		//	base code just sticks all our binary data into the root of the asset file 
 		TBinaryTree& BinaryTree = pAssetFile->GetData();

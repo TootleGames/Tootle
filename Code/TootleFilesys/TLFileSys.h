@@ -25,6 +25,7 @@ namespace TLFileSys
 
 	TPtr<TLFileSys::TFileSys>&	GetFileSys(TRefRef FileSysRef);		//	return a file system
 	void						GetFileSys(TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef FileSysRef,TRefRef FileSysTypeRef);	//	return all matching file systems to these refs/types
+	void						GetFileList(TArray<TRef>& FileList);																//	get a list of all files in all the file systems (gets refs out of the groups)
 
 	TPtr<TFile>&				GetFile(TRefRef FileRef,TRefRef FileTypeRef=TRef());	//	find the newest file with this file ref. if type invalid, just gets newest file with matching name
 
@@ -69,7 +70,8 @@ class TLFileSys::TFileFactory : public TClassFactory<TLFileSys::TFile>
 public:
 	TFileFactory()					{}
 
-	FORCEINLINE TPtr<TFileGroup>&	GetFileGroup(TRefRef FileRef)		{	return m_FileGroups.FindPtr( FileRef );	}
+	FORCEINLINE TPtr<TFileGroup>&				GetFileGroup(TRefRef FileRef)		{	return m_FileGroups.FindPtr( FileRef );	}
+	FORCEINLINE const TPtrArray<TFileGroup>&	GetFileGroups() const				{	return m_FileGroups;	}
 
 	TPtr<TLFileSys::TFile>&			CreateFileInstance(const TFileRef& FileRef,TRefRef FileSysRef,const TString& Filename);	//	create instance, init, add to group
 	Bool							RemoveFileInstance(TPtr<TLFileSys::TFile>& pFile);										//	delete instance, remove from group

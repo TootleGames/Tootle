@@ -110,7 +110,10 @@ TRef Mode_Init::Update(float Timestep)
 
 		//	problem creating placeholder asset...
 		if ( !pAsset )
+		{
+			TLDebug_Break("failed to create TEMP asset");
 			return "Failed";
+		}
 	}
 
 	return "AFGet";
@@ -130,6 +133,9 @@ TRef Mode_GetPlainFile::Update(float Timestep)
 		//	didn't find a file to convert, there is no file with this ref at all
 		if ( !GetPlainFile() )
 		{
+			TTempString Debug_String("failed to get plain file for asset ");
+			GetAssetRef().GetString( Debug_String );
+			TLDebug_Break( Debug_String );
 			return "Failed";
 		}
 	}
@@ -150,14 +156,26 @@ TRef Mode_GetPlainFile::Update(float Timestep)
 //------------------------------------------------------------
 TRef Mode_PlainFileLoad::Update(float Timestep)
 {
+	TPtr<TLFileSys::TFile>& pPlainFile = GetPlainFile();
+	if ( !pPlainFile )
+	{
+		TLDebug_Break("Plain file expected");
+		return "Failed";
+	}
+
 	//	load the plain file
-	TPtr<TLFileSys::TFileSys> pFileSys = GetPlainFile()->GetFileSys();
-	SyncBool LoadResult = pFileSys->LoadFile( GetPlainFile() );
+	TPtr<TLFileSys::TFileSys> pFileSys = pPlainFile->GetFileSys();
+	SyncBool LoadResult = pFileSys->LoadFile( pPlainFile );
 	if ( LoadResult == SyncWait )
 		return TRef();
 	
 	if ( LoadResult == SyncFalse )
+	{
+		TTempString Debug_String("Failed to load plain file ");
+		Debug_String.Append( pPlainFile->GetFilename() );
+		TLDebug_Break( Debug_String );
 		return "Failed";
+	}
 
 	//	convert to AssetFile
 	return "PFcAF";
@@ -243,14 +261,26 @@ TRef Mode_PlainFileCreateAssetFile::Update(float Timestep)
 TRef Mode_PlainFileExport::Update(float Timestep)
 {
 	Debug_PrintStep("Exporting plain file to asset file");
-	SyncBool ExportResult = GetPlainFile()->Export( GetAssetFile() );
+	TLFileSys::TFile* pPlainFile = GetPlainFile();
+	if ( !pPlainFile )
+	{
+		TLDebug_Break("Plain file expected");
+		return "Failed";
+	}
 
+	//	export
+	SyncBool ExportResult = pPlainFile->Export( GetAssetFile() );
 	if ( ExportResult == SyncWait )
 		return TRef();
 
 	//	failed to export our file into an asset file
 	if ( ExportResult == SyncFalse )
+	{
+		TTempString Debug_String("Failed to export plain file ");
+		Debug_String.Append( pPlainFile->GetFilename() );
+		Debug_String.Append(" to asset file");
 		return "Failed";
+	}
 
 	return "AFExport";
 }
@@ -295,6 +325,10 @@ TRef Mode_GetAssetFile::Update(float Timestep)
 	else
 	{
 		//	no file at all with a matching name
+		TTempString Debug_String("Failed to find any file with a file name/ref matching ");
+		GetAssetRef().GetString( Debug_String );
+		//TLDebug_Break( Debug_String );
+		TLDebug_Print( Debug_String );
 		return "Failed";
 	}
 
@@ -324,19 +358,40 @@ TRef Mode_GetAssetFile::Update(float Timestep)
 //------------------------------------------------------------
 TRef Mode_AssetFileLoad::Update(float Timestep)
 {
+	TPtr<TLFileSys::TFileAsset>& pAssetFile = GetAssetFile();
+	if ( !pAssetFile )
+	{
+		TLDebug_Break("Asset file expected");
+		return "Failed";
+	}
+
 	//	load the file
-	TPtr<TLFileSys::TFileSys> pFileSys = GetAssetFile()->GetFileSys();
-	TPtr<TLFileSys::TFile> pAssetFile = GetAssetFile();
-	SyncBool LoadResult = pFileSys->LoadFile( pAssetFile );
+	TPtr<TLFileSys::TFileSys> pFileSys = pAssetFile->GetFileSys();
+	if ( !pFileSys )
+	{
+		TLDebug_Break("File is missing an owner file system. Files should ALWAYS have an owner file system");
+		return "Failed";
+	}
+
+	//	load the asset file
+	TPtr<TLFileSys::TFile> pFile = pAssetFile;
+	SyncBool LoadResult = pFileSys->LoadFile( pFile );
 	if ( LoadResult == SyncWait )
 		return TRef();
 	
 	if ( LoadResult == SyncFalse )
+	{
+		TTempString Debug_String("File sys ");
+		pFileSys->GetFileSysRef().GetString( Debug_String );
+		Debug_String.Append(" failed to load file ");
+		Debug_String.Append( pAssetFile->GetFilename() );
+		TLDebug_Break( Debug_String );
 		return "Failed";
+	}
 
 	//	do export/create (same path as end of Mode_GetAssetFile)
 	//	if our new asset file needs to be written back to a normal file, do that
-	if ( GetAssetFile()->GetNeedsExport() )
+	if ( pAssetFile->GetNeedsExport() )
 	{
 		return "AFExport";
 	}
@@ -354,8 +409,8 @@ TRef Mode_AssetFileLoad::Update(float Timestep)
 TRef Mode_AssetFileImport::Update(float Timestep)
 {
 	Debug_PrintStep("Importing asset file");
-
-	if ( !GetAssetFile() )
+	TPtr<TLFileSys::TFileAsset>& pAssetFile = GetAssetFile();
+	if ( !pAssetFile )
 	{
 		TLDebug_Break("Asset file expected");
 		return "Failed";
@@ -363,12 +418,17 @@ TRef Mode_AssetFileImport::Update(float Timestep)
 
 	//	attempt to write our new file back into our filesytem
 	//	convert the asset file to a plain file first, then write that
-	SyncBool ImportResult = GetAssetFile()->Import();
+	SyncBool ImportResult = pAssetFile->Import();
 	if ( ImportResult == SyncWait )
 		return TRef();
 
 	if ( ImportResult == SyncFalse )
+	{
+		TTempString Debug_String("Failed to import asset file ");
+		Debug_String.Append( pAssetFile->GetFilename() );
+		TLDebug_Break( Debug_String );
 		return "Failed";
+	}
 
 	//	imported, now create asset from this file
 	return "ACreate";
@@ -381,15 +441,26 @@ TRef Mode_AssetFileImport::Update(float Timestep)
 TRef Mode_AssetFileExport::Update(float Timestep)
 {
 	Debug_PrintStep("Exporting asset file to plain file");
+	TPtr<TLFileSys::TFileAsset>& pAssetFile = GetAssetFile();
+	if ( !pAssetFile )
+	{
+		TLDebug_Break("Asset file expected");
+		return "Failed";
+	}
 
 	//	attempt to write our new file back into our filesytem
 	//	convert the asset file to a plain file first, then write that
-	SyncBool ExportResult = GetAssetFile()->Export();
+	SyncBool ExportResult = pAssetFile->Export();
 	if ( ExportResult == SyncWait )
 		return TRef();
 
 	if ( ExportResult == SyncFalse )
+	{
+		TTempString Debug_String("Failed to export asset file ");
+		Debug_String.Append( pAssetFile->GetFilename() );
+		TLDebug_Break( Debug_String );
 		return "Failed";
+	}
 
 	return "AFWrite";
 }
@@ -427,19 +498,20 @@ TRef Mode_CreateAsset::Update(float Timestep)
 {
 	Debug_PrintStep("Creating asset");
 
-	if ( !GetAssetFile() )
+	TPtr<TLFileSys::TFileAsset>& pAssetFile = GetAssetFile();
+	if ( !pAssetFile )
 	{
-		TLDebug_Break("no asset file");
+		TLDebug_Break("Asset file expected");
 		return TRef();
 	}
 
 	//	check in case this asset file needs importing
-	if ( GetAssetFile()->GetNeedsImport() )
+	if ( pAssetFile->GetNeedsImport() )
 	{
 		return "AFImport";
 	}
 
-	TRefRef NewAssetType = GetAssetFile()->GetAssetTypeRef();
+	TRefRef NewAssetType = pAssetFile->GetAssetTypeRef();
 
 	//	if we have an asset, but its the wrong type... destroy it
 	TPtr<TLAsset::TAsset> pAsset = GetAsset();
@@ -459,7 +531,14 @@ TRef Mode_CreateAsset::Update(float Timestep)
 		pAsset = TLAsset::CreateAsset( GetAssetRef(), NewAssetType );
 		//	failed to create
 		if ( !pAsset )
+		{
+			TTempString Debug_String("Failed to create asset type ");
+			NewAssetType.GetString( Debug_String );
+			Debug_String.Append(" when creating asset ");
+			GetAssetRef().GetString( Debug_String );
+			TLDebug_Break( Debug_String );
 			return "Failed";
+		}
 	}
 	
 	//	gr: mark asset as importing so we don't think it's failed...

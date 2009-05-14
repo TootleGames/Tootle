@@ -237,7 +237,10 @@ TRef TLFileSys::TLFileAssetImporter::Mode_Init::Update(float Timestep)
 
 	//	file is empty
 	if ( pFile->GetData().GetSize() == 0 )
+	{
+		TLDebug_Break("File is empty");
 		return "Failed";
+	}
 
 	//	empty out the existing tree data
 	GetAssetFile()->GetData().Empty();

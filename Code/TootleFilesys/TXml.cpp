@@ -396,6 +396,8 @@ SyncBool TXml::Import(const TString& XmlString)
 			//	nothing to close??
 			if ( !TagStack.GetSize() )
 			{
+				TTempString Debug_String("XML Syntax error: closing tag with no previous open tag; ");
+				TLDebug_Break( Debug_String );
 				SyntaxError = TRUE;
 				break;
 			}
@@ -405,6 +407,9 @@ SyncBool TXml::Import(const TString& XmlString)
 			//	wrong type?
 			if ( pLastTag->m_TagType != TLXml::TagType_OpenClose )
 			{
+				TTempString Debug_String("XML Syntax error: mis matched type of tags; ");
+				Debug_String.Append( pLastTag->GetTagName() );
+				TLDebug_Break( Debug_String );
 				SyntaxError = TRUE;
 				break;
 			}
@@ -412,6 +417,11 @@ SyncBool TXml::Import(const TString& XmlString)
 			//	match tag names
 			if ( pNewTag->GetTagName() != pLastTag->GetTagName() )
 			{
+				TTempString Debug_String("XML Syntax error: mis matched start/end tags; ");
+				Debug_String.Append( pLastTag->GetTagName() );
+				Debug_String.Append(" ... ");
+				Debug_String.Append( pNewTag->GetTagName() );
+				TLDebug_Break( Debug_String );
 				SyntaxError = TRUE;
 				break;
 			}
@@ -461,6 +471,7 @@ SyncBool TXml::Import(const TString& XmlString)
 		if ( NextTagOpenIndex == -1 )
 		{
 			//	no more tags? means this open tag is broken
+			TLDebug_Break("XML Syntax error: Expected another tag as previous tag is still open");
 			SyntaxError = TRUE;
 			break;
 		}
@@ -481,7 +492,10 @@ SyncBool TXml::Import(const TString& XmlString)
 
 	//	tags left in stack? error parsing then
 	if ( TagStack.GetSize() > 0 )
+	{
+		TLDebug_Break("XML Syntax error: Unprocessed tags (probably parser error)");
 		SyntaxError = TRUE;
+	}
 
 	//	error parsing
 	if ( SyntaxError )

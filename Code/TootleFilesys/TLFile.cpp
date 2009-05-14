@@ -191,8 +191,6 @@ TRef TLFile::GetDataTypeFromString(const TString& String)
 #ifdef _DEBUG
 	TTempString Debug_String("Warning: using old data type name ");
 	Debug_String.Append( String );
-	//Debug_String.Append(" in Scheme ");
-	//this->GetFileRef().GetString( Debug_String );
 	TLDebug_Print( Debug_String );
 #endif
 
@@ -283,12 +281,77 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 
 		return SyncTrue;
 	}
+	else if ( DataType == TLBinary::GetDataTypeRef<TColour24>() )
+	{
+		Type3<s32> Colours;
+		if ( !TLString::ReadNextInteger( DataString, CharIndex, Colours.x ) )		return SyncFalse;
+		if ( !TLString::ReadNextInteger( DataString, CharIndex, Colours.y ) )		return SyncFalse;
+		if ( !TLString::ReadNextInteger( DataString, CharIndex, Colours.z ) )		return SyncFalse;
+		
+		//	check range
+		if ( Colours.x > 255 || Colours.x < 0 ||
+			Colours.y > 255 || Colours.y < 0 ||
+			Colours.z > 255 || Colours.z < 0 )
+		{
+			if ( !TLDebug_Break( TString("Colour24 type has components out of range (0..255); %d,%d,%d", Colours.x, Colours.y, Colours.z ) ) )
+				return SyncFalse;
+		}
+
+		TColour24 Colour( Colours.x, Colours.y, Colours.z );
+		BinaryData.Write( Colour );
+		return SyncTrue;
+	}
+	else if ( DataType == TLBinary::GetDataTypeRef<TColour32>() )
+	{
+		Type4<s32> Colours;
+		if ( !TLString::ReadNextInteger( DataString, CharIndex, Colours.x ) )		return SyncFalse;
+		if ( !TLString::ReadNextInteger( DataString, CharIndex, Colours.y ) )		return SyncFalse;
+		if ( !TLString::ReadNextInteger( DataString, CharIndex, Colours.z ) )		return SyncFalse;
+		if ( !TLString::ReadNextInteger( DataString, CharIndex, Colours.w ) )		return SyncFalse;
+		
+		//	check range
+		if ( Colours.x > 255 || Colours.x < 0 ||
+			Colours.y > 255 || Colours.y < 0 ||
+			Colours.z > 255 || Colours.z < 0 ||
+			Colours.w > 255 || Colours.w < 0 )
+		{
+			if ( !TLDebug_Break( TString("Colour32 type has components out of range (0..255); %d,%d,%d,%d", Colours.x, Colours.y, Colours.z, Colours.w ) ) )
+				return SyncFalse;
+		}
+
+		TColour32 Colour( Colours.x, Colours.y, Colours.z, Colours.w );
+		BinaryData.Write( Colour );
+		return SyncTrue;
+	}
+	else if ( DataType == TLBinary::GetDataTypeRef<TColour64>() )
+	{
+		Type4<s32> Colours;
+		if ( !TLString::ReadNextInteger( DataString, CharIndex, Colours.x ) )		return SyncFalse;
+		if ( !TLString::ReadNextInteger( DataString, CharIndex, Colours.y ) )		return SyncFalse;
+		if ( !TLString::ReadNextInteger( DataString, CharIndex, Colours.z ) )		return SyncFalse;
+		if ( !TLString::ReadNextInteger( DataString, CharIndex, Colours.w ) )		return SyncFalse;
+		
+		//	check range
+		if ( Colours.x > 65535 || Colours.x < 0 ||
+			Colours.y > 65535 || Colours.y < 0 ||
+			Colours.z > 65535 || Colours.z < 0 ||
+			Colours.w > 65535 || Colours.w < 0 )
+		{
+			if ( !TLDebug_Break( TString("Colour64 type has components out of range (0..65535); %d,%d,%d,%d", Colours.x, Colours.y, Colours.z, Colours.w ) ) )
+				return SyncFalse;
+		}
+
+		TColour64 Colour( Colours.x, Colours.y, Colours.z, Colours.w );
+		BinaryData.Write( Colour );
+		return SyncTrue;
+	}
 
 #ifdef _DEBUG
 	TTempString Debug_String("Unsupported/todo data type ");
+	DataType.GetString( Debug_String );
+	Debug_String.Append(". Data [");
 	Debug_String.Append( DataString );
-	//Debug_String.Append(" in Scheme ");
-	//this->GetFileRef().GetString( Debug_String );
+	Debug_String.Append("]");
 	TLDebug_Break( Debug_String );
 #endif
 

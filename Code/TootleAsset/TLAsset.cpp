@@ -326,44 +326,31 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef,Bool bBlocking,TR
 //----------------------------------------------------------
 TLAsset::TAsset* TLAsset::TAssetFactory::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 {
-	if ( TypeRef == "Audio" )
-		return new TLAsset::TAudio( InstanceRef );
-
-	if ( TypeRef == "Mesh" )
-		return new TLAsset::TMesh( InstanceRef );
-
-	if ( TypeRef == "Font" )
-		return new TLAsset::TFont( InstanceRef );
-	
-	if ( TypeRef == "Menu" )
-		return new TLAsset::TMenu( InstanceRef );
-	
-	if ( TypeRef == "Scheme" )
-		return new TLAsset::TScheme( InstanceRef );
-
-	if ( TypeRef == "PathNetwork" )
-		return new TLAsset::TPathNetwork( InstanceRef );
-	
-	if ( TypeRef == "Text" )
-		return new TLAsset::TText( InstanceRef );
-	
-	if ( TypeRef == "Timeline" )
-		return new TLAsset::TAssetTimeline( InstanceRef );
-	
-	if ( TypeRef == "Texture" )
-		return new TLAsset::TTexture( InstanceRef );	
-
-	if ( TypeRef == "Atlas" )
-		return new TLAsset::TAtlas( InstanceRef );	
+	switch ( TypeRef.GetData() )
+	{
+	case STRef(A,u,d,i,o):	return new TLAsset::TAudio( InstanceRef );	//	"audio"
+	case STRef4(M,e,s,h):	return new TLAsset::TMesh( InstanceRef );	//	"mesh"
+	case STRef4(F,o,n,t):	return new TLAsset::TFont( InstanceRef );	//	"font"
+	case STRef4(M,e,n,u):	return new TLAsset::TMenu( InstanceRef );	//	"menu"
+	case STRef(S,c,h,e,m):	return new TLAsset::TScheme( InstanceRef );	//	"scheme"
+	case STRef(P,a,t,h,N):	return new TLAsset::TPathNetwork( InstanceRef );	//	"PathNetwork"
+	case STRef4(T,e,x,t):	return new TLAsset::TText( InstanceRef );	//	"Text"
+	case STRef(T,i,m,e,l):	return new TLAsset::TAssetTimeline( InstanceRef );	//	"Timeline"
+	case STRef(T,e,x,t,u):	return new TLAsset::TTexture( InstanceRef );	//	"Texture"
+	case STRef(A,t,l,a,s):	return new TLAsset::TAtlas( InstanceRef );	//	"Atlas" 
 
 	//	gr: dumb asset - just stores data - consider turning this into a specific TBinaryTree/"Data" asset
-	if ( TypeRef == "Asset" )
-		return new TLAsset::TAsset( InstanceRef, TypeRef );
-
-	//	"nothing" asset - used as a placeholder whilst we convert file into a real asset
-	if ( TypeRef == "Temp" )
-		return new TLAsset::TTempAsset( InstanceRef );
+	case STRef(A,s,s,e,t):	return new TLAsset::TAsset( TypeRef, InstanceRef );	//	"Asset"
 	
+	//	"nothing" asset - used as a placeholder whilst we convert file into a real asset
+	case STRef4(T,e,m,p):	return new TLAsset::TTempAsset( InstanceRef );	//	"Temp"
+	};
+
+#ifdef _DEBUG
+	TTempString Debug_String("Don't know how to make asset type ");
+	TypeRef.GetString( Debug_String );
+	TLDebug_Break( Debug_String );
+#endif
 
 	return NULL;
 }
@@ -438,7 +425,8 @@ SyncBool TLAsset::TAssetFactory::Update(float fTimeStep)
 		SyncBool UpdateResult = pTask->Update( 0.f, FALSE );
 
 		//	all complete!
-		if ( UpdateResult == SyncTrue )
+		//	gr: stop loading files that have failed too
+		if ( UpdateResult == SyncTrue || UpdateResult == SyncFalse )
 			pTask = NULL;
 	}
 
