@@ -45,6 +45,15 @@ else
 fi
 
 
+# update the tootle repository, if this fails assume it hasn't been checked out
+echo "Updating Tootle svn repository..."
+svn update Tootle > Tootle_svn.txt
+if [ $? != 0 ]; then
+	echo "svn update of Tootle failed, the Tootle Repository must have already been checked out (especially for the latest version of this script). See Tootle_svn.txt"
+	exit 1
+fi
+
+
 # make sure password was provided
 if [ "$PASSWORD" == "" ]; then
 	echo "No keychain password provided. Second parameter should be your keychain/login password to unlock the keychain so we can sign the .app"
