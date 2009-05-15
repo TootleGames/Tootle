@@ -295,8 +295,11 @@ SyncBool TLFileSys::TFileScheme::ImportNode_Data(TPtr<TXmlTag>& pTag,TPtr<TLAsse
 
 		//	failed
 		if ( TagImportResult == SyncFalse )
-		{
-			TLDebug_Break( TString("failed to import <data> tag \"%s\" in scheme", pChildTag->GetTagName() ) );
+		{			
+			TTempString str;
+			str.Appendf("failed to import <data> tag \"%s\" in scheme", pChildTag->GetTagName().GetData() );
+			
+			TLDebug_Break( str );
 			return SyncFalse;
 		}
 
