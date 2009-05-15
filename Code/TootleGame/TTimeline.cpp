@@ -8,8 +8,60 @@
 
 using namespace TLAnimation;
 
+//#define TEST_REVERSE_PLAYBACK
 
-void TTimelineInstance::Update(float fTimestep)
+
+void TTimelineInstance::Initialise(TLMessaging::TMessage& InitMessage)
+{
+	float fTime = 0.0f;
+
+	// Get the initial time from the init message
+	InitMessage.ImportData("Time", fTime);
+
+	// Initialise the timeline to the current time
+	SetTime(fTime);
+}
+
+
+void TTimelineInstance::SetTime(float fTime)
+{
+	// Check to ensure the time is within range of the assets key frames
+
+	// Always check for less than 0.0f and set to 0 if less than
+	if(fTime < 0.0f)
+		fTime = 0.0f;
+	else
+	{
+		TLAsset::TAssetTimeline* pAssetTimeline = GetAssetTimeline();
+
+		// If no script then simply set the time to what was requested
+		// Otherwise get the last key frame and check the time with that
+		if(pAssetTimeline)
+		{
+			float fLastTime = pAssetTimeline->GetLastKeyFrameTime();
+
+			// Set to the last key frame time if the keyframe time is less that the requested time
+			if(fLastTime < fTime)
+				fTime = fLastTime;
+		}
+	}
+
+	// Set the current time of the timeline
+	m_fTime = fTime; 
+	
+	// Update the timeline to be at the specified time
+	OnTimeSet();
+
+}
+
+void TTimelineInstance::OnTimeSet()
+{
+	// Force the timeline to process the time
+	DoUpdate(0.0f, TRUE);
+}
+
+
+SyncBool TTimelineInstance::DoUpdate(float fTimestep, Bool bForced)
 {
 	//TEST Force the timestep for testing purposes
 	//fTimestep = 10.0f ;/// 10.0f;
@@ -17,16 +69,22 @@ void TTimelineInstance::Update(float fTimestep)
 
 
 	// Get the current and next keyframes
-	TLAsset::TAssetTimeline* pScript = GetAssetTimeline();
+	TLAsset::TAssetTimeline* pAssetTimeline = GetAssetTimeline();
 
-	if(!pScript)
-		return;
+	// Wait for asset?
+	if(!pAssetTimeline)
+		return SyncWait;
 
 	TArray<TLAsset::TTempKeyframeData> pKeyframes;
 
+#ifdef TEST_REVERSE_PLAYBACK
+	// Manipulate the timestep by the playback rate modifier
+	fTimestep *= m_fPlaybackRateModifier;
+#endif
+
 	// We could cross multiple keyframes in one step so get all keyframes we are going to span
 	// So we can send out all changes as required
-	if(pScript->GetKeyframes(m_fTime, fTimestep, pKeyframes))
+	if(pAssetTimeline->GetKeyframes(m_fTime, fTimestep, pKeyframes, bForced))
 	{
 /*
 #ifdef _DEBUG
@@ -46,6 +104,9 @@ void TTimelineInstance::Update(float fTimestep)
 				m_fTime += fTimestep;
 
 				OnEndOfTimeline();
+
+				// Finish
+				return SyncFalse;
 			}
 		}
 		else
@@ -64,7 +125,8 @@ void TTimelineInstance::Update(float fTimestep)
 					if(!ProcessKeyframes(KeyframeFrom, KeyframeTo, fTimestep))
 					{
 						TLDebug_Print("Failed to process keyframes");
-						return;
+						// Finish
+						return SyncFalse;
 					}
 				}
 			}
@@ -74,7 +136,12 @@ void TTimelineInstance::Update(float fTimestep)
 	{
 		// No keyframes so it's the end of the timeline
 		OnEndOfTimeline();
+		// Finish
+		return SyncFalse;	
 	}
+
+	// Continue updating
+	return SyncTrue;
 }
 
 

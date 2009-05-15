@@ -24,11 +24,17 @@ public:
 public:
 	TTimelineInstance(TRefRef AssetScriptRef) :
 		m_AssetScriptRef(AssetScriptRef),
-		m_fTime(0.0f)
+		m_fTime(0.0f),
+		m_fPlaybackRateModifier(1.0f)
 	{
 	}
 
-	void	Update(float fTimestep);
+	void Initialise(TLMessaging::TMessage& InitMessage);
+
+	FORCEINLINE SyncBool	Update(float fTimestep)
+	{
+		return DoUpdate(fTimestep, FALSE);
+	}
 
 	FORCEINLINE void	BindTo(TRefRef NodeRef)	
 	{ 
@@ -47,10 +53,19 @@ public:
 		}
 	}
 
+	// Set the time
+	void					SetTime(float fTime);
+	FORCEINLINE float		GetTime()			const	{ return m_fTime; }
 
-	
+	// Set the playback rate modifier
+	FORCEINLINE void		SetPlaybackRateModifier(const float& fRateModifier)	{ m_fPlaybackRateModifier = fRateModifier; }
+	FORCEINLINE float		GetPlaybackRateModifier()					const	{ return m_fPlaybackRateModifier; }
 
 private:
+
+	SyncBool			DoUpdate(float fTimestep, Bool bForced);
+
+
 	TLAsset::TAssetTimeline*	GetAssetTimeline();
 
 	// Keyframe processing
@@ -65,12 +80,14 @@ private:
 
 	// Events
 	void					OnEndOfTimeline();
+	void					OnTimeSet();
 
 private:
-	TRef						m_AssetScriptRef;		// Ref of the Asset script object loaded from the XML data that we are using
-	float						m_fTime;				// Current time of the asset script instance
+	TRef						m_AssetScriptRef;			// Ref of the Asset script object loaded from the XML data that we are using
+	float						m_fTime;					// Current time of the asset script instance
+	float						m_fPlaybackRateModifier;	// Playback rate modifier. Allows you to pause, play forward and backward at any speed
 
-	TFlags<TimelineFlags>		m_Flags;				// Optional flags for the instance
+	TFlags<TimelineFlags>		m_Flags;					// Optional flags for the instance
 
-	TKeyArray<TRef, TRef>		m_NodeRefMap;			// Node ref mapping - used for when nodes are added via the timeline commands
+	TKeyArray<TRef, TRef>		m_NodeRefMap;				// Node ref mapping - used for when nodes are added via the timeline commands
 };

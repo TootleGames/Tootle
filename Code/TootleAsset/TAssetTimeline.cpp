@@ -214,10 +214,28 @@ SyncBool TAssetTimeline::ExportData(TBinaryTree& Data)
 }	
 
 
-Bool TAssetTimeline::GetKeyframes(const float& fTimeFrom,const float& fTimeStep, TArray<TTempKeyframeData>& pKeyframes)
+float TAssetTimeline::GetLastKeyFrameTime()
+{
+	float fTime = 0.0f;
+
+	u32 uKeyframeCount = m_Keyframes.GetSize();
+	if(uKeyframeCount > 0)
+	{
+		TLKeyArray::TPair<float,TPtr<TKeyframe> >& Pair = m_Keyframes.GetPairAt( uKeyframeCount - 1 );
+
+		// Time of the keyframe
+		return Pair.m_Key;
+	}
+
+	return fTime;
+}
+
+
+
+Bool TAssetTimeline::GetKeyframes(const float& fTimeFrom,const float& fTimeStep, TArray<TTempKeyframeData>& pKeyframes, Bool bAllowNoTimestep)
 {
 	// No timestep?  Then ther's no need to process the keyframes
-	if(fTimeStep == 0.0f)
+	if((fTimeStep == 0.0f) && (!bAllowNoTimestep))
 		return FALSE;
 
 	// Do we have any keyframes to check?
@@ -229,7 +247,7 @@ Bool TAssetTimeline::GetKeyframes(const float& fTimeFrom,const float& fTimeStep,
 	// Check the timestep sign - are we looking forwards or backwards?
 	// If forwards use the forward find routine, otherwise use the backwards find routine
 
-	if(fTimeStep > 0.0f)
+	if(fTimeStep >= 0.0f)
 		return GetKeyframes_Forward(fTimeFrom, fTimeTo, pKeyframes);
 	else
 		return GetKeyframes_Backward(fTimeTo, fTimeFrom, pKeyframes);

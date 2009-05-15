@@ -136,7 +136,9 @@ public:
 		return NULL;
 	}
 
-	Bool		GetKeyframes(const float& fTimeFrom,const float& fTimeStep, TArray<TTempKeyframeData>& pKeyframes);
+	Bool		GetKeyframes(const float& fTimeFrom,const float& fTimeStep, TArray<TTempKeyframeData>& pKeyframes, Bool bAllowNoTimestep);
+
+	float		GetLastKeyFrameTime();
 
 protected:
 	virtual SyncBool		ImportData(TBinaryTree& Data);	//	load asset data out binary data
