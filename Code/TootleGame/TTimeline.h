@@ -27,6 +27,7 @@ public:
 		m_fTime(0.0f),
 		m_fPlaybackRateModifier(1.0f)
 	{
+		TLAsset::LoadAsset( m_AssetScriptRef );
 	}
 
 	void Initialise(TLMessaging::TMessage& InitMessage);
@@ -44,7 +45,7 @@ public:
 	FORCEINLINE float		GetPlaybackRateModifier()					const	{ return m_fPlaybackRateModifier; }
 
 	//	valid asset?
-	FORCEINLINE Bool		GetAssetExists() const								{	return TLAsset::GetAsset( m_AssetScriptRef, FALSE ).IsValid();	}
+	FORCEINLINE Bool		GetAssetExists() const								{	return TLAsset::LoadAsset( m_AssetScriptRef, TRUE, "Timeline" ).IsValid();	}
 
 private:
 
