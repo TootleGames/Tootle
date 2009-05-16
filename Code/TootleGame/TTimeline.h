@@ -31,27 +31,9 @@ public:
 
 	void Initialise(TLMessaging::TMessage& InitMessage);
 
-	FORCEINLINE SyncBool	Update(float fTimestep)
-	{
-		return DoUpdate(fTimestep, FALSE);
-	}
-
-	FORCEINLINE void	BindTo(TRefRef NodeRef)	
-	{ 
-		MapNodeRef(TRef("this"), NodeRef);
-	}
-
-	FORCEINLINE void	MapNodeRef(TRefRef FromRef, TRefRef ToRef)	
-	{ 
-		TRef* pNodeRef = m_NodeRefMap.Find(FromRef);
-		if(pNodeRef == NULL)
-			m_NodeRefMap.Add(FromRef, ToRef);
-		else
-		{
-			// Alter the node ref to the one being passed in
-			*pNodeRef = ToRef;
-		}
-	}
+	FORCEINLINE SyncBool	Update(float fTimestep)			{	return DoUpdate(fTimestep, FALSE);	}
+	FORCEINLINE void		BindTo(TRefRef NodeRef)			{ 	MapNodeRef(TRef("this"), NodeRef);	}
+	FORCEINLINE void		MapNodeRef(TRefRef FromRef, TRefRef ToRef);
 
 	// Set the time
 	void					SetTime(float fTime);
@@ -60,6 +42,9 @@ public:
 	// Set the playback rate modifier
 	FORCEINLINE void		SetPlaybackRateModifier(const float& fRateModifier)	{ m_fPlaybackRateModifier = fRateModifier; }
 	FORCEINLINE float		GetPlaybackRateModifier()					const	{ return m_fPlaybackRateModifier; }
+
+	//	valid asset?
+	FORCEINLINE Bool		GetAssetExists() const								{	return TLAsset::GetAsset( m_AssetScriptRef, FALSE ).IsValid();	}
 
 private:
 
@@ -91,3 +76,19 @@ private:
 
 	TKeyArray<TRef, TRef>		m_NodeRefMap;				// Node ref mapping - used for when nodes are added via the timeline commands
 };
+
+
+
+FORCEINLINE void TLAnimation::TTimelineInstance::MapNodeRef(TRefRef FromRef, TRefRef ToRef)	
+{ 
+	TRef* pNodeRef = m_NodeRefMap.Find(FromRef);
+	if(pNodeRef == NULL)
+	{
+		m_NodeRefMap.Add(FromRef, ToRef);
+	}
+	else
+	{
+		// Alter the node ref to the one being passed in
+		*pNodeRef = ToRef;
+	}
+}

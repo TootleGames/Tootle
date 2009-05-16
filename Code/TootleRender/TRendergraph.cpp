@@ -62,22 +62,39 @@ SyncBool TLRender::TRendergraph::Update(float fTimeStep)
 	//	gr; update structure first, this will remove nodes first and 
 	//	mean any node messages wont do uncessacary processing
 	UpdateGraphStructure();
+	TPtrArray<TLGraph::TNodeMessage> LostMessages;
 
 	//	process node messages. fifo
 	u32 MessageCount = m_NodeMessages.GetSize();
 	for ( u32 m=0;	m<MessageCount;	m++ )
 	{
-		TLGraph::TNodeMessage* pMessage = m_NodeMessages[m];
-		TRenderNode* pRenderNode = FindNode( pMessage->GetNodeRef() );
+		TLGraph::TNodeMessage& Message = *(m_NodeMessages[m]);
+		TRenderNode* pRenderNode = FindNode( Message.GetNodeRef() );
 		if ( pRenderNode )
 		{
-			pMessage->GetMessage().ResetReadPos();
-			pRenderNode->ProcessMessage( pMessage->GetMessage() );
+			Message.GetMessage().ResetReadPos();
+			pRenderNode->ProcessMessage( Message.GetMessage() );
+		}
+		else
+		{
+			//	missing render node... not yet in tree? keep the message
+			LostMessages.Add( m_NodeMessages[m] );
 		}
 	}
 
 	//	clear messages (dont remove all in case some kinda processing added another message to the queue
 	m_NodeMessages.RemoveAt( 0, MessageCount );
+
+	//	warning break if we have a lot of them
+	if ( LostMessages.GetSize() > 200 )
+	{
+		if ( !TLDebug_Break("Lots of lost messages... trying to send messages to something that will never exist?") )
+			LostMessages.Empty();
+	}
+
+	//	insert the unhandled messages back to the start of the queue
+	m_NodeMessages.InsertAt( 0, LostMessages );
+
 
 	return SyncTrue;
 }

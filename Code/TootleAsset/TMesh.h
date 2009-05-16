@@ -213,6 +213,7 @@ public:
 	template<class SHAPETYPE>
 	SHAPETYPE*							GetDatum(TRefRef DatumRef);
 	Bool								CreateDatum(const TArray<float3>& PolygonPoints,TRefRef DatumRef,TRefRef DatumShapeType);
+	const TPtrKeyArray<TRef,TLMaths::TShape>&	GetDatums() const			{	return m_Datums;	}
 	
 	void								OnVertexesChanged()					{	SetBoundsInvalid();	}
 	void								OnPrimitivesChanged();				//	just a check to make sure the integrety of all the polygons indexes are valid
