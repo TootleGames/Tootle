@@ -150,6 +150,17 @@ SyncBool TLFileSys::TFile::Export(TPtr<TFileAsset>& pAssetFile)
 			}
 
 			m_pExportAsset = NULL;
+
+			#ifdef _DEBUG
+			TTempString Debug_String("TFile ");
+			Debug_String.Append( GetFilename() );
+			Debug_String.Append(" (");
+			GetTypeRef().GetString( Debug_String );
+			Debug_String.Append(") does not support exporting asset - marked as unknown type");
+			TLDebug_Break( Debug_String );
+			#endif
+			SetUnknownType();
+			return SyncFalse;
 		}
 	}
 
@@ -177,6 +188,14 @@ SyncBool TLFileSys::TFile::Export(TPtr<TFileAsset>& pAssetFile)
 	}
 	else
 	{
+		//	gr: from now on, we do not turn files we don't recognise into .asset files
+		//	instead we mark them as unknown file types and fail to convert.
+		//	if we still want to get the pure data out of a file [I THINK] you just need to
+		//	get the TFileFactory::CreateObject to return an "asset" type of file.
+		//	[gr: if that doesn't work, then make up some binary type and use the code below]
+		TLDebug_Break("This should have already been caught - TFile type export must be supported, but failed to generate asset?");
+		return SyncFalse;
+		/*
 		//	masquerade as a generic binary file
 		pAssetFile->GetHeader().m_TootFileRef = TLFileSys::g_TootFileRef;
 		pAssetFile->GetHeader().m_AssetType = "Asset";
@@ -194,6 +213,7 @@ SyncBool TLFileSys::TFile::Export(TPtr<TFileAsset>& pAssetFile)
 
 		//	data is not compressed
 		pAssetFile->GetHeader().m_Flags.Clear( TFileAsset::Compressed );
+		*/
 	}
 
 	//	this file no longer needs to be imported, but the binary file itself is out of date

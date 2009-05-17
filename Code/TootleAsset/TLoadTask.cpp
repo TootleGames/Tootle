@@ -69,9 +69,29 @@ SyncBool TLAsset::TLoadTask::Update(float Timestep,Bool Blocking)
 		//	if we're in the finished mode, we're finished
 		if ( CurrentModeRef == "Finished" )
 		{
-			TRef AssetType = (m_pAssetFile ? m_pAssetFile->GetAssetTypeRef() : (u32)0);
-			TLAsset::g_pFactory->OnAssetLoad(GetAssetRef(), AssetType, TRUE);
-			return SyncTrue;
+			//	gr: quick check to make sure the asset's state is correct
+			TPtr<TLAsset::TAsset>& pAsset = GetAsset();
+			if ( pAsset )
+			{
+				//	make sure loading state is set correctly
+				if ( pAsset->IsLoaded() )
+				{
+					//	notification of sucess
+					TRef AssetType = (m_pAssetFile ? m_pAssetFile->GetAssetTypeRef() : (u32)0);
+					TLAsset::g_pFactory->OnAssetLoad(GetAssetRef(), AssetType, TRUE);
+					return SyncTrue;
+				}
+				else
+				{
+					TLDebug_Break("Asset not marked as loaded after successfull load - changing LoadTask to failure");
+					SetMode("Failed");
+				}
+			}
+			else
+			{
+				TLDebug_Break("Asset expected - changing LoadTask to failure");
+				SetMode("Failed");
+			}
 		}
 
 		//	if in failed mode... or no mode, failed
@@ -82,8 +102,16 @@ SyncBool TLAsset::TLoadTask::Update(float Timestep,Bool Blocking)
 			GetAssetRef().GetString( Debug_String );
 			TLDebug_Warning( Debug_String );
 			#endif
-			TRef AssetType = (m_pAssetFile ? m_pAssetFile->GetAssetTypeRef() : (u32)0);
+
+			//	if there is an asset - mark it as failed to load
+			TPtr<TLAsset::TAsset>& pAsset = GetAsset();
+			if ( pAsset )
+				pAsset->SetLoadingState( TLAsset::LoadingState_Failed );
+
+			//	notification of failure
+			TRef AssetType = (m_pAssetFile ? m_pAssetFile->GetAssetTypeRef() : TRef_Invalid);
 			TLAsset::g_pFactory->OnAssetLoad(GetAssetRef(), AssetType, FALSE);
+
 			return SyncFalse;
 		}
 	}
@@ -268,8 +296,15 @@ TRef Mode_PlainFileExport::Update(float Timestep)
 		return "Failed";
 	}
 
-	//	export
-	SyncBool ExportResult = pPlainFile->Export( GetAssetFile() );
+	TPtr<TLFileSys::TFileAsset> pAssetFile = GetAssetFile();
+	if ( !pAssetFile )
+	{
+		TLDebug_Break("Asset file expected");
+		return "Failed";
+	}
+
+	//	export plain file to asset file
+	SyncBool ExportResult = pPlainFile->Export( pAssetFile );
 	if ( ExportResult == SyncWait )
 		return TRef();
 
@@ -278,7 +313,19 @@ TRef Mode_PlainFileExport::Update(float Timestep)
 	{
 		TTempString Debug_String("Failed to export plain file ");
 		Debug_String.Append( pPlainFile->GetFilename() );
-		Debug_String.Append(" to asset file");
+		Debug_String.Append(" to asset file."); 
+		TLDebug_Break( Debug_String );
+
+		TPtr<TLFileSys::TFileSys> pFileSys = pAssetFile->GetFileSys();
+		if ( pFileSys )
+		{
+			Debug_String = "Deleting asset file";
+			Debug_String.Append( pAssetFile->GetFilename() );
+			if ( pFileSys->DeleteFile( pAssetFile->GetFileRefObject() ) == SyncFalse )
+				Debug_String.Append(" Failed!");
+			TLDebug_Break( Debug_String );
+		}
+
 		return "Failed";
 	}
 

@@ -36,7 +36,8 @@ typedef const TRef& TRefRef;	//	TRefRef is just shorthand for passing ref's arou
 #define TLRef_BitsPerRefChar					6	//	32bits / TRef::g_CharsPerRef
 #define TLRef_StaticCharIndex(Char)				TLRef::StaticCharIndex::Index_##Char
 #define TLRef_StaticOffsetChar(CharOffset,Char)	((u32)(TLRef_StaticCharIndex(Char) << (CharOffset*TLRef_BitsPerRefChar)))
-#define TRef_Invalid							0
+#define TRef_InvalidValue						0
+#define TRef_Invalid							TRef( (u32)TRef_InvalidValue )
 #define TRef_Static1(a)							TRef_Static(a,SPACE,SPACE,SPACE,SPACE)
 #define TRef_Static2(a,b)						TRef_Static(a,b,SPACE,SPACE,SPACE)
 #define TRef_Static3(a,b,c)						TRef_Static(a,b,c,SPACE,SPACE)
@@ -149,15 +150,15 @@ public:
 	static const u32	g_CharsPerRef = 5;
 
 public:
-	TRef() 													:	m_Ref	( TRef_Invalid )	{	}
+	TRef() 													:	m_Ref	( TRef_InvalidValue )	{	}
 	TRef(u32 Ref)											:	m_Ref	( Ref )				{	Debug_IsValid();	}	//	gr: call IsValid() to check for invalid values
 	TRef(const TRef& Ref)									:	m_Ref	( Ref.GetData() )	{	}
-	TRef(const TString& RefString) 							:	m_Ref	( TRef_Invalid )	{	Set( RefString );	}
-	TRef(const TString* pRefString) 						:	m_Ref	( TRef_Invalid )	{	if ( pRefString )	Set( *pRefString );	}
-	TRef(const char* pRefString) 							:	m_Ref	( TRef_Invalid )	{	Set( pRefString );	}
-	TRef(const TArray<char>& RefStringChars)				:	m_Ref	( TRef_Invalid )	{	Set( RefStringChars );	}
+	TRef(const TString& RefString) 							:	m_Ref	( TRef_InvalidValue )	{	Set( RefString );	}
+	TRef(const TString* pRefString) 						:	m_Ref	( TRef_InvalidValue )	{	if ( pRefString )	Set( *pRefString );	}
+	TRef(const char* pRefString) 							:	m_Ref	( TRef_InvalidValue )	{	Set( pRefString );	}
+	TRef(const TArray<char>& RefStringChars)				:	m_Ref	( TRef_InvalidValue )	{	Set( RefStringChars );	}
 
-	void				SetInvalid()							{	m_Ref = TRef_Invalid;	}
+	void				SetInvalid()							{	m_Ref = TRef_InvalidValue;	}
 	void				Set(u32 Ref)							{	m_Ref = Ref;	Debug_IsValid();	}	//	gr: call IsValid() to check for invalid values
 	void				Set(const TRef& Ref)					{	Set( Ref.GetData() );	}
 	void				Set(const TString& RefString);			//	pull out 5 characters and set from this string
@@ -217,7 +218,7 @@ FORCEINLINE void TRef::Debug_IsValid() const
 FORCEINLINE Bool TRef::IsValid() const
 {
 	//	not valid if zero
-	if ( m_Ref == TRef_Invalid )
+	if ( m_Ref == TRef_InvalidValue )
 		return FALSE;
 
 	//	check for no invalid bits

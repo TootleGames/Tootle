@@ -10,7 +10,8 @@
 TLRender::TRenderNodeText::TRenderNodeText(TRefRef RenderNodeRef,TRefRef TypeRef) :
 	TRenderNode		( RenderNodeRef, TypeRef ),
 	m_GlyphsValid	( FALSE ),
-	m_AlignMode		( TLRenderText::HAlignLeft, TLRenderText::VAlignTop )
+	m_AlignMode		( TLRenderText::HAlignLeft, TLRenderText::VAlignTop ),
+	m_LineHeight	( 1.f )
 {
 }
 
@@ -62,9 +63,16 @@ void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 	}
 
 	//	import scale/alignment modes
-	Message.ImportData("HAlign", m_AlignMode.x );
-	Message.ImportData("VAlign", m_AlignMode.y );
-	Message.ImportData("SMode", m_ScaleMode );
+	if ( Message.ImportData("HAlign", m_AlignMode.x ) )	
+		OnLayoutChanged();
+	if ( Message.ImportData("VAlign", m_AlignMode.y ) )	
+		OnLayoutChanged();
+	if ( Message.ImportData("SMode", m_ScaleMode ) )	
+		OnLayoutChanged();
+
+	//	import string formatting
+	if ( Message.ImportData("LineHeight", m_LineHeight ) )	
+		OnStringFormatChanged();
 
 	//	has text box shape
 	TPtr<TBinaryTree>& pBoxData = Message.GetChild("Box");
@@ -171,8 +179,7 @@ Bool TLRender::TRenderNodeText::SetTextBox(const TLMaths::TBox2D& Box)
 	//	todo: check for change
 	m_TextBox = Box;
 
-	//	gr: bit inefficient... need a seperate flag to just re-build alignment
-	m_GlyphsValid = FALSE;
+	OnLayoutChanged();
 
 	return TRUE;
 }
@@ -509,7 +516,7 @@ void TLRender::TRenderNodeVectorText::SetGlyph(TRenderNodeVectorGlyph& RenderGly
 			if ( Bounds.IsValid() )
 			{
 				float LineHeight = Bounds.GetMin().y + Bounds.GetMax().y;
-				GlyphPos.y += LineHeight;
+				GlyphPos.y += LineHeight * GetLineHeight();
 			}
 		}
 		GlyphPos.x = 0.f;
@@ -605,7 +612,7 @@ Bool TLRender::TRenderNodeTextureText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 			if ( pGlyph )
 			{
 				float LineHeight = pGlyph->m_SpacingBox.GetHeight();
-				GlyphTransform.GetTranslate().y += LineHeight;
+				GlyphTransform.GetTranslate().y += LineHeight * GetLineHeight();
 			}
 			GlyphTransform.GetTranslate().x = 0.f;
 			continue;

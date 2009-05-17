@@ -390,7 +390,7 @@ FORCEINLINE const TLMaths::TShape* TLRender::TRenderNode::GetLocalDatum(TRefRef 
 {
 	switch ( DatumRef.GetData() )
 	{
-		case TRef_Invalid:								return NULL;
+		case TRef_InvalidValue:							return NULL;
 		case TLRender_TRenderNode_DatumBoundsBox:		return &m_BoundsBox.m_LocalShape;
 		case TLRender_TRenderNode_DatumBoundsBox2D:		return &m_BoundsBox2D.m_LocalShape;
 		case TLRender_TRenderNode_DatumBoundsSphere:	return &m_BoundsSphere.m_LocalShape;

@@ -33,8 +33,8 @@ public:
 	FORCEINLINE const u16&			GetHeight() const						{	return m_Size.y;	}
 	FORCEINLINE Bool				HasAlphaChannel() const					{	return m_HasAlpha;	}
 
-	FORCEINLINE Bool				IsMinFilterLinear() const				{	return FALSE;	}
-	FORCEINLINE Bool				IsMagFilterLinear() const				{	return FALSE;	}
+	FORCEINLINE Bool				IsMinFilterLinear() const				{	return TRUE;	}
+	FORCEINLINE Bool				IsMagFilterLinear() const				{	return TRUE;	}
 	FORCEINLINE Bool				IsMipMapEnabled() const					{	return FALSE;	}
 	FORCEINLINE Bool				IsClampEnabled() const					{	return FALSE;	}
 

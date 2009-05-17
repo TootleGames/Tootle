@@ -50,12 +50,6 @@ SyncBool Platform::LocalFileSys::LoadFileList()
 			pFile->GetFlags().Set( TFile::Lost );
 	}
 	
-	//	search for asset files first to make the file ref's match the filename as a priority
-	if ( !Platform::LocalFileSys::LoadFileList("*.asset") )
-	{
-		return SyncFalse;
-	}
-	
 	//	now search for all the other file types
 	if ( !Platform::LocalFileSys::LoadFileList("*.*") )
 	{

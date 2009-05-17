@@ -92,7 +92,11 @@ protected:
 	virtual Bool			SetGlyphs(TLMaths::TBox2D& TextBounds)=0;		//	setup child glyph render objects
 	void					RealignGlyphs(TLMaths::TBox2D& TextBounds);		//	realign the glyphs according to our bounds box - the box provided is the box the glyphs take up
 
+	FORCEINLINE float		GetLineHeight() const						{	return m_LineHeight;	}
+
 	void					OnStringChanged()							{	m_GlyphsValid = FALSE;	}
+	void					OnStringFormatChanged()						{	m_GlyphsValid = FALSE;	}
+	void					OnLayoutChanged()							{	m_GlyphsValid = FALSE;	}
 
 protected:
 	TRef					m_FontRef;
@@ -101,6 +105,7 @@ protected:
 	TLMaths::TBox2D			m_TextBox;				//	currently only a box is supported
 	Type2<TRef>				m_AlignMode;			//	horizontal and vertical alignment mode
 	TRef					m_ScaleMode;			//	scale mode, if invalid no scaling applied. Note: if you scale the text, and then set a scale mode you will lose your original scale info (or at least on whatever axis is affected by the mode)
+	float					m_LineHeight;			//	scalar to the line height for extra line spacing. 1.0 is default
 
 private:
 	Bool					m_GlyphsValid;			//	if TRUE we need to re-generate glyphs

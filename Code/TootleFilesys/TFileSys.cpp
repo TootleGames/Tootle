@@ -53,24 +53,16 @@ TPtr<TLFileSys::TFile> TLFileSys::TFileSys::CreateFileInstance(const TString& Fi
 	//	generate a file ref from the file name (and type if provided)
 	TLFileSys::TFileRef FileRef = GetFileRef( Filename, TypeRef );
 
+	//	fail to create file instances that have no extension
+	//	this is mostly to ignore ipod executable files which have no extension and we'll always find one
+	if ( !FileRef.GetTypeRef().IsValid() )
+	{
+		TLDebug_Print( TString("Ignoring file in filesys that has no extension: %s", Filename.GetData() ) );
+		return NULL;
+	}
+
 	//	see if this file already exists
 	TPtr<TFile> pFile = GetFile( FileRef );
-
-	/*	gr: now, two files with the same name(first 5 chars) AND extension, 2nd one disapears
-	//	as this is a new file, we want to make sure we're not overwriting the fileref of
-	//	another file. 
-	//	this means LongFileName1 and LongFileName2 can both exist and generate different refs
-	if ( !pFile )
-	{
-		//	see if there's a file with this file ref
-		TPtr<TFile> pDupeFile = GetFile( FileRef, FALSE );
-		while ( pDupeFile )
-		{
-			FileRef.Increment();
-			pDupeFile = GetFile( FileRef, FALSE );
-		}
-	}
-	*/
 
 	//	already created/exists just return current one - if it's a different file, that's tough luck, maybe files need renaming
 	if ( pFile )

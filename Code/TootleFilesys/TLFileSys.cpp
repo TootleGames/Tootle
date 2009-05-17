@@ -509,6 +509,10 @@ TPtr<TLFileSys::TFile>& TLFileSys::TFileGroup::GetNewestFile(TRefRef FileType)
 		if ( FileType.IsValid() && File.GetTypeRef() != FileType )
 			continue;
 
+		//	ignore files that cannot be loaded
+		if ( File.IsUnknownType() )
+			continue;
+
 		//	is it newer? (or first hit)
 		if ( NewestIndex == -1 || File.GetTimestamp() > NewestTimestamp )
 		{

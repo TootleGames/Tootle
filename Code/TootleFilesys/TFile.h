@@ -85,6 +85,7 @@ public:
 		OutOfDate=0,	//	timestamp has changed since this file was loaded (should only apply when loaded state is true)
 		TooBig,			//	file is bigger than u32 (>4gb) so we don't allow this to be loaded (or file size is inaccurate
 		Lost,			//	file is no longer there and will be flushed next time the file list is updated
+		UnknownType,	//	if we have tried to load this file and don't recognise the type, we mark it so we can ignore it in future
 	};
 
 protected:
@@ -116,6 +117,9 @@ public:
 	TFlags<TFile::Flags>&			GetFlags()						{	return m_Flags;	}
 	const TFlags<TFile::Flags>&		GetFlags() const				{	return m_Flags;	}
 	void							SetFileSize(s32 FileSize,Bool IsTooBig=FALSE)	{	m_FileSize = FileSize;	GetFlags().Set( TooBig, IsTooBig );	}
+
+	FORCEINLINE void				SetUnknownType(Bool IsUnknown=TRUE)	{	m_Flags.Set( UnknownType, IsUnknown );	}
+	FORCEINLINE Bool				IsUnknownType() const				{	return m_Flags.IsSet( UnknownType );	}
 
 	virtual void					OnFileLoaded()					{	SetIsLoaded(SyncTrue);	TBinary::Compact();	m_Flags.Clear( OutOfDate );	};		//	binary file data has finished loading from file sys
 
