@@ -105,7 +105,7 @@ public:
 	FORCEINLINE TArray<u8>&			GetDataArray()						{	return m_Data;	}
 	FORCEINLINE const TArray<u8>&	GetDataArray() const				{	return m_Data;	}
 	FORCEINLINE TRefRef				GetDataTypeHint() const				{	return m_DataTypeHint;	}
-	FORCEINLINE void				SetDataTypeHint(TRefRef DataTypeHint)	{	m_DataTypeHint = DataTypeHint.GetData() * ( DataTypeHint == m_DataTypeHint || GetSize() == 0 );	}	//	if we're mixing data types, then set the hint to "unknown". 
+	FORCEINLINE void				SetDataTypeHint(TRefRef DataTypeHint,Bool Force=FALSE)	{	m_DataTypeHint = DataTypeHint.GetData() * ( DataTypeHint == m_DataTypeHint || GetSize() == 0 || Force );	}	//	if we're mixing data types, then set the hint to "unknown". 
 	template<typename TYPE> void	SetDataTypeHint()					{	SetDataTypeHint( TLBinary::GetDataTypeRef<TYPE>() );	}
 
 	FORCEINLINE void				Empty(Bool Dealloc=FALSE)			{	m_Data.Empty(Dealloc);	m_ReadPos = -1;	}

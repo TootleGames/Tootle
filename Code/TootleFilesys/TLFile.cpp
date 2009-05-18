@@ -258,6 +258,18 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 		BinaryData.Write( f );
 		return SyncTrue;
 	}
+	else if ( DataType == TLBinary::GetDataTypeRef<TLMaths::TQuaternion>()  )
+	{
+		float4 f;
+		if ( !TLString::ReadNextFloatArray( DataString, CharIndex, f.GetData(), f.GetSize() ) )
+			return SyncFalse;
+
+		//	convert to normalised quaternion
+		TLMaths::TQuaternion Quat( f );
+		Quat.Normalise();
+		BinaryData.Write( Quat );
+		return SyncTrue;
+	}
 	else if ( DataType == TLBinary::GetDataTypeRef<TRef>() )
 	{
 		TRef Ref( DataString );

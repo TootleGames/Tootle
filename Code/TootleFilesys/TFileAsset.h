@@ -84,19 +84,26 @@ public:
 		TRef						m_AssetType;		//	asset type
 	};
 
-	//	section header stored in file
+	//	section header stored in file - gr: a section is a TBinaryTree.
+	//	length of the data is built into the Read()Write() system of the TBinary class so no longer needs storing here (it follows the header)
 	class SectionHeader
 	{
 	public:
-		enum Flags
+		SectionHeader() :
+			m_ChildCount	( 0 )
 		{
-		};
+		}
+		SectionHeader(const TBinaryTree& Data) :
+			m_DataRef		( Data.GetDataRef() ),
+			m_DataType		( Data.GetDataTypeHint() ),
+			m_ChildCount	( Data.GetChildCount() )
+		{
+		}
 
 	public:
-		TRef				m_SectionRef;
-		u32					m_Length;		//	redundant now as blocks of data have the length written before them...
-		u16					m_ChildCount;
-		TFlags<Flags,u16>	m_Flags;
+		TRef				m_DataRef;		//	DataRef of the TBinaryTree
+		TRef				m_DataType;		//	DataHint of the TBinaryTree
+		u16					m_ChildCount;	//	number of [direct] children in the binary tree
 	};
 
 protected:

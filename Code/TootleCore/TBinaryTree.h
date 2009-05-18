@@ -28,7 +28,8 @@ public:
 	TPtr<TBinaryTree>&			GetChild(TRefRef DataRef)				{	return m_Children.FindPtr( DataRef );	}	//	return the first child we find
 	TPtrArray<TBinaryTree>&		GetChildren()							{	return m_Children;	}		//	return all the children as an array
 	const TPtrArray<TBinaryTree>&	GetChildren() const					{	return m_Children;	}		//	return all the children as an array
-	u32							GetChildren(TRefRef DataRef,TPtrArray<TBinaryTree>& Children)	{	return m_Children.FindAll( Children, DataRef );	}	//	get all the sections with this ref into an array
+	FORCEINLINE u32				GetChildren(TRefRef DataRef,TPtrArray<TBinaryTree>& Children)	{	return m_Children.FindAll( Children, DataRef );	}	//	get all the sections with this ref into an array
+	FORCEINLINE u32				GetChildCount() const					{	return GetChildren().GetSize();	}
 	TPtr<TBinaryTree>&			AddChild(TRefRef ChildRef);				//	add new child
 	TPtr<TBinaryTree>&			AddChild(TPtr<TBinaryTree>& pChild)		{	s32 Index = m_Children.Add( pChild );	return (Index == -1) ? TLPtr::GetNullPtr<TBinaryTree>() : m_Children.ElementAt(Index);	}	//	add child
 	Bool						RemoveChild(TRefRef ChildRef)			{	return m_Children.Remove( ChildRef );	}
@@ -41,6 +42,7 @@ public:
 	FORCEINLINE Bool			CopyDataTree(const TPtr<TBinaryTree>& pData,Bool OverwriteDataRef=TRUE)	{	const TBinaryTree* pBinaryTree = pData.GetObject();	return pBinaryTree ? CopyDataTree( *pBinaryTree, OverwriteDataRef ) : FALSE;	}
 	Bool						ReferenceDataTree(const TBinaryTree& Data,Bool OverwriteDataRef=TRUE);			//	copy the tree by re-using the TPtr's to the data. The data is re-used and saves us allocating and copying data but without fear of deletion
 	FORCEINLINE Bool			ReferenceDataTree(const TPtr<TBinaryTree>& pData,Bool OverwriteDataRef=TRUE)	{	const TBinaryTree* pBinaryTree = pData.GetObject();	return pBinaryTree ? ReferenceDataTree( *pBinaryTree, OverwriteDataRef ) : FALSE;	}
+	Bool						IsDataTreeRead() const;							//	traverse tree to see if any data has been read (read pos is valid and not -1)
 
 	template<class ARRAYTYPE> 
 	Bool						ImportArrays(TRefRef ArrayRef,ARRAYTYPE& Array);	//	returns FALSE if failed, WAIT if nothing imported, TRUE if something imported
@@ -53,9 +55,10 @@ public:
 	void						ExportData(TRefRef DataRef,const TYPE& Data);
 	void						ExportDataString(TRefRef DataRef,const TString& DataString);	//	gr: remove if I can get Read/Write() to work with a TString in TBinary
 
-	FORCEINLINE Bool					operator==(TRefRef DataRef)const		{	return GetDataRef() == DataRef;	}
+	FORCEINLINE Bool			operator==(TRefRef DataRef)const		{	return GetDataRef() == DataRef;	}
 
-	void						Debug_PrintTree(u32 TreeLevel=0) const;	//	debug_print the tree
+	void						Debug_PrintTree(u32 TreeLevel=0) const;					//	debug_print the tree
+	void						Debug_FailedToRead(TRefRef ChildDataRef,TRefRef TypeRef);	//	print out what data we failed to read
 
 protected:
 	TRef						m_DataRef;								//	ref of data
@@ -133,7 +136,10 @@ Bool TBinaryTree::ImportData(TRefRef DataRef,TYPE& Data,Bool ConvertData)
 	else
 */	{
 		if ( !pData->Read( Data ) )
+		{
+			Debug_FailedToRead( DataRef, TLBinary::GetDataTypeRef<TYPE>() );
 			return FALSE;
+		}
 	}
 
 	return TRUE;

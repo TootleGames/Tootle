@@ -55,18 +55,19 @@ public:
 	SyncBool			Export(TPtr<TLFileSys::TFileAsset>& pAssetFile);	//	save asset to file
 
 	TPtr<TBinaryTree>&	GetData(TRefRef DataRef,Bool CreateNew=FALSE);
+	TBinaryTree&		GetData()								{	return m_Data;	}
 
 	inline Bool			operator==(const TRef& AssetRef) const	{	return GetAssetRef() == AssetRef;	}
 	inline Bool			operator==(const TAsset& Asset) const 	{	return GetAssetRef() == Asset.GetAssetRef();	}
 
 protected:
-	virtual SyncBool	ImportData(TBinaryTree& Data)			{	return SyncFalse;	}	//	load asset data out binary data
-	virtual SyncBool	ExportData(TBinaryTree& Data)			{	return SyncFalse;	}	//	save asset data to binary data
+	virtual SyncBool	ImportData(TBinaryTree& Data);			//	load asset data out binary data - base type just imports dumb m_Data
+	virtual SyncBool	ExportData(TBinaryTree& Data);			//	save asset data to binary data - base type just exports dumb m_Data
 	void				ImportUnknownData(TBinaryTree& Data);	//	take any data in this binary tree that we didn't read after importing and put it into this asset's data (m_Data)
 	void				ExportUnknownData(TBinaryTree& Data);	//	write out our unknown data
 
 protected:
-	TPtrArray<TBinaryTree>	m_Data;						//	after importing, this data was not read in. could just be additonal meta data
+	TBinaryTree			m_Data;							//	after importing, this data was not read in. could just be additonal meta data or old data we don't use any more
 
 private:
 	TRef				m_AssetType;

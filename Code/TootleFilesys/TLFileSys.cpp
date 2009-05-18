@@ -454,6 +454,60 @@ void TLFileSys::GetFileSys(TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef F
 }
 
 
+//------------------------------------------------------------
+//	try to create a file in one of the file systems provided. FileType dictates the TFile type (not extension or anything)
+//	todo: omit this and use the extension of the filename?
+//------------------------------------------------------------
+TPtr<TLFileSys::TFile> TLFileSys::CreateFileInFileSys(const TString& Filename,TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef FileType)
+{
+	TPtr<TLFileSys::TFile> pNewFile;
+
+	//	loop through file systems and try and create file
+	for ( u32 i=0;	i<FileSysList.GetSize();	i++ )
+	{
+		TLFileSys::TFileSys& FileSys = *FileSysList[i];
+
+		//	try and create file
+		pNewFile = FileSys.CreateFile( Filename, FileType );
+
+		//	created file, break out of loop
+		if ( pNewFile )
+		{
+			/*
+			//	check file ref matches the one we based it from/our asset
+			if ( pNewFile->GetFileRef() != GetPlainFile()->GetFileRef() )
+			{
+				TLDebug_Break("Newly created file's file ref doesn't match the one it was based on");
+				return NULL;
+			}
+			*/
+
+			//	check file type
+			if ( pNewFile->GetTypeRef() != FileType )
+			{
+				TLDebug_Break("Newly created file's type ref doesn't match the one we tried to create");
+				return NULL;
+			}
+
+			//	debug info
+			#ifdef _DEBUG
+			{
+				TTempString Debug_String("Created new file ");
+				Debug_String.Append( pNewFile->GetFilename() );
+				Debug_String.Append(" in file sys ");
+				FileSys.GetFileSysRef().GetString( Debug_String );
+				Debug_String.Append(" (");
+				FileSys.GetFileSysTypeRef().GetString( Debug_String );
+				Debug_String.Append(")");
+				TLDebug_Print( Debug_String );
+			}
+			#endif
+			return pNewFile;
+		}
+	}
+
+	return NULL;
+}
 
 
 

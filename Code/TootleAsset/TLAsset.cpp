@@ -14,6 +14,7 @@
 #include <TootleCore/TPtr.h>
 #include <TootleCore/TEventChannel.h>
 #include <TootleFileSys/TFileAsset.h>
+#include <TootleFileSys/TLFileSys.h>
 
 namespace TLAsset
 {
@@ -319,7 +320,72 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef,Bool bBlocking,TR
 
 	return pLoadingAsset;
 }
+
+
+//----------------------------------------------------------
+//	export an asset out to a .asset file - currently writes to the user file system
+//----------------------------------------------------------
+Bool TLAsset::SaveAsset(TRefRef AssetRef)
+{
+	//	get asset
+	TPtr<TLAsset::TAsset>& pAsset = GetAsset( AssetRef, TRUE );
+	if ( !pAsset )
+	{
+		TLDebug_Break("Asset expected");
+		return FALSE;
+	}
+
+	//	gr: currently the order of this is a bit shit, filesys and asset load system need a bit of a fiddle before 
+	//		I can fix this. todo, but not urgent
+
+	//	create new asset file in a file sys
+	//	make a list of file systems to try and write to
+	//	local file system first and finally resort to the virtual file sys
+	TPtrArray<TLFileSys::TFileSys> FileSystems;
+	TLFileSys::GetFileSys( FileSystems, TRef(), "Local" );
+	TLFileSys::GetFileSys( FileSystems, "Virtual", "Virtual" );
+
+	//	make up new filename (with the right extension)
+	TString NewFilename;
+	pAsset->GetAssetRef().GetString( NewFilename );
+	NewFilename.Append(".");
+	TRef("asset").GetString( NewFilename );
 	
+	TPtr<TLFileSys::TFileAsset> pAssetFile = TLFileSys::CreateFileInFileSys( NewFilename, FileSystems, "Asset");
+
+	//	failed to create file in any file sys
+	if ( !pAssetFile )
+	{
+		//	failed to create new file
+		TLDebug_Break("Failed to create new .asset file");
+		return FALSE;
+	}
+
+	//	export asset to asset file
+	if ( pAsset->Export( pAssetFile ) != SyncTrue )
+		return FALSE;
+
+	//	export asset file to plain file
+	if ( pAssetFile->Export() != SyncTrue )
+		return FALSE;
+
+	//	get the file sys for the file so we can write to it
+	TPtr<TLFileSys::TFileSys>& pFileSys = pAssetFile->GetFileSys();
+	if ( !pFileSys )
+	{
+		TLDebug_Break("Expected file sys on new asset file");
+		return FALSE;
+	}
+
+	//	write file to filesys
+	TPtr<TLFileSys::TFile> pFile = pAssetFile;
+	if ( !pFileSys->WriteFile( pFile ) )
+		return FALSE;
+
+	//	all done!
+	return TRUE;
+}
+
 
 //----------------------------------------------------------
 //	instance an asset
@@ -385,6 +451,23 @@ void TLAsset::TAssetFactory::OnEventChannelAdded(TRefRef refPublisherID, TRefRef
 
 void TLAsset::TAssetFactory::OnAssetLoad(TRefRef AssetRef, TRefRef AssetType, Bool bStatus)
 {
+	//	if the asset failed to load then ensure the asset object is marked as deleted
+	if ( !bStatus )
+	{
+		//	if there is an asset - mark it as failed to load
+		TPtr<TLAsset::TAsset> pAsset = GetAsset(AssetRef);
+		if ( pAsset )
+		{
+			pAsset->SetLoadingState( TLAsset::LoadingState_Failed );
+
+			//	gr: if it's a "temp" type, then delete the asset
+			if ( pAsset->GetAssetType() == "temp" )
+			{
+				TLAsset::DeleteAsset( pAsset->GetAssetRef() );
+			}
+		}
+	}
+
 	TLMessaging::TMessage Message("OnAssetChanged");
 	Message.Write(AssetRef);
 	Message.Write(AssetType);

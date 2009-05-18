@@ -92,6 +92,13 @@ void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 	{
 		const TLMaths::TShape* pBoxShape = NULL;
 
+		//	if no mesh or node provided then use the parent node
+		if ( !TextBoxNode.IsValid() && !TextBoxMesh.IsValid() )
+		{
+			TLDebug_Print("BoxDatum provided for text render node, but no mesh or node ref. Using parent node ref to get datum from.");
+			TextBoxNode = GetParent()->GetNodeRef();
+		}
+
 		if ( TextBoxNode.IsValid() )
 		{
 			//	get datum from node
@@ -238,6 +245,10 @@ void TLRender::TRenderNodeText::RealignGlyphs(TLMaths::TBox2D& TextBounds)
 
 	//	build up a new transform.
 	TLMaths::TTransform NewTransform;
+	
+	//	copy existing rotation
+	if ( GetTransform().HasRotation() )
+		NewTransform.SetRotation( GetTransform().GetRotation() );
 
 	//	do scaling first
 	if ( m_ScaleMode.IsValid() )

@@ -11,7 +11,8 @@
 TLAsset::TAsset::TAsset(const TRef& AssetType,const TRef& AssetRef) :
 	m_AssetType		( AssetType ),
 	m_AssetRef		( AssetRef ),
-	m_LoadingState	( TLAsset::LoadingState_Init )
+	m_LoadingState	( TLAsset::LoadingState_Init ),
+	m_Data			( STRef4(D,a,t,a) )
 {
 	m_AssetRef.GetString( m_Debug_AssetRefString );
 }
@@ -112,12 +113,29 @@ void TLAsset::TAsset::ImportUnknownData(TBinaryTree& Data)
 		TPtr<TBinaryTree>& pChild = Data.GetChildren().ElementAt(i);
 		
 		//	if read pos isnt reset we can assume we didn't read the data in
-		if ( pChild->GetReadPos() >= 0 )
+		//	gr: now if any children HAVE been read we don't store this data
+		if ( pChild->IsDataTreeRead() )
 			continue;
 
 		//	gr: does this need to clone?
 		//	save this child
-		m_Data.Add( pChild );
+		m_Data.AddChild( pChild );
+
+		#ifdef _DEBUG
+		TTempString Debug_String("Storing non-imported data in asset ");
+		GetAssetRef().GetString( Debug_String );
+		Debug_String.Append("(");
+		GetAssetType().GetString( Debug_String );
+		Debug_String.Append("): ");
+		pChild->GetDataRef().GetString( Debug_String );
+		if ( pChild->GetDataTypeHint().IsValid() )
+		{
+			Debug_String.Append("(type: ");
+			pChild->GetDataTypeHint().GetString( Debug_String );
+			Debug_String.Append(")");
+		}
+		TLDebug_Print( Debug_String );
+		#endif
 	}
 
 }
@@ -128,13 +146,19 @@ void TLAsset::TAsset::ImportUnknownData(TBinaryTree& Data)
 //----------------------------------------------------
 void TLAsset::TAsset::ExportUnknownData(TBinaryTree& Data)
 {
-	for ( u32 i=0;	i<m_Data.GetSize();	i++ )
+	//	our root data should not have data in it
+	if ( m_Data.GetSize() )
 	{
-		TPtr<TBinaryTree>& pChild = m_Data[i];
+		TLDebug_Break("warning: the root m_Data in an asset should NOT have data in it - it is not exported and will be lost!");
+	}
 
-		TPtr<TBinaryTree> pNewChild = Data.AddChild( pChild->GetDataRef() );
+	TPtrArray<TBinaryTree>& DataChildren = m_Data.GetChildren();
 
-		pNewChild->ReferenceDataTree( pChild );
+	//	add the asset's child data to the exporting data
+	for ( u32 i=0;	i<DataChildren.GetSize();	i++ )
+	{
+		TPtr<TBinaryTree>& pChild = DataChildren[i];
+		Data.AddChild( pChild );
 	}
 
 }
@@ -145,11 +169,40 @@ void TLAsset::TAsset::ExportUnknownData(TBinaryTree& Data)
 //----------------------------------------------------
 TPtr<TBinaryTree>& TLAsset::TAsset::GetData(TRefRef DataRef,Bool CreateNew)
 {
-	TPtr<TBinaryTree>& pData = m_Data.FindPtr( DataRef );
+	TPtr<TBinaryTree>& pData = m_Data.GetChild(DataRef);
 	if ( pData || !CreateNew )
 		return pData;
 
 	//	doesn't exist and we need to create it
 	TPtr<TBinaryTree> pNewData = new TBinaryTree( DataRef );
-	return m_Data.AddPtr( pNewData );
+	return m_Data.AddChild( pNewData );
 }
+
+
+
+//----------------------------------------------------
+//	save asset data to binary data - base type just exports dumb m_Data
+//----------------------------------------------------
+SyncBool TLAsset::TAsset::ExportData(TBinaryTree& Data)
+{
+	//	copy all our lost/dumb data into the data to be exported
+	if ( !Data.ReferenceDataTree( m_Data, FALSE ) )
+		return SyncFalse;
+
+	return SyncTrue;
+}
+
+
+
+//----------------------------------------------------
+//	load asset data out binary data - base type just imports dumb m_Data
+//----------------------------------------------------
+SyncBool TLAsset::TAsset::ImportData(TBinaryTree& Data)
+{
+	//	copy all our lost/dumb data into the data to be exported
+	if ( !m_Data.ReferenceDataTree( Data, FALSE ) )
+		return SyncFalse;
+
+	return SyncTrue;
+}
+

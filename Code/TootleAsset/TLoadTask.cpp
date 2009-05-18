@@ -103,11 +103,6 @@ SyncBool TLAsset::TLoadTask::Update(float Timestep,Bool Blocking)
 			TLDebug_Warning( Debug_String );
 			#endif
 
-			//	if there is an asset - mark it as failed to load
-			TPtr<TLAsset::TAsset>& pAsset = GetAsset();
-			if ( pAsset )
-				pAsset->SetLoadingState( TLAsset::LoadingState_Failed );
-
 			//	notification of failure
 			TRef AssetType = (m_pAssetFile ? m_pAssetFile->GetAssetTypeRef() : TRef_Invalid);
 			TLAsset::g_pFactory->OnAssetLoad(GetAssetRef(), AssetType, FALSE);
@@ -216,7 +211,6 @@ TRef Mode_PlainFileLoad::Update(float Timestep)
 TRef Mode_PlainFileCreateAssetFile::Update(float Timestep)
 {
 	//	create a new asset file
-	TPtr<TLFileSys::TFileAsset> pNewFile;
 
 	//	make a list of file systems to try and write to
 	TPtrArray<TLFileSys::TFileSys> FileSystems;
@@ -232,39 +226,7 @@ TRef Mode_PlainFileCreateAssetFile::Update(float Timestep)
 	NewFilename.Append(".");
 	TRef("asset").GetString( NewFilename );
 
-	//	loop through file systems and try and create file
-	for ( u32 i=0;	i<FileSystems.GetSize();	i++ )
-	{
-		TLFileSys::TFileSys& FileSys = *FileSystems[i];
-
-		//	try and create file
-		pNewFile = FileSys.CreateFile( NewFilename, "asset" );
-
-		//	created file, break out of loop
-		if ( pNewFile )
-		{
-			//	check file ref matches the one we based it from/our asset
-			if ( pNewFile->GetFileRef() != GetPlainFile()->GetFileRef() )
-			{
-				TLDebug_Break("Newly created .asset file's file ref doesn't match the one it was based on");
-			}
-
-			//	debug info
-			#ifdef _DEBUG
-			{
-				TTempString Debug_String("Created new .asset file ");
-				Debug_String.Append( pNewFile->GetFilename() );
-				Debug_String.Append(" in file sys ");
-				FileSys.GetFileSysRef().GetString( Debug_String );
-				Debug_String.Append(" (");
-				FileSys.GetFileSysTypeRef().GetString( Debug_String );
-				Debug_String.Append(")");
-				TLDebug_Print( Debug_String );
-			}
-			#endif
-			break;
-		}
-	}
+	TPtr<TLFileSys::TFileAsset> pNewFile = TLFileSys::CreateFileInFileSys( NewFilename, FileSystems, "Asset");
 
 	//	failed to create file in any file sys
 	if ( !pNewFile )

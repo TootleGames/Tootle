@@ -270,6 +270,18 @@ SyncBool TLFileSys::TFileScheme::ImportNode_Data(TPtr<TXmlTag>& pTag,TPtr<TLAsse
 	//	import contents of data
 	TBinaryTree& NodeData = pDataChild ? *pDataChild.GetObject() : NodeRootData;
 
+	//	if the tag has no children (eg. type like <float />) but DOES have data (eg. 1.0) throw up an error and fail
+	//	assume the data is malformed and someone has forgotten to add the type specifier. 
+	//	if something automated has output it and doesnt know the type it should still output it as hex raw data
+	if ( !pTag->GetChildren().GetSize() && pTag->GetDataString().GetLengthWithoutTerminator() > 0 )
+	{
+		TTempString Debug_String("<Data ");
+		DataRef.GetString( Debug_String );
+		Debug_String.Append("> tag with no children, but DOES have data inside (eg. 1.0). Missing type specifier (eg. <float>)?.\n");
+		Debug_String.Append( pTag->GetDataString() );
+		TLDebug_Break( Debug_String );
+		return SyncFalse;
+	}
 
 	//	deal with child tags
 	for ( u32 c=0;	c<pTag->GetChildren().GetSize();	c++ )

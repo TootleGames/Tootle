@@ -28,6 +28,7 @@ namespace TLFileSys
 	void						GetFileList(TArray<TRef>& FileList);																//	get a list of all files in all the file systems (gets refs out of the groups)
 
 	TPtr<TFile>&				GetFile(TRefRef FileRef,TRefRef FileTypeRef=TRef());	//	find the newest file with this file ref. if type invalid, just gets newest file with matching name
+	TPtr<TFile>					CreateFileInFileSys(const TString& Filename,TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef FileType=TRef());
 
 	//	create a local file system
 	SyncBool					CreateLocalFileSys(TRef& FileSysRef,const TString& Directory,Bool IsWritable);	//	async create a local filesystem for the specified path. FileSysRef is set to the new file system's ref for the purposes of asynchronousness so keep using it when async calling this func

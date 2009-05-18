@@ -201,3 +201,42 @@ void TBinaryTree::ExportDataString(TRefRef DataRef,const TString& DataString)
 	TPtr<TBinaryTree>& pData = AddChild( DataRef );
 	pData->WriteString( DataString );
 }
+
+
+//------------------------------------------------------
+//	print out what data we failed to read
+//------------------------------------------------------
+void TBinaryTree::Debug_FailedToRead(TRefRef ChildDataRef,TRefRef TypeRef)
+{
+#ifdef _DEBUG
+	TTempString Debug_String("Failed to read TBinaryTree ");
+	GetDataRef().GetString( Debug_String );
+	Debug_String.Append(", child ref: ");
+	ChildDataRef.GetString( Debug_String );
+	Debug_String.Append(". Trying to read data type ");
+	TypeRef.GetString( Debug_String );
+	TLDebug_Break( Debug_String );
+#endif
+}
+
+
+//------------------------------------------------------
+//	traverse tree to see if any data has been read (read pos is valid and not -1)
+//------------------------------------------------------
+Bool TBinaryTree::IsDataTreeRead() const
+{
+	//	our data has been read 
+	if ( GetReadPos() >= 0 )
+		return TRUE;
+
+	//	check children
+	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
+	{
+		if ( m_Children[c]->IsDataTreeRead() )
+			return TRUE;
+	}
+
+	//	no data has been read
+	return FALSE;
+}
+

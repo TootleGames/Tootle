@@ -8,7 +8,7 @@
 
 namespace TLFileSys
 {
-	const TRef		g_TootFileRef = TRef_Static(T,o,o,t,C);	//	serves as version type too - changing this makes old file types incompatible
+	const TRef		g_TootFileRef = TRef_Static(T,o,o,t,D);	//	serves as version type too - changing this makes old file types incompatible
 };
 
 
@@ -36,7 +36,17 @@ Bool TLFileSys::TFileAsset::ImportTree(TPtr<TBinaryTree>& pChild,SectionHeader& 
 
 	//	no children, no more data
 	if ( Header.m_ChildCount == 0 )
+	{
+		//	catch data that has no data and no children
+		if ( pChild->GetSize() == 0 )
+		{
+			TTempString Debug_String("Importing data with no children and no data: ");
+			pChild->GetDataRef().GetString( Debug_String );
+			TLDebug_Warning( Debug_String );
+		}
+
 		return TRUE;
+	}
 
 	//	if we have children read the data out
 	TBinary ChildTreeData;
@@ -57,7 +67,8 @@ Bool TLFileSys::TFileAsset::ImportTree(TPtr<TBinaryTree>& pChild,SectionHeader& 
 			return FALSE;
 
 		//	create new child
-		TPtr<TBinaryTree> pNewChild = pChild->AddChild( ChildHeader.m_SectionRef );
+		TPtr<TBinaryTree> pNewChild = pChild->AddChild( ChildHeader.m_DataRef );
+		pChild->SetDataTypeHint( ChildHeader.m_DataType, TRUE );
 
 		//	import that child
 		if ( !ImportTree( pNewChild, ChildHeader, ChildTreeData ) )
@@ -114,28 +125,25 @@ Bool TLFileSys::TFileAsset::ExportTree(TPtrArray<TBinaryTree>& Children,TBinary&
 	for ( u32 c=0;	c<Children.GetSize();	c++ )
 	{
 		//	create data for child
-		TPtr<TBinaryTree>& pChild = Children[c];
+		TBinaryTree& Child = *Children[c];
 		
 		TBinary ChildTreeData;
-		if ( pChild->GetChildren().GetSize() )
+		if ( Child.GetChildren().GetSize() )
 		{
-			ExportTree( pChild->GetChildren(), ChildTreeData );
+			ExportTree( Child.GetChildren(), ChildTreeData );
 		}
 
 		//	setup header
-		SectionHeader ChildHeader;
-		ChildHeader.m_ChildCount = pChild->GetChildren().GetSize();
-		ChildHeader.m_Length = pChild->GetData().GetSize();
-		ChildHeader.m_SectionRef = pChild->GetDataRef();
+		SectionHeader ChildHeader( Child );
 
 		//	write header
 		Data.Write( ChildHeader );
 
 		//	write child's data
-		Data.Write( pChild->GetData() );
+		Data.Write( Child.GetData() );
 
 		//	write child's children data if we have any children
-		if ( pChild->GetChildren().GetSize() )
+		if ( Child.GetChildren().GetSize() )
 		{
 			Data.Write( ChildTreeData );
 		}
@@ -315,22 +323,27 @@ TRef TLFileSys::TLFileAssetImporter::Mode_ImportChild::Update(float Timestep)
 		//	failed to read section header info? then fail entirely. sections should still match up
 		if ( !pFile->Read( ChildHeader ) )
 			return "Failed";
-		
-		TTempString FileRefString;
-		pFile->GetFileRef().GetString( FileRefString );
-		TTempString ChildSectionRefString;
-		ChildHeader.m_SectionRef.GetString( ChildSectionRefString );
-		TLDebug_Print( TString("%s: Imported child %s. Len: %d. Children: %d", FileRefString.GetData(), ChildSectionRefString.GetData(), ChildHeader.m_Length, ChildHeader.m_ChildCount ) );
-		
 
+		#ifdef _DEBUG
+		TTempString Debug_String( pFile->GetFilename() );
+		Debug_String.Append(" imported child ");
+		ChildHeader.m_DataRef.GetString( Debug_String );
+		
+		if ( ChildHeader.m_ChildCount > 0 )
+			Debug_String.Appendf(" (has %d children)", ChildHeader.m_ChildCount );
+			
+		TLDebug_Print( Debug_String );
+		#endif
+		
 		//	section is corrupt
-		if ( !ChildHeader.m_SectionRef.IsValid() )
+		if ( !ChildHeader.m_DataRef.IsValid() )
 			return "Failed";
 
 		//	create new section and copy data into it
-		TPtr<TBinaryTree> pChild = pAssetFile->GetData().AddChild( ChildHeader.m_SectionRef );
+		TPtr<TBinaryTree> pChild = pAssetFile->GetData().AddChild( ChildHeader.m_DataRef );
 		if ( !pChild )
 			return "Failed";
+		pChild->SetDataTypeHint( ChildHeader.m_DataType, TRUE );
 
 		//	import child data
 		if ( !pAssetFile->ImportTree( pChild, ChildHeader, pFile->GetData() ) )

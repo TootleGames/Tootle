@@ -31,6 +31,7 @@ namespace TLAsset
 	TPtr<TAsset>&		LoadAsset(TRefRef AssetRef,Bool bBlocking=FALSE,TRefRef ExpectedAssetType=TRef());						//	load asset from a file systems
 	TPtr<TAsset>&		CreateAsset(TRefRef AssetRef,TRefRef AssetType);	//	return a pointer to a new asset - mostly used for runtime asssets
 	void				DeleteAsset(TRefRef AssetRef);						//	delete an asset
+	Bool				SaveAsset(TRefRef AssetRef);						//	export an asset out to a .asset file - currently writes to the user file system
 
 	TLArray::SortResult	AssetSort(const TPtr<TAsset>& a,const TPtr<TAsset>& b,const void* pTestRef);	//	asset sort
 
