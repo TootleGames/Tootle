@@ -370,7 +370,7 @@ Bool TLAsset::SaveAsset(TRefRef AssetRef)
 		return FALSE;
 
 	//	get the file sys for the file so we can write to it
-	TPtr<TLFileSys::TFileSys>& pFileSys = pAssetFile->GetFileSys();
+	TPtr<TLFileSys::TFileSys> pFileSys = pAssetFile->GetFileSys();
 	if ( !pFileSys )
 	{
 		TLDebug_Break("Expected file sys on new asset file");
