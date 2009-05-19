@@ -38,7 +38,7 @@ public:
 protected:
 	Bool					IsDirectoryValid();					//	returns FALSE if m_Directory isn't a directory
 	
-	Bool					LoadFileList(const char* pFileSearch);	//	load files with a filter, returns number of files found. -1 on error
+	Bool					LoadFileList();						//	returns number of files found. -1 on error
 	
 protected:
 	Bool					m_IsWritable;						//	overriding readonly setting

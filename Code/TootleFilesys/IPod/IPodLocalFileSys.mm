@@ -51,7 +51,7 @@ SyncBool Platform::LocalFileSys::LoadFileList()
 	}
 	
 	//	now search for all the other file types
-	if ( !Platform::LocalFileSys::LoadFileList("*.*") )
+	if ( !Platform::LocalFileSys::LoadFileList() )
 	{
 		return SyncFalse;
 	}
@@ -66,7 +66,7 @@ SyncBool Platform::LocalFileSys::LoadFileList()
 //---------------------------------------------------------------
 //	load files with a filter, returns number of files found. -1 on error
 //---------------------------------------------------------------
-Bool Platform::LocalFileSys::LoadFileList(const char* pFileSearch)
+Bool Platform::LocalFileSys::LoadFileList()
 {
 	NSString *pDirString = [[NSString alloc] initWithUTF8String:m_Directory.GetData()];
 	 
@@ -126,49 +126,6 @@ Bool Platform::LocalFileSys::LoadFileList(const char* pFileSearch)
 	
 	[pDirString release];
 
-			
-	/*
-	//	no file list handle, start
-	if ( m_FileFindHandle == INVALID_HANDLE_VALUE )
-	{
-		//	make a wildcard search from the directory name
-		TTempString FileSearch = m_Directory;
-		FileSearch.Append(pFileSearch);
-		
-		//	init the search
-		m_FileFindHandle = FindFirstFile( FileSearch.GetData(), &m_FileFindData );
-		
-		//	failed
-		if ( m_FileFindHandle == INVALID_HANDLE_VALUE )
-		{
-			//	just because dir is empty? that's okay. 
-			if ( GetLastError() == ERROR_FILE_NOT_FOUND )
-			{
-				return TRUE;
-			}
-			
-			//	failed for other reason
-			return FALSE;
-		}
-		
-		//	pull out info of first file
-		CreateFileInstance( m_FileFindData, TRUE );
-	}
-	
-	
-	//	goto next file
-	while ( FindNextFile( m_FileFindHandle, &m_FileFindData ) )
-	{
-		CreateFileInstance( m_FileFindData, TRUE );
-	}
-	
-	//	find next file has failed... assume out of files?
-	//if ( GetLastError() == ERROR_NO_MORE_FILES )
-	
-	//	close find handle
-	FindClose( m_FileFindHandle );
-	m_FileFindHandle = INVALID_HANDLE_VALUE;
-	*/
 	return TRUE;
 }
 
@@ -379,55 +336,68 @@ TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filenam
 	if ( !m_IsWritable )
 		return NULL;
 		
-	TLDebug_Break("todo: file creation code like below/PC");
-	return NULL;
-/*	
+	TFileRef FileRef = GetFileRef( Filename, TypeRef );
+
 	//	look for existing file
-	TPtr<TFile> pFile = GetFile( Filename, FALSE );
+	TPtr<TFile>& pFile = GetFile( FileRef );
 	if ( pFile )
+	{
+		if ( !pFile->GetFilename().IsEqual( Filename, FALSE ) )
+		{
+			TLDebug_Break("Called CreateFile(), new FileRef matches existing file, BUT filename is different. Conflict here. Aborting file creation");
+			//return TLPtr::GetNullPtr<TLFileSys::TFile>();
+			return NULL;
+		}
+
 		return pFile;
-	
+	}
+
 	//	cant create a file if directory is invalid
 	if ( !IsDirectoryValid() )
 		return NULL;
-	
+
 	//	get full path and filename
 	TTempString FullFilename = m_Directory;
 	FullFilename.Append( Filename );
-	
+
 	//	attempt to open file before creating instance
-	FILE* pFileHandle = NULL;
-	errno_t Result = fopen_s( &pFileHandle, FullFilename.GetData(), "wb" );
-	
+	FILE* pFileHandle = fopen( FullFilename.GetData(), "wb" );
+
 	//	failed to open
-	if ( Result != 0 )
+	if ( !pFileHandle )
 	{
 		return NULL;
 	}
-	
+
 	//	close file
 	fclose( pFileHandle );
 	pFileHandle = NULL;
-	
-	
-	//	get file data by searching for it
-	HANDLE FileFindHandle;
-	WIN32_FIND_DATA FileFindData;
-	FileFindHandle = FindFirstFile( FullFilename.GetData(), &FileFindData );
-	
-	//	failed to find our new file
-	if ( FileFindHandle == INVALID_HANDLE_VALUE )
-		return NULL;
-	
-	FindClose( FileFindHandle );
-	FileFindHandle = INVALID_HANDLE_VALUE;
+
 	
 	//	create instance
-	TPtr<TLFileSys::TFile> pNewFile = CreateFileInstance( FileFindData, FALSE );
+	TPtr<TLFileSys::TFile> pFile = CreateFileInstance( Filename );
+	if ( !pFile )
+	{
+		TLDebug_Break( TString("Failed to create file instance for %s", Filename.GetData() ) );
+		return NULL;
+	}
+	else
+	{
+		TTempString DebugString("Created new file instance ");
+		pFile->GetFileRef().GetString( DebugString );
+		DebugString.Append(", type: ");
+		pFile->GetTypeRef().GetString( DebugString );
+		TLDebug_Print( DebugString );
+	}	
 	
+	//	check type returned matches up
+	if ( pFile->GetFileRefObject() != FileRef )
+	{
+		TLDebug_Break("Created new file, but file ref doesn't match to what we expected");
+	}
+
 	//	return new instance if it worked
-	return pNewFile;
- */
+	return pFile;
 }
 
 
