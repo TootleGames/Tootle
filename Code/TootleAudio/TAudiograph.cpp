@@ -374,6 +374,7 @@ TRef TAudiograph::StartAudio(TRefRef AudioRef, TRefRef AssetRef)
 	TLMessaging::TMessage Message(TLCore::InitialiseRef);
 
 	Message.ExportData("Asset", AssetRef);
+	Message.ExportData("Play", TRUE);
 
 	return StartAudio(AudioRef, Message);
 }

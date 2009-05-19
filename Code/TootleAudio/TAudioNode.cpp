@@ -76,6 +76,15 @@ void TAudioNode::Initialise(TLMessaging::TMessage& Message)
 		SetLooping(Props.m_bLooping);
 		SetRelative(Props.m_bRelative);
 	}
+	else
+	{
+		// Check for individual options
+		
+		
+		Bool bOption;
+		if(Message.ImportData("Loop", bOption))
+			SetLooping(bOption);
+	}
 
 	UpdatePreviousPos();
 	float3 vPosition;
@@ -95,12 +104,13 @@ void TAudioNode::Initialise(TLMessaging::TMessage& Message)
 	TLAudio::Platform::SetVelocity(GetNodeRef(), vVelocity);
 
 
+	Bool bPlay = FALSE;
 
-	Bool bPlay;
-	if(Message.ImportData("Play", bPlay))
-	{
+	Message.ImportData("Play", bPlay);
+
+	if(bPlay)
 		Play();
-	}
+
 
 	TLGraph::TGraphNode<TAudioNode>::Initialise(Message);
 }

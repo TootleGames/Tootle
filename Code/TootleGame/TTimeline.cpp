@@ -30,7 +30,7 @@ void TTimelineInstance::SetTime(float fTime)
 	// Always check for less than 0.0f and set to 0 if less than
 	if(fTime < 0.0f)
 		fTime = 0.0f;
-	else
+	else if(fTime > 0.0f)
 	{
 		TLAsset::TAssetTimeline* pAssetTimeline = GetAssetTimeline();
 
@@ -202,6 +202,23 @@ Bool TTimelineInstance::ProcessKeyframes(const TLAsset::TTempKeyframeData& Keyfr
 	float fStartTime = m_fTime;
 	float fEndTime = m_fTime + fTimestep;
 
+	Bool bCrossingKeyframe = FALSE;
+	
+	if(fStartTime == fEndTime)
+	{
+		// Only difference here is that the endtime can be the same as the keyframe time in both cases.
+		if((m_fTime <= KeyframeFrom.m_fTime) && (fEndTime >= KeyframeFrom.m_fTime))
+			bCrossingKeyframe = TRUE;
+	}
+	else
+	{
+		// If current time is less than or equal to the from keyframe and the end time is more than the 
+		// from keyframe time then we are crossing the keyframe
+		if((m_fTime <= KeyframeFrom.m_fTime) && (fEndTime > KeyframeFrom.m_fTime))
+			bCrossingKeyframe = TRUE;
+	}
+
+
 	for(u32 uIndex = 0; uIndex < KeyframeFrom.m_pKeyframe->GetSize(); uIndex++)
 	{
 		// Get the node list of commands
@@ -243,7 +260,7 @@ Bool TTimelineInstance::ProcessKeyframes(const TLAsset::TTempKeyframeData& Keyfr
 					else
 					{
 						// Crossing over keyframe?
-						if((m_fTime <= KeyframeFrom.m_fTime) && (fEndTime > KeyframeFrom.m_fTime))
+						if(bCrossingKeyframe)
 						{
 							// On the exact time of the keyframe so send out the command as a message
 							if(!SendCommandAsMessage(FromCmd, pFromCmdList->GetNodeGraphRef(), pFromCmdList->GetNodeRef()))
@@ -257,7 +274,7 @@ Bool TTimelineInstance::ProcessKeyframes(const TLAsset::TTempKeyframeData& Keyfr
 				else
 				{
 					// No equivalent 'to' command so simply send the message if we are going to cross the keyframe
-					if((m_fTime <= KeyframeFrom.m_fTime) && (fEndTime > KeyframeFrom.m_fTime))
+					if(bCrossingKeyframe)
 					{
 						// On the exact time of the keyframe so send out the command as a message
 						if(!SendCommandAsMessage(FromCmd, pFromCmdList->GetNodeGraphRef(), pFromCmdList->GetNodeRef()))
@@ -274,7 +291,7 @@ Bool TTimelineInstance::ProcessKeyframes(const TLAsset::TTempKeyframeData& Keyfr
 		{
 			// Node doesn't have an equivalent command list for the node specified in the 'to' keyframe
 			// Simply  go through the commands and send them as messages if we are going to cross the keyframe
-			if((m_fTime <= KeyframeFrom.m_fTime) && (fEndTime > KeyframeFrom.m_fTime))
+			if(bCrossingKeyframe)
 			{
 				// On the exact time of the keyframe so send out all commands as messages
 				for(u32 uIndex2 = 0; uIndex2 < pFromCmdList->GetCommands().GetSize(); uIndex2++)

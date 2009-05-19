@@ -55,7 +55,7 @@ public:
 	////////////////////////////////////////////////////////
 	// Audio object access
 	////////////////////////////////////////////////////////
-	TRef	StartAudio(TRefRef AudioRef, TRefRef AudioAddet);
+	TRef	StartAudio(TRefRef AudioRef, TRefRef AssetRef);
 	TRef	StartAudio(TRefRef AudioRef, TLMessaging::TMessage& Message);	
 
 	Bool	StopAudio(TRefRef AudioRef);
