@@ -835,13 +835,54 @@ void TLRender::TRenderNode::SetAttachDatum(TRefRef DatumRef)
 	{
 		//	get position of datum
 		const TLMaths::TShape* pDatum = pParent->GetLocalDatum( DatumRef );
+		TLRender::TRenderNode* pDatumParent = pParent;
+
+		//	gr: bodge - look at parent's parent. This is to get around a node in a scheme which uses a parent datum
+		//			but the menu system shoves in an intermediate node to hold the sceheme.
+		//			we can remove this when we get a nicer scheme manager which doesnt rely on nodes so we can import/remove
+		//			schemes a bit easier without having intermediate nodes like this
+		//		could make this permanant though? so we cna grab a datum further up the tree (assuming there is no transforming)
+		while ( !pDatum )
+		{
+			pDatumParent = pDatumParent->GetParent();
+			if ( !pDatumParent )
+				break;
+			
+			//	don't use if the parent has transform
+			//if ( pDatumParent->GetTransform().HasScale() || pDatumParent->GetTransform().HasRotation() )
+			//	break;
+
+			pDatum = pDatumParent->GetLocalDatum( DatumRef );
+		}
+
 		if ( pDatum )
 		{
 			SetTranslate( pDatum->GetCenter() );
+
+			//	debug that we used a different parent
+			if ( pDatumParent != pParent )
+			{
+				TTempString Debug_String("Failed to find datum ");
+				DatumRef.GetString( Debug_String );
+				Debug_String.Append(" to attach ");
+				GetNodeRef().GetString( Debug_String );
+				Debug_String.Append(" on to parent render node (");
+				pParent->GetNodeRef().GetString( Debug_String );
+				Debug_String.Append("). Used a grand parent instead: ");
+				pDatumParent->GetNodeRef().GetString( Debug_String );
+				TLDebug_Print( Debug_String );
+			}
 		}
 		else
 		{
-			TLDebug_Break("Failed to find datum to attach to on parent render node - setup \"async attach to datum\" routine? or just wait for a OnDatumChanged message?");
+			TTempString Debug_String("Failed to find datum ");
+			DatumRef.GetString( Debug_String );
+			Debug_String.Append(" to attach ");
+			GetNodeRef().GetString( Debug_String );
+			Debug_String.Append(" on to parent render node (");
+			pParent->GetNodeRef().GetString( Debug_String );
+			Debug_String.Append("). setup \"async attach to datum\" routine? or just wait for a OnDatumChanged message?");
+			TLDebug_Break( Debug_String );
 		}
 	}
 	else
