@@ -51,7 +51,7 @@ SyncBool Platform::LocalFileSys::LoadFileList()
 	}
 	
 	//	now search for all the other file types
-	if ( !Platform::LocalFileSys::LoadFileList() )
+	if ( !Platform::LocalFileSys::DoLoadFileList() )
 	{
 		return SyncFalse;
 	}
@@ -66,7 +66,7 @@ SyncBool Platform::LocalFileSys::LoadFileList()
 //---------------------------------------------------------------
 //	load files with a filter, returns number of files found. -1 on error
 //---------------------------------------------------------------
-Bool Platform::LocalFileSys::LoadFileList()
+Bool Platform::LocalFileSys::DoLoadFileList()
 {
 	NSString *pDirString = [[NSString alloc] initWithUTF8String:m_Directory.GetData()];
 	 
@@ -375,8 +375,8 @@ TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filenam
 
 	
 	//	create instance
-	TPtr<TLFileSys::TFile> pFile = CreateFileInstance( Filename );
-	if ( !pFile )
+	TPtr<TLFileSys::TFile> pNewFile = CreateFileInstance( Filename );
+	if ( !pNewFile )
 	{
 		TLDebug_Break( TString("Failed to create file instance for %s", Filename.GetData() ) );
 		return NULL;
@@ -384,20 +384,20 @@ TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filenam
 	else
 	{
 		TTempString DebugString("Created new file instance ");
-		pFile->GetFileRef().GetString( DebugString );
+		pNewFile->GetFileRef().GetString( DebugString );
 		DebugString.Append(", type: ");
-		pFile->GetTypeRef().GetString( DebugString );
+		pNewFile->GetTypeRef().GetString( DebugString );
 		TLDebug_Print( DebugString );
 	}	
 	
 	//	check type returned matches up
-	if ( pFile->GetFileRefObject() != FileRef )
+	if ( pNewFile->GetFileRefObject() != FileRef )
 	{
 		TLDebug_Break("Created new file, but file ref doesn't match to what we expected");
 	}
 
 	//	return new instance if it worked
-	return pFile;
+	return pNewFile;
 }
 
 

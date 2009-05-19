@@ -38,7 +38,7 @@ public:
 protected:
 	Bool					IsDirectoryValid();					//	returns FALSE if m_Directory isn't a directory
 	
-	Bool					LoadFileList();						//	returns number of files found. -1 on error
+	Bool					DoLoadFileList();						//	returns number of files found. -1 on error
 	
 protected:
 	Bool					m_IsWritable;						//	overriding readonly setting
