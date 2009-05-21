@@ -102,7 +102,7 @@ if [ ! -e "$APP_FILENAME" ]; then
 fi
 
 # date in Fri_15May_1301 format appended to zip filename, after the .app and before the .zip
-DATE_STRING=`date +%a_%d%b_%H%M`
+DATE_STRING=`date +%d%b%Y_%H%M`
 ZIP_FILENAME="${APP_FILENAME}.${DATE_STRING}.zip"
 
 # ftp details for curl
