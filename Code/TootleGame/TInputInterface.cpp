@@ -42,6 +42,14 @@ TLInput::TInputInterface::~TInputInterface()
 	TTempString Debug_String("TInputInterface destructed ");
 	m_RenderNodeRef.GetString( Debug_String );
 	TLDebug_Print( Debug_String );
+	
+	if(m_ActionInClick.IsValid() || m_ActionInMove.IsValid())
+	{
+		TLDebug_Print("Action hasn't been cleared.  has shutown been called?");
+		TLDebug_Break("Doing last chance action removal");
+		RemoveAllActions();
+	}
+
 }
 
 
@@ -163,8 +171,44 @@ void TLInput::TInputInterface::GetRenderNodes(TArray<TRef>& RenderNodeArray)
 //-------------------------------------------------
 void TLInput::TInputInterface::Shutdown()
 {
+	RemoveAllActions();
+	
+	
 	TLMessaging::TPublisher::Shutdown();
 	TLMessaging::TSubscriber::Shutdown();
+}
+
+
+void TLInput::TInputInterface::RemoveAllActions()
+{
+	// Remove the actions from the user
+	TPtr<TLUser::TUser>	pUser = TLUser::g_pUserManager->GetUser( m_UserRef );
+	if ( pUser )
+	{
+		if(m_ActionInClick.IsValid())
+		{
+			if(!pUser->RemoveAction(m_ActionInClick))
+			{
+				TLDebug_Break("Failed to remove action");
+			}
+			
+			m_ActionInClick.SetInvalid();
+		}
+		
+		if(m_ActionInMove.IsValid())
+		{
+			if(!pUser->RemoveAction(m_ActionInMove))
+			{
+				TLDebug_Break("Failed to remove action");
+			}
+			m_ActionInMove.SetInvalid();
+		}
+	}
+	else
+	{
+		TLDebug_Break("Failed to get user");
+	}
+
 }
 
 

@@ -99,6 +99,7 @@ protected:
 private:
 	void						ProcessQueuedClicks();	//	go through queued-up (unhandled) clicks and respond to them
 
+	void						RemoveAllActions();
 protected:
 	TRef						m_RenderTargetRef;
 	TRef						m_RenderNodeRef;
