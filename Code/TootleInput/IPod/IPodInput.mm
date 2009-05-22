@@ -53,6 +53,18 @@ SyncBool Platform::Init()
 	return SyncTrue;	
 }
 
+Bool Platform::CreateVirtualKeyboard()
+{
+	return IPod::CreateVirtualKeyboard();
+}
+
+Bool Platform::DestroyVirtualKeyboard()
+{
+	return IPod::DestroyVirtualKeyboard();
+}
+
+
+
 // Create Ipod input device
 Bool Platform::IPod::CreateDevice()
 {
@@ -191,6 +203,9 @@ SyncBool Platform::Shutdown()
 	
 	IPod::g_ActiveTouchObjects.Empty();
 	IPod::g_TouchObjects.Empty();
+	
+	// Cleanup if the keyboard is active
+	IPod::DestroyVirtualKeyboard();
 	
 	return SyncTrue;
 }

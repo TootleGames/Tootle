@@ -142,6 +142,18 @@ TRef TLInput::GetFreeDeviceRef(TRef BaseRef)
 }
 
 
+Bool TLInput::CreateVirtualKeyboard()
+{
+	return Platform::CreateVirtualKeyboard();
+}
+
+Bool TLInput::DestroyVirtualKeyboard()
+{
+	return Platform::DestroyVirtualKeyboard();
+}
+
+
+
 TInputManager::TInputManager(TRef refManagerID) :
 	TManager(refManagerID),
 	m_fDeviceCheckTimer(0.0f),

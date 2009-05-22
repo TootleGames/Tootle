@@ -21,6 +21,8 @@
 		841007900EF92CC000542F4A /* TLInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 8410078A0EF92CC000542F4A /* TLInput.h */; };
 		841007910EF92CC000542F4A /* TSensor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8410078B0EF92CC000542F4A /* TSensor.h */; };
 		841007920EF92CC000542F4A /* TUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 8410078C0EF92CC000542F4A /* TUser.h */; };
+		84D9DC670FC5788100C7A173 /* IPodVirtualKeyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 84D9DC650FC5788100C7A173 /* IPodVirtualKeyboard.h */; };
+		84D9DC680FC5788100C7A173 /* IPodVirtualKeyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84D9DC660FC5788100C7A173 /* IPodVirtualKeyboard.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,13 +32,13 @@
 		841005590EF913CE00542F4A /* TLInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLInput.cpp; path = ../TLInput.cpp; sourceTree = SOURCE_ROOT; };
 		8410055B0EF913CE00542F4A /* TSensor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSensor.cpp; path = ../TSensor.cpp; sourceTree = SOURCE_ROOT; };
 		8410055D0EF913CE00542F4A /* TUser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TUser.cpp; path = ../TUser.cpp; sourceTree = SOURCE_ROOT; };
-		841005600EF913E500542F4A /* IPodInput.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodInput.mm; sourceTree = "<group>"; };
+		841005600EF913E500542F4A /* IPodInput.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 2; path = IPodInput.mm; sourceTree = "<group>"; };
 		841005760EF9144200542F4A /* libTootleInput.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleInput.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		841007850EF92CB000542F4A /* IPodInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodInput.h; sourceTree = "<group>"; };
 		841007870EF92CC000542F4A /* TAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAction.h; path = ../TAction.h; sourceTree = SOURCE_ROOT; };
 		841007880EF92CC000542F4A /* TDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDevice.h; path = ../TDevice.h; sourceTree = SOURCE_ROOT; };
 		841007890EF92CC000542F4A /* TEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TEffect.h; path = ../TEffect.h; sourceTree = SOURCE_ROOT; };
-		8410078A0EF92CC000542F4A /* TLInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLInput.h; path = ../TLInput.h; sourceTree = SOURCE_ROOT; };
+		8410078A0EF92CC000542F4A /* TLInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TLInput.h; path = ../TLInput.h; sourceTree = SOURCE_ROOT; };
 		8410078B0EF92CC000542F4A /* TSensor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSensor.h; path = ../TSensor.h; sourceTree = SOURCE_ROOT; };
 		8410078C0EF92CC000542F4A /* TUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TUser.h; path = ../TUser.h; sourceTree = SOURCE_ROOT; };
 		8461BD320F5816C500ED9509 /* PCInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCInput.cpp; path = ../PC/PCInput.cpp; sourceTree = SOURCE_ROOT; };
@@ -45,6 +47,8 @@
 		84C108450F0A72FE00B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C108460F0A72FE00B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C108470F0A72FE00B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
+		84D9DC650FC5788100C7A173 /* IPodVirtualKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; path = IPodVirtualKeyboard.h; sourceTree = "<group>"; };
+		84D9DC660FC5788100C7A173 /* IPodVirtualKeyboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 2; path = IPodVirtualKeyboard.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +76,8 @@
 			children = (
 				841007850EF92CB000542F4A /* IPodInput.h */,
 				841005600EF913E500542F4A /* IPodInput.mm */,
+				84D9DC650FC5788100C7A173 /* IPodVirtualKeyboard.h */,
+				84D9DC660FC5788100C7A173 /* IPodVirtualKeyboard.mm */,
 			);
 			name = IPod;
 			sourceTree = "<group>";
@@ -139,6 +145,7 @@
 				841007900EF92CC000542F4A /* TLInput.h in Headers */,
 				841007910EF92CC000542F4A /* TSensor.h in Headers */,
 				841007920EF92CC000542F4A /* TUser.h in Headers */,
+				84D9DC670FC5788100C7A173 /* IPodVirtualKeyboard.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,6 +199,7 @@
 				8410061D0EF91D8D00542F4A /* TLInput.cpp in Sources */,
 				8410061F0EF91D8D00542F4A /* TSensor.cpp in Sources */,
 				841006210EF91D8D00542F4A /* TUser.cpp in Sources */,
+				84D9DC680FC5788100C7A173 /* IPodVirtualKeyboard.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

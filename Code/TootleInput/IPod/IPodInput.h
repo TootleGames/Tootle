@@ -4,7 +4,6 @@
 
 #include "../TLInput.h"
 
-
 namespace TLInput
 {
 	namespace Platform
@@ -19,6 +18,10 @@ namespace TLInput
 		SyncBool		EnumerateDevices();
 		void			RemoveAllDevices();
 		
+		Bool			CreateVirtualKeyboard();
+		Bool			DestroyVirtualKeyboard();
+
+				
 		namespace IPod
 		{			
 			// Base touch data - used for the persistent TouchObject class and as temp data passed form the
@@ -89,6 +92,9 @@ namespace TLInput
 
 			Bool CreateDevice();
 			Bool InitialiseDevice(TPtr<TInputDevice> pDevice);
+			
+			Bool			CreateVirtualKeyboard();
+			Bool			DestroyVirtualKeyboard();			
 		}
 	};
 };

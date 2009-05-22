@@ -42,6 +42,10 @@ namespace TLInput
 		Bool		UpdateDevice(TInputDevice& Device);
 
 		Type2<s32>	GetCursorPosition(u8 uIndex);
+		
+		Bool			CreateVirtualKeyboard();
+		Bool			DestroyVirtualKeyboard();
+
 	};
 
 
@@ -54,6 +58,10 @@ namespace TLInput
 	TPtr<TLInput::TInputDevice>&	GetDevice(TRefRef DeviceRef);			//	fetch device with this ref
 	TPtr<TLInput::TInputDevice>&	GetDeviceOfType(TRefRef DeviceType);	//	find the (first) device of this type
 	TRef							GetFreeDeviceRef(TRef BaseRef=TRef());	//	get an unused ref for a device
+	
+	// Virtual device creation
+	Bool			CreateVirtualKeyboard();
+	Bool			DestroyVirtualKeyboard();
 };
 
 
