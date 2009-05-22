@@ -48,7 +48,8 @@
 #include "TLDebug.h"
 #include "TString.h"
 
-
+//#include "TSmallObject.h"
+//#define TEST_COUNTER_USING_SOA
 
 template <typename TYPE>
 class TPtr;
@@ -66,6 +67,23 @@ namespace TLPtr
 	//	to sort various issues, and speed things up the counter type is now just a u32
 	//---------------------------------------------------------
 	typedef u32 TCounter;
+	
+	/*
+	class TCounter //: public TLMemory::SmallValueObject<>
+	{
+	public:
+		inline Bool operator==(const u32& value)	const	{ return count == value; }
+		inline void operator=(const u32& value)				{ count = value; }
+		inline void operator++(int value)					{ count+=value; }
+		inline void operator--(int value)					{ count-=value; }
+		
+		// DB - Not sure why but this just doesn't work how I expect it to work :S
+		//inline u32	operator*()						const	{ return count; }
+	//private:
+		u32 count;
+	};
+	*/
+	
 
 
 	template<typename TYPE>
@@ -90,7 +108,8 @@ public:
 	
 	//	accessors
 	FORCEINLINE Bool			IsValid() const								{	return (m_pCounter != NULL);	}
-	FORCEINLINE u32				GetRefCount() const							{	return m_pCounter ? *m_pCounter : 0;	}
+	//FORCEINLINE u32				GetRefCount() const							{	if(m_pCounter != NULL) return m_pCounter->count; return 0;	}
+	FORCEINLINE u32				GetRefCount() const							{	if(m_pCounter != NULL) return *m_pCounter; return 0;	}
 
 	//FORCEINLINE TYPE&			operator*()	const							{	return *GetObject();	}	//	gr: safer not to have this... unless required?? easier, safer and clearer to use GetPtr()
 	FORCEINLINE TYPE*			operator->()								{	return m_pObject;	}	//	note: no pointer check here for efficieny
@@ -186,7 +205,13 @@ void TPtr<TYPE>::AssignToObject(TYPE* pObject)
 		return;
 
 	//	create a new counter...
+#ifdef TEST_COUNTER_USING_SOA
+	// Allocate from the SOA
+	m_pCounter = TLMemory::SOAAllocate<TLPtr::TCounter>(sizeof(TLPtr::TCounter), TRUE);
+#else
 	m_pCounter = new TLPtr::TCounter;
+#endif
+	
 	*m_pCounter = 1;
 
 	//	store pointer to object
@@ -265,7 +290,11 @@ void TPtr<TYPE>::ReleaseObject()
 	if ( (*m_pCounter) == 0 )
 	{
 		//	delete data and null pointers
+#ifdef TEST_COUNTER_USING_SOA
+		TLMemory::SOADelete( m_pCounter );
+#else
 		TLMemory::Delete( m_pCounter );
+#endif
 		TLMemory::Delete( m_pObject );
 	}
 	else

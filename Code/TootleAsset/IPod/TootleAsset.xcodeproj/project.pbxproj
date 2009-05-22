@@ -54,7 +54,7 @@
 		84C109290F0A787B00B2DF7A /* TAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAudio.h; path = ../TAudio.h; sourceTree = SOURCE_ROOT; };
 		84C1092A0F0A787B00B2DF7A /* TFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFont.cpp; path = ../TFont.cpp; sourceTree = SOURCE_ROOT; };
 		84C1092B0F0A787B00B2DF7A /* TFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFont.h; path = ../TFont.h; sourceTree = SOURCE_ROOT; };
-		84C1092C0F0A787B00B2DF7A /* TLAsset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLAsset.cpp; path = ../TLAsset.cpp; sourceTree = SOURCE_ROOT; };
+		84C1092C0F0A787B00B2DF7A /* TLAsset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TLAsset.cpp; path = ../TLAsset.cpp; sourceTree = SOURCE_ROOT; };
 		84C1092D0F0A787B00B2DF7A /* TLAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLAsset.h; path = ../TLAsset.h; sourceTree = SOURCE_ROOT; };
 		84C1092E0F0A787B00B2DF7A /* TLoadTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLoadTask.cpp; path = ../TLoadTask.cpp; sourceTree = SOURCE_ROOT; };
 		84C1092F0F0A787B00B2DF7A /* TLoadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLoadTask.h; path = ../TLoadTask.h; sourceTree = SOURCE_ROOT; };

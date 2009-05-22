@@ -279,11 +279,12 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>31</integer>
+									<integer>2</integer>
+									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 54}, {186, 609}}</string>
+							<string>{{0, 0}, {186, 609}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -318,7 +319,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TInputInterface.cpp</string>
+								<string>TTimeline.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -326,11 +327,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TInputInterface.cpp</string>
+										<string>TTimeline.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>848468C60F8E492A006F21AA</string>
+										<string>84DF34740FC1E06B00B0E6D5</string>
 										<key>history</key>
 										<array>
 											<string>84F90F3C0F13E208007455BB</string>
@@ -346,7 +347,9 @@
 											<string>84C0C4CC0F6AA7860080B167</string>
 											<string>849E9F710F866D1600037332</string>
 											<string>848468BF0F8E45D1006F21AA</string>
-											<string>848468C00F8E45D1006F21AA</string>
+											<string>845FDE5A0FBC265B00F88607</string>
+											<string>845FDE5B0FBC265B00F88607</string>
+											<string>845FDE5F0FBC265B00F88607</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -363,7 +366,7 @@
 											<string>84C0C4CD0F6AA7860080B167</string>
 											<string>849E9F740F866D1600037332</string>
 											<string>849E9F750F866D1600037332</string>
-											<string>848468C10F8E45D1006F21AA</string>
+											<string>845FDE5E0FBC265B00F88607</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -421,9 +424,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>848468C30F8E45D1006F21AA</string>
+				<string>84DF34750FC1E06B00B0E6D5</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>848468C40F8E45D1006F21AA</string>
+				<string>84DF34760FC1E06B00B0E6D5</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -557,7 +560,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>84DE2E860F122C3D00608F8C</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleGame/IPod/TootleGame.xcodeproj</string>
 	</array>
 	<key>WindowString</key>

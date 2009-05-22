@@ -15,6 +15,8 @@
 
 #import <UIKit/UIDevice.h>
 
+#import <IPodAlert.h>
+
 //	Constant for the number of times per second (Hertz) to sample acceleration.
 #define ACCELEROMETER_FREQUENCY     30
 
@@ -227,12 +229,32 @@ void TLDebug::Platform::Print(const TString& String)
 }
 
 
+
+
 //--------------------------------------------------
 //	return FALSE to stop app, TRUE and will attempt to continue
 //--------------------------------------------------
 Bool TLDebug::Platform::Break(const TString& String)
 {
 	Print( String );
+/*
+	// Create an alert so that we can skip debugger or breaking
+	NSString* errornsstring = [[NSString alloc] initWithCString:String.GetData() ];
+		
+	AlertsViewController *alertsViewController = [[AlertsViewController alloc] init];
+	[alertsViewController dialogueOKCancelAction: errornsstring];
+	
+	// Wait for the error dialogue to be dismissed
+	SyncBool Res = SyncWait;
+	
+	do
+	{
+		Res = [alertsViewController dialogueResult];
+	} while(Res == SyncWait);
+	
+	[errornsstring release];
+	[alertsViewController release];	
+*/
 
 	// Drop into debugger if possible
 	// DB:	Found solution to getting the CoreServices linked *only* for the iphone simulator build
@@ -246,6 +268,9 @@ Bool TLDebug::Platform::Break(const TString& String)
 	//	gr: removed because there's no way to get out of this in xcode if we trigger it..
 	int* pNull = 0x0;
 	//*pNull = 99;
+	
+	
+	//assert(FALSE);
 #endif
 	
 	//	fail

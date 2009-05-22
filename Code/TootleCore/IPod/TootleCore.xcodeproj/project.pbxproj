@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8461F1100FBAC46800742359 /* TSmallObjectAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8461F10F0FBAC46800742359 /* TSmallObjectAllocator.cpp */; };
+		8461F1130FBAC4B800742359 /* TSmallObjectAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8461F1120FBAC4B800742359 /* TSmallObjectAllocator.h */; };
+		8461F3420FBAE7F200742359 /* TSmallObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 8461F3410FBAE7F200742359 /* TSmallObject.h */; };
 		84C109970F0A791900B2DF7A /* TArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109600F0A791900B2DF7A /* TArray.h */; };
 		84C109980F0A791900B2DF7A /* TArray.inc.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109610F0A791900B2DF7A /* TArray.inc.h */; };
 		84C109990F0A791900B2DF7A /* TBinary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109620F0A791900B2DF7A /* TBinary.cpp */; };
@@ -70,6 +73,8 @@
 		84C109DC0F0A793000B2DF7A /* IPodMemory.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C109D40F0A793000B2DF7A /* IPodMemory.mm */; };
 		84C109DD0F0A793000B2DF7A /* IPodTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109D50F0A793000B2DF7A /* IPodTime.h */; };
 		84C109DE0F0A793000B2DF7A /* IPodTime.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C109D60F0A793000B2DF7A /* IPodTime.mm */; };
+		84D9DAC10FC3266100C7A173 /* IPodAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = 84D9DABF0FC3266100C7A173 /* IPodAlert.h */; };
+		84D9DAC20FC3266100C7A173 /* IPodAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84D9DAC00FC3266100C7A173 /* IPodAlert.mm */; };
 		84E116070F3C6C7900471397 /* TGraphBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E116040F3C6C7900471397 /* TGraphBase.cpp */; };
 		84E116080F3C6C7900471397 /* TGraphBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E116050F3C6C7900471397 /* TGraphBase.h */; };
 		84E116090F3C6C7900471397 /* TLanguage.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E116060F3C6C7900471397 /* TLanguage.h */; };
@@ -80,6 +85,9 @@
 /* Begin PBXFileReference section */
 		8418E89D0F4C2D8C00B956C9 /* TootleSimDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleSimDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleSimDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		8418E89E0F4C2D8C00B956C9 /* TootleSimRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleSimRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleSimRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		8461F10F0FBAC46800742359 /* TSmallObjectAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TSmallObjectAllocator.cpp; path = ../TSmallObjectAllocator.cpp; sourceTree = SOURCE_ROOT; };
+		8461F1120FBAC4B800742359 /* TSmallObjectAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TSmallObjectAllocator.h; path = ../TSmallObjectAllocator.h; sourceTree = SOURCE_ROOT; };
+		8461F3410FBAE7F200742359 /* TSmallObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSmallObject.h; path = ../TSmallObject.h; sourceTree = SOURCE_ROOT; };
 		84C109590F0A78EE00B2DF7A /* libTootleCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleCore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C109600F0A791900B2DF7A /* TArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TArray.h; path = ../TArray.h; sourceTree = SOURCE_ROOT; };
 		84C109610F0A791900B2DF7A /* TArray.inc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TArray.inc.h; path = ../TArray.inc.h; sourceTree = SOURCE_ROOT; };
@@ -104,8 +112,8 @@
 		84C109740F0A791900B2DF7A /* TLGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLGraph.h; path = ../TLGraph.h; sourceTree = SOURCE_ROOT; };
 		84C109750F0A791900B2DF7A /* TLMaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLMaths.cpp; path = ../TLMaths.cpp; sourceTree = SOURCE_ROOT; };
 		84C109760F0A791900B2DF7A /* TLMaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLMaths.h; path = ../TLMaths.h; sourceTree = SOURCE_ROOT; };
-		84C109770F0A791900B2DF7A /* TLMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLMemory.cpp; path = ../TLMemory.cpp; sourceTree = SOURCE_ROOT; };
-		84C109780F0A791900B2DF7A /* TLMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLMemory.h; path = ../TLMemory.h; sourceTree = SOURCE_ROOT; };
+		84C109770F0A791900B2DF7A /* TLMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TLMemory.cpp; path = ../TLMemory.cpp; sourceTree = SOURCE_ROOT; };
+		84C109780F0A791900B2DF7A /* TLMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TLMemory.h; path = ../TLMemory.h; sourceTree = SOURCE_ROOT; };
 		84C109790F0A791900B2DF7A /* TLMemory.inc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLMemory.inc.h; path = ../TLMemory.inc.h; sourceTree = SOURCE_ROOT; };
 		84C1097A0F0A791900B2DF7A /* TLMessaging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLMessaging.cpp; path = ../TLMessaging.cpp; sourceTree = SOURCE_ROOT; };
 		84C1097B0F0A791900B2DF7A /* TLMessaging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLMessaging.h; path = ../TLMessaging.h; sourceTree = SOURCE_ROOT; };
@@ -148,6 +156,8 @@
 		84C109E00F0A794A00B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C109E10F0A794A00B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C109E20F0A794A00B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
+		84D9DABF0FC3266100C7A173 /* IPodAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = IPodAlert.h; path = ../IPodAlert.h; sourceTree = "<group>"; };
+		84D9DAC00FC3266100C7A173 /* IPodAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodAlert.mm; path = ../IPodAlert.mm; sourceTree = "<group>"; };
 		84E116040F3C6C7900471397 /* TGraphBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGraphBase.cpp; path = ../TGraphBase.cpp; sourceTree = SOURCE_ROOT; };
 		84E116050F3C6C7900471397 /* TGraphBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGraphBase.h; path = ../TGraphBase.h; sourceTree = SOURCE_ROOT; };
 		84E116060F3C6C7900471397 /* TLanguage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLanguage.h; path = ../TLanguage.h; sourceTree = SOURCE_ROOT; };
@@ -229,6 +239,11 @@
 				84C109770F0A791900B2DF7A /* TLMemory.cpp */,
 				84C109780F0A791900B2DF7A /* TLMemory.h */,
 				84C109790F0A791900B2DF7A /* TLMemory.inc.h */,
+				84C109840F0A791900B2DF7A /* TMemoryManager.cpp */,
+				84C109850F0A791900B2DF7A /* TMemoryManager.h */,
+				8461F3410FBAE7F200742359 /* TSmallObject.h */,
+				8461F1120FBAC4B800742359 /* TSmallObjectAllocator.h */,
+				8461F10F0FBAC46800742359 /* TSmallObjectAllocator.cpp */,
 				84C1097A0F0A791900B2DF7A /* TLMessaging.cpp */,
 				84C1097B0F0A791900B2DF7A /* TLMessaging.h */,
 				84C1097C0F0A791900B2DF7A /* TLThread.cpp */,
@@ -239,8 +254,6 @@
 				84C109810F0A791900B2DF7A /* TLTypes.inc.h */,
 				84C109820F0A791900B2DF7A /* TManager.cpp */,
 				84C109830F0A791900B2DF7A /* TManager.h */,
-				84C109840F0A791900B2DF7A /* TMemoryManager.cpp */,
-				84C109850F0A791900B2DF7A /* TMemoryManager.h */,
 				84C109860F0A791900B2DF7A /* TMessage.cpp */,
 				84C109870F0A791900B2DF7A /* TMessage.h */,
 				84C109880F0A791900B2DF7A /* TPtr.h */,
@@ -275,6 +288,8 @@
 				84C109D40F0A793000B2DF7A /* IPodMemory.mm */,
 				84C109D50F0A793000B2DF7A /* IPodTime.h */,
 				84C109D60F0A793000B2DF7A /* IPodTime.mm */,
+				84D9DABF0FC3266100C7A173 /* IPodAlert.h */,
+				84D9DAC00FC3266100C7A173 /* IPodAlert.mm */,
 			);
 			name = IPod;
 			sourceTree = "<group>";
@@ -328,6 +343,9 @@
 				84E116080F3C6C7900471397 /* TGraphBase.h in Headers */,
 				84E116090F3C6C7900471397 /* TLanguage.h in Headers */,
 				84E1169C0F3C9E2A00471397 /* TApplication.h in Headers */,
+				8461F1130FBAC4B800742359 /* TSmallObjectAllocator.h in Headers */,
+				8461F3420FBAE7F200742359 /* TSmallObject.h in Headers */,
+				84D9DAC10FC3266100C7A173 /* IPodAlert.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,6 +418,8 @@
 				84C109DE0F0A793000B2DF7A /* IPodTime.mm in Sources */,
 				84E116070F3C6C7900471397 /* TGraphBase.cpp in Sources */,
 				84E1169D0F3C9E2A00471397 /* TApplication.cpp in Sources */,
+				8461F1100FBAC46800742359 /* TSmallObjectAllocator.cpp in Sources */,
+				84D9DAC20FC3266100C7A173 /* IPodAlert.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -5,6 +5,40 @@
 
 
 
+template<typename TYPE>
+TYPE* TLMemory::SOAAllocate(std::size_t size, Bool bThrow)
+{
+#ifdef ENABLE_SOA
+	return ( static_cast<TYPE*>(TLMemory::g_sMemorySystem.GetSmallObjectAllocator().Allocate(size, bThrow)) );
+#else
+	return ( static_cast<TYPE*>(TLMemory::g_sMemorySystem.Allocate(size)) ) ;
+#endif
+}
+	
+
+//-------------------------------------------------------
+//	delete an object
+//-------------------------------------------------------
+template<typename TYPE>
+void TLMemory::SOADelete(TYPE*& pData)
+{
+	if ( !pData )
+		return;
+	
+#ifdef ENABLE_SOA	
+	TLMemory::g_sMemorySystem.GetSmallObjectAllocator().Deallocate( pData );
+#else
+	TLMemory::g_sMemorySystem.Deallocate(pData);
+#endif
+	pData = NULL;
+
+}
+
+
+
+
+
+
 //-------------------------------------------------------
 //	delete an object
 //-------------------------------------------------------

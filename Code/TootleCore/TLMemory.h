@@ -20,6 +20,12 @@
 #endif
 
 
+//#define ENABLE_SOA
+
+
+#ifdef ENABLE_SOA
+#include "TSmallObjectAllocator.h"
+#endif
 
 namespace TLMemory
 {
@@ -29,6 +35,9 @@ namespace TLMemory
 	template<typename TYPE> FORCEINLINE void	CopyData(TYPE* pToData,const TYPE* pFromData,u32 Elements);	//	(memcpy) copy a load of raw data
 	template<typename TYPE> FORCEINLINE void	MoveData(TYPE* pToData,const TYPE* pFromData,u32 Elements);	//	(memmove) move a load of raw data
 
+	// SOA versions - if ENABLE_SOA is undefined they will use the memory system routines
+	template<typename TYPE> FORCEINLINE TYPE*	SOAAllocate(std::size_t size, Bool bThrow);
+	template<typename TYPE> FORCEINLINE void	SOADelete(TYPE*& pData);					//	delete an object if not-null and NULLs the pointer provided
 
 	//	added this wrapper for TLDebug_Break so we don't include the string type or debug header
 	namespace Debug
@@ -53,7 +62,6 @@ namespace TLMemory
 
 	class TMemoryTrack;								//	allocation tracking entry
 	class TMemorySystem;							//	memory interface...
-	extern TMemorySystem	g_sMemorySystem;		//	global static memory system
 };
 
 
@@ -82,9 +90,9 @@ public:
 	~TMemorySystem();
 
 	// Custom memory allocation
-	FORCEINLINE void*		Allocate(u32 Size)
+	FORCEINLINE void*		Allocate(std::size_t size)
 	{
-		void* pData = Platform::MemAlloc( Size );
+		void* pData = Platform::MemAlloc( size );
 		if ( !pData )
 		{
 			TLMemory::Debug::Break("Failed to allocate memory", __FUNCTION__ );
@@ -95,7 +103,7 @@ public:
 		//	this is per-lib
 		#ifdef _DEBUG
 		{
-			TLMemory::Debug::Debug_Alloc( pData, Size );
+			TLMemory::Debug::Debug_Alloc( pData, size );
 		}
 		#endif
 
@@ -139,8 +147,26 @@ public:
 		//	delete memory
 		Platform::MemDealloc( pObj );
 	}
-
+#ifdef ENABLE_SOA
+	
+	FORCEINLINE TSmallObjectAllocator& GetSmallObjectAllocator()	 
+	{ 
+		if(!m_pSOA) 
+			m_pSOA = new TSmallObjectAllocator(LOKI_DEFAULT_CHUNK_SIZE, LOKI_MAX_SMALL_OBJECT_SIZE, LOKI_DEFAULT_OBJECT_ALIGNMENT); 
+		
+		return *m_pSOA; 
+	}
+	
+private:
+	TSmallObjectAllocator*	m_pSOA;	// Small Object Allocator
+#endif
 };
+
+
+namespace TLMemory
+{
+	static TMemorySystem	g_sMemorySystem;		//	global static memory system
+}
 
 
 //------------------------------------------------

@@ -13,7 +13,7 @@
 
 namespace TLMemory
 {
-	TMemorySystem	g_sMemorySystem;		// global static memory system
+	//static TMemorySystem	g_sMemorySystem;		// global static memory system
 
 	TLArray::SortResult	SortMemoryTracks(const TMemoryTrack& a,const TMemoryTrack& b,const void* pTestMemoryTrack);	//	sort memory trackers
 	TMemoryTrack*		FindMemoryTrack(void* pAddress);			//	find a memory tracker from an address
