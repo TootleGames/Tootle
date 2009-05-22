@@ -1171,3 +1171,16 @@ void Platform::DirectX::RemoveAllDevices()
 }
 
 
+
+
+Bool TLInput::Platform::CreateVirtualKeyboard()		
+{	
+	return FALSE;	
+}
+
+Bool TLInput::Platform::DestroyVirtualKeyboard()
+{
+	return FALSE;	
+}
+
+
