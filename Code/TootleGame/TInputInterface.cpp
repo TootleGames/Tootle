@@ -202,11 +202,7 @@ void TLInput::TInputInterface::ProcessMessage(TLMessaging::TMessage& Message)
 				}
 				else if ( ActionRef == m_ActionInMove )
 				{
-					//	gr: the Move action is dependant on the parent, so assuming mouse is down.
-					//		if that changes (which would be for hover-detection, which would be windows only)
-					//		then we need to work out the button's raw state from this message...
-					float RawValue = 1.f;
-					QueueClick( CursorPosition, RawValue );
+					OnCursorMove(CursorPosition);
 				}
 
 				//	now process ALL the queued clicks so if we have some unprocessed they're not lost and kept in order
@@ -347,7 +343,12 @@ SyncBool TLInput::TInputInterface::ProcessClick(TClick& Click,TLRender::TScreen&
 			if(Click.GetActionValue() == 0.0f)
 				OnClickEnd( Click );
 			else
-				OnClickBegin( Click );
+			{
+				// This is where we *should* check for being able to hover 'onto' a button
+				// but the movement is classed as clicks along with the actual clicks.... that's gonna have to change! :/
+				//if(AllowClickOnHoverOver())
+					OnClickBegin( Click );
+			}
 		}
 		break;
 
@@ -419,11 +420,6 @@ void TLInput::TInputInterface::OnClickEnd(const TClick& Click)
 
 	//if(m_ClickCount == 0)
 		SendActionMessage( FALSE, 0.f );
-}
-
-void TLInput::TInputInterface::OnCursorMove()
-{
-
 }
 
 

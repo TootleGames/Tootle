@@ -34,6 +34,8 @@ protected:
 	virtual void			GetRenderNodes(TArray<TRef>& RenderNodeArray);		//	get array of all the render nodes we're using
 	virtual void			OnInitialised();									//	when init has finished set the position of the slider
 
+	virtual void				OnCursorMove(const int2& NewCursorPosition);		
+	
 	void					SetScrollValue(float NewValue);						//	set value and send out message if it changes
 	void					UpdateSliderPos();									//	update graphical position of slider
 

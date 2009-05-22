@@ -84,17 +84,19 @@ protected:
 	
 	SyncBool					IsIntersecting(TLRender::TScreen& Screen, TLRender::TRenderTarget& RenderTarget, TLRender::TRenderNode& RenderNode,TClick& Click);
 
-	virtual void				OnInitialised()										{	};
+	virtual void				OnInitialised()										{	}
 
 	virtual void				OnClickBegin(const TClick& Click);
 	virtual void				OnClickEnd(const TClick& Click);
 
-	virtual void				OnCursorMove();		
+	virtual void				OnCursorMove(const int2& NewCursorPosition)			{}
+	
 	virtual void				OnCursorHoverOn()	{}
 	virtual void				OnCursorHoverOff()	{}
+	
+	void						QueueClick(const int2& CursorPos,float ActionValue);	//	put a click in the queue
 
 private:
-	void						QueueClick(const int2& CursorPos,float ActionValue);	//	put a click in the queue
 	void						ProcessQueuedClicks();	//	go through queued-up (unhandled) clicks and respond to them
 
 protected:

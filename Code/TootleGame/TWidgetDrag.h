@@ -22,8 +22,8 @@ public:
 protected:
 	virtual void				OnClickBegin(const TClick& Click);
 	virtual void				OnClickEnd(const TClick& Click);
-	virtual void				OnCursorMove();		
-
+	virtual void				OnCursorMove(const int2& NewCursorPosition);		
+	
 	void						OnDrag(const TClick& Click,const int2& Drag2,const float3& Drag3);
 
 protected:
