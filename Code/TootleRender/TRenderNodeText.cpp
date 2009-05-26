@@ -54,10 +54,10 @@ void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 		else
 		{
 			#ifdef _DEBUG
-			TTempString debugstr;
+			TTempString debugstr("Failed to get text: ");
 			TextRef.GetString(debugstr);
 			TLDebug_Print(debugstr);
-			TLDebug_Break("Failed to get text");
+			TLDebug_Break(debugstr);
 			#endif
 		}
 	}

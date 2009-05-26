@@ -956,3 +956,14 @@ s32 TString::GetCharIndexWhitespace(u32 From) const
 	return -1;
 }
 
+
+//------------------------------------------------------
+//	insert a string into this string
+//------------------------------------------------------
+void TString::InsertAt(u32 Index,const TString& String)
+{
+	const TArray<char>& OtherStringArray = String.GetStringArray();
+	TArray<char>& StringArray = this->GetStringArray();
+
+	StringArray.InsertAt( Index, OtherStringArray );
+}

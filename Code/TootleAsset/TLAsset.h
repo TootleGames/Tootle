@@ -64,7 +64,7 @@ protected:
 
 	virtual SyncBool Initialise();
 	virtual SyncBool Update(float fTimeStep);
-	virtual SyncBool Shutdown()			{	return TManager::Shutdown();	}
+	virtual SyncBool Shutdown();
 	
 	virtual void			OnEventChannelAdded(TRefRef refPublisherID,TRefRef refChannelID);
 	

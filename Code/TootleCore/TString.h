@@ -68,6 +68,7 @@ public:
 	void					Append(const CHARTYPE* pString,s32 Length=-1);	//	add string onto the end of the current string
 	void					Append(const TString& String,u32 From,s32 Length);	//	append part of a string (use -1 as the length to copy everything FROM from)
 	void					Appendf(const CHARTYPE* pString,...);			//	add string onto the end of the current string
+	void					InsertAt(u32 Index,const TString& String);		//	insert a string into this string
 	Bool					Trim();											//	trim whitespace from front and back of string - returns TRUE if changed
 	Bool					SetLowercase();									//	change all uppercase characters to lowercase - returns TRUE if changed
 	Bool					SetUppercase();									//	change all lowercase characters to uppercase - returns TRUE if changed

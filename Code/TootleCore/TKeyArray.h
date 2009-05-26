@@ -76,6 +76,7 @@ public:
 
 public:
 	TKeyArray() : m_Array( &TLKeyArray::KeyArraySort<KEYTYPE,TYPE> )						{	}
+	TKeyArray(const TKeyArray<KEYTYPE,TYPE>& OtherArray)				{	Copy( OtherArray );	}
 
 	FORCEINLINE u32				GetSize() const							{	return m_Array.GetSize();	}
 
@@ -103,6 +104,8 @@ public:
 	TYPE*						AddNew(const KEYTYPE& Key);				//	add a new key and un-set item to the list - returns NULL if the key already exists. returns the item for the key
 	Bool						Remove(const KEYTYPE& Key);				//	remove the item with this key. returns if anything was removed
 	Bool						RemoveItem(const TYPE& Item,Bool RemoveAllMatches=FALSE);	//	remove matching item. (for when we dont know the key) returns if anything was removed
+
+	FORCEINLINE void			Copy(const TKeyArray<KEYTYPE,TYPE>& OtherArray)	{	m_Array.Copy( OtherArray.m_Array );	}
 
 protected:
 	TArray<TLKeyArray::TPair<KEYTYPE,TYPE> >		m_Array;		//	array of pairs

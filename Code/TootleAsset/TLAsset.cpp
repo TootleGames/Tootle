@@ -519,3 +519,12 @@ SyncBool TLAsset::TAssetFactory::Update(float fTimeStep)
 	return SyncTrue;
 }
 
+
+SyncBool TLAsset::TAssetFactory::Shutdown()
+{
+	g_LoadTasks.Empty( TRUE );
+
+	return TManager::Shutdown();	
+}
+
+
