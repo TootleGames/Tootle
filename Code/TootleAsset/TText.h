@@ -112,6 +112,17 @@ FORCEINLINE Bool TLAsset::TText::GetText(TRefRef LanguageRef, TRefRef TextRef, T
 }
 
 
+FORCEINLINE Bool TLAsset::TText::GetText(TRefRef LanguageRef, TRefRef TextRef, TString& TextString,const TTextReplaceTable& ReplaceTable)			
+{	
+	//	gr: cache the current language if this is slow, we're never going to want to change language mid-game
+	TPtr<TLanguageDatabase>& pTextDB = m_LanguageDatabases.FindPtr(LanguageRef); 
+	if( !pTextDB.IsValid() ) 
+		return FALSE;
+	
+	return pTextDB->GetText(TextRef, TextString,ReplaceTable);
+}
+
+
 
 FORCEINLINE Bool TLAsset::TText::TLanguageDatabase::GetText(TRefRef TextRef, TString& TextString)			
 {

@@ -6,6 +6,7 @@
 #pragma once
 
 #include "TRenderNode.h"
+#include <TootleAsset/TText.h>
 
 
 namespace TLRender
@@ -81,6 +82,8 @@ public:
 	DEPRECATED const TString&	GetText() const							{	return m_Text;	}
 	void					SetString(const TString& String);			//	setup new string
 	DEPRECATED void			SetText(const TString& String)				{	SetString( String );	}
+	void					SetText(TRefRef TextRef,TLAsset::TText::TTextReplaceTable* pReplaceTable=NULL);
+	FORCEINLINE void		SetText(TRefRef TextRef,TLAsset::TText::TTextReplaceTable& ReplaceTable)			{	SetText( TextRef, &ReplaceTable );	}
 	Bool					SetTextBox(const TLMaths::TBox2D& Box);		//	update box - returns TRUE if it's changed
 	Bool					SetTextBox(const TLMaths::TShape& Shape);	//	update box - returns TRUE if it's changed
 	Bool					SetTextBox(const TLMaths::TShape* pShape)	{	return pShape ? SetTextBox( *pShape ) : SetTextBoxInvalid();	}

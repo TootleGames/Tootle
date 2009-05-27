@@ -3,6 +3,8 @@
 
 #include <TootleCore/TPtr.h>
 #include <TootleCore/TManager.h>
+#include <TootleAsset/TText.h>
+
 
 namespace TLText
 {
@@ -22,15 +24,15 @@ public:
 	}
 
 	// Language access
-	void		SetLanguage(TRefRef LanguageRef)	{ m_LanguageRef = LanguageRef; OnLanguageChanged(); }
-	TRefRef		GetLanguage()						{ return m_LanguageRef; }
+	void				SetLanguage(TRefRef LanguageRef)	{ m_LanguageRef = LanguageRef; OnLanguageChanged(); }
+	TRefRef				GetLanguage()						{ return m_LanguageRef; }
 	
-	FORCEINLINE Bool			IsLanguageSupported(TRefRef LanguageRef)	{ return m_LanguagesSupported.Exists(LanguageRef); }
-	TArray<TRef>&				GetSupportedLanguages()						{ return m_LanguagesSupported; }
+	FORCEINLINE Bool	IsLanguageSupported(TRefRef LanguageRef)	{ return m_LanguagesSupported.Exists(LanguageRef); }
+	TArray<TRef>&		GetSupportedLanguages()						{ return m_LanguagesSupported; }
 
 	// Text access
-	Bool		GetText(TRefRef TextRef, TString& Text);
-	Bool		GetText(TRefRef TextRef, TRefRef TextSection, TString& Text);
+	Bool				GetText(TRefRef TextRef, TString& Text,TLAsset::TText::TTextReplaceTable* pReplaceTable=NULL);						//	
+	Bool				GetText(TRefRef TextRef, TRefRef TextSection, TString& Text,TLAsset::TText::TTextReplaceTable* pReplaceTable=NULL);	//	gr: text section is a text asset!
 
 protected:
 	
@@ -42,8 +44,8 @@ protected:
 	void				OnLanguageChanged();
 
 private:
-	TRef			m_LanguageRef;		// Current selected language
+	TRef				m_LanguageRef;		// Current selected language
 
-	TArray<TRef>	m_TextFiles;			// List of text files
-	TArray<TRef>	m_LanguagesSupported;	// List of supported languages as Tref's
+	TArray<TRef>		m_TextFiles;			// List of text files
+	TArray<TRef>		m_LanguagesSupported;	// List of supported languages as Tref's
 };

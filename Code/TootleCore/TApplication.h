@@ -54,7 +54,7 @@ public:
 	
 	//	global options
 	FORCEINLINE void	SetLanguage(TRefRef LanguageRef)	{	SetOption("Lang", LanguageRef );	}
-	FORCEINLINE TRef	GetLanguage()						{	return GetOption("Lang", TLanguage::g_LanguageRef_Eng );	}
+	FORCEINLINE TRef	GetLanguage()						{	return GetOption("Lang", TLLanguage::g_LanguageRef_English );	}
 	FORCEINLINE void	SetSoundVolume(u8 Volume)			{	SetOption("sfxvol", Volume );	}
 	FORCEINLINE TRef	GetSoundVolume()					{	return GetOption<u8>("sfxvol", 100 );	}
 	FORCEINLINE void	SetMusicVolume(u8 Volume)			{	SetOption("musvol", Volume );	}

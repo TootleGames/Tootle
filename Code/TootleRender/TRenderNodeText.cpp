@@ -46,20 +46,8 @@ void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 	TRef TextRef;
 	if ( Message.ImportData("TextRef", TextRef ) )
 	{
-		// Now get the string from the text manager
-		if(TLText::g_pTextManager->GetText(TextRef, m_Text))
-		{
-			OnStringChanged();
-		}
-		else
-		{
-			#ifdef _DEBUG
-			TTempString debugstr("Failed to get text: ");
-			TextRef.GetString(debugstr);
-			TLDebug_Print(debugstr);
-			TLDebug_Break(debugstr);
-			#endif
-		}
+		SetText( TextRef );
+
 	}
 
 	//	import scale/alignment modes
@@ -161,6 +149,30 @@ void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 	//	do inherited init
 	TRenderNode::Initialise( Message );
 }
+
+
+//--------------------------------------------------------------------
+//	
+//--------------------------------------------------------------------
+void TLRender::TRenderNodeText::SetText(TRefRef TextRef,TLAsset::TText::TTextReplaceTable* pReplaceTable)
+{
+	// Now get the string from the text manager
+	if ( !TLText::g_pTextManager->GetText(TextRef, m_Text, pReplaceTable ) )
+	{
+		#ifdef _DEBUG
+		TTempString debugstr("Failed to get text: ");
+		TextRef.GetString(debugstr);
+		TLDebug_Print(debugstr);
+		TLDebug_Break(debugstr);
+		#endif
+		return;
+	}
+		
+	//	gr: note, no check to see if the text has changed, assume we dont really need to...
+	OnStringChanged();
+}
+
+
 
 //--------------------------------------------------------------------
 //	setup new string
@@ -702,4 +714,5 @@ Bool TLRender::TRenderNodeTextureText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 
 	return TRUE;
 }
+
 

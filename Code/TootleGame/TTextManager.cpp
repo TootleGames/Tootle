@@ -2,6 +2,7 @@
 #include "TTextManager.h"
 
 #include <TootleCore/TEventChannel.h>
+#include <TootleCore/TLanguage.h>
 #include <TootleAsset/TLAsset.h>
 #include <TootleAsset/TText.h>
 #include <TootleCore/TCoreManager.h>
@@ -15,7 +16,7 @@ namespace TLText
 using namespace TLText;
 
 // Get the text from *any* of the text sections.  First one found is returned, if successfully found.
-Bool TTextManager::GetText(TRefRef TextRef, TString& Text)
+Bool TTextManager::GetText(TRefRef TextRef, TString& Text,TLAsset::TText::TTextReplaceTable* pReplaceTable)
 {
 	for(u32 uIndex = 0; uIndex < m_TextFiles.GetSize(); uIndex++)
 	{
@@ -25,16 +26,20 @@ Bool TTextManager::GetText(TRefRef TextRef, TString& Text)
 		// Get the text asset file from the asset system
 		TPtr<TLAsset::TText> pAsset = TLAsset::GetAsset(TextSection, TRUE);
 
-		if(pAsset.IsValid())
+		if ( !pAsset )
+			continue;
+		
+		//	find matching text
+		if ( pReplaceTable )
 		{
-			if(pAsset->GetText(m_LanguageRef, TextRef, Text))
-			{
-				// Sucessfully found the text
+			if( pAsset->GetText(m_LanguageRef, TextRef, Text, *pReplaceTable ) )
 				return TRUE;
-			}
 		}
-
-
+		else
+		{
+			if( pAsset->GetText(m_LanguageRef, TextRef, Text ) )
+				return TRUE;
+		}
 	}
 
 	// Not found
@@ -42,7 +47,7 @@ Bool TTextManager::GetText(TRefRef TextRef, TString& Text)
 }
 
 
-Bool TTextManager::GetText(TRefRef TextRef, TRefRef TextSection, TString& Text) 
+Bool TTextManager::GetText(TRefRef TextRef, TRefRef TextSection, TString& Text,TLAsset::TText::TTextReplaceTable* pReplaceTable) 
 {
 	// Is the section loaded?  The section is the same ref as a text file ref
 	if(!m_TextFiles.Exists(TextSection))
@@ -54,7 +59,10 @@ Bool TTextManager::GetText(TRefRef TextRef, TRefRef TextSection, TString& Text)
 	if(!pAsset.IsValid())
 		return FALSE;
 
-	return pAsset->GetText(m_LanguageRef, TextRef, Text);
+	if ( pReplaceTable )
+		return pAsset->GetText(m_LanguageRef, TextRef, Text, *pReplaceTable );
+	else
+		return pAsset->GetText(m_LanguageRef, TextRef, Text );
 }
 
 void TTextManager::OnLanguageChanged()	
@@ -69,23 +77,27 @@ SyncBool TTextManager::Initialise()
 	// Add some languages that we will support
 	//TODO: This will need updating so that it is either generated from
 	// the game or lists all possibly supported languages.
-	m_LanguagesSupported.Add("usa");	// US English
-	m_LanguagesSupported.Add("eng");	// UK English
-	m_LanguagesSupported.Add("fre");	// French	
-	m_LanguagesSupported.Add("ger");	// German	
-	m_LanguagesSupported.Add("spa");	// Spanish
-	m_LanguagesSupported.Add("ita");	// Italian
-	m_LanguagesSupported.Add("ned");	// Dutch
-	m_LanguagesSupported.Add("jap");	// Japanese
+	m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_Usa );
+	m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_English );
+	m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_French );
+	m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_German );
+	m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_Spanish );
+	m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_Italian );
+	m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_Dutch );
+	m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_Japanese );
 
 	// Get the language from the core manager as specified on the hardware
+	//	gr: should get this from the TApplication::GetLanguage ?
 	TRef LanguageRef = TLCore::g_pCoreManager->GetHardwareLanguage();
 	
 	if(IsLanguageSupported(LanguageRef))
 	{
 		SetLanguage(LanguageRef);
 	}
-	
+	else
+	{
+		TLDebug_Break("What do we do here?");
+	}	
 
 	return TManager::Initialise();
 }
