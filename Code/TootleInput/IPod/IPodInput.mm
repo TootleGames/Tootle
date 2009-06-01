@@ -1,8 +1,12 @@
 #include "IPodInput.h"
 
+#include <TootleCore/TKeyArray.h>
 #ifdef _DEBUG
 	#define ENABLE_INPUTSYSTEM_TRACE
 #endif
+
+// Define to quickly enable/disable the accelerometer processing
+//#define DISBALE_ACCELEROMETER
 
 
 #define ACCEL_MAXPROCESS	10		//	at most, per device update only process the last N accelerometer data's
@@ -28,6 +32,11 @@ namespace TLInput
 			TArray<float3>				g_AccelerationData;
 			float3						g_LastAccelData = float3(0,0,0);		//	store the last accel data in case we dont have any for some immediate touch response, we will just send the last data we had. Also reduces the amount of processing done when values changes only slightly
 			
+			TKeyArray<TRef, TRef>		g_KeyboardRefMap;		// iPod virtual keybord button refs
+			TArray<TRef>				g_KeyboardKeyArray;		// iPod virtual keyboard keys pressed
+			
+			Bool						g_bVirtualKeyboardActive = FALSE;
+			
 			const u32 MAX_CURSOR_POSITIONS = 4;
 			TFixedArray<int2, MAX_CURSOR_POSITIONS>					g_aCursorPositions(MAX_CURSOR_POSITIONS);
 			//TFixedArray<float, MAX_CURSOR_POSITIONS>				g_aIpodButtonState;		// DB - MAY BE ABLE TO REMOVE THIS AND USE THE NEW TOUCH OBJECT ARRAY
@@ -40,6 +49,20 @@ namespace TLInput
 			void	ProcessTouchData(TPtr<TLInput::TInputDevice> pDevice);
 			
 			void	CheckRemoveTouchObjects();
+			
+			// Internal
+			void			InitialiseKeyboadRefMap();
+			
+			Bool			InitialisePhysicalDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef);
+			Bool			InitialiseVirtualDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef);
+
+			Bool			CreateVirtualKeyboard();
+			Bool			DestroyVirtualKeyboard();
+			
+			Bool			UpdatePhysicalDevice(TLInput::TInputDevice& Device);
+			Bool			UpdateVirtualDevice(TLInput::TInputDevice& Device);
+
+			
 		}
 	}
 }
@@ -50,33 +73,107 @@ using namespace TLInput;
 // Not used on the ipod
 SyncBool Platform::Init()
 {		
+	IPod::InitialiseKeyboadRefMap();
 	return SyncTrue;	
 }
 
-Bool Platform::CreateVirtualKeyboard()
+void Platform::IPod::InitialiseKeyboadRefMap()
 {
-	return IPod::CreateVirtualKeyboard();
+	g_KeyboardRefMap.Add("ESC", "K_ESC");
+	g_KeyboardRefMap.Add("1", "K_1");
+	g_KeyboardRefMap.Add("2", "K_2");
+	g_KeyboardRefMap.Add("3", "K_3");
+	g_KeyboardRefMap.Add("4", "K_4");
+	g_KeyboardRefMap.Add("5", "K_5");
+	g_KeyboardRefMap.Add("6", "K_6");
+	g_KeyboardRefMap.Add("7", "K_7");
+	g_KeyboardRefMap.Add("8", "K_8");
+	g_KeyboardRefMap.Add("9", "K_9");
+	g_KeyboardRefMap.Add("0", "K_0");
+	g_KeyboardRefMap.Add("-", "K_MINUS");
+	g_KeyboardRefMap.Add("=", "K_EQUALS");
+	g_KeyboardRefMap.Add("BACKSPACE", "K_BACKSPACE");
+	g_KeyboardRefMap.Add("TAB", "K_TAB");
+	g_KeyboardRefMap.Add("Q", "K_Q");
+	g_KeyboardRefMap.Add("W", "K_W");
+	g_KeyboardRefMap.Add("E", "K_E");
+	g_KeyboardRefMap.Add("R", "K_R");
+	g_KeyboardRefMap.Add("T", "K_T");
+	g_KeyboardRefMap.Add("Y", "K_Y");
+	g_KeyboardRefMap.Add("U", "K_U");
+	g_KeyboardRefMap.Add("I", "K_I");
+	g_KeyboardRefMap.Add("O", "K_O");
+	g_KeyboardRefMap.Add("P", "K_P");
+	g_KeyboardRefMap.Add("(", "K_LBRACKET");
+	g_KeyboardRefMap.Add(")", "K_RBRACKET");
+	g_KeyboardRefMap.Add("RETURN", "K_RETURN");
+	g_KeyboardRefMap.Add("LCTRL", "K_LCTRL");
+	g_KeyboardRefMap.Add("A", "K_A");
+	g_KeyboardRefMap.Add("S", "K_S");
+	g_KeyboardRefMap.Add("D", "K_D");
+	g_KeyboardRefMap.Add("F", "K_F");
+	g_KeyboardRefMap.Add("G", "K_G");
+	g_KeyboardRefMap.Add("H", "K_H");
+	g_KeyboardRefMap.Add("J", "K_J");
+	g_KeyboardRefMap.Add("K", "K_K");
+	g_KeyboardRefMap.Add("L", "K_L");
+	g_KeyboardRefMap.Add(":", "K_COLON");
+	g_KeyboardRefMap.Add("'", "K_APOSTROPHE");
+	g_KeyboardRefMap.Add("#", "K_GRAVE");
+	g_KeyboardRefMap.Add("LSHIFT", "K_LSHIFT");
+	g_KeyboardRefMap.Add("\\", "K_BACKSLASH");
+	g_KeyboardRefMap.Add("Z", "K_Z");
+	g_KeyboardRefMap.Add("X", "K_X");
+	g_KeyboardRefMap.Add("C", "K_C");
+	g_KeyboardRefMap.Add("V", "K_V");
+	g_KeyboardRefMap.Add("B", "K_B");
+	g_KeyboardRefMap.Add("N", "K_N");
+	g_KeyboardRefMap.Add("M", "K_M");
+	g_KeyboardRefMap.Add(",", "K_,");
+	g_KeyboardRefMap.Add(".", "K_.");
+	g_KeyboardRefMap.Add("/", "K_FORWARDSLASH");
+	g_KeyboardRefMap.Add("RSHIFT", "K_RSHIFT");
+	g_KeyboardRefMap.Add("*", "K_MULTIPLY");
+	g_KeyboardRefMap.Add(" ", "K_SPACE");
+	g_KeyboardRefMap.Add("CAPS", "K_CAPS");
 }
 
-Bool Platform::DestroyVirtualKeyboard()
-{
-	return IPod::DestroyVirtualKeyboard();
+
+
+SyncBool Platform::CreateVirtualDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef)
+{	
+	// Check to see if the virtual device alreay exists
+	TPtr<TInputDevice>& pDevice = g_pInputSystem->GetInstance(InstanceRef, FALSE);
+	
+	if(!pDevice)
+		IPod::CreateDevice(InstanceRef, DeviceTypeRef, TRUE);
+	
+	return SyncTrue;
 }
+
+SyncBool Platform::RemoveVirtualDevice(TRefRef InstanceRef)
+{
+	// Remove the virtual device
+	//TODO: Call a removedevice routine that also broadcasts a message to say the device has been removed
+	
+	//TEST - Remove the keyboard object.  Need a nice way to tie this to the destruction of the virtual device object
+	IPod::DestroyVirtualKeyboard();
+	
+	g_pInputSystem->RemoveInstance(InstanceRef);
+}
+
 
 
 
 // Create Ipod input device
-Bool Platform::IPod::CreateDevice()
+Bool Platform::IPod::CreateDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef, Bool bVirtual)
 {
-	// On the Ipod the input is fixed hardware so create a generic device to handle this
-	TRef InstanceRef = "IPOD";
-	
 	// Create the generic input object
-	TPtr<TInputDevice>& pGenericDevice = g_pInputSystem->GetInstance(InstanceRef, TRUE, "Mouse");
+	TPtr<TInputDevice>& pGenericDevice = g_pInputSystem->GetInstance(InstanceRef, TRUE, DeviceTypeRef);
 	
 	if(pGenericDevice.IsValid())
 	{
-		if(!InitialiseDevice(pGenericDevice))
+		if(!InitialiseDevice(pGenericDevice, DeviceTypeRef, bVirtual))
 		{
 			// Failed to initialise the input device data						
 			pGenericDevice = NULL;
@@ -106,7 +203,54 @@ Bool Platform::IPod::CreateDevice()
 }
 
 // Initialise the device
-Bool Platform::IPod::InitialiseDevice(TPtr<TInputDevice> pDevice)
+Bool Platform::IPod::InitialiseDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef, Bool bVirtual)
+{
+	// Intitialise a virtual device?
+	if(bVirtual)
+		return InitialiseVirtualDevice(pDevice, DeviceTypeRef);
+	
+	// Initialise the physical device
+	return InitialisePhysicalDevice(pDevice, DeviceTypeRef);
+}
+
+
+Bool Platform::IPod::InitialiseVirtualDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef)
+{
+	if(DeviceTypeRef == TRef("Keyboard"))
+	{
+		if(CreateVirtualKeyboard())
+		{
+			// Now add a sensor for each keyboard button we can process
+			for(u32 uIndex = 0; uIndex < g_KeyboardRefMap.GetSize(); uIndex++)
+			{				
+				const TLKeyArray::TPair<TRef, TRef>& Pair= g_KeyboardRefMap.GetPairAt(uIndex);
+				TRef KeyRef = Pair.m_Key;
+				
+				TPtr<TInputSensor>& pSensor = pDevice->AttachSensor(KeyRef, Button);
+				
+				if(pSensor.IsValid())
+				{
+					// Add the default button ref 'BNxxx'
+					TRef refLabel = GetDefaultButtonRef(uIndex);
+					pSensor->AddLabel(refLabel);
+
+					// Add the ID ref which for the virtual keyboard is the letter of the key because the letter is what is passed to us via the obj-c callbacks
+					refLabel = Pair.m_Item;
+					pSensor->AddLabel(refLabel);
+					
+				}
+				
+				
+			}
+			
+			return TRUE;
+		}
+	}
+	
+	return FALSE;
+}
+
+Bool Platform::IPod::InitialisePhysicalDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef)
 {
 	// Create four 'buttons' and 'axis' sensors to be able to send data from
 	// and for actions to be mapped to
@@ -219,7 +363,7 @@ SyncBool Platform::EnumerateDevices()
 	TPtr<TInputDevice>& pDevice = g_pInputSystem->GetInstance(InstanceRef, FALSE);
 	
 	if(!pDevice)
-		IPod::CreateDevice();
+		IPod::CreateDevice(InstanceRef, "Mouse", FALSE);
 	
 	return SyncTrue; 
 }
@@ -232,6 +376,24 @@ void Platform::RemoveAllDevices()
 
 
 Bool Platform::UpdateDevice(TLInput::TInputDevice& Device)
+{
+	//TODO: Add proper device type checking for virtual and physical devices
+	if(Device.GetDeviceType() == "Mouse")
+	{
+		// Physical device
+		return IPod::UpdatePhysicalDevice(Device);
+	}
+	else
+	{
+		// Virtual device
+		return IPod::UpdateVirtualDevice(Device);
+	}	
+	
+	return FALSE;
+}
+
+
+Bool Platform::IPod::UpdatePhysicalDevice(TLInput::TInputDevice& Device)
 {
 	// No touch or acceleration data?  nothing to do
 	if((IPod::g_TouchData.GetSize() == 0) &&
@@ -424,6 +586,65 @@ Bool Platform::UpdateDevice(TLInput::TInputDevice& Device)
 	return TRUE;	
 }
 
+Bool Platform::IPod::UpdateVirtualDevice(TLInput::TInputDevice& Device)
+{
+	u32 KeyboardArraySize = IPod::g_KeyboardKeyArray.GetSize();
+	
+	//TODO: Process the keys that have bene pressed and add to the input buffer
+	if(KeyboardArraySize > 0)
+	{
+		TArray<TInputData>& InputBuffer = Device.GetInputBuffer();
+		
+		//	prealloc array data
+		// We allocate twice the size because we will be adding two key data per key press - one for press and one for release
+		// due to the ipod only reporting one event
+		InputBuffer.AddAllocSize( KeyboardArraySize * 2 );
+		
+		TInputData data;
+		
+		for(u32 uIndex = 0; uIndex < KeyboardArraySize; uIndex++)
+		{
+			TRefRef KeyRef = IPod::g_KeyboardKeyArray.ElementAt(uIndex);
+			
+			// Add the key to the input buffer
+			data.m_SensorRef = KeyRef;
+			data.m_fData = 1.0f;			
+			
+			InputBuffer.Add(data);
+			
+#ifdef _DEBUG
+			// In debug, print the keyboard key pressed
+			TTempString inputinfo = "Key Pressed: ";
+			inputinfo.Appendf("%d", KeyRef.GetData());
+			TLDebug::Print(inputinfo);
+#endif				
+			
+			// On the iPod/iPhone we simply get the key pressed and not released so to compensate we need to add the key again
+			// to say it has also been released.
+
+			// Add the key to the input buffer
+			data.m_SensorRef = KeyRef;
+			data.m_fData = 0.0f;			
+			
+			InputBuffer.Add(data);
+			
+#ifdef _DEBUG
+			// In debug, print the keyboard key pressed
+			inputinfo = "Key Released: ";
+			inputinfo.Appendf("%d", KeyRef.GetData());
+			TLDebug::Print(inputinfo);
+#endif				
+			
+		}
+		
+		// Clear the array
+		g_KeyboardKeyArray.Empty(TRUE);
+		
+	}
+	
+	return TRUE;
+}
+
 
 int2 Platform::GetCursorPosition(u8 uIndex)
 {
@@ -452,6 +673,10 @@ void Platform::IPod::SetCursorPosition(u8 uIndex, int2 uPos)
 
 void TLInput::Platform::IPod::ProcessTouchBegin(const TTouchData& TouchData)
 {
+	// [27/05/09] DB - Don;t process touch events when the virtual keyboard is active
+	if(g_bVirtualKeyboardActive)
+		return;
+	
 #ifdef ENABLE_INPUTSYSTEM_TRACE
 	TString str;
 	str.Appendf("TOUCH BEGIN %d", TouchData.TouchRef.GetData() );
@@ -506,6 +731,10 @@ void TLInput::Platform::IPod::ProcessTouchBegin(const TTouchData& TouchData)
 
 void TLInput::Platform::IPod::ProcessTouchMoved(const TTouchData& TouchData)
 {
+	// [27/05/09] DB - Don;t process touch events when the virtual keyboard is active
+	if(g_bVirtualKeyboardActive)
+		return;
+	
 #ifdef ENABLE_INPUTSYSTEM_TRACE
 	TString str;
 	str.Appendf("TOUCH MOVED %d", TouchData.TouchRef.GetData() );
@@ -535,6 +764,10 @@ void TLInput::Platform::IPod::ProcessTouchMoved(const TTouchData& TouchData)
 
 void TLInput::Platform::IPod::ProcessTouchEnd(const TTouchData& TouchData)
 {
+	// [27/05/09] DB - Don;t process touch events when the virtual keyboard is active
+	if(g_bVirtualKeyboardActive)
+		return;
+	
 #ifdef ENABLE_INPUTSYSTEM_TRACE
 	TString str;
 	str.Appendf("TOUCH END %d", TouchData.TouchRef.GetData() );
@@ -558,6 +791,10 @@ void TLInput::Platform::IPod::ProcessTouchEnd(const TTouchData& TouchData)
 
 void TLInput::Platform::IPod::ProcessAcceleration(const float3& vAccelerationData)
 {
+#ifdef DISBALE_ACCELEROMETER
+	return;
+#endif
+	
 	//	gr: moved the comparison with the last-data to here so minor changes don't even get close to the
 	//		accell data buffer
 	float3 Diff( IPod::g_LastAccelData - vAccelerationData );
@@ -576,4 +813,12 @@ void TLInput::Platform::IPod::ProcessAcceleration(const float3& vAccelerationDat
 	//	record last-used accell value
 	IPod::g_LastAccelData = vAccelerationData;
 }
+
+void TLInput::Platform::IPod::ProcessVirtualKey(TRefRef KeyRef)
+{
+	//TODO: Need to be able to handle other virtual device inputs
+	// Add the key to the keyboard array
+	IPod::g_KeyboardKeyArray.Add(KeyRef);
+}
+
 

@@ -18,8 +18,9 @@ namespace TLInput
 		SyncBool		EnumerateDevices();
 		void			RemoveAllDevices();
 		
-		Bool			CreateVirtualKeyboard();
-		Bool			DestroyVirtualKeyboard();
+		
+		SyncBool		CreateVirtualDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef);
+		SyncBool		RemoveVirtualDevice(TRefRef InstanceRef);
 
 				
 		namespace IPod
@@ -89,12 +90,13 @@ namespace TLInput
 			void ProcessTouchEnd(const TTouchData& touchData);
 
 			void ProcessAcceleration(const float3& vAccelerationData);
-
-			Bool CreateDevice();
-			Bool InitialiseDevice(TPtr<TInputDevice> pDevice);
 			
-			Bool			CreateVirtualKeyboard();
-			Bool			DestroyVirtualKeyboard();			
+			void ProcessVirtualKey(TRefRef KeyRef);
+
+			Bool CreateDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef, Bool bVirtual);
+			Bool InitialiseDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef, Bool bVirtual);
+		
+			extern Bool						g_bVirtualKeyboardActive;
 		}
 	};
 };

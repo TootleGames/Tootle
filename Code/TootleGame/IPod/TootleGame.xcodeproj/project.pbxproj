@@ -21,6 +21,8 @@
 		847FFF510F66BE1300121D77 /* TWidgetButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 847FFF4B0F66BE1300121D77 /* TWidgetButton.h */; };
 		847FFF520F66BE1300121D77 /* TWidgetManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 847FFF4C0F66BE1300121D77 /* TWidgetManager.cpp */; };
 		847FFF530F66BE1300121D77 /* TWidgetManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 847FFF4D0F66BE1300121D77 /* TWidgetManager.h */; };
+		8486172E0FCE95B400C22D6B /* TWidgetText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8486172C0FCE95B400C22D6B /* TWidgetText.cpp */; };
+		8486172F0FCE95B400C22D6B /* TWidgetText.h in Headers */ = {isa = PBXBuildFile; fileRef = 8486172D0FCE95B400C22D6B /* TWidgetText.h */; };
 		849E9C980F83861300037332 /* TTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 849E9C940F83861300037332 /* TTimeline.cpp */; };
 		849E9C990F83861300037332 /* TTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 849E9C950F83861300037332 /* TTimeline.h */; };
 		849E9C9A0F83861300037332 /* TTimelineManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 849E9C960F83861300037332 /* TTimelineManager.cpp */; };
@@ -44,12 +46,14 @@
 		8418EB170F4C769A00B956C9 /* TWidgetScrollbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWidgetScrollbar.h; path = ../TWidgetScrollbar.h; sourceTree = SOURCE_ROOT; };
 		846B711A0F2A366F005EB752 /* TLGame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLGame.cpp; path = ../TLGame.cpp; sourceTree = SOURCE_ROOT; };
 		846B711B0F2A366F005EB752 /* TLGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLGame.h; path = ../TLGame.h; sourceTree = SOURCE_ROOT; };
-		847FFF480F66BE1300121D77 /* TInputInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TInputInterface.cpp; path = ../TInputInterface.cpp; sourceTree = SOURCE_ROOT; };
+		847FFF480F66BE1300121D77 /* TInputInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TInputInterface.cpp; path = ../TInputInterface.cpp; sourceTree = SOURCE_ROOT; };
 		847FFF490F66BE1300121D77 /* TInputInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TInputInterface.h; path = ../TInputInterface.h; sourceTree = SOURCE_ROOT; };
 		847FFF4A0F66BE1300121D77 /* TWidgetButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidgetButton.cpp; path = ../TWidgetButton.cpp; sourceTree = SOURCE_ROOT; };
 		847FFF4B0F66BE1300121D77 /* TWidgetButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TWidgetButton.h; path = ../TWidgetButton.h; sourceTree = SOURCE_ROOT; };
 		847FFF4C0F66BE1300121D77 /* TWidgetManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidgetManager.cpp; path = ../TWidgetManager.cpp; sourceTree = SOURCE_ROOT; };
 		847FFF4D0F66BE1300121D77 /* TWidgetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWidgetManager.h; path = ../TWidgetManager.h; sourceTree = SOURCE_ROOT; };
+		8486172C0FCE95B400C22D6B /* TWidgetText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidgetText.cpp; path = ../TWidgetText.cpp; sourceTree = SOURCE_ROOT; };
+		8486172D0FCE95B400C22D6B /* TWidgetText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TWidgetText.h; path = ../TWidgetText.h; sourceTree = SOURCE_ROOT; };
 		849E9C940F83861300037332 /* TTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTimeline.cpp; path = ../TTimeline.cpp; sourceTree = SOURCE_ROOT; };
 		849E9C950F83861300037332 /* TTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTimeline.h; path = ../TTimeline.h; sourceTree = SOURCE_ROOT; };
 		849E9C960F83861300037332 /* TTimelineManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTimelineManager.cpp; path = ../TTimelineManager.cpp; sourceTree = SOURCE_ROOT; };
@@ -115,6 +119,8 @@
 				BFAC1BF80FA0DE1000F69941 /* TWidgetDrag.cpp */,
 				8418EB170F4C769A00B956C9 /* TWidgetScrollbar.h */,
 				8418EB160F4C769A00B956C9 /* TWidgetScrollbar.cpp */,
+				8486172C0FCE95B400C22D6B /* TWidgetText.cpp */,
+				8486172D0FCE95B400C22D6B /* TWidgetText.h */,
 				847FFF4C0F66BE1300121D77 /* TWidgetManager.cpp */,
 				847FFF4D0F66BE1300121D77 /* TWidgetManager.h */,
 				840DECD60F545DAE005C7CFF /* TPath.cpp */,
@@ -169,6 +175,7 @@
 				849E9C990F83861300037332 /* TTimeline.h in Headers */,
 				849E9C9B0F83861300037332 /* TTimelineManager.h in Headers */,
 				BFAC1C210FA0DE1100F69941 /* TWidgetDrag.h in Headers */,
+				8486172F0FCE95B400C22D6B /* TWidgetText.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -228,6 +235,7 @@
 				849E9C980F83861300037332 /* TTimeline.cpp in Sources */,
 				849E9C9A0F83861300037332 /* TTimelineManager.cpp in Sources */,
 				BFAC1C200FA0DE1100F69941 /* TWidgetDrag.cpp in Sources */,
+				8486172E0FCE95B400C22D6B /* TWidgetText.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

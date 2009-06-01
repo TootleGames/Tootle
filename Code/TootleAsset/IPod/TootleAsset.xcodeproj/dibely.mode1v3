@@ -330,7 +330,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84DF349E0FC1E38300B0E6D5</string>
+										<string>848615CC0FCDA12800C22D6B</string>
 										<key>history</key>
 										<array>
 											<string>84E643D90F1537BF005A4DC9</string>
@@ -353,7 +353,7 @@
 											<string>845FE2060FBD82C300F88607</string>
 											<string>845FE2080FBD82C300F88607</string>
 											<string>845FE2800FBEE2F700F88607</string>
-											<string>845FE2830FBEE2F700F88607</string>
+											<string>84DF349E0FC1E38300B0E6D5</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -435,9 +435,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84DF34920FC1E25D00B0E6D5</string>
+				<string>848615CD0FCDA12800C22D6B</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84DF34930FC1E25D00B0E6D5</string>
+				<string>848615CE0FCDA12800C22D6B</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -571,6 +571,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleAsset/IPod/TootleAsset.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -806,14 +807,12 @@
 							<key>Dock</key>
 							<array>
 								<dict>
-									<key>BecomeActive</key>
-									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TLAsset.cpp</string>
+										<string></string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -834,6 +833,8 @@
 							<string>212pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -869,8 +870,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>845FE2110FBD82C300F88607</string>
-				<string>845FE2120FBD82C300F88607</string>
+				<string>848615CA0FCDA12600C22D6B</string>
+				<string>848615CB0FCDA12600C22D6B</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>
@@ -879,7 +880,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C530D57069F1CE1000CFCEE</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>Identifier</key>

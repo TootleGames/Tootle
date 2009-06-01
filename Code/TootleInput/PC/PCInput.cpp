@@ -143,7 +143,7 @@ void Platform::DirectX::InitialiseKeyboadRefMap()
 	g_KeyboardRefMap.Add(DIK_0, "K_0");
 	g_KeyboardRefMap.Add(DIK_MINUS, "K_MINUS");
 	g_KeyboardRefMap.Add(DIK_EQUALS, "K_EQUALS");
-	g_KeyboardRefMap.Add(DIK_BACK, "K_BACK");
+	g_KeyboardRefMap.Add(DIK_BACK, "K_BACKSPACE");
 	g_KeyboardRefMap.Add(DIK_TAB, "K_TAB");
 	g_KeyboardRefMap.Add(DIK_Q, "K_Q");
 	g_KeyboardRefMap.Add(DIK_W, "K_W");
@@ -1172,15 +1172,14 @@ void Platform::DirectX::RemoveAllDevices()
 
 
 
-
-Bool TLInput::Platform::CreateVirtualKeyboard()		
+SyncBool Platform::CreateVirtualDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef);
 {	
-	return FALSE;	
+	return SyncFalse;	
 }
 
-Bool TLInput::Platform::DestroyVirtualKeyboard()
+SyncBool Platform::RemoveVirtualDevice(TRefRef InstanceRef);
 {
-	return FALSE;	
+	return SyncFalse;	
 }
 
 

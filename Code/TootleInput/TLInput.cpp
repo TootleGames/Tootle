@@ -2,13 +2,14 @@
 #include <TootleCore/TEventChannel.h>
 #include <TootleCore/TLTime.h>
 
-
+#include <ctype.h> // for tolower routine
 
 namespace TLInput
 {
 	TPtr<TInputManager>	g_pInputSystem = NULL;	// The input system
 
 	const float INPUT_DEVICE_CHECK_TIME = 10.0f;			// Device check interval time in seconds
+		
 }
 
 using namespace TLInput;
@@ -142,17 +143,6 @@ TRef TLInput::GetFreeDeviceRef(TRef BaseRef)
 }
 
 
-Bool TLInput::CreateVirtualKeyboard()
-{
-	return Platform::CreateVirtualKeyboard();
-}
-
-Bool TLInput::DestroyVirtualKeyboard()
-{
-	return Platform::DestroyVirtualKeyboard();
-}
-
-
 
 TInputManager::TInputManager(TRef refManagerID) :
 	TManager(refManagerID),
@@ -170,11 +160,128 @@ SyncBool TInputManager::Initialise()
 		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), TRef_Static(A,c,t,i,o));
 		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "DeviceChanged");
 
+		InitSupportedTextCharacters();
+		
 		return Platform::Init();
 	}
 
 	return SyncWait;
 }
+
+/*
+ For now use an array of all possible supported text characters from KEYBOARD input. At some stage this may need to be a language specific list (for special characters)
+ or even a list generated via an xml file or possibly using key ranges instead.  Also, not sure whether we should use unicode here or UTF8 or something?
+*/
+void TInputManager::InitSupportedTextCharacters()
+{
+	m_SupportedTextCharacters.Add("k_a",'a');
+	m_SupportedTextCharacters.Add("k_b",'b');
+	m_SupportedTextCharacters.Add("k_c",'c');
+	m_SupportedTextCharacters.Add("k_d",'d');
+	m_SupportedTextCharacters.Add("k_e",'e');
+	m_SupportedTextCharacters.Add("k_f",'f');
+	m_SupportedTextCharacters.Add("k_g",'g');
+	m_SupportedTextCharacters.Add("k_h",'h');
+	m_SupportedTextCharacters.Add("k_i",'i');
+	m_SupportedTextCharacters.Add("k_j",'j');
+	m_SupportedTextCharacters.Add("k_k",'k');
+	m_SupportedTextCharacters.Add("k_l",'l');
+	m_SupportedTextCharacters.Add("k_m",'m');
+	m_SupportedTextCharacters.Add("k_n",'n');
+	m_SupportedTextCharacters.Add("k_o",'o');
+	m_SupportedTextCharacters.Add("k_p",'p');
+	m_SupportedTextCharacters.Add("k_q",'q');
+	m_SupportedTextCharacters.Add("k_r",'r');
+	m_SupportedTextCharacters.Add("k_s",'s');
+	m_SupportedTextCharacters.Add("k_t",'t');
+	m_SupportedTextCharacters.Add("k_u",'u');
+	m_SupportedTextCharacters.Add("k_v",'v');
+	m_SupportedTextCharacters.Add("k_w",'w');
+	m_SupportedTextCharacters.Add("k_x",'x');
+	m_SupportedTextCharacters.Add("k_y",'y');
+	m_SupportedTextCharacters.Add("k_z",'z');
+	m_SupportedTextCharacters.Add("k_0",'0');
+	m_SupportedTextCharacters.Add("k_1",'1');
+	m_SupportedTextCharacters.Add("k_2",'2');
+	m_SupportedTextCharacters.Add("k_3",'3');
+	m_SupportedTextCharacters.Add("k_4",'4');
+	m_SupportedTextCharacters.Add("k_5",'5');
+	m_SupportedTextCharacters.Add("k_6",'6');
+	m_SupportedTextCharacters.Add("k_7",'7');
+	m_SupportedTextCharacters.Add("k_8",'8');
+	m_SupportedTextCharacters.Add("k_9",'9');	
+	m_SupportedTextCharacters.Add("k_space",' ');
+}
+
+Bool TInputManager::BuildArrayOfSupportInputCharacterRefs(TArray<TRef>& array)
+{
+	u32 uSize = m_SupportedTextCharacters.GetSize();
+	
+	if(0 == uSize)
+		return FALSE;
+
+	// preallocate array size
+	array.SetAllocSize(uSize);
+	
+	for(u32 uIndex = 0; uIndex < uSize; uIndex++)
+	{
+		TRef KeyRef = m_SupportedTextCharacters.GetKeyAt(uIndex);
+		array.Add(KeyRef);
+	}
+	
+	return TRUE;
+}
+
+
+Bool TInputManager::IsSupportedInputCharacter(const char& character)
+{
+	// Convert to lower case character
+	const char lowercharacter = tolower(character);
+	
+	// Find the character in our supported characters lookup-table (language specific?)
+	const TRef* pKey = m_SupportedTextCharacters.FindKey(lowercharacter);
+	
+	// Character found?  If not then it's not supported.
+	if(NULL == pKey)
+		return FALSE;
+
+	// Character supported
+	return TRUE;
+}
+
+Bool TInputManager::GetSupportedInputCharacter(TRefRef CharacterRef, char& character)
+{
+	char* pChar = m_SupportedTextCharacters.Find(CharacterRef);
+
+	// Not found
+	if(!pChar)
+		return FALSE;
+
+	// set the character
+	character = *pChar;
+
+	// return success
+	return TRUE;
+}
+
+Bool TInputManager::GetSupportedInputCharacterRef(TRef& CharacterRef, const char& character)
+{
+	const char lowercharacter = tolower(character);
+
+	const TRef* pRef = m_SupportedTextCharacters.FindKey(lowercharacter);
+	
+	// Not found
+	if(!pRef)
+		return FALSE;
+	
+	// set the character ref
+	CharacterRef = *pRef;
+	
+	// return success
+	return TRUE;
+}
+
+
 
 void TInputManager::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID)
 {
@@ -239,9 +346,112 @@ void TInputManager::CheckForDeviceChanges()
 {
 	// OK we need to get the platform specific stuff to check for any changes to the device states
 	// i.e. new devices that have been attached and current devices that have been dettached
-
 	Platform::EnumerateDevices();
+	
+	// Now check for changes to virtual devices
+	if(m_VirtualDeviceRequests.GetSize())
+	{
+		for(u32 uIndex = 0; uIndex < m_VirtualDeviceRequests.GetSize(); uIndex++)
+		{
+			TVirtualDeviceRequest& request = m_VirtualDeviceRequests.ElementAt(uIndex);
+			
+			// Process create or remove request
+			if(request.m_bCreate)
+			{
+				if(!TLInput::Platform::CreateVirtualDevice(request.m_DeviceInstanceRef, request.m_DeviceTypeRef))
+				{
+					TLDebug_Break("Failed to create virtual device");
+				}
+			}
+			else
+			{
+				TPtr<TLInput::TInputDevice> pDevice = GetInstance(request.m_DeviceInstanceRef);
+
+				if(pDevice)
+				{
+					// Send a message to say the device is being removed
+					TLMessaging::TMessage Message("DeviceChanged");
+					Message.ExportData("State", TRef("Removed"));			// state change
+					Message.ExportData("DEVID", pDevice->GetDeviceRef() );		// device ref 
+					Message.ExportData("TYPE", pDevice->GetDeviceType() );				// device type
+					
+					PublishMessage(Message);
+					
+					if(!TLInput::Platform::RemoveVirtualDevice(request.m_DeviceInstanceRef))
+					{
+						TLDebug_Break("Failed to remove virtual device");
+					}
+				}
+				else
+				{
+					TLDebug_Break("Failed to get virtual device instance for removal");
+				}
+			}
+		}
+		
+		m_VirtualDeviceRequests.Empty(TRUE);
+	}
 }
+
+Bool TInputManager::CreateVirtualDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef)
+{
+	// Check to see if the device already exists.  If so return false.
+	
+	TPtr<TLInput::TInputDevice> pDevice = GetInstance(InstanceRef);
+
+	if(pDevice)
+	{
+		TLDebug_Print("Virtual device already exists");
+		return FALSE;
+	}
+	
+	// TODO: Check to see if the device has already been requested.
+	// If so return false.
+	
+	// Add request to queue
+	TVirtualDeviceRequest request;
+	
+	request.m_DeviceInstanceRef = InstanceRef;
+	request.m_DeviceTypeRef = DeviceTypeRef;
+	request.m_bCreate = TRUE;
+	
+	m_VirtualDeviceRequests.Add(request);
+
+	// Set timer to force an update of the devices list
+	m_fDeviceCheckTimer = 0.0f;
+
+	//return TLInput::Platform::CreateVirtualDevice(InstanceRef, DeviceTypeRef);
+	return TRUE;
+}
+
+Bool TInputManager::RemoveVirtualDevice(TRefRef InstanceRef)
+{
+	// TODO: Check device exists and return false if not.
+	TPtr<TLInput::TInputDevice> pDevice = GetInstance(InstanceRef);
+	
+	if(!pDevice)
+	{
+		TLDebug_Print("Virtual device does not exist");
+		return FALSE;
+	}
+	
+	// TODO: Check to see if the removal/creation has already been requested
+	
+	// Add request to queue
+	TVirtualDeviceRequest request;
+	
+	request.m_DeviceInstanceRef = InstanceRef;
+	request.m_bCreate = FALSE;
+	
+	m_VirtualDeviceRequests.Add(request);
+			
+	// Set timer to force an update of the devices list
+	m_fDeviceCheckTimer = 0.0f;
+	
+	//return TLInput::Platform::RemoveVirtualDevice(InstanceRef);
+	return TRUE;
+}
+
 
 
 SyncBool TInputManager::Shutdown()
@@ -259,7 +469,7 @@ void TInputManager::RemoveAllDevices()
 
 		// Send a message to say the device is being removed
 		TLMessaging::TMessage Message("DeviceChanged");
-		Message.ExportData("State", "REMOVED");			// state change
+		Message.ExportData("State", TRef("Removed"));			// state change
 		Message.ExportData("DEVID", Device.GetDeviceRef() );		// device ref 
 		Message.ExportData("TYPE", Device.GetDeviceType() );				// device type
 

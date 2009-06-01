@@ -10,7 +10,10 @@
 #import "IPodVirtualKeyboard.h"
 
 #include <TootleCore/IPod/IPodApp.h>
+#include <TootleCore/TRef.h>
+#include <TootleCore/TString.h>
 
+#include "IPodInput.h"
 
 
 // the amount of vertical shift upwards keep the text field in view as the keyboard appears
@@ -64,6 +67,9 @@
 	[m_textField setAutocapitalizationType:UITextAutocapitalizationTypeWords];
 	[m_textField setReturnKeyType:UIReturnKeySend];
 	[m_textField setDelegate:self];
+	//[m_textField setKeyboardType:UIKeyboardTypeNamePhonePad];	// use the name/phone type input method (alpha-numeric only keyboard)
+	[m_textField setReturnKeyType:UIReturnKeyDone];	// set the return key string
+
 	
 	
 	// DB - The plan was to add the controller as a subview of the window and then the text as a subview of the controller.
@@ -98,7 +104,11 @@
 	// remove keyboard
 	[m_textField resignFirstResponder];
 	
-	// do something with [textField text]...
+	//TODO: do something with [textField text]...??
+
+	// Add RETURN key ref to say keyboard has finished editing
+	TRef KeyRef = TRef("return");
+	TLInput::Platform::IPod::ProcessVirtualKey(KeyRef);
 	
 	// Remove the text from the game window
 	[m_textField removeFromSuperview];
@@ -115,14 +125,42 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-	//TODO: Intercept key string here and send out as a messgae via the input system
+	// Intercept the key data here and add to the iPod specific keyboard array.
+	// TODO: Needs wrapping up into an iPod specific class really
+	// TODO: Need to check for special cases like delete, return, etc
+	
+	s32 Change = (range.length > 0 ? -1 : 1);
+	
+	// Check for backspace
+	if(Change == -1)
+	{
+		// Delete a character
+		TRef KeyRef = TRef("backspace");
+		
+		TLInput::Platform::IPod::ProcessVirtualKey(KeyRef);
+	}
+	else if(Change > 0)
+	{
+		const char *pString = [string UTF8String];
+		TTempString TempStr(pString);
+
+		if(!TLInput::g_pInputSystem->IsSupportedInputCharacter(TempStr[0]))
+			return FALSE;
+		
+		TRef KeyRef = TRef(TempStr);
+
+		//if(!TLInput::g_pInputSystem->GetSupportedInputCharacterRef(KeyRef, TempStr[0]))
+		//	return FALSE;
+
+		TLInput::Platform::IPod::ProcessVirtualKey(KeyRef);
+	}
 	
 	return TRUE;
 }
 
 @end
 
-//#define ENABLE_VIRTUAL_KEYBOARD
+#define ENABLE_VIRTUAL_KEYBOARD
 
 using namespace TLInput;
 
@@ -149,6 +187,7 @@ Bool Platform::IPod::CreateVirtualKeyboard()
 	[TLCore::Platform::g_pIPodApp.window addSubview:inputTextField];
 	[inputTextField becomeFirstResponder];
 	 */
+	g_bVirtualKeyboardActive = TRUE;
 	
 	return TRUE;
 #else
@@ -166,6 +205,8 @@ Bool Platform::IPod::DestroyVirtualKeyboard()
 		[g_TextFieldViewController release];
 		g_TextFieldViewController = NULL;
 	}
+	
+	g_bVirtualKeyboardActive = FALSE;
 	
 	return TRUE;
 #else

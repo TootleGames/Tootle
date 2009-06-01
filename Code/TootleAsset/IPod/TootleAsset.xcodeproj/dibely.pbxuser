@@ -239,23 +239,6 @@
 		vrLen = 1393;
 		vrLoc = 358;
 	};
-	845FE2180FBD832D00F88607 /* TLAsset.cpp:414 */ = {
-		isa = PBXFileBreakpoint;
-		actions = (
-		);
-		breakpointStyle = 0;
-		continueAfterActions = 0;
-		countType = 0;
-		delayBeforeContinue = 0;
-		fileReference = 84C1092C0F0A787B00B2DF7A /* TLAsset.cpp */;
-		functionName = "TLAsset::TAssetFactory::Update(float fTimeStep)";
-		hitCount = 1;
-		ignoreCount = 0;
-		lineNumber = 414;
-		location = Seaman;
-		modificationTime = 264364742.655141;
-		state = 1;
-	};
 	845FE2800FBEE2F700F88607 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84C1092C0F0A787B00B2DF7A /* TLAsset.cpp */;
@@ -266,22 +249,22 @@
 		vrLen = 696;
 		vrLoc = 6951;
 	};
-	845FE2830FBEE2F700F88607 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C1092E0F0A787B00B2DF7A /* TLoadTask.cpp */;
-		name = "TLoadTask.cpp: 60";
-		rLen = 67;
-		rLoc = 1736;
-		rType = 0;
-		vrLen = 975;
-		vrLoc = 1590;
-	};
 	8461F0470FB9EECF00742359 /* TMesh.h */ = {
 		isa = PBXFileReference;
 		lastKnownFileType = sourcecode.c.h;
 		name = TMesh.h;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleCore/IPod/../../TootleAsset/TMesh.h;
 		sourceTree = "<absolute>";
+	};
+	848615CC0FCDA12800C22D6B /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C1092E0F0A787B00B2DF7A /* TLoadTask.cpp */;
+		name = "TLoadTask.cpp: 60";
+		rLen = 67;
+		rLoc = 1736;
+		rType = 0;
+		vrLen = 891;
+		vrLoc = 1590;
 	};
 	84C0CA470F6D6C840080B167 /* TText.h */ = {
 		uiCtxt = {
@@ -448,13 +431,12 @@
 		vrLoc = 1340;
 	};
 	84C108A10F0A755700B2DF7A /* Project object */ = {
-		activeBuildConfigurationName = Debug;
+		activeBuildConfigurationName = Release;
 		activeTarget = 84C1091E0F0A785200B2DF7A /* TootleAsset */;
 		addToTargets = (
 			84C1091E0F0A785200B2DF7A /* TootleAsset */,
 		);
 		breakpoints = (
-			845FE2180FBD832D00F88607 /* TLAsset.cpp:414 */,
 		);
 		codeSenseManager = 84C108A60F0A755700B2DF7A /* Code sense */;
 		ignoreBreakpointsInProjectsDict = {
@@ -532,8 +514,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 264364234;
-			PBXWorkspaceStateSaveDate = 264364234;
+			PBXPerProjectTemplateStateSaveDate = 265134364;
+			PBXWorkspaceStateSaveDate = 265134364;
 		};
 		perUserProjectItems = {
 			8418F32D0F4DC1E800B956C9 /* PBXTextBookmark */ = 8418F32D0F4DC1E800B956C9 /* PBXTextBookmark */;
@@ -556,7 +538,7 @@
 			845FE2060FBD82C300F88607 /* PBXTextBookmark */ = 845FE2060FBD82C300F88607 /* PBXTextBookmark */;
 			845FE2080FBD82C300F88607 /* PBXTextBookmark */ = 845FE2080FBD82C300F88607 /* PBXTextBookmark */;
 			845FE2800FBEE2F700F88607 /* PBXTextBookmark */ = 845FE2800FBEE2F700F88607 /* PBXTextBookmark */;
-			845FE2830FBEE2F700F88607 /* PBXTextBookmark */ = 845FE2830FBEE2F700F88607 /* PBXTextBookmark */;
+			848615CC0FCDA12800C22D6B /* PBXTextBookmark */ = 848615CC0FCDA12800C22D6B /* PBXTextBookmark */;
 			84C0CA620F6D70D60080B167 /* PBXTextBookmark */ = 84C0CA620F6D70D60080B167 /* PBXTextBookmark */;
 			84C0CA630F6D70D60080B167 /* PBXTextBookmark */ = 84C0CA630F6D70D60080B167 /* PBXTextBookmark */;
 			84C0CA650F6D70D60080B167 /* PBXTextBookmark */ = 84C0CA650F6D70D60080B167 /* PBXTextBookmark */;

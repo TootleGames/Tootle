@@ -6,7 +6,7 @@
 #include <TootleCore/TClassFactory.h>
 #include <TootleCore/TRelay.h>
 #include <TootleCore/TManager.h>
-
+#include <TootleCore/TKeyArray.h>
 
 #include "TDevice.h"
 
@@ -42,10 +42,9 @@ namespace TLInput
 		Bool		UpdateDevice(TInputDevice& Device);
 
 		Type2<s32>	GetCursorPosition(u8 uIndex);
-		
-		Bool			CreateVirtualKeyboard();
-		Bool			DestroyVirtualKeyboard();
 
+		SyncBool		CreateVirtualDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef);
+		SyncBool		RemoveVirtualDevice(TRefRef InstanceRef);
 	};
 
 
@@ -57,11 +56,7 @@ namespace TLInput
 
 	TPtr<TLInput::TInputDevice>&	GetDevice(TRefRef DeviceRef);			//	fetch device with this ref
 	TPtr<TLInput::TInputDevice>&	GetDeviceOfType(TRefRef DeviceType);	//	find the (first) device of this type
-	TRef							GetFreeDeviceRef(TRef BaseRef=TRef());	//	get an unused ref for a device
-	
-	// Virtual device creation
-	Bool			CreateVirtualKeyboard();
-	Bool			DestroyVirtualKeyboard();
+	TRef							GetFreeDeviceRef(TRef BaseRef=TRef());	//	get an unused ref for a device	
 };
 
 
@@ -70,6 +65,15 @@ namespace TLInput
 */
 class TLInput::TInputManager : public TManager, public TClassFactory<TLInput::TInputDevice> 
 {
+private:
+	class TVirtualDeviceRequest
+	{
+	public:
+		TRef m_DeviceInstanceRef;		// Device instance ID
+		TRef m_DeviceTypeRef;			// Device type, keyboard, etc
+		Bool m_bCreate;					// True - Create, otherwise Remove
+	};
+	
 public:
 	TInputManager(TRef refManagerID);
 
@@ -85,7 +89,17 @@ public:
 	}
 
 	FORCEINLINE Bool		IsEnabled()		const		{ return m_bEnabled; }
+	
+	// Input character support
+	Bool			IsSupportedInputCharacter(const char& character);
+	Bool			GetSupportedInputCharacter(TRefRef CharacterRef, char& character);
+	Bool			GetSupportedInputCharacterRef(TRef& CharacterRef, const char& character);
+	Bool			BuildArrayOfSupportInputCharacterRefs(TArray<TRef>& array);
 
+	// Virtual device handling
+	Bool			CreateVirtualDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef);
+	Bool			RemoveVirtualDevice(TRefRef InstanceRef);
+	
 protected:
 	virtual SyncBool		Initialise();
 	virtual SyncBool		Update(float fTimeStep);
@@ -95,6 +109,9 @@ protected:
 	virtual void			OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);	
 
 private:
+	
+	void					InitSupportedTextCharacters();
+	
 	void					RemoveAllDevices();
 
 	void					CheckForDeviceChanges();
@@ -102,6 +119,11 @@ private:
 	virtual TLInput::TInputDevice*		CreateObject(TRefRef InstanceRef,TRefRef TypeRef);
 
 private:
+	// Array of supported input 'text' characters mapped to an input 'key' ref to represent the character.  Actions will in turn be mapped to the key ref.
+	// NOTE: Should be Unicode? UTF8? Possibly?
+	TKeyArray<TRef, char>				m_SupportedTextCharacters;
+	TArray<TVirtualDeviceRequest>		m_VirtualDeviceRequests;
+	
 	float					m_fDeviceCheckTimer;		// Interval timer between checks for devices
 	Bool					m_bEnabled;
 };

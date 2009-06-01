@@ -90,7 +90,7 @@ public:
 	Bool					SetTextBoxInvalid()							{	Bool WasValid = m_TextBox.IsValid();	m_TextBox.SetInvalid();	return (WasValid!=FALSE);	}
 
 	virtual Bool			Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList);	//	our overloaded renderer
-
+	
 protected:
 	virtual Bool			SetGlyphs(TLMaths::TBox2D& TextBounds)=0;		//	setup child glyph render objects
 	void					RealignGlyphs(TLMaths::TBox2D& TextBounds);		//	realign the glyphs according to our bounds box - the box provided is the box the glyphs take up
@@ -100,6 +100,8 @@ protected:
 	void					OnStringChanged()							{	m_GlyphsValid = FALSE;	}
 	void					OnStringFormatChanged()						{	m_GlyphsValid = FALSE;	}
 	void					OnLayoutChanged()							{	m_GlyphsValid = FALSE;	}
+	
+	virtual void			ProcessMessage(TLMessaging::TMessage& Message);
 
 protected:
 	TRef					m_FontRef;

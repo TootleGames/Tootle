@@ -287,7 +287,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 479}, {186, 609}}</string>
+							<string>{{0, 0}, {186, 609}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -322,7 +322,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>IPodLocalFileSys.mm</string>
+								<string>TFileAsset.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -330,11 +330,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>IPodLocalFileSys.mm</string>
+										<string>TFileAsset.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>845FE27F0FBEE2F500F88607</string>
+										<string>848615DC0FCDA19B00C22D6B</string>
 										<key>history</key>
 										<array>
 											<string>84E6432C0F15293C005A4DC9</string>
@@ -363,7 +363,8 @@
 											<string>84C0CA920F6D70DB0080B167</string>
 											<string>843B568E0FB30E7B004FAC36</string>
 											<string>843B56BA0FB311F8004FAC36</string>
-											<string>845FE1F30FBD824400F88607</string>
+											<string>848615D20FCDA14700C22D6B</string>
+											<string>848615D30FCDA14700C22D6B</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -394,6 +395,7 @@
 											<string>84C0CA3A0F6D6C250080B167</string>
 											<string>84C0CA3E0F6D6C250080B167</string>
 											<string>843B568F0FB30E7B004FAC36</string>
+											<string>848615D40FCDA14700C22D6B</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -451,9 +453,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>845FE27B0FBDA92400F88607</string>
+				<string>848615D60FCDA14700C22D6B</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>845FE27C0FBDA92400F88607</string>
+				<string>848615D70FCDA14700C22D6B</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -587,6 +589,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleFilesys/IPod/TootleFileSys.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -822,12 +825,14 @@
 							<key>Dock</key>
 							<array>
 								<dict>
+									<key>BecomeActive</key>
+									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TLFileSys.cpp</string>
+										<string>TFileAsset.cpp</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -848,8 +853,6 @@
 							<string>174pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -885,8 +888,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>843B56870FB30E69004FAC36</string>
-				<string>843B56880FB30E69004FAC36</string>
+				<string>848615D80FCDA14700C22D6B</string>
+				<string>848615D90FCDA14700C22D6B</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>
@@ -895,7 +898,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C530D57069F1CE1000CFCEE</string>
 			<key>WindowToolIsVisible</key>
-			<false/>
+			<true/>
 		</dict>
 		<dict>
 			<key>Identifier</key>

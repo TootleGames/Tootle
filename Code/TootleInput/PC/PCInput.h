@@ -50,8 +50,8 @@ namespace TLInput
 		SyncBool		EnumerateDevices()		{ return DirectX::EnumerateDevices(); }
 		void			RemoveAllDevices()		{ DirectX::RemoveAllDevices(); }
 
-		Bool			CreateVirtualKeyboard();
-		Bool			DestroyVirtualKeyboard();
+		SyncBool		CreateVirtualDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef);
+		SyncBool		RemoveVirtualDevice(TRefRef InstanceRef);
 
 		Bool			UpdateDevice(TInputDevice& Device);
 		int2			GetCursorPosition(u8 uIndex);

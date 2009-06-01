@@ -16,6 +16,13 @@ void TInputDevice::Update()
 
 void TInputDevice::ProcessSensors()
 {
+#ifdef _DEBUG
+	if(m_InputBuffer.GetSize() == 0)
+	{
+		TLDebug_Break("Device has no sensors!");
+	}
+#endif
+	
 	for( u32 uIndex = 0; uIndex < m_InputBuffer.GetSize(); uIndex++ )
 	{
 		const TInputData& data = m_InputBuffer.ElementAt(uIndex);

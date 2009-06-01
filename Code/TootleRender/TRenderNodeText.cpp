@@ -151,6 +151,23 @@ void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 }
 
 
+void TLRender::TRenderNodeText::ProcessMessage(TLMessaging::TMessage& Message)
+{
+	if(Message.GetMessageRef() == "SetString")
+	{
+		TTempString str;
+		if(Message.ImportDataString("String", str))
+		{
+			SetString(str);
+		}
+		
+	}
+	
+	// Super class processmessage
+	TRenderNode::ProcessMessage(Message);
+}
+
+
 //--------------------------------------------------------------------
 //	
 //--------------------------------------------------------------------
