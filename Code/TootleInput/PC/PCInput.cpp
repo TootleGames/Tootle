@@ -1172,12 +1172,12 @@ void Platform::DirectX::RemoveAllDevices()
 
 
 
-SyncBool Platform::CreateVirtualDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef);
+SyncBool Platform::CreateVirtualDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef)
 {	
 	return SyncFalse;	
 }
 
-SyncBool Platform::RemoveVirtualDevice(TRefRef InstanceRef);
+SyncBool Platform::RemoveVirtualDevice(TRefRef InstanceRef)
 {
 	return SyncFalse;	
 }

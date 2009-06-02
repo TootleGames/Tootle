@@ -251,6 +251,14 @@
 			RelativePath="..\TWidgetScrollbar.h"
 			>
 		</File>
+		<File
+			RelativePath="..\TWidgetText.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TWidgetText.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

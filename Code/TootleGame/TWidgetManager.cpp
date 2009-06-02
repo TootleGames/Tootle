@@ -49,15 +49,15 @@ void TWidgetManager::ProcessMessage(TLMessaging::TMessage& Message)
 			if(!Message.ImportData("TYPE", DeviceTypeRef))
 				return;
 
-			if(refState == TRef("ADDED"))
+			if(refState == STRef(A,D,D,E,D))
 			{
 				// New device
 				OnInputDeviceAdded( DeviceRef, DeviceTypeRef );
 			}
-			else if(refState == TRef("REMOVED"))
+			else if(refState == STRef(R,E,M,O,V))
 			{
 				// Device removed
-				// Remove any users that are using the device		
+				OnInputDeviceRemoved(DeviceRef, DeviceTypeRef);
 			}
 
 			// return - no need to pass this message on
@@ -78,14 +78,19 @@ void TWidgetManager::OnInputDeviceAdded(TRefRef DeviceRef, TRefRef DeviceTypeRef
 		return;
 	}
 
-#ifdef TL_TARGET_IPOD
-	MapDeviceActions_TouchPad(DeviceRef, pGlobalUser);
-#else
-	if(DeviceTypeRef == "MOUSE")
+	if(DeviceTypeRef == STRef(k,e,y,b,o))
 	{
-		MapDeviceActions_Mouse(DeviceRef, pGlobalUser);
+		MapDeviceActions_Keyboard(DeviceRef, pGlobalUser);
 	}
+	else if(DeviceTypeRef == STRef(M,O,U,S,E))
+	{
+
+#ifdef TL_TARGET_IPOD
+		MapDeviceActions_TouchPad(DeviceRef, pGlobalUser);
+#else
+		MapDeviceActions_Mouse(DeviceRef, pGlobalUser);
 #endif
+	}
 }
 
 #ifdef TL_TARGET_IPOD
@@ -213,3 +218,190 @@ void TWidgetManager::MapDeviceActions_Mouse(TRefRef DeviceRef, TPtr<TLUser::TUse
 
 
 #endif
+
+
+void TWidgetManager::MapDeviceActions_Keyboard(TRefRef DeviceRef, TPtr<TLUser::TUser> pUser)
+{
+	/*
+	// Subscribe to the keyboard buttons
+	// Get the device.  This should *always* be valid if the ID is valid.
+	TPtr<TLInput::TInputDevice> pDevice = TLInput::g_pInputSystem->FindPtr(DeviceRef);
+	
+	if(!pDevice)
+	{
+		TLDebug_Break("Invalid device ref");
+		return;
+	}
+	
+	///////////////////////////////////////////////////////
+	// Needs moving into the device class so we can subscribe 
+	// something to all sensors of a specific class
+	///////////////////////////////////////////////////////
+	u32 NumberOfButtons = pDevice->GetSensorCount(TLInput::Button);
+	
+	for(u32 uIndex = 0; uIndex < NumberOfButtons; uIndex++)
+	{
+		TRef ButtonRef = TLInput::GetDefaultButtonRef(uIndex);
+
+		TPtr<TLInput::TInputSensor>& pSensor = pDevice->GetSensor(ButtonRef);
+		
+		if(pSensor.IsValid())
+			SubscribeTo(pSensor);
+	}
+	///////////////////////////////////////////////////////
+	*/
+			
+	// Get a list of the supported characters 
+	TArray<TRef> RefArray;
+	
+	if(TLInput::g_pInputSystem->BuildArrayOfSupportInputCharacterRefs(RefArray))
+	{
+		for(u32 uIndex = 0; uIndex < RefArray.GetSize(); uIndex++)
+		{
+			TRef KeyRef = RefArray.ElementAt(uIndex);
+			
+			// Map actions for each key of the keyboard we will support use of
+			if(pUser->AddAction("SIMPLE", KeyRef))
+			{
+				// The keyref is the same as one of the sensor labels so we can use the same ref. 
+				pUser->MapAction(KeyRef, DeviceRef, KeyRef);
+				pUser->MapActionCondition(KeyRef, TLInput::LessThan, 1.0f); // Release
+			}
+		}			
+	}
+	/*
+	 // VERY SPECIAL CHARACTERS. PROBABLY NEED A LOOKUP FOR THE CHARS FOR THESE TO WORK CORRECTLY
+	pGlobalUser->AddAction("SIMPLE", "-");
+	pGlobalUser->MapAction("-", DeviceRef, "k_minus");
+	pGlobalUser->MapActionCondition("-", TLInput::LessThan, 1.0f); // Release
+	
+	pGlobalUser->AddAction("SIMPLE", "/");
+	pGlobalUser->MapAction("/", DeviceRef, "k_forwardslash");
+	pGlobalUser->MapActionCondition("/", TLInput::LessThan, 1.0f); // Release
+	
+	pGlobalUser->AddAction("SIMPLE", ":");
+	pGlobalUser->MapAction(":", DeviceRef, "k_colon");
+	pGlobalUser->MapActionCondition(":", TLInput::LessThan, 1.0f); // Release
+	
+	pGlobalUser->AddAction("SIMPLE", ";");
+	pGlobalUser->MapAction(";", DeviceRef, "k_semicolon");
+	pGlobalUser->MapActionCondition(";", TLInput::LessThan, 1.0f); // Release
+	
+	pGlobalUser->AddAction("SIMPLE", "(");
+	pGlobalUser->MapAction("(", DeviceRef, "k_lbracket");
+	pGlobalUser->MapActionCondition("(", TLInput::LessThan, 1.0f); // Release
+	
+	pGlobalUser->AddAction("SIMPLE", ")");
+	pGlobalUser->MapAction(")", DeviceRef, "k_rbracket");
+	pGlobalUser->MapActionCondition(")", TLInput::LessThan, 1.0f); // Release
+	
+	pGlobalUser->AddAction("SIMPLE", "£");
+	pGlobalUser->MapAction("£", DeviceRef, "k_sterling");
+	pGlobalUser->MapActionCondition("£", TLInput::LessThan, 1.0f); // Release
+	
+	pGlobalUser->AddAction("SIMPLE", "&");
+	pGlobalUser->MapAction("&", DeviceRef, "k_ampersand");
+	pGlobalUser->MapActionCondition("&", TLInput::LessThan, 1.0f); // Release
+	
+	pGlobalUser->AddAction("SIMPLE", "@");
+	pGlobalUser->MapAction("@", DeviceRef, "k_at");
+	pGlobalUser->MapActionCondition("@", TLInput::LessThan, 1.0f); // Release
+	
+	pGlobalUser->AddAction("SIMPLE", "\"");
+	pGlobalUser->MapAction("\"", DeviceRef, "k_quote");
+	pGlobalUser->MapActionCondition("\"", TLInput::LessThan, 1.0f); // Release
+	
+	pGlobalUser->AddAction("SIMPLE", ".");
+	pGlobalUser->MapAction(".", DeviceRef, "k_period");
+	pGlobalUser->MapActionCondition(".", TLInput::LessThan, 1.0f); // Release
+	
+	pGlobalUser->AddAction("SIMPLE", ",");
+	pGlobalUser->MapAction(",", DeviceRef, "k_comma");
+	pGlobalUser->MapActionCondition(",", TLInput::LessThan, 1.0f); // Release
+	
+	pGlobalUser->AddAction("SIMPLE", "?");
+	pGlobalUser->MapAction("?", DeviceRef, "k_question");
+	pGlobalUser->MapActionCondition("?", TLInput::LessThan, 1.0f); // Release
+	
+	pGlobalUser->AddAction("SIMPLE", "!");
+	pGlobalUser->MapAction("!", DeviceRef, "k_exclamation");
+	pGlobalUser->MapActionCondition("!", TLInput::LessThan, 1.0f); // Release
+	
+	pGlobalUser->AddAction("SIMPLE", "'");
+	pGlobalUser->MapAction("'", DeviceRef, "k_apostrophe");
+	pGlobalUser->MapActionCondition("'", TLInput::LessThan, 1.0f); // Release
+	
+	pGlobalUser->AddAction("SIMPLE", "+");
+	pGlobalUser->MapAction("+", DeviceRef, "k_plus");
+	pGlobalUser->MapActionCondition("+", TLInput::LessThan, 1.0f); // Release
+	
+	pGlobalUser->AddAction("SIMPLE", "*");
+	pGlobalUser->MapAction("*", DeviceRef, "k_multiply");
+	pGlobalUser->MapActionCondition("*", TLInput::LessThan, 1.0f); // Release
+	
+	pGlobalUser->AddAction("SIMPLE", "=");
+	pGlobalUser->MapAction("=", DeviceRef, "k_equals");
+	pGlobalUser->MapActionCondition("=", TLInput::LessThan, 1.0f); // Release
+*/			
+	
+	// Special character actions
+	if(pUser->AddAction("SIMPLE", "k_backspace"))
+	{
+		pUser->MapAction("k_backspace", DeviceRef, "k_backspace");
+		pUser->MapActionCondition("k_backspace", TLInput::LessThan, 1.0f); // Release
+	}
+
+	if(pUser->AddAction("SIMPLE", "k_return"))
+	{
+		pUser->MapAction("k_return", DeviceRef, "k_return");
+		pUser->MapActionCondition("k_return", TLInput::LessThan, 1.0f); // Release
+	}
+	///////////////////////////////////////////////////////
+	
+}
+
+
+void TWidgetManager::OnInputDeviceRemoved(TRefRef DeviceRef, TRefRef DeviceTypeRef)
+{
+	// Remove any added actions from the global user.
+	
+	TPtr<TLUser::TUser>	pGlobalUser = TLUser::g_pUserManager->GetUser("Global");
+	
+	if(!pGlobalUser.IsValid())
+	{
+		TLDebug_Break("Failed to find global user");
+		return;
+	}
+	
+	if(DeviceTypeRef == STRef(k,e,y,b,o))
+	{
+		// Get a list of the supported characters 
+		TArray<TRef> RefArray;
+		
+		if(TLInput::g_pInputSystem->BuildArrayOfSupportInputCharacterRefs(RefArray))
+		{
+			for(u32 uIndex = 0; uIndex < RefArray.GetSize(); uIndex++)
+			{
+				TRef KeyRef = RefArray.ElementAt(uIndex);
+				
+				// Map actions for each key of the keyboard we will support use of
+				if(!pGlobalUser->RemoveAction(KeyRef))
+				{
+					TLDebug_Break("Action being removed from user that doesn't exist.");
+				}
+			}			
+		}
+		
+		// Remove special actions
+		if(!pGlobalUser->RemoveAction("k_backspace"))
+		{
+			TLDebug_Break("Action being removed from user that doesn't exist.");
+		}
+		
+		if(!pGlobalUser->RemoveAction("k_return"))
+		{
+			TLDebug_Break("Action being removed from user that doesn't exist.");
+		}
+		
+	}		
+}

@@ -22,9 +22,6 @@ class TLGui::TWidgetText : public TLInput::TInputInterface
 public:
 	TWidgetText(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef());
 
-	SyncBool					Initialise();						//	continue initialising
-	void						Shutdown();							//	shutdown code - just unsubscribes from publishers - this is to release all the TPtr's so we can be destructed
-	
 	void						SetString(const TTempString& str) { m_Text = str; OnTextChange(); }
 	
 protected:
@@ -36,9 +33,6 @@ private:
 	void						BeginEditing();
 	void						EndEditing();
 	
-	void						OnInputDeviceAdded(TRefRef DeviceRef, TRefRef DeviceTypeRef);
-	void						OnInputDeviceRemoved(TRefRef DeviceRef, TRefRef DeviceTypeRef);
-
 	void						OnTextChange();
 	
 private:
