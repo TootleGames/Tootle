@@ -72,7 +72,7 @@ protected:
 
 	virtual void			ProcessMessageFromQueue(TLMessaging::TMessage& Message)			{	ProcessMessage( Message );	}
 	virtual void			ProcessMessage(TLMessaging::TMessage& Message);
-	void					UnregisterAllManagers()				{	}
+	void					UnregisterAllManagers();				
 
 	FORCEINLINE void		Debug_UpdateDebugCounters();		//	update our per-second counters to detect X fps etc
 
@@ -97,7 +97,8 @@ private:
 	float						m_Debug_FrameTimePerSecond;			//	time counter for prev second
 	float						m_Debug_CurrentFrameTimePerSecond;	//	time counter
 
-	TPtrArray<TManager>			m_Managers;
+	TPtrArray<TManager>			m_Managers;				// Array of TPtr's to managers
+	TArray< TPtr<TManager>* >	m_ManagerPointers;		// Array of pointers to the global TPtr's to managers
 
 	TKeyArray<TRef, float>		m_aTimeStepModifiers;	// Game mechanics time step modifier - allows the game to sped up/slowed down/paused etc
 	
@@ -124,7 +125,12 @@ Bool TLCore::TCoreManager::CreateAndRegisterManager(TPtr<T>& pManager,TRefRef Ma
 		pManager = NULL;
 		return FALSE;
 	}
-	
+
+	// Success - now add the TPtr to our list of pointers to TPtrs so we can clear the TPtr 
+	// automatically at shutdown
+	TPtr<TManager>* pPtr = (reinterpret_cast< TPtr<TManager>* >(&pManager));
+	m_ManagerPointers.Add(pPtr);
+
 	return TRUE;
 }
 

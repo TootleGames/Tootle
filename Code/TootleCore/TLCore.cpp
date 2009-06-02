@@ -21,9 +21,6 @@ namespace TLCore
 
 	void RegisterManagers_Engine(TPtr<TCoreManager>& pCoreManager);
 	void RegisterManagers_Game(TPtr<TCoreManager>& pCoreManager);
-
-	void UnregisterManagers_Engine();
-	void UnregisterManagers_Game();
 }
 
 
@@ -51,15 +48,6 @@ void TLCore::RegisterManagers_Engine(TPtr<TCoreManager>& pManager)
 	pManager->CreateAndRegisterManager<TLMessaging::TEventChannelManager>(TLMessaging::g_pEventChannelManager, "EVENTCHANNEL");
 	pManager->CreateAndRegisterManager<TLTime::TTimeManager>("TIMEMANAGER");	// NOTE: No global poitner for this manager
 }
-
-// Unset all global pointers - engine side
-void TLCore::UnregisterManagers_Engine()
-{
-	TLDebug_Print("Unregistering Engine Managers");
-	
-	TLMessaging::g_pEventChannelManager = NULL;
-}
-
 
 
 //---------------------------------------------------
@@ -95,9 +83,6 @@ Bool TLCore::TootMain()
 	{
 		ShutdownLoopResult = g_pCoreManager->UpdateShutdown();
 	}
-
-	UnregisterManagers_Engine();
-	UnregisterManagers_Game();
 
 	//	destroy core manager
 	g_pCoreManager = NULL;

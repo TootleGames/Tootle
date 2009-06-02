@@ -55,6 +55,36 @@ TCoreManager::~TCoreManager()
 }
 
 
+void TCoreManager::UnregisterAllManagers()				
+{
+	s32 sIndex = 0;
+	s32 sNumberOfManagers = (s32)m_ManagerPointers.GetSize();
+
+	// Go through the pointers to TPtr's and set them to null
+	for(sIndex = 0; sIndex < sNumberOfManagers; sIndex++)
+	{
+		TPtr<TManager>* pPtr = m_ManagerPointers.ElementAt(sIndex);
+
+		*pPtr = NULL;
+	}
+
+	m_ManagerPointers.Empty(TRUE);
+
+
+	sNumberOfManagers = (s32)(m_Managers.GetSize()-1);
+	// Go through the list of managers and null the TPtr's in reverse order
+	for(sIndex = sNumberOfManagers; sIndex >= 0; sIndex--)
+	{
+		m_Managers.ElementAt(sIndex) = NULL;
+	}
+
+	m_Managers.Empty(TRUE);
+
+
+}
+
+
+
 SyncBool TCoreManager::Initialise()
 {
 	return SyncTrue;
