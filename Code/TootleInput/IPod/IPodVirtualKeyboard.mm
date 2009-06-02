@@ -68,9 +68,17 @@
 	[m_textField setReturnKeyType:UIReturnKeySend];
 	[m_textField setDelegate:self];
 	//[m_textField setKeyboardType:UIKeyboardTypeNamePhonePad];	// use the name/phone type input method (alpha-numeric only keyboard)
-	[m_textField setReturnKeyType:UIReturnKeyDone];	// set the return key string
-
+	[m_textField setReturnKeyType:UIReturnKeyDone];	// set the return key string to 'Done'
 	
+	
+	TString initialText = TLInput::g_pInputSystem->GetVirtualKeyboardText();
+	
+	NSString *initialString = [[NSString alloc] initWithUTF8String: initialText.GetData()];
+	
+	[m_textField setText:initialString];
+
+
+	[initialString release];
 	
 	// DB - The plan was to add the controller as a subview of the window and then the text as a subview of the controller.
 	// Alas for some reaosn that doesn't quite work so now the plan is to simply add the text as a subview of the window.

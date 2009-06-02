@@ -233,8 +233,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -316,12 +314,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TClassFactory.h</string>
+								<string>IPodCore.mm</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -329,11 +329,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TClassFactory.h</string>
+										<string>IPodCore.mm</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84BBBF510FD43FE20046E316</string>
+										<string>84BBC2880FD5725C0046E316</string>
 										<key>history</key>
 										<array>
 											<string>84D692970F42F71C002CFFE1</string>
@@ -342,7 +342,6 @@
 											<string>84D6945F0F431B21002CFFE1</string>
 											<string>84DC8A110F45829900532109</string>
 											<string>84DC8C2C0F458CA900532109</string>
-											<string>84DC8C7B0F458D7900532109</string>
 											<string>8418E7690F4C110700B956C9</string>
 											<string>8418E8A00F4C2DFF00B956C9</string>
 											<string>8418E8A10F4C2DFF00B956C9</string>
@@ -364,7 +363,6 @@
 											<string>8488F54D0F8B52C6008A08AF</string>
 											<string>8488F57C0F8B5652008A08AF</string>
 											<string>848468A60F8DE1E8006F21AA</string>
-											<string>84C3F3D50FB85713001BBE93</string>
 											<string>8461EDAF0FB9C92200742359</string>
 											<string>8461EDB50FB9C92200742359</string>
 											<string>8461F0350FB9EEB200742359</string>
@@ -396,7 +394,6 @@
 											<string>84D9D8AB0FC2D38F00C7A173</string>
 											<string>84D9DB8F0FC4186000C7A173</string>
 											<string>84D9DB910FC4186000C7A173</string>
-											<string>84D9DE8E0FC5B47B00C7A173</string>
 											<string>84D9DE8F0FC5B47B00C7A173</string>
 											<string>844DEB7C0FC6853D004AB3AB</string>
 											<string>844DEB850FC68550004AB3AB</string>
@@ -409,8 +406,11 @@
 											<string>844DEBB60FC68B7B004AB3AB</string>
 											<string>848615270FCD9B0800C22D6B</string>
 											<string>84E45E000FCEC0630015A203</string>
-											<string>84BBBF4F0FD43FE20046E316</string>
-											<string>84BBBF4B0FD43FDE0046E316</string>
+											<string>84BBC2520FD56A2D0046E316</string>
+											<string>84BBC2530FD56A2D0046E316</string>
+											<string>84BBC2540FD56A2D0046E316</string>
+											<string>84BBC2850FD5725C0046E316</string>
+											<string>84BBC2860FD5725C0046E316</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -484,6 +484,8 @@
 											<string>84D9DBAD0FC4186000C7A173</string>
 											<string>84D9DE910FC5B47B00C7A173</string>
 											<string>84BBBF500FD43FE20046E316</string>
+											<string>84BBC2560FD56A2D0046E316</string>
+											<string>84BBC2870FD5725C0046E316</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -541,9 +543,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84BBBF520FD43FE20046E316</string>
+				<string>84BBC2890FD5725C0046E316</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84BBBF530FD43FE20046E316</string>
+				<string>84BBC28A0FD5725C0046E316</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -918,7 +920,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TClassFactory.h</string>
+										<string>IPodCore.mm</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -974,8 +976,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>84BBBF4D0FD43FDE0046E316</string>
-				<string>84BBBF4E0FD43FDE0046E316</string>
+				<string>84BBC2830FD572590046E316</string>
+				<string>84BBC2840FD572590046E316</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>

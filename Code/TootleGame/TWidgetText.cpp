@@ -37,7 +37,11 @@ void TWidgetText::BeginEditing()
 	m_bEditing = TRUE;
 
 	// For platforms that support it bring up the virtual keyboard
-	if(!TLInput::g_pInputSystem->CreateVirtualDevice("VDev1", "keyboard"))
+	if(TLInput::g_pInputSystem->CreateVirtualDevice("VDev1", "keyboard"))
+	{
+		TLInput::g_pInputSystem->SetVirtualKeyboardText(m_Text);
+	}
+	else
 	{
 		// If failed we can ignore because there is most likely a keyboard device already which will 
 		// have the appropriate actions mapped

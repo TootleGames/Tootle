@@ -56,7 +56,8 @@ namespace TLInput
 
 	TPtr<TLInput::TInputDevice>&	GetDevice(TRefRef DeviceRef);			//	fetch device with this ref
 	TPtr<TLInput::TInputDevice>&	GetDeviceOfType(TRefRef DeviceType);	//	find the (first) device of this type
-	TRef							GetFreeDeviceRef(TRef BaseRef=TRef());	//	get an unused ref for a device	
+	TRef							GetFreeDeviceRef(TRef BaseRef=TRef());	//	get an unused ref for a device
+		
 };
 
 
@@ -100,6 +101,19 @@ public:
 	Bool			CreateVirtualDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef);
 	Bool			RemoveVirtualDevice(TRefRef InstanceRef);
 	
+	
+	// [02/06/09] DB - Dirty hack to setup the initial virtual keyboard text. Could do with being able to send this data to
+	// the device but not a nice way to do that yet
+	void			SetVirtualKeyboardText(const TString& vktext)
+	{
+		m_VKText = vktext;
+	}
+	
+	TString		GetVirtualKeyboardText() const
+	{
+		return m_VKText;
+	}
+	
 protected:
 	virtual SyncBool		Initialise();
 	virtual SyncBool		Update(float fTimeStep);
@@ -123,6 +137,8 @@ private:
 	// NOTE: Should be Unicode? UTF8? Possibly?
 	TKeyArray<TRef, char>				m_SupportedTextCharacters;
 	TArray<TVirtualDeviceRequest>		m_VirtualDeviceRequests;
+
+	TString								m_VKText;
 	
 	float					m_fDeviceCheckTimer;		// Interval timer between checks for devices
 	Bool					m_bEnabled;

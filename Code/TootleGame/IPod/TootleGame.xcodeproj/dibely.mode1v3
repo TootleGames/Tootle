@@ -233,8 +233,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -278,7 +276,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>19</integer>
+									<integer>18</integer>
 									<integer>2</integer>
 									<integer>0</integer>
 								</array>
@@ -314,12 +312,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TWidgetText.h</string>
+								<string>TWidgetText.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -327,11 +327,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TWidgetText.h</string>
+										<string>TWidgetText.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84BBC02A0FD4805D0046E316</string>
+										<string>84BBC2A60FD573760046E316</string>
 										<key>history</key>
 										<array>
 											<string>84F90F3C0F13E208007455BB</string>
@@ -358,8 +358,10 @@
 											<string>84E461C70FCFCF390015A203</string>
 											<string>84E461CA0FCFCF390015A203</string>
 											<string>84E461CB0FCFCF390015A203</string>
-											<string>84BBC0280FD4805D0046E316</string>
-											<string>846E63D90FD0246100F38208</string>
+											<string>84BBC1F70FD564D50046E316</string>
+											<string>84BBC2950FD573160046E316</string>
+											<string>84BBC2960FD573160046E316</string>
+											<string>84BBC29B0FD573160046E316</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -388,7 +390,8 @@
 											<string>84CDFE0F0FCE9C8500D41F8F</string>
 											<string>84E461D60FCFCF390015A203</string>
 											<string>843CD7C90FD02E4C003550FD</string>
-											<string>84BBC0290FD4805D0046E316</string>
+											<string>84BBC1FD0FD564D50046E316</string>
+											<string>84BBC2980FD573160046E316</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -446,9 +449,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84BBC02B0FD4805D0046E316</string>
+				<string>84BBC2A80FD573760046E316</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84BBC02C0FD4805D0046E316</string>
+				<string>84BBC2A90FD573760046E316</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -582,7 +585,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>84DE2E860F122C3D00608F8C</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleGame/IPod/TootleGame.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -663,7 +665,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>84DE2E860F122C3D00608F8C</string>
-				<string>84BBC02D0FD4805D0046E316</string>
+				<string>84BBC29F0FD573160046E316</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
