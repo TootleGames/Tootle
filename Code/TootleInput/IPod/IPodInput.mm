@@ -62,6 +62,9 @@ namespace TLInput
 			Bool			UpdatePhysicalDevice(TLInput::TInputDevice& Device);
 			Bool			UpdateVirtualDevice(TLInput::TInputDevice& Device);
 
+			// TEMP test routine
+			void			VibrateDevice();
+
 			
 		}
 	}
@@ -819,6 +822,12 @@ void TLInput::Platform::IPod::ProcessVirtualKey(TRefRef KeyRef)
 	//TODO: Need to be able to handle other virtual device inputs
 	// Add the key to the keyboard array
 	IPod::g_KeyboardKeyArray.Add(KeyRef);
+}
+
+// TEMP test routine
+void TLInput::Platform::TestVibrateDevice()
+{
+	IPod::VibrateDevice();
 }
 
 

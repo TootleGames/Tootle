@@ -45,6 +45,9 @@ namespace TLInput
 
 		SyncBool		CreateVirtualDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef);
 		SyncBool		RemoveVirtualDevice(TRefRef InstanceRef);
+		
+		//TEMP test routine
+		void TestVibrateDevice();
 	};
 
 
@@ -58,6 +61,9 @@ namespace TLInput
 	TPtr<TLInput::TInputDevice>&	GetDeviceOfType(TRefRef DeviceType);	//	find the (first) device of this type
 	TRef							GetFreeDeviceRef(TRef BaseRef=TRef());	//	get an unused ref for a device
 		
+	
+	// TEMP test routine
+	void TempTriggerVibration();
 };
 
 

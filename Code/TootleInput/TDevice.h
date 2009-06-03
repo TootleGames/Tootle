@@ -72,7 +72,7 @@ public:
 	u32								GetTotalSensorCount()		const	{ return m_Sensors.GetSize(); }
 
 	// Effects access
-	TPtr<TLInput::TInputEffect>&	AttachEffect(TRef refEffectID);
+	TPtr<TLInput::TInputEffect>&	AttachEffect(TRefRef EffectRef, TRefRef TypeRef);
 
 	// Data buffer access - sensor information from hardware
 	TArray<TInputData>&				GetInputBuffer()				{ return m_InputBuffer; }
@@ -94,7 +94,7 @@ private:
 
 	TArray<TInputData>			m_InputBuffer;			// Buffer for all input from the hardware device
 	TPtrArray<TInputSensor>		m_Sensors;				// List of sensors that the device has access to
-	TPtrArray<TInputEffect>		m_Effects;				// List of (output) effects such as force, feedback (rumble) and audio
+	TPtrArray<TInputEffect>		m_Effects;				// List of (output) effects such as force feedback (rumble) and audio
 
 	TFlags<u32>					m_Flags;				// Device flags
 };

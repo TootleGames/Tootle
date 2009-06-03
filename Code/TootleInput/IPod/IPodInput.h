@@ -22,6 +22,8 @@ namespace TLInput
 		SyncBool		CreateVirtualDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef);
 		SyncBool		RemoveVirtualDevice(TRefRef InstanceRef);
 
+		// TEMP test routine
+		void TestVibrateDevice();
 				
 		namespace IPod
 		{			

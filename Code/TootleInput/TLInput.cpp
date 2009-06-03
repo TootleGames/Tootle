@@ -550,5 +550,12 @@ Bool TInputManager::GetDeviceIDs(TArray<TRef>& refArray)
 	return TRUE;
 }
 
+// TEMP test routine.  Vibration will eventually be handled via the device effects system
+void TLInput::TempTriggerVibration()
+{
+	Platform::TestVibrateDevice();
+}
+
+
 
 

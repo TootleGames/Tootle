@@ -170,8 +170,28 @@ u32	TInputDevice::GetSensorCount(TSensorType SensorType)
 
 
 
-TPtr<TLInput::TInputEffect>& TInputDevice::AttachEffect(TRef refEffectID)
+TPtr<TLInput::TInputEffect>& TInputDevice::AttachEffect(TRefRef EffectRef, TRefRef TypeRef)
 {
+	TPtr<TLInput::TInputEffect> pEffect;
+	if(TypeRef == STRef(F,o,r,c,e))
+	{
+		// Create the force feedback effect
+		pEffect = new TLInput::TInputEffect_ForceFeedback(EffectRef);
+		
+	}
+	
+	if(pEffect.IsValid())
+	{
+		s32 sIndex = m_Effects.Add(pEffect);
+		
+		if(sIndex != -1)
+		{
+			return m_Effects[sIndex];
+		}
+	}
+	
+	
+	
 	return TLPtr::GetNullPtr<TLInput::TInputEffect>();
 }
 
