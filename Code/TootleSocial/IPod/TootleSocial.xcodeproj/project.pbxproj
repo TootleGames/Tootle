@@ -1,0 +1,347 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8404EAC30FD7D0BC00F280AF /* FBConnect.h in Headers */ = {isa = PBXBuildFile; fileRef = 8404EAAF0FD7D0BC00F280AF /* FBConnect.h */; };
+		8404EAC40FD7D0BC00F280AF /* FBConnectGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8404EAB00FD7D0BC00F280AF /* FBConnectGlobal.h */; };
+		8404EAC50FD7D0BC00F280AF /* FBConnectGlobal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8404EAB10FD7D0BC00F280AF /* FBConnectGlobal.m */; };
+		8404EAC60FD7D0BC00F280AF /* FBSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 8404EAB20FD7D0BC00F280AF /* FBSession.h */; };
+		8404EAC70FD7D0BC00F280AF /* FBSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 8404EAB30FD7D0BC00F280AF /* FBSession.m */; };
+		8404EAC80FD7D0BC00F280AF /* FBRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8404EAB40FD7D0BC00F280AF /* FBRequest.h */; };
+		8404EAC90FD7D0BC00F280AF /* FBRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8404EAB50FD7D0BC00F280AF /* FBRequest.m */; };
+		8404EACA0FD7D0BC00F280AF /* FBXMLHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 8404EAB60FD7D0BC00F280AF /* FBXMLHandler.h */; };
+		8404EACB0FD7D0BC00F280AF /* FBXMLHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8404EAB70FD7D0BC00F280AF /* FBXMLHandler.m */; };
+		8404EACC0FD7D0BC00F280AF /* FBLoginButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 8404EAB80FD7D0BC00F280AF /* FBLoginButton.h */; };
+		8404EACD0FD7D0BC00F280AF /* FBLoginButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 8404EAB90FD7D0BC00F280AF /* FBLoginButton.m */; };
+		8404EACE0FD7D0BC00F280AF /* FBDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 8404EABA0FD7D0BC00F280AF /* FBDialog.h */; };
+		8404EACF0FD7D0BC00F280AF /* FBDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8404EABB0FD7D0BC00F280AF /* FBDialog.m */; };
+		8404EAD00FD7D0BC00F280AF /* FBLoginDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 8404EABC0FD7D0BC00F280AF /* FBLoginDialog.h */; };
+		8404EAD10FD7D0BC00F280AF /* FBLoginDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8404EABD0FD7D0BC00F280AF /* FBLoginDialog.m */; };
+		8404EAD20FD7D0BC00F280AF /* FBPermissionDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 8404EABE0FD7D0BC00F280AF /* FBPermissionDialog.h */; };
+		8404EAD30FD7D0BC00F280AF /* FBPermissionDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8404EABF0FD7D0BC00F280AF /* FBPermissionDialog.m */; };
+		8404EAD40FD7D0BC00F280AF /* FBFeedDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 8404EAC00FD7D0BC00F280AF /* FBFeedDialog.h */; };
+		8404EAD50FD7D0BC00F280AF /* FBFeedDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8404EAC10FD7D0BC00F280AF /* FBFeedDialog.m */; };
+		8404EC6B0FD7D75800F280AF /* TLSocial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8404EC690FD7D75800F280AF /* TLSocial.h */; };
+		8404EC6C0FD7D75800F280AF /* TLSocial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8404EC6A0FD7D75800F280AF /* TLSocial.cpp */; };
+		8404EC6F0FD7D78B00F280AF /* TFacebookConnect.h in Headers */ = {isa = PBXBuildFile; fileRef = 8404EC6D0FD7D78B00F280AF /* TFacebookConnect.h */; };
+		8404EC700FD7D78B00F280AF /* TFacebookConnect.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8404EC6E0FD7D78B00F280AF /* TFacebookConnect.mm */; };
+		847DF8210FD9325E005F9EDC /* TFacebookSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 847DF81F0FD9325E005F9EDC /* TFacebookSession.h */; };
+		847DF8220FD9325E005F9EDC /* TFacebookSession.mm in Sources */ = {isa = PBXBuildFile; fileRef = 847DF8200FD9325E005F9EDC /* TFacebookSession.mm */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		8404EA5C0FD7CF8100F280AF /* libTootleSocial.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleSocial.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8404EAAF0FD7D0BC00F280AF /* FBConnect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FBConnect.h; path = FacebookConnect/src/FBConnect/FBConnect.h; sourceTree = "<group>"; };
+		8404EAB00FD7D0BC00F280AF /* FBConnectGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FBConnectGlobal.h; path = FacebookConnect/src/FBConnect/FBConnectGlobal.h; sourceTree = "<group>"; };
+		8404EAB10FD7D0BC00F280AF /* FBConnectGlobal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FBConnectGlobal.m; path = FacebookConnect/src/FBConnectGlobal.m; sourceTree = "<group>"; };
+		8404EAB20FD7D0BC00F280AF /* FBSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FBSession.h; path = FacebookConnect/src/FBConnect/FBSession.h; sourceTree = "<group>"; };
+		8404EAB30FD7D0BC00F280AF /* FBSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FBSession.m; path = FacebookConnect/src/FBSession.m; sourceTree = "<group>"; };
+		8404EAB40FD7D0BC00F280AF /* FBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FBRequest.h; path = FacebookConnect/src/FBConnect/FBRequest.h; sourceTree = "<group>"; };
+		8404EAB50FD7D0BC00F280AF /* FBRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FBRequest.m; path = FacebookConnect/src/FBRequest.m; sourceTree = "<group>"; };
+		8404EAB60FD7D0BC00F280AF /* FBXMLHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FBXMLHandler.h; path = FacebookConnect/src/FBXMLHandler.h; sourceTree = "<group>"; };
+		8404EAB70FD7D0BC00F280AF /* FBXMLHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FBXMLHandler.m; path = FacebookConnect/src/FBXMLHandler.m; sourceTree = "<group>"; };
+		8404EAB80FD7D0BC00F280AF /* FBLoginButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FBLoginButton.h; path = FacebookConnect/src/FBConnect/FBLoginButton.h; sourceTree = "<group>"; };
+		8404EAB90FD7D0BC00F280AF /* FBLoginButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FBLoginButton.m; path = FacebookConnect/src/FBLoginButton.m; sourceTree = "<group>"; };
+		8404EABA0FD7D0BC00F280AF /* FBDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FBDialog.h; path = FacebookConnect/src/FBConnect/FBDialog.h; sourceTree = "<group>"; };
+		8404EABB0FD7D0BC00F280AF /* FBDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FBDialog.m; path = FacebookConnect/src/FBDialog.m; sourceTree = "<group>"; };
+		8404EABC0FD7D0BC00F280AF /* FBLoginDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FBLoginDialog.h; path = FacebookConnect/src/FBConnect/FBLoginDialog.h; sourceTree = "<group>"; };
+		8404EABD0FD7D0BC00F280AF /* FBLoginDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FBLoginDialog.m; path = FacebookConnect/src/FBLoginDialog.m; sourceTree = "<group>"; };
+		8404EABE0FD7D0BC00F280AF /* FBPermissionDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FBPermissionDialog.h; path = FacebookConnect/src/FBConnect/FBPermissionDialog.h; sourceTree = "<group>"; };
+		8404EABF0FD7D0BC00F280AF /* FBPermissionDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FBPermissionDialog.m; path = FacebookConnect/src/FBPermissionDialog.m; sourceTree = "<group>"; };
+		8404EAC00FD7D0BC00F280AF /* FBFeedDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FBFeedDialog.h; path = FacebookConnect/src/FBConnect/FBFeedDialog.h; sourceTree = "<group>"; };
+		8404EAC10FD7D0BC00F280AF /* FBFeedDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FBFeedDialog.m; path = FacebookConnect/src/FBFeedDialog.m; sourceTree = "<group>"; };
+		8404EAC20FD7D0BC00F280AF /* FBConnect.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = FBConnect.bundle; path = FacebookConnect/src/FBConnect.bundle; sourceTree = "<group>"; };
+		8404EC690FD7D75800F280AF /* TLSocial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLSocial.h; path = ../TLSocial.h; sourceTree = SOURCE_ROOT; };
+		8404EC6A0FD7D75800F280AF /* TLSocial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLSocial.cpp; path = ../TLSocial.cpp; sourceTree = SOURCE_ROOT; };
+		8404EC6D0FD7D78B00F280AF /* TFacebookConnect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFacebookConnect.h; sourceTree = "<group>"; };
+		8404EC6E0FD7D78B00F280AF /* TFacebookConnect.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TFacebookConnect.mm; sourceTree = "<group>"; };
+		8404EC960FD7DA2C00F280AF /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		8404EC970FD7DA2C00F280AF /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		8404EC980FD7DA2C00F280AF /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
+		8404EC990FD7DA2C00F280AF /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
+		847DF81F0FD9325E005F9EDC /* TFacebookSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFacebookSession.h; sourceTree = "<group>"; };
+		847DF8200FD9325E005F9EDC /* TFacebookSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TFacebookSession.mm; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8404EA5A0FD7CF8100F280AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8404EA430FD7CF4F00F280AF = {
+			isa = PBXGroup;
+			children = (
+				8404EA610FD7CF9700F280AF /* Build Configurations */,
+				8404EA620FD7CFA200F280AF /* Source Code */,
+				8404EAE00FD7D0F100F280AF /* Frameworks */,
+				8404EA5D0FD7CF8100F280AF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8404EA5D0FD7CF8100F280AF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8404EA5C0FD7CF8100F280AF /* libTootleSocial.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8404EA610FD7CF9700F280AF /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				8404EC960FD7DA2C00F280AF /* TootleDebug.xcconfig */,
+				8404EC970FD7DA2C00F280AF /* TootleRelease.xcconfig */,
+				8404EC980FD7DA2C00F280AF /* TootleReleaseAdHoc.xcconfig */,
+				8404EC990FD7DA2C00F280AF /* TootleReleaseAppStore.xcconfig */,
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+		8404EA620FD7CFA200F280AF /* Source Code */ = {
+			isa = PBXGroup;
+			children = (
+				8404EA6D0FD7CFD000F280AF /* Mac */,
+				8404EA6C0FD7CFCA00F280AF /* IPod */,
+				8404EA6B0FD7CFC400F280AF /* PC */,
+				8404EC690FD7D75800F280AF /* TLSocial.h */,
+				8404EC6A0FD7D75800F280AF /* TLSocial.cpp */,
+			);
+			name = "Source Code";
+			sourceTree = "<group>";
+		};
+		8404EA6B0FD7CFC400F280AF /* PC */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = PC;
+			sourceTree = "<group>";
+		};
+		8404EA6C0FD7CFCA00F280AF /* IPod */ = {
+			isa = PBXGroup;
+			children = (
+				8404EAAE0FD7D0BC00F280AF /* FBConnect */,
+				8404EC6D0FD7D78B00F280AF /* TFacebookConnect.h */,
+				8404EC6E0FD7D78B00F280AF /* TFacebookConnect.mm */,
+				847DF81F0FD9325E005F9EDC /* TFacebookSession.h */,
+				847DF8200FD9325E005F9EDC /* TFacebookSession.mm */,
+			);
+			name = IPod;
+			sourceTree = "<group>";
+		};
+		8404EA6D0FD7CFD000F280AF /* Mac */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Mac;
+			sourceTree = "<group>";
+		};
+		8404EAAE0FD7D0BC00F280AF /* FBConnect */ = {
+			isa = PBXGroup;
+			children = (
+				8404EAAF0FD7D0BC00F280AF /* FBConnect.h */,
+				8404EAB00FD7D0BC00F280AF /* FBConnectGlobal.h */,
+				8404EAB10FD7D0BC00F280AF /* FBConnectGlobal.m */,
+				8404EAB20FD7D0BC00F280AF /* FBSession.h */,
+				8404EAB30FD7D0BC00F280AF /* FBSession.m */,
+				8404EAB40FD7D0BC00F280AF /* FBRequest.h */,
+				8404EAB50FD7D0BC00F280AF /* FBRequest.m */,
+				8404EAB60FD7D0BC00F280AF /* FBXMLHandler.h */,
+				8404EAB70FD7D0BC00F280AF /* FBXMLHandler.m */,
+				8404EAB80FD7D0BC00F280AF /* FBLoginButton.h */,
+				8404EAB90FD7D0BC00F280AF /* FBLoginButton.m */,
+				8404EABA0FD7D0BC00F280AF /* FBDialog.h */,
+				8404EABB0FD7D0BC00F280AF /* FBDialog.m */,
+				8404EABC0FD7D0BC00F280AF /* FBLoginDialog.h */,
+				8404EABD0FD7D0BC00F280AF /* FBLoginDialog.m */,
+				8404EABE0FD7D0BC00F280AF /* FBPermissionDialog.h */,
+				8404EABF0FD7D0BC00F280AF /* FBPermissionDialog.m */,
+				8404EAC00FD7D0BC00F280AF /* FBFeedDialog.h */,
+				8404EAC10FD7D0BC00F280AF /* FBFeedDialog.m */,
+				8404EAC20FD7D0BC00F280AF /* FBConnect.bundle */,
+			);
+			name = FBConnect;
+			sourceTree = "<group>";
+		};
+		8404EAE00FD7D0F100F280AF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		8404EA580FD7CF8100F280AF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8404EAC30FD7D0BC00F280AF /* FBConnect.h in Headers */,
+				8404EAC40FD7D0BC00F280AF /* FBConnectGlobal.h in Headers */,
+				8404EAC60FD7D0BC00F280AF /* FBSession.h in Headers */,
+				8404EAC80FD7D0BC00F280AF /* FBRequest.h in Headers */,
+				8404EACA0FD7D0BC00F280AF /* FBXMLHandler.h in Headers */,
+				8404EACC0FD7D0BC00F280AF /* FBLoginButton.h in Headers */,
+				8404EACE0FD7D0BC00F280AF /* FBDialog.h in Headers */,
+				8404EAD00FD7D0BC00F280AF /* FBLoginDialog.h in Headers */,
+				8404EAD20FD7D0BC00F280AF /* FBPermissionDialog.h in Headers */,
+				8404EAD40FD7D0BC00F280AF /* FBFeedDialog.h in Headers */,
+				8404EC6B0FD7D75800F280AF /* TLSocial.h in Headers */,
+				8404EC6F0FD7D78B00F280AF /* TFacebookConnect.h in Headers */,
+				847DF8210FD9325E005F9EDC /* TFacebookSession.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		8404EA5B0FD7CF8100F280AF /* TootleSocial */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8404EA600FD7CF8200F280AF /* Build configuration list for PBXNativeTarget "TootleSocial" */;
+			buildPhases = (
+				8404EA580FD7CF8100F280AF /* Headers */,
+				8404EA590FD7CF8100F280AF /* Sources */,
+				8404EA5A0FD7CF8100F280AF /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleSocial;
+			productName = TootleSocial;
+			productReference = 8404EA5C0FD7CF8100F280AF /* libTootleSocial.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8404EA450FD7CF4F00F280AF /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 8404EA480FD7CF4F00F280AF /* Build configuration list for PBXProject "TootleSocial" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 0;
+			mainGroup = 8404EA430FD7CF4F00F280AF;
+			productRefGroup = 8404EA5D0FD7CF8100F280AF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8404EA5B0FD7CF8100F280AF /* TootleSocial */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8404EA590FD7CF8100F280AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8404EAC50FD7D0BC00F280AF /* FBConnectGlobal.m in Sources */,
+				8404EAC70FD7D0BC00F280AF /* FBSession.m in Sources */,
+				8404EAC90FD7D0BC00F280AF /* FBRequest.m in Sources */,
+				8404EACB0FD7D0BC00F280AF /* FBXMLHandler.m in Sources */,
+				8404EACD0FD7D0BC00F280AF /* FBLoginButton.m in Sources */,
+				8404EACF0FD7D0BC00F280AF /* FBDialog.m in Sources */,
+				8404EAD10FD7D0BC00F280AF /* FBLoginDialog.m in Sources */,
+				8404EAD30FD7D0BC00F280AF /* FBPermissionDialog.m in Sources */,
+				8404EAD50FD7D0BC00F280AF /* FBFeedDialog.m in Sources */,
+				8404EC6C0FD7D75800F280AF /* TLSocial.cpp in Sources */,
+				8404EC700FD7D78B00F280AF /* TFacebookConnect.mm in Sources */,
+				847DF8220FD9325E005F9EDC /* TFacebookSession.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		8404EA460FD7CF4F00F280AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8404EC960FD7DA2C00F280AF /* TootleDebug.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_THUMB_SUPPORT = NO;
+				HEADER_SEARCH_PATHS = (
+					../..,
+					FacebookConnect/src,
+				);
+				SDKROOT = iphoneos2.2.1;
+			};
+			name = Debug;
+		};
+		8404EA470FD7CF4F00F280AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8404EC970FD7DA2C00F280AF /* TootleRelease.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_THUMB_SUPPORT = NO;
+				HEADER_SEARCH_PATHS = (
+					../..,
+					FacebookConnect/src,
+				);
+				SDKROOT = iphoneos2.2.1;
+			};
+			name = Release;
+		};
+		8404EA5E0FD7CF8200F280AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleSocial;
+			};
+			name = Debug;
+		};
+		8404EA5F0FD7CF8200F280AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Don't Code Sign";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleSocial;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8404EA480FD7CF4F00F280AF /* Build configuration list for PBXProject "TootleSocial" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8404EA460FD7CF4F00F280AF /* Debug */,
+				8404EA470FD7CF4F00F280AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8404EA600FD7CF8200F280AF /* Build configuration list for PBXNativeTarget "TootleSocial" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8404EA5E0FD7CF8200F280AF /* Debug */,
+				8404EA5F0FD7CF8200F280AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8404EA450FD7CF4F00F280AF /* Project object */;
+}
