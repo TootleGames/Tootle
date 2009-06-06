@@ -47,7 +47,9 @@ static NSString* kGetSessionProxy = nil; // @"<YOUR SESSION CALLBACK)>";
 	UIView *view = [[UIView alloc] initWithFrame:[UIScreen mainScreen].applicationFrame];
 	
     [view setAutoresizingMask:UIViewAutoresizingNone];	
-    [view setBackgroundColor: [UIColor redColor]];
+    //[view setBackgroundColor: [UIColor redColor]];
+    [view setBackgroundColor: [UIColor clearColor]];
+	
 	
 	// Set view to be full screen
 	[view setFrame:CGRectMake(0, 0, 320, 480)];
@@ -78,14 +80,15 @@ static NSString* kGetSessionProxy = nil; // @"<YOUR SESSION CALLBACK)>";
 	
 	[self createSessionView];	
 	
-	// Create the facebook login button
+	// Create the 'standard' facebook login button. 
+	// Note: requires the facebook bundle to be added to the project.
 	_loginButton = [[FBLoginButton alloc] initWithFrame:CGRectMake(58, 25, 258, 56)];
 	
-	[_loginButton setHidden:NO];
+	//[_loginButton setHidden:NO];
 
-	[_loginButton setBackgroundColor: [UIColor blueColor]];
+	//[_loginButton setBackgroundColor: [UIColor blueColor]];
 	//[_loginButton setSession:_session];
-	//[_loginButton setStyle:FBLoginButtonStyleWide];
+	[_loginButton setStyle:FBLoginButtonStyleWide];
 
 	[self.view addSubview:_loginButton];
 }
