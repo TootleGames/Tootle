@@ -79,18 +79,61 @@ static NSString* kGetSessionProxy = nil; // @"<YOUR SESSION CALLBACK)>";
 {	
 	
 	[self createSessionView];	
-	
+
+	//////////////////////////////////////////	
 	// Create the 'standard' facebook login button. 
-	// Note: requires the facebook bundle to be added to the project.
+	//
+	// NOTE: requires the facebook bundle to be added to 
+	// the game project for the facebook button image(s)
+	// to appear correctly.
+	// See the test app for an example.
+	//////////////////////////////////////////	
 	_loginButton = [[FBLoginButton alloc] initWithFrame:CGRectMake(58, 25, 258, 56)];
 	
-	//[_loginButton setHidden:NO];
-
-	//[_loginButton setBackgroundColor: [UIColor blueColor]];
-	//[_loginButton setSession:_session];
 	[_loginButton setStyle:FBLoginButtonStyleWide];
 
 	[self.view addSubview:_loginButton];
+	//////////////////////////////////////////	
+
+
+	//////////////////////////////////////////	
+	// Add a publish feed button
+	// 
+	// This button is an iPod specific button and will 
+	// call the 'publishFeed' callback routine when clicked on
+	//////////////////////////////////////////
+	_feedButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+	// set position - x,y,w,h
+	[_feedButton setFrame:CGRectMake(20, 100, 260, 56)];	
+	[_feedButton setHidden:TRUE];
+
+	[_feedButton setTitle:@"Publish Feed" forState:UIControlStateNormal];
+	
+	SEL feedSelector = @selector(publishFeed:);
+	[_feedButton addTarget:nil action:feedSelector forControlEvents:UIControlEventTouchUpInside];
+	[self.view addSubview:_feedButton];
+	
+	//////////////////////////////////////////
+	// Add a get permission button
+	//
+	// This button is an iPod specific button and will 
+	// call the 'askPermission' callback routine when clicked on
+	//////////////////////////////////////////
+
+	_permissionButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];	
+	
+	// set position - x,y,w,h
+	[_permissionButton setFrame:CGRectMake(20, 185, 260, 56)];
+	[_permissionButton setHidden:TRUE];
+
+	[_permissionButton setTitle:@"Get permission" forState:UIControlStateNormal];
+	
+	SEL permissionSelector = @selector(askPermission:);
+	[_permissionButton addTarget:nil action:permissionSelector forControlEvents:UIControlEventTouchUpInside];
+	[self.view addSubview:_permissionButton];
+
+	//////////////////////////////////////////
+
 }
 
 
