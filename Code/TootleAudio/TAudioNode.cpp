@@ -56,6 +56,14 @@ void TAudioNode::Initialise(TLMessaging::TMessage& Message)
 	{
 		SetStreaming(Props.m_bStreaming);
 	}
+	else
+	{
+		// Check for individual options
+		Bool bOption;
+		if(Message.ImportData("Streaming", bOption))
+			SetStreaming(bOption);
+
+	}
 
 	TRef AudioAsset;
 	if(Message.ImportData("Asset", AudioAsset))
@@ -79,11 +87,32 @@ void TAudioNode::Initialise(TLMessaging::TMessage& Message)
 	else
 	{
 		// Check for individual options
-		
-		
 		Bool bOption;
 		if(Message.ImportData("Loop", bOption))
 			SetLooping(bOption);
+
+		if(Message.ImportData("Relative", bOption))
+			SetRelative(bOption);
+
+		float fValue;
+		if(Message.ImportData("Pitch", fValue))
+			SetPitch(fValue);
+
+		if(Message.ImportData("Volume", fValue))
+			SetVolume(fValue, TRUE);
+
+		if(Message.ImportData("FreqMult", fValue))
+			SetFrequencyMult(fValue);
+
+		if(Message.ImportData("MinRange", fValue))
+			SetMinRange(fValue);
+
+		if(Message.ImportData("MaxRange", fValue))
+			SetMaxRange(fValue);
+
+		if(Message.ImportData("RateOfDecay", fValue))
+			SetRateOfDecay(fValue);
+
 	}
 
 	UpdatePreviousPos();
