@@ -1,7 +1,7 @@
 #include "TMenu.h"
 #include <TootleAsset/TScheme.h>
 #include <TootleRender/TRendergraph.h>
-
+#include <TootleAudio/TAudiograph.h>
 
 
 
@@ -109,6 +109,8 @@ Bool TLMenu::TMenuController::ExecuteMenuItem(TRefRef MenuItemRef)
 	//	get command of menu item
 	TRefRef MenuCommand = pMenuItem->GetMenuCommand();
 
+	TRefRef AudioRef = pMenuItem->GetAudioRef();;
+
 	//	open-menu command
 	if ( MenuCommand == "Open" )
 	{
@@ -118,6 +120,7 @@ Bool TLMenu::TMenuController::ExecuteMenuItem(TRefRef MenuItemRef)
 	else if ( MenuCommand == "Close" )
 	{
 		CloseMenu();
+
 	}
 	else
 	{
@@ -125,6 +128,11 @@ Bool TLMenu::TMenuController::ExecuteMenuItem(TRefRef MenuItemRef)
 		if ( !ExecuteCommand( MenuCommand ) )
 			return FALSE;
 	}
+
+	// Valid audio to play?
+	// Create menu audio for command execution
+	if(AudioRef.IsValid())
+		TLAudio::g_pAudiograph->StartAudio(MenuCommand, AudioRef);
 
 	//	publish that command has been executed
 	OnMenuItemExecuted( MenuCommand );

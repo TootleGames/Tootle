@@ -67,12 +67,14 @@ public:
 	TRefRef						GetMenuCommand() const		{	return m_Command;	}
 	TRefRef						GetNextMenu() const			{	return m_NextMenu;	}
 	TRefRef						GetMeshRef() const			{	return m_MeshRef; }
+	TRefRef						GetAudioRef() const			{	return m_AudioRef; }
 
 	DEPRECATED void				SetString(const TString& String) 		{	m_Text = String;	}
 	void						SetText(const TString& String)		{	m_Text = String;	}
 	void						SetMenuCommand(TRefRef Command)		{	m_Command = Command;	}
 	void						SetNextMenu(TRefRef NextMenu)		{	m_NextMenu = NextMenu;	SetMenuCommand("open");	};
 	void						SetMeshRef(TRefRef MeshRef)			{	m_MeshRef = MeshRef;	}
+	void						SetAudioRef(TRefRef AudioRef)		{	m_AudioRef = AudioRef; }
 
 	Bool						IsHighlightable() const				{	return m_Command.IsValid();	}	
 
@@ -86,4 +88,5 @@ protected:
 	TString						m_Text;				//	string displayed on menu
 	TRef						m_NextMenu;			//	if menu command is "open" then this is the menu we open
 	TRef						m_MeshRef;			//	Mesh icon reference - for use instead of a string
+	TRef						m_AudioRef;			//  Audio asset ref - for playing audio when a menu option is selected
 };
