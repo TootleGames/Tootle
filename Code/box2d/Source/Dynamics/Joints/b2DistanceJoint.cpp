@@ -38,12 +38,28 @@
 void b2DistanceJointDef::Initialize(b2Body* b1, b2Body* b2,
 									const b2Vec2& anchor1, const b2Vec2& anchor2)
 {
+	Initialize( b1, b2, anchor1, anchor2, body1->GetLocalPoint(anchor1), body2->GetLocalPoint(anchor2) );
+}
+
+
+//	gr: same as initialise but with local anchors
+void b2DistanceJointDef::InitializeLocal(b2Body* b1, b2Body* b2,
+									const b2Vec2& LOCALanchor1, const b2Vec2& LOCALanchor2)
+{
+	Initialize( b1, b2, b1->GetWorldPoint( LOCALanchor1 ), b2->GetWorldPoint( LOCALanchor2 ), LOCALanchor1, LOCALanchor2 );
+}
+
+	//	gr: full initialise with pre-calced local and world positions
+void b2DistanceJointDef::Initialize(b2Body* b1, b2Body* b2,
+									const b2Vec2& worldanchor1, const b2Vec2& worldanchor2, const b2Vec2& localanchor1, const b2Vec2& localanchor2)
+{
 	body1 = b1;
 	body2 = b2;
-	localAnchor1 = body1->GetLocalPoint(anchor1);
-	localAnchor2 = body2->GetLocalPoint(anchor2);
-	b2Vec2 d = anchor2 - anchor1;
+	localAnchor1 = localanchor1;
+	localAnchor2 = localanchor2;
+	b2Vec2 d = worldanchor2 - worldanchor1;
 	length = d.Length();
+
 }
 
 

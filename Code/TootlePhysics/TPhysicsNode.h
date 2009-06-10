@@ -33,6 +33,7 @@ namespace TLPhysics
 {
 	class TPhysicsNode;
 	class TPhysicsgraph;
+	class TJoint;
 
 	extern float3		g_WorldUp;			//	gr: currently a global, change to be on the graph, or per node at some point so individual nodes can have their own gravity direction. Depends on what we need it for
 	extern float3		g_WorldUpNormal;	//	gr: currently a global, change to be on the graph, or per node at some point so individual nodes can have their own gravity direction. Depends on what we need it for
@@ -45,6 +46,7 @@ namespace TLPhysics
 class TLPhysics::TPhysicsNode : public TLGraph::TGraphNode<TLPhysics::TPhysicsNode>, public TLMaths::TQuadTreeNode
 {
 	friend class TLPhysics::TPhysicsgraph;
+	friend class TLPhysics::TJoint;
 public:
 	enum Flags
 	{
@@ -160,6 +162,8 @@ protected:
 	Bool						CreateBody(b2World& World);					//	create the body in the world
 	Bool						CreateBodyShape();							//	when our collision shape changes we recreate the shape on the body
 	void						SetBodyTransform();							//	reset the body's transform
+	FORCEINLINE b2Body*			GetBody()									{	return m_pBody;	}
+	FORCEINLINE const b2Body*	GetBody() const								{	return m_pBody;	}
 	FORCEINLINE b2Shape*		GetBodyShape()								{	return m_pBody ? m_pBody->GetShapeList() : NULL;	}	//	quick access to the first shape on the body - assuming we only ever have one shape
 	FORCEINLINE const b2Shape*	GetBodyShape() const						{	return m_pBody ? m_pBody->GetShapeList() : NULL;	}	//	quick access to the first shape on the body - assuming we only ever have one shape
 	virtual void				GetBodys(TArray<b2Body*>& Bodies) const		{	if ( m_pBody )	Bodies.Add( m_pBody );	}

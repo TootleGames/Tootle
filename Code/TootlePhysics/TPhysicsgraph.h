@@ -21,6 +21,7 @@ namespace TLPhysics
 	class TPhysicsgraph;
 	class TPhysicsNode;
 	class TPhysicsNodeFactory;
+	class TJoint;					//	joint between two physics nodes.
 
 	extern TPtr<TPhysicsgraph> g_pPhysicsgraph;
 
@@ -40,6 +41,30 @@ class TLPhysics::TPhysics_ContactFilter : public b2ContactFilter
 
 
 //-----------------------------------------------------
+//	class to join two nodes together in whatever way.
+//	this class will expand in future for other joint types - maybe be overloaded
+//-----------------------------------------------------
+class TLPhysics::TJoint
+{
+public:
+	TJoint();
+
+	SyncBool	CreateJoint(b2World& World,TPhysicsgraph& PhysicsGraph);
+	void		DestroyJoint(b2World& World);
+
+public:
+	TRef		m_NodeA;			//	physics nodes
+	TRef		m_NodeB;			//	physics nodes
+	float2		m_JointPosA;		//	position relative to the node
+	float2		m_JointPosB;		//	position relative to the node
+	Bool		m_CollisionBetweenNodes;	//	can explicitly disable collision between these two nodes via joint
+
+private:
+	b2Joint*		m_pJoint;		//	joint in world
+};
+
+
+//-----------------------------------------------------
 //	TPhysicsgraph class
 //-----------------------------------------------------
 class TLPhysics::TPhysicsgraph : public TLGraph::TGraph<TLPhysics::TPhysicsNode>
@@ -50,15 +75,16 @@ public:
 	virtual SyncBool		Initialise();
 	virtual void			UpdateGraph(float TimeStep);
 	
-	void							SetRootCollisionZone(TPtr<TLMaths::TQuadTreeZone>& pZone);	//	set a new root collision zone
+	void							SetRootCollisionZone(TPtr<TLMaths::TQuadTreeZone>& pZone,Bool AllowSleep=TRUE);	//	set a new root collision zone. Allow sleep to speed up idle objects, BUT without gravity, joints don't update/constrain properly... looking for a good soluition to this
 	TPtr<TLMaths::TQuadTreeZone>&	GetRootCollisionZone()										{	return m_pRootCollisionZone;	}
 	
-	FORCEINLINE TPtr<b2World>&		GetWorld()			{	return m_pWorld;	}				//	box2d's world
+	FORCEINLINE TPtr<b2World>&		GetWorld()						{	return m_pWorld;	}				//	box2d's world
+	FORCEINLINE void				AddJoint(const TJoint& Joint)	{	m_NodeJointQueue.Add( Joint );	};	//	add a joint to be created on next update
 
 	// Test routines
-	FORCEINLINE void		SetGravityX(float fValue)	{	if ( g_WorldUp.x == fValue )	return;		g_WorldUp.x = fValue;	CalcWorldUpNormal();	}
-	FORCEINLINE void		SetGravityY(float fValue)	{	if ( g_WorldUp.y == fValue )	return;		g_WorldUp.y = fValue;	CalcWorldUpNormal();	}
-	FORCEINLINE void		SetGravityZ(float fValue)	{	if ( g_WorldUp.z == fValue )	return;		g_WorldUp.z = fValue;	CalcWorldUpNormal();	}
+	FORCEINLINE void		SetGravityX(float fValue)		{	if ( g_WorldUp.x == fValue )	return;		g_WorldUp.x = fValue;	CalcWorldUpNormal();	}
+	FORCEINLINE void		SetGravityY(float fValue)		{	if ( g_WorldUp.y == fValue )	return;		g_WorldUp.y = fValue;	CalcWorldUpNormal();	}
+	FORCEINLINE void		SetGravityZ(float fValue)		{	if ( g_WorldUp.z == fValue )	return;		g_WorldUp.z = fValue;	CalcWorldUpNormal();	}
 	
 protected:
 	virtual void			OnNodeRemoving(TPtr<TLPhysics::TPhysicsNode>& pNode);
@@ -80,6 +106,10 @@ protected:
 
 	void					CalcWorldUpNormal();					//	world up has changed, recalc the normal
 	
+	SyncBool				CreateJoint(const TJoint& Joint);		//	create joint. if Wait then we're waiting for a node to be created still
+	void					RemoveJoint(TRefRef NodeA,TRefRef NodeB);	//	remove joint between these two nodes
+	void					RemoveJoint(TRefRef NodeA);				//	remove all joints involving this node
+
 public:
 	u32						m_Debug_CollisionTestCount;				//	collision test count
 	u32						m_Debug_StaticCollisionTestCount;		//	collision test count
@@ -94,6 +124,8 @@ public:
 protected:
 	TPtr<TLMaths::TQuadTreeZone>	m_pRootCollisionZone;			//	collision zone tree
 	TPtr<b2World>					m_pWorld;						//	box2d's world
+	TArray<TJoint>					m_NodeJoints;					//	list of joints created
+	TArray<TJoint>					m_NodeJointQueue;				//	list of joints that are to be created in the next update
 
 private:
 	TPhysics_ContactFilter			m_ContactFilter;				//	instance of our custom box2d contact filter

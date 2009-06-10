@@ -176,6 +176,7 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 	}
 
 	//	read transform
+	//	gr: this code needs to change to use SetTransform() to change the body as appropriate too
 	u8 TransformChanges = m_Transform.ImportData( Message );
 	OnTransformChanged( TransformChanges );
 	
@@ -218,6 +219,27 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 		}
 		FlagChildren.Empty();
 	}
+
+	//	has a joint[s] to create
+	TPtrArray<TBinaryTree> JointDatas;
+	Message.GetChildren( "Joint", JointDatas );
+	for ( u32 i=0;	i<JointDatas.GetSize();	i++ )
+	{
+		TBinaryTree& JointData = *(JointDatas[i]);
+		TJoint NewJoint;
+		NewJoint.m_NodeA = this->GetNodeRef();
+		
+		//	must has an other-node to link to
+		if ( !JointData.ImportData("Node", NewJoint.m_NodeB ) )
+			continue;
+		
+		JointData.ImportData("AncPos", NewJoint.m_JointPosA );
+		JointData.ImportData("OthAncPos", NewJoint.m_JointPosB );
+
+		//	create new joint
+		TLPhysics::g_pPhysicsgraph->AddJoint( NewJoint );
+	}
+
 
 	TLGraph::TGraphNode<TPhysicsNode>::Initialise(Message);
 }
