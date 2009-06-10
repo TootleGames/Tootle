@@ -34,6 +34,8 @@ SyncBool TInputEffect_ForceFeedback::Shutdown()
 {
 	// Stop the vibration
 	OnStopVibration();
+
+	return SyncTrue;
 }
 
 
