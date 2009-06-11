@@ -259,6 +259,14 @@
 			RelativePath="..\TWidgetText.h"
 			>
 		</File>
+		<File
+			RelativePath="..\TWidgetThumbStick.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TWidgetThumbStick.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
