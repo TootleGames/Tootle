@@ -66,6 +66,9 @@ public:
 		m_NodeIndex	( &TLGraph::TPtrRefSort<T>, TGraph_DefaultGrowBy )
 	{
 	}
+	virtual ~TGraph()
+	{
+	}
 	
 	virtual TRefRef				GetGraphRef() const						{	return TManager::GetManagerRef();	}
 

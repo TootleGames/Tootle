@@ -60,6 +60,10 @@ SyncBool Win32::Shutdown()
 
 	//	free factory
 	g_pFactory = NULL;
+
+	//	empty global array
+	g_ClassCreatedList.Empty(TRUE);
+
 	return Result;
 }
 

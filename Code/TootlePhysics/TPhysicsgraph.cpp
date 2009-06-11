@@ -119,6 +119,8 @@ SyncBool TLPhysics::TJoint::CreateJoint(b2World& World,TPhysicsgraph& PhysicsGra
 	JointDef.collideConnected = m_CollisionBetweenNodes;
 	JointDef.InitializeLocal( pBodyA, pBodyB, b2Vec2( m_JointPosA.x, m_JointPosA.y ), b2Vec2( m_JointPosB.x, m_JointPosB.y ) );
 
+//	JointDef.dampingRatio = 1.0f;
+//	JointDef.frequencyHz = 0.9f;
 	JointDef.dampingRatio = 0.0f;
 	JointDef.frequencyHz = 0.0f;
 
