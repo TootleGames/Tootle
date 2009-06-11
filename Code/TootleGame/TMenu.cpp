@@ -132,7 +132,16 @@ Bool TLMenu::TMenuController::ExecuteMenuItem(TRefRef MenuItemRef)
 	// Valid audio to play?
 	// Create menu audio for command execution
 	if(AudioRef.IsValid())
+	{
+		TLMessaging::TMessage Message(TLCore::InitialiseRef);
+		Message.ExportData("Asset", AudioRef);
+		Message.ExportData("Play", TRUE);
+		Message.ExportData("RateOfDecay", 0.0f); // Make 2D
+		Message.ExportData("MinRange", 100000.0f);
+		Message.ExportData("MaxRange", 100000.0f);
+		
 		TLAudio::g_pAudiograph->StartAudio(MenuCommand, AudioRef);
+	}
 
 	//	publish that command has been executed
 	OnMenuItemExecuted( MenuCommand );
