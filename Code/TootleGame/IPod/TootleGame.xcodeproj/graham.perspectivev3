@@ -327,7 +327,6 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>3</integer>
 									<integer>2</integer>
 									<integer>0</integer>
 								</array>
@@ -350,7 +349,7 @@
 							<real>185</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>21 447 810 487 0 0 1280 1002 </string>
+						<string>21 188 810 487 0 0 1280 698 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -389,7 +388,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {603, 0}}</string>
 								<key>RubberWindowFrame</key>
-								<string>21 447 810 487 0 0 1280 1002 </string>
+								<string>21 188 810 487 0 0 1280 698 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -414,7 +413,7 @@
 										<key>Frame</key>
 										<string>{{10, 27}, {603, 414}}</string>
 										<key>RubberWindowFrame</key>
-										<string>21 447 810 487 0 0 1280 1002 </string>
+										<string>21 188 810 487 0 0 1280 698 </string>
 									</dict>
 									<key>Module</key>
 									<string>XCDetailModule</string>
@@ -496,11 +495,11 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>BFAC1C890FA1C05500F69941</string>
+				<string>BF1B9E9E0FE192050014C702</string>
 				<string>1CA23ED40692098700951B8B</string>
-				<string>BFAC1C8A0FA1C05500F69941</string>
+				<string>BF1B9E9F0FE192050014C702</string>
 				<string>BF8889C30F7E6520008581B5</string>
-				<string>BFAC1C8B0FA1C05500F69941</string>
+				<string>BF1B9EA00FE192050014C702</string>
 				<string>1CA23EDF0692099D00951B8B</string>
 				<string>1CA23EE00692099D00951B8B</string>
 				<string>1CA23EE10692099D00951B8B</string>
@@ -651,7 +650,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>262258773.288257</real>
+	<real>266441221.79556799</real>
 	<key>ToolbarDisplayMode</key>
 	<integer>1</integer>
 	<key>ToolbarIsVisible</key>
@@ -666,10 +665,10 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>/Volumes/Tootle/Tootle/Code/TootleGame/IPod/TootleGame.xcodeproj</string>
+		<string>/Users/graham/TootleBuild/Tootle/Code/TootleGame/IPod/TootleGame.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>21 447 810 487 0 0 1280 1002 </string>
+	<string>21 188 810 487 0 0 1280 698 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
