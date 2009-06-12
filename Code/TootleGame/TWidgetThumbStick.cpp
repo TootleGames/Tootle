@@ -19,12 +19,22 @@ SyncBool TLGui::TWidgetThumbStick::ProcessClick(TClick& Click,TLRender::TScreen&
 {
 	//	mouse up, dont need to do anything
 	if ( Click.GetActionValue() == 0.f )
+	{
+		OnClickEnd( Click );
 		return SyncFalse;
+	}
 
 	//	see if ray intersects our object, and creates a valid ray
 	SyncBool Intersection = IsIntersecting(Screen, RenderTarget, RenderNode, Click );
-	if ( Intersection != SyncTrue )
-		return Intersection;
+	if ( Intersection == SyncFalse )
+	{
+		OnClickEnd( Click );
+		return SyncFalse;
+	}
+	else if ( Intersection == SyncWait )
+	{
+		return SyncWait;
+	}
 
 	//	get the 2d circle bounds as the thumbstick
 	//	if not valid, wait till next frame (off-screen?)

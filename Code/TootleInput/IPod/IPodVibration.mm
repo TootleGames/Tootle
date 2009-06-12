@@ -20,8 +20,10 @@
 */
 void TLInput::Platform::IPod::VibrateDevice()
 {
+	//	gr: not foudn when linking on simulator build
+#ifndef TARGET_IPHONE_SIMULATOR	
 	AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-
+#endif
 }
 
 
