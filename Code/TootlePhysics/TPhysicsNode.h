@@ -57,6 +57,7 @@ public:
 		Flag_HasCollision,		//	expecting a valid collision shape - clear this to DISABLE collision, but still keep shape etc
 		Flag_ZoneExpected,		//	expecting to be in a collision zone
 		Flag_Enabled,			//	if not enabled, graph does not update this node
+		Flag_Rotate,			//	if disabled (on by default) then box2d's collision doesn't rotate objects
 	};
 
 public:

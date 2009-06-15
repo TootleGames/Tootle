@@ -76,8 +76,7 @@ TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 	m_AccumulatedMovementValid = FALSE;
 #endif
 	m_PhysicsFlags.Set( TPhysicsNode::Flag_Enabled );
-
-
+	m_PhysicsFlags.Set( TPhysicsNode::Flag_Rotate );
 }
 
 
@@ -981,6 +980,12 @@ Bool TLPhysics::TPhysicsNode::CreateBody(b2World& World)
 
 	if ( Transform.HasRotation() )
 		BodyDef.angle = Transform.GetRotation().GetAngle2D().GetRadians();
+
+	//	fix rotation as neccessary
+	if ( GetPhysicsFlags().IsSet( Flag_Rotate ) )
+		BodyDef.fixedRotation = FALSE;
+	else
+		BodyDef.fixedRotation = TRUE;
 
 	//	set user data as a pointer back to self (could use ref...)
 	BodyDef.userData = this;
