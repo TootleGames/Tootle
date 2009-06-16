@@ -176,7 +176,6 @@ public:
 	void					SetDimensions(int2 Pos, int2 Size);		//	set new pos and dimensions at once
 	void					SetDimensions(const Type4<s32>& PosSize);		//	set new pos and dimensions at once
 	void					Refresh();
-	void					ResizeClientArea(int2 ClientSize);
 	void					SetStyleFlags(u32 Flags);
 	void					ClearStyleFlags(u32 Flags);
 	inline u32				HasStyleFlags(u32 Flags)				{	return (m_StyleFlags & Flags);	};

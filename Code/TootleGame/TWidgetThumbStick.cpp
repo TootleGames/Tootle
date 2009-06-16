@@ -4,9 +4,9 @@
 
 
 
-TLGui::TWidgetThumbStick::TWidgetThumbStick(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp) : 
+TLGui::TWidgetThumbStick::TWidgetThumbStick(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,float DeadZone) : 
 	TLInput::TInputInterface	( RenderTargetRef, RenderNodeRef, UserRef, ActionOutDown, ActionOutUp ),
-	m_DeadZone					( TLMaths_NearZero )
+	m_DeadZone					( DeadZone )
 {
 }
 

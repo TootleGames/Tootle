@@ -436,6 +436,7 @@ void Win32::GWinControl::Move(int2 Pos)
 //-------------------------------------------------------------------------
 void Win32::GWinControl::Resize(int2 Size)
 {
+	//	gr: client size is not window size
 	//	update our size
 	m_ClientSize = Size;
 
@@ -449,35 +450,28 @@ void Win32::GWinControl::Resize(int2 Size)
 //-------------------------------------------------------------------------
 void Win32::GWinControl::UpdateDimensions()
 {
-	if ( m_Hwnd )
-	{
-		if ( !MoveWindow( m_Hwnd, m_ClientPos.x, m_ClientPos.y, m_ClientSize.x, m_ClientSize.y, TRUE ) )
-		{
-			TLDebug::Platform::CheckWin32Error();
-		}
-	}
-}
+	//	convert client rect to window rect
+	RECT WindowRect;
+	WindowRect.left		= m_ClientPos.x;
+	WindowRect.right	= m_ClientPos.x + m_ClientSize.x;
+	WindowRect.top		= m_ClientPos.y;
+	WindowRect.bottom	= m_ClientPos.y + m_ClientSize.y;
 
-
-//-------------------------------------------------------------------------
-//	calcs the window's overall size to accomadate the client size
-//-------------------------------------------------------------------------
-void Win32::GWinControl::ResizeClientArea(int2 ClientSize)
-{
-	RECT ClientRect;
-	ClientRect.top		= 0;
-	ClientRect.left		= 0;
-	ClientRect.bottom	= ClientSize.y;
-	ClientRect.right	= ClientSize.x;
-
-	if ( !AdjustWindowRectEx( &ClientRect, StyleFlags(), HasMenu(), StyleExFlags() ) )
+	if ( !AdjustWindowRectEx( &WindowRect, StyleFlags(), HasMenu(), StyleExFlags() ) )
 	{
 		TLDebug::Platform::CheckWin32Error();
 		return;
 	}
 
 	//	set new window size
-	Resize( int2( ClientRect.right-ClientRect.left, ClientRect.bottom-ClientRect.top ) );
+//	Resize( int2( ClientRect.right-ClientRect.left, ClientRect.bottom-ClientRect.top ) );
+	if ( m_Hwnd )
+	{
+		if ( !MoveWindow( m_Hwnd, WindowRect.left, WindowRect.top, WindowRect.right-WindowRect.left, WindowRect.bottom-WindowRect.top, TRUE ) )
+		{
+			TLDebug::Platform::CheckWin32Error();
+		}
+	}
 }
 
 
