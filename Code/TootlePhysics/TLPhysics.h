@@ -5,7 +5,6 @@
 #include <TootleMaths/TShape.h>
 
 
-#define USE_BOX2D			//	do box2d simulation and skip our own collision system
 
 #define PHYSICS_SCALAR		60.f
 /*
@@ -217,11 +216,11 @@ public:
 	void		ExportData(TBinaryTree& Data);		//	export this collision info into a BinaryData
 	Bool		ImportData(TBinaryTree& Data);		//	get collision info from a BinaryData
 
-protected:
+public:
 	TRef		m_OtherNode;			//	ref of other physics node
 	TRef		m_OtherNodeOwner;		//	ref of other physics node's owner (ie. what scene node we collided with)
 	Bool		m_OtherNodeStatic;		//	other node is static
-	float3		m_Intersection;			//	intersection on this object in world space
+	float3		m_Intersection;			//	collision point in world space
 };
 
 

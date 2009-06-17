@@ -139,7 +139,7 @@ protected:
 	virtual TLGraph::TGraphNodeBase*	GetRootNodeBase()					{	TPtr<T>& pNode = m_pRootNode;	return pNode.GetObject();	}
 
 	//	events
-	virtual void				OnNodeAdded(TPtr<T>& pNode);				//	called after node has been added to graph and to parent
+	virtual void				OnNodeAdded(TPtr<T>& pNode,Bool SendAddedMessage);	//	called after node has been added to graph and to parent
 	virtual void				OnNodeRemoving(TPtr<T>& pNode)		{	}	//	called before node shutdown and before being removed from parent and graph
 	virtual void				OnNodeRemoved(TRefRef NodeRef);				//	called after node shutdown and after being removed from parent and graph
 
@@ -881,7 +881,7 @@ SyncBool TLGraph::TGraph<T>::Initialise()
 	
 	//	call notifications for root node - 
 	//	gr: note - root node has no Init message...
-	OnNodeAdded( m_pRootNode );
+	OnNodeAdded( m_pRootNode, TRUE );
 	m_pRootNode->OnAdded();
 
 	return SyncTrue;
@@ -1483,7 +1483,7 @@ void TLGraph::TGraph<T>::DoAddNode(TPtr<T>& pNode, TPtr<T>& pParent)
 	//		- we want the init message much earlier; specificcly for me the parent node was incorporating a new node's shape in 
 	//		it's bounds despite being set not to include that child... because the child hadn't been setup yet.
 	//	do graph's OnAdded event
-	OnNodeAdded( pNode );
+	OnNodeAdded( pNode, TRUE );
 
 	// Tell the node it has been added to the graph
 	pNode->OnAdded();
@@ -1624,7 +1624,7 @@ void TLGraph::TGraph<T>::OnNodeRemoved(TRefRef NodeRef)
 //	called after node has been added to the graph and parent
 //---------------------------------------------------------
 template<class T>
-void TLGraph::TGraph<T>::OnNodeAdded(TPtr<T>& pNode)
+void TLGraph::TGraph<T>::OnNodeAdded(TPtr<T>& pNode,Bool SendAddedMessage)
 {
 	//	add to index
 	m_NodeIndex.Add( pNode );
@@ -1632,11 +1632,14 @@ void TLGraph::TGraph<T>::OnNodeAdded(TPtr<T>& pNode)
 	//	gr: process initial message queue (assume this only has the Init message in it)
 	pNode->ProcessMessageQueue();
 
-	// Send the added node notificaiton
-	TLMessaging::TMessage Message("NodeAdded", GetGraphRef());
-	Message.Write(pNode->GetNodeRef());
+	if ( SendAddedMessage )
+	{
+		// Send the added node notificaiton
+		TLMessaging::TMessage Message("NodeAdded", GetGraphRef());
+		Message.Write(pNode->GetNodeRef());
 
-	PublishMessage(Message);
+		PublishMessage(Message);
+	}
 }
 
 

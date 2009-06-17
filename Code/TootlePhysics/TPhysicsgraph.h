@@ -10,9 +10,6 @@
 #include <TootleCore/TLGraph.h>
 #include "TLPhysics.h"
 #include "TPhysicsNode.h"
-
-
-//namespace Box2D
 #include <box2d/include/box2d.h>
 
 
@@ -26,6 +23,7 @@ namespace TLPhysics
 	extern TPtr<TPhysicsgraph> g_pPhysicsgraph;
 
 	class TPhysics_ContactFilter;		//	custom box2D contact filterer
+	class TPhysics_ContactListener;		//	custom box2D contact listener
 };
 
 
@@ -37,6 +35,16 @@ namespace TLPhysics
 class TLPhysics::TPhysics_ContactFilter : public b2ContactFilter
 {
 	virtual bool ShouldCollide(b2Shape* shape1, b2Shape* shape2);
+};
+
+
+class TLPhysics::TPhysics_ContactListener : public b2ContactListener
+{
+public:
+	virtual void	Add(const b2ContactPoint* point);		// handle add point - pre-solver.	gr: new collision
+	virtual void	Persist(const b2ContactPoint* point)	{}	// handle persist point	 - pre-solver.	gr: collision still exists
+	virtual void	Remove(const b2ContactPoint* point)		{}	// handle remove point - pre-solver.	gr: no more collision
+	virtual void	Result(const b2ContactResult* point)	{}	// handle results - post solver. can occur multiple times
 };
 
 
@@ -88,7 +96,7 @@ public:
 	
 protected:
 	virtual void			OnNodeRemoving(TPtr<TLPhysics::TPhysicsNode>& pNode);
-	virtual void			OnNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pNode);
+	virtual void			OnNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pNode,Bool SendAddedMessage);
 
 	void					DoCollisionsByNode();							//	do all the object-object collison iterations
 	void					DoCollisionsByNode(TPtr<TLPhysics::TPhysicsNode>& pNode);		//	do collision tests for this node
@@ -129,6 +137,7 @@ protected:
 
 private:
 	TPhysics_ContactFilter			m_ContactFilter;				//	instance of our custom box2d contact filter
+	TPhysics_ContactListener		m_ContactListener;				//	instance of our custom box2d contact listener
 };
 
 

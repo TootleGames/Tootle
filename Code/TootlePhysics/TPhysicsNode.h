@@ -12,14 +12,12 @@
 #include "TCollisionShape.h"
 #include <TootleMaths/TQuadTree.h>
 #include "TLPhysics.h"
+#include <box2d/include/box2d.h>
 
 
-//namespace Box2D
-	#include <box2d/include/box2d.h>
 
-//namespace Box2D
-	class b2World;
-	class b2Body;
+class b2World;
+class b2Body;
 
 
 namespace TLMaths
@@ -34,6 +32,7 @@ namespace TLPhysics
 	class TPhysicsNode;
 	class TPhysicsgraph;
 	class TJoint;
+	class TPhysics_ContactListener;
 
 	extern float3		g_WorldUp;			//	gr: currently a global, change to be on the graph, or per node at some point so individual nodes can have their own gravity direction. Depends on what we need it for
 	extern float3		g_WorldUpNormal;	//	gr: currently a global, change to be on the graph, or per node at some point so individual nodes can have their own gravity direction. Depends on what we need it for
@@ -47,6 +46,7 @@ class TLPhysics::TPhysicsNode : public TLGraph::TGraphNode<TLPhysics::TPhysicsNo
 {
 	friend class TLPhysics::TPhysicsgraph;
 	friend class TLPhysics::TJoint;
+	friend class TLPhysics::TPhysics_ContactListener;
 public:
 	enum Flags
 	{
@@ -92,6 +92,10 @@ public:
 	
 	FORCEINLINE void			OnVelocityChanged()					{	SetAccumulatedMovementInvalid();	}
 	FORCEINLINE void			OnForceChanged()					{	SetAccumulatedMovementInvalid();	}
+	FORCEINLINE void			OnFrictionChanged()					{	OnShapeDefintionChanged();	}
+	FORCEINLINE void			OnBounceChanged()					{	OnShapeDefintionChanged();	}
+	FORCEINLINE void			OnDampingChanged()					{	SetLinearDamping( m_Damping );	}	//	this re-sets it on the body if it exists
+	void						OnShapeDefintionChanged();
 
 	FORCEINLINE void			OnTransformChanged(Bool TransChanged,Bool ScaleChanged,Bool RotationChanged)	{	OnTransformChanged( (TransChanged*TLMaths_TransformBitTranslate) | (ScaleChanged*TLMaths_TransformBitScale) | (RotationChanged*TLMaths_TransformBitRotation) );	}
 	FORCEINLINE void			OnTransformChanged(u8 TransformChangedBits)										{	m_TransformChangedBits |= TransformChangedBits;	if ( TransformChangedBits != 0x0 )	SetWorldCollisionShapeInvalid();	}
@@ -126,17 +130,12 @@ public:
 
 	FORCEINLINE Bool			operator==(TRefRef Ref) const							{	return GetNodeRef() == Ref;	}
 
-#ifdef USE_BOX2D
 	FORCEINLINE float3			GetForce() const							{	return float3();	}
 	FORCEINLINE float3			GetVelocityAndForce() const					{	return float3();	}
 	FORCEINLINE void			SetLinearDamping(float Damping);
 	FORCEINLINE void			SetAngularDamping(float Damping);
-#else
-	FORCEINLINE const float3&	GetForce() const							{	return (m_Force);	}
-	FORCEINLINE float3			GetVelocityAndForce() const					{	return (m_Velocity + m_Force);	}
-#endif
 	
-	FORCEINLINE float			GetFriction() const;
+	FORCEINLINE float			GetFriction() const							{	return m_Friction;	}
 	FORCEINLINE void			SetFriction(float Friction);
 	
 protected:
@@ -150,9 +149,7 @@ protected:
 	FORCEINLINE void			SetAccumulatedMovementInvalid()				{	m_AccumulatedMovementValid = FALSE;	}
 	FORCEINLINE Bool			IsAccumulatedMovementValid() const			{	return m_AccumulatedMovementValid;	}
 
-
-	virtual Bool				OnCollision(const TPhysicsNode& OtherNode);	//	handle collision with other object
-	void						AddCollisionInfo(const TLPhysics::TPhysicsNode& OtherNode,const TLMaths::TIntersection& Intersection);
+	TCollisionInfo*				OnCollision();								//	called when we get a collision. return a collision info to write data into. return NULL to pre-empt not sending any collision info out (eg. if no subscribers)
 	void						PublishCollisions();						//	send out our list of collisions
 	void						OnCollisionEnabledChanged(Bool IsNowEnabled);	//	called when collision is enabled/disabled - changes group of box2D body so it won't do collision checks
 
@@ -169,22 +166,15 @@ protected:
 	FORCEINLINE const b2Shape*	GetBodyShape() const						{	return m_pBody ? m_pBody->GetShapeList() : NULL;	}	//	quick access to the first shape on the body - assuming we only ever have one shape
 	virtual void				GetBodys(TArray<b2Body*>& Bodies) const		{	if ( m_pBody )	Bodies.Add( m_pBody );	}
 
-public:
-	float					m_Mass;				//	used for varying impact of two objects, larger object bounces less
-	float					m_Bounce;			//	elasticity :)
-	float					m_Squidge;			//	the amount (factor) the collision shape can be overlapped by (opposite to rigiditty)
-
 protected:
+	float					m_Bounce;					//	0..1
+	float					m_Friction;					//	0..1
+	float					m_Damping;					//	0...infinate, but smaller numbers are better
+
 	TLMaths::TTransform		m_Transform;				//	world transform of shape
 	u8						m_TransformChangedBits;		//	dont broadcast trasnform changes until post update - TRANSFORM_BIT_XXX
 
 	TFlags<Flags>			m_PhysicsFlags;
-
-#ifndef USE_BOX2D
-	float					m_Friction;			//	
-	float3					m_Force;
-	float3					m_Velocity;
-#endif
 
 	TPtr<TLMaths::TShape>	m_pCollisionShape;			//	collision shape
 	TPtr<TLMaths::TShape>	m_pWorldCollisionShape;		//	transformed collision shape, delete/invalidated when pos or collision shape changes
@@ -208,16 +198,13 @@ FORCEINLINE void TLPhysics::TPhysicsNode::AddForce(const float3& Force,Bool Mass
 {
 	if ( m_pBody && Force.IsNonZero() )	
 	{
-#ifdef USE_BOX2D
 		//	multiply by the mass if it's not mass relative otherwise box will scale down the effect of the force. 
 		//	eg. gravity doesn't want to be mass related otherwise things will fall at the wrong rates
 		float Mass = MassRelative ? 1.f : m_pBody->GetMass();
 
 		//	gr: apply the force at the world center[mass center] of the body
 		m_pBody->ApplyForce( b2Vec2(Force.x*Mass,Force.y*Mass) , m_pBody->GetWorldCenter() );	
-#else
-		m_Force += Force;
-#endif
+
 		OnForceChanged();
 	}
 }
@@ -227,24 +214,18 @@ FORCEINLINE void TLPhysics::TPhysicsNode::AddTorque(float AngleRadians)
 {
 	if ( m_pBody && AngleRadians != 0.f )	
 	{
-#ifdef USE_BOX2D
 		//	gr: apply the torque
 		m_pBody->ApplyTorque( AngleRadians );	
-#endif
 	//	OnForceChanged();
 	}
 }
 	
 FORCEINLINE void TLPhysics::TPhysicsNode::SetVelocity(const float3& Velocity)	
 {
-#ifdef USE_BOX2D
 	if ( m_pBody )
 	{
 		m_pBody->SetLinearVelocity( b2Vec2( Velocity.x, Velocity.y ) );
 	}
-#else
-	m_Velocity = Velocity;
-#endif
 
 	OnVelocityChanged();
 }
@@ -252,7 +233,6 @@ FORCEINLINE void TLPhysics::TPhysicsNode::SetVelocity(const float3& Velocity)
 
 FORCEINLINE float3 TLPhysics::TPhysicsNode::GetVelocity() const			
 {
-#ifdef USE_BOX2D
 	if ( m_pBody )
 	{
 		const b2Vec2& BodyVelocity = m_pBody->GetLinearVelocity();
@@ -262,71 +242,44 @@ FORCEINLINE float3 TLPhysics::TPhysicsNode::GetVelocity() const
 	{
 		return float3( 0.f, 0.f, 0.f );
 	}
-#else
-	return m_Velocity;
-#endif
 }
 
 
 FORCEINLINE void TLPhysics::TPhysicsNode::ResetForces()
 {
-#ifdef USE_BOX2D
 	if ( m_pBody )
 	{
-		//	gr: quick fudge version
+		//	gr: quick fudge version, seems to work fine
 		m_pBody->PutToSleep();
 		m_pBody->WakeUp();
 	}
-#else
-	m_Velocity.Set( float3() );
-	m_Force.Set( float3() );
-#endif
-}
-
-
-
-FORCEINLINE float TLPhysics::TPhysicsNode::GetFriction() const			
-{
-#ifdef USE_BOX2D
-	const b2Shape* pBodyShape = GetBodyShape();
-	return pBodyShape ? pBodyShape->GetFriction() : 0.f;
-#else
-	return m_Friction;
-#endif
 }
 
 
 FORCEINLINE void TLPhysics::TPhysicsNode::SetFriction(float Friction)
 {
-#ifdef USE_BOX2D
 	TLDebug_Break("todo - modify box2d");
 	//b2Shape* pBodyShape = GetBodyShape();
 	//if ( pBodyShape )
 	//	pBodyShape->SetFriction( Friction );
-#else
-	m_Friction = Friction;
-#endif
 }
 
 	
 FORCEINLINE void TLPhysics::TPhysicsNode::SetLinearDamping(float Damping)
 {
-#ifdef USE_BOX2D
+	m_Damping = Damping;
 	if ( m_pBody )
 	{
-		m_pBody->SetLinearDamping( Damping );
+		m_pBody->SetLinearDamping( m_Damping );
 	}
-#endif
 }
 
 
 FORCEINLINE void TLPhysics::TPhysicsNode::SetAngularDamping(float Damping)
 {
-#ifdef USE_BOX2D
 	if ( m_pBody )
 	{
 		m_pBody->SetAngularDamping( Damping );
 	}
-#endif
 }
 
