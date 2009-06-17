@@ -5,6 +5,7 @@
 #include <TootleCore/TManager.h>
 #include <TootleInput/TUser.h>
 
+//#define TEST_WIDGET_ONE_ACTION
 
 namespace TLGui
 {

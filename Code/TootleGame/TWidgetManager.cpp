@@ -106,6 +106,8 @@ void TWidgetManager::MapDeviceActions_TouchPad(TRefRef DeviceRef, TPtr<TLUser::T
 		return;
 	}
 
+	
+#ifdef TEST_WIDGET_ONE_ACTION	
 	/////////////////////////////////////////////////////////////////////////
 	// GUI SYSTEM ACTIONS
 	/////////////////////////////////////////////////////////////////////////
@@ -151,6 +153,7 @@ void TWidgetManager::MapDeviceActions_TouchPad(TRefRef DeviceRef, TPtr<TLUser::T
 		// Only when 'released' do we want to know about it
 		pUser->MapActionCondition("EClick", TLInput::LessThan, 1.0f);	
 	}
+#endif //TEST_WIDGET_ONE_ACTION
 }
 
 #else
