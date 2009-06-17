@@ -79,12 +79,12 @@ SyncBool TTextManager::Initialise()
 	// the game or lists all possibly supported languages.
 	m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_Usa );
 	m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_English );
-	m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_French );
-	m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_German );
-	m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_Spanish );
-	m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_Italian );
-	m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_Dutch );
-	m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_Japanese );
+	//m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_French );
+	//m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_German );
+	//m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_Spanish );
+	//m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_Italian );
+	//m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_Dutch );
+	//m_LanguagesSupported.Add( TLLanguage::g_LanguageRef_Japanese );
 
 	// Get the language from the core manager as specified on the hardware
 	//	gr: should get this from the TApplication::GetLanguage ?
