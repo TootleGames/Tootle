@@ -859,6 +859,12 @@ Bool TLPhysics::TPhysicsNode::CreateBodyShape()
 	//	zero restitution = no bounce
 	ShapeDef.restitution = m_Bounce;
 
+	//	make sensor
+	if ( GetPhysicsFlags().IsSet( Flag_IsSensor ) )
+		ShapeDef.isSensor = TRUE;
+	else
+		ShapeDef.isSensor = FALSE;
+
 	//	set initial group
 	ShapeDef.filter.groupIndex = HasCollisionFlag() ? 0 : -1;
 
@@ -897,7 +903,8 @@ void TLPhysics::TPhysicsNode::SetBodyTransform()
 		b2Shape* pShape = m_pBody->GetShapeList();
 		while ( pShape )
 		{
-			pWorld->Refilter( pShape );
+			//	tell graph to refilter
+			TLPhysics::g_pPhysicsgraph->RefilterShape( pShape );
 			pShape = pShape->GetNext();
 		}
 	}
@@ -935,7 +942,7 @@ void TLPhysics::TPhysicsNode::OnCollisionEnabledChanged(Bool IsNowEnabled)
 			NewFilterData.groupIndex = -GroupIndex;
 		#endif
 		pShape->SetFilterData( NewFilterData );
-		TLPhysics::g_pPhysicsgraph->GetWorld()->Refilter( pShape );
+		TLPhysics::g_pPhysicsgraph->RefilterShape( pShape );
 	}
 #ifdef USE_ZERO_GROUP
 	else if ( !IsNowEnabled && GroupIndex >= 0 )
@@ -951,7 +958,7 @@ void TLPhysics::TPhysicsNode::OnCollisionEnabledChanged(Bool IsNowEnabled)
 			NewFilterData.groupIndex = -GroupIndex;
 		#endif
 		pShape->SetFilterData( NewFilterData );
-		TLPhysics::g_pPhysicsgraph->GetWorld()->Refilter( pShape );
+		TLPhysics::g_pPhysicsgraph->RefilterShape( pShape );
 	}
 
 

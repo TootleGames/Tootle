@@ -88,6 +88,7 @@ public:
 	
 	FORCEINLINE TPtr<b2World>&		GetWorld()						{	return m_pWorld;	}				//	box2d's world
 	FORCEINLINE void				AddJoint(const TJoint& Joint)	{	m_NodeJointQueue.Add( Joint );	};	//	add a joint to be created on next update
+	FORCEINLINE void				RefilterShape(b2Shape* pShape)	{	m_RefilterQueue.Add( pShape );	}	//	add to list of shapes that need refiltering
 
 	// Test routines
 	FORCEINLINE void		SetGravityX(float fValue)		{	if ( g_WorldUp.x == fValue )	return;		g_WorldUp.x = fValue;	CalcWorldUpNormal();	}
@@ -118,6 +119,7 @@ protected:
 	void					RemoveJoint(TRefRef NodeA,TRefRef NodeB);	//	remove joint between these two nodes
 	void					RemoveJoint(TRefRef NodeA);				//	remove all joints involving this node
 
+
 public:
 	u32						m_Debug_CollisionTestCount;				//	collision test count
 	u32						m_Debug_StaticCollisionTestCount;		//	collision test count
@@ -134,6 +136,7 @@ protected:
 	TPtr<b2World>					m_pWorld;						//	box2d's world
 	TArray<TJoint>					m_NodeJoints;					//	list of joints created
 	TArray<TJoint>					m_NodeJointQueue;				//	list of joints that are to be created in the next update
+	TArray<b2Shape*>				m_RefilterQueue;				//	queue of box2d shapes that need refiltering
 
 private:
 	TPhysics_ContactFilter			m_ContactFilter;				//	instance of our custom box2d contact filter

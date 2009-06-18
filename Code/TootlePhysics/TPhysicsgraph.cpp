@@ -167,9 +167,6 @@ void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 	m_Debug_CollisionTestsDownwards = 0;
 	m_Debug_ZonesTested = 0;
 
-	// Process all queued messages first
-	ProcessMessageQueue();
-	
 	//	create queued joints
 	for ( s32 j=m_NodeJointQueue.GetLastIndex();	j>=0;	j-- )
 	{
@@ -180,6 +177,17 @@ void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 			m_NodeJointQueue.RemoveAt( j );
 	}
 
+	//	process the refilters
+	//	gr: do this before the graph structure change - this way we can assume the shapes are all still valid
+	for ( u32 i=0;	i<m_RefilterQueue.GetSize();	i++ )
+	{
+		m_pWorld->Refilter( m_RefilterQueue[i] );
+	}
+	m_RefilterQueue.Empty();
+
+	// Process all queued messages first
+	ProcessMessageQueue();
+	
 	//	no root? nothing to do
 	TPtr<TLPhysics::TPhysicsNode>& pRootNode = GetRootNode();
 	if ( pRootNode )
@@ -212,6 +220,9 @@ void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 		}
 	}
 	
+	//	gr: if this is before the world step, post updates etc, for some reason my 
+	//	render nodes don't show up (physics node doesn't MOVE i suppose and scene node 
+	//	needs an initial transform message...? seems odd to be dependant on the physics node)
 	// Update the graph structure with any changes
 	UpdateGraphStructure();
 
@@ -487,6 +498,14 @@ void TLPhysics::TPhysics_ContactListener::Add(const b2ContactPoint* point)
 	//	get physics node for shape 1
 	TPhysicsNode* pNodeA = (TPhysicsNode*)point->shape1->GetBody()->GetUserData();
 	TPhysicsNode* pNodeB = (TPhysicsNode*)point->shape2->GetBody()->GetUserData();
+
+	/*
+	TTempString Debug_String("Collison between ");
+	pNodeA->GetNodeRef().GetString(Debug_String );
+	Debug_String.Append(" and ");
+	pNodeB->GetNodeRef().GetString(Debug_String );
+	TLDebug_Print( Debug_String );
+*/
 
 	if ( pNodeA )
 	{

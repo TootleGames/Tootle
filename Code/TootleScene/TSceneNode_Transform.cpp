@@ -47,7 +47,10 @@ void TLScene::TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Messag
 	if(Message.GetMessageRef() == TRef_Static(D,o,T,r,a) )
 	{
 		u8 TransformChangedBits = m_Transform.ImportData( Message );
-		OnTransformChanged( TransformChangedBits );
+		//OnTransformChanged( TransformChangedBits );
+
+		//	gr: use the explicit SetTransform function so it uses overloaded funationality (ie. the Object scene node forces changes onto the physics node)
+		SetTransform( m_Transform );
 	}
 	else if(Message.GetMessageRef() == TRef_Static(R,e,q,T,r) )
 	{
