@@ -108,6 +108,8 @@ public:
 	Bool								HasCollision() const				{	return (IsEnabled() && HasCollisionFlag() && m_pCollisionShape.IsValid()) ? m_pCollisionShape->IsValid() : FALSE;	}
 	Bool								HasCollisionFlag() const			{	return m_PhysicsFlags( Flag_HasCollision );	}
 	FORCEINLINE void					EnableCollision(Bool Enable=TRUE)	{	if ( m_PhysicsFlags( Flag_HasCollision ) != Enable )	{	m_PhysicsFlags.Set( Flag_HasCollision, Enable );	OnCollisionEnabledChanged( Enable );	}	}
+	FORCEINLINE Bool					IsAllowedCollisionWithNode(TRefRef NodeRef)					{	return !m_NonCollisionNodes.Exists( NodeRef );	}
+	FORCEINLINE void					EnableCollisionWithNode(TRefRef NodeRef,Bool Enable)		{	if ( Enable )	m_NonCollisionNodes.Remove( NodeRef );	else	m_NonCollisionNodes.AddUnique( NodeRef );	}
 
 	FORCEINLINE void					SetCollisionNone()											{	m_pCollisionShape = NULL;	SetWorldCollisionShapeInvalid();	SetCollisionZoneNeedsUpdate();	}
 	void								SetCollisionShape(const TPtr<TLMaths::TShape>& pShape);		//	setup collision shape from a shape
@@ -180,6 +182,8 @@ protected:
 	TPtr<TLMaths::TShape>	m_pWorldCollisionShape;		//	transformed collision shape, delete/invalidated when pos or collision shape changes
 	TPtr<TLMaths::TShape>	m_pLastWorldCollisionShape;	//	to save re-allocations of the same object, when we invalidate the world collision shape we set it to this. then when we recalc it, we try to reuse this pointer
 	TArray<TCollisionInfo>	m_Collisions;				//	list of collisions during our last update - published in PostUpdate to subscribers
+
+	TArray<TRef>			m_NonCollisionNodes;		//	list of nodes we're explicitly not allowed to collide with
 
 	Bool					m_InitialisedZone;			//	
 

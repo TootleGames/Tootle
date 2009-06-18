@@ -467,6 +467,18 @@ void TLRender::TRenderNode::OnAdded()
 }
 
 
+void TLRender::TRenderNode::OnMoved(const TPtr<TLRender::TRenderNode>& pOldParent)
+{
+	TLGraph::TGraphNode<TLRender::TRenderNode>::OnMoved(pOldParent);
+
+	//	invalidate bounds of self IF child affects bounds
+	if ( !GetRenderFlags().IsSet( RenderFlags::ResetScene ) )
+	{
+		SetBoundsInvalid( TInvalidateFlags( InvalidateLocalBounds, ForceInvalidateParentsLocalBounds ) );
+	}
+}
+
+
 //---------------------------------------------------------
 //	generic render node init
 //---------------------------------------------------------
@@ -751,10 +763,10 @@ Bool TLRender::TRenderNode::SetWorldTransformOld(Bool SetPosOld,Bool SetTransfor
 //	If WorldTransform is Valid(TRUE) then this is not recalculated. 
 //	THe root render node should be provided (but in reality not a neccessity, see trac: http://grahamgrahamreeves.getmyip.com:1984/Trac/wiki/KnownIssues )
 //---------------------------------------------------------
-const TLMaths::TTransform& TLRender::TRenderNode::GetWorldTransform(TRenderNode* pRootNode)
+const TLMaths::TTransform& TLRender::TRenderNode::GetWorldTransform(TRenderNode* pRootNode,Bool ForceCalculation)
 {
 	//	doesn't require recalculation
-	if ( m_WorldTransformValid == SyncTrue )
+	if ( !ForceCalculation && m_WorldTransformValid == SyncTrue )
 		return m_WorldTransform;
 
 	//	get our parent's world transform

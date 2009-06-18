@@ -86,9 +86,10 @@ public:
 
 	// Graph change requests
 	virtual TRef				CreateNode(TRefRef NodeRef,TRefRef TypeRef,TRefRef ParentRef,TLMessaging::TMessage* pInitMessage=NULL,Bool StrictNodeRef=FALSE);		//	create node and add to the graph. returns ref of new node
-	virtual Bool				RemoveNode(TRefRef NodeRef)				{	return RemoveNode( FindNode( NodeRef ) );	}
-	FORCEINLINE Bool			RemoveNode(TRef& NodeRef);				//	simple remove node wrapper which invalidates the node ref as well
-	FORCEINLINE Bool			RemoveChildren(TRefRef NodeRef)			{	return RemoveChildren( FindNode( NodeRef ) );	}			//	remove pNode's children (but not pNode)
+	FORCEINLINE Bool			MoveNode(TRefRef NodeRef,TRefRef NewParentRef)		{	return MoveNode( FindNode( NodeRef ), NewParentRef.IsValid() ? FindNode( NewParentRef ) : GetRootNode() );	}
+	virtual Bool				RemoveNode(TRefRef NodeRef)							{	return RemoveNode( FindNode( NodeRef ) );	}
+	FORCEINLINE Bool			RemoveNode(TRef& NodeRef);							//	simple remove node wrapper which invalidates the node ref as well
+	FORCEINLINE Bool			RemoveChildren(TRefRef NodeRef)						{	return RemoveChildren( FindNode( NodeRef ) );	}			//	remove pNode's children (but not pNode)
 
 	//	factory access
 	FORCEINLINE Bool			AddFactory(TPtr< TClassFactory<T,FALSE> >& pFactory);	//	add factory to graph
@@ -112,10 +113,12 @@ public:
 	FORCEINLINE Bool			AddNode(TPtr<T>& pNode)							{	return AddNode( pNode, m_pRootNode );	}
 	FORCEINLINE Bool			AddNode(TPtr<T>& pNode,TRefRef ParentRef)		{	return AddNode( pNode, FindNode( ParentRef ) );	}
 
-
 //	FORCEINLINE Bool			RemoveNode(const T* pNode)				{	return RemoveNode( FindNode( pNode->GetNodeRef() ) );	}
 	Bool						RemoveNode(TPtr<T> pNode);				//	Requests a node to be removed from the graph.  The node will be removed at a 'safe' time so is not immediate
 	Bool						RemoveChildren(TPtr<T> pNode);			//	remove pNode's children (but not pNode)
+
+	Bool						MoveNode(TPtr<T>& pNode,TPtr<T>& pParent);		//	give this node a new parent via a request
+
 	///////////////////////////////////////////////////////////////////////////////////
 protected:
 	template<typename MATCHTYPE>
@@ -139,7 +142,8 @@ protected:
 	virtual TLGraph::TGraphNodeBase*	GetRootNodeBase()					{	TPtr<T>& pNode = m_pRootNode;	return pNode.GetObject();	}
 
 	//	events
-	virtual void				OnNodeAdded(TPtr<T>& pNode,Bool SendAddedMessage);	//	called after node has been added to graph and to parent
+	virtual void				OnNodeAdded(TPtr<T>& pNode,Bool SendAddedMessage);	//	called after node has been added to graph and to parent - publishes an added message
+	virtual void				OnNodeMoved(TPtr<T>& pNode,TPtr<T>& pOldParentNode);	//	called after node has been moved to a new parent in the scenegraph - publishes a move message
 	virtual void				OnNodeRemoving(TPtr<T>& pNode)		{	}	//	called before node shutdown and before being removed from parent and graph
 	virtual void				OnNodeRemoved(TRefRef NodeRef);				//	called after node shutdown and after being removed from parent and graph
 
@@ -148,32 +152,34 @@ private:
 	// Graph structure updates
 	void						DoAddNode(TPtr<T>& pNode,TPtr<T>& pParent);		// Final stage add of the graph node
 	void						DoRemoveNode(TPtr<T>& pNode,TPtr<T>& pParent);	// Final stage removal of the graph node
+	void						DoMoveNode(TPtr<T>& pNode,TPtr<T>& pNewParent);	// Final stage move of a graph node
 
 	//	gr: you don;t need another template declaration, by being inside a template class it is templated (it's TGraph<T>::TGraphRequest which is different to TGraph<X>::TGraphRequest)
 	//template <class T>
 	class TGraphUpdateRequest
 	{
 	public:
-		explicit TGraphUpdateRequest(TPtr<T>& pNode,TPtr<T>& pParent, Bool bIsRemove) :
+		explicit TGraphUpdateRequest(TPtr<T>& pNode,TPtr<T>& pParent, TRefRef Command) :
 			m_pNode			( pNode ),
 			m_pNodeParent	( pParent ),
-			m_bRemoveNode	( bIsRemove )
+			m_Command		( Command )
 		{
 		}
 
-		FORCEINLINE TPtr<T>&	GetNode()			{	return m_pNode;	}
-		FORCEINLINE TPtr<T>&	GetNodeParent()		{	return m_pNodeParent;	}
-		FORCEINLINE Bool		IsAddRequest()		{	return !m_bRemoveNode;	}
-		FORCEINLINE Bool		IsRemoveRequest()	{	return m_bRemoveNode;	}
+		FORCEINLINE TPtr<T>&	GetNode()					{	return m_pNode;	}
+		FORCEINLINE TPtr<T>&	GetNodeParent()				{	return m_pNodeParent;	}
+		FORCEINLINE TRefRef		GetCommand() const			{	return m_Command;	}
+		
+		FORCEINLINE Bool		IsAddRequest() const		{	return m_Command == STRef3(A,d,d);	}
+		FORCEINLINE Bool		IsRemoveRequest() const		{	return m_Command == STRef(R,e,m,o,v);	}
+		FORCEINLINE Bool		IsMoveRequest() const		{	return m_Command == STRef4(M,o,v,e);	}
 
-		FORCEINLINE Bool		operator==(TRefRef NodeRef) const					{	return m_pNode == NodeRef;	}
-	//	FORCEINLINE Bool		operator<(TRefRef NodeRef) const					{	return m_pNode < NodeRef;	}
-	//	FORCEINLINE Bool		operator<(const TGraphUpdateRequest& Update) const	{	return m_pNode < Update.m_pNode;	}
+		FORCEINLINE Bool		operator==(TRefRef NodeRef) const		{	return m_pNode == NodeRef;	}
 
 	protected:
-		TPtr<T>		m_pNode;					// Node to update
-		TPtr<T>		m_pNodeParent;		// Node parent
-		Bool		m_bRemoveNode;
+		TPtr<T>		m_pNode;			//	Node to update
+		TPtr<T>		m_pNodeParent;		//	Node parent
+		TRef		m_Command;			//	like an enum - "Add" "Remove" "Move"
 	};
 
 private:
@@ -206,22 +212,22 @@ public:
 
 	// Parent manipulation
 	FORCEINLINE TPtr<T>&			GetParent()							{	return m_pParent;	}
-	FORCEINLINE const TPtr<T>&	GetParent() const					{	return m_pParent;	}
+	FORCEINLINE const TPtr<T>&		GetParent() const					{	return m_pParent;	}
 	FORCEINLINE Bool				HasParent() const					{	return m_pParent.IsValid();	}
 
 	// Child manipulation
 #ifdef TLGRAPH_OWN_CHILDREN
 	FORCEINLINE Bool				HasChildren() const					{	return (m_Children.GetSize() > 0);	}
-	FORCEINLINE TPtrArray<T>&	GetChildren()						{	return m_Children;	}
+	FORCEINLINE TPtrArray<T>&		GetChildren()						{	return m_Children;	}
 	FORCEINLINE const TPtrArray<T>&	GetChildren() const				{	return m_Children;	}
 
 #else
 	FORCEINLINE Bool				HasChildren() const					{	return m_pChildFirst.IsValid();	}
-	FORCEINLINE const TPtr<T>&	GetChildFirst() const				{	return m_pChildFirst;	}			//	cant call it ChildFirst because of windows macro
+	FORCEINLINE const TPtr<T>&		GetChildFirst() const				{	return m_pChildFirst;	}			//	cant call it ChildFirst because of windows macro
 #endif
 	template<typename MATCHTYPE>
-	TPtr<T>&				FindChildMatch(const MATCHTYPE& Value);		//	find a TPtr in the graph that matches the specified value (will use == operator of node type to match)
-	FORCEINLINE TPtr<T>&	FindChild(const TRef& NodeRef)				{	return FindChildMatch(NodeRef);	}
+	TPtr<T>&						FindChildMatch(const MATCHTYPE& Value);		//	find a TPtr in the graph that matches the specified value (will use == operator of node type to match)
+	FORCEINLINE TPtr<T>&			FindChild(const TRef& NodeRef)				{	return FindChildMatch(NodeRef);	}
 
 
 	FORCEINLINE Bool				operator==(const TPtr<TGraphNode<T> >& pNode) const	{	return this == pNode.GetObject();	}
@@ -231,25 +237,28 @@ public:
 	FORCEINLINE Bool				operator<(const TGraphNode<T>& Node) const			{	return GetNodeRef() == Node.GetNodeRef();	}
 
 protected:
-	virtual void			Initialise(TLMessaging::TMessage& Message);	//	Initialise message - made into virtual func as it's so commonly used
-	virtual void 			Update(float Timestep);					// Main node update called once per frame
-	virtual void			Shutdown();							// Shutdown routine	- called before being removed form the graph. Base code sends out a shutdown message to our subscribers
+	virtual void					Initialise(TLMessaging::TMessage& Message);	//	Initialise message - made into virtual func as it's so commonly used
+	virtual void 					Update(float Timestep);					// Main node update called once per frame
+	virtual void					Shutdown();							// Shutdown routine	- called before being removed form the graph. Base code sends out a shutdown message to our subscribers
 
 	virtual const TGraphNodeBase*	GetParentBase() const		{	return m_pParent.GetObject();	}
 
-	virtual void			UpdateAll(float Timestep);						//	update tree: update self, and children and siblings
+	virtual void					UpdateAll(float Timestep);						//	update tree: update self, and children and siblings
 
-	virtual void			OnAdded()							{}			// Added routine			- called once the node has been added to the graph
+	virtual void					OnAdded()									{}	// Added routine - called once the node has been added to the graph
+	virtual void					OnMoved(const TPtr<T>& pOldParentNode)		{}	// Moved routine - called after the node has been moved (so this->GetParent is the new parent)
+	virtual void					OnChildMovedFrom(const TPtr<T>& pOldChild)	{}	//	called to a parent when one of it's direct children has moved to somewhere else (pOldChild->GetParent is it's new parent)
+	virtual void					OnChildMovedTo(const TPtr<T>& pNewChild,const TPtr<T>& pOldParentNode)	{}	//	called to the new parent of a child after it's been moved
 
-	virtual void			GetShutdownMessageData(TLMessaging::TMessage& ShutdownMessage)	{	}	//	add additional data to the shutdown message
+	virtual void					GetShutdownMessageData(TLMessaging::TMessage& ShutdownMessage)	{	}	//	add additional data to the shutdown message
 
 	// Sibling manipulation
 #ifndef TLGRAPH_OWN_CHILDREN
-	Bool					HasNext() const						{	return m_pNext.IsValid();	}
+	Bool							HasNext() const						{	return m_pNext.IsValid();	}
 	FORCEINLINE TPtr<T>&			GetNext() 							{	return m_pNext;	}
 	FORCEINLINE TPtr<T>&			GetPrevious() 						{	return m_pPrevious;	}
-	FORCEINLINE const TPtr<T>&	GetNext() const						{	return m_pNext;	}
-	FORCEINLINE const TPtr<T>&	GetPrevious() const					{	return m_pPrevious;	}
+	FORCEINLINE const TPtr<T>&		GetNext() const						{	return m_pNext;	}
+	FORCEINLINE const TPtr<T>&		GetPrevious() const					{	return m_pPrevious;	}
 #endif
 
 	template<typename MATCHTYPE>
@@ -1228,7 +1237,7 @@ Bool TLGraph::TGraph<T>::AddNode(TPtr<T>& pNode,TPtr<T>& pParent)
 #endif
 
 	//	add the node to the requet queue
-	m_RequestQueue.AddNewPtr( new TGraphUpdateRequest(pNode, pParent, FALSE) );
+	m_RequestQueue.AddNewPtr( new TGraphUpdateRequest(pNode, pParent, STRef3(A,d,d) ) );
 
 	return TRUE;
 }
@@ -1325,7 +1334,7 @@ Bool TLGraph::TGraph<T>::RemoveNode(TPtr<T> pNode)
 #endif
 	
 	// No - Add the node to the queue
-	m_RequestQueue.AddNewPtr( new TGraphUpdateRequest(pNode, pParent, TRUE) );
+	m_RequestQueue.AddNewPtr( new TGraphUpdateRequest(pNode, pParent, STRef(R,e,m,o,v) ) );
 
 	return TRUE;
 }
@@ -1381,6 +1390,33 @@ Bool TLGraph::TGraph<T>::RemoveChildren(TPtr<T> pNode)
 }
 
 
+
+//-------------------------------------------------------------
+//	give this node a new parent via a request
+//-------------------------------------------------------------
+template <class T>
+Bool TLGraph::TGraph<T>::MoveNode(TPtr<T>& pNode,TPtr<T>& pParent)
+{
+	if ( !pNode || !pParent )
+	{
+		TLDebug_Break("Node or parent expected");
+		return FALSE;
+	}
+
+	//	check theyre not the same node
+	if ( pNode->GetNodeRef() == pParent->GetNodeRef() )
+	{
+		TLDebug_Break("Attempting to move a node to be under itself");
+		return FALSE;
+	}
+
+	//	create new request
+	m_RequestQueue.AddNewPtr( new TGraphUpdateRequest( pNode, pParent, STRef4(M,o,v,e) ) );
+
+	return TRUE;
+}
+
+
 //-------------------------------------------------------------
 //	find a request for a node and see if it's an ADD request
 //-------------------------------------------------------------
@@ -1411,6 +1447,9 @@ Bool TLGraph::TGraph<T>::IsInRemoveQueue(TRefRef NodeRef) const
 }
 
 
+//----------------------------------------------------------------
+//	
+//----------------------------------------------------------------
 template <class T>
 void TLGraph::TGraph<T>::UpdateGraph(float fTimeStep)
 {
@@ -1424,9 +1463,9 @@ void TLGraph::TGraph<T>::UpdateGraph(float fTimeStep)
 	TGraph<T>::UpdateGraphStructure();
 }
 
-/*
-	Adds/removes nodes that have been queued up for update
-*/
+//----------------------------------------------------------------
+//	Adds/removes nodes that have been queued up for update
+//----------------------------------------------------------------
 template <class T>
 void TLGraph::TGraph<T>::UpdateGraphStructure()
 {
@@ -1435,14 +1474,23 @@ void TLGraph::TGraph<T>::UpdateGraphStructure()
 	{
 		TGraphUpdateRequest& Request = *m_RequestQueue.ElementAt(uIndex);
 
-		// Add/Remvoe the node
-		if ( Request.IsRemoveRequest() )
+		switch ( Request.GetCommand().GetData() )
 		{
-			DoRemoveNode( Request.GetNode(), Request.GetNodeParent() );
-		}
-		else
-		{
-			DoAddNode( Request.GetNode(), Request.GetNodeParent() );
+			case STRef(R,e,m,o,v):
+				DoRemoveNode( Request.GetNode(), Request.GetNodeParent() );
+				break;
+
+			case STRef3(A,d,d):
+				DoAddNode( Request.GetNode(), Request.GetNodeParent() );
+				break;
+
+			case STRef4(M,o,v,e):
+				DoMoveNode( Request.GetNode(), Request.GetNodeParent() );
+				break;
+
+			default:
+				TLDebug_Break("Unknown request queue command");
+				break;
 		}
 	}
 
@@ -1450,9 +1498,9 @@ void TLGraph::TGraph<T>::UpdateGraphStructure()
 	m_RequestQueue.Empty();
 }
 
-/*
-	Final stage add of the graph node
-*/
+//----------------------------------------------------------------
+//	Final stage add of the graph node
+//----------------------------------------------------------------
 template <class T>
 void TLGraph::TGraph<T>::DoAddNode(TPtr<T>& pNode, TPtr<T>& pParent)
 {
@@ -1487,13 +1535,12 @@ void TLGraph::TGraph<T>::DoAddNode(TPtr<T>& pNode, TPtr<T>& pParent)
 
 	// Tell the node it has been added to the graph
 	pNode->OnAdded();
-
-
 }
 
-/*
-	Final stage removal of the graph node
-*/
+
+//----------------------------------------------------------------
+//	Final stage removal of the graph node
+//----------------------------------------------------------------
 template <class T>
 void TLGraph::TGraph<T>::DoRemoveNode(TPtr<T>& pNode,TPtr<T>& pParent)
 {
@@ -1543,6 +1590,53 @@ void TLGraph::TGraph<T>::DoRemoveNode(TPtr<T>& pNode,TPtr<T>& pParent)
 	//	notify post-removal
 	OnNodeRemoved( NodeRef );
 }
+
+
+//----------------------------------------------------------------
+//	actual move of a graph node
+//----------------------------------------------------------------
+template <class T>
+void TLGraph::TGraph<T>::DoMoveNode(TPtr<T>& pNode, TPtr<T>& pNewParent)
+{
+	// Final check to ensure the parent node is in the graph
+	if(!IsInGraph(pNewParent))
+	{
+		#if defined(_DEBUG)
+		{
+			#ifdef DONT_ADD_NODE_WHERE_PARENT_IS_BEING_REMOVED
+				//	Should not get here...
+				TLDebug_Break("Parent isnt in graph(any more?)");
+			#else
+				//	Should not get here...
+				TTempString Debug_String("Parent isn't in graph(any more?) upon move of ");
+				pNode->GetNodeRef().GetString( Debug_String );
+				TLDebug_Warning( Debug_String );
+			#endif
+		}
+		#endif
+		return;
+	}
+
+	//	remove from old parent
+	TPtr<T> pOldParent = pNode->GetParent();
+	pOldParent->RemoveChild( pNode );
+	
+	//	set new parent and add to new parent
+	pNode->SetParent( pNewParent );
+	pNewParent->AddChild( pNode, pNewParent );
+
+	//	graph publish a moved message
+	OnNodeMoved( pNode, pOldParent );
+
+	//	Tell the node it has been moved in the graph
+	pNode->OnMoved( pOldParent );
+
+	//	tell the parents of a change
+	pOldParent->OnChildMovedFrom( pNode );
+	pNewParent->OnChildMovedTo( pNode, pOldParent );
+}
+
+
 
 
 template <class T>
@@ -1642,6 +1736,21 @@ void TLGraph::TGraph<T>::OnNodeAdded(TPtr<T>& pNode,Bool SendAddedMessage)
 	}
 }
 
+
+//---------------------------------------------------------
+//	called after node has been moved in the graph
+//---------------------------------------------------------
+template<class T>
+void TLGraph::TGraph<T>::OnNodeMoved(TPtr<T>& pNode,TPtr<T>& pOldParentNode)
+{
+	//	make up a moved node notificaiton
+	TLMessaging::TMessage Message("NodeMoved", GetGraphRef());
+	Message.Write( pNode->GetNodeRef() );
+	Message.ExportData("OldParent", pOldParentNode->GetNodeRef() );
+	Message.ExportData("NewParent", pNode->GetParent()->GetNodeRef() );
+
+	PublishMessage(Message);
+}
 
 //---------------------------------------------------------
 //	send message to node

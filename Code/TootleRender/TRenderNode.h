@@ -165,6 +165,7 @@ public:
 	FORCEINLINE TRefRef						GetOwnerSceneNodeRef() const				{	return m_OwnerSceneNode;	}
 
 	virtual void							OnAdded();
+	virtual void							OnMoved(const TPtr<TLRender::TRenderNode>& pOldParent);
 	void									Copy(const TRenderNode& OtherRenderNode);	//	copy render object DOES NOT COPY CHILDREN or parent! just properties
 
 	FORCEINLINE TBinaryTree&				GetData()									{	return m_Data;	}
@@ -186,7 +187,7 @@ public:
 	Bool									SetWorldTransformOld(Bool SetPosOld,Bool SetTransformOld,Bool SetShapesOld);				//	downgrade all world shape/transform states from valid to old. returns if anyhting was downgraded
 	FORCEINLINE Bool						SetWorldTransformOld()						{	return SetWorldTransformOld( TRUE, TRUE, TRUE );	}
 	FORCEINLINE SyncBool					IsWorldTransformValid() const				{	return m_WorldTransformValid;	}
-	const TLMaths::TTransform&				GetWorldTransform(TRenderNode* pRootNode=NULL);	//	return the world transform. will explicitly calculate the world transform if out of date. This is a bit rendundant as it's calculated via the render but sometimes we need it outside of that. If WorldTransform is Valid(TRUE) then this is not recalculated. THe root render node should be provided (but in reality not a neccessity, see trac: http://grahamgrahamreeves.getmyip.com:1984/Trac/wiki/KnownIssues )
+	const TLMaths::TTransform&				GetWorldTransform(TRenderNode* pRootNode=NULL,Bool ForceCalculation=FALSE);	//	return the world transform. will explicitly calculate the world transform if out of date. This is a bit rendundant as it's calculated via the render but sometimes we need it outside of that. If WorldTransform is Valid(TRUE) then this is not recalculated. THe root render node should be provided (but in reality not a neccessity, see trac: http://grahamgrahamreeves.getmyip.com:1984/Trac/wiki/KnownIssues )
 	
 	const float3&							GetWorldPos();								//	calculate our new world position from the latest scene transform
 	FORCEINLINE const float3&				GetWorldPos(SyncBool& IsValid) 				{	GetWorldPos();	IsValid = m_WorldPosValid;	return m_WorldPos;	}

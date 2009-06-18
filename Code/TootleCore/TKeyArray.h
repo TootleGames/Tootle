@@ -103,6 +103,7 @@ public:
 	TYPE*						Add(const KEYTYPE& Key,const TYPE& Item,Bool Overwrite=TRUE);	//	add an item with this key. if the key already exists the item is overwritten if specified, returns the item for the key, overwritten or not. NULL if failed
 	TYPE*						AddNew(const KEYTYPE& Key);				//	add a new key and un-set item to the list - returns NULL if the key already exists. returns the item for the key
 	Bool						Remove(const KEYTYPE& Key);				//	remove the item with this key. returns if anything was removed
+	Bool						RemoveAt(u32 Index);					//	remove the item at this index
 	Bool						RemoveItem(const TYPE& Item,Bool RemoveAllMatches=FALSE);	//	remove matching item. (for when we dont know the key) returns if anything was removed
 
 	FORCEINLINE void			Copy(const TKeyArray<KEYTYPE,TYPE>& OtherArray)	{	m_Array.Copy( OtherArray.m_Array );	}
@@ -233,9 +234,22 @@ Bool TKeyArray<KEYTYPE,TYPE>::Remove(const KEYTYPE& Key)
 		return FALSE;
 
 	//	remove from array
-	m_Array.RemoveAt( PairIndex );
+	if ( !m_Array.RemoveAt( PairIndex ) )
+		return FALSE;
 
 	return TRUE;
+}
+
+
+
+//-------------------------------------------------------
+//	remove item from the key array at index
+//-------------------------------------------------------
+template<typename KEYTYPE,typename TYPE>
+Bool TKeyArray<KEYTYPE,TYPE>::RemoveAt(u32 Index)
+{
+	//	remove from array
+	return m_Array.RemoveAt( Index );
 }
 
 
@@ -259,9 +273,10 @@ Bool TKeyArray<KEYTYPE,TYPE>::RemoveItem(const TYPE& Item,Bool RemoveAllMatches)
 			continue;
 
 		//	is a match, remove
-		m_Array.RemoveAt( i );
-
-		AnyRemoved |= TRUE;
+		if ( m_Array.RemoveAt( i ) )
+		{
+			AnyRemoved |= TRUE;
+		}
 
 		//	only remove first match
 		if ( !RemoveAllMatches )

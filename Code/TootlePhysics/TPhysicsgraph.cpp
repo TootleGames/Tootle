@@ -43,6 +43,14 @@ bool TLPhysics::TPhysics_ContactFilter::ShouldCollide(b2Shape* shape1, b2Shape* 
 	if ( filter1.groupIndex < 0 || filter2.groupIndex < 0 )
 		return FALSE;
 
+	//	explicit node-no-collision-with-node check
+	TPhysicsNode* pNodeA = (TPhysicsNode*)shape1->GetBody()->GetUserData();
+	TPhysicsNode* pNodeB = (TPhysicsNode*)shape2->GetBody()->GetUserData();
+	if ( !pNodeA->IsAllowedCollisionWithNode( pNodeB->GetNodeRef() ) )
+		return FALSE;
+	if ( !pNodeB->IsAllowedCollisionWithNode( pNodeA->GetNodeRef() ) )
+		return FALSE;
+
 	if (filter1.groupIndex == filter2.groupIndex && filter1.groupIndex != 0)
 	{
 		//	always collide when in same non-zero group (default box2d behaviour)

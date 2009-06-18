@@ -16,62 +16,76 @@ namespace TLMessaging
 };
 
 
+
+
 class TLMessaging::TMessageQueue
 {
 public:
+	virtual ~TMessageQueue()	{}
 
-	virtual ~TMessageQueue()
-	{
-		RemoveAllMessages();
-	}
+	FORCEINLINE Bool		QueueMessage(TLMessaging::TMessage& Message);		//	queue up message 
 
-	// Message sending
-	Bool			QueueMessage(TLMessaging::TMessage& Message)						
-	{
-		// NOTE: Will need to wait for a mutex if mutlithreading is used
-		return (  m_MessageQueue.Add(Message) != -1 );
-	}
-
-	FORCEINLINE u32			NumberOfMessages()			const	{ return m_MessageQueue.GetSize(); }
-	FORCEINLINE Bool			HasMessagesInQueue()		const	{ return (NumberOfMessages() > 0); }
+	FORCEINLINE u32			GetMessageQueueSize() const			{	return m_MessageQueue.GetSize();	}
+	FORCEINLINE Bool		HasMessagesInQueue() const			{	return m_MessageQueue.GetSize() > 0;	}
 
 protected:
-
-	virtual void ProcessMessageFromQueue(TLMessaging::TMessage& Message)	= 0;		// Individual message processing - behaviour dependent on where it is used
-
-	// FORCEINLINE wrapper for the main message queue process call
-	FORCEINLINE void ProcessMessageQueue()
-	{
-		if(HasMessagesInQueue())
-			DoProcessMessageQueue();
-	}
+	virtual void			ProcessMessageFromQueue(TLMessaging::TMessage& Message)	= 0;		// Individual message processing - behaviour dependent on where it is used
+	FORCEINLINE void		ProcessMessageQueue();				//	inline wrapper for the main message queue process call
 
 private:
-
-	// Main message queue processing
-	void DoProcessMessageQueue()		
-	{
-		u32 uNumberOfMessages = NumberOfMessages();
-
-		// NOTE: Will need to lock the message queue when we are updating it if using threads
-		for(u32 uIndex = 0; uIndex < uNumberOfMessages; uIndex++)
-		{
-			TLMessaging::TMessage&	Message = m_MessageQueue.ElementAt(uIndex);
-
-			ProcessMessageFromQueue(Message);
-		}
-
-		// Finished now remove the messages from the queue
-		RemoveAllMessages();
-	}
-
-	// Remove all messages from the queue
-	FORCEINLINE void		RemoveAllMessages()
-	{
-		m_MessageQueue.Empty(TRUE);
-	}
-
+	FORCEINLINE void		DoProcessMessageQueue();			// Main message queue processing
 
 protected:
 	TArray<TLMessaging::TMessage>		m_MessageQueue;
 };
+
+
+
+
+
+
+//--------------------------------------------------------------
+//	queue up message 
+//--------------------------------------------------------------
+FORCEINLINE Bool TLMessaging::TMessageQueue::QueueMessage(TLMessaging::TMessage& Message)						
+{
+	// NOTE: Will need to wait for a mutex if mutlithreading is used
+	return (  m_MessageQueue.Add(Message) != -1 );
+}
+
+	
+
+//--------------------------------------------------------------
+//	inline wrapper for the main message queue process call
+//--------------------------------------------------------------
+FORCEINLINE void TLMessaging::TMessageQueue::ProcessMessageQueue()
+{
+	if ( HasMessagesInQueue() )
+		DoProcessMessageQueue();
+}
+
+
+
+//--------------------------------------------------------------
+// Main message queue processing
+//--------------------------------------------------------------
+FORCEINLINE void TLMessaging::TMessageQueue::DoProcessMessageQueue()		
+{
+	u32 uNumberOfMessages = GetMessageQueueSize();
+
+	// NOTE: Will need to lock the message queue when we are updating it if using threads
+	for(u32 uIndex=0;	uIndex<uNumberOfMessages;	uIndex++)
+	{
+		TLMessaging::TMessage&	Message = m_MessageQueue.ElementAt(uIndex);
+
+		ProcessMessageFromQueue(Message);
+
+		//	gr: warning, do not access Message here, there is a chance that another message was added to the queue
+		//	during the process, so the reference(pointer) to Element(Index) coudl be invalid if the array was re-allocated
+	}
+
+	// Finished now remove the messages from the queue
+	//	gr: dont remove new messages... only remove the ones we processed in case more messages were queued during this queue process
+	m_MessageQueue.RemoveAt( 0, uNumberOfMessages );
+}
+
