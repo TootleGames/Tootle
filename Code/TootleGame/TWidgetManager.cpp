@@ -171,48 +171,46 @@ void TWidgetManager::MapDeviceActions_Mouse(TRefRef DeviceRef, TPtr<TLUser::TUse
 	// GUI SYSTEM ACTIONS
 	/////////////////////////////////////////////////////////////////////////
 
-	// BClick action.  This is a generic click/select action.  
-	// Says a 'click' has started
-
-	// Begin click
-	if(pUser->AddAction("SIMPLE", "BClick"))	
+	// Create a generic 'click' action for all buttons
+	
+	u32 NumberOfButtons = pDevice->GetSensorCount(TLInput::Button);
+	
+	for ( u32 s=0; s < NumberOfButtons ;s++ )
 	{
-		//	subscribe to all of the button sensors
-		u32 NumberOfButtons = pDevice->GetSensorCount(TLInput::Button);
-
-		for ( u32 s=0; s < NumberOfButtons ;s++ )
+		TRef ButtonRef = TLInput::GetDefaultButtonRef(s);
+		TRef ClickActionRef = pUser->GetUnusedActionRef("click");
+		
+		if(pUser->AddAction("SIMPLE", ClickActionRef))	
 		{
-			TRef ButtonRef = TLInput::GetDefaultButtonRef(s);
-
-			// Map to all buttons
-			pUser->MapAction("BClick", DeviceRef, ButtonRef);
+			TActionRefData ActionRefData;
+			
+			ActionRefData.m_ClickActionRef = ClickActionRef;
+			
+			// Map the click to this particular button
+			pUser->MapAction(ClickActionRef, DeviceRef, ButtonRef);
+			
+			// Now add a generic 'move' action that is dependant on this particular click
+			TRef MoveActionRef = pUser->GetUnusedActionRef("move");
+			
+			if(pUser->AddAction("SIMPLE", MoveActionRef))	
+			{
+				// Map the click to this particular button
+				pUser->MapActionParent(MoveActionRef, ClickActionRef);
+				
+				TRef AxisRef_x = TLInput::GetDefaultAxisRef( s, 'x' );
+				TRef AxisRef_y = TLInput::GetDefaultAxisRef( s, 'y' );
+				
+				pUser->MapAction( MoveActionRef, DeviceRef, AxisRef_x );
+				pUser->MapAction( MoveActionRef, DeviceRef, AxisRef_y );
+				
+				ActionRefData.m_MoveActionRef = MoveActionRef;
+			}
+			
+			// Add the action ref data to the array
+			m_WidgetActionRefs.Add(ActionRefData);
+			
 		}
-
-		// Only when 'pressed' do we want to know about it
-		pUser->MapActionCondition("BClick", TLInput::GreaterThan, 0.0f);
-	}
-
-	// EClick action.  This is a generic click/select action.  
-	// Says a 'click' has ended
-
-	// End click
-	if(pUser->AddAction("SIMPLE", "EClick"))	
-	{
-		//	subscribe to all of the button sensors
-		u32 NumberOfButtons = pDevice->GetSensorCount(TLInput::Button);
-
-		for ( u32 s=0; s < NumberOfButtons ;s++ )
-		{
-			TRef ButtonRef = TLInput::GetDefaultButtonRef(s);
-
-			// Map to all buttons
-			pUser->MapAction("EClick", DeviceRef, ButtonRef);
-		}
-
-		// Only when 'released' do we want to know about it
-		pUser->MapActionCondition("EClick", TLInput::LessThan, 1.0f);
-	}
-
+	}	
 
 }
 
