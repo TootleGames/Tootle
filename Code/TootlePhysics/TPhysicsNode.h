@@ -140,7 +140,10 @@ public:
 	
 	FORCEINLINE float			GetFriction() const							{	return m_Friction;	}
 	FORCEINLINE void			SetFriction(float Friction);
-	
+
+	FORCEINLINE float			GetBounce() const							{ return m_Bounce;	}
+	FORCEINLINE void			SetBounce(float fBounce)					{ m_Bounce = fBounce; }
+
 protected:
 	virtual void				Initialise(TLMessaging::TMessage& Message);	
 	void						PostUpdateAll(float Timestep,TLPhysics::TPhysicsgraph& Graph,TPtr<TLPhysics::TPhysicsNode>& pThis);		//	update tree: update self, and children and siblings
