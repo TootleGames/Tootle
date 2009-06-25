@@ -28,7 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		841005530EF913CE00542F4A /* TAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAction.cpp; path = ../TAction.cpp; sourceTree = SOURCE_ROOT; };
+		841005530EF913CE00542F4A /* TAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TAction.cpp; path = ../TAction.cpp; sourceTree = SOURCE_ROOT; };
 		841005550EF913CE00542F4A /* TDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TDevice.cpp; path = ../TDevice.cpp; sourceTree = SOURCE_ROOT; };
 		841005570EF913CE00542F4A /* TEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TEffect.cpp; path = ../TEffect.cpp; sourceTree = SOURCE_ROOT; };
 		841005590EF913CE00542F4A /* TLInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TLInput.cpp; path = ../TLInput.cpp; sourceTree = SOURCE_ROOT; };
