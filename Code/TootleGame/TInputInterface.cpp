@@ -10,7 +10,7 @@
 #include <TootleRender/TRendergraph.h>
 #include <TootleCore/TCoreManager.h>
 
-
+#include "TWidgetManager.h"
 
 TLInput::TInputInterface::TInputInterface(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp)  : 
 	m_Initialised				( SyncWait ),
@@ -67,85 +67,10 @@ SyncBool TLInput::TInputInterface::Initialise()
 	if ( !pUser )
 		return SyncWait;
 
-// Old system
-
-	//	create click action
-	if ( !m_ActionInClick.IsValid() )
-	{
-		//	just some ref we know of. Could be randomly generated or some unused value on the user...
-		//	has to be unique on the user though
-		m_ActionInClick = pUser->GetUnusedActionRef("click");
-		
-		//	make up action for this device
-		if ( !pUser->AddAction("Simple", m_ActionInClick ) )
-		{
-			TLDebug_Break("Failed to create new action on user");
-			m_ActionInClick.SetInvalid();
-			return SyncWait;
-		}
-	
-		//	subscribe to user's actions
-		SubscribeTo( pUser );
-	}
-	
-	//	create drag action
-	if ( !m_ActionInMove.IsValid() && m_ActionInClick.IsValid() )
-	{
-		//	just some ref we know of. Could be randomly generated or some unused value on the user...
-		//	has to be unique on the user though
-		m_ActionInMove = pUser->GetUnusedActionRef("move");
-		
-		//	make up action for this device
-		if ( !pUser->AddAction("Simple", m_ActionInMove ) )
-		{
-			TLDebug_Break("Failed to create new action on user");
-			m_ActionInMove.SetInvalid();
-			return SyncWait;
-		}
-
-		//	depend on the click to turn the mouse move into a drag
-		pUser->MapActionParent( m_ActionInMove, m_ActionInClick );
-
-		//	subscribe to user's actions
-		SubscribeTo( pUser );
-	}
-
-	Bool SubscribedToAnyAction = FALSE;
-
-	//	map action to at least one mouse device
-	for ( u32 d=0;	d<TLInput::g_pInputSystem->GetSize();	d++ )
-	{
-		TLInput::TInputDevice& InputDevice = *(TLInput::g_pInputSystem->ElementAt( d ));
-		if ( InputDevice.GetDeviceType() != "Mouse" )
-			continue;
-
-		//	subscribe to all of the button sensors
-		u32 NumberOfButtons = InputDevice.GetSensorCount(TLInput::Button);
-
-		for ( u32 s=0; s < NumberOfButtons ;s++ )
-		{
-			TRef ButtonRef = TLInput::GetDefaultButtonRef(s);
-
-			//	map this action to this button sensor
-			if ( pUser->MapAction( m_ActionInClick, InputDevice.GetDeviceRef(), ButtonRef ) )
-			{
-				SubscribedToAnyAction = TRUE;
-
-				//	map the drag-detection
-				//	get axis sensor refs matching this button...
-				//	gr: buttons start at zero, axis' start at 1...
-				TRef AxisRef_x = TLInput::GetDefaultAxisRef( s, 'x' );
-				TRef AxisRef_y = TLInput::GetDefaultAxisRef( s, 'y' );
-			
-				pUser->MapAction( m_ActionInMove, InputDevice.GetDeviceRef(), AxisRef_x );
-				pUser->MapAction( m_ActionInMove, InputDevice.GetDeviceRef(), AxisRef_y );
-			}
-		}
-	}
-
-	//	failed to subscribe to any actions
-	if ( !SubscribedToAnyAction )
+	//	subscribe to user's actions
+	if(!SubscribeTo( pUser ))
 		return SyncWait;
+
 
 	//	all done
 	m_Initialised = SyncTrue;
@@ -235,20 +160,21 @@ void TLInput::TInputInterface::ProcessMessage(TLMessaging::TMessage& Message)
 
 			if ( Message.Read(ActionRef) && Message.ImportData("CURSOR", CursorPosition ) )
 			{
-				if ( ActionRef == m_ActionInClick )
+
+				if(TLGui::g_pWidgetManager->IsClickActionRef(ActionRef))
 				{
 					float RawValue = 0.f;
 					if ( Message.ImportData("RawData", RawValue) )
 					{
-						//	queue up this click
-						QueueClick( CursorPosition, RawValue );
+							//	queue up this click
+							QueueClick( CursorPosition, RawValue, ActionRef );
 					}
 				}
-				else if ( ActionRef == m_ActionInMove )
+				else if(TLGui::g_pWidgetManager->IsMoveActionRef(ActionRef))
 				{
-					OnCursorMove(CursorPosition);
+					OnCursorMove(CursorPosition, ActionRef);
 				}
-
+				
 				//	now process ALL the queued clicks so if we have some unprocessed they're not lost and kept in order
 				ProcessQueuedClicks();
 			}
@@ -268,7 +194,7 @@ void TLInput::TInputInterface::ProcessMessage(TLMessaging::TMessage& Message)
 //-------------------------------------------------
 //	put a click in the queue
 //-------------------------------------------------
-void TLInput::TInputInterface::QueueClick(const int2& CursorPos,float ActionValue)		
+void TLInput::TInputInterface::QueueClick(const int2& CursorPos,float ActionValue, TRefRef ActionRef)		
 {
 	//	if this "click" is a mouse up, and the previous was too, then dont add it
 	if ( m_QueuedClicks.GetSize() > 0 )
@@ -279,7 +205,7 @@ void TLInput::TInputInterface::QueueClick(const int2& CursorPos,float ActionValu
 	}
 
 	//	add to queue
-	m_QueuedClicks.Add( TClick( CursorPos, ActionValue ) );
+	m_QueuedClicks.Add( TClick( CursorPos, ActionValue, ActionRef ) );
 }
 
 
@@ -368,10 +294,51 @@ void TLInput::TInputInterface::ProcessQueuedClicks()
 //-------------------------------------------------
 SyncBool TLInput::TInputInterface::ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode)
 {
+	Bool bClickAction = TLGui::g_pWidgetManager->IsClickActionRef(Click.GetActionRef());
+	Bool bMoveAction = TLGui::g_pWidgetManager->IsMoveActionRef(Click.GetActionRef());
+	Bool bCurrentAction = FALSE;
+	Bool bActionPair = FALSE;
+	
+	if(m_ActionBeingProcessedRef.IsValid())
+	{
+		bCurrentAction = (Click.GetActionRef() == m_ActionBeingProcessedRef);
+		bActionPair = TLGui::g_pWidgetManager->IsActionPair(m_ActionBeingProcessedRef, Click.GetActionRef());
+	}
+
+	
+	Bool bTestIntersection = FALSE;
+	
+	if(m_ActionBeingProcessedRef.IsValid() )
+	{
+		if(bClickAction && bCurrentAction)
+		{
+			// Click occured and it's the same as the currently processing action
+			bTestIntersection = TRUE;
+		}
+		else if(bMoveAction)
+		{
+			if(bActionPair)
+			{
+				// move action accured and is paired with our action being processed
+				bTestIntersection = TRUE;
+			}
+		}
+		
+	}
+	else if(bClickAction)
+	{
+		// No 'click' action in progress yet.  Test intersection
+		bTestIntersection = TRUE;
+	}
+	
+	// If we aren't going to test the intersection then we don't need to continue processing this click
+	// effectively we have some click actions which we aren't interested in.
+	if(!bTestIntersection)
+		return SyncFalse;
+
 	//	see if ray intersects our object - check all our collision objects to get closest hit.
 	SyncBool Intersection = IsIntersecting(Screen, RenderTarget, RenderNode, Click );
 
-	
 	switch ( Intersection )
 	{
 		//	failed to check - no valid bounds? might have to wait till next frame
@@ -381,25 +348,41 @@ SyncBool TLInput::TInputInterface::ProcessClick(TClick& Click,TLRender::TScreen&
 		}
 		break;
 	
-		//	mouse intersected with shape, but if mouse is up then we end click
+		//	click position intersected with shape - test to see if the click should end
 		case SyncTrue:
 		{
 			if(Click.GetActionValue() == 0.0f)
+			{
 				OnClickEnd( Click );
+
+				// If the click was an actual click, not a move, then set the action being processed ref
+				if(bClickAction)
+					m_ActionBeingProcessedRef.SetInvalid();
+			}
 			else
 			{
 				// This is where we *should* check for being able to hover 'onto' a button
 				// but the movement is classed as clicks along with the actual clicks.... that's gonna have to change! :/
 				//if(AllowClickOnHoverOver())
-					OnClickBegin( Click );
+				OnClickBegin( Click );
+
+				if(bClickAction)
+					m_ActionBeingProcessedRef = Click.GetActionRef();
 			}
 		}
 		break;
 
-		//	mouse might be down, but its not down on the render node, OR, it's released
+			// Click pos does not intersect shape
 		case SyncFalse:
 		{
-			OnClickEnd( Click );
+			//if((bClickAction  && bCurrentAction) || (bMoveAction && bActionPair))
+			if(m_ActionBeingProcessedRef.IsValid())
+			{
+				OnClickEnd( Click );
+				
+				if(bClickAction)
+					m_ActionBeingProcessedRef.SetInvalid();
+			}
 		}
 		break;
 	}

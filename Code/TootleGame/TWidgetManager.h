@@ -5,8 +5,6 @@
 #include <TootleCore/TManager.h>
 #include <TootleInput/TUser.h>
 
-//#define TEST_WIDGET_ONE_ACTION
-
 namespace TLGui
 {
 	class TWidgetManager;
@@ -17,12 +15,60 @@ namespace TLGui
 
 class TLGui::TWidgetManager : public TManager
 {
+private:
+	
+	class TActionRefData
+	{
+	public:
+		TRef	m_ClickActionRef;
+		TRef	m_MoveActionRef;
+	};
 
 public:
 	TWidgetManager(TRefRef ManagerRef) :
 		TManager(ManagerRef)
 	{
 	}
+	
+	
+	Bool			IsClickActionRef(TRefRef ClickActionRef)
+	{
+		for(u32 uIndex = 0; uIndex < m_WidgetActionRefs.GetSize(); uIndex++)
+		{
+			if(m_WidgetActionRefs.ElementAt(uIndex).m_ClickActionRef == ClickActionRef)
+				return TRUE;
+		}
+		return FALSE;
+	}
+	
+	Bool			IsMoveActionRef(TRefRef MoveActionRef)
+	{
+		for(u32 uIndex = 0; uIndex < m_WidgetActionRefs.GetSize(); uIndex++)
+		{
+			if(m_WidgetActionRefs.ElementAt(uIndex).m_MoveActionRef == MoveActionRef)
+				return TRUE;
+		}
+		return FALSE;
+	}
+	
+	Bool			IsActionPair(TRefRef ClickActionRef, TRefRef MoveActionRef)
+	{
+		for(u32 uIndex = 0; uIndex < m_WidgetActionRefs.GetSize(); uIndex++)
+		{
+			if(m_WidgetActionRefs.ElementAt(uIndex).m_ClickActionRef == ClickActionRef)
+			{
+				if(m_WidgetActionRefs.ElementAt(uIndex).m_MoveActionRef == MoveActionRef)
+					return TRUE;
+
+				// Actions will be unique so if we find the click ref 
+				// but move is different then we should not find any further click with the same ref
+				// therefore we can return
+				return FALSE;
+			}
+		}
+		return FALSE;
+	}
+
 
 protected:
 
@@ -40,5 +86,8 @@ protected:
 #endif
 
 	void			MapDeviceActions_Keyboard(TRefRef refDeviceID, TPtr<TLUser::TUser> pUser);
-
+	
+private:
+	
+	TArray<TActionRefData>	m_WidgetActionRefs;
 };

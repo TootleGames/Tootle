@@ -41,9 +41,10 @@ protected:
 	class TClick
 	{
 	public:
-		TClick(const int2& CursorPos,float ActionValue) :
+		TClick(const int2& CursorPos,float ActionValue, TRefRef ActionRef) :
 			m_CursorPos		( CursorPos ),
 			m_ActionValue	( ActionValue ),
+			m_ActionRef		( ActionRef ),
 			m_WorldRayValid	( FALSE )
 		{
 		}	
@@ -59,10 +60,12 @@ protected:
 		FORCEINLINE void					SetWorldRay(const TLMaths::TLine& WorldRay)		{	m_WorldRayValid = TRUE;	m_WorldRay = WorldRay;	}
 		FORCEINLINE const TLMaths::TLine&	GetWorldRay() const								{	return m_WorldRay;	}
 		FORCEINLINE float3					GetWorldPos(float z) const;
+		FORCEINLINE TRefRef					GetActionRef() const							{	return m_ActionRef; }
 
 	protected:
 		int2			m_CursorPos;	
 		float			m_ActionValue;
+		TRef			m_ActionRef;
 		TLMaths::TLine	m_WorldRay;
 		Bool			m_WorldRayValid;
 	};
@@ -89,12 +92,12 @@ protected:
 	virtual void				OnClickBegin(const TClick& Click);
 	virtual void				OnClickEnd(const TClick& Click);
 
-	virtual void				OnCursorMove(const int2& NewCursorPosition)			{}
+	virtual void				OnCursorMove(const int2& NewCursorPosition, TRefRef ActionRef)			{}
 	
 	virtual void				OnCursorHoverOn()	{}
 	virtual void				OnCursorHoverOff()	{}
 	
-	void						QueueClick(const int2& CursorPos,float ActionValue);	//	put a click in the queue
+	void						QueueClick(const int2& CursorPos,float ActionValue, TRefRef ActionRef);	//	put a click in the queue
 
 private:
 	void						ProcessQueuedClicks();	//	go through queued-up (unhandled) clicks and respond to them
@@ -106,6 +109,8 @@ protected:
 
 	TRef						m_ActionOutDown;		//	action to send out when mouse goes down over render node
 	TRef						m_ActionOutUp;			//	action to send out when mouse is relesed/not over render node
+
+	TRef						m_ActionBeingProcessedRef;	// Action in process
 
 private:
 	SyncBool					m_Initialised;			//	have created actions and subscribed to user input

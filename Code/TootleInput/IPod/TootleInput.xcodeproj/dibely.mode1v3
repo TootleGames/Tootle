@@ -282,13 +282,13 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>12</integer>
+									<integer>23</integer>
 									<integer>6</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 69}, {186, 609}}</string>
+							<string>{{0, 15}, {186, 609}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -323,7 +323,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TEffect.h</string>
+								<string>TAction.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -331,18 +331,16 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TEffect.h</string>
+										<string>TAction.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84BBC4AC0FD66C660046E316</string>
+										<string>84E2203A0FF395290081287A</string>
 										<key>history</key>
 										<array>
 											<string>8418FBD50F4EFE5400B956C9</string>
 											<string>845FDE430FBB3E2000F88607</string>
 											<string>84D9DD940FC5957400C7A173</string>
-											<string>848613D60FCD787200C22D6B</string>
-											<string>843CD7F40FD0383E003550FD</string>
 											<string>84BBBFBC0FD47C250046E316</string>
 											<string>84BBBFBD0FD47C250046E316</string>
 											<string>84BBBFC00FD47C250046E316</string>
@@ -356,17 +354,18 @@
 											<string>84BBC3C30FD6632A0046E316</string>
 											<string>84BBC3CA0FD6632A0046E316</string>
 											<string>84BBC46D0FD66C0A0046E316</string>
-											<string>84BBC46E0FD66C0A0046E316</string>
 											<string>84BBC46F0FD66C0A0046E316</string>
-											<string>84BBC4700FD66C0A0046E316</string>
-											<string>84BBC4710FD66C0A0046E316</string>
 											<string>84BBC4720FD66C0A0046E316</string>
 											<string>84BBC4730FD66C0A0046E316</string>
 											<string>84BBC4740FD66C0A0046E316</string>
-											<string>84BBC4750FD66C0A0046E316</string>
 											<string>84BBC4760FD66C0A0046E316</string>
-											<string>84BBC4AA0FD66C660046E316</string>
-											<string>84BBC46C0FD66C0A0046E316</string>
+											<string>847DF8740FD9359B005F9EDC</string>
+											<string>847DF88D0FD9705F005F9EDC</string>
+											<string>84795F080FE663D5000D0EDA</string>
+											<string>84795F090FE663D5000D0EDA</string>
+											<string>84E218F50FF249BA0081287A</string>
+											<string>84E218F60FF249BA0081287A</string>
+											<string>84E220390FF395290081287A</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -384,7 +383,6 @@
 											<string>84C0C5610F6ABE140080B167</string>
 											<string>845FDE440FBB3E2000F88607</string>
 											<string>84D9DC9E0FC5831E00C7A173</string>
-											<string>84D9DCA10FC5831E00C7A173</string>
 											<string>848613E40FCD787200C22D6B</string>
 											<string>848613E50FCD787200C22D6B</string>
 											<string>84BBBFE90FD47C250046E316</string>
@@ -399,51 +397,6 @@
 											<string>84BBC3E40FD6632A0046E316</string>
 											<string>84BBC3E50FD6632A0046E316</string>
 											<string>84BBC4090FD6632A0046E316</string>
-											<string>84BBC4780FD66C0A0046E316</string>
-											<string>84BBC4790FD66C0A0046E316</string>
-											<string>84BBC47A0FD66C0A0046E316</string>
-											<string>84BBC47C0FD66C0A0046E316</string>
-											<string>84BBC47D0FD66C0A0046E316</string>
-											<string>84BBC47E0FD66C0A0046E316</string>
-											<string>84BBC47F0FD66C0A0046E316</string>
-											<string>84BBC4800FD66C0A0046E316</string>
-											<string>84BBC4810FD66C0A0046E316</string>
-											<string>84BBC4820FD66C0A0046E316</string>
-											<string>84BBC4830FD66C0A0046E316</string>
-											<string>84BBC4840FD66C0A0046E316</string>
-											<string>84BBC4850FD66C0A0046E316</string>
-											<string>84BBC4860FD66C0A0046E316</string>
-											<string>84BBC4870FD66C0A0046E316</string>
-											<string>84BBC4880FD66C0A0046E316</string>
-											<string>84BBC4890FD66C0A0046E316</string>
-											<string>84BBC48A0FD66C0A0046E316</string>
-											<string>84BBC48B0FD66C0A0046E316</string>
-											<string>84BBC48C0FD66C0A0046E316</string>
-											<string>84BBC48D0FD66C0A0046E316</string>
-											<string>84BBC48E0FD66C0A0046E316</string>
-											<string>84BBC48F0FD66C0A0046E316</string>
-											<string>84BBC4900FD66C0A0046E316</string>
-											<string>84BBC4910FD66C0A0046E316</string>
-											<string>84BBC4920FD66C0A0046E316</string>
-											<string>84BBC4930FD66C0A0046E316</string>
-											<string>84BBC4940FD66C0A0046E316</string>
-											<string>84BBC4950FD66C0A0046E316</string>
-											<string>84BBC4960FD66C0A0046E316</string>
-											<string>84BBC4970FD66C0A0046E316</string>
-											<string>84BBC4980FD66C0A0046E316</string>
-											<string>84BBC4990FD66C0A0046E316</string>
-											<string>84BBC49A0FD66C0A0046E316</string>
-											<string>84BBC49B0FD66C0A0046E316</string>
-											<string>84BBC49C0FD66C0A0046E316</string>
-											<string>84BBC49D0FD66C0A0046E316</string>
-											<string>84BBC49E0FD66C0A0046E316</string>
-											<string>84BBC49F0FD66C0A0046E316</string>
-											<string>84BBC4A00FD66C0A0046E316</string>
-											<string>84BBC4A10FD66C0A0046E316</string>
-											<string>84BBC4A20FD66C0A0046E316</string>
-											<string>84BBC4A30FD66C0A0046E316</string>
-											<string>84BBC4A40FD66C0A0046E316</string>
-											<string>84BBC4AB0FD66C660046E316</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -501,9 +454,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84BBC4A60FD66C0A0046E316</string>
+				<string>84E2203B0FF395290081287A</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84BBC4A70FD66C0A0046E316</string>
+				<string>84E2203C0FF395290081287A</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -638,7 +591,6 @@
 	<key>WindowOrderList</key>
 	<array>
 		<string>841005E50EF91B5F00542F4A</string>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleInput/IPod/TootleInput.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -719,7 +671,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>841005E50EF91B5F00542F4A</string>
-				<string>84BBC42E0FD6679B0046E316</string>
+				<string>84E2203D0FF395290081287A</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -872,12 +824,14 @@
 							<key>Dock</key>
 							<array>
 								<dict>
+									<key>BecomeActive</key>
+									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>IPodInput.mm</string>
+										<string>TAction.cpp</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -898,8 +852,6 @@
 							<string>359pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -935,8 +887,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>84BBC4170FD666380046E316</string>
-				<string>84BBC4180FD666380046E316</string>
+				<string>84E21F0F0FF383D60081287A</string>
+				<string>84E21F100FF383D60081287A</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>

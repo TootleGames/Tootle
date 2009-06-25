@@ -64,13 +64,13 @@ void TLGui::TWidgetDrag::OnClickEnd(const TLInput::TInputInterface::TClick& Clic
 }
 
 
-void TLGui::TWidgetDrag::OnCursorMove(const int2& NewCursorPosition)
+void TLGui::TWidgetDrag::OnCursorMove(const int2& NewCursorPosition, TRefRef ActionRef)
 {		
 	//	gr: the Move action is dependant on the parent, so assuming mouse is down.
 	//		if that changes (which would be for hover-detection, which would be windows only)
 	//		then we need to work out the button's raw state from this message...
 	float RawValue = 1.f;
-	QueueClick( NewCursorPosition, RawValue );	
+	QueueClick( NewCursorPosition, RawValue, ActionRef );	
 }
 
 

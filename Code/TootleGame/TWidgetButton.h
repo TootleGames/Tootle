@@ -21,7 +21,7 @@ public:
 	void SetAllowClickOnCursorMove(Bool bValue)		{ m_bAllowClickOnCursorMove = bValue; }
 	
 protected:
-	virtual void				OnCursorMove(const int2& NewCursorPosition);
+	virtual void				OnCursorMove(const int2& NewCursorPosition, TRefRef ActionRef);
 	
 private:
 	Bool						AllowClickOnCursorMove()		{ return m_bAllowClickOnCursorMove; }

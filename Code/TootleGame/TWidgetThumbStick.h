@@ -18,7 +18,7 @@ public:
 
 protected:
 	virtual SyncBool		ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode);	//	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
-	virtual void			OnCursorMove(const int2& NewCursorPosition)			{	QueueClick( NewCursorPosition, 1.f );	}
+	virtual void			OnCursorMove(const int2& NewCursorPosition, TRefRef ActionRef)			{	QueueClick( NewCursorPosition, 1.f, ActionRef );	}
 
 protected:
 	float					m_DeadZone;		//	if click is within this deadzone (0..1) then ignore it

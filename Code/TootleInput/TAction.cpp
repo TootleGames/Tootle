@@ -4,7 +4,7 @@
 using namespace TLInput;
 
 #ifdef _DEBUG
-	#define ENABLE_INPUTACTION_TRACE
+	//#define ENABLE_INPUTACTION_TRACE
 #endif
 
 TAction::TAction(TRefRef refActionID)	:
@@ -52,7 +52,10 @@ void TAction::ProcessMessage(TLMessaging::TMessage& Message)
 	if ( Message.GetMessageRef() == TRef_Static(A,c,t,i,o) )
 	{
 		// Check to see if the message coming in is for a parent action
-		ProcessParentActionMessage( Message );
+		if ( m_refParentActions.GetSize() )
+			ProcessParentActionMessage( Message );
+		else
+			ProcessSensorMessage( Message );			
 	}
 	else if ( Message.GetMessageRef() == TRef_Static(O,n,I,n,p) )
 	{
@@ -62,9 +65,6 @@ void TAction::ProcessMessage(TLMessaging::TMessage& Message)
 
 void TAction::ProcessParentActionMessage(TLMessaging::TMessage& Message)
 {
-	if ( !m_refParentActions.GetSize() )
-		return;
-
 	// Get the action ID
 	TRef refActionID;
 	if(!Message.Read(refActionID))

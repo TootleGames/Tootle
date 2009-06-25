@@ -2,7 +2,7 @@
 
 using namespace TLGui;
 
-void TWidgetButton::OnCursorMove(const int2& NewCursorPosition)
+void TWidgetButton::OnCursorMove(const int2& NewCursorPosition, TRefRef ActionRef)
 {
 	if(AllowClickOnCursorMove())
 	{
@@ -11,6 +11,6 @@ void TWidgetButton::OnCursorMove(const int2& NewCursorPosition)
 		//		if that changes (which would be for hover-detection, which would be windows only)
 		//		then we need to work out the button's raw state from this message...
 		float RawValue = 1.f;
-		QueueClick( NewCursorPosition, RawValue );	
+		QueueClick( NewCursorPosition, RawValue, ActionRef );	
 	}
 }
