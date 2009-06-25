@@ -42,16 +42,10 @@ Bool TLMaths::TShapeCapsule2D::ExportData(TBinaryTree& Data) const
 //----------------------------------------------------------
 //	
 //----------------------------------------------------------
-TPtr<TLMaths::TShape> TLMaths::TShapeCapsule2D::Transform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pThis,TPtr<TLMaths::TShape>& pOldShape)
+TPtr<TLMaths::TShape> TLMaths::TShapeCapsule2D::Transform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pOldShape) const
 {
 	if ( !m_Shape.IsValid() )
 		return NULL;
-
-	//	no transform, so just use ourself
-	if ( !Transform.HasAnyTransform() )
-	{
-		return pThis;
-	}
 
 	//	copy and transform capsule
 	TLMaths::TCapsule2D NewCapsule( m_Shape );

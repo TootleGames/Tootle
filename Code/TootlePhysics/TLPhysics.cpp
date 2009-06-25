@@ -4,6 +4,7 @@
 #include <TootleMaths/TShapeBox.h>
 #include <TootleMaths/TShapeSphere.h>
 #include <TootleMaths/TShapePolygon.h>
+#include <TootleMaths/TShapeOblong.h>
 
 //	namespace Box2D
 #include <box2d/include/box2d.h>
@@ -61,6 +62,21 @@ Bool TLPhysics::GetPolygonDefFromShape(b2PolygonDef& PolygonDef,const TLMaths::T
 			const TLMaths::TBox2D& ShapeBox = static_cast<const TLMaths::TShapeBox2D&>( Shape ).GetBox();
 			float2 ShapeBoxCenter = ShapeBox.GetCenter();
 			PolygonDef.SetAsBox( ShapeBox.GetHalfWidth(), ShapeBox.GetHalfHeight(), b2Vec2( ShapeBoxCenter.x, ShapeBoxCenter.y ), 0.f );
+			return TRUE;
+		}
+
+		case TLMaths_ShapeRef(TOblong2D):
+		{
+			const TLMaths::TOblong2D& ShapeBox = static_cast<const TLMaths::TShapeOblong2D&>( Shape ).GetOblong();
+			
+			//	turn into polygon shape
+			const TFixedArray<float2,4>& Corners = ShapeBox.GetBoxCorners();
+		
+			//	set shape vertexes
+			PolygonDef.vertexCount = Corners.GetSize();
+			for ( u32 i=0;	i<Corners.GetSize();	i++ )
+				PolygonDef.vertices[i].Set( Corners[i].x, Corners[i].y );
+
 			return TRUE;
 		}
 

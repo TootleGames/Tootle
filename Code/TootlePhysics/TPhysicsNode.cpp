@@ -553,9 +553,13 @@ TLMaths::TShape* TLPhysics::TPhysicsNode::CalcWorldCollisionShape()
 
 	TLMaths::TTransform& Transform = m_Transform;
 
-	//	transform the collision shape into a new shape
-	m_pWorldCollisionShape = m_pCollisionShape->Transform( Transform, m_pCollisionShape, m_pLastWorldCollisionShape );
+	//	transform the collision shape into a new shape if it needs to
+	if ( Transform.HasAnyTransform() )
+		m_pWorldCollisionShape = m_pCollisionShape->Transform( Transform, m_pLastWorldCollisionShape );
+	else
+		m_pWorldCollisionShape = m_pCollisionShape;
 
+	//	
 	if ( m_pWorldCollisionShape )
 	{
 		//	whether it was used or not, the last world collision shape is now redundant
@@ -824,7 +828,7 @@ Bool TLPhysics::TPhysicsNode::CreateBodyShape()
 	{
 		TLMaths::TTransform ScaleTransform;
 		ScaleTransform.SetScale( GetTransform().GetScale() );
-		pScaledCollisionShape = m_pCollisionShape->Transform( ScaleTransform, m_pCollisionShape, TLPtr::GetNullPtr<TLMaths::TShape>() );
+		pScaledCollisionShape = m_pCollisionShape->Transform( ScaleTransform, TLPtr::GetNullPtr<TLMaths::TShape>() );
 		pCollisionShape = pScaledCollisionShape;
 	}
 

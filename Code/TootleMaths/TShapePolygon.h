@@ -33,7 +33,7 @@ public:
 	void							ReverseContour();								//	reverse contour order
 
 	virtual void					Transform(const TLMaths::TTransform& Transform)	{	Transform.Transform( m_Outline );	}
-	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pThis,TPtr<TShape>& pOldShape);
+	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape) const;
 
 	Bool							Debug_CheckIsConvex() const;					//	debug check that matches box2d's convex polygon check
 

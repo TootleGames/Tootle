@@ -212,9 +212,10 @@ public:
 	const TLMaths::TShapeSphere2D&			GetLocalBoundsSphere2D()						{	CalcLocalBounds( m_BoundsSphere2D.m_LocalShape );		return m_BoundsSphere2D.m_LocalShape;	}
 	FORCEINLINE const TLMaths::TShape*		GetLocalDatum(TRefRef DatumRef);				//	extract a datum from our mesh - unless a special ref is used to get bounds shapes
 	template<class SHAPETYPE>
-	FORCEINLINE const SHAPETYPE*			GetLocalDatum(TRefRef DatumRef);				//	get a datum of a specific type - returns NULL if it doesn't exist or is of a different type
+	FORCEINLINE const SHAPETYPE*			GetLocalDatum(TRefRef DatumRef);						//	get a datum of a specific type - returns NULL if it doesn't exist or is of a different type
 	Bool									GetLocalDatumPos(TRefRef DatumRef,float3& Position);	//	get the position of a datum in local space. returns FALSE if no such datum
-	Bool									GetWorldDatumPos(TRefRef DatumRef,float3& Position);	//	get the position of a datum in local space. returns FALSE if no such datum. Currently will recalc the world transform if it's out of date
+	TPtr<TLMaths::TShape>					GetWorldDatum(TRefRef DatumRef);						//	extract a datum  and transform it into a new world space shape
+	Bool									GetWorldDatumPos(TRefRef DatumRef,float3& Position);	//	get the position of a datum in world space. returns FALSE if no such datum. Currently will recalc the world transform if it's out of date
 	
 	//	gr: not needed? if required uncomment
 	//const TLMaths::TShapeBox&				GetLocalBoundsBox() const					{	return m_BoundsBox.m_LocalShape;	}

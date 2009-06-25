@@ -86,7 +86,7 @@ public:
 	virtual float3					GetCenter() const = 0;						//	get the center of the shape
 
 	virtual void					Transform(const TLMaths::TTransform& Transform)												{	TLDebug_Break("Overload me");	}	//	transform self
-	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pThis,TPtr<TShape>& pOldShape)	{	return NULL;	}	//	transform this collision shape into a world-relative shape
+	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape) const	{	return NULL;	}	//	transform this collision shape into a world-relative shape
 
 	//	simple fast intersection tests which don't need intersection information - default behaviour uses more expensive "GetIntersection" code
 	Bool							HasIntersection(TShape& OtherShape);								//	for the low level type we use our shape refs to work out which one to call... redun

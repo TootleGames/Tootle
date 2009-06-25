@@ -24,7 +24,7 @@ public:
 	virtual float3					GetCenter() const							{	return m_Shape.GetCenter();	}
 
 	virtual void					Transform(const TLMaths::TTransform& Transform)	{	m_Shape.Transform( Transform );	}
-	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pThis,TPtr<TShape>& pOldShape);
+	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape) const;
 	
 	virtual Bool					HasIntersection(TShapeSphere& OtherShape);
 
@@ -54,7 +54,7 @@ public:
 	virtual float3					GetCenter() const							{	return m_Shape.GetCenter();	}
 
 	virtual void					Transform(const TLMaths::TTransform& Transform)	{	m_Shape.Transform( Transform );	}
-	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pThis,TPtr<TShape>& pOldShape);
+	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape) const;
 
 	virtual Bool					HasIntersection(TShapeSphere& OtherShape);
 	virtual Bool					HasIntersection(TShapeSphere2D& OtherShape);

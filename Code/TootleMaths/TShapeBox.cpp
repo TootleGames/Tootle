@@ -59,16 +59,10 @@ Bool TLMaths::TShapeBox::ExportData(TBinaryTree& Data) const
 //----------------------------------------------------------
 //	
 //----------------------------------------------------------
-TPtr<TLMaths::TShape> TLMaths::TShapeBox::Transform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pThis,TPtr<TLMaths::TShape>& pOldShape)
+TPtr<TLMaths::TShape> TLMaths::TShapeBox::Transform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pOldShape) const
 {
 	if ( !m_Shape.IsValid() )
 		return NULL;
-
-	//	no transform, so just use ourself
-	if ( !Transform.HasAnyTransform() )
-	{
-		return pThis;
-	}
 
 	if ( Transform.HasRotation() )
 	{
@@ -175,16 +169,10 @@ Bool TLMaths::TShapeBox::HasIntersection(TLMaths::TShapeMesh& CollisionMesh)
 //----------------------------------------------------------
 //	
 //----------------------------------------------------------
-TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Transform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pThis,TPtr<TLMaths::TShape>& pOldShape)
+TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Transform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pOldShape) const
 {
 	if ( !m_Shape.IsValid() )
 		return NULL;
-
-	//	no transform, so just use ourself
-	if ( !Transform.HasAnyTransform() )
-	{
-		return pThis;
-	}
 
 	//	if the transform contains a rotation then it's a complex transform into an oblong
 	if ( Transform.HasRotation() )

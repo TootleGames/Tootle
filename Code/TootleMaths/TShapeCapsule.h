@@ -32,7 +32,7 @@ public:
 protected:
 	virtual Bool					ImportData(TBinaryTree& Data);
 	virtual Bool					ExportData(TBinaryTree& Data) const;
-	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pThis,TPtr<TShape>& pOldShape);
+	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape) const;
 
 public:
 	TLMaths::TCapsule2D				m_Shape;

@@ -39,14 +39,10 @@ Bool TLMaths::TShapePolygon2D::ExportData(TBinaryTree& Data) const
 }
 
 
-TPtr<TLMaths::TShape> TLMaths::TShapePolygon2D::Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pThis,TPtr<TShape>& pOldShape)
+TPtr<TLMaths::TShape> TLMaths::TShapePolygon2D::Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape) const
 {
 	if ( !IsValid() )
 		return NULL;
-
-	//	no transform, so just use ourself
-	if ( !Transform.HasAnyTransform() )
-		return pThis;
 
 	//	re-use old shape if possible
 	TPtr<TLMaths::TShape> pNewShape;

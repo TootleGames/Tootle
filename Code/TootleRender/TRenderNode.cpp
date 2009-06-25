@@ -941,3 +941,25 @@ Bool TLRender::TRenderNode::GetWorldDatumPos(TRefRef DatumRef,float3& Position)
 	
 	return TRUE;
 }
+
+//---------------------------------------------------------
+//	extract a datum  and transform it into a new world space shape
+//---------------------------------------------------------
+TPtr<TLMaths::TShape> TLRender::TRenderNode::GetWorldDatum(TRefRef DatumRef)
+{
+	//	get local pos of datum first
+	const TLMaths::TShape* pLocalDatum = GetLocalDatum( DatumRef );				//	extract a datum from our mesh - unless a special ref is used to get bounds shapes
+	if ( !pLocalDatum )
+		return NULL;
+
+	//	get the world transform (this will recalc it if out of date)
+	const TLMaths::TTransform& WorldTransform = GetWorldTransform();
+
+	//	transform is out of date so cant use it
+	if ( IsWorldTransformValid() != SyncTrue )
+		return NULL;
+
+	//	transform the datum by world transform into a new datum shape
+	TPtr<TLMaths::TShape> pNewShape = pLocalDatum->Transform( WorldTransform, TLPtr::GetNullPtr<TLMaths::TShape>() );
+	return pNewShape;
+}
