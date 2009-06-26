@@ -285,3 +285,15 @@ Bool TLMaths::TShapeBox2D::HasIntersection(TLMaths::TShapeMesh& CollisionMesh)
 	return FALSE;
 }
 */
+
+
+//----------------------------------------------------------
+//	return a random position inside the shape
+//----------------------------------------------------------
+float3 TLMaths::TShapeBox2D::GetRandomPosition() const
+{
+	float x = TLMaths::Randf( m_Shape.GetLeft(), m_Shape.GetRight() );
+	float y = TLMaths::Randf( m_Shape.GetTop(), m_Shape.GetBottom() );
+
+	return float3( x, y, 0.f );
+}

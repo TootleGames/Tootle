@@ -108,36 +108,7 @@ SyncBool TLAsset::TAsset::Export(TPtr<TLFileSys::TFileAsset>& pAssetFile)
 //----------------------------------------------------
 void TLAsset::TAsset::ImportUnknownData(TBinaryTree& Data)
 {
-	for ( u32 i=0;	i<Data.GetChildren().GetSize();	i++ )
-	{
-		TPtr<TBinaryTree>& pChild = Data.GetChildren().ElementAt(i);
-		
-		//	if read pos isnt reset we can assume we didn't read the data in
-		//	gr: now if any children HAVE been read we don't store this data
-		if ( pChild->IsDataTreeRead() )
-			continue;
-
-		//	gr: does this need to clone?
-		//	save this child
-		m_Data.AddChild( pChild );
-
-		#ifdef _DEBUG
-		TTempString Debug_String("Storing non-imported data in asset ");
-		GetAssetRef().GetString( Debug_String );
-		Debug_String.Append("(");
-		GetAssetType().GetString( Debug_String );
-		Debug_String.Append("): ");
-		pChild->GetDataRef().GetString( Debug_String );
-		if ( pChild->GetDataTypeHint().IsValid() )
-		{
-			Debug_String.Append("(type: ");
-			pChild->GetDataTypeHint().GetString( Debug_String );
-			Debug_String.Append(")");
-		}
-		TLDebug_Print( Debug_String );
-		#endif
-	}
-
+	m_Data.AddUnreadChildren( Data );
 }
 
 

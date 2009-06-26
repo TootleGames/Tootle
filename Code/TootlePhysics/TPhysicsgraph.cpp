@@ -44,8 +44,8 @@ bool TLPhysics::TPhysics_ContactFilter::ShouldCollide(b2Shape* shape1, b2Shape* 
 		return FALSE;
 
 	//	explicit node-no-collision-with-node check
-	TPhysicsNode* pNodeA = (TPhysicsNode*)shape1->GetBody()->GetUserData();
-	TPhysicsNode* pNodeB = (TPhysicsNode*)shape2->GetBody()->GetUserData();
+	TPhysicsNode* pNodeA = TLPhysics::GetPhysicsNodeFromShape( shape1 );
+	TPhysicsNode* pNodeB = TLPhysics::GetPhysicsNodeFromShape( shape2 );
 	if ( !pNodeA->IsAllowedCollisionWithNode( pNodeB->GetNodeRef() ) )
 		return FALSE;
 	if ( !pNodeB->IsAllowedCollisionWithNode( pNodeA->GetNodeRef() ) )
@@ -475,6 +475,79 @@ void TLPhysics::TPhysicsgraph::RemoveJoint(TRefRef NodeA)
 }
 
 
+//-------------------------------------------------
+//	get all the nodes in this shape - for spheres optionally do strict sphere checks - box2D uses Boxes for its query so it can return objects outside the sphere. this does an extra loop to make sure distance is within the radius
+//-------------------------------------------------
+void TLPhysics::TPhysicsgraph::GetNodesInShape(const TLMaths::TSphere2D& Shape,TArray<TLPhysics::TPhysicsNode*>& NearPhysicsNodes,Bool StrictSphere)
+{
+	//	convert to box and do test
+	TLMaths::TBox2D BoxShape;
+	BoxShape.Accumulate( Shape );
+
+	//	get nodes in box
+	GetNodesInShape( BoxShape, NearPhysicsNodes );
+
+	//	get rid of nodes that are outside of the SPHERE (even if they're in the box)
+	if ( StrictSphere )
+	{
+		float RadSq = Shape.GetRadiusSq();
+		for ( s32 n=NearPhysicsNodes.GetLastIndex();	n>=0;	n-- )
+		{
+			//	get distance from center of sphere to node
+			TLPhysics::TPhysicsNode* pPhysicsNode = NearPhysicsNodes[n];
+			float2 NodeToShape( Shape.GetPos() - pPhysicsNode->GetPosition().xy() );
+			float DistSq = NodeToShape.LengthSq();
+
+			//	in box, but outside of sphere's radius
+			if ( DistSq > RadSq )
+				NearPhysicsNodes.RemoveAt( n );
+		}
+	}
+}
+
+
+//-------------------------------------------------
+//	get all the nodes in this shape
+//-------------------------------------------------
+void TLPhysics::TPhysicsgraph::GetNodesInShape(const TLMaths::TBox2D& Shape,TArray<TLPhysics::TPhysicsNode*>& NearPhysicsNodes)
+{
+	//	no world to check for bodies
+	if ( !m_pWorld )
+		return;
+
+	//	make box2D bounds shape
+	b2AABB BoxShape;
+	BoxShape.lowerBound.x = Shape.GetLeft();
+	BoxShape.lowerBound.y = Shape.GetTop();
+	BoxShape.upperBound.x = Shape.GetRight();
+	BoxShape.upperBound.y = Shape.GetBottom();
+
+	//	get a buffer for shapes's found
+	TFixedArray<b2Shape*,100> ShapeBuffer;
+	ShapeBuffer.SetSize( 100 );
+	
+	//	find bodies
+	s32 ShapeCount = m_pWorld->Query( BoxShape, ShapeBuffer.GetData(), ShapeBuffer.GetSize() );
+	
+	//	correct the valid body count on the array (cull unused entries)
+	ShapeBuffer.SetSize( ShapeCount );
+
+	//	get the nodes of each body
+	for ( u32 b=0;	b<ShapeBuffer.GetSize();	b++ )
+	{
+		TPhysicsNode* pNode = TLPhysics::GetPhysicsNodeFromShape( ShapeBuffer[b] );
+		if ( !pNode )
+		{
+			TLDebug_Break("Failed to get node from shape entry from box2d world::query");
+			continue;
+		}
+
+		//	add node entry to list
+		NearPhysicsNodes.Add( pNode );
+	}
+}
+
+
 
 
 //-------------------------------------------------
@@ -496,8 +569,8 @@ TLPhysics::TPhysicsNode* TLPhysics::TPhysicsNodeFactory::CreateObject(TRefRef In
 void TLPhysics::TPhysics_ContactListener::Add(const b2ContactPoint* point)
 {
 	//	get physics node for shape 1
-	TPhysicsNode* pNodeA = (TPhysicsNode*)point->shape1->GetBody()->GetUserData();
-	TPhysicsNode* pNodeB = (TPhysicsNode*)point->shape2->GetBody()->GetUserData();
+	TPhysicsNode* pNodeA = TLPhysics::GetPhysicsNodeFromShape( point->shape1 );
+	TPhysicsNode* pNodeB = TLPhysics::GetPhysicsNodeFromShape( point->shape2 );
 
 	/*
 	TTempString Debug_String("Collison between ");
@@ -534,3 +607,4 @@ void TLPhysics::TPhysics_ContactListener::Add(const b2ContactPoint* point)
 
 
 }
+

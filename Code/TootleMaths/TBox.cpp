@@ -1051,6 +1051,23 @@ void TLMaths::TBox2D::Accumulate(const TBox& Box)
 
 
 //-------------------------------------------------
+//	accumulate sphere
+//-------------------------------------------------
+void TLMaths::TBox2D::Accumulate(const TSphere2D& Sphere)
+{
+	//	gr: quickly done, not sure if this is accurate
+	float SphereRadius = Sphere.GetRadius();
+	const float2& SpherePos = Sphere.GetPos();
+	float2 Min( SpherePos.x - SphereRadius, SpherePos.y - SphereRadius );
+	float2 Max( SpherePos.x + SphereRadius, SpherePos.y + SphereRadius );
+
+	//	accumulate this sphere min/max
+	Accumulate( Min );
+	Accumulate( Max );
+}
+
+
+//-------------------------------------------------
 //	transform box - this transforms each corner, then gets
 //	a new/min max and hence a new box
 //-------------------------------------------------

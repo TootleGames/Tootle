@@ -310,3 +310,22 @@ Bool TLMaths::TShapeSphere2D::HasIntersection(TLMaths::TShapeBox2D& CollisionSha
 {	
 	return CollisionShape.GetBox().GetIntersection( this->GetSphere() );
 }
+
+
+//----------------------------------------------------------
+//	return a random position inside the shape
+//----------------------------------------------------------
+float3 TLMaths::TShapeSphere2D::GetRandomPosition() const 
+{
+	//	random angle (get xy) mult by random length (2 rands, 1cos, 1sin)
+
+	//	get random length
+	float2 Direction( 0.f, TLMaths::Randf( m_Shape.GetRadius() ) );
+
+	//	rotate randomly
+	TLMaths::TAngle RandAngle( TLMaths::Randf( 360.f ) );
+	Direction.Rotate( RandAngle.GetRadians() );
+
+	return Direction.xyz( 0.f );
+}
+

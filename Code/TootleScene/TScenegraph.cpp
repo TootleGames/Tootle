@@ -3,14 +3,12 @@
 #include <TootleCore/TLTime.h>
 
 
-////////////////////////////////////////////////////
 // include files for the node factory
-////////////////////////////////////////////////////
 #include "TSceneNode_Camera.h"
 #include "TSceneNode_Timeline.h"
 #include "TSceneNode_Emitter.h"
+#include "TSceneNode_Object.h"
 #include "TSchemeNode.h"
-////////////////////////////////////////////////////
 
 
 namespace TLScene
@@ -36,6 +34,9 @@ TSceneNode* TSceneNodeFactory::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 
 	if(TypeRef == "Scheme")
 		return new TSceneNode_Scheme(InstanceRef,TypeRef);
+
+	if(TypeRef == "object")
+		return new TSceneNode_Object(InstanceRef,TypeRef);
 
 	return NULL;
 }

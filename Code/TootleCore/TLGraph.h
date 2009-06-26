@@ -335,8 +335,7 @@ void TLGraph::TGraphNode<T>::Update(float Timestep)
 template <class T>
 void TLGraph::TGraphNode<T>::Initialise(TLMessaging::TMessage& Message)		
 {
-	//	gr: consider this to initialise reflection...
-	//	GetNodeData().CopyTree( Message.GetData() );
+	TGraphNodeBase::Initialise( Message );
 }
 
 

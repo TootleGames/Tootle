@@ -251,3 +251,49 @@ Bool TBinaryTree::IsDataTreeRead() const
 	return FALSE;
 }
 
+
+//------------------------------------------------------
+//	add children from Data to this when unread
+//------------------------------------------------------
+Bool TBinaryTree::AddUnreadChildren(TBinaryTree& Data)
+{
+	Bool Changed = FALSE;
+
+	//	loop through each child to see whether to add it or not
+	for ( u32 i=0;	i<Data.GetChildren().GetSize();	i++ )
+	{
+		TPtr<TBinaryTree> pChild = Data.GetChildren().ElementAt(i);
+		
+		//	if read pos isnt reset we can assume we didn't read the data in
+		//	gr: now if any children HAVE been read we don't store this data
+		if ( pChild->IsDataTreeRead() )
+			continue;
+
+		//	gr: does this need to clone? (in assets)
+		//	save this child
+		AddChild( pChild );
+
+	
+	#ifdef _DEBUG
+		TTempString Debug_String("Storing unread child data (");
+		pChild->GetDataRef().GetString( Debug_String );
+		Debug_String.Append(") from data (");
+		Data.GetDataRef().GetString( Debug_String );
+		Debug_String.Append(") into this data (");
+		this->GetDataRef().GetString( Debug_String );
+		Debug_String.Append("): ");
+		pChild->GetDataRef().GetString( Debug_String );
+		if ( pChild->GetDataTypeHint().IsValid() )
+		{
+			Debug_String.Append("(type: ");
+			pChild->GetDataTypeHint().GetString( Debug_String );
+			Debug_String.Append(")");
+		}
+		TLDebug_Print( Debug_String );
+	#endif
+
+		Changed = TRUE;
+	}
+
+	return Changed;
+}

@@ -3,6 +3,7 @@
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/TBinaryTree.h>
 #include <TootleMaths/TShape.h>
+#include <box2d/include/box2d.h>
 
 
 
@@ -26,21 +27,19 @@ Rubber on Concrete (wet)					0.25	0.3
 
 */
 
-//	box2D forward declaration
-//	namespace Box2D
-struct b2PolygonDef;
-struct b2CircleDef;
-class b2Shape;
-
 
 namespace TLPhysics
 {
 	class TCollisionInfo;		//	collision info which is sent to subscribers - merge with intersection info?
 	class TPhysicsNode;
 
-	Bool					GetCircleDefFromShape(b2CircleDef& PolygonDef,const TLMaths::TShape& Shape);		//	get a box2D polygon [definition] shape from a tootle shape
-	Bool					GetPolygonDefFromShape(b2PolygonDef& PolygonDef,const TLMaths::TShape& Shape);		//	get a box2D polygon [definition] shape from a tootle shape
-	TPtr<TLMaths::TShape>	GetShapeFromBodyShape(b2Shape& BodyShape,const TLMaths::TTransform& Transform);	//	create a transformed shape from a body shape
+	Bool						GetCircleDefFromShape(b2CircleDef& PolygonDef,const TLMaths::TShape& Shape);		//	get a box2D polygon [definition] shape from a tootle shape
+	Bool						GetPolygonDefFromShape(b2PolygonDef& PolygonDef,const TLMaths::TShape& Shape);		//	get a box2D polygon [definition] shape from a tootle shape
+	TPtr<TLMaths::TShape>		GetShapeFromBodyShape(b2Shape& BodyShape,const TLMaths::TTransform& Transform);	//	create a transformed shape from a body shape
+
+	FORCEINLINE TPhysicsNode*	GetPhysicsNodeFromBody(b2Body* pBody)		{	return pBody ? (TLPhysics::TPhysicsNode*)pBody->GetUserData() : NULL;	}	//	in case the user-data usage of the body changes, use this to access a physics node from a body
+	FORCEINLINE TPhysicsNode*	GetPhysicsNodeFromShape(b2Shape* pShape)	{	return pShape ? GetPhysicsNodeFromBody( pShape->GetBody() ) : NULL;	}
+
 
 	/*
 	// Force

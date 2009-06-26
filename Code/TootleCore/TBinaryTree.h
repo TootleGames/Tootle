@@ -31,7 +31,9 @@ public:
 	FORCEINLINE u32				GetChildren(TRefRef DataRef,TPtrArray<TBinaryTree>& Children)	{	return m_Children.FindAll( Children, DataRef );	}	//	get all the sections with this ref into an array
 	FORCEINLINE u32				GetChildCount() const					{	return GetChildren().GetSize();	}
 	TPtr<TBinaryTree>&			AddChild(TRefRef ChildRef);				//	add new child
-	TPtr<TBinaryTree>&			AddChild(TPtr<TBinaryTree>& pChild)		{	s32 Index = m_Children.Add( pChild );	return (Index == -1) ? TLPtr::GetNullPtr<TBinaryTree>() : m_Children.ElementAt(Index);	}	//	add child
+	TPtr<TBinaryTree>&			AddChild(TPtr<TBinaryTree>& pChild)			{	s32 Index = m_Children.Add( pChild );	return (Index == -1) ? TLPtr::GetNullPtr<TBinaryTree>() : m_Children.ElementAt(Index);	}	//	add child
+	//gr: do not implement, causes too many ambiguities. In your client code convert to non const TPtr.......
+	//TPtr<TBinaryTree>&			AddChild(const TPtr<TBinaryTree>& pChild)	{	TPtr<TBinaryTree> pNonConstChild = pChild;	return AddChild( pNonConstChild );	}
 	Bool						RemoveChild(TRefRef ChildRef)			{	return m_Children.Remove( ChildRef );	}
 
 	void						Empty(Bool Dealloc=FALSE)						{	TBinary::Empty(Dealloc);	m_Children.Empty(Dealloc);	}	//	delete tree
@@ -42,6 +44,7 @@ public:
 	FORCEINLINE Bool			CopyDataTree(const TPtr<TBinaryTree>& pData,Bool OverwriteDataRef=TRUE)	{	const TBinaryTree* pBinaryTree = pData.GetObject();	return pBinaryTree ? CopyDataTree( *pBinaryTree, OverwriteDataRef ) : FALSE;	}
 	Bool						ReferenceDataTree(const TBinaryTree& Data,Bool OverwriteDataRef=TRUE);			//	copy the tree by re-using the TPtr's to the data. The data is re-used and saves us allocating and copying data but without fear of deletion
 	FORCEINLINE Bool			ReferenceDataTree(const TPtr<TBinaryTree>& pData,Bool OverwriteDataRef=TRUE)	{	const TBinaryTree* pBinaryTree = pData.GetObject();	return pBinaryTree ? ReferenceDataTree( *pBinaryTree, OverwriteDataRef ) : FALSE;	}
+	Bool						AddUnreadChildren(TBinaryTree& Data);			//	add children from Data to this when unread
 	Bool						IsDataTreeRead() const;							//	traverse tree to see if any data has been read (read pos is valid and not -1)
 
 	template<class ARRAYTYPE> 

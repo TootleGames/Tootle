@@ -10,7 +10,6 @@
 #include <TootleCore/TLGraph.h>
 #include "TLPhysics.h"
 #include "TPhysicsNode.h"
-#include <box2d/include/box2d.h>
 
 
 namespace TLPhysics
@@ -85,7 +84,10 @@ public:
 	
 	void							SetRootCollisionZone(TPtr<TLMaths::TQuadTreeZone>& pZone,Bool AllowSleep=TRUE);	//	set a new root collision zone. Allow sleep to speed up idle objects, BUT without gravity, joints don't update/constrain properly... looking for a good soluition to this
 	TPtr<TLMaths::TQuadTreeZone>&	GetRootCollisionZone()										{	return m_pRootCollisionZone;	}
-	
+
+	void					GetNodesInShape(const TLMaths::TSphere2D& Shape,TArray<TLPhysics::TPhysicsNode*>& NearPhysicsNodes,Bool StrictSphere);	//	get all the nodes in this shape - for spheres optionally do strict sphere checks - box2D uses Boxes for its query so it can return objects outside the sphere. this does an extra loop to make sure distance is within the radius
+	void					GetNodesInShape(const TLMaths::TBox2D& Shape,TArray<TLPhysics::TPhysicsNode*>& NearPhysicsNodes);						//	get all the nodes in this shape
+
 	FORCEINLINE TPtr<b2World>&		GetWorld()						{	return m_pWorld;	}				//	box2d's world
 	FORCEINLINE void				AddJoint(const TJoint& Joint)	{	m_NodeJointQueue.Add( Joint );	};	//	add a joint to be created on next update
 	FORCEINLINE void				RefilterShape(b2Shape* pShape)	{	m_RefilterQueue.Add( pShape );	}	//	add to list of shapes that need refiltering
@@ -118,7 +120,6 @@ protected:
 	SyncBool				CreateJoint(const TJoint& Joint);		//	create joint. if Wait then we're waiting for a node to be created still
 	void					RemoveJoint(TRefRef NodeA,TRefRef NodeB);	//	remove joint between these two nodes
 	void					RemoveJoint(TRefRef NodeA);				//	remove all joints involving this node
-
 
 public:
 	u32						m_Debug_CollisionTestCount;				//	collision test count

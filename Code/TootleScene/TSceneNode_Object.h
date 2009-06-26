@@ -48,6 +48,7 @@ public:
 	TPtr<TLRender::TRenderNode>&	GetRenderNode(Bool InitialisedOnly=FALSE);
 
 protected:
+	virtual void					Initialise(TLMessaging::TMessage& Message);
 	virtual void					ProcessMessage(TLMessaging::TMessage& Message);
 
 	virtual Bool					CreatePhysicsNode(TRefRef PhysicsNodeType=TRef(),TLMessaging::TMessage* pInitMessage=NULL);

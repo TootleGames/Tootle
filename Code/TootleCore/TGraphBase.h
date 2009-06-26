@@ -77,14 +77,15 @@ public:
 	FORCEINLINE Bool			IsParentKindOf(TRefRef TypeRef) const	{	return GetParentBase() ? GetParentBase()->IsKindOf(TypeRef) : FALSE;	}
 	
 	virtual const TBinaryTree&	GetNodeData(Bool UpdateData)			{	return m_NodeData;	}	//	overload this to handle UpdateData for specific nodes
+	virtual TBinaryTree&		GetNodeData()							{	return m_NodeData;	}	//	overload this to handle UpdateData for specific nodes
 
 protected:
-	FORCEINLINE void				SetNodeRef(TRefRef NodeRef)			{	m_NodeRef = NodeRef;	m_NodeRef.GetString( m_Debug_NodeRefString );	}
+	virtual void					Initialise(TLMessaging::TMessage& Message);	
 
 	virtual void					GetChildrenBase(TArray<TGraphNodeBase*>& ChildNodes) = 0;
 	virtual const TGraphNodeBase*	GetParentBase() const = 0;
 	
-	virtual TBinaryTree&			GetNodeData()						{	return m_NodeData;	}	//	overload this to handle UpdateData for specific nodes
+	FORCEINLINE void				SetNodeRef(TRefRef NodeRef)			{	m_NodeRef = NodeRef;	m_NodeRef.GetString( m_Debug_NodeRefString );	}
 
 protected:
 	TRef					m_NodeRef;			//	Node unique ID

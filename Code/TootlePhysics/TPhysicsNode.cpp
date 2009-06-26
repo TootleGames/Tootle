@@ -761,6 +761,7 @@ Bool TLPhysics::TPhysicsNode::CreateBody(b2World& World)
 		BodyDef.fixedRotation = TRUE;
 
 	//	set user data as a pointer back to self (could use ref...)
+	//	if this changes, change TLPhysics::GetPhysicsNodeFromBody()
 	BodyDef.userData = this;
 
 	BodyDef.linearDamping = m_Damping;

@@ -52,6 +52,7 @@ public:
 	virtual Bool					IsValid() const								{	return m_Shape.IsValid();	}
 	virtual void					SetInvalid()								{	return m_Shape.SetInvalid();	}
 	virtual float3					GetCenter() const							{	return m_Shape.GetCenter();	}
+	virtual float3					GetRandomPosition() const;					//	return a random position inside the shape
 
 	virtual void					Transform(const TLMaths::TTransform& Transform)	{	m_Shape.Transform( Transform );	}
 	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape) const;

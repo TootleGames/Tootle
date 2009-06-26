@@ -84,6 +84,7 @@ public:
 	virtual Bool					IsValid() const = 0;						//	check if the shape is valid
 	virtual void					SetInvalid() = 0;							//	set shape as invalid
 	virtual float3					GetCenter() const = 0;						//	get the center of the shape
+	virtual float3					GetRandomPosition() const					{	return GetCenter();	}	//	return a random position inside the shape
 
 	virtual void					Transform(const TLMaths::TTransform& Transform)												{	TLDebug_Break("Overload me");	}	//	transform self
 	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape) const	{	return NULL;	}	//	transform this collision shape into a world-relative shape

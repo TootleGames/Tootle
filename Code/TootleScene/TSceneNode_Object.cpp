@@ -60,6 +60,103 @@ void TSceneNode_Object::DeleteRenderNode()
 }
 
 
+void TLScene::TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
+{
+	//	do super init first
+	TLScene::TSceneNode_Transform::Initialise( Message );
+
+	//	create a render node if a mesh ref or specific render node type exists
+	Bool DoCreateRenderNode = FALSE;
+	TRef MeshRef,RenderNodeType;
+	DoCreateRenderNode |= Message.ImportData("Meshref", MeshRef);
+	DoCreateRenderNode |= Message.ImportData("RNType", RenderNodeType);
+
+	if ( DoCreateRenderNode )
+	{
+		TRef ParentRenderNode;
+		Message.ImportData("RNParent", ParentRenderNode );
+		//	re-use the message to create the render node
+		CreateRenderNode( ParentRenderNode, RenderNodeType, &Message );
+	}
+
+
+	//	create a physics node if a collision shape exists
+
+	//	pull out collision shape from data if specified
+	TPtr<TBinaryTree> pCollisionShapeData = Message.GetChild("colshape");
+
+	//	if collision shape data exists, we re-use it
+	//	no collision shape data, look for a datum
+	if ( !pCollisionShapeData )
+	{
+		TRef CollisionShapeDatum;
+		if ( Message.ImportData("coldatum", CollisionShapeDatum ) )
+		{
+			TPtr<TLMaths::TShape> pCollisionShape;
+			
+			//	get a datum from the mesh for the collision shape
+			if ( MeshRef.IsValid() )
+			{
+				TLAsset::TMesh* pMesh = TLAsset::LoadAsset( MeshRef, TRUE, "Mesh" ).GetObject<TLAsset::TMesh>();
+				if ( pMesh )
+				{
+					pCollisionShape = pMesh->GetDatum( CollisionShapeDatum );
+					if ( !pCollisionShape )
+					{
+						TTempString Debug_String("Collision datum (");
+						CollisionShapeDatum.GetString( Debug_String );
+						Debug_String.Append(") is missing from mesh ");
+						MeshRef.GetString( Debug_String );
+						TLDebug_Break( Debug_String );
+					}
+				}
+				else
+				{
+					TTempString Debug_String("Collision datum specified (");
+					CollisionShapeDatum.GetString( Debug_String );
+					Debug_String.Append(") but missing mesh ");
+					MeshRef.GetString( Debug_String );
+					TLDebug_Break( Debug_String );
+				}
+			}
+			else
+			{
+				TTempString Debug_String("Collision datum specified (");
+				CollisionShapeDatum.GetString( Debug_String );
+				Debug_String.Append(") to create a physics node on a Scene Object but no mesh specified");
+				TLDebug_Break( Debug_String );
+			}
+
+			//	if we got a shape, then export it to data we're going to use
+			if ( pCollisionShape )
+			{
+				pCollisionShapeData = Message.AddChild("colshape");
+				if ( !TLMaths::ExportShapeData( pCollisionShapeData, *pCollisionShape, FALSE ) )
+				{
+					//	failed - remove that data again
+					Message.RemoveChild("Colshape");
+					pCollisionShapeData = NULL;
+				}
+			}
+		}
+	}
+
+	//	pull out physics node type if specified
+	TRef PhysicsNodeType;
+	Message.ImportData("PNType", PhysicsNodeType );
+
+	//	if we did get a valid collision shape or a specific node type then create the physics node
+	if ( pCollisionShapeData || PhysicsNodeType.IsValid() )
+	{
+		//	re-use the message to create the physics node
+		CreatePhysicsNode( PhysicsNodeType, &Message );
+	}
+
+
+}
+
+
+
 void TSceneNode_Object::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	//	gr: apply change from our physics node ONLY

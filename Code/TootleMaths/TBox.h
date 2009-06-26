@@ -141,7 +141,7 @@ public:
 
 	void			Accumulate(const TBox2D& Box);				//	accumulate other box. copies other box if this is invalid
 	void			Accumulate(const TBox& Box);				//	accumulate other box. copies other box if this is invalid
-//	void			Accumulate(const TSphere& Sphere);			//	accumulate sphere
+	void			Accumulate(const TSphere2D& Sphere);		//	accumulate sphere
 	void			Accumulate(const float2& Point);			//	grow the box to these extents
 	void			Accumulate(const float3& Point)				{	Accumulate( Point.xy() );	}
 	void			Accumulate(const TArray<float2>& Points);	//	get the extents of all these points

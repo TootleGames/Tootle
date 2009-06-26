@@ -281,3 +281,21 @@ TLGraph::TGraphNodeBase::TGraphNodeBase(TRefRef NodeRef,TRefRef NodeTypeRef) :
 }
 
 
+
+//------------------------------------------------------------
+//	 base initialise for a node
+//------------------------------------------------------------
+void TLGraph::TGraphNodeBase::Initialise(TLMessaging::TMessage& Message)
+{
+	//	gr: initialise reflection and arbitry data not processed by overloaded Initialise's
+	//	this probably ends up saving redundant data, but the idea is 
+	//	a) this data will be updated when reflection/serialising requests data
+	//	b) maybe one day we stop having members on classes and use this named data anyway...
+	//	problem here would be adding duplicate entries that we don't want... but that's why we only use unread data
+
+	//	main issue with this is if the base initialise (this) is called BEFORE any processing on a node's side which would
+	//	end up storing data that WILL be read, even if it hasn't been read yet
+
+	GetNodeData().AddUnreadChildren( Message );
+}
+
