@@ -29,7 +29,9 @@ protected:
 	virtual void 			Update(float Timestep);					
 	virtual void			Shutdown();							
 
-	virtual void		ProcessMessage(TLMessaging::TMessage& Message);
+	virtual void			ProcessMessage(TLMessaging::TMessage& Message);
+
+	virtual void			OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode);
 
 
 private:
@@ -37,5 +39,6 @@ private:
 	void				DeleteTimelineInstance();
 
 private:
+	TRef								m_TimelineAssetRef;
 	TLAnimation::TTimelineInstance*		m_pTimelineInstance;
 };

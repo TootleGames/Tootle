@@ -654,13 +654,13 @@ void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 	{
 		Bool TransformChanged = FALSE;
 
-		if ( Message.ImportData( TRef_Static(T,r,a,n,s), m_Transform.GetTranslate() ) == SyncTrue )
+		if ( Message.ImportData( TRef_Static(T,r,a,n,s), m_Transform.GetTranslate() ) )
 		{
 			m_Transform.SetTranslateValid();
 			TransformChanged = TRUE;
 		}
 
-		if ( Message.ImportData( TRef_Static(S,c,a,l,e), m_Transform.GetScale() ) == SyncTrue )
+		if ( Message.ImportData( TRef_Static(S,c,a,l,e), m_Transform.GetScale() ) )
 		{
 			m_Transform.SetScaleValid();
 			TransformChanged = TRUE;

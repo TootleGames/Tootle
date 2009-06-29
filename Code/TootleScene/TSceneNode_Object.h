@@ -28,7 +28,6 @@ public:
 	virtual Bool	HasRender()		{ return TRUE; }
 	virtual Bool	HasPhysics()	{ return TRUE; }
 
-	virtual void	Shutdown();
 
 	//	explicit changes change the physics nodes transform
 	virtual void					SetTransform(const TLMaths::TTransform& Transform);
@@ -49,6 +48,8 @@ public:
 
 protected:
 	virtual void					Initialise(TLMessaging::TMessage& Message);
+	virtual void					Shutdown();
+
 	virtual void					ProcessMessage(TLMessaging::TMessage& Message);
 
 	virtual Bool					CreatePhysicsNode(TRefRef PhysicsNodeType=TRef(),TLMessaging::TMessage* pInitMessage=NULL);

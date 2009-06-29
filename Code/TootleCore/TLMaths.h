@@ -313,6 +313,7 @@ public:
 
 	// Euler angles
 	void					SetEuler(const float& Pitch, const float& Yaw, const float& Roll);	//	radians
+	FORCEINLINE void		SetEuler(const float3& vEuler)	{ SetEuler(vEuler.x, vEuler.y, vEuler.z); }
 	float3					GetEuler() const;
 
 	// Axis and angle

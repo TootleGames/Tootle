@@ -6,6 +6,9 @@ using namespace TLScene;
 
 void TSceneNode_Timeline::Initialise(TLMessaging::TMessage& Message)
 {
+	// Import the timeline asset ref
+	Message.ImportData("Timeline", m_TimelineAssetRef);
+
 	TSceneNode_Object::Initialise(Message);
 }
 
@@ -75,10 +78,23 @@ void TSceneNode_Timeline::CreateTimelineInstance()
 	if(m_pTimelineInstance != NULL)
 		return;
 
-	// Create the timeline instance
-	TRef m_TimelineAssetRef;
-	m_pTimelineInstance = new TLAnimation::TTimelineInstance(m_TimelineAssetRef);
+	if(m_TimelineAssetRef.IsValid())
+	{
+		// Create the timeline instance
+		m_pTimelineInstance = new TLAnimation::TTimelineInstance(m_TimelineAssetRef);
 
+		// Bind the timeline instance to the render node and init
+		if(m_pTimelineInstance)
+		{
+			m_pTimelineInstance->BindTo(GetRenderNodeRef());
+
+			TLMessaging::TMessage Message(TLCore::InitialiseRef);
+			Message.ExportData("Time", 0.0f);
+			m_pTimelineInstance->Initialise(Message);
+		}
+	}
+	else
+		TLDebug_Print("No timeline specified for timeline node");
 }
 
 // Delete the timeline instance
@@ -89,4 +105,17 @@ void TSceneNode_Timeline::DeleteTimelineInstance()
 		delete m_pTimelineInstance;
 		m_pTimelineInstance = NULL;
 	}
+}
+
+
+void TSceneNode_Timeline::OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode)
+{
+	//TODO: May want to have some control flags to determine if the timeline 
+	// starts as soon as the render node is added or not
+	if(m_TimelineAssetRef.IsValid())
+	{
+		CreateTimelineInstance();
+	}
+
+	TSceneNode_Object::OnRenderNodeAdded(pRenderNode);
 }

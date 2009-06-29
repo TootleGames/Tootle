@@ -19,6 +19,46 @@ TSceneNode_Object::~TSceneNode_Object()
 {
 }
 
+/*
+// [29/06/09] Duane's version - changed because Graham added the same thing at the same time...
+//			  Leaving code in case I miss something after commit.  Will remove if everything works as before on
+//			  all platforms.
+void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
+{	
+	// Super class intialise
+	TSceneNode_Transform::Initialise(Message);
+	
+	// Check for a render node data sent to node.  Use the data to 
+	// automatically setup a render node
+	TPtr<TBinaryTree>& pRenderData = Message.GetChild("RenderData");
+
+	if(pRenderData.IsValid())
+	{
+		TRef ParentRenderNodeRef;
+		TRef RenderNodeTypeRef;
+
+		pRenderData->ImportData("Parent", ParentRenderNodeRef);
+		pRenderData->ImportData("Type", RenderNodeTypeRef);
+
+
+		// Import the render node init message data
+		TLMessaging::TMessage RenderNodeInitMessage(TLCore::InitialiseRef);
+		TLMessaging::TMessage* pMessage = NULL;
+
+		TPtr<TBinaryTree>& pRenderInitMessageData = pRenderData->GetChild("Message");
+		
+		if(pRenderInitMessageData)
+		{
+			RenderNodeInitMessage.CopyDataTree(*pRenderInitMessageData, FALSE);
+			pMessage = &RenderNodeInitMessage;
+		}
+
+		// Create Render node
+		CreateRenderNode(ParentRenderNodeRef, RenderNodeTypeRef, pMessage);
+	}
+}
+*/
+
 
 void TSceneNode_Object::Shutdown()
 {
@@ -60,7 +100,7 @@ void TSceneNode_Object::DeleteRenderNode()
 }
 
 
-void TLScene::TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
+void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 {
 	//	do super init first
 	TLScene::TSceneNode_Transform::Initialise( Message );
@@ -151,8 +191,6 @@ void TLScene::TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 		//	re-use the message to create the physics node
 		CreatePhysicsNode( PhysicsNodeType, &Message );
 	}
-
-
 	//	enable/disable things
 	TPtr<TBinaryTree>& pEnableData = Message.GetChild("Enable");
 	if ( pEnableData )
