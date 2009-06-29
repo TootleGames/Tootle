@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2006-2007 Erin Catto http://www.gphysics.com
+* Copyright (c) 2006-2009 Erin Catto http://www.gphysics.com
 *
 * This software is provided 'as-is', without any express or implied
 * warranty.  In no event will the authors be held liable for any damages
@@ -21,6 +21,8 @@
 
 #include "Box2D.h"
 #include "Render.h"
+
+#include <stdlib.h>
 
 class Test;
 struct Settings;
@@ -68,7 +70,7 @@ struct Settings
 		drawFrictionForces(0),
 		drawCOMs(0),
 		enableWarmStarting(1),
-		enableTOI(1),
+		enableContinuous(1),
 		pause(0),
 		singleStep(0)
 		{}
@@ -90,7 +92,7 @@ struct Settings
 	int32 drawCOMs;
 	int32 drawStats;
 	int32 enableWarmStarting;
-	int32 enableTOI;
+	int32 enableContinuous;
 	int32 pause;
 	int32 singleStep;
 };
@@ -108,7 +110,7 @@ extern TestEntry g_testEntries[];
 class DestructionListener : public b2DestructionListener
 {
 public:
-	void SayGoodbye(b2Shape* shape) { B2_NOT_USED(shape); }
+	void SayGoodbye(b2Fixture* fixture) { B2_NOT_USED(fixture); }
 	void SayGoodbye(b2Joint* joint);
 
 	Test* test;
@@ -124,35 +126,16 @@ public:
 
 const int32 k_maxContactPoints = 2048;
 
-class ContactListener : public b2ContactListener
-{
-public:
-	void Add(const b2ContactPoint* point);
-	void Persist(const b2ContactPoint* point);
-	void Remove(const b2ContactPoint* point);
-
-	Test* test;
-};
-
-enum ContactState
-{
-	e_contactAdded,
-	e_contactPersisted,
-	e_contactRemoved,
-};
-
 struct ContactPoint
 {
-	b2Shape* shape1;
-	b2Shape* shape2;
+	b2Fixture* fixtureA;
+	b2Fixture* fixtureB;
 	b2Vec2 normal;
 	b2Vec2 position;
-	b2Vec2 velocity;
-	b2ContactID id;
-	ContactState state;
+	b2PointState state;
 };
 
-class Test
+class Test : public b2ContactListener
 {
 public:
 
@@ -177,7 +160,16 @@ public:
 	virtual void JointDestroyed(b2Joint* joint) { B2_NOT_USED(joint); }
 	virtual void BoundaryViolated(b2Body* body) { B2_NOT_USED(body); }
 
-    
+	// Callbacks for derived classes.
+	virtual void BeginContact(b2Contact* contact) { B2_NOT_USED(contact); }
+	virtual void EndContact(b2Contact* contact) { B2_NOT_USED(contact); }
+	virtual void PreSolve(b2Contact* contact, const b2Manifold* oldManifold);
+	virtual void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse)
+	{
+		B2_NOT_USED(contact);
+		B2_NOT_USED(impulse);
+	}
+
 protected:
 	friend class DestructionListener;
 	friend class BoundaryListener;
@@ -188,7 +180,6 @@ protected:
 	int32 m_pointCount;
 	DestructionListener m_destructionListener;
 	BoundaryListener m_boundaryListener;
-	ContactListener m_contactListener;
 	DebugDraw m_debugDraw;
 	int32 m_textLine;
 	b2World* m_world;

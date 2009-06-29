@@ -32,10 +32,10 @@ namespace TLPhysics
 //-----------------------------------------------------
 //	custom box2D contact filterer
 //-----------------------------------------------------
-bool TLPhysics::TPhysics_ContactFilter::ShouldCollide(b2Shape* shape1, b2Shape* shape2)
+bool TLPhysics::TPhysics_ContactFilter::ShouldCollide(b2Fixture* fixtureA, b2Fixture* fixtureB)
 {
-	const b2FilterData& filter1 = shape1->GetFilterData();
-	const b2FilterData& filter2 = shape2->GetFilterData();
+	const b2FilterData& filter1 = fixtureA->GetFilterData();
+	const b2FilterData& filter2 = fixtureB->GetFilterData();
 
 	//	increment collision test counter
 	TLCounter::Debug_Increment( TRef_Static(C,o,T,s,t) );
@@ -45,8 +45,8 @@ bool TLPhysics::TPhysics_ContactFilter::ShouldCollide(b2Shape* shape1, b2Shape* 
 		return FALSE;
 
 	//	explicit node-no-collision-with-node check
-	TPhysicsNode* pNodeA = TLPhysics::GetPhysicsNodeFromShape( shape1 );
-	TPhysicsNode* pNodeB = TLPhysics::GetPhysicsNodeFromShape( shape2 );
+	TPhysicsNode* pNodeA = TLPhysics::GetPhysicsNodeFromShape( fixtureA );
+	TPhysicsNode* pNodeB = TLPhysics::GetPhysicsNodeFromShape( fixtureB );
 	if ( !pNodeA->IsAllowedCollisionWithNode( pNodeB->GetNodeRef() ) )
 		return FALSE;
 	if ( !pNodeB->IsAllowedCollisionWithNode( pNodeA->GetNodeRef() ) )
@@ -525,7 +525,7 @@ void TLPhysics::TPhysicsgraph::GetNodesInShape(const TLMaths::TBox2D& Shape,TArr
 	BoxShape.upperBound.y = Shape.GetBottom();
 
 	//	get a buffer for shapes's found
-	TFixedArray<b2Shape*,100> ShapeBuffer;
+	TFixedArray<b2Fixture*,100> ShapeBuffer;
 	ShapeBuffer.SetSize( 100 );
 	
 	//	find bodies
@@ -568,11 +568,11 @@ TLPhysics::TPhysicsNode* TLPhysics::TPhysicsNodeFactory::CreateObject(TRefRef In
 //-------------------------------------------------
 // handle add point - pre-solver.	gr: new collision
 //-------------------------------------------------
-void TLPhysics::TPhysics_ContactListener::Add(const b2ContactPoint* point)
+void TLPhysics::TPhysics_ContactListener::BeginContact(b2Contact* contact)
 {
 	//	get physics node for shape 1
-	TPhysicsNode* pNodeA = TLPhysics::GetPhysicsNodeFromShape( point->shape1 );
-	TPhysicsNode* pNodeB = TLPhysics::GetPhysicsNodeFromShape( point->shape2 );
+	TPhysicsNode* pNodeA = TLPhysics::GetPhysicsNodeFromShape( contact->GetFixtureA() );
+	TPhysicsNode* pNodeB = TLPhysics::GetPhysicsNodeFromShape( contact->GetFixtureB() );
 
 	/*
 	TTempString Debug_String("Collison between ");
@@ -581,13 +581,34 @@ void TLPhysics::TPhysics_ContactListener::Add(const b2ContactPoint* point)
 	pNodeB->GetNodeRef().GetString(Debug_String );
 	TLDebug_Print( Debug_String );
 */
+	u32 ContactPointCount = contact->GetManifold()->m_pointCount;
+	
+	//	gr: no contact?
+	if ( ContactPointCount == 0 )
+	{
+		TLDebug_Break("No contact points in BeginContact? don't know where collision is");
+		return;
+	}
 
+	if ( ContactPointCount > 2 )
+	{
+		TLDebug_Break("More than 2 contact points in the manifold, must be a change to box2d we don't handle");
+	}
+
+	//	get world space manifold (world space collision points)
+	b2WorldManifold WorldManifold;
+	contact->GetWorldManifold( &WorldManifold );
+
+	const b2Vec2& FirstContactLocalPoint = WorldManifold.m_points[0];
+	const b2Vec2& SecondContactLocalPoint = (ContactPointCount > 1) ? WorldManifold.m_points[1] : FirstContactLocalPoint;
+	
 	if ( pNodeA )
 	{
 		TLPhysics::TCollisionInfo* pCollisionInfo = pNodeA->OnCollision();
 		if ( pCollisionInfo )
 		{
-			pCollisionInfo->m_Intersection = float3( point->position.x, point->position.y, 0.f );
+			pCollisionInfo->m_Intersection = float3( FirstContactLocalPoint.x, FirstContactLocalPoint.y, 0.f );
+			pCollisionInfo->m_OtherIntersection = float3( SecondContactLocalPoint.x, SecondContactLocalPoint.y, 0.f );
 			pCollisionInfo->m_OtherNode = pNodeB->GetNodeRef();
 			pCollisionInfo->m_OtherNodeOwner = pNodeB->GetOwnerSceneNodeRef();
 			pCollisionInfo->m_OtherNodeStatic = pNodeB->IsStatic();
@@ -599,7 +620,8 @@ void TLPhysics::TPhysics_ContactListener::Add(const b2ContactPoint* point)
 		TLPhysics::TCollisionInfo* pCollisionInfo = pNodeB->OnCollision();
 		if ( pCollisionInfo )
 		{
-			pCollisionInfo->m_Intersection = float3( point->position.x, point->position.y, 0.f );
+			pCollisionInfo->m_Intersection = float3( SecondContactLocalPoint.x, SecondContactLocalPoint.y, 0.f );
+			pCollisionInfo->m_OtherIntersection = float3( FirstContactLocalPoint.x, FirstContactLocalPoint.y, 0.f );
 			pCollisionInfo->m_OtherNode = pNodeA->GetNodeRef();
 			pCollisionInfo->m_OtherNodeOwner = pNodeA->GetOwnerSceneNodeRef();
 			pCollisionInfo->m_OtherNodeStatic = pNodeA->IsStatic();

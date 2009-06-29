@@ -33,17 +33,14 @@ namespace TLPhysics
 //-----------------------------------------------------
 class TLPhysics::TPhysics_ContactFilter : public b2ContactFilter
 {
-	virtual bool ShouldCollide(b2Shape* shape1, b2Shape* shape2);
+	virtual bool ShouldCollide(b2Fixture* fixtureA, b2Fixture* fixtureB);
 };
 
 
 class TLPhysics::TPhysics_ContactListener : public b2ContactListener
 {
 public:
-	virtual void	Add(const b2ContactPoint* point);		// handle add point - pre-solver.	gr: new collision
-	virtual void	Persist(const b2ContactPoint* point)	{}	// handle persist point	 - pre-solver.	gr: collision still exists
-	virtual void	Remove(const b2ContactPoint* point)		{}	// handle remove point - pre-solver.	gr: no more collision
-	virtual void	Result(const b2ContactResult* point)	{}	// handle results - post solver. can occur multiple times
+	virtual void	BeginContact(b2Contact* contact);		// handle add point - pre-solver.	gr: new collision
 };
 
 
@@ -90,7 +87,7 @@ public:
 
 	FORCEINLINE TPtr<b2World>&		GetWorld()						{	return m_pWorld;	}				//	box2d's world
 	FORCEINLINE void				AddJoint(const TJoint& Joint)	{	m_NodeJointQueue.Add( Joint );	};	//	add a joint to be created on next update
-	FORCEINLINE void				RefilterShape(b2Shape* pShape)	{	m_RefilterQueue.Add( pShape );	}	//	add to list of shapes that need refiltering
+	FORCEINLINE void				RefilterShape(b2Fixture* pShape)	{	m_RefilterQueue.Add( pShape );	}	//	add to list of shapes that need refiltering
 
 	// Test routines
 	FORCEINLINE void		SetGravityX(float fValue)		{	if ( g_WorldUp.x == fValue )	return;		g_WorldUp.x = fValue;	CalcWorldUpNormal();	}
@@ -137,7 +134,7 @@ protected:
 	TPtr<b2World>					m_pWorld;						//	box2d's world
 	TArray<TJoint>					m_NodeJoints;					//	list of joints created
 	TArray<TJoint>					m_NodeJointQueue;				//	list of joints that are to be created in the next update
-	TArray<b2Shape*>				m_RefilterQueue;				//	queue of box2d shapes that need refiltering
+	TArray<b2Fixture*>				m_RefilterQueue;				//	queue of box2d shapes that need refiltering
 
 private:
 	TPhysics_ContactFilter			m_ContactFilter;				//	instance of our custom box2d contact filter

@@ -13,22 +13,23 @@
 //------------------------------------------------------
 //	create a transformed shape from a body shape
 //------------------------------------------------------
-TPtr<TLMaths::TShape> TLPhysics::GetShapeFromBodyShape(b2Shape& BodyShape,const TLMaths::TTransform& Transform)
+TPtr<TLMaths::TShape> TLPhysics::GetShapeFromBodyShape(b2Fixture& BodyShape,const TLMaths::TTransform& Transform)
 {
 	b2Body& Body = *BodyShape.GetBody();
 
-	if ( BodyShape.GetType() == e_polygonShape )
+	if ( BodyShape.GetType() == b2_polygonShape )
 	{
 		b2PolygonShape& PolyShape = (b2PolygonShape&)BodyShape;
 		const b2XForm& Bodyxf = Body.GetXForm();
 
 		//	get a list of the points
 		TFixedArray<float2,100> Points;
-		const b2Vec2* pShapeVerts = PolyShape.GetVertices();
+			void Set(const b2Vec2* vertices, int32 vertexCount);
+
 		for ( s32 p=0;	p<PolyShape.GetVertexCount();	p++ )
 		{
 			//	transform by bodys transform
-			b2Vec2 WorldPos = b2Mul( Bodyxf, pShapeVerts[p] );
+			b2Vec2 WorldPos = b2Mul( Bodyxf, PolyShape.GetVertex(p) );
 
 			//	gr: transform by ourtransform for scale? or instead of the box2d one? as box2d lacks scale
 			float2 WorldPos2( WorldPos.x, WorldPos.y );
@@ -39,12 +40,15 @@ TPtr<TLMaths::TShape> TLPhysics::GetShapeFromBodyShape(b2Shape& BodyShape,const 
 		//	create shape
 		return new TLMaths::TShapePolygon2D( Points );
 	}
-	else if ( BodyShape.GetType() == e_circleShape )
+	else if ( BodyShape.GetType() == b2_circleShape )
 	{
 		TLDebug_Break("todo");
 	}
+	else
+	{
+		TLDebug_Break("Invalid body shape");
+	}
 
-	TLDebug_Break("Invalid body shape");
 	return NULL;
 }
 
@@ -171,10 +175,12 @@ void TLPhysics::TCollisionInfo::Set(const TLPhysics::TPhysicsNode& OtherNode,con
 //------------------------------------------------------
 void TLPhysics::TCollisionInfo::ExportData(TBinaryTree& Data)
 {
+	//	gr: really should change this into named data...
 	Data.Write( m_OtherNode );
 	Data.Write( m_OtherNodeOwner );
 	Data.Write( m_OtherNodeStatic );
 	Data.Write( m_Intersection );
+	Data.Write( m_OtherIntersection );
 }
 
 
@@ -185,10 +191,11 @@ Bool TLPhysics::TCollisionInfo::ImportData(TBinaryTree& Data)
 {
 	Data.ResetReadPos();
 
-	if ( !Data.Read( m_OtherNode ) )		return FALSE;
-	if ( !Data.Read( m_OtherNodeOwner ) )	return FALSE;
-	if ( !Data.Read( m_OtherNodeStatic ) )	return FALSE;
-	if ( !Data.Read( m_Intersection ) )		return FALSE;
+	if ( !Data.Read( m_OtherNode ) )			return FALSE;
+	if ( !Data.Read( m_OtherNodeOwner ) )		return FALSE;
+	if ( !Data.Read( m_OtherNodeStatic ) )		return FALSE;
+	if ( !Data.Read( m_Intersection ) )			return FALSE;
+	if ( !Data.Read( m_OtherIntersection ) )	return FALSE;
 
 	return TRUE;
 }

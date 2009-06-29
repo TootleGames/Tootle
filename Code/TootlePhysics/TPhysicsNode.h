@@ -170,8 +170,10 @@ protected:
 	void						SetBodyTransform();							//	reset the body's transform
 	FORCEINLINE b2Body*			GetBody()									{	return m_pBody;	}
 	FORCEINLINE const b2Body*	GetBody() const								{	return m_pBody;	}
-	FORCEINLINE b2Shape*		GetBodyShape()								{	return m_pBody ? m_pBody->GetShapeList() : NULL;	}	//	quick access to the first shape on the body - assuming we only ever have one shape
-	FORCEINLINE const b2Shape*	GetBodyShape() const						{	return m_pBody ? m_pBody->GetShapeList() : NULL;	}	//	quick access to the first shape on the body - assuming we only ever have one shape
+//	FORCEINLINE b2Shape*		GetBodyShape()								{	return m_pBody ? m_pBody->GetShapeList() : NULL;	}	//	quick access to the first shape on the body - assuming we only ever have one shape
+//	FORCEINLINE const b2Shape*	GetBodyShape() const						{	return m_pBody ? m_pBody->GetShapeList() : NULL;	}	//	quick access to the first shape on the body - assuming we only ever have one shape
+
+	//	gr: remove this and replace with multiple-shape access
 	virtual void				GetBodys(TArray<b2Body*>& Bodies) const		{	if ( m_pBody )	Bodies.Add( m_pBody );	}
 
 protected:

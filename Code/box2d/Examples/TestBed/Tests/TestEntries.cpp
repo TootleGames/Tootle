@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2006-2007 Erin Catto http://www.gphysics.com
+* Copyright (c) 2006-2009 Erin Catto http://www.gphysics.com
 *
 * This software is provided 'as-is', without any express or implied
 * warranty.  In no event will the authors be held liable for any damages
@@ -34,7 +34,6 @@
 #include "Car.h"
 #include "CCDTest.h"
 #include "Chain.h"
-#include "ContactCallbackTest.h"
 #include "CollisionFiltering.h"
 #include "CollisionProcessing.h"
 #include "CompoundShapes.h"
@@ -64,27 +63,31 @@
 #include "VaryingRestitution.h"
 #include "VerticalStack.h"
 #include "Web.h"
+#include "FixedJoint.h"
 
 
 TestEntry g_testEntries[] =
 {
-	{"Pyramid And Static Edges", PyramidStaticEdges::Create},
+	{"Sensor Test", SensorTest::Create},
 	{"CCD Test", CCDTest::Create},
-	{"Dynamic Tree", DynamicTreeTest::Create},
+	{"SphereStack", SphereStack::Create},
+	{"Vertical Stack", VerticalStack::Create},
+	{"Time of Impact", TimeOfImpact::Create},
+	{"Distance Test", DistanceTest::Create},
 	{"Static Edges", StaticEdges::Create},
+	{"Pyramid And Static Edges", PyramidStaticEdges::Create},
+	{"PolyCollision", PolyCollision::Create},
+	{"Dynamic Tree", DynamicTreeTest::Create},
 	{"Dynamic Edges", DynamicEdges::Create},
 	{"Line Joint", LineJoint::Create},
-	{"SphereStack", SphereStack::Create},
 	{"Pyramid", Pyramid::Create},
 	{"Prismatic", Prismatic::Create},
 	{"Revolute", Revolute::Create},
 	{"Bridge", Bridge::Create},
-	{"Sensor Test", SensorTest::Create},
 	{"Breakable Body", BreakableBody::Create},
-	{"Vertical Stack", VerticalStack::Create},
 	{"Polygon Shapes", PolyShapes::Create},
+	{"FixedJoint", FixedJoint::Create},
 	{"Theo Jansen's Walker", TheoJansen::Create},
-	{"Contact Callback Test", ContactCB::Create},
 	{"Web", Web::Create},
 	{"Varying Friction", VaryingFriction::Create},
 	{"Varying Restitution", VaryingRestitution::Create},
@@ -100,10 +103,7 @@ TestEntry g_testEntries[] =
 	{"Apply Force", ApplyForce::Create},
 	{"Pulleys", Pulleys::Create},
 	{"Shape Editing", ShapeEditing::Create},
-	{"Time of Impact", TimeOfImpact::Create},
-	{"Distance Test", DistanceTest::Create},
 	{"Broad Phase", BroadPhaseTest::Create},
-	{"PolyCollision", PolyCollision::Create},
 	{"Elastic Body", ElasticBody::Create},
 	{"Raycast Test", RaycastTest::Create},
 	{"Buoyancy", Buoyancy::Create},

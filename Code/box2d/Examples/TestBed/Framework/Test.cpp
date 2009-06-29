@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2006-2007 Erin Catto http://www.gphysics.com
+* Copyright (c) 2006-2009 Erin Catto http://www.gphysics.com
 *
 * This software is provided 'as-is', without any express or implied
 * warranty.  In no event will the authors be held liable for any damages
@@ -48,60 +48,6 @@ void BoundaryListener::Violation(b2Body* body)
 	}
 }
 
-void ContactListener::Add(const b2ContactPoint* point)
-{
-	if (test->m_pointCount == k_maxContactPoints)
-	{
-		return;
-	}
-
-	ContactPoint* cp = test->m_points + test->m_pointCount;
-	cp->shape1 = point->shape1;
-	cp->shape2 = point->shape2;
-	cp->position = point->position;
-	cp->normal = point->normal;
-	cp->id = point->id;
-	cp->state = e_contactAdded;
-
-	++test->m_pointCount;
-}
-
-void ContactListener::Persist(const b2ContactPoint* point)
-{
-	if (test->m_pointCount == k_maxContactPoints)
-	{
-		return;
-	}
-
-	ContactPoint* cp = test->m_points + test->m_pointCount;
-	cp->shape1 = point->shape1;
-	cp->shape2 = point->shape2;
-	cp->position = point->position;
-	cp->normal = point->normal;
-	cp->id = point->id;
-	cp->state = e_contactPersisted;
-
-	++test->m_pointCount;
-}
-
-void ContactListener::Remove(const b2ContactPoint* point)
-{
-	if (test->m_pointCount == k_maxContactPoints)
-	{
-		return;
-	}
-
-	ContactPoint* cp = test->m_points + test->m_pointCount;
-	cp->shape1 = point->shape1;
-	cp->shape2 = point->shape2;
-	cp->position = point->position;
-	cp->normal = point->normal;
-	cp->id = point->id;
-	cp->state = e_contactRemoved;
-
-	++test->m_pointCount;
-}
-
 Test::Test()
 {
 	m_worldAABB.lowerBound.Set(-200.0f, -100.0f);
@@ -117,10 +63,9 @@ Test::Test()
 
 	m_destructionListener.test = this;
 	m_boundaryListener.test = this;
-	m_contactListener.test = this;
 	m_world->SetDestructionListener(&m_destructionListener);
 	m_world->SetBoundaryListener(&m_boundaryListener);
-	m_world->SetContactListener(&m_contactListener);
+	m_world->SetContactListener(this);
 	m_world->SetDebugDraw(&m_debugDraw);
 	
 	m_bombSpawning = false;
@@ -133,6 +78,36 @@ Test::~Test()
 	// By deleting the world, we delete the bomb, mouse joint, etc.
 	delete m_world;
 	m_world = NULL;
+}
+
+void Test::PreSolve(b2Contact* contact, const b2Manifold* oldManifold)
+{
+	const b2Manifold* manifold = contact->GetManifold();
+
+	if (manifold->m_pointCount == 0)
+	{
+		return;
+	}
+
+	b2Fixture* fixtureA = contact->GetFixtureA();
+	b2Fixture* fixtureB = contact->GetFixtureB();
+
+	b2PointState state1[b2_maxManifoldPoints], state2[b2_maxManifoldPoints];
+	b2GetPointStates(state1, state2, oldManifold, manifold);
+
+	b2WorldManifold worldManifold;
+	contact->GetWorldManifold(&worldManifold);
+
+	for (int32 i = 0; i < manifold->m_pointCount && m_pointCount < k_maxContactPoints; ++i)
+	{
+		ContactPoint* cp = m_points + m_pointCount;
+		cp->fixtureA = fixtureA;
+		cp->fixtureB = fixtureB;
+		cp->position = worldManifold.m_points[i];
+		cp->normal = worldManifold.m_normal;
+		cp->state = state2[i];
+		++m_pointCount;
+	}
 }
 
 void Test::DrawTitle(int x, int y, const char *string)
@@ -158,18 +133,18 @@ void Test::MouseDown(const b2Vec2& p)
 
 	// Query the world for overlapping shapes.
 	const int32 k_maxCount = 10;
-	b2Shape* shapes[k_maxCount];
-	int32 count = m_world->Query(aabb, shapes, k_maxCount);
+	b2Fixture* fixtures[k_maxCount];
+	int32 count = m_world->Query(aabb, fixtures, k_maxCount);
 	b2Body* body = NULL;
 	for (int32 i = 0; i < count; ++i)
 	{
-		b2Body* shapeBody = shapes[i]->GetBody();
-		if (shapeBody->IsStatic() == false && shapeBody->GetMass() > 0.0f)
+		b2Body* b = fixtures[i]->GetBody();
+		if (b->IsStatic() == false && b->GetMass() > 0.0f)
 		{
-			bool inside = shapes[i]->TestPoint(shapeBody->GetXForm(), p);
+			bool inside = fixtures[i]->TestPoint(p);
 			if (inside)
 			{
-				body = shapes[i]->GetBody();
+				body = b;
 				break;
 			}
 		}
@@ -287,7 +262,7 @@ void Test::LaunchBomb(const b2Vec2& position, const b2Vec2& velocity)
 
 	if (inRange)
 	{
-		m_bomb->CreateShape(&sd);
+		m_bomb->CreateFixture(&sd);
 		m_bomb->SetMassFromShapes();
 	}
 }
@@ -323,14 +298,9 @@ void Test::Step(Settings* settings)
 	m_debugDraw.SetFlags(flags);
 
 	m_world->SetWarmStarting(settings->enableWarmStarting > 0);
-	m_world->SetContinuousPhysics(settings->enableTOI > 0);
+	m_world->SetContinuousPhysics(settings->enableContinuous > 0);
 
 	m_pointCount = 0;
-
-	if (m_stepCount == 18)
-	{
-		m_stepCount += 0;
-	}
 
 	m_world->Step(timeStep, settings->velocityIterations, settings->positionIterations);
 
@@ -408,20 +378,15 @@ void Test::Step(Settings* settings)
 		{
 			ContactPoint* point = m_points + i;
 
-			if (point->state == 0)
+			if (point->state == b2_addState)
 			{
 				// Add
 				m_debugDraw.DrawPoint(point->position, 10.0f, b2Color(0.3f, 0.95f, 0.3f));
 			}
-			else if (point->state == 1)
+			else if (point->state == b2_persistState)
 			{
 				// Persist
 				m_debugDraw.DrawPoint(point->position, 5.0f, b2Color(0.3f, 0.3f, 0.95f));
-			}
-			else
-			{
-				// Remove
-				m_debugDraw.DrawPoint(point->position, 10.0f, b2Color(0.95f, 0.3f, 0.3f));
 			}
 
 			if (settings->drawContactNormals == 1)

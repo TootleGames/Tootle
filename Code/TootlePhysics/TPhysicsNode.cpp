@@ -826,15 +826,18 @@ Bool TLPhysics::TPhysicsNode::CreateBodyShape()
 	if ( !m_pBody )
 		return FALSE;
 
-	//	destroy existing shape[s]
-	b2Shape* pExistingShape = m_pBody->GetShapeList();
+	//	gr: optimisation here; according to code documentation, you can change a shape's vertexes at runtime (needs same number of verts)
+	//		which would save all the filtering etc
+
+	//	destroy existing shapes/fixtures
+	b2Fixture* pExistingShape = m_pBody->GetFixtureList();
 	while ( pExistingShape )
 	{
 		//	store next
-		b2Shape* pNextShape = pExistingShape->GetNext();
+		b2Fixture* pNextShape = pExistingShape->GetNext();
 
 		//	remove from body
-		m_pBody->DestroyShape( pExistingShape );
+		m_pBody->DestroyFixture( pExistingShape );
 
 		pExistingShape = pNextShape;
 	}
@@ -853,7 +856,7 @@ Bool TLPhysics::TPhysicsNode::CreateBodyShape()
 	//	try to get a circle definition first...
 	b2CircleDef CircleDef;
 	b2PolygonDef PolygonDef;
-	b2ShapeDef* pShapeDef = NULL;
+	b2FixtureDef* pShapeDef = NULL;
 	TLMaths::TShape* pCollisionShape = m_pCollisionShape;
 	TPtr<TLMaths::TShape> pScaledCollisionShape = NULL;
 
@@ -889,7 +892,7 @@ Bool TLPhysics::TPhysicsNode::CreateBodyShape()
 	}
 
 	//	setup generic shape definition stuff
-	b2ShapeDef& ShapeDef = *pShapeDef;
+	b2FixtureDef& ShapeDef = *pShapeDef;
 
 	//	make everything rigid
 	ShapeDef.density = 1.f;
@@ -909,7 +912,7 @@ Bool TLPhysics::TPhysicsNode::CreateBodyShape()
 	ShapeDef.filter.groupIndex = HasCollisionFlag() ? 0 : -1;
 
 	//	create shape
-	m_pBody->CreateShape( &ShapeDef );
+	m_pBody->CreateFixture( &ShapeDef );
 
 	//	generate new mass value for the body. If static mass must be zero
 	if ( !IsStatic() )
@@ -940,7 +943,7 @@ void TLPhysics::TPhysicsNode::SetBodyTransform()
 	TPtr<b2World>& pWorld = TLPhysics::g_pPhysicsgraph->GetWorld();
 	if ( pWorld )
 	{
-		b2Shape* pShape = m_pBody->GetShapeList();
+		b2Fixture* pShape = m_pBody->GetFixtureList();
 		while ( pShape )
 		{
 			//	tell graph to refilter
@@ -956,7 +959,8 @@ void TLPhysics::TPhysicsNode::SetBodyTransform()
 //-------------------------------------------------------------
 void TLPhysics::TPhysicsNode::OnCollisionEnabledChanged(Bool IsNowEnabled)
 {
-	b2Shape* pShape = GetBodyShape();
+	//	gr: todo: this uses single-body code - we will want to ditch this anyway and do specific stuff in our collision filter code
+	b2Fixture* pShape = m_pBody ? m_pBody->GetFixtureList() : NULL;
 	if ( !pShape )
 		return;
 
@@ -1023,7 +1027,8 @@ void TLPhysics::TPhysicsNode::OnNodeEnabledChanged(Bool IsNowEnabled)
 void TLPhysics::TPhysicsNode::OnShapeDefintionChanged()
 {
 	//	no changes to implement as shape isn't created
-	if ( !GetBodyShape() )
+	//if ( !GetBodyShape() )
+	if ( !GetBody() )
 		return;
 
 	TLDebug_Break("todo: alter body shape's properties (friction, restitution etc)");
@@ -1043,7 +1048,7 @@ void TLPhysics::TPhysicsNode::GetBodyWorldShapes(TPtrArray<TLMaths::TShape>& Sha
 	for ( u32 b=0;	b<Bodies.GetSize();	b++ )
 	{
 		b2Body* pBody = Bodies[b];
-		b2Shape* pBodyShape = pBody->GetShapeList();
+		b2Fixture* pBodyShape = pBody->GetFixtureList();
 		while ( pBodyShape )
 		{
 			ShapeArray.Add( TLPhysics::GetShapeFromBodyShape( *pBodyShape, GetTransform() ) );
