@@ -21,7 +21,7 @@
 
 #include "b2Settings.h"
 
-#ifdef TARGET_OS_IPHONE
+#ifdef __GNUG__
 #include "math.h"
 #else
 #include <cmath>
@@ -70,7 +70,7 @@ inline bool b2IsValid(float32 x)
 	return _finite(x) != 0;
 #else
 	
-#ifdef TARGET_OS_IPHONE
+#ifdef __GNUG__
 	return isfinite(x);
 #else
 	return finite(x) != 0;
