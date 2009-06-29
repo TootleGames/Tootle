@@ -166,10 +166,13 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 			FlagChildren[f]->ResetReadPos();
 			if ( FlagChildren[f]->Read( FlagIndex ) )
 			{
-				GetPhysicsFlags().Set( (Flags)FlagIndex );
-				
-				if ( FlagIndex == Flag_HasCollision )
-					OnCollisionEnabledChanged(TRUE);
+				//	handle special case flags
+				if ( FlagIndex == Flag_Enabled )
+					SetEnabled( TRUE );
+				else if ( FlagIndex == Flag_HasCollision )
+					EnableCollision( TRUE );
+				else
+					GetPhysicsFlags().Set( (Flags)FlagIndex );
 			}
 		}
 		FlagChildren.Empty();
@@ -184,10 +187,13 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 			FlagChildren[f]->ResetReadPos();
 			if ( FlagChildren[f]->Read( FlagIndex ) )
 			{
-				GetPhysicsFlags().Clear( (Flags)FlagIndex );
-				
-				if ( FlagIndex == Flag_HasCollision )
-					OnCollisionEnabledChanged(TRUE);
+				//	handle special case flags
+				if ( FlagIndex == Flag_Enabled )
+					SetEnabled( FALSE );
+				else if ( FlagIndex == Flag_HasCollision )
+					EnableCollision( FALSE );
+				else
+					GetPhysicsFlags().Clear( (Flags)FlagIndex );
 			}
 		}
 		FlagChildren.Empty();
@@ -248,6 +254,35 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 
 
 	TLGraph::TGraphNode<TPhysicsNode>::Initialise(Message);
+}
+
+
+//----------------------------------------------------
+//	
+//----------------------------------------------------
+void TLPhysics::TPhysicsNode::ProcessMessage(TLMessaging::TMessage& Message)
+{
+	//	inherited process message
+	TLGraph::TGraphNode<TLPhysics::TPhysicsNode>::ProcessMessage( Message );
+
+	//	add a force 
+	if ( Message.GetMessageRef() == "Force" )
+	{
+		//	read out float3 force
+		float3 Force( 0.f, 0.f, 0.f );
+		Bool MassRelative = FALSE;
+		Message.ImportData( "MassRelative", MassRelative );
+
+		if ( Message.Read( Force ) )
+		{
+			AddForce( Force, MassRelative );
+		}
+	}
+	else if ( Message.GetMessageRef() == "ResetForces" )
+	{
+		//	reset forces command
+		ResetForces();
+	}
 }
 
 
@@ -967,6 +1002,18 @@ void TLPhysics::TPhysicsNode::OnCollisionEnabledChanged(Bool IsNowEnabled)
 	}
 
 
+}
+
+
+
+//-------------------------------------------------------------
+//	called when node is enabled/disabled - hide from box world when disabled
+//-------------------------------------------------------------
+void TLPhysics::TPhysicsNode::OnNodeEnabledChanged(Bool IsNowEnabled)
+{
+	//	freeze body by removing it from world and then we'll put it back in afterwards
+//	TLPhysics::g_pPhysicsgraph->m_pWorld->CreateBody
+	
 }
 
 

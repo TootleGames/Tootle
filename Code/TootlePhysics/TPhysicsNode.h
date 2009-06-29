@@ -82,7 +82,7 @@ public:
 	const TFlags<Flags>&		GetPhysicsFlags() const				{	return m_PhysicsFlags;	}
 	virtual Bool				IsStatic() const					{	return m_PhysicsFlags.IsSet( TPhysicsNode::Flag_Static );	}
 	FORCEINLINE Bool			IsEnabled() const					{	return m_PhysicsFlags.IsSet( TPhysicsNode::Flag_Enabled );	}
-	FORCEINLINE void			SetEnabled(Bool Enabled)			{	return m_PhysicsFlags.Set( TPhysicsNode::Flag_Enabled, Enabled );	}
+	FORCEINLINE void			SetEnabled(Bool Enabled);			//	enable/disable node (physics processing and collision). Disabling makes it invisible to the box world
 
 	FORCEINLINE void			AddForce(const float3& Force,Bool MassRelative=FALSE);
 	FORCEINLINE void			AddForceFrom(const float3& Force,const float3& ForceLocalPosition,Bool MassRelative=FALSE);
@@ -108,7 +108,7 @@ public:
 
 	Bool								HasCollision() const				{	return (IsEnabled() && HasCollisionFlag() && m_pCollisionShape.IsValid()) ? m_pCollisionShape->IsValid() : FALSE;	}
 	Bool								HasCollisionFlag() const			{	return m_PhysicsFlags( Flag_HasCollision );	}
-	FORCEINLINE void					EnableCollision(Bool Enable=TRUE)	{	if ( m_PhysicsFlags( Flag_HasCollision ) != Enable )	{	m_PhysicsFlags.Set( Flag_HasCollision, Enable );	OnCollisionEnabledChanged( Enable );	}	}
+	FORCEINLINE void					EnableCollision(Bool Enable=TRUE);							//	enable collision, regardless of existance of shape
 	FORCEINLINE Bool					IsAllowedCollisionWithNode(TRefRef NodeRef)					{	return !m_NonCollisionNodes.Exists( NodeRef );	}
 	FORCEINLINE void					EnableCollisionWithNode(TRefRef NodeRef,Bool Enable)		{	if ( Enable )	m_NonCollisionNodes.Remove( NodeRef );	else	m_NonCollisionNodes.AddUnique( NodeRef );	}
 
@@ -146,6 +146,7 @@ public:
 
 protected:
 	virtual void				Initialise(TLMessaging::TMessage& Message);	
+	virtual void				ProcessMessage(TLMessaging::TMessage& Message);
 	void						PostUpdateAll(float Timestep,TLPhysics::TPhysicsgraph& Graph,TPtr<TLPhysics::TPhysicsNode>& pThis);		//	update tree: update self, and children and siblings
 	const float3&				GetWorldUp() const							{	return HasParent() ? GetParent()->GetWorldUp() : TLPhysics::g_WorldUpNormal;	}
 
@@ -158,6 +159,7 @@ protected:
 	TCollisionInfo*				OnCollision();								//	called when we get a collision. return a collision info to write data into. return NULL to pre-empt not sending any collision info out (eg. if no subscribers)
 	void						PublishCollisions();						//	send out our list of collisions
 	void						OnCollisionEnabledChanged(Bool IsNowEnabled);	//	called when collision is enabled/disabled - changes group of box2D body so it won't do collision checks
+	void						OnNodeEnabledChanged(Bool IsNowEnabled);	//	called when node is enabled/disabled
 
 	virtual SyncBool			IsInShape(const TLMaths::TBox2D& Shape);
 	virtual Bool				HasZoneShape();								//	return validity of shape for early bail out tests.
@@ -290,4 +292,25 @@ FORCEINLINE void TLPhysics::TPhysicsNode::SetAngularDamping(float Damping)
 		m_pBody->SetAngularDamping( Damping );
 	}
 }
+
+
+FORCEINLINE void TLPhysics::TPhysicsNode::EnableCollision(Bool Enable)
+{	
+	if ( m_PhysicsFlags( Flag_HasCollision ) != Enable )
+	{
+		m_PhysicsFlags.Set( Flag_HasCollision, Enable );	
+		OnCollisionEnabledChanged( Enable );	
+	}
+}
+
+
+FORCEINLINE void TLPhysics::TPhysicsNode::SetEnabled(Bool Enable)
+{	
+	if ( m_PhysicsFlags( Flag_Enabled ) != Enable )	
+	{	
+		m_PhysicsFlags.Set( Flag_Enabled, Enable );	
+		OnNodeEnabledChanged( Enable );	
+	}	
+}
+
 

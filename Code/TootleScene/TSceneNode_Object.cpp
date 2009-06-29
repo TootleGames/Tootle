@@ -153,6 +153,24 @@ void TLScene::TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 	}
 
 
+	//	enable/disable things
+	TPtr<TBinaryTree>& pEnableData = Message.GetChild("Enable");
+	if ( pEnableData )
+	{
+		Bool RenderEnable = TRUE;
+		Bool PhysicsEnable = TRUE;
+		Bool CollisionEnable = TRUE;
+		
+		if ( pEnableData->ImportData("Render", RenderEnable ) )
+			EnableRenderNode( RenderEnable );
+
+		Bool ChangePhysics = pEnableData->ImportData("Physics", PhysicsEnable );
+		ChangePhysics |= pEnableData->ImportData("Collision", CollisionEnable );
+		if ( ChangePhysics )
+		{
+			EnablePhysicsNode( PhysicsEnable, CollisionEnable );
+		}
+	}
 }
 
 

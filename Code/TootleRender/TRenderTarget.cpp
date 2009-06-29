@@ -36,7 +36,9 @@ TLRender::TRenderTarget::TRenderTarget(const TRef& Ref) :
 	m_Flags.Set( Flag_Enabled );
 	m_Flags.Set( Flag_ClearColour );
 	m_Flags.Set( Flag_ClearDepth );
-	m_Flags.Set( Flag_AntiAlias );
+
+	//	gr: turned off default anti-aliasing as it doesn't work on the ipod
+//	m_Flags.Set( Flag_AntiAlias );
 
 	//	calc initial size
 	OnSizeChanged();

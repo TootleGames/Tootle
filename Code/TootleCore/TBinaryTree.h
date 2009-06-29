@@ -48,15 +48,15 @@ public:
 	Bool						IsDataTreeRead() const;							//	traverse tree to see if any data has been read (read pos is valid and not -1)
 
 	template<class ARRAYTYPE> 
-	Bool						ImportArrays(TRefRef ArrayRef,ARRAYTYPE& Array);	//	returns FALSE if failed, WAIT if nothing imported, TRUE if something imported
+	Bool						ImportArrays(TRefRef ArrayRef,ARRAYTYPE& Array);	//	imports MULTIPLE children with this ref all into one array. You can have say 2 children called "numbers" and the contents of both children will be put into the array
 	template<class ARRAYTYPE> 
-	void						ExportArray(TRefRef ArrayRef,const ARRAYTYPE& Array,Bool WriteIfEmpty=FALSE);
+	TPtr<TBinaryTree>&			ExportArray(TRefRef ArrayRef,const ARRAYTYPE& Array,Bool WriteIfEmpty=FALSE);
 	template<typename TYPE> 
-	Bool						ImportData(TRefRef DataRef,TYPE& Data,Bool ConvertData=FALSE);					//	returns FALSE if failed, WAIT if nothing imported, TRUE if something imported
-	Bool						ImportDataString(TRefRef DataRef,TString& DataString);	//	gr: remove if I can get Read/Write() to work with a TString in TBinary
+	TPtr<TBinaryTree>&			ImportData(TRefRef DataRef,TYPE& Data,Bool ConvertData=FALSE);					//	returns FALSE if failed, WAIT if nothing imported, TRUE if something imported
+	TPtr<TBinaryTree>&			ImportDataString(TRefRef DataRef,TString& DataString);	//	gr: remove if I can get Read/Write() to work with a TString in TBinary
 	template<typename TYPE> 
-	void						ExportData(TRefRef DataRef,const TYPE& Data);
-	void						ExportDataString(TRefRef DataRef,const TString& DataString);	//	gr: remove if I can get Read/Write() to work with a TString in TBinary
+	TPtr<TBinaryTree>&			ExportData(TRefRef DataRef,const TYPE& Data);
+	TPtr<TBinaryTree>&			ExportDataString(TRefRef DataRef,const TString& DataString);	//	gr: remove if I can get Read/Write() to work with a TString in TBinary
 
 	FORCEINLINE Bool			operator==(TRefRef DataRef)const		{	return GetDataRef() == DataRef;	}
 
@@ -101,14 +101,15 @@ Bool TBinaryTree::ImportArrays(TRefRef ArrayRef,ARRAYTYPE& Array)
 
 
 template<class ARRAYTYPE> 
-void TBinaryTree::ExportArray(TRefRef ArrayRef,const ARRAYTYPE& Array,Bool WriteIfEmpty)
+TPtr<TBinaryTree>& TBinaryTree::ExportArray(TRefRef ArrayRef,const ARRAYTYPE& Array,Bool WriteIfEmpty)
 {
 	//	dont write if array is empty
 	if ( !WriteIfEmpty && Array.GetSize() == 0 )
-		return;
+		return TLPtr::GetNullPtr<TBinaryTree>();
 
 	TPtr<TBinaryTree>& pData = AddChild( ArrayRef );
 	pData->WriteArray( Array );
+	return pData;
 }
 
 
@@ -118,14 +119,14 @@ void TBinaryTree::ExportArray(TRefRef ArrayRef,const ARRAYTYPE& Array,Bool Write
 //	gr: changed back to Bool
 //------------------------------------------------------
 template<typename TYPE> 
-Bool TBinaryTree::ImportData(TRefRef DataRef,TYPE& Data,Bool ConvertData)
+TPtr<TBinaryTree>& TBinaryTree::ImportData(TRefRef DataRef,TYPE& Data,Bool ConvertData)
 {
 	//	get the first child with this ref
 	TPtr<TBinaryTree>& pData = GetChild( DataRef );
 	if ( !pData )
 	{
 		//	no matching child
-		return FALSE;//SyncWait;
+		return TLPtr::GetNullPtr<TBinaryTree>();
 	}
 
 	//	read out var
@@ -141,11 +142,11 @@ Bool TBinaryTree::ImportData(TRefRef DataRef,TYPE& Data,Bool ConvertData)
 		if ( !pData->Read( Data ) )
 		{
 			Debug_FailedToRead( DataRef, TLBinary::GetDataTypeRef<TYPE>() );
-			return FALSE;
+			return TLPtr::GetNullPtr<TBinaryTree>();
 		}
 	}
 
-	return TRUE;
+	return pData;
 }
 
 
@@ -153,10 +154,11 @@ Bool TBinaryTree::ImportData(TRefRef DataRef,TYPE& Data,Bool ConvertData)
 //	
 //------------------------------------------------------
 template<typename TYPE> 
-void TBinaryTree::ExportData(TRefRef DataRef,const TYPE& Data)
+TPtr<TBinaryTree>& TBinaryTree::ExportData(TRefRef DataRef,const TYPE& Data)
 {
 	//	create a child
 	TPtr<TBinaryTree>& pData = AddChild( DataRef );
 	pData->Write( Data );
+	return pData;
 }
 

@@ -93,7 +93,10 @@ SyncBool TLPhysics::TJoint::CreateJoint(b2World& World,TPhysicsgraph& PhysicsGra
 	//	init definition
 	b2DistanceJointDef JointDef;
 	JointDef.collideConnected = m_CollisionBetweenNodes;
-	JointDef.InitializeLocal( pBodyA, pBodyB, b2Vec2( m_JointPosA.x, m_JointPosA.y ), b2Vec2( m_JointPosB.x, m_JointPosB.y ) );
+
+	b2Vec2 WorldAnchor1 = pBodyA->GetWorldPoint( b2Vec2( m_JointPosA.x, m_JointPosA.y ) );
+	b2Vec2 WorldAnchor2 = pBodyB->GetWorldPoint( b2Vec2( m_JointPosB.x, m_JointPosB.y ) );
+	JointDef.Initialize( pBodyA, pBodyB, WorldAnchor1, WorldAnchor2 );
 
 //	JointDef.dampingRatio = 1.0f;
 //	JointDef.frequencyHz = 0.9f;
