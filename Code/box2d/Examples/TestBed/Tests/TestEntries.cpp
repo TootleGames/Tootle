@@ -27,8 +27,10 @@
 
 #include "ApplyForce.h"
 #include "BipedTest.h"
+#include "BreakableBody.h"
 #include "Bridge.h"
 #include "BroadPhaseTest.h"
+#include "Buoyancy.h"
 #include "Car.h"
 #include "CCDTest.h"
 #include "Chain.h"
@@ -38,16 +40,24 @@
 #include "CompoundShapes.h"
 #include "DistanceTest.h"
 #include "Dominos.h"
+#include "DynamicEdges.h"
+#include "DynamicTreeTest.h"
 #include "ElasticBody.h"
 #include "Gears.h"
-#include "MotorsAndLimits.h"
+#include "LineJoint.h"
 #include "PolyCollision.h"
 #include "PolyShapes.h"
+#include "Prismatic.h"
 #include "Pulleys.h"
 #include "Pyramid.h"
+#include "PyramidStaticEdges.h"
+#include "RaycastTest.h"
+#include "Revolute.h"
 #include "SensorTest.h"
 #include "ShapeEditing.h"
 #include "SliderCrank.h"
+#include "SphereStack.h"
+#include "StaticEdges.h"
 #include "TheoJansen.h"
 #include "TimeOfImpact.h"
 #include "VaryingFriction.h"
@@ -55,21 +65,31 @@
 #include "VerticalStack.h"
 #include "Web.h"
 
+
 TestEntry g_testEntries[] =
 {
+	{"Pyramid And Static Edges", PyramidStaticEdges::Create},
+	{"CCD Test", CCDTest::Create},
+	{"Dynamic Tree", DynamicTreeTest::Create},
+	{"Static Edges", StaticEdges::Create},
+	{"Dynamic Edges", DynamicEdges::Create},
+	{"Line Joint", LineJoint::Create},
+	{"SphereStack", SphereStack::Create},
+	{"Pyramid", Pyramid::Create},
+	{"Prismatic", Prismatic::Create},
+	{"Revolute", Revolute::Create},
+	{"Bridge", Bridge::Create},
+	{"Sensor Test", SensorTest::Create},
+	{"Breakable Body", BreakableBody::Create},
+	{"Vertical Stack", VerticalStack::Create},
+	{"Polygon Shapes", PolyShapes::Create},
 	{"Theo Jansen's Walker", TheoJansen::Create},
 	{"Contact Callback Test", ContactCB::Create},
-	{"Polygon Shapes", PolyShapes::Create},
-	{"Pyramid", Pyramid::Create},
 	{"Web", Web::Create},
-	{"Vertical Stack", VerticalStack::Create},
 	{"Varying Friction", VaryingFriction::Create},
 	{"Varying Restitution", VaryingRestitution::Create},
-	{"Bridge", Bridge::Create},
 	{"Dominos", Dominos::Create},
-	{"CCD Test", CCDTest::Create},
 	{"Biped Test", BipedTest::Create},
-	{"Sensor Test", SensorTest::Create},
 	{"Car", Car::Create},
 	{"Gears", Gears::Create},
 	{"Slider Crank", SliderCrank::Create},
@@ -77,7 +97,6 @@ TestEntry g_testEntries[] =
 	{"Chain", Chain::Create},
 	{"Collision Processing", CollisionProcessing::Create},
 	{"Collision Filtering", CollisionFiltering::Create},
-	{"Motors and Limits", MotorsAndLimits::Create},
 	{"Apply Force", ApplyForce::Create},
 	{"Pulleys", Pulleys::Create},
 	{"Shape Editing", ShapeEditing::Create},
@@ -86,5 +105,7 @@ TestEntry g_testEntries[] =
 	{"Broad Phase", BroadPhaseTest::Create},
 	{"PolyCollision", PolyCollision::Create},
 	{"Elastic Body", ElasticBody::Create},
+	{"Raycast Test", RaycastTest::Create},
+	{"Buoyancy", Buoyancy::Create},
 	{NULL, NULL}
 };

@@ -4,7 +4,7 @@
 
 <book>
 <bookinfo>
-    <title>Box2D v2.0.1 User Manual</title>
+    <title>Box2D v2.0.2 User Manual</title>
     <author><firstname>Erin</firstname><surname>Catto</surname></author>
     <copyright><year>2007-2008</year><holder>Erin Catto</holder></copyright>
 </bookinfo>
@@ -137,7 +137,7 @@ groundBodyDef.position.Set(0.0f, -10.0f);
 </programlisting>
       <para>For step 2 the body definition is passed to the world object to create the ground body. The world object does not keep a reference to the body definition. The ground body is created as a static body. Static bodies don&apos;t collide with other static bodies and are immovable. Box2D determines that a body is static when it has zero mass. Bodies have zero mass by default, therefore they are static by default.</para>
       <programlisting>
-b2Body* ground = world.CreateBody(&amp;groundBodyDef);
+b2Body* groundBody = world.CreateBody(&amp;groundBodyDef);
 </programlisting>
       <para>For step 3 we create a ground polygon definition. We use the <literal>SetAsBox</literal> shortcut to form the ground polygon into a box shape, with the box centered on the origin of the parent body.</para>
       <programlisting>
@@ -181,9 +181,12 @@ body-&gt;SetMassFromShapes();
       <programlisting>
 float32 timeStep = 1.0f / 60.0f;
 </programlisting>
-      <para>In addition to the integrator, Box2D also uses a larger bit of code called a <emphasis>constraint solver</emphasis>. The constraint solver solves all the constraints in the simulation, one at a time. A single constraint can be solved perfectly. However, when we solve one constraint, we slightly disrupt other constraints. To get a good solution, we need to iterate over all constraints a number of times. The suggested iteration count for Box2D is 10. You can tune this number to your liking, just keep in mind that this has a trade-off between speed and accuracy. Using fewer iterations increases performance but accuracy suffers. Likewise, using more iterations decreases performance but improves the quality of your simulation. Here is our chosen iteration count.</para>
+      <para>In addition to the integrator, Box2D also uses a larger bit of code called a <emphasis>constraint solver</emphasis>. The constraint solver solves all the constraints in the simulation, one at a time. A single constraint can be solved perfectly. However, when we solve one constraint, we slightly disrupt other constraints. To get a good solution, we need to iterate over all constraints a number of times.</para>
+    <para>There are two phases in the constraint solver: a velocity phase and a position phase. In the velocity phase the solver computes the impulses necessary for the bodies to move correctly. In the position phase the solver adjusts the positions of the bodies to reduce overlap and joint detachment. Each phase has its own iteration count. In addition, the position phase will exit iteraions early if the errors are small.</para>
+     <para>The suggested iteration count for Box2D is 10 for both velocity and position. You can tune this number to your liking, just keep in mind that this has a trade-off between speed and accuracy. Using fewer iterations increases performance but accuracy suffers. Likewise, using more iterations decreases performance but improves the quality of your simulation. For this simple example, we don't need many iterations. Here are our chosen iteration counts.</para>
       <programlisting>
-int32 iterations = 10;
+int32 velocityIterations = 8;
+int32 positionIterations = 1;
 </programlisting>
         <para>Note that the time step and the iteration count are completely unrelated. An iteration is not a sub-step. One iteration is a single pass over all the constraints withing a time step. You can have multiple passes over the constraints within a single time step.</para>
       <para>We are now ready to begin the simulation loop. In your game the simulation loop can be merged with your game loop. In each pass through your game loop you call <literal>b2World::Step</literal>. Just one call is usually enough, depending on your frame rate and your physics time step.</para>
@@ -191,7 +194,7 @@ int32 iterations = 10;
       <programlisting>
 for (int32 i = 0; i &lt; 60; ++i)
 {
-    world.Step(timeStep, iterations);
+    world.Step(timeStep, velocityIterations, positionIterations);
     b2Vec2 position = body-&gt;GetPosition();
     float32 angle = body-&gt;GetAngle();
     printf(&quot;%4.2f %4.2f %4.2f\n&quot;, position.x, position.y, angle);
@@ -347,11 +350,12 @@ delete myWorld;
       <para>The world class contains factories for creating and destroying bodies and joints. These factories are discussed later in the sections on bodies and joints. There are some other interactions with <classname>b2World</classname> that I will cover now.</para>
       <sect2>
         <title>Simulation</title>
-        <para>The world class is used to drive the simulation. You specify a time step and an iteration count. For example:</para>
+        <para>The world class is used to drive the simulation. You specify a time step and a velocity and position iteration count. For example:</para>
         <programlisting>
 float32 timeStep = 1.0f / 60.f;
-int32 iterationCount = 10;
-myWorld-&gt;Step(timeStep, iterationCount);
+int32 velocityIterations = 10;
+int32 positionIterations = 8;
+myWorld-&gt;Step(timeStep, velocityIterations, positionIterations);
 </programlisting>
         <para>After the time step you can examine your bodies and joints for information. Most likely you will grab the position off the bodies so that you can update your actors and render them. You can perform the time step anywhere in your game loop, but you should be aware of the order of things. For example, you must create bodies before the time step if you want to get collision results for the new bodies in that frame.</para>
         <para>As I discussed above in the HelloWorld tutorial, you should use a fixed time step. By using a larger time step you can improve performance in low frame rate scenarios. But generally you should use a time step no larger than 1/30 seconds. A time step of 1/60 seconds will usually deliver a high quality simulation.</para>
@@ -418,8 +422,8 @@ while (node)
         <para>Sometimes you want to determine all the shapes in a region. The <classname>b2World</classname> class has a fast log(N) method for this using the <emphasis>broad-phase</emphasis> data structure. You provide an AABB in world coordinates and <classname>b2World</classname> returns an array of all the shapes that potentially intersect the AABB. This is not exact because what the function actually does is return all the shapes whose AABBs intersect the specified AABB. For example, the following code finds all the shapes that potentially intersect a specified AABB and wakes up all of the associated bodies.</para>
         <programlisting>
 b2AABB aabb;
-aabb.minVertex.Set(-1.0f, -1.0f);
-aabb.maxVertex.Set(1.0f, 1.0f);
+aabb.lowerBound.Set(-1.0f, -1.0f);
+aabb.upperBound.Set(1.0f, 1.0f);
 const int32 k_bufferSize = 10;
 b2Shape *buffer[k_bufferSize];
 int32 count = myWorld-&gt;Query(aabb, buffer, k_bufferSize);
@@ -741,7 +745,7 @@ triangleDef.vertices[2].Set(0.0f, 2.0f);
 b2PolygonDef alignedBoxDef;
 float32 hx = 1.0f; // half-width
 float32 hy = 2.0f; // half-height
-alignedBodyDef.SetAsBox(hx, hy);
+alignedBoxDef.SetAsBox(hx, hy);
 
 b2PolygonDef orientedBoxDef;
 b2Vec2 center(-1.5f, 0.0f);
@@ -907,7 +911,7 @@ jointDef.maxLength2 = 20.0f;
       </sect2>
       <sect2>
         <title>Gear Joint</title>
-        <para>If you want to create a sophisticated mechanical contraption you might want to use a gears. In priciple you can create gears in Box2D by using compound shapes to model gear teeth. This is not very efficient and might be tedious to author. You also have to be careful to line up the gears so the teeth mesh smoothly. Box2D has a simpler method of creating gears: the <emphasis>gear joint</emphasis>.</para>
+        <para>If you want to create a sophisticated mechanical contraption you might want to use a gears. In principle you can create gears in Box2D by using compound shapes to model gear teeth. This is not very efficient and might be tedious to author. You also have to be careful to line up the gears so the teeth mesh smoothly. Box2D has a simpler method of creating gears: the <emphasis>gear joint</emphasis>.</para>
         <informalfigure>
           <mediaobject>
             <imageobject>

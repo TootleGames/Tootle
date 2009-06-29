@@ -48,7 +48,7 @@ bool b2CircleShape::TestPoint(const b2XForm& transform, const b2Vec2& p) const
 // From Section 3.1.2
 // x = s + a * r
 // norm(x) = radius
-bool b2CircleShape::TestSegment(const b2XForm& transform,
+b2SegmentCollide b2CircleShape::TestSegment(const b2XForm& transform,
 								float32* lambda,
 								b2Vec2* normal,
 								const b2Segment& segment,
@@ -61,7 +61,8 @@ bool b2CircleShape::TestSegment(const b2XForm& transform,
 	// Does the segment start inside the circle?
 	if (b < 0.0f)
 	{
-		return false;
+		*lambda = 0;
+		return e_startsInsideCollide;
 	}
 
 	// Solve quadratic equation.
@@ -73,7 +74,7 @@ bool b2CircleShape::TestSegment(const b2XForm& transform,
 	// Check for negative discriminant and short segment.
 	if (sigma < 0.0f || rr < B2_FLT_EPSILON)
 	{
-		return false;
+		return e_missCollide;
 	}
 
 	// Find the point of intersection of the line with the circle.
@@ -86,10 +87,10 @@ bool b2CircleShape::TestSegment(const b2XForm& transform,
 		*lambda = a;
 		*normal = s + a * r;
 		normal->Normalize();
-		return true;
+		return e_hitCollide;
 	}
 
-	return false;
+	return e_missCollide;
 }
 
 void b2CircleShape::ComputeAABB(b2AABB* aabb, const b2XForm& transform) const
@@ -117,4 +118,34 @@ void b2CircleShape::ComputeMass(b2MassData* massData) const
 
 	// inertia about the local origin
 	massData->I = massData->mass * (0.5f * m_radius * m_radius + b2Dot(m_localPosition, m_localPosition));
+}
+
+float32 b2CircleShape::ComputeSubmergedArea(	const b2Vec2& normal,
+												float32 offset,
+												const b2XForm& xf, 
+												b2Vec2* c) const
+{
+	b2Vec2 p = b2Mul(xf,m_localPosition);
+	float32 l = -(b2Dot(normal,p) - offset);
+	if(l<-m_radius+B2_FLT_EPSILON){
+		//Completely dry
+		return 0;
+	}
+	if(l>m_radius){
+		//Completely wet
+		*c = p;
+		return b2_pi*m_radius*m_radius;
+	}
+	
+	//Magic
+	float32 r2 = m_radius*m_radius;
+	float32 l2 = l*l;
+    //TODO: write b2Sqrt to handle fixed point case.
+	float32 area = r2 * (asin(l/m_radius) + b2_pi/2.0f)+ l * b2Sqrt(r2 - l2);
+	float32 com = -2.0f/3.0f*pow(r2-l2,1.5f)/area;
+	
+	c->x = p.x + normal.x * com;
+	c->y = p.y + normal.y * com;
+	
+	return area;
 }

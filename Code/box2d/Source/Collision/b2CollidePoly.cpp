@@ -326,7 +326,9 @@ void b2CollidePolygons(b2Manifold* manifold,
 	np = ClipSegmentToLine(clipPoints2, clipPoints1,  sideNormal, sideOffset2);
 
 	if (np < 2)
+	{
 		return;
+	}
 
 	// Now clipPoints2 contains the clipped points.
 	manifold->normal = flip ? -frontNormal : frontNormal;
@@ -348,5 +350,4 @@ void b2CollidePolygons(b2Manifold* manifold,
 		}
 	}
 
-	manifold->pointCount = pointCount;
-}
+	manifold->pointCount = pointCount;}

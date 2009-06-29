@@ -171,6 +171,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Source\Dynamics\Controllers\b2BuoyancyController.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\Source\Dynamics\Controllers\b2BuoyancyController.h"
+			>
+		</File>
+		<File
 			RelativePath="..\Source\Dynamics\Contacts\b2CircleContact.cpp"
 			>
 		</File>
@@ -203,6 +211,22 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Source\Dynamics\Controllers\b2ConstantAccelController.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\Source\Dynamics\Controllers\b2ConstantAccelController.h"
+			>
+		</File>
+		<File
+			RelativePath="..\Source\Dynamics\Controllers\b2ConstantForceController.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\Source\Dynamics\Controllers\b2ConstantForceController.h"
+			>
+		</File>
+		<File
 			RelativePath="..\Source\Dynamics\Contacts\b2Contact.cpp"
 			>
 		</File>
@@ -227,6 +251,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Source\Dynamics\Controllers\b2Controller.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\Source\Dynamics\Controllers\b2Controller.h"
+			>
+		</File>
+		<File
 			RelativePath="..\Source\Collision\b2Distance.cpp"
 			>
 		</File>
@@ -239,11 +271,43 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Source\Collision\b2DynamicTree.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\Source\Collision\b2DynamicTree.h"
+			>
+		</File>
+		<File
+			RelativePath="..\Source\Dynamics\Contacts\b2EdgeAndCircleContact.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\Source\Dynamics\Contacts\b2EdgeAndCircleContact.h"
+			>
+		</File>
+		<File
+			RelativePath="..\Source\Collision\Shapes\b2EdgeShape.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\Source\Collision\Shapes\b2EdgeShape.h"
+			>
+		</File>
+		<File
 			RelativePath="..\Source\Dynamics\Joints\b2GearJoint.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\Source\Dynamics\Joints\b2GearJoint.h"
+			>
+		</File>
+		<File
+			RelativePath="..\Source\Dynamics\Controllers\b2GravityController.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\Source\Dynamics\Controllers\b2GravityController.h"
 			>
 		</File>
 		<File
@@ -260,6 +324,14 @@
 		</File>
 		<File
 			RelativePath="..\Source\Dynamics\Joints\b2Joint.h"
+			>
+		</File>
+		<File
+			RelativePath="..\Source\Dynamics\Joints\b2LineJoint.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\Source\Dynamics\Joints\b2LineJoint.h"
 			>
 		</File>
 		<File
@@ -296,6 +368,14 @@
 		</File>
 		<File
 			RelativePath="..\Source\Dynamics\Contacts\b2PolyAndCircleContact.h"
+			>
+		</File>
+		<File
+			RelativePath="..\Source\Dynamics\Contacts\b2PolyAndEdgeContact.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\Source\Dynamics\Contacts\b2PolyAndEdgeContact.h"
 			>
 		</File>
 		<File
@@ -363,6 +443,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Source\Dynamics\Controllers\b2TensorDampingController.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\Source\Dynamics\Controllers\b2TensorDampingController.h"
+			>
+		</File>
+		<File
 			RelativePath="..\Source\Collision\b2TimeOfImpact.cpp"
 			>
 		</File>
@@ -380,10 +468,6 @@
 		</File>
 		<File
 			RelativePath="..\Source\Dynamics\b2WorldCallbacks.h"
-			>
-		</File>
-		<File
-			RelativePath="..\Include\Box2D.h"
 			>
 		</File>
 		<File

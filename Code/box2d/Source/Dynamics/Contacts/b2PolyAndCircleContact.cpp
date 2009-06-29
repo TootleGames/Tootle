@@ -22,6 +22,7 @@
 #include "../../Common/b2BlockAllocator.h"
 
 #include <new>
+#include <cstring>
 
 b2Contact* b2PolyAndCircleContact::Create(b2Shape* shape1, b2Shape* shape2, b2BlockAllocator* allocator)
 {
@@ -41,8 +42,6 @@ b2PolyAndCircleContact::b2PolyAndCircleContact(b2Shape* s1, b2Shape* s2)
 	b2Assert(m_shape1->GetType() == e_polygonShape);
 	b2Assert(m_shape2->GetType() == e_circleShape);
 	m_manifold.pointCount = 0;
-	m_manifold.points[0].normalImpulse = 0.0f;
-	m_manifold.points[0].tangentImpulse = 0.0f;
 }
 
 void b2PolyAndCircleContact::Evaluate(b2ContactListener* listener)
@@ -60,8 +59,8 @@ void b2PolyAndCircleContact::Evaluate(b2ContactListener* listener)
 	b2ContactPoint cp;
 	cp.shape1 = m_shape1;
 	cp.shape2 = m_shape2;
-	cp.friction = m_friction;
-	cp.restitution = m_restitution;
+	cp.friction = b2MixFriction(m_shape1->GetFriction(), m_shape2->GetFriction());
+	cp.restitution = b2MixRestitution(m_shape1->GetRestitution(), m_shape2->GetRestitution());
 
 	// Match contact ids to facilitate warm starting.
 	if (m_manifold.pointCount > 0)

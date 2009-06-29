@@ -55,12 +55,10 @@ public:
 		}
 
 		m_world->SetGravity(b2Vec2_zero);
-		m_world->SetPositionCorrection(false);
 	}
 
 	~PolyCollision()
 	{
-		m_world->SetPositionCorrection(true);
 	}
 
 	static Test* Create()
@@ -70,8 +68,11 @@ public:
 
 	void Step(Settings* settings)
 	{
+		int32 positionIterations = settings->positionIterations;
+		settings->positionIterations = 0;
 		settings->pause = 1;
 		Test::Step(settings);
+		settings->positionIterations = positionIterations;
 		settings->pause = 0;
 	}
 

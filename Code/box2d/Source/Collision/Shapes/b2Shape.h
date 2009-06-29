@@ -61,7 +61,16 @@ enum b2ShapeType
 	e_unknownShape = -1,
 	e_circleShape,
 	e_polygonShape,
+	e_edgeShape,
 	e_shapeTypeCount,
+};
+
+/// Return codes from TestSegment
+enum b2SegmentCollide
+{
+	e_startsInsideCollide = -1,
+	e_missCollide = 0,
+	e_hitCollide = 1
 };
 
 /// A shape definition is used to construct a shape. This class defines an
@@ -121,6 +130,10 @@ public:
 	/// @return the true if the shape is a sensor.
 	bool IsSensor() const;
 
+	/// Set if this shapes is a sensor.
+	/// You must call b2World::Refilter to update existing contacts.
+	void SetSensor(bool sensor);
+
 	/// Set the contact filtering data. You must call b2World::Refilter to correct
 	/// existing contacts/non-contacts.
 	void SetFilterData(const b2FilterData& filter);
@@ -156,12 +169,11 @@ public:
 	/// is not set.
 	/// @param segment defines the begin and end point of the ray cast.
 	/// @param maxLambda a number typically in the range [0,1].
-	/// @return true if there was an intersection.
-	virtual bool TestSegment(	const b2XForm& xf,
-								float32* lambda,
-								b2Vec2* normal,
-								const b2Segment& segment,
-								float32 maxLambda) const = 0;
+	virtual b2SegmentCollide TestSegment(	const b2XForm& xf,
+											float32* lambda,
+											b2Vec2* normal,
+											const b2Segment& segment,
+											float32 maxLambda) const = 0;
 
 	/// Given a transform, compute the associated axis aligned bounding box for this shape.
 	/// @param aabb returns the axis aligned box.
@@ -181,14 +193,37 @@ public:
 	/// @param massData returns the mass data for this shape.
 	virtual void ComputeMass(b2MassData* massData) const = 0;
 
+	/// Compute the volume and centroid of this shape intersected with a half plane
+	/// @param normal the surface normal
+	/// @param offset the surface offset along normal
+	/// @param xf the shape transform
+	/// @param c returns the centroid
+	/// @return the total volume less than offset along normal
+	virtual float32 ComputeSubmergedArea(	const b2Vec2& normal,
+											float32 offset,
+											const b2XForm& xf, 
+											b2Vec2* c) const = 0;
+
 	/// Get the maximum radius about the parent body's center of mass.
 	float32 GetSweepRadius() const;
 
 	/// Get the coefficient of friction.
 	float32 GetFriction() const;
 
+	/// Set the coefficient of friction.
+	void SetFriction(float32 friction);
+
 	/// Get the coefficient of restitution.
 	float32 GetRestitution() const;
+
+	/// Set the coefficient of restitution.
+	void SetRestitution(float32 restitution);
+
+	/// Get the density of the shape.
+	float32 GetDensity() const;
+
+	/// Set the density of the shape.
+	void SetDensity(float32 density);
 
 protected:
 
@@ -237,6 +272,11 @@ inline bool b2Shape::IsSensor() const
 	return m_isSensor;
 }
 
+inline void b2Shape::SetSensor(bool sensor)
+{
+	m_isSensor = sensor;
+}
+
 inline void b2Shape::SetFilterData(const b2FilterData& filter)
 {
 	m_filter = filter;
@@ -277,9 +317,30 @@ inline float32 b2Shape::GetFriction() const
 	return m_friction;
 }
 
+inline void b2Shape::SetFriction(float32 friction)
+{
+	m_friction = friction;
+}
+
 inline float32 b2Shape::GetRestitution() const
 {
 	return m_restitution;
+}
+
+inline void b2Shape::SetRestitution(float32 restitution)
+{
+	m_restitution = restitution;
+}
+
+
+inline float32 b2Shape::GetDensity() const
+{
+	return m_density;
+}
+
+inline void b2Shape::SetDensity(float32 density)
+{
+	m_density = density;
 }
 
 #endif

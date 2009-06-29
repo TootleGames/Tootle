@@ -12,12 +12,13 @@ SOURCES=	Framework/Main.cpp \
 		Tests/BroadPhaseTest.cpp \
 		Tests/Biped.cpp \
 		Tests/BipedDef.cpp \
+		Tests/TriangleMesh.cpp \
 		Tests/TestEntries.cpp 
 
 ifneq ($(INCLUDE_DEPENDENCIES),yes)
 
 all:	
-	@make --no-print-directory INCLUDE_DEPENDENCIES=yes $(TARGETS)
+	$(MAKE) --no-print-directory INCLUDE_DEPENDENCIES=yes $(TARGETS)
 
 .PHONY:	clean
 clean:
@@ -58,4 +59,5 @@ Gen/fixed/testbed:	$(FIXED_OBJECTS) $(PROJECT)/Source/Gen/fixed/libbox2d.a
 Gen/fixed/%.d:		%.cpp
 	@mkdir -p $(dir $@)
 	c++ -M -MT $(@:.d=.o) $(CXXFLAGS) -o $@ $<
+
 

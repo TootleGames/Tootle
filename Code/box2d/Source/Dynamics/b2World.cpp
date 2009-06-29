@@ -25,6 +25,7 @@
 #include "../Collision/b2Collision.h"
 #include "../Collision/Shapes/b2CircleShape.h"
 #include "../Collision/Shapes/b2PolygonShape.h"
+#include "../Collision/Shapes/b2EdgeShape.h"
 #include <new>
 
 b2World::b2World(const b2AABB& worldAABB, const b2Vec2& gravity, bool doSleep)
@@ -38,12 +39,13 @@ b2World::b2World(const b2AABB& worldAABB, const b2Vec2& gravity, bool doSleep)
 	m_bodyList = NULL;
 	m_contactList = NULL;
 	m_jointList = NULL;
+	m_controllerList = NULL;
 
 	m_bodyCount = 0;
 	m_contactCount = 0;
 	m_jointCount = 0;
+	m_controllerCount = 0;
 
-	m_positionCorrection = true;
 	m_warmStarting = true;
 	m_continuousPhysics = true;
 
@@ -140,6 +142,16 @@ void b2World::DestroyBody(b2Body* b)
 		}
 
 		DestroyJoint(jn0->joint);
+	}
+
+	//Detach controllers attached to this body
+	b2ControllerEdge* ce = b->m_controllerList;
+	while(ce)
+	{
+		b2ControllerEdge* ce0 = ce;
+		ce = ce->nextController;
+
+		ce0->controller->RemoveBody(b);
 	}
 
 	// Delete the attached shapes. This destroys broad-phase
@@ -310,15 +322,51 @@ void b2World::DestroyJoint(b2Joint* j)
 	}
 }
 
+b2Controller* b2World::CreateController(b2ControllerDef* def)
+{
+	b2Controller* controller = def->Create(&m_blockAllocator);
+
+	controller->m_next = m_controllerList;
+	controller->m_prev = NULL;
+	if(m_controllerList)
+		m_controllerList->m_prev = controller;
+	m_controllerList = controller;
+	++m_controllerCount;
+
+	controller->m_world = this;
+
+	return controller;
+}
+
+void b2World::DestroyController(b2Controller* controller)
+{
+	b2Assert(m_controllerCount>0);
+	if(controller->m_next)
+		controller->m_next->m_prev = controller->m_prev;
+	if(controller->m_prev)
+		controller->m_prev->m_next = controller->m_next;
+	if(controller == m_controllerList)
+		m_controllerList = controller->m_next;
+	--m_controllerCount;
+
+	b2Controller::Destroy(controller, &m_blockAllocator);
+}
+
 void b2World::Refilter(b2Shape* shape)
 {
+	b2Assert(m_lock == false);
+
 	shape->RefilterProxy(m_broadPhase, shape->GetBody()->GetXForm());
 }
 
 // Find islands, integrate and solve constraints, solve position constraints
 void b2World::Solve(const b2TimeStep& step)
 {
-	m_positionIterationCount = 0;
+	// Step all controlls
+	for(b2Controller* controller = m_controllerList;controller;controller=controller->m_next)
+	{
+		controller->Step(step);
+	}
 
 	// Size the island for the worst case.
 	b2Island island(m_bodyCount, m_contactCount, m_jointCount, &m_stackAllocator, m_contactListener);
@@ -429,8 +477,7 @@ void b2World::Solve(const b2TimeStep& step)
 			}
 		}
 
-		island.Solve(step, m_gravity, m_positionCorrection, m_allowSleep);
-		m_positionIterationCount = b2Max(m_positionIterationCount, island.m_positionIterationCount);
+		island.Solve(step, m_gravity, m_allowSleep);
 
 		// Post solve cleanup.
 		for (int32 i = 0; i < island.m_bodyCount; ++i)
@@ -479,10 +526,19 @@ void b2World::Solve(const b2TimeStep& step)
 // Find TOI contacts and solve them.
 void b2World::SolveTOI(const b2TimeStep& step)
 {
-	// Reserve an island and a stack for TOI island solution.
-	b2Island island(m_bodyCount, b2_maxTOIContactsPerIsland, 0, &m_stackAllocator, m_contactListener);
-	int32 stackSize = m_bodyCount;
-	b2Body** stack = (b2Body**)m_stackAllocator.Allocate(stackSize * sizeof(b2Body*));
+	// Reserve an island and a queue for TOI island solution.
+	b2Island island(m_bodyCount, b2_maxTOIContactsPerIsland, b2_maxTOIJointsPerIsland, &m_stackAllocator, m_contactListener);
+	
+	//Simple one pass queue
+	//Relies on the fact that we're only making one pass
+	//through and each body can only be pushed/popped once.
+	//To push: 
+	//  queue[queueStart+queueSize++] = newElement;
+	//To pop: 
+	//	poppedElement = queue[queueStart++];
+	//  --queueSize;
+	int32 queueCapacity = m_bodyCount;
+	b2Body** queue = (b2Body**)m_stackAllocator.Allocate(queueCapacity* sizeof(b2Body*));
 
 	for (b2Body* b = m_bodyList; b; b = b->m_next)
 	{
@@ -494,6 +550,11 @@ void b2World::SolveTOI(const b2TimeStep& step)
 	{
 		// Invalidate TOI
 		c->m_flags &= ~(b2Contact::e_toiFlag | b2Contact::e_islandFlag);
+	}
+
+	for (b2Joint* j = m_jointList; j; j = j->m_next)
+	{
+            j->m_islandFlag = false;
 	}
 
 	// Find TOI events and solve them.
@@ -552,8 +613,10 @@ void b2World::SolveTOI(const b2TimeStep& step)
 
 				b2Assert(0.0f <= toi && toi <= 1.0f);
 
-				if (toi > 0.0f && toi < 1.0f)
+				// If the TOI is in range ...
+				if (0.0f < toi && toi < 1.0f)
 				{
+					// Interpolate on the actual range.
 					toi = b2Min((1.0f - toi) * t0 + toi, 1.0f);
 				}
 
@@ -602,17 +665,21 @@ void b2World::SolveTOI(const b2TimeStep& step)
 			seed = b2;
 		}
 
-		// Reset island and stack.
+		// Reset island and queue.
 		island.Clear();
-		int32 stackCount = 0;
-		stack[stackCount++] = seed;
+		
+		int32 queueStart = 0; // starting index for queue
+		int32 queueSize = 0;  // elements in queue
+		queue[queueStart + queueSize++] = seed;
 		seed->m_flags |= b2Body::e_islandFlag;
 
-		// Perform a depth first search (DFS) on the contact graph.
-		while (stackCount > 0)
+		// Perform a breadth first search (BFS) on the contact/joint graph.
+		while (queueSize > 0)
 		{
 			// Grab the next body off the stack and add it to the island.
-			b2Body* b = stack[--stackCount];
+			b2Body* b = queue[queueStart++];
+			--queueSize;
+			
 			island.Add(b);
 
 			// Make sure the body is awake.
@@ -626,7 +693,7 @@ void b2World::SolveTOI(const b2TimeStep& step)
 			}
 
 			// Search all contacts connected to this body.
-			for (b2ContactEdge* cn = b->m_contactList; cn; cn = cn->next)
+			for (b2ContactEdge* cEdge = b->m_contactList; cEdge; cEdge = cEdge->next)
 			{
 				// Does the TOI island still have space for contacts?
 				if (island.m_contactCount == island.m_contactCapacity)
@@ -635,22 +702,22 @@ void b2World::SolveTOI(const b2TimeStep& step)
 				}
 
 				// Has this contact already been added to an island? Skip slow or non-solid contacts.
-				if (cn->contact->m_flags & (b2Contact::e_islandFlag | b2Contact::e_slowFlag | b2Contact::e_nonSolidFlag))
+				if (cEdge->contact->m_flags & (b2Contact::e_islandFlag | b2Contact::e_slowFlag | b2Contact::e_nonSolidFlag))
 				{
 					continue;
 				}
 
 				// Is this contact touching? For performance we are not updating this contact.
-				if (cn->contact->GetManifoldCount() == 0)
+				if (cEdge->contact->GetManifoldCount() == 0)
 				{
 					continue;
 				}
 
-				island.Add(cn->contact);
-				cn->contact->m_flags |= b2Contact::e_islandFlag;
+				island.Add(cEdge->contact);
+				cEdge->contact->m_flags |= b2Contact::e_islandFlag;
 
 				// Update other body.
-				b2Body* other = cn->other;
+				b2Body* other = cEdge->other;
 
 				// Was the other body already added to this island?
 				if (other->m_flags & b2Body::e_islandFlag)
@@ -665,17 +732,55 @@ void b2World::SolveTOI(const b2TimeStep& step)
 					other->WakeUp();
 				}
 
-				b2Assert(stackCount < stackSize);
-				stack[stackCount++] = other;
+				b2Assert(queueStart + queueSize < queueCapacity);
+				queue[queueStart + queueSize] = other;
+				++queueSize;
+				other->m_flags |= b2Body::e_islandFlag;
+			}
+			
+			for (b2JointEdge* jEdge = b->m_jointList; jEdge; jEdge = jEdge->next)
+			{
+				if (island.m_jointCount == island.m_jointCapacity)
+				{
+					continue;
+				}
+				
+				if (jEdge->joint->m_islandFlag == true)
+				{
+					continue;
+				}
+				
+				island.Add(jEdge->joint);
+				
+				jEdge->joint->m_islandFlag = true;
+				
+				b2Body* other = jEdge->other;
+				
+				if (other->m_flags & b2Body::e_islandFlag)
+				{
+					continue;
+				}
+				
+				if (!other->IsStatic())
+				{
+					other->Advance(minTOI);
+					other->WakeUp();
+				}
+				
+				b2Assert(queueStart + queueSize < queueCapacity);
+				queue[queueStart + queueSize] = other;
+				++queueSize;
 				other->m_flags |= b2Body::e_islandFlag;
 			}
 		}
 
 		b2TimeStep subStep;
+		subStep.warmStarting = false;
 		subStep.dt = (1.0f - minTOI) * step.dt;
-		b2Assert(subStep.dt > B2_FLT_EPSILON);
 		subStep.inv_dt = 1.0f / subStep.dt;
-		subStep.maxIterations = step.maxIterations;
+		subStep.dtRatio = 0.0f;
+		subStep.velocityIterations = step.velocityIterations;
+		subStep.positionIterations = step.positionIterations;
 
 		island.SolveTOI(subStep);
 
@@ -722,21 +827,29 @@ void b2World::SolveTOI(const b2TimeStep& step)
 			c->m_flags &= ~(b2Contact::e_toiFlag | b2Contact::e_islandFlag);
 		}
 
+		for (int32 i = 0; i < island.m_jointCount; ++i)
+		{
+			// Allow joints to participate in future TOI islands.
+			b2Joint* j = island.m_joints[i];
+			j->m_islandFlag = false;
+		}
+		
 		// Commit shape proxy movements to the broad-phase so that new contacts are created.
 		// Also, some contacts can be destroyed.
 		m_broadPhase->Commit();
 	}
 
-	m_stackAllocator.Free(stack);
+	m_stackAllocator.Free(queue);
 }
 
-void b2World::Step(float32 dt, int32 iterations)
+void b2World::Step(float32 dt, int32 velocityIterations, int32 positionIterations)
 {
 	m_lock = true;
 
 	b2TimeStep step;
 	step.dt = dt;
-	step.maxIterations	= iterations;
+	step.velocityIterations	= velocityIterations;
+	step.positionIterations = positionIterations;
 	if (dt > 0.0f)
 	{
 		step.inv_dt = 1.0f / dt;
@@ -748,7 +861,6 @@ void b2World::Step(float32 dt, int32 iterations)
 
 	step.dtRatio = m_inv_dt0 * dt;
 
-	step.positionCorrection = m_positionCorrection;
 	step.warmStarting = m_warmStarting;
 	
 	// Update contacts.
@@ -786,6 +898,45 @@ int32 b2World::Query(const b2AABB& aabb, b2Shape** shapes, int32 maxCount)
 
 	m_stackAllocator.Free(results);
 	return count;
+}
+
+int32 b2World::Raycast(const b2Segment& segment, b2Shape** shapes, int32 maxCount, bool solidShapes, void* userData)
+{
+	m_raycastSegment = &segment;
+	m_raycastUserData = userData;
+	m_raycastSolidShape = solidShapes;
+
+	void** results = (void**)m_stackAllocator.Allocate(maxCount * sizeof(void*));
+
+	int32 count = m_broadPhase->QuerySegment(segment,results,maxCount, &RaycastSortKey);
+
+	for (int32 i = 0; i < count; ++i)
+	{
+		shapes[i] = (b2Shape*)results[i];
+	}
+
+	m_stackAllocator.Free(results);
+	return count;
+}
+
+b2Shape* b2World::RaycastOne(const b2Segment& segment, float32* lambda, b2Vec2* normal, bool solidShapes, void* userData)
+{
+	int32 maxCount = 1;
+	b2Shape* shape;
+
+	int32 count = Raycast(segment, &shape, maxCount, solidShapes, userData);
+
+	if(count==0)
+		return NULL;
+
+	b2Assert(count==1);
+
+	//Redundantly do TestSegment a second time, as the previous one's results are inaccessible
+
+	const b2XForm xf = shape->GetBody()->GetXForm();
+	shape->TestSegment(xf, lambda, normal,segment,1);
+	//We already know it returns true
+	return shape;
 }
 
 void b2World::DrawShape(b2Shape* shape, const b2XForm& xf, const b2Color& color, bool core)
@@ -835,6 +986,19 @@ void b2World::DrawShape(b2Shape* shape, const b2XForm& xf, const b2Color& color,
 					vertices[i] = b2Mul(xf, localCoreVertices[i]);
 				}
 				m_debugDraw->DrawPolygon(vertices, vertexCount, coreColor);
+			}
+		}
+		break;
+		
+	case e_edgeShape:
+		{
+			b2EdgeShape* edge = (b2EdgeShape*)shape;
+			
+			m_debugDraw->DrawSegment(b2Mul(xf, edge->GetVertex1()), b2Mul(xf, edge->GetVertex2()), color);
+			
+			if (core)
+			{
+				m_debugDraw->DrawSegment(b2Mul(xf, edge->GetCoreVertex1()), b2Mul(xf, edge->GetCoreVertex2()), coreColor);
 			}
 		}
 		break;
@@ -924,6 +1088,14 @@ void b2World::DrawDebugData()
 			{
 				DrawJoint(j);
 			}
+		}
+	}
+
+	if (flags & b2DebugDraw::e_controllerBit)
+	{
+		for (b2Controller* c = m_controllerList; c; c= c->GetNext())
+		{
+			c->Draw(m_debugDraw);
 		}
 	}
 
@@ -1061,4 +1233,30 @@ int32 b2World::GetProxyCount() const
 int32 b2World::GetPairCount() const
 {
 	return m_broadPhase->m_pairManager.m_pairCount;
+}
+
+bool b2World::InRange(const b2AABB& aabb) const
+{
+	return m_broadPhase->InRange(aabb);
+}
+
+float32 b2World::RaycastSortKey(void* data)
+{
+	b2Shape* shape = (b2Shape*)data;
+	b2Body* body = shape->GetBody();
+	b2World* world = body->GetWorld();
+	const b2XForm xf = body->GetXForm();
+
+	if(world->m_contactFilter && !world->m_contactFilter->RayCollide(world->m_raycastUserData,shape))
+		return -1;
+
+	float32 lambda;
+	b2SegmentCollide collide = shape->TestSegment(xf, &lambda, &world->m_raycastNormal, *world->m_raycastSegment,1);
+
+	if(world->m_raycastSolidShape && collide==e_missCollide)
+		return -1;
+	if(!world->m_raycastSolidShape && collide!=e_hitCollide)
+		return -1;
+
+	return lambda;
 }

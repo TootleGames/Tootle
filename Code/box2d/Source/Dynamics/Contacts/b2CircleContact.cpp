@@ -22,6 +22,7 @@
 #include "../../Common/b2BlockAllocator.h"
 
 #include <new>
+#include <cstring>
 
 b2Contact* b2CircleContact::Create(b2Shape* shape1, b2Shape* shape2, b2BlockAllocator* allocator)
 {
@@ -58,8 +59,8 @@ void b2CircleContact::Evaluate(b2ContactListener* listener)
 	b2ContactPoint cp;
 	cp.shape1 = m_shape1;
 	cp.shape2 = m_shape2;
-	cp.friction = m_friction;
-	cp.restitution = m_restitution;
+	cp.friction = b2MixFriction(m_shape1->GetFriction(), m_shape2->GetFriction());
+	cp.restitution = b2MixRestitution(m_shape1->GetRestitution(), m_shape2->GetRestitution());
 
 	if (m_manifold.pointCount > 0)
 	{

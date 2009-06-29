@@ -41,17 +41,8 @@ struct b2DistanceJointDef : public b2JointDef
 
 	/// Initialize the bodies, anchors, and length using the world
 	/// anchors.
-	void Initialize(b2Body* b1, b2Body* b2,
+	void Initialize(b2Body* body1, b2Body* body2,
 					const b2Vec2& anchor1, const b2Vec2& anchor2);
-
-	//	gr: same as initialise but with local anchors
-	void InitializeLocal(b2Body* b1, b2Body* b2,
-					const b2Vec2& LOCALanchor1, const b2Vec2& LOCALanchor2);
-
-	//	gr: full initialise with pre-calced local and world positions
-	void Initialize(b2Body* b1, b2Body* b2,
-					const b2Vec2& worldanchor1, const b2Vec2& worldanchor2, const b2Vec2& localanchor1, const b2Vec2& localanchor2);
-
 
 	/// The local anchor point relative to body1's origin.
 	b2Vec2 localAnchor1;
@@ -79,8 +70,8 @@ public:
 	b2Vec2 GetAnchor1() const;
 	b2Vec2 GetAnchor2() const;
 
-	b2Vec2 GetReactionForce() const;
-	float32 GetReactionTorque() const;
+	b2Vec2 GetReactionForce(float32 inv_dt) const;
+	float32 GetReactionTorque(float32 inv_dt) const;
 
 	//--------------- Internals Below -------------------
 
@@ -88,7 +79,7 @@ public:
 
 	void InitVelocityConstraints(const b2TimeStep& step);
 	void SolveVelocityConstraints(const b2TimeStep& step);
-	bool SolvePositionConstraints();
+	bool SolvePositionConstraints(float32 baumgarte);
 
 	b2Vec2 m_localAnchor1;
 	b2Vec2 m_localAnchor2;

@@ -47,20 +47,14 @@ public:
 			sd.density = 1.0f;
 			sd.friction = 0.3f;
 
-			for (int i = 0; i < 12; ++i)
+			for (int i = 0; i < 16; ++i)
 			{
 				b2BodyDef bd;
 
-				// For this test we are using continuous physics for all boxes.
-				// This is a stress test, you normally wouldn't do this for
-				// performance reasons.
-				//bd.isBullet = true;
-				bd.allowSleep = true;
-
-				//float32 x = b2Random(-0.1f, 0.1f);
+				float32 x = 0.0f;
+				//float32 x = RandomFloat(-0.02f, 0.02f);
 				//float32 x = i % 2 == 0 ? -0.025f : 0.025f;
-				bd.position.Set(xs[j], 0.752f + 1.54f * i);
-				//bd.position.Set(xs[j], 2.51f + 4.02f * i);
+				bd.position.Set(xs[j] + x, 0.752f + 1.54f * i);
 				b2Body* body = m_world->CreateBody(&bd);
 
 				body->CreateShape(&sd);
@@ -90,7 +84,6 @@ public:
 
 				b2BodyDef bd;
 				bd.isBullet = true;
-				bd.allowSleep = false;
 				bd.position.Set(-31.0f, 5.0f);
 
 				m_bullet = m_world->CreateBody(&bd);
@@ -106,7 +99,7 @@ public:
 	void Step(Settings* settings)
 	{
 		Test::Step(settings);
-		DrawString(5, m_textLine, "Press: (,) to launch a bullet.");
+		m_debugDraw.DrawString(5, m_textLine, "Press: (,) to launch a bullet.");
 		m_textLine += 15;
 	}
 

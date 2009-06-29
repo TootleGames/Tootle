@@ -35,7 +35,9 @@ For discussion please visit http://www.box2d.org/forum
 
 #include "../Source/Collision/Shapes/b2CircleShape.h"
 #include "../Source/Collision/Shapes/b2PolygonShape.h"
+#include "../Source/Collision/Shapes/b2EdgeShape.h"
 #include "../Source/Collision/b2BroadPhase.h"
+#include "../Source/Collision/b2DynamicTree.h"
 #include "../Source/Dynamics/b2WorldCallbacks.h"
 #include "../Source/Dynamics/b2World.h"
 #include "../Source/Dynamics/b2Body.h"
@@ -43,10 +45,17 @@ For discussion please visit http://www.box2d.org/forum
 #include "../Source/Dynamics/Contacts/b2Contact.h"
 
 #include "../Source/Dynamics/Joints/b2DistanceJoint.h"
+#include "../Source/Dynamics/Joints/b2GearJoint.h"
+#include "../Source/Dynamics/Joints/b2LineJoint.h"
 #include "../Source/Dynamics/Joints/b2MouseJoint.h"
 #include "../Source/Dynamics/Joints/b2PrismaticJoint.h"
-#include "../Source/Dynamics/Joints/b2RevoluteJoint.h"
 #include "../Source/Dynamics/Joints/b2PulleyJoint.h"
-#include "../Source/Dynamics/Joints/b2GearJoint.h"
+#include "../Source/Dynamics/Joints/b2RevoluteJoint.h"
+
+#include "../Source/Dynamics/Controllers/b2BuoyancyController.h"
+#include "../Source/Dynamics/Controllers/b2ConstantForceController.h"
+#include "../Source/Dynamics/Controllers/b2ConstantAccelController.h"
+#include "../Source/Dynamics/Controllers/b2GravityController.h"
+#include "../Source/Dynamics/Controllers/b2TensorDampingController.h"
 
 #endif

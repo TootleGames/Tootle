@@ -53,7 +53,7 @@ public:
 		triangleShapeDef.density = 1.0f;
 
 		b2BodyDef triangleBodyDef;
-		triangleBodyDef.position.Set(b2Random(xLo, xHi), b2Random(yLo, yHi));
+		triangleBodyDef.position.Set(RandomFloat(xLo, xHi), RandomFloat(yLo, yHi));
 
 		b2Body* body1 = m_world->CreateBody(&triangleBodyDef);
 		body1->CreateShape(&triangleShapeDef);
@@ -63,7 +63,7 @@ public:
 		triangleShapeDef.vertices[0] *= 2.0f;
 		triangleShapeDef.vertices[1] *= 2.0f;
 		triangleShapeDef.vertices[2] *= 2.0f;
-		triangleBodyDef.position.Set(b2Random(xLo, xHi), b2Random(yLo, yHi));
+		triangleBodyDef.position.Set(RandomFloat(xLo, xHi), RandomFloat(yLo, yHi));
 
 		b2Body* body2 = m_world->CreateBody(&triangleBodyDef);
 		body2->CreateShape(&triangleShapeDef);
@@ -75,7 +75,7 @@ public:
 		boxShapeDef.density = 1.0f;
 
 		b2BodyDef boxBodyDef;
-		boxBodyDef.position.Set(b2Random(xLo, xHi), b2Random(yLo, yHi));
+		boxBodyDef.position.Set(RandomFloat(xLo, xHi), RandomFloat(yLo, yHi));
 
 		b2Body* body3 = m_world->CreateBody(&boxBodyDef);
 		body3->CreateShape(&boxShapeDef);
@@ -83,7 +83,7 @@ public:
 
 		// Large box (recycle definitions)
 		boxShapeDef.SetAsBox(2.0f, 1.0f);
-		boxBodyDef.position.Set(b2Random(xLo, xHi), b2Random(yLo, yHi));
+		boxBodyDef.position.Set(RandomFloat(xLo, xHi), RandomFloat(yLo, yHi));
 		
 		b2Body* body4 = m_world->CreateBody(&boxBodyDef);
 		body4->CreateShape(&boxShapeDef);
@@ -95,7 +95,7 @@ public:
 		circleShapeDef.density = 1.0f;
 
 		b2BodyDef circleBodyDef;
-		circleBodyDef.position.Set(b2Random(xLo, xHi), b2Random(yLo, yHi));
+		circleBodyDef.position.Set(RandomFloat(xLo, xHi), RandomFloat(yLo, yHi));
 
 		b2Body* body5 = m_world->CreateBody(&circleBodyDef);
 		body5->CreateShape(&circleShapeDef);
@@ -103,7 +103,7 @@ public:
 
 		// Large circle
 		circleShapeDef.radius *= 2.0f;
-		circleBodyDef.position.Set(b2Random(xLo, xHi), b2Random(yLo, yHi));
+		circleBodyDef.position.Set(RandomFloat(xLo, xHi), RandomFloat(yLo, yHi));
 
 		b2Body* body6 = m_world->CreateBody(&circleBodyDef);
 		body6->CreateShape(&circleShapeDef);

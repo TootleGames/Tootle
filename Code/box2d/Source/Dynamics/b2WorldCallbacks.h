@@ -70,6 +70,9 @@ public:
 	/// Return true if contact calculations should be performed between these two shapes.
 	/// @warning for performance reasons this is only called when the AABBs begin to overlap.
 	virtual bool ShouldCollide(b2Shape* shape1, b2Shape* shape2);
+
+	/// Return true if the given shape should be considered for ray intersection
+	virtual bool RayCollide(void* userData, b2Shape* b2Shape);
 };
 
 /// The default contact filter.
@@ -111,6 +114,7 @@ struct b2Color
 {
 	b2Color() {}
 	b2Color(float32 r, float32 g, float32 b) : r(r), g(g), b(b) {}
+	void Set(float32 ri, float32 gi, float32 bi) { r = ri; g = gi; b = bi; }
 	float32 r, g, b;
 };
 
@@ -132,6 +136,7 @@ public:
 		e_obbBit				= 0x0010, ///< draw oriented bounding boxes
 		e_pairBit				= 0x0020, ///< draw broad-phase pairs
 		e_centerOfMassBit		= 0x0040, ///< draw center of mass frame
+		e_controllerBit			= 0x0080, ///< draw controllers
 	};
 
 	/// Set the drawing flags.

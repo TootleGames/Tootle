@@ -239,7 +239,7 @@ public:
 
 		for( unsigned i=0; i<m_strings.size(); ++i )
 		{
-			DrawString(5, m_textLine, m_strings[i].c_str() );
+			m_debugDraw.DrawString(5, m_textLine, m_strings[i].c_str() );
 			m_textLine += 15;
 		}
 	}

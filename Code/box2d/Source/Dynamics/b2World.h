@@ -34,15 +34,17 @@ class b2Joint;
 class b2Shape;
 class b2Contact;
 class b2BroadPhase;
+class b2Controller;
+class b2ControllerDef;
 
 struct b2TimeStep
 {
 	float32 dt;			// time step
 	float32 inv_dt;		// inverse time step (0 if dt == 0).
 	float32 dtRatio;	// dt * inv_dt0
-	int32 maxIterations;
+	int32 velocityIterations;
+	int32 positionIterations;
 	bool warmStarting;
-	bool positionCorrection;
 };
 
 /// The world class manages all physics entities, dynamic simulation,
@@ -98,6 +100,12 @@ public:
 	/// @warning This function is locked during callbacks.
 	void DestroyJoint(b2Joint* joint);
 
+	/// Add a controller to the world.
+	b2Controller* CreateController(b2ControllerDef* def);
+
+	/// Removes a controller from the world.
+	void DestroyController(b2Controller* controller);
+
 	/// The world provides a single static ground body with no collision shapes.
 	/// You can use this to simplify the creation of joints and static shapes.
 	b2Body* GetGroundBody();
@@ -105,8 +113,9 @@ public:
 	/// Take a time step. This performs collision detection, integration,
 	/// and constraint solution.
 	/// @param timeStep the amount of time to simulate, this should not vary.
-	/// @param iterations the number of iterations to be used by the constraint solver.
-	void Step(float32 timeStep, int32 iterations);
+	/// @param velocityIterations for the velocity constraint solver.
+	/// @param positionIterations for the position constraint solver.
+	void Step(float32 timeStep, int32 velocityIterations, int32 positionIterations);
 
 	/// Query the world for all shapes that potentially overlap the
 	/// provided AABB. You provide a shape pointer buffer of specified
@@ -116,6 +125,32 @@ public:
 	/// @param maxCount the capacity of the shapes array.
 	/// @return the number of shapes found in aabb.
 	int32 Query(const b2AABB& aabb, b2Shape** shapes, int32 maxCount);
+
+	/// Query the world for all shapes that intersect a given segment. You provide a shap
+	/// pointer buffer of specified size. The number of shapes found is returned, and the buffer
+	/// is filled in order of intersection
+	/// @param segment defines the begin and end point of the ray cast, from p1 to p2.
+	/// Use b2Segment.Extend to create (semi-)infinite rays
+	/// @param shapes a user allocated shape pointer array of size maxCount (or greater).
+	/// @param maxCount the capacity of the shapes array
+	/// @param solidShapes determines if shapes that the ray starts in are counted as hits.
+	/// @param userData passed through the worlds contact filter, with method RayCollide. This can be used to filter valid shapes
+	/// @returns the number of shapes found
+	int32 Raycast(const b2Segment& segment, b2Shape** shapes, int32 maxCount, bool solidShapes, void* userData);
+
+	/// Performs a raycast as with Raycast, finding the first intersecting shape.
+	/// @param segment defines the begin and end point of the ray cast, from p1 to p2.
+	/// Use b2Segment.Extend to create (semi-)infinite rays	
+	/// @param lambda returns the hit fraction. You can use this to compute the contact point
+	/// p = (1 - lambda) * segment.p1 + lambda * segment.p2.
+	/// @param normal returns the normal at the contact point. If there is no intersection, the normal
+	/// is not set.
+	/// @param solidShapes determines if shapes that the ray starts in are counted as hits.
+	/// @returns the colliding shape shape, or null if not found
+	b2Shape* RaycastOne(const b2Segment& segment, float32* lambda, b2Vec2* normal, bool solidShapes, void* userData);
+
+	/// Check if the AABB is within the broadphase limits.
+	bool InRange(const b2AABB& aabb) const;
 
 	/// Get the world body list. With the returned body, use b2Body::GetNext to get
 	/// the next body in the world list. A NULL body indicates the end of the list.
@@ -127,14 +162,16 @@ public:
 	/// @return the head of the world joint list.
 	b2Joint* GetJointList();
 
+	/// Get the world controller list. With the returned controller, use b2Controller::GetNext to get
+	/// the next controller in the world list. A NULL controller indicates the end of the list.
+	/// @return the head of the world controller list.
+	b2Controller* GetControllerList();
+
 	/// Re-filter a shape. This re-runs contact filtering on a shape.
 	void Refilter(b2Shape* shape);
 
 	/// Enable/disable warm starting. For testing.
 	void SetWarmStarting(bool flag) { m_warmStarting = flag; }
-
-	/// Enable/disable position correction. For testing.
-	void SetPositionCorrection(bool flag) { m_positionCorrection = flag; }
 
 	/// Enable/disable continuous physics. For testing.
 	void SetContinuousPhysics(bool flag) { m_continuousPhysics = flag; }
@@ -151,19 +188,26 @@ public:
 	/// Get the number of bodies.
 	int32 GetBodyCount() const;
 
-	/// Get the number joints.
+	/// Get the number of joints.
 	int32 GetJointCount() const;
 
 	/// Get the number of contacts (each may have 0 or more contact points).
 	int32 GetContactCount() const;
 
+	/// Get the number of controllers.
+	int32 GetControllerCount() const;
+
 	/// Change the global gravity vector.
 	void SetGravity(const b2Vec2& gravity);
+	
+	/// Get the global gravity vector.
+	b2Vec2 GetGravity() const;
 
 private:
 
 	friend class b2Body;
 	friend class b2ContactManager;
+	friend class b2Controller;
 
 	void Solve(const b2TimeStep& step);
 	void SolveTOI(const b2TimeStep& step);
@@ -171,6 +215,9 @@ private:
 	void DrawJoint(b2Joint* joint);
 	void DrawShape(b2Shape* shape, const b2XForm& xf, const b2Color& color, bool core);
 	void DrawDebugData();
+
+	//Is it safe to pass private static function pointers?
+	static float32 RaycastSortKey(void* shape);
 
 	b2BlockAllocator m_blockAllocator;
 	b2StackAllocator m_stackAllocator;
@@ -182,6 +229,13 @@ private:
 
 	b2Body* m_bodyList;
 	b2Joint* m_jointList;
+	b2Controller* m_controllerList;
+
+	b2Vec2 m_raycastNormal;
+	void* m_raycastUserData;
+	const b2Segment* m_raycastSegment;
+	bool m_raycastSolidShape;
+
 
 	// Do not access
 	b2Contact* m_contactList;
@@ -189,6 +243,7 @@ private:
 	int32 m_bodyCount;
 	int32 m_contactCount;
 	int32 m_jointCount;
+	int32 m_controllerCount;
 
 	b2Vec2 m_gravity;
 	bool m_allowSleep;
@@ -201,12 +256,9 @@ private:
 	b2ContactListener* m_contactListener;
 	b2DebugDraw* m_debugDraw;
 
+	// This is used to compute the time step ratio to
+	// support a variable time step.
 	float32 m_inv_dt0;
-
-	int32 m_positionIterationCount;
-
-	// This is for debugging the solver.
-	bool m_positionCorrection;
 
 	// This is for debugging the solver.
 	bool m_warmStarting;
@@ -230,6 +282,11 @@ inline b2Joint* b2World::GetJointList()
 	return m_jointList;
 }
 
+inline b2Controller* b2World::GetControllerList()
+{
+	return m_controllerList;
+}
+
 inline int32 b2World::GetBodyCount() const
 {
 	return m_bodyCount;
@@ -245,9 +302,19 @@ inline int32 b2World::GetContactCount() const
 	return m_contactCount;
 }
 
+inline int32 b2World::GetControllerCount() const
+{
+	return m_controllerCount;
+}
+
 inline void b2World::SetGravity(const b2Vec2& gravity)
 {
 	m_gravity = gravity;
+}
+
+inline b2Vec2 b2World::GetGravity() const
+{
+	return m_gravity;
 }
 
 #endif

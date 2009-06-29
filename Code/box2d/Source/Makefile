@@ -15,6 +15,8 @@ SOURCES = \
 	./Dynamics/Contacts/b2PolyContact.cpp \
 	./Dynamics/Contacts/b2CircleContact.cpp \
 	./Dynamics/Contacts/b2PolyAndCircleContact.cpp \
+	./Dynamics/Contacts/b2EdgeAndCircleContact.cpp \
+	./Dynamics/Contacts/b2PolyAndEdgeContact.cpp \
 	./Dynamics/Contacts/b2ContactSolver.cpp \
 	./Dynamics/b2WorldCallbacks.cpp \
 	./Dynamics/Joints/b2MouseJoint.cpp \
@@ -24,6 +26,13 @@ SOURCES = \
 	./Dynamics/Joints/b2PrismaticJoint.cpp \
 	./Dynamics/Joints/b2DistanceJoint.cpp \
 	./Dynamics/Joints/b2GearJoint.cpp \
+	./Dynamics/Joints/b2LineJoint.cpp \
+	./Dynamics/Controllers/b2Controller.cpp \
+	./Dynamics/Controllers/b2BuoyancyController.cpp \
+	./Dynamics/Controllers/b2GravityController.cpp \
+	./Dynamics/Controllers/b2TensorDampingController.cpp \
+	./Dynamics/Controllers/b2ConstantForceController.cpp \
+	./Dynamics/Controllers/b2ConstantAccelController.cpp \
 	./Common/b2StackAllocator.cpp \
 	./Common/b2Math.cpp \
 	./Common/b2BlockAllocator.cpp \
@@ -33,6 +42,7 @@ SOURCES = \
 	./Collision/Shapes/b2Shape.cpp \
 	./Collision/Shapes/b2CircleShape.cpp \
 	./Collision/Shapes/b2PolygonShape.cpp \
+	./Collision/Shapes/b2EdgeShape.cpp \
 	./Collision/b2TimeOfImpact.cpp \
 	./Collision/b2PairManager.cpp \
 	./Collision/b2CollidePoly.cpp \
@@ -45,7 +55,7 @@ SOURCES = \
 ifneq ($(INCLUDE_DEPENDENCIES),yes)
 
 all:	
-	@make --no-print-directory INCLUDE_DEPENDENCIES=yes $(TARGETS)
+	$(MAKE) --no-print-directory INCLUDE_DEPENDENCIES=yes $(TARGETS)
 
 .PHONY:	clean
 clean:

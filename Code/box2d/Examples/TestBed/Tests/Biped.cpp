@@ -51,7 +51,7 @@ Biped::Biped(b2World* w, const b2Vec2& position)
 	Pelvis->CreateShape(&def.PelvisPoly);
 	Pelvis->SetMassFromShapes();
 
-	bd = def.PelvisDef;
+	bd = def.StomachDef;
 	bd.position += position;
 	Stomach = w->CreateBody(&bd);
 	Stomach->CreateShape(&def.StomachPoly);

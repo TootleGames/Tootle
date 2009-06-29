@@ -60,7 +60,7 @@ public:
 			bd.isBullet = true;
 			b2Body* body = m_world->CreateBody(&bd);
 			body->SetLinearVelocity(b2Vec2(0.0f, -100.0f));
-			body->SetAngularVelocity(b2Random(-50.0f, 50.0f));
+			body->SetAngularVelocity(RandomFloat(-50.0f, 50.0f));
 
 			b2CircleDef sd;
 			sd.radius = 0.25f;

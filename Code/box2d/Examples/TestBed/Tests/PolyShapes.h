@@ -21,6 +21,8 @@
 
 #include "../Framework/Render.h"
 
+#include <cstring>
+
 const int32 k_maxBodies = 256;
 
 class PolyShapes : public Test
@@ -33,7 +35,6 @@ public:
 			b2PolygonDef sd;
 			sd.SetAsBox(50.0f, 10.0f);
 			sd.friction = 0.3f;
-			sd.filter.categoryBits = 0x0001;
 			
 			b2BodyDef bd;
 			bd.position.Set(0.0f, -10.0f);
@@ -47,8 +48,6 @@ public:
 		sds[0].vertices[2].Set(0.0f, 1.5f);
 		sds[0].density = 1.0f;
 		sds[0].friction = 0.3f;
-		sds[0].filter.categoryBits = 0x0002;
-		//sds[0].maskBits = 0x0003;
 		
 		sds[1].vertexCount = 3;
 		sds[1].vertices[0].Set(-0.1f, 0.0f);
@@ -56,7 +55,6 @@ public:
 		sds[1].vertices[2].Set(0.0f, 1.5f);
 		sds[1].density = 1.0f;
 		sds[1].friction = 0.3f;
-		sds[1].filter.categoryBits = 0x0004;
 
 		sds[2].vertexCount = 8;
 		float32 w = 1.0f;
@@ -72,16 +70,10 @@ public:
 		sds[2].vertices[7].Set(-0.5f * s, 0.0f);
 		sds[2].density = 1.0f;
 		sds[2].friction = 0.3f;
-		sds[2].filter.categoryBits = 0x0004;
 
-		sds[3].vertexCount = 4;
-		sds[3].vertices[0].Set(-0.5f, 0.0f);
-		sds[3].vertices[1].Set(0.5f, 0.0f);
-		sds[3].vertices[2].Set(0.5f, 1.0f);
-		sds[3].vertices[3].Set(-0.5f, 1.0f);
+		sds[3].SetAsBox(0.5f, 0.5f);
 		sds[3].density = 1.0f;
 		sds[3].friction = 0.3f;
-		sds[3].filter.categoryBits = 0x0004;
 
 		circleDef.radius = 0.5f;
 		circleDef.density = 1.0f;
@@ -100,9 +92,9 @@ public:
 
 		b2BodyDef bd;
 
-		float32 x = b2Random(-2.0f, 2.0f);
+		float32 x = RandomFloat(-2.0f, 2.0f);
 		bd.position.Set(x, 10.0f);
-		bd.angle = b2Random(-b2_pi, b2_pi);
+		bd.angle = RandomFloat(-b2_pi, b2_pi);
 
 		if (index == 4)
 		{
@@ -158,7 +150,7 @@ public:
 	void Step(Settings* settings)
 	{
 		Test::Step(settings);
-		DrawString(5, m_textLine, "Press 1-5 to drop stuff");
+		m_debugDraw.DrawString(5, m_textLine, "Press 1-5 to drop stuff");
 		m_textLine += 15;
 	}
 

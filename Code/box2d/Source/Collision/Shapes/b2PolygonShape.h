@@ -59,7 +59,7 @@ public:
 	bool TestPoint(const b2XForm& transform, const b2Vec2& p) const;
 
 	/// @see b2Shape::TestSegment
-	bool TestSegment(	const b2XForm& transform,
+	b2SegmentCollide TestSegment(	const b2XForm& transform,
 		float32* lambda,
 		b2Vec2* normal,
 		const b2Segment& segment,
@@ -75,6 +75,12 @@ public:
 
 	/// @see b2Shape::ComputeMass
 	void ComputeMass(b2MassData* massData) const;
+
+	/// @see b2Shape::ComputeSubmergedArea
+	float32 ComputeSubmergedArea(	const b2Vec2& normal,
+									float32 offset,
+									const b2XForm& xf, 
+									b2Vec2* c) const;
 
 	/// Get the oriented bounding box relative to the parent body.
 	const b2OBB& GetOBB() const;

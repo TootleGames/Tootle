@@ -8,7 +8,8 @@
 #define MAX_PHYSICS_TIMESTEP	0.3f	//	max step is 20/60 ish...
 
 
-#define BOX2D_ITERATIONS		10	//	constraint/collision iterations
+#define BOX2D_VELOCITY_ITERATIONS		1	//	movement iterations
+#define BOX2D_POSITION_ITERATIONS		10	//	constraint/collision/restitution iterations
 
 
 
@@ -207,11 +208,9 @@ void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 
 			//	box2d prefers fixed timesteps... lets see how our variable rate goes...
 			float timeStep = fTimeStep;			//	1.0f / 60.0f;
-			s32 iterations = BOX2D_ITERATIONS;	//	10
-
 			if ( m_pWorld )
 			{
-				m_pWorld->Step( timeStep, iterations );
+				m_pWorld->Step( timeStep, BOX2D_VELOCITY_ITERATIONS, BOX2D_POSITION_ITERATIONS );
 			}
 		}
 

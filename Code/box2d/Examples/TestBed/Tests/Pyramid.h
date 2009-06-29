@@ -40,7 +40,7 @@ public:
 			sd.SetAsBox(a, a);
 			sd.density = 5.0f;
 
-			b2Vec2 x(-10.0f, 0.75f);
+			b2Vec2 x(-10.0f, 1.0f);
 			b2Vec2 y;
 			b2Vec2 deltaX(0.5625f, 2.0f);
 			b2Vec2 deltaY(1.125f, 0.0f);
@@ -64,6 +64,18 @@ public:
 			}
 		}
 	}
+
+	//void Step(Settings* settings)
+	//{
+	//	// We need higher accuracy for the pyramid.
+	//	int32 velocityIterations = settings->velocityIterations;
+	//	int32 positionIterations = settings->positionIterations;
+	//	settings->velocityIterations = b2Max(8, velocityIterations);
+	//	settings->positionIterations = b2Max(1, positionIterations);
+	//	Test::Step(settings);
+	//	settings->velocityIterations = velocityIterations;
+	//	settings->positionIterations = positionIterations;
+	//}
 
 	static Test* Create()
 	{

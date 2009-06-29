@@ -19,44 +19,20 @@
 #include "BroadPhaseTest.h"
 
 #include <cstdio>
+
+#include <cstring>
+
 const float32 k_width = 1.0f;
-
-inline void GetRandomAABB(b2AABB* aabb)
-{
-	b2Vec2 w; w.Set(k_width, k_width);
-	aabb->lowerBound.x = b2Random(-k_extent, k_extent);
-	aabb->lowerBound.y = b2Random(0.0f, 2.0f * k_extent);
-	aabb->upperBound = aabb->lowerBound + w;
-}
-
-inline void MoveAABB(b2AABB* aabb)
-{
-	b2Vec2 d;
-	d.x = b2Random(-0.5f, 0.5f);
-	d.y = b2Random(-0.5f, 0.5f);
-	//d.x = 2.0f;
-	//d.y = 0.0f;
-	aabb->lowerBound += d;
-	aabb->upperBound += d;
-
-	b2Vec2 c0 = 0.5f * (aabb->lowerBound + aabb->upperBound);
-	b2Vec2 min; min.Set(-k_extent, 0.0f);
-	b2Vec2 max; max.Set(k_extent, 2.0f * k_extent);
-	b2Vec2 c = b2Clamp(c0, min, max);
-
-	aabb->lowerBound += c - c0;
-	aabb->upperBound += c - c0;
-}
 
 void* Callback::PairAdded(void* proxyUserData1, void* proxyUserData2)
 {
-	Actor* actor1 = (Actor*)proxyUserData1;
-	Actor* actor2 = (Actor*)proxyUserData2;
+	BroadPhaseTest::Actor* actor1 = (BroadPhaseTest::Actor*)proxyUserData1;
+	BroadPhaseTest::Actor* actor2 = (BroadPhaseTest::Actor*)proxyUserData2;
 
 	int32 id1 = (int32)(actor1 - m_test->m_actors);
 	int32 id2 = (int32)(actor2 - m_test->m_actors);
-	b2Assert(id1 < k_actorCount);
-	b2Assert(id2 < k_actorCount);
+	b2Assert(id1 < BroadPhaseTest::e_actorCount);
+	b2Assert(id2 < BroadPhaseTest::e_actorCount);
 
 	b2Assert(m_test->m_overlaps[id1][id2] == false);
 	m_test->m_overlaps[id1][id2] = true;
@@ -73,14 +49,14 @@ void Callback::PairRemoved(void* proxyUserData1, void* proxyUserData2, void* pai
 {
 	B2_NOT_USED(pairUserData);
 
-	Actor* actor1 = (Actor*)proxyUserData1;
-	Actor* actor2 = (Actor*)proxyUserData2;
+	BroadPhaseTest::Actor* actor1 = (BroadPhaseTest::Actor*)proxyUserData1;
+	BroadPhaseTest::Actor* actor2 = (BroadPhaseTest::Actor*)proxyUserData2;
 
 	// The pair may have been removed by destroying a proxy.
 	int32 id1 = (int32)(actor1 - m_test->m_actors);
 	int32 id2 = (int32)(actor2 - m_test->m_actors);
-	b2Assert(id1 < k_actorCount);
-	b2Assert(id2 < k_actorCount);
+	b2Assert(id1 < BroadPhaseTest::e_actorCount);
+	b2Assert(id2 < BroadPhaseTest::e_actorCount);
 
 	m_test->m_overlaps[id1][id2] = false;
 	m_test->m_overlaps[id2][id1] = false;
@@ -97,13 +73,15 @@ Test* BroadPhaseTest::Create()
 
 BroadPhaseTest::BroadPhaseTest()
 {
+	m_extent = 15.0f;
+
 	b2BroadPhase::s_validate = true;
 
 	srand(888);
 
 	b2AABB worldAABB;
-	worldAABB.lowerBound.Set(-5.0f * k_extent, -5.0f * k_extent);
-	worldAABB.upperBound.Set(5.0f * k_extent, 5.0f * k_extent);
+	worldAABB.lowerBound.Set(-5.0f * m_extent, -5.0f * m_extent);
+	worldAABB.upperBound.Set(5.0f * m_extent, 5.0f * m_extent);
 
 	m_overlapCount = 0;
 	m_overlapCountExact = 0;
@@ -113,7 +91,7 @@ BroadPhaseTest::BroadPhaseTest()
 
 	memset(m_overlaps, 0, sizeof(m_overlaps));
 
-	for (int32 i = 0; i < k_actorCount; ++i)
+	for (int32 i = 0; i < e_actorCount; ++i)
 	{
 		Actor* actor = m_actors + i;
 		GetRandomAABB(&actor->aabb);
@@ -135,11 +113,38 @@ BroadPhaseTest::~BroadPhaseTest()
 	delete m_broadPhase;
 }
 
+void BroadPhaseTest::GetRandomAABB(b2AABB* aabb)
+{
+	b2Vec2 w; w.Set(k_width, k_width);
+	aabb->lowerBound.x = RandomFloat(-m_extent, m_extent);
+	aabb->lowerBound.y = RandomFloat(0.0f, 2.0f * m_extent);
+	aabb->upperBound = aabb->lowerBound + w;
+}
+
+void BroadPhaseTest::MoveAABB(b2AABB* aabb)
+{
+	b2Vec2 d;
+	d.x = RandomFloat(-0.5f, 0.5f);
+	d.y = RandomFloat(-0.5f, 0.5f);
+	//d.x = 2.0f;
+	//d.y = 0.0f;
+	aabb->lowerBound += d;
+	aabb->upperBound += d;
+
+	b2Vec2 c0 = 0.5f * (aabb->lowerBound + aabb->upperBound);
+	b2Vec2 min; min.Set(-m_extent, 0.0f);
+	b2Vec2 max; max.Set(m_extent, 2.0f * m_extent);
+	b2Vec2 c = b2Clamp(c0, min, max);
+
+	aabb->lowerBound += c - c0;
+	aabb->upperBound += c - c0;
+}
+
 void BroadPhaseTest::CreateProxy()
 {
-	for (int32 i = 0; i < k_actorCount; ++i)
+	for (int32 i = 0; i < e_actorCount; ++i)
 	{
-		int32 j = rand() % k_actorCount;
+		int32 j = rand() % e_actorCount;
 		Actor* actor = m_actors + j;
 		if (actor->proxyId == b2_nullProxy)
 		{
@@ -153,9 +158,9 @@ void BroadPhaseTest::CreateProxy()
 
 void BroadPhaseTest::DestroyProxy()
 {
-	for (int32 i = 0; i < k_actorCount; ++i)
+	for (int32 i = 0; i < e_actorCount; ++i)
 	{
-		int32 j = rand() % k_actorCount;
+		int32 j = rand() % e_actorCount;
 		Actor* actor = m_actors + j;
 		if (actor->proxyId != b2_nullProxy)
 		{
@@ -169,9 +174,9 @@ void BroadPhaseTest::DestroyProxy()
 
 void BroadPhaseTest::MoveProxy()
 {
-	for (int32 i = 0; i < k_actorCount; ++i)
+	for (int32 i = 0; i < e_actorCount; ++i)
 	{
-		int32 j = rand() % k_actorCount;
+		int32 j = rand() % e_actorCount;
 		//int32 j = 1;
 		Actor* actor = m_actors + j;
 		if (actor->proxyId == b2_nullProxy)
@@ -210,7 +215,7 @@ void BroadPhaseTest::Step(Settings* settings)
 
 	if (m_automated == true)
 	{
-		int32 actionCount = b2Max(1, k_actorCount >> 2);
+		int32 actionCount = b2Max(1, e_actorCount >> 2);
 
 		for (int32 i = 0; i < actionCount; ++i)
 		{
@@ -220,7 +225,7 @@ void BroadPhaseTest::Step(Settings* settings)
 
 	m_broadPhase->Commit();
 
-	for (int32 i = 0; i < k_actorCount; ++i)
+	for (int32 i = 0; i < e_actorCount; ++i)
 	{
 		Actor* actor = m_actors + i;
 		if (actor->proxyId == b2_nullProxy)
@@ -242,12 +247,12 @@ void BroadPhaseTest::Step(Settings* settings)
 			break;
 		}
 
-		DrawAABB(&actor->aabb, c);
+		m_debugDraw.DrawAABB(&actor->aabb, c);
 	}
 
 	char buffer[64];
 	sprintf(buffer, "overlaps = %d, exact = %d, diff = %d", m_overlapCount, m_overlapCountExact, m_overlapCount - m_overlapCountExact);
-	DrawString(5, 30, buffer);
+	m_debugDraw.DrawString(5, 30, buffer);
 	Validate();
 
 	++m_stepCount;
@@ -281,13 +286,13 @@ void BroadPhaseTest::Validate()
 
 	m_overlapCountExact = 0;
 
-	for (int32 i = 0; i < k_actorCount; ++i)
+	for (int32 i = 0; i < e_actorCount; ++i)
 	{
 		Actor* actor1 = m_actors + i;
 		if (actor1->proxyId == b2_nullProxy)
 			continue;
 
-		for (int32 j = i + 1; j < k_actorCount; ++j)
+		for (int32 j = i + 1; j < e_actorCount; ++j)
 		{
 			Actor* actor2 = m_actors + j;
 			if (actor2->proxyId == b2_nullProxy)
