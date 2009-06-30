@@ -2,7 +2,7 @@
 #include <TootleCore/TBinaryTree.h>
 #include "TShapeSphere.h"
 #include "TShapeCapsule.h"
-#include "TShapeOblong.h"
+#include "TShapePolygon.h"
 
 
 
@@ -181,13 +181,13 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Transform(const TLMaths::TTransform&
 		TLMaths::TOblong2D NewOblong( m_Shape, Transform );
 
 		//	re-use old shape
-		if ( pOldShape && pOldShape.GetObject() != this && pOldShape->GetShapeType() == TLMaths::TOblong2D::GetTypeRef() )
+		if ( pOldShape && pOldShape.GetObject() != this && pOldShape->GetShapeType() == TLMaths::TShapePolygon2D::GetShapeType_Static() )
 		{
-			pOldShape.GetObject<TShapeOblong2D>()->SetOblong( NewOblong );
+			pOldShape.GetObject<TShapePolygon2D>()->SetOutline( NewOblong.GetBoxCorners() );
 			return pOldShape;
 		}
 
-		return new TShapeOblong2D( NewOblong );
+		return new TShapePolygon2D( NewOblong.GetBoxCorners() );
 	}
 	else
 	{

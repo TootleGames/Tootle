@@ -219,12 +219,23 @@ void b2Fixture::RefilterProxy(b2BroadPhase* broadPhase, const b2XForm& transform
 		return;
 	}
 
-	broadPhase->DestroyProxy(m_proxyId);
+	DestroyProxy( broadPhase );
+
+	CreateProxy( broadPhase, transform );
+}
+
+
+void b2Fixture::CreateProxy(b2BroadPhase* broadPhase, const b2XForm& transform)
+{
+	b2Assert(m_proxyId == b2_nullProxy);
 
 	b2AABB aabb;
 	m_shape->ComputeAABB(&aabb, transform);
 
 	bool inRange = broadPhase->InRange(aabb);
+
+	// You are creating a shape outside the world box.
+	b2Assert(inRange);
 
 	if (inRange)
 	{
@@ -232,6 +243,15 @@ void b2Fixture::RefilterProxy(b2BroadPhase* broadPhase, const b2XForm& transform
 	}
 	else
 	{
+		m_proxyId = b2_nullProxy;
+	}
+}
+
+void b2Fixture::DestroyProxy(b2BroadPhase* broadPhase)
+{
+	if (m_proxyId != b2_nullProxy)
+	{
+		broadPhase->DestroyProxy(m_proxyId);
 		m_proxyId = b2_nullProxy;
 	}
 }

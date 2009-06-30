@@ -1,0 +1,180 @@
+Index: Source/Dynamics/b2Body.cpp
+===================================================================
+--- Source/Dynamics/b2Body.cpp	(revision 220)
++++ Source/Dynamics/b2Body.cpp	(working copy)
+@@ -373,3 +373,50 @@
+ 	// Success
+ 	return true;
+ }
++
++
++void b2Body::Freeze()
++{
++	/*
++	check !IsFrozenByUser() - to prevent duplicate call DestroyProxy
++	check !IsFrozen() - to prevent freeze bodies frozen automatically 
++	on reaches the boundary of the world AABB.
++	*/
++	if (!IsFrozenByUser() && !IsFrozen()) 
++	{
++		/*
++		e_frozenByUserFlag required to prevent unfreeze body, 
++		frozen automatically on reaches the boundary of the world AABB.
++		*/
++		m_flags |= e_frozenByUserFlag;
++		m_flags |= e_frozenFlag;
++		for (b2Fixture* f = GetFixtureList(); f; f = f->m_next)
++		{
++			f->DestroyProxy(m_world->m_broadPhase);
++		}
++
++		for (b2JointEdge* j = m_jointList; j; j = j->next)
++		{
++			j->other->Freeze();
++		}
++	}
++}
++
++
++void b2Body::UnFreeze()
++{
++	if (IsFrozenByUser())
++	{
++		m_flags &= ~e_frozenByUserFlag;
++		m_flags &= ~e_frozenFlag;
++		for (b2Fixture* f = GetFixtureList(); f; f = f->m_next)
++		{
++			f->CreateProxy(m_world->m_broadPhase, m_xf);
++		}
++		for (b2JointEdge* j = m_jointList; j; j = j->next)
++		{
++			j->other->UnFreeze();
++		}
++	}
++}
++
+Index: Source/Dynamics/b2Body.h
+===================================================================
+--- Source/Dynamics/b2Body.h	(revision 220)
++++ Source/Dynamics/b2Body.h	(working copy)
+@@ -291,6 +291,9 @@
+ 	/// Is this body frozen?
+ 	bool IsFrozen() const;
+ 
++	/// Is this body disabled by user (not simulating + no collision)
++	bool IsFrozenByUser() const;
++
+ 	/// Is this body sleeping (not simulating).
+ 	bool IsSleeping() const;
+ 
+@@ -306,6 +309,12 @@
+ 	/// Put this body to sleep so it will stop simulating.
+ 	/// This also sets the velocity to zero.
+ 	void PutToSleep();
++	
++	//Freeze this body and his jointed bodies
++	void Freeze();
++	
++	//Unfreeze this body and his jointed bodies
++	void UnFreeze();
+ 
+ 	/// Get the list of all fixtures attached to this body.
+ 	b2Fixture* GetFixtureList();
+@@ -366,6 +375,7 @@
+ 		e_allowSleepFlag	= 0x0010,
+ 		e_bulletFlag		= 0x0020,
+ 		e_fixedRotationFlag	= 0x0040,
++		e_frozenByUserFlag	= 0x0080,
+ 	};
+ 
+ 	// m_type
+@@ -613,6 +623,11 @@
+ 	return (m_flags & e_frozenFlag) == e_frozenFlag;
+ }
+ 
++inline bool b2Body::IsFrozenByUser() const
++{
++	return (m_flags & e_frozenByUserFlag) == e_frozenByUserFlag;
++}
++
+ inline bool b2Body::IsSleeping() const
+ {
+ 	return (m_flags & e_sleepFlag) == e_sleepFlag;
+Index: Source/Dynamics/b2Fixture.cpp
+===================================================================
+--- Source/Dynamics/b2Fixture.cpp	(revision 220)
++++ Source/Dynamics/b2Fixture.cpp	(working copy)
+@@ -219,13 +219,24 @@
+ 		return;
+ 	}
+ 
+-	broadPhase->DestroyProxy(m_proxyId);
++	DestroyProxy( broadPhase );
+ 
++	CreateProxy( broadPhase, transform );
++}
++
++
++void b2Fixture::CreateProxy(b2BroadPhase* broadPhase, const b2XForm& transform)
++{
++	b2Assert(m_proxyId == b2_nullProxy);
++
+ 	b2AABB aabb;
+ 	m_shape->ComputeAABB(&aabb, transform);
+ 
+ 	bool inRange = broadPhase->InRange(aabb);
+ 
++	// You are creating a shape outside the world box.
++	b2Assert(inRange);
++
+ 	if (inRange)
+ 	{
+ 		m_proxyId = broadPhase->CreateProxy(aabb, this);
+@@ -235,3 +246,12 @@
+ 		m_proxyId = b2_nullProxy;
+ 	}
+ }
++
++void b2Fixture::DestroyProxy(b2BroadPhase* broadPhase)
++{
++	if (m_proxyId != b2_nullProxy)
++	{
++		broadPhase->DestroyProxy(m_proxyId);
++		m_proxyId = b2_nullProxy;
++	}
++}
+\ No newline at end of file
+Index: Source/Dynamics/b2Fixture.h
+===================================================================
+--- Source/Dynamics/b2Fixture.h	(revision 220)
++++ Source/Dynamics/b2Fixture.h	(working copy)
+@@ -258,6 +258,11 @@
+ 	bool Synchronize(b2BroadPhase* broadPhase, const b2XForm& xf1, const b2XForm& xf2);
+ 	void RefilterProxy(b2BroadPhase* broadPhase, const b2XForm& xf);
+ 
++	///	graham@grahamreeves.com: added these back in for b2Body::Freeze(), same as the original b2Shape functions which were removed when b2Fixture was added
++	void CreateProxy(b2BroadPhase* broadPhase, const b2XForm& transform);
++	void DestroyProxy(b2BroadPhase* broadPhase);
++
++
+ 	b2ShapeType m_type;
+ 	b2Fixture* m_next;
+ 	b2Body* m_body;
+Index: Source/Dynamics/b2World.cpp
+===================================================================
+--- Source/Dynamics/b2World.cpp	(revision 220)
++++ Source/Dynamics/b2World.cpp	(working copy)
+@@ -1068,8 +1068,12 @@
+ 			const b2XForm& xf = b->GetXForm();
+ 			for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext())
+ 			{
+-				if (b->IsStatic())
++				if (b->IsFrozen())
+ 				{
++					DrawShape(f, xf, b2Color(0.25f, 0.25f, 0.25f));
++				}
++				else if (b->IsStatic())
++				{
+ 					DrawShape(f, xf, b2Color(0.5f, 0.9f, 0.5f));
+ 				}
+ 				else if (b->IsSleeping())

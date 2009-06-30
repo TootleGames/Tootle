@@ -373,3 +373,50 @@ bool b2Body::SynchronizeFixtures()
 	// Success
 	return true;
 }
+
+
+void b2Body::Freeze()
+{
+	/*
+	check !IsFrozenByUser() - to prevent duplicate call DestroyProxy
+	check !IsFrozen() - to prevent freeze bodies frozen automatically 
+	on reaches the boundary of the world AABB.
+	*/
+	if (!IsFrozenByUser() && !IsFrozen()) 
+	{
+		/*
+		e_frozenByUserFlag required to prevent unfreeze body, 
+		frozen automatically on reaches the boundary of the world AABB.
+		*/
+		m_flags |= e_frozenByUserFlag;
+		m_flags |= e_frozenFlag;
+		for (b2Fixture* f = GetFixtureList(); f; f = f->m_next)
+		{
+			f->DestroyProxy(m_world->m_broadPhase);
+		}
+
+		for (b2JointEdge* j = m_jointList; j; j = j->next)
+		{
+			j->other->Freeze();
+		}
+	}
+}
+
+
+void b2Body::UnFreeze()
+{
+	if (IsFrozenByUser())
+	{
+		m_flags &= ~e_frozenByUserFlag;
+		m_flags &= ~e_frozenFlag;
+		for (b2Fixture* f = GetFixtureList(); f; f = f->m_next)
+		{
+			f->CreateProxy(m_world->m_broadPhase, m_xf);
+		}
+		for (b2JointEdge* j = m_jointList; j; j = j->next)
+		{
+			j->other->UnFreeze();
+		}
+	}
+}
+

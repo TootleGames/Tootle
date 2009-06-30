@@ -4,7 +4,6 @@
 #include <TootleMaths/TShapeSphere.h>
 #include <TootleMaths/TShapeBox.h>
 #include <TootleMaths/TShapeCapsule.h>
-#include <TootleMaths/TShapeOblong.h>
 #include "TLFile.h"
 
 
@@ -759,24 +758,8 @@ Bool TLFileSys::TFileCollada::CreateDatum(TLAsset::TMesh& Mesh,TRefRef DatumRef,
 	}
 	else if ( DatumShapeType == TLMaths::TOblong2D::GetTypeRef() )
 	{
-		//	gr: currently, simple mehtod just works with 4-point meshes
-		if ( GeometryMesh.GetVertexes().GetSize() != 4 )
-		{
-			TLDebug_Break("Cannot create an oblong datum shape from a polygon/outline with other than 4 points");
-			return FALSE;
-		}
-
-		TLMaths::TOblong2D Oblong;
-		TFixedArray<float2,4>& Corners = Oblong.GetBoxCorners();
-		Corners[0] = GeometryMesh.GetVertexes()[0].xy();
-		Corners[1] = GeometryMesh.GetVertexes()[1].xy();
-		Corners[2] = GeometryMesh.GetVertexes()[2].xy();
-		Corners[3] = GeometryMesh.GetVertexes()[3].xy();
-
-		//	set as explicitly valid
-		Oblong.SetValid();
-
-		pShape = new TLMaths::TShapeOblong2D( Oblong );
+		//	gr: no limit on vertexes any more... TOblong2D shape needs to turn into a TPolygon2D shape
+		pShape = new TLMaths::TShapePolygon2D( GeometryMesh.GetVertexes() );
 	}
 	else if ( DatumShapeType == TLMaths::TCapsule2D::GetTypeRef() )
 	{

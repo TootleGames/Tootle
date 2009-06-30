@@ -34,11 +34,6 @@
 #define FRICTION_SCALAR				PHYSICS_SCALAR
 #define MOVEMENT_SCALAR				PHYSICS_SCALAR
 
-//	gr: simple is faster, possibly could make non-simple one save doing same in-zone-shape checks over and over..
-#define SIMPLE_UPDATE_ZONE	//	changes update zone to just traverse from root down, instead of current zone up
-//#define COMPLEX_UPDATE_ZONE	//	changes update zone to just traverse from root down, instead of current zone up
-//#define NEW_UPDATE_ZONE	//	changes update zone to just traverse from root down, instead of current zone up
-
 
 namespace TLPhysics
 {
@@ -65,7 +60,6 @@ TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 	m_Damping						( 0.0f ),
 	m_Friction						( 0.4f ),
 	m_Temp_ExtrudeTimestep			( 0.f ),
-	m_InitialisedZone				( FALSE ),
 	m_TransformChangedBits			( 0x0 ),
 	m_pBody							( NULL )
 {
@@ -307,10 +301,6 @@ void TLPhysics::TPhysicsNode::Update(float fTimeStep)
 	if ( m_PhysicsFlags( Flag_HasCollision ) && !HasCollision() )
 		return;
 
-	//	gr: doesn't apply if we have no zone
-	if ( m_PhysicsFlags( Flag_ZoneExpected ) &&!m_InitialisedZone )
-		return;
-
 	//	set the pre-update pos
 //	m_LastPosition = m_Position;
 
@@ -330,15 +320,6 @@ void TLPhysics::TPhysicsNode::Update(float fTimeStep)
 //----------------------------------------------------
 void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgraph& Graph,TPtr<TPhysicsNode>& pThis)
 {
-	if ( m_PhysicsFlags( Flag_ZoneExpected ) && !m_InitialisedZone )
-	{
-		if ( HasCollision() )
-		{
-			UpdateNodeCollisionZone( pThis, Graph );
-			m_InitialisedZone = TRUE;
-		}
-	}
-
 	if ( m_PhysicsFlags( Flag_HasCollision ) && !HasCollision() )
 	{
 		PublishTransformChanges();
@@ -363,26 +344,7 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 
 		//	notify of changes
 		if ( ChangedBits != 0x0 )
-		{
-			if ( ChangedBits == TLMaths_TransformBitRotation )
-			{
-				OnRotationChanged();
-			}
-			else
-			{
-				OnTransformChanged(ChangedBits);
-			}
-
-			//	after moving node, mark that the zone needs updating
-			SetCollisionZoneNeedsUpdate();
-		}
-	}
-
-	//	update collision zone
-	if ( m_PhysicsFlags( Flag_ZoneExpected ) && GetCollisionZoneNeedsUpdate() )
-	{
-		//	no longer needs update
-		SetCollisionZoneNeedsUpdate( FALSE );
+			OnBodyTransformChanged(ChangedBits);
 	}
 
 	//	send out transform-changed messages
@@ -423,9 +385,6 @@ void TLPhysics::TPhysicsNode::SetPosition(const float3& Position)
 	SetBodyTransform();
 
 	OnTranslationChanged();
-
-	//	after moving node, mark that the zone needs updating
-	SetCollisionZoneNeedsUpdate();
 }
 
 
@@ -462,9 +421,6 @@ void TLPhysics::TPhysicsNode::MovePosition(const float3& Movement,float Timestep
 
 	//	translation has changed
 	OnTranslationChanged();
-
-	//	after moving node, mark that the zone needs updating
-	SetCollisionZoneNeedsUpdate();
 }
 
 
@@ -541,15 +497,6 @@ void TLPhysics::TPhysicsNode::PostUpdateAll(float fTimestep,TLPhysics::TPhysicsg
 }
 
 
-//----------------------------------------------------------
-//	called after iteration, return TRUE to do another iteration
-//----------------------------------------------------------
-Bool TLPhysics::TPhysicsNode::PostIteration(u32 Iteration)
-{	
-	//SetWorldCollisionShapeInvalid();
-	return (Iteration+1 <= 1);
-}
-
 
 //----------------------------------------------------------
 //	setup collision shape from a shape
@@ -559,73 +506,8 @@ void TLPhysics::TPhysicsNode::SetCollisionShape(const TPtr<TLMaths::TShape>& pSh
 	//	set shape
 	m_pCollisionShape = pShape;
 
-	//	invalidate zone
-	SetCollisionZoneNeedsUpdate();
-
-	//	invalidate WORLD shape
-	SetWorldCollisionShapeInvalid();
-
 	//	create box2d shape
 	CreateBodyShape();
-}
-
-
-//----------------------------------------------------------
-//	calculate transformed collision shape 
-//----------------------------------------------------------
-TLMaths::TShape* TLPhysics::TPhysicsNode::CalcWorldCollisionShape()
-{
-	//	doesn't need calculating
-	if ( m_pWorldCollisionShape )
-		return m_pWorldCollisionShape.GetObject();
-
-	//	no collision shape
-	if ( !m_pCollisionShape )
-	{
-		TLDebug_Break("Collision shape expected");
-		return NULL;
-	}
-
-	TLMaths::TTransform& Transform = m_Transform;
-
-	//	transform the collision shape into a new shape if it needs to
-	if ( Transform.HasAnyTransform() )
-		m_pWorldCollisionShape = m_pCollisionShape->Transform( Transform, m_pLastWorldCollisionShape );
-	else
-		m_pWorldCollisionShape = m_pCollisionShape;
-
-	//	
-	if ( m_pWorldCollisionShape )
-	{
-		//	whether it was used or not, the last world collision shape is now redundant
-		m_pLastWorldCollisionShape = NULL;
-	}
-	else
-	{
-#ifdef _DEBUG
-		TTempString Debug_String("Failed to transform collision shape type ");
-		m_pCollisionShape->GetShapeType().GetString( Debug_String );
-		Debug_String.Append(" on node ");
-		GetNodeRef().GetString( Debug_String );
-		Debug_String.Append('(');
-		GetNodeTypeRef().GetString( Debug_String );
-		Debug_String.Append(')');
-		TLDebug_Break( Debug_String );
-#endif
-	}
-
-	return m_pWorldCollisionShape.GetObject();
-}
-
-
-//----------------------------------------------------------
-//	move node into/out of collision zones
-//----------------------------------------------------------
-void TLPhysics::TPhysicsNode::UpdateNodeCollisionZone(TPtr<TLPhysics::TPhysicsNode>& pThis,TLPhysics::TPhysicsgraph& Graph)
-{
-	//	use the generic quad tree zone update
-	TPtr<TLMaths::TQuadTreeNode> pThisZoneNode = pThis;
-	UpdateZone( pThisZoneNode, Graph.GetRootCollisionZone() );
 }
 
 
@@ -685,83 +567,22 @@ void TLPhysics::TPhysicsNode::PublishCollisions()
 }
 
 
-
-//-------------------------------------------------------------
-//	
-//-------------------------------------------------------------
-SyncBool TLPhysics::TPhysicsNode::IsInShape(const TLMaths::TBox2D& Shape)
-{
-#ifdef _DEBUG
-	if ( !HasZoneShape() )
-	{
-		TLDebug_Break("Doing shape test on a physics node when we shouldn't... must be missing a HasZoneShape() test");
-		return SyncWait;
-	}
-#endif
-
-	//	gr: always recalc world collision shape, previous break worked, but if the shape was invalidated between zone tests then
-	//		it wouldn't be recalculated and trigger the break below
-	TLMaths::TShape* pWorldShape = CalcWorldCollisionShape();
-
-	if ( !pWorldShape )
-	{
-		TLDebug_Break("World collision shape expected; this nodes shape-testability should have already been checked with HasZoneShape()");
-		return SyncWait;
-	}
-
-	//	make up a Collision shape for the test-shape and do an intersection test with it
-	TLMaths::TShapeBox2D ShapeCollisionShape( Shape );
-	
-	return pWorldShape->HasIntersection( ShapeCollisionShape ) ? SyncTrue : SyncFalse;
-//	return ShapeCollisionShape.HasIntersection( *pWorldShape ) ? SyncTrue : SyncFalse;
-}
-
-
-
-//-------------------------------------------------------------
-//	
-//-------------------------------------------------------------
-Bool TLPhysics::TPhysicsNode::HasZoneShape()
-{
-	//	not yet initialised with a collision shape
-	if ( !HasCollision() )
-		return FALSE;
-
-	//	pre-calc the world collision shape (we're going to use it anyway)
-	//	and if that fails we can't do any tests anyway
-	TLMaths::TShape* pShape = CalcWorldCollisionShape();
-
-	//	no shape atm, wait
-	if ( !pShape )
-		return FALSE;
-
-	return TRUE;
-}
-
-
 //-------------------------------------------------------------
 //	explicit change of transform
 //-------------------------------------------------------------
 void TLPhysics::TPhysicsNode::SetTransform(const TLMaths::TTransform& NewTransform,Bool PublishChanges)
 {
 	//	copy transform
-	m_Transform = NewTransform;
+	u8 Changes = m_Transform.SetHasChanged( NewTransform );
 
-	//	explicit change of the body's transform
-	if ( m_pBody )
-	{
-		//	from CreateBody()
-		b2Vec2 Position = m_Transform.HasTranslate() ? b2Vec2( m_Transform.GetTranslate().x, m_Transform.GetTranslate().y ) : b2Vec2( 0.f, 0.f );
-		TLMaths::TAngle Angle = m_Transform.HasRotation() ? m_Transform.GetRotation().GetAngle2D() : 0.f;
-		Angle.AddDegrees(180.f);
-		Angle.Invert();
-		m_pBody->SetXForm( Position, Angle.GetRadians() );
-	}
+	//	no changes
+	if ( Changes == 0x0 )
+		return;
 
-	//	invalidate stuff
+	//	note changes and set body transform
 	if ( PublishChanges )
 	{
-		OnTransformChanged( TRUE, TRUE, TRUE );
+		OnTransformChanged( Changes );
 	}
 	else
 	{
@@ -908,9 +729,6 @@ Bool TLPhysics::TPhysicsNode::CreateBodyShape()
 	else
 		ShapeDef.isSensor = FALSE;
 
-	//	set initial group
-	ShapeDef.filter.groupIndex = HasCollisionFlag() ? 0 : -1;
-
 	//	create shape
 	m_pBody->CreateFixture( &ShapeDef );
 
@@ -955,57 +773,11 @@ void TLPhysics::TPhysicsNode::SetBodyTransform()
 
 
 //-------------------------------------------------------------
-//	called when collision is enabled/disabled - changes group of box2D body so it won't do collision checks
+//	called when collision is enabled/disabled 
 //-------------------------------------------------------------
 void TLPhysics::TPhysicsNode::OnCollisionEnabledChanged(Bool IsNowEnabled)
 {
-	//	gr: todo: this uses single-body code - we will want to ditch this anyway and do specific stuff in our collision filter code
-	b2Fixture* pShape = m_pBody ? m_pBody->GetFixtureList() : NULL;
-	if ( !pShape )
-		return;
-
-	//	detect change of group index
-	s16 GroupIndex = pShape->GetFilterData().groupIndex;
-
-	//	gr: due to the use of this system, all our objects must be in group 1
-#ifndef USE_ZERO_GROUP
-	if ( GroupIndex == 0 )
-	{
-		TLDebug_Break("Gr: no objects should be in the zero group");
-		GroupIndex = 1;
-	}
-#endif
-
-	if ( IsNowEnabled && GroupIndex < 0 )
-	{
-		//	enable collision by making group positive
-		b2FilterData NewFilterData = pShape->GetFilterData();
-		#ifdef USE_ZERO_GROUP
-			NewFilterData.groupIndex = 0;
-		#else
-			NewFilterData.groupIndex = -GroupIndex;
-		#endif
-		pShape->SetFilterData( NewFilterData );
-		TLPhysics::g_pPhysicsgraph->RefilterShape( pShape );
-	}
-#ifdef USE_ZERO_GROUP
-	else if ( !IsNowEnabled && GroupIndex >= 0 )
-#else
-	else if ( !IsNowEnabled && GroupIndex > 0 )
-#endif
-	{
-		//	disable collision by making group negative
-		b2FilterData NewFilterData = pShape->GetFilterData();
-		#ifdef USE_ZERO_GROUP
-			NewFilterData.groupIndex = -1;
-		#else
-			NewFilterData.groupIndex = -GroupIndex;
-		#endif
-		pShape->SetFilterData( NewFilterData );
-		TLPhysics::g_pPhysicsgraph->RefilterShape( pShape );
-	}
-
-
+	//	gr: group stuff all ditched. Collision handled in the contact listener on the graph
 }
 
 
@@ -1015,9 +787,14 @@ void TLPhysics::TPhysicsNode::OnCollisionEnabledChanged(Bool IsNowEnabled)
 //-------------------------------------------------------------
 void TLPhysics::TPhysicsNode::OnNodeEnabledChanged(Bool IsNowEnabled)
 {
-	//	freeze body by removing it from world and then we'll put it back in afterwards
-//	TLPhysics::g_pPhysicsgraph->m_pWorld->CreateBody
-	
+	//	freeze body with box2d's functionality (added by me)
+	if ( m_pBody )
+	{
+		if ( IsNowEnabled )
+			m_pBody->UnFreeze();
+		else
+			m_pBody->Freeze();
+	}	
 }
 
 

@@ -258,6 +258,11 @@ protected:
 	bool Synchronize(b2BroadPhase* broadPhase, const b2XForm& xf1, const b2XForm& xf2);
 	void RefilterProxy(b2BroadPhase* broadPhase, const b2XForm& xf);
 
+	///	graham@grahamreeves.com: added these back in for b2Body::Freeze(), same as the original b2Shape functions which were removed when b2Fixture was added
+	void CreateProxy(b2BroadPhase* broadPhase, const b2XForm& transform);
+	void DestroyProxy(b2BroadPhase* broadPhase);
+
+
 	b2ShapeType m_type;
 	b2Fixture* m_next;
 	b2Body* m_body;

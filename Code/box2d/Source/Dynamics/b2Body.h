@@ -291,6 +291,9 @@ public:
 	/// Is this body frozen?
 	bool IsFrozen() const;
 
+	/// Is this body disabled by user (not simulating + no collision)
+	bool IsFrozenByUser() const;
+
 	/// Is this body sleeping (not simulating).
 	bool IsSleeping() const;
 
@@ -306,6 +309,12 @@ public:
 	/// Put this body to sleep so it will stop simulating.
 	/// This also sets the velocity to zero.
 	void PutToSleep();
+	
+	//Freeze this body and his jointed bodies
+	void Freeze();
+	
+	//Unfreeze this body and his jointed bodies
+	void UnFreeze();
 
 	/// Get the list of all fixtures attached to this body.
 	b2Fixture* GetFixtureList();
@@ -366,6 +375,7 @@ private:
 		e_allowSleepFlag	= 0x0010,
 		e_bulletFlag		= 0x0020,
 		e_fixedRotationFlag	= 0x0040,
+		e_frozenByUserFlag	= 0x0080,
 	};
 
 	// m_type
@@ -611,6 +621,11 @@ inline bool b2Body::IsDynamic() const
 inline bool b2Body::IsFrozen() const
 {
 	return (m_flags & e_frozenFlag) == e_frozenFlag;
+}
+
+inline bool b2Body::IsFrozenByUser() const
+{
+	return (m_flags & e_frozenByUserFlag) == e_frozenByUserFlag;
 }
 
 inline bool b2Body::IsSleeping() const

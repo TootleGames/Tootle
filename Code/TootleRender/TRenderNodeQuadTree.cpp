@@ -83,13 +83,7 @@ void TLRender::TRenderNodeQuadTreeZone::Initialise(TLMessaging::TMessage& Messag
 	TRef ZoneRef;
 	if ( Message.ImportData("Zone", ZoneRef ) )
 	{
-		if ( ZoneRef == "Physics" )
-		{
-			//	physic's graph's root zone
-			TPtr<TLMaths::TQuadTreeZone> pZone = TLPhysics::g_pPhysicsgraph->GetRootCollisionZone();
-			SetQuadTreeZone( pZone );
-		}
-		else if ( ZoneRef == "Scene" )
+		if ( ZoneRef == "Scene" )
 		{
 			//	physic's graph's root zone
 			TPtr<TLMaths::TQuadTreeZone> pZone = TLScene::g_pScenegraph->GetRootZone();

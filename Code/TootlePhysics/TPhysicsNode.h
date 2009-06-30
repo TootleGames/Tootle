@@ -10,7 +10,6 @@
 #include <TootleCore/TFlags.h>
 #include <TootleCore/TLMaths.h>
 #include "TCollisionShape.h"
-#include <TootleMaths/TQuadTree.h>
 #include "TLPhysics.h"
 #include <box2d/include/box2d.h>
 
@@ -32,7 +31,6 @@ namespace TLPhysics
 	class TPhysicsNode;
 	class TPhysicsgraph;
 	class TJoint;
-	class TPhysics_ContactListener;
 
 	extern float3		g_WorldUp;			//	gr: currently a global, change to be on the graph, or per node at some point so individual nodes can have their own gravity direction. Depends on what we need it for
 	extern float3		g_WorldUpNormal;	//	gr: currently a global, change to be on the graph, or per node at some point so individual nodes can have their own gravity direction. Depends on what we need it for
@@ -42,11 +40,10 @@ namespace TLPhysics
 //------------------------------------------------------
 //	
 //------------------------------------------------------
-class TLPhysics::TPhysicsNode : public TLGraph::TGraphNode<TLPhysics::TPhysicsNode>, public TLMaths::TQuadTreeNode
+class TLPhysics::TPhysicsNode : public TLGraph::TGraphNode<TLPhysics::TPhysicsNode>
 {
 	friend class TLPhysics::TPhysicsgraph;
 	friend class TLPhysics::TJoint;
-	friend class TLPhysics::TPhysics_ContactListener;
 public:
 	enum Flags
 	{
@@ -55,7 +52,6 @@ public:
 		Flag_Static,			//	does not move when collided wtih
 		//Flag_CollideBothSides,	//	collide with inside of shape, or dont check normal in polygon 
 		Flag_HasCollision,		//	expecting a valid collision shape - clear this to DISABLE collision, but still keep shape etc
-		Flag_ZoneExpected,		//	expecting to be in a collision zone
 		Flag_Enabled,			//	if not enabled, graph does not update this node
 		Flag_Rotate,			//	if disabled (on by default) then box2d's collision doesn't rotate objects
 		Flag_IsSensor,			//	if enabled, (and collision is enabled) objects pass through on-collision but a collision is registered
@@ -67,7 +63,6 @@ public:
 	virtual void				Update(float Timestep);						//	physics update
 	virtual void				Shutdown();									//	cleanup
 	virtual void				PostUpdate(float Timestep,TLPhysics::TPhysicsgraph& Graph,TPtr<TLPhysics::TPhysicsNode>& pThis);			//	after collisions are handled
-	virtual Bool				PostIteration(u32 Iteration);				//	called after iteration, return TRUE to do another iteration
 
 	FORCEINLINE TRefRef			GetOwnerSceneNodeRef() const				{	return m_OwnerSceneNode;	}
 
@@ -98,9 +93,8 @@ public:
 	FORCEINLINE void			OnDampingChanged()					{	SetLinearDamping( m_Damping );	}	//	this re-sets it on the body if it exists
 	void						OnShapeDefintionChanged();
 
-	FORCEINLINE void			OnTransformChanged(Bool TransChanged,Bool ScaleChanged,Bool RotationChanged)	{	OnTransformChanged( (TransChanged*TLMaths_TransformBitTranslate) | (ScaleChanged*TLMaths_TransformBitScale) | (RotationChanged*TLMaths_TransformBitRotation) );	}
-	FORCEINLINE void			OnTransformChanged(u8 TransformChangedBits)										{	m_TransformChangedBits |= TransformChangedBits;	if ( TransformChangedBits != 0x0 )	SetWorldCollisionShapeInvalid();	}
-	FORCEINLINE void			OnTransformChangedNoPublish()		{	SetWorldCollisionShapeInvalid();	}
+	FORCEINLINE void			OnTransformChanged(u8 TransformChangedBits)	{	m_TransformChangedBits |= TransformChangedBits;	if ( TransformChangedBits != 0x0 )	SetBodyTransform();	}
+	FORCEINLINE void			OnTransformChangedNoPublish()		{	SetBodyTransform();	}
 	FORCEINLINE void			OnTranslationChanged()				{	OnTransformChanged( TLMaths_TransformBitTranslate );	}
 	FORCEINLINE void			OnRotationChanged()					{	OnTransformChanged( TLMaths_TransformBitRotation );	}
 	FORCEINLINE void			OnScaleChanged()					{	OnTransformChanged( TLMaths_TransformBitScale );	}
@@ -112,24 +106,12 @@ public:
 	FORCEINLINE Bool					IsAllowedCollisionWithNode(TRefRef NodeRef)					{	return !m_NonCollisionNodes.Exists( NodeRef );	}
 	FORCEINLINE void					EnableCollisionWithNode(TRefRef NodeRef,Bool Enable)		{	if ( Enable )	m_NonCollisionNodes.Remove( NodeRef );	else	m_NonCollisionNodes.AddUnique( NodeRef );	}
 
-	FORCEINLINE void					SetCollisionNone()											{	m_pCollisionShape = NULL;	SetWorldCollisionShapeInvalid();	SetCollisionZoneNeedsUpdate();	}
+	FORCEINLINE void					SetCollisionNone()											{	m_pCollisionShape = NULL;	CreateBodyShape();	}
 	void								SetCollisionShape(const TPtr<TLMaths::TShape>& pShape);		//	setup collision shape from a shape
 	FORCEINLINE TLMaths::TTransform&	GetCollisionShapeTransform()								{	return m_Transform;	}
 	FORCEINLINE TPtr<TLMaths::TShape>&	GetCollisionShape()											{	return m_pCollisionShape;	}
 	
-	//	gr: todo: change all this to handle multiple shapes/bodies more natively, return/get arrays of shapes
-	TPtr<TLMaths::TShape>&				GetWorldCollisionShape()				{	return m_pWorldCollisionShape;	}
-	const TPtr<TLMaths::TShape>&		GetWorldCollisionShape() const			{	return m_pWorldCollisionShape;	}
-	TLMaths::TShape*					CalcWorldCollisionShape();				//	calculate transformed collision shape 
-	FORCEINLINE void					SetWorldCollisionShapeInvalid()			{	if ( m_pWorldCollisionShape )	m_pLastWorldCollisionShape = m_pWorldCollisionShape;	m_pWorldCollisionShape = NULL;	}
-	virtual Bool						HasMultipleShapes() const				{	return FALSE;	}
-	void								GetBodyWorldShapes(TPtrArray<TLMaths::TShape>& ShapeArray);			//	get a more exact array of all the box 2D body shapes
-
-//	Bool						SetCollisionZone(TPtr<TLMaths::TQuadTreeZone>& pCollisionZone,TPtr<TPhysicsNode> pThis,const TFixedArray<u32,4>* pChildZoneList);
-
-	FORCEINLINE void			SetCollisionZoneNeedsUpdate(Bool NeedsUpdate=TRUE)		{	SetZoneOutOfDate( NeedsUpdate );	}
-	FORCEINLINE Bool			GetCollisionZoneNeedsUpdate() const						{	return IsZoneOutOfDate();	}
-	void						UpdateNodeCollisionZone(TPtr<TLPhysics::TPhysicsNode>& pThis,TLPhysics::TPhysicsgraph& Graph);	//	update what collision zone we're in
+	void								GetBodyWorldShapes(TPtrArray<TLMaths::TShape>& ShapeArray);	//	convert the body shapes to native TShapes in world space
 
 	FORCEINLINE Bool			operator==(TRefRef Ref) const							{	return GetNodeRef() == Ref;	}
 
@@ -161,17 +143,13 @@ protected:
 	void						OnCollisionEnabledChanged(Bool IsNowEnabled);	//	called when collision is enabled/disabled - changes group of box2D body so it won't do collision checks
 	void						OnNodeEnabledChanged(Bool IsNowEnabled);	//	called when node is enabled/disabled
 
-	virtual SyncBool			IsInShape(const TLMaths::TBox2D& Shape);
-	virtual Bool				HasZoneShape();								//	return validity of shape for early bail out tests.
-
 	//	box2d interface
 	Bool						CreateBody(b2World& World);					//	create the body in the world
 	Bool						CreateBodyShape();							//	when our collision shape changes we recreate the shape on the body
 	void						SetBodyTransform();							//	reset the body's transform
 	FORCEINLINE b2Body*			GetBody()									{	return m_pBody;	}
 	FORCEINLINE const b2Body*	GetBody() const								{	return m_pBody;	}
-//	FORCEINLINE b2Shape*		GetBodyShape()								{	return m_pBody ? m_pBody->GetShapeList() : NULL;	}	//	quick access to the first shape on the body - assuming we only ever have one shape
-//	FORCEINLINE const b2Shape*	GetBodyShape() const						{	return m_pBody ? m_pBody->GetShapeList() : NULL;	}	//	quick access to the first shape on the body - assuming we only ever have one shape
+	FORCEINLINE void			OnBodyTransformChanged(u8 TransformChangedBits)	{	m_TransformChangedBits |= TransformChangedBits;	}
 
 	//	gr: remove this and replace with multiple-shape access
 	virtual void				GetBodys(TArray<b2Body*>& Bodies) const		{	if ( m_pBody )	Bodies.Add( m_pBody );	}
@@ -187,13 +165,9 @@ protected:
 	TFlags<Flags>			m_PhysicsFlags;
 
 	TPtr<TLMaths::TShape>	m_pCollisionShape;			//	collision shape
-	TPtr<TLMaths::TShape>	m_pWorldCollisionShape;		//	transformed collision shape, delete/invalidated when pos or collision shape changes
-	TPtr<TLMaths::TShape>	m_pLastWorldCollisionShape;	//	to save re-allocations of the same object, when we invalidate the world collision shape we set it to this. then when we recalc it, we try to reuse this pointer
 	TArray<TCollisionInfo>	m_Collisions;				//	list of collisions during our last update - published in PostUpdate to subscribers
 
 	TArray<TRef>			m_NonCollisionNodes;		//	list of nodes we're explicitly not allowed to collide with
-
-	Bool					m_InitialisedZone;			//	
 
 	float					m_Temp_ExtrudeTimestep;		//	timestep for this frame... just saves passing around, used when calculating world collision shape for this frame
 	TLMaths::TIntersection	m_Temp_Intersection;		//	current intersection. assume is invalid unless we're in an OnCollision func

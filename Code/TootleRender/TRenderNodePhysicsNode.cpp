@@ -5,7 +5,6 @@
 #include <TootleMaths/TShapeCapsule.h>
 #include <TootleMaths/TShapeSphere.h>
 #include <TootleMaths/TShapeBox.h>
-#include <TootleMaths/TShapeOblong.h>
 
 
 #define COLLISION_SHAPE_COLOUR	TColour( 1.f, 0.f, 0.f, 1.f )
@@ -174,61 +173,17 @@ void TLRender::TRenderNodePhysicsNode::OnPhysicsNodeChanged(TLPhysics::TPhysicsN
 	GetMeshAsset()->GenerateLine( LineB, COLLISION_SHAPE_COLOUR );
 	*/
 
-	//	temp special system for the multi-body physics node
-	if ( PhysicsNode.HasMultipleShapes() )
+	//	get world shapes 
+	TPtrArray<TLMaths::TShape> ShapeArray;
+	PhysicsNode.GetBodyWorldShapes( ShapeArray );
+
+	//	generate geometry for each shape
+	for ( u32 i=0;	i<ShapeArray.GetSize();	i++ )
 	{
-		TPtrArray<TLMaths::TShape> ShapeArray;
-		PhysicsNode.GetBodyWorldShapes( ShapeArray );
-		for ( u32 i=0;	i<ShapeArray.GetSize();	i++ )
-		{
-			GetMeshAsset()->GenerateShape( *ShapeArray.ElementAt(i) );
-		}
-		return;
-	}
-
-
-	//	get the world shape
-	const TLMaths::TShape* pWorldCollisionShape = PhysicsNode.CalcWorldCollisionShape();
-
-	//	draw a mesh of the shape
-	if ( pWorldCollisionShape )
-	{
-		TRef CollisionShapeType = pWorldCollisionShape->GetShapeType();
-
-		switch ( CollisionShapeType.GetData() )
-		{
-			case TLMaths_ShapeRef(TCapsule2D):
-				GetMeshAsset()->GenerateCapsule( static_cast<const TLMaths::TShapeCapsule2D*>(pWorldCollisionShape)->GetCapsule() );
-				break;
-
-			case TLMaths_ShapeRef(TSphere):
-				GetMeshAsset()->GenerateSphere( static_cast<const TLMaths::TShapeSphere*>(pWorldCollisionShape)->GetSphere() );
-				break;
-
-			case TLMaths_ShapeRef(TSphere2D):
-				GetMeshAsset()->GenerateSphere( static_cast<const TLMaths::TShapeSphere2D*>(pWorldCollisionShape)->GetSphere() );
-				break;
-
-			case TLMaths_ShapeRef(TBox2D):
-				GetMeshAsset()->GenerateQuad( static_cast<const TLMaths::TShapeBox2D*>(pWorldCollisionShape)->GetBox() );
-				break;
-
-			case TLMaths_ShapeRef(TOblong2D):
-				GetMeshAsset()->GenerateQuad( static_cast<const TLMaths::TShapeOblong2D*>(pWorldCollisionShape)->GetOblong() );
-				break;
-
-			default:
-			{
-				TTempString Debug_String("Unsupported shape type ");
-				CollisionShapeType.GetString( Debug_String );
-				TLDebug_Break( Debug_String );
-			}
-			break;
-		}
+		GetMeshAsset()->GenerateShape( *ShapeArray.ElementAt(i) );
 	}
 
 	//	mesh has changed
 	OnMeshChanged();
-
 }
 

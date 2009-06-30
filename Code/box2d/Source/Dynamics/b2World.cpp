@@ -1068,7 +1068,11 @@ void b2World::DrawDebugData()
 			const b2XForm& xf = b->GetXForm();
 			for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext())
 			{
-				if (b->IsStatic())
+				if (b->IsFrozen())
+				{
+					DrawShape(f, xf, b2Color(0.25f, 0.25f, 0.25f));
+				}
+				else if (b->IsStatic())
 				{
 					DrawShape(f, xf, b2Color(0.5f, 0.9f, 0.5f));
 				}

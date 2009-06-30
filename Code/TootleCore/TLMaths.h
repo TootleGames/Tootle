@@ -359,6 +359,8 @@ public:
 	FORCEINLINE void				SetScale(const float3& Scale)							{	m_Scale = Scale;			SetScaleValid();	}
 	FORCEINLINE void				SetTranslate(const float3& Translate)					{	m_Translate = Translate;	SetTranslateValid();	}
 	FORCEINLINE void				SetRotation(const TQuaternion& Rotation)				{	m_Rotation = Rotation;		SetRotationValid();	}
+
+	FORCEINLINE u8					SetHasChanged(const TLMaths::TTransform& NewTransform);					//	set all elements and return what bits have changed
 	FORCEINLINE u8					SetScaleHasChanged(const float3& Scale);								//	set scale, return's the Transform bit that has changed
 	FORCEINLINE u8					SetTranslateHasChanged(const float3& Translate);						//	set translation, return's the Transform bit that has changed
 	FORCEINLINE u8					SetTranslateHasChanged(const float3& Translate,float MinChange);		//	set translation, return's the Transform bit that has changed
@@ -388,7 +390,7 @@ public:
 	FORCEINLINE Bool				HasRotation() const				{	return (m_Valid & TLMaths_TransformBitRotation) != 0x0;	}
 	FORCEINLINE u8					GetHasTransformBits() const		{	return m_Valid;	}
 
-	void				Transform(const TLMaths::TTransform& Trans);	//	transform this
+	void				Transform(const TLMaths::TTransform& Trans);	//	transform this by another transfor
 	void				Transform(float3& Vector) const;				//	transform vector
 	void				Transform(float2& Vector) const;				//	transform vector
 	void				Transform(TArray<float3>& VectorArray) const;
@@ -570,6 +572,26 @@ FORCEINLINE float TLMaths::Sinf(float RadAngle)
 	*/
 }
 
+	
+
+//--------------------------------------------------
+//	set all elements and return what bits have changed
+//--------------------------------------------------
+FORCEINLINE u8 TLMaths::TTransform::SetHasChanged(const TLMaths::TTransform& NewTransform)
+{
+	u8 Changes = 0x0;
+
+	if ( NewTransform.HasScale() )
+		Changes |= SetScaleHasChanged( NewTransform.GetScale() );
+
+	if ( NewTransform.HasRotation() )
+		Changes |= SetRotationHasChanged( NewTransform.GetRotation() );
+
+	if ( NewTransform.HasTranslate() )
+		Changes |= SetTranslateHasChanged( NewTransform.GetTranslate() );
+
+	return Changes;
+}
 
 
 //--------------------------------------------------

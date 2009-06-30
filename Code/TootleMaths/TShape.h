@@ -17,12 +17,10 @@ namespace TLMaths
 	class TShape;			//	base shape type
 	class TShapeSphere2D;	//	sphere shape
 	class TShapeSphere;		//	sphere shape
-	class TShapeOblong2D;	//	oblong shape
 	class TShapeCapsule2D;	//	capsule shape
 	class TShapeBox;		//	box shape
 	class TShapeBox2D;		//	box shape
 //	class TShapeMesh;		//	mesh "shape" for triangle/face, line intersection etc
-	class TShapePolygon;	//	convex polygon shape
 	class TShapePolygon2D;	//	convex polygon shape
 
 	class TIntersection;	//	resulting intersection information of two shapes
@@ -95,7 +93,7 @@ public:
 	virtual Bool					HasIntersection(TShapeSphere2D& OtherShape)							{	TIntersection a,b;	return GetIntersection( OtherShape, a, b );	}
 	virtual Bool					HasIntersection(TShapeBox& OtherShape)								{	TIntersection a,b;	return GetIntersection( OtherShape, a, b );	}
 	virtual Bool					HasIntersection(TShapeBox2D& OtherShape)							{	TIntersection a,b;	return GetIntersection( OtherShape, a, b );	}
-	virtual Bool					HasIntersection(TShapeOblong2D& OtherShape)							{	TIntersection a,b;	return GetIntersection( OtherShape, a, b );	}
+	virtual Bool					HasIntersection(TShapePolygon2D& OtherShape)						{	TIntersection a,b;	return GetIntersection( OtherShape, a, b );	}
 	virtual Bool					HasIntersection(TShapeCapsule2D& OtherShape)						{	TIntersection a,b;	return GetIntersection( OtherShape, a, b );	}
 //	virtual Bool					HasIntersection(TShapeMesh* pCollisionShape)						{	TIntersection a,b;	return GetIntersection_Mesh( OtherShape, a, b );	}
 
@@ -105,7 +103,7 @@ public:
 	virtual Bool					GetIntersection(TShapeSphere2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 	virtual Bool					GetIntersection(TShapeBox& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 	virtual Bool					GetIntersection(TShapeBox2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
-	virtual Bool					GetIntersection(TShapeOblong2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
+	virtual Bool					GetIntersection(TShapePolygon2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 	virtual Bool					GetIntersection(TShapeCapsule2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 //	virtual Bool					GetIntersection(TShapeMesh* pCollisionMesh,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 	

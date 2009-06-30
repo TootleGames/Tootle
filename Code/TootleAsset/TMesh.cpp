@@ -1,7 +1,6 @@
 #include "TMesh.h"
 #include <TootleCore/TBinaryTree.h>
 #include <TootleMaths/TShapeSphere.h>
-#include <TootleMaths/TShapeOblong.h>
 #include <TootleMaths/TShapeCapsule.h>
 #include <TootleMaths/TShapeBox.h>
 #include <TootleMaths/TShapePolygon.h>
@@ -1535,17 +1534,7 @@ Bool TLAsset::TMesh::CreateDatum(const TArray<float3>& PolygonPoints,TRefRef Dat
 			return FALSE;
 		}
 
-		TLMaths::TOblong2D Oblong;
-		TFixedArray<float2,4>& Corners = Oblong.GetBoxCorners();
-		Corners[0] = PolygonPoints[0].xy();
-		Corners[1] = PolygonPoints[1].xy();
-		Corners[2] = PolygonPoints[2].xy();
-		Corners[3] = PolygonPoints[3].xy();
-
-		//	set as explicitly valid
-		Oblong.SetValid();
-
-		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeOblong2D( Oblong );
+		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapePolygon2D( PolygonPoints );
 
 		//	add datum
 		AddDatum( DatumRef, pShape );

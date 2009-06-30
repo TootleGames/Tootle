@@ -15,7 +15,6 @@
 
 #define COLLISION_ITERATIONS	1
 
-//#define PREDIVIDE_COLLISION_ZONES
 
 namespace TLPhysics
 {
@@ -26,41 +25,6 @@ namespace TLPhysics
 
 
 
-
-
-
-//-----------------------------------------------------
-//	custom box2D contact filterer
-//-----------------------------------------------------
-bool TLPhysics::TPhysics_ContactFilter::ShouldCollide(b2Fixture* fixtureA, b2Fixture* fixtureB)
-{
-	const b2FilterData& filter1 = fixtureA->GetFilterData();
-	const b2FilterData& filter2 = fixtureB->GetFilterData();
-
-	//	increment collision test counter
-	TLCounter::Debug_Increment( TRef_Static(C,o,T,s,t) );
-
-	//	either is in a negative group... no collision
-	if ( filter1.groupIndex < 0 || filter2.groupIndex < 0 )
-		return FALSE;
-
-	//	explicit node-no-collision-with-node check
-	TPhysicsNode* pNodeA = TLPhysics::GetPhysicsNodeFromShape( fixtureA );
-	TPhysicsNode* pNodeB = TLPhysics::GetPhysicsNodeFromShape( fixtureB );
-	if ( !pNodeA->IsAllowedCollisionWithNode( pNodeB->GetNodeRef() ) )
-		return FALSE;
-	if ( !pNodeB->IsAllowedCollisionWithNode( pNodeA->GetNodeRef() ) )
-		return FALSE;
-
-	if (filter1.groupIndex == filter2.groupIndex && filter1.groupIndex != 0)
-	{
-		//	always collide when in same non-zero group (default box2d behaviour)
-		return TRUE;
-	}
-
-	bool collide = (filter1.maskBits & filter2.categoryBits) != 0 && (filter1.categoryBits & filter2.maskBits) != 0;
-	return collide;
-}
 
 
 
@@ -132,13 +96,7 @@ void TLPhysics::TJoint::DestroyJoint(b2World& World)
 
 
 TLPhysics::TPhysicsgraph::TPhysicsgraph(TRefRef refManagerID) :
-	TLGraph::TGraph<TLPhysics::TPhysicsNode>	( refManagerID ),
-	m_Debug_CollisionTestCount					( 0 ),
-	m_Debug_StaticCollisionTestCount			( 0 ),
-	m_Debug_CollisionTestDupeSavedCount			( 0 ),
-	m_Debug_CollisionIntersections				( 0 ),
-	m_Debug_InZoneTests							( 0 ),
-	m_Debug_InZoneTestsFailed					( 0 )
+	TLGraph::TGraph<TLPhysics::TPhysicsNode>	( refManagerID )
 {
 }
 
@@ -160,16 +118,6 @@ void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 	TLTime::TScopeTimer Timer( TRef_Static(P,h,y,s,c) );
 
 	TLMaths::Limit( fTimeStep, 0.f, MAX_PHYSICS_TIMESTEP );
-	//	reset collision test count
-	m_Debug_CollisionTestCount = 0;
-	m_Debug_StaticCollisionTestCount = 0;
-	m_Debug_CollisionTestDupeSavedCount = 0;
-	m_Debug_CollisionIntersections = 0;
-	m_Debug_InZoneTests = 0;
-	m_Debug_InZoneTestsFailed = 0;
-	m_Debug_CollisionTestsUpwards = 0;
-	m_Debug_CollisionTestsDownwards = 0;
-	m_Debug_ZonesTested = 0;
 
 	//	create queued joints
 	for ( s32 j=m_NodeJointQueue.GetLastIndex();	j>=0;	j-- )
@@ -246,10 +194,6 @@ void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 //----------------------------------------------------------
 void TLPhysics::TPhysicsgraph::OnNodeRemoving(TPtr<TLPhysics::TPhysicsNode>& pNode)
 {
-	//	remove node from zones
-	TPtr<TLMaths::TQuadTreeNode> pQuadTreeNode = pNode;
-	pNode->SetZone( TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>(), pQuadTreeNode, NULL );
-
 	//	inherited OnRemoving()
 	TLGraph::TGraph<TLPhysics::TPhysicsNode>::OnNodeRemoving( pNode );
 }
@@ -280,16 +224,6 @@ void TLPhysics::TPhysicsgraph::OnNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pNode,
 		pNode->CreateBody( *m_pWorld );
 	}
 
-	//	initialise zone
-	if ( m_pRootCollisionZone )
-	{
-		TPtr<TLMaths::TQuadTreeNode> pQuadTreeNode = pNode;
-		if ( pQuadTreeNode->HasZoneShape() )
-		{
-			m_pRootCollisionZone->AddNode( pQuadTreeNode, m_pRootCollisionZone, TRUE );
-		}
-	}
-
 	// Send the added node notificaiton
 	if ( SendAddedMessage )
 	{
@@ -306,28 +240,10 @@ void TLPhysics::TPhysicsgraph::OnNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pNode,
 //----------------------------------------------------------
 void TLPhysics::TPhysicsgraph::SetRootCollisionZone(TPtr<TLMaths::TQuadTreeZone>& pZone,Bool AllowSleep)
 {
-	//	clean up old zone tree
-	if ( m_pRootCollisionZone && pZone )
-	{
-		TLDebug_Break("todo: clean up old collision tree");
-		m_pRootCollisionZone = NULL;
-	}
-
-	//	set new root zone
-	m_pRootCollisionZone = pZone;
-
-	//	pre-divide tree
-#ifdef PREDIVIDE_COLLISION_ZONES
-	if ( m_pRootCollisionZone )
-	{
-		m_pRootCollisionZone->DivideAll( m_pRootCollisionZone );
-	}
-#endif
-
 	//	create box2d world[bounds]
-	if ( m_pRootCollisionZone )
+	if ( pZone )
 	{
-		const TLMaths::TBox2D& WorldShape = m_pRootCollisionZone->GetShape();
+		const TLMaths::TBox2D& WorldShape = pZone->GetShape();
 		b2AABB WorldBox;
 		WorldBox.lowerBound.Set( WorldShape.GetLeft(), WorldShape.GetTop() );
 		WorldBox.upperBound.Set( WorldShape.GetRight(), WorldShape.GetBottom() );
@@ -342,9 +258,9 @@ void TLPhysics::TPhysicsgraph::SetRootCollisionZone(TPtr<TLMaths::TQuadTreeZone>
 		//	gr: note our world up is opposite to box2d...
 		m_pWorld = new b2World( WorldBox, b2Vec2( Gravity.x, -Gravity.y ), AllowSleep );
 
-		//	set contact filter
-		m_pWorld->SetContactFilter( &m_ContactFilter );
-		m_pWorld->SetContactListener( &m_ContactListener );
+		//	set contact filter & listener
+		m_pWorld->SetContactFilter( this );
+		m_pWorld->SetContactListener( this );
 	}
 	else
 	{
@@ -551,6 +467,43 @@ void TLPhysics::TPhysicsgraph::GetNodesInShape(const TLMaths::TBox2D& Shape,TArr
 
 
 
+//-----------------------------------------------------
+//	custom box2D contact filterer
+//-----------------------------------------------------
+bool TLPhysics::TPhysicsgraph::ShouldCollide(b2Fixture* fixtureA, b2Fixture* fixtureB)
+{
+	const b2FilterData& filter1 = fixtureA->GetFilterData();
+	const b2FilterData& filter2 = fixtureB->GetFilterData();
+
+	//	increment collision test counter
+	TLCounter::Debug_Increment( TRef_Static(C,o,T,s,t) );
+
+	TPhysicsNode* pNodeA = TLPhysics::GetPhysicsNodeFromShape( fixtureA );
+	TPhysicsNode* pNodeB = TLPhysics::GetPhysicsNodeFromShape( fixtureB );
+
+	//	missing a node, ignore
+	if ( !pNodeA || !pNodeB )
+	{
+		TLDebug_Break("All shapes/bodies should have nodes associated with them...");
+		return FALSE;
+	}
+
+	//	if either has no collision, then no collision occurs!
+	if ( !pNodeA->HasCollision() || !pNodeB->HasCollision() )
+		return FALSE;
+
+	//	explicit node-no-collision-with-node check
+	if ( !pNodeA->IsAllowedCollisionWithNode( pNodeB->GetNodeRef() ) )
+		return FALSE;
+	if ( !pNodeB->IsAllowedCollisionWithNode( pNodeA->GetNodeRef() ) )
+		return FALSE;
+
+	//	has collision!
+	return TRUE;
+}
+
+
+
 
 //-------------------------------------------------
 //	
@@ -568,19 +521,19 @@ TLPhysics::TPhysicsNode* TLPhysics::TPhysicsNodeFactory::CreateObject(TRefRef In
 //-------------------------------------------------
 // handle add point - pre-solver.	gr: new collision
 //-------------------------------------------------
-void TLPhysics::TPhysics_ContactListener::BeginContact(b2Contact* contact)
+void TLPhysics::TPhysicsgraph::BeginContact(b2Contact* contact)
 {
 	//	get physics node for shape 1
 	TPhysicsNode* pNodeA = TLPhysics::GetPhysicsNodeFromShape( contact->GetFixtureA() );
 	TPhysicsNode* pNodeB = TLPhysics::GetPhysicsNodeFromShape( contact->GetFixtureB() );
 
-	/*
+	
 	TTempString Debug_String("Collison between ");
 	pNodeA->GetNodeRef().GetString(Debug_String );
 	Debug_String.Append(" and ");
 	pNodeB->GetNodeRef().GetString(Debug_String );
 	TLDebug_Print( Debug_String );
-*/
+
 	u32 ContactPointCount = contact->GetManifold()->m_pointCount;
 	
 	//	gr: no contact?

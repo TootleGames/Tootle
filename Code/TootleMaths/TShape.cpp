@@ -2,7 +2,6 @@
 #include "TShapeSphere.h"
 #include "TShapeBox.h"
 #include "TShapeCapsule.h"
-#include "TShapeOblong.h"
 #include "TShapePolygon.h"
 #include <TootleCore/TString.h>
 #include <TootleCore/TBinaryTree.h>
@@ -13,7 +12,7 @@ Bool TLMaths::TShape::GetIntersection(TShapeSphere& OtherShape,TIntersection& No
 Bool TLMaths::TShape::GetIntersection(TShapeSphere2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)		{	Debug_BreakOverloadThis("GetIntersection", static_cast<TShape&>(OtherShape) );	return FALSE;	}
 Bool TLMaths::TShape::GetIntersection(TShapeBox& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)			{	Debug_BreakOverloadThis("GetIntersection", static_cast<TShape&>(OtherShape) );	return FALSE;	}
 Bool TLMaths::TShape::GetIntersection(TShapeBox2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)		{	Debug_BreakOverloadThis("GetIntersection", static_cast<TShape&>(OtherShape) );	return FALSE;	}
-Bool TLMaths::TShape::GetIntersection(TShapeOblong2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)		{	Debug_BreakOverloadThis("GetIntersection", static_cast<TShape&>(OtherShape) );	return FALSE;	}
+Bool TLMaths::TShape::GetIntersection(TShapePolygon2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)		{	Debug_BreakOverloadThis("GetIntersection", static_cast<TShape&>(OtherShape) );	return FALSE;	}
 Bool TLMaths::TShape::GetIntersection(TShapeCapsule2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)	{	Debug_BreakOverloadThis("GetIntersection", static_cast<TShape&>(OtherShape) );	return FALSE;	}
 //Bool TLMaths::TShape::GetIntersection(TShapeMesh& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)		{	Debug_BreakOverloadThis("GetIntersection", static_cast<TShape&>(OtherShape) );	return FALSE;	}
 
@@ -135,7 +134,6 @@ TPtr<TLMaths::TShape> TLMaths::CreateShapeType(TRefRef ShapeType)
 //		CASE_CREATE_SHAPE( Line );
 //		CASE_CREATE_SHAPE( Line2D );
 //		CASE_CREATE_SHAPE( Oblong );
-		CASE_CREATE_SHAPE( Oblong2D );
 		CASE_CREATE_SHAPE( Sphere );
 		CASE_CREATE_SHAPE( Sphere2D );
 #undef CASE_CREATE_SHAPE
@@ -188,7 +186,6 @@ Bool TLMaths::TShape::HasIntersection(TShape& OtherShape)
 		case TLMaths_ShapeRef(TSphere2D):	return HasIntersection( static_cast<TShapeSphere2D&>(OtherShape) );
 		case TLMaths_ShapeRef(TBox):		return HasIntersection( static_cast<TShapeBox&>(OtherShape) );
 		case TLMaths_ShapeRef(TBox2D):		return HasIntersection( static_cast<TShapeBox2D&>(OtherShape) );
-		case TLMaths_ShapeRef(TOblong2D):	return HasIntersection( static_cast<TShapeOblong2D&>(OtherShape) );
 		case TLMaths_ShapeRef(TCapsule2D):	return HasIntersection( static_cast<TShapeCapsule2D&>(OtherShape) );
 //		case TLMaths_ShapeRef(Mesh):		return HasIntersection( static_cast<TShapeMesh&>(OtherShape) );
 		case TLMaths_ShapeRef(Polygon2D):	return HasIntersection( static_cast<TShapePolygon2D&>(OtherShape) );
@@ -215,7 +212,6 @@ Bool TLMaths::TShape::GetIntersection(TShape& OtherShape,TIntersection& NodeAInt
 		case TLMaths_ShapeRef(TSphere2D):	return GetIntersection( static_cast<TShapeSphere2D&>(OtherShape), NodeAIntersection, NodeBIntersection );
 		case TLMaths_ShapeRef(TBox):		return GetIntersection( static_cast<TShapeBox&>(OtherShape), NodeAIntersection, NodeBIntersection );
 		case TLMaths_ShapeRef(TBox2D):		return GetIntersection( static_cast<TShapeBox2D&>(OtherShape), NodeAIntersection, NodeBIntersection );
-		case TLMaths_ShapeRef(TOblong2D):	return GetIntersection( static_cast<TShapeOblong2D&>(OtherShape), NodeAIntersection, NodeBIntersection );
 		case TLMaths_ShapeRef(TCapsule2D):	return GetIntersection( static_cast<TShapeCapsule2D&>(OtherShape), NodeAIntersection, NodeBIntersection );
 //		case TLMaths_ShapeRef(Mesh):		return GetIntersection( static_cast<TShapeMesh&>(OtherShape), NodeAIntersection, NodeBIntersection );
 		case TLMaths_ShapeRef(Polygon2D):	return GetIntersection( static_cast<TShapePolygon2D&>(OtherShape), NodeAIntersection, NodeBIntersection );
