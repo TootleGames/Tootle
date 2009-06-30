@@ -79,8 +79,7 @@ public:
 	FORCEINLINE Bool			IsEnabled() const					{	return m_PhysicsFlags.IsSet( TPhysicsNode::Flag_Enabled );	}
 	FORCEINLINE void			SetEnabled(Bool Enabled);			//	enable/disable node (physics processing and collision). Disabling makes it invisible to the box world
 
-	FORCEINLINE void			AddForce(const float3& Force,Bool MassRelative=FALSE);
-	FORCEINLINE void			AddForceFrom(const float3& Force,const float3& ForceLocalPosition,Bool MassRelative=FALSE);
+	void						AddForce(const float3& Force,Bool MassRelative=FALSE);	//	apply a force to the body
 	FORCEINLINE void			AddTorque(float AngleRadians);
 	FORCEINLINE void			SetVelocity(const float3& Velocity);
 	FORCEINLINE float3			GetVelocity() const;
@@ -161,6 +160,7 @@ protected:
 
 	TLMaths::TTransform		m_Transform;				//	world transform of shape
 	u8						m_TransformChangedBits;		//	dont broadcast trasnform changes until post update - TRANSFORM_BIT_XXX
+	Bool					m_BodyTransformChanged;		//	if true then the body transform needs setting. Generally this means if the node is disabled and has moved then we need to set it again when enabling.
 
 	TFlags<Flags>			m_PhysicsFlags;
 
@@ -180,20 +180,6 @@ protected:
 
 
 
-FORCEINLINE void TLPhysics::TPhysicsNode::AddForce(const float3& Force,Bool MassRelative)
-{
-	if ( m_pBody && Force.IsNonZero() )	
-	{
-		//	multiply by the mass if it's not mass relative otherwise box will scale down the effect of the force. 
-		//	eg. gravity doesn't want to be mass related otherwise things will fall at the wrong rates
-		float Mass = MassRelative ? 1.f : m_pBody->GetMass();
-
-		//	gr: apply the force at the world center[mass center] of the body
-		m_pBody->ApplyForce( b2Vec2(Force.x*Mass,Force.y*Mass) , m_pBody->GetWorldCenter() );	
-
-		OnForceChanged();
-	}
-}
 
 
 FORCEINLINE void TLPhysics::TPhysicsNode::AddTorque(float AngleRadians)

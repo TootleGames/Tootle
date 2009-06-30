@@ -61,7 +61,8 @@ TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 	m_Friction						( 0.4f ),
 	m_Temp_ExtrudeTimestep			( 0.f ),
 	m_TransformChangedBits			( 0x0 ),
-	m_pBody							( NULL )
+	m_pBody							( NULL ),
+	m_BodyTransformChanged			( FALSE )
 {
 #ifdef CACHE_ACCUMULATED_MOVEMENT
 	m_AccumulatedMovementValid = FALSE;
@@ -381,9 +382,7 @@ void TLPhysics::TPhysicsNode::SetPosition(const float3& Position)
 	//	exclusivly set transform
 	m_Transform.SetTranslate( Position );
 
-	//	set transform on box2d body
-	SetBodyTransform();
-
+	//	notify change (will set box body)
 	OnTranslationChanged();
 }
 
@@ -627,6 +626,9 @@ Bool TLPhysics::TPhysicsNode::CreateBody(b2World& World)
 	if ( !m_pBody  )
 		return FALSE;
 
+	//	created body with correct transform, so cannot be out of date
+	m_BodyTransformChanged = FALSE;
+
 	//	create shape definition from our existing collision shape
 	if ( m_pCollisionShape )
 	{
@@ -746,17 +748,31 @@ Bool TLPhysics::TPhysicsNode::CreateBodyShape()
 void TLPhysics::TPhysicsNode::SetBodyTransform()
 {
 	if ( !m_pBody )
+	{
+		m_BodyTransformChanged = TRUE;
 		return;
+	}
 
 	const TLMaths::TTransform& Transform = GetTransform();
 	float AngleRadians = Transform.GetRotation().GetAngle2D().GetRadians();
 
+	//	set new transform (BEFORE refiltering contact points)
+	if ( !m_pBody->SetXForm( b2Vec2( Transform.GetTranslate().x, Transform.GetTranslate().y ), AngleRadians ) )
+	{
+		//	failed to set the transform, must be frozen
+		m_BodyTransformChanged = TRUE;
+		return;
+	}
+	
+	//	transform has been set, is now valid
+	m_BodyTransformChanged = FALSE;
+
 	//	wake up body (Not sure if this has to be BEFORE the transforms...)
+	//	gr: don't think this needs to be done before the transform, SO, because we don't want 
+	//	to wake up the body when disabled/frozen (ie. failed SetXForm above) then I've moved
+	//	this to after SetXForm (has/hasnt failed)
 	m_pBody->WakeUp();
 
-	//	set new transform (BEFORE refiltering contact points)
-	m_pBody->SetXForm( b2Vec2( Transform.GetTranslate().x, Transform.GetTranslate().y ), AngleRadians );
-	
 	//	refilter on world to reset contact points of the shapes
 	TPtr<b2World>& pWorld = TLPhysics::g_pPhysicsgraph->GetWorld();
 	if ( pWorld )
@@ -791,9 +807,17 @@ void TLPhysics::TPhysicsNode::OnNodeEnabledChanged(Bool IsNowEnabled)
 	if ( m_pBody )
 	{
 		if ( IsNowEnabled )
+		{
 			m_pBody->UnFreeze();
+
+			//	if body transform is out of date, (eg. changed when disabled) set it
+			if ( m_BodyTransformChanged )
+				SetBodyTransform();
+		}
 		else
+		{
 			m_pBody->Freeze();
+		}
 	}	
 }
 
@@ -836,3 +860,34 @@ void TLPhysics::TPhysicsNode::GetBodyWorldShapes(TPtrArray<TLMaths::TShape>& Sha
 }
 
 
+
+//-------------------------------------------------------------
+//	apply a force to the body
+//-------------------------------------------------------------
+void TLPhysics::TPhysicsNode::AddForce(const float3& Force,Bool MassRelative)
+{
+	//	nothing to apply
+	if ( Force.IsZero() )
+		return;
+
+	if ( !m_pBody )
+	{
+		TLDebug_Warning("Force applied when no body... accumulate into force buffer to apply when body is created?");
+		return;
+	}
+	
+	//	I'm assuming force won't be applied when disabled (body is frozen)
+	if ( !IsEnabled() )
+	{
+		TLDebug_Warning("Force applied when disabled... not sure this will apply");
+	}
+
+	//	multiply by the mass if it's not mass relative otherwise box will scale down the effect of the force. 
+	//	eg. gravity doesn't want to be mass related otherwise things will fall at the wrong rates
+	float Mass = MassRelative ? 1.f : m_pBody->GetMass();
+
+	//	gr: apply the force at the world center[mass center] of the body
+	m_pBody->ApplyForce( b2Vec2(Force.x*Mass,Force.y*Mass) , m_pBody->GetWorldCenter() );	
+
+	OnForceChanged();
+}
