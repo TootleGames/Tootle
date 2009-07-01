@@ -1595,6 +1595,65 @@ void TLMaths::TTransform::Transform(const TLMaths::TTransform& Trans)
 	}
 }
 
+
+//-----------------------------------------------------------
+//	transform this by another transform. returns elements that have changed 
+//	(slightly slower, but if your caller does much LESS work if nothing changed then use this)
+//-----------------------------------------------------------
+u8 TLMaths::TTransform::TransformHasChanged(const TLMaths::TTransform& Trans)
+{
+	u8 ChangedBits = 0x0;
+
+	if ( Trans.HasTranslate() )
+	{
+		if ( Trans.m_Translate.IsNonZero() )
+		{
+			float3 Translate = Trans.m_Translate;
+		
+			//	gr: this is from the render code, we transform the translate of the child by ourselves(the parent)
+			//		so the translate gets rotated, scaled etc... theres a possibility this might be wrong for other things, but Im not sure if it is or not
+			//		it's done BEFORE the merge of the rotation and the matrix of the child
+			//		the order of the other parts doesn't matter as they dont interact, where as this does
+			Transform( Translate );
+
+			ChangedBits |= SetTranslateHasChanged( Translate );
+			TLDebug_CheckFloat( Translate );
+		}
+	}
+
+
+	if ( Trans.HasScale() )
+	{
+		if ( HasScale() )
+			m_Scale *= Trans.m_Scale;
+		else
+			SetScale( Trans.m_Scale );
+
+		//	assume scale always changes... can check Trans.m_Scale.LengthSq() == 1 i think to see if its all 1's. Not sure how accurate that is...		
+		ChangedBits |= TLMaths_TransformBitScale;
+
+		TLDebug_CheckFloat( m_Scale );
+	}
+
+	if ( Trans.HasRotation() )
+	{
+		//	gr: needs normalising?
+		if ( HasRotation() )
+			m_Rotation *= Trans.m_Rotation;
+		else
+			SetRotation( Trans.m_Rotation );
+		
+		//	assume rotation always changes... 
+		ChangedBits |= TLMaths_TransformBitScale;
+
+		TLDebug_CheckFloat( m_Rotation );
+	}
+
+	return ChangedBits;
+}
+
+
+
 //-----------------------------------------------------------
 //	transform vector
 //-----------------------------------------------------------

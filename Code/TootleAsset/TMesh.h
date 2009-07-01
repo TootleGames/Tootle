@@ -82,7 +82,7 @@ public:
 	void					GenerateShape(const TLMaths::TShapeBox2D& Shape)		{	GenerateShape( Shape.GetBox() );	}
 	void					GenerateShape(const TLMaths::TShapeSphere& Shape)		{	GenerateShape( Shape.GetSphere() );	}
 	void					GenerateShape(const TLMaths::TShapeSphere2D& Shape)		{	GenerateShape( Shape.GetSphere() );	}
-	void					GenerateShape(const TLMaths::TShapePolygon2D& Shape)	{	GenerateShape( Shape.GetOutline() );	}
+	void					GenerateShape(const TLMaths::TShapePolygon2D& Shape)	{	GeneratePolygon( Shape.GetOutline() );	}
 	void					GenerateShape(const TLMaths::TBox& Box)					{	GenerateCube( Box );	}
 	void					GenerateShape(const TLMaths::TBox2D& Box)				{	GenerateQuad( Box );	}
 	void					GenerateShape(const TLMaths::TSphere& Sphere)			{	GenerateSphere( Sphere );	}
@@ -111,20 +111,24 @@ public:
 	void					GenerateLine(const float3& LineStart,const float3& LineEnd,const TColour* pColour=NULL)				{	GenerateLine( LineStart, LineEnd, pColour, pColour );	}
 	void					GenerateLine(const float3& LineStart,const float3& LineEnd,const TColour* pColourStart,const TColour* pColourEnd);	//	generate a line
 	void					GenerateLine(u16 StartVertex,u16 EndVertex);
-	void					GenerateLine(const TArray<float3>& LinePoints,const TColour& Colour)								{	GenerateLine( LinePoints, &Colour );	}
-	void					GenerateLine(const TArray<float3>& LinePoints,const TColour* pColour=NULL);	//	generate a line
+	void					GenerateLine(const TArray<float3>& LinePoints,Bool Loop,const TColour& Colour)								{	GenerateLine( LinePoints, Loop, &Colour );	}
+	void					GenerateLine(const TArray<float3>& LinePoints,Bool Loop,const TColour* pColour=NULL);	//	generate a line
+	void					GenerateLine(const TArray<float2>& LinePoints,Bool Loop,const TColour* pColour=NULL,float z=0.f);	//	generate a line
 
 	void					GenerateQuad(const TLMaths::TBox2D& Box)															{	GenerateQuad( Box, NULL, FALSE, 0.f );	}
 	void					GenerateQuad(const TLMaths::TBox2D& Box,const TColour* pColour,Bool GenerateUV,float z=0.f);		//	generate a square mesh from a 2d box
 	void					GenerateQuad(const TLMaths::TOblong2D& Oblong)														{	GenerateQuad( Oblong, NULL, FALSE, 0.f );	}
 	void					GenerateQuad(const TLMaths::TOblong2D& Oblong,const TColour* pColour,Bool GenerateUV,float z=0.f);		//	generate a square mesh from a 2d box
 	void					GenerateQuad(const float2& Center,float Size,const TColour* pColour=NULL,float z=0.f);			//	generate a square mesh around a point
+	Bool					GenerateQuad(const TArray<float2>& Outline,const TColour* pColour=NULL,float z=0.f);			//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const TArray<float3>& Outline,const TColour* pColour=NULL);			//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const TArray<float3>& Outline,const TArray<TColour>& Colours);	//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const float3& OutlineA,const float3& OutlineB,const float3& OutlineC,const float3& OutlineD,const TColour* pColour=NULL,Bool GenerateUVs=FALSE);	//	turn an outline of points into a quad/tri-strip
 	Bool					GenerateQuad(const TArray<u16>& OutlineVertIndexes);			//	turn an outline of points into a quad/tri-strip
 	void					GenerateQuad(u16 VertexA,u16 VertexB,u16 VertexC,u16 VertexD);	//	
 	void					GenerateQuadOutline(const TLMaths::TBox2D& Box,const TColour* pColour=NULL,float z=0.f);		//	generate a square mesh from a 2d box
+
+	void					GeneratePolygon(const TArray<float2>& Outline,const TColour* pColour=NULL,float z=0.f);			//	tesselate and create geometry for polygon
 
 	void					GenerateTriangle(u16 VertA,u16 VertB,u16 VertC);		//	generate triangle
 	void					GenerateTristrip(const TArray<u16>& TristripVerts);		//	generate triangle strips from points. this is IN TRISTRIP ORDER

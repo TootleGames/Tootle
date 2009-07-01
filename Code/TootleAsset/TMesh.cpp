@@ -135,7 +135,7 @@ void TLAsset::TMesh::GenerateQuadOutline(const TLMaths::TBox2D& Box,const TColou
 	BottomLeft = float3( TopLeft.x, BottomRight.y, z );
 	
 	//	generate oultine
-	GenerateLine( Outline, pColour );
+	GenerateLine( Outline, TRUE, pColour );
 }
 
 
@@ -334,11 +334,8 @@ void TLAsset::TMesh::GenerateSphereOutline(const TLMaths::TSphere2D& Sphere,cons
 		Outline.Add( Pos );
 	}
 
-	//	complete the loop
-	Outline.Add( Outline[0] );
-
 	//	create the geometry
-	GenerateLine( Outline, pColour );
+	GenerateLine( Outline, TRUE, pColour );
 }
 
 
@@ -426,8 +423,8 @@ void TLAsset::TMesh::GenerateCapsuleOutline(const TLMaths::TCapsule2D& Capsule,c
 	TLMaths::ExpandLineStrip( Line, Capsule.GetRadius()*2.f, LineOutside, LineInside );
 
 	//	draw the capsule's outlines
-	GenerateLine( LineOutside, pColour );
-	GenerateLine( LineInside, pColour );
+	GenerateLine( LineOutside, FALSE, pColour );
+	GenerateLine( LineInside, FALSE, pColour );
 
 	//	draw a sphere at each end of the capsule
 	GenerateSphereOutline( TLMaths::TSphere2D( CapsuleLine.GetStart(), Capsule.GetRadius() ), pColour, z );
@@ -486,7 +483,7 @@ void TLAsset::TMesh::GenerateLine(u16 StartVertex,u16 EndVertex)
 //-------------------------------------------------------
 //	generate a line
 //-------------------------------------------------------
-void TLAsset::TMesh::GenerateLine(const TArray<float3>& LinePoints,const TColour* pColour)
+void TLAsset::TMesh::GenerateLine(const TArray<float3>& LinePoints,Bool Loop,const TColour* pColour)
 {
 	if ( LinePoints.GetSize() < 2 )
 	{
@@ -509,11 +506,33 @@ void TLAsset::TMesh::GenerateLine(const TArray<float3>& LinePoints,const TColour
 	m_Colours.AddAllocSize( LinePoints.GetSize() );
 	pLine->AddAllocSize( LinePoints.GetSize() );
 	
+	s32 FirstVertex = -1;
 	for ( u32 i=0;	i<LinePoints.GetSize();	i++ )
 	{
 		s32 VertexIndex = AddVertex( LinePoints[i], pColour );
 		pLine->Add( (u16)VertexIndex );
+
+		if ( i==0 )
+			FirstVertex = VertexIndex;
 	}
+
+	//	loop linestrip
+	if ( Loop )
+		pLine->Add( FirstVertex );
+}
+
+
+//-------------------------------------------------------
+//	generate a line
+//-------------------------------------------------------
+void TLAsset::TMesh::GenerateLine(const TArray<float2>& LinePoints,Bool Loop,const TColour* pColour,float z)
+{
+	TFixedArray<float3,1000> LineBuffer;
+
+	for ( u32 i=0;	i<LinePoints.GetSize();	i++ )
+		LineBuffer.Add( LinePoints[i].xyz( z ) );
+
+	GenerateLine( LineBuffer, Loop, pColour );
 }
 
 
@@ -1172,6 +1191,25 @@ void TLAsset::TMesh::RemoveTriangle(u16 TriangleIndex,Bool RemoveVertexes,Bool C
 
 
 //--------------------------------------------------------
+//	tesselate and create geometry for polygon
+//--------------------------------------------------------
+void TLAsset::TMesh::GeneratePolygon(const TArray<float2>& Outline,const TColour* pColour,float z)
+{
+	//	create a quad if there are 4 points
+	if ( Outline.GetSize() == 4 )
+	{
+		GenerateQuad( Outline, pColour, z );
+		return;
+	}
+	
+	//	create a simple outline until we implement the tesselator
+	TLDebug_Warning("todo: tesselate polygon and create geometry");
+
+	GenerateLine( Outline, TRUE, pColour, z );
+}
+
+
+//--------------------------------------------------------
 //	turn an outline of points into a quad/tri-strip
 //--------------------------------------------------------
 Bool TLAsset::TMesh::GenerateQuad(const TArray<float3>& Outline,const TColour* pColour)
@@ -1220,6 +1258,19 @@ void TLAsset::TMesh::GenerateQuad(const TLMaths::TOblong2D& Oblong,const TColour
 	GenerateQuad( OblongCorners[0].xyz(z), OblongCorners[1].xyz(z), OblongCorners[2].xyz(z), OblongCorners[3].xyz(z), pColour, GenerateUV );
 }
 
+//--------------------------------------------------------
+//	turn an outline of points into a quad/tri-strip
+//--------------------------------------------------------
+Bool TLAsset::TMesh::GenerateQuad(const TArray<float2>& Outline,const TColour* pColour,float z)
+{
+	if ( Outline.GetSize() != 4 )
+	{
+		if ( !TLDebug_Break("GenerateQuad with an outline with more/less than 4 points") )
+			return FALSE;
+	}
+
+	return GenerateQuad( Outline[0].xyz(z), Outline[1].xyz(z), Outline[2].xyz(z), Outline[3].xyz(z), pColour, FALSE );
+}
 
 //--------------------------------------------------------
 //	turn an outline of points into a quad/tri-strip
@@ -1801,6 +1852,22 @@ void TLAsset::TMesh::AddLines(const TArray<Line>& OtherPolygons,u32 OffsetVertex
 //-----------------------------------------------------------
 void TLAsset::TMesh::GenerateShape(const TLMaths::TShape& Shape)
 {
-	TLDebug_Break("todo: switch shape type and cast & call appropriately");
+	switch ( Shape.GetShapeType().GetData() )
+	{
+	case TLMaths_ShapeRef(TBox):		GenerateShape( static_cast<const TLMaths::TShapeBox&>( Shape ) );			break;
+	case TLMaths_ShapeRef(TBox2D):		GenerateShape( static_cast<const TLMaths::TShapeBox2D&>( Shape ) );		break;
+	case TLMaths_ShapeRef(TSphere):		GenerateShape( static_cast<const TLMaths::TShapeSphere&>( Shape ) );		break;
+	case TLMaths_ShapeRef(TSphere2D):	GenerateShape( static_cast<const TLMaths::TShapeSphere2D&>( Shape ) );		break;
+	case TLMaths_ShapeRef(TPolygon2D):	GenerateShape( static_cast<const TLMaths::TShapePolygon2D&>( Shape ) );	break;
+	
+	default:
+		//	gr: draw a cross at the shape center?
+	#ifdef _DEBUG
+		TTempString Debug_String("Unhandled shape type ");
+		Shape.GetShapeType().GetString( Debug_String );
+		TLDebug_Break( Debug_String );
+	#endif
+		break;
+	}
 }
 

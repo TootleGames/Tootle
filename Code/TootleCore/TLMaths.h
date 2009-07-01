@@ -125,6 +125,8 @@ namespace TLMaths
 	#define TLMaths_ShapeRef_TLine2D		TRef_Static(L,i,n,e,TWO)
 	#define TLMaths_ShapeRef_TOblong		TRef_Static3(O,b,l)
 	#define TLMaths_ShapeRef_TOblong2D		TRef_Static4(O,b,l,TWO)
+	#define TLMaths_ShapeRef_TPolygon		TRef_Static4(P,o,l,y)
+	#define TLMaths_ShapeRef_TPolygon2D		TRef_Static5(P,o,l,y,TWO)
 	#define TLMaths_ShapeRef_TSphere		TRef_Static3(S,p,h)
 	#define TLMaths_ShapeRef_TSphere2D		TRef_Static4(S,p,h,TWO)
 	#define TLMaths_ShapeRef_Polygon		TRef_Static4(P,o,l,y)
@@ -390,7 +392,8 @@ public:
 	FORCEINLINE Bool				HasRotation() const				{	return (m_Valid & TLMaths_TransformBitRotation) != 0x0;	}
 	FORCEINLINE u8					GetHasTransformBits() const		{	return m_Valid;	}
 
-	void				Transform(const TLMaths::TTransform& Trans);	//	transform this by another transfor
+	void				Transform(const TLMaths::TTransform& Trans);			//	transform this by another transform. dumb faster method which doesn't do checks
+	u8					TransformHasChanged(const TLMaths::TTransform& Trans);	//	transform this by another transform. returns elements that have changed (slightly slower, but if your caller does much LESS work if nothing changed then use this)
 	void				Transform(float3& Vector) const;				//	transform vector
 	void				Transform(float2& Vector) const;				//	transform vector
 	void				Transform(TArray<float3>& VectorArray) const;

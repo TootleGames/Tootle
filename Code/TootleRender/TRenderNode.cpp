@@ -652,21 +652,9 @@ void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 	}
 	else if(Message.GetMessageRef() == TRef("SetTransform"))
 	{
-		Bool TransformChanged = FALSE;
-
-		if ( Message.ImportData( TRef_Static(T,r,a,n,s), m_Transform.GetTranslate() ) )
-		{
-			m_Transform.SetTranslateValid();
-			TransformChanged = TRUE;
-		}
-
-		if ( Message.ImportData( TRef_Static(S,c,a,l,e), m_Transform.GetScale() ) )
-		{
-			m_Transform.SetScaleValid();
-			TransformChanged = TRUE;
-		}
-
-		// Import the rotation
+		//	gr: remove the rotation child then it won't get applied -
+		//		graham suggests NOT sending the rotation if your interpolation is broken... there's no interpolation in this code here... the problem is the sender, not the reciever
+		Message.RemoveChild("Rotation");
 		/*
 		// [01/04/09] DB - Disabled for now whilst I fix the interpolation
 		if ( Message.ImportData(TRef_Static(R,o,t,a,t), m_Transform.GetRotation() ) == SyncTrue )
@@ -675,16 +663,23 @@ void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 			TransformChanged = TRUE;
 		}
 		*/
-		
 
-		//	transform has been set
-		if ( TransformChanged )
-			OnTransformChanged();
-
-
+		//	overwrite our transform
+		u8 TransformChangedBits = m_Transform.ImportData( Message );
+		OnTransformChanged(TransformChangedBits);
 		return;
 	}
-
+	else if(Message.GetMessageRef() == TRef("DoTransform"))
+	{
+		//	read sent transform
+		TLMaths::TTransform Transform;
+		Transform.ImportData( Message );
+		
+		//	modify our existing transform by this transform
+		u8 TransformChangedBits = m_Transform.TransformHasChanged( Transform );
+		OnTransformChanged( TransformChangedBits );
+		return;
+	}
 
 	//	do inherited init
 	TLGraph::TGraphNode<TLRender::TRenderNode>::ProcessMessage( Message );

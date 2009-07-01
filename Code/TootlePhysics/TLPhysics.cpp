@@ -14,24 +14,44 @@
 //------------------------------------------------------
 TPtr<TLMaths::TShape> TLPhysics::GetShapeFromBodyShape(b2Fixture& BodyShape,const TLMaths::TTransform& Transform)
 {
+	//	gr: I figured the accurate/fast verison would transform by box2d. 
+	//		but if we use the box2D transform, then it's out of date if the
+	//		node is disabled(body frozen) and the transform[on the node] is changed as the
+	//		body's transform cannot be changed until it's enabled (body is unfrozen). 
+//#define TRANSFORM_BY_BOX2D
+
 	b2Body& Body = *BodyShape.GetBody();
+	b2Shape* pBodyShape = BodyShape.GetShape();
+	
+	if ( !pBodyShape )
+	{
+		TLDebug_Break("Fixture missing shape");
+		return NULL;
+	}
 
 	if ( BodyShape.GetType() == b2_polygonShape )
 	{
-		b2PolygonShape& PolyShape = (b2PolygonShape&)BodyShape;
+		b2PolygonShape& PolyShape = static_cast<b2PolygonShape&>( *pBodyShape );
+
+#ifdef TRANSFORM_BY_BOX2D
 		const b2XForm& Bodyxf = Body.GetXForm();
+#endif
 
 		//	get a list of the points
 		TFixedArray<float2,100> Points;
-			void Set(const b2Vec2* vertices, int32 vertexCount);
-
 		for ( s32 p=0;	p<PolyShape.GetVertexCount();	p++ )
 		{
-			//	transform by bodys transform
-			b2Vec2 WorldPos = b2Mul( Bodyxf, PolyShape.GetVertex(p) );
+			#ifdef TRANSFORM_BY_BOX2D
+				//	transform by bodys transform
+				b2Vec2 WorldPos = b2Mul( Bodyxf, PolyShape.GetVertex(p) );
 
-			//	gr: transform by ourtransform for scale? or instead of the box2d one? as box2d lacks scale
-			float2 WorldPos2( WorldPos.x, WorldPos.y );
+				//	gr: transform by ourtransform for scale? or instead of the box2d one? as box2d lacks scale
+				float2 WorldPos2( WorldPos.x, WorldPos.y );
+			#else
+				//	transform by OUR transform
+				float2 WorldPos2( PolyShape.GetVertex(p).x, PolyShape.GetVertex(p).y );
+				Transform.Transform( WorldPos2 );
+			#endif
 
 			Points.Add( WorldPos2 );
 		}
@@ -41,7 +61,21 @@ TPtr<TLMaths::TShape> TLPhysics::GetShapeFromBodyShape(b2Fixture& BodyShape,cons
 	}
 	else if ( BodyShape.GetType() == b2_circleShape )
 	{
-		TLDebug_Break("todo");
+		b2CircleShape& CircleShape = static_cast<b2CircleShape&>( *pBodyShape );
+
+		#ifdef TRANSFORM_BY_BOX2D
+			//	transform by bodys transform to put shape in world space
+			const b2XForm& Bodyxf = Body.GetXForm();
+			b2Vec2 WorldPos = b2Mul( Bodyxf, CircleShape.m_p );
+		#else
+			//	transform by OUR transform
+			float2 WorldPos( CircleShape.m_p.x, CircleShape.m_p.y );
+			Transform.Transform( WorldPos );
+		#endif
+
+		//	make circle
+		TLMaths::TSphere2D Circle( float2( WorldPos.x, WorldPos.y ), CircleShape.m_radius );
+		return new TLMaths::TShapeSphere2D( Circle );
 	}
 	else
 	{
