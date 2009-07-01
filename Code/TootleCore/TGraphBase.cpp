@@ -296,6 +296,6 @@ void TLGraph::TGraphNodeBase::Initialise(TLMessaging::TMessage& Message)
 	//	main issue with this is if the base initialise (this) is called BEFORE any processing on a node's side which would
 	//	end up storing data that WILL be read, even if it hasn't been read yet
 
-	GetNodeData().AddUnreadChildren( Message );
+	GetNodeData().AddUnreadChildren( Message, TRUE );
 }
 

@@ -256,7 +256,7 @@ Bool TBinaryTree::IsDataTreeRead() const
 //------------------------------------------------------
 //	add children from Data to this when unread
 //------------------------------------------------------
-Bool TBinaryTree::AddUnreadChildren(TBinaryTree& Data)
+Bool TBinaryTree::AddUnreadChildren(TBinaryTree& Data,Bool ReplaceExisting)
 {
 	Bool Changed = FALSE;
 
@@ -272,9 +272,38 @@ Bool TBinaryTree::AddUnreadChildren(TBinaryTree& Data)
 
 		//	gr: does this need to clone? (in assets)
 		//	save this child
-		AddChild( pChild );
+		
+		if ( ReplaceExisting )
+		{
+			TPtr<TBinaryTree>& pExistingChild = GetChild( pChild->GetDataRef() );
 
+			//	if a TPtr child already exists with this ref, change the Ptr
+			if ( pExistingChild )
+			{
+				//	gr: which is faster?
+
+				//	copy plain data, no alloc/realloc, but might copy a big tree (which would involve some allocs)
+				//pExistingChild->CopyDataTree( *pChild );
+
+				//	re-use ptr. may dealloc old data, which would be lots of deallocs if it's a big tree
+				pExistingChild = pChild;
+			}
+			else
+			{
+				AddChild( pChild );
+			}
+		}
+		else
+		{
+			//	just add to children
+			AddChild( pChild );
+		}
 	
+		//	gr: if this message is printing out from the graphnode initialise a lot then your node type 
+		//		doesn't need this data, try and stop the sender sending this redundant data in the first place
+		//		OR if you node DOES use this data, then you might find this base initialise gets called before you use it
+		//		you can either move the parent class type to after where you use it, OR call Message.SetChildrenRead( dataref )
+		//		to reset the read pos to pretend it has been read
 	#ifdef _DEBUG
 		TTempString Debug_String("Storing unread child data (");
 		pChild->GetDataRef().GetString( Debug_String );
@@ -292,9 +321,30 @@ Bool TBinaryTree::AddUnreadChildren(TBinaryTree& Data)
 		}
 		TLDebug_Print( Debug_String );
 	#endif
+	
 
 		Changed = TRUE;
 	}
 
 	return Changed;
 }
+
+
+
+//------------------------------------------------------
+//	mark any children with this ref as read
+//------------------------------------------------------
+void TBinaryTree::SetChildrenRead(TRefRef DataRef)
+{
+	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
+	{
+		TBinaryTree& ChildData = *( m_Children[c] );
+		if ( ChildData.GetDataRef() != DataRef )
+			continue;
+		
+		//	mark child as read
+		ChildData.ResetReadPos();
+	}
+}
+
+

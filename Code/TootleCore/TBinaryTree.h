@@ -44,7 +44,8 @@ public:
 	FORCEINLINE Bool			CopyDataTree(const TPtr<TBinaryTree>& pData,Bool OverwriteDataRef=TRUE)	{	const TBinaryTree* pBinaryTree = pData.GetObject();	return pBinaryTree ? CopyDataTree( *pBinaryTree, OverwriteDataRef ) : FALSE;	}
 	Bool						ReferenceDataTree(const TBinaryTree& Data,Bool OverwriteDataRef=TRUE);			//	copy the tree by re-using the TPtr's to the data. The data is re-used and saves us allocating and copying data but without fear of deletion
 	FORCEINLINE Bool			ReferenceDataTree(const TPtr<TBinaryTree>& pData,Bool OverwriteDataRef=TRUE)	{	const TBinaryTree* pBinaryTree = pData.GetObject();	return pBinaryTree ? ReferenceDataTree( *pBinaryTree, OverwriteDataRef ) : FALSE;	}
-	Bool						AddUnreadChildren(TBinaryTree& Data);			//	add children from Data to this when unread
+	Bool						AddUnreadChildren(TBinaryTree& Data,Bool ReplaceExisting);		//	add children from Data to this when unread - if ReplaceExisting then we overwrite existing child data with that ref
+	void						SetChildrenRead(TRefRef DataRef);				//	mark any children with this ref as read
 	Bool						IsDataTreeRead() const;							//	traverse tree to see if any data has been read (read pos is valid and not -1)
 
 	template<class ARRAYTYPE> 

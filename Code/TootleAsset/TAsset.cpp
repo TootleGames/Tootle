@@ -108,7 +108,7 @@ SyncBool TLAsset::TAsset::Export(TPtr<TLFileSys::TFileAsset>& pAssetFile)
 //----------------------------------------------------
 void TLAsset::TAsset::ImportUnknownData(TBinaryTree& Data)
 {
-	m_Data.AddUnreadChildren( Data );
+	m_Data.AddUnreadChildren( Data, FALSE );
 }
 
 

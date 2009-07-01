@@ -21,9 +21,6 @@ TLRender::TRenderNodeSwoosh::TRenderNodeSwoosh(TRefRef NodeRef,TRefRef TypeRef) 
 //----------------------------------------------------
 void TLRender::TRenderNodeSwoosh::Initialise(TLMessaging::TMessage& Message)
 {
-	//	do inherited init
-	TLRender::TRenderNodeDebugMesh::Initialise( Message );
-
 	//	read line properties
 	Message.ImportData("Width", m_Width );
 	Message.ImportData("MinWidth", m_MinWidth );
@@ -41,6 +38,9 @@ void TLRender::TRenderNodeSwoosh::Initialise(TLMessaging::TMessage& Message)
 	if ( Message.ImportArrays("Offsets", Offsets ) )
 		SetOffsets( Offsets );
 
+	//	gr: moved to after our speciality data to ensure none of it is saved to the NodeData as unread data
+	//	do inherited init
+	TLRender::TRenderNodeDebugMesh::Initialise( Message );
 }
 
 
