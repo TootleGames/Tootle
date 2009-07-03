@@ -214,6 +214,7 @@ public:
 	Bool								RemoveDatum(TRefRef DatumRef) 		{	return m_Datums.Remove( DatumRef );	}
 	Bool								DatumExists(TRefRef DatumRef) const	{	return m_Datums.Exists( DatumRef );	}
 	TPtr<TLMaths::TShape>&				GetDatum(TRefRef DatumRef)			{	return m_Datums.FindPtr( DatumRef );	}
+	FORCEINLINE Bool					GetDatumCenter(TRefRef DatumRef,float3& Center);
 	template<class SHAPETYPE>
 	SHAPETYPE*							GetDatum(TRefRef DatumRef);
 	Bool								CreateDatum(const TArray<float3>& PolygonPoints,TRefRef DatumRef,TRefRef DatumShapeType);
@@ -294,6 +295,18 @@ FORCEINLINE TPtr<TLMaths::TShape>& TLAsset::TMesh::AddDatum(TRefRef DatumRef,TPt
 		return TLPtr::GetNullPtr<TLMaths::TShape>();
 
 	return *ppShape;
+}
+
+
+FORCEINLINE Bool TLAsset::TMesh::GetDatumCenter(TRefRef DatumRef,float3& Center)
+{
+	TPtr<TLMaths::TShape>& pDatum = GetDatum( DatumRef );
+	if ( !pDatum )
+		return FALSE;
+
+	Center = pDatum->GetCenter();
+
+	return TRUE;
 }
 
 

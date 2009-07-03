@@ -118,10 +118,15 @@ Bool TLPhysics::GetPolygonDefFromShape(b2PolygonDef& PolygonDef,const TLMaths::T
 			//	if is not clockwise then create a new reversed (clockwise) shape to generate from
 			if ( !ShapePolygon.IsClockwise() )
 			{
+				//	gr: throw up an error, as Polygon2D's should now always be clockwise
+				if ( !TLDebug_Break("Polygon shape should always be clockwise. Possibly old datum/shape from mesh, fix with re-parse/output. Continue to reverse contour") )
+					return FALSE;
+
 				TLMaths::TShapePolygon2D ReversedShapePolygon( Outline );
 				
 				ReversedShapePolygon.ReverseContour();
 
+				//	gr: need some anti-recursive check code here
 				return GetPolygonDefFromShape( PolygonDef, ReversedShapePolygon );
 			}
 

@@ -1576,21 +1576,6 @@ Bool TLAsset::TMesh::CreateDatum(const TArray<float3>& PolygonPoints,TRefRef Dat
 		AddDatum( DatumRef, pSphereShape );
 		return TRUE;
 	}
-	else if ( DatumShapeType == TLMaths::TOblong2D::GetTypeRef() )
-	{
-		//	gr: currently, simple mehtod just works with 4-point meshes
-		if ( PolygonPoints.GetSize() != 4 )
-		{
-			TLDebug_Break("Cannot create an oblong datum shape from a polygon/outline with other than 4 points");
-			return FALSE;
-		}
-
-		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapePolygon2D( PolygonPoints );
-
-		//	add datum
-		AddDatum( DatumRef, pShape );
-		return TRUE;
-	}
 	else if ( DatumShapeType == TLMaths::TCapsule2D::GetTypeRef() )
 	{
 		//	get box of points for extents
@@ -1613,11 +1598,13 @@ Bool TLAsset::TMesh::CreateDatum(const TArray<float3>& PolygonPoints,TRefRef Dat
 		AddDatum( DatumRef, pShape );
 		return TRUE;
 	}
-	else if ( DatumShapeType == TLMaths_ShapeRef_Polygon2D )
+	else if ( DatumShapeType == TLMaths_ShapeRef_Polygon2D || DatumShapeType == TLMaths::TOblong2D::GetTypeRef() )
 	{
-		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapePolygon2D( PolygonPoints );
+		//	gr: keep oblong for legacy shapes - now replaced with polygon
+		TPtr<TLMaths::TShapePolygon2D> pShapePolygon = new TLMaths::TShapePolygon2D( PolygonPoints );
 
 		//	add datum
+		TPtr<TLMaths::TShape> pShape = pShapePolygon;
 		AddDatum( DatumRef, pShape );
 		return TRUE;
 	}

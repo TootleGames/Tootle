@@ -10,6 +10,8 @@ TLMaths::TShapePolygon2D::TShapePolygon2D(const TArray<float3>& Outline)
 {
 	for ( u32 i=0;	i<Outline.GetSize();	i++ )
 		m_Outline.Add( Outline[i].xy() );
+
+	CleanContour();
 }
 
 
@@ -26,6 +28,9 @@ Bool TLMaths::TShapePolygon2D::ImportData(TBinaryTree& Data)
 {
 	if ( !Data.ImportArrays("Outline", m_Outline ) )		
 		return FALSE;
+
+	//	clean contour on import to clean old data
+	CleanContour();
 
 	return TRUE;
 }
@@ -45,23 +50,19 @@ TPtr<TLMaths::TShape> TLMaths::TShapePolygon2D::Transform(const TLMaths::TTransf
 		return NULL;
 
 	//	re-use old shape if possible
-	TPtr<TLMaths::TShape> pNewShape;
-	Bool ReUseShape = FALSE;
+	TPtr<TLMaths::TShapePolygon2D> pResultShape;
 	if ( pOldShape && pOldShape.GetObject() != this && pOldShape->GetShapeType() == GetShapeType() )
 	{
+		pResultShape = pOldShape;
 	}
 	else
 	{
 		//	otherwise create new shape 
-		pNewShape = new TShapePolygon2D();
+		pResultShape = new TShapePolygon2D();
 	}
 
-	//	get the shape to modify
-	TPtr<TLMaths::TShape>& pResultShape = pNewShape ? pNewShape : pOldShape;
-
 	//	copy current outline
-	TArray<float2>& NewOutline = pResultShape.GetObject<TShapePolygon2D>()->GetOutline();
-	NewOutline.Copy( GetOutline() );
+	pResultShape->SetOutline( GetOutline(), FALSE );
 	pResultShape->Transform( Transform );
 
 	return pResultShape;
@@ -131,9 +132,21 @@ Bool TLMaths::TShapePolygon2D::IsClockwise() const
 		int32 i2 = i + 1 <(s32)m_Outline.GetSize() ? i + 1 : 0;
 		float2 edge2 = m_Outline[i2] - m_Outline[i1];
 		b2Vec2 edge( edge2.x, edge2.y );
-		b2Assert(edge.LengthSquared() > B2_FLT_EPSILON * B2_FLT_EPSILON);
-		m_normals[i] = b2Cross(edge, 1.0f);
-		m_normals[i].Normalize();
+
+		if ( edge.LengthSquared() < TLMaths_NearZero )
+		{
+			TLDebug_Break("Polygon shape has edge of no length (two points on top of each other)");
+			//	can't return false as the box shape definition will get stuck in a loop. this function needs
+			//	to either return valid/true/false
+			//	im just going to set a normal and let it continue
+			//return FALSE;
+			m_normals[i].Set( 0.f, 1.f );
+		}
+		else
+		{
+			m_normals[i] = b2Cross(edge, 1.0f);
+			m_normals[i].Normalize();
+		}
 	}
 
 	// Ensure the polygon is counter-clockwise.
@@ -151,6 +164,30 @@ Bool TLMaths::TShapePolygon2D::IsClockwise() const
 	}
 
 	return FALSE;
+}
+
+
+
+//-----------------------------------------------------
+//	checks for overlapping points, tiny edges, and reverses outline if it's anti clockwise
+//-----------------------------------------------------
+void TLMaths::TShapePolygon2D::CleanContour()
+{
+	//	remove overlapping points by checking for edges with no length.
+	//	usually overlapping points are closing points for the contour (0 and Last are the same)
+	for ( s32 i=m_Outline.GetLastIndex();	i>=0;	i-- )
+	{
+		int32 i1 = i;
+		int32 i2 = (i == 0 ) ? m_Outline.GetLastIndex() : (i-1);
+		float2 edge2 = m_Outline[i2] - m_Outline[i1];
+		
+		//	overlapping points, remove i
+		if ( edge2.IsZero() )
+			m_Outline.RemoveAt( i );
+	}
+
+	//	make sure it's clockwise
+	SetClockwise();
 }
 
 
