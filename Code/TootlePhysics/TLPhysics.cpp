@@ -18,6 +18,8 @@ TPtr<TLMaths::TShape> TLPhysics::GetShapeFromBodyShape(b2Fixture& BodyShape,cons
 	//		but if we use the box2D transform, then it's out of date if the
 	//		node is disabled(body frozen) and the transform[on the node] is changed as the
 	//		body's transform cannot be changed until it's enabled (body is unfrozen). 
+
+	//	gr: change this to use box2D when ENABLED and use our node transform when DISABLED.
 //#define TRANSFORM_BY_BOX2D
 
 	b2Body& Body = *BodyShape.GetBody();
@@ -190,6 +192,26 @@ void TLPhysics::TCollisionInfo::Set(const TLPhysics::TPhysicsNode& OtherNode,con
 	m_OtherNodeStatic = OtherNode.IsStatic();
 
 	m_Intersection = Intersection.m_Intersection;
+	
+	SetIsNewCollision( TRUE );
+}
+
+
+//------------------------------------------------------
+//	set up end-of-collision with this node
+//------------------------------------------------------
+void TLPhysics::TCollisionInfo::SetIsEndOfCollision(const TLPhysics::TPhysicsNode& OtherNode)
+{
+	m_OtherNode = OtherNode.GetNodeRef();
+	m_OtherNodeOwner = OtherNode.GetOwnerSceneNodeRef();
+	m_OtherNodeStatic = OtherNode.IsStatic();
+
+	SetIsNewCollision( FALSE );
+
+	//	invalidate other bits
+	m_Intersection.Set( 0.f, 0.f, 0.f );
+	m_OtherIntersection.Set( 0.f, 0.f, 0.f );
+	m_IntersectionNormal.Set( 0.f, 0.f );
 }
 
 
@@ -199,12 +221,18 @@ void TLPhysics::TCollisionInfo::Set(const TLPhysics::TPhysicsNode& OtherNode,con
 //------------------------------------------------------
 void TLPhysics::TCollisionInfo::ExportData(TBinaryTree& Data)
 {
-	//	gr: really should change this into named data...
-	Data.Write( m_OtherNode );
-	Data.Write( m_OtherNodeOwner );
-	Data.Write( m_OtherNodeStatic );
-	Data.Write( m_Intersection );
-	Data.Write( m_OtherIntersection );
+	Data.Write( m_IsNewCollision );
+
+	Data.ExportData("Node", m_OtherNode );
+	Data.ExportData("Owner", m_OtherNodeOwner );
+	Data.ExportData("OthStatic", m_OtherNodeStatic );
+
+	if ( m_IsNewCollision )
+	{
+		Data.ExportData("Intersection", m_Intersection );
+		Data.ExportData("OthIntersection", m_OtherIntersection );
+		Data.ExportData("Normal", m_IntersectionNormal);
+	}
 }
 
 
@@ -215,11 +243,23 @@ Bool TLPhysics::TCollisionInfo::ImportData(TBinaryTree& Data)
 {
 	Data.ResetReadPos();
 
-	if ( !Data.Read( m_OtherNode ) )			return FALSE;
-	if ( !Data.Read( m_OtherNodeOwner ) )		return FALSE;
-	if ( !Data.Read( m_OtherNodeStatic ) )		return FALSE;
-	if ( !Data.Read( m_Intersection ) )			return FALSE;
-	if ( !Data.Read( m_OtherIntersection ) )	return FALSE;
+	//	required data
+	if ( !Data.Read( m_IsNewCollision ) )
+		return FALSE;
+
+	if ( !Data.ImportData("Node", m_OtherNode ) )	return FALSE;
+	if ( !Data.ImportData("Owner", m_OtherNodeOwner ) )	return FALSE;
+	if ( !Data.ImportData("OthStatic", m_OtherNodeStatic ) )	return FALSE;
+
+	//	optional data, reset if doesn't exist
+	if ( !Data.ImportData("Intersection", m_Intersection ) )
+		m_Intersection.Set( 0.f, 0.f, 0.f );
+
+	if ( !Data.ImportData("OthIntersection", m_OtherIntersection ) )
+		m_OtherIntersection.Set( 0.f, 0.f, 0.f );
+
+	if ( !Data.ImportData("Normal", m_IntersectionNormal ) )
+		m_IntersectionNormal.Set( 0.f, 0.f );
 
 	return TRUE;
 }

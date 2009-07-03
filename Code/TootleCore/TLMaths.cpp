@@ -1756,8 +1756,15 @@ void TLMaths::TTransform::Debug_Assert(const char* pString) const
 //-----------------------------------------------------------
 void TLMaths::TAngle::SetAngle(const float2& Direction)
 {
-	float AngRad = atan2f( Direction.x, Direction.y );
+	//	doesn't need to be normalised
+	//	gr: Atan2f is supposed to be y/x but that's wrong. Maybe because of our world co-ordinates...
+	//	y is inverted as math co-ordinates go +ve when they go UP, but in our world, -Y is UP
+	float AngRad = atan2f( Direction.x, -Direction.y );
+
 	SetRadians( AngRad );
+
+	//	make sure value is in range
+	SetLimit180();
 }
 
 

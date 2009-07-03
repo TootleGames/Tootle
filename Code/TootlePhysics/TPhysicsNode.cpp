@@ -330,18 +330,24 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 	//	get change in transform
 	if ( m_pBody )
 	{
-		const b2Vec2& BodyPosition = m_pBody->GetPosition();
-		float32 BodyAngleRad = m_pBody->GetAngle();
-
-		//	get new transform from box2d
-		float3 NewTranslate( BodyPosition.x, BodyPosition.y, 0.f );
-		
-		//	get new rotation; todo: store angle for quicker angle-changed test?
-		TLMaths::TQuaternion NewRotation( float3( 0.f, 0.f, -1.f ), BodyAngleRad );
-
 		u8 ChangedBits = 0x0;
+		
+		//	get new translation from box2d
+		const b2Vec2& BodyPosition = m_pBody->GetPosition();
+		float3 NewTranslate( BodyPosition.x, BodyPosition.y, 0.f );
 		ChangedBits |= m_Transform.SetTranslateHasChanged( NewTranslate, TLMaths_NearZero );
-		ChangedBits |= m_Transform.SetRotationHasChanged( NewRotation, TLMaths_NearZero );
+
+		//	todo: some how allow existing 3D rotation and the box2D rotation.... 
+		//	maybe somehting specificly for the scenenode to handle?
+		//	http://grahamgrahamreeves.getmyip.com:1984/Trac/ticket/90
+		//	gr: if the object has no rotation, then ignore rotation from box2D
+		if ( GetPhysicsFlags().IsSet( Flag_Rotate ) )
+		{
+			//	get new rotation; todo: store angle for quicker angle-changed test?
+			float32 BodyAngleRad = m_pBody->GetAngle();
+			TLMaths::TQuaternion NewRotation( float3( 0.f, 0.f, -1.f ), BodyAngleRad );
+			ChangedBits |= m_Transform.SetRotationHasChanged( NewRotation, TLMaths_NearZero );
+		}
 
 		//	notify of changes
 		if ( ChangedBits != 0x0 )
@@ -522,7 +528,25 @@ TLPhysics::TCollisionInfo* TLPhysics::TPhysicsNode::OnCollision()
 	//	add new collision info and return it
 	TLPhysics::TCollisionInfo* pNewCollisionInfo = m_Collisions.AddNew();
 	
+	//	initialise a little
+	if ( pNewCollisionInfo )
+		pNewCollisionInfo->SetIsNewCollision( TRUE );
+
 	return pNewCollisionInfo;
+}
+
+
+//----------------------------------------------------
+//	called when we are no longer colliding with a node
+//----------------------------------------------------
+void TLPhysics::TPhysicsNode::OnEndCollision(TLPhysics::TPhysicsNode& OtherNode)
+{
+	//	create a special TCollisionInfo with end-of-collision info
+	TLPhysics::TCollisionInfo* pEndCollisionInfo = TLPhysics::TPhysicsNode::OnCollision();
+	if ( !pEndCollisionInfo )
+		return;
+
+	pEndCollisionInfo->SetIsEndOfCollision( OtherNode );
 }
 
 
@@ -552,7 +576,11 @@ void TLPhysics::TPhysicsNode::PublishCollisions()
 	//	add an entry for each collision
 	for ( u32 c=0;	c<m_Collisions.GetSize();	c++ )
 	{
-		TPtr<TBinaryTree>& pCollisionData = Message.AddChild("Collision");
+		TLPhysics::TCollisionInfo& CollisionInfo = m_Collisions[c];
+
+		//	write the data as "end collision" data if it's not a new collison
+		TRef CollisionDataRef = CollisionInfo.IsEndOfCollision() ? "EndCollision" : "Collision";
+		TPtr<TBinaryTree>& pCollisionData = Message.AddChild( CollisionDataRef );
 
 		//	write data
 		m_Collisions[c].ExportData( *pCollisionData );
@@ -600,14 +628,8 @@ Bool TLPhysics::TPhysicsNode::CreateBody(b2World& World)
 
 	b2BodyDef BodyDef;
 
-	//	set initial transform
-	if ( Transform.HasTranslate() )
-		BodyDef.position.Set( Transform.GetTranslate().x, Transform.GetTranslate().y );
-	else
-		BodyDef.position.Set( 0.f, 0.f );
-
-	if ( Transform.HasRotation() )
-		BodyDef.angle = Transform.GetRotation().GetAngle2D().GetRadians();
+	//	get values for the box2D body transform
+	GetBodyTransformValues( BodyDef.position, BodyDef.angle );
 
 	//	fix rotation as neccessary
 	if ( GetPhysicsFlags().IsSet( Flag_Rotate ) )
@@ -726,7 +748,7 @@ Bool TLPhysics::TPhysicsNode::CreateBodyShape()
 	ShapeDef.restitution = m_Bounce;
 
 	//	make sensor
-	if ( GetPhysicsFlags().IsSet( Flag_IsSensor ) )
+	if ( IsSensor() )
 		ShapeDef.isSensor = TRUE;
 	else
 		ShapeDef.isSensor = FALSE;
@@ -753,11 +775,12 @@ void TLPhysics::TPhysicsNode::SetBodyTransform()
 		return;
 	}
 
-	const TLMaths::TTransform& Transform = GetTransform();
-	float AngleRadians = Transform.GetRotation().GetAngle2D().GetRadians();
+	b2Vec2 Translate( 0.f, 0.f );
+	float32 AngleRadians( 0.f );
+	GetBodyTransformValues( Translate, AngleRadians );
 
 	//	set new transform (BEFORE refiltering contact points)
-	if ( !m_pBody->SetXForm( b2Vec2( Transform.GetTranslate().x, Transform.GetTranslate().y ), AngleRadians ) )
+	if ( !m_pBody->SetXForm( Translate, AngleRadians ) )
 	{
 		//	failed to set the transform, must be frozen
 		m_BodyTransformChanged = TRUE;
@@ -891,3 +914,28 @@ void TLPhysics::TPhysicsNode::AddForce(const float3& Force,Bool MassRelative)
 
 	OnForceChanged();
 }
+
+
+//-------------------------------------------------------------
+//	get values to put INTO the box2D body transform from our transform
+//-------------------------------------------------------------
+void TLPhysics::TPhysicsNode::GetBodyTransformValues(b2Vec2& Translate,float32& AngleRadians)
+{
+	const TLMaths::TTransform& Transform = GetTransform();
+
+	//	get simple translation
+	if ( Transform.HasTranslate() )
+		Translate.Set( Transform.GetTranslate().x, Transform.GetTranslate().y );
+	else
+		Translate.Set( 0.f, 0.f );
+
+	//	work out Z axis rotation
+	if ( Transform.HasRotation() )
+		AngleRadians = Transform.GetRotation().GetAngle2D().GetRadians();
+	else
+		AngleRadians = TLMaths::TAngle::DegreesToRadians( 0.f );
+
+
+
+}
+

@@ -69,6 +69,8 @@ protected:
 	TRef							CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset, const TLAudio::TAudioProperties& Props);
 	Bool							RemoveAudioNode(TRefRef AudioRef);
 
+	void							Debug_EnableRenderDebugPhysics(Bool Enable);	//	turn on/off debug render node for physics
+
 	// Transformation
 	virtual void					Translate(float3 vTranslation);
 	virtual void					OnTransformChanged(u8 TransformChangedBits);	//	this checks to see if we're asleep first and delays sending a transform until we are awake
@@ -79,6 +81,7 @@ protected:
 private:
 	TRef					m_RenderNodeRef;
 	TRef					m_PhysicsNodeRef;
+	TRef					m_Debug_RenderDebugPhysicsNodeRef;	//	debug rendernode to render our physics
 	u8						m_PublishTransformOnWake;		//	TTransform bitmask - true if our transform was changed by the physics whilst we were asleep. When we wake, we send our latest transform to the render node
 };
 

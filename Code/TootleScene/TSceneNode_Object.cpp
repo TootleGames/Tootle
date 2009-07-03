@@ -4,7 +4,7 @@
 
 #define DISABLE_RENDER_ON_SLEEP
 #define DISABLE_RENDER_ON_HALFWAKE
-
+#define DEBUG_PHYSICS_RENDERNODE_COLOUR		TColour( 1.f, 0.f, 1.f, 0.5f )	//	pink
 
 using namespace TLScene;
 
@@ -684,4 +684,26 @@ void TLScene::TSceneNode_Object::SetScale(const float3& Scale)
 }
 
 
+
+//--------------------------------------------------------
+//	turn on/off debug render node for physics
+//--------------------------------------------------------
+void TLScene::TSceneNode_Object::Debug_EnableRenderDebugPhysics(Bool Enable)
+{
+	if ( Enable && !m_Debug_RenderDebugPhysicsNodeRef.IsValid() )
+	{
+		//	create debug render node - requires render node and physics node
+		if ( !GetRenderNodeRef().IsValid() || !GetPhysicsNodeRef().IsValid() )
+			return;
+
+		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
+		InitMessage.ExportData("PhNode", GetPhysicsNodeRef() );
+		InitMessage.ExportData("Colour", DEBUG_PHYSICS_RENDERNODE_COLOUR );		//	gr: use a colour so we can have transparency
+		m_Debug_RenderDebugPhysicsNodeRef = TLRender::g_pRendergraph->CreateNode( GetNodeRef(), "DbgPhys", GetRenderNodeRef(), &InitMessage );
+	}
+	else if ( !Enable && m_Debug_RenderDebugPhysicsNodeRef.IsValid() )
+	{
+		TLRender::g_pRendergraph->RemoveNode( m_Debug_RenderDebugPhysicsNodeRef );
+	}
+}
 

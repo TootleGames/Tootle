@@ -73,11 +73,12 @@ public:
 	const TLMaths::TTransform&	GetTransform() const					{	return m_Transform;	}
 	virtual const TLMaths::TTransform&	GetRenderTransform() const		{	return GetTransform();	}
 
+	FORCEINLINE Bool			IsEnabled() const					{	return m_PhysicsFlags.IsSet( TPhysicsNode::Flag_Enabled );	}
+	FORCEINLINE void			SetEnabled(Bool Enabled);			//	enable/disable node (physics processing and collision). Disabling makes it invisible to the box world
 	TFlags<Flags>&				GetPhysicsFlags()					{	return m_PhysicsFlags;	}
 	const TFlags<Flags>&		GetPhysicsFlags() const				{	return m_PhysicsFlags;	}
 	virtual Bool				IsStatic() const					{	return m_PhysicsFlags.IsSet( TPhysicsNode::Flag_Static );	}
-	FORCEINLINE Bool			IsEnabled() const					{	return m_PhysicsFlags.IsSet( TPhysicsNode::Flag_Enabled );	}
-	FORCEINLINE void			SetEnabled(Bool Enabled);			//	enable/disable node (physics processing and collision). Disabling makes it invisible to the box world
+	FORCEINLINE Bool			IsSensor() const					{	return m_PhysicsFlags.IsSet( TPhysicsNode::Flag_IsSensor );	}
 
 	void						AddForce(const float3& Force,Bool MassRelative=FALSE);	//	apply a force to the body
 	FORCEINLINE void			AddTorque(float AngleRadians);
@@ -138,17 +139,19 @@ protected:
 	FORCEINLINE Bool			IsAccumulatedMovementValid() const			{	return m_AccumulatedMovementValid;	}
 
 	TCollisionInfo*				OnCollision();								//	called when we get a collision. return a collision info to write data into. return NULL to pre-empt not sending any collision info out (eg. if no subscribers)
-	void						PublishCollisions();						//	send out our list of collisions
+	void						OnEndCollision(TLPhysics::TPhysicsNode& OtherNode);	//	called when we are no longer colliding with a node
+	void						PublishCollisions();						//	send out our list of collisions (and end collisions)
 	void						OnCollisionEnabledChanged(Bool IsNowEnabled);	//	called when collision is enabled/disabled - changes group of box2D body so it won't do collision checks
 	void						OnNodeEnabledChanged(Bool IsNowEnabled);	//	called when node is enabled/disabled
 
 	//	box2d interface
 	Bool						CreateBody(b2World& World);					//	create the body in the world
 	Bool						CreateBodyShape();							//	when our collision shape changes we recreate the shape on the body
-	void						SetBodyTransform();							//	reset the body's transform
 	FORCEINLINE b2Body*			GetBody()									{	return m_pBody;	}
 	FORCEINLINE const b2Body*	GetBody() const								{	return m_pBody;	}
 	FORCEINLINE void			OnBodyTransformChanged(u8 TransformChangedBits)	{	m_TransformChangedBits |= TransformChangedBits;	}
+	void						SetBodyTransform();							//	reset the body's transform
+	void						GetBodyTransformValues(b2Vec2& Translate,float32& AngleRadians);	//	get values to put INTO the box2D body transform from our transform
 
 	//	gr: remove this and replace with multiple-shape access
 	virtual void				GetBodys(TArray<b2Body*>& Bodies) const		{	if ( m_pBody )	Bodies.Add( m_pBody );	}

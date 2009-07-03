@@ -11,9 +11,10 @@
 #include "TLTypes.h"
 #include "TLDebug.h"
 
-#define	PI				( (float)3.14159265358979323846f )
-#define TWO_PI			((float)6.283185307f)
-#define HALF_PI			((float)1.570796326794895f)
+//	gr: this value of PI is what the cmath libs return
+#define	PI				((float)3.1415927f )
+#define TWO_PI			((float)6.2831853f)
+#define HALF_PI			((float)1.5707963f)
 
 
 //	forward declarations
@@ -153,7 +154,7 @@ public:
 	FORCEINLINE void	AddRadians(float AngRadians)			{	m_AngleDegrees += RadiansToDegrees( AngRadians );	SetLimit180();	}
 
 	FORCEINLINE void	SetLimit360()							{	TLMaths::Wrap( m_AngleDegrees, 0.f, 360.f );	}	//	limit angle to 0...360
-	FORCEINLINE void	SetLimit180()							{	TLMaths::Wrap( m_AngleDegrees, -180.f, 180.f );	}	//	limit angle to -180...180
+	FORCEINLINE void	SetLimit180()							{	TLMaths::Wrap( m_AngleDegrees, -179.999f, 180.f );	}	//	limit angle to -180...180
 	FORCEINLINE void	Invert()								{	m_AngleDegrees = -m_AngleDegrees;	}	//	different to adding 180
 
 	FORCEINLINE void	SetAngle(const float2& From,const float2& To)	{	SetAngle( To - From );	}

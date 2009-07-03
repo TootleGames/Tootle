@@ -89,7 +89,8 @@ protected:
 
 private:
 	//	box2d listener functions
-	virtual void			BeginContact(b2Contact* contact);		// handle add point - pre-solver.	gr: new collision
+	virtual void			BeginContact(b2Contact* contact);		//	new collision with shape
+	virtual void			EndContact(b2Contact* contact);			//	no longer colliding with shape
 	virtual bool			ShouldCollide(b2Fixture* fixtureA, b2Fixture* fixtureB);
 
 protected:
