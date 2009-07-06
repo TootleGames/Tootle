@@ -302,12 +302,12 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandData(TPtr<TL
 		else if(PropertyName == "InterpMethod")
 		{
 			// Interp method.  Linear, SLERP etc.  Mainly for transform messages, rotation, translation and scale
-			pCommandChildData->ExportData(PropertyName, PropertyData);
+			pCommandChildData->ExportData(PropertyName, TRef(PropertyData));
 		}
 		else if(PropertyName == "Mode")
 		{
 			// Mode - absolute, relative.  Mainly for transforms, rotation, translation and scale
-			pCommandChildData->ExportData(PropertyName, PropertyData);
+			pCommandChildData->ExportData(PropertyName, TRef(PropertyData));
 		}
 
 		// Now get any extra data once we reach the end of the tag info
@@ -327,18 +327,73 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandData(TPtr<TL
 				// Special case for rotations
 				if(pCommandChildData->GetDataRef() == "Rotate")
 				{
-					if(DataTypeRef == TLBinary::GetDataTypeRef<float4>())
+					//if(DataTypeRef == TLBinary::GetDataTypeRef<float4>())
+					if(DataTypeRef == TLBinary::GetDataTypeRef<TLMaths::TQuaternion>())
 					{
-						// float4 format so just import the data as a quaternion
-						// Can we use a <Quaternion> tag perhaps? And maybe a <AxisAngle> tag as well 
-						// so we can convert form an axis and angle
+						// Raw Quaternion format so import as a quaternion
+						// TODO: Float 4... could be axis-angle or quaternion format.  Could use 
+						// for axis angle with radians for angle seeing as that isn't supported
+						// at the moment, or we could simply add an 'AngleFormat' property 
+						// to determine the angle format which would probably be more flexible.
 						TagImportResult = TLFile::ImportBinaryData( pChildTag, *pCommandChildData, DataTypeRef );
 					}
-					else if(DataTypeRef == TLBinary::GetDataTypeRef<float3>())
+					else if(DataTypeRef == TLBinary::GetDataTypeRef<TLMaths::TAxisAngle>())
 					{
-						// float3 format so import as Euler angles
-						// Might want to use a special tag for the the euler angles say <Euler>
-						// Then could also have <Radians> for ones already set in radians
+						// Axis and Angle format so import as an AxisAngle and convert to a Quaternion
+						TBinary Data;
+						TagImportResult = TLFile::ImportBinaryData( pChildTag, Data, DataTypeRef );
+
+						if(TagImportResult == SyncTrue)
+						{
+							// Convert the data to a quaternion
+							Data.ResetReadPos();
+
+							float4 vector;
+							if(Data.Read(vector))
+							{
+								TLMaths::TQuaternion qRot;
+
+								TLMaths::TAxisAngle axisangle(vector);
+			
+#ifdef _DEBUG
+								TTempString str;
+								str.Appendf("Axis: %.2f %.2f %.2f", vector.x, vector.y, vector.z);
+								TLDebug_Print(str);
+								str.Empty();
+
+								str.Appendf("Angle: %.2f", axisangle.GetAngle(FALSE));
+								TLDebug_Print(str);
+								str.Empty();
+
+
+								str.Appendf("Radians: %.2f", axisangle.GetAngle());
+								TLDebug_Print(str);
+								str.Empty();
+#endif
+								qRot.Set(axisangle.GetAxis(), axisangle.GetAngle());
+								qRot.Normalise();
+#ifdef _DEBUG
+								str.Appendf("Quat: %.2f %.2f %.2f %.2f", qRot.GetData().x, qRot.GetData().y, qRot.GetData().z, qRot.GetData().w );
+								TLDebug_Print(str);
+								str.Empty();
+#endif
+
+								pCommandChildData->Write(qRot); 
+
+								// Change the data type hint to quaternion
+								//pCommandChildData->SetDataTypeHint(DataTypeRef);
+								pCommandChildData->SetDataTypeHint(TLBinary::GetDataTypeRef<TLMaths::TQuaternion>());
+							}
+						}
+
+					}
+					else if( (DataTypeRef == TLBinary::GetDataTypeRef<float3>()) ||
+							 (DataTypeRef == TLBinary::GetDataTypeRef<TLMaths::TEuler>()) )
+					{
+						// float3 or Euler format so import as Euler angles
+						// NOTE: float3 is assumed to be the same as euler but we could have 
+						// the float3 as an explicit euler in radians angle format?
+						// TODO: Support for both degrees and radians for the angle format.
 
 						// Get the data and convert from a float3 euler data to a quaternion
 						TBinary Data;
@@ -355,37 +410,34 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandData(TPtr<TL
 								TLMaths::TQuaternion qRot;
 
 								// Vector is in degrees.  Change to radians.
-								TLMaths::TAngle pitch(vector.x);
-								TLMaths::TAngle yaw(vector.y);
-								TLMaths::TAngle roll(vector.z);
+								TLMaths::TEuler euler(vector);
 
-								// Clamp within limits
-								//pitch.SetLimit360();
-								//yaw.SetLimit360();
-								//roll.SetLimit360();
+
+#ifdef _DEBUG
 								TTempString str;
-								str.Appendf("Degrees: %.2f %.2f %.2f", vector.x, vector.y, vector.z);
+								str.Appendf("Degrees: %.2f %.2f %.2f", euler.GetPitch(), euler.GetYaw(), euler.GetRoll());
 								TLDebug_Print(str);
 								str.Empty();
 
-								str.Appendf("Radians: %.2f %.2f %.2f", pitch.GetRadians(), yaw.GetRadians(), roll.GetRadians());
+								str.Appendf("Radians: %.2f %.2f %.2f", euler.GetPitch(FALSE), euler.GetYaw(FALSE), euler.GetRoll(FALSE));
 								TLDebug_Print(str);
 								str.Empty();
+#endif
 
-
-								qRot.SetEuler(pitch.GetRadians(), yaw.GetRadians(), roll.GetRadians());
+								qRot.SetEuler(euler.GetAngles());
 								qRot.Normalise();
 
+#ifdef _DEBUG
 								str.Appendf("Quat: %.2f %.2f %.2f %.2f", qRot.GetData().x, qRot.GetData().y, qRot.GetData().z, qRot.GetData().w );
 								TLDebug_Print(str);
 								str.Empty();
-
+#endif
 
 								pCommandChildData->Write(qRot); 
 
 								// Change the data type hint to quaternion
-								pCommandChildData->SetDataTypeHint(TLBinary::GetDataTypeRef<float4>());
-								//pCommand->SetDataTypeHint(TLBinary::GetDataTypeRef<TLMaths::TQuaternion>());
+								//pCommandChildData->SetDataTypeHint(DataTypeRef);
+								pCommandChildData->SetDataTypeHint(TLBinary::GetDataTypeRef<TLMaths::TQuaternion>());
 							}
 						}
 						else

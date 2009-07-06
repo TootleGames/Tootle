@@ -174,6 +174,9 @@ TRef TLFile::GetDataTypeFromString(const TString& String)
 		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef_Hex64() );
 
 		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TLMaths::TQuaternion>() );
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TLMaths::TEuler>() );
+		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TLMaths::TAxisAngle>() );
+	
 		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TColour>() );
 		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TColour24>() );
 		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TColour32>() );
@@ -268,6 +271,28 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 		TLMaths::TQuaternion Quat( f );
 		Quat.Normalise();
 		BinaryData.Write( Quat );
+		return SyncTrue;
+	}
+	else if ( DataType == TLBinary::GetDataTypeRef<TLMaths::TEuler>()  )
+	{
+		float3 f;
+		if ( !TLString::ReadNextFloatArray( DataString, CharIndex, f.GetData(), f.GetSize() ) )
+			return SyncFalse;
+
+		//	convert to Euler type
+		TLMaths::TEuler Euler( f );
+		BinaryData.Write( Euler );
+		return SyncTrue;
+	}
+	else if ( DataType == TLBinary::GetDataTypeRef<TLMaths::TAxisAngle>()  )
+	{
+		float4 f;
+		if ( !TLString::ReadNextFloatArray( DataString, CharIndex, f.GetData(), f.GetSize() ) )
+			return SyncFalse;
+
+		//	convert to normalised quaternion
+		TLMaths::TAxisAngle AxisAngle( f );
+		BinaryData.Write( AxisAngle );
 		return SyncTrue;
 	}
 	else if ( DataType == TLBinary::GetDataTypeRef<TRef>() )

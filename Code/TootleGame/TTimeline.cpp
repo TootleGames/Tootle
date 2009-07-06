@@ -511,9 +511,7 @@ Bool TTimelineInstance::SendInterpedCommandAsMessage(TLAsset::TAssetTimelineComm
 			TRef InterpMethod = "None";
 
 			// Now check to see if the Rotate command needs interping
-			pFromData->ImportData("InterpMethod", InterpMethod);
-
-			if(InterpMethod != "None")
+			if(pFromData->ImportData("InterpMethod", InterpMethod) && (InterpMethod != "None"))
 			{
 				// Check to see if the ToCommand has the same child data
 				TPtr<TBinaryTree>& pToData = ToCommand.GetChild(pFromData->GetDataRef()); 
@@ -562,8 +560,7 @@ void TTimelineInstance::AttachInterpedDataToMessage(TPtr<TBinaryTree>& pFromData
 	pToData->ResetReadPos();
 
 	// Check the data type and use the appropriate interp as required.
-	//TODO: Possibly check for quaternion instead?
-	//if(pFromData->GetDataTypeHint() == TLBinary::GetDataTypeRef<float4>())
+	//if(pFromData->GetDataTypeHint() == TLBinary::GetDataTypeRef<TLMaths::TQuaternion>())
 	if(pFromData->GetDataRef() == "Rotate")
 	{
 		// Get the to command rotate quaternion
@@ -573,10 +570,13 @@ void TTimelineInstance::AttachInterpedDataToMessage(TPtr<TBinaryTree>& pFromData
 		{
 			if(pToData->Read(qRotTo))
 			{
-				//TODO: Check for different type of interps
 				TLMaths::TQuaternion qRot;
 #ifdef _DEBUG
 				TTempString str;
+
+				InterpMethod.GetString(str);
+				TLDebug_Print(str);
+				str.Empty();
 
 				str.Appendf("Quat From: %.2f %.2f %.2f %.2f", qRotFrom.GetData().x, qRotFrom.GetData().y, qRotFrom.GetData().z, qRotFrom.GetData().w );
 				TLDebug_Print(str);
@@ -589,16 +589,20 @@ void TTimelineInstance::AttachInterpedDataToMessage(TPtr<TBinaryTree>& pFromData
 				str.Empty();
 #endif
 
-				//TODO: Test the interp method and select the appropriate interp
-				qRot = TLMaths::Interp(qRotFrom, qRotTo, fPercent);
-				//qRot.Nlerp(qRotFrom, qRotTo, fPercent);
-				//qRot.Slerp(qRotFrom, qRotTo, fPercent);
+				// Do spherical linear interp if specified, otherwise default to linear interp
+				if(InterpMethod == STRef(S,p,h,e,r))
+				{
+					qRot.Slerp(qRotFrom, qRotTo, fPercent);
+					qRot.Normalise();
+				}
+				else
+					qRot.Nlerp(qRotFrom, qRotTo, fPercent);
+		
 #ifdef _DEBUG
 				str.Appendf("Quat Lerp: %.2f %.2f %.2f %.2f", qRot.GetData().x, qRot.GetData().y, qRot.GetData().z, qRot.GetData().w );
 				TLDebug_Print(str);
 #endif
 				Message.ExportData(pFromData->GetDataRef(), qRot);
-				//Message.Write(qRot);
 			}
 		}
 	}
@@ -618,7 +622,6 @@ void TTimelineInstance::AttachInterpedDataToMessage(TPtr<TBinaryTree>& pFromData
 				vector = TLMaths::Interp(vFrom, vTo, fPercent);
 
 				Message.ExportData(pFromData->GetDataRef(), vector);
-				//Message.Write(vector);
 			}
 		}
 	}

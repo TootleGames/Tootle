@@ -34,6 +34,9 @@ namespace TLMaths
 	class TLine;		//	3D line/ray
 	class TTransform;	//	Transform class - encapsulates common usage of position, rotation and scale
 
+	class TEuler;		// Simple convenience class to represent a set of 3 Euler angles
+	class TAxisAngle;	// Simple convenience class to represent an axis and angle
+
 	//	external types
 	class TBox;
 	class TBox2D;
@@ -349,6 +352,48 @@ public:
 
 public:
 	float4					xyzw;
+};
+
+// Convenience class for using Euler angles
+class TLMaths::TEuler
+{
+public:
+	TEuler()												{};
+	TEuler(float3 Angles) : 
+		m_Pitch(Angles.x),
+		m_Yaw(Angles.y),
+		m_Roll(Angles.z)
+	{};
+
+	FORCEINLINE float GetPitch(Bool bRadians = TRUE)		const { return (bRadians ? m_Pitch.GetRadians() : m_Pitch.GetDegrees()) ; }
+	FORCEINLINE float GetYaw(Bool bRadians = TRUE)			const { return (bRadians ? m_Yaw.GetRadians() : m_Yaw.GetDegrees()); }
+	FORCEINLINE float GetRoll(Bool bRadians = TRUE)			const { return (bRadians ? m_Roll.GetRadians() : m_Roll.GetDegrees()); }
+
+	FORCEINLINE	float3	GetAngles()		{ return float3(GetPitch(), GetYaw(), GetRoll()); }
+private:
+	TAngle					m_Pitch;
+	TAngle					m_Yaw;
+	TAngle					m_Roll;
+};
+
+// Convenience class for using an Axis and Angle
+class TLMaths::TAxisAngle
+{
+public:
+	TAxisAngle()												{};
+	TAxisAngle(float4 AxisAngle) : 
+		m_Axis(AxisAngle.x, AxisAngle.y, AxisAngle.z),
+		m_Angle(AxisAngle.w)
+	{};
+
+	FORCEINLINE float3	GetAxis()					const { return m_Axis; }
+	FORCEINLINE float	GetAngle(Bool bRadians = TRUE)		const { return (bRadians ? m_Angle.GetRadians() : m_Angle.GetDegrees()); }
+
+	FORCEINLINE	float4	GetAxisAngle()		{ return float4(m_Axis.x, m_Axis.y, m_Axis.z, m_Angle.GetRadians()); }
+
+private:
+	float3					m_Axis;
+	TAngle					m_Angle;
 };
 
 

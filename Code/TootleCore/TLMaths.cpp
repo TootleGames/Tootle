@@ -834,16 +834,18 @@ void TLMaths::TQuaternion::operator *= (const float &Scalar)
 	SetValues( xyzw*Scalar );
 }
 
+
 //---------------------------------------------------------------------------
 // 
 //---------------------------------------------------------------------------
 
 void TLMaths::TQuaternion::SetEuler(const float& Pitch, const float& Yaw, const float& Roll)
 {
+
 	// original method
-	TLMaths::TQuaternion Qx( float3(0, 0, 1), Pitch );	Qx.Normalise();
-	TLMaths::TQuaternion Qy( float3(0, 1, 0), Yaw );		Qx.Normalise();
-	TLMaths::TQuaternion Qz( float3(1, 0, 0), Roll );	Qx.Normalise();
+	TLMaths::TQuaternion Qx( float3(1, 0, 0), Pitch );	Qx.Normalise();
+	TLMaths::TQuaternion Qy( float3(0, 1, 0), Yaw );	Qy.Normalise();
+	TLMaths::TQuaternion Qz( float3(0, 0, 1), Roll );	Qz.Normalise();
 
 	SetValues(0,0,0,1);
 	*this *= Qx;
@@ -854,9 +856,9 @@ void TLMaths::TQuaternion::SetEuler(const float& Pitch, const float& Yaw, const 
 
 	// Method from the internet
 
-	TLMaths::TQuaternion Qx( float3(0, 0, 1), -Pitch );
+	TLMaths::TQuaternion Qx( float3(1, 0, 0), -Pitch );
 	TLMaths::TQuaternion Qy( float3(0, 1, 0), -Yaw );
-	TLMaths::TQuaternion Qz( float3(1, 0, 0), -Roll );
+	TLMaths::TQuaternion Qz( float3(0, 0, 1), -Roll );
 
 	Qz = Qy * Qz;
 	*this = Qx * Qz;
@@ -961,6 +963,7 @@ TLMaths::TQuaternion RotationArc(const float3& V0,const float3& V1)
 }
 
 
+/*
 //---------------------------------------------------------------------------
 // 
 //---------------------------------------------------------------------------
@@ -972,7 +975,7 @@ void TLMaths::TQuaternion::Slerp(const TLMaths::TQuaternion &From, const TLMaths
 
 	cosO = From.DotProduct(To);
 
-	if (cosO < 0.0)
+	if (cosO < 0.0f)
 	{
 		cosO = -cosO;
 		Temp = -To;
@@ -982,7 +985,7 @@ void TLMaths::TQuaternion::Slerp(const TLMaths::TQuaternion &From, const TLMaths
 		Temp = -To;
 	}
 
-	if ((1.0 - cosO) > 0.0001f)
+	if ((1.0f - cosO) > 0.0001f)
 	{
 		omega = (float)acos(cosO);
 		sinO = sinf(omega);
@@ -996,6 +999,7 @@ void TLMaths::TQuaternion::Slerp(const TLMaths::TQuaternion &From, const TLMaths
 	}
 	*this = From*scale0 + Temp*scale1 ;
 }
+*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // DB - We seem to have quite a few quaternion slerp routines
@@ -1003,16 +1007,21 @@ void TLMaths::TQuaternion::Slerp(const TLMaths::TQuaternion &From, const TLMaths
 // Very likely these are all similar or the same so we could do with tidying these up and removing
 // ones we aren't going to use.
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
-/*
 // Spherical linear interpolation
 void TLMaths::TQuaternion::Slerp(const TQuaternion& From, const TQuaternion& To, const float& t)
 {
 	float w1, w2;
 
-	float fCosTheta = From.DotProduct(To);
+	TQuaternion FlipTo = To;
+
+	float fCosTheta = From.DotProduct(FlipTo);
 	float fTheta = acosf(fCosTheta);
 	float fSinTheta = TLMaths::Sinf(fTheta);
+
+	if ( fCosTheta < 0)
+	{   
+		FlipTo.Invert();
+	}
 
 	if( fSinTheta > 0.0001f)
 	{
@@ -1025,12 +1034,11 @@ void TLMaths::TQuaternion::Slerp(const TQuaternion& From, const TQuaternion& To,
 		w2 = t;
 	}
 
-	*this = (From*w1) + (To*w2);
+	*this = (From*w1) + (FlipTo*w2);
 }
-*/
 
-// Normalised linear interpolation
 /*
+// Normalised linear interpolation
 void TLMaths::TQuaternion::Nlerp(const TQuaternion& From, const TQuaternion& To, const float& t)
 {
 	float w1 = 1.0f - t;
@@ -1039,8 +1047,8 @@ void TLMaths::TQuaternion::Nlerp(const TQuaternion& From, const TQuaternion& To,
 }
 */
 
-////////////////////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////////////////////
 void TLMaths::TQuaternion::Nlerp(const TLMaths::TQuaternion& From, const TLMaths::TQuaternion& To, const float& t)
 {
 	if ( From == To )
@@ -1057,7 +1065,7 @@ void TLMaths::TQuaternion::Nlerp(const TLMaths::TQuaternion& From, const TLMaths
 
 	//	flip to, if neccesary
 	//if (Q1.w * Q2.w + Q1.x * Q2.x + Q1.y * Q2.y + Q1.z * Q2.z < 0)
-	if ( From.xyzw.DotProduct( FlipTo.xyzw ) < 0)
+	if ( From.DotProduct( FlipTo ) < 0)
 	{   
 		//Q2.w = -Q2.w;    Q2.x = -Q2.x;    Q2.y = -Q2.y;    Q2.z = -Q2.z;
 		FlipTo.Invert();
@@ -1076,6 +1084,7 @@ void TLMaths::TQuaternion::Nlerp(const TLMaths::TQuaternion& From, const TLMaths
 	*this = ( q1 + q2 );
 	Normalise();
 }
+
 
 
 /*

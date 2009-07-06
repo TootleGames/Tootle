@@ -370,6 +370,8 @@ TLBinary_DeclareDataTypeRefAll( float );
 #define TLBinary_TypeRef_TColour64				TRef_Static5(C,o,l,SIX,FOUR)
 #define TLBinary_TypeRef_TRef					TRef_Static4(T,R,e,f)
 #define TLBinary_TypeRef_TQuaternion			TRef_Static4(Q,u,a,t)
+#define TLBinary_TypeRef_TEuler					TRef_Static5(E,u,l,e,r)
+#define TLBinary_TypeRef_TAxisAngle				TRef_Static5(A,x,i,s,A)
 
 TLBinary_DeclareDataTypeRef( TColour,				TLBinary_TypeRef(TColour) );
 TLBinary_DeclareDataTypeRef( TColour24,				TLBinary_TypeRef(TColour24) );
@@ -377,3 +379,6 @@ TLBinary_DeclareDataTypeRef( TColour32,				TLBinary_TypeRef(TColour32) );
 TLBinary_DeclareDataTypeRef( TColour64,				TLBinary_TypeRef(TColour64) );
 TLBinary_DeclareDataTypeRef( TRef,					TLBinary_TypeRef(TRef) );
 TLBinary_DeclareDataTypeRef( TLMaths::TQuaternion,	TLBinary_TypeRef(TQuaternion) );
+TLBinary_DeclareDataTypeRef( TLMaths::TEuler,		TLBinary_TypeRef(TEuler) );
+TLBinary_DeclareDataTypeRef( TLMaths::TAxisAngle,	TLBinary_TypeRef(TAxisAngle) );
+

@@ -248,15 +248,15 @@ public:
 	FORCEINLINE void			operator*=(const TYPE v)				{	x *= v;		y *= v;		z *= v;		w *= v;	};
 	FORCEINLINE void			operator/=(const TYPE v)				{	x /= v;		y /= v;		z /= v;		w /= v;	};
 	
-	FORCEINLINE Type4<TYPE>	operator+(const Type4<TYPE>& v) const	{	return ( x + v.x,	y + v.y,	z + v.z,	w + v.w );	};
-	FORCEINLINE Type4<TYPE>	operator-(const Type4<TYPE>& v) const	{	return ( x - v.x,	y - v.y,	z - v.z,	w - v.w );	};
-	FORCEINLINE Type4<TYPE>	operator*(const Type4<TYPE>& v) const	{	return ( x * v.x,	y * v.y,	z * v.z,	w * v.w );	};
-	FORCEINLINE Type4<TYPE>	operator/(const Type4<TYPE>& v) const	{	return ( x / v.x,	y / v.y,	z / v.z,	w / v.w );	};
+	FORCEINLINE Type4<TYPE>	operator+(const Type4<TYPE>& v) const	{	return Type4<TYPE>( x + v.x,	y + v.y,	z + v.z,	w + v.w );	};
+	FORCEINLINE Type4<TYPE>	operator-(const Type4<TYPE>& v) const	{	return Type4<TYPE>( x - v.x,	y - v.y,	z - v.z,	w - v.w );	};
+	FORCEINLINE Type4<TYPE>	operator*(const Type4<TYPE>& v) const	{	return Type4<TYPE>( x * v.x,	y * v.y,	z * v.z,	w * v.w );	};
+	FORCEINLINE Type4<TYPE>	operator/(const Type4<TYPE>& v) const	{	return Type4<TYPE>( x / v.x,	y / v.y,	z / v.z,	w / v.w );	};
 
-	FORCEINLINE Type4<TYPE>	operator+(const TYPE v) const			{	return ( x + v,	y + v,	z + v,	w + v );	};
-	FORCEINLINE Type4<TYPE>	operator-(const TYPE v) const			{	return ( x - v,	y - v,	z - v,	w - v );	};
-	FORCEINLINE Type4<TYPE>	operator*(const TYPE v) const			{	return ( x * v,	y * v,	z * v,	w * v );	};
-	FORCEINLINE Type4<TYPE>	operator/(const TYPE v) const			{	return ( x / v,	y / v,	z / v,	w / v );	};
+	FORCEINLINE Type4<TYPE>	operator+(const TYPE v) const			{	return Type4<TYPE>( x + v,	y + v,	z + v,	w + v );	};
+	FORCEINLINE Type4<TYPE>	operator-(const TYPE v) const			{	return Type4<TYPE>( x - v,	y - v,	z - v,	w - v );	};
+	FORCEINLINE Type4<TYPE>	operator*(const TYPE v) const			{	return Type4<TYPE>( x * v,	y * v,	z * v,	w * v );	};
+	FORCEINLINE Type4<TYPE>	operator/(const TYPE v) const			{	return Type4<TYPE>( x / v,	y / v,	z / v,	w / v );	};
 
 	FORCEINLINE TYPE&		operator[](const int Index)		{	TLDebug::CheckIndex(Index,4);	return GetData()[Index];	};
 	FORCEINLINE const TYPE*	GetData() const					{	return &x;	};

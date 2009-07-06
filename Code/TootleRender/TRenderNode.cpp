@@ -652,18 +652,6 @@ void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 	}
 	else if(Message.GetMessageRef() == TRef("SetTransform"))
 	{
-		//	gr: remove the rotation child then it won't get applied -
-		//		graham suggests NOT sending the rotation if your interpolation is broken... there's no interpolation in this code here... the problem is the sender, not the reciever
-		Message.RemoveChild("Rotation");
-		/*
-		// [01/04/09] DB - Disabled for now whilst I fix the interpolation
-		if ( Message.ImportData(TRef_Static(R,o,t,a,t), m_Transform.GetRotation() ) == SyncTrue )
-		{
-			m_Transform.SetRotationValid();
-			TransformChanged = TRUE;
-		}
-		*/
-
 		//	overwrite our transform
 		u8 TransformChangedBits = m_Transform.ImportData( Message );
 		OnTransformChanged(TransformChangedBits);
