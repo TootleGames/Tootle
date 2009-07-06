@@ -448,6 +448,89 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandData(TPtr<TL
 						}
 					}
 				}
+				else if(pCommandChildData->GetDataRef() == "Colour")
+				{
+					//if(DataTypeRef == TLBinary::GetDataTypeRef<float4>())
+					if(DataTypeRef == TLBinary::GetDataTypeRef<TColour>())
+					{
+						// Raw Colour format so import as a TColour
+						TagImportResult = TLFile::ImportBinaryData( pChildTag, *pCommandChildData, DataTypeRef );
+					}
+					else if( (DataTypeRef == TLBinary::GetDataTypeRef<TColour24>()) ||
+							 (DataTypeRef == TLBinary::GetDataTypeRef<TColour32>()) ||
+//							 (DataTypeRef == TLBinary::GetDataTypeRef<TColour48>()) ||
+							 (DataTypeRef == TLBinary::GetDataTypeRef<TColour64>()) )
+					{
+						// Alternative colour format format
+						// Import the data
+						TBinary Data;
+						TagImportResult = TLFile::ImportBinaryData( pChildTag, Data, DataTypeRef );
+
+						if(TagImportResult == SyncTrue)
+						{
+							TColour newcol;
+							Bool bSuccess = FALSE;
+
+							// Convert the data to a TColour
+							Data.ResetReadPos();
+
+							if(DataTypeRef == TLBinary::GetDataTypeRef<TColour24>())
+							{
+								TColour24 col;
+								bSuccess = Data.Read(col);
+
+								if(bSuccess)
+									newcol = col;
+							}
+							else if(DataTypeRef == TLBinary::GetDataTypeRef<TColour32>())
+							{
+								TColour32 col;
+								bSuccess = Data.Read(col);
+
+								if(bSuccess)
+		 							newcol = col;
+							}
+							/*
+							// Not supported yet?
+							else if(DataTypeRef == TLBinary::GetDataTypeRef<TColour48>())
+							{
+								TColour48 col;
+								bSuccess = Data.Read(col);
+
+								if(bSuccess)
+		 							newcol = col;
+							}
+							*/
+							else if(DataTypeRef == TLBinary::GetDataTypeRef<TColour64>())
+							{
+								TColour64 col;
+								bSuccess = Data.Read(col);
+
+								if(bSuccess)
+		 							newcol = col;
+							}
+
+							if(bSuccess)
+							{
+								pCommandChildData->Write(newcol); 
+
+								// Change the data type hint to TColour
+								pCommandChildData->SetDataTypeHint(TLBinary::GetDataTypeRef<TColour>());						
+							}
+						}
+						else
+						{
+							// Failed to copy the data form the XML file
+							TLDebug_Print("Failed to get (colour) command data from TTL file");
+							return SyncFalse;
+						}
+					}
+
+					//TODO: Add support for other colour types :-
+					// TColour48 rgb 16-bit
+					// float3 rgb ?
+					// flaot4 rgba ?
+				}
 				else
 					TagImportResult = TLFile::ImportBinaryData( pChildTag, *pCommandChildData, DataTypeRef );
 

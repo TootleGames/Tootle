@@ -561,7 +561,7 @@ void TTimelineInstance::AttachInterpedDataToMessage(TPtr<TBinaryTree>& pFromData
 
 	// Check the data type and use the appropriate interp as required.
 	//if(pFromData->GetDataTypeHint() == TLBinary::GetDataTypeRef<TLMaths::TQuaternion>())
-	if(pFromData->GetDataRef() == "Rotate")
+	if(pFromData->GetDataRef() == TRef("Rotate"))
 	{
 		// Get the to command rotate quaternion
 		TLMaths::TQuaternion qRotFrom, qRotTo;
@@ -605,6 +605,25 @@ void TTimelineInstance::AttachInterpedDataToMessage(TPtr<TBinaryTree>& pFromData
 				Message.ExportData(pFromData->GetDataRef(), qRot);
 			}
 		}
+	}
+	//else if(pFromData->GetDataTypeHint() == TLBinary::GetDataTypeRef<Colour>())
+	else if(pFromData->GetDataRef() == TRef("Colour"))
+	{
+		TColour vFrom, vTo;
+
+		if(pFromData->Read(vFrom))
+		{
+			if(pToData->Read(vTo))
+			{
+				TColour vector;
+				
+				//TODO: Check for different type of interps
+				vector = TLMaths::Interp(vFrom, vTo, fPercent);
+
+				Message.ExportData(pFromData->GetDataRef(), vector);
+			}
+		}
+
 	}
 	//else if(pFromData->GetDataTypeHint() == TLBinary::GetDataTypeRef<float3>())
 	else

@@ -148,7 +148,7 @@ Bool TLString::ReadNextFloatArray(const TString& String,u32& CharIndex,float* pF
 TRef TLFile::GetDataTypeFromString(const TString& String)
 {
 	//	cache predefined ref types for a simple match
-	static TFixedArray<TRef,20> g_DataTypeRefCache;
+	static TFixedArray<TRef,24> g_DataTypeRefCache;
 	if ( g_DataTypeRefCache.GetSize() == 0 )
 	{
 		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TRef>() );
@@ -316,6 +316,26 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 			BinaryData.WriteString( DataString );
 		}
 
+		return SyncTrue;
+	}
+	else if ( DataType == TLBinary::GetDataTypeRef<TColour>() )
+	{
+		float4 f;
+		if ( !TLString::ReadNextFloatArray( DataString, CharIndex, f.GetData(), f.GetSize() ) )
+			return SyncFalse;
+		
+		//	check range
+		if ( f.x > 1.0f || f.x < 0.0f ||
+			f.y > 1.0f || f.y < 0.0f ||
+			f.z > 1.0f || f.z < 0.0f ||
+			f.w > 1.0f || f.w < 0.0f )
+		{
+			if ( !TLDebug_Break( TString("Colour float type has components out of range (0..1); %.3f,%.3f,%.3f,%.3f", f.x, f.y, f.z, f.w) ) )
+				return SyncFalse;
+		}
+
+		TColour Colour( f );
+		BinaryData.Write( Colour );
 		return SyncTrue;
 	}
 	else if ( DataType == TLBinary::GetDataTypeRef<TColour24>() )

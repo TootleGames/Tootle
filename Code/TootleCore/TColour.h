@@ -48,6 +48,7 @@ class TColour
 public:
 	TColour() : m_Rgba ( 0.f,0.f,0.f,1.f )								{	}	
 	TColour(float r, float g,float b,float a=1.f) : m_Rgba ( r,g,b,a )	{	}	
+	TColour(float4 rgba) : m_Rgba ( rgba )	{	}	
 	TColour(u8 r, u8 g,u8 b,u8 a=255)									{	Set( r,g,b,a );	}
 	TColour(const TColour& Colour);
 	TColour(const TColour24& Colour);
@@ -99,21 +100,28 @@ public:
 	FORCEINLINE					operator const float4&() const			{	return m_Rgba;	}
 	FORCEINLINE					operator float4&()						{	return m_Rgba;	}
 
-	FORCEINLINE void			operator+=(const float4& v)					{	m_Rgba += v;	Limit();	}
-	FORCEINLINE void			operator-=(const float4& v)					{	m_Rgba -= v;	Limit();	}
-	FORCEINLINE void			operator*=(const float4& v)					{	m_Rgba *= v;	Limit();	}
-	FORCEINLINE void			operator/=(const float4& v)					{	m_Rgba /= v;	Limit();	}
+	FORCEINLINE void			operator+=(const float4& v)					{	m_Rgba += v; }
+	FORCEINLINE void			operator-=(const float4& v)					{	m_Rgba -= v; }
+	FORCEINLINE void			operator*=(const float4& v)					{	m_Rgba *= v; }
+	FORCEINLINE void			operator/=(const float4& v)					{	m_Rgba /= v; }
 
-	FORCEINLINE void			operator+=(const float v)					{	m_Rgba += v;	Limit();	}
-	FORCEINLINE void			operator-=(const float v)					{	m_Rgba -= v;	Limit();	}
-	FORCEINLINE void			operator*=(const float v)					{	m_Rgba *= v;	Limit();	}
-	FORCEINLINE void			operator/=(const float v)					{	m_Rgba /= v;	Limit();	}
+	FORCEINLINE void			operator+=(const float v)					{	m_Rgba += v; }
+	FORCEINLINE void			operator-=(const float v)					{	m_Rgba -= v; }
+	FORCEINLINE void			operator*=(const float v)					{	m_Rgba *= v; }
+	FORCEINLINE void			operator/=(const float v)					{	m_Rgba /= v; }
 
 	FORCEINLINE Bool			operator==(const TColour& Colour) const		{	return m_Rgba == Colour.m_Rgba;	}	//	required for sorting in arrays... maybe we'll have a need for this in future
 	FORCEINLINE Bool			operator!=(const TColour& Colour) const		{	return m_Rgba != Colour.m_Rgba;	}	//	required for sorting in arrays... maybe we'll have a need for this in future
 	FORCEINLINE Bool			operator<(const TColour& Colour) const		{	return FALSE;	}	//	required for sorting in arrays... maybe we'll have a need for this in future
 
-protected:
+	FORCEINLINE TColour			operator - () const							{ return TColour( m_Rgba * -1.f );	}
+	FORCEINLINE TColour			operator - (const TColour& Colour) const	{ return TColour( m_Rgba - Colour.m_Rgba ); }
+	FORCEINLINE TColour			operator + (const TColour& Colour) const	{ return TColour( m_Rgba + Colour.m_Rgba ); }
+
+	FORCEINLINE void			operator -=(const TColour& Colour) 			{ m_Rgba -= Colour.m_Rgba; }
+	FORCEINLINE void			operator +=(const TColour& Colour) 			{ m_Rgba += Colour.m_Rgba; }
+	FORCEINLINE void			operator *=(const TColour& Colour) 			{ m_Rgba *= Colour.m_Rgba; }
+
 	FORCEINLINE void			Limit()										{	TLMaths::Limit( m_Rgba.x, 0.f, 1.f );	TLMaths::Limit( m_Rgba.y, 0.f, 1.f );	TLMaths::Limit( m_Rgba.z, 0.f, 1.f );	TLMaths::Limit( m_Rgba.w, 0.f, 1.f );	}
 
 protected:

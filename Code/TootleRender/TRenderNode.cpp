@@ -655,6 +655,12 @@ void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 		//	overwrite our transform
 		u8 TransformChangedBits = m_Transform.ImportData( Message );
 		OnTransformChanged(TransformChangedBits);
+
+		// Colour property import
+		TColour newcol;
+		if(Message.ImportData("Colour", newcol))
+			SetColour(newcol);
+
 		return;
 	}
 	else if(Message.GetMessageRef() == TRef("DoTransform"))
