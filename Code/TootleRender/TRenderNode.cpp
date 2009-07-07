@@ -557,7 +557,7 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 
 	Message.ImportData("LineWidth", m_LineWidth );
 
-	if ( Message.ImportData("MeshRef", m_MeshRef ) == SyncTrue )
+	if ( Message.ImportData("MeshRef", m_MeshRef ) )
 	{
 		//	start loading the asset in case we havent loaded it already
 		TLAsset::LoadAsset( m_MeshRef );
@@ -566,7 +566,7 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 		OnMeshRefChanged();
 	}
 
-	if ( Message.ImportData("TextureRef", m_TextureRef ) == SyncTrue )
+	if ( Message.ImportData("TextureRef", m_TextureRef ) )
 	{
 		//	start loading the asset in case we havent loaded it already
 		TLAsset::LoadAsset( m_TextureRef );

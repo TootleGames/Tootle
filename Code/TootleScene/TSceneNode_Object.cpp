@@ -204,8 +204,10 @@ void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 		if ( pEnableData->ImportData("DbgPhys", DebugPhysicsEnable ) )
 			Debug_EnableRenderDebugPhysics( DebugPhysicsEnable );
 
-		Bool ChangePhysics = pEnableData->ImportData("Physics", PhysicsEnable );
-		ChangePhysics |= pEnableData->ImportData("Collision", CollisionEnable );
+		Bool ChangePhysics = FALSE;
+		if ( pEnableData->ImportData("Physics", PhysicsEnable ) )		ChangePhysics |= TRUE;
+		if ( pEnableData->ImportData("Collision", CollisionEnable ) )	ChangePhysics |= TRUE;
+
 		if ( ChangePhysics )
 		{
 			EnablePhysicsNode( PhysicsEnable, CollisionEnable );

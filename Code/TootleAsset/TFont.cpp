@@ -109,7 +109,7 @@ SyncBool TLAsset::TFont::ImportData(TBinaryTree& Data)
 			TPtr<TLAsset::TMesh> pNewChildMesh = new TLAsset::TMesh( ChildRef );
 			
 			//	import it
-			if ( pNewChildMesh->ImportData( *pChildData.GetObject() ) == SyncFalse )
+			if ( !pNewChildMesh->ImportData( *pChildData.GetObject() ) )
 				return SyncFalse;
 
 			//	read out the glyph character
