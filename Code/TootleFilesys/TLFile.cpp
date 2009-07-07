@@ -253,7 +253,7 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 		BinaryData.Write( f );
 		return SyncTrue;
 	}
-	else if ( DataType == TLBinary::GetDataTypeRef<float4>() || DataType == TLBinary::GetDataTypeRef<TColour>() )
+	else if ( DataType == TLBinary::GetDataTypeRef<float4>() )
 	{
 		float4 f;
 		if ( !TLString::ReadNextFloatArray( DataString, CharIndex, f.GetData(), f.GetSize() ) )
