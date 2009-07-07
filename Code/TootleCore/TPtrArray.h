@@ -41,6 +41,8 @@ public:
 		
 	template<class MATCHTYPE>
 	FORCEINLINE const TPtr<TYPE>&	FindPtr(const MATCHTYPE& val) const;
+	
+	FORCEINLINE s32					FindPtrIndex(const TPtr<TYPE>& pPtr);	//	find pointer index, if your class has sorting and the == operator matches, use the TArray FindIndex. But this is a handy Ptr specific one
 
 	FORCEINLINE TPtr<TYPE>&			GetPtrLast();						//	fast version to return the last TPtr
 	FORCEINLINE const TPtr<TYPE>&	GetPtrLast() const;					//	fast version to return the last TPtr
@@ -50,6 +52,7 @@ public:
 	FORCEINLINE TPtr<TYPE>&			AddPtr(const TPtr<TYPE>& val);		//	add TPtr to array and return the new [more permanant] TPtr reference
 	FORCEINLINE TPtr<TYPE>&			AddNewPtr(TYPE* pVal);				//	add a pointer to the array, this is quite fast, but ONLY use it for pointers that are NOT in TPtr's already. use like; AddNewPtr( new TObject() );. CANNOT be a const pointer. This should stop us using this function for pointers that might already be in a TPtr
 
+	FORCEINLINE Bool				RemovePtr(const TPtr<TYPE>& pPtr)	{	s32 Index = FindPtrIndex( pPtr );	return (Index==-1) ? FALSE : TArray<TPtr<TYPE> >::RemoveAt( Index );	}	//	remove pointer from array. use the TArray::Remove when possible. Only remvoes first matching instance
 	void							RemoveNull();						//	remove all NULL pointers from array
 		
 	template<typename FUNCTIONPOINTER>
@@ -207,5 +210,26 @@ FORCEINLINE TPtr<TYPE>& TPtrArray<TYPE>::AddNewPtr(TYPE* pVal)
 	pNewPtr = pVal;
 
 	return pNewPtr;
+}
+
+
+//----------------------------------------------------------------------
+//	find pointer index, if your class has sorting and the == operator matches, 
+//	use the TArray FindIndex. But this is a handy Ptr specific one
+//----------------------------------------------------------------------
+template<typename TYPE>
+FORCEINLINE s32 TPtrArray<TYPE>::FindPtrIndex(const TPtr<TYPE>& pPtr)
+{
+	for ( u32 i=0;	i<TArray<TPtr<TYPE> >::GetSize();	i++ )
+	{
+		const TPtr<TYPE>& pElementPtr = TArray<TPtr<TYPE> >::ElementAtConst( i );
+
+		//	do pointer address comparison
+		if ( pElementPtr.GetObject() == pPtr.GetObject() )
+			return (s32)i;
+	}
+
+	//	no matches
+	return -1;
 }
 

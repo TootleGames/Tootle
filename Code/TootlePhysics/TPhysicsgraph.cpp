@@ -523,9 +523,11 @@ TLPhysics::TPhysicsNode* TLPhysics::TPhysicsNodeFactory::CreateObject(TRefRef In
 //-------------------------------------------------
 void TLPhysics::TPhysicsgraph::BeginContact(b2Contact* contact)
 {
-	//	get physics node for shape 1
-	TPhysicsNode* pNodeA = TLPhysics::GetPhysicsNodeFromShape( contact->GetFixtureA() );
-	TPhysicsNode* pNodeB = TLPhysics::GetPhysicsNodeFromShape( contact->GetFixtureB() );
+	//	get physics nodes for shapes
+	b2Fixture* pShapeA = contact->GetFixtureA();
+	b2Fixture* pShapeB = contact->GetFixtureB();
+	TPhysicsNode* pNodeA = TLPhysics::GetPhysicsNodeFromShape( pShapeA );
+	TPhysicsNode* pNodeB = TLPhysics::GetPhysicsNodeFromShape( pShapeB );
 
 	if ( !pNodeA || !pNodeB )
 	{
@@ -561,7 +563,7 @@ void TLPhysics::TPhysicsgraph::BeginContact(b2Contact* contact)
 	const b2Vec2& SecondContactLocalPoint = (ContactPointCount > 1) ? WorldManifold.m_points[1] : FirstContactLocalPoint;
 	
 	//	if the Other node is a sensor, (we haven't bounced off of it) then don't count it as a collision, it's a SENSOR for the other node
-	if ( !pNodeB->IsSensor() )
+	if ( !pShapeB->IsSensor() )
 	{
 		TLPhysics::TCollisionInfo* pCollisionInfo = pNodeA->OnCollision();
 		if ( pCollisionInfo )
@@ -572,11 +574,13 @@ void TLPhysics::TPhysicsgraph::BeginContact(b2Contact* contact)
 			pCollisionInfo->m_OtherNodeOwner = pNodeB->GetOwnerSceneNodeRef();
 			pCollisionInfo->m_OtherNodeStatic = pNodeB->IsStatic();
 			pCollisionInfo->m_IntersectionNormal = float2( WorldManifold.m_normal.x, WorldManifold.m_normal.y );
+			pCollisionInfo->m_Shape = TLPhysics::GetShapeRefFromShape( pShapeA );
+			pCollisionInfo->m_OtherShape = TLPhysics::GetShapeRefFromShape( pShapeB );
 		}
 	}
 
 	//	if the Other node is a sensor, (we haven't bounced off of it) then don't count it as a collision, it's a SENSOR for the other node
-	if ( !pNodeA->IsSensor() )
+	if ( !pShapeA->IsSensor() )
 	{
 		TLPhysics::TCollisionInfo* pCollisionInfo = pNodeB->OnCollision();
 		if ( pCollisionInfo )
@@ -586,9 +590,11 @@ void TLPhysics::TPhysicsgraph::BeginContact(b2Contact* contact)
 			pCollisionInfo->m_OtherNode = pNodeA->GetNodeRef();
 			pCollisionInfo->m_OtherNodeOwner = pNodeA->GetOwnerSceneNodeRef();
 			pCollisionInfo->m_OtherNodeStatic = pNodeA->IsStatic();
-			
 			//	invert normal
 			pCollisionInfo->m_IntersectionNormal = float2( -WorldManifold.m_normal.x, -WorldManifold.m_normal.y );
+
+			pCollisionInfo->m_Shape = TLPhysics::GetShapeRefFromShape( pShapeB );
+			pCollisionInfo->m_OtherShape = TLPhysics::GetShapeRefFromShape( pShapeA );
 		}
 	}
 
@@ -603,8 +609,10 @@ void TLPhysics::TPhysicsgraph::BeginContact(b2Contact* contact)
 void TLPhysics::TPhysicsgraph::EndContact(b2Contact* contact)
 {
 	//	get physics node for shape 1
-	TPhysicsNode* pNodeA = TLPhysics::GetPhysicsNodeFromShape( contact->GetFixtureA() );
-	TPhysicsNode* pNodeB = TLPhysics::GetPhysicsNodeFromShape( contact->GetFixtureB() );
+	b2Fixture* pShapeA = contact->GetFixtureA();
+	b2Fixture* pShapeB = contact->GetFixtureB();
+	TPhysicsNode* pNodeA = TLPhysics::GetPhysicsNodeFromShape( pShapeA );
+	TPhysicsNode* pNodeB = TLPhysics::GetPhysicsNodeFromShape( pShapeB );
 
 	if ( !pNodeA || !pNodeB )
 	{
@@ -612,13 +620,16 @@ void TLPhysics::TPhysicsgraph::EndContact(b2Contact* contact)
 		return;
 	}
 
+	TRef ShapeARef = TLPhysics::GetShapeRefFromShape( pShapeA );
+	TRef ShapeBRef = TLPhysics::GetShapeRefFromShape( pShapeB );
+
 	TTempString Debug_String("No more collision between ");
 	pNodeA->GetNodeRef().GetString(Debug_String );
 	Debug_String.Append(" and ");
 	pNodeB->GetNodeRef().GetString(Debug_String );
 	TLDebug_Print( Debug_String );
 
-	pNodeA->OnEndCollision( *pNodeB );
-	pNodeB->OnEndCollision( *pNodeA );
+	pNodeA->OnEndCollision( ShapeARef, *pNodeB, ShapeBRef );
+	pNodeB->OnEndCollision( ShapeARef, *pNodeA, ShapeBRef );
 }
 

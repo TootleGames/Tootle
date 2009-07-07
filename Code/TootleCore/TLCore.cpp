@@ -40,6 +40,23 @@ u32 TLCore::PointerToInteger(void* pAddress)
 	return Address;
 }
 
+//---------------------------------------------------
+//	convert an integer to a pointer
+//---------------------------------------------------
+void* TLCore::IntegerToPointer(u32 Integer)
+{
+	void* pAddress = 0;
+
+	//	ignore pointer truncation warning (void* to integer)
+#pragma warning(push)
+#pragma warning(disable : 4311) 
+	pAddress = reinterpret_cast<void*>( Integer );
+#pragma warning(pop)
+
+	return pAddress;
+}
+
+
 void TLCore::RegisterManagers_Engine(TPtr<TCoreManager>& pManager)
 {
 	TLDebug_Print("Registering Engine Managers");

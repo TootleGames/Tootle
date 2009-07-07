@@ -175,7 +175,7 @@ void TLRender::TRenderNodePhysicsNode::OnPhysicsNodeChanged(TLPhysics::TPhysicsN
 
 	//	get world shapes 
 	TPtrArray<TLMaths::TShape> ShapeArray;
-	PhysicsNode.GetBodyWorldShapes( ShapeArray );
+	PhysicsNode.GetCollisionShapesWorld( ShapeArray );
 
 	//	generate geometry for each shape
 	for ( u32 i=0;	i<ShapeArray.GetSize();	i++ )

@@ -34,7 +34,9 @@ public:
 	TPtr<TBinaryTree>&			AddChild(TPtr<TBinaryTree>& pChild)			{	s32 Index = m_Children.Add( pChild );	return (Index == -1) ? TLPtr::GetNullPtr<TBinaryTree>() : m_Children.ElementAt(Index);	}	//	add child
 	//gr: do not implement, causes too many ambiguities. In your client code convert to non const TPtr.......
 	//TPtr<TBinaryTree>&			AddChild(const TPtr<TBinaryTree>& pChild)	{	TPtr<TBinaryTree> pNonConstChild = pChild;	return AddChild( pNonConstChild );	}
-	Bool						RemoveChild(TRefRef ChildRef)			{	return m_Children.Remove( ChildRef );	}
+	FORCEINLINE Bool			RemoveChild(TRefRef ChildRef)					{	return m_Children.Remove( ChildRef );	}	//	this assumes there is only one child with this ref
+	FORCEINLINE Bool			RemoveChild(const char* pRefString)				{	return RemoveChild( TRef( pRefString ) );	}	//	added to ease ambiguity
+	FORCEINLINE Bool			RemoveChild(const TPtr<TBinaryTree>& pChild)	{	return m_Children.RemovePtr( pChild );	}	//	remove this ptr from the array (dont use .Remove()!)
 
 	void						Empty(Bool Dealloc=FALSE)						{	TBinary::Empty(Dealloc);	m_Children.Empty(Dealloc);	}	//	delete tree
 	void						Compact();										//	compact binary data and all our children

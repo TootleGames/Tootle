@@ -122,62 +122,60 @@ void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 
 	//	create a physics node if a collision shape exists
 
-	//	pull out collision shape from data if specified
-	TPtr<TBinaryTree> pCollisionShapeData = Message.GetChild("colshape");
+	//	look for mesh datums to convert into collision shapes
+	TPtrArray<TBinaryTree> CollisionDatumDatas;
+	Message.GetChildren("coldatum", CollisionDatumDatas );
+	TLAsset::TMesh* pMesh = NULL;
 
-	//	if collision shape data exists, we re-use it
-	//	no collision shape data, look for a datum
-	if ( !pCollisionShapeData )
+	if ( CollisionDatumDatas.GetSize() > 0 )
 	{
-		TRef CollisionShapeDatum;
-		if ( Message.ImportData("coldatum", CollisionShapeDatum ) )
+		pMesh = TLAsset::LoadAsset( MeshRef, TRUE, "Mesh" ).GetObject<TLAsset::TMesh>();
+		if ( !pMesh )
 		{
-			TPtr<TLMaths::TShape> pCollisionShape;
-			
-			//	get a datum from the mesh for the collision shape
-			if ( MeshRef.IsValid() )
-			{
-				TLAsset::TMesh* pMesh = TLAsset::LoadAsset( MeshRef, TRUE, "Mesh" ).GetObject<TLAsset::TMesh>();
-				if ( pMesh )
-				{
-					pCollisionShape = pMesh->GetDatum( CollisionShapeDatum );
-					if ( !pCollisionShape )
-					{
-						TTempString Debug_String("Collision datum (");
-						CollisionShapeDatum.GetString( Debug_String );
-						Debug_String.Append(") is missing from mesh ");
-						MeshRef.GetString( Debug_String );
-						TLDebug_Break( Debug_String );
-					}
-				}
-				else
-				{
-					TTempString Debug_String("Collision datum specified (");
-					CollisionShapeDatum.GetString( Debug_String );
-					Debug_String.Append(") but missing mesh ");
-					MeshRef.GetString( Debug_String );
-					TLDebug_Break( Debug_String );
-				}
-			}
-			else
-			{
-				TTempString Debug_String("Collision datum specified (");
-				CollisionShapeDatum.GetString( Debug_String );
-				Debug_String.Append(") to create a physics node on a Scene Object but no mesh specified");
-				TLDebug_Break( Debug_String );
-			}
+			TTempString Debug_String("Collision datums specified, but mesh \"");
+			MeshRef.GetString( Debug_String );
+			Debug_String.Append("\" is missing. Cannot create collision shapes for physics node");
+			TLDebug_Break( Debug_String );
+		}
+	}
 
-			//	if we got a shape, then export it to data we're going to use
-			if ( pCollisionShape )
-			{
-				pCollisionShapeData = Message.AddChild("colshape");
-				if ( !TLMaths::ExportShapeData( pCollisionShapeData, *pCollisionShape, FALSE ) )
-				{
-					//	failed - remove that data again
-					Message.RemoveChild("Colshape");
-					pCollisionShapeData = NULL;
-				}
-			}
+	for ( u32 d=0;	d<CollisionDatumDatas.GetSize() && pMesh;	d++ )
+	{
+		TBinaryTree& CollisionDatumData = *(CollisionDatumDatas[d]);
+
+		//	read datum ref
+		TRef CollisionShapeDatum;
+		CollisionDatumData.ResetReadPos();
+		if ( !CollisionDatumData.Read( CollisionShapeDatum ) )
+			continue;
+
+		//	get a datum from the mesh for the collision shape
+		TPtr<TLMaths::TShape>& pCollisionShape = pMesh->GetDatum( CollisionShapeDatum );
+		if ( !pCollisionShape )
+		{
+			TTempString Debug_String("Collision datum (");
+			CollisionShapeDatum.GetString( Debug_String );
+			Debug_String.Append(") is missing from mesh ");
+			MeshRef.GetString( Debug_String );
+			TLDebug_Break( Debug_String );
+			continue;
+		}
+		
+		//	if we got a shape, then export it to data we're going to use
+		TPtr<TBinaryTree>& pCollisionShapeData = Message.AddChild("colshape");
+		if ( TLMaths::ExportShapeData( pCollisionShapeData, *pCollisionShape, FALSE ) )
+		{
+			//	export ref - use the same ref as the datum
+			pCollisionShapeData->ExportData("Ref", CollisionShapeDatum );
+
+			//	and copy any extra data (eg. sensor state)
+			pCollisionShapeData->AddUnreadChildren( CollisionDatumData, FALSE );
+		}
+		else
+		{
+			//	failed - remove that data again
+			Message.RemoveChild( pCollisionShapeData );
+			pCollisionShapeData = NULL;
 		}
 	}
 
@@ -185,8 +183,8 @@ void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 	TRef PhysicsNodeType;
 	Message.ImportData("PNType", PhysicsNodeType );
 
-	//	if we did get a valid collision shape or a specific node type then create the physics node
-	if ( pCollisionShapeData || PhysicsNodeType.IsValid() )
+	//	if we have any collision shapes or a specific node type then create the physics node
+	if ( PhysicsNodeType.IsValid() || Message.GetChild("colshape").IsValid() )
 	{
 		//	re-use the message to create the physics node
 		CreatePhysicsNode( PhysicsNodeType, &Message );
@@ -198,9 +196,13 @@ void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 		Bool RenderEnable = TRUE;
 		Bool PhysicsEnable = TRUE;
 		Bool CollisionEnable = TRUE;
+		Bool DebugPhysicsEnable = FALSE;
 		
 		if ( pEnableData->ImportData("Render", RenderEnable ) )
 			EnableRenderNode( RenderEnable );
+
+		if ( pEnableData->ImportData("DbgPhys", DebugPhysicsEnable ) )
+			Debug_EnableRenderDebugPhysics( DebugPhysicsEnable );
 
 		Bool ChangePhysics = pEnableData->ImportData("Physics", PhysicsEnable );
 		ChangePhysics |= pEnableData->ImportData("Collision", CollisionEnable );

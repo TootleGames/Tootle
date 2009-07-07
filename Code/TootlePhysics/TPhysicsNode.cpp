@@ -51,6 +51,112 @@ namespace TLRef
 }
 
 
+//---------------------------------------------------------
+//	update the bodyshape to match our current shape - fails if it must be recreated, or doesnt exist etc
+//---------------------------------------------------------
+Bool TLPhysics::TCollisionShape::UpdateBodyShape()
+{
+	//	missing shape - gr: auto delete the body shape here?
+	if ( !m_pShape )
+	{
+		TLDebug_Break("shape expected");
+		return FALSE;
+	}
+
+	//	don't have an old body shape - nothing to "update"
+	if ( !m_pBodyShape )
+	{
+		TLDebug_Break("Bodyshape expected(? or not? is it okay to fail here and continue?");
+		return FALSE;
+	}
+
+	//	get a new shape def
+	b2CircleDef TempCircleDef;
+	b2PolygonDef TempPolygonDef;
+	b2FixtureDef* pNewShapeDef = TLPhysics::GetShapeDefFromShape(TempCircleDef,TempPolygonDef, *m_pShape );
+	
+	//	failed to get a definition from this shape
+	if ( !pNewShapeDef )
+		return FALSE;
+
+	//	check we can update the polygon...
+
+	//	different type (eg. circle vs polygon)
+	if ( m_pBodyShape->GetType() != pNewShapeDef->type )
+		return FALSE;
+
+	//	if polygon, make sure we have same number of verts (otherwise corrupts/crashes box)
+	if ( m_pBodyShape->GetType() == b2_polygonShape )
+	{
+		b2PolygonShape& CurrentPolygonShape = static_cast<b2PolygonShape&>( *m_pBodyShape->GetShape() );
+
+		//	different number of verts, can't do a simple update
+		//	must have used the TempPolygon shape def - saves casting pNewShapeDef
+		if ( TempPolygonDef.vertexCount != CurrentPolygonShape.GetVertexCount() )
+			return FALSE;
+
+		//	can just update vertex positions 
+		//	gr: I dont *think* this needs a refilter...
+		CurrentPolygonShape.Set( TempPolygonDef.vertices, TempPolygonDef.vertexCount );
+		return TRUE;
+	}
+	else if ( m_pBodyShape->GetType() == b2_circleShape )
+	{
+		b2CircleShape& CurrentCircleShape = static_cast<b2CircleShape&>( *m_pBodyShape->GetShape() );
+		
+		//	update circle shape 
+		//	must have used the TempCircle shape def - saves casting pNewShapeDef
+		//	gr: I dont *think* this needs a refilter...
+		CurrentCircleShape.m_p = TempCircleDef.localPosition;
+		CurrentCircleShape.m_radius = TempCircleDef.radius;
+		return TRUE;
+	}
+	else
+	{
+		TLDebug_Break("updating unhandled/unknown shape type");
+		return FALSE;
+	}
+
+}
+
+
+//---------------------------------------------------------
+//	delete body shape from body - returns if any changes made
+//---------------------------------------------------------
+Bool TLPhysics::TCollisionShape::DestroyBodyShape(b2Body* pBody)
+{
+	//	nothing to destroy
+	if ( !m_pBodyShape )
+		return FALSE;
+
+	//	check bodies match - use correct body if wrong
+	if ( GetBody() != pBody )
+	{
+		TLDebug_Break("Tried to delete bodyshape from body which it's not attached to");
+		pBody = GetBody();
+	}
+
+	if ( !pBody )
+	{
+		TLDebug_Break("Body expected");
+		return FALSE;
+	}
+
+	//	destroy shape
+	pBody->DestroyFixture( m_pBodyShape );
+	m_pBodyShape = NULL;
+
+	return TRUE;
+}
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 
 
@@ -59,7 +165,6 @@ TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 	m_Bounce						( 0.0f ),
 	m_Damping						( 0.0f ),
 	m_Friction						( 0.4f ),
-	m_Temp_ExtrudeTimestep			( 0.f ),
 	m_TransformChangedBits			( 0x0 ),
 	m_pBody							( NULL ),
 	m_BodyTransformChanged			( FALSE )
@@ -82,6 +187,10 @@ void TLPhysics::TPhysicsNode::Shutdown()
 	{
 		m_pBody->GetWorld()->DestroyBody( m_pBody );
 		m_pBody = NULL;
+
+		//	invalidate pointers to all body's shapes
+		for ( u32 s=0;	s<m_CollisionShapes.GetSize();	s++ )
+			m_CollisionShapes[s].SetBodyShape( NULL );
 	}
 
 	//	regular shutdown
@@ -204,15 +313,24 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 	if ( Message.ImportData("Damping", m_Damping ) )
 		OnDampingChanged();
 
-	//	read collision shape
-	TPtr<TBinaryTree>& pColShapeData = Message.GetChild("Colshape");
-	if ( pColShapeData )
+	//	read collision shapes
+	TPtrArray<TBinaryTree> CollisionShapeDatas;
+	Message.GetChildren("colshape", CollisionShapeDatas );
+	for ( u32 i=0;	i<CollisionShapeDatas.GetSize();	i++ )
 	{
-		pColShapeData->ResetReadPos();
-		TPtr<TLMaths::TShape> pCollisionShape = TLMaths::ImportShapeData( *pColShapeData );
+		TBinaryTree& ColShapeData = *(CollisionShapeDatas[i]);
+		ColShapeData.ResetReadPos();
+		TPtr<TLMaths::TShape> pCollisionShape = TLMaths::ImportShapeData( ColShapeData );
 		if ( pCollisionShape )
 		{
-			SetCollisionShape( pCollisionShape );
+			//	import ref and sensor settings
+			TRef ShapeRef;
+			Bool IsSensor = FALSE;
+			ColShapeData.ImportData("Ref", ShapeRef );
+			ColShapeData.ImportData("Sensor", IsSensor );
+
+			//	add the collison shape
+			AddCollisionShape( pCollisionShape, IsSensor, ShapeRef );
 
 			//	gr: by default we'll enable collision when a collision shape is specified
 			EnableCollision();
@@ -295,19 +413,9 @@ void TLPhysics::TPhysicsNode::Update(float fTimeStep)
 	//	do base update to process messages
 	TLGraph::TGraphNode<TLPhysics::TPhysicsNode>::Update( fTimeStep );
 
-	//	init per-frame stuff
-	m_Temp_ExtrudeTimestep = fTimeStep;
-	SetAccumulatedMovementInvalid();
-
-	if ( m_PhysicsFlags( Flag_HasCollision ) && !HasCollision() )
-		return;
-
-	//	set the pre-update pos
-//	m_LastPosition = m_Position;
-
+	//	add gravity force
 	if ( m_PhysicsFlags( Flag_HasGravity ) )
 	{
-		//	add gravity
 		//	negate as UP is opposite to the direction of gravity.
 		float3 GravityForce = g_WorldUpNormal * -g_GravityMetresSec;
 
@@ -380,7 +488,7 @@ float3 TLPhysics::TPhysicsNode::GetPosition() const
 //----------------------------------------------------
 void TLPhysics::TPhysicsNode::SetPosition(const float3& Position) 
 {
-	if ( GetCollisionShapeTransform().HasScale() )
+	if ( GetTransform().HasScale() )
 	{
 		TLDebug_Break("handle this...");
 	}
@@ -504,15 +612,98 @@ void TLPhysics::TPhysicsNode::PostUpdateAll(float fTimestep,TLPhysics::TPhysicsg
 
 
 //----------------------------------------------------------
-//	setup collision shape from a shape
+//	setup collision shape from a shape, add to list, replace existing shape if it already exists
 //----------------------------------------------------------
-void TLPhysics::TPhysicsNode::SetCollisionShape(const TPtr<TLMaths::TShape>& pShape)
+TRef TLPhysics::TPhysicsNode::AddCollisionShape(const TPtr<TLMaths::TShape>& pShape,Bool IsSensor,TRef ShapeRef)
 {
-	//	set shape
-	m_pCollisionShape = pShape;
+	//	check params
+	if ( !pShape )
+	{
+		TLDebug_Break("Shape expected");
+		return TRef();
+	}
+
+	//	no ref provided, find a free one
+	if ( !ShapeRef.IsValid() )
+	{
+		do
+		{
+			ShapeRef.Increment();
+		}
+		while ( m_CollisionShapes.Exists( ShapeRef ) );
+	}
+
+	//	find existing shape to repalce
+	TCollisionShape* pExistingCollisionShape = GetCollisionShape( ShapeRef );
+	if ( pExistingCollisionShape )
+	{
+#ifdef _DEBUG
+		TTempString Debug_String("Collision shape ");
+		ShapeRef.GetString( Debug_String );
+		Debug_String.Append(" already exists on node ");
+		GetNodeRef().GetString( Debug_String );
+		Debug_String.Append("... replacing shape");
+		TLDebug_Print( Debug_String );
+#endif
+
+		//	set new shape
+		pExistingCollisionShape->SetShape( pShape );
+
+		//	update the shape by just calling create
+		//	failed to update shape, remove it
+		if ( CreateBodyShape( *pExistingCollisionShape ) == SyncFalse)
+		{
+			RemoveCollisionShape( ShapeRef );
+			return TRef();
+		}
+
+		return ShapeRef;		
+	}
+
+	//	else create a new one 
+	TCollisionShape NewCollisionShape;
+	NewCollisionShape.SetShape( pShape );
+	NewCollisionShape.SetShapeRef( ShapeRef );
+	NewCollisionShape.SetIsSensor( IsSensor );
 
 	//	create box2d shape
-	CreateBodyShape();
+	SyncBool CreateResult = CreateBodyShape( NewCollisionShape );
+
+	//	failed
+	if ( CreateResult == SyncFalse )
+		return TRef();
+	
+	//	success! add to list of shapes
+	m_CollisionShapes.Add( NewCollisionShape );
+
+	return NewCollisionShape.GetShapeRef();
+}
+
+
+//----------------------------------------------------------
+//	remove a collision shape, and it's body shape from the body. returns false if doesn't exist
+//----------------------------------------------------------
+Bool TLPhysics::TPhysicsNode::RemoveCollisionShape(TCollisionShape& CollisionShape)
+{
+	//	get index to remove from collision shape list - security check really before removing the body
+	s32 CollisionShapeIndex = m_CollisionShapes.FindIndex( CollisionShape );
+	if ( CollisionShapeIndex == -1 )
+	{
+		TLDebug_Break("Collison shape tried to be removed from node which it's not a member of");
+		return FALSE;
+	}
+
+	//	delete shape from body
+	if ( m_pBody )
+	{
+		if ( CollisionShape.DestroyBodyShape( m_pBody ) )
+			OnBodyShapeRemoved();
+	}
+
+	//	get index to remove from collision shape list
+	m_CollisionShapes.RemoveAt( CollisionShapeIndex );
+
+	return TRUE;
 }
 
 
@@ -539,14 +730,14 @@ TLPhysics::TCollisionInfo* TLPhysics::TPhysicsNode::OnCollision()
 //----------------------------------------------------
 //	called when we are no longer colliding with a node
 //----------------------------------------------------
-void TLPhysics::TPhysicsNode::OnEndCollision(TLPhysics::TPhysicsNode& OtherNode)
+void TLPhysics::TPhysicsNode::OnEndCollision(TRefRef ShapeRef,TLPhysics::TPhysicsNode& OtherNode,TRefRef OtherShapeRef)
 {
 	//	create a special TCollisionInfo with end-of-collision info
 	TLPhysics::TCollisionInfo* pEndCollisionInfo = TLPhysics::TPhysicsNode::OnCollision();
 	if ( !pEndCollisionInfo )
 		return;
 
-	pEndCollisionInfo->SetIsEndOfCollision( OtherNode );
+	pEndCollisionInfo->SetIsEndOfCollision( ShapeRef, OtherNode, OtherShapeRef );
 }
 
 
@@ -639,7 +830,7 @@ Bool TLPhysics::TPhysicsNode::CreateBody(b2World& World)
 
 	//	set user data as a pointer back to self (could use ref...)
 	//	if this changes, change TLPhysics::GetPhysicsNodeFromBody()
-	BodyDef.userData = this;
+	BodyDef.userData = GetBodyUserDataFromPhysicsNode( this );
 
 	BodyDef.linearDamping = m_Damping;
 
@@ -652,115 +843,123 @@ Bool TLPhysics::TPhysicsNode::CreateBody(b2World& World)
 	m_BodyTransformChanged = FALSE;
 
 	//	create shape definition from our existing collision shape
-	if ( m_pCollisionShape )
+	for ( u32 s=0;	s<m_CollisionShapes.GetSize();	s++ )
 	{
-		if ( !CreateBodyShape() )
-			return FALSE;
+		if ( CreateBodyShape( m_CollisionShapes[s] ) != SyncTrue )
+		{
+			TLDebug_Break("todo: handle this - wait means try again sometime - false means shape is invalid");
+		}
 	}
+
 
 	return TRUE;
 }
 
+//-------------------------------------------------------------
+//	get the body shape (fixture) for this shape 
+//-------------------------------------------------------------
+b2Fixture* TLPhysics::TPhysicsNode::GetBodyShape(TRefRef ShapeRef)
+{
+	//	need a body
+	if ( !m_pBody )
+		return NULL;
+	
+	//	loop through list to find fixture with this shape ref
+	b2Fixture* pShape = m_pBody->GetFixtureList();
+	while ( pShape )
+	{
+		//	get check ref
+		TRef BodyShapeRef = TLPhysics::GetShapeRefFromShape( pShape );
+		if ( BodyShapeRef == ShapeRef )
+			return pShape;
+
+		pShape = pShape->GetNext();
+	}
+
+	//	no matches
+	return NULL;
+}
 
 //-------------------------------------------------------------
-//	when our collision shape changes we recreate the shape on the body
+//	create/recreate this shape on the body. if FALSE - it failed, if WAIT then we're waiting for a body to add it to
 //-------------------------------------------------------------
-Bool TLPhysics::TPhysicsNode::CreateBodyShape()
+SyncBool TLPhysics::TPhysicsNode::CreateBodyShape(TCollisionShape& CollisionShape)
 {
 	//	need a box2d body
 	if ( !m_pBody )
-		return FALSE;
+		return SyncWait;
 
-	//	gr: optimisation here; according to code documentation, you can change a shape's vertexes at runtime (needs same number of verts)
-	//		which would save all the filtering etc
-
-	//	destroy existing shapes/fixtures
-	b2Fixture* pExistingShape = m_pBody->GetFixtureList();
-	while ( pExistingShape )
+	//	update existing shape
+	if ( CollisionShape.GetBodyShape() )
 	{
-		//	store next
-		b2Fixture* pNextShape = pExistingShape->GetNext();
-
-		//	remove from body
-		m_pBody->DestroyFixture( pExistingShape );
-
-		pExistingShape = pNextShape;
+		if ( CollisionShape.UpdateBodyShape() )
+			return SyncTrue;
+		
+		//	update of shape failed, delete it
+		CollisionShape.DestroyBodyShape( m_pBody );
 	}
-
-	//	no collision shape to work from
-	if ( !m_pCollisionShape )
-		return FALSE;
 
 	//	create new shape
-	if ( !m_pCollisionShape->IsValid() )
+	TLMaths::TShape* pShape = CollisionShape.GetShape();
+	if ( !pShape )
 	{
-		TLDebug_Break("Trying to create box2d shape from invalid shape");
-		return FALSE;
+		TLDebug_Break("shape expected");
+		return SyncFalse;
 	}
 
-	//	try to get a circle definition first...
-	b2CircleDef CircleDef;
-	b2PolygonDef PolygonDef;
-	b2FixtureDef* pShapeDef = NULL;
-	TLMaths::TShape* pCollisionShape = m_pCollisionShape;
+	//	if we have to scale shape because of our node transform, make up a new shape
 	TPtr<TLMaths::TShape> pScaledCollisionShape = NULL;
-
-	//	gr: not decided how to do this yet... if the scale changes we will need to re-create the body shape...
-	//		as a scale doesnt come OUT of box2d body, we should retain this scale
-	//		but SCALE is the ONLY thing to apply to the shape
 	if ( GetTransform().HasScale() )
 	{
 		TLMaths::TTransform ScaleTransform;
 		ScaleTransform.SetScale( GetTransform().GetScale() );
-		pScaledCollisionShape = m_pCollisionShape->Transform( ScaleTransform, TLPtr::GetNullPtr<TLMaths::TShape>() );
-		pCollisionShape = pScaledCollisionShape;
+		pScaledCollisionShape = pShape->Transform( ScaleTransform, TLPtr::GetNullPtr<TLMaths::TShape>() );
+		pShape = pScaledCollisionShape;
 	}
 
-	//	apply scale to the shape
-
-	if ( TLPhysics::GetCircleDefFromShape( CircleDef, *pCollisionShape ) )
-	{
-		pShapeDef = &CircleDef;
-	}
-	else if ( TLPhysics::GetPolygonDefFromShape( PolygonDef, *pCollisionShape ) )
-	{
-		pShapeDef = &PolygonDef;
-	}
-	else
+	//	get a new shape def
+	b2CircleDef TempCircleDef;
+	b2PolygonDef TempPolygonDef;
+	b2FixtureDef* pNewShapeDef = TLPhysics::GetShapeDefFromShape(TempCircleDef,TempPolygonDef, *pShape );
+	if ( !pNewShapeDef )
 	{
 #ifdef _DEBUG
-		TTempString Debug_String("Unsupported TShape -> box2d shape? ");
-		m_pCollisionShape->GetShapeType().GetString( Debug_String );
-		TLDebug_Print( Debug_String );
+		TTempString Debug_String("failed to make shape definition for new body shape, unsupported TShape -> box2d shape? ");
+		pShape->GetShapeType().GetString( Debug_String );
+		TLDebug_Break( Debug_String );
 #endif
-		return FALSE;
+		return SyncFalse;
 	}
 
-	//	setup generic shape definition stuff
-	b2FixtureDef& ShapeDef = *pShapeDef;
+	//	initialise shape
 
-	//	make everything rigid
-	ShapeDef.density = 1.f;
+	//	node properties
+	pNewShapeDef->density = 1.f;		//	make everything rigid
+	pNewShapeDef->friction = m_Friction;
+	pNewShapeDef->restitution = m_Bounce;	//	zero restitution = no bounce
 
-	ShapeDef.friction = m_Friction;
-
-	//	zero restitution = no bounce
-	ShapeDef.restitution = m_Bounce;
-
-	//	make sensor
-	if ( IsSensor() )
-		ShapeDef.isSensor = TRUE;
-	else
-		ShapeDef.isSensor = FALSE;
+	//	set shape properties
+	pNewShapeDef->isSensor = CollisionShape.IsSensor();
+	pNewShapeDef->userData = TLPhysics::GetShapeUserDataFromShapeRef( CollisionShape.GetShapeRef() );
 
 	//	create shape
-	m_pBody->CreateFixture( &ShapeDef );
+	b2Fixture* pNewBodyShape = m_pBody->CreateFixture( pNewShapeDef );
 
-	//	generate new mass value for the body. If static mass must be zero
-	if ( !IsStatic() )
-		m_pBody->SetMassFromShapes();
+	//	update collision shape
+	CollisionShape.SetBodyShape( pNewBodyShape );
 
-	return TRUE;
+	if ( pNewBodyShape )
+	{
+		OnBodyShapeAdded( CollisionShape );
+		return SyncTrue;
+	}
+	else
+	{
+		//	everything's okay, but failed to add to body... maybe body is disabled?
+		//	queue up to add again
+		TLDebug_Break("Find out what this circumstance might be");
+		return SyncWait;
+	}
 }
 
 
@@ -851,7 +1050,6 @@ void TLPhysics::TPhysicsNode::OnNodeEnabledChanged(Bool IsNowEnabled)
 void TLPhysics::TPhysicsNode::OnShapeDefintionChanged()
 {
 	//	no changes to implement as shape isn't created
-	//if ( !GetBodyShape() )
 	if ( !GetBody() )
 		return;
 
@@ -862,22 +1060,17 @@ void TLPhysics::TPhysicsNode::OnShapeDefintionChanged()
 //-------------------------------------------------------------
 //	get a more exact array of all the box 2D body shapes
 //-------------------------------------------------------------
-void TLPhysics::TPhysicsNode::GetBodyWorldShapes(TPtrArray<TLMaths::TShape>& ShapeArray)
+void TLPhysics::TPhysicsNode::GetCollisionShapesWorld(TPtrArray<TLMaths::TShape>& ShapeArray) const
 {
-	//	get all the bodies
-	TFixedArray<b2Body*,100> Bodies;
-	GetBodys( Bodies );
+	if ( !m_pBody )
+		return;
 
-	//	for each shape in each body, get a world-transformed shape
-	for ( u32 b=0;	b<Bodies.GetSize();	b++ )
+	//	for each shape in the body, get a world-transformed shape
+	b2Fixture* pBodyShape = m_pBody->GetFixtureList();
+	while ( pBodyShape )
 	{
-		b2Body* pBody = Bodies[b];
-		b2Fixture* pBodyShape = pBody->GetFixtureList();
-		while ( pBodyShape )
-		{
-			ShapeArray.Add( TLPhysics::GetShapeFromBodyShape( *pBodyShape, GetTransform() ) );
-			pBodyShape = pBodyShape->GetNext();
-		}
+		ShapeArray.Add( TLPhysics::GetShapeFromBodyShape( *pBodyShape, GetTransform() ) );
+		pBodyShape = pBodyShape->GetNext();
 	}
 
 }
@@ -911,8 +1104,6 @@ void TLPhysics::TPhysicsNode::AddForce(const float3& Force,Bool MassRelative)
 
 	//	gr: apply the force at the world center[mass center] of the body
 	m_pBody->ApplyForce( b2Vec2(Force.x*Mass,Force.y*Mass) , m_pBody->GetWorldCenter() );	
-
-	OnForceChanged();
 }
 
 
@@ -935,7 +1126,43 @@ void TLPhysics::TPhysicsNode::GetBodyTransformValues(b2Vec2& Translate,float32& 
 	else
 		AngleRadians = TLMaths::TAngle::DegreesToRadians( 0.f );
 
+}
 
 
+//-------------------------------------------------------------
+//
+//-------------------------------------------------------------
+void TLPhysics::TPhysicsNode::SetCollisionNone()
+{
+	TLDebug_Break("if required - remove all collision shapes with a function that removes the shape from the body");
+}
+
+
+//-------------------------------------------------------------
+//	body shape has been added
+//-------------------------------------------------------------
+void TLPhysics::TPhysicsNode::OnBodyShapeAdded(TCollisionShape& CollisionShape)
+{
+	//	gr: same code atm
+	OnBodyShapeRemoved();
+
+}
+
+//-------------------------------------------------------------
+//	body shape has been removed
+//-------------------------------------------------------------
+void TLPhysics::TPhysicsNode::OnBodyShapeRemoved()
+{
+	if ( !m_pBody )
+	{
+		TLDebug_Break("Body expected");
+		return;
+	}
+
+	//	generate new mass value for the body. If static mass must be zero
+	if ( IsStatic() )
+		m_pBody->SetStatic();
+	else
+		m_pBody->SetMassFromShapes();
 }
 

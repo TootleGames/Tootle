@@ -88,6 +88,29 @@ TPtr<TLMaths::TShape> TLPhysics::GetShapeFromBodyShape(b2Fixture& BodyShape,cons
 }
 
 
+//------------------------------------------------------
+//	get a box2D shape definition from a shape. need some temporaries to decide which to return
+//------------------------------------------------------
+b2FixtureDef* TLPhysics::GetShapeDefFromShape(b2CircleDef& TempCircleDef,b2PolygonDef& TempPolygonDef,const TLMaths::TShape& Shape)
+{
+	if ( !Shape.IsValid() )
+	{
+		TLDebug_Break("Cannot create shapedef - shape is invalid");
+		return NULL;
+	}
+
+	//	try a circle shape first
+	if ( GetCircleDefFromShape( TempCircleDef, Shape ) )
+		return &TempCircleDef;
+
+	//	try polygon def
+	if ( GetPolygonDefFromShape( TempPolygonDef, Shape ) )
+		return &TempPolygonDef;
+
+	//	shape is unsupported...
+	return NULL;
+}
+
 
 //------------------------------------------------------
 //	get a box2D polygon [definition] shape from a tootle shape
@@ -205,11 +228,13 @@ void TLPhysics::TCollisionInfo::Set(const TLPhysics::TPhysicsNode& OtherNode,con
 //------------------------------------------------------
 //	set up end-of-collision with this node
 //------------------------------------------------------
-void TLPhysics::TCollisionInfo::SetIsEndOfCollision(const TLPhysics::TPhysicsNode& OtherNode)
+void TLPhysics::TCollisionInfo::SetIsEndOfCollision(TRefRef ShapeRef,const TLPhysics::TPhysicsNode& OtherNode,TRefRef OtherShapeRef)
 {
 	m_OtherNode = OtherNode.GetNodeRef();
 	m_OtherNodeOwner = OtherNode.GetOwnerSceneNodeRef();
 	m_OtherNodeStatic = OtherNode.IsStatic();
+	m_Shape = ShapeRef;
+	m_OtherShape = OtherShapeRef;
 
 	SetIsNewCollision( FALSE );
 
@@ -231,6 +256,8 @@ void TLPhysics::TCollisionInfo::ExportData(TBinaryTree& Data)
 	Data.ExportData("Node", m_OtherNode );
 	Data.ExportData("Owner", m_OtherNodeOwner );
 	Data.ExportData("OthStatic", m_OtherNodeStatic );
+	Data.ExportData("Shape", m_Shape );
+	Data.ExportData("OthShape", m_OtherShape );
 
 	if ( m_IsNewCollision )
 	{
@@ -252,9 +279,11 @@ Bool TLPhysics::TCollisionInfo::ImportData(TBinaryTree& Data)
 	if ( !Data.Read( m_IsNewCollision ) )
 		return FALSE;
 
-	if ( !Data.ImportData("Node", m_OtherNode ) )	return FALSE;
-	if ( !Data.ImportData("Owner", m_OtherNodeOwner ) )	return FALSE;
+	if ( !Data.ImportData("Node", m_OtherNode ) )				return FALSE;
+	if ( !Data.ImportData("Owner", m_OtherNodeOwner ) )			return FALSE;
 	if ( !Data.ImportData("OthStatic", m_OtherNodeStatic ) )	return FALSE;
+	if ( !Data.ImportData("Shape", m_Shape ) )					return FALSE;
+	if ( !Data.ImportData("OthShape", m_OtherShape ) )			return FALSE;
 
 	//	optional data, reset if doesn't exist
 	if ( !Data.ImportData("Intersection", m_Intersection ) )
