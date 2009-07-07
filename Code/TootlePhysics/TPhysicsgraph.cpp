@@ -11,9 +11,9 @@
 #define BOX2D_VELOCITY_ITERATIONS		1	//	movement iterations
 #define BOX2D_POSITION_ITERATIONS		10	//	constraint/collision/restitution iterations
 
-
-
-#define COLLISION_ITERATIONS	1
+#ifdef _DEBUG
+	//#define DEBUG_PRINT_COLLISIONS
+#endif
 
 
 namespace TLPhysics
@@ -535,11 +535,13 @@ void TLPhysics::TPhysicsgraph::BeginContact(b2Contact* contact)
 		return;
 	}
 	
+#ifdef DEBUG_PRINT_COLLISIONS
 	TTempString Debug_String("Collison between ");
 	pNodeA->GetNodeRef().GetString(Debug_String );
 	Debug_String.Append(" and ");
 	pNodeB->GetNodeRef().GetString(Debug_String );
 	TLDebug_Print( Debug_String );
+#endif
 
 	u32 ContactPointCount = contact->GetManifold()->m_pointCount;
 	
@@ -623,13 +625,18 @@ void TLPhysics::TPhysicsgraph::EndContact(b2Contact* contact)
 	TRef ShapeARef = TLPhysics::GetShapeRefFromShape( pShapeA );
 	TRef ShapeBRef = TLPhysics::GetShapeRefFromShape( pShapeB );
 
+#ifdef DEBUG_PRINT_COLLISIONS
 	TTempString Debug_String("No more collision between ");
 	pNodeA->GetNodeRef().GetString(Debug_String );
 	Debug_String.Append(" and ");
 	pNodeB->GetNodeRef().GetString(Debug_String );
 	TLDebug_Print( Debug_String );
+#endif
 
-	pNodeA->OnEndCollision( ShapeARef, *pNodeB, ShapeBRef );
-	pNodeB->OnEndCollision( ShapeARef, *pNodeA, ShapeBRef );
+	if ( !pShapeB->IsSensor() )
+		pNodeA->OnEndCollision( ShapeARef, *pNodeB, ShapeBRef );
+
+	if ( !pShapeA->IsSensor() )
+		pNodeB->OnEndCollision( ShapeARef, *pNodeA, ShapeBRef );
 }
 

@@ -694,6 +694,7 @@ void TLScene::TSceneNode_Object::SetScale(const float3& Scale)
 //--------------------------------------------------------
 void TLScene::TSceneNode_Object::Debug_EnableRenderDebugPhysics(Bool Enable)
 {
+#ifdef _DEBUG
 	if ( Enable && !m_Debug_RenderDebugPhysicsNodeRef.IsValid() )
 	{
 		//	create debug render node - requires render node and physics node
@@ -709,5 +710,6 @@ void TLScene::TSceneNode_Object::Debug_EnableRenderDebugPhysics(Bool Enable)
 	{
 		TLRender::g_pRendergraph->RemoveNode( m_Debug_RenderDebugPhysicsNodeRef );
 	}
+#endif
 }
 
