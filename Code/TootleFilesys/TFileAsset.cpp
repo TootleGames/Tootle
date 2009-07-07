@@ -68,7 +68,7 @@ Bool TLFileSys::TFileAsset::ImportTree(TPtr<TBinaryTree>& pChild,SectionHeader& 
 
 		//	create new child
 		TPtr<TBinaryTree> pNewChild = pChild->AddChild( ChildHeader.m_DataRef );
-		pChild->SetDataTypeHint( ChildHeader.m_DataType, TRUE );
+		pNewChild->SetDataTypeHint( ChildHeader.m_DataType, TRUE );
 
 		//	import that child
 		if ( !ImportTree( pNewChild, ChildHeader, ChildTreeData ) )
