@@ -258,11 +258,30 @@ TRef TLFileSys::TLFileAssetImporter::Mode_Init::Update(float Timestep)
 	//	read file header
 	TFileAsset::Header& Header = GetHeader();
 	if ( !pFile->Read( Header ) )
+	{
+		#ifdef _DEBUG
+		TTempString Debug_String("Asset file ");
+		Debug_String.Append( pFile->GetFilename() );
+		Debug_String.Append(" failed to read header data");
+		TLDebug_Break( Debug_String );
+		#endif
 		return "Failed";
+	}
 
 	//	validate header ref
 	if ( GetHeader().m_TootFileRef != TLFileSys::g_TootFileRef )
+	{
+		#ifdef _DEBUG
+		TTempString Debug_String("Asset file ");
+		Debug_String.Append( pFile->GetFilename() );
+		Debug_String.Append(" header ref is wrong/old: ");
+		GetHeader().m_TootFileRef.GetString( Debug_String );
+		Debug_String.Append(". Should be: ");
+		TLFileSys::g_TootFileRef.GetString( Debug_String );
+		TLDebug_Break( Debug_String );
+		#endif
 		return "Failed";
+	}
 
 	//	decompress file
 	return "Decompress";
