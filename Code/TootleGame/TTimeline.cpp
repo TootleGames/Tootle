@@ -179,7 +179,7 @@ Bool TTimelineInstance::ProcessFinalKeyframe(const TLAsset::TTempKeyframeData& K
 			// Get the command 
 			TLAsset::TAssetTimelineCommand& Cmd = pCmdList->GetCommands().ElementAt(uIndex2);
 
-			if(!SendCommandAsMessage(Cmd, pCmdList->GetNodeGraphRef(), pCmdList->GetNodeRef()))
+			if(!SendCommandAsMessage(&Cmd, NULL, pCmdList->GetNodeGraphRef(), pCmdList->GetNodeRef()))
 			{
 				TLDebug_Print("Failed to send command");
 				return FALSE;
@@ -240,35 +240,16 @@ Bool TTimelineInstance::ProcessKeyframes(const TLAsset::TTempKeyframeData& Keyfr
 
 				if(pToCmd != NULL)
 				{
-					TRef MessageRef = FromCmd.GetMessageRef();
 					// Command exists in both lists
-					// CHeck to se eif this is a command that *might* be interped.
-					// If so then go through the interp message sending rather than sending the message as-is
-					// Otherwise simply send the message as is
-					if(MessageRef == "SetTransform")
-					{
-						// Determine the percentage of the time we are betwen the keyframes
-						float fPercent = (m_fTime - KeyframeFrom.m_fTime) / (KeyframeTo.m_fTime - KeyframeFrom.m_fTime);
 
-						// Interp the key data
-						if(!SendInterpedCommandAsMessage(FromCmd, *pToCmd, pFromCmdList->GetNodeGraphRef(), pFromCmdList->GetNodeRef(), MessageRef, fPercent))
-						{
-							TLDebug_Print("Failed to send command");
-							return FALSE;
-						}
-					}
-					else
+					// Determine the percentage of the time we are betwen the keyframes
+					float fPercent = (m_fTime - KeyframeFrom.m_fTime) / (KeyframeTo.m_fTime - KeyframeFrom.m_fTime);
+
+					// Interp the key data
+					if(!SendCommandAsMessage(&FromCmd, pToCmd, pFromCmdList->GetNodeGraphRef(), pFromCmdList->GetNodeRef(), fPercent, TRUE))
 					{
-						// Crossing over keyframe?
-						if(bCrossingKeyframe)
-						{
-							// On the exact time of the keyframe so send out the command as a message
-							if(!SendCommandAsMessage(FromCmd, pFromCmdList->GetNodeGraphRef(), pFromCmdList->GetNodeRef()))
-							{
-								TLDebug_Print("Failed to send command");
-								return FALSE;
-							}
-						}
+						TLDebug_Print("Failed to send command");
+						return FALSE;
 					}
 				}
 				else
@@ -277,7 +258,7 @@ Bool TTimelineInstance::ProcessKeyframes(const TLAsset::TTempKeyframeData& Keyfr
 					if(bCrossingKeyframe)
 					{
 						// On the exact time of the keyframe so send out the command as a message
-						if(!SendCommandAsMessage(FromCmd, pFromCmdList->GetNodeGraphRef(), pFromCmdList->GetNodeRef()))
+						if(!SendCommandAsMessage(&FromCmd, NULL, pFromCmdList->GetNodeGraphRef(), pFromCmdList->GetNodeRef()))
 						{
 							TLDebug_Print("Failed to send command");
 							return FALSE;
@@ -299,7 +280,7 @@ Bool TTimelineInstance::ProcessKeyframes(const TLAsset::TTempKeyframeData& Keyfr
 					// Get the command from the 'from' command list
 					TLAsset::TAssetTimelineCommand& FromCmd = pFromCmdList->GetCommands().ElementAt(uIndex2);
 
-					if(!SendCommandAsMessage(FromCmd, pFromCmdList->GetNodeGraphRef(), pFromCmdList->GetNodeRef()))
+					if(!SendCommandAsMessage(&FromCmd, NULL, pFromCmdList->GetNodeGraphRef(), pFromCmdList->GetNodeRef()))
 					{
 						TLDebug_Print("Failed to send command");
 						return FALSE;
@@ -338,9 +319,9 @@ Bool TTimelineInstance::ProcessKeyframes(const TLAsset::TTempKeyframeData& Keyfr
 }
 
 
-Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand& Command, TRef NodeGraphRef, TRef NodeRef)
+Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFromCommand, TLAsset::TAssetTimelineCommand* pToCommand, TRef NodeGraphRef, TRef NodeRef, float fPercent, Bool bTestDataForInterp)
 {
-	TLDebug_Print("Sending as-is command");
+	TLDebug_Print("Sending timeline command");
 
 	// Check for node mapped ref.  If found replace the ndoe ref with the one for our key array
 	if(m_NodeRefMap.GetSize() > 0)
@@ -358,14 +339,16 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand& Com
 	// if the timeline instance hasn;t had the BindTo routine called then "this" won't have been replaced.
 	// We can't really call anything on the graphs using a ref of "this" as it won't do anything so at least 
 	// trap this in debug.
-	if(NodeRef == TRef("this"))
+	if(NodeRef == TRef_Static4(t,h,i,s))
 	{
-		TLDebug_Print("Invalid node ref for 'this' on asset script instance");
+		TLDebug_Print("Invalid node ref for 'this' on timline instance");
 		return FALSE;
 	}
 #endif
 
-	TRef MessageRef = Command.GetMessageRef();
+	TLMessaging::TMessage* pMessage = pFromCommand;
+
+	TRef MessageRef = pFromCommand->GetMessageRef();
 
 	// Handle special create and shutdown commands
 	if(MessageRef == TLCore::InitialiseRef)
@@ -373,20 +356,20 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand& Com
 		// get the paretn ndoe ref
 		TRef ParentNodeRef;
 
-		Command.ImportData("ParentRef", ParentNodeRef);
+		pFromCommand->ImportData("ParentRef", ParentNodeRef);
 
 		// Create a new node via the graph and 
 		TRef NewNodeRef;
 
 		// Create a node via the graph
-		if(NodeGraphRef == "Scene")
-			NewNodeRef = TLScene::g_pScenegraph->CreateNode(NodeRef, "Object", ParentNodeRef, &Command);
-		else if(NodeGraphRef == "Render")
-			NewNodeRef = TLRender::g_pRendergraph->CreateNode(NodeRef, "Render", ParentNodeRef, &Command);
-		else if(NodeGraphRef == "Audio")
-			NewNodeRef = TLAudio::g_pAudiograph->CreateNode(NodeRef, "Audio", ParentNodeRef, &Command);
-		else if(NodeGraphRef == "Physics")
-			NewNodeRef = TLPhysics::g_pPhysicsgraph->CreateNode(NodeRef, "Physics", ParentNodeRef, &Command);
+		if(NodeGraphRef == TLAnimation::ScenegraphRef)
+			NewNodeRef = TLScene::g_pScenegraph->CreateNode(NodeRef, "Object", ParentNodeRef, pMessage);
+		else if(NodeGraphRef == TLAnimation::RendergraphRef)
+			NewNodeRef = TLRender::g_pRendergraph->CreateNode(NodeRef, "Render", ParentNodeRef, pMessage);
+		else if(NodeGraphRef == TLAnimation::AudiographRef)
+			NewNodeRef = TLAudio::g_pAudiograph->CreateNode(NodeRef, "Audio", ParentNodeRef, pMessage);
+		else if(NodeGraphRef == TLAnimation::PhysicsgraphRef)
+			NewNodeRef = TLPhysics::g_pPhysicsgraph->CreateNode(NodeRef, "Physics", ParentNodeRef, pMessage);
 		else
 		{
 			// Invalid graph ref? We may need to handle special cases here.
@@ -396,7 +379,7 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand& Com
 
 		if(NewNodeRef.IsValid() && (NodeRef != NewNodeRef))
 		{
-			// Store teh reference in the key array.  This will be used as the alternative node name for 
+			// Store the reference in the key array.  This will be used as the alternative node name for 
 			// when the same node ID is used in other commands
 			m_NodeRefMap.Add(NodeRef, NewNodeRef);
 		}
@@ -408,26 +391,25 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand& Com
 		m_NodeRefMap.RemoveItem(NodeRef);
 
 		// Shutdown a node from the graph
-		if(NodeGraphRef == "Scene")
+		if(NodeGraphRef == TLAnimation::ScenegraphRef)
 			return TLScene::g_pScenegraph->RemoveNode(NodeRef);
-		else if(NodeGraphRef == "Render")
+		else if(NodeGraphRef == TLAnimation::RendergraphRef)
 			return TLRender::g_pRendergraph->RemoveNode(NodeRef);
-		else if(NodeGraphRef == "Audio")
+		else if(NodeGraphRef == TLAnimation::AudiographRef)
 			return TLAudio::g_pAudiograph->RemoveNode(NodeRef);
-		else if(NodeGraphRef == "Physics")
+		else if(NodeGraphRef == TLAnimation::PhysicsgraphRef)
 			return TLPhysics::g_pPhysicsgraph->RemoveNode(NodeRef);
 		else
 		{
 			// Invalid graph ref? We may need to handle special cases here.
 			return FALSE;
 		}
-
 	}
-	else if(MessageRef == "TimeJump")
+	else if(MessageRef == TLAnimation::TimeJumpRef)
 	{
 		float fTime;
 		
-		if(Command.ImportData("Time", fTime))
+		if(pFromCommand->ImportData("Time", fTime))
 		{
 			// Jump to time immediately?  Or add a command object to this instance 
 			// and jump at a 'safe' time?
@@ -440,116 +422,69 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand& Com
 		// Ignore and continue processing
 		return TRUE;
 	}
-	else
+	else 
 	{
+		// Create a new message with the same ref as the from command
+		// NOTE: This may not get used but is needed as a local in case we use it
+		TLMessaging::TMessage NewMessage(MessageRef);
+
+		// Do test for interped data?
+		if(bTestDataForInterp)
+		{
+			TLDebug_Print("Testing for interped data");
+
+			pMessage = &NewMessage;
+
+			// Reset the readpos for the commands
+			pFromCommand->ResetReadPos();
+			pToCommand->ResetReadPos();
+
+			// Now get the data from the 'from' command and the 'to' command and use the appropriate 
+			// interp routine to generate some new data
+			u32 uNumberOfDataElements = pFromCommand->GetChildren().GetSize();
+			for(u32 uIndex = 0; uIndex < uNumberOfDataElements; uIndex++)
+			{
+				TPtr<TBinaryTree>& pFromData = pFromCommand->GetChildren().ElementAt(uIndex);
+
+				TRef InterpMethod = "None";
+
+				// Now check to see if the command data needs interping
+				if(pFromData->ImportData("InterpMethod", InterpMethod) && (InterpMethod != "None"))
+				{
+					// Check to see if the ToCommand has the same child data
+					TPtr<TBinaryTree>& pToData = pToCommand->GetChild(pFromData->GetDataRef()); 
+					
+					// If so interp the data otherwise just add the data as-is
+					if(pToData)
+						AttachInterpedDataToMessage(pFromData, pToData, InterpMethod, fPercent, NewMessage);
+					else
+						NewMessage.AddChild(pFromData);
+				}
+				else
+				{
+					// Attach data as-is to the message
+					NewMessage.AddChild(pFromData);
+				}
+			}
+		}
 
 		// Send message to the graph
-		if(NodeGraphRef == "Scene")
-			return TLScene::g_pScenegraph->SendMessageToNode(NodeRef, Command);
-		else if(NodeGraphRef == "Render")
-			return TLRender::g_pRendergraph->SendMessageToNode(NodeRef, Command);
-		else if(NodeGraphRef == "Audio")
-			return TLAudio::g_pAudiograph->SendMessageToNode(NodeRef, Command);
-		else if(NodeGraphRef == "Physics")
-			return TLPhysics::g_pPhysicsgraph->SendMessageToNode(NodeRef, Command);
+		if(NodeGraphRef == TLAnimation::ScenegraphRef)
+			return TLScene::g_pScenegraph->SendMessageToNode(NodeRef, *pMessage);
+		else if(NodeGraphRef == TLAnimation::RendergraphRef)
+			return TLRender::g_pRendergraph->SendMessageToNode(NodeRef, *pMessage);
+		else if(NodeGraphRef == TLAnimation::AudiographRef)
+			return TLAudio::g_pAudiograph->SendMessageToNode(NodeRef, *pMessage);
+		else if(NodeGraphRef == TLAnimation::PhysicsgraphRef)
+			return TLPhysics::g_pPhysicsgraph->SendMessageToNode(NodeRef, *pMessage);
 		else
 		{
 			// Invalid graph ref
 			// Send the command to subscribers
-			PublishMessage(Command);
+			PublishMessage(*pMessage);
 
 			return TRUE;
 		}
-
-	}
-}
-
-
-
-Bool TTimelineInstance::SendInterpedCommandAsMessage(TLAsset::TAssetTimelineCommand& FromCommand, TLAsset::TAssetTimelineCommand& ToCommand, TRef NodeGraphRef, TRef NodeRef, TRefRef MessageRef, float fPercent)
-{
-	TLDebug_Print("Sending interped command");
-
-	// Check for node mapped ref.  If found replace the ndoe ref with the one for our key array
-	if(m_NodeRefMap.GetSize() > 0)
-	{
-		TRef* pAlternateRef = m_NodeRefMap.Find(NodeRef);
-
-		if(pAlternateRef != NULL)
-		{
-			NodeRef = *pAlternateRef;
-		}
-	}
-
-#ifdef _DEBUG
-	// Check for special 'this' node ref.  Should have been altered via the noderefmap lookup but
-	// if the timeline instance hasn;t had the BindTo routine called then "this" won't have been replaced.
-	// We can't really call anything on the graphs using a ref of "this" as it won't do anything so at least 
-	// trap this in debug.
-	if(NodeRef == TRef("this"))
-	{
-		TLDebug_Print("Invalid node ref for 'this' on timline instance");
-		return FALSE;
-	}
-#endif
-
-	// Create a new message with the same ref as the from command
-	TLMessaging::TMessage Message(MessageRef);
-
-	// Reset the readpos for the commands
-	FromCommand.ResetReadPos();
-	ToCommand.ResetReadPos();
-
-	// Now get the data from the 'from' command and the 'to' command and use the appropraite 
-	// interp routine to generate some new data
-	if(MessageRef == "SetTransform")
-	{
-		for(u32 uIndex = 0; uIndex < FromCommand.GetChildren().GetSize(); uIndex++)
-		{
-			TPtr<TBinaryTree>& pFromData = FromCommand.GetChildren().ElementAt(uIndex);
-
-			TRef InterpMethod = "None";
-
-			// Now check to see if the Rotate command needs interping
-			if(pFromData->ImportData("InterpMethod", InterpMethod) && (InterpMethod != "None"))
-			{
-				// Check to see if the ToCommand has the same child data
-				TPtr<TBinaryTree>& pToData = ToCommand.GetChild(pFromData->GetDataRef()); 
-				
-				// If so interp the data otherwise jsut add the data as-is
-				if(pToData)
-					AttachInterpedDataToMessage(pFromData, pToData, InterpMethod, fPercent, Message);
-				else
-					Message.AddChild(pFromData);
-			}
-			else
-			{
-				// Attach Rotation as-is to the message
-				Message.AddChild(pFromData);
-			}
-		}
-	} 
-	else
-	{
-		TLDebug_Break("Unhandled interped command");
-	}
-
-	//TODO: Check for the node id being special i.e. "This", == node graph, null...?
-	if(NodeGraphRef == "Render")
-	{
-		// Send message to the render graph
-		return TLRender::g_pRendergraph->SendMessageToNode(NodeRef, Message);
-	}
-	else if(NodeGraphRef == "Scene")
-	{
-		// Send message to the scenegraph
-		return TLScene::g_pScenegraph->SendMessageToNode(NodeRef, Message);
-	}
-	else
-	{
-		// Invalid graph ref? We may need to handle special cases here.
-
-		return FALSE;
 	}
 }
 

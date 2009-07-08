@@ -8,6 +8,15 @@
 namespace TLAnimation
 {
 	class TTimelineInstance;
+
+	// Graph references
+	const TRef ScenegraphRef	= TRef_Static(S,c,e,n,e);	//"Scene" used in timelines
+	const TRef RendergraphRef	= TRef_Static(R,e,n,d,e);	//"Render" used in timelines
+	const TRef AudiographRef	= TRef_Static(A,u,d,i,o);	//"Audio" used in timelines
+	const TRef PhysicsgraphRef	= TRef_Static(P,h,y,s,i);	//"Physics" used in timelines
+
+	// Special commands
+	const TRef TimeJumpRef	= TRef_Static(T,i,m,e,j);	//"Timejump" command used in timelines
 };
 
 
@@ -59,8 +68,7 @@ private:
 	Bool					ProcessFinalKeyframe(const TLAsset::TTempKeyframeData& Keyframe);
 
 	// Command handling
-	Bool					SendCommandAsMessage(TLAsset::TAssetTimelineCommand& Command, TRef NodeGraphRef, TRef NodeRef);
-	Bool					SendInterpedCommandAsMessage(TLAsset::TAssetTimelineCommand& FromCommand, TLAsset::TAssetTimelineCommand& ToCommand, TRef NodeGraphRef, TRef NodeRef, TRefRef MessageRef, float fPercent);
+	Bool					SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFromCommand, TLAsset::TAssetTimelineCommand* pToCommand, TRef NodeGraphRef, TRef NodeRef, float fPercent = 0.0f, Bool bTestDataForInterp = FALSE);
 
 	void					AttachInterpedDataToMessage(TPtr<TBinaryTree>& pFromData, TPtr<TBinaryTree>& pToData, TRefRef InterpMethod, const float& fPercent, TLMessaging::TMessage& Message);
 
