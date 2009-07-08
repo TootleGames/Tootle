@@ -13,6 +13,11 @@
 using namespace TLAsset;
 
 
+// Quick define to be able to trace out the timeline data tree
+#ifdef _DEBUG
+//	#define TRACE_TIMELINE_TREE
+#endif
+
 
 SyncBool TKeyframe::ImportData(TBinaryTree& Data)
 {
@@ -72,7 +77,6 @@ SyncBool TKeyframe::ExportData(TBinaryTree& Data)
 
 SyncBool TAssetTimelineCommandList::ImportData(TBinaryTree& Data)
 {
-
 	// Read the Node ref
 	if(!Data.Read(m_NodeRef))
 	{
@@ -127,7 +131,7 @@ SyncBool TAssetTimelineCommandList::ExportData(TBinaryTree& Data)
 		for(u32 uIndex = 0; uIndex < m_Commands.GetSize(); uIndex++)
 		{
 			TAssetTimelineCommand& cmd = m_Commands.ElementAt(uIndex);
-			
+
 			TPtr<TBinaryTree> pCommand = pCommandData->AddChild("Command");
 
 			pCommand->CopyDataTree(cmd);
@@ -151,6 +155,11 @@ TAsset	( "Timeline", AssetRef )
 //-------------------------------------------------------
 SyncBool TAssetTimeline::ImportData(TBinaryTree& Data)		
 {
+#ifdef TRACE_TIMELINE_TREE
+	// Output the binary tree
+	Data.Debug_PrintTree();
+#endif
+
 	u32 uKeyframeCount = Data.GetChildren().GetSize();
 
 	// Read each keyframe
@@ -209,6 +218,11 @@ SyncBool TAssetTimeline::ExportData(TBinaryTree& Data)
 		if(KeyRes != SyncTrue)
 			return KeyRes;
 	}
+
+#ifdef TRACE_TIMELINE_TREE
+	// Output the binary tree
+	Data.Debug_PrintTree();
+#endif
 
 	return SyncTrue;
 }	

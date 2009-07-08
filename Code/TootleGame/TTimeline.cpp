@@ -559,9 +559,10 @@ void TTimelineInstance::AttachInterpedDataToMessage(TPtr<TBinaryTree>& pFromData
 	pFromData->ResetReadPos();
 	pToData->ResetReadPos();
 
+	TRef DataType = pFromData->GetDataTypeHint();
+
 	// Check the data type and use the appropriate interp as required.
-	//if(pFromData->GetDataTypeHint() == TLBinary::GetDataTypeRef<TLMaths::TQuaternion>())
-	if(pFromData->GetDataRef() == TRef("Rotate"))
+	if(DataType == TLBinary::GetDataTypeRef<TLMaths::TQuaternion>())
 	{
 		// Get the to command rotate quaternion
 		TLMaths::TQuaternion qRotFrom, qRotTo;
@@ -606,8 +607,7 @@ void TTimelineInstance::AttachInterpedDataToMessage(TPtr<TBinaryTree>& pFromData
 			}
 		}
 	}
-	//else if(pFromData->GetDataTypeHint() == TLBinary::GetDataTypeRef<Colour>())
-	else if(pFromData->GetDataRef() == TRef("Colour"))
+	else if(DataType == TLBinary::GetDataTypeRef<TColour>())
 	{
 		TColour vFrom, vTo;
 
@@ -625,10 +625,9 @@ void TTimelineInstance::AttachInterpedDataToMessage(TPtr<TBinaryTree>& pFromData
 		}
 
 	}
-	//else if(pFromData->GetDataTypeHint() == TLBinary::GetDataTypeRef<float3>())
-	else
+	else if(DataType == TLBinary::GetDataTypeRef<float3>())
 	{
-		// Get the to command translation
+		// Get the to command vector
 		float3 vFrom, vTo;
 
 		if(pFromData->Read(vFrom))
@@ -644,6 +643,17 @@ void TTimelineInstance::AttachInterpedDataToMessage(TPtr<TBinaryTree>& pFromData
 			}
 		}
 	}
+#ifdef _DEBUG
+	else
+	{
+		// Unhandled type
+		TTempString str;
+		DataType.GetString(str);
+		TTempString errorstr;
+		errorstr.Appendf("Unhandled timeline interpolation data type - %s", str.GetData());
+		TLDebug_Break(errorstr);
+	}
+#endif
 }
 
 
