@@ -80,6 +80,21 @@ Bool TLString::ReadNextInteger(const TString& String,u32& CharIndex,s32& Integer
 
 
 //--------------------------------------------------------
+//	reads an integer out of a string, and does a min/max CheckInRange check. 
+//	returns FALSE if out of range (in debug only, uses TLDebug_CHeckInRange)
+//--------------------------------------------------------
+Bool TLString::ReadIntegerInRange(const TString& String,s32& Integer,s32 Min,s32 Max)
+{
+	if ( !String.GetInteger( Integer ) )
+		return FALSE;
+
+	if ( !TLDebug_CheckInRange( Integer, Min, Max ) )
+		return FALSE;
+
+	return TRUE;
+}
+
+//--------------------------------------------------------
 //	
 //--------------------------------------------------------
 Bool TLString::ReadNextFloatArray(const TString& String,u32& CharIndex,float* pFloats,u32 FloatSize,Bool ReturnInvalidFloatZero)
@@ -147,49 +162,55 @@ Bool TLString::ReadNextFloatArray(const TString& String,u32& CharIndex,float* pF
 
 TRef TLFile::GetDataTypeFromString(const TString& String)
 {
-	//	cache predefined ref types for a simple match
-	static TFixedArray<TRef,24> g_DataTypeRefCache;
-	if ( g_DataTypeRefCache.GetSize() == 0 )
-	{
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TRef>() );
-
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<float>() );
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<float2>() );
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<float3>() );
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<float4>() );
-
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<u8>() );
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<u16>() );
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<u32>() );
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<u64>() );
-
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<s8>() );
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<s16>() );
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<s32>() );
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<s64>() );
-
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef_Hex8() );
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef_Hex16() );
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef_Hex32() );
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef_Hex64() );
-
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TLMaths::TQuaternion>() );
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TLMaths::TEuler>() );
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TLMaths::TAxisAngle>() );
-	
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TColour>() );
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TColour24>() );
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TColour32>() );
-		g_DataTypeRefCache.Add( TLBinary::GetDataTypeRef<TColour64>() );
-	}
-
 	//	turn string into a ref and check against the ref types...
 	TRef StringRef( String );
-	if ( g_DataTypeRefCache.Exists( StringRef ) )
+
+	//	add "tootle data xml" supported types to this case statement
+	switch ( StringRef.GetData() )
 	{
-		//	matches an existing data type ref
-		return StringRef;
-	}
+		case TLBinary_TypeRef(TRef):
+		case TLBinary_TypeRef(Bool):
+
+		case TLBinary_TypeRef(float):
+		case TLBinary_TypeRef(float2):
+		case TLBinary_TypeRef(float3):
+		case TLBinary_TypeRef(float4):
+
+		case TLBinary_TypeRef(u8):
+		case TLBinary_TypeRef(u16):
+		case TLBinary_TypeRef(u32):
+		case TLBinary_TypeRef(u64):
+
+		case TLBinary_TypeRef(s8):
+		case TLBinary_TypeRef(s16):
+		case TLBinary_TypeRef(s32):
+		case TLBinary_TypeRef(s64):
+
+		case TLBinary_TypeRef_Hex8:
+		case TLBinary_TypeRef_Hex16:
+		case TLBinary_TypeRef_Hex32:
+		case TLBinary_TypeRef_Hex64:
+
+		case TLBinary_TypeRef(TQuaternion):
+		case TLBinary_TypeRef(TEuler):
+		case TLBinary_TypeRef(TAxisAngle):
+
+		case TLBinary_TypeRef(TColour):
+		case TLBinary_TypeRef(TColour24):
+		case TLBinary_TypeRef(TColour32):
+		case TLBinary_TypeRef(TColour64):
+	
+		case TLBinary_TypeRef_String:
+		case TLBinary_TypeRef_WideString:
+		{
+			//	matches an existing data type ref
+			return StringRef;
+		}
+		break;
+
+		default:
+			break;
+	};
 
 #ifdef _DEBUG
 	TTempString Debug_String("Warning: using old data type name ");
@@ -204,19 +225,15 @@ TRef TLFile::GetDataTypeFromString(const TString& String)
 	if ( String == "float4" )		return TLBinary::GetDataTypeRef<float4>();
 	if ( String == "quaternion" )	return TLBinary::GetDataTypeRef<TLMaths::TQuaternion>();
 	if ( String == "colour" )		return TLBinary::GetDataTypeRef<TColour>();
-	if ( String == "string" )		return TLBinary::GetDataTypeRef_String();
-	if ( String == "widestring" )	return TLBinary::GetDataTypeRef_WideString();
 
 	//	unknown type
 #ifdef _DEBUG
 	Debug_String.Set("Unsupported data type ");
 	Debug_String.Append( String );
-	//Debug_String.Append(" in Scheme ");
-	//this->GetFileRef().GetString( Debug_String );
 	TLDebug_Break( Debug_String );
 #endif
 
-	return TRef();
+	return TRef_Invalid;
 }
 
 
@@ -229,7 +246,9 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 	const TString& DataString = pTag->GetDataString();
 	u32 CharIndex = 0;
 
-	if ( DataType == TLBinary::GetDataTypeRef<float>() )
+	switch ( DataType.GetData() )
+	{
+	case TLBinary_TypeRef(float):
 	{
 		float f;
 		if ( !TLString::ReadNextFloatArray( DataString, CharIndex, &f, 1 ) )
@@ -237,7 +256,8 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 		BinaryData.Write( f );
 		return SyncTrue;
 	}
-	else if ( DataType == TLBinary::GetDataTypeRef<float2>() )
+
+	case TLBinary_TypeRef(float2):
 	{
 		float2 f;
 		if ( !TLString::ReadNextFloatArray( DataString, CharIndex, f.GetData(), f.GetSize() ) )
@@ -245,7 +265,8 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 		BinaryData.Write( f );
 		return SyncTrue;
 	}
-	else if ( DataType == TLBinary::GetDataTypeRef<float3>() )
+	
+	case TLBinary_TypeRef(float3):
 	{
 		float3 f;
 		if ( !TLString::ReadNextFloatArray( DataString, CharIndex, f.GetData(), f.GetSize() ) )
@@ -253,7 +274,8 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 		BinaryData.Write( f );
 		return SyncTrue;
 	}
-	else if ( DataType == TLBinary::GetDataTypeRef<float4>() )
+	
+	case TLBinary_TypeRef(float4):
 	{
 		float4 f;
 		if ( !TLString::ReadNextFloatArray( DataString, CharIndex, f.GetData(), f.GetSize() ) )
@@ -261,7 +283,8 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 		BinaryData.Write( f );
 		return SyncTrue;
 	}
-	else if ( DataType == TLBinary::GetDataTypeRef<TLMaths::TQuaternion>()  )
+	
+	case TLBinary_TypeRef(TQuaternion):
 	{
 		float4 f;
 		if ( !TLString::ReadNextFloatArray( DataString, CharIndex, f.GetData(), f.GetSize() ) )
@@ -273,7 +296,8 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 		BinaryData.Write( Quat );
 		return SyncTrue;
 	}
-	else if ( DataType == TLBinary::GetDataTypeRef<TLMaths::TEuler>()  )
+	
+	case TLBinary_TypeRef(TEuler):
 	{
 		float3 f;
 		if ( !TLString::ReadNextFloatArray( DataString, CharIndex, f.GetData(), f.GetSize() ) )
@@ -284,7 +308,8 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 		BinaryData.Write( Euler );
 		return SyncTrue;
 	}
-	else if ( DataType == TLBinary::GetDataTypeRef<TLMaths::TAxisAngle>()  )
+	
+	case TLBinary_TypeRef(TAxisAngle):
 	{
 		float4 f;
 		if ( !TLString::ReadNextFloatArray( DataString, CharIndex, f.GetData(), f.GetSize() ) )
@@ -295,13 +320,15 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 		BinaryData.Write( AxisAngle );
 		return SyncTrue;
 	}
-	else if ( DataType == TLBinary::GetDataTypeRef<TRef>() )
+	
+	case TLBinary_TypeRef(TRef):
 	{
 		TRef Ref( DataString );
 		BinaryData.Write( Ref );
 		return SyncTrue;
 	}
-	else if ( DataType == TLBinary::GetDataTypeRef_String() )
+	
+	case TLBinary_TypeRef_String:
 	{
 		//	do string cleanup, convert "\n" to a linefeed etc
 		if ( TLString::IsStringDirty( DataString ) )
@@ -318,13 +345,15 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 
 		return SyncTrue;
 	}
-	else if ( DataType == TLBinary::GetDataTypeRef<TColour>() )
+	
+	case TLBinary_TypeRef(TColour):
 	{
 		float4 f;
 		if ( !TLString::ReadNextFloatArray( DataString, CharIndex, f.GetData(), f.GetSize() ) )
 			return SyncFalse;
 		
 		//	check range
+		//	gr: use TLDebug_CheckInRange() ?
 		if ( f.x > 1.0f || f.x < 0.0f ||
 			f.y > 1.0f || f.y < 0.0f ||
 			f.z > 1.0f || f.z < 0.0f ||
@@ -338,7 +367,8 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 		BinaryData.Write( Colour );
 		return SyncTrue;
 	}
-	else if ( DataType == TLBinary::GetDataTypeRef<TColour24>() )
+	
+	case TLBinary_TypeRef(TColour24):
 	{
 		Type3<s32> Colours;
 		if ( !TLString::ReadNextInteger( DataString, CharIndex, Colours.x ) )		return SyncFalse;
@@ -346,6 +376,7 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 		if ( !TLString::ReadNextInteger( DataString, CharIndex, Colours.z ) )		return SyncFalse;
 		
 		//	check range
+		//	gr: use TLDebug_CheckInRange() ?
 		if ( Colours.x > 255 || Colours.x < 0 ||
 			Colours.y > 255 || Colours.y < 0 ||
 			Colours.z > 255 || Colours.z < 0 )
@@ -358,7 +389,8 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 		BinaryData.Write( Colour );
 		return SyncTrue;
 	}
-	else if ( DataType == TLBinary::GetDataTypeRef<TColour32>() )
+	
+	case TLBinary_TypeRef(TColour32):
 	{
 		Type4<s32> Colours;
 		if ( !TLString::ReadNextInteger( DataString, CharIndex, Colours.x ) )		return SyncFalse;
@@ -367,6 +399,7 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 		if ( !TLString::ReadNextInteger( DataString, CharIndex, Colours.w ) )		return SyncFalse;
 		
 		//	check range
+		//	gr: use TLDebug_CheckInRange() ?
 		if ( Colours.x > 255 || Colours.x < 0 ||
 			Colours.y > 255 || Colours.y < 0 ||
 			Colours.z > 255 || Colours.z < 0 ||
@@ -380,7 +413,8 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 		BinaryData.Write( Colour );
 		return SyncTrue;
 	}
-	else if ( DataType == TLBinary::GetDataTypeRef<TColour64>() )
+	
+	case TLBinary_TypeRef(TColour64):
 	{
 		Type4<s32> Colours;
 		if ( !TLString::ReadNextInteger( DataString, CharIndex, Colours.x ) )		return SyncFalse;
@@ -389,6 +423,7 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 		if ( !TLString::ReadNextInteger( DataString, CharIndex, Colours.w ) )		return SyncFalse;
 		
 		//	check range
+		//	gr: use TLDebug_CheckInRange() ?
 		if ( Colours.x > 65535 || Colours.x < 0 ||
 			Colours.y > 65535 || Colours.y < 0 ||
 			Colours.z > 65535 || Colours.z < 0 ||
@@ -403,6 +438,87 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 		return SyncTrue;
 	}
 
+	case TLBinary_TypeRef(u8):
+	{
+		s32 Integer;
+		if ( !TLString::ReadIntegerInRange( DataString, Integer, 0, 255 ) )
+			return SyncFalse;
+		BinaryData.Write( (u8)Integer );
+		return SyncTrue;
+	}
+
+	case TLBinary_TypeRef(s8):
+	{
+		s32 Integer;
+		if ( !TLString::ReadIntegerInRange( DataString, Integer, -127, 127 ) )
+			return SyncFalse;
+		BinaryData.Write( (s8)Integer );
+		return SyncTrue;
+	}
+
+	case TLBinary_TypeRef(u16):
+	{
+		s32 Integer;
+		if ( !TLString::ReadIntegerInRange( DataString, Integer, 0, 65535 ) )
+			return SyncFalse;
+		BinaryData.Write( (u16)Integer );
+		return SyncTrue;
+	}
+
+	case TLBinary_TypeRef(s16):
+	{
+		s32 Integer;
+		if ( !TLString::ReadIntegerInRange( DataString, Integer, -32767, 32767 ) )
+			return SyncFalse;
+		BinaryData.Write( (s16)Integer );
+		return SyncTrue;
+	}
+
+	case TLBinary_TypeRef(u32):
+	{
+		s32 Integer;
+		if ( !TLString::ReadIntegerInRange( DataString, Integer, 0, 4294967295 ) )
+			return SyncFalse;
+		BinaryData.Write( (u32)Integer );
+		return SyncTrue;
+	}
+
+	case TLBinary_TypeRef(s32):
+	{
+		s32 Integer;
+		if ( !TLString::ReadIntegerInRange( DataString, Integer, -2147483647, 2147483647 ) )
+			return SyncFalse;
+		BinaryData.Write( (s32)Integer );
+		return SyncTrue;
+	}
+
+	case TLBinary_TypeRef(Bool):
+	{
+		//	read first char, we can work out true/false/0/1 from that
+		if ( DataString.GetLength() == 0 )
+			return SyncFalse;
+		const char& BoolChar = DataString.GetCharAt(0);
+		if ( BoolChar == 't' || BoolChar == 'T' || BoolChar == '1' )
+		{
+			BinaryData.Write( (Bool)TRUE );
+			return SyncTrue;
+		}
+		else if ( BoolChar == 'f' || BoolChar == 'F' || BoolChar == '0' )
+		{
+			BinaryData.Write( (Bool)FALSE );
+			return SyncTrue;
+		}
+		else
+		{
+			TLDebug_Break("Bool data is not True,False,0 or 1");
+			return SyncFalse;
+		}
+	}
+
+	default:
+		break;
+	};
+	
 #ifdef _DEBUG
 	TTempString Debug_String("Unsupported/todo data type ");
 	DataType.GetString( Debug_String );

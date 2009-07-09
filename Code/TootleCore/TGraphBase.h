@@ -42,10 +42,10 @@ public:
 	void						RemoveNodes(const TArray<TRef>& NodeRefs);							//	remove an array of nodes by their ref
 	virtual Bool				RemoveNode(TRefRef NodeRef)=0;										//	remove an array of nodes by their ref
 
-	FORCEINLINE Bool			ImportScheme(const TLAsset::TScheme* pScheme,TRefRef ParentNodeRef,Bool StrictNodeRefs=TRUE)		{	return pScheme ? ImportScheme( *pScheme, ParentNodeRef, StrictNodeRefs ) : FALSE;	}
-	Bool						ImportScheme(const TLAsset::TScheme& Scheme,TRefRef ParentNodeRef,Bool StrictNodeRefs=TRUE);		//	import scheme into this graph
-	FORCEINLINE Bool			ReimportScheme(const TLAsset::TScheme* pScheme,TRefRef ParentNodeRef,Bool StrictNodeRefs,Bool AddMissingNodes,Bool RemoveUnknownNodes)	{	return pScheme ? ReimportScheme( *pScheme, ParentNodeRef, StrictNodeRefs, AddMissingNodes, RemoveUnknownNodes ) : FALSE;	}
-	Bool						ReimportScheme(const TLAsset::TScheme& Scheme,TRefRef ParentNodeRef,Bool StrictNodeRefs,Bool AddMissingNodes,Bool RemoveUnknownNodes);							//	re-import scheme into this graph. Nodes will be re-sent an Initialise message. Add missing and delete new (non-scheme) nodes via params. this system will kinda mess up if the original scheme wasn't loaded with strict refs
+	FORCEINLINE Bool			ImportScheme(const TLAsset::TScheme* pScheme,TRefRef ParentNodeRef,Bool StrictNodeRefs=TRUE,TLMessaging::TMessage* pCommonInitMessage=NULL)		{	return pScheme ? ImportScheme( *pScheme, ParentNodeRef, StrictNodeRefs, pCommonInitMessage ) : FALSE;	}
+	Bool						ImportScheme(const TLAsset::TScheme& Scheme,TRefRef ParentNodeRef,Bool StrictNodeRefs=TRUE,TLMessaging::TMessage* pCommonInitMessage=NULL);		//	import scheme into this graph
+	FORCEINLINE Bool			ReimportScheme(const TLAsset::TScheme* pScheme,TRefRef ParentNodeRef,Bool StrictNodeRefs,Bool AddMissingNodes,Bool RemoveUnknownNodes,TLMessaging::TMessage* pCommonInitMessage=NULL)	{	return pScheme ? ReimportScheme( *pScheme, ParentNodeRef, StrictNodeRefs, AddMissingNodes, RemoveUnknownNodes, pCommonInitMessage ) : FALSE;	}
+	Bool						ReimportScheme(const TLAsset::TScheme& Scheme,TRefRef ParentNodeRef,Bool StrictNodeRefs,Bool AddMissingNodes,Bool RemoveUnknownNodes,TLMessaging::TMessage* pCommonInitMessage=NULL);							//	re-import scheme into this graph. Nodes will be re-sent an Initialise message. Add missing and delete new (non-scheme) nodes via params. this system will kinda mess up if the original scheme wasn't loaded with strict refs
 	TPtr<TLAsset::TScheme>		ExportScheme(TRef SchemeAssetRef,TRef SchemeRootNode=TRef(),Bool IncludeSchemeRootNode=TRUE);	//	export node tree to a scheme
 
 protected:
@@ -53,8 +53,8 @@ protected:
 	virtual TLGraph::TGraphNodeBase*	GetRootNodeBase() = 0;
 
 private:
-	Bool						ImportSchemeNode(const TLAsset::TSchemeNode& SchemeNode,TRefRef ParentRef,TArray<TRef>& ImportedNodes,Bool StrictNodeRefs);	//	import scheme node (tree) into this graph
-	Bool						ReimportSchemeNode(const TLAsset::TSchemeNode& SchemeNode,TRefRef ParentRef,Bool StrictNodeRefs,Bool AddMissingNodes,Bool RemoveUnknownNodes);		//	re-init and restore node tree
+	Bool						ImportSchemeNode(const TLAsset::TSchemeNode& SchemeNode,TRefRef ParentRef,TArray<TRef>& ImportedNodes,Bool StrictNodeRefs,TLMessaging::TMessage* pCommonInitMessage);	//	import scheme node (tree) into this graph
+	Bool						ReimportSchemeNode(const TLAsset::TSchemeNode& SchemeNode,TRefRef ParentRef,Bool StrictNodeRefs,Bool AddMissingNodes,Bool RemoveUnknownNodes,TLMessaging::TMessage* pCommonInitMessage);		//	re-init and restore node tree
 	TPtr<TLAsset::TSchemeNode>	ExportSchemeNode(TGraphNodeBase* pNode);
 };
 

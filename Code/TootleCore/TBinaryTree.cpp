@@ -32,9 +32,6 @@ Bool TBinaryTree::CopyDataTree(const TBinaryTree& Data,Bool OverwriteDataRef)
 	//	copy this data
 	GetData().Copy( Data.GetData() );
 
-	//	remove existing children
-	m_Children.Empty();
-
 	//	copy children
 	for ( u32 c=0;	c<Data.GetChildren().GetSize();	c++ )
 	{
@@ -64,9 +61,6 @@ Bool TBinaryTree::ReferenceDataTree(const TBinaryTree& Data,Bool OverwriteDataRe
 
 	//	still have to copy the root data
 	GetData().Copy( Data.GetData() );
-
-	//	remove existing children
-	m_Children.Empty();
 
 	//	pre-alloc array in case it's big
 	u32 DataChildCount = Data.GetChildren().GetSize();

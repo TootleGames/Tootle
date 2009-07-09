@@ -96,9 +96,16 @@ TPtr<TXmlTag> TLXml::ParseTag(const TString& XmlString,u32 TagOpenIndex,u32 TagC
 	//	make up tag
 	TPtr<TXmlTag> pNewTag = new TXmlTag( TagName, Type );
 	
-	//	error parsing properties
-	if ( !pNewTag->SetProperties( TagProperties ) )
-		return NULL;
+	//	gr: don't parse properties for hidden tags - some characters can cause parse errors
+	//		as it won't be formatted for property-like syntax
+	//		in future we *could* put TagContents into the data string (m_Data) if we ever
+	//		have a need for comments
+	if ( Type != TLXml::TagType_Hidden )
+	{
+		//	error parsing properties, abort
+		if ( !pNewTag->SetProperties( TagProperties ) )
+			return NULL;
+	}
 
 	return pNewTag;
 }
@@ -493,6 +500,7 @@ SyncBool TXml::Import(const TString& XmlString)
 	//	tags left in stack? error parsing then
 	if ( TagStack.GetSize() > 0 )
 	{
+		Debug_PrintTree("xml filename");
 		TLDebug_Break("XML Syntax error: Unprocessed tags (probably parser error)");
 		SyntaxError = TRUE;
 	}

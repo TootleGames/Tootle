@@ -5,7 +5,7 @@
 //--------------------------------------------------------------------	
 //	import scheme into this graph
 //--------------------------------------------------------------------	
-Bool TLGraph::TGraphBase::ImportScheme(const TLAsset::TScheme& Scheme,TRefRef ParentNodeRef,Bool StrictNodeRefs)
+Bool TLGraph::TGraphBase::ImportScheme(const TLAsset::TScheme& Scheme,TRefRef ParentNodeRef,Bool StrictNodeRefs,TLMessaging::TMessage* pCommonInitMessage)
 {
 	//	just do a quick type check...
 	if ( Scheme.GetAssetType() != "Scheme" )
@@ -25,7 +25,7 @@ Bool TLGraph::TGraphBase::ImportScheme(const TLAsset::TScheme& Scheme,TRefRef Pa
 	for ( u32 n=0;	n<SchemeNodes.GetSize();	n++ )
 	{
 		TArray<TRef> NodeImportedNodes;
-		if ( !ImportSchemeNode( *SchemeNodes[n], ParentNodeRef, NodeImportedNodes, StrictNodeRefs ) )
+		if ( !ImportSchemeNode( *SchemeNodes[n], ParentNodeRef, NodeImportedNodes, StrictNodeRefs, pCommonInitMessage ) )
 		{
 			//	remove nodes we added 
 			RemoveNodes( NodeImportedNodes );
@@ -54,11 +54,15 @@ Bool TLGraph::TGraphBase::ImportScheme(const TLAsset::TScheme& Scheme,TRefRef Pa
 //--------------------------------------------------------------------	
 //	import scheme node (tree) into this graph
 //--------------------------------------------------------------------	
-Bool TLGraph::TGraphBase::ImportSchemeNode(const TLAsset::TSchemeNode& SchemeNode,TRefRef ParentRef,TArray<TRef>& ImportedNodes,Bool StrictNodeRefs)
+Bool TLGraph::TGraphBase::ImportSchemeNode(const TLAsset::TSchemeNode& SchemeNode,TRefRef ParentRef,TArray<TRef>& ImportedNodes,Bool StrictNodeRefs,TLMessaging::TMessage* pCommonInitMessage)
 {
 	//	create an init message with all the data in the SchemeNode
-	TLMessaging::TMessage	Message( TLCore::InitialiseRef );
+	TLMessaging::TMessage Message( TLCore::InitialiseRef );
 	Message.ReferenceDataTree( SchemeNode.GetData(), FALSE );
+
+	//	add common data too
+	if ( pCommonInitMessage )
+		Message.ReferenceDataTree( *pCommonInitMessage, FALSE );
 
 	//	create node
 	TRef NewNodeRef = CreateNode( SchemeNode.GetNodeRef(), SchemeNode.GetTypeRef(), ParentRef, &Message, StrictNodeRefs );
@@ -76,7 +80,7 @@ Bool TLGraph::TGraphBase::ImportSchemeNode(const TLAsset::TSchemeNode& SchemeNod
 	{
 		const TPtr<TLAsset::TSchemeNode>& pChildSchemeNode = ChildSchemeNodes[n];
 
-		if ( !ImportSchemeNode( *pChildSchemeNode, NewNodeRef, ImportedNodes, StrictNodeRefs ) )
+		if ( !ImportSchemeNode( *pChildSchemeNode, NewNodeRef, ImportedNodes, StrictNodeRefs, pCommonInitMessage ) )
 			return FALSE;
 	}
 
@@ -185,7 +189,7 @@ TPtr<TLAsset::TScheme> TLGraph::TGraphBase::ExportScheme(TRef SchemeAssetRef,TRe
 //	re-import scheme into this graph. Nodes will be re-sent an Initialise message. 
 //	Add missing and delete new (non-scheme) nodes via params
 //--------------------------------------------------------------------	
-Bool TLGraph::TGraphBase::ReimportScheme(const TLAsset::TScheme& Scheme,TRefRef ParentNodeRef,Bool StrictNodeRefs,Bool AddMissingNodes,Bool RemoveUnknownNodes)
+Bool TLGraph::TGraphBase::ReimportScheme(const TLAsset::TScheme& Scheme,TRefRef ParentNodeRef,Bool StrictNodeRefs,Bool AddMissingNodes,Bool RemoveUnknownNodes,TLMessaging::TMessage* pCommonInitMessage)
 {
 	if ( !StrictNodeRefs )
 	{
@@ -209,7 +213,7 @@ Bool TLGraph::TGraphBase::ReimportScheme(const TLAsset::TScheme& Scheme,TRefRef 
 	for ( u32 n=0;	n<SchemeNodes.GetSize();	n++ )
 	{
 		TArray<TRef> NodeImportedNodes;
-		if ( !ReimportSchemeNode( *SchemeNodes[n], ParentNodeRef, StrictNodeRefs, AddMissingNodes, RemoveUnknownNodes ) )
+		if ( !ReimportSchemeNode( *SchemeNodes[n], ParentNodeRef, StrictNodeRefs, AddMissingNodes, RemoveUnknownNodes, pCommonInitMessage ) )
 		{
 			//	remove nodes we added 
 			RemoveNodes( NodeImportedNodes );
@@ -224,11 +228,15 @@ Bool TLGraph::TGraphBase::ReimportScheme(const TLAsset::TScheme& Scheme,TRefRef 
 //--------------------------------------------------------------------	
 //	re-init and restore node tree
 //--------------------------------------------------------------------	
-Bool TLGraph::TGraphBase::ReimportSchemeNode(const TLAsset::TSchemeNode& SchemeNode,TRefRef ParentRef,Bool StrictNodeRefs,Bool AddMissingNodes,Bool RemoveUnknownNodes)
+Bool TLGraph::TGraphBase::ReimportSchemeNode(const TLAsset::TSchemeNode& SchemeNode,TRefRef ParentRef,Bool StrictNodeRefs,Bool AddMissingNodes,Bool RemoveUnknownNodes,TLMessaging::TMessage* pCommonInitMessage)
 {
 	//	create an init message with all the data in the SchemeNode
 	TLMessaging::TMessage Message( TLCore::InitialiseRef );
 	Message.ReferenceDataTree( SchemeNode.GetData(), FALSE );
+
+	//	add common data too
+	if ( pCommonInitMessage )
+		Message.ReferenceDataTree( *pCommonInitMessage, FALSE );
 
 	//	restore node if missing
 	if ( !IsInGraph( SchemeNode.GetNodeRef() ) )
@@ -239,7 +247,7 @@ Bool TLGraph::TGraphBase::ReimportSchemeNode(const TLAsset::TSchemeNode& SchemeN
 	
 		//	re-create node
 		TFixedArray<TRef,100> ImportedNodes;
-		return ImportSchemeNode( SchemeNode, ParentRef, ImportedNodes, TRUE );
+		return ImportSchemeNode( SchemeNode, ParentRef, ImportedNodes, TRUE, pCommonInitMessage );
 	}
 
 	//	node exists, re-init
@@ -257,7 +265,7 @@ Bool TLGraph::TGraphBase::ReimportSchemeNode(const TLAsset::TSchemeNode& SchemeN
 	{
 		const TPtr<TLAsset::TSchemeNode>& pChildSchemeNode = ChildSchemeNodes[n];
 
-		if ( !ReimportSchemeNode( *pChildSchemeNode, SchemeNode.GetNodeRef(), StrictNodeRefs, AddMissingNodes, RemoveUnknownNodes ) )
+		if ( !ReimportSchemeNode( *pChildSchemeNode, SchemeNode.GetNodeRef(), StrictNodeRefs, AddMissingNodes, RemoveUnknownNodes, pCommonInitMessage ) )
 			return FALSE;
 	}
 
