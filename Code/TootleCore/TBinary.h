@@ -91,7 +91,7 @@ public:
 	template<typename TYPE> FORCEINLINE void	Write(const TYPE*& Pointer)			{	Debug_ReadWritePointerError();	}	//	cant read/write a pointer
 	template<typename TYPE> FORCEINLINE void	WriteToStart(const TYPE& Var)		{	SetDataTypeHint<TYPE>();	WriteDataToStart( (u8*)&Var, sizeof(TYPE) );	}
 	template<typename TYPE> void				WriteArray(const TArray<TYPE>& Array);	//	write an array to the data. we write the element count into the data too to save doing it client side
-	FORCEINLINE void							WriteString(const TString& String)	{	SetDataTypeHint( TLBinary::GetDataTypeRef_String() );	WriteArray( String.GetStringArray() );	}
+	FORCEINLINE void							WriteString(const TString& String)	{	WriteArray( String.GetStringArray() );	SetDataTypeHint( TLBinary_TypeRef(String), TRUE );	}	//	gr: set the FORCED hint AFTER we write the string, the string uses the array functionality whihc writes an array size first. As long as strings are parsed with ReadString this isn't a problem
 
 	template<typename TYPE> FORCEINLINE void	AllocData(u32 Elements)				{	m_Data.AddAllocSize( Elements * sizeof(TYPE) );	}
 	

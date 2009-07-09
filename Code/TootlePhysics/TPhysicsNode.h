@@ -124,8 +124,8 @@ public:
 	FORCEINLINE void			OnDampingChanged()					{	SetLinearDamping( m_Damping );	}	//	this re-sets it on the body if it exists
 	void						OnShapeDefintionChanged();
 
-	FORCEINLINE void			OnTransformChanged(u8 TransformChangedBits)	{	m_TransformChangedBits |= TransformChangedBits;	if ( TransformChangedBits != 0x0 )	SetBodyTransform();	}
-	FORCEINLINE void			OnTransformChangedNoPublish()		{	SetBodyTransform();	}
+	FORCEINLINE void			OnTransformChanged(u8 TransformChangedBits)					{	m_TransformChangedBits |= TransformChangedBits;	if ( TransformChangedBits != 0x0 )	SetBodyTransform( TransformChangedBits );	}
+	FORCEINLINE void			OnTransformChangedNoPublish(u8 TransformChangedBits)		{	SetBodyTransform(TransformChangedBits);	}
 	FORCEINLINE void			OnTranslationChanged()				{	OnTransformChanged( TLMaths_TransformBitTranslate );	}
 	FORCEINLINE void			OnRotationChanged()					{	OnTransformChanged( TLMaths_TransformBitRotation );	}
 	FORCEINLINE void			OnScaleChanged()					{	OnTransformChanged( TLMaths_TransformBitScale );	}
@@ -178,7 +178,7 @@ protected:
 	FORCEINLINE const b2Body*	GetBody() const										{	return m_pBody;	}
 	FORCEINLINE void			OnBodyTransformChanged(u8 TransformChangedBits)		{	m_TransformChangedBits |= TransformChangedBits;	}
 	void						GetBodyTransformValues(b2Vec2& Translate,float32& AngleRadians);	//	get values to put INTO the box2D body transform from our transform
-	void						SetBodyTransform();									//	reset the body's transform
+	void						SetBodyTransform(u8 TransformChangedBits);			//	reset the body's transform
 	void						OnBodyShapeAdded(TCollisionShape& CollisionShape);	//	body shape has been added
 	void						OnBodyShapeRemoved();								//	body shape has been removed
 
@@ -188,8 +188,8 @@ protected:
 	float					m_Damping;					//	0...infinate, but smaller numbers are better
 
 	TLMaths::TTransform		m_Transform;				//	world transform of shape
-	u8						m_TransformChangedBits;		//	dont broadcast trasnform changes until post update - TRANSFORM_BIT_XXX
-	Bool					m_BodyTransformChanged;		//	if true then the body transform needs setting. Generally this means if the node is disabled and has moved then we need to set it again when enabling.
+	u8						m_TransformChangedBits;		//	dont broadcast trasnform changes until post update - TLMaths_TransformBit_XXX
+	u8						m_BodyTransformChangedBits;	//	if not zero then the body transform needs setting. Generally this means if the node is disabled and has moved then we need to set it again when enabling.
 
 	TRef					m_OwnerSceneNode;			//	"Owner" scene node - if this is set then we automaticcly process some stuff
 	TFlags<Flags>			m_PhysicsFlags;

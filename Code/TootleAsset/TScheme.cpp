@@ -132,6 +132,9 @@ SyncBool TLAsset::TScheme::ExportData(TBinaryTree& Data)
 		Data.AddChild( pChildNodeData );
 	}
 
+	//	write back any data we didn't recognise
+	ExportUnknownData( Data );
+
 	return SyncTrue;
 }
 
@@ -163,6 +166,9 @@ SyncBool TLAsset::TScheme::ImportData(TBinaryTree& Data)
 		//	imported okay, add to list
 		m_Nodes.Add( pChildNode );
 	}
+
+	//	store off any data we haven't read to keep this data intact
+	ImportUnknownData( Data );
 
 	return SyncTrue;
 }

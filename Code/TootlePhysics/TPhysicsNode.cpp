@@ -167,7 +167,7 @@ TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 	m_Friction						( 0.4f ),
 	m_TransformChangedBits			( 0x0 ),
 	m_pBody							( NULL ),
-	m_BodyTransformChanged			( FALSE )
+	m_BodyTransformChangedBits		( 0x0 )
 {
 #ifdef CACHE_ACCUMULATED_MOVEMENT
 	m_AccumulatedMovementValid = FALSE;
@@ -804,7 +804,7 @@ void TLPhysics::TPhysicsNode::SetTransform(const TLMaths::TTransform& NewTransfo
 	}
 	else
 	{
-		OnTransformChangedNoPublish();
+		OnTransformChangedNoPublish( Changes );
 	}
 }
 
@@ -840,7 +840,7 @@ Bool TLPhysics::TPhysicsNode::CreateBody(b2World& World)
 		return FALSE;
 
 	//	created body with correct transform, so cannot be out of date
-	m_BodyTransformChanged = FALSE;
+	m_BodyTransformChangedBits = 0x0;
 
 	//	create shape definition from our existing collision shape
 	for ( u32 s=0;	s<m_CollisionShapes.GetSize();	s++ )
@@ -966,12 +966,19 @@ SyncBool TLPhysics::TPhysicsNode::CreateBodyShape(TCollisionShape& CollisionShap
 //-------------------------------------------------------------
 //	reset the body's transform
 //-------------------------------------------------------------
-void TLPhysics::TPhysicsNode::SetBodyTransform()
+void TLPhysics::TPhysicsNode::SetBodyTransform(u8 TransformChangedBits)
 {
 	if ( !m_pBody )
 	{
-		m_BodyTransformChanged = TRUE;
+		m_BodyTransformChangedBits |= TransformChangedBits;
 		return;
+	}
+
+	//	body transform doesn't include a scale, we manually scale our collision shapes
+	//	so when it changes we need to remake all our shape defs
+	if ( (TransformChangedBits & TLMaths_TransformBitScale) != 0x0 )
+	{
+		TLDebug_Break("todo: when scale changes, rebuild all the collision shape body shapes");
 	}
 
 	b2Vec2 Translate( 0.f, 0.f );
@@ -982,12 +989,12 @@ void TLPhysics::TPhysicsNode::SetBodyTransform()
 	if ( !m_pBody->SetXForm( Translate, AngleRadians ) )
 	{
 		//	failed to set the transform, must be frozen
-		m_BodyTransformChanged = TRUE;
+		m_BodyTransformChangedBits |= TransformChangedBits;
 		return;
 	}
 	
 	//	transform has been set, is now valid
-	m_BodyTransformChanged = FALSE;
+	m_BodyTransformChangedBits = 0x0;
 
 	//	wake up body (Not sure if this has to be BEFORE the transforms...)
 	//	gr: don't think this needs to be done before the transform, SO, because we don't want 
@@ -1033,8 +1040,8 @@ void TLPhysics::TPhysicsNode::OnNodeEnabledChanged(Bool IsNowEnabled)
 			m_pBody->UnFreeze();
 
 			//	if body transform is out of date, (eg. changed when disabled) set it
-			if ( m_BodyTransformChanged )
-				SetBodyTransform();
+			if ( m_BodyTransformChangedBits != 0x0 )
+				SetBodyTransform( m_BodyTransformChangedBits );
 		}
 		else
 		{

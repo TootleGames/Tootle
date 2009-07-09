@@ -320,6 +320,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandData(TPtr<TL
 				TRef DataTypeRef = TLFile::GetDataTypeFromString( pChildTag->GetTagName() );
 
 				//	update type of data
+				//	gr: this SHOULD be redundant and set by ImportBinaryData
 				pCommandChildData->SetDataTypeHint( DataTypeRef );
 
 				SyncBool TagImportResult = SyncFalse;
@@ -381,6 +382,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandData(TPtr<TL
 								pCommandChildData->Write(qRot); 
 
 								// Change the data type hint to quaternion
+								//	gr: this SHOULD be redundant and set by Write() above
 								//pCommandChildData->SetDataTypeHint(DataTypeRef);
 								pCommandChildData->SetDataTypeHint(TLBinary::GetDataTypeRef<TLMaths::TQuaternion>());
 							}
@@ -436,6 +438,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandData(TPtr<TL
 								pCommandChildData->Write(qRot); 
 
 								// Change the data type hint to quaternion
+								//	gr: this SHOULD be redundant and set by Write() above
 								//pCommandChildData->SetDataTypeHint(DataTypeRef);
 								pCommandChildData->SetDataTypeHint(TLBinary::GetDataTypeRef<TLMaths::TQuaternion>());
 							}
@@ -515,6 +518,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandData(TPtr<TL
 								pCommandChildData->Write(newcol); 
 
 								// Change the data type hint to TColour
+								//	gr: this SHOULD be redundant and set by Write() above
 								pCommandChildData->SetDataTypeHint(TLBinary::GetDataTypeRef<TColour>());						
 							}
 						}

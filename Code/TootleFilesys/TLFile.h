@@ -40,6 +40,7 @@ namespace TLFile
 {
 	TRef		GetDataTypeFromString(const TString& String);
 	SyncBool	ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRef DataType);
+	Bool		ParseXMLDataTree(TPtr<TXmlTag>& pTag,TBinaryTree& Data);	//	parse XML tag to Binary data[tree]
 }
 
 

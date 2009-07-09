@@ -97,6 +97,14 @@ SyncBool TLFileSys::TFileScheme::ImportScheme(TPtr<TXmlTag>& pTag,TPtr<TLAsset::
 		{
 			TagImportResult = ImportGraph( pChildTag, pScheme );
 		}
+		else if ( pChildTag->GetTagName() == "Data" )
+		{
+			//	read-in data and add to the asset's generic data
+			if ( TLFile::ParseXMLDataTree( pChildTag, pScheme->GetData() ) )
+				TagImportResult = SyncTrue;
+			else
+				TagImportResult = SyncFalse;
+		}
 		else
 		{
 			TLDebug_Break("Unsupported tag in Scheme import");
@@ -243,86 +251,9 @@ SyncBool TLFileSys::TFileScheme::ImportNode(TPtr<TXmlTag>& pTag,TRefRef GraphRef
 //--------------------------------------------------------
 SyncBool TLFileSys::TFileScheme::ImportNode_Data(TPtr<TXmlTag>& pTag,TPtr<TLAsset::TSchemeNode>& pNode)
 {
-	/*
-		<Data DataRef=TRef_Static(T,r,a,n,s)><float3>0,40,0</float3></Data>
-	*/
-
-	//	read the data ref
-	const TString* pDataRefString = pTag->GetProperty("DataRef");
-	TRef DataRef( pDataRefString ? *pDataRefString : "" );
-
-	//	establish the data we're writing data to
-	TBinaryTree& NodeRootData = pNode->GetData();
-	TPtr<TBinaryTree> pDataChild;
-
-	//	add a child to the node data if it has a ref, otherwise data is added to root of the node
-	if ( DataRef.IsValid() )
-	{
-		pDataChild = NodeRootData.AddChild( DataRef );
-		//	failed to add child data...
-		if ( !pDataChild )
-		{
-			TLDebug_Break("failed to add child data");
-			return SyncFalse;
-		}
-	}
-
-	//	import contents of data
-	TBinaryTree& NodeData = pDataChild ? *pDataChild.GetObject() : NodeRootData;
-
-	//	if the tag has no children (eg. type like <float />) but DOES have data (eg. 1.0) throw up an error and fail
-	//	assume the data is malformed and someone has forgotten to add the type specifier. 
-	//	if something automated has output it and doesnt know the type it should still output it as hex raw data
-	if ( !pTag->GetChildren().GetSize() && pTag->GetDataString().GetLengthWithoutTerminator() > 0 )
-	{
-		TTempString Debug_String("<Data ");
-		DataRef.GetString( Debug_String );
-		Debug_String.Append("> tag with no children, but DOES have data inside (eg. 1.0). Missing type specifier (eg. <float>)?.\n");
-		Debug_String.Append( pTag->GetDataString() );
-		TLDebug_Break( Debug_String );
+	if ( !TLFile::ParseXMLDataTree( pTag, pNode->GetData() ) )
 		return SyncFalse;
-	}
 
-	//	deal with child tags
-	for ( u32 c=0;	c<pTag->GetChildren().GetSize();	c++ )
-	{
-		TPtr<TXmlTag>& pChildTag = pTag->GetChildren().ElementAt(c);
-
-		SyncBool TagImportResult = SyncFalse;
-
-		if ( pChildTag->GetTagName() == "data" )
-		{
-			//	import child data
-			TLDebug_Break("Todo");
-		}
-		else
-		{
-			TRef DataTypeRef = TLFile::GetDataTypeFromString( pChildTag->GetTagName() );
-
-			//	update type of data
-			NodeData.SetDataTypeHint( DataTypeRef );
-
-			TagImportResult = TLFile::ImportBinaryData( pChildTag, NodeData, DataTypeRef );
-		}
-
-		//	failed
-		if ( TagImportResult == SyncFalse )
-		{			
-			TTempString str;
-			str.Appendf("failed to import <data> tag \"%s\" in scheme", pChildTag->GetTagName().GetData() );
-			
-			TLDebug_Break( str );
-			return SyncFalse;
-		}
-
-		//	async
-		if ( TagImportResult == SyncWait )
-		{
-			TLDebug_Break("todo: async Scheme import");
-			return SyncFalse;
-		}
-	}
-	
 	return SyncTrue;
 }
 
