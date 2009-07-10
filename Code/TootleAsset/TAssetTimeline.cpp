@@ -15,7 +15,7 @@ using namespace TLAsset;
 
 // Quick define to be able to trace out the timeline data tree
 #ifdef _DEBUG
-//	#define TRACE_TIMELINE_TREE
+//	#define DEBUG_PRINT_TIMELINE_TREE
 #endif
 
 
@@ -155,7 +155,7 @@ TAsset	( "Timeline", AssetRef )
 //-------------------------------------------------------
 SyncBool TAssetTimeline::ImportData(TBinaryTree& Data)		
 {
-#ifdef TRACE_TIMELINE_TREE
+#ifdef DEBUG_PRINT_TIMELINE_TREE
 	// Output the binary tree
 	Data.Debug_PrintTree();
 #endif
@@ -219,7 +219,7 @@ SyncBool TAssetTimeline::ExportData(TBinaryTree& Data)
 			return KeyRes;
 	}
 
-#ifdef TRACE_TIMELINE_TREE
+#ifdef DEBUG_PRINT_TIMELINE_TREE
 	// Output the binary tree
 	Data.Debug_PrintTree();
 #endif
