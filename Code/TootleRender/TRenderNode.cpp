@@ -656,11 +656,6 @@ void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 		u8 TransformChangedBits = m_Transform.ImportData( Message );
 		OnTransformChanged(TransformChangedBits);
 
-		// Colour property import
-		TColour newcol;
-		if(Message.ImportData("Colour", newcol))
-			SetColour(newcol);
-
 		return;
 	}
 	else if(Message.GetMessageRef() == TRef("DoTransform"))
@@ -677,6 +672,20 @@ void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 
 	//	do inherited init
 	TLGraph::TGraphNode<TLRender::TRenderNode>::ProcessMessage( Message );
+}
+
+
+//	SetProperty message - made into virtual func as it's will be commonly used.
+void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
+{
+	// Colour property import
+	TColour newcol;
+	if(Message.ImportData("Colour", newcol))
+		SetColour(newcol);
+
+
+	// Super SetProperty call
+	TLGraph::TGraphNode<TLRender::TRenderNode>::SetProperty(Message);
 }
 
 

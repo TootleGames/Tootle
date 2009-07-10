@@ -62,6 +62,9 @@ public:
 	
 	TRef					GetHardwareLanguage();
 	
+	// Messaging
+	Bool					SendMessage(TRefRef RecipientRef, TRefRef ManagerRef, TLMessaging::TMessage& Message);
+
 protected:
 	virtual SyncBool		Initialise();
 	virtual SyncBool		Update(float fTimeStep);

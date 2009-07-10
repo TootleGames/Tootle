@@ -39,6 +39,11 @@ public:
 	FORCEINLINE TLManager::ManagerState	GetState() const						{	return m_ManagerState;	}
 	FORCEINLINE Bool					operator<(const TManager& Manager)const	{	return (GetManagerRef() < Manager.GetManagerRef());	}
 
+	// Messaging
+	virtual Bool	SendMessage(TRefRef RecipientRef, TLMessaging::TMessage& Message) { return FALSE; }
+
+	FORCEINLINE Bool			operator==(const TRef& Ref) const				{	return (m_ManagerRef == Ref);	}
+
 protected:
 	virtual SyncBool Initialise()					{	return SyncTrue; 	}
 	virtual SyncBool Shutdown()						{ 	return SyncTrue;	}

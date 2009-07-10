@@ -28,6 +28,12 @@ namespace TLCore
 	const TRef TimeStepModRef	= TRef_Static(T,S,M,o,d);	//"TSMod";
 	const TRef QuitRef			= TRef_Static4(Q,u,i,t);	//"Quit";
 
+	const TRef SetPropertyRef	= TRef_Static(S,e,t,P,r);	// "SetProperty"
+	const TRef GetPropertyRef	= TRef_Static(G,e,t,P,r);	// "GetProperty"
+	const TRef PropertyRef		= TRef_Static(P,r,o,p,e);	// "Property"
+
+	const TRef ManagerRef		= TRef_Static(M,a,n,a,g);	// "Manager"
+
 	namespace Platform
 	{
 		SyncBool			Init();				//	platform init

@@ -341,7 +341,7 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 	// trap this in debug.
 	if(NodeRef == TRef_Static4(t,h,i,s))
 	{
-		TLDebug_Print("Invalid node ref for 'this' on timline instance");
+		TLDebug_Print("Invalid node ref for 'this' on timeline instance");
 		return FALSE;
 	}
 #endif
@@ -353,6 +353,32 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 	// Handle special create and shutdown commands
 	if(MessageRef == TLCore::InitialiseRef)
 	{
+		TLDebug_Print("Timeline - Create node");
+
+		TArray<TRef>* pArray = &m_CreatedSceneNodes;
+		if(NodeGraphRef == TLAnimation::RendergraphRef)
+			pArray = &m_CreatedRenderNodes;
+		else if(NodeGraphRef == TLAnimation::PhysicsgraphRef)
+			pArray = &m_CreatedPhysicsNodes;
+		else if(NodeGraphRef == TLAnimation::AudiographRef)
+			pArray = &m_CreatedAudioNodes;
+
+
+		if(pArray->Exists(NodeRef))
+		{
+			// Node has already been created.  Should we allow the timeline
+			// to create a new node in this instance? Or should we enforce on ly creation
+			// and shutdown for hte same node ref?  The former would allow for 
+			// emission type timelines and/or spawning - create a new monster every n seconds
+			// and the former would prevent issues with duplicating nodes when we don't want 
+			// them to be.  Perhaps flagging the init as 'unique' would help distinguish when 
+			// you want the former only?
+
+			// For now prevent duplication.
+			TLDebug_Print("Timeline - Node exists, preventing duplication");
+			return TRUE;
+		}
+
 		// get the paretn ndoe ref
 		TRef ParentNodeRef;
 
@@ -377,36 +403,95 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 		}
 
 
-		if(NewNodeRef.IsValid() && (NodeRef != NewNodeRef))
+		if(NewNodeRef.IsValid())
 		{
-			// Store the reference in the key array.  This will be used as the alternative node name for 
-			// when the same node ID is used in other commands
-			m_NodeRefMap.Add(NodeRef, NewNodeRef);
+
+			if(NodeRef != NewNodeRef)
+			{
+				// Store the reference in the key array.  This will be used as the alternative node name for 
+				// when the same node ID is used in other commands
+				m_NodeRefMap.Add(NodeRef, NewNodeRef);
+			}
+
+			// Store the created node ref to prevent duplication
+			pArray->Add(NewNodeRef);
+
+			// Once we have created a node for a graph we need to process messages
+			// for if the node is removed prematurely so we can update our list of 
+			// created nodes correctly
+			if(NodeGraphRef == TLAnimation::ScenegraphRef)
+				SubscribeTo(TLScene::g_pScenegraph);
+			else if(NodeGraphRef == TLAnimation::RendergraphRef)
+				SubscribeTo(TLRender::g_pRendergraph);
+			else if(NodeGraphRef == TLAnimation::AudiographRef)
+				SubscribeTo(TLAudio::g_pAudiograph);
+			else if(NodeGraphRef == TLAnimation::PhysicsgraphRef)
+				SubscribeTo(TLPhysics::g_pPhysicsgraph);
+
+
+			// Success
+			return TRUE;
 		}
-		return (NewNodeRef.IsValid());
+
+		// Failed
+		return FALSE;
 	}
 	else if (MessageRef == TLCore::ShutdownRef)
 	{
-		// Remove from our keyarray if it exists
-		m_NodeRefMap.RemoveItem(NodeRef);
+		TLDebug_Print("Timeline - Shutdown node");
+
+		Bool bResult = FALSE;
+		TRefRef RemovedNodeRef = NodeRef;
 
 		// Shutdown a node from the graph
 		if(NodeGraphRef == TLAnimation::ScenegraphRef)
-			return TLScene::g_pScenegraph->RemoveNode(NodeRef);
+			bResult = TLScene::g_pScenegraph->RemoveNode(NodeRef);
 		else if(NodeGraphRef == TLAnimation::RendergraphRef)
-			return TLRender::g_pRendergraph->RemoveNode(NodeRef);
+			bResult = TLRender::g_pRendergraph->RemoveNode(NodeRef);
 		else if(NodeGraphRef == TLAnimation::AudiographRef)
-			return TLAudio::g_pAudiograph->RemoveNode(NodeRef);
+			bResult = TLAudio::g_pAudiograph->RemoveNode(NodeRef);
 		else if(NodeGraphRef == TLAnimation::PhysicsgraphRef)
-			return TLPhysics::g_pPhysicsgraph->RemoveNode(NodeRef);
+			bResult = TLPhysics::g_pPhysicsgraph->RemoveNode(NodeRef);
 		else
 		{
 			// Invalid graph ref? We may need to handle special cases here.
 			return FALSE;
 		}
+
+		// 
+		//if(bResult)
+		{
+			// Remove from our keyarray if it exists
+			m_NodeRefMap.RemoveItem(RemovedNodeRef);
+
+			// Remove from the 'created nodes' list
+			if(NodeGraphRef == TLAnimation::ScenegraphRef)
+			{
+				m_CreatedSceneNodes.Remove(RemovedNodeRef);
+			}
+			else if(NodeGraphRef == TLAnimation::RendergraphRef)
+			{
+				m_CreatedRenderNodes.Remove(RemovedNodeRef);
+			}
+			else if(NodeGraphRef == TLAnimation::PhysicsgraphRef)
+			{
+				m_CreatedPhysicsNodes.Remove(RemovedNodeRef);
+			}
+			else if(NodeGraphRef == TLAnimation::AudiographRef)
+			{
+				m_CreatedAudioNodes.Remove(RemovedNodeRef);
+			}
+		}
+
+		//if(!bResult)
+		//	TLDebug_Break("Failed to shutdown node");
+
+		// Allow timeline to continue even if failed to remove node.
+		return TRUE;
 	}
 	else if(MessageRef == TLAnimation::TimeJumpRef)
 	{
+		TLDebug_Print("Timeline - Timejump encountered");
 		float fTime;
 		
 		if(pFromCommand->ImportData("Time", fTime))
@@ -469,6 +554,9 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 		}
 
 		// Send message to the graph
+		if(NodeGraphRef.IsValid())
+			return TLCore::g_pCoreManager->SendMessage(NodeRef, NodeGraphRef, *pMessage);
+		/*
 		if(NodeGraphRef == TLAnimation::ScenegraphRef)
 			return TLScene::g_pScenegraph->SendMessageToNode(NodeRef, *pMessage);
 		else if(NodeGraphRef == TLAnimation::RendergraphRef)
@@ -477,6 +565,7 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 			return TLAudio::g_pAudiograph->SendMessageToNode(NodeRef, *pMessage);
 		else if(NodeGraphRef == TLAnimation::PhysicsgraphRef)
 			return TLPhysics::g_pPhysicsgraph->SendMessageToNode(NodeRef, *pMessage);
+		*/
 		else
 		{
 			// Invalid graph ref
@@ -592,4 +681,30 @@ void TTimelineInstance::AttachInterpedDataToMessage(TPtr<TBinaryTree>& pFromData
 }
 
 
+void TTimelineInstance::ProcessMessage(TLMessaging::TMessage& Message)
+{
+	if(Message.GetMessageRef() == STRef(N,o,d,e,R))	
+	{
+		// NodeRemoved
+		// Check to see if this node was created by the timeline
+		TRef ManagerRef = Message.GetSenderRef();
+
+		TRef NodeRef;
+		Message.Read(NodeRef);
+
+		if(NodeRef.IsValid())
+		{
+			TArray<TRef>* pArray = &m_CreatedSceneNodes;
+			if(ManagerRef == TLAnimation::RendergraphRef)
+				pArray = &m_CreatedRenderNodes;
+			else if(ManagerRef == TLAnimation::PhysicsgraphRef)
+				pArray = &m_CreatedPhysicsNodes;
+			else if(ManagerRef == TLAnimation::AudiographRef)
+				pArray = &m_CreatedAudioNodes;
+
+			// Simply try and remove the ref - not worth testing for if it exists.
+			pArray->Remove(NodeRef);
+		}
+	}
+}
 

@@ -10,10 +10,8 @@
 #include "TApplication.h"
 
 #include <TootleCore/TCoreManager.h>
-#include <TootleRender/TLRender.h>
 #include <TootleRender/TScreenManager.h>
 #include <TootleFileSys/TLFileSys.h>
-#include <TootleFileSys/TFileSys.h>
 
 
 #include <TootleInput/TLInput.h>

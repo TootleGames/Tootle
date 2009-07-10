@@ -22,6 +22,7 @@ namespace TLRender
 	class TRenderNode;
 	class TRenderTarget;
 	class TRenderZoneNode;
+	class TRendergraph;
 
 #define TLRender_TRenderNode_DatumBoundsBox			TRef_Static(UNDERSCORE,B,n,b,THREE)
 #define TLRender_TRenderNode_DatumBoundsBox2D		TRef_Static(UNDERSCORE,B,n,b,TWO)
@@ -64,7 +65,7 @@ public:
 	friend class TLMaths::TBoundsShape<TLMaths::TShapeBox2D>;
 	friend class TLMaths::TBoundsShape<TLMaths::TShapeSphere>;
 	friend class TLMaths::TBoundsShape<TLMaths::TShapeSphere2D>;
-	friend class TRendergraph;
+	friend class TLRender::TRendergraph;
 
 private:
 	enum InvalidateFlags
@@ -121,10 +122,6 @@ public:
 
 public:
 	TRenderNode(TRefRef RenderNodeRef=TRef(),TRefRef TypeRef=TRef());
-
-	virtual void							Initialise(TLMessaging::TMessage& Message);	//	generic render node init
-	virtual void 							Update(float Timestep);	
-	virtual void							Shutdown();									//	clean-up any TPtrs back to us so we will be deallocated
 
 	FORCEINLINE const TLMaths::TTransform&	GetTransform() const						{	return m_Transform;	}
 	FORCEINLINE const float3&				GetTranslate() const						{	return m_Transform.GetTranslate() ;	}
@@ -229,7 +226,15 @@ public:
 	FORCEINLINE Bool						operator==(TRefRef Ref) const				{	return GetRenderNodeRef() == Ref;	}
 	FORCEINLINE Bool						operator<(TRefRef Ref) const				{	return GetRenderNodeRef() < Ref;	}
 
+	virtual void							Shutdown();									//	clean-up any TPtrs back to us so we will be deallocated
+
 protected:
+	virtual void							Initialise(TLMessaging::TMessage& Message);	//	generic render node init
+	virtual void 							Update(float Timestep);	
+
+	virtual void							SetProperty(TLMessaging::TMessage& Message);	//	SetProperty message - made into virtual func as it's will be commonly used.
+
+
 	FORCEINLINE void						OnMeshRefChanged()							{	m_pMeshCache = NULL;	OnMeshChanged();	}
 	FORCEINLINE void						OnTextureRefChanged()						{	m_pTextureCache = NULL;	}
 	//void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags=TInvalidateFlags(InvalidateLocalBounds,InvalidateWorldBounds,InvalidateWorldPos,InvalidateParents,InvalidateChildren));	//	set all bounds as invalid

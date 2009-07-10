@@ -3,7 +3,7 @@
 #include <TootleCore/TFlags.h>
 #include <TootleCore/TKeyArray.h>
 #include <TootleAsset/TAssetTimeline.h>
-#include <TootleCore/TPublisher.h>
+#include <TootleCore/TRelay.h>
 
 namespace TLAnimation
 {
@@ -21,7 +21,7 @@ namespace TLAnimation
 
 
 
-class TLAnimation::TTimelineInstance : public TLMessaging::TPublisher
+class TLAnimation::TTimelineInstance : public TLMessaging::TPublisherSubscriber
 {
 public:
 	enum TimelineFlags
@@ -56,6 +56,9 @@ public:
 	//	valid asset?
 	FORCEINLINE Bool		GetAssetExists() const								{	return TLAsset::LoadAsset( m_AssetScriptRef, TRUE, "Timeline" ).IsValid();	}
 
+protected:
+	virtual void		ProcessMessage(TLMessaging::TMessage& Message);
+
 private:
 
 	SyncBool			DoUpdate(float fTimestep, Bool bForced);
@@ -84,6 +87,10 @@ private:
 	TFlags<TimelineFlags>		m_Flags;					// Optional flags for the instance
 
 	TKeyArray<TRef, TRef>		m_NodeRefMap;				// Node ref mapping - used for when nodes are added via the timeline commands
+	TArray<TRef>				m_CreatedSceneNodes;		// List of scene nodes created
+	TArray<TRef>				m_CreatedRenderNodes;		// List of render nodes created
+	TArray<TRef>				m_CreatedPhysicsNodes;		// List of physics nodes created
+	TArray<TRef>				m_CreatedAudioNodes;		// List of audio nodes created
 };
 
 

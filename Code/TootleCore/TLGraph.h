@@ -22,6 +22,7 @@
 #include "TManager.h"
 #include <TootleCore/TEventChannel.h>
 #include <TootleCore/TClassFactory.h>
+#include <TootleCore/TCoreManager.h>
 #include <TootleAsset/TScheme.h>
 
 
@@ -82,6 +83,13 @@ public:
 	TRef						GetFreeNodeRef(TRefRef BaseRef=TRef());	//	find an unused ref for a node - returns the ref
 	TRefRef						GetFreeNodeRef(TRef& Ref);				//	find an unused ref for a node, modifies the ref provided
 
+	// Messaging
+	virtual Bool				SendMessage(TRefRef RecipientRef, TLMessaging::TMessage& Message) 
+	{
+		// Generic manager SendMessage routine wrapper for the graph SendMessageToNode
+		return SendMessageToNode(RecipientRef, Message);
+	}
+
 	virtual Bool				SendMessageToNode(TRefRef NodeRef,TLMessaging::TMessage& Message);	//	send message to node
 
 	// Graph change requests
@@ -102,6 +110,7 @@ protected:
 	// Main update of the graph
 	virtual void				UpdateGraph(float fTimeStep);
 	void						UpdateGraphStructure();							// Adds/removes nodes that have been queued up for update
+
 public:
 	///////////////////////////////////////////////////////////////////////////////////
 	// These should be private.  A couple of places need updating before we can 
@@ -241,6 +250,9 @@ protected:
 	virtual void 					Update(float Timestep);					// Main node update called once per frame
 	virtual void					Shutdown();							// Shutdown routine	- called before being removed form the graph. Base code sends out a shutdown message to our subscribers
 
+	virtual void					SetProperty(TLMessaging::TMessage& Message);	//	SetProperty message - made into virtual func as it's will be commonly used.
+	virtual void					GetProperty(TLMessaging::TMessage& Message, TLMessaging::TMessage& Response);	//	GetProperty message - made into virtual func as it's will be commonly used.
+
 	virtual const TGraphNodeBase*	GetParentBase() const		{	return m_pParent.GetObject();	}
 
 	virtual void					UpdateAll(float Timestep);						//	update tree: update self, and children and siblings
@@ -336,6 +348,23 @@ template <class T>
 void TLGraph::TGraphNode<T>::Initialise(TLMessaging::TMessage& Message)		
 {
 	TGraphNodeBase::Initialise( Message );
+}
+
+
+//-------------------------------------------------------
+//	SetProperty message - made into virtual func as it will be commonly used.
+//-------------------------------------------------------
+template <class T>
+void TLGraph::TGraphNode<T>::SetProperty(TLMessaging::TMessage& Message)
+{
+}
+
+//-------------------------------------------------------
+//	GetProperty message - made into virtual func as it will be commonly used.
+//-------------------------------------------------------
+template <class T>
+void TLGraph::TGraphNode<T>::GetProperty(TLMessaging::TMessage& Message, TLMessaging::TMessage& Response)
+{
 }
 
 
@@ -846,6 +875,35 @@ void TLGraph::TGraphNode<T>::ProcessMessage(TLMessaging::TMessage& Message)
 		Shutdown();
 		return;
 	}
+	else if(MessageRef == TLCore::SetPropertyRef)
+	{
+		// Reflection for setting property data on a node via the messaging system
+		SetProperty(Message);
+		return;
+	}
+	else if(MessageRef == TLCore::GetPropertyRef)
+	{
+		// Reflection for getting property data from a node via the messaging system
+		TRef Manager;
+		Message.ImportData(TLCore::ManagerRef, Manager);
+
+		// Valid manager?  If so we can send a response
+		if(Manager.IsValid())
+		{
+			TLMessaging::TMessage Response(TLCore::PropertyRef, GetNodeRef());
+
+			// generate a response with the property information requested
+			GetProperty(Message, Response);
+
+			// Now send the response message 
+			TRefRef Sender = Message.GetSenderRef();
+
+			TLCore::g_pCoreManager->SendMessage(Sender, Manager, Message);
+		}
+
+		return;
+	}
+#ifdef _DEBUG
 	else
 	{
 		//	gr: this is a bit expensive. I'm sending small messages around now when car control changes. 
@@ -861,6 +919,7 @@ void TLGraph::TGraphNode<T>::ProcessMessage(TLMessaging::TMessage& Message)
 		TLDebug_Print( DebugString );
 		*/
 	}
+#endif
 }
 
 

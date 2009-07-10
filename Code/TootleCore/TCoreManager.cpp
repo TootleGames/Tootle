@@ -579,4 +579,37 @@ float TCoreManager::GetTimeStepDifference(TLTime::TTimestampMicro& LastTimestamp
 }
 
 
+Bool TCoreManager::SendMessage(TRefRef RecipientRef, TRefRef ManagerRef, TLMessaging::TMessage& Message)
+{
+	if(!ManagerRef.IsValid())
+	{
+		TLDebug_Break("Trying to send a message with an invalid manager ref");
+		return FALSE;
+	}
+
+	// Go through the list of managers and find the right one to send the message via.
+	// If the Sender is invalid or the same as the managerref then we are sending the message
+	// to the manager itself.
+	TPtr<TManager> pManager = m_Managers.FindPtr(ManagerRef);
+
+	if(pManager)
+	{
+		if(!pManager->SendMessage(RecipientRef, Message))
+		{
+			// Failed
+			TLDebug_Break("Failed to send message to recipient");
+			return FALSE;
+		}
+
+		// Success
+		return TRUE;
+	}
+	else
+	{
+		TLDebug_Print("Unable to find manager");
+		TLDebug_Break("Unable to send message");
+	}
+
+	return FALSE;
+}
 
