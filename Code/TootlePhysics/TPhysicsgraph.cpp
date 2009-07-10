@@ -534,12 +534,26 @@ void TLPhysics::TPhysicsgraph::BeginContact(b2Contact* contact)
 		TLDebug_Break("Collision between shapes missing node[s]");
 		return;
 	}
-	
+
+	TRef ShapeARef = TLPhysics::GetShapeRefFromShape( pShapeA );
+	TRef ShapeBRef = TLPhysics::GetShapeRefFromShape( pShapeB );
+
 #ifdef DEBUG_PRINT_COLLISIONS
-	TTempString Debug_String("Collison between ");
+	TTempString Debug_String("Collision between ");
+	
+	//	node(shape)
 	pNodeA->GetNodeRef().GetString(Debug_String );
+	Debug_String.Append("(");
+	ShapeARef.GetString(Debug_String);
+	Debug_String.Append(")");
+	
 	Debug_String.Append(" and ");
+	
 	pNodeB->GetNodeRef().GetString(Debug_String );
+	Debug_String.Append("(");
+	ShapeBRef.GetString(Debug_String);
+	Debug_String.Append(")");
+
 	TLDebug_Print( Debug_String );
 #endif
 
@@ -576,8 +590,8 @@ void TLPhysics::TPhysicsgraph::BeginContact(b2Contact* contact)
 			pCollisionInfo->m_OtherNodeOwner = pNodeB->GetOwnerSceneNodeRef();
 			pCollisionInfo->m_OtherNodeStatic = pNodeB->IsStatic();
 			pCollisionInfo->m_IntersectionNormal = float2( WorldManifold.m_normal.x, WorldManifold.m_normal.y );
-			pCollisionInfo->m_Shape = TLPhysics::GetShapeRefFromShape( pShapeA );
-			pCollisionInfo->m_OtherShape = TLPhysics::GetShapeRefFromShape( pShapeB );
+			pCollisionInfo->m_Shape = ShapeARef;
+			pCollisionInfo->m_OtherShape = ShapeBRef;
 		}
 	}
 
@@ -595,8 +609,8 @@ void TLPhysics::TPhysicsgraph::BeginContact(b2Contact* contact)
 			//	invert normal
 			pCollisionInfo->m_IntersectionNormal = float2( -WorldManifold.m_normal.x, -WorldManifold.m_normal.y );
 
-			pCollisionInfo->m_Shape = TLPhysics::GetShapeRefFromShape( pShapeB );
-			pCollisionInfo->m_OtherShape = TLPhysics::GetShapeRefFromShape( pShapeA );
+			pCollisionInfo->m_Shape = ShapeBRef;
+			pCollisionInfo->m_OtherShape = ShapeARef;
 		}
 	}
 
@@ -627,9 +641,20 @@ void TLPhysics::TPhysicsgraph::EndContact(b2Contact* contact)
 
 #ifdef DEBUG_PRINT_COLLISIONS
 	TTempString Debug_String("No more collision between ");
+	
+	//	node(shape)
 	pNodeA->GetNodeRef().GetString(Debug_String );
+	Debug_String.Append("(");
+	ShapeARef.GetString(Debug_String);
+	Debug_String.Append(")");
+	
 	Debug_String.Append(" and ");
+	
 	pNodeB->GetNodeRef().GetString(Debug_String );
+	Debug_String.Append("(");
+	ShapeBRef.GetString(Debug_String);
+	Debug_String.Append(")");
+
 	TLDebug_Print( Debug_String );
 #endif
 
@@ -637,6 +662,6 @@ void TLPhysics::TPhysicsgraph::EndContact(b2Contact* contact)
 		pNodeA->OnEndCollision( ShapeARef, *pNodeB, ShapeBRef );
 
 	if ( !pShapeA->IsSensor() )
-		pNodeB->OnEndCollision( ShapeARef, *pNodeA, ShapeBRef );
+		pNodeB->OnEndCollision( ShapeBRef, *pNodeA, ShapeARef );
 }
 

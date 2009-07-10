@@ -13,6 +13,9 @@
 
 #define USE_ZERO_GROUP
 
+#ifdef _DEBUG
+//#define DEBUG_PRINT_COLLISION_SHAPE_CHANGES
+#endif
 
 
 //	if something moves less than this amount then dont apply the change - 
@@ -637,7 +640,7 @@ TRef TLPhysics::TPhysicsNode::AddCollisionShape(const TPtr<TLMaths::TShape>& pSh
 	TCollisionShape* pExistingCollisionShape = GetCollisionShape( ShapeRef );
 	if ( pExistingCollisionShape )
 	{
-#ifdef _DEBUG
+#ifdef DEBUG_PRINT_COLLISION_SHAPE_CHANGES
 		TTempString Debug_String("Collision shape ");
 		ShapeRef.GetString( Debug_String );
 		Debug_String.Append(" already exists on node ");
