@@ -19,6 +19,12 @@ namespace TLInput
 	{
 		const u32 Attached = 0;		//	gr: TFlags work off indexes, not bits. bits are internal to the TFlags class
 	};
+
+	const TRef KeyboardRef		= TRef_Static(K,e,y,b,o); // "Keyboard"
+	const TRef MouseRef			= TRef_Static(M,o,u,s,e); // "Mouse"
+	const TRef GamepadRef		= TRef_Static(G,a,m,e,p); // "Gamepad"
+	const TRef TrackpadRef		= TRef_Static(T,r,a,c,k); // "Trackpad"
+
 }
 
 /*

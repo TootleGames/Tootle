@@ -2,6 +2,7 @@
 #include "TLAudio.h"
 #include <TootleCore/TEventChannel.h>
 #include <TootleCore/TLTime.h>
+#include <TootleInput/TDevice.h>
 
 
 namespace TLAudio
@@ -300,7 +301,7 @@ void TAudiograph::OnInputDeviceAdded(TRefRef DeviceRef,TRefRef DeviceTypeRef)
 		return;
 	}
 
-	if(DeviceTypeRef == "KEYBOARD")
+	if(DeviceTypeRef == TLInput::KeyboardRef)
 	{
 		// Map some basic keyboard keys to control some of the audio system
 		MapActions_Keyboard(DeviceRef, pGlobalUser);

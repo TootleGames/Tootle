@@ -400,15 +400,15 @@ Bool Platform::DirectX::GetSpecificButtonRef(const u32& uButtonID, TRefRef Devic
 {
 	TKeyArray<u32, TRef>* pArray = NULL;
 
-	if(DeviceType == "KEYBOARD")
+	if(DeviceType == TLInput::KeyboardRef)
 	{
 		pArray = &g_KeyboardRefMap;
 	}
-	else if(DeviceType == "MOUSE")
+	else if(DeviceType == TLInput::MouseRef)
 	{
 		pArray = &g_MouseRefMap;
 	}
-	else if(DeviceType == "GAMEPAD")
+	else if(DeviceType == TLInput::GamepadRef)
 	{
 		// Test the product ID for known I'ds
 		switch(uProductID)
@@ -491,15 +491,15 @@ BOOL CALLBACK Platform::DirectX::CreateDevice(const DIDEVICEINSTANCE* pdidInstan
 	switch(uDeviceType)
 	{
 		case DI8DEVTYPE_MOUSE:
-			refDeviceType = "MOUSE";
+			refDeviceType = TLInput::MouseRef;
 			bProcessDevice = TRUE;
 			break;
 		case DI8DEVTYPE_KEYBOARD:
-			refDeviceType = "KEYBOARD";
+			refDeviceType = TLInput::KeyboardRef;
 			bProcessDevice = TRUE;
 			break;
 		case DI8DEVTYPE_GAMEPAD:
-			refDeviceType = "GAMEPAD";
+			refDeviceType = TLInput::GamepadRef;
 			bProcessDevice = TRUE;
 			break;
 
@@ -511,11 +511,11 @@ BOOL CALLBACK Platform::DirectX::CreateDevice(const DIDEVICEINSTANCE* pdidInstan
 			// WinXP. I will look into alternatives using a Wiimote library of some sort that I have come across
 			// but these have drawback sin that most are for windows only so wouldn't work on the Max. :(
 		case DI8DEVTYPE_DEVICE:
-			refDeviceType = "GAMEPAD";
+			refDeviceType = TLInput::GamepadRef;
 			bProcessDevice = TRUE;
 			break;
 		case DI8DEVTYPE_SUPPLEMENTAL:
-			refDeviceType = "GAMEPAD";
+			refDeviceType = TLInput::GamepadRef;
 			bProcessDevice = TRUE;
 			break;
 			*/

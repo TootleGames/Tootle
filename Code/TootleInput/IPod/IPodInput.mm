@@ -219,7 +219,7 @@ Bool Platform::IPod::InitialiseDevice(TPtr<TInputDevice> pDevice, TRefRef Device
 
 Bool Platform::IPod::InitialiseVirtualDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef)
 {
-	if(DeviceTypeRef == TRef("Keyboard"))
+	if(DeviceTypeRef == TLInput::KeyboardRef))
 	{
 		if(CreateVirtualKeyboard())
 		{
@@ -366,7 +366,7 @@ SyncBool Platform::EnumerateDevices()
 	TPtr<TInputDevice>& pDevice = g_pInputSystem->GetInstance(InstanceRef, FALSE);
 	
 	if(!pDevice)
-		IPod::CreateDevice(InstanceRef, "Mouse", FALSE);
+		IPod::CreateDevice(InstanceRef, /*TLInput::TrackpadRef*/ TLInput::MouseRef, FALSE);
 	
 	return SyncTrue; 
 }
@@ -381,7 +381,7 @@ void Platform::RemoveAllDevices()
 Bool Platform::UpdateDevice(TLInput::TInputDevice& Device)
 {
 	//TODO: Add proper device type checking for virtual and physical devices
-	if(Device.GetDeviceType() == "Mouse")
+	if(Device.GetDeviceType() == /*TLInput::TrackpadRef*/ TLInput::MouseRef)
 	{
 		// Physical device
 		return IPod::UpdatePhysicalDevice(Device);
