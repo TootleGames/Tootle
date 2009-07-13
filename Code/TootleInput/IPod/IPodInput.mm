@@ -219,7 +219,7 @@ Bool Platform::IPod::InitialiseDevice(TPtr<TInputDevice> pDevice, TRefRef Device
 
 Bool Platform::IPod::InitialiseVirtualDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef)
 {
-	if(DeviceTypeRef == TLInput::KeyboardRef))
+	if(DeviceTypeRef == TLInput::KeyboardRef)
 	{
 		if(CreateVirtualKeyboard())
 		{
