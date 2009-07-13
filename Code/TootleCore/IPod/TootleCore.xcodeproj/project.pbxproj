@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8434C8D9100B484C0063673E /* TLRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 8434C8D8100B484C0063673E /* TLRandom.h */; };
 		8461F1100FBAC46800742359 /* TSmallObjectAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8461F10F0FBAC46800742359 /* TSmallObjectAllocator.cpp */; };
 		8461F1130FBAC4B800742359 /* TSmallObjectAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8461F1120FBAC4B800742359 /* TSmallObjectAllocator.h */; };
 		8461F3420FBAE7F200742359 /* TSmallObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 8461F3410FBAE7F200742359 /* TSmallObject.h */; };
@@ -85,6 +86,7 @@
 /* Begin PBXFileReference section */
 		8418E89D0F4C2D8C00B956C9 /* TootleSimDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleSimDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleSimDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		8418E89E0F4C2D8C00B956C9 /* TootleSimRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleSimRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleSimRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		8434C8D8100B484C0063673E /* TLRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLRandom.h; path = ../TLRandom.h; sourceTree = SOURCE_ROOT; };
 		8461F10F0FBAC46800742359 /* TSmallObjectAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TSmallObjectAllocator.cpp; path = ../TSmallObjectAllocator.cpp; sourceTree = SOURCE_ROOT; };
 		8461F1120FBAC4B800742359 /* TSmallObjectAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TSmallObjectAllocator.h; path = ../TSmallObjectAllocator.h; sourceTree = SOURCE_ROOT; };
 		8461F3410FBAE7F200742359 /* TSmallObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSmallObject.h; path = ../TSmallObject.h; sourceTree = SOURCE_ROOT; };
@@ -236,6 +238,7 @@
 				84C109740F0A791900B2DF7A /* TLGraph.h */,
 				84C109750F0A791900B2DF7A /* TLMaths.cpp */,
 				84C109760F0A791900B2DF7A /* TLMaths.h */,
+				8434C8D8100B484C0063673E /* TLRandom.h */,
 				84C109770F0A791900B2DF7A /* TLMemory.cpp */,
 				84C109780F0A791900B2DF7A /* TLMemory.h */,
 				84C109790F0A791900B2DF7A /* TLMemory.inc.h */,
@@ -346,6 +349,7 @@
 				8461F1130FBAC4B800742359 /* TSmallObjectAllocator.h in Headers */,
 				8461F3420FBAE7F200742359 /* TSmallObject.h in Headers */,
 				84D9DAC10FC3266100C7A173 /* IPodAlert.h in Headers */,
+				8434C8D9100B484C0063673E /* TLRandom.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

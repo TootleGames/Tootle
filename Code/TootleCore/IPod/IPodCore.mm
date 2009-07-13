@@ -436,11 +436,11 @@ void TLCore::Platform::Sleep(u32 Millisecs)
 	///////////////////////////////////////////////////////////////////
 	TLTime::TTimestampMicro EndTime(TRUE);
 
-	g_pCoreManager->StoreTimestamp("TSEndTime", EndTime);
+	TLCore::g_pCoreManager->StoreTimestamp("TSEndTime", EndTime);
 	
 	TLTime::TTimestampMicro InitTime;
 	
-	if(g_pCoreManager->RetrieveTimestamp("TSInitTime", InitTime))
+	if(TLCore::g_pCoreManager->RetrieveTimestamp("TSInitTime", InitTime))
 	{	
 		s32 Secs, MilliSecs, MicroSecs;
 		InitTime.GetTimeDiff(EndTime, Secs, MilliSecs, MicroSecs);
