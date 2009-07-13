@@ -1,6 +1,7 @@
 #include "IPodTime.h"
 #include <sys/time.h>
 
+#include "../TCoreManager.h"
 
 namespace TLTime
 {
@@ -12,6 +13,13 @@ namespace TLTime
 
 SyncBool TLTime::Platform::Init()
 {
+	TLTime::TTimestampMicro StartTime(TRUE);
+	
+	TLDebug_Print("Startup timestamp:");
+	Debug_PrintTimestamp( StartTime );
+
+	TLCore::g_pCoreManager->StoreTimestamp("TSStartTime", StartTime);
+
 	return SyncTrue;
 }
 

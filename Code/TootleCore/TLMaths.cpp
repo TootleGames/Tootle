@@ -28,10 +28,6 @@ namespace TLColour
 //-------------------------------------------------------------
 void TLMaths::Init()
 {
-	//	init random seed
-	TLTime::TTimestamp TimeNow(TRUE);
-	srand( TimeNow.GetTotalMilliSeconds() );
-
 	//	init debug colours
 //	TLColour::g_Debug_Colours.Add( TColour( 1.0f, 1.0f, 1.0f ) );	//	white
 	TLColour::g_Debug_Colours.Add( TColour( 1.0f, 0.0f, 0.0f ) );	//	red

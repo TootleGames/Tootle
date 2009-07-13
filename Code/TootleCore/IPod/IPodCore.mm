@@ -5,6 +5,7 @@
 #include "../TLTypes.h"
 #include "../TString.h"
 #include "../TCoreManager.h"
+#include "../TLTime.h"
 
 
 //	for the app code
@@ -33,7 +34,7 @@ namespace TLCore
 	void RegisterManagers_Engine(TPtr<TCoreManager>& pCoreManager);
 	void RegisterManagers_Game(TPtr<TCoreManager>& pCoreManager);
 
-	extern TPtr<TCoreManager>		g_pCoreManager;
+	extern TPtr<TCoreManager>		g_pCoreManager;	
 }
 
 
@@ -56,7 +57,7 @@ int main(int argc, char *argv[])
 //	int retVal = UIApplicationMain(argc, argv, nil, [OpenglESAppAppDelegate class]);	//	
 	int retVal = UIApplicationMain(argc, argv, nil, @"OpenglESAppAppDelegate");	//	[OpenglESAppAppDelegate class]
 //	int retVal = UIApplicationMain(argc, argv, nil, nil);
-
+	
 	return retVal;
 }
 
@@ -400,6 +401,27 @@ void TLCore::Platform::Sleep(u32 Millisecs)
 	// Force an update and render.  This fixes the glitch between the Default.png file and the very first frame of the logo
 	TLCore::g_pCoreManager->ForceUpdate();
 	TLCore::g_pCoreManager->ForceRender();
+	
+	///////////////////////////////////////////////////////////////////
+	// Calculate time it took to go through the initialisation sequence
+	///////////////////////////////////////////////////////////////////
+	TLTime::TTimestampMicro InitialiseTime(TRUE);	
+	
+	TLCore::g_pCoreManager->StoreTimestamp("TSInitTime", InitialiseTime);
+	
+	TLTime::TTimestampMicro StartTime;
+	
+	if(TLCore::g_pCoreManager->RetrieveTimestamp("TSStartTime", StartTime))
+	{	
+		s32 Secs, MilliSecs, MicroSecs;
+		StartTime.GetTimeDiff(InitialiseTime, Secs, MilliSecs, MicroSecs);
+	
+		TTempString time;
+		time.Appendf("%d.%d:%d Seconds", Secs, MilliSecs, MicroSecs);
+		TLDebug_Print("App finished launching");
+		TLDebug_Print(time.GetData());
+	}
+	///////////////////////////////////////////////////////////////////
 }
 
 
@@ -408,6 +430,29 @@ void TLCore::Platform::Sleep(u32 Millisecs)
 - (void)applicationWillTerminate:(UIApplication *)application 
 {
 	TLDebug_Print("applicationWillTerminate");
+	
+	///////////////////////////////////////////////////////////////////
+	// Calculate total run time
+	///////////////////////////////////////////////////////////////////
+	TLTime::TTimestampMicro EndTime(TRUE);
+
+	g_pCoreManager->StoreTimestamp("TSEndTime", EndTime);
+	
+	TLTime::TTimestampMicro InitTime;
+	
+	if(g_pCoreManager->RetrieveTimestamp("TSInitTime", InitTime))
+	{	
+		s32 Secs, MilliSecs, MicroSecs;
+		InitTime.GetTimeDiff(EndTime, Secs, MilliSecs, MicroSecs);
+	
+		TTempString time;
+		time.Appendf("%d.%d:%d Seconds", Secs, MilliSecs, MicroSecs);
+		TLDebug_Print("App shutting down");
+		TLDebug_Print("Total run time:");
+		TLDebug_Print(time.GetData());
+	}
+	///////////////////////////////////////////////////////////////////
+
 	
 	shutdown = TRUE;
 	

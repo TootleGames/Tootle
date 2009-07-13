@@ -61,6 +61,18 @@ public:
 
 	
 	TRef					GetHardwareLanguage();
+
+	FORCEINLINE void		StoreTimestamp(TRefRef TimestampRef, TLTime::TTimestampMicro& Timestamp)
+	{
+		if(m_pMachineData)
+			m_pMachineData->ExportData(TimestampRef, Timestamp);
+	}
+	
+	FORCEINLINE Bool		RetrieveTimestamp(TRefRef TimestampRef, TLTime::TTimestampMicro& Timestamp)
+	{
+		if(m_pMachineData)
+			return m_pMachineData->ImportData(TimestampRef, Timestamp);
+	}
 	
 	// Messaging
 	Bool					SendMessage(TRefRef RecipientRef, TRefRef ManagerRef, TLMessaging::TMessage& Message);

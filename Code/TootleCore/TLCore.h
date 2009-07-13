@@ -8,7 +8,6 @@
 #include "TRef.h"
 
 
-
 namespace TLCore
 {
 	//	forward declaration of the generic app loop
@@ -45,6 +44,7 @@ namespace TLCore
 		
 		void				OpenWebURL(TString& urlstr);
 	}
+	
 };
 
 //	include the platform specific header

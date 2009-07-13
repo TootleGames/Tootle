@@ -47,6 +47,7 @@ TCoreManager::TCoreManager(TRefRef refManagerID) :
 		// Query user selected data on the device - languages and other settings
 		TLCore::Platform::QueryLanguageInformation(*m_pMachineData.GetObject());
 	}
+	
 }
 
 TCoreManager::~TCoreManager()
@@ -172,7 +173,6 @@ SyncBool TCoreManager::InitialiseLoop()
 		TLCore::Platform::Init();
 
 		//	other non complex one-off init's
-		TLTime::Platform::Init();
 		TLMaths::Init();
 
 		m_ChannelsInitialised = TRUE;

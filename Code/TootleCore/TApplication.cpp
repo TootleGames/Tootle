@@ -476,6 +476,24 @@ void TApplication::TApplicationState_Bootup::OnEnd(TRefRef NextMode)
 
 	//	delete asset
 	TLAsset::DeleteAsset("logo");
+	
+	TLTime::TTimestampMicro BootTime(TRUE);	
+	
+	TLCore::g_pCoreManager->StoreTimestamp("TSBootupTime", BootTime);
+	
+	TLTime::TTimestampMicro StartTime;
+	
+	if(TLCore::g_pCoreManager->RetrieveTimestamp("TSStartTime", StartTime))
+	{	
+		// Calculate time it took to go through the entire bootup sequence
+		s32 Secs, MilliSecs, MicroSecs;
+		StartTime.GetTimeDiff(BootTime, Secs, MilliSecs, MicroSecs);
+	
+		TTempString time;
+		time.Appendf("%d.%d:%d Seconds", Secs, MilliSecs, MicroSecs);
+		TLDebug_Print("App finished boot sequence");
+		TLDebug_Print(time.GetData());		
+	}
 }
 
 

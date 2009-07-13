@@ -4,6 +4,7 @@
 #include <ctime>
 #include "../TString.h"
 
+#include "../TCoreManager.h"
 
 namespace TLTime
 {
@@ -11,7 +12,6 @@ namespace TLTime
 	{
 		u32					g_BootupDate = 0;			//	base date so we don't need to fetch time() every time we want to get the current timestamp
 		u32					g_BootupMilliSeconds = 0;	//	timeGetTime() at bootup
-		TTimestampMicro		g_BootupTimestamp;
 		float				g_MicroSecondsPerClock = 0;	//	when using performance counter this is how many Micro seconds each counter is worth. if 0 high performance not supported
 		
 		LARGE_INTEGER		g_BootupClockCount;			//	bootup result from performance counter
@@ -27,8 +27,11 @@ namespace TLTime
 
 SyncBool TLTime::Platform::Init()
 {
+	TLTime::TTimestampMicro StartTime;
+
 	//	see if performance counter is supported
 	LARGE_INTEGER Frequency;
+
 	if ( QueryPerformanceFrequency( &Frequency ) )
 	{
 		if ( Frequency.HighPart > 0 )
@@ -58,11 +61,11 @@ SyncBool TLTime::Platform::Init()
 	//	init bootup timestamp
 	if ( IsMicroClockSupported() )
 	{
-		GetTimestampFromTickCount( g_BootupTimestamp, g_BootupMilliSeconds );
+		GetTimestampFromTickCount( StartTime, g_BootupMilliSeconds );
 	}
 	else
 	{
-		GetTimestampFromClockCount( g_BootupTimestamp, g_BootupClockCount );
+		GetTimestampFromClockCount( StartTime, g_BootupClockCount );
 	}
 
 	//	the bootup timestamp deducts bootup millisecs, which is right, but we still want those remaining millisecs in
@@ -72,17 +75,19 @@ SyncBool TLTime::Platform::Init()
 		u32 Secs;
 		u16 MilliSecs,MicroSecs;
 		GetSecsFromClockCount( g_BootupClockCount, Secs, MilliSecs, MicroSecs );
-		g_BootupTimestamp.SetMilliSeconds( MilliSecs );
-		g_BootupTimestamp.SetMicroSeconds( MilliSecs );
+		StartTime.SetMilliSeconds( MilliSecs );
+		StartTime.SetMicroSeconds( MilliSecs );
 	}
 	else
 	{
-		g_BootupTimestamp.SetMilliSeconds( g_BootupMilliSeconds %1000 );
-		g_BootupTimestamp.SetMicroSeconds( 0 );
+		StartTime.SetMilliSeconds( g_BootupMilliSeconds %1000 );
+		StartTime.SetMicroSeconds( 0 );
 	}
-	
-	TLDebug_Print("Bootup timestamp:");
-	Debug_PrintTimestamp( g_BootupTimestamp );
+
+	TLDebug_Print("Startup timestamp:");
+	Debug_PrintTimestamp( StartTime );
+
+	TLCore::g_pCoreManager->StoreTimestamp("TSStartTime", StartTime);
 
 	return SyncTrue;
 }

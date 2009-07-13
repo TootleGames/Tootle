@@ -12,7 +12,7 @@
 #include "TEventChannel.h"
 #include "TRefManager.h"
 #include "TMemoryManager.h"
-
+#include "TLRandom.h"
 
 namespace TLCore
 {
@@ -61,9 +61,10 @@ void TLCore::RegisterManagers_Engine(TPtr<TCoreManager>& pManager)
 {
 	TLDebug_Print("Registering Engine Managers");
 	
-	pManager->CreateAndRegisterManager<TLRef::TRefManager>("REFMANAGER");	// NOTE: No global poitner for this manager
+	pManager->CreateAndRegisterManager<TLRef::TRefManager>("REFMANAGER");				// NOTE: No global pointer for this manager
 	pManager->CreateAndRegisterManager<TLMessaging::TEventChannelManager>(TLMessaging::g_pEventChannelManager, "EVENTCHANNEL");
-	pManager->CreateAndRegisterManager<TLTime::TTimeManager>("TIMEMANAGER");	// NOTE: No global poitner for this manager
+	pManager->CreateAndRegisterManager<TLTime::TTimeManager>("TIMEMANAGER");			// NOTE: No global pointer for this manager
+	pManager->CreateAndRegisterManager<TLRandom::TRandomNumberManager>("RANDOMNUMBERMANAGER");	// NOTE: No global pointer for this manager
 }
 
 
@@ -83,7 +84,32 @@ Bool TLCore::TootMain()
 	while ( InitLoopResult == SyncWait )
 	{
 		InitLoopResult = g_pCoreManager->InitialiseLoop();
-	} 
+	}
+
+	///////////////////////////////////////////////////////////////////
+	// Calculate time it took to go through the initialisation sequence
+	///////////////////////////////////////////////////////////////////
+	if(InitLoopResult != SyncFalse)
+	{
+		TLTime::TTimestampMicro InitialiseTime(TRUE);	
+	
+		g_pCoreManager->StoreTimestamp("TSInitTime", InitialiseTime);
+		
+		TLTime::TTimestampMicro StartTime;
+		
+		if(g_pCoreManager->RetrieveTimestamp("TSStartTime", StartTime))
+		{	
+			s32 Secs, MilliSecs, MicroSecs;
+			StartTime.GetTimeDiff(InitialiseTime, Secs, MilliSecs, MicroSecs);
+		
+			TTempString time;
+			time.Appendf("%d.%d:%d Seconds", Secs, MilliSecs, MicroSecs);
+			TLDebug_Print("App finished launching");
+			TLDebug_Print(time.GetData());
+		}
+	}
+	///////////////////////////////////////////////////////////////////
+
 	
 	//	init was okay, do update loop
 	SyncBool UpdateLoopResult = (InitLoopResult == SyncTrue) ? SyncWait : SyncFalse;
@@ -92,6 +118,30 @@ Bool TLCore::TootMain()
 		// If enabled go through the update loop
 		if(g_pCoreManager->IsEnabled())
 			UpdateLoopResult = g_pCoreManager->UpdateLoop();
+	}
+
+	///////////////////////////////////////////////////////////////////
+	// Calculate total run time
+	///////////////////////////////////////////////////////////////////
+	if(InitLoopResult == SyncTrue)
+	{
+		TLTime::TTimestampMicro EndTime(TRUE);
+
+		g_pCoreManager->StoreTimestamp("TSEndTime", EndTime);
+		
+		TLTime::TTimestampMicro InitTime;
+		
+		if(g_pCoreManager->RetrieveTimestamp("TSInitTime", InitTime))
+		{	
+			s32 Secs, MilliSecs, MicroSecs;
+			InitTime.GetTimeDiff(EndTime, Secs, MilliSecs, MicroSecs);
+		
+			TTempString time;
+			time.Appendf("%d.%d:%d Seconds", Secs, MilliSecs, MicroSecs);
+			TLDebug_Print("App shutting down");
+			TLDebug_Print("Total run time:");
+			TLDebug_Print(time.GetData());
+		}
 	}
 
 	//	shutdown loop
