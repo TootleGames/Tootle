@@ -76,6 +76,13 @@ public:
 	
 	// Messaging
 	Bool					SendMessage(TRefRef RecipientRef, TRefRef ManagerRef, TLMessaging::TMessage& Message);
+	
+	// Manager access
+	template<class TYPE>
+	TPtr<TYPE>			GetManager(TRefRef ManagerRef)
+	{
+		return TPtr<TYPE>(m_Managers.FindPtr(ManagerRef));
+	}
 
 protected:
 	virtual SyncBool		Initialise();
