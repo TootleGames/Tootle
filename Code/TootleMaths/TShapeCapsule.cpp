@@ -42,7 +42,7 @@ Bool TLMaths::TShapeCapsule2D::ExportData(TBinaryTree& Data) const
 //----------------------------------------------------------
 //	
 //----------------------------------------------------------
-TPtr<TLMaths::TShape> TLMaths::TShapeCapsule2D::Transform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pOldShape) const
+TPtr<TLMaths::TShape> TLMaths::TShapeCapsule2D::Transform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pOldShape,Bool KeepShape) const
 {
 	if ( !m_Shape.IsValid() )
 		return NULL;

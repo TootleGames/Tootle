@@ -44,7 +44,7 @@ Bool TLMaths::TShapePolygon2D::ExportData(TBinaryTree& Data) const
 }
 
 
-TPtr<TLMaths::TShape> TLMaths::TShapePolygon2D::Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape) const
+TPtr<TLMaths::TShape> TLMaths::TShapePolygon2D::Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape,Bool KeepShape) const
 {
 	if ( !IsValid() )
 		return NULL;

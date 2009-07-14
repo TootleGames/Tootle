@@ -47,7 +47,7 @@ Bool TLMaths::TShapeSphere2D::ExportData(TBinaryTree& Data) const
 //----------------------------------------------------------
 //	
 //----------------------------------------------------------
-TPtr<TLMaths::TShape> TLMaths::TShapeSphere2D::Transform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pOldShape) const
+TPtr<TLMaths::TShape> TLMaths::TShapeSphere2D::Transform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pOldShape,Bool KeepShape) const
 {
 	if ( !m_Shape.IsValid() )
 		return NULL;
@@ -114,7 +114,7 @@ Bool TLMaths::TShapeSphere::ExportData(TBinaryTree& Data) const
 //----------------------------------------------------------
 //	
 //----------------------------------------------------------
-TPtr<TLMaths::TShape> TLMaths::TShapeSphere::Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape) const
+TPtr<TLMaths::TShape> TLMaths::TShapeSphere::Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape,Bool KeepShape) const
 {
 	if ( !m_Shape.IsValid() )
 		return NULL;

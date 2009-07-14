@@ -25,7 +25,7 @@ public:
 	virtual float3					GetRandomPosition() const;					//	return a random position inside the shape
 
 	virtual void					Transform(const TLMaths::TTransform& Transform)	{	m_Shape.Transform( Transform );	}
-	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape) const;
+	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape,Bool KeepShape=FALSE) const;
 
 	virtual Bool					HasIntersection(TShapeBox2D& OtherShape);
 	virtual Bool					GetIntersection(TShapeSphere2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
@@ -58,7 +58,7 @@ public:
 	virtual float3					GetCenter() const							{	return m_Shape.GetPos();	}
 
 	virtual void					Transform(const TLMaths::TTransform& Transform)	{	m_Shape.Transform( Transform );	}
-	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape) const;
+	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape,Bool KeepShape=FALSE) const;
 
 	virtual Bool					GetIntersection(TShapeSphere& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 	virtual Bool					HasIntersection(TShapeBox2D& OtherShape);

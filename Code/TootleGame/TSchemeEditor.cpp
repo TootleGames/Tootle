@@ -1,5 +1,6 @@
 #include "TSchemeEditor.h"
 #include <TootleRender/TScreenManager.h>
+#include <TootleGame/TWidgetButton.h>
 
 
 
@@ -10,10 +11,21 @@ TLGame::TSchemeEditor::TSchemeEditor()
 
 TLGame::TSchemeEditor::~TSchemeEditor()
 {
-	m_pGraph = NULL;
-
 	//	unselect all the nodes - need to do this to send out the end-edit message for node cleanups
 	UnselectAllNodes();
+
+	//	delete render target
+	if ( m_EditorRenderTarget.IsValid() )
+	{
+		TLRender::g_pScreenManager->DeleteRenderTarget( m_EditorRenderTarget );
+		m_EditorRenderTarget.SetInvalid();
+	}
+
+	//	delete our nodes
+	TLRender::g_pRendergraph->RemoveNode( m_EditorRenderNodeRef );
+
+	//	release ptrs
+	m_pGraph = NULL;
 }
 
 
@@ -73,7 +85,10 @@ void TLGame::TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 		TRef ActionRef;
 		TRef NodeRef;
 		Message.ResetReadPos();
-		if ( Message.Read(ActionRef) && Message.ImportData("Node", NodeRef) )
+		if ( !Message.Read(ActionRef) )
+			return;
+		
+		if ( Message.ImportData("Node", NodeRef) )
 		{
 			if ( ActionRef == "NDrag" )
 			{
@@ -91,6 +106,29 @@ void TLGame::TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 			else if ( ActionRef == "NUp" )
 			{
 				OnNodeUnselected( NodeRef );
+			}
+		}
+		else 
+		{
+			//	gui command for editor from widget
+			switch ( ActionRef.GetData() )
+			{
+				case TRef_Static(C,l,o,s,e):
+				{
+					//	todo: do some shutdown
+					//	send close message
+					TLMessaging::TMessage CloseMessage( ActionRef, "Editor" );
+					PublishMessage( CloseMessage );
+				}
+				break;
+
+				default:
+				{
+					TTempString Debug_String("Unknown editor command ");
+					ActionRef.GetString( Debug_String );
+					TLDebug_Break( Debug_String );
+				}
+				break;
 			}
 		}
 	}
@@ -143,6 +181,13 @@ Bool TLGame::TSchemeEditor::CreateEditorGui(TRefRef EditorScheme)
 	if ( !EditorScheme.IsValid() )
 		return FALSE;
 
+	TLAsset::TScheme* pEditorScheme = TLAsset::LoadAsset( EditorScheme, TRUE, "Scheme" ).GetObject<TLAsset::TScheme>();
+	if ( !pEditorScheme )
+	{
+		TLDebug_Break("failed to load editor scheme");
+		return FALSE;
+	}
+
 	//	create render target
 	if ( !m_EditorRenderTarget.IsValid() )
 	{
@@ -171,8 +216,39 @@ Bool TLGame::TSchemeEditor::CreateEditorGui(TRefRef EditorScheme)
 	}
 
 	//	instance the scheme
-	TLDebug_Break("todo");
-	return FALSE;
+	if ( !TLRender::g_pRendergraph->ImportScheme( pEditorScheme, m_EditorRenderNodeRef ) )
+		return FALSE;
+
+	//	read in data from the scheme
+	u32 i;
+
+	//	setup widgets
+	TPtrArray<TBinaryTree> WidgetDatas;
+	pEditorScheme->GetData().GetChildren("Widget",WidgetDatas);
+	for ( i=0;	i<WidgetDatas.GetSize();	i++ )
+		CreateEditorWidget( *WidgetDatas[i] );
+
+	//	setup list of node types we can create
+	/*
+	TPtrArray<TBinaryTree> NewNodeDatas = pEditorScheme->GetData().GetChildren("NewNode");
+	for ( i=0;	i<NewNodeDatas.GetSize();	i++ )
+		CreateEditorWidget( *NewNodeDatas[i] );
+		*/
+
+	return TRUE;
+}
+
+
+//----------------------------------------------------------
+//	create a widget from scheme XML
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::CreateEditorWidget(TBinaryTree& WidgetData)
+{
+	//	todo: need a "widget is valid" function
+	TPtr<TLGui::TWidget> pWidget = new TLGui::TWidgetButton( m_EditorRenderTarget, WidgetData );
+	
+	this->SubscribeTo( pWidget );
+	m_EditorWidgets.Add( pWidget );
 }
 
 

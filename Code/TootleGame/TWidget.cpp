@@ -17,6 +17,7 @@ TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef Us
 	m_RenderTargetRef			( RenderTargetRef ),
 	m_RenderNodeRef				( RenderNodeRef ),
 	m_RenderNodeDatum			( TLRender_TRenderNode_DatumBoundsBox2D ),
+	m_RenderNodeDatumKeepShape	( TRUE ),
 	m_UserRef					( UserRef),
 	m_ActionOutDown				( ActionOutDown ),
 	m_ActionOutUp				( ActionOutUp ),
@@ -47,6 +48,8 @@ TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef Us
 	
 TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TBinaryTree& WidgetData)  : 
 	m_RenderTargetRef			( RenderTargetRef ),
+	m_RenderNodeDatumKeepShape	( TRUE ),
+	m_UserRef					( "global" ),
 	m_WidgetData				("WidgetData")
 {
 	//	read actions out of the TBinary
@@ -54,8 +57,7 @@ TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TBinaryTree& WidgetData)  :
 	WidgetData.ImportData("ActUp", m_ActionOutUp );
 
 	//	read user ref
-	if ( !WidgetData.ImportData("User", m_UserRef ) )
-		m_UserRef = "global";
+	WidgetData.ImportData("User", m_UserRef );
 
 	//	read render node
 	WidgetData.ImportData("Node", m_RenderNodeRef );
@@ -63,6 +65,8 @@ TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TBinaryTree& WidgetData)  :
 	//	read out a datum - if none supplied we use the bounds box
 	if ( !WidgetData.ImportData("Datum", m_RenderNodeDatum ) )
 		m_RenderNodeDatum = TLRender_TRenderNode_DatumBoundsBox2D;
+
+	WidgetData.ImportData("DtKeepShape", m_RenderNodeDatumKeepShape );	
 
 	//	copy user-supplied data
 	//	m_WidgetData.ReferenceDataTree( *pData, FALSE );
@@ -300,7 +304,7 @@ SyncBool TLGui::TWidget::ProcessQueuedClicks()
 	TPtr<TLMaths::TShape> pClickDatum;
 	if ( m_RenderNodeDatum.IsValid() )
 	{
-		pClickDatum = RenderNode.GetWorldDatum( m_RenderNodeDatum );
+		pClickDatum = RenderNode.GetWorldDatum( m_RenderNodeDatum, m_RenderNodeDatumKeepShape );
 		if ( !pClickDatum )
 		{
 			TLDebug_Break("Missing datum for widget on render node?");

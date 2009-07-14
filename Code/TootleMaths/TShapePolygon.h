@@ -36,7 +36,7 @@ public:
 	void							CleanContour();									//	checks for overlapping points, tiny edges, and reverses outline if it's anti clockwise
 
 	virtual void					Transform(const TLMaths::TTransform& Transform)	{	Transform.Transform( m_Outline );	CleanContour();	}
-	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape) const;
+	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape,Bool KeepShape=FALSE) const;
 
 	Bool							Debug_CheckIsConvex() const;					//	debug check that matches box2d's convex polygon check
 

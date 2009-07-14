@@ -212,9 +212,9 @@ public:
 	const TLMaths::TShapeSphere2D&			GetLocalBoundsSphere2D()						{	CalcLocalBounds( m_BoundsSphere2D.m_LocalShape );		return m_BoundsSphere2D.m_LocalShape;	}
 	FORCEINLINE const TLMaths::TShape*		GetLocalDatum(TRefRef DatumRef);				//	extract a datum from our mesh - unless a special ref is used to get bounds shapes
 	template<class SHAPETYPE>
-	FORCEINLINE const SHAPETYPE*			GetLocalDatum(TRefRef DatumRef);						//	get a datum of a specific type - returns NULL if it doesn't exist or is of a different type
+	FORCEINLINE const SHAPETYPE*			GetLocalDatum(TRefRef DatumRef);				//	get a datum of a specific type - returns NULL if it doesn't exist or is of a different type
 	Bool									GetLocalDatumPos(TRefRef DatumRef,float3& Position);	//	get the position of a datum in local space. returns FALSE if no such datum
-	TPtr<TLMaths::TShape>					GetWorldDatum(TRefRef DatumRef);						//	extract a datum  and transform it into a new world space shape
+	TPtr<TLMaths::TShape>					GetWorldDatum(TRefRef DatumRef,Bool KeepShape=FALSE);	//	extract a datum  and transform it into a new world space shape. Using KeepShape will ensure a shape type stays the same, eg, rotated box doesn't turn into a poly and stays as a box
 	Bool									GetWorldDatumPos(TRefRef DatumRef,float3& Position);	//	get the position of a datum in world space. returns FALSE if no such datum. Currently will recalc the world transform if it's out of date
 	
 	//	gr: not needed? if required uncomment

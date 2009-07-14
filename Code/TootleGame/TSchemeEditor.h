@@ -28,7 +28,7 @@ namespace TLGame
 //	customisable scheme editor, currently to
 //	manipulate just scene nodes, but designing it to manipulate all node types
 //----------------------------------------------
-class TLGame::TSchemeEditor : public TLMessaging::TSubscriber
+class TLGame::TSchemeEditor : public TLMessaging::TSubscriber, public TLMessaging::TPublisher
 {
 public:
 	TSchemeEditor();
@@ -40,6 +40,7 @@ protected:
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);		//	
 
 	Bool						CreateEditorGui(TRefRef EditorScheme);				//	create render target, widgets, icons etc
+	void						CreateEditorWidget(TBinaryTree& WidgetData);		//	create a widget from scheme XML
 
 	void						CreateNodeWidgets(TLGraph::TGraphNodeBase& Node);		//	create a node widget to allow us to drag around in-game nodes. recurses down the tree
 	void						OnNodeSelected(TRefRef NodeRef);						//	node has been selected
@@ -51,7 +52,7 @@ protected:
 private:
 	TRef							m_EditorRenderTarget;	//	render target of our editor
 	TRef							m_EditorRenderNodeRef;	//	root node for our editors render target
-	TPtrArray<TLGui::TWidgetDrag>	m_EditorWidgets;		//	widgets to drag from editor to game
+	TPtrArray<TLGui::TWidget>		m_EditorWidgets;		//	widgets to drag from editor to game, and general UI widgets
 	TPtrArray<TBinaryTree>			m_NewNodeData;			//	data's from the editor scheme dictating what nodes we can create
 
 	TPtr<TLGraph::TGraphBase>		m_pGraph;				//	which graph are we modifying

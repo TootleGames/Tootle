@@ -116,6 +116,7 @@ protected:
 	TRef						m_RenderTargetRef;		//	render target where we can see the render node to click on
 	TRef						m_RenderNodeRef;		//	render node we're clicking on
 	TRef						m_RenderNodeDatum;		//	after a fast sphere check we check for a click inside this datum shape (if none supplied at construction we use the bounds box)
+	Bool						m_RenderNodeDatumKeepShape;	//	sometimes for efficiency we can keep the datum shape as the same type (ie. keep a rotated box as a box shape)
 
 	TRef						m_ActionOutDown;		//	action to send out when mouse goes down over render node
 	TRef						m_ActionOutUp;			//	action to send out when mouse is relesed/not over render node

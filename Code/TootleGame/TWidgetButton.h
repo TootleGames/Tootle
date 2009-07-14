@@ -18,6 +18,13 @@ public:
 	{
 	}
 	
+	TWidgetButton(TRefRef RenderTargetRef,TBinaryTree& WidgetData) : 
+		TLGui::TWidget				( RenderTargetRef, WidgetData ),
+		m_bAllowClickOnCursorMove	( FALSE )
+	{
+		WidgetData.ImportData("ClkMove", m_bAllowClickOnCursorMove );
+	}
+	
 	void SetAllowClickOnCursorMove(Bool bValue)		{	m_bAllowClickOnCursorMove = bValue; }
 	
 protected:

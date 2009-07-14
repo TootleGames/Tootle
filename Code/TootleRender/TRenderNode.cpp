@@ -947,7 +947,7 @@ Bool TLRender::TRenderNode::GetWorldDatumPos(TRefRef DatumRef,float3& Position)
 //---------------------------------------------------------
 //	extract a datum  and transform it into a new world space shape
 //---------------------------------------------------------
-TPtr<TLMaths::TShape> TLRender::TRenderNode::GetWorldDatum(TRefRef DatumRef)
+TPtr<TLMaths::TShape> TLRender::TRenderNode::GetWorldDatum(TRefRef DatumRef,Bool KeepShape)
 {
 	//	get local pos of datum first
 	const TLMaths::TShape* pLocalDatum = GetLocalDatum( DatumRef );				//	extract a datum from our mesh - unless a special ref is used to get bounds shapes
@@ -962,6 +962,7 @@ TPtr<TLMaths::TShape> TLRender::TRenderNode::GetWorldDatum(TRefRef DatumRef)
 		return NULL;
 
 	//	transform the datum by world transform into a new datum shape
-	TPtr<TLMaths::TShape> pNewShape = pLocalDatum->Transform( WorldTransform, TLPtr::GetNullPtr<TLMaths::TShape>() );
+	//	gr: in order to keep a bounds box as a box - for efficiency - we can keep the shape type
+	TPtr<TLMaths::TShape> pNewShape = pLocalDatum->Transform( WorldTransform, TLPtr::GetNullPtr<TLMaths::TShape>(), KeepShape );
 	return pNewShape;
 }

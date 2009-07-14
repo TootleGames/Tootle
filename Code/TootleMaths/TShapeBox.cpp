@@ -59,12 +59,12 @@ Bool TLMaths::TShapeBox::ExportData(TBinaryTree& Data) const
 //----------------------------------------------------------
 //	
 //----------------------------------------------------------
-TPtr<TLMaths::TShape> TLMaths::TShapeBox::Transform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pOldShape) const
+TPtr<TLMaths::TShape> TLMaths::TShapeBox::Transform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pOldShape,Bool KeepShape) const
 {
 	if ( !m_Shape.IsValid() )
 		return NULL;
 
-	if ( Transform.HasRotation() )
+	if ( !KeepShape && Transform.HasRotation() )
 	{
 		TLDebug_Break("todo: need to transform into a 3D oblong (non AA box)");
 		return NULL;
@@ -169,13 +169,13 @@ Bool TLMaths::TShapeBox::HasIntersection(TLMaths::TShapeMesh& CollisionMesh)
 //----------------------------------------------------------
 //	
 //----------------------------------------------------------
-TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Transform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pOldShape) const
+TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Transform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pOldShape,Bool KeepShape) const
 {
 	if ( !m_Shape.IsValid() )
 		return NULL;
 
 	//	if the transform contains a rotation then it's a complex transform into an oblong
-	if ( Transform.HasRotation() )
+	if ( !KeepShape && Transform.HasRotation() )
 	{
 		//	create an oblong shape
 		TLMaths::TOblong2D NewOblong( m_Shape, Transform );
