@@ -1,11 +1,9 @@
 /*------------------------------------------------------
 
-	GUI class. Creates a simple link between screen render
+	Base Widget class. Creates a simple link between screen render
 	objects, input and outputs action messages.
 	Designed to integrate nicely with menu's or as an input
-	device replacement.
-
-	Formely known as "menu renderer"
+	device replacement. (eg. on-screen thumbstick)
 
 -------------------------------------------------------*/
 #pragma once
@@ -15,11 +13,17 @@
 #include <TootleCore/TSubscriber.h>
 #include <TootleCore/TClassFactory.h>
 #include <TootleMaths/TLine.h>
+#include <TootleMaths/TShape.h>
+#include <TootleMaths/TSphere.h>
 
 
-namespace TLInput
+namespace TLGui
 {
-	class TInputInterface;
+	class TWidget;
+
+#define TLGui_WidgetActionType_Down		TRef_Static4(D,o,w,n)
+#define TLGui_WidgetActionType_Move		TRef_Static4(M,o,v,e)
+#define TLGui_WidgetActionType_Up		TRef_Static2(U,p)
 };
 
 namespace TLRender
@@ -35,16 +39,17 @@ namespace TLRender
 //	consider turning the GUI (this) into another input device that 
 //	piggy backs on the mouse input?
 //----------------------------------------------
-class TLInput::TInputInterface : public TLMessaging::TPublisher, public TLMessaging::TSubscriber
+class TLGui::TWidget : public TLMessaging::TPublisher, public TLMessaging::TSubscriber
 {
 protected:
 	class TClick
 	{
 	public:
-		TClick(const int2& CursorPos,float ActionValue, TRefRef ActionRef) :
+		TClick(const int2& CursorPos,float ActionValue, TRefRef ActionRef, TRefRef ActionType) :
 			m_CursorPos		( CursorPos ),
 			m_ActionValue	( ActionValue ),
 			m_ActionRef		( ActionRef ),
+			m_ActionType	( ActionType ),
 			m_WorldRayValid	( FALSE )
 		{
 		}	
@@ -61,18 +66,21 @@ protected:
 		FORCEINLINE const TLMaths::TLine&	GetWorldRay() const								{	return m_WorldRay;	}
 		FORCEINLINE float3					GetWorldPos(float z) const;
 		FORCEINLINE TRefRef					GetActionRef() const							{	return m_ActionRef; }
+		FORCEINLINE TRefRef					GetActionType() const							{	return m_ActionType; }
 
 	protected:
 		int2			m_CursorPos;	
 		float			m_ActionValue;
 		TRef			m_ActionRef;
+		TRef			m_ActionType;		//	TLGui_WidgetActionType_*
 		TLMaths::TLine	m_WorldRay;
 		Bool			m_WorldRayValid;
 	};
 
 public:
-	TInputInterface(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef(),TBinaryTree* pWidgetData=NULL);
-	~TInputInterface();
+	TWidget(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef(),TBinaryTree* pWidgetData=NULL);
+	TWidget(TRefRef RenderTargetRef,TBinaryTree& WidgetData);
+	~TWidget();
 	
 	SyncBool					Initialise();						//	continue initialising
 	void						Shutdown();							//	shutdown code - just unsubscribes from publishers - this is to release all the TPtr's so we can be destructed
@@ -84,13 +92,11 @@ public:
 protected:
 	virtual Bool				Update();											//	update routine - return FALSE if we don't need updates any more
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);	//	
-	virtual SyncBool			ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode);	//	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
+	virtual SyncBool			ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode,const TLMaths::TShapeSphere2D& BoundsDatum,const TLMaths::TShape* pClickDatum);	//	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
 	void						SendActionMessage(Bool ActionDown,float RawData);	//	when click has been validated action message is sent to subscribers
 	virtual void				GetRenderNodes(TArray<TRef>& RenderNodeArray);		//	get array of all the render nodes we're using
 	
-	SyncBool					IsIntersecting(TLRender::TScreen& Screen, TLRender::TRenderTarget& RenderTarget, TLRender::TRenderNode& RenderNode,TClick& Click);
-
-	virtual void				OnInitialised()										{	}
+	SyncBool					IsIntersecting(TLRender::TScreen& Screen, TLRender::TRenderTarget& RenderTarget, TLRender::TRenderNode& RenderNode,const TLMaths::TShapeSphere2D& BoundsDatum,const TLMaths::TShape* pClickDatum,TClick& Click);
 
 	virtual void				OnClickBegin(const TClick& Click);
 	virtual void				OnClickEnd(const TClick& Click);
@@ -100,17 +106,17 @@ protected:
 	virtual void				OnCursorHoverOn()	{}
 	virtual void				OnCursorHoverOff()	{}
 	
-	void						QueueClick(const int2& CursorPos,float ActionValue, TRefRef ActionRef);	//	put a click in the queue
+	void						QueueClick(const int2& CursorPos,float ActionValue, TRefRef ActionRef, TRefRef ActionType);	//	put a click in the queue
 
 	FORCEINLINE void			AppendWidgetData(TLMessaging::TMessage& Message)			{	Message.ReferenceDataTree( m_WidgetData, FALSE );	}
 
 private:
-	void						ProcessQueuedClicks();	//	go through queued-up (unhandled) clicks and respond to them
+	SyncBool					ProcessQueuedClicks();	//	go through queued-up (unhandled) clicks and respond to them. Return FALSE if we cannot process and want to ditch all collected clicks. SyncWait if we don't process the clicks but want to keep them
 
-	void						RemoveAllActions();
 protected:
-	TRef						m_RenderTargetRef;
-	TRef						m_RenderNodeRef;
+	TRef						m_RenderTargetRef;		//	render target where we can see the render node to click on
+	TRef						m_RenderNodeRef;		//	render node we're clicking on
+	TRef						m_RenderNodeDatum;		//	after a fast sphere check we check for a click inside this datum shape (if none supplied at construction we use the bounds box)
 
 	TRef						m_ActionOutDown;		//	action to send out when mouse goes down over render node
 	TRef						m_ActionOutUp;			//	action to send out when mouse is relesed/not over render node
@@ -120,10 +126,7 @@ protected:
 	TBinaryTree					m_WidgetData;			//	generic widget data - this gets attached to all messages sent out so you cna attach node refs etc
 
 private:
-	SyncBool					m_Initialised;			//	have created actions and subscribed to user input
 	TRef						m_UserRef;
-	TRef						m_ActionInClick;		//	our click action
-	TRef						m_ActionInMove;			//	our drag action (only occurs when mouse is down)
 	TArray<TClick>				m_QueuedClicks;			//	action's we had to wait for
 };
 
@@ -131,7 +134,7 @@ private:
 
 
 
-FORCEINLINE float3 TLInput::TInputInterface::TClick::GetWorldPos(float z) const						
+FORCEINLINE float3 TLGui::TWidget::TClick::GetWorldPos(float z) const						
 {	
 	float Factor = m_WorldRay.GetFactorAlongZ(z);	
 	float3 Pos;	

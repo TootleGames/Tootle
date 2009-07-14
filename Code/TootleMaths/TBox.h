@@ -8,6 +8,7 @@
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/TArray.h>
 #include <TootleCore/TFixedArray.h>
+#include "TLine.h"
 
 
 namespace TLMaths
@@ -156,8 +157,8 @@ public:
 	void			Untransform(const TLMaths::TTransform& Transform);	//	untransform box
 
 	//	"intersection" is just a bool version of the distance check. (negative distance is an intersection)
-	Bool			GetIntersection(const TLine& Line) const;
-	Bool			GetIntersection(const TLine2D& Line) const;
+	Bool			GetIntersection(const TLine& Line) const			{	return GetIntersection( Line.GetStart().xy(), Line.GetStart().xy() );	}
+	Bool			GetIntersection(const TLine2D& Line) const			{	return GetIntersection( Line.GetStart(), Line.GetStart() );	}
 	Bool			GetIntersection(const float2& Pos) const;
 	Bool			GetIntersection(const float3& Pos) const;
 	Bool			GetIntersection(const TSphere& Sphere) const;
@@ -179,6 +180,9 @@ public:
 	void			operator/=(const float2& v)		{	m_Min /= v;	m_Max /= v;	}
 	void			operator*=(float v)				{	m_Min *= v;	m_Max *= v;	}
 	void			operator/=(float v)				{	m_Min /= v;	m_Max /= v;	}
+
+protected:
+	Bool			GetIntersection(const float2& LineStart,const float2& LineEnd) const;
 
 protected:
 	float2		m_Min;

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "TInputInterface.h"
+#include "TWidget.h"
 
 namespace TLGui
 {
@@ -9,24 +9,24 @@ namespace TLGui
 }
 
 
-class TLGui::TWidgetButton : public TLInput::TInputInterface
+class TLGui::TWidgetButton : public TLGui::TWidget
 {
 public:
 	TWidgetButton(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef()) : 
-		TLInput::TInputInterface	( RenderTargetRef, RenderNodeRef, UserRef, ActionOutDown, ActionOutUp ),
-		m_bAllowClickOnCursorMove(FALSE)
+		TLGui::TWidget				( RenderTargetRef, RenderNodeRef, UserRef, ActionOutDown, ActionOutUp ),
+		m_bAllowClickOnCursorMove	( FALSE )
 	{
 	}
 	
-	void SetAllowClickOnCursorMove(Bool bValue)		{ m_bAllowClickOnCursorMove = bValue; }
+	void SetAllowClickOnCursorMove(Bool bValue)		{	m_bAllowClickOnCursorMove = bValue; }
 	
 protected:
-	virtual void				OnCursorMove(const int2& NewCursorPosition, TRefRef ActionRef);
+	virtual void	OnCursorMove(const int2& NewCursorPosition, TRefRef ActionRef);
 	
 private:
-	Bool						AllowClickOnCursorMove()		{ return m_bAllowClickOnCursorMove; }
+	Bool			AllowClickOnCursorMove()		{	return m_bAllowClickOnCursorMove;	}
 
 private:
-	Bool		m_bAllowClickOnCursorMove;
+	Bool			m_bAllowClickOnCursorMove;
 
 };

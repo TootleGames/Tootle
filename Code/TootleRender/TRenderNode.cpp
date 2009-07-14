@@ -380,21 +380,11 @@ void TLRender::TRenderNode::SetBoundsInvalid(const TInvalidateFlags& InvalidateF
 			ChildInvalidateFlags.Set( InvalidateChildWorldPos );
 		}
 
-#ifdef TLGRAPH_OWN_CHILDREN
 		TPtrArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
 		for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 		{
 			TLRender::TRenderNode* pChild = NodeChildren[c];
-#else
-		TPtr<TRenderNode> pChild = GetChildFirst();
-		while ( pChild )
-		{
-#endif
 			pChild->SetBoundsInvalid( ChildInvalidateFlags );
-			
-			#ifndef TLGRAPH_OWN_CHILDREN
-			pChild = pChild->GetNext();
-			#endif
 		}
 	}
 }

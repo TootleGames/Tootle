@@ -8,7 +8,7 @@
 -------------------------------------------------------*/
 #pragma once
 
-#include "TInputInterface.h"
+#include "TWidget.h"
 
 
 namespace TLGui
@@ -19,9 +19,9 @@ namespace TLGui
 
 
 //----------------------------------------------
-//	scroll bar derives from the TInputInterface, catches clicks then updates the scroll value
+//	scroll bar derives from the TWidget, catches clicks then updates the scroll value
 //----------------------------------------------
-class TLGui::TWidgetScrollbar : public TLInput::TInputInterface
+class TLGui::TWidgetScrollbar : public TLGui::TWidget
 {
 public:
 	TWidgetScrollbar(TRefRef RenderTargetRef,TRefRef ScrollBarRenderNode,TRefRef SliderRenderNode,TRefRef UserRef,TRefRef ActionOut,float InitialScrollValue=0.f);
@@ -30,9 +30,8 @@ public:
 
 protected:
 	virtual Bool			Update();											//	update routine - return FALSE if we don't need updates any more
-	virtual SyncBool		ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode);	//	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
+	virtual SyncBool		ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode,const TLMaths::TShapeSphere2D& BoundsDatum,const TLMaths::TShape* pClickDatum);	//	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
 	virtual void			GetRenderNodes(TArray<TRef>& RenderNodeArray);		//	get array of all the render nodes we're using
-	virtual void			OnInitialised();									//	when init has finished set the position of the slider
 
 	virtual void				OnCursorMove(const int2& NewCursorPosition, TRefRef ActionRef);		
 	

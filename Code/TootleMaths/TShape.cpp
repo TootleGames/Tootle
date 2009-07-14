@@ -17,6 +17,25 @@ Bool TLMaths::TShape::GetIntersection(TShapeCapsule2D& OtherShape,TIntersection&
 //Bool TLMaths::TShape::GetIntersection(TShapeMesh& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection)		{	Debug_BreakOverloadThis("GetIntersection", static_cast<TShape&>(OtherShape) );	return FALSE;	}
 
 
+Bool TLMaths::TShape::GetIntersection(TLMaths::TLine& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection) const
+{
+	TRef ThisShapeType = this->GetShapeType();
+	TRef OtherShapeType = "line";
+
+	TTempString Debug_String;
+	Debug_String.Appendf("Need to overload TShape; ");
+	ThisShapeType.GetString( Debug_String );
+	Debug_String.Append("get intersection");
+	Debug_String.Append("( ");
+	OtherShapeType.GetString( Debug_String );
+	Debug_String.Append(")");
+
+	TLDebug_Break( Debug_String );
+	return FALSE;
+}
+
+
+
 
 //---------------------------------------------------
 //	create a shape type from TBinaryData

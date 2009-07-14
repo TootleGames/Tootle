@@ -585,8 +585,6 @@ void TLPhysics::TPhysicsNode::PostUpdateAll(float fTimestep,TLPhysics::TPhysicsg
 	// Update this
 	PostUpdate( fTimestep, Graph, pThis );
 
-#ifdef TLGRAPH_OWN_CHILDREN
-
 	TPtrArray<TPhysicsNode>& NodeChildren = GetChildren();
 	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 	{
@@ -594,22 +592,6 @@ void TLPhysics::TPhysicsNode::PostUpdateAll(float fTimestep,TLPhysics::TPhysicsg
 		pNode->PostUpdateAll( fTimestep, Graph, pNode );
 	}
 
-#else
-
-	// Update children recursivly
-	if ( HasChildren() )
-	{
-		TPtr<TLPhysics::TPhysicsNode>& pChildFirst = GetChildFirst();
-		pChildFirst->PostUpdateAll( fTimestep, pGraph, pChildFirst );
-	}
-
-	//	update siblings recursivly
-	if ( HasNext() )
-	{
-		TPtr<TLPhysics::TPhysicsNode>& pNext = GetNext();
-		pNext->PostUpdateAll( fTimestep, pGraph, pNext );
-	}
-#endif
 }
 
 

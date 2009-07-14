@@ -17,7 +17,7 @@ using namespace TLGui;
 
 
 TWidgetText::TWidgetText(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp) : 
-	TLInput::TInputInterface( RenderTargetRef, RenderNodeRef, UserRef, ActionOutDown, ActionOutUp ),
+	TLGui::TWidget( RenderTargetRef, RenderNodeRef, UserRef, ActionOutDown, ActionOutUp ),
 	m_bEditing(FALSE)
 {
 }
@@ -117,7 +117,7 @@ void TWidgetText::ProcessMessage(TLMessaging::TMessage& Message)
 	
 	
 	// super class process message
-	TInputInterface::ProcessMessage(Message);
+	TWidget::ProcessMessage(Message);
 }
 
 

@@ -1,4 +1,4 @@
-#include "TInputInterface.h"
+#include "TWidget.h"
 #include <TootleInput/TUser.h>
 #include <TootleInput/TLInput.h>
 #include <TootleInput/TDevice.h>
@@ -9,11 +9,11 @@
 #include <TootleRender/TScreenManager.h>
 #include <TootleRender/TRendergraph.h>
 #include <TootleCore/TCoreManager.h>
-
 #include "TWidgetManager.h"
 
-TLInput::TInputInterface::TInputInterface(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,TBinaryTree* pData)  : 
-	m_Initialised				( SyncWait ),
+
+
+TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,TBinaryTree* pWidgetData)  : 
 	m_RenderTargetRef			( RenderTargetRef ),
 	m_RenderNodeRef				( RenderNodeRef ),
 	m_UserRef					( UserRef),
@@ -21,75 +21,77 @@ TLInput::TInputInterface::TInputInterface(TRefRef RenderTargetRef,TRefRef Render
 	m_ActionOutUp				( ActionOutUp ),
 	m_WidgetData				("WidgetData")
 {
-	//	no actions going out means this TInputInterface wont do anything
+	//	no actions going out means this TWidget wont do anything
 	if ( !m_ActionOutDown.IsValid() && !m_ActionOutUp.IsValid() )
 	{
-		TLDebug_Break("TInputInterface created that won't send out actions");
+		TLDebug_Break("TWidget created that won't send out actions");
 	}
 
 	//	copy user-supplied data
-	if ( pData )
-		m_WidgetData.ReferenceDataTree( *pData, FALSE );
-
-	//	start initialise
-	SyncBool InitResult = Initialise();
-	if ( InitResult == SyncWait )
-	{
-		//	init not finished yet, subscribe to updates until initialised
-		this->SubscribeTo( TLCore::g_pCoreManager );
-	}
-}
-
-
-TLInput::TInputInterface::~TInputInterface()
-{
-	TTempString Debug_String("TInputInterface destructed ");
-	m_RenderNodeRef.GetString( Debug_String );
-	TLDebug_Print( Debug_String );
-	
-	if(m_ActionInClick.IsValid() || m_ActionInMove.IsValid())
-	{
-		TLDebug_Print("Action hasn't been cleared.  has shutown been called?");
-		TLDebug_Break("Doing last chance action removal");
-		RemoveAllActions();
-	}
-
-}
-
-
-//-------------------------------------------------
-//	keeps subscribing to the appropriate channels until everything is done
-//-------------------------------------------------
-SyncBool TLInput::TInputInterface::Initialise()
-{
-	//	init done alreayd
-	if ( m_Initialised != SyncWait )
-		return m_Initialised;
+	if ( pWidgetData )
+		m_WidgetData.ReferenceDataTree( *pWidgetData, FALSE );
 
 	//	get user
 	TPtr<TLUser::TUser>	pUser = TLUser::g_pUserManager->GetUser( m_UserRef );
 	if ( !pUser )
-		return SyncWait;
+	{
+		TLDebug_Break("Invalid user ref for widget");
+	}
 
 	//	subscribe to user's actions
-	if(!SubscribeTo( pUser ))
-		return SyncWait;
-
-
-	//	all done
-	m_Initialised = SyncTrue;
-
-	//	notify init has finished
-	OnInitialised();
-
-	return m_Initialised;
+	this->SubscribeTo( pUser );
 }
+
+
+	
+TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TBinaryTree& WidgetData)  : 
+	m_RenderTargetRef			( RenderTargetRef ),
+	m_WidgetData				("WidgetData")
+{
+	//	read actions out of the TBinary
+	WidgetData.ImportData("ActDown", m_ActionOutDown );
+	WidgetData.ImportData("ActUp", m_ActionOutUp );
+
+	//	read user ref
+	if ( !WidgetData.ImportData("User", m_UserRef ) )
+		m_UserRef = "global";
+
+	//	read render node
+	WidgetData.ImportData("Node", m_RenderNodeRef );
+
+	//	read out a datum - if none supplied we use the bounds box
+	if ( !WidgetData.ImportData("Datum", m_RenderNodeDatum ) )
+		m_RenderNodeDatum = TLRender_TRenderNode_DatumBoundsBox2D;
+
+	//	copy user-supplied data
+	//	m_WidgetData.ReferenceDataTree( *pData, FALSE );
+	m_WidgetData.AddUnreadChildren( WidgetData, FALSE );
+
+	//	get user
+	TPtr<TLUser::TUser>	pUser = TLUser::g_pUserManager->GetUser( m_UserRef );
+	if ( !pUser )
+	{
+		TLDebug_Break("Invalid user ref for widget");
+	}
+
+	//	subscribe to user's actions
+	this->SubscribeTo( pUser );
+}
+
+
+TLGui::TWidget::~TWidget()
+{
+	TTempString Debug_String("TWidget destructed ");
+	m_RenderNodeRef.GetString( Debug_String );
+	TLDebug_Print( Debug_String );
+}
+
 
 
 //-------------------------------------------------
 //	get array of all the render nodes we're using
 //-------------------------------------------------
-void TLInput::TInputInterface::GetRenderNodes(TArray<TRef>& RenderNodeArray)
+void TLGui::TWidget::GetRenderNodes(TArray<TRef>& RenderNodeArray)
 {
 	RenderNodeArray.Add( m_RenderNodeRef );
 }
@@ -98,60 +100,24 @@ void TLInput::TInputInterface::GetRenderNodes(TArray<TRef>& RenderNodeArray)
 //-------------------------------------------------
 //	shutdown code - just unsubscribes from publishers - this is to release all the TPtr's so we can be destructed
 //-------------------------------------------------
-void TLInput::TInputInterface::Shutdown()
+void TLGui::TWidget::Shutdown()
 {
-	RemoveAllActions();
-	
-	
 	TLMessaging::TPublisher::Shutdown();
 	TLMessaging::TSubscriber::Shutdown();
-}
-
-
-void TLInput::TInputInterface::RemoveAllActions()
-{
-	// Remove the actions from the user
-	TPtr<TLUser::TUser>	pUser = TLUser::g_pUserManager->GetUser( m_UserRef );
-	if ( pUser )
-	{
-		if(m_ActionInClick.IsValid())
-		{
-			if(!pUser->RemoveAction(m_ActionInClick))
-			{
-				TLDebug_Break("Failed to remove action");
-			}
-			
-			m_ActionInClick.SetInvalid();
-		}
-		
-		if(m_ActionInMove.IsValid())
-		{
-			if(!pUser->RemoveAction(m_ActionInMove))
-			{
-				TLDebug_Break("Failed to remove action");
-			}
-			m_ActionInMove.SetInvalid();
-		}
-	}
-	else
-	{
-		TLDebug_Break("Failed to get user");
-	}
-
 }
 
 
 //-------------------------------------------------
 //	
 //-------------------------------------------------
-void TLInput::TInputInterface::ProcessMessage(TLMessaging::TMessage& Message)
+void TLGui::TWidget::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	if(Message.GetMessageRef() == TRef_Static(A,c,t,i,o))
 	{
 		if ( !HasSubscribers() )
 		{
 #ifdef _DEBUG
-			TTempString Debug_String("TInputInterface ");
+			TTempString Debug_String("TWidget ");
 			m_RenderNodeRef.GetString( Debug_String );
 			Debug_String.Append(" has no subscribers");
 			TLDebug_Warning( Debug_String );
@@ -167,11 +133,12 @@ void TLInput::TInputInterface::ProcessMessage(TLMessaging::TMessage& Message)
 
 				if(TLGui::g_pWidgetManager->IsClickActionRef(ActionRef))
 				{
+					//	read the raw value to see if it's a mouse down or mouse up
 					float RawValue = 0.f;
 					if ( Message.ImportData("RawData", RawValue) )
 					{
-							//	queue up this click
-							QueueClick( CursorPosition, RawValue, ActionRef );
+						//	queue up this click
+						QueueClick( CursorPosition, RawValue, ActionRef, RawValue < TLMaths_NearZero ? TLGui_WidgetActionType_Up : TLGui_WidgetActionType_Down );
 					}
 				}
 				else if(TLGui::g_pWidgetManager->IsMoveActionRef(ActionRef))
@@ -180,7 +147,8 @@ void TLInput::TInputInterface::ProcessMessage(TLMessaging::TMessage& Message)
 				}
 				
 				//	now process ALL the queued clicks so if we have some unprocessed they're not lost and kept in order
-				ProcessQueuedClicks();
+				if ( ProcessQueuedClicks() == SyncFalse )
+					m_QueuedClicks.Empty();
 			}
 		}
 	}
@@ -198,18 +166,50 @@ void TLInput::TInputInterface::ProcessMessage(TLMessaging::TMessage& Message)
 //-------------------------------------------------
 //	put a click in the queue
 //-------------------------------------------------
-void TLInput::TInputInterface::QueueClick(const int2& CursorPos,float ActionValue, TRefRef ActionRef)		
+void TLGui::TWidget::QueueClick(const int2& CursorPos,float ActionValue, TRefRef ActionRef,TRefRef ActionType)		
 {
 	//	if this "click" is a mouse up, and the previous was too, then dont add it
 	if ( m_QueuedClicks.GetSize() > 0 )
 	{
 		//	both this and prev action values were "off" so skip adding to the queue
-		if ( ActionValue < TLMaths_NearZero && m_QueuedClicks.ElementLast().GetActionValue() < TLMaths_NearZero )
+		if ( ActionType == TLGui_WidgetActionType_Up && m_QueuedClicks.ElementLast().GetActionType() == TLGui_WidgetActionType_Up )
 			return;
 	}
 
+	TLRender::TRenderTarget* pRenderTarget = TLRender::g_pScreenManager->GetRenderTarget( m_RenderTargetRef );
+	//	if no render target at all then assume error - ignore click
+	if ( !pRenderTarget )
+	{
+		TLDebug_Break("Render target expected");
+		return;
+	}
+
+	//	gr: when the render target (maybe expand to include rendernode) is disabled
+	//		we need to ignore clicks and mouse moves so they dont continue to queue up 
+	//		and then all get processed if the widget comes back
+	//		BUT we still want to process mouse releases to "finish" a current click
+	if ( !pRenderTarget->IsEnabled() )
+	{
+		switch ( ActionType.GetData() )
+		{
+		case TLGui_WidgetActionType_Move:
+		case TLGui_WidgetActionType_Down:
+			return;
+
+		//	if it's an "up" then let it go through if it's the current action
+		case TLGui_WidgetActionType_Up:
+			if ( ActionRef != m_ActionBeingProcessedRef )
+				return;
+			break;
+
+		default:
+			TLDebug_Break("Unknown action type");
+			return;
+		}
+	}
+
 	//	add to queue
-	m_QueuedClicks.Add( TClick( CursorPos, ActionValue, ActionRef ) );
+	m_QueuedClicks.Add( TClick( CursorPos, ActionValue, ActionRef, ActionType ) );
 }
 
 
@@ -217,16 +217,13 @@ void TLInput::TInputInterface::QueueClick(const int2& CursorPos,float ActionValu
 //-------------------------------------------------
 //	update routine - return FALSE if we don't need updates any more
 //-------------------------------------------------
-Bool TLInput::TInputInterface::Update()
+Bool TLGui::TWidget::Update()
 {
 	Bool ContinueUpdate = FALSE;
 
-	//	keep doing initialise
-	if ( Initialise() == SyncWait )
-		ContinueUpdate |= TRUE;
-
 	//	process any queued up clicks
-	ProcessQueuedClicks();
+	if ( ProcessQueuedClicks() == SyncFalse )
+		m_QueuedClicks.Empty();
 
 	//	some clicks still need processing
 	if ( m_QueuedClicks.GetSize() > 0 )
@@ -238,20 +235,18 @@ Bool TLInput::TInputInterface::Update()
 
 
 //-------------------------------------------------
-//	go through queued-up (unhandled) clicks and respond to them
+//	go through queued-up (unhandled) clicks and respond to them. 
+//	Return FALSE if we cannot process and want to ditch all collected clicks. SyncWait if we don't process the clicks but want to keep them
 //-------------------------------------------------
-void TLInput::TInputInterface::ProcessQueuedClicks()
+SyncBool TLGui::TWidget::ProcessQueuedClicks()
 {
 	//	no queue
 	if ( m_QueuedClicks.GetSize() == 0 )
-		return;
+		return SyncTrue;
 
 	//	if we have no subscribers we can just ditch the clicks...
 	if ( !HasSubscribers() )
-	{
-		m_QueuedClicks.Empty();
-		return;
-	}
+		return SyncFalse;
 
 	//	find the render target in a screen...
 	TPtr<TLRender::TScreen> pScreen;
@@ -259,29 +254,63 @@ void TLInput::TInputInterface::ProcessQueuedClicks()
 
 	//	didnt find the render target
 	if ( !pRenderTarget )
-		return;
+		return SyncFalse;
 
-	//	render target isnt enabled, ignore
-	if ( !pRenderTarget->IsEnabled() )
-		return;
+	//	render target isnt enabled, ignore clicks
+	//if ( !pRenderTarget->IsEnabled() )
+	//	return SyncWait;
+
+	//	gr: not sure we can have an invalid rendernode and not crash below... check if anyhting is using the system like this
+	if ( !m_RenderNodeRef.IsValid() )
+	{
+		TLDebug_Break("Is there any code using this functionality - widget with no render node ref");
+		return SyncFalse;
+	}
 
 	//	got a render target, fetch a render node
 	TPtr<TLRender::TRenderNode>& pRenderNode = m_RenderNodeRef.IsValid() ? TLRender::g_pRendergraph->FindNode( m_RenderNodeRef ) : TLPtr::GetNullPtr<TLRender::TRenderNode>();
 
 	//	gr: for support of those that don't use this base render node variable, only check if the ref is valid
 	if ( m_RenderNodeRef.IsValid() && !pRenderNode )
-		return;
-
+		return SyncFalse;
 
 	TLRender::TScreen& Screen = *pScreen;
 	TLRender::TRenderTarget& RenderTarget = *pRenderTarget;
 	TLRender::TRenderNode& RenderNode = *pRenderNode;
+	
+	//	ditch clicks if disabled
+	if ( !RenderNode.IsEnabled() )
+		return SyncFalse;
 
+	//	pre-fetch bounds
+
+	//	get world bounds sphere
+	const TLMaths::TShapeSphere2D& WorldBoundsSphere = RenderNode.GetWorldBoundsSphere2D();
+
+	//	if this fails, we can assume the transform on the render node is out of date
+	if ( !WorldBoundsSphere.IsValid() )
+		return SyncWait;
+
+	//	fetch the clickable datum if one is specified - if this fails then we abort (probably missing datum)
+	//	if none was specified we use the bounds sphere we've already fetched and assume the widget has some custom
+	//	code that doesn't use the datum anyway
+	TPtr<TLMaths::TShape> pClickDatum;
+	if ( m_RenderNodeDatum.IsValid() )
+	{
+		pClickDatum = RenderNode.GetWorldDatum( m_RenderNodeDatum );
+		if ( !pClickDatum )
+		{
+			TLDebug_Break("Missing datum for widget on render node?");
+			return SyncWait;
+		}
+	}
+
+	//	procecess the clicks in the order they came in - removing as we go
 	while ( m_QueuedClicks.GetSize() )
 	{
 		TClick& Click = m_QueuedClicks[0];
 
-		if ( ProcessClick( Click, Screen, RenderTarget, RenderNode ) == SyncWait )
+		if ( ProcessClick( Click, Screen, RenderTarget, RenderNode, WorldBoundsSphere, pClickDatum ) == SyncWait )
 			break;
 
 		m_QueuedClicks.RemoveAt( 0 );
@@ -290,23 +319,25 @@ void TLInput::TInputInterface::ProcessQueuedClicks()
 	//	need to process this click again later so subscribe to updates to process them next time we can
 	if ( m_QueuedClicks.GetSize() > 0 )
 		this->SubscribeTo( TLCore::g_pCoreManager );
+
+	return SyncTrue;
 }
 
 
 //-------------------------------------------------
 //	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
 //-------------------------------------------------
-SyncBool TLInput::TInputInterface::ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode)
+SyncBool TLGui::TWidget::ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode,const TLMaths::TShapeSphere2D& BoundsDatum,const TLMaths::TShape* pClickDatum)
 {
-	Bool bClickAction = TLGui::g_pWidgetManager->IsClickActionRef(Click.GetActionRef());
-	Bool bMoveAction = TLGui::g_pWidgetManager->IsMoveActionRef(Click.GetActionRef());
-	Bool bCurrentAction = FALSE;
-	Bool bActionPair = FALSE;
+	Bool bMoveAction = Click.GetActionRef() == TLGui_WidgetActionType_Move;
+	Bool bClickAction = !bMoveAction;
+	Bool bIsCurrentAction = FALSE;
+	Bool bIsActionPair = FALSE;
 	
 	if(m_ActionBeingProcessedRef.IsValid())
 	{
-		bCurrentAction = (Click.GetActionRef() == m_ActionBeingProcessedRef);
-		bActionPair = TLGui::g_pWidgetManager->IsActionPair(m_ActionBeingProcessedRef, Click.GetActionRef());
+		bIsCurrentAction = (Click.GetActionRef() == m_ActionBeingProcessedRef);
+		bIsActionPair = TLGui::g_pWidgetManager->IsActionPair(m_ActionBeingProcessedRef, Click.GetActionRef());
 	}
 
 	
@@ -314,18 +345,15 @@ SyncBool TLInput::TInputInterface::ProcessClick(TClick& Click,TLRender::TScreen&
 	
 	if(m_ActionBeingProcessedRef.IsValid() )
 	{
-		if(bClickAction && bCurrentAction)
+		if(bClickAction && bIsCurrentAction)
 		{
 			// Click occured and it's the same as the currently processing action
 			bTestIntersection = TRUE;
 		}
-		else if(bMoveAction)
+		else if(bMoveAction && bIsActionPair )
 		{
-			if(bActionPair)
-			{
-				// move action accured and is paired with our action being processed
-				bTestIntersection = TRUE;
-			}
+			// move action accured and is paired with our action being processed
+			bTestIntersection = TRUE;
 		}
 		
 	}
@@ -341,7 +369,7 @@ SyncBool TLInput::TInputInterface::ProcessClick(TClick& Click,TLRender::TScreen&
 		return SyncFalse;
 
 	//	see if ray intersects our object - check all our collision objects to get closest hit.
-	SyncBool Intersection = IsIntersecting(Screen, RenderTarget, RenderNode, Click );
+	SyncBool Intersection = IsIntersecting(Screen, RenderTarget, RenderNode, BoundsDatum, pClickDatum, Click );
 
 	switch ( Intersection )
 	{
@@ -355,7 +383,7 @@ SyncBool TLInput::TInputInterface::ProcessClick(TClick& Click,TLRender::TScreen&
 		//	click position intersected with shape - test to see if the click should end
 		case SyncTrue:
 		{
-			if(Click.GetActionValue() == 0.0f)
+			if(Click.GetActionType() == TLGui_WidgetActionType_Up)
 			{
 				OnClickEnd( Click );
 
@@ -365,6 +393,11 @@ SyncBool TLInput::TInputInterface::ProcessClick(TClick& Click,TLRender::TScreen&
 			}
 			else
 			{
+				if ( Click.GetActionType() == TLGui_WidgetActionType_Move )
+				{
+					TLDebug_Break("gr: should we be calling OnClickBegin during a move?");
+				}
+
 				// This is where we *should* check for being able to hover 'onto' a button
 				// but the movement is classed as clicks along with the actual clicks.... that's gonna have to change! :/
 				//if(AllowClickOnHoverOver())
@@ -376,7 +409,7 @@ SyncBool TLInput::TInputInterface::ProcessClick(TClick& Click,TLRender::TScreen&
 		}
 		break;
 
-			// Click pos does not intersect shape
+		// Click pos does not intersect shape
 		case SyncFalse:
 		{
 			//if((bClickAction  && bCurrentAction) || (bMoveAction && bActionPair))
@@ -395,7 +428,7 @@ SyncBool TLInput::TInputInterface::ProcessClick(TClick& Click,TLRender::TScreen&
 }
 
 
-SyncBool TLInput::TInputInterface::IsIntersecting(TLRender::TScreen& Screen, TLRender::TRenderTarget& RenderTarget, TLRender::TRenderNode& RenderNode,TClick& Click)
+SyncBool TLGui::TWidget::IsIntersecting(TLRender::TScreen& Screen, TLRender::TRenderTarget& RenderTarget, TLRender::TRenderNode& RenderNode,const TLMaths::TShapeSphere2D& BoundsDatum,const TLMaths::TShape* pClickDatum,TClick& Click)
 {
 	SyncBool Intersection = SyncWait;
 
@@ -417,18 +450,13 @@ SyncBool TLInput::TInputInterface::IsIntersecting(TLRender::TScreen& Screen, TLR
 		//	if we haven't already failed a check, test again bounds sphere
 		if ( Intersection != SyncFalse )
 		{
-			const TLMaths::TShapeSphere2D& WorldBoundsSphere = RenderNode.GetWorldBoundsSphere2D();
-			if ( WorldBoundsSphere.IsValid() )
-				Intersection = WorldBoundsSphere.GetSphere().GetIntersection( WorldRay ) ? SyncTrue : SyncFalse;
+			Intersection = BoundsDatum.GetSphere().GetIntersection( WorldRay ) ? SyncTrue : SyncFalse;
 		}
 
 		//	if we haven't already failed a check, test again bounds box for a tighter bounds check
-		if ( Intersection != SyncFalse )
+		if ( pClickDatum && Intersection != SyncFalse )
 		{
-			//	gr: test against 2D box
-			const TLMaths::TShapeBox2D& WorldBoundsBox2D = RenderNode.GetWorldBoundsBox2D();
-			if ( WorldBoundsBox2D.IsValid() )
-				Intersection = WorldBoundsBox2D.GetBox().GetIntersection( WorldRay ) ? SyncTrue : SyncFalse;
+			Intersection = pClickDatum->HasIntersection( WorldRay ) ? SyncTrue : SyncFalse;
 		}
 	}
 
@@ -437,12 +465,12 @@ SyncBool TLInput::TInputInterface::IsIntersecting(TLRender::TScreen& Screen, TLR
 
 
 
-void TLInput::TInputInterface::OnClickBegin(const TClick& Click)
+void TLGui::TWidget::OnClickBegin(const TClick& Click)
 {
 	SendActionMessage( TRUE, 1.f );
 }
 
-void TLInput::TInputInterface::OnClickEnd(const TClick& Click)
+void TLGui::TWidget::OnClickEnd(const TClick& Click)
 {
 	SendActionMessage( FALSE, 0.f );
 }
@@ -452,7 +480,7 @@ void TLInput::TInputInterface::OnClickEnd(const TClick& Click)
 //-------------------------------------------------
 //	when click has been validated action message is sent to subscribers
 //-------------------------------------------------
-void TLInput::TInputInterface::SendActionMessage(Bool ActionDown,float RawData)
+void TLGui::TWidget::SendActionMessage(Bool ActionDown,float RawData)
 {
 	if ( !HasSubscribers( TRef_Static(A,c,t,i,o) ) )
 		return;
@@ -460,7 +488,7 @@ void TLInput::TInputInterface::SendActionMessage(Bool ActionDown,float RawData)
 	TRef ActionOutRef = ActionDown ? m_ActionOutDown : m_ActionOutUp;
 
 #ifdef _DEBUG
-	TTempString Debug_String("TInputInterface (");
+	TTempString Debug_String("TWidget (");
 	m_RenderNodeRef.GetString( Debug_String );
 	Debug_String.Append(") outgoing click message ");
 	ActionOutRef.GetString( Debug_String );

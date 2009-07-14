@@ -10,7 +10,7 @@ TLGui::TWidgetScrollbar::TWidgetScrollbar(TRefRef RenderTargetRef,TRefRef Scroll
 	m_ScrollBarRenderNode	( ScrollBarRenderNode ),
 	m_SliderRenderNode		( SliderRenderNode ),
 	m_SliderPosValid		( FALSE ),
-	TInputInterface					( RenderTargetRef, TRef(), UserRef, ActionOut )
+	TWidget					( RenderTargetRef, TRef(), UserRef, ActionOut )
 {
 	//	check an invalid scroll value provided is valid
 	if ( m_ScrollValue < 0.f || m_ScrollValue > 1.f )
@@ -18,16 +18,26 @@ TLGui::TWidgetScrollbar::TWidgetScrollbar(TRefRef RenderTargetRef,TRefRef Scroll
 		TLDebug_Break("Scrollbar value should be between 0 and 1");
 		TLMaths::Limit( m_ScrollValue, 0.f, 1.f );
 	}
+
+	//	formely OnInitialised()
+	UpdateSliderPos();
+
+	//	need to update slider pos
+	if ( !m_SliderPosValid )
+	{
+		this->SubscribeTo( TLCore::g_pCoreManager );
+	}
+
 }
 
 
 //-------------------------------------------------
 //	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
 //-------------------------------------------------
-SyncBool TLGui::TWidgetScrollbar::ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode)
+SyncBool TLGui::TWidgetScrollbar::ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode,const TLMaths::TShapeSphere2D& BoundsDatum,const TLMaths::TShape* pClickDatum)
 {
 	//	mouse up, dont need to do anything
-	if ( Click.GetActionValue() == 0.f )
+	if ( Click.GetActionType() == TLGui_WidgetActionType_Up )
 		return SyncFalse;
 
 	//	get render node for the scroll bar
@@ -87,7 +97,7 @@ SyncBool TLGui::TWidgetScrollbar::ProcessClick(TClick& Click,TLRender::TScreen& 
 //-------------------------------------------------
 Bool TLGui::TWidgetScrollbar::Update()
 {
-	Bool NeedsUpdate = TInputInterface::Update();
+	Bool NeedsUpdate = TWidget::Update();
 
 	//	update slider pos
 	if ( !m_SliderPosValid )
@@ -133,28 +143,13 @@ void TLGui::TWidgetScrollbar::SetScrollValue(float NewValue)
 }
 
 
-//-------------------------------------------------
-//	when init has finished set the position of the slider
-//-------------------------------------------------
-void TLGui::TWidgetScrollbar::OnInitialised()
-{
-	UpdateSliderPos();
-
-	//	need to update slider pos
-	if ( !m_SliderPosValid )
-	{
-		this->SubscribeTo( TLCore::g_pCoreManager );
-	}
-}
-
-
 void TLGui::TWidgetScrollbar::OnCursorMove(const int2& NewCursorPosition, TRefRef ActionRef)
 {		
 	//	gr: the Move action is dependant on the parent, so assuming mouse is down.
 	//		if that changes (which would be for hover-detection, which would be windows only)
 	//		then we need to work out the button's raw state from this message...
 	float RawValue = 1.f;
-	QueueClick( NewCursorPosition, RawValue, ActionRef);	
+	QueueClick( NewCursorPosition, RawValue, ActionRef, TLGui_WidgetActionType_Down );	
 }
 
 

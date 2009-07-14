@@ -61,6 +61,7 @@ public:
 	virtual Bool					HasIntersection(TShapeSphere2D& OtherShape);
 	virtual Bool					HasIntersection(TShapeBox2D& OtherShape);
 	virtual Bool					HasIntersection(TShapeCapsule2D& OtherShape);
+	virtual Bool					HasIntersection(TLMaths::TLine& Line) const	{	return m_Shape.GetIntersection( Line );	}
 
 	const TLMaths::TBox2D&			GetBox() const								{	return m_Shape;	}
 	void							SetBox(const TLMaths::TBox2D& Box)			{	m_Shape = Box;	}

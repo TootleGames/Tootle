@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "TInputInterface.h"
+#include "TWidget.h"
 
 namespace TLGui
 {
@@ -17,7 +17,7 @@ namespace TLGui
 }
 
 
-class TLGui::TWidgetText : public TLInput::TInputInterface
+class TLGui::TWidgetText : public TLGui::TWidget
 {
 public:
 	TWidgetText(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef());

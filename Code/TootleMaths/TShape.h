@@ -95,7 +95,7 @@ public:
 	virtual Bool					HasIntersection(TShapeBox2D& OtherShape)							{	TIntersection a,b;	return GetIntersection( OtherShape, a, b );	}
 	virtual Bool					HasIntersection(TShapePolygon2D& OtherShape)						{	TIntersection a,b;	return GetIntersection( OtherShape, a, b );	}
 	virtual Bool					HasIntersection(TShapeCapsule2D& OtherShape)						{	TIntersection a,b;	return GetIntersection( OtherShape, a, b );	}
-//	virtual Bool					HasIntersection(TShapeMesh* pCollisionShape)						{	TIntersection a,b;	return GetIntersection_Mesh( OtherShape, a, b );	}
+	virtual Bool					HasIntersection(TLMaths::TLine& Line) const							{	TIntersection a,b;	return GetIntersection( Line, a, b );	}
 
 	//	full intersection tests which return intersection info
 	Bool							GetIntersection(TShape& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
@@ -106,6 +106,7 @@ public:
 	virtual Bool					GetIntersection(TShapePolygon2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 	virtual Bool					GetIntersection(TShapeCapsule2D& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
 //	virtual Bool					GetIntersection(TShapeMesh* pCollisionMesh,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection);
+	virtual Bool					GetIntersection(TLMaths::TLine& OtherShape,TIntersection& NodeAIntersection,TIntersection& NodeBIntersection) const;
 	
 	//template<class TYPE> 
 	//FORCEINLINE void				operator=(const TYPE& Shape)				{	m_Box = Shape;	}
@@ -119,32 +120,5 @@ protected:
 protected:
 };
 
-
-
-
-
-/*
-class TLMaths::TShapeMesh : public TLMaths::TShape
-{
-public:
-	TShapeMesh()															{}
-	TShapeMesh(TRefRef MeshRef) : m_MeshRef ( MeshRef )					{}
-
-	static TRef						GetShapeType_Static()						{	return TLMaths_ShapeRef(Mesh);	}
-	virtual TRef					GetShapeType() const						{	return TLMaths_ShapeRef(Mesh);	}
-	virtual Bool					IsValid() const								{	return m_MeshRef.IsValid();	}
-	virtual float3					GetCenter() const							{	return float3(0,0,0);	}
-	
-	const TLMaths::TBox2D&			GetBox() const								{	return m_Box;	}
-
-protected:
-	virtual Bool					ImportData(TBinaryTree& Data);
-	virtual Bool					ExportData(TBinaryTree& Data) const;
-
-protected:
-	TLMaths::TBox2D					m_Box;
-};
-
-*/
 
 

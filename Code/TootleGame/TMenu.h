@@ -9,7 +9,7 @@
 #include <TootleAsset/TMenu.h>
 #include <TootleCore/TPublisher.h>
 #include <TootleCore/TSubscriber.h>
-#include "TInputInterface.h"
+#include "TWidget.h"
 
 
 namespace TLMenu
@@ -130,7 +130,7 @@ protected:
 protected:
 	TRef								m_MenuRef;
 	TLMenu::TMenuController*			m_pMenuController;		//	owner menu controller
-	TPtrArray<TLInput::TInputInterface>	m_Guis;					//	gui storage
+	TPtrArray<TLGui::TWidget>	m_Guis;					//	gui storage
 };
 
 
@@ -145,7 +145,7 @@ public:
 
 protected:
 	TRef								m_MenuRef;
-	TPtrArray<TLInput::TInputInterface>	m_Guis;		//	gui storage
+	TPtrArray<TLGui::TWidget>	m_Guis;		//	gui storage
 };
 
 

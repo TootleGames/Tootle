@@ -389,26 +389,17 @@ Bool TLRender::TRenderNodeVectorText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 	//	setup RenderNodes
 	u32 charindex=0;
 
-#ifdef TLGRAPH_OWN_CHILDREN
 	TPtrArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
 	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 	{
 		TPtr<TLRender::TRenderNode>& pChild = NodeChildren[c];
-#else
-	TPtr<TRenderNode> pChild = GetChildFirst();
-	while ( pChild )
-	{
-#endif
+
 		//	gr: just set not enabled?
 		//	remove children we dont need any more
 		if ( charindex >= m_Text.GetLengthWithoutTerminator() )
 		{
 			TLRender::g_pRendergraph->RemoveNode( pChild->GetNodeRef() );
 			//RemoveChild( pRemoveChild );
-
-			#ifndef TLGRAPH_OWN_CHILDREN
-			pChild = pChild->GetNext();
-			#endif
 			continue;
 		}
 
@@ -421,9 +412,6 @@ Bool TLRender::TRenderNodeVectorText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 		//	take parents render flags
 		RenderGlyph.GetRenderFlags() = this->GetRenderFlags();
 
-		#ifndef TLGRAPH_OWN_CHILDREN
-		pChild = pChild->GetNext();
-		#endif
 		charindex++;
 	}
 	

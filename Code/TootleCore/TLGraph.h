@@ -1,11 +1,14 @@
+/*------------------------------------------------------
+	
+	Templated graph and graphnode classes which handle node in a tree - 
+	handles the update, queued tree changes, events for nodes
 
+-------------------------------------------------------*/
 #pragma once
 
 //#include "TPtrLinkedList.h"
 //#include "TPtrTree.h"
 
-
-#define TLGRAPH_OWN_CHILDREN
 
 //#define DEBUG_PRINT_GRAPH_CHANGES	//	enable "removing node XXX" and "requesting remove node XX" etc prints
 
@@ -202,6 +205,7 @@ public:
 	TGraphNode(TRefRef NodeRef,TRefRef NodeTypeRef) : TGraphNodeBase ( NodeRef, NodeTypeRef )	{}
 	virtual ~TGraphNode()
 	{
+		//	gr: check has gone through shutdown?
 		// Ensure this node isn't in the linked list any longer
 		//Remove(this);
 	}
@@ -210,34 +214,25 @@ public:
 	FORCEINLINE TPtr<T>&			GetParent()							{	return m_pParent;	}
 	FORCEINLINE const TPtr<T>&		GetParent() const					{	return m_pParent;	}
 	FORCEINLINE Bool				HasParent() const					{	return m_pParent.IsValid();	}
-	virtual const TGraphNodeBase*	GetParentBase() const						{	return m_pParent.GetObject();	}	//	gr: automaticcly casts down
+	virtual const TGraphNodeBase*	GetParentBase() const				{	return m_pParent;	}	//	gr: automaticcly casts down
 
 	// Child manipulation
-#ifdef TLGRAPH_OWN_CHILDREN
 	FORCEINLINE Bool				HasChildren() const					{	return (m_Children.GetSize() > 0);	}
 	FORCEINLINE TPtrArray<T>&		GetChildren()						{	return m_Children;	}
-	FORCEINLINE const TPtrArray<T>&	GetChildren() const				{	return m_Children;	}
+	FORCEINLINE const TPtrArray<T>&	GetChildren() const					{	return m_Children;	}
 	virtual void					GetChildrenBase(TArray<TGraphNodeBase*>& ChildNodes);
-
-#else
-	FORCEINLINE Bool				HasChildren() const					{	return m_pChildFirst.IsValid();	}
-	FORCEINLINE const TPtr<T>&		GetChildFirst() const				{	return m_pChildFirst;	}			//	cant call it ChildFirst because of windows macro
-#endif
 	template<typename MATCHTYPE>
-	TPtr<T>&						FindChildMatch(const MATCHTYPE& Value);		//	find a TPtr in the graph that matches the specified value (will use == operator of node type to match)
-	FORCEINLINE TPtr<T>&			FindChild(const TRef& NodeRef)				{	return FindChildMatch(NodeRef);	}
-
+	TPtr<T>&						FindChildMatch(const MATCHTYPE& Value);				//	find a TPtr in the graph that matches the specified value (will use == operator of node type to match)
+	FORCEINLINE TPtr<T>&			FindChild(const TRef& NodeRef)						{	return FindChildMatch(NodeRef);	}
 
 	FORCEINLINE Bool				operator==(const TPtr<TGraphNode<T> >& pNode) const	{	return this == pNode.GetObject();	}
 	FORCEINLINE Bool				operator==(const TGraphNode<T>& Node) const			{	return this == (&Node);	}
 	FORCEINLINE Bool				operator==(TRefRef NodeRef) const					{	return GetNodeRef() == NodeRef;	}
-	FORCEINLINE Bool				operator<(TRefRef NodeRef) const					{	return GetNodeRef() == NodeRef;	}
-	FORCEINLINE Bool				operator<(const TGraphNode<T>& Node) const			{	return GetNodeRef() == Node.GetNodeRef();	}
 
 protected:
-	virtual void 					Update(float Timestep);					// Main node update called once per frame
+	virtual void 					Update(float Timestep);						// Main node update called once per frame
 	virtual void					UpdateAll(float Timestep);					//	update tree: update self, and children and siblings
-	virtual void					Shutdown();								// Shutdown routine	- called before being removed form the graph. Base code sends out a shutdown message to our subscribers
+	virtual void					Shutdown();									// Shutdown routine	- called before being removed form the graph. Base code sends out a shutdown message to our subscribers
 	virtual void					GetShutdownMessageData(TLMessaging::TMessage& ShutdownMessage)	{	}	//	add additional data to the shutdown message
 
 	virtual void					ProcessMessage(TLMessaging::TMessage& Message);
@@ -249,57 +244,31 @@ protected:
 	virtual void					OnChildMovedTo(const TPtr<T>& pNewChild,const TPtr<T>& pOldParentNode)	{}	//	called to the new parent of a child after it's been moved
 
 	// Sibling manipulation
-#ifndef TLGRAPH_OWN_CHILDREN
-	Bool							HasNext() const						{	return m_pNext.IsValid();	}
-	FORCEINLINE TPtr<T>&			GetNext() 							{	return m_pNext;	}
-	FORCEINLINE TPtr<T>&			GetPrevious() 						{	return m_pPrevious;	}
-	FORCEINLINE const TPtr<T>&		GetNext() const						{	return m_pNext;	}
-	FORCEINLINE const TPtr<T>&		GetPrevious() const					{	return m_pPrevious;	}
-#endif
-
 	template<typename MATCHTYPE>
-	TPtr<T>&				FindNodeMatch(const MATCHTYPE& Value);		//	find a TPtr in the graph that matches the specified value (will use == operator of node type to match)
-	TPtr<T>&				FindNode(const TRef& NodeRef)				{	return FindNodeMatch( NodeRef );	}
+	FORCEINLINE TPtr<T>&			FindNodeMatch(const MATCHTYPE& Value);		//	find a TPtr in the graph that matches the specified value (will use == operator of node type to match)
+	FORCEINLINE TPtr<T>&			FindNode(const TRef& NodeRef)				{	return FindNodeMatch( NodeRef );	}
 	template<typename MATCHTYPE>
-	Bool					IsInGraph(const MATCHTYPE& Value)			{	return FindNodeMatch( Value ).IsValid();	}
+	FORCEINLINE Bool				IsInGraph(const MATCHTYPE& Value)			{	return FindNodeMatch( Value ).IsValid();	}
 
 	// Parent manipulation
-	virtual void			SetParent(TPtr<T>& pNode);						//	gr: needs to make sure removes self from former parent?
-	TPtr<T>&				FindPtr(const TGraphNode<T>* pNode) const;		//	find a child/sibling matching this node and return our TPtr to it - workaround for non intrusive smart pointers
+	virtual void					SetParent(TPtr<T>& pNode);					//	gr: needs to make sure removes self from former parent?
+	TPtr<T>&						FindPtr(const TGraphNode<T>* pNode) const;	//	find a child/sibling matching this node and return our TPtr to it - workaround for non intrusive smart pointers
 
-	Bool					CheckIsThis(TPtr<T>& pThis);					//	check the node pointer is actually this, if not throws up a DebugBreak
-
-private:
-	virtual Bool			AddChild(TPtr<T>& pChild,TPtr<T>& pThis);		//	gr: add to END of child list
-//	virtual Bool			InsertChild(TPtr<T>& pChild,TPtr<T>& pThis)	{	return SetChildFirst( pChild, pThis );	}	//	gr: add to START of child list
-	Bool					RemoveChild(TPtr<T>& pItem);
-	void					RemoveChildren();
-
-	T&						This()												{	return *static_cast<T*>( this );	}
-	const T&				This() const										{	return *static_cast<const T*>( this );	}
-
-	// Sibling manipulation
-#ifdef TLGRAPH_OWN_CHILDREN
-
-#else
-	FORCEINLINE void				SetNext(const TPtr<T>& pNode)						{	m_pNext = pNode;	}	//	gr: need to correct the old m_pNext?
-	FORCEINLINE void				SetPrevious(const TPtr<T>& pNode)					{	m_pPrevious = pNode;	}	//	gr: need to correct the old m_pPrevious?
-	FORCEINLINE Bool				SetChildFirst(TPtr<T>& pNode,TPtr<T>& pThis);		//	assign node as first child
-	Bool					AddSibling(TPtr<T>& pSibling,TPtr<T>& pThis);		//	gr: insert adds to END of siblings...
-	Bool					RemoveSibling(TPtr<T>& pNode);
-	void					RemoveSiblings();
-#endif
+	Bool							CheckIsThis(TPtr<T>& pThis);				//	check the node pointer is actually this, if not throws up a DebugBreak
 
 private:
-	TPtr<T>				m_pParent;			// Parent item
+	virtual Bool					AddChild(TPtr<T>& pChild,TPtr<T>& pThis);	//	gr: add to END of child list
+	FORCEINLINE Bool				RemoveChild(TPtr<T>& pNode)					{	return m_Children.Remove( pNode );	}
+	FORCEINLINE void				RemoveChildren()							{	m_Children.Empty();	}	//	TPtrArray deallocs and cleans up for us
 
-#ifdef TLGRAPH_OWN_CHILDREN
-	TPtrArray<T>		m_Children;
-#else
-	TPtr<T>				m_pChildFirst;		// First child
-	TPtr<T>				m_pPrevious;		//	prev sibling
-	TPtr<T>				m_pNext;			//	Next sibling
-#endif
+	//	accessor to this derived type so we can call functions on the objects (ie. on TRenderNode) without the need for a virtual, 
+	//	compiler can inline and optimise this much more easily. USE WHENEVER POSSIBLE! (see IsEnabled for example)
+	T&								This()										{	return *static_cast<T*>( this );	}		
+	const T&						This() const								{	return *static_cast<const T*>( this );	}
+
+private:
+	TPtr<T>							m_pParent;			// Parent item
+	TPtrArray<T>					m_Children;
 };
 
 
@@ -363,8 +332,6 @@ TPtr<T>& TLGraph::TGraphNode<T>::FindPtr(const TGraphNode<T>* pNode) const
 		return TLPtr::GetNullPtr<T>();
 	}
 
-#ifdef TLGRAPH_OWN_CHILDREN
-	
 	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
 	{
 		TPtr<T>& pChild = m_Children[c];
@@ -373,35 +340,6 @@ TPtr<T>& TLGraph::TGraphNode<T>::FindPtr(const TGraphNode<T>* pNode) const
 
 		pChild->FindPtr( pNode );
 	}
-
-#else
-
-	//	if pNode is one of our members return it before more recursive searching
-	if ( m_pChildFirst.GetObject() == pNode )
-		return m_pChildFirst;
-
-	if ( m_pNext.GetObject() == pNode )
-		return m_pNext;
-
-	TPtr<T> pPtr;
-
-	//	search children
-	if ( m_pChildFirst )
-	{
-		pPtr = m_pChildFirst->FindPtr( pNode );
-		if ( pPtr )
-			return pPtr;
-	}
-
-	//	search siblings
-	if ( m_pNext )
-	{
-		pPtr = m_pNext->FindPtr( pNode );
-		if ( pPtr )
-			return pPtr;
-	}
-
-#endif
 
 	//	no match
 	return TLPtr::GetNullPtr<T>();
@@ -422,8 +360,6 @@ TPtr<T>& TLGraph::TGraphNode<T>::FindNodeMatch(const MATCHTYPE& Value)
 		return TLPtr::GetNullPtr<T>();
 	}
 
-#ifdef TLGRAPH_OWN_CHILDREN
-
 	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
 	{
 		TPtr<T>& pChild = m_Children[c];
@@ -435,32 +371,6 @@ TPtr<T>& TLGraph::TGraphNode<T>::FindNodeMatch(const MATCHTYPE& Value)
 			return pPtr;
 	}
 
-#else
-
-	//	if pNode is one of our members return it before more recursive searching
-	if ( m_pChildFirst == Value )
-		return m_pChildFirst;
-
-	if ( m_pNext == Value )
-		return m_pNext;
-
-	//	search children
-	if ( m_pChildFirst )
-	{
-		TPtr<T>& pPtr = m_pChildFirst->FindNodeMatch( Value );
-		if ( pPtr )
-			return pPtr;
-	}
-
-	//	search siblings
-	if ( m_pNext )
-	{
-		TPtr<T>& pPtr = m_pNext->FindNodeMatch( Value );
-		if ( pPtr )
-			return pPtr;
-	}
-
-#endif
 
 	//	no match
 	return TLPtr::GetNullPtr<T>();
@@ -477,8 +387,6 @@ template <class T>
 template<typename MATCHTYPE>
 TPtr<T>&	TLGraph::TGraphNode<T>::FindChildMatch(const MATCHTYPE& Value)		
 {
-#ifdef TLGRAPH_OWN_CHILDREN
-
 	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
 	{
 		TPtr<T>& pChild = m_Children[c];
@@ -489,38 +397,6 @@ TPtr<T>&	TLGraph::TGraphNode<T>::FindChildMatch(const MATCHTYPE& Value)
 		if ( pResult )
 			return pResult;
 	}
-
-#else
-
-	if ( !m_pChildFirst )
-		return TLPtr::GetNullPtr<T>();
-
-	//	if pNode is one of our members return it before more recursive searching
-	if ( m_pChildFirst == Value )
-		return m_pChildFirst;
-
-	//	check first child's children
-	TPtr<T>& pFirstChildFind = m_pChildFirst->FindChild( Value );
-	if ( pFirstChildFind )
-		return pFirstChildFind;
-
-	//	go through siblings
-	TPtr<T> pChild = m_pChildFirst;
-	while ( pChild->GetNext() )
-	{
-		if ( pChild->GetNext() == Value )
-			return pChild->GetNext();
-
-		//	check children of next
-		TPtr<T>& pChildNextFind = pChild->GetNext()->FindChild( Value );
-		if ( pChildNextFind )
-			return pChildNextFind;
-
-		//	goto next
-		pChild = pChild->GetNext();
-	}
-
-#endif
 
 	//	no match
 	return TLPtr::GetNullPtr<T>();
@@ -544,25 +420,11 @@ void TLGraph::TGraphNode<T>::UpdateAll(float Timestep)
 	// Update this
 	Update( Timestep );
 
-#ifdef TLGRAPH_OWN_CHILDREN
-
 	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
 	{
-		TPtr<T>& pChild = m_Children[c];
-		pChild->UpdateAll( Timestep );
+		T& Child = *(m_Children[c]);
+		Child.UpdateAll( Timestep );
 	}
-
-#else
-
-	// Update children
-	if(m_pChildFirst.IsValid())
-		m_pChildFirst->UpdateAll( Timestep );
-
-	// Update siblings
-	if(m_pNext.IsValid())
-		m_pNext->UpdateAll( Timestep );
-
-#endif
 }
 
 
@@ -579,213 +441,11 @@ Bool TLGraph::TGraphNode<T>::AddChild(TPtr<T>& pChild,TPtr<T>& pThis)
 	if ( !pChild )
 		return FALSE;
 
-#ifdef TLGRAPH_OWN_CHILDREN
-
 	pChild->SetParent( pThis );
 	m_Children.Add( pChild );
 	
-#else
-
-	if ( m_pChildFirst.IsValid() )
-	{
-		m_pChildFirst->AddSibling( pChild, m_pChildFirst );
-	}
-	else
-	{
-		// Assign as the first child
-		SetChildFirst( pChild, pThis );
-	}
-
-#endif
-
 	return TRUE;
 }
-
-
-//-------------------------------------------------------
-//	gr: add to START of child list
-//-------------------------------------------------------
-#ifndef TLGRAPH_OWN_CHILDREN
-template <class T>
-Bool TLGraph::TGraphNode<T>::SetChildFirst(TPtr<T>& pChild,TPtr<T>& pThis)
-{
-	if ( !CheckIsThis(pThis) )
-		return FALSE;
-
-	if ( !pChild )
-		return FALSE;
-
-	if ( pChild == m_pChildFirst )
-		return FALSE;
-
-	TPtr<T> pOldFirstChild = m_pChildFirst;
-	m_pChildFirst = pChild;
-
-	m_pChildFirst->SetPrevious( NULL );
-	m_pChildFirst->SetNext( pOldFirstChild );
-		
-	if ( pOldFirstChild )
-		pOldFirstChild->SetPrevious( m_pChildFirst );
-
-	m_pChildFirst->SetParent( pThis );
-
-	return TRUE;
-}
-#endif
-
-
-//-------------------------------------------------------
-//
-//-------------------------------------------------------
-template <class T>
-Bool TLGraph::TGraphNode<T>::RemoveChild(TPtr<T>& pItem)
-{
-#ifdef TLGRAPH_OWN_CHILDREN
-
-	s32 ChildIndex = m_Children.FindIndex( pItem );
-	if ( ChildIndex == -1 )
-		return FALSE;
-	
-	m_Children.RemoveAt( ChildIndex );
-
-	return TRUE;
-
-#else
-
-	// Recurse through the childs siblings
-	if ( m_pChildFirst.IsValid() )
-	{
-		return m_pChildFirst->RemoveSibling(pItem);
-	}
-
-	// No children
-	return FALSE;
-
-#endif
-}
-
-
-//-------------------------------------------------------
-//
-//-------------------------------------------------------
-#ifndef TLGRAPH_OWN_CHILDREN
-template <class T>
-Bool TLGraph::TGraphNode<T>::AddSibling(TPtr<T>& pSibling,TPtr<T>& pThis)
-{
-	if ( !CheckIsThis(pThis) )
-		return FALSE;
-
-	// Recurse throught he linked list until we find the end
-	if ( m_pNext.IsValid() )
-	{
-		return m_pNext->AddSibling( pSibling, m_pNext );
-	}
-	else
-	{
-		// Assign the sibling to the list
-		SetNext( pSibling );
-		pSibling->SetPrevious( pThis );
-		pSibling->SetParent( GetParent() );
-
-		return TRUE;
-	}
-}
-#endif
-
-
-//-------------------------------------------------------
-//
-//-------------------------------------------------------
-#ifndef TLGRAPH_OWN_CHILDREN
-template <class T>
-Bool TLGraph::TGraphNode<T>::RemoveSibling(TPtr<T>& pNode)
-{
-	if ( this == pNode.GetObject() )
-	{
-		// Remove the children
-		RemoveChildren();
-
-		// Swap the previous and next pointers on the previous and next nodes
-		TPtr<T> pTemp = m_pNext;
-
-		if(m_pPrevious.IsValid())
-			m_pPrevious->SetNext(pTemp);
-		
-		if(m_pNext.IsValid())
-			m_pNext->SetPrevious(m_pPrevious);
-
-		// Unassign all ponters
-		m_pPrevious = NULL;
-		m_pNext = NULL;
-
-		m_pParent = NULL;
-		m_pChildFirst = NULL;
-
-		return TRUE;
-	}
-	else
-	{
-		//Bool bRemoved = FALSE;
-
-		if(m_pChildFirst.IsValid())
-		{
-			if(m_pChildFirst->RemoveSibling(pNode))
-				return TRUE;
-		}
-
-		if(m_pNext.IsValid())
-			return m_pNext->RemoveSibling(pNode);
-
-		// Not removed
-		return FALSE;
-	}
-}
-#endif
-
-
-//-------------------------------------------------------
-//
-//-------------------------------------------------------
-template <class T>
-void TLGraph::TGraphNode<T>::RemoveChildren()
-{
-#ifdef TLGRAPH_OWN_CHILDREN
-
-	m_Children.Empty();	//	TPtrArray class NULL's children for us so everything gets released okay
-
-#else
-
-	if(m_pChildFirst.IsValid())
-	{
-		// Recursively remove the children
-		m_pChildFirst->RemoveChildren();
-
-		// remove the main child
-		RemoveSibling(m_pChildFirst);
-		m_pChildFirst = NULL;
-	}
-
-#endif
-}
-
-//-------------------------------------------------------
-//
-//-------------------------------------------------------
-#ifndef TLGRAPH_OWN_CHILDREN
-template <class T>
-void TLGraph::TGraphNode<T>::RemoveSiblings()
-{
-	if(m_pNext.IsValid())
-	{
-		// Recursively remove the siblings
-		m_pNext->RemoveSiblings();
-
-		// remove the main sibling
-		Remove(m_pNext);
-		m_pNext = NULL;
-	}
-}
-#endif
 
 
 //-------------------------------------------------------
@@ -811,62 +471,72 @@ void TLGraph::TGraphNode<T>::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	TRefRef MessageRef = Message.GetMessageRef();
 
-	if(MessageRef == TLCore::InitialiseRef)
+	switch ( MessageRef.GetData() )
 	{
 		// Now initialise
-		Initialise(Message);
-		return;
-	}
-	else if(MessageRef == TLCore::ShutdownRef)
-	{
-		Shutdown();
-		return;
-	}
-	else if(MessageRef == TLCore::SetPropertyRef)
-	{
-		// Reflection for setting property data on a node via the messaging system
-		SetProperty(Message);
-		return;
-	}
-	else if(MessageRef == TLCore::GetPropertyRef)
-	{
-		// Reflection for getting property data from a node via the messaging system
-		TRef Manager;
-		Message.ImportData(TLCore::ManagerRef, Manager);
-
-		// Valid manager?  If so we can send a response
-		if(Manager.IsValid())
+		//	gr: change this to call SetProperty() and add a warning to change it to a SetProperty message. 
+		//	Call Initialise() explicitly with the init message, and don't use the ProcessMessage/message queue system
+		case TRef_Static(I,n,i,t,i):	//	TLCore::InitialiseRef:
 		{
-			TLMessaging::TMessage Response(TLCore::PropertyRef, GetNodeRef());
-
-			// generate a response with the property information requested
-			GetProperty(Message, Response);
-
-			// Now send the response message 
-			TRefRef Sender = Message.GetSenderRef();
-
-			TLCore::g_pCoreManager->SendMessage(Sender, Manager, Message);
+			Initialise(Message);
+			return;
 		}
 
-		return;
+		//	gr: do we use this? why would something shutdown a node via a message and not remove it?
+		case TRef_Static(S,h,u,t,d):	//	TLCore::ShutdownRef:
+		{
+			Shutdown();
+			return;
+		}
+
+		// Reflection for setting property data on a node via the messaging system
+		case TRef_Static(S,e,t,P,r):	//	TLCore::SetPropertyRef:
+		{
+			SetProperty(Message);
+			return;
+		}
+
+		// Reflection for getting property data from a node via the messaging system
+		case TRef_Static(G,e,t,P,r):	//	TLCore::GetPropertyRef:
+		{
+			TRef Manager;
+			Message.ImportData(TLCore::ManagerRef, Manager);
+
+			// Valid manager?  If so we can send a response
+			if(Manager.IsValid())
+			{
+				TLMessaging::TMessage Response(TLCore::PropertyRef, GetNodeRef());
+
+				// generate a response with the property information requested
+				GetProperty(Message, Response);
+
+				// Now send the response message 
+				TRefRef Sender = Message.GetSenderRef();
+
+				TLCore::g_pCoreManager->SendMessage(Sender, Manager, Message);
+			}
+			return;
+		}
+
+		default:
+		#ifdef _DEBUG
+		{
+			//	gr: this is a bit expensive. I'm sending small messages around now when car control changes. 
+			//	this gets to the physics node, which doesnt do anything with it - which is fine - but this then prints out and game slows to a crawl
+			/*
+			TTempString DebugString("Unhandled message ");
+			MessageRef.GetString( DebugString );
+			DebugString.Append(", node: ");
+			GetNodeRef().GetString( DebugString );
+			DebugString.Append(" (");
+			GetNodeTypeRef().GetString( DebugString );
+			DebugString.Append(")");
+			TLDebug_Print( DebugString );
+			*/
+		}
+		#endif
+		break;
 	}
-#ifdef _DEBUG
-	else
-	{
-		//	gr: this is a bit expensive. I'm sending small messages around now when car control changes. 
-		//	this gets to the physics node, which doesnt do anything with it - which is fine - but this then prints out and game slows to a crawl
-		/*
-		TTempString DebugString("Unhandled message ");
-		MessageRef.GetString( DebugString );
-		DebugString.Append(", node: ");
-		GetNodeRef().GetString( DebugString );
-		DebugString.Append(" (");
-		GetNodeTypeRef().GetString( DebugString );
-		DebugString.Append(")");
-		TLDebug_Print( DebugString );
-		*/
-	}
-#endif
 }
 
 
@@ -942,13 +612,12 @@ SyncBool TLGraph::TGraph<T>::Update(float fTimeStep)
 }
 
 
+//-------------------------------------------------------
+//	dealloc root node
+//-------------------------------------------------------
 template <class T>
 SyncBool TLGraph::TGraph<T>::Shutdown()
 {
-#ifndef TLGRAPH_OWN_CHILDREN
-	m_pRootNode->RemoveSibling(m_pRootNode);
-#endif
-
 	m_pRootNode = NULL;
 
 	return SyncTrue;

@@ -757,22 +757,13 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 	}
 
 	//	render children
-#ifdef TLGRAPH_OWN_CHILDREN
 	TPtrArray<TLRender::TRenderNode>& NodeChildren = pRenderNode->GetChildren();
 	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 	{
 		TPtr<TLRender::TRenderNode>& pChild = NodeChildren[c];
-#else
-	TPtr<TRenderNode> pChild = pRenderNode->GetChildFirst();
-	while ( pChild )
-	{
-#endif
-		//	draw child
-		DrawNode( pChild.GetObject(), pRenderNode, &SceneTransform, SceneColour, pChildCameraZoneNode );
 
-		#ifndef TLGRAPH_OWN_CHILDREN
-		pChild = pChild->GetNext();
-		#endif
+		//	draw child
+		DrawNode( pChild, pRenderNode, &SceneTransform, SceneColour, pChildCameraZoneNode );
 	}
 
 	//	draw our post-render nodes, deleting them as we go

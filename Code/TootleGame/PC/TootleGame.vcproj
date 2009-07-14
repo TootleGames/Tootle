@@ -231,14 +231,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\TInputInterface.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\TInputInterface.h"
-			>
-		</File>
-		<File
 			RelativePath="..\TLGame.cpp"
 			>
 		</File>
@@ -292,6 +284,14 @@
 		</File>
 		<File
 			RelativePath="..\TTimelineManager.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TWidget.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TWidget.h"
 			>
 		</File>
 		<File

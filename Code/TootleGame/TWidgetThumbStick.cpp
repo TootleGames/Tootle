@@ -5,7 +5,7 @@
 #include "TWidgetManager.h"
 
 TLGui::TWidgetThumbStick::TWidgetThumbStick(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,float DeadZone) : 
-	TLInput::TInputInterface	( RenderTargetRef, RenderNodeRef, UserRef, ActionOutDown, ActionOutUp ),
+	TLGui::TWidget	( RenderTargetRef, RenderNodeRef, UserRef, ActionOutDown, ActionOutUp ),
 	m_DeadZone					( DeadZone )
 {
 }
@@ -15,7 +15,7 @@ TLGui::TWidgetThumbStick::TWidgetThumbStick(TRefRef RenderTargetRef,TRefRef Rend
 //-------------------------------------------------
 //	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
 //-------------------------------------------------
-SyncBool TLGui::TWidgetThumbStick::ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode)
+SyncBool TLGui::TWidgetThumbStick::ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode,const TLMaths::TShapeSphere2D& BoundsDatum,const TLMaths::TShape* pClickDatum)
 {
 	Bool bClickAction = TLGui::g_pWidgetManager->IsClickActionRef(Click.GetActionRef());
 	Bool bMoveAction = TLGui::g_pWidgetManager->IsMoveActionRef(Click.GetActionRef());
@@ -34,7 +34,7 @@ SyncBool TLGui::TWidgetThumbStick::ProcessClick(TClick& Click,TLRender::TScreen&
 	{
 		if(bClickAction && bCurrentAction)
 		{
-			if(Click.GetActionValue() == 0.f)
+			if(Click.GetActionType() == TLGui_WidgetActionType_Up )
 			{
 				OnClickEnd( Click );
 				m_ActionBeingProcessedRef.SetInvalid();
@@ -48,7 +48,7 @@ SyncBool TLGui::TWidgetThumbStick::ProcessClick(TClick& Click,TLRender::TScreen&
 	}
 	else if(bClickAction)
 	{
-		if(Click.GetActionValue() == 0.f)
+		if(Click.GetActionType() == TLGui_WidgetActionType_Up )
 		{
 			if(bCurrentAction)
 			{
@@ -69,7 +69,7 @@ SyncBool TLGui::TWidgetThumbStick::ProcessClick(TClick& Click,TLRender::TScreen&
 		return SyncFalse;
 
 	//	see if ray intersects our object, and creates a valid ray
-	SyncBool Intersection = IsIntersecting(Screen, RenderTarget, RenderNode, Click );
+	SyncBool Intersection = IsIntersecting(Screen, RenderTarget, RenderNode, BoundsDatum, pClickDatum, Click );
 
 	if ( Intersection == SyncTrue )
 	{
@@ -91,7 +91,7 @@ SyncBool TLGui::TWidgetThumbStick::ProcessClick(TClick& Click,TLRender::TScreen&
 	}
 
 	 /*
-	SyncBool Result = TInputInterface::ProcessClick(Click, Screen, RenderTarget, RenderNode);
+	SyncBool Result = TWidget::ProcessClick(Click, Screen, RenderTarget, RenderNode);
 	
 	if(Result != SyncTrue)
 		return Result;

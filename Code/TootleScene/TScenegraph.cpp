@@ -95,8 +95,6 @@ void TScenegraph::GetNearestNodes(TPtr<TSceneNode>& pNode, const TLMaths::TLine&
 	if(IsNodeWithinRange(pNode, Line, fDistance))
 		pArray.Add(pNode);
 
-#ifdef TLGRAPH_OWN_CHILDREN
-
 	TPtrArray<TSceneNode>& NodeChildren = pNode->GetChildren();
 	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 	{
@@ -104,19 +102,6 @@ void TScenegraph::GetNearestNodes(TPtr<TSceneNode>& pNode, const TLMaths::TLine&
 		GetNearestNodes( pChild, Line, fDistance, pArray );
 	}
 
-#else
-
-	// Check the nodes children - the child will propagate the check to all other children too
-	TPtr<TSceneNode> pNextNode = pNode->GetChildFirst();
-	if(pNextNode.IsValid())
-		GetNearestNodes(pNextNode, Line, fDistance, pArray);
-
-	// Check the nodes siblings - the next one will check the next sibling and so on...
-	pNextNode = pNode->GetNext();
-	if(pNextNode.IsValid())
-		GetNearestNodes(pNextNode, Line, fDistance, pArray);
-
-#endif
 }
 
 Bool TScenegraph::IsNodeWithinRange(TPtr<TSceneNode>& pNode, const TLMaths::TLine& Line, const float& fDistance)
