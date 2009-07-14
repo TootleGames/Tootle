@@ -6,6 +6,7 @@
 #include "TRenderNodePhysicsNode.h"
 #include "TRenderNodeQuadTree.h"
 #include "TRenderNodeSwoosh.h"
+#include "TRenderNodeScrollableView.h"
 #include <TootleCore/TLTime.h>
 
 
@@ -155,6 +156,9 @@ TLRender::TRenderNode* TLRender::TRenderNodeFactory::CreateObject(TRefRef Instan
 
 	if ( TypeRef == "Swoosh" )
 		return new TLRender::TRenderNodeSwoosh(InstanceRef,TypeRef);
+
+	if ( TypeRef == "Scroll" )
+		return new TLRender::TRenderNodeScrollableView(InstanceRef,TypeRef);
 
 	return NULL;
 }

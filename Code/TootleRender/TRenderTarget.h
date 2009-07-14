@@ -108,7 +108,7 @@ public:
 
 protected:
 	Bool							DrawNode(TRenderNode* pRenderNode,TRenderNode* pParentRenderNode,const TLMaths::TTransform* pSceneTransform,TColour SceneColour,TLMaths::TQuadTreeNode* pCameraZoneNode);	//	render a render object
-	void							DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRenderNode* pRenderNode,const TLMaths::TTransform& SceneTransform,TColour SceneColour,TPtrArray<TRenderNode>& PostRenderList);	
+	void							DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRenderNode* pRenderNode, TColour SceneColour,TPtrArray<TRenderNode>& PostRenderList);	
 	void							DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset::TTexture* pTexture,const TRenderNode* pRenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags,Bool HasAlpha);
 	template<class SHAPE>
 	void							DrawMeshShape(const SHAPE& Shape,const TRenderNode* pRenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags,Bool ResetScene);

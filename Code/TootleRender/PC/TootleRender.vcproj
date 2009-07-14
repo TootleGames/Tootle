@@ -637,6 +637,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TRenderNodeScrollableView.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TRenderNodeScrollableView.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TRenderNodeSwoosh.cpp"
 			>
 		</File>

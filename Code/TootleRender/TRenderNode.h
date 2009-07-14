@@ -176,6 +176,9 @@ public:
 	//	if FALSE presumed we are doing psuedo rendering ourselves (creating RenderNodes and rendering them to the render target)
 	virtual Bool							Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList);	//	pre-draw routine for a render object
 
+	virtual void							PreDrawChildren(TLMaths::TTransform& SceneTransform)	{}
+	virtual void							PostDrawChildren(TLMaths::TTransform& SceneTransform)	{}
+
 	FORCEINLINE void						OnTransformChanged(u8 TransformChangedBits=TLMaths_TransformBitAll);	//	invalidate bounds
 	FORCEINLINE void						OnMeshChanged();							//	invalidate bounds
 	FORCEINLINE void						OnBoundsChanged()							{	OnMeshChanged();	}

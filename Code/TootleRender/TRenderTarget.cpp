@@ -100,7 +100,7 @@ Bool TLRender::TRenderTarget::BeginDraw(const Type4<s32>& RenderTargetMaxSize,co
 
 	//	todo: only enable if size is not full screen - maybe cache current scene viewport?
 	Opengl::EnableScissor( TRUE );
-	glScissor( ViewportSize.Left(), ViewportSize.Top(), ViewportSize.Width(), ViewportSize.Height() );
+	Opengl::SetScissor( ViewportSize.Left(), ViewportSize.Top(), ViewportSize.Width(), ViewportSize.Height() );
 	Opengl::Debug_CheckForError();
 
 	//	calculate new view sizes etc for this viewport
@@ -698,11 +698,13 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 		{
 			BeginSceneReset();
 
+#ifdef _DEBUG
 			//	transform scene
 			if ( &NodeTransform != &SceneTransform )
 			{
 				TLDebug_Break("Im pretty sure these should be the same - in which case use SceneTransform");
 			}
+#endif
 		}
 		else
 		{
@@ -727,7 +729,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 		TPtr<TLAsset::TMesh>& pMeshAsset = pRenderNode->GetMeshAsset();
 
 		//	draw mesh!
-		DrawMeshWrapper( pMeshAsset.GetObject(), pRenderNode, SceneTransform, SceneColour, PostRenderList );
+		DrawMeshWrapper( pMeshAsset.GetObject(), pRenderNode, SceneColour, PostRenderList );
 	}
 
 	//	if this render node is in a zone under the camera's zone, then we KNOW the child nodes are going to be visible, so we dont need to provide the camera's
@@ -756,6 +758,9 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 		}
 	}
 
+	TLMaths::TTransform ChildSceneTransform = SceneTransform;
+	pRenderNode->PreDrawChildren(ChildSceneTransform);
+
 	//	render children
 	TPtrArray<TLRender::TRenderNode>& NodeChildren = pRenderNode->GetChildren();
 	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
@@ -763,8 +768,10 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 		TPtr<TLRender::TRenderNode>& pChild = NodeChildren[c];
 
 		//	draw child
-		DrawNode( pChild, pRenderNode, &SceneTransform, SceneColour, pChildCameraZoneNode );
+		DrawNode( pChild, pRenderNode, &ChildSceneTransform, SceneColour, pChildCameraZoneNode );
 	}
+
+	pRenderNode->PostDrawChildren(ChildSceneTransform);
 
 	//	draw our post-render nodes, deleting them as we go
 	for ( s32 n=PostRenderList.GetLastIndex();	n>=FirstRenderNodeListIndex;	n-- )
@@ -775,15 +782,14 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 		//TPtr<TLRender::TRenderNode>& pChild = PostRenderList[c];
 		TPtr<TLRender::TRenderNode> pChild = PostRenderList[n];
 
-		//	gr: redundant? dont need a temp... this transform wont be changed...
-		TLMaths::TTransform TempSceneTransform = SceneTransform;
-
 		//	draw child
-		DrawNode( pChild.GetObject(), pRenderNode, &TempSceneTransform, SceneColour, pChildCameraZoneNode );
+		DrawNode( pChild.GetObject(), pRenderNode, &SceneTransform, SceneColour, pChildCameraZoneNode );
 
 		//	remove from list
 		PostRenderList.RemoveAt(n);
 	}
+
+	
 
 	//	clean up/restore scene
 	if ( NodeTrans )
@@ -798,7 +804,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 //-------------------------------------------------------------
 //	
 //-------------------------------------------------------------
-void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRenderNode* pRenderNode,const TLMaths::TTransform& SceneTransform,TColour SceneColour,TPtrArray<TRenderNode>& PostRenderList)
+void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRenderNode* pRenderNode, TColour SceneColour,TPtrArray<TRenderNode>& PostRenderList)
 {
 #ifdef _DEBUG
 	TFlags<TRenderNode::RenderFlags::Flags> RenderNodeRenderFlags = pRenderNode->GetRenderFlags();

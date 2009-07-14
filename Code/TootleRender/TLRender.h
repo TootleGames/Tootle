@@ -71,6 +71,7 @@ namespace TLRender
 		FORCEINLINE void		EnableDepthRead(Bool Enable);
 		FORCEINLINE void		EnableDepthWrite(Bool Enable);
 		FORCEINLINE void		EnableScissor(Bool Enable);
+		FORCEINLINE void		SetScissor(u32 x, u32 y, u32 width, u32 height);
 		FORCEINLINE void		SetSceneColour(const TColour& Colour,Bool ForceEnableAlpha=FALSE,Bool AddBlending=FALSE);		//	if alpha < 1 then it will enable alpha too
 		FORCEINLINE void		SetLineWidth(float Width);
 		FORCEINLINE void		SetPointSize(float Size);
@@ -101,6 +102,7 @@ namespace TLRender
 			FORCEINLINE void		EnableDepthRead(Bool Enable);
 			FORCEINLINE void		EnableDepthWrite(Bool Enable);
 			FORCEINLINE void		EnableScissor(Bool Enable);
+			FORCEINLINE void		SetScissor(u32 x, u32 y, u32 width, u32 height);
 			FORCEINLINE void		SetSceneColour(const TColour& Colour);
 			FORCEINLINE void		SetLineWidth(float Width);
 			FORCEINLINE void		SetPointSize(float Size);
@@ -215,6 +217,26 @@ FORCEINLINE void TLRender::Opengl::EnableScissor(Bool Enable)
 		g_SceneEnabled = NewEnabled;
 	}
 }
+
+
+FORCEINLINE void TLRender::Opengl::SetScissor(u32 x, u32 y, u32 width, u32 height)
+{
+	static u32 g_SceneScissor[4] = {0,0,0,0};
+
+	if( x != g_SceneScissor[0] ||
+		y != g_SceneScissor[1] ||
+		width != g_SceneScissor[2] ||
+		height != g_SceneScissor[3])
+	{
+		Platform::SetScissor( x, y, width, height );
+
+		g_SceneScissor[0] = x;
+		g_SceneScissor[1] = y;
+		g_SceneScissor[2] = width;
+		g_SceneScissor[3] = height;
+	}
+}
+
 
 
 //---------------------------------------------------
