@@ -16,6 +16,7 @@
 TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,TBinaryTree* pWidgetData)  : 
 	m_RenderTargetRef			( RenderTargetRef ),
 	m_RenderNodeRef				( RenderNodeRef ),
+	m_RenderNodeDatum			( TLRender_TRenderNode_DatumBoundsBox2D ),
 	m_UserRef					( UserRef),
 	m_ActionOutDown				( ActionOutDown ),
 	m_ActionOutUp				( ActionOutUp ),
@@ -81,6 +82,8 @@ TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TBinaryTree& WidgetData)  :
 
 TLGui::TWidget::~TWidget()
 {
+	Shutdown();
+
 	TTempString Debug_String("TWidget destructed ");
 	m_RenderNodeRef.GetString( Debug_String );
 	TLDebug_Print( Debug_String );

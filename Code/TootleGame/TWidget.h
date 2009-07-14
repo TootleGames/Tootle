@@ -82,7 +82,6 @@ public:
 	TWidget(TRefRef RenderTargetRef,TBinaryTree& WidgetData);
 	~TWidget();
 	
-	SyncBool					Initialise();						//	continue initialising
 	void						Shutdown();							//	shutdown code - just unsubscribes from publishers - this is to release all the TPtr's so we can be destructed
 	virtual TRefRef				GetSubscriberRef() const		{	static TRef Ref("inpint");	return Ref;	}
 
