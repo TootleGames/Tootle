@@ -1,6 +1,6 @@
-
 #include "TRenderNodeScrollableView.h"
 #include "TLRender.h"
+#include "TRenderTarget.h"
 
 using namespace TLRender;
 
@@ -36,8 +36,22 @@ void TRenderNodeScrollableView::ProcessMessage(TLMessaging::TMessage& Message)
 			float3 Change;
 			if(Message.ImportData("Move3", Change ))
 			{
-				m_Scroll.x += Change.x;
-				m_Scroll.y += Change.y;
+				//	mark as having a scroll now
+				m_ScrollTransform.SetTranslateValid();
+
+				//	 change scroll
+				GetScroll() += Change.xy();
+
+				//	gr: when we change the scroll (ie. changing the world transform for the children) then really
+				//		we need to invalidate our children otherwise their world bounds/transforms are going to be
+				//		out of date and when we try and get the bounds (eg. for widget clicking) they're going to
+				//		be in the wrong place - missing the scroll offset.
+				//	note: also need to think about the visibility of the bounds for the widget... either by clipping
+				//		datums, or some kinda "check point isn't clipped" functionality when ray casting into it...
+				//		not sure of the best (ie. still efficient) way of doing this...
+	
+				//	gr: untested
+				//SetBoundsInvalid( TInvalidateFlags( InvalidateChildWorldBounds, InvalidateChildWorldPos ) );
 			}
 		}
 	}
@@ -46,12 +60,8 @@ void TRenderNodeScrollableView::ProcessMessage(TLMessaging::TMessage& Message)
 }
 
 
-void TRenderNodeScrollableView::PreDrawChildren(TLMaths::TTransform& SceneTransform)
+void TRenderNodeScrollableView::PreDrawChildren(TLRender::TRenderTarget& RenderTarget,TLMaths::TTransform& SceneTransform)
 {
-	// Don't change anything if we don't have any children
-	if(!HasChildren())
-		return;
-
 	// Enable scissoring
 	//Opengl::EnableScissor(TRUE);
 
@@ -60,38 +70,27 @@ void TRenderNodeScrollableView::PreDrawChildren(TLMaths::TTransform& SceneTransf
 	Opengl::SetScissor( (u32)m_ViewBox.GetLeft(), (u32)m_ViewBox.GetTop(), (u32)m_ViewBox.GetWidth(), (u32)m_ViewBox.GetHeight() );
 
 	// Only alter the scene transform if we have a valid scroll
-	if(m_Scroll.x != 0.0f && m_Scroll.y != 0.0f)
+	if ( HasScroll() )
 	{
+		//	gr: rather than manipulate the transform in post draw, we can save the scene, then restore it
+		//	note: ALWAYS match a BeginScene and EndScene (will assert if you don't as it corrupts scene)
+		RenderTarget.BeginScene();
+
 		// Update the transform based on our scroll values
-		TLMaths::TTransform	ScrollTransform;
-
-		ScrollTransform.SetTranslate(float3(m_Scroll.x, m_Scroll.y, 0.0f));
-
-		SceneTransform.Transform( ScrollTransform );
-
-		Opengl::SceneTransform(ScrollTransform);
+		SceneTransform.Transform( m_ScrollTransform );
+		Opengl::SceneTransform( m_ScrollTransform );
 	}
 }
 
-void TRenderNodeScrollableView::PostDrawChildren(TLMaths::TTransform& SceneTransform)
+void TRenderNodeScrollableView::PostDrawChildren(TLRender::TRenderTarget& RenderTarget)
 {
-	if(!HasChildren())
-		return;
-
-	//Disable scissoring
+	//restore scissoring
 	//Opengl::EnableScissor(FALSE);
 
 	// Only alter the scene transform if we have a valid scroll
-	if(m_Scroll.x != 0.0f && m_Scroll.y != 0.0f)
+	if ( HasScroll() )
 	{
 		// Undo changes to transform
-
-		TLMaths::TTransform	ScrollTransform;
-
-		ScrollTransform.SetTranslate(float3(-m_Scroll.x, -m_Scroll.y, 0.0f));
-
-		SceneTransform.Transform( ScrollTransform );
-
-		Opengl::SceneTransform(ScrollTransform);
+		RenderTarget.EndScene();
 	}
 }

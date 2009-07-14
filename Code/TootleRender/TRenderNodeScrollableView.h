@@ -1,5 +1,12 @@
+/*------------------------------------------------------
+	
+	A render node which has a world-space box on it which
+	clips(scissors) all children underneath, creating a pseudo
+	scroll box. A scroll(a trasnform, so we could rotate/scale
+	the children) variable exists so we can scroll the contents (the children)
+	around inside our clipping box
 
-
+-------------------------------------------------------*/
 #pragma once
 
 
@@ -10,28 +17,28 @@ namespace TLRender
 	class TRenderNodeScrollableView;
 }
 
-class TLRender::TRenderNodeScrollableView : public TRenderNode
+class TLRender::TRenderNodeScrollableView : public TLRender::TRenderNode
 {
 public:
 	TRenderNodeScrollableView(TRefRef RenderNodeRef=TRef(),TRefRef TypeRef=TRef()) :
 		TRenderNode(RenderNodeRef, TypeRef)
 	{
-		m_Scroll.x = 0;
-		m_Scroll.y = 0;
 	}
 
 	//virtual Bool							Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList)		{ return FALSE; }
 
-	virtual void							PreDrawChildren(TLMaths::TTransform& SceneTransform);
-	virtual void							PostDrawChildren(TLMaths::TTransform& SceneTransform);
+	virtual void							PreDrawChildren(TLRender::TRenderTarget& RenderTarget,TLMaths::TTransform& SceneTransform);
+	virtual void							PostDrawChildren(TLRender::TRenderTarget& RenderTarget);
+
 protected:
-
 	virtual void							Initialise(TLMessaging::TMessage& Message);	//	generic render node init
-
 	virtual void							ProcessMessage(TLMessaging::TMessage& Message);
 
-private:
+	FORCEINLINE Bool						HasScroll() const		{	return m_ScrollTransform.HasAnyTransform();	}
+	FORCEINLINE float2&						GetScroll()				{	return m_ScrollTransform.GetTranslate().xy();	}	//	accessor straight to the 2D scroll
 
+private:
+	TLMaths::TTransform			m_ScrollTransform;		//	gr: keep the scroll in a transform so we don't need to create a transform twice every render
 	TLMaths::TBox2D				m_ViewBox;
-	float2						m_Scroll;
 };
+

@@ -758,20 +758,26 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 		}
 	}
 
-	TLMaths::TTransform ChildSceneTransform = SceneTransform;
-	pRenderNode->PreDrawChildren(ChildSceneTransform);
 
-	//	render children
+	//	process children
 	TPtrArray<TLRender::TRenderNode>& NodeChildren = pRenderNode->GetChildren();
-	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
+	u32 ChildCount = NodeChildren.GetSize();
+	if ( ChildCount > 0 )
 	{
-		TPtr<TLRender::TRenderNode>& pChild = NodeChildren[c];
+		TLMaths::TTransform ChildSceneTransform = SceneTransform;
+		pRenderNode->PreDrawChildren( *this, ChildSceneTransform);
 
-		//	draw child
-		DrawNode( pChild, pRenderNode, &ChildSceneTransform, SceneColour, pChildCameraZoneNode );
+		//	render children
+		for ( u32 c=0;	c<ChildCount;	c++ )
+		{
+			TPtr<TLRender::TRenderNode>& pChild = NodeChildren[c];
+
+			//	draw child
+			DrawNode( pChild, pRenderNode, &ChildSceneTransform, SceneColour, pChildCameraZoneNode );
+		}
+
+		pRenderNode->PostDrawChildren( *this );
 	}
-
-	pRenderNode->PostDrawChildren(ChildSceneTransform);
 
 	//	draw our post-render nodes, deleting them as we go
 	for ( s32 n=PostRenderList.GetLastIndex();	n>=FirstRenderNodeListIndex;	n-- )
@@ -788,7 +794,6 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 		//	remove from list
 		PostRenderList.RemoveAt(n);
 	}
-
 	
 
 	//	clean up/restore scene
