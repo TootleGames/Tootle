@@ -25,7 +25,7 @@ void TWidgetManager::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChan
 	}
 	
 	// Super event channel routine
-	TManager::OnEventChannelAdded(refPublisherID, refChannelID);
+	TLCore::TManager::OnEventChannelAdded(refPublisherID, refChannelID);
 }
 
 //-----------------------------------------------------------
@@ -65,7 +65,7 @@ void TWidgetManager::ProcessMessage(TLMessaging::TMessage& Message)
 		}
 	}
 
-	TManager::ProcessMessage(Message);
+	TLCore::TManager::ProcessMessage(Message);
 }
 
 void TWidgetManager::OnInputDeviceAdded(TRefRef DeviceRef, TRefRef DeviceTypeRef)

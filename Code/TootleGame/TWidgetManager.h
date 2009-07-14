@@ -13,7 +13,7 @@ namespace TLGui
 }
 
 
-class TLGui::TWidgetManager : public TManager
+class TLGui::TWidgetManager : public TLCore::TManager
 {
 private:
 	
@@ -26,7 +26,7 @@ private:
 
 public:
 	TWidgetManager(TRefRef ManagerRef) :
-		TManager(ManagerRef)
+		TLCore::TManager(ManagerRef)
 	{
 	}
 	

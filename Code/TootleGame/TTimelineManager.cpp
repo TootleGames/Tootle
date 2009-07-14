@@ -35,17 +35,17 @@ SyncBool TTimelineManager::Shutdown()
 	// Remove all instances of the timelines
 	m_TimelineInstances.Empty(TRUE);
 
-	return TManager::Shutdown();
+	return TLCore::TManager::Shutdown();
 }
 
 SyncBool TTimelineManager::Update(float fTimestep)
 {
-	return TManager::Update(fTimestep);
+	return TLCore::TManager::Update(fTimestep);
 }
 
 void TTimelineManager::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID)
 {
-	TManager::OnEventChannelAdded(refPublisherID, refChannelID);
+	TLCore::TManager::OnEventChannelAdded(refPublisherID, refChannelID);
 }
 
 

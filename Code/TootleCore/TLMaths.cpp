@@ -1605,7 +1605,7 @@ void TLMaths::TTransform::Transform(const TLMaths::TTransform& Trans)
 //	transform this by another transform. returns elements that have changed 
 //	(slightly slower, but if your caller does much LESS work if nothing changed then use this)
 //-----------------------------------------------------------
-u8 TLMaths::TTransform::TransformHasChanged(const TLMaths::TTransform& Trans)
+u8 TLMaths::TTransform::Transform_HasChanged(const TLMaths::TTransform& Trans)
 {
 	u8 ChangedBits = 0x0;
 
@@ -1657,6 +1657,97 @@ u8 TLMaths::TTransform::TransformHasChanged(const TLMaths::TTransform& Trans)
 	return ChangedBits;
 }
 
+
+//-----------------------------------------------------------
+//	Modify the transform values by another transform, Translates the translate, scales the scale, rotates the rotation. Doesn't multiply and rotate the translate etc
+//-----------------------------------------------------------
+void TLMaths::TTransform::AddTransform(const TLMaths::TTransform& Trans)
+{
+	if ( Trans.HasTranslate() )
+	{
+		if ( HasTranslate() )
+			m_Translate += Trans.GetTranslate();
+		else
+			SetTranslate( Trans.GetTranslate() );
+
+		TLDebug_CheckFloat( m_Translate );
+	}
+
+	if ( Trans.HasScale() )
+	{
+		if ( HasScale() )
+			m_Scale *= Trans.m_Scale;
+		else
+			SetScale( Trans.m_Scale );
+
+		TLDebug_CheckFloat( m_Scale );
+	}
+
+	if ( Trans.HasRotation() )
+	{
+		//	gr: needs normalising?
+		if ( HasRotation() )
+			m_Rotation *= Trans.m_Rotation;
+		else
+			SetRotation( Trans.m_Rotation );
+		
+		TLDebug_CheckFloat( m_Rotation );
+	}
+}
+
+
+//-----------------------------------------------------------
+//	Modify the transform values by another transform, Translates the translate, scales the scale, rotates the rotation. Doesn't multiply and rotate the translate etc. returns elements that have changed (slightly slower, but if your caller does much LESS work if nothing changed then use this)
+//-----------------------------------------------------------
+u8 TLMaths::TTransform::AddTransform_HasChanged(const TLMaths::TTransform& Trans)
+{
+	u8 ChangedBits = 0x0;
+
+	if ( Trans.HasTranslate() )
+	{
+		if ( Trans.m_Translate.IsNonZero() )
+		{
+			if ( HasTranslate() )
+				m_Translate += Trans.GetTranslate();
+			else
+				SetTranslate( Trans.GetTranslate() );
+
+			ChangedBits |= TLMaths_TransformBitTranslate;
+
+			TLDebug_CheckFloat( m_Translate );
+		}
+	}
+
+
+	if ( Trans.HasScale() )
+	{
+		if ( HasScale() )
+			m_Scale *= Trans.m_Scale;
+		else
+			SetScale( Trans.m_Scale );
+
+		//	assume scale always changes... can check Trans.m_Scale.LengthSq() == 1 i think to see if its all 1's. Not sure how accurate that is...		
+		ChangedBits |= TLMaths_TransformBitScale;
+
+		TLDebug_CheckFloat( m_Scale );
+	}
+
+	if ( Trans.HasRotation() )
+	{
+		//	gr: needs normalising?
+		if ( HasRotation() )
+			m_Rotation *= Trans.m_Rotation;
+		else
+			SetRotation( Trans.m_Rotation );
+		
+		//	assume rotation always changes... 
+		ChangedBits |= TLMaths_TransformBitScale;
+
+		TLDebug_CheckFloat( m_Rotation );
+	}
+
+	return ChangedBits;
+}
 
 
 //-----------------------------------------------------------

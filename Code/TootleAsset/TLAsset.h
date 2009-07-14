@@ -43,11 +43,11 @@ namespace TLAsset
 //------------------------------------------------------------
 //	class factory for assets
 //------------------------------------------------------------
-class TLAsset::TAssetFactory : public TManager, public TClassFactory<TLAsset::TAsset>
+class TLAsset::TAssetFactory : public TLCore::TManager, public TClassFactory<TLAsset::TAsset>
 {
 public:
 	TAssetFactory(TRefRef ManagerRef) :
-		TManager						( ManagerRef ),
+		TLCore::TManager				( ManagerRef ),
 		TClassFactory<TLAsset::TAsset>	( &TLAsset::AssetSort )
 	{
 		//	gr: make grow by quite big for assets - cops and robbers has thousands of assets, takes a while to init with

@@ -34,7 +34,7 @@ public:
 class TLAudio::TAudiograph : public TLGraph::TGraph<TLAudio::TAudioNode>
 {
 public:
-	TAudiograph(TRefRef refManagerID);
+	TAudiograph();
 
 	////////////////////////////////////////////////////////
 	// Audio system access

@@ -18,10 +18,10 @@ using namespace TLScene;
 
 
 
-TSchemeEditor::TSchemeEditor(TRef refManagerID) :
-  TManager(refManagerID),
-  m_uTransformMode(Translate),
-  m_bEnabled(TRUE)
+TSchemeEditor::TSchemeEditor(TRefRef ManagerRef) :
+	TLCore::TManager	(ManagerRef),
+	m_uTransformMode	(Translate),
+	m_bEnabled			(TRUE)
 {
 }
 

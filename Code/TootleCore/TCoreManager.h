@@ -33,6 +33,7 @@ public:
 	FORCEINLINE void				ForceRender()	{	PublishRenderMessage();	}
 
 	template<class T> Bool	CreateAndRegisterManager(TPtr<T>& pManager,TRefRef ManagerRef);	// Creates and registers a manager and assigns the new manager to a global pointer 
+	template<class T> Bool	CreateAndRegisterManager(TPtr<T>& pManager);	// Creates and registers a manager and assigns the new manager to a global pointer 
 	template<class T> Bool	CreateAndRegisterManager(TRefRef ManagerRef);	// Creates and registers a manager but doesn't assign the new manager to any global pointer 
 	template<class T> Bool	RegisterManager(TPtr<T>& pManager);				// Simply registers the manager by adding to our list - can also be used to add managers that have been created externally
 	Bool					UnRegisterManager(TRefRef ManagerRef);
@@ -62,17 +63,8 @@ public:
 	
 	TRef					GetHardwareLanguage();
 
-	FORCEINLINE void		StoreTimestamp(TRefRef TimestampRef, TLTime::TTimestampMicro& Timestamp)
-	{
-		if(m_pMachineData)
-			m_pMachineData->ExportData(TimestampRef, Timestamp);
-	}
-	
-	FORCEINLINE Bool		RetrieveTimestamp(TRefRef TimestampRef, TLTime::TTimestampMicro& Timestamp)
-	{
-		if(m_pMachineData)
-			return m_pMachineData->ImportData(TimestampRef, Timestamp);
-	}
+	FORCEINLINE void		StoreTimestamp(TRefRef TimestampRef, TLTime::TTimestampMicro& Timestamp)	{	m_MachineData.ExportData(TimestampRef, Timestamp);	}
+	FORCEINLINE Bool		RetrieveTimestamp(TRefRef TimestampRef, TLTime::TTimestampMicro& Timestamp)	{	return m_MachineData.ImportData(TimestampRef, Timestamp);	}
 	
 	// Messaging
 	Bool					SendMessage(TRefRef RecipientRef, TRefRef ManagerRef, TLMessaging::TMessage& Message);
@@ -124,7 +116,7 @@ private:
 
 	TKeyArray<TRef, float>		m_aTimeStepModifiers;	// Game mechanics time step modifier - allows the game to sped up/slowed down/paused etc
 	
-	TPtr<TBinaryTree>			m_pMachineData;			// Hardware specific data
+	TBinaryTree					m_MachineData;			// Hardware specific data. gr: doesn't need to be a pointer...
 
 	Bool						m_ChannelsInitialised;	//	for the init, we do channel initialisation once
 	Bool						m_bEnabled;
@@ -155,6 +147,31 @@ Bool TLCore::TCoreManager::CreateAndRegisterManager(TPtr<T>& pManager,TRefRef Ma
 
 	return TRUE;
 }
+
+
+//---------------------------------------------------------
+// Creates and registers a manager and assigns the new manager to a global pointer 
+//---------------------------------------------------------
+template<class T>
+Bool TLCore::TCoreManager::CreateAndRegisterManager(TPtr<T>& pManager)
+{
+	//	alloc and register manager
+	pManager = new T();
+
+	if ( !RegisterManager(pManager) )
+	{
+		pManager = NULL;
+		return FALSE;
+	}
+
+	// Success - now add the TPtr to our list of pointers to TPtrs so we can clear the TPtr 
+	// automatically at shutdown
+	TPtr<TManager>* pPtr = (reinterpret_cast< TPtr<TManager>* >(&pManager));
+	m_ManagerPointers.Add(pPtr);
+
+	return TRUE;
+}
+
 
 //---------------------------------------------------------
 // Creates and registers a manager but doesn't assign the new manager to any global pointer 

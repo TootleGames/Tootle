@@ -11,6 +11,8 @@
 
 #include "TRef.h"
 #include "TLMessaging.h"
+#include "TRelay.h"
+#include "TManager.h"
 
 namespace TLAsset
 {
@@ -28,13 +30,18 @@ namespace TLGraph
 //--------------------------------------------------------------------
 //	base graph class
 //--------------------------------------------------------------------
-class TLGraph::TGraphBase
+class TLGraph::TGraphBase : public TLCore::TManager
 {
 public:
-	TGraphBase()				{}
+	TGraphBase(TRefRef GraphRef) :
+		TLCore::TManager	( GraphRef )
+	{
+	}
+	virtual ~TGraphBase()		{}
 	
-	virtual TRefRef				GetGraphRef() const = 0;
+	FORCEINLINE TRefRef			GetGraphRef() const						{	return TLCore::TManager::GetManagerRef();	}
 
+	virtual Bool				SendMessage(TRefRef RecipientRef, TLMessaging::TMessage& Message) 		{	return SendMessageToNode(RecipientRef, Message);	}	// Generic manager SendMessage routine wrapper for the graph SendMessageToNode
 	virtual Bool				SendMessageToNode(TRefRef NodeRef,TLMessaging::TMessage& Message)=0;	//	send message to node
 
 	virtual TRef				CreateNode(TRefRef NodeRef,TRefRef TypeRef,TRefRef ParentRef,TLMessaging::TMessage* pInitMessage=NULL,Bool StrictNodeRef=FALSE)=0;	//	create node and add to the graph. returns ref of new node
@@ -48,7 +55,7 @@ public:
 	Bool						ReimportScheme(const TLAsset::TScheme& Scheme,TRefRef ParentNodeRef,Bool StrictNodeRefs,Bool AddMissingNodes,Bool RemoveUnknownNodes,TLMessaging::TMessage* pCommonInitMessage=NULL);							//	re-import scheme into this graph. Nodes will be re-sent an Initialise message. Add missing and delete new (non-scheme) nodes via params. this system will kinda mess up if the original scheme wasn't loaded with strict refs
 	TPtr<TLAsset::TScheme>		ExportScheme(TRef SchemeAssetRef,TRef SchemeRootNode=TRef(),Bool IncludeSchemeRootNode=TRUE);	//	export node tree to a scheme
 
-protected:
+	//	gr: exposed for the scheme editor...
 	virtual TLGraph::TGraphNodeBase*	FindNodeBase(TRefRef NodeRef) = 0;
 	virtual TLGraph::TGraphNodeBase*	GetRootNodeBase() = 0;
 
@@ -63,11 +70,12 @@ private:
 //--------------------------------------------------------------------
 //	base graph node class
 //--------------------------------------------------------------------
-class TLGraph::TGraphNodeBase
+class TLGraph::TGraphNodeBase : public TLMessaging::TPublisherSubscriber
 {
 	friend class TLGraph::TGraphBase;
 public:
 	TGraphNodeBase(TRefRef NodeRef,TRefRef NodeTypeRef);
+	virtual ~TGraphNodeBase()											{	}
 
 	FORCEINLINE TRefRef			GetNodeRef() const						{	return m_NodeRef; }
 	FORCEINLINE TRefRef			GetNodeTypeRef() const					{	return m_NodeTypeRef; }
@@ -79,12 +87,21 @@ public:
 	virtual const TBinaryTree&	GetNodeData(Bool UpdateData)			{	return m_NodeData;	}	//	overload this to handle UpdateData for specific nodes
 	virtual TBinaryTree&		GetNodeData()							{	return m_NodeData;	}	//	overload this to handle UpdateData for specific nodes
 
-protected:
-	virtual void					Initialise(TLMessaging::TMessage& Message);	
-
+	//	gr: big hack here! instead... use node data? it's more class based than instance based... cant think of a great solution right now...
+	//	Will remove this at somepoint for some other interface, ie. when looking at audio graph, something will be rendering debug-style
+	//	nodes, so we'd use them
+	virtual TRef				GetRenderNodeRef() const				{	return TRef();	}	//	get a render node ref to represent this node. used in the scheme editor as the widget node. 
+	
+	//	gr: exposed for the scheme editor...
 	virtual void					GetChildrenBase(TArray<TGraphNodeBase*>& ChildNodes) = 0;
 	virtual const TGraphNodeBase*	GetParentBase() const = 0;
 	
+protected:
+	virtual void					Initialise(TLMessaging::TMessage& Message);				//	[soon to be] only called once for initialisation after being added to the graph. Does an initialising call to SetProperty to replace the legacy usage
+	virtual void					SetProperty(TLMessaging::TMessage& Message);			//	base SetProperty function writes/updates the NodeData with any data in the message that hasn't already been read
+	virtual void					GetProperty(TLMessaging::TMessage& Message, TLMessaging::TMessage& Response);	//	GetProperty message handler
+	virtual void					ProcessMessage(TLMessaging::TMessage& Message)			{	}	//	gr: only implemented as its pure virtual. Maybe in the future move the common Initialise, shutdown, SetProperty into this class...
+
 	FORCEINLINE void				SetNodeRef(TRefRef NodeRef)			{	m_NodeRef = NodeRef;	m_NodeRef.GetString( m_Debug_NodeRefString );	}
 
 protected:

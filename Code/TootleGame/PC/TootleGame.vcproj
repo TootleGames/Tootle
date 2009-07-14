@@ -263,6 +263,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TSchemeEditor.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TSchemeEditor.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TTextManager.cpp"
 			>
 		</File>

@@ -1,5 +1,10 @@
+/*------------------------------------------------------
+	
+	Graham doesn't know why this is a manager and not
+	just some maths static Init function called from
+	the core/bootup Init...
 
-
+-------------------------------------------------------*/
 #pragma once
 
 #include "TManager.h"
@@ -12,11 +17,11 @@ namespace TLRandom
 }
 
 
-class TLRandom::TRandomNumberManager : public TManager
+class TLRandom::TRandomNumberManager : public TLCore::TManager
 {
 public:
 	TRandomNumberManager(TRefRef ManagerRef) :
-	  TManager(ManagerRef)
+		TLCore::TManager(ManagerRef)
 	{
 	}
 

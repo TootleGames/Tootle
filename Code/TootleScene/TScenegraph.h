@@ -37,8 +37,8 @@ protected:
 class TLScene::TScenegraph : public TLGraph::TGraph<TSceneNode>
 {
 public:
-	TScenegraph(TRefRef refManagerID) :
-		TLGraph::TGraph<TSceneNode>		(refManagerID)
+	TScenegraph() :
+		TLGraph::TGraph<TSceneNode>	("Scene")
 	{
 	}
 

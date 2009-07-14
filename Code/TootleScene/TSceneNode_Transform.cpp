@@ -43,39 +43,37 @@ void TLScene::TSceneNode_Transform::Initialise(TLMessaging::TMessage& Message)
 
 void TLScene::TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	//	gr: only apply change if explicitly sent to change
-	if(Message.GetMessageRef() == TRef_Static(D,o,T,r,a) )
+	//	gr: same format as TRenderNode; "SetTransform" to overwrite, "DoTransform" to change
+	if(Message.GetMessageRef() == TRef_Static(S,e,t,T,r) )
 	{
+		//	overwrite our transform
 		u8 TransformChangedBits = m_Transform.ImportData( Message );
-		//OnTransformChanged( TransformChangedBits );
+		OnTransformChanged(TransformChangedBits);
 
-		//	gr: use the explicit SetTransform function so it uses overloaded funationality (ie. the Object scene node forces changes onto the physics node)
-		SetTransform( m_Transform );
+		return;
 	}
-	else if(Message.GetMessageRef() == TRef_Static(R,e,q,T,r) )
+	else if(Message.GetMessageRef() == TRef_Static(L,o,c,T,r))	//	local transform
 	{
-		float3 vVector;
-		TLMaths::TQuaternion qRot;
-
-		// Delta position/rotation/scale that are requested from other things i.e. editor
-		if(Message.ImportData(TRef_Static(T,r,a,n,s), vVector))
-		{
-			// Apply translation
-			Translate(vVector);
-		}
-
-		if(Message.ImportData("Rotate", qRot))
-		{
-			//Apply rotation
-			TLDebug_Break("Rotate message received - needs implementing");
-		}
+		//	read sent transform
+		TLMaths::TTransform Transform;
+		Transform.ImportData( Message );
 		
-		if(Message.ImportData(TRef_Static(S,c,a,l,e), vVector))
-		{
-			// Apply scale
-			TLDebug_Break("Scale message received - needs implementing");
-		}
-
+		//	modify our existing transform by this transform
+		//	gr: this takes Transform, localises the changes (eg. rotate and scale the translate) and then sets the values. 
+		//	This is kinda okay for rotations and scales, but wrong for translations. This is like a Matrix multiply
+		u8 TransformChangedBits = m_Transform.Transform_HasChanged( Transform );
+		OnTransformChanged( TransformChangedBits );
+		return;
+	}
+	else if(Message.GetMessageRef() == TRef_Static(D,o,T,r,a))
+	{
+		//	read sent transform
+		TLMaths::TTransform Transform;
+		Transform.ImportData( Message );
+		
+		//	modify our existing transform by this transform
+		u8 TransformChangedBits = m_Transform.AddTransform_HasChanged( Transform );
+		OnTransformChanged( TransformChangedBits );
 		return;
 	}
 
@@ -87,13 +85,13 @@ void TLScene::TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Messag
 // Transform changed
 void TLScene::TSceneNode_Transform::OnTransformChanged(u8 TransformChangedBits)
 {
-	//	if translation changed then set zone out of date
-	if ( TransformChangedBits & TLMaths_TransformBitTranslate )
-		TLMaths::TQuadTreeNode::SetZoneOutOfDate();	
-
 	//	no changes
 	if ( !TransformChangedBits )
 		return;
+
+	//	if translation changed then set zone out of date
+	if ( TransformChangedBits & TLMaths_TransformBitTranslate )
+		TLMaths::TQuadTreeNode::SetZoneOutOfDate();	
 
 	//	no one to send a message to 
 	if ( !HasSubscribers() )
@@ -109,24 +107,9 @@ void TLScene::TSceneNode_Transform::OnTransformChanged(u8 TransformChangedBits)
 }
 
 
-void TLScene::TSceneNode_Transform::Translate(float3 vTranslation)
-{
-	//	no change
-	if ( vTranslation.LengthSq() == 0.f )
-		return;
-
-	//	if the current translate is valid, move it, else explicitly set new translate.
-	if ( GetTransform().HasTranslate() )
-	{
-		vTranslation += GetTranslate();
-	}
-	
-	SetTranslate( vTranslation );
-}
-
-
 float TLScene::TSceneNode_Transform::GetDistanceTo(const TLMaths::TLine& Line)
 {
+	TLDebug_Break("gr; note; this returns SQuared distance, not distance");
 	float3 vPos = GetPosition();
 
 	// Do distance check from node to line

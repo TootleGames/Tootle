@@ -19,7 +19,6 @@
 #include "TGraphBase.h"
 #include "TLMessaging.h"
 #include "TRelay.h"
-#include "TManager.h"
 #include <TootleCore/TEventChannel.h>
 #include <TootleCore/TClassFactory.h>
 #include <TootleCore/TCoreManager.h>
@@ -57,22 +56,17 @@ namespace TLGraph
 //	TGraph class - templated graph management class
 //--------------------------------------------------------------------
 template <class T>
-class TLGraph::TGraph : public TManager, public TLMessaging::TMessageQueue, public TLGraph::TGraphBase
+class TLGraph::TGraph : public TLMessaging::TMessageQueue, public TLGraph::TGraphBase
 {
 	friend class TGraphNode<T>;
 	
 public:
-	TGraph(TRef refManagerID) :
-		TManager	( refManagerID ),
-		m_NodeIndex	( &TLGraph::TPtrRefSort<T>, TGraph_DefaultGrowBy )
-	{
-	}
-	virtual ~TGraph()
+	TGraph(TRefRef GraphRef) :
+		TLGraph::TGraphBase	( GraphRef ),
+		m_NodeIndex			( &TLGraph::TPtrRefSort<T>, TGraph_DefaultGrowBy )
 	{
 	}
 	
-	virtual TRefRef				GetGraphRef() const						{	return TManager::GetManagerRef();	}
-
 	//	Node access
 	FORCEINLINE TPtr<T>&		GetRootNode()							{	return m_pRootNode; }
 	FORCEINLINE TPtrArray<T>&	GetNodeList()							{	return m_NodeIndex;	}
@@ -84,12 +78,6 @@ public:
 	TRefRef						GetFreeNodeRef(TRef& Ref);				//	find an unused ref for a node, modifies the ref provided
 
 	// Messaging
-	virtual Bool				SendMessage(TRefRef RecipientRef, TLMessaging::TMessage& Message) 
-	{
-		// Generic manager SendMessage routine wrapper for the graph SendMessageToNode
-		return SendMessageToNode(RecipientRef, Message);
-	}
-
 	virtual Bool				SendMessageToNode(TRefRef NodeRef,TLMessaging::TMessage& Message);	//	send message to node
 
 	// Graph change requests
@@ -107,8 +95,7 @@ protected:
 	virtual SyncBool			Update(float fTimeStep);
 	virtual SyncBool			Shutdown();
 
-	// Main update of the graph
-	virtual void				UpdateGraph(float fTimeStep);
+	virtual void				UpdateGraph(float fTimeStep);					// Main update of the graph
 	void						UpdateGraphStructure();							// Adds/removes nodes that have been queued up for update
 
 public:
@@ -208,7 +195,7 @@ private:
 //		use TPtr& pPtr for internal/protected functions (sibling funcs)
 //--------------------------------------------------------------------
 template <class T>
-class TLGraph::TGraphNode : public TLMessaging::TPublisherSubscriber, public TLMessaging::TEventChannelInterface, public TLMessaging::TMessageQueue, public TLGraph::TGraphNodeBase
+class TLGraph::TGraphNode : public TLMessaging::TEventChannelInterface, public TLMessaging::TMessageQueue, public TLGraph::TGraphNodeBase
 {
 	friend class TGraph<T>;
 public:
@@ -223,12 +210,14 @@ public:
 	FORCEINLINE TPtr<T>&			GetParent()							{	return m_pParent;	}
 	FORCEINLINE const TPtr<T>&		GetParent() const					{	return m_pParent;	}
 	FORCEINLINE Bool				HasParent() const					{	return m_pParent.IsValid();	}
+	virtual const TGraphNodeBase*	GetParentBase() const						{	return m_pParent.GetObject();	}	//	gr: automaticcly casts down
 
 	// Child manipulation
 #ifdef TLGRAPH_OWN_CHILDREN
 	FORCEINLINE Bool				HasChildren() const					{	return (m_Children.GetSize() > 0);	}
 	FORCEINLINE TPtrArray<T>&		GetChildren()						{	return m_Children;	}
 	FORCEINLINE const TPtrArray<T>&	GetChildren() const				{	return m_Children;	}
+	virtual void					GetChildrenBase(TArray<TGraphNodeBase*>& ChildNodes);
 
 #else
 	FORCEINLINE Bool				HasChildren() const					{	return m_pChildFirst.IsValid();	}
@@ -246,23 +235,18 @@ public:
 	FORCEINLINE Bool				operator<(const TGraphNode<T>& Node) const			{	return GetNodeRef() == Node.GetNodeRef();	}
 
 protected:
-	virtual void					Initialise(TLMessaging::TMessage& Message);	//	Initialise message - made into virtual func as it's so commonly used
 	virtual void 					Update(float Timestep);					// Main node update called once per frame
-	virtual void					Shutdown();							// Shutdown routine	- called before being removed form the graph. Base code sends out a shutdown message to our subscribers
+	virtual void					UpdateAll(float Timestep);					//	update tree: update self, and children and siblings
+	virtual void					Shutdown();								// Shutdown routine	- called before being removed form the graph. Base code sends out a shutdown message to our subscribers
+	virtual void					GetShutdownMessageData(TLMessaging::TMessage& ShutdownMessage)	{	}	//	add additional data to the shutdown message
 
-	virtual void					SetProperty(TLMessaging::TMessage& Message);	//	SetProperty message - made into virtual func as it's will be commonly used.
-	virtual void					GetProperty(TLMessaging::TMessage& Message, TLMessaging::TMessage& Response);	//	GetProperty message - made into virtual func as it's will be commonly used.
-
-	virtual const TGraphNodeBase*	GetParentBase() const		{	return m_pParent.GetObject();	}
-
-	virtual void					UpdateAll(float Timestep);						//	update tree: update self, and children and siblings
+	virtual void					ProcessMessage(TLMessaging::TMessage& Message);
+	virtual void					ProcessMessageFromQueue(TLMessaging::TMessage& Message);
 
 	virtual void					OnAdded()									{}	// Added routine - called once the node has been added to the graph
 	virtual void					OnMoved(const TPtr<T>& pOldParentNode)		{}	// Moved routine - called after the node has been moved (so this->GetParent is the new parent)
 	virtual void					OnChildMovedFrom(const TPtr<T>& pOldChild)	{}	//	called to a parent when one of it's direct children has moved to somewhere else (pOldChild->GetParent is it's new parent)
 	virtual void					OnChildMovedTo(const TPtr<T>& pNewChild,const TPtr<T>& pOldParentNode)	{}	//	called to the new parent of a child after it's been moved
-
-	virtual void					GetShutdownMessageData(TLMessaging::TMessage& ShutdownMessage)	{	}	//	add additional data to the shutdown message
 
 	// Sibling manipulation
 #ifndef TLGRAPH_OWN_CHILDREN
@@ -279,21 +263,11 @@ protected:
 	template<typename MATCHTYPE>
 	Bool					IsInGraph(const MATCHTYPE& Value)			{	return FindNodeMatch( Value ).IsValid();	}
 
-	virtual void			ProcessMessage(TLMessaging::TMessage& Message);
-	virtual void			ProcessMessageFromQueue(TLMessaging::TMessage& Message)	
-	{	
-		Message.ResetReadPos();
-		ProcessMessage(Message);	
-	}
-
 	// Parent manipulation
 	virtual void			SetParent(TPtr<T>& pNode);						//	gr: needs to make sure removes self from former parent?
 	TPtr<T>&				FindPtr(const TGraphNode<T>* pNode) const;		//	find a child/sibling matching this node and return our TPtr to it - workaround for non intrusive smart pointers
 
 	Bool					CheckIsThis(TPtr<T>& pThis);					//	check the node pointer is actually this, if not throws up a DebugBreak
-
-	//	base functions
-	virtual void			GetChildrenBase(TArray<TGraphNodeBase*>& ChildNodes);
 
 private:
 	virtual Bool			AddChild(TPtr<T>& pChild,TPtr<T>& pThis);		//	gr: add to END of child list
@@ -338,33 +312,6 @@ void TLGraph::TGraphNode<T>::Update(float Timestep)
 {
 	// Process all queued messages first
 	ProcessMessageQueue();
-}
-
-
-//-------------------------------------------------------
-//	Initialise message - made into virtual func as it's so commonly used
-//-------------------------------------------------------
-template <class T>
-void TLGraph::TGraphNode<T>::Initialise(TLMessaging::TMessage& Message)		
-{
-	TGraphNodeBase::Initialise( Message );
-}
-
-
-//-------------------------------------------------------
-//	SetProperty message - made into virtual func as it will be commonly used.
-//-------------------------------------------------------
-template <class T>
-void TLGraph::TGraphNode<T>::SetProperty(TLMessaging::TMessage& Message)
-{
-}
-
-//-------------------------------------------------------
-//	GetProperty message - made into virtual func as it will be commonly used.
-//-------------------------------------------------------
-template <class T>
-void TLGraph::TGraphNode<T>::GetProperty(TLMessaging::TMessage& Message, TLMessaging::TMessage& Response)
-{
 }
 
 
@@ -937,6 +884,15 @@ void TLGraph::TGraphNode<T>::GetChildrenBase(TArray<TGraphNodeBase*>& ChildNodes
 	}
 }
 
+//---------------------------------------------------------
+//	
+//---------------------------------------------------------
+template<class T>
+void TLGraph::TGraphNode<T>::ProcessMessageFromQueue(TLMessaging::TMessage& Message)	
+{	
+	Message.ResetReadPos();
+	ProcessMessage(Message);	
+}
 
 
 

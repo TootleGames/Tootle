@@ -92,11 +92,11 @@ private:
 /*
 	Event Channel Manager - keeps track of events channels
 */
-class TLMessaging::TEventChannelManager : public TManager
+class TLMessaging::TEventChannelManager : public TLCore::TManager
 {
 public:
-	TEventChannelManager(TRefRef refManagerID) :
-		TManager(refManagerID)
+	TEventChannelManager(TRefRef ManagerRef) :
+		TLCore::TManager	(ManagerRef)
 	{
 	}
 

@@ -26,13 +26,13 @@ TAudioNode* TAudioNodeFactory::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 
 
 
-TAudiograph::TAudiograph(TRefRef refManagerID) :
-	TLGraph::TGraph<TLAudio::TAudioNode>	( refManagerID ),
-	m_fMusicVolume(1.0f),
-	m_fEffectsVolume(1.0f),
-	m_bPause(FALSE),
-	m_bEnabled(TRUE),
-	m_bMute(FALSE)
+TAudiograph::TAudiograph() :
+	TLGraph::TGraph<TLAudio::TAudioNode>	( "Audio" ),
+	m_fMusicVolume							(1.0f),
+	m_fEffectsVolume						(1.0f),
+	m_bPause								(FALSE),
+	m_bEnabled								(TRUE),
+	m_bMute									(FALSE)
 {
 }
 

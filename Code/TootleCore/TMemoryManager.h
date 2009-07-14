@@ -17,13 +17,13 @@ namespace TLMemory
 }	
 
 
-class TLMemory::TMemoryManager : public TManager
+class TLMemory::TMemoryManager : public TLCore::TManager
 {
 public:
-	TMemoryManager(TRefRef refManagerID) :
-	  TManager(refManagerID)
-  {
-  }
+	TMemoryManager(TRefRef ManagerRef) :
+		TLCore::TManager	( ManagerRef )
+	{
+	}
 
 protected:
 	SyncBool Initialise();

@@ -150,14 +150,16 @@ public:
 */
 	FORCEINLINE operator Bool	() const									{	return m_pObject != NULL;	} //	gr: compiler usually uses the TYPE* operator for if ( Ptr ) checks now
 
+	FORCEINLINE void			Debug_CheckNotOnlyPtr() const;				//	in a debug build this will break if the counter is 1. If it is 1 then that means if this is a reference param in a function (TPtr<X>&), a variable or c-pointer has been converted into a TPtr and will dealloc when the function returns, which is never what we want when passing a TPtr reference
+
 protected:
 	FORCEINLINE TLPtr::TCounter*	GetRefCounter() const					{	return m_pCounter;	}
 
 private:
 	template<typename OBJTYPE>
-	void				AssignToPtr(const TPtr<OBJTYPE>& Ptr);			//	link to counter and increment
-	void				AssignToObject(TYPE* pObject);					//	create a counter and link to this object
-	void				ReleaseObject();								//	decrement the counter and delete if this is the last reference
+	FORCEINLINE void	AssignToPtr(const TPtr<OBJTYPE>& Ptr);			//	link to counter and increment
+	FORCEINLINE void	AssignToObject(TYPE* pObject);					//	create a counter and link to this object
+	FORCEINLINE void	ReleaseObject();								//	decrement the counter and delete if this is the last reference
 
 private:
 	TLPtr::TCounter*	m_pCounter;		//	this is a pointer to the global counter (a u32)
@@ -171,7 +173,7 @@ private:
 //---------------------------------------------------------
 template <typename TYPE>
 template<typename OBJTYPE>
-Bool TPtr<TYPE>::operator==(const OBJTYPE& Object) const	
+FORCEINLINE Bool TPtr<TYPE>::operator==(const OBJTYPE& Object) const	
 {
 	const TYPE* pObjectA = GetObject();	
 	return pObjectA ? (*pObjectA) == Object : FALSE;		
@@ -182,7 +184,7 @@ Bool TPtr<TYPE>::operator==(const OBJTYPE& Object) const
 //	take ownership of this pointer
 //----------------------------------------------------------
 template <typename TYPE>
-void TPtr<TYPE>::AssignToObject(TYPE* pObject)
+FORCEINLINE void TPtr<TYPE>::AssignToObject(TYPE* pObject)
 {
 	//	check we're not already assigned to this object
 	if ( m_pCounter )
@@ -226,7 +228,7 @@ void TPtr<TYPE>::AssignToObject(TYPE* pObject)
 //----------------------------------------------------------
 template<typename TYPE>
 template<typename OBJTYPE>
-void TPtr<TYPE>::AssignToPtr(const TPtr<OBJTYPE>& Ptr)
+FORCEINLINE void TPtr<TYPE>::AssignToPtr(const TPtr<OBJTYPE>& Ptr)
 {
 	//	we are already assigned to this object... no change
 	if ( GetRefCounter() == Ptr.GetRefCounter() )
@@ -277,7 +279,7 @@ void TPtr<TYPE>::AssignToPtr(const TPtr<OBJTYPE>& Ptr)
 //	decrement the counter and delete if this is the last reference
 //----------------------------------------------------------
 template <typename TYPE>
-void TPtr<TYPE>::ReleaseObject()
+FORCEINLINE void TPtr<TYPE>::ReleaseObject()
 {
 	//	nothing associated with this Ptr
 	if ( !m_pCounter )
@@ -325,3 +327,22 @@ FORCEINLINE TPtr<TYPE>&	TLPtr::GetNullPtr()
 	
 	return g_pNull;
 }
+
+
+//----------------------------------------------------
+//	in a debug build this will break if the counter is 1. If it is 1 then that 
+//	means if this is a reference param in a function (TPtr<X>&), a variable or 
+//	c-pointer has been converted into a TPtr and will dealloc when the function 
+//	returns, which is never what we want when passing a TPtr reference
+//----------------------------------------------------
+template<typename TYPE>
+FORCEINLINE void TPtr<TYPE>::Debug_CheckNotOnlyPtr() const
+{
+#ifdef _DEBUG
+	if ( m_pCounter && (*m_pCounter) == 1 )
+	{
+		TLDebug_Break("Counter for TPtr is 1. This debug break should be placed somewhere where we expect this TPtr to already exist. Check callstack above to ensure a TPtr has been passed in.");
+	}
+#endif	
+}
+

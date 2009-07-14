@@ -123,6 +123,9 @@ void TWidgetText::ProcessMessage(TLMessaging::TMessage& Message)
 
 void TWidgetText::OnTextChange()
 {
+	//	gr: this should NOT be "SetString" - you dont know what is subscribed.
+	//	this should be "OnStringChanged" (or similar), then the subscriber decides what to do. 
+	//	They might just be monitoring this widget, and SetString might not actually do anything
 	TLMessaging::TMessage Message("SetString");
 	Message.ExportDataString("String", m_Text );
 	PublishMessage( Message );	

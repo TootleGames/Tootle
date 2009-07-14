@@ -17,11 +17,11 @@ namespace TLAnimation
 }
 
 
-class TLAnimation::TTimelineManager : public TManager
+class TLAnimation::TTimelineManager : public TLCore::TManager
 {
 public:
 	TTimelineManager(TRefRef ManagerRef) :
-	  TManager(ManagerRef)
+		TLCore::TManager(ManagerRef)
 	{
 	}
 

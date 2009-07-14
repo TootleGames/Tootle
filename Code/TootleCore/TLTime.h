@@ -204,11 +204,11 @@ class TLTime::TScopeTimerDummy
 
 
 
-class TLTime::TTimeManager : public TManager
+class TLTime::TTimeManager : public TLCore::TManager
 {
 public:
-	TTimeManager(TRef refManagerID) :
-	  TManager(refManagerID)
+	TTimeManager(TRefRef ManagerRef) :
+		TLCore::TManager	( ManagerRef )
 	{
 	}
 

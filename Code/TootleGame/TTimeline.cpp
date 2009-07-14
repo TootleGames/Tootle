@@ -355,16 +355,17 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 	{
 		TLDebug_Print("Timeline - Create node");
 
-		TArray<TRef>* pArray = &m_CreatedSceneNodes;
-		if(NodeGraphRef == TLAnimation::RendergraphRef)
-			pArray = &m_CreatedRenderNodes;
-		else if(NodeGraphRef == TLAnimation::PhysicsgraphRef)
-			pArray = &m_CreatedPhysicsNodes;
-		else if(NodeGraphRef == TLAnimation::AudiographRef)
-			pArray = &m_CreatedAudioNodes;
+		//	gr: i've removed the refs in the animation namespace - the refs are set in the graph's own
+		//		constructor now so they are not changed. If we want some global TRef_Static's for this
+		//		then we should define them somewhere more gloablly (not in the animation system)
+		TArray<TRef>* pNodeArray = GetGraphNodeRefArray( NodeGraphRef );
+		if ( !pNodeArray )
+		{
+			TLDebug_Break("Node array expected - invalid graph ref?");
+			return FALSE;
+		}
 
-
-		if(pArray->Exists(NodeRef))
+		if(pNodeArray->Exists(NodeRef))
 		{
 			// Node has already been created.  Should we allow the timeline
 			// to create a new node in this instance? Or should we enforce on ly creation
@@ -384,57 +385,44 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 
 		pFromCommand->ImportData("ParentRef", ParentNodeRef);
 
-		// Create a new node via the graph and 
-		TRef NewNodeRef;
-
-		// Create a node via the graph
-		if(NodeGraphRef == TLAnimation::ScenegraphRef)
-			NewNodeRef = TLScene::g_pScenegraph->CreateNode(NodeRef, "Object", ParentNodeRef, pMessage);
-		else if(NodeGraphRef == TLAnimation::RendergraphRef)
-			NewNodeRef = TLRender::g_pRendergraph->CreateNode(NodeRef, "Render", ParentNodeRef, pMessage);
-		else if(NodeGraphRef == TLAnimation::AudiographRef)
-			NewNodeRef = TLAudio::g_pAudiograph->CreateNode(NodeRef, "Audio", ParentNodeRef, pMessage);
-		else if(NodeGraphRef == TLAnimation::PhysicsgraphRef)
-			NewNodeRef = TLPhysics::g_pPhysicsgraph->CreateNode(NodeRef, "Physics", ParentNodeRef, pMessage);
-		else
+		// Create a new node via the graph 
+		TLGraph::TGraphBase* pGraph = GetGraph( NodeGraphRef );
+		if ( !pGraph )
 		{
-			// Invalid graph ref? We may need to handle special cases here.
+			TLDebug_Break("Graph expected");
 			return FALSE;
 		}
 
+		// Create a node via the graph
+		//	gr: note here, the scene graph had an exception where it created an "Object" type, and not the defualt type...
+		//		why is this? the type will HAVE to be able to be specified in the XML anyway for flexibility (eg. creating particle render nodes)...
+		//		if you consider the base scene node type useless, we shouldn't have one and the scene node should be a type
+		//		which always has render/physics/transform capabilities...
+		TRef NewNodeRef;
+		TRef NewNodeTypeRef = (NodeGraphRef==TRef_Static(S,c,e,n,e)) ? TRef("Object") : TRef();
 
-		if(NewNodeRef.IsValid())
+		NewNodeRef = pGraph->CreateNode(NodeRef, NewNodeTypeRef, ParentNodeRef, pMessage);
+		if ( !NewNodeRef.IsValid() )
+			return FALSE;
+
+
+		if(NodeRef != NewNodeRef)
 		{
-
-			if(NodeRef != NewNodeRef)
-			{
-				// Store the reference in the key array.  This will be used as the alternative node name for 
-				// when the same node ID is used in other commands
-				m_NodeRefMap.Add(NodeRef, NewNodeRef);
-			}
-
-			// Store the created node ref to prevent duplication
-			pArray->Add(NewNodeRef);
-
-			// Once we have created a node for a graph we need to process messages
-			// for if the node is removed prematurely so we can update our list of 
-			// created nodes correctly
-			if(NodeGraphRef == TLAnimation::ScenegraphRef)
-				SubscribeTo(TLScene::g_pScenegraph);
-			else if(NodeGraphRef == TLAnimation::RendergraphRef)
-				SubscribeTo(TLRender::g_pRendergraph);
-			else if(NodeGraphRef == TLAnimation::AudiographRef)
-				SubscribeTo(TLAudio::g_pAudiograph);
-			else if(NodeGraphRef == TLAnimation::PhysicsgraphRef)
-				SubscribeTo(TLPhysics::g_pPhysicsgraph);
-
-
-			// Success
-			return TRUE;
+			// Store the reference in the key array.  This will be used as the alternative node name for 
+			// when the same node ID is used in other commands
+			m_NodeRefMap.Add(NodeRef, NewNodeRef);
 		}
 
-		// Failed
-		return FALSE;
+		// Store the created node ref to prevent duplication
+		pNodeArray->Add(NewNodeRef);
+
+		// Once we have created a node for a graph we need to process messages
+		// for if the node is removed prematurely so we can update our list of 
+		// created nodes correctly
+		SubscribeTo( pGraph );
+
+		// Success
+		return TRUE;
 	}
 	else if (MessageRef == TLCore::ShutdownRef)
 	{
@@ -443,20 +431,16 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 		Bool bResult = FALSE;
 		TRefRef RemovedNodeRef = NodeRef;
 
-		// Shutdown a node from the graph
-		if(NodeGraphRef == TLAnimation::ScenegraphRef)
-			bResult = TLScene::g_pScenegraph->RemoveNode(NodeRef);
-		else if(NodeGraphRef == TLAnimation::RendergraphRef)
-			bResult = TLRender::g_pRendergraph->RemoveNode(NodeRef);
-		else if(NodeGraphRef == TLAnimation::AudiographRef)
-			bResult = TLAudio::g_pAudiograph->RemoveNode(NodeRef);
-		else if(NodeGraphRef == TLAnimation::PhysicsgraphRef)
-			bResult = TLPhysics::g_pPhysicsgraph->RemoveNode(NodeRef);
-		else
+		// Create a new node via the graph 
+		TLGraph::TGraphBase* pGraph = GetGraph( NodeGraphRef );
+		if ( !pGraph )
 		{
-			// Invalid graph ref? We may need to handle special cases here.
+			TLDebug_Break("Graph expected");
 			return FALSE;
 		}
+
+		// Shutdown a node from the graph
+		bResult = pGraph->RemoveNode(NodeRef);
 
 		// 
 		//if(bResult)
@@ -465,22 +449,14 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 			m_NodeRefMap.RemoveItem(RemovedNodeRef);
 
 			// Remove from the 'created nodes' list
-			if(NodeGraphRef == TLAnimation::ScenegraphRef)
+			TArray<TRef>* pNodeArray = GetGraphNodeRefArray( NodeGraphRef );
+			if ( !pNodeArray )
 			{
-				m_CreatedSceneNodes.Remove(RemovedNodeRef);
+				TLDebug_Break("Node array expected - invalid graph ref?");
+				return FALSE;
 			}
-			else if(NodeGraphRef == TLAnimation::RendergraphRef)
-			{
-				m_CreatedRenderNodes.Remove(RemovedNodeRef);
-			}
-			else if(NodeGraphRef == TLAnimation::PhysicsgraphRef)
-			{
-				m_CreatedPhysicsNodes.Remove(RemovedNodeRef);
-			}
-			else if(NodeGraphRef == TLAnimation::AudiographRef)
-			{
-				m_CreatedAudioNodes.Remove(RemovedNodeRef);
-			}
+
+			pNodeArray->Remove(RemovedNodeRef);
 		}
 
 		//if(!bResult)
@@ -555,17 +531,9 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 
 		// Send message to the graph
 		if(NodeGraphRef.IsValid())
+		{
 			return TLCore::g_pCoreManager->SendMessage(NodeRef, NodeGraphRef, *pMessage);
-		/*
-		if(NodeGraphRef == TLAnimation::ScenegraphRef)
-			return TLScene::g_pScenegraph->SendMessageToNode(NodeRef, *pMessage);
-		else if(NodeGraphRef == TLAnimation::RendergraphRef)
-			return TLRender::g_pRendergraph->SendMessageToNode(NodeRef, *pMessage);
-		else if(NodeGraphRef == TLAnimation::AudiographRef)
-			return TLAudio::g_pAudiograph->SendMessageToNode(NodeRef, *pMessage);
-		else if(NodeGraphRef == TLAnimation::PhysicsgraphRef)
-			return TLPhysics::g_pPhysicsgraph->SendMessageToNode(NodeRef, *pMessage);
-		*/
+		}
 		else
 		{
 			// Invalid graph ref
@@ -694,16 +662,12 @@ void TTimelineInstance::ProcessMessage(TLMessaging::TMessage& Message)
 
 		if(NodeRef.IsValid())
 		{
-			TArray<TRef>* pArray = &m_CreatedSceneNodes;
-			if(ManagerRef == TLAnimation::RendergraphRef)
-				pArray = &m_CreatedRenderNodes;
-			else if(ManagerRef == TLAnimation::PhysicsgraphRef)
-				pArray = &m_CreatedPhysicsNodes;
-			else if(ManagerRef == TLAnimation::AudiographRef)
-				pArray = &m_CreatedAudioNodes;
-
-			// Simply try and remove the ref - not worth testing for if it exists.
-			pArray->Remove(NodeRef);
+			TArray<TRef>* pNodeArray = GetGraphNodeRefArray(ManagerRef);
+			if ( pNodeArray )
+			{
+				// Simply try and remove the ref - not worth testing for if it exists.
+				pNodeArray->Remove(NodeRef);
+			}
 		}
 	}
 }

@@ -12,20 +12,24 @@
 
 #include "TWidgetManager.h"
 
-TLInput::TInputInterface::TInputInterface(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp)  : 
+TLInput::TInputInterface::TInputInterface(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,TBinaryTree* pData)  : 
 	m_Initialised				( SyncWait ),
 	m_RenderTargetRef			( RenderTargetRef ),
 	m_RenderNodeRef				( RenderNodeRef ),
 	m_UserRef					( UserRef),
 	m_ActionOutDown				( ActionOutDown ),
-	m_ActionOutUp				( ActionOutUp )
-	//m_ClickCount				( 0 )
+	m_ActionOutUp				( ActionOutUp ),
+	m_WidgetData				("WidgetData")
 {
 	//	no actions going out means this TInputInterface wont do anything
 	if ( !m_ActionOutDown.IsValid() && !m_ActionOutUp.IsValid() )
 	{
 		TLDebug_Break("TInputInterface created that won't send out actions");
 	}
+
+	//	copy user-supplied data
+	if ( pData )
+		m_WidgetData.ReferenceDataTree( *pData, FALSE );
 
 	//	start initialise
 	SyncBool InitResult = Initialise();
@@ -435,18 +439,12 @@ SyncBool TLInput::TInputInterface::IsIntersecting(TLRender::TScreen& Screen, TLR
 
 void TLInput::TInputInterface::OnClickBegin(const TClick& Click)
 {
-	//if(m_ClickCount == 0)
-		SendActionMessage( TRUE, 1.f );
-
-	//m_ClickCount++;
+	SendActionMessage( TRUE, 1.f );
 }
 
 void TLInput::TInputInterface::OnClickEnd(const TClick& Click)
 {
-	//m_ClickCount--;
-
-	//if(m_ClickCount == 0)
-		SendActionMessage( FALSE, 0.f );
+	SendActionMessage( FALSE, 0.f );
 }
 
 
@@ -456,7 +454,7 @@ void TLInput::TInputInterface::OnClickEnd(const TClick& Click)
 //-------------------------------------------------
 void TLInput::TInputInterface::SendActionMessage(Bool ActionDown,float RawData)
 {
-	if ( !HasSubscribers() )
+	if ( !HasSubscribers( TRef_Static(A,c,t,i,o) ) )
 		return;
 	
 	TRef ActionOutRef = ActionDown ? m_ActionOutDown : m_ActionOutUp;
@@ -473,7 +471,9 @@ void TLInput::TInputInterface::SendActionMessage(Bool ActionDown,float RawData)
 	if ( ActionOutRef.IsValid() )
 	{
 		//	make up fake input message
-		TLMessaging::TMessage Message(TRef_Static(A,c,t,i,o));
+		TLMessaging::TMessage Message( TRef_Static(A,c,t,i,o) );
+		AppendWidgetData( Message );
+
 		Message.Write( ActionOutRef );
 		Message.ExportData("RawData", RawData );
 

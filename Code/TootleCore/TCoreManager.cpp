@@ -5,6 +5,7 @@
 #include "TLMaths.h"
 #include "TRefManager.h"
 #include "TLTime.h"
+#include "TLanguage.h"
 
 
 using namespace TLCore;
@@ -24,8 +25,8 @@ using namespace TLCore;
 //#define DEBUG_RECORD_SUBSCRIBER_UPDATE_TIMES
 
 
-TCoreManager::TCoreManager(TRefRef refManagerID) :
-	TManager							( refManagerID ),
+TCoreManager::TCoreManager(TRefRef ManagerRef) :
+	TManager							( ManagerRef ),
 	m_Debug_FramesPerSecond				( 0 ),
 	m_Debug_CurrentFramesPerSecond		( 0 ),
 	m_Debug_FrameTimePerSecond			( 0.f ),
@@ -33,21 +34,16 @@ TCoreManager::TCoreManager(TRefRef refManagerID) :
 	m_ChannelsInitialised				( FALSE ),
 	m_bEnabled							( TRUE ),
 	m_bQuit								( FALSE ),
-	m_TimerUpdateCount					( 0 )
+	m_TimerUpdateCount					( 0 ),
+	m_MachineData						( "Machine" )
 {
 	// Query the hardware for various hardware and OS specific data as soon as we create the core manager.
 	// Some of this data we may need in advance of creating any other managers.
-	m_pMachineData = new TBinaryTree("Machine");
+	// Query the device specific information - UDID, OS and version etc
+	TLCore::Platform::QueryHardwareInformation( m_MachineData );
 	
-	if(m_pMachineData)
-	{
-		// Query the device specific information - UDID, OS and version etc
-		TLCore::Platform::QueryHardwareInformation(*m_pMachineData.GetObject());
-	
-		// Query user selected data on the device - languages and other settings
-		TLCore::Platform::QueryLanguageInformation(*m_pMachineData.GetObject());
-	}
-	
+	// Query user selected data on the device - languages and other settings
+	TLCore::Platform::QueryLanguageInformation( m_MachineData );
 }
 
 TCoreManager::~TCoreManager()
@@ -200,12 +196,12 @@ SyncBool TCoreManager::InitialiseLoop()
 
 // Returns a TRef version of the language that was stored when queried by the hardware
 // The TRef will be appropriate for our engine and can be any language TRef - no language filtering is doen via this routine, 
-// tha callee is responsible for determining whether the language selected by the hardware is appropriately supported.
+// tha callee (gr: caller. this funcion IS the callee) is responsible for determining whether the language selected by the hardware is appropriately supported.
 TRef TCoreManager::GetHardwareLanguage()
 {
-	TRef LanguageRef = "eng";
+	TRef LanguageRef = TLLanguage_RefEnglish;
 
-	m_pMachineData->ImportData("Language", LanguageRef);
+	m_MachineData.ImportData("Language", LanguageRef);
 	
 	return LanguageRef;
 }

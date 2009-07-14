@@ -23,10 +23,10 @@ namespace TLRender
 	extern TPtr<TScreenManager> g_pScreenManager;
 }
 
-class TLRender::TScreenManager : public TManager, public TObjectFactory<TLRender::TScreen>
+class TLRender::TScreenManager : public TLCore::TManager, public TObjectFactory<TLRender::TScreen>
 {
 public:
-	TScreenManager(TRefRef refManagerID);
+	TScreenManager(TRefRef ManagerRef);
 	
 	const TLMaths::TAngle&		GetScreenAngle();			//	returns the screen angle for the FIRST screen. this is just to make it easier and saves us fetching the right screen
 	TPtr<TLRender::TScreen>&	GetDefaultScreen()	{	return (GetInstanceArray().GetSize() > 0) ? GetInstanceArray().ElementAt( 0 ) : TLPtr::GetNullPtr<TLRender::TScreen>();	}	//	returns the default (first) screen

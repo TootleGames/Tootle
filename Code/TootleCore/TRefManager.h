@@ -10,11 +10,11 @@ namespace TLRef
 	extern void DestroyCharLookupTable();
 };
 
-class TLRef::TRefManager : public TManager
+class TLRef::TRefManager : public TLCore::TManager
 {
 public:
-	TRefManager(TRef refManagerID) :
-	  TManager(refManagerID)
+	TRefManager(TRefRef ManagerRef) :
+		TLCore::TManager	( ManagerRef )
 	{
 	}
 

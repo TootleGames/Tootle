@@ -275,7 +275,7 @@ TPtr<TLFileSys::TFile>& TLFileSys::GetFile(TRefRef FileRef,TRefRef FileTypeRef)
 //	create file factory in file sys constructor
 //----------------------------------------------------------
 TLFileSys::TFileSysFactory::TFileSysFactory(TRefRef ManagerRef) :
-	TManager	( ManagerRef )
+	TLCore::TManager	( ManagerRef )
 {
 	if ( TLFileSys::g_pFileFactory )
 	{

@@ -1,11 +1,11 @@
-
 #include "TManager.h"
-
 #include "TEventChannel.h"
-/*
-	Process basic messages a manager will receive
-*/
-void TManager::ProcessMessage(TLMessaging::TMessage& Message)
+
+
+//------------------------------------------------------
+//	Process basic messages a manager will receive
+//------------------------------------------------------
+void TLCore::TManager::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	switch ( Message.GetMessageRef().GetData() )
 	{
@@ -100,24 +100,24 @@ void TManager::ProcessMessage(TLMessaging::TMessage& Message)
 
 }
 
-void TManager::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID)
+void TLCore::TManager::OnEventChannelAdded(TRefRef PublisherRef, TRefRef ChannelRef)
 {
-	if(refPublisherID == "CORE")
+	if(PublisherRef == TRef_Static4(C,o,r,e) )
 	{
 		// Subscribe to the initialise messages
-		if(refChannelID == TLCore::InitialiseRef)
-			TLMessaging::g_pEventChannelManager->SubscribeTo(this, refPublisherID, refChannelID); 
+		if(ChannelRef == TLCore::InitialiseRef)
+			TLMessaging::g_pEventChannelManager->SubscribeTo(this, PublisherRef, ChannelRef); 
 		
 		// Subscribe to the shutdown messages
-		if(refChannelID == TLCore::ShutdownRef)
-			TLMessaging::g_pEventChannelManager->SubscribeTo(this, refPublisherID, refChannelID); 
+		if(ChannelRef == TLCore::ShutdownRef)
+			TLMessaging::g_pEventChannelManager->SubscribeTo(this, PublisherRef, ChannelRef); 
 	}	
 }
 
 
 
 
-void TManager::SetState(TLManager::ManagerState NewState)
+void TLCore::TManager::SetState(TLManager::ManagerState NewState)
 { 
 	if(m_ManagerState != NewState)
 	{

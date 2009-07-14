@@ -19,8 +19,8 @@ namespace TLRender
 
 using namespace TLRender;
 
-TScreenManager::TScreenManager(TRefRef refManagerID) :
-	TManager	(refManagerID)
+TScreenManager::TScreenManager(TRefRef ManagerRef) :
+	TLCore::TManager	(ManagerRef)
 {
 }
 

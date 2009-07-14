@@ -158,7 +158,7 @@ public:
 	virtual TPtr<TLAsset::TTexture>&		GetTextureAsset(Bool BlockLoad=FALSE);		//	default behaviour fetches the mesh from the asset lib with our mesh ref
 
 	FORCEINLINE void						SetRenderNodeRef(TRefRef Ref)				{	SetNodeRef( Ref );	}
-	FORCEINLINE TRefRef						GetRenderNodeRef() const					{	return GetNodeRef();	}
+	virtual TRef							GetRenderNodeRef() const					{	return GetNodeRef();	}
 	FORCEINLINE TRefRef						GetOwnerSceneNodeRef() const				{	return m_OwnerSceneNode;	}
 
 	virtual void							OnAdded();

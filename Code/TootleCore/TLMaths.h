@@ -438,14 +438,19 @@ public:
 	FORCEINLINE Bool				HasRotation() const				{	return (m_Valid & TLMaths_TransformBitRotation) != 0x0;	}
 	FORCEINLINE u8					GetHasTransformBits() const		{	return m_Valid;	}
 
-	void				Transform(const TLMaths::TTransform& Trans);			//	transform this by another transform. dumb faster method which doesn't do checks
-	u8					TransformHasChanged(const TLMaths::TTransform& Trans);	//	transform this by another transform. returns elements that have changed (slightly slower, but if your caller does much LESS work if nothing changed then use this)
+	//	these Transform()'s are like matrix multiplies
+	void				Transform(const TLMaths::TTransform& Trans);			//	transform this by another transform, this is like a local tranform, if Trans says "move right", it will move right, relative to the rotation. dumb faster method which doesn't do checks
+	u8					Transform_HasChanged(const TLMaths::TTransform& Trans);	//	transform this by another transform, this is like a local tranform, if Trans says "move right", it will move right, relative to the rotation. returns elements that have changed (slightly slower, but if your caller does much LESS work if nothing changed then use this)
 	void				Transform(float3& Vector) const;				//	transform vector
 	void				Transform(float2& Vector) const;				//	transform vector
 	void				Transform(TArray<float3>& VectorArray) const;
 	void				Transform(TArray<float2>& VectorArray) const;
 	void				Untransform(float3& Vector) const;				//	untransform vector
 	void				Untransform(float2& Vector) const;				//	untransform vector
+
+	//	matrix "adds"
+	void				AddTransform(const TLMaths::TTransform& Trans);				//	Modify the transform values by another transform, Translates the translate, scales the scale, rotates the rotation. Doesn't multiply and rotate the translate etc
+	u8					AddTransform_HasChanged(const TLMaths::TTransform& Trans);	//	Modify the transform values by another transform, Translates the translate, scales the scale, rotates the rotation. Doesn't multiply and rotate the translate etc. returns elements that have changed (slightly slower, but if your caller does much LESS work if nothing changed then use this)
 
 	u8					ImportData(TBinaryTree& Data);				//	import transform data from binary data/message/etc- returns bitmask of the attributes that have changed
 	u8					ExportData(TBinaryTree& Data,u8 TransformBits=TLMaths_TransformBitAll);	//	export all our valid data to this binary data- can optionally make it only write certain attributes. Returns bits of the attributes written.

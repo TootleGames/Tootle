@@ -46,8 +46,8 @@ namespace TLGraph
 class TLRender::TRendergraph : public TLGraph::TGraph<TLRender::TRenderNode>
 {
 public:
-	TRendergraph(TRefRef refManagerID) :
-		TLGraph::TGraph<TLRender::TRenderNode>	(refManagerID)
+	TRendergraph() :
+		TLGraph::TGraph<TLRender::TRenderNode>	( "Render" )
 	{
 	}
 

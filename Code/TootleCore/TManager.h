@@ -1,5 +1,9 @@
+/*------------------------------------------------------
+	
+	A manager is a component of the runtime game, it is
+	owned by the App (the engine)
 
-
+-------------------------------------------------------*/
 #pragma once
 
 #include "TRelay.h"
@@ -19,9 +23,14 @@ namespace TLManager
 	};
 }
 
+namespace TLCore
+{
+	class TManager;
+}
+
 
 // Generic manager class
-class TManager : public TLMessaging::TRelay
+class TLCore::TManager : public TLMessaging::TRelay
 {
 public:
 	TManager(TRefRef ManagerRef) :
@@ -40,7 +49,7 @@ public:
 	FORCEINLINE Bool					operator<(const TManager& Manager)const	{	return (GetManagerRef() < Manager.GetManagerRef());	}
 
 	// Messaging
-	virtual Bool	SendMessage(TRefRef RecipientRef, TLMessaging::TMessage& Message) { return FALSE; }
+	virtual Bool				SendMessage(TRefRef RecipientRef, TLMessaging::TMessage& Message) { return FALSE; }
 
 	FORCEINLINE Bool			operator==(const TRef& Ref) const				{	return (m_ManagerRef == Ref);	}
 
@@ -53,7 +62,7 @@ protected:
 
 	void			SetState(TLManager::ManagerState NewState);
 	
-	virtual void	OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
+	virtual void	OnEventChannelAdded(TRefRef PublisherRef, TRefRef ChannelRef);
 
 private:
 	TRef					m_ManagerRef;	// Manager unique ID

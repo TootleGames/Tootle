@@ -144,10 +144,10 @@ TRef TLInput::GetFreeDeviceRef(TRef BaseRef)
 
 
 
-TInputManager::TInputManager(TRef refManagerID) :
-	TManager(refManagerID),
-	m_fDeviceCheckTimer(0.0f),
-	m_bEnabled(TRUE) 
+TInputManager::TInputManager(TRefRef ManagerRef) :
+	TLCore::TManager		(ManagerRef),
+	m_fDeviceCheckTimer		(0.0f),
+	m_bEnabled				(TRUE) 
 {
 }
 

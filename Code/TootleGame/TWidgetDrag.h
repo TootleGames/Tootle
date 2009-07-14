@@ -17,7 +17,7 @@ namespace TLGui
 class TLGui::TWidgetDrag : public TLInput::TInputInterface
 {
 public:
-	TWidgetDrag(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,TRefRef ActionOutDrag);
+	TWidgetDrag(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,TRefRef ActionOutDrag,TBinaryTree* pWidgetData=NULL);
 
 protected:
 	virtual void				OnClickBegin(const TClick& Click);

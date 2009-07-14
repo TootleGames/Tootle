@@ -12,7 +12,7 @@ namespace TLScene
 }
 
 
-class TLScene::TSchemeEditor : public TManager
+class TLScene::TSchemeEditor : public TLCore::TManager
 {
 	// Internal transform tool type
 	typedef enum TransformMode
@@ -30,8 +30,7 @@ class TLScene::TSchemeEditor : public TManager
 	};
 
 public:
-	TSchemeEditor(TRef refManagerID);
-
+	TSchemeEditor(TRefRef ManagerRef);
 
 	// Enabled flag
 	FORCEINLINE void			SetEnabled(Bool bEnabled)		{ m_bEnabled = bEnabled; }

@@ -22,11 +22,11 @@ namespace TLSocial
 }
 
 
-class TLSocial::TSocialNetworkingManager : public TManager
+class TLSocial::TSocialNetworkingManager : public TLCore::TManager
 {
 public:
 	TSocialNetworkingManager(TRefRef ManagerRef) :
-		TManager(ManagerRef)
+		TLCore::TManager		(ManagerRef)
 	{
 	}
 	

@@ -30,7 +30,7 @@ namespace TLCore
 //---------------------------------------------------------
 //	base application type
 //---------------------------------------------------------
-class TLCore::TApplication : public TManager, public TStateMachine
+class TLCore::TApplication : public TLCore::TManager, public TStateMachine
 {
 protected:
 	// Internal applicaiton states
@@ -46,9 +46,9 @@ protected:
 	class TApplicationState_ExitGame;
 
 public:	
-	TApplication(TRef refManagerID) :
-		TManager	( refManagerID ),
-		m_Options	("Options")
+	TApplication(TRefRef ManagerRef) :
+		TLCore::TManager	( ManagerRef ),
+		m_Options			("Options")
 	{
 	}
 	

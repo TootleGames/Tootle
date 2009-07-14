@@ -34,7 +34,7 @@ public:
 	FORCEINLINE	const float3&	GetScale() const												{	return m_Transform.GetScale();	}
 
 	//	explicit changes
-	virtual void				SetTransform(const TLMaths::TTransform& Transform)				{	m_Transform = Transform; OnTransformChanged(TRUE, TRUE, TRUE); }	
+	virtual void				SetTransform(const TLMaths::TTransform& Transform)				{	m_Transform = Transform; OnTransformChanged( TLMaths_TransformBitAll ); }	
 	virtual void				SetTranslate(const float3& Translate)							{	m_Transform.SetTranslate(Translate);	OnTranslationChanged();	}
 	virtual void				SetRotation(const TLMaths::TQuaternion& Rotation)				{	m_Transform.SetRotation(Rotation);	OnRotationChanged();	}
 	virtual void				SetScale(const float3& Scale)									{	m_Transform.SetScale(Scale);	OnScaleChanged();	}
@@ -48,15 +48,11 @@ protected:
 
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);
 
-	virtual void				Translate(float3 vTranslation);
-	//virtual void				Rotate(float3 vRotation);
-	//virtual void				Scale(float3 vScale);
 	TLMaths::TTransform&		GetTransform() 							{	return m_Transform;	}
 
 	FORCEINLINE void			OnTranslationChanged()					{	OnTransformChanged( TLMaths_TransformBitTranslate );	}
 	FORCEINLINE void			OnRotationChanged()						{	OnTransformChanged( TLMaths_TransformBitRotation );	}
 	FORCEINLINE void			OnScaleChanged()						{	OnTransformChanged( TLMaths_TransformBitScale );	}
-	FORCEINLINE void			OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale);
 	virtual void				OnTransformChanged(u8 TransformChangedBits);
 
 	virtual void				OnZoneWake(SyncBool ZoneActive)			{	}	//	notifcation when zone is set to active (from non-active). SceneNode will now be updated
@@ -87,19 +83,3 @@ FORCEINLINE SyncBool TLScene::TSceneNode_Transform::IsZoneAwake() const
 	return pZone ? pZone->IsActive() : SyncTrue;
 }
 
-
-//--------------------------------------------
-//	
-//--------------------------------------------
-FORCEINLINE void TLScene::TSceneNode_Transform::OnTransformChanged(Bool bTranslation, Bool bRotation, Bool bScale)
-{
-	u8 TransformBits = (TLMaths_TransformBitTranslate*bTranslation);
-	TransformBits |= (TLMaths_TransformBitRotation*bRotation);
-	TransformBits |= (TLMaths_TransformBitScale*bScale);
-
-	//	go onto real routine if there were any changes
-	if ( TransformBits != 0x0 )
-	{
-		OnTransformChanged( TransformBits );
-	}
-}

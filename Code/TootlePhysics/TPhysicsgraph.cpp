@@ -95,12 +95,6 @@ void TLPhysics::TJoint::DestroyJoint(b2World& World)
 
 
 
-TLPhysics::TPhysicsgraph::TPhysicsgraph(TRefRef refManagerID) :
-	TLGraph::TGraph<TLPhysics::TPhysicsNode>	( refManagerID )
-{
-}
-
-
 SyncBool TLPhysics::TPhysicsgraph::Initialise()
 {
 	if ( TLGraph::TGraph<TLPhysics::TPhysicsNode>::Initialise() == SyncFalse )

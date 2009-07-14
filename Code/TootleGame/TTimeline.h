@@ -4,16 +4,13 @@
 #include <TootleCore/TKeyArray.h>
 #include <TootleAsset/TAssetTimeline.h>
 #include <TootleCore/TRelay.h>
+#include <TootleCore/TCoreManager.h>
+#include <TootleCore/TGraphBase.h>
+
 
 namespace TLAnimation
 {
 	class TTimelineInstance;
-
-	// Graph references
-	const TRef ScenegraphRef	= TRef_Static(S,c,e,n,e);	//"Scene" used in timelines
-	const TRef RendergraphRef	= TRef_Static(R,e,n,d,e);	//"Render" used in timelines
-	const TRef AudiographRef	= TRef_Static(A,u,d,i,o);	//"Audio" used in timelines
-	const TRef PhysicsgraphRef	= TRef_Static(P,h,y,s,i);	//"Physics" used in timelines
 
 	// Special commands
 	const TRef TimeJumpRef	= TRef_Static(T,i,m,e,j);	//"Timejump" command used in timelines
@@ -60,11 +57,11 @@ protected:
 	virtual void		ProcessMessage(TLMessaging::TMessage& Message);
 
 private:
-
 	SyncBool			DoUpdate(float fTimestep, Bool bForced);
 
-
-	TLAsset::TAssetTimeline*	GetAssetTimeline();
+	TLAsset::TAssetTimeline*			GetAssetTimeline();
+	FORCEINLINE TArray<TRef>*			GetGraphNodeRefArray(TRefRef GraphRef);
+	FORCEINLINE TLGraph::TGraphBase*	GetGraph(TRefRef GraphRef);
 
 	// Keyframe processing
 	Bool					ProcessKeyframes(const TLAsset::TTempKeyframeData& KeyframeFrom, const TLAsset::TTempKeyframeData& KeyframeTo, float& fTimestep);
@@ -107,4 +104,24 @@ FORCEINLINE void TLAnimation::TTimelineInstance::MapNodeRef(TRefRef FromRef, TRe
 		// Alter the node ref to the one being passed in
 		*pNodeRef = ToRef;
 	}
+}
+
+
+FORCEINLINE TArray<TRef>* TLAnimation::TTimelineInstance::GetGraphNodeRefArray(TRefRef GraphRef)
+{
+	switch ( GraphRef.GetData() )
+	{
+		case TRef_Static(R,e,n,d,e):	return &m_CreatedRenderNodes;
+		case TRef_Static(P,h,y,s,i):	return &m_CreatedPhysicsNodes;
+		case TRef_Static(A,u,d,i,o):	return &m_CreatedAudioNodes;
+
+		default:	//	gr: old code defaulted to scene node... I assume this is as designed instead of throwing up an "unknown graph" error...
+		case TRef_Static(S,c,e,n,e):	return &m_CreatedSceneNodes;
+	};
+}
+
+FORCEINLINE TLGraph::TGraphBase* TLAnimation::TTimelineInstance::GetGraph(TRefRef GraphRef)
+{
+	TLGraph::TGraphBase* pGraph = TLCore::g_pCoreManager->GetManager<TLGraph::TGraphBase>( GraphRef );
+	return pGraph;
 }

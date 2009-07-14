@@ -23,7 +23,7 @@ namespace TLScheme
 }
 
 
-class TLScheme::TSchemeManager : public TManager
+class TLScheme::TSchemeManager : public TLCore::TManager
 {
 	enum TSchemeUpdateType
 	{
@@ -43,7 +43,7 @@ class TLScheme::TSchemeManager : public TManager
 public:	
 	
 	TSchemeManager(TRefRef ManagerRef) :
-		TManager( ManagerRef )
+		TLCore::TManager( ManagerRef )
 	{
 	}
 

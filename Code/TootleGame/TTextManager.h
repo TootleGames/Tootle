@@ -3,6 +3,7 @@
 
 #include <TootleCore/TPtr.h>
 #include <TootleCore/TManager.h>
+#include <TootleCore/TLanguage.h>
 #include <TootleAsset/TText.h>
 
 
@@ -14,12 +15,12 @@ namespace TLText
 }
 
 
-class TLText::TTextManager : public TManager
+class TLText::TTextManager : public TLCore::TManager
 {
 public:
 	TTextManager(TRefRef ManagerRef) :
-	  TManager(ManagerRef),
-		m_LanguageRef("eng")
+		TLCore::TManager	( ManagerRef ),
+		m_LanguageRef		( TLLanguage_RefEnglish )
 	{
 	}
 

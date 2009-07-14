@@ -74,11 +74,11 @@ private:
 };
 
 
-class TLUser::TUserManager : public TManager
+class TLUser::TUserManager : public TLCore::TManager
 {
 public:
-	TUserManager(TRef refManagerID) :
-	  TManager(refManagerID)
+	TUserManager(TRefRef ManagerRef) :
+		TLCore::TManager	( ManagerRef )
 	{
 	}
 

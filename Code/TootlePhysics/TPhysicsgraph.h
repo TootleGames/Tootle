@@ -58,7 +58,10 @@ private:
 class TLPhysics::TPhysicsgraph : public TLGraph::TGraph<TLPhysics::TPhysicsNode>, public b2ContactListener, public b2ContactFilter
 {
 public:
-	TPhysicsgraph(TRefRef refManagerID);
+	TPhysicsgraph() :
+		TLGraph::TGraph<TLPhysics::TPhysicsNode>	( "Physics" )
+	{
+	}
 
 	virtual SyncBool		Initialise();
 	virtual void			UpdateGraph(float TimeStep);

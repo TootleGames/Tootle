@@ -10,7 +10,8 @@ using namespace TLScene;
 
 TSceneNode_Object::TSceneNode_Object(TRefRef NodeRef,TRefRef TypeRef) :
 	TSceneNode_Transform		( NodeRef, TypeRef ),
-	m_PublishTransformOnWake	( 0x0 )
+	m_PublishTransformOnWake	( 0x0 ),
+	m_OnEditPhysicsWasEnabled	( SyncWait )
 {
 }
 
@@ -195,7 +196,7 @@ void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 	{
 		Bool RenderEnable = TRUE;
 		Bool PhysicsEnable = TRUE;
-		Bool CollisionEnable = TRUE;
+		SyncBool CollisionEnable = SyncWait;	//	syncwait = no changes
 		Bool DebugPhysicsEnable = FALSE;
 		
 		if ( pEnableData->ImportData("Render", RenderEnable ) )
@@ -205,8 +206,15 @@ void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 			Debug_EnableRenderDebugPhysics( DebugPhysicsEnable );
 
 		Bool ChangePhysics = FALSE;
-		if ( pEnableData->ImportData("Physics", PhysicsEnable ) )		ChangePhysics |= TRUE;
-		if ( pEnableData->ImportData("Collision", CollisionEnable ) )	ChangePhysics |= TRUE;
+		if ( pEnableData->ImportData("Physics", PhysicsEnable ) )		
+			ChangePhysics |= TRUE;
+
+		Bool TmpCollisionEnable = FALSE;
+		if ( pEnableData->ImportData("Collision", TmpCollisionEnable ) )	
+		{
+			CollisionEnable = TmpCollisionEnable ? SyncTrue : SyncFalse;
+			ChangePhysics |= TRUE;
+		}
 
 		if ( ChangePhysics )
 		{
@@ -223,7 +231,7 @@ void TSceneNode_Object::ProcessMessage(TLMessaging::TMessage& Message)
 	if(Message.GetMessageRef() == TRef_Static(O,n,T,r,a) && Message.GetSenderRef() == m_PhysicsNodeRef )
 	{
 		u8 TransformChangedBits = GetTransform().ImportData( Message );
-		OnTransformChanged(TransformChangedBits);
+		OnTransformChanged( TransformChangedBits|TLSceneNodeObject_FromPhysicsTransform );
 	}
 	else if ( Message.GetMessageRef() == "NodeAdded" )	//	catch when our render node or physics node has been added to the graph
 	{
@@ -286,6 +294,47 @@ void TSceneNode_Object::ProcessMessage(TLMessaging::TMessage& Message)
 			return;
 		}
 	}
+	else if ( Message.GetMessageRef() == "EdtStart" )
+	{
+		//	 when this node starts to be edited we disable the physics
+		if ( m_OnEditPhysicsWasEnabled != SyncWait )
+		{
+			TLDebug_Break("Warning, editing has already started on node?");
+		}
+
+		TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode();
+		if ( pPhysicsNode )
+		{
+			//	save old state of physics
+			m_OnEditPhysicsWasEnabled = (SyncBool)pPhysicsNode->IsEnabled();
+
+			//	disable
+			EnablePhysicsNode( FALSE, SyncWait );
+		}
+		return;
+	}
+	else if ( Message.GetMessageRef() == "EdtEnd" )
+	{
+		//	 stopped editing node, restore physics state
+		if ( m_OnEditPhysicsWasEnabled != SyncWait )
+		{
+			TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode();
+			if ( pPhysicsNode )
+			{
+				//	restore enabled state
+				EnablePhysicsNode( m_OnEditPhysicsWasEnabled==SyncTrue ? TRUE : FALSE, SyncWait );
+			}
+			else
+			{
+				TLDebug_Break("Restoring physics node state, but node missing?");
+			}
+
+			//	reset saved state
+			m_OnEditPhysicsWasEnabled = SyncWait;
+		}
+		return;
+	}
+
 
 	//	do normal process
 	TSceneNode_Transform::ProcessMessage( Message );
@@ -461,34 +510,6 @@ Bool TSceneNode_Object::RemoveAudioNode(TRefRef AudioRef)
 
 
 
-void TSceneNode_Object::Translate(float3 vTranslation)
-{
-	// Manipulate the physics by adding a force in the direction required
-	TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = GetPhysicsNode();
-
-	//	update game object from physics node
-	if ( pPhysicsNode )
-	{
-		// If we add a force it doesn;t necessarily move the object how we want when running
-		// and when paused the physics doesn;t update.
-		//pPhysicsNode->AddForce(vTranslation);
-
-		// Set the position explicitly using the delta
-		float3 vPos = pPhysicsNode->GetPosition();
-
-		vPos += vTranslation;
-
-		pPhysicsNode->SetPosition(vPos);
-
-	}
-	else
-	{
-		// No physics?
-		TSceneNode_Transform::Translate(vTranslation);
-	}
-}
-
-
 float TSceneNode_Object::GetDistanceTo(const TLMaths::TLine& Line)
 {
 	float3 vPos = GetPosition();
@@ -529,7 +550,7 @@ float TSceneNode_Object::GetDistanceTo(const TLMaths::TLine& Line)
 //--------------------------------------------------------
 void TLScene::TSceneNode_Object::OnZoneWake(SyncBool ZoneActive)
 {
-	EnablePhysicsNode( TRUE, TRUE );
+	EnablePhysicsNode( TRUE, SyncWait );
 	
 #ifdef DISABLE_RENDER_ON_HALFWAKE
 	EnableRenderNode( ZoneActive == SyncTrue );
@@ -544,7 +565,7 @@ void TLScene::TSceneNode_Object::OnZoneWake(SyncBool ZoneActive)
 //--------------------------------------------------------
 void TLScene::TSceneNode_Object::OnZoneSleep()
 {
-	EnablePhysicsNode( FALSE, FALSE );
+	EnablePhysicsNode( FALSE, SyncWait );
 
 #ifdef DISABLE_RENDER_ON_SLEEP
 	EnableRenderNode( FALSE );
@@ -557,6 +578,15 @@ void TLScene::TSceneNode_Object::OnZoneSleep()
 //--------------------------------------------------------
 void TLScene::TSceneNode_Object::OnTransformChanged(u8 TransformChangedBits)
 {
+	//	change the physics transform when the change has NOT come from the physics
+	if ( (TransformChangedBits & TLSceneNodeObject_FromPhysicsTransform) == 0x0 )
+	{
+		//	change physics
+		TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode();
+		if ( pPhysicsNode )
+			pPhysicsNode->SetTransform( GetTransform(), FALSE );
+	}
+
 	//	gr: this still needs doing even if we're asleep
 	//	if translation changed then set zone out of date
 	if ( TransformChangedBits & TLMaths_TransformBitTranslate )
@@ -569,12 +599,12 @@ void TLScene::TSceneNode_Object::OnTransformChanged(u8 TransformChangedBits)
 	//	if asleep then don't send a message until we wake up again
 	if ( IsAwake() == SyncFalse )
 	{
-		m_PublishTransformOnWake |= TransformChangedBits;
+		m_PublishTransformOnWake |= TransformChangedBits & ~TLSceneNodeObject_FromPhysicsTransform;
 		return;
 	}
 
 	//	publish transform changes
-	TSceneNode_Transform::OnTransformChanged( TransformChangedBits );
+	TSceneNode_Transform::OnTransformChanged( TransformChangedBits & ~TLSceneNodeObject_FromPhysicsTransform );
 
 	//	subscribers are up to date
 	m_PublishTransformOnWake = 0x0;
@@ -584,7 +614,7 @@ void TLScene::TSceneNode_Object::OnTransformChanged(u8 TransformChangedBits)
 //--------------------------------------------------------
 //	enable/disable physics node - can seperately enable collision
 //--------------------------------------------------------
-void TLScene::TSceneNode_Object::EnablePhysicsNode(Bool Enable,Bool EnableCollision)
+void TLScene::TSceneNode_Object::EnablePhysicsNode(Bool Enable,SyncBool EnableCollision)
 {
 	//	enable physics node
 	if ( !GetPhysicsNodeRef().IsValid() )
@@ -596,7 +626,8 @@ void TLScene::TSceneNode_Object::EnablePhysicsNode(Bool Enable,Bool EnableCollis
 		return;
 
 	//	enable/disable collision
-	pPhysicsNode->EnableCollision( EnableCollision );
+	if ( EnableCollision != SyncWait )
+		pPhysicsNode->EnableCollision( (EnableCollision==SyncTrue) ? TRUE : FALSE );
 
 	//	enable/disable
 	pPhysicsNode->SetEnabled( Enable );
@@ -625,66 +656,6 @@ void TLScene::TSceneNode_Object::EnableRenderNode(Bool Enable)
 		OnTransformChanged( m_PublishTransformOnWake );
 	}
 
-}
-
-
-//--------------------------------------------------------
-//	when we do an explicit transform on our node - change the physics' transform too
-//--------------------------------------------------------
-void TLScene::TSceneNode_Object::SetTransform(const TLMaths::TTransform& Transform)
-{
-	//	do inherited change
-	TSceneNode_Transform::SetTransform( Transform );
-
-	//	change physics
-	TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode();
-	if ( pPhysicsNode )
-		pPhysicsNode->SetTransform( GetTransform(), FALSE );
-}
-
-
-//--------------------------------------------------------
-//	when we do an explicit transform on our node - change the physics' transform too
-//--------------------------------------------------------
-void TLScene::TSceneNode_Object::SetTranslate(const float3& Translate)
-{
-	//	do inherited change
-	TSceneNode_Transform::SetTranslate( Translate );
-
-	//	change physics
-	TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode();
-	if ( pPhysicsNode )
-		pPhysicsNode->SetTransform( GetTransform(), FALSE );
-}
-
-
-//--------------------------------------------------------
-//	when we do an explicit transform on our node - change the physics' transform too
-//--------------------------------------------------------
-void TLScene::TSceneNode_Object::SetRotation(const TLMaths::TQuaternion& Rotation)
-{
-	//	do inherited change
-	TSceneNode_Transform::SetRotation( Rotation );
-
-	//	change physics
-	TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode();
-	if ( pPhysicsNode )
-		pPhysicsNode->SetTransform( GetTransform(), FALSE );
-}
-
-
-//--------------------------------------------------------
-//	when we do an explicit transform on our node - change the physics' transform too
-//--------------------------------------------------------
-void TLScene::TSceneNode_Object::SetScale(const float3& Scale)
-{
-	//	do inherited change
-	TSceneNode_Transform::SetScale( Scale );
-
-	//	change physics
-	TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode();
-	if ( pPhysicsNode )
-		pPhysicsNode->SetTransform( GetTransform(), FALSE );
 }
 
 

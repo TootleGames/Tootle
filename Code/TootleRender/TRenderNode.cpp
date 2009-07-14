@@ -549,14 +549,100 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 		}
 	}
 
+	//	read properties that are in the Init message
+	SetProperty( Message );
 
+	//	do inherited init
+	TLGraph::TGraphNode<TLRender::TRenderNode>::Initialise( Message );
+}
+
+//---------------------------------------------------------
+//	no updates for render nodes!
+//---------------------------------------------------------
+void TLRender::TRenderNode::Update(float Timestep)
+{
+	TLDebug_Break("Render nodes should not be updated!");
+}
+
+
+//---------------------------------------------------------
+//	clean-up any TPtrs back to us so we will be deallocated
+//---------------------------------------------------------
+void TLRender::TRenderNode::Shutdown()
+{
+	//	these contain TPtr's back to us, so we need to clear them
+	m_RenderZoneNodes.Empty();
+
+	//	inherited cleanup
+	TLGraph::TGraphNode<TLRender::TRenderNode>::Shutdown();
+}
+
+
+//---------------------------------------------------------
+//	
+//---------------------------------------------------------
+void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
+{
+	//	catch the change of transform from our owner scene node, and then copy it
+	//	"OnTransform"
+	if ( Message.GetMessageRef() == TRef_Static(O,n,T,r,a) && Message.GetSenderRef() == GetOwnerSceneNodeRef() && GetOwnerSceneNodeRef().IsValid() )
+	{
+		u8 TransformChangedBits = m_Transform.ImportData( Message );
+		OnTransformChanged(TransformChangedBits);
+		return;
+	}
+	else if(Message.GetMessageRef() == TRef_Static(S,e,t,T,r) )
+	{
+		//	overwrite our transform
+		u8 TransformChangedBits = m_Transform.ImportData( Message );
+		OnTransformChanged(TransformChangedBits);
+
+		return;
+	}
+	else if(Message.GetMessageRef() == TRef_Static(L,o,c,T,r))	//	local transform
+	{
+		//	read sent transform
+		TLMaths::TTransform Transform;
+		Transform.ImportData( Message );
+		
+		//	modify our existing transform by this transform
+		//	gr: this takes Transform, localises the changes (eg. rotate and scale the translate) and then sets the values. 
+		//	This is kinda okay for rotations and scales, but wrong for translations. This is like a Matrix multiply
+		u8 TransformChangedBits = m_Transform.Transform_HasChanged( Transform );
+		OnTransformChanged( TransformChangedBits );
+		return;
+	}
+	else if(Message.GetMessageRef() == TRef_Static(D,o,T,r,a))
+	{
+		//	read sent transform
+		TLMaths::TTransform Transform;
+		Transform.ImportData( Message );
+		
+		//	modify our existing transform by this transform
+		u8 TransformChangedBits = m_Transform.AddTransform_HasChanged( Transform );
+		OnTransformChanged( TransformChangedBits );
+		return;
+	}
+
+	//	do inherited init
+	TLGraph::TGraphNode<TLRender::TRenderNode>::ProcessMessage( Message );
+}
+
+
+//---------------------------------------------------------
+//	SetProperty message - made into virtual func as it's will be commonly used.
+//---------------------------------------------------------
+void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
+{
+	//	read new transform (acts like "SetTransform")
 	u8 TransformChangedBits = m_Transform.ImportData( Message );
+	if ( TransformChangedBits )
+		OnTransformChanged(TransformChangedBits);
 
-	//	transform has been set
-	OnTransformChanged(TransformChangedBits);
-
+	//	line width
 	Message.ImportData("LineWidth", m_LineWidth );
 
+	//	mesh
 	if ( Message.ImportData("MeshRef", m_MeshRef ) )
 	{
 		//	start loading the asset in case we havent loaded it already
@@ -566,6 +652,7 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 		OnMeshRefChanged();
 	}
 
+	//	texture
 	if ( Message.ImportData("TextureRef", m_TextureRef ) )
 	{
 		//	start loading the asset in case we havent loaded it already
@@ -606,83 +693,10 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 	if ( Message.ImportData("Colour", m_Colour ) )
 		OnColourChanged();
 
-	//	import attach datum
+	//	set attach datum
 	TRef AttachDatum;
 	if ( Message.ImportData("Attach", AttachDatum ) )
 		SetAttachDatum( AttachDatum );
-
-	//	do inherited init
-	TLGraph::TGraphNode<TLRender::TRenderNode>::Initialise( Message );
-}
-
-//---------------------------------------------------------
-//	no updates for render nodes!
-//---------------------------------------------------------
-void TLRender::TRenderNode::Update(float Timestep)
-{
-	TLDebug_Break("Render nodes should not be updated!");
-}
-
-
-//---------------------------------------------------------
-//	clean-up any TPtrs back to us so we will be deallocated
-//---------------------------------------------------------
-void TLRender::TRenderNode::Shutdown()
-{
-	//	these contain TPtr's back to us, so we need to clear them
-	m_RenderZoneNodes.Empty();
-
-	//	inherited cleanup
-	TLGraph::TGraphNode<TLRender::TRenderNode>::Shutdown();
-}
-
-
-//---------------------------------------------------------
-//	
-//---------------------------------------------------------
-void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
-{
-	//	gr: only apply the change if it comes from our owner scene node
-	//	"OnTransform"
-	if ( Message.GetMessageRef() == TRef_Static(O,n,T,r,a) && Message.GetSenderRef() == GetOwnerSceneNodeRef() && GetOwnerSceneNodeRef().IsValid() )
-	{
-		u8 TransformChangedBits = m_Transform.ImportData( Message );
-		OnTransformChanged(TransformChangedBits);
-		return;
-	}
-	else if(Message.GetMessageRef() == TRef("SetTransform"))
-	{
-		//	overwrite our transform
-		u8 TransformChangedBits = m_Transform.ImportData( Message );
-		OnTransformChanged(TransformChangedBits);
-
-		return;
-	}
-	else if(Message.GetMessageRef() == TRef("DoTransform"))
-	{
-		//	read sent transform
-		TLMaths::TTransform Transform;
-		Transform.ImportData( Message );
-		
-		//	modify our existing transform by this transform
-		u8 TransformChangedBits = m_Transform.TransformHasChanged( Transform );
-		OnTransformChanged( TransformChangedBits );
-		return;
-	}
-
-	//	do inherited init
-	TLGraph::TGraphNode<TLRender::TRenderNode>::ProcessMessage( Message );
-}
-
-
-//	SetProperty message - made into virtual func as it's will be commonly used.
-void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
-{
-	// Colour property import
-	TColour newcol;
-	if(Message.ImportData("Colour", newcol))
-		SetColour(newcol);
-
 
 	// Super SetProperty call
 	TLGraph::TGraphNode<TLRender::TRenderNode>::SetProperty(Message);

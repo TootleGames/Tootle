@@ -43,12 +43,12 @@ protected:
 
 // NOTE: Not sure whether we can make this a manager that is created and removed during the applications lifetime?  
 // It would mean we can subscribe to it and provide some basic init, udpate and shutdown routines...
-//	gr: dont make it a manager then! add "manager" functionality later if we need it :P
-class TLGame::TGame : public TManager, public TStateMachine
+//	gr: dont make it a manager then! add "manager" functionality later if we need it
+class TLGame::TGame : public TLCore::TManager, public TStateMachine
 {
 public:
-	TGame(TRef refManagerID) :
-		TManager(refManagerID)
+	TGame(TRefRef ManagerRef) :
+		TLCore::TManager	(ManagerRef)
 	{
 	}
 	

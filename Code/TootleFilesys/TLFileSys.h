@@ -45,7 +45,7 @@ namespace TLFileSys
 //------------------------------------------------------------
 //	class factory for file systems
 //------------------------------------------------------------
-class TLFileSys::TFileSysFactory : public TManager, public TClassFactory<TLFileSys::TFileSys>
+class TLFileSys::TFileSysFactory : public TLCore::TManager, public TClassFactory<TLFileSys::TFileSys>
 {
 	friend class TLFileSys::TFileSys;
 public:

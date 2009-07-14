@@ -37,6 +37,12 @@ public:
 	virtual Bool		HasRender()				{	return FALSE; }
 	virtual Bool		HasPhysics()			{	return FALSE; }
 
+	//	gr: the functions above are useless without actual (and therefore forced to be virtual..) accessors
+	//		otherwise you have to cast (and use RTTI) to ensure you're accessing the actual functions on a class...
+	//		if a node HasRender(), I still can't assume it's an Object node...
+	virtual TRef		GetPhysicsNodeRef() const		{	return TRef();	}
+	virtual TRef		GetRenderNodeRef() const		{	return TRef();	}
+
 protected:
 	virtual void 		Update(float fTimestep);		//	base scene node update
 	virtual void		PostUpdate(float fTimestep);	//

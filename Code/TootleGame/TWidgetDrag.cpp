@@ -4,10 +4,10 @@
 
 
 
-TLGui::TWidgetDrag::TWidgetDrag(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,TRefRef ActionOutDrag) :
+TLGui::TWidgetDrag::TWidgetDrag(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,TRefRef ActionOutDrag,TBinaryTree* pWidgetData) :
 	m_ActionOutDrag		( ActionOutDrag ),
 	m_Dragging			( FALSE ),
-	TLInput::TInputInterface	( RenderTargetRef, RenderNodeRef, UserRef, ActionOutDown, ActionOutUp)
+	TLInput::TInputInterface	( RenderTargetRef, RenderNodeRef, UserRef, ActionOutDown, ActionOutUp, pWidgetData)
 {
 }
 
@@ -78,6 +78,7 @@ void TLGui::TWidgetDrag::OnDrag(const TClick& Click,const int2& Drag2,const floa
 {
 	//	make up fake input message
 	TLMessaging::TMessage Message(TRef_Static(A,c,t,i,o));
+	AppendWidgetData( Message );
 	Message.Write( m_ActionOutDrag );
 	
 //	Message.ExportData("RawData", RawData );

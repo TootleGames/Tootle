@@ -71,12 +71,15 @@ protected:
 	};
 
 public:
-	TInputInterface(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef());
+	TInputInterface(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef(),TBinaryTree* pWidgetData=NULL);
 	~TInputInterface();
 	
 	SyncBool					Initialise();						//	continue initialising
 	void						Shutdown();							//	shutdown code - just unsubscribes from publishers - this is to release all the TPtr's so we can be destructed
 	virtual TRefRef				GetSubscriberRef() const		{	static TRef Ref("inpint");	return Ref;	}
+
+	TBinaryTree&				GetWidgetData()					{	return m_WidgetData;	}
+	const TBinaryTree&			GetWidgetData() const			{	return m_WidgetData;	}
 
 protected:
 	virtual Bool				Update();											//	update routine - return FALSE if we don't need updates any more
@@ -99,6 +102,8 @@ protected:
 	
 	void						QueueClick(const int2& CursorPos,float ActionValue, TRefRef ActionRef);	//	put a click in the queue
 
+	FORCEINLINE void			AppendWidgetData(TLMessaging::TMessage& Message)			{	Message.ReferenceDataTree( m_WidgetData, FALSE );	}
+
 private:
 	void						ProcessQueuedClicks();	//	go through queued-up (unhandled) clicks and respond to them
 
@@ -112,13 +117,14 @@ protected:
 
 	TRef						m_ActionBeingProcessedRef;	// Action in process
 
+	TBinaryTree					m_WidgetData;			//	generic widget data - this gets attached to all messages sent out so you cna attach node refs etc
+
 private:
 	SyncBool					m_Initialised;			//	have created actions and subscribed to user input
 	TRef						m_UserRef;
 	TRef						m_ActionInClick;		//	our click action
 	TRef						m_ActionInMove;			//	our drag action (only occurs when mouse is down)
 	TArray<TClick>				m_QueuedClicks;			//	action's we had to wait for
-	//u8						m_ClickCount;			// Click count - used because we can receive multiple begin click messages from different device buttons
 };
 
 

@@ -295,15 +295,31 @@ TLGraph::TGraphNodeBase::TGraphNodeBase(TRefRef NodeRef,TRefRef NodeTypeRef) :
 //------------------------------------------------------------
 void TLGraph::TGraphNodeBase::Initialise(TLMessaging::TMessage& Message)
 {
+	//	base initialise should call SetProperty() to initialise properties/data from 
+	//	a node's initialising message; eg. Scheme data declared in XML
+	SetProperty( Message );
+}
+
+
+//------------------------------------------------------------
+//	base SetProperty function writes/updates the NodeData with any data in the message that hasn't already been read
+//------------------------------------------------------------
+void TLGraph::TGraphNodeBase::SetProperty(TLMessaging::TMessage& Message)
+{
 	//	gr: initialise reflection and arbitry data not processed by overloaded Initialise's
 	//	this probably ends up saving redundant data, but the idea is 
 	//	a) this data will be updated when reflection/serialising requests data
 	//	b) maybe one day we stop having members on classes and use this named data anyway...
-	//	problem here would be adding duplicate entries that we don't want... but that's why we only use unread data
-
-	//	main issue with this is if the base initialise (this) is called BEFORE any processing on a node's side which would
-	//	end up storing data that WILL be read, even if it hasn't been read yet
+	//	problem here would be adding entries that we don't want... but that's why we only use unread data
 
 	GetNodeData().AddUnreadChildren( Message, TRUE );
 }
 
+//------------------------------------------------------------
+//	GetProperty message handler
+//------------------------------------------------------------
+void TLGraph::TGraphNodeBase::GetProperty(TLMessaging::TMessage& Message, TLMessaging::TMessage& Response)
+{
+	TLDebug_Break("errr");
+
+}

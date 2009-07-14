@@ -70,7 +70,7 @@ namespace TLInput
 /*
 	Input system/management.  Keeps track of the input devices and notifies subscribers of input based events.
 */
-class TLInput::TInputManager : public TManager, public TClassFactory<TLInput::TInputDevice> 
+class TLInput::TInputManager : public TLCore::TManager, public TClassFactory<TLInput::TInputDevice> 
 {
 private:
 	class TVirtualDeviceRequest
@@ -82,11 +82,8 @@ private:
 	};
 	
 public:
-	TInputManager(TRef refManagerID);
-
-	~TInputManager()
-	{
-	}
+	TInputManager(TRefRef ManagerRef);
+	~TInputManager()		{	}
 
 	Bool					GetDeviceIDs(TArray<TRef>& refArray);
 	
