@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8434CB8E100DBB910063673E /* TRenderNodeScrollableView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8434CB8C100DBB910063673E /* TRenderNodeScrollableView.cpp */; };
+		8434CB8F100DBB910063673E /* TRenderNodeScrollableView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8434CB8D100DBB910063673E /* TRenderNodeScrollableView.h */; };
 		843B55590FB2F0E4004FAC36 /* TRenderNodeSwoosh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 843B55570FB2F0E4004FAC36 /* TRenderNodeSwoosh.cpp */; };
 		843B555A0FB2F0E4004FAC36 /* TRenderNodeSwoosh.h in Headers */ = {isa = PBXBuildFile; fileRef = 843B55580FB2F0E4004FAC36 /* TRenderNodeSwoosh.h */; };
 		8461BD700F582DA300ED9509 /* TRenderNodeDebugMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8461BD6E0F582DA300ED9509 /* TRenderNodeDebugMesh.cpp */; };
@@ -49,6 +51,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8434CB8C100DBB910063673E /* TRenderNodeScrollableView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeScrollableView.cpp; path = ../TRenderNodeScrollableView.cpp; sourceTree = SOURCE_ROOT; };
+		8434CB8D100DBB910063673E /* TRenderNodeScrollableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeScrollableView.h; path = ../TRenderNodeScrollableView.h; sourceTree = SOURCE_ROOT; };
 		843B55570FB2F0E4004FAC36 /* TRenderNodeSwoosh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeSwoosh.cpp; path = ../TRenderNodeSwoosh.cpp; sourceTree = SOURCE_ROOT; };
 		843B55580FB2F0E4004FAC36 /* TRenderNodeSwoosh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeSwoosh.h; path = ../TRenderNodeSwoosh.h; sourceTree = SOURCE_ROOT; };
 		8461BD6E0F582DA300ED9509 /* TRenderNodeDebugMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeDebugMesh.cpp; path = ../TRenderNodeDebugMesh.cpp; sourceTree = SOURCE_ROOT; };
@@ -128,6 +132,8 @@
 		84C10AED0F0A7E4E00B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				8434CB8C100DBB910063673E /* TRenderNodeScrollableView.cpp */,
+				8434CB8D100DBB910063673E /* TRenderNodeScrollableView.h */,
 				843B55570FB2F0E4004FAC36 /* TRenderNodeSwoosh.cpp */,
 				843B55580FB2F0E4004FAC36 /* TRenderNodeSwoosh.h */,
 				8477D5AE0F697E0F0023454C /* TRenderNodeQuadTree.cpp */,
@@ -223,6 +229,7 @@
 				847F01C20F69040E00121D77 /* TRenderNodePhysicsNode.h in Headers */,
 				8477D5B10F697E0F0023454C /* TRenderNodeQuadTree.h in Headers */,
 				843B555A0FB2F0E4004FAC36 /* TRenderNodeSwoosh.h in Headers */,
+				8434CB8F100DBB910063673E /* TRenderNodeScrollableView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,6 +295,7 @@
 				847F01C10F69040E00121D77 /* TRenderNodePhysicsNode.cpp in Sources */,
 				8477D5B00F697E0F0023454C /* TRenderNodeQuadTree.cpp in Sources */,
 				843B55590FB2F0E4004FAC36 /* TRenderNodeSwoosh.cpp in Sources */,
+				8434CB8E100DBB910063673E /* TRenderNodeScrollableView.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

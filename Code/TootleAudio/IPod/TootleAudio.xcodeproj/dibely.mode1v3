@@ -278,7 +278,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>6</integer>
+									<integer>8</integer>
 									<integer>3</integer>
 									<integer>0</integer>
 								</array>
@@ -321,7 +321,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TAudiograph.cpp</string>
+								<string>TAudioNode.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -329,11 +329,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TAudiograph.cpp</string>
+										<string>TAudioNode.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84E45EE80FCECCDC0015A203</string>
+										<string>848705560FE155E8008411A4</string>
 										<key>history</key>
 										<array>
 											<string>84179D9C0EFBD639005375E5</string>
@@ -352,12 +352,11 @@
 											<string>84C0C92B0F6C21960080B167</string>
 											<string>84C0C92D0F6C21960080B167</string>
 											<string>84C0C92E0F6C21960080B167</string>
-											<string>8488F4920F8A883B008A08AF</string>
-											<string>84E45EE70FCECCDC0015A203</string>
+											<string>848705340FE1524A008411A4</string>
+											<string>848705360FE1524A008411A4</string>
 										</array>
 										<key>prevStack</key>
 										<array>
-											<string>84179D7D0EFBAE84005375E5</string>
 											<string>84179D7E0EFBAE84005375E5</string>
 											<string>84179DA40EFBD639005375E5</string>
 											<string>84179DA60EFBD639005375E5</string>
@@ -375,6 +374,7 @@
 											<string>8461C5AC0F5EE3C400ED9509</string>
 											<string>8461C5AD0F5EE3C400ED9509</string>
 											<string>84C0C9380F6C21960080B167</string>
+											<string>848705350FE1524A008411A4</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -432,9 +432,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84E45EE90FCECCDC0015A203</string>
+				<string>848705570FE155E8008411A4</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84E45EEA0FCECCDC0015A203</string>
+				<string>848705580FE155E8008411A4</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -568,7 +568,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleAudio/IPod/TootleAudio.xcodeproj</string>
 	</array>
 	<key>WindowString</key>

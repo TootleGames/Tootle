@@ -281,7 +281,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>42</integer>
+									<integer>5</integer>
 									<integer>2</integer>
 									<integer>0</integer>
 								</array>
@@ -322,7 +322,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TFileAsset.cpp</string>
+								<string>TFileSys.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -330,11 +330,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TFileAsset.cpp</string>
+										<string>TFileSys.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>848615DC0FCDA19B00C22D6B</string>
+										<string>84795E250FE64752000D0EDA</string>
 										<key>history</key>
 										<array>
 											<string>84E6432C0F15293C005A4DC9</string>
@@ -363,8 +363,10 @@
 											<string>84C0CA920F6D70DB0080B167</string>
 											<string>843B568E0FB30E7B004FAC36</string>
 											<string>843B56BA0FB311F8004FAC36</string>
-											<string>848615D20FCDA14700C22D6B</string>
-											<string>848615D30FCDA14700C22D6B</string>
+											<string>84795E1E0FE64752000D0EDA</string>
+											<string>84795E1F0FE64752000D0EDA</string>
+											<string>84795E200FE64752000D0EDA</string>
+											<string>84795E210FE64752000D0EDA</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -395,7 +397,9 @@
 											<string>84C0CA3A0F6D6C250080B167</string>
 											<string>84C0CA3E0F6D6C250080B167</string>
 											<string>843B568F0FB30E7B004FAC36</string>
-											<string>848615D40FCDA14700C22D6B</string>
+											<string>84795E220FE64752000D0EDA</string>
+											<string>84795E230FE64752000D0EDA</string>
+											<string>84795E240FE64752000D0EDA</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -453,9 +457,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>848615D60FCDA14700C22D6B</string>
+				<string>84795E260FE64752000D0EDA</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>848615D70FCDA14700C22D6B</string>
+				<string>84795E270FE64752000D0EDA</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -589,7 +593,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleFilesys/IPod/TootleFileSys.xcodeproj</string>
 	</array>
 	<key>WindowString</key>

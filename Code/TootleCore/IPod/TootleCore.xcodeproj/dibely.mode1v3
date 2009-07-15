@@ -233,8 +233,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -280,7 +278,8 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>40</integer>
+									<integer>10</integer>
+									<integer>6</integer>
 									<integer>2</integer>
 									<integer>0</integer>
 								</array>
@@ -316,12 +315,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>IPodCore.mm</string>
+								<string>TCoreManager.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -329,11 +330,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>IPodCore.mm</string>
+										<string>TCoreManager.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8434C8DB100B48630063673E</string>
+										<string>8434CAFC100DB9A50063673E</string>
 										<key>history</key>
 										<array>
 											<string>84D692970F42F71C002CFFE1</string>
@@ -355,10 +356,8 @@
 											<string>840EBD660F72A45F00BA6F4C</string>
 											<string>84BF76390F7DB003008C3BA9</string>
 											<string>849E9E8C0F864D4D00037332</string>
-											<string>849E9E8D0F864D4D00037332</string>
 											<string>849E9EC60F86546200037332</string>
 											<string>849E9F1B0F86600600037332</string>
-											<string>849E9F4C0F8669E500037332</string>
 											<string>8488F4C40F8B4F04008A08AF</string>
 											<string>8488F54D0F8B52C6008A08AF</string>
 											<string>8488F57C0F8B5652008A08AF</string>
@@ -378,7 +377,6 @@
 											<string>8461F49F0FBB090600742359</string>
 											<string>845FDC630FBB1BCD00F88607</string>
 											<string>845FDD9F0FBB2E7800F88607</string>
-											<string>845FE16A0FBD628000F88607</string>
 											<string>845FE1E50FBD820A00F88607</string>
 											<string>845FE1E70FBD820A00F88607</string>
 											<string>84DF32350FC15DF800B0E6D5</string>
@@ -410,7 +408,12 @@
 											<string>84BBC2530FD56A2D0046E316</string>
 											<string>84BBC2540FD56A2D0046E316</string>
 											<string>84BBC2850FD5725C0046E316</string>
-											<string>84BBC2880FD5725C0046E316</string>
+											<string>8434CA49100BB8230063673E</string>
+											<string>8434CA4A100BB8230063673E</string>
+											<string>8434CAF4100DB9A50063673E</string>
+											<string>8434CAF5100DB9A50063673E</string>
+											<string>8434CAF6100DB9A50063673E</string>
+											<string>8434CAF7100DB9A50063673E</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -485,6 +488,12 @@
 											<string>84D9DE910FC5B47B00C7A173</string>
 											<string>84BBBF500FD43FE20046E316</string>
 											<string>84BBC2560FD56A2D0046E316</string>
+											<string>8434CA4E100BB8230063673E</string>
+											<string>8434CA4F100BB8230063673E</string>
+											<string>8434CAF8100DB9A50063673E</string>
+											<string>8434CAF9100DB9A50063673E</string>
+											<string>8434CAFA100DB9A50063673E</string>
+											<string>8434CAFB100DB9A50063673E</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -542,9 +551,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>8434C8DC100B48630063673E</string>
+				<string>8434CAFD100DB9A50063673E</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>8434C8DD100B48630063673E</string>
+				<string>8434CAFE100DB9A50063673E</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -678,7 +687,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>84E1160F0F3C6C8900471397</string>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleCore/IPod/TootleCore.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -759,7 +768,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>84E1160F0F3C6C8900471397</string>
-				<string>8434C8DE100B48630063673E</string>
+				<string>8434CA53100BB8230063673E</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -912,8 +921,6 @@
 							<key>Dock</key>
 							<array>
 								<dict>
-									<key>BecomeActive</key>
-									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
@@ -940,6 +947,8 @@
 							<string>348pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -975,8 +984,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>84BBC2830FD572590046E316</string>
-				<string>84BBC2840FD572590046E316</string>
+				<string>8434CAF2100DB9A40063673E</string>
+				<string>8434CAF3100DB9A40063673E</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>

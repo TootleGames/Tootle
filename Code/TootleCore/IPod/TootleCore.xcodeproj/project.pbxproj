@@ -100,7 +100,7 @@
 		84C109660F0A791900B2DF7A /* TClassFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TClassFactory.h; path = ../TClassFactory.h; sourceTree = SOURCE_ROOT; };
 		84C109670F0A791900B2DF7A /* TColour.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TColour.h; path = ../TColour.h; sourceTree = SOURCE_ROOT; };
 		84C109680F0A791900B2DF7A /* TCoreManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TCoreManager.cpp; path = ../TCoreManager.cpp; sourceTree = SOURCE_ROOT; };
-		84C109690F0A791900B2DF7A /* TCoreManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCoreManager.h; path = ../TCoreManager.h; sourceTree = SOURCE_ROOT; };
+		84C109690F0A791900B2DF7A /* TCoreManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TCoreManager.h; path = ../TCoreManager.h; sourceTree = SOURCE_ROOT; };
 		84C1096A0F0A791900B2DF7A /* TEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TEventChannel.cpp; path = ../TEventChannel.cpp; sourceTree = SOURCE_ROOT; };
 		84C1096B0F0A791900B2DF7A /* TEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TEventChannel.h; path = ../TEventChannel.h; sourceTree = SOURCE_ROOT; };
 		84C1096C0F0A791900B2DF7A /* TFixedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFixedArray.h; path = ../TFixedArray.h; sourceTree = SOURCE_ROOT; };
