@@ -685,7 +685,7 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 
 	//	set attach datum
 	TRef AttachDatum;
-	if ( Message.ImportData("Attach", AttachDatum ) )
+	if ( Message.ImportData("AttachDatum", AttachDatum ) )
 		SetAttachDatum( AttachDatum );
 
 	// Super SetProperty call

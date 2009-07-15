@@ -18,6 +18,7 @@ class TLGui::TWidgetDrag : public TLGui::TWidget
 {
 public:
 	TWidgetDrag(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,TRefRef ActionOutDrag,TBinaryTree* pWidgetData=NULL);
+	TWidgetDrag(TRefRef RenderTargetRef,TBinaryTree& WidgetData);
 
 protected:
 	virtual void				OnClickBegin(const TClick& Click);

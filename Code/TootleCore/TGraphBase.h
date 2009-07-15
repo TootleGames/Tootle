@@ -48,6 +48,7 @@ public:
 	virtual Bool				IsInGraph(TRefRef NodeRef,Bool CheckRequestQueue=TRUE)=0;			//	return if a node exists
 	void						RemoveNodes(const TArray<TRef>& NodeRefs);							//	remove an array of nodes by their ref
 	virtual Bool				RemoveNode(TRefRef NodeRef)=0;										//	remove an array of nodes by their ref
+	virtual Bool				RemoveChildren(TRefRef NodeRef)=0;									//	remove all children from this node
 
 	FORCEINLINE Bool			ImportScheme(const TLAsset::TScheme* pScheme,TRefRef ParentNodeRef,Bool StrictNodeRefs=TRUE,TLMessaging::TMessage* pCommonInitMessage=NULL)		{	return pScheme ? ImportScheme( *pScheme, ParentNodeRef, StrictNodeRefs, pCommonInitMessage ) : FALSE;	}
 	Bool						ImportScheme(const TLAsset::TScheme& Scheme,TRefRef ParentNodeRef,Bool StrictNodeRefs=TRUE,TLMessaging::TMessage* pCommonInitMessage=NULL);		//	import scheme into this graph

@@ -272,12 +272,8 @@ void TLRender::TRenderNodeText::RealignGlyphs(TLMaths::TBox2D& TextBounds)
 		return;
 	}
 
-	//	build up a new transform.
-	TLMaths::TTransform NewTransform;
-	
-	//	copy existing rotation
-	if ( GetTransform().HasRotation() )
-		NewTransform.SetRotation( GetTransform().GetRotation() );
+	//	reset alignemnt transform
+	m_AlignmentTransform.SetInvalid();
 
 	//	do scaling first
 	if ( m_ScaleMode.IsValid() )
@@ -285,13 +281,6 @@ void TLRender::TRenderNodeText::RealignGlyphs(TLMaths::TBox2D& TextBounds)
 		TTempString Debug_String("todo: handle text scale mode ");
 		m_ScaleMode.GetString( Debug_String );
 		TLDebug_Break( Debug_String );
-		//	NewTransform.SetScale(xyz);
-	}
-	else
-	{
-		//	copy existing scale
-		if ( GetTransform().HasScale() )
-			NewTransform.SetScale( GetTransform().GetScale() );
 	}
 
 	//	if we don't have a text box we can still do alignment, just with our base point of 0,0
@@ -299,66 +288,72 @@ void TLRender::TRenderNodeText::RealignGlyphs(TLMaths::TBox2D& TextBounds)
 	const TLMaths::TBox2D& AlignBox = m_TextBox.IsValid() ? m_TextBox : TempBox;
 
 	//	scale the glyph bounds according to our scale
-	//	note: ensure the original TextBounds isn't scaled according to our transform... it shouldn't be... it should be in local space
-	if ( NewTransform.HasScale() )
+	//	note: ensure the original calculated TextBounds isn't scaled according to our transform... it shouldn't be... it should be in local space
+	if ( m_BaseTransform.HasScale() )
 	{
-		//	gr: NewTransform should only have scale in it at the moment
-		TextBounds.Transform( NewTransform );
+		//	gr: should this rotate and translate too?
+		TLMaths::TTransform GlyphBoundsTransform;
+		GlyphBoundsTransform.SetScale( m_BaseTransform.GetScale() );
+		TextBounds.Transform( GlyphBoundsTransform );
 
-		//	glyph bounds world space is now relative to our text box (which is local to our parent - regardless if we got the box from our parent or not)
+		//	glyph bounds world space is now relative to our text box 
+		//	(which is local to our parent - regardless if we got the box from our parent or not)
 	}
 
-	if ( m_TextBox.IsValid() )
+	//	now get a vector which will align us with our text box as required
+	//	defaults to top-left
+	float2 Alignment( AlignBox.GetMin() );
+
+	if ( m_AlignMode.x == TLRenderText::HAlignCenter )
+		Alignment.x += (AlignBox.GetWidth() - TextBounds.GetWidth()) / 2.f;
+	else if ( m_AlignMode.x == TLRenderText::HAlignRight )
+		Alignment.x = (AlignBox.GetRight() - TextBounds.GetWidth());
+	else if ( m_AlignMode.x != TLRenderText::HAlignLeft )
 	{
-		//	now get a vector which will align us with our text box as required
-		//	defaults to top-left
-		float2 Alignment( AlignBox.GetMin() );
-
-		if ( m_AlignMode.x == TLRenderText::HAlignCenter )
-			Alignment.x += (AlignBox.GetWidth() - TextBounds.GetWidth()) / 2.f;
-		else if ( m_AlignMode.x == TLRenderText::HAlignRight )
-			Alignment.x = (AlignBox.GetRight() - TextBounds.GetWidth());
-		else if ( m_AlignMode.x != TLRenderText::HAlignLeft )
-		{
-			TTempString Debug_String("Unknown alignment mode ");
-			m_AlignMode.x.GetString( Debug_String );
-			TLDebug_Break( Debug_String );
-		}
-
-		if ( m_AlignMode.y == TLRenderText::VAlignMiddle )
-			Alignment.y += (AlignBox.GetHeight() - TextBounds.GetHeight()) / 2.f;
-		else if ( m_AlignMode.y == TLRenderText::VAlignBottom )
-			Alignment.y = (AlignBox.GetBottom() - TextBounds.GetHeight());
-		else if ( m_AlignMode.y != TLRenderText::VAlignTop )
-		{
-			TTempString Debug_String("Unknown alignment mode ");
-			m_AlignMode.y.GetString( Debug_String );
-			TLDebug_Break( Debug_String );
-		}
-
-		//	have a new alignment, apply it to the new transform...
-		NewTransform.SetTranslate( Alignment.xyz( GetTransform().GetTranslate().z ) );
-	}
-	else
-	{
-		//	gr: currently the transform is reset to 0,0,0 if we have no text box... which is bad
-		//	because usually if we dont have a text box we are setting a translate explicitly.
-		//	we could use the existing translate for the TempBox but that's not working to work right
-		//	for Center/Right align. Need to store an original offset I suppose... work this all
-		//	into the next-revision where we have a different transform for each line
-		if ( GetTransform().HasTranslate() )
-			NewTransform.SetTranslate( GetTransform().GetTranslate() );
-
-		if ( m_AlignMode.x != TLRenderText::HAlignLeft || m_AlignMode.y != TLRenderText::VAlignTop )
-		{
-			TLDebug_Break("align modes without a text box aren't supported at the moment");
-		}
+		TTempString Debug_String("Unknown alignment mode ");
+		m_AlignMode.x.GetString( Debug_String );
+		TLDebug_Break( Debug_String );
 	}
 
-	//	and set our new transform
-	SetTransform( NewTransform );
+	if ( m_AlignMode.y == TLRenderText::VAlignMiddle )
+		Alignment.y += (AlignBox.GetHeight() - TextBounds.GetHeight()) / 2.f;
+	else if ( m_AlignMode.y == TLRenderText::VAlignBottom )
+		Alignment.y = (AlignBox.GetBottom() - TextBounds.GetHeight());
+	else if ( m_AlignMode.y != TLRenderText::VAlignTop )
+	{
+		TTempString Debug_String("Unknown alignment mode ");
+		m_AlignMode.y.GetString( Debug_String );
+		TLDebug_Break( Debug_String );
+	}
+
+	//	have a new alignment, apply it to the new transform...
+	m_AlignmentTransform.SetTranslate( Alignment.xyz(0.f) );
+
+	//	recalculate new overall transform
+	m_Transform = m_BaseTransform;
+
+	//	accumulate alignment, don't scale/rotate it etc
+	m_Transform.AddTransform( m_AlignmentTransform );
+
+	//	propogate changes to transform
+	TLRender::TRenderNode::OnTransformChanged( TLMaths_TransformBitAll );	
 }
 
+
+//--------------------------------------------------------
+//	when the transform changes, merge with the alignment transform
+//--------------------------------------------------------
+void TLRender::TRenderNodeText::OnTransformChanged(u8 TransformChangedBits)
+{
+	//	save new manual/offset transform
+	m_BaseTransform = m_Transform;
+
+	//	accumulate alignment, don't scale/rotate it etc
+	m_Transform.AddTransform( m_AlignmentTransform );
+
+	//	now do normal stuff
+	TLRender::TRenderNode::OnTransformChanged( TransformChangedBits );	
+}
 
 
 
@@ -719,5 +714,4 @@ Bool TLRender::TRenderNodeTextureText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 
 	return TRUE;
 }
-
 

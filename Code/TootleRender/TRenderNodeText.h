@@ -75,6 +75,7 @@ public:
 	TRenderNodeText(TRefRef RenderNodeRef,TRefRef TypeRef);
 
 	virtual void			Initialise(TLMessaging::TMessage& Message);	//	generic render node init
+	virtual void			OnTransformChanged(u8 TransformChangedBits=TLMaths_TransformBitAll);	//	when the transform changes, merge with the alignment transform
 
 	TRefRef					GetFontRef() const							{	return m_FontRef;	}
 	void					SetFontRef(TRefRef FontRef)					{	m_FontRef = FontRef;	}
@@ -111,6 +112,9 @@ protected:
 	Type2<TRef>				m_AlignMode;			//	horizontal and vertical alignment mode
 	TRef					m_ScaleMode;			//	scale mode, if invalid no scaling applied. Note: if you scale the text, and then set a scale mode you will lose your original scale info (or at least on whatever axis is affected by the mode)
 	float					m_LineHeight;			//	scalar to the line height for extra line spacing. 1.0 is default
+
+	TLMaths::TTransform		m_BaseTransform;		//	this is the "offset" transform. whenever the local transform is set it's copied here, then the alignment transform is put on top
+	TLMaths::TTransform		m_AlignmentTransform;	//	transform for the alignment
 
 private:
 	Bool					m_GlyphsValid;			//	if TRUE we need to re-generate glyphs

@@ -179,7 +179,7 @@ public:
 	virtual void							PreDrawChildren(TLRender::TRenderTarget& RenderTarget,TLMaths::TTransform& SceneTransform)	{}	//	only called if we HAVE children
 	virtual void							PostDrawChildren(TLRender::TRenderTarget& RenderTarget)										{}	//	only called if we HAVE children
 
-	FORCEINLINE void						OnTransformChanged(u8 TransformChangedBits=TLMaths_TransformBitAll);	//	invalidate bounds
+	virtual void							OnTransformChanged(u8 TransformChangedBits=TLMaths_TransformBitAll);	//	invalidate bounds
 	FORCEINLINE void						OnMeshChanged();							//	invalidate bounds
 	FORCEINLINE void						OnBoundsChanged()							{	OnMeshChanged();	}
 
@@ -236,7 +236,6 @@ protected:
 	virtual void 							Update(float Timestep);	
 
 	virtual void							SetProperty(TLMessaging::TMessage& Message);	//	SetProperty message - made into virtual func as it's will be commonly used.
-
 
 	FORCEINLINE void						OnMeshRefChanged()							{	m_pMeshCache = NULL;	OnMeshChanged();	}
 	FORCEINLINE void						OnTextureRefChanged()						{	m_pTextureCache = NULL;	}

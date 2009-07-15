@@ -88,7 +88,7 @@ public:
 	FORCEINLINE Bool			MoveNode(TRefRef NodeRef,TRefRef NewParentRef)		{	return MoveNode( FindNode( NodeRef ), NewParentRef.IsValid() ? FindNode( NewParentRef ) : GetRootNode() );	}
 	virtual Bool				RemoveNode(TRefRef NodeRef)							{	return RemoveNode( FindNode( NodeRef ) );	}
 	FORCEINLINE Bool			RemoveNode(TRef& NodeRef);							//	simple remove node wrapper which invalidates the node ref as well
-	FORCEINLINE Bool			RemoveChildren(TRefRef NodeRef)						{	return RemoveChildren( FindNode( NodeRef ) );	}			//	remove pNode's children (but not pNode)
+	virtual Bool				RemoveChildren(TRefRef NodeRef)						{	return RemoveChildren( FindNode( NodeRef ) );	}			//	remove pNode's children (but not pNode)
 
 	//	factory access
 	FORCEINLINE Bool			AddFactory(TPtr< TClassFactory<T,FALSE> >& pFactory);	//	add factory to graph

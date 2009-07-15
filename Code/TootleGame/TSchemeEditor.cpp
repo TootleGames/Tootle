@@ -5,7 +5,8 @@
 
 
 
-TLGame::TSchemeEditor::TSchemeEditor()
+TLGame::TSchemeEditor::TSchemeEditor() :
+	m_CommonNodeData	( TRef() )
 {
 }
 
@@ -33,8 +34,12 @@ TLGame::TSchemeEditor::~TSchemeEditor()
 //----------------------------------------------------------
 //	
 //----------------------------------------------------------
-Bool TLGame::TSchemeEditor::Initialise(TRefRef EditorScheme,TRefRef GraphRef,TRefRef SchemeRootNode,TRefRef GameRenderTarget)
+Bool TLGame::TSchemeEditor::Initialise(TRefRef EditorScheme,TRefRef GraphRef,TRefRef SchemeRootNode,TRefRef GameRenderTarget,TBinaryTree* pCommonNodeData)
 {
+	//	copy node params
+	if ( pCommonNodeData )
+		m_CommonNodeData.ReferenceDataTree( *pCommonNodeData, FALSE );
+
 	//	check params
 	if ( !SchemeRootNode.IsValid() )
 	{
@@ -83,30 +88,18 @@ void TLGame::TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 	if(Message.GetMessageRef() == TRef_Static(A,c,t,i,o))
 	{
 		TRef ActionRef;
-		TRef NodeRef;
 		Message.ResetReadPos();
 		if ( !Message.Read(ActionRef) )
 			return;
 		
-		if ( Message.ImportData("Node", NodeRef) )
+		TRef Ref;
+		if ( Message.ImportData("Node", Ref) )
 		{
-			if ( ActionRef == "NDrag" )
-			{
-				//	get world change
-				float3 WorldChange;
-				if ( Message.ImportData("Move3",WorldChange ) )
-				{
-					OnNodeDrag( NodeRef, WorldChange );
-				}
-			}
-			else if ( ActionRef == "NDown" )
-			{
-				OnNodeSelected( NodeRef );
-			}
-			else if ( ActionRef == "NUp" )
-			{
-				OnNodeUnselected( NodeRef );
-			}
+			ProcessNodeMessage( Ref, ActionRef, Message );
+		}
+		else if ( Message.ImportData("Icon", Ref ) )
+		{
+			ProcessIconMessage( Ref, ActionRef, Message );
 		}
 		else 
 		{
@@ -122,6 +115,10 @@ void TLGame::TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 				}
 				break;
 
+				case TRef_Static(C,l,e,a,r):
+					ClearScheme();
+					break;
+
 				default:
 				{
 					TTempString Debug_String("Unknown editor command ");
@@ -132,7 +129,19 @@ void TLGame::TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 			}
 		}
 	}
-	
+
+	if ( Message.GetMessageRef() == "NodeAdded" && Message.GetSenderRef() == TLRender::g_pRendergraph->GetGraphRef() )
+	{
+		TRef NodeRef;
+		Message.ResetReadPos();
+		if ( Message.Read( NodeRef ) )
+		{
+			if ( NodeRef == m_EditorRenderNodeRef )
+				OnEditorRenderNodeAdded();
+		}
+
+		return;
+	}
 
 }
 
@@ -212,6 +221,9 @@ Bool TLGame::TSchemeEditor::CreateEditorGui(TRefRef EditorScheme)
 			Message.ExportData("RFClear", TLRender::TRenderNode::RenderFlags::EnableCull );
 			m_EditorRenderNodeRef = TLRender::g_pRendergraph->CreateNode("EditorRoot", TRef(), TRef(), &Message );
 			pRenderTarget->SetRootRenderNode( m_EditorRenderNodeRef );
+
+			//	catch when the editor render node is created so we can create icons etc
+			this->SubscribeTo( TLRender::g_pRendergraph );
 		}
 	}
 
@@ -229,11 +241,7 @@ Bool TLGame::TSchemeEditor::CreateEditorGui(TRefRef EditorScheme)
 		CreateEditorWidget( *WidgetDatas[i] );
 
 	//	setup list of node types we can create
-	/*
-	TPtrArray<TBinaryTree> NewNodeDatas = pEditorScheme->GetData().GetChildren("NewNode");
-	for ( i=0;	i<NewNodeDatas.GetSize();	i++ )
-		CreateEditorWidget( *NewNodeDatas[i] );
-		*/
+	pEditorScheme->GetData().GetChildren("NewNode", m_NewNodeData );
 
 	return TRUE;
 }
@@ -306,5 +314,135 @@ void TLGame::TSchemeEditor::UnselectAllNodes()
 
 	//	now unselect all those nodes
 	m_SelectedNodes.Empty();
+}
+
+
+
+//----------------------------------------------------------
+//	remove all nodes
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::ClearScheme()
+{
+	UnselectAllNodes();
+
+	m_pGraph->RemoveChildren( m_SchemeRootNode );
+}
+
+
+
+//----------------------------------------------------------
+//	handle a [widget]message from a game node
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef,TLMessaging::TMessage& Message)
+{
+	if ( ActionRef == "NDrag" )
+	{
+		//	get world change
+		float3 WorldChange;
+		if ( Message.ImportData("Move3",WorldChange ) )
+		{
+			OnNodeDrag( NodeRef, WorldChange );
+		}
+	}
+	else if ( ActionRef == "NDown" )
+	{
+		OnNodeSelected( NodeRef );
+	}
+	else if ( ActionRef == "NUp" )
+	{
+		OnNodeUnselected( NodeRef );
+	}
+}
+
+
+//----------------------------------------------------------
+//	handle a [widget]message from a editor icon
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::ProcessIconMessage(TRefRef IconRef,TRefRef ActionRef,TLMessaging::TMessage& Message)
+{
+	if ( ActionRef == "IcoDown" )
+	{
+		//	create a new node at the mouse position - convert screen pos to game render target world pos
+		float2 ScreenPos;
+		Message.ImportData("Pos2", ScreenPos);
+
+		float3 MouseWorldPos( 10.f, 10.f, 0.f );
+
+		TRef NodeType;
+		Message.ImportData("Type", NodeType);
+
+		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
+		InitMessage.ReferenceDataTree( m_CommonNodeData, FALSE );
+		InitMessage.ExportData("Translate", MouseWorldPos );
+
+		TRef NewSceneNode = m_pGraph->CreateNode("Node", NodeType, m_SchemeRootNode, &InitMessage );
+	}
+
+}
+
+
+//----------------------------------------------------------
+//	create an icon for the editor
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::CreateEditorIcons()
+{
+	float3 IconPosition( 0.f, 0.f, 5.f );
+	float3 IconScale( 5.f, 5.f, 1.f );
+
+	for ( u32 i=0;	i<m_NewNodeData.GetSize();	i++ )
+	{
+		TBinaryTree& IconData = *m_NewNodeData[i];
+		TRef TypeRef;
+		if ( !IconData.ImportData("Type", TypeRef) )
+		{
+			TLDebug_Break("Icon data requires a type - otherwise we don't know what scene node to create");
+			continue;
+		}
+
+		//	create icon render node
+		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
+
+		//	temporary text rnder node setup
+		TTempString String;
+		if ( !IconData.ImportDataString("name", String ) )
+		{
+			TRef TypeRef("????");
+			IconData.ImportData("Type", TypeRef );
+			TypeRef.GetString( String, TRUE );
+		}
+		InitMessage.ExportDataString("string", String );
+		InitMessage.ExportData("scale", IconScale );
+		InitMessage.ExportData("FontRef", TRef("fdebug") );
+		InitMessage.ExportData("translate", IconPosition );
+		InitMessage.ExportData("boxdatum", TRef("Icons") );
+		InitMessage.ExportData("boxnode", TRef("e_gui") );
+
+		TRef IconRenderNodeRef = TLRender::g_pRendergraph->CreateNode("Icon", "TxText", m_EditorRenderNodeRef, &InitMessage );
+
+		//	create draggable widget on this icon
+		TBinaryTree WidgetData("Widget");
+		WidgetData.ExportData("Node", IconRenderNodeRef );
+		WidgetData.ExportData("ActDown", TRef("IcoDown") );
+		WidgetData.ExportData("ActDrag", TRef("IcoDrag") );
+
+		//	custom data
+		WidgetData.ExportData("Icon", TypeRef );
+		WidgetData.ExportData("Type", TypeRef );
+		TPtr<TLGui::TWidgetDrag> pWidget = new TLGui::TWidgetDrag( m_EditorRenderNodeRef, WidgetData );
+		m_EditorWidgets.Add( pWidget );
+		this->SubscribeTo( pWidget );
+
+		IconPosition.y += IconScale.y * 1.5f;
+	}
+
+}
+
+
+//----------------------------------------------------------
+//	editor render node is ready to be used
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::OnEditorRenderNodeAdded()
+{
+	CreateEditorIcons();
 }
 

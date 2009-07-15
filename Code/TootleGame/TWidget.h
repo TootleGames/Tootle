@@ -69,7 +69,7 @@ protected:
 		FORCEINLINE TRefRef					GetActionType() const							{	return m_ActionType; }
 
 	protected:
-		int2			m_CursorPos;	
+		int2			m_CursorPos;		//	in screen space
 		float			m_ActionValue;
 		TRef			m_ActionRef;
 		TRef			m_ActionType;		//	TLGui_WidgetActionType_*

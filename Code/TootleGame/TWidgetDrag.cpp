@@ -7,8 +7,16 @@
 TLGui::TWidgetDrag::TWidgetDrag(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,TRefRef ActionOutDrag,TBinaryTree* pWidgetData) :
 	m_ActionOutDrag		( ActionOutDrag ),
 	m_Dragging			( FALSE ),
-	TLGui::TWidget	( RenderTargetRef, RenderNodeRef, UserRef, ActionOutDown, ActionOutUp, pWidgetData)
+	TLGui::TWidget		( RenderTargetRef, RenderNodeRef, UserRef, ActionOutDown, ActionOutUp, pWidgetData)
 {
+}
+
+
+TLGui::TWidgetDrag::TWidgetDrag(TRefRef RenderTargetRef,TBinaryTree& WidgetData) :
+	m_Dragging			( FALSE ),
+	TLGui::TWidget		( RenderTargetRef, WidgetData )
+{
+	WidgetData.ImportData("ActDrag", m_ActionOutDrag );
 }
 
 
