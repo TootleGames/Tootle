@@ -75,6 +75,8 @@ public:
 	Bool							GetWorldPosFromScreenPos(const TRenderTarget& RenderTarget,float3& WorldPos,float WorldDepth,const Type2<s32>& ScreenPos);
 	Bool							GetWorldPosFromScreenPos(const TPtr<TRenderTarget>& pRenderTarget,float3& WorldPos,float WorldDepth,const Type2<s32>& ScreenPos);
 
+	Bool							GetScreenPosFromWorldPos(const TRenderTarget& RenderTarget,const float3& WorldPos, Type2<s32>& ScreenPos);
+	Bool							GetScreenPosFromWorldPos(const TPtr<TRenderTarget>& pRenderTarget,const float3& WorldPos, Type2<s32>& ScreenPos);
 
 	FORCEINLINE void				RequestScreenshot()							{	m_Flags.Set(Flag_TakeScreenshot);	}	// Screenshot request
 
@@ -85,6 +87,7 @@ public:
 
 protected:
 	Bool							GetRenderTargetPosFromScreenPos(const TRenderTarget& RenderTarget,Type2<s32>& RenderTargetPos,Type4<s32>& RenderTargetSize,const Type2<s32>& ScreenPos);	//	Get a render target-relative cursor position from a screen pos - fails if outside render target box
+	Bool							GetScreenPosFromRenderTargetPos(Type2<s32>& ScreenPos, const TRenderTarget& RenderTarget,const Type2<s32>& RenderTargetPos, Type4<s32>& RenderTargetSize);	//	Get a screen pos render target-relative cursor position- fails if outside render target box
 	void							CreateDebugRenderTarget();
 
 protected:

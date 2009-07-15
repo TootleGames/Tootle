@@ -322,6 +322,133 @@ Bool TLRender::TScreen::GetRenderTargetPosFromScreenPos(const TRenderTarget& Ren
 	return TRUE;
 }
 
+
+//---------------------------------------------------------
+//	Get a screen pos from a render target-relative cursor position - fails if outside render target box
+//---------------------------------------------------------
+Bool TLRender::TScreen::GetScreenPosFromRenderTargetPos(Type2<s32>& ScreenPos, const TRenderTarget& RenderTarget,const Type2<s32>& RenderTargetPos, Type4<s32>& RenderTargetSize)	//	Get a screen pos render target-relative cursor position- fails if outside render target box
+{
+	//	outside render target, fail
+	if ( !RenderTargetSize.GetIsInside( RenderTargetPos ) )
+		return FALSE;
+
+	//	convert screen(viewport) pos to render target pos by rotating it inside the viewport
+	Type2<s32> RotatedScreenPos = RenderTargetPos;
+
+	Type4<s32> MaxRenderTargetSize;
+	GetRenderTargetMaxSize( MaxRenderTargetSize );
+
+	//	make relative to render target
+	RenderTarget.GetSize( RenderTargetSize, MaxRenderTargetSize );
+
+	RotatedScreenPos.Left() += RenderTargetSize.Left();
+	RotatedScreenPos.Top() += RenderTargetSize.Top();
+
+//	rotate screen pos to be in "screen" space
+	if ( GetScreenShape() == TLRender::ScreenShape_WideLeft )
+	{
+		//	rotate RIGHT
+		RotatedScreenPos.Top() = MaxRenderTargetSize.Right() - RenderTargetPos.Left();
+		RotatedScreenPos.Left() = RenderTargetPos.Top();
+		//RotatedScreenPos.Top() = RenderTargetPos.Left();
+		//RotatedScreenPos.Left() = MaxRenderTargetSize.Bottom() - RenderTargetPos.Top();
+	}
+	else if ( GetScreenShape() == TLRender::ScreenShape_WideRight )
+	{
+		//	rotate LEFT
+		RotatedScreenPos.Top() = RenderTargetPos.Left();
+		RotatedScreenPos.Left() = MaxRenderTargetSize.Bottom() - RenderTargetPos.Top();
+	}
+
+	// Set the screen pos
+	//ScreenPos = RotatedScreenPos;
+
+	Type4<s32> RotatedRenderTargetSize = RenderTargetSize;
+
+	if ( GetScreenShape() == ScreenShape_WideLeft )
+	{
+		//	gr: rendertarget is rotated left, so to get viewport, rotate it right again
+		//	rotate right
+		RotatedRenderTargetSize.x = RenderTargetSize.Top();
+		RotatedRenderTargetSize.y = MaxRenderTargetSize.Width() - RenderTargetSize.Right();
+		RotatedRenderTargetSize.Width() = RenderTargetSize.Height();
+		RotatedRenderTargetSize.Height() = RenderTargetSize.Width();
+	}
+	else if ( GetScreenShape() == ScreenShape_WideRight )
+	{
+		//	gr: rendertarget is rotated right, so to get viewport, rotate it left again
+		//	rotate left
+		RotatedRenderTargetSize.x = MaxRenderTargetSize.Height() - RenderTargetSize.Bottom();
+		RotatedRenderTargetSize.y = RenderTargetSize.Left();
+		RotatedRenderTargetSize.Width() = RenderTargetSize.Height();
+		RotatedRenderTargetSize.Height() = RenderTargetSize.Width();
+	}
+
+	ScreenPos.Left() = RotatedScreenPos.Left();
+	ScreenPos.Top() = RotatedRenderTargetSize.Height() - RotatedScreenPos.Top();
+//	ViewportSize.Left() = RotatedRenderTargetSize.Left();
+//	ViewportSize.Top() = ViewportTargetMaxSize.Height() - RotatedRenderTargetSize.Top() - RotatedRenderTargetSize.Height();
+
+
+	//	check the point is inside the screen viewport
+	Type4<s32> ViewportMaxSize;
+	GetViewportMaxSize( ViewportMaxSize );
+
+	if ( !ViewportMaxSize.GetIsInside( ScreenPos ) )
+		return FALSE;
+
+
+
+
+	return TRUE;
+
+	/*
+	//	check the point is inside the screen viewport
+	Type4<s32> ViewportMaxSize;
+	GetViewportMaxSize( ViewportMaxSize );
+
+	if ( !ViewportMaxSize.GetIsInside( ScreenPos ) )
+		return FALSE;
+
+	//	convert screen(viewport) pos to render target pos by rotating it inside the viewport
+	RenderTargetPos = ScreenPos;
+
+	Type4<s32> MaxRenderTargetSize;
+	GetRenderTargetMaxSize( MaxRenderTargetSize );
+
+	//	rotate screen pos to be in "render target" space
+	if ( GetScreenShape() == TLRender::ScreenShape_WideLeft )
+	{
+		//	rotate RIGHT
+		RenderTargetPos.Left() = MaxRenderTargetSize.Right()  - ScreenPos.Top();
+	//	RenderTargetPos.Left() = ViewportMaxSize.Right()  - ScreenPos.Top();
+		RenderTargetPos.Top() = ScreenPos.Left();
+	}
+	else if ( GetScreenShape() == TLRender::ScreenShape_WideRight )
+	{
+		//	rotate LEFT
+		RenderTargetPos.Left() = ScreenPos.Top();
+	//	RenderTargetPos.Top() = ViewportMaxSize.Bottom() - ScreenPos.Left();
+		RenderTargetPos.Top() = MaxRenderTargetSize.Bottom() - ScreenPos.Left();
+	}
+
+	//	make relative to render target
+	RenderTarget.GetSize( RenderTargetSize, MaxRenderTargetSize );
+
+	RenderTargetPos.Left() -= RenderTargetSize.Left();
+	RenderTargetPos.Top() -= RenderTargetSize.Top();
+
+	//	outside render target, fail
+	if ( !RenderTargetSize.GetIsInside( RenderTargetPos ) )
+		return FALSE;
+
+	*/
+	return TRUE;
+}
+
+
+
+
 //---------------------------------------------------------
 //	get a world position from this screen posiiton
 //---------------------------------------------------------
@@ -365,6 +492,37 @@ Bool TLRender::TScreen::GetWorldPosFromScreenPos(const TPtr<TRenderTarget>& pRen
 
 	return GetWorldPosFromScreenPos( *pRenderTarget.GetObject(), WorldPos, WorldDepth, ScreenPos );
 }
+
+Bool TLRender::TScreen::GetScreenPosFromWorldPos(const TPtr<TRenderTarget>& pRenderTarget,const float3& WorldPos, Type2<s32>& ScreenPos)
+{
+	if ( !pRenderTarget )
+	{
+		TLDebug_Break("RenderTarget expected");
+		return FALSE;
+	}
+
+	return GetScreenPosFromWorldPos(*pRenderTarget.GetObject(), WorldPos, ScreenPos);
+}
+
+Bool TLRender::TScreen::GetScreenPosFromWorldPos(const TRenderTarget& RenderTarget, const float3& WorldPos, Type2<s32>& ScreenPos)
+{
+	Type4<s32> RenderTargetSize;
+	Type4<s32> MaxRenderTargetSize;
+	Type2<s32> RenderTargetPos;
+
+	GetRenderTargetMaxSize(MaxRenderTargetSize);
+
+	RenderTarget.GetSize(RenderTargetSize, MaxRenderTargetSize);
+
+	//	let render target do it's own conversions what with fancy cameras n that
+	if ( !RenderTarget.GetScreenPos(RenderTargetPos, WorldPos, RenderTargetSize, GetScreenShape()) )
+		return FALSE;
+
+
+	return GetScreenPosFromRenderTargetPos( ScreenPos, RenderTarget, RenderTargetPos, RenderTargetSize);
+}
+
+
 
 
 //---------------------------------------------------------

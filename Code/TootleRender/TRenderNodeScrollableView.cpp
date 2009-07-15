@@ -60,10 +60,6 @@ void TRenderNodeScrollableView::OnRenderTargetRefChange()
 
 	if(pRenderTarget)
 	{
-		Type4<s32> RenderTargetSize;
-		pScreen->GetRenderTargetSize( RenderTargetSize, pRenderTarget );
-
-
 		TPtr<TLMaths::TShape> pDatum = GetWorldDatum( m_DatumRef );
 
 		if(!pDatum || (pDatum->GetShapeType() != TLMaths_ShapeRef(TBox2D)))
@@ -84,15 +80,27 @@ void TRenderNodeScrollableView::OnRenderTargetRefChange()
 		Point[0] = float3(box.GetMin().x,box.GetMax().y, GetTranslate().z);
 		Point[1] = float3(box.GetMax().x,box.GetMin().y, GetTranslate().z);
 
-
+#define USE_SCREEN_ROTATION
+#ifdef USE_SCREEN_ROTATION
 		// Get bottom left corner of box as min point
-		if(!pRenderTarget->GetScreenPos(ScreenPos[0], Point[0], RenderTargetSize, pScreen->GetScreenShape(), TRUE))
+		if(!pScreen->GetScreenPosFromWorldPos(pRenderTarget, Point[0], ScreenPos[0]))
 			return;
 
 		// Get top right corner of box as max point
-		if(!pRenderTarget->GetScreenPos(ScreenPos[1], Point[1], RenderTargetSize, pScreen->GetScreenShape(), TRUE))
+		if(!pScreen->GetScreenPosFromWorldPos(pRenderTarget, Point[1], ScreenPos[1]))
+			return;
+#else		
+		Type4<s32> RenderTargetSize;
+		pScreen->GetRenderTargetSize( RenderTargetSize, pRenderTarget );
+
+		// Get bottom left corner of box as min point
+		if(!pRenderTarget->GetScreenPos(ScreenPos[0], Point[0], RenderTargetSize, pScreen->GetScreenShape()))
 			return;
 
+		// Get top right corner of box as max point
+		if(!pRenderTarget->GetScreenPos(ScreenPos[1], Point[1], RenderTargetSize, pScreen->GetScreenShape()))
+			return;
+#endif
 		float2 fmin, fmax;
 
 		fmin.x = (float)ScreenPos[0].x;

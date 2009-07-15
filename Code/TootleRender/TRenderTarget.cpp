@@ -352,12 +352,12 @@ Bool TLRender::TRenderTarget::GetWorldPos(float3& WorldPos,float WorldDepth,cons
 
 
 // Get screen pos from 3d world pos
-Bool TLRender::TRenderTarget::GetScreenPos(Type2<s32>& ScreenPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape, Bool bFlipY) const
+Bool TLRender::TRenderTarget::GetScreenPos(Type2<s32>& ScreenPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const
 {
 	if ( !m_pCamera )
 		return FALSE;
 
-	return m_pCamera->GetScreenPos( ScreenPos, WorldPos, RenderTargetSize, ScreenShape, bFlipY );
+	return m_pCamera->GetScreenPos( ScreenPos, WorldPos, RenderTargetSize, ScreenShape );
 }
 
 

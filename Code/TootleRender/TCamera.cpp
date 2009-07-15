@@ -545,7 +545,7 @@ Bool TLRender::TOrthoCamera::GetWorldPos(float3& WorldPos,float WorldDepth,const
 //	convert point on screen to a 3D pos
 // NOTE: Works the opposite of the GetWorldPos() routine
 //--------------------------------------------------------------
-Bool TLRender::TOrthoCamera::GetScreenPos(Type2<s32>& ScreenPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape, Bool bFlipY) const
+Bool TLRender::TOrthoCamera::GetScreenPos(Type2<s32>& ScreenPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const
 {
 	// view -> screen
 
@@ -562,12 +562,6 @@ Bool TLRender::TOrthoCamera::GetScreenPos(Type2<s32>& ScreenPos, const float3& W
 	// Scale by the width
 	OrthoX *= wh.x;
 	OrthoY *= wh.x;
-
-	// If required to flip the Y then flip relative to the target height
-	if(bFlipY)
-	{
-		OrthoY = wh.y - OrthoY;
-	}
 
 	// Limit results to (0,0,rendertargetwidth, rendertargetheight)
 	TLMaths::Limit(OrthoX, 0.0f, wh.x);
