@@ -32,26 +32,3 @@ void TLScene::TSceneNode::UpdateAll(float Timestep)
 
 }
 
-
-
-void TLScene::TSceneNode::ProcessMessage(TLMessaging::TMessage& Message)
-{
-
-	// Super class process message
-	TLGraph::TGraphNode<TSceneNode>::ProcessMessage(Message);
-}
-
-
-
-void TLScene::TSceneNode::Update(float fTimeStep)
-{
-	//	do inherited update
-	TLGraph::TGraphNode<TLScene::TSceneNode>::Update( fTimeStep );
-}
-
-
-void TLScene::TSceneNode::PostUpdate(float fTimestep)
-{
-}
-
-

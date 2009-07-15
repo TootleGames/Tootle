@@ -1,6 +1,9 @@
 #include "TBinaryTree.h"
 
 
+#ifdef _DEBUG
+//#define DEBUG_PRINT_UNREAD_DATA
+#endif
 
 
 //----------------------------------------------------------------
@@ -298,7 +301,7 @@ Bool TBinaryTree::AddUnreadChildren(TBinaryTree& Data,Bool ReplaceExisting)
 		//		OR if you node DOES use this data, then you might find this base initialise gets called before you use it
 		//		you can either move the parent class type to after where you use it, OR call Message.SetChildrenRead( dataref )
 		//		to reset the read pos to pretend it has been read
-	#ifdef _DEBUG
+	#ifdef DEBUG_PRINT_UNREAD_DATA
 		TTempString Debug_String("Storing unread child data (");
 		pChild->GetDataRef().GetString( Debug_String );
 		Debug_String.Append(") from data (");
@@ -319,6 +322,7 @@ Bool TBinaryTree::AddUnreadChildren(TBinaryTree& Data,Bool ReplaceExisting)
 
 		Changed = TRUE;
 	}
+
 
 	return Changed;
 }

@@ -45,52 +45,54 @@ void TUserManager::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChanne
 
 
 
-Bool TUserManager::RegisterUser(TRef refUserID)
+Bool TUserManager::RegisterUser(TRefRef UserRef)
 {
-	if(HasUser(refUserID))
+	if(HasUser(UserRef))
 		return FALSE;
 
-	TPtr<TUser> pUser = new TUser(refUserID);
+	TPtr<TUser> pUser = new TUser(UserRef);
 
-	if(pUser.IsValid())
-	{	
-		s32 sIndex = m_Users.Add(pUser);
+	if(!pUser.IsValid())
+		return FALSE;
+	
+	s32 sIndex = m_Users.Add(pUser);
 
-		// Set the user index
-		if(sIndex > 0)
-		{
-			pUser->SetUserIndex( (u8)(sIndex-1) );
-		}
-
-		if(SubscribeTo(pUser))
-		{
-			// Broadcast message to say a new user has been added to the system
-			TLMessaging::TMessage Message("USER");
-			Message.Write("ADDED");				// User added message
-			Message.Write(pUser.GetObject());		// User being added
-
-			PublishMessage(Message);
-
-			return TRUE;
-		}
+	// Set the user index
+	if(sIndex > 0)
+	{
+		pUser->SetUserIndex( (u8)(sIndex-1) );
 	}
 
-	return FALSE;
+	if(!SubscribeTo(pUser))
+		return FALSE;
+	
+	// Broadcast message to say a new user has been added to the system
+	TLMessaging::TMessage Message("USER");
+	Message.Write("ADDED");				// User added message
+	TLDebug_Break("gr: pointer in a message! change me");
+	Message.Write(pUser.GetObject());		// User being added
+	Message.ExportData("UserRef", UserRef );
+
+	PublishMessage(Message);
+
+	return TRUE;
 }
 
-Bool TUserManager::UnregisterUser(TRef refUserID)
+Bool TUserManager::UnregisterUser(TRefRef UserRef)
 {
-	s32 sUserIndex = FindUserIndex(refUserID);
-
+	s32 sUserIndex = FindUserIndex(UserRef);
 	if(sUserIndex == -1)
 		return FALSE;
 
-	TPtr<TUser> pUser = m_Users.ElementAt(sUserIndex);
+	TPtr<TUser>& pUser = m_Users.ElementAt(sUserIndex);
 
 	// Broadcast message to say a user is being removed from the system
 	TLMessaging::TMessage Message("USER");
 	Message.Write("REMOVED");				// User removed message
+	
+	TLDebug_Break("gr: pointer in a message! change me");
 	Message.Write(pUser.GetObject());		// User being removed
+	Message.ExportData("UserRef", UserRef );
 
 	PublishMessage(Message);
 
@@ -103,12 +105,14 @@ void TUserManager::UnregisterAllUsers()
 	// Go through the users and send a message saying the user is being removed
 	for(u32 uIndex = 0; uIndex < m_Users.GetSize(); uIndex++)
 	{
-		TPtr<TUser> pUser = m_Users.ElementAt((s32)uIndex);
+		TPtr<TUser>& pUser = m_Users.ElementAt(uIndex);
 
 		// Broadcast message to say a user is being removed from the system
 		TLMessaging::TMessage Message("USER");
 		Message.Write("REMOVED");				// User removed message
+		TLDebug_Break("gr: pointer in a message! change me");
 		Message.Write(pUser.GetObject());		// User being removed
+		Message.ExportData("UserRef", pUser->GetUserRef() );
 
 		PublishMessage(Message);
 	}
@@ -117,34 +121,6 @@ void TUserManager::UnregisterAllUsers()
 	m_Users.Empty();
 }
 
-
-s32 TUserManager::FindUserIndex(TRef refUserID)
-{
-	for(u32 uIndex = 0; uIndex < m_Users.GetSize(); uIndex++)
-	{
-		TPtr<TUser> pUser = m_Users.ElementAt(uIndex);
-
-		if(pUser->GetUserID() == refUserID)
-			return (s32)(uIndex);
-	}
-
-	// Not found
-	return -1;
-}
-
-TPtr<TUser> TUserManager::FindUser(TRef refUserID)
-{
-	for(u32 uIndex = 0; uIndex < m_Users.GetSize(); uIndex++)
-	{
-		TPtr<TUser> pUser = m_Users.ElementAt(uIndex);
-
-		if(pUser->GetUserID() == refUserID)
-			return pUser;
-	}
-
-	// Not found
-	return TPtr<TUser>(NULL);
-}
 
 
 void TUserManager::ProcessMessage(TLMessaging::TMessage& Message)
@@ -211,8 +187,8 @@ SyncBool TUserManager::Shutdown()
 
 
 
-TUser::TUser(TRefRef refUserID) : 
-	m_refUserID			(refUserID),
+TUser::TUser(TRefRef UserRef) : 
+	m_UserRef			(UserRef),
 	m_strUserName		("Unknown"),
 	m_uLocalUserIndex	(0)
 {
@@ -237,7 +213,7 @@ void TUser::ProcessMessage(TLMessaging::TMessage& Message)
 	UpdateCursorPosition(uCursorIndex);
 	
 	// Add the user ID to the message so things know 'who' it came from
-	Message.ExportData("USERID", m_refUserID);
+	Message.ExportData("USERID", m_UserRef);
 
 	
 	// Add the users cursor information to make it quicker to access

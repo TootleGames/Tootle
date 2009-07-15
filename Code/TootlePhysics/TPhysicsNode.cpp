@@ -236,7 +236,15 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 		}
 	}
 
+	TLGraph::TGraphNode<TPhysicsNode>::Initialise(Message);
+}
 
+
+//---------------------------------------------------------
+//	generic render node init
+//---------------------------------------------------------
+void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
+{
 	if(Message.ImportData("Owner", m_OwnerSceneNode))
 	{
 		// Get the scenegraph node
@@ -246,19 +254,6 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 		{
 			pOwner->SubscribeTo(this);
 			SubscribeTo(pOwner);
-
-			/*
-			TPtr<TLMessaging::TEventChannel>& pEventChannel = pOwner->FindEventChannel(TRef_Static(O,n,T,r,a));
-
-			if(pEventChannel)
-			{
-				// Subscribe to the scene node owners transform channel
-				SubscribeTo(pEventChannel);
-
-				// Subscribe the 'scene' node owner to this node so we can sen audio change messages
-				pOwner->SubscribeTo(this);
-			}
-			*/
 		}
 	}
 
@@ -341,12 +336,13 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 	}
 
 	//	read transform
-	//	gr: this code needs to change to use SetTransform() to change the body as appropriate too
 	u8 TransformChanges = m_Transform.ImportData( Message );
-	OnTransformChanged( TransformChanges );
-	
-	//	broadcast changes in transform NOW
-	PublishTransformChanges();
+	if ( TransformChanges )
+	{
+		OnTransformChanged( TransformChanges );
+		//	broadcast changes in transform NOW
+		PublishTransformChanges();
+	}
 
 	//	has a joint[s] to create
 	TPtrArray<TBinaryTree> JointDatas;
@@ -369,7 +365,7 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 	}
 
 
-	TLGraph::TGraphNode<TPhysicsNode>::Initialise(Message);
+	TLGraph::TGraphNode<TPhysicsNode>::SetProperty(Message);
 }
 
 

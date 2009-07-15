@@ -473,12 +473,17 @@ void TLGraph::TGraphNode<T>::ProcessMessage(TLMessaging::TMessage& Message)
 
 	switch ( MessageRef.GetData() )
 	{
-		// Now initialise
-		//	gr: change this to call SetProperty() and add a warning to change it to a SetProperty message. 
-		//	Call Initialise() explicitly with the init message, and don't use the ProcessMessage/message queue system
+		//	Initialise - 
 		case TRef_Static(I,n,i,t,i):	//	TLCore::InitialiseRef:
 		{
+			//	first read properties (eg. Values to base creation of stuff from)
+			SetProperty(Message);
+
+			//	then Initialise (ie. using those values set in SetProperty)
 			Initialise(Message);
+
+			//	then store any data that hasn't been read in the node data (eg. bits of game specific data not handled by generic nodes, but used later)
+			GetNodeData().AddUnreadChildren( Message, TRUE );
 			return;
 		}
 
@@ -493,6 +498,10 @@ void TLGraph::TGraphNode<T>::ProcessMessage(TLMessaging::TMessage& Message)
 		case TRef_Static(S,e,t,P,r):	//	TLCore::SetPropertyRef:
 		{
 			SetProperty(Message);
+
+			//	gr: now store unread data in the node - this is NOT in the base code as we want to only add data that has NOT been read
+			//		ie. game specific data, so this order is explicit to save CPU work
+			GetNodeData().AddUnreadChildren( Message, TRUE );
 			return;
 		}
 

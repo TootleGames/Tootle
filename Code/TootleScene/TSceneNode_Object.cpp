@@ -190,6 +190,15 @@ void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 		//	re-use the message to create the physics node
 		CreatePhysicsNode( PhysicsNodeType, &Message );
 	}
+
+}
+
+
+//------------------------------------------------
+//	set node properties
+//------------------------------------------------
+void TSceneNode_Object::SetProperty(TLMessaging::TMessage& Message)
+{
 	//	enable/disable things
 	TPtr<TBinaryTree>& pEnableData = Message.GetChild("Enable");
 	if ( pEnableData )
@@ -221,8 +230,10 @@ void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 			EnablePhysicsNode( PhysicsEnable, CollisionEnable );
 		}
 	}
-}
 
+	//	read super-properties
+	TSceneNode_Transform::SetProperty( Message );
+}
 
 
 void TSceneNode_Object::ProcessMessage(TLMessaging::TMessage& Message)
@@ -369,20 +380,20 @@ Bool TSceneNode_Object::CreatePhysicsNode(TRefRef PhysicsNodeType,TLMessaging::T
 		pInitMessage = &TempMessage;
 	}
 
-	//	add transform info from this scene node
+	//	add transform info from this scene node if the data doesn't already exist
 	const TLMaths::TTransform& Transform = GetTransform();
-
-	if ( Transform.HasTranslate() )
-		pInitMessage->ExportData(TRef_Static(T,r,a,n,s), Transform.GetTranslate() );
-
-	if ( Transform.HasScale() )
-		pInitMessage->ExportData(TRef_Static(S,c,a,l,e), Transform.GetScale() );
-
-	if ( Transform.HasRotation() )
-		pInitMessage->ExportData(TRef_Static(R,o,t,a,t), Transform.GetRotation() );
+	if ( Transform.HasTranslate() && !pInitMessage->HasChild(TRef_Static(T,r,a,n,s)) )
+		pInitMessage->ExportData( TRef_Static(T,r,a,n,s), Transform.GetTranslate() );
+	
+	if ( Transform.HasScale() && !pInitMessage->HasChild(TRef_Static(T,r,a,n,s)) )
+		pInitMessage->ExportData( TRef_Static(S,c,a,l,e), Transform.GetScale() );
+	
+	if ( Transform.HasRotation() && !pInitMessage->HasChild(TRef_Static(T,r,a,n,s)) )
+		pInitMessage->ExportData( TRef_Static(R,o,t,a,t), Transform.GetRotation() );
 
 	//	export ownership info
-	pInitMessage->ExportData("Owner", GetNodeRef());
+	if ( !pInitMessage->HasChild( TRef_Static(O,w,n,e,r) ) )
+		pInitMessage->ExportData( TRef_Static(O,w,n,e,r), GetNodeRef());
 
 	//	create node
 	TRef ParentNode = TRef();
@@ -418,24 +429,20 @@ Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TRefRef Ren
 		pInitMessage = &TempMessage;
 	}
 
-	//	add standard scene node object stuff
-	//	add transform info from this scene node
-	if ( GetTransform().HasAnyTransform() )
-	{
-		const TLMaths::TTransform& Transform = GetTransform();
+	//	add transform info from this scene node if the data doesn't already exist
+	const TLMaths::TTransform& Transform = GetTransform();
+	if ( Transform.HasTranslate() && !pInitMessage->HasChild(TRef_Static(T,r,a,n,s)) )
+		pInitMessage->ExportData( TRef_Static(T,r,a,n,s), Transform.GetTranslate() );
+	
+	if ( Transform.HasScale() && !pInitMessage->HasChild(TRef_Static(T,r,a,n,s)) )
+		pInitMessage->ExportData( TRef_Static(S,c,a,l,e), Transform.GetScale() );
+	
+	if ( Transform.HasRotation() && !pInitMessage->HasChild(TRef_Static(T,r,a,n,s)) )
+		pInitMessage->ExportData( TRef_Static(R,o,t,a,t), Transform.GetRotation() );
 
-		if ( Transform.HasTranslate() )
-			pInitMessage->ExportData(TRef_Static(T,r,a,n,s), Transform.GetTranslate() );
-
-		if ( Transform.HasScale() )
-			pInitMessage->ExportData(TRef_Static(S,c,a,l,e), Transform.GetScale() );
-
-		if ( Transform.HasRotation() )
-			pInitMessage->ExportData(TRef_Static(R,o,t,a,t), Transform.GetRotation() );
-	}
-
-	//	export scene-node-ownership info
-	pInitMessage->ExportData("Owner", GetNodeRef());
+	//	export ownership info
+	if ( !pInitMessage->HasChild( TRef_Static(O,w,n,e,r) ) )
+		pInitMessage->ExportData( TRef_Static(O,w,n,e,r), GetNodeRef());
 
 	//	create node
 	m_RenderNodeRef = TLRender::g_pRendergraph->CreateNode( GetNodeRef(), RenderNodeType, ParentRenderNodeRef, pInitMessage );
@@ -550,7 +557,9 @@ float TSceneNode_Object::GetDistanceTo(const TLMaths::TLine& Line)
 //--------------------------------------------------------
 void TLScene::TSceneNode_Object::OnZoneWake(SyncBool ZoneActive)
 {
-	EnablePhysicsNode( TRUE, SyncWait );
+	//	when physics is disabled via editor, don't enable physics on wake
+	if ( m_OnEditPhysicsWasEnabled == SyncWait )
+		EnablePhysicsNode( TRUE, SyncWait );
 	
 #ifdef DISABLE_RENDER_ON_HALFWAKE
 	EnableRenderNode( ZoneActive == SyncTrue );
@@ -565,7 +574,9 @@ void TLScene::TSceneNode_Object::OnZoneWake(SyncBool ZoneActive)
 //--------------------------------------------------------
 void TLScene::TSceneNode_Object::OnZoneSleep()
 {
-	EnablePhysicsNode( FALSE, SyncWait );
+	//	when physics is disabled via editor, don't enable physics on wake
+	if ( m_OnEditPhysicsWasEnabled == SyncWait )
+		EnablePhysicsNode( FALSE, SyncWait );
 
 #ifdef DISABLE_RENDER_ON_SLEEP
 	EnableRenderNode( FALSE );
@@ -621,9 +632,19 @@ void TLScene::TSceneNode_Object::EnablePhysicsNode(Bool Enable,SyncBool EnableCo
 		return;
 
 	//	get node
-	TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode();
+	TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode(TRUE);
 	if ( !pPhysicsNode )
+	{
+		//	send message instead if it's not been created yet
+		TLMessaging::TMessage SetMessage(TLCore::SetPropertyRef);
+		SetMessage.ExportData( Enable ? TRef("PFSet") : TRef("PFClear"), TLPhysics::TPhysicsNode::Flag_Enabled );
+		
+		if ( EnableCollision != SyncWait )
+			SetMessage.ExportData( (EnableCollision==SyncTrue) ? TRef("PFSet") : TRef("PFClear"), TLPhysics::TPhysicsNode::Flag_HasCollision );
+
+		TLPhysics::g_pPhysicsgraph->SendMessageToNode( GetPhysicsNodeRef(), SetMessage );
 		return;
+	}
 
 	//	enable/disable collision
 	if ( EnableCollision != SyncWait )

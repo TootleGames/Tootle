@@ -474,14 +474,6 @@ void TLRender::TRenderNode::OnMoved(const TPtr<TLRender::TRenderNode>& pOldParen
 //---------------------------------------------------------
 void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 {
-	//	read init data
-	/*
-#ifdef _DEBUG
-		TLDebug_Print("Init message data: ");
-		Message.Debug_PrintTree();
-#endif
-		*/
-
 	TRef SceneNodeRef;
 
 	//	need to subscribe to a scene node - todo: expand to get all children like this
@@ -538,9 +530,6 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 			*/
 		}
 	}
-
-	//	read properties that are in the Init message
-	SetProperty( Message );
 
 	//	do inherited init
 	TLGraph::TGraphNode<TLRender::TRenderNode>::Initialise( Message );

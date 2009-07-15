@@ -44,10 +44,7 @@ public:
 	virtual TRef		GetRenderNodeRef() const		{	return TRef();	}
 
 protected:
-	virtual void 		Update(float fTimestep);		//	base scene node update
-	virtual void		PostUpdate(float fTimestep);	//
-
-	virtual void		ProcessMessage(TLMessaging::TMessage& Message);
+	virtual void		PostUpdate(float fTimestep)		{	}	//	gr: an update that occurs immediately after normal update. 
 };
 
 

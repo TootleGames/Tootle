@@ -44,9 +44,10 @@ public:
 
 protected:
 	virtual void				Initialise(TLMessaging::TMessage& Message);
-	virtual void				PostUpdate(float fTimestep);
-
+	virtual void				SetProperty(TLMessaging::TMessage& Message);	//	set node properties
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);
+
+	virtual void				PostUpdate(float fTimestep);
 
 	TLMaths::TTransform&		GetTransform() 							{	return m_Transform;	}
 

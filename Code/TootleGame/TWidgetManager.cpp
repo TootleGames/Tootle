@@ -70,7 +70,7 @@ void TWidgetManager::ProcessMessage(TLMessaging::TMessage& Message)
 
 void TWidgetManager::OnInputDeviceAdded(TRefRef DeviceRef, TRefRef DeviceTypeRef)
 {
-	TPtr<TLUser::TUser>	pGlobalUser = TLUser::g_pUserManager->GetUser("Global");
+	TPtr<TLUser::TUser>& pGlobalUser = TLUser::g_pUserManager->GetUser("Global");
 	
 	if(!pGlobalUser.IsValid())
 	{
@@ -363,7 +363,7 @@ void TWidgetManager::OnInputDeviceRemoved(TRefRef DeviceRef, TRefRef DeviceTypeR
 {
 	// Remove any added actions from the global user.
 	
-	TPtr<TLUser::TUser>	pGlobalUser = TLUser::g_pUserManager->GetUser("Global");
+	TPtr<TLUser::TUser>& pGlobalUser = TLUser::g_pUserManager->GetUser("Global");
 	
 	if(!pGlobalUser.IsValid())
 	{

@@ -23,7 +23,7 @@ class TLUser::TUser : public TLMessaging::TRelay
 	friend class TLUser::TUserManager;
 
 public:
-	TUser(TRefRef refUserID);
+	TUser(TRefRef UserRef);
 
 	// Action Mapping
 	Bool						AddAction(TRefRef refActionType, TRefRef refActionID);
@@ -36,7 +36,8 @@ public:
 	Bool						MapActionParent(TRefRef refActionID, TRefRef refParentActionID, Bool bCondition = TRUE);
 
 	// User information access
-	FORCEINLINE TRefRef				GetUserID()		const					{	return m_refUserID;	}
+	DEPRECATED TRefRef				GetUserID()		const 					{	return m_UserRef;	}
+	FORCEINLINE TRefRef				GetUserRef()		const				{	return m_UserRef;	}
 	FORCEINLINE u8					GetUserIndex()	const					{	return m_uLocalUserIndex;	}
 	FORCEINLINE const Type2<s32>&	GetCursorPosition() const				{	return m_CursorPosition;	}
 
@@ -44,6 +45,8 @@ public:
 	FORCEINLINE void				SetUserName(const TString& strUserName)	{	m_strUserName = strUserName;	}
 
 	TRef							GetUnusedActionRef(TRef BaseRef=TRef()) const;		//	get a ref for an action not currently in use
+
+	FORCEINLINE Bool				operator==(TRefRef UserRef) const		{	return GetUserRef() == UserRef;	}
 
 protected:
 	FORCEINLINE s32						FindActionIndex(TRefRef refActionID)		{	return m_ActionMap.FindIndex( refActionID );	}
@@ -63,9 +66,9 @@ private:
 	Bool						MapActionParentPtr(TLInput::TAction* pAction,TLInput::TAction* pParentAction, Bool bCondition = TRUE);
 
 private:
-	TRef							m_refUserID;	// Unique ID of the user
+	TRef							m_UserRef;			// Unique ID of the user
 
-	TPtrArray<TLInput::TAction>		m_ActionMap;	// Maps actions to inputs for a user
+	TPtrArray<TLInput::TAction>		m_ActionMap;		// Maps actions to inputs for a user
 	int2							m_CursorPosition;	// Users cursor position
 
 	TString							m_strUserName;
@@ -82,33 +85,26 @@ public:
 	{
 	}
 
-	Bool			RegisterUser(TRef refUserID);
-	Bool			UnregisterUser(TRef refUserID);
+	Bool						RegisterUser(TRefRef UserRef);
+	Bool						UnregisterUser(TRefRef UserRef);
 
- 	inline TPtr<TUser>		GetUser(TRef refUserID)		{ return FindUser(refUserID); }
-
-	inline u32				GetNumberOfUsers()	const	{ return m_Users.GetSize(); }
+	FORCEINLINE TPtr<TUser>&	GetUser(TRefRef UserRef)			{	return m_Users.FindPtr( UserRef );	}
+	FORCEINLINE u32				GetNumberOfUsers() const			{	return m_Users.GetSize();	}
 
 protected:
-	virtual SyncBool Initialise();
-	virtual SyncBool Update(float /*fTimeStep*/);		
-	virtual SyncBool Shutdown();
+	virtual SyncBool			Initialise();
+	virtual SyncBool			Update(float /*fTimeStep*/);		
+	virtual SyncBool			Shutdown();
 
-	virtual void	ProcessMessage(TLMessaging::TMessage& Message);
-	virtual void	OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
+	virtual void				ProcessMessage(TLMessaging::TMessage& Message);
+	virtual void				OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
 
 	// Internal user access
-	inline Bool HasUser(TRef refUserID)  
-	{ 
-		TPtr<TUser> pUser = FindUser(refUserID);
-		return pUser.IsValid(); 
-	}
-
-	s32 FindUserIndex(TRef refUserID);
-	TPtr<TUser> FindUser(TRef refUserID);
+	FORCEINLINE Bool			HasUser(TRef UserRef)				{	return m_Users.Exists( UserRef );	}
+	FORCEINLINE s32				FindUserIndex(TRefRef UserRef)		{	return m_Users.FindIndex( UserRef );	}
 
 private:
-	void	UnregisterAllUsers();
+	void						UnregisterAllUsers();
 
 private:
 	TPtrArray<TUser>			m_Users;		// The lsit of users

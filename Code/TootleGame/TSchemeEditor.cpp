@@ -1,6 +1,8 @@
 #include "TSchemeEditor.h"
 #include <TootleRender/TScreenManager.h>
 #include <TootleGame/TWidgetButton.h>
+#include <TootleGame/TWidgetManager.h>
+#include <TootleInput/TUser.h>
 
 
 
@@ -103,29 +105,42 @@ void TLGame::TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 		}
 		else 
 		{
-			//	gui command for editor from widget
-			switch ( ActionRef.GetData() )
+			if ( ActionRef == m_NewSceneNodeDragAction && m_NewSceneNodeDragAction.IsValid() )
 			{
-				case TRef_Static(C,l,o,s,e):
+				ProcessMouseMessage( m_NewSceneNodeDragAction, Message );
+				return;
+			}
+			else if ( ActionRef == m_NewSceneNodeClickAction && m_NewSceneNodeClickAction.IsValid() )
+			{
+				ProcessMouseMessage( m_NewSceneNodeClickAction, Message );
+				return;
+			}
+			else
+			{
+				//	gui command for editor from widget
+				switch ( ActionRef.GetData() )
 				{
-					//	todo: do some shutdown
-					//	send close message
-					TLMessaging::TMessage CloseMessage( ActionRef, "Editor" );
-					PublishMessage( CloseMessage );
-				}
-				break;
-
-				case TRef_Static(C,l,e,a,r):
-					ClearScheme();
+					case TRef_Static(C,l,o,s,e):
+					{
+						//	todo: do some shutdown
+						//	send close message
+						TLMessaging::TMessage CloseMessage( ActionRef, "Editor" );
+						PublishMessage( CloseMessage );
+					}
 					break;
 
-				default:
-				{
-					TTempString Debug_String("Unknown editor command ");
-					ActionRef.GetString( Debug_String );
-					TLDebug_Break( Debug_String );
+					case TRef_Static(C,l,e,a,r):
+						ClearScheme();
+						break;
+
+					default:
+					{
+						TTempString Debug_String("Unknown editor command ");
+						ActionRef.GetString( Debug_String );
+						TLDebug_Print( Debug_String );
+					}
+					break;
 				}
-				break;
 			}
 		}
 	}
@@ -224,6 +239,17 @@ Bool TLGame::TSchemeEditor::CreateEditorGui(TRefRef EditorScheme)
 
 			//	catch when the editor render node is created so we can create icons etc
 			this->SubscribeTo( TLRender::g_pRendergraph );
+		}
+
+		//	subscribe to user's (mouse) actions
+		TPtr<TLUser::TUser>& pUser = TLUser::g_pUserManager->GetUser("global");
+		if ( pUser )
+		{
+			this->SubscribeTo( pUser );
+		}
+		else
+		{
+			TLDebug_Break("missing user to subscribe to actions");
 		}
 	}
 
@@ -360,7 +386,7 @@ void TLGame::TSchemeEditor::ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef
 //----------------------------------------------------------
 void TLGame::TSchemeEditor::ProcessIconMessage(TRefRef IconRef,TRefRef ActionRef,TLMessaging::TMessage& Message)
 {
-	if ( ActionRef == "IcoDown" )
+	if ( ActionRef == "IcoDrag" && !m_NewSceneNode.IsValid() )
 	{
 		//	create a new node at the mouse position - convert screen pos to game render target world pos
 		float2 ScreenPos;
@@ -375,7 +401,25 @@ void TLGame::TSchemeEditor::ProcessIconMessage(TRefRef IconRef,TRefRef ActionRef
 		InitMessage.ReferenceDataTree( m_CommonNodeData, FALSE );
 		InitMessage.ExportData("Translate", MouseWorldPos );
 
-		TRef NewSceneNode = m_pGraph->CreateNode("Node", NodeType, m_SchemeRootNode, &InitMessage );
+		//	set this new node as the "new scene node" that we're dropping into the game.
+		//	the editor's mouse controls take over now
+		m_NewSceneNode = m_pGraph->CreateNode("Node", NodeType, m_SchemeRootNode, &InitMessage );
+		OnNodeSelected( m_NewSceneNode );
+
+		//	store off the action to listen for, for the mouse
+		if ( !Message.ImportData("InpAction", m_NewSceneNodeDragAction ) )
+		{
+			TLDebug_Break("Don't know what to look out for when dragging new scene node, handle me gracefully!");
+			//UnselectNode( m_NewSceneNode );
+			return;
+		}
+
+		//	get the equivelent mouse action
+		m_NewSceneNodeClickAction = TLGui::g_pWidgetManager->GetClickActionFromMoveAction( m_NewSceneNodeDragAction );
+
+		//	create the in-game widget for this
+		//	gr: can't do until initialised...
+		//CreateNodeWidget( m_NewSceneNode );
 	}
 
 }
@@ -445,4 +489,66 @@ void TLGame::TSchemeEditor::OnEditorRenderNodeAdded()
 {
 	CreateEditorIcons();
 }
+
+//----------------------------------------------------------
+//	handle mouse messages 
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::ProcessMouseMessage(TRefRef ActionRef,TLMessaging::TMessage& Message)
+{
+	//	dragging new scene node around
+	if ( ActionRef == m_NewSceneNodeDragAction && m_NewSceneNode.IsValid() )
+	{
+		//	get the screen cursor pos
+		int2 ScreenPos;
+		if ( !Message.ImportData("Cursor", ScreenPos ) )
+		{
+			TLDebug_Break("Mouse move message missing cursor pos");
+			return;
+		}
+
+		//	convert to world pos in game [render target]
+
+		//	get game's render target
+		TPtr<TLRender::TScreen> pScreen;
+		TLRender::TRenderTarget* pRenderTarget = TLRender::g_pScreenManager->GetRenderTarget( m_GameRenderTarget, pScreen );
+		if ( !pRenderTarget )
+		{
+			TLDebug_Break("Game's rendertarget expected");
+			return;
+		}
+
+		float3 WorldPos;
+		if ( !pScreen->GetWorldPosFromScreenPos( *pRenderTarget, WorldPos, 0.f, ScreenPos ) )
+		{
+			//	failed - probably dragged outside the game's window, drop
+			TLDebug_Break("todo: drop node");
+			return;
+		}
+
+		//	move the node to the cursor's world pos
+		TLMessaging::TMessage SetMessage(TLCore::SetPropertyRef);
+		SetMessage.ExportData("translate", WorldPos);
+		m_pGraph->SendMessageToNode( m_NewSceneNode, SetMessage );
+		return;
+	}
+
+	//	drop new scene node into game (let go)
+	if ( ActionRef == m_NewSceneNodeClickAction && m_NewSceneNode.IsValid() )
+	{
+		//	create widget for this node
+		TLGraph::TGraphNodeBase* pNode = m_pGraph->FindNodeBase( m_NewSceneNode );
+		if ( pNode )
+		{
+			CreateNodeWidgets( *pNode );
+		}
+		else
+		{
+			TLDebug_Break("Node expected");
+		}
+
+		OnNodeUnselected( m_NewSceneNode );
+		m_NewSceneNode.SetInvalid();
+	}
+}
+
 

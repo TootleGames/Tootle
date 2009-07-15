@@ -160,6 +160,7 @@ public:
 
 protected:
 	virtual void				Initialise(TLMessaging::TMessage& Message);	
+	virtual void				SetProperty(TLMessaging::TMessage& Message);	
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);
 	void						PostUpdateAll(float Timestep,TLPhysics::TPhysicsgraph& Graph,TPtr<TLPhysics::TPhysicsNode>& pThis);		//	update tree: update self, and children and siblings
 

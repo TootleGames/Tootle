@@ -27,8 +27,8 @@ public:
 	TSceneNode_Object(TRefRef NodeRef,TRefRef TypeRef);
 	~TSceneNode_Object();
 
-	virtual Bool	HasRender()		{ return TRUE; }
-	virtual Bool	HasPhysics()	{ return TRUE; }
+	virtual Bool					HasRender()		{ return TRUE; }
+	virtual Bool					HasPhysics()	{ return TRUE; }
 
 	// Distance checks
 	virtual float					GetDistanceTo(const TLMaths::TLine& Line);
@@ -43,6 +43,7 @@ public:
 
 protected:
 	virtual void					Initialise(TLMessaging::TMessage& Message);
+	virtual void					SetProperty(TLMessaging::TMessage& Message);
 	virtual void					Shutdown();
 	virtual void					ProcessMessage(TLMessaging::TMessage& Message);
 

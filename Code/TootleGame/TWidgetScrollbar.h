@@ -26,7 +26,7 @@ class TLGui::TWidgetScrollbar : public TLGui::TWidget
 public:
 	TWidgetScrollbar(TRefRef RenderTargetRef,TRefRef ScrollBarRenderNode,TRefRef SliderRenderNode,TRefRef UserRef,TRefRef ActionOut,float InitialScrollValue=0.f);
 
-	FORCEINLINE void		PublishScrollValue()								{	SendActionMessage( TRUE, m_ScrollValue );	}
+	FORCEINLINE void		PublishScrollValue();			//	make up a fake click message with our vlaue and send it out
 
 protected:
 	virtual Bool			Update();											//	update routine - return FALSE if we don't need updates any more
@@ -45,4 +45,21 @@ protected:
 	Bool					m_SliderPosValid;					//	true if slider graphic is out of date 
 };
 
+
+//----------------------------------------------
+//	make up a fake click message with our vlaue and send it out
+//----------------------------------------------
+FORCEINLINE void TLGui::TWidgetScrollbar::PublishScrollValue()								
+{
+	//	todo: relay the real cursor pos?
+	int2 CursorPos(0,0);
+	
+	//	todo: relay the real action refs?
+	TRef ActionRef;
+	TRef ActionType;
+
+	TLGui::TWidget::TClick FakeClick( CursorPos, m_ScrollValue, ActionRef, ActionType );
+
+	SendActionMessage( FakeClick, m_ActionOutDown );	
+}
 

@@ -293,7 +293,7 @@ void TAudiograph::OnMuteChanged()
 
 void TAudiograph::OnInputDeviceAdded(TRefRef DeviceRef,TRefRef DeviceTypeRef)
 {
-	TPtr<TLUser::TUser>	pGlobalUser = TLUser::g_pUserManager->GetUser("Global");
+	TPtr<TLUser::TUser>& pGlobalUser = TLUser::g_pUserManager->GetUser("Global");
 	
 	if(!pGlobalUser.IsValid())
 	{

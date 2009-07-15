@@ -26,6 +26,7 @@ public:
 	FORCEINLINE void			SetDataRef(TRefRef DataRef)				{	m_DataRef = DataRef;	}
 
 	TPtr<TBinaryTree>&			GetChild(TRefRef DataRef)				{	return m_Children.FindPtr( DataRef );	}	//	return the first child we find
+	FORCEINLINE Bool			HasChild(TRefRef DataRef)				{	return m_Children.Exists( DataRef );	}
 	TPtrArray<TBinaryTree>&		GetChildren()							{	return m_Children;	}		//	return all the children as an array
 	const TPtrArray<TBinaryTree>&	GetChildren() const					{	return m_Children;	}		//	return all the children as an array
 	FORCEINLINE u32				GetChildren(TRefRef DataRef,TPtrArray<TBinaryTree>& Children)	{	return m_Children.FindAll( Children, DataRef );	}	//	get all the sections with this ref into an array

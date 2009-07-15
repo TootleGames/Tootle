@@ -95,9 +95,14 @@ void TLGui::TWidgetDrag::OnDrag(const TClick& Click,const int2& Drag2,const floa
 	Message.ExportData("Move2", Drag2 );
 	Message.ExportData("Move3", Drag3 );
 
-	//	write real positions
+	//	write world positions
 	Message.ExportData("Pos2", Click.GetCursorPos() );
-	Message.ExportData("Pos3", Click.GetWorldPos(0.f) );
+	if ( Click.IsWorldRayValid() )
+		Message.ExportData("Pos3", Click.GetWorldPos(0.f) );
+
+	//	write original action
+	Message.ExportData("InpAction", Click.GetActionRef() );
+	Message.ExportData("InpType", Click.GetActionType() );
 
 	//	send message
 	PublishMessage( Message );

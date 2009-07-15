@@ -29,6 +29,16 @@ void TLScene::TSceneNode_Transform::Initialise(TLMessaging::TMessage& Message)
 	//	do inherited initialise
 	TLScene::TSceneNode::Initialise( Message );
 
+	//	initialise zone
+	InitialiseZone();
+}
+
+
+//---------------------------------------------------------
+//	set node properties
+//---------------------------------------------------------
+void TLScene::TSceneNode_Transform::SetProperty(TLMessaging::TMessage& Message)
+{
 	//	read transform info (same as render node's init)
 	u8 TransformChangedBits = m_Transform.ImportData( Message );
 
@@ -36,8 +46,8 @@ void TLScene::TSceneNode_Transform::Initialise(TLMessaging::TMessage& Message)
 	if( TransformChangedBits )
 		OnTransformChanged( TransformChangedBits );
 
-	//	initialise zone
-	InitialiseZone();
+	//	super setproperty
+	TLScene::TSceneNode::SetProperty( Message );
 }
 
 

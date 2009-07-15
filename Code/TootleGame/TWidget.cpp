@@ -33,15 +33,17 @@ TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef Us
 	if ( pWidgetData )
 		m_WidgetData.ReferenceDataTree( *pWidgetData, FALSE );
 
-	//	get user
-	TPtr<TLUser::TUser>	pUser = TLUser::g_pUserManager->GetUser( m_UserRef );
-	if ( !pUser )
+	//	subscribe to user's actions
+	TPtr<TLUser::TUser>& pUser = TLUser::g_pUserManager->GetUser( m_UserRef );
+	if ( pUser )
+	{
+		this->SubscribeTo( pUser );
+	}
+	else
 	{
 		TLDebug_Break("Invalid user ref for widget");
 	}
 
-	//	subscribe to user's actions
-	this->SubscribeTo( pUser );
 }
 
 
@@ -72,15 +74,17 @@ TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TBinaryTree& WidgetData)  :
 	//	m_WidgetData.ReferenceDataTree( *pData, FALSE );
 	m_WidgetData.AddUnreadChildren( WidgetData, FALSE );
 
-	//	get user
-	TPtr<TLUser::TUser>	pUser = TLUser::g_pUserManager->GetUser( m_UserRef );
-	if ( !pUser )
+	//	subscribe to user's actions
+	TPtr<TLUser::TUser>& pUser = TLUser::g_pUserManager->GetUser( m_UserRef );
+	if ( pUser )
+	{
+		this->SubscribeTo( pUser );
+	}
+	else
 	{
 		TLDebug_Break("Invalid user ref for widget");
 	}
 
-	//	subscribe to user's actions
-	this->SubscribeTo( pUser );
 }
 
 
@@ -474,12 +478,12 @@ SyncBool TLGui::TWidget::IsIntersecting(TLRender::TScreen& Screen, TLRender::TRe
 
 void TLGui::TWidget::OnClickBegin(const TClick& Click)
 {
-	SendActionMessage( TRUE, 1.f );
+	SendActionMessage( Click, m_ActionOutDown );
 }
 
 void TLGui::TWidget::OnClickEnd(const TClick& Click)
 {
-	SendActionMessage( FALSE, 0.f );
+	SendActionMessage( Click, m_ActionOutUp );
 }
 
 
@@ -487,33 +491,44 @@ void TLGui::TWidget::OnClickEnd(const TClick& Click)
 //-------------------------------------------------
 //	when click has been validated action message is sent to subscribers
 //-------------------------------------------------
-void TLGui::TWidget::SendActionMessage(Bool ActionDown,float RawData)
+void TLGui::TWidget::SendActionMessage(const TClick& Click,TRefRef ActionRef)
 {
 	if ( !HasSubscribers( TRef_Static(A,c,t,i,o) ) )
+	{
+		TLDebug_Break("Subscribers should have been checked before we did tons of click processing");
 		return;
-	
-	TRef ActionOutRef = ActionDown ? m_ActionOutDown : m_ActionOutUp;
+	}	
 
 #ifdef _DEBUG
 	TTempString Debug_String("TWidget (");
 	m_RenderNodeRef.GetString( Debug_String );
 	Debug_String.Append(") outgoing click message ");
-	ActionOutRef.GetString( Debug_String );
-	Debug_String.Appendf(": %s", ActionDown ? "down" : "up" );
+	ActionRef.GetString( Debug_String );
+	Debug_String.Append(": ");
+	Click.GetActionType().GetString( Debug_String );
 	TLDebug_Print( Debug_String );
 #endif
 
-	if ( ActionOutRef.IsValid() )
-	{
-		//	make up fake input message
-		TLMessaging::TMessage Message( TRef_Static(A,c,t,i,o) );
-		AppendWidgetData( Message );
+	if ( !ActionRef.IsValid() )
+		return;
 
-		Message.Write( ActionOutRef );
-		Message.ExportData("RawData", RawData );
+	//	make up fake input message
+	TLMessaging::TMessage Message( TRef_Static(A,c,t,i,o) );
+	AppendWidgetData( Message );
 
-		//	send message
-		PublishMessage( Message );
-	}
+	Message.Write( ActionRef );
+	Message.ExportData("RawData", Click.GetActionValue() );
+
+	//	write world positions
+	Message.ExportData("Pos2", Click.GetCursorPos() );
+	if ( Click.IsWorldRayValid() )
+		Message.ExportData("Pos3", Click.GetWorldPos(0.f) );
+
+	//	write original action and type
+	Message.ExportData("InpAction", Click.GetActionRef() );
+	Message.ExportData("InpType", Click.GetActionType() );
+
+	//	send message
+	PublishMessage( Message );
 }
 
