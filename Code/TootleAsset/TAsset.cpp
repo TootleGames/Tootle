@@ -69,6 +69,7 @@ SyncBool TLAsset::TAsset::Export(TPtr<TLFileSys::TFileAsset>& pAssetFile)
 		TLDebug_Break("Asset file expected");
 		return SyncFalse;
 	}
+	TLFileSys::TFileAsset& AssetFile = *pAssetFile;
 
 	//	ensure the asset is loaded before we can export it
 	TLAsset::TLoadingState AssetLoadingState = GetLoadingState();
@@ -82,22 +83,21 @@ SyncBool TLAsset::TAsset::Export(TPtr<TLFileSys::TFileAsset>& pAssetFile)
 		return SyncFalse;
 
 	//	setup asset file header
-	TLFileSys::TFileAsset::Header& Header = pAssetFile->GetHeader();
+	TLFileSys::TFileAsset::Header& Header = AssetFile.GetHeader();
 	Header.m_AssetType = GetAssetType();
 	Header.m_TootFileRef = TLFileSys::g_TootFileRef;
 
+	//	clear existing data (this should always be empty on a fresh export
+	AssetFile.GetData().Empty();
+
 	//	export data
-	SyncBool ExportResult = ExportData( pAssetFile->GetData()  );
+	SyncBool ExportResult = ExportData( AssetFile.GetData()  );
 
 	//	asset file's tree is updated
 	if ( ExportResult == SyncTrue )
 	{
-		pAssetFile->SetNeedsExport(TRUE);
+		AssetFile.SetNeedsExport(TRUE);
 	}
-
-	//	print out tree
-	//TLDebug_Print("Exported asset to asset file...");
-	//pAssetFile->GetData().Debug_PrintTree();
 
 	return ExportResult;
 }

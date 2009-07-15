@@ -51,6 +51,22 @@ void TLScene::TSceneNode_Transform::SetProperty(TLMessaging::TMessage& Message)
 }
 
 
+//---------------------------------------------------------
+//	
+//---------------------------------------------------------
+void TLScene::TSceneNode_Transform::UpdateNodeData()
+{
+	//	update transform by clearing out old values and adding new ones
+	GetNodeData().RemoveChild("Translate");
+	GetNodeData().RemoveChild("Scale");
+	GetNodeData().RemoveChild("Rotate");
+	GetTransform().ExportData( GetNodeData() );
+
+	//	inherited update
+	TLScene::TSceneNode::UpdateNodeData();
+}
+
+
 void TLScene::TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	//	gr: same format as TRenderNode; "SetTransform" to overwrite, "DoTransform" to change

@@ -2,6 +2,11 @@
 #include <TootleAsset/TScheme.h>
 
 
+#ifdef _DEBUG
+//#define DEBUG_SCHEME_IMPORT_EXPORT
+#endif
+
+
 //--------------------------------------------------------------------	
 //	import scheme into this graph
 //--------------------------------------------------------------------	
@@ -44,8 +49,9 @@ Bool TLGraph::TGraphBase::ImportScheme(const TLAsset::TScheme& Scheme,TRefRef Pa
 #endif
 
 	//	if no nodes added, fail
-	if ( !ImportedNodes.GetSize() )
-		return FALSE;
+	//	gr; could be empty of nodes...
+//	if ( !ImportedNodes.GetSize() )
+//		return FALSE;
 
 	return TRUE;
 }
@@ -56,6 +62,15 @@ Bool TLGraph::TGraphBase::ImportScheme(const TLAsset::TScheme& Scheme,TRefRef Pa
 //--------------------------------------------------------------------	
 Bool TLGraph::TGraphBase::ImportSchemeNode(const TLAsset::TSchemeNode& SchemeNode,TRefRef ParentRef,TArray<TRef>& ImportedNodes,Bool StrictNodeRefs,TLMessaging::TMessage* pCommonInitMessage)
 {
+#ifdef DEBUG_SCHEME_IMPORT_EXPORT
+	TTempString Debug_String("Importing scheme node: ");
+	SchemeNode.GetNodeRef().GetString( Debug_String );
+	Debug_String.Append("(");
+	SchemeNode.GetTypeRef().GetString( Debug_String );
+	Debug_String.Append(")");
+	TLDebug_Print( Debug_String );
+#endif
+
 	//	create an init message with all the data in the SchemeNode
 	TLMessaging::TMessage Message( TLCore::InitialiseRef );
 	Message.ReferenceDataTree( SchemeNode.GetData(), FALSE );
@@ -99,12 +114,22 @@ TPtr<TLAsset::TSchemeNode> TLGraph::TGraphBase::ExportSchemeNode(TGraphNodeBase*
 		return NULL;
 	}
 
+#ifdef DEBUG_SCHEME_IMPORT_EXPORT
+	TTempString Debug_String("Exporting scheme node: ");
+	pNode->GetNodeRef().GetString( Debug_String );
+	Debug_String.Append("(");
+	pNode->GetNodeTypeRef().GetString( Debug_String );
+	Debug_String.Append(")");
+	TLDebug_Print( Debug_String );
+#endif
+
 	//	create scheme node
 	TPtr<TLAsset::TSchemeNode> pSchemeNode = new TLAsset::TSchemeNode( pNode->GetNodeRef(), GetGraphRef(), pNode->GetNodeTypeRef() );
 
 	//	export data from node to scheme node
-	const TBinaryTree& NodeData = pNode->GetNodeData( TRUE );
-	pSchemeNode->GetData().ReferenceDataTree( NodeData );
+	pNode->UpdateNodeData();
+	const TBinaryTree& NodeData = pNode->GetNodeData();
+	pSchemeNode->GetData().ReferenceDataTree( NodeData, FALSE );
 
 	//	export children into this node
 	TArray<TGraphNodeBase*> RootChildren;
@@ -134,7 +159,7 @@ void TLGraph::TGraphBase::RemoveNodes(const TArray<TRef>& NodeRefs)
 //--------------------------------------------------------------------	
 //	export node tree to a scheme
 //--------------------------------------------------------------------	
-TPtr<TLAsset::TScheme> TLGraph::TGraphBase::ExportScheme(TRef SchemeAssetRef,TRef SchemeRootNode,Bool IncludeSchemeRootNode)
+Bool TLGraph::TGraphBase::ExportScheme(TLAsset::TScheme& Scheme,TRef SchemeRootNode,Bool IncludeSchemeRootNode)
 {
 	TLGraph::TGraphNodeBase* pSchemeRootNode = NULL;
 
@@ -156,18 +181,11 @@ TPtr<TLAsset::TScheme> TLGraph::TGraphBase::ExportScheme(TRef SchemeAssetRef,TRe
 		return FALSE;
 	}
 
-	//	gr: currently we're not putting this scheme asset into the asset list, so no need to
-	//		check that its free...
-	//SchemeAssetRef = TLAsset::GetFreeAssetRef( SchemeAssetRef );
-
-	//	create asset
-	TPtr<TLAsset::TScheme> pScheme = new TLAsset::TScheme(SchemeAssetRef);
-
 	//	if we're including the root node then export from that one recursively
 	if ( IncludeSchemeRootNode )
 	{
 		TPtr<TLAsset::TSchemeNode> pSchemeNode = ExportSchemeNode( pSchemeRootNode );
-		pScheme->AddNode( pSchemeNode );
+		Scheme.AddNode( pSchemeNode );
 	}
 	else
 	{
@@ -177,11 +195,11 @@ TPtr<TLAsset::TScheme> TLGraph::TGraphBase::ExportScheme(TRef SchemeAssetRef,TRe
 		for ( u32 c=0;	c<RootChildren.GetSize();	c++ )
 		{
 			TPtr<TLAsset::TSchemeNode> pSchemeNode = ExportSchemeNode( RootChildren[c] );
-			pScheme->AddNode( pSchemeNode );
+			Scheme.AddNode( pSchemeNode );
 		}
 	}
 
-	return pScheme;
+	return TRUE;
 }
 
 	

@@ -124,8 +124,16 @@ void TLGame::TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 					{
 						//	todo: do some shutdown
 						//	send close message
-						TLMessaging::TMessage CloseMessage( ActionRef, "Editor" );
-						PublishMessage( CloseMessage );
+						TLMessaging::TMessage Message( ActionRef, "Editor" );
+						PublishMessage( Message );
+					}
+					break;
+
+					case TRef_Static4(S,a,v,e):
+					{
+						//	send save message - currently handled externally...
+						TLMessaging::TMessage Message( ActionRef, "Editor" );
+						PublishMessage( Message );
 					}
 					break;
 

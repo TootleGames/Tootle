@@ -93,7 +93,7 @@ protected:
 	virtual Bool				Update();											//	update routine - return FALSE if we don't need updates any more
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);	//	
 	virtual SyncBool			ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode,const TLMaths::TShapeSphere2D& BoundsDatum,const TLMaths::TShape* pClickDatum);	//	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
-	void						SendActionMessage(const TClick& Click,TRefRef ActionRef);	//	when click has been validated action message is sent to subscribers
+	void						SendActionMessage(const TClick& Click,TRefRef ActionRef,TBinaryTree* pExtraData=NULL);	//	when click has been validated action message is sent to subscribers
 	virtual void				GetRenderNodes(TArray<TRef>& RenderNodeArray);		//	get array of all the render nodes we're using
 	
 	SyncBool					IsIntersecting(TLRender::TScreen& Screen, TLRender::TRenderTarget& RenderTarget, TLRender::TRenderNode& RenderNode,const TLMaths::TShapeSphere2D& BoundsDatum,const TLMaths::TShape* pClickDatum,TClick& Click);

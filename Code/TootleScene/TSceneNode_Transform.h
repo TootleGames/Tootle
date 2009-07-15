@@ -41,6 +41,8 @@ public:
 
 	// Distance checks
 	virtual float				GetDistanceTo(const TLMaths::TLine& Line);			//	gr: note, this returns SQUARED distance! bad function naming!
+	
+	virtual void				UpdateNodeData();
 
 protected:
 	virtual void				Initialise(TLMessaging::TMessage& Message);

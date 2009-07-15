@@ -6,14 +6,14 @@
 
 TLGui::TWidgetDrag::TWidgetDrag(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,TRefRef ActionOutDrag,TBinaryTree* pWidgetData) :
 	m_ActionOutDrag		( ActionOutDrag ),
-	m_Dragging			( FALSE ),
+	m_Dragging			( SyncFalse ),
 	TLGui::TWidget		( RenderTargetRef, RenderNodeRef, UserRef, ActionOutDown, ActionOutUp, pWidgetData)
 {
 }
 
 
 TLGui::TWidgetDrag::TWidgetDrag(TRefRef RenderTargetRef,TBinaryTree& WidgetData) :
-	m_Dragging			( FALSE ),
+	m_Dragging			( SyncFalse ),
 	TLGui::TWidget		( RenderTargetRef, WidgetData )
 {
 	WidgetData.ImportData("ActDrag", m_ActionOutDrag );
@@ -23,9 +23,10 @@ TLGui::TWidgetDrag::TWidgetDrag(TRefRef RenderTargetRef,TBinaryTree& WidgetData)
 void TLGui::TWidgetDrag::OnClickBegin(const TLGui::TWidget::TClick& Click)
 {
 	//	start drag
-	if ( !m_Dragging )
+	if ( m_Dragging == SyncFalse )
 	{
-		m_Dragging = TRUE;
+		//	first "click", is just the mouse down.
+		m_Dragging = SyncWait;
 		
 		m_DragLast2 =
 		m_DragFrom2 = Click.GetCursorPos();
@@ -38,7 +39,8 @@ void TLGui::TWidgetDrag::OnClickBegin(const TLGui::TWidget::TClick& Click)
 	}
 	else
 	{
-		//	continue dragging
+		//	continue dragging (or first drag if m_Dragging is SyncWait)
+		m_Dragging = SyncTrue;
 
 		//	get changes
 		float3 Change3 = Click.GetWorldPos(0.f) - m_DragLast3;
@@ -66,9 +68,15 @@ void TLGui::TWidgetDrag::OnClickEnd(const TLGui::TWidget::TClick& Click)
 		return;
 	}
 
-	//	normal ClickEnd;
-	m_Dragging = FALSE;
-	TLGui::TWidget::OnClickEnd( Click );
+	//	send the normal click end message, add some extra data to say if we did a drag or not
+	//TLGui::TWidget::OnClickEnd( Click );
+	TBinaryTree MessageData( TRef_Invalid );
+	Bool DidDrag = (m_Dragging == SyncTrue);
+	MessageData.ExportData("DidDrag", DidDrag );
+	SendActionMessage( Click, m_ActionOutUp, &MessageData );
+		
+	//	reset dragging state
+	m_Dragging = SyncFalse;
 }
 
 

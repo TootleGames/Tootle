@@ -29,7 +29,7 @@ protected:
 
 protected:
 	TRef						m_ActionOutDrag;	//	
-	Bool						m_Dragging;			//	down/up state basicly
+	SyncBool					m_Dragging;			//	down/up state basicly
 	int2						m_DragFrom2;		//	base position of the mouse down
 	int2						m_DragLast2;		//	last position
 	float3						m_DragFrom3;		//	base position of the mouse down

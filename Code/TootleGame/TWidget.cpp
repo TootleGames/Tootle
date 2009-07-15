@@ -491,7 +491,7 @@ void TLGui::TWidget::OnClickEnd(const TClick& Click)
 //-------------------------------------------------
 //	when click has been validated action message is sent to subscribers
 //-------------------------------------------------
-void TLGui::TWidget::SendActionMessage(const TClick& Click,TRefRef ActionRef)
+void TLGui::TWidget::SendActionMessage(const TClick& Click,TRefRef ActionRef,TBinaryTree* pExtraData)
 {
 	if ( !HasSubscribers( TRef_Static(A,c,t,i,o) ) )
 	{
@@ -527,6 +527,9 @@ void TLGui::TWidget::SendActionMessage(const TClick& Click,TRefRef ActionRef)
 	//	write original action and type
 	Message.ExportData("InpAction", Click.GetActionRef() );
 	Message.ExportData("InpType", Click.GetActionType() );
+
+	if ( pExtraData)
+		Message.ReferenceDataTree( *pExtraData, FALSE );
 
 	//	send message
 	PublishMessage( Message );

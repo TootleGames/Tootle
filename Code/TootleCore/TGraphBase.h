@@ -54,7 +54,7 @@ public:
 	Bool						ImportScheme(const TLAsset::TScheme& Scheme,TRefRef ParentNodeRef,Bool StrictNodeRefs=TRUE,TLMessaging::TMessage* pCommonInitMessage=NULL);		//	import scheme into this graph
 	FORCEINLINE Bool			ReimportScheme(const TLAsset::TScheme* pScheme,TRefRef ParentNodeRef,Bool StrictNodeRefs,Bool AddMissingNodes,Bool RemoveUnknownNodes,TLMessaging::TMessage* pCommonInitMessage=NULL)	{	return pScheme ? ReimportScheme( *pScheme, ParentNodeRef, StrictNodeRefs, AddMissingNodes, RemoveUnknownNodes, pCommonInitMessage ) : FALSE;	}
 	Bool						ReimportScheme(const TLAsset::TScheme& Scheme,TRefRef ParentNodeRef,Bool StrictNodeRefs,Bool AddMissingNodes,Bool RemoveUnknownNodes,TLMessaging::TMessage* pCommonInitMessage=NULL);							//	re-import scheme into this graph. Nodes will be re-sent an Initialise message. Add missing and delete new (non-scheme) nodes via params. this system will kinda mess up if the original scheme wasn't loaded with strict refs
-	TPtr<TLAsset::TScheme>		ExportScheme(TRef SchemeAssetRef,TRef SchemeRootNode=TRef(),Bool IncludeSchemeRootNode=TRUE);	//	export node tree to a scheme
+	Bool						ExportScheme(TLAsset::TScheme& Scheme,TRef SchemeRootNode,Bool IncludeSchemeRootNode);	//	export node tree to a scheme
 
 	//	gr: exposed for the scheme editor...
 	virtual TLGraph::TGraphNodeBase*	FindNodeBase(TRefRef NodeRef) = 0;
@@ -85,7 +85,7 @@ public:
 	Bool						IsKindOf(TRefRef TypeRef) const			{	return (GetNodeTypeRef() == TypeRef) ? TRUE : IsParentKindOf( TypeRef );	}
 	FORCEINLINE Bool			IsParentKindOf(TRefRef TypeRef) const	{	return GetParentBase() ? GetParentBase()->IsKindOf(TypeRef) : FALSE;	}
 	
-	virtual const TBinaryTree&	GetNodeData(Bool UpdateData)			{	return m_NodeData;	}	//	overload this to handle UpdateData for specific nodes
+	virtual void				UpdateNodeData()						{	}						//	overload this to make sure all properties on your node (that aren't stored/read directly out of the data) is up to date and reayd for export
 	virtual TBinaryTree&		GetNodeData()							{	return m_NodeData;	}	//	overload this to handle UpdateData for specific nodes
 
 	//	gr: big hack here! instead... use node data? it's more class based than instance based... cant think of a great solution right now...

@@ -32,8 +32,17 @@ Bool TBinaryTree::CopyDataTree(const TBinaryTree& Data,Bool OverwriteDataRef)
 	if ( OverwriteDataRef )
 		SetDataRef( Data.GetDataRef() );
 
-	//	copy this data
-	GetData().Copy( Data.GetData() );
+	//	copy the root data
+	if ( Data.GetData().GetSize() )
+	{
+		//	throw up an error if we're going to write over root data. Bit of a conflict here... 
+		//	if this becomes a problem then make an "OverwriteRootData" param
+		if ( GetData().GetSize() )
+		{
+			TLDebug_Break("Overwriting existing root data");
+		}
+		GetData().Copy( Data.GetData() );
+	}
 
 	//	copy children
 	for ( u32 c=0;	c<Data.GetChildren().GetSize();	c++ )
@@ -62,8 +71,17 @@ Bool TBinaryTree::ReferenceDataTree(const TBinaryTree& Data,Bool OverwriteDataRe
 	if ( OverwriteDataRef )
 		SetDataRef( Data.GetDataRef() );
 
-	//	still have to copy the root data
-	GetData().Copy( Data.GetData() );
+	//	copy the root data
+	if ( Data.GetData().GetSize() )
+	{
+		//	throw up an error if we're going to write over root data. Bit of a conflict here... 
+		//	if this becomes a problem then make an "OverwriteRootData" param
+		if ( GetData().GetSize() )
+		{
+			TLDebug_Break("Overwriting existing root data");
+		}
+		GetData().Copy( Data.GetData() );
+	}
 
 	//	pre-alloc array in case it's big
 	u32 DataChildCount = Data.GetChildren().GetSize();

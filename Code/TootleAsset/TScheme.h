@@ -62,6 +62,7 @@ public:
 
 	const TPtrArray<TSchemeNode>&	GetNodes() const					{	return m_Nodes;	}
 	TPtrArray<TSchemeNode>&			GetNodes()							{	return m_Nodes;	}
+	void							RemoveNodes()						{	m_Nodes.Empty();	}
 	void							AddNode(TPtr<TSchemeNode>& pNode)	{	m_Nodes.Add( pNode );	}
 
 protected:

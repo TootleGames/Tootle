@@ -39,10 +39,11 @@ public:
 	FORCEINLINE Bool			RemoveChild(const char* pRefString)				{	return RemoveChild( TRef( pRefString ) );	}	//	added to ease ambiguity
 	FORCEINLINE Bool			RemoveChild(const TPtr<TBinaryTree>& pChild)	{	return m_Children.RemovePtr( pChild );	}	//	remove this ptr from the array (dont use .Remove()!)
 
-	void						Empty(Bool Dealloc=FALSE)						{	TBinary::Empty(Dealloc);	m_Children.Empty(Dealloc);	}	//	delete tree
+	FORCEINLINE void			Empty(Bool Dealloc=FALSE)						{	TBinary::Empty(Dealloc);	m_Children.Empty(Dealloc);	}	//	delete tree
+	FORCEINLINE Bool			IsEmpty() const									{	return ( TBinary::GetSize() == 0 && m_Children.GetSize() == 0 );	}
 	void						Compact();										//	compact binary data and all our children
-	TBinary&					GetData()										{	return (*this);	}
-	const TBinary&				GetData() const									{	return (*this);	}
+	FORCEINLINE TBinary&		GetData()										{	return (*this);	}
+	FORCEINLINE const TBinary&	GetData() const									{	return (*this);	}
 	Bool						CopyDataTree(const TBinaryTree& Data,Bool OverwriteDataRef=TRUE);			//	recursivly copy the tree from Data into this (allocs new data and copies the data)
 	FORCEINLINE Bool			CopyDataTree(const TPtr<TBinaryTree>& pData,Bool OverwriteDataRef=TRUE)			{	const TBinaryTree* pBinaryTree = pData.GetObject();	return pBinaryTree ? CopyDataTree( *pBinaryTree, OverwriteDataRef ) : FALSE;	}
 	Bool						ReferenceDataTree(const TBinaryTree& Data,Bool OverwriteDataRef=TRUE);			//	copy the tree by re-using the TPtr's to the data. The data is re-used and saves us allocating and copying data but without fear of deletion
