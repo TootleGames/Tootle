@@ -74,30 +74,32 @@ void TRenderNodeScrollableView::OnRenderTargetRefChange()
 		Type2<s32> ScreenPos[2];
 		Bool bSuccess = FALSE;
 
+		//NOTE: For the OpengGL handling 0,0 is the left,bottom of the screen not left,top
+		//		so we need to pass in these points to the calculation for the screen pos
+		// 		and we need to flip the Y as well
+
 		float3 Point[2];
 		Point[0] = float3(box.GetMin().x,box.GetMax().y, GetTranslate().z);
 		Point[1] = float3(box.GetMax().x,box.GetMin().y, GetTranslate().z);
 
+
 		// Get bottom left corner of box as min point
-		bSuccess |= pRenderTarget->GetScreenPos(ScreenPos[0], Point[0], RenderTargetSize, pScreen->GetScreenShape(), TRUE);
+		if(!pRenderTarget->GetScreenPos(ScreenPos[0], Point[0], RenderTargetSize, pScreen->GetScreenShape(), TRUE))
+			return;
 
 		// Get top right corner of box as max point
-		bSuccess |= pRenderTarget->GetScreenPos(ScreenPos[1], Point[1], RenderTargetSize, pScreen->GetScreenShape(), TRUE);
+		if(!pRenderTarget->GetScreenPos(ScreenPos[1], Point[1], RenderTargetSize, pScreen->GetScreenShape(), TRUE))
+			return;
 
-		if(bSuccess)
-		{
-			float2 fmin, fmax;
-			// NOTE: 0,0 is bottom left of screen, not top left
+		float2 fmin, fmax;
 
-			// DB - Test values for test box.  These are roughly the values needed after conversion.
-			fmin.x = (float)ScreenPos[0].x; //50;
-			fmin.y = (float)ScreenPos[0].y; //150;
+		fmin.x = (float)ScreenPos[0].x;
+		fmin.y = (float)ScreenPos[0].y;
 
-			fmax.x = TLMaths::Absf((float)ScreenPos[1].x - (float)ScreenPos[0].x); //500;
-			fmax.y = TLMaths::Absf((float)ScreenPos[1].y - (float)ScreenPos[0].y); //600;
+		fmax.x = (float)ScreenPos[1].x;
+		fmax.y = (float)ScreenPos[1].y;
 
-			m_ViewBox = TLMaths::TBox2D(fmin, fmax);
-		}
+		m_ViewBox = TLMaths::TBox2D(fmin, fmax);
 	}
 	else
 		TLDebug_Break("Failed to find render target");

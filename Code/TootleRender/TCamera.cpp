@@ -543,6 +543,7 @@ Bool TLRender::TOrthoCamera::GetWorldPos(float3& WorldPos,float WorldDepth,const
 
 //--------------------------------------------------------------
 //	convert point on screen to a 3D pos
+// NOTE: Works the opposite of the GetWorldPos() routine
 //--------------------------------------------------------------
 Bool TLRender::TOrthoCamera::GetScreenPos(Type2<s32>& ScreenPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape, Bool bFlipY) const
 {
@@ -551,33 +552,24 @@ Bool TLRender::TOrthoCamera::GetScreenPos(Type2<s32>& ScreenPos, const float3& W
 	// Move pos to be in line with camera
 	float OrthoX = WorldPos.x + GetPosition().x;
 	float OrthoY = WorldPos.y + GetPosition().y;
-	//float Distance = WorldPos.z + GetPosition().z;
 
-	// Scale the x and Y by the distance
-	//OrthoX /= Distance;
-	//OrthoY /= Distance;
-
-	// Coords now in screen space
+	// Coords now in screen space - scale by ortho range
 	OrthoX /= GetOrthoRange();
 	OrthoY /= GetOrthoRange();
 
 	float2 wh( (float)RenderTargetSize.Width(), (float)RenderTargetSize.Height() );
 
-	// Multiply by half screen width and height
-	//OrthoX *= wh.x * 0.5f;
-	//OrthoY *= wh.y * 0.5f;
+	// Scale by the width
+	OrthoX *= wh.x;
+	OrthoY *= wh.x;
 
-	//float fAspectRatio = wh.x / wh.y;
-
-	OrthoX *= wh.x;// * fAspectRatio;
-	OrthoY *= wh.x;// * fAspectRatio;
-
+	// If required to flip the Y then flip relative to the target height
 	if(bFlipY)
 	{
 		OrthoY = wh.y - OrthoY;
 	}
 
-	// Limit result to 0,0,rendertargetwidth, rendertargetheight
+	// Limit results to (0,0,rendertargetwidth, rendertargetheight)
 	TLMaths::Limit(OrthoX, 0.0f, wh.x);
 	TLMaths::Limit(OrthoY, 0.0f, wh.y);
 
@@ -585,25 +577,5 @@ Bool TLRender::TOrthoCamera::GetScreenPos(Type2<s32>& ScreenPos, const float3& W
 	ScreenPos.Set((s32)OrthoX, (s32)OrthoY);
 
 	return TRUE;
-	/*
-	//	screen -> view
-	float2 xy( (float)RenderTargetPos.x, (float)RenderTargetPos.y );
-	float2 wh( (float)RenderTargetSize.Width(), (float)RenderTargetSize.Height() );
-
-	//	scale the rendertarget pos to a pos between 0..100 (100 being GetOrthoRange - and scale is always based on width)
-	float OrthoX = (xy.x / wh.x) * GetOrthoRange();
-	float OrthoY = (xy.y / wh.x) * GetOrthoRange();
-
-	//	"ortho" x/y is now world space
-	OrthoX -= GetPosition().x;
-	OrthoY -= GetPosition().y;
-
-	//	new world pos -
-	//	gr: camera z is right? or wrong... world space cam pos + nearz.. must be right
-	//	gr: no complex z stuff in ortho...
-	WorldPos.Set( OrthoX, OrthoY, WorldDepth );
-
-	return TRUE;
-	*/
 }
 
