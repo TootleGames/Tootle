@@ -190,13 +190,13 @@ TLRender::TRenderNode::TRenderNode(TRefRef RenderNodeRef,TRefRef TypeRef) :
 void TLRender::TRenderNode::Copy(const TRenderNode& OtherRenderNode)
 {
 	TLDebug_Break("still used? - code is out of date");
-	/*
+/*	
 	m_Transform				= OtherRenderNode.m_Transform;
 	m_Colour				= OtherRenderNode.m_Colour;
-	m_LocalBoundsBox		= OtherRenderNode.m_LocalBoundsBox;
-	m_WorldBoundsBox		= OtherRenderNode.m_WorldBoundsBox;
-	m_LocalBoundsSphere		= OtherRenderNode.m_LocalBoundsSphere;
-	m_WorldBoundsSphere		= OtherRenderNode.m_WorldBoundsSphere;
+	m_BoundsBox		= OtherRenderNode.m_BoundsBox;
+	m_BoundsBox2D		= OtherRenderNode.m_BoundsBox2D;
+	m_BoundsSphere		= OtherRenderNode.m_BoundsSphere;
+	m_BoundsSphere2D		= OtherRenderNode.m_BoundsSphere2D;
 	m_RenderFlags			= OtherRenderNode.m_RenderFlags;
 	m_MeshRef				= OtherRenderNode.m_MeshRef;
 	m_Data					= OtherRenderNode.m_Data;

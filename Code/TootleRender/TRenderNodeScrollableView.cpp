@@ -1,6 +1,8 @@
 #include "TRenderNodeScrollableView.h"
 #include "TLRender.h"
 #include "TRenderTarget.h"
+#include "TScreenManager.h"
+#include <TootleMaths/TShapeBox.h>
 
 using namespace TLRender;
 
@@ -8,21 +10,10 @@ void TRenderNodeScrollableView::Initialise(TLMessaging::TMessage& Message)
 {
 	TRenderNode::Initialise(Message);
 
-	float2 fmin, fmax;
-
-
-	//TODO: Calculate the box screen coords from the bounds box
-	// NOTE: 0,0 is bottom left of screen, not top left
-	
-	// DB - Test values for test box.  These are roughly the values needed after conversion.
-	fmin.x = 50;
-	fmin.y = 150;
-
-	fmax.x = 500;
-	fmax.y = 600;
-
-	m_ViewBox = TLMaths::TBox2D(fmin, fmax);
+	if(Message.ImportData("RTarget", m_RenderTargetRef))
+		OnRenderTargetRefChange();
 }
+
 
 void TRenderNodeScrollableView::ProcessMessage(TLMessaging::TMessage& Message)
 {
@@ -57,6 +48,59 @@ void TRenderNodeScrollableView::ProcessMessage(TLMessaging::TMessage& Message)
 	}
 
 	TRenderNode::ProcessMessage(Message);
+}
+
+
+void TRenderNodeScrollableView::OnRenderTargetRefChange()
+{
+	TPtr<TLRender::TScreen> pScreen;
+	TPtr<TLRender::TRenderTarget>& pRenderTarget = TLRender::g_pScreenManager->GetRenderTarget( m_RenderTargetRef, pScreen );
+
+	if(pRenderTarget)
+	{
+		Type4<s32> RenderTargetSize;
+		pScreen->GetRenderTargetSize( RenderTargetSize, pRenderTarget );
+
+
+		TPtr<TLMaths::TShape> pDatum = GetWorldDatum( m_DatumRef );
+
+		if(!pDatum || (pDatum->GetShapeType() != TLMaths_ShapeRef(TBox)))
+			return;
+
+		TLMaths::TShapeBox* pBox = dynamic_cast<TLMaths::TShapeBox*>(pDatum.GetObject());
+
+		const TLMaths::TBox& box = pBox->GetBox();
+
+		Type2<s32> ScreenPos[2];
+		Bool bSuccess = FALSE;
+
+		float3 Point[2];
+		Point[0] = float3(box.GetMin().x,box.GetMax().y, GetTranslate().z);
+		Point[1] = float3(box.GetMax().x,box.GetMin().y, GetTranslate().z);
+
+		// Get bottom left corner of box as min point
+		bSuccess |= pRenderTarget->GetScreenPos(ScreenPos[0], Point[0], RenderTargetSize, pScreen->GetScreenShape(), TRUE);
+
+		// Get top right corner of box as max point
+		bSuccess |= pRenderTarget->GetScreenPos(ScreenPos[1], Point[1], RenderTargetSize, pScreen->GetScreenShape(), TRUE);
+
+		if(bSuccess)
+		{
+			float2 fmin, fmax;
+			// NOTE: 0,0 is bottom left of screen, not top left
+
+			// DB - Test values for test box.  These are roughly the values needed after conversion.
+			fmin.x = (float)ScreenPos[0].x; //50;
+			fmin.y = (float)ScreenPos[0].y; //150;
+
+			fmax.x = TLMaths::Absf((float)ScreenPos[1].x - (float)ScreenPos[0].x); //500;
+			fmax.y = TLMaths::Absf((float)ScreenPos[1].y - (float)ScreenPos[0].y); //600;
+
+			m_ViewBox = TLMaths::TBox2D(fmin, fmax);
+		}
+	}
+	else
+		TLDebug_Break("Failed to find render target");
 }
 
 

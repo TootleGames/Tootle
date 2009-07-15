@@ -73,6 +73,8 @@ public:
 	virtual Bool				GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const	{	return FALSE;	}	//	convert point on screen to a 3D ray
 	virtual Bool				GetWorldPos(float3& WorldPos,float WorldDepth,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const	{	return FALSE;	}	//	convert point on screen to a 3D position
 
+	virtual Bool				GetScreenPos(Type2<s32>& ScreenPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape, Bool bFlipY) const { return FALSE; } // convert 3d pos into screen 2d point
+
 protected:
 	virtual void				OnCameraChanged();			//	
 	void						CalculateViewVectors();		//	calculate new view vectors
@@ -161,6 +163,8 @@ public:
 
 	virtual Bool			GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;			//	convert point on screen to a 3D ray
 	virtual Bool			GetWorldPos(float3& WorldPos,float WorldDepth,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;	//	convert point on screen to a 3D position
+
+	virtual Bool			GetScreenPos(Type2<s32>& ScreenPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape, Bool bFlipY) const; // convert 3d pos into screen 2d point
 
 protected:
 	TLMaths::TBox2D			m_OrthoViewportBox;		//	ortho viewport dimensions as a box

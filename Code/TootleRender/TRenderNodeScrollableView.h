@@ -21,7 +21,8 @@ class TLRender::TRenderNodeScrollableView : public TLRender::TRenderNode
 {
 public:
 	TRenderNodeScrollableView(TRefRef RenderNodeRef=TRef(),TRefRef TypeRef=TRef()) :
-		TRenderNode(RenderNodeRef, TypeRef)
+		TRenderNode(RenderNodeRef, TypeRef),
+		m_DatumRef(TLRender_TRenderNode_DatumBoundsBox)
 	{
 	}
 
@@ -38,7 +39,13 @@ protected:
 	FORCEINLINE float2&						GetScroll()				{	return m_ScrollTransform.GetTranslate().xy();	}	//	accessor straight to the 2D scroll
 
 private:
+	void									OnRenderTargetRefChange();
+
+private:
 	TLMaths::TTransform			m_ScrollTransform;		//	gr: keep the scroll in a transform so we don't need to create a transform twice every render
 	TLMaths::TBox2D				m_ViewBox;
+
+	TRef						m_DatumRef;
+	TRef						m_RenderTargetRef;
 };
 
