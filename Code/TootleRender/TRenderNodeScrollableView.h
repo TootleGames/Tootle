@@ -22,7 +22,7 @@ class TLRender::TRenderNodeScrollableView : public TLRender::TRenderNode
 public:
 	TRenderNodeScrollableView(TRefRef RenderNodeRef=TRef(),TRefRef TypeRef=TRef()) :
 		TRenderNode(RenderNodeRef, TypeRef),
-		m_DatumRef(TLRender_TRenderNode_DatumBoundsBox)
+		m_DatumRef(TLRender_TRenderNode_DatumBoundsBox2D)
 	{
 	}
 

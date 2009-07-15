@@ -10,6 +10,8 @@ void TRenderNodeScrollableView::Initialise(TLMessaging::TMessage& Message)
 {
 	TRenderNode::Initialise(Message);
 
+	Message.ImportData("Datum", m_DatumRef);
+
 	if(Message.ImportData("RTarget", m_RenderTargetRef))
 		OnRenderTargetRefChange();
 }
@@ -64,12 +66,12 @@ void TRenderNodeScrollableView::OnRenderTargetRefChange()
 
 		TPtr<TLMaths::TShape> pDatum = GetWorldDatum( m_DatumRef );
 
-		if(!pDatum || (pDatum->GetShapeType() != TLMaths_ShapeRef(TBox)))
+		if(!pDatum || (pDatum->GetShapeType() != TLMaths_ShapeRef(TBox2D)))
 			return;
 
-		TLMaths::TShapeBox* pBox = dynamic_cast<TLMaths::TShapeBox*>(pDatum.GetObject());
+		TLMaths::TShapeBox2D* pBox = dynamic_cast<TLMaths::TShapeBox2D*>(pDatum.GetObject());
 
-		const TLMaths::TBox& box = pBox->GetBox();
+		const TLMaths::TBox2D& box = pBox->GetBox();
 
 		Type2<s32> ScreenPos[2];
 		Bool bSuccess = FALSE;
