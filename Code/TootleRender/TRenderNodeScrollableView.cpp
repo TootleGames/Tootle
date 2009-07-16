@@ -80,8 +80,6 @@ void TRenderNodeScrollableView::OnRenderTargetRefChange()
 		Point[0] = float3(box.GetMin().x,box.GetMax().y, GetTranslate().z);
 		Point[1] = float3(box.GetMax().x,box.GetMin().y, GetTranslate().z);
 
-#define USE_SCREEN_ROTATION
-#ifdef USE_SCREEN_ROTATION
 		// Get bottom left corner of box as min point
 		if(!pScreen->GetScreenPosFromWorldPos(pRenderTarget, Point[0], ScreenPos[0]))
 			return;
@@ -89,25 +87,31 @@ void TRenderNodeScrollableView::OnRenderTargetRefChange()
 		// Get top right corner of box as max point
 		if(!pScreen->GetScreenPosFromWorldPos(pRenderTarget, Point[1], ScreenPos[1]))
 			return;
-#else		
-		Type4<s32> RenderTargetSize;
-		pScreen->GetRenderTargetSize( RenderTargetSize, pRenderTarget );
 
-		// Get bottom left corner of box as min point
-		if(!pRenderTarget->GetScreenPos(ScreenPos[0], Point[0], RenderTargetSize, pScreen->GetScreenShape()))
-			return;
-
-		// Get top right corner of box as max point
-		if(!pRenderTarget->GetScreenPos(ScreenPos[1], Point[1], RenderTargetSize, pScreen->GetScreenShape()))
-			return;
-#endif
 		float2 fmin, fmax;
 
-		fmin.x = (float)ScreenPos[0].x;
-		fmin.y = (float)ScreenPos[0].y;
+		// Use lowest values for max and min extents of the scissor box
+		if(ScreenPos[0].x > ScreenPos[1].x)
+		{
+			fmin.x = (float)ScreenPos[1].x;
+			fmax.x = (float)ScreenPos[0].x;
+		}
+		else
+		{
+			fmin.x = (float)ScreenPos[0].x;
+			fmax.x = (float)ScreenPos[1].x;
+		}
 
-		fmax.x = (float)ScreenPos[1].x;
-		fmax.y = (float)ScreenPos[1].y;
+		if(ScreenPos[0].y > ScreenPos[1].y)
+		{
+			fmin.y = (float)ScreenPos[1].y;
+			fmax.y = (float)ScreenPos[0].y;
+		}
+		else
+		{
+			fmin.y = (float)ScreenPos[0].y;
+			fmax.y = (float)ScreenPos[1].y;
+		}
 
 		m_ViewBox = TLMaths::TBox2D(fmin, fmax);
 	}
