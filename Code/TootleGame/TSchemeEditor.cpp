@@ -299,8 +299,14 @@ void TLGame::TSchemeEditor::CreateEditorWidget(TBinaryTree& WidgetData)
 //----------------------------------------------------------
 void TLGame::TSchemeEditor::OnNodeSelected(TRefRef SceneNode)
 {
-	m_SelectedNodes.AddUnique( SceneNode );
+	//	dont do anything if already selected
+	if ( m_SelectedNodes.Exists( SceneNode ) )
+		return;
 	
+	//	add to list
+	m_SelectedNodes.Add( SceneNode );
+	
+	//	notify
 	TLMessaging::TMessage EditMessage("EdtStart");
 	m_pGraph->SendMessageToNode( SceneNode, EditMessage );
 }
@@ -312,10 +318,19 @@ void TLGame::TSchemeEditor::OnNodeSelected(TRefRef SceneNode)
 //----------------------------------------------------------
 void TLGame::TSchemeEditor::OnNodeUnselected(TRefRef SceneNode)
 {
-	m_SelectedNodes.Remove( SceneNode );
-		
-	TLMessaging::TMessage EditMessage("EdtEnd");
-	m_pGraph->SendMessageToNode( SceneNode, EditMessage );
+	if ( m_SelectedNodes.Remove( SceneNode ) )
+	{
+		TLMessaging::TMessage EditMessage("EdtEnd");
+		m_pGraph->SendMessageToNode( SceneNode, EditMessage );
+	}
+
+	//	unset our new scene node
+	if ( SceneNode == m_NewSceneNode )
+	{
+		m_NewSceneNode.SetInvalid();
+		m_NewSceneNodeDragAction.SetInvalid();
+		m_NewSceneNodeClickAction.SetInvalid();
+	}
 }
 
 
@@ -348,6 +363,9 @@ void TLGame::TSchemeEditor::UnselectAllNodes()
 
 	//	now unselect all those nodes
 	m_SelectedNodes.Empty();
+	m_NewSceneNode.SetInvalid();
+	m_NewSceneNodeDragAction.SetInvalid();
+	m_NewSceneNodeClickAction.SetInvalid();
 }
 
 
@@ -555,7 +573,6 @@ void TLGame::TSchemeEditor::ProcessMouseMessage(TRefRef ActionRef,TLMessaging::T
 		}
 
 		OnNodeUnselected( m_NewSceneNode );
-		m_NewSceneNode.SetInvalid();
 	}
 }
 

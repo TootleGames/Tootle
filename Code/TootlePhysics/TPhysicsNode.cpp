@@ -974,6 +974,17 @@ void TLPhysics::TPhysicsNode::SetBodyTransform(u8 TransformChangedBits)
 		return;
 	}
 	
+	//	gr: in order to get debug physics node to update graphics of shapes
+	//	after being re-enabled on a node that doesn't move (body doesnt move which
+	//	means movement is not detected) we trigger a publish of a OnTransform
+	//	if BodyTransformChangedBits is set, they were set when a Body->Transform 
+	//	failed before so use those bits to publish
+	if ( m_BodyTransformChangedBits )
+	{
+		m_TransformChangedBits |= m_BodyTransformChangedBits;
+		PublishTransformChanges();
+	}
+
 	//	transform has been set, is now valid
 	m_BodyTransformChangedBits = 0x0;
 
