@@ -328,7 +328,8 @@ Bool TApplication::TApplicationState_Bootup::OnBegin(TRefRef PreviousMode)
 
 
 TApplication::TApplicationState_Bootup::TApplicationState_Bootup() :
-	m_SkipBootup	( FALSE )
+	m_pTimelineInstance	( NULL ),
+	m_SkipBootup		( FALSE )
 {
 }
 
@@ -381,6 +382,22 @@ Bool TApplication::TApplicationState_Bootup::CreateIntroScreen()
 		pCamera->SetPosition( float3( 0, 0, -10.f ) );
 		pRenderTarget->SetRootRenderNode( m_LogoRenderNode );
 	}
+
+	// Create timeline
+	TPtr<TLAsset::TAsset>& pIntroTimeline = TLAsset::LoadAsset("t_logo", TRUE);
+	if ( pIntroTimeline )
+	{
+		// Create the timeline instance
+		m_pTimelineInstance = new TLAnimation::TTimelineInstance("t_logo");
+
+		// Bind the timeline instance to the render node and init
+		if(m_pTimelineInstance)
+		{
+			TLMessaging::TMessage Message(TLCore::InitialiseRef);
+			Message.ExportData("Time", 0.0f);
+			m_pTimelineInstance->Initialise(Message);
+		}
+	}
 	
 	// All done
 	return TRUE;
@@ -389,7 +406,11 @@ Bool TApplication::TApplicationState_Bootup::CreateIntroScreen()
 
 TRef TApplication::TApplicationState_Bootup::Update(float Timestep)
 {
-	if ( m_SkipBootup || (GetModeTime() > BOOTUP_TIME_MIN) && ArePreloadFilesLoaded() )
+	SyncBool TimelineUpdate = SyncFalse;
+	if(m_pTimelineInstance)
+		TimelineUpdate = m_pTimelineInstance->Update(Timestep);
+
+	if ( m_SkipBootup || (GetModeTime() > BOOTUP_TIME_MIN) && ArePreloadFilesLoaded() && (TimelineUpdate == SyncFalse) )
 	{
 		TApplication* pApp = GetStateMachine<TApplication>();
 		
@@ -473,6 +494,9 @@ void TApplication::TApplicationState_Bootup::OnEnd(TRefRef NextMode)
 		TLRender::g_pScreenManager->DeleteRenderTarget( m_RenderTarget );
 		m_RenderTarget.SetInvalid();
 	}
+
+	m_pTimelineInstance = NULL;
+
 
 	//	delete asset
 	TLAsset::DeleteAsset("logo");

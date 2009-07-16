@@ -16,6 +16,7 @@
 #include "TStateMachine.h"
 
 #include <TootleGame/TGame.h>
+#include <TootleGame/TTimeline.h>
 
 namespace TLCore
 {
@@ -148,10 +149,11 @@ protected:
 	Bool		ArePreloadFilesLoaded();
 	
 private:
-	TRef			m_LogoRenderNode;	//	
-	TRef			m_RenderTarget;		//	our render target
-	TArray<TRef>	m_PreloadFiles;
-	Bool			m_SkipBootup;		//	skip bootup if we failed to create rendernode/screen/logo etc
+	TRef									m_LogoRenderNode;	//	
+	TPtr<TLAnimation::TTimelineInstance>	m_pTimelineInstance;
+	TRef									m_RenderTarget;		//	our render target
+	TArray<TRef>							m_PreloadFiles;
+	Bool									m_SkipBootup;		//	skip bootup if we failed to create rendernode/screen/logo etc
 };
 
 

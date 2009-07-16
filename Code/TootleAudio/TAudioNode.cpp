@@ -68,7 +68,7 @@ void TAudioNode::Initialise(TLMessaging::TMessage& Message)
 	TRef AudioAsset;
 	if(Message.ImportData("Asset", AudioAsset))
 	{
-		TLAsset::LoadAsset( AudioAsset );
+		TLAsset::LoadAsset( AudioAsset, TRUE );
 		SetAudioAssetRef(AudioAsset);
 	}
 
