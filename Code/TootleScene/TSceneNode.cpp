@@ -34,6 +34,18 @@ void TLScene::TSceneNode::UpdateAll(float Timestep)
 }
 
 
+void TLScene::TSceneNode::SetProperty(TLMessaging::TMessage& Message)
+{
+	Bool bEnable = TRUE;
+	if(Message.ImportData("Enable", bEnable))
+		SetEnable(bEnable);
+
+	// Call super setproperty routine
+	TLGraph::TGraphNode<TLScene::TSceneNode>::SetProperty(Message);
+}
+
+
+
 void TLScene::TSceneNode::SetEnable(const Bool& bEnabled)
 {
 	if(bEnabled != m_bEnabled)

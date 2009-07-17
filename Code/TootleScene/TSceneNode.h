@@ -45,6 +45,9 @@ public:
 	virtual TRef		GetRenderNodeRef() const		{	return TRef();	}
 
 protected:
+
+	virtual void		SetProperty(TLMessaging::TMessage& Message);
+
 	virtual void		PostUpdate(float fTimestep)		{	}	//	gr: an update that occurs immediately after normal update. 
 
 	virtual void		OnEnable()		{}
