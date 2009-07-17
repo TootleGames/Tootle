@@ -14,7 +14,8 @@ class TLScene::TSceneNode_Timeline : public TSceneNode_Object
 public:
 	TSceneNode_Timeline(TRefRef NodeRef,TRefRef TypeRef) :
 		TSceneNode_Object(NodeRef, TypeRef),
-		m_pTimelineInstance(NULL)
+		m_pTimelineInstance(NULL),
+		m_bAutoDelete(FALSE)
 	{
 	}
 
@@ -28,6 +29,8 @@ protected:
 	virtual void			Initialise(TLMessaging::TMessage& Message);	
 	virtual void 			Update(float Timestep);					
 	virtual void			Shutdown();							
+	
+	virtual void			SetProperty(TLMessaging::TMessage& Message);	
 
 	virtual void			ProcessMessage(TLMessaging::TMessage& Message);
 
@@ -41,4 +44,6 @@ private:
 private:
 	TRef								m_TimelineAssetRef;
 	TLAnimation::TTimelineInstance*		m_pTimelineInstance;
+
+	Bool								m_bAutoDelete;
 };

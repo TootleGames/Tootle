@@ -203,6 +203,12 @@ void TSceneNode_Object::SetProperty(TLMessaging::TMessage& Message)
 	TPtr<TBinaryTree>& pEnableData = Message.GetChild("Enable");
 	if ( pEnableData )
 	{
+		Bool bEnable = TRUE;
+		pEnableData->ResetReadPos();
+
+		if(pEnableData->Read(bEnable))
+			SetEnable(bEnable);
+
 		Bool RenderEnable = TRUE;
 		Bool PhysicsEnable = TRUE;
 		SyncBool CollisionEnable = SyncWait;	//	syncwait = no changes

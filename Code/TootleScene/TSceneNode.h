@@ -26,7 +26,8 @@ class TLScene::TSceneNode : public TLGraph::TGraphNode<TLScene::TSceneNode>
 public:
 	TSceneNode(TRefRef NodeRef,TRefRef TypeRef=TRef());
 
-	FORCEINLINE Bool	IsEnabled() const				{	return TRUE;	}	//	for the graph templating - scene nodes aren't explicitly disabled... (yet)
+	FORCEINLINE Bool	IsEnabled() const				{	return m_bEnabled;	}	
+	void				SetEnable(const Bool& bEnable);
 
 	virtual void		UpdateAll(float Timestep);		//	overloaded to force a PostUpdate() after the normal Update()
 
@@ -45,6 +46,12 @@ public:
 
 protected:
 	virtual void		PostUpdate(float fTimestep)		{	}	//	gr: an update that occurs immediately after normal update. 
+
+	virtual void		OnEnable()		{}
+	virtual void		OnDisable()		{}
+
+private:
+	Bool				m_bEnabled;
 };
 
 

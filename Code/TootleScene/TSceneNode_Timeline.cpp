@@ -1,13 +1,12 @@
 
 #include "TSceneNode_Timeline.h"
+#include "TScenegraph.h"
 
 using namespace TLScene;
 
 
 void TSceneNode_Timeline::Initialise(TLMessaging::TMessage& Message)
 {
-	// Import the timeline asset ref
-	Message.ImportData("Timeline", m_TimelineAssetRef);
 
 	TSceneNode_Object::Initialise(Message);
 }
@@ -16,7 +15,16 @@ void TSceneNode_Timeline::Update(float fTimestep)
 {
 	// If active update the timeline instance 
 	if(m_pTimelineInstance)
-		m_pTimelineInstance->Update(fTimestep);
+	{
+		if(m_pTimelineInstance->Update(fTimestep) == SyncFalse)
+		{
+			// timeline complete
+			if(m_bAutoDelete)
+			{
+				TLScene::g_pScenegraph->RemoveNode(GetNodeRef());
+			}
+		}
+	}
 
 	TSceneNode_Object::Update(fTimestep);
 }
@@ -69,6 +77,33 @@ void TSceneNode_Timeline::ProcessMessage(TLMessaging::TMessage& Message)
 
 	// Super process message
 	TSceneNode_Object::ProcessMessage(Message);
+}
+
+
+void TSceneNode_Timeline::SetProperty(TLMessaging::TMessage& Message)
+{
+	// Import the timeline asset ref
+	if(!m_TimelineAssetRef.IsValid())
+		Message.ImportData("Timeline", m_TimelineAssetRef);
+	else
+	{
+		TRef CurrentTimelineRef = m_TimelineAssetRef;
+
+		Message.ImportData("Timeline", m_TimelineAssetRef);
+
+		if(m_pTimelineInstance && (CurrentTimelineRef != m_TimelineAssetRef))
+		{
+			// Change timeline
+			DeleteTimelineInstance();
+
+			if(m_TimelineAssetRef.IsValid())
+				CreateTimelineInstance();
+		}
+	}
+
+	Message.ImportData("AutoDelete", m_bAutoDelete);
+
+	TSceneNode_Object::SetProperty(Message);
 }
 
 
