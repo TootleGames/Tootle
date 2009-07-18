@@ -51,7 +51,7 @@ Bool TLGame::TSchemeEditor::Initialise(TRefRef EditorScheme,TRefRef GraphRef,TRe
 
 	//	fetch graph 
 	//	gr: no type checking atm, have to assume this is a graph...
-	m_pGraph = TLCore::g_pCoreManager->GetManager<TLGraph::TGraphBase>( GraphRef );
+	m_pGraph = TLCore::g_pCoreManager->GetManagerPtr<TLGraph::TGraphBase>( GraphRef );
 	if ( !m_pGraph )
 	{
 		TLDebug_Break("Initialised scheme editor with graph ref that doesnt exist");

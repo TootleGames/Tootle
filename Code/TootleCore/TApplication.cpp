@@ -154,6 +154,13 @@ void TApplication::AddModes()
 //-----------------------------------------------------------
 SyncBool TApplication::Update(float fTimeStep)
 {
+	//	request to change app mode
+	if ( m_NewAppMode.IsValid() )
+	{
+		TStateMachine::SetMode( m_NewAppMode );
+		m_NewAppMode.SetInvalid();
+	}
+
 	// Udpate the state machine
 	TStateMachine::Update(fTimeStep);
 		
@@ -165,12 +172,11 @@ SyncBool TApplication::Update(float fTimeStep)
 //-----------------------------------------------------------
 SyncBool TApplication::Shutdown()
 {
-	//	gr: put this in the clean up of the game mode?
-	SyncBool Result = DestroyGameObject();
-	if(Result != SyncTrue)
-		return Result;
-
+	//	clean up states
 	TStateMachine::Shutdown();
+
+	//	clean up game if it hasnt been done
+	DestroyGame();
 
 	return TManager::Shutdown();
 }
@@ -212,67 +218,67 @@ void TApplication::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChanne
 
 
 
-SyncBool TApplication::CreateGameObject()
+TPtr<TLGame::TGame> TApplication::CreateGameObject()
 {
-	TLDebug_Break("Overload this! You cannot use the base func!");
-
-	// Already have a game object? Create one if not
-	if(!m_pGame)	
-	{
-		m_pGame = new TLGame::TGame("Game");
-
-		// Subscribe the game object to the application
-		m_pGame->SubscribeTo(this);
-		
-		// Subscribe to the core manager for update messages
-		m_pGame->SubscribeTo(TLCore::g_pCoreManager);
-		
-		// Send a message to the new game object to initialise
-		// NOTE: Currently asume this happens in a frame so may need to cater for it occuring over a number of frames
-		TLMessaging::TMessage Message(TLCore::InitialiseRef);
-		
-		PublishMessage(Message);
-		
-		/*
-		 // NOTE: I'm not sure this is a good plan.  The managers list in the core manager
-		 // is for gloabal managers and rely on the mesaging to be done in a certain order
-		 // for initialisation and shutdown.  Creation of  manager at this point would mean
-		 // having missed the initialise message and also could cause issues if the shutdown occurs
-		 // at the same time as the application manager shutdown - which removes it's pointer to the 
-		 // game object and would need to request removing the manager from the core manager
-		 // so it could get deleted prematurely
-		 TLCore::g_pCoreManager->CreateAndRegisterManager<TLGame::TGame>(m_pGame, "GAMEMANAGER");
-		
-		 // Subscribe the game manager to the event channel manager
-		 m_pGame->SubscribeTo(TLMessaging::g_pEventChannelManager);
-
-		 // Subscribe the game manager to the core manager messages
-		 TLMessaging::g_pEventChannelManager->SubscribeTo(this, "COREMANAGER", TLCore::UpdateRef); 
-		 TLMessaging::g_pEventChannelManager->SubscribeTo(this, "COREMANAGER", TLCore::ShutdownRef); 
-		 */
-	}
-	
-	return SyncTrue;
+	TLDebug_Break("Overload this and create your game");
+	return NULL;
 }
 
 
-SyncBool TApplication::DestroyGameObject()
+//-----------------------------------------
+//	create and setup the game object on the app
+//-----------------------------------------
+Bool TApplication::CreateGame()
 {
+	//	existing game shouldn't really exist
+	if ( m_pGame )
+	{
+		TLDebug_Break("Creating new game whilst other already exists...");
+		DestroyGame();
+	}
+
+	//	create new instance
+	m_pGame = CreateGameObject();
+	if ( !m_pGame )
+		return FALSE;
 	
-	// Send a shutdown message to the game object
-	// NOTE: Currently asume this happens in a frame so may need to cater for it occuring over a number of frames
-	TLMessaging::TMessage Message(TLCore::ShutdownRef);
+	//	register as manager so things can find it by using the manager lookup functionality...
+	//	overkill for a game?
+	TLCore::g_pCoreManager->RegisterManager( m_pGame );
+
+	// Subscribe the game object to the application
+	m_pGame->SubscribeTo(this);
 	
-	PublishMessage(Message);
-			
+	// Subscribe to the core manager for update messages
+	m_pGame->SubscribeTo(TLCore::g_pCoreManager);
+
+	//	gr: just initialise, we dont wanna send this message to everyone
+	if ( m_pGame->Initialise() != SyncTrue )
+	{
+		DestroyGame();
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+
+//-----------------------------------------
+//	
+//-----------------------------------------
+void TApplication::DestroyGame()
+{
+	if ( !m_pGame )
+		return;
+
+	//	shutdown
+	m_pGame->Shutdown();
+
+	//	unregister
+	TLCore::g_pCoreManager->UnregisterManager( m_pGame->GetManagerRef() );
+
+	//	free			
 	m_pGame = NULL;
-	
-	// NOTE: This would likely cause issues if the game object was a manager and subscribed to the 
-	// core manager removing it could occur during shutdown and may leave the game object 
-	// without having been shutdown properly.
-	//TLCore::g_pCoreManager->UnRegisterManager("GAMEMANAGER");
-	
-	return SyncTrue;
 }
 
 
@@ -547,9 +553,9 @@ Bool TApplication::TApplicationState_EnterGame::OnBegin(TRefRef PreviousMode)
 
 	// Create (gamespecific) TGame object
 	TApplication* pApp = GetStateMachine<TApplication>();
-	
-	pApp->CreateGameObject();
-	
+	if ( !pApp->CreateGame() )
+		return FALSE;
+
 	return TStateMode::OnBegin(PreviousMode);
 }
 
@@ -602,8 +608,7 @@ void TApplication::TApplicationState_ExitGame::OnEnd(TRefRef NextMode)
 {
 	// Destroy (game specific) TGame object
 	TApplication* pApp = GetStateMachine<TApplication>();
-	
-	pApp->DestroyGameObject();	
+	pApp->DestroyGame();	
 	
 	return TStateMode::OnEnd(NextMode);
 }

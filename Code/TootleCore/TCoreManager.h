@@ -36,7 +36,7 @@ public:
 	template<class T> Bool	CreateAndRegisterManager(TPtr<T>& pManager);	// Creates and registers a manager and assigns the new manager to a global pointer 
 	template<class T> Bool	CreateAndRegisterManager(TRefRef ManagerRef);	// Creates and registers a manager but doesn't assign the new manager to any global pointer 
 	template<class T> Bool	RegisterManager(TPtr<T>& pManager);				// Simply registers the manager by adding to our list - can also be used to add managers that have been created externally
-	Bool					UnRegisterManager(TRefRef ManagerRef);
+	Bool					UnregisterManager(TRefRef ManagerRef);
 
 	// Time step access
 	FORCEINLINE Bool		IsReadyForUpdate() const								{	return m_TimerUpdateCount > 0;	}
@@ -71,10 +71,11 @@ public:
 	
 	// Manager access
 	template<class TYPE>
-	TPtr<TYPE>			GetManager(TRefRef ManagerRef)
-	{
-		return TPtr<TYPE>(m_Managers.FindPtr(ManagerRef));
-	}
+	TPtr<TYPE>				GetManagerPtr(TRefRef ManagerRef)		{	return TPtr<TYPE>( m_Managers.FindPtr(ManagerRef) );	}
+	TPtr<TManager>&			GetManagerPtr(TRefRef ManagerRef)		{	return m_Managers.FindPtr(ManagerRef);	}
+	template<class TYPE>
+	TYPE*					GetManager(TRefRef ManagerRef)			{	return GetManagerPtr(ManagerRef).GetObject<TYPE>();	}
+	TManager*				GetManager(TRefRef ManagerRef)			{	return GetManagerPtr(ManagerRef);	}
 
 protected:
 	virtual SyncBool		Initialise();
@@ -195,9 +196,19 @@ Bool TLCore::TCoreManager::CreateAndRegisterManager(TRefRef ManagerRef)
 template <class T>
 Bool TLCore::TCoreManager::RegisterManager(TPtr<T>& pManager)
 {
+	//	ref of manager must be unique, so do an Exists check first
+	if ( m_Managers.Exists( pManager ) )
+	{
+#ifdef _DEBUG
+		TTempString Debug_String("Trying to add manager that already exists, duplicate ref? ");
+		pManager->GetManagerRef().GetString( Debug_String );
+		TLDebug_Break( Debug_String );
+#endif
+		return FALSE;
+	}
+
 	return (m_Managers.Add(pManager) != -1);
 }
-
 
 //---------------------------------------------------------
 //

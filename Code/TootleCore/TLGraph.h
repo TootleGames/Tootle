@@ -266,6 +266,8 @@ private:
 	T&								This()										{	return *static_cast<T*>( this );	}		
 	const T&						This() const								{	return *static_cast<const T*>( this );	}
 
+	void							ProcessSubscribeOrPublishTo(TRefRef SubOrPub,TBinaryTree& PubSubData);	//	handle publishto/subscribeto message data 
+
 private:
 	TPtr<T>							m_pParent;			// Parent item
 	TPtrArray<T>					m_Children;
@@ -527,6 +529,20 @@ void TLGraph::TGraphNode<T>::ProcessMessage(TLMessaging::TMessage& Message)
 			return;
 		}
 
+		//	publish or subscribe to a node/manager
+		case TRef_Static(P,u,b,T,o):
+		case TRef_Static(S,u,b,T,o):
+		{
+			//	subscribe to managers and nodes via the data inside
+			TPtrArray<TBinaryTree>& MessageChildren = Message.GetChildren();
+			for ( u32 i=0;	i<MessageChildren.GetSize();	i++ )
+			{
+				TBinaryTree& Data = *MessageChildren[i];
+				ProcessSubscribeOrPublishTo( MessageRef, Data ); 
+			}
+			return;
+		}
+
 		default:
 		#ifdef _DEBUG
 		{
@@ -545,6 +561,74 @@ void TLGraph::TGraphNode<T>::ProcessMessage(TLMessaging::TMessage& Message)
 		}
 		#endif
 		break;
+	}
+}
+
+
+//---------------------------------------------------------
+//	handle publishto/subscribeto message data 
+//---------------------------------------------------------
+template<class T>
+void TLGraph::TGraphNode<T>::ProcessSubscribeOrPublishTo(TRefRef SubOrPub,TBinaryTree& PubSubData)
+{
+	//	gr: the way ive done the code means this kinda only works for publisher/subscribers
+	//		we can simplify it a bit if we merge the publisher and subscriber classes
+	TLMessaging::TPublisher* pOtherPublisher = NULL;
+	TLMessaging::TSubscriber* pOtherSubscriber = NULL;
+
+	//	subscribe to a "manager"
+	if ( PubSubData.GetDataRef() == TRef_Static(M,a,n,a,g) )
+	{
+		TRef ManagerRef;
+		PubSubData.ResetReadPos();
+		if ( !PubSubData.Read( ManagerRef ) )
+			return;
+		
+		//	get manager
+		TLCore::TManager* pManager = TLCore::g_pCoreManager->GetManager( ManagerRef );
+		pOtherPublisher = pManager;
+		pOtherSubscriber = pManager;
+	}
+	else if ( PubSubData.GetDataRef() == TRef_Static4(N,o,d,e) )
+	{
+		TRef NodeRef;
+		PubSubData.ResetReadPos();
+		if ( !PubSubData.Read( NodeRef ) )
+			return;
+
+		//	work out where to find this node
+		//	todo use the graph this is in when we add a ptr back to the graph
+		//TLGraph::TGraphBase* pGraph = this;
+		TLGraph::TGraphBase* pGraph = NULL;
+		TRef GraphRef;
+		if ( PubSubData.ImportData( TRef_Static(G,r,a,p,h), GraphRef ) )
+			pGraph = TLCore::g_pCoreManager->GetManager<TLGraph::TGraphBase>( GraphRef );
+
+		//	missing graph?
+		if ( !pGraph )
+		{
+			TLDebug_Break("Failed to find graph to subscribe/publish to node of");
+			return;
+		}
+
+		//	get node
+		TLGraph::TGraphNodeBase* pNode = pGraph->FindNodeBase( NodeRef );
+		pOtherPublisher = pNode;
+		pOtherSubscriber = pNode;
+	}
+
+	//	failed to get publisher/subscriber
+	if ( !pOtherPublisher )
+		return;
+
+	//	subscribe/publish to this object
+	if ( SubOrPub == TRef_Static(S,u,b,T,o) )
+	{
+		this->SubscribeTo( pOtherPublisher );
+	}
+	else if ( SubOrPub == TRef_Static(P,u,b,T,o) )
+	{
+		pOtherSubscriber->SubscribeTo( this );
 	}
 }
 

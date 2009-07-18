@@ -14,6 +14,12 @@
 #include <TootleCore/TManager.h>
 #include <TootleCore/TStateMachine.h>
 
+
+namespace TLCore
+{
+	class TApplication;
+}
+
 namespace TLGame
 {
 	class TGame;
@@ -46,18 +52,23 @@ protected:
 //	gr: dont make it a manager then! add "manager" functionality later if we need it
 class TLGame::TGame : public TLCore::TManager, public TStateMachine
 {
+	friend class TLCore::TApplication;
 public:
-	TGame(TRefRef ManagerRef) :
-		TLCore::TManager	(ManagerRef)
-	{
-	}
+	TGame(TRefRef ManagerRef,TLCore::TApplication& Application);
+	~TGame();
 	
+	FORCEINLINE TLCore::TApplication&	GetApplication()			{	return *m_pApplication;	}
 
 protected:
-	virtual SyncBool	Initialise();
-	virtual SyncBool	Update(float fTimeStep);
-	virtual SyncBool	Shutdown();
+	virtual SyncBool			Initialise();
+	virtual SyncBool			Update(float fTimeStep);
+	virtual SyncBool			Shutdown();
 
-	virtual void		AddModes()		{	}
+	void						SetMode(TRefRef Mode)		{	m_NewGameMode = Mode;	}	//	change mode on next update
+	virtual void				AddModes()					{	}
+
+private:
+	TRef						m_NewGameMode;
+	TLCore::TApplication*		m_pApplication;		//	should never be null and whilst the app exists, this object should exist so this should never be a deleted item. Possibly a pointer may not have released to this TGame but the app will still have shutdown the game
 };
 

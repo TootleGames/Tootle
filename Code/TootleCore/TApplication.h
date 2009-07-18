@@ -69,12 +69,10 @@ public:
 	template<typename TYPE>
 	void				SetOption(TRefRef OptionRef,const TYPE& Value);						//	overwrite/add option value
 
-	
-	// Game object access
-	//TPtr<TLGame::TGame>		GetGameObject()		const	{ return m_pGame; }
-
 	template <class TYPE>
 	TYPE*						GetGameObject()				{ return static_cast<TYPE*>(m_pGame.GetObject()); }
+
+	FORCEINLINE void			SetAppMode(TRefRef Mode)	{	m_NewAppMode = Mode;	}	//	change app mode on next update
 
 protected:
 	virtual SyncBool			Initialise();
@@ -94,23 +92,22 @@ protected:
 	virtual TRef				GetDefaultScreenType() const	{	return "Screen";	}
 	
 	// Game object creation and destruction
-	virtual SyncBool			CreateGameObject();
-	SyncBool					DestroyGameObject();
-
+	virtual TPtr<TLGame::TGame>	CreateGameObject();				//	overload this to return the game specific object
+	Bool						CreateGame();
+	void						DestroyGame();
 	
 	// Import and export of the global preferences
 	virtual Bool				ExportData(TBinaryTree& data)			{ return FALSE; }
 	virtual Bool				ImportData(TBinaryTree& data)			{ return FALSE; }
 
 	void						OnOptionChanged(TRefRef OptionRef);		//	notify subscribers when option changes - and do any specific option stuff
-	
-protected:	
+		
+private:
 	TPtr<TLGame::TGame>		m_pGame;				//	The application's game object
 	TRef					m_LocalFileSysRef;		//	ref of local file sys
 	TRef					m_UserFileSysRef;		//	ref of local file sys user's runtime assets/save files etc
-	
-private:
 	TBinaryTree				m_Options;		//	Global & app specific preferences
+	TRef					m_NewAppMode;	//	if valid, we switch to this app mode on next update
 };
 
 

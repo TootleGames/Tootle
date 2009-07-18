@@ -52,6 +52,50 @@ TCoreManager::~TCoreManager()
 }
 
 
+//---------------------------------------------------------
+//	remove manager from list
+//---------------------------------------------------------
+Bool TLCore::TCoreManager::UnregisterManager(TRefRef ManagerRef)
+{
+	//	get index
+	s32 Index = m_Managers.FindIndex( ManagerRef );
+	if ( !Index )
+		return FALSE;
+
+	//	see if we have a [global] pointer to this manager we need to null
+	//	gr: cant use FindIndex because we'd have to match pointers to the TPtr
+	//		and because we may have cast it to a TPtr<Manager> from another TPtr<TYPE>
+	//		in register manager, the address of the TPtr* may not be the same as the 
+	//		TPtr stored in our array. Especially not if the array has been reallocated
+	for ( u32 i=0;	i<m_ManagerPointers.GetSize();	i++ )
+	{
+		TPtr<TManager>& pManagerPointer = *m_ManagerPointers[i];
+		if ( !pManagerPointer )
+		{
+			TLDebug_Print("manager pointer expected");
+			continue;
+		}
+
+		//	match
+		if ( pManagerPointer->GetManagerRef() != ManagerRef )
+			continue;
+
+		//	release global pointer
+		pManagerPointer = NULL;
+	}
+
+	//	null pointer to (hopefully) release manager
+	TPtr<TManager>& pManager = m_Managers[Index];
+	pManager = NULL;
+
+	//	remove (now null ptr) from list
+	m_Managers.RemoveAt(Index);
+
+	return TRUE;
+}
+
+
+
 void TCoreManager::UnregisterAllManagers()				
 {
 	s32 sIndex = 0;
@@ -60,15 +104,14 @@ void TCoreManager::UnregisterAllManagers()
 	// Go through the pointers to TPtr's and set them to null
 	for(sIndex = 0; sIndex < sNumberOfManagers; sIndex++)
 	{
-		TPtr<TManager>* pPtr = m_ManagerPointers.ElementAt(sIndex);
-
-		*pPtr = NULL;
+		TPtr<TManager>& pPtr = *m_ManagerPointers.ElementAt(sIndex);
+		pPtr = NULL;
 	}
 
 	m_ManagerPointers.Empty(TRUE);
 
 
-	sNumberOfManagers = (s32)(m_Managers.GetSize()-1);
+	sNumberOfManagers = m_Managers.GetLastIndex();
 	// Go through the list of managers and null the TPtr's in reverse order
 	for(sIndex = sNumberOfManagers; sIndex >= 0; sIndex--)
 	{
