@@ -56,7 +56,8 @@ protected:
 	virtual void					OnPhysicsNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode);
 	void							DeletePhysicsNode();
 	virtual void					OnPhysicsNodeRemoved(TRefRef PhysicsNodeRef)			{}	//	called when we get a message from the graph that our node has been removed - NOT invoked by DeletePhysicsNode()
-	void							EnablePhysicsNode(Bool Enable,SyncBool EnableCollision);		//	enable/disable physics node - can seperately enable collision, syncwait doesn't change collision setting
+	void							EnablePhysicsNode(Bool Enable,SyncBool EnableCollision=SyncWait);		//	enable/disable physics node - can seperately enable collision, syncwait doesn't change collision setting
+	void							EnablePhysicsNodeCollision(Bool Enable);								//	enable/disable physics node's collisin
 
 	FORCEINLINE Bool				CreateRenderNode(TPtr<TLRender::TRenderNode> pParentRenderNode)	{	return CreateRenderNode( pParentRenderNode ? pParentRenderNode->GetNodeRef() : TRef() );	}
 	virtual Bool					CreateRenderNode(TRefRef ParentRenderNode,TRefRef RenderNodeType=TRef(),TLMessaging::TMessage* pInitMessage=NULL);

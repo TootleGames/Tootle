@@ -199,37 +199,20 @@ void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 //------------------------------------------------
 void TSceneNode_Object::SetProperty(TLMessaging::TMessage& Message)
 {
-	//	enable/disable things
-	TPtr<TBinaryTree>& pEnableData = Message.GetChild("Enable");
-	if ( pEnableData )
-	{
-		Bool RenderEnable = TRUE;
-		Bool PhysicsEnable = TRUE;
-		SyncBool CollisionEnable = SyncWait;	//	syncwait = no changes
-		Bool DebugPhysicsEnable = FALSE;
-		
-		if ( pEnableData->ImportData("Render", RenderEnable ) )
-			EnableRenderNode( RenderEnable );
+	//	gr: changed this so individual things have specific enable messages/properties
+	Bool Enable;
 
-		if ( pEnableData->ImportData("DbgPhys", DebugPhysicsEnable ) )
-			Debug_EnableRenderDebugPhysics( DebugPhysicsEnable );
+	if ( Message.ImportData("EnRender", Enable ) )
+		EnableRenderNode( Enable );
 
-		Bool ChangePhysics = FALSE;
-		if ( pEnableData->ImportData("Physics", PhysicsEnable ) )		
-			ChangePhysics |= TRUE;
+	if ( Message.ImportData("EnDbg", Enable ) )
+		Debug_EnableRenderDebugPhysics( Enable );
 
-		Bool TmpCollisionEnable = FALSE;
-		if ( pEnableData->ImportData("Collision", TmpCollisionEnable ) )	
-		{
-			CollisionEnable = TmpCollisionEnable ? SyncTrue : SyncFalse;
-			ChangePhysics |= TRUE;
-		}
+	if ( Message.ImportData("EnPhysics", Enable ) )
+		EnablePhysicsNode( Enable );
 
-		if ( ChangePhysics )
-		{
-			EnablePhysicsNode( PhysicsEnable, CollisionEnable );
-		}
-	}
+	if ( Message.ImportData("EnCollision", Enable ) )
+		EnablePhysicsNodeCollision( Enable );
 
 	//	read super-properties
 	TSceneNode_Transform::SetProperty( Message );
@@ -631,27 +614,29 @@ void TLScene::TSceneNode_Object::EnablePhysicsNode(Bool Enable,SyncBool EnableCo
 	if ( !GetPhysicsNodeRef().IsValid() )
 		return;
 
-	//	get node
-	TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode(TRUE);
-	if ( !pPhysicsNode )
-	{
-		//	send message instead if it's not been created yet
-		TLMessaging::TMessage SetMessage(TLCore::SetPropertyRef);
-		SetMessage.ExportData( Enable ? TRef("PFSet") : TRef("PFClear"), TLPhysics::TPhysicsNode::Flag_Enabled );
+	//	gr: changed to always send a message
+	TLMessaging::TMessage SetMessage(TLCore::SetPropertyRef);
+	SetMessage.ExportData( Enable ? TRef("PFSet") : TRef("PFClear"), TLPhysics::TPhysicsNode::Flag_Enabled );
 		
-		if ( EnableCollision != SyncWait )
-			SetMessage.ExportData( (EnableCollision==SyncTrue) ? TRef("PFSet") : TRef("PFClear"), TLPhysics::TPhysicsNode::Flag_HasCollision );
-
-		TLPhysics::g_pPhysicsgraph->SendMessageToNode( GetPhysicsNodeRef(), SetMessage );
-		return;
-	}
-
-	//	enable/disable collision
 	if ( EnableCollision != SyncWait )
-		pPhysicsNode->EnableCollision( (EnableCollision==SyncTrue) ? TRUE : FALSE );
+		SetMessage.ExportData( (EnableCollision==SyncTrue) ? TRef("PFSet") : TRef("PFClear"), TLPhysics::TPhysicsNode::Flag_HasCollision );
 
-	//	enable/disable
-	pPhysicsNode->SetEnabled( Enable );
+	TLPhysics::g_pPhysicsgraph->SendMessageToNode( GetPhysicsNodeRef(), SetMessage );
+}
+
+//--------------------------------------------------------
+//	enable/disable physics node collision
+//--------------------------------------------------------
+void TLScene::TSceneNode_Object::EnablePhysicsNodeCollision(Bool Enable)
+{
+	if ( !GetPhysicsNodeRef().IsValid() )
+		return;
+
+	//	gr: changed to always send a message
+	TLMessaging::TMessage SetMessage(TLCore::SetPropertyRef);
+	SetMessage.ExportData( Enable ? TRef("PFSet") : TRef("PFClear"), TLPhysics::TPhysicsNode::Flag_HasCollision );
+
+	TLPhysics::g_pPhysicsgraph->SendMessageToNode( GetPhysicsNodeRef(), SetMessage );
 }
 
 
