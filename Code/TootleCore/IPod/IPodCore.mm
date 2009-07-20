@@ -272,7 +272,23 @@ Bool TLDebug::Platform::Break(const TString& String)
 	
 	
 	//assert(FALSE);
+	
+	
+	//	gr: new method, untested, see https://devforums.apple.com/message/99580
+	/*
+	__builtin_trap() is one option. If the debugger is running then you'll stop in the debugger, 
+	otherwise you'll crash with a crash log. But there's no guarantee that you can tell the debugger 
+	to continue running your program after that - the compiler thinks __builtin_trap() halts the process 
+	so it may optimize away any code after it.
+
+	asm("trap") or asm("int3") is an architecture-specific option. The behavior is the same as __builtin_trap(), 
+	except the compiler doesn't optimize around it so you should be able to continue running afterwards.
+	*/
+	//__builtin_trap();
+	//asm("int3");		//	note: same as PC version
+	
 #endif
+	
 	
 	//	fail
 	return FALSE;

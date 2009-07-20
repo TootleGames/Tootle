@@ -653,7 +653,7 @@ Bool TLFile::ParseXMLDataTree(TPtr<TXmlTag>& pTag,TBinaryTree& Data)
 //--------------------------------------------------------
 //	check if string marked as a datum
 //--------------------------------------------------------
-Bool TLString::IsDatumString(const TString& String,TRef& DatumRef,TRef& ShapeType)
+Bool TLString::IsDatumString(const TString& String,TRef& DatumRef,TRef& ShapeType,Bool& IsJustDatum)
 {
 	//	split the string - max at 4 splits, if it splits 4 times, there's too many parts
 	TFixedArray<TStringLowercase<TTempString>, 4> StringParts;
@@ -664,8 +664,21 @@ Bool TLString::IsDatumString(const TString& String,TRef& DatumRef,TRef& ShapeTyp
 	}
 
 	//	check first part is named "datum"
-	if ( StringParts[0] != "datum" )
+	if ( StringParts[0] == "datum" )
+	{
+		//	just a datum
+		IsJustDatum = TRUE;
+	}
+	else if ( StringParts[0] == "anddatum" )
+	{
+		//	not just a datum
+		IsJustDatum = FALSE;
+	}
+	else
+	{
+		//	no kinda datum
 		return FALSE;
+	}
 
 	//	should be 3 parts
 	if ( StringParts.GetSize() != 3 )

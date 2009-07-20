@@ -9,6 +9,9 @@
 #include <box2d/include/box2d.h>
 
 
+//	smaller values make smoother movements but we can tweak this to see what we can get away with on a small resolution screen :)
+#define MIN_TRANSLATE_CHANGE		0.1f	//	about 5 units per pixel (480/100) in ortho, so 1 pixel movement is 1/5th (0.2f) - so although this value is quite high, you can't see it on-screen. we don't "lose" any translation as this comparison is always against the current state
+#define MIN_ROTATION_CHANGE			0.005f	//	unit changes - todo: store old angle and compare angle changes so we can only apply 1 degree min changes
 
 
 #define USE_ZERO_GROUP
@@ -17,25 +20,6 @@
 //#define DEBUG_PRINT_COLLISION_SHAPE_CHANGES
 #endif
 
-
-//	if something moves less than this amount then dont apply the change - 
-//	this stops the world collision sphere from being invalidated more than we need to
-#define MIN_CHANGE_AMOUNT			(TLMaths_NearZero*1000.f)
-//#define MIN_CHANGE_AMOUNT			(TLMaths_NearZero)
-
-#define HAS_MIN_CHANGE3(v)			HAS_MIN_CHANGE( v.LengthSq() )
-//#define HAS_MIN_CHANGE3(v)			TRUE
-
-#define HAS_MIN_CHANGE(f)			( f > MIN_CHANGE_AMOUNT )
-//#define HAS_MIN_CHANGE(f)			TRUE
-
-#define DEBUG_FLOAT_CHECK(v)		TLDebug_CheckFloat(v)
-//#define DEBUG_FLOAT_CHECK(v)		TRUE
-
-//#define FORCE_SQUIDGE				0.0f
-
-#define FRICTION_SCALAR				PHYSICS_SCALAR
-#define MOVEMENT_SCALAR				PHYSICS_SCALAR
 
 
 namespace TLPhysics
@@ -442,7 +426,7 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 		//	get new translation from box2d
 		const b2Vec2& BodyPosition = m_pBody->GetPosition();
 		float3 NewTranslate( BodyPosition.x, BodyPosition.y, 0.f );
-		ChangedBits |= m_Transform.SetTranslateHasChanged( NewTranslate, TLMaths_NearZero );
+		ChangedBits |= m_Transform.SetTranslateHasChanged( NewTranslate, MIN_TRANSLATE_CHANGE );
 
 		//	todo: some how allow existing 3D rotation and the box2D rotation.... 
 		//	maybe somehting specificly for the scenenode to handle?
@@ -453,7 +437,7 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 			//	get new rotation; todo: store angle for quicker angle-changed test?
 			float32 BodyAngleRad = m_pBody->GetAngle();
 			TLMaths::TQuaternion NewRotation( float3( 0.f, 0.f, -1.f ), BodyAngleRad );
-			ChangedBits |= m_Transform.SetRotationHasChanged( NewRotation, TLMaths_NearZero );
+			ChangedBits |= m_Transform.SetRotationHasChanged( NewRotation, MIN_ROTATION_CHANGE );
 		}
 
 		//	notify of changes
@@ -469,19 +453,6 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 }
 
 
-
-//----------------------------------------------------
-//	work out our position
-//----------------------------------------------------
-float3 TLPhysics::TPhysicsNode::GetPosition() const					
-{
-	float3 Position(0,0,0);
-
-	m_Transform.Transform( Position );
-	
-	return Position;	
-}
-
 //----------------------------------------------------
 //	
 //----------------------------------------------------
@@ -496,42 +467,6 @@ void TLPhysics::TPhysicsNode::SetPosition(const float3& Position)
 	m_Transform.SetTranslate( Position );
 
 	//	notify change (will set box body)
-	OnTranslationChanged();
-}
-
-
-//----------------------------------------------------
-//	
-//----------------------------------------------------
-void TLPhysics::TPhysicsNode::MovePosition(const float3& Movement,float Timestep)
-{
-#ifdef _DEBUG
-	//	tiny change, dont apply it
-	float MovementLengthSq = Movement.LengthSq();
-	if ( MovementLengthSq < 0.0001f )
-	{
-		TLDebug_Break("Tiny movement - should have been caught by caller");
-		return;
-	}
-#endif
-
-	//	change translation
-	if ( m_Transform.HasTranslate() )
-	{
-		float3 NewPosition = m_Transform.GetTranslate();
-		NewPosition += Movement * Timestep * MOVEMENT_SCALAR;
-		if ( NewPosition.z != 0.f )
-		{
-			TLDebug_Break("z?");
-		}
-		m_Transform.SetTranslate( NewPosition );
-	}
-	else
-	{
-		m_Transform.SetTranslate( Movement * Timestep * MOVEMENT_SCALAR );
-	}
-
-	//	translation has changed
 	OnTranslationChanged();
 }
 

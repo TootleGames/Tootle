@@ -61,6 +61,7 @@ protected:
 
 	FORCEINLINE Bool				CreateRenderNode(TPtr<TLRender::TRenderNode> pParentRenderNode)	{	return CreateRenderNode( pParentRenderNode ? pParentRenderNode->GetNodeRef() : TRef() );	}
 	virtual Bool					CreateRenderNode(TRefRef ParentRenderNode,TRefRef RenderNodeType=TRef(),TLMessaging::TMessage* pInitMessage=NULL);
+	virtual void					OnRenderNodeCreated()							{}	//	called after being created, ref is valid
 	virtual void					OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode);
 	void							DeleteRenderNode();
 	virtual void					OnRenderNodeRemoved(TRefRef RenderNodeRef)			{}	//	called when we get a message from the graph that our node has been removed - NOT invoked by DeleteRenderNode()

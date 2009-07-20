@@ -100,9 +100,8 @@ public:
 
 	FORCEINLINE TRefRef			GetOwnerSceneNodeRef() const				{	return m_OwnerSceneNode;	}
 
-	float3						GetPosition() const;
+	FORCEINLINE const float3&	GetPosition() const							{	return GetTransform().GetTranslate();	}
 	void						SetPosition(const float3& Position);
-	void						MovePosition(const float3& Movement,float Timestep);
 	virtual void				SetTransform(const TLMaths::TTransform& NewTransform,Bool PublishChanges=TRUE);	//	explicit change of transform
 	const TLMaths::TTransform&	GetTransform() const					{	return m_Transform;	}
 	virtual const TLMaths::TTransform&	GetRenderTransform() const		{	return GetTransform();	}

@@ -67,7 +67,7 @@ protected:
 	void				CreateMeshLines(TLAsset::TMesh& Mesh,TPtrArray<TLMaths::TContour>& Contours,Style& LineStyle);	//	create line strips on mesh from a list of contours
 	void				CreateMeshLineStrip(TLAsset::TMesh& Mesh,TLMaths::TContour& Contour,Style& LineStyle);	//	create line strip on mesh from a contour
 
-	Bool				IsTagDatum(TXmlTag& Tag,TRef& DatumRef,TRef& ShapeType);	//	check if tag marked as a datum
+	Bool				IsTagDatum(TXmlTag& Tag,TRef& DatumRef,TRef& ShapeType,Bool& IsJustDatum);	//	check if tag marked as a datum
 
 protected:
 	float				m_SvgLayerZIncrement;	//	every layer we increase the Z position of meshes we generate to avoid Z fighting, this is how much we increment by

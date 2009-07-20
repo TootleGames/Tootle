@@ -171,17 +171,29 @@ Bool TTimelineInstance::ProcessFinalKeyframe(const TLAsset::TTempKeyframeData& K
 	for(u32 uIndex = 0; uIndex < Keyframe.m_pKeyframe->GetSize(); uIndex++)
 	{
 		// Get the list of commands
-		TPtr<TLAsset::TAssetTimelineCommandList> pCmdList = Keyframe.m_pKeyframe->ElementAt(uIndex);
+		//	gr: must faster than using and de-referencing a TPtr all the time
+		TPtr<TLAsset::TAssetTimelineCommandList>& pCmdList = Keyframe.m_pKeyframe->ElementAt(uIndex);
+		TLAsset::TAssetTimelineCommandList& CmdList = *pCmdList;
+		TRefRef GraphRef = CmdList.GetNodeGraphRef();
+		TRefRef NodeRef = CmdList.GetNodeRef();
 
 		// Send out all commands as messages
-		for(u32 uIndex2 = 0; uIndex2 < pCmdList->GetCommands().GetSize(); uIndex2++)
+		for(u32 uIndex2 = 0; uIndex2 < CmdList.GetCommands().GetSize(); uIndex2++)
 		{
 			// Get the command 
-			TLAsset::TAssetTimelineCommand& Cmd = pCmdList->GetCommands().ElementAt(uIndex2);
+			TLAsset::TAssetTimelineCommand& Cmd = CmdList.GetCommands().ElementAt(uIndex2);
 
-			if(!SendCommandAsMessage(&Cmd, NULL, pCmdList->GetNodeGraphRef(), pCmdList->GetNodeRef()))
+			if(!SendCommandAsMessage(&Cmd, NULL, GraphRef, NodeRef ))
 			{
-				TLDebug_Print("Failed to send command");
+				#ifdef _DEBUG
+				TTempString Debug_String("Failed to send timeline command ");
+				Cmd.GetMessageRef().GetString( Debug_String );
+				Debug_String.Append(" to ");
+				NodeRef.GetString( Debug_String );
+				Debug_String.Append(" in ");
+				GraphRef.GetString( Debug_String );
+				TLDebug_Print( Debug_String );
+				#endif
 				return FALSE;
 			}
 		}

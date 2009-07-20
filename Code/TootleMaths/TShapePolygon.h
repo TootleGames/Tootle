@@ -44,6 +44,8 @@ protected:
 	virtual Bool					ImportData(TBinaryTree& Data);
 	virtual Bool					ExportData(TBinaryTree& Data) const;
 	
+	Bool							CalcNormals(TArray<float2>& Normals) const;
+
 protected:
 	TArray<float2>					m_Outline;
 };

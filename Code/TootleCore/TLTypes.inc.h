@@ -94,6 +94,7 @@ public:
 	FORCEINLINE void			Invert()									{	x=-x;	y=-y;	};
 //	FORCEINLINE void			Reflect(const Type2<TYPE>& UpVector);
 	Type2<TYPE>					CrossProduct(const Type2<TYPE>& v) const;
+	float						CrossProductScalar(const Type2<TYPE>& v) const;
 	FORCEINLINE float			DotProduct(const Type2<TYPE>& v) const		{	return (x*v.x) + (y*v.y) ;	}
 	FORCEINLINE float			DotProduct() const							{	return (x*x) + (y*y);	}	//	same as lengthsq!
 
@@ -326,6 +327,15 @@ Type2<TYPE> Type2<TYPE>::CrossProduct(const Type2<TYPE>& v) const
 	xyz.y = ( y * v.x ) - ( x * v.y );
 
 	return xyz;
+}
+
+//------------------------------------------------------
+//	gr: from box2d
+//------------------------------------------------------
+template <typename TYPE>
+float Type2<TYPE>::CrossProductScalar(const Type2<TYPE>& v) const
+{
+	return x * v.y - y * v.x;
 }
 
 

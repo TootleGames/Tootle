@@ -71,39 +71,66 @@ TPtr<TLMaths::TShape> TLMaths::TShapePolygon2D::Transform(const TLMaths::TTransf
 
 
 //-----------------------------------------------------
-//	debug check that matches box2d's convex polygon check
+// Compute normals. Ensure the edges have non-zero length. returns FALSE if has zero-length points
 //-----------------------------------------------------
-Bool TLMaths::TShapePolygon2D::Debug_CheckIsConvex() const
+Bool TLMaths::TShapePolygon2D::CalcNormals(TArray<float2>& Normals) const
 {
-	// Compute normals. Ensure the edges have non-zero length.
-	b2Vec2 m_normals[b2_maxPolygonVertices];
-	for (int32 i = 0; i <(s32)m_Outline.GetSize(); ++i)
+	Bool Result = TRUE;
+	Normals.Empty();
+
+	for ( u32 i=0;	i<m_Outline.GetSize();	i++ )
 	{
 		int32 i1 = i;
 		int32 i2 = i + 1 <(s32)m_Outline.GetSize() ? i + 1 : 0;
 		float2 edge2 = m_Outline[i2] - m_Outline[i1];
 		b2Vec2 edge( edge2.x, edge2.y );
-		b2Assert(edge.LengthSquared() > B2_FLT_EPSILON * B2_FLT_EPSILON);
-		m_normals[i] = b2Cross(edge, 1.0f);
-		m_normals[i].Normalize();
+
+		if ( edge.LengthSquared() < TLMaths_NearZero )
+		{
+			TLDebug_Break("Polygon shape has edge of no length (two points on top of each other)");
+			//	can't return false as the box shape definition will get stuck in a loop. this function needs
+			//	to either return valid/true/false
+			//	im just going to set a normal and let it continue
+			//return FALSE;
+			Normals.Add( float2( 0.f, 1.f ) );
+			Result = FALSE;
+		}
+		else
+		{
+			b2Vec2 Normal = b2Cross(edge, 1.0f);
+			Normal.Normalize();
+			Normals.Add( float2( Normal.x, Normal.y ) );
+		}
 	}
 
+	return Result;
+}
+
+
+//-----------------------------------------------------
+//	debug check that matches box2d's convex polygon check
+//-----------------------------------------------------
+Bool TLMaths::TShapePolygon2D::Debug_CheckIsConvex() const
+{
+	// Compute normals. Ensure the edges have non-zero length.
+	//	gr: note, polygon shape may have more than b2_maxPolygonVertices(8) points so don't use this for the temp normal size
+	TFixedArray<float2,500> Normals;
+	if ( !CalcNormals( Normals ) )
+		return FALSE;
+
 	// Ensure the polygon is convex.
-	for (int32 i = 0; i <(s32)m_Outline.GetSize(); ++i)
+	for ( u32 i=0;	i<m_Outline.GetSize();	i++)
 	{
-		for (int32 j = 0; j <(s32)m_Outline.GetSize(); ++j)
+		for ( u32 j=0;	j<m_Outline.GetSize();	j++)
 		{
 			// Don't check vertices on the current edge.
-			if (j == i || j == (i + 1) % m_Outline.GetSize())
-			{
+			if (j == i || j == (i + 1) % m_Outline.GetSize() )
 				continue;
-			}
 			
 			// Your polygon is non-convex (it has an indentation).
 			// Or your polygon is too skinny.
-			float2 edge2 = m_Outline[j] - m_Outline[i];
-			b2Vec2 edge( edge2.x, edge2.y );
-			float32 s = b2Dot(m_normals[i], edge);
+			float2 edge = m_Outline[j] - m_Outline[i];
+			float s = Normals[i].DotProduct( edge );
 
 			Bool IsConcave = (s < -b2_linearSlop);
 
@@ -125,37 +152,18 @@ Bool TLMaths::TShapePolygon2D::Debug_CheckIsConvex() const
 Bool TLMaths::TShapePolygon2D::IsClockwise() const
 {
 	// Compute normals. Ensure the edges have non-zero length.
-	b2Vec2 m_normals[b2_maxPolygonVertices];
-	for (int32 i = 0; i <(s32)m_Outline.GetSize(); ++i)
-	{
-		int32 i1 = i;
-		int32 i2 = i + 1 <(s32)m_Outline.GetSize() ? i + 1 : 0;
-		float2 edge2 = m_Outline[i2] - m_Outline[i1];
-		b2Vec2 edge( edge2.x, edge2.y );
-
-		if ( edge.LengthSquared() < TLMaths_NearZero )
-		{
-			TLDebug_Break("Polygon shape has edge of no length (two points on top of each other)");
-			//	can't return false as the box shape definition will get stuck in a loop. this function needs
-			//	to either return valid/true/false
-			//	im just going to set a normal and let it continue
-			//return FALSE;
-			m_normals[i].Set( 0.f, 1.f );
-		}
-		else
-		{
-			m_normals[i] = b2Cross(edge, 1.0f);
-			m_normals[i].Normalize();
-		}
-	}
+	TFixedArray<float2,500> Normals;
+	if ( !CalcNormals( Normals ) )
+		return FALSE;
 
 	// Ensure the polygon is counter-clockwise.
-	for (int32 i = 1; i <(s32)m_Outline.GetSize(); ++i)
+	for ( u32 i=1;	i<m_Outline.GetSize();	i++ )
 	{
-		float32 cross = b2Cross(m_normals[i-1], m_normals[i]);
+		float cross = Normals[i-1].CrossProductScalar( Normals[i] );
 
 		// Keep asinf happy.
-		cross = b2Clamp(cross, -1.0f, 1.0f);
+		TLMaths::Limit( cross, -1.f, 1.f );
+		//cross = b2Clamp(cross, -1.0f, 1.0f);
 
 		// You have consecutive edges that are almost parallel on your polygon.
 		float32 angle = asinf(cross);

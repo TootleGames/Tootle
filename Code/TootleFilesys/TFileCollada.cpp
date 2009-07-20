@@ -641,11 +641,15 @@ Bool TLFileSys::TFileCollada::ImportScene(TLAsset::TMesh& Mesh,TXmlTag& RootTag)
 		{
 			//	is named as a datum
 			TRef DatumRef,ShapeRef;
-			if ( TLString::IsDatumString( *pNodeName, DatumRef, ShapeRef ) )
+			Bool IsJustDatum = TRUE;
+			if ( TLString::IsDatumString( *pNodeName, DatumRef, ShapeRef, IsJustDatum ) )
 			{
 				//	create a datum on the mesh... from the geometry mesh['s bounds]
 				CreateDatum( Mesh, DatumRef, ShapeRef, *pGeometry->m_pMesh );
-				continue;
+
+				//	if it's just a datum, don't create geometry
+				if ( IsJustDatum )
+					continue;
 			}
 		}
 

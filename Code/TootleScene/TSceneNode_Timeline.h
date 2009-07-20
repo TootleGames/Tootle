@@ -1,8 +1,7 @@
-
-
+#pragma once
 #include "TSceneNode_Object.h"
-
 #include <TootleGame/TTimeline.h>
+
 
 namespace TLScene
 {

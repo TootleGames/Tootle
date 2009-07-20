@@ -24,7 +24,7 @@ namespace TLString
 	FORCEINLINE Bool	ReadNextFloat(const TString& String,u32& CharIndex,float& FloatType,Bool ReturnInvalidFloatZero);
 	Bool				ReadNextFloatArray(const TString& String,u32& CharIndex,float* pFloats,u32 FloatSize,Bool ReturnInvalidFloatZero=FALSE);
 
-	Bool				IsDatumString(const TString& String,TRef& DatumRef,TRef& ShapeType);	//	check if string marked as a datum
+	Bool				IsDatumString(const TString& String,TRef& DatumRef,TRef& ShapeType,Bool& IsJustDatum);	//	check if string marked as a datum. if IsOnlyDatum is FALSE then create geometry as well as a datum
 
 	FORCEINLINE Bool	IsStringDirty(const TString& String)	{	return TRUE;	}	//	gr: for now assume all strings need cleaning up
 	Bool				CleanString(TString& String);									//	cleanup string. Convert "\n" to a linefeed, convert tabs, do other generic string-replace's etc, returns if any changes are made

@@ -448,6 +448,9 @@ Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TRefRef Ren
 	if ( !m_RenderNodeRef.IsValid() )
 		return FALSE;
 
+	//	render node has been created (not added yet)
+	OnRenderNodeCreated();
+
 	//	subscribe to the render graph to catch when our node has been added
 	this->SubscribeTo( TLRender::g_pRendergraph );
 

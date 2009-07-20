@@ -221,23 +221,26 @@ Bool TLFileSys::TFileSimpleVector::ImportPolygonTag(TPtr<TLAsset::TMesh>& pMesh,
 
 	//	turn into datum instead of geometry
 	TRef DatumRef,DatumShapeType;
-	if ( IsTagDatum( Tag, DatumRef, DatumShapeType ) )
+	Bool IsJustDatum=TRUE;
+	if ( IsTagDatum( Tag, DatumRef, DatumShapeType, IsJustDatum ) )
 	{
 		pMesh->CreateDatum( OutlinePoints, DatumRef, DatumShapeType );
+
+		//	just a datum, don't create geometry
+		if ( IsJustDatum )
+			return TRUE;
 	}
-	else
-	{
-		//	turn into a polygon in the mesh
-		TLMaths::TTessellator* pTessellator = TLMaths::Platform::CreateTessellator( pMesh );
-		if ( !pTessellator )
-			return FALSE;
+
+	//	turn into a polygon in the mesh
+	TLMaths::TTessellator* pTessellator = TLMaths::Platform::CreateTessellator( pMesh );
+	if ( !pTessellator )
+		return FALSE;
 		
-		TPtr<TLMaths::TContour> pContour = new TLMaths::TContour( OutlinePoints, NULL );
-		pTessellator->AddContour(pContour);
+	TPtr<TLMaths::TContour> pContour = new TLMaths::TContour( OutlinePoints, NULL );
+	pTessellator->AddContour(pContour);
 		
-		if ( !pTessellator->GenerateTessellations( TLMaths::TLTessellator::WindingMode_Odd ) )
-			return FALSE;
-	}
+	if ( !pTessellator->GenerateTessellations( TLMaths::TLTessellator::WindingMode_Odd ) )
+		return FALSE;
 
 	return TRUE;
 }
@@ -463,7 +466,8 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 
 	//	turn into datum instead of geometry
 	TRef DatumRef,DatumShapeType;
-	if ( IsTagDatum( Tag, DatumRef, DatumShapeType ) )
+	Bool IsJustDatum = TRUE;
+	if ( IsTagDatum( Tag, DatumRef, DatumShapeType, IsJustDatum ) )
 	{
 		if ( Contours.GetSize() == 1 )
 		{
@@ -478,32 +482,36 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 			
 			pMesh->CreateDatum( ContourPoints, DatumRef, DatumShapeType );
 		}
+
+		//	skip creating geometry if datum is marked as just a datum
+		if ( IsJustDatum )
+			return TRUE;
 	}
-	else	//	create geometry
+	
+	//	create geometry
+	
+	//	get style
+	Style TagStyle( Tag.GetProperty("style") );
+
+	//	if a filled vector then create tesselations from the outline
+	if ( TagStyle.m_HasFill )
 	{
-		//	get style
-		Style TagStyle( Tag.GetProperty("style") );
-
-		//	if a filled vector then create tesselations from the outline
-		if ( TagStyle.m_HasFill )
+		//	tesselate those bad boys!
+		TLMaths::TTessellator* pTessellator = TLMaths::Platform::CreateTessellator( pMesh );
+		if ( pTessellator )
 		{
-			//	tesselate those bad boys!
-			TLMaths::TTessellator* pTessellator = TLMaths::Platform::CreateTessellator( pMesh );
-			if ( pTessellator )
+			for ( u32 c=0;	c<Contours.GetSize();	c++ )
 			{
-				for ( u32 c=0;	c<Contours.GetSize();	c++ )
-				{
-					pTessellator->AddContour( Contours[c] );
-				}
-				pTessellator->SetVertexColour( m_VertexColoursEnabled ? &TagStyle.m_FillColour : NULL );
-				pTessellator->GenerateTessellations( TLMaths::TLTessellator::WindingMode_Odd );
+				pTessellator->AddContour( Contours[c] );
 			}
+			pTessellator->SetVertexColour( m_VertexColoursEnabled ? &TagStyle.m_FillColour : NULL );
+			pTessellator->GenerateTessellations( TLMaths::TLTessellator::WindingMode_Odd );
 		}
+	}
 
-		if ( TagStyle.m_HasStroke )
-		{
-			CreateMeshLines( *pMesh, Contours, TagStyle );
-		}
+	if ( TagStyle.m_HasStroke )
+	{
+		CreateMeshLines( *pMesh, Contours, TagStyle );
 	}
 
 	return TRUE;
@@ -562,11 +570,17 @@ Bool TLFileSys::TFileSimpleVector::ImportRectTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 
 	//	turn into datum instead of geometry
 	TRef DatumRef,DatumShapeType;
-	if ( IsTagDatum( Tag, DatumRef, DatumShapeType ) )
+	Bool IsJustDatum = TRUE;
+	if ( IsTagDatum( Tag, DatumRef, DatumShapeType, IsJustDatum ) )
 	{
 		pMesh->CreateDatum( Vertexes, DatumRef, DatumShapeType );
+
+		//	skip creating geometry if just a datum
+		if ( IsJustDatum )
+			return TRUE;
 	}
-	else if ( TagStyle.m_HasFill || TagStyle.m_HasStroke )	//	create polygons
+	
+	if ( TagStyle.m_HasFill || TagStyle.m_HasStroke )	//	create polygons
 	{
 		//	create quad
 		if ( TagStyle.m_HasFill )
@@ -671,7 +685,7 @@ void TLFileSys::TFileSimpleVector::CreateMeshLineStrip(TLAsset::TMesh& Mesh,TLMa
 //--------------------------------------------------------
 //	check if tag marked as a datum
 //--------------------------------------------------------
-Bool TLFileSys::TFileSimpleVector::IsTagDatum(TXmlTag& Tag,TRef& DatumRef,TRef& ShapeType)
+Bool TLFileSys::TFileSimpleVector::IsTagDatum(TXmlTag& Tag,TRef& DatumRef,TRef& ShapeType,Bool& IsJustDatum)
 {
 	//	get the "id" property
 	const TString* pIDString = Tag.GetProperty("id");
@@ -679,7 +693,7 @@ Bool TLFileSys::TFileSimpleVector::IsTagDatum(TXmlTag& Tag,TRef& DatumRef,TRef& 
 		return FALSE;
 
 	//	check if string marked as a datum
-	return TLString::IsDatumString( *pIDString, DatumRef, ShapeType );
+	return TLString::IsDatumString( *pIDString, DatumRef, ShapeType, IsJustDatum );
 }
 
 
