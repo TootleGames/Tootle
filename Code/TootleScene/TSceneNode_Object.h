@@ -70,12 +70,26 @@ protected:
 	TRef							CreateAudioNode(TRefRef AudioRef, TRefRef AudioAsset, const TLAudio::TAudioProperties& Props);
 	Bool							RemoveAudioNode(TRefRef AudioRef);
 
+	// Life handling
+	FORCEINLINE void				SetLife(const float& fLife)			{ DoChangeLife(fLife - m_fLife); }
+	FORCEINLINE	float				GetLife()					const	{ return m_fLife; }
+
+	void							DoChangeLife(const float& fLifeChange);
+
+	virtual Bool					CanChangeLife(const float& fLifeChange)		{ return (m_fLife <= 0.0f ? FALSE : TRUE); }
+	virtual void					OnLifeChange(const float& fLifeChange)		{ if(GetLife() <= 0.0f)	OnDeath(); }
+	virtual void					OnDeath();
+
+	// Debug render/physics
 	void							Debug_EnableRenderDebugPhysics(Bool Enable);	//	turn on/off debug render node for physics
 
 private:
 	TRef					m_RenderNodeRef;
 	TRef					m_PhysicsNodeRef;
 	TRef					m_Debug_RenderDebugPhysicsNodeRef;	//	debug rendernode to render our physics
+
+	float					m_fLife;						// Object life
+
 	u8						m_PublishTransformOnWake;		//	TTransform bitmask - true if our transform was changed by the physics whilst we were asleep. When we wake, we send our latest transform to the render node
 	
 	SyncBool				m_OnEditPhysicsWasEnabled;			//	when we start editing this node we disable the physics, this is what it was set to before so we don't enable a previously disabled node. If Wait then we haven't initialised this so shouldn't be restoring it

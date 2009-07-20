@@ -1,4 +1,5 @@
 #include "TSceneNode_Object.h"
+#include "TScenegraph.h"
 #include <TootlePhysics/TPhysicsGraph.h>
 
 
@@ -10,6 +11,7 @@ using namespace TLScene;
 
 TSceneNode_Object::TSceneNode_Object(TRefRef NodeRef,TRefRef TypeRef) :
 	TSceneNode_Transform		( NodeRef, TypeRef ),
+	m_fLife(100.0f),
 	m_PublishTransformOnWake	( 0x0 ),
 	m_OnEditPhysicsWasEnabled	( SyncWait )
 {
@@ -214,6 +216,11 @@ void TSceneNode_Object::SetProperty(TLMessaging::TMessage& Message)
 	if ( Message.ImportData("EnCollision", Enable ) )
 		EnablePhysicsNodeCollision( Enable );
 
+	// Import life
+	float fLife;
+	if(Message.ImportData("Life", fLife))
+		SetLife(fLife);
+
 	//	read super-properties
 	TSceneNode_Transform::SetProperty( Message );
 }
@@ -328,6 +335,13 @@ void TSceneNode_Object::ProcessMessage(TLMessaging::TMessage& Message)
 		}
 		return;
 	}
+	else if( Message.GetMessageRef() == STRef(L,i,f,e,C) )	// "LifeChange"
+	{
+		float fLifeChange;
+		if(Message.Read(fLifeChange))
+			DoChangeLife(fLifeChange);
+	}
+
 
 
 	//	do normal process
@@ -664,6 +678,23 @@ void TLScene::TSceneNode_Object::EnableRenderNode(Bool Enable)
 
 }
 
+
+void TLScene::TSceneNode_Object::DoChangeLife(const float& fLifeChange)
+{
+	if((fLifeChange != 0.0f) && CanChangeLife(fLifeChange))
+	{
+		m_fLife += fLifeChange;
+
+		OnLifeChange(fLifeChange);
+	}
+}
+
+
+void TLScene::TSceneNode_Object::OnDeath()
+{
+	// Remove the node from the scenegraph as default behaviour
+	TLScene::g_pScenegraph->RemoveNode(GetNodeRef());
+}
 
 
 //--------------------------------------------------------
