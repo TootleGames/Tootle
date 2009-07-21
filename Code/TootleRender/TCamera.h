@@ -72,8 +72,8 @@ public:
 	//	camera virtual
 	virtual Bool				GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const	{	return FALSE;	}	//	convert point on screen to a 3D ray
 	virtual Bool				GetWorldPos(float3& WorldPos,float WorldDepth,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const	{	return FALSE;	}	//	convert point on screen to a 3D position
-
 	virtual Bool				GetScreenPos(Type2<s32>& ScreenPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const { return FALSE; } // convert 3d pos into screen 2d point
+	virtual float				GetScreenSizeFromWorldSize(float WorldUnit,float Depth)		{	return WorldUnit;	};	//	convert a world unit to pixel size
 
 protected:
 	virtual void				OnCameraChanged();			//	
@@ -159,12 +159,13 @@ public:
 
 	const TLMaths::TBox2D&	GetOrthoViewportBox() const			{	return m_OrthoViewportBox;	}
 	const TLMaths::TBox2D&	GetOrthoRenderTargetBox() const		{	return m_OrthoRenderTargetBox;	}
-	float					GetOrthoRange() const	{	return 100.f;	}
+	float					GetOrthoRange() const				{	return 100.f;	}
 
 	virtual Bool			GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;			//	convert point on screen to a 3D ray
 	virtual Bool			GetWorldPos(float3& WorldPos,float WorldDepth,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;	//	convert point on screen to a 3D position
 
 	virtual Bool			GetScreenPos(Type2<s32>& ScreenPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const; // convert 3d pos into screen 2d point
+	virtual float			GetScreenSizeFromWorldSize(float WorldUnit,float Depth)		{	return (WorldUnit/GetOrthoRange()) * (float)m_OrthoRenderTargetBox.GetWidth();	};	//	convert a world unit to pixel size
 
 protected:
 	TLMaths::TBox2D			m_OrthoViewportBox;		//	ortho viewport dimensions as a box

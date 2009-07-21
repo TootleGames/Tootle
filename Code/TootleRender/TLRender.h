@@ -64,6 +64,8 @@ namespace TLRender
 
 		void					GetViewportSize(Type4<s32>& ViewportSize,const Type4<s32>& ViewportTargetMaxSize,const Type4<s32>& RenderTargetSize,const Type4<s32>& RenderTargetMaxSize,TScreenShape ScreenShape);	//	get render target's viewport size from the size and the screen size
 	
+		FORCEINLINE void		ClampPointSpriteSize(float& PointSize)		{	TLMaths::Limit( PointSize, 0.f, 64.f );	}	//	gr: 64 is the limit on the iphone. change this to use glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, sizes); to get accurate sizes. 
+
 		//	scene settings - only calls platform implementations as required - inlined for speed
 		FORCEINLINE void		EnableWireframe(Bool Enable);
 		FORCEINLINE void		EnableAlpha(Bool Enable,Bool AddBlending=FALSE);
@@ -75,7 +77,8 @@ namespace TLRender
 		FORCEINLINE void		SetSceneColour(const TColour& Colour,Bool ForceEnableAlpha=FALSE,Bool AddBlending=FALSE);		//	if alpha < 1 then it will enable alpha too
 		FORCEINLINE void		SetLineWidth(float Width);
 		FORCEINLINE void		SetPointSize(float Size);
-		
+		FORCEINLINE void		EnablePointSprites(Bool Enable);
+
 
 		//	platform specific implementations - dumb - just do whatever is specified
 		//	gr: if your code cannot resolve these functions, include the platform header 
@@ -106,6 +109,7 @@ namespace TLRender
 			FORCEINLINE void		SetSceneColour(const TColour& Colour);
 			FORCEINLINE void		SetLineWidth(float Width);
 			FORCEINLINE void		SetPointSize(float Size);
+			FORCEINLINE void		EnablePointSprites(Bool Enable);
 		}
 	};
 }
@@ -238,6 +242,18 @@ FORCEINLINE void TLRender::Opengl::SetScissor(u32 x, u32 y, u32 width, u32 heigh
 }
 
 
+FORCEINLINE void TLRender::Opengl::EnablePointSprites(Bool Enable)
+{
+	static SyncBool g_SceneEnabled = SyncWait;
+	SyncBool NewEnabled = Enable ? SyncTrue : SyncFalse;
+
+	if ( NewEnabled != g_SceneEnabled )
+	{
+		Platform::EnablePointSprites( Enable );
+		g_SceneEnabled = NewEnabled;
+	}
+}
+
 
 //---------------------------------------------------
 //	if < 1 then it will enable alpha too
@@ -283,7 +299,7 @@ void TLRender::Opengl::SetPointSize(float Size)
 	
 	if ( g_ScenePointSize != Size )
 	{
-		Platform::SetLineWidth( Size );
+		Platform::SetPointSize( Size );
 		g_ScenePointSize = Size;
 	}
 }

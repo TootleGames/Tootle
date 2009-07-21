@@ -1101,10 +1101,9 @@ void TLRender::TRenderTarget::DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset:
 		float LineWidth = pRenderNode->GetLineWidth();
 		if ( LineWidth < 1.f )
 		{
-			//	gr: need some kinda world->screen space conversion.. drawing is in pixels, widths are in world space
-			float MeshLineWidth = Mesh.GetLineWidth() * 2.f;
-			MeshLineWidth *= 320.f / 100.f;	//	ortho scale
-			LineWidth = MeshLineWidth;
+			//	convert world-space line width to pixel size
+			const float3& NodePos = pRenderNode->GetWorldPosConst();
+			LineWidth = GetCamera()->GetScreenSizeFromWorldSize( Mesh.GetLineWidth(), NodePos.z );
 
 			//	min width
 			if ( LineWidth < 1.f )
@@ -1130,7 +1129,53 @@ void TLRender::TRenderTarget::DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset:
 	if ( RenderFlags( TRenderNode::RenderFlags::Debug_Points ) )
 	{
 		Opengl::SetPointSize( 8.f );
+		Opengl::EnablePointSprites(FALSE);
 		Opengl::DrawPrimitivePoints( &Vertexes );
+	}
+
+	//	draw points as point sprites
+	if ( RenderFlags( TRenderNode::RenderFlags::UsePointSprites ) )
+	{
+		//	convert world-space point size to pixel size
+		const float3& NodePos = pRenderNode->GetWorldPosConst();
+		float PointSize = GetCamera()->GetScreenSizeFromWorldSize( pRenderNode->GetPointSpriteSize(), NodePos.z );
+
+/*
+		static PFNGLPOINTPARAMETERFARBPROC  glPointParameterfARB  = NULL;
+		static PFNGLPOINTPARAMETERFVARBPROC glPointParameterfvARB = NULL;
+		if ( !glPointParameterfARB || !glPointParameterfvARB )
+		{
+			glPointParameterfARB  = (PFNGLPOINTPARAMETERFARBPROC)wglGetProcAddress("glPointParameterfARB");
+			glPointParameterfvARB = (PFNGLPOINTPARAMETERFVARBPROC)wglGetProcAddress("glPointParameterfvARB");
+		}
+		
+		float quadratic[] =  { 1.0f, 0.0f, 0.01f };
+		glPointParameterfvARB( GL_POINT_DISTANCE_ATTENUATION_ARB, quadratic );
+
+		// Query for the max point size supported by the hardware
+		float maxSize = 0.0f;
+		glGetFloatv( GL_POINT_SIZE_MAX_ARB, &maxSize );
+		glPointParameterfARB( GL_POINT_FADE_THRESHOLD_SIZE_ARB, 60.0f );
+
+		glPointParameterfARB( GL_POINT_SIZE_MIN_ARB, 1.f );
+		glPointParameterfARB( GL_POINT_SIZE_MAX_ARB, maxSize );
+		*/
+
+		//	enable point sprites
+		Opengl::EnablePointSprites(TRUE);
+
+		//	set point-size UV mapping (otherwise will just be uv's of 0,0)
+		glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
+
+		//	clamp size
+		Opengl::ClampPointSpriteSize( PointSize );
+		Opengl::SetPointSize( PointSize );
+
+		//	draw points
+		Opengl::DrawPrimitivePoints( &Vertexes );
+
+		//	undo texture env changes
+		glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_FALSE);
 	}
 
 }

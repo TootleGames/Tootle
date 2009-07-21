@@ -167,6 +167,7 @@ TLRender::TRenderNode::TRenderNode(TRefRef RenderNodeRef,TRefRef TypeRef) :
 	TLGraph::TGraphNode<TLRender::TRenderNode>	( RenderNodeRef, TypeRef ),
 	m_Data						( "Data" ),
 	m_LineWidth					( 0.f ),
+	m_PointSpriteSize			( 1.f ),
 	m_WorldPosValid				( SyncFalse ),
 	m_Colour					( 1.f, 1.f, 1.f, 1.f ),
 	m_WorldTransformValid		( SyncFalse )
@@ -621,6 +622,9 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 	//	line width
 	Message.ImportData("LineWidth", m_LineWidth );
 
+	//	point sprite size
+	Message.ImportData("PointSize", m_PointSpriteSize );
+
 	//	mesh
 	if ( Message.ImportData("MeshRef", m_MeshRef ) )
 	{
@@ -639,6 +643,14 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 
 		//	texture ref changed
 		OnTextureRefChanged();
+	}
+
+	//	enable state
+	Bool Enabled = TRUE;
+	if ( Message.ImportData("Enabled", Enabled ) )
+	{
+		//	set/unset flag
+		SetEnabled( Enabled );
 	}
 
 	//	get render flags to set

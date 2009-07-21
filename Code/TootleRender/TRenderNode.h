@@ -103,6 +103,7 @@ public:
 			UseVertexUVs,				//	bind vertex UVs of mesh. if not set when rendering we have no texture mapping
 			UseMeshLineWidth,			//	calculates mesh/world line width -> screen/pixel width
 			UseNodeColour,				//	set when colour is something other than 1,1,1,1 to save some processing (off by default!)
+			UsePointSprites,			//	render points of a mesh as point sprites
 			EnableCull,					//	enable camera/frustum/zone culling. if disabled, the whole tree below is disabled
 			ForceCullTestChildren,		//	if we are not culled, still do a cull test with children. By default, when not culled, we don't test children as they should be encapsulated within our bounds
 			InvalidateBoundsByChildren,	//	default behaviour is to invalidate our bounding box when child CHANGES. we can disable this for certain cases - eg. root objects, which when invalidated cause the entire tree to recalculate stuff - still invalidated when a child is ADDED to the tree (this may have to change to "first-calculation of bounds")
@@ -136,6 +137,8 @@ public:
 	
 	FORCEINLINE float						GetLineWidth() const						{	return m_LineWidth;	}
 	FORCEINLINE void						SetLineWidth(float Width)					{	m_LineWidth = Width;	}
+	FORCEINLINE float						GetPointSpriteSize() const					{	return m_PointSpriteSize;	}
+	FORCEINLINE void						SetPointSpriteSize(float Width)				{	m_PointSpriteSize = Width;	}
 
 	FORCEINLINE TFlags<RenderFlags::Flags>&	GetRenderFlags()							{	return m_RenderFlags;	}
 	FORCEINLINE const TFlags<RenderFlags::Flags>&	GetRenderFlags() const				{	return m_RenderFlags;	}
@@ -191,6 +194,7 @@ public:
 	
 	const float3&							GetWorldPos();								//	calculate our new world position from the latest scene transform
 	FORCEINLINE const float3&				GetWorldPos(SyncBool& IsValid) 				{	GetWorldPos();	IsValid = m_WorldPosValid;	return m_WorldPos;	}
+	FORCEINLINE const float3&				GetWorldPosConst() const					{	return m_WorldPos;	}
 
 	//	get world shapes/datums - recalculates if old
 	const TLMaths::TShapeBox&				GetWorldBoundsBox()							{	return m_BoundsBox.CalcWorldShape( *this );	}
@@ -253,6 +257,7 @@ protected:
 
 	TColour						m_Colour;					//	colour of render node - only works if UseNodeColour is set
 	float						m_LineWidth;				//	this is an overriding line width for rendering lines in the mesh. In pixel width. NOT like the mesh line width which is in a world-size.
+	float						m_PointSpriteSize;			//	size of point sprites in world space. API renders these in pixel sizes so we do a conversion in the render
 	float3						m_WorldPos;					//	we always calc the world position on render, even if we dont calc the bounds box/sphere/etc, it's quick and handy!
 	SyncBool					m_WorldPosValid;			//	if this is not valid then the transform of this node has changed since our last render
 
