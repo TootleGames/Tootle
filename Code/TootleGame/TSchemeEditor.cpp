@@ -58,8 +58,17 @@ Bool TLGame::TSchemeEditor::Initialise(TRefRef EditorScheme,TRefRef GraphRef,TRe
 		return FALSE;
 	}
 
+	//	set vars
 	m_SchemeRootNode = SchemeRootNode;
 	m_GameRenderTarget = GameRenderTarget;
+
+	//	pre-fetch render target
+	m_pGameRenderTarget = TLRender::g_pScreenManager->GetRenderTarget( m_GameRenderTarget, m_pGameScreen );
+	if ( !m_pGameRenderTarget )
+	{
+		TLDebug_Break("game's render target expected");
+		return FALSE;
+	}
 
 	TLGraph::TGraphNodeBase* pRootNode = m_pGraph->FindNodeBase( m_SchemeRootNode );
 	if ( !pRootNode )
@@ -113,17 +122,25 @@ void TLGame::TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 		
 		if ( ActionRef == m_NewSceneNodeDragAction && m_NewSceneNodeDragAction.IsValid() )
 		{
-			ProcessMouseMessage( m_NewSceneNodeDragAction, Message );
+			ProcessMouseMessage( ActionRef, Message, FALSE );
 			return;
 		}
 		else if ( ActionRef == m_NewSceneNodeClickAction && m_NewSceneNodeClickAction.IsValid() )
 		{
-			ProcessMouseMessage( m_NewSceneNodeClickAction, Message );
+			ProcessMouseMessage( ActionRef, Message, TRUE );
 			return;
 		}
-		else if ( ActionRef == "Move" )
+
+		//	catch mouse actions
+		if ( TLGui::g_pWidgetManager->IsClickActionRef( ActionRef ) )
 		{
-			//	temp
+			ProcessMouseMessage( ActionRef, Message, TRUE );
+			return;
+		}
+		else if ( TLGui::g_pWidgetManager->IsMoveActionRef( ActionRef ) )
+		{
+			ProcessMouseMessage( ActionRef, Message, FALSE );
+			return;
 		}
 		else
 		{
@@ -522,7 +539,7 @@ void TLGame::TSchemeEditor::OnEditorRenderNodeAdded()
 //----------------------------------------------------------
 //	handle mouse messages 
 //----------------------------------------------------------
-void TLGame::TSchemeEditor::ProcessMouseMessage(TRefRef ActionRef,TLMessaging::TMessage& Message)
+void TLGame::TSchemeEditor::ProcessMouseMessage(TRefRef ActionRef,TLMessaging::TMessage& Message,Bool IsClickAction)
 {
 	//	dragging new scene node around
 	if ( ActionRef == m_NewSceneNodeDragAction && m_NewSceneNode.IsValid() )
@@ -538,16 +555,8 @@ void TLGame::TSchemeEditor::ProcessMouseMessage(TRefRef ActionRef,TLMessaging::T
 		//	convert to world pos in game [render target]
 
 		//	get game's render target
-		TPtr<TLRender::TScreen> pScreen;
-		TLRender::TRenderTarget* pRenderTarget = TLRender::g_pScreenManager->GetRenderTarget( m_GameRenderTarget, pScreen );
-		if ( !pRenderTarget )
-		{
-			TLDebug_Break("Game's rendertarget expected");
-			return;
-		}
-
 		float3 WorldPos;
-		if ( !pScreen->GetWorldPosFromScreenPos( *pRenderTarget, WorldPos, 0.f, ScreenPos ) )
+		if ( !m_pGameScreen->GetWorldPosFromScreenPos( *m_pGameRenderTarget, WorldPos, 0.f, ScreenPos ) )
 		{
 			//	failed - probably dragged outside the game's window, drop
 			TLDebug_Break("todo: drop node");

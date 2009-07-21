@@ -37,7 +37,7 @@ protected:
 
 public:
 	TSchemeEditor();
-	~TSchemeEditor();
+	virtual ~TSchemeEditor();
 
 	Bool						Initialise(TRefRef EditorScheme,TRefRef GraphRef,TRefRef SchemeRootNode,TRefRef GameRenderTarget,TBinaryTree* pCommonNodeData);
 
@@ -50,16 +50,16 @@ protected:
 	void						OnEditorRenderNodeAdded();							//	editor render node is ready to be used
 
 	void						CreateNodeWidgets(TLGraph::TGraphNodeBase& Node);		//	create nodes widget to allow us to drag around in-game nodes. recurses down the tree
-	void						ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a game node
+	virtual void				ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a game node
 	void						OnNodeSelected(TRefRef NodeRef);						//	node has been selected
 	void						OnNodeDrag(TRefRef NodeRef,const float3& DragAmount);	//	node has been dragged
 	void						OnNodeUnselected(TRefRef NodeRef);						//	node has been selected
 	void						EnableNodeWidgets(Bool Enable);							//	enable/disable node widgets
 
-	void						ProcessIconMessage(TRefRef IconRef,TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a editor icon
+	virtual void				ProcessIconMessage(TRefRef IconRef,TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a editor icon
 	void						CreateEditorIcons();									//	create icons for the editor
 
-	void						ProcessMouseMessage(TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle mouse messages 
+	virtual void				ProcessMouseMessage(TRefRef ActionRef,TLMessaging::TMessage& Message,Bool IsClickAction);		//	handle mouse messages 
 	void						UnselectAllNodes();			//	unselect all nodes
 	void						ClearScheme();				//	remove all nodes
 
@@ -76,6 +76,8 @@ protected:
 	TBinaryTree						m_CommonNodeData;		//	data attached to the init of all nodes we create
 	TRef							m_SchemeRootNode;		//	root node to modify - we manipulate all the nodes below this
 	TRef							m_GameRenderTarget;		//	render target that the user is viewing the game through
+	TPtr<TLRender::TScreen>			m_pGameScreen;			//	cache ptr to game's screen which contains render target
+	TPtr<TLRender::TRenderTarget>	m_pGameRenderTarget;	//	cache ptr to game's render target
 	TPtrArray<TLGui::TWidgetDrag>	m_NodeWidgets;			//	widgets to manipulate existing nodes
 	TRef							m_NewSceneNode;			//	ref of the new in-game node we've created from an icon and currently dragging into the game
 	TRef							m_NewSceneNodeDragAction;	//	action for the mouse to look out for when we are dragging a new scene node

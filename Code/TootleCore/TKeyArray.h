@@ -86,6 +86,8 @@ public:
 
 	FORCEINLINE TYPE*			Find(const KEYTYPE& Key)				{	PAIRTYPE* pPair = m_Array.Find( Key );	return pPair ? &pPair->m_Item : NULL;	}
 	FORCEINLINE const TYPE*		Find(const KEYTYPE& Key) const			{	const PAIRTYPE* pPair = m_Array.FindConst( Key );	return pPair ? &pPair->m_Item : NULL;	}
+	FORCEINLINE s32				FindIndex(const KEYTYPE& Key)			{	return m_Array.FindIndex( Key );	}
+	FORCEINLINE s32				FindIndex(const KEYTYPE& Key) const		{	return m_Array.FindIndex( Key );	}
 	FORCEINLINE TYPE&			ElementAt(u32 Index)					{	return GetPairAt( Index ).m_Item;	}
 	FORCEINLINE const TYPE&		ElementAt(u32 Index) const				{	return GetPairAt( Index ).m_Item;	}
 	FORCEINLINE KEYTYPE&		GetKeyAt(u32 Index)						{	return GetPairAt( Index ).m_Key;	}
