@@ -97,6 +97,8 @@ public:
 	
 	FORCEINLINE Bool				SetSize(u32 NewSize)				{	return m_Data.SetSize( NewSize );	}
 	FORCEINLINE u32					GetSize() const						{	return m_Data.GetSize();	}
+	FORCEINLINE Bool				IsUnread() const					{	return (m_ReadPos == -1);	}
+	FORCEINLINE void				SetUnread()							{	m_ReadPos = -1;	}
 	FORCEINLINE void				ResetReadPos()						{	m_ReadPos = 0;	}
 	FORCEINLINE s32					GetReadPos() const					{	return m_ReadPos;	}
 	FORCEINLINE u32					GetSizeUnread() const;

@@ -50,6 +50,7 @@ public:
 	FORCEINLINE Bool			ReferenceDataTree(const TPtr<TBinaryTree>& pData,Bool OverwriteDataRef=TRUE)	{	const TBinaryTree* pBinaryTree = pData.GetObject();	return pBinaryTree ? ReferenceDataTree( *pBinaryTree, OverwriteDataRef ) : FALSE;	}
 	Bool						AddUnreadChildren(TBinaryTree& Data,Bool ReplaceExisting);		//	add children from Data to this when unread - if ReplaceExisting then we overwrite existing child data with that ref
 	void						SetChildrenRead(TRefRef DataRef);				//	mark any children with this ref as read
+	void						SetTreeUnread();								//	mark this and children recursivly as unread data
 	Bool						IsDataTreeRead() const;							//	traverse tree to see if any data has been read (read pos is valid and not -1)
 
 	template<class ARRAYTYPE> 

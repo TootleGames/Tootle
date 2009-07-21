@@ -604,7 +604,8 @@ Bool TLFile::ParseXMLDataTree(TPtr<TXmlTag>& pTag,TBinaryTree& Data)
 			else
 				TagImportResult = SyncFalse;
 
-			Data.Debug_PrintTree();
+			if ( TagImportResult != SyncTrue )
+				Data.Debug_PrintTree();
 		}
 		else
 		{

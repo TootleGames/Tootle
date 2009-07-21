@@ -14,6 +14,7 @@
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/TSubscriber.h>
 #include <TootleCore/TGraphBase.h>
+#include <TootleCore/TStateMachine.h>
 #include <TootleGame/TWidgetDrag.h>
 
 
@@ -28,8 +29,12 @@ namespace TLGame
 //	customisable scheme editor, currently to
 //	manipulate just scene nodes, but designing it to manipulate all node types
 //----------------------------------------------
-class TLGame::TSchemeEditor : public TLMessaging::TSubscriber, public TLMessaging::TPublisher
+class TLGame::TSchemeEditor : public TLMessaging::TSubscriber, public TLMessaging::TPublisher, public TStateMachine
 {
+protected:
+	class Mode_Base;	
+	class Mode_NodeEditor;		//	mode where icons are visible and in-game objects can be dragged around
+
 public:
 	TSchemeEditor();
 	~TSchemeEditor();
@@ -38,6 +43,7 @@ public:
 
 protected:
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);		//	
+	virtual void				AddStateModes();									//	add state machine modes here. overload to add custom modes
 
 	Bool						CreateEditorGui(TRefRef EditorScheme);				//	create render target, widgets, icons etc
 	void						CreateEditorWidget(TBinaryTree& WidgetData);		//	create a widget from scheme XML
@@ -48,17 +54,21 @@ protected:
 	void						OnNodeSelected(TRefRef NodeRef);						//	node has been selected
 	void						OnNodeDrag(TRefRef NodeRef,const float3& DragAmount);	//	node has been dragged
 	void						OnNodeUnselected(TRefRef NodeRef);						//	node has been selected
+	void						EnableNodeWidgets(Bool Enable);							//	enable/disable node widgets
 
-	void						ProcessIconMessage(TRefRef IconRef,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a editor icon
+	void						ProcessIconMessage(TRefRef IconRef,TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a editor icon
 	void						CreateEditorIcons();									//	create icons for the editor
 
 	void						ProcessMouseMessage(TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle mouse messages 
 	void						UnselectAllNodes();			//	unselect all nodes
 	void						ClearScheme();				//	remove all nodes
 
-private:
+	virtual void				ProcessCommandMessage(TRefRef CommandRef,TLMessaging::TMessage& Message);	//	handle other messages (assume are commands)
+
+protected:
 	TRef							m_EditorRenderTarget;	//	render target of our editor
 	TRef							m_EditorRenderNodeRef;	//	root node for our editors render target
+	TRef							m_EditorIconRootNodeRef;	//	node to put icons under
 	TPtrArray<TLGui::TWidget>		m_EditorWidgets;		//	widgets to drag from editor to game, and general UI widgets
 	TPtrArray<TBinaryTree>			m_NewNodeData;			//	data's from the editor scheme dictating what nodes we can create
 
@@ -74,4 +84,21 @@ private:
 	TArray<TRef>					m_SelectedNodes;		//	nodes selected
 };
 
+
+
+
+
+class TLGame::TSchemeEditor::Mode_Base : public TStateMode
+{
+protected:
+	TLGame::TSchemeEditor&		GetEditor()		{	return *GetStateMachine<TLGame::TSchemeEditor>();	}
+};
+
+
+class TLGame::TSchemeEditor::Mode_NodeEditor : public TLGame::TSchemeEditor::Mode_Base
+{
+protected:
+	virtual Bool			OnBegin(TRefRef PreviousMode)		{	GetEditor().EnableNodeWidgets(TRUE);	return TRUE;	}
+	virtual void			OnEnd(TRefRef NextMode)				{	GetEditor().EnableNodeWidgets(FALSE);	}
+};
 

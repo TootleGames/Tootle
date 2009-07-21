@@ -67,7 +67,7 @@ public:
 	FORCEINLINE Bool		RetrieveTimestamp(TRefRef TimestampRef, TLTime::TTimestampMicro& Timestamp)	{	return m_MachineData.ImportData(TimestampRef, Timestamp);	}
 	
 	// Messaging
-	Bool					SendMessage(TRefRef RecipientRef, TRefRef ManagerRef, TLMessaging::TMessage& Message);
+	Bool					SendMessageTo(TRefRef RecipientRef, TRefRef ManagerRef, TLMessaging::TMessage& Message);
 	
 	// Manager access
 	template<class TYPE>

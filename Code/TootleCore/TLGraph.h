@@ -524,7 +524,7 @@ void TLGraph::TGraphNode<T>::ProcessMessage(TLMessaging::TMessage& Message)
 				// Now send the response message 
 				TRefRef Sender = Message.GetSenderRef();
 
-				TLCore::g_pCoreManager->SendMessage(Sender, Manager, Message);
+				TLCore::g_pCoreManager->SendMessageTo(Sender, Manager, Message);
 			}
 			return;
 		}

@@ -544,7 +544,7 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 		// Send message to the graph
 		if(NodeGraphRef.IsValid())
 		{
-			return TLCore::g_pCoreManager->SendMessage(NodeRef, NodeGraphRef, *pMessage);
+			return TLCore::g_pCoreManager->SendMessageTo(NodeRef, NodeGraphRef, *pMessage);
 		}
 		else
 		{

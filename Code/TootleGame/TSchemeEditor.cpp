@@ -78,6 +78,9 @@ Bool TLGame::TSchemeEditor::Initialise(TRefRef EditorScheme,TRefRef GraphRef,TRe
 			return FALSE;
 	}
 
+	//	init modes, first one added will be active one, this allows overloaded editors to dictate where to start
+	AddStateModes();
+
 	return TRUE;
 }
 
@@ -98,58 +101,34 @@ void TLGame::TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 		if ( Message.ImportData("Node", Ref) )
 		{
 			ProcessNodeMessage( Ref, ActionRef, Message );
+			return;
 		}
-		else if ( Message.ImportData("Icon", Ref ) )
+
+		TPtr<TBinaryTree>& pIconData = Message.ImportData("Icon", Ref );
+		if ( pIconData )
 		{
-			ProcessIconMessage( Ref, ActionRef, Message );
+			ProcessIconMessage( Ref, pIconData, ActionRef, Message );
+			return;
 		}
-		else 
+		
+		if ( ActionRef == m_NewSceneNodeDragAction && m_NewSceneNodeDragAction.IsValid() )
 		{
-			if ( ActionRef == m_NewSceneNodeDragAction && m_NewSceneNodeDragAction.IsValid() )
-			{
-				ProcessMouseMessage( m_NewSceneNodeDragAction, Message );
-				return;
-			}
-			else if ( ActionRef == m_NewSceneNodeClickAction && m_NewSceneNodeClickAction.IsValid() )
-			{
-				ProcessMouseMessage( m_NewSceneNodeClickAction, Message );
-				return;
-			}
-			else
-			{
-				//	gui command for editor from widget
-				switch ( ActionRef.GetData() )
-				{
-					case TRef_Static(C,l,o,s,e):
-					{
-						//	todo: do some shutdown
-						//	send close message
-						TLMessaging::TMessage Message( ActionRef, "Editor" );
-						PublishMessage( Message );
-					}
-					break;
-
-					case TRef_Static4(S,a,v,e):
-					{
-						//	send save message - currently handled externally...
-						TLMessaging::TMessage Message( ActionRef, "Editor" );
-						PublishMessage( Message );
-					}
-					break;
-
-					case TRef_Static(C,l,e,a,r):
-						ClearScheme();
-						break;
-
-					default:
-					{
-						TTempString Debug_String("Unknown editor command ");
-						ActionRef.GetString( Debug_String );
-						TLDebug_Print( Debug_String );
-					}
-					break;
-				}
-			}
+			ProcessMouseMessage( m_NewSceneNodeDragAction, Message );
+			return;
+		}
+		else if ( ActionRef == m_NewSceneNodeClickAction && m_NewSceneNodeClickAction.IsValid() )
+		{
+			ProcessMouseMessage( m_NewSceneNodeClickAction, Message );
+			return;
+		}
+		else if ( ActionRef == "Move" )
+		{
+			//	temp
+		}
+		else
+		{
+			ProcessCommandMessage( ActionRef, Message );
+			return;
 		}
 	}
 
@@ -276,6 +255,10 @@ Bool TLGame::TSchemeEditor::CreateEditorGui(TRefRef EditorScheme)
 
 	//	setup list of node types we can create
 	pEditorScheme->GetData().GetChildren("NewNode", m_NewNodeData );
+
+	//	what node should we put icons under?
+	if ( !pEditorScheme->GetData().ImportData("IconRoot", m_EditorIconRootNodeRef ) )
+		m_EditorIconRootNodeRef = m_EditorRenderNodeRef;
 
 	return TRUE;
 }
@@ -410,7 +393,7 @@ void TLGame::TSchemeEditor::ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef
 //----------------------------------------------------------
 //	handle a [widget]message from a editor icon
 //----------------------------------------------------------
-void TLGame::TSchemeEditor::ProcessIconMessage(TRefRef IconRef,TRefRef ActionRef,TLMessaging::TMessage& Message)
+void TLGame::TSchemeEditor::ProcessIconMessage(TRefRef IconRef,TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message)
 {
 	if ( ActionRef == "IcoDrag" && !m_NewSceneNode.IsValid() )
 	{
@@ -420,12 +403,25 @@ void TLGame::TSchemeEditor::ProcessIconMessage(TRefRef IconRef,TRefRef ActionRef
 
 		float3 MouseWorldPos( 10.f, 10.f, 0.f );
 
+		//	get icon data
 		TRef NodeType;
-		Message.ImportData("Type", NodeType);
+		if ( !pIconData->ImportData("Type", NodeType) )
+		{
+			TLDebug_Break("type expected");
+			return;
+		}		
 
+		//	make up init data for the node
 		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
-		InitMessage.ReferenceDataTree( m_CommonNodeData, FALSE );
 		InitMessage.ExportData("Translate", MouseWorldPos );
+		
+		//	add common data
+		InitMessage.ReferenceDataTree( m_CommonNodeData, FALSE );
+
+		//	add data specified in the editor scheme (xml)
+		TPtr<TBinaryTree>& pInitData = pIconData->GetChild("Init");
+		if ( pInitData )
+			InitMessage.ReferenceDataTree( pInitData, FALSE );
 
 		//	set this new node as the "new scene node" that we're dropping into the game.
 		//	the editor's mouse controls take over now
@@ -442,10 +438,6 @@ void TLGame::TSchemeEditor::ProcessIconMessage(TRefRef IconRef,TRefRef ActionRef
 
 		//	get the equivelent mouse action
 		m_NewSceneNodeClickAction = TLGui::g_pWidgetManager->GetClickActionFromMoveAction( m_NewSceneNodeDragAction );
-
-		//	create the in-game widget for this
-		//	gr: can't do until initialised...
-		//CreateNodeWidget( m_NewSceneNode );
 	}
 
 }
@@ -461,7 +453,8 @@ void TLGame::TSchemeEditor::CreateEditorIcons()
 
 	for ( u32 i=0;	i<m_NewNodeData.GetSize();	i++ )
 	{
-		TBinaryTree& IconData = *m_NewNodeData[i];
+		TPtr<TBinaryTree>& pIconData = m_NewNodeData[i];
+		TBinaryTree& IconData = *pIconData;
 		TRef TypeRef;
 		if ( !IconData.ImportData("Type", TypeRef) )
 		{
@@ -487,7 +480,7 @@ void TLGame::TSchemeEditor::CreateEditorIcons()
 		InitMessage.ExportData("boxdatum", TRef("Icons") );
 		InitMessage.ExportData("boxnode", TRef("e_gui") );
 
-		TRef IconRenderNodeRef = TLRender::g_pRendergraph->CreateNode("Icon", "TxText", m_EditorRenderNodeRef, &InitMessage );
+		TRef IconRenderNodeRef = TLRender::g_pRendergraph->CreateNode("Icon", "TxText", m_EditorIconRootNodeRef, &InitMessage );
 
 		//	create draggable widget on this icon
 		TBinaryTree WidgetData("Widget");
@@ -496,13 +489,23 @@ void TLGame::TSchemeEditor::CreateEditorIcons()
 		WidgetData.ExportData("ActDrag", TRef("IcoDrag") );
 
 		//	custom data
-		WidgetData.ExportData("Icon", TypeRef );
-		WidgetData.ExportData("Type", TypeRef );
+		TPtr<TBinaryTree>& pWidgetIconData = WidgetData.ExportData("Icon", TypeRef );
+		if ( pWidgetIconData )
+		{
+			//	mark all the icon data as unread so it will be added to the widget
+			pIconData->SetTreeUnread();
+
+			//	add all the data specified in the XML including "init" data for the node when it's created 
+			//pWidgetIconData->ExportData("Type", TypeRef );
+			pWidgetIconData->ReferenceDataTree( pIconData, FALSE );
+		}
+
+		//	create widget
 		TPtr<TLGui::TWidgetDrag> pWidget = new TLGui::TWidgetDrag( m_EditorRenderNodeRef, WidgetData );
 		m_EditorWidgets.Add( pWidget );
 		this->SubscribeTo( pWidget );
 
-		IconPosition.y += IconScale.y * 1.5f;
+		IconPosition.y += IconScale.y * 1.0f;
 	}
 
 }
@@ -577,3 +580,65 @@ void TLGame::TSchemeEditor::ProcessMouseMessage(TRefRef ActionRef,TLMessaging::T
 }
 
 
+//----------------------------------------------------------
+//	handle other messages (assume are commands)
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::ProcessCommandMessage(TRefRef CommandRef,TLMessaging::TMessage& Message)
+{
+	//	gui command for editor from widget
+	switch ( CommandRef.GetData() )
+	{
+		case TRef_Static(C,l,o,s,e):
+		{
+			//	todo: do some shutdown
+			//	send close message
+			TLMessaging::TMessage Message( CommandRef, "Editor" );
+			PublishMessage( Message );
+		}
+		break;
+
+		case TRef_Static4(S,a,v,e):
+		{
+			//	send save message - currently handled externally...
+			TLMessaging::TMessage Message( CommandRef, "Editor" );
+			PublishMessage( Message );
+		}
+		break;
+
+		case TRef_Static(C,l,e,a,r):
+			ClearScheme();
+			break;
+
+		default:
+		{
+#ifdef _DEBUG
+			TTempString Debug_String("Unknown editor command ");
+			CommandRef.GetString( Debug_String );
+			TLDebug_Print( Debug_String );
+#endif	
+		}
+		break;
+	}
+}
+
+
+//----------------------------------------------------------
+//	add state machine modes here. overload to add custom modes
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::AddStateModes()
+{
+	AddMode<Mode_NodeEditor>("NodeEditor");
+}
+
+
+//----------------------------------------------------------
+//	enable/disable node widgets
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::EnableNodeWidgets(Bool Enable)
+{
+	for ( u32 i=0;	i<m_NodeWidgets.GetSize();	i++ )
+	{
+		TPtr<TLGui::TWidgetDrag>& pWidget = m_NodeWidgets[i];
+		pWidget->SetEnabled( Enable );
+	}
+}

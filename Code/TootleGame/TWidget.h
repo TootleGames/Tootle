@@ -89,6 +89,9 @@ public:
 	TBinaryTree&				GetWidgetData()					{	return m_WidgetData;	}
 	const TBinaryTree&			GetWidgetData() const			{	return m_WidgetData;	}
 
+	FORCEINLINE void			SetEnabled(Bool Enabled);		//	enable/disable widget
+	FORCEINLINE Bool			IsEnabled() const				{	return m_Enabled;	}
+
 protected:
 	virtual Bool				Update();											//	update routine - return FALSE if we don't need updates any more
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);	//	
@@ -110,6 +113,9 @@ protected:
 
 	FORCEINLINE void			AppendWidgetData(TLMessaging::TMessage& Message)			{	Message.ReferenceDataTree( m_WidgetData, FALSE );	}
 
+	virtual void				OnEnabled();			//	widget was enabled
+	virtual void				OnDisabled();			//	widget disabled
+
 private:
 	SyncBool					ProcessQueuedClicks();	//	go through queued-up (unhandled) clicks and respond to them. Return FALSE if we cannot process and want to ditch all collected clicks. SyncWait if we don't process the clicks but want to keep them
 
@@ -129,6 +135,7 @@ protected:
 private:
 	TRef						m_UserRef;
 	TArray<TClick>				m_QueuedClicks;			//	action's we had to wait for
+	Bool						m_Enabled;				//	widget is/isn't enabled
 };
 
 
@@ -142,4 +149,22 @@ FORCEINLINE float3 TLGui::TWidget::TClick::GetWorldPos(float z) const
 	m_WorldRay.GetPointAlongLine( Pos, Factor );	
 	return Pos;	
 }
+	
+
+//-------------------------------------------------
+//	enable/disable widget
+//-------------------------------------------------
+FORCEINLINE void TLGui::TWidget::SetEnabled(Bool Enabled)		
+{
+	if ( Enabled == IsEnabled() )	
+		return;	
+	
+	m_Enabled = Enabled;	
+	
+	if ( IsEnabled() )	
+		OnEnabled();	
+	else	
+		OnDisabled();
+}
+
 

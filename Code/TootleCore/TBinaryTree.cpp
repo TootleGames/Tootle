@@ -253,7 +253,7 @@ void TBinaryTree::Debug_FailedToRead(TRefRef ChildDataRef,TRefRef TypeRef)
 Bool TBinaryTree::IsDataTreeRead() const
 {
 	//	our data has been read 
-	if ( GetReadPos() >= 0 )
+	if ( !IsUnread() )
 		return TRUE;
 
 	//	check children
@@ -346,6 +346,20 @@ Bool TBinaryTree::AddUnreadChildren(TBinaryTree& Data,Bool ReplaceExisting)
 }
 
 
+//------------------------------------------------------
+//	mark this and children recursivly as unread data
+//------------------------------------------------------
+void TBinaryTree::SetTreeUnread()
+{
+	//	set as unread
+	this->SetUnread();
+
+	//	set children as unread (recursive)
+	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
+	{
+		m_Children[c]->SetTreeUnread();
+	}
+}
 
 //------------------------------------------------------
 //	mark any children with this ref as read

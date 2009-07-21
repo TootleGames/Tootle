@@ -21,7 +21,8 @@ TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef Us
 	m_UserRef					( UserRef),
 	m_ActionOutDown				( ActionOutDown ),
 	m_ActionOutUp				( ActionOutUp ),
-	m_WidgetData				("WidgetData")
+	m_WidgetData				("WidgetData"),
+	m_Enabled					( TRUE )
 {
 	//	no actions going out means this TWidget wont do anything
 	if ( !m_ActionOutDown.IsValid() && !m_ActionOutUp.IsValid() )
@@ -33,17 +34,8 @@ TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef Us
 	if ( pWidgetData )
 		m_WidgetData.ReferenceDataTree( *pWidgetData, FALSE );
 
-	//	subscribe to user's actions
-	TPtr<TLUser::TUser>& pUser = TLUser::g_pUserManager->GetUser( m_UserRef );
-	if ( pUser )
-	{
-		this->SubscribeTo( pUser );
-	}
-	else
-	{
-		TLDebug_Break("Invalid user ref for widget");
-	}
-
+	//	do OnEnabled functionality like an initialise
+	OnEnabled();
 }
 
 
@@ -52,7 +44,8 @@ TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TBinaryTree& WidgetData)  :
 	m_RenderTargetRef			( RenderTargetRef ),
 	m_RenderNodeDatumKeepShape	( TRUE ),
 	m_UserRef					( "global" ),
-	m_WidgetData				("WidgetData")
+	m_WidgetData				("WidgetData"),
+	m_Enabled					( TRUE )
 {
 	//	read actions out of the TBinary
 	WidgetData.ImportData("ActDown", m_ActionOutDown );
@@ -74,17 +67,8 @@ TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TBinaryTree& WidgetData)  :
 	//	m_WidgetData.ReferenceDataTree( *pData, FALSE );
 	m_WidgetData.AddUnreadChildren( WidgetData, FALSE );
 
-	//	subscribe to user's actions
-	TPtr<TLUser::TUser>& pUser = TLUser::g_pUserManager->GetUser( m_UserRef );
-	if ( pUser )
-	{
-		this->SubscribeTo( pUser );
-	}
-	else
-	{
-		TLDebug_Break("Invalid user ref for widget");
-	}
-
+	//	do OnEnabled functionality like an initialise
+	OnEnabled();
 }
 
 
@@ -179,6 +163,10 @@ void TLGui::TWidget::ProcessMessage(TLMessaging::TMessage& Message)
 //-------------------------------------------------
 void TLGui::TWidget::QueueClick(const int2& CursorPos,float ActionValue, TRefRef ActionRef,TRefRef ActionType)		
 {
+	//	if we have no subscribers we can just ditch the clicks as we're not going to do anything
+	if ( !HasSubscribers() || !IsEnabled() )
+		return;
+
 	//	if this "click" is a mouse up, and the previous was too, then dont add it
 	if ( m_QueuedClicks.GetSize() > 0 )
 	{
@@ -254,6 +242,11 @@ SyncBool TLGui::TWidget::ProcessQueuedClicks()
 	//	no queue
 	if ( m_QueuedClicks.GetSize() == 0 )
 		return SyncTrue;
+
+	//	not enabled - ditch clicks
+	//	gr: allow process if they're here, just ignore them in QueueClick
+//	if ( !IsEnabled() )
+//		return SyncFalse;
 
 	//	if we have no subscribers we can just ditch the clicks...
 	if ( !HasSubscribers() )
@@ -535,3 +528,37 @@ void TLGui::TWidget::SendActionMessage(const TClick& Click,TRefRef ActionRef,TBi
 	PublishMessage( Message );
 }
 
+
+//-------------------------------------------------
+//	widget was enabled
+//-------------------------------------------------
+void TLGui::TWidget::OnEnabled()
+{
+	//	subscribe to user's actions
+	TPtr<TLUser::TUser>& pUser = TLUser::g_pUserManager->GetUser( m_UserRef );
+	if ( pUser )
+	{
+		this->SubscribeTo( pUser );
+	}
+	else
+	{
+		TLDebug_Break("Invalid user ref for widget");
+	}
+}
+
+//-------------------------------------------------
+//	widget disabled
+//-------------------------------------------------
+void TLGui::TWidget::OnDisabled()
+{
+	//	unsubscribe from user's actions for a bit of a speed up
+	TPtr<TLUser::TUser>& pUser = TLUser::g_pUserManager->GetUser( m_UserRef );
+	if ( pUser )
+	{
+		this->UnsubscribeFrom( pUser );
+	}
+	else
+	{
+		TLDebug_Break("Invalid user ref for widget");
+	}
+}

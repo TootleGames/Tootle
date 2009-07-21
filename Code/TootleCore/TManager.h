@@ -49,7 +49,7 @@ public:
 	FORCEINLINE Bool					operator<(const TManager& Manager)const	{	return (GetManagerRef() < Manager.GetManagerRef());	}
 
 	// Messaging
-	virtual Bool				SendMessage(TRefRef RecipientRef, TLMessaging::TMessage& Message) { return FALSE; }
+	virtual Bool				SendMessageTo(TRefRef RecipientRef, TLMessaging::TMessage& Message) { return FALSE; }
 
 	FORCEINLINE Bool			operator==(const TRef& Ref) const				{	return (m_ManagerRef == Ref);	}
 

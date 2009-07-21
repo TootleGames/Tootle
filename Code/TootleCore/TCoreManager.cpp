@@ -618,7 +618,7 @@ float TCoreManager::GetTimeStepDifference(TLTime::TTimestampMicro& LastTimestamp
 }
 
 
-Bool TCoreManager::SendMessage(TRefRef RecipientRef, TRefRef ManagerRef, TLMessaging::TMessage& Message)
+Bool TCoreManager::SendMessageTo(TRefRef RecipientRef, TRefRef ManagerRef, TLMessaging::TMessage& Message)
 {
 	if(!ManagerRef.IsValid())
 	{
@@ -633,7 +633,7 @@ Bool TCoreManager::SendMessage(TRefRef RecipientRef, TRefRef ManagerRef, TLMessa
 
 	if(pManager)
 	{
-		if(!pManager->SendMessage(RecipientRef, Message))
+		if(!pManager->SendMessageTo(RecipientRef, Message))
 		{
 			// Failed
 			TLDebug_Break("Failed to send message to recipient");
