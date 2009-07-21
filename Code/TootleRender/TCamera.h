@@ -72,7 +72,7 @@ public:
 	//	camera virtual
 	virtual Bool				GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const	{	return FALSE;	}	//	convert point on screen to a 3D ray
 	virtual Bool				GetWorldPos(float3& WorldPos,float WorldDepth,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const	{	return FALSE;	}	//	convert point on screen to a 3D position
-	virtual Bool				GetScreenPos(Type2<s32>& ScreenPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const { return FALSE; } // convert 3d pos into screen 2d point
+	virtual Bool				GetRenderTargetPos(Type2<s32>& RenderTargetPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const { return FALSE; } // convert 3d pos into screen 2d point
 	virtual float				GetScreenSizeFromWorldSize(float WorldUnit,float Depth)		{	return WorldUnit;	};	//	convert a world unit to pixel size
 
 protected:
@@ -151,7 +151,11 @@ protected:
 class TLRender::TOrthoCamera : public TCamera
 {
 public:
-	TOrthoCamera()			{}
+	TOrthoCamera() :
+		m_WorldToPixelScale	( 0.f ),
+		m_PixelToWorldScale	( 0.f )
+	{
+	}
 
 	virtual Bool			IsOrtho() const			{	return TRUE;	}
 	virtual void			SetRenderTargetSize(const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape);	//	calc new view sizes
@@ -164,11 +168,13 @@ public:
 	virtual Bool			GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;			//	convert point on screen to a 3D ray
 	virtual Bool			GetWorldPos(float3& WorldPos,float WorldDepth,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;	//	convert point on screen to a 3D position
 
-	virtual Bool			GetScreenPos(Type2<s32>& ScreenPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const; // convert 3d pos into screen 2d point
-	virtual float			GetScreenSizeFromWorldSize(float WorldUnit,float Depth)		{	return (WorldUnit/GetOrthoRange()) * (float)m_OrthoRenderTargetBox.GetWidth();	};	//	convert a world unit to pixel size
+	virtual Bool			GetRenderTargetPos(Type2<s32>& RenderTargetPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const; // convert 3d pos into screen 2d point
+	virtual float			GetScreenSizeFromWorldSize(float WorldUnit,float Depth)		{	return WorldUnit * m_WorldToPixelScale;	};	//	convert a world unit to pixel size
 
 protected:
-	TLMaths::TBox2D			m_OrthoViewportBox;		//	ortho viewport dimensions as a box
-	TLMaths::TBox2D			m_OrthoRenderTargetBox;	//	ortho render target dimensions as a box
+	float					m_WorldToPixelScale;		//	world -> pixel scalar
+	float					m_PixelToWorldScale;		//	pixel -> world scalar
+	TLMaths::TBox2D			m_OrthoViewportBox;			//	ortho viewport dimensions as a box
+	TLMaths::TBox2D			m_OrthoRenderTargetBox;		//	ortho render target dimensions as a box
 };
 

@@ -352,12 +352,12 @@ Bool TLRender::TRenderTarget::GetWorldPos(float3& WorldPos,float WorldDepth,cons
 
 
 // Get screen pos from 3d world pos
-Bool TLRender::TRenderTarget::GetScreenPos(Type2<s32>& ScreenPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const
+Bool TLRender::TRenderTarget::GetRenderTargetPos(Type2<s32>& RenderTargetPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const
 {
 	if ( !m_pCamera )
 		return FALSE;
 
-	return m_pCamera->GetScreenPos( ScreenPos, WorldPos, RenderTargetSize, ScreenShape );
+	return m_pCamera->GetRenderTargetPos( RenderTargetPos, WorldPos, RenderTargetSize, ScreenShape );
 }
 
 
@@ -1165,7 +1165,9 @@ void TLRender::TRenderTarget::DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset:
 		Opengl::EnablePointSprites(TRUE);
 
 		//	set point-size UV mapping (otherwise will just be uv's of 0,0)
-		glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
+		//	gr: only change this if we have a texture - saves a state change
+		if ( pTexture )
+			glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
 
 		//	clamp size
 		Opengl::ClampPointSpriteSize( PointSize );
@@ -1175,7 +1177,8 @@ void TLRender::TRenderTarget::DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset:
 		Opengl::DrawPrimitivePoints( &Vertexes );
 
 		//	undo texture env changes
-		glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_FALSE);
+		if ( pTexture )
+			glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_FALSE);
 	}
 
 }

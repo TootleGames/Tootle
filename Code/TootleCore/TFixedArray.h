@@ -22,6 +22,7 @@ public:
 	virtual TYPE*		GetData()							{	return &m_Data[0];	}
 	virtual const TYPE*	GetData() const						{	return &m_Data[0];	}
 	virtual Bool		SetSize(s32 NewSize);				//	returns FALSE if we couldn't set the size this big - sets the array to the largest size it can
+	virtual u32			GetAllocSize()						{	return SIZE;	}
 
 	virtual TYPE&		ElementAt(u32 Index)				{	TLDebug_CheckIndex( Index, SIZE );	return m_Data[Index];	}
 	virtual const TYPE&	ElementAtConst(u32 Index) const		{	TLDebug_CheckIndex( Index, SIZE );	return m_Data[Index];	}
@@ -35,7 +36,6 @@ public:
 protected:
 	//	array
 	virtual void		SetAllocSize(u32 NewSize)			{	};	//	shouldnt be called on fixed array
-	virtual u32			GetAllocSize()						{	return SIZE;	}
 
 protected:
 	TYPE				m_Data[SIZE];	//	actual data

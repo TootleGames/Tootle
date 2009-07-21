@@ -456,14 +456,13 @@ Bool TLRender::TScreen::GetScreenPosFromWorldPos(const TRenderTarget& RenderTarg
 {
 	Type4<s32> RenderTargetSize;
 	Type4<s32> MaxRenderTargetSize;
-	Type2<s32> RenderTargetPos;
 
 	GetRenderTargetMaxSize(MaxRenderTargetSize);
-
 	RenderTarget.GetSize(RenderTargetSize, MaxRenderTargetSize);
 
 	//	let render target do it's own conversions what with fancy cameras n that
-	if ( !RenderTarget.GetScreenPos(RenderTargetPos, WorldPos, RenderTargetSize, GetScreenShape()) )
+	Type2<s32> RenderTargetPos;
+	if ( !RenderTarget.GetRenderTargetPos( RenderTargetPos, WorldPos, RenderTargetSize, GetScreenShape()) )
 		return FALSE;
 
 

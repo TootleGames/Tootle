@@ -101,7 +101,7 @@ public:
 	Bool					GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;	//	get world pos from 2d point inside our rendertarget size
 	Bool					GetWorldPos(float3& WorldPos,float WorldDepth,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;	//	get world pos from 2d point inside our rendertarget size
 
-	Bool					GetScreenPos(Type2<s32>& ScreenPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const; // get 2d point from 3d world pos
+	Bool					GetRenderTargetPos(Type2<s32>& RenderTargetPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const; // get 2d point from 3d world pos
 
 	const TLMaths::TBox2D&	GetWorldViewBox(float WorldDepth=0.f) const;						//	the world-space box for the extents at the edges of the screen.
 	const TLMaths::TBox2D&	GetWorldViewBox(TPtr<TScreen>& pScreen,float WorldDepth=0.f);		//	same as GetWorldViewBox but can be used before a render

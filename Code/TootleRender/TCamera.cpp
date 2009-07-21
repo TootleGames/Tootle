@@ -388,32 +388,9 @@ const TLMaths::TBox2D& TLRender::TProjectCamera::GetZoneShape()
 //--------------------------------------------------------------
 void TLRender::TOrthoCamera::SetRenderTargetSize(const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape)
 {
-	/*
-	//	set box dimensions according to screen orientation
-	if ( ScreenShape == TLRender::ScreenShape_WideRight || ScreenShape == TLRender::ScreenShape_WideLeft )
-	{
-		//	gr: currently this is the same rotation of dimensions either way around, it makes the box the right size
-		//		the actual rotation is done at projection
-		m_OrthoRenderTargetBox.GetLeft()	= (float)RenderTargetSize.Top();
-		m_OrthoRenderTargetBox.GetRight()	= (float)RenderTargetSize.Bottom();
-		m_OrthoRenderTargetBox.GetTop()		= (float)RenderTargetSize.Left();
-		m_OrthoRenderTargetBox.GetBottom()	= (float)RenderTargetSize.Right();
-	}
-	else
-	{
-		//	gr: currently this is the same rotation of dimensions
-		m_OrthoRenderTargetBox.GetLeft()	= (float)RenderTargetSize.Left();
-		m_OrthoRenderTargetBox.GetRight()	= (float)RenderTargetSize.Right();
-		m_OrthoRenderTargetBox.GetTop()		= (float)RenderTargetSize.Top();
-		m_OrthoRenderTargetBox.GetBottom()	= (float)RenderTargetSize.Bottom();
-	}
-
-
-	//	gr: left and top is always zero as ortho coordinates are a scale. The RenderTargetSize dictates the position as well as dimensions,
-	//		but the viewport/scissoring does the actual screen-positioning
-	m_OrthoRenderTargetBox.GetLeft() = 0.f;
-	m_OrthoRenderTargetBox.GetTop() = 0.f;
-	*/
+	//	gr: "cache" the world -> pixel scalars
+	m_WorldToPixelScale = RenderTargetSize.Width() / GetOrthoRange();
+	m_PixelToWorldScale = GetOrthoRange() / RenderTargetSize.Width();
 
 	m_OrthoRenderTargetBox.GetLeft()	= (float)RenderTargetSize.Left();
 	m_OrthoRenderTargetBox.GetRight()	= (float)RenderTargetSize.Right();
@@ -508,23 +485,6 @@ Bool TLRender::TOrthoCamera::GetWorldPos(float3& WorldPos,float WorldDepth,const
 	float2 xy( (float)RenderTargetPos.x, (float)RenderTargetPos.y );
 	float2 wh( (float)RenderTargetSize.Width(), (float)RenderTargetSize.Height() );
 
-	/*
-	if ( ScreenShape == TLRender::ScreenShape_WideRight )
-	{
-		float2 oldxy = xy;
-		xy.x = oldxy.y;
-		xy.y = wh.x - oldxy.x;
-		TLMaths::SwapVars( wh.x, wh.y );
-	}
-	else if ( ScreenShape == TLRender::ScreenShape_WideLeft )
-	{
-		float2 oldxy = xy;
-		xy.x = wh.y - oldxy.y;
-		xy.y = oldxy.x;
-		TLMaths::SwapVars( wh.x, wh.y );
-	}
-	*/
-
 	//	scale the rendertarget pos to a pos between 0..100 (100 being GetOrthoRange - and scale is always based on width)
 	float OrthoX = (xy.x / wh.x) * GetOrthoRange();
 	float OrthoY = (xy.y / wh.x) * GetOrthoRange();
@@ -545,30 +505,33 @@ Bool TLRender::TOrthoCamera::GetWorldPos(float3& WorldPos,float WorldDepth,const
 //	convert point on screen to a 3D pos
 // NOTE: Works the opposite of the GetWorldPos() routine
 //--------------------------------------------------------------
-Bool TLRender::TOrthoCamera::GetScreenPos(Type2<s32>& ScreenPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const
+Bool TLRender::TOrthoCamera::GetRenderTargetPos(Type2<s32>& RenderTargetPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const
 {
-	// view -> screen
+	// world -> screen
 
-	// Move pos to be in line with camera
+	//	Move pos to be in at origin of camera
 	float OrthoX = WorldPos.x + GetPosition().x;
 	float OrthoY = WorldPos.y + GetPosition().y;
 
-	// Coords now in screen space - scale by ortho range
+	//	now in view space
+
+	//	scale by ortho range to be 0..1 in the view
 	OrthoX /= GetOrthoRange();
 	OrthoY /= GetOrthoRange();
 
 	float2 wh( (float)RenderTargetSize.Width(), (float)RenderTargetSize.Height() );
 
-	// Scale by the width
+	// Scale by the render target width to be in render target space
 	OrthoX *= wh.x;
 	OrthoY *= wh.x;
 
 	// Limit results to (0,0,rendertargetwidth, rendertargetheight)
-	TLMaths::Limit(OrthoX, 0.0f, wh.x);
-	TLMaths::Limit(OrthoY, 0.0f, wh.y);
+	//	gr: should allow out-of-bounds values so we can tell if something is off rendetarget/offscreen
+	//TLMaths::Limit(OrthoX, 0.0f, wh.x);
+	//TLMaths::Limit(OrthoY, 0.0f, wh.y);
 
-	// Screen points
-	ScreenPos.Set((s32)OrthoX, (s32)OrthoY);
+	//	now set 
+	RenderTargetPos.Set((s32)OrthoX, (s32)OrthoY);
 
 	return TRUE;
 }
