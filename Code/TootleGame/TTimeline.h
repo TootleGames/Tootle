@@ -68,7 +68,7 @@ private:
 	Bool					ProcessFinalKeyframe(const TLAsset::TTempKeyframeData& Keyframe);
 
 	// Command handling
-	Bool					SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFromCommand, TLAsset::TAssetTimelineCommand* pToCommand, TRef NodeGraphRef, TRef NodeRef, float fPercent = 0.0f, Bool bTestDataForInterp = FALSE);
+	SyncBool					SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFromCommand, TLAsset::TAssetTimelineCommand* pToCommand, TRef NodeGraphRef, TRef NodeRef, float fPercent = 0.0f, Bool bTestDataForInterp = FALSE);
 
 	void					AttachInterpedDataToMessage(TPtr<TBinaryTree>& pFromData, TPtr<TBinaryTree>& pToData, TRefRef InterpMethod, const float& fPercent, TLMessaging::TMessage& Message);
 

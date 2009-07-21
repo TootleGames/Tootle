@@ -183,7 +183,9 @@ Bool TTimelineInstance::ProcessFinalKeyframe(const TLAsset::TTempKeyframeData& K
 			// Get the command 
 			TLAsset::TAssetTimelineCommand& Cmd = CmdList.GetCommands().ElementAt(uIndex2);
 
-			if(!SendCommandAsMessage(&Cmd, NULL, GraphRef, NodeRef ))
+			SyncBool Result = SendCommandAsMessage(&Cmd, NULL, pCmdList->GetNodeGraphRef(), pCmdList->GetNodeRef());
+
+			if(Result == SyncFalse)
 			{
 				#ifdef _DEBUG
 				TTempString Debug_String("Failed to send timeline command ");
@@ -196,6 +198,8 @@ Bool TTimelineInstance::ProcessFinalKeyframe(const TLAsset::TTempKeyframeData& K
 				#endif
 				return FALSE;
 			}
+			else if(Result == SyncWait)
+				return FALSE;
 		}
 	}
 
@@ -258,11 +262,15 @@ Bool TTimelineInstance::ProcessKeyframes(const TLAsset::TTempKeyframeData& Keyfr
 					float fPercent = (m_fTime - KeyframeFrom.m_fTime) / (KeyframeTo.m_fTime - KeyframeFrom.m_fTime);
 
 					// Interp the key data
-					if(!SendCommandAsMessage(&FromCmd, pToCmd, pFromCmdList->GetNodeGraphRef(), pFromCmdList->GetNodeRef(), fPercent, TRUE))
+					SyncBool Result = SendCommandAsMessage(&FromCmd, pToCmd, pFromCmdList->GetNodeGraphRef(), pFromCmdList->GetNodeRef(), fPercent, TRUE);
+
+					if(Result == SyncFalse)
 					{
 						TLDebug_Print("Failed to send command");
 						return FALSE;
 					}
+					else if(Result == SyncWait)
+						return FALSE;
 				}
 				else
 				{
@@ -270,11 +278,15 @@ Bool TTimelineInstance::ProcessKeyframes(const TLAsset::TTempKeyframeData& Keyfr
 					if(bCrossingKeyframe)
 					{
 						// On the exact time of the keyframe so send out the command as a message
-						if(!SendCommandAsMessage(&FromCmd, NULL, pFromCmdList->GetNodeGraphRef(), pFromCmdList->GetNodeRef()))
+						SyncBool Result = SendCommandAsMessage(&FromCmd, NULL, pFromCmdList->GetNodeGraphRef(), pFromCmdList->GetNodeRef());
+						
+						if(Result == SyncFalse)
 						{
 							TLDebug_Print("Failed to send command");
 							return FALSE;
 						}
+						else if(Result == SyncWait)
+							return FALSE;
 					}
 
 				}
@@ -292,11 +304,15 @@ Bool TTimelineInstance::ProcessKeyframes(const TLAsset::TTempKeyframeData& Keyfr
 					// Get the command from the 'from' command list
 					TLAsset::TAssetTimelineCommand& FromCmd = pFromCmdList->GetCommands().ElementAt(uIndex2);
 
-					if(!SendCommandAsMessage(&FromCmd, NULL, pFromCmdList->GetNodeGraphRef(), pFromCmdList->GetNodeRef()))
+					SyncBool Result = SendCommandAsMessage(&FromCmd, NULL, pFromCmdList->GetNodeGraphRef(), pFromCmdList->GetNodeRef());
+
+					if(Result == SyncFalse)
 					{
 						TLDebug_Print("Failed to send command");
 						return FALSE;
 					}
+					else if(Result == SyncWait)
+						return FALSE;
 				}
 			}
 		}
@@ -331,7 +347,7 @@ Bool TTimelineInstance::ProcessKeyframes(const TLAsset::TTempKeyframeData& Keyfr
 }
 
 
-Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFromCommand, TLAsset::TAssetTimelineCommand* pToCommand, TRef NodeGraphRef, TRef NodeRef, float fPercent, Bool bTestDataForInterp)
+SyncBool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFromCommand, TLAsset::TAssetTimelineCommand* pToCommand, TRef NodeGraphRef, TRef NodeRef, float fPercent, Bool bTestDataForInterp)
 {
 	TLDebug_Print("Sending timeline command");
 
@@ -354,7 +370,7 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 	if(NodeRef == TRef_Static4(t,h,i,s))
 	{
 		TLDebug_Print("Invalid node ref for 'this' on timeline instance");
-		return FALSE;
+		return SyncFalse;
 	}
 #endif
 
@@ -374,7 +390,7 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 		if ( !pNodeArray )
 		{
 			TLDebug_Break("Node array expected - invalid graph ref?");
-			return FALSE;
+			return SyncFalse;
 		}
 
 		if(pNodeArray->Exists(NodeRef))
@@ -389,7 +405,7 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 
 			// For now prevent duplication.
 			TLDebug_Print("Timeline - Node exists, preventing duplication");
-			return TRUE;
+			return SyncTrue;
 		}
 
 		// get the paretn ndoe ref
@@ -402,7 +418,7 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 		if ( !pGraph )
 		{
 			TLDebug_Break("Graph expected");
-			return FALSE;
+			return SyncFalse;
 		}
 
 		// Create a node via the graph
@@ -415,7 +431,7 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 
 		NewNodeRef = pGraph->CreateNode(NodeRef, NewNodeTypeRef, ParentNodeRef, pMessage);
 		if ( !NewNodeRef.IsValid() )
-			return FALSE;
+			return SyncFalse;
 
 
 		if(NodeRef != NewNodeRef)
@@ -434,7 +450,7 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 		SubscribeTo( pGraph );
 
 		// Success
-		return TRUE;
+		return SyncTrue;
 	}
 	else if (MessageRef == TLCore::ShutdownRef)
 	{
@@ -448,7 +464,7 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 		if ( !pGraph )
 		{
 			TLDebug_Break("Graph expected");
-			return FALSE;
+			return SyncFalse;
 		}
 
 		// Shutdown a node from the graph
@@ -465,7 +481,7 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 			if ( !pNodeArray )
 			{
 				TLDebug_Break("Node array expected - invalid graph ref?");
-				return FALSE;
+				return SyncFalse;
 			}
 
 			pNodeArray->Remove(RemovedNodeRef);
@@ -475,7 +491,7 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 		//	TLDebug_Break("Failed to shutdown node");
 
 		// Allow timeline to continue even if failed to remove node.
-		return TRUE;
+		return SyncTrue;
 	}
 	else if(MessageRef == TLAnimation::TimeJumpRef)
 	{
@@ -488,12 +504,12 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 			// and jump at a 'safe' time?
 			// Either way, stop the processing of the timeline instance any further
 			m_fTime = fTime;
-			return FALSE;
+			return SyncWait;
 		}
 
 		// Invalid time?
 		// Ignore and continue processing
-		return TRUE;
+		return SyncTrue;
 	}
 	else 
 	{
@@ -544,7 +560,11 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 		// Send message to the graph
 		if(NodeGraphRef.IsValid())
 		{
-			return TLCore::g_pCoreManager->SendMessageTo(NodeRef, NodeGraphRef, *pMessage);
+			if(TLCore::g_pCoreManager->SendMessageTo(NodeRef, NodeGraphRef, *pMessage))
+				return SyncTrue;
+
+			// Fail
+			return SyncFalse;
 		}
 		else
 		{
@@ -552,7 +572,7 @@ Bool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFr
 			// Send the command to subscribers
 			PublishMessage(*pMessage);
 
-			return TRUE;
+			return SyncTrue;
 		}
 	}
 }
