@@ -79,6 +79,27 @@ TPtr<TLMaths::TShape> TLPhysics::GetShapeFromBodyShape(b2Fixture& BodyShape,cons
 		TLMaths::TSphere2D Circle( float2( WorldPos.x, WorldPos.y ), CircleShape.m_radius );
 		return new TLMaths::TShapeSphere2D( Circle );
 	}
+	else if ( BodyShape.GetType() == b2_edgeShape )
+	{
+		b2EdgeShape& EdgeShape = static_cast<b2EdgeShape&>( *pBodyShape );
+	
+		//	make line
+		#ifdef TRANSFORM_BY_BOX2D
+			//	transform by bodys transform to put shape in world space
+			const b2XForm& Bodyxf = Body.GetXForm();
+			b2Vec2 v1 = b2Mul( Bodyxf, EdgeShape.GetVertex1() );
+			b2Vec2 v2 = b2Mul( Bodyxf, EdgeShape.GetVertex2() );
+			TLMaths::TLine2D Line( float2( v1.x, v1.y ), float2( v2.x, v2.y ) );
+		#else
+			//	transform by OUR transform
+			const b2Vec2& v1 = EdgeShape.GetVertex1();
+			const b2Vec2& v2 = EdgeShape.GetVertex2();
+			TLMaths::TLine2D Line( float2( v1.x, v1.y ), float2( v2.x, v2.y ) );
+			Line.Transform( Transform );
+		#endif
+			
+		return new TLMaths::TShapeLine2D( Line );
+	}
 	else
 	{
 		TLDebug_Break("Invalid body shape");
@@ -138,6 +159,13 @@ Bool TLPhysics::GetPolygonDefFromShape(b2PolygonDef& PolygonDef,const TLMaths::T
 			const TLMaths::TShapePolygon2D& ShapePolygon = static_cast<const TLMaths::TShapePolygon2D&>( Shape );
 			const TArray<float2>& Outline = ShapePolygon.GetOutline();
 
+			//	gr: limit this at the shape level?
+			if ( Outline.GetSize() > b2_maxPolygonVertices )
+			{
+				TLDebug_Break("Polygon shape has too many outline points for box2d - use edge shape instead");
+				return FALSE;
+			}
+
 			//	if is not clockwise then create a new reversed (clockwise) shape to generate from
 			if ( !ShapePolygon.IsClockwise() )
 			{
@@ -158,13 +186,6 @@ Bool TLPhysics::GetPolygonDefFromShape(b2PolygonDef& PolygonDef,const TLMaths::T
 			{
 				if ( !TLDebug_Break("Polygon shape is concave and needs to be convex for box2d. If your shape cannot be fixed then we can implement a tesselation system that then creates multiple shapes on a body...") )
 					return FALSE;
-			}
-
-			//	gr: limit this at the shape level?
-			if ( Outline.GetSize() > b2_maxPolygonVertices )
-			{
-				TLDebug_Break("Polygon shape has too many outline points for box2d");
-				return FALSE;
 			}
 
 			//	set shape vertexes
@@ -209,6 +230,45 @@ Bool TLPhysics::GetCircleDefFromShape(b2CircleDef& PolygonDef,const TLMaths::TSh
 
 	return FALSE;
 }
+
+
+//------------------------------------------------------
+//	returns TRUE if this shape must be created as a edge chain
+//------------------------------------------------------
+Bool TLPhysics::IsEdgeChainShape(const TLMaths::TShape& Shape)
+{
+	if ( Shape.GetShapeType() != TLMaths_ShapeRef(Polygon2D) )
+		return FALSE;
+
+	//	if number of verts is more than box2d can cope with for a polygon then yes it needs to be an edge chain
+	const TLMaths::TShapePolygon2D& ShapePolygon = static_cast<const TLMaths::TShapePolygon2D&>( Shape );
+	const TArray<float2>& Outline = ShapePolygon.GetOutline();
+
+	if ( Outline.GetSize() > b2_maxPolygonVertices )
+		return TRUE;
+
+	return FALSE;
+}
+
+
+//------------------------------------------------------
+//	fails if wrong type of shape
+//------------------------------------------------------
+Bool TLPhysics::GetEdgeChainVertexes(TArray<b2Vec2>& VertexBuffer,const TLMaths::TShape& Shape)
+{
+	if ( Shape.GetShapeType() != TLMaths_ShapeRef(Polygon2D) )
+		return FALSE;
+
+	//	if number of verts is more than box2d can cope with for a polygon then yes it needs to be an edge chain
+	const TLMaths::TShapePolygon2D& ShapePolygon = static_cast<const TLMaths::TShapePolygon2D&>( Shape );
+	const TArray<float2>& Outline = ShapePolygon.GetOutline();
+
+	for ( u32 i=0;	i<Outline.GetSize();	i++ )
+		VertexBuffer.Add( b2Vec2( Outline[i].x, Outline[i].y ) );
+
+	return TRUE;
+}
+
 
 //------------------------------------------------------
 //	set collision info against this node

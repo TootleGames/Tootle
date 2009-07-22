@@ -38,6 +38,9 @@ namespace TLPhysics
 	Bool						GetPolygonDefFromShape(b2PolygonDef& PolygonDef,const TLMaths::TShape& Shape);		//	get a box2D polygon [definition] shape from a tootle shape
 	TPtr<TLMaths::TShape>		GetShapeFromBodyShape(b2Fixture& BodyShape,const TLMaths::TTransform& Transform);	//	create a transformed shape from a body shape
 
+	Bool						IsEdgeChainShape(const TLMaths::TShape& Shape);	//	returns TRUE if this shape must be created as a edge chain
+	Bool						GetEdgeChainVertexes(TArray<b2Vec2>& VertexBuffer,const TLMaths::TShape& Shape);
+
 	FORCEINLINE TPhysicsNode*	GetPhysicsNodeFromBody(b2Body* pBody)			{	return pBody ? (TLPhysics::TPhysicsNode*)pBody->GetUserData() : NULL;	}	//	in case the user-data usage of the body changes, use this to access a physics node from a body
 	FORCEINLINE TPhysicsNode*	GetPhysicsNodeFromShape(b2Fixture* pShape)		{	return pShape ? GetPhysicsNodeFromBody( pShape->GetBody() ) : NULL;	}
 	FORCEINLINE void*			GetBodyUserDataFromPhysicsNode(TPhysicsNode* pNode)	{	return pNode ? (void*)pNode : NULL;	}

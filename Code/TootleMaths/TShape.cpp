@@ -265,3 +265,48 @@ void TLMaths::TShape::Debug_BreakOverloadThis(const char* pTestType,TShape& Othe
 
 
 
+
+
+
+
+
+
+TPtr<TLMaths::TShape> TLMaths::TShapeLine2D::Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape,Bool KeepShape) const
+{
+	if ( !IsValid() )
+		return NULL;
+
+	//	copy and transform box
+	TLMaths::TLine2D NewLine( m_Shape );
+	NewLine.Transform( Transform );
+
+	//	re-use old shape
+	if ( pOldShape && pOldShape.GetObject() != this && pOldShape->GetShapeType() == TLMaths::TBox::GetTypeRef() )
+	{
+		pOldShape.GetObject<TShapeLine2D>()->SetLine( NewLine );
+		return pOldShape;
+	}
+
+	return new TShapeLine2D( NewLine );
+}
+
+
+
+
+Bool TLMaths::TShapeLine2D::ImportData(TBinaryTree& Data)
+{
+	if ( !Data.ImportData("Start", m_Shape.GetStart() ) )	return FALSE;
+	if ( !Data.ImportData("End", m_Shape.GetEnd() ) )		return FALSE;
+
+	return TRUE;
+}
+
+Bool TLMaths::TShapeLine2D::ExportData(TBinaryTree& Data) const
+{
+	Data.ExportData("Start", m_Shape.GetStart() );
+	Data.ExportData("End", m_Shape.GetEnd() );
+	return TRUE;
+}
+
+
+

@@ -116,6 +116,7 @@ public:
 	Bool				GetIsPointNearestToStart(const float2& Pos,float& DistanceSq) const;	//	return whether this point is nearer to the start, or to the end. DistanceSq is set to the distance (commonly used afterwards)
 
 	void				GetPointAlongLine(float2& PointAlongLine,float Factor) const;	//	get a point along the line from 0..1 (factor)
+	float2				GetPointAlongLine(float Factor) const			{	float2 Point;	GetPointAlongLine( Point, Factor );	return Point;	}
 	void				MoveStart(float Distance);						//	move the start point along the direction by an amount (NOT a factor)
 	void				MoveEnd(float Distance);						//	move the end point along the direction by an amount (NOT a factor)
 

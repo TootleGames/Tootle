@@ -1846,6 +1846,7 @@ void TLAsset::TMesh::GenerateShape(const TLMaths::TShape& Shape)
 	case TLMaths_ShapeRef(TSphere):		GenerateShape( static_cast<const TLMaths::TShapeSphere&>( Shape ) );		break;
 	case TLMaths_ShapeRef(TSphere2D):	GenerateShape( static_cast<const TLMaths::TShapeSphere2D&>( Shape ) );		break;
 	case TLMaths_ShapeRef(TPolygon2D):	GenerateShape( static_cast<const TLMaths::TShapePolygon2D&>( Shape ) );	break;
+	case TLMaths_ShapeRef(TLine2D):		GenerateShape( static_cast<const TLMaths::TShapeLine2D&>( Shape ) );	break;
 	
 	default:
 		//	gr: draw a cross at the shape center?

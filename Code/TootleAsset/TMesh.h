@@ -83,12 +83,15 @@ public:
 	void					GenerateShape(const TLMaths::TShapeSphere& Shape)		{	GenerateShape( Shape.GetSphere() );	}
 	void					GenerateShape(const TLMaths::TShapeSphere2D& Shape)		{	GenerateShape( Shape.GetSphere() );	}
 	void					GenerateShape(const TLMaths::TShapePolygon2D& Shape)	{	GeneratePolygon( Shape.GetOutline() );	}
+	void					GenerateShape(const TLMaths::TShapeLine2D& Shape)		{	GenerateLine( Shape.GetLine() );	}
+
 	void					GenerateShape(const TLMaths::TBox& Box)					{	GenerateCube( Box );	}
 	void					GenerateShape(const TLMaths::TBox2D& Box)				{	GenerateQuad( Box );	}
 	void					GenerateShape(const TLMaths::TSphere& Sphere)			{	GenerateSphere( Sphere );	}
 	void					GenerateShape(const TLMaths::TSphere2D& Sphere)			{	GenerateSphere( Sphere );	}
 	void					GenerateShape(const TLMaths::TCapsule& Capsule)			{	GenerateCapsule( Capsule );	}
 	void					GenerateShape(const TLMaths::TCapsule2D& Capsule)		{	GenerateCapsule( Capsule );	}
+	void					GenerateShape(const TLMaths::TLine2D& Line)				{	GenerateLine( Line );	}
 
 	void					GenerateCube(float Scale);							//	generate a cube mesh
 	void					GenerateCube(const TLMaths::TBox& Box);				//	generate a cube mesh from a math box
@@ -108,8 +111,10 @@ public:
 	void					GenerateLine(const TLMaths::TLine& LineShape,const TColour& Colour)									{	GenerateLine( LineShape.GetStart(), LineShape.GetEnd(), &Colour, &Colour );	}
 	void					GenerateLine(const TLMaths::TLine& LineShape,const TColour* pColour=NULL)							{	GenerateLine( LineShape.GetStart(), LineShape.GetEnd(), pColour, pColour );	}
 	void					GenerateLine(const TLMaths::TLine& LineShape,const TColour* pColourStart,const TColour* pColourEnd)	{	GenerateLine( LineShape.GetStart(), LineShape.GetEnd(), pColourStart, pColourEnd );	}
+	void					GenerateLine(const TLMaths::TLine2D& LineShape,const TColour* pColourStart,const TColour* pColourEnd)	{	GenerateLine( LineShape.GetStart(), LineShape.GetEnd(), pColourStart, pColourEnd );	}
 	void					GenerateLine(const float3& LineStart,const float3& LineEnd,const TColour* pColour=NULL)				{	GenerateLine( LineStart, LineEnd, pColour, pColour );	}
 	void					GenerateLine(const float3& LineStart,const float3& LineEnd,const TColour* pColourStart,const TColour* pColourEnd);	//	generate a line
+	void					GenerateLine(const float2& LineStart,const float2& LineEnd,const TColour* pColourStart,const TColour* pColourEnd)	{	GenerateLine( LineStart.xyz(0.f), LineEnd.xyz(0.f), pColourStart, pColourEnd );	}
 	void					GenerateLine(u16 StartVertex,u16 EndVertex);
 	void					GenerateLine(const TArray<float3>& LinePoints,Bool Loop,const TColour& Colour)								{	GenerateLine( LinePoints, Loop, &Colour );	}
 	void					GenerateLine(const TArray<float3>& LinePoints,Bool Loop,const TColour* pColour=NULL);	//	generate a line

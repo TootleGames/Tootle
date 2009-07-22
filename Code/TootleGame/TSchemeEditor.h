@@ -61,7 +61,7 @@ protected:
 
 	virtual void				ProcessMouseMessage(TRefRef ActionRef,TLMessaging::TMessage& Message,Bool IsClickAction);		//	handle mouse messages 
 	void						UnselectAllNodes();			//	unselect all nodes
-	void						ClearScheme();				//	remove all nodes
+	virtual void				ClearScheme();				//	remove all nodes
 
 	virtual void				ProcessCommandMessage(TRefRef CommandRef,TLMessaging::TMessage& Message);	//	handle other messages (assume are commands)
 

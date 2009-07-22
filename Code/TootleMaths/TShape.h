@@ -22,6 +22,7 @@ namespace TLMaths
 	class TShapeBox2D;		//	box shape
 //	class TShapeMesh;		//	mesh "shape" for triangle/face, line intersection etc
 	class TShapePolygon2D;	//	convex polygon shape
+	class TShapeLine2D;		//	single line shape (maybe expand this to line strip)
 
 	class TIntersection;	//	resulting intersection information of two shapes
 
@@ -120,5 +121,38 @@ protected:
 protected:
 };
 
+
+
+
+
+//----------------------------------------------------
+//	gr: todo; move to its own file
+//----------------------------------------------------
+class TLMaths::TShapeLine2D : public TLMaths::TShape
+{
+public:
+	TShapeLine2D()															{}
+	TShapeLine2D(const TLMaths::TLine2D& Line) : m_Shape ( Line )				{}
+
+	static TRef						GetShapeType_Static()						{	return TLMaths_ShapeRef(TLine2D);	}
+	virtual TRef					GetShapeType() const						{	return TLMaths_ShapeRef(TLine2D);	}
+	virtual Bool					IsValid() const								{	return m_Shape.GetLengthSq() > TLMaths_NearZero;	}
+	virtual void					SetInvalid()								{	return m_Shape.Set( float2(0.f,0.f), float2(0.f,0.f) );	}
+	virtual float3					GetCenter() const							{	return m_Shape.GetCenter();	}
+	virtual float3					GetRandomPosition() const					{	return m_Shape.GetPointAlongLine( TLMaths::Randf( 1.f ) ).xyz(0.f);	}
+
+	virtual void					Transform(const TLMaths::TTransform& Transform)	{	m_Shape.Transform( Transform );	}
+	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape,Bool KeepShape=FALSE) const;
+
+	const TLMaths::TLine2D&			GetLine() const								{	return m_Shape;	}
+	void							SetLine(const TLMaths::TLine2D& Line)		{	m_Shape = Line;	}
+
+protected:
+	virtual Bool					ImportData(TBinaryTree& Data);
+	virtual Bool					ExportData(TBinaryTree& Data) const;
+	
+public:
+	TLMaths::TLine2D				m_Shape;
+};
 
 
