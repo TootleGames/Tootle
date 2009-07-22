@@ -42,6 +42,7 @@ public:
 	FORCEINLINE void				Clear()											{	m_Flags = 0x0;	}
 
 	FORCEINLINE const STORAGETYPE&	GetData() const									{	return m_Flags;	}
+	FORCEINLINE void				SetData(STORAGETYPE& Flags)						{ m_Flags = Flags; } // raw Set flags
 
 	FORCEINLINE TFlags&				operator=(const TFlags& Flags)					{	m_Flags = Flags.GetData();	return *this;	}
 

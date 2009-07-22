@@ -111,7 +111,7 @@ protected:
 	
 	void						QueueClick(const int2& CursorPos,float ActionValue, TRefRef ActionRef, TRefRef ActionType);	//	put a click in the queue
 
-	FORCEINLINE void			AppendWidgetData(TLMessaging::TMessage& Message)			{	Message.ReferenceDataTree( m_WidgetData, FALSE );	}
+	FORCEINLINE void			AppendWidgetData(TLMessaging::TMessage& Message)			{	Message.ReferenceDataTree( m_WidgetData );	}
 
 	virtual void				OnEnabled();			//	widget was enabled
 	virtual void				OnDisabled();			//	widget disabled

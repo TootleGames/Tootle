@@ -22,46 +22,6 @@ TSceneNode_Object::~TSceneNode_Object()
 {
 }
 
-/*
-// [29/06/09] Duane's version - changed because Graham added the same thing at the same time...
-//			  Leaving code in case I miss something after commit.  Will remove if everything works as before on
-//			  all platforms.
-void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
-{	
-	// Super class intialise
-	TSceneNode_Transform::Initialise(Message);
-	
-	// Check for a render node data sent to node.  Use the data to 
-	// automatically setup a render node
-	TPtr<TBinaryTree>& pRenderData = Message.GetChild("RenderData");
-
-	if(pRenderData.IsValid())
-	{
-		TRef ParentRenderNodeRef;
-		TRef RenderNodeTypeRef;
-
-		pRenderData->ImportData("Parent", ParentRenderNodeRef);
-		pRenderData->ImportData("Type", RenderNodeTypeRef);
-
-
-		// Import the render node init message data
-		TLMessaging::TMessage RenderNodeInitMessage(TLCore::InitialiseRef);
-		TLMessaging::TMessage* pMessage = NULL;
-
-		TPtr<TBinaryTree>& pRenderInitMessageData = pRenderData->GetChild("Message");
-		
-		if(pRenderInitMessageData)
-		{
-			RenderNodeInitMessage.CopyDataTree(*pRenderInitMessageData, FALSE);
-			pMessage = &RenderNodeInitMessage;
-		}
-
-		// Create Render node
-		CreateRenderNode(ParentRenderNodeRef, RenderNodeTypeRef, pMessage);
-	}
-}
-*/
-
 
 void TSceneNode_Object::Shutdown()
 {
@@ -110,16 +70,48 @@ void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 
 	//	create a render node if a mesh ref or specific render node type exists
 	Bool DoCreateRenderNode = FALSE;
-	TRef MeshRef,RenderNodeType;
-	DoCreateRenderNode |= Message.ImportData("Meshref", MeshRef);
-	DoCreateRenderNode |= Message.ImportData("RNType", RenderNodeType);
+	TRef MeshRef, RenderNodeTypeRef, ParentRenderNodeRef;
 
-	if ( DoCreateRenderNode )
+	// Test for meshref
+	DoCreateRenderNode |= Message.ImportData("Meshref", MeshRef);
+
+	// Intialise pointer to the message we will use for the render node initialisation
+	TLMessaging::TMessage* pRenderInitMessage = &Message;
+
+	TPtr<TBinaryTree>& pRenderData = Message.GetChild("RNode");
+
+	if(pRenderData.IsValid())
 	{
-		TRef ParentRenderNode;
-		Message.ImportData("RNParent", ParentRenderNode );
-		//	re-use the message to create the render node
-		CreateRenderNode( ParentRenderNode, RenderNodeType, &Message );
+		// NEW SYSTEM
+		// Uses render node data under a RNode subtree
+		DoCreateRenderNode |= pRenderData->ImportData("Parent", ParentRenderNodeRef);
+		DoCreateRenderNode |= pRenderData->ImportData("Type", RenderNodeTypeRef);
+
+		if(DoCreateRenderNode)
+		{
+			// Reference the render node data as an initialise message
+			TLMessaging::TMessage RenderNodeInitMessage(TLCore::InitialiseRef);
+
+			RenderNodeInitMessage.ReferenceDataTree(*pRenderData);
+			pRenderInitMessage = &RenderNodeInitMessage;
+
+			// Create Render node
+			CreateRenderNode(ParentRenderNodeRef, RenderNodeTypeRef, pRenderInitMessage);
+		}
+	}
+	else
+	{
+		// OLD SYSTEM
+		// Uses render node data within the nodes initialise message
+		DoCreateRenderNode |= Message.ImportData("RNType", RenderNodeTypeRef);
+
+		if ( DoCreateRenderNode )
+		{
+			Message.ImportData("RNParent", ParentRenderNodeRef );
+
+			// Re-use the message to create the render node
+			CreateRenderNode( ParentRenderNodeRef, RenderNodeTypeRef, pRenderInitMessage );
+		}
 	}
 
 
@@ -182,17 +174,36 @@ void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 		}
 	}
 
-	//	pull out physics node type if specified
+
 	TRef PhysicsNodeType;
-	Message.ImportData("PNType", PhysicsNodeType );
+	TLMessaging::TMessage* pPhysicsInitMessage = &Message;
 
-	//	if we have any collision shapes or a specific node type then create the physics node
-	if ( PhysicsNodeType.IsValid() || Message.GetChild("colshape").IsValid() )
+	TPtr<TBinaryTree>& pPhysicsData = Message.GetChild("PNode");
+
+	if(pPhysicsData.IsValid())
 	{
-		//	re-use the message to create the physics node
-		CreatePhysicsNode( PhysicsNodeType, &Message );
-	}
+		pPhysicsData->ImportData("Type", PhysicsNodeType );
 
+		//	if we have any collision shapes or a specific node type then create the physics node
+		if ( PhysicsNodeType.IsValid() ||  pPhysicsData->GetChild("colshape").IsValid())
+		{
+			TLMessaging::TMessage PhysicsInitMessage(TLCore::InitialiseRef);
+			
+			PhysicsInitMessage.ReferenceDataTree(*pPhysicsData);
+			pPhysicsInitMessage = &PhysicsInitMessage;
+
+			CreatePhysicsNode( PhysicsNodeType, pPhysicsInitMessage );
+		}
+	}
+	else
+	{
+		//	pull out physics node type if specified
+		Message.ImportData("PNType", PhysicsNodeType );
+
+		//	if we have any collision shapes or a specific node type then create the physics node
+		if ( PhysicsNodeType.IsValid() || Message.GetChild("colshape").IsValid() )
+			CreatePhysicsNode( PhysicsNodeType, pPhysicsInitMessage );
+	}
 }
 
 
@@ -223,6 +234,61 @@ void TSceneNode_Object::SetProperty(TLMessaging::TMessage& Message)
 
 	//	read super-properties
 	TSceneNode_Transform::SetProperty( Message );
+}
+
+void TSceneNode_Object::UpdateNodeData()
+{
+	// Update and serialise the render node data
+	TPtr<TLRender::TRenderNode> pRenderNode = GetRenderNode();
+
+	if(pRenderNode)
+	{
+		// Update the Render node data
+		pRenderNode->UpdateNodeData();
+
+		GetNodeData().RemoveChild("RNode");
+		TPtr<TBinaryTree>& pRenderData = GetNodeData().AddChild("RNode");
+
+		if(pRenderData)
+			pRenderData->ReferenceDataTree(pRenderNode->GetNodeData());
+	}
+
+	// Update and serialise the physics node data
+	TPtr<TLPhysics::TPhysicsNode> pPhysicsNode = GetPhysicsNode();
+
+	if(pPhysicsNode)
+	{
+		// Update the Physics node data
+		pPhysicsNode->UpdateNodeData();
+
+		GetNodeData().RemoveChild("PNode");
+		TPtr<TBinaryTree>& pPhysicsData = GetNodeData().AddChild("PNode");
+
+		if(pPhysicsData)
+			pPhysicsData->ReferenceDataTree(pPhysicsNode->GetNodeData());
+	}
+
+/*	
+	// Update and serialise the audio node data
+	TPtr<TLAudio::TAudioNode> pAudioNode = GetAudioNode();
+
+
+	if(pAudioNode)
+	{
+		// Update the Audio node data
+		pAudioNode->UpdateNodeData();
+
+		GetNodeData().RemoveChild("ANode");
+		TPtr<TBinaryTree>& pAudioData = GetNodeData().AddChild("ANode");
+
+		if(pAudioData)
+			pAudioData->ReferenceDataTree(pAudioNode->GetNodeData());
+	}
+*/
+	GetNodeData().RemoveChild("Life");
+	GetNodeData().ExportData("Life", m_fLife);
+
+	TLScene::TSceneNode_Transform::UpdateNodeData();
 }
 
 

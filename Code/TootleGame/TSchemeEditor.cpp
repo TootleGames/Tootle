@@ -40,7 +40,7 @@ Bool TLGame::TSchemeEditor::Initialise(TRefRef EditorScheme,TRefRef GraphRef,TRe
 {
 	//	copy node params
 	if ( pCommonNodeData )
-		m_CommonNodeData.ReferenceDataTree( *pCommonNodeData, FALSE );
+		m_CommonNodeData.ReferenceDataTree( *pCommonNodeData );
 
 	//	check params
 	if ( !SchemeRootNode.IsValid() )
@@ -433,12 +433,12 @@ void TLGame::TSchemeEditor::ProcessIconMessage(TRefRef IconRef,TPtr<TBinaryTree>
 		InitMessage.ExportData("Translate", MouseWorldPos );
 		
 		//	add common data
-		InitMessage.ReferenceDataTree( m_CommonNodeData, FALSE );
+		InitMessage.ReferenceDataTree( m_CommonNodeData );
 
 		//	add data specified in the editor scheme (xml)
 		TPtr<TBinaryTree>& pInitData = pIconData->GetChild("Init");
 		if ( pInitData )
-			InitMessage.ReferenceDataTree( pInitData, FALSE );
+			InitMessage.ReferenceDataTree( pInitData );
 
 		//	set this new node as the "new scene node" that we're dropping into the game.
 		//	the editor's mouse controls take over now
@@ -514,7 +514,7 @@ void TLGame::TSchemeEditor::CreateEditorIcons()
 
 			//	add all the data specified in the XML including "init" data for the node when it's created 
 			//pWidgetIconData->ExportData("Type", TypeRef );
-			pWidgetIconData->ReferenceDataTree( pIconData, FALSE );
+			pWidgetIconData->ReferenceDataTree( pIconData );
 		}
 
 		//	create widget

@@ -124,6 +124,8 @@ public:
 
 	FORCEINLINE Bool			operator==(TRefRef Ref) const							{	return GetNodeRef() == Ref;	}
 
+	virtual void				UpdateNodeData();
+
 protected:
 	virtual void				Initialise(TLMessaging::TMessage& Message);	
 	virtual void				SetProperty(TLMessaging::TMessage& Message);	

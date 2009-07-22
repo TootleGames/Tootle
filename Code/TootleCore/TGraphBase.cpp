@@ -73,11 +73,11 @@ Bool TLGraph::TGraphBase::ImportSchemeNode(const TLAsset::TSchemeNode& SchemeNod
 
 	//	create an init message with all the data in the SchemeNode
 	TLMessaging::TMessage Message( TLCore::InitialiseRef );
-	Message.ReferenceDataTree( SchemeNode.GetData(), FALSE );
+	Message.ReferenceDataTree( SchemeNode.GetData() );
 
 	//	add common data too
 	if ( pCommonInitMessage )
-		Message.ReferenceDataTree( *pCommonInitMessage, FALSE );
+		Message.ReferenceDataTree( *pCommonInitMessage );
 
 	//	create node
 	TRef NewNodeRef = CreateNode( SchemeNode.GetNodeRef(), SchemeNode.GetTypeRef(), ParentRef, &Message, StrictNodeRefs );
@@ -129,7 +129,7 @@ TPtr<TLAsset::TSchemeNode> TLGraph::TGraphBase::ExportSchemeNode(TGraphNodeBase*
 	//	export data from node to scheme node
 	pNode->UpdateNodeData();
 	const TBinaryTree& NodeData = pNode->GetNodeData();
-	pSchemeNode->GetData().ReferenceDataTree( NodeData, FALSE );
+	pSchemeNode->GetData().ReferenceDataTree( NodeData );
 
 	//	export children into this node
 	TArray<TGraphNodeBase*> RootChildren;
@@ -250,11 +250,11 @@ Bool TLGraph::TGraphBase::ReimportSchemeNode(const TLAsset::TSchemeNode& SchemeN
 {
 	//	create an init message with all the data in the SchemeNode
 	TLMessaging::TMessage Message( TLCore::InitialiseRef );
-	Message.ReferenceDataTree( SchemeNode.GetData(), FALSE );
+	Message.ReferenceDataTree( SchemeNode.GetData() );
 
 	//	add common data too
 	if ( pCommonInitMessage )
-		Message.ReferenceDataTree( *pCommonInitMessage, FALSE );
+		Message.ReferenceDataTree( *pCommonInitMessage );
 
 	//	restore node if missing
 	if ( !IsInGraph( SchemeNode.GetNodeRef() ) )

@@ -157,7 +157,7 @@ TPtr<TBinaryTree>& TLAsset::TAsset::GetData(TRefRef DataRef,Bool CreateNew)
 SyncBool TLAsset::TAsset::ExportData(TBinaryTree& Data)
 {
 	//	copy all our lost/dumb data into the data to be exported
-	if ( !Data.ReferenceDataTree( m_Data, FALSE ) )
+	if ( !Data.ReferenceDataTree( m_Data ) )
 		return SyncFalse;
 
 	return SyncTrue;
@@ -171,7 +171,7 @@ SyncBool TLAsset::TAsset::ExportData(TBinaryTree& Data)
 SyncBool TLAsset::TAsset::ImportData(TBinaryTree& Data)
 {
 	//	copy all our lost/dumb data into the data to be exported
-	if ( !m_Data.ReferenceDataTree( Data, FALSE ) )
+	if ( !m_Data.ReferenceDataTree( Data ) )
 		return SyncFalse;
 
 	return SyncTrue;

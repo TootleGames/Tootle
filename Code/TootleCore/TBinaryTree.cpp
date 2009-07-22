@@ -65,12 +65,8 @@ Bool TBinaryTree::CopyDataTree(const TBinaryTree& Data,Bool OverwriteDataRef)
 //----------------------------------------------------------------
 //	copy the tree by re-using the TPtr's to the data. The data is re-used and saves us allocating and copying data but without fear of deletion
 //----------------------------------------------------------------
-Bool TBinaryTree::ReferenceDataTree(const TBinaryTree& Data,Bool OverwriteDataRef)
+Bool TBinaryTree::ReferenceDataTree(const TBinaryTree& Data)
 {
-	//	copy ref
-	if ( OverwriteDataRef )
-		SetDataRef( Data.GetDataRef() );
-
 	//	copy the root data
 	if ( Data.GetData().GetSize() )
 	{

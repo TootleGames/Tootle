@@ -47,6 +47,8 @@ protected:
 	virtual void					Shutdown();
 	virtual void					ProcessMessage(TLMessaging::TMessage& Message);
 
+	virtual void					UpdateNodeData();
+
 	virtual void					OnTransformChanged(u8 TransformChangedBits);	//	this checks to see if we're asleep first and delays sending a transform until we are awake. gr: see TLSceneNodeObject_FromPhysicsTransform
 	
 	virtual void					OnZoneWake(SyncBool ZoneActive);		//	re-enable physics and render nodes

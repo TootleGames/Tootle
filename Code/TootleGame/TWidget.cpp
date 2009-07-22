@@ -32,7 +32,7 @@ TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef Us
 
 	//	copy user-supplied data
 	if ( pWidgetData )
-		m_WidgetData.ReferenceDataTree( *pWidgetData, FALSE );
+		m_WidgetData.ReferenceDataTree( *pWidgetData );
 
 	//	do OnEnabled functionality like an initialise
 	OnEnabled();
@@ -522,7 +522,7 @@ void TLGui::TWidget::SendActionMessage(const TClick& Click,TRefRef ActionRef,TBi
 	Message.ExportData("InpType", Click.GetActionType() );
 
 	if ( pExtraData)
-		Message.ReferenceDataTree( *pExtraData, FALSE );
+		Message.ReferenceDataTree( *pExtraData );
 
 	//	send message
 	PublishMessage( Message );

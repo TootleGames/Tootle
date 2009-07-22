@@ -653,31 +653,41 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 		SetEnabled( Enabled );
 	}
 
-	//	get render flags to set
-	TPtrArray<TBinaryTree> FlagChildren;
-	if ( Message.GetChildren("RFSet", FlagChildren ) )
+	u32 RenderFlags = 0;
+	if(Message.ImportData("RFlags", RenderFlags))
 	{
-		u32 RenderFlagIndex = 0;
-		for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
-		{
-			FlagChildren[f]->ResetReadPos();
-			if ( FlagChildren[f]->Read( RenderFlagIndex ) )
-				GetRenderFlags().Set( (RenderFlags::Flags)RenderFlagIndex );
-		}
-		FlagChildren.Empty();
+		// Set the flags as a raw value.  Saves cycling through a load of 
+		// flag indices but should generally only be used for exporting and re-import
+		m_RenderFlags.SetData(RenderFlags);
 	}
-
-	//	get render flags to clear
-	if ( Message.GetChildren("RFClear", FlagChildren ) )
+	else
 	{
-		u32 RenderFlagIndex = 0;
-		for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
+		//	get render flags to set
+		TPtrArray<TBinaryTree> FlagChildren;
+		if ( Message.GetChildren("RFSet", FlagChildren ) )
 		{
-			FlagChildren[f]->ResetReadPos();
-			if ( FlagChildren[f]->Read( RenderFlagIndex ) )
-				GetRenderFlags().Clear( (RenderFlags::Flags)RenderFlagIndex );
+			u32 RenderFlagIndex = 0;
+			for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
+			{
+				FlagChildren[f]->ResetReadPos();
+				if ( FlagChildren[f]->Read( RenderFlagIndex ) )
+					GetRenderFlags().Set( (RenderFlags::Flags)RenderFlagIndex );
+			}
+			FlagChildren.Empty();
 		}
-		FlagChildren.Empty();
+
+		//	get render flags to clear
+		if ( Message.GetChildren("RFClear", FlagChildren ) )
+		{
+			u32 RenderFlagIndex = 0;
+			for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
+			{
+				FlagChildren[f]->ResetReadPos();
+				if ( FlagChildren[f]->Read( RenderFlagIndex ) )
+					GetRenderFlags().Clear( (RenderFlags::Flags)RenderFlagIndex );
+			}
+			FlagChildren.Empty();
+		}
 	}
 
 	//	import colour
@@ -757,6 +767,49 @@ Bool TLRender::TRenderNode::SetWorldTransformOld(Bool SetPosOld,Bool SetTransfor
 
 	return Changed;
 }
+
+
+void TLRender::TRenderNode::UpdateNodeData()
+{
+	TPtr<TLRender::TRenderNode> pParent = GetParent();
+
+	if(pParent)
+	{
+		GetNodeData().RemoveChild("Parent");
+		GetNodeData().ExportData("Parent", pParent->GetNodeRef());
+	}
+
+	GetNodeData().RemoveChild("Type");
+	GetNodeData().ExportData("Type", GetNodeTypeRef());
+
+	GetNodeData().RemoveChild("MeshRef");
+	GetNodeData().ExportData("MeshRef", m_MeshRef);
+
+	GetNodeData().RemoveChild("Texture");
+	GetNodeData().ExportData("Texture", m_TextureRef);
+
+	GetNodeData().RemoveChild("Colour");
+	GetNodeData().ExportData("Colour", m_Colour);
+
+	GetNodeData().RemoveChild("AttachDatum");
+
+	TRef AttachDatum = GetAttachDatum();
+	if(AttachDatum.IsValid())
+		GetNodeData().ExportData("AttachDatum", AttachDatum);
+
+	GetNodeData().RemoveChild("LineWidth");
+	GetNodeData().ExportData("LineWidth", m_LineWidth );
+
+	//	point sprite size
+	GetNodeData().RemoveChild("PointSize");
+	GetNodeData().ExportData("PointSize", m_PointSpriteSize );
+
+	// Export renderflags as a single value rathe than individual bit's
+	//NOTE: No need to do the 'enable' as that is stored in the render flags
+	GetNodeData().RemoveChild("RFlags");
+	GetNodeData().ExportData("RFlags", m_RenderFlags.GetData());
+}
+
 
 
 //---------------------------------------------------------

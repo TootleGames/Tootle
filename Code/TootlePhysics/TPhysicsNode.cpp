@@ -133,47 +133,59 @@ void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
 	}
 
 
-	//	get physics flags to set
-	TPtrArray<TBinaryTree> FlagChildren;
-	if ( Message.GetChildren("PFSet", FlagChildren ) )
-	{
-		u32 FlagIndex = 0;
-		for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
-		{
-			FlagChildren[f]->ResetReadPos();
-			if ( FlagChildren[f]->Read( FlagIndex ) )
-			{
-				//	handle special case flags
-				if ( FlagIndex == Flag_Enabled )
-					SetEnabled( TRUE );
-				else if ( FlagIndex == Flag_HasCollision )
-					EnableCollision( TRUE );
-				else
-					GetPhysicsFlags().Set( (Flags)FlagIndex );
-			}
-		}
-		FlagChildren.Empty();
-	}
+	u32 PhysicsFlags = 0;
 
-	//	get render flags to clear
-	if ( Message.GetChildren("PFClear", FlagChildren ) )
+	if(Message.ImportData("PFlags", PhysicsFlags))
 	{
-		u32 FlagIndex = 0;
-		for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
+		// Import raw physics flags value - saves going through individual flag bits
+		// NOTE: may need to do some stuff based on flags changed?
+		m_PhysicsFlags.SetData(PhysicsFlags);
+	}
+	else
+	{
+
+		//	get physics flags to set
+		TPtrArray<TBinaryTree> FlagChildren;
+		if ( Message.GetChildren("PFSet", FlagChildren ) )
 		{
-			FlagChildren[f]->ResetReadPos();
-			if ( FlagChildren[f]->Read( FlagIndex ) )
+			u32 FlagIndex = 0;
+			for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
 			{
-				//	handle special case flags
-				if ( FlagIndex == Flag_Enabled )
-					SetEnabled( FALSE );
-				else if ( FlagIndex == Flag_HasCollision )
-					EnableCollision( FALSE );
-				else
-					GetPhysicsFlags().Clear( (Flags)FlagIndex );
+				FlagChildren[f]->ResetReadPos();
+				if ( FlagChildren[f]->Read( FlagIndex ) )
+				{
+					//	handle special case flags
+					if ( FlagIndex == Flag_Enabled )
+						SetEnabled( TRUE );
+					else if ( FlagIndex == Flag_HasCollision )
+						EnableCollision( TRUE );
+					else
+						GetPhysicsFlags().Set( (Flags)FlagIndex );
+				}
 			}
+			FlagChildren.Empty();
 		}
-		FlagChildren.Empty();
+
+		//	get render flags to clear
+		if ( Message.GetChildren("PFClear", FlagChildren ) )
+		{
+			u32 FlagIndex = 0;
+			for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
+			{
+				FlagChildren[f]->ResetReadPos();
+				if ( FlagChildren[f]->Read( FlagIndex ) )
+				{
+					//	handle special case flags
+					if ( FlagIndex == Flag_Enabled )
+						SetEnabled( FALSE );
+					else if ( FlagIndex == Flag_HasCollision )
+						EnableCollision( FALSE );
+					else
+						GetPhysicsFlags().Clear( (Flags)FlagIndex );
+				}
+			}
+			FlagChildren.Empty();
+		}
 	}
 
 	//	read physics properties
@@ -241,6 +253,60 @@ void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
 
 
 	TLGraph::TGraphNode<TPhysicsNode>::SetProperty(Message);
+}
+
+
+void TLPhysics::TPhysicsNode::UpdateNodeData()
+{
+	GetNodeData().RemoveChild("Type");
+	GetNodeData().ExportData("Type", GetNodeTypeRef());
+
+	GetNodeData().RemoveChild("Friction");
+	GetNodeData().ExportData("Friction", m_Friction);
+
+	GetNodeData().RemoveChild("Bounce");
+	GetNodeData().ExportData("Bounce", m_Bounce);
+
+	GetNodeData().RemoveChild("Damping");
+	GetNodeData().ExportData("Damping", m_Damping);
+
+	GetNodeData().RemoveChild("PFlags");
+	GetNodeData().ExportData("PFlags", m_PhysicsFlags.GetData());
+
+
+	// Remove all 'colshape' children formt he node data
+	Bool Result = TRUE;
+	do
+	{
+		Result = GetNodeData().RemoveChild("colshape");
+	}while(Result == TRUE);
+
+	// Export all collision shapes
+	for(u32 uIndex = 0; uIndex < m_CollisionShapes.GetSize(); uIndex++)
+	{
+		const TCollisionShape& shape = m_CollisionShapes.ElementAt(uIndex);
+
+		TPtr<TBinaryTree>& pChild = GetNodeData().AddChild("colshape");
+
+		if(pChild)
+		{
+			if(TLMaths::ExportShapeData( pChild.GetObject(), *shape.GetShape().GetObject(), FALSE ))
+			{
+				pChild->ExportData("Ref", shape.GetShapeRef());
+
+				// Export if shape is a sensor but only if it is - save exporting a bit of data?
+				if(shape.IsSensor())
+					pChild->ExportData("Sensor", (Bool)TRUE);
+
+			}
+			else
+			{
+				// failed - remove colshape
+				GetNodeData().RemoveChild(pChild);
+			}
+
+		}
+	}
 }
 
 

@@ -171,6 +171,7 @@ public:
 	FORCEINLINE TBinaryTree&				GetData()									{	return m_Data;	}
 	FORCEINLINE TPtr<TBinaryTree>&			GetData(TRefRef DataRef)					{	return GetData().GetChild( DataRef );	}
 	FORCEINLINE TPtr<TBinaryTree>&			AddData(TRefRef DataRef)					{	return GetData().AddChild( DataRef );	}
+	virtual void							UpdateNodeData();							
 
 	void									SetAttachDatum(TRefRef DatumRef);			//	change the datum we're attached to. Sets the data and does an immediate translate as required
 	FORCEINLINE TRef						GetAttachDatum()							{	TRef DatumRef;	return GetData().ImportData("AttachDatum", DatumRef ) ? DatumRef : TRef();	}
