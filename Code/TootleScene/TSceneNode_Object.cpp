@@ -68,63 +68,105 @@ void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 	//	do super init first
 	TLScene::TSceneNode_Transform::Initialise( Message );
 
-	//	create a render node if a mesh ref or specific render node type exists
-	Bool DoCreateRenderNode = FALSE;
-	TRef MeshRef, RenderNodeTypeRef, ParentRenderNodeRef;
+	//	auto-create render node
+	InitialiseRenderNode(Message);
 
-	// Test for meshref
-	DoCreateRenderNode |= Message.ImportData("Meshref", MeshRef);
+	//	auto create physics node
+	InitialisePhysicsNode(Message);
+}
 
-	// Intialise pointer to the message we will use for the render node initialisation
-	TLMessaging::TMessage* pRenderInitMessage = &Message;
 
-	TPtr<TBinaryTree>& pRenderData = Message.GetChild("RNode");
 
-	if(pRenderData.IsValid())
+//------------------------------------------------
+//	create render node from init message
+//------------------------------------------------
+Bool TSceneNode_Object::InitialiseRenderNode(TLMessaging::TMessage& Message)
+{
+	//	if explicit node data exists, create and init a node with that
+	TPtr<TBinaryTree>& pNodeData = Message.GetChild("RNode");
+	if ( pNodeData.IsValid() )
 	{
 		// NEW SYSTEM
 		// Uses render node data under a RNode subtree
-		DoCreateRenderNode |= pRenderData->ImportData("Parent", ParentRenderNodeRef);
-		DoCreateRenderNode |= pRenderData->ImportData("Type", RenderNodeTypeRef);
+		TRef ParentNodeRef;
+		if ( !pNodeData->ImportData("Parent", ParentNodeRef) )
+			pNodeData->ImportData("RNParent", ParentNodeRef);
 
-		if(DoCreateRenderNode)
-		{
-			// Reference the render node data as an initialise message
-			TLMessaging::TMessage RenderNodeInitMessage(TLCore::InitialiseRef);
+		TRef NodeTypeRef;
+		pNodeData->ImportData("Type", NodeTypeRef);
 
-			RenderNodeInitMessage.ReferenceDataTree(*pRenderData);
-			pRenderInitMessage = &RenderNodeInitMessage;
+		// Reference the node data as an initialise message
+		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
+		InitMessage.ReferenceDataTree(*pNodeData);
 
-			// Create Render node
-			CreateRenderNode(ParentRenderNodeRef, RenderNodeTypeRef, pRenderInitMessage);
-		}
+		// Create node
+		CreateRenderNode( ParentNodeRef, NodeTypeRef, &InitMessage );
+		return TRUE;
 	}
-	else
+
+
+	// OLD SYSTEM 
+	// Uses render node data within the nodes initialise message
+	//	create a render node if a mesh ref or specific render node type exists
+	TRef MeshRef,NodeTypeRef;
+	Bool DoCreateNode = Message.ImportData("MeshRef", MeshRef);
+	DoCreateNode |= Message.ImportData("RNType", NodeTypeRef);
+
+	//	nothing specified to say "create a render node"
+	if ( !DoCreateNode )
+		return FALSE;
+
+	TRef ParentNodeRef;
+	Message.ImportData("RNParent", ParentNodeRef );
+
+	//	Re-use the message to create the render node
+	CreateRenderNode( ParentNodeRef, NodeTypeRef, &Message );
+	
+	return TRUE;
+}
+
+
+//------------------------------------------------
+//	create physics node from init message
+//------------------------------------------------
+Bool TSceneNode_Object::InitialisePhysicsNode(TLMessaging::TMessage& Message)
+{
+	//	if explicit node data exists, create and init a node with that
+	TPtr<TBinaryTree>& pNodeData = Message.GetChild("PNode");
+	if ( pNodeData.IsValid() )
 	{
-		// OLD SYSTEM
-		// Uses render node data within the nodes initialise message
-		DoCreateRenderNode |= Message.ImportData("RNType", RenderNodeTypeRef);
+		// NEW SYSTEM
+		// Uses node data under a XNode subtree
 
-		if ( DoCreateRenderNode )
-		{
-			Message.ImportData("RNParent", ParentRenderNodeRef );
+		TRef NodeTypeRef;
+		pNodeData->ImportData("Type", NodeTypeRef);
 
-			// Re-use the message to create the render node
-			CreateRenderNode( ParentRenderNodeRef, RenderNodeTypeRef, pRenderInitMessage );
-		}
+		// Reference the node data as an initialise message
+		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
+		InitMessage.ReferenceDataTree(*pNodeData);
+
+		// Create node
+		CreatePhysicsNode( NodeTypeRef, &InitMessage );
+		return TRUE;
 	}
 
 
-	//	create a physics node if a collision shape exists
+	// OLD SYSTEM 
+	// Uses render node data within the nodes initialise message
 
-	//	look for mesh datums to convert into collision shapes
+
+	//	detect and convert collision datums into collision shapes
 	TPtrArray<TBinaryTree> CollisionDatumDatas;
 	Message.GetChildren("coldatum", CollisionDatumDatas );
 	TLAsset::TMesh* pMesh = NULL;
 
 	if ( CollisionDatumDatas.GetSize() > 0 )
 	{
-		pMesh = TLAsset::LoadAsset( MeshRef, TRUE, "Mesh" ).GetObject<TLAsset::TMesh>();
+		//	require a mesh, read the mesh ref
+		TRef MeshRef;
+		if ( Message.ImportData("Meshref", MeshRef) )
+			pMesh = TLAsset::LoadAsset( MeshRef, TRUE, "Mesh" ).GetObject<TLAsset::TMesh>();
+
 		if ( !pMesh )
 		{
 			TTempString Debug_String("Collision datums specified, but mesh \"");
@@ -151,7 +193,7 @@ void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 			TTempString Debug_String("Collision datum (");
 			CollisionShapeDatum.GetString( Debug_String );
 			Debug_String.Append(") is missing from mesh ");
-			MeshRef.GetString( Debug_String );
+			pMesh->GetAssetRef().GetString( Debug_String );
 			TLDebug_Break( Debug_String );
 			continue;
 		}
@@ -175,35 +217,19 @@ void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 	}
 
 
-	TRef PhysicsNodeType;
-	TLMessaging::TMessage* pPhysicsInitMessage = &Message;
+	//	create a physics node if a collision shape or specific node type exists
+	TRef NodeTypeRef;
+	Bool DoCreateNode = Message.HasChild("colshape");
+	DoCreateNode |= Message.ImportData("PNType", NodeTypeRef);
 
-	TPtr<TBinaryTree>& pPhysicsData = Message.GetChild("PNode");
+	//	nothing specified to say "create a node"
+	if ( !DoCreateNode )
+		return FALSE;
 
-	if(pPhysicsData.IsValid())
-	{
-		pPhysicsData->ImportData("Type", PhysicsNodeType );
-
-		//	if we have any collision shapes or a specific node type then create the physics node
-		if ( PhysicsNodeType.IsValid() ||  pPhysicsData->GetChild("colshape").IsValid())
-		{
-			TLMessaging::TMessage PhysicsInitMessage(TLCore::InitialiseRef);
-			
-			PhysicsInitMessage.ReferenceDataTree(*pPhysicsData);
-			pPhysicsInitMessage = &PhysicsInitMessage;
-
-			CreatePhysicsNode( PhysicsNodeType, pPhysicsInitMessage );
-		}
-	}
-	else
-	{
-		//	pull out physics node type if specified
-		Message.ImportData("PNType", PhysicsNodeType );
-
-		//	if we have any collision shapes or a specific node type then create the physics node
-		if ( PhysicsNodeType.IsValid() || Message.GetChild("colshape").IsValid() )
-			CreatePhysicsNode( PhysicsNodeType, pPhysicsInitMessage );
-	}
+	//	Re-use the message to create the render node
+	CreatePhysicsNode( NodeTypeRef, &Message );
+	
+	return TRUE;
 }
 
 

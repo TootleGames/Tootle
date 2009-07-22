@@ -46,13 +46,15 @@ protected:
 	virtual void					SetProperty(TLMessaging::TMessage& Message);
 	virtual void					Shutdown();
 	virtual void					ProcessMessage(TLMessaging::TMessage& Message);
-
 	virtual void					UpdateNodeData();
 
 	virtual void					OnTransformChanged(u8 TransformChangedBits);	//	this checks to see if we're asleep first and delays sending a transform until we are awake. gr: see TLSceneNodeObject_FromPhysicsTransform
 	
 	virtual void					OnZoneWake(SyncBool ZoneActive);		//	re-enable physics and render nodes
 	virtual void					OnZoneSleep();							//	disable physics and render nodes
+
+	Bool							InitialiseRenderNode(TLMessaging::TMessage& Message);		//	create render node from init message
+	Bool							InitialisePhysicsNode(TLMessaging::TMessage& Message);		//	create physics node from init message
 
 	virtual Bool					CreatePhysicsNode(TRefRef PhysicsNodeType=TRef(),TLMessaging::TMessage* pInitMessage=NULL);
 	virtual void					OnPhysicsNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode);
