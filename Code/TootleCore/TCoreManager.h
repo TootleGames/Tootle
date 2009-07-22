@@ -74,7 +74,7 @@ public:
 	TPtr<TYPE>				GetManagerPtr(TRefRef ManagerRef)		{	return TPtr<TYPE>( m_Managers.FindPtr(ManagerRef) );	}
 	TPtr<TManager>&			GetManagerPtr(TRefRef ManagerRef)		{	return m_Managers.FindPtr(ManagerRef);	}
 	template<class TYPE>
-	TYPE*					GetManager(TRefRef ManagerRef)			{	return GetManagerPtr(ManagerRef).GetObject<TYPE>();	}
+	TYPE*					GetManager(TRefRef ManagerRef)			{	return GetManagerPtr<TYPE>(ManagerRef).GetObject();	}
 	TManager*				GetManager(TRefRef ManagerRef)			{	return GetManagerPtr(ManagerRef);	}
 
 protected:

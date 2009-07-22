@@ -1167,7 +1167,7 @@ void TLRender::TRenderTarget::DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset:
 		//	set point-size UV mapping (otherwise will just be uv's of 0,0)
 		//	gr: only change this if we have a texture - saves a state change
 		if ( pTexture )
-			glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
+			Opengl::EnablePointSizeUVMapping(TRUE); 
 
 		//	clamp size
 		Opengl::ClampPointSpriteSize( PointSize );
@@ -1178,7 +1178,8 @@ void TLRender::TRenderTarget::DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset:
 
 		//	undo texture env changes
 		if ( pTexture )
-			glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_FALSE);
+			Opengl::EnablePointSizeUVMapping(FALSE); 
+		
 	}
 
 }

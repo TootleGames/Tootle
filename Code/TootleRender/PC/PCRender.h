@@ -64,6 +64,7 @@ namespace TLRender
 			FORCEINLINE void		SetLineWidth(float Width)				{	glLineWidth( Width );	}
 			FORCEINLINE void		SetPointSize(float Size)				{	glPointSize( Size );	}
 			FORCEINLINE void		EnablePointSprites(Bool Enable)			{	if ( Enable )	glEnable( GL_POINT_SPRITE_ARB );		else	glDisable( GL_POINT_SPRITE_ARB );	}
+			FORCEINLINE void		EnablePointSizeUVMapping(Bool Enable)	{	GLint GLEnable = (Enable ? GL_TRUE : GL_FALSE);	glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GLEnable);	}
 		}
 	}
 

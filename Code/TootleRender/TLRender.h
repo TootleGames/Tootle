@@ -78,6 +78,7 @@ namespace TLRender
 		FORCEINLINE void		SetLineWidth(float Width);
 		FORCEINLINE void		SetPointSize(float Size);
 		FORCEINLINE void		EnablePointSprites(Bool Enable);
+		FORCEINLINE void		EnablePointSizeUVMapping(Bool Enable);
 
 
 		//	platform specific implementations - dumb - just do whatever is specified
@@ -110,6 +111,7 @@ namespace TLRender
 			FORCEINLINE void		SetLineWidth(float Width);
 			FORCEINLINE void		SetPointSize(float Size);
 			FORCEINLINE void		EnablePointSprites(Bool Enable);
+			FORCEINLINE void		EnablePointSizeUVMapping(Bool Enable);
 		}
 	};
 }
@@ -251,6 +253,19 @@ FORCEINLINE void TLRender::Opengl::EnablePointSprites(Bool Enable)
 	{
 		Platform::EnablePointSprites( Enable );
 		g_SceneEnabled = NewEnabled;
+	}
+}
+
+
+FORCEINLINE void TLRender::Opengl::EnablePointSizeUVMapping(Bool Enable)
+{
+	static SyncBool g_PointSizeUVMappingEnabled = SyncWait;
+	SyncBool NewEnabled = (Enable ? SyncTrue : SyncFalse);
+
+	if ( NewEnabled != g_PointSizeUVMappingEnabled )
+	{
+		Platform::EnablePointSizeUVMapping( Enable );
+		g_PointSizeUVMappingEnabled = NewEnabled;
 	}
 }
 

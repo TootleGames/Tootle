@@ -55,7 +55,10 @@ namespace TLRender
 			FORCEINLINE void		SetSceneColour(const TColour& Colour)	{	glColor4f( Colour.GetRedf(), Colour.GetGreenf(), Colour.GetBluef(), Colour.GetAlphaf() );	}
 			FORCEINLINE void		SetLineWidth(float Width)				{	glLineWidth( Width );	}
 			FORCEINLINE void		SetPointSize(float Size)				{	glPointSize( Size );	}
-			FORCEINLINE void		EnablePointSprites(Bool Enable)			{	if ( Enable )	glEnable( GL_OES_POINT_SPRITES );		else	glDisable( GL_OES_POINT_SPRITES );	}
+			FORCEINLINE void		EnablePointSprites(Bool Enable)			{	if ( Enable )	glEnable( GL_POINT_SPRITE_OES );		else	glDisable( GL_POINT_SPRITE_OES );	}
+			FORCEINLINE void		EnablePointSizeUVMapping(Bool Enable)	{	GLint GLEnable = (Enable ? GL_TRUE : GL_FALSE);	glTexEnvi(GL_POINT_SPRITE_OES, GL_COORD_REPLACE_OES, GLEnable);	}
+
+
 		}
 	}
 
