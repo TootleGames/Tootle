@@ -19,6 +19,8 @@
 		8477D5B10F697E0F0023454C /* TRenderNodeQuadTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 8477D5AF0F697E0F0023454C /* TRenderNodeQuadTree.h */; };
 		847F01C10F69040E00121D77 /* TRenderNodePhysicsNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 847F01BF0F69040E00121D77 /* TRenderNodePhysicsNode.cpp */; };
 		847F01C20F69040E00121D77 /* TRenderNodePhysicsNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 847F01C00F69040E00121D77 /* TRenderNodePhysicsNode.h */; };
+		84ADBE73101877FA0090EAFB /* TRenderNodeTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ADBE71101877FA0090EAFB /* TRenderNodeTimeline.cpp */; };
+		84ADBE74101877FA0090EAFB /* TRenderNodeTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 84ADBE72101877FA0090EAFB /* TRenderNodeTimeline.h */; };
 		84C10B020F0A7E6000B2DF7A /* TCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AEE0F0A7E6000B2DF7A /* TCamera.cpp */; };
 		84C10B030F0A7E6000B2DF7A /* TCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AEF0F0A7E6000B2DF7A /* TCamera.h */; };
 		84C10B040F0A7E6000B2DF7A /* TLRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AF00F0A7E6000B2DF7A /* TLRender.cpp */; };
@@ -63,6 +65,8 @@
 		8477D5AF0F697E0F0023454C /* TRenderNodeQuadTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeQuadTree.h; path = ../TRenderNodeQuadTree.h; sourceTree = SOURCE_ROOT; };
 		847F01BF0F69040E00121D77 /* TRenderNodePhysicsNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodePhysicsNode.cpp; path = ../TRenderNodePhysicsNode.cpp; sourceTree = SOURCE_ROOT; };
 		847F01C00F69040E00121D77 /* TRenderNodePhysicsNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodePhysicsNode.h; path = ../TRenderNodePhysicsNode.h; sourceTree = SOURCE_ROOT; };
+		84ADBE71101877FA0090EAFB /* TRenderNodeTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeTimeline.cpp; path = ../TRenderNodeTimeline.cpp; sourceTree = SOURCE_ROOT; };
+		84ADBE72101877FA0090EAFB /* TRenderNodeTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeTimeline.h; path = ../TRenderNodeTimeline.h; sourceTree = SOURCE_ROOT; };
 		84C10AE80F0A7E3B00B2DF7A /* libTootleRender.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleRender.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C10AEE0F0A7E6000B2DF7A /* TCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TCamera.cpp; path = ../TCamera.cpp; sourceTree = SOURCE_ROOT; };
 		84C10AEF0F0A7E6000B2DF7A /* TCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCamera.h; path = ../TCamera.h; sourceTree = SOURCE_ROOT; };
@@ -132,6 +136,8 @@
 		84C10AED0F0A7E4E00B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				84ADBE71101877FA0090EAFB /* TRenderNodeTimeline.cpp */,
+				84ADBE72101877FA0090EAFB /* TRenderNodeTimeline.h */,
 				8434CB8C100DBB910063673E /* TRenderNodeScrollableView.cpp */,
 				8434CB8D100DBB910063673E /* TRenderNodeScrollableView.h */,
 				843B55570FB2F0E4004FAC36 /* TRenderNodeSwoosh.cpp */,
@@ -230,6 +236,7 @@
 				8477D5B10F697E0F0023454C /* TRenderNodeQuadTree.h in Headers */,
 				843B555A0FB2F0E4004FAC36 /* TRenderNodeSwoosh.h in Headers */,
 				8434CB8F100DBB910063673E /* TRenderNodeScrollableView.h in Headers */,
+				84ADBE74101877FA0090EAFB /* TRenderNodeTimeline.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,6 +303,7 @@
 				8477D5B00F697E0F0023454C /* TRenderNodeQuadTree.cpp in Sources */,
 				843B55590FB2F0E4004FAC36 /* TRenderNodeSwoosh.cpp in Sources */,
 				8434CB8E100DBB910063673E /* TRenderNodeScrollableView.cpp in Sources */,
+				84ADBE73101877FA0090EAFB /* TRenderNodeTimeline.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

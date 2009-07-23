@@ -233,6 +233,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -312,8 +314,6 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -331,7 +331,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84D2300110171B9700CA57C1</string>
+										<string>84ADBE75101877FD0090EAFB</string>
 										<key>history</key>
 										<array>
 											<string>84EB990B0F3786160020B52B</string>
@@ -373,7 +373,7 @@
 											<string>84D22FF810171B9700CA57C1</string>
 											<string>84D22FFA10171B9700CA57C1</string>
 											<string>84D22FFB10171B9700CA57C1</string>
-											<string>84E461640FCFC6750015A203</string>
+											<string>84D2300110171B9700CA57C1</string>
 										</array>
 										<key>nextStack</key>
 										<array>
@@ -473,9 +473,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84D2300210171B9700CA57C1</string>
+				<string>84ADBE76101877FD0090EAFB</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84D2300310171B9700CA57C1</string>
+				<string>84ADBE77101877FD0090EAFB</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -609,7 +609,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleRender/IPod/TootleRender.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
