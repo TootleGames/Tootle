@@ -3,6 +3,7 @@
 #include <TootleGame/TWidgetButton.h>
 #include <TootleGame/TWidgetManager.h>
 #include <TootleInput/TUser.h>
+#include <TootleScene/TSceneGraph.h>
 
 
 
@@ -113,10 +114,10 @@ void TLGame::TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 			return;
 		}
 
-		TPtr<TBinaryTree>& pIconData = Message.ImportData("Icon", Ref );
+		TPtr<TBinaryTree>& pIconData = Message.GetChild("Icon");
 		if ( pIconData )
 		{
-			ProcessIconMessage( Ref, pIconData, ActionRef, Message );
+			ProcessIconMessage( pIconData, ActionRef, Message );
 			return;
 		}
 		
@@ -406,43 +407,92 @@ void TLGame::TSchemeEditor::ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef
 	}
 }
 
+	
+//----------------------------------------------------------
+//	get world pos in-game from cursor
+//----------------------------------------------------------
+Bool TLGame::TSchemeEditor::GetGameWorldPosFromScreenPos(float3& WorldPos,const int2& ScreenPos,float ViewDepth)
+{
+	if ( !m_pGameScreen || !m_pGameRenderTarget )
+		return FALSE;
+
+	return m_pGameScreen->GetWorldPosFromScreenPos( *m_pGameRenderTarget, WorldPos, ViewDepth, ScreenPos );
+}
+
 
 //----------------------------------------------------------
 //	handle a [widget]message from a editor icon
 //----------------------------------------------------------
-void TLGame::TSchemeEditor::ProcessIconMessage(TRefRef IconRef,TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message)
+void TLGame::TSchemeEditor::ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message)
 {
 	if ( ActionRef == "IcoDrag" && !m_NewSceneNode.IsValid() )
 	{
 		//	create a new node at the mouse position - convert screen pos to game render target world pos
-		float2 ScreenPos;
-		Message.ImportData("Pos2", ScreenPos);
-
-		float3 MouseWorldPos( 10.f, 10.f, 0.f );
-
-		//	get icon data
-		TRef NodeType;
-		if ( !pIconData->ImportData("Type", NodeType) )
-		{
-			TLDebug_Break("type expected");
+		int2 ScreenPos;
+		if ( !Message.ImportData("Pos2", ScreenPos) )
 			return;
-		}		
+		
+		//	error, mouse is off screen or something
+		float3 WorldPos;
+		if ( !GetGameWorldPosFromScreenPos( WorldPos, ScreenPos ) )
+			return;
 
-		//	make up init data for the node
+		//	make up init data for the node (or root node in scheme case)
 		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
-		InitMessage.ExportData("Translate", MouseWorldPos );
+		InitMessage.ExportData("Translate", WorldPos );
 		
 		//	add common data
 		InitMessage.ReferenceDataTree( m_CommonNodeData );
-
+	
 		//	add data specified in the editor scheme (xml)
 		TPtr<TBinaryTree>& pInitData = pIconData->GetChild("Init");
 		if ( pInitData )
 			InitMessage.ReferenceDataTree( pInitData );
 
-		//	set this new node as the "new scene node" that we're dropping into the game.
-		//	the editor's mouse controls take over now
-		m_NewSceneNode = m_pGraph->CreateNode("Node", NodeType, m_SchemeRootNode, &InitMessage );
+		//	create node either from type or importing scheme under it
+		TRef Type;
+		if ( pIconData->ImportData("Type", Type) )
+		{
+			//	set this new node as the "new scene node" that we're dropping into the game.
+			//	the editor's mouse controls take over now
+			m_NewSceneNode = m_pGraph->CreateNode("EdNode", Type, m_SchemeRootNode, &InitMessage );
+		}
+		else if ( pIconData->ImportData("Scheme", Type) )
+		{
+			TRefRef SchemeRef = Type;
+			TLAsset::TScheme* pScheme = TLAsset::LoadAsset(SchemeRef, TRUE, "Scheme" ).GetObject<TLAsset::TScheme>();
+			if ( !pScheme )
+			{
+				TTempString Debug_String("Failed to load scheme ");
+				SchemeRef.GetString( Debug_String );
+				Debug_String.Append(" for new icon-node");
+				TLDebug_Break( Debug_String );
+				return;
+			}
+
+			//	make a base node - still trying to decide if this is the best method
+			m_NewSceneNode = m_pGraph->CreateNode("EdNode", "object", m_SchemeRootNode, &InitMessage );
+
+			//	import the scheme under neath it
+			//	we do NOT use strict refs as the scheme is to be re-instanced...
+			//	maybe move this option INTO the scheme XML itself?
+			TLScene::g_pScenegraph->ImportScheme( *pScheme, m_NewSceneNode, FALSE, &m_CommonNodeData );
+		}
+		else 
+		{
+			TLDebug_Break("type or scheme expected");
+			return;
+		}		
+
+		//	should have set this new scene node
+		if ( !m_NewSceneNode.IsValid() )
+		{
+			TLDebug_Break("Failed to create new scene node");
+			return;
+		}
+
+		//	set as selected - this also sends the EdtStart message to disable physics etc
+		//	getting in the way of the drag
 		OnNodeSelected( m_NewSceneNode );
 
 		//	store off the action to listen for, for the mouse
@@ -472,10 +522,10 @@ void TLGame::TSchemeEditor::CreateEditorIcons()
 	{
 		TPtr<TBinaryTree>& pIconData = m_NewNodeData[i];
 		TBinaryTree& IconData = *pIconData;
-		TRef TypeRef;
-		if ( !IconData.ImportData("Type", TypeRef) )
+		TRef TypeOrSchemeRef;
+		if ( !IconData.ImportData("Type", TypeOrSchemeRef) && !IconData.ImportData("Scheme", TypeOrSchemeRef) )
 		{
-			TLDebug_Break("Icon data requires a type - otherwise we don't know what scene node to create");
+			TLDebug_Break("Icon data requires a SceneNode Type or a Scheme - otherwise we don't know what to create");
 			continue;
 		}
 
@@ -485,11 +535,8 @@ void TLGame::TSchemeEditor::CreateEditorIcons()
 		//	temporary text rnder node setup
 		TTempString String;
 		if ( !IconData.ImportDataString("name", String ) )
-		{
-			TRef TypeRef("????");
-			IconData.ImportData("Type", TypeRef );
-			TypeRef.GetString( String, TRUE );
-		}
+			TypeOrSchemeRef.GetString( String, TRUE );
+	
 		InitMessage.ExportDataString("string", String );
 		InitMessage.ExportData("scale", IconScale );
 		InitMessage.ExportData("FontRef", TRef("fdebug") );
@@ -506,14 +553,14 @@ void TLGame::TSchemeEditor::CreateEditorIcons()
 		WidgetData.ExportData("ActDrag", TRef("IcoDrag") );
 
 		//	custom data
-		TPtr<TBinaryTree>& pWidgetIconData = WidgetData.ExportData("Icon", TypeRef );
+		TPtr<TBinaryTree>& pWidgetIconData = WidgetData.AddChild("Icon");
 		if ( pWidgetIconData )
 		{
 			//	mark all the icon data as unread so it will be added to the widget
 			pIconData->SetTreeUnread();
 
-			//	add all the data specified in the XML including "init" data for the node when it's created 
-			//pWidgetIconData->ExportData("Type", TypeRef );
+			//	add all the data specified in the XML including "init" data for the node when it's created
+			//	this will include the "Type" or "Scheme" specification
 			pWidgetIconData->ReferenceDataTree( pIconData );
 		}
 
@@ -556,7 +603,7 @@ void TLGame::TSchemeEditor::ProcessMouseMessage(TRefRef ActionRef,TLMessaging::T
 
 		//	get game's render target
 		float3 WorldPos;
-		if ( !m_pGameScreen->GetWorldPosFromScreenPos( *m_pGameRenderTarget, WorldPos, 0.f, ScreenPos ) )
+		if ( !GetGameWorldPosFromScreenPos( WorldPos, ScreenPos ) )
 		{
 			//	failed - probably dragged outside the game's window, drop
 			TLDebug_Break("todo: drop node");

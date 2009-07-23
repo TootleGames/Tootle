@@ -36,9 +36,10 @@ public:
 		TLAsset::LoadAsset( m_AssetScriptRef );
 	}
 
-	void Initialise(TLMessaging::TMessage& InitMessage);
+	void					Initialise();
+	void					Initialise(TLMessaging::TMessage& InitMessage);
 
-	FORCEINLINE SyncBool	Update(float fTimestep)			{	return DoUpdate(fTimestep, FALSE);	}
+	FORCEINLINE SyncBool	Update(float fTimestep)			{	return DoUpdate(fTimestep, FALSE);	}	//	returns SyncFalse when the timeline has come to an end
 	FORCEINLINE void		BindTo(TRefRef NodeRef)			{ 	MapNodeRef(TRef("this"), NodeRef);	}
 	FORCEINLINE void		MapNodeRef(TRefRef FromRef, TRefRef ToRef);
 
@@ -57,7 +58,7 @@ protected:
 	virtual void		ProcessMessage(TLMessaging::TMessage& Message);
 
 private:
-	SyncBool			DoUpdate(float fTimestep, Bool bForced);
+	SyncBool			DoUpdate(float fTimestep, Bool bForced);	//	returns SyncFalse when the timeline has come to an end
 
 	TLAsset::TAssetTimeline*			GetAssetTimeline();
 	FORCEINLINE TArray<TRef>*			GetGraphNodeRefArray(TRefRef GraphRef);

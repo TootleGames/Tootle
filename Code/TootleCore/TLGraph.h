@@ -77,7 +77,7 @@ public:
 	template<typename MATCHTYPE>
 	TPtr<T>&					FindNodeMatch(const MATCHTYPE& Value,Bool CheckRequestQueue=TRUE);	//	find a TPtr in the graph that matches the specified value (will use == operator of node type to match)
 	TPtr<T>&					FindNode(TRefRef NodeRef,Bool CheckRequestQueue=TRUE);				//	find a node
-	TRef						GetFreeNodeRef(TRefRef BaseRef=TRef());	//	find an unused ref for a node - returns the ref
+	virtual TRef				GetFreeNodeRef(TRefRef BaseRef=TRef());	//	find an unused ref for a node - returns the ref
 	TRefRef						GetFreeNodeRef(TRef& Ref);				//	find an unused ref for a node, modifies the ref provided
 
 	// Messaging
@@ -768,6 +768,13 @@ TRefRef TLGraph::TGraph<T>::GetFreeNodeRef(TRef& Ref)
 		TLPtr::GetNullPtr<T>();
 #endif
 
+	//	gr: this can be sped up by finding the existing index in the node index array
+	//	and then keep incrementing and check the NEXT index in the array - 
+	//	the array is sorted so the next one along is either the Increment() or it's 
+	//	something else. We can keep incrementing the index and ref until we reach the 
+	//	end of the array or something similar. We don't need to do a whole binary chop
+	//	for a match each time
+
 	//	keep searching through the graph for this ref whilst a node is found
 	while ( FindNode( Ref ).IsValid() )
 	{
@@ -780,6 +787,8 @@ TRefRef TLGraph::TGraph<T>::GetFreeNodeRef(TRef& Ref)
 		Ref.Increment();
 	}
 
+	//	gr: this is slower, and NOT sorted, so cannot be sped up... but the array
+	//		should be much smaller...
 	//	if it's in the queue, it also needs changing
 	while ( m_RequestQueue.Exists( Ref ) )
 	{
@@ -833,6 +842,11 @@ TPtr<T> TLGraph::TGraph<T>::DoCreateNode(TRef NodeRef,TRefRef TypeRef,TPtr<T> pP
 	if ( !StrictNodeRef )
 	{
 		TRef OldRef = NodeRef;
+
+		//	not strict, so allow an invalid node ref, and generate a valid one
+		if ( !NodeRef.IsValid() )
+			NodeRef.Set("Node");
+
 		NodeRef = GetFreeNodeRef( NodeRef );
 	
 		if ( OldRef != NodeRef )

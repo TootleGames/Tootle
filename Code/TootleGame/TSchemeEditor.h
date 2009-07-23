@@ -55,8 +55,9 @@ protected:
 	void						OnNodeDrag(TRefRef NodeRef,const float3& DragAmount);	//	node has been dragged
 	void						OnNodeUnselected(TRefRef NodeRef);						//	node has been selected
 	void						EnableNodeWidgets(Bool Enable);							//	enable/disable node widgets
+	Bool						GetGameWorldPosFromScreenPos(float3& WorldPos,const int2& ScreenPos,float ViewDepth=0.f);	//	get world pos in-game from cursor
 
-	virtual void				ProcessIconMessage(TRefRef IconRef,TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a editor icon
+	virtual void				ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a editor icon
 	void						CreateEditorIcons();									//	create icons for the editor
 
 	virtual void				ProcessMouseMessage(TRefRef ActionRef,TLMessaging::TMessage& Message,Bool IsClickAction);		//	handle mouse messages 

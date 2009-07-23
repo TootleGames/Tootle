@@ -47,6 +47,7 @@ protected:
 	virtual void					Shutdown();
 	virtual void					ProcessMessage(TLMessaging::TMessage& Message);
 	virtual void					UpdateNodeData();
+	void							UpdateOwnedNodeData(TLRender::TRenderNode& RenderNode,TBinaryTree& NodeData,TRefRef NodeDataRef);	//	recursivly store an owned-node's data to this data
 
 	virtual void					OnTransformChanged(u8 TransformChangedBits);	//	this checks to see if we're asleep first and delays sending a transform until we are awake. gr: see TLSceneNodeObject_FromPhysicsTransform
 	

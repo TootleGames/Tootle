@@ -532,9 +532,41 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 		}
 	}
 
+	//	create children during init
+	TPtrArray<TBinaryTree> InitChildDatas;
+	if ( Message.GetChildren("Child", InitChildDatas ) )
+		for ( u32 c=0;	c<InitChildDatas.GetSize();	c++ )
+			CreateChildNode( *InitChildDatas[c] );
+	
 	//	do inherited init
 	TLGraph::TGraphNode<TLRender::TRenderNode>::Initialise( Message );
 }
+
+
+//---------------------------------------------------------
+//	create a child node from plain data
+//---------------------------------------------------------
+Bool TLRender::TRenderNode::CreateChildNode(TBinaryTree& ChildInitData)
+{
+	//	import bits of optional data
+	TRef Type;
+	ChildInitData.ImportData("Type", Type);
+
+	TRef Parent = this->GetNodeRef();
+	ChildInitData.ImportData("Parent", Parent);
+
+	TRef ChildRef;
+	ChildInitData.ImportData("NodeRef", ChildRef);
+
+	//	make up an initialise message and use the data provided
+	TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
+	InitMessage.ReferenceDataTree( ChildInitData );
+
+	ChildRef = TLRender::g_pRendergraph->CreateNode( ChildRef, Type, Parent, &InitMessage );
+	
+	return ChildRef.IsValid();
+}
+
 
 //---------------------------------------------------------
 //	no updates for render nodes!

@@ -10,9 +10,23 @@ using namespace TLAnimation;
 
 //#define TEST_REVERSE_PLAYBACK
 
+#ifdef _DEBUG
+	//#define DEBUG_TIMELINE
+#endif
+
+
+void TTimelineInstance::Initialise()
+{
+	//	gr: check timeline asset is valid?
+
+	// Initialise the timeline to the current time
+	SetTime( 0.f );
+}
 
 void TTimelineInstance::Initialise(TLMessaging::TMessage& InitMessage)
 {
+	//	gr: check timeline asset is valid?
+
 	float fTime = 0.0f;
 
 	// Get the initial time from the init message
@@ -61,6 +75,9 @@ void TTimelineInstance::OnTimeSet()
 }
 
 
+//---------------------------------------------------
+//	returns SyncFalse when the timeline has come to an end
+//---------------------------------------------------
 SyncBool TTimelineInstance::DoUpdate(float fTimestep, Bool bForced)
 {
 	//TEST Force the timestep for testing purposes
@@ -349,7 +366,9 @@ Bool TTimelineInstance::ProcessKeyframes(const TLAsset::TTempKeyframeData& Keyfr
 
 SyncBool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFromCommand, TLAsset::TAssetTimelineCommand* pToCommand, TRef NodeGraphRef, TRef NodeRef, float fPercent, Bool bTestDataForInterp)
 {
+#ifdef DEBUG_TIMELINE
 	TLDebug_Print("Sending timeline command");
+#endif
 
 	// Check for node mapped ref.  If found replace the ndoe ref with the one for our key array
 	if(m_NodeRefMap.GetSize() > 0)
@@ -381,7 +400,9 @@ SyncBool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand*
 	// Handle special create and shutdown commands
 	if(MessageRef == TLCore::InitialiseRef)
 	{
+#ifdef DEBUG_TIMELINE
 		TLDebug_Print("Timeline - Create node");
+#endif
 
 		//	gr: i've removed the refs in the animation namespace - the refs are set in the graph's own
 		//		constructor now so they are not changed. If we want some global TRef_Static's for this
@@ -520,7 +541,9 @@ SyncBool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand*
 		// Do test for interped data?
 		if(bTestDataForInterp)
 		{
+			#ifdef DEBUG_TIMELINE
 			TLDebug_Print("Testing for interped data");
+			#endif
 
 			pMessage = &NewMessage;
 
@@ -596,7 +619,7 @@ void TTimelineInstance::AttachInterpedDataToMessage(TPtr<TBinaryTree>& pFromData
 			if(pToData->Read(qRotTo))
 			{
 				TLMaths::TQuaternion qRot;
-#ifdef _DEBUG
+#ifdef DEBUG_TIMELINE
 				TTempString str;
 
 				InterpMethod.GetString(str);
@@ -623,7 +646,7 @@ void TTimelineInstance::AttachInterpedDataToMessage(TPtr<TBinaryTree>& pFromData
 				else
 					qRot.Nlerp(qRotFrom, qRotTo, fPercent);
 		
-#ifdef _DEBUG
+#ifdef DEBUG_TIMELINE
 				str.Appendf("Quat Lerp: %.2f %.2f %.2f %.2f", qRot.GetData().x, qRot.GetData().y, qRot.GetData().z, qRot.GetData().w );
 				TLDebug_Print(str);
 #endif

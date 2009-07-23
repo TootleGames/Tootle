@@ -212,6 +212,13 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef,Bool bBlocking,TR
 		return TLPtr::GetNullPtr<TLAsset::TAsset>();
 	}
 
+	//	trying to load invalid ref
+	if ( !AssetRef.IsValid() )
+	{
+		TLDebug_Break("Trying to load asset of no ref");
+		return TLPtr::GetNullPtr<TLAsset::TAsset>();
+	} 
+
 	//	check it doesnt already exist
 	{
 		TPtr<TAsset>& pAssetPtr = GetAsset( AssetRef );

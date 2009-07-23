@@ -7,6 +7,7 @@
 #include "TRenderNodeQuadTree.h"
 #include "TRenderNodeSwoosh.h"
 #include "TRenderNodeScrollableView.h"
+#include "TRenderNodeTimeline.h"
 #include <TootleCore/TLTime.h>
 
 
@@ -159,6 +160,9 @@ TLRender::TRenderNode* TLRender::TRenderNodeFactory::CreateObject(TRefRef Instan
 
 	if ( TypeRef == "Scroll" )
 		return new TLRender::TRenderNodeScrollableView(InstanceRef,TypeRef);
+
+	if ( TypeRef == "Timeline" )
+		return new TLRender::TRenderNodeTimeline(InstanceRef,TypeRef);
 
 	return NULL;
 }

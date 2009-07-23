@@ -90,7 +90,7 @@ Bool TSceneNode_Object::InitialiseRenderNode(TLMessaging::TMessage& Message)
 		// Uses render node data under a RNode subtree
 		TRef ParentNodeRef;
 		if ( !pNodeData->ImportData("Parent", ParentNodeRef) )
-			pNodeData->ImportData("RNParent", ParentNodeRef);
+			Message.ImportData("RNParent", ParentNodeRef);
 
 		TRef NodeTypeRef;
 		pNodeData->ImportData("Type", NodeTypeRef);
@@ -265,38 +265,34 @@ void TSceneNode_Object::SetProperty(TLMessaging::TMessage& Message)
 void TSceneNode_Object::UpdateNodeData()
 {
 	// Update and serialise the render node data
-	TPtr<TLRender::TRenderNode> pRenderNode = GetRenderNode();
+	TPtr<TLRender::TRenderNode>& pRenderNode = GetRenderNode();
 
+	//	gr: clear current render node data
+	GetNodeData().RemoveChild("RNode");
 	if(pRenderNode)
 	{
-		// Update the Render node data
-		pRenderNode->UpdateNodeData();
-
-		GetNodeData().RemoveChild("RNode");
-		TPtr<TBinaryTree>& pRenderData = GetNodeData().AddChild("RNode");
-
-		if(pRenderData)
-			pRenderData->ReferenceDataTree(pRenderNode->GetNodeData());
+		//	recursivly add the render node and all it's children to our node data
+		UpdateOwnedNodeData( *pRenderNode, GetNodeData(), "RNode" );
 	}
 
 	// Update and serialise the physics node data
-	TPtr<TLPhysics::TPhysicsNode> pPhysicsNode = GetPhysicsNode();
+	TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = GetPhysicsNode();
 
+	//	gr: clear current physics node data
+	GetNodeData().RemoveChild("PNode");
 	if(pPhysicsNode)
 	{
 		// Update the Physics node data
 		pPhysicsNode->UpdateNodeData();
 
-		GetNodeData().RemoveChild("PNode");
 		TPtr<TBinaryTree>& pPhysicsData = GetNodeData().AddChild("PNode");
-
 		if(pPhysicsData)
 			pPhysicsData->ReferenceDataTree(pPhysicsNode->GetNodeData());
 	}
 
 /*	
 	// Update and serialise the audio node data
-	TPtr<TLAudio::TAudioNode> pAudioNode = GetAudioNode();
+	TPtr<TLAudio::TAudioNode>& pAudioNode = GetAudioNode();
 
 
 	if(pAudioNode)
@@ -315,6 +311,31 @@ void TSceneNode_Object::UpdateNodeData()
 	GetNodeData().ExportData("Life", m_fLife);
 
 	TLScene::TSceneNode_Transform::UpdateNodeData();
+}
+
+
+//------------------------------------------------
+//	recursivly store an owned-node's data to this data
+//------------------------------------------------
+void TSceneNode_Object::UpdateOwnedNodeData(TLRender::TRenderNode& RenderNode,TBinaryTree& NodeData,TRefRef NodeDataRef)
+{
+	// Update the node's own data (ie. save it's state)
+	RenderNode.UpdateNodeData();
+
+	//	add some data to write to
+	TPtr<TBinaryTree>& pNewNodeData = GetNodeData().AddChild( NodeDataRef );
+	if ( !pNewNodeData )
+		return;
+
+	//	copy the node's data
+	pNewNodeData->ReferenceDataTree( RenderNode.GetNodeData() );
+
+	//	now store this node's children too
+	for ( u32 c=0;	c<RenderNode.GetChildren().GetSize();	c++ )
+	{
+		TPtr<TLRender::TRenderNode>& pChildRenderNode = RenderNode.GetChildren().ElementAt(c);
+		UpdateOwnedNodeData( *pChildRenderNode, *pNewNodeData, "Child" );
+	}
 }
 
 

@@ -239,16 +239,16 @@ public:
 protected:
 	virtual void							Initialise(TLMessaging::TMessage& Message);	//	generic render node init
 	virtual void 							Update(float Timestep);	
-
+	virtual void							ProcessMessage(TLMessaging::TMessage& Message);
 	virtual void							SetProperty(TLMessaging::TMessage& Message);	//	SetProperty message - made into virtual func as it's will be commonly used.
+
+	Bool									CreateChildNode(TBinaryTree& ChildInitData);	//	create a child node from plain data
 
 	FORCEINLINE void						OnMeshRefChanged()							{	m_pMeshCache = NULL;	OnMeshChanged();	}
 	FORCEINLINE void						OnTextureRefChanged()						{	m_pTextureCache = NULL;	}
 	//void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags=TInvalidateFlags(InvalidateLocalBounds,InvalidateWorldBounds,InvalidateWorldPos,InvalidateParents,InvalidateChildren));	//	set all bounds as invalid
 	void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags);
 
-	virtual void							ProcessMessage(TLMessaging::TMessage& Message);
-	
 	template<class SHAPETYPE> void			CalcLocalBounds(SHAPETYPE& Shape);
 
 protected:
