@@ -28,6 +28,8 @@ protected:
 	virtual void			Initialise(TLMessaging::TMessage& Message);	
 	virtual void 			Update(float Timestep);					
 	virtual void			Shutdown();							
+
+	virtual void			UpdateNodeData();
 	
 	virtual void			SetProperty(TLMessaging::TMessage& Message);	
 

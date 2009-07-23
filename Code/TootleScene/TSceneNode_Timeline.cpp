@@ -143,6 +143,19 @@ void TSceneNode_Timeline::DeleteTimelineInstance()
 }
 
 
+void TSceneNode_Timeline::UpdateNodeData()
+{
+	GetNodeData().RemoveChild("Timeline");
+	GetNodeData().ExportData("Timeline", m_TimelineAssetRef);
+
+	GetNodeData().RemoveChild("AutoDelete");
+	GetNodeData().ExportData("AutoDelete", m_bAutoDelete);
+
+	TSceneNode_Object::UpdateNodeData();
+}
+
+
+
 void TSceneNode_Timeline::OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode)
 {
 	//TODO: May want to have some control flags to determine if the timeline 
