@@ -817,6 +817,12 @@ void TLRender::TRenderNode::UpdateNodeData()
 	GetNodeData().RemoveChild("MeshRef");
 	GetNodeData().ExportData("MeshRef", m_MeshRef);
 
+	// Export transform info
+	GetNodeData().RemoveChild(TRef_Static(T,r,a,n,s));
+	GetNodeData().RemoveChild(TRef_Static(S,c,a,l,e));
+	GetNodeData().RemoveChild(TRef_Static(R,o,t,a,t));
+	m_Transform.ExportData(GetNodeData());
+
 	GetNodeData().RemoveChild("Texture");
 	GetNodeData().ExportData("Texture", m_TextureRef);
 

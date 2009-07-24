@@ -57,9 +57,9 @@ void TLScene::TSceneNode_Transform::SetProperty(TLMessaging::TMessage& Message)
 void TLScene::TSceneNode_Transform::UpdateNodeData()
 {
 	//	update transform by clearing out old values and adding new ones
-	GetNodeData().RemoveChild("Translate");
-	GetNodeData().RemoveChild("Scale");
-	GetNodeData().RemoveChild("Rotate");
+	GetNodeData().RemoveChild(TRef_Static(T,r,a,n,s));
+	GetNodeData().RemoveChild(TRef_Static(S,c,a,l,e));
+	GetNodeData().RemoveChild(TRef_Static(R,o,t,a,t));
 	GetTransform().ExportData( GetNodeData() );
 
 	//	inherited update

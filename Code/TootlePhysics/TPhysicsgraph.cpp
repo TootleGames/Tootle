@@ -2,6 +2,8 @@
 #include "TPhysicsNode.h"
 #include "TPhysicsNodeSphere.h"
 
+#include <TootleMaths/TShapePolygon.h>
+
 #include <TootleCore/TLTime.h>
 
 
@@ -384,6 +386,17 @@ void TLPhysics::TPhysicsgraph::RemoveJoint(TRefRef NodeA)
 		}
 	}
 
+}
+
+
+void TLPhysics::TPhysicsgraph::GetNodesInShape(const TLMaths::TShapePolygon2D& Shape,TArray<TLPhysics::TPhysicsNode*>& NearPhysicsNodes)
+{
+	//	convert to box and do test
+	TLMaths::TBox2D BoxShape;
+	BoxShape.Accumulate( Shape.GetOutline() );
+
+	//	get nodes in box
+	GetNodesInShape( BoxShape, NearPhysicsNodes );
 }
 
 

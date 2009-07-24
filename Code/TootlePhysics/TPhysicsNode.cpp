@@ -261,6 +261,13 @@ void TLPhysics::TPhysicsNode::UpdateNodeData()
 	GetNodeData().RemoveChild("Type");
 	GetNodeData().ExportData("Type", GetNodeTypeRef());
 
+	// Export physics transform
+	GetNodeData().RemoveChild(TRef_Static(T,r,a,n,s));
+	GetNodeData().RemoveChild(TRef_Static(S,c,a,l,e));
+	GetNodeData().RemoveChild(TRef_Static(R,o,t,a,t));
+	m_Transform.ExportData(GetNodeData());
+
+
 	GetNodeData().RemoveChild("Friction");
 	GetNodeData().ExportData("Friction", m_Friction);
 
