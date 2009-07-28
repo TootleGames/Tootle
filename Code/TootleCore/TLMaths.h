@@ -332,7 +332,15 @@ public:
 //	float3&					GetAxis()			{	return xyz;	};
 //	float&					GetAngle()			{	return w;	}
 	float3					GetTempAxis() const {	return float3( xyzw.x, xyzw.y, xyzw.z );	}	//	gr: called this "temp" to make sure I can tell if anything is using "getaxis"
-	FORCEINLINE Bool				IsValid() const		{	return (xyzw.w!=0.f) && (GetTempAxis().LengthSq()!=0.f);	};
+
+	// [28/07/09] DB - A quaternion is still valid with a zero w value. 
+	//				   {1,0,0,0} for example is 180 degrees in the x-axis which
+	//				   would fail when checking the w value first and it's likely to
+	//				   be quicker simply checking the lengthsq of the float4 than
+	//				   creating and testing a float3 lengthsq first
+	//FORCEINLINE Bool				IsValid() const		{	return ((xyzw.w!=0.f) && (GetTempAxis().LengthSq() !=0.f));	};
+	FORCEINLINE Bool		IsValid() const		{	return (xyzw.LengthSq() !=0.f);	}
+
 	TLMaths::TAngle			GetAngle2D() const;	//	extract a eular angle in degrees from the quaternion. Is is based on an axis of 0,0,1. probably better ways to do it to get 3D angles...
 
 	FORCEINLINE void				SetIdentity()								{	SetValues( 0,0,0,1 );	};
