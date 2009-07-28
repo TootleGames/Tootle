@@ -62,9 +62,7 @@ namespace TLRender
 		void					SceneTransform(const TLMaths::TTransform& Transform,const TLMaths::TMatrix* pMatrix=NULL);	//	transform scene
 		void					SceneRotate(const TLMaths::TAngle& Rotation,const float3& Axis);	//	eular rotation on the scene - wrapper for glRotatef
 
-		void					GetViewportSize(Type4<s32>& ViewportSize,const Type4<s32>& ViewportTargetMaxSize,const Type4<s32>& RenderTargetSize,const Type4<s32>& RenderTargetMaxSize,TScreenShape ScreenShape);	//	get render target's viewport size from the size and the screen size
-	
-		FORCEINLINE void		ClampPointSpriteSize(float& PointSize)		{	TLMaths::Limit( PointSize, 0.f, 64.f );	}	//	gr: 64 is the limit on the iphone. change this to use glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, sizes); to get accurate sizes. 
+		FORCEINLINE void		ClampPointSpriteSize(float& PointSize)		{	TLMaths::Limit( PointSize, 1.f, 64.f );	}	//	gr: 64 is the limit on the iphone. change this to use glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, sizes); to get accurate sizes. 
 
 		//	scene settings - only calls platform implementations as required - inlined for speed
 		FORCEINLINE void		EnableWireframe(Bool Enable);

@@ -29,6 +29,7 @@ public:
 	FORCEINLINE void			GetLocalPosition(float3& Pos) const								{	GetTransform().Transform( Pos );	}	//	get a position relative to the scene node
 
 	const TLMaths::TTransform&	GetTransform() const											{	return m_Transform;	}
+	const TLMaths::TTransform&	GetTransformConst() const										{	return m_Transform;	}
 	FORCEINLINE	const float3&	GetTranslate() const											{	return m_Transform.GetTranslate();	}
 	FORCEINLINE	const TLMaths::TQuaternion&		GetRotation() const								{	return m_Transform.GetRotation();	}
 	FORCEINLINE	const float3&	GetScale() const												{	return m_Transform.GetScale();	}

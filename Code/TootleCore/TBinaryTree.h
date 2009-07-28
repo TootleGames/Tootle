@@ -20,7 +20,7 @@ class TBinaryTree : public TBinary
 {
 public:
 	TBinaryTree(TRefRef DataRef) : m_DataRef ( DataRef )				{	}
-	TBinaryTree(TBinaryTree& OtherTree)									{	SetDataRef( OtherTree.GetDataRef() ); ReferenceDataTree( OtherTree );	}
+	TBinaryTree(const TBinaryTree& OtherTree)							{	SetDataRef( OtherTree.GetDataRef() ); ReferenceDataTree( OtherTree );	}
 
 	FORCEINLINE TRefRef			GetDataRef() const						{	return m_DataRef;	}
 	FORCEINLINE void			SetDataRef(TRefRef DataRef)				{	m_DataRef = DataRef;	}

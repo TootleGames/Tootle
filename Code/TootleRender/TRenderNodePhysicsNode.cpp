@@ -131,24 +131,44 @@ void TLRender::TRenderNodePhysicsNode::ProcessMessage(TLMessaging::TMessage& Mes
 		}
 	}
 
-	//	catch node destruction (gr: dont think nodes actually send out shutdowns yet)
-	if ( Message.GetMessageRef() == "shutdown" && Message.GetSenderRef() == m_PhysicsNodeRef )
+	//	messages from the physics node we're tracking
+	if ( Message.GetSenderRef() == m_PhysicsNodeRef )
 	{
-		SetPhysicsNode( TRef() );
-		return;
-	}
-
-	//	catch change in collision shape
-	if ( Message.GetMessageRef() == TRef_Static(O,n,T,r,a) && Message.GetSenderRef() == m_PhysicsNodeRef )
-	{
-		TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef );
-		if ( pPhysicsNode )
+		//	catch node destruction (gr: dont think nodes actually send out shutdowns yet)
+		if ( Message.GetMessageRef() == "shutdown" )
 		{
-			OnPhysicsNodeChanged( *pPhysicsNode );
+			SetPhysicsNode( TRef() );
+			return;
 		}
-		else
+
+		//	catch change in transform or collision shape
+		if ( Message.GetMessageRef() == TRef_Static(O,n,T,r,a) )
 		{
-			TLDebug_Break("Physics node expected");
+			TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef );
+			if ( pPhysicsNode )
+			{
+				OnPhysicsNodeChanged( *pPhysicsNode );
+			}
+			else
+			{
+				TLDebug_Break("Physics node expected");
+			}
+			return;
+		}
+
+		//	catch change in transform or collision shape
+		if ( Message.GetMessageRef() == TRef_Static(O,n,S,h,a) )
+		{
+			TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef );
+			if ( pPhysicsNode )
+			{
+				OnPhysicsNodeChanged( *pPhysicsNode );
+			}
+			else
+			{
+				TLDebug_Break("Physics node expected");
+			}
+			return;
 		}
 	}
 }

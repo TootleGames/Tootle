@@ -61,6 +61,7 @@ Bool TLRender::TRenderTarget::BeginDraw(const Type4<s32>& RenderTargetMaxSize,co
 	//	need a camera
 	if ( !m_pCamera )
 		return FALSE;
+	TCamera& Camera = *m_pCamera;
 
 	//	get the size... fails if it's too small to be of any use
 	Type4<s32> RenderTargetSize;
@@ -93,30 +94,36 @@ Bool TLRender::TRenderTarget::BeginDraw(const Type4<s32>& RenderTargetMaxSize,co
 	m_TempPostRenderList.Empty();
 
 	//	setup viewport and sissor outside the viewport
-	Type4<s32> ViewportSize;
-	Opengl::GetViewportSize( ViewportSize, ViewportMaxSize, RenderTargetSize, RenderTargetMaxSize, Screen.GetScreenShape() );
-	glViewport( ViewportSize.Left(), ViewportSize.Top(), ViewportSize.Width(), ViewportSize.Height() );
+	const TLMaths::TBox2D& ViewportBox = Camera.GetViewportBox();
+	if ( !ViewportBox.IsValid() )
+	{
+		TLDebug_Break("Viewport box should be valid");
+		return FALSE;
+	}
+	//	gr: store a integer box for these?
+	glViewport( (s32)ViewportBox.GetLeft(), (s32)ViewportBox.GetTop(), (s32)ViewportBox.GetWidth(), (s32)ViewportBox.GetHeight() );
 	Opengl::Debug_CheckForError();
 
-	//	todo: only enable if size is not full screen - maybe cache current scene viewport?
+	//	gr: todo; cache current scissor box
+	const TLMaths::TBox2D& ScissorBox = Camera.GetScissorBox();
+	if ( !ScissorBox.IsValid() )
+	{
+		TLDebug_Break("Scissor box should be valid");
+		return FALSE;
+	}
 	Opengl::EnableScissor( TRUE );
-	Opengl::SetScissor( ViewportSize.Left(), ViewportSize.Top(), ViewportSize.Width(), ViewportSize.Height() );
+	Opengl::SetScissor( (u32)ScissorBox.GetLeft(), (u32)ScissorBox.GetTop(), (u32)ScissorBox.GetWidth(), (u32)ScissorBox.GetHeight() );
 	Opengl::Debug_CheckForError();
-
-	//	calculate new view sizes etc for this viewport
-	TPtr<TLRender::TCamera>& pCamera = GetCamera();
-	pCamera->SetViewportSize( ViewportSize, Screen.GetScreenShape() );
-	pCamera->SetRenderTargetSize( RenderTargetSize, Screen.GetScreenShape() );
 
 	//	do projection vs orthographic setup
-	if ( GetCamera()->IsOrtho() )
+	if ( Camera.IsOrtho() )
 	{
-		if ( !BeginOrthoDraw( pCamera.GetObject<TLRender::TOrthoCamera>(), Screen.GetScreenShape() ) )
+		if ( !BeginOrthoDraw( static_cast<TLRender::TOrthoCamera&>(Camera), Screen.GetScreenShape() ) )
 			return FALSE;
 	}
 	else
 	{
-		if ( !BeginProjectDraw( pCamera.GetObject<TLRender::TProjectCamera>(), Screen.GetScreenShape() ) )
+		if ( !BeginProjectDraw( static_cast<TLRender::TProjectCamera&>(Camera), Screen.GetScreenShape() ) )
 			return FALSE;
 	}
 
@@ -307,11 +314,10 @@ void TLRender::TRenderTarget::GetSize(Type4<s32>& Size,const Type4<s32>& MaxSize
 //-------------------------------------------------------------
 void TLRender::TRenderTarget::OnSizeChanged()
 {
-	//	initialise the ortho camera's box (useful for when we want to use the box straight after initialisation but before we do a render)
+	//	setup view boxes of camera
 	TPtr<TCamera>& pCamera = GetCamera();
 	if ( pCamera )
 	{
-		//	calc render target size
 		//	todo: replace this screen pointer with proper one when screen owner gets stored on render target
 		TPtr<TLRender::TScreen>& pScreen = TLRender::g_pScreenManager->GetDefaultScreen();
 		if ( pScreen )
@@ -320,7 +326,7 @@ void TLRender::TRenderTarget::OnSizeChanged()
 			pScreen->GetRenderTargetMaxSize( RenderTargetMaxSize );
 			Type4<s32> RenderTargetSize;
 			GetSize( RenderTargetSize, RenderTargetMaxSize );
-			pCamera->SetRenderTargetSize( RenderTargetSize, pScreen->GetScreenShape() );
+			pCamera->SetRenderTargetSize( RenderTargetSize, RenderTargetMaxSize, pScreen->GetSize(), pScreen->GetScreenShape() );
 		}
 	}
 
@@ -1257,38 +1263,12 @@ void TLRender::TRenderTarget::Debug_DrawZone(TPtr<TLMaths::TQuadTreeZone>& pZone
 	
 }
 
-
-//--------------------------------------------------
-//	the world-space box for the extents at the edges of the screen.
-//--------------------------------------------------
-const TLMaths::TBox2D& TLRender::TRenderTarget::GetWorldViewBox(float WorldDepth) const
-{
-	if ( m_pCamera->IsOrtho() )
-	{
-		const TOrthoCamera* pCamera = m_pCamera.GetObject<TOrthoCamera>();
-		return pCamera->GetOrthoRenderTargetBox();
-	}
-	else
-	{
-		//	we make this up on the fly but for the sake of keeping this function fast
-		//	for ortho we return a reference to a static box
-		static TLMaths::TBox2D g_ProjectionWorldViewBox;
-
-		//	get box at this depth
-		const TProjectCamera* pCamera = m_pCamera.GetObject<TProjectCamera>();
-		float ViewDepth = pCamera->GetPosition().z + WorldDepth;
-		pCamera->GetWorldFrustumPlaneBox2D( ViewDepth, g_ProjectionWorldViewBox );
-
-		return g_ProjectionWorldViewBox;
-	}
-}
-
-
 //--------------------------------------------------
 //	same as GetWorldViewBox but can be used before a render
 //--------------------------------------------------
 const TLMaths::TBox2D& TLRender::TRenderTarget::GetWorldViewBox(TPtr<TScreen>& pScreen,float WorldDepth)
 {
+	/*
 	//	get render target size
 	Type4<s32> Size;
 	Type4<s32> MaxSize;
@@ -1297,6 +1277,7 @@ const TLMaths::TBox2D& TLRender::TRenderTarget::GetWorldViewBox(TPtr<TScreen>& p
 
 	//	calc viewport sizes and boxes etc will be valid
 	m_pCamera->SetRenderTargetSize( Size, pScreen->GetScreenShape() );
+	*/
 
 	return GetWorldViewBox( WorldDepth );
 }

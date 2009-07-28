@@ -152,6 +152,7 @@ public:
 	void					ScaleVerts(const float3& Scale,u16 FirstVert=0,s32 LastVert=-1);	//	scale all vertexes
 	void					TransformVerts(const TLMaths::TTransform& Transform,u16 FirstVert=0,s32 LastVert=-1);	//	move all verts
 	void					ColoursMult(const TColour& Colour);		//	multiply all colours by this colour
+	void					PreAllocVertexes(u32 VertexCount)		{	if ( m_Vertexes.GetAllocSize() < VertexCount )	m_Vertexes.SetAllocSize( VertexCount );	}
 
 	//	data accessors
 	TFlags<TMeshFlags,u8>&				GetFlags()								{	return m_Flags;	}

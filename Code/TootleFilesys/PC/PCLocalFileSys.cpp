@@ -455,7 +455,9 @@ TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filenam
 	{
 		if ( !pFile->GetFilename().IsEqual( Filename, FALSE ) )
 		{
-			TLDebug_Break("Called CreateFile(), new FileRef matches existing file, BUT filename is different. Conflict here. Aborting file creation");
+			TTempString Debug_String;
+			Debug_String.Appendf("Called CreateFile(%s) but new FileRef will match existing file (%s) BUT filename is different. Conflict here (2 files will resolve to same FileRef). Aborting file creation", Filename.GetData(), pFile->GetFilename().GetData() );
+			TLDebug_Break( Debug_String );
 			//return TLPtr::GetNullPtr<TLFileSys::TFile>();
 			return NULL;
 		}

@@ -11,6 +11,34 @@
 
 
 
+void RotateBoxInsideBox(TLMaths::TBox2D& Box,TLMaths::TBox2D& MaxBox,TLRender::TScreenShape ScreenShape)
+{
+	//	rotate box
+	TLMaths::TBox2D OriginalBox = Box;
+
+	if ( ScreenShape == TLRender::ScreenShape_WideLeft )
+	{
+		//	gr: rendertarget is rotated left, so to get viewport, rotate it right again
+		//	rotate right
+		Box.GetLeft() = OriginalBox.GetTop();
+		Box.GetTop() = MaxBox.GetWidth() - OriginalBox.GetRight();
+		Box.SetWidth( OriginalBox.GetHeight() );
+		Box.SetHeight( OriginalBox.GetWidth() );
+	}
+	else if ( ScreenShape == TLRender::ScreenShape_WideRight )
+	{
+		//	gr: rendertarget is rotated right, so to get viewport, rotate it left again
+		//	rotate left
+		Box.GetLeft() = MaxBox.GetHeight() - OriginalBox.GetBottom();
+		Box.GetTop() = OriginalBox.GetLeft();
+		Box.SetWidth( OriginalBox.GetHeight() );
+		Box.SetHeight( OriginalBox.GetWidth() );
+	}
+}
+
+
+
+
 TLRender::TCamera::TCamera() :
 	m_ViewLine	( float3(0.f, 0.f, 0.f), float3(0.f, 0.f, 1.f) ),
 	m_NearZ		( 0.01f ),
@@ -247,10 +275,14 @@ void TLRender::TProjectCamera::GetWorldFrustumPlaneBox(float ViewDepth,TLMaths::
 //----------------------------------------------------------
 //	calc new view sizes
 //----------------------------------------------------------
-void TLRender::TProjectCamera::SetRenderTargetSize(const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape)
+void TLRender::TProjectCamera::SetRenderTargetSize(const Type4<s32>& RenderTargetSize,const Type4<s32>& RenderTargetMaxSize,const Type4<s32>& ViewportMaxSize,TScreenShape ScreenShape)
 {
+	TLDebug_Break("New recalc code required - copy most of ortho code");
+
+
+	///	gr: this is the old SetViewportSize code
 	/*
-	float AspectRatio = (float)RenderTargetSize.Width() / (float)RenderTargetSize.Height();
+	float AspectRatio = (float)ViewportSize.Width() / (float)ViewportSize.Height();
 
 	//	calc the un-rotated screen view size
 	float ViewHalfHeight = tanf( GetHorzFov().GetRadians() / 2.f );
@@ -275,35 +307,6 @@ void TLRender::TProjectCamera::SetRenderTargetSize(const Type4<s32>& RenderTarge
 	*/
 }
 
-
-//----------------------------------------------------------
-//	calc new view sizes
-//----------------------------------------------------------
-void TLRender::TProjectCamera::SetViewportSize(const Type4<s32>& ViewportSize,TScreenShape ScreenShape)
-{
-	float AspectRatio = (float)ViewportSize.Width() / (float)ViewportSize.Height();
-
-	//	calc the un-rotated screen view size
-	float ViewHalfHeight = tanf( GetHorzFov().GetRadians() / 2.f );
-	float ViewHalfWidth = ViewHalfHeight * AspectRatio;
-	m_ScreenViewBox.SetMin( float2( -ViewHalfWidth, -ViewHalfHeight ) );
-	m_ScreenViewBox.SetMax( float2( ViewHalfWidth, ViewHalfHeight ) );
-
-	//	copy the screen view into the projection view...
-	m_ProjectionViewBox = m_ScreenViewBox;
-
-	//	rotate our projected view (same as glRotatef)
-	if ( ScreenShape == TLRender::ScreenShape_WideRight || ScreenShape == TLRender::ScreenShape_WideLeft )
-	{
-		//	gr: bit of a bodge atm, just swap w and h
-		TLMaths::SwapVars( m_ProjectionViewBox.GetMin().x, m_ProjectionViewBox.GetMin().y );
-		TLMaths::SwapVars( m_ProjectionViewBox.GetMax().x, m_ProjectionViewBox.GetMax().y );
-	}
-
-	//	move the screen view forward to the nearz
-	m_ScreenViewBox.GetMin() *= GetNearZ();
-	m_ScreenViewBox.GetMax() *= GetNearZ();
-}
 
 
 //----------------------------------------------------------
@@ -382,75 +385,141 @@ const TLMaths::TBox2D& TLRender::TProjectCamera::GetZoneShape()
 }
 
 
+//----------------------------------------------------
+//	the world-space box for the extents at the edges of the screen.
+//----------------------------------------------------
+const TLMaths::TBox2D& TLRender::TProjectCamera::GetWorldViewBox(float WorldDepth) const
+{
+	//	we make this up on the fly but for the sake of keeping this function fast
+	//	for ortho we return a reference to a static box
+	static TLMaths::TBox2D g_ProjectionWorldViewBox;
+
+	//	get box at this depth
+	float ViewDepth = GetPosition().z + WorldDepth;
+	GetWorldFrustumPlaneBox2D( ViewDepth, g_ProjectionWorldViewBox );
+
+	return g_ProjectionWorldViewBox;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //--------------------------------------------------------------
 //	convert render target size (pixels) to game-screen dimensions (0-100.f)
 //	calc new view sizes
 //--------------------------------------------------------------
-void TLRender::TOrthoCamera::SetRenderTargetSize(const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape)
+void TLRender::TOrthoCamera::SetRenderTargetSize(const Type4<s32>& RenderTargetSize,const Type4<s32>& RenderTargetMaxSize,const Type4<s32>& ViewportMaxSize,TScreenShape ScreenShape)
 {
 	//	gr: "cache" the world -> pixel scalars
 	m_WorldToPixelScale = RenderTargetSize.Width() / GetOrthoRange();
 	m_PixelToWorldScale = GetOrthoRange() / RenderTargetSize.Width();
 
-	m_OrthoRenderTargetBox.GetLeft()	= (float)RenderTargetSize.Left();
-	m_OrthoRenderTargetBox.GetRight()	= (float)RenderTargetSize.Right();
-	m_OrthoRenderTargetBox.GetTop()		= (float)RenderTargetSize.Top();
-	m_OrthoRenderTargetBox.GetBottom()	= (float)RenderTargetSize.Bottom();
-
-	//	the screen is on a scale of 0-100 wide (height is relative to the width)
-	//	so scale the dimensions
-	float OrthoScale = GetOrthoRange() / m_OrthoRenderTargetBox.GetWidth();
-	m_OrthoRenderTargetBox *= OrthoScale;
-
-	//	altering values directly means it wont be marked as valid, so do that manually too
-	m_OrthoRenderTargetBox.SetValid();
-}
+	TLMaths::TBox2D RenderTargetBox( (float)RenderTargetSize.Left(), (float)RenderTargetSize.Top(), (float)RenderTargetSize.Right(), (float)RenderTargetSize.Bottom() );
+	TLMaths::TBox2D RenderTargetMaxBox( (float)RenderTargetMaxSize.Left(), (float)RenderTargetMaxSize.Top(), (float)RenderTargetMaxSize.Right(), (float)RenderTargetMaxSize.Bottom() );
+	TLMaths::TBox2D ViewportMaxBox( (float)ViewportMaxSize.Left(), (float)ViewportMaxSize.Top(), (float)ViewportMaxSize.Right(), (float)ViewportMaxSize.Bottom() );
 
 
-//--------------------------------------------------------------
-//	convert render target size (pixels) to game-screen dimensions (0-100.f)
-//	calc new view sizes
-//--------------------------------------------------------------
-void TLRender::TOrthoCamera::SetViewportSize(const Type4<s32>& ViewportSize,TScreenShape ScreenShape)
-{
-	/*
-	//	set box dimensions according to screen orientation
-	if ( ScreenShape == TLRender::ScreenShape_WideRight || ScreenShape == TLRender::ScreenShape_WideLeft )
+
+
+
+	//	viewport box is a copy of the render target box... rotated inside the screen
+	m_ViewportBox = RenderTargetBox;
+
+	RotateBoxInsideBox( m_ViewportBox, RenderTargetMaxBox, ScreenShape );
+	
+	//	make square as neccesary...
+	//	gr: needs to be before the rotation? if the coordinate system seems shrunk (ortho gfx are smaller than normal) then it does
+	if ( m_SquareProjection )
 	{
-		//	gr: currently this is the same rotation of dimensions either way around, it makes the box the right size
-		//		the actual rotation is done at projection
-		m_OrthoViewportBox.GetLeft()	= (float)ViewportSize.Top();
-		m_OrthoViewportBox.GetRight()	= (float)ViewportSize.Bottom();
-		m_OrthoViewportBox.GetTop()		= (float)ViewportSize.Left();
-		m_OrthoViewportBox.GetBottom()	= (float)ViewportSize.Right();
+		float Diff = m_ViewportBox.GetWidth() - m_ViewportBox.GetHeight();
+		if ( Diff > 0.f )	//	wide
+		{
+			m_ViewportBox.GetTop() -= Diff / 2.f;
+			m_ViewportBox.GetBottom() += Diff / 2.f;
+		}
+		else if ( Diff < 0.f )	//	tall
+		{
+			m_ViewportBox.GetLeft() -= -Diff / 2.f;
+			m_ViewportBox.GetRight() += -Diff / 2.f;
+		}
+	}
+
+
+	//	now flip to be in opengl view coordinates
+	//	position for opengl viewport
+	//	0,0 is bottom left, next two sizes in Scissor() and Viewport() are still widht and height, just upside down
+	//	no change in dimensions
+	float NewLeft = m_ViewportBox.GetLeft();
+	float NewTop = ViewportMaxBox.GetHeight() - m_ViewportBox.GetTop() - m_ViewportBox.GetHeight();
+	m_ViewportBox.GetLeft() = NewLeft;
+	m_ViewportBox.GetTop() = NewTop;
+
+
+	//	scissor box is same as viewport, but not squared
+	if ( m_SquareProjection )
+	{
+		m_ScissorBox = RenderTargetBox;
+		RotateBoxInsideBox( m_ScissorBox, RenderTargetMaxBox, ScreenShape );
+
+		//	now flip to be in opengl view coordinates
+		//	position for opengl viewport
+		//	0,0 is bottom left, next two sizes in Scissor() and Viewport() are still widht and height, just upside down
+		//	no change in dimensions
+		float NewLeft = m_ScissorBox.GetLeft();
+		float NewTop = ViewportMaxBox.GetHeight() - m_ScissorBox.GetTop() - m_ScissorBox.GetHeight();
+		m_ScissorBox.GetLeft() = NewLeft;
+		m_ScissorBox.GetTop() = NewTop;
 	}
 	else
 	{
-		//	gr: currently this is the same rotation of dimensions
-		m_OrthoViewportBox.GetLeft()	= (float)ViewportSize.Left();
-		m_OrthoViewportBox.GetRight()	= (float)ViewportSize.Right();
-		m_OrthoViewportBox.GetTop()		= (float)ViewportSize.Top();
-		m_OrthoViewportBox.GetBottom()	= (float)ViewportSize.Bottom();
+		m_ScissorBox = m_ViewportBox;
 	}
 
-	//	gr: left and top is always zero as ortho coordinates are a scale. The RenderTargetSize dictates the position as well as dimensions,
-	//		but the viewport/scissoring does the actual screen-positioning
-	m_OrthoViewportBox.GetLeft() = 0.f;
-	m_OrthoViewportBox.GetTop() = 0.f;
-	*/
 
-	m_OrthoViewportBox.GetLeft()	= (float)ViewportSize.Left();
-	m_OrthoViewportBox.GetRight()	= (float)ViewportSize.Right();
-	m_OrthoViewportBox.GetTop()		= (float)ViewportSize.Top();
-	m_OrthoViewportBox.GetBottom()	= (float)ViewportSize.Bottom();
+
 
 	//	the screen is on a scale of 0-100 wide (height is relative to the width)
-	//	so scale the dimensions
-	float OrthoScale = GetOrthoRange() / m_OrthoViewportBox.GetWidth();
-	m_OrthoViewportBox *= OrthoScale;
+	float OrthoScale = GetOrthoRange() / RenderTargetBox.GetWidth();
 
-	//	altering values directly means it wont be marked as valid, so do that manually too
-	m_OrthoViewportBox.SetValid();
+	//	set the world box dimensions to the render target size but in ortho scale
+	m_OrthoWorldBox = RenderTargetBox;
+	m_OrthoWorldBox *= OrthoScale;
+
+	//	ortho coorindate box is same as the world box, but squared if neccessary
+	m_OrthoCoorindateBox = m_OrthoWorldBox;
+	if ( m_SquareProjection )
+	{
+		float Diff = m_OrthoCoorindateBox.GetWidth() - m_OrthoCoorindateBox.GetHeight();
+		if ( Diff > 0.f )	//	wide
+		{
+			m_OrthoCoorindateBox.GetTop() -= Diff / 2.f;
+			m_OrthoCoorindateBox.GetBottom() += Diff / 2.f;
+		}
+		else if ( Diff < 0.f )	//	tall
+		{
+			m_OrthoCoorindateBox.GetLeft() -= -Diff / 2.f;
+			m_OrthoCoorindateBox.GetRight() += -Diff / 2.f;
+		}
+	}
+
+	//	altering values directly means it wont be marked as valid, so do that manually
+	m_OrthoCoorindateBox.SetValid();
+	m_OrthoWorldBox.SetValid();
+	m_ScissorBox.SetValid();
+	m_ViewportBox.SetValid();
 }
 
 
@@ -485,7 +554,26 @@ Bool TLRender::TOrthoCamera::GetWorldPos(float3& WorldPos,float WorldDepth,const
 	float2 xy( (float)RenderTargetPos.x, (float)RenderTargetPos.y );
 	float2 wh( (float)RenderTargetSize.Width(), (float)RenderTargetSize.Height() );
 
-	//	scale the rendertarget pos to a pos between 0..100 (100 being GetOrthoRange - and scale is always based on width)
+	//	rotate the XY coordinates around the center of the render target
+	float RollDegrees = m_CameraRoll.GetDegrees();
+	if ( RollDegrees > TLMaths_NearZero || RollDegrees < -TLMaths_NearZero )
+	{
+		//	center the coordinates so the center of the render target becomes 0,0
+		float2 Halfwh = wh * 0.5f;
+		xy -= Halfwh;
+
+		//	rotate in the opposite way to the screen 
+		xy.Rotate( m_CameraRoll.GetInverseRadians() );
+
+		//	re-align
+		xy += Halfwh;
+
+		//	check is still in bounds
+		if ( xy.x < 0 || xy.x >= wh.x || xy.y < 0 || xy.y >= wh.y )
+			return FALSE;
+	}
+
+	//	scale the rendertarget pos to a pos between 0..100 (100 being GetOrthoRange - and scale is always based on width hence why both are /wh.x)
 	float OrthoX = (xy.x / wh.x) * GetOrthoRange();
 	float OrthoY = (xy.y / wh.x) * GetOrthoRange();
 
@@ -502,7 +590,7 @@ Bool TLRender::TOrthoCamera::GetWorldPos(float3& WorldPos,float WorldDepth,const
 }
 
 //--------------------------------------------------------------
-//	convert point on screen to a 3D pos
+// convert 3d pos into rendertarget-space 2d point
 // NOTE: Works the opposite of the GetWorldPos() routine
 //--------------------------------------------------------------
 Bool TLRender::TOrthoCamera::GetRenderTargetPos(Type2<s32>& RenderTargetPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const
@@ -510,20 +598,34 @@ Bool TLRender::TOrthoCamera::GetRenderTargetPos(Type2<s32>& RenderTargetPos, con
 	// world -> screen
 
 	//	Move pos to be in at origin of camera
-	float OrthoX = WorldPos.x + GetPosition().x;
-	float OrthoY = WorldPos.y + GetPosition().y;
+	float2 Orthoxy = WorldPos.xy() + GetPosition().xy();
 
 	//	now in view space
 
 	//	scale by ortho range to be 0..1 in the view
-	OrthoX /= GetOrthoRange();
-	OrthoY /= GetOrthoRange();
+	Orthoxy /= GetOrthoRange();
 
 	float2 wh( (float)RenderTargetSize.Width(), (float)RenderTargetSize.Height() );
 
+	//	rotate with camera roll
+	//	rotate the XY coordinates around the center of the render target
+	float RollDegrees = m_CameraRoll.GetDegrees();
+	if ( RollDegrees > TLMaths_NearZero || RollDegrees < -TLMaths_NearZero )
+	{
+		TLDebug_Warning("gr: untested");
+
+		//	center the coordinates so the center of the render target becomes 0,0
+		float2 Halfwh = wh * 0.5f;
+		Orthoxy -= Halfwh;
+
+		Orthoxy.Rotate( m_CameraRoll.GetRadians() );
+
+		//	re-align
+		Orthoxy += Halfwh;
+	}
+
 	// Scale by the render target width to be in render target space
-	OrthoX *= wh.x;
-	OrthoY *= wh.x;
+	Orthoxy *= wh.x;
 
 	// Limit results to (0,0,rendertargetwidth, rendertargetheight)
 	//	gr: should allow out-of-bounds values so we can tell if something is off rendetarget/offscreen
@@ -531,7 +633,7 @@ Bool TLRender::TOrthoCamera::GetRenderTargetPos(Type2<s32>& RenderTargetPos, con
 	//TLMaths::Limit(OrthoY, 0.0f, wh.y);
 
 	//	now set 
-	RenderTargetPos.Set((s32)OrthoX, (s32)OrthoY);
+	RenderTargetPos.Set((s32)Orthoxy.x, (s32)Orthoxy.y );
 
 	return TRUE;
 }

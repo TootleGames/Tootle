@@ -164,7 +164,9 @@ SyncBool TTimelineInstance::DoUpdate(float fTimestep, Bool bForced)
 
 void TTimelineInstance::OnEndOfTimeline()
 {
+#ifdef DEBUG_TIMELINE
 	TLDebug_Print("Reached the end of the timeline");
+#endif 
 
 	// Broadcast a message to say the timeline has finished
 	TLMessaging::TMessage Message("OnComplete", m_AssetScriptRef );

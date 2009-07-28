@@ -52,10 +52,12 @@ public:
 		Flag_HasGravity = 0,	//	has generic gravity force applied
 		Flag_RestOnStatic,		//	stick to floor when we hit it (stops tiny vibration bounce)
 		Flag_Static,			//	does not move when collided wtih
-		//Flag_CollideBothSides,	//	collide with inside of shape, or dont check normal in polygon 
 		Flag_HasCollision,		//	expecting a valid collision shape - clear this to DISABLE collision, but still keep shape etc
 		Flag_Enabled,			//	if not enabled, graph does not update this node
 		Flag_Rotate,			//	if disabled (on by default) then box2d's collision doesn't rotate objects
+		Flag_UseOwnGravity,		//	use the gravity vector on the node rather than the defualt global one on the graph
+		Flag_SmoothTranslateChanges,	//	if flaged then we use much more precise detection for translate changes (stops jitter in movement)
+		Flag_SmoothRotationChanges,		//	if flaged then we use much more precise detection for rotation changes (stops jitter in rotation)
 	};
 
 public:
@@ -64,6 +66,7 @@ public:
 	virtual void				Update(float Timestep);						//	physics update
 	virtual void				Shutdown();									//	cleanup
 	virtual void				PostUpdate(float Timestep,TLPhysics::TPhysicsgraph& Graph,TPtr<TLPhysics::TPhysicsNode>& pThis);			//	after collisions are handled
+	virtual void				UpdateNodeData();							//	exposed public for the SceneNode_Object access when serialising
 
 	FORCEINLINE TRefRef			GetOwnerSceneNodeRef() const				{	return m_OwnerSceneNode;	}
 
@@ -90,8 +93,8 @@ public:
 	FORCEINLINE void			OnDampingChanged()					{	SetLinearDamping( m_Damping );	}	//	this re-sets it on the body if it exists
 	void						OnShapeDefintionChanged();
 
-	FORCEINLINE void			OnTransformChanged(u8 TransformChangedBits)					{	m_TransformChangedBits |= TransformChangedBits;	if ( TransformChangedBits != 0x0 )	SetBodyTransform( TransformChangedBits );	}
-	FORCEINLINE void			OnTransformChangedNoPublish(u8 TransformChangedBits)		{	SetBodyTransform(TransformChangedBits);	}
+	virtual void				OnTransformChanged(u8 TransformChangedBits)					{	m_TransformChangedBits |= TransformChangedBits;	if ( TransformChangedBits != 0x0 )	SetBodyTransform( TransformChangedBits );	}
+	virtual void				OnTransformChangedNoPublish(u8 TransformChangedBits)		{	SetBodyTransform(TransformChangedBits);	}
 	FORCEINLINE void			OnTranslationChanged()				{	OnTransformChanged( TLMaths_TransformBitTranslate );	}
 	FORCEINLINE void			OnRotationChanged()					{	OnTransformChanged( TLMaths_TransformBitRotation );	}
 	FORCEINLINE void			OnScaleChanged()					{	OnTransformChanged( TLMaths_TransformBitScale );	}
@@ -124,19 +127,19 @@ public:
 
 	FORCEINLINE Bool			operator==(TRefRef Ref) const							{	return GetNodeRef() == Ref;	}
 
-	virtual void				UpdateNodeData();
-
 protected:
 	virtual void				Initialise(TLMessaging::TMessage& Message);	
 	virtual void				SetProperty(TLMessaging::TMessage& Message);	
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);
 	void						PostUpdateAll(float Timestep,TLPhysics::TPhysicsgraph& Graph,TPtr<TLPhysics::TPhysicsNode>& pThis);		//	update tree: update self, and children and siblings
 
-	TCollisionInfo*				OnCollision();								//	called when we get a collision. return a collision info to write data into. return NULL to pre-empt not sending any collision info out (eg. if no subscribers)
+	TCollisionInfo*				OnCollision();											//	called when we get a collision. return a collision info to write data into. return NULL to pre-empt not sending any collision info out (eg. if no subscribers)
 	void						OnEndCollision(TRefRef ShapeRef,TLPhysics::TPhysicsNode& OtherNode,TRefRef OtherShapeRef);	//	called when we are no longer colliding with a node
-	void						PublishCollisions();						//	send out our list of collisions (and end collisions)
-	void						OnCollisionEnabledChanged(Bool IsNowEnabled);	//	called when collision is enabled/disabled - changes group of box2D body so it won't do collision checks
-	void						OnNodeEnabledChanged(Bool IsNowEnabled);	//	called when node is enabled/disabled
+	void						PublishCollisions();									//	send out our list of collisions (and end collisions)
+	void						OnCollisionEnabledChanged(Bool IsNowEnabled);			//	called when collision is enabled/disabled - changes group of box2D body so it won't do collision checks
+	void						OnNodeEnabledChanged(Bool IsNowEnabled);				//	called when node is enabled/disabled
+	void						OnCollisionShapeAdded(TCollisionShape& CollisionShape);	//	collision shape added to the list & body
+	void						OnCollisionShapeRemoved(TRefRef CollisionShapeRef);		//	collision shape added to the list & body
 
 	//	box2d interface
 	Bool						CreateBody(b2World& World);							//	create the body in the world
@@ -145,7 +148,7 @@ protected:
 	FORCEINLINE b2Fixture*		GetBodyShape(const TCollisionShape& CollisionShape)	{	return GetBodyShape( CollisionShape.GetShapeRef() );	}
 	FORCEINLINE b2Body*			GetBody()											{	return m_pBody;	}
 	FORCEINLINE const b2Body*	GetBody() const										{	return m_pBody;	}
-	FORCEINLINE void			OnBodyTransformChanged(u8 TransformChangedBits)		{	m_TransformChangedBits |= TransformChangedBits;	}
+	virtual void				OnBodyTransformChanged(u8 TransformChangedBits)		{	m_TransformChangedBits |= TransformChangedBits;	}
 	void						GetBodyTransformValues(b2Vec2& Translate,float32& AngleRadians);	//	get values to put INTO the box2D body transform from our transform
 	void						SetBodyTransform(u8 TransformChangedBits);			//	reset the body's transform
 	void						OnBodyShapeAdded(TCollisionShape& CollisionShape);	//	body shape has been added
@@ -155,6 +158,7 @@ protected:
 	float					m_Bounce;					//	0..1
 	float					m_Friction;					//	0..1
 	float					m_Damping;					//	0...infinate, but smaller numbers are better
+	float3					m_WorldUp;					//	normalised vector for the world "up". This is used for gravity specified per-node
 
 	TLMaths::TTransform		m_Transform;				//	world transform of shape
 	u8						m_TransformChangedBits;		//	dont broadcast trasnform changes until post update - TLMaths_TransformBit_XXX

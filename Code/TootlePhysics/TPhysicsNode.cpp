@@ -45,7 +45,8 @@ TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 	m_Friction						( 0.4f ),
 	m_TransformChangedBits			( 0x0 ),
 	m_pBody							( NULL ),
-	m_BodyTransformChangedBits		( 0x0 )
+	m_BodyTransformChangedBits		( 0x0 ),
+	m_WorldUp						( g_WorldUpNormal )
 {
 #ifdef CACHE_ACCUMULATED_MOVEMENT
 	m_AccumulatedMovementValid = FALSE;
@@ -139,6 +140,7 @@ void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
 	{
 		// Import raw physics flags value - saves going through individual flag bits
 		// NOTE: may need to do some stuff based on flags changed?
+		//	gr: need to do both PFlags AND PFset?
 		m_PhysicsFlags.SetData(PhysicsFlags);
 	}
 	else
@@ -343,6 +345,13 @@ void TLPhysics::TPhysicsNode::ProcessMessage(TLMessaging::TMessage& Message)
 		//	reset forces command
 		ResetForces();
 	}
+	else if ( Message.GetMessageRef() == "RemColShape" )
+	{
+		//	remove a collision shape
+		TRef ShapeRef;
+		if ( Message.ImportData("Ref", ShapeRef ) )
+			RemoveCollisionShape( ShapeRef );
+	}
 }
 
 
@@ -363,10 +372,10 @@ void TLPhysics::TPhysicsNode::Update(float fTimeStep)
 	//	add gravity force
 	if ( m_PhysicsFlags( Flag_HasGravity ) )
 	{
-		//	negate as UP is opposite to the direction of gravity.
-		float3 GravityForce = g_WorldUpNormal * -g_GravityMetresSec;
-
-		AddForce( GravityForce );
+		float3& WorldUp = m_PhysicsFlags( Flag_UseOwnGravity ) ? m_WorldUp : TLPhysics::g_WorldUpNormal;
+		
+		//	negate as UP is opposite to the direction of gravity.		
+		AddForce( WorldUp * -g_GravityMetresSec );
 	}
 }
 
@@ -390,7 +399,7 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 		//	get new translation from box2d
 		const b2Vec2& BodyPosition = m_pBody->GetPosition();
 		float3 NewTranslate( BodyPosition.x, BodyPosition.y, 0.f );
-		ChangedBits |= m_Transform.SetTranslateHasChanged( NewTranslate, MIN_TRANSLATE_CHANGE );
+		ChangedBits |= m_Transform.SetTranslateHasChanged( NewTranslate, m_PhysicsFlags( Flag_SmoothTranslateChanges ) ? TLMaths_NearZero : MIN_TRANSLATE_CHANGE );
 
 		//	todo: some how allow existing 3D rotation and the box2D rotation.... 
 		//	maybe somehting specificly for the scenenode to handle?
@@ -401,7 +410,7 @@ void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgrap
 			//	get new rotation; todo: store angle for quicker angle-changed test?
 			float32 BodyAngleRad = m_pBody->GetAngle();
 			TLMaths::TQuaternion NewRotation( float3( 0.f, 0.f, -1.f ), BodyAngleRad );
-			ChangedBits |= m_Transform.SetRotationHasChanged( NewRotation, MIN_ROTATION_CHANGE );
+			ChangedBits |= m_Transform.SetRotationHasChanged( NewRotation,  m_PhysicsFlags( Flag_SmoothRotationChanges ) ? TLMaths_NearZero : MIN_ROTATION_CHANGE );
 		}
 
 		//	notify of changes
@@ -463,7 +472,7 @@ void TLPhysics::TPhysicsNode::PublishTransformChanges()
 	if ( m_Transform.ExportData( Message, Changes ) != 0x0 )
 	{
 		//	send out message
-		PublishMessage(Message);
+		PublishMessage( Message );
 	}
 }
 
@@ -554,7 +563,18 @@ TRef TLPhysics::TPhysicsNode::AddCollisionShape(const TPtr<TLMaths::TShape>& pSh
 		return TRef();
 	
 	//	success! add to list of shapes
-	m_CollisionShapes.Add( NewCollisionShape );
+	s32 ShapeIndex = m_CollisionShapes.Add( NewCollisionShape );
+
+	//	failed to add?
+	if ( ShapeIndex == -1 )
+	{
+		TLDebug_Break("Untested");
+		RemoveCollisionShape( NewCollisionShape );
+		return TRef();
+	}
+
+	//	notify change
+	OnCollisionShapeAdded( m_CollisionShapes[ShapeIndex] );
 
 	return NewCollisionShape.GetShapeRef();
 }
@@ -580,8 +600,14 @@ Bool TLPhysics::TPhysicsNode::RemoveCollisionShape(TCollisionShape& CollisionSha
 			OnBodyShapeRemoved();
 	}
 
+	//	save off the ref for notification
+	TRef ShapeRef = CollisionShape.GetShapeRef();
+
 	//	get index to remove from collision shape list
 	m_CollisionShapes.RemoveAt( CollisionShapeIndex );
+
+	//	notify change
+	OnCollisionShapeRemoved( ShapeRef );
 
 	return TRUE;
 }
@@ -1094,5 +1120,37 @@ void TLPhysics::TPhysicsNode::OnBodyShapeRemoved()
 		m_pBody->SetStatic();
 	else
 		m_pBody->SetMassFromShapes();
+}
+
+
+//-------------------------------------------------------------
+//	collision shape added to the list & body
+//-------------------------------------------------------------
+void TLPhysics::TPhysicsNode::OnCollisionShapeAdded(TCollisionShape& CollisionShape)
+{
+	if ( !HasSubscribers("OnShape") )
+		return;
+
+	TLMessaging::TMessage Message("OnShape", GetNodeRef());
+
+	//	gr: if required, expand this to include the shape
+	Message.ExportData("Added", CollisionShape.GetShapeRef() );
+
+	PublishMessage( Message );
+}
+
+//-------------------------------------------------------------
+//	collision shape added to the list & body
+//-------------------------------------------------------------
+void TLPhysics::TPhysicsNode::OnCollisionShapeRemoved(TRefRef CollisionShapeRef)
+{
+	if ( !HasSubscribers("OnShape") )
+		return;
+
+	TLMessaging::TMessage Message("OnShape", GetNodeRef());
+
+	Message.ExportData("Removed", CollisionShapeRef );
+
+	PublishMessage( Message );
 }
 

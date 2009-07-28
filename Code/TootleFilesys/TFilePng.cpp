@@ -270,9 +270,11 @@ SyncBool TLFileSys::TFilePng::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Su
 	//	assume sizes should match...
 	if ( TotalDataSize != pTexture->GetPixelData().GetSize() )
 	{
-		TLDebug_Break("expected data sizes to match...");
-		libpng::png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
-		return SyncFalse;
+		if ( !TLDebug_Break("expected data sizes to match...") )
+		{
+			libpng::png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+			return SyncFalse;
+		}
 	}
 
 	ReadSuccess = FALSE;

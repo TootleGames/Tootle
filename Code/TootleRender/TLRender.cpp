@@ -126,44 +126,6 @@ void TLRender::Opengl::SceneRotate(const TLMaths::TAngle& Rotation,const float3&
 }
 
 
-//---------------------------------------------------
-//	get render target's viewport size from the size and the screen size
-//---------------------------------------------------
-void TLRender::Opengl::GetViewportSize(Type4<s32>& ViewportSize,const Type4<s32>& ViewportTargetMaxSize,const Type4<s32>& RenderTargetSize,const Type4<s32>& RenderTargetMaxSize,TScreenShape ScreenShape)
-{
-	//	rotate render target size to be in "viewport" space
-	Type4<s32> RotatedRenderTargetSize = RenderTargetSize;
-
-	if ( ScreenShape == ScreenShape_WideLeft )
-	{
-		//	gr: rendertarget is rotated left, so to get viewport, rotate it right again
-		//	rotate right
-		RotatedRenderTargetSize.x = RenderTargetSize.Top();
-		RotatedRenderTargetSize.y = RenderTargetMaxSize.Width() - RenderTargetSize.Right();
-		RotatedRenderTargetSize.Width() = RenderTargetSize.Height();
-		RotatedRenderTargetSize.Height() = RenderTargetSize.Width();
-	}
-	else if ( ScreenShape == ScreenShape_WideRight )
-	{
-		//	gr: rendertarget is rotated right, so to get viewport, rotate it left again
-		//	rotate left
-		RotatedRenderTargetSize.x = RenderTargetMaxSize.Height() - RenderTargetSize.Bottom();
-		RotatedRenderTargetSize.y = RenderTargetSize.Left();
-		RotatedRenderTargetSize.Width() = RenderTargetSize.Height();
-		RotatedRenderTargetSize.Height() = RenderTargetSize.Width();
-	}
-
-	//	position for opengl viewport
-	//	0,0 is bottom left, next two sizes in Scissor() and Viewport() are still widht and height, just upside down
-	ViewportSize.Left() = RotatedRenderTargetSize.Left();
-	ViewportSize.Top() = ViewportTargetMaxSize.Height() - RotatedRenderTargetSize.Top() - RotatedRenderTargetSize.Height();
-
-	//	no change in dimensions
-	ViewportSize.Width() = RotatedRenderTargetSize.Width();
-	ViewportSize.Height() = RotatedRenderTargetSize.Height();
-}
-
-
 
 //---------------------------------------------------
 //	get opengl filter type from asset filter type

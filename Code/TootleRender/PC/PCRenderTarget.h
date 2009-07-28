@@ -42,9 +42,9 @@ public:
 	virtual void			EndScene();									//	restore previous scene
 
 protected:
-	virtual Bool			BeginProjectDraw(TLRender::TProjectCamera* pCamera,TLRender::TScreenShape ScreenShape);	//	setup projection mode
+	virtual Bool			BeginProjectDraw(TLRender::TProjectCamera& Camera,TLRender::TScreenShape ScreenShape);	//	setup projection mode
 	virtual void			EndProjectDraw();
-	virtual Bool			BeginOrthoDraw(TLRender::TOrthoCamera* pCamera,TLRender::TScreenShape ScreenShape);		//	setup ortho projection mode
+	virtual Bool			BeginOrthoDraw(TLRender::TOrthoCamera& Camera,TLRender::TScreenShape ScreenShape);		//	setup ortho projection mode
 	virtual void			EndOrthoDraw();
 };
 

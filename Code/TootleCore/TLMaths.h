@@ -149,10 +149,12 @@ public:
 	TAngle(float AngDegrees=0.f) : m_AngleDegrees (AngDegrees)	{}
 
 	FORCEINLINE float	GetDegrees() const						{	return m_AngleDegrees;	}
+	FORCEINLINE float	GetInverseDegrees() const				{	return -m_AngleDegrees;	}
 	FORCEINLINE void	SetDegrees(float AngDegrees)			{	m_AngleDegrees = AngDegrees;	}
 	FORCEINLINE void	AddDegrees(float AngDegrees)			{	m_AngleDegrees += AngDegrees;	SetLimit180();	}
 
 	FORCEINLINE float	GetRadians() const						{	return DegreesToRadians( m_AngleDegrees );	}
+	FORCEINLINE float	GetInverseRadians() const				{	return DegreesToRadians( -m_AngleDegrees );	}
 	FORCEINLINE void	SetRadians(float AngRadians)			{	m_AngleDegrees = RadiansToDegrees( AngRadians );	}
 	FORCEINLINE void	AddRadians(float AngRadians)			{	m_AngleDegrees += RadiansToDegrees( AngRadians );	SetLimit180();	}
 

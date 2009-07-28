@@ -24,7 +24,7 @@ namespace TLPhysics
 class TLPhysics::TCollisionShape
 {
 public:
-	TCollisionShape() : m_pBodyShape ( NULL ), m_IsSensor ( FALSE )	{}
+	TCollisionShape() : m_pBodyShape ( NULL ), m_IsSensor ( FALSE )				{}
 
 	FORCEINLINE TRefRef				GetShapeRef() const							{	return m_ShapeRef;	}
 	FORCEINLINE void				SetShapeRef(TRefRef ShapeRef)				{	m_ShapeRef = ShapeRef;	}

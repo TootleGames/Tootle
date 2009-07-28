@@ -521,28 +521,6 @@ float3 TLMaths::TBox2D::GetCenter3(float z) const
 
 
 
-TLMaths::TBox2D::TBox2D() :
-	m_IsValid	( FALSE )
-{
-}
-
-
-TLMaths::TBox2D::TBox2D(const float2& Min,const float2& Max) : 
-	m_Min		( Min ), 
-	m_Max		( Max ),
-	m_IsValid	( TRUE )
-{
-}
-
-
-TLMaths::TBox2D::TBox2D(const float2& Center,float Size) : 
-	m_Min		( Center - float2(Size,Size) ), 
-	m_Max		( Center + float2(Size,Size) ),
-	m_IsValid	( TRUE )
-{
-}
-
-
 //-------------------------------------------------
 //	grow the box to these extents
 //-------------------------------------------------

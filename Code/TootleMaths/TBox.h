@@ -101,9 +101,31 @@ protected:
 class TLMaths::TBox2D
 {
 public:
-	TBox2D();
-	TBox2D(const float2& Min,const float2& Max);
-	TBox2D(const float2& Center,float Size);
+	TBox2D() :
+		m_IsValid	( FALSE )
+	{
+	}
+
+	TBox2D(const float2& Min,const float2& Max) : 
+		m_Min		( Min ), 
+		m_Max		( Max ),
+		m_IsValid	( TRUE )
+	{
+	}
+
+	TBox2D(const float2& Center,float Size) : 
+		m_Min		( Center - float2(Size,Size) ), 
+		m_Max		( Center + float2(Size,Size) ),
+		m_IsValid	( TRUE )
+	{
+	}
+
+	TBox2D(float MinX,float MinY,float MaxX,float MaxY) :
+		m_Min		( MinX, MinY ), 
+		m_Max		( MaxX, MaxY ),
+		m_IsValid	( TRUE )
+	{
+	}
 
 	static TRef		GetTypeRef()		{	return TLMaths_ShapeRef(TBox2D);	}
 
@@ -125,10 +147,12 @@ public:
 	float&			GetRight()			{	return m_Max.x;	}
 	const float&	GetBottom() const	{	return m_Max.y;	}
 	float&			GetBottom()			{	return m_Max.y;	}
-	float			GetWidth() const	{	return (m_Max.x - m_Min.x);	}
-	float			GetHeight() const	{	return (m_Max.y - m_Min.y);	}
+	const float		GetWidth() const	{	return (m_Max.x - m_Min.x);	}
+	const float		GetHeight() const	{	return (m_Max.y - m_Min.y);	}
 	float			GetHalfWidth() const	{	return (m_Max.x - m_Min.x) * 0.5f;	}
 	float			GetHalfHeight() const	{	return (m_Max.y - m_Min.y) * 0.5f;	}
+	void			SetWidth(float Width)	{	m_Max.x = m_Min.x + Width;	}	//	set the width by changing the max
+	void			SetHeight(float Height)	{	m_Max.y = m_Min.y + Height;	}	//	set the height by changing the max
 
 	void			Set(const float2& Min,const float2& Max)	{	m_Min = Min;	m_Max = Max;	m_IsValid = TRUE;	}
 	void			Set(const float2& MinMax)					{	m_Min = MinMax;	m_Max = MinMax;	m_IsValid = TRUE;	}
