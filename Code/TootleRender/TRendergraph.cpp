@@ -8,6 +8,7 @@
 #include "TRenderNodeSwoosh.h"
 #include "TRenderNodeScrollableView.h"
 #include "TRenderNodeTimeline.h"
+#include "TRenderNodeParticle.h"
 #include <TootleCore/TLTime.h>
 
 
@@ -163,6 +164,9 @@ TLRender::TRenderNode* TLRender::TRenderNodeFactory::CreateObject(TRefRef Instan
 
 	if ( TypeRef == "Timeline" )
 		return new TLRender::TRenderNodeTimeline(InstanceRef,TypeRef);
+
+	if ( TypeRef == "Particle" )
+		return new TLRender::TRenderNodeParticle(InstanceRef,TypeRef);
 
 	return NULL;
 }

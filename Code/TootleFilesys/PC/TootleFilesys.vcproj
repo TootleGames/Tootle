@@ -591,6 +591,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TFileParticle.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TFileParticle.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TFilePng.cpp"
 			>
 		</File>

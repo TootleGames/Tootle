@@ -543,6 +543,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TRenderNodeParticle.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TRenderNodeParticle.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TRenderNodePathNetwork.cpp"
 			>
 		</File>

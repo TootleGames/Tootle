@@ -7,11 +7,20 @@ TLRender::TRenderNodeTimeline::TRenderNodeTimeline(TRefRef RenderNodeRef,TRefRef
 	TRenderNode	( RenderNodeRef, TypeRef ),
 	m_Playing	( TRUE )
 {
+}
+
+	
+//---------------------------------------------------------
+//
+//---------------------------------------------------------
+void TLRender::TRenderNodeTimeline::Initialise(TLMessaging::TMessage& Message)
+{
 	//	subscribe to updates
 	//	gr: change this so the game or something dictates updates - not the core
 	this->SubscribeTo( TLCore::g_pCoreManager );
-}
 
+	TLRender::TRenderNode::Initialise( Message );
+}
 
 //---------------------------------------------------------
 //	set properties

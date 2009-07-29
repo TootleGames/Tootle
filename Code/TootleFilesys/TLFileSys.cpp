@@ -18,6 +18,7 @@
 #include "TFileTextDatabase.h"
 #include "TFilePng.h"
 #include "TFileFnt.h"
+#include "TFileParticle.h"
 
 #if defined(TL_TARGET_IPOD)
 	#include "IPod/IPodLocalFileSys.h"
@@ -601,14 +602,15 @@ TLFileSys::TFile* TLFileSys::TFileFactory::CreateObject(TRefRef InstanceRef,TRef
 	case TRef_Static3(t,a,m):		return new TLFileSys::TFileAssetMarkup( InstanceRef, TypeRef );		//	TAM file
 	case TRef_Static3(w,a,v):		return new TLFileSys::TFileWAV( InstanceRef, TypeRef );				//	Wave file
 	case TRef_Static(s,c,h,e,m):	return new TLFileSys::TFileScheme( InstanceRef, TypeRef );			//	scheme file
-	case TRef_Static3(d,a,e):		return new TLFileSys::TFileCollada( InstanceRef, TypeRef );			//	collada xml file
-	case TRef_Static4(m,e,n,u):		return new TLFileSys::TFileMenu( InstanceRef, TypeRef );			//	menu xml file
+	case TRef_Static3(d,a,e):		return new TLFileSys::TFileCollada( InstanceRef, TypeRef );			//	"dae" collada xml file
+	case TRef_Static4(m,e,n,u):		return new TLFileSys::TFileMenu( InstanceRef, TypeRef );			//	"menu" menu xml file
 	case TRef_Static(t,i,m,e,l):
-	case TRef_Static3(t,t,l):		return new TLFileSys::TFileTimeline( InstanceRef, TypeRef );		//	tootle timeline xml file
+	case TRef_Static3(t,t,l):		return new TLFileSys::TFileTimeline( InstanceRef, TypeRef );		//	"timeline"/"ttl" tootle timeline xml file
 	case TRef_Static4(t,e,x,t):
-	case TRef_Static3(t,t,d):		return new TLFileSys::TFileTextDatabase( InstanceRef, TypeRef );	//	tootle text database xml file
+	case TRef_Static3(t,t,d):		return new TLFileSys::TFileTextDatabase( InstanceRef, TypeRef );	//	"text"/"ttd" tootle text database xml file
 	case TRef_Static3(p,n,g):		return new TLFileSys::TFilePng( InstanceRef, TypeRef );				//	png texture
-	case TRef_Static3(f,n,t):		return new TLFileSys::TFileFnt( InstanceRef, TypeRef );				//	font atlas
+	case TRef_Static3(f,n,t):		return new TLFileSys::TFileFnt( InstanceRef, TypeRef );				//	"fnt" font atlas
+	case TRef_Static(P,a,r,t,i):	return new TLFileSys::TFileParticle( InstanceRef, TypeRef );		//	"Particle" markup
 	
 	default:
 		//	generic binary file

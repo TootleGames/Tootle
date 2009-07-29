@@ -9,6 +9,7 @@
 #include "TTexture.h"
 #include "TAssetTimeline.h"
 #include "TAtlas.h"
+#include "TParticle.h"
 
 #include "TLoadTask.h"
 #include <TootleCore/TPtr.h>
@@ -411,6 +412,7 @@ TLAsset::TAsset* TLAsset::TAssetFactory::CreateObject(TRefRef InstanceRef,TRefRe
 	case STRef(T,i,m,e,l):	return new TLAsset::TAssetTimeline( InstanceRef );	//	"Timeline"
 	case STRef(T,e,x,t,u):	return new TLAsset::TTexture( InstanceRef );	//	"Texture"
 	case STRef(A,t,l,a,s):	return new TLAsset::TAtlas( InstanceRef );	//	"Atlas" 
+	case STRef(P,a,r,t,i):	return new TLAsset::TParticle( InstanceRef );	//	"Particle" 
 
 	//	gr: dumb asset - just stores data - consider turning this into a specific TBinaryTree/"Data" asset
 	case STRef(A,s,s,e,t):	return new TLAsset::TAsset( TypeRef, InstanceRef );	//	"Asset"

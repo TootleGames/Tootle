@@ -288,6 +288,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TParticle.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TParticle.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TPath.cpp"
 			>
 		</File>
