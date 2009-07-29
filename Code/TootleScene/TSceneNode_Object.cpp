@@ -65,6 +65,8 @@ void TSceneNode_Object::DeleteRenderNode()
 
 void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 {
+	Message.Debug_PrintTree();
+
 	//	do super init first
 	TLScene::TSceneNode_Transform::Initialise( Message );
 
@@ -158,68 +160,19 @@ Bool TSceneNode_Object::InitialisePhysicsNode(TLMessaging::TMessage& Message)
 	//	detect and convert collision datums into collision shapes
 	TPtrArray<TBinaryTree> CollisionDatumDatas;
 	Message.GetChildren("coldatum", CollisionDatumDatas );
-	TLAsset::TMesh* pMesh = NULL;
+	TPtr<TBinaryTree>& pMeshData = CollisionDatumDatas.GetSize() ? Message.GetChild("MeshRef") : TLPtr::GetNullPtr<TBinaryTree>();
 
-	if ( CollisionDatumDatas.GetSize() > 0 )
+	//	add the mesh data to the datum data (to make it backwards compatible)
+	for ( u32 d=0;	d<CollisionDatumDatas.GetSize() && pMeshData;	d++ )
 	{
-		//	require a mesh, read the mesh ref
-		TRef MeshRef;
-		if ( Message.ImportData("Meshref", MeshRef) )
-			pMesh = TLAsset::LoadAsset( MeshRef, TRUE, "Mesh" ).GetObject<TLAsset::TMesh>();
-
-		if ( !pMesh )
-		{
-			TTempString Debug_String("Collision datums specified, but mesh \"");
-			MeshRef.GetString( Debug_String );
-			Debug_String.Append("\" is missing. Cannot create collision shapes for physics node");
-			TLDebug_Break( Debug_String );
-		}
+		TBinaryTree& CollisionDatumData = *CollisionDatumDatas.ElementAt(d);
+		CollisionDatumData.AddChild( pMeshData );
 	}
-
-	for ( u32 d=0;	d<CollisionDatumDatas.GetSize() && pMesh;	d++ )
-	{
-		TBinaryTree& CollisionDatumData = *(CollisionDatumDatas[d]);
-
-		//	read datum ref
-		TRef CollisionShapeDatum;
-		CollisionDatumData.ResetReadPos();
-		if ( !CollisionDatumData.Read( CollisionShapeDatum ) )
-			continue;
-
-		//	get a datum from the mesh for the collision shape
-		TPtr<TLMaths::TShape>& pCollisionShape = pMesh->GetDatum( CollisionShapeDatum );
-		if ( !pCollisionShape )
-		{
-			TTempString Debug_String("Collision datum (");
-			CollisionShapeDatum.GetString( Debug_String );
-			Debug_String.Append(") is missing from mesh ");
-			pMesh->GetAssetRef().GetString( Debug_String );
-			TLDebug_Break( Debug_String );
-			continue;
-		}
-		
-		//	if we got a shape, then export it to data we're going to use
-		TPtr<TBinaryTree>& pCollisionShapeData = Message.AddChild("colshape");
-		if ( TLMaths::ExportShapeData( pCollisionShapeData, *pCollisionShape, FALSE ) )
-		{
-			//	export ref - use the same ref as the datum
-			pCollisionShapeData->ExportData("Ref", CollisionShapeDatum );
-
-			//	and copy any extra data (eg. sensor state)
-			pCollisionShapeData->AddUnreadChildren( CollisionDatumData, FALSE );
-		}
-		else
-		{
-			//	failed - remove that data again
-			Message.RemoveChild( pCollisionShapeData );
-			pCollisionShapeData = NULL;
-		}
-	}
-
 
 	//	create a physics node if a collision shape or specific node type exists
 	TRef NodeTypeRef;
 	Bool DoCreateNode = Message.HasChild("colshape");
+	DoCreateNode |= Message.HasChild("coldatum");
 	DoCreateNode |= Message.ImportData("PNType", NodeTypeRef);
 
 	//	nothing specified to say "create a node"

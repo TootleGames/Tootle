@@ -7,6 +7,7 @@
 #include <TootleMaths/TShapeSphere.h>
 #include <TootleMaths/TShapeBox.h>
 #include <box2d/include/box2d.h>
+#include <TootleAsset/TMesh.h>
 
 
 //	smaller values make smoother movements but we can tweak this to see what we can get away with on a small resolution screen :)
@@ -133,6 +134,15 @@ void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
 		}
 	}
 
+	//	static flag
+	Bool IsStatic;
+	if ( Message.ImportData("fStatic", IsStatic ) )
+		m_PhysicsFlags.Set( Flag_Static, IsStatic );
+
+	//	rotate flag
+	Bool Rotate;
+	if ( Message.ImportData("fRotate", Rotate ) )
+		m_PhysicsFlags.Set( Flag_Rotate, Rotate );
 
 	u32 PhysicsFlags = 0;
 
@@ -141,6 +151,7 @@ void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
 		// Import raw physics flags value - saves going through individual flag bits
 		// NOTE: may need to do some stuff based on flags changed?
 		//	gr: need to do both PFlags AND PFset?
+		//	gr: also probably need to check for special flags as below
 		m_PhysicsFlags.SetData(PhysicsFlags);
 	}
 	else
@@ -200,28 +211,21 @@ void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
 	if ( Message.ImportData("Damping", m_Damping ) )
 		OnDampingChanged();
 
-	//	read collision shapes
+	//	read collision shapes-from-datums
 	TPtrArray<TBinaryTree> CollisionShapeDatas;
+	Message.GetChildren("coldatum", CollisionShapeDatas );
+	for ( u32 i=0;	i<CollisionShapeDatas.GetSize();	i++ )
+	{
+		ImportCollisionShapeFromDatum( *CollisionShapeDatas.ElementAt(i) );
+	}
+
+
+	//	read collision shapes
+	CollisionShapeDatas.Empty();
 	Message.GetChildren("colshape", CollisionShapeDatas );
 	for ( u32 i=0;	i<CollisionShapeDatas.GetSize();	i++ )
 	{
-		TBinaryTree& ColShapeData = *(CollisionShapeDatas[i]);
-		ColShapeData.ResetReadPos();
-		TPtr<TLMaths::TShape> pCollisionShape = TLMaths::ImportShapeData( ColShapeData );
-		if ( pCollisionShape )
-		{
-			//	import ref and sensor settings
-			TRef ShapeRef;
-			Bool IsSensor = FALSE;
-			ColShapeData.ImportData("Ref", ShapeRef );
-			ColShapeData.ImportData("Sensor", IsSensor );
-
-			//	add the collison shape
-			AddCollisionShape( pCollisionShape, IsSensor, ShapeRef );
-
-			//	gr: by default we'll enable collision when a collision shape is specified
-			EnableCollision();
-		}
+		ImportCollisionShape( *CollisionShapeDatas.ElementAt(i) );
 	}
 
 	//	read transform
@@ -1153,4 +1157,101 @@ void TLPhysics::TPhysicsNode::OnCollisionShapeRemoved(TRefRef CollisionShapeRef)
 
 	PublishMessage( Message );
 }
+
+
+//-------------------------------------------------------------
+//	create a collision shape from init data
+//-------------------------------------------------------------
+Bool TLPhysics::TPhysicsNode::ImportCollisionShape(TBinaryTree& CollisionShapeData)
+{
+	CollisionShapeData.ResetReadPos();
+	TPtr<TLMaths::TShape> pCollisionShape = TLMaths::ImportShapeData( CollisionShapeData );
+
+	//	failed to import shape data
+	if ( !pCollisionShape )
+	{
+		TLDebug_Break("Failed to import collision shape data");
+		return FALSE;
+	}
+
+	//	import ref and sensor settings
+	TRef ShapeRef;
+	Bool IsSensor = FALSE;
+	CollisionShapeData.ImportData("Ref", ShapeRef );
+	CollisionShapeData.ImportData("Sensor", IsSensor );
+
+	//	add the collison shape
+	TRef NewShapRef = AddCollisionShape( pCollisionShape, IsSensor, ShapeRef );
+	if ( !NewShapRef.IsValid() )
+		return FALSE;
+
+	//	gr: by default we'll enable collision when a collision shape is specified
+	EnableCollision();
+
+	return TRUE;
+}
+
+//-------------------------------------------------------------
+//	create a collision shape from init data
+//-------------------------------------------------------------
+Bool TLPhysics::TPhysicsNode::ImportCollisionShapeFromDatum(TBinaryTree& CollisionShapeData)
+{
+	//	read datum
+	CollisionShapeData.ResetReadPos();
+	TRef DatumRef;
+	if ( !CollisionShapeData.Read( DatumRef ) )
+		return FALSE;
+
+	//	read mesh to get datum from
+	TRef MeshRef;
+	if ( !CollisionShapeData.ImportData("MeshRef", MeshRef ) )
+	{
+		TTempString Debug_String("Missing MeshRef data for ColDatum: ");
+		DatumRef.GetString( Debug_String );
+		TLDebug_Break( Debug_String );
+		return FALSE;
+	}
+
+	//	get mesh
+	TLAsset::TMesh* pMesh = TLAsset::LoadAsset( MeshRef, TRUE, "Mesh" ).GetObject<TLAsset::TMesh>();
+	if ( !pMesh )
+	{
+		TTempString Debug_String("Collision datum \"");
+		DatumRef.GetString(Debug_String);
+		Debug_String.Append("\" specified, but mesh \"");
+		MeshRef.GetString( Debug_String );
+		Debug_String.Append("\" is missing. Cannot create collision shapes for physics node");
+		TLDebug_Break( Debug_String );
+		return FALSE;
+	}
+
+	//	get a datum from the mesh for the collision shape
+	TPtr<TLMaths::TShape>& pCollisionShape = pMesh->GetDatum( DatumRef );
+	if ( !pCollisionShape )
+	{
+		TTempString Debug_String("Collision datum (");
+		DatumRef.GetString( Debug_String );
+		Debug_String.Append(") is missing from mesh ");
+		MeshRef.GetString( Debug_String );
+		TLDebug_Break( Debug_String );
+		return FALSE;
+	}
+
+	//	import ref and sensor settings
+	TRef ShapeRef = DatumRef;
+	Bool IsSensor = FALSE;
+	CollisionShapeData.ImportData("Ref", ShapeRef );
+	CollisionShapeData.ImportData("Sensor", IsSensor );
+
+	//	add collision shape
+	TRef NewShapRef = AddCollisionShape( pCollisionShape, IsSensor, ShapeRef );
+	if ( !NewShapRef.IsValid() )
+		return FALSE;
+
+	//	gr: by default we'll enable collision when a collision shape is specified
+	EnableCollision();
+
+	return TRUE;
+}
+
 

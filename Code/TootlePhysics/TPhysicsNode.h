@@ -141,6 +141,9 @@ protected:
 	void						OnCollisionShapeAdded(TCollisionShape& CollisionShape);	//	collision shape added to the list & body
 	void						OnCollisionShapeRemoved(TRefRef CollisionShapeRef);		//	collision shape added to the list & body
 
+	Bool						ImportCollisionShape(TBinaryTree& CollisionShapeData);	//	create a collision shape from init data
+	Bool						ImportCollisionShapeFromDatum(TBinaryTree& CollisionShapeData);	//	create a collision shape from init data
+
 	//	box2d interface
 	Bool						CreateBody(b2World& World);							//	create the body in the world
 	SyncBool					CreateBodyShape(TCollisionShape& CollisionShape);	//	create/recreate this shape on the body. if FALSE - it failed, if WAIT then we're waiting for a body to add it to
