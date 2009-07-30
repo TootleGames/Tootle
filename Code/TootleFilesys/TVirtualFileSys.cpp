@@ -275,7 +275,7 @@ SyncBool TLFileSys::TVirtualFileSys::WriteFile(TPtr<TFile>& pFile)
 //---------------------------------------------------------
 //	delete file from file sys
 //---------------------------------------------------------
-SyncBool TLFileSys::TVirtualFileSys::DeleteFile(const TFileRef& FileRef)
+SyncBool TLFileSys::TVirtualFileSys::DeleteFile(const TTypedRef& FileRef)
 {
 	//	gr: out of safety this pFile isn't a ref. it will be invalid after RemoveFileInstance()
 	TPtr<TFile> pFile = GetFile( FileRef );

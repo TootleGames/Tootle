@@ -39,9 +39,10 @@ public:
 	inline Bool		operator==(TRefRef AssetRef) const	{	return GetAssetRef() == AssetRef;	}
 
 protected:
-	TRef						m_AssetRef;			//	ref of asset we're creating
-	TPtr<TLFileSys::TFile>		m_pFile;			//	plain file needs converting to asset file
-	TPtr<TLFileSys::TFileAsset>	m_pAssetFile;		//	asset file needs converting to asset
+	TRef						m_AssetRef;				//	ref of asset we're creating
+	TPtr<TLFileSys::TFile>		m_pFile;				//	plain file needs converting to asset file
+	TPtr<TLFileSys::TFileAsset>	m_pTempAssetFile;		//	asset file generated from plain file
+	TPtr<TLFileSys::TFileAsset>	m_pAssetFile;			//	asset file in a proper file sys that needs converting to asset
 };
 
 
@@ -53,6 +54,7 @@ namespace TLLoadTask
 	protected:
 		TLAsset::TLoadTask*				GetLoadTask()		{	return GetStateMachine<TLAsset::TLoadTask>();	}
 		TPtr<TLFileSys::TFile>&			GetPlainFile()		{	return GetLoadTask()->m_pFile;	}
+		TPtr<TLFileSys::TFileAsset>&	GetTempAssetFile()	{	return GetLoadTask()->m_pTempAssetFile;	}
 		TPtr<TLFileSys::TFileAsset>&	GetAssetFile()		{	return GetLoadTask()->m_pAssetFile;	}
 		TRef&							GetAssetRef() 		{	return GetLoadTask()->m_AssetRef;	}	
 		TPtr<TLAsset::TAsset>			GetAsset() 			{	return GetLoadTask()->GetAsset();	}
@@ -81,8 +83,8 @@ namespace TLLoadTask
 		virtual TRef			Update(float Timestep);
 	};
 
-	//	create asset file from plain file
-	class Mode_PlainFileCreateAssetFile : public TLoadTaskMode
+	//	create a temporary asset file from plain file
+	class Mode_PlainFileCreateTempAssetFile : public TLoadTaskMode
 	{
 	protected:
 		virtual TRef				Update(float Timestep);
@@ -125,6 +127,13 @@ namespace TLLoadTask
 
 	//	save asset file back to file sys
 	class Mode_AssetFileWrite : public TLoadTaskMode
+	{
+	protected:
+		virtual TRef			Update(float Timestep);
+	};
+
+	//	save asset file back to file sys
+	class Mode_AssetFileCreate : public TLoadTaskMode
 	{
 	protected:
 		virtual TRef			Update(float Timestep);

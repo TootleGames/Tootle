@@ -447,7 +447,7 @@ TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filenam
 	if ( !m_IsWritable )
 		return NULL;
 
-	TFileRef FileRef = GetFileRef( Filename, TypeRef );
+	TTypedRef FileRef = GetFileAndTypeRef( Filename, TypeRef );
 
 	//	look for existing file
 	TPtr<TFile>& pFile = GetFile( FileRef );
@@ -508,9 +508,10 @@ TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filenam
 	}
 
 	//	check type returned matches up
-	if ( pNewFile->GetFileRefObject() != FileRef )
+	if ( pNewFile->GetFileAndTypeRef() != FileRef )
 	{
-		TLDebug_Break("Created new file, but file ref doesn't match to what we expected");
+		if ( !TLDebug_Break("Created new file, but file ref doesn't match to what we expected") )
+			return NULL;
 	}
 
 	//	return new instance if it worked

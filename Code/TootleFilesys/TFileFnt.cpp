@@ -126,8 +126,8 @@ SyncBool TLFileSys::TFileFnt::ImportFont(TXmlTag& Tag,TLAsset::TAtlas& Atlas)
 	}
 
 	//	extract a ref from the filename - note; use the file sys filename splitting so that "x.fnt" doesnt turn into a ref of "xfnt"
-	TLFileSys::TFileRef FileRef = TLFileSys::GetFileRef( *pPageTextureFileString, TRef() );
-	Atlas.SetTextureRef( FileRef.GetFileRef() );
+	TTypedRef FileRef = TLFileSys::GetFileAndTypeRef( *pPageTextureFileString, TRef() );
+	Atlas.SetTextureRef( FileRef.GetRef() );
 
 	//	now extract all the char's
 	for ( u32 c=0;	c<pCharsTag->GetChildren().GetSize();	c++ )

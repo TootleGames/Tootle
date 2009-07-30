@@ -227,6 +227,55 @@ FORCEINLINE Bool TRef::IsValid() const
 
 
 
+
+
+
+//------------------------------------------------------------
+//	This is a pair of refs. Commonly used to put a ref and a specific TypeRef together
+//	we could re-use this class for anything that needs two refs, or even a double-sized ref (instead of a 64bit one)
+//------------------------------------------------------------
+class TTypedRef
+{
+public:
+	TTypedRef()																											{};
+	TTypedRef(const TTypedRef& TypedRef) :		m_Ref ( TypedRef.GetRef() ),	m_TypeRef ( TypedRef.GetTypeRef() )		{};
+	TTypedRef(TRefRef Ref,TRefRef TypeRef) :	m_Ref ( Ref ),					m_TypeRef ( TypeRef )					{};
+
+	FORCEINLINE TRefRef		GetRef() const						{	return m_Ref;	}
+	FORCEINLINE TRefRef		GetTypeRef() const					{	return m_TypeRef;	}
+
+	FORCEINLINE void		Set(const TTypedRef& TypedRef)		{	m_Ref = TypedRef.GetRef();	m_TypeRef = TypedRef.GetTypeRef();	}
+	FORCEINLINE void		SetRef(TRefRef Ref)					{	m_Ref = Ref;	}
+	FORCEINLINE void		SetTypeRef(TRefRef TypeRef)			{	m_TypeRef = TypeRef;	}
+
+	FORCEINLINE Bool		operator<(const TTypedRef& TypedRef) const;
+	FORCEINLINE Bool		operator==(const TTypedRef& TypedRef) const	{	return (GetRef() == TypedRef.GetRef()) && (GetTypeRef()==TypedRef.GetTypeRef());	}
+	FORCEINLINE Bool		operator!=(const TTypedRef& TypedRef) const	{	return (GetRef() != TypedRef.GetRef()) || (GetTypeRef()!=TypedRef.GetTypeRef());	}
+
+private:
+	TRef		m_Ref;
+	TRef		m_TypeRef;
+};
+
+
+FORCEINLINE Bool TTypedRef::operator<(const TTypedRef& TypedRef) const	
+{	
+	//	check main ref first
+	if ( GetRef() < TypedRef.GetRef() )			
+		return TRUE;
+	else if ( GetRef() > TypedRef.GetRef() )	
+		return FALSE;
+	
+	//	main ref matches, so check secondary ref
+	return ( GetTypeRef() < TypedRef.GetTypeRef() );
+}
+
+
+
+
+
+
 TLCore_DeclareIsDataType( TRef );
+TLCore_DeclareIsDataType( TTypedRef );
 
 

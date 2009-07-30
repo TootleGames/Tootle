@@ -8,10 +8,10 @@
 
 
 TLFileSys::TFile::TFile(TRefRef InstanceRef,TRefRef TypeRef) :
-	m_FileSize		( -1 ),
-	m_InstanceRef	( InstanceRef ),
-	m_FileRef		( TRef(), TypeRef ),
-	m_IsLoaded		( SyncFalse )
+	m_FileSize			( -1 ),
+	m_InstanceRef		( InstanceRef ),
+	m_FileAndTypeRef	( TRef(), TypeRef ),
+	m_IsLoaded			( SyncFalse )
 {
 }
 
@@ -22,13 +22,13 @@ TLFileSys::TFile::TFile(TRefRef InstanceRef,TRefRef TypeRef) :
 SyncBool TLFileSys::TFile::Init(TRefRef FileRef,TRefRef FileSysRef,const TString& Filename)
 {
 	//	the file ref should be invalid at this point
-	if ( m_FileRef.GetFileRef().IsValid() )
+	if ( m_FileAndTypeRef.GetRef().IsValid() )
 	{
 		TLDebug_Break("Expected file's FileRef to be invalid, as it is NOT assigned at construction");
 	}
 
 	//	set params
-	m_FileRef.SetFileRef( FileRef );
+	m_FileAndTypeRef.SetRef( FileRef );
 	m_FileSysRef = FileSysRef;
 	m_Filename = Filename;
 

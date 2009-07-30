@@ -354,12 +354,7 @@ Bool TLAsset::SaveAsset(TRefRef AssetRef)
 	TLFileSys::GetFileSys( FileSystems, "Virtual", "Virtual" );
 
 	//	make up new filename (with the right extension)
-	TString NewFilename;
-	pAsset->GetAssetRef().GetString( NewFilename );
-	NewFilename.Append(".");
-	TRef("asset").GetString( NewFilename );
-	
-	TPtr<TLFileSys::TFileAsset> pAssetFile = TLFileSys::CreateFileInFileSys( NewFilename, FileSystems, "Asset");
+	TPtr<TLFileSys::TFileAsset> pAssetFile = TLFileSys::CreateAssetFileInFileSys( AssetRef, FileSystems);
 
 	//	failed to create file in any file sys
 	if ( !pAssetFile )

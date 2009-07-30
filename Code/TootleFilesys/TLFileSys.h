@@ -29,12 +29,13 @@ namespace TLFileSys
 
 	TPtr<TFile>&				GetFile(TRefRef FileRef,TRefRef FileTypeRef=TRef());	//	find the newest file with this file ref. if type invalid, just gets newest file with matching name
 	TPtr<TFile>					CreateFileInFileSys(const TString& Filename,TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef FileType=TRef());
+	TPtr<TFile>					CreateAssetFileInFileSys(TRefRef AssetRef,TPtrArray<TLFileSys::TFileSys>& FileSysList);	//	wrapper to create a file for a .asset file (to ensure consistent filenames)
 
 	//	create a local file system
 	SyncBool					CreateLocalFileSys(TRef& FileSysRef,const TString& Directory,Bool IsWritable);	//	async create a local filesystem for the specified path. FileSysRef is set to the new file system's ref for the purposes of asynchronousness so keep using it when async calling this func
 
 	Bool						GetParentDir(TString& Directory);	//	directory manipulation - turns filename to dir, then chops off a dir at a time
-	TFileRef					GetFileRef(const TString& Filename,TRef TypeRef);					//	generate file ref with explicit type
+	TTypedRef					GetFileAndTypeRef(const TString& Filename,TRef TypeRef);					//	generate file ref with explicit type
 
 	extern TPtr<TFileSysFactory>	g_pFactory;			//	extern'd as it's a manager, the file factory is not exposed
 };
@@ -74,7 +75,7 @@ public:
 	FORCEINLINE TPtr<TFileGroup>&				GetFileGroup(TRefRef FileRef)		{	return m_FileGroups.FindPtr( FileRef );	}
 	FORCEINLINE const TPtrArray<TFileGroup>&	GetFileGroups() const				{	return m_FileGroups;	}
 
-	TPtr<TLFileSys::TFile>&			CreateFileInstance(const TFileRef& FileRef,TRefRef FileSysRef,const TString& Filename);	//	create instance, init, add to group
+	TPtr<TLFileSys::TFile>&			CreateFileInstance(const TTypedRef& FileRef,TRefRef FileSysRef,const TString& Filename);	//	create instance, init, add to group
 	Bool							RemoveFileInstance(TPtr<TLFileSys::TFile>& pFile);										//	delete instance, remove from group
 
 protected:

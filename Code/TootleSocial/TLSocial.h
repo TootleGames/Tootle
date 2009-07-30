@@ -44,7 +44,7 @@ public:
 	Bool		OpenDashboard();
 
 	// Leaderboard processing
-	FORCEINLINE Bool		RegisterLeaderboard(TRefRef LeaderboardRef, const s32& LeaderboardID)	{ return m_Leaderboards.Add(LeaderboardRef, LeaderboardID); }
+	FORCEINLINE Bool		RegisterLeaderboard(TRefRef LeaderboardRef, const s32& LeaderboardID)	{ return m_Leaderboards.Add(LeaderboardRef, LeaderboardID)!=NULL; }
 	
 	Bool		SubmitScore(const s32& Score, const TString& Format, TRefRef LeaderboardRef);
 

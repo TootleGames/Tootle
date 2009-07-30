@@ -51,7 +51,7 @@ Bool TLFileSys::TFileSys::CheckIsFileFromThisFileSys(TPtr<TFile>& pFile)
 TPtr<TLFileSys::TFile> TLFileSys::TFileSys::CreateFileInstance(const TString& Filename,TRef TypeRef)
 {
 	//	generate a file ref from the file name (and type if provided)
-	TLFileSys::TFileRef FileRef = GetFileRef( Filename, TypeRef );
+	TTypedRef FileRef = GetFileAndTypeRef( Filename, TypeRef );
 
 	//	fail to create file instances that have no extension
 	//	this is mostly to ignore ipod executable files which have no extension and we'll always find one

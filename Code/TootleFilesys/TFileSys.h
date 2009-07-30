@@ -18,7 +18,6 @@ namespace TLCore
 
 namespace TLFileSys
 {
-	class TFileRef;			//	file ref AND type ref in one type, essentially the filename in the format xxxxx.yyyyy
 	class TFile;			//	base file type - same as the old Binary data class
 	class TFileSys;			//	base file system type
 	class TFileSysFactory;	//	file system class factory
@@ -48,7 +47,7 @@ public:
 	virtual SyncBool			LoadFile(TPtr<TFile>& pFile)					{	return SyncFalse;	}		//	read-in file
 	virtual SyncBool			WriteFile(TPtr<TFile>& pFile)					{	return SyncFalse;	}		//	write file into file system if possible - if the filesys is read-only we cannot add external files and this fails
 	virtual TPtr<TFile>			CreateFile(const TString& Filename,TRef TypeRef)	{	return NULL;	}		//	create a new empty file into file system if possible - if the filesys is read-only we cannot add external files and this fails
-	virtual SyncBool			DeleteFile(const TFileRef& FileRef)				{	return SyncFalse;	}		//	delete file from file sys
+	virtual SyncBool			DeleteFile(const TTypedRef& FileRef)			{	return SyncFalse;	}		//	delete file from file sys
 
 	//inline Bool				operator==(const TFileSys& FileSys) const		{	return (this == &FileSys);	}
 	inline Bool					operator==(const TRef& FileSysRef) const		{	return (GetFileSysRef() == FileSysRef);	}
@@ -59,8 +58,8 @@ protected:
 	
 	Bool						CheckIsFileFromThisFileSys(TPtr<TFile>& pFile);	//	check this file belongs to this file system, if not break
 	Bool						GetFileExists(const TString& Filename) const	{	return GetFileList().Exists( Filename );	}	
-	Bool						GetFileExists(const TFileRef& FileRef) const	{	return GetFileList().Exists( FileRef );	}	
-	TPtr<TFile>&				GetFile(const TFileRef& FileRef)				{	return m_Files.FindPtr( FileRef );	}
+	Bool						GetFileExists(const TTypedRef& FileRef) const	{	return GetFileList().Exists( FileRef );	}	
+	TPtr<TFile>&				GetFile(const TTypedRef& FileRef)				{	return m_Files.FindPtr( FileRef );	}
 
 	TPtrArray<TFile>&			GetFileList()									{	return m_Files;	}
 	const TPtrArray<TFile>&		GetFileList() const								{	return m_Files;	}

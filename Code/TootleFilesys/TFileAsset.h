@@ -51,6 +51,8 @@ public:
 	SyncBool			Import();					//	turn this TFile into a binary tree
 	SyncBool			Export();					//	export the binary tree to this TFile
 
+	Bool				CopyAssetFileData(TFileAsset& OtherAssetFile);		//	copy contents of other asset file into this (note: uses ReferenceDataTree, does NOT duplicate data)
+
 	TRefRef				GetAssetTypeRef() const		{	return m_Header.m_AssetType;	}
 	TFileAsset::Header&	GetHeader()					{	return m_Header;	}
 	TBinaryTree&		GetData()					{	return m_Data;	}

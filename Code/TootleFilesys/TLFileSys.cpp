@@ -174,7 +174,7 @@ Bool TLFileSys::GetParentDir(TString& Directory)
 //----------------------------------------------------------
 //	generate file ref and type ref from filename
 //----------------------------------------------------------
-TLFileSys::TFileRef TLFileSys::GetFileRef(const TString& Filename,TRef TypeRef)
+TTypedRef TLFileSys::GetFileAndTypeRef(const TString& Filename,TRef TypeRef)
 {	
 	//	extract a file type from the extension of the filename if it's not been provided
 	TArray<TString> FilenameParts;
@@ -200,7 +200,7 @@ TLFileSys::TFileRef TLFileSys::GetFileRef(const TString& Filename,TRef TypeRef)
 		FileRef.Set( FilenameParts[0] );
 	}
 
-	return TFileRef( FileRef, TypeRef );
+	return TTypedRef( FileRef, TypeRef );
 }
 
 
@@ -456,6 +456,19 @@ void TLFileSys::GetFileSys(TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef F
 
 
 //------------------------------------------------------------
+//	wrapper to create a file for a .asset file (to ensure consistent filenames)
+//------------------------------------------------------------
+TPtr<TLFileSys::TFile> TLFileSys::CreateAssetFileInFileSys(TRefRef AssetRef,TPtrArray<TLFileSys::TFileSys>& FileSysList)
+{
+	TTempString Filename;
+	AssetRef.GetString( Filename );
+	Filename.Append(".Asset");
+
+	return CreateFileInFileSys( Filename, FileSysList, TRef_Static(A,s,s,e,t) );
+}
+
+
+//------------------------------------------------------------
 //	try to create a file in one of the file systems provided. FileType dictates the TFile type (not extension or anything)
 //	todo: omit this and use the extension of the filename?
 //------------------------------------------------------------
@@ -622,7 +635,7 @@ TLFileSys::TFile* TLFileSys::TFileFactory::CreateObject(TRefRef InstanceRef,TRef
 //------------------------------------------------------------
 //	create instance, init, add to group
 //------------------------------------------------------------
-TPtr<TLFileSys::TFile>& TLFileSys::TFileFactory::CreateFileInstance(const TFileRef& FileRef,TRefRef FileSysRef,const TString& Filename)
+TPtr<TLFileSys::TFile>& TLFileSys::TFileFactory::CreateFileInstance(const TTypedRef& FileRef,TRefRef FileSysRef,const TString& Filename)
 {
 	//	get a unique instance ref (based on filename)
 	//	gr: currently NOT based on filename to stay away from confusion
@@ -634,7 +647,7 @@ TPtr<TLFileSys::TFile>& TLFileSys::TFileFactory::CreateFileInstance(const TFileR
 		return pNewFile;
 
 	//	init
-	if ( !pNewFile->Init( FileRef.GetFileRef(), FileSysRef, Filename ) )
+	if ( !pNewFile->Init( FileRef.GetRef(), FileSysRef, Filename ) )
 	{
 		RemoveInstance( InstanceRef );
 		return TLPtr::GetNullPtr<TLFileSys::TFile>();

@@ -201,6 +201,30 @@ SyncBool TLFileSys::TFileAsset::Export()
 }	
 
 
+//---------------------------------------------------------
+//	copy contents of other asset file into this (note: uses ReferenceDataTree, does NOT duplicate data)
+//---------------------------------------------------------
+Bool TLFileSys::TFileAsset::CopyAssetFileData(TFileAsset& OtherAssetFile)
+{
+	//	copy header
+	this->m_Header = OtherAssetFile.GetHeader();
+
+	//	copy data
+	this->m_Data.ReferenceDataTree( OtherAssetFile.GetData() );
+
+	//	copy importer
+	//	gr: dont know if we need to do this
+	if ( this->m_pImporter || OtherAssetFile.m_pImporter )
+	{
+		if ( TLDebug_Break("Should we do this?") )
+		{
+			this->m_pImporter = OtherAssetFile.m_pImporter;
+		}
+	}
+
+	return TRUE;
+}
+
 
 //---------------------------------------------------------
 //	write this section to binary[file]

@@ -608,13 +608,11 @@ Bool TLRender::TRenderNodeTextureText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 	}
 
 	//	grab atlas asset
-	TPtr<TLAsset::TAsset>& pAsset = TLAsset::GetAsset( GetFontRef(), TRUE );
-
-	//	wrong type/not loaded
-	if ( ! (pAsset && pAsset->GetAssetType() == "Atlas") )
+	TLAsset::TAtlas* pAtlasAsset = TLAsset::LoadAsset( GetFontRef(), TRUE, TRef_Static(A,t,l,a,s) ).GetObject<TLAsset::TAtlas>();
+	if ( !pAtlasAsset )
 		return FALSE;
 
-	TLAsset::TAtlas& Atlas = *(pAsset.GetObject<TLAsset::TAtlas>());
+	TLAsset::TAtlas& Atlas = *pAtlasAsset;
 
 	//	current triangle index - maybe different from number of chars in the string because of missing glyphs
 	u32 TriangleIndex = 0;

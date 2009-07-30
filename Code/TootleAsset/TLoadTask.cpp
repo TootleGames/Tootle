@@ -38,15 +38,19 @@ TLAsset::TLoadTask::TLoadTask(TRefRef AssetRef) :
 {
 	//	init modes
 	AddMode<Mode_Init>("Init");
+
 	AddMode<Mode_GetPlainFile>("PFGet");
 	AddMode<Mode_PlainFileLoad>("PFLoad");
-	AddMode<Mode_PlainFileCreateAssetFile>("PFcAF");
+	AddMode<Mode_PlainFileCreateTempAssetFile>("PFcAF");
 	AddMode<Mode_PlainFileExport>("PFexport");
+	
 	AddMode<Mode_GetAssetFile>("AFGet");
 	AddMode<Mode_AssetFileLoad>("AFLoad");
 	AddMode<Mode_AssetFileImport>("AFImport");
 	AddMode<Mode_AssetFileExport>("AFExport");
+	AddMode<Mode_AssetFileCreate>("AFCreate");
 	AddMode<Mode_AssetFileWrite>("AFWrite");
+	
 	AddMode<Mode_CreateAsset>("ACreate");
 	AddMode<Mode_AssetImport>("AImport");
 	AddMode<Mode_Finished>("Finished");
@@ -208,36 +212,22 @@ TRef Mode_PlainFileLoad::Update(float Timestep)
 //------------------------------------------------------------
 //	create asset file from plain file
 //------------------------------------------------------------
-TRef Mode_PlainFileCreateAssetFile::Update(float Timestep)
+TRef Mode_PlainFileCreateTempAssetFile::Update(float Timestep)
 {
-	//	create a new asset file
-
-	//	make a list of file systems to try and write to
-	TPtrArray<TLFileSys::TFileSys> FileSystems;
-	//	first try and put asset file into the file system that the file came from...
-	TLFileSys::GetFileSys( FileSystems, GetPlainFile()->GetFileSysRef(), TRef() );
-	//	then any local file sys
-	TLFileSys::GetFileSys( FileSystems, TRef(), "Local" );
-	//	and finally resort to the virtual file sys
-	TLFileSys::GetFileSys( FileSystems, "Virtual", "Virtual" );
-
-	//	make up new filename (with the right extension)
-	TString NewFilename = GetPlainFile()->GetFilename();
-	NewFilename.Append(".");
-	TRef("asset").GetString( NewFilename );
-
-	TPtr<TLFileSys::TFileAsset> pNewFile = TLFileSys::CreateFileInFileSys( NewFilename, FileSystems, "Asset");
-
-	//	failed to create file in any file sys
-	if ( !pNewFile )
+	if ( GetAssetFile().IsValid() )
 	{
-		//	failed to create new file
-		TLDebug_Break("Failed to put new .asset file in ANY file sys!");
+		TLDebug_Break("Expected no asset file at this point...");
 		return "Failed";
 	}
 
-	//	save this new file as our asset file
-	GetAssetFile() = pNewFile;
+	if ( GetTempAssetFile().IsValid() )
+	{
+		TLDebug_Break("Expected no temporary asset file at this point...");
+		return "Failed";
+	}
+
+	//	create a temporary file with no file system (helps us identify that it's very temporary)
+	GetTempAssetFile() = new TLFileSys::TFileAsset( GetAssetRef(), "Asset" );
 
 	//	export plain file
 	return "PFExport";
@@ -258,7 +248,7 @@ TRef Mode_PlainFileExport::Update(float Timestep)
 		return "Failed";
 	}
 
-	TPtr<TLFileSys::TFileAsset> pAssetFile = GetAssetFile();
+	TPtr<TLFileSys::TFileAsset> pAssetFile = GetTempAssetFile();
 	if ( !pAssetFile )
 	{
 		TLDebug_Break("Asset file expected");
@@ -283,7 +273,7 @@ TRef Mode_PlainFileExport::Update(float Timestep)
 		{
 			Debug_String = "Deleting asset file";
 			Debug_String.Append( pAssetFile->GetFilename() );
-			if ( pFileSys->DeleteFile( pAssetFile->GetFileRefObject() ) == SyncFalse )
+			if ( pFileSys->DeleteFile( pAssetFile->GetFileAndTypeRef() ) == SyncFalse )
 				Debug_String.Append(" Failed!");
 			TLDebug_Break( Debug_String );
 		}
@@ -291,7 +281,8 @@ TRef Mode_PlainFileExport::Update(float Timestep)
 		return "Failed";
 	}
 
-	return "AFExport";
+	//	create temporary asset file, now create the real one and start writing to file system
+	return "AFCreate";
 }
 
 
@@ -444,6 +435,49 @@ TRef Mode_AssetFileImport::Update(float Timestep)
 }
 
 
+
+//------------------------------------------------------------
+//	save asset file back to file sys
+//------------------------------------------------------------
+TRef Mode_AssetFileCreate::Update(float Timestep)
+{
+	TPtr<TLFileSys::TFileAsset>& pTempAssetFile = GetTempAssetFile();
+	if ( !pTempAssetFile )
+	{
+		TLDebug_Break("Temporary asset file expected");
+		return "Failed";
+	}
+
+	//	create a real asset file
+	TPtrArray<TLFileSys::TFileSys> FileSystems;
+	//	first try and put asset file into the file system that the file came from...
+	TLFileSys::GetFileSys( FileSystems, GetPlainFile()->GetFileSysRef(), TRef() );
+	//	then any local file sys
+	TLFileSys::GetFileSys( FileSystems, TRef(), "Local" );
+	//	then virtual as a last resort
+	TLFileSys::GetFileSys( FileSystems, "Virtual", "Virtual" );
+
+	//	create real asset file
+	GetAssetFile() = TLFileSys::CreateAssetFileInFileSys( GetAssetRef(), FileSystems );
+
+	//	failed to create the real file, so just continue with our temporary asset file and create the asset
+	if ( !GetAssetFile() )
+	{
+		TLDebug_Break("Should never get this case? should always at least write to the virtual file sys...");
+		return "ACreate";
+	}
+
+	//	copy contents of temp asset file to the real asset file
+	GetAssetFile()->CopyAssetFileData( *pTempAssetFile );
+
+	//	delete temp asset file
+	pTempAssetFile = NULL;
+
+	//	write asset file back to file sys
+	return "AFExport";
+}
+
+
 //------------------------------------------------------------
 //	turn asset file back to plain file
 //------------------------------------------------------------
@@ -471,6 +505,7 @@ TRef Mode_AssetFileExport::Update(float Timestep)
 		return "Failed";
 	}
 
+	//	now write the asset file to the file sys
 	return "AFWrite";
 }
 
@@ -479,21 +514,25 @@ TRef Mode_AssetFileExport::Update(float Timestep)
 //------------------------------------------------------------
 TRef Mode_AssetFileWrite::Update(float Timestep)
 {
-	if ( !GetAssetFile() )
+	TPtr<TLFileSys::TFile> pAssetFile = GetAssetFile();
+	if ( !pAssetFile )
 	{
-		TLDebug_Break("Asset file expected");
+		TLDebug_Break("asset file expected");
 		return "Failed";
 	}
 
-	TPtr<TLFileSys::TFileSys> pFileSys = TLFileSys::GetFileSys( GetAssetFile()->GetFileSysRef() );
-	if ( pFileSys )
+	//	write the contents back to our file sys
+	TPtr<TLFileSys::TFileSys> pFileSys = TLFileSys::GetFileSys( pAssetFile->GetFileSysRef() );
+	if ( !pFileSys )
 	{
-		//	write file
-		TPtr<TLFileSys::TFile> pAssetFile = GetAssetFile();
-		SyncBool WriteResult = pFileSys->WriteFile( pAssetFile );
-		if ( WriteResult == SyncWait )
-			return TRef();
+		TLDebug_Break("new asset file is in lost file system");
+		return "Acreate";
 	}
+
+	//	write file
+	SyncBool WriteResult = pFileSys->WriteFile( pAssetFile );
+	if ( WriteResult == SyncWait )
+		return TRef();
 
 	//	failed or didnt, just continue
 	return "Acreate";
