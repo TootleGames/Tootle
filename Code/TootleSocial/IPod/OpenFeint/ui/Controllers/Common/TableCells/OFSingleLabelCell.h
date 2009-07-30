@@ -1,0 +1,22 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+///  This is beta software and is subject to changes without notice.
+///
+///  Do not distribute.
+///
+///  Copyright (c) 2009 Aurora Feint Inc. All rights reserved.
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#import "OFTableCellHelper.h"
+
+@interface OFSingleLabelCell : OFTableCellHelper
+{
+	UILabel* label;
+}
+
+@property (nonatomic, retain) IBOutlet UILabel* label;
+
+- (void)onResourceChanged:(OFResource*)resource;
+
+@end

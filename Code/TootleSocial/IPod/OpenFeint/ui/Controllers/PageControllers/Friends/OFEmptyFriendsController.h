@@ -1,0 +1,22 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+///  This is beta software and is subject to changes without notice.
+///
+///  Do not distribute.
+///
+///  Copyright (c) 2009 Aurora Feint Inc. All rights reserved.
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#pragma once
+
+@interface OFEmptyFriendsController : UIViewController
+{
+	UIViewController* owner;
+}
+
+@property (nonatomic, assign) IBOutlet UIViewController* owner;
+
+- (IBAction)onImportFriendsPressed;
+
+@end

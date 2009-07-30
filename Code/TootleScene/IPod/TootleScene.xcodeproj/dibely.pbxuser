@@ -10,6 +10,16 @@
 		vrLen = 936;
 		vrLoc = 372;
 	};
+	845084CA101F184300B78F2B /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C107A40F0A686E00B2DF7A /* TScenegraph.h */;
+		name = "TScenegraph.h: 35";
+		rLen = 0;
+		rLoc = 666;
+		rType = 0;
+		vrLen = 936;
+		vrLoc = 372;
+	};
 	8461C21C0F5C2BED00ED9509 /* TSceneNode_Camera.h */ = {
 		isa = PBXFileReference;
 		lastKnownFileType = sourcecode.c.h;
@@ -41,7 +51,7 @@
 		ignoreCount = 0;
 		lineNumber = 109;
 		location = FindFritz;
-		modificationTime = 265640338.818812;
+		modificationTime = 270238214.417902;
 		state = 2;
 	};
 	8461C2AD0F5C308600ED9509 /* PBXTextBookmark */ = {
@@ -121,16 +131,6 @@
 		vrLen = 548;
 		vrLoc = 4468;
 	};
-	84BBC2610FD56AFB0046E316 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C107A40F0A686E00B2DF7A /* TScenegraph.h */;
-		name = "TScenegraph.h: 35";
-		rLen = 0;
-		rLoc = 666;
-		rType = 0;
-		vrLen = 1041;
-		vrLoc = 372;
-	};
 	84C107820F0A679500B2DF7A /* Project object */ = {
 		activeBuildConfigurationName = Debug;
 		activeSDKPreference = iphonesimulator2.2.1;
@@ -203,11 +203,12 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 269335372;
-			PBXWorkspaceStateSaveDate = 269335372;
+			PBXPerProjectTemplateStateSaveDate = 270473280;
+			PBXWorkspaceStateSaveDate = 270473280;
 		};
 		perUserProjectItems = {
 			8434CB84100DBB610063673E /* PBXTextBookmark */ = 8434CB84100DBB610063673E /* PBXTextBookmark */;
+			845084CA101F184300B78F2B /* PBXTextBookmark */ = 845084CA101F184300B78F2B /* PBXTextBookmark */;
 			8461C2700F5C2F8D00ED9509 /* PBXTextBookmark */ = 8461C2700F5C2F8D00ED9509 /* PBXTextBookmark */;
 			8461C2AD0F5C308600ED9509 /* PBXTextBookmark */ = 8461C2AD0F5C308600ED9509 /* PBXTextBookmark */;
 			8461C2AE0F5C308600ED9509 /* PBXTextBookmark */ = 8461C2AE0F5C308600ED9509 /* PBXTextBookmark */;
@@ -216,7 +217,6 @@
 			8461C2BA0F5C311100ED9509 /* PBXTextBookmark */ = 8461C2BA0F5C311100ED9509 /* PBXTextBookmark */;
 			8491EFF00F1F9D7D002FE16F /* PBXTextBookmark */ = 8491EFF00F1F9D7D002FE16F /* PBXTextBookmark */;
 			84BBC25F0FD56AFB0046E316 /* PBXTextBookmark */ = 84BBC25F0FD56AFB0046E316 /* PBXTextBookmark */;
-			84BBC2610FD56AFB0046E316 /* PBXTextBookmark */ = 84BBC2610FD56AFB0046E316 /* PBXTextBookmark */;
 			84D690850F41F05A002CFFE1 /* PBXTextBookmark */ = 84D690850F41F05A002CFFE1 /* PBXTextBookmark */;
 			84DC8FF30F45F71300532109 /* PBXTextBookmark */ = 84DC8FF30F45F71300532109 /* PBXTextBookmark */;
 			84DC92AB0F49D73E00532109 /* PBXTextBookmark */ = 84DC92AB0F49D73E00532109 /* PBXTextBookmark */;
@@ -289,7 +289,7 @@
 	};
 	84C107A40F0A686E00B2DF7A /* TScenegraph.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1032, 1442}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1032, 1456}}";
 			sepNavSelRange = "{666, 0}";
 			sepNavVisRange = "{372, 936}";
 		};

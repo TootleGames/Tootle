@@ -1,0 +1,10 @@
+/*
+ *  TootleSocialPrefix.pch
+ *  TootleSocial
+ *
+ *  Created by Duane Bradbury on 29/07/2009.
+ *  Copyright 2009 Tootle. All rights reserved.
+ *
+ */
+
+#import "OpenFeintPrefix.pch"

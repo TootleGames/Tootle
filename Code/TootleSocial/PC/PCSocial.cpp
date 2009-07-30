@@ -13,7 +13,13 @@ namespace TLSocial
 {
 	namespace Platform
 	{
-		void BeginSession()		{}
-		void EndSession()		{}
+		void BeginSession(TRefRef SessionTypeRef)	{}
+		void EndSession(TRefRef SessionTypeRef)		{}
+		
+		void OpenDashboard(TRefRef SessionTypeRef)	{}
+		
+		void SubmitScore(TRefRef SessionTypeRef, const s32& Score, const TString& Format, const s32& LeaderboardID)	{}
 	}
 }
+
+

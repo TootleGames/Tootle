@@ -21,20 +21,29 @@ namespace TLSocial
 	{
 		namespace IPod
 		{
-			SessionViewController* g_pFacebookSession = NULL;
+			namespace Facebook
+			{
+				SessionViewController* g_pFacebookSession = NULL;
+			}
 		}
 	}
 }
 
-void TLSocial::Platform::BeginSession()
+void TLSocial::Platform::IPod::Facebook::BeginSession()
 {
-	IPod::g_pFacebookSession = [[SessionViewController alloc] init];
+	g_pFacebookSession = [[SessionViewController alloc] init];
 	
-	[TLCore::Platform::g_pIPodApp.window addSubview:IPod::g_pFacebookSession.view];		
+	[TLCore::Platform::g_pIPodApp.window addSubview:g_pFacebookSession.view];		
 }
 
-void TLSocial::Platform::EndSession()
+void TLSocial::Platform::IPod::Facebook::EndSession()
 {
-	[IPod::g_pFacebookSession release];
+	[g_pFacebookSession release];
 }
+
+void TLSocial::Platform::IPod::Facebook::OpenDashboard()	
+{
+}
+
+
 

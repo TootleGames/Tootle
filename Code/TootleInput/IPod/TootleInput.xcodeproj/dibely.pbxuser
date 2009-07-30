@@ -1,7 +1,7 @@
 // !$*UTF8*$!
 {
 	841005400EF912FC00542F4A /* Project object */ = {
-		activeBuildConfigurationName = Release;
+		activeBuildConfigurationName = Debug;
 		activeSDKPreference = iphoneos2.2.1;
 		activeTarget = 841005750EF9144200542F4A /* TootleInput */;
 		addToTargets = (
@@ -9,10 +9,8 @@
 		);
 		breakpoints = (
 			8486145D0FCD81E800C22D6B /* TDevice.cpp:36 */,
-			848614670FCD8AF300C22D6B /* IPodVirtualKeyboard.mm:217 */,
 			84BBBEBC0FD422220046E316 /* TSensor.cpp:38 */,
 			84BBBEBE0FD422420046E316 /* TDevice.cpp:42 */,
-			84795E180FE6470A000D0EDA /* TLInput.cpp:158 */,
 		);
 		codeSenseManager = 841005450EF912FC00542F4A /* Code sense */;
 		ignoreBreakpointsInProjectsDict = {
@@ -130,8 +128,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 268129629;
-			PBXWorkspaceStateSaveDate = 268129629;
+			PBXPerProjectTemplateStateSaveDate = 270558573;
+			PBXWorkspaceStateSaveDate = 270558573;
 		};
 		perUserProjectItems = {
 			841005D20EF91B5F00542F4A /* PBXTextBookmark */ = 841005D20EF91B5F00542F4A /* PBXTextBookmark */;
@@ -146,12 +144,12 @@
 			84135E3D0FFB555C00FD81A5 /* PBXTextBookmark */ = 84135E3D0FFB555C00FD81A5 /* PBXTextBookmark */;
 			84135E3F0FFB555C00FD81A5 /* PBXTextBookmark */ = 84135E3F0FFB555C00FD81A5 /* PBXTextBookmark */;
 			84135E400FFB555C00FD81A5 /* PBXTextBookmark */ = 84135E400FFB555C00FD81A5 /* PBXTextBookmark */;
-			84135E410FFB555C00FD81A5 /* PBXTextBookmark */ = 84135E410FFB555C00FD81A5 /* PBXTextBookmark */;
 			84135E480FFB557100FD81A5 /* PBXTextBookmark */ = 84135E480FFB557100FD81A5 /* PBXTextBookmark */;
 			8418FBD50F4EFE5400B956C9 /* PBXTextBookmark */ = 8418FBD50F4EFE5400B956C9 /* PBXTextBookmark */;
 			8418FBDB0F4EFE5400B956C9 /* PBXTextBookmark */ = 8418FBDB0F4EFE5400B956C9 /* PBXTextBookmark */;
 			8418FBDE0F4EFE5400B956C9 /* PBXTextBookmark */ = 8418FBDE0F4EFE5400B956C9 /* PBXTextBookmark */;
 			842A9FAF0F17D5EA004BF60A /* PBXTextBookmark */ = 842A9FAF0F17D5EA004BF60A /* PBXTextBookmark */;
+			84508A161020658600B78F2B /* PBXTextBookmark */ = 84508A161020658600B78F2B /* PBXTextBookmark */;
 			845FDE440FBB3E2000F88607 /* PBXTextBookmark */ = 845FDE440FBB3E2000F88607 /* PBXTextBookmark */;
 			8461BD8A0F582DDF00ED9509 /* PBXTextBookmark */ = 8461BD8A0F582DDF00ED9509 /* PBXTextBookmark */;
 			8461BD8B0F582DDF00ED9509 /* PBXTextBookmark */ = 8461BD8B0F582DDF00ED9509 /* PBXTextBookmark */;
@@ -446,16 +444,6 @@
 		vrLen = 875;
 		vrLoc = 499;
 	};
-	84135E410FFB555C00FD81A5 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C108460F0A72FE00B2DF7A /* TootleReleaseAdHoc.xcconfig */;
-		name = "TootleReleaseAdHoc.xcconfig: 19";
-		rLen = 0;
-		rLoc = 514;
-		rType = 0;
-		vrLen = 1003;
-		vrLoc = 152;
-	};
 	84135E480FFB557100FD81A5 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84C108460F0A72FE00B2DF7A /* TootleReleaseAdHoc.xcconfig */;
@@ -520,6 +508,16 @@
 		vrLen = 565;
 		vrLoc = 2;
 	};
+	84508A161020658600B78F2B /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C108460F0A72FE00B2DF7A /* TootleReleaseAdHoc.xcconfig */;
+		name = "TootleReleaseAdHoc.xcconfig: 18";
+		rLen = 0;
+		rLoc = 514;
+		rType = 0;
+		vrLen = 1018;
+		vrLoc = 141;
+	};
 	845FDE440FBB3E2000F88607 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84C108450F0A72FE00B2DF7A /* TootleRelease.xcconfig */;
@@ -563,30 +561,6 @@
 		rType = 0;
 		vrLen = 1119;
 		vrLoc = 16;
-	};
-	84795E160FE6470A000D0EDA /* TLInput.cpp */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.cpp.cpp;
-		name = TLInput.cpp;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleInput/TLInput.cpp;
-		sourceTree = "<group>";
-	};
-	84795E180FE6470A000D0EDA /* TLInput.cpp:158 */ = {
-		isa = PBXFileBreakpoint;
-		actions = (
-		);
-		breakpointStyle = 0;
-		continueAfterActions = 0;
-		countType = 0;
-		delayBeforeContinue = 0;
-		fileReference = 84795E160FE6470A000D0EDA /* TLInput.cpp */;
-		functionName = "TInputManager::Initialise()";
-		hitCount = 0;
-		ignoreCount = 0;
-		lineNumber = 158;
-		location = Hockey;
-		modificationTime = 267621490.076054;
-		state = 1;
 	};
 	84795F080FE663D5000D0EDA /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -662,33 +636,8 @@
 		ignoreCount = 0;
 		lineNumber = 36;
 		location = Seaman;
-		modificationTime = 267621490.075768;
+		modificationTime = 270567488.879198;
 		state = 2;
-	};
-	848614650FCD8AF300C22D6B /* IPodVirtualKeyboard.mm */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.cpp.objcpp;
-		lineEnding = 2;
-		name = IPodVirtualKeyboard.mm;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleInput/IPod/IPodVirtualKeyboard.mm;
-		sourceTree = "<group>";
-	};
-	848614670FCD8AF300C22D6B /* IPodVirtualKeyboard.mm:217 */ = {
-		isa = PBXFileBreakpoint;
-		actions = (
-		);
-		breakpointStyle = 0;
-		continueAfterActions = 0;
-		countType = 0;
-		delayBeforeContinue = 0;
-		fileReference = 848614650FCD8AF300C22D6B /* IPodVirtualKeyboard.mm */;
-		functionName = "Platform::IPod::DestroyVirtualKeyboard()";
-		hitCount = 0;
-		ignoreCount = 0;
-		lineNumber = 217;
-		location = Hockey;
-		modificationTime = 267621490.075842;
-		state = 1;
 	};
 	84BBBEBA0FD422220046E316 /* TSensor.cpp */ = {
 		isa = PBXFileReference;
@@ -711,7 +660,7 @@
 		ignoreCount = 0;
 		lineNumber = 38;
 		location = TestGame;
-		modificationTime = 267621490.075911;
+		modificationTime = 270567488.879218;
 		state = 2;
 	};
 	84BBBEBE0FD422420046E316 /* TDevice.cpp:42 */ = {
@@ -727,8 +676,8 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		lineNumber = 42;
-		location = Hockey;
-		modificationTime = 267621490.0759811;
+		location = TestGame;
+		modificationTime = 270567488.879238;
 		state = 1;
 	};
 	84BBBFBC0FD47C250046E316 /* PBXTextBookmark */ = {

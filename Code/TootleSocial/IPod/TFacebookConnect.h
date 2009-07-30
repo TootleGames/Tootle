@@ -13,12 +13,16 @@ namespace TLSocial
 {
 	namespace Platform
 	{
-		void BeginSession();
-		void EndSession();
-
 		namespace IPod
 		{
-			
+			namespace Facebook
+			{
+				
+				void BeginSession();
+				void EndSession();
+				
+				void OpenDashboard();
+			}
 		}
 	}
 }
