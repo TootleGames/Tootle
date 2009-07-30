@@ -1,7 +1,88 @@
 // !$*UTF8*$!
 {
+	84508A1D1020664D00B78F2B /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10AA80F0A7DBD00B2DF7A /* TootleDebug.xcconfig */;
+		name = "TootleDebug.xcconfig: 113";
+		rLen = 22;
+		rLoc = 3380;
+		rType = 0;
+		vrLen = 646;
+		vrLoc = 3188;
+	};
+	84508A1E1020664D00B78F2B /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10AA90F0A7DBD00B2DF7A /* TootleRelease.xcconfig */;
+		name = "TootleRelease.xcconfig: 112";
+		rLen = 0;
+		rLoc = 3356;
+		rType = 0;
+		vrLen = 577;
+		vrLoc = 1711;
+	};
+	84508A1F1020664D00B78F2B /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10AAA0F0A7DBD00B2DF7A /* TootleReleaseAdHoc.xcconfig */;
+		name = "TootleReleaseAdHoc.xcconfig: 112";
+		rLen = 0;
+		rLoc = 3354;
+		rType = 0;
+		vrLen = 639;
+		vrLoc = 3039;
+	};
+	84508A211020664D00B78F2B /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10AA80F0A7DBD00B2DF7A /* TootleDebug.xcconfig */;
+		name = "TootleDebug.xcconfig: 113";
+		rLen = 22;
+		rLoc = 3380;
+		rType = 0;
+		vrLen = 646;
+		vrLoc = 3188;
+	};
+	84508A221020664D00B78F2B /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10AA90F0A7DBD00B2DF7A /* TootleRelease.xcconfig */;
+		name = "TootleRelease.xcconfig: 112";
+		rLen = 0;
+		rLoc = 3356;
+		rType = 0;
+		vrLen = 577;
+		vrLoc = 1711;
+	};
+	84508A231020664D00B78F2B /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10AAA0F0A7DBD00B2DF7A /* TootleReleaseAdHoc.xcconfig */;
+		name = "TootleReleaseAdHoc.xcconfig: 112";
+		rLen = 0;
+		rLoc = 3354;
+		rType = 0;
+		vrLen = 639;
+		vrLoc = 3039;
+	};
+	84508A2F1020666200B78F2B /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10AAB0F0A7DBD00B2DF7A /* TootleReleaseAppStore.xcconfig */;
+		name = "TootleReleaseAppStore.xcconfig: 112";
+		rLen = 0;
+		rLoc = 3354;
+		rType = 0;
+		vrLen = 586;
+		vrLoc = 0;
+	};
+	84508A381020668E00B78F2B /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10AAB0F0A7DBD00B2DF7A /* TootleReleaseAppStore.xcconfig */;
+		name = "TootleReleaseAppStore.xcconfig: 112";
+		rLen = 0;
+		rLoc = 3354;
+		rType = 0;
+		vrLen = 586;
+		vrLoc = 0;
+	};
 	84C108C80F0A767600B2DF7A /* Project object */ = {
 		activeBuildConfigurationName = Debug;
+		activeSDKPreference = iphoneos2.2.1;
 		activeTarget = 84C10A9C0F0A7D7100B2DF7A /* TootleNeuralNetwork */;
 		addToTargets = (
 			84C10A9C0F0A7D7100B2DF7A /* TootleNeuralNetwork */,
@@ -10,12 +91,26 @@
 		ignoreBreakpointsInProjectsDict = {
 		};
 		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXErrorsWarningsDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXErrorsWarningsDataSource_LocationID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					300,
+					367.20849609375,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXErrorsWarningsDataSource_TypeID,
+					PBXErrorsWarningsDataSource_MessageID,
+					PBXErrorsWarningsDataSource_LocationID,
+				);
+			};
 			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
 				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					341,
+					477,
 					20,
 					48,
 					43,
@@ -37,10 +132,10 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					301,
+					437,
 					60,
 					20,
-					48.16259765625,
+					48,
 					43,
 					43,
 				);
@@ -54,8 +149,18 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 252349225;
-			PBXWorkspaceStateSaveDate = 252349225;
+			PBXPerProjectTemplateStateSaveDate = 270558830;
+			PBXWorkspaceStateSaveDate = 270558830;
+		};
+		perUserProjectItems = {
+			84508A1D1020664D00B78F2B /* PBXTextBookmark */ = 84508A1D1020664D00B78F2B /* PBXTextBookmark */;
+			84508A1E1020664D00B78F2B /* PBXTextBookmark */ = 84508A1E1020664D00B78F2B /* PBXTextBookmark */;
+			84508A1F1020664D00B78F2B /* PBXTextBookmark */ = 84508A1F1020664D00B78F2B /* PBXTextBookmark */;
+			84508A211020664D00B78F2B /* PBXTextBookmark */ = 84508A211020664D00B78F2B /* PBXTextBookmark */;
+			84508A221020664D00B78F2B /* PBXTextBookmark */ = 84508A221020664D00B78F2B /* PBXTextBookmark */;
+			84508A231020664D00B78F2B /* PBXTextBookmark */ = 84508A231020664D00B78F2B /* PBXTextBookmark */;
+			84508A2F1020666200B78F2B /* PBXTextBookmark */ = 84508A2F1020666200B78F2B /* PBXTextBookmark */;
+			84508A381020668E00B78F2B /* PBXTextBookmark */ = 84508A381020668E00B78F2B /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84C108CC0F0A767600B2DF7A /* Source Control */;
 		userBuildSettings = {
@@ -74,5 +179,33 @@
 	};
 	84C10A9C0F0A7D7100B2DF7A /* TootleNeuralNetwork */ = {
 		activeExec = 0;
+	};
+	84C10AA80F0A7DBD00B2DF7A /* TootleDebug.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {798, 2730}}";
+			sepNavSelRange = "{3380, 22}";
+			sepNavVisRange = "{3188, 646}";
+		};
+	};
+	84C10AA90F0A7DBD00B2DF7A /* TootleRelease.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {798, 2716}}";
+			sepNavSelRange = "{3356, 0}";
+			sepNavVisRange = "{1711, 577}";
+		};
+	};
+	84C10AAA0F0A7DBD00B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {798, 2828}}";
+			sepNavSelRange = "{3354, 0}";
+			sepNavVisRange = "{3039, 639}";
+		};
+	};
+	84C10AAB0F0A7DBD00B2DF7A /* TootleReleaseAppStore.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {798, 2758}}";
+			sepNavSelRange = "{3354, 0}";
+			sepNavVisRange = "{0, 586}";
+		};
 	};
 }
