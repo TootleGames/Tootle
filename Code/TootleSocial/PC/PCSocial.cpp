@@ -9,6 +9,10 @@
 
 #include "PCSocial.h"
 
+#include <TootleCore/TLTypes.h>
+#include <TootleCore/TRef.h>
+#include <TootleCore/TString.h>
+
 namespace TLSocial
 {
 	namespace Platform
