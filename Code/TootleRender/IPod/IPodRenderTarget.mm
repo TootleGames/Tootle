@@ -84,7 +84,7 @@ Bool TLRender::Platform::RenderTarget::BeginProjectDraw(TLRender::TProjectCamera
 	
 	//	set projection matrix - 
 	//	gr: note, Bottom and Top are the WRONG way around to invert opengl's upside coordinate system and makes things simpiler in our own code
-	glFrustumf( ScreenViewBox.GetLeft(), ScreenViewBox.GetRight(), ScreenViewBox.GetTop(), ScreenViewBox.GetBottom(), pCamera->GetNearZ(), pCamera->GetFarZ() );
+	glFrustumf( ScreenViewBox.GetLeft(), ScreenViewBox.GetRight(), ScreenViewBox.GetTop(), ScreenViewBox.GetBottom(), Camera.GetNearZ(), Camera.GetFarZ() );
 
 	//	rotate the view matrix so that UP is properly relative to the new screen
 	//	gr: another "thing what is backwards" - as is the -/+ of the shape rotation....
@@ -149,7 +149,7 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(TLRender::TOrthoCamera& Ca
 	Opengl::SceneRotate( TLMaths::TAngle(ProjectionRotationDeg), float3( 0.f, 0.f, 1.f ) );
 
 	//	set the world coordinates
-	glOrthof( OrthoBox.GetLeft(), OrthoBox.GetRight(), OrthoBox.GetBottom(), OrthoBox.GetTop(), pCamera->GetNearZ(), pCamera->GetFarZ() );
+	glOrthof( OrthoBox.GetLeft(), OrthoBox.GetRight(), OrthoBox.GetBottom(), OrthoBox.GetTop(), Camera.GetNearZ(), Camera.GetFarZ() );
 
 	Opengl::Debug_CheckForError();		
 

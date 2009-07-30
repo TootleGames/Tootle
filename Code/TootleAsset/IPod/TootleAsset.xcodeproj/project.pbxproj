@@ -13,6 +13,8 @@
 		840EBDB50F777B5600BA6F4C /* TTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 840EBDB10F777B5600BA6F4C /* TTexture.h */; };
 		8418F8CB0F4EB9C200B956C9 /* TPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F8C90F4EB9C200B956C9 /* TPath.cpp */; };
 		8418F8CC0F4EB9C200B956C9 /* TPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F8CA0F4EB9C200B956C9 /* TPath.h */; };
+		8450984E10219F5900B78F2B /* TParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8450984C10219F5900B78F2B /* TParticle.cpp */; };
+		8450984F10219F5900B78F2B /* TParticle.h in Headers */ = {isa = PBXBuildFile; fileRef = 8450984D10219F5900B78F2B /* TParticle.h */; };
 		849E9C8B0F8385FC00037332 /* TAssetTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 849E9C890F8385FC00037332 /* TAssetTimeline.cpp */; };
 		849E9C8C0F8385FC00037332 /* TAssetTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 849E9C8A0F8385FC00037332 /* TAssetTimeline.h */; };
 		84C0CA490F6D6C840080B167 /* TText.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C0CA470F6D6C840080B167 /* TText.h */; };
@@ -43,6 +45,8 @@
 		840EBDB10F777B5600BA6F4C /* TTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTexture.h; path = ../TTexture.h; sourceTree = SOURCE_ROOT; };
 		8418F8C90F4EB9C200B956C9 /* TPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPath.cpp; path = ../TPath.cpp; sourceTree = SOURCE_ROOT; };
 		8418F8CA0F4EB9C200B956C9 /* TPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPath.h; path = ../TPath.h; sourceTree = SOURCE_ROOT; };
+		8450984C10219F5900B78F2B /* TParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TParticle.cpp; path = ../TParticle.cpp; sourceTree = SOURCE_ROOT; };
+		8450984D10219F5900B78F2B /* TParticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TParticle.h; path = ../TParticle.h; sourceTree = SOURCE_ROOT; };
 		849E9C890F8385FC00037332 /* TAssetTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAssetTimeline.cpp; path = ../TAssetTimeline.cpp; sourceTree = SOURCE_ROOT; };
 		849E9C8A0F8385FC00037332 /* TAssetTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAssetTimeline.h; path = ../TAssetTimeline.h; sourceTree = SOURCE_ROOT; };
 		84C0CA470F6D6C840080B167 /* TText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TText.h; path = ../TText.h; sourceTree = SOURCE_ROOT; };
@@ -102,6 +106,8 @@
 		84C109450F0A789D00B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				8450984C10219F5900B78F2B /* TParticle.cpp */,
+				8450984D10219F5900B78F2B /* TParticle.h */,
 				849E9C890F8385FC00037332 /* TAssetTimeline.cpp */,
 				849E9C8A0F8385FC00037332 /* TAssetTimeline.h */,
 				840EBDAE0F777B5600BA6F4C /* TAtlas.cpp */,
@@ -165,6 +171,7 @@
 				840EBDB30F777B5600BA6F4C /* TAtlas.h in Headers */,
 				840EBDB50F777B5600BA6F4C /* TTexture.h in Headers */,
 				849E9C8C0F8385FC00037332 /* TAssetTimeline.h in Headers */,
+				8450984F10219F5900B78F2B /* TParticle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,6 +231,7 @@
 				840EBDB20F777B5600BA6F4C /* TAtlas.cpp in Sources */,
 				840EBDB40F777B5600BA6F4C /* TTexture.cpp in Sources */,
 				849E9C8B0F8385FC00037332 /* TAssetTimeline.cpp in Sources */,
+				8450984E10219F5900B78F2B /* TParticle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
