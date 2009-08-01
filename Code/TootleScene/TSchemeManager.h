@@ -41,12 +41,7 @@ class TLScheme::TSchemeManager : public TLCore::TManager
 	
 	
 public:	
-	
-	TSchemeManager(TRefRef ManagerRef) :
-		TLCore::TManager( ManagerRef )
-	{
-	}
-
+	TSchemeManager() : TLCore::TManager("SCHMAN") {}
 	
 	FORCEINLINE Bool IsSchemeLoaded(TRefRef SchemeRef)			 { return IsSchemeInState(SchemeRef, Loaded); }
 	FORCEINLINE Bool IsSchemeLoading(TRefRef SchemeRef)			 { return IsSchemeInState(SchemeRef, Loading); }
@@ -93,7 +88,10 @@ public:
 	TRefRef				GetSchemeAssetRef()		const	{ return m_SchemeAssetRef;}
 	TSchemeUpdateType	GetUpdateType()			const	{ return m_Type; }
 		
-	inline Bool		operator==(TRefRef SchemeRef) const	{	return (m_SchemeRef == SchemeRef);	}
+	FORCEINLINE Bool	operator==(TRefRef SchemeRef) const	{	return (m_SchemeRef == SchemeRef);	}
+
+	void				PublishFinishedLoadMessage(Bool Success);
+	void				PublishFinishedUnloadMessage();
 
 private:
 	TRef				m_SchemeRef;			// SchemeRef
@@ -110,31 +108,53 @@ private:
 };
 
 
+//-----------------------------------------------------
 // Scheme update state modes
+//-----------------------------------------------------
 class TLScheme::TSchemeManager::TSchemeUpdateRequest::TSchemeState_Init : public TStateMode
 {
+protected:
 	virtual TRef			Update(float Timestep);			
+	TSchemeUpdateRequest&	GetRequest()				{	return *GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();	}
 };
 
+
+//-----------------------------------------------------
 // Handles loading a scheme
+//-----------------------------------------------------
 class TLScheme::TSchemeManager::TSchemeUpdateRequest::TSchemeState_Loading : public TStateMode
 {
+protected:
 	virtual TRef			Update(float Timestep);			
+	TSchemeUpdateRequest&	GetRequest()				{	return *GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();	}
 };
 
+//-----------------------------------------------------
 // Handles unloading a scheme
+//-----------------------------------------------------
 class TLScheme::TSchemeManager::TSchemeUpdateRequest::TSchemeState_UnLoading : public TStateMode
 {
+protected:
 	virtual TRef			Update(float Timestep);
+	TSchemeUpdateRequest&	GetRequest()				{	return *GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();	}
 };
 
+//-----------------------------------------------------
 // Holding state mode for when the scheme update is finished
+//-----------------------------------------------------
 class TLScheme::TSchemeManager::TSchemeUpdateRequest::TSchemeState_Finished : public TStateMode
 {
+protected:
+	TSchemeUpdateRequest&	GetRequest()				{	return *GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();	}
 };
 
+
+//-----------------------------------------------------
 // Handles cancelling a load or unload request
+//-----------------------------------------------------
 class TLScheme::TSchemeManager::TSchemeUpdateRequest::TSchemeState_Cancel : public TStateMode
 {
+protected:
 	virtual TRef			Update(float Timestep);			
+	TSchemeUpdateRequest&	GetRequest()				{	return *GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();	}
 };

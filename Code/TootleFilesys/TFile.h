@@ -67,20 +67,24 @@ public:
 
 	SyncBool						IsLoaded() const				{	return m_IsLoaded;	}
 	void							SetIsLoaded(SyncBool Loaded)	{	m_IsLoaded = Loaded;	}
-	s32								GetFileSize() const				{	return m_FileSize;	}		
-	TRefRef							GetFileSysRef() const			{	return m_FileSysRef;	}
-	TPtr<TFileSys>					GetFileSys() const;				//	get a pointer to the file sys this file is owned by (GetFileSysRef)
-	TRefRef							GetFileRef() const				{	return m_FileAndTypeRef.GetRef();	}
-	TRefRef							GetTypeRef() const				{	return m_FileAndTypeRef.GetTypeRef();	}
-	const TTypedRef&				GetFileAndTypeRef() const		{	return m_FileAndTypeRef;	}
-	const TString&					GetFilename() const				{	return m_Filename;	}
-	TBinary&						GetData()						{	return *this;	}
 	const TLTime::TTimestamp&		GetTimestamp() const			{	return m_Timestamp;	}
 	void							SetTimestamp(const TLTime::TTimestamp& NewTimestamp);	//	update timestamp
 	void							SetTimestampNow();				//	update timestamp
+
+	s32								GetFileSize() const				{	return m_FileSize;	}		
+	void							SetFileSize(s32 FileSize,Bool IsTooBig=FALSE)	{	m_FileSize = FileSize;	GetFlags().Set( TooBig, IsTooBig );	}
+	TRefRef							GetFileSysRef() const			{	return m_FileSysRef;	}
+	TPtr<TFileSys>					GetFileSys() const;				//	get a pointer to the file sys this file is owned by (GetFileSysRef)
+	const TString&					GetFilename() const				{	return m_Filename;	}
+	
+	TRefRef							GetFileRef() const				{	return m_FileAndTypeRef.GetRef();	}
+	TRefRef							GetTypeRef() const				{	return m_FileAndTypeRef.GetTypeRef();	}
+	const TTypedRef&				GetFileAndTypeRef() const		{	return m_FileAndTypeRef;	}
+	virtual TRef					GetFileExportAssetType() const	{	return TRef();	}	//	if the file type knows what type of Asset it exports to, return it. (aids loading)
+	
+	TBinary&						GetData()						{	return *this;	}
 	TFlags<TFile::Flags>&			GetFlags()						{	return m_Flags;	}
 	const TFlags<TFile::Flags>&		GetFlags() const				{	return m_Flags;	}
-	void							SetFileSize(s32 FileSize,Bool IsTooBig=FALSE)	{	m_FileSize = FileSize;	GetFlags().Set( TooBig, IsTooBig );	}
 
 	FORCEINLINE void				SetUnknownType(Bool IsUnknown=TRUE)	{	m_Flags.Set( UnknownType, IsUnknown );	}
 	FORCEINLINE Bool				IsUnknownType() const				{	return m_Flags.IsSet( UnknownType );	}

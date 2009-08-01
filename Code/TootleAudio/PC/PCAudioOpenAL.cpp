@@ -199,11 +199,11 @@ Bool Platform::OpenAL::DetermineFinishedAudio(TArray<TRef>& refArray)
 }
 
 
-Bool Platform::OpenAL::CreateBuffer(TRefRef AudioAssetRef)
+Bool Platform::OpenAL::CreateBuffer(TLAsset::TAudio& AudioAsset)
 {
 	// Test to see if we already have a buffer for the audio asset
 	// If so return 
-	AudioObj* pAO = g_Buffers.Find(AudioAssetRef);
+	AudioObj* pAO = g_Buffers.Find(AudioAsset.GetAssetRef());
 	
 	if(pAO)
 		return TRUE;
@@ -231,31 +231,20 @@ Bool Platform::OpenAL::CreateBuffer(TRefRef AudioAssetRef)
 	// We *may* end up wasting memory if not...
 	/////////////////////////////////////////////////////////
 
-	// Get the audio details from the asset
-	TPtr<TLAsset::TAsset> pAsset = TLAsset::GetAsset(AudioAssetRef);
-	
-	if(!pAsset.IsValid())
-	{
-		TLDebug_Print("Failed to find audio asset for buffer creation");
-		return FALSE;
-	}
-	
-	TLAsset::TAudio* pAudioAsset = static_cast<TLAsset::TAudio*>(pAsset.GetObject());
-
 	ALenum  format;
 
 	// Determine format of data
-	if(pAudioAsset->GetNumberOfChannels() > 1)
-		format = (pAudioAsset->GetBitsPerSample()==16 ? AL_FORMAT_STEREO16 : AL_FORMAT_STEREO8 );
+	if(AudioAsset.GetNumberOfChannels() > 1)
+		format = (AudioAsset.GetBitsPerSample()==16 ? AL_FORMAT_STEREO16 : AL_FORMAT_STEREO8 );
 	else
-		format = (pAudioAsset->GetBitsPerSample()==16 ? AL_FORMAT_MONO16 : AL_FORMAT_MONO8 );
+		format = (AudioAsset.GetBitsPerSample()==16 ? AL_FORMAT_MONO16 : AL_FORMAT_MONO8 );
 
 	// Audio data
-	ALvoid* data = (ALvoid*) pAudioAsset->RawAudioDataBinary().GetData();
+	ALvoid* data = (ALvoid*)AudioAsset.RawAudioDataBinary().GetData();
 	
 	// Size of the audio data
-	ALsizei size = pAudioAsset->GetSize();	
-	ALsizei freq = pAudioAsset->GetSampleRate();
+	ALsizei size = AudioAsset.GetSize();	
+	ALsizei freq = AudioAsset.GetSampleRate();
 	
 	alBufferData(uBufferID, format, data, size, freq);
 	
@@ -276,7 +265,7 @@ Bool Platform::OpenAL::CreateBuffer(TRefRef AudioAssetRef)
 	// Success - add to the array
 	AudioObj AO;
 	
-	AO.m_AudioObjRef = AudioAssetRef;
+	AO.m_AudioObjRef = AudioAsset.GetAssetRef();
 	AO.m_OpenALID = uBufferID;
 	
 	g_Buffers.Add(AO);

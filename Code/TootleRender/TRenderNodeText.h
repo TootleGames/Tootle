@@ -45,7 +45,7 @@ class TLRender::TRenderNodeVectorGlyph : public TLRender::TRenderNode
 protected:
 	TRenderNodeVectorGlyph(TRefRef RenderNodeRef,TRefRef TypeRef);
 
-	virtual TPtr<TLAsset::TMesh>&	GetMeshAsset(Bool BlockLoad=FALSE) 	{	return m_pGlyphMesh;	}
+	virtual TPtr<TLAsset::TMesh>&	GetMeshAsset() 				{	return m_pGlyphMesh;	}
 	virtual Bool					Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList)	{	return TRUE;	}
 
 public:
@@ -147,7 +147,7 @@ public:
 
 protected:
 	virtual Bool					SetGlyphs(TLMaths::TBox2D& TextBounds);	//	setup geometry
-	virtual TPtr<TLAsset::TMesh>&	GetMeshAsset(Bool BlockLoad=FALSE)			{	return m_pMesh;	}
+	virtual TPtr<TLAsset::TMesh>&	GetMeshAsset()							{	return m_pMesh;	}
 	virtual void					Initialise(TLMessaging::TMessage& Message);
 
 protected:

@@ -7,7 +7,7 @@
  *
  */
 
-#include "TAssetTimeline.h"
+#include "TTimeline.h"
 
 
 using namespace TLAsset;
@@ -34,7 +34,7 @@ SyncBool TKeyframe::ImportData(TBinaryTree& Data)
 			pNodeTree->ResetReadPos();
 
 			// add a new command list to the keyframe
-			TPtr<TLAsset::TAssetTimelineCommandList> pCommandList = new TLAsset::TAssetTimelineCommandList();
+			TPtr<TLAsset::TTimelineCommandList> pCommandList = new TLAsset::TTimelineCommandList();
 
 			if(!pCommandList || (Add(pCommandList) == -1))
 			{
@@ -60,7 +60,7 @@ SyncBool TKeyframe::ExportData(TBinaryTree& Data)
 		
 		if(pNodeTree)
 		{
-			TPtr<TAssetTimelineCommandList>& cmdslist = ElementAt(uIndex);
+			TPtr<TTimelineCommandList>& cmdslist = ElementAt(uIndex);
 
 			SyncBool CmdRes = cmdslist->ExportData(*pNodeTree);
 
@@ -75,7 +75,7 @@ SyncBool TKeyframe::ExportData(TBinaryTree& Data)
 
 
 
-SyncBool TAssetTimelineCommandList::ImportData(TBinaryTree& Data)
+SyncBool TTimelineCommandList::ImportData(TBinaryTree& Data)
 {
 	// Read the Node ref
 	if(!Data.Read(m_NodeRef))
@@ -105,7 +105,7 @@ SyncBool TAssetTimelineCommandList::ImportData(TBinaryTree& Data)
 			TPtr<TBinaryTree> pCommand = pCommandData->GetChildren().ElementAt(uIndex);
 			pCommand->ResetReadPos();
 
-			TLAsset::TAssetTimelineCommand cmd;
+			TLAsset::TTimelineCommand cmd;
 
 			cmd.CopyDataTree(pCommand);
 			//pCommand->Read(cmd);
@@ -119,7 +119,7 @@ SyncBool TAssetTimelineCommandList::ImportData(TBinaryTree& Data)
 	return SyncTrue;
 }
 
-SyncBool TAssetTimelineCommandList::ExportData(TBinaryTree& Data)
+SyncBool TTimelineCommandList::ExportData(TBinaryTree& Data)
 {
 	Data.Write(m_NodeRef);
 	Data.Write(m_NodeGraphRef);
@@ -130,7 +130,7 @@ SyncBool TAssetTimelineCommandList::ExportData(TBinaryTree& Data)
 	{
 		for(u32 uIndex = 0; uIndex < m_Commands.GetSize(); uIndex++)
 		{
-			TAssetTimelineCommand& cmd = m_Commands.ElementAt(uIndex);
+			TTimelineCommand& cmd = m_Commands.ElementAt(uIndex);
 
 			TPtr<TBinaryTree> pCommand = pCommandData->AddChild("Command");
 
@@ -143,8 +143,8 @@ SyncBool TAssetTimelineCommandList::ExportData(TBinaryTree& Data)
 }
 
 
-TAssetTimeline::TAssetTimeline(const TRef& AssetRef) :
-TAsset	( "Timeline", AssetRef )
+TTimeline::TTimeline(TRefRef AssetRef) :
+	TAsset	( GetAssetType_Static(), AssetRef )
 {
 }
 
@@ -153,7 +153,7 @@ TAsset	( "Timeline", AssetRef )
 //-------------------------------------------------------
 //	load asset data out binary data
 //-------------------------------------------------------
-SyncBool TAssetTimeline::ImportData(TBinaryTree& Data)		
+SyncBool TTimeline::ImportData(TBinaryTree& Data)		
 {
 #ifdef DEBUG_PRINT_TIMELINE_TREE
 	// Output the binary tree
@@ -199,7 +199,7 @@ SyncBool TAssetTimeline::ImportData(TBinaryTree& Data)
 //-------------------------------------------------------
 //	save asset data to binary data
 //-------------------------------------------------------
-SyncBool TAssetTimeline::ExportData(TBinaryTree& Data)				
+SyncBool TTimeline::ExportData(TBinaryTree& Data)				
 {	
 	// Write each keyframe out
 	for(u32 uIndex = 0; uIndex < m_Keyframes.GetSize(); uIndex++)
@@ -228,7 +228,7 @@ SyncBool TAssetTimeline::ExportData(TBinaryTree& Data)
 }	
 
 
-float TAssetTimeline::GetLastKeyFrameTime()
+float TTimeline::GetLastKeyFrameTime()
 {
 	float fTime = 0.0f;
 
@@ -246,7 +246,7 @@ float TAssetTimeline::GetLastKeyFrameTime()
 
 
 
-Bool TAssetTimeline::GetKeyframes(const float& fTimeFrom,const float& fTimeStep, TArray<TTempKeyframeData>& pKeyframes, Bool bAllowNoTimestep)
+Bool TTimeline::GetKeyframes(const float& fTimeFrom,const float& fTimeStep, TArray<TTempKeyframeData>& pKeyframes, Bool bAllowNoTimestep)
 {
 	// No timestep?  Then ther's no need to process the keyframes
 	if((fTimeStep == 0.0f) && (!bAllowNoTimestep))
@@ -268,7 +268,7 @@ Bool TAssetTimeline::GetKeyframes(const float& fTimeFrom,const float& fTimeStep,
 
 }
 
-Bool TAssetTimeline::GetKeyframes_Forward(const float& fTimeFrom,const float& fTimeTo, TArray<TTempKeyframeData>& pKeyframes)
+Bool TTimeline::GetKeyframes_Forward(const float& fTimeFrom,const float& fTimeTo, TArray<TTempKeyframeData>& pKeyframes)
 {
 	TTempKeyframeData firstkey;
 	Bool bAddFirstKey = TRUE;
@@ -388,7 +388,7 @@ Bool TAssetTimeline::GetKeyframes_Forward(const float& fTimeFrom,const float& fT
 }
 
 
-Bool TAssetTimeline::GetKeyframes_Backward(const float& fTimeFrom,const float& fTimeTo, TArray<TTempKeyframeData>& pKeyframes)
+Bool TTimeline::GetKeyframes_Backward(const float& fTimeFrom,const float& fTimeTo, TArray<TTempKeyframeData>& pKeyframes)
 {
 	// Get the keyframes that the time from and time to will span
 	for(u32 uIndex = (m_Keyframes.GetSize() - 1); uIndex >= 0; uIndex--)

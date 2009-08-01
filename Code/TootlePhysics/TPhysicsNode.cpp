@@ -1213,7 +1213,7 @@ Bool TLPhysics::TPhysicsNode::ImportCollisionShapeFromDatum(TBinaryTree& Collisi
 	}
 
 	//	get mesh
-	TLAsset::TMesh* pMesh = TLAsset::LoadAsset( MeshRef, TRUE, "Mesh" ).GetObject<TLAsset::TMesh>();
+	TLAsset::TMesh* pMesh = TLAsset::GetAsset<TLAsset::TMesh>( MeshRef );
 	if ( !pMesh )
 	{
 		TTempString Debug_String("Collision datum \"");

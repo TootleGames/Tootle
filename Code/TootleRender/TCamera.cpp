@@ -277,12 +277,32 @@ void TLRender::TProjectCamera::GetWorldFrustumPlaneBox(float ViewDepth,TLMaths::
 //----------------------------------------------------------
 void TLRender::TProjectCamera::SetRenderTargetSize(const Type4<s32>& RenderTargetSize,const Type4<s32>& RenderTargetMaxSize,const Type4<s32>& ViewportMaxSize,TScreenShape ScreenShape)
 {
-	TLDebug_Break("New recalc code required - copy most of ortho code");
+	TLMaths::TBox2D RenderTargetBox( (float)RenderTargetSize.Left(), (float)RenderTargetSize.Top(), (float)RenderTargetSize.Right(), (float)RenderTargetSize.Bottom() );
+	TLMaths::TBox2D RenderTargetMaxBox( (float)RenderTargetMaxSize.Left(), (float)RenderTargetMaxSize.Top(), (float)RenderTargetMaxSize.Right(), (float)RenderTargetMaxSize.Bottom() );
+	TLMaths::TBox2D ViewportMaxBox( (float)ViewportMaxSize.Left(), (float)ViewportMaxSize.Top(), (float)ViewportMaxSize.Right(), (float)ViewportMaxSize.Bottom() );
 
 
-	///	gr: this is the old SetViewportSize code
-	/*
-	float AspectRatio = (float)ViewportSize.Width() / (float)ViewportSize.Height();
+	
+	//	viewport box is a copy of the render target box... rotated inside the screen
+	m_ViewportBox = RenderTargetBox;
+	RotateBoxInsideBox( m_ViewportBox, RenderTargetMaxBox, ScreenShape );
+	
+	//	now flip to be in opengl view coordinates
+	//	position for opengl viewport
+	//	0,0 is bottom left, next two sizes in Scissor() and Viewport() are still widht and height, just upside down
+	//	no change in dimensions
+	float NewLeft = m_ViewportBox.GetLeft();
+	float NewTop = ViewportMaxBox.GetHeight() - m_ViewportBox.GetTop() - m_ViewportBox.GetHeight();
+	m_ViewportBox.GetLeft() = NewLeft;
+	m_ViewportBox.GetTop() = NewTop;
+
+	//	scissor box is same as viewport
+	m_ScissorBox = m_ViewportBox;
+
+
+
+	//	gr: note viewport box is the post-rotated/flipped box
+	float AspectRatio = (float)m_ViewportBox.GetWidth() / (float)m_ViewportBox.GetHeight();
 
 	//	calc the un-rotated screen view size
 	float ViewHalfHeight = tanf( GetHorzFov().GetRadians() / 2.f );
@@ -304,7 +324,7 @@ void TLRender::TProjectCamera::SetRenderTargetSize(const Type4<s32>& RenderTarge
 	//	move the screen view forward to the nearz
 	m_ScreenViewBox.GetMin() *= GetNearZ();
 	m_ScreenViewBox.GetMax() *= GetNearZ();
-	*/
+
 }
 
 

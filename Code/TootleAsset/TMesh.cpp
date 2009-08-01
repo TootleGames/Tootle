@@ -56,7 +56,7 @@ FORCEINLINE u32 TLAsset::TLMesh::GetSphereSegmentCount(float Radius)
 
 
 TLAsset::TMesh::TMesh(const TRef& AssetRef) :
-	TAsset		( "Mesh", AssetRef ),
+	TAsset		( GetAssetType_Static(), AssetRef ),
 	m_LineWidth	( 0.f )
 {
 }

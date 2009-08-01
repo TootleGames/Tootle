@@ -71,6 +71,8 @@ public:
 public:
 	TMesh(const TRef& AssetRef);
 
+	static TRef				GetAssetType_Static()								{	return TRef_Static4(M,e,s,h);	}
+
 	void					Empty();
 	FORCEINLINE Bool		IsEmpty() const										{	return !( m_Vertexes.GetSize() || m_Colours.GetSize() || m_Triangles.GetSize() || m_Tristrips.GetSize() || m_Trifans.GetSize() || m_Lines.GetSize() );	}
 	FORCEINLINE void		Copy(const TMesh& OtherMesh)						{	Empty();	Merge( OtherMesh );	}

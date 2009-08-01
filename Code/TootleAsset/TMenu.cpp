@@ -4,7 +4,7 @@
 
 
 TLAsset::TMenu::TMenu(TRefRef MenuAssetRef) :
-	TAsset	( "Menu", MenuAssetRef )
+	TAsset	( GetAssetType_Static(), MenuAssetRef )
 {
 }
 

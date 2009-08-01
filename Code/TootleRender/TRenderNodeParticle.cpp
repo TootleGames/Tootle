@@ -44,7 +44,7 @@ void TLRender::TRenderNodeParticle::SetProperty(TLMessaging::TMessage& Message)
 	if ( Message.ImportData("Particle", m_ParticleAsset ) )
 	{
 		//	load particle system
-		TLAsset::TParticle* pParticleAsset = TLAsset::LoadAsset( m_ParticleAsset, TRUE, "Particle" ).GetObject<TLAsset::TParticle>();
+		TLAsset::TParticle* pParticleAsset = TLAsset::GetAsset<TLAsset::TParticle>( m_ParticleAsset );
 		if ( pParticleAsset )
 		{
 			//	read properties out of particle system

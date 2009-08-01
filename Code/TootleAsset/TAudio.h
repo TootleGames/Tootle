@@ -16,6 +16,8 @@ class TLAsset::TAudio : public TLAsset::TAsset
 public:
 	TAudio(const TRef& AssetRef);
 	
+	static TRef	GetAssetType_Static()						{	return TRef_Static(A,u,d,i,o);	}
+
 	virtual SyncBool	Shutdown();	
 	
 	u32			GetSize()								const	{ return m_HeaderData.m_Size; }

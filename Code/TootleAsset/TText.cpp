@@ -13,7 +13,7 @@
 
 
 TLAsset::TText::TText(const TRef& AssetRef) :
-	TAsset	( "Text", AssetRef )
+	TAsset	( GetAssetType_Static(), AssetRef )
 {
 }
 

@@ -114,7 +114,7 @@ float3 TSceneNode_Emitter::GetEmissionPosition()
 	if(m_refMeshToEmitFrom.IsValid())
 	{
 		// Find the mesh to reference
-		TPtr<TLAsset::TMesh> pMesh = TLAsset::GetAsset( m_refMeshToEmitFrom, "Mesh");
+		TLAsset::TMesh* pMesh = TLAsset::GetAsset<TLAsset::TMesh>( m_refMeshToEmitFrom );
 
 		if(pMesh)
 		{

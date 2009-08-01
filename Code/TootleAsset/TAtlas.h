@@ -51,6 +51,8 @@ class TLAsset::TAtlas : public TLAsset::TAsset
 public:
 	TAtlas(TRefRef AssetRef);
 
+	static TRef					GetAssetType_Static()						{	return TRef_Static(A,t,l,a,s);	}
+
 	FORCEINLINE const TAtlasGlyph*	GetGlyph(u16 Key) 						{	return m_Glyphs.Find(Key);	}
 	FORCEINLINE const TAtlasGlyph*	GetGlyph(char KeyChar) 					{	u16 Key16 = ((u16)KeyChar) & 0x00ff;	return GetGlyph( Key16);	}
 	FORCEINLINE const TAtlasGlyph*	GetGlyph(u16 Key) const					{	return m_Glyphs.Find(Key);	}

@@ -210,7 +210,7 @@ Bool TLGame::TSchemeEditor::CreateEditorGui(TRefRef EditorScheme)
 	if ( !EditorScheme.IsValid() )
 		return FALSE;
 
-	TLAsset::TScheme* pEditorScheme = TLAsset::LoadAsset( EditorScheme, TRUE, "Scheme" ).GetObject<TLAsset::TScheme>();
+	TLAsset::TScheme* pEditorScheme = TLAsset::GetAsset<TLAsset::TScheme>( EditorScheme );
 	if ( !pEditorScheme )
 	{
 		TLDebug_Break("failed to load editor scheme");
@@ -460,7 +460,7 @@ void TLGame::TSchemeEditor::ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRef
 		else if ( pIconData->ImportData("Scheme", Type) )
 		{
 			TRefRef SchemeRef = Type;
-			TLAsset::TScheme* pScheme = TLAsset::LoadAsset(SchemeRef, TRUE, "Scheme" ).GetObject<TLAsset::TScheme>();
+			TLAsset::TScheme* pScheme = TLAsset::GetAsset<TLAsset::TScheme>(SchemeRef);
 			if ( !pScheme )
 			{
 				TTempString Debug_String("Failed to load scheme ");
@@ -511,12 +511,13 @@ void TLGame::TSchemeEditor::ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRef
 
 
 //----------------------------------------------------------
-//	create an icon for the editor
+//	create icons for the editor - overload this to render your own icons
 //----------------------------------------------------------
-void TLGame::TSchemeEditor::CreateEditorIcons()
+void TLGame::TSchemeEditor::CreateEditorIcons(TRefRef ParentRenderNode)
 {
 	float3 IconPosition( 0.f, 0.f, 5.f );
-	float3 IconScale( 5.f, 5.f, 1.f );
+	float3 IconScale( 10.f, 10.f, 1.f );
+	float3 IconPositionStep( 0.f, IconScale.y * 0.7f, 0.f );
 
 	for ( u32 i=0;	i<m_NewNodeData.GetSize();	i++ )
 	{
@@ -544,34 +545,43 @@ void TLGame::TSchemeEditor::CreateEditorIcons()
 		InitMessage.ExportData("boxdatum", TRef("Icons") );
 		InitMessage.ExportData("boxnode", TRef("e_gui") );
 
-		TRef IconRenderNodeRef = TLRender::g_pRendergraph->CreateNode("Icon", "TxText", m_EditorIconRootNodeRef, &InitMessage );
+		TRef IconRenderNodeRef = TLRender::g_pRendergraph->CreateNode("Icon", "TxText", ParentRenderNode, &InitMessage );
 
-		//	create draggable widget on this icon
-		TBinaryTree WidgetData("Widget");
-		WidgetData.ExportData("Node", IconRenderNodeRef );
-		WidgetData.ExportData("ActDown", TRef("IcoDown") );
-		WidgetData.ExportData("ActDrag", TRef("IcoDrag") );
+		//	do internal stuff
+		OnCreatedIconRenderNode( IconRenderNodeRef, *pIconData );
 
-		//	custom data
-		TPtr<TBinaryTree>& pWidgetIconData = WidgetData.AddChild("Icon");
-		if ( pWidgetIconData )
-		{
-			//	mark all the icon data as unread so it will be added to the widget
-			pIconData->SetTreeUnread();
+		IconPosition += IconPositionStep;
+	}
+}
 
-			//	add all the data specified in the XML including "init" data for the node when it's created
-			//	this will include the "Type" or "Scheme" specification
-			pWidgetIconData->ReferenceDataTree( pIconData );
-		}
 
-		//	create widget
-		TPtr<TLGui::TWidgetDrag> pWidget = new TLGui::TWidgetDrag( m_EditorRenderNodeRef, WidgetData );
-		m_EditorWidgets.Add( pWidget );
-		this->SubscribeTo( pWidget );
+//----------------------------------------------------------------------
+//	internal UI setup when an icon render node is created
+//----------------------------------------------------------------------
+void TLGame::TSchemeEditor::OnCreatedIconRenderNode(TRefRef IconRenderNodeRef,TBinaryTree& IconData)
+{
+	//	create draggable widget on this icon
+	TBinaryTree WidgetData("Widget");
+	WidgetData.ExportData("Node", IconRenderNodeRef );
+	WidgetData.ExportData("ActDown", TRef("IcoDown") );
+	WidgetData.ExportData("ActDrag", TRef("IcoDrag") );
 
-		IconPosition.y += IconScale.y * 1.0f;
+	//	custom data
+	TPtr<TBinaryTree>& pWidgetIconData = WidgetData.AddChild("Icon");
+	if ( pWidgetIconData )
+	{
+		//	mark all the icon data as unread so it will be added to the widget
+		IconData.SetTreeUnread();
+
+		//	add all the data specified in the XML including "init" data for the node when it's created
+		//	this will include the "Type" or "Scheme" specification
+		pWidgetIconData->ReferenceDataTree( IconData );
 	}
 
+	//	create widget
+	TPtr<TLGui::TWidgetDrag> pWidget = new TLGui::TWidgetDrag( m_EditorRenderNodeRef, WidgetData );
+	m_EditorWidgets.Add( pWidget );
+	this->SubscribeTo( pWidget );
 }
 
 
@@ -580,7 +590,7 @@ void TLGame::TSchemeEditor::CreateEditorIcons()
 //----------------------------------------------------------
 void TLGame::TSchemeEditor::OnEditorRenderNodeAdded()
 {
-	CreateEditorIcons();
+	CreateEditorIcons(m_EditorIconRootNodeRef);
 }
 
 //----------------------------------------------------------

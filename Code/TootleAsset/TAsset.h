@@ -18,7 +18,6 @@ namespace TLFileSys
 namespace TLAsset
 {
 	class TAsset;			//	base asset type
-	class TTempAsset;		//	placeholder asset type
 
 	enum TLoadingState
 	{
@@ -38,15 +37,18 @@ namespace TLAsset
 class TLAsset::TAsset
 {
 public:
-	TAsset(const TRef& AssetType,const TRef& AssetRef);
+	TAsset(TRefRef AssetType,TRefRef AssetRef);
+
+	static TRef			GetAssetType_Static()					{	return TRef_Static(A,s,s,e,t);	}
 
 	Bool				IsLoaded() const						{	return GetLoadingState() == TLAsset::LoadingState_Loaded;	}
 	TLoadingState		GetLoadingState() const					{	return m_LoadingState;	}
 	void				SetLoadingState(TLoadingState State)	{	m_LoadingState = State;	}
 
-	const TRef&			GetAssetType() const			{	return m_AssetType;	}
-	void				SetAssetRef(const TRef& Ref)	{	m_AssetRef = Ref;	}
-	const TRef&			GetAssetRef() const				{	return m_AssetRef;	}
+	TRefRef				GetAssetType() const					{	return m_AssetAndTypeRef.GetTypeRef();	}
+	void				SetAssetRef(TRefRef Ref)				{	m_AssetAndTypeRef.SetRef( Ref );	}
+	TRefRef				GetAssetRef() const						{	return m_AssetAndTypeRef.GetRef();	}
+	const TTypedRef&	GetAssetAndTypeRef() const				{	return m_AssetAndTypeRef;	}
 
 	virtual void		Update()						{	}	//	update this asset
 	virtual SyncBool	Shutdown()						{	return SyncTrue;	}
@@ -57,8 +59,9 @@ public:
 	TPtr<TBinaryTree>&	GetData(TRefRef DataRef,Bool CreateNew=FALSE);
 	TBinaryTree&		GetData()								{	return m_Data;	}
 
-	inline Bool			operator==(const TRef& AssetRef) const	{	return GetAssetRef() == AssetRef;	}
-	inline Bool			operator==(const TAsset& Asset) const 	{	return GetAssetRef() == Asset.GetAssetRef();	}
+	inline Bool			operator==(const TRef& AssetRef) const		{	return GetAssetRef() == AssetRef;	}
+	inline Bool			operator==(const TTypedRef& AssetRef) const	{	return GetAssetAndTypeRef() == AssetRef;	}
+	inline Bool			operator==(const TAsset& Asset) const 		{	return GetAssetAndTypeRef() == Asset.GetAssetAndTypeRef();	}
 
 protected:
 	virtual SyncBool	ImportData(TBinaryTree& Data);			//	load asset data out binary data - base type just imports dumb m_Data
@@ -70,25 +73,11 @@ protected:
 	TBinaryTree			m_Data;							//	after importing, this data was not read in. could just be additonal meta data or old data we don't use any more
 
 private:
-	TRef				m_AssetType;
-	TRef				m_AssetRef;
+	TTypedRef			m_AssetAndTypeRef;
 	TLoadingState		m_LoadingState;					//	loading state 
 	TString				m_Debug_AssetRefString;	
 };
 
 
 
-
-
-//----------------------------------------------------
-//	base asset type
-//----------------------------------------------------
-class TLAsset::TTempAsset : public TLAsset::TAsset
-{
-public:
-	TTempAsset(const TRef& AssetRef) : 
-		TAsset( "Temp", AssetRef )
-	{
-	}
-};
 

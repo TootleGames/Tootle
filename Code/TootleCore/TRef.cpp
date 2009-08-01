@@ -403,3 +403,14 @@ void TRef::Debug_BreakInvalidRef() const
 }
 
 
+
+
+
+void TTypedRef::GetString(TString& RefString,Bool Capitalise) const
+{
+	GetRef().GetString( RefString, Capitalise );
+	RefString.Append('[');
+	GetTypeRef().GetString( RefString, Capitalise );
+	RefString.Append(']');
+}
+

@@ -8,7 +8,7 @@
  */
 
 #include "TFileTimeline.h"
-#include <TootleAsset/TAssetTimeline.h>
+#include <TootleAsset/TTimeline.h>
 #include "TLFile.h"
 
 
@@ -49,9 +49,9 @@ SyncBool TLFileSys::TFileTimeline::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Boo
 	}
 
 	//	do specific importing
-	TPtr<TLAsset::TAsset> pNewAsset = new TLAsset::TAssetTimeline( GetFileRef() );
+	TPtr<TLAsset::TAsset> pNewAsset = new TLAsset::TTimeline( GetFileRef() );
 
-	ImportResult = ImporTAssetTimeline( pNewAsset, pTasTag );
+	ImportResult = ImporTTimeline( pNewAsset, pTasTag );
 
 	//	failed to import
 	if ( ImportResult != SyncTrue )
@@ -69,7 +69,7 @@ SyncBool TLFileSys::TFileTimeline::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Boo
 //--------------------------------------------------------
 //	
 //--------------------------------------------------------
-SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline(TPtr<TLAsset::TAssetTimeline> pAssetTimeline, TPtr<TXmlTag>& pTag)
+SyncBool TLFileSys::TFileTimeline::ImporTTimeline(TPtr<TLAsset::TTimeline> pAssetTimeline, TPtr<TXmlTag>& pTag)
 {
 	/*
 	<assetscript>
@@ -88,7 +88,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline(TPtr<TLAsset::TAssetTimel
 		SyncBool TagImportResult = SyncFalse;
 		if ( pChildTag->GetTagName() == "keyframe" )
 		{
-			TagImportResult = ImporTAssetTimeline_ImportKeyframeTag( pAssetTimeline, pChildTag );
+			TagImportResult = ImporTTimeline_ImportKeyframeTag( pAssetTimeline, pChildTag );
 		}
 		else
 		{
@@ -114,7 +114,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline(TPtr<TLAsset::TAssetTimel
 //--------------------------------------------------------
 //	generate mesh TAM tag
 //--------------------------------------------------------
-SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportKeyframeTag(TPtr<TLAsset::TAssetTimeline>& pAssetTimeline,TPtr<TXmlTag>& pImportTag)
+SyncBool TLFileSys::TFileTimeline::ImporTTimeline_ImportKeyframeTag(TPtr<TLAsset::TTimeline>& pAssetTimeline,TPtr<TXmlTag>& pImportTag)
 {
 	/*
 	<keyframe time="0.0">
@@ -157,7 +157,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportKeyframeTag(TPtr<TL
 		// Deal with "node" tags
 		if ( pChildTag->GetTagName() == "command" )
 		{
-			TagImportResult = ImporTAssetTimeline_ImportCommandTag( pAssetTimeline, pKeyframe, pChildTag );
+			TagImportResult = ImporTTimeline_ImportCommandTag( pAssetTimeline, pKeyframe, pChildTag );
 		}
 
 		//	failed
@@ -175,7 +175,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportKeyframeTag(TPtr<TL
 	return SyncTrue;
 }
 
-SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandTag(TPtr<TLAsset::TAssetTimeline>& pAssetTimeline, TLAsset::TKeyframe* pKeyframe, TPtr<TXmlTag>& pImportTag)
+SyncBool TLFileSys::TFileTimeline::ImporTTimeline_ImportCommandTag(TPtr<TLAsset::TTimeline>& pAssetTimeline, TLAsset::TKeyframe* pKeyframe, TPtr<TXmlTag>& pImportTag)
 {
 	/*
 	<Node NodeRef="rarm1">		
@@ -224,14 +224,14 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandTag(TPtr<TLA
 	}
 	*/
 
-	TPtr<TLAsset::TAssetTimelineCommandList> pTimelineCommandList = pKeyframe->FindPtr(NodeRef);
+	TPtr<TLAsset::TTimelineCommandList> pTimelineCommandList = pKeyframe->FindPtr(NodeRef);
 
 	// Check to see if we have a command list for the specified node.  If so use it, otherwise create a new 
 	// command list with the specified node ref
 	if(!pTimelineCommandList)
 	{
 		// Create the asset script command list object
-		pTimelineCommandList = new TLAsset::TAssetTimelineCommandList(NodeRef, NodeGraphRef);
+		pTimelineCommandList = new TLAsset::TTimelineCommandList(NodeRef, NodeGraphRef);
 
 		if(!pTimelineCommandList || (pKeyframe->Add(pTimelineCommandList) == -1))
 		{
@@ -242,7 +242,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandTag(TPtr<TLA
 
 
 	// Create the command and attach it to the asset timeline
-	TLAsset::TAssetTimelineCommand*	pCommand = pTimelineCommandList->AddCommand(CommandRef);
+	TLAsset::TTimelineCommand*	pCommand = pTimelineCommandList->AddCommand(CommandRef);
 
 	if(!pCommand)
 	{
@@ -257,7 +257,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandTag(TPtr<TLA
 	{
 		TPtr<TXmlTag>& pChildTag = pImportTag->GetChildren().ElementAt(c);
 
-		SyncBool TagImportResult = ImporTAssetTimeline_ImportCommandData( pAssetTimeline, pCommand, pChildTag);
+		SyncBool TagImportResult = ImporTTimeline_ImportCommandData( pAssetTimeline, pCommand, pChildTag);
 
 		//	failed
 		if ( TagImportResult == SyncFalse )
@@ -276,7 +276,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandTag(TPtr<TLA
 }
 
 
-SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandData(TPtr<TLAsset::TAssetTimeline>& pAssetTimeline, TLAsset::TAssetTimelineCommand* pTimelineCommand, TPtr<TXmlTag>& pImportTag)
+SyncBool TLFileSys::TFileTimeline::ImporTTimeline_ImportCommandData(TPtr<TLAsset::TTimeline>& pAssetTimeline, TLAsset::TTimelineCommand* pTimelineCommand, TPtr<TXmlTag>& pImportTag)
 {
 	TPtr<TBinaryTree> pCommandChildData = NULL;
 

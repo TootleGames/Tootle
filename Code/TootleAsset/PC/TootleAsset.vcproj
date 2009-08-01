@@ -224,14 +224,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\TAssetTimeline.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\TAssetTimeline.h"
-			>
-		</File>
-		<File
 			RelativePath="..\TAtlas.cpp"
 			>
 		</File>
@@ -329,6 +321,14 @@
 		</File>
 		<File
 			RelativePath="..\TTexture.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TTimeline.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TTimeline.h"
 			>
 		</File>
 	</Files>

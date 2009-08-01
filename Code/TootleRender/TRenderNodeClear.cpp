@@ -23,7 +23,7 @@ void TLRender::TRenderNodeClear::SetSize(const TLMaths::TBox2D& ClearBox,float N
 	//	create mesh
 	if ( !pClearMesh )
 	{
-		m_pClearMesh = TLAsset::CreateAsset( TLAsset::GetFreeAssetRef("Clear"), "Mesh" );
+		m_pClearMesh = TLAsset::CreateAsset( TLAsset::GetFreeAssetRef("Clear","Mesh") );
 		pClearMesh = m_pClearMesh.GetObject();
 
 		InitMesh( *pClearMesh );

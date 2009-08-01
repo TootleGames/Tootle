@@ -60,17 +60,10 @@ void TLRender::TRenderNodePathNetwork::SetPathNetwork(TRefRef PathNetworkRef)
 		return;
 
 	//	get the path network asset
-	TPtr<TLAsset::TPathNetwork> pPathNetwork = TLAsset::GetAsset( m_PathNetworkRef, TRUE );
+	TLAsset::TPathNetwork* pPathNetwork = TLAsset::GetAsset<TLAsset::TPathNetwork>( m_PathNetworkRef );
 	if ( !pPathNetwork )
 	{
 		TLDebug_Break("Missing Path asset for TRenderNodePathNetwork");
-		return;
-	}
-
-	//	check type
-	if ( pPathNetwork->GetAssetType() != "PathNetwork" )
-	{
-		TLDebug_Break("Path asset for TRenderNodePathNetwork is not a path network");
 		return;
 	}
 

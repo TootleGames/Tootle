@@ -69,7 +69,13 @@ Bool TStateMachine::SetMode(TRefRef NextModeRef)
 	m_pCurrentMode = pNextMode;
 
 	//	log mode change
-	m_Debug_ModeLog.Add( GetCurrentModeRef() );
+#ifdef _DEBUG
+	TBufferString<6>* pLogModeString = m_Debug_ModeLog.AddNew();
+	if ( pLogModeString )
+	{
+		GetCurrentModeRef().GetString( *pLogModeString );
+	}
+#endif
 
 	return m_pCurrentMode.IsValid();
 }
@@ -128,8 +134,7 @@ void TStateMachine::Debug_ModeLog(const TString& StateMachineName) const
 	for ( u32 i=0;	i<m_Debug_ModeLog.GetSize();	i++ )
 	{
 		DebugString.Empty();
-		TTempString ModeRefString;
-		m_Debug_ModeLog[i].GetString( ModeRefString );
+		const TString& ModeRefString = m_Debug_ModeLog[i];
 
 		DebugString.Appendf("%2d: %s", i, ModeRefString.GetData() );
 

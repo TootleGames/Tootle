@@ -85,7 +85,7 @@ protected:
 	
 	virtual void				OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
 
-	virtual void				GetPreloadFiles(TArray<TRef>& PreloadFiles)		{} // builds a list of files to load at boot up
+	virtual void				GetPreloadFiles(TArray<TTypedRef>& PreloadFiles)		{} // builds a list of files to load at boot up
 
 	virtual TTempString			GetName()	const = 0;			// Name of application - must be specified
 	virtual void				GetName(TString& String) const	{	String.Append( GetName() );	}
@@ -142,14 +142,13 @@ protected:
 
 	Bool		CreateIntroScreen();
 
-	void		PreloadFiles();
-	Bool		ArePreloadFilesLoaded();
+	Bool		PreloadFiles();				//	load files. returns TRUE when finished (no more to load)
 	
 private:
 	TRef									m_LogoRenderNode;	//	
 	TPtr<TLAnimation::TTimelineInstance>	m_pTimelineInstance;
 	TRef									m_RenderTarget;		//	our render target
-	TArray<TRef>							m_PreloadFiles;
+	TArray<TTypedRef>						m_PreloadFiles;		//	waiting for these files to async load
 	Bool									m_SkipBootup;		//	skip bootup if we failed to create rendernode/screen/logo etc
 };
 

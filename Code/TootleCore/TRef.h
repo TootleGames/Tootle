@@ -241,8 +241,13 @@ public:
 	TTypedRef(const TTypedRef& TypedRef) :		m_Ref ( TypedRef.GetRef() ),	m_TypeRef ( TypedRef.GetTypeRef() )		{};
 	TTypedRef(TRefRef Ref,TRefRef TypeRef) :	m_Ref ( Ref ),					m_TypeRef ( TypeRef )					{};
 
+	FORCEINLINE Bool		IsValid() const						{	return GetRef().IsValid() && GetTypeRef().IsValid();	}
+
+	FORCEINLINE TRef&		GetRef()							{	return m_Ref;	}
 	FORCEINLINE TRefRef		GetRef() const						{	return m_Ref;	}
+	FORCEINLINE TRef&		GetTypeRef()						{	return m_TypeRef;	}
 	FORCEINLINE TRefRef		GetTypeRef() const					{	return m_TypeRef;	}
+	void					GetString(TString& RefString,Bool Capitalise=FALSE) const;
 
 	FORCEINLINE void		Set(const TTypedRef& TypedRef)		{	m_Ref = TypedRef.GetRef();	m_TypeRef = TypedRef.GetTypeRef();	}
 	FORCEINLINE void		SetRef(TRefRef Ref)					{	m_Ref = Ref;	}
@@ -269,7 +274,6 @@ FORCEINLINE Bool TTypedRef::operator<(const TTypedRef& TypedRef) const
 	//	main ref matches, so check secondary ref
 	return ( GetTypeRef() < TypedRef.GetTypeRef() );
 }
-
 
 
 

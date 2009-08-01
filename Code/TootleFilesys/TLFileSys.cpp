@@ -458,12 +458,16 @@ void TLFileSys::GetFileSys(TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef F
 //------------------------------------------------------------
 //	wrapper to create a file for a .asset file (to ensure consistent filenames)
 //------------------------------------------------------------
-TPtr<TLFileSys::TFile> TLFileSys::CreateAssetFileInFileSys(TRefRef AssetRef,TPtrArray<TLFileSys::TFileSys>& FileSysList)
+TPtr<TLFileSys::TFile> TLFileSys::CreateAssetFileInFileSys(const TTypedRef& AssetAndTypeRef,TPtrArray<TLFileSys::TFileSys>& FileSysList)
 {
+	//	asset file name format is Name.Type.Asset
 	TTempString Filename;
-	AssetRef.GetString( Filename );
+	AssetAndTypeRef.GetRef().GetString( Filename );
+	Filename.Append('.');
+	AssetAndTypeRef.GetTypeRef().GetString( Filename );
 	Filename.Append(".Asset");
 
+	//	create file sys TFile
 	return CreateFileInFileSys( Filename, FileSysList, TRef_Static(A,s,s,e,t) );
 }
 

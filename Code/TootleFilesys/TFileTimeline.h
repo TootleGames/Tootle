@@ -21,9 +21,9 @@ namespace TLFileSys
 namespace TLAsset
 {
 	class TKeyframe;
-	class TAssetTimeline;
-	class TAssetTimelineCommand;
-	class TAssetTimelineCommandList;
+	class TTimeline;
+	class TTimelineCommand;
+	class TTimelineCommandList;
 }
 
 class TLFileSys::TFileTimeline : public TLFileSys::TFileXml
@@ -35,8 +35,8 @@ public:
 	
 protected:
 
-	SyncBool			ImporTAssetTimeline(TPtr<TLAsset::TAssetTimeline> pAssetTimeline,TPtr<TXmlTag>& pTag);
-	SyncBool			ImporTAssetTimeline_ImportKeyframeTag(TPtr<TLAsset::TAssetTimeline>& pAssetTimeline, TPtr<TXmlTag>& pImportTag);
-	SyncBool			ImporTAssetTimeline_ImportCommandTag(TPtr<TLAsset::TAssetTimeline>& pAssetTimeline, TLAsset::TKeyframe* pKeyframe, TPtr<TXmlTag>& pImportTag);
-	SyncBool			ImporTAssetTimeline_ImportCommandData(TPtr<TLAsset::TAssetTimeline>& pAssetTimeline, TLAsset::TAssetTimelineCommand* pTimelineCommand, TPtr<TXmlTag>& pImportTag);
+	SyncBool			ImporTTimeline(TPtr<TLAsset::TTimeline> pAssetTimeline,TPtr<TXmlTag>& pTag);
+	SyncBool			ImporTTimeline_ImportKeyframeTag(TPtr<TLAsset::TTimeline>& pAssetTimeline, TPtr<TXmlTag>& pImportTag);
+	SyncBool			ImporTTimeline_ImportCommandTag(TPtr<TLAsset::TTimeline>& pAssetTimeline, TLAsset::TKeyframe* pKeyframe, TPtr<TXmlTag>& pImportTag);
+	SyncBool			ImporTTimeline_ImportCommandData(TPtr<TLAsset::TTimeline>& pAssetTimeline, TLAsset::TTimelineCommand* pTimelineCommand, TPtr<TXmlTag>& pImportTag);
 };

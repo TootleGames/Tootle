@@ -1,5 +1,5 @@
 /*
- *  TAssetTimeline.h
+ *  TTimeline.h
  *  TootleAsset
  *
  *  Created by Duane Bradbury on 15/03/2009.
@@ -16,13 +16,13 @@
 
 namespace TLAsset
 {
-	class TAssetTimeline;
+	class TTimeline;
 
 	class TTempKeyframeData;
 	class TKeyframe;
 
-	class TAssetTimelineCommand;
-	class TAssetTimelineCommandList;
+	class TTimelineCommand;
+	class TTimelineCommandList;
 };
 
 
@@ -31,14 +31,14 @@ namespace TLAsset
 // I have added an interp method as I suspect quite a few of the most common commands 
 // will require an interp such as translation, rotation, scale but if this becomes less common 
 // a property for most commands then it can simply be added to the message as a piece of data instead.
-class TLAsset::TAssetTimelineCommand : public TLMessaging::TMessage
+class TLAsset::TTimelineCommand : public TLMessaging::TMessage
 {
 public:
-	TAssetTimelineCommand()
+	TTimelineCommand()
 	{
 	}
 
-	TAssetTimelineCommand(TRefRef CommandRef) :
+	TTimelineCommand(TRefRef CommandRef) :
 		TMessage(CommandRef)
 	{
 	}
@@ -47,24 +47,24 @@ public:
 
 // The script command list is a container for a node ref and graph ref and list of commands that
 // for the specified node
-class TLAsset::TAssetTimelineCommandList
+class TLAsset::TTimelineCommandList
 {
 public:
 
-	TAssetTimelineCommandList() 
+	TTimelineCommandList() 
 	{
 	}
 
 
-	TAssetTimelineCommandList(TRefRef NodeRef, TRefRef NodeGraphRef) :
+	TTimelineCommandList(TRefRef NodeRef, TRefRef NodeGraphRef) :
 		m_NodeRef(NodeRef),
 		m_NodeGraphRef(NodeGraphRef)
 	{
 	}
 
-	TAssetTimelineCommand*			AddCommand(TRefRef CommandRef)
+	TTimelineCommand*			AddCommand(TRefRef CommandRef)
 	{
-		TAssetTimelineCommand cmd(CommandRef);
+		TTimelineCommand cmd(CommandRef);
 
 		s32 Index = m_Commands.Add(cmd);
 
@@ -75,7 +75,7 @@ public:
 	}
 
 	inline Bool			operator==(const TRef& NodeRef)						const	{	return GetNodeRef() == NodeRef;	}
-	inline Bool			operator==(const TAssetTimelineCommandList& ascmd)	const 	{	return GetNodeRef() == ascmd.GetNodeRef();	}
+	inline Bool			operator==(const TTimelineCommandList& ascmd)	const 	{	return GetNodeRef() == ascmd.GetNodeRef();	}
 
 
 	// Accessors
@@ -85,7 +85,7 @@ public:
 	FORCEINLINE void				SetNodeGraphRef(TRefRef NodeGraphRef)	{ m_NodeGraphRef = NodeGraphRef; }
 	FORCEINLINE TRefRef				GetNodeGraphRef()				const	{ return m_NodeGraphRef; }
 
-	TArray<TAssetTimelineCommand>&	GetCommands()			{ return m_Commands; }
+	TArray<TTimelineCommand>&	GetCommands()			{ return m_Commands; }
 
 	SyncBool						ImportData(TBinaryTree& Data);	//	load asset data out binary data
 	SyncBool						ExportData(TBinaryTree& Data);	//	save asset data to binary data
@@ -94,13 +94,13 @@ private:
 	TRef							m_NodeRef;			// Node associated with the commands
 	TRef							m_NodeGraphRef;		// Node graph to use 
 
-	TArray<TAssetTimelineCommand>				m_Commands;			// Array of command messages
+	TArray<TTimelineCommand>				m_Commands;			// Array of command messages
 };
 
 
 
 // The keyframe is essentially a list of commands for nodes organised by node
-class TLAsset::TKeyframe : public TPtrArray<TLAsset::TAssetTimelineCommandList>
+class TLAsset::TKeyframe : public TPtrArray<TLAsset::TTimelineCommandList>
 {
 public:
 	TKeyframe()
@@ -120,25 +120,19 @@ public:
 };
 
 
-class TLAsset::TAssetTimeline : public TLAsset::TAsset
+class TLAsset::TTimeline : public TLAsset::TAsset
 {
 public:
-	TAssetTimeline(const TRef& AssetRef);
+	TTimeline(TRefRef AssetRef);
 
-	//TLAsset::TKeyframe&		Addkeyframe(TRef KeyRef, float fTime)	// DB - may want an ID for each keyframe so we could do things like loop back to a specific keyframe
-	TKeyframe*		AddKeyframe(float fTime)
-	{
-		TPtr<TKeyframe> pKey = new TKeyframe();
+	static TRef				GetAssetType_Static()						{	return TRef_Static(T,i,m,e,l);	}
+	
+	//TLAsset::TKeyframe&	Addkeyframe(TRef KeyRef, float fTime)	// DB - may want an ID for each keyframe so we could do things like loop back to a specific keyframe
+	FORCEINLINE TKeyframe*	AddKeyframe(float fTime);
 
-		if(m_Keyframes.Add(fTime, pKey) != NULL)
-			return pKey.GetObject();
+	Bool					GetKeyframes(const float& fTimeFrom,const float& fTimeStep, TArray<TTempKeyframeData>& pKeyframes, Bool bAllowNoTimestep);
 
-		return NULL;
-	}
-
-	Bool		GetKeyframes(const float& fTimeFrom,const float& fTimeStep, TArray<TTempKeyframeData>& pKeyframes, Bool bAllowNoTimestep);
-
-	float		GetLastKeyFrameTime();
+	float					GetLastKeyFrameTime();
 
 protected:
 	virtual SyncBool		ImportData(TBinaryTree& Data);	//	load asset data out binary data
@@ -150,6 +144,19 @@ protected:
 
 
 private:
-
 	TPtrKeyArray<float, TKeyframe>		m_Keyframes;
 };
+
+
+
+FORCEINLINE TLAsset::TKeyframe* TLAsset::TTimeline::AddKeyframe(float fTime)
+{
+	TPtr<TLAsset::TKeyframe> pKey = new TLAsset::TKeyframe();
+
+	if(m_Keyframes.Add(fTime, pKey) != NULL)
+		return pKey.GetObject();
+
+	return NULL;
+}
+
+

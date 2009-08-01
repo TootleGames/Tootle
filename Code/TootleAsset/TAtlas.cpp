@@ -30,7 +30,7 @@ void TLAsset::TAtlasGlyph::ExportData(TBinaryTree& Data)
 
 
 TLAsset::TAtlas::TAtlas(TRefRef AssetRef) :
-	TAsset				( "Atlas", AssetRef )
+	TAsset				( GetAssetType_Static(), AssetRef )
 {
 }
 

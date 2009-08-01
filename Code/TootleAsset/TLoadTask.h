@@ -13,7 +13,7 @@ namespace TLAsset
 {
 	class TLoadTask;
 	extern TPtrArray<TLoadTask>		g_LoadTasks;
-	FORCEINLINE TPtr<TLoadTask>&	GetLoadTask(TRefRef AssetRef)	{	return g_LoadTasks.FindPtr( AssetRef );	}	//	get the load task for this asset
+	FORCEINLINE TPtr<TLoadTask>&	GetLoadTask(const TTypedRef& AssetAndTypeRef)	{	return g_LoadTasks.FindPtr( AssetAndTypeRef );	}	//	get the load task for this asset
 }
 
 namespace TLLoadTask
@@ -29,17 +29,18 @@ class TLAsset::TLoadTask : public TStateMachine
 {
 	friend class TLLoadTask::TLoadTaskMode;
 public:
-	TLoadTask(TRefRef AssetRef);
+	TLoadTask(const TTypedRef& AssetAndTypeRef);
 
-	SyncBool		Update(float Timestep,Bool Blocking);	//	update load - blocking will force it to loop until non-waiting
+	SyncBool						Update(float Timestep,Bool Blocking);	//	update load - blocking will force it to loop until non-waiting
+	SyncBool						GetLoadingState() const;		//	depending on the state we can tell if it's loading, failed or loaded okay
 
-	TRefRef			GetAssetRef() const					{	return m_AssetRef;	}	
-	TPtr<TAsset>&	GetAsset() const					{	return TLAsset::GetAsset( GetAssetRef() );	}
+	FORCEINLINE const TTypedRef&	GetAssetAndTypeRef() const		{	return m_AssetAndTypeRef;	}	
+	FORCEINLINE TPtr<TAsset>&		GetAsset() const				{	return TLAsset::GetAssetInstance( GetAssetAndTypeRef() );	}
 
-	inline Bool		operator==(TRefRef AssetRef) const	{	return GetAssetRef() == AssetRef;	}
+	FORCEINLINE Bool				operator==(const TTypedRef& AssetAndTypeRef) const	{	return GetAssetAndTypeRef() == AssetAndTypeRef;	}
 
 protected:
-	TRef						m_AssetRef;				//	ref of asset we're creating
+	TTypedRef					m_AssetAndTypeRef;		//	ref of asset we're creating
 	TPtr<TLFileSys::TFile>		m_pFile;				//	plain file needs converting to asset file
 	TPtr<TLFileSys::TFileAsset>	m_pTempAssetFile;		//	asset file generated from plain file
 	TPtr<TLFileSys::TFileAsset>	m_pAssetFile;			//	asset file in a proper file sys that needs converting to asset
@@ -56,7 +57,7 @@ namespace TLLoadTask
 		TPtr<TLFileSys::TFile>&			GetPlainFile()		{	return GetLoadTask()->m_pFile;	}
 		TPtr<TLFileSys::TFileAsset>&	GetTempAssetFile()	{	return GetLoadTask()->m_pTempAssetFile;	}
 		TPtr<TLFileSys::TFileAsset>&	GetAssetFile()		{	return GetLoadTask()->m_pAssetFile;	}
-		TRef&							GetAssetRef() 		{	return GetLoadTask()->m_AssetRef;	}	
+		TTypedRef&						GetAssetAndTypeRef(){	return GetLoadTask()->m_AssetAndTypeRef;	}	
 		TPtr<TLAsset::TAsset>			GetAsset() 			{	return GetLoadTask()->GetAsset();	}
 
 		void							Debug_PrintStep(const char* pStepString);	//	print out some debug info for this step

@@ -26,6 +26,8 @@ public:
 
 public:
 	TMenu(TRefRef MenuAssetRef);
+
+	static TRef					GetAssetType_Static()						{	return TRef_Static4(M,e,n,u);	}
 	
 	FORCEINLINE TPtrArray<TMenuItem>&		GetMenuItems()							{	return m_MenuItems;	}
 	FORCEINLINE const TPtrArray<TMenuItem>&	GetMenuItems() const					{	return m_MenuItems;	}

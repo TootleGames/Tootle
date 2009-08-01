@@ -14,11 +14,37 @@ using namespace TLAnimation;
 	//#define DEBUG_TIMELINE
 #endif
 
+TLAnimation::TTimelineInstance::TTimelineInstance(TRefRef TimelineAssetRef) :
+	m_TimelineAssetRef	( TimelineAssetRef ),
+	m_fTime(0.0f),
+	m_fPlaybackRateModifier(1.0f)
+{
+	//	get timeline specified
+	m_pTimeline = TLAsset::GetAssetPtr<TLAsset::TTimeline>( m_TimelineAssetRef );
+
+	//	gr: check timeline asset is valid
+	if ( !m_pTimeline )
+	{
+		TLDebug_Break("Timeline asset should not be NULL");
+	}
+}
+
+TLAnimation::TTimelineInstance::TTimelineInstance(TPtr<TLAsset::TTimeline>& pTimelineAsset) :
+	m_TimelineAssetRef		( pTimelineAsset ? pTimelineAsset->GetAssetRef() : TRef_Invalid ),
+	m_pTimeline				( pTimelineAsset ),
+	m_fTime					(0.0f),
+	m_fPlaybackRateModifier	(1.0f)
+{
+	//	gr: check timeline asset is valid
+	if ( !m_pTimeline )
+	{
+		TLDebug_Break("Timeline asset should not be NULL");
+	}
+}
+
 
 void TTimelineInstance::Initialise()
 {
-	//	gr: check timeline asset is valid?
-
 	// Initialise the timeline to the current time
 	SetTime( 0.f );
 }
@@ -46,13 +72,11 @@ void TTimelineInstance::SetTime(float fTime)
 		fTime = 0.0f;
 	else if(fTime > 0.0f)
 	{
-		TLAsset::TAssetTimeline* pAssetTimeline = GetAssetTimeline();
-
 		// If no script then simply set the time to what was requested
 		// Otherwise get the last key frame and check the time with that
-		if(pAssetTimeline)
+		if(m_pTimeline)
 		{
-			float fLastTime = pAssetTimeline->GetLastKeyFrameTime();
+			float fLastTime = m_pTimeline->GetLastKeyFrameTime();
 
 			// Set to the last key frame time if the keyframe time is less that the requested time
 			if(fLastTime < fTime)
@@ -85,11 +109,8 @@ SyncBool TTimelineInstance::DoUpdate(float fTimestep, Bool bForced)
 	//TEST
 
 
-	// Get the current and next keyframes
-	TLAsset::TAssetTimeline* pAssetTimeline = GetAssetTimeline();
-
 	// Wait for asset?
-	if(!pAssetTimeline)
+	if(!m_pTimeline)
 		return SyncWait;
 
 	TArray<TLAsset::TTempKeyframeData> pKeyframes;
@@ -101,7 +122,7 @@ SyncBool TTimelineInstance::DoUpdate(float fTimestep, Bool bForced)
 
 	// We could cross multiple keyframes in one step so get all keyframes we are going to span
 	// So we can send out all changes as required
-	if(pAssetTimeline->GetKeyframes(m_fTime, fTimestep, pKeyframes, bForced))
+	if(m_pTimeline->GetKeyframes(m_fTime, fTimestep, pKeyframes, bForced))
 	{
 /*
 #ifdef _DEBUG
@@ -169,18 +190,9 @@ void TTimelineInstance::OnEndOfTimeline()
 #endif 
 
 	// Broadcast a message to say the timeline has finished
-	TLMessaging::TMessage Message("OnComplete", m_AssetScriptRef );
+	TLMessaging::TMessage Message("OnComplete", m_TimelineAssetRef );
 
 	PublishMessage(Message);
-}
-
-
-TLAsset::TAssetTimeline* TTimelineInstance::GetAssetTimeline()
-{
-	// Get the asset script from the asset system
-	TPtr<TLAsset::TAsset>& pAsset = TLAsset::LoadAsset(m_AssetScriptRef, TRUE,"Timeline");
-
-	return pAsset.GetObject<TLAsset::TAssetTimeline>();
 }
 
 
@@ -191,8 +203,8 @@ Bool TTimelineInstance::ProcessFinalKeyframe(const TLAsset::TTempKeyframeData& K
 	{
 		// Get the list of commands
 		//	gr: must faster than using and de-referencing a TPtr all the time
-		TPtr<TLAsset::TAssetTimelineCommandList>& pCmdList = Keyframe.m_pKeyframe->ElementAt(uIndex);
-		TLAsset::TAssetTimelineCommandList& CmdList = *pCmdList;
+		TPtr<TLAsset::TTimelineCommandList>& pCmdList = Keyframe.m_pKeyframe->ElementAt(uIndex);
+		TLAsset::TTimelineCommandList& CmdList = *pCmdList;
 		TRefRef GraphRef = CmdList.GetNodeGraphRef();
 		TRefRef NodeRef = CmdList.GetNodeRef();
 
@@ -200,7 +212,7 @@ Bool TTimelineInstance::ProcessFinalKeyframe(const TLAsset::TTempKeyframeData& K
 		for(u32 uIndex2 = 0; uIndex2 < CmdList.GetCommands().GetSize(); uIndex2++)
 		{
 			// Get the command 
-			TLAsset::TAssetTimelineCommand& Cmd = CmdList.GetCommands().ElementAt(uIndex2);
+			TLAsset::TTimelineCommand& Cmd = CmdList.GetCommands().ElementAt(uIndex2);
 
 			SyncBool Result = SendCommandAsMessage(&Cmd, NULL, pCmdList->GetNodeGraphRef(), pCmdList->GetNodeRef());
 
@@ -257,10 +269,10 @@ Bool TTimelineInstance::ProcessKeyframes(const TLAsset::TTempKeyframeData& Keyfr
 	for(u32 uIndex = 0; uIndex < KeyframeFrom.m_pKeyframe->GetSize(); uIndex++)
 	{
 		// Get the node list of commands
-		TPtr<TLAsset::TAssetTimelineCommandList> pFromCmdList = KeyframeFrom.m_pKeyframe->ElementAt(uIndex);
+		TPtr<TLAsset::TTimelineCommandList> pFromCmdList = KeyframeFrom.m_pKeyframe->ElementAt(uIndex);
 
 		// Does shte same node ID exist in the to list?
-		TPtr<TLAsset::TAssetTimelineCommandList> pToCmdList = KeyframeTo.m_pKeyframe->FindPtr(pFromCmdList->GetNodeRef());
+		TPtr<TLAsset::TTimelineCommandList> pToCmdList = KeyframeTo.m_pKeyframe->FindPtr(pFromCmdList->GetNodeRef());
 
 		if(pToCmdList.IsValid())
 		{
@@ -268,10 +280,10 @@ Bool TTimelineInstance::ProcessKeyframes(const TLAsset::TTempKeyframeData& Keyfr
 			for(u32 uIndex2 = 0; uIndex2 < pFromCmdList->GetCommands().GetSize(); uIndex2++)
 			{
 				// Get the command from the 'from' command list
-				TLAsset::TAssetTimelineCommand& FromCmd = pFromCmdList->GetCommands().ElementAt(uIndex2);
+				TLAsset::TTimelineCommand& FromCmd = pFromCmdList->GetCommands().ElementAt(uIndex2);
 
 				// Does the same command occur in the 'to' keyframe node command list?
-				TLAsset::TAssetTimelineCommand* pToCmd = pToCmdList->GetCommands().Find(FromCmd.GetMessageRef());
+				TLAsset::TTimelineCommand* pToCmd = pToCmdList->GetCommands().Find(FromCmd.GetMessageRef());
 
 				if(pToCmd != NULL)
 				{
@@ -321,7 +333,7 @@ Bool TTimelineInstance::ProcessKeyframes(const TLAsset::TTempKeyframeData& Keyfr
 				for(u32 uIndex2 = 0; uIndex2 < pFromCmdList->GetCommands().GetSize(); uIndex2++)
 				{
 					// Get the command from the 'from' command list
-					TLAsset::TAssetTimelineCommand& FromCmd = pFromCmdList->GetCommands().ElementAt(uIndex2);
+					TLAsset::TTimelineCommand& FromCmd = pFromCmdList->GetCommands().ElementAt(uIndex2);
 
 					SyncBool Result = SendCommandAsMessage(&FromCmd, NULL, pFromCmdList->GetNodeGraphRef(), pFromCmdList->GetNodeRef());
 
@@ -366,7 +378,7 @@ Bool TTimelineInstance::ProcessKeyframes(const TLAsset::TTempKeyframeData& Keyfr
 }
 
 
-SyncBool TTimelineInstance::SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFromCommand, TLAsset::TAssetTimelineCommand* pToCommand, TRef NodeGraphRef, TRef NodeRef, float fPercent, Bool bTestDataForInterp)
+SyncBool TTimelineInstance::SendCommandAsMessage(TLAsset::TTimelineCommand* pFromCommand, TLAsset::TTimelineCommand* pToCommand, TRef NodeGraphRef, TRef NodeRef, float fPercent, Bool bTestDataForInterp)
 {
 #ifdef DEBUG_TIMELINE
 	TLDebug_Print("Sending timeline command");

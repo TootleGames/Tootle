@@ -10,7 +10,7 @@
 
 
 TLAsset::TFont::TFont(const TRef& AssetRef) :
-	TAsset				( "Font", AssetRef ),
+	TAsset				( GetAssetType_Static(), AssetRef ),
 	m_ImportChildIndex	( 0 )
 {
 }

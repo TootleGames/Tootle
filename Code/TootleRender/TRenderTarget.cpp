@@ -861,7 +861,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 
 				//	missing texture - try and use debug one
 				if ( !pTexture )
-					pTexture = TLAsset::LoadAsset("d_texture",TRUE).GetObject<TLAsset::TTexture>();
+					pTexture = TLAsset::GetAsset<TLAsset::TTexture>("d_texture");
 			}
 
 			//	enable alpha if texture is alpha'd
@@ -918,12 +918,9 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 			Opengl::EnableAlpha( FALSE );
 
 			//	get the debug cross
-			TPtr<TLAsset::TAsset>& pAsset = TLAsset::LoadAsset("d_cross",TRUE);
-			if ( pAsset && pAsset->GetAssetType() == "mesh" )
-			{
-				TLAsset::TMesh* pMesh = pAsset.GetObject<TLAsset::TMesh>();
+			TLAsset::TMesh* pMesh = TLAsset::GetAsset<TLAsset::TMesh>("d_cross");
+			if ( pMesh )
 				DrawMesh( *pMesh, NULL, pRenderNode, RenderNodeRenderFlags, FALSE );
-			}
 		}
 
 		//	render local bounds box in current [render object's] transform

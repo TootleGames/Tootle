@@ -25,15 +25,41 @@ namespace TLAsset
 	class TAssetFactory;	//	asset factory
 	class TLoadTask;		//	loading-asset task
 
-	TPtr<TAsset>&		GetAsset(TRefRef AssetRef,Bool LoadedOnly=FALSE);	//	return a pointer to an asset - if LoadedOnly, returns a NULL pointer for assets that aren't loaded
-	TRef				GetFreeAssetRef(TRef BaseRef=TRef());				//	get an asset ref that isn't in use (starting from base ref)
-	void				GetAssetArray(TPtrArray<TAsset>& AssetArray,TRefRef AssetType,Bool LoadedOnly=FALSE);	//	get an array of assets of a certain type
-	TPtr<TAsset>&		LoadAsset(TRefRef AssetRef,Bool bBlocking=FALSE,TRefRef ExpectedAssetType=TRef());						//	load asset from a file systems
-	TPtr<TAsset>&		CreateAsset(TRefRef AssetRef,TRefRef AssetType);	//	return a pointer to a new asset - mostly used for runtime asssets
-	void				DeleteAsset(TRefRef AssetRef);						//	delete an asset
-	Bool				SaveAsset(TRefRef AssetRef);						//	export an asset out to a .asset file - currently writes to the user file system
+	//	this replaces the old LoadAsset and GetAsset functions.
+	//	get an asset from the sytem. If it's not loaded, it will try to.
+	//	if Blocking is SyncTrue and the file is still loading then NULL will be returned.
+	//	use SyncTrue to load, SyncFalse to NOT load, SyncWait to async-load
+	TPtr<TAsset>&				GetAssetPtr(const TTypedRef& AssetAndTypeRef,SyncBool LoadAsset=SyncTrue);	
+	template<class ASSETTYPE>
+	FORCEINLINE ASSETTYPE*		GetAsset(TRefRef AssetRef,SyncBool LoadAsset=SyncTrue)		{	return GetAssetPtr( TTypedRef( AssetRef, ASSETTYPE::GetAssetType_Static() ), LoadAsset ).GetObject<ASSETTYPE>();	}
+	FORCEINLINE TLAsset::TAsset* GetAsset(const TTypedRef& AssetAndTypeRef,SyncBool LoadAsset=SyncTrue)		{	return GetAssetPtr( AssetAndTypeRef, LoadAsset ).GetObject();	}
+	FORCEINLINE TLAsset::TAsset* GetAsset(TRefRef AssetRef,TRefRef AssetType,SyncBool LoadAsset=SyncTrue)	{	return GetAsset( TTypedRef( AssetRef, AssetType ), LoadAsset );	}
+	template<class ASSETTYPE>
+	TPtr<ASSETTYPE>				GetAssetPtr(TRefRef AssetRef,SyncBool LoadAsset=SyncTrue);
+	TPtr<TLAsset::TAsset>&		GetAssetInstance(const TTypedRef& AssetAndTypeRef);				//	not really for general public usage
 
-	TLArray::SortResult	AssetSort(const TPtr<TAsset>& a,const TPtr<TAsset>& b,const void* pTestRef);	//	asset sort
+	//	wrapper to just simply load an asset - returns TRUE if currently loaded, SyncWait if loading, SyncFalse if failed
+	SyncBool					LoadAsset(const TTypedRef& AssetAndTypeRef,Bool BlockLoad);
+	FORCEINLINE SyncBool		LoadAsset(TRefRef AssetRef,TRefRef AssetType,Bool BlockLoad)	{	return LoadAsset( TTypedRef( AssetRef, AssetType ), BlockLoad );	}
+	template<class ASSETTYPE>
+	FORCEINLINE SyncBool		LoadAsset(TRefRef AssetRef,Bool BlockLoad)						{	return LoadAsset( TTypedRef( AssetRef, ASSETTYPE::GetType_Static() ), BlockLoad );	}
+
+	TPtr<TAsset>&				CreateAsset(const TTypedRef& AssetAndTypeRef);		//	return a pointer to a new asset - mostly used for runtime asssets
+	FORCEINLINE TPtr<TAsset>&	CreateAsset(TRefRef AssetRef,TRefRef AssetType)		{	return CreateAsset( TTypedRef( AssetRef, AssetType ) );	}
+
+	TTypedRef					GetFreeAssetRef(TTypedRef BaseAndTypeRef);			//	get an asset ref that isn't in use (starting from base ref)
+	FORCEINLINE TTypedRef		GetFreeAssetRef(TRefRef AssetRef,TRefRef AssetType)	{	return GetFreeAssetRef( TTypedRef( AssetRef, AssetType ) );	}
+
+	Bool						SaveAsset(const TTypedRef& AssetAndTypeRef);		//	write an asset's current state back to the file system - fails if the asset isn't currently loaded
+	FORCEINLINE Bool			SaveAsset(TRefRef AssetRef,TRefRef AssetType)		{	return SaveAsset( TTypedRef( AssetRef, AssetType ) );	}
+	Bool						SaveAsset(const TLAsset::TAsset* pAsset);
+
+	void						DeleteAsset(const TTypedRef& AssetAndTypeRef);		//	delete an asset from the asset factory
+	FORCEINLINE void			DeleteAsset(TRefRef AssetRef,TRefRef AssetType)		{	DeleteAsset( TTypedRef( AssetRef, AssetType ) );	}
+	void						DeleteAsset(const TLAsset::TAsset* pAsset);
+
+
+	TLArray::SortResult			AssetSort(const TPtr<TAsset>& a,const TPtr<TAsset>& b,const void* pTestRef);	//	asset sort
 
 	extern TPtr<TLAsset::TAssetFactory>	g_pFactory;
 };
@@ -56,18 +82,50 @@ public:
 	}
 
 	// Asset events - should be private but called from the LoadTask
-	void	OnAssetLoad(TRefRef AssetRef, TRefRef AssetType, Bool bStatus);
-	void	OnAssetUnload(TRefRef AssetRef, TRefRef AssetType);
+	void	OnAssetLoad(const TTypedRef& AssetAndTypeRef, Bool bStatus);
+	void	OnAssetUnload(const TTypedRef& AssetAndTypeRef);
 
 protected:
 	virtual TLAsset::TAsset*	CreateObject(TRefRef InstanceRef,TRefRef TypeRef);
 
-	virtual SyncBool Initialise();
-	virtual SyncBool Update(float fTimeStep);
-	virtual SyncBool Shutdown();
+	virtual SyncBool			Initialise();
+	virtual SyncBool			Update(float fTimeStep);
+	virtual SyncBool			Shutdown();
 	
-	virtual void			OnEventChannelAdded(TRefRef refPublisherID,TRefRef refChannelID);
+	virtual void				OnEventChannelAdded(TRefRef refPublisherID,TRefRef refChannelID);
 	
 };
 
 
+//------------------------------------------------------------
+//	wrapper to just simply load an asset - returns TRUE if currently loaded, SyncWait if loading, SyncFalse if failed
+//------------------------------------------------------------
+template<class ASSETTYPE>
+TPtr<ASSETTYPE> TLAsset::GetAssetPtr(TRefRef AssetRef,SyncBool LoadAsset)
+{
+	//	make up asset+type ref
+	TRef AssetTypeRef = ASSETTYPE::GetAssetType_Static();
+	TTypedRef AssetAndTypeRef( AssetRef, AssetTypeRef );
+
+	//	fetch base asset ptr
+	TPtr<TLAsset::TAsset>& pAsset = GetAssetPtr( AssetAndTypeRef, LoadAsset );
+
+	//	debug check for invalid casting
+	if ( pAsset && pAsset->GetAssetType() != AssetTypeRef )
+	{
+		#ifdef _DEBUG
+		{
+			TTempString Debug_String("fetched asset Ptr for ");
+			AssetAndTypeRef.GetString( Debug_String );
+			Debug_String.Append(" but asset's type is ");
+			pAsset->GetAssetType().GetString( Debug_String );
+			TLDebug_Break( Debug_String );
+		}
+		#endif
+		return TPtr<ASSETTYPE>(NULL);
+	}
+
+	return pAsset;	
+}
+
+	

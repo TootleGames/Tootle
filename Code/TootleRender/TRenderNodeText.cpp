@@ -22,11 +22,9 @@ TLRender::TRenderNodeText::TRenderNodeText(TRefRef RenderNodeRef,TRefRef TypeRef
 void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 {
 	//	read init data
-	//	import font - if one specified then load
-	if ( Message.ImportData("FontRef", m_FontRef ) )
-	{
-		TLAsset::LoadAsset( m_FontRef );
-	}
+
+	//	import font
+	Message.ImportData("FontRef", m_FontRef );
 
 	// [07/05/09] DB - This shouldn't be used anymore.  Use a <TextRef> in place of the <Text> tag in any XML file
 	if ( Message.ImportDataString("Text", m_Text ) )
@@ -114,7 +112,7 @@ void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 		else if ( TextBoxMesh.IsValid() )
 		{
 			//	get datum directly from a mesh
-			TLAsset::TMesh* pMesh = TLAsset::LoadAsset(TextBoxMesh,TRUE,"mesh").GetObject<TLAsset::TMesh>();
+			TLAsset::TMesh* pMesh = TLAsset::GetAsset<TLAsset::TMesh>(TextBoxMesh);
 			if ( pMesh )
 			{
 				pBoxShape = pMesh->GetDatum(TextBoxDatum);
@@ -373,10 +371,9 @@ TLRender::TRenderNodeVectorText::TRenderNodeVectorText(TRefRef RenderNodeRef,TRe
 Bool TLRender::TRenderNodeVectorText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 {
 	//	grab our font
-	TPtr<TLAsset::TAsset>& pFontAsset = TLAsset::GetAsset( m_FontRef, TRUE );
+	TLAsset::TFont* pFontAsset = TLAsset::GetAsset<TLAsset::TFont>( m_FontRef );
 	if ( !pFontAsset )
 		return FALSE;
-	TLAsset::TFont& Font = *pFontAsset.GetObject<TLAsset::TFont>();
 
 	//	relative to parent so start at 0,0,0
 	float3 GlyphPos(0,0,0);
@@ -402,7 +399,7 @@ Bool TLRender::TRenderNodeVectorText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 		TRenderNodeVectorGlyph& RenderGlyph = *pChild.GetObject<TRenderNodeVectorGlyph>();
 
 		//	update glyph
-		SetGlyph( RenderGlyph, Font, GlyphPos, m_Text[charindex], TextBounds );
+		SetGlyph( RenderGlyph, *pFontAsset, GlyphPos, m_Text[charindex], TextBounds );
 		
 		//	take parents render flags
 		RenderGlyph.GetRenderFlags() = this->GetRenderFlags();
@@ -428,12 +425,15 @@ Bool TLRender::TRenderNodeVectorText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 		//		Message.ExportData(TRef_Static(T,r,a,n,s), GlyphPos);
 		//		Message.ExportData("Char", m_Text[charindex]);
 		//		TLRender::g_pRendergraph->CreateNode(GlyphRef, "Glyph", "Root");
+		//	
+		//	gr: if this is implemented we need to move the changes to the existing text to be a SetProperty message too
+		//		in order to sync the existing-glyph change and the new-glyph creation
 		///////////////////////////////////////////////////////////////////////////////
 		TPtr<TRenderNode> pRenderGlyphPtr = new TRenderNodeVectorGlyph( GlyphRef, "Glyph" );
 		TLRender::g_pRendergraph->AddNode( pRenderGlyphPtr, this->GetNodeRef() );
 
 		TRenderNodeVectorGlyph* pRenderGlyph = pRenderGlyphPtr.GetObject<TRenderNodeVectorGlyph>();
-		SetGlyph( *pRenderGlyph, Font, GlyphPos, m_Text[charindex], TextBounds );
+		SetGlyph( *pRenderGlyph, *pFontAsset, GlyphPos, m_Text[charindex], TextBounds );
 
 		///////////////////////////////////////////////////////////////////////////////
 	
@@ -578,19 +578,11 @@ void TLRender::TRenderNodeTextureText::Initialise(TLMessaging::TMessage& Message
 	TLRender::TRenderNodeText::Initialise( Message );
 	
 	//	block load the atlas so we can check the asset is the right type and assign the texture for the font
-	TPtr<TLAsset::TAsset>& pAtlasAsset = TLAsset::LoadAsset( GetFontRef(), TRUE );
+	TLAsset::TAtlas* pAtlasAsset = TLAsset::GetAsset<TLAsset::TAtlas>( GetFontRef() );
 	if ( pAtlasAsset )
 	{
-		if ( pAtlasAsset->GetAssetType() == "Atlas" )
-		{
-			TLAsset::TAtlas& Atlas = *(pAtlasAsset.GetObject<TLAsset::TAtlas>());
-			SetTextureRef( Atlas.GetTextureRef() );
-			TLAsset::LoadAsset( Atlas.GetTextureRef() );
-		}
-		else
-		{
-			TLDebug_Break("TextureText render node assigned font asset which is not an atlas");
-		}
+		SetTextureRef( pAtlasAsset->GetTextureRef() );
+		TLAsset::LoadAsset( pAtlasAsset->GetTextureRef(), "Texture", FALSE );
 	}
 }
 
@@ -608,7 +600,7 @@ Bool TLRender::TRenderNodeTextureText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 	}
 
 	//	grab atlas asset
-	TLAsset::TAtlas* pAtlasAsset = TLAsset::LoadAsset( GetFontRef(), TRUE, TRef_Static(A,t,l,a,s) ).GetObject<TLAsset::TAtlas>();
+	TLAsset::TAtlas* pAtlasAsset = TLAsset::GetAsset<TLAsset::TAtlas>( GetFontRef() );
 	if ( !pAtlasAsset )
 		return FALSE;
 

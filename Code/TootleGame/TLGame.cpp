@@ -27,7 +27,7 @@ TLGame::TScreenRayTest::~TScreenRayTest()
 	//	delete asset
 	if ( m_pMesh )
 	{
-		TLAsset::DeleteAsset( m_pMesh->GetAssetRef() );
+		TLAsset::DeleteAsset( m_pMesh );
 		m_pMesh = NULL;
 	}
 

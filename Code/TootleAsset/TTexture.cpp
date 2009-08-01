@@ -5,7 +5,7 @@
 
 
 TLAsset::TTexture::TTexture(TRefRef AssetRef) :
-	TAsset		( "Texture", AssetRef ),
+	TAsset		( GetAssetType_Static(), AssetRef ),
 	m_Size		( 0, 0 ),
 	m_HasAlpha	( FALSE )
 {

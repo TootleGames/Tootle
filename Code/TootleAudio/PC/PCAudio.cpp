@@ -66,10 +66,10 @@ Bool Platform::RemoveSource(TRefRef AudioSourceRef)
 	return TRUE;
 }
 
-Bool Platform::CreateBuffer(TRefRef AudioAssetRef)
+Bool Platform::CreateBuffer(TLAsset::TAudio& AudioAsset)
 {
 #if(AUDIO_SYSTEM == AUDIO_OPENAL)
-	if(!OpenAL::CreateBuffer(AudioAssetRef))
+	if(!OpenAL::CreateBuffer(AudioAsset))
 	{
 		TLDebug_Print("Failed to create buffer for audio");	
 		return FALSE;

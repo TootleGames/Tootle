@@ -27,6 +27,8 @@ class TLAsset::TTexture : public TLAsset::TAsset
 public:
 	TTexture(TRefRef AssetRef);
 
+	static TRef						GetAssetType_Static()					{	return TRef_Static(T,e,x,t,u);	}
+
 	Bool							SetSize(const Type2<u16>& NewSize,Bool EnableAlpha);	//	set a new size, re-alloc data etc - fails if size is incompatbile
 	FORCEINLINE const Type2<u16>&	GetSize() const							{	return m_Size;	}
 	FORCEINLINE const u16&			GetWidth() const						{	return m_Size.x;	}

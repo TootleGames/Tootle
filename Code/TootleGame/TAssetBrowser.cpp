@@ -21,20 +21,10 @@ TLGame::TAssetBrowser::TAssetBrowser(TRefRef ScreenRef,TRefRef FontRef) :
 //----------------------------------------------
 SyncBool TLGame::TAssetBrowser::Initialise()
 {	
-	//	subscribe to input system
-	this->SubscribeTo( TLInput::g_pInputSystem );
-	this->SubscribeTo( TLCore::g_pCoreManager );
-
-	//	if font ref is invalid, and we can't load it, fetch the first font we have loaded
-	TPtr<TLAsset::TAsset>& pFontAsset = TLAsset::LoadAsset( m_FontRef );
-
-	//	unknown font
-	if ( !pFontAsset )
+	//	load font
+	if ( TLAsset::LoadAsset( m_FontRef, "Font", TRUE ) == SyncFalse )
 		return SyncFalse;
 		
-	m_FontRef = pFontAsset->GetAssetRef();
-
-
 	//	screen ref is invalid? - resort to a valid ref but we shouldnt have an invalid one
 	if ( !m_ScreenRef.IsValid() )
 	{
@@ -77,6 +67,10 @@ SyncBool TLGame::TAssetBrowser::Initialise()
 	//	init menu
 	if ( !OpenMenu("Root") )
 		return SyncFalse;
+
+	//	subscribe to input system
+	this->SubscribeTo( TLInput::g_pInputSystem );
+	this->SubscribeTo( TLCore::g_pCoreManager );
 
 	//	everything setup, menu open
 	return SyncTrue;
@@ -147,8 +141,10 @@ TPtr<TLMenu::TMenu> TLGame::TAssetBrowser::CreateMenu(TRefRef MenuRef)
 		return pNewMenu;
 	}
 	
+	TLDebug_Break("gr: need to rework how this works, need to duplicate existing menu asset i think");
+	/*
 	//	assume any other menu ref is for an asset
-	TPtr<TLAsset::TAsset>& pAsset = TLAsset::GetAsset( MenuRef );
+	TLAsset::TMenu* pAsset = TLAsset::GetAsset( MenuRef );
 	if ( pAsset )
 	{
 		//	create asset-specific menu
@@ -170,6 +166,7 @@ TPtr<TLMenu::TMenu> TLGame::TAssetBrowser::CreateMenu(TRefRef MenuRef)
 
 		return pNewMenu;
 	}
+	*/
 
 	return TMenuController::CreateMenu( MenuRef );
 }

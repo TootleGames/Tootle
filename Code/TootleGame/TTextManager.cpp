@@ -24,8 +24,7 @@ Bool TTextManager::GetText(TRefRef TextRef, TString& Text,TLAsset::TText::TTextR
 		TRefRef TextSection = m_TextFiles.ElementAtConst(uIndex);
 
 		// Get the text asset file from the asset system
-		TPtr<TLAsset::TText> pAsset = TLAsset::GetAsset(TextSection, TRUE);
-
+		TLAsset::TText* pAsset = TLAsset::GetAsset<TLAsset::TText>(TextSection);
 		if ( !pAsset )
 			continue;
 		
@@ -54,15 +53,14 @@ Bool TTextManager::GetText(TRefRef TextRef, TRefRef TextSection, TString& Text,T
 		return FALSE;
 
 	// Get the asset file and return the GetText routine form that
-	TPtr<TLAsset::TText> pAsset = TLAsset::GetAsset(TextSection, TRUE);
-
-	if(!pAsset.IsValid())
+	TLAsset::TText* pTextAsset = TLAsset::GetAsset<TLAsset::TText>(TextSection);
+	if( !pTextAsset )
 		return FALSE;
 
 	if ( pReplaceTable )
-		return pAsset->GetText(m_LanguageRef, TextRef, Text, *pReplaceTable );
+		return pTextAsset->GetText(m_LanguageRef, TextRef, Text, *pReplaceTable );
 	else
-		return pAsset->GetText(m_LanguageRef, TextRef, Text );
+		return pTextAsset->GetText(m_LanguageRef, TextRef, Text );
 }
 
 void TTextManager::OnLanguageChanged()	

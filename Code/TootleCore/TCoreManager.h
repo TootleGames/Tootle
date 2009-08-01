@@ -63,7 +63,7 @@ public:
 	
 	TRef					GetHardwareLanguage();
 
-	FORCEINLINE void		StoreTimestamp(TRefRef TimestampRef, TLTime::TTimestampMicro& Timestamp)	{	m_MachineData.ExportData(TimestampRef, Timestamp);	}
+	FORCEINLINE void		StoreTimestamp(TRefRef TimestampRef,const TLTime::TTimestampMicro& Timestamp)	{	m_MachineData.ExportData(TimestampRef, Timestamp);	}
 	FORCEINLINE Bool		RetrieveTimestamp(TRefRef TimestampRef, TLTime::TTimestampMicro& Timestamp)	{	return m_MachineData.ImportData(TimestampRef, Timestamp);	}
 	
 	// Messaging

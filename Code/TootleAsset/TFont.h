@@ -24,6 +24,8 @@ class TLAsset::TFont : public TLAsset::TAsset
 public:
 	TFont(const TRef& AssetRef);
 
+	static TRef					GetAssetType_Static()						{	return TRef_Static4(F,o,n,t);	}
+
 	TPtr<TLAsset::TMesh>&	GetGlyph(u16 Character)		{	return m_Glyphs.FindPtr(Character);	}
 	TPtr<TLAsset::TMesh>&	GetGlyph(char Character)	{	u16 Char16 = ((u16)Character) & 0x00ff;	return GetGlyph( Char16);	}
 	u32						GetGlyphCount() const		{	return m_Glyphs.GetSize();	}

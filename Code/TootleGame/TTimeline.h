@@ -2,7 +2,7 @@
 
 #include <TootleCore/TFlags.h>
 #include <TootleCore/TKeyArray.h>
-#include <TootleAsset/TAssetTimeline.h>
+#include <TootleAsset/TTimeline.h>
 #include <TootleCore/TRelay.h>
 #include <TootleCore/TCoreManager.h>
 #include <TootleCore/TGraphBase.h>
@@ -28,13 +28,8 @@ public:
 	};
 
 public:
-	TTimelineInstance(TRefRef AssetScriptRef) :
-		m_AssetScriptRef(AssetScriptRef),
-		m_fTime(0.0f),
-		m_fPlaybackRateModifier(1.0f)
-	{
-		TLAsset::LoadAsset( m_AssetScriptRef );
-	}
+	TTimelineInstance(TRefRef TimelineAssetRef);
+	TTimelineInstance(TPtr<TLAsset::TTimeline>& pTimelineAsset);
 
 	void					Initialise();
 	void					Initialise(TLMessaging::TMessage& InitMessage);
@@ -51,16 +46,12 @@ public:
 	FORCEINLINE void		SetPlaybackRateModifier(const float& fRateModifier)	{ m_fPlaybackRateModifier = fRateModifier; }
 	FORCEINLINE float		GetPlaybackRateModifier()					const	{ return m_fPlaybackRateModifier; }
 
-	//	valid asset?
-	FORCEINLINE Bool		GetAssetExists() const								{	return TLAsset::LoadAsset( m_AssetScriptRef, TRUE, "Timeline" ).IsValid();	}
-
 protected:
 	virtual void		ProcessMessage(TLMessaging::TMessage& Message);
 
 private:
 	SyncBool			DoUpdate(float fTimestep, Bool bForced);	//	returns SyncFalse when the timeline has come to an end
 
-	TLAsset::TAssetTimeline*			GetAssetTimeline();
 	FORCEINLINE TArray<TRef>*			GetGraphNodeRefArray(TRefRef GraphRef);
 	FORCEINLINE TLGraph::TGraphBase*	GetGraph(TRefRef GraphRef);
 
@@ -69,7 +60,7 @@ private:
 	Bool					ProcessFinalKeyframe(const TLAsset::TTempKeyframeData& Keyframe);
 
 	// Command handling
-	SyncBool					SendCommandAsMessage(TLAsset::TAssetTimelineCommand* pFromCommand, TLAsset::TAssetTimelineCommand* pToCommand, TRef NodeGraphRef, TRef NodeRef, float fPercent = 0.0f, Bool bTestDataForInterp = FALSE);
+	SyncBool					SendCommandAsMessage(TLAsset::TTimelineCommand* pFromCommand, TLAsset::TTimelineCommand* pToCommand, TRef NodeGraphRef, TRef NodeRef, float fPercent = 0.0f, Bool bTestDataForInterp = FALSE);
 
 	void					AttachInterpedDataToMessage(TPtr<TBinaryTree>& pFromData, TPtr<TBinaryTree>& pToData, TRefRef InterpMethod, const float& fPercent, TLMessaging::TMessage& Message);
 
@@ -78,7 +69,8 @@ private:
 	void					OnTimeSet();
 
 private:
-	TRef						m_AssetScriptRef;			// Ref of the Asset script object loaded from the XML data that we are using
+	TRef						m_TimelineAssetRef;			// Ref of the Asset script object loaded from the XML data that we are using
+	TPtr<TLAsset::TTimeline>	m_pTimeline;				//	timeline asset
 	float						m_fTime;					// Current time of the asset script instance
 	float						m_fPlaybackRateModifier;	// Playback rate modifier. Allows you to pause, play forward and backward at any speed
 

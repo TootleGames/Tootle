@@ -22,8 +22,8 @@ namespace TLAsset
 class TLAsset::TShader : public TLAsset::TAsset
 {
 public:
-	TShader(const TRef& AssetRef) :	TAsset( "Shader", AssetRef )	{	}
+	TShader(const TRef& AssetRef) :	TAsset( GetAssetType_Static(), AssetRef )	{	}
 
-
+	static TRef						GetAssetType_Static()			{	return TRef_Static(S,h,a,d,e);	}
 };
 

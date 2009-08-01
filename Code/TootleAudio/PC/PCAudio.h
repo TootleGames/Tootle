@@ -23,7 +23,7 @@ namespace TLAudio
 		Bool		CreateSource(TRefRef AudioSourceRef);
 		Bool		RemoveSource(TRefRef AudioSourceRef);
 		
-		Bool		CreateBuffer(TRefRef AudioAssetRef);
+		Bool		CreateBuffer(TLAsset::TAudio& AudioAsset);
 		Bool		RemoveBuffer(TRefRef AudioAssetRef);
 		
 		Bool		HasSource(TRefRef AudioSourceRef);

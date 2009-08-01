@@ -83,7 +83,7 @@ SyncBool TLRender::TRenderZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
 	{
 #ifdef _DEBUG
 		//	if there is no mesh, then this is understandable and wont throw up an error
-		TPtr<TLAsset::TMesh>& pMesh = pRenderNode->GetMeshAsset(TRUE);
+		TPtr<TLAsset::TMesh>& pMesh = pRenderNode->GetMeshAsset();
 		if ( pMesh )
 		{
 			//	gr: if we get here whilst the zone we're in is splitting, then we return Wait, 
@@ -209,12 +209,12 @@ void TLRender::TRenderNode::Copy(const TRenderNode& OtherRenderNode)
 //------------------------------------------------------------
 //	default behaviour fetches the mesh from the asset lib with our mesh ref
 //------------------------------------------------------------
-TPtr<TLAsset::TMesh>& TLRender::TRenderNode::GetMeshAsset(Bool BlockLoad)
+TPtr<TLAsset::TMesh>& TLRender::TRenderNode::GetMeshAsset()
 {
 	//	re-fetch mesh if we need to
 	if ( GetMeshRef().IsValid() && !m_pMeshCache )
 	{
-		m_pMeshCache = TLAsset::LoadAsset( GetMeshRef(), BlockLoad, TRef_Static4(M,e,s,h) );
+		m_pMeshCache = TLAsset::GetAssetPtr<TLAsset::TMesh>( GetMeshRef() );
 	}
 
 	return m_pMeshCache;
@@ -223,12 +223,12 @@ TPtr<TLAsset::TMesh>& TLRender::TRenderNode::GetMeshAsset(Bool BlockLoad)
 //------------------------------------------------------------
 //	default behaviour fetches the mesh from the asset lib with our mesh ref
 //------------------------------------------------------------
-TPtr<TLAsset::TTexture>& TLRender::TRenderNode::GetTextureAsset(Bool BlockLoad)
+TPtr<TLAsset::TTexture>& TLRender::TRenderNode::GetTextureAsset()
 {
 	//	re-fetch mesh if we need to
 	if ( GetTextureRef().IsValid() && !m_pTextureCache )
 	{
-		m_pTextureCache = TLAsset::LoadAsset( GetTextureRef(), BlockLoad, TRef_Static(T,e,x,t,u) );
+		m_pTextureCache = TLAsset::GetAssetPtr<TLAsset::TTexture>( GetTextureRef() );
 	}
 
 	return m_pTextureCache;
@@ -661,7 +661,8 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 	if ( Message.ImportData("MeshRef", m_MeshRef ) )
 	{
 		//	start loading the asset in case we havent loaded it already
-		TLAsset::LoadAsset( m_MeshRef );
+		if ( m_MeshRef.IsValid() )
+			TLAsset::LoadAsset( m_MeshRef, TRef_Static4(M,e,s,h), FALSE );
 
 		//	mesh ref changed
 		OnMeshRefChanged();
@@ -671,7 +672,8 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 	if ( Message.ImportData("TextureRef", m_TextureRef ) )
 	{
 		//	start loading the asset in case we havent loaded it already
-		TLAsset::LoadAsset( m_TextureRef );
+		if ( m_TextureRef.IsValid() )
+			TLAsset::LoadAsset( m_TextureRef, TRef_Static(T,e,x,t,u), FALSE );
 
 		//	texture ref changed
 		OnTextureRefChanged();

@@ -141,15 +141,15 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 		TLDebug_Break("File expected");
 		return SyncFalse;
 	}
-	
+
 	//	already loaded
 	if ( pFile->IsLoaded() == SyncTrue )
 		return SyncTrue;
-	
+
 	//	get full path and filename
 	TString FullFilename = m_Directory;
 	FullFilename.Append( pFile->GetFilename() );
-	
+
 	//	open
 	FILE* pFileHandle = fopen( FullFilename.GetData(), "rb" );
 	
@@ -164,11 +164,11 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 	{
 		pFile->GetFlags().Clear( TFile::OutOfDate );
 	}
-	
+
 	//	move cursor to end and get position
 	fseek( pFileHandle, 0, SEEK_END );
 	s32 FileSize = ftell( pFileHandle );
-	
+
 	//	file size is zero, treat as non-existant
 	if ( FileSize == 0 )
 	{
@@ -177,11 +177,11 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 		pFile->SetIsLoaded( SyncFalse );
 		return SyncFalse;
 	}
-	
-	
+
+
 	//	file data
 	TBinary& Data = pFile->GetData();
-	
+
 	//	alloc data for file
 	if ( !Data.SetSize( FileSize ) )
 	{
@@ -190,17 +190,17 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 		pFile->SetIsLoaded( SyncWait );
 		return SyncWait;
 	}
-	
+
 	//	go back to the start of the file
 	fseek( pFileHandle, 0, SEEK_SET );
-	
+
 	//	read data
 	Bool FileTooBig = FALSE;
 	u32 DataRead = 0;
 	while ( DataRead < Data.GetSize() )
 	{
 		u64 ThisRead = fread( Data.GetData(DataRead), 1, Data.GetSize()-DataRead, pFileHandle );
-		
+
 		//	too much data!
 		if ( ThisRead > (u64)0xffffffff )
 		{
@@ -208,25 +208,25 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 			FileTooBig = TRUE;
 			break;
 		}
-		
+
 		if ( ThisRead <= 0 )
 		{
 			if ( TLDebug_Break("Read zero data from file") )
 				break;
 		}
-		
+
 		DataRead += (u32)ThisRead;
 	}
-	
+
 	//	close file
 	fclose( pFileHandle );
 	pFileHandle = NULL;
-	
+
 	//	make sure file is marked as okay
 	pFile->GetFlags().Clear( TFile::Lost );
 	pFile->GetFlags().Clear( TFile::TooBig );
 	pFile->GetFlags().Clear( TFile::OutOfDate );
-	
+
 	//	file was too big
 	if ( FileTooBig )
 	{
@@ -234,14 +234,14 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 		pFile->SetIsLoaded( SyncFalse );	//	failed to load
 		return SyncFalse;
 	}
-	
+
 	//	is loaded now
 	pFile->OnFileLoaded();
-	
+
 	//	reset read pos ready for first use
 	//	gr: dont do this any more, we use the read pos to determine if we've attempted to read data post-import
 	//pFile->ResetReadPos();
-	
+
 	return SyncTrue;
 }
 
@@ -335,8 +335,8 @@ TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filenam
 	//	not allowed to write to this file sys
 	if ( !m_IsWritable )
 		return NULL;
-		
-	TFileRef FileRef = GetFileRef( Filename, TypeRef );
+
+	TTypedRef FileRef = GetFileAndTypeRef( Filename, TypeRef );
 
 	//	look for existing file
 	TPtr<TFile>& pFile = GetFile( FileRef );
@@ -344,7 +344,9 @@ TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filenam
 	{
 		if ( !pFile->GetFilename().IsEqual( Filename, FALSE ) )
 		{
-			TLDebug_Break("Called CreateFile(), new FileRef matches existing file, BUT filename is different. Conflict here. Aborting file creation");
+			TTempString Debug_String;
+			Debug_String.Appendf("Called CreateFile(%s) but new FileRef will match existing file (%s) BUT filename is different. Conflict here (2 files will resolve to same FileRef). Aborting file creation", Filename.GetData(), pFile->GetFilename().GetData() );
+			TLDebug_Break( Debug_String );
 			//return TLPtr::GetNullPtr<TLFileSys::TFile>();
 			return NULL;
 		}
@@ -391,9 +393,10 @@ TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filenam
 	}	
 	
 	//	check type returned matches up
-	if ( pNewFile->GetFileRefObject() != FileRef )
+	if ( pNewFile->GetFileAndTypeRef() != FileRef )
 	{
-		TLDebug_Break("Created new file, but file ref doesn't match to what we expected");
+		if ( !TLDebug_Break("Created new file, but file ref doesn't match to what we expected") )
+			return NULL;
 	}
 
 	//	return new instance if it worked
@@ -413,14 +416,14 @@ SyncBool Platform::LocalFileSys::WriteFile(TPtr<TFile>& pFile)
 		TLDebug_Break("File expected");
 		return SyncFalse;
 	}
-	
+
 	//	not allowed to write to this file sys
 	if ( !m_IsWritable )
 		return SyncFalse;
 
 	TTempString FullFilename = m_Directory;
 	FullFilename.Append( pFile->GetFilename() );
-	
+
 	//	open file for writing
 	FILE* pFileHandle = fopen( FullFilename.GetData(), "wb" );
 	
@@ -431,42 +434,42 @@ SyncBool Platform::LocalFileSys::WriteFile(TPtr<TFile>& pFile)
 		pFile->SetIsLoaded( SyncFalse );
 		return SyncFalse;
 	}
-	
+
 	//	go back to the start of the file
 	fseek( pFileHandle, 0, SEEK_SET );
-	
+
 	//	file data
 	TBinary& Data = pFile->GetData();
-	
+
 	//	write data
 	u32 DataWritten = 0;
 	while ( DataWritten < Data.GetSize() )
 	{
 		u64 ThisWritten = fwrite( Data.GetData(DataWritten), 1, Data.GetSize()-DataWritten, pFileHandle );
-		
+
 		if ( ThisWritten <= 0 )
 		{
 			if ( TLDebug_Break("Wrote zero data to file") )
 				break;
 		}
-		
+
 		//	too much data!
 		if ( ThisWritten > (u64)0xffffffff )
 		{
 			TLDebug_Break("written more data than a u32? somethings gone wrong");
 			break;
 		}
-		
+
 		DataWritten += (u32)ThisWritten;
 	}
-	
+
 	//	close file
 	fclose( pFileHandle );
 	pFileHandle = NULL;
-	
+
 	//	file can't be out of date any more!
 	pFile->GetFlags().Clear( TFile::OutOfDate );
-	
+
 	//	refresh file info
 	//UpdateFileInstance( pFile, FALSE );
 	

@@ -351,7 +351,7 @@ Bool TApplication::TApplicationState_Bootup::CreateIntroScreen()
 	}
 		
 	//	create background graphic
-	TPtr<TLAsset::TAsset>& pBgAsset = TLAsset::LoadAsset("logo", TRUE);
+	TLAsset::TMesh* pBgAsset = TLAsset::GetAsset<TLAsset::TMesh>("logo");
 	if ( pBgAsset )
 	{
 		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
@@ -390,11 +390,11 @@ Bool TApplication::TApplicationState_Bootup::CreateIntroScreen()
 	}
 
 	// Create timeline
-	TPtr<TLAsset::TAsset>& pIntroTimeline = TLAsset::LoadAsset("t_logo", TRUE);
+	TPtr<TLAsset::TTimeline> pIntroTimeline = TLAsset::GetAssetPtr<TLAsset::TTimeline>("t_logo");
 	if ( pIntroTimeline )
 	{
 		// Create the timeline instance
-		m_pTimelineInstance = new TLAnimation::TTimelineInstance("t_logo");
+		m_pTimelineInstance = new TLAnimation::TTimelineInstance( pIntroTimeline );
 
 		// Bind the timeline instance to the render node and init
 		if(m_pTimelineInstance)
@@ -416,7 +416,7 @@ TRef TApplication::TApplicationState_Bootup::Update(float Timestep)
 	if(m_pTimelineInstance)
 		TimelineUpdate = m_pTimelineInstance->Update(Timestep);
 
-	if ( m_SkipBootup || (GetModeTime() > BOOTUP_TIME_MIN) && ArePreloadFilesLoaded() && (TimelineUpdate == SyncFalse) )
+	if ( m_SkipBootup || (GetModeTime() > BOOTUP_TIME_MIN) && PreloadFiles() && (TimelineUpdate == SyncFalse) )
 	{
 		TApplication* pApp = GetStateMachine<TApplication>();
 		
@@ -432,60 +432,43 @@ TRef TApplication::TApplicationState_Bootup::Update(float Timestep)
 };
 
 
-void TApplication::TApplicationState_Bootup::PreloadFiles()
+//--------------------------------------------------------
+//	load files. returns TRUE when finished (no more to load)
+//--------------------------------------------------------
+Bool TApplication::TApplicationState_Bootup::PreloadFiles()
 {
-	for(u32 uIndex = 0; uIndex < m_PreloadFiles.GetSize(); uIndex++)
+	for ( s32 i=m_PreloadFiles.GetLastIndex();	i>=0;	i-- )
 	{
-		TLAsset::LoadAsset(m_PreloadFiles.ElementAt(uIndex));
-	}
-}
-
-Bool TApplication::TApplicationState_Bootup::ArePreloadFilesLoaded()
-{
-	for(u32 uIndex = 0; uIndex < m_PreloadFiles.GetSize(); uIndex++)
-	{
-		TRef& refFileID = m_PreloadFiles.ElementAt(uIndex);
+		SyncBool AssetLoadState = TLAsset::LoadAsset( m_PreloadFiles[i], FALSE );
 		
-		TPtr<TLAsset::TAsset>& pAsset = TLAsset::GetAsset(refFileID);
-		if ( !pAsset )
-		{
-			TTempString DebugString("Preload: Missing Asset: ");
-			refFileID.GetString( DebugString );
-			TLDebug_Print( DebugString );
+		//	still loading
+		if ( AssetLoadState == SyncWait )
 			continue;
-		}
-		
-		TLAsset::TLoadingState AssetLoadingState = pAsset->GetLoadingState();
 
-		//	file failed to load
-		if ( AssetLoadingState == TLAsset::LoadingState_Failed )
+		//	failed show error
+		if ( AssetLoadState == SyncFalse )
 		{
-			TTempString DebugString("Preload: Asset failed to load: ");
-			refFileID.GetString( DebugString );
-			DebugString.Appendf(" %x", pAsset.GetObject() );
+			TTempString DebugString("Preload: Asset failed to load ");
+			m_PreloadFiles[i].GetString( DebugString );
 			TLDebug_Print( DebugString );
+
+			//	remove from preload list
+			m_PreloadFiles.RemoveAt( i );
 			continue;
 		}
-		else if ( AssetLoadingState == TLAsset::LoadingState_Loaded )
+
+		//	loaded, remove from preload list
+		if ( AssetLoadState == SyncTrue )
 		{
-			//	is loaded
+			//	remove from preload list
+			m_PreloadFiles.RemoveAt( i );
 			continue;
 		}
-		else
-		{
-			//	still waiting for this asset
-			TTempString DebugString("Preload: Waiting for asset to load... ");
-			refFileID.GetString( DebugString );
-			DebugString.Append(" (");
-			pAsset->GetAssetType().GetString( DebugString );
-			DebugString.Append(")");
-			TLDebug_Print( DebugString );
-			return FALSE;
-		}
+
+		TLDebug_Break("Unknown state here");
 	}
 
-	
-	return TRUE;
+	return (m_PreloadFiles.GetSize() == 0);
 }
 
 
@@ -504,15 +487,14 @@ void TApplication::TApplicationState_Bootup::OnEnd(TRefRef NextMode)
 	m_pTimelineInstance = NULL;
 
 
-	//	delete asset
-	TLAsset::DeleteAsset("logo");
+	//	delete assets we used
+	TLAsset::DeleteAsset("logo","Mesh");
+	TLAsset::DeleteAsset("t_logo","Timeline");
 	
 	TLTime::TTimestampMicro BootTime(TRUE);	
-	
 	TLCore::g_pCoreManager->StoreTimestamp("TSBootupTime", BootTime);
 	
 	TLTime::TTimestampMicro StartTime;
-	
 	if(TLCore::g_pCoreManager->RetrieveTimestamp("TSStartTime", StartTime))
 	{	
 		// Calculate time it took to go through the entire bootup sequence

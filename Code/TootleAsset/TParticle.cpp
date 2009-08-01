@@ -6,7 +6,7 @@
 
 
 TLAsset::TParticle::TParticle(TRefRef AssetRef) :
-	TLAsset::TAsset( "Particle", AssetRef )
+	TLAsset::TAsset( GetAssetType_Static(), AssetRef )
 {
 }
 

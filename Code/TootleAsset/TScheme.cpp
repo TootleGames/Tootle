@@ -103,7 +103,7 @@ SyncBool TLAsset::TSchemeNode::ExportData(TBinaryTree& Data)
 
 
 TLAsset::TScheme::TScheme(TRefRef AssetRef) :
-	TLAsset::TAsset( "Scheme", AssetRef )
+	TLAsset::TAsset( GetAssetType_Static(), AssetRef )
 {
 }
 

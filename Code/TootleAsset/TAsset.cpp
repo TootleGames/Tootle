@@ -8,13 +8,12 @@
 //----------------------------------------------------------
 //	
 //----------------------------------------------------------
-TLAsset::TAsset::TAsset(const TRef& AssetType,const TRef& AssetRef) :
-	m_AssetType		( AssetType ),
-	m_AssetRef		( AssetRef ),
-	m_LoadingState	( TLAsset::LoadingState_Init ),
-	m_Data			( STRef4(D,a,t,a) )
+TLAsset::TAsset::TAsset(TRefRef AssetType,TRefRef AssetRef) :
+	m_AssetAndTypeRef	( AssetRef, AssetType ),
+	m_LoadingState		( TLAsset::LoadingState_Init ),
+	m_Data				( STRef4(D,a,t,a) )
 {
-	m_AssetRef.GetString( m_Debug_AssetRefString );
+	m_AssetAndTypeRef.GetString( m_Debug_AssetRefString );
 }
 
 

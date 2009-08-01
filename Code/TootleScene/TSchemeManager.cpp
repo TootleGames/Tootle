@@ -260,6 +260,10 @@ void TSchemeManager::ProcessMessage(TLMessaging::TMessage& Message)
 
 
 
+
+
+
+
 // Scheme update request class
 TSchemeManager::TSchemeUpdateRequest::TSchemeUpdateRequest(TRefRef SchemeRef, TRefRef SchemeAssetRef, TSchemeUpdateType UpdateType) :
 	m_SchemeRef(SchemeRef),
@@ -274,51 +278,46 @@ TSchemeManager::TSchemeUpdateRequest::TSchemeUpdateRequest(TRefRef SchemeRef, TR
 }
 
 
+void TSchemeManager::TSchemeUpdateRequest::PublishFinishedLoadMessage(Bool Success)
+{
+	TLMessaging::TMessage Message("LOAD", TLScheme::g_pSchemeManager->GetManagerRef() );
+	Message.ExportData("SCHEME", GetSchemeRef() );
+	PublishMessage(Message);
+}
+
+
+void TSchemeManager::TSchemeUpdateRequest::PublishFinishedUnloadMessage()
+{
+	TLMessaging::TMessage Message("UNLOAD", TLScheme::g_pSchemeManager->GetManagerRef() );
+	Message.ExportData("SCHEME", GetSchemeRef() );
+	PublishMessage(Message);
+}
+
+
+
 TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Init::Update(float Timestep)
 {	
-	TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
-
-	if(pRequest->GetUpdateType() == Load)
+	if(GetRequest().GetUpdateType() == Load)
 	{
-		// Begin load		
-		TPtr<TLAsset::TAsset>& pAsset = TLAsset::GetAsset(pRequest->GetSchemeAssetRef(), TRUE);
+		// Begin sync load
+		SyncBool LoadingState = TLAsset::LoadAsset( GetRequest().GetSchemeAssetRef(), "Scheme", FALSE );
 
-		// Is the asset loaded?
-		if(!pAsset)
+		//	failed to load
+		if ( LoadingState == SyncFalse )
 		{
-			// Request the asset to be loaded
-			TLAsset::LoadAsset(pRequest->GetSchemeAssetRef());
-			
-			// Wait for asset to load
-			return TRef();
-		}
-
-		// Check make sure the asset loaded is a scheme
-		if(pAsset->GetAssetType() != "scheme")
-		{
-			TLDebug_Break("Loaded asset is not a scheme");
-
 			// Broadcast message to say we are done loading - effectively bail out
-			TLMessaging::TMessage Message("LOAD");
-			
-			TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
-			
-			if(pRequest)
-			{
-				Message.ExportData("SCHEME", pRequest->GetSchemeRef());
-				pRequest->PublishMessage(Message);
-			}
-
-			return TRef();
+			GetRequest().PublishFinishedLoadMessage(FALSE);
+			return "Finished";
 		}
-
-		// Asset is loaded
-		return "Loading";
+		else
+		{
+			// Asset is loading
+			return "Loading";
+		}
 	}
 	else
 	{
 		// Begin unload
-		
 		return "UnLoading";
 	}
 }	
@@ -326,46 +325,48 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Init::Update(float Times
 
 TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Loading::Update(float Timestep)
 {
-	TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
+	//	wait for scheme to load
+	SyncBool LoadingState = TLAsset::LoadAsset( GetRequest().GetSchemeAssetRef(), "Scheme", FALSE );
+	if ( LoadingState == SyncWait )
+	{
+		return TRef();
+	}
+	else if ( LoadingState == SyncFalse )
+	{
+		// Broadcast message to say we are done loading - effectively bail out
+		GetRequest().PublishFinishedLoadMessage(FALSE);
+		return "Finished";
+	}
+
+	//	get the now-loaded scheme
+	TLAsset::TScheme* pScheme = TLAsset::GetAsset<TLAsset::TScheme>( GetRequest().GetSchemeAssetRef() );
+	if ( !pScheme )
+	{
+		TLDebug_Break("Scheme Asset is no longer loaded");
+		
+		// Broadcast message to say we are done loading - effectively bail out
+		GetRequest().PublishFinishedLoadMessage(FALSE);
+		return "Finished";
+	}
 
 	//TODO:
 	// Load the schemes required files
 	// Wait for files to load
 
-	// Instance the scheme node we will be attaching the scheme contents to
-	TPtr<TLScene::TSceneNode_Scheme> pSchemeNode = TLScene::g_pScenegraph->DoCreateNode(pRequest->GetSchemeRef(), "Scheme");
-
-	if(!pSchemeNode)
+	//	Instance the scheme node we will be attaching the scheme contents to
+	TRef SchemeRootNode = TLScene::g_pScenegraph->DoCreateNode( GetRequest().GetSchemeRef(), "Scheme" );
+	if(!SchemeRootNode.IsValid())
 	{
 		// Failed
 		TLDebug_Break("Failed to instance scheme node");
 
 		// Broadcast message to say we are done loading - effectively bail out
-		TLMessaging::TMessage Message("LOAD");
-		
-		TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
-		
-		if(pRequest)
-		{
-			Message.ExportData("SCHEME", pRequest->GetSchemeRef());
-			pRequest->PublishMessage(Message);
-		}
-
-		return TRef();
-	}
-
-	// Instance the scheme
-	TPtr<TLAsset::TScheme> pScheme = TLAsset::GetAsset(pRequest->GetSchemeAssetRef(), TRUE);
-
-	// Is the asset loaded?
-	if(!pScheme)
-	{
-		TLDebug_Break("Scheme Asset is no longer loaded");
-		return TRef();
+		GetRequest().PublishFinishedLoadMessage(FALSE);
+		return "Finished";
 	}
 
 	// Import scheme to scenegraph attached to the scheme node
-	TLScene::g_pScenegraph->ImportScheme( pScheme, pSchemeNode->GetNodeRef() );
+	TLScene::g_pScenegraph->ImportScheme( pScheme, SchemeRootNode );
 
 	// TODO:
 	// From  past experience...
@@ -374,15 +375,10 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Loading::Update(float Ti
 	// nodes and when saved would be static (non-changeable) so we would make a temp change at runtime.
 	// In the past however we didn't have control of the editor so we may be able to use alternative
 	// solutions that are built into the system rather than this sort of 'hack'
+	//	gr: from past expierence... use a different system than "links". Links will obviously be fine if ref's are strict...
 
 	// Broadcast message to say we are done loading
-	TLMessaging::TMessage Message("LOAD");
-	
-	if(pRequest)
-	{
-		Message.ExportData("SCHEME", pRequest->GetSchemeRef());
-		pRequest->PublishMessage(Message);
-	}
+	GetRequest().PublishFinishedLoadMessage(TRUE);
 
 	// All done	
 	return "Finished";	
@@ -399,15 +395,7 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_UnLoading::Update(float 
 	
 	
 	// Broadcast message to say we are done loading
-	TLMessaging::TMessage Message("UNLOAD");
-	
-	TSchemeManager::TSchemeUpdateRequest* pRequest = GetStateMachine<TSchemeManager::TSchemeUpdateRequest>();
-	
-	if(pRequest)
-	{
-		Message.ExportData("SCHEME", pRequest->GetSchemeRef());
-		pRequest->PublishMessage(Message);
-	}
+	GetRequest().PublishFinishedUnloadMessage();
 	
 	// All done
 	return "Finished";	

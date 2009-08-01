@@ -25,21 +25,12 @@ TLPath::TPath::TPath(TRefRef PathNetworkRef) :
 SyncBool TLPath::TPath::FindPath(TRefRef StartNode,TRefRef EndNode,TLPath::TPathMode::Type PathMode, Bool Blocking)
 {
 	//	get network path asset
-	TPtr<TLAsset::TAsset>& pPathNetworkAsset = TLAsset::GetAsset( m_PathNetworkRef );
-	if ( !pPathNetworkAsset )
+	TPtr<TLAsset::TPathNetwork> pPathNetwork = TLAsset::GetAssetPtr<TLAsset::TPathNetwork>( m_PathNetworkRef );
+	if ( !pPathNetwork )
 	{
 		TLDebug_Break("FindPath failed, missing path network");
 		return SyncFalse;
 	}
-
-	if ( pPathNetworkAsset->GetAssetType() != "PathNetwork" )
-	{
-		TLDebug_Break("FindPath failed, asset is not path network");
-		return SyncFalse;
-	}
-	
-	//	cast ptr
-	TPtr<TLAsset::TPathNetwork> pPathNetwork = pPathNetworkAsset;
 
 	//	create new path spider
 	m_pPathSpider = new TPathSpider_Path( pPathNetwork, StartNode, EndNode, PathMode );
@@ -69,21 +60,12 @@ SyncBool TLPath::TPath::FindPathRandom(TRefRef StartNode,u32 NodesInRoute, Bool 
 	}
 
 	//	get network path asset
-	TPtr<TLAsset::TAsset>& pPathNetworkAsset = TLAsset::GetAsset( m_PathNetworkRef );
-	if ( !pPathNetworkAsset )
+	TLAsset::TPathNetwork* pPathNetwork = TLAsset::GetAsset<TLAsset::TPathNetwork>( m_PathNetworkRef );
+	if ( !pPathNetwork )
 	{
 		TLDebug_Break("FindPath failed, missing path network");
 		return SyncFalse;
 	}
-
-	if ( pPathNetworkAsset->GetAssetType() != "PathNetwork" )
-	{
-		TLDebug_Break("FindPath failed, asset is not path network");
-		return SyncFalse;
-	}
-	
-	//	cast ptr
-	TPtr<TLAsset::TPathNetwork> pPathNetwork = pPathNetworkAsset;
 
 	//	get starting node
 	TPtr<TLPath::TPathNode> pNode = pPathNetwork->GetNode( StartNode );

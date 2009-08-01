@@ -160,6 +160,8 @@ class TLAsset::TPathNetwork : public TLAsset::TAsset
 public:
 	TPathNetwork(TRefRef AssetRef);
 
+	static TRef						GetAssetType_Static()										{	return TRef_Static(P,a,t,h,N);	}
+
 	TPtr<TLPath::TPathNode>&		GetNode(TRefRef NodeRef)									{	return m_Nodes.FindPtr( NodeRef );	}
 	TPtr<TLPath::TPathNode>&		GetRandomNode()												{	return m_Nodes.ElementRand();	}
 	TPtr<TLPath::TPathNode>&		GetNearestNode(const float2& Position);						//	find the nearest node to this position

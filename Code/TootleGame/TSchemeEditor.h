@@ -44,27 +44,31 @@ public:
 protected:
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);		//	
 	virtual void				AddStateModes();									//	add state machine modes here. overload to add custom modes
+	Bool						GetGameWorldPosFromScreenPos(float3& WorldPos,const int2& ScreenPos,float ViewDepth=0.f);	//	get world pos in-game from cursor
 
+	void						EnableNodeWidgets(Bool Enable);							//	enable/disable node widgets
+	virtual void				ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a game node
+	void						OnNodeSelected(TRefRef NodeRef);						//	node has been selected
+	void						OnNodeUnselected(TRefRef NodeRef);						//	node has been selected
+	void						UnselectAllNodes();			//	unselect all nodes
+
+	virtual void				ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a editor icon
+	virtual void				CreateEditorIcons(TRefRef ParentRenderNode);								//	create icons for the editor - overload this to render your own icons
+	void						OnCreatedIconRenderNode(TRefRef IconRenderNodeRef,TBinaryTree& IconData);	//	internal UI setup when an icon render node is created
+
+	virtual void				ProcessMouseMessage(TRefRef ActionRef,TLMessaging::TMessage& Message,Bool IsClickAction);		//	handle mouse messages 
+
+	virtual void				ProcessCommandMessage(TRefRef CommandRef,TLMessaging::TMessage& Message);	//	handle other messages (assume are commands)
+	virtual void				ClearScheme();				//	remove all nodes
+
+private:
 	Bool						CreateEditorGui(TRefRef EditorScheme);				//	create render target, widgets, icons etc
 	void						CreateEditorWidget(TBinaryTree& WidgetData);		//	create a widget from scheme XML
 	void						OnEditorRenderNodeAdded();							//	editor render node is ready to be used
 
 	void						CreateNodeWidgets(TLGraph::TGraphNodeBase& Node);		//	create nodes widget to allow us to drag around in-game nodes. recurses down the tree
-	virtual void				ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a game node
-	void						OnNodeSelected(TRefRef NodeRef);						//	node has been selected
 	void						OnNodeDrag(TRefRef NodeRef,const float3& DragAmount);	//	node has been dragged
-	void						OnNodeUnselected(TRefRef NodeRef);						//	node has been selected
-	void						EnableNodeWidgets(Bool Enable);							//	enable/disable node widgets
-	Bool						GetGameWorldPosFromScreenPos(float3& WorldPos,const int2& ScreenPos,float ViewDepth=0.f);	//	get world pos in-game from cursor
 
-	virtual void				ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a editor icon
-	void						CreateEditorIcons();									//	create icons for the editor
-
-	virtual void				ProcessMouseMessage(TRefRef ActionRef,TLMessaging::TMessage& Message,Bool IsClickAction);		//	handle mouse messages 
-	void						UnselectAllNodes();			//	unselect all nodes
-	virtual void				ClearScheme();				//	remove all nodes
-
-	virtual void				ProcessCommandMessage(TRefRef CommandRef,TLMessaging::TMessage& Message);	//	handle other messages (assume are commands)
 
 protected:
 	TRef							m_EditorRenderTarget;	//	render target of our editor

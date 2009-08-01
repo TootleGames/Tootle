@@ -1,8 +1,8 @@
 /*------------------------------------------------------
- 
- Local file system... reads files out of a specific directory
- 
- -------------------------------------------------------*/
+	
+	Local file system... reads files out of a specific directory
+
+-------------------------------------------------------*/
 #pragma once
 #include "../TLFileSys.h"
 
@@ -24,14 +24,14 @@ class TLFileSys::Platform::LocalFileSys : public TLFileSys::TFileSys
 {
 public:
 	LocalFileSys(TRefRef FileSysRef,TRefRef FileSysTypeRef);
-	
+
 	virtual SyncBool		Init();								//	check directory exists
 	virtual SyncBool		LoadFileList();						//	search for all files
 	virtual SyncBool		LoadFile(TPtr<TFile>& pFile);		//	load a file
 	virtual TPtr<TFile>		CreateFile(const TString& Filename,TRef TypeRef);
 	virtual SyncBool		WriteFile(TPtr<TFile>& pFile);
 	virtual SyncBool		Shutdown();
-	
+
 	void					SetDirectory(const TString& Directory);
 	void					SetIsWritable(Bool IsWritable)		{	m_IsWritable = IsWritable;	}
 

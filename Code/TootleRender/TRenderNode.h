@@ -157,8 +157,8 @@ public:
 	FORCEINLINE const TRef&					GetTextureRef() const						{	return m_TextureRef;	}
 	FORCEINLINE void						SetTextureRef(TRefRef TextureRef)			{	if ( m_TextureRef != TextureRef )	{	m_TextureRef = TextureRef;	OnTextureRefChanged();	}	}
 
-	virtual TPtr<TLAsset::TMesh>&			GetMeshAsset(Bool BlockLoad=FALSE);			//	default behaviour fetches the mesh from the asset lib with our mesh ref
-	virtual TPtr<TLAsset::TTexture>&		GetTextureAsset(Bool BlockLoad=FALSE);		//	default behaviour fetches the mesh from the asset lib with our mesh ref
+	virtual TPtr<TLAsset::TMesh>&			GetMeshAsset();								//	default behaviour fetches the mesh from the asset lib with our mesh ref
+	virtual TPtr<TLAsset::TTexture>&		GetTextureAsset();							//	default behaviour fetches the texutre from the asset lib with our mesh ref
 
 	FORCEINLINE void						SetRenderNodeRef(TRefRef Ref)				{	SetNodeRef( Ref );	}
 	virtual TRef							GetRenderNodeRef() const					{	return GetNodeRef();	}
@@ -414,7 +414,7 @@ FORCEINLINE const TLMaths::TShape* TLRender::TRenderNode::GetLocalDatum(TRefRef 
 		default:
 		{
 			//	get datum from mesh
-			TLAsset::TMesh* pMesh = GetMeshAsset(TRUE);
+			TLAsset::TMesh* pMesh = GetMeshAsset();
 			if ( !pMesh )
 				return NULL;
 			
@@ -450,7 +450,7 @@ void TLRender::TRenderNode::CalcLocalBounds(SHAPETYPE& Shape)
 		return;
 	
 	//	get bounds from mesh
-	TPtr<TLAsset::TMesh>& pMesh = GetMeshAsset(TRUE);
+	TLAsset::TMesh* pMesh = GetMeshAsset();
 	if ( pMesh )
 	{
 		//	copy bounds of mesh to use as our own

@@ -5,7 +5,7 @@
 using namespace TLAsset;
 
 TAudio::TAudio(const TRef& AssetRef) :
-	TAsset	( "Audio", AssetRef )
+	TAsset	( GetAssetType_Static(), AssetRef )
 {
 }
 
@@ -24,34 +24,28 @@ SyncBool TAudio::Shutdown()
 //-------------------------------------------------------
 SyncBool TAudio::ImportData(TBinaryTree& Data)		
 {
-	TPtrArray<TBinaryTree> DataArray;
-	
-	//TODO: Make async
-
 	// Import Header
-	TPtr<TBinaryTree>& pChild = Data.GetChild("Header");
-#ifdef _DEBUG
-	if(!pChild)
-		TLDebug_Break("Unable to import audio header");
-#endif	
-	pChild->ResetReadPos();
-	pChild->Read(m_HeaderData);
+	Data.ImportData("Header", m_HeaderData );
 
-	
 	// Import audio data
-	pChild = Data.GetChild("Audio");
-#ifdef _DEBUG
-	if(!pChild)
+	TPtr<TBinaryTree>& pAudioData = Data.GetChild("Audio");
+	if(!pAudioData)
+	{
 		TLDebug_Break("Unable to import audio header");
-#endif	
-	pChild->ResetReadPos();
+		return SyncFalse;
+	}
+	pAudioData->ResetReadPos();
+	pAudioData->ReadAll(m_RawAudioData);
 	
-	pChild->ReadAll(m_RawAudioData);
-	
-	
-	// Now we have read the data create the audio buffer for this asset
-	// in the audio system
-	if(!TLAudio::Platform::CreateBuffer(GetAssetRef()))
+	//	Now we have read the data create the audio buffer for this asset
+	//	in the audio system
+	//	gr: use the asset directly, if we use the method with fetches the asset
+	//	it causes a recursing load and corrupts the state of the asset/load task
+	//	note, at this point the asset is still considered "not loaded".
+	//	this kind of runtime-buffer thing should really be implemented on the 
+	//	thing that USES the asset, not on the asset itself
+	//	I assume there may be openAL issues if we load 1000 audio assets (even if we intend to only play 1)
+	if( !TLAudio::Platform::CreateBuffer(*this) )
 		return SyncFalse;	
 		
 	return SyncTrue;
@@ -64,24 +58,14 @@ SyncBool TAudio::ImportData(TBinaryTree& Data)
 //-------------------------------------------------------
 SyncBool TAudio::ExportData(TBinaryTree& Data)				
 {	
-	TPtr<TBinaryTree> pChildData = Data.AddChild("Header");
+	//	write header
+	Data.ExportData("Header", m_HeaderData);
 	
-#ifdef _DEBUG
-	if(!pChildData)
-		TLDebug_Break("Failed to create child");
-#endif	
-	// Write the Header data
-	pChildData->Write(m_HeaderData);
-	
-	pChildData = Data.AddChild("Audio");
-
-#ifdef _DEBUG
-	if(!pChildData)
-		TLDebug_Break("Failed to create child");
-#endif	
-	// Write the Audio data
-	pChildData->Copy(RawAudioDataBinary());
-	
-		
+	//	write audio data
+	TPtr<TBinaryTree>& pAudioData = Data.AddChild("Audio");
+	if ( !pAudioData )
+		return SyncFalse;
+	pAudioData->Copy(RawAudioDataBinary());
+			
 	return SyncTrue;
 }	

@@ -44,7 +44,7 @@ namespace TLAudio
 			Bool			PauseAudio(TRefRef AudioSourceRef);
 			
 			
-			Bool CreateBuffer(TRefRef AudioAssetRef);
+			Bool CreateBuffer(TLAsset::TAudio& AudioAsset);
 			Bool ReleaseBuffer(TRefRef AudioAssetRef);
 			
 			Bool CreateSource(TRefRef AudioSourceRef);

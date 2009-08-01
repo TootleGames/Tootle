@@ -181,7 +181,7 @@ SyncBool TLFileSys::TFileMenu::ImportMenuItem(TPtr<TXmlTag>& pTag,TPtr<TLAsset::
 }
 
 /*
-SyncBool TLFileSys::TFileTimeline::ImporTAssetTimeline_ImportCommandData(TPtr<TLAsset::TMenu>& pMenu, TPtr<TXmlTag>& pImportTag)
+SyncBool TLFileSys::TFileTimeline::ImporTTimeline_ImportCommandData(TPtr<TLAsset::TMenu>& pMenu, TPtr<TXmlTag>& pImportTag)
 {
 	// Get data tag and all data properties
 	for ( u32 c=0;	c<pImportTag->GetPropertyCount();	c++ )

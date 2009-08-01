@@ -7,7 +7,7 @@
 #include "TPath.h"
 #include "TText.h"
 #include "TTexture.h"
-#include "TAssetTimeline.h"
+#include "TTimeline.h"
 #include "TAtlas.h"
 #include "TParticle.h"
 
@@ -30,8 +30,8 @@ namespace TLAsset
 //----------------------------------------------------------
 TLArray::SortResult	TLAsset::AssetSort(const TPtr<TLAsset::TAsset>& a,const TPtr<TLAsset::TAsset>& b,const void* pTestRef)
 {
-	const TRef& aRef = a->GetAssetRef();
-	const TRef& bRef = pTestRef ? *(const TRef*)pTestRef : b->GetAssetRef();
+	const TTypedRef& aRef = a->GetAssetAndTypeRef();
+	const TTypedRef& bRef = pTestRef ? *(const TTypedRef*)pTestRef : b->GetAssetAndTypeRef();
 	
 	//	== turns into 0 (is greater) or 1(equals)
 	return aRef < bRef ? TLArray::IsLess : (TLArray::SortResult)(aRef==bRef);	
@@ -39,27 +39,28 @@ TLArray::SortResult	TLAsset::AssetSort(const TPtr<TLAsset::TAsset>& a,const TPtr
 
 
 //----------------------------------------------------------
-//	get an asset ref that isn't in use (starting from base ref)
+//	get an asset ref for this type that isn't in use (starting from base ref)
 //----------------------------------------------------------
-TRef TLAsset::GetFreeAssetRef(TRef BaseRef)
+TTypedRef TLAsset::GetFreeAssetRef(TTypedRef BaseAndTypeRef)
 {
 	//	start at a valid ref :)
-	if ( !BaseRef.IsValid() )
-		BaseRef.Increment();
+	if ( !BaseAndTypeRef.GetRef().IsValid() )
+		BaseAndTypeRef.GetRef().Increment();
 
-	while ( g_pFactory->GetInstance( BaseRef ).IsValid() )
+	//	keep incrementing the ref until we don't find a matching asset
+	while ( GetAssetInstance( BaseAndTypeRef ).IsValid() )
 	{
-		BaseRef.Increment();
+		BaseAndTypeRef.GetRef().Increment();
 	}
 
-	return BaseRef;
+	return BaseAndTypeRef;
 }
 
 
 //----------------------------------------------------------
 //	return a pointer to an asset
 //----------------------------------------------------------
-TPtr<TLAsset::TAsset>& TLAsset::CreateAsset(TRefRef AssetRef,TRefRef AssetType)
+TPtr<TLAsset::TAsset>& TLAsset::CreateAsset(const TTypedRef& AssetAndTypeRef)
 {
 	if ( !g_pFactory )
 	{
@@ -67,41 +68,32 @@ TPtr<TLAsset::TAsset>& TLAsset::CreateAsset(TRefRef AssetRef,TRefRef AssetType)
 		return TLPtr::GetNullPtr<TLAsset::TAsset>();
 	}
 
-	TPtr<TAsset>& pNewAsset = g_pFactory->GetInstance( AssetRef, TRUE, AssetType );
+
+	TPtr<TAsset>& pNewAsset = g_pFactory->GetInstance( AssetAndTypeRef.GetRef(), TRUE, AssetAndTypeRef.GetTypeRef() );
 	if ( !pNewAsset )
 	{
 		TTempString DebugString("Failed to create asset... ");
-		AssetRef.GetString( DebugString );
-		DebugString.Append(" (");
-		AssetType.GetString( DebugString );
-		DebugString.Append(")");
+		AssetAndTypeRef.GetString( DebugString );
 		//	gr: changed to break, if this fails the factory failed to create it... invalid type?
 		TLDebug_Break( DebugString );
 		return TLPtr::GetNullPtr<TLAsset::TAsset>();
 	}
-	else
-	{
-		TTempString DebugString("Created asset: ");
-		AssetRef.GetString( DebugString );
-		DebugString.Append(" (");
-		AssetType.GetString( DebugString );
-		DebugString.Append(")");
-		TLDebug_Print( DebugString );
-	}
+
+	TTempString DebugString("Created asset: ");
+	pNewAsset->GetAssetAndTypeRef().GetString( DebugString );
+	TLDebug_Print( DebugString );
 
 	//	ensure it's the right type
-	if ( pNewAsset->GetAssetType() != AssetType )
+	if ( pNewAsset->GetAssetType() != AssetAndTypeRef.GetTypeRef() )
 	{
 #ifdef _DEBUG
 		TTempString DebugString("Created/found asset ");
-		pNewAsset->GetAssetRef().GetString( DebugString );
-		DebugString.Append(" but is type ");
-		pNewAsset->GetAssetType().GetString( DebugString );
-		DebugString.Append(". Expected type ");
-		AssetType.GetString( DebugString );
+		pNewAsset->GetAssetAndTypeRef().GetString( DebugString );
+		DebugString.Append(" but expected type ");
+		AssetAndTypeRef.GetTypeRef().GetString( DebugString );
 		TLDebug_Print( DebugString );
 #endif
-		TLDebug_Break("Wrong type of asset. If this is a new asset type, check the TAsset constructor in your asset types constructor.");
+		TLDebug_Break("Wrong type of asset. If this is a new asset type, check the TAsset() constructor in your new asset types constructor.");
 		return TLPtr::GetNullPtr<TLAsset::TAsset>();
 	}
 
@@ -110,102 +102,74 @@ TPtr<TLAsset::TAsset>& TLAsset::CreateAsset(TRefRef AssetRef,TRefRef AssetType)
 
 
 //----------------------------------------------------------
-//	return a pointer to an asset
+//	delete an asset
 //----------------------------------------------------------
-TPtr<TLAsset::TAsset>& TLAsset::GetAsset(TRefRef AssetRef,Bool LoadedOnly)
+void TLAsset::DeleteAsset(const TLAsset::TAsset* pAsset)	
 {
-	if ( !g_pFactory )
-	{
-		TLDebug_Break("Asset factory expected");
-		return TLPtr::GetNullPtr<TLAsset::TAsset>();
-	}
-	
-	TPtr<TLAsset::TAsset>& pAsset = g_pFactory->GetInstance( AssetRef );
-	
-	if ( LoadedOnly )
-	{
-		if ( pAsset && !pAsset->IsLoaded() )
-			return TLPtr::GetNullPtr<TLAsset::TAsset>();
-	}
-
-	if ( !pAsset && AssetRef.IsValid() )
-	{
-		TTempString DebugString("failed to find asset ");
-		AssetRef.GetString( DebugString );
-		TLDebug_Print( DebugString );
-	}
-
-	
-	return pAsset;
-}
-
-	
-//----------------------------------------------------------
-//	get an array of assets of a certain type
-//----------------------------------------------------------
-void TLAsset::GetAssetArray(TPtrArray<TAsset>& AssetArray,TRefRef AssetType,Bool LoadedOnly)
-{
-	for ( u32 i=0;	i<g_pFactory->GetSize();	i++ )
-	{
-		TPtr<TAsset>& pAsset = g_pFactory->ElementAt(i);
-		if ( pAsset->GetAssetType() != AssetType )
-			continue;
-
-		//	loaded only?
-		if ( LoadedOnly && !pAsset->IsLoaded() )
-			continue;
-
-		AssetArray.Add( pAsset );
-	}
+	DeleteAsset( pAsset->GetAssetAndTypeRef() );	
 }
 
 
 //----------------------------------------------------------
 //	delete an asset
 //----------------------------------------------------------
-void TLAsset::DeleteAsset(TRefRef AssetRef)
+void TLAsset::DeleteAsset(const TTypedRef& AssetAndTypeRef)
 {
 	//	find the existing asset
-	//XXXX
-	TPtr<TAsset> pAsset = GetAsset(AssetRef);
+	TPtr<TAsset>& pAssetPtr = GetAssetInstance( AssetAndTypeRef );
 
-	//	unknown asset, nothing to do
-	if ( !pAsset )
+	//	doesnt exist, nothing to delete
+	if ( !pAssetPtr )
 		return;
 
-	//	mark asset as unavailible
-	pAsset->SetLoadingState( TLAsset::LoadingState_Deleted );
-	TRef AssetType = pAsset->GetAssetType();
-
-#ifdef _DEBUG
-	TTempString DebugString("Deleting asset from factory... ");
-	AssetRef.GetString( DebugString );
-	DebugString.Append(" (");
-	pAsset->GetAssetType().GetString( DebugString );
-	DebugString.Append(")");
-	TLDebug_Print( DebugString );
-#endif
+	//	mark asset as unavailible in case it's lingering around somewhere to help debugging
+	pAssetPtr->SetLoadingState( TLAsset::LoadingState_Deleted );
 
 	//	delete from factory
-	if ( g_pFactory->RemoveInstance( AssetRef ) )
+	if ( g_pFactory->RemoveInstance( AssetAndTypeRef ) )
 	{
-		
+		#ifdef _DEBUG
+			TTempString DebugString("Deleted asset ");
+			AssetAndTypeRef.GetString( DebugString );
+			TLDebug_Print( DebugString );
+		#endif
+
 		// Do a notification to say the asset has been removed
-		g_pFactory->OnAssetUnload(AssetRef, AssetType);
+		g_pFactory->OnAssetUnload( AssetAndTypeRef );
 	}
 	else
 	{
-		TTempString DebugString("Deleting asset from factory... ");
-		AssetRef.GetString( DebugString );
-		DebugString.Append(" not found");
-		TLDebug_Print( DebugString );
+		#ifdef _DEBUG
+			TTempString DebugString("Failed to delete asset ");
+			AssetAndTypeRef.GetString( DebugString );
+			TLDebug_Break( DebugString );
+		#endif
 	}
+
+	//	pAssetPtr is now invalid
 }
 
+
 //----------------------------------------------------------
-//	load asset from a file system
+//	
 //----------------------------------------------------------
-TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef,Bool bBlocking,TRefRef ExpectedAssetType)
+TPtr<TLAsset::TAsset>& TLAsset::GetAssetInstance(const TTypedRef& AssetAndTypeRef)
+{
+	if ( !g_pFactory )
+		return TLPtr::GetNullPtr<TLAsset::TAsset>();
+
+	TPtr<TAsset>& pAssetPtr = g_pFactory->GetInstance( AssetAndTypeRef );
+	return pAssetPtr;
+}
+
+
+//----------------------------------------------------------
+//	Replaces the old LoadAsset and GetAsset functions.
+//	get an asset from the sytem. If it's not loaded, it will try to.
+//	if Blocking is FALSE then if the file is still [async] loading then NULL will be returned.
+//	use SyncTrue to load, SyncFalse to NOT load, SyncWait to async-load
+//----------------------------------------------------------
+TPtr<TLAsset::TAsset>& TLAsset::GetAssetPtr(const TTypedRef& AssetAndTypeRef,SyncBool LoadAsset)
 {
 	if ( !g_pFactory )
 	{
@@ -213,48 +177,37 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef,Bool bBlocking,TR
 		return TLPtr::GetNullPtr<TLAsset::TAsset>();
 	}
 
-	//	trying to load invalid ref
-	if ( !AssetRef.IsValid() )
+	//	invalid params
+	if ( !AssetAndTypeRef.IsValid() )
 	{
-		TLDebug_Break("Trying to load asset of no ref");
+		TLDebug_Break("GetAsset called for asset missing ref and/or type");
 		return TLPtr::GetNullPtr<TLAsset::TAsset>();
-	} 
+	}
 
 	//	check it doesnt already exist
 	{
-		TPtr<TAsset>& pAssetPtr = GetAsset( AssetRef );
-		TAsset* pAsset = pAssetPtr;
+		TPtr<TLAsset::TAsset>& pAsset = GetAssetInstance( AssetAndTypeRef );
 
 		//	if loaded, return straight away
 		if ( pAsset && pAsset->IsLoaded() )
 		{
-			//	check type
-			if ( ExpectedAssetType.IsValid() && pAsset->GetAssetType() != ExpectedAssetType )
-			{
-				#ifdef _DEBUG
-				TTempString Debug_String("LoadAsset ");
-				AssetRef.GetString( Debug_String );
-				Debug_String.Append(": expected type ");
-				ExpectedAssetType.GetString( Debug_String );
-				Debug_String.Append(" but is type ");
-				pAsset->GetAssetType().GetString( Debug_String );
-				TLDebug_Print( Debug_String );
-				#endif
+			return pAsset;
+		}
 
-				return TLPtr::GetNullPtr<TLAsset::TAsset>();
-			}
-
-			return pAssetPtr;
+		//	asset is not loaded (whether it exists or not), and we don't want to load it, so return NULL
+		if ( LoadAsset == SyncFalse )
+		{
+			return TLPtr::GetNullPtr<TLAsset::TAsset>();
 		}
 	}
 
 	//	look for an existing loading task
-	TPtr<TLAsset::TLoadTask> pLoadTask = TLAsset::GetLoadTask( AssetRef );
+	TPtr<TLAsset::TLoadTask> pLoadTask = TLAsset::GetLoadTask( AssetAndTypeRef );
 
 	//	create a new load task if we dont have one already
 	if ( !pLoadTask )
 	{
-		pLoadTask = new TLoadTask( AssetRef );
+		pLoadTask = new TLoadTask( AssetAndTypeRef );
 	}
 
 	//	missing task (failed to alloc?)
@@ -262,13 +215,13 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef,Bool bBlocking,TR
 		return TLPtr::GetNullPtr<TLAsset::TAsset>();
 
 	//	do first update, if it fails then we can abort early and fail immedietly
-	SyncBool FirstUpdateResult = pLoadTask->Update( 0.f, bBlocking );
+	SyncBool FirstUpdateResult = pLoadTask->Update( 0.f, (LoadAsset == SyncTrue) );
 
 	//	get loading/loaded asset
 	TPtr<TAsset>& pLoadingAsset = pLoadTask->GetAsset();
 
 	//	verify the correct result
-	if ( FirstUpdateResult != SyncFalse )
+	if ( FirstUpdateResult == SyncTrue )
 	{
 		//	asset expected
 		if ( !pLoadingAsset )
@@ -291,13 +244,11 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef,Bool bBlocking,TR
 		pLoadTask = NULL;
 
 		//	check type
-		if ( ExpectedAssetType.IsValid() && pLoadingAsset->GetAssetType() != ExpectedAssetType )
+		if ( pLoadingAsset->GetAssetType() != AssetAndTypeRef.GetTypeRef() )
 		{
 			#ifdef _DEBUG
 			TTempString Debug_String("LoadAsset ");
-			AssetRef.GetString( Debug_String );
-			Debug_String.Append(": expected type ");
-			ExpectedAssetType.GetString( Debug_String );
+			AssetAndTypeRef.GetString( Debug_String );
 			Debug_String.Append(" but is type ");
 			pLoadingAsset->GetAssetType().GetString( Debug_String );
 			TLDebug_Print( Debug_String );
@@ -310,7 +261,7 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef,Bool bBlocking,TR
 	}
 
 	//	if we got here with a block load, then it failed to block load...
-	if ( bBlocking )
+	if ( LoadAsset == SyncTrue )
 	{
 		TLDebug_Break("Block load failed... asynchornously loading...");
 	}
@@ -322,8 +273,9 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef,Bool bBlocking,TR
 	//	this type WONT be cast correctly (it will be a TempAsset) - the TPtr system will
 	//	probably not cast at all and send back a NULL TPtr anyway
 	//	we only get this case when NOT blockloading AND expecting a type
-	//if ( ExpectedAssetType.IsValid() && pLoadingAsset->GetAssetType() != ExpectedAssetType )
-	if ( ExpectedAssetType.IsValid() )
+	//	gr: now always expect a type... so we have to return NULL as it's not loaded yet
+	//		no such thing as a temp asset any more
+	//if ( ExpectedAssetType.IsValid() )
 		return TLPtr::GetNullPtr<TLAsset::TAsset>();
 
 	return pLoadingAsset;
@@ -331,20 +283,28 @@ TPtr<TLAsset::TAsset>& TLAsset::LoadAsset(const TRef& AssetRef,Bool bBlocking,TR
 
 
 //----------------------------------------------------------
-//	export an asset out to a .asset file - currently writes to the user file system
+//	write an asset's current state back to the file system - fails if the asset isn't currently loaded
 //----------------------------------------------------------
-Bool TLAsset::SaveAsset(TRefRef AssetRef)
+Bool TLAsset::SaveAsset(const TLAsset::TAsset* pAsset)	
+{
+	return SaveAsset( pAsset->GetAssetAndTypeRef() );	
+}
+
+
+//----------------------------------------------------------
+//	write an asset's current state back to the file system - fails if the asset isn't currently loaded
+//----------------------------------------------------------
+Bool TLAsset::SaveAsset(const TTypedRef& AssetAndTypeRef)
 {
 	//	get asset
-	TPtr<TLAsset::TAsset>& pAsset = GetAsset( AssetRef, TRUE );
-	if ( !pAsset )
+	TPtr<TAsset>& pAssetPtr = GetAssetInstance( AssetAndTypeRef );
+	if ( !pAssetPtr || (pAssetPtr && !pAssetPtr->IsLoaded() ) )
 	{
-		TLDebug_Break("Asset expected");
+		TLDebug_Break("Failed to save asset as it isn't loaded");
 		return FALSE;
 	}
 
-	//	gr: currently the order of this is a bit shit, filesys and asset load system need a bit of a fiddle before 
-	//		I can fix this. todo, but not urgent
+	//	todo: find out the original file system the asset came from...
 
 	//	create new asset file in a file sys
 	//	make a list of file systems to try and write to
@@ -353,19 +313,19 @@ Bool TLAsset::SaveAsset(TRefRef AssetRef)
 	TLFileSys::GetFileSys( FileSystems, TRef(), "Local" );
 	TLFileSys::GetFileSys( FileSystems, "Virtual", "Virtual" );
 
-	//	make up new filename (with the right extension)
-	TPtr<TLFileSys::TFileAsset> pAssetFile = TLFileSys::CreateAssetFileInFileSys( AssetRef, FileSystems);
+	//	make new file
+	TPtr<TLFileSys::TFileAsset> pAssetFile = TLFileSys::CreateAssetFileInFileSys( AssetAndTypeRef, FileSystems);
 
 	//	failed to create file in any file sys
 	if ( !pAssetFile )
 	{
 		//	failed to create new file
-		TLDebug_Break("Failed to create new .asset file");
+		TLDebug_Break("Failed to create new .Asset file");
 		return FALSE;
 	}
 
 	//	export asset to asset file
-	if ( pAsset->Export( pAssetFile ) != SyncTrue )
+	if ( pAssetPtr->Export( pAssetFile ) != SyncTrue )
 		return FALSE;
 
 	//	export asset file to plain file
@@ -390,6 +350,87 @@ Bool TLAsset::SaveAsset(TRefRef AssetRef)
 }
 
 
+//------------------------------------------------------------
+//	wrapper to just simply load an asset - returns TRUE if currently loaded, SyncWait if loading, SyncFalse if failed
+//------------------------------------------------------------
+SyncBool TLAsset::LoadAsset(const TTypedRef& AssetAndTypeRef,Bool BlockLoad)
+{
+	if ( !g_pFactory )
+	{
+		TLDebug_Break("Asset factory expected");
+		return SyncFalse;
+	}
+
+	//	invalid params
+	if ( !AssetAndTypeRef.IsValid() )
+	{
+		TLDebug_Break("GetAsset called for asset missing ref and/or type");
+		return SyncFalse;
+	}
+
+	//	get the asset object
+	TPtr<TAsset>& pAssetPtr = GetAssetInstance( AssetAndTypeRef );
+
+	//	doesnt exist, start a load and see what the result is
+	if ( !pAssetPtr )
+	{
+		TPtr<TAsset>& pNewAssetPtr = GetAssetPtr( AssetAndTypeRef, BlockLoad ? SyncTrue : SyncWait );
+
+		if ( pNewAssetPtr )
+		{
+			//	loaded okay
+			return SyncTrue;
+		}
+		else if ( BlockLoad )
+		{
+			//	still not loaded, (no asset returned) if it's a block load, it failed
+			return SyncFalse;
+		}
+		else
+		{
+			//	not a block load, find the load task...
+			TLAsset::TLoadTask* pLoadTask = TLAsset::GetLoadTask( AssetAndTypeRef );
+
+			//	get the load task state, if no load task, and no asset... assume it failed
+			SyncBool LoadTaskState = pLoadTask ? pLoadTask->GetLoadingState() : SyncFalse;
+
+			return LoadTaskState;
+		}
+	}
+
+	//	asset exists, check its state
+	switch ( pAssetPtr->GetLoadingState() )
+	{
+	case TLAsset::LoadingState_Loading:
+	case TLAsset::LoadingState_Init:
+		{
+			if ( !BlockLoad )
+				return SyncWait;
+
+			//	block load (this should continue an existing load...)
+			TPtr<TAsset>& pLoadedAssetPtr = GetAssetPtr( AssetAndTypeRef, SyncTrue );
+			return pLoadedAssetPtr ? SyncTrue : SyncFalse;
+		}
+		break;
+	
+	case TLAsset::LoadingState_Loaded:
+		return SyncTrue;
+
+	case TLAsset::LoadingState_Failed:
+		return SyncFalse;
+
+	case TLAsset::LoadingState_Deleted:
+		TLDebug_Break("Unexpected state - deleted assets should not be in the asset factory");
+		return SyncFalse;
+
+	default:
+		TLDebug_Break("Unknown loading state of asset");
+		return SyncFalse;
+	}
+}
+
+
+
 //----------------------------------------------------------
 //	instance an asset
 //----------------------------------------------------------
@@ -404,16 +445,13 @@ TLAsset::TAsset* TLAsset::TAssetFactory::CreateObject(TRefRef InstanceRef,TRefRe
 	case STRef(S,c,h,e,m):	return new TLAsset::TScheme( InstanceRef );	//	"scheme"
 	case STRef(P,a,t,h,N):	return new TLAsset::TPathNetwork( InstanceRef );	//	"PathNetwork"
 	case STRef4(T,e,x,t):	return new TLAsset::TText( InstanceRef );	//	"Text"
-	case STRef(T,i,m,e,l):	return new TLAsset::TAssetTimeline( InstanceRef );	//	"Timeline"
+	case STRef(T,i,m,e,l):	return new TLAsset::TTimeline( InstanceRef );	//	"Timeline"
 	case STRef(T,e,x,t,u):	return new TLAsset::TTexture( InstanceRef );	//	"Texture"
 	case STRef(A,t,l,a,s):	return new TLAsset::TAtlas( InstanceRef );	//	"Atlas" 
 	case STRef(P,a,r,t,i):	return new TLAsset::TParticle( InstanceRef );	//	"Particle" 
 
 	//	gr: dumb asset - just stores data - consider turning this into a specific TBinaryTree/"Data" asset
-	case STRef(A,s,s,e,t):	return new TLAsset::TAsset( TypeRef, InstanceRef );	//	"Asset"
-	
-	//	"nothing" asset - used as a placeholder whilst we convert file into a real asset
-	case STRef4(T,e,m,p):	return new TLAsset::TTempAsset( InstanceRef );	//	"Temp"
+	case STRef(A,s,s,e,t):	return new TLAsset::TAsset( TLAsset::TAsset::GetAssetType_Static(), InstanceRef );	//	"Asset"
 	};
 
 #ifdef _DEBUG
@@ -453,41 +491,35 @@ void TLAsset::TAssetFactory::OnEventChannelAdded(TRefRef refPublisherID, TRefRef
 }
 
 
-void TLAsset::TAssetFactory::OnAssetLoad(TRefRef AssetRef, TRefRef AssetType, Bool bStatus)
+void TLAsset::TAssetFactory::OnAssetLoad(const TTypedRef& AssetAndTypeRef, Bool bStatus)
 {
 	//	if the asset failed to load then ensure the asset object is marked as deleted
 	if ( !bStatus )
 	{
 		//	if there is an asset - mark it as failed to load
-		TPtr<TLAsset::TAsset> pAsset = GetAsset(AssetRef);
+		TPtr<TLAsset::TAsset>& pAsset = GetAssetInstance(AssetAndTypeRef);
 		if ( pAsset )
 		{
 			pAsset->SetLoadingState( TLAsset::LoadingState_Failed );
-
-			//	gr: if it's a "temp" type, then delete the asset
-			if ( pAsset->GetAssetType() == "temp" )
-			{
-				TLAsset::DeleteAsset( pAsset->GetAssetRef() );
-			}
 		}
 	}
 
 	TLMessaging::TMessage Message("OnAssetChanged");
-	Message.Write(AssetRef);
-	Message.Write(AssetType);
+	Message.Write( AssetAndTypeRef.GetRef() );
+	Message.Write( AssetAndTypeRef.GetTypeRef() );
 	Message.Write(TRef("Load"));
 	Message.Write(bStatus);		// Successful/Failed load.  Would we want to let things know if the load failed?
 
 	PublishMessage(Message);
 }
 
-void TLAsset::TAssetFactory::OnAssetUnload(TRefRef AssetRef, TRefRef AssetType)
+void TLAsset::TAssetFactory::OnAssetUnload(const TTypedRef& AssetAndTypeRef)
 {
 	TLMessaging::TMessage Message("OnAssetChanged");
-	Message.Write(AssetRef);
-	Message.Write(AssetType);
+	Message.Write( AssetAndTypeRef.GetRef() );
+	Message.Write( AssetAndTypeRef.GetTypeRef() );
 	Message.Write(TRef("Unload"));
-	Message.Write(TRUE);
+	Message.Write( (Bool)TRUE );
 
 	PublishMessage(Message);
 }

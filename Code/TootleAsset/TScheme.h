@@ -60,6 +60,8 @@ class TLAsset::TScheme : public TLAsset::TAsset
 public:
 	TScheme(TRefRef AssetRef);
 
+	static TRef						GetAssetType_Static()				{	return TRef_Static(S,c,h,e,m);	}
+
 	const TPtrArray<TSchemeNode>&	GetNodes() const					{	return m_Nodes;	}
 	TPtrArray<TSchemeNode>&			GetNodes()							{	return m_Nodes;	}
 	void							RemoveNodes()						{	m_Nodes.Empty();	}

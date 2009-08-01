@@ -81,7 +81,7 @@ TLPath::TPathNodeLink::TPathNodeLink(TRefRef LinkNodeRef,TLPath::TDirection::Typ
 
 
 TLAsset::TPathNetwork::TPathNetwork(TRefRef AssetRef) :
-	TAsset	( "PathNetwork", AssetRef ),
+	TAsset	( GetAssetType_Static(), AssetRef ),
 	m_Nodes	( &TLPath::NodeSort_ByRef )
 {
 }

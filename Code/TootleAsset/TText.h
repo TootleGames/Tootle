@@ -63,7 +63,9 @@ private:
 	};
 
 public:
-	TText(const TRef& AssetRef);
+	TText(TRefRef AssetRef);
+
+	static TRef				GetAssetType_Static()										{	return TRef_Static4(T,e,x,t);	}
 	
 	FORCEINLINE Bool		AddText(TRefRef LanguageRef, TRefRef TextRef, const TString& TextString);
 	FORCEINLINE Bool		GetText(TRefRef LanguageRef, TRefRef TextRef, TString& TextString);

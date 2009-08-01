@@ -53,6 +53,8 @@ public:
 
 	Bool				CopyAssetFileData(TFileAsset& OtherAssetFile);		//	copy contents of other asset file into this (note: uses ReferenceDataTree, does NOT duplicate data)
 
+	virtual TRef		GetFileExportAssetType() const	{	return GetAssetTypeRef();	}
+
 	TRefRef				GetAssetTypeRef() const		{	return m_Header.m_AssetType;	}
 	TFileAsset::Header&	GetHeader()					{	return m_Header;	}
 	TBinaryTree&		GetData()					{	return m_Data;	}
