@@ -1,5 +1,4 @@
 #include "TAsset.h"
-#include "TAsset.h"
 #include <TootleFileSys/TLFileSys.h>
 #include <TootleFileSys/TFileAsset.h>
 

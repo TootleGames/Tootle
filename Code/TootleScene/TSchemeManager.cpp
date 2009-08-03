@@ -354,7 +354,7 @@ TRef TSchemeManager::TSchemeUpdateRequest::TSchemeState_Loading::Update(float Ti
 	// Wait for files to load
 
 	//	Instance the scheme node we will be attaching the scheme contents to
-	TRef SchemeRootNode = TLScene::g_pScenegraph->DoCreateNode( GetRequest().GetSchemeRef(), "Scheme" );
+	TRef SchemeRootNode = TLScene::g_pScenegraph->CreateNode( GetRequest().GetSchemeRef(), "Scheme", TRef() );
 	if(!SchemeRootNode.IsValid())
 	{
 		// Failed

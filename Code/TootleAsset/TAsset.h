@@ -5,9 +5,12 @@
 -------------------------------------------------------*/
 #pragma once
 
-#include "TLAsset.h"
+#include <TootleCore/TRef.h>
+#include <TootleCore/TPtr.h>
+#include <TootleCore/TBinaryTree.h>
 
-class TBinaryTree;
+
+class TString;
 
 namespace TLFileSys
 {

@@ -11,6 +11,7 @@
 #include <TootleCore/TBinaryTree.h>
 #include <TootleCore/TManager.h>
 
+#include "TAsset.h"
 
 namespace TLFileSys
 {
@@ -20,8 +21,6 @@ namespace TLFileSys
 
 namespace TLAsset
 {
-	class TAsset;			//	base asset type
-	
 	class TAssetFactory;	//	asset factory
 	class TLoadTask;		//	loading-asset task
 

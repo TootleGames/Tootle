@@ -233,7 +233,7 @@ Bool Platform::OpenAL::CreateBuffer(TLAsset::TAudio& AudioAsset)
 	ALenum  format;
 
 	// Determine format of data
-	if(pAudioAsset->GetNumberOfChannels() > 1)
+	if(AudioAsset.GetNumberOfChannels() > 1)
 		format = (AudioAsset.GetBitsPerSample()==16 ? AL_FORMAT_STEREO16 : AL_FORMAT_STEREO8 );
 	else
 		format = (AudioAsset.GetBitsPerSample()==16 ? AL_FORMAT_MONO16 : AL_FORMAT_MONO8 );
@@ -264,7 +264,7 @@ Bool Platform::OpenAL::CreateBuffer(TLAsset::TAudio& AudioAsset)
 	// Success - add to the array
 	AudioObj AO;
 	
-	AO.m_AudioObjRef = AudioAssetRef;
+	AO.m_AudioObjRef = AudioAsset.GetAssetRef();
 	AO.m_OpenALID = uBufferID;
 	
 	g_Buffers.Add(AO);

@@ -49,7 +49,7 @@ private:
 protected:
 	TPtrArray<TStateMode>	m_Modes;
 	TPtr<TStateMode>		m_pCurrentMode;
-	TArray<TBufferString<6>>	m_Debug_ModeLog;								//	keep a log of what mode's we've been in for debugging
+	TArray< TBufferString<6> >	m_Debug_ModeLog;								//	keep a log of what mode's we've been in for debugging
 };
 
 
