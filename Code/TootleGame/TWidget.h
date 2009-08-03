@@ -92,6 +92,8 @@ public:
 	FORCEINLINE void			SetEnabled(Bool Enabled);		//	enable/disable widget
 	FORCEINLINE Bool			IsEnabled() const				{	return m_Enabled;	}
 
+	FORCEINLINE TRefRef			GetRenderNodeRef() const		{	return m_RenderNodeRef;	}	//	can be invalid, or used in more than one widget, so dont rely on this to be unique!
+
 protected:
 	virtual Bool				Update();											//	update routine - return FALSE if we don't need updates any more
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);	//	

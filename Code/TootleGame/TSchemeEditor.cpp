@@ -58,6 +58,9 @@ Bool TLGame::TSchemeEditor::Initialise(TRefRef EditorScheme,TRefRef GraphRef,TRe
 		TLDebug_Break("Initialised scheme editor with graph ref that doesnt exist");
 		return FALSE;
 	}
+	
+	//	catch node creation from this graph
+	this->SubscribeTo( m_pGraph );
 
 	//	set vars
 	m_SchemeRootNode = SchemeRootNode;
@@ -100,6 +103,7 @@ Bool TLGame::TSchemeEditor::Initialise(TRefRef EditorScheme,TRefRef GraphRef,TRe
 //----------------------------------------------------------
 void TLGame::TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 {
+	//	input/widget input
 	if(Message.GetMessageRef() == TRef_Static(A,c,t,i,o))
 	{
 		TRef ActionRef;
@@ -150,6 +154,7 @@ void TLGame::TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 		}
 	}
 
+	//	specific render graph change
 	if ( Message.GetMessageRef() == "NodeAdded" && Message.GetSenderRef() == TLRender::g_pRendergraph->GetGraphRef() )
 	{
 		TRef NodeRef;
@@ -159,10 +164,13 @@ void TLGame::TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 			if ( NodeRef == m_EditorRenderNodeRef )
 				OnEditorRenderNodeAdded();
 		}
-
-		return;
 	}
 
+	//	graph message
+	if ( Message.GetSenderRef() == m_pGraph->GetGraphRef() )
+	{
+		OnGraphMessage( Message );
+	}
 }
 
 
@@ -176,14 +184,31 @@ void TLGame::TSchemeEditor::CreateNodeWidgets(TLGraph::TGraphNodeBase& Node)
 	TRefRef RenderNodeRef = Node.GetRenderNodeRef();
 	if ( RenderNodeRef.IsValid() )
 	{
-		TBinaryTree WidgetData( TRef_Invalid );	//	ref irrelavant
-		WidgetData.ExportData("Node", Node.GetNodeRef() );
+		Bool CreateWidget = TRUE;
 
-		TPtr<TLGui::TWidgetDrag> pWidget = new TLGui::TWidgetDrag( m_GameRenderTarget, RenderNodeRef, "global", "NDown", "NUp", "NDrag", &WidgetData );
-		m_NodeWidgets.Add( pWidget );
+		//	make sure we don't already have a widget for this render node as that could cause problems
+		for ( u32 w=0;	w<m_NodeWidgets.GetSize();	w++ )
+		{
+			TPtr<TLGui::TWidgetDrag>& pWidget = m_NodeWidgets[w];
+			if ( pWidget->GetRenderNodeRef() == RenderNodeRef )
+			{
+				CreateWidget = FALSE;
+				break;
+			}
+		}
 
-		//	subscribe to widget to get the actions
-		this->SubscribeTo( pWidget );
+		if ( CreateWidget )
+		{
+			//	export the node information so when we get the widget callback we know what node it's for in this graph
+			TBinaryTree WidgetData( TRef_Invalid );	//	ref irrelavant
+			WidgetData.ExportData("Node", Node.GetNodeRef() );
+
+			TPtr<TLGui::TWidgetDrag> pWidget = new TLGui::TWidgetDrag( m_GameRenderTarget, RenderNodeRef, "global", "NDown", "NUp", "NDrag", &WidgetData );
+			m_NodeWidgets.Add( pWidget );
+
+			//	subscribe to widget to get the actions
+			this->SubscribeTo( pWidget );
+		}
 	}
 
 	//	subscribe to this node to get changes to the render node
@@ -197,7 +222,6 @@ void TLGame::TSchemeEditor::CreateNodeWidgets(TLGraph::TGraphNodeBase& Node)
 		TLGraph::TGraphNodeBase* pChild = ChildNodes.ElementAt(c);
 		CreateNodeWidgets( *pChild );
 	}
-
 }
 
 
@@ -298,12 +322,16 @@ void TLGame::TSchemeEditor::CreateEditorWidget(TBinaryTree& WidgetData)
 //----------------------------------------------------------
 //	node has been selected
 //----------------------------------------------------------
-void TLGame::TSchemeEditor::OnNodeSelected(TRefRef SceneNode)
+void TLGame::TSchemeEditor::SelectNode(TRefRef SceneNode)
 {
 	//	dont do anything if already selected
 	if ( m_SelectedNodes.Exists( SceneNode ) )
 		return;
 	
+	TTempString Debug_String("Selecting node ");
+	SceneNode.GetString( Debug_String );
+	TLDebug_Print( Debug_String );
+
 	//	add to list
 	m_SelectedNodes.Add( SceneNode );
 	
@@ -317,18 +345,21 @@ void TLGame::TSchemeEditor::OnNodeSelected(TRefRef SceneNode)
 //----------------------------------------------------------
 //	node has been selected
 //----------------------------------------------------------
-void TLGame::TSchemeEditor::OnNodeUnselected(TRefRef SceneNode)
+void TLGame::TSchemeEditor::UnselectNode(TRefRef SceneNode)
 {
+	TTempString Debug_String("Unselecting node ");
+	SceneNode.GetString( Debug_String );
+	TLDebug_Print( Debug_String );
+
 	if ( m_SelectedNodes.Remove( SceneNode ) )
 	{
 		TLMessaging::TMessage EditMessage("EdtEnd");
 		m_pGraph->SendMessageToNode( SceneNode, EditMessage );
 	}
 
-	//	unset our new scene node
-	if ( SceneNode == m_NewSceneNode )
+	//	if no more selected nodes then unset the new-node drag actions
+	if ( m_SelectedNodes.GetSize() == 0 )
 	{
-		m_NewSceneNode.SetInvalid();
 		m_NewSceneNodeDragAction.SetInvalid();
 		m_NewSceneNodeClickAction.SetInvalid();
 	}
@@ -345,7 +376,10 @@ void TLGame::TSchemeEditor::OnNodeDrag(TRefRef SceneNode,const float3& DragAmoun
 	TLMessaging::TMessage TransformMessage("DoTransform");
 	TransformMessage.ExportData("Translate", DragAmount );
 
-	TLDebug_Print( TString("Node drag; %2.2f, %2.2f, %2.2f", DragAmount.x, DragAmount.y, DragAmount.z ) );
+	TTempString Debug_String("Dragging node ");
+	SceneNode.GetString( Debug_String );
+	Debug_String.Appendf("; %2.2f, %2.2f, %2.2f", DragAmount.x, DragAmount.y, DragAmount.z );
+	TLDebug_Print( Debug_String );
 	
 	m_pGraph->SendMessageToNode( SceneNode, TransformMessage );
 }
@@ -364,7 +398,6 @@ void TLGame::TSchemeEditor::UnselectAllNodes()
 
 	//	now unselect all those nodes
 	m_SelectedNodes.Empty();
-	m_NewSceneNode.SetInvalid();
 	m_NewSceneNodeDragAction.SetInvalid();
 	m_NewSceneNodeClickAction.SetInvalid();
 }
@@ -399,11 +432,11 @@ void TLGame::TSchemeEditor::ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef
 	}
 	else if ( ActionRef == "NDown" )
 	{
-		OnNodeSelected( NodeRef );
+		SelectNode( NodeRef );
 	}
 	else if ( ActionRef == "NUp" )
 	{
-		OnNodeUnselected( NodeRef );
+		UnselectNode( NodeRef );
 	}
 }
 
@@ -425,7 +458,7 @@ Bool TLGame::TSchemeEditor::GetGameWorldPosFromScreenPos(float3& WorldPos,const 
 //----------------------------------------------------------
 void TLGame::TSchemeEditor::ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message)
 {
-	if ( ActionRef == "IcoDrag" && !m_NewSceneNode.IsValid() )
+	if ( ActionRef == "IcoDrag" && m_SelectedNodes.GetSize()==0 )
 	{
 		//	create a new node at the mouse position - convert screen pos to game render target world pos
 		int2 ScreenPos;
@@ -451,11 +484,18 @@ void TLGame::TSchemeEditor::ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRef
 
 		//	create node either from type or importing scheme under it
 		TRef Type;
+		TRef NewSceneNode;
 		if ( pIconData->ImportData("Type", Type) )
 		{
 			//	set this new node as the "new scene node" that we're dropping into the game.
 			//	the editor's mouse controls take over now
-			m_NewSceneNode = m_pGraph->CreateNode("EdNode", Type, m_SchemeRootNode, &InitMessage );
+			NewSceneNode = m_pGraph->CreateNode("EdNode", Type, m_SchemeRootNode, &InitMessage );
+	
+			TTempString Debug_String("Created new scene node ");
+			NewSceneNode.GetString( Debug_String );
+			Debug_String.Append(" from node TYPE ");
+			Type.GetString( Debug_String );
+			TLDebug_Print( Debug_String );
 		}
 		else if ( pIconData->ImportData("Scheme", Type) )
 		{
@@ -471,12 +511,18 @@ void TLGame::TSchemeEditor::ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRef
 			}
 
 			//	make a base node - still trying to decide if this is the best method
-			m_NewSceneNode = m_pGraph->CreateNode("EdNode", "object", m_SchemeRootNode, &InitMessage );
+			NewSceneNode = m_pGraph->CreateNode("EdNode", "object", m_SchemeRootNode, &InitMessage );
+
+			TTempString Debug_String("Created new scene node ");
+			NewSceneNode.GetString( Debug_String );
+			Debug_String.Append(" from SCEHEME ");
+			SchemeRef.GetString( Debug_String );
+			TLDebug_Print( Debug_String );
 
 			//	import the scheme under neath it
 			//	we do NOT use strict refs as the scheme is to be re-instanced...
 			//	maybe move this option INTO the scheme XML itself?
-			TLScene::g_pScenegraph->ImportScheme( *pScheme, m_NewSceneNode, FALSE, &m_CommonNodeData );
+			TLScene::g_pScenegraph->ImportScheme( *pScheme, NewSceneNode, FALSE, &m_CommonNodeData );
 		}
 		else 
 		{
@@ -485,15 +531,19 @@ void TLGame::TSchemeEditor::ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRef
 		}		
 
 		//	should have set this new scene node
-		if ( !m_NewSceneNode.IsValid() )
+		if ( !NewSceneNode.IsValid() )
 		{
 			TLDebug_Break("Failed to create new scene node");
 			return;
 		}
 
+		//	unselect current nodes and select new nodes only
+		UnselectAllNodes();
+
 		//	set as selected - this also sends the EdtStart message to disable physics etc
 		//	getting in the way of the drag
-		OnNodeSelected( m_NewSceneNode );
+		//	gr: now just stored in selected node list
+		SelectNode( NewSceneNode );
 
 		//	store off the action to listen for, for the mouse
 		if ( !Message.ImportData("InpAction", m_NewSceneNodeDragAction ) )
@@ -506,7 +556,7 @@ void TLGame::TSchemeEditor::ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRef
 		//	get the equivelent mouse action
 		m_NewSceneNodeClickAction = TLGui::g_pWidgetManager->GetClickActionFromMoveAction( m_NewSceneNodeDragAction );
 	}
-
+	
 }
 
 
@@ -599,8 +649,12 @@ void TLGame::TSchemeEditor::OnEditorRenderNodeAdded()
 void TLGame::TSchemeEditor::ProcessMouseMessage(TRefRef ActionRef,TLMessaging::TMessage& Message,Bool IsClickAction)
 {
 	//	dragging new scene node around
-	if ( ActionRef == m_NewSceneNodeDragAction && m_NewSceneNode.IsValid() )
+	if ( ActionRef == m_NewSceneNodeDragAction && m_SelectedNodes.GetSize() )
 	{
+		TTempString Debug_String("Dragging selected nodes ");
+		Debug_GetSelectedNodeRefStrings( Debug_String );
+		TLDebug_Print( Debug_String );
+
 		//	get the screen cursor pos
 		int2 ScreenPos;
 		if ( !Message.ImportData("Cursor", ScreenPos ) )
@@ -615,33 +669,29 @@ void TLGame::TSchemeEditor::ProcessMouseMessage(TRefRef ActionRef,TLMessaging::T
 		float3 WorldPos;
 		if ( !GetGameWorldPosFromScreenPos( WorldPos, ScreenPos ) )
 		{
-			//	failed - probably dragged outside the game's window, drop
-			TLDebug_Break("todo: drop node");
+			TLDebug_Print("mouse outside window, dropping nodes");
+			DropNewNode( m_SelectedNodes );
 			return;
 		}
 
 		//	move the node to the cursor's world pos
 		TLMessaging::TMessage SetMessage(TLCore::SetPropertyRef);
 		SetMessage.ExportData("translate", WorldPos);
-		m_pGraph->SendMessageToNode( m_NewSceneNode, SetMessage );
+
+		for ( u32 i=0;	i<m_SelectedNodes.GetSize();	i++ )
+			m_pGraph->SendMessageToNode( m_SelectedNodes[i], SetMessage );
 		return;
 	}
 
 	//	drop new scene node into game (let go)
-	if ( ActionRef == m_NewSceneNodeClickAction && m_NewSceneNode.IsValid() )
+	if ( ActionRef == m_NewSceneNodeClickAction && m_SelectedNodes.GetSize() )
 	{
-		//	create widget for this node
-		TLGraph::TGraphNodeBase* pNode = m_pGraph->FindNodeBase( m_NewSceneNode );
-		if ( pNode )
-		{
-			CreateNodeWidgets( *pNode );
-		}
-		else
-		{
-			TLDebug_Break("Node expected");
-		}
+		TTempString Debug_String("Mouse click action (assume up) - releasing [new] selected nodes ");
+		Debug_GetSelectedNodeRefStrings( Debug_String );
+		TLDebug_Print( Debug_String );
 
-		OnNodeUnselected( m_NewSceneNode );
+		//	drop new nodes into world, create widgets and unselect them
+		DropNewNode( m_SelectedNodes );
 	}
 }
 
@@ -706,5 +756,91 @@ void TLGame::TSchemeEditor::EnableNodeWidgets(Bool Enable)
 	{
 		TPtr<TLGui::TWidgetDrag>& pWidget = m_NodeWidgets[i];
 		pWidget->SetEnabled( Enable );
+	}
+}
+
+
+//----------------------------------------------------------
+//	get all the selected node refs as strings
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::Debug_GetSelectedNodeRefStrings(TString& String)
+{
+	u32 SelectedNodeCount = m_SelectedNodes.GetSize();
+	if ( SelectedNodeCount == 0 )
+	{
+		String.Append("(none)");
+		return;
+	}
+
+	for ( u32 i=0;	i<SelectedNodeCount;	i++ )
+	{
+		m_SelectedNodes[i].GetString( String );
+		if ( i != m_SelectedNodes.GetLastIndex() )
+			String.Append(",");
+	}
+	
+}
+
+
+//----------------------------------------------------------
+//	handle graph change from our graph
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::OnGraphMessage(TLMessaging::TMessage& Message)
+{
+	//	new [scene] node, eg. child of an instanced scheme node
+	if ( Message.GetMessageRef() == "NodeAdded" )
+	{
+		TRef SceneNode;
+		Message.ResetReadPos();
+		if( !Message.Read( SceneNode ) )
+			return;
+
+		//	not dragging a new node.. but a new node has turned up
+		if ( !m_NewSceneNodeDragAction.IsValid() || !m_NewSceneNodeClickAction.IsValid() )
+		{
+			TLDebug_Print("New node has appeared in graph, but we're not dragging in a new node...");
+			DropNewNode( SceneNode );
+		}
+		else
+		{
+			//	new node, let's select it and it'll be dragged around like everything else
+			//	but... i dont know where to position it...
+			SelectNode( SceneNode );
+		}
+		return;
+	}
+}
+
+
+//----------------------------------------------------------
+//	drop a node into the game
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::DropNewNode(TRefRef NodeRef)
+{
+	//	fetch node and create widget
+	TLGraph::TGraphNodeBase* pNode = m_pGraph->FindNodeBase( NodeRef );
+	if ( pNode )
+	{
+		CreateNodeWidgets( *pNode );
+	}
+	else
+	{
+		TLDebug_Break("Node expected");
+	}
+
+	//	unselect node
+	UnselectNode( NodeRef );
+}
+
+
+//----------------------------------------------------------
+//	drop a bunch of nodes (probbaly selected nodes)
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::DropNewNode(TArray<TRef>& NodeArray)
+{
+	//	gr: do this in reverse as the array is likely to be the selected node list, and the array gets changed in DropNewNode
+	for ( s32 i=NodeArray.GetLastIndex();	i>=0;	i-- )
+	{
+		DropNewNode( NodeArray[i] );
 	}
 }

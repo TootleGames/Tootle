@@ -402,7 +402,7 @@ SyncBool TTimelineInstance::SendCommandAsMessage(TLAsset::TTimelineCommand* pFro
 	// trap this in debug.
 	if(NodeRef == TRef_Static4(t,h,i,s))
 	{
-		TLDebug_Print("Invalid node ref for 'this' on timeline instance");
+		TLDebug_Print("Invalid node ref for 'this' on timeline instance. BindTo() not called yet?");
 		return SyncFalse;
 	}
 #endif

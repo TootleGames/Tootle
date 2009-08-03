@@ -48,8 +48,8 @@ protected:
 
 	void						EnableNodeWidgets(Bool Enable);							//	enable/disable node widgets
 	virtual void				ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a game node
-	void						OnNodeSelected(TRefRef NodeRef);						//	node has been selected
-	void						OnNodeUnselected(TRefRef NodeRef);						//	node has been selected
+	void						SelectNode(TRefRef NodeRef);						//	select a node
+	void						UnselectNode(TRefRef NodeRef);						//	unselect a node
 	void						UnselectAllNodes();			//	unselect all nodes
 
 	virtual void				ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a editor icon
@@ -61,14 +61,19 @@ protected:
 	virtual void				ProcessCommandMessage(TRefRef CommandRef,TLMessaging::TMessage& Message);	//	handle other messages (assume are commands)
 	virtual void				ClearScheme();				//	remove all nodes
 
+	void						Debug_GetSelectedNodeRefStrings(TString& String);	//	get all the selected node refs as strings
+
 private:
 	Bool						CreateEditorGui(TRefRef EditorScheme);				//	create render target, widgets, icons etc
 	void						CreateEditorWidget(TBinaryTree& WidgetData);		//	create a widget from scheme XML
 	void						OnEditorRenderNodeAdded();							//	editor render node is ready to be used
 
-	void						CreateNodeWidgets(TLGraph::TGraphNodeBase& Node);		//	create nodes widget to allow us to drag around in-game nodes. recurses down the tree
+	void						CreateNodeWidgets(TLGraph::TGraphNodeBase& Node);		//	create nodes widget to allow us to drag around in-game nodes. recurses down the tree, decrementing RecurseLevels until it's zero, at which point it doesn't create nodes for the children
 	void						OnNodeDrag(TRefRef NodeRef,const float3& DragAmount);	//	node has been dragged
+	void						DropNewNode(TRefRef NodeRef);							//	drop a node into the game
+	void						DropNewNode(TArray<TRef>& NodeArray);					//	drop a bunch of nodes (probbaly selected nodes)
 
+	void						OnGraphMessage(TLMessaging::TMessage& Message);			//	handle graph change from our graph
 
 protected:
 	TRef							m_EditorRenderTarget;	//	render target of our editor
@@ -84,7 +89,6 @@ protected:
 	TPtr<TLRender::TScreen>			m_pGameScreen;			//	cache ptr to game's screen which contains render target
 	TPtr<TLRender::TRenderTarget>	m_pGameRenderTarget;	//	cache ptr to game's render target
 	TPtrArray<TLGui::TWidgetDrag>	m_NodeWidgets;			//	widgets to manipulate existing nodes
-	TRef							m_NewSceneNode;			//	ref of the new in-game node we've created from an icon and currently dragging into the game
 	TRef							m_NewSceneNodeDragAction;	//	action for the mouse to look out for when we are dragging a new scene node
 	TRef							m_NewSceneNodeClickAction;	//	action for the mouse to look out for when we are dragging a new scene node
 

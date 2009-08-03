@@ -65,7 +65,7 @@ void TSceneNode_Object::DeleteRenderNode()
 
 void TSceneNode_Object::Initialise(TLMessaging::TMessage& Message)
 {
-	Message.Debug_PrintTree();
+	//Message.Debug_PrintTree();
 
 	//	do super init first
 	TLScene::TSceneNode_Transform::Initialise( Message );
@@ -270,15 +270,18 @@ void TSceneNode_Object::UpdateNodeData()
 //------------------------------------------------
 //	recursivly store an owned-node's data to this data
 //------------------------------------------------
-void TSceneNode_Object::UpdateOwnedNodeData(TLRender::TRenderNode& RenderNode,TBinaryTree& NodeData,TRefRef NodeDataRef)
+void TSceneNode_Object::UpdateOwnedNodeData(TLRender::TRenderNode& RenderNode,TBinaryTree& NodeData,TRefRef NewNodeDataRef)
 {
 	// Update the node's own data (ie. save it's state)
 	RenderNode.UpdateNodeData();
 
 	//	add some data to write to
-	TPtr<TBinaryTree>& pNewNodeData = GetNodeData().AddChild( NodeDataRef );
+	TPtr<TBinaryTree>& pNewNodeData = NodeData.AddChild( NewNodeDataRef );
 	if ( !pNewNodeData )
 		return;
+
+	//	add the node's ref
+	pNewNodeData->ExportData("NodeRef", RenderNode.GetNodeRef() );
 
 	//	copy the node's data
 	pNewNodeData->ReferenceDataTree( RenderNode.GetNodeData() );

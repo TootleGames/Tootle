@@ -548,12 +548,23 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 //---------------------------------------------------------
 Bool TLRender::TRenderNode::CreateChildNode(TBinaryTree& ChildInitData)
 {
+	TTempString Debug_String("Creating child node from RenderNode ");
+	this->GetNodeRef().GetString( Debug_String );
+	TLDebug_Print( Debug_String );
+	ChildInitData.Debug_PrintTree();
+
 	//	import bits of optional data
 	TRef Type;
 	ChildInitData.ImportData("Type", Type);
 
 	TRef Parent = this->GetNodeRef();
-	ChildInitData.ImportData("Parent", Parent);
+	if ( ChildInitData.ImportData("Parent", Parent) )
+	{
+		if ( Parent != this->GetNodeRef() )
+		{
+			TLDebug_Break("Import \"child\" data for render node, and child's parent ref isn't this");
+		}
+	}
 
 	TRef ChildRef;
 	ChildInitData.ImportData("NodeRef", ChildRef);
@@ -805,14 +816,14 @@ Bool TLRender::TRenderNode::SetWorldTransformOld(Bool SetPosOld,Bool SetTransfor
 
 void TLRender::TRenderNode::UpdateNodeData()
 {
-	TPtr<TLRender::TRenderNode> pParent = GetParent();
-
+	TLRender::TRenderNode* pParent = GetParent();
 	if(pParent)
 	{
 		GetNodeData().RemoveChild("Parent");
 		GetNodeData().ExportData("Parent", pParent->GetNodeRef());
 	}
 
+	//	gr: i wonder if the type should be stored in itself, as (for editor-style reflection at least) it cannot be changed
 	GetNodeData().RemoveChild("Type");
 	GetNodeData().ExportData("Type", GetNodeTypeRef());
 
