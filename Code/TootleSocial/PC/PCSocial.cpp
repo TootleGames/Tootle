@@ -17,11 +17,11 @@ namespace TLSocial
 {
 	namespace Platform
 	{
-		void BeginSession(TRefRef SessionTypeRef)	{}
+		void BeginSession(TRefRef SessionTypeRef, const TString& APIKey, const TString& APISecret)	{}
 		void EndSession(TRefRef SessionTypeRef)		{}
 		
 		void OpenDashboard(TRefRef SessionTypeRef)	{}
-		void OpeLeaderboard(TRefRef SessionTypeRef)	{}
+		void OpenLeaderboard(TRefRef SessionTypeRef)	{}
 		
 		void SubmitScore(TRefRef SessionTypeRef, const s32& Score, const TString& Format, const s32& LeaderboardID)	{}
 	}
