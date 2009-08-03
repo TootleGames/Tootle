@@ -12,7 +12,7 @@
 // Additionally you will need to add some bundles to your project resources:
 //	AgonData.bundle		- found in the libagon/resources directory
 //	AgonPackage.bundle	- project specific and is downloaded from the AGON online developer site.
-//#define ENABLE_AGONONLINE
+#define ENABLE_AGONONLINE
 
 
 #include <TootleCore/TLTypes.h>
@@ -27,15 +27,17 @@ namespace TLSocial
 			namespace AGONOnline
 			{
 #ifdef ENABLE_AGONONLINE
-				void BeginSession();
+				void BeginSession(const TString& APIKey, const TString& APISecret);
 				void OpenDashboard();
+				void OpenLeaderboard();
 				void EndSession();
 				
 				void SubmitScore(const s32& Score, const TString& Format, const s32& LeaderboardID);
 
 #else
-				void BeginSession()		{}
+				void BeginSession(const TString& APIKey, const TString& APISecret)		{}
 				void OpenDashboard()	{}
+				void OpenLeaderboard()	{}
 				void EndSession()		{}
 				
 				void SubmitScore(const s32& Score, const TString& Format, const s32& LeaderboardID)	{}

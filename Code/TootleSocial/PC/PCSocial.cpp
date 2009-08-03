@@ -21,6 +21,7 @@ namespace TLSocial
 		void EndSession(TRefRef SessionTypeRef)		{}
 		
 		void OpenDashboard(TRefRef SessionTypeRef)	{}
+		void OpeLeaderboard(TRefRef SessionTypeRef)	{}
 		
 		void SubmitScore(TRefRef SessionTypeRef, const s32& Score, const TString& Format, const s32& LeaderboardID)	{}
 	}

@@ -6,10 +6,16 @@
 #import "OFViewHelper.h"
 
 
-void TLSocial::Platform::IPod::OpenFeint::BeginSession()
+void TLSocial::Platform::IPod::OpenFeint::BeginSession(const TString& APIKey, const TString& APISecret)
 {
-	[OpenFeint initializeWithProductKey:@"Np73Z3nH4lPmwCGxQCh7A" 
-							  andSecret:@"1Vr4ufYKQrdHptYmq6C5LP5dytD0GNNz74o908lQiY" 
+	NSString* pAPIKey = [NSString stringWithUTF8String:APIKey.GetData()];
+	NSString* pAPISecret = [NSString stringWithUTF8String:APISecret.GetData()];
+	
+	// Test App Key		- @"Np73Z3nH4lPmwCGxQCh7A"
+	// Test App Secret	- @"1Vr4ufYKQrdHptYmq6C5LP5dytD0GNNz74o908lQiY" 
+	
+	[OpenFeint initializeWithProductKey: pAPIKey
+							  andSecret: pAPISecret
 						 andDisplayName:@"TestGame" 
 							andSettings:nil 
 							andDelegate:nil];

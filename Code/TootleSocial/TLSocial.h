@@ -15,6 +15,7 @@
 
 namespace TLSocial
 {
+	//template<class SocialNetworkingPlatform>
 	class TSocialNetworkingManager;
 		
 	extern TPtr<TSocialNetworkingManager> g_pSocialNetworkingManager;
@@ -25,11 +26,17 @@ namespace TLSocial
 	const TRef OpenFeintRef			= TRef_Static(O,p,e,n,F);	//"OpenFeint";
 	const TRef AGONOnlineRef		= TRef_Static(A,G,O,N,O);	//"AGONOnline";
 	
-	
+
+	class SocialNetworkingPlatform_None
+	{
+		
+	};
 }
 
 
-class TLSocial::TSocialNetworkingManager : public TLCore::TManager
+
+//template<class SocialNetworkingPlatform>
+class TLSocial::TSocialNetworkingManager : public TLCore::TManager //, public SocialNetworkingPlatform
 {
 public:
 	TSocialNetworkingManager(TRefRef ManagerRef) :
@@ -38,10 +45,11 @@ public:
 	}
 	
 	// Session management
-	Bool		BeginSession(TRefRef SessionRef, TRefRef UserRef, TRefRef SessionTypeRef);
+	Bool		BeginSession(TRefRef SessionRef, TRefRef UserRef, TRefRef SessionTypeRef, const TString& APIKey, const TString& APISecret);
 	Bool		EndSession(TRefRef SessionRef);
 	
 	Bool		OpenDashboard();
+	Bool		OpenLeaderboard();
 
 	// Leaderboard processing
 	FORCEINLINE Bool		RegisterLeaderboard(TRefRef LeaderboardRef, const s32& LeaderboardID)	{ return m_Leaderboards.Add(LeaderboardRef, LeaderboardID)!=NULL; }
@@ -51,11 +59,8 @@ public:
 	// Achievement processing
 	
 	// Accessors
-	FORCEINLINE const TString&		GetKey()					const	{ return m_Key; }
-	FORCEINLINE void				SetKey(const TString& key)			{ m_Key = key; }
-	
+	FORCEINLINE const TString&		GetKey()					const	{ return m_Key; }	
 	FORCEINLINE const TString&		GetSecret()					const	{ return m_Secret; }
-	FORCEINLINE void				SetSecret(const TString& secret)	{ m_Secret = secret; }
 
 private:
 	

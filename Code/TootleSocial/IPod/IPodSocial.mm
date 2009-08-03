@@ -18,19 +18,19 @@
 #include "../TLSocial.h"
 
 
-void TLSocial::Platform::BeginSession(TRefRef SessionTypeRef)
+void TLSocial::Platform::BeginSession(TRefRef SessionTypeRef, const TString& APIKey, const TString& APISecret)
 {
 	if(SessionTypeRef == TLSocial::FacebookRef)
 	{
-		IPod::Facebook::BeginSession();
+		IPod::Facebook::BeginSession(APIKey, APISecret);
 	}
 	else if(SessionTypeRef == TLSocial::AGONOnlineRef)
 	{
-		IPod::AGONOnline::BeginSession();
+		IPod::AGONOnline::BeginSession(APIKey, APISecret);
 	}
 	else if(SessionTypeRef == TLSocial::OpenFeintRef)
 	{
-		IPod::OpenFeint::BeginSession();
+		IPod::OpenFeint::BeginSession(APIKey, APISecret);
 	}
 
 }
@@ -68,6 +68,19 @@ void TLSocial::Platform::OpenDashboard(TRefRef SessionTypeRef)
 	}
 
 }
+
+void TLSocial::Platform::OpenLeaderboard(TRefRef SessionTypeRef)
+{
+	if(SessionTypeRef == TLSocial::AGONOnlineRef)
+	{
+		IPod::AGONOnline::OpenLeaderboard();
+	}
+	else if(SessionTypeRef == TLSocial::OpenFeintRef)
+	{
+		IPod::OpenFeint::OpenLeaderboard();
+	}
+}
+
 
 
 void TLSocial::Platform::SubmitScore(TRefRef SessionTypeRef, const s32& Score, const TString& Format, const s32& LeaderboardID)

@@ -281,7 +281,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>21</integer>
+									<integer>20</integer>
 									<integer>2</integer>
 									<integer>0</integer>
 								</array>
@@ -322,7 +322,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TLSocial.cpp</string>
+								<string>TLSocial.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -330,11 +330,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TLSocial.cpp</string>
+										<string>TLSocial.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8450999F1021AAD100B78F2B</string>
+										<string>84D226701026E83D0090276A</string>
 										<key>history</key>
 										<array>
 											<string>847DF7E40FD92C61005F9EDC</string>
@@ -351,26 +351,27 @@
 											<string>840AFDA90FDD1B2C00922D69</string>
 											<string>840AFDAA0FDD1B2C00922D69</string>
 											<string>84508B201020856400B78F2B</string>
-											<string>84508B221020856400B78F2B</string>
-											<string>845095001020B38100B78F2B</string>
 											<string>845095051020B38100B78F2B</string>
 											<string>845095061020B38100B78F2B</string>
 											<string>845095281020B3F100B78F2B</string>
 											<string>8450954B102186B800B78F2B</string>
-											<string>8450954C102186B800B78F2B</string>
-											<string>8450954D102186B800B78F2B</string>
-											<string>84509550102186B800B78F2B</string>
 											<string>84509551102186B800B78F2B</string>
-											<string>845099671021A70A00B78F2B</string>
-											<string>8450997C1021A89800B78F2B</string>
-											<string>8450997D1021A89800B78F2B</string>
-											<string>8450997E1021A89800B78F2B</string>
-											<string>8450997F1021A89800B78F2B</string>
-											<string>845099801021A89800B78F2B</string>
-											<string>845099811021A89800B78F2B</string>
-											<string>845099821021A89800B78F2B</string>
-											<string>8450999C1021AAD100B78F2B</string>
-											<string>8450999D1021AAD100B78F2B</string>
+											<string>84509BF21021E00A00B78F2B</string>
+											<string>84509C241021E59200B78F2B</string>
+											<string>84509C251021E59200B78F2B</string>
+											<string>84D2208210234EB00090276A</string>
+											<string>84D2208510234EB00090276A</string>
+											<string>84D2208610234EB00090276A</string>
+											<string>84D2208710234EB00090276A</string>
+											<string>84D2208810234EB00090276A</string>
+											<string>84D2208910234EB00090276A</string>
+											<string>84D220CC10239E450090276A</string>
+											<string>84D2217E102427C40090276A</string>
+											<string>84D22180102427C40090276A</string>
+											<string>84D221EE10242ED90090276A</string>
+											<string>84D2266C1026E83D0090276A</string>
+											<string>84D2266D1026E83D0090276A</string>
+											<string>84D2217F102427C40090276A</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -407,7 +408,9 @@
 											<string>84509557102186B800B78F2B</string>
 											<string>84509558102186B800B78F2B</string>
 											<string>84509569102186B800B78F2B</string>
-											<string>8450999E1021AAD100B78F2B</string>
+											<string>84509BF91021E00A00B78F2B</string>
+											<string>84D2266E1026E83D0090276A</string>
+											<string>84D2266F1026E83D0090276A</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -465,9 +468,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>845099A11021AAD100B78F2B</string>
+				<string>84D226721026E83D0090276A</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>845099A21021AAD100B78F2B</string>
+				<string>84D226731026E83D0090276A</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -601,7 +604,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>8404EB760FD7D1E700F280AF</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleSocial/IPod/TootleSocial.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -682,7 +684,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>8404EB760FD7D1E700F280AF</string>
-				<string>845099A31021AAD100B78F2B</string>
+				<string>84D221AE102428BA0090276A</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

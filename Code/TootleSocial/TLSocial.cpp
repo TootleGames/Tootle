@@ -15,10 +15,11 @@ namespace TLSocial
 	
 	namespace Platform
 	{
-		void BeginSession(TRefRef SessionTypeRef);
+		void BeginSession(TRefRef SessionTypeRef, const TString& APIKey, const TString& APISecret);
 		void EndSession(TRefRef SessionTypeRef);
 		
 		void OpenDashboard(TRefRef SessionTypeRef);
+		void OpenLeaderboard(TRefRef SessionTypeRef);
 		
 		void SubmitScore(TRefRef SessionTypeRef, const s32& Score, const TString& Format, const s32& LeaderboardID);
 	}				
@@ -28,7 +29,7 @@ namespace TLSocial
 using namespace TLSocial;
 
 // Begins a social networking session - initiates login dialogue and session object for a given user
-Bool TSocialNetworkingManager::BeginSession(TRefRef SessionRef, TRefRef UserRef, TRefRef SessionTypeRef)
+Bool TSocialNetworkingManager::BeginSession(TRefRef SessionRef, TRefRef UserRef, TRefRef SessionTypeRef, const TString& APIKey, const TString& APISecret)
 {
 	if(m_SessionTypeRef.IsValid())
 	{
@@ -45,8 +46,11 @@ Bool TSocialNetworkingManager::BeginSession(TRefRef SessionRef, TRefRef UserRef,
 	}
 
 	m_SessionTypeRef = SessionTypeRef;
+	
+	m_Key = APIKey;
+	m_Secret = APISecret;
 		
-	Platform::BeginSession(m_SessionTypeRef);
+	Platform::BeginSession(m_SessionTypeRef, m_Key, m_Secret);
 	
 	return TRUE;
 }
@@ -75,6 +79,19 @@ Bool TSocialNetworkingManager::OpenDashboard()
 	
 	return TRUE;
 }
+
+
+// Opens social network platform dashboard
+Bool TSocialNetworkingManager::OpenLeaderboard()
+{
+	if(!m_SessionTypeRef.IsValid())
+		return FALSE;
+	
+	Platform::OpenLeaderboard(m_SessionTypeRef);
+	
+	return TRUE;
+}
+
 
 
 Bool TSocialNetworkingManager::SubmitScore(const s32& Score, const TString& Format, TRefRef LeaderboardRef)

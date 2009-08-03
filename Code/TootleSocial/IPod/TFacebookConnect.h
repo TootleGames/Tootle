@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <TootleCore/TString.h>
+
 namespace TLSocial
 {
 	namespace Platform
@@ -18,7 +20,7 @@ namespace TLSocial
 			namespace Facebook
 			{
 				
-				void BeginSession();
+				void BeginSession(const TString& APIKey, const TString& APISecret);
 				void EndSession();
 				
 				void OpenDashboard();

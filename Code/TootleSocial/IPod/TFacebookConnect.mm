@@ -29,7 +29,7 @@ namespace TLSocial
 	}
 }
 
-void TLSocial::Platform::IPod::Facebook::BeginSession()
+void TLSocial::Platform::IPod::Facebook::BeginSession(const TString& APIKey, const TString& APISecret)
 {
 	g_pFacebookSession = [[SessionViewController alloc] init];
 	
