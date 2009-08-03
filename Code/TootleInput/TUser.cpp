@@ -68,9 +68,7 @@ Bool TUserManager::RegisterUser(TRefRef UserRef)
 	
 	// Broadcast message to say a new user has been added to the system
 	TLMessaging::TMessage Message("USER");
-	Message.Write("ADDED");				// User added message
-	TLDebug_Break("gr: pointer in a message! change me");
-	Message.Write(pUser.GetObject());		// User being added
+	Message.Write(TRef("ADDED"));
 	Message.ExportData("UserRef", UserRef );
 
 	PublishMessage(Message);
@@ -88,10 +86,7 @@ Bool TUserManager::UnregisterUser(TRefRef UserRef)
 
 	// Broadcast message to say a user is being removed from the system
 	TLMessaging::TMessage Message("USER");
-	Message.Write("REMOVED");				// User removed message
-	
-	TLDebug_Break("gr: pointer in a message! change me");
-	Message.Write(pUser.GetObject());		// User being removed
+	Message.Write(TRef("REMOVED"));				
 	Message.ExportData("UserRef", UserRef );
 
 	PublishMessage(Message);
@@ -109,9 +104,7 @@ void TUserManager::UnregisterAllUsers()
 
 		// Broadcast message to say a user is being removed from the system
 		TLMessaging::TMessage Message("USER");
-		Message.Write("REMOVED");				// User removed message
-		TLDebug_Break("gr: pointer in a message! change me");
-		Message.Write(pUser.GetObject());		// User being removed
+		Message.Write(TRef("REMOVED"));				
 		Message.ExportData("UserRef", pUser->GetUserRef() );
 
 		PublishMessage(Message);
