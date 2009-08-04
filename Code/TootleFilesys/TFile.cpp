@@ -59,8 +59,11 @@ void TLFileSys::TFile::SetTimestamp(const TLTime::TTimestamp& NewTimestamp)
 	if ( SecondsDiff < 0 )
 	{
 		s32 MilliDiff = m_Timestamp.GetMilliSecondsDiff( NewTimestamp );
-		if ( !TLDebug_Break( TString("File's timestamp is OLDER than what it was before? (%d seconds, %d milliseconds diff)", SecondsDiff, MilliDiff ) ) )
-			return;
+		TTempString Debug_String("File ");
+		this->GetFileAndTypeRef().GetString( Debug_String );
+		Debug_String.Appendf("'s timestamp is OLDER than what it was before? (%d hours, %d seconds, %d milliseconds diff)", SecondsDiff/60, SecondsDiff%60, MilliDiff );
+		TLDebug_Print( Debug_String );
+		return;
 	}
 
 	//	if the file is laoded, it's now out of date

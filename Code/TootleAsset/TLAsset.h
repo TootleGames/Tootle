@@ -46,6 +46,7 @@ namespace TLAsset
 	FORCEINLINE SyncBool		LoadAsset(TRefRef AssetRef,TRefRef AssetType,Bool BlockLoad)	{	return LoadAsset( TTypedRef( AssetRef, AssetType ), BlockLoad );	}
 	template<class ASSETTYPE>
 	FORCEINLINE SyncBool		LoadAsset(TRefRef AssetRef,Bool BlockLoad)						{	return LoadAsset( TTypedRef( AssetRef, ASSETTYPE::GetType_Static() ), BlockLoad );	}
+	Bool						LoadAllAssets(TRefRef AssetType);					//	load all assets from the file system of this type that we can identify. (ie. won't load non-compiled assets). Returns TRUE if we found any new assets of this type
 
 	FORCEINLINE TPtr<TAsset>&	CreateAsset(const TTypedRef& AssetAndTypeRef);		//	return a pointer to a new asset - mostly used for runtime asssets
 	FORCEINLINE TPtr<TAsset>&	CreateAsset(TRefRef AssetRef,TRefRef AssetType)		{	return CreateAsset( TTypedRef( AssetRef, AssetType ) );	}

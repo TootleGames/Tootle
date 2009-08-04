@@ -244,6 +244,9 @@ Bool TLFileSys::TFileAsset::Header::IsValid() const
 	if ( !m_TootFileRef.IsValid() )
 		return FALSE;
 
+	if ( m_TootFileRef != TLFileSys::g_TootFileRef )
+		return FALSE;
+
 	if ( !m_AssetType.IsValid() )
 		return FALSE;
 
@@ -293,7 +296,7 @@ TRef TLFileSys::TLFileAssetImporter::Mode_Init::Update(float Timestep)
 	}
 
 	//	validate header ref
-	if ( GetHeader().m_TootFileRef != TLFileSys::g_TootFileRef )
+	if ( !Header.IsValid() )
 	{
 		#ifdef _DEBUG
 		TTempString Debug_String("Asset file ");

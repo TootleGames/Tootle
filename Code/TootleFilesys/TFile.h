@@ -100,7 +100,7 @@ protected:
 	TRefRef							GetInstanceRef() const					{	return m_InstanceRef;	}
 
 private:
-	TRef							m_InstanceRef;		//	unique instance ref of file
+	TRef							m_InstanceRef;		//	unique instance ref of file - this does NOT correspond to the file name. Never ever store this!
 
 protected:
 	SyncBool						m_IsLoaded;			//	FALSE if not loaded, WAIT if still loading, TRUE if loaded

@@ -12,17 +12,6 @@
 //--------------------------------------------------------------------	
 Bool TLGraph::TGraphBase::ImportScheme(const TLAsset::TScheme& Scheme,TRefRef ParentNodeRef,Bool StrictNodeRefs,TBinaryTree* pCommonInitData)
 {
-	//	just do a quick type check...
-	if ( Scheme.GetAssetType() != "Scheme" )
-	{
-		TTempString Debug_String("Trying to import scheme asset ");
-		Scheme.GetAssetRef().GetString( Debug_String );
-		Debug_String.Append(" but is wrong asset type: ");
-		Scheme.GetAssetType().GetString( Debug_String );
-		TLDebug_Break( Debug_String );
-		return FALSE;
-	}
-
 	//	keep track of all the node's we've imported so we can remove them again if it fails
 	TArray<TRef> ImportedNodes;
 	const TPtrArray<TLAsset::TSchemeNode>& SchemeNodes = Scheme.GetNodes();

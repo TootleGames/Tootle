@@ -56,7 +56,10 @@ public:
 	virtual TRef		GetFileExportAssetType() const	{	return GetAssetTypeRef();	}
 
 	TRefRef				GetAssetTypeRef() const		{	return m_Header.m_AssetType;	}
+	TTypedRef			GetAssetAndTypeRef() const	{	return TTypedRef( GetFileRef(), GetAssetTypeRef() );	}
 	TFileAsset::Header&	GetHeader()					{	return m_Header;	}
+	Bool				IsHeaderLoaded() const		{	return m_Header.IsValid();	}	//	if the header is valid, we assume it's loaded okay
+
 	TBinaryTree&		GetData()					{	return m_Data;	}
 	const TBinaryTree&	GetData() const				{	return m_Data;	}
 
