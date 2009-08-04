@@ -589,11 +589,5 @@ TLAsset::TAsset* TLAsset::TAssetFactory::CreateObject(TRefRef InstanceRef,TRefRe
 	case STRef(A,s,s,e,t):	return new TLAsset::TAsset( TLAsset::TAsset::GetAssetType_Static(), InstanceRef );	//	"Asset"
 	};
 
-#ifdef _DEBUG
-	TTempString Debug_String("Don't know how to make asset type ");
-	TypeRef.GetString( Debug_String );
-	TLDebug_Break( Debug_String );
-#endif
-
 	return NULL;
 }

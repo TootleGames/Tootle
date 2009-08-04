@@ -58,7 +58,7 @@ protected:
 class TLAsset::TScheme : public TLAsset::TAsset
 {
 public:
-	TScheme(TRefRef AssetRef);
+	TScheme(TRefRef AssetRef,TRefRef TypeRef=GetAssetType_Static());		//	default
 
 	static TRef						GetAssetType_Static()				{	return TRef_Static(S,c,h,e,m);	}
 
