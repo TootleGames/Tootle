@@ -119,7 +119,7 @@ SyncBool TLAsset::TLoadTask::Update(float Timestep,Bool Blocking)
 				{
 					//	notification of sucess
 					TRef AssetType = (m_pAssetFile ? m_pAssetFile->GetAssetTypeRef() : (u32)0);
-					TLAsset::g_pFactory->OnAssetLoad( GetAssetAndTypeRef(), TRUE);
+					TLAsset::g_pManager->OnAssetLoad( GetAssetAndTypeRef(), TRUE);
 					return SyncTrue;
 				}
 				else
@@ -146,7 +146,7 @@ SyncBool TLAsset::TLoadTask::Update(float Timestep,Bool Blocking)
 
 			//	notification of failure
 			//TRef AssetType = (m_pAssetFile ? m_pAssetFile->GetAssetTypeRef() : TRef_Invalid);
-			TLAsset::g_pFactory->OnAssetLoad( GetAssetAndTypeRef(), FALSE);
+			TLAsset::g_pManager->OnAssetLoad( GetAssetAndTypeRef(), FALSE);
 
 			return SyncFalse;
 		}

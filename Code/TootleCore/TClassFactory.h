@@ -31,7 +31,7 @@ public:
 
 	template<class MATCHTYPE>
 	TPtr<TYPE>&				GetInstance(const MATCHTYPE& Match)				{	return FindPtr(Match);	}
-	TPtr<TYPE>&				GetInstance(TRefRef InstanceRef,Bool CreateNew=FALSE,TRefRef TypeRef=TRef());	//	get an instance from the list. If it doesnt exist option to create a new one
+	TPtr<TYPE>&				GetInstance(TRefRef InstanceRef,Bool CreateNew=FALSE,TRefRef TypeRef=TRef());	//	get an instance from the list. If it doesnt exist option to create a new one. if STOREINSTANCES is false, this will never return a valid ptr.. use CreateInstance isntead
 
 	template<class OBJECTTYPE>
 	OBJECTTYPE*				GetInstanceObject(TRefRef InstanceRef);			//	get the object of an instance and cast as desired

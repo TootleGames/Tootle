@@ -21,6 +21,7 @@ namespace TLFileSys
 
 namespace TLAsset
 {
+	class TAssetManager;	//	asset manager
 	class TAssetFactory;	//	asset factory
 	class TLoadTask;		//	loading-asset task
 
@@ -34,8 +35,11 @@ namespace TLAsset
 	FORCEINLINE TLAsset::TAsset* GetAsset(const TTypedRef& AssetAndTypeRef,SyncBool LoadAsset=SyncTrue)		{	return GetAssetPtr( AssetAndTypeRef, LoadAsset ).GetObject();	}
 	FORCEINLINE TLAsset::TAsset* GetAsset(TRefRef AssetRef,TRefRef AssetType,SyncBool LoadAsset=SyncTrue)	{	return GetAsset( TTypedRef( AssetRef, AssetType ), LoadAsset );	}
 	template<class ASSETTYPE>
-	TPtr<ASSETTYPE>				GetAssetPtr(TRefRef AssetRef,SyncBool LoadAsset=SyncTrue);
+	FORCEINLINE TPtr<ASSETTYPE>	GetAssetPtr(TRefRef AssetRef,SyncBool LoadAsset=SyncTrue);
 	TPtr<TLAsset::TAsset>&		GetAssetInstance(const TTypedRef& AssetAndTypeRef);				//	not really for general public usage
+
+	template<class ASSETTYPE>
+	u32							GetAllAssets(TPtrArray<ASSETTYPE>& AssetArray);					//	get an array containing all the assets of this type
 
 	//	wrapper to just simply load an asset - returns TRUE if currently loaded, SyncWait if loading, SyncFalse if failed
 	SyncBool					LoadAsset(const TTypedRef& AssetAndTypeRef,Bool BlockLoad);
@@ -43,7 +47,7 @@ namespace TLAsset
 	template<class ASSETTYPE>
 	FORCEINLINE SyncBool		LoadAsset(TRefRef AssetRef,Bool BlockLoad)						{	return LoadAsset( TTypedRef( AssetRef, ASSETTYPE::GetType_Static() ), BlockLoad );	}
 
-	TPtr<TAsset>&				CreateAsset(const TTypedRef& AssetAndTypeRef);		//	return a pointer to a new asset - mostly used for runtime asssets
+	FORCEINLINE TPtr<TAsset>&	CreateAsset(const TTypedRef& AssetAndTypeRef);		//	return a pointer to a new asset - mostly used for runtime asssets
 	FORCEINLINE TPtr<TAsset>&	CreateAsset(TRefRef AssetRef,TRefRef AssetType)		{	return CreateAsset( TTypedRef( AssetRef, AssetType ) );	}
 
 	TTypedRef					GetFreeAssetRef(TTypedRef BaseAndTypeRef);			//	get an asset ref that isn't in use (starting from base ref)
@@ -53,46 +57,60 @@ namespace TLAsset
 	FORCEINLINE Bool			SaveAsset(TRefRef AssetRef,TRefRef AssetType)		{	return SaveAsset( TTypedRef( AssetRef, AssetType ) );	}
 	Bool						SaveAsset(const TLAsset::TAsset* pAsset);
 
-	void						DeleteAsset(const TTypedRef& AssetAndTypeRef);		//	delete an asset from the asset factory
-	FORCEINLINE void			DeleteAsset(TRefRef AssetRef,TRefRef AssetType)		{	DeleteAsset( TTypedRef( AssetRef, AssetType ) );	}
-	void						DeleteAsset(const TLAsset::TAsset* pAsset);
+	FORCEINLINE Bool			DeleteAsset(const TTypedRef& AssetAndTypeRef);		//	delete an asset from the asset Manager
+	FORCEINLINE Bool			DeleteAsset(TRefRef AssetRef,TRefRef AssetType)		{	return DeleteAsset( TTypedRef( AssetRef, AssetType ) );	}
+	Bool						DeleteAsset(const TLAsset::TAsset* pAsset);
 
 
 	TLArray::SortResult			AssetSort(const TPtr<TAsset>& a,const TPtr<TAsset>& b,const void* pTestRef);	//	asset sort
 
-	extern TPtr<TLAsset::TAssetFactory>	g_pFactory;
+	extern TPtr<TLAsset::TAssetManager>	g_pManager;
 };
 
 
 
 //------------------------------------------------------------
-//	class factory for assets
+//	an asset factory, overload this to add your own asset types
 //------------------------------------------------------------
-class TLAsset::TAssetFactory : public TLCore::TManager, public TClassFactory<TLAsset::TAsset>
+class TLAsset::TAssetFactory : public TClassFactory<TLAsset::TAsset,FALSE>
 {
 public:
-	TAssetFactory(TRefRef ManagerRef) :
-		TLCore::TManager				( ManagerRef ),
-		TClassFactory<TLAsset::TAsset>	( &TLAsset::AssetSort )
-	{
-		//	gr: make grow by quite big for assets - cops and robbers has thousands of assets, takes a while to init with
-		//		a small growby
-		SetGrowBy( 200 );
-	}
-
-	// Asset events - should be private but called from the LoadTask
-	void	OnAssetLoad(const TTypedRef& AssetAndTypeRef, Bool bStatus);
-	void	OnAssetUnload(const TTypedRef& AssetAndTypeRef);
 
 protected:
-	virtual TLAsset::TAsset*	CreateObject(TRefRef InstanceRef,TRefRef TypeRef);
+	virtual TLAsset::TAsset*	CreateObject(TRefRef InstanceRef,TRefRef TypeRef);	
+};
 
+
+//------------------------------------------------------------
+//	class Manager for assets
+//------------------------------------------------------------
+class TLAsset::TAssetManager : public TLCore::TManager
+{
+	friend class TLAsset::TLoadTask;
+public:
+	TAssetManager(TRefRef ManagerRef);
+
+	void						AddAssetFactory(TPtr<TAssetFactory>& pFactory)		{	m_Factories.Add( pFactory );	}
+
+	TPtr<TAsset>&				CreateAsset(const TTypedRef& AssetAndTypeRef);		//	return a pointer to a new asset - mostly used for runtime asssets
+	TPtr<TAsset>&				GetAsset(const TTypedRef& AssetAndTypeRef)			{	return m_Assets.FindPtr( AssetAndTypeRef );	}
+	TPtrArray<TAsset>&			GetAllAssets()										{	return m_Assets;	}
+	Bool						DeleteAsset(const TTypedRef& AssetAndTypeRef);
+
+protected:
 	virtual SyncBool			Initialise();
 	virtual SyncBool			Update(float fTimeStep);
 	virtual SyncBool			Shutdown();
 	
 	virtual void				OnEventChannelAdded(TRefRef refPublisherID,TRefRef refChannelID);
-	
+
+	// Asset events - should be private but called from the LoadTask
+	void						OnAssetLoad(const TTypedRef& AssetAndTypeRef, Bool bStatus);
+	void						OnAssetUnload(const TTypedRef& AssetAndTypeRef);
+
+private:
+	TPtrArray<TAssetFactory>	m_Factories;	//	asset factories, including default
+	TPtrArray<TAsset>			m_Assets;		//	global list of assets, they're not stored in the factory, stored in a single array instead
 };
 
 
@@ -100,7 +118,7 @@ protected:
 //	wrapper to just simply load an asset - returns TRUE if currently loaded, SyncWait if loading, SyncFalse if failed
 //------------------------------------------------------------
 template<class ASSETTYPE>
-TPtr<ASSETTYPE> TLAsset::GetAssetPtr(TRefRef AssetRef,SyncBool LoadAsset)
+FORCEINLINE TPtr<ASSETTYPE> TLAsset::GetAssetPtr(TRefRef AssetRef,SyncBool LoadAsset)
 {
 	//	make up asset+type ref
 	TRef AssetTypeRef = ASSETTYPE::GetAssetType_Static();
@@ -128,3 +146,61 @@ TPtr<ASSETTYPE> TLAsset::GetAssetPtr(TRefRef AssetRef,SyncBool LoadAsset)
 }
 
 	
+
+
+
+//----------------------------------------------------------
+//	return a pointer to an asset
+//----------------------------------------------------------
+FORCEINLINE TPtr<TLAsset::TAsset>& TLAsset::CreateAsset(const TTypedRef& AssetAndTypeRef)
+{
+	if ( !g_pManager )
+	{
+		TLDebug_Break("Asset manager expected");
+		return TLPtr::GetNullPtr<TLAsset::TAsset>();
+	}
+
+	return g_pManager->CreateAsset( AssetAndTypeRef );
+}
+
+
+//----------------------------------------------------------
+//	delete an asset from the manager
+//----------------------------------------------------------
+FORCEINLINE Bool TLAsset::DeleteAsset(const TTypedRef& AssetAndTypeRef)
+{
+	if ( !g_pManager )
+		return FALSE;
+	
+	return g_pManager->DeleteAsset( AssetAndTypeRef );
+}
+
+
+//----------------------------------------------------------
+//	get an array containing all the assets of this type
+//----------------------------------------------------------
+template<class ASSETTYPE>
+u32 TLAsset::GetAllAssets(TPtrArray<ASSETTYPE>& AssetArray)
+{
+	if ( !g_pManager )
+		return 0;
+
+	//	pre-fetch the asset type 
+	TRef AssetType = ASSETTYPE::GetAssetType_Static();
+	
+	//	look through all the assets to find matching types
+	TPtrArray<TLAsset::TAsset>& AllAssets = g_pManager->GetAllAssets();
+	for ( u32 i=0;	i<AllAssets.GetSize();	i++ )
+	{
+		//	check type
+		TPtr<TLAsset::TAsset>& pAsset = AllAssets[i];
+		if ( pAsset->GetAssetType() != AssetType )
+			continue;
+
+		//	cast and add to array
+		AssetArray.Add( pAsset );
+	}
+
+	return AssetArray.GetSize();
+}
+

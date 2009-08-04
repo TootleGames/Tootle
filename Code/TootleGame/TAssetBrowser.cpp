@@ -125,11 +125,11 @@ TPtr<TLMenu::TMenu> TLGame::TAssetBrowser::CreateMenu(TRefRef MenuRef)
 		pItem = pNewMenuAsset->AddMenuItem("Refresh");
 		pItem->SetText("Refresh");
 		pItem->SetMenuCommand("Refresh");
-
+/*
 		//	add a menu item for all the assets we have
-		for ( u32 i=0;	i<TLAsset::g_pFactory->GetSize();	i++ )
+		for ( u32 i=0;	i<TLAsset::g_pManager->GetSize();	i++ )
 		{
-			TPtr<TLAsset::TAsset>& pAsset = TLAsset::g_pFactory->ElementAt(i);
+			TPtr<TLAsset::TAsset>& pAsset = TLAsset::g_pManager->ElementAt(i);
 			TRefRef AssetRef = pAsset->GetAssetRef();
 			pItem = pNewMenuAsset->AddMenuItem( AssetRef );
 			TTempString AssetName;
@@ -137,7 +137,7 @@ TPtr<TLMenu::TMenu> TLGame::TAssetBrowser::CreateMenu(TRefRef MenuRef)
 			pItem->SetText( AssetName );
 			pItem->SetNextMenu( AssetRef );
 		}
-
+*/
 		return pNewMenu;
 	}
 	
