@@ -130,7 +130,7 @@ public:
 //---------------------------------------------------------
 // Bootup state
 //---------------------------------------------------------
-class TLCore::TApplication::TApplicationState_Bootup : public TLCore::TApplication::Mode_Base
+class TLCore::TApplication::TApplicationState_Bootup : public TLCore::TApplication::Mode_Base, public TLMessaging::TSubscriber
 {
 public:
 	TApplicationState_Bootup();
@@ -140,9 +140,11 @@ public:
 
 protected:	
 
+	void		ProcessMessage(TLMessaging::TMessage& Message);
+
 	Bool		CreateIntroScreen();
 
-	Bool		PreloadFiles();				//	load files. returns TRUE when finished (no more to load)
+	FORCEINLINE Bool ArePreloadFilesLoaded()	{ return (m_PreloadFiles.GetSize() == 0); }
 	
 private:
 	TRef									m_LogoRenderNode;	//	

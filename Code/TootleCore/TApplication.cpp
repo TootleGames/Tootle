@@ -317,6 +317,10 @@ Bool TApplication::TApplicationState_Bootup::OnBegin(TRefRef PreviousMode)
 	if(!bSuccess)
 		return FALSE;
 	
+
+	// Subscribe to the asset manager
+	TLMessaging::g_pEventChannelManager->SubscribeTo(this, "Asset", "OnAssetChanged"); 
+
 	// TODO:
 	// Setup language
 	// Setup Audio - language specific
@@ -326,8 +330,13 @@ Bool TApplication::TApplicationState_Bootup::OnBegin(TRefRef PreviousMode)
 	// Obtain list of files to load at startup
 	pApp->GetPreloadFiles(m_PreloadFiles);
 
+	
 	if(m_PreloadFiles.GetSize() > 0)
-		PreloadFiles();
+	{
+		// Request the load of the assets
+		for ( s32 i=m_PreloadFiles.GetLastIndex();	i>=0;	i-- )
+			TLAsset::LoadAsset( m_PreloadFiles[i], FALSE );
+	}
 	
 	return TStateMode::OnBegin(PreviousMode);
 }
@@ -416,7 +425,7 @@ TRef TApplication::TApplicationState_Bootup::Update(float Timestep)
 	if(m_pTimelineInstance)
 		TimelineUpdate = m_pTimelineInstance->Update(Timestep);
 
-	if ( m_SkipBootup || (GetModeTime() > BOOTUP_TIME_MIN) && PreloadFiles() && (TimelineUpdate == SyncFalse) )
+	if ( m_SkipBootup || (GetModeTime() > BOOTUP_TIME_MIN) && ArePreloadFilesLoaded() && (TimelineUpdate == SyncFalse) )
 	{
 		TApplication* pApp = GetStateMachine<TApplication>();
 		
@@ -432,48 +441,44 @@ TRef TApplication::TApplicationState_Bootup::Update(float Timestep)
 };
 
 
-//--------------------------------------------------------
-//	load files. returns TRUE when finished (no more to load)
-//--------------------------------------------------------
-Bool TApplication::TApplicationState_Bootup::PreloadFiles()
+void TApplication::TApplicationState_Bootup::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	for ( s32 i=m_PreloadFiles.GetLastIndex();	i>=0;	i-- )
+	if(Message.GetMessageRef() == "OnAssetChanged")
 	{
-		SyncBool AssetLoadState = TLAsset::LoadAsset( m_PreloadFiles[i], FALSE );
-		
-		//	still loading
-		if ( AssetLoadState == SyncWait )
-			continue;
+		TRef AssetRef, AssetType, State;
+		Bool bSuccess;
 
-		//	failed show error
-		if ( AssetLoadState == SyncFalse )
+		// Is the asset a text type?
+		Message.Read(AssetRef);
+		Message.Read(AssetType);
+		Message.Read(State);
+		Message.Read(bSuccess);
+
+		if(State == TRef("Load"))
 		{
-			TTempString DebugString("Preload: Asset failed to load ");
-			m_PreloadFiles[i].GetString( DebugString );
-			TLDebug_Print( DebugString );
+			s32 sIndex = m_PreloadFiles.FindIndex(TTypedRef(AssetRef, AssetType));
 
-			//	remove from preload list
-			m_PreloadFiles.RemoveAt( i );
-			continue;
+			if(sIndex != -1)
+			{
+				// Remove the file from the preload list
+				m_PreloadFiles.RemoveAt(sIndex);
+
+				TTempString str("Preload File load: ");
+				str.Appendf("%s", (bSuccess ? "succeeded" : "failed"));
+				TLDebug_Print(str);
+			}
 		}
-
-		//	loaded, remove from preload list
-		if ( AssetLoadState == SyncTrue )
-		{
-			//	remove from preload list
-			m_PreloadFiles.RemoveAt( i );
-			continue;
-		}
-
-		TLDebug_Break("Unknown state here");
 	}
-
-	return (m_PreloadFiles.GetSize() == 0);
 }
+
 
 
 void TApplication::TApplicationState_Bootup::OnEnd(TRefRef NextMode)
 {
+	// Un-subscribe from the asset manager
+	TLMessaging::g_pEventChannelManager->UnsubscribeFrom(this, "Asset", "OnAssetChanged"); 
+
+
 	//	delete node
 	TLRender::g_pRendergraph->RemoveNode( m_LogoRenderNode );
 
