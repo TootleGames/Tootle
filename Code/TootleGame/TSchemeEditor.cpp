@@ -566,7 +566,7 @@ void TLGame::TSchemeEditor::ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRef
 void TLGame::TSchemeEditor::CreateEditorIcons(TRefRef ParentRenderNode)
 {
 	float3 IconPosition( 0.f, 0.f, 5.f );
-	float3 IconScale( 10.f, 10.f, 1.f );
+	float3 IconScale( 3.f, 3.f, 1.f );
 	float3 IconPositionStep( 0.f, IconScale.y * 0.7f, 0.f );
 
 	for ( u32 i=0;	i<m_NewNodeData.GetSize();	i++ )
@@ -583,19 +583,34 @@ void TLGame::TSchemeEditor::CreateEditorIcons(TRefRef ParentRenderNode)
 		//	create icon render node
 		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
 
-		//	temporary text rnder node setup
-		TTempString String;
-		if ( !IconData.ImportDataString("name", String ) )
-			TypeOrSchemeRef.GetString( String, TRUE );
-	
-		InitMessage.ExportDataString("string", String );
 		InitMessage.ExportData("scale", IconScale );
-		InitMessage.ExportData("FontRef", TRef("fdebug") );
 		InitMessage.ExportData("translate", IconPosition );
-		InitMessage.ExportData("boxdatum", TRef("Icons") );
-		InitMessage.ExportData("boxnode", TRef("e_gui") );
 
-		TRef IconRenderNodeRef = TLRender::g_pRendergraph->CreateNode("Icon", "TxText", ParentRenderNode, &InitMessage );
+		TRef IconRef;
+		TRef TypeRef;
+
+		if ( IconData.ImportData("IconRef", IconRef ) )
+		{
+			// Create a graphic
+			InitMessage.ExportData("MeshRef", TRef("d_cube"));
+			InitMessage.ExportData("TextureRef", IconRef);
+		}
+		else
+		{
+			// Create a text item
+			TTempString String;
+			if ( !IconData.ImportDataString("name", String ) )
+				TypeOrSchemeRef.GetString( String, TRUE );
+		
+			InitMessage.ExportDataString("string", String );
+			InitMessage.ExportData("FontRef", TRef("fdebug") );
+			InitMessage.ExportData("boxdatum", TRef("Icons") );
+			InitMessage.ExportData("boxnode", TRef("em_obj") );
+
+			TypeRef = TRef("TxText");
+		}
+
+		TRef IconRenderNodeRef = TLRender::g_pRendergraph->CreateNode("Icon", TypeRef, ParentRenderNode, &InitMessage );
 
 		//	do internal stuff
 		OnCreatedIconRenderNode( IconRenderNodeRef, *pIconData );

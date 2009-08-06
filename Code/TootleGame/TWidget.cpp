@@ -13,10 +13,10 @@
 
 
 
-TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,TBinaryTree* pWidgetData)  : 
+TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TRefRef RenderNodeRef, TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,TBinaryTree* pWidgetData, TRefRef DatumRef)  : 
 	m_RenderTargetRef			( RenderTargetRef ),
 	m_RenderNodeRef				( RenderNodeRef ),
-	m_RenderNodeDatum			( TLRender_TRenderNode_DatumBoundsBox2D ),
+	m_RenderNodeDatum			( DatumRef ),
 	m_RenderNodeDatumKeepShape	( TRUE ),
 	m_UserRef					( UserRef),
 	m_ActionOutDown				( ActionOutDown ),

@@ -16,6 +16,8 @@
 #include <TootleMaths/TShape.h>
 #include <TootleMaths/TSphere.h>
 
+#include <TootleRender/TRenderNode.h>
+
 
 namespace TLGui
 {
@@ -79,7 +81,7 @@ protected:
 	};
 
 public:
-	TWidget(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef(),TBinaryTree* pWidgetData=NULL);
+	TWidget(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef(),TBinaryTree* pWidgetData=NULL, TRefRef DatumRef=TLRender_TRenderNode_DatumBoundsBox2D);
 	TWidget(TRefRef RenderTargetRef,TBinaryTree& WidgetData);
 	~TWidget();
 	

@@ -12,11 +12,12 @@ namespace TLGui
 class TLGui::TWidgetButton : public TLGui::TWidget
 {
 public:
-	TWidgetButton(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef()) : 
-		TLGui::TWidget				( RenderTargetRef, RenderNodeRef, UserRef, ActionOutDown, ActionOutUp ),
+	TWidgetButton(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef(), TRefRef DatumRef=TLRender_TRenderNode_DatumBoundsBox2D) : 
+		TLGui::TWidget				( RenderTargetRef, RenderNodeRef, UserRef, ActionOutDown, ActionOutUp, NULL, DatumRef  ),
 		m_bAllowClickOnCursorMove	( FALSE )
 	{
 	}
+
 	
 	TWidgetButton(TRefRef RenderTargetRef,TBinaryTree& WidgetData) : 
 		TLGui::TWidget				( RenderTargetRef, WidgetData ),
