@@ -612,10 +612,18 @@ Bool TLAsset::LoadAllAssets(TRefRef AssetType)
 	//	go through all the files...
 	for ( u32 f=0;	f<FileList.GetSize();	f++ )
 	{
-		//	fetch asset type files from file sys
-		TPtr<TLFileSys::TFile>& pFile = TLFileSys::GetFile( FileList[f], "Asset" );
+		//	fetch the group of files
+		TPtr<TLFileSys::TFileGroup>& pFileGroup = TLFileSys::GetFileGroup( FileList[f] );
+		if ( !pFileGroup )
+		{
+			TLDebug_Break("file group expected");
+			continue;
+		}
 
-		//	if null returned, this ref doesn't represent an asset file...
+		//	fetch the newest asset-type file from the group
+		TPtr<TLFileSys::TFile>& pFile = pFileGroup->GetNewestFile( TRef_Static(A,s,s,e,t) );
+
+		//	if null returned, this ref doesn't represent any asset files...
 		if ( !pFile )
 			continue;
 

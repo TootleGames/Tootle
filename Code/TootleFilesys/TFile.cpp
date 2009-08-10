@@ -60,7 +60,7 @@ void TLFileSys::TFile::SetTimestamp(const TLTime::TTimestamp& NewTimestamp)
 	{
 		s32 MilliDiff = m_Timestamp.GetMilliSecondsDiff( NewTimestamp );
 		TTempString Debug_String("File ");
-		this->GetFileAndTypeRef().GetString( Debug_String );
+		this->Debug_GetString( Debug_String );
 		Debug_String.Appendf("'s timestamp is OLDER than what it was before? (%d hours, %d seconds, %d milliseconds diff)", SecondsDiff/60, SecondsDiff%60, MilliDiff );
 		TLDebug_Print( Debug_String );
 		return;
@@ -106,9 +106,14 @@ SyncBool TLFileSys::TFile::Export(TPtr<TFileAsset>& pAssetFile)
 	//	do we need to continue loading an existing asset?
 	if ( m_pExportAsset )
 	{
-		if ( m_pExportAsset->GetLoadingState() == TLAsset::LoadingState_Loading )
-			DoExportAsset = TRUE;
-		//	else asset doesnt need to continue being loaded
+		//	if a valid asset already exists, it doesn't need exporting
+		switch ( m_pExportAsset->GetLoadingState() )
+		{
+			case TLAsset::LoadingState_Loaded:
+			case TLAsset::LoadingState_Failed:
+				DoExportAsset = FALSE;
+				break;
+		};
 	}
 
 	if ( DoExportAsset )

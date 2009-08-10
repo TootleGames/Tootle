@@ -76,12 +76,12 @@ public:
 	TRefRef							GetFileSysRef() const			{	return m_FileSysRef;	}
 	TPtr<TFileSys>					GetFileSys() const;				//	get a pointer to the file sys this file is owned by (GetFileSysRef)
 	const TString&					GetFilename() const				{	return m_Filename;	}
-	
-	TRefRef							GetFileRef() const				{	return m_FileAndTypeRef.GetRef();	}
+
+	TRefRef							GetFileRef() const				{	return m_FileAndTypeRef.GetRef();	}		
 	TRefRef							GetTypeRef() const				{	return m_FileAndTypeRef.GetTypeRef();	}
 	const TTypedRef&				GetFileAndTypeRef() const		{	return m_FileAndTypeRef;	}
 	virtual TRef					GetFileExportAssetType() const	{	return TRef();	}	//	if the file type knows what type of Asset it exports to, return it. (aids loading)
-	
+
 	TBinary&						GetData()						{	return *this;	}
 	TFlags<TFile::Flags>&			GetFlags()						{	return m_Flags;	}
 	const TFlags<TFile::Flags>&		GetFlags() const				{	return m_Flags;	}
@@ -91,10 +91,11 @@ public:
 
 	virtual void					OnFileLoaded()					{	SetIsLoaded(SyncTrue);	TBinary::Compact();	m_Flags.Clear( OutOfDate );	};		//	binary file data has finished loading from file sys
 
-	FORCEINLINE Bool				operator==(const TString& Filename) const			{	return GetFilename() == Filename;	}
-	FORCEINLINE Bool				operator==(const TTypedRef& FileAndTypeRef) const	{	return GetFileAndTypeRef() == FileAndTypeRef;	}
-	FORCEINLINE Bool				operator==(const TFile& File) const					{	return GetFileAndTypeRef() == File.GetFileAndTypeRef();	}
-	FORCEINLINE Bool				operator==(TRefRef InstanceRef) const				{	return GetInstanceRef() == InstanceRef;	}	//	gr: better if this was protected, but we can't without changing TPtr :(
+	FORCEINLINE Bool				operator==(const TString& Filename) const			{	return GetFilename().IsEqual( Filename, FALSE );	}	//	gr: although files are stored as case-sensitive (CS on unix/mac/ipod, not windows) we do case-insenstive comparisons. do not STORE case insenstive though
+	FORCEINLINE Bool				operator==(const TFile& File) const					{	return GetInstanceRef() == File.GetInstanceRef();	}
+	FORCEINLINE Bool				operator==(const TRef& InstanceRef) const			{	return GetInstanceRef() == InstanceRef;	}		//	note: NOT a match to the file ref
+
+	void							Debug_GetString(TString& String)		{	m_FileAndTypeRef.GetString( String );	}
 
 protected:
 	TRefRef							GetInstanceRef() const					{	return m_InstanceRef;	}
@@ -106,7 +107,7 @@ protected:
 	SyncBool						m_IsLoaded;			//	FALSE if not loaded, WAIT if still loading, TRUE if loaded
 	s32								m_FileSize;			//	this is the size of the file set by the file sys. -1 if unknown
 	TRef							m_FileSysRef;		//	what file system did this come from?
-	TTypedRef						m_FileAndTypeRef;	//	ref(name) & type of file
+	TTypedRef						m_FileAndTypeRef;	//	ref(name) & type of file - NOT UNIQUE PER FILE SYS
 	TString							m_Filename;			//	original filename
 	TLTime::TTimestamp				m_Timestamp;		//	last-modified timestamp
 	TFlags<TFile::Flags>			m_Flags;			//	file flags

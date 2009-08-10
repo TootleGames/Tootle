@@ -39,9 +39,62 @@ namespace TLFileSys
 }
 
 
+//--------------------------------------------------
+//	get the group of files for a file ref
+//--------------------------------------------------
+TPtr<TLFileSys::TFileGroup>& TLFileSys::GetFileGroup(TRefRef FileRef)
+{
+	return TLFileSys::g_pFileFactory->GetFileGroup( FileRef );
+}
 
 
+//--------------------------------------------------
+//	update the file lists on the file systems, returns TRUE if any file sys' has change
+//--------------------------------------------------
+Bool TLFileSys::UpdateFileLists()
+{
+	if ( !TLFileSys::g_pFactory )
+		return FALSE;
+	
+	return TLFileSys::g_pFactory->UpdateFileLists();
+}
 
+
+//--------------------------------------------------
+//	from a list of files, return the one with the most recent timestamp
+//--------------------------------------------------
+TPtr<TLFileSys::TFile>& TLFileSys::GetLatestFile(TPtrArray<TLFileSys::TFile>& Files,TRef FileType)
+{
+	s32 NewestIndex = -1;
+	TLTime::TTimestamp NewestTimestamp;
+
+	//	search through the files to find the one with the newest timestamp
+	for ( u32 i=0;	i<Files.GetSize();	i++ )
+	{
+		TFile& File = *Files[i];
+
+		//	looking for specific file type
+		if ( FileType.IsValid() && File.GetTypeRef() != FileType )
+			continue;
+
+		//	ignore files that cannot be loaded
+		if ( File.IsUnknownType() )
+			continue;
+
+		//	is it newer? (or first hit)
+		if ( NewestIndex == -1 || File.GetTimestamp() > NewestTimestamp )
+		{
+			NewestIndex = i;
+			NewestTimestamp = File.GetTimestamp();
+		}
+	}
+
+	//	failed to find any files
+	if ( NewestIndex == -1 )
+		return TLPtr::GetNullPtr<TFile>();
+
+	return Files[NewestIndex];
+}
 
 //----------------------------------------------------------
 //	async create a local filesystem for the specified path. 
@@ -174,12 +227,12 @@ Bool TLFileSys::GetParentDir(TString& Directory)
 //----------------------------------------------------------
 //	generate file ref and type ref from filename
 //----------------------------------------------------------
-TTypedRef TLFileSys::GetFileAndTypeRef(const TString& Filename,TRef TypeRef)
+TTypedRef TLFileSys::GetFileAndTypeRef(const TString& Filename)
 {	
 	//	extract a file type from the extension of the filename if it's not been provided
 	TArray<TString> FilenameParts;
-	TRef FileRef;
-	
+	TRef FileRef,TypeRef;
+
 	//	no .'s in the filename, so use invalid file type and generate filename in the normal way
 	if ( !Filename.Split('.',FilenameParts) )
 	{
@@ -235,40 +288,6 @@ Bool UpdateNewestFile(TPtr<TLFileSys::TFile>& pNewestFile,const TPtr<TLFileSys::
 	}
 
 	return FALSE;
-}
-
-
-//----------------------------------------------------------
-//	find the newest file [of a specific type] in the specified file systems
-//----------------------------------------------------------
-TPtr<TLFileSys::TFile>& TLFileSys::GetFile(TRefRef FileRef,TRefRef FileTypeRef)
-{
-	//	no factory
-	if ( !TLFileSys::g_pFileFactory )
-	{
-		TLDebug_Break("FileSys factory expected - maybe looking for a file too soon :)");
-		return TLPtr::GetNullPtr<TLFileSys::TFile>();
-	}
-
-	//	get file group for this file
-	TPtr<TFileGroup>& pFileGroup = TLFileSys::g_pFileFactory->GetFileGroup( FileRef );
-	if ( pFileGroup )
-	{
-		//	find file
-		TPtr<TLFileSys::TFile>& pFile = pFileGroup->GetNewestFile( FileTypeRef );
-		if ( pFile )
-			return pFile;
-	}
-
-	//	didnt find, update the file lists
-	Bool FileListsChanged = TLFileSys::g_pFactory->UpdateFileLists();
-
-	//	nothing changed with file lists, obviously no file!
-	if ( !FileListsChanged )
-		return TLPtr::GetNullPtr<TLFileSys::TFile>();
-
-	//	gr: maybe some kinda counter limit to stop recursive calls...
-	return GetFile( FileRef, FileTypeRef );
 }
 
 
@@ -465,10 +484,11 @@ TPtr<TLFileSys::TFile> TLFileSys::CreateAssetFileInFileSys(const TTypedRef& Asse
 	AssetAndTypeRef.GetRef().GetString( Filename );
 	Filename.Append('.');
 	AssetAndTypeRef.GetTypeRef().GetString( Filename );
-	Filename.Append(".Asset");
+	Filename.Append('.');
+	TRef( TRef_Static(A,s,s,e,t) ).GetString( Filename );
 
 	//	create file sys TFile
-	return CreateFileInFileSys( Filename, FileSysList, TRef_Static(A,s,s,e,t) );
+	return CreateFileInFileSys( Filename, FileSysList );
 }
 
 
@@ -476,7 +496,7 @@ TPtr<TLFileSys::TFile> TLFileSys::CreateAssetFileInFileSys(const TTypedRef& Asse
 //	try to create a file in one of the file systems provided. FileType dictates the TFile type (not extension or anything)
 //	todo: omit this and use the extension of the filename?
 //------------------------------------------------------------
-TPtr<TLFileSys::TFile> TLFileSys::CreateFileInFileSys(const TString& Filename,TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef FileType)
+TPtr<TLFileSys::TFile> TLFileSys::CreateFileInFileSys(const TString& Filename,TPtrArray<TLFileSys::TFileSys>& FileSysList)
 {
 	TPtr<TLFileSys::TFile> pNewFile;
 
@@ -486,27 +506,11 @@ TPtr<TLFileSys::TFile> TLFileSys::CreateFileInFileSys(const TString& Filename,TP
 		TLFileSys::TFileSys& FileSys = *FileSysList[i];
 
 		//	try and create file
-		pNewFile = FileSys.CreateFile( Filename, FileType );
+		pNewFile = FileSys.CreateFile( Filename );
 
 		//	created file, break out of loop
 		if ( pNewFile )
 		{
-			/*
-			//	check file ref matches the one we based it from/our asset
-			if ( pNewFile->GetFileRef() != GetPlainFile()->GetFileRef() )
-			{
-				TLDebug_Break("Newly created file's file ref doesn't match the one it was based on");
-				return NULL;
-			}
-			*/
-
-			//	check file type
-			if ( pNewFile->GetTypeRef() != FileType )
-			{
-				TLDebug_Break("Newly created file's type ref doesn't match the one we tried to create");
-				return NULL;
-			}
-
 			//	debug info
 			#ifdef _DEBUG
 			{
@@ -569,35 +573,7 @@ void TLFileSys::TFileGroup::Remove(TPtr<TLFileSys::TFile>& pFile)
 //------------------------------------------------------------
 TPtr<TLFileSys::TFile>& TLFileSys::TFileGroup::GetNewestFile(TRefRef FileType)
 {
-	s32 NewestIndex = -1;
-	TLTime::TTimestamp NewestTimestamp;
-
-	//	search through the files to find the one with the newest timestamp
-	for ( u32 i=0;	i<m_Files.GetSize();	i++ )
-	{
-		TFile& File = *m_Files[i];
-
-		//	looking for specific file type
-		if ( FileType.IsValid() && File.GetTypeRef() != FileType )
-			continue;
-
-		//	ignore files that cannot be loaded
-		if ( File.IsUnknownType() )
-			continue;
-
-		//	is it newer? (or first hit)
-		if ( NewestIndex == -1 || File.GetTimestamp() > NewestTimestamp )
-		{
-			NewestIndex = i;
-			NewestTimestamp = File.GetTimestamp();
-		}
-	}
-
-	//	failed to find any files
-	if ( NewestIndex == -1 )
-		return TLPtr::GetNullPtr<TFile>();
-
-	return m_Files[NewestIndex];
+	return TLFileSys::GetLatestFile( m_Files, FileType );
 }
 
 
@@ -639,19 +615,33 @@ TLFileSys::TFile* TLFileSys::TFileFactory::CreateObject(TRefRef InstanceRef,TRef
 //------------------------------------------------------------
 //	create instance, init, add to group
 //------------------------------------------------------------
-TPtr<TLFileSys::TFile>& TLFileSys::TFileFactory::CreateFileInstance(const TTypedRef& FileRef,TRefRef FileSysRef,const TString& Filename)
+TPtr<TLFileSys::TFile>& TLFileSys::TFileFactory::CreateFileInstance(const TString& Filename,TRefRef FileSysRef)
 {
+	//	get the file type from the filename
+	TTypedRef FileNameAndTypeRef = TLFileSys::GetFileAndTypeRef( Filename );
+
+	//	fail to make instances with no type (eg. executable name on ipod) 
+	if ( !FileNameAndTypeRef.IsValid() )
+	{
+#ifdef _DEBUG
+		TTempString Debug_String("Ignoring file with no type; ");
+		Debug_String.Append( Filename );
+		TLDebug_Print( Debug_String );
+#endif
+		return TLPtr::GetNullPtr<TLFileSys::TFile>();
+	}
+
 	//	get a unique instance ref (based on filename)
 	//	gr: currently NOT based on filename to stay away from confusion
 	//TRef InstanceRef = TClassFactory::GetFreeInstanceRef( FileRef.GetFileRef() );
 	TRef InstanceRef = GetFreeInstanceRef();
 
-	TPtr<TLFileSys::TFile>& pNewFile = GetInstance( InstanceRef, TRUE, FileRef.GetTypeRef() );
+	TPtr<TLFileSys::TFile>& pNewFile = GetInstance( InstanceRef, TRUE, FileNameAndTypeRef.GetTypeRef() );
 	if ( !pNewFile )
 		return pNewFile;
 
 	//	init
-	if ( !pNewFile->Init( FileRef.GetRef(), FileSysRef, Filename ) )
+	if ( !pNewFile->Init( FileNameAndTypeRef.GetRef(), FileSysRef, Filename ) )
 	{
 		RemoveInstance( InstanceRef );
 		return TLPtr::GetNullPtr<TLFileSys::TFile>();
@@ -678,7 +668,7 @@ Bool TLFileSys::TFileFactory::RemoveFileInstance(TPtr<TLFileSys::TFile>& pFile)
 	//	remove from groups
 	OnFileRemoved( pFile );
 
-	//	remove instance using it's instance ref
+	//	remove instance
 	return RemoveInstance( pFile->GetInstanceRef() );
 }
 

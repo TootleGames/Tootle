@@ -48,36 +48,17 @@ Bool TLFileSys::TFileSys::CheckIsFileFromThisFileSys(TPtr<TFile>& pFile)
 //----------------------------------------------------------
 //	create new file into the file list - returns existing file if it already exists in our file sys
 //----------------------------------------------------------
-TPtr<TLFileSys::TFile> TLFileSys::TFileSys::CreateFileInstance(const TString& Filename,TRef TypeRef)
+TPtr<TLFileSys::TFile> TLFileSys::TFileSys::CreateFileInstance(const TString& Filename)
 {
-	//	generate a file ref from the file name (and type if provided)
-	TTypedRef FileRef = GetFileAndTypeRef( Filename, TypeRef );
-
-	//	fail to create file instances that have no extension
-	//	this is mostly to ignore ipod executable files which have no extension and we'll always find one
-	if ( !FileRef.GetTypeRef().IsValid() )
-	{
-		TLDebug_Print( TString("Ignoring file in filesys that has no extension: %s", Filename.GetData() ) );
-		return NULL;
-	}
-
 	//	see if this file already exists
-	TPtr<TFile> pFile = GetFile( FileRef );
+	TPtr<TFile> pFile = GetFile( Filename );
 
-	//	already created/exists just return current one - if it's a different file, that's tough luck, maybe files need renaming
+	//	already created/exists just return current one
 	if ( pFile )
-	{
-#ifdef _DEBUG
-		if ( pFile->GetFilename() != Filename )
-		{
-			TLDebug_Warning("Found two files with the same FileRef.TypeRef, but different filenames. Consider renaming your files!");
-		}
-#endif
 		return pFile;
-	}
 
 	//	create new file object
-	pFile = TLFileSys::g_pFileFactory->CreateFileInstance( FileRef, GetFileSysRef(), Filename );
+	pFile = TLFileSys::g_pFileFactory->CreateFileInstance( Filename, GetFileSysRef() );
 
 	//	failed to create/init
 	if ( !pFile )
@@ -88,7 +69,10 @@ TPtr<TLFileSys::TFile> TLFileSys::TFileSys::CreateFileInstance(const TString& Fi
 	{
 		TLDebug_Break("Shouldn't find this new file in our list");
 	}
-	m_Files.Add( pFile );
+	else
+	{
+		m_Files.Add( pFile );
+	}
 
 	return pFile;
 }
@@ -171,12 +155,7 @@ SyncBool TLFileSys::TFileSys::UpdateFileList()
 	for ( u32 f=0;	f<GetFileList().GetSize();	f++ )
 	{
 		TLFileSys::TFile& File = *(GetFileList().ElementAt(f));
-		TRefRef FileRef = File.GetFileRef();
-		TRefRef TypeRef = File.GetTypeRef();
-
-		FileRef.GetString( Debug_String );
-		Debug_String.Append(".");
-		TypeRef.GetString( Debug_String );
+		File.Debug_GetString( Debug_String );
 		Debug_String.Append("\n");
 	}
 	TLDebug_Print( Debug_String );

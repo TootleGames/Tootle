@@ -224,10 +224,10 @@ SyncBool TLDebugFile::LoadDebugFile_TextureTest(TPtr<TLFileSys::TFile>& pFile)
 //---------------------------------------------------------
 //	create a new empty file into file system if possible - if the filesys is read-only we cannot add external files and this fails
 //---------------------------------------------------------
-TPtr<TLFileSys::TFile> TLFileSys::TVirtualFileSys::CreateFile(const TString& Filename,TRef TypeRef)
+TPtr<TLFileSys::TFile> TLFileSys::TVirtualFileSys::CreateFile(const TString& Filename)
 {
 	//	create/get existing file
-	TPtr<TLFileSys::TFile> pNewFile = CreateFileInstance( Filename, TypeRef );
+	TPtr<TLFileSys::TFile> pNewFile = CreateFileInstance( Filename );
 
 	//	error creating file
 	if ( !pNewFile )
@@ -271,23 +271,3 @@ SyncBool TLFileSys::TVirtualFileSys::WriteFile(TPtr<TFile>& pFile)
 	return SyncTrue;
 }
 
-
-//---------------------------------------------------------
-//	delete file from file sys
-//---------------------------------------------------------
-SyncBool TLFileSys::TVirtualFileSys::DeleteFile(const TTypedRef& FileRef)
-{
-	//	gr: out of safety this pFile isn't a ref. it will be invalid after RemoveFileInstance()
-	TPtr<TFile> pFile = GetFile( FileRef );
-	if ( !pFile )
-	{
-		TLDebug_Break("or should this be SyncTrue?");
-		return SyncFalse;
-	}
-
-	//	just remove from file list
-	if ( !RemoveFileInstance( pFile ) )
-		return SyncFalse;
-
-	return SyncTrue;
-}

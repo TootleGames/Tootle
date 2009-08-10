@@ -106,7 +106,7 @@ void TLRender::TRenderNodeParticle::SetProperty(TLMessaging::TMessage& Message)
 	}
 
 	//	do inherited init
-	TLRender::TRenderNodeDebugMesh::Initialise( Message );
+	TLRender::TRenderNodeDebugMesh::SetProperty( Message );
 }
 
 

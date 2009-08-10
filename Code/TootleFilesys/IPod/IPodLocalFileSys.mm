@@ -43,7 +43,7 @@ SyncBool Platform::LocalFileSys::LoadFileList()
 {
 	//	mark all the current files as missing, then any files we dont 
 	//	re-find when scanning the dir we remove
-	for ( u32 f=0;	f < GetFileList().GetSize();	f++ )
+	for ( u32 f=0;	f<GetFileList().GetSize();	f++ )
 	{
 		TPtr<TFile>& pFile = GetFileList().ElementAt( f );
 		if ( pFile )
@@ -55,10 +55,10 @@ SyncBool Platform::LocalFileSys::LoadFileList()
 	{
 		return SyncFalse;
 	}
-	
+
 	//	finalise file list (updates timestamp and flushes missing files)
 	FinaliseFileList();
-	
+
 	return SyncTrue;
 }
 
@@ -115,9 +115,7 @@ Bool Platform::LocalFileSys::DoLoadFileList()
 			else
 			{
 				TTempString DebugString("Created new file instance ");
-				pFile->GetFileRef().GetString( DebugString );
-				DebugString.Append(", type: ");
-				pFile->GetTypeRef().GetString( DebugString );
+				pFile->Debug_GetString( DebugString );
 				TLDebug_Print( DebugString );
 			}		
 			
@@ -330,29 +328,16 @@ void Platform::LocalFileSys::SetDirectory(const TString& Directory)
 //---------------------------------------------------------
 //	create a new empty file into file system if possible - if the filesys is read-only we cannot add external files and this fails
 //---------------------------------------------------------
-TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filename,TRef TypeRef)
+TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filename)
 {
 	//	not allowed to write to this file sys
 	if ( !m_IsWritable )
 		return NULL;
 
-	TTypedRef FileRef = GetFileAndTypeRef( Filename, TypeRef );
-
 	//	look for existing file
-	TPtr<TFile>& pFile = GetFile( FileRef );
+	TPtr<TFile>& pFile = GetFile( Filename );
 	if ( pFile )
-	{
-		if ( !pFile->GetFilename().IsEqual( Filename, FALSE ) )
-		{
-			TTempString Debug_String;
-			Debug_String.Appendf("Called CreateFile(%s) but new FileRef will match existing file (%s) BUT filename is different. Conflict here (2 files will resolve to same FileRef). Aborting file creation", Filename.GetData(), pFile->GetFilename().GetData() );
-			TLDebug_Break( Debug_String );
-			//return TLPtr::GetNullPtr<TLFileSys::TFile>();
-			return NULL;
-		}
-
 		return pFile;
-	}
 
 	//	cant create a file if directory is invalid
 	if ( !IsDirectoryValid() )
@@ -382,21 +367,6 @@ TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filenam
 	{
 		TLDebug_Break( TString("Failed to create file instance for %s", Filename.GetData() ) );
 		return NULL;
-	}
-	else
-	{
-		TTempString DebugString("Created new file instance ");
-		pNewFile->GetFileRef().GetString( DebugString );
-		DebugString.Append(", type: ");
-		pNewFile->GetTypeRef().GetString( DebugString );
-		TLDebug_Print( DebugString );
-	}	
-	
-	//	check type returned matches up
-	if ( pNewFile->GetFileAndTypeRef() != FileRef )
-	{
-		if ( !TLDebug_Break("Created new file, but file ref doesn't match to what we expected") )
-			return NULL;
 	}
 
 	//	return new instance if it worked

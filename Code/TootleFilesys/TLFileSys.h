@@ -26,16 +26,18 @@ namespace TLFileSys
 	TPtr<TLFileSys::TFileSys>&	GetFileSys(TRefRef FileSysRef);		//	return a file system
 	void						GetFileSys(TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef FileSysRef,TRefRef FileSysTypeRef);	//	return all matching file systems to these refs/types
 	void						GetFileList(TArray<TRef>& FileList);																//	get a list of all files in all the file systems (gets refs out of the groups)
-
-	TPtr<TFile>&				GetFile(TRefRef FileRef,TRefRef FileTypeRef=TRef());	//	find the newest file with this file ref. if type invalid, just gets newest file with matching name
-	TPtr<TFile>					CreateFileInFileSys(const TString& Filename,TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef FileType=TRef());
+	TPtr<TFileGroup>&			GetFileGroup(TRefRef FileRef);		//	get the group of files for a file ref
+	Bool						UpdateFileLists();					//	update the file lists on the file systems, returns TRUE if any file sys' has change
+	
+	TPtr<TFile>					CreateFileInFileSys(const TString& Filename,TPtrArray<TLFileSys::TFileSys>& FileSysList);
 	TPtr<TFile>					CreateAssetFileInFileSys(const TTypedRef& AssetAndTypeRef,TPtrArray<TLFileSys::TFileSys>& FileSysList);	//	wrapper to create a file for a .asset file (to ensure consistent filenames)
+	TPtr<TFile>&				GetLatestFile(TPtrArray<TLFileSys::TFile>& Files,TRef FileType=TRef());	//	from a list of files, return the one with the most recent timestamp
 
 	//	create a local file system
 	SyncBool					CreateLocalFileSys(TRef& FileSysRef,const TString& Directory,Bool IsWritable);	//	async create a local filesystem for the specified path. FileSysRef is set to the new file system's ref for the purposes of asynchronousness so keep using it when async calling this func
 
-	Bool						GetParentDir(TString& Directory);	//	directory manipulation - turns filename to dir, then chops off a dir at a time
-	TTypedRef					GetFileAndTypeRef(const TString& Filename,TRef TypeRef);					//	generate file ref with explicit type
+	Bool						GetParentDir(TString& Directory);					//	directory manipulation - turns filename to dir, then chops off a dir at a time
+	TTypedRef					GetFileAndTypeRef(const TString& Filename);			//	generate file ref with explicit type
 
 	extern TPtr<TFileSysFactory>	g_pFactory;			//	extern'd as it's a manager, the file factory is not exposed
 };
@@ -75,8 +77,8 @@ public:
 	FORCEINLINE TPtr<TFileGroup>&				GetFileGroup(TRefRef FileRef)		{	return m_FileGroups.FindPtr( FileRef );	}
 	FORCEINLINE const TPtrArray<TFileGroup>&	GetFileGroups() const				{	return m_FileGroups;	}
 
-	TPtr<TLFileSys::TFile>&			CreateFileInstance(const TTypedRef& FileRef,TRefRef FileSysRef,const TString& Filename);	//	create instance, init, add to group
-	Bool							RemoveFileInstance(TPtr<TLFileSys::TFile>& pFile);										//	delete instance, remove from group
+	TPtr<TLFileSys::TFile>&			CreateFileInstance(const TString& Filename,TRefRef FileSysRef);	//	create instance, init, add to group
+	Bool							RemoveFileInstance(TPtr<TLFileSys::TFile>& pFile);				//	delete instance, remove from group
 
 protected:
 	virtual TLFileSys::TFile*		CreateObject(TRefRef InstanceRef,TRefRef TypeRef);
@@ -107,6 +109,7 @@ public:
 	void				Remove(TPtr<TFile>& pFile);						//	remove file from group
 	TPtr<TFile>&		GetNewestFile(TRefRef FileType=TRef());			//	get file with newest timestamp
 	FORCEINLINE Bool	IsEmpty() const									{	return (m_Files.GetSize() > 0);	}
+	TPtrArray<TFile>&	GetFiles()										{	return m_Files;	}
 
 	FORCEINLINE Bool	operator==(TRefRef FileRef) const				{	return GetFileRef() == FileRef;	}
 	FORCEINLINE Bool	operator==(const TFileGroup& FileGroup) const	{	return GetFileRef() == FileGroup.GetFileRef();	}

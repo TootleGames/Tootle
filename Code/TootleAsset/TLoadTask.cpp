@@ -42,15 +42,11 @@ TLAsset::TLoadTask::TLoadTask(const TTypedRef& AssetAndTypeRef) :
 	TLDebug_Print( Debug_String );
 #endif
 
-	//	init modes
-	AddMode<Mode_Init>("Init");
-
 	//	get asset file - if it exists, it loads it (AFLoad) or fetches plain file if we need to convert a plain file (PFGet)
 	AddMode<Mode_GetAssetFile>("AFGet");
 	AddMode<Mode_AssetFileLoad>("AFLoad");
 
 	//	get plain file, load, export into asset file
-	AddMode<Mode_GetPlainFile>("PFGet");
 	AddMode<Mode_PlainFileLoad>("PFLoad");
 	AddMode<Mode_PlainFileCreateTempAssetFile>("PFcAF");
 	AddMode<Mode_PlainFileExport>("PFexport");
@@ -158,50 +154,6 @@ SyncBool TLAsset::TLoadTask::Update(float Timestep,Bool Blocking)
 }
 
 
-
-
-
-//------------------------------------------------------------
-//	fetch the plain file
-//------------------------------------------------------------
-TRef Mode_Init::Update(float Timestep)
-{
-	return "AFGet";
-}
-			
-
-//------------------------------------------------------------
-//	fetch the plain file
-//------------------------------------------------------------
-TRef Mode_GetPlainFile::Update(float Timestep)
-{
-	Debug_PrintStep("Finding plain file");
-	//	get the plain file for this asset (if we haven't already located it)
-	if ( !GetPlainFile() )
-	{
-		GetPlainFile() = TLFileSys::GetFile( GetAssetAndTypeRef().GetRef() );
-
-		//	didn't find a file to convert, there is no file with this ref at all
-		if ( !GetPlainFile() )
-		{
-			TTempString Debug_String("failed to get plain file for asset ");
-			GetAssetAndTypeRef().GetString( Debug_String );
-			TLDebug_Break( Debug_String );
-			return "Failed";
-		}
-	}
-
-	//	is the file out of date?? reload it!
-	if ( GetPlainFile()->IsLoaded() != SyncTrue || GetPlainFile()->GetFlags()( TLFileSys::TFile::OutOfDate ) )
-	{
-		return "PFLoad";
-	}
-
-	return "PFcAF";
-}
-
-
-
 //------------------------------------------------------------
 //	load plain file from file sys
 //------------------------------------------------------------
@@ -267,7 +219,7 @@ TRef Mode_PlainFileCreateTempAssetFile::Update(float Timestep)
 TRef Mode_PlainFileExport::Update(float Timestep)
 {
 	Debug_PrintStep("Exporting plain file to asset file");
-	TLFileSys::TFile* pPlainFile = GetPlainFile();
+	TPtr<TLFileSys::TFile> pPlainFile = GetPlainFile();
 	if ( !pPlainFile )
 	{
 		TLDebug_Break("Plain file expected");
@@ -299,12 +251,43 @@ TRef Mode_PlainFileExport::Update(float Timestep)
 		{
 			Debug_String = "Deleting asset file";
 			Debug_String.Append( pAssetFile->GetFilename() );
-			if ( pFileSys->DeleteFile( pAssetFile->GetFileAndTypeRef() ) == SyncFalse )
+
+			//	gr: need to cast down to TFile ptr
+			TPtr<TLFileSys::TFile> pAssetFileFile = pAssetFile;
+			if ( pFileSys->DeleteFile( pAssetFileFile ) == SyncFalse )
 				Debug_String.Append(" Failed!");
+
 			TLDebug_Break( Debug_String );
 		}
 
+		//	add to list of files we failed to convert
+		TLDebug_Break("Add plain file to list of failed-to-convert files and find another to try");
+
 		return "Failed";
+	}
+
+	//	created an asset file, check if it's creating the right kind of asset we want
+	if ( pAssetFile->GetFileExportAssetType() != GetAssetAndTypeRef().GetTypeRef() )
+	{
+		TTempString Debug_String("Exported plain file ");
+		pPlainFile->Debug_GetString( Debug_String );
+		Debug_String.Append(" but asset file's asset type is ");
+		pAssetFile->GetFileExportAssetType().GetString( Debug_String );
+		Debug_String.Append(", looking for asset ref ");
+		GetAssetAndTypeRef().GetString( Debug_String );
+		TLDebug_Print( Debug_String );
+
+		//	add to list of files we tried to convert but failed and try again
+		GetLoadTask()->AddFailedToConvertFile( pPlainFile );
+		GetLoadTask()->AddFailedToConvertFile( pAssetFile );
+
+		//	reset task vars
+		GetAssetFile() = NULL;
+		GetPlainFile() = NULL;
+		GetTempAssetFile() = NULL;
+
+		//	go back to finding the asset file
+		return "AFGet";
 	}
 
 	//	create temporary asset file, now create the real one and start writing to file system
@@ -319,39 +302,94 @@ TRef Mode_GetAssetFile::Update(float Timestep)
 {
 	Debug_PrintStep("Finding asset file");
 
-	//	get latest file for this asset ref
-	TPtr<TLFileSys::TFile>& pFile = TLFileSys::GetFile( GetAssetAndTypeRef().GetRef() );
-
-	//	if the latest file is an asset file, then assign it, otherwise leave it null and we'll attempt to convert
-	if ( pFile && pFile->GetTypeRef() == "Asset" )
-	{
-		GetAssetFile() = pFile;
-	}
-	else if ( pFile )
-	{
-		TTempString Debug_String("Found newest file for ");
-		GetAssetAndTypeRef().GetRef().GetString( Debug_String );
-		Debug_String.Append(", but newest is type ");
-		pFile->GetTypeRef().GetString( Debug_String );
-		TLDebug_Print( Debug_String );
-
-		//	save fetching it again
-		GetPlainFile() = pFile;
-
-		//	load (if required) then convert plain file
-		return "PFGet";
-	}
-	else
+	//	get the file group with this ref (eg. tree.asset, tree.png, tree.mesh)
+	TRefRef FileRef = GetAssetAndTypeRef().GetRef();
+	TLFileSys::UpdateFileLists();
+	TPtr<TLFileSys::TFileGroup>& pFileGroup = TLFileSys::GetFileGroup( FileRef );
+	
+	//	no files at all starting with the asset's name
+	if ( !pFileGroup )
 	{
 		//	no file at all with a matching name
 		TTempString Debug_String("Failed to find any file with a file name/ref matching ");
 		GetAssetAndTypeRef().GetRef().GetString( Debug_String );
-		//TLDebug_Break( Debug_String );
 		TLDebug_Print( Debug_String );
 		return "Failed";
 	}
 
-	//	need to load file
+	//	get list of possible files..
+	TPtrArray<TLFileSys::TFile> FileGroupFiles;
+	FileGroupFiles.Copy( pFileGroup->GetFiles() );
+
+	//	remove files which we know won't convert to the right asset type
+	for ( s32 f=FileGroupFiles.GetLastIndex();	f>=0;	f-- )
+	{
+		TLFileSys::TFile& File = *FileGroupFiles[f];
+		TRef FileExportAssetType = File.GetFileExportAssetType();
+
+		//	remove files we know will convert to wrong asset type
+		if ( FileExportAssetType.IsValid() && FileExportAssetType != GetAssetAndTypeRef().GetTypeRef() )
+		{
+			FileGroupFiles.RemoveAt( f );
+			continue;
+		}
+		else
+		{
+			//	make sure it's not in our already-tried list
+			if ( GetLoadTask()->HasFailedToConvertFile( File ) )
+			{
+				FileGroupFiles.RemoveAt( f );
+				continue;
+			}
+		}
+	}
+
+	//	no files to try and convert?
+	if ( FileGroupFiles.GetSize() == 0 )
+	{
+		//	no file at all with a matching name
+		TTempString Debug_String("Failed to find any more files with a file name/ref matching ");
+		GetAssetAndTypeRef().GetRef().GetString( Debug_String );
+		Debug_String.Append(" to try and load/convert");
+		TLDebug_Print( Debug_String );
+		return "Failed";
+	}
+
+	//	got a list of potential files now, get the last-modified one
+	TPtr<TLFileSys::TFile>& pLatestFile = TLFileSys::GetLatestFile( FileGroupFiles );
+	if ( !pLatestFile )
+	{
+		TLDebug_Break("File expected, TLFileSys::GetLatestFile failed to return a file from non-empty list");
+		return "failed";
+	}
+
+	//	if the latest file is not an asset file, then convert
+	if ( pLatestFile->GetTypeRef() != "Asset" )
+	{
+		TTempString Debug_String("Found newest file for ");
+		GetAssetAndTypeRef().GetRef().GetString( Debug_String );
+		Debug_String.Append(", but newest is type ");
+		pLatestFile->GetTypeRef().GetString( Debug_String );
+		Debug_String.Append(", converting...");
+		TLDebug_Print( Debug_String );
+
+		//	save fetching it again
+		GetPlainFile() = pLatestFile;
+
+		//	if the plain file needs loading/reloading then load it...
+		if ( GetPlainFile()->IsLoaded() != SyncTrue || GetPlainFile()->GetFlags()( TLFileSys::TFile::OutOfDate ) )
+		{
+			return "PFLoad";
+		}
+
+		//	plain file is loaded and ready to convert, convert to asset file
+		return "PFcAF";
+	}
+
+	//	latest file is an asset file, so assign and load/convert
+	GetAssetFile() = pLatestFile;
+
+	//	need to load/reload asset file
 	if ( GetAssetFile()->IsLoaded() != SyncTrue || GetAssetFile()->GetFlags()( TLFileSys::TFile::OutOfDate ) )
 	{
 		return "AFLoad";

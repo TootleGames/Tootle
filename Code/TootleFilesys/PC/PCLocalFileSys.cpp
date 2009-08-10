@@ -441,29 +441,16 @@ void Platform::LocalFileSys::UpdateFileInstance(TPtr<TFile> pFile,const WIN32_FI
 //---------------------------------------------------------
 //	create a new empty file into file system if possible - if the filesys is read-only we cannot add external files and this fails
 //---------------------------------------------------------
-TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filename,TRef TypeRef)
+TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filename)
 {
 	//	not allowed to write to this file sys
 	if ( !m_IsWritable )
 		return NULL;
 
-	TTypedRef FileRef = GetFileAndTypeRef( Filename, TypeRef );
-
 	//	look for existing file
-	TPtr<TFile>& pFile = GetFile( FileRef );
+	TPtr<TFile>& pFile = GetFile( Filename );
 	if ( pFile )
-	{
-		if ( !pFile->GetFilename().IsEqual( Filename, FALSE ) )
-		{
-			TTempString Debug_String;
-			Debug_String.Appendf("Called CreateFile(%s) but new FileRef will match existing file (%s) BUT filename is different. Conflict here (2 files will resolve to same FileRef). Aborting file creation", Filename.GetData(), pFile->GetFilename().GetData() );
-			TLDebug_Break( Debug_String );
-			//return TLPtr::GetNullPtr<TLFileSys::TFile>();
-			return NULL;
-		}
-
 		return pFile;
-	}
 
 	//	cant create a file if directory is invalid
 	if ( !IsDirectoryValid() )
@@ -505,13 +492,6 @@ TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filenam
 	{
 		TLDebug_Break("failed to find newly created file?");
 		return NULL;
-	}
-
-	//	check type returned matches up
-	if ( pNewFile->GetFileAndTypeRef() != FileRef )
-	{
-		if ( !TLDebug_Break("Created new file, but file ref doesn't match to what we expected") )
-			return NULL;
 	}
 
 	//	return new instance if it worked

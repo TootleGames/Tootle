@@ -37,6 +37,9 @@ public:
 	FORCEINLINE const TTypedRef&	GetAssetAndTypeRef() const		{	return m_AssetAndTypeRef;	}	
 	FORCEINLINE TPtr<TAsset>&		GetAsset() const				{	return TLAsset::GetAssetInstance( GetAssetAndTypeRef() );	}
 
+	Bool							HasFailedToConvertFile(TLFileSys::TFile& File)			{	return m_FailedToConvertFiles.Exists( File );	}
+	void							AddFailedToConvertFile(TPtr<TLFileSys::TFile> pFile)	{	m_FailedToConvertFiles.Add( pFile );	}
+
 	FORCEINLINE Bool				operator==(const TTypedRef& AssetAndTypeRef) const	{	return GetAssetAndTypeRef() == AssetAndTypeRef;	}
 
 protected:
@@ -44,6 +47,7 @@ protected:
 	TPtr<TLFileSys::TFile>		m_pFile;				//	plain file needs converting to asset file
 	TPtr<TLFileSys::TFileAsset>	m_pTempAssetFile;		//	asset file generated from plain file
 	TPtr<TLFileSys::TFileAsset>	m_pAssetFile;			//	asset file in a proper file sys that needs converting to asset
+	TPtrArray<TLFileSys::TFile>	m_FailedToConvertFiles;	//	list of files that didnt convert to an asset we require, eg. loading tree.mesh, tree.png might be in this list
 };
 
 
@@ -61,20 +65,6 @@ namespace TLLoadTask
 		TPtr<TLAsset::TAsset>			GetAsset() 			{	return GetLoadTask()->GetAsset();	}
 
 		void							Debug_PrintStep(const char* pStepString);	//	print out some debug info for this step
-	};
-
-	//	first mode to decide what to do
-	class Mode_Init : public TLoadTaskMode
-	{
-	protected:
-		virtual TRef			Update(float Timestep);
-	};
-
-	//	fetch the plain file
-	class Mode_GetPlainFile : public TLoadTaskMode
-	{
-	protected:
-		virtual TRef			Update(float Timestep);
 	};
 
 	//	load plain file from file sys
