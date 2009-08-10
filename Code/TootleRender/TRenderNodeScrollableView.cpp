@@ -6,14 +6,18 @@
 
 using namespace TLRender;
 
-void TRenderNodeScrollableView::Initialise(TLMessaging::TMessage& Message)
+void TRenderNodeScrollableView::SetProperty(TLMessaging::TMessage& Message)
 {
-	TRenderNode::Initialise(Message);
+	TRenderNode::SetProperty(Message);
 
 	Message.ImportData("Datum", m_DatumRef);
 
 	if(Message.ImportData("RTarget", m_RenderTargetRef))
 		OnRenderTargetRefChange();
+
+	Message.ImportData("Horizontal", m_bHorizontalScroll);
+	Message.ImportData("Vertical", m_bVerticalScroll);
+
 }
 
 
@@ -33,7 +37,11 @@ void TRenderNodeScrollableView::ProcessMessage(TLMessaging::TMessage& Message)
 				m_ScrollTransform.SetTranslateValid();
 
 				//	 change scroll
-				GetScroll() += Change.xy();
+				if(m_bVerticalScroll)
+					GetScroll().y += Change.y;
+
+				if(m_bHorizontalScroll)
+					GetScroll().x += Change.x;
 
 				//	gr: when we change the scroll (ie. changing the world transform for the children) then really
 				//		we need to invalidate our children otherwise their world bounds/transforms are going to be

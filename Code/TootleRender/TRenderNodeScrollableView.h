@@ -32,7 +32,7 @@ public:
 	virtual void							PostDrawChildren(TLRender::TRenderTarget& RenderTarget);
 
 protected:
-	virtual void							Initialise(TLMessaging::TMessage& Message);	//	generic render node init
+	virtual void							SetProperty(TLMessaging::TMessage& Message);	//	generic render node init
 	virtual void							ProcessMessage(TLMessaging::TMessage& Message);
 
 	FORCEINLINE Bool						HasScroll() const		{	return m_ScrollTransform.HasAnyTransform();	}
@@ -47,5 +47,8 @@ private:
 
 	TRef						m_DatumRef;
 	TRef						m_RenderTargetRef;
+
+	Bool						m_bVerticalScroll;
+	Bool						m_bHorizontalScroll;
 };
 
