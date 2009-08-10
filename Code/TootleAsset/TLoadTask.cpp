@@ -395,6 +395,16 @@ TRef Mode_GetAssetFile::Update(float Timestep)
 		return "AFLoad";
 	}
 
+	//	check type...
+	if ( GetAssetFile()->GetFileExportAssetType() != GetAssetAndTypeRef().GetTypeRef() )
+	{
+		TTempString Debug_String("latest file asset type: ");
+		GetAssetFile()->GetFileExportAssetType().GetString( Debug_String );
+		Debug_String.Append(" doesn't convert to desired asset type ");
+		GetAssetAndTypeRef().GetTypeRef().GetString( Debug_String );
+		TLDebug_Break( Debug_String );
+	}
+
 	//	do export/create
 	//	if our new asset file needs to be written back to a normal file, do that
 	if ( GetAssetFile()->GetNeedsExport() )
@@ -633,6 +643,7 @@ TRef Mode_CreateAsset::Update(float Timestep)
 	}
 
 	//	check the asset file contains the right type of asset
+	//	gr: this may not have been checked yet as this stage could be right after the assetfile import
 	TRefRef AssetFileAssetType = pAssetFile->GetAssetTypeRef();
 	if ( AssetFileAssetType != GetAssetAndTypeRef().GetTypeRef() )
 	{
@@ -640,8 +651,22 @@ TRef Mode_CreateAsset::Update(float Timestep)
 		GetAssetAndTypeRef().GetString( Debug_String );
 		Debug_String.Append(" failed: AssetFile's asset type is ");
 		AssetFileAssetType.GetString( Debug_String );
-		TLDebug_Break( Debug_String );
-		return "Failed";
+		TLDebug_Print( Debug_String );
+
+		//	gr: note at this point, we're ditching the temp asset file which has a perfectly good asset in it's importer
+		//		bit of a waste
+
+		//	add to list of files we tried to convert but failed and try again
+		GetLoadTask()->AddFailedToConvertFile( GetPlainFile() );
+		GetLoadTask()->AddFailedToConvertFile( pAssetFile );
+
+		//	reset task vars
+		GetAssetFile() = NULL;
+		GetPlainFile() = NULL;
+		GetTempAssetFile() = NULL;
+
+		//	go back to finding the asset file
+		return "AFGet";
 	}
 
 	//	create asset if it doesn't exist

@@ -38,7 +38,7 @@ public:
 	FORCEINLINE TPtr<TAsset>&		GetAsset() const				{	return TLAsset::GetAssetInstance( GetAssetAndTypeRef() );	}
 
 	Bool							HasFailedToConvertFile(TLFileSys::TFile& File)			{	return m_FailedToConvertFiles.Exists( File );	}
-	void							AddFailedToConvertFile(TPtr<TLFileSys::TFile> pFile)	{	m_FailedToConvertFiles.Add( pFile );	}
+	void							AddFailedToConvertFile(TPtr<TLFileSys::TFile> pFile)	{	if ( pFile )	m_FailedToConvertFiles.Add( pFile );	}
 
 	FORCEINLINE Bool				operator==(const TTypedRef& AssetAndTypeRef) const	{	return GetAssetAndTypeRef() == AssetAndTypeRef;	}
 
