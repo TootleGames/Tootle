@@ -101,7 +101,9 @@ protected:
 	void					OnStringChanged()							{	m_GlyphsValid = FALSE;	}
 	void					OnStringFormatChanged()						{	m_GlyphsValid = FALSE;	}
 	void					OnLayoutChanged()							{	m_GlyphsValid = FALSE;	}
-	
+
+	virtual void			SetProperty(TLMessaging::TMessage& Message);	//	SetProperty message - made into virtual func as it's will be commonly used.
+
 	virtual void			ProcessMessage(TLMessaging::TMessage& Message);
 
 protected:

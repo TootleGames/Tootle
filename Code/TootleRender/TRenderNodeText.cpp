@@ -21,44 +21,15 @@ TLRender::TRenderNodeText::TRenderNodeText(TRefRef RenderNodeRef,TRefRef TypeRef
 //---------------------------------------------------------
 void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 {
-	//	read init data
-
-	//	import font
-	Message.ImportData("FontRef", m_FontRef );
-
-	// [07/05/09] DB - This shouldn't be used anymore.  Use a <TextRef> in place of the <Text> tag in any XML file
+	// [07/05/09] DB - This shouldn't be used anymore.
+	// Use either "TextRef" for text from the text database or "String" for a raw string 
+	// in any XML or messages
 	if ( Message.ImportDataString("Text", m_Text ) )
 	{
 		TLDebug_Break("Setting text directly.  Should now use a text ref instead and lookup the text. If data string, use the STRING ref");
 		OnStringChanged();
 	}
 
-	//	import text - if we do, make sure we make a note the glyphs need building
-	//	gr: this IS allowed, for dynamic strings, eg, numbers, counters etc
-	//		ref changed to "string" for clarity though. "String" being data, "text" being specific text.
-	if ( Message.ImportDataString("String", m_Text ) )
-	{
-		OnStringChanged();
-	}
-
-	TRef TextRef;
-	if ( Message.ImportData("TextRef", TextRef ) )
-	{
-		SetText( TextRef );
-
-	}
-
-	//	import scale/alignment modes
-	if ( Message.ImportData("HAlign", m_AlignMode.x ) )	
-		OnLayoutChanged();
-	if ( Message.ImportData("VAlign", m_AlignMode.y ) )	
-		OnLayoutChanged();
-	if ( Message.ImportData("SMode", m_ScaleMode ) )	
-		OnLayoutChanged();
-
-	//	import string formatting
-	if ( Message.ImportData("LineHeight", m_LineHeight ) )	
-		OnStringFormatChanged();
 
 	//	has text box shape
 	TPtr<TBinaryTree>& pBoxData = Message.GetChild("Box");
@@ -146,6 +117,41 @@ void TLRender::TRenderNodeText::Initialise(TLMessaging::TMessage& Message)
 
 	//	do inherited init
 	TRenderNode::Initialise( Message );
+}
+
+void TLRender::TRenderNodeText::SetProperty(TLMessaging::TMessage& Message)
+{
+	//	import font
+	Message.ImportData("FontRef", m_FontRef );
+
+	// Import of raw string - valid for counters and timers etc.
+	//	import text - if we do, make sure we make a note the glyphs need building
+	if ( Message.ImportDataString("String", m_Text ) )
+	{
+		OnStringChanged();
+	}
+
+	// Import of TextRef 
+	TRef TextRef;
+	if ( Message.ImportData("TextRef", TextRef ) )
+	{
+		SetText( TextRef );
+	}
+
+	//	import scale/alignment modes
+	if ( Message.ImportData("HAlign", m_AlignMode.x ) )	
+		OnLayoutChanged();
+	if ( Message.ImportData("VAlign", m_AlignMode.y ) )	
+		OnLayoutChanged();
+	if ( Message.ImportData("SMode", m_ScaleMode ) )	
+		OnLayoutChanged();
+
+	//	import string formatting
+	if ( Message.ImportData("LineHeight", m_LineHeight ) )	
+		OnStringFormatChanged();
+
+	// Super setproperty routine
+	TRenderNode::SetProperty(Message);
 }
 
 
