@@ -584,20 +584,41 @@ void TLGame::TSchemeEditor::CreateEditorIcons(TRefRef ParentRenderNode)
 		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
 
 		InitMessage.ExportData("scale", IconScale );
-		InitMessage.ExportData("translate", IconPosition );
 
 		TRef IconRef;
 		TRef TypeRef;
+
+		float3 FinalPositionStep = IconPositionStep;
 
 		if ( IconData.ImportData("IconRef", IconRef ) )
 		{
 			// Create a graphic
 			InitMessage.ExportData("MeshRef", TRef("d_cube"));
 			InitMessage.ExportData("TextureRef", IconRef);
+
+			// For the sprite icons we need to move them to match the icons box.
+			// This is because the iconroot will actually be at 0,0 and therefore the icons are 
+			// relative to that.  For the text they are positioned using the 'boxdatum' which
+			// effectively shifts them to the box pos in the graphic as their root pos.
+			// There's no easy way to do this form here so going to do a bit of trial and error
+			// for now. Eventually the icons will be used instead of the text so we can find 
+			// a singular usable way of positioning the icons in the box correctly then
+			float3 FinalPosition = float3(5.5f, 8.0f, 0.0f) + IconPosition;
+			InitMessage.ExportData("translate", FinalPosition );
+
+			// Get the size of the icon from the XML for the icon step so we move 
+			// the next icon correctly. This is NOT in pixels.
+			// NOTE: We could get the size in pixels from the editor xml and then  
+			// scale that to determine the correct step for the perspective?  
+			float2 IconSize(0,3.5f);
+			IconData.ImportData("Size", IconSize );
+			FinalPositionStep.xy() = IconSize;
 		}
 		else
 		{
 			// Create a text item
+			InitMessage.ExportData("translate", IconPosition );
+
 			TTempString String;
 			if ( !IconData.ImportDataString("name", String ) )
 				TypeOrSchemeRef.GetString( String, TRUE );
@@ -615,7 +636,7 @@ void TLGame::TSchemeEditor::CreateEditorIcons(TRefRef ParentRenderNode)
 		//	do internal stuff
 		OnCreatedIconRenderNode( IconRenderNodeRef, *pIconData );
 
-		IconPosition += IconPositionStep;
+		IconPosition += FinalPositionStep;
 	}
 }
 
