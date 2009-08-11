@@ -85,6 +85,8 @@ protected:
 	//	incoming events
 	virtual void		ProcessMessage(TLMessaging::TMessage& Message);
 
+	virtual void		Update();
+
 	//	outgoing events
 	virtual void		OnMenuOpen();						//	moved onto new menu
 	virtual void		OnMenuClose();						//	moved to previous menu
@@ -94,6 +96,8 @@ protected:
 
 protected:
 	TPtrArray<TMenu>	m_MenuStack;						//	menu stack
+
+	TTypedRef			m_QueuedCommand;
 };
 
 

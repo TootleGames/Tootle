@@ -146,6 +146,11 @@ SyncBool TLFileSys::TFileMenu::ImportMenuItem(TPtr<TXmlTag>& pTag,TPtr<TLAsset::
 	if ( pString )
 		pItem->SetMenuCommand( TRef(*pString) );
 
+	//	nextmenu
+	pString = pTag->GetProperty("NextMenu");
+	if ( pString )
+		pItem->SetNextMenu( TRef(*pString) );
+
 	//	mesh/gui node ref
 	pString = pTag->GetProperty("GuiRenderNodeRef");
 	if ( pString )

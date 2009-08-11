@@ -114,13 +114,22 @@ Bool TLMenu::TMenuController::ExecuteMenuItem(TRefRef MenuItemRef)
 	//	open-menu command
 	if ( MenuCommand == "Open" )
 	{
-		if ( !OpenMenu( pMenuItem->GetNextMenu() ) )
+		// Already has a queued command?
+		if(m_QueuedCommand.GetRef().IsValid())
 			return FALSE;
+
+		// Queue up the command.  
+		m_QueuedCommand.SetRef(MenuCommand);
+		m_QueuedCommand.SetTypeRef(pMenuItem->GetNextMenu());
 	}
 	else if ( MenuCommand == "Close" )
 	{
-		CloseMenu();
+		// Already has a queued command?
+		if(m_QueuedCommand.GetRef().IsValid())
+			return FALSE;
 
+		// Queue up the command.  
+		m_QueuedCommand.SetRef(MenuCommand);
 	}
 	else
 	{
@@ -186,6 +195,27 @@ TPtr<TLMenu::TMenuItem> TLMenu::TMenuController::GetMenuItem(TRefRef MenuItemRef
 }
 
 
+void TLMenu::TMenuController::Update()
+{
+	if(m_QueuedCommand.GetRef().IsValid())
+	{
+		if(m_QueuedCommand.GetRef() == "Open")
+		{
+			// Open new menu
+			OpenMenu( m_QueuedCommand.GetTypeRef() );
+		}
+		else if(m_QueuedCommand.GetRef() == "close")
+		{
+			CloseMenu();
+		}
+
+		// Invalidate
+		m_QueuedCommand.SetRef(TRef());
+		m_QueuedCommand.SetTypeRef(TRef());
+	}
+}
+
+
 //----------------------------------------------
 //	
 //----------------------------------------------
@@ -196,10 +226,15 @@ void TLMenu::TMenuController::ProcessMessage(TLMessaging::TMessage& Message)
 	//	open new menu
 	if ( MessageRef == "Open" )
 	{
-		TRef MenuRef;
-		if ( Message.ImportData( "MenuRef", MenuRef ) )
+		if(!m_QueuedCommand.GetRef().IsValid())
 		{
-			OpenMenu( MenuRef );
+			TRef MenuRef;
+			if ( Message.ImportData( "MenuRef", MenuRef ) )
+			{
+				// Queue up the command.  
+				m_QueuedCommand.SetRef(MessageRef);
+				m_QueuedCommand.SetTypeRef(MenuRef);
+			}
 		}
 		return;
 	}
@@ -207,7 +242,11 @@ void TLMenu::TMenuController::ProcessMessage(TLMessaging::TMessage& Message)
 	//	close current menu
 	if ( MessageRef == "Close" )
 	{
-		CloseMenu();
+		if(!m_QueuedCommand.GetRef().IsValid())
+		{
+			// Queue up the command.  
+			m_QueuedCommand.SetRef(MessageRef);
+		}
 		return;
 	}
 
@@ -240,6 +279,10 @@ void TLMenu::TMenuController::ProcessMessage(TLMessaging::TMessage& Message)
 		return;
 	}
 
+	if(MessageRef == TLCore::UpdateRef)
+	{
+		Update();
+	}
 
 }
 
