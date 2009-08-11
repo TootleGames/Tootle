@@ -49,7 +49,8 @@ protected:
 public:	
 	TApplication(TRefRef ManagerRef) :
 		TLCore::TManager	( ManagerRef ),
-		m_Options			("Options")
+		m_Options			("Options"),
+		m_LevelData			("Level")
 	{
 	}
 	
@@ -73,6 +74,8 @@ public:
 	TYPE*						GetGameObject()				{ return static_cast<TYPE*>(m_pGame.GetObject()); }
 
 	FORCEINLINE void			SetAppMode(TRefRef Mode)	{	m_NewAppMode = Mode;	}	//	change app mode on next update
+
+	FORCEINLINE TBinaryTree&	GetLevelData()				{ return m_LevelData; }
 
 protected:
 	virtual SyncBool			Initialise();
@@ -106,8 +109,9 @@ private:
 	TPtr<TLGame::TGame>		m_pGame;				//	The application's game object
 	TRef					m_LocalFileSysRef;		//	ref of local file sys
 	TRef					m_UserFileSysRef;		//	ref of local file sys user's runtime assets/save files etc
-	TBinaryTree				m_Options;		//	Global & app specific preferences
-	TRef					m_NewAppMode;	//	if valid, we switch to this app mode on next update
+	TBinaryTree				m_Options;				//	Global & app specific preferences
+	TBinaryTree				m_LevelData;			//	Level specific information
+	TRef					m_NewAppMode;			//	if valid, we switch to this app mode on next update
 };
 
 
