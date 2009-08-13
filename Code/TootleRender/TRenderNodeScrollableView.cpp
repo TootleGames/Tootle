@@ -10,7 +10,8 @@ void TRenderNodeScrollableView::SetProperty(TLMessaging::TMessage& Message)
 {
 	TRenderNode::SetProperty(Message);
 
-	Message.ImportData("Datum", m_ClipDatumRef);
+	if ( Message.ImportData("Datum", m_ClipDatumRef) )
+		OnDatumChanged();
 
 	if(Message.ImportData("RTarget", m_RenderTargetRef))
 		OnRenderTargetRefChange();
@@ -19,7 +20,8 @@ void TRenderNodeScrollableView::SetProperty(TLMessaging::TMessage& Message)
 	Message.ImportData("Vertical", m_bVerticalScroll);
 	Message.ImportData("Depth", m_bDepthScroll);
 
-	Message.ImportData("AlignChildren", m_AlignChildrenToClipDatum );
+	if ( Message.ImportData("AlignChildren", m_AlignChildrenToClipDatum ) )
+		OnOffsetChanged();
 }
 
 
@@ -43,16 +45,7 @@ void TRenderNodeScrollableView::ProcessMessage(TLMessaging::TMessage& Message)
 				if(m_bHorizontalScroll)		GetScroll().x += Change.x;
 				if(m_bDepthScroll)			GetScroll().z += Change.z;
 
-				//	gr: when we change the scroll (ie. changing the world transform for the children) then really
-				//		we need to invalidate our children otherwise their world bounds/transforms are going to be
-				//		out of date and when we try and get the bounds (eg. for widget clicking) they're going to
-				//		be in the wrong place - missing the scroll offset.
-				//	note: also need to think about the visibility of the bounds for the widget... either by clipping
-				//		datums, or some kinda "check point isn't clipped" functionality when ray casting into it...
-				//		not sure of the best (ie. still efficient) way of doing this...
-	
-				//	gr: untested
-				//SetBoundsInvalid( TInvalidateFlags( InvalidateChildWorldBounds, InvalidateChildWorldPos ) );
+				OnScrollChanged();
 			}
 		}
 	}
@@ -70,6 +63,8 @@ void TRenderNodeScrollableView::ProcessMessage(TLMessaging::TMessage& Message)
 			if(m_bVerticalScroll)	GetScroll().y += Change.y;
 			if(m_bHorizontalScroll)	GetScroll().x += Change.x;
 			if(m_bDepthScroll)		GetScroll().z += Change.z;
+		
+			OnScrollChanged();
 		}
 	}
 
@@ -82,6 +77,7 @@ void TRenderNodeScrollableView::OnRenderTargetRefChange(TLRender::TRenderTarget*
 	//	reset viewbox
 	m_ViewBox.SetInvalid();
 	m_ClipDatumOffset.SetInvalid();
+	OnOffsetChanged();
 	TLRender::TScreen* pScreen = NULL;
 
 	//	get render target if no provided
@@ -100,7 +96,10 @@ void TRenderNodeScrollableView::OnRenderTargetRefChange(TLRender::TRenderTarget*
 	//	missing render target
 	if ( !pRenderTarget || !pScreen )
 	{
-		TLDebug_Break("Render target/screen expected");
+		if ( m_RenderTargetRef.IsValid() )
+		{
+			TLDebug_Break("Render target/screen expected");
+		}
 		return;
 	}
 	
@@ -130,6 +129,7 @@ void TRenderNodeScrollableView::OnRenderTargetRefChange(TLRender::TRenderTarget*
 
 	//	cache the datum's min point/child offset
 	m_ClipDatumOffset.SetTranslate( pLocalDatum->GetBox().GetMin().xyz(0.f) );
+	OnOffsetChanged();
 
 	//	get box shape
 	TLMaths::TShapeBox2D* pBox = pWorldDatum.GetObject<TLMaths::TShapeBox2D>();
@@ -247,3 +247,110 @@ void TLRender::TRenderNodeScrollableView::OnTransformChanged(u8 TransformChanged
 }
 
 
+
+
+//---------------------------------------------------------
+//	same as the base GetWorldTransform, but applies the additional transforms which we apply to children too
+//---------------------------------------------------------
+const TLMaths::TTransform& TLRender::TRenderNodeScrollableView::GetWorldTransform(TRenderNode* pRootNode,Bool ForceCalculation)
+{
+	//	doesn't require recalculation
+	if ( !ForceCalculation && m_WorldTransformValid == SyncTrue )
+		return m_WorldTransform;
+
+	//	get our parent's world transform
+	TRenderNode* pParent = GetParent();
+
+	//	no parent, or we are the root, then our transform *is* the world transform...
+	if ( !pParent || this == pRootNode )
+	{
+		if ( HasScroll() || ( m_AlignChildrenToClipDatum && m_ClipDatumOffset.HasAnyTransform() ) )
+		{
+			TLMaths::TTransform AccumulatedTransform = GetTransform();
+			if ( m_AlignChildrenToClipDatum )
+				AccumulatedTransform.Transform( m_ClipDatumOffset );
+			AccumulatedTransform.Transform( m_ScrollTransform );
+			this->SetWorldTransform( AccumulatedTransform );
+		}
+		else
+		{
+			this->SetWorldTransform( GetTransform() );
+		}
+		return m_WorldTransform;
+	}
+
+	//	if we don't inherit transforms then stop here - our world transform is the same as our local transform
+	if ( GetRenderFlags().IsSet(TLRender::TRenderNode::RenderFlags::ResetScene) )
+	{
+		if ( HasScroll() || ( m_AlignChildrenToClipDatum && m_ClipDatumOffset.HasAnyTransform() ) )
+		{
+			TLMaths::TTransform AccumulatedTransform = GetTransform();
+			if ( m_AlignChildrenToClipDatum )
+				AccumulatedTransform.Transform( m_ClipDatumOffset );
+			AccumulatedTransform.Transform( m_ScrollTransform );
+			this->SetWorldTransform( AccumulatedTransform );
+		}
+		else
+		{
+			this->SetWorldTransform( GetTransform() );
+		}
+		return m_WorldTransform;
+	}
+	
+	//	recalculate our parent's world transform
+	const TLMaths::TTransform& ParentWorldTransform = pParent->GetWorldTransform( pRootNode );
+
+	//	we can now calculate our transform based on our parent.
+	if ( pParent->IsWorldTransformValid() != SyncTrue )
+	{
+		TLDebug_Break("error - parent couldn't calculate it's world transform... we can't calcualte ours.");
+		return m_WorldTransform;
+	}
+
+	//	make up a transform including our child transforms
+	TLMaths::TTransform AccumulatedTransform = GetTransform();
+	if ( HasScroll() || ( m_AlignChildrenToClipDatum && m_ClipDatumOffset.HasAnyTransform() ) )
+	{
+		if ( m_AlignChildrenToClipDatum )
+			AccumulatedTransform.Transform( m_ClipDatumOffset );
+		AccumulatedTransform.Transform( m_ScrollTransform );
+	}
+
+	//	just inherit parent's if no local transform
+	if ( !AccumulatedTransform.HasAnyTransform() )
+	{
+		SetWorldTransform( ParentWorldTransform );
+	}
+	else
+	{
+		//	get the current scene transform (parent's)...
+		TLMaths::TTransform NewWorldTransform = ParentWorldTransform;
+
+		//	...and change it by our tranform
+		NewWorldTransform.Transform( AccumulatedTransform );
+
+		//	set new world transform
+		SetWorldTransform( NewWorldTransform );
+	}
+
+	return m_WorldTransform;
+}
+
+
+//---------------------------------------------------------
+//	called when scroll changes
+//---------------------------------------------------------
+void TLRender::TRenderNodeScrollableView::OnScrollChanged()
+{
+	//	gr: when we change the scroll (ie. changing the world transform for the children) then really
+	//		we need to invalidate our children otherwise their world bounds/transforms are going to be
+	//		out of date and when we try and get the bounds (eg. for widget clicking) they're going to
+	//		be in the wrong place - missing the scroll offset.
+	//	note: also need to think about the visibility of the bounds for the widget... either by clipping
+	//		datums, or some kinda "check point isn't clipped" functionality when ray casting into it...
+	//		not sure of the best (ie. still efficient) way of doing this...
+
+	//	gr: untested
+	SetBoundsInvalid( TInvalidateFlags( ForceInvalidateChildren, InvalidateChildWorldBounds, InvalidateChildWorldPos ) );
+
+}

@@ -38,6 +38,8 @@ protected:
 	virtual void							OnTransformChanged(u8 TransformChangedBits=TLMaths_TransformBitAll);			//	gr
 
 	virtual TPtrArray<TRenderNode>&			GetLocalBoundsChildren()						{	static TPtrArray<TRenderNode> NoChildren;	return NoChildren;	}	//	we don't include our children when calculating the local bounds as they're going to be clipped somewhere inside the node anyway
+	virtual const TLMaths::TTransform&		GetWorldTransform(TRenderNode* pRootNode=NULL,Bool ForceCalculation=FALSE);
+
 	virtual void							PreDrawChildren(TLRender::TRenderTarget& RenderTarget,TLMaths::TTransform& SceneTransform);
 	virtual void							PostDrawChildren(TLRender::TRenderTarget& RenderTarget);
 
@@ -46,6 +48,9 @@ protected:
 
 private:
 	void									OnRenderTargetRefChange(TLRender::TRenderTarget* pRenderTarget=NULL);
+	void									OnScrollChanged();														//	called when scroll changes
+	void									OnOffsetChanged()														{	OnScrollChanged();	}
+	void									OnDatumChanged()														{	OnRenderTargetRefChange(NULL);	}		//	recalc view box if datum changes or moves
 
 private:
 	TLMaths::TTransform			m_ScrollTransform;		//	gr: keep the scroll in a transform so we don't need to create a transform twice every render

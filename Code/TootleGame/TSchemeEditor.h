@@ -57,6 +57,7 @@ protected:
 	void						SelectNode(TRefRef NodeRef);						//	select a node
 	void						UnselectNode(TRefRef NodeRef);						//	unselect a node
 	void						UnselectAllNodes();			//	unselect all nodes
+	virtual void				OnNewNodeDropped(TRefRef NodeRef)					{	}	//	called when a new node has been dropped
 
 	virtual void				ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a editor icon
 	void						EnableIconWidgets(Bool Enable);												//	enable/disable node widgets

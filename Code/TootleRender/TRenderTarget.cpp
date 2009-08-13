@@ -4,7 +4,7 @@
 #include "TScreenManager.h"
 
 
-
+#define DEBUG_RENDER_DATUMS_IN_WORLD	//	if not defined, renders datums in local space which is faster
 
 #if defined(_DEBUG) && !defined(TL_TARGET_IPOD)
 //#define DEBUG_DRAW_RENDERZONES
@@ -925,26 +925,47 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 
 
 		//	get a list of datums to debug-render
+#ifdef DEBUG_RENDER_DATUMS_IN_WORLD
+		TPtrArray<TLMaths::TShape> RenderDatums;
+#else
 		TFixedArray<const TLMaths::TShape*,100> RenderDatums;
+#endif
 
 		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_Datums ) )
 		{
+#ifdef DEBUG_RENDER_DATUMS_IN_WORLD
+			//	todo :)
+			//pRenderNode->GetLocalDatums( RenderDatums );
+#else
 			pRenderNode->GetLocalDatums( RenderDatums );
+#endif
 		}
 		else
 		{
 			for ( u32 i=0;	i<pRenderNode->Debug_GetDebugRenderDatums().GetSize();	i++ )
 			{
+			#ifdef DEBUG_RENDER_DATUMS_IN_WORLD
+				TPtr<TLMaths::TShape> pDatum = pRenderNode->GetWorldDatum( pRenderNode->Debug_GetDebugRenderDatums()[i] );
+			#else
 				const TLMaths::TShape* pDatum = pRenderNode->GetLocalDatum( pRenderNode->Debug_GetDebugRenderDatums()[i] );
+			#endif
 				RenderDatums.Add( pDatum );
 			}
 
 			//	add flagged datums
+		#ifdef DEBUG_RENDER_DATUMS_IN_WORLD
+			if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsBox ) )
+				RenderDatums.Add( pRenderNode->GetWorldDatum( TLRender_TRenderNode_DatumBoundsBox ) );
+
+			if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsSphere ) )
+				RenderDatums.Add( pRenderNode->GetWorldDatum( TLRender_TRenderNode_DatumBoundsSphere ) );
+		#else
 			if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsBox ) )
 				RenderDatums.Add( pRenderNode->GetLocalDatum( TLRender_TRenderNode_DatumBoundsBox ) );
 
 			if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsSphere ) )
 				RenderDatums.Add( pRenderNode->GetLocalDatum( TLRender_TRenderNode_DatumBoundsSphere ) );
+		#endif
 		}
 
 		//	setup scene if we have some datums to render
@@ -963,7 +984,13 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 			{
 				const TLMaths::TShape* pDatum = RenderDatums[i];
 				if ( pDatum )
+				{
+#ifdef DEBUG_RENDER_DATUMS_IN_WORLD
+					DrawMeshShape( *pDatum, pRenderNode, DebugDatumRenderFlags, TRUE );
+#else
 					DrawMeshShape( *pDatum, pRenderNode, DebugDatumRenderFlags, FALSE );
+#endif
+				}
 			}
 		}
 	}

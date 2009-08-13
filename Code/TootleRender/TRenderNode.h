@@ -67,7 +67,7 @@ public:
 	friend class TLMaths::TBoundsShape<TLMaths::TShapeSphere2D>;
 	friend class TLRender::TRendergraph;
 
-private:
+protected:
 	enum InvalidateFlags
 	{
 		InvalidateDummy = 0,
@@ -82,6 +82,7 @@ private:
 		InvalidateParentsChildrenWorldPos,		//	as above, but for pos
 		FromChild,								//	child has instigated this invalidation
 		FromParent,								//	parent has instigated this invalidation
+		ForceInvalidateChildren,				//	does child invalidation even if our world bounds didn't change
 	};
 	typedef TFlags<InvalidateFlags> TInvalidateFlags;
 
@@ -196,7 +197,7 @@ public:
 	Bool									SetWorldTransformOld(Bool SetPosOld,Bool SetTransformOld,Bool SetShapesOld);				//	downgrade all world shape/transform states from valid to old. returns if anyhting was downgraded
 	FORCEINLINE Bool						SetWorldTransformOld()						{	return SetWorldTransformOld( TRUE, TRUE, TRUE );	}
 	FORCEINLINE SyncBool					IsWorldTransformValid() const				{	return m_WorldTransformValid;	}
-	const TLMaths::TTransform&				GetWorldTransform(TRenderNode* pRootNode=NULL,Bool ForceCalculation=FALSE);	//	return the world transform. will explicitly calculate the world transform if out of date. This is a bit rendundant as it's calculated via the render but sometimes we need it outside of that. If WorldTransform is Valid(TRUE) then this is not recalculated. THe root render node should be provided (but in reality not a neccessity, see trac: http://grahamgrahamreeves.getmyip.com:1984/Trac/wiki/KnownIssues )
+	virtual const TLMaths::TTransform&		GetWorldTransform(TRenderNode* pRootNode=NULL,Bool ForceCalculation=FALSE);	//	return the world transform. will explicitly calculate the world transform if out of date. This is a bit rendundant as it's calculated via the render but sometimes we need it outside of that. If WorldTransform is Valid(TRUE) then this is not recalculated. THe root render node should be provided (but in reality not a neccessity, see trac: http://grahamgrahamreeves.getmyip.com:1984/Trac/wiki/KnownIssues )
 	
 	const float3&							GetWorldPos();								//	calculate our new world position from the latest scene transform
 	FORCEINLINE const float3&				GetWorldPos(SyncBool& IsValid) 				{	GetWorldPos();	IsValid = m_WorldPosValid;	return m_WorldPos;	}
@@ -230,13 +231,6 @@ public:
 	Bool									GetWorldDatumPos(TRefRef DatumRef,float3& Position);	//	get the position of a datum in world space. returns FALSE if no such datum. Currently will recalc the world transform if it's out of date
 
 	const TArray<TRef>&						Debug_GetDebugRenderDatums() const				{	return m_Debug_RenderDatums;	}
-
-	
-	//	gr: not needed? if required uncomment
-	//const TLMaths::TShapeBox&				GetLocalBoundsBox() const					{	return m_BoundsBox.m_LocalShape;	}
-	//const TLMaths::TShapeBox2D&				GetLocalBoundsBox2D() const 			{	return m_BoundsBox2D.m_LocalShape;	}
-	//const TLMaths::TShapeSphere&			GetLocalBoundsSphere() const				{	return m_BoundsSphere.m_LocalShape;	}
-	//const TLMaths::TShapeSphere2D&			GetLocalBoundsSphere2D() const			{	return m_BoundsSphere2D.m_LocalShape;	}
 
 	FORCEINLINE TPtr<TLMaths::TQuadTreeNode>*	GetRenderZoneNode(TRefRef RenderTargetRef)	{	return m_RenderZoneNodes.Find( RenderTargetRef );	}
 	FORCEINLINE TPtr<TLMaths::TQuadTreeNode>*	SetRenderZoneNode(TRefRef RenderTargetRef,TPtr<TLMaths::TQuadTreeNode>& pRenderZoneNode)	{	return m_RenderZoneNodes.Add( RenderTargetRef, pRenderZoneNode );	}

@@ -930,6 +930,9 @@ void TLGame::TSchemeEditor::DropNewNode(TRefRef NodeRef)
 		m_NewSceneNodeDragAction.SetInvalid();
 		m_NewSceneNodeClickAction.SetInvalid();
 	}
+
+	//	do notifications of drop
+	OnNewNodeDropped( NodeRef );
 }
 
 

@@ -71,12 +71,14 @@ void TLGui::TWidgetDrag::OnClickBegin(const TLGui::TWidget::TClick& Click)
 		if ( !m_VerticalDragEnabled )
 		{
 			Change3.y = 0.f;
-			Change2.y = 0.f;
+			Change2.y = 0;
 		}
 
 		//	check the drag meets min requirements. if it doesn't we ignore this click and will come to this test again when the mouse moves again
-		if ( Change3.LengthSq() < m_DragMinimum*m_DragMinimum )
-			return;
+		//	gr: only do this check if it's the first drag, let subsequent drags be smooth
+		if ( m_Dragging != SyncTrue )
+			if ( Change3.LengthSq() < m_DragMinimum*m_DragMinimum )
+				return;
 
 		//	continue dragging (or first drag if m_Dragging is SyncWait)
 		m_Dragging = SyncTrue;

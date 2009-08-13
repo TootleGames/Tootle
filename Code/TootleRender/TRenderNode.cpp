@@ -264,128 +264,129 @@ void TLRender::TRenderNode::SetBoundsInvalid(const TInvalidateFlags& InvalidateF
 	Bool InvWorld = InvalidateFlags(InvalidateWorldBounds);
 	Bool InvLocal = InvalidateFlags(InvalidateLocalBounds);
 	Bool InvPos = InvalidateFlags(InvalidateWorldPos);
-
-	//	no change
-	if ( !InvLocal && !InvWorld && !InvPos )
-		return;
-
-	Bool ThisLocalBoundsChanged = FALSE;
 	Bool ThisWorldBoundsChanged = FALSE;
-	Bool HasSetRenderZoneInvalid = FALSE;
 
-
-	//	invalidate local bounds
-	if ( InvLocal )
+	//	do self changes
+	if ( InvLocal || InvWorld || InvPos )
 	{
-		//	if any are valid, then at least must change when we invalidate them
-		ThisLocalBoundsChanged |= m_BoundsBox.IsLocalShapeValid() ||
-									m_BoundsBox2D.IsLocalShapeValid() ||
-									m_BoundsSphere.IsLocalShapeValid() ||
-									m_BoundsSphere2D.IsLocalShapeValid();
+		Bool ThisLocalBoundsChanged = FALSE;
+		Bool HasSetRenderZoneInvalid = FALSE;
 
-		//	now just blindly invalidate shapes
-		m_BoundsBox.SetLocalShapeInvalid();
-		m_BoundsBox2D.SetLocalShapeInvalid();
-		m_BoundsSphere.SetLocalShapeInvalid();
-		m_BoundsSphere2D.SetLocalShapeInvalid();
-	}
 
-	//	invalidating world TRANSFORM...
-	if ( InvWorld )
-	{
-		//	downgrade validation of world shapes, transform and pos only if requested
-		ThisWorldBoundsChanged |= SetWorldTransformOld( InvPos, TRUE, TRUE );
-	}
-	else if ( InvLocal && ThisLocalBoundsChanged )
-	{
-		//	just invalidating our world SHAPE, not our transform or pos
-		ThisWorldBoundsChanged |= SetWorldTransformOld( FALSE, FALSE, TRUE );
-	}
-
-	//	invalidate zones if required
-	if ( ThisWorldBoundsChanged )
-	{
-		Debug_PrintInvalidate( this, "local", "all" );
-
-		//	invalidate the zone of our RenderNodeZones - if our world bounds has changed then we
-		//	may have moved to a new zone
-		if ( !HasSetRenderZoneInvalid && m_RenderZoneNodes.GetSize() )
+		//	invalidate local bounds
+		if ( InvLocal )
 		{
-			for ( u32 z=0;	z<m_RenderZoneNodes.GetSize();	z++ )
-				m_RenderZoneNodes.ElementAt(z)->SetZoneOutOfDate();
-				
-			HasSetRenderZoneInvalid = TRUE;
+			//	if any are valid, then at least must change when we invalidate them
+			ThisLocalBoundsChanged |= m_BoundsBox.IsLocalShapeValid() ||
+										m_BoundsBox2D.IsLocalShapeValid() ||
+										m_BoundsSphere.IsLocalShapeValid() ||
+										m_BoundsSphere2D.IsLocalShapeValid();
+
+			//	now just blindly invalidate shapes
+			m_BoundsBox.SetLocalShapeInvalid();
+			m_BoundsBox2D.SetLocalShapeInvalid();
+			m_BoundsSphere.SetLocalShapeInvalid();
+			m_BoundsSphere2D.SetLocalShapeInvalid();
 		}
-	}
 
-	//	invalidate world pos
-	if ( InvPos )
-	{
-		if ( m_WorldPosValid == SyncTrue )
+		//	invalidating world TRANSFORM...
+		if ( InvWorld )
 		{
-			m_WorldPosValid = SyncWait;
-			ThisWorldBoundsChanged = TRUE;
+			//	downgrade validation of world shapes, transform and pos only if requested
+			ThisWorldBoundsChanged |= SetWorldTransformOld( InvPos, TRUE, TRUE );
+		}
+		else if ( InvLocal && ThisLocalBoundsChanged )
+		{
+			//	just invalidating our world SHAPE, not our transform or pos
+			ThisWorldBoundsChanged |= SetWorldTransformOld( FALSE, FALSE, TRUE );
+		}
 
+		//	invalidate zones if required
+		if ( ThisWorldBoundsChanged )
+		{
+			Debug_PrintInvalidate( this, "local", "all" );
+
+			//	invalidate the zone of our RenderNodeZones - if our world bounds has changed then we
+			//	may have moved to a new zone
 			if ( !HasSetRenderZoneInvalid && m_RenderZoneNodes.GetSize() )
 			{
 				for ( u32 z=0;	z<m_RenderZoneNodes.GetSize();	z++ )
 					m_RenderZoneNodes.ElementAt(z)->SetZoneOutOfDate();
+					
 				HasSetRenderZoneInvalid = TRUE;
+			}
+		}
+
+		//	invalidate world pos
+		if ( InvPos )
+		{
+			if ( m_WorldPosValid == SyncTrue )
+			{
+				m_WorldPosValid = SyncWait;
+				ThisWorldBoundsChanged = TRUE;
+
+				if ( !HasSetRenderZoneInvalid && m_RenderZoneNodes.GetSize() )
+				{
+					for ( u32 z=0;	z<m_RenderZoneNodes.GetSize();	z++ )
+						m_RenderZoneNodes.ElementAt(z)->SetZoneOutOfDate();
+					HasSetRenderZoneInvalid = TRUE;
+				}
+			}
+		}
+
+		//	invalidate parent if local changes
+		if ( (ThisWorldBoundsChanged&&InvalidateFlags(InvalidateParentLocalBounds)) || InvalidateFlags(ForceInvalidateParentsLocalBounds) )
+		{
+			TRenderNode* pParent = GetParent();
+			if ( pParent )
+			{
+				//	get parent's invalidate flags
+				TInvalidateFlags ParentInvalidateFlags;
+				ParentInvalidateFlags.Set( FromChild );
+				ParentInvalidateFlags.Set( InvalidateLocalBounds );
+
+				//	gr: unless explicitly set, dont invalidate all of the parent's children
+				if ( ParentInvalidateFlags(InvalidateParentsChildrenWorldBounds) )
+					ParentInvalidateFlags.Set( InvalidateChildWorldBounds );
+				if ( ParentInvalidateFlags(InvalidateParentsChildrenWorldPos) )
+					ParentInvalidateFlags.Set( InvalidateChildWorldPos );
+
+				//	invalidate parent
+				pParent->SetBoundsInvalid(ParentInvalidateFlags);
 			}
 		}
 	}
 
-	//	invalidate parent if local changes
-	if ( (ThisWorldBoundsChanged&&InvalidateFlags(InvalidateParentLocalBounds)) || InvalidateFlags(ForceInvalidateParentsLocalBounds) )
-	{
-		TRenderNode* pParent = GetParent();
-		if ( pParent )
-		{
-			//	get parent's invalidate flags
-			TInvalidateFlags ParentInvalidateFlags;
-			ParentInvalidateFlags.Set( FromChild );
-			ParentInvalidateFlags.Set( InvalidateLocalBounds );
-
-			//	gr: unless explicitly set, dont invalidate all of the parent's children
-			if ( ParentInvalidateFlags(InvalidateParentsChildrenWorldBounds) )
-				ParentInvalidateFlags.Set( InvalidateChildWorldBounds );
-			if ( ParentInvalidateFlags(InvalidateParentsChildrenWorldPos) )
-				ParentInvalidateFlags.Set( InvalidateChildWorldPos );
-
-			//	invalidate parent
-			pParent->SetBoundsInvalid(ParentInvalidateFlags);
-		}
-	}
-
 	//	invalidate world bounds of children
-	if ( HasChildren() && ThisWorldBoundsChanged && (InvalidateFlags(InvalidateChildWorldBounds) || InvalidateFlags(InvalidateChildWorldPos) )  )
+	if ( HasChildren() )
 	{
-		if ( !ThisWorldBoundsChanged )
+		//	if we have changed, or we force a child-invalidation
+		//	AND the invalidation of children was requested, then do child invalidation
+		//	ThisWorldBoundsChanged check is an optimisation so we don't invalidate children when nothign has changed
+		if ( ( ThisWorldBoundsChanged || InvalidateFlags(ForceInvalidateChildren) ) && (InvalidateFlags(InvalidateChildWorldBounds) || InvalidateFlags(InvalidateChildWorldPos) ) )
 		{
-			//TLDebug_Break("Possible optimisation?");
-		}
+			//	calculate child's invalidate flags
+			TInvalidateFlags ChildInvalidateFlags;
+			ChildInvalidateFlags.Set( FromParent );
 
-		//	calculate child's invalidate flags
-		TInvalidateFlags ChildInvalidateFlags;
-		ChildInvalidateFlags.Set( FromParent );
+			if ( InvalidateFlags(InvalidateChildWorldBounds) )
+			{
+				ChildInvalidateFlags.Set( InvalidateWorldBounds );
+				ChildInvalidateFlags.Set( InvalidateChildWorldBounds );
+			}
 
-		if ( InvalidateFlags(InvalidateChildWorldBounds) )
-		{
-			ChildInvalidateFlags.Set( InvalidateWorldBounds );
-			ChildInvalidateFlags.Set( InvalidateChildWorldBounds );
-		}
+			if ( InvalidateFlags(InvalidateChildWorldPos) )
+			{
+				ChildInvalidateFlags.Set( InvalidateWorldPos );
+				ChildInvalidateFlags.Set( InvalidateChildWorldPos );
+			}
 
-		if ( InvalidateFlags(InvalidateChildWorldPos) )
-		{
-			ChildInvalidateFlags.Set( InvalidateWorldPos );
-			ChildInvalidateFlags.Set( InvalidateChildWorldPos );
-		}
-
-		TPtrArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
-		for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
-		{
-			TLRender::TRenderNode* pChild = NodeChildren[c];
-			pChild->SetBoundsInvalid( ChildInvalidateFlags );
+			TPtrArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
+			for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
+			{
+				TLRender::TRenderNode* pChild = NodeChildren[c];
+				pChild->SetBoundsInvalid( ChildInvalidateFlags );
+			}
 		}
 	}
 }
