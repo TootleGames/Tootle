@@ -299,35 +299,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\TSchemeEditor.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\TSchemeEditor.h"
-			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Final|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-				/>
-			</FileConfiguration>
-		</File>
-		<File
 			RelativePath="..\TSchemeManager.cpp"
 			>
 		</File>
