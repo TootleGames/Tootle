@@ -16,6 +16,7 @@
 #include <TootleCore/TGraphBase.h>
 #include <TootleCore/TStateMachine.h>
 #include <TootleGame/TWidgetDrag.h>
+#include <TootleGame/TMenu.h>
 
 
 namespace TLGame
@@ -33,13 +34,18 @@ class TLGame::TSchemeEditor : public TLMessaging::TSubscriber, public TLMessagin
 {
 protected:
 	class Mode_Base;	
-	class Mode_NodeEditor;		//	mode where icons are visible and in-game objects can be dragged around
+	class Mode_Idle;			//	non-specific mode
+	class Mode_Node;			//	mode where in-game objects can be dragged around
+	class Mode_Icon;			//	mode where icons are visible
 
 public:
 	TSchemeEditor();
 	virtual ~TSchemeEditor();
 
 	Bool						Initialise(TRefRef EditorScheme,TRefRef GraphRef,TRefRef SchemeRootNode,TRefRef GameRenderTarget,TBinaryTree* pCommonNodeData);
+	
+	FORCEINLINE TRefRef			GetEditorRenderTargetRef() const	{	return m_EditorRenderTarget;	}
+	FORCEINLINE TRefRef			GetEditorRenderNodeRef() const		{	return m_EditorRenderNodeRef;	}
 
 protected:
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);		//	
@@ -53,12 +59,14 @@ protected:
 	void						UnselectAllNodes();			//	unselect all nodes
 
 	virtual void				ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a editor icon
+	void						EnableIconWidgets(Bool Enable);												//	enable/disable node widgets
 	virtual void				CreateEditorIcons(TRefRef ParentRenderNode);								//	create icons for the editor - overload this to render your own icons
 	void						OnCreatedIconRenderNode(TRefRef IconRenderNodeRef,TBinaryTree& IconData);	//	internal UI setup when an icon render node is created
+	TPtr<TLAsset::TMenu>&		GetEditorIconMenu()															{	return m_pEditorIconMenu;	}
 
 	virtual void				ProcessMouseMessage(TRefRef ActionRef,TLMessaging::TMessage& Message,Bool IsClickAction);		//	handle mouse messages 
 
-	virtual void				ProcessCommandMessage(TRefRef CommandRef,TLMessaging::TMessage& Message);	//	handle other messages (assume are commands)
+	virtual Bool				ProcessCommandMessage(TRefRef CommandRef,TLMessaging::TMessage& Message);	//	handle other messages (assume are commands)
 	virtual void				ClearScheme();				//	remove all nodes
 
 	void						Debug_GetSelectedNodeRefStrings(TString& String);	//	get all the selected node refs as strings
@@ -66,7 +74,6 @@ protected:
 private:
 	Bool						CreateEditorGui(TRefRef EditorScheme);				//	create render target, widgets, icons etc
 	void						CreateEditorWidget(TBinaryTree& WidgetData);		//	create a widget from scheme XML
-	void						OnEditorRenderNodeAdded();							//	editor render node is ready to be used
 
 	void						CreateNodeWidgets(TLGraph::TGraphNodeBase& Node);		//	create nodes widget to allow us to drag around in-game nodes. recurses down the tree, decrementing RecurseLevels until it's zero, at which point it doesn't create nodes for the children
 	void						OnNodeDrag(TRefRef NodeRef,const float3& DragAmount);	//	node has been dragged
@@ -79,8 +86,9 @@ protected:
 	TRef							m_EditorRenderTarget;	//	render target of our editor
 	TRef							m_EditorRenderNodeRef;	//	root node for our editors render target
 	TRef							m_EditorIconRootNodeRef;	//	node to put icons under
-	TPtrArray<TLGui::TWidget>		m_EditorWidgets;		//	widgets to drag from editor to game, and general UI widgets
-	TPtrArray<TBinaryTree>			m_NewNodeData;			//	data's from the editor scheme dictating what nodes we can create
+	TPtrArray<TLGui::TWidget>		m_EditorWidgets;		//	general UI widgets
+	TPtrArray<TLGui::TWidget>		m_EditorIconWidgets;	//	widgets to drag from editor to game
+	TPtr<TLAsset::TMenu>			m_pEditorIconMenu;		//	icons in menu form with NewNode data attached
 
 	TPtr<TLGraph::TGraphBase>		m_pGraph;				//	which graph are we modifying
 	TBinaryTree						m_CommonNodeData;		//	data attached to the init of all nodes we create
@@ -106,10 +114,23 @@ protected:
 };
 
 
-class TLGame::TSchemeEditor::Mode_NodeEditor : public TLGame::TSchemeEditor::Mode_Base
+class TLGame::TSchemeEditor::Mode_Idle : public TLGame::TSchemeEditor::Mode_Base
 {
 protected:
-	virtual Bool			OnBegin(TRefRef PreviousMode)		{	GetEditor().EnableNodeWidgets(TRUE);	return TRUE;	}
-	virtual void			OnEnd(TRefRef NextMode)				{	GetEditor().EnableNodeWidgets(FALSE);	}
+	virtual Bool			OnBegin(TRefRef PreviousMode);
+};
+
+
+class TLGame::TSchemeEditor::Mode_Node : public TLGame::TSchemeEditor::Mode_Base
+{
+protected:
+	virtual Bool			OnBegin(TRefRef PreviousMode);
+};
+
+
+class TLGame::TSchemeEditor::Mode_Icon : public TLGame::TSchemeEditor::Mode_Base
+{
+protected:
+	virtual Bool			OnBegin(TRefRef PreviousMode);	
 };
 

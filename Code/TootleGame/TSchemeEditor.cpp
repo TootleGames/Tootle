@@ -7,6 +7,8 @@
 
 
 
+#define ENABLE_ICON_WIDGETS
+
 
 TLGame::TSchemeEditor::TSchemeEditor() :
 	m_CommonNodeData	( TRef() )
@@ -154,18 +156,6 @@ void TLGame::TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 		}
 	}
 
-	//	specific render graph change
-	if ( Message.GetMessageRef() == "NodeAdded" && Message.GetSenderRef() == TLRender::g_pRendergraph->GetGraphRef() )
-	{
-		TRef NodeRef;
-		Message.ResetReadPos();
-		if ( Message.Read( NodeRef ) )
-		{
-			if ( NodeRef == m_EditorRenderNodeRef )
-				OnEditorRenderNodeAdded();
-		}
-	}
-
 	//	graph message
 	if ( Message.GetSenderRef() == m_pGraph->GetGraphRef() )
 	{
@@ -296,11 +286,40 @@ Bool TLGame::TSchemeEditor::CreateEditorGui(TRefRef EditorScheme)
 		CreateEditorWidget( *WidgetDatas[i] );
 
 	//	setup list of node types we can create
-	pEditorScheme->GetData().GetChildren("NewNode", m_NewNodeData );
+	TPtrArray<TBinaryTree> NewNodeDatas;			//	data's from the editor scheme dictating what nodes we can create
+	if ( pEditorScheme->GetData().GetChildren("NewNode", NewNodeDatas ) )
+	{
+		m_pEditorIconMenu = new TLAsset::TMenu("Icons");
+		for ( i=0;	i<NewNodeDatas.GetSize();	i++ )
+		{
+			TPtr<TBinaryTree>& pNewNodeData = NewNodeDatas[i];
+			TLAsset::TMenu::TMenuItem* pMenuItem = m_pEditorIconMenu->AddMenuItem();
+			if ( !pMenuItem )
+			{
+				TLDebug_Break("failed to add menu item");
+				continue;
+			}
+
+			TRef TypeOrSchemeRef;
+			if ( !pNewNodeData->ImportData("Type", TypeOrSchemeRef) && !pNewNodeData->ImportData("Scheme", TypeOrSchemeRef) )
+			{
+				TLDebug_Break("Icon data requires a SceneNode Type or a Scheme - otherwise we don't know what to create");
+				continue;
+			}
+
+			//	setup menu item from data
+			TTempString MenuItemString;
+			if ( !pNewNodeData->ImportDataString("Name", MenuItemString ) )
+				TypeOrSchemeRef.GetString( MenuItemString, TRUE );
+			pMenuItem->SetText( MenuItemString );
+
+			//	add the new node data to the menu item's data (named "newnode")
+			pMenuItem->GetData().AddChild( pNewNodeData );
+		}
+	}
 
 	//	what node should we put icons under?
-	if ( !pEditorScheme->GetData().ImportData("IconRoot", m_EditorIconRootNodeRef ) )
-		m_EditorIconRootNodeRef = m_EditorRenderNodeRef;
+	pEditorScheme->GetData().ImportData("IconRoot", m_EditorIconRootNodeRef );
 
 	return TRUE;
 }
@@ -338,6 +357,10 @@ void TLGame::TSchemeEditor::SelectNode(TRefRef SceneNode)
 	//	notify
 	TLMessaging::TMessage EditMessage("EdtStart");
 	m_pGraph->SendMessageToNode( SceneNode, EditMessage );
+
+	//	go into node mode if we're not already in it
+	if ( GetCurrentModeRef() != "Node" )
+		SetMode("Node");
 }
 
 
@@ -360,8 +383,8 @@ void TLGame::TSchemeEditor::UnselectNode(TRefRef SceneNode)
 	//	if no more selected nodes then unset the new-node drag actions
 	if ( m_SelectedNodes.GetSize() == 0 )
 	{
-		m_NewSceneNodeDragAction.SetInvalid();
-		m_NewSceneNodeClickAction.SetInvalid();
+	//	m_NewSceneNodeDragAction.SetInvalid();
+	//	m_NewSceneNodeClickAction.SetInvalid();
 	}
 }
 
@@ -458,7 +481,7 @@ Bool TLGame::TSchemeEditor::GetGameWorldPosFromScreenPos(float3& WorldPos,const 
 //----------------------------------------------------------
 void TLGame::TSchemeEditor::ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message)
 {
-	if ( ActionRef == "IcoDrag" && m_SelectedNodes.GetSize()==0 )
+	if ( ActionRef == "IcoDrag" && m_SelectedNodes.GetSize()==0 && GetCurrentModeRef() == "icon" )
 	{
 		//	create a new node at the mouse position - convert screen pos to game render target world pos
 		int2 ScreenPos;
@@ -489,7 +512,9 @@ void TLGame::TSchemeEditor::ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRef
 		{
 			//	set this new node as the "new scene node" that we're dropping into the game.
 			//	the editor's mouse controls take over now
-			NewSceneNode = m_pGraph->CreateNode("EdNode", Type, m_SchemeRootNode, &InitMessage );
+			TRef BaseNodeRef = "EdNode";
+			//TRef BaseNodeRef = Type;
+			NewSceneNode = m_pGraph->CreateNode( BaseNodeRef, Type, m_SchemeRootNode, &InitMessage );
 	
 			TTempString Debug_String("Created new scene node ");
 			NewSceneNode.GetString( Debug_String );
@@ -511,7 +536,9 @@ void TLGame::TSchemeEditor::ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRef
 			}
 
 			//	make a base node - still trying to decide if this is the best method
-			NewSceneNode = m_pGraph->CreateNode("EdNode", "object", m_SchemeRootNode, &InitMessage );
+			TRef BaseNodeRef = "EdNode";
+			//TRef BaseNodeRef = Type;
+			NewSceneNode = m_pGraph->CreateNode( BaseNodeRef, "object", m_SchemeRootNode, &InitMessage );
 
 			TTempString Debug_String("Created new scene node ");
 			NewSceneNode.GetString( Debug_String );
@@ -553,8 +580,20 @@ void TLGame::TSchemeEditor::ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRef
 			return;
 		}
 
+		if ( !TLGui::g_pWidgetManager->IsMoveActionRef( m_NewSceneNodeDragAction ) )
+		{
+			TTempString Debug_String("NewScene node drag action ref ");
+			m_NewSceneNodeDragAction.GetString( Debug_String );
+			Debug_String.Append(" is not a widget manager move action");
+			TLDebug_Break( Debug_String );
+		}
+
 		//	get the equivelent mouse action
 		m_NewSceneNodeClickAction = TLGui::g_pWidgetManager->GetClickActionFromMoveAction( m_NewSceneNodeDragAction );
+		if ( !m_NewSceneNodeClickAction.IsValid() )
+		{
+			TLDebug_Break("Missing click action ref");
+		}
 	}
 	
 }
@@ -565,18 +604,22 @@ void TLGame::TSchemeEditor::ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRef
 //----------------------------------------------------------
 void TLGame::TSchemeEditor::CreateEditorIcons(TRefRef ParentRenderNode)
 {
+	//	no icon data
+	if ( !m_pEditorIconMenu )
+		return;
+	TPtrArray<TLAsset::TMenu::TMenuItem>& IconMenuItems = m_pEditorIconMenu->GetMenuItems();
+
 	float3 IconPosition( 0.f, 0.f, 5.f );
 	float3 IconScale( 3.f, 3.f, 1.f );
 	float3 IconPositionStep( 0.f, IconScale.y * 0.7f, 0.f );
 
-	for ( u32 i=0;	i<m_NewNodeData.GetSize();	i++ )
+	for ( u32 i=0;	i<IconMenuItems.GetSize();	i++ )
 	{
-		TPtr<TBinaryTree>& pIconData = m_NewNodeData[i];
-		TBinaryTree& IconData = *pIconData;
-		TRef TypeOrSchemeRef;
-		if ( !IconData.ImportData("Type", TypeOrSchemeRef) && !IconData.ImportData("Scheme", TypeOrSchemeRef) )
+		TLAsset::TMenu::TMenuItem& IconMenuItem = *IconMenuItems[i];
+		TPtr<TBinaryTree>& pIconData = IconMenuItem.GetData().GetChild("NewNode");
+		if ( !pIconData )
 		{
-			TLDebug_Break("Icon data requires a SceneNode Type or a Scheme - otherwise we don't know what to create");
+			TLDebug_Break("Icon menu item is missing the \"NewNode\" data from the editor's scheme");
 			continue;
 		}
 
@@ -590,7 +633,7 @@ void TLGame::TSchemeEditor::CreateEditorIcons(TRefRef ParentRenderNode)
 
 		float3 FinalPositionStep = IconPositionStep;
 
-		if ( IconData.ImportData("IconRef", IconRef ) )
+		if ( pIconData->ImportData("IconRef", IconRef ) )
 		{
 			// Create a graphic
 			InitMessage.ExportData("MeshRef", TRef("d_cube"));
@@ -611,7 +654,7 @@ void TLGame::TSchemeEditor::CreateEditorIcons(TRefRef ParentRenderNode)
 			// NOTE: We could get the size in pixels from the editor xml and then  
 			// scale that to determine the correct step for the perspective?  
 			float2 IconSize(0,3.5f);
-			IconData.ImportData("Size", IconSize );
+			pIconData->ImportData("Size", IconSize );
 			FinalPositionStep.xy() = IconSize;
 		}
 		else
@@ -619,11 +662,7 @@ void TLGame::TSchemeEditor::CreateEditorIcons(TRefRef ParentRenderNode)
 			// Create a text item
 			InitMessage.ExportData("translate", IconPosition );
 
-			TTempString String;
-			if ( !IconData.ImportDataString("name", String ) )
-				TypeOrSchemeRef.GetString( String, TRUE );
-		
-			InitMessage.ExportDataString("string", String );
+			InitMessage.ExportDataString("string", IconMenuItem.GetText() );
 			InitMessage.ExportData("FontRef", TRef("fdebug") );
 			InitMessage.ExportData("boxdatum", TRef("Icons") );
 			InitMessage.ExportData("boxnode", TRef("em_obj") );
@@ -646,11 +685,13 @@ void TLGame::TSchemeEditor::CreateEditorIcons(TRefRef ParentRenderNode)
 //----------------------------------------------------------------------
 void TLGame::TSchemeEditor::OnCreatedIconRenderNode(TRefRef IconRenderNodeRef,TBinaryTree& IconData)
 {
+#ifdef ENABLE_ICON_WIDGETS
 	//	create draggable widget on this icon
 	TBinaryTree WidgetData("Widget");
 	WidgetData.ExportData("Node", IconRenderNodeRef );
 	WidgetData.ExportData("ActDown", TRef("IcoDown") );
 	WidgetData.ExportData("ActDrag", TRef("IcoDrag") );
+	WidgetData.ExportData("VertDrag", FALSE );
 
 	//	custom data
 	TPtr<TBinaryTree>& pWidgetIconData = WidgetData.AddChild("Icon");
@@ -666,17 +707,22 @@ void TLGame::TSchemeEditor::OnCreatedIconRenderNode(TRefRef IconRenderNodeRef,TB
 
 	//	create widget
 	TPtr<TLGui::TWidgetDrag> pWidget = new TLGui::TWidgetDrag( m_EditorRenderNodeRef, WidgetData );
-	m_EditorWidgets.Add( pWidget );
+	m_EditorIconWidgets.Add( pWidget );
 	this->SubscribeTo( pWidget );
+#endif
 }
 
 
 //----------------------------------------------------------
 //	editor render node is ready to be used
 //----------------------------------------------------------
-void TLGame::TSchemeEditor::OnEditorRenderNodeAdded()
+void TLGame::TSchemeEditor::EnableIconWidgets(Bool EnableIcons)
 {
-	CreateEditorIcons(m_EditorIconRootNodeRef);
+	//	enable/disable icon widgets
+	for ( u32 i=0;	i<m_EditorIconWidgets.GetSize();	i++ )
+	{
+		m_EditorIconWidgets[i]->SetEnabled( EnableIcons );
+	}
 }
 
 //----------------------------------------------------------
@@ -735,30 +781,33 @@ void TLGame::TSchemeEditor::ProcessMouseMessage(TRefRef ActionRef,TLMessaging::T
 //----------------------------------------------------------
 //	handle other messages (assume are commands)
 //----------------------------------------------------------
-void TLGame::TSchemeEditor::ProcessCommandMessage(TRefRef CommandRef,TLMessaging::TMessage& Message)
+Bool TLGame::TSchemeEditor::ProcessCommandMessage(TRefRef CommandRef,TLMessaging::TMessage& Message)
 {
 	//	gui command for editor from widget
 	switch ( CommandRef.GetData() )
 	{
-		case TRef_Static(C,l,o,s,e):
+		case TRef_Static4(Q,u,i,t):
 		{
 			//	todo: do some shutdown
 			//	send close message
-			TLMessaging::TMessage Message( CommandRef, "Editor" );
-			PublishMessage( Message );
+			TLMessaging::TMessage OutMessage( CommandRef, "Editor" );
+			PublishMessage( OutMessage );
+			return TRUE;
 		}
 		break;
 
 		case TRef_Static4(S,a,v,e):
 		{
 			//	send save message - currently handled externally...
-			TLMessaging::TMessage Message( CommandRef, "Editor" );
-			PublishMessage( Message );
+			TLMessaging::TMessage OutMessage( CommandRef, "Editor" );
+			PublishMessage( OutMessage );
+			return TRUE;
 		}
 		break;
 
 		case TRef_Static(C,l,e,a,r):
 			ClearScheme();
+			return TRUE;
 			break;
 
 		default:
@@ -771,6 +820,8 @@ void TLGame::TSchemeEditor::ProcessCommandMessage(TRefRef CommandRef,TLMessaging
 		}
 		break;
 	}
+
+	return FALSE;
 }
 
 
@@ -779,7 +830,9 @@ void TLGame::TSchemeEditor::ProcessCommandMessage(TRefRef CommandRef,TLMessaging
 //----------------------------------------------------------
 void TLGame::TSchemeEditor::AddStateModes()
 {
-	AddMode<Mode_NodeEditor>("NodeEditor");
+	AddMode<Mode_Idle>("Idle");
+	AddMode<Mode_Node>("Node");
+	AddMode<Mode_Icon>("Icon");
 }
 
 
@@ -832,7 +885,7 @@ void TLGame::TSchemeEditor::OnGraphMessage(TLMessaging::TMessage& Message)
 			return;
 
 		//	not dragging a new node.. but a new node has turned up
-		if ( !m_NewSceneNodeDragAction.IsValid() || !m_NewSceneNodeClickAction.IsValid() )
+		if ( !m_NewSceneNodeDragAction.IsValid() /*|| !m_NewSceneNodeClickAction.IsValid() */)
 		{
 			TLDebug_Print("New node has appeared in graph, but we're not dragging in a new node...");
 			DropNewNode( SceneNode );
@@ -853,6 +906,10 @@ void TLGame::TSchemeEditor::OnGraphMessage(TLMessaging::TMessage& Message)
 //----------------------------------------------------------
 void TLGame::TSchemeEditor::DropNewNode(TRefRef NodeRef)
 {
+	TTempString Debug_String("Dropping new node: ");
+	NodeRef.GetString( Debug_String );
+	TLDebug_Print( Debug_String );
+
 	//	fetch node and create widget
 	TLGraph::TGraphNodeBase* pNode = m_pGraph->FindNodeBase( NodeRef );
 	if ( pNode )
@@ -866,6 +923,13 @@ void TLGame::TSchemeEditor::DropNewNode(TRefRef NodeRef)
 
 	//	unselect node
 	UnselectNode( NodeRef );
+
+	//	if no more selected nodes then unset the new-node drag actions
+	if ( m_SelectedNodes.GetSize() == 0 )
+	{
+		m_NewSceneNodeDragAction.SetInvalid();
+		m_NewSceneNodeClickAction.SetInvalid();
+	}
 }
 
 
@@ -880,3 +944,32 @@ void TLGame::TSchemeEditor::DropNewNode(TArray<TRef>& NodeArray)
 		DropNewNode( NodeArray[i] );
 	}
 }
+
+
+
+
+Bool TLGame::TSchemeEditor::Mode_Idle::OnBegin(TRefRef PreviousMode)		
+{
+	GetEditor().EnableNodeWidgets(TRUE);	
+	GetEditor().EnableIconWidgets(FALSE);	
+	return TRUE;	
+}
+
+
+
+Bool TLGame::TSchemeEditor::Mode_Node::OnBegin(TRefRef PreviousMode)
+{
+	GetEditor().EnableNodeWidgets(TRUE);	
+	GetEditor().EnableIconWidgets(FALSE);	
+	return TRUE;	
+}
+
+
+Bool TLGame::TSchemeEditor::Mode_Icon::OnBegin(TRefRef PreviousMode)
+{	
+	GetEditor().EnableNodeWidgets(FALSE);	
+	GetEditor().EnableIconWidgets(TRUE);	
+	GetEditor().UnselectAllNodes();	
+	return TRUE;	
+}
+

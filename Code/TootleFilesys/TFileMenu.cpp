@@ -156,14 +156,16 @@ SyncBool TLFileSys::TFileMenu::ImportMenuItem(TPtr<TXmlTag>& pTag,TPtr<TLAsset::
 	pString = pTag->GetProperty("GuiRenderNodeRef");
 	if ( pString )
 	{
-		TLDebug_Break("The GuiRendernodeRef is now deprecated in menu item XML, please store the ref in menu item data");
+		TTempString Debug_String("The GuiRendernodeRef is now deprecated in menu item XML, please store the ref in menu item data - ");
+		GetFileAndTypeRef().GetString( Debug_String );
+		TLDebug_Break( Debug_String );
 		pItem->SetMeshRef( TRef(*pString) );
 	}
 
 	pString = pTag->GetProperty("AudioRef");
 	if ( pString )
 	{
-		TLDebug_Break("The audio ref is now deprecated in menu item XML, please store the ref in menu item data");
+		//TLDebug_Break("The audio ref is now deprecated in menu item XML, please store the ref in menu item data");
 		pItem->SetAudioRef( TRef(*pString) );
 	}
 
