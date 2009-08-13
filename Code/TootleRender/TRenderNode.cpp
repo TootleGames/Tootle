@@ -548,10 +548,12 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 //---------------------------------------------------------
 Bool TLRender::TRenderNode::CreateChildNode(TBinaryTree& ChildInitData)
 {
+	/*
 	TTempString Debug_String("Creating child node from RenderNode ");
 	this->GetNodeRef().GetString( Debug_String );
 	TLDebug_Print( Debug_String );
 	ChildInitData.Debug_PrintTree();
+	*/
 
 	//	import bits of optional data
 	TRef Type;
@@ -562,7 +564,11 @@ Bool TLRender::TRenderNode::CreateChildNode(TBinaryTree& ChildInitData)
 	{
 		if ( Parent != this->GetNodeRef() )
 		{
-			TLDebug_Break("Import \"child\" data for render node, and child's parent ref isn't this");
+			TTempString Debug_String("Import \"child\" data for render node ");
+			this->GetNodeRef().GetString( Debug_String );
+			Debug_String.Append(", and child's parent is ");
+			Parent.GetString( Debug_String );
+			TLDebug_Break(Debug_String);
 		}
 	}
 
@@ -743,6 +749,19 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 	TRef AttachDatum;
 	if ( Message.ImportData("AttachDatum", AttachDatum ) )
 		SetAttachDatum( AttachDatum );
+
+	//	get list of datums to debug-render
+	TPtrArray<TBinaryTree> DbgDatumDatas;
+	if ( Message.GetChildren("DbgDatum", DbgDatumDatas ) )
+	{
+		for ( u32 c=0;	c<DbgDatumDatas.GetSize();	c++ )
+		{
+			TRef DatumRef;
+			DbgDatumDatas[c]->ResetReadPos();
+			if ( DbgDatumDatas[c]->Read(DatumRef) )
+				m_Debug_RenderDatums.AddUnique( DatumRef );
+		}
+	}
 
 	// Super SetProperty call
 	TLGraph::TGraphNode<TLRender::TRenderNode>::SetProperty(Message);

@@ -923,78 +923,49 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 				DrawMesh( *pMesh, NULL, pRenderNode, RenderNodeRenderFlags, FALSE );
 		}
 
-		//	render local bounds box in current [render object's] transform
-		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsBox ) )
+
+		//	get a list of datums to debug-render
+		TFixedArray<const TLMaths::TShape*,100> RenderDatums;
+
+		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_Datums ) )
 		{
-			const TLMaths::TShapeBox& RenderNodeBounds = pRenderNode->GetLocalBounds<TLMaths::TShapeBox>();
-			if ( RenderNodeBounds.IsValid() )
-			{
-				TFlags<TRenderNode::RenderFlags::Flags> RenderFlags = pRenderNode->GetRenderFlags();
-				RenderFlags.Set( TRenderNode::RenderFlags::Debug_Wireframe );
-				RenderFlags.Set( TRenderNode::RenderFlags::Debug_Outline );
-				RenderFlags.Clear( TRenderNode::RenderFlags::DepthRead );
-				
-				DrawMeshShape( RenderNodeBounds, pRenderNode, RenderFlags, FALSE );
-			}
+			pRenderNode->GetLocalDatums( RenderDatums );
 		}
-
-		//	render world bounds box (outside current transform)
-		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_WorldBoundsBox ) )
+		else
 		{
-			const TLMaths::TShapeBox& RenderNodeBounds = pRenderNode->GetWorldBoundsBox();
-			if ( RenderNodeBounds.IsValid() )
+			for ( u32 i=0;	i<pRenderNode->Debug_GetDebugRenderDatums().GetSize();	i++ )
 			{
-				TFlags<TRenderNode::RenderFlags::Flags> RenderFlags = pRenderNode->GetRenderFlags();
-			
-				//	setup specific params
-				Opengl::EnableWireframe(TRUE);
-				Opengl::SetSceneColour( TColour( 1.f, 1.f, 1.f, 1.f ) );
-				Opengl::SetLineWidth( 1.f );
-
-				DrawMeshShape( RenderNodeBounds, pRenderNode, RenderFlags, TRUE );
-			}
-		}
-
-			//	render local bounds box in current [render object's] transform
-		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsSphere ) )
-		{
-			const TLMaths::TShapeSphere& RenderNodeBounds = pRenderNode->GetLocalBounds<TLMaths::TShapeSphere>();
-
-			if ( RenderNodeBounds.IsValid() )
-			{
-				TPtr<TRenderNode> pTempRenderNode = new TRenderNode;
-				pTempRenderNode->Copy( *pRenderNode );
-				pTempRenderNode->ClearDebugRenderFlags();
-				pTempRenderNode->GetRenderFlags().Set( TRenderNode::RenderFlags::Debug_Wireframe );
-				//pTempRenderNode->GetRenderFlags().Set( TRenderNode::RenderFlags::ResetScene );	//	world bounds so reset scene
-				pTempRenderNode->GetRenderFlags().Clear( TRenderNode::RenderFlags::DepthRead );
-				pTempRenderNode->SetScale( RenderNodeBounds.GetSphere().GetRadius() );
-				pTempRenderNode->SetTranslate( RenderNodeBounds.GetSphere().GetPos() );
-				pTempRenderNode->SetMeshRef( "d_sphere" );
-				PostRenderList.Add( pTempRenderNode );
-			}
-		}
-
-		//	render world bounds box (outside current transform)
-		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_WorldBoundsSphere ) )
-		{
-			const TLMaths::TShapeSphere& RenderNodeBounds = pRenderNode->GetWorldBoundsSphere();
-			if ( RenderNodeBounds.IsValid() )
-			{
-				TPtr<TRenderNode> pTempRenderNode = new TRenderNode;
-				pTempRenderNode->Copy( *pRenderNode );
-				pTempRenderNode->ClearDebugRenderFlags();
-				pTempRenderNode->GetRenderFlags().Set( TRenderNode::RenderFlags::Debug_Wireframe );
-				pTempRenderNode->GetRenderFlags().Set( TRenderNode::RenderFlags::ResetScene );	//	world bounds so reset scene
-				pTempRenderNode->GetRenderFlags().Clear( TRenderNode::RenderFlags::DepthRead );
-				pTempRenderNode->SetScale( RenderNodeBounds.GetSphere().GetRadius() );
-				pTempRenderNode->SetTranslate( RenderNodeBounds.GetSphere().GetPos() );
-				pTempRenderNode->SetMeshRef( "d_sphere" );
-				PostRenderList.Add( pTempRenderNode );
+				const TLMaths::TShape* pDatum = pRenderNode->GetLocalDatum( pRenderNode->Debug_GetDebugRenderDatums()[i] );
+				RenderDatums.Add( pDatum );
 			}
 
+			//	add flagged datums
+			if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsBox ) )
+				RenderDatums.Add( pRenderNode->GetLocalDatum( TLRender_TRenderNode_DatumBoundsBox ) );
+
+			if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsSphere ) )
+				RenderDatums.Add( pRenderNode->GetLocalDatum( TLRender_TRenderNode_DatumBoundsSphere ) );
 		}
 
+		//	setup scene if we have some datums to render
+		if ( RenderDatums.GetSize())
+		{
+			TFlags<TRenderNode::RenderFlags::Flags> DebugDatumRenderFlags = pRenderNode->GetRenderFlags();
+			DebugDatumRenderFlags.Set( TRenderNode::RenderFlags::Debug_Wireframe );
+			DebugDatumRenderFlags.Set( TRenderNode::RenderFlags::Debug_Outline );
+			DebugDatumRenderFlags.Clear( TRenderNode::RenderFlags::DepthRead );
+		
+			Opengl::EnableWireframe(TRUE);
+			Opengl::SetSceneColour( TColour( 1.f, 1.f, 1.f, 1.f ) );
+			Opengl::SetLineWidth( 1.f );
+
+			for ( u32 i=0;	i<RenderDatums.GetSize();	i++ )
+			{
+				const TLMaths::TShape* pDatum = RenderDatums[i];
+				if ( pDatum )
+					DrawMeshShape( *pDatum, pRenderNode, DebugDatumRenderFlags, FALSE );
+			}
+		}
 	}
 	#endif
 }
@@ -1189,6 +1160,30 @@ void TLRender::TRenderTarget::DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset:
 
 
 
+void TLRender::TRenderTarget::DrawMeshShape(const TLMaths::TShape& Shape,const TLRender::TRenderNode* pRenderNode,const TFlags<TLRender::TRenderNode::RenderFlags::Flags>& RenderFlags,Bool ResetScene)
+{
+	if ( !Shape.IsValid() )
+		return;
+
+	//	save off current render state
+	if ( ResetScene )
+		BeginSceneReset();
+	else
+		BeginScene();
+		
+	//	possible a little expensive... generate a mesh for the bounds...
+	TLAsset::TMesh ShapeMesh("Bounds");
+	ShapeMesh.GenerateShape( Shape );
+
+	//	then render our temporary mesh
+	DrawMesh( ShapeMesh, NULL, pRenderNode, RenderFlags, FALSE );
+
+	//	when using a temporary mesh, make sure all vertex caches are unbound/uncached
+	Opengl::Unbind();
+
+	EndScene();
+}
+
 //-------------------------------------------------------------
 //	
 //-------------------------------------------------------------
@@ -1304,7 +1299,7 @@ void TLRender::TRenderTarget::SetScreenZ(u8 NewZ)
 	if ( m_ScreenZ != NewZ )
 	{
 		m_ScreenZ = NewZ;
-		TLRender::g_pScreenManager->GetDefaultScreen()->OnRenderTargetZChanged( this );
+		TLRender::g_pScreenManager->GetDefaultScreen()->OnRenderTargetZChanged( *this );
 	}
 }
 

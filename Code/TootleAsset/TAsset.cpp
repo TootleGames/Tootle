@@ -38,9 +38,13 @@ void TLAsset::TAsset::Import(TPtr<TLFileSys::TFileAsset>& pAssetFile)
 		}
 	}
 
-	//	print out tree
-	//TLDebug_Print("Importing asset file...");
-	//pAssetFile->GetData().Debug_PrintTree();
+/*
+	TTempString Debug_String("Asset ");
+	this->GetAssetAndTypeRef().GetString( Debug_String );
+	Debug_String.Append(" importing asset file data below");
+	TLDebug_Print( Debug_String );
+	pAssetFile->GetData().Debug_PrintTree();
+*/
 
 	//	reset read pos
 	pAssetFile->GetData().ResetReadPos();

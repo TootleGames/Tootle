@@ -21,7 +21,7 @@ PASSWORD=$2
 # maybe should force this to be relative to something?
 cd ~/TootleBuild/
 LOG_DIR=`pwd`
-LOG_FILE="${LOG_DIR}/Log_$PROJECT"
+LOG_FILE="${LOG_DIR}/Logs/$PROJECT"
 
 
 if [ "$PROJECT" == "" ]; then
@@ -32,7 +32,7 @@ fi
 
 # update the tootle repository, if this fails assume it hasn't been checked out
 echo "Updating Tootle svn repository..."
-svn update Tootle > "${LOG_DIR}/Log_Tootle_svn.txt"
+svn update Tootle > "${LOG_FILE}_Tootle_svn.txt"
 if [ $? != 0 ]; then
 	echo "svn update of Tootle failed, the Tootle Repository must have already been checked out (especially for the latest version of this script). See Tootle_svn.txt"
 	exit 1

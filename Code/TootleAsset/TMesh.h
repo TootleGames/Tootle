@@ -246,7 +246,7 @@ protected:
 	
 	template<class SHAPETYPE> SHAPETYPE&		GetBoundsShape()				{	TLDebug_Break("Specialise this for shapes we don't currently support");	static SHAPETYPE g_DummyShape;	return g_DummyShape;	}
 	
-	template<class SHAPETYPE> FORCEINLINE void	CalcBounds(SHAPETYPE& Shape)	{	if ( !Shape.IsValid() ) Shape.m_Shape.Accumulate( m_Vertexes );	}
+	template<class SHAPETYPE> FORCEINLINE void	CalcBounds(SHAPETYPE& Shape);
 	
 	void					AddTriangles(const TArray<Triangle>& OtherPolygons,u32 OffsetVertexIndex);
 	void					AddTristrips(const TArray<Tristrip>& OtherPolygons,u32 OffsetVertexIndex);
@@ -381,5 +381,16 @@ FORCEINLINE const SHAPETYPE& TLAsset::TMesh::GetBounds()
 		Shape.m_Shape.Accumulate( m_Vertexes );	
 	
 	return Shape;	
+}
+
+
+//----------------------------------------------------
+//	
+//----------------------------------------------------
+template<class SHAPETYPE> 
+FORCEINLINE void TLAsset::TMesh::CalcBounds(SHAPETYPE& Shape)	
+{
+	if ( !Shape.IsValid() ) 
+		Shape.m_Shape.Accumulate( m_Vertexes );	
 }
 

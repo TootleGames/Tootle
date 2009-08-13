@@ -105,11 +105,21 @@ protected:
 
 class TLGame::TMenuWrapper
 {
-protected:
+public:
+	TMenuWrapper(TLMenu::TMenuController& MenuController);
 	virtual ~TMenuWrapper();
 
+	Bool						IsValid()			{	return m_MenuRef.IsValid();	}
+	void						SetInvalid()		{	m_MenuRef.SetInvalid();	}
+
 protected:
-	TRef	m_RenderNode;		//	root render node added to the parent specified in the constructor
+	virtual void				OnWidgetsRemoved(TPtrArray<TLGui::TWidget>& Widgets)	{	}	//	callback so we can do extra widget-removed code
+
+protected:
+	TRef						m_MenuRef;
+	TRef						m_RenderNode;		//	root render node added to the parent specified in the constructor
+	TPtrArray<TLGui::TWidget>	m_Widgets;			//	widget storage
+	TLMenu::TMenuController*	m_pMenuController;		//	owner menu controller
 };
 
 
@@ -123,18 +133,9 @@ class TLGame::TMenuWrapperScheme : public TLGame::TMenuWrapper, public TLMessagi
 {
 public:
 	TMenuWrapperScheme(TLMenu::TMenuController& MenuController,TRefRef SchemeRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef);	//	create menu/render nodes etc
-	~TMenuWrapperScheme();
-
-	Bool					IsValid()			{	return m_MenuRef.IsValid();	}
-	void					SetInvalid()		{	m_MenuRef.SetInvalid();	}
 	
 protected:
 	virtual void					ProcessMessage(TLMessaging::TMessage& Message);	//	catch gui's messages and turn them into menu item execution for our owner menu controller
-
-protected:
-	TRef								m_MenuRef;
-	TLMenu::TMenuController*			m_pMenuController;		//	owner menu controller
-	TPtrArray<TLGui::TWidget>	m_Guis;					//	gui storage
 };
 
 
@@ -145,11 +146,7 @@ protected:
 class TLGame::TMenuWrapperText : public TLGame::TMenuWrapper
 {
 public:
-	TMenuWrapperText(TLMenu::TMenuController* pMenuController,TRefRef FontRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef);	//	create menu/render nodes etc
-
-protected:
-	TRef								m_MenuRef;
-	TPtrArray<TLGui::TWidget>	m_Guis;		//	gui storage
+	TMenuWrapperText(TLMenu::TMenuController& MenuController,TRefRef FontRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef);	//	create menu/render nodes etc
 };
 
 

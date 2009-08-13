@@ -2,6 +2,7 @@
 #include <TootleAsset/TMenu.h>
 #include <TootleCore/TBinaryTree.h>
 #include <TootleGame/TMenu.h>
+#include "TLFile.h"
 
 
 
@@ -154,12 +155,28 @@ SyncBool TLFileSys::TFileMenu::ImportMenuItem(TPtr<TXmlTag>& pTag,TPtr<TLAsset::
 	//	mesh/gui node ref
 	pString = pTag->GetProperty("GuiRenderNodeRef");
 	if ( pString )
+	{
+		TLDebug_Break("The GuiRendernodeRef is now deprecated in menu item XML, please store the ref in menu item data");
 		pItem->SetMeshRef( TRef(*pString) );
+	}
 
 	pString = pTag->GetProperty("AudioRef");
 	if ( pString )
+	{
+		TLDebug_Break("The audio ref is now deprecated in menu item XML, please store the ref in menu item data");
 		pItem->SetAudioRef( TRef(*pString) );
+	}
 
+	//	import child data
+	TPtrArray<TXmlTag> DataTags;
+	pTag->GetChildren( "Data", DataTags );
+	for ( u32 i=0;	i<DataTags.GetSize();	i++ )
+	{
+		TPtr<TXmlTag>& pDataTag = DataTags[i];
+
+		if ( !TLFile::ParseXMLDataTree( pDataTag, pItem->GetData() ) )
+			return SyncFalse;
+	}
 
 	/*
 	//	find out what we need to do

@@ -35,7 +35,7 @@ public:
 	FORCEINLINE Bool				GetMenuItemExists(TRefRef MenuItemRef) const	{	return GetMenuItems().Exists( MenuItemRef );	}
 	FORCEINLINE Bool				GetMenuItemExists(TRefRef MenuItemRef)			{	return GetMenuItems().Exists( MenuItemRef );	}
 
-	TPtr<TMenuItem>&				AddMenuItem(TRefRef MenuItemRef);				//	create a menu item - returns NULL if duplicated menu item ref
+	TPtr<TMenuItem>&				AddMenuItem(TRef MenuItemRef=TRef());		//	create a menu item - returns NULL if duplicated menu item ref. if Invalid ref specified next availible ref is used 
 
 	FORCEINLINE TRefRef				GetSchemeRef() const							{	return m_SchemeRef;	}
 	FORCEINLINE void				SetSchemeRef(TRefRef SchemeRef)					{	m_SchemeRef = SchemeRef;	}
@@ -65,13 +65,15 @@ public:
 
 	TRefRef						GetMenuItemRef() const		{	return m_MenuItemRef;	}
 	const TString&				GetText() const				{	return m_Text;	}
-	DEPRECATED const TString&	GetString() const 	{	return m_Text;	}
+	DEPRECATED const TString&	GetString() const 			{	return m_Text;	}
 	TRefRef						GetMenuCommand() const		{	return m_Command;	}
 	TRefRef						GetNextMenu() const			{	return m_NextMenu;	}
-	TRefRef						GetMeshRef() const			{	return m_MeshRef; }
+	DEPRECATED TRefRef			GetMeshRef() const			{	return m_MeshRef; }		//	please move away from using this and use either the MenuWrapper classes or your own custom menu renderer
 	TRefRef						GetAudioRef() const			{	return m_AudioRef; }
+	const TBinaryTree&			GetData() const				{	return m_Data;	}
+	TBinaryTree&				GetData()					{	return m_Data;	}
 
-	DEPRECATED void				SetString(const TString& String) 		{	m_Text = String;	}
+	DEPRECATED void				SetString(const TString& String) 	{	m_Text = String;	}
 	void						SetText(const TString& String)		{	m_Text = String;	}
 	void						SetMenuCommand(TRefRef Command)		{	m_Command = Command;	}
 	void						SetNextMenu(TRefRef NextMenu)		{	m_NextMenu = NextMenu;	SetMenuCommand("open");	};
@@ -86,9 +88,12 @@ protected:
 	TRef						m_MenuItemRef;		//	ref for menu item
 	TRef						m_Command;			//	menu command, invalid commands cannot be highlighted
 
-	//	todo: gr: replace all this with TBinaryData?
 	TString						m_Text;				//	string displayed on menu
 	TRef						m_NextMenu;			//	if menu command is "open" then this is the menu we open
+
+	//	todo: gr: replace all this with TBinaryData?
 	TRef						m_MeshRef;			//	Mesh icon reference - for use instead of a string
 	TRef						m_AudioRef;			//  Audio asset ref - for playing audio when a menu option is selected
+
+	TBinaryTree					m_Data;				//	custom menu item data, eg, widget data, audio, or something else your menu controller/renderer wants to use
 };

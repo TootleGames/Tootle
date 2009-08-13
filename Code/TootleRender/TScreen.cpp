@@ -178,7 +178,7 @@ TPtr<TLRender::TRenderTarget> TLRender::TScreen::CreateRenderTarget(TRefRef Targ
 	m_RenderTargetsZOrdered.Add( pRenderTarget );
 
 	//	resort render targets by z
-	OnRenderTargetZChanged( pRenderTarget );
+	OnRenderTargetZChanged( *pRenderTarget );
 
 	return pRenderTarget;
 }
@@ -245,34 +245,15 @@ SyncBool TLRender::TScreen::DeleteRenderTarget(const TRef& TargetRef)
 //---------------------------------------------------------
 //	get the dimensions of a render target
 //---------------------------------------------------------
-Bool TLRender::TScreen::GetRenderTargetSize(Type4<s32>& Size,const TPtr<TRenderTarget>& pRenderTarget)
+Bool TLRender::TScreen::GetRenderTargetSize(Type4<s32>& Size,const TRenderTarget& RenderTarget)
 {
-	if ( !pRenderTarget )
-		return FALSE;
-
 	Type4<s32> RenderTargetMaxSize;
 	GetRenderTargetMaxSize( RenderTargetMaxSize );
 
-	pRenderTarget->GetSize( Size, RenderTargetMaxSize );
+	RenderTarget.GetSize( Size, RenderTargetMaxSize );
 
 	return TRUE;
 }
-
-
-//---------------------------------------------------------
-//	get a world position from this screen posiiton
-//---------------------------------------------------------
-Bool TLRender::TScreen::GetWorldRayFromScreenPos(const TPtr<TRenderTarget>& pRenderTarget,TLMaths::TLine& WorldRay,const Type2<s32>& ScreenPos)
-{
-	if ( !pRenderTarget )
-	{
-		TLDebug_Break("RenderTarget expected");
-		return FALSE;
-	}
-
-	return GetWorldRayFromScreenPos( *pRenderTarget.GetObject(), WorldRay, ScreenPos );
-}
-
 
 
 //---------------------------------------------------------
@@ -427,30 +408,6 @@ Bool TLRender::TScreen::GetWorldPosFromScreenPos(const TRenderTarget& RenderTarg
 }
 
 
-//---------------------------------------------------------
-//	
-//---------------------------------------------------------
-Bool TLRender::TScreen::GetWorldPosFromScreenPos(const TPtr<TRenderTarget>& pRenderTarget,float3& WorldPos,float WorldDepth,const Type2<s32>& ScreenPos)
-{
-	if ( !pRenderTarget )
-	{
-		TLDebug_Break("RenderTarget expected");
-		return FALSE;
-	}
-
-	return GetWorldPosFromScreenPos( *pRenderTarget.GetObject(), WorldPos, WorldDepth, ScreenPos );
-}
-
-Bool TLRender::TScreen::GetScreenPosFromWorldPos(const TPtr<TRenderTarget>& pRenderTarget,const float3& WorldPos, Type2<s32>& ScreenPos)
-{
-	if ( !pRenderTarget )
-	{
-		TLDebug_Break("RenderTarget expected");
-		return FALSE;
-	}
-
-	return GetScreenPosFromWorldPos(*pRenderTarget.GetObject(), WorldPos, ScreenPos);
-}
 
 Bool TLRender::TScreen::GetScreenPosFromWorldPos(const TRenderTarget& RenderTarget, const float3& WorldPos, Type2<s32>& ScreenPos)
 {
@@ -571,7 +528,7 @@ TLRender::TRenderNodeText* TLRender::TScreen::Debug_GetRenderNodeText(TRefRef De
 //---------------------------------------------------------
 //	z has changed on render target - resorts render targets
 //---------------------------------------------------------
-void TLRender::TScreen::OnRenderTargetZChanged(const TRenderTarget* pRenderTarget)
+void TLRender::TScreen::OnRenderTargetZChanged(const TRenderTarget& RenderTarget)
 {
 	m_RenderTargetsZOrdered.Sort();
 }

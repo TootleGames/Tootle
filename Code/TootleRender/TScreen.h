@@ -61,22 +61,18 @@ public:
 
 	TPtr<TLRender::TRenderTarget>	CreateRenderTarget(TRefRef TargetRef);					// Creates a new render target
 	SyncBool						DeleteRenderTarget(TRefRef TargetRef);					//	shutdown a render target
-	void							OnRenderTargetZChanged(const TRenderTarget* pRenderTarget);	//	z has changed on render target - resorts render targets
+	void							OnRenderTargetZChanged(const TRenderTarget& RenderTarget);	//	z has changed on render target - resorts render targets
 
 	TPtr<TRenderTarget>&			GetRenderTarget(TRefRef TargetRef);						//	fetch render target
 
 	void							GetRenderTargetMaxSize(Type4<s32>& MaxSize);			//	get the render target max size (in "render target space") - this is the viewport size, but rotated
 	virtual void					GetViewportMaxSize(Type4<s32>& MaxSize)					{	MaxSize.Set( 0, 0, GetSize().Width(), GetSize().Height() );	}
-	Bool							GetRenderTargetSize(Type4<s32>& Size,const TPtr<TRenderTarget>& pRenderTarget);	//	get the dimensions of a render target
-	FORCEINLINE Bool				GetRenderTargetSize(Type4<s32>& Size,TRefRef TargetRef) {	return GetRenderTargetSize( Size, GetRenderTarget( TargetRef ) );	}
+	Bool							GetRenderTargetSize(Type4<s32>& Size,const TRenderTarget& RenderTarget);	//	get the dimensions of a render target
+	FORCEINLINE Bool				GetRenderTargetSize(Type4<s32>& Size,TRefRef TargetRef) {	const TRenderTarget* pRenderTarget = GetRenderTarget( TargetRef );	return pRenderTarget ? GetRenderTargetSize( Size, *pRenderTarget ) : FALSE;	}
 
 	Bool							GetWorldRayFromScreenPos(const TRenderTarget& RenderTarget,TLMaths::TLine& WorldRay,const Type2<s32>& ScreenPos);
-	Bool							GetWorldRayFromScreenPos(const TPtr<TRenderTarget>& pRenderTarget,TLMaths::TLine& WorldRay,const Type2<s32>& ScreenPos);
 	Bool							GetWorldPosFromScreenPos(const TRenderTarget& RenderTarget,float3& WorldPos,float WorldDepth,const Type2<s32>& ScreenPos);
-	Bool							GetWorldPosFromScreenPos(const TPtr<TRenderTarget>& pRenderTarget,float3& WorldPos,float WorldDepth,const Type2<s32>& ScreenPos);
-
 	Bool							GetScreenPosFromWorldPos(const TRenderTarget& RenderTarget,const float3& WorldPos, Type2<s32>& ScreenPos);
-	Bool							GetScreenPosFromWorldPos(const TPtr<TRenderTarget>& pRenderTarget,const float3& WorldPos, Type2<s32>& ScreenPos);
 
 	FORCEINLINE void				RequestScreenshot()							{	m_Flags.Set(Flag_TakeScreenshot);	}	// Screenshot request
 

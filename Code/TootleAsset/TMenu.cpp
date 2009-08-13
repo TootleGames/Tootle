@@ -34,13 +34,24 @@ SyncBool TLAsset::TMenu::ImportData(TBinaryTree& Data)
 
 		//	create menu item
 		TPtr<TMenuItem>& pMenuItem = AddMenuItem( MenuItemRef );
+		if ( !pMenuItem )
+		{
+			TLDebug_Break("Menu item expected");
+			Data.Debug_PrintTree();
+			continue;
+		}
 
 		//	read out other bits of data
 		ItemData.ImportData("Command", pMenuItem->m_Command );
+		
 		ItemData.ImportData("MeshRef", pMenuItem->m_MeshRef );
 		ItemData.ImportData("NextMenu", pMenuItem->m_NextMenu );
 		ItemData.ImportData("String", pMenuItem->m_Text );
 		ItemData.ImportData("AudioRef", pMenuItem->m_AudioRef );
+
+		TPtr<TBinaryTree>& pItemDataData = ItemData.GetChild("Data");
+		if ( pItemDataData )
+			pMenuItem->GetData().ReferenceDataTree( *pItemDataData );
 	}
 
 	//	store off any data we haven't read to keep this data intact
@@ -60,29 +71,56 @@ SyncBool TLAsset::TMenu::ExportData(TBinaryTree& Data)
 	for ( u32 i=0;	i<m_MenuItems.GetSize();	i++ )
 	{
 		TMenuItem& MenuItem = *m_MenuItems[i].GetObject();
-		TPtr<TBinaryTree>& ItemData = Data.AddChild("Item");
-		ItemData->Write( MenuItem.GetMenuItemRef() );
+		TPtr<TBinaryTree>& pItemData = Data.AddChild("Item");
+		pItemData->Write( MenuItem.GetMenuItemRef() );
 
 		//	export other bits of data that exist
 		if ( MenuItem.GetMenuCommand().IsValid() )
-			ItemData->ExportData("Command", MenuItem.GetMenuCommand() );
+			pItemData->ExportData("Command", MenuItem.GetMenuCommand() );
 
 		if ( MenuItem.GetMeshRef().IsValid() )
-			ItemData->ExportData("MeshRef", MenuItem.GetMeshRef() );
+			pItemData->ExportData("MeshRef", MenuItem.GetMeshRef() );
 
 		if ( MenuItem.GetNextMenu().IsValid() )
-			ItemData->ExportData("NextMenu", MenuItem.GetNextMenu() );
+			pItemData->ExportData("NextMenu", MenuItem.GetNextMenu() );
 
-		ItemData->ExportData("String", MenuItem.GetText() );
+		pItemData->ExportData("String", MenuItem.GetText() );
 
 		if ( MenuItem.GetAudioRef().IsValid() )
-			ItemData->ExportData("AudioRef", MenuItem.GetAudioRef() );
+			pItemData->ExportData("AudioRef", MenuItem.GetAudioRef() );
 
+		//	export all other data
+		//	gr: ref check just in case it's been changed when it shouldn't have
+		if ( MenuItem.GetData().GetDataRef() != STRef4(D,a,t,a) )
+		{
+			TTempString Debug_String("MenuItem ");
+			MenuItem.GetMenuItemRef().GetString( Debug_String );
+			Debug_String.Append("'s data has had it's ref changed to ");
+			MenuItem.GetData().GetDataRef().GetString( Debug_String );
+			TLDebug_Break( Debug_String );
+			MenuItem.GetData().SetDataRef( STRef4(D,a,t,a) );
+		}
+
+		//	can't reference the original data as there's no TPtr and this is just for
+		//	export so the expense (duplication) can be here instead in the menu item (TPtr dereferencing and alloc)
+		TPtr<TBinaryTree>& pItemDataData = pItemData->AddChild("data");
+		pItemDataData->CopyDataTree( MenuItem.GetData() );
 	}
 
 	//	write back any data we didn't recognise
 	ExportUnknownData( Data );
 
+	//	gr: grahams test
+#ifdef _DEBUG
+	//TLDebug_Print("Menu exporting data...");
+	//Data.Debug_PrintTree();
+
+	TPtrArray<TBinaryTree> SchemeDatas;
+	if ( Data.GetChildren( "SchemeRef", SchemeDatas ) > 1 )
+	{
+		TLDebug_Break("asset is exporting too much data... or the data supplied already had data in it - export bug tell graham!");
+	}
+#endif
 	return SyncTrue;
 }	
 
@@ -91,11 +129,23 @@ SyncBool TLAsset::TMenu::ExportData(TBinaryTree& Data)
 //----------------------------------------------
 //	create a menu item - returns NULL if duplicated menu item ref
 //----------------------------------------------
-TPtr<TLAsset::TMenu::TMenuItem>& TLAsset::TMenu::AddMenuItem(TRefRef MenuItemRef)
+TPtr<TLAsset::TMenu::TMenuItem>& TLAsset::TMenu::AddMenuItem(TRef MenuItemRef)
 {
-	//	check an item doesnt already exist with this ref
-	if ( m_MenuItems.Exists( MenuItemRef ) )
-		return TLPtr::GetNullPtr<TLAsset::TMenu::TMenuItem>();
+	//	if invalid ref specified, then come up with an unused one
+	if ( !MenuItemRef.IsValid() )
+	{
+		do
+		{
+			MenuItemRef.Increment();
+		}
+		while ( m_MenuItems.Exists( MenuItemRef ) );
+	}
+	else
+	{
+		//	check an item doesnt already exist with this ref
+		if ( m_MenuItems.Exists( MenuItemRef ) )
+			return TLPtr::GetNullPtr<TLAsset::TMenu::TMenuItem>();
+	}
 
 	TPtr<TLAsset::TMenu::TMenuItem> pNewItem = new TLAsset::TMenu::TMenuItem( MenuItemRef );
 	return m_MenuItems.AddPtr( pNewItem );
@@ -104,7 +154,8 @@ TPtr<TLAsset::TMenu::TMenuItem>& TLAsset::TMenu::AddMenuItem(TRefRef MenuItemRef
 
 
 TLAsset::TMenu::TMenuItem::TMenuItem(TRefRef MenuItemRef) :
-	m_MenuItemRef	( MenuItemRef )
+	m_MenuItemRef	( MenuItemRef ),
+	m_Data			( TRef_Static4(D,a,t,a) )
 {
 }
 

@@ -2,6 +2,7 @@
 #include <TootleAsset/TScheme.h>
 #include <TootleRender/TRendergraph.h>
 #include <TootleAudio/TAudiograph.h>
+#include <TootleGame/TWidgetButton.h>
 
 
 
@@ -140,6 +141,7 @@ Bool TLMenu::TMenuController::ExecuteMenuItem(TRefRef MenuItemRef)
 
 	// Valid audio to play?
 	// Create menu audio for command execution
+	//	gr: this should go in menu renderer code, not menu logic code
 	if(AudioRef.IsValid())
 	{
 		TLMessaging::TMessage Message(TLCore::InitialiseRef);
@@ -340,6 +342,15 @@ void TLMenu::TMenuController::OnMenuItemExecuted(TRefRef MenuCommand)
 }
 
 
+TLGame::TMenuWrapper::TMenuWrapper(TLMenu::TMenuController& MenuController) :
+	m_pMenuController	( &MenuController )
+{
+	if ( !m_pMenuController )
+	{
+		TLDebug_Break("Menu controller expected");
+	}
+}
+
 
 //---------------------------------------------------
 //	cleanup
@@ -348,6 +359,13 @@ TLGame::TMenuWrapper::~TMenuWrapper()
 {
 	//	delete render node
 	TLRender::g_pRendergraph->RemoveNode( m_RenderNode );
+
+	//	callback so we can do extra widget-removed code
+	OnWidgetsRemoved( m_Widgets );
+
+	//	dealloc widgets - shut them down first to make sure all TPtr's are released
+	m_Widgets.FunctionAll( &TLGui::TWidget::Shutdown );
+	m_Widgets.Empty();
 }
 
 
@@ -356,9 +374,12 @@ TLGame::TMenuWrapper::~TMenuWrapper()
 //	create menu/render nodes etc
 //---------------------------------------------------
 TLGame::TMenuWrapperScheme::TMenuWrapperScheme(TLMenu::TMenuController& MenuController,TRefRef SchemeRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef) :
-	m_pMenuController	( &MenuController )
+	TMenuWrapper		( MenuController )
 {
-	TLMenu::TMenu& Menu = *MenuController.GetCurrentMenu();
+	if ( !m_pMenuController )
+		return;
+
+	TLMenu::TMenu& Menu = *m_pMenuController->GetCurrentMenu();
 	m_MenuRef = Menu.GetMenuRef();
 
 	//	load scheme under this node
@@ -379,44 +400,47 @@ TLGame::TMenuWrapperScheme::TMenuWrapperScheme(TLMenu::TMenuController& MenuCont
 		}
 
 		//	create empty root render node to put scheme under
-		m_RenderNode = TLRender::g_pRendergraph->CreateNode( m_MenuRef, TRef(), ParentRenderNodeRef );
+		m_RenderNode = TLRender::g_pRendergraph->CreateNode( TRef(), TRef(), ParentRenderNodeRef );
 
 		//	import scheme
 		TLRender::g_pRendergraph->ImportScheme( pScheme, m_RenderNode );
 	}
 
 	//	create TWidget's for each menu item
-	const TPtrArray<TLMenu::TMenuItem>& MenuItems = Menu.GetMenuItems();
+	TPtrArray<TLMenu::TMenuItem>& MenuItems = Menu.GetMenuItems();
 	for ( u32 i=0;	i<MenuItems.GetSize();	i++ )
 	{
-		//	get render node ref usable for the TWidget
-		TRefRef MenuItemRenderNodeRef = MenuItems[i]->GetMeshRef();
-		if ( !MenuItemRenderNodeRef.IsValid() )
-			continue;
+		//	get widget data
+		TPtr<TBinaryTree> pWidgetData = MenuItems[i]->GetData().GetChild("Widget");
+
+		//	no widget data, make up our own based on old implementation
+		if ( !pWidgetData )
+		{
+			//	get render node ref usable for the TWidget
+			TRefRef MenuItemRenderNodeRef = MenuItems[i]->GetMeshRef();
+			if ( !MenuItemRenderNodeRef.IsValid() )
+				continue;
+			
+			TLDebug_Warning("Using old widget-generation method for a menu item - please switch to using widget <data>");
+			pWidgetData = new TBinaryTree( TRef_Static(W,i,d,g,e) );
+			pWidgetData->ExportData( TRef_Static4(N,o,d,e), MenuItemRenderNodeRef );
+		}
+
+		//	the action from the widget is the menu item ref
+		pWidgetData->ExportData("ActDown", MenuItems[i]->GetMenuItemRef() );
 
 		//	make the rendernode of this menu item clickable, the action coming out of the TWidget
 		//	is the ref of the menu item that was clicked
-		TPtr<TLGui::TWidget> pGui = new TLGui::TWidget( RenderTargetRef, MenuItemRenderNodeRef, "global", MenuItems[i]->GetMenuItemRef() );
+		TPtr<TLGui::TWidgetButton> pWidget = new TLGui::TWidgetButton( RenderTargetRef, *pWidgetData );
 
 		//	subscribe the menu controller to the gui to get the clicked messages
 		//	gr: THIS now gets the gui messages and handles them and invokes execution of the menu item
-		if ( this->SubscribeTo( pGui.GetObject() ) )
+		if ( this->SubscribeTo( pWidget ) )
 		{
-			m_Guis.Add( pGui );
+			m_Widgets.Add( pWidget );
 		}
 	}
 
-}
-
-
-//---------------------------------------------------
-//	delete render nodes
-//---------------------------------------------------
-TLGame::TMenuWrapperScheme::~TMenuWrapperScheme()
-{
-	//	dealloc guis - shut them down first to make sure all TPtr's are released
-	m_Guis.FunctionAll( &TLGui::TWidget::Shutdown );
-	m_Guis.Empty();
 }
 
 	
@@ -441,54 +465,12 @@ void TLGame::TMenuWrapperScheme::ProcessMessage(TLMessaging::TMessage& Message)
 //---------------------------------------------------
 //	create menu/render nodes etc
 //---------------------------------------------------
-TLGame::TMenuWrapperText::TMenuWrapperText(TLMenu::TMenuController* pMenuController,TRefRef SchemeRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef)
+TLGame::TMenuWrapperText::TMenuWrapperText(TLMenu::TMenuController& MenuController,TRefRef SchemeRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef) :
+	TMenuWrapper		( MenuController )
 {
-	TPtr<TLMenu::TMenu>& pMenu = pMenuController->GetCurrentMenu();
-	m_MenuRef = pMenu->GetMenuRef();
+	if ( !m_pMenuController )
+		return;
 
-	//	load scheme under this node
-	if ( SchemeRef.IsValid() )
-	{
-		//	load asset
-		TLAsset::TScheme* pScheme = TLAsset::GetAsset<TLAsset::TScheme>( SchemeRef );
-		if ( !pScheme )
-		{
-#ifdef _DEBUG
-			TTempString Debug_String("failed to find scheme ");
-			SchemeRef.GetString( Debug_String );
-			Debug_String.Append(" for menu ");
-			m_MenuRef.GetString( Debug_String );
-			TLDebug_Break( Debug_String );
-#endif
-			return;
-		}
-
-		//	create empty root render node to put scheme under
-		m_RenderNode = TLRender::g_pRendergraph->CreateNode( m_MenuRef, TRef(), ParentRenderNodeRef );
-
-		//	import scheme
-		TLRender::g_pRendergraph->ImportScheme( pScheme, m_RenderNode );
-	}
-
-	//	create TWidget's for each menu item
-	const TPtrArray<TLMenu::TMenuItem>& MenuItems = pMenu->GetMenuItems();
-	for ( u32 i=0;	i<MenuItems.GetSize();	i++ )
-	{
-		//	get render node ref usable for the TWidget
-		TRefRef MenuItemRenderNodeRef = MenuItems[i]->GetMeshRef();
-		if ( !MenuItemRenderNodeRef.IsValid() )
-			continue;
-
-		//	make the rendernode of this menu item clickable, the action coming out of the TWidget
-		//	is the ref of the menu item that was clicked
-		TPtr<TLGui::TWidget> pGui = new TLGui::TWidget( RenderTargetRef, MenuItemRenderNodeRef, "global", MenuItems[i]->GetMenuItemRef() );
-
-		//	subscribe the menu controller to the gui to get the clicked messages
-		if ( pMenuController->SubscribeTo( pGui.GetObject() ) )
-		{
-			m_Guis.Add( pGui );
-		}
-	}
-
+	TLDebug_Break("todo");
 }
 

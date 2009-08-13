@@ -24,6 +24,8 @@ protected:
 	virtual void				OnClickBegin(const TClick& Click);
 	virtual void				OnClickEnd(const TClick& Click);
 	virtual void				OnCursorMove(const int2& NewCursorPosition, TRefRef ActionRef);		
+	virtual void				OnEnabled();			//	widget was enabled
+	virtual void				OnDisabled();			//	widget disabled
 	
 	void						OnDrag(const TClick& Click,const int2& Drag2,const float3& Drag3);
 
@@ -34,6 +36,9 @@ protected:
 	int2						m_DragLast2;		//	last position
 	float3						m_DragFrom3;		//	base position of the mouse down
 	float3						m_DragLast3;		//	last position
+	float						m_DragMinimum;		//	need to drag this distance before a drag is registered
+	Bool						m_HoriztonalDragEnabled;	//	allow horizontal drag
+	Bool						m_VerticalDragEnabled;		//	allow vertical drag
 };
 
 

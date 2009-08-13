@@ -75,10 +75,6 @@ TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TBinaryTree& WidgetData)  :
 TLGui::TWidget::~TWidget()
 {
 	Shutdown();
-
-	TTempString Debug_String("TWidget destructed ");
-	m_RenderNodeRef.GetString( Debug_String );
-	TLDebug_Print( Debug_String );
 }
 
 
@@ -304,7 +300,14 @@ SyncBool TLGui::TWidget::ProcessQueuedClicks()
 		pClickDatum = RenderNode.GetWorldDatum( m_RenderNodeDatum, m_RenderNodeDatumKeepShape );
 		if ( !pClickDatum )
 		{
-			TLDebug_Break("Missing datum for widget on render node?");
+			TTempString Debug_String("Missing click-datum ");
+			m_RenderNodeDatum.GetString( Debug_String );
+			Debug_String.Append(" for widget on render node ");
+			RenderNode.GetNodeRef().GetString( Debug_String );
+			Debug_String.Append(" (mesh is ");
+			RenderNode.GetMeshRef().GetString( Debug_String );
+			Debug_String.Append(")");
+			TLDebug_Print( Debug_String );
 			return SyncWait;
 		}
 	}
@@ -544,6 +547,11 @@ void TLGui::TWidget::OnEnabled()
 	{
 		TLDebug_Break("Invalid user ref for widget");
 	}
+
+	if ( m_QueuedClicks.GetSize() > 0 )
+	{
+		TLDebug_Break("Clicks queued up in widget on enabling, need to dump these clicks?");
+	}
 }
 
 //-------------------------------------------------
@@ -551,6 +559,9 @@ void TLGui::TWidget::OnEnabled()
 //-------------------------------------------------
 void TLGui::TWidget::OnDisabled()
 {
+	//	ditch queued up clicks
+	m_QueuedClicks.Empty();
+
 	//	unsubscribe from user's actions for a bit of a speed up
 	TPtr<TLUser::TUser>& pUser = TLUser::g_pUserManager->GetUser( m_UserRef );
 	if ( pUser )

@@ -108,6 +108,14 @@ SyncBool TLFileSys::TFileAsset::Import()
 	{
 		m_pImporter = NULL;
 		OnImportFinished(ImportResult);
+
+		/*
+		TTempString Debug_String("TFileAsset ");
+		this->Debug_GetString( Debug_String );
+		Debug_String.Append(" imported. Data below.");
+		TLDebug_Print( Debug_String );
+		this->GetData().Debug_PrintTree();
+		*/
 	}
 
 	return ImportResult;
@@ -169,6 +177,11 @@ SyncBool TLFileSys::TFileAsset::Export()
 		TLDebug_Break("Assetfile isnt setup");
 		return SyncFalse;
 	}
+
+	/*
+	TLDebug_Print("Exporting asset file to file...");
+	GetData().Debug_PrintTree();
+	*/
 
 	//	init up header
 	m_Header.m_DataCheckSum = 0;

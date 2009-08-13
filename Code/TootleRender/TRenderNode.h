@@ -115,14 +115,19 @@ public:
 			Debug_Outline,				//	render again with wireframe on
 			Debug_Position,				//	draws a 3axis cross at 0,0,0 on the render node
 			Debug_LocalBoundsBox,		//	render our local bounds box
-			Debug_WorldBoundsBox,		//	render our world bounds box
 			Debug_LocalBoundsSphere,	//	render our local bounds sphere
-			Debug_WorldBoundsSphere,	//	render our world bounds sphere
+			Debug_Datums,				//	render all our datums (includes bounds)
+
+			//	now deprecated - we know the local -> world datum conversion works
+			Debug_WorldBoundsBox = Debug_LocalBoundsBox,
+			Debug_WorldBoundsSphere = Debug_LocalBoundsSphere,
 		};
 	};
 
 public:
 	TRenderNode(TRefRef RenderNodeRef=TRef(),TRefRef TypeRef=TRef());
+
+	virtual void							Shutdown();									//	clean-up any TPtrs back to us so we will be deallocated
 
 	FORCEINLINE const TLMaths::TTransform&	GetTransform() const						{	return m_Transform;	}
 	FORCEINLINE const float3&				GetTranslate() const						{	return m_Transform.GetTranslate() ;	}
@@ -209,18 +214,23 @@ public:
 	const TLMaths::TShapeSphere&			GetWorldBoundsSphere(SyncBool& Validity) const		{	Validity = m_BoundsSphere.m_WorldValid;		return m_BoundsSphere.m_WorldShape;	}
 	const TLMaths::TShapeSphere2D&			GetWorldBoundsSphere2D(SyncBool& Validity) const	{	Validity = m_BoundsSphere2D.m_WorldValid;	return m_BoundsSphere2D.m_WorldShape;	}
 
+	virtual TPtrArray<TRenderNode>&			GetLocalBoundsChildren()						{	return GetChildren();	}	//	specialise this for your rendernode to have control over the local bounds calculation
+	
 	template<class SHAPETYPE> const SHAPETYPE&	GetLocalBounds()							{ TLDebug_Break("Specialise this for shapes we don't currently support");	static SHAPETYPE g_DummyShape;	return g_DummyShape; }
-
 	const TLMaths::TShapeBox&				GetLocalBoundsBox() 							{	CalcLocalBounds( m_BoundsBox.m_LocalShape );			return m_BoundsBox.m_LocalShape;	}
 	const TLMaths::TShapeBox2D&				GetLocalBoundsBox2D() 							{	CalcLocalBounds( m_BoundsBox2D.m_LocalShape );			return m_BoundsBox2D.m_LocalShape;	}
 	const TLMaths::TShapeSphere&			GetLocalBoundsSphere()							{	CalcLocalBounds( m_BoundsSphere.m_LocalShape );			return m_BoundsSphere.m_LocalShape;	}
 	const TLMaths::TShapeSphere2D&			GetLocalBoundsSphere2D()						{	CalcLocalBounds( m_BoundsSphere2D.m_LocalShape );		return m_BoundsSphere2D.m_LocalShape;	}
+	FORCEINLINE void						GetLocalDatums(TArray<const TLMaths::TShape*>& LocalDatums);	//	get all datums in the mesh and render node (ie. includes bounds)
 	FORCEINLINE const TLMaths::TShape*		GetLocalDatum(TRefRef DatumRef);				//	extract a datum from our mesh - unless a special ref is used to get bounds shapes
 	template<class SHAPETYPE>
 	FORCEINLINE const SHAPETYPE*			GetLocalDatum(TRefRef DatumRef);				//	get a datum of a specific type - returns NULL if it doesn't exist or is of a different type
 	Bool									GetLocalDatumPos(TRefRef DatumRef,float3& Position);	//	get the position of a datum in local space. returns FALSE if no such datum
 	TPtr<TLMaths::TShape>					GetWorldDatum(TRefRef DatumRef,Bool KeepShape=FALSE);	//	extract a datum  and transform it into a new world space shape. Using KeepShape will ensure a shape type stays the same, eg, rotated box doesn't turn into a poly and stays as a box
 	Bool									GetWorldDatumPos(TRefRef DatumRef,float3& Position);	//	get the position of a datum in world space. returns FALSE if no such datum. Currently will recalc the world transform if it's out of date
+
+	const TArray<TRef>&						Debug_GetDebugRenderDatums() const				{	return m_Debug_RenderDatums;	}
+
 	
 	//	gr: not needed? if required uncomment
 	//const TLMaths::TShapeBox&				GetLocalBoundsBox() const					{	return m_BoundsBox.m_LocalShape;	}
@@ -233,8 +243,6 @@ public:
 
 	FORCEINLINE Bool						operator==(TRefRef Ref) const				{	return GetRenderNodeRef() == Ref;	}
 	FORCEINLINE Bool						operator<(TRefRef Ref) const				{	return GetRenderNodeRef() < Ref;	}
-
-	virtual void							Shutdown();									//	clean-up any TPtrs back to us so we will be deallocated
 
 protected:
 	virtual void							Initialise(TLMessaging::TMessage& Message);	//	generic render node init
@@ -280,6 +288,7 @@ protected:
 	TPtr<TLAsset::TTexture>		m_pTextureCache;
 
 	TBinaryTree					m_Data;					//	data attached to render object
+	TArray<TRef>				m_Debug_RenderDatums;	//	list of datums to debug-render
 
 	TRef						m_OwnerSceneNode;		//	"Owner" scene node - if this is set then we automaticcly process some stuff (ie. catching OnTransform of a scene node we set our transform)
 };
@@ -399,6 +408,27 @@ FORCEINLINE void TLRender::TRenderNode::OnMeshChanged()
 
 
 //---------------------------------------------------------------
+//	get all datums in the mesh and render node (ie. includes bounds)
+//---------------------------------------------------------------
+FORCEINLINE void TLRender::TRenderNode::GetLocalDatums(TArray<const TLMaths::TShape*>& LocalDatums)
+{
+	LocalDatums.Add( &GetLocalBoundsBox() );
+	LocalDatums.Add( &GetLocalBoundsBox2D() );
+	LocalDatums.Add( &GetLocalBoundsSphere() );
+	LocalDatums.Add( &GetLocalBoundsSphere2D() );
+		
+	//	add all the datums in the mesh
+	TLAsset::TMesh* pMesh = GetMeshAsset();
+	if ( pMesh )
+	{
+		const TPtrKeyArray<TRef,TLMaths::TShape>& MeshDatums = pMesh->GetDatums();
+		for ( u32 i=0;	i<MeshDatums.GetSize();	i++ )
+			LocalDatums.Add( MeshDatums.GetItemAt(i) );
+	}
+}
+
+
+//---------------------------------------------------------------
 //	extract a datum from our mesh - unless a special ref is used to get bounds shapes
 //---------------------------------------------------------------
 FORCEINLINE const TLMaths::TShape* TLRender::TRenderNode::GetLocalDatum(TRefRef DatumRef)
@@ -458,7 +488,7 @@ void TLRender::TRenderNode::CalcLocalBounds(SHAPETYPE& Shape)
 	}
 
 	//	accumulate children's bounds
-	TPtrArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
+	TPtrArray<TLRender::TRenderNode>& NodeChildren = GetLocalBoundsChildren();
 	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 	{
 		TLRender::TRenderNode& Child = *NodeChildren[c];

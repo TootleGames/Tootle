@@ -114,8 +114,7 @@ protected:
 	Bool							DrawNode(TRenderNode* pRenderNode,TRenderNode* pParentRenderNode,const TLMaths::TTransform* pSceneTransform,TColour SceneColour,TLMaths::TQuadTreeNode* pCameraZoneNode);	//	render a render object
 	void							DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRenderNode* pRenderNode, TColour SceneColour,TPtrArray<TRenderNode>& PostRenderList);	
 	void							DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset::TTexture* pTexture,const TRenderNode* pRenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags,Bool HasAlpha);
-	template<class SHAPE>
-	void							DrawMeshShape(const SHAPE& Shape,const TRenderNode* pRenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags,Bool ResetScene);
+	void							DrawMeshShape(const TLMaths::TShape& Shape,const TRenderNode* pRenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags,Bool ResetScene);
 
 	virtual Bool					BeginProjectDraw(TLRender::TProjectCamera& Camera,TScreenShape ScreenShape)	{	return TRUE;	}	//	setup projection mode
 	virtual void					EndProjectDraw()																{	}
@@ -157,26 +156,3 @@ protected:
 };
 
 
-
-template<class SHAPE>
-void TLRender::TRenderTarget::DrawMeshShape(const SHAPE& Shape,const TLRender::TRenderNode* pRenderNode,const TFlags<TLRender::TRenderNode::RenderFlags::Flags>& RenderFlags,Bool ResetScene)
-{
-	if ( !Shape.IsValid() )
-		return;
-
-	//	save off current render state
-	if ( ResetScene )
-		BeginSceneReset();
-	else
-		BeginScene();
-		
-	//	possible a little expensive... generate a mesh for the bounds...
-	TLAsset::TMesh ShapeMesh("Bounds");
-
-	ShapeMesh.GenerateShape( Shape );
-
-	//	then render our temporary mesh
-	DrawMesh( ShapeMesh, NULL, pRenderNode, RenderFlags, FALSE );
-
-	EndScene();
-}
