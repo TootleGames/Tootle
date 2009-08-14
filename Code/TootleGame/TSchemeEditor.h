@@ -54,10 +54,12 @@ protected:
 
 	void						EnableNodeWidgets(Bool Enable);							//	enable/disable node widgets
 	virtual void				ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a game node
-	void						SelectNode(TRefRef NodeRef);						//	select a node
-	void						UnselectNode(TRefRef NodeRef);						//	unselect a node
+	Bool						SelectNode(TRefRef NodeRef);						//	select a node - returns true if NEWLY selected. if it was alreayd selected, false is returned
+	void						UnselectNode(TRef NodeRef);							//	unselect a node
 	void						UnselectNode(TArray<TRef>& NodeRefs);				//	unselect a list of nodes
 	void						UnselectAllNodes();									//	unselect all nodes
+	virtual void				OnNodeSelected(TRefRef NodeRef)						{	}	//	called when a node is selected
+	virtual void				OnNodeUnselected(TRefRef NodeRef)					{	}	//	called when a node is unselected
 	virtual void				OnNewNodeDropped(TRefRef NodeRef)					{	}	//	called when a new node has been dropped
 
 	virtual void				ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a editor icon

@@ -340,13 +340,13 @@ void TLGame::TSchemeEditor::CreateEditorWidget(TBinaryTree& WidgetData)
 
 
 //----------------------------------------------------------
-//	node has been selected
+//	select a node - returns true if NEWLY selected. if it was alreayd selected, false is returned
 //----------------------------------------------------------
-void TLGame::TSchemeEditor::SelectNode(TRefRef SceneNode)
+Bool TLGame::TSchemeEditor::SelectNode(TRefRef SceneNode)
 {
 	//	dont do anything if already selected
 	if ( m_SelectedNodes.Exists( SceneNode ) )
-		return;
+		return FALSE;
 	
 	#ifdef DEBUG_NODE_INTERACTION
 		TTempString Debug_String("Selecting node ");
@@ -364,6 +364,10 @@ void TLGame::TSchemeEditor::SelectNode(TRefRef SceneNode)
 	//	go into node mode if we're not already in it
 	if ( GetCurrentModeRef() != "Node" )
 		SetMode("Node");
+
+	OnNodeSelected( SceneNode );
+
+	return TRUE;
 }
 
 
@@ -371,7 +375,7 @@ void TLGame::TSchemeEditor::SelectNode(TRefRef SceneNode)
 //----------------------------------------------------------
 //	node has been selected
 //----------------------------------------------------------
-void TLGame::TSchemeEditor::UnselectNode(TRefRef SceneNode)
+void TLGame::TSchemeEditor::UnselectNode(TRef SceneNode)
 {
 	#ifdef DEBUG_NODE_INTERACTION
 		TTempString Debug_String("Unselecting node ");
@@ -379,19 +383,24 @@ void TLGame::TSchemeEditor::UnselectNode(TRefRef SceneNode)
 		TLDebug_Print( Debug_String );
 	#endif
 
-	if ( m_SelectedNodes.Remove( SceneNode ) )
-	{
-		TLMessaging::TMessage EditMessage("EdtEnd");
-		m_pGraph->SendMessageToNode( SceneNode, EditMessage );
-	}
+	if ( !m_SelectedNodes.Remove( SceneNode ) )
+		return;
+	
+	TLMessaging::TMessage EditMessage("EdtEnd");
+	m_pGraph->SendMessageToNode( SceneNode, EditMessage );
 
 	//	if no more selected nodes then unset the new-node drag actions
 	if ( m_SelectedNodes.GetSize() == 0 )
 	{
 		//	nothing selected, if in node mode, switch to idle mode
+		//	gr: enabling this in rare cases can cause two mdoe switches in one frame which causes issues when 
+		//	instancing schemes in graphs
 	//	if ( GetCurrentModeRef() == "Node" )
 	//		SetMode("Idle");
 	}
+
+	//	notify of unselection
+	OnNodeUnselected( SceneNode );
 }
 
 
@@ -421,14 +430,10 @@ void TLGame::TSchemeEditor::OnNodeDrag(TRefRef SceneNode,const float3& DragAmoun
 //----------------------------------------------------------
 void TLGame::TSchemeEditor::UnselectNode(TArray<TRef>& NodeRefs)
 {
-	//	send editor-end message to all selected nodes
-	TLMessaging::TMessage EditMessage("EdtEnd");
-
-	for ( u32 i=0;	i<NodeRefs.GetSize();	i++ )
-		m_pGraph->SendMessageToNode( NodeRefs[i], EditMessage );
-
-	//	now unselect all those nodes
-	NodeRefs.Empty();
+	for ( s32 i=NodeRefs.GetLastIndex();	i>=0;	i-- )
+	{
+		UnselectNode( NodeRefs[i] );
+	}
 }
 
 //----------------------------------------------------------
@@ -461,6 +466,14 @@ void TLGame::TSchemeEditor::ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef
 {
 	if ( ActionRef == "NDrag" )
 	{
+		//	if this node hasn't been selected before, select this node and unselect everything else
+		if ( SelectNode( NodeRef ) )
+		{
+			for ( s32 i=m_SelectedNodes.GetSize();	i>=0;	i-- )
+				if ( m_SelectedNodes[i] != NodeRef )
+					UnselectNode( m_SelectedNodes[i] );
+		}
+
 		//	get world change
 		float3 WorldChange;
 		if ( Message.ImportData("Move3",WorldChange ) )
@@ -470,7 +483,14 @@ void TLGame::TSchemeEditor::ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef
 	}
 	else if ( ActionRef == "NDown" )
 	{
-		SelectNode( NodeRef );
+		//	gr: selection/unselection is done when mouse is released to determine if we need to unselect or select depending on whether we dragged or not
+		//	but, if we're in icon mode we have touched a node rather than the menu, so switch to node-editor mode
+		if ( GetCurrentModeRef() == "Icon" )
+		{
+			//	gr: switch to idle mode so the node menu doesn't pop up, we'll switch to node mode when we actually select a node
+			SetMode("Idle");
+			//SetMode("Node");
+		}
 	}
 	else if ( ActionRef == "NUp" )
 	{
@@ -479,7 +499,26 @@ void TLGame::TSchemeEditor::ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef
 		Bool WasDragged = FALSE;
 		Message.ImportData("DidDrag", WasDragged );
 		if ( WasDragged )
+		{
 			UnselectNode( NodeRef );
+			SetMode("Idle");
+		}
+		else if ( GetCurrentModeRef() == "Node" || GetCurrentModeRef() == "Idle" )
+		{
+			//	 wasn't dragged, and isn't selected, so select it (assume is a tap to select)
+			if ( SelectNode( NodeRef ) )
+			{
+				for ( s32 i=m_SelectedNodes.GetSize();	i>=0;	i-- )
+					if ( m_SelectedNodes[i] != NodeRef )
+						UnselectNode( m_SelectedNodes[i] );
+			}
+			else
+			{
+				//	was already selected, so unselect
+				UnselectNode( NodeRef );
+				SetMode("Idle");
+			}
+		}
 	}
 }
 
@@ -825,12 +864,20 @@ Bool TLGame::TSchemeEditor::ProcessCommandMessage(TRefRef CommandRef,TLMessaging
 			//	send save message - currently handled externally...
 			TLMessaging::TMessage OutMessage( CommandRef, "Editor" );
 			PublishMessage( OutMessage );
+
+			//	gr: cant do this as this message/stack may be coming from something we delete when we change mode
+			//		add this back in when the set mode is stalled
+			//SetMode("Idle");
 			return TRUE;
 		}
 		break;
 
 		case TRef_Static(C,l,e,a,r):
 			ClearScheme();
+
+			//	gr: cant do this as this message/stack may be coming from something we delete when we change mode
+			//		add this back in when the set mode is stalled
+			//SetMode("Idle");
 			return TRUE;
 			break;
 
@@ -842,6 +889,11 @@ Bool TLGame::TSchemeEditor::ProcessCommandMessage(TRefRef CommandRef,TLMessaging
 				for ( u32 i=0;	i<SelectedNodes.GetSize();	i++ )
 					DeleteNode( SelectedNodes[i] );
 			}
+			//	all nodes will have been deleted and unselected so go back to idle mode
+			//	gr: cant do this as this message/stack may be coming from something we delete when we change mode
+			//		add this back in when the set mode is stalled
+			//if ( !m_SelectedNodes.GetSize() )
+			//	SetMode("Idle");
 			return TRUE;
 			break;
 

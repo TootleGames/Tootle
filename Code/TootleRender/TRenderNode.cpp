@@ -764,6 +764,19 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 		}
 	}
 
+	//	get list of datums to remove from the debug-render list
+	DbgDatumDatas.Empty();
+	if ( Message.GetChildren("RmDbgDatum", DbgDatumDatas ) )
+	{
+		for ( u32 c=0;	c<DbgDatumDatas.GetSize();	c++ )
+		{
+			TRef DatumRef;
+			DbgDatumDatas[c]->ResetReadPos();
+			if ( DbgDatumDatas[c]->Read(DatumRef) )
+				m_Debug_RenderDatums.Remove( DatumRef );
+		}
+	}
+
 	// Super SetProperty call
 	TLGraph::TGraphNode<TLRender::TRenderNode>::SetProperty(Message);
 }
