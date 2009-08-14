@@ -56,7 +56,8 @@ protected:
 	virtual void				ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a game node
 	void						SelectNode(TRefRef NodeRef);						//	select a node
 	void						UnselectNode(TRefRef NodeRef);						//	unselect a node
-	void						UnselectAllNodes();			//	unselect all nodes
+	void						UnselectNode(TArray<TRef>& NodeRefs);				//	unselect a list of nodes
+	void						UnselectAllNodes();									//	unselect all nodes
 	virtual void				OnNewNodeDropped(TRefRef NodeRef)					{	}	//	called when a new node has been dropped
 
 	virtual void				ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a editor icon
@@ -77,9 +78,12 @@ private:
 	void						CreateEditorWidget(TBinaryTree& WidgetData);		//	create a widget from scheme XML
 
 	void						CreateNodeWidgets(TLGraph::TGraphNodeBase& Node);		//	create nodes widget to allow us to drag around in-game nodes. recurses down the tree, decrementing RecurseLevels until it's zero, at which point it doesn't create nodes for the children
+	void						RemoveNodeWidget(TRefRef NodeRef);						//	remove widget for this node
 	void						OnNodeDrag(TRefRef NodeRef,const float3& DragAmount);	//	node has been dragged
 	void						DropNewNode(TRefRef NodeRef);							//	drop a node into the game
 	void						DropNewNode(TArray<TRef>& NodeArray);					//	drop a bunch of nodes (probbaly selected nodes)
+
+	void						DeleteNode(TRefRef NodeRef);							//	delete a node and it's widgets
 
 	void						OnGraphMessage(TLMessaging::TMessage& Message);			//	handle graph change from our graph
 

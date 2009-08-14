@@ -318,3 +318,26 @@ void TLGraph::TGraphNodeBase::SetProperty(TLMessaging::TMessage& Message)
 void TLGraph::TGraphNodeBase::GetProperty(TLMessaging::TMessage& Message, TLMessaging::TMessage& Response)
 {
 }
+
+
+//------------------------------------------------------------
+//	get array of children's refs
+//------------------------------------------------------------
+void TLGraph::TGraphNodeBase::GetChildren(TArray<TRef>& ChildNodeRefs,Bool Recursive)
+{
+	//	get children
+	TArray<TGraphNodeBase*> ChildNodes;
+	GetChildrenBase( ChildNodes );
+
+	for ( u32 c=0;	c<ChildNodes.GetSize();	c++ )
+	{
+		TGraphNodeBase* pChild = ChildNodes[c];
+
+		//	add this child's ref...
+		ChildNodeRefs.Add( pChild->GetNodeRef() );	
+
+		//	now add childrens children
+		if ( Recursive )
+			pChild->GetChildrenTree( ChildNodeRefs );
+	}
+}

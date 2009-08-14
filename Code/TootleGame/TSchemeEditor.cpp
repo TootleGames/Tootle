@@ -419,20 +419,27 @@ void TLGame::TSchemeEditor::OnNodeDrag(TRefRef SceneNode,const float3& DragAmoun
 //----------------------------------------------------------
 //	unselect all nodes
 //----------------------------------------------------------
-void TLGame::TSchemeEditor::UnselectAllNodes()
+void TLGame::TSchemeEditor::UnselectNode(TArray<TRef>& NodeRefs)
 {
 	//	send editor-end message to all selected nodes
 	TLMessaging::TMessage EditMessage("EdtEnd");
 
-	for ( u32 i=0;	i<m_SelectedNodes.GetSize();	i++ )
-		m_pGraph->SendMessageToNode( m_SelectedNodes[i], EditMessage );
+	for ( u32 i=0;	i<NodeRefs.GetSize();	i++ )
+		m_pGraph->SendMessageToNode( NodeRefs[i], EditMessage );
 
 	//	now unselect all those nodes
-	m_SelectedNodes.Empty();
+	NodeRefs.Empty();
+}
+
+//----------------------------------------------------------
+//	unselect all nodes
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::UnselectAllNodes()
+{
+	UnselectNode( m_SelectedNodes );
 	m_NewSceneNodeDragAction.SetInvalid();
 	m_NewSceneNodeClickAction.SetInvalid();
 }
-
 
 
 //----------------------------------------------------------
@@ -827,6 +834,17 @@ Bool TLGame::TSchemeEditor::ProcessCommandMessage(TRefRef CommandRef,TLMessaging
 			return TRUE;
 			break;
 
+		//	delete selected node[s]
+		case TRef_Static(D,e,l,e,t):
+			{
+				TArray<TRef> SelectedNodes;
+				SelectedNodes.Copy( m_SelectedNodes );
+				for ( u32 i=0;	i<SelectedNodes.GetSize();	i++ )
+					DeleteNode( SelectedNodes[i] );
+			}
+			return TRUE;
+			break;
+
 		default:
 		{
 #ifdef _DEBUG
@@ -967,7 +985,94 @@ void TLGame::TSchemeEditor::DropNewNode(TArray<TRef>& NodeArray)
 	}
 }
 
+//----------------------------------------------------------
+//	delete a node and it's widgets
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::DeleteNode(TRefRef NodeRef)
+{
+	TRef RootNodeRef = NodeRef;
 
+	//	get root node list
+	TLGraph::TGraphNodeBase* pSchemeRootNode = m_pGraph->FindNodeBase( m_SchemeRootNode );
+	if ( !pSchemeRootNode )
+	{
+		TLDebug_Break("Scehem root node expected");
+		return;
+	}
+	TArray<TRef> RootNodeRefs;
+	pSchemeRootNode->GetChildren( RootNodeRefs );
+
+	//	loop through list of ROOT nodes associated with the editor - if we're trying to delete a sub-node then we need to delete the parent node
+	//	this is required for scheme node usage
+	s32 RootNodeIndex = -1;
+	while ( RootNodeIndex == -1 && RootNodeRef.IsValid() )
+	{
+		RootNodeIndex = RootNodeRefs.FindIndex( RootNodeRef );
+
+		//	not a root node, try the parent
+		if ( RootNodeIndex == -1 )
+		{
+			//	get the parent's ref node
+			const TLGraph::TGraphNodeBase* pNode = m_pGraph->FindNodeBase( RootNodeRef );
+			const TLGraph::TGraphNodeBase* pNodeParent = pNode ? pNode->GetParentBase() : NULL;
+			if ( pNodeParent )
+				RootNodeRef = pNodeParent->GetNodeRef();
+			else
+				RootNodeRef.SetInvalid();
+		}
+	}
+
+	//	not found
+	TLGraph::TGraphNodeBase* pNode = m_pGraph->FindNodeBase( RootNodeRef );
+	if ( !RootNodeRef.IsValid() || !pNode )
+	{
+		TTempString Debug_String("Failed to delete node ");
+		NodeRef.GetString( Debug_String );
+		Debug_String.Append(" as it (and it's parents) are not in our node list");
+		TLDebug_Break( Debug_String );
+		return;
+	}
+
+	//	get a list of all the child node refs
+	TArray<TRef> ChildNodeRefs;
+	pNode->GetChildrenTree( ChildNodeRefs );
+
+	//	remove root node from graph (will remove children)
+	m_pGraph->RemoveNode( RootNodeRef );
+
+	//	find and remove widgets associated with these nodes
+	RemoveNodeWidget( RootNodeRef );
+	for ( u32 c=0;	c<ChildNodeRefs.GetSize();	c++ )
+		RemoveNodeWidget( ChildNodeRefs[c] );
+
+	//	unselect nodes
+	UnselectNode( RootNodeRef );
+	UnselectNode( ChildNodeRefs );
+
+	//	todo: remove links
+}
+
+
+//----------------------------------------------------------
+//	remove widget for this node
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::RemoveNodeWidget(TRefRef NodeRef)
+{
+	//	find widget associated with node
+	for ( s32 i=m_NodeWidgets.GetLastIndex();	i>=0;	i-- )
+	{
+		TRef WidgetNodeRef;
+		if ( !m_NodeWidgets[i]->GetWidgetData().ImportData("Node", WidgetNodeRef ) )
+			continue;
+
+		//	wrong widget
+		if ( WidgetNodeRef != NodeRef )
+			continue;
+
+		//	remove this widget
+		m_NodeWidgets.RemoveAt(i);
+	}
+}
 
 
 Bool TLGame::TSchemeEditor::Mode_Idle::OnBegin(TRefRef PreviousMode)		
