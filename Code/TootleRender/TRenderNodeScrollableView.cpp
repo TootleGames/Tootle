@@ -248,92 +248,52 @@ void TLRender::TRenderNodeScrollableView::OnTransformChanged(u8 TransformChanged
 
 
 
-
 //---------------------------------------------------------
-//	same as the base GetWorldTransform, but applies the additional transforms which we apply to children too
+//	return the world transform for our children. called by the child from GetWorldTransform. Overload if you transform your children in a specific way without using the base trasnform
 //---------------------------------------------------------
-const TLMaths::TTransform& TLRender::TRenderNodeScrollableView::GetWorldTransform(TRenderNode* pRootNode,Bool ForceCalculation)
+const TLMaths::TTransform& TLRender::TRenderNodeScrollableView::GetChildWorldTransform(TRenderNode* pRootNode,Bool ForceCalculation)
 {
-	//	doesn't require recalculation
-	if ( !ForceCalculation && m_WorldTransformValid == SyncTrue )
-		return m_WorldTransform;
+	//	up to date
+	//	gr: because this function isn't always neccessary (if the world transform is still valid post-render)
+	//		then our m_ChildWorldTransform could be out of sync with the world transform validity.
+	if ( !ForceCalculation && m_ChildWorldTransformValid == SyncTrue )
+		return m_ChildWorldTransform;
 
-	//	get our parent's world transform
-	TRenderNode* pParent = GetParent();
+	//	calculate our own world transform first
+	const TLMaths::TTransform& ThisWorldTransform = GetWorldTransform( pRootNode, ForceCalculation );
 
-	//	no parent, or we are the root, then our transform *is* the world transform...
-	if ( !pParent || this == pRootNode )
-	{
-		if ( HasScroll() || ( m_AlignChildrenToClipDatum && m_ClipDatumOffset.HasAnyTransform() ) )
-		{
-			TLMaths::TTransform AccumulatedTransform = GetTransform();
-			if ( m_AlignChildrenToClipDatum )
-				AccumulatedTransform.Transform( m_ClipDatumOffset );
-			AccumulatedTransform.Transform( m_ScrollTransform );
-			this->SetWorldTransform( AccumulatedTransform );
-		}
-		else
-		{
-			this->SetWorldTransform( GetTransform() );
-		}
-		return m_WorldTransform;
-	}
-
-	//	if we don't inherit transforms then stop here - our world transform is the same as our local transform
-	if ( GetRenderFlags().IsSet(TLRender::TRenderNode::RenderFlags::ResetScene) )
-	{
-		if ( HasScroll() || ( m_AlignChildrenToClipDatum && m_ClipDatumOffset.HasAnyTransform() ) )
-		{
-			TLMaths::TTransform AccumulatedTransform = GetTransform();
-			if ( m_AlignChildrenToClipDatum )
-				AccumulatedTransform.Transform( m_ClipDatumOffset );
-			AccumulatedTransform.Transform( m_ScrollTransform );
-			this->SetWorldTransform( AccumulatedTransform );
-		}
-		else
-		{
-			this->SetWorldTransform( GetTransform() );
-		}
-		return m_WorldTransform;
-	}
+	//	copy our world transform...
+	m_ChildWorldTransform = ThisWorldTransform;
 	
-	//	recalculate our parent's world transform
-	const TLMaths::TTransform& ParentWorldTransform = pParent->GetWorldTransform( pRootNode );
-
-	//	we can now calculate our transform based on our parent.
-	if ( pParent->IsWorldTransformValid() != SyncTrue )
-	{
-		TLDebug_Break("error - parent couldn't calculate it's world transform... we can't calcualte ours.");
-		return m_WorldTransform;
-	}
-
-	//	make up a transform including our child transforms
-	TLMaths::TTransform AccumulatedTransform = GetTransform();
+	//	apply our own changes for the children
 	if ( HasScroll() || ( m_AlignChildrenToClipDatum && m_ClipDatumOffset.HasAnyTransform() ) )
 	{
 		if ( m_AlignChildrenToClipDatum )
-			AccumulatedTransform.Transform( m_ClipDatumOffset );
-		AccumulatedTransform.Transform( m_ScrollTransform );
+			m_ChildWorldTransform.Transform( m_ClipDatumOffset );
+		m_ChildWorldTransform.Transform( m_ScrollTransform );
 	}
 
-	//	just inherit parent's if no local transform
-	if ( !AccumulatedTransform.HasAnyTransform() )
+	//	child transform now up to date
+	m_ChildWorldTransformValid = SyncTrue;
+	
+	return m_ChildWorldTransform;
+}
+
+//---------------------------------------------------------
+//	world transform has changed, invalidate child world transform
+//---------------------------------------------------------
+Bool TLRender::TRenderNodeScrollableView::SetWorldTransformOld(Bool SetPosOld,Bool SetTransformOld,Bool SetShapesOld)
+{
+	Bool Changed = FALSE;
+
+	if ( SetTransformOld && m_ChildWorldTransformValid == SyncTrue )
 	{
-		SetWorldTransform( ParentWorldTransform );
-	}
-	else
-	{
-		//	get the current scene transform (parent's)...
-		TLMaths::TTransform NewWorldTransform = ParentWorldTransform;
-
-		//	...and change it by our tranform
-		NewWorldTransform.Transform( AccumulatedTransform );
-
-		//	set new world transform
-		SetWorldTransform( NewWorldTransform );
+		m_ChildWorldTransformValid = SyncWait;
+		Changed = TRUE;
 	}
 
-	return m_WorldTransform;
+	Changed |= TLRender::TRenderNode::SetWorldTransformOld( SetPosOld, SetTransformOld, SetShapesOld );
+	return Changed;
 }
 
 
@@ -354,3 +314,4 @@ void TLRender::TRenderNodeScrollableView::OnScrollChanged()
 	SetBoundsInvalid( TInvalidateFlags( ForceInvalidateChildren, InvalidateChildWorldBounds, InvalidateChildWorldPos ) );
 
 }
+

@@ -914,7 +914,7 @@ const TLMaths::TTransform& TLRender::TRenderNode::GetWorldTransform(TRenderNode*
 	}
 	
 	//	recalculate our parent's world transform
-	const TLMaths::TTransform& ParentWorldTransform = pParent->GetWorldTransform( pRootNode );
+	const TLMaths::TTransform& ParentWorldTransform = pParent->GetChildWorldTransform( pRootNode );
 
 	//	we can now calculate our transform based on our parent.
 	if ( pParent->IsWorldTransformValid() != SyncTrue )

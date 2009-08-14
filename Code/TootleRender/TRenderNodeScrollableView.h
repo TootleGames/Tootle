@@ -26,7 +26,8 @@ public:
 		m_bVerticalScroll			( TRUE ),
 		m_bHorizontalScroll			( TRUE ),
 		m_bDepthScroll				( FALSE ),
-		m_AlignChildrenToClipDatum	( TRUE )
+		m_AlignChildrenToClipDatum	( TRUE ),
+		m_ChildWorldTransformValid	( SyncFalse )
 	{
 	}
 
@@ -35,10 +36,12 @@ public:
 protected:
 	virtual void							SetProperty(TLMessaging::TMessage& Message);	//	generic render node init
 	virtual void							ProcessMessage(TLMessaging::TMessage& Message);
+
 	virtual void							OnTransformChanged(u8 TransformChangedBits=TLMaths_TransformBitAll);			//	gr
 
 	virtual TPtrArray<TRenderNode>&			GetLocalBoundsChildren()						{	static TPtrArray<TRenderNode> NoChildren;	return NoChildren;	}	//	we don't include our children when calculating the local bounds as they're going to be clipped somewhere inside the node anyway
-	virtual const TLMaths::TTransform&		GetWorldTransform(TRenderNode* pRootNode=NULL,Bool ForceCalculation=FALSE);
+	virtual const TLMaths::TTransform&		GetChildWorldTransform(TRenderNode* pRootNode=NULL,Bool ForceCalculation=FALSE);
+	virtual Bool							SetWorldTransformOld(Bool SetPosOld,Bool SetTransformOld,Bool SetShapesOld);	//	world transform has changed, invalidate child world transform
 
 	virtual void							PreDrawChildren(TLRender::TRenderTarget& RenderTarget,TLMaths::TTransform& SceneTransform);
 	virtual void							PostDrawChildren(TLRender::TRenderTarget& RenderTarget);
@@ -64,5 +67,8 @@ private:
 	Bool						m_bHorizontalScroll;
 	Bool						m_bDepthScroll;				//	allow scroll on z
 	Bool						m_AlignChildrenToClipDatum;	//	if true, 0,0,0 position on a child will be at the top left of the clipping box
+
+	TLMaths::TTransform			m_ChildWorldTransform;		//	cache of the children's world transform
+	SyncBool					m_ChildWorldTransformValid;	//	
 };
 

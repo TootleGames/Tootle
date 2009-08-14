@@ -194,10 +194,11 @@ public:
 	FORCEINLINE void						OnBoundsChanged()							{	OnMeshChanged();	}
 
 	void									SetWorldTransform(const TLMaths::TTransform& SceneTransform);	//	set new world transform
-	Bool									SetWorldTransformOld(Bool SetPosOld,Bool SetTransformOld,Bool SetShapesOld);				//	downgrade all world shape/transform states from valid to old. returns if anyhting was downgraded
+	virtual Bool							SetWorldTransformOld(Bool SetPosOld,Bool SetTransformOld,Bool SetShapesOld);				//	downgrade all world shape/transform states from valid to old. returns if anyhting was downgraded
 	FORCEINLINE Bool						SetWorldTransformOld()						{	return SetWorldTransformOld( TRUE, TRUE, TRUE );	}
 	FORCEINLINE SyncBool					IsWorldTransformValid() const				{	return m_WorldTransformValid;	}
 	virtual const TLMaths::TTransform&		GetWorldTransform(TRenderNode* pRootNode=NULL,Bool ForceCalculation=FALSE);	//	return the world transform. will explicitly calculate the world transform if out of date. This is a bit rendundant as it's calculated via the render but sometimes we need it outside of that. If WorldTransform is Valid(TRUE) then this is not recalculated. THe root render node should be provided (but in reality not a neccessity, see trac: http://grahamgrahamreeves.getmyip.com:1984/Trac/wiki/KnownIssues )
+	virtual const TLMaths::TTransform&		GetChildWorldTransform(TRenderNode* pRootNode=NULL,Bool ForceCalculation=FALSE)		{	return GetWorldTransform( pRootNode, ForceCalculation );	}	//	return the world transform for our children. called by the child from GetWorldTransform. Overload if you transform your children in a specific way without using the base trasnform
 	
 	const float3&							GetWorldPos();								//	calculate our new world position from the latest scene transform
 	FORCEINLINE const float3&				GetWorldPos(SyncBool& IsValid) 				{	GetWorldPos();	IsValid = m_WorldPosValid;	return m_WorldPos;	}

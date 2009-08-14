@@ -123,7 +123,8 @@ protected:
 	template<typename MATCHTYPE>
 	FORCEINLINE Bool			IsInGraph(const MATCHTYPE& Value,Bool CheckRequestQueue=TRUE)		{	return FindNodeMatch( Value, CheckRequestQueue ).IsValid();	}
 	virtual Bool				IsInGraph(TRefRef NodeRef,Bool CheckRequestQueue=TRUE)				{	return FindNode( NodeRef, CheckRequestQueue ).IsValid();	}
-	FORCEINLINE Bool			IsInGraph(TPtr<T>& pNode,Bool CheckRequestQueue=TRUE)			{	return FindNode( pNode->GetNodeRef(), CheckRequestQueue ).IsValid();	}
+	FORCEINLINE Bool			IsInGraph(T* pNode,Bool CheckRequestQueue=TRUE)						{	return pNode ? FindNode( pNode->GetNodeRef(), CheckRequestQueue ).IsValid() : FALSE;	}
+	FORCEINLINE Bool			IsInGraph(TPtr<T>& pNode,Bool CheckRequestQueue=TRUE)				{	return IsInGraph( pNode.GetObject(), CheckRequestQueue );	}
 	FORCEINLINE Bool			IsInRequestQueue(TPtr<T>& pNode) const		{	return IsInRequestQueue( pNode->GetNodeRef() );	}
 	FORCEINLINE Bool			IsInRequestQueue(TRefRef NodeRef) const		{	return m_RequestQueue.Exists( NodeRef );	}
 	FORCEINLINE Bool			IsInAddQueue(TPtr<T>& pNode) const			{	return IsInAddQueue( pNode->GetNodeRef() );	}
@@ -240,8 +241,9 @@ protected:
 
 	virtual void					OnAdded()									{}	// Added routine - called once the node has been added to the graph
 	virtual void					OnMoved(const TPtr<T>& pOldParentNode)		{}	// Moved routine - called after the node has been moved (so this->GetParent is the new parent)
-	virtual void					OnChildMovedFrom(const TPtr<T>& pOldChild)	{}	//	called to a parent when one of it's direct children has moved to somewhere else (pOldChild->GetParent is it's new parent)
-	virtual void					OnChildMovedTo(const TPtr<T>& pNewChild,const TPtr<T>& pOldParentNode)	{}	//	called to the new parent of a child after it's been moved
+	virtual void					OnChildMovedFrom(TPtr<T>& pOldChild)		{}	//	called to a parent when one of it's direct children has moved to somewhere else (pOldChild->GetParent is it's new parent)
+	virtual void					OnChildMovedTo(TPtr<T>& pNewChild,const TPtr<T>& pOldParentNode)	{}	//	called to the new parent of a child after it's been moved. note, this AND OnChildAdded is called, so only use this for very specific cases
+	virtual void					OnChildAdded(TPtr<T>& pNewChild)			{}	//	called to the new parent of a child after it's been added to the graph
 
 	// Sibling manipulation
 	template<typename MATCHTYPE>
@@ -257,7 +259,7 @@ protected:
 	Bool							CheckIsThis(TPtr<T>& pThis);				//	check the node pointer is actually this, if not throws up a DebugBreak
 
 private:
-	virtual Bool					AddChild(TPtr<T>& pChild,TPtr<T>& pThis);	//	gr: add to END of child list
+	Bool							AddChild(TPtr<T>& pChild,TPtr<T>& pThis);	//	gr: add to END of child list
 	FORCEINLINE Bool				RemoveChild(TPtr<T>& pNode)					{	return m_Children.Remove( pNode );	}
 	FORCEINLINE void				RemoveChildren()							{	m_Children.Empty();	}	//	TPtrArray deallocs and cleans up for us
 
@@ -441,7 +443,10 @@ Bool TLGraph::TGraphNode<T>::AddChild(TPtr<T>& pChild,TPtr<T>& pThis)
 		return FALSE;
 
 	if ( !pChild )
+	{
+		TLDebug_Break("child expected - should have alreayd been checked");
 		return FALSE;
+	}
 
 	pChild->SetParent( pThis );
 	m_Children.Add( pChild );
@@ -1263,19 +1268,25 @@ void TLGraph::TGraph<T>::UpdateGraphStructure()
 	for(u32 uIndex = 0; uIndex < m_RequestQueue.GetSize(); uIndex++)
 	{
 		TGraphUpdateRequest& Request = *m_RequestQueue.ElementAt(uIndex);
+		TPtr<T>& pRequestNode = Request.GetNode();
+		if ( !pRequestNode )
+		{
+			TLDebug_Break("Node expected");
+			continue;
+		}
 
 		switch ( Request.GetCommand().GetData() )
 		{
 			case STRef(R,e,m,o,v):
-				DoRemoveNode( Request.GetNode(), Request.GetNodeParent() );
+				DoRemoveNode( pRequestNode, Request.GetNodeParent() );
 				break;
 
 			case STRef3(A,d,d):
-				DoAddNode( Request.GetNode(), Request.GetNodeParent() );
+				DoAddNode( pRequestNode, Request.GetNodeParent() );
 				break;
 
 			case STRef4(M,o,v,e):
-				DoMoveNode( Request.GetNode(), Request.GetNodeParent() );
+				DoMoveNode( pRequestNode, Request.GetNodeParent() );
 				break;
 
 			default:
@@ -1325,6 +1336,9 @@ void TLGraph::TGraph<T>::DoAddNode(TPtr<T>& pNode, TPtr<T>& pParent)
 
 	// Tell the node it has been added to the graph
 	pNode->OnAdded();
+
+	//	tell the parent it has a new child
+	pParent->OnChildAdded( pNode );
 }
 
 
@@ -1424,6 +1438,7 @@ void TLGraph::TGraph<T>::DoMoveNode(TPtr<T>& pNode, TPtr<T>& pNewParent)
 	//	tell the parents of a change
 	pOldParent->OnChildMovedFrom( pNode );
 	pNewParent->OnChildMovedTo( pNode, pOldParent );
+	pNewParent->OnChildAdded( pNode );
 }
 
 
