@@ -8,6 +8,7 @@
 
 
 #define ENABLE_ICON_WIDGETS
+//#define DEBUG_NODE_INTERACTION		//	prints out drags, selection etc
 
 
 TLGame::TSchemeEditor::TSchemeEditor() :
@@ -347,9 +348,11 @@ void TLGame::TSchemeEditor::SelectNode(TRefRef SceneNode)
 	if ( m_SelectedNodes.Exists( SceneNode ) )
 		return;
 	
-	TTempString Debug_String("Selecting node ");
-	SceneNode.GetString( Debug_String );
-	TLDebug_Print( Debug_String );
+	#ifdef DEBUG_NODE_INTERACTION
+		TTempString Debug_String("Selecting node ");
+		SceneNode.GetString( Debug_String );
+		TLDebug_Print( Debug_String );
+	#endif
 
 	//	add to list
 	m_SelectedNodes.Add( SceneNode );
@@ -370,9 +373,11 @@ void TLGame::TSchemeEditor::SelectNode(TRefRef SceneNode)
 //----------------------------------------------------------
 void TLGame::TSchemeEditor::UnselectNode(TRefRef SceneNode)
 {
-	TTempString Debug_String("Unselecting node ");
-	SceneNode.GetString( Debug_String );
-	TLDebug_Print( Debug_String );
+	#ifdef DEBUG_NODE_INTERACTION
+		TTempString Debug_String("Unselecting node ");
+		SceneNode.GetString( Debug_String );
+		TLDebug_Print( Debug_String );
+	#endif
 
 	if ( m_SelectedNodes.Remove( SceneNode ) )
 	{
@@ -383,8 +388,9 @@ void TLGame::TSchemeEditor::UnselectNode(TRefRef SceneNode)
 	//	if no more selected nodes then unset the new-node drag actions
 	if ( m_SelectedNodes.GetSize() == 0 )
 	{
-	//	m_NewSceneNodeDragAction.SetInvalid();
-	//	m_NewSceneNodeClickAction.SetInvalid();
+		//	nothing selected, if in node mode, switch to idle mode
+	//	if ( GetCurrentModeRef() == "Node" )
+	//		SetMode("Idle");
 	}
 }
 
@@ -399,10 +405,12 @@ void TLGame::TSchemeEditor::OnNodeDrag(TRefRef SceneNode,const float3& DragAmoun
 	TLMessaging::TMessage TransformMessage("DoTransform");
 	TransformMessage.ExportData("Translate", DragAmount );
 
+#ifdef DEBUG_NODE_INTERACTION
 	TTempString Debug_String("Dragging node ");
 	SceneNode.GetString( Debug_String );
 	Debug_String.Appendf("; %2.2f, %2.2f, %2.2f", DragAmount.x, DragAmount.y, DragAmount.z );
 	TLDebug_Print( Debug_String );
+#endif
 	
 	m_pGraph->SendMessageToNode( SceneNode, TransformMessage );
 }
@@ -459,7 +467,12 @@ void TLGame::TSchemeEditor::ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef
 	}
 	else if ( ActionRef == "NUp" )
 	{
-		UnselectNode( NodeRef );
+		//	gr: only unselect the node when mouse is release if we did some dragging. If we have simply touched the node withot moving it
+		//		then we can assume the user explicitly tried to select it
+		Bool WasDragged = FALSE;
+		Message.ImportData("DidDrag", WasDragged );
+		if ( WasDragged )
+			UnselectNode( NodeRef );
 	}
 }
 
@@ -733,9 +746,11 @@ void TLGame::TSchemeEditor::ProcessMouseMessage(TRefRef ActionRef,TLMessaging::T
 	//	dragging new scene node around
 	if ( ActionRef == m_NewSceneNodeDragAction && m_SelectedNodes.GetSize() )
 	{
-		TTempString Debug_String("Dragging selected nodes ");
-		Debug_GetSelectedNodeRefStrings( Debug_String );
-		TLDebug_Print( Debug_String );
+		#ifdef DEBUG_NODE_INTERACTION
+			TTempString Debug_String("Dragging selected nodes ");
+			Debug_GetSelectedNodeRefStrings( Debug_String );
+			TLDebug_Print( Debug_String );
+		#endif
 
 		//	get the screen cursor pos
 		int2 ScreenPos;
@@ -768,9 +783,11 @@ void TLGame::TSchemeEditor::ProcessMouseMessage(TRefRef ActionRef,TLMessaging::T
 	//	drop new scene node into game (let go)
 	if ( ActionRef == m_NewSceneNodeClickAction && m_SelectedNodes.GetSize() )
 	{
-		TTempString Debug_String("Mouse click action (assume up) - releasing [new] selected nodes ");
-		Debug_GetSelectedNodeRefStrings( Debug_String );
-		TLDebug_Print( Debug_String );
+		#ifdef DEBUG_NODE_INTERACTION
+			TTempString Debug_String("Mouse click action (assume up) - releasing [new] selected nodes ");
+			Debug_GetSelectedNodeRefStrings( Debug_String );
+			TLDebug_Print( Debug_String );
+		#endif
 
 		//	drop new nodes into world, create widgets and unselect them
 		DropNewNode( m_SelectedNodes );
@@ -906,9 +923,11 @@ void TLGame::TSchemeEditor::OnGraphMessage(TLMessaging::TMessage& Message)
 //----------------------------------------------------------
 void TLGame::TSchemeEditor::DropNewNode(TRefRef NodeRef)
 {
-	TTempString Debug_String("Dropping new node: ");
-	NodeRef.GetString( Debug_String );
-	TLDebug_Print( Debug_String );
+	#ifdef DEBUG_NODE_INTERACTION
+		TTempString Debug_String("Dropping new node: ");
+		NodeRef.GetString( Debug_String );
+		TLDebug_Print( Debug_String );
+	#endif
 
 	//	fetch node and create widget
 	TLGraph::TGraphNodeBase* pNode = m_pGraph->FindNodeBase( NodeRef );
@@ -967,10 +986,18 @@ Bool TLGame::TSchemeEditor::Mode_Node::OnBegin(TRefRef PreviousMode)
 	return TRUE;	
 }
 
+void TLGame::TSchemeEditor::Mode_Node::OnEnd(TRefRef NextMode)
+{
+	//	when we go out of node mode, unselect any nodes we had selected
+	GetEditor().UnselectAllNodes();
+}
+
 
 Bool TLGame::TSchemeEditor::Mode_Icon::OnBegin(TRefRef PreviousMode)
 {	
-	GetEditor().EnableNodeWidgets(FALSE);	
+	//	gr: allow user to select & drag node widgets still. when they do this we'll be set back to Node mode
+	GetEditor().EnableNodeWidgets(TRUE);	
+
 	GetEditor().EnableIconWidgets(TRUE);	
 	GetEditor().UnselectAllNodes();	
 	return TRUE;	

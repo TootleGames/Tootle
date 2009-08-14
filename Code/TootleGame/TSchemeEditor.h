@@ -126,6 +126,7 @@ class TLGame::TSchemeEditor::Mode_Node : public TLGame::TSchemeEditor::Mode_Base
 {
 protected:
 	virtual Bool			OnBegin(TRefRef PreviousMode);
+	virtual void			OnEnd(TRefRef NextMode);
 };
 
 
