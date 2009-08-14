@@ -39,6 +39,7 @@ public:
 	TFileFreetype(TRefRef FileRef,TRefRef FileTypeRef);
 	~TFileFreetype();
 
+	virtual TRef				GetFileExportAssetType() const										{	return TRef_Static4(F,o,n,t);	}
 	virtual SyncBool			ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);
 
 protected:

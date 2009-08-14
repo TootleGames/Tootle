@@ -113,6 +113,7 @@ class TLFileSys::TFileCollada : public TLFileSys::TFileXml
 public:
 	TFileCollada(TRefRef FileRef,TRefRef FileTypeRef);
 
+	virtual TRef		GetFileExportAssetType() const										{	return TRef_Static4(M,e,s,h);	}
 	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);			//	import the XML and convert from Collada to mesh
 
 protected:

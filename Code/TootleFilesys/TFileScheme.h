@@ -30,6 +30,7 @@ class TLFileSys::TFileScheme : public TLFileSys::TFileXml
 public:
 	TFileScheme(TRefRef FileRef,TRefRef FileTypeRef);
 
+	virtual TRef				GetFileExportAssetType() const								{	return TRef_Static(S,c,h,e,m);	}
 	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);			//	import the XML and convert from SVG to mesh
 
 protected:

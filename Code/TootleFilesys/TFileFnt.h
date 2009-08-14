@@ -30,6 +30,7 @@ class TLFileSys::TFileFnt : public TLFileSys::TFileXml
 public:
 	TFileFnt(TRefRef FileRef,TRefRef FileTypeRef);
 	
+	virtual TRef		GetFileExportAssetType() const										{	return TRef_Static(A,t,l,a,s);	}
 	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);
 
 protected:
