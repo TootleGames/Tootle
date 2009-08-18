@@ -23,8 +23,6 @@
 		84C107BC0F0A686E00B2DF7A /* TSceneNode_Object.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C107AC0F0A686E00B2DF7A /* TSceneNode_Object.h */; };
 		84C107BD0F0A686E00B2DF7A /* TSceneNode_Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C107AD0F0A686E00B2DF7A /* TSceneNode_Transform.cpp */; };
 		84C107BE0F0A686E00B2DF7A /* TSceneNode_Transform.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C107AE0F0A686E00B2DF7A /* TSceneNode_Transform.h */; };
-		84C107BF0F0A686E00B2DF7A /* TSchemeEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C107AF0F0A686E00B2DF7A /* TSchemeEditor.cpp */; };
-		84C107C00F0A686E00B2DF7A /* TSchemeEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C107B00F0A686E00B2DF7A /* TSchemeEditor.h */; };
 		84E1156C0F3C515B00471397 /* TSchemeManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E1156A0F3C515B00471397 /* TSchemeManager.h */; };
 		84E1156D0F3C515B00471397 /* TSchemeManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E1156B0F3C515B00471397 /* TSchemeManager.cpp */; };
 		84E115700F3C51DF00471397 /* TSchemeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E1156E0F3C51DF00471397 /* TSchemeNode.cpp */; };
@@ -49,8 +47,6 @@
 		84C107AC0F0A686E00B2DF7A /* TSceneNode_Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSceneNode_Object.h; path = ../TSceneNode_Object.h; sourceTree = SOURCE_ROOT; };
 		84C107AD0F0A686E00B2DF7A /* TSceneNode_Transform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSceneNode_Transform.cpp; path = ../TSceneNode_Transform.cpp; sourceTree = SOURCE_ROOT; };
 		84C107AE0F0A686E00B2DF7A /* TSceneNode_Transform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSceneNode_Transform.h; path = ../TSceneNode_Transform.h; sourceTree = SOURCE_ROOT; };
-		84C107AF0F0A686E00B2DF7A /* TSchemeEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSchemeEditor.cpp; path = ../TSchemeEditor.cpp; sourceTree = SOURCE_ROOT; };
-		84C107B00F0A686E00B2DF7A /* TSchemeEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSchemeEditor.h; path = ../TSchemeEditor.h; sourceTree = SOURCE_ROOT; };
 		84C107CB0F0A6A3100B2DF7A /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TootleDebug.xcconfig; sourceTree = "<group>"; };
 		84C107CC0F0A6A3100B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TootleRelease.xcconfig; sourceTree = "<group>"; };
 		84C107CD0F0A6A3100B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TootleReleaseAdHoc.xcconfig; sourceTree = "<group>"; };
@@ -97,8 +93,6 @@
 				84C107A20F0A686E00B2DF7A /* TLScene.h */,
 				84C107A30F0A686E00B2DF7A /* TScenegraph.cpp */,
 				84C107A40F0A686E00B2DF7A /* TScenegraph.h */,
-				84C107AF0F0A686E00B2DF7A /* TSchemeEditor.cpp */,
-				84C107B00F0A686E00B2DF7A /* TSchemeEditor.h */,
 				84E1156A0F3C515B00471397 /* TSchemeManager.h */,
 				84E1156B0F3C515B00471397 /* TSchemeManager.cpp */,
 			);
@@ -152,7 +146,6 @@
 				84C107BA0F0A686E00B2DF7A /* TSceneNode_Emitter.h in Headers */,
 				84C107BC0F0A686E00B2DF7A /* TSceneNode_Object.h in Headers */,
 				84C107BE0F0A686E00B2DF7A /* TSceneNode_Transform.h in Headers */,
-				84C107C00F0A686E00B2DF7A /* TSchemeEditor.h in Headers */,
 				84E1156C0F3C515B00471397 /* TSchemeManager.h in Headers */,
 				84E115710F3C51DF00471397 /* TSchemeNode.h in Headers */,
 				849EA07D0F891D9C00037332 /* TSceneNode_Timeline.h in Headers */,
@@ -209,7 +202,6 @@
 				84C107B90F0A686E00B2DF7A /* TSceneNode_Emitter.cpp in Sources */,
 				84C107BB0F0A686E00B2DF7A /* TSceneNode_Object.cpp in Sources */,
 				84C107BD0F0A686E00B2DF7A /* TSceneNode_Transform.cpp in Sources */,
-				84C107BF0F0A686E00B2DF7A /* TSchemeEditor.cpp in Sources */,
 				84E1156D0F3C515B00471397 /* TSchemeManager.cpp in Sources */,
 				84E115700F3C51DF00471397 /* TSchemeNode.cpp in Sources */,
 				849EA07C0F891D9C00037332 /* TSceneNode_Timeline.cpp in Sources */,

@@ -268,9 +268,6 @@
 						<dict>
 							<key>PBXSmartGroupTreeModuleOutlineStateExpansionKey</key>
 							<array>
-								<string>84C108D30F0A76EC00B2DF7A</string>
-								<string>84C1095F0F0A790100B2DF7A</string>
-								<string>84C109CE0F0A791F00B2DF7A</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FAAC04509CD000000102</string>
 								<string>1C37FABC05509CD000000102</string>
@@ -278,13 +275,11 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>34</integer>
-									<integer>2</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 569}, {186, 609}}</string>
+							<string>{{0, 0}, {186, 609}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -314,14 +309,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TLCore.h</string>
+								<string>TApplication.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -329,11 +322,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TLCore.h</string>
+										<string>TApplication.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84508B101020851600B78F2B</string>
+										<string>8446CAD7103AACDA00DFD24F</string>
 										<key>history</key>
 										<array>
 											<string>84D692970F42F71C002CFFE1</string>
@@ -411,7 +404,8 @@
 											<string>8434CAF6100DB9A50063673E</string>
 											<string>84D22FCE101717A900CA57C1</string>
 											<string>8450881D101F603100B78F2B</string>
-											<string>8450881F101F603100B78F2B</string>
+											<string>8446CAD4103AACDA00DFD24F</string>
+											<string>8446CAD5103AACDA00DFD24F</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -487,6 +481,7 @@
 											<string>84BBC2560FD56A2D0046E316</string>
 											<string>8434CA4E100BB8230063673E</string>
 											<string>8434CA4F100BB8230063673E</string>
+											<string>8446CAD6103AACDA00DFD24F</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -508,6 +503,8 @@
 							<string>449pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -544,9 +541,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84508B111020851600B78F2B</string>
+				<string>8446CAD8103AACDA00DFD24F</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84508B121020851600B78F2B</string>
+				<string>8446CAD9103AACDA00DFD24F</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -918,7 +915,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>IPodCore.mm</string>
+										<string></string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -976,8 +973,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>8434CAF2100DB9A40063673E</string>
-				<string>8434CAF3100DB9A40063673E</string>
+				<string>842E51D6102999E10037C5B1</string>
+				<string>842E51D7102999E10037C5B1</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>

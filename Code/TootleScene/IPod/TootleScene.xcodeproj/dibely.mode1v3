@@ -233,6 +233,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -311,8 +313,6 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -330,12 +330,11 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>845084CA101F184300B78F2B</string>
+										<string>8446CA6E103A9C2B00DFD24F</string>
 										<key>history</key>
 										<array>
 											<string>84E115800F3C5B0200471397</string>
 											<string>84E1177F0F3CB45800471397</string>
-											<string>84E118700F3F901F00471397</string>
 											<string>84E118710F3F901F00471397</string>
 											<string>84E119120F40449C00471397</string>
 											<string>84E119130F40449C00471397</string>
@@ -351,7 +350,7 @@
 											<string>8461C2AE0F5C308600ED9509</string>
 											<string>8461C2B90F5C311100ED9509</string>
 											<string>84BBC25F0FD56AFB0046E316</string>
-											<string>8434CB84100DBB610063673E</string>
+											<string>845084CA101F184300B78F2B</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -359,7 +358,6 @@
 											<string>84E1158B0F3C5B0200471397</string>
 											<string>84E1158C0F3C5B0200471397</string>
 											<string>84E1158D0F3C5B0200471397</string>
-											<string>84E1158E0F3C5B0200471397</string>
 											<string>84E1158F0F3C5B0200471397</string>
 											<string>84E115910F3C5B0200471397</string>
 											<string>84E115920F3C5B0200471397</string>
@@ -431,9 +429,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>845084CB101F184300B78F2B</string>
+				<string>8446CA6F103A9C2B00DFD24F</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>845084CC101F184300B78F2B</string>
+				<string>8446CA70103A9C2B00DFD24F</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>

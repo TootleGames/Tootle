@@ -53,6 +53,7 @@ class TLFileSys::TFileSysFactory : public TLCore::TManager, public TClassFactory
 	friend class TLFileSys::TFileSys;
 public:
 	TFileSysFactory(TRefRef ManagerRef);
+	~TFileSysFactory();
 
 	Bool							UpdateFileLists();					//	update file lists of the file systems, return TRUE if any changed
 

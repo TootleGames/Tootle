@@ -287,7 +287,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 496}, {186, 609}}</string>
+							<string>{{0, 0}, {186, 609}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -334,12 +334,12 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>841360BA0FFBA39A00FD81A5</string>
+										<string>842E51E1102999F00037C5B1</string>
 										<key>history</key>
 										<array>
 											<string>844232EE0FF92AC10024EFEF</string>
 											<string>84CC91E80FFA718C00B36FD6</string>
-											<string>84CC921E0FFA731A00B36FD6</string>
+											<string>841360BA0FFBA39A00FD81A5</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -402,9 +402,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>841360BC0FFBA39A00FD81A5</string>
+				<string>842E51E3102999F00037C5B1</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>841360BD0FFBA39A00FD81A5</string>
+				<string>842E51E4102999F00037C5B1</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -538,7 +538,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>844232F40FF92AC10024EFEF</string>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/box2d/IPod/box2d.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -755,7 +755,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>b2Math.h</string>
+										<string></string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -813,8 +813,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>844232F90FF92AFC0024EFEF</string>
-				<string>844232FA0FF92AFC0024EFEF</string>
+				<string>842E51DF102999EE0037C5B1</string>
+				<string>842E51E0102999EE0037C5B1</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>

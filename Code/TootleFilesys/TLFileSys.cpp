@@ -307,12 +307,25 @@ TLFileSys::TFileSysFactory::TFileSysFactory(TRefRef ManagerRef) :
 	}
 }
 
+
+TLFileSys::TFileSysFactory::~TFileSysFactory()
+{
+	// Delete the file factory when the filesystem factory is deleted.
+	TLFileSys::g_pFileFactory = NULL;
+
+}
+
+
+
+
 		
 //----------------------------------------------------------
 //	clean up
 //----------------------------------------------------------
 SyncBool TLFileSys::TFileSysFactory::Shutdown()
 {
+	// [18/08/09] The factory may still be used during the shutdown so leave it active and remove it during the destructor
+	/*
 	if ( TLFileSys::g_pFileFactory )
 	{
 		//if ( TLFileSys::g_pFileFactory->Shutdown() == SyncWait )
@@ -320,6 +333,7 @@ SyncBool TLFileSys::TFileSysFactory::Shutdown()
 		
 		TLFileSys::g_pFileFactory = NULL;
 	}
+	 */
 
 	return SyncTrue;
 }
