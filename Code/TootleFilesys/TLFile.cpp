@@ -477,7 +477,7 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 	case TLBinary_TypeRef(u32):
 	{
 		s32 Integer;
-		if ( !TLString::ReadIntegerInRange( DataString, Integer, 0, 4294967295 ) )
+		if ( !TLString::ReadIntegerInRange( DataString, Integer, 0, 4294967295U ) )
 			return SyncFalse;
 		BinaryData.Write( (u32)Integer );
 		return SyncTrue;
