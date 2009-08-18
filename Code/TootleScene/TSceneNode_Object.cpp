@@ -1,6 +1,7 @@
 #include "TSceneNode_Object.h"
 #include "TScenegraph.h"
-#include <TootlePhysics/TPhysicsGraph.h>
+#include <TootlePhysics/TPhysicsgraph.h>
+#include <TootleRender/TRendergraph.h>
 
 
 #define DISABLE_RENDER_ON_SLEEP
@@ -760,6 +761,22 @@ void TLScene::TSceneNode_Object::DoChangeLife(const float& fLifeChange)
 		OnLifeChange(fLifeChange);
 	}
 }
+
+
+Bool TLScene::TSceneNode_Object::CanChangeLife(const float& fLifeChange)
+{ 
+	if(m_fLife <= 0.0f)
+		return FALSE;
+
+	// Check the node data to see if the node has been flagged as indestructible.
+	// Default is false.
+	Bool bIndestructible = FALSE;
+
+	GetNodeData().ImportData("Indestructible", bIndestructible);
+
+	return (!bIndestructible);
+}
+
 
 
 void TLScene::TSceneNode_Object::OnDeath()

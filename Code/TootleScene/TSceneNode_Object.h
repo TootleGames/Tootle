@@ -1,7 +1,7 @@
 #pragma once
 
-#include <TootleRender/TLRender.h>
-#include <TootlePhysics/TLPhysics.h>
+#include <TootleRender/TRenderNode.h>
+#include <TootlePhysics/TPhysicsNode.h>
 #include <TootleAudio/TLAudio.h>
 
 #include "TSceneNode_Transform.h"
@@ -82,7 +82,7 @@ protected:
 
 	void							DoChangeLife(const float& fLifeChange);
 
-	virtual Bool					CanChangeLife(const float& fLifeChange)		{ return (m_fLife <= 0.0f ? FALSE : TRUE); }
+	Bool							CanChangeLife(const float& fLifeChange);
 	virtual void					OnLifeChange(const float& fLifeChange)		{ if(GetLife() <= 0.0f)	OnDeath(); }
 	virtual void					OnDeath();
 
