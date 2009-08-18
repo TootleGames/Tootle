@@ -24,6 +24,7 @@
 #include <TootleMaths/TFrustum.h>
 #include <TootleMaths/TLine.h>
 #include "TLRender.h"
+#include "TScreenShape.h"
 
 namespace TLRender
 {

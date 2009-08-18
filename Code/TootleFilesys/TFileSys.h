@@ -46,7 +46,7 @@ public:
 
 	virtual SyncBool			LoadFile(TPtr<TFile>& pFile)					{	return SyncFalse;	}		//	read-in file
 	virtual SyncBool			WriteFile(TPtr<TFile>& pFile)					{	return SyncFalse;	}		//	write file into file system if possible - if the filesys is read-only we cannot add external files and this fails
-	virtual TPtr<TFile>			CreateFile(const TString& Filename)				{	return NULL;	}		//	create a new empty file into file system if possible - if the filesys is read-only we cannot add external files and this fails
+	virtual TPtr<TFile>			CreateNewFile(const TString& Filename)				=0;//{	return NULL;	}		//	create a new empty file into file system if possible - if the filesys is read-only we cannot add external files and this fails
 	virtual SyncBool			DeleteFile(TPtr<TFile>& pFile)					{	return RemoveFileInstance( pFile ) ? SyncTrue : SyncFalse;	}		//	delete file from file sys
 
 	inline Bool					operator==(const TRef& FileSysRef) const		{	return (GetFileSysRef() == FileSysRef);	}

@@ -13,6 +13,7 @@
 #pragma once
 
 #include <TootleCore/TManager.h>
+#include <TootleCore/TClassFactory.h>
 #include "TScreen.h"
 
 namespace TLRender

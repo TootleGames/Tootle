@@ -59,9 +59,9 @@ TPtr<TLMaths::TShape> TLMaths::TShapeSphere2D::Transform(const TLMaths::TTransfo
 	TLDebug_CheckFloat( m_Shape.GetPos() );
 
 	//	re-use old shape
-	if ( pOldShape && pOldShape.GetObject() != this && pOldShape->GetShapeType() == TLMaths::TSphere2D::GetTypeRef() )
+	if ( pOldShape && pOldShape.GetObjectPointer() != this && pOldShape->GetShapeType() == TLMaths::TSphere2D::GetTypeRef() )
 	{
-		pOldShape.GetObject<TLMaths::TShapeSphere2D>()->SetSphere( NewSphere );
+		pOldShape.GetObjectPointer<TLMaths::TShapeSphere2D>()->SetSphere( NewSphere );
 		return pOldShape;
 	}
 
@@ -126,9 +126,9 @@ TPtr<TLMaths::TShape> TLMaths::TShapeSphere::Transform(const TLMaths::TTransform
 	TLDebug_CheckFloat( m_Sphere.GetPos() );
 
 	//	re-use old shape
-	if ( pOldShape && pOldShape.GetObject() != this && pOldShape->GetShapeType() == TLMaths::TSphere::GetTypeRef() )
+	if ( pOldShape && pOldShape.GetObjectPointer() != this && pOldShape->GetShapeType() == TLMaths::TSphere::GetTypeRef() )
 	{
-		pOldShape.GetObject<TShapeSphere>()->SetSphere( NewSphere );
+		pOldShape.GetObjectPointer<TShapeSphere>()->SetSphere( NewSphere );
 		return pOldShape;
 	}
 
@@ -187,7 +187,7 @@ Bool TLMaths::TShapeSphere::GetIntersection(TLMaths::TShapeMesh& CollisionMesh,T
 {
 	//	get asset
 	TPtr<TLAsset::TMesh>& pMeshAsset = pCollisionMesh.GetMeshAsset();
-	TLAsset::TMesh* pMesh = pMeshAsset.GetObject();
+	TLAsset::TMesh* pMesh = pMeshAsset.GetObjectPointer();
 	if ( !pMesh )
 	{
 		//	gr: this asserts here in snowman code when you delete a line because the mesh is deleted, but

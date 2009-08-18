@@ -124,7 +124,7 @@ protected:
 	FORCEINLINE Bool			IsInGraph(const MATCHTYPE& Value,Bool CheckRequestQueue=TRUE)		{	return FindNodeMatch( Value, CheckRequestQueue ).IsValid();	}
 	virtual Bool				IsInGraph(TRefRef NodeRef,Bool CheckRequestQueue=TRUE)				{	return FindNode( NodeRef, CheckRequestQueue ).IsValid();	}
 	FORCEINLINE Bool			IsInGraph(T* pNode,Bool CheckRequestQueue=TRUE)						{	return pNode ? FindNode( pNode->GetNodeRef(), CheckRequestQueue ).IsValid() : FALSE;	}
-	FORCEINLINE Bool			IsInGraph(TPtr<T>& pNode,Bool CheckRequestQueue=TRUE)				{	return IsInGraph( pNode.GetObject(), CheckRequestQueue );	}
+	FORCEINLINE Bool			IsInGraph(TPtr<T>& pNode,Bool CheckRequestQueue=TRUE)				{	return IsInGraph( pNode.GetObjectPointer(), CheckRequestQueue );	}
 	FORCEINLINE Bool			IsInRequestQueue(TPtr<T>& pNode) const		{	return IsInRequestQueue( pNode->GetNodeRef() );	}
 	FORCEINLINE Bool			IsInRequestQueue(TRefRef NodeRef) const		{	return m_RequestQueue.Exists( NodeRef );	}
 	FORCEINLINE Bool			IsInAddQueue(TPtr<T>& pNode) const			{	return IsInAddQueue( pNode->GetNodeRef() );	}
@@ -138,8 +138,8 @@ protected:
 	FORCEINLINE TPtr<T>&		FindPtr(const TGraphNode<T>* pNode) const	{	return FindNode( pNode->GetNodeRef() );	}
 
 	//	base graph functions
-	virtual TLGraph::TGraphNodeBase*	FindNodeBase(TRefRef NodeRef)		{	TPtr<T>& pNode = FindNode( NodeRef );	return pNode.GetObject();	}
-	virtual TLGraph::TGraphNodeBase*	GetRootNodeBase()					{	TPtr<T>& pNode = m_pRootNode;	return pNode.GetObject();	}
+	virtual TLGraph::TGraphNodeBase*	FindNodeBase(TRefRef NodeRef)		{	TPtr<T>& pNode = FindNode( NodeRef );	return pNode.GetObjectPointer();	}
+	virtual TLGraph::TGraphNodeBase*	GetRootNodeBase()					{	TPtr<T>& pNode = m_pRootNode;	return pNode.GetObjectPointer();	}
 
 	//	events
 	virtual void				OnNodeAdded(TPtr<T>& pNode,Bool SendAddedMessage);	//	called after node has been added to graph and to parent - publishes an added message
@@ -226,7 +226,7 @@ public:
 	TPtr<T>&						FindChildMatch(const MATCHTYPE& Value);				//	find a TPtr in the graph that matches the specified value (will use == operator of node type to match)
 	FORCEINLINE TPtr<T>&			FindChild(const TRef& NodeRef)						{	return FindChildMatch(NodeRef);	}
 
-	FORCEINLINE Bool				operator==(const TPtr<TGraphNode<T> >& pNode) const	{	return this == pNode.GetObject();	}
+	FORCEINLINE Bool				operator==(const TPtr<TGraphNode<T> >& pNode) const	{	return this == pNode.GetObjectPointer();	}
 	FORCEINLINE Bool				operator==(const TGraphNode<T>& Node) const			{	return this == (&Node);	}
 	FORCEINLINE Bool				operator==(TRefRef NodeRef) const					{	return GetNodeRef() == NodeRef;	}
 
@@ -313,7 +313,7 @@ void TLGraph::TGraphNode<T>::Shutdown()
 template <class T>	
 void TLGraph::TGraphNode<T>::SetParent(TPtr<T>& pNode)
 {
-	if ( pNode.GetObject() == this )
+	if ( pNode.GetObjectPointer() == this )
 	{
 		TLDebug_Break("Trying to set parent of this to this");
 		return;
@@ -461,7 +461,7 @@ Bool TLGraph::TGraphNode<T>::AddChild(TPtr<T>& pChild,TPtr<T>& pThis)
 template <class T>
 Bool TLGraph::TGraphNode<T>::CheckIsThis(TPtr<T>& pThis)
 {
-	if ( pThis.GetObject() == this )
+	if ( pThis.GetObjectPointer() == this )
 		return TRUE;
 
 	//	gr: do NOT return the Break() result, always return FALSE
@@ -648,7 +648,7 @@ void TLGraph::TGraphNode<T>::GetChildrenBase(TArray<TGraphNodeBase*>& ChildNodes
 
 	for ( u32 c=0;	c<Children.GetSize();	c++ )
 	{
-		ChildNodes.Add( Children[c].GetObject() );
+		ChildNodes.Add( Children[c].GetObjectPointer() );
 	}
 }
 

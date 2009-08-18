@@ -402,7 +402,7 @@ Bool TLRender::TRenderNodeVectorText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 		}
 
 		//	setup existing child
-		TRenderNodeVectorGlyph& RenderGlyph = *pChild.GetObject<TRenderNodeVectorGlyph>();
+		TRenderNodeVectorGlyph& RenderGlyph = *pChild.GetObjectPointer<TRenderNodeVectorGlyph>();
 
 		//	update glyph
 		SetGlyph( RenderGlyph, *pFontAsset, GlyphPos, m_Text[charindex], TextBounds );
@@ -438,7 +438,7 @@ Bool TLRender::TRenderNodeVectorText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 		TPtr<TRenderNode> pRenderGlyphPtr = new TRenderNodeVectorGlyph( GlyphRef, "Glyph" );
 		TLRender::g_pRendergraph->AddNode( pRenderGlyphPtr, this->GetNodeRef() );
 
-		TRenderNodeVectorGlyph* pRenderGlyph = pRenderGlyphPtr.GetObject<TRenderNodeVectorGlyph>();
+		TRenderNodeVectorGlyph* pRenderGlyph = pRenderGlyphPtr.GetObjectPointer<TRenderNodeVectorGlyph>();
 		SetGlyph( *pRenderGlyph, *pFontAsset, GlyphPos, m_Text[charindex], TextBounds );
 
 		///////////////////////////////////////////////////////////////////////////////
@@ -482,7 +482,7 @@ void TLRender::TRenderNodeVectorText::SetGlyph(TRenderNodeVectorGlyph& RenderGly
 
 	//	get the mesh's lead in/out box
 	const TLMaths::TBox* pLeadInOutBox = NULL;
-	TLAsset::TMesh* pGlyphMesh = RenderGlyph.m_pGlyphMesh.GetObject();
+	TLAsset::TMesh* pGlyphMesh = RenderGlyph.m_pGlyphMesh.GetObjectPointer();
 	if ( pGlyphMesh )
 	{
 		TPtr<TBinaryTree>& pLeadInOutBoxData = pGlyphMesh->GetData("LeadBox");

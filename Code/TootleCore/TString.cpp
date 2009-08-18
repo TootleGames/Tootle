@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#ifdef _MSC_EXTENSIONS
+	#include <string.h>		// strlen
+#endif
 
 #if defined(_VA_LIST_DEFINED) || defined(_VA_LIST)
 	#define ENABLE_VA_LIST

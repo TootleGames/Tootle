@@ -51,6 +51,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
+				ShowIncludes="false"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -636,6 +637,10 @@
 		</File>
 		<File
 			RelativePath="..\TScreenManager.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TScreenShape.h"
 			>
 		</File>
 	</Files>

@@ -362,7 +362,7 @@ Bool TLMaths::TQuadTreeZone::AddNode(TPtr<TLMaths::TQuadTreeNode>& pNode,TPtr<TL
 
 					//	see if child node is now in one of the new zones
 					TFixedArray<u32,4> InZones;
-					GetInChildZones( pChildNode.GetObject(), InZones );
+					GetInChildZones( pChildNode.GetObjectPointer(), InZones );
 
 					//	node is not in any of these zones... error...
 					if ( InZones.GetSize() == 0 )
@@ -400,7 +400,7 @@ Bool TLMaths::TQuadTreeZone::AddNode(TPtr<TLMaths::TQuadTreeNode>& pNode,TPtr<TL
 
 	//	loop through the child zones to see if it fits into 1 or multiple zones
 	TFixedArray<u32,4> InZones;
-	GetInChildZones( pNode.GetObject(), InZones );
+	GetInChildZones( pNode.GetObjectPointer(), InZones );
 
 	//	node is not in any of these zones... error... 
 	//	or
@@ -466,7 +466,7 @@ void TLMaths::TQuadTreeZone::DoRemoveNode(TPtr<TQuadTreeNode>& pNode)
 	m_NonStaticNodes.Remove( pNode );
 	
 	//	notify parent changed state of children
-	TQuadTreeZone* pParentZone = GetParentZone().GetObject();
+	TQuadTreeZone* pParentZone = GetParentZone().GetObjectPointer();
 	if ( pParentZone )
 		pParentZone->OnChildZoneNodesChanged();
 
@@ -497,7 +497,7 @@ void TLMaths::TQuadTreeZone::DoAddNode(TPtr<TQuadTreeNode>& pNode)
 	pNode->SetChildZonesNone();
 
 	//	notify parent changed state of children
-	TQuadTreeZone* pParentZone = GetParentZone().GetObject();
+	TQuadTreeZone* pParentZone = GetParentZone().GetObjectPointer();
 	if ( pParentZone )
 		pParentZone->OnChildZoneNodesChanged();
 }
@@ -553,7 +553,7 @@ void TLMaths::TQuadTreeZone::OnChildZoneNodesChanged()
 #endif // ENABLE_CULL_EMPTY_ZONES
 
 	//	update parent's children-with-nodes status too
-	TQuadTreeZone* pParentZone = GetParentZone().GetObject();
+	TQuadTreeZone* pParentZone = GetParentZone().GetObjectPointer();
 	if ( pParentZone )
 		pParentZone->OnChildZoneNodesChanged();
 }
@@ -645,7 +645,7 @@ void TLMaths::TQuadTreeZone::SetSiblingZones(TPtrArray<TQuadTreeZone>& Siblings)
 		TPtr<TQuadTreeZone>& pSibling = Siblings.ElementAt(s);
 
 		//	if this new sibling is us, then store our index
-		if ( pSibling.GetObject() == this )
+		if ( pSibling.GetObjectPointer() == this )
 		{
 			m_SiblingIndex = s;
 			continue;

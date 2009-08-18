@@ -1,9 +1,6 @@
 
 #pragma once
 
-#include <TootleCore/TLCore.h>
-#include <TootleCore/TPtr.h>
-
 // DirectX audio include
 #include <xaudio2.h>	
 

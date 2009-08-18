@@ -9,11 +9,14 @@
 
 
 #include <TootleCore/TLTypes.h>
-#include <TootleCore/TPtr.h>
 #include <TootleCore/TPtrArray.h>
+#include <TootleCore/TKeyArray.h>
+#include <TootleCore/TRelay.h>
+#include <TootleCore/TFlags.h>
 #include "TRenderTarget.h"		//	gr: needed to include the array type because of templated destructor... would be good to find a way to avoid that
-#include "TLRender.h"		//	gr: needed to include the array type because of templated destructor... would be good to find a way to avoid that
+//#include "TLRender.h"		//	gr: needed to include the array type because of templated destructor... would be good to find a way to avoid that
 
+#include "TScreenShape.h"
 
 namespace TLRender
 {
@@ -68,7 +71,7 @@ public:
 	void							GetRenderTargetMaxSize(Type4<s32>& MaxSize);			//	get the render target max size (in "render target space") - this is the viewport size, but rotated
 	virtual void					GetViewportMaxSize(Type4<s32>& MaxSize)					{	MaxSize.Set( 0, 0, GetSize().Width(), GetSize().Height() );	}
 	Bool							GetRenderTargetSize(Type4<s32>& Size,const TRenderTarget& RenderTarget);	//	get the dimensions of a render target
-	FORCEINLINE Bool				GetRenderTargetSize(Type4<s32>& Size,TRefRef TargetRef) {	const TRenderTarget* pRenderTarget = GetRenderTarget( TargetRef );	return pRenderTarget ? GetRenderTargetSize( Size, *pRenderTarget ) : FALSE;	}
+	Bool							GetRenderTargetSize(Type4<s32>& Size,TRefRef TargetRef);
 
 	Bool							GetWorldRayFromScreenPos(const TRenderTarget& RenderTarget,TLMaths::TLine& WorldRay,const Type2<s32>& ScreenPos);
 	Bool							GetWorldPosFromScreenPos(const TRenderTarget& RenderTarget,float3& WorldPos,float WorldDepth,const Type2<s32>& ScreenPos);

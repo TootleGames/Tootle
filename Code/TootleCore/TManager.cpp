@@ -1,6 +1,7 @@
 #include "TManager.h"
 #include "TEventChannel.h"
 
+#include "TLCoreMisc.h"
 
 //------------------------------------------------------
 //	Process basic messages a manager will receive

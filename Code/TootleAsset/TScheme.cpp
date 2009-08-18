@@ -36,7 +36,7 @@ SyncBool TLAsset::TSchemeNode::ImportData(TBinaryTree& Data)
 		{
 			//	import this node
 			TPtr<TSchemeNode> pChildNode = new TSchemeNode();
-			SyncBool ImportResult = pChildNode->ImportData( *pChildData.GetObject() );
+			SyncBool ImportResult = pChildNode->ImportData( *pChildData.GetObjectPointer() );
 			if ( ImportResult == SyncWait )
 			{
 				if ( !TLDebug_Break("Scheme Async import not yet supported") )
@@ -84,7 +84,7 @@ SyncBool TLAsset::TSchemeNode::ExportData(TBinaryTree& Data)
 		TPtr<TSchemeNode>& pChildNode = m_Children[c];
 		TPtr<TBinaryTree> pChildNodeData = new TBinaryTree("Node");
 
-		SyncBool ExportResult = pChildNode->ExportData( *pChildNodeData.GetObject() );
+		SyncBool ExportResult = pChildNode->ExportData( *pChildNodeData.GetObjectPointer() );
 		if ( ExportResult == SyncWait )
 		{
 			if ( !TLDebug_Break("Scheme Async export not yet supported") )
@@ -119,7 +119,7 @@ SyncBool TLAsset::TScheme::ExportData(TBinaryTree& Data)
 		TPtr<TSchemeNode>& pChildNode = m_Nodes[c];
 		TPtr<TBinaryTree> pChildNodeData = new TBinaryTree("Node");
 
-		SyncBool ExportResult = pChildNode->ExportData( *pChildNodeData.GetObject() );
+		SyncBool ExportResult = pChildNode->ExportData( *pChildNodeData.GetObjectPointer() );
 		if ( ExportResult == SyncWait )
 		{
 			if ( !TLDebug_Break("Scheme Async export not yet supported") )
@@ -152,7 +152,7 @@ SyncBool TLAsset::TScheme::ImportData(TBinaryTree& Data)
 	for ( u32 n=0;	n<SchemeNodes.GetSize();	n++ )
 	{
 		TPtr<TSchemeNode> pChildNode = new TSchemeNode();
-		SyncBool ImportResult = pChildNode->ImportData( *SchemeNodes[n].GetObject() );
+		SyncBool ImportResult = pChildNode->ImportData( *SchemeNodes[n].GetObjectPointer() );
 
 		if ( ImportResult == SyncWait )
 		{

@@ -1,5 +1,4 @@
 #include "TRenderNodeScrollableView.h"
-#include "TLRender.h"
 #include "TRenderTarget.h"
 #include "TScreenManager.h"
 #include <TootleMaths/TShapeBox.h>
@@ -132,7 +131,7 @@ void TRenderNodeScrollableView::OnRenderTargetRefChange(TLRender::TRenderTarget*
 	OnOffsetChanged();
 
 	//	get box shape
-	TLMaths::TShapeBox2D* pBox = pWorldDatum.GetObject<TLMaths::TShapeBox2D>();
+	TLMaths::TShapeBox2D* pBox = pWorldDatum.GetObjectPointer<TLMaths::TShapeBox2D>();
 	const TLMaths::TBox2D& box = pBox->GetBox();
 
 	Type2<s32> ScreenPos[2];

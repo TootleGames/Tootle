@@ -281,9 +281,9 @@ TPtr<TLMaths::TShape> TLMaths::TShapeLine2D::Transform(const TLMaths::TTransform
 	NewLine.Transform( Transform );
 
 	//	re-use old shape
-	if ( pOldShape && pOldShape.GetObject() != this && pOldShape->GetShapeType() == TLMaths::TBox::GetTypeRef() )
+	if ( pOldShape && pOldShape.GetObjectPointer() != this && pOldShape->GetShapeType() == TLMaths::TBox::GetTypeRef() )
 	{
-		pOldShape.GetObject<TShapeLine2D>()->SetLine( NewLine );
+		pOldShape.GetObjectPointer<TShapeLine2D>()->SetLine( NewLine );
 		return pOldShape;
 	}
 

@@ -242,6 +242,12 @@ SyncBool TLRender::TScreen::DeleteRenderTarget(const TRef& TargetRef)
 
 
 
+Bool TLRender::TScreen::GetRenderTargetSize(Type4<s32>& Size,TRefRef TargetRef) 
+{	
+	const TRenderTarget* pRenderTarget = GetRenderTarget( TargetRef );	
+	return pRenderTarget ? GetRenderTargetSize( Size, *pRenderTarget ) : FALSE;	
+}
+
 //---------------------------------------------------------
 //	get the dimensions of a render target
 //---------------------------------------------------------
@@ -254,6 +260,8 @@ Bool TLRender::TScreen::GetRenderTargetSize(Type4<s32>& Size,const TRenderTarget
 
 	return TRUE;
 }
+
+
 
 
 //---------------------------------------------------------
@@ -521,7 +529,7 @@ TLRender::TRenderNodeText* TLRender::TScreen::Debug_GetRenderNodeText(TRefRef De
 	if ( !pRenderNode )
 		return NULL;
 
-	return pRenderNode.GetObject<TLRender::TRenderNodeText>();
+	return pRenderNode.GetObjectPointer<TLRender::TRenderNodeText>();
 }
 
 

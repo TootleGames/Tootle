@@ -25,21 +25,45 @@ namespace TLMemory
 	TFixedArray<TMemoryTrack,1000>		g_MemoryTracks( 0, &SortMemoryTracks );		//	array of data we've allocated - to search, use Find/Exists with a u32-memory address
 	u32									g_MemoryAllocated = 0;	//	total amount of memory we've allocated
 	#endif
-}
+};
 
-
+TLMemory::TMemorySystem*	TLMemory::TMemorySystem::ms_pMemorySystem = NULL;
+Bool						TLMemory::TMemorySystem::m_bDestroyed = FALSE;
 
 
 TLMemory::TMemorySystem::TMemorySystem()
 {
+	Initialise();	
+}
+
+
+void TLMemory::TMemorySystem::Initialise()
+{
+	m_totalAlloc = 0;
 	TLMemory::Platform::Initialise();
 }
+
+void TLMemory::TMemorySystem::Shutdown()
+{
+	ms_pMemorySystem->~TMemorySystem();
+}
+
 
 
 
 TLMemory::TMemorySystem::~TMemorySystem()
 {
+	if(m_totalAlloc > 0)
+	{
+		// We still have things allocated
+		TLDebug_Break("Memory system still has memory allocated");
+
+	}
+
 	TLMemory::Platform::Shutdown();
+
+	ms_pMemorySystem = NULL;
+	m_bDestroyed = TRUE;
 }
 
 

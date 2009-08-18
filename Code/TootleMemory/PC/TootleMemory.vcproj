@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="TootleInput"
-	ProjectGUID="{B76B17DF-787E-4664-98EF-FD45CDE3B976}"
+	Name="TootleMemory"
+	ProjectGUID="{F9B9EA9A-5093-43B2-B1B1-E83C90F50B6B}"
 	RootNamespace="TootleInput"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
@@ -51,7 +51,6 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
-				ShowIncludes="false"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -216,146 +215,13 @@
 	</References>
 	<Files>
 		<Filter
-			Name="PC Source files"
+			Name="PC Source Files"
 			>
 			<File
-				RelativePath=".\PCInput.cpp"
+				RelativePath=".\Boot.cpp"
 				>
-			</File>
-			<File
-				RelativePath=".\PCInput.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Final|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
 			</File>
 		</Filter>
-		<Filter
-			Name="IPod"
-			>
-			<File
-				RelativePath="..\IPod\IPodInput.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\IPod\IPodInput.mm"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-		</Filter>
-		<File
-			RelativePath="..\TAction.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\TAction.h"
-			>
-		</File>
-		<File
-			RelativePath="..\TDevice.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\TDevice.h"
-			>
-		</File>
-		<File
-			RelativePath="..\TEffect.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\TEffect.h"
-			>
-		</File>
-		<File
-			RelativePath="..\TLInput.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\TLInput.h"
-			>
-		</File>
-		<File
-			RelativePath="..\TSensor.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\TSensor.h"
-			>
-		</File>
-		<File
-			RelativePath="..\TUser.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\TUser.h"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

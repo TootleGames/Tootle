@@ -297,7 +297,7 @@ Bool TTimeline::GetKeyframes_Forward(const float& fTimeFrom,const float& fTimeTo
 				// add it to the array as it may be needed for interping to as a last keyframe
 				TTempKeyframeData data;
 				data.m_fTime = fTime;
-				data.m_pKeyframe = Pair.m_Item.GetObject();
+				data.m_pKeyframe = Pair.m_Item.GetObjectPointer();
 
 				pKeyframes.Add(data);
 			}
@@ -312,7 +312,7 @@ Bool TTimeline::GetKeyframes_Forward(const float& fTimeFrom,const float& fTimeTo
 			// Add the keyframe temp data
 			TTempKeyframeData data;
 			data.m_fTime = fTime;
-			data.m_pKeyframe = Pair.m_Item.GetObject();
+			data.m_pKeyframe = Pair.m_Item.GetObjectPointer();
 
 			pKeyframes.Add(data);
 		}
@@ -324,7 +324,7 @@ Bool TTimeline::GetKeyframes_Forward(const float& fTimeFrom,const float& fTimeTo
 			// Add the keyframe temp data
 			TTempKeyframeData data;
 			data.m_fTime = fTime;
-			data.m_pKeyframe = Pair.m_Item.GetObject();
+			data.m_pKeyframe = Pair.m_Item.GetObjectPointer();
 
 			pKeyframes.Add(data);
 
@@ -337,7 +337,7 @@ Bool TTimeline::GetKeyframes_Forward(const float& fTimeFrom,const float& fTimeTo
 			// Add the keyframe temp data
 			TTempKeyframeData data;
 			data.m_fTime = fTime;
-			data.m_pKeyframe = Pair.m_Item.GetObject();
+			data.m_pKeyframe = Pair.m_Item.GetObjectPointer();
 
 			pKeyframes.Add(data);
 
@@ -355,7 +355,7 @@ Bool TTimeline::GetKeyframes_Forward(const float& fTimeFrom,const float& fTimeTo
 		{
 			// Potential first key
 			firstkey.m_fTime = fTime;
-			firstkey.m_pKeyframe = Pair.m_Item.GetObject();
+			firstkey.m_pKeyframe = Pair.m_Item.GetObjectPointer();
 		}
 		/*
 		else if((uIndex == (m_Keyframes.GetSize()-1)) && (fTime > fTimeFrom))
@@ -373,7 +373,7 @@ Bool TTimeline::GetKeyframes_Forward(const float& fTimeFrom,const float& fTimeTo
 				// add it to the array as it may be needed for interping to as a last keyframe
 				TTempKeyframeData data;
 				data.m_fTime = fTime;
-				data.m_pKeyframe = Pair.m_Item.GetObject();
+				data.m_pKeyframe = Pair.m_Item.GetObjectPointer();
 
 				pKeyframes.Add(data);
 			}
@@ -406,7 +406,7 @@ Bool TTimeline::GetKeyframes_Backward(const float& fTimeFrom,const float& fTimeT
 			// add it to the array as it may be needed for interping to as a last keyframe
 			TTempKeyframeData data;
 			data.m_fTime = fTime;
-			data.m_pKeyframe = Pair.m_Item.GetObject();
+			data.m_pKeyframe = Pair.m_Item.GetObjectPointer();
 
 			pKeyframes.Add(data);
 			return TRUE;
@@ -417,7 +417,7 @@ Bool TTimeline::GetKeyframes_Backward(const float& fTimeFrom,const float& fTimeT
 			// Add the keyframe temp data
 			TTempKeyframeData data;
 			data.m_fTime = fTime;
-			data.m_pKeyframe = Pair.m_Item.GetObject();
+			data.m_pKeyframe = Pair.m_Item.GetObjectPointer();
 
 			pKeyframes.Add(data);
 		}

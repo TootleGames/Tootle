@@ -1,5 +1,6 @@
 #include <TootleCore/TLMaths.h>	//	gr: I don't know why but this needs to be included before "TFileFreetype.h" or "rand" isn't found
 #include <TootleCore/TEventChannel.h>
+#include <TootleCore/TLCore.h>
 
 #include "TLFileSys.h"
 #include "TVirtualFileSys.h"
@@ -140,7 +141,7 @@ SyncBool TLFileSys::CreateLocalFileSys(TRef& FileSysRef,const TString& Directory
 		}
 
 		//	set directory
-		TLFileSys::TLocalFileSys* pLocalFileSys = pFileSys.GetObject<TLFileSys::TLocalFileSys>();
+		TLFileSys::TLocalFileSys* pLocalFileSys = pFileSys.GetObjectPointer<TLFileSys::TLocalFileSys>();
 		if ( pLocalFileSys )
 		{
 			pLocalFileSys->SetDirectory( Directory );
@@ -517,10 +518,10 @@ TPtr<TLFileSys::TFile> TLFileSys::CreateFileInFileSys(const TString& Filename,TP
 	//	loop through file systems and try and create file
 	for ( u32 i=0;	i<FileSysList.GetSize();	i++ )
 	{
-		TLFileSys::TFileSys& FileSys = *FileSysList[i];
+		TPtr<TLFileSys::TFileSys> pFileSys = FileSysList[i];
 
 		//	try and create file
-		pNewFile = FileSys.CreateFile( Filename );
+		pNewFile = pFileSys->CreateNewFile( Filename );
 
 		//	created file, break out of loop
 		if ( pNewFile )
@@ -531,9 +532,9 @@ TPtr<TLFileSys::TFile> TLFileSys::CreateFileInFileSys(const TString& Filename,TP
 				TTempString Debug_String("Created new file ");
 				Debug_String.Append( pNewFile->GetFilename() );
 				Debug_String.Append(" in file sys ");
-				FileSys.GetFileSysRef().GetString( Debug_String );
+				pFileSys->GetFileSysRef().GetString( Debug_String );
 				Debug_String.Append(" (");
-				FileSys.GetFileSysTypeRef().GetString( Debug_String );
+				pFileSys->GetFileSysTypeRef().GetString( Debug_String );
 				Debug_String.Append(")");
 				TLDebug_Print( Debug_String );
 			}

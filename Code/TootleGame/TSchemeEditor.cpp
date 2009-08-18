@@ -3,7 +3,9 @@
 #include <TootleGame/TWidgetButton.h>
 #include <TootleGame/TWidgetManager.h>
 #include <TootleInput/TUser.h>
-#include <TootleScene/TSceneGraph.h>
+#include <TootleScene/TScenegraph.h>
+#include <TootleRender/TRendergraph.h>
+#include <TootleRender/TRenderTarget.h>
 
 
 

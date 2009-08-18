@@ -8,6 +8,7 @@
 #include "TArray.h"
 #include "TPtr.h"
 #include "TString.h"
+#include "TRef.h"
 
 
 namespace TLBinary

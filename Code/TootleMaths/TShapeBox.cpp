@@ -75,9 +75,9 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox::Transform(const TLMaths::TTransform& T
 	NewBox.Transform( Transform );
 
 	//	re-use old shape
-	if ( pOldShape && pOldShape.GetObject() != this && pOldShape->GetShapeType() == TLMaths::TBox::GetTypeRef() )
+	if ( pOldShape && pOldShape.GetObjectPointer() != this && pOldShape->GetShapeType() == TLMaths::TBox::GetTypeRef() )
 	{
-		pOldShape.GetObject<TShapeBox>()->SetBox( NewBox );
+		pOldShape.GetObjectPointer<TShapeBox>()->SetBox( NewBox );
 		return pOldShape;
 	}
 
@@ -181,9 +181,9 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Transform(const TLMaths::TTransform&
 		TLMaths::TOblong2D NewOblong( m_Shape, Transform );
 
 		//	re-use old shape
-		if ( pOldShape && pOldShape.GetObject() != this && pOldShape->GetShapeType() == TLMaths::TShapePolygon2D::GetShapeType_Static() )
+		if ( pOldShape && pOldShape.GetObjectPointer() != this && pOldShape->GetShapeType() == TLMaths::TShapePolygon2D::GetShapeType_Static() )
 		{
-			pOldShape.GetObject<TShapePolygon2D>()->SetOutline( NewOblong.GetBoxCorners() );
+			pOldShape.GetObjectPointer<TShapePolygon2D>()->SetOutline( NewOblong.GetBoxCorners() );
 			return pOldShape;
 		}
 
@@ -196,9 +196,9 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Transform(const TLMaths::TTransform&
 		NewBox.Transform( Transform );
 
 		//	re-use old shape
-		if ( pOldShape && pOldShape.GetObject() != this && pOldShape->GetShapeType() == TLMaths::TBox2D::GetTypeRef() )
+		if ( pOldShape && pOldShape.GetObjectPointer() != this && pOldShape->GetShapeType() == TLMaths::TBox2D::GetTypeRef() )
 		{
-			pOldShape.GetObject<TShapeBox2D>()->SetBox( NewBox );
+			pOldShape.GetObjectPointer<TShapeBox2D>()->SetBox( NewBox );
 			return pOldShape;
 		}
 

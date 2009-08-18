@@ -26,6 +26,6 @@ public:
 	virtual SyncBool		LoadFileList();
 	virtual SyncBool		LoadFile(TPtr<TFile>& pFile);
 	virtual SyncBool		WriteFile(TPtr<TFile>& pFile);		//	add this file into the file system if it's not there
-	virtual TPtr<TFile>		CreateFile(const TString& Filename);	//	create a new empty file into file system if possible - if the filesys is read-only we cannot add external files and this fails
+	virtual TPtr<TFile>		CreateNewFile(const TString& Filename);	//	create a new empty file into file system if possible - if the filesys is read-only we cannot add external files and this fails
 };
 

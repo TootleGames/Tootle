@@ -326,7 +326,7 @@ SHAPETYPE* TLAsset::TMesh::GetDatum(TRefRef DatumRef)
 		return NULL;
 
 	//	cast down
-	SHAPETYPE* pShape = pShapePtr.GetObject<SHAPETYPE>();	
+	SHAPETYPE* pShape = pShapePtr.GetObjectPointer<SHAPETYPE>();	
 
 	//	gr: unfortunetly as it's templated has to be in the header, so this check will only work if the calling file's project is debug
 #ifdef _DEBUG

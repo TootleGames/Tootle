@@ -132,14 +132,14 @@ private:
 
 FORCEINLINE Bool TLMessaging::TEventChannelManager::UnsubscribeFrom(TPtr<TSubscriber>& pSubscriber,TRefRef refPublisherID,TRefRef refChannelID)
 {
-	return UnsubscribeFrom(pSubscriber.GetObject(), refPublisherID, refChannelID);
+	return UnsubscribeFrom(pSubscriber.GetObjectPointer(), refPublisherID, refChannelID);
 }
 
 
 template <class T>
 FORCEINLINE Bool TLMessaging::TEventChannelManager::SubscribeTo(TPtr<T>& pSubscriber, TRefRef refPublisherID, TRefRef refChannelID)
 {
-	TSubscriber* pSubscriberPtr = dynamic_cast<TSubscriber*>(pSubscriber.GetObject());
+	TSubscriber* pSubscriberPtr = dynamic_cast<TSubscriber*>(pSubscriber.GetObjectPointer());
 	return SubscribeTo(pSubscriberPtr, refPublisherID, refChannelID);
 }
 

@@ -1,5 +1,8 @@
 #include "TScreenManager.h"
+
 #include <TootleCore/TLTime.h>
+#include <TootleCore/TEventChannel.h>
+#include "TRenderTarget.h"
 
 
 #if defined(TL_TARGET_PC) && defined(_MSC_EXTENSIONS)

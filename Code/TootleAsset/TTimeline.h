@@ -154,7 +154,7 @@ FORCEINLINE TLAsset::TKeyframe* TLAsset::TTimeline::AddKeyframe(float fTime)
 	TPtr<TLAsset::TKeyframe> pKey = new TLAsset::TKeyframe();
 
 	if(m_Keyframes.Add(fTime, pKey) != NULL)
-		return pKey.GetObject();
+		return pKey.GetObjectPointer();
 
 	return NULL;
 }

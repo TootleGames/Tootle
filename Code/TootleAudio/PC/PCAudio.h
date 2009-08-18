@@ -1,8 +1,6 @@
 
 #pragma once
 
-#include <TootleCore/TLCore.h>
-
 #include "../TLAudio.h"
 
 // Different audio system types

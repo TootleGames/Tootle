@@ -100,7 +100,7 @@ SyncBool TLFileSys::TFileFreetype::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Boo
 	//	print out some debug info
 	TString FontRefString;
 	pAsset->GetAssetRef().GetString( FontRefString );
-	TLDebug_Print( TString("%d characters in the %s font", pAsset.GetObject<TLAsset::TFont>()->GetGlyphCount(), FontRefString.GetData() ) );
+	TLDebug_Print( TString("%d characters in the %s font", pAsset.GetObjectPointer<TLAsset::TFont>()->GetGlyphCount(), FontRefString.GetData() ) );
 
 	//	cleanup, but dont delete font
 	ShutdownExport( FALSE );

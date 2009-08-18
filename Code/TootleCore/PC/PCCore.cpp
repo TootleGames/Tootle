@@ -63,6 +63,15 @@ namespace TLCore
 	extern TPtr<TCoreManager>		g_pCoreManager;
 }
 
+//--------------------------------------------------
+//	platform thread/process sleep
+//--------------------------------------------------
+void TLCore::Platform::Sleep(u32 Millisecs)
+{
+	::Sleep( Millisecs );
+}
+
+
 
 //---------------------------------------------------
 //	win32 entry
@@ -79,6 +88,8 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
 
 	//	go to the tootle main loop
 	Bool Result = TLCore::TootMain();
+
+	TLCore::Platform::g_AppExe.Empty(TRUE);
 
 	return Result ? 0 : 255;
 }

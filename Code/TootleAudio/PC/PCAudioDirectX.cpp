@@ -70,7 +70,7 @@ SyncBool Platform::DirectX::Init()
 */
 
 	// Register for callbacks
-	hr = Platform::DirectX::g_pXAudio2->RegisterForCallbacks(Platform::DirectX::g_pAudioEngineCallback.GetObject());
+	hr = Platform::DirectX::g_pXAudio2->RegisterForCallbacks(Platform::DirectX::g_pAudioEngineCallback.GetObjectPointer());
 
 	if(FAILED(hr))
 	{

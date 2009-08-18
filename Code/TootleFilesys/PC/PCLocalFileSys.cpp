@@ -441,7 +441,7 @@ void Platform::LocalFileSys::UpdateFileInstance(TPtr<TFile> pFile,const WIN32_FI
 //---------------------------------------------------------
 //	create a new empty file into file system if possible - if the filesys is read-only we cannot add external files and this fails
 //---------------------------------------------------------
-TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateFile(const TString& Filename)
+TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateNewFile(const TString& Filename)
 {
 	//	not allowed to write to this file sys
 	if ( !m_IsWritable )

@@ -202,11 +202,11 @@ OBJECTTYPE* TClassFactory<TYPE, STOREINSTANCES>::GetInstanceObject(TRefRef Insta
 		return NULL;
 
 #if defined(__GNUG__)
-	TYPE* pInstanceObject = pInstance.GetObject();
+	TYPE* pInstanceObject = pInstance.GetObjectPointer();
 	return static_cast<OBJECTTYPE>(pInstanceObject);
 #else
 	//	gr: not sure why this doesn't compile on gcc...
-	return pInstance.GetObject < OBJECTTYPE > ( );
+	return pInstance.GetObjectPointer < OBJECTTYPE > ( );
 #endif
 }
 

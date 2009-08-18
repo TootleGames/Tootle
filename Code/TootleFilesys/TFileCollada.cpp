@@ -157,7 +157,7 @@ Bool TLCollada::TGeometry::Import(TXmlTag& Tag,TPtrArray<TLCollada::TMaterial>& 
 		//	get material
 		const TString* pMaterialID = pTriangleTag->GetProperty("Material");
 		TPtr<TLCollada::TMaterial>* ppMaterial = pMaterialID ? Materials.Find( *pMaterialID ) : NULL;
-		TLCollada::TMaterial* pMaterial = ppMaterial ? (*ppMaterial).GetObject() : NULL;
+		TLCollada::TMaterial* pMaterial = ppMaterial ? (*ppMaterial).GetObjectPointer() : NULL;
 
 		//	get all the different mappings of triangle data -> vertex data
 		u32 TriangleDataStep = 1;	//	step is the biggest offset from the inputs, + 1
@@ -484,8 +484,8 @@ Bool TLCollada::TMaterial::Import(TXmlTag& MaterialTag,TXmlTag& LibraryEffectsTa
 
 	//	get profile tag
 	TXmlTag* pProfileTag = pEffectTag->GetChild("profile_COMMON");
-	TXmlTag* pTechniqueTag = pProfileTag ? pProfileTag->GetChild("technique").GetObject() : NULL;
-	TXmlTag* pPhongTag = pTechniqueTag ? pTechniqueTag->GetChild("phong").GetObject() : NULL;
+	TXmlTag* pTechniqueTag = pProfileTag ? pProfileTag->GetChild("technique").GetObjectPointer() : NULL;
+	TXmlTag* pPhongTag = pTechniqueTag ? pTechniqueTag->GetChild("phong").GetObjectPointer() : NULL;
 	if ( !pPhongTag )
 	{
 		TLDebug_Break("Couldnt find the <effect><profile_common><technique><phong> tag. Phong is the only one i know in use at the moment!");
@@ -495,7 +495,7 @@ Bool TLCollada::TMaterial::Import(TXmlTag& MaterialTag,TXmlTag& LibraryEffectsTa
 	//	just use the ambient colour for our material colour;
 	//	http://en.wikipedia.org/wiki/Phong_shading
 	TXmlTag* pAmbientTag = pPhongTag->GetChild("ambient");
-	TXmlTag* pAmbientColourTag = pAmbientTag ? pAmbientTag->GetChild("color").GetObject() : NULL;
+	TXmlTag* pAmbientColourTag = pAmbientTag ? pAmbientTag->GetChild("color").GetObjectPointer() : NULL;
 	if ( !pAmbientColourTag )
 	{
 		TLDebug_Break("Missing ambient/colour tag from phong effect");
@@ -621,7 +621,7 @@ Bool TLFileSys::TFileCollada::ImportScene(TLAsset::TMesh& Mesh,TXmlTag& RootTag)
 		TXmlTag* pGeometryTag = Nodes[n]->GetChild("instance_geometry");
 		const TString* pGeometryID = pGeometryTag ? pGeometryTag->GetProperty("url") : NULL;
 		TPtr<TLCollada::TGeometry>* ppGeometry = pGeometryID ? m_Geometry.Find( *pGeometryID ) : NULL;
-		TLCollada::TGeometry* pGeometry = ppGeometry ? (*ppGeometry).GetObject() : (TLCollada::TGeometry*)NULL;
+		TLCollada::TGeometry* pGeometry = ppGeometry ? (*ppGeometry).GetObjectPointer() : (TLCollada::TGeometry*)NULL;
 		if ( !pGeometry )
 		{
 			TLDebug_Break("Cannot find node's geometry");

@@ -11,13 +11,18 @@
 -------------------------------------------------------*/
 #pragma once
 
-#include "TLCore.h"
+#include "TLCoreMisc.h"
+//#include "TLTypes.h"
 
 #if defined(__GNUG__)
 	#include <new>
 #else
+	#include <cstddef>
 	#include <new.h>
 #endif
+
+
+
 
 
 //#define ENABLE_SOA
@@ -82,12 +87,35 @@ public:
 	u32				m_Size;		//	size of data we allocated
 };
 
+#if defined(__GNUG__)
+	#define throwfunc(exceptionfunc)	throw (exceptionfunc)
+#else
+	#define	throwfunc(exceptionfunc)	throw ()
+#endif
+
 
 class TLMemory::TMemorySystem
 {
+
 public:
-	TMemorySystem();
-	~TMemorySystem();
+
+	static TMemorySystem& Instance()
+	{
+		if(!ms_pMemorySystem)
+		{
+			if(m_bDestroyed)
+			{
+				OnDeadReference();
+			}
+			else
+			{
+				Create();
+			}
+
+		}
+
+		return *ms_pMemorySystem;
+	}
 
 	// Custom memory allocation
 	FORCEINLINE void*		Allocate(std::size_t size)
@@ -106,6 +134,8 @@ public:
 			TLMemory::Debug::Debug_Alloc( pData, size );
 		}
 		#endif
+
+		m_totalAlloc += size;
 
 		return pData;
 		/*
@@ -144,8 +174,11 @@ public:
 		}
 		#endif
 
+		m_totalAlloc -= sizeof(pObj);
+
 		//	delete memory
 		Platform::MemDealloc( pObj );
+		
 	}
 #ifdef ENABLE_SOA
 	
@@ -160,13 +193,44 @@ public:
 private:
 	TSmallObjectAllocator*	m_pSOA;	// Small Object Allocator
 #endif
+
+private:
+	TMemorySystem();										// Prevent outside creation - can only be accessed via the Instance() routine
+	TMemorySystem(const TMemorySystem&)	{}					// Prevent automatic copy constructor creation
+	TMemorySystem& operator=(const TMemorySystem&)	{}		// Prevent assignment
+	~TMemorySystem();										// Prevent outside destruction - automated by atexit via compiler
+
+	void Initialise();
+	void Shutdown();
+
+	static void Create()
+	{
+		/*
+		// Instance the single static memory system
+		// Use malloc as the new would cause a recursive call to the Instance routine
+		ms_pMemorySystem = static_cast<TMemorySystem*>(malloc(sizeof(TMemorySystem)));
+		// call contructor
+		ms_pMemorySystem->Initialise();
+		*/
+
+		static TMemorySystem theMemorySystem;
+		ms_pMemorySystem = &theMemorySystem;
+	}
+
+	static void OnDeadReference()
+	{
+		int x = 1;
+		//throw std::runtime_error("Allocation from Memory system when it has been deleted");
+	}
+
+private:
+
+	static TMemorySystem*	ms_pMemorySystem;		//	global static memory system
+	static Bool				m_bDestroyed;
+
+	std::size_t				m_totalAlloc;
 };
 
-
-namespace TLMemory
-{
-	static TMemorySystem	g_sMemorySystem;		//	global static memory system
-}
 
 
 //------------------------------------------------
@@ -180,33 +244,28 @@ void operator delete(void* pObj);
 void operator delete[](void* pObj);
 */
 
-#if defined(__GNUG__)
-	#define throwfunc(exceptionfunc)	throw (exceptionfunc)
-#else
-	#define	throwfunc(exceptionfunc)	throw ()
-#endif
+
 
 
 FORCEINLINE void* operator new(std::size_t size) throwfunc(std::bad_alloc)
 {
-	return TLMemory::g_sMemorySystem.Allocate( size );
+	return TLMemory::TMemorySystem::Instance().Allocate( size );
 }
 
 FORCEINLINE void* operator new[](std::size_t size) throwfunc(std::bad_alloc)
 {
-	return TLMemory::g_sMemorySystem.Allocate( size );
+	return TLMemory::TMemorySystem::Instance().Allocate( size );
 }
 
 FORCEINLINE void operator delete(void* pObj) throw()
 {
-	return TLMemory::g_sMemorySystem.Deallocate( pObj );
+	return TLMemory::TMemorySystem::Instance().Deallocate( pObj );
 }
 
 FORCEINLINE void operator delete[](void* pObj) throw()
 {
-	return TLMemory::g_sMemorySystem.Deallocate( pObj );
+	return TLMemory::TMemorySystem::Instance().Deallocate( pObj );
 }
-
 
 //	include the platform specific header
 #if defined(_MSC_EXTENSIONS) && defined(TL_TARGET_PC)
@@ -216,6 +275,7 @@ FORCEINLINE void operator delete[](void* pObj) throw()
 #if defined(TL_TARGET_IPOD)
 	#include "IPod/IPodMemory.h"
 #endif
+
 
 
 #include "TLMemory.inc.h"

@@ -159,6 +159,25 @@ Bool Win32::GWinControl::Init(TPtr<GWinControl>& pOwner, u32 Flags)
 		TLDebug_Break("Control already created");
 		return FALSE;
 	}
+
+
+	STARTUPINFO startupinfo;
+	startupinfo.cb=0;
+	GetStartupInfo(&startupinfo);
+
+	// Filled the structure?
+	if(startupinfo.cb)
+	{
+		// This structure is used when the first call to ShowWindow() is done.
+		// Check to see if the startupinfo will set the size?  
+		// if so prevent this as we will explicitly set the size of the window ourselves.
+
+		if(startupinfo.dwFlags & STARTF_USESIZE)
+		{
+			//switch of fthe flag
+			startupinfo.dwFlags &= ~STARTF_USESIZE;
+		}
+	}
 	
 	//	create control
 	Flags |= AdditionalStyleFlags();
@@ -201,6 +220,21 @@ Bool Win32::GWinControl::Init(TPtr<GWinControl>& pOwner, u32 Flags)
 		g_pFactory->RemoveInstance( m_Ref );
 		return FALSE;
 	}
+
+	// Force an update/refresh of the window
+	//if ( !SetWindowPos( m_Hwnd, WindowOrder, m_ClientPos.x, m_ClientPos.x, m_ClientSize.x, m_ClientSize.y, SWP_FRAMECHANGED ) )
+	//	TLDebug::Platform::CheckWin32Error();
+
+	// This will reset the window restore information so when the window is created it will *always* be 
+	// at the size we create it at
+	WINDOWPLACEMENT wndpl;
+	if(GetWindowPlacement(ResultHwnd, &wndpl))
+	{
+		wndpl.rcNormalPosition.right = 0;
+		wndpl.rcNormalPosition.bottom = 0;
+		SetWindowPlacement(ResultHwnd, &wndpl);
+	}
+    
 
 	//	control has been created
 	OnCreate();
@@ -839,13 +873,32 @@ LRESULT CALLBACK Win32::Win32CallBack(HWND hwnd, UINT message, WPARAM wParam, LP
 			}
 			break;
 	
+			/*
+		case WM_WINDOWPOSCHANGING:
+			{
+				WINDOWPOS* pWindowData = (WINDOWPOS*)(lParam);
+
+				// Overwtie the window size data, otherwise it will be the previous 
+				// set size and position for the window.
+				if(pWindowData)
+				{
+					pWindowData->cx = pControl->m_ClientSize.x;
+					pWindowData->cy = pControl->m_ClientSize.y;
+				}
+			}
+			break;
+			*/
 		case WM_SIZE:	//	resized
 			if ( pControl )
 			{
-				pControl->m_ClientSize.x = LOWORD( lParam );
-				pControl->m_ClientSize.y = HIWORD( lParam );
-				pControl->OnResize();
-				pControl->UpdateScrollBars();
+				u32 Size = LOWORD( lParam );
+				if(Size == 320 || Size == 480)
+				{
+					pControl->m_ClientSize.x = Size;
+					pControl->m_ClientSize.y = HIWORD( lParam );
+					pControl->OnResize();
+					pControl->UpdateScrollBars();
+				}
 				return 0;
 			}
 			break;

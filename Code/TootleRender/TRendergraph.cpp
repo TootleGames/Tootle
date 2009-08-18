@@ -47,6 +47,8 @@ SyncBool TLRender::TRendergraph::Shutdown()
 	if ( ShutdownResult == SyncWait )
 		return SyncWait;
 
+	TLRender::Opengl::Shutdown();
+
 	return TLRender::Platform::Shutdown();
 }
 

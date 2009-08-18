@@ -24,7 +24,7 @@ SyncBool TLAsset::TMenu::ImportData(TBinaryTree& Data)
 	Data.GetChildren("Item", Items );
 	for ( u32 i=0;	i<Items.GetSize();	i++ )
 	{
-		TBinaryTree& ItemData = *Items[i].GetObject();
+		TBinaryTree& ItemData = *Items[i].GetObjectPointer();
 		ItemData.ResetReadPos();
 
 		//	read the ref of the new item
@@ -70,7 +70,7 @@ SyncBool TLAsset::TMenu::ExportData(TBinaryTree& Data)
 
 	for ( u32 i=0;	i<m_MenuItems.GetSize();	i++ )
 	{
-		TMenuItem& MenuItem = *m_MenuItems[i].GetObject();
+		TMenuItem& MenuItem = *m_MenuItems[i].GetObjectPointer();
 		TPtr<TBinaryTree>& pItemData = Data.AddChild("Item");
 		pItemData->Write( MenuItem.GetMenuItemRef() );
 

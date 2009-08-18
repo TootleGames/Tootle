@@ -7,6 +7,8 @@
 #include "TLTime.h"
 #include "TLanguage.h"
 
+#include "TLCoreMisc.h"
+
 
 using namespace TLCore;
 

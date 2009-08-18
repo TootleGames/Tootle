@@ -51,6 +51,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
+				ShowIncludes="false"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -478,30 +479,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Memory"
-			>
-			<File
-				RelativePath="..\TLMemory.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\TLMemory.h"
-				>
-			</File>
-			<File
-				RelativePath="..\TLMemory.inc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\TMemoryManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\TMemoryManager.h"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="IPod Source Files"
 			>
 			<File
@@ -620,6 +597,14 @@
 				RelativePath="..\IPod\IPodMemory.h"
 				>
 				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
 					Name="Release|Win32"
 					ExcludedFromBuild="true"
 					>
@@ -721,6 +706,30 @@
 				</FileConfiguration>
 			</File>
 		</Filter>
+		<Filter
+			Name="Memory"
+			>
+			<File
+				RelativePath="..\TLMemory.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\TLMemory.h"
+				>
+			</File>
+			<File
+				RelativePath="..\TLMemory.inc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\TMemoryManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\TMemoryManager.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\TApplication.cpp"
 			>
@@ -759,6 +768,14 @@
 		</File>
 		<File
 			RelativePath="..\TLCore.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TLCoreMisc.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TLCoreMisc.h"
 			>
 		</File>
 		<File

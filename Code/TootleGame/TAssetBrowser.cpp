@@ -2,6 +2,7 @@
 
 #include <TootleRender/TScreen.h>
 #include <TootleRender/TScreenManager.h>
+#include <TootleRender/TCamera.h>
 #include <TootleAsset/TLAsset.h>
 #include <TootleInput/TLInput.h>
 #include <TootleCore/TCoreManager.h>

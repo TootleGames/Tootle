@@ -10,7 +10,6 @@
 
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/TLCore.h>
-#include <TootleCore/TPtr.h>
 #include <TootleCore/TColour.h>
 
 //	include opengl stuff
@@ -20,12 +19,6 @@
 #include "glsdk/gl.h"
 #include "glsdk/glext.h"
 #include "glsdk/wglext.h"
-
-
-//	forward declaration
-class TColour;
-
-
 
 namespace TLRender
 {

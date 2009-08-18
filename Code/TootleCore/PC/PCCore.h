@@ -60,7 +60,7 @@ namespace TLCore
 		SyncBool			Init();				//	platform init
 		SyncBool			Update();			//	platform update
 		SyncBool			Shutdown();			//	platform shutdown
-		FORCEINLINE void	Sleep(u32 Millisecs);	//	platform thread/process sleep
+		void				Sleep(u32 Millisecs);	//	platform thread/process sleep
 
 		void				DoQuit();			// Notification of app quit
 		const TString&		GetAppExe();		//	get the application exe (full path)
@@ -72,12 +72,5 @@ namespace TLCore
 
 
 
-//--------------------------------------------------
-//	platform thread/process sleep
-//--------------------------------------------------
-FORCEINLINE void TLCore::Platform::Sleep(u32 Millisecs)
-{
-	::Sleep( Millisecs );
-}
 
 

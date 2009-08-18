@@ -574,7 +574,7 @@ Bool TLFile::ParseXMLDataTree(TPtr<TXmlTag>& pTag,TBinaryTree& Data)
 	}
 
 	//	import contents of data
-	TBinaryTree& NodeData = pDataChild ? *pDataChild.GetObject() : Data;
+	TBinaryTree& NodeData = pDataChild ? *pDataChild.GetObjectPointer() : Data;
 
 	//	if the tag has no children (eg. type like <float />) but DOES have data (eg. 1.0) throw up an error and fail
 	//	assume the data is malformed and someone has forgotten to add the type specifier. 

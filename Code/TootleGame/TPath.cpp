@@ -397,7 +397,7 @@ SyncBool TLPath::TPathSpider_Path::Update()
 		RemoveEndNode( FollowNode );
 		return SyncFalse;
 	}
-	TArray<TRef>& PreviousPath = *(*pPreviousPath).GetObject();
+	TArray<TRef>& PreviousPath = *(*pPreviousPath).GetObjectPointer();
 
 	//	if we dont follow any links, this path is a dead end
 	Bool HasFollowedLinks = FALSE;

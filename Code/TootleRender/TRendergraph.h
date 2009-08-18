@@ -14,6 +14,11 @@ namespace TLRender
 		extern SyncBool Shutdown();
 	}
 
+	// DB - Temp 
+	namespace Opengl
+	{
+		extern void Shutdown();
+	}
 
 	class TRendergraph;
 	class TRenderNodeFactory;

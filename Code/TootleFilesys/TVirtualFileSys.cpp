@@ -224,7 +224,7 @@ SyncBool TLDebugFile::LoadDebugFile_TextureTest(TPtr<TLFileSys::TFile>& pFile)
 //---------------------------------------------------------
 //	create a new empty file into file system if possible - if the filesys is read-only we cannot add external files and this fails
 //---------------------------------------------------------
-TPtr<TLFileSys::TFile> TLFileSys::TVirtualFileSys::CreateFile(const TString& Filename)
+TPtr<TLFileSys::TFile> TLFileSys::TVirtualFileSys::CreateNewFile(const TString& Filename)
 {
 	//	create/get existing file
 	TPtr<TLFileSys::TFile> pNewFile = CreateFileInstance( Filename );

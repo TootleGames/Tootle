@@ -71,7 +71,7 @@ public:
 	void				SetOption(TRefRef OptionRef,const TYPE& Value);						//	overwrite/add option value
 
 	template <class TYPE>
-	TYPE*						GetGameObject()				{ return static_cast<TYPE*>(m_pGame.GetObject()); }
+	TYPE*						GetGameObject()				{ return static_cast<TYPE*>(m_pGame.GetObjectPointer()); }
 
 	FORCEINLINE void			SetAppMode(TRefRef Mode)	{	m_NewAppMode = Mode;	}	//	change app mode on next update
 

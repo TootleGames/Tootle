@@ -197,7 +197,7 @@ Bool TSchemeManager::RequestUpdateScheme(TRefRef SchemeRef, TRefRef SchemeAssetR
 		if(m_SchemeUpdateRequests.Add(pRequest) != -1)
 		{
 			// Subscribe to the update request
-			return SubscribeTo(pRequest.GetObject());
+			return SubscribeTo(pRequest.GetObjectPointer());
 		}
 	}
 	

@@ -738,7 +738,7 @@ TRef Mode_AssetImport::Update(float Timestep)
 				pAsset->GetAssetRef().GetString( Debug_String );
 				Debug_String.Append(" (");
 				pAsset->GetAssetType().GetString( Debug_String );
-				Debug_String.Appendf(") %x", pAsset.GetObject() );
+				Debug_String.Appendf(") %x", pAsset.GetObjectPointer() );
 				TLDebug_Print( Debug_String );
 			}
 			#endif

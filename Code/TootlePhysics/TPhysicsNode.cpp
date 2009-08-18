@@ -303,7 +303,7 @@ void TLPhysics::TPhysicsNode::UpdateNodeData()
 
 		if(pChild)
 		{
-			if(TLMaths::ExportShapeData( pChild.GetObject(), *shape.GetShape().GetObject(), FALSE ))
+			if(TLMaths::ExportShapeData( pChild.GetObjectPointer(), *shape.GetShape().GetObjectPointer(), FALSE ))
 			{
 				pChild->ExportData("Ref", shape.GetShapeRef());
 

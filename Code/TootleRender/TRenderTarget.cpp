@@ -1,6 +1,5 @@
 #include "TRenderTarget.h"
 #include "TScreen.h"
-#include <TootleCore/TPtr.h>
 #include "TScreenManager.h"
 
 
@@ -144,7 +143,7 @@ void TLRender::TRenderTarget::Draw()
 #ifndef TLRENDER_DISABLE_CLEAR
 	if ( m_pRenderNodeClear )
 	{
-		DrawNode( m_pRenderNodeClear.GetObject(), NULL, NULL, TColour( 1.f, 1.f, 1.f, 1.f ), NULL );
+		DrawNode( m_pRenderNodeClear.GetObjectPointer(), NULL, NULL, TColour( 1.f, 1.f, 1.f, 1.f ), NULL );
 	}
 #endif
 
@@ -169,7 +168,7 @@ void TLRender::TRenderTarget::Draw()
 		TPtr<TRenderNode>& pRootRenderNode = GetRootRenderNode();
 		if ( pRootRenderNode )
 		{
-			DrawNode( pRootRenderNode.GetObject(), NULL, NULL, TColour( 1.f, 1.f, 1.f, 1.f ), m_pRootQuadTreeZone ? m_pCamera.GetObject<TLMaths::TQuadTreeNode>() : NULL );
+			DrawNode( pRootRenderNode.GetObjectPointer(), NULL, NULL, TColour( 1.f, 1.f, 1.f, 1.f ), m_pRootQuadTreeZone ? m_pCamera.GetObjectPointer<TLMaths::TQuadTreeNode>() : NULL );
 		}
 	}
 
@@ -214,11 +213,11 @@ void TLRender::TRenderTarget::EndDraw()
 		BeginSceneReset();
 
 #ifdef DEBUG_DRAW_RENDERZONES
-		Debug_DrawZone( m_pRootQuadTreeZone, 0.f, m_pCamera.GetObject() );
+		Debug_DrawZone( m_pRootQuadTreeZone, 0.f, m_pCamera.GetObjectPointer() );
 #endif
 
 #ifdef DEBUG_DRAW_FRUSTUM
-		TProjectCamera* pCamera = GetCamera().GetObject<TProjectCamera>();
+		TProjectCamera* pCamera = GetCamera().GetObjectPointer<TProjectCamera>();
 		pCamera->CalcFrustum();
 
 		//	really quick bodge
@@ -411,7 +410,7 @@ SyncBool TLRender::TRenderTarget::IsRenderNodeVisible(TRenderNode& RenderNode,TP
 		//	if we have a zone, then set the up-to-date value
 		if ( ppRenderZoneNode )
 		{
-			pRenderZoneNode = (*ppRenderZoneNode).GetObject<TLRender::TRenderZoneNode>();
+			pRenderZoneNode = (*ppRenderZoneNode).GetObjectPointer<TLRender::TRenderZoneNode>();
 			IsZoneUpToDate = pRenderZoneNode->IsZoneOutOfDate() ? SyncFalse : SyncTrue;
 		}
 
@@ -469,7 +468,7 @@ SyncBool TLRender::TRenderTarget::IsRenderNodeVisible(TRenderNode& RenderNode,TP
 	else
 	{
 		//	de-reference existing pointer
-		pRenderZoneNode = (*ppRenderZoneNode).GetObject<TLRender::TRenderZoneNode>();
+		pRenderZoneNode = (*ppRenderZoneNode).GetObjectPointer<TLRender::TRenderZoneNode>();
 		IsZoneUpToDate = pRenderZoneNode->IsZoneOutOfDate() ? SyncFalse : SyncTrue;
 	}
 
@@ -512,7 +511,7 @@ SyncBool TLRender::TRenderTarget::IsRenderNodeVisible(TRenderNode& RenderNode,TP
 	}
 
 	//	if the zone we are inside, is inside the camera zone, then render (this should be the most likely case)
-	TLMaths::TQuadTreeZone* pRenderNodeZone = pRenderZoneNode->GetZone().GetObject();
+	TLMaths::TQuadTreeZone* pRenderNodeZone = pRenderZoneNode->GetZone().GetObjectPointer();
 
 	//	if zones are not visible to each other, not visible
 	if ( !IsZoneVisible( pCameraZoneNode, pRenderNodeZone, pRenderZoneNode, RenderNodeIsInsideCameraZone ) )
@@ -544,14 +543,14 @@ Bool TLRender::TRenderTarget::IsZoneVisible(TLMaths::TQuadTreeNode* pCameraZoneN
 	if ( !pCameraZoneNode )
 		return TRUE;
 
-	const TLMaths::TQuadTreeZone* pCameraZone = pCameraZoneNode->GetZone().GetObject();
+	const TLMaths::TQuadTreeZone* pCameraZone = pCameraZoneNode->GetZone().GetObjectPointer();
 
 	//	no render zone, assume node/camera is out outside of root zone
 	if ( !pZone || !pCameraZone )
 		return FALSE;
 
 	//	our zone is directly under the camera's zone
-	if ( pZone->GetParentZone().GetObject() == pCameraZone )
+	if ( pZone->GetParentZone().GetObjectPointer() == pCameraZone )
 	{
 		//	render node is below camera zone
 		RenderNodeIsInsideCameraZone = TRUE;
@@ -746,7 +745,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 		TPtr<TLAsset::TMesh>& pMeshAsset = pRenderNode->GetMeshAsset();
 
 		//	draw mesh!
-		DrawMeshWrapper( pMeshAsset.GetObject(), pRenderNode, SceneColour, PostRenderList );
+		DrawMeshWrapper( pMeshAsset.GetObjectPointer(), pRenderNode, SceneColour, PostRenderList );
 	}
 
 	//	if this render node is in a zone under the camera's zone, then we KNOW the child nodes are going to be visible, so we dont need to provide the camera's
@@ -806,7 +805,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 		TPtr<TLRender::TRenderNode> pChild = PostRenderList[n];
 
 		//	draw child
-		DrawNode( pChild.GetObject(), pRenderNode, &SceneTransform, SceneColour, pChildCameraZoneNode );
+		DrawNode( pChild.GetObjectPointer(), pRenderNode, &SceneTransform, SceneColour, pChildCameraZoneNode );
 
 		//	remove from list
 		PostRenderList.RemoveAt(n);
@@ -1253,14 +1252,14 @@ void TLRender::TRenderTarget::Debug_DrawZone(TPtr<TLMaths::TQuadTreeZone>& pZone
 	if ( pCameraZoneNode )
 	{
 		Bool Dummy;
-		if ( !IsZoneVisible( pCameraZoneNode, pZone.GetObject(), NULL, Dummy ) )
+		if ( !IsZoneVisible( pCameraZoneNode, pZone.GetObjectPointer(), NULL, Dummy ) )
 			return;
 	}
 
 	TempRenderNode.SetAlpha( 0.3f );
 	if ( pCameraZoneNode )
 	{
-		if ( pZone.GetObject() == pCameraZoneNode->GetZone().GetObject() )
+		if ( pZone.GetObjectPointer() == pCameraZoneNode->GetZone().GetObjectPointer() )
 		{
 			TempRenderNode.GetRenderFlags().Clear( TLRender::TRenderNode::RenderFlags::UseVertexColours );
 			TempRenderNode.GetRenderFlags().Clear( TLRender::TRenderNode::RenderFlags::DepthRead );

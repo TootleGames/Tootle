@@ -33,7 +33,7 @@ namespace Win32
 	{
 		//	style flags
 		const u32	Popup						= WS_POPUP;
-		const u32	OverlappedWindow			= WS_OVERLAPPEDWINDOW;
+		const u32	OverlappedWindow			= WS_OVERLAPPEDWINDOW;// &~WS_SIZEBOX);
 		const u32	Visible						= WS_VISIBLE;
 		const u32	Child						= WS_CHILD;
 		const u32	ClipSiblings				= WS_CLIPSIBLINGS;

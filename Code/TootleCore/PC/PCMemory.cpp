@@ -6,6 +6,7 @@
 
 #include "PCMemory.h"
 
+#include "PCCore.h"
 
 namespace TLMemory
 {
@@ -32,3 +33,8 @@ void TLMemory::Platform::Shutdown()
 }
 
 
+void*	TLMemory::Platform::MemAlloc(u32 Size)								{	return HeapAlloc( g_MemHeap, 0x0, Size );	}
+void	TLMemory::Platform::MemDealloc(void* pMem)							{	HeapFree( g_MemHeap, 0x0, pMem );	}	//	free
+void	TLMemory::Platform::MemCopy(void* pDest,const void* pSrc,u32 Size)	{	memcpy( pDest, pSrc, Size );	}	//	memcpy
+void	TLMemory::Platform::MemMove(void* pDest,const void* pSrc,u32 Size)	{	memmove( pDest, pSrc, Size );	}	//	memcpy
+void	TLMemory::Platform::MemValidate(void* pMem)							{	HeapValidate( g_MemHeap, 0x0, pMem );	}

@@ -1,10 +1,11 @@
 
 #pragma once
 
-#include <TootleCore/TLCore.h>
 #include <TootleCore/TKeyArray.h>
 
 #include "../TLInput.h"
+
+#include <TootleCore/TLCore.h> // include(s) windows.h
 
 #pragma comment( lib, "dinput8.lib" )
 #pragma comment( lib, "dxguid.lib" )

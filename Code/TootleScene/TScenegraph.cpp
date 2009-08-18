@@ -110,7 +110,7 @@ Bool TScenegraph::IsNodeWithinRange(TPtr<TSceneNode>& pNode, const TLMaths::TLin
 	{
 		// If the node has transform then we can assume it is the transform node type
 		// Cast to a transform node
-		TSceneNode_Transform* pTransformNode = reinterpret_cast<TSceneNode_Transform*>(pNode.GetObject());
+		TSceneNode_Transform* pTransformNode = reinterpret_cast<TSceneNode_Transform*>(pNode.GetObjectPointer());
 
 		// Do distance check from node to line
 		float fDistanceToLine = pTransformNode->GetDistanceTo(Line);
@@ -277,7 +277,7 @@ void TLScene::TScenegraph::UpdateNodesByZone(float TimeStep,TLMaths::TQuadTreeZo
 	for ( u32 n=0;	n<ZoneNodes.GetSize();	n++ )
 	{
 		TPtr<TLMaths::TQuadTreeNode>& pQuadTreeNode = ZoneNodes[n];
-		TLScene::TSceneNode_Transform& SceneNode = *pQuadTreeNode.GetObject<TLScene::TSceneNode_Transform>();
+		TLScene::TSceneNode_Transform& SceneNode = *pQuadTreeNode.GetObjectPointer<TLScene::TSceneNode_Transform>();
 
 		//	node that is already updated
 		if ( IsAlwaysUpdateNode( SceneNode.GetNodeRef() ) )
@@ -320,7 +320,7 @@ void TLScene::TScenegraph::SetActiveZoneTrackNode(TRefRef SceneNodeRef)
 	}
 
 	//	grab current zone of node and make it active
-	TLScene::TSceneNode_Transform& SceneNode = *(pSceneNode.GetObject<TLScene::TSceneNode_Transform>());
+	TLScene::TSceneNode_Transform& SceneNode = *(pSceneNode.GetObjectPointer<TLScene::TSceneNode_Transform>());
 	SetActiveZone( SceneNode.GetZone() );
 }
 

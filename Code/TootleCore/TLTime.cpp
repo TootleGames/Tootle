@@ -18,6 +18,20 @@ namespace TLCounter
 }
 
 
+void TLTime::Shutdown()
+{
+	g_TimerCounters.Empty(TRUE);
+	g_TimerAverages.Empty(TRUE);
+}
+
+void TLCounter::Shutdown()
+{
+	g_Counters.Empty(TRUE);
+	g_Averages.Empty(TRUE);
+}
+
+
+
 //---------------------------------------------------------
 //	get our application udpate rate
 //---------------------------------------------------------

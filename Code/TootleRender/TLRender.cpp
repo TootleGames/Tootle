@@ -633,3 +633,12 @@ void TLRender::Opengl::DrawPrimitives(u16 GLPrimType,u32 IndexCount,const u16* p
 	Debug_CheckForError();
 }
 
+// DB - Cleans the gloabl arrays so they aren't cleared on exit causing a crash
+// due to the memory manager being destroyed first.
+// Tmep fix until we have a way of spotting memory still allocated when the memory manager 
+// is deleted and someway of alolowing it to prevent deletion so it's always deleted last.
+void TLRender::Opengl::Shutdown()
+{
+	g_TextureIndexes.Empty(TRUE);
+}
+

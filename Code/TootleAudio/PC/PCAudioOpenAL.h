@@ -1,9 +1,6 @@
 
 #pragma once
 
-#include <TootleCore/TLCore.h>
-#include <TootleCore/TPtr.h>
-
 // OpenAL audio include
 #include <al.h>			
 #include <alc.h>			

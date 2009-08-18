@@ -8,7 +8,8 @@
 #include "PCInput.h"
 #include <TootleCore/TSyncQueue.h>
 #include <TootleCore/TPtr.h>
-#include <TootleCore/TEventChannel.h> //TEST
+#include <TootleCore/TEventChannel.h> 
+#include <TootleCore/TLCore.h>
 
 
 // DirectX buffer sizes for each device type

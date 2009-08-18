@@ -18,13 +18,13 @@ TLRender::TRenderNodeClear::TRenderNodeClear(TRefRef NodeRef,TRefRef TypeRef) :
 //-------------------------------------------------------
 void TLRender::TRenderNodeClear::SetSize(const TLMaths::TBox2D& ClearBox,float NearZ)
 {
-	TLAsset::TMesh* pClearMesh = m_pClearMesh.GetObject();
+	TLAsset::TMesh* pClearMesh = m_pClearMesh.GetObjectPointer();
 
 	//	create mesh
 	if ( !pClearMesh )
 	{
 		m_pClearMesh = TLAsset::CreateAsset( TLAsset::GetFreeAssetRef("Clear","Mesh") );
-		pClearMesh = m_pClearMesh.GetObject();
+		pClearMesh = m_pClearMesh.GetObjectPointer();
 
 		InitMesh( *pClearMesh );
 	}

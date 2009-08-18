@@ -15,7 +15,7 @@
 #include <TootleCore/TColour.h>
 #include <TootleCore/TRef.h>
 #include <TootleCore/TFlags.h>
-#include "TLRender.h"
+#include "TScreenShape.h"
 #include "TCamera.h"
 #include "TRenderNode.h"
 #include "TRenderNodeClear.h"

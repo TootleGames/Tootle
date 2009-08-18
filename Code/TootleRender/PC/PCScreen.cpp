@@ -242,6 +242,6 @@ void TLRender::Platform::Screen::GetViewportMaxSize(Type4<s32>& MaxSize)
 //------------------------------------------------------------
 Win32::GOpenglWindow* TLRender::Platform::Screen::GetOpenglWindow()
 {
-	return m_pWindow.GetObject<Win32::GOpenglWindow>();
+	return m_pWindow.GetObjectPointer<Win32::GOpenglWindow>();
 }
 

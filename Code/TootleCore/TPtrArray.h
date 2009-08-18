@@ -18,8 +18,8 @@ namespace TLPtrArray
 		//	as the "default" sort func, we ASSUME that pTestVal is of TYPE type.
 		const TPtr<TYPE>& TestWithPtr = pTestVal ? *(const TPtr<TYPE>*)pTestVal :  pb;
 
-		const TYPE& a = *pa.GetObject();
-		const TYPE& t = *TestWithPtr.GetObject();
+		const TYPE& a = *pa.GetObjectPointer();
+		const TYPE& t = *TestWithPtr.GetObjectPointer();
 
 		//	== turns into 0 (is greater) or 1(equals)
 		return a < t ? TLArray::IsLess : (TLArray::SortResult)(a==t);	
@@ -133,7 +133,7 @@ FORCEINLINE void TPtrArray<TYPE>::FunctionAll(FUNCTIONPOINTER pFunc)
 	for ( u32 i=0;	i<TArray<TPtr<TYPE> >::GetSize();	i++ )
 	{
 		TPtr<TYPE>& pPtr = TArray<TPtr<TYPE> >::ElementAt(i);
-		TYPE* pObject = pPtr.GetObject();
+		TYPE* pObject = pPtr.GetObjectPointer();
 		(pObject->*pFunc)();
 	}
 }
@@ -225,7 +225,7 @@ FORCEINLINE s32 TPtrArray<TYPE>::FindPtrIndex(const TPtr<TYPE>& pPtr)
 		const TPtr<TYPE>& pElementPtr = TArray<TPtr<TYPE> >::ElementAtConst( i );
 
 		//	do pointer address comparison
-		if ( pElementPtr.GetObject() == pPtr.GetObject() )
+		if ( pElementPtr.GetObjectPointer() == pPtr.GetObjectPointer() )
 			return (s32)i;
 	}
 

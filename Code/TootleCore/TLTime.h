@@ -66,6 +66,8 @@ namespace TLTime
 	FORCEINLINE const TKeyArray<TRef,float>&	GetTimers()											{	return g_TimerAverages;	}	//	current elapsed time for timers
 
 	class TTimeManager;
+
+	void	Shutdown();
 }
 
 
@@ -89,6 +91,7 @@ namespace TLCounter
 
 	FORCEINLINE const TKeyArray<TRef,float>&	GetCounters()		{	return g_Averages;	}	//	current elapsed time for timers
 
+	void	Shutdown();
 };	
 
 
@@ -220,7 +223,8 @@ protected:
 
 	SyncBool		Shutdown()
 	{
-		g_TimerAverages.Empty(TRUE);
+		TLTime::Shutdown();
+		TLCounter::Shutdown();
 	
 		return TManager::Shutdown();
 	}

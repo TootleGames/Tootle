@@ -12,9 +12,12 @@
 #include <TootleCore/TCoreManager.h>
 #include <TootleRender/TScreenManager.h>
 #include <TootleFileSys/TLFileSys.h>
-
-
 #include <TootleInput/TLInput.h>
+#include <TootleRender/TRendergraph.h>
+#include <TootleRender/TRendertarget.h>
+#include <TootleRender/TCamera.h>
+
+#include "TEventChannel.h"
 
 
 // Time for the bootup sequence to occur over

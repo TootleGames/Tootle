@@ -51,7 +51,7 @@ TPtr<TLMaths::TShape> TLMaths::TShapePolygon2D::Transform(const TLMaths::TTransf
 
 	//	re-use old shape if possible
 	TPtr<TLMaths::TShapePolygon2D> pResultShape;
-	if ( pOldShape && pOldShape.GetObject() != this && pOldShape->GetShapeType() == GetShapeType() )
+	if ( pOldShape && pOldShape.GetObjectPointer() != this && pOldShape->GetShapeType() == GetShapeType() )
 	{
 		pResultShape = pOldShape;
 	}

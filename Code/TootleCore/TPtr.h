@@ -114,12 +114,12 @@ public:
 	//FORCEINLINE TYPE&			operator*()	const							{	return *GetObject();	}	//	gr: safer not to have this... unless required?? easier, safer and clearer to use GetPtr()
 	FORCEINLINE TYPE*			operator->()								{	return m_pObject;	}	//	note: no pointer check here for efficieny
 	FORCEINLINE const TYPE*		operator->() const							{	return m_pObject;	}	//	note: no pointer check here for efficieny
-	FORCEINLINE TYPE*			GetObject()									{	return m_pObject;	}	//	note: no pointer check here for efficieny
-	FORCEINLINE const TYPE*		GetObject() const							{	return m_pObject;	}	//	note: no pointer check here for efficieny
+	FORCEINLINE TYPE*			GetObjectPointer()									{	return m_pObject;	}	//	note: no pointer check here for efficieny
+	FORCEINLINE const TYPE*		GetObjectPointer() const							{	return m_pObject;	}	//	note: no pointer check here for efficieny
 	template<typename OBJTYPE>
-	FORCEINLINE OBJTYPE*		GetObject()									{	return static_cast<OBJTYPE*>( m_pObject );	}	//	note: no pointer check here for efficieny
+	FORCEINLINE OBJTYPE*		GetObjectPointer()									{	return static_cast<OBJTYPE*>( m_pObject );	}	//	note: no pointer check here for efficieny
 	template<typename OBJTYPE>
-	FORCEINLINE const OBJTYPE*	GetObject() const							{	return static_cast<const OBJTYPE*>( m_pObject );	}	//	note: no pointer check here for efficieny
+	FORCEINLINE const OBJTYPE*	GetObjectPointer() const							{	return static_cast<const OBJTYPE*>( m_pObject );	}	//	note: no pointer check here for efficieny
 	FORCEINLINE					operator TYPE*() const						{	return m_pObject;	}
 
 	template<typename OBJTYPE>
@@ -132,13 +132,13 @@ public:
 	template<typename OBJTYPE>
 	FORCEINLINE Bool			operator==(const OBJTYPE& Object) const;	//	gr: GENIUS! now == operators in our TYPE type work through TPtr! :)
 	template<typename OBJTYPE>
-	FORCEINLINE Bool			operator==(const TPtr<OBJTYPE>& Ptr) const	{	return m_pObject == Ptr.GetObject<TYPE>();	}
-	FORCEINLINE Bool			operator==(const TPtr<TYPE>& Ptr) const		{	return m_pObject == Ptr.GetObject();	}
+	FORCEINLINE Bool			operator==(const TPtr<OBJTYPE>& Ptr) const	{	return m_pObject == Ptr.GetObjectPointer<TYPE>();	}
+	FORCEINLINE Bool			operator==(const TPtr<TYPE>& Ptr) const		{	return m_pObject == Ptr.GetObjectPointer();	}
 	FORCEINLINE Bool			operator==(const TYPE* pObject) const		{	return m_pObject == pObject;	}
 
 	template<typename OBJTYPE>
-	FORCEINLINE Bool			operator!=(const TPtr<OBJTYPE>& Ptr) const	{	return m_pObject != Ptr.GetObject<TYPE>();	}
-	FORCEINLINE Bool			operator!=(const TPtr<TYPE>& Ptr) const		{	return m_pObject != Ptr.GetObject();	}
+	FORCEINLINE Bool			operator!=(const TPtr<OBJTYPE>& Ptr) const	{	return m_pObject != Ptr.GetObjectPointer<TYPE>();	}
+	FORCEINLINE Bool			operator!=(const TPtr<TYPE>& Ptr) const		{	return m_pObject != Ptr.GetObjectPointer();	}
 	FORCEINLINE Bool			operator!=(const TYPE* pObject) const		{	return m_pObject != pObject;	}
 /*
 	template<typename OBJTYPE>
@@ -175,7 +175,7 @@ template <typename TYPE>
 template<typename OBJTYPE>
 FORCEINLINE Bool TPtr<TYPE>::operator==(const OBJTYPE& Object) const	
 {
-	const TYPE* pObjectA = GetObject();	
+	const TYPE* pObjectA = GetObjectPointer();	
 	return pObjectA ? (*pObjectA) == Object : FALSE;		
 }
 
@@ -244,18 +244,18 @@ FORCEINLINE void TPtr<TYPE>::AssignToPtr(const TPtr<OBJTYPE>& Ptr)
 		//	use a static_cast to allow TPtr<B> (derived from A) = TPtr<A>
 		//	dynamic_cast is a runtime-type check
 #ifdef _DEBUG
-		const TYPE* pConstObject = dynamic_cast<const TYPE*>( Ptr.GetObject() );
+		const TYPE* pConstObject = dynamic_cast<const TYPE*>( Ptr.GetObjectPointer() );
 
 		//	cast failed, break and static cast if we continue
 		if ( !pConstObject )
 		{
 			if ( TLDebug::Break("Failed to cast pointer type to other type", __FUNCTION__ ) )
 			{
-				pConstObject = static_cast<const TYPE*>( Ptr.GetObject() );
+				pConstObject = static_cast<const TYPE*>( Ptr.GetObjectPointer() );
 			}
 		}
 #else
-		const TYPE* pConstObject = static_cast<const TYPE*>( Ptr.GetObject() );
+		const TYPE* pConstObject = static_cast<const TYPE*>( Ptr.GetObjectPointer() );
 #endif
 
 		//	cast succeeded

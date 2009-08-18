@@ -50,7 +50,7 @@ SyncBool TFileWAV::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported)
 	//	print out some debug info
 	TString FontRefString;
 	pAsset->GetAssetRef().GetString( FontRefString );
-	TLDebug_Print( TString("%d in the %s WAV", pAsset.GetObject<TLAsset::TAudio>()->GetNumberOfChannels(), FontRefString.GetData() ) );
+	TLDebug_Print( TString("%d in the %s WAV", pAsset.GetObjectPointer<TLAsset::TAudio>()->GetNumberOfChannels(), FontRefString.GetData() ) );
 	
 	//	cleanup, but dont delete audio
 	ShutdownExport( FALSE );
