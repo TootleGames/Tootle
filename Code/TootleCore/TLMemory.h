@@ -197,7 +197,7 @@ private:
 private:
 	TMemorySystem();										// Prevent outside creation - can only be accessed via the Instance() routine
 	TMemorySystem(const TMemorySystem&)	{}					// Prevent automatic copy constructor creation
-	TMemorySystem& operator=(const TMemorySystem&)	{}		// Prevent assignment
+	TMemorySystem& operator=(const TMemorySystem&)	{ return *this; }		// Prevent assignment
 	~TMemorySystem();										// Prevent outside destruction - automated by atexit via compiler
 
 	void Initialise();
@@ -219,7 +219,9 @@ private:
 
 	static void OnDeadReference()
 	{
-		int x = 1;
+		// Memory system being used after it has been deleted. We *could* recreste the memory system and add it to the atexit list
+		// (known as the pheonix pattern) which would probably work whiclst we are simply allocating form the 
+		// system bu if we had our own pool/heap then this would probably not help much.
 		//throw std::runtime_error("Allocation from Memory system when it has been deleted");
 	}
 

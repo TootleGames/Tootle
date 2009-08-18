@@ -9,9 +9,9 @@ template<typename TYPE>
 TYPE* TLMemory::SOAAllocate(std::size_t size, Bool bThrow)
 {
 #ifdef ENABLE_SOA
-	return ( static_cast<TYPE*>(TLMemory::g_sMemorySystem.GetSmallObjectAllocator().Allocate(size, bThrow)) );
+	return ( static_cast<TYPE*>(TLMemory::TMemorySystem::Instance().GetSmallObjectAllocator().Allocate(size, bThrow)) );
 #else
-	return ( static_cast<TYPE*>(TLMemory::g_sMemorySystem.Allocate(size)) ) ;
+	return ( static_cast<TYPE*>(TLMemory::TMemorySystem::Instance().Allocate(size)) ) ;
 #endif
 }
 	
@@ -26,9 +26,9 @@ void TLMemory::SOADelete(TYPE*& pData)
 		return;
 	
 #ifdef ENABLE_SOA	
-	TLMemory::g_sMemorySystem.GetSmallObjectAllocator().Deallocate( pData );
+	TLMemory::TMemorySystem::Instance().GetSmallObjectAllocator().Deallocate( pData );
 #else
-	TLMemory::g_sMemorySystem.Deallocate(pData);
+	TLMemory::TMemorySystem::Instance().Deallocate(pData);
 #endif
 	pData = NULL;
 
