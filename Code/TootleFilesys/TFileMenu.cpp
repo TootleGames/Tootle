@@ -137,8 +137,18 @@ SyncBool TLFileSys::TFileMenu::ImportMenuItem(TPtr<TXmlTag>& pTag,TPtr<TLAsset::
 	//	read off other properties
 	const TString* pString = NULL;
 	
-	//	string
-	pString = pTag->GetProperty("String");
+	//	gr: shouldnt be using the "text=" property. not sure if this was deprecated or if some XML was wrong and it was just duplicated
+	pString = pTag->GetProperty("Text");
+	if ( pString )
+	{
+		TLDebug_Break("The Text= property of a menu item's XML should be String=");
+	}
+	else
+	{
+		//	string
+		pString = pTag->GetProperty("String");
+	}
+
 	if ( pString )
 		pItem->SetText( *pString );
 

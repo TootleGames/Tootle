@@ -135,7 +135,7 @@ public:
 	TMenuWrapperScheme(TLMenu::TMenuController& MenuController,TRefRef SchemeRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef);	//	create menu/render nodes etc
 	
 protected:
-	virtual void					ProcessMessage(TLMessaging::TMessage& Message);	//	catch gui's messages and turn them into menu item execution for our owner menu controller
+	virtual void					ProcessMessage(TLMessaging::TMessage& Message);	//	catch widget's messages and turn them into menu item execution for our owner menu controller
 };
 
 
@@ -143,10 +143,13 @@ protected:
 //	This class creates text render nodes to make 
 //	up a menu that looks like a popup menu
 //----------------------------------------------
-class TLGame::TMenuWrapperText : public TLGame::TMenuWrapper
+class TLGame::TMenuWrapperText : public TLGame::TMenuWrapper, public TLMessaging::TSubscriber
 {
 public:
-	TMenuWrapperText(TLMenu::TMenuController& MenuController,TRefRef FontRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef);	//	create menu/render nodes etc
+	TMenuWrapperText(TLMenu::TMenuController& MenuController,TRefRef FontRef,float FontScale,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef,TRef ParentRenderNodeDatum=TRef());	//	create menu/render nodes etc
+	
+protected:
+	virtual void					ProcessMessage(TLMessaging::TMessage& Message);	//	catch widget's messages and turn them into menu item execution for our owner menu controller
 };
 
 

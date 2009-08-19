@@ -1,6 +1,7 @@
 #include "TMenu.h"
 #include <TootleAsset/TScheme.h>
 #include <TootleRender/TRendergraph.h>
+#include <TootleRender/TRenderNodeText.h>
 #include <TootleAudio/TAudiograph.h>
 #include <TootleGame/TWidgetButton.h>
 
@@ -445,7 +446,7 @@ TLGame::TMenuWrapperScheme::TMenuWrapperScheme(TLMenu::TMenuController& MenuCont
 
 	
 //---------------------------------------------------
-//	catch gui's messages and turn them into menu item execution for our owner menu controller
+//	catch widget's messages and turn them into menu item execution for our owner menu controller
 //---------------------------------------------------
 void TLGame::TMenuWrapperScheme::ProcessMessage(TLMessaging::TMessage& Message)
 {
@@ -465,12 +466,103 @@ void TLGame::TMenuWrapperScheme::ProcessMessage(TLMessaging::TMessage& Message)
 //---------------------------------------------------
 //	create menu/render nodes etc
 //---------------------------------------------------
-TLGame::TMenuWrapperText::TMenuWrapperText(TLMenu::TMenuController& MenuController,TRefRef SchemeRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef) :
+TLGame::TMenuWrapperText::TMenuWrapperText(TLMenu::TMenuController& MenuController,TRefRef FontRef,float FontScale,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef,TRef ParentRenderNodeDatum) :
 	TMenuWrapper		( MenuController )
 {
 	if ( !m_pMenuController )
 		return;
 
-	TLDebug_Break("todo");
+	TLMenu::TMenu& Menu = *m_pMenuController->GetCurrentMenu();
+	m_MenuRef = Menu.GetMenuRef();
+
+	//	create root render node to store the text render nodes under - this also saves us manually cleaning up the other nodes
+	m_RenderNode = TLRender::g_pRendergraph->CreateNode("_MenuRoot", TRef(), ParentRenderNodeRef );
+
+	TPtrArray<TLAsset::TMenu::TMenuItem>& MenuItems = Menu.GetMenuItems();
+
+	float3 TextPosition( 0.f, 0.f, 2.f );
+	float3 TextScale( FontScale, FontScale, 1.f );
+	float3 TextPositionStep( 0.f, TextScale.y * 1.0f, 0.f );
+
+	//	create Text for each menu item
+	for ( u32 i=0;	i<MenuItems.GetSize();	i++ )
+	{
+		TLAsset::TMenu::TMenuItem& MenuItem = *MenuItems[i];
+		
+		//	create text render node
+		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
+
+		//	if string is missing, convert the menu item ref
+		if ( MenuItem.GetText().GetLength() == 0 )
+		{
+			TTempString RefString;
+			MenuItem.GetMenuItemRef().GetString( RefString );
+			InitMessage.ExportDataString("string", RefString );
+		}
+		else
+		{
+			InitMessage.ExportDataString("string", MenuItem.GetText() );
+		}
+
+		//InitMessage.ExportData("DbgDatum", TRef("_BnB2") );
+		InitMessage.ExportData("translate", TextPosition );
+		InitMessage.ExportData("scale", TextScale );
+		InitMessage.ExportData("FontRef", FontRef );
+		
+		//	gr: todo; make all the alignment stuff optional
+		if ( ParentRenderNodeDatum.IsValid() )
+		{
+			InitMessage.ExportData("HAlign", TLRenderText::HAlignCenter );
+			InitMessage.ExportData("BoxNode", ParentRenderNodeRef );
+			InitMessage.ExportData("BoxDatum", ParentRenderNodeDatum );
+		}
+
+		//	create
+		TRef MenuItemRenderNodeRef = TLRender::g_pRendergraph->CreateNode("_Text", "TxText", m_RenderNode, &InitMessage );
+		if ( !MenuItemRenderNodeRef.IsValid() )
+		{
+			TLDebug_Break("failed to create text menu item render node");
+			continue;
+		}
+
+		//	move along position
+		TextPosition += TextPositionStep;
+
+		//	create widget
+		TBinaryTree WidgetData( TRef_Static(W,i,d,g,e) );
+		WidgetData.ExportData( TRef_Static4(N,o,d,e), MenuItemRenderNodeRef );
+
+		//	the action from the widget is the menu item ref
+		WidgetData.ExportData("ActDown", MenuItem.GetMenuItemRef() );
+
+		//	make the rendernode of this menu item clickable, the action coming out of the TWidget
+		//	is the ref of the menu item that was clicked
+		TPtr<TLGui::TWidgetButton> pWidget = new TLGui::TWidgetButton( RenderTargetRef, WidgetData );
+
+		//	subscribe the menu controller to the gui to get the clicked messages
+		//	gr: THIS now gets the gui messages and handles them and invokes execution of the menu item
+		if ( this->SubscribeTo( pWidget ) )
+		{
+			m_Widgets.Add( pWidget );
+		}
+	}
 }
 
+
+
+//---------------------------------------------------
+//	catch widget's messages and turn them into menu item execution for our owner menu controller
+//---------------------------------------------------
+void TLGame::TMenuWrapperText::ProcessMessage(TLMessaging::TMessage& Message)
+{
+	//	action from a gui - match it to a menu item, then invoke the "click" of that menu item
+	if ( Message.GetMessageRef() == TRef_Static(A,c,t,i,o) )
+	{
+		TRef ActionRef;
+		if ( Message.Read( ActionRef ) )
+		{
+			TRef MenuItemRef = ActionRef;
+			m_pMenuController->ExecuteMenuItem( MenuItemRef );
+		}
+	}
+}

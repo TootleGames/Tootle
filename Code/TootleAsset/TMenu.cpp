@@ -46,7 +46,7 @@ SyncBool TLAsset::TMenu::ImportData(TBinaryTree& Data)
 		
 		ItemData.ImportData("MeshRef", pMenuItem->m_MeshRef );
 		ItemData.ImportData("NextMenu", pMenuItem->m_NextMenu );
-		ItemData.ImportData("String", pMenuItem->m_Text );
+		ItemData.ImportDataString("String", pMenuItem->m_Text );
 		ItemData.ImportData("AudioRef", pMenuItem->m_AudioRef );
 
 		TPtr<TBinaryTree>& pItemDataData = ItemData.GetChild("Data");
@@ -84,7 +84,7 @@ SyncBool TLAsset::TMenu::ExportData(TBinaryTree& Data)
 		if ( MenuItem.GetNextMenu().IsValid() )
 			pItemData->ExportData("NextMenu", MenuItem.GetNextMenu() );
 
-		pItemData->ExportData("String", MenuItem.GetText() );
+		pItemData->ExportDataString("String", MenuItem.GetText() );
 
 		if ( MenuItem.GetAudioRef().IsValid() )
 			pItemData->ExportData("AudioRef", MenuItem.GetAudioRef() );
