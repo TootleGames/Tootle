@@ -4,7 +4,6 @@
 #import <Foundation/NSString.h>
 #import <Foundation/Foundation.h>
 
-
 using namespace TLFileSys;
 
 
@@ -69,7 +68,19 @@ SyncBool Platform::LocalFileSys::LoadFileList()
 Bool Platform::LocalFileSys::DoLoadFileList()
 {
 	NSString *pDirString = [[NSString alloc] initWithUTF8String:m_Directory.GetData()];
-	 
+
+#ifdef _DEBUG
+	//	fail to make instances with no type (eg. executable name on ipod) 
+	TTempString Debug_String("DoLoadFileList checking directory: ");
+
+	const char* pNSChars = [pDirString UTF8String];
+	u32 NsLength = [pDirString length];
+	
+	Debug_String.Append( pNSChars, NsLength );
+	
+	TLDebug_Print( Debug_String );
+#endif
+	
 	//	make a directory enumerator
 	NSDirectoryEnumerator *direnum = [[NSFileManager defaultManager] enumeratorAtPath: pDirString];
 	
@@ -117,6 +128,11 @@ Bool Platform::LocalFileSys::DoLoadFileList()
 				TTempString DebugString("Created new file instance ");
 				pFile->Debug_GetString( DebugString );
 				TLDebug_Print( DebugString );
+				
+				// Clear the Lost flag to ensure the file is subsequently removed from the system if 
+				// this was called from the LoadFileList where it will set this flag assuming it will be reset 
+				// when found.  The CreateFileInstance above will simply return if the file already exists.
+				pFile->GetFlags().Clear( TFile::Lost );
 			}		
 			
 		}
