@@ -17,6 +17,7 @@
 #include <TootleCore/TStateMachine.h>
 #include <TootleGame/TWidgetDrag.h>
 #include <TootleGame/TMenu.h>
+#include <TootleRender/TRenderTarget.h>
 
 
 namespace TLGame
@@ -43,9 +44,13 @@ public:
 	virtual ~TSchemeEditor();
 
 	Bool						Initialise(TRefRef EditorScheme,TRefRef GraphRef,TRefRef SchemeRootNode,TRefRef GameRenderTarget,TBinaryTree* pCommonNodeData);
+	virtual void				Update(float Timestep)				{	TStateMachine::Update( Timestep );	}
 	
-	FORCEINLINE TRefRef			GetEditorRenderTargetRef() const	{	return m_EditorRenderTarget;	}
-	FORCEINLINE TRefRef			GetEditorRenderNodeRef() const		{	return m_EditorRenderNodeRef;	}
+	FORCEINLINE TRefRef						GetEditorRenderTargetRef() const	{	return m_EditorRenderTarget;	}
+	FORCEINLINE TRefRef						GetEditorRenderNodeRef() const		{	return m_EditorRenderNodeRef;	}
+	FORCEINLINE TLRender::TRenderTarget*	GetGameRenderTarget() const			{	return m_pGameRenderTarget;	}
+	FORCEINLINE TRef						GetGameRenderTargetRef() const		{	TLRender::TRenderTarget* pRenderTarget = GetGameRenderTarget();	return pRenderTarget ? pRenderTarget->GetRef() : TRef();	}
+	FORCEINLINE TRef						GetGameRenderNodeRef() const		{	TLRender::TRenderTarget* pRenderTarget = GetGameRenderTarget();	return pRenderTarget ? pRenderTarget->GetRootRenderNodeRef() : TRef();	}
 
 protected:
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);		//	
@@ -54,13 +59,18 @@ protected:
 
 	void						EnableNodeWidgets(Bool Enable);							//	enable/disable node widgets
 	virtual void				ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a game node
+	FORCEINLINE Bool			HasNewNodesSelected() const							{	return m_NewSceneNodeDragAction.IsValid() && m_SelectedNodes.GetSize() > 0;	}
+	void						DropNewNodes()										{	if ( HasNewNodesSelected() )	DropNewNode( m_SelectedNodes );	}
 	Bool						SelectNode(TRefRef NodeRef);						//	select a node - returns true if NEWLY selected. if it was alreayd selected, false is returned
+	TRef						SelectSingleNode();									//	make sure only one TRIGGER node is selected. returns the now selected node (if any)
 	void						UnselectNode(TRef NodeRef);							//	unselect a node
 	void						UnselectNode(TArray<TRef>& NodeRefs);				//	unselect a list of nodes
 	void						UnselectAllNodes();									//	unselect all nodes
-	virtual void				OnNodeSelected(TRefRef NodeRef)						{	}	//	called when a node is selected
-	virtual void				OnNodeUnselected(TRefRef NodeRef)					{	}	//	called when a node is unselected
+	FORCEINLINE Bool			HasSelectedNodes() const							{	return m_SelectedNodes.GetSize() > 0;	}
+	virtual void				OnNodeSelected(TRefRef NodeRef);					//	called when a node is selected
+	virtual void				OnNodeUnselected(TRefRef NodeRef);					//	called when a node is unselected
 	virtual void				OnNewNodeDropped(TRefRef NodeRef)					{	}	//	called when a new node has been dropped
+	virtual void				OnNodeDeleted(TArray<TRef>& NodeRefs)				{	}	//	scene nodes have been removed from the graph and removed from our system
 
 	virtual void				ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a editor icon
 	void						EnableIconWidgets(Bool Enable);												//	enable/disable node widgets
@@ -141,4 +151,8 @@ class TLGame::TSchemeEditor::Mode_Icon : public TLGame::TSchemeEditor::Mode_Base
 protected:
 	virtual Bool			OnBegin(TRefRef PreviousMode);	
 };
+
+
+
+
 

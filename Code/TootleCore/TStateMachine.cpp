@@ -50,6 +50,9 @@ Bool TStateMachine::SetMode(TRefRef NextModeRef)
 		TLDebug_Break( TString("Attempted to change to non-existant mode %s from mode %s", NextModeString.GetData(), CurrentModeString.GetData() ) );
 	}
 
+	//	mark that we're changing mode
+	m_ChangingMode = TRUE;
+
 	//	begin new mode (if failed we'll go onto no mode)
 	if ( pNextMode )
 	{
@@ -67,6 +70,9 @@ Bool TStateMachine::SetMode(TRefRef NextModeRef)
 
 	//	set current mode to the new mode
 	m_pCurrentMode = pNextMode;
+
+	//	finish changing
+	m_ChangingMode = FALSE;
 
 	//	log mode change
 #ifdef _DEBUG

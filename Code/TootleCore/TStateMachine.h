@@ -17,7 +17,7 @@ class TStateMode;
 class TStateMachine
 {
 public:
-	TStateMachine()			{}
+	TStateMachine() : m_ChangingMode ( FALSE )		{}
 	
 	void					Update(float Timestep);			//	update current mode
 	void					Shutdown()						{	TStateMachine::SetMode( TRef() );	}	//	clean up current mode bgy ending it
@@ -34,6 +34,7 @@ public:
 	TPtr<TYPE>				GetCurrentMode()				{	return m_pCurrentMode;	}
 	TPtr<TStateMode>		GetCurrentMode()				{	return m_pCurrentMode;	}
 	TRef					GetCurrentModeRef() const;		
+	Bool					IsChangingMode() const			{	return m_ChangingMode;	}
 	
 	template<class TYPE>
 	TRef					AddMode(TRefRef ModeRef)		{	TPtr<TStateMode> pMode = new TYPE;	return AddMode( ModeRef, pMode );	}
@@ -49,7 +50,8 @@ private:
 protected:
 	TPtrArray<TStateMode>	m_Modes;
 	TPtr<TStateMode>		m_pCurrentMode;
-	TArray< TBufferString<6> >	m_Debug_ModeLog;								//	keep a log of what mode's we've been in for debugging
+	Bool					m_ChangingMode;					//	true during OnBegin and OnEnd functions
+	TArray< TBufferString<6> >	m_Debug_ModeLog;			//	keep a log of what mode's we've been in for debugging
 };
 
 

@@ -364,7 +364,7 @@ Bool TLGame::TSchemeEditor::SelectNode(TRefRef SceneNode)
 	m_pGraph->SendMessageToNode( SceneNode, EditMessage );
 
 	//	go into node mode if we're not already in it
-	if ( GetCurrentModeRef() != "Node" )
+	if ( GetCurrentModeRef() != "Node" && !IsChangingMode() )
 		SetMode("Node");
 
 	OnNodeSelected( SceneNode );
@@ -372,6 +372,28 @@ Bool TLGame::TSchemeEditor::SelectNode(TRefRef SceneNode)
 	return TRUE;
 }
 
+
+//----------------------------------------------------------
+//	make sure only one TRIGGER node is selected
+//----------------------------------------------------------
+TRef TLGame::TSchemeEditor::SelectSingleNode()
+{
+	TRef KeepSelected;
+
+	for ( s32 i=m_SelectedNodes.GetLastIndex();	i>=0;	i-- )
+	{
+		if ( !KeepSelected.IsValid() )
+		{
+			KeepSelected = m_SelectedNodes[i];
+		}
+		else
+		{
+			UnselectNode( m_SelectedNodes[i] );
+		}
+	}
+
+	return KeepSelected;
+}
 
 
 //----------------------------------------------------------
@@ -406,6 +428,19 @@ void TLGame::TSchemeEditor::UnselectNode(TRef SceneNode)
 }
 
 
+//----------------------------------------------------------
+//	called when a node is unselected
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::OnNodeUnselected(TRefRef NodeRef)
+{
+}
+
+//----------------------------------------------------------
+//	called when a node is selected
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::OnNodeSelected(TRefRef NodeRef)
+{
+}
 
 
 //----------------------------------------------------------
@@ -502,8 +537,8 @@ void TLGame::TSchemeEditor::ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef
 		Message.ImportData("DidDrag", WasDragged );
 		if ( WasDragged )
 		{
-			UnselectNode( NodeRef );
-			SetMode("Idle");
+			//UnselectNode( NodeRef );
+			//SetMode("Idle");
 		}
 		else if ( GetCurrentModeRef() == "Node" || GetCurrentModeRef() == "Idle" )
 		{
@@ -829,7 +864,7 @@ void TLGame::TSchemeEditor::ProcessMouseMessage(TRefRef ActionRef,TLMessaging::T
 	}
 
 	//	drop new scene node into game (let go)
-	if ( ActionRef == m_NewSceneNodeClickAction && m_SelectedNodes.GetSize() )
+	if ( ActionRef == m_NewSceneNodeClickAction && HasNewNodesSelected() )
 	{
 		#ifdef DEBUG_NODE_INTERACTION
 			TTempString Debug_String("Mouse click action (assume up) - releasing [new] selected nodes ");
@@ -839,7 +874,11 @@ void TLGame::TSchemeEditor::ProcessMouseMessage(TRefRef ActionRef,TLMessaging::T
 
 		//	drop new nodes into world, create widgets and unselect them
 		DropNewNode( m_SelectedNodes );
+		return;
 	}
+
+
+
 }
 
 
@@ -1094,16 +1133,18 @@ void TLGame::TSchemeEditor::DeleteNode(TRefRef NodeRef)
 	//	remove root node from graph (will remove children)
 	m_pGraph->RemoveNode( RootNodeRef );
 
+	//	include root node in the removed-node list now
+	ChildNodeRefs.Add(RootNodeRef);
+
 	//	find and remove widgets associated with these nodes
-	RemoveNodeWidget( RootNodeRef );
 	for ( u32 c=0;	c<ChildNodeRefs.GetSize();	c++ )
 		RemoveNodeWidget( ChildNodeRefs[c] );
 
 	//	unselect nodes
-	UnselectNode( RootNodeRef );
 	UnselectNode( ChildNodeRefs );
 
-	//	todo: remove links
+	//	overloaded notification
+	OnNodeDeleted( ChildNodeRefs );
 }
 
 
@@ -1148,7 +1189,9 @@ Bool TLGame::TSchemeEditor::Mode_Node::OnBegin(TRefRef PreviousMode)
 void TLGame::TSchemeEditor::Mode_Node::OnEnd(TRefRef NextMode)
 {
 	//	when we go out of node mode, unselect any nodes we had selected
-	GetEditor().UnselectAllNodes();
+	//	gr: unless we're going to link mode
+	if ( NextMode != "Link" )
+		GetEditor().UnselectAllNodes();
 }
 
 
