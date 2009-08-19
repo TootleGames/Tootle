@@ -136,7 +136,7 @@ Bool TLMenu::TMenuController::ExecuteMenuItem(TRefRef MenuItemRef)
 	else
 	{
 		//	do non standard command
-		if ( !ExecuteCommand( MenuCommand ) )
+		if ( !ExecuteCommand( MenuCommand, pMenuItem->GetData() ) )
 			return FALSE;
 	}
 
@@ -493,7 +493,7 @@ TLGame::TMenuWrapperText::TMenuWrapperText(TLMenu::TMenuController& MenuControll
 		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
 
 		//	if string is missing, convert the menu item ref
-		if ( MenuItem.GetText().GetLength() == 0 )
+		if ( MenuItem.GetString().GetLength() == 0 )
 		{
 			TTempString RefString;
 			MenuItem.GetMenuItemRef().GetString( RefString );
@@ -501,7 +501,7 @@ TLGame::TMenuWrapperText::TMenuWrapperText(TLMenu::TMenuController& MenuControll
 		}
 		else
 		{
-			InitMessage.ExportDataString("string", MenuItem.GetText() );
+			InitMessage.ExportDataString("string", MenuItem.GetString() );
 		}
 
 		//InitMessage.ExportData("DbgDatum", TRef("_BnB2") );

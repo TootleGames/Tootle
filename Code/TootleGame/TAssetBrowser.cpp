@@ -124,7 +124,7 @@ TPtr<TLMenu::TMenu> TLGame::TAssetBrowser::CreateMenu(TRefRef MenuRef)
 		
 		//	add a "refresh" menu command
 		pItem = pNewMenuAsset->AddMenuItem("Refresh");
-		pItem->SetText("Refresh");
+		pItem->SetString("Refresh");
 		pItem->SetMenuCommand("Refresh");
 /*
 		//	add a menu item for all the assets we have

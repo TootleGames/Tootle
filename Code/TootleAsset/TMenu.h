@@ -64,8 +64,8 @@ public:
 	TMenuItem(TRefRef MenuItemRef);
 
 	TRefRef						GetMenuItemRef() const		{	return m_MenuItemRef;	}
-	const TString&				GetText() const				{	return m_Text;	}
-	DEPRECATED const TString&	GetString() const 			{	return m_Text;	}
+	DEPRECATED const TString&	GetText() const				{	return m_String;	}
+	const TString&				GetString() const 			{	return m_String;	}
 	TRefRef						GetMenuCommand() const		{	return m_Command;	}
 	TRefRef						GetNextMenu() const			{	return m_NextMenu;	}
 	DEPRECATED TRefRef			GetMeshRef() const			{	return m_MeshRef; }		//	please move away from using this and use either the MenuWrapper classes or your own custom menu renderer
@@ -73,8 +73,8 @@ public:
 	const TBinaryTree&			GetData() const				{	return m_Data;	}
 	TBinaryTree&				GetData()					{	return m_Data;	}
 
-	DEPRECATED void				SetString(const TString& String) 	{	m_Text = String;	}
-	void						SetText(const TString& String)		{	m_Text = String;	}
+	void						SetString(const TString& String) 	{	m_String = String;	}
+	DEPRECATED void				SetText(const TString& String)		{	m_String = String;	}
 	void						SetMenuCommand(TRefRef Command)		{	m_Command = Command;	}
 	void						SetNextMenu(TRefRef NextMenu)		{	m_NextMenu = NextMenu;	SetMenuCommand("open");	};
 	void						SetMeshRef(TRefRef MeshRef)			{	m_MeshRef = MeshRef;	}
@@ -88,7 +88,7 @@ protected:
 	TRef						m_MenuItemRef;		//	ref for menu item
 	TRef						m_Command;			//	menu command, invalid commands cannot be highlighted
 
-	TString						m_Text;				//	string displayed on menu
+	TString						m_String;			//	string displayed on menu
 	TRef						m_NextMenu;			//	if menu command is "open" then this is the menu we open
 
 	//	todo: gr: replace all this with TBinaryData?

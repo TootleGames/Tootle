@@ -125,7 +125,7 @@ class TLCore::TApplication::Mode_Base : public TStateMode
 {
 public:
 	template<class APPTYPE>
-	FORCEINLINE APPTYPE*				GetApplication()		{	return TStateMode::GetStateMachine<APPTYPE>();	}
+	FORCEINLINE APPTYPE&				GetApplication()		{	return *TStateMode::GetStateMachine<APPTYPE>();	}
 	//template<>
 	//FORCEINLINE TLCore::TApplication*	GetApplication()		{	return TStateMachine::GetStateMachine<TLCore::TApplication>();	}
 };

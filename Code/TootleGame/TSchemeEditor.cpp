@@ -314,7 +314,7 @@ Bool TLGame::TSchemeEditor::CreateEditorGui(TRefRef EditorScheme)
 			TTempString MenuItemString;
 			if ( !pNewNodeData->ImportDataString("Name", MenuItemString ) )
 				TypeOrSchemeRef.GetString( MenuItemString, TRUE );
-			pMenuItem->SetText( MenuItemString );
+			pMenuItem->SetString( MenuItemString );
 
 			//	add the new node data to the menu item's data (named "newnode")
 			pMenuItem->GetData().AddChild( pNewNodeData );
@@ -758,7 +758,7 @@ void TLGame::TSchemeEditor::CreateEditorIcons(TRefRef ParentRenderNode)
 			// Create a text item
 			InitMessage.ExportData("translate", IconPosition );
 
-			InitMessage.ExportDataString("string", IconMenuItem.GetText() );
+			InitMessage.ExportDataString("string", IconMenuItem.GetString() );
 			InitMessage.ExportData("FontRef", TRef("fdebug") );
 			InitMessage.ExportData("boxdatum", TRef("Icons") );
 			InitMessage.ExportData("boxnode", TRef("em_obj") );

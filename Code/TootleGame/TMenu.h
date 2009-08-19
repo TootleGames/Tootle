@@ -77,8 +77,9 @@ public:
 	Bool				GetMenuItemExists(TRefRef MenuItem) const	{	return IsMenuOpen() ? GetCurrentMenu()->GetMenuItemExists(MenuItem) : FALSE;	}
 
 protected:
-	virtual TPtr<TMenu>		CreateMenu(TRefRef MenuRef);			//	create a menu. default just loads menu definition from assets, overload to create custom menus
-	virtual Bool			ExecuteCommand(TRefRef MenuCommand)	{	return FALSE;	}	//	execute menu item command 
+	virtual TPtr<TMenu>	CreateMenu(TRefRef MenuRef);			//	create a menu. default just loads menu definition from assets, overload to create custom menus
+	virtual Bool		ExecuteCommand(TRefRef MenuCommand)	{	return FALSE;	}	//	execute menu item command 
+	virtual Bool		ExecuteCommand(TRefRef MenuCommand,TBinaryTree& MenuItemData)	{	return ExecuteCommand( MenuCommand );	}	//	execute menu item command - gr: new version, provides the data from the menu item as well to do specific stuff - can be null if we are executing a command without using a menu item
 
 	TPtr<TMenuItem>		GetMenuItem(TRefRef MenuItemRef);	//	get menu item out of current menu
 
