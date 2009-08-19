@@ -109,7 +109,7 @@ public:
 	void				Add(TPtr<TFile>& pFile);						//	add file to group
 	void				Remove(TPtr<TFile>& pFile);						//	remove file from group
 	TPtr<TFile>&		GetNewestFile(TRefRef FileType=TRef());			//	get file with newest timestamp
-	FORCEINLINE Bool	IsEmpty() const									{	return (m_Files.GetSize() > 0);	}
+	FORCEINLINE Bool	IsEmpty() const									{	return (m_Files.GetSize() == 0);	}
 	TPtrArray<TFile>&	GetFiles()										{	return m_Files;	}
 
 	FORCEINLINE Bool	operator==(TRefRef FileRef) const				{	return GetFileRef() == FileRef;	}
