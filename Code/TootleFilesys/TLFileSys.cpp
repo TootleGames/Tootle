@@ -680,6 +680,14 @@ Bool TLFileSys::TFileFactory::RemoveFileInstance(TPtr<TLFileSys::TFile>& pFile)
 		return FALSE;
 	}
 
+#ifdef _DEBUG
+	//	fail to make instances with no type (eg. executable name on ipod) 
+	TTempString Debug_String("Removing file from group: ");
+	pFile->GetFileAndTypeRef().GetString(Debug_String);
+	TLDebug_Print( Debug_String );
+#endif
+	
+
 	//	remove from groups
 	OnFileRemoved( pFile );
 

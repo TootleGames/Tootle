@@ -55,7 +55,9 @@ TPtr<TLFileSys::TFile> TLFileSys::TFileSys::CreateFileInstance(const TString& Fi
 
 	//	already created/exists just return current one
 	if ( pFile )
+	{
 		return pFile;
+	}
 
 	//	create new file object
 	pFile = TLFileSys::g_pFileFactory->CreateFileInstance( Filename, GetFileSysRef() );
@@ -156,9 +158,9 @@ SyncBool TLFileSys::TFileSys::UpdateFileList()
 	{
 		TLFileSys::TFile& File = *(GetFileList().ElementAt(f));
 		File.Debug_GetString( Debug_String );
-		Debug_String.Append("\n");
+		TLDebug_Print( Debug_String );
+		Debug_String.Empty();
 	}
-	TLDebug_Print( Debug_String );
 #endif
 
 	//	gr: was SyncWait... not sure why, now when it returns SyncTrue we 

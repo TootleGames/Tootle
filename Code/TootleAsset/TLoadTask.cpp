@@ -330,6 +330,13 @@ TRef Mode_GetAssetFile::Update(float Timestep)
 		//	remove files we know will convert to wrong asset type
 		if ( FileExportAssetType.IsValid() && FileExportAssetType != GetAssetAndTypeRef().GetTypeRef() )
 		{
+#ifdef _DEBUG
+			TTempString Debug_String("File export type is invalid or incorrect type ");
+			GetAssetAndTypeRef().GetRef().GetString( Debug_String );
+			Debug_String.Append(" - should be ");
+			FileExportAssetType.GetString(Debug_String);
+			TLDebug_Print( Debug_String );
+#endif			
 			FileGroupFiles.RemoveAt( f );
 			continue;
 		}
@@ -338,6 +345,11 @@ TRef Mode_GetAssetFile::Update(float Timestep)
 			//	make sure it's not in our already-tried list
 			if ( GetLoadTask()->HasFailedToConvertFile( File ) )
 			{
+#ifdef _DEBUG
+				TTempString Debug_String("Failed to convert file ");
+				GetAssetAndTypeRef().GetRef().GetString( Debug_String );
+				TLDebug_Print( Debug_String );
+#endif			
 				FileGroupFiles.RemoveAt( f );
 				continue;
 			}
@@ -349,7 +361,7 @@ TRef Mode_GetAssetFile::Update(float Timestep)
 	{
 		//	no file at all with a matching name
 		TTempString Debug_String("Failed to find any more files with a file name/ref matching ");
-		GetAssetAndTypeRef().GetRef().GetString( Debug_String );
+		GetAssetAndTypeRef().GetString( Debug_String );
 		Debug_String.Append(" to try and load/convert");
 		TLDebug_Print( Debug_String );
 		return "Failed";

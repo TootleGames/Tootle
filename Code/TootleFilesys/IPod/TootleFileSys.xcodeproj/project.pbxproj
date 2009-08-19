@@ -616,7 +616,7 @@
 		840EBF860F777B9C00BA6F4C /* symbols0.pbxsymbols */ = {isa = PBXFileReference; lastKnownFileType = file; path = symbols0.pbxsymbols; sourceTree = "<group>"; };
 		840EBF880F777B9C00BA6F4C /* libTootleFileSys.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTootleFileSys.a; sourceTree = "<group>"; };
 		840EBF890F777B9C00BA6F4C /* IPodLocalFileSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodLocalFileSys.h; sourceTree = "<group>"; };
-		840EBF8A0F777B9C00BA6F4C /* IPodLocalFileSys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodLocalFileSys.mm; sourceTree = "<group>"; };
+		840EBF8A0F777B9C00BA6F4C /* IPodLocalFileSys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 2; path = IPodLocalFileSys.mm; sourceTree = "<group>"; };
 		840EBF8B0F777B9C00BA6F4C /* TootleFileSys.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = TootleFileSys.xcodeproj; sourceTree = "<group>"; };
 		840EBF8E0F777B9C00BA6F4C /* TFileFnt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileFnt.cpp; path = ../TFileFnt.cpp; sourceTree = SOURCE_ROOT; };
 		840EBF8F0F777B9C00BA6F4C /* TFileFnt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileFnt.h; path = ../TFileFnt.h; sourceTree = SOURCE_ROOT; };
@@ -624,7 +624,7 @@
 		840EBF910F777B9C00BA6F4C /* TFilePng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFilePng.h; path = ../TFilePng.h; sourceTree = SOURCE_ROOT; };
 		8418E6C10F4B18C700B956C9 /* TFileMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileMenu.cpp; path = ../TFileMenu.cpp; sourceTree = SOURCE_ROOT; };
 		8418E6C20F4B18C700B956C9 /* TFileMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileMenu.h; path = ../TFileMenu.h; sourceTree = SOURCE_ROOT; };
-		8418FCF30F4F4D5900B956C9 /* TFileSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileSys.cpp; path = ../TFileSys.cpp; sourceTree = SOURCE_ROOT; };
+		8418FCF30F4F4D5900B956C9 /* TFileSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TFileSys.cpp; path = ../TFileSys.cpp; sourceTree = SOURCE_ROOT; };
 		8418FCF40F4F4D5900B956C9 /* TFileSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileSys.h; path = ../TFileSys.h; sourceTree = SOURCE_ROOT; };
 		8450985710219F7200B78F2B /* TFileParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileParticle.cpp; path = ../TFileParticle.cpp; sourceTree = SOURCE_ROOT; };
 		8450985810219F7200B78F2B /* TFileParticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileParticle.h; path = ../TFileParticle.h; sourceTree = SOURCE_ROOT; };
