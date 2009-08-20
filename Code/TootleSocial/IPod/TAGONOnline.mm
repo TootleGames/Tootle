@@ -15,8 +15,9 @@ void TLSocial::Platform::IPod::AGONOnline::BeginSession(const TString& APIKey, c
 	AgonCreate(pAPISecret); // App secret that matches the DevDB environment.
 	
 	// Tint AGON backgrounds to match app
-	AgonSetStartBackgroundTint([UIColor colorWithRed:118/255.0 green:118/255.0 blue:118/255.0 alpha:1]);
-	AgonSetEndBackgroundTint([UIColor colorWithRed:121/255.0 green:163/255.0 blue:164/255.0 alpha:1]);
+	// NOTE: Seaman Count specific atm
+	AgonSetStartBackgroundTint([UIColor colorWithRed:125/255.0 green:208/255.0 blue:1 alpha:1]);
+	AgonSetEndBackgroundTint([UIColor colorWithRed:0/255.0 green:76/255.0 blue:120/255.0 alpha:1]);
 }
 
 void TLSocial::Platform::IPod::AGONOnline::OpenDashboard()
