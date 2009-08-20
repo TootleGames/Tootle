@@ -43,7 +43,8 @@ SyncBool TLGame::TGame::Update(float fTimeStep)
 	//	request to change app mode
 	if ( m_NewGameMode.IsValid() )
 	{
-		TStateMachine::SetMode( m_NewGameMode );
+		if ( GetCurrentModeRef() != m_NewGameMode )
+			TStateMachine::SetMode( m_NewGameMode );
 		m_NewGameMode.SetInvalid();
 	}
 
