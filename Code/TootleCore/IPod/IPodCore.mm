@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 //	int retVal = UIApplicationMain(argc, argv, nil, [OpenglESAppAppDelegate class]);	//	
 	int retVal = UIApplicationMain(argc, argv, nil, @"OpenglESAppAppDelegate");	//	[OpenglESAppAppDelegate class]
 //	int retVal = UIApplicationMain(argc, argv, nil, nil);
-	
+		
 	return retVal;
 }
 
@@ -483,6 +483,9 @@ void TLCore::Platform::Sleep(u32 Millisecs)
 	
 	// Destroy the core manager
 	TLCore::g_pCoreManager = NULL;
+	
+	TLCore::Platform::g_AppExe.Empty(TRUE);
+
 }
 
 

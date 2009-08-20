@@ -346,13 +346,17 @@ SyncBool Platform::Shutdown()
 	// Shutdown the ipod hardware
 
 	//Clear the touch data array
-	IPod::g_TouchData.Empty();
+	IPod::g_TouchData.Empty(TRUE);
+	IPod::g_AccelerationData.Empty(TRUE);
 	
-	IPod::g_ActiveTouchObjects.Empty();
-	IPod::g_TouchObjects.Empty();
+	IPod::g_ActiveTouchObjects.Empty(TRUE);
+	IPod::g_TouchObjects.Empty(TRUE);
 	
 	// Cleanup if the keyboard is active
 	IPod::DestroyVirtualKeyboard();
+	
+	IPod::g_KeyboardRefMap.Empty(TRUE);
+	IPod::g_KeyboardKeyArray.Empty(TRUE);
 	
 	return SyncTrue;
 }
