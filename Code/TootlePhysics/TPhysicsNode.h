@@ -10,13 +10,16 @@
 #include <TootleCore/TFlags.h>
 #include <TootleCore/TLMaths.h>
 #include "TCollisionShape.h"
-#include "TLPhysics.h"
-#include <box2d/include/box2d.h>
 
+#include <box2d/source/common/b2Settings.h> // required for float32
 
+#include "TCollisionInfo.h"
 
+// Forward declarations
 class b2World;
+class b2Fixture;
 class b2Body;
+struct b2Vec2;
 
 
 namespace TLMaths
@@ -32,6 +35,7 @@ namespace TLPhysics
 	class TPhysicsgraph;
 	class TJoint;
 	class TCollisionShape;					//	shape with a ref
+	class TCollisionInfo;
 
 	extern float3		g_WorldUp;			//	gr: currently a global, change to be on the graph, or per node at some point so individual nodes can have their own gravity direction. Depends on what we need it for
 	extern float3		g_WorldUpNormal;	//	gr: currently a global, change to be on the graph, or per node at some point so individual nodes can have their own gravity direction. Depends on what we need it for
@@ -179,77 +183,6 @@ protected:
 
 
 
-
-
-FORCEINLINE void TLPhysics::TPhysicsNode::AddTorque(float AngleRadians)
-{
-	if ( m_pBody && AngleRadians != 0.f )	
-	{
-		//	gr: apply the torque
-		m_pBody->ApplyTorque( AngleRadians );	
-	}
-}
-	
-FORCEINLINE void TLPhysics::TPhysicsNode::SetVelocity(const float3& Velocity)	
-{
-	if ( m_pBody )
-	{
-		m_pBody->SetLinearVelocity( b2Vec2( Velocity.x, Velocity.y ) );
-	}
-}
-
-
-FORCEINLINE float3 TLPhysics::TPhysicsNode::GetVelocity() const			
-{
-	if ( m_pBody )
-	{
-		const b2Vec2& BodyVelocity = m_pBody->GetLinearVelocity();
-		return float3( BodyVelocity.x, BodyVelocity.y, 0.f );
-	}
-	else
-	{
-		return float3( 0.f, 0.f, 0.f );
-	}
-}
-
-
-FORCEINLINE void TLPhysics::TPhysicsNode::ResetForces()
-{
-	if ( m_pBody )
-	{
-		//	gr: quick fudge version, seems to work fine
-		m_pBody->PutToSleep();
-		m_pBody->WakeUp();
-	}
-}
-
-
-FORCEINLINE void TLPhysics::TPhysicsNode::SetFriction(float Friction)
-{
-	TLDebug_Break("todo - modify box2d");
-	//b2Shape* pBodyShape = GetBodyShape();
-	//if ( pBodyShape )
-	//	pBodyShape->SetFriction( Friction );
-}
-
-	
-FORCEINLINE void TLPhysics::TPhysicsNode::SetLinearDamping(float Damping)
-{
-	m_Damping = Damping;
-	if ( m_pBody )
-	{
-		m_pBody->SetLinearDamping( m_Damping );
-	}
-}
-
-
-FORCEINLINE void TLPhysics::TPhysicsNode::SetAngularDamping(float Damping)
-{
-	if ( m_pBody )
-	{
-		m_pBody->SetAngularDamping( Damping );
-	}
-}
 
 
 FORCEINLINE void TLPhysics::TPhysicsNode::EnableCollision(Bool Enable)

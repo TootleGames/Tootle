@@ -1,5 +1,10 @@
 #include "TCollisionShape.h"
+#include "TCollisionShapeInline.h"
+
 #include "TPhysicsGraph.h"
+#include "TLPhysics.h"
+//#include "TLPhysicsInline.h"
+
 #include <TootleAsset/TAsset.h>
 #include <TootleAsset/TMesh.h>
 #include <TootleMaths/TShape.h>

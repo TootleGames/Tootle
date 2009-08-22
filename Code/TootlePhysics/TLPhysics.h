@@ -3,9 +3,14 @@
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/TBinaryTree.h>
 #include <TootleMaths/TShape.h>
-#include <box2d/include/box2d.h>
 
 
+// Forward declarations
+struct b2FixtureDef;
+struct b2CircleDef;
+struct b2PolygonDef;
+struct b2Vec2;
+class b2Fixture;
 
 #define PHYSICS_SCALAR		60.f
 /*
@@ -30,8 +35,7 @@ Rubber on Concrete (wet)					0.25	0.3
 
 namespace TLPhysics
 {
-	class TCollisionInfo;		//	collision info which is sent to subscribers - merge with intersection info?
-	class TPhysicsNode;
+
 
 	b2FixtureDef*				GetShapeDefFromShape(b2CircleDef& TempCircleDef,b2PolygonDef& TempPolygonDef,const TLMaths::TShape& Shape);		//	get a box2D shape definition from a shape. need some temporaries to decide which to return
 	Bool						GetCircleDefFromShape(b2CircleDef& PolygonDef,const TLMaths::TShape& Shape);		//	get a box2D polygon [definition] shape from a tootle shape
@@ -41,12 +45,6 @@ namespace TLPhysics
 	Bool						IsEdgeChainShape(const TLMaths::TShape& Shape);	//	returns TRUE if this shape must be created as a edge chain
 	Bool						GetEdgeChainVertexes(TArray<b2Vec2>& VertexBuffer,const TLMaths::TShape& Shape);
 
-	FORCEINLINE TPhysicsNode*	GetPhysicsNodeFromBody(b2Body* pBody)			{	return pBody ? (TLPhysics::TPhysicsNode*)pBody->GetUserData() : NULL;	}	//	in case the user-data usage of the body changes, use this to access a physics node from a body
-	FORCEINLINE TPhysicsNode*	GetPhysicsNodeFromShape(b2Fixture* pShape)		{	return pShape ? GetPhysicsNodeFromBody( pShape->GetBody() ) : NULL;	}
-	FORCEINLINE void*			GetBodyUserDataFromPhysicsNode(TPhysicsNode* pNode)	{	return pNode ? (void*)pNode : NULL;	}
-
-	FORCEINLINE TRef			GetShapeRefFromShape(b2Fixture* pShape)			{	return pShape ? TRef( TLCore::PointerToInteger( pShape->GetUserData() ) ) : TRef_Invalid;	}
-	FORCEINLINE void*			GetShapeUserDataFromShapeRef(TRefRef ShapeRef)	{	return TLCore::IntegerToPointer( ShapeRef.GetData() );	}
 
 
 	/*
@@ -80,7 +78,6 @@ namespace TLPhysics
 	*/
 };
 
-TLCore_DeclareIsDataType( TLPhysics::TCollisionInfo );
 
 
 /*
@@ -209,36 +206,5 @@ inline float3 TLPhysics::SpringVelocity( float fRestorationConstant)
 */
 
 
-
-//------------------------------------------------------
-//	collision info which is sent to subscribers - merge with intersection info?	
-//------------------------------------------------------
-class TLPhysics::TCollisionInfo
-{
-public:
-	TCollisionInfo() : m_OtherNodeStatic ( FALSE ), m_IsNewCollision ( TRUE )	{}
-
-	void			Set(const TLPhysics::TPhysicsNode& OtherNode,const TLMaths::TIntersection& Intersection);
-	void			SetIsNewCollision(Bool NewCollision)	{	m_IsNewCollision = NewCollision;	}
-	void			SetIsEndOfCollision(TRefRef ShapeRef,const TLPhysics::TPhysicsNode& OtherNode,TRefRef OtherShapeRef);	//	set up end-of-collision with this node
-
-	void			ExportData(TBinaryTree& Data);		//	export this collision info into a BinaryData
-	Bool			ImportData(TBinaryTree& Data);		//	get collision info from a BinaryData
-
-	Bool			IsEndOfCollision() const			{	return !m_IsNewCollision;	}
-	Bool			HasNormal() const					{	return m_IntersectionNormal.IsNonZero();	}
-	const float2&	GetIntersectionNormal() const		{	return m_IntersectionNormal;	}		//	gr: USE THIS FUNCTION as normal computation may change in future
-
-public:
-	Bool		m_IsNewCollision;		//	is a new collision, if false then it's notification of an end-of-collision/contact
-	TRef		m_OtherNode;			//	ref of other physics node
-	TRef		m_OtherNodeOwner;		//	ref of other physics node's owner (ie. what scene node we collided with)
-	Bool		m_OtherNodeStatic;		//	other node is static
-	float3		m_Intersection;			//	collision point in world space on node that this has come from
-	float3		m_OtherIntersection;	//	collision point in world space on other object
-	float2		m_IntersectionNormal;	//	this is the direction from this node to the othernode. The direction from intersection to other intersection might be better...
-	TRef		m_Shape;				//	ref of the shape that collided on this node
-	TRef		m_OtherShape;			//	ref of the shape on the other node we collided with
-};
 
 

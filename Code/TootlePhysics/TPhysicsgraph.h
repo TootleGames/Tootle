@@ -8,48 +8,26 @@
 #pragma once
 
 #include <TootleCore/TLGraph.h>
-#include "TLPhysics.h"
-#include "TPhysicsNode.h"
-#include <TootleMaths/TQuadTree.h>
 
+#include <box2d/source/dynamics/b2WorldCallbacks.h> // Required for the callback classes
+
+#include "TPhysicsNode.h"
+#include "TJoint.h"
+
+#include <TootleMaths/TQuadTree.h>
 
 namespace TLPhysics
 {
 	class TPhysicsgraph;
 	class TPhysicsNode;
 	class TPhysicsNodeFactory;
-	class TJoint;					//	joint between two physics nodes.
 
 	extern TPtr<TPhysicsgraph> g_pPhysicsgraph;
 };
 
 
-
-
-
-
-//-----------------------------------------------------
-//	class to join two nodes together in whatever way.
-//	this class will expand in future for other joint types - maybe be overloaded
-//-----------------------------------------------------
-class TLPhysics::TJoint
-{
-public:
-	TJoint();
-
-	SyncBool	CreateJoint(b2World& World,TPhysicsgraph& PhysicsGraph);
-	void		DestroyJoint(b2World& World);
-
-public:
-	TRef		m_NodeA;			//	physics nodes
-	TRef		m_NodeB;			//	physics nodes
-	float2		m_JointPosA;		//	position relative to the node
-	float2		m_JointPosB;		//	position relative to the node
-	Bool		m_CollisionBetweenNodes;	//	can explicitly disable collision between these two nodes via joint
-
-private:
-	b2Joint*		m_pJoint;		//	joint in world
-};
+class b2World;
+class b2Fixture;
 
 
 //-----------------------------------------------------
@@ -61,18 +39,16 @@ public:
 	TPhysicsgraph() :
 		TLGraph::TGraph<TLPhysics::TPhysicsNode>	( "Physics" )
 	{
+		m_pWorld = NULL;
 	}
 
-	virtual SyncBool		Initialise();
-	virtual void			UpdateGraph(float TimeStep);
-	
 	void					SetRootCollisionZone(TPtr<TLMaths::TQuadTreeZone>& pZone,Bool AllowSleep=TRUE);	//	set a new root collision zone. Allow sleep to speed up idle objects, BUT without gravity, joints don't update/constrain properly... looking for a good soluition to this
 
 	void					GetNodesInShape(const TLMaths::TShapePolygon2D& Shape,TArray<TLPhysics::TPhysicsNode*>& NearPhysicsNodes);
 	void					GetNodesInShape(const TLMaths::TSphere2D& Shape,TArray<TLPhysics::TPhysicsNode*>& NearPhysicsNodes,Bool StrictSphere);	//	get all the nodes in this shape - for spheres optionally do strict sphere checks - box2D uses Boxes for its query so it can return objects outside the sphere. this does an extra loop to make sure distance is within the radius
 	void					GetNodesInShape(const TLMaths::TBox2D& Shape,TArray<TLPhysics::TPhysicsNode*>& NearPhysicsNodes);						//	get all the nodes in this shape
 
-	FORCEINLINE TPtr<b2World>&		GetWorld()						{	return m_pWorld;	}				//	box2d's world
+	FORCEINLINE const b2World*		GetWorld()					const {	return m_pWorld;	}				//	box2d's world
 	FORCEINLINE void				AddJoint(const TJoint& Joint)	{	m_NodeJointQueue.Add( Joint );	};	//	add a joint to be created on next update
 	FORCEINLINE void				RefilterShape(b2Fixture* pShape)	{	m_RefilterQueue.Add( pShape );	}	//	add to list of shapes that need refiltering
 
@@ -82,6 +58,13 @@ public:
 	FORCEINLINE void		SetGravityZ(float fValue)		{	if ( g_WorldUp.z == fValue )	return;		g_WorldUp.z = fValue;	CalcWorldUpNormal();	}
 	
 protected:
+
+	virtual SyncBool		Initialise();
+	virtual SyncBool		Shutdown();
+
+	virtual void			UpdateGraph(float TimeStep);
+	
+
 	virtual void			OnNodeRemoving(TPtr<TLPhysics::TPhysicsNode>& pNode);
 	virtual void			OnNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pNode,Bool SendAddedMessage);
 
@@ -98,7 +81,7 @@ private:
 	virtual bool			ShouldCollide(b2Fixture* fixtureA, b2Fixture* fixtureB);
 
 protected:
-	TPtr<b2World>					m_pWorld;						//	box2d's world
+	b2World*						m_pWorld;						//	box2d's world
 	TArray<TJoint>					m_NodeJoints;					//	list of joints created
 	TArray<TJoint>					m_NodeJointQueue;				//	list of joints that are to be created in the next update
 	TArray<b2Fixture*>				m_RefilterQueue;				//	queue of box2d shapes that need refiltering

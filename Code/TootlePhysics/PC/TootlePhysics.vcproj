@@ -116,6 +116,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				ShowIncludes="false"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -215,6 +216,10 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="..\TCollisionInfo.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TCollisionShape.cpp"
 			>
 		</File>
@@ -223,11 +228,27 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TCollisionShapeInline.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TJoint.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TJoint.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TLPhysics.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\TLPhysics.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TLPhysicsInline.h"
 			>
 		</File>
 		<File
@@ -252,6 +273,10 @@
 		</File>
 		<File
 			RelativePath="..\TPhysicsNodeChain.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TPhysicsNodeInline.h"
 			>
 		</File>
 		<File

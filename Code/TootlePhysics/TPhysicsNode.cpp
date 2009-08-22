@@ -1,13 +1,20 @@
 #include "TPhysicsNode.h"
+#include "TPhysicsNodeInline.h"
+
 #include "TPhysicsGraph.h"
+#include "TLPhysics.h"
+#include "TLPhysicsInline.h"
+
 #include <TootleCore/TLMaths.h>
 #include <TootleCore/TLTime.h>
 #include <TootleScene/TScenegraph.h>
 #include <TootleCore/TEventChannel.h>
 #include <TootleMaths/TShapeSphere.h>
 #include <TootleMaths/TShapeBox.h>
-#include <box2d/include/box2d.h>
+//#include <box2d/include/box2d.h>
 #include <TootleAsset/TMesh.h>
+
+#include "TCollisionShapeInline.h"
 
 
 //	smaller values make smoother movements but we can tweak this to see what we can get away with on a small resolution screen :)
@@ -956,7 +963,7 @@ void TLPhysics::TPhysicsNode::SetBodyTransform(u8 TransformChangedBits)
 	m_pBody->WakeUp();
 
 	//	refilter on world to reset contact points of the shapes
-	TPtr<b2World>& pWorld = TLPhysics::g_pPhysicsgraph->GetWorld();
+	const b2World* pWorld = TLPhysics::g_pPhysicsgraph->GetWorld();
 	if ( pWorld )
 	{
 		b2Fixture* pShape = m_pBody->GetFixtureList();

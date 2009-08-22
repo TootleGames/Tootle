@@ -8,9 +8,11 @@
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/TRef.h>
 #include <TootleCore/TLMaths.h>
-#include "TLPhysics.h"
-#include <box2d/include/box2d.h>
 
+#include <TootleMaths/TShape.h>
+
+class b2Fixture;
+class b2Body;
 
 namespace TLPhysics
 {
@@ -34,9 +36,9 @@ public:
 	FORCEINLINE Bool				IsSensor() const							{	return m_IsSensor;	}
 	FORCEINLINE void				SetIsSensor(Bool IsSensor)					{	m_IsSensor = IsSensor;	}
 
-	FORCEINLINE b2Body*				GetBody()									{	return m_pBodyShape ? m_pBodyShape->GetBody() : NULL;	}
-	FORCEINLINE b2Fixture*			GetBodyShape()								{	return m_pBodyShape;	}
-	FORCEINLINE void				SetBodyShape(b2Fixture* pBodyShape)			{	m_pBodyShape = pBodyShape;	}
+	FORCEINLINE b2Body*				GetBody();
+	FORCEINLINE b2Fixture*			GetBodyShape();
+	FORCEINLINE void				SetBodyShape(b2Fixture* pBodyShape);
 	Bool							UpdateBodyShape();							//	update the bodyshape to match our current shape - fails if it must be recreated, or doesnt exist etc
 	Bool							DestroyBodyShape(b2Body* pBody);			//	delete body shape from body - returns if any changes made
 
