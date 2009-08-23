@@ -57,6 +57,7 @@ FORCEINLINE void TLPhysics::TPhysicsNode::SetFriction(float Friction)
 	//	pBodyShape->SetFriction( Friction );
 }
 
+
 	
 FORCEINLINE void TLPhysics::TPhysicsNode::SetLinearDamping(float Damping)
 {
@@ -75,3 +76,10 @@ FORCEINLINE void TLPhysics::TPhysicsNode::SetAngularDamping(float Damping)
 		m_pBody->SetAngularDamping( Damping );
 	}
 }
+
+//	this re-sets it on the body if it exists
+FORCEINLINE void TLPhysics::TPhysicsNode::OnDampingChanged()
+{	
+	SetLinearDamping( m_Damping );
+}	
+

@@ -233,8 +233,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -278,13 +276,11 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>10</integer>
-									<integer>2</integer>
-									<integer>0</integer>
+									<integer>25</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {186, 445}}</string>
+							<string>{{0, 84}, {186, 445}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -314,6 +310,8 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -331,7 +329,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8442318E0FF919FE0024EFEF</string>
+										<string>84C80E4A1040C5AE004FC72E</string>
 										<key>history</key>
 										<array>
 											<string>8488F46B0F8A86E2008A08AF</string>
@@ -340,7 +338,8 @@
 											<string>84C3F2E60FB84AB8001BBE93</string>
 											<string>84C3F30D0FB84B67001BBE93</string>
 											<string>8442318B0FF919FE0024EFEF</string>
-											<string>8442318C0FF919FE0024EFEF</string>
+											<string>84C80E061040C2F8004FC72E</string>
+											<string>84C80E491040C5AE004FC72E</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -351,7 +350,7 @@
 											<string>84C3F2E80FB84AB8001BBE93</string>
 											<string>84C3F30F0FB84B67001BBE93</string>
 											<string>84E21B830FF252C60081287A</string>
-											<string>8442318D0FF919FE0024EFEF</string>
+											<string>84C80E081040C2F8004FC72E</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -409,9 +408,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>8442318F0FF919FE0024EFEF</string>
+				<string>84C80E4C1040C5AE004FC72E</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>844231900FF919FE0024EFEF</string>
+				<string>84C80E4D1040C5AE004FC72E</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -545,6 +544,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>84EB98A80F3724C40020B52B</string>
 		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootlePhysics/IPod/TootlePhysics.xcodeproj</string>
 	</array>
@@ -626,7 +626,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>84EB98A80F3724C40020B52B</string>
-				<string>84E21B870FF252C60081287A</string>
+				<string>84C80E4E1040C5AE004FC72E</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -764,7 +764,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TPhysicsgraph.cpp</string>
+										<string>TPhysicsNode.h</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -820,8 +820,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>844231700FF8E30D0024EFEF</string>
-				<string>844231710FF8E30D0024EFEF</string>
+				<string>84C80E441040C59B004FC72E</string>
+				<string>84C80E451040C59B004FC72E</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>

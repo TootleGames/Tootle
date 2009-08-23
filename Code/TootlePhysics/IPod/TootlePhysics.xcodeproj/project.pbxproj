@@ -17,6 +17,14 @@
 		84C10AD30F0A7DF900B2DF7A /* TPhysicsNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AC70F0A7DF900B2DF7A /* TPhysicsNode.h */; };
 		84C10AD40F0A7DF900B2DF7A /* TPhysicsNodeSphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AC80F0A7DF900B2DF7A /* TPhysicsNodeSphere.cpp */; };
 		84C10AD50F0A7DF900B2DF7A /* TPhysicsNodeSphere.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AC90F0A7DF900B2DF7A /* TPhysicsNodeSphere.h */; };
+		84C80DF71040C2DC004FC72E /* TCollisionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C80DEF1040C2DC004FC72E /* TCollisionInfo.h */; };
+		84C80DF81040C2DC004FC72E /* TCollisionShapeInline.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C80DF01040C2DC004FC72E /* TCollisionShapeInline.h */; };
+		84C80DF91040C2DC004FC72E /* TJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C80DF11040C2DC004FC72E /* TJoint.cpp */; };
+		84C80DFA1040C2DC004FC72E /* TJoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C80DF21040C2DC004FC72E /* TJoint.h */; };
+		84C80DFB1040C2DC004FC72E /* TLPhysicsInline.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C80DF31040C2DC004FC72E /* TLPhysicsInline.h */; };
+		84C80DFC1040C2DC004FC72E /* TPhysicsNodeChain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C80DF41040C2DC004FC72E /* TPhysicsNodeChain.cpp */; };
+		84C80DFD1040C2DC004FC72E /* TPhysicsNodeChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C80DF51040C2DC004FC72E /* TPhysicsNodeChain.h */; };
+		84C80DFE1040C2DC004FC72E /* TPhysicsNodeInline.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C80DF61040C2DC004FC72E /* TPhysicsNodeInline.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +43,14 @@
 		84C10AD80F0A7E1300B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C10AD90F0A7E1300B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C10ADA0F0A7E1300B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
+		84C80DEF1040C2DC004FC72E /* TCollisionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCollisionInfo.h; path = ../TCollisionInfo.h; sourceTree = SOURCE_ROOT; };
+		84C80DF01040C2DC004FC72E /* TCollisionShapeInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCollisionShapeInline.h; path = ../TCollisionShapeInline.h; sourceTree = SOURCE_ROOT; };
+		84C80DF11040C2DC004FC72E /* TJoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TJoint.cpp; path = ../TJoint.cpp; sourceTree = SOURCE_ROOT; };
+		84C80DF21040C2DC004FC72E /* TJoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TJoint.h; path = ../TJoint.h; sourceTree = SOURCE_ROOT; };
+		84C80DF31040C2DC004FC72E /* TLPhysicsInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLPhysicsInline.h; path = ../TLPhysicsInline.h; sourceTree = SOURCE_ROOT; };
+		84C80DF41040C2DC004FC72E /* TPhysicsNodeChain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPhysicsNodeChain.cpp; path = ../TPhysicsNodeChain.cpp; sourceTree = SOURCE_ROOT; };
+		84C80DF51040C2DC004FC72E /* TPhysicsNodeChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPhysicsNodeChain.h; path = ../TPhysicsNodeChain.h; sourceTree = SOURCE_ROOT; };
+		84C80DF61040C2DC004FC72E /* TPhysicsNodeInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPhysicsNodeInline.h; path = ../TPhysicsNodeInline.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +84,14 @@
 		84C10ABD0F0A7DE800B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				84C80DEF1040C2DC004FC72E /* TCollisionInfo.h */,
+				84C80DF01040C2DC004FC72E /* TCollisionShapeInline.h */,
+				84C80DF11040C2DC004FC72E /* TJoint.cpp */,
+				84C80DF21040C2DC004FC72E /* TJoint.h */,
+				84C80DF31040C2DC004FC72E /* TLPhysicsInline.h */,
+				84C80DF41040C2DC004FC72E /* TPhysicsNodeChain.cpp */,
+				84C80DF51040C2DC004FC72E /* TPhysicsNodeChain.h */,
+				84C80DF61040C2DC004FC72E /* TPhysicsNodeInline.h */,
 				84C10ABE0F0A7DF900B2DF7A /* TCollisionShape.cpp */,
 				84C10ABF0F0A7DF900B2DF7A /* TCollisionShape.h */,
 				84C10AC20F0A7DF900B2DF7A /* TLPhysics.cpp */,
@@ -105,6 +129,12 @@
 				84C10AD10F0A7DF900B2DF7A /* TPhysicsgraph.h in Headers */,
 				84C10AD30F0A7DF900B2DF7A /* TPhysicsNode.h in Headers */,
 				84C10AD50F0A7DF900B2DF7A /* TPhysicsNodeSphere.h in Headers */,
+				84C80DF71040C2DC004FC72E /* TCollisionInfo.h in Headers */,
+				84C80DF81040C2DC004FC72E /* TCollisionShapeInline.h in Headers */,
+				84C80DFA1040C2DC004FC72E /* TJoint.h in Headers */,
+				84C80DFB1040C2DC004FC72E /* TLPhysicsInline.h in Headers */,
+				84C80DFD1040C2DC004FC72E /* TPhysicsNodeChain.h in Headers */,
+				84C80DFE1040C2DC004FC72E /* TPhysicsNodeInline.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -156,6 +186,8 @@
 				84C10AD00F0A7DF900B2DF7A /* TPhysicsgraph.cpp in Sources */,
 				84C10AD20F0A7DF900B2DF7A /* TPhysicsNode.cpp in Sources */,
 				84C10AD40F0A7DF900B2DF7A /* TPhysicsNodeSphere.cpp in Sources */,
+				84C80DF91040C2DC004FC72E /* TJoint.cpp in Sources */,
+				84C80DFC1040C2DC004FC72E /* TPhysicsNodeChain.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

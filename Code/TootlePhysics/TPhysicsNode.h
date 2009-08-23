@@ -94,7 +94,7 @@ public:
 	
 	FORCEINLINE void			OnFrictionChanged()					{	OnShapeDefintionChanged();	}
 	FORCEINLINE void			OnBounceChanged()					{	OnShapeDefintionChanged();	}
-	FORCEINLINE void			OnDampingChanged()					{	SetLinearDamping( m_Damping );	}	//	this re-sets it on the body if it exists
+	FORCEINLINE void			OnDampingChanged();
 	void						OnShapeDefintionChanged();
 
 	virtual void				OnTransformChanged(u8 TransformChangedBits)					{	m_TransformChangedBits |= TransformChangedBits;	if ( TransformChangedBits != 0x0 )	SetBodyTransform( TransformChangedBits );	}

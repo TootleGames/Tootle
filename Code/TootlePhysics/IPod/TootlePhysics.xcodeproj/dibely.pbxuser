@@ -10,33 +10,6 @@
 		vrLen = 455;
 		vrLoc = 23832;
 	};
-	8442318C0FF919FE0024EFEF /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C10AC70F0A7DF900B2DF7A /* TPhysicsNode.h */;
-		rLen = 7;
-		rLoc = 10262;
-		rType = 0;
-	};
-	8442318D0FF919FE0024EFEF /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C10AC60F0A7DF900B2DF7A /* TPhysicsNode.cpp */;
-		name = "TPhysicsNode.cpp: 859";
-		rLen = 8;
-		rLoc = 24134;
-		rType = 0;
-		vrLen = 455;
-		vrLoc = 23832;
-	};
-	8442318E0FF919FE0024EFEF /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C10AC70F0A7DF900B2DF7A /* TPhysicsNode.h */;
-		name = "TPhysicsNode.h: 166";
-		rLen = 7;
-		rLoc = 10262;
-		rType = 0;
-		vrLen = 1505;
-		vrLoc = 9613;
-	};
 	8461C1320F5C142700ED9509 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84C10AC60F0A7DF900B2DF7A /* TPhysicsNode.cpp */;
@@ -88,7 +61,7 @@
 		vrLoc = 893;
 	};
 	84C108AE0F0A760800B2DF7A /* Project object */ = {
-		activeBuildConfigurationName = Debug;
+		activeBuildConfigurationName = Release;
 		activeTarget = 84C10AB70F0A7DD700B2DF7A /* TootlePhysics */;
 		addToTargets = (
 			84C10AB70F0A7DD700B2DF7A /* TootlePhysics */,
@@ -102,8 +75,8 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXErrorsWarningsDataSource_LocationID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					300,
-					231.20849609375,
+					314,
+					217.20849609375,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXErrorsWarningsDataSource_TypeID,
@@ -155,14 +128,11 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 267969287;
-			PBXWorkspaceStateSaveDate = 267969287;
+			PBXPerProjectTemplateStateSaveDate = 272680220;
+			PBXWorkspaceStateSaveDate = 272680220;
 		};
 		perUserProjectItems = {
 			8442318B0FF919FE0024EFEF /* PBXTextBookmark */ = 8442318B0FF919FE0024EFEF /* PBXTextBookmark */;
-			8442318C0FF919FE0024EFEF /* PBXTextBookmark */ = 8442318C0FF919FE0024EFEF /* PBXTextBookmark */;
-			8442318D0FF919FE0024EFEF /* PBXTextBookmark */ = 8442318D0FF919FE0024EFEF /* PBXTextBookmark */;
-			8442318E0FF919FE0024EFEF /* PBXTextBookmark */ = 8442318E0FF919FE0024EFEF /* PBXTextBookmark */;
 			8461C1320F5C142700ED9509 /* PBXTextBookmark */ = 8461C1320F5C142700ED9509 /* PBXTextBookmark */;
 			8488F46B0F8A86E2008A08AF /* PBXTextBookmark */ = 8488F46B0F8A86E2008A08AF /* PBXTextBookmark */;
 			8488F46C0F8A86E2008A08AF /* PBXTextBookmark */ = 8488F46C0F8A86E2008A08AF /* PBXTextBookmark */;
@@ -174,6 +144,10 @@
 			84C3F2E80FB84AB8001BBE93 /* PBXTextBookmark */ = 84C3F2E80FB84AB8001BBE93 /* PBXTextBookmark */;
 			84C3F30D0FB84B67001BBE93 /* PBXTextBookmark */ = 84C3F30D0FB84B67001BBE93 /* PBXTextBookmark */;
 			84C3F30F0FB84B67001BBE93 /* PBXTextBookmark */ = 84C3F30F0FB84B67001BBE93 /* PBXTextBookmark */;
+			84C80E061040C2F8004FC72E /* PBXTextBookmark */ = 84C80E061040C2F8004FC72E /* PBXTextBookmark */;
+			84C80E081040C2F8004FC72E /* PBXTextBookmark */ = 84C80E081040C2F8004FC72E /* PBXTextBookmark */;
+			84C80E491040C5AE004FC72E /* PBXTextBookmark */ = 84C80E491040C5AE004FC72E /* PBXTextBookmark */;
+			84C80E4A1040C5AE004FC72E /* PBXTextBookmark */ = 84C80E4A1040C5AE004FC72E /* PBXTextBookmark */;
 			84E21B830FF252C60081287A /* PBXTextBookmark */ = 84E21B830FF252C60081287A /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84C108B20F0A760800B2DF7A /* Source Control */;
@@ -208,6 +182,13 @@
 			sepNavVisRange = "{893, 489}";
 		};
 	};
+	84C10AC30F0A7DF900B2DF7A /* TLPhysics.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {519, 3052}}";
+			sepNavSelRange = "{119, 0}";
+			sepNavVisRange = "{0, 315}";
+		};
+	};
 	84C10AC40F0A7DF900B2DF7A /* TPhysicsgraph.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {720, 8652}}";
@@ -231,9 +212,9 @@
 	};
 	84C10AC70F0A7DF900B2DF7A /* TPhysicsNode.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1440, 3864}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1290, 3906}}";
 			sepNavSelRange = "{10262, 7}";
-			sepNavVisRange = "{9613, 1505}";
+			sepNavVisRange = "{9487, 1443}";
 		};
 	};
 	84C10AC80F0A7DF900B2DF7A /* TPhysicsNodeSphere.cpp */ = {
@@ -302,6 +283,56 @@
 		rType = 0;
 		vrLen = 300;
 		vrLoc = 0;
+	};
+	84C80DF61040C2DC004FC72E /* TPhysicsNodeInline.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {720, 1232}}";
+			sepNavSelRange = "{1486, 0}";
+			sepNavVisRange = "{1414, 222}";
+		};
+	};
+	84C80E061040C2F8004FC72E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10AC30F0A7DF900B2DF7A /* TLPhysics.h */;
+		name = "TLPhysics.h: 6";
+		rLen = 0;
+		rLoc = 119;
+		rType = 0;
+		vrLen = 315;
+		vrLoc = 0;
+	};
+	84C80E081040C2F8004FC72E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10AC30F0A7DF900B2DF7A /* TLPhysics.h */;
+		name = "TLPhysics.h: 6";
+		rLen = 0;
+		rLoc = 119;
+		rType = 0;
+		vrLen = 315;
+		vrLoc = 0;
+	};
+	84C80E491040C5AE004FC72E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10AC70F0A7DF900B2DF7A /* TPhysicsNode.h */;
+		rLen = 16;
+		rLoc = 4453;
+		rType = 0;
+	};
+	84C80E4A1040C5AE004FC72E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C80E4B1040C5AE004FC72E /* TPhysicsNode.h */;
+		name = "TPhysicsNode.h: 95";
+		rLen = 0;
+		rLoc = 4300;
+		rType = 0;
+		vrLen = 1567;
+		vrLoc = 4143;
+	};
+	84C80E4B1040C5AE004FC72E /* TPhysicsNode.h */ = {
+		isa = PBXFileReference;
+		name = TPhysicsNode.h;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleGame/IPod/../../TootlePhysics/TPhysicsNode.h;
+		sourceTree = "<absolute>";
 	};
 	84E21B830FF252C60081287A /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
