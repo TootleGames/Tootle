@@ -791,6 +791,15 @@ void TLRender::TRenderNode::SetWorldTransform(const TLMaths::TTransform& SceneTr
 	if ( m_WorldTransformValid == SyncTrue )
 	{
 		//	SceneTransform should match our m_WorldTransform
+		#ifdef _DEBUG
+		if ( m_WorldTransform != SceneTransform )
+		{
+			TTempString Debug_String("World transform of render node ");
+			this->GetRenderNodeRef().GetString( Debug_String );
+			Debug_String.Append(" doesn't match it's scene transform... but render node thinks its up to date... Invalidation missing somewhere");
+			TLDebug_Break(Debug_String);
+		}
+		#endif
 		return;
 	}
 
@@ -927,7 +936,7 @@ const TLMaths::TTransform& TLRender::TRenderNode::GetWorldTransform(TRenderNode*
 	}
 	
 	//	recalculate our parent's world transform
-	const TLMaths::TTransform& ParentWorldTransform = pParent->GetChildWorldTransform( pRootNode );
+	const TLMaths::TTransform& ParentWorldTransform = pParent->GetChildWorldTransform( pRootNode, ForceCalculation );
 
 	//	we can now calculate our transform based on our parent.
 	if ( pParent->IsWorldTransformValid() != SyncTrue )
@@ -1063,14 +1072,14 @@ Bool TLRender::TRenderNode::GetLocalDatumPos(TRefRef DatumRef,float3& Position)
 //---------------------------------------------------------
 //	get the position of a datum in local space. returns FALSE if no such datum. Currently will recalc the world transform if it's out of date
 //---------------------------------------------------------
-Bool TLRender::TRenderNode::GetWorldDatumPos(TRefRef DatumRef,float3& Position)
+Bool TLRender::TRenderNode::GetWorldDatumPos(TRefRef DatumRef,float3& Position,Bool KeepShape,Bool ForceCalc)
 {
 	//	get local pos of datum first
 	if ( !GetLocalDatumPos( DatumRef, Position ) )
 		return FALSE;
 
 	//	get the world transform (this will recalc it if out of date)
-	const TLMaths::TTransform& WorldTransform = GetWorldTransform();
+	const TLMaths::TTransform& WorldTransform = GetWorldTransform( NULL, ForceCalc );
 
 	//	transform is out of date so cant use it
 	if ( IsWorldTransformValid() != SyncTrue )
@@ -1085,7 +1094,7 @@ Bool TLRender::TRenderNode::GetWorldDatumPos(TRefRef DatumRef,float3& Position)
 //---------------------------------------------------------
 //	extract a datum  and transform it into a new world space shape
 //---------------------------------------------------------
-TPtr<TLMaths::TShape> TLRender::TRenderNode::GetWorldDatum(TRefRef DatumRef,Bool KeepShape)
+TPtr<TLMaths::TShape> TLRender::TRenderNode::GetWorldDatum(TRefRef DatumRef,Bool KeepShape,Bool ForceCalc)
 {
 	//	get local pos of datum first
 	const TLMaths::TShape* pLocalDatum = GetLocalDatum( DatumRef );				//	extract a datum from our mesh - unless a special ref is used to get bounds shapes
@@ -1093,7 +1102,7 @@ TPtr<TLMaths::TShape> TLRender::TRenderNode::GetWorldDatum(TRefRef DatumRef,Bool
 		return NULL;
 
 	//	get the world transform (this will recalc it if out of date)
-	const TLMaths::TTransform& WorldTransform = GetWorldTransform();
+	const TLMaths::TTransform& WorldTransform = GetWorldTransform( NULL, ForceCalc );
 
 	//	transform is out of date so cant use it
 	if ( IsWorldTransformValid() != SyncTrue )
@@ -1103,4 +1112,52 @@ TPtr<TLMaths::TShape> TLRender::TRenderNode::GetWorldDatum(TRefRef DatumRef,Bool
 	//	gr: in order to keep a bounds box as a box - for efficiency - we can keep the shape type
 	TPtr<TLMaths::TShape> pNewShape = pLocalDatum->Transform( WorldTransform, TLPtr::GetNullPtr<TLMaths::TShape>(), KeepShape );
 	return pNewShape;
+}
+
+
+//---------------------------------------------------------------
+//	get all datums in the mesh and render node (ie. includes bounds)
+//---------------------------------------------------------------
+void TLRender::TRenderNode::GetLocalDatums(TArray<const TLMaths::TShape*>& LocalDatums)
+{
+	LocalDatums.Add( &GetLocalBoundsBox() );
+	LocalDatums.Add( &GetLocalBoundsBox2D() );
+	LocalDatums.Add( &GetLocalBoundsSphere() );
+	LocalDatums.Add( &GetLocalBoundsSphere2D() );
+		
+	//	add all the datums in the mesh
+	TLAsset::TMesh* pMesh = GetMeshAsset();
+	if ( pMesh )
+	{
+		const TPtrKeyArray<TRef,TLMaths::TShape>& MeshDatums = pMesh->GetDatums();
+		for ( u32 i=0;	i<MeshDatums.GetSize();	i++ )
+			LocalDatums.Add( MeshDatums.GetItemAt(i) );
+	}
+}
+
+
+//---------------------------------------------------------------
+//	get all datums in the mesh and render node (ie. includes bounds) in world space. Use very sparingly! (ie. debug only)
+//---------------------------------------------------------------
+void TLRender::TRenderNode::GetWorldDatums(TPtrArray<TLMaths::TShape>& WorldDatums,Bool KeepShape,Bool ForceCalc)
+{
+	//	get the world transform (this will recalc it if out of date)
+	const TLMaths::TTransform& WorldTransform = GetWorldTransform( NULL, ForceCalc );
+
+	//	transform is out of date so cant use it
+	if ( IsWorldTransformValid() != SyncTrue )
+		return;
+
+	//	get all the local datums
+	TArray<const TLMaths::TShape*> LocalDatums;
+	GetLocalDatums( LocalDatums );
+
+	for ( u32 i=0;	i<LocalDatums.GetSize();	i++ )
+	{
+		//	transform the datum by world transform into a new datum shape
+		//	gr: in order to keep a bounds box as a box - for efficiency - we can keep the shape type
+		TPtr<TLMaths::TShape> pNewShape = LocalDatums[i]->Transform( WorldTransform, TLPtr::GetNullPtr<TLMaths::TShape>(), KeepShape );
+		if ( pNewShape )
+			WorldDatums.Add( pNewShape );
+	}
 }

@@ -280,9 +280,20 @@ float TLMaths::TSphere::GetDistanceSq(const TLMaths::TBox& Box) const
 //--------------------------------------------------------
 void TLMaths::TSphere::Untransform(const TLMaths::TTransform& Transform)
 {
+	if ( !IsValid() )
+	{
+		TLDebug_Break("Untransforming invalid sphere");
+		return;
+	}
+
 	if ( Transform.HasTranslate() )
 	{
 		m_Pos -= Transform.GetTranslate();
+	}
+
+	if ( Transform.HasRotation() )
+	{
+		Transform.GetRotation().UnrotateVector( m_Pos );
 	}
 
 	if ( Transform.HasScale() )
@@ -347,7 +358,10 @@ Bool TLMaths::TSphere::GetIntersection(const TLine& Line) const
 void TLMaths::TSphere::Transform(const TLMaths::TMatrix& Matrix,const float3& Scale)
 {
 	if ( !IsValid() )
+	{
+		TLDebug_Break("Transforming invalid sphere");
 		return;
+	}
 
 	//	transform center of sphere
 	m_Pos *= Scale;
@@ -700,7 +714,7 @@ void TLMaths::TSphere2D::Transform(const TLMaths::TTransform& Transform)
 {
 	if ( !IsValid() )
 	{
-		TLDebug_Break("Transforming invalid capsule");
+		TLDebug_Break("Transforming invalid sphere");
 		return;
 	}
 
@@ -726,3 +740,39 @@ void TLMaths::TSphere2D::Transform(const TLMaths::TTransform& Transform)
 	}
 }
 
+
+
+//--------------------------------------------------------
+//	untransform sphere
+//	note: must be opposite order to transform!
+//--------------------------------------------------------
+void TLMaths::TSphere2D::Untransform(const TLMaths::TTransform& Transform)
+{
+	if ( !IsValid() )
+	{
+		TLDebug_Break("Untransforming invalid sphere");
+		return;
+	}
+
+	if ( Transform.HasTranslate() )
+	{
+		m_Pos -= Transform.GetTranslate();
+	}
+
+	if ( Transform.HasRotation() )
+	{
+		Transform.GetRotation().UnrotateVector( m_Pos );
+	}
+
+	if ( Transform.HasScale() )
+	{
+		const float3& Scale = Transform.GetScale();
+		m_Pos /= Scale;
+
+		//	scale radius by biggest value of the scale
+		float BigScale = (Scale.x>Scale.y) ? Scale.x : Scale.y;
+		BigScale = (Scale.z>BigScale) ? Scale.z : BigScale;
+
+		m_Radius /= BigScale;
+	}
+}

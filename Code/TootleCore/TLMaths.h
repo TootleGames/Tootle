@@ -352,7 +352,8 @@ public:
 	void					LookAt(const float3& Dir,const float3& WorldUp=float3(0,1,0));
 	void					RotateVector(float3& Vector) const;
 	void					RotateVector(float2& Vector) const;
-	void					UnRotateVector(float3& Vector) const;
+	void					UnrotateVector(float3& Vector) const;
+	void					UnrotateVector(float2& Vector) const;
 
 	// Interpolation
 	void					Slerp(const TQuaternion& From, const TQuaternion& To, const float& t);					// Spherical linear interpolation
@@ -453,17 +454,22 @@ public:
 	u8					Transform_HasChanged(const TLMaths::TTransform& Trans);	//	transform this by another transform, this is like a local tranform, if Trans says "move right", it will move right, relative to the rotation. returns elements that have changed (slightly slower, but if your caller does much LESS work if nothing changed then use this)
 	void				Transform(float3& Vector) const;				//	transform vector
 	void				Transform(float2& Vector) const;				//	transform vector
-	void				Transform(TArray<float3>& VectorArray) const;
-	void				Transform(TArray<float2>& VectorArray) const;
 	void				Untransform(float3& Vector) const;				//	untransform vector
 	void				Untransform(float2& Vector) const;				//	untransform vector
+	void				Invert();										//	make an "untransform" from this transform. (inverts rotation, scale, trans)
 
-	//	matrix "adds"
+	template<typename TYPE>	void	Transform(TArray<TYPE>& VectorArray) const		{	for ( u32 i=0;	i<VectorArray.GetSize();	i++ )	Transform( VectorArray[i] );	}
+	template<typename TYPE>	void	Untransform(TArray<TYPE>& VectorArray) const	{	for ( u32 i=0;	i<VectorArray.GetSize();	i++ )	Untransform( VectorArray[i] );	}
+
+	//	matrix style "adds"
 	void				AddTransform(const TLMaths::TTransform& Trans);				//	Modify the transform values by another transform, Translates the translate, scales the scale, rotates the rotation. Doesn't multiply and rotate the translate etc
 	u8					AddTransform_HasChanged(const TLMaths::TTransform& Trans);	//	Modify the transform values by another transform, Translates the translate, scales the scale, rotates the rotation. Doesn't multiply and rotate the translate etc. returns elements that have changed (slightly slower, but if your caller does much LESS work if nothing changed then use this)
 
 	u8					ImportData(TBinaryTree& Data);				//	import transform data from binary data/message/etc- returns bitmask of the attributes that have changed
 	u8					ExportData(TBinaryTree& Data,u8 TransformBits=TLMaths_TransformBitAll);	//	export all our valid data to this binary data- can optionally make it only write certain attributes. Returns bits of the attributes written.
+
+	Bool				operator==(const TLMaths::TTransform& Transform) const;		//	see if transforms are same
+	Bool				operator!=(const TLMaths::TTransform& Transform) const;		//	see if transforms are different 
 
 private:
 #ifdef _DEBUG

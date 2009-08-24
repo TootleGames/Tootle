@@ -23,8 +23,10 @@ public:
 	virtual void					SetInvalid()								{	return m_Shape.SetInvalid();	}
 	virtual float3					GetCenter() const							{	return m_Shape.GetCenter();	}
 
-	virtual void					Transform(const TLMaths::TTransform& Transform)	{	m_Shape.Transform( Transform );	}
+	virtual void					Transform(const TLMaths::TTransform& Transform)		{	m_Shape.Transform( Transform );	}
 	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape,Bool KeepShape=FALSE) const;
+	virtual void					Untransform(const TLMaths::TTransform& Transform)	{	m_Shape.Untransform( Transform );	}
+	virtual TPtr<TShape>			Untransform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape,Bool KeepShape=FALSE) const;
 	
 	virtual Bool					HasIntersection(TShapeSphere& OtherShape);
 
@@ -56,6 +58,8 @@ public:
 
 	virtual void					Transform(const TLMaths::TTransform& Transform)	{	m_Shape.Transform( Transform );	}
 	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape,Bool KeepShape=FALSE) const;
+	virtual void					Untransform(const TLMaths::TTransform& Transform)	{	m_Shape.Untransform( Transform );	}
+	virtual TPtr<TShape>			Untransform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape,Bool KeepShape=FALSE) const;
 
 	virtual Bool					HasIntersection(TShapeSphere& OtherShape);
 	virtual Bool					HasIntersection(TShapeSphere2D& OtherShape);

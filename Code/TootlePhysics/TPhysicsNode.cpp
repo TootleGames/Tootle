@@ -218,6 +218,8 @@ void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
 	if ( Message.ImportData("Damping", m_Damping ) )
 		OnDampingChanged();
 
+	Message.ImportData("RelMovement", m_RelativeMovement );
+
 	//	read collision shapes-from-datums
 	TPtrArray<TBinaryTree> CollisionShapeDatas;
 	Message.GetChildren("coldatum", CollisionShapeDatas );
@@ -293,6 +295,9 @@ void TLPhysics::TPhysicsNode::UpdateNodeData()
 	GetNodeData().RemoveChild("PFlags");
 	GetNodeData().ExportData("PFlags", m_PhysicsFlags.GetData());
 
+	GetNodeData().RemoveChild("RelMovement");
+	GetNodeData().ExportData("RelMovement", m_RelativeMovement );
+
 
 	// Remove all 'colshape' children formt he node data
 	Bool Result = TRUE;
@@ -351,6 +356,18 @@ void TLPhysics::TPhysicsNode::ProcessMessage(TLMessaging::TMessage& Message)
 			AddForce( Force, MassRelative );
 		}
 	}
+	else if ( Message.GetMessageRef() == "Move" )
+	{
+		//	read out float3 force
+		float3 Movement( 0.f, 0.f, 0.f );
+		Bool MassRelative = FALSE;
+		Message.ImportData( "MassRelative", MassRelative );
+
+		if ( Message.Read( Movement ) )
+		{
+			AddMovement( Movement, MassRelative );
+		}
+	}
 	else if ( Message.GetMessageRef() == "ResetForces" )
 	{
 		//	reset forces command
@@ -388,6 +405,36 @@ void TLPhysics::TPhysicsNode::Update(float fTimeStep)
 		//	negate as UP is opposite to the direction of gravity.		
 		AddForce( WorldUp * -g_GravityMetresSec );
 	}
+
+	//	add regular linear movement
+	if ( m_RelativeMovement.IsNonZero() )
+	{
+		//	if the object is rotated by physics then move based on the world up
+		if ( GetPhysicsFlags()( Flag_Rotate ) )
+		{
+			//	gr: there MUST be a faster version of this either using a mtx or a 2d cross
+			//	note: this will only work in 2D too
+			float3& WorldUp = m_PhysicsFlags( Flag_UseOwnGravity ) ? m_WorldUp : TLPhysics::g_WorldUpNormal;
+			TLMaths::TAngle WorldUpAngle;
+			WorldUpAngle.SetAngle( WorldUp.xy() );
+			float3 RelativeMovement = m_RelativeMovement;
+			RelativeMovement.xy().Rotate( WorldUpAngle.GetRadians() );
+			AddMovement( RelativeMovement );
+		}
+		else if ( GetTransform().HasRotation() )
+		{
+			//	move based on rotation
+			float3 RelativeMovement = m_RelativeMovement;
+			GetTransform().GetRotation().RotateVector( RelativeMovement );
+			AddMovement( RelativeMovement );
+		}
+		else
+		{
+			//	simple application, no rotation involved
+			AddMovement( m_RelativeMovement );
+		}
+	}
+		
 }
 
 
@@ -556,6 +603,8 @@ TRef TLPhysics::TPhysicsNode::AddCollisionShape(const TPtr<TLMaths::TShape>& pSh
 			RemoveCollisionShape( ShapeRef );
 			return TRef();
 		}
+
+		OnCollisionShapeChanged( *pExistingCollisionShape );
 
 		return ShapeRef;		
 	}
@@ -1074,6 +1123,37 @@ void TLPhysics::TPhysicsNode::AddForce(const float3& Force,Bool MassRelative)
 }
 
 
+
+//-------------------------------------------------------------
+//	apply a linear movement to the body (impulse)
+//-------------------------------------------------------------
+void TLPhysics::TPhysicsNode::AddMovement(const float3& Movement,Bool MassRelative)
+{
+	//	nothing to apply
+	if ( Movement.IsZero() )
+		return;
+
+	if ( !m_pBody )
+	{
+		TLDebug_Warning("impulse applied when no body... accumulate into force buffer to apply when body is created?");
+		return;
+	}
+	
+	//	I'm assuming force won't be applied when disabled (body is frozen)
+	if ( !IsEnabled() )
+	{
+		TLDebug_Warning("impulse applied when disabled... not sure this will apply");
+	}
+
+	//	multiply by the mass if it's not mass relative otherwise box will scale down the effect of the force. 
+	//	eg. gravity doesn't want to be mass related otherwise things will fall at the wrong rates
+	float Mass = MassRelative ? 1.f : m_pBody->GetMass();
+
+	//	gr: apply the force at the world center[mass center] of the body
+	m_pBody->ApplyImpulse( b2Vec2(Movement.x*Mass,Movement.y*Mass) , m_pBody->GetWorldCenter() );	
+}
+
+
 //-------------------------------------------------------------
 //	get values to put INTO the box2D body transform from our transform
 //-------------------------------------------------------------
@@ -1146,6 +1226,22 @@ void TLPhysics::TPhysicsNode::OnCollisionShapeAdded(TCollisionShape& CollisionSh
 
 	//	gr: if required, expand this to include the shape
 	Message.ExportData("Added", CollisionShape.GetShapeRef() );
+
+	PublishMessage( Message );
+}
+
+//-------------------------------------------------------------
+//	collision shape added to the list & body
+//-------------------------------------------------------------
+void TLPhysics::TPhysicsNode::OnCollisionShapeChanged(TCollisionShape& CollisionShape)
+{
+	if ( !HasSubscribers("OnShape") )
+		return;
+
+	TLMessaging::TMessage Message("OnShape", GetNodeRef());
+
+	//	gr: if required, expand this to include the shape
+	Message.ExportData("Changed", CollisionShape.GetShapeRef() );
 
 	PublishMessage( Message );
 }

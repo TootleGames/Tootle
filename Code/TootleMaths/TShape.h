@@ -85,8 +85,10 @@ public:
 	virtual float3					GetCenter() const = 0;						//	get the center of the shape
 	virtual float3					GetRandomPosition() const					{	return GetCenter();	}	//	return a random position inside the shape
 
-	virtual void					Transform(const TLMaths::TTransform& Transform)												{	TLDebug_Break("Overload me");	}	//	transform self
-	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape,Bool KeepShape=FALSE) const	{	return NULL;	}	//	transform this collision shape into a world-relative shape
+	virtual void					Transform(const TLMaths::TTransform& Transform)															{	TLDebug_Break("Overload me");	}					//	transform this shape type
+	virtual TPtr<TShape>			Transform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape,Bool KeepShape=FALSE) const		{	TLDebug_Break("Overload me");	return NULL;	}	//	transform this shape type into a new shape (may be of different type - KeepShape will force it to stay as the same kind of shape)
+	virtual void					Untransform(const TLMaths::TTransform& Transform)														{	TLDebug_Break("Overload me");	}					//	untransform this shape type
+	virtual TPtr<TShape>			Untransform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape,Bool KeepShape=FALSE) const	{	TLDebug_Break("Overload me");	return NULL;	}	//	untransform this shape type into a new shape (may be of different type - KeepShape will force it to stay as the same kind of shape)
 
 	//	simple fast intersection tests which don't need intersection information - default behaviour uses more expensive "GetIntersection" code
 	Bool							HasIntersection(TShape& OtherShape);								//	for the low level type we use our shape refs to work out which one to call... redun

@@ -3,7 +3,10 @@
 #include "TScreenManager.h"
 
 
-#define DEBUG_RENDER_DATUMS_IN_WORLD	//	if not defined, renders datums in local space which is faster
+//#define DEBUG_RENDER_DATUMS_IN_WORLD	//	if not defined, renders datums in local space which is faster (in world space will show up transform multiplication errors)
+#define DEBUG_RENDER_ALL_DATUMS			FALSE
+#define DEBUG_DATUMS_FORCE_RECALC		FALSE	//	when true will force the render node code to use the GetWorldTransform call that goes UP the render tree
+#define DEBUG_ALWAYS_RESET_SCENE		FALSE	//	if things render incorrectly it suggests our calculated scene transform is incorrect
 
 #if defined(_DEBUG) && !defined(TL_TARGET_IPOD)
 //#define DEBUG_DRAW_RENDERZONES
@@ -710,25 +713,20 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 	//	start new scene if we change the transform of the current scene
 	if ( NodeTrans )
 	{
-		if ( ResetScene )
+		if ( ResetScene || DEBUG_ALWAYS_RESET_SCENE )
 		{
 			BeginSceneReset();
 
-#ifdef _DEBUG
-			//	transform scene
-			if ( &NodeTransform != &SceneTransform )
-			{
-				TLDebug_Break("Im pretty sure these should be the same - in which case use SceneTransform");
-			}
-#endif
+			//	transform scene by node's transofrm
+			Opengl::SceneTransform( SceneTransform );
 		}
 		else
 		{
 			BeginScene();
+	
+			//	transform scene by node's transofrm
+			Opengl::SceneTransform( NodeTransform );
 		}
-
-		//	transform scene by node's transofrm
-		Opengl::SceneTransform( NodeTransform );
 	}
 
 	//	count node as rendered
@@ -930,11 +928,10 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 		TFixedArray<const TLMaths::TShape*,100> RenderDatums;
 #endif
 
-		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_Datums ) )
+		if ( DEBUG_RENDER_ALL_DATUMS || RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_Datums ) )
 		{
 #ifdef DEBUG_RENDER_DATUMS_IN_WORLD
-			//	todo :)
-			//pRenderNode->GetLocalDatums( RenderDatums );
+			pRenderNode->GetWorldDatums( RenderDatums, FALSE, DEBUG_DATUMS_FORCE_RECALC );
 #else
 			pRenderNode->GetLocalDatums( RenderDatums );
 #endif
@@ -944,7 +941,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 			for ( u32 i=0;	i<pRenderNode->Debug_GetDebugRenderDatums().GetSize();	i++ )
 			{
 			#ifdef DEBUG_RENDER_DATUMS_IN_WORLD
-				TPtr<TLMaths::TShape> pDatum = pRenderNode->GetWorldDatum( pRenderNode->Debug_GetDebugRenderDatums()[i] );
+				TPtr<TLMaths::TShape> pDatum = pRenderNode->GetWorldDatum( pRenderNode->Debug_GetDebugRenderDatums()[i], FALSE, DEBUG_DATUMS_FORCE_RECALC );
 			#else
 				const TLMaths::TShape* pDatum = pRenderNode->GetLocalDatum( pRenderNode->Debug_GetDebugRenderDatums()[i] );
 			#endif
@@ -954,10 +951,10 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 			//	add flagged datums
 		#ifdef DEBUG_RENDER_DATUMS_IN_WORLD
 			if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsBox ) )
-				RenderDatums.Add( pRenderNode->GetWorldDatum( TLRender_TRenderNode_DatumBoundsBox ) );
+				RenderDatums.Add( pRenderNode->GetWorldDatum( TLRender_TRenderNode_DatumBoundsBox, FALSE, DEBUG_DATUMS_FORCE_RECALC ) );
 
 			if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsSphere ) )
-				RenderDatums.Add( pRenderNode->GetWorldDatum( TLRender_TRenderNode_DatumBoundsSphere ) );
+				RenderDatums.Add( pRenderNode->GetWorldDatum( TLRender_TRenderNode_DatumBoundsSphere, FALSE, DEBUG_DATUMS_FORCE_RECALC ) );
 		#else
 			if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsBox ) )
 				RenderDatums.Add( pRenderNode->GetLocalDatum( TLRender_TRenderNode_DatumBoundsBox ) );

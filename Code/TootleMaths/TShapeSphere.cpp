@@ -70,6 +70,32 @@ TPtr<TLMaths::TShape> TLMaths::TShapeSphere2D::Transform(const TLMaths::TTransfo
 
 
 
+//----------------------------------------------------------
+//	
+//----------------------------------------------------------
+TPtr<TLMaths::TShape> TLMaths::TShapeSphere2D::Untransform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pOldShape,Bool KeepShape) const
+{
+	if ( !m_Shape.IsValid() )
+		return NULL;
+
+	//	copy and transform sphere
+	TLMaths::TSphere2D NewSphere( m_Shape );
+	NewSphere.Untransform( Transform );
+
+	TLDebug_CheckFloat( m_Shape.GetPos() );
+
+	//	re-use old shape
+	if ( pOldShape && pOldShape.GetObjectPointer() != this && pOldShape->GetShapeType() == TLMaths::TSphere2D::GetTypeRef() )
+	{
+		pOldShape.GetObjectPointer<TLMaths::TShapeSphere2D>()->SetSphere( NewSphere );
+		return pOldShape;
+	}
+
+	return new TLMaths::TShapeSphere2D( NewSphere );
+}
+
+
+
 //---------------------------------------
 //	create sphere from box
 //---------------------------------------
@@ -136,6 +162,31 @@ TPtr<TLMaths::TShape> TLMaths::TShapeSphere::Transform(const TLMaths::TTransform
 }
 
 
+
+
+//----------------------------------------------------------
+//	
+//----------------------------------------------------------
+TPtr<TLMaths::TShape> TLMaths::TShapeSphere::Untransform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape,Bool KeepShape) const
+{
+	if ( !m_Shape.IsValid() )
+		return NULL;
+
+	//	copy and transform sphere
+	TLMaths::TSphere NewSphere( m_Shape );
+	NewSphere.Untransform( Transform );
+
+	TLDebug_CheckFloat( m_Sphere.GetPos() );
+
+	//	re-use old shape
+	if ( pOldShape && pOldShape.GetObjectPointer() != this && pOldShape->GetShapeType() == TLMaths::TSphere::GetTypeRef() )
+	{
+		pOldShape.GetObjectPointer<TShapeSphere>()->SetSphere( NewSphere );
+		return pOldShape;
+	}
+
+	return new TShapeSphere( NewSphere );
+}
 
 
 

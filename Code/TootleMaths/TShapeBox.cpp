@@ -66,7 +66,7 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox::Transform(const TLMaths::TTransform& T
 
 	if ( !KeepShape && Transform.HasRotation() )
 	{
-		TLDebug_Break("todo: need to transform into a 3D oblong (non AA box)");
+		TLDebug_Print("todo: need to transform into a 3D oblong (non AA box)");
 		return NULL;
 	}
 
@@ -84,6 +84,34 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox::Transform(const TLMaths::TTransform& T
 	return new TShapeBox( NewBox );
 }
 
+
+//----------------------------------------------------------
+//	
+//----------------------------------------------------------
+TPtr<TLMaths::TShape> TLMaths::TShapeBox::Untransform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pOldShape,Bool KeepShape) const
+{
+	if ( !m_Shape.IsValid() )
+		return NULL;
+
+	if ( !KeepShape && Transform.HasRotation() )
+	{
+		TLDebug_Break("todo: need to transform into a 3D oblong (non AA box)");
+		return NULL;
+	}
+
+	//	copy and transform box
+	TLMaths::TBox NewBox( m_Shape );
+	NewBox.Untransform( Transform );
+
+	//	re-use old shape
+	if ( pOldShape && pOldShape.GetObjectPointer() != this && pOldShape->GetShapeType() == TLMaths::TBox::GetTypeRef() )
+	{
+		pOldShape.GetObjectPointer<TShapeBox>()->SetBox( NewBox );
+		return pOldShape;
+	}
+
+	return new TShapeBox( NewBox );
+}
 
 //----------------------------------------------------------
 //	fast box <-> sphere intersection
@@ -194,6 +222,49 @@ TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Transform(const TLMaths::TTransform&
 		//	simple transform
 		TLMaths::TBox2D NewBox( m_Shape );
 		NewBox.Transform( Transform );
+
+		//	re-use old shape
+		if ( pOldShape && pOldShape.GetObjectPointer() != this && pOldShape->GetShapeType() == TLMaths::TBox2D::GetTypeRef() )
+		{
+			pOldShape.GetObjectPointer<TShapeBox2D>()->SetBox( NewBox );
+			return pOldShape;
+		}
+
+		return new TShapeBox2D( NewBox );
+	}
+}
+
+
+//----------------------------------------------------------
+//	
+//----------------------------------------------------------
+TPtr<TLMaths::TShape> TLMaths::TShapeBox2D::Untransform(const TLMaths::TTransform& Transform,TPtr<TLMaths::TShape>& pOldShape,Bool KeepShape) const
+{
+	if ( !m_Shape.IsValid() )
+		return NULL;
+
+	//	if the transform contains a rotation then it's a complex transform into an oblong
+	if ( !KeepShape && Transform.HasRotation() )
+	{
+		//	create an polygon shape
+		TFixedArray<float2,4> Corners;
+		m_Shape.GetBoxCorners( Corners );
+		Transform.Untransform( Corners );
+
+		//	re-use old shape
+		if ( pOldShape && pOldShape.GetObjectPointer() != this && pOldShape->GetShapeType() == TLMaths::TShapePolygon2D::GetShapeType_Static() )
+		{
+			pOldShape.GetObjectPointer<TShapePolygon2D>()->SetOutline( Corners );
+			return pOldShape;
+		}
+
+		return new TShapePolygon2D( Corners );
+	}
+	else
+	{
+		//	simple transform
+		TLMaths::TBox2D NewBox( m_Shape );
+		NewBox.Untransform( Transform );
 
 		//	re-use old shape
 		if ( pOldShape && pOldShape.GetObjectPointer() != this && pOldShape->GetShapeType() == TLMaths::TBox2D::GetTypeRef() )

@@ -223,13 +223,14 @@ public:
 	const TLMaths::TShapeBox2D&				GetLocalBoundsBox2D() 							{	CalcLocalBounds( m_BoundsBox2D.m_LocalShape );			return m_BoundsBox2D.m_LocalShape;	}
 	const TLMaths::TShapeSphere&			GetLocalBoundsSphere()							{	CalcLocalBounds( m_BoundsSphere.m_LocalShape );			return m_BoundsSphere.m_LocalShape;	}
 	const TLMaths::TShapeSphere2D&			GetLocalBoundsSphere2D()						{	CalcLocalBounds( m_BoundsSphere2D.m_LocalShape );		return m_BoundsSphere2D.m_LocalShape;	}
-	FORCEINLINE void						GetLocalDatums(TArray<const TLMaths::TShape*>& LocalDatums);	//	get all datums in the mesh and render node (ie. includes bounds)
+	void									GetLocalDatums(TArray<const TLMaths::TShape*>& LocalDatums);	//	get all datums in the mesh and render node (ie. includes bounds)
 	FORCEINLINE const TLMaths::TShape*		GetLocalDatum(TRefRef DatumRef);				//	extract a datum from our mesh - unless a special ref is used to get bounds shapes
 	template<class SHAPETYPE>
 	FORCEINLINE const SHAPETYPE*			GetLocalDatum(TRefRef DatumRef);				//	get a datum of a specific type - returns NULL if it doesn't exist or is of a different type
 	Bool									GetLocalDatumPos(TRefRef DatumRef,float3& Position);	//	get the position of a datum in local space. returns FALSE if no such datum
-	TPtr<TLMaths::TShape>					GetWorldDatum(TRefRef DatumRef,Bool KeepShape=FALSE);	//	extract a datum  and transform it into a new world space shape. Using KeepShape will ensure a shape type stays the same, eg, rotated box doesn't turn into a poly and stays as a box
-	Bool									GetWorldDatumPos(TRefRef DatumRef,float3& Position);	//	get the position of a datum in world space. returns FALSE if no such datum. Currently will recalc the world transform if it's out of date
+	void									GetWorldDatums(TPtrArray<TLMaths::TShape>& WorldDatums,Bool KeepShape=FALSE,Bool ForceCalc=FALSE);	//	get all datums in the mesh and render node (ie. includes bounds) in world space. Use very sparingly! (ie. debug only)
+	TPtr<TLMaths::TShape>					GetWorldDatum(TRefRef DatumRef,Bool KeepShape=FALSE,Bool ForceCalc=FALSE);	//	extract a datum  and transform it into a new world space shape. Using KeepShape will ensure a shape type stays the same, eg, rotated box doesn't turn into a poly and stays as a box
+	Bool									GetWorldDatumPos(TRefRef DatumRef,float3& Position,Bool KeepShape=FALSE,Bool ForceCalc=FALSE);	//	get the position of a datum in world space. returns FALSE if no such datum. Currently will recalc the world transform if it's out of date. 
 
 	const TArray<TRef>&						Debug_GetDebugRenderDatums() const				{	return m_Debug_RenderDatums;	}
 
@@ -399,27 +400,6 @@ FORCEINLINE void TLRender::TRenderNode::OnMeshChanged()
 						InvalidateWorldBounds,			//	this also affects world bounds
 						InvalidateParentLocalBounds		//	and so shape of parents may have changed as it encapsulates us
 						) );	
-}
-
-
-//---------------------------------------------------------------
-//	get all datums in the mesh and render node (ie. includes bounds)
-//---------------------------------------------------------------
-FORCEINLINE void TLRender::TRenderNode::GetLocalDatums(TArray<const TLMaths::TShape*>& LocalDatums)
-{
-	LocalDatums.Add( &GetLocalBoundsBox() );
-	LocalDatums.Add( &GetLocalBoundsBox2D() );
-	LocalDatums.Add( &GetLocalBoundsSphere() );
-	LocalDatums.Add( &GetLocalBoundsSphere2D() );
-		
-	//	add all the datums in the mesh
-	TLAsset::TMesh* pMesh = GetMeshAsset();
-	if ( pMesh )
-	{
-		const TPtrKeyArray<TRef,TLMaths::TShape>& MeshDatums = pMesh->GetDatums();
-		for ( u32 i=0;	i<MeshDatums.GetSize();	i++ )
-			LocalDatums.Add( MeshDatums.GetItemAt(i) );
-	}
 }
 
 

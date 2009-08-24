@@ -762,13 +762,24 @@ void TLMaths::TQuaternion::Set(const float3& Axis,float RadAngle)
 //---------------------------------------------------------------------------
 TLMaths::TQuaternion TLMaths::TQuaternion::operator * (const TLMaths::TQuaternion &Other) const
 {
-	const float4& Otherxyzw = Other.xyzw;
+	TLDebug_Break("gr: this code doesn't seem to produce what I expect... *= operator works, but I can't seem to reuse the * code!? seems backwards");
+	const float4& other = Other.xyzw;
 
+	TLMaths::TQuaternion NewQuat;
+	float4& temp = NewQuat.xyzw;
+
+	temp.x = xyzw.w * other.x + xyzw.x * other.w + xyzw.y * other.z - xyzw.z * other.y;
+	temp.y = xyzw.w * other.y + xyzw.y * other.w + xyzw.z * other.x - xyzw.x * other.z;
+	temp.z = xyzw.w * other.z + xyzw.z * other.w + xyzw.x * other.y - xyzw.y * other.x;
+	temp.w = xyzw.w * other.w - xyzw.x * other.x - xyzw.y * other.y - xyzw.z * other.z; 
+	/*
 	return TLMaths::TQuaternion(
 		xyzw.w * Otherxyzw.x + xyzw.x * Otherxyzw.w + xyzw.y * Otherxyzw.z - xyzw.z * Otherxyzw.y,
 		xyzw.w * Otherxyzw.y + xyzw.y * Otherxyzw.w + xyzw.z * Otherxyzw.x - xyzw.x * Otherxyzw.z,
 		xyzw.w * Otherxyzw.z + xyzw.z * Otherxyzw.w + xyzw.x * Otherxyzw.y - xyzw.y * Otherxyzw.x,
 		xyzw.w * Otherxyzw.w - xyzw.x * Otherxyzw.x - xyzw.y * Otherxyzw.y - xyzw.z * Otherxyzw.z); 
+		*/
+	return NewQuat;
 }
 
 //---------------------------------------------------------------------------
@@ -806,10 +817,14 @@ void TLMaths::TQuaternion::operator *= (const TLMaths::TQuaternion &Other)
 
 	const float4& other = Other.xyzw;
 
-	xyzw.x = xyzw.w * other.x + xyzw.x * other.w + xyzw.y * other.z - xyzw.z * other.y;
-	xyzw.y = xyzw.w * other.y + xyzw.y * other.w + xyzw.z * other.x - xyzw.x * other.z;
-	xyzw.z = xyzw.w * other.z + xyzw.z * other.w + xyzw.x * other.y - xyzw.y * other.x;
-	xyzw.w = xyzw.w * other.w - xyzw.x * other.x - xyzw.y * other.y - xyzw.z * other.z; 
+	float4 temp;
+
+	temp.x = xyzw.w * other.x + xyzw.x * other.w + xyzw.y * other.z - xyzw.z * other.y;
+	temp.y = xyzw.w * other.y + xyzw.y * other.w + xyzw.z * other.x - xyzw.x * other.z;
+	temp.z = xyzw.w * other.z + xyzw.z * other.w + xyzw.x * other.y - xyzw.y * other.x;
+	temp.w = xyzw.w * other.w - xyzw.x * other.x - xyzw.y * other.y - xyzw.z * other.z; 
+	
+	xyzw = temp;
 }
 
 //---------------------------------------------------------------------------
@@ -1424,7 +1439,7 @@ void TLMaths::TQuaternion::RotateVector(float3& Vector) const
 */	
 }
 
-void TLMaths::TQuaternion::UnRotateVector(float3& Vector) const
+void TLMaths::TQuaternion::UnrotateVector(float3& Vector) const
 {
 	if ( !IsValid() )
 		return;
@@ -1452,6 +1467,26 @@ void TLMaths::TQuaternion::RotateVector(float2& Vector) const
 	//	gr: slow here... speed up!
 	TLMaths::TMatrix RotationMatrix;
 	RotationMatrix.SetRotation(*this);
+	RotationMatrix.TransformVector( Vector );
+/*	
+	float3 This3 = float3( x, y, z );
+	//<0,w> = inv(q) * <0,v> * q
+	TLMaths::TQuaternion Inverse(*this);
+	Inverse.Invert();
+
+	Vector = Inverse * Vector * This3;
+*/	
+}
+
+void TLMaths::TQuaternion::UnrotateVector(float2& Vector) const
+{
+	if ( !IsValid() )
+		return;
+
+	//	gr: slow here... speed up!
+	TLMaths::TMatrix RotationMatrix;
+	RotationMatrix.SetRotation(*this);
+	RotationMatrix.Invert();
 	RotationMatrix.TransformVector( Vector );
 /*	
 	float3 This3 = float3( x, y, z );
@@ -1590,11 +1625,15 @@ void TLMaths::TTransform::Transform(const TLMaths::TTransform& Trans)
 
 	if ( Trans.HasRotation() )
 	{
-		//	gr: needs normalising?
 		if ( HasRotation() )
+		{
 			m_Rotation *= Trans.m_Rotation;
+		}
 		else
+		{
 			SetRotation( Trans.m_Rotation );
+			m_Rotation.Normalise();
+		}
 		
 		TLDebug_CheckFloat( m_Rotation );
 	}
@@ -1825,8 +1864,7 @@ void TLMaths::TTransform::Untransform(float3& Vector) const
 
 	if ( HasRotation() )
 	{
-		TLDebug_Break("todo: undo transform vector");
-		//GetRotation().UnTransformVector( m_Pos );
+		GetRotation().UnrotateVector( Vector );
 		TLDebug_CheckFloat( Vector );
 	}
 
@@ -1837,6 +1875,60 @@ void TLMaths::TTransform::Untransform(float3& Vector) const
 	}
 }
 
+	
+//-----------------------------------------------------------
+//	untransform vector
+//-----------------------------------------------------------
+void TLMaths::TTransform::Untransform(float2& Vector) const
+{
+	TLDebug_CheckFloat( Vector );
+
+	if ( HasTranslate() )
+	{
+		Vector -= GetTranslate().xy();
+		TLDebug_CheckFloat( Vector );
+	}
+
+	if ( HasRotation() )
+	{
+		GetRotation().UnrotateVector( Vector );
+		TLDebug_CheckFloat( Vector );
+	}
+
+	if ( HasScale() )
+	{
+		Vector /= GetScale().xy();
+		TLDebug_CheckFloat( Vector );
+	}
+}
+
+//-----------------------------------------------------------
+//	make an "untransform" from this transform. (inverts rotation, scale, trans)
+//-----------------------------------------------------------
+void TLMaths::TTransform::Invert()
+{
+	//	negate translate
+	if ( HasTranslate() )
+	{
+		m_Translate.x = -m_Translate.x;
+		m_Translate.y = -m_Translate.y;
+		m_Translate.z = -m_Translate.z;
+	}
+
+	//	invert rotation
+	if ( HasRotation() )
+	{
+		m_Rotation.Invert();
+	}
+
+	//	get reciprocal of scale
+	if ( HasScale() )
+	{
+		m_Scale.x = 1.f/m_Scale.x;
+		m_Scale.y = 1.f/m_Scale.y;
+		m_Scale.z = 1.f/m_Scale.z;
+	}
+}
 
 //-----------------------------------------------------------
 //	assert handler
@@ -1846,6 +1938,51 @@ void TLMaths::TTransform::Debug_Assert(const char* pString) const
 	TLDebug_Break( pString );
 }
 
+	
+//-----------------------------------------------------------
+//	see if transforms are same
+//-----------------------------------------------------------
+Bool TLMaths::TTransform::operator==(const TLMaths::TTransform& Transform) const
+{
+	//	quick check to see if valid elements are different or not...
+	//	technically we could have scale=1 or transform=0 and they'd have the same EFFECT, but validity is different..
+	if ( GetHasTransformBits() != Transform.GetHasTransformBits() )
+		return FALSE;
+
+	if ( HasTranslate() && GetTranslate() != Transform.GetTranslate() )
+		return FALSE;
+
+	if ( HasScale() && GetScale() != Transform.GetScale() )
+		return FALSE;
+
+	if ( HasRotation() && GetRotation() != Transform.GetRotation() )
+		return FALSE;
+	
+	return TRUE;
+}
+
+
+//-----------------------------------------------------------
+//	see if transforms are different 
+//-----------------------------------------------------------
+Bool TLMaths::TTransform::operator!=(const TLMaths::TTransform& Transform) const
+{
+	//	quick check to see if valid elements are different or not...
+	//	technically we could have scale=1 or transform=0 and they'd have the same EFFECT, but validity is different..
+	if ( GetHasTransformBits() == Transform.GetHasTransformBits() )
+		return FALSE;
+
+	if ( HasTranslate() && GetTranslate() == Transform.GetTranslate() )
+		return FALSE;
+
+	if ( HasScale() && GetScale() == Transform.GetScale() )
+		return FALSE;
+
+	if ( HasRotation() && GetRotation() == Transform.GetRotation() )
+		return FALSE;
+	
+	return TRUE;
+}
 
 //-----------------------------------------------------------
 //	get angle from a vector
@@ -1863,23 +2000,4 @@ void TLMaths::TAngle::SetAngle(const float2& Direction)
 	SetLimit180();
 }
 
-
-//-----------------------------------------------------------
-//	
-//-----------------------------------------------------------
-void TLMaths::TTransform::Transform(TArray<float3>& VectorArray) const	
-{
-	for ( u32 i=0;	i<VectorArray.GetSize();	i++ )	
-		Transform( VectorArray[i] );	
-}
-
-
-//-----------------------------------------------------------
-//	
-//-----------------------------------------------------------
-void TLMaths::TTransform::Transform(TArray<float2>& VectorArray) const	
-{	
-	for ( u32 i=0;	i<VectorArray.GetSize();	i++ )
-		Transform( VectorArray[i] );
-}
 

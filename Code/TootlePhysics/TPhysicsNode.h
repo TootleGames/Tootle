@@ -86,7 +86,8 @@ public:
 	const TFlags<Flags>&		GetPhysicsFlags() const				{	return m_PhysicsFlags;	}
 	virtual Bool				IsStatic() const					{	return m_PhysicsFlags.IsSet( TPhysicsNode::Flag_Static );	}
 
-	void						AddForce(const float3& Force,Bool MassRelative=FALSE);	//	apply a force to the body
+	void						AddForce(const float3& Force,Bool MassRelative=FALSE);			//	apply a force to the body
+	void						AddMovement(const float3& Movement,Bool MassRelative=FALSE);	//	apply a linear movement to the body (impulse)
 	FORCEINLINE void			AddTorque(float AngleRadians);
 	FORCEINLINE void			SetVelocity(const float3& Velocity);
 	FORCEINLINE float3			GetVelocity() const;
@@ -143,6 +144,7 @@ protected:
 	void						OnCollisionEnabledChanged(Bool IsNowEnabled);			//	called when collision is enabled/disabled - changes group of box2D body so it won't do collision checks
 	void						OnNodeEnabledChanged(Bool IsNowEnabled);				//	called when node is enabled/disabled
 	void						OnCollisionShapeAdded(TCollisionShape& CollisionShape);	//	collision shape added to the list & body
+	void						OnCollisionShapeChanged(TCollisionShape& CollisionShape);	//	collision shape changed
 	void						OnCollisionShapeRemoved(TRefRef CollisionShapeRef);		//	collision shape added to the list & body
 
 	Bool						ImportCollisionShape(TBinaryTree& CollisionShapeData);	//	create a collision shape from init data
@@ -166,6 +168,7 @@ protected:
 	float					m_Friction;					//	0..1
 	float					m_Damping;					//	0...infinate, but smaller numbers are better
 	float3					m_WorldUp;					//	normalised vector for the world "up". This is used for gravity specified per-node
+	float3					m_RelativeMovement;			//	per-frame linear movement, relative to our rotation
 
 	TLMaths::TTransform		m_Transform;				//	world transform of shape
 	u8						m_TransformChangedBits;		//	dont broadcast trasnform changes until post update - TLMaths_TransformBit_XXX
