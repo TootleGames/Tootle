@@ -88,6 +88,7 @@
 /* Begin PBXFileReference section */
 		8418E89D0F4C2D8C00B956C9 /* TootleSimDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleSimDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleSimDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		8418E89E0F4C2D8C00B956C9 /* TootleSimRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleSimRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleSimRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		84237DEA1046CA7E009E67C3 /* TootleBuild.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = TootleBuild.sh; path = ../../BuildConfigurations/IPod/TootleBuild.sh; sourceTree = SOURCE_ROOT; };
 		8434C8D8100B484C0063673E /* TLRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLRandom.h; path = ../TLRandom.h; sourceTree = SOURCE_ROOT; };
 		8446CFF8103B514B00DFD24F /* TLCoreMisc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLCoreMisc.cpp; path = ../TLCoreMisc.cpp; sourceTree = SOURCE_ROOT; };
 		8446CFF9103B514B00DFD24F /* TLCoreMisc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLCoreMisc.h; path = ../TLCoreMisc.h; sourceTree = SOURCE_ROOT; };
@@ -202,6 +203,7 @@
 		84C1095E0F0A78F800B2DF7A /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				84237DEA1046CA7E009E67C3 /* TootleBuild.sh */,
 				8418E89D0F4C2D8C00B956C9 /* TootleSimDebug.xcconfig */,
 				8418E89E0F4C2D8C00B956C9 /* TootleSimRelease.xcconfig */,
 				84C109DF0F0A794A00B2DF7A /* TootleDebug.xcconfig */,
