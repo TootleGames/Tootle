@@ -1,6 +1,7 @@
 #!/bin/sh
 # Tootle's automated build script;
-# use: ./TootleBuild.sh Seaman YourKeychainPassword
+# use: ./TootleBuild.sh <SVNREPO> <PROJECT> <TARGET> <KEYCHAINPASSWORD>
+# e.g ./TootleBuild.sh Seaman Seaman Demo YourKeychainPassword
 
 # assumes you've already checked out the repositories.
 # Structure like
@@ -15,8 +16,13 @@
 # Zip
 # Upload
 
+#SVN_REPO=$1
 PROJECT=$1
-PASSWORD=$2
+TARGET=$2
+PASSWORD=$3
+
+# Use the project for the SVN repo for now - assumes the project and repository are the same name
+SVN_REPO=$PROJECT
 
 # maybe should force this to be relative to something?
 cd ~/TootleBuild/
@@ -24,10 +30,31 @@ LOG_DIR=`pwd`
 LOG_FILE="${LOG_DIR}/Logs/$PROJECT"
 
 
-if [ "$PROJECT" == "" ]; then
-	echo "No project provided. First parameter should be the project name, which is case sensitive. "
+# make sure svn repo was provided
+if [ "$SVN_REPO" == "" ]; then
+	echo "No svn repository provided. First parameter should be the svn repository name, which is case sensitive. "
 	exit 1
 fi
+
+# make sure project was provided
+if [ "$PROJECT" == "" ]; then
+	echo "No project provided. Second parameter should be the project name, which is case sensitive. "
+	exit 1
+fi
+
+
+# make sure target was provided
+if [ "$TARGET" == "" ]; then
+	echo "No target provided. Third parameter should be the target name, which is case sensitive. "
+	exit 1
+fi
+
+# make sure password was provided
+if [ "$PASSWORD" == "" ]; then
+	echo "No keychain password provided. Fourth parameter should be your keychain/login password to unlock the keychain so we can sign the .app"
+	exit 1
+fi
+
 
 
 # update the tootle repository, if this fails assume it hasn't been checked out
@@ -45,28 +72,23 @@ chmod 777 "Tootle/Code/BuildConfigurations/IPod/TootleBuild.sh"
 # if the directory doesn't exist, assume the repository hasn't been checked out
 if [ ! -d "$PROJECT" ]; then
 	echo "$PROJECT directory doesn't exist, checking out repository..."
-	svn checkout svn://grahamgrahamreeves.getmyip.com:1983/$PROJECT $PROJECT > ${LOG_FILE}_svn.txt
+	svn checkout svn://grahamgrahamreeves.getmyip.com:1983/$SVN_REPO $PROJECT > ${LOG_FILE}_svn.txt
 	
 	if [ $? != 0 ]; then
-		echo "svn checkout of $PROJECT failed. See ${LOG_FILE}_svn.txt"
+		echo "svn checkout of $SVN_REPO repository for project $PROJECT failed. See ${LOG_FILE}_svn.txt"
 		exit 1
 	fi
 else
-	echo "Updating $PROJECT svn..."
-	svn update $PROJECT > ${LOG_FILE}_svn.txt
+	echo "Updating $SVN_REPO svn..."
+	svn update $SVN_REPO > ${LOG_FILE}_svn.txt
 	if [ $? != 0 ]; then
-		echo "svn update of $PROJECT failed. See ${LOG_FILE}_svn.txt"
+		echo "svn update of $SVN_REPO repository for project $PROJECT failed. See ${LOG_FILE}_svn.txt"
 		exit 1
 	fi
 fi
 
 
 
-# make sure password was provided
-if [ "$PASSWORD" == "" ]; then
-	echo "No keychain password provided. Second parameter should be your keychain/login password to unlock the keychain so we can sign the .app"
-	exit 1
-fi
 
 # unlock keychain to sign project
 echo "Unlocking keychain with password..."
@@ -81,7 +103,7 @@ fi
 # need to change directory for xcodebuild to work :(
 echo "Building $PROJECT..."
 cd $PROJECT/Code/IPod/
-xcodebuild -configuration "Release AdHoc" -sdk iphoneos2.2.1 -alltargets clean build > ${LOG_FILE}_build.txt
+xcodebuild -target $TARGET -configuration "Release AdHoc" -sdk iphoneos2.2.1 clean build > ${LOG_FILE}_build.txt
 if [ $? != 0 ]; then
 	echo "xcode build failed. read ${LOG_FILE}_build.txt"
 	exit 1
@@ -92,7 +114,7 @@ fi
 # this is to make things simple and so we're in our zip's directory
 # so when we zip up we don't include a massive directory structure
 cd "build/Release AdHoc-iphoneos/"
-APP_FILENAME="$PROJECT.app"
+APP_FILENAME="$TARGET.app"
 
 # check .app has been built
 if [ ! -e "$APP_FILENAME" ]; then
@@ -101,8 +123,8 @@ if [ ! -e "$APP_FILENAME" ]; then
 	exit 1
 fi
 
-# date in Fri_15May_1301 format appended to zip filename, after the .app and before the .zip
-DATE_STRING=`date +%d%b%Y_%H%M`
+# date in Year_Month_Day_Time format appended to zip filename, after the .app and before the .zip
+DATE_STRING=`date +%Y_%b_%d_%H%M`
 ZIP_FILENAME="${APP_FILENAME}.${DATE_STRING}.zip"
 
 # ftp details for curl
@@ -132,6 +154,6 @@ if [ $? != 0 ]; then
 	exit 1
 fi
 
-echo "Zip and upload finished. $PROJECT built!"
+echo "Zip and upload finished. $TARGET for project $PROJECT built!"
 exit 0
 
