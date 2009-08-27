@@ -44,7 +44,7 @@ public:
 	virtual ~TSchemeEditor();
 
 	Bool						Initialise(TRefRef EditorScheme,TRefRef GraphRef,TRefRef SchemeRootNode,TRefRef GameRenderTarget,TBinaryTree* pCommonNodeData);
-	virtual void				Update(float Timestep)				{	TStateMachine::Update( Timestep );	}
+	virtual void				Update(float Timestep);
 	
 	FORCEINLINE TRefRef						GetEditorRenderTargetRef() const	{	return m_EditorRenderTarget;	}
 	FORCEINLINE TRefRef						GetEditorRenderNodeRef() const		{	return m_EditorRenderNodeRef;	}
@@ -55,6 +55,7 @@ public:
 protected:
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);		//	
 	virtual void				AddStateModes();									//	add state machine modes here. overload to add custom modes
+	void						ChangeMode(TRefRef NewMode)							{	m_NextMode = NewMode;	}	//	on next update change mode
 	Bool						GetGameWorldPosFromScreenPos(float3& WorldPos,const int2& ScreenPos,float ViewDepth=0.f);	//	get world pos in-game from cursor
 
 	void						EnableNodeWidgets(Bool Enable);							//	enable/disable node widgets
@@ -71,6 +72,7 @@ protected:
 	virtual void				OnNodeUnselected(TRefRef NodeRef);					//	called when a node is unselected
 	virtual void				OnNewNodeDropped(TRefRef NodeRef)					{	}	//	called when a new node has been dropped
 	virtual void				OnNodeDeleted(TArray<TRef>& NodeRefs)				{	}	//	scene nodes have been removed from the graph and removed from our system
+	virtual void				OnNodeClickReleased(TRefRef NodeRef, Bool WasDragged);		//	overloadable behaviour when mouse is released from a node
 
 	virtual void				ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a editor icon
 	void						EnableIconWidgets(Bool Enable);												//	enable/disable node widgets
@@ -100,6 +102,8 @@ private:
 	void						OnGraphMessage(TLMessaging::TMessage& Message);			//	handle graph change from our graph
 
 protected:
+	TRef							m_NextMode;				//	if set then on next update we will change mode
+
 	TRef							m_EditorRenderTarget;	//	render target of our editor
 	TRef							m_EditorRenderNodeRef;	//	root node for our editors render target
 	TRef							m_EditorIconRootNodeRef;	//	node to put icons under

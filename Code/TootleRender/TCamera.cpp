@@ -589,8 +589,11 @@ Bool TLRender::TOrthoCamera::GetWorldPos(float3& WorldPos,float WorldDepth,const
 		xy += Halfwh;
 
 		//	check is still in bounds
-		if ( xy.x < 0 || xy.x >= wh.x || xy.y < 0 || xy.y >= wh.y )
-			return FALSE;
+		//	gr: this check removed from low-level code. If we have gotten this far we can assume the 
+		//	coords are inside the screen's render target box. this allows the function to return world
+		//	coordinates outside the traditional frame. Bad for UI's, good for games.
+		//if ( xy.x < 0 || xy.x >= wh.x || xy.y < 0 || xy.y >= wh.y )
+		//	return FALSE;
 	}
 
 	//	scale the rendertarget pos to a pos between 0..100 (100 being GetOrthoRange - and scale is always based on width hence why both are /wh.x)

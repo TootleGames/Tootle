@@ -38,6 +38,7 @@ public:
 	FORCEINLINE Bool			RemoveChild(TRefRef ChildRef)					{	return m_Children.Remove( ChildRef );	}	//	this assumes there is only one child with this ref
 	FORCEINLINE Bool			RemoveChild(const char* pRefString)				{	return RemoveChild( TRef( pRefString ) );	}	//	added to ease ambiguity
 	FORCEINLINE Bool			RemoveChild(const TPtr<TBinaryTree>& pChild)	{	return m_Children.RemovePtr( pChild );	}	//	remove this ptr from the array (dont use .Remove()!)
+	Bool						RemoveChildren(TRefRef ChildRef);				//	remove all children with this ref
 
 	FORCEINLINE void			Empty(Bool Dealloc=FALSE)						{	TBinary::Empty(Dealloc);	m_Children.Empty(Dealloc);	}	//	delete tree
 	FORCEINLINE Bool			IsEmpty() const									{	return ( TBinary::GetSize() == 0 && m_Children.GetSize() == 0 );	}

@@ -33,7 +33,7 @@ protected:
 	virtual SyncBool		ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode,const TLMaths::TShapeSphere2D& BoundsDatum,const TLMaths::TShape* pClickDatum);	//	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
 	virtual void			GetRenderNodes(TArray<TRef>& RenderNodeArray);		//	get array of all the render nodes we're using
 
-	virtual void				OnCursorMove(const int2& NewCursorPosition, TRefRef ActionRef);		
+	virtual void			OnCursorMove(const int2& NewCursorPosition, TRefRef ActionRef);		
 	
 	void					SetScrollValue(float NewValue);						//	set value and send out message if it changes
 	void					UpdateSliderPos();									//	update graphical position of slider

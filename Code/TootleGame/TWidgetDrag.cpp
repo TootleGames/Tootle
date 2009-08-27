@@ -1,8 +1,8 @@
 #include "TWidgetDrag.h"
 
 
-
-#define DEFAULT_DRAG_MIN	((100.f/480.f) * 3.f)	//	the effectiveness of this varies, in ortho (100/480) is one pixel. In perspective... it depends where the camera is
+//	gr: very small finger movements are large in pixels on an iphone screen, so make this value a bit higher
+#define DEFAULT_DRAG_MIN	((100.f/480.f) * 5.f)	//	the effectiveness of this varies, in ortho (100/480) is one pixel. In perspective... it depends where the camera is
 
 
 
@@ -104,6 +104,11 @@ void TLGui::TWidgetDrag::OnClickEnd(const TLGui::TWidget::TClick& Click)
 		OnClickBegin( Click );
 		return;
 	}
+
+	//	gr: if the drag status indicates we never had a mouse-down message then don't send a mouse up
+	//	todo: move this into base widget code somewhere so we never have a mouse up without a mouse down
+	if ( m_Dragging == SyncFalse )
+		return;
 
 	//	send the normal click end message, add some extra data to say if we did a drag or not
 	//TLGui::TWidget::OnClickEnd( Click );

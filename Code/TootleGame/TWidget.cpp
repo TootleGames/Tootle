@@ -230,6 +230,103 @@ Bool TLGui::TWidget::Update()
 
 
 //-------------------------------------------------
+//	
+//-------------------------------------------------
+SyncBool TLGui::TWidget::PrefetchProcessData(TLRender::TScreen*& pScreen,TLRender::TRenderTarget*& pRenderTarget,TLRender::TRenderNode*& pRenderNode,const TLMaths::TShapeSphere2D*& pWorldBoundsSphere,TPtr<TLMaths::TShape>& pClickDatum)
+{
+	//	find the render target in a screen...
+	TPtr<TLRender::TScreen> pScreenPtr;
+	pRenderTarget = TLRender::g_pScreenManager->GetRenderTarget( m_RenderTargetRef, pScreenPtr );
+	pScreen = pScreenPtr;
+
+	//	didnt find the render target
+	if ( !pRenderTarget )
+		return SyncFalse;
+
+	//	render target isnt enabled, ignore clicks
+	if ( !pRenderTarget->IsEnabled() )
+		return SyncWait;
+
+	//	gr: not sure we can have an invalid rendernode and not crash below... check if anyhting is using the system like this
+	if ( !m_RenderNodeRef.IsValid() )
+	{
+		TLDebug_Break("Is there any code using this functionality - widget with no render node ref");
+		return SyncFalse;
+	}
+
+	//	got a render target, fetch a render node
+	pRenderNode = m_RenderNodeRef.IsValid() ? TLRender::g_pRendergraph->FindNode( m_RenderNodeRef ) : TLPtr::GetNullPtr<TLRender::TRenderNode>();
+
+	//	gr: for support of those that don't use this base render node variable, only check if the ref is valid
+	if ( m_RenderNodeRef.IsValid() && !pRenderNode )
+		return SyncFalse;
+
+	//	ditch clicks if disabled
+	if ( !pRenderNode->IsEnabled() )
+		return SyncFalse;
+
+	//	pre-fetch bounds
+
+	//	get world bounds sphere
+	pWorldBoundsSphere = &pRenderNode->GetWorldBoundsSphere2D();
+
+	//	if this fails, we can assume the transform on the render node is out of date
+	if ( !pWorldBoundsSphere->IsValid() )
+		return SyncWait;
+
+	//	fetch the clickable datum if one is specified - if this fails then we abort (probably missing datum)
+	//	if none was specified we use the bounds sphere we've already fetched and assume the widget has some custom
+	//	code that doesn't use the datum anyway
+	if ( m_RenderNodeDatum.IsValid() )
+	{
+		pClickDatum = pRenderNode->GetWorldDatum( m_RenderNodeDatum, m_RenderNodeDatumKeepShape );
+		if ( !pClickDatum )
+		{
+			TTempString Debug_String("Missing click-datum ");
+			m_RenderNodeDatum.GetString( Debug_String );
+			Debug_String.Append(" for widget on render node ");
+			pRenderNode->GetNodeRef().GetString( Debug_String );
+			Debug_String.Append(" (mesh is ");
+			pRenderNode->GetMeshRef().GetString( Debug_String );
+			Debug_String.Append(")");
+			TLDebug_Print( Debug_String );
+			return SyncWait;
+		}
+	}
+
+	//	got all the values we want, continue onto process/intersection tests
+	return SyncTrue;
+}
+
+//-------------------------------------------------
+//	do a one-off intersection test with this click information. This shouldnt be used in critical code or for normal processing, ProcessQueuedClicks pre-caches much more info
+//-------------------------------------------------
+SyncBool TLGui::TWidget::IsIntersecting(TClick& Click)
+{
+	//	gr: don't allow intersection if disabled?
+	if ( !IsEnabled() )
+		return SyncFalse;
+
+	//	get all the variables we need
+	TLRender::TScreen* pScreen = NULL;
+	TLRender::TRenderTarget* pRenderTarget = NULL;
+	TLRender::TRenderNode* pRenderNode = NULL;
+	const TLMaths::TShapeSphere2D* pWorldBoundsSphere = NULL;
+	TPtr<TLMaths::TShape> pClickDatum;
+
+	SyncBool PrefetchResult = PrefetchProcessData( pScreen, pRenderTarget, pRenderNode, pWorldBoundsSphere, pClickDatum );
+
+	//	if it failed then return whatever the fetch said
+	if ( PrefetchResult != SyncTrue )
+		return PrefetchResult;
+
+	//	do intersection test
+	SyncBool IntersectionResult = IsIntersecting( *pScreen, *pRenderTarget, *pRenderNode, *pWorldBoundsSphere, pClickDatum, Click );
+
+	return IntersectionResult;
+}
+
+//-------------------------------------------------
 //	go through queued-up (unhandled) clicks and respond to them. 
 //	Return FALSE if we cannot process and want to ditch all collected clicks. SyncWait if we don't process the clicks but want to keep them
 //-------------------------------------------------
@@ -248,76 +345,25 @@ SyncBool TLGui::TWidget::ProcessQueuedClicks()
 	if ( !HasSubscribers() )
 		return SyncFalse;
 
-	//	find the render target in a screen...
-	TPtr<TLRender::TScreen> pScreen;
-	TPtr<TLRender::TRenderTarget>& pRenderTarget = TLRender::g_pScreenManager->GetRenderTarget( m_RenderTargetRef, pScreen );
-
-	//	didnt find the render target
-	if ( !pRenderTarget )
-		return SyncFalse;
-
-	//	render target isnt enabled, ignore clicks
-	//if ( !pRenderTarget->IsEnabled() )
-	//	return SyncWait;
-
-	//	gr: not sure we can have an invalid rendernode and not crash below... check if anyhting is using the system like this
-	if ( !m_RenderNodeRef.IsValid() )
-	{
-		TLDebug_Break("Is there any code using this functionality - widget with no render node ref");
-		return SyncFalse;
-	}
-
-	//	got a render target, fetch a render node
-	TPtr<TLRender::TRenderNode>& pRenderNode = m_RenderNodeRef.IsValid() ? TLRender::g_pRendergraph->FindNode( m_RenderNodeRef ) : TLPtr::GetNullPtr<TLRender::TRenderNode>();
-
-	//	gr: for support of those that don't use this base render node variable, only check if the ref is valid
-	if ( m_RenderNodeRef.IsValid() && !pRenderNode )
-		return SyncFalse;
-
-	TLRender::TScreen& Screen = *pScreen;
-	TLRender::TRenderTarget& RenderTarget = *pRenderTarget;
-	TLRender::TRenderNode& RenderNode = *pRenderNode;
-	
-	//	ditch clicks if disabled
-	if ( !RenderNode.IsEnabled() )
-		return SyncFalse;
-
-	//	pre-fetch bounds
-
-	//	get world bounds sphere
-	const TLMaths::TShapeSphere2D& WorldBoundsSphere = RenderNode.GetWorldBoundsSphere2D();
-
-	//	if this fails, we can assume the transform on the render node is out of date
-	if ( !WorldBoundsSphere.IsValid() )
-		return SyncWait;
-
-	//	fetch the clickable datum if one is specified - if this fails then we abort (probably missing datum)
-	//	if none was specified we use the bounds sphere we've already fetched and assume the widget has some custom
-	//	code that doesn't use the datum anyway
+	//	fetch all our neccessary variables
+	TLRender::TScreen* pScreen = NULL;
+	TLRender::TRenderTarget* pRenderTarget = NULL;
+	TLRender::TRenderNode* pRenderNode = NULL;
+	const TLMaths::TShapeSphere2D* pWorldBoundsSphere = NULL;
 	TPtr<TLMaths::TShape> pClickDatum;
-	if ( m_RenderNodeDatum.IsValid() )
-	{
-		pClickDatum = RenderNode.GetWorldDatum( m_RenderNodeDatum, m_RenderNodeDatumKeepShape );
-		if ( !pClickDatum )
-		{
-			TTempString Debug_String("Missing click-datum ");
-			m_RenderNodeDatum.GetString( Debug_String );
-			Debug_String.Append(" for widget on render node ");
-			RenderNode.GetNodeRef().GetString( Debug_String );
-			Debug_String.Append(" (mesh is ");
-			RenderNode.GetMeshRef().GetString( Debug_String );
-			Debug_String.Append(")");
-			TLDebug_Print( Debug_String );
-			return SyncWait;
-		}
-	}
+
+	SyncBool PrefetchResult = PrefetchProcessData( pScreen, pRenderTarget, pRenderNode, pWorldBoundsSphere, pClickDatum );
+
+	//	if it failed then return whatever the fetch said
+	if ( PrefetchResult != SyncTrue )
+		return PrefetchResult;
 
 	//	procecess the clicks in the order they came in - removing as we go
 	while ( m_QueuedClicks.GetSize() )
 	{
 		TClick& Click = m_QueuedClicks[0];
 
-		if ( ProcessClick( Click, Screen, RenderTarget, RenderNode, WorldBoundsSphere, pClickDatum ) == SyncWait )
+		if ( ProcessClick( Click, *pScreen, *pRenderTarget, *pRenderNode, *pWorldBoundsSphere, pClickDatum ) == SyncWait )
 			break;
 
 		m_QueuedClicks.RemoveAt( 0 );

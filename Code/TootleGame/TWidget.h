@@ -43,7 +43,7 @@ namespace TLRender
 //----------------------------------------------
 class TLGui::TWidget : public TLMessaging::TPublisher, public TLMessaging::TSubscriber
 {
-protected:
+public:
 	class TClick
 	{
 	public:
@@ -94,6 +94,8 @@ public:
 	FORCEINLINE void			SetEnabled(Bool Enabled);		//	enable/disable widget
 	FORCEINLINE Bool			IsEnabled() const				{	return m_Enabled;	}
 
+	SyncBool					IsIntersecting(TClick& Click);	//	do a one-off intersection test with this click information. This shouldnt be used in critical code or for normal processing, ProcessQueuedClicks pre-caches much more info
+
 	FORCEINLINE TRefRef			GetRenderNodeRef() const		{	return m_RenderNodeRef;	}	//	can be invalid, or used in more than one widget, so dont rely on this to be unique!
 
 protected:
@@ -122,6 +124,8 @@ protected:
 
 private:
 	SyncBool					ProcessQueuedClicks();	//	go through queued-up (unhandled) clicks and respond to them. Return FALSE if we cannot process and want to ditch all collected clicks. SyncWait if we don't process the clicks but want to keep them
+
+	SyncBool					PrefetchProcessData(TLRender::TScreen*& pScreen,TLRender::TRenderTarget*& pRenderTarget,TLRender::TRenderNode*& pRenderNode,const TLMaths::TShapeSphere2D*& pWorldBoundsSphere,TPtr<TLMaths::TShape>& pClickDatum);
 
 protected:
 	TRef						m_RenderTargetRef;		//	render target where we can see the render node to click on

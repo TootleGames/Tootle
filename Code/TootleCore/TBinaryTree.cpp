@@ -374,3 +374,24 @@ void TBinaryTree::SetChildrenRead(TRefRef DataRef)
 }
 
 
+//------------------------------------------------------
+//	remove all children with this ref
+//------------------------------------------------------
+Bool TBinaryTree::RemoveChildren(TRefRef ChildRef)
+{
+	Bool AnyRemoved = FALSE;
+
+	for ( s32 c=m_Children.GetLastIndex();	c>=0;	c-- )
+	{
+		TBinaryTree& ChildData = *( m_Children[c] );
+		if ( ChildData.GetDataRef() != ChildRef )
+			continue;
+		
+		//	remove child
+		m_Children.RemoveAt( c );
+		AnyRemoved = TRUE;
+	}
+
+	return AnyRemoved;
+}
+

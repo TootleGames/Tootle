@@ -106,6 +106,32 @@ Bool TLGame::TSchemeEditor::Initialise(TRefRef EditorScheme,TRefRef GraphRef,TRe
 //----------------------------------------------------------
 //	
 //----------------------------------------------------------
+void TLGame::TSchemeEditor::Update(float Timestep)				
+{
+	//	new mode requested, change mode
+	if ( m_NextMode.IsValid() )
+	{
+		if ( GetCurrentModeRef() != m_NextMode )
+		{
+#ifdef _DEBUG
+			TTempString Debug_String("Changing editor mode from ");
+			GetCurrentModeRef().GetString( Debug_String );
+			Debug_String.Append(" to ");
+			m_NextMode.GetString( Debug_String );
+			TLDebug_Print( Debug_String );
+#endif
+			SetMode( m_NextMode );
+		}
+		m_NextMode.SetInvalid();
+	}
+
+	TStateMachine::Update( Timestep );	
+}
+
+
+//----------------------------------------------------------
+//	
+//----------------------------------------------------------
 void TLGame::TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	//	input/widget input
@@ -363,10 +389,6 @@ Bool TLGame::TSchemeEditor::SelectNode(TRefRef SceneNode)
 	TLMessaging::TMessage EditMessage("EdtStart");
 	m_pGraph->SendMessageToNode( SceneNode, EditMessage );
 
-	//	go into node mode if we're not already in it
-	if ( GetCurrentModeRef() != "Node" && !IsChangingMode() )
-		SetMode("Node");
-
 	OnNodeSelected( SceneNode );
 
 	return TRUE;
@@ -413,16 +435,6 @@ void TLGame::TSchemeEditor::UnselectNode(TRef SceneNode)
 	TLMessaging::TMessage EditMessage("EdtEnd");
 	m_pGraph->SendMessageToNode( SceneNode, EditMessage );
 
-	//	if no more selected nodes then unset the new-node drag actions
-	if ( m_SelectedNodes.GetSize() == 0 )
-	{
-		//	nothing selected, if in node mode, switch to idle mode
-		//	gr: enabling this in rare cases can cause two mdoe switches in one frame which causes issues when 
-		//	instancing schemes in graphs
-	//	if ( GetCurrentModeRef() == "Node" )
-	//		SetMode("Idle");
-	}
-
 	//	notify of unselection
 	OnNodeUnselected( SceneNode );
 }
@@ -433,6 +445,13 @@ void TLGame::TSchemeEditor::UnselectNode(TRef SceneNode)
 //----------------------------------------------------------
 void TLGame::TSchemeEditor::OnNodeUnselected(TRefRef NodeRef)
 {
+	//	if no more selected nodes then unset the new-node drag actions
+	if ( m_SelectedNodes.GetSize() == 0 )
+	{
+		//	nothing selected, if in node mode, switch to idle mode
+		if ( GetCurrentModeRef() == "Node" )
+			ChangeMode("Idle");
+	}
 }
 
 //----------------------------------------------------------
@@ -440,6 +459,10 @@ void TLGame::TSchemeEditor::OnNodeUnselected(TRefRef NodeRef)
 //----------------------------------------------------------
 void TLGame::TSchemeEditor::OnNodeSelected(TRefRef NodeRef)
 {
+	//	gr: base functionality changes mode
+	//	go into node mode if we're not already in it
+	if ( GetCurrentModeRef() != "Node" && !IsChangingMode() )
+		ChangeMode("Node");
 }
 
 
@@ -506,7 +529,7 @@ void TLGame::TSchemeEditor::ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef
 		//	if this node hasn't been selected before, select this node and unselect everything else
 		if ( SelectNode( NodeRef ) )
 		{
-			for ( s32 i=m_SelectedNodes.GetSize();	i>=0;	i-- )
+			for ( s32 i=m_SelectedNodes.GetLastIndex();	i>=0;	i-- )
 				if ( m_SelectedNodes[i] != NodeRef )
 					UnselectNode( m_SelectedNodes[i] );
 		}
@@ -525,8 +548,8 @@ void TLGame::TSchemeEditor::ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef
 		if ( GetCurrentModeRef() == "Icon" )
 		{
 			//	gr: switch to idle mode so the node menu doesn't pop up, we'll switch to node mode when we actually select a node
-			SetMode("Idle");
-			//SetMode("Node");
+			ChangeMode("Idle");
+			//ChangeMode("Node");
 		}
 	}
 	else if ( ActionRef == "NUp" )
@@ -535,30 +558,39 @@ void TLGame::TSchemeEditor::ProcessNodeMessage(TRefRef NodeRef,TRefRef ActionRef
 		//		then we can assume the user explicitly tried to select it
 		Bool WasDragged = FALSE;
 		Message.ImportData("DidDrag", WasDragged );
-		if ( WasDragged )
-		{
-			//UnselectNode( NodeRef );
-			//SetMode("Idle");
-		}
-		else if ( GetCurrentModeRef() == "Node" || GetCurrentModeRef() == "Idle" )
-		{
-			//	 wasn't dragged, and isn't selected, so select it (assume is a tap to select)
-			if ( SelectNode( NodeRef ) )
-			{
-				for ( s32 i=m_SelectedNodes.GetSize();	i>=0;	i-- )
-					if ( m_SelectedNodes[i] != NodeRef )
-						UnselectNode( m_SelectedNodes[i] );
-			}
-			else
-			{
-				//	was already selected, so unselect
-				UnselectNode( NodeRef );
-				SetMode("Idle");
-			}
-		}
+		OnNodeClickReleased( NodeRef, WasDragged );
 	}
 }
 
+
+//----------------------------------------------------------
+//	
+//----------------------------------------------------------
+void TLGame::TSchemeEditor::OnNodeClickReleased(TRefRef NodeRef, Bool WasDragged)
+{
+	if ( WasDragged )
+	{
+		UnselectNode( NodeRef );
+		ChangeMode("Idle");
+	}
+	else if ( GetCurrentModeRef() != "icon" )
+	{
+		//	 wasn't dragged, and isn't selected, so select it (assume is a tap to select)
+		if ( SelectNode( NodeRef ) )
+		{
+			for ( s32 i=m_SelectedNodes.GetLastIndex();	i>=0;	i-- )
+				if ( m_SelectedNodes[i] != NodeRef )
+					UnselectNode( m_SelectedNodes[i] );
+		}
+		else
+		{
+			//	was already selected, so unselect
+			UnselectNode( NodeRef );
+			if ( GetCurrentModeRef() == "Node" )
+				ChangeMode("Idle");
+		}
+	}
+}
 	
 //----------------------------------------------------------
 //	get world pos in-game from cursor
@@ -866,15 +898,22 @@ void TLGame::TSchemeEditor::ProcessMouseMessage(TRefRef ActionRef,TLMessaging::T
 	//	drop new scene node into game (let go)
 	if ( ActionRef == m_NewSceneNodeClickAction && HasNewNodesSelected() )
 	{
-		#ifdef DEBUG_NODE_INTERACTION
-			TTempString Debug_String("Mouse click action (assume up) - releasing [new] selected nodes ");
-			Debug_GetSelectedNodeRefStrings( Debug_String );
-			TLDebug_Print( Debug_String );
-		#endif
-
-		//	drop new nodes into world, create widgets and unselect them
-		DropNewNode( m_SelectedNodes );
-		return;
+		float RawData = 0.f;
+		if ( IsClickAction && Message.ImportData("RawData", RawData ) )
+		{
+			//	mouse up, drop new nodes into world and unselect them
+			if ( RawData < TLMaths_NearZero )
+			{
+				#ifdef DEBUG_NODE_INTERACTION
+				TTempString Debug_String("Mouse click action up - releasing [new] selected nodes ");
+				Debug_GetSelectedNodeRefStrings( Debug_String );
+				TLDebug_Print( Debug_String );
+				#endif
+	
+				DropNewNode( m_SelectedNodes );
+				return;
+			}
+		}
 	}
 
 
@@ -906,9 +945,8 @@ Bool TLGame::TSchemeEditor::ProcessCommandMessage(TRefRef CommandRef,TLMessaging
 			TLMessaging::TMessage OutMessage( CommandRef, "Editor" );
 			PublishMessage( OutMessage );
 
-			//	gr: cant do this as this message/stack may be coming from something we delete when we change mode
-			//		add this back in when the set mode is stalled
-			//SetMode("Idle");
+			//	change back to idle as menu option has been selected
+			ChangeMode("Idle");
 			return TRUE;
 		}
 		break;
@@ -916,9 +954,8 @@ Bool TLGame::TSchemeEditor::ProcessCommandMessage(TRefRef CommandRef,TLMessaging
 		case TRef_Static(C,l,e,a,r):
 			ClearScheme();
 
-			//	gr: cant do this as this message/stack may be coming from something we delete when we change mode
-			//		add this back in when the set mode is stalled
-			//SetMode("Idle");
+			//	change back to idle as menu option has been selected
+			ChangeMode("Idle");
 			return TRUE;
 			break;
 
@@ -931,10 +968,8 @@ Bool TLGame::TSchemeEditor::ProcessCommandMessage(TRefRef CommandRef,TLMessaging
 					DeleteNode( SelectedNodes[i] );
 			}
 			//	all nodes will have been deleted and unselected so go back to idle mode
-			//	gr: cant do this as this message/stack may be coming from something we delete when we change mode
-			//		add this back in when the set mode is stalled
-			//if ( !m_SelectedNodes.GetSize() )
-			//	SetMode("Idle");
+			//	change back to idle as menu option has been selected
+			ChangeMode("Idle");
 			return TRUE;
 			break;
 
