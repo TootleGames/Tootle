@@ -384,7 +384,7 @@ void TCoreManager::PublishShutdownMessage()
 {
 	TLMessaging::TMessage Message(ShutdownRef);
 	
-	PublishMessage( Message );
+	PublishMessageReverse( Message );
 }
 
 

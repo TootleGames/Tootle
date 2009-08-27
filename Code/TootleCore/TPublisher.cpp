@@ -42,6 +42,20 @@ void TLMessaging::TPublisher::DoPublishMessage(TLMessaging::TMessage& Message)
 	}
 }
 
+void TLMessaging::TPublisher::DoPublishMessageReverse(TLMessaging::TMessage& Message)		
+{
+	for(s32 uIndex = m_Subscribers.GetLastIndex(); uIndex >=0 ; uIndex--)
+	{
+		// Reset the read pos for each subscriber so they read from the start
+		Message.ResetReadPos();
+
+		TSubscriber* pSubscriber = m_Subscribers.ElementAt(uIndex);
+
+		pSubscriber->ProcessMessage(Message);
+	}
+}
+
+
 void TLMessaging::TPublisher::RemoveAllSubscribers()
 {
 	for(u32 uIndex = 0; uIndex < m_Subscribers.GetSize(); uIndex++)

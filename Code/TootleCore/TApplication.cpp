@@ -275,7 +275,12 @@ void TApplication::DestroyGame()
 		return;
 
 	//	shutdown
-	m_pGame->Shutdown();
+	// [27/08/09] DB - We can probably remove this call to the game shutdown as the game will 
+	// subscribe to the core manager and therefore will be shutdown via the shutdown messaging.
+	// But if not then this may need to be handled async.
+	if(m_pGame->GetState() != TLManager::S_Shutdown)
+		m_pGame->Shutdown();
+
 
 	//	unregister
 	TLCore::g_pCoreManager->UnregisterManager( m_pGame->GetManagerRef() );
