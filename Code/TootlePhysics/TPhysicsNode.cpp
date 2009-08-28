@@ -72,6 +72,15 @@ void TLPhysics::TPhysicsNode::Shutdown()
 	//	remove body
 	if ( m_pBody )
 	{
+		// Remove from the filter queue
+		b2Fixture* pShape = m_pBody->GetFixtureList();
+		while ( pShape )
+		{
+			TLPhysics::g_pPhysicsgraph->RemoveRefilterShape( pShape );
+			pShape = pShape->GetNext();
+		}
+
+
 		m_pBody->GetWorld()->DestroyBody( m_pBody );
 		m_pBody = NULL;
 
@@ -142,14 +151,17 @@ void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
 	}
 
 	//	static flag
-	Bool IsStatic;
-	if ( Message.ImportData("fStatic", IsStatic ) )
-		m_PhysicsFlags.Set( Flag_Static, IsStatic );
+	Bool TempPhysicsFlag;
+	if ( Message.ImportData("fStatic", TempPhysicsFlag ) )
+		m_PhysicsFlags.Set( Flag_Static, TempPhysicsFlag );
 
 	//	rotate flag
-	Bool Rotate;
-	if ( Message.ImportData("fRotate", Rotate ) )
-		m_PhysicsFlags.Set( Flag_Rotate, Rotate );
+	if ( Message.ImportData("fRotate", TempPhysicsFlag ) )
+		m_PhysicsFlags.Set( Flag_Rotate, TempPhysicsFlag );
+
+	// Gravity flag
+	if ( Message.ImportData("fGravity", TempPhysicsFlag ) )
+		m_PhysicsFlags.Set( Flag_HasGravity, TempPhysicsFlag );
 
 	u32 PhysicsFlags = 0;
 

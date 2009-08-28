@@ -51,6 +51,7 @@ public:
 	FORCEINLINE const b2World*		GetWorld()					const {	return m_pWorld;	}				//	box2d's world
 	FORCEINLINE void				AddJoint(const TJoint& Joint)	{	m_NodeJointQueue.Add( Joint );	};	//	add a joint to be created on next update
 	FORCEINLINE void				RefilterShape(b2Fixture* pShape)	{	m_RefilterQueue.Add( pShape );	}	//	add to list of shapes that need refiltering
+	FORCEINLINE Bool				RemoveRefilterShape(b2Fixture* pShape)		{	return m_RefilterQueue.Remove( pShape );	}	//	remvoe from the list of shapes that need refiltering
 
 	// Test routines
 	FORCEINLINE void		SetGravityX(float fValue)		{	if ( g_WorldUp.x == fValue )	return;		g_WorldUp.x = fValue;	CalcWorldUpNormal();	}
