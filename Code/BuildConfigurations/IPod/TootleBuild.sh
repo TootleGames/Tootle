@@ -79,7 +79,7 @@ if [ ! -d "$PROJECT" ]; then
 		exit 1
 	fi
 else
-	echo "Updating $SVN_REPO svn..."
+	echo "Updating $PROJECT svn repository ($SVN_REPO)..."
 	svn update $SVN_REPO > ${LOG_FILE}_svn.txt
 	if [ $? != 0 ]; then
 		echo "svn update of $SVN_REPO repository for project $PROJECT failed. See ${LOG_FILE}_svn.txt"
@@ -101,7 +101,7 @@ if [ $? != 0 ]; then
 fi
 
 # need to change directory for xcodebuild to work :(
-echo "Building $PROJECT..."
+echo "Building $TARGET for the $PROJECT project..."
 cd $PROJECT/Code/IPod/
 xcodebuild -target $TARGET -configuration "Release AdHoc" -sdk iphoneos2.2.1 clean build > ${LOG_FILE}_build.txt
 if [ $? != 0 ]; then
@@ -131,7 +131,7 @@ ZIP_FILENAME="${APP_FILENAME}.${DATE_STRING}.zip"
 FTP_HOST="ftp.grahamreeves.com"
 FTP_USER="graham70"
 FTP_PASS="a5c59gra533"
-FTP_DIR="public_html/tootlegames/beta/"
+FTP_DIR="public_html/tootlegames/beta/$PROJECT/"
 
 
 echo "Zipping up ${APP_FILENAME}..."
