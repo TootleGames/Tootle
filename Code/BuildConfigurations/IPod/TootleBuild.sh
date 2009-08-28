@@ -131,7 +131,7 @@ ZIP_FILENAME="${APP_FILENAME}.${DATE_STRING}.zip"
 FTP_HOST="ftp.grahamreeves.com"
 FTP_USER="graham70"
 FTP_PASS="a5c59gra533"
-FTP_DIR="public_html/tootlegames/beta/$PROJECT/"
+FTP_DIR="public_html/tootlegames/beta/$TARGET/"
 
 
 echo "Zipping up ${APP_FILENAME}..."
