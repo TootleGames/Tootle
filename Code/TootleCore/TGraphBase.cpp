@@ -49,7 +49,7 @@ Bool TLGraph::TGraphBase::ImportScheme(const TLAsset::TScheme& Scheme,TRefRef Pa
 //--------------------------------------------------------------------	
 //	import scheme node (tree) into this graph
 //--------------------------------------------------------------------	
-Bool TLGraph::TGraphBase::ImportSchemeNode(const TLAsset::TSchemeNode& SchemeNode,TRefRef ParentRef,TArray<TRef>& ImportedNodes,Bool StrictNodeRefs,TBinaryTree* pCommonInitData)
+Bool TLGraph::TGraphBase::ImportSchemeNode(TLAsset::TSchemeNode& SchemeNode,TRefRef ParentRef,TArray<TRef>& ImportedNodes,Bool StrictNodeRefs,TBinaryTree* pCommonInitData)
 {
 #ifdef DEBUG_SCHEME_IMPORT_EXPORT
 	TTempString Debug_String("Importing scheme node: ");
@@ -60,13 +60,18 @@ Bool TLGraph::TGraphBase::ImportSchemeNode(const TLAsset::TSchemeNode& SchemeNod
 	TLDebug_Print( Debug_String );
 #endif
 
+	SchemeNode.GetData().SetTreeUnread();
+
 	//	create an init message with all the data in the SchemeNode
 	TLMessaging::TMessage Message( TLCore::InitialiseRef );
 	Message.ReferenceDataTree( SchemeNode.GetData() );
 
 	//	add common data too
 	if ( pCommonInitData )
+	{
+		pCommonInitData->SetTreeUnread();
 		Message.ReferenceDataTree( *pCommonInitData );
+	}
 
 	//	create node
 	TRef NewNodeRef = CreateNode( SchemeNode.GetNodeRef(), SchemeNode.GetTypeRef(), ParentRef, &Message, StrictNodeRefs );
@@ -235,15 +240,20 @@ Bool TLGraph::TGraphBase::ReimportScheme(const TLAsset::TScheme& Scheme,TRefRef 
 //--------------------------------------------------------------------	
 //	re-init and restore node tree
 //--------------------------------------------------------------------	
-Bool TLGraph::TGraphBase::ReimportSchemeNode(const TLAsset::TSchemeNode& SchemeNode,TRefRef ParentRef,Bool StrictNodeRefs,Bool AddMissingNodes,Bool RemoveUnknownNodes,TBinaryTree* pCommonInitData)
+Bool TLGraph::TGraphBase::ReimportSchemeNode(TLAsset::TSchemeNode& SchemeNode,TRefRef ParentRef,Bool StrictNodeRefs,Bool AddMissingNodes,Bool RemoveUnknownNodes,TBinaryTree* pCommonInitData)
 {
 	//	create an init message with all the data in the SchemeNode
+	SchemeNode.GetData().SetTreeUnread();
+
 	TLMessaging::TMessage Message( TLCore::InitialiseRef );
 	Message.ReferenceDataTree( SchemeNode.GetData() );
 
 	//	add common data too
 	if ( pCommonInitData )
+	{
+		pCommonInitData->SetTreeUnread();
 		Message.ReferenceDataTree( *pCommonInitData );
+	}
 
 	//	restore node if missing
 	if ( !IsInGraph( SchemeNode.GetNodeRef() ) )
