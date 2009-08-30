@@ -61,12 +61,15 @@ TLRender::TScreen::~TScreen()
 //---------------------------------------------------------
 SyncBool TLRender::TScreen::Init()
 {
+	/*
+#ifdef _DEBUG
 	//	create a debug render target
 	if ( !m_DebugRenderTarget.IsValid() )
 	{
 		CreateDebugRenderTarget();
 	}
-
+#endif
+*/
 	return SyncTrue;
 }
 
@@ -476,8 +479,11 @@ void TLRender::TScreen::GetRenderTargetMaxSize(Type4<s32>& MaxSize)
 //---------------------------------------------------------
 //	
 //---------------------------------------------------------
-void TLRender::TScreen::CreateDebugRenderTarget()
+void TLRender::TScreen::CreateDebugRenderTarget(TRefRef FontRef)
 {
+	if ( !FontRef.IsValid() )
+		return;
+
 	TPtr<TLRender::TRenderTarget> pRenderTarget = CreateRenderTarget("Debug");
 	if ( !pRenderTarget )
 		return;
@@ -508,7 +514,7 @@ void TLRender::TScreen::CreateDebugRenderTarget()
 	//	add fps text
 	{
 		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
-		InitMessage.ExportData("FontRef", TRef("fdebug") );
+		InitMessage.ExportData("FontRef", FontRef );
 		TRef FpsRenderNode = TLRender::g_pRendergraph->CreateNode( "dbgfps", "txtext", RootRenderNode, &InitMessage );
 		m_DebugRenderText.Add( "fps", FpsRenderNode );
 	}

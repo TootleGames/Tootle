@@ -216,6 +216,17 @@ void TLRender::TRenderNodeText::SetString(const TString& Text)
 //--------------------------------------------------------------------
 Bool TLRender::TRenderNodeText::SetTextBox(const TLMaths::TBox2D& Box)
 {
+	//	make a 3d box from the 2D box
+	TLMaths::TBox Box3( Box.GetMin().xyz(0.f), Box.GetMax().xyz(0.f) );
+	return SetTextBox( Box3 );
+}
+
+
+//--------------------------------------------------------------------
+//	update box - returns TRUE if it's changed
+//--------------------------------------------------------------------
+Bool TLRender::TRenderNodeText::SetTextBox(const TLMaths::TBox& Box)
+{
 	//	todo: check for change
 	m_TextBox = Box;
 
@@ -231,13 +242,19 @@ Bool TLRender::TRenderNodeText::SetTextBox(const TLMaths::TBox2D& Box)
 Bool TLRender::TRenderNodeText::SetTextBox(const TLMaths::TShape& Shape)
 {
 	//	can only deal with 2D box's atm
-	if ( Shape.GetShapeType() != TLMaths_ShapeRef_TBox2D )
+	if ( Shape.GetShapeType() == TLMaths_ShapeRef_TBox2D )
 	{
-		TLDebug_Break("Currently TRenderNodeText's only support 2D box shapes for TextBox's");
+		return SetTextBox( static_cast<const TLMaths::TShapeBox2D&>( Shape ).GetBox() );
+	}
+	else if ( Shape.GetShapeType() == TLMaths_ShapeRef_TBox )
+	{
+		return SetTextBox( static_cast<const TLMaths::TShapeBox&>( Shape ).GetBox() );
+	}
+	else
+	{
+		TLDebug_Break("Currently TRenderNodeText's only support box shapes for TextBox's");
 		return FALSE;
 	}
-
-	return SetTextBox( static_cast<const TLMaths::TShapeBox2D&>( Shape ).GetBox() );
 }
 
 
@@ -288,8 +305,8 @@ void TLRender::TRenderNodeText::RealignGlyphs(TLMaths::TBox2D& TextBounds)
 	}
 
 	//	if we don't have a text box we can still do alignment, just with our base point of 0,0
-	TLMaths::TBox2D TempBox( float2(0.f,0.f), float2(0.f,0.f) );
-	const TLMaths::TBox2D& AlignBox = m_TextBox.IsValid() ? m_TextBox : TempBox;
+	TLMaths::TBox TempBox( float3(0.f,0.f,0.f), float3(0.f,0.f,0.f) );
+	const TLMaths::TBox& AlignBox = m_TextBox.IsValid() ? m_TextBox : TempBox;
 
 	//	scale the glyph bounds according to our scale
 	//	note: ensure the original calculated TextBounds isn't scaled according to our transform... it shouldn't be... it should be in local space
@@ -306,12 +323,13 @@ void TLRender::TRenderNodeText::RealignGlyphs(TLMaths::TBox2D& TextBounds)
 
 	//	now get a vector which will align us with our text box as required
 	//	defaults to top-left
-	float2 Alignment( AlignBox.GetMin() );
+	float z = AlignBox.GetCenter().z;
+	float3 Alignment( AlignBox.GetMin().xyzw(z) - TextBounds.GetMin().xyz(z) );
 
 	if ( m_AlignMode.x == TLRenderText::HAlignCenter )
-		Alignment.x += (AlignBox.GetWidth() - TextBounds.GetWidth()) / 2.f;
+		Alignment.x += (AlignBox.GetWidth() - TextBounds.GetWidth() ) / 2.f;
 	else if ( m_AlignMode.x == TLRenderText::HAlignRight )
-		Alignment.x = (AlignBox.GetRight() - TextBounds.GetWidth());
+		Alignment.x = (AlignBox.GetRight() - TextBounds.GetWidth() - TextBounds.GetLeft() );
 	else if ( m_AlignMode.x != TLRenderText::HAlignLeft )
 	{
 		TTempString Debug_String("Unknown alignment mode ");
@@ -320,9 +338,9 @@ void TLRender::TRenderNodeText::RealignGlyphs(TLMaths::TBox2D& TextBounds)
 	}
 
 	if ( m_AlignMode.y == TLRenderText::VAlignMiddle )
-		Alignment.y += (AlignBox.GetHeight() - TextBounds.GetHeight()) / 2.f;
+		Alignment.y += (AlignBox.GetHeight() - TextBounds.GetHeight() ) / 2.f;
 	else if ( m_AlignMode.y == TLRenderText::VAlignBottom )
-		Alignment.y = (AlignBox.GetBottom() - TextBounds.GetHeight());
+		Alignment.y = (AlignBox.GetBottom() - TextBounds.GetHeight() - TextBounds.GetTop() );
 	else if ( m_AlignMode.y != TLRenderText::VAlignTop )
 	{
 		TTempString Debug_String("Unknown alignment mode ");
@@ -331,7 +349,7 @@ void TLRender::TRenderNodeText::RealignGlyphs(TLMaths::TBox2D& TextBounds)
 	}
 
 	//	have a new alignment, apply it to the new transform...
-	m_AlignmentTransform.SetTranslate( Alignment.xyz(0.f) );
+	m_AlignmentTransform.SetTranslate( Alignment );
 
 	//	recalculate new overall transform
 	m_Transform = m_BaseTransform;
@@ -584,7 +602,7 @@ void TLRender::TRenderNodeTextureText::Initialise(TLMessaging::TMessage& Message
 	TLRender::TRenderNodeText::Initialise( Message );
 	
 	//	block load the atlas so we can check the asset is the right type and assign the texture for the font
-	TLAsset::TAtlas* pAtlasAsset = TLAsset::GetAsset<TLAsset::TAtlas>( GetFontRef() );
+	TLAsset::TAtlas* pAtlasAsset = GetFontRef().IsValid() ? TLAsset::GetAsset<TLAsset::TAtlas>( GetFontRef() ) : NULL;
 	if ( pAtlasAsset )
 	{
 		SetTextureRef( pAtlasAsset->GetTextureRef() );
@@ -606,7 +624,7 @@ Bool TLRender::TRenderNodeTextureText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 	}
 
 	//	grab atlas asset
-	TLAsset::TAtlas* pAtlasAsset = TLAsset::GetAsset<TLAsset::TAtlas>( GetFontRef() );
+	TLAsset::TAtlas* pAtlasAsset = GetFontRef().IsValid() ? TLAsset::GetAsset<TLAsset::TAtlas>( GetFontRef() ) : NULL;
 	if ( !pAtlasAsset )
 		return FALSE;
 

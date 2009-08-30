@@ -86,6 +86,7 @@ public:
 	void					SetText(TRefRef TextRef,TLAsset::TText::TTextReplaceTable* pReplaceTable=NULL);
 	FORCEINLINE void		SetText(TRefRef TextRef,TLAsset::TText::TTextReplaceTable& ReplaceTable)			{	SetText( TextRef, &ReplaceTable );	}
 	Bool					SetTextBox(const TLMaths::TBox2D& Box);		//	update box - returns TRUE if it's changed
+	Bool					SetTextBox(const TLMaths::TBox& Box);		//	update box - returns TRUE if it's changed
 	Bool					SetTextBox(const TLMaths::TShape& Shape);	//	update box - returns TRUE if it's changed
 	Bool					SetTextBox(const TLMaths::TShape* pShape)	{	return pShape ? SetTextBox( *pShape ) : SetTextBoxInvalid();	}
 	Bool					SetTextBoxInvalid()							{	Bool WasValid = m_TextBox.IsValid();	m_TextBox.SetInvalid();	return (WasValid!=FALSE);	}
@@ -110,7 +111,7 @@ protected:
 	TRef					m_FontRef;
 	TString					m_Text;
 
-	TLMaths::TBox2D			m_TextBox;				//	currently only a box is supported
+	TLMaths::TBox			m_TextBox;				//	currently only a box is supported
 	Type2<TRef>				m_AlignMode;			//	horizontal and vertical alignment mode
 	TRef					m_ScaleMode;			//	scale mode, if invalid no scaling applied. Note: if you scale the text, and then set a scale mode you will lose your original scale info (or at least on whatever axis is affected by the mode)
 	float					m_LineHeight;			//	scalar to the line height for extra line spacing. 1.0 is default

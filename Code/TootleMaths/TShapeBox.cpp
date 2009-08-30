@@ -122,6 +122,24 @@ Bool TLMaths::TShapeBox::HasIntersection(TLMaths::TShapeSphere& CollisionShape)
 }
 
 
+//----------------------------------------------------------
+//	fast box <-> sphere intersection
+//----------------------------------------------------------
+Bool TLMaths::TShapeBox::HasIntersection(TLMaths::TShapeBox& CollisionShape)
+{
+	return m_Shape.GetIntersection( CollisionShape.GetBox() );
+}
+
+
+//----------------------------------------------------------
+//	fast box <-> sphere intersection
+//----------------------------------------------------------
+Bool TLMaths::TShapeBox::HasIntersection(TLMaths::TShapeBox2D& CollisionShape)
+{
+	return m_Shape.GetIntersection( CollisionShape.GetBox() );
+}
+
+
 
 /*
 //----------------------------------------------------------
@@ -290,6 +308,12 @@ Bool TLMaths::TShapeBox2D::HasIntersection(TShapeSphere2D& CollisionShape)
 
 
 Bool TLMaths::TShapeBox2D::HasIntersection(TShapeBox2D& CollisionShape)
+{
+	return m_Shape.GetIntersection( CollisionShape.GetBox() );
+}
+
+
+Bool TLMaths::TShapeBox2D::HasIntersection(TShapeBox& CollisionShape)
 {
 	return m_Shape.GetIntersection( CollisionShape.GetBox() );
 }

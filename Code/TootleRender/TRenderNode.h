@@ -174,13 +174,13 @@ public:
 	virtual void							OnMoved(const TPtr<TLRender::TRenderNode>& pOldParent);
 	void									Copy(const TRenderNode& OtherRenderNode);	//	copy render object DOES NOT COPY CHILDREN or parent! just properties
 
-	FORCEINLINE TBinaryTree&				GetData()									{	return m_Data;	}
-	FORCEINLINE TPtr<TBinaryTree>&			GetData(TRefRef DataRef)					{	return GetData().GetChild( DataRef );	}
-	FORCEINLINE TPtr<TBinaryTree>&			AddData(TRefRef DataRef)					{	return GetData().AddChild( DataRef );	}
+	DEPRECATED FORCEINLINE TBinaryTree&			GetData()									{	return GetNodeData();	}
+	DEPRECATED FORCEINLINE TPtr<TBinaryTree>&	GetData(TRefRef DataRef)					{	return GetNodeData().GetChild( DataRef );	}
+	DEPRECATED FORCEINLINE TPtr<TBinaryTree>&	AddData(TRefRef DataRef)					{	return GetNodeData().AddChild( DataRef );	}
 	virtual void							UpdateNodeData();							
 
 	void									SetAttachDatum(TRefRef DatumRef);			//	change the datum we're attached to. Sets the data and does an immediate translate as required
-	FORCEINLINE TRef						GetAttachDatum()							{	TRef DatumRef;	return GetData().ImportData("AttachDatum", DatumRef ) ? DatumRef : TRef();	}
+	FORCEINLINE TRef						GetAttachDatum()							{	TRef DatumRef;	return GetNodeData().ImportData("AttachDatum", DatumRef ) ? DatumRef : TRef();	}
 
 	//	overloaded render routine for generic stuff. if this returns TRUE then continue with default RenderNode rendering - 
 	//	if FALSE presumed we are doing psuedo rendering ourselves (creating RenderNodes and rendering them to the render target)
@@ -204,6 +204,8 @@ public:
 	FORCEINLINE const float3&				GetWorldPos(SyncBool& IsValid) 				{	GetWorldPos();	IsValid = m_WorldPosValid;	return m_WorldPos;	}
 	FORCEINLINE const float3&				GetWorldPosConst() const					{	return m_WorldPos;	}
 
+	Bool									GetLocalPos(float3& LocalPos,const float3& WorldPos);		//	calculate a local-relative position from a world position. this will be in THIS's space. so if this has a scale of 10, the relative position will be 1/10th of the world's offset. The end result, multiplied by this's world transform should produce the original world pos
+
 	//	get world shapes/datums - recalculates if old
 	const TLMaths::TShapeBox&				GetWorldBoundsBox()							{	return m_BoundsBox.CalcWorldShape( *this );	}
 	const TLMaths::TShapeBox2D&				GetWorldBoundsBox2D()						{	return m_BoundsBox2D.CalcWorldShape( *this );	}
@@ -223,8 +225,8 @@ public:
 	const TLMaths::TShapeBox2D&				GetLocalBoundsBox2D() 							{	CalcLocalBounds( m_BoundsBox2D.m_LocalShape );			return m_BoundsBox2D.m_LocalShape;	}
 	const TLMaths::TShapeSphere&			GetLocalBoundsSphere()							{	CalcLocalBounds( m_BoundsSphere.m_LocalShape );			return m_BoundsSphere.m_LocalShape;	}
 	const TLMaths::TShapeSphere2D&			GetLocalBoundsSphere2D()						{	CalcLocalBounds( m_BoundsSphere2D.m_LocalShape );		return m_BoundsSphere2D.m_LocalShape;	}
-	void									GetLocalDatums(TArray<const TLMaths::TShape*>& LocalDatums);	//	get all datums in the mesh and render node (ie. includes bounds)
-	FORCEINLINE const TLMaths::TShape*		GetLocalDatum(TRefRef DatumRef);				//	extract a datum from our mesh - unless a special ref is used to get bounds shapes
+	virtual void							GetLocalDatums(TArray<const TLMaths::TShape*>& LocalDatums);	//	get all datums in the mesh and render node (ie. includes bounds)
+	virtual const TLMaths::TShape*			GetLocalDatum(TRefRef DatumRef);				//	extract a datum from our mesh - unless a special ref is used to get bounds shapes
 	template<class SHAPETYPE>
 	FORCEINLINE const SHAPETYPE*			GetLocalDatum(TRefRef DatumRef);				//	get a datum of a specific type - returns NULL if it doesn't exist or is of a different type
 	Bool									GetLocalDatumPos(TRefRef DatumRef,float3& Position);	//	get the position of a datum in local space. returns FALSE if no such datum
@@ -250,6 +252,7 @@ protected:
 
 	FORCEINLINE void						OnMeshRefChanged()							{	m_pMeshCache = NULL;	OnMeshChanged();	}
 	FORCEINLINE void						OnTextureRefChanged()						{	m_pTextureCache = NULL;	}
+	void									OnAttachDatumChanged();						//	called when attach datum needs repositioning
 	//void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags=TInvalidateFlags(InvalidateLocalBounds,InvalidateWorldBounds,InvalidateWorldPos,InvalidateParents,InvalidateChildren));	//	set all bounds as invalid
 	void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags);
 
@@ -265,6 +268,7 @@ protected:
 	float						m_PointSpriteSize;			//	size of point sprites in world space. API renders these in pixel sizes so we do a conversion in the render
 	float3						m_WorldPos;					//	we always calc the world position on render, even if we dont calc the bounds box/sphere/etc, it's quick and handy!
 	SyncBool					m_WorldPosValid;			//	if this is not valid then the transform of this node has changed since our last render
+	Bool						m_AttachDatumValid;			//	if we're using an attach datum, and this is FALSE then we need to re-position ourself to the datum
 
 	//	gr: todo: almagamate all these bounds shapes into a single bounds type that does all 3 or picks the best or something
 	//	gr: also todo; turn this into datums with special refs. Then add a bounds-checking type as above
@@ -283,7 +287,6 @@ protected:
 	TRef						m_TextureRef;
 	TPtr<TLAsset::TTexture>		m_pTextureCache;
 
-	TBinaryTree					m_Data;					//	data attached to render object
 	TArray<TRef>				m_Debug_RenderDatums;	//	list of datums to debug-render
 
 	TRef						m_OwnerSceneNode;		//	"Owner" scene node - if this is set then we automaticcly process some stuff (ie. catching OnTransform of a scene node we set our transform)
@@ -403,30 +406,6 @@ FORCEINLINE void TLRender::TRenderNode::OnMeshChanged()
 }
 
 
-//---------------------------------------------------------------
-//	extract a datum from our mesh - unless a special ref is used to get bounds shapes
-//---------------------------------------------------------------
-FORCEINLINE const TLMaths::TShape* TLRender::TRenderNode::GetLocalDatum(TRefRef DatumRef)
-{
-	switch ( DatumRef.GetData() )
-	{
-		case TRef_InvalidValue:							return NULL;
-		case TLRender_TRenderNode_DatumBoundsBox:		return &GetLocalBoundsBox();
-		case TLRender_TRenderNode_DatumBoundsBox2D:		return &GetLocalBoundsBox2D();
-		case TLRender_TRenderNode_DatumBoundsSphere:	return &GetLocalBoundsSphere();
-		case TLRender_TRenderNode_DatumBoundsSphere2D:	return &GetLocalBoundsSphere2D();
-
-		default:
-		{
-			//	get datum from mesh
-			TLAsset::TMesh* pMesh = GetMeshAsset();
-			if ( !pMesh )
-				return NULL;
-			
-			return pMesh->GetDatum( DatumRef );
-		}
-	};
-}
 
 //---------------------------------------------------------------
 //	get a datum of a specific type - returns NULL if it doesn't exist or is of a different type
@@ -514,12 +493,17 @@ const SHAPETYPE& TLMaths::TBoundsShape<SHAPETYPE>::CalcWorldShape(TLRender::TRen
 	}
 
 	//	get/recalc local bounds box
-	RenderNode.CalcLocalBounds( m_LocalShape );
 	if ( !m_LocalShape.IsValid() )
 	{
-		//	gr: shouldn't be valid...
-		m_WorldShape.SetInvalid();
-		return m_WorldShape;
+		RenderNode.CalcLocalBounds( m_LocalShape );
+
+		//	still not valid
+		if ( !m_LocalShape.IsValid() )
+		{
+			//	gr: shouldn't be valid...
+			m_WorldShape.SetInvalid();
+			return m_WorldShape;
+		}
 	}
 
 	//	tranform our local bounds into the world bounds

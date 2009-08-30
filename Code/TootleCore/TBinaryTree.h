@@ -65,6 +65,9 @@ public:
 	TPtr<TBinaryTree>&			ExportData(TRefRef DataRef,const TYPE& Data);
 	TPtr<TBinaryTree>&			ExportDataString(TRefRef DataRef,const TString& DataString);	//	gr: remove if I can get Read/Write() to work with a TString in TBinary
 
+	template<typename TYPE> 
+	Bool						ReplaceData(TRefRef DataRef,const TYPE& Data);			//	remove existing data and swap it for this new data. if the new value is the same as before then FALSE is returned							
+
 	FORCEINLINE Bool			operator==(TRefRef DataRef)const		{	return GetDataRef() == DataRef;	}
 
 	void						Debug_PrintTree(u32 TreeLevel=0) const;					//	debug_print the tree
@@ -169,3 +172,25 @@ TPtr<TBinaryTree>& TBinaryTree::ExportData(TRefRef DataRef,const TYPE& Data)
 	return pData;
 }
 
+
+//------------------------------------------------------
+//	remove existing data and swap it for this new data. if the new value is the same as before then FALSE is returned
+//------------------------------------------------------
+template<typename TYPE> 
+Bool TBinaryTree::ReplaceData(TRefRef DataRef,const TYPE& Data)
+{
+	//	get existing data
+	TPtr<TBinaryTree>& pExistingData = GetChild( DataRef );
+	if ( pExistingData )
+	{
+		//	todo: compare existing data
+		pExistingData->Empty();
+		pExistingData->Write( Data );
+		return TRUE;
+	}
+
+	//	new data
+	ExportData( DataRef, Data );
+
+	return TRUE;
+}

@@ -227,6 +227,8 @@ public:
 	FORCEINLINE const Type2<TYPE>&	xy() const								{	return *((Type2<TYPE>*)&x);	}
 	FORCEINLINE Type3<TYPE>&		xyz()									{	return *((Type3<TYPE>*)&x);	}
 	FORCEINLINE const Type3<TYPE>&	xyz() const								{	return *((Type3<TYPE>*)&x);	}
+	FORCEINLINE Type2<TYPE>&		zw()									{	return *((Type2<TYPE>*)&z);	}
+	FORCEINLINE const Type2<TYPE>&	zw() const								{	return *((Type2<TYPE>*)&z);	}
 	FORCEINLINE Bool				IsZero() const							{	return (x==0) && (y==0) && (z==0) && (w==0);	}	//	could also use {	return DotProduct() == 0;	}	
 	FORCEINLINE Bool				IsNonZero() const						{	return (x!=0) || (y!=0) || (z!=0) || (w!=0);	}	//	could also use {	return DotProduct() != 0;	}	
 	FORCEINLINE Bool				HasDifferenceMin(const Type4<TYPE>& Other,const TYPE& MinDifference) const;			//	check difference between two instances are above a miniumum

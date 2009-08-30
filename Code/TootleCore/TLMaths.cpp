@@ -1521,9 +1521,15 @@ u8 TLMaths::TTransform::ImportData(TBinaryTree& Data)
 {
 	u8 ChangedBits = 0x0;
 
+	
 	//	import translate
 	float3 OldTranslate = m_Translate;
-	if ( Data.ImportData( TRef_Static(T,r,a,n,s), m_Translate ) )
+	Bool ChangedTransform = Data.ImportData( TRef_Static(T,r,a,n,s), m_Translate );
+	
+	//	gr: now support setting of just the Z
+	ChangedTransform |= Data.ImportData( TRef_Static(Z,T,r,a,n), m_Translate.z );
+
+	if ( ChangedTransform )
 	{
 		TLDebug_CheckFloat( m_Translate );
 

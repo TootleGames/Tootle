@@ -46,8 +46,26 @@ void TLMaths::TSphere::Accumulate(const TSphere& Sphere)
 
 	//	get furthest point on both spheres from each other
 	float3 DirToSphere( Sphere.GetPos() - GetPos() );
-	DirToSphere.Normalise();
+	float LengthSq = DirToSphere.LengthSq();
+	
+	//	overlapping, so just get a new larger radius
+	if ( LengthSq < TLMaths_NearZero )
+	{
+		m_Radius = (Sphere.GetRadius() > m_Radius) ? Sphere.GetRadius() : m_Radius;
+		return;
+	}
+
+	//	normalise dir
+	DirToSphere.Normalise( TLMaths::Sqrtf(LengthSq), 1.f );
+
+	//	get the furthest point away on the sphere
 	float3 FurthestPointOnSphere = Sphere.GetPos() + DirToSphere.Normal( Sphere.GetRadius() );
+
+	//	if its already inside this sphere then we dont need to change anything
+	if ( GetIntersection( FurthestPointOnSphere ) )
+		return;
+
+	//	get furthest point away on the existing sphere
 	float3 FurthestPointOnThis = GetPos() - DirToSphere.Normal( GetRadius() );
 
 	//	new sphere center is midpoint between furthest points
@@ -64,8 +82,13 @@ void TLMaths::TSphere::Accumulate(const TSphere& Sphere)
 //-----------------------------------------------------------
 void TLMaths::TSphere::Accumulate(const TBox& Box)
 {
-	Accumulate( Box.GetMin() );
-	Accumulate( Box.GetMax() );
+	//	make a sphere that encompasses the boxes furthest points
+	float3 BoxCenter = Box.GetCenter();
+	float BoxRadius = (Box.GetMax() - BoxCenter).Length();
+
+	TLMaths::TSphere BoxSphere( BoxCenter, BoxRadius );
+
+	Accumulate( BoxSphere );
 }
 
 
@@ -74,8 +97,13 @@ void TLMaths::TSphere::Accumulate(const TBox& Box)
 //-----------------------------------------------------------
 void TLMaths::TSphere::Accumulate(const TBox2D& Box)
 {
-	Accumulate( Box.GetMin() );
-	Accumulate( Box.GetMax() );
+	//	make a sphere that encompasses the boxes furthest points
+	float2 BoxCenter = Box.GetCenter();
+	float BoxRadius = (Box.GetMax() - BoxCenter).Length();
+
+	TLMaths::TSphere BoxSphere( BoxCenter.xyz(0.f), BoxRadius );
+
+	Accumulate( BoxSphere );
 }
 
 //-----------------------------------------------------------
@@ -500,8 +528,13 @@ TLMaths::TSphere2D::TSphere2D(const float2& Pos,float Radius) :
 //-----------------------------------------------------------
 void TLMaths::TSphere2D::Accumulate(const TBox2D& Box)
 {
-	Accumulate( Box.GetMin() );
-	Accumulate( Box.GetMax() );
+	//	make a sphere that encompasses the boxes furthest points
+	float2 BoxCenter = Box.GetCenter();
+	float BoxRadius = (Box.GetMax() - BoxCenter).Length();
+
+	TLMaths::TSphere2D BoxSphere( BoxCenter, BoxRadius );
+
+	Accumulate( BoxSphere );
 }
 
 //-----------------------------------------------------------
@@ -669,8 +702,26 @@ void TLMaths::TSphere2D::Accumulate(const TSphere2D& Sphere)
 
 	//	get furthest point on both spheres from each other
 	float2 DirToSphere( Sphere.GetPos() - GetPos() );
-	DirToSphere.Normalise();
+	float LengthSq = DirToSphere.LengthSq();
+	
+	//	overlapping, so just get a new larger radius
+	if ( LengthSq < TLMaths_NearZero )
+	{
+		m_Radius = (Sphere.GetRadius() > m_Radius) ? Sphere.GetRadius() : m_Radius;
+		return;
+	}
+
+	//	normalise dir
+	DirToSphere.Normalise( TLMaths::Sqrtf(LengthSq), 1.f );
+
+	//	get the furthest point away on the sphere
 	float2 FurthestPointOnSphere = Sphere.GetPos() + DirToSphere.Normal( Sphere.GetRadius() );
+
+	//	if its already inside this sphere then we dont need to change anything
+	if ( GetIntersection( FurthestPointOnSphere ) )
+		return;
+
+	//	get furthest point away on the existing sphere
 	float2 FurthestPointOnThis = GetPos() - DirToSphere.Normal( GetRadius() );
 
 	//	new sphere center is midpoint between furthest points
@@ -686,23 +737,9 @@ void TLMaths::TSphere2D::Accumulate(const TSphere2D& Sphere)
 //-----------------------------------------------------------
 void TLMaths::TSphere2D::Accumulate(const TSphere& Sphere)
 {
-	if ( !IsValid() )
-	{
-		Set( Sphere );
-		return;
-	}
+	TLMaths::TSphere2D Sphere2D( Sphere.GetPos().xy(), Sphere.GetRadius() );
 
-	//	get furthest point on both spheres from each other
-	float2 DirToSphere( Sphere.GetPos().xy() - GetPos() );
-	DirToSphere.Normalise();
-	float2 FurthestPointOnSphere = Sphere.GetPos().xy() + DirToSphere.Normal( Sphere.GetRadius() );
-	float2 FurthestPointOnThis = GetPos() - DirToSphere.Normal( GetRadius() );
-
-	//	new sphere center is midpoint between furthest points
-	m_Pos = (FurthestPointOnSphere + FurthestPointOnThis) * 0.5f;
-
-	//	new radius is half length from furthest point to furthest point
-	m_Radius = (FurthestPointOnSphere - FurthestPointOnThis).Length() * 0.5f;
+	Accumulate( Sphere2D );
 }
 
 

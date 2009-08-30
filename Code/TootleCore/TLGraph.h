@@ -1205,6 +1205,10 @@ Bool TLGraph::TGraph<T>::MoveNode(TPtr<T>& pNode,TPtr<T>& pParent)
 		return FALSE;
 	}
 
+	//	this is already the node's parent
+	if ( pNode->GetParent() == pParent )
+		return FALSE;
+
 	//	create new request
 	m_RequestQueue.AddNewPtr( new TGraphUpdateRequest( pNode, pParent, STRef4(M,o,v,e) ) );
 

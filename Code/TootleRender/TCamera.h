@@ -158,9 +158,10 @@ protected:
 class TLRender::TOrthoCamera : public TCamera
 {
 public:
-	TOrthoCamera(Bool SquareProjection=FALSE) :
+	TOrthoCamera(Bool SquareProjection=FALSE,float OrthoRange=100.f) :
 		m_WorldToPixelScale	( 0.f ),
 		m_PixelToWorldScale	( 0.f ),
+		m_OrthoRange		( OrthoRange ),
 		m_SquareProjection	( SquareProjection )
 	{
 	}
@@ -170,7 +171,7 @@ public:
 
 	const TLMaths::TBox2D&				GetOrthoCoordinateBox() const		{	return m_OrthoCoorindateBox;	}	
 	DEPRECATED const TLMaths::TBox2D&	GetOrthoRenderTargetBox() const		{	return m_OrthoWorldBox;	}	//	use TLRender::TRenderTarget::GetWorldViewBox (or GetWorldViewBox if you have a camera pointer already)
-	float								GetOrthoRange() const				{	return 100.f;	}
+	float								GetOrthoRange() const				{	return m_OrthoRange;	}
 
 	virtual Bool						GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;			//	convert point on screen to a 3D ray
 	virtual Bool						GetWorldPos(float3& WorldPos,float WorldDepth,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;	//	convert point on screen to a 3D position
@@ -185,5 +186,6 @@ protected:
 	TLMaths::TBox2D			m_OrthoCoorindateBox;		//	ortho coorindate box. this will match the viewport box but be in ortho scale
 	TLMaths::TBox2D			m_OrthoWorldBox;			//	ortho render target dimensions as a box
 	Bool					m_SquareProjection;			//	if true then the projection becomes square which allows us to roll the camera without skewing it
+	float					m_OrthoRange;				//	world size in the render target's width. Make this the same as the screen/render target's width to have 1 unit = 1 pixel
 };
 

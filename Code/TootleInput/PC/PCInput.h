@@ -41,6 +41,9 @@ namespace TLInput
 			Bool UpdateDirectXDevice_Mouse(TInputDevice& Device, TLInputDirectXDevice& TLDirectInputDevice);
 			Bool UpdateDirectXDevice_Keyboard(TInputDevice& Device, TLInputDirectXDevice& TLDirectInputDevice);
 			Bool UpdateDirectXDevice_Gamepad(TInputDevice& Device, TLInputDirectXDevice& TLDirectInputDevice);
+
+			//	for an axis, consolidate all the movement in an axis to one movement
+			Bool		ConslidateAxisMovement(TArray<TInputData>& InputBuffer,TRefRef AxisSensorRef);
 		}
 
 

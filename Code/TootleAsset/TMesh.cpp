@@ -1598,6 +1598,17 @@ Bool TLAsset::TMesh::CreateDatum(const TArray<float3>& PolygonPoints,TRefRef Dat
 		AddDatum( DatumRef, pShape );
 		return TRUE;
 	}
+	else if ( DatumShapeType == TLMaths::TBox::GetTypeRef() )
+	{
+		//	get box of points for extents
+		TLMaths::TBox Box;
+		Box.Accumulate( PolygonPoints );
+		TPtr<TLMaths::TShape> pShape = new TLMaths::TShapeBox( Box );
+
+		//	add datum
+		AddDatum( DatumRef, pShape );
+		return TRUE;
+	}
 	else if ( DatumShapeType == TLMaths_ShapeRef_Polygon2D || DatumShapeType == TLMaths::TOblong2D::GetTypeRef() )
 	{
 		//	gr: keep oblong for legacy shapes - now replaced with polygon
@@ -1859,3 +1870,38 @@ void TLAsset::TMesh::GenerateShape(const TLMaths::TShape& Shape)
 	}
 }
 
+
+//-----------------------------------------------------------
+//	calculate UV's per vertex relative to the bounds of the shape (2D projection)
+//-----------------------------------------------------------
+void TLAsset::TMesh::CalcProjectionUVs()
+{
+	//	get the 2D bounds box
+	const TLMaths::TBox2D& BoundsBox = GetBoundsBox2D();
+	float BoxWidth = BoundsBox.GetWidth();
+	float BoxHeight = BoundsBox.GetHeight();
+	Bool WidthZero = (BoxWidth < TLMaths_NearZero);
+	Bool HeightZero = (BoxHeight < TLMaths_NearZero);
+	
+	//	alloc uv's
+	m_UVs.SetSize( m_Vertexes.GetSize() );
+
+	//	preaclc offset
+	float2 uvoffset;
+	uvoffset.x = WidthZero ? 0.f : BoundsBox.GetLeft() / BoxWidth;
+	uvoffset.y = HeightZero ? 0.f : BoundsBox.GetTop() / BoxHeight;
+
+	//	calculate Uv for each vertex
+	for ( u32 i=0;	i<m_Vertexes.GetSize();	i++ )
+	{
+		//	x/width = range
+		float s = WidthZero ? 0.f : m_Vertexes[i].x / BoxWidth;
+		float t = HeightZero ? 0.f : m_Vertexes[i].y / BoxHeight;
+
+		//	+ offset for geometry not at 0,0
+		m_UVs[i].x = s + uvoffset.x;
+		m_UVs[i].y = t + uvoffset.y;
+	}
+
+
+}

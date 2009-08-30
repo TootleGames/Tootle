@@ -77,5 +77,7 @@ protected:
 	float				m_SvgPointScale;		//	when parsing xml we scale all points by this
 
 	Bool				m_VertexColoursEnabled;	//	adding TootleVertexColours="FALSE" to the <svg> tag disables generation of colours on vertexes (so the mesh can be coloured by the render node)
+	Bool				m_ProjectUVsEnabled;	//	adding TootleProjectUVs="TRUE" to the <svg> tag enables projection UV mapping where the UV's of the vertexes are set relative to their position in their bounds. (most top-left vertex would be 0,0 uv)
+	
 };
 

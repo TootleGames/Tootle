@@ -864,7 +864,10 @@ Bool Platform::DirectX::UpdateDirectXDevice_Mouse(TInputDevice& Device,TLInputDi
 	TLDebug::Print(inputinfo);
 #endif
 
+	//	make a list of axes to consolidate after processing
+	TFixedArray<TRef,100> ConsolidateAxes;
 
+	//	pre-alloc input buffer space
 	TArray<TInputData>& InputBuffer = Device.GetInputBuffer();
 	InputBuffer.AddAllocSize( dwItems );
 
@@ -874,11 +877,10 @@ Bool Platform::DirectX::UpdateDirectXDevice_Mouse(TInputDevice& Device,TLInputDi
 	{
 		// get the data from the buffer
 		float fValue = 0.0f;
+		Bool IsAxisData = (rgdod[uCount].dwOfs == DIMOFS_X) || (rgdod[uCount].dwOfs == DIMOFS_Y) || (rgdod[uCount].dwOfs == DIMOFS_Z);
 
 		// Check for the axes and scale down the value
-		if(	(rgdod[uCount].dwOfs == DIMOFS_X) ||
-			(rgdod[uCount].dwOfs == DIMOFS_Y) ||
-			(rgdod[uCount].dwOfs == DIMOFS_Z))
+		if(	IsAxisData )
 		{
 
 			s32 sValue = rgdod[uCount].dwData;
@@ -904,6 +906,7 @@ Bool Platform::DirectX::UpdateDirectXDevice_Mouse(TInputDevice& Device,TLInputDi
 				fValue = ((float)sValue / (float)dipdw.dwData);
 
 				//Simple scale of the value instead of doing a percentage
+				//	gr: needs to be changed so it's not some arbitry value... just keep it in screen space...
 				fValue /= 100.0f;
 
 				bSuccess = TRUE;
@@ -948,6 +951,7 @@ Bool Platform::DirectX::UpdateDirectXDevice_Mouse(TInputDevice& Device,TLInputDi
 		}
 		else
 		{
+			//	is a button, not an axis
 			fValue = (rgdod[uCount].dwData > 0.0f ? 1.0f : 0.0f);
 		}
 
@@ -955,6 +959,10 @@ Bool Platform::DirectX::UpdateDirectXDevice_Mouse(TInputDevice& Device,TLInputDi
 		data.m_fData = fValue;
 		InputBuffer.Add(data);
 
+		if ( IsAxisData )
+		{
+			ConsolidateAxes.AddUnique( data.m_SensorRef );
+		}
 #ifdef _DEBUG
 		// In debug print what button was pressed
 		TString inputinfo = "Mouse input: ";
@@ -969,13 +977,67 @@ Bool Platform::DirectX::UpdateDirectXDevice_Mouse(TInputDevice& Device,TLInputDi
 
 	}
 
+	//	consolidate axis data
+	for ( u32 i=0;	i<ConsolidateAxes.GetSize();	i++ )
+		ConslidateAxisMovement( InputBuffer, ConsolidateAxes[i] );
+
 	return (hr == DI_OK);
 }
 
 
-/*	
-	Special update routine for a keyboard using directx
-*/
+//-------------------------------------------------------------------
+//	for an axis, consolidate all the movement in an axis to one movement
+//-------------------------------------------------------------------
+Bool Platform::DirectX::ConslidateAxisMovement(TArray<TInputData>& InputBuffer,TRefRef AxisSensorRef)
+{
+	//	reduce all movement (values) on one axis down to one value
+	//	gr: the caveat here is that we could have a sequence of
+	//	move down move up
+	//	and we'll lose the 2nd move (between down and up, ie, a drag)
+	//	my thinking is that if this is in the input buffer then we've managed to
+	//	do this in ONE frame, and the user couldn't have done that much important stuff in 1/60th of a second
+	float RunningValue = 0.f;
+	s32 PreviousValueIndex = -1;
+	u32 Debug_DatasRemoved = 0;
+
+	for ( s32 i=InputBuffer.GetLastIndex();	i>=0;	i-- )
+	{
+		TInputData& InputData = InputBuffer[i];
+		if ( InputData.m_SensorRef != AxisSensorRef )
+			continue;
+
+		//	accumulate this movement 
+		RunningValue += InputData.m_fData;
+		InputData.m_fData = RunningValue;
+
+		//	if there was a previous value remove the one we've now accumulated
+		if ( PreviousValueIndex != -1 )
+		{
+			InputBuffer.RemoveAt( PreviousValueIndex );
+			Debug_DatasRemoved++;
+		}
+
+		//	THIS is now the next one to remove if we find an earlier value
+		PreviousValueIndex = i;
+	}
+
+#ifdef _DEBUG
+	if ( Debug_DatasRemoved > 0 )
+	{
+		TTempString Debug_String("Removed ");
+		Debug_String.Appendf("%d data's from the axis sensor ",Debug_DatasRemoved);
+		AxisSensorRef.GetString( Debug_String );
+		TLDebug_Print( Debug_String );
+	}
+#endif
+
+	return (Debug_DatasRemoved>0);
+}
+
+
+//-------------------------------------------------------------------
+//	Special update routine for a keyboard using directx
+//-------------------------------------------------------------------
 Bool Platform::DirectX::UpdateDirectXDevice_Keyboard(TInputDevice& Device,TLInputDirectXDevice& TLDirectInputDevice)
 {
 	LPDIRECTINPUTDEVICE8 lpdiDevice = TLDirectInputDevice.GetDevice();

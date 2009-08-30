@@ -29,6 +29,8 @@ public:
 	virtual TPtr<TShape>			Untransform(const TLMaths::TTransform& Transform,TPtr<TShape>& pOldShape,Bool KeepShape=FALSE) const;
 	
 	virtual Bool					HasIntersection(TShapeSphere& OtherShape);
+	virtual Bool					HasIntersection(TShapeBox& OtherShape);
+	virtual Bool					HasIntersection(TShapeBox2D& OtherShape);
 
 	const TLMaths::TBox&			GetBox() const								{	return m_Shape;	}
 	void							SetBox(const TLMaths::TBox& Box)			{	m_Shape = Box;	}
@@ -63,6 +65,7 @@ public:
 
 	virtual Bool					HasIntersection(TShapeSphere& OtherShape);
 	virtual Bool					HasIntersection(TShapeSphere2D& OtherShape);
+	virtual Bool					HasIntersection(TShapeBox& OtherShape);
 	virtual Bool					HasIntersection(TShapeBox2D& OtherShape);
 	virtual Bool					HasIntersection(TShapeCapsule2D& OtherShape);
 	virtual Bool					HasIntersection(TLMaths::TLine& Line) const	{	return m_Shape.GetIntersection( Line );	}

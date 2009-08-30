@@ -46,7 +46,25 @@ public:
 	float3			GetCenter() const;	//	get the center of the box
 	float3			GetSize() const		{	return (m_Max - m_Min);	}
 	void			GetBoxCorners(TArray<float3>& CornerPositions) const;	//	get the 8 corners of the box
-	
+	const float&	GetLeft() const		{	return m_Min.x;	}
+	float&			GetLeft()			{	return m_Min.x;	}
+	const float&	GetTop() const		{	return m_Min.y;	}
+	float&			GetTop()			{	return m_Min.y;	}
+	const float&	GetNear() const		{	return m_Min.z;	}
+	float&			GetNear()			{	return m_Min.z;	}
+	const float&	GetRight() const	{	return m_Max.x;	}
+	float&			GetRight()			{	return m_Max.x;	}
+	const float&	GetBottom() const	{	return m_Max.y;	}
+	float&			GetBottom()			{	return m_Max.y;	}
+	const float&	GetFar() const		{	return m_Max.z;	}
+	float&			GetFar()			{	return m_Max.z;	}
+	const float		GetWidth() const	{	return (m_Max.x - m_Min.x);	}
+	const float		GetHeight() const	{	return (m_Max.y - m_Min.y);	}
+	float			GetHalfWidth() const	{	return (m_Max.x - m_Min.x) * 0.5f;	}
+	float			GetHalfHeight() const	{	return (m_Max.y - m_Min.y) * 0.5f;	}
+	void			SetWidth(float Width)	{	m_Max.x = m_Min.x + Width;	}	//	set the width by changing the max
+	void			SetHeight(float Height)	{	m_Max.y = m_Min.y + Height;	}	//	set the height by changing the max
+
 	void			Set(const float3& Min,const float3& Max)	{	m_Min = Min;	m_Max = Max;	m_IsValid = TRUE;	}
 	void			Set(const float3& MinMax)					{	m_Min = MinMax;	m_Max = MinMax;	m_IsValid = TRUE;	}
 	void			SetMin(const float3& Min)					{	m_Min = Min;	m_IsValid = TRUE;	}
@@ -69,6 +87,7 @@ public:
 
 	//	"intersection" is just a bool version of the distance check. (negative distance is an intersection)
 	Bool			GetIntersection(const TLine& Line) const;
+	Bool			GetIntersection(const TBox2D& Box) const;
 	Bool			GetIntersection(const float3& Pos) const;
 	Bool			GetIntersection(const TSphere& Sphere) const;
 	Bool			GetIntersection(const TCapsule& Capsule) const;

@@ -165,12 +165,12 @@ Bool TLRender::TRenderZoneNode::HasZoneShape()
 
 TLRender::TRenderNode::TRenderNode(TRefRef RenderNodeRef,TRefRef TypeRef) :
 	TLGraph::TGraphNode<TLRender::TRenderNode>	( RenderNodeRef, TypeRef ),
-	m_Data						( "Data" ),
 	m_LineWidth					( 0.f ),
 	m_PointSpriteSize			( 1.f ),
 	m_WorldPosValid				( SyncFalse ),
 	m_Colour					( 1.f, 1.f, 1.f, 1.f ),
-	m_WorldTransformValid		( SyncFalse )
+	m_WorldTransformValid		( SyncFalse ),
+	m_AttachDatumValid			( TRUE )
 {
 	//	setup defualt render flags
 	m_RenderFlags.Set( RenderFlags::DepthRead );
@@ -240,6 +240,10 @@ TPtr<TLAsset::TTexture>& TLRender::TRenderNode::GetTextureAsset()
 //------------------------------------------------------------
 Bool TLRender::TRenderNode::Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList)
 {
+	//	if attach datum needs updating... do it
+	if ( !m_AttachDatumValid )
+		OnAttachDatumChanged();
+
 	//	base type aborts drawing early if no mesh ref assigned
 	if ( m_MeshRef.IsValid() )
 		return TRUE;
@@ -974,82 +978,99 @@ void TLRender::TRenderNode::SetAttachDatum(TRefRef DatumRef)
 	//	no longer valid, remove from data if it's there
 	if ( !DatumRef.IsValid() )
 	{
-		GetData().RemoveChild("AttachDatum");
+		GetNodeData().RemoveChild("AttachDatum");
 		return;
 	}
 
-	//	write changes to data 
-	TPtr<TBinaryTree>& pData = GetData().GetChild("AttachDatum");
-	if ( pData )
+	//	write changes to data
+	Bool DatumChanged = GetNodeData().ReplaceData("AttachDatum", DatumRef );
+
+	if ( DatumChanged )
 	{
-		pData->Empty();
-		pData->Write( DatumRef );
+		m_AttachDatumValid = FALSE;
+
+		//	try an immediate transform
+		OnAttachDatumChanged();
 	}
-	else
-	{
-		GetData().ExportData("AttachDatum", DatumRef );
-	}
+}
+
+
+//---------------------------------------------------------
+//	re-align ourselves with our attach datum if we can
+//---------------------------------------------------------
+void TLRender::TRenderNode::OnAttachDatumChanged()
+{
+	//	mark as invalid - todo change this so all callers invalidate it
+	m_AttachDatumValid = FALSE;
 
 	//	do an immediate transform if we can
 	TLRender::TRenderNode* pParent = GetParent();
-	if ( pParent )
+	if ( !pParent )
 	{
-		//	get position of datum
-		const TLMaths::TShape* pDatum = pParent->GetLocalDatum( DatumRef );
-		TLRender::TRenderNode* pDatumParent = pParent;
-
-		//	gr: bodge - look at parent's parent. This is to get around a node in a scheme which uses a parent datum
-		//			but the menu system shoves in an intermediate node to hold the sceheme.
-		//			we can remove this when we get a nicer scheme manager which doesnt rely on nodes so we can import/remove
-		//			schemes a bit easier without having intermediate nodes like this
-		//		could make this permanant though? so we cna grab a datum further up the tree (assuming there is no transforming)
-		while ( !pDatum )
-		{
-			pDatumParent = pDatumParent->GetParent();
-			if ( !pDatumParent )
-				break;
-			
-			//	don't use if the parent has transform
-			//if ( pDatumParent->GetTransform().HasScale() || pDatumParent->GetTransform().HasRotation() )
-			//	break;
-
-			pDatum = pDatumParent->GetLocalDatum( DatumRef );
-		}
-
-		if ( pDatum )
-		{
-			SetTranslate( pDatum->GetCenter() );
-
-			//	debug that we used a different parent
-			if ( pDatumParent != pParent )
-			{
-				TTempString Debug_String("Failed to find datum ");
-				DatumRef.GetString( Debug_String );
-				Debug_String.Append(" to attach ");
-				GetNodeRef().GetString( Debug_String );
-				Debug_String.Append(" on to parent render node (");
-				pParent->GetNodeRef().GetString( Debug_String );
-				Debug_String.Append("). Used a grand parent instead: ");
-				pDatumParent->GetNodeRef().GetString( Debug_String );
-				TLDebug_Print( Debug_String );
-			}
-		}
-		else
-		{
-			TTempString Debug_String("Failed to find datum ");
-			DatumRef.GetString( Debug_String );
-			Debug_String.Append(" to attach ");
-			GetNodeRef().GetString( Debug_String );
-			Debug_String.Append(" on to parent render node (");
-			pParent->GetNodeRef().GetString( Debug_String );
-			Debug_String.Append("). setup \"async attach to datum\" routine? or just wait for a OnDatumChanged message?");
-			TLDebug_Break( Debug_String );
-		}
-	}
-	else
-	{
-		TLDebug_Break("Set attach datum to a node with no parent...");
+		TLDebug_Break("Trying to set/place attach datum to a node with no parent...");
+		m_AttachDatumValid = TRUE;
+		return;
 	}		
+
+	//	get the datum ref
+	TRef DatumRef;
+	if ( !GetNodeData().ImportData("AttachDatum", DatumRef ) )
+	{
+		//	no attach datum set, mark postiion as valid
+		m_AttachDatumValid = TRUE;
+		return;
+	}
+
+	//	get position of datum
+	const TLMaths::TShape* pDatum = pParent->GetLocalDatum( DatumRef );
+	TLRender::TRenderNode* pDatumParent = pParent;
+
+	//	gr: bodge - look at parent's parent. This is to get around a node in a scheme which uses a parent datum
+	//			but the menu system shoves in an intermediate node to hold the sceheme.
+	//			we can remove this when we get a nicer scheme manager which doesnt rely on nodes so we can import/remove
+	//			schemes a bit easier without having intermediate nodes like this
+	//		could make this permanant though? so we cna grab a datum further up the tree (assuming there is no transforming)
+	while ( !pDatum )
+	{
+		pDatumParent = pDatumParent->GetParent();
+		if ( !pDatumParent )
+			break;
+			
+		pDatum = pDatumParent->GetLocalDatum( DatumRef );
+	}
+
+	if ( !pDatum )
+	{
+		TTempString Debug_String("Failed to find datum ");
+		DatumRef.GetString( Debug_String );
+		Debug_String.Append(" to attach ");
+		GetNodeRef().GetString( Debug_String );
+		Debug_String.Append(" on to parent render node (");
+		pParent->GetNodeRef().GetString( Debug_String );
+		Debug_String.Append("). Will try again...");
+		TLDebug_Print( Debug_String );
+		return;
+	}
+
+	//	position to datum's center
+	SetTranslate( pDatum->GetCenter() );
+
+	//	position is now up to date
+	m_AttachDatumValid = TRUE;
+
+	//	debug that we used a different parent
+	if ( pDatumParent != pParent )
+	{
+		TTempString Debug_String("Failed to find datum ");
+		DatumRef.GetString( Debug_String );
+		Debug_String.Append(" to attach ");
+		GetNodeRef().GetString( Debug_String );
+		Debug_String.Append(" on to parent render node (");
+		pParent->GetNodeRef().GetString( Debug_String );
+		Debug_String.Append("). Used a grand parent instead: ");
+		pDatumParent->GetNodeRef().GetString( Debug_String );
+		TLDebug_Print( Debug_String );
+	}
 }
 
 
@@ -1116,6 +1137,32 @@ TPtr<TLMaths::TShape> TLRender::TRenderNode::GetWorldDatum(TRefRef DatumRef,Bool
 
 
 //---------------------------------------------------------------
+//	extract a datum from our mesh - unless a special ref is used to get bounds shapes
+//---------------------------------------------------------------
+const TLMaths::TShape* TLRender::TRenderNode::GetLocalDatum(TRefRef DatumRef)
+{
+	switch ( DatumRef.GetData() )
+	{
+		case TRef_InvalidValue:							return NULL;
+		case TLRender_TRenderNode_DatumBoundsBox:		return &GetLocalBoundsBox();
+		case TLRender_TRenderNode_DatumBoundsBox2D:		return &GetLocalBoundsBox2D();
+		case TLRender_TRenderNode_DatumBoundsSphere:	return &GetLocalBoundsSphere();
+		case TLRender_TRenderNode_DatumBoundsSphere2D:	return &GetLocalBoundsSphere2D();
+
+		default:
+		{
+			//	get datum from mesh
+			TLAsset::TMesh* pMesh = GetMeshAsset();
+			if ( !pMesh )
+				return NULL;
+			
+			return pMesh->GetDatum( DatumRef );
+		}
+	};
+}
+
+
+//---------------------------------------------------------------
 //	get all datums in the mesh and render node (ie. includes bounds)
 //---------------------------------------------------------------
 void TLRender::TRenderNode::GetLocalDatums(TArray<const TLMaths::TShape*>& LocalDatums)
@@ -1161,3 +1208,22 @@ void TLRender::TRenderNode::GetWorldDatums(TPtrArray<TLMaths::TShape>& WorldDatu
 			WorldDatums.Add( pNewShape );
 	}
 }
+
+
+//---------------------------------------------------------------
+//	calculate a local-relative position from a world position. this will be in THIS's space. 
+//	so if this has a scale of 10, the relative position will be 1/10th of the world's offset. 
+//	The end result, multiplied by this's world transform should produce the original world pos
+//---------------------------------------------------------------
+Bool TLRender::TRenderNode::GetLocalPos(float3& LocalPos,const float3& WorldPos)
+{
+	const TLMaths::TTransform& WorldTransform = GetWorldTransform();
+//	TLMaths::TTransform Untransform = WorldTransform;
+//Untransform.Invert();
+	LocalPos = WorldPos;
+	WorldTransform.Untransform( LocalPos );
+//	Untransform.Untransform( LocalPos );
+	return TRUE;
+}
+
+

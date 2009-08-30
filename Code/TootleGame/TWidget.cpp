@@ -64,8 +64,9 @@ TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TBinaryTree& WidgetData)  :
 	WidgetData.ImportData("DtKeepShape", m_RenderNodeDatumKeepShape );	
 
 	//	copy user-supplied data
-	//	m_WidgetData.ReferenceDataTree( *pData, FALSE );
-	m_WidgetData.AddUnreadChildren( WidgetData, FALSE );
+	//	gr: changed back to putting ALL the node's data in the widget data so we can re-use nodes, datums etc
+	m_WidgetData.ReferenceDataTree( WidgetData );
+	//m_WidgetData.AddUnreadChildren( WidgetData, FALSE );
 
 	//	do OnEnabled functionality like an initialise
 	OnEnabled();
@@ -271,8 +272,12 @@ SyncBool TLGui::TWidget::PrefetchProcessData(TLRender::TScreen*& pScreen,TLRende
 	pWorldBoundsSphere = &pRenderNode->GetWorldBoundsSphere2D();
 
 	//	if this fails, we can assume the transform on the render node is out of date
+	//	gr: if it fails, it means there is no world bounds, so either not being rendered, or has nothing TO render
+	//		which means there is nothing to click on, which means the widget is useless, which means, ditch the clicks, dont keep them
+	//		case here was a render node with no mesh.
 	if ( !pWorldBoundsSphere->IsValid() )
-		return SyncWait;
+		//return SyncWait;
+		return SyncFalse;
 
 	//	fetch the clickable datum if one is specified - if this fails then we abort (probably missing datum)
 	//	if none was specified we use the bounds sphere we've already fetched and assume the widget has some custom

@@ -241,6 +241,15 @@ void TLMaths::TBox::Untransform(const TLMaths::TTransform& Transform)
 }
 
 
+//-------------------------------------------------
+//	test to see if this line intersects our box
+//-------------------------------------------------
+Bool TLMaths::TBox::GetIntersection(const TBox2D& Box) const
+{
+	return Box.GetIntersection( *this );
+}
+
+
 Bool TempGetIntersection( float fDst1, float fDst2,const float3& P1,const float3& P2,float3& Hit) 
 {
 	if ( (fDst1 * fDst2) > 0.0f)	 

@@ -11,7 +11,8 @@ TLFileSys::TFileSimpleVector::TFileSimpleVector(TRefRef FileRef,TRefRef FileType
 	TFileXml				( FileRef, FileTypeRef ),
 	m_SvgPointScale			( 1.f ),
 	m_SvgLayerZIncrement	( 0.5f ),
-	m_VertexColoursEnabled	( TRUE )
+	m_VertexColoursEnabled	( TRUE ),
+	m_ProjectUVsEnabled		( FALSE )
 {
 }
 
@@ -75,23 +76,28 @@ SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset
 	if ( pVertexColoursProperty )
 		m_VertexColoursEnabled = !pVertexColoursProperty->IsEqual("false",FALSE);
 
+	const TString* pProjectUVsProperty = pSvgTag->GetProperty("TootleProjectUVs");
+	if ( pProjectUVsProperty )
+		m_ProjectUVsEnabled = !pProjectUVsProperty->IsEqual("false",FALSE);
+
+	//	old style defualt scalar was [document width] = [1 unit]
 	float DimensionScalar = 1.f;
 
+	//	find dimensions
+	float Width = 100.f;
+	const TString* pWidthString = pSvgTag->GetProperty("width");
+	if ( pWidthString )
+		pWidthString->GetFloat(Width);
+
 	//	new scale format - if set then the width is relative to a ortho screen width (ie. 100 wide) instead of 1 unit wide
+	//	gr: now uses document width, so 100 width assumes orhto camera of 100
 	const TString* pOrthoScaleProperty = pSvgTag->GetProperty("TootleOrthoScale");
 	if ( pOrthoScaleProperty )
 		if ( !pOrthoScaleProperty->IsEqual("false",FALSE) )
-			DimensionScalar = 100.f;
+			DimensionScalar = Width;
 
-	//	find scale dimensions
-	const TString* pWidthString = pSvgTag->GetProperty("width");
-	if ( pWidthString )
-	{
-		float Width;
-		if ( pWidthString->GetFloat(Width) )
-			if ( Width > 0.f )
-				m_SvgPointScale = DimensionScalar / Width;
-	}
+	//	set scale
+	m_SvgPointScale = Width <= 0.f ? 1.f : DimensionScalar / Width;
 
 	//	init offset
 	m_SvgPointMove.Set( 0.f, 0.f, 0.f );
@@ -99,6 +105,10 @@ SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset
 	//	parse xml to mesh (and it's children)
 	if ( !ImportMesh( pNewMesh, *pSvgTag ) )
 		return SyncFalse;
+
+	//	set projection UVs
+	if ( m_ProjectUVsEnabled )
+		pNewMesh->CalcProjectionUVs();
 
 	//	assign resulting asset
 	pAsset = pNewMesh;

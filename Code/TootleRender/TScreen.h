@@ -87,7 +87,7 @@ public:
 protected:
 	Bool							GetRenderTargetPosFromScreenPos(const TRenderTarget& RenderTarget,Type2<s32>& RenderTargetPos,Type4<s32>& RenderTargetSize,const Type2<s32>& ScreenPos);	//	Get a render target-relative cursor position from a screen pos - fails if outside render target box
 	Bool							GetScreenPosFromRenderTargetPos(Type2<s32>& ScreenPos, const TRenderTarget& RenderTarget,const Type2<s32>& RenderTargetPos, Type4<s32>& RenderTargetSize);	//	Get a screen pos render target-relative cursor position- fails if outside render target box
-	void							CreateDebugRenderTarget();
+	void							CreateDebugRenderTarget(TRefRef FontRef=TRef("FDebug"));
 
 protected:
 	TPtrArray<TRenderTarget>		m_RenderTargets;			//	list of active render targets

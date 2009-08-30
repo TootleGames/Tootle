@@ -206,6 +206,9 @@ public:
 	float					GetLineWidth() const				{	return m_LineWidth;	}
 	Bool					RemoveLine(u32 VertexIndexA,u32 VertexIndexB);	//	remove any lines/parts of linestrips with these two points next to each other. returns TRUE if any changes made
 
+	//	automatic UV calculation methods
+	void									CalcProjectionUVs();	//	calculate UV's per vertex relative to the bounds of the shape (2D projection)
+
 	//	bounds stuff
 	FORCEINLINE void						SetBoundsInvalid();	//	invalidate bounds shapes
 	FORCEINLINE void						CalcBounds();		//	calculate all the invalid bounds shapes
