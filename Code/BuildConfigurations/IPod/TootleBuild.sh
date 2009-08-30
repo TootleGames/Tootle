@@ -18,8 +18,8 @@
 
 #SVN_REPO=$1
 PROJECT=$1
-TARGET=$2
-PASSWORD=$3
+PASSWORD=$2
+TARGET=$3
 
 # Use the project for the SVN repo for now - assumes the project and repository are the same name
 SVN_REPO=$PROJECT
@@ -44,9 +44,9 @@ fi
 
 
 # make sure target was provided
+# gr: if no target supplied, assume the target name is the same as the project name
 if [ "$TARGET" == "" ]; then
-	echo "No target provided. Third parameter should be the target name, which is case sensitive. "
-	exit 1
+	$TARGET = $PROJECT;
 fi
 
 # make sure password was provided
@@ -66,7 +66,8 @@ if [ $? != 0 ]; then
 fi
 
 # in case the build script has changed, restore execution permissions
-chmod 777 "Tootle/Code/BuildConfigurations/IPod/TootleBuild.sh"
+# gr: dont auto allow execution.
+#chmod 777 "Tootle/Code/BuildConfigurations/IPod/TootleBuild.sh"
 
 
 # if the directory doesn't exist, assume the repository hasn't been checked out
