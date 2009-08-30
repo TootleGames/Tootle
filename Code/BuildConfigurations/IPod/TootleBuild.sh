@@ -46,7 +46,7 @@ fi
 # make sure target was provided
 # gr: if no target supplied, assume the target name is the same as the project name
 if [ "$TARGET" == "" ]; then
-	$TARGET = $PROJECT;
+	set TARGET=$PROJECT;
 fi
 
 # make sure password was provided
