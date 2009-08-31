@@ -11,6 +11,13 @@
 		8404EC6C0FD7D75800F280AF /* TLSocial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8404EC6A0FD7D75800F280AF /* TLSocial.cpp */; };
 		8404EC6F0FD7D78B00F280AF /* TFacebookConnect.h in Headers */ = {isa = PBXBuildFile; fileRef = 8404EC6D0FD7D78B00F280AF /* TFacebookConnect.h */; };
 		8404EC700FD7D78B00F280AF /* TFacebookConnect.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8404EC6E0FD7D78B00F280AF /* TFacebookConnect.mm */; };
+		842382F51047E3BD009E67C3 /* IPodSocialNetworkingPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 842382F41047E3BD009E67C3 /* IPodSocialNetworkingPlatform.h */; };
+		843CDA3C104815BA00E6295B /* IPodSocialNetworkingPlatform_Facebook.h in Headers */ = {isa = PBXBuildFile; fileRef = 843CDA3B104815BA00E6295B /* IPodSocialNetworkingPlatform_Facebook.h */; };
+		843CDA401048165300E6295B /* IPodSocialNetworkingPlatform_OpenFeint.h in Headers */ = {isa = PBXBuildFile; fileRef = 843CDA3F1048165300E6295B /* IPodSocialNetworkingPlatform_OpenFeint.h */; };
+		843CDA421048166A00E6295B /* IPodSocialNetworkingPlatform_AGONOnline.h in Headers */ = {isa = PBXBuildFile; fileRef = 843CDA411048166A00E6295B /* IPodSocialNetworkingPlatform_AGONOnline.h */; };
+		843CDACF1048234300E6295B /* TSocialNetworkingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 843CDACE1048234300E6295B /* TSocialNetworkingManager.h */; };
+		843CDB6210483BD400E6295B /* IPodSocialNetworkingPlatform_AGONOnline.mm in Sources */ = {isa = PBXBuildFile; fileRef = 843CDB6110483BD400E6295B /* IPodSocialNetworkingPlatform_AGONOnline.mm */; };
+		843CDB7110483CE800E6295B /* IPodSocialNetworkingPlatform_OpenFeint.mm in Sources */ = {isa = PBXBuildFile; fileRef = 843CDB7010483CE800E6295B /* IPodSocialNetworkingPlatform_OpenFeint.mm */; };
 		84508700101F475800B78F2B /* AGON.h in Headers */ = {isa = PBXBuildFile; fileRef = 845086FF101F475800B78F2B /* AGON.h */; };
 		84508804101F596200B78F2B /* IPodSocial.h in Headers */ = {isa = PBXBuildFile; fileRef = 84508800101F596200B78F2B /* IPodSocial.h */; };
 		84508805101F596200B78F2B /* IPodSocial.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84508801101F596200B78F2B /* IPodSocial.mm */; };
@@ -25,7 +32,7 @@
 
 /* Begin PBXFileReference section */
 		8404EA5C0FD7CF8100F280AF /* libTootleSocial.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleSocial.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		8404EC690FD7D75800F280AF /* TLSocial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLSocial.h; path = ../TLSocial.h; sourceTree = SOURCE_ROOT; };
+		8404EC690FD7D75800F280AF /* TLSocial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TLSocial.h; path = ../TLSocial.h; sourceTree = SOURCE_ROOT; };
 		8404EC6A0FD7D75800F280AF /* TLSocial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TLSocial.cpp; path = ../TLSocial.cpp; sourceTree = SOURCE_ROOT; };
 		8404EC6D0FD7D78B00F280AF /* TFacebookConnect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFacebookConnect.h; sourceTree = "<group>"; };
 		8404EC6E0FD7D78B00F280AF /* TFacebookConnect.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TFacebookConnect.mm; sourceTree = "<group>"; };
@@ -33,6 +40,14 @@
 		8404EC970FD7DA2C00F280AF /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		8404EC980FD7DA2C00F280AF /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
 		8404EC990FD7DA2C00F280AF /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
+		842382F31047E346009E67C3 /* PCSocialNetworkingPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCSocialNetworkingPlatform.h; path = ../PC/PCSocialNetworkingPlatform.h; sourceTree = SOURCE_ROOT; };
+		842382F41047E3BD009E67C3 /* IPodSocialNetworkingPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodSocialNetworkingPlatform.h; sourceTree = "<group>"; };
+		843CDA3B104815BA00E6295B /* IPodSocialNetworkingPlatform_Facebook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodSocialNetworkingPlatform_Facebook.h; sourceTree = "<group>"; };
+		843CDA3F1048165300E6295B /* IPodSocialNetworkingPlatform_OpenFeint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodSocialNetworkingPlatform_OpenFeint.h; sourceTree = "<group>"; };
+		843CDA411048166A00E6295B /* IPodSocialNetworkingPlatform_AGONOnline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodSocialNetworkingPlatform_AGONOnline.h; sourceTree = "<group>"; };
+		843CDACE1048234300E6295B /* TSocialNetworkingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSocialNetworkingManager.h; path = ../TSocialNetworkingManager.h; sourceTree = SOURCE_ROOT; };
+		843CDB6110483BD400E6295B /* IPodSocialNetworkingPlatform_AGONOnline.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodSocialNetworkingPlatform_AGONOnline.mm; sourceTree = "<group>"; };
+		843CDB7010483CE800E6295B /* IPodSocialNetworkingPlatform_OpenFeint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodSocialNetworkingPlatform_OpenFeint.mm; sourceTree = "<group>"; };
 		845086FF101F475800B78F2B /* AGON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGON.h; path = libagon/include/AGON.h; sourceTree = "<group>"; };
 		84508800101F596200B78F2B /* IPodSocial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodSocial.h; sourceTree = "<group>"; };
 		84508801101F596200B78F2B /* IPodSocial.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodSocial.mm; sourceTree = "<group>"; };
@@ -95,6 +110,7 @@
 				8404EA6B0FD7CFC400F280AF /* PC */,
 				8404EC690FD7D75800F280AF /* TLSocial.h */,
 				8404EC6A0FD7D75800F280AF /* TLSocial.cpp */,
+				843CDACE1048234300E6295B /* TSocialNetworkingManager.h */,
 			);
 			name = "Source Code";
 			sourceTree = "<group>";
@@ -104,6 +120,7 @@
 			children = (
 				845095391021836000B78F2B /* PCSocial.cpp */,
 				8450953A1021836000B78F2B /* PCSocial.h */,
+				842382F31047E346009E67C3 /* PCSocialNetworkingPlatform.h */,
 			);
 			name = PC;
 			sourceTree = "<group>";
@@ -123,6 +140,12 @@
 				847DF81F0FD9325E005F9EDC /* TFacebookSession.h */,
 				847DF8200FD9325E005F9EDC /* TFacebookSession.mm */,
 				845094F91020B32200B78F2B /* TootleSocialPrefix.pch */,
+				842382F41047E3BD009E67C3 /* IPodSocialNetworkingPlatform.h */,
+				843CDA3B104815BA00E6295B /* IPodSocialNetworkingPlatform_Facebook.h */,
+				843CDA3F1048165300E6295B /* IPodSocialNetworkingPlatform_OpenFeint.h */,
+				843CDB7010483CE800E6295B /* IPodSocialNetworkingPlatform_OpenFeint.mm */,
+				843CDA411048166A00E6295B /* IPodSocialNetworkingPlatform_AGONOnline.h */,
+				843CDB6110483BD400E6295B /* IPodSocialNetworkingPlatform_AGONOnline.mm */,
 			);
 			name = IPod;
 			sourceTree = "<group>";
@@ -164,6 +187,11 @@
 				84508806101F596200B78F2B /* TAGONOnline.h in Headers */,
 				845094E11020B19200B78F2B /* TOpenFeint.h in Headers */,
 				845094FA1020B32200B78F2B /* TootleSocialPrefix.pch in Headers */,
+				842382F51047E3BD009E67C3 /* IPodSocialNetworkingPlatform.h in Headers */,
+				843CDA3C104815BA00E6295B /* IPodSocialNetworkingPlatform_Facebook.h in Headers */,
+				843CDA401048165300E6295B /* IPodSocialNetworkingPlatform_OpenFeint.h in Headers */,
+				843CDA421048166A00E6295B /* IPodSocialNetworkingPlatform_AGONOnline.h in Headers */,
+				843CDACF1048234300E6295B /* TSocialNetworkingManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,6 +244,8 @@
 				84508805101F596200B78F2B /* IPodSocial.mm in Sources */,
 				84508807101F596200B78F2B /* TAGONOnline.mm in Sources */,
 				845094E21020B19200B78F2B /* TOpenFeint.mm in Sources */,
+				843CDB6210483BD400E6295B /* IPodSocialNetworkingPlatform_AGONOnline.mm in Sources */,
+				843CDB7110483CE800E6295B /* IPodSocialNetworkingPlatform_OpenFeint.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
