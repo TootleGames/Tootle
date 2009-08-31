@@ -42,8 +42,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="$(ProjectDir)..\..\"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;TL_TARGET_PC"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\..\&quot;;&quot;$(ProjectDir)..\..\libcurl\include\&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;TL_TARGET_PC;CURL_STATICLIB;BUILDING_LIBCURL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -109,9 +109,9 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="$(ProjectDir)..\..\"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;TL_TARGET_PC"
-				RuntimeLibrary="2"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\..\&quot;;&quot;$(ProjectDir)..\..\libcurl\include\&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;TL_TARGET_PC;CURL_STATICLIB;BUILDING_LIBCURL"
+				RuntimeLibrary="3"
 				DisableLanguageExtensions="false"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -174,8 +174,8 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="$(ProjectDir)..\..\"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;TL_TARGET_PC"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\..\&quot;;&quot;$(ProjectDir)..\..\libcurl\include\&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;TL_TARGET_PC;CURL_STATICLIB;BUILDING_LIBCURL"
 				RuntimeLibrary="2"
 				DisableLanguageExtensions="false"
 				UsePrecompiledHeader="0"
@@ -217,7 +217,83 @@
 		<Filter
 			Name="PC Source Files"
 			>
+			<File
+				RelativePath=".\PCConnectionHttp.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PCConnectionHttp.h"
+				>
+			</File>
 		</Filter>
+		<Filter
+			Name="IPod source files"
+			>
+			<File
+				RelativePath="..\IPod\IPodConnectionHttp.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Final|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\IPod\IPodConnectionHttp.mm"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Final|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+		<File
+			RelativePath="..\TConnection.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TConnection.h"
+			>
+		</File>
 		<File
 			RelativePath="..\TLNetwork.cpp"
 			>

@@ -18,6 +18,7 @@ namespace TLMemory
 		void	MemDealloc(void* pMem);
 		void	MemCopy(void* pDest,const void* pSrc,u32 Size);
 		void	MemMove(void* pDest,const void* pSrc,u32 Size);
+		void*	MemRealloc(void* pMem,u32 Size);
 		void	MemValidate(void* pMem);
 	}
 }

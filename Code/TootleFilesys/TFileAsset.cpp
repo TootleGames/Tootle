@@ -269,21 +269,26 @@ Bool TLFileSys::TFileAsset::Header::IsValid() const
 }
 
 
-
-
 //---------------------------------------------------------
-//	
+//	do import 
+//	(todo: make async)
 //---------------------------------------------------------
 TRef TLFileSys::TLFileAssetImporter::Mode_Init::Update(float Timestep)
 {
 	TLFileSys::TFile* pFile = GetFile();
 
-	//	check file hasn't been parsed
-	if ( pFile->GetReadPos() != -1 )
+	//	file missing??
+	if ( !pFile )
 	{
-		if ( TLDebug_Break("Asset file read pos not at begining") )
-			return "Failed";
+		TLDebug_Break("file expected");
+		return "failed";
 	}
+
+	//	reset read pos
+	pFile->ResetReadPos();
+
+	//	empty out the existing tree data
+	GetAssetFile()->GetData().Empty();
 
 	//	file is empty
 	if ( pFile->GetData().GetSize() == 0 )
@@ -292,11 +297,6 @@ TRef TLFileSys::TLFileAssetImporter::Mode_Init::Update(float Timestep)
 		return "Failed";
 	}
 
-	//	empty out the existing tree data
-	GetAssetFile()->GetData().Empty();
-
-	pFile->ResetReadPos();
-		
 	//	read file header
 	TFileAsset::Header& Header = GetHeader();
 	if ( !pFile->Read( Header ) )

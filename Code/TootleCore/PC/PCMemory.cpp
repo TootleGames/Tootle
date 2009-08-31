@@ -37,4 +37,5 @@ void*	TLMemory::Platform::MemAlloc(u32 Size)								{	return HeapAlloc( g_MemHea
 void	TLMemory::Platform::MemDealloc(void* pMem)							{	HeapFree( g_MemHeap, 0x0, pMem );	}	//	free
 void	TLMemory::Platform::MemCopy(void* pDest,const void* pSrc,u32 Size)	{	memcpy( pDest, pSrc, Size );	}	//	memcpy
 void	TLMemory::Platform::MemMove(void* pDest,const void* pSrc,u32 Size)	{	memmove( pDest, pSrc, Size );	}	//	memcpy
+void*	TLMemory::Platform::MemRealloc(void* pMem,u32 Size)					{	return HeapReAlloc( g_MemHeap, 0x0, pMem, Size );	}	//	realloc
 void	TLMemory::Platform::MemValidate(void* pMem)							{	HeapValidate( g_MemHeap, 0x0, pMem );	}

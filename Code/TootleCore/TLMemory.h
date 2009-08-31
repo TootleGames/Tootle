@@ -62,6 +62,7 @@ namespace TLMemory
 		FORCEINLINE void		MemDealloc(void* pMem);							//	free
 		FORCEINLINE void		MemCopy(void* pDest,const void* pSrc,u32 Size);	//	memcpy
 		FORCEINLINE void		MemMove(void* pDest,const void* pSrc,u32 Size);	//	memmove
+		FORCEINLINE void*		MemRealloc(void* pMem,u32 Size);				//	realloc
 		FORCEINLINE void		MemValidate(void* pMem=NULL);					//	validate memory heaps
 	}
 
