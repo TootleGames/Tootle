@@ -261,9 +261,15 @@ TRef Mode_PlainFileExport::Update(float Timestep)
 		}
 
 		//	add to list of files we failed to convert
-		TLDebug_Break("Add plain file to list of failed-to-convert files and find another to try");
+		GetLoadTask()->AddFailedToConvertFile( pPlainFile );
 
-		return "Failed";
+		//	reset task vars
+		GetAssetFile() = NULL;
+		GetPlainFile() = NULL;
+		GetTempAssetFile() = NULL;
+
+		//	go back to finding the asset file
+		return "AFGet";
 	}
 
 	//	created an asset file, check if it's creating the right kind of asset we want
@@ -407,6 +413,14 @@ TRef Mode_GetAssetFile::Update(float Timestep)
 		return "AFLoad";
 	}
 
+	//	gr: asset file may need importing at this point, (even if the plain file is loaded)
+	//	if the GetFileExportAssetType returns invalid, it doesn't know what type of asset it holds [yet]
+	//	this can only be true if it's not yet loaded the header, so we need to load & import the asset file
+	if ( GetAssetFile()->GetNeedsImport() )
+	{
+		return "AFImport";
+	}
+
 	//	check type...
 	if ( GetAssetFile()->GetFileExportAssetType() != GetAssetAndTypeRef().GetTypeRef() )
 	{
@@ -446,28 +460,31 @@ TRef Mode_AssetFileLoad::Update(float Timestep)
 		return "Failed";
 	}
 
-	//	load the file
-	TPtr<TLFileSys::TFileSys> pFileSys = pAssetFile->GetFileSys();
-	if ( !pFileSys )
+	//	load the file as required
+	if ( pAssetFile->IsLoaded() != SyncTrue )
 	{
-		TLDebug_Break("File is missing an owner file system. Files should ALWAYS have an owner file system");
-		return "Failed";
-	}
+		TPtr<TLFileSys::TFileSys> pFileSys = pAssetFile->GetFileSys();
+		if ( !pFileSys )
+		{
+			TLDebug_Break("File is missing an owner file system. Files should ALWAYS have an owner file system");
+			return "Failed";
+		}
 
-	//	load the asset file
-	TPtr<TLFileSys::TFile> pFile = pAssetFile;
-	SyncBool LoadResult = pFileSys->LoadFile( pFile );
-	if ( LoadResult == SyncWait )
-		return TRef();
-	
-	if ( LoadResult == SyncFalse )
-	{
-		TTempString Debug_String("File sys ");
-		pFileSys->GetFileSysRef().GetString( Debug_String );
-		Debug_String.Append(" failed to load file ");
-		Debug_String.Append( pAssetFile->GetFilename() );
-		TLDebug_Break( Debug_String );
-		return "Failed";
+		//	load the asset file
+		TPtr<TLFileSys::TFile> pFile = pAssetFile;
+		SyncBool LoadResult = pFileSys->LoadFile( pFile );
+		if ( LoadResult == SyncWait )
+			return TRef();
+		
+		if ( LoadResult == SyncFalse )
+		{
+			TTempString Debug_String("File sys ");
+			pFileSys->GetFileSysRef().GetString( Debug_String );
+			Debug_String.Append(" failed to load file ");
+			Debug_String.Append( pAssetFile->GetFilename() );
+			TLDebug_Break( Debug_String );
+			return "Failed";
+		}
 	}
 
 	//	asset file needs converting from plain file to asset file before we can make an asset

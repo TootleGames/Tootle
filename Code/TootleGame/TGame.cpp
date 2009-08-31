@@ -31,7 +31,9 @@ TLGame::TGame::~TGame()
 
 SyncBool TLGame::TGame::Initialise()
 {
-	AddModes();
+	//	gr: only call this once - fails if the overloaded Initialise is asynchronous...
+	if ( m_Modes.GetSize() == 0 )
+		AddModes();
 	
 	//	init the manager
 	return TManager::Initialise();

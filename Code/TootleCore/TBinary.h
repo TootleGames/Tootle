@@ -93,6 +93,7 @@ public:
 	template<typename TYPE> FORCEINLINE void	WriteToStart(const TYPE& Var)		{	SetDataTypeHint<TYPE>();	WriteDataToStart( (u8*)&Var, sizeof(TYPE) );	}
 	template<typename TYPE> void				WriteArray(const TArray<TYPE>& Array);	//	write an array to the data. we write the element count into the data too to save doing it client side
 	FORCEINLINE void							WriteString(const TString& String)	{	WriteArray( String.GetStringArray() );	SetDataTypeHint( TLBinary_TypeRef(String), TRUE );	}	//	gr: set the FORCED hint AFTER we write the string, the string uses the array functionality whihc writes an array size first. As long as strings are parsed with ReadString this isn't a problem
+	FORCEINLINE void							WriteData(const u8* pData,u32 Length)	{	m_Data.Add( pData, Length );	}	//	add raw data to array
 
 	template<typename TYPE> FORCEINLINE void	AllocData(u32 Elements)				{	m_Data.AddAllocSize( Elements * sizeof(TYPE) );	}
 	
@@ -127,7 +128,6 @@ public:
 protected:
 	FORCEINLINE Bool				CheckDataAvailible(u32 DataSize) const;				//	see if this amount of data is readable
 	FORCEINLINE void				MoveReadPos(u32 MoveAmount)							{	m_ReadPos += MoveAmount;	}	//	move read pos along
-	FORCEINLINE void				WriteData(const u8* pData,u32 Length)			{	m_Data.Add( pData, Length );	}	//	add data to array
 	FORCEINLINE void				WriteDataToStart(const u8* pData,u32 Length)	{	m_Data.InsertAt( 0, pData, Length );	}	//	add data to array
 
 private:

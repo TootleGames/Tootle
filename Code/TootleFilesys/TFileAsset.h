@@ -41,8 +41,6 @@ public:
 	{
 		Broken = 0,		//	failed to parse - file is broken
 		Compressed,		//	data is compressed
-		NeedsImport,	//	file data has changed, binary tree is now out of date
-		NeedsExport,	//	asset tree has changed, binary File is now out of date
 	};
 
 public:
@@ -63,12 +61,12 @@ public:
 	TBinaryTree&		GetData()					{	return m_Data;	}
 	const TBinaryTree&	GetData() const				{	return m_Data;	}
 
-	void				SetNeedsImport(Bool Enable)	{	return m_Header.m_Flags.Set( NeedsImport, Enable );	}
-	void				SetNeedsExport(Bool Enable)	{	return m_Header.m_Flags.Set( NeedsExport, Enable );	}
-	Bool				GetNeedsImport() const		{	return m_Header.m_Flags( NeedsImport );	}
-	Bool				GetNeedsExport() const		{	return m_Header.m_Flags( NeedsExport );	}
+	void				SetNeedsImport(Bool Needs)	{	m_NeedsImport = Needs;	}
+	void				SetNeedsExport(Bool Needs)	{	m_NeedsExport = Needs;	}
+	Bool				GetNeedsImport() const		{	return m_NeedsImport;	}
+	Bool				GetNeedsExport() const		{	return m_NeedsExport;	}
 
-	virtual void		OnFileLoaded()				{	TFile::OnFileLoaded();	m_Header.m_Flags.Set( NeedsImport );	}
+	virtual void		OnFileLoaded()				{	TFile::OnFileLoaded();	m_NeedsImport = TRUE;	}
 	virtual void		OnImportFinished(SyncBool ImportResult)	{	m_Data.Compact();	}
 
 protected:
@@ -117,6 +115,8 @@ protected:
 	Header						m_Header;		//	toot header
 	TBinaryTree					m_Data;			//	data turned into binary tree
 	TPtr<TFileAssetImporter>	m_pImporter;	//	step-by-step importer
+	Bool						m_NeedsImport;	//	needs import from binary to binary tree
+	Bool						m_NeedsExport;	//	needs export from binarytree to binary
 };
 
 

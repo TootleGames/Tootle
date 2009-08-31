@@ -5,6 +5,9 @@
 #include <TootleMaths/TShape.h>
 
 
+#pragma comment(lib,"../../../Tootle/Code/Lib/box2d.lib")
+
+
 // Forward declarations
 struct b2FixtureDef;
 struct b2CircleDef;

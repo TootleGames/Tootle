@@ -14,8 +14,10 @@ namespace TLFileSys
 
 
 TLFileSys::TFileAsset::TFileAsset(TRefRef FileRef,TRefRef FileTypeRef) :
-	TFile	( FileRef, FileTypeRef ),
-	m_Data	( "Tooot" )	//	gr: this WAS the fileref, but i dont think it's ever referenced as that, i've changed it, just so when you look at it in any way we might know where the data is from. The FileRef is per-game instance anyway so probably shouldnt get saved
+	TFile			( FileRef, FileTypeRef ),
+	m_NeedsImport	( FALSE ),
+	m_NeedsExport	( FALSE ),
+	m_Data			( "Tooot" )	//	gr: this WAS the fileref, but i dont think it's ever referenced as that, i've changed it, just so when you look at it in any way we might know where the data is from. The FileRef is per-game instance anyway so probably shouldnt get saved
 {
 	//	initially needs importing
 	SetNeedsImport( TRUE );

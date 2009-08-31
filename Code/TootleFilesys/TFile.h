@@ -64,6 +64,7 @@ public:
 	virtual SyncBool				ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported)		{	Supported = FALSE;	return SyncFalse;	}	//	turn this file into an asset - set Supported to FALSE if this file doesnt convert to an asset (i.e. SyncFalse doesnt mean ERROR)
 
 	Bool							Copy(TPtr<TFile>& pFile,Bool CopyFilename=FALSE);		//	copy file data and attributes (timestamp, flags)
+	Bool							Load(TBinary& Data);			//	copy data into file - this sets new timestamp, file size, and marks file as out of date
 
 	SyncBool						IsLoaded() const				{	return m_IsLoaded;	}
 	void							SetIsLoaded(SyncBool Loaded)	{	m_IsLoaded = Loaded;	}

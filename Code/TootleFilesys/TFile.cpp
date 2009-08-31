@@ -273,3 +273,21 @@ Bool TLFileSys::TFile::Copy(TPtr<TFile>& pFile,Bool CopyFilename)
 }
 
 
+//-----------------------------------------------------------
+//	copy data into file - this sets new timestamp, file size, and marks file as out of date
+//-----------------------------------------------------------
+Bool TLFileSys::TFile::Load(TBinary& Data)
+{
+	//	copy data
+	TBinary::Copy( Data );
+	SetFileSize( m_Data.GetSize() );				
+
+	//	update timestamp on file
+	SetTimestampNow();
+
+	//	notify is now loaded
+	OnFileLoaded();
+
+	return TRUE;
+}
+
