@@ -69,7 +69,7 @@ void TLNetwork::Platform::TConnectionHttp::StartGetTask(TTask& Task)
 
 	//	create request
 //	NSURL* pUrl = [[NSURL alloc] initWithString:@"http://www.google.com/"];
-	NSURL* pUrl = [[NSURL alloc] initWithString:Url.GetData()];
+	NSURL* pUrl = [[NSURL alloc] initWithUTF8String:Url.GetData()];
 
 	NSURLRequest *pRequest = [NSURLRequest	requestWithURL:pURL
 											cachePolicy:NSURLRequestReloadIgnoringLocalCacheData 
@@ -133,7 +133,7 @@ TPtr<TLNetwork::TTask>& TLNetwork::Platform::TConnectionHttp::GetTask(NSURLConne
 	if ( !pTaskRef )
 		return TLPtr::GetNullPtr<TLNetwork::TTask>();
 
-	TPtr<TLNetwork::TTask>& pTask = GetTask( *pTaskRef );
+	TPtr<TLNetwork::TTask>& pTask = TConnection::GetTask( *pTaskRef );
 	return pTask;
 }
 
@@ -196,7 +196,7 @@ void TLNetwork::Platform::TConnectionHttp::OnTaskRemoved(TRef TaskRef)
 	enough information to create the NSURLResponse. It can be called
 	multiple times, for example in the case of a redirect, so each time
 	we reset the data. */
-	TTask* pTask = m_pConnection->GetTask( connection );
+	TLNetwork::TTask* pTask = m_pConnection->GetTask( connection );
 	if ( !pTask )
 	{
 		TLDebug_Break("Missing task on connection recv start");
@@ -209,7 +209,7 @@ void TLNetwork::Platform::TConnectionHttp::OnTaskRemoved(TRef TaskRef)
 
 - (void) connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
-	TTask* pTask = m_pConnection->GetTask( connection );
+	TLNetwork::TTask* pTask = m_pConnection->GetTask( connection );
 	if ( !pTask )
 	{
 		TLDebug_Break("Missing task on connection recv");
@@ -224,7 +224,7 @@ void TLNetwork::Platform::TConnectionHttp::OnTaskRemoved(TRef TaskRef)
 
 - (void) connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-	TTask* pTask = m_pConnection->GetTask( connection );
+	TLNetwork::TTask* pTask = m_pConnection->GetTask( connection );
 	if ( !pTask )
 	{
 		TLDebug_Break("Missing task on connection error");
@@ -246,7 +246,7 @@ void TLNetwork::Platform::TConnectionHttp::OnTaskRemoved(TRef TaskRef)
 
 - (void) connectionDidFinishLoading:(NSURLConnection *)connection
 {
-	TTask* pTask = m_pConnection->GetTask( connection );
+	TLNetwork::TTask* pTask = m_pConnection->GetTask( connection );
 	if ( !pTask )
 	{
 		TLDebug_Break("Missing task on finished connection");
