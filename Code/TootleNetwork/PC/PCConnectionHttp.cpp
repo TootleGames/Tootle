@@ -7,7 +7,7 @@ namespace TLNetwork
 {
 	namespace Platform
 	{
-		size_t	RecieveData(void *ptr, size_t size, size_t nmemb, void *data);	//	data should be a TConnectionHttp
+		size_t		RecieveData(void *ptr, size_t size, size_t nmemb, void *data);	//	data should be a TConnectionHttp
 
 		void*		Alloc(size_t size);	//	curl_malloc_callback
 		void		Delete(void *ptr);	//	curl_free_callback
@@ -64,9 +64,11 @@ void* TLNetwork::Platform::ArrayAlloc(size_t nmemb, size_t size)
 size_t TLNetwork::Platform::RecieveData(void *ptr, size_t size, size_t nmemb, void *data)
 {
 	size_t realsize = size * nmemb;
-	TLNetwork::Platform::TConnectionHttp* pConnection = (TLNetwork::Platform::TConnectionHttp*)data;
+	TLNetwork::TTask* pTask = (TLNetwork::TTask*)data;
+	if ( !pTask )
+		return 0;
 
-	if ( !pConnection->OnRecieveData( (u8*)ptr, realsize ) )
+	if ( !pTask->RecieveData( (const u8*)ptr, (u32)realsize ) )
 		return 0;
 
 	return realsize;
@@ -76,8 +78,7 @@ size_t TLNetwork::Platform::RecieveData(void *ptr, size_t size, size_t nmemb, vo
 
 TLNetwork::Platform::TConnectionHttp::TConnectionHttp() :
 	TLNetwork::TConnection	(),
-	m_pCurl					( NULL ),
-	m_pRecieveData			( NULL )
+	m_pCurl					( NULL )
 {
 }
 
@@ -109,71 +110,15 @@ SyncBool TLNetwork::Platform::TConnectionHttp::Initialise(TRef& ErrorRef)
 		ErrorRef = "NoCurl";
 		return SyncFalse;
 	}
-
-	return SyncTrue;
-}
-
-//---------------------------------------------------------
-//	
-//---------------------------------------------------------
-SyncBool TLNetwork::Platform::TConnectionHttp::GetData(const TString& Url,TBinary& Data,TRef& ErrorRef)
-{
-	if ( !m_pCurl )
-	{
-		ErrorRef = "NotInit";
-		return SyncFalse;
-	}
-
-	if ( !Url.GetLength() )
-	{
-		ErrorRef = "NoUrl";
-		return SyncFalse;
-	}
-
-	//	set url
-    curl_easy_setopt( m_pCurl, CURLOPT_URL, Url.GetData() );
-
-	//	tell it what func to recieve data to
-	m_pRecieveData = &Data;
-	curl_easy_setopt( m_pCurl, CURLOPT_WRITEFUNCTION, RecieveData);
-	curl_easy_setopt( m_pCurl, CURLOPT_WRITEDATA, (void*)this );
+	
+	//	setup some global curl params
 
 	// some servers don't like requests that are made without a user-agent field, so we provide one
 	curl_easy_setopt( m_pCurl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
 
-	//	store data in the data provided
-	CURLcode Result = curl_easy_perform( m_pCurl );
-	m_pRecieveData = NULL;
-
-	//	work out error
-	if ( Result != CURLE_OK )
-	{
-		TTempString ErrorString;
-		ErrorString.Appendf("C%d", Result );
-		ErrorRef = ErrorString;
-		return SyncFalse;
-	}
-
 	return SyncTrue;
 }
 
-
-//---------------------------------------------------------
-//	recieved some data from curl
-//---------------------------------------------------------
-Bool TLNetwork::Platform::TConnectionHttp::OnRecieveData(const u8* pData,u32 Size)
-{
-	if ( !m_pRecieveData )
-	{
-		TLDebug_Break("recieving data with no buffer assigned");
-		return FALSE;
-	}
-
-	//	store this data
-	m_pRecieveData->WriteData( pData, Size );
-
-	return TRUE;
-}
 
 //---------------------------------------------------------
 //	
@@ -186,6 +131,70 @@ SyncBool TLNetwork::Platform::TConnectionHttp::Shutdown()
 		m_pCurl = NULL;
 	}
 
-	return SyncTrue;
+	return TConnection::Shutdown();
 }
+
+
+//---------------------------------------------------------
+//	start a task.
+//---------------------------------------------------------
+void TLNetwork::Platform::TConnectionHttp::StartTask(TTask& Task)
+{
+	//	start type of task
+	if ( Task.GetTaskType() == "Get" )
+	{
+		StartGetTask( Task );
+		return;
+	}
+
+	//	unknown type
+	Task.SetStatusFailed("NoType");
+}
+
+
+//---------------------------------------------------------
+//	start a GET task. Returns error ref. 
+//---------------------------------------------------------
+void TLNetwork::Platform::TConnectionHttp::StartGetTask(TTask& Task)
+{
+	if ( !m_pCurl )
+	{
+		Task.SetStatusFailed("NoInit");
+		return;
+	}
+
+	//	get the url string
+	TTempString Url;
+	if ( !Task.GetData().ImportDataString("url", Url ) )
+	{
+		Task.SetStatusFailed("NoUrl");
+		return;
+	}
+
+	//	set url
+    curl_easy_setopt( m_pCurl, CURLOPT_URL, Url.GetData() );
+
+	//	tell it what func to recieve data to, the data param is a pointer to the task which should continue to exist
+	//	todo: change to a ref so it's a bit safer and have a global task list
+	curl_easy_setopt( m_pCurl, CURLOPT_WRITEFUNCTION, TLNetwork::Platform::RecieveData);
+	curl_easy_setopt( m_pCurl, CURLOPT_WRITEDATA, (void*)&Task );
+
+	//	execute 
+	//	todo: make async
+	CURLcode Result = curl_easy_perform( m_pCurl );
+
+	//	finished
+	if ( Result == CURLE_OK )
+	{
+		Task.SetStatusSuccess();
+	}
+	else 
+	{
+		TTempString ErrorString;
+		ErrorString.Appendf("C%d", Result );
+		TRef ErrorRef = ErrorString;
+		Task.SetStatusFailed( ErrorRef );
+	}
+}
+
 

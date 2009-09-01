@@ -35,12 +35,12 @@ public:
 	virtual SyncBool	Initialise(TRef& ErrorRef);
 	virtual SyncBool	Shutdown();
 
-	virtual SyncBool	GetData(const TString& Url,TBinary& Data,TRef& ErrorRef);
+	virtual void		StartTask(TTask& Task);						//	start a task.
 
-	Bool				OnRecieveData(const u8* pData,u32 Size);	//	recieved some data from curl
+protected:
+	void				StartGetTask(TTask& Task);					//	start a GET task
 
 private:
-	TBinary*			m_pRecieveData;	//	current binary data to recieve into
 	CURL*				m_pCurl;		//	curl handler
 };
 

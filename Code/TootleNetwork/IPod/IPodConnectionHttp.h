@@ -7,6 +7,7 @@
 #pragma once
 #include "../TConnection.h"
 #import <UIKit/UIKit.h>
+#import <TootleCore/TKeyArray.h>
 
 
 namespace TLNetwork
@@ -22,14 +23,13 @@ namespace TLNetwork
 
 @interface TConnectionDelegate : NSObject 
 {
-	NSMutableData *receivedData;
 	TLNetwork::Platform::TConnectionHttp* m_pConnection;
 }
 
-@property (nonatomic, retain) NSMutableData *receivedData;
 @property TLNetwork::Platform::TConnectionHttp* m_pConnection;
-- (id) initWithURL:(NSURL *)pURL Connection:(TLNetwork::Platform::TConnectionHttp*)pConnection ;
-- (void) dealloc;
+
+- (id) Initialise:(TLNetwork::Platform::TConnectionHttp*)pConnection;
+
 @end
 
 
@@ -47,13 +47,16 @@ public:
 	virtual SyncBool	Initialise(TRef& ErrorRef);
 	virtual SyncBool	Shutdown();
 
-	virtual SyncBool	GetData(const TString& Url,TBinary& Data,TRef& ErrorRef);
+	virtual void		StartTask(TTask& Task);						//	start a task.
 
-	void				OnResetData()								{	m_pRecvData->Empty();	}
-	void				OnRecieveData(const u8* pData,u32 Size)		{	m_pRecvData->WriteData( pData, Size );		}
-	
+	TPtr<TTask>&		GetTask(NSURLConnection* pConnection);		//	get a task from a connection
+
+protected:
+	void				StartGetTask(TTask& Task);					//	start a GET task
+	virtual void		OnTaskRemoved(TRef TaskRef);				//	clean up task
+
 private:
-	TBinary*				m_pRecvData;
-	TConnectionDelegate*	m_pDelegate;
+	TKeyArray<NSURLConnection*,TRef>	m_ConnectionTasks;		//	this associates a connection with a task ref
+	TConnectionDelegate*				m_pDelegate;
 };
 
