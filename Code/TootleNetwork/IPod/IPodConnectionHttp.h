@@ -20,12 +20,16 @@ namespace TLNetwork
 
 
 
-@interface TConnectionDelegate : NSObject {
+@interface TConnectionDelegate : NSObject 
+{
 	NSMutableData *receivedData;
+	TLNetwork::Platform::TConnectionHttp* m_pConnection;
 }
 
 @property (nonatomic, retain) NSMutableData *receivedData;
-- (id) initWithURL:(NSURL *)theURL ;
+@property TLNetwork::Platform::TConnectionHttp* m_pConnection;
+- (id) initWithURL:(NSURL *)pURL Connection:(TLNetwork::Platform::TConnectionHttp*)pConnection ;
+- (void) dealloc;
 @end
 
 
@@ -45,7 +49,11 @@ public:
 
 	virtual SyncBool	GetData(const TString& Url,TBinary& Data,TRef& ErrorRef);
 
+	void				OnResetData()								{	m_pRecvData->Empty();	}
+	void				OnRecieveData(const u8* pData,u32 Size)		{	m_pRecvData->WriteData( pData, Size );		}
+	
 private:
+	TBinary*				m_pRecvData;
 	TConnectionDelegate*	m_pDelegate;
 };
 
