@@ -60,18 +60,20 @@ void TLNetwork::Platform::TConnectionHttp::StartGetTask(TTask& Task)
 	}
 
 	//	get the url string
-	TTempString Url;
-	if ( !Task.GetData().ImportDataString("url", Url ) )
+	TTempString UrlString;
+	if ( !Task.GetData().ImportDataString("url", UrlString ) )
 	{
 		Task.SetStatusFailed("NoUrl");
 		return;
 	}
 
 	//	create request
-//	NSURL* pUrl = [[NSURL alloc] initWithString:@"http://www.google.com/"];
-	NSURL* pUrl = [[NSURL alloc] initWithUTF8String:Url.GetData()];
+	NSString* pUrlString = [[NSString alloc] initWithUTF8String:UrlString.GetData() ];
+//	NSURL* pUrl = [[NSURL alloc] initWithString:@"http://www.google.com/" ];
+	NSURL* pUrl = [[NSURL alloc] initWithString:pUrlString ];
+	[pUrlString release];
 
-	NSURLRequest *pRequest = [NSURLRequest	requestWithURL:pURL
+	NSURLRequest *pRequest = [NSURLRequest	requestWithURL:pUrl
 											cachePolicy:NSURLRequestReloadIgnoringLocalCacheData 
 											timeoutInterval:60];
 	if ( !pRequest )
