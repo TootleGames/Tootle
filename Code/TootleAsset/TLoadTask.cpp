@@ -296,7 +296,7 @@ TRef Mode_PlainFileExport::Update(float Timestep)
 		return "AFGet";
 	}
 
-	//	create temporary asset file, now create the real one and start writing to file system
+	//	created temporary asset file, now create the real one and start writing to file system
 	return "AFCreate";
 }
 
@@ -571,7 +571,10 @@ TRef Mode_AssetFileCreate::Update(float Timestep)
 	pTempAssetFile = NULL;
 
 	//	write asset file back to file sys
-	return "AFExport";
+	if ( GetAssetFile()->GetNeedsExport() )
+		return "AFExport";
+	else
+		return "Finished";
 }
 
 
@@ -586,12 +589,6 @@ TRef Mode_AssetFileExport::Update(float Timestep)
 	{
 		TLDebug_Break("Asset file expected");
 		return "Failed";
-	}
-
-	//	quick check to see if we're doing redundant work
-	if ( !pAssetFile->GetNeedsExport() )
-	{
-		TLDebug_Break("Exporting asset file that doesn't need exporting? (hasn't changed)");
 	}
 
 	//	attempt to write our new file back into our filesytem

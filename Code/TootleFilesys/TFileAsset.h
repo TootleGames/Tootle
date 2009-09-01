@@ -57,16 +57,16 @@ public:
 	TTypedRef			GetAssetAndTypeRef() const	{	return TTypedRef( GetFileRef(), GetAssetTypeRef() );	}
 	TFileAsset::Header&	GetHeader()					{	return m_Header;	}
 	Bool				IsHeaderLoaded() const		{	return m_Header.IsValid();	}	//	if the header is valid, we assume it's loaded okay
+	TBinaryTree&		GetAssetData()				{	return m_AssetData;	}
+	const TBinaryTree&	GetAssetData() const		{	return m_AssetData;	}
 
-	TBinaryTree&		GetData()					{	return m_Data;	}
-	const TBinaryTree&	GetData() const				{	return m_Data;	}
+	FORCEINLINE Bool	GetNeedsImport() const		{	return m_NeedsImport;	}	//	this BINARY file needs to be IMPORTED by it's overloaded file type (ie. TFileAsset needs to Import from TFile)
+	FORCEINLINE void	SetNeedsImport(Bool Needs);									//	should be called when the TBinary file contents are changed externally (eg. after loading from file sys - OnFileLoaded())
 
-	void				SetNeedsImport(Bool Needs)	{	m_NeedsImport = Needs;	}
-	void				SetNeedsExport(Bool Needs)	{	m_NeedsExport = Needs;	}
-	Bool				GetNeedsImport() const		{	return m_NeedsImport;	}
-	Bool				GetNeedsExport() const		{	return m_NeedsExport;	}
+	FORCEINLINE Bool	GetNeedsExport() const		{	return m_NeedsExport;	}	//	this BINARY file data is out of data and needs to be EXPORTED FROM it's overloaded file type (ie. TFileAsset needs to Export to TFile)
+	FORCEINLINE void	SetNeedsExport(Bool Needs);									//	should be called whenever we change the contents of our binary tree 
 
-	virtual void		OnFileLoaded()				{	TFile::OnFileLoaded();	m_NeedsImport = TRUE;	}
+	virtual void		OnFileLoaded()				{	TFile::OnFileLoaded();	SetNeedsImport(TRUE);	}
 	virtual void		OnImportFinished(SyncBool ImportResult)	{	m_Data.Compact();	}
 
 protected:
@@ -113,7 +113,7 @@ public:
 
 protected:
 	Header						m_Header;		//	toot header
-	TBinaryTree					m_Data;			//	data turned into binary tree
+	TBinaryTree					m_AssetData;	//	data turned into binary tree
 	TPtr<TFileAssetImporter>	m_pImporter;	//	step-by-step importer
 	Bool						m_NeedsImport;	//	needs import from binary to binary tree
 	Bool						m_NeedsExport;	//	needs export from binarytree to binary
@@ -184,11 +184,40 @@ namespace TLFileSys
 }
 
 
+//-------------------------------------------------------------
+//	should be called when the TBinary file contents are changed externally (eg. after loading from file sys - OnFileLoaded())
+//-------------------------------------------------------------
+FORCEINLINE void TLFileSys::TFileAsset::SetNeedsImport(Bool Needs)	
+{	
+	m_NeedsImport = Needs;	
+
+	if ( m_NeedsExport && m_NeedsImport )
+	{
+		TLDebug_Break("TFileAsset now out of sync - file has changed, (eg. reloaded from file sys) and Asset binary tree has already changed ");
+	}
+}
+
+
+//-------------------------------------------------------------
+//	should be called whenever we change the contents of our binary tree 
+//-------------------------------------------------------------
+FORCEINLINE void TLFileSys::TFileAsset::SetNeedsExport(Bool Needs)	
+{	
+	m_NeedsExport = Needs;	
+
+	if ( m_NeedsExport && m_NeedsImport )
+	{
+		TLDebug_Break("TFileAsset now out of sync - Asset binary tree has changed (eg. from asset save) and file has already been changed (eg. reload from file sys)");
+	}
+}
+
 
 //-------------------------------------------------------------
 //	definition needs to be after TFileAssetImporter declaration
 //-------------------------------------------------------------
-inline TLFileSys::TFileAsset* TLFileSys::TLFileAssetImporter::Mode_Base::GetAssetFile()
+FORCEINLINE TLFileSys::TFileAsset* TLFileSys::TLFileAssetImporter::Mode_Base::GetAssetFile()
 {
 	return GetStateMachine<TFileAssetImporter>()->GetAssetFile();
 }
+
+

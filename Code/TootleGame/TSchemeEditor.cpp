@@ -143,7 +143,7 @@ void TLGame::TSchemeEditor::ProcessMessage(TLMessaging::TMessage& Message)
 			return;
 		
 		TRef Ref;
-		if ( Message.ImportData("Node", Ref) )
+		if ( Message.ImportData("GrNode", Ref) )
 		{
 			ProcessNodeMessage( Ref, ActionRef, Message );
 			return;
@@ -220,7 +220,7 @@ void TLGame::TSchemeEditor::CreateNodeWidgets(TLGraph::TGraphNodeBase& Node)
 		{
 			//	export the node information so when we get the widget callback we know what node it's for in this graph
 			TBinaryTree WidgetData( TRef_Invalid );	//	ref irrelavant
-			WidgetData.ExportData("Node", Node.GetNodeRef() );
+			WidgetData.ExportData("GrNode", Node.GetNodeRef() );
 
 			TPtr<TLGui::TWidgetDrag> pWidget = new TLGui::TWidgetDrag( m_GameRenderTarget, RenderNodeRef, "global", "NDown", "NUp", "NDrag", &WidgetData );
 			m_NodeWidgets.Add( pWidget );
@@ -1192,7 +1192,7 @@ void TLGame::TSchemeEditor::RemoveNodeWidget(TRefRef NodeRef)
 	for ( s32 i=m_NodeWidgets.GetLastIndex();	i>=0;	i-- )
 	{
 		TRef WidgetNodeRef;
-		if ( !m_NodeWidgets[i]->GetWidgetData().ImportData("Node", WidgetNodeRef ) )
+		if ( !m_NodeWidgets[i]->GetWidgetData().ImportData("GrNode", WidgetNodeRef ) )
 			continue;
 
 		//	wrong widget

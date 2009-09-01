@@ -47,10 +47,10 @@ void TLAsset::TAsset::Import(TPtr<TLFileSys::TFileAsset>& pAssetFile)
 */
 
 	//	reset read pos
-	pAssetFile->GetData().ResetReadPos();
+	pAssetFile->GetAssetData().ResetReadPos();
 
 	//	import the data
-	SyncBool ImportState = ImportData( pAssetFile->GetData() );
+	SyncBool ImportState = ImportData( pAssetFile->GetAssetData() );
 	
 	if ( ImportState == SyncFalse )
 		SetLoadingState( TLAsset::LoadingState_Failed );
@@ -89,11 +89,11 @@ SyncBool TLAsset::TAsset::Export(TPtr<TLFileSys::TFileAsset>& pAssetFile)
 	Header.m_AssetType = GetAssetType();
 	Header.m_TootFileRef = TLFileSys::g_TootFileRef;
 
-	//	clear existing data (this should always be empty on a fresh export
-	AssetFile.GetData().Empty();
+	//	clear existing data (this should always be empty on a fresh export)
+	AssetFile.GetAssetData().Empty();
 
 	//	export data
-	SyncBool ExportResult = ExportData( AssetFile.GetData()  );
+	SyncBool ExportResult = ExportData( AssetFile.GetAssetData()  );
 
 	//	asset file's tree is updated
 	if ( ExportResult == SyncTrue )

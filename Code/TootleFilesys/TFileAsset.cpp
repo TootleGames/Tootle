@@ -17,10 +17,8 @@ TLFileSys::TFileAsset::TFileAsset(TRefRef FileRef,TRefRef FileTypeRef) :
 	TFile			( FileRef, FileTypeRef ),
 	m_NeedsImport	( FALSE ),
 	m_NeedsExport	( FALSE ),
-	m_Data			( "Tooot" )	//	gr: this WAS the fileref, but i dont think it's ever referenced as that, i've changed it, just so when you look at it in any way we might know where the data is from. The FileRef is per-game instance anyway so probably shouldnt get saved
+	m_AssetData		( "Tooot" )	//	gr: this WAS the fileref, but i dont think it's ever referenced as that, i've changed it, just so when you look at it in any way we might know where the data is from. The FileRef is per-game instance anyway so probably shouldnt get saved
 {
-	//	initially needs importing
-	SetNeedsImport( TRUE );
 }
 
 
@@ -86,6 +84,18 @@ Bool TLFileSys::TFileAsset::ImportTree(TPtr<TBinaryTree>& pChild,SectionHeader& 
 //---------------------------------------------------------
 SyncBool TLFileSys::TFileAsset::Import()
 {
+	if ( !GetNeedsImport() )
+	{
+		TLDebug_Break("Warning: redundant import...");
+	}
+
+	//	if we need to be exported at this point then the asset file data (tree) has changed
+	//	we are going to lose our changes...
+	if ( GetNeedsExport() )
+	{
+		TLDebug_Break("Trying to import asset file, but the Asset file has changed. Will lose changes.");
+	}
+
 	//	create importer if we havent got one
 	if ( !m_pImporter )
 	{
@@ -168,6 +178,19 @@ Bool TLFileSys::TFileAsset::ExportTree(TPtrArray<TBinaryTree>& Children,TBinary&
 //---------------------------------------------------------
 SyncBool TLFileSys::TFileAsset::Export()
 {
+	if ( !GetNeedsExport() )
+	{
+		TLDebug_Break("Warning: redundant export...");
+	}
+
+	//	if we need to be imported at this point then the plain TBinary/TFile data has changed since we last imported...
+	//	So we're out of sync, the TBinaryTree doesn't reflect what's in the file
+	if ( GetNeedsImport() )
+	{
+		TLDebug_Break("Trying to export asset file, but the file data has changed so we're out of sync");
+		return SyncFalse;
+	}
+
 	TFile* pFile = this;
 
 	//	clean out existing data in file
@@ -190,10 +213,10 @@ SyncBool TLFileSys::TFileAsset::Export()
 	m_Header.m_DataLength = 0;
 	
 	//	write root data
-	pFile->Write( GetData().GetData() );
+	pFile->Write( GetAssetData().GetData() );
 
 	//	write all the child data
-	ExportTree( GetData().GetChildren(), pFile->GetData() );
+	ExportTree( GetAssetData().GetChildren(), pFile->GetData() );
 
 	//	update header
 	m_Header.m_DataLength = pFile->GetSize();
@@ -224,8 +247,25 @@ Bool TLFileSys::TFileAsset::CopyAssetFileData(TFileAsset& OtherAssetFile)
 	//	copy header
 	this->m_Header = OtherAssetFile.GetHeader();
 
-	//	copy data
-	this->m_Data.ReferenceDataTree( OtherAssetFile.GetData() );
+	//	copy asset data,
+	this->GetAssetData().ReferenceDataTree( OtherAssetFile.GetAssetData() );
+
+	//	as we're overwriting our asset data we can assume the plain data is out of date now
+	//	so if the source is up to date, copy it, otherwise it's out of date and needs exporting
+	if ( OtherAssetFile.GetNeedsExport() )
+	{
+		//	the plain file data is out of date
+		GetData().Empty();
+		SetNeedsImport( FALSE );
+		SetNeedsExport( TRUE );
+	}
+	else
+	{
+		//	the plain file data is up to date, so copy it
+		GetData().Copy( OtherAssetFile.GetData() );
+		SetNeedsImport( FALSE );
+		SetNeedsExport( FALSE );
+	}
 
 	//	copy importer
 	//	gr: dont know if we need to do this
@@ -288,7 +328,7 @@ TRef TLFileSys::TLFileAssetImporter::Mode_Init::Update(float Timestep)
 	pFile->ResetReadPos();
 
 	//	empty out the existing tree data
-	GetAssetFile()->GetData().Empty();
+	GetAssetFile()->GetAssetData().Empty();
 
 	//	file is empty
 	if ( pFile->GetData().GetSize() == 0 )
@@ -364,7 +404,7 @@ TRef TLFileSys::TLFileAssetImporter::Mode_ImportChild::Update(float Timestep)
 	//	read out root data if first time
 	if ( m_CurrentChild == -1 )
 	{
-		pFile->Read( pAssetFile->GetData().GetData() );
+		pFile->Read( pAssetFile->GetAssetData().GetData() );
 		m_CurrentChild = 0;
 	}
 
@@ -401,7 +441,7 @@ TRef TLFileSys::TLFileAssetImporter::Mode_ImportChild::Update(float Timestep)
 			return "Failed";
 
 		//	create new section and copy data into it
-		TPtr<TBinaryTree> pChild = pAssetFile->GetData().AddChild( ChildHeader.m_DataRef );
+		TPtr<TBinaryTree> pChild = pAssetFile->GetAssetData().AddChild( ChildHeader.m_DataRef );
 		if ( !pChild )
 			return "Failed";
 		pChild->SetDataTypeHint( ChildHeader.m_DataType, TRUE );
@@ -440,7 +480,7 @@ Bool TLFileSys::TLFileAssetImporter::Mode_Failed::OnBegin(TRefRef PreviousMode)
 	TFileAsset*	pAssetFile = GetAssetFile();
 	if ( pAssetFile )
 	{
-		pAssetFile->GetData().Empty();
+		pAssetFile->GetAssetData().Empty();
 	}
 	
 	return TRUE;
