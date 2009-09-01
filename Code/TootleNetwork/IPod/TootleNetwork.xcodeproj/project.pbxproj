@@ -7,11 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		84906351104D3814001930A3 /* TConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8490634F104D3814001930A3 /* TConnection.cpp */; };
+		84906352104D3814001930A3 /* TConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 84906350104D3814001930A3 /* TConnection.h */; };
+		84906356104D383F001930A3 /* IPodConnectionHttp.h in Headers */ = {isa = PBXBuildFile; fileRef = 84906354104D383F001930A3 /* IPodConnectionHttp.h */; };
+		84906357104D383F001930A3 /* IPodConnectionHttp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84906355104D383F001930A3 /* IPodConnectionHttp.mm */; };
 		84C10A8A0F0A7D3800B2DF7A /* TLNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10A880F0A7D3800B2DF7A /* TLNetwork.cpp */; };
 		84C10A8B0F0A7D3800B2DF7A /* TLNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10A890F0A7D3800B2DF7A /* TLNetwork.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8490634F104D3814001930A3 /* TConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TConnection.cpp; path = ../TConnection.cpp; sourceTree = SOURCE_ROOT; };
+		84906350104D3814001930A3 /* TConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TConnection.h; path = ../TConnection.h; sourceTree = SOURCE_ROOT; };
+		84906354104D383F001930A3 /* IPodConnectionHttp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodConnectionHttp.h; sourceTree = "<group>"; };
+		84906355104D383F001930A3 /* IPodConnectionHttp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodConnectionHttp.mm; sourceTree = "<group>"; };
 		84C10A820F0A7D0F00B2DF7A /* libTootleNetwork.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleNetwork.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C10A880F0A7D3800B2DF7A /* TLNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLNetwork.cpp; path = ../TLNetwork.cpp; sourceTree = SOURCE_ROOT; };
 		84C10A890F0A7D3800B2DF7A /* TLNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLNetwork.h; path = ../TLNetwork.h; sourceTree = SOURCE_ROOT; };
@@ -32,6 +40,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		84906353104D382C001930A3 /* IPod Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				84906354104D383F001930A3 /* IPodConnectionHttp.h */,
+				84906355104D383F001930A3 /* IPodConnectionHttp.mm */,
+			);
+			name = "IPod Source Files";
+			sourceTree = "<group>";
+		};
 		84C108B90F0A765A00B2DF7A = {
 			isa = PBXGroup;
 			children = (
@@ -52,6 +69,9 @@
 		84C10A870F0A7D2300B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				84906353104D382C001930A3 /* IPod Source Files */,
+				8490634F104D3814001930A3 /* TConnection.cpp */,
+				84906350104D3814001930A3 /* TConnection.h */,
 				84C10A880F0A7D3800B2DF7A /* TLNetwork.cpp */,
 				84C10A890F0A7D3800B2DF7A /* TLNetwork.h */,
 			);
@@ -77,6 +97,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				84C10A8B0F0A7D3800B2DF7A /* TLNetwork.h in Headers */,
+				84906352104D3814001930A3 /* TConnection.h in Headers */,
+				84906356104D383F001930A3 /* IPodConnectionHttp.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,6 +146,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				84C10A8A0F0A7D3800B2DF7A /* TLNetwork.cpp in Sources */,
+				84906351104D3814001930A3 /* TConnection.cpp in Sources */,
+				84906357104D383F001930A3 /* IPodConnectionHttp.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

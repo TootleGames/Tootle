@@ -1,7 +1,4 @@
-#include "PCConnectionHttp.h"
-#include <curl/curl.h>
-#include <curl/types.h>
-#include <curl/easy.h>
+#include "IPodConnectionHttp.h"
 
 namespace TLNetwork
 {
@@ -34,7 +31,7 @@ SyncBool TLNetwork::Platform::TConnectionHttp::Initialise(TRef& ErrorRef)
 SyncBool TLNetwork::Platform::TConnectionHttp::GetData(const TString& Url,TBinary& Data,TRef& ErrorRef)
 {
 	//	create url
-	NSURL* pUrl = [NSURL alloc] initWithString:@"http://www.google.com/";
+	NSURL* pUrl = [[NSURL alloc] initWithString:@"http://www.google.com/"];
 	
 	//	create connection delegate
 	m_pDelegate = [[TConnectionDelegate alloc] initWithURL:pUrl];
