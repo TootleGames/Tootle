@@ -120,18 +120,23 @@ TPtr<TLAsset::TSchemeNode> TLGraph::TGraphBase::ExportSchemeNode(TGraphNodeBase*
 	//	create scheme node
 	TPtr<TLAsset::TSchemeNode> pSchemeNode = new TLAsset::TSchemeNode( pNode->GetNodeRef(), GetGraphRef(), pNode->GetNodeTypeRef() );
 
-	//	export data from node to scheme node
-	pNode->UpdateNodeData();
-	const TBinaryTree& NodeData = pNode->GetNodeData();
-	pSchemeNode->GetData().ReferenceDataTree( NodeData );
-
-	//	export children into this node
-	TArray<TGraphNodeBase*> RootChildren;
-	pNode->GetChildrenBase( RootChildren );
-	for ( u32 c=0;	c<RootChildren.GetSize();	c++ )
+	// Test to see if the node is flagged to be ignored when storing to a scheme
+	if(!pNode->GetNodeData().HasChild("IgnoreData"))
 	{
-		TPtr<TLAsset::TSchemeNode> pChildSchemeNode = ExportSchemeNode( RootChildren[c] );
-		pSchemeNode->AddChild( pChildSchemeNode );
+		//	export data from node to scheme node
+		pNode->UpdateNodeData();
+
+		const TBinaryTree& NodeData = pNode->GetNodeData();
+		pSchemeNode->GetData().ReferenceDataTree( NodeData );
+
+		//	export children into this node
+		TArray<TGraphNodeBase*> RootChildren;
+		pNode->GetChildrenBase( RootChildren );
+		for ( u32 c=0;	c<RootChildren.GetSize();	c++ )
+		{
+			TPtr<TLAsset::TSchemeNode> pChildSchemeNode = ExportSchemeNode( RootChildren[c] );
+			pSchemeNode->AddChild( pChildSchemeNode );
+		}
 	}
 
 	return pSchemeNode;

@@ -223,7 +223,9 @@ void TSceneNode_Object::UpdateNodeData()
 
 	//	gr: clear current render node data
 	GetNodeData().RemoveChild("RNode");
-	if(pRenderNode)
+
+	// Test to see if the render node is flagged to be ignored when storing to the scene node
+	if(pRenderNode  && !pRenderNode->GetNodeData().HasChild("IgnoreData"))
 	{
 		//	recursivly add the render node and all it's children to our node data
 		UpdateOwnedNodeData( *pRenderNode, GetNodeData(), "RNode" );
@@ -234,7 +236,9 @@ void TSceneNode_Object::UpdateNodeData()
 
 	//	gr: clear current physics node data
 	GetNodeData().RemoveChild("PNode");
-	if(pPhysicsNode)
+
+	// Test to see if the physics node is flagged to be ignored when storing to the scene node
+	if(pPhysicsNode && !pPhysicsNode->GetNodeData().HasChild("IgnoreData"))
 	{
 		// Update the Physics node data
 		pPhysicsNode->UpdateNodeData();
@@ -249,7 +253,8 @@ void TSceneNode_Object::UpdateNodeData()
 	TPtr<TLAudio::TAudioNode>& pAudioNode = GetAudioNode();
 
 
-	if(pAudioNode)
+	// Test to see if the audio node is flagged to be ignored when storing the scene node
+	if(pAudioNode && !pAudioNode->GetNodeData().HasChild("IgnoreData"))
 	{
 		// Update the Audio node data
 		pAudioNode->UpdateNodeData();
@@ -291,7 +296,10 @@ void TSceneNode_Object::UpdateOwnedNodeData(TLRender::TRenderNode& RenderNode,TB
 	for ( u32 c=0;	c<RenderNode.GetChildren().GetSize();	c++ )
 	{
 		TPtr<TLRender::TRenderNode>& pChildRenderNode = RenderNode.GetChildren().ElementAt(c);
-		UpdateOwnedNodeData( *pChildRenderNode, *pNewNodeData, "Child" );
+
+		// Test to see if the child render node is flagged to be ignored when storing to the scene node
+		if(!pChildRenderNode->GetNodeData().HasChild("IgnoreData"))
+			UpdateOwnedNodeData( *pChildRenderNode, *pNewNodeData, "Child" );
 	}
 }
 
