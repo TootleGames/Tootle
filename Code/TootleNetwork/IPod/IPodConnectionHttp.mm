@@ -71,7 +71,7 @@ void TLNetwork::Platform::TConnectionHttp::StartGetTask(TTask& Task)
 	NSString* pUrlString = [[NSString alloc] initWithUTF8String:UrlString.GetData() ];
 //	NSURL* pUrl = [[NSURL alloc] initWithString:@"http://www.google.com/" ];
 	NSURL* pUrl = [[NSURL alloc] initWithString:pUrlString ];
-	[pUrlString release];
+//	[pUrlString release];
 
 	NSURLRequest *pRequest = [NSURLRequest	requestWithURL:pUrl
 											cachePolicy:NSURLRequestReloadIgnoringLocalCacheData 
@@ -88,12 +88,13 @@ void TLNetwork::Platform::TConnectionHttp::StartGetTask(TTask& Task)
 	//	to avoid race condition problems, we wait until we've created a connection <-> task link
 	//	before starting in case we recieve data before they;re linked and would have no where to 
 	//	put the downloaded data	
+	TConnectionDelegate* pDelegate = m_pDelegate;
 	NSURLConnection *pConnection = [[NSURLConnection alloc]	initWithRequest:pRequest 
-															delegate:m_pDelegate
+															delegate:pDelegate
 															startImmediately:NO];
 
-	[pUrl release];
-	[pRequest release];
+//	[pUrl release];
+//	[pRequest release];
 	
 	//	failed to create/init connection with request
 	if ( !pConnection ) 

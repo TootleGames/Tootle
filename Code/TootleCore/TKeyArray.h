@@ -31,7 +31,11 @@ namespace TLKeyArray
 
 		FORCEINLINE Bool	operator<(const KEYTYPE& Key) const					{	return m_Key < Key;	}
 		FORCEINLINE Bool	operator<(const TPair<KEYTYPE,TYPE>& Pair) const	{	return m_Key < Pair.m_Key;	}
-		FORCEINLINE void	operator=(const TPair<KEYTYPE,TYPE>& Pair)			{	m_Key = Pair.m_Key;	m_Item = Pair.m_Item;	}
+		FORCEINLINE void	operator=(const TPair<KEYTYPE,TYPE>& Pair)			
+		{
+		m_Key = Pair.m_Key;
+		m_Item = Pair.m_Item;	
+		}
 		FORCEINLINE Bool	operator==(const KEYTYPE& Key) const				{	return m_Key == Key;	}
 		FORCEINLINE Bool	operator==(const TPair<KEYTYPE,TYPE>& Pair) const	{	return (m_Key == Pair.m_Key) && (m_Item == Pair.m_Item);	}
 
@@ -194,7 +198,8 @@ TYPE* TKeyArray<KEYTYPE,TYPE>::Add(const KEYTYPE& Key,const TYPE& Item,Bool Over
 	}
 
 	//	add new pair
-	s32 AddIndex = m_Array.Add( PAIRTYPE( Key, Item ) );
+	PAIRTYPE TempNewPair( Key, Item );
+	s32 AddIndex = m_Array.Add( TempNewPair );
 	if ( AddIndex == -1 )
 		return NULL;
 
