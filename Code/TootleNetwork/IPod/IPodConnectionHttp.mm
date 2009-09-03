@@ -9,6 +9,24 @@ namespace TLNetwork
 
 
 
+
+TLNetwork::Platform::TNSUrlConnectionTask::~TNSUrlConnectionTask()
+{
+	if ( m_pConnection )
+		[m_pConnection release];
+
+	if ( m_pUrlRequest )
+		[m_pUrlRequest release];
+		
+	if ( m_pUrl )
+		[m_pUrl release];
+
+	if ( m_pUrlString )
+		[m_pUrlString release];
+}
+
+
+
 TLNetwork::Platform::TConnectionHttp::TConnectionHttp() :
 	m_pDelegate				( NULL )
 {
@@ -29,29 +47,10 @@ SyncBool TLNetwork::Platform::TConnectionHttp::Initialise(TRef& ErrorRef)
 }
 
 
-
 //---------------------------------------------------------
-//	start a task.
+//	start a download task
 //---------------------------------------------------------
-void TLNetwork::Platform::TConnectionHttp::StartTask(TTask& Task)
-{
-	//	start type of task
-	if ( Task.GetTaskType() == "Get" )
-	{
-		StartGetTask( Task );
-		return;
-	}
-
-	//	unknown type
-	Task.SetStatusFailed("NoType");
-}
-
-
-
-//---------------------------------------------------------
-//	start a GET task. Returns error ref. 
-//---------------------------------------------------------
-void TLNetwork::Platform::TConnectionHttp::StartGetTask(TTask& Task)
+void TLNetwork::Platform::TConnectionHttp::StartDownloadTask(TTask& Task)
 {
 	if ( !m_pDelegate )
 	{
@@ -68,17 +67,13 @@ void TLNetwork::Platform::TConnectionHttp::StartGetTask(TTask& Task)
 	}
 
 	//	create request
-	NSString* pUrlString = [[NSString alloc] initWithUTF8String:UrlString.GetData() ];
-//	NSURL* pUrl = [[NSURL alloc] initWithString:@"http://www.google.com/" ];
-	NSURL* pUrl = [[NSURL alloc] initWithString:pUrlString ];
-//	[pUrlString release];
-
-	NSURLRequest *pRequest = [NSURLRequest	requestWithURL:pUrl
-											cachePolicy:NSURLRequestReloadIgnoringLocalCacheData 
-											timeoutInterval:60];
-	if ( !pRequest )
+	m_pUrlString = [[NSString alloc] initWithUTF8String:UrlString.GetData() ];
+	m_pUrl = [[NSURL alloc] initWithString:m_pUrlString ];
+	m_pRequest = [NSURLRequest	requestWithURL:m_pUrl
+								cachePolicy:NSURLRequestReloadIgnoringLocalCacheData 
+								timeoutInterval:60];
+	if ( !m_pRequest )
 	{
-		[pUrl release];
 		Task.SetStatusFailed("NoRequest");
 		return;
 	}
@@ -88,28 +83,31 @@ void TLNetwork::Platform::TConnectionHttp::StartGetTask(TTask& Task)
 	//	to avoid race condition problems, we wait until we've created a connection <-> task link
 	//	before starting in case we recieve data before they;re linked and would have no where to 
 	//	put the downloaded data	
-	TConnectionDelegate* pDelegate = m_pDelegate;
-	NSURLConnection *pConnection = [[NSURLConnection alloc]	initWithRequest:pRequest 
-															delegate:pDelegate
-															startImmediately:NO];
-
-//	[pUrl release];
-//	[pRequest release];
+	m_pConnection = [[NSURLConnection alloc]	initWithRequest:pRequest 
+												delegate:m_pDelegate
+												startImmediately:NO];
 	
 	//	failed to create/init connection with request
-	if ( !pConnection ) 
+	if ( !m_pConnection ) 
 	{
 		Task.SetStatusFailed("NoConnection");
 		return;
 	}
 
-	//	created connection, associate it with a task
-	m_ConnectionTasks.Add( pConnection, Task.GetTaskRef() );
-	
 	//	now start connection
 	[pConnection start];
 
 	//	now we just wait for it to do it's thing!...	
+}
+
+
+//---------------------------------------------------------
+//	start a upload task
+//---------------------------------------------------------
+void TLNetwork::Platform::TConnectionHttp::StartDownloadTask(TTask& Task)
+{
+	Task.SetStatusFailed("Todo");
+	TLDebug_Break("Todo");
 }
 
 
@@ -127,47 +125,16 @@ SyncBool TLNetwork::Platform::TConnectionHttp::Shutdown()
 	return TConnection::Shutdown();
 }
 
+
 //---------------------------------------------------------
 //	get a task from a connection
 //---------------------------------------------------------
-TPtr<TLNetwork::TTask>& TLNetwork::Platform::TConnectionHttp::GetTask(NSURLConnection* pConnection)
+TLNetwork::TTask* TLNetwork::Platform::TConnectionHttp::GetTask(NSURLConnection* pConnection)
 {
-	TRef* pTaskRef = m_ConnectionTasks.Find( pConnection );
-	if ( !pTaskRef )
-		return TLPtr::GetNullPtr<TLNetwork::TTask>();
-
-	TPtr<TLNetwork::TTask>& pTask = TConnection::GetTask( *pTaskRef );
+	TPtr<TLNetwork::TTask>& pTask = m_Tasks.Find( pConnection );
 	return pTask;
 }
 
-//---------------------------------------------------------
-//	clean up task
-//---------------------------------------------------------
-void TLNetwork::Platform::TConnectionHttp::OnTaskRemoved(TRef TaskRef)
-{
-	//	find connection for this task
-	const NSURLConnection** ppConnection = m_ConnectionTasks.FindKey( TaskRef );
-	
-	//	didnt have a connection entry
-	if ( !ppConnection )
-		return;
-
-	//	get index and proper key
-	s32 Index = m_ConnectionTasks.FindIndex( *ppConnection );
-	if ( Index == -1 )
-	{
-		TLDebug_Break("Index expected");
-		return;
-	}
-	
-	//	get proper key
-	NSURLConnection*& pConnection = m_ConnectionTasks.GetKeyAt( Index );
-	[pConnection release];
-	pConnection = NULL;
-	
-	//	remove entry
-	m_ConnectionTasks.RemoveAt( Index );
-}
 
 
 

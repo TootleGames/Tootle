@@ -75,10 +75,55 @@ size_t TLNetwork::Platform::RecieveData(void *ptr, size_t size, size_t nmemb, vo
 }
 
 
+TLNetwork::Platform::TCurlTask::~TCurlTask()
+{
+	if ( m_pMultiHandle )
+	{
+		curl_multi_cleanup( m_pMultiHandle );
+		m_pMultiHandle = NULL;
+	}
+
+	if ( m_pHandle )
+	{
+		curl_easy_cleanup( m_pHandle );
+		m_pHandle = NULL;
+	}
+}
+
+
+//---------------------------------------------------------
+//	create curl handle
+//---------------------------------------------------------
+CURL* TLNetwork::Platform::TCurlTask::InitHandle()
+{
+	//	todo: make sure global curl is initialised
+
+	//	alloc handle
+	if ( !m_pHandle )
+	{
+		m_pHandle = curl_easy_init();
+		
+		if ( !m_pHandle )
+			return FALSE;
+	}
+	
+	//	tell it what func to recieve data to, the data param is a pointer to the task which should continue to exist
+	//	todo: change to a ref so it's a bit safer and have a global task list
+	curl_easy_setopt( m_pHandle, CURLOPT_WRITEFUNCTION, TLNetwork::Platform::RecieveData);
+	curl_easy_setopt( m_pHandle, CURLOPT_WRITEDATA, (void*)this );
+
+	// some servers don't like requests that are made without a user-agent field, so we provide one
+	curl_easy_setopt( m_pHandle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+
+	//	debug output
+    curl_easy_setopt( m_pHandle, CURLOPT_VERBOSE, 1L);
+
+	return m_pHandle;
+}
+
 
 TLNetwork::Platform::TConnectionHttp::TConnectionHttp() :
-	TLNetwork::TConnection	(),
-	m_pCurl					( NULL )
+	TLNetwork::TConnection	()
 {
 }
 
@@ -88,10 +133,6 @@ TLNetwork::Platform::TConnectionHttp::TConnectionHttp() :
 //---------------------------------------------------------
 SyncBool TLNetwork::Platform::TConnectionHttp::Initialise(TRef& ErrorRef)
 {
-	//	already initialised
-	if ( m_pCurl )
-		return SyncTrue;
-
 	//	init curl global system with our own mem alloc routines
 	CURLcode Result = curl_global_init_mem(CURL_GLOBAL_ALL,
 											TLNetwork::Platform::Alloc,
@@ -102,19 +143,6 @@ SyncBool TLNetwork::Platform::TConnectionHttp::Initialise(TRef& ErrorRef)
 
 //	curl_global_init(CURL_GLOBAL_ALL);
 
-	//	init curl
-	m_pCurl = curl_easy_init();
-	
-	if ( !m_pCurl )
-	{
-		ErrorRef = "NoCurl";
-		return SyncFalse;
-	}
-	
-	//	setup some global curl params
-
-	// some servers don't like requests that are made without a user-agent field, so we provide one
-	curl_easy_setopt( m_pCurl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
 
 	return SyncTrue;
 }
@@ -125,39 +153,20 @@ SyncBool TLNetwork::Platform::TConnectionHttp::Initialise(TRef& ErrorRef)
 //---------------------------------------------------------
 SyncBool TLNetwork::Platform::TConnectionHttp::Shutdown()
 {
-	if ( m_pCurl )
-	{
-		curl_easy_cleanup(m_pCurl);
-		m_pCurl = NULL;
-	}
-
 	return TConnection::Shutdown();
 }
 
-
-//---------------------------------------------------------
-//	start a task.
-//---------------------------------------------------------
-void TLNetwork::Platform::TConnectionHttp::StartTask(TTask& Task)
-{
-	//	start type of task
-	if ( Task.GetTaskType() == "Get" )
-	{
-		StartGetTask( Task );
-		return;
-	}
-
-	//	unknown type
-	Task.SetStatusFailed("NoType");
-}
 
 
 //---------------------------------------------------------
 //	start a GET task. Returns error ref. 
 //---------------------------------------------------------
-void TLNetwork::Platform::TConnectionHttp::StartGetTask(TTask& Task)
+void TLNetwork::Platform::TConnectionHttp::StartDownloadTask(TTask& Task)
 {
-	if ( !m_pCurl )
+	TCurlTask& CurlTask = static_cast<TCurlTask&>( Task );
+
+	CURL* pHandle = CurlTask.InitHandle();
+	if ( !pHandle )
 	{
 		Task.SetStatusFailed("NoInit");
 		return;
@@ -170,18 +179,11 @@ void TLNetwork::Platform::TConnectionHttp::StartGetTask(TTask& Task)
 		Task.SetStatusFailed("NoUrl");
 		return;
 	}
-
-	//	set url
-    curl_easy_setopt( m_pCurl, CURLOPT_URL, Url.GetData() );
-
-	//	tell it what func to recieve data to, the data param is a pointer to the task which should continue to exist
-	//	todo: change to a ref so it's a bit safer and have a global task list
-	curl_easy_setopt( m_pCurl, CURLOPT_WRITEFUNCTION, TLNetwork::Platform::RecieveData);
-	curl_easy_setopt( m_pCurl, CURLOPT_WRITEDATA, (void*)&Task );
+    curl_easy_setopt( pHandle, CURLOPT_URL, Url.GetData() );
 
 	//	execute 
 	//	todo: make async
-	CURLcode Result = curl_easy_perform( m_pCurl );
+	CURLcode Result = curl_easy_perform( pHandle );
 
 	//	finished
 	if ( Result == CURLE_OK )
@@ -197,4 +199,89 @@ void TLNetwork::Platform::TConnectionHttp::StartGetTask(TTask& Task)
 	}
 }
 
+
+
+
+//---------------------------------------------------------
+//	start a POST task.
+//---------------------------------------------------------
+void TLNetwork::Platform::TConnectionHttp::StartUploadTask(TTask& Task)
+{
+	TCurlTask& CurlTask = static_cast<TCurlTask&>( Task );
+
+	CURL* pHandle = CurlTask.InitHandle();
+	if ( !pHandle )
+	{
+		Task.SetStatusFailed("NoInit");
+		return;
+	}
+
+	//	get the url string
+	TTempString Url;
+	if ( !Task.GetData().ImportDataString("url", Url ) )
+	{
+		Task.SetStatusFailed("NoUrl");
+		return;
+	}
+    curl_easy_setopt( pHandle, CURLOPT_URL, Url.GetData() );
+
+
+	//	setup form
+	curl_httppost* pForm = NULL;
+	curl_httppost* pLast = NULL;
+
+	//	add form data for each bit of upload data
+	TPtr<TBinaryTree>& pUploadData = CurlTask.GetData().GetChild("Upload");
+	if ( !pUploadData )
+	{
+		Task.SetStatusFailed("NoData");
+		return;
+	}
+
+	TPtrArray<TBinaryTree>& UploadDatas = pUploadData->GetChildren();
+	for ( u32 i=0;	i<UploadDatas.GetSize();	i++ )
+	{
+		TBinaryTree& UploadData = *UploadDatas[i];
+
+		//	the data's ref represents the field name
+		TTempString DataRefString;
+		UploadData.GetDataRef().GetString( DataRefString );
+
+		//	add pointers to the data for the form
+		CURLFORMcode FormError = curl_formadd(	&pForm,
+												&pLast,
+												CURLFORM_COPYNAME, DataRefString.GetData(),		//	copies data
+												CURLFORM_PTRCONTENTS, UploadData.GetData().GetData(),		//	not raw data ptr!
+												CURLFORM_CONTENTSLENGTH, UploadData.GetSize(),
+												CURLFORM_END);
+
+		//	setup okay, continue
+		if ( FormError == CURL_FORMADD_OK )
+			continue;
+
+		//	error with form
+		TLDebug_Break("Error with form params");
+		Task.SetStatusFailed("Error");
+		return;
+	}
+
+	//	assign form
+    curl_easy_setopt( pHandle, CURLOPT_HTTPPOST, pForm);
+
+	//	execute 
+	CURLcode Result = curl_easy_perform( pHandle );
+
+	//	finished
+	if ( Result == CURLE_OK )
+	{
+		Task.SetStatusSuccess();
+	}
+	else 
+	{
+		TTempString ErrorString;
+		ErrorString.Appendf("C%d", Result );
+		TRef ErrorRef = ErrorString;
+		Task.SetStatusFailed( ErrorRef );
+	}
+}
 

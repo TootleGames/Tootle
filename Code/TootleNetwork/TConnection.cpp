@@ -52,11 +52,33 @@ void TLNetwork::TTask::SetStatusFailed(TRefRef ErrorRef)
 }
 
 
+//---------------------------------------------------------
+//	start a task.
+//---------------------------------------------------------
+void TLNetwork::TConnection::StartTask(TTask& Task)
+{
+	//	start type of task
+	if ( Task.GetTaskType() == "Download" )
+	{
+		StartDownloadTask( Task );
+		return;
+	}
+
+	if ( Task.GetTaskType() == "Upload" )
+	{
+		StartUploadTask( Task );
+		return;
+	}
+
+	//	unknown type
+	Task.SetStatusFailed("NoType");
+}
+
 
 //-------------------------------------------------------------
 //	Get data from url. creates a get-data task and return the task ref
 //-------------------------------------------------------------
-TRefRef TLNetwork::TConnection::GetData(const TString& Url)
+TRef TLNetwork::TConnection::Download(const TString& Url)
 {
 	//	new task ref
 	TRefRef TaskRef = GetNextNetworkTaskRef();
@@ -66,7 +88,7 @@ TRefRef TLNetwork::TConnection::GetData(const TString& Url)
 	TaskData.ExportDataString("url", Url );
 
 	//	create task and add to list
-	TPtr<TTask> pTask = new TTask( TTypedRef( TaskRef, "Get" ), TaskData );
+	TPtr<TTask> pTask = CreateTask( TTypedRef( TaskRef, "Download" ), TaskData );
 	m_Tasks.Add( pTask );
 
 	//	start the task - note: may block and complete here...
@@ -75,17 +97,33 @@ TRefRef TLNetwork::TConnection::GetData(const TString& Url)
 	return pTask->GetTaskRef();
 }
 
+
 //-------------------------------------------------------------
-//	start a task. Base code sets it to fail instantly
+//	Upload data to an url, each bit of data is named (the root data is unused). 
+//	The refs are converted to strings and used as HTTP params, maybe for packets they wont be strings. creates a get-data task and return the task ref
 //-------------------------------------------------------------
-void TLNetwork::TConnection::StartTask(TTask& Task)
+TRef TLNetwork::TConnection::Upload(const TString& Url,TBinaryTree& UploadData)
 {
-	TLDebug_Break("Overload me.");
+	//	new task ref
+	TRefRef TaskRef = GetNextNetworkTaskRef();
 
-	Task.SetStatusFailed("CodeError");
+	//	setup data for the task
+	TBinaryTree TaskData( TRef_Invalid );
+	TaskData.ExportDataString("url", Url );
+
+	//	put upload data in the tasks data
+	TPtr<TBinaryTree>& pUploadData = TaskData.AddChild("Upload");
+	pUploadData->ReferenceDataTree( UploadData );
+
+	//	create task and add to list
+	TPtr<TTask> pTask = CreateTask( TTypedRef( TaskRef, "Upload" ), TaskData );
+	m_Tasks.Add( pTask );
+
+	//	start the task - note: may block and complete here...
+	StartTask( *pTask );
+
+	return pTask->GetTaskRef();
 }
-
-
 
 
 //-------------------------------------------------------------
@@ -117,11 +155,11 @@ TBinaryTree* TLNetwork::TConnection::GetTask(TRefRef TaskRef,SyncBool& TaskStatu
 //-------------------------------------------------------------
 Bool TLNetwork::TConnection::RemoveTask(TRef TaskRef)	
 {
+	//	todo: insert shutdown here as required
+
 	if ( !m_Tasks.Remove( TaskRef ) )
 		return FALSE;
 
-	//	do overloaded notification
-	OnTaskRemoved( TaskRef );
-
 	return TRUE;
 }	
+
