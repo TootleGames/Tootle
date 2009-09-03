@@ -108,20 +108,37 @@ void TLNetwork::Platform::TConnectionHttp::StartDownloadTask(TTask& Task)
 //---------------------------------------------------------
 void TLNetwork::Platform::TConnectionHttp::StartUploadTask(TTask& Task)
 {
-/*
-    //creating the url request:
-    NSURL *cgiUrl = [NSURL URLWithString:@"http://www.testsite.com/upload.php"];
-    NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:cgiUrl];
- 
-    //adding header information:
-    [postRequest setHTTPMethod:@"POST"];
- 
+	TNSUrlConnectionTask& ConnectionTask = static_cast<TNSUrlConnectionTask&>( Task );
+	if ( !m_pDelegate )
+	{
+		Task.SetStatusFailed("NoInit");
+		return;
+	}
+
+	//	get the url string
+	TTempString UrlString;
+	if ( !Task.GetData().ImportDataString("url", UrlString ) )
+	{
+		Task.SetStatusFailed("NoUrl");
+		return;
+	}
+
+	//	create request
+	ConnectionTask.m_pUrlString = [[NSString alloc] initWithUTF8String:UrlString.GetData() ];
+	ConnectionTask.m_pUrl = [[NSURL alloc] initWithString:ConnectionTask.m_pUrlString ];
+	ConnectionTask.m_pUrlRequest = [NSMutableURLRequest	requestWithURL:ConnectionTask.m_pUrl];
+
+    //	POST, not default GET
+    //	http://www.w3.org/Protocols/rfc1341/7_2_Multipart.html
+    [ConnectionTask.m_pUrlRequest setHTTPMethod:@"POST"];
+    
+    //	post boundry is a VERY UNIQUE identifier to split up the form parts. this must never ever been in the body!
     NSString *stringBoundary = [NSString stringWithString:@"0xKhTmLbOuNdArY"];
     NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",stringBoundary];
-    [postRequest addValue:contentType forHTTPHeaderField: @"Content-Type"];
+    [ConnectionTask.m_pUrlRequest addValue:contentType forHTTPHeaderField: @"Content-Type"];
  
- 
-    //setting up the body:
+
+    //	setup the post body
     NSMutableData *postBody = [NSMutableData data];
     [postBody appendData:[[NSString stringWithFormat:@"\r\n\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
     [postBody appendData:[[NSString stringWithString:@"Content-Disposition: form-data; name=\"title\"\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
@@ -130,32 +147,50 @@ void TLNetwork::Platform::TConnectionHttp::StartUploadTask(TTask& Task)
  
     [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
     [postBody appendData:[[NSString stringWithString:@"Content-Disposition: form-data; name=\"description\"\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
-    [postBody appendData:[[NSString stringWithString:[edDescript stringValue]] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBody appendData:[[NSString stringWithString:@"some description"] dataUsingEncoding:NSUTF8StringEncoding]];
  
  
     [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
     [postBody appendData:[[NSString stringWithString:@"Content-Disposition: form-data; name=\"username\"\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
-    [postBody appendData:[[NSString stringWithString:[edUser stringValue]] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBody appendData:[[NSString stringWithString:@"some username"] dataUsingEncoding:NSUTF8StringEncoding]];
  
  
     [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
     [postBody appendData:[[NSString stringWithString:@"Content-Disposition: form-data; name=\"password\"\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
-    [postBody appendData:[[NSString stringWithString:[edPasswd stringValue]] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBody appendData:[[NSString stringWithString:@"some password"]] dataUsingEncoding:NSUTF8StringEncoding]];
  
- 
+ /*
     [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
     [postBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"videoFile\"; filename=\"@\"\r\n", [[edFileName stringValue] lastPathComponent]] dataUsingEncoding:NSUTF8StringEncoding]];
     [postBody appendData:[[NSString stringWithString:@"Content-Type: application/octet-stream\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
     [postBody appendData:[[NSString stringWithString:@"Content-Transfer-Encoding: binary/video\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
- 
+
     [postBody appendData:[NSData dataWithContentsOfFile:[edFileName stringValue]]];
- 
+*/ 
     [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
     [postRequest setHTTPBody:postBody];
  
- */
-	Task.SetStatusFailed("Todo");
-	TLDebug_Break("Todo");
+ 
+	//	create connection - 
+	//	gr: DO NOT START IT YET!
+	//	to avoid race condition problems, we wait until we've created a connection <-> task link
+	//	before starting in case we recieve data before they;re linked and would have no where to 
+	//	put the downloaded data	
+	ConnectionTask.m_pConnection = [[NSURLConnection alloc]	initWithRequest:ConnectionTask.m_pUrlRequest 
+												delegate:m_pDelegate
+												startImmediately:YES];
+	
+	//	failed to create/init connection with request
+	if ( !ConnectionTask.m_pConnection ) 
+	{
+		Task.SetStatusFailed("NoConnection");
+		return;
+	}
+
+	//	now start connection
+	[ConnectionTask.m_pConnection start];
+
+	//	now we just wait for it to do it's thing!...
 }
 
 
