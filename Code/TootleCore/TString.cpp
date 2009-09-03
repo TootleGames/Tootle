@@ -144,6 +144,9 @@ s32 TLString::GetCharHexInteger(const char& Char)
 	if ( Char >= 'a' && Char <= 'f' )
 		return Char - 'a' + 10;
 
+	if ( Char >= 'A' && Char <= 'F' )
+		return Char - 'A' + 10;
+
 	return -1;
 }
 
@@ -598,7 +601,7 @@ void TString::SetAllocSize(u32 AllocLength)
 //------------------------------------------------------
 //	trim whitespace from front and back of string - returns TRUE if changed
 //------------------------------------------------------
-Bool TString::Trim()
+Bool TString::Trim(Bool TrimLeft)
 {
 	u32 OldLength = GetLength();
 
@@ -617,7 +620,8 @@ Bool TString::Trim()
 	SetLength( NewLastIndex + 1 );
 	u32 NewLength = GetLength();
 
-	if ( NewLastIndex <= 0 )
+	//	if we went to far left, or not trimming left side, then abort now
+	if ( NewLastIndex <= 0 || !TrimLeft )
 		return (OldLength != NewLength);
 
 	//	if we didnt go all the way to the start, trim the left too

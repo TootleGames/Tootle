@@ -105,3 +105,64 @@ void TBinary::Debug_ReadWritePointerError()
 	TLDebug_Break("Cannot read or write a pointer to a TBinary");
 }
 
+
+//--------------------------------------------------------------------
+//	get all the data in the form of a hex string (does not include size, type hint or read info)
+//--------------------------------------------------------------------
+void TBinary::GetDataHexString(TString& String) const
+{
+	const char HexChars[16+1] = "0123456789ABCDEF";
+	for ( u32 i=0;	i<m_Data.GetSize();	i++ )
+	{
+		const u8& Data = m_Data[i];
+
+		u8 PartAIndex = (Data >> 4) & 0x0F;
+		String.Append( HexChars[PartAIndex] );
+
+		u8 PartBIndex = (Data) & 0x0F;
+		String.Append( HexChars[PartBIndex] );
+	}
+}
+
+//--------------------------------------------------------------------
+//	write data from hex string
+//--------------------------------------------------------------------
+Bool TBinary::WriteDataHexString(const TString& String,TRef TypeHint)
+{
+	u32 StringDataLength = String.GetLengthWithoutTerminator();
+	const TArray<char>& StringArray = String.GetStringArray();
+
+	//	string shouldn't have an odd character left over
+	if ( StringDataLength % 2 == 1 )
+	{
+		TLDebug_Break("Hex string provided doesn't have even number of characters");
+		return FALSE;
+	}
+
+	u32 OrigDataSize = m_Data.GetSize();
+
+	for ( u32 i=0;	i<StringDataLength;	i+=2 )
+	{
+		//	work out the numbers from the hex characters
+		s32 PartA = TLString::GetCharHexInteger( StringArray[i] );
+		s32 PartB = TLString::GetCharHexInteger( StringArray[i+1] );
+		if ( PartA == -1 || PartB == -1 )
+		{
+			TLDebug_Break("Non-hex character found in hex-string");
+			m_Data.SetSize( OrigDataSize );
+			return FALSE;
+		}
+
+		//	make byte
+		u8 PartA8 = (u8)PartA;
+		u8 PartB8 = (u8)PartB;
+		u8 Byte = (PartA << 4) & 0xF0;
+		Byte |= (PartB) & 0x0F;
+
+		//	save byte
+		m_Data.Add( Byte );
+	}
+
+	return TRUE;
+}
+

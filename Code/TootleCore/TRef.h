@@ -168,7 +168,8 @@ public:
 	const TRef&			Increment();							//	increment the reference - don't just increment the u32 though! do it systematticly - returns itself so you can construct another TRef from the incremented version of this
 
 	const u32&					GetData() const							{	return m_Ref;	}
-	void						GetString(TString& RefString,Bool Capitalise=FALSE) const;	//	convert ref to a string
+	void						GetString(TString& RefString,Bool Capitalise=FALSE,Bool Trim=FALSE,Bool UrlSafe=FALSE) const;	//	convert ref to a string. if Trim then any white spaces are removed at the end of the string. If UrlSafe then we use the alternative symbol for Space instead of a space so the string doesnt need to be url encoded
+	FORCEINLINE void			GetUrlString(TString& RefString) const	{	GetString( RefString, FALSE, FALSE, TRUE );	}		//	get url-safe ref as a string
 	FORCEINLINE void			Debug_IsValid() const;					//	do a debug break on invalid refs - no release runtime functionality (use the normal one if you're checking IsValid)
 	FORCEINLINE Bool			IsValid() const;						//	check for invalid bits being set etc
 

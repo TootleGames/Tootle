@@ -245,14 +245,31 @@ void TLNetwork::Platform::TConnectionHttp::StartUploadTask(TTask& Task)
 
 		//	the data's ref represents the field name
 		TTempString DataRefString;
-		UploadData.GetDataRef().GetString( DataRefString );
+		UploadData.GetDataRef().GetUrlString( DataRefString );
+
+		//	append the data type if we have it. Parenthesis are safe to use as theyre not in the ref alphabet, and are safe url-enc characters
+		if ( UploadData.GetDataTypeHint().IsValid() )
+		{
+			//	this produces "MYINT(U16)=00FF" instead of just "MYINT=00FF"
+			DataRefString.Append('(');
+			UploadData.GetDataTypeHint().GetUrlString( DataRefString );
+			DataRefString.Append(')');
+		}
+
+		//	convert the raw data to a hex string(UTF8 compatible)
+		//	we're doing this to match the IPod code which I can't see a way to send raw data
+		//	without converting it to a string
+		TString DataString;
+		UploadData.GetData().GetDataHexString( DataString );
 
 		//	add pointers to the data for the form
 		CURLFORMcode FormError = curl_formadd(	&pForm,
 												&pLast,
 												CURLFORM_COPYNAME, DataRefString.GetData(),		//	copies data
-												CURLFORM_PTRCONTENTS, UploadData.GetData().GetData(),		//	not raw data ptr!
-												CURLFORM_CONTENTSLENGTH, UploadData.GetSize(),
+												//CURLFORM_PTRCONTENTS, UploadData.GetData().GetData(),
+												//CURLFORM_CONTENTSLENGTH, UploadData.GetSize(),
+												CURLFORM_COPYCONTENTS, DataString.GetData(),
+												CURLFORM_CONTENTSLENGTH, DataString.GetLengthWithoutTerminator(),
 												CURLFORM_END);
 
 		//	setup okay, continue

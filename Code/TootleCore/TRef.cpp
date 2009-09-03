@@ -21,12 +21,27 @@ namespace TLRef
 	const u32	g_RefCharTable_Size		= 41;	//	supported chars in a ref
 	const u32	g_CharIndexBitMask		= g_RefCharTableSizeMax-1;
 
-	//	table for string->ref conversions (+1 for terminator)
-	const char	g_RefCharTable[g_RefCharTable_Size+1]		= {	" abcdefghijklmnopqrstuvwxyz0123456789?-#_"	};
 
-	//	alternate table for caps conversion (+1 for terminator)
-	const char	g_RefCharTableAlt[g_RefCharTable_Size+1]	= {	" ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?-#_"	};
 
+	//	symbols allowed in urls
+	//	-_.!*'() a-z A-Z 0-9
+
+	//	not allowed for url enc as they are URI commands or often mistakenly converted/used for other things so unreliable
+	//	$&+,/:;=?@<>#%{}|\^~[]` SPACE
+
+	//	not allowed in win32 filenames
+	//	\/:*?"<>|
+
+	//	gr: new ref alphabet, some symbols have been repalced to aid URL-Encoding (so I don't need to encode a ref and can just send it as a string
+	//	table for string->ref conversions (+1 for terminator) and an ALT table for capitalisation
+	const char	g_RefCharTable[g_RefCharTable_Size+1]			= {	" abcdefghijklmnopqrstuvwxyz0123456789'-!_"	};	//	file system safe
+	const char	g_RefCharTableAlt[g_RefCharTable_Size+1]		= {	"*ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'-!_"	};	//	web safe
+	//const char	g_RefCharTable[g_RefCharTable_Size+1]		= {	" abcdefghijklmnopqrstuvwxyz0123456789?-#_"	};	//	old table
+	//const char	g_RefCharTableAlt[g_RefCharTable_Size+1]	= {	" ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?-#_"	};	//	old alt table
+
+	//	when url-encoding, we can't use a space, but we definatly want to use that in code as it's such a useful and common character. 
+	const char	g_RefCharUrlSpace	= g_RefCharTableAlt[0];		//	'apostraphe
+	
 	Bool		g_RefCharLookupValid	= FALSE;
 	u32			g_InvalidRefMask		= 0x0;			//	uninitialised! I can probably work out an actual number but calculations are more accurate
 
@@ -36,9 +51,9 @@ namespace TLRef
 
 	TKeyArray<char,u32>	g_RefCharLookup;				//	lookup table for char->refchar
 
-	FORCEINLINE u32	GetRefCharIndex(char c);					//	get a refchar index from a string character
-	FORCEINLINE char	GetCharFromRefCharIndex(u32 Index,Bool Uppercase=FALSE);			//	get a string character from a refchar index
-	FORCEINLINE u32	GetRefBitsFromChar(char Char,u32 Index,Bool CheckIndex);
+	FORCEINLINE u32		GetRefCharIndex(char c);					//	get a refchar index from a string character
+	FORCEINLINE char	GetCharFromRefCharIndex(u32 Index,Bool UseAltTable=FALSE);			//	get a string character from a refchar index
+	FORCEINLINE u32		GetRefBitsFromChar(char Char,u32 Index,Bool CheckIndex);
 
 	void		GenerateCharLookupTable();
 	void		DestroyCharLookupTable();
@@ -142,20 +157,21 @@ FORCEINLINE u32 TLRef::GetRefCharIndex(char c)
 	}
 
 	//	unsupported character
-	return GetRefCharIndex( '?' );
+	TLDebug_Break( TString("unsupported character %c provided for ref. Replacing with underscore", c ) );
+	return GetRefCharIndex('_');
 }
 
 
 //---------------------------------------------------
 //	get a string character from a refchar index
 //---------------------------------------------------
-FORCEINLINE char TLRef::GetCharFromRefCharIndex(u32 Index,Bool Uppercase)
+FORCEINLINE char TLRef::GetCharFromRefCharIndex(u32 Index,Bool UseAltTable)
 {
 	//	invalid index
 	if ( Index >= g_RefCharTable_Size )
 		return 0;
 
-	return Uppercase ? g_RefCharTableAlt[Index] : g_RefCharTable[Index];
+	return UseAltTable ? g_RefCharTableAlt[Index] : g_RefCharTable[Index];
 }
 
 
@@ -321,9 +337,11 @@ u32 TRef::GetRefCharIndex(u32 Index) const
 }
 
 //-----------------------------------------------------
-//	convert ref to a string
+//	convert ref to a string. 
+//	if Trim then any white spaces are removed at the end of the string. 
+//	If UrlSafe then we use the alternative symbol for Space instead of a space so the string doesnt need to be url encoded
 //-----------------------------------------------------
-void TRef::GetString(TString& RefString,Bool Capitalise) const
+void TRef::GetString(TString& RefString,Bool Capitalise,Bool Trim,Bool UrlSafe) const
 {
 	for ( u32 i=0;	i<TRef::g_CharsPerRef;	i++ )
 	{
@@ -331,10 +349,15 @@ void TRef::GetString(TString& RefString,Bool Capitalise) const
 		u32 RefCharIndex = GetRefCharIndex( i );
 
 		//	convert index to character
-		//	gr: just to make them a little nicer to read, I've made the first character in the string uppercase
-		char RefChar = TLRef::GetCharFromRefCharIndex( RefCharIndex, Capitalise && (i==0) );
+		Bool UseAltTable = UrlSafe || (Capitalise && (i==0));
+		char RefChar = TLRef::GetCharFromRefCharIndex( RefCharIndex, UseAltTable );
+
 		RefString.Append( RefChar );
 	}
+
+	//	trim whitespace at the end of the string (never does anything in url safe mode)
+	if ( Trim && !UrlSafe )
+		RefString.Trim(FALSE);
 }
 
 

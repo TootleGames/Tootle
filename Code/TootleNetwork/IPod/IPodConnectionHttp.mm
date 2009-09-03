@@ -108,6 +108,52 @@ void TLNetwork::Platform::TConnectionHttp::StartDownloadTask(TTask& Task)
 //---------------------------------------------------------
 void TLNetwork::Platform::TConnectionHttp::StartUploadTask(TTask& Task)
 {
+/*
+    //creating the url request:
+    NSURL *cgiUrl = [NSURL URLWithString:@"http://www.testsite.com/upload.php"];
+    NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:cgiUrl];
+ 
+    //adding header information:
+    [postRequest setHTTPMethod:@"POST"];
+ 
+    NSString *stringBoundary = [NSString stringWithString:@"0xKhTmLbOuNdArY"];
+    NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",stringBoundary];
+    [postRequest addValue:contentType forHTTPHeaderField: @"Content-Type"];
+ 
+ 
+    //setting up the body:
+    NSMutableData *postBody = [NSMutableData data];
+    [postBody appendData:[[NSString stringWithFormat:@"\r\n\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBody appendData:[[NSString stringWithString:@"Content-Disposition: form-data; name=\"title\"\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBody appendData:[[NSString stringWithString:[edTitle stringValue]] dataUsingEncoding:NSUTF8StringEncoding]];
+ 
+ 
+    [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBody appendData:[[NSString stringWithString:@"Content-Disposition: form-data; name=\"description\"\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBody appendData:[[NSString stringWithString:[edDescript stringValue]] dataUsingEncoding:NSUTF8StringEncoding]];
+ 
+ 
+    [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBody appendData:[[NSString stringWithString:@"Content-Disposition: form-data; name=\"username\"\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBody appendData:[[NSString stringWithString:[edUser stringValue]] dataUsingEncoding:NSUTF8StringEncoding]];
+ 
+ 
+    [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBody appendData:[[NSString stringWithString:@"Content-Disposition: form-data; name=\"password\"\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBody appendData:[[NSString stringWithString:[edPasswd stringValue]] dataUsingEncoding:NSUTF8StringEncoding]];
+ 
+ 
+    [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"videoFile\"; filename=\"@\"\r\n", [[edFileName stringValue] lastPathComponent]] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBody appendData:[[NSString stringWithString:@"Content-Type: application/octet-stream\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBody appendData:[[NSString stringWithString:@"Content-Transfer-Encoding: binary/video\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+ 
+    [postBody appendData:[NSData dataWithContentsOfFile:[edFileName stringValue]]];
+ 
+    [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postRequest setHTTPBody:postBody];
+ 
+ */
 	Task.SetStatusFailed("Todo");
 	TLDebug_Break("Todo");
 }

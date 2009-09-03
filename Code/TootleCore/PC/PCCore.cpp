@@ -353,12 +353,12 @@ void TLCore::Platform::QueryHardwareInformation(TBinaryTree& Data)
 		cpustr.Empty();
 #endif
 		// Number of processors
-		Data.ExportData("CPU#", morecpudata.numLogicalProcessors);
+		Data.ExportData("CPU_", morecpudata.numLogicalProcessors);
 	}
 	else
 	{
 		// Number of processors
-		Data.ExportData("CPU#", SysInfo.dwNumberOfProcessors);
+		Data.ExportData("CPU_", SysInfo.dwNumberOfProcessors);
 	}
 
 	//More detailed CPU info
