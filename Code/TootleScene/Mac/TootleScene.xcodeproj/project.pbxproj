@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 45;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -21,16 +21,16 @@
 		8418EF390F4DAC8500B956C9 /* TSceneNode_Object.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EF250F4DAC8500B956C9 /* TSceneNode_Object.h */; };
 		8418EF3A0F4DAC8500B956C9 /* TSceneNode_Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EF260F4DAC8500B956C9 /* TSceneNode_Transform.cpp */; };
 		8418EF3B0F4DAC8500B956C9 /* TSceneNode_Transform.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EF270F4DAC8500B956C9 /* TSceneNode_Transform.h */; };
-		8418EF3C0F4DAC8500B956C9 /* TSchemeEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EF280F4DAC8500B956C9 /* TSchemeEditor.cpp */; };
-		8418EF3D0F4DAC8500B956C9 /* TSchemeEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EF290F4DAC8500B956C9 /* TSchemeEditor.h */; };
 		8418EF3E0F4DAC8500B956C9 /* TSchemeManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EF2A0F4DAC8500B956C9 /* TSchemeManager.cpp */; };
 		8418EF3F0F4DAC8500B956C9 /* TSchemeManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EF2B0F4DAC8500B956C9 /* TSchemeManager.h */; };
 		8418EF400F4DAC8500B956C9 /* TSchemeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EF2C0F4DAC8500B956C9 /* TSchemeNode.cpp */; };
 		8418EF410F4DAC8500B956C9 /* TSchemeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EF2D0F4DAC8500B956C9 /* TSchemeNode.h */; };
+		84B606B8104FFDE00022E5BC /* TSceneNode_Timeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B606B6104FFDE00022E5BC /* TSceneNode_Timeline.cpp */; };
+		84B606B9104FFDE00022E5BC /* TSceneNode_Timeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B606B7104FFDE00022E5BC /* TSceneNode_Timeline.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8418EE5C0F4DAAF200B956C9 /* libTootleScene.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleScene.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8418EE5C0F4DAAF200B956C9 /* TootleScene. */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = TootleScene.; sourceTree = BUILT_PRODUCTS_DIR; };
 		8418EF1A0F4DAC8500B956C9 /* TLScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLScene.cpp; path = ../TLScene.cpp; sourceTree = SOURCE_ROOT; };
 		8418EF1B0F4DAC8500B956C9 /* TLScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLScene.h; path = ../TLScene.h; sourceTree = SOURCE_ROOT; };
 		8418EF1C0F4DAC8500B956C9 /* TScenegraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TScenegraph.cpp; path = ../TScenegraph.cpp; sourceTree = SOURCE_ROOT; };
@@ -45,12 +45,14 @@
 		8418EF250F4DAC8500B956C9 /* TSceneNode_Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSceneNode_Object.h; path = ../TSceneNode_Object.h; sourceTree = SOURCE_ROOT; };
 		8418EF260F4DAC8500B956C9 /* TSceneNode_Transform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSceneNode_Transform.cpp; path = ../TSceneNode_Transform.cpp; sourceTree = SOURCE_ROOT; };
 		8418EF270F4DAC8500B956C9 /* TSceneNode_Transform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSceneNode_Transform.h; path = ../TSceneNode_Transform.h; sourceTree = SOURCE_ROOT; };
-		8418EF280F4DAC8500B956C9 /* TSchemeEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSchemeEditor.cpp; path = ../TSchemeEditor.cpp; sourceTree = SOURCE_ROOT; };
-		8418EF290F4DAC8500B956C9 /* TSchemeEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSchemeEditor.h; path = ../TSchemeEditor.h; sourceTree = SOURCE_ROOT; };
 		8418EF2A0F4DAC8500B956C9 /* TSchemeManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSchemeManager.cpp; path = ../TSchemeManager.cpp; sourceTree = SOURCE_ROOT; };
 		8418EF2B0F4DAC8500B956C9 /* TSchemeManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSchemeManager.h; path = ../TSchemeManager.h; sourceTree = SOURCE_ROOT; };
 		8418EF2C0F4DAC8500B956C9 /* TSchemeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSchemeNode.cpp; path = ../TSchemeNode.cpp; sourceTree = SOURCE_ROOT; };
 		8418EF2D0F4DAC8500B956C9 /* TSchemeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSchemeNode.h; path = ../TSchemeNode.h; sourceTree = SOURCE_ROOT; };
+		84B606B4104FFDD20022E5BC /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		84B606B5104FFDD20022E5BC /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		84B606B6104FFDE00022E5BC /* TSceneNode_Timeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSceneNode_Timeline.cpp; path = ../TSceneNode_Timeline.cpp; sourceTree = SOURCE_ROOT; };
+		84B606B7104FFDE00022E5BC /* TSceneNode_Timeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSceneNode_Timeline.h; path = ../TSceneNode_Timeline.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,8 +69,8 @@
 		8418ECF60F4DA63E00B956C9 = {
 			isa = PBXGroup;
 			children = (
-				8418EF530F4DACDA00B956C9 /* Frameworks */,
 				8418EF190F4DAC5C00B956C9 /* Build Configurations */,
+				8418EF530F4DACDA00B956C9 /* Frameworks */,
 				8418EF180F4DAC5300B956C9 /* Source Code */,
 				8418ED0E0F4DA70B00B956C9 /* Products */,
 			);
@@ -77,7 +79,7 @@
 		8418ED0E0F4DA70B00B956C9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8418EE5C0F4DAAF200B956C9 /* libTootleScene.a */,
+				8418EE5C0F4DAAF200B956C9 /* TootleScene. */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -85,6 +87,8 @@
 		8418EF180F4DAC5300B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				84B606B6104FFDE00022E5BC /* TSceneNode_Timeline.cpp */,
+				84B606B7104FFDE00022E5BC /* TSceneNode_Timeline.h */,
 				8418EF1A0F4DAC8500B956C9 /* TLScene.cpp */,
 				8418EF1B0F4DAC8500B956C9 /* TLScene.h */,
 				8418EF1C0F4DAC8500B956C9 /* TScenegraph.cpp */,
@@ -99,8 +103,6 @@
 				8418EF250F4DAC8500B956C9 /* TSceneNode_Object.h */,
 				8418EF260F4DAC8500B956C9 /* TSceneNode_Transform.cpp */,
 				8418EF270F4DAC8500B956C9 /* TSceneNode_Transform.h */,
-				8418EF280F4DAC8500B956C9 /* TSchemeEditor.cpp */,
-				8418EF290F4DAC8500B956C9 /* TSchemeEditor.h */,
 				8418EF2A0F4DAC8500B956C9 /* TSchemeManager.cpp */,
 				8418EF2B0F4DAC8500B956C9 /* TSchemeManager.h */,
 				8418EF2C0F4DAC8500B956C9 /* TSchemeNode.cpp */,
@@ -112,6 +114,8 @@
 		8418EF190F4DAC5C00B956C9 /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				84B606B4104FFDD20022E5BC /* TootleDebug.xcconfig */,
+				84B606B5104FFDD20022E5BC /* TootleRelease.xcconfig */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
@@ -137,9 +141,9 @@
 				8418EF370F4DAC8500B956C9 /* TSceneNode_Emitter.h in Headers */,
 				8418EF390F4DAC8500B956C9 /* TSceneNode_Object.h in Headers */,
 				8418EF3B0F4DAC8500B956C9 /* TSceneNode_Transform.h in Headers */,
-				8418EF3D0F4DAC8500B956C9 /* TSchemeEditor.h in Headers */,
 				8418EF3F0F4DAC8500B956C9 /* TSchemeManager.h in Headers */,
 				8418EF410F4DAC8500B956C9 /* TSchemeNode.h in Headers */,
+				84B606B9104FFDE00022E5BC /* TSceneNode_Timeline.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,7 +164,7 @@
 			);
 			name = TootleScene;
 			productName = TootleScene;
-			productReference = 8418EE5C0F4DAAF200B956C9 /* libTootleScene.a */;
+			productReference = 8418EE5C0F4DAAF200B956C9 /* TootleScene. */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -169,7 +173,7 @@
 		8418ECF80F4DA63E00B956C9 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 8418ECFB0F4DA63E00B956C9 /* Build configuration list for PBXProject "TootleScene" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.1";
 			hasScannedForEncodings = 0;
 			mainGroup = 8418ECF60F4DA63E00B956C9;
 			productRefGroup = 8418ED0E0F4DA70B00B956C9 /* Products */;
@@ -193,9 +197,9 @@
 				8418EF360F4DAC8500B956C9 /* TSceneNode_Emitter.cpp in Sources */,
 				8418EF380F4DAC8500B956C9 /* TSceneNode_Object.cpp in Sources */,
 				8418EF3A0F4DAC8500B956C9 /* TSceneNode_Transform.cpp in Sources */,
-				8418EF3C0F4DAC8500B956C9 /* TSchemeEditor.cpp in Sources */,
 				8418EF3E0F4DAC8500B956C9 /* TSchemeManager.cpp in Sources */,
 				8418EF400F4DAC8500B956C9 /* TSchemeNode.cpp in Sources */,
+				84B606B8104FFDE00022E5BC /* TSceneNode_Timeline.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,19 +208,15 @@
 /* Begin XCBuildConfiguration section */
 		8418ECF90F4DA63E00B956C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84B606B4104FFDD20022E5BC /* TootleDebug.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = TL_TARGET_MAC;
-				HEADER_SEARCH_PATHS = ../..;
 			};
 			name = Debug;
 		};
 		8418ECFA0F4DA63E00B956C9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84B606B5104FFDD20022E5BC /* TootleRelease.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = TL_TARGET_MAC;
-				HEADER_SEARCH_PATHS = ../..;
 			};
 			name = Release;
 		};

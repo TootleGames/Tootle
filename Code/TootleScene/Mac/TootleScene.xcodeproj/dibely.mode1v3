@@ -330,7 +330,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8418F34F0F4DC33400B956C9</string>
+										<string>84B606BB104FFE240022E5BC</string>
 										<key>history</key>
 										<array>
 											<string>8418EF550F4DACF200B956C9</string>
@@ -338,7 +338,7 @@
 											<string>8418F28F0F4DBDE600B956C9</string>
 											<string>8418F34A0F4DC33400B956C9</string>
 											<string>8418F34B0F4DC33400B956C9</string>
-											<string>8418F34C0F4DC33400B956C9</string>
+											<string>8418F34F0F4DC33400B956C9</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -347,7 +347,6 @@
 											<string>8418F2930F4DBDE600B956C9</string>
 											<string>8418F2940F4DBDE600B956C9</string>
 											<string>8418F34D0F4DC33400B956C9</string>
-											<string>8418F34E0F4DC33400B956C9</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -405,9 +404,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>8418F3500F4DC33400B956C9</string>
+				<string>84B606BD104FFE240022E5BC</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>8418F3510F4DC33400B956C9</string>
+				<string>84B606BE104FFE240022E5BC</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -566,7 +565,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>&lt;No Editor&gt;</string>
+								<string></string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -622,7 +621,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>8418EF510F4DACCD00B956C9</string>
-				<string>8418F33C0F4DC27200B956C9</string>
+				<string>84B606BF104FFE240022E5BC</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

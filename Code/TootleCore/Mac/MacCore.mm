@@ -12,6 +12,9 @@
 #import <TootleInput/Ipod/IPodInput.h>
 #import <QuartzCore/QuartzCore.h>
 
+#import <Cocoa/Cocoa.h>
+
+
 //#import <OpenGLES/EAGLDrawable.h>
 
 //	Constant for the number of times per second (Hertz) to sample acceleration.
@@ -23,6 +26,9 @@ namespace TLCore
 	namespace Platform
 	{
 		TString						g_AppExe;
+		
+		void				GetString(TString& String, const NSString* pNSString);
+
 	}
 	
 	void RegisterManagers_Engine(TPtr<TCoreManager>& pCoreManager);
@@ -46,10 +52,8 @@ int main(int argc, char *argv[])
 	//	get the root directory that the app is in
 	NSString *HomeDir = NSHomeDirectory();
 	TLCore::Platform::GetString( TLCore::Platform::g_AppExe, HomeDir );
-	TLCore::Platform::g_AppExe.Append("/myapp.app");
 
-	//int retVal = UIApplicationMain(argc, argv, nil, @"OpenglESAppAppDelegate");	//	[OpenglESAppAppDelegate class]
-	int retVal = 0;
+	int retVal = NSApplicationMain(argc,  (const char **) argv);
 
 	return retVal;
 }
@@ -98,16 +102,9 @@ SyncBool TLCore::Platform::Shutdown()
 void TLCore::Platform::DoQuit()
 {
 	// Send a message to the core manager telling it to quit
-	TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Quit");
+	TLMessaging::TMessage Message("Quit");
 	
-	if(pMessage.IsValid())
-	{
-		TLCore::g_pCoreManager->QueueMessage(pMessage);
-	}
-	else
-	{
-		TLDebug_Break("Unable to send quit message");
-	}	
+	TLCore::g_pCoreManager->QueueMessage(Message);
 }
 
 
@@ -172,35 +169,6 @@ void TLCore::Platform::GetString(TString& String, const NSString* pNSString)
 
 	String.Append( pNSChars, NsLength );
 }
-
-
-
-
-
-
-void* TLMemory::Platform::MemAlloc(u32 Size)								
-{	
-	return malloc( Size );
-}		
-
-
-void TLMemory::Platform::MemDealloc(void* pMem)							
-{
-	free( pMem );	
-}
-
-
-void TLMemory::Platform::MemCopy(void* pDest,const void* pSrc,u32 Size)	
-{
-	memcpy( pDest, pSrc, Size );	
-}
-
-
-void TLMemory::Platform::MemMove(void* pDest,const void* pSrc,u32 Size)	
-{
-	memmove( pDest, pSrc, Size );
-}
-
 
 
 

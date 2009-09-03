@@ -271,6 +271,8 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateExpansionKey</key>
 							<array>
 								<string>8418ECF60F4DA63E00B956C9</string>
+								<string>8418F0260F4DB80A00B956C9</string>
+								<string>8418F0250F4DB80400B956C9</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FAAC04509CD000000102</string>
 								<string>1C08E77C0454961000C914BD</string>
@@ -279,11 +281,11 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>8</integer>
+									<integer>42</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {186, 445}}</string>
+							<string>{{0, 307}, {186, 611}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -295,14 +297,14 @@
 					<key>GeometryConfiguration</key>
 					<dict>
 						<key>Frame</key>
-						<string>{{0, 0}, {203, 463}}</string>
+						<string>{{0, 0}, {203, 629}}</string>
 						<key>GroupTreeTableConfiguration</key>
 						<array>
 							<string>MainColumn</string>
 							<real>186</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>246 233 788 504 0 0 1280 778 </string>
+						<string>0 108 1280 670 0 0 1280 778 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -337,14 +339,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {580, 285}}</string>
+								<string>{{0, 0}, {1072, 451}}</string>
 								<key>RubberWindowFrame</key>
-								<string>246 233 788 504 0 0 1280 778 </string>
+								<string>0 108 1280 670 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>285pt</string>
+							<string>451pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -357,9 +359,9 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 290}, {580, 173}}</string>
+								<string>{{0, 456}, {1072, 173}}</string>
 								<key>RubberWindowFrame</key>
-								<string>246 233 788 504 0 0 1280 778 </string>
+								<string>0 108 1280 670 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -368,7 +370,7 @@
 						</dict>
 					</array>
 					<key>Proportion</key>
-					<string>580pt</string>
+					<string>1072pt</string>
 				</dict>
 			</array>
 			<key>Name</key>
@@ -383,9 +385,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>8418F3FA0F4DC58800B956C9</string>
+				<string>84B605C0104FF9050022E5BC</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>8418F3FB0F4DC58800B956C9</string>
+				<string>84B605C1104FF9050022E5BC</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -523,7 +525,7 @@
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleGame/Mac/TootleGame.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>246 233 788 504 0 0 1280 778 </string>
+	<string>0 108 1280 670 0 0 1280 778 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
@@ -600,7 +602,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>8418F2D50F4DC03000B956C9</string>
-				<string>8418F3FC0F4DC58800B956C9</string>
+				<string>84B605C2104FF9050022E5BC</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

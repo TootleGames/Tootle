@@ -279,6 +279,11 @@ FORCEINLINE void operator delete[](void* pObj) throw()
 	#include "IPod/IPodMemory.h"
 #endif
 
+#if defined(TL_TARGET_MAC)
+	#include "Mac/MacMemory.h"
+#endif
+
+
 
 
 #include "TLMemory.inc.h"

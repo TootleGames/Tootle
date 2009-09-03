@@ -57,21 +57,16 @@ Bool Platform::Mac::CreateDevice()
 		else
 		{
 			// Notify to all subscribers of the input system that a new device was added
-			TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("Input");			
+			TLMessaging::TMessage Message("DeviceChanged");			
 			
-			if(pMessage.IsValid())
-			{
-				TRef refState = "ADDED";
-				pMessage->AddChannelID("DEVICE");									// device information message
-				pMessage->AddChildAndData("STATE", refState);					// state change
-				pMessage->AddChildAndData("DEVID", pGenericDevice->GetDeviceRef() );	// device ID
-				pMessage->AddChildAndData("TYPE", pGenericDevice->GetDeviceType() );						// device type
+			Message.ExportData("STATE", TRef("Added"));					// state change
+			Message.ExportData("DEVID", pGenericDevice->GetDeviceRef() );	// device ID
+			Message.ExportData("TYPE", pGenericDevice->GetDeviceType() );						// device type
+			
+			g_pInputSystem->PublishMessage(Message);
 				
-				g_pInputSystem->PublishMessage(pMessage);
-				
-				// Success
-				return TRUE;
-			}
+			// Success
+			return TRUE;
 		}
 	}
 	

@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		8418EFA60F4DB71B00B956C9 /* TCollisionShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EF9A0F4DB71B00B956C9 /* TCollisionShape.cpp */; };
 		8418EFA70F4DB71B00B956C9 /* TCollisionShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EF9B0F4DB71B00B956C9 /* TCollisionShape.h */; };
-		8418EFA80F4DB71B00B956C9 /* TCollisionZone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EF9C0F4DB71B00B956C9 /* TCollisionZone.cpp */; };
-		8418EFA90F4DB71B00B956C9 /* TCollisionZone.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EF9D0F4DB71B00B956C9 /* TCollisionZone.h */; };
 		8418EFAA0F4DB71B00B956C9 /* TLPhysics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EF9E0F4DB71B00B956C9 /* TLPhysics.cpp */; };
 		8418EFAB0F4DB71B00B956C9 /* TLPhysics.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EF9F0F4DB71B00B956C9 /* TLPhysics.h */; };
 		8418EFAC0F4DB71B00B956C9 /* TPhysicsgraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EFA00F4DB71B00B956C9 /* TPhysicsgraph.cpp */; };
@@ -19,14 +17,20 @@
 		8418EFAF0F4DB71B00B956C9 /* TPhysicsNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EFA30F4DB71B00B956C9 /* TPhysicsNode.h */; };
 		8418EFB00F4DB71B00B956C9 /* TPhysicsNodeSphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EFA40F4DB71B00B956C9 /* TPhysicsNodeSphere.cpp */; };
 		8418EFB10F4DB71B00B956C9 /* TPhysicsNodeSphere.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EFA50F4DB71B00B956C9 /* TPhysicsNodeSphere.h */; };
+		84B60661104FFCC40022E5BC /* TCollisionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60659104FFCC40022E5BC /* TCollisionInfo.h */; };
+		84B60662104FFCC40022E5BC /* TCollisionShapeInline.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B6065A104FFCC40022E5BC /* TCollisionShapeInline.h */; };
+		84B60663104FFCC40022E5BC /* TJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B6065B104FFCC40022E5BC /* TJoint.cpp */; };
+		84B60664104FFCC40022E5BC /* TJoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B6065C104FFCC40022E5BC /* TJoint.h */; };
+		84B60665104FFCC40022E5BC /* TLPhysicsInline.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B6065D104FFCC40022E5BC /* TLPhysicsInline.h */; };
+		84B60666104FFCC40022E5BC /* TPhysicsNodeChain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B6065E104FFCC40022E5BC /* TPhysicsNodeChain.cpp */; };
+		84B60667104FFCC40022E5BC /* TPhysicsNodeChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B6065F104FFCC40022E5BC /* TPhysicsNodeChain.h */; };
+		84B60668104FFCC40022E5BC /* TPhysicsNodeInline.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60660104FFCC40022E5BC /* TPhysicsNodeInline.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		8418EE3A0F4DAAC600B956C9 /* libTootlePhysics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootlePhysics.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8418EF9A0F4DB71B00B956C9 /* TCollisionShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TCollisionShape.cpp; path = ../TCollisionShape.cpp; sourceTree = SOURCE_ROOT; };
 		8418EF9B0F4DB71B00B956C9 /* TCollisionShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCollisionShape.h; path = ../TCollisionShape.h; sourceTree = SOURCE_ROOT; };
-		8418EF9C0F4DB71B00B956C9 /* TCollisionZone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TCollisionZone.cpp; path = ../TCollisionZone.cpp; sourceTree = SOURCE_ROOT; };
-		8418EF9D0F4DB71B00B956C9 /* TCollisionZone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCollisionZone.h; path = ../TCollisionZone.h; sourceTree = SOURCE_ROOT; };
 		8418EF9E0F4DB71B00B956C9 /* TLPhysics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLPhysics.cpp; path = ../TLPhysics.cpp; sourceTree = SOURCE_ROOT; };
 		8418EF9F0F4DB71B00B956C9 /* TLPhysics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLPhysics.h; path = ../TLPhysics.h; sourceTree = SOURCE_ROOT; };
 		8418EFA00F4DB71B00B956C9 /* TPhysicsgraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPhysicsgraph.cpp; path = ../TPhysicsgraph.cpp; sourceTree = SOURCE_ROOT; };
@@ -35,6 +39,16 @@
 		8418EFA30F4DB71B00B956C9 /* TPhysicsNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPhysicsNode.h; path = ../TPhysicsNode.h; sourceTree = SOURCE_ROOT; };
 		8418EFA40F4DB71B00B956C9 /* TPhysicsNodeSphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPhysicsNodeSphere.cpp; path = ../TPhysicsNodeSphere.cpp; sourceTree = SOURCE_ROOT; };
 		8418EFA50F4DB71B00B956C9 /* TPhysicsNodeSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPhysicsNodeSphere.h; path = ../TPhysicsNodeSphere.h; sourceTree = SOURCE_ROOT; };
+		84B60657104FFCAD0022E5BC /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		84B60658104FFCAD0022E5BC /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		84B60659104FFCC40022E5BC /* TCollisionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCollisionInfo.h; path = ../TCollisionInfo.h; sourceTree = SOURCE_ROOT; };
+		84B6065A104FFCC40022E5BC /* TCollisionShapeInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCollisionShapeInline.h; path = ../TCollisionShapeInline.h; sourceTree = SOURCE_ROOT; };
+		84B6065B104FFCC40022E5BC /* TJoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TJoint.cpp; path = ../TJoint.cpp; sourceTree = SOURCE_ROOT; };
+		84B6065C104FFCC40022E5BC /* TJoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TJoint.h; path = ../TJoint.h; sourceTree = SOURCE_ROOT; };
+		84B6065D104FFCC40022E5BC /* TLPhysicsInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLPhysicsInline.h; path = ../TLPhysicsInline.h; sourceTree = SOURCE_ROOT; };
+		84B6065E104FFCC40022E5BC /* TPhysicsNodeChain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPhysicsNodeChain.cpp; path = ../TPhysicsNodeChain.cpp; sourceTree = SOURCE_ROOT; };
+		84B6065F104FFCC40022E5BC /* TPhysicsNodeChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPhysicsNodeChain.h; path = ../TPhysicsNodeChain.h; sourceTree = SOURCE_ROOT; };
+		84B60660104FFCC40022E5BC /* TPhysicsNodeInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPhysicsNodeInline.h; path = ../TPhysicsNodeInline.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,10 +90,16 @@
 		8418EF980F4DAD3D00B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				84B60659104FFCC40022E5BC /* TCollisionInfo.h */,
+				84B6065A104FFCC40022E5BC /* TCollisionShapeInline.h */,
+				84B6065B104FFCC40022E5BC /* TJoint.cpp */,
+				84B6065C104FFCC40022E5BC /* TJoint.h */,
+				84B6065D104FFCC40022E5BC /* TLPhysicsInline.h */,
+				84B6065E104FFCC40022E5BC /* TPhysicsNodeChain.cpp */,
+				84B6065F104FFCC40022E5BC /* TPhysicsNodeChain.h */,
+				84B60660104FFCC40022E5BC /* TPhysicsNodeInline.h */,
 				8418EF9A0F4DB71B00B956C9 /* TCollisionShape.cpp */,
 				8418EF9B0F4DB71B00B956C9 /* TCollisionShape.h */,
-				8418EF9C0F4DB71B00B956C9 /* TCollisionZone.cpp */,
-				8418EF9D0F4DB71B00B956C9 /* TCollisionZone.h */,
 				8418EF9E0F4DB71B00B956C9 /* TLPhysics.cpp */,
 				8418EF9F0F4DB71B00B956C9 /* TLPhysics.h */,
 				8418EFA00F4DB71B00B956C9 /* TPhysicsgraph.cpp */,
@@ -95,6 +115,8 @@
 		8418EF990F4DAD4300B956C9 /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				84B60657104FFCAD0022E5BC /* TootleDebug.xcconfig */,
+				84B60658104FFCAD0022E5BC /* TootleRelease.xcconfig */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
@@ -107,11 +129,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				8418EFA70F4DB71B00B956C9 /* TCollisionShape.h in Headers */,
-				8418EFA90F4DB71B00B956C9 /* TCollisionZone.h in Headers */,
 				8418EFAB0F4DB71B00B956C9 /* TLPhysics.h in Headers */,
 				8418EFAD0F4DB71B00B956C9 /* TPhysicsgraph.h in Headers */,
 				8418EFAF0F4DB71B00B956C9 /* TPhysicsNode.h in Headers */,
 				8418EFB10F4DB71B00B956C9 /* TPhysicsNodeSphere.h in Headers */,
+				84B60661104FFCC40022E5BC /* TCollisionInfo.h in Headers */,
+				84B60662104FFCC40022E5BC /* TCollisionShapeInline.h in Headers */,
+				84B60664104FFCC40022E5BC /* TJoint.h in Headers */,
+				84B60665104FFCC40022E5BC /* TLPhysicsInline.h in Headers */,
+				84B60667104FFCC40022E5BC /* TPhysicsNodeChain.h in Headers */,
+				84B60668104FFCC40022E5BC /* TPhysicsNodeInline.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -159,11 +186,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				8418EFA60F4DB71B00B956C9 /* TCollisionShape.cpp in Sources */,
-				8418EFA80F4DB71B00B956C9 /* TCollisionZone.cpp in Sources */,
 				8418EFAA0F4DB71B00B956C9 /* TLPhysics.cpp in Sources */,
 				8418EFAC0F4DB71B00B956C9 /* TPhysicsgraph.cpp in Sources */,
 				8418EFAE0F4DB71B00B956C9 /* TPhysicsNode.cpp in Sources */,
 				8418EFB00F4DB71B00B956C9 /* TPhysicsNodeSphere.cpp in Sources */,
+				84B60663104FFCC40022E5BC /* TJoint.cpp in Sources */,
+				84B60666104FFCC40022E5BC /* TPhysicsNodeChain.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

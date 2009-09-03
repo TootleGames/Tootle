@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 45;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -27,7 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8418ED0D0F4DA70B00B956C9 /* libTootleAsset.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleAsset.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8418ED0D0F4DA70B00B956C9 /* TootleAsset. */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = TootleAsset.; sourceTree = BUILT_PRODUCTS_DIR; };
 		8418F1230F4DB8C100B956C9 /* TAsset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAsset.cpp; path = ../TAsset.cpp; sourceTree = SOURCE_ROOT; };
 		8418F1240F4DB8C100B956C9 /* TAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAsset.h; path = ../TAsset.h; sourceTree = SOURCE_ROOT; };
 		8418F1250F4DB8C100B956C9 /* TAudio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAudio.cpp; path = ../TAudio.cpp; sourceTree = SOURCE_ROOT; };
@@ -45,6 +45,8 @@
 		8418F1310F4DB8C100B956C9 /* TScheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TScheme.cpp; path = ../TScheme.cpp; sourceTree = SOURCE_ROOT; };
 		8418F1320F4DB8C100B956C9 /* TScheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TScheme.h; path = ../TScheme.h; sourceTree = SOURCE_ROOT; };
 		8418F1330F4DB8C100B956C9 /* TShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TShader.h; path = ../TShader.h; sourceTree = SOURCE_ROOT; };
+		84B6020D104FEF2C0022E5BC /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		84B6020E104FEF2C0022E5BC /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,7 +73,7 @@
 		8418ED0E0F4DA70B00B956C9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8418ED0D0F4DA70B00B956C9 /* libTootleAsset.a */,
+				8418ED0D0F4DA70B00B956C9 /* TootleAsset. */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -110,6 +112,8 @@
 		8418F1220F4DB8B400B956C9 /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				84B6020D104FEF2C0022E5BC /* TootleDebug.xcconfig */,
+				84B6020E104FEF2C0022E5BC /* TootleRelease.xcconfig */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
@@ -150,7 +154,7 @@
 			);
 			name = TootleAsset;
 			productName = TootleAsset;
-			productReference = 8418ED0D0F4DA70B00B956C9 /* libTootleAsset.a */;
+			productReference = 8418ED0D0F4DA70B00B956C9 /* TootleAsset. */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -159,7 +163,7 @@
 		8418ECF80F4DA63E00B956C9 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 8418ECFB0F4DA63E00B956C9 /* Build configuration list for PBXProject "TootleAsset" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.1";
 			hasScannedForEncodings = 0;
 			mainGroup = 8418ECF60F4DA63E00B956C9;
 			productRefGroup = 8418ED0E0F4DA70B00B956C9 /* Products */;
@@ -192,19 +196,15 @@
 /* Begin XCBuildConfiguration section */
 		8418ECF90F4DA63E00B956C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84B6020D104FEF2C0022E5BC /* TootleDebug.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = TL_TARGET_MAC;
-				HEADER_SEARCH_PATHS = ../..;
 			};
 			name = Debug;
 		};
 		8418ECFA0F4DA63E00B956C9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84B6020E104FEF2C0022E5BC /* TootleRelease.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = TL_TARGET_MAC;
-				HEADER_SEARCH_PATHS = ../..;
 			};
 			name = Release;
 		};

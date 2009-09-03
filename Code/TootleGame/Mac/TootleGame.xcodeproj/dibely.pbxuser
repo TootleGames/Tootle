@@ -1,6 +1,7 @@
 // !$*UTF8*$!
 {
 	8418ECF80F4DA63E00B956C9 /* Project object */ = {
+		activeArchitecturePreference = x86_64;
 		activeBuildConfigurationName = Debug;
 		activeTarget = 8418EEAE0F4DAB4500B956C9 /* TootleGame */;
 		addToTargets = (
@@ -16,7 +17,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
 					300,
-					231,
+					723,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXErrorsWarningsDataSource_TypeID,
@@ -29,7 +30,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					341,
+					833,
 					20,
 					48,
 					43,
@@ -68,8 +69,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 256755054;
-			PBXWorkspaceStateSaveDate = 256755054;
+			PBXPerProjectTemplateStateSaveDate = 273676379;
+			PBXWorkspaceStateSaveDate = 273676379;
 		};
 		sourceControlManager = 8418ECFC0F4DA63E00B956C9 /* Source Control */;
 		userBuildSettings = {

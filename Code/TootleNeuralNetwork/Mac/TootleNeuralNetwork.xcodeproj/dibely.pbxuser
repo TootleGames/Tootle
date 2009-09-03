@@ -68,12 +68,12 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 256754005;
-			PBXWorkspaceStateSaveDate = 256754005;
+			PBXPerProjectTemplateStateSaveDate = 273677365;
+			PBXWorkspaceStateSaveDate = 273677365;
 		};
 		perUserProjectItems = {
-			8418F3D00F4DC50A00B956C9 /* PBXTextBookmark */ = 8418F3D00F4DC50A00B956C9 /* PBXTextBookmark */;
 			8418F3D10F4DC50A00B956C9 /* PBXTextBookmark */ = 8418F3D10F4DC50A00B956C9 /* PBXTextBookmark */;
+			84B60642104FFC6C0022E5BC /* PBXTextBookmark */ = 84B60642104FFC6C0022E5BC /* PBXTextBookmark */;
 		};
 		sourceControlManager = 8418ECFC0F4DA63E00B956C9 /* Source Control */;
 		userBuildSettings = {
@@ -93,29 +93,12 @@
 	8418EE4A0F4DAADD00B956C9 /* TootleNeuralNetwork */ = {
 		activeExec = 0;
 	};
-	8418F3CB0F4DC4F400B956C9 /* TBinary.h */ = {
-		isa = PBXFileReference;
-		name = TBinary.h;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleNeuralNetwork/Mac/../../TootleCore/TBinary.h;
-		sourceTree = "<absolute>";
-	};
 	8418F3CE0F4DC4F400B956C9 /* TBinary.h */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
 		name = TBinary.h;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleNeuralNetwork/Mac/../../TootleCore/TBinary.h;
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1158, 3640}}";
-			sepNavSelRange = "{8871, 43}";
-			sepNavVisRange = "{8738, 487}";
-		};
-	};
-	8418F3D00F4DC50A00B956C9 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8418F3CB0F4DC4F400B956C9 /* TBinary.h */;
-		rLen = 1;
-		rLoc = 202;
-		rType = 1;
 	};
 	8418F3D10F4DC50A00B956C9 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -126,5 +109,21 @@
 		rType = 0;
 		vrLen = 487;
 		vrLoc = 8738;
+	};
+	84B60642104FFC6C0022E5BC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60643104FFC6C0022E5BC /* TBinary.h */;
+		name = "TBinary.h: 139";
+		rLen = 43;
+		rLoc = 8871;
+		rType = 0;
+		vrLen = 844;
+		vrLoc = 8591;
+	};
+	84B60643104FFC6C0022E5BC /* TBinary.h */ = {
+		isa = PBXFileReference;
+		name = TBinary.h;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleNeuralNetwork/Mac/../../TootleCore/TBinary.h;
+		sourceTree = "<absolute>";
 	};
 }

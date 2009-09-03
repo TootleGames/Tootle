@@ -16,7 +16,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
 					300,
-					231.20849609375,
+					231,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXErrorsWarningsDataSource_TypeID,
@@ -68,12 +68,16 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 256759026;
-			PBXWorkspaceStateSaveDate = 256759026;
+			PBXPerProjectTemplateStateSaveDate = 273676007;
+			PBXWorkspaceStateSaveDate = 273676007;
 		};
 		perUserProjectItems = {
-			8418F41D0F4DC63A00B956C9 /* PBXTextBookmark */ = 8418F41D0F4DC63A00B956C9 /* PBXTextBookmark */;
-			8418F5A90F4DD4F700B956C9 /* PBXTextBookmark */ = 8418F5A90F4DD4F700B956C9 /* PBXTextBookmark */;
+			84B6056E104FF8100022E5BC /* PBXTextBookmark */ = 84B6056E104FF8100022E5BC /* PBXTextBookmark */;
+			84B6056F104FF8100022E5BC /* PBXTextBookmark */ = 84B6056F104FF8100022E5BC /* PBXTextBookmark */;
+			84B60570104FF8100022E5BC /* PBXTextBookmark */ = 84B60570104FF8100022E5BC /* PBXTextBookmark */;
+			84B60571104FF8100022E5BC /* PBXTextBookmark */ = 84B60571104FF8100022E5BC /* PBXTextBookmark */;
+			84B60572104FF8100022E5BC /* PBXTextBookmark */ = 84B60572104FF8100022E5BC /* PBXTextBookmark */;
+			84B60573104FF8100022E5BC /* PBXTextBookmark */ = 84B60573104FF8100022E5BC /* PBXTextBookmark */;
 		};
 		sourceControlManager = 8418ECFC0F4DA63E00B956C9 /* Source Control */;
 		userBuildSettings = {
@@ -95,12 +99,31 @@
 	};
 	8418F1520F4DB94D00B956C9 /* MacAudio.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {519, 14364}}";
-			sepNavSelRange = "{13, 0}";
-			sepNavVisRange = "{0, 291}";
+			sepNavIntBoundsRect = "{{0, 0}, {522, 14306}}";
+			sepNavSelRange = "{8215, 67}";
+			sepNavVisRange = "{8111, 348}";
 		};
 	};
-	8418F41D0F4DC63A00B956C9 /* PBXTextBookmark */ = {
+	84B60300104FF0700022E5BC /* TootleDebug.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {618, 2842}}";
+			sepNavSelRange = "{4029, 0}";
+			sepNavVisRange = "{3902, 589}";
+		};
+	};
+	84B60566104FF7E00022E5BC /* alc.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = alc.h;
+		path = /System/Library/Frameworks/OpenAL.framework/Headers/alc.h;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {606, 4326}}";
+			sepNavSelRange = "{3808, 70}";
+			sepNavVisRange = "{3568, 504}";
+		};
+	};
+	84B6056E104FF8100022E5BC /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 8418F1520F4DB94D00B956C9 /* MacAudio.cpp */;
 		name = "MacAudio.cpp: 1";
@@ -110,7 +133,25 @@
 		vrLen = 291;
 		vrLoc = 0;
 	};
-	8418F5A90F4DD4F700B956C9 /* PBXTextBookmark */ = {
+	84B6056F104FF8100022E5BC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60300104FF0700022E5BC /* TootleDebug.xcconfig */;
+		name = "TootleDebug.xcconfig: 135";
+		rLen = 0;
+		rLoc = 4029;
+		rType = 0;
+		vrLen = 589;
+		vrLoc = 3902;
+	};
+	84B60570104FF8100022E5BC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "error: '<anonymous>' has incomplete type";
+		fRef = 84B60566104FF7E00022E5BC /* alc.h */;
+		rLen = 1;
+		rLoc = 181;
+		rType = 1;
+	};
+	84B60571104FF8100022E5BC /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 8418F1520F4DB94D00B956C9 /* MacAudio.cpp */;
 		name = "MacAudio.cpp: 1";
@@ -119,5 +160,36 @@
 		rType = 0;
 		vrLen = 291;
 		vrLoc = 0;
+	};
+	84B60572104FF8100022E5BC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60300104FF0700022E5BC /* TootleDebug.xcconfig */;
+		name = "TootleDebug.xcconfig: 135";
+		rLen = 0;
+		rLoc = 4029;
+		rType = 0;
+		vrLen = 589;
+		vrLoc = 3902;
+	};
+	84B60573104FF8100022E5BC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60574104FF8100022E5BC /* alc.h */;
+		name = "alc.h: 182";
+		rLen = 70;
+		rLoc = 3808;
+		rType = 0;
+		vrLen = 663;
+		vrLoc = 3484;
+	};
+	84B60574104FF8100022E5BC /* alc.h */ = {
+		isa = PBXFileReference;
+		name = alc.h;
+		path = /System/Library/Frameworks/OpenAL.framework/Headers/alc.h;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {606, 4410}}";
+			sepNavSelRange = "{3808, 70}";
+			sepNavVisRange = "{3484, 663}";
+		};
 	};
 }
