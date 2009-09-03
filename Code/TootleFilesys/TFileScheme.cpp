@@ -47,7 +47,7 @@ SyncBool TLFileSys::TFileScheme::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool&
 	}
 
 	//	make up new storage asset type
-	TPtr<TLAsset::TScheme> pNewAsset = new TLAsset::TScheme( GetFileRef() );
+	TPtr<TLAsset::TScheme> pNewAsset = CreateAsset();
 	ImportResult = ImportScheme( pRootTag, pNewAsset );
 
 	//	failed to import
@@ -61,7 +61,6 @@ SyncBool TLFileSys::TFileScheme::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool&
 
 	return SyncTrue;
 }
-
 
 
 

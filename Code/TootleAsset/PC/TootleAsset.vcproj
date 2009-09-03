@@ -280,6 +280,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TObject.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TParticle.cpp"
 			>
 		</File>

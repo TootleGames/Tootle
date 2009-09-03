@@ -8,12 +8,7 @@
 #include "TFile.h"
 #include "TFileXml.h"
 
-
-namespace TLAsset
-{
-	class TScheme;
-	class TSchemeNode;
-}
+#include <TootleAsset/TScheme.h>
 
 namespace TLFileSys
 {
@@ -32,6 +27,8 @@ public:
 
 	virtual TRef				GetFileExportAssetType() const								{	return TRef_Static(S,c,h,e,m);	}
 	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);			//	import the XML and convert from SVG to mesh
+
+	virtual TLAsset::TScheme* CreateAsset() { 	return new TLAsset::TScheme( GetFileRef()); }
 
 protected:
 	SyncBool			ImportScheme(TPtr<TXmlTag>& pTag,TPtr<TLAsset::TScheme>& pScheme);

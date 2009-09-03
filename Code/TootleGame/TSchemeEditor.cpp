@@ -6,6 +6,7 @@
 #include <TootleScene/TScenegraph.h>
 #include <TootleRender/TRendergraph.h>
 #include <TootleRender/TRenderTarget.h>
+#include <TootleAsset/TObject.h>
 
 
 
@@ -330,7 +331,9 @@ Bool TLGame::TSchemeEditor::CreateEditorGui(TRefRef EditorScheme)
 			}
 
 			TRef TypeOrSchemeRef;
-			if ( !pNewNodeData->ImportData("Type", TypeOrSchemeRef) && !pNewNodeData->ImportData("Scheme", TypeOrSchemeRef) )
+			if ( !pNewNodeData->ImportData("Type", TypeOrSchemeRef) && 
+				!pNewNodeData->ImportData("Scheme", TypeOrSchemeRef) &&
+				!pNewNodeData->ImportData("Object", TypeOrSchemeRef))
 			{
 				TLDebug_Break("Icon data requires a SceneNode Type or a Scheme - otherwise we don't know what to create");
 				continue;
@@ -678,6 +681,35 @@ void TLGame::TSchemeEditor::ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRef
 			//	we do NOT use strict refs as the scheme is to be re-instanced...
 			//	maybe move this option INTO the scheme XML itself?
 			TLScene::g_pScenegraph->ImportScheme( *pScheme, NewSceneNode, FALSE, &m_CommonNodeData );
+		}
+		else if ( pIconData->ImportData("Object", Type) )
+		{
+			TRefRef SchemeRef = Type;
+			TLAsset::TObject* pObject = TLAsset::GetAsset<TLAsset::TObject>(SchemeRef);
+			if ( !pObject )
+			{
+				TTempString Debug_String("Failed to load object ");
+				SchemeRef.GetString( Debug_String );
+				Debug_String.Append(" for new icon-node");
+				TLDebug_Break( Debug_String );
+				return;
+			}
+
+			//	make a base node - still trying to decide if this is the best method
+			TRef BaseNodeRef = "EdNode";
+			//TRef BaseNodeRef = Type;
+			NewSceneNode = m_pGraph->CreateNode( BaseNodeRef, "object", m_SchemeRootNode, &InitMessage );
+
+			TTempString Debug_String("Created new scene node ");
+			NewSceneNode.GetString( Debug_String );
+			Debug_String.Append(" from OBJECT ");
+			SchemeRef.GetString( Debug_String );
+			TLDebug_Print( Debug_String );
+
+			//	import the scheme under neath it
+			//	we do NOT use strict refs as the scheme is to be re-instanced...
+			//	maybe move this option INTO the scheme XML itself?
+			TLScene::g_pScenegraph->ImportScheme( *pObject, NewSceneNode, FALSE, &m_CommonNodeData );
 		}
 		else 
 		{

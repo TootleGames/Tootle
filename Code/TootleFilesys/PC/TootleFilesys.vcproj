@@ -591,6 +591,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TFileObject.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TFileParticle.cpp"
 			>
 		</File>

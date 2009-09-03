@@ -20,6 +20,7 @@
 #include "TFilePng.h"
 #include "TFileFnt.h"
 #include "TFileParticle.h"
+#include "TFileObject.h"
 
 #if defined(TL_TARGET_IPOD)
 	#include "IPod/IPodLocalFileSys.h"
@@ -614,6 +615,7 @@ TLFileSys::TFile* TLFileSys::TFileFactory::CreateObject(TRefRef InstanceRef,TRef
 	case TRef_Static3(p,n,g):		return new TLFileSys::TFilePng( InstanceRef, TypeRef );				//	png texture
 	case TRef_Static3(f,n,t):		return new TLFileSys::TFileFnt( InstanceRef, TypeRef );				//	"fnt" font atlas
 	case TRef_Static(P,a,r,t,i):	return new TLFileSys::TFileParticle( InstanceRef, TypeRef );		//	"Particle" markup
+	case TRef_Static(O,b,j,e,c):	return new TLFileSys::TFileObject( InstanceRef, TypeRef );			//	"Object" markup (same as scheme just different extension to differetiate)
 	
 	default:
 		//	generic binary file
