@@ -80,6 +80,7 @@ public:
 	TTask*					GetTask(NSURLConnection* pConnection);		//	get a task from a connection
 
 protected:
+	virtual TPtr<TTask>		CreateTask(const TTypedRef& TaskRef,TBinaryTree& TaskData)	{	return new TNSUrlConnectionTask( TaskRef, TaskData );	}	//	allocate connection-specific task type
 	virtual void			StartDownloadTask(TTask& Task);				//	start a simple GET task
 	virtual void			StartUploadTask(TTask& Task);				//	start a POST task
 

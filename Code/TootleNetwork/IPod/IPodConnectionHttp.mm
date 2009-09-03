@@ -14,7 +14,7 @@ TLNetwork::Platform::TNSUrlConnectionTask::~TNSUrlConnectionTask()
 {
 	if ( m_pConnection )
 		[m_pConnection release];
-
+/*
 	if ( m_pUrlRequest )
 		[m_pUrlRequest release];
 		
@@ -23,6 +23,7 @@ TLNetwork::Platform::TNSUrlConnectionTask::~TNSUrlConnectionTask()
 
 	if ( m_pUrlString )
 		[m_pUrlString release];
+ */
 }
 
 
@@ -52,6 +53,7 @@ SyncBool TLNetwork::Platform::TConnectionHttp::Initialise(TRef& ErrorRef)
 //---------------------------------------------------------
 void TLNetwork::Platform::TConnectionHttp::StartDownloadTask(TTask& Task)
 {
+	TNSUrlConnectionTask& ConnectionTask = static_cast<TNSUrlConnectionTask&>( Task );
 	if ( !m_pDelegate )
 	{
 		Task.SetStatusFailed("NoInit");
@@ -67,12 +69,12 @@ void TLNetwork::Platform::TConnectionHttp::StartDownloadTask(TTask& Task)
 	}
 
 	//	create request
-	m_pUrlString = [[NSString alloc] initWithUTF8String:UrlString.GetData() ];
-	m_pUrl = [[NSURL alloc] initWithString:m_pUrlString ];
-	m_pRequest = [NSURLRequest	requestWithURL:m_pUrl
+	ConnectionTask.m_pUrlString = [[NSString alloc] initWithUTF8String:UrlString.GetData() ];
+	ConnectionTask.m_pUrl = [[NSURL alloc] initWithString:ConnectionTask.m_pUrlString ];
+	ConnectionTask.m_pUrlRequest = [NSURLRequest	requestWithURL:ConnectionTask.m_pUrl
 								cachePolicy:NSURLRequestReloadIgnoringLocalCacheData 
 								timeoutInterval:60];
-	if ( !m_pRequest )
+	if ( !ConnectionTask.m_pUrlRequest )
 	{
 		Task.SetStatusFailed("NoRequest");
 		return;
@@ -83,19 +85,19 @@ void TLNetwork::Platform::TConnectionHttp::StartDownloadTask(TTask& Task)
 	//	to avoid race condition problems, we wait until we've created a connection <-> task link
 	//	before starting in case we recieve data before they;re linked and would have no where to 
 	//	put the downloaded data	
-	m_pConnection = [[NSURLConnection alloc]	initWithRequest:pRequest 
+	ConnectionTask.m_pConnection = [[NSURLConnection alloc]	initWithRequest:ConnectionTask.m_pUrlRequest 
 												delegate:m_pDelegate
-												startImmediately:NO];
+												startImmediately:YES];
 	
 	//	failed to create/init connection with request
-	if ( !m_pConnection ) 
+	if ( !ConnectionTask.m_pConnection ) 
 	{
 		Task.SetStatusFailed("NoConnection");
 		return;
 	}
 
 	//	now start connection
-	[pConnection start];
+	[ConnectionTask.m_pConnection start];
 
 	//	now we just wait for it to do it's thing!...	
 }
@@ -104,7 +106,7 @@ void TLNetwork::Platform::TConnectionHttp::StartDownloadTask(TTask& Task)
 //---------------------------------------------------------
 //	start a upload task
 //---------------------------------------------------------
-void TLNetwork::Platform::TConnectionHttp::StartDownloadTask(TTask& Task)
+void TLNetwork::Platform::TConnectionHttp::StartUploadTask(TTask& Task)
 {
 	Task.SetStatusFailed("Todo");
 	TLDebug_Break("Todo");
@@ -131,7 +133,17 @@ SyncBool TLNetwork::Platform::TConnectionHttp::Shutdown()
 //---------------------------------------------------------
 TLNetwork::TTask* TLNetwork::Platform::TConnectionHttp::GetTask(NSURLConnection* pConnection)
 {
-	TPtr<TLNetwork::TTask>& pTask = m_Tasks.Find( pConnection );
+	TLNetwork::TTask* pTask = NULL;
+	for ( u32 i=0;	i<m_Tasks.GetSize();	i++ )
+	{
+		TNSUrlConnectionTask* pNsTask = m_Tasks[i].GetObjectPointer<TNSUrlConnectionTask>();
+		if ( *pNsTask == pConnection )
+		{
+			pTask = pNsTask;
+			break;
+		}
+	}
+	
 	return pTask;
 }
 
