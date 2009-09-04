@@ -1,7 +1,7 @@
 // !$*UTF8*$!
 {
 	8418ECF80F4DA63E00B956C9 /* Project object */ = {
-		activeArchitecturePreference = x86_64;
+		activeArchitecturePreference = i386;
 		activeBuildConfigurationName = Debug;
 		activeTarget = 8418EED00F4DAB6A00B956C9 /* TootleCore */;
 		addToTargets = (
@@ -17,7 +17,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
 					387,
-					636,
+					636.20849609375,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXErrorsWarningsDataSource_TypeID,
@@ -85,8 +85,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 273682449;
-			PBXWorkspaceStateSaveDate = 273682449;
+			PBXPerProjectTemplateStateSaveDate = 273772593;
+			PBXWorkspaceStateSaveDate = 273772593;
 		};
 		perUserProjectItems = {
 			8418F2E90F4DC0D400B956C9 /* PBXTextBookmark */ = 8418F2E90F4DC0D400B956C9 /* PBXTextBookmark */;
@@ -106,6 +106,11 @@
 			8418F5970F4DD4EA00B956C9 /* PBXTextBookmark */ = 8418F5970F4DD4EA00B956C9 /* PBXTextBookmark */;
 			8418F59C0F4DD4EA00B956C9 /* PBXTextBookmark */ = 8418F59C0F4DD4EA00B956C9 /* PBXTextBookmark */;
 			8418F59E0F4DD4EA00B956C9 /* PBXTextBookmark */ = 8418F59E0F4DD4EA00B956C9 /* PBXTextBookmark */;
+			844CE29E105164BB00178124 /* PBXTextBookmark */ = 844CE29E105164BB00178124 /* PBXTextBookmark */;
+			844CE29F105164BB00178124 /* PBXTextBookmark */ = 844CE29F105164BB00178124 /* PBXTextBookmark */;
+			844CE2A3105164BB00178124 /* PBXTextBookmark */ = 844CE2A3105164BB00178124 /* PBXTextBookmark */;
+			844CE2A91051667800178124 /* PBXTextBookmark */ = 844CE2A91051667800178124 /* PBXTextBookmark */;
+			844CE4581051704800178124 /* PBXTextBookmark */ = 844CE4581051704800178124 /* PBXTextBookmark */;
 			84B601CB104FEA760022E5BC /* PBXTextBookmark */ = 84B601CB104FEA760022E5BC /* PBXTextBookmark */;
 			84B601CC104FEA760022E5BC /* PBXTextBookmark */ = 84B601CC104FEA760022E5BC /* PBXTextBookmark */;
 			84B601D0104FEA760022E5BC /* PBXTextBookmark */ = 84B601D0104FEA760022E5BC /* PBXTextBookmark */;
@@ -114,11 +119,8 @@
 			84B60200104FEF140022E5BC /* PBXTextBookmark */ = 84B60200104FEF140022E5BC /* PBXTextBookmark */;
 			84B60872105010480022E5BC /* PBXTextBookmark */ = 84B60872105010480022E5BC /* PBXTextBookmark */;
 			84B60873105010480022E5BC /* PBXTextBookmark */ = 84B60873105010480022E5BC /* PBXTextBookmark */;
-			84B60874105010480022E5BC /* PBXTextBookmark */ = 84B60874105010480022E5BC /* PBXTextBookmark */;
-			84B60875105010480022E5BC /* PBXTextBookmark */ = 84B60875105010480022E5BC /* PBXTextBookmark */;
 			84B60876105010480022E5BC /* PBXTextBookmark */ = 84B60876105010480022E5BC /* PBXTextBookmark */;
 			84B60877105010480022E5BC /* PBXTextBookmark */ = 84B60877105010480022E5BC /* PBXTextBookmark */;
-			84B60878105010480022E5BC /* PBXTextBookmark */ = 84B60878105010480022E5BC /* PBXTextBookmark */;
 		};
 		sourceControlManager = 8418ECFC0F4DA63E00B956C9 /* Source Control */;
 		userBuildSettings = {
@@ -177,7 +179,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1011, 868}}";
 			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 585}";
+			sepNavVisRange = "{0, 615}";
 		};
 	};
 	8418F1600F4DB9B900B956C9 /* MacCore.mm */ = {
@@ -413,6 +415,84 @@
 		vrLen = 421;
 		vrLoc = 854;
 	};
+	844CE29E105164BB00178124 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8418F15F0F4DB9B900B956C9 /* MacCore.h */;
+		name = "MacCore.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 615;
+		vrLoc = 0;
+	};
+	844CE29F105164BB00178124 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 844CE2A0105164BB00178124 /* Threads.h */;
+		name = "Threads.h: 97";
+		rLen = 0;
+		rLoc = 2313;
+		rType = 0;
+		vrLen = 400;
+		vrLoc = 393;
+	};
+	844CE2A0105164BB00178124 /* Threads.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = Threads.h;
+		path = /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers/Threads.h;
+		sourceTree = "<absolute>";
+	};
+	844CE2A3105164BB00178124 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 844CE2A4105164BB00178124 /* Threads.h */;
+		name = "Threads.h: 97";
+		rLen = 0;
+		rLoc = 2313;
+		rType = 0;
+		vrLen = 400;
+		vrLoc = 393;
+	};
+	844CE2A4105164BB00178124 /* Threads.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = Threads.h;
+		path = /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers/Threads.h;
+		sourceTree = "<absolute>";
+	};
+	844CE2A91051667800178124 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 844CE2AA1051667800178124 /* TLCoreMisc.cpp */;
+		name = "TLCoreMisc.cpp: 13";
+		rLen = 0;
+		rLoc = 358;
+		rType = 0;
+		vrLen = 836;
+		vrLoc = 0;
+	};
+	844CE2AA1051667800178124 /* TLCoreMisc.cpp */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.cpp.cpp;
+		lineEnding = 2;
+		name = TLCoreMisc.cpp;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleCore/Mac/../TLCoreMisc.cpp;
+		sourceTree = "<absolute>";
+	};
+	844CE4581051704800178124 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 844CE4591051704800178124 /* TLCoreMisc.cpp */;
+		name = "TLCoreMisc.cpp: 13";
+		rLen = 0;
+		rLoc = 358;
+		rType = 0;
+		vrLen = 836;
+		vrLoc = 0;
+	};
+	844CE4591051704800178124 /* TLCoreMisc.cpp */ = {
+		isa = PBXFileReference;
+		name = TLCoreMisc.cpp;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleCore/Mac/../TLCoreMisc.cpp;
+		sourceTree = "<absolute>";
+	};
 	84B601B9104FE7ED0022E5BC /* TootleDebug.xcconfig */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1011, 2842}}";
@@ -489,7 +569,7 @@
 		fRef = 84B601B9104FE7ED0022E5BC /* TootleDebug.xcconfig */;
 		name = "TootleDebug.xcconfig: 203";
 		rLen = 0;
-		rLoc = 6409;
+		rLoc = 6404;
 		rType = 0;
 		vrLen = 937;
 		vrLoc = 0;
@@ -499,7 +579,7 @@
 		fRef = 84B601BA104FE7ED0022E5BC /* TootleRelease.xcconfig */;
 		name = "TootleRelease.xcconfig: 203";
 		rLen = 0;
-		rLoc = 6413;
+		rLoc = 6400;
 		rType = 0;
 		vrLen = 947;
 		vrLoc = 0;
@@ -512,26 +592,6 @@
 		rLoc = 0;
 		rType = 0;
 		vrLen = 1182;
-		vrLoc = 0;
-	};
-	84B60874105010480022E5BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8418F15F0F4DB9B900B956C9 /* MacCore.h */;
-		name = "MacCore.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 585;
-		vrLoc = 0;
-	};
-	84B60875105010480022E5BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84B601BA104FE7ED0022E5BC /* TootleRelease.xcconfig */;
-		name = "TootleRelease.xcconfig: 203";
-		rLen = 0;
-		rLoc = 6413;
-		rType = 0;
-		vrLen = 947;
 		vrLoc = 0;
 	};
 	84B60876105010480022E5BC /* PBXTextBookmark */ = {
@@ -552,16 +612,6 @@
 		rLoc = 0;
 		rType = 0;
 		vrLen = 1182;
-		vrLoc = 0;
-	};
-	84B60878105010480022E5BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8418F15F0F4DB9B900B956C9 /* MacCore.h */;
-		name = "MacCore.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 585;
 		vrLoc = 0;
 	};
 }

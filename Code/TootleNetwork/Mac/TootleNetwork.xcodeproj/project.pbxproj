@@ -9,14 +9,18 @@
 /* Begin PBXBuildFile section */
 		8418EFD30F4DB78E00B956C9 /* TLNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EFD10F4DB78E00B956C9 /* TLNetwork.cpp */; };
 		8418EFD40F4DB78E00B956C9 /* TLNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EFD20F4DB78E00B956C9 /* TLNetwork.h */; };
+		844CE1AA1051591A00178124 /* MacConnectionHttp.h in Headers */ = {isa = PBXBuildFile; fileRef = 844CE1A81051591A00178124 /* MacConnectionHttp.h */; };
+		844CE1AB1051591A00178124 /* MacConnectionHttp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 844CE1A91051591A00178124 /* MacConnectionHttp.mm */; };
 		84B60629104FFBFA0022E5BC /* TConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B60627104FFBFA0022E5BC /* TConnection.cpp */; };
 		84B6062A104FFBFA0022E5BC /* TConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60628104FFBFA0022E5BC /* TConnection.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8418EE7C0F4DAB1500B956C9 /* TootleNetwork. */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = TootleNetwork.; sourceTree = BUILT_PRODUCTS_DIR; };
+		8418EE7C0F4DAB1500B956C9 /* libTootleNetwork.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleNetwork.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8418EFD10F4DB78E00B956C9 /* TLNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLNetwork.cpp; path = ../TLNetwork.cpp; sourceTree = SOURCE_ROOT; };
 		8418EFD20F4DB78E00B956C9 /* TLNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLNetwork.h; path = ../TLNetwork.h; sourceTree = SOURCE_ROOT; };
+		844CE1A81051591A00178124 /* MacConnectionHttp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacConnectionHttp.h; sourceTree = "<group>"; };
+		844CE1A91051591A00178124 /* MacConnectionHttp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacConnectionHttp.mm; sourceTree = "<group>"; };
 		84B60625104FFBC40022E5BC /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B60626104FFBC40022E5BC /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B60627104FFBFA0022E5BC /* TConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TConnection.cpp; path = ../TConnection.cpp; sourceTree = SOURCE_ROOT; };
@@ -47,7 +51,7 @@
 		8418ED0E0F4DA70B00B956C9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8418EE7C0F4DAB1500B956C9 /* TootleNetwork. */,
+				8418EE7C0F4DAB1500B956C9 /* libTootleNetwork.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -62,6 +66,7 @@
 		8418EFCF0F4DB77100B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				844CE1A71051590900178124 /* Mac Source Files */,
 				84B60627104FFBFA0022E5BC /* TConnection.cpp */,
 				84B60628104FFBFA0022E5BC /* TConnection.h */,
 				8418EFD10F4DB78E00B956C9 /* TLNetwork.cpp */,
@@ -79,6 +84,15 @@
 			name = "Build Configurations";
 			sourceTree = "<group>";
 		};
+		844CE1A71051590900178124 /* Mac Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				844CE1A81051591A00178124 /* MacConnectionHttp.h */,
+				844CE1A91051591A00178124 /* MacConnectionHttp.mm */,
+			);
+			name = "Mac Source Files";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -88,6 +102,7 @@
 			files = (
 				8418EFD40F4DB78E00B956C9 /* TLNetwork.h in Headers */,
 				84B6062A104FFBFA0022E5BC /* TConnection.h in Headers */,
+				844CE1AA1051591A00178124 /* MacConnectionHttp.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,7 +123,7 @@
 			);
 			name = TootleNetwork;
 			productName = TootleNetwork;
-			productReference = 8418EE7C0F4DAB1500B956C9 /* TootleNetwork. */;
+			productReference = 8418EE7C0F4DAB1500B956C9 /* libTootleNetwork.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -136,6 +151,7 @@
 			files = (
 				8418EFD30F4DB78E00B956C9 /* TLNetwork.cpp in Sources */,
 				84B60629104FFBFA0022E5BC /* TConnection.cpp in Sources */,
+				844CE1AB1051591A00178124 /* MacConnectionHttp.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

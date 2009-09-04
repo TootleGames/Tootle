@@ -16,7 +16,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
 					412,
-					119,
+					119.20849609375,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXErrorsWarningsDataSource_TypeID,
@@ -68,8 +68,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 273677752;
-			PBXWorkspaceStateSaveDate = 273677752;
+			PBXPerProjectTemplateStateSaveDate = 273766327;
+			PBXWorkspaceStateSaveDate = 273766327;
 		};
 		perUserProjectItems = {
 			8418EF550F4DACF200B956C9 /* PBXTextBookmark */ = 8418EF550F4DACF200B956C9 /* PBXTextBookmark */;
@@ -82,7 +82,7 @@
 			8418F34A0F4DC33400B956C9 /* PBXTextBookmark */ = 8418F34A0F4DC33400B956C9 /* PBXTextBookmark */;
 			8418F34B0F4DC33400B956C9 /* PBXTextBookmark */ = 8418F34B0F4DC33400B956C9 /* PBXTextBookmark */;
 			8418F34D0F4DC33400B956C9 /* PBXTextBookmark */ = 8418F34D0F4DC33400B956C9 /* PBXTextBookmark */;
-			8418F34F0F4DC33400B956C9 /* PBXTextBookmark */ = 8418F34F0F4DC33400B956C9 /* PBXTextBookmark */;
+			844CE194105157C000178124 /* PBXTextBookmark */ = 844CE194105157C000178124 /* PBXTextBookmark */;
 			84B606BB104FFE240022E5BC /* PBXTextBookmark */ = 84B606BB104FFE240022E5BC /* PBXTextBookmark */;
 		};
 		sourceControlManager = 8418ECFC0F4DA63E00B956C9 /* Source Control */;
@@ -215,13 +215,6 @@
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleScene/Mac/../../TootleCore/TBinary.h;
 		sourceTree = "<absolute>";
 	};
-	8418F3470F4DC2D400B956C9 /* MacRender.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = MacRender.h;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleScene/Mac/../../TootleRender/Mac/MacRender.h;
-		sourceTree = "<absolute>";
-	};
 	8418F34A0F4DC33400B956C9 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 8418F2830F4DBDA900B956C9 /* TLTypes.h */;
@@ -252,15 +245,21 @@
 		vrLen = 428;
 		vrLoc = 3599;
 	};
-	8418F34F0F4DC33400B956C9 /* PBXTextBookmark */ = {
+	844CE194105157C000178124 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = 8418F3470F4DC2D400B956C9 /* MacRender.h */;
-		name = "MacRender.h: 22";
+		fRef = 844CE195105157C000178124 /* MacRender.h */;
+		name = "MacRender.h: 27";
 		rLen = 0;
 		rLoc = 506;
 		rType = 0;
-		vrLen = 375;
-		vrLoc = 144;
+		vrLen = 316;
+		vrLoc = 140;
+	};
+	844CE195105157C000178124 /* MacRender.h */ = {
+		isa = PBXFileReference;
+		name = MacRender.h;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleScene/Mac/../../TootleRender/Mac/MacRender.h;
+		sourceTree = "<absolute>";
 	};
 	84B606BB104FFE240022E5BC /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -274,6 +273,7 @@
 	};
 	84B606BC104FFE240022E5BC /* MacRender.h */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
 		name = MacRender.h;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleScene/Mac/../../TootleRender/Mac/MacRender.h;
 		sourceTree = "<absolute>";

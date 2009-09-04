@@ -28,8 +28,8 @@ Bool Win32::GWindow::Init(TPtr<GWinControl>& pOwner, u32 Flags)
 
 Win32::GOpenglWindow::GOpenglWindow(TRefRef InstanceRef) :
 	GWindow				( InstanceRef ),
-	m_HDC				( NULL ),
-	m_HGLRC				( NULL ),
+//	m_HDC				( NULL ),
+//	m_HGLRC				( NULL ),
 	m_HasArbMultiSample	( FALSE )
 {
 }
@@ -105,7 +105,11 @@ Bool Win32::GOpenglWindow::Init(TPtr<GWinControl>& pOwner, u32 Flags)
 Bool Win32::GOpenglWindow::InitDisplay()
 {
 	using namespace TLRender::Platform;
-	
+
+	TLDebug_Break("not implemented");
+
+	return FALSE;
+/*	
 	//	make the pixel format descriptor
 	PIXELFORMATDESCRIPTOR pfd=				// pfd Tells Windows How We Want Things To Be
 	{
@@ -184,11 +188,15 @@ Bool Win32::GOpenglWindow::InitDisplay()
 	TLRender::Platform::g_OpenglInitialised = SyncTrue;
 
 	return TRUE;
+ */
 }
 
 
 void Win32::GOpenglWindow::ShutdownDisplay()
 {
+	TLDebug_Break("not implemented");
+
+	/*
 	if ( m_HDC )											// Does The Window Have A Device Context?
 	{
 		wglMakeCurrent( m_HDC, 0 );							// Set The Current Active Rendering Context To Zero
@@ -201,6 +209,7 @@ void Win32::GOpenglWindow::ShutdownDisplay()
 		ReleaseDC( m_Hwnd, m_HDC );						// Release The Device Context
 		m_HDC = NULL;											// Zero The Device Context
 	}
+	 */
 	
 }
 

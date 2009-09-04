@@ -281,11 +281,12 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>42</integer>
+									<integer>4</integer>
+									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 307}, {186, 611}}</string>
+							<string>{{0, 0}, {186, 611}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -385,9 +386,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84B605C0104FF9050022E5BC</string>
+				<string>844CE2BC1051676100178124</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84B605C1104FF9050022E5BC</string>
+				<string>844CE2BD1051676100178124</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -521,7 +522,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>8418F2D50F4DC03000B956C9</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleGame/Mac/TootleGame.xcodeproj</string>
 	</array>
 	<key>WindowString</key>

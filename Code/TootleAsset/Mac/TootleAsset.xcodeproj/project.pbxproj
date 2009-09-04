@@ -24,10 +24,23 @@
 		8418F1420F4DB8C100B956C9 /* TScheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F1310F4DB8C100B956C9 /* TScheme.cpp */; };
 		8418F1430F4DB8C100B956C9 /* TScheme.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F1320F4DB8C100B956C9 /* TScheme.h */; };
 		8418F1440F4DB8C100B956C9 /* TShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F1330F4DB8C100B956C9 /* TShader.h */; };
+		844CE0411051577700178124 /* TAtlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 844CE0341051577700178124 /* TAtlas.cpp */; };
+		844CE0421051577700178124 /* TAtlas.h in Headers */ = {isa = PBXBuildFile; fileRef = 844CE0351051577700178124 /* TAtlas.h */; };
+		844CE0431051577700178124 /* TObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 844CE0361051577700178124 /* TObject.h */; };
+		844CE0441051577700178124 /* TParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 844CE0371051577700178124 /* TParticle.cpp */; };
+		844CE0451051577700178124 /* TParticle.h in Headers */ = {isa = PBXBuildFile; fileRef = 844CE0381051577700178124 /* TParticle.h */; };
+		844CE0461051577700178124 /* TPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 844CE0391051577700178124 /* TPath.cpp */; };
+		844CE0471051577700178124 /* TPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 844CE03A1051577700178124 /* TPath.h */; };
+		844CE0481051577700178124 /* TText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 844CE03B1051577700178124 /* TText.cpp */; };
+		844CE0491051577700178124 /* TText.h in Headers */ = {isa = PBXBuildFile; fileRef = 844CE03C1051577700178124 /* TText.h */; };
+		844CE04A1051577700178124 /* TTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 844CE03D1051577700178124 /* TTexture.cpp */; };
+		844CE04B1051577700178124 /* TTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 844CE03E1051577700178124 /* TTexture.h */; };
+		844CE04C1051577700178124 /* TTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 844CE03F1051577700178124 /* TTimeline.cpp */; };
+		844CE04D1051577700178124 /* TTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 844CE0401051577700178124 /* TTimeline.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8418ED0D0F4DA70B00B956C9 /* TootleAsset. */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = TootleAsset.; sourceTree = BUILT_PRODUCTS_DIR; };
+		8418ED0D0F4DA70B00B956C9 /* libTootleAsset.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleAsset.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8418F1230F4DB8C100B956C9 /* TAsset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAsset.cpp; path = ../TAsset.cpp; sourceTree = SOURCE_ROOT; };
 		8418F1240F4DB8C100B956C9 /* TAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAsset.h; path = ../TAsset.h; sourceTree = SOURCE_ROOT; };
 		8418F1250F4DB8C100B956C9 /* TAudio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAudio.cpp; path = ../TAudio.cpp; sourceTree = SOURCE_ROOT; };
@@ -45,6 +58,19 @@
 		8418F1310F4DB8C100B956C9 /* TScheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TScheme.cpp; path = ../TScheme.cpp; sourceTree = SOURCE_ROOT; };
 		8418F1320F4DB8C100B956C9 /* TScheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TScheme.h; path = ../TScheme.h; sourceTree = SOURCE_ROOT; };
 		8418F1330F4DB8C100B956C9 /* TShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TShader.h; path = ../TShader.h; sourceTree = SOURCE_ROOT; };
+		844CE0341051577700178124 /* TAtlas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAtlas.cpp; path = ../TAtlas.cpp; sourceTree = SOURCE_ROOT; };
+		844CE0351051577700178124 /* TAtlas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAtlas.h; path = ../TAtlas.h; sourceTree = SOURCE_ROOT; };
+		844CE0361051577700178124 /* TObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TObject.h; path = ../TObject.h; sourceTree = SOURCE_ROOT; };
+		844CE0371051577700178124 /* TParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TParticle.cpp; path = ../TParticle.cpp; sourceTree = SOURCE_ROOT; };
+		844CE0381051577700178124 /* TParticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TParticle.h; path = ../TParticle.h; sourceTree = SOURCE_ROOT; };
+		844CE0391051577700178124 /* TPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPath.cpp; path = ../TPath.cpp; sourceTree = SOURCE_ROOT; };
+		844CE03A1051577700178124 /* TPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPath.h; path = ../TPath.h; sourceTree = SOURCE_ROOT; };
+		844CE03B1051577700178124 /* TText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TText.cpp; path = ../TText.cpp; sourceTree = SOURCE_ROOT; };
+		844CE03C1051577700178124 /* TText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TText.h; path = ../TText.h; sourceTree = SOURCE_ROOT; };
+		844CE03D1051577700178124 /* TTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTexture.cpp; path = ../TTexture.cpp; sourceTree = SOURCE_ROOT; };
+		844CE03E1051577700178124 /* TTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTexture.h; path = ../TTexture.h; sourceTree = SOURCE_ROOT; };
+		844CE03F1051577700178124 /* TTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTimeline.cpp; path = ../TTimeline.cpp; sourceTree = SOURCE_ROOT; };
+		844CE0401051577700178124 /* TTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTimeline.h; path = ../TTimeline.h; sourceTree = SOURCE_ROOT; };
 		84B6020D104FEF2C0022E5BC /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B6020E104FEF2C0022E5BC /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -73,7 +99,7 @@
 		8418ED0E0F4DA70B00B956C9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8418ED0D0F4DA70B00B956C9 /* TootleAsset. */,
+				8418ED0D0F4DA70B00B956C9 /* libTootleAsset.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -88,6 +114,19 @@
 		8418F1210F4DB8AD00B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				844CE0341051577700178124 /* TAtlas.cpp */,
+				844CE0351051577700178124 /* TAtlas.h */,
+				844CE0361051577700178124 /* TObject.h */,
+				844CE0371051577700178124 /* TParticle.cpp */,
+				844CE0381051577700178124 /* TParticle.h */,
+				844CE0391051577700178124 /* TPath.cpp */,
+				844CE03A1051577700178124 /* TPath.h */,
+				844CE03B1051577700178124 /* TText.cpp */,
+				844CE03C1051577700178124 /* TText.h */,
+				844CE03D1051577700178124 /* TTexture.cpp */,
+				844CE03E1051577700178124 /* TTexture.h */,
+				844CE03F1051577700178124 /* TTimeline.cpp */,
+				844CE0401051577700178124 /* TTimeline.h */,
 				8418F1230F4DB8C100B956C9 /* TAsset.cpp */,
 				8418F1240F4DB8C100B956C9 /* TAsset.h */,
 				8418F1250F4DB8C100B956C9 /* TAudio.cpp */,
@@ -134,6 +173,13 @@
 				8418F1410F4DB8C100B956C9 /* TMesh.h in Headers */,
 				8418F1430F4DB8C100B956C9 /* TScheme.h in Headers */,
 				8418F1440F4DB8C100B956C9 /* TShader.h in Headers */,
+				844CE0421051577700178124 /* TAtlas.h in Headers */,
+				844CE0431051577700178124 /* TObject.h in Headers */,
+				844CE0451051577700178124 /* TParticle.h in Headers */,
+				844CE0471051577700178124 /* TPath.h in Headers */,
+				844CE0491051577700178124 /* TText.h in Headers */,
+				844CE04B1051577700178124 /* TTexture.h in Headers */,
+				844CE04D1051577700178124 /* TTimeline.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,7 +200,7 @@
 			);
 			name = TootleAsset;
 			productName = TootleAsset;
-			productReference = 8418ED0D0F4DA70B00B956C9 /* TootleAsset. */;
+			productReference = 8418ED0D0F4DA70B00B956C9 /* libTootleAsset.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -188,6 +234,12 @@
 				8418F13E0F4DB8C100B956C9 /* TMenu.cpp in Sources */,
 				8418F1400F4DB8C100B956C9 /* TMesh.cpp in Sources */,
 				8418F1420F4DB8C100B956C9 /* TScheme.cpp in Sources */,
+				844CE0411051577700178124 /* TAtlas.cpp in Sources */,
+				844CE0441051577700178124 /* TParticle.cpp in Sources */,
+				844CE0461051577700178124 /* TPath.cpp in Sources */,
+				844CE0481051577700178124 /* TText.cpp in Sources */,
+				844CE04A1051577700178124 /* TTexture.cpp in Sources */,
+				844CE04C1051577700178124 /* TTimeline.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

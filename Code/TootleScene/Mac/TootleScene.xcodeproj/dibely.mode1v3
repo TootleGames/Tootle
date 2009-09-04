@@ -279,7 +279,8 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>8</integer>
+									<integer>3</integer>
+									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
@@ -330,7 +331,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84B606BB104FFE240022E5BC</string>
+										<string>844CE194105157C000178124</string>
 										<key>history</key>
 										<array>
 											<string>8418EF550F4DACF200B956C9</string>
@@ -338,7 +339,7 @@
 											<string>8418F28F0F4DBDE600B956C9</string>
 											<string>8418F34A0F4DC33400B956C9</string>
 											<string>8418F34B0F4DC33400B956C9</string>
-											<string>8418F34F0F4DC33400B956C9</string>
+											<string>84B606BB104FFE240022E5BC</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -404,9 +405,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84B606BD104FFE240022E5BC</string>
+				<string>844CE196105157C100178124</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84B606BE104FFE240022E5BC</string>
+				<string>844CE197105157C100178124</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -540,7 +541,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>8418EF510F4DACCD00B956C9</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleScene/Mac/TootleScene.xcodeproj</string>
 	</array>
 	<key>WindowString</key>

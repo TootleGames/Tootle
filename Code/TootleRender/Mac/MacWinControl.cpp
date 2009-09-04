@@ -11,7 +11,7 @@ namespace Win32
 {
 	TPtr<Win32::TWinControlFactory>	g_pFactory;
 
-	LRESULT CALLBACK			Win32CallBack(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam );
+//	LRESULT CALLBACK			Win32CallBack(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam );
 	u32							GWinControl::g_MouseWheelMsg = 0;
 
 	TArray<const char*>			g_ClassCreatedList;	//	array of strings of classes we've created
@@ -87,8 +87,8 @@ Win32::GWinControl* Win32::TWinControlFactory::CreateObject(TRefRef InstanceRef,
 
 Win32::GWinControl::GWinControl(TRefRef InstanceRef) :
 	m_Ref				( InstanceRef ),
-	m_Hwnd				( NULL ),
-	m_OwnerHwnd			( NULL ),
+//	m_Hwnd				( NULL ),
+//	m_OwnerHwnd			( NULL ),
 	m_ClientPos			( int2(0,0) ),
 	m_ClientSize		( int2(40,40) ),
 	m_StyleFlags		( 0x0 ),
@@ -125,7 +125,7 @@ Win32::GWinControl::~GWinControl()
 
 void Win32::GWinControl::PosToScreen(int2& ClientPos)
 {
-	TLDebug_Break("");
+	TLDebug_Break("not implemented");
 /*
  Removed from MAC build
 	//	convert client pos to screen
@@ -141,6 +141,9 @@ void Win32::GWinControl::PosToScreen(int2& ClientPos)
 
 void Win32::GWinControl::ScreenToPos(int2& ScreenPos)
 {
+	TLDebug_Break("not implemented");
+	
+	/*
 	//	convert screen pos to client pos
 	POINT p;
 	p.x = ScreenPos.x;
@@ -148,6 +151,7 @@ void Win32::GWinControl::ScreenToPos(int2& ScreenPos)
 	ScreenToClient( m_Hwnd, &p );
 	ScreenPos.x = p.x;
 	ScreenPos.y = p.y;
+	 */
 }
 
 
@@ -215,10 +219,11 @@ Bool Win32::GWinControl::Init(TPtr<GWinControl>& pOwner, u32 Flags)
  */
 }
 
+/*
 //-------------------------------------------------------------------------
 //	callback after a window has been created
 //-------------------------------------------------------------------------
-/*static*/void Win32::GWinControl::OnWindowCreate(TPtr<GWinControl>& pControl,HWND Hwnd)
+void Win32::GWinControl::OnWindowCreate(TPtr<GWinControl>& pControl,HWND Hwnd)
 {
 	if ( !pControl )
 	{
@@ -238,10 +243,14 @@ Bool Win32::GWinControl::Init(TPtr<GWinControl>& pOwner, u32 Flags)
 		pControl->m_pOwnerControl->m_ChildControls.Add( pControl );
 	}
 }
+ */
 
 
 Bool Win32::GWinControl::CreateClass()
 {
+	TLDebug_Break("not implemented");
+	return FALSE;
+/*
 	//	if class already created we dont need to create it
 	if ( g_ClassCreatedList.Find( ClassName() ) )
 		return TRUE;
@@ -269,10 +278,15 @@ Bool Win32::GWinControl::CreateClass()
 	g_ClassCreatedList.Add( ClassName() );
 
 	return TRUE;
+ */
 }
 
 /*static*/Bool Win32::GWinControl::DestroyClass(const char* pClassName)
 {
+	TLDebug_Break("not implemented");
+	return FALSE;
+
+	/*
 	if ( !UnregisterClass( pClassName, TLCore::Platform::g_HInstance ) )
 	{
 		TLDebug::Platform::CheckWin32Error();
@@ -284,6 +298,7 @@ Bool Win32::GWinControl::CreateClass()
 	g_ClassCreatedList.RemoveAt( ClassIndex );
 
 	return TRUE;
+	 */
 }
 
 Bool Win32::GWinControl::DestroyClass()
@@ -293,15 +308,23 @@ Bool Win32::GWinControl::DestroyClass()
 
 Bool Win32::GWinControl::ClassExists()
 {
+	TLDebug_Break("not implemented");
+
+	return FALSE;
+	/*
 	WNDCLASS wc;
 	return GetClassInfo( TLCore::Platform::g_HInstance, ClassName(), &wc ) != 0;
+*/
 }
 
 
 void Win32::GWinControl::Destroy()
 {
 	OnDestroy();
+	
+	TLDebug_Break("not fully implemented");
 
+/*
 	//	destroy the control if we still have a handle
 	if ( m_Hwnd )
 	{
@@ -320,6 +343,7 @@ void Win32::GWinControl::Destroy()
 
 		m_Hwnd = NULL;
 	}
+ */
 
 	//	remove from global control list
 	if ( Win32::g_pFactory )
@@ -330,11 +354,15 @@ void Win32::GWinControl::Destroy()
 
 void Win32::GWinControl::Show(Bool Show)
 {
+	TLDebug_Break("not implemented");
+
+/*	
 	if ( m_Hwnd )
 	{
 		ShowWindow( m_Hwnd, Show ? SW_SHOW : SW_HIDE );
 		GetStyleFlags();
 	}
+*/
 }
 
 Bool Win32::GWinControl::SetText(const TString& Text,Bool IsExplicitText)
@@ -344,10 +372,14 @@ Bool Win32::GWinControl::SetText(const TString& Text,Bool IsExplicitText)
 	if ( !IsExplicitText && m_HasExplicitText )
 		return FALSE;
 
+	TLDebug_Break("not implemented");
+
+/*	
 	if ( !m_Hwnd )
 		return FALSE;
 
 	SetWindowText( m_Hwnd, Text.GetData() );
+ */
 	m_HasExplicitText = IsExplicitText;
 	return TRUE;
 }
@@ -473,14 +505,12 @@ void Win32::GWinControl::UpdateDimensions()
 }
 
 
+/*
 //-------------------------------------------------------------------------
 //	calcs the window's overall size to accomadate the client size
 //-------------------------------------------------------------------------
 void Win32::GWinControl::ResizeClientArea(int2 ClientSize)
 {
-	/*
-	REMOVED FORM MAC BUILD
-
 	RECT ClientRect;
 	ClientRect.top		= 0;
 	ClientRect.left		= 0;
@@ -495,8 +525,9 @@ void Win32::GWinControl::ResizeClientArea(int2 ClientSize)
 
 	//	set new window size
 	Resize( int2( ClientRect.right-ClientRect.left, ClientRect.bottom-ClientRect.top ) );
-	 */
+
 }
+ */
 
 
 void Win32::GWinControl::GetStyleFlags()
@@ -553,12 +584,9 @@ void Win32::GWinControl::ClearStyleFlags(u32 Flags)
 }
 
 
+/*
 Win32::GMenuSubMenu* Win32::GWinControl::GetChildSubMenu(HMENU HMenu,TPtr<GWinControl>& pControl)	
 {
-	return NULL;
-	/*
-	 REMOVED FORM MAC BUILD
-
 	GMenuSubMenu* pSubMenu = NULL;
 	pControl = NULL;
 
@@ -573,9 +601,9 @@ Win32::GMenuSubMenu* Win32::GWinControl::GetChildSubMenu(HMENU HMenu,TPtr<GWinCo
 	}
 
 	return pSubMenu;
-	 */
+	 
 }
-
+*/
 
 
 Win32::GMenuItem* Win32::GWinControl::GetChildMenuItem(u16 ItemID, TPtr<GWinControl>& pControl)	
@@ -602,6 +630,9 @@ Win32::GMenuItem* Win32::GWinControl::GetChildMenuItem(u16 ItemID, TPtr<GWinCont
 //-------------------------------------------------------------------------
 void Win32::GWinControl::UpdateScrollBars()
 {
+	TLDebug_Break("not implemented");
+
+	/*
 	//	only needed if window is setup
 	if ( !Hwnd() )
 		return;
@@ -671,8 +702,10 @@ void Win32::GWinControl::UpdateScrollBars()
 
 		SetScrollInfo( Hwnd(), SB_HORZ, &ScrollInfo, TRUE );
 	}
+	 */
 }
 
+/*
 //-------------------------------------------------------------------------
 //	load a resource and turn it into a brush
 //-------------------------------------------------------------------------
@@ -692,16 +725,20 @@ HBRUSH Win32::GWinControl::GetBrushFromResource(int Resource)
 
 	return HBrush;
 }
+ */
 	
 //-------------------------------------------------------------------------
 //	setup a timer
 //-------------------------------------------------------------------------
 void Win32::GWinControl::StartTimer(int TimerID,int Time)
 {
+	TLDebug_Break("not implemented");
+/*
 	if ( !SetTimer( m_Hwnd, TimerID, Time, NULL ) )
 	{
 		TLDebug::Platform::CheckWin32Error();
 	}
+ */
 }
 
 //-------------------------------------------------------------------------
@@ -709,15 +746,19 @@ void Win32::GWinControl::StartTimer(int TimerID,int Time)
 //-------------------------------------------------------------------------
 void Win32::GWinControl::StopTimer(int TimerID)
 {
+	TLDebug_Break("not implemented");
+
+/*
 	if ( !KillTimer( m_Hwnd, TimerID ) )
 	{
 		TLDebug::Platform::CheckWin32Error();
 	}
+*/
 }
 
 
 
-
+/*
 Bool Win32::GWinControl::HandleMessage(u32 message, WPARAM wParam, LPARAM lParam, u32& Result)
 {
 	Result = 0;
@@ -729,6 +770,7 @@ int Win32::GWinControl::HandleNotifyMessage(u32 message, NMHDR* pNotifyData)
 {
 	return 0;
 }
+ */
 
 
 

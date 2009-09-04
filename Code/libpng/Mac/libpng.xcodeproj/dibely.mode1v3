@@ -233,6 +233,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -269,9 +271,9 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateExpansionKey</key>
 							<array>
 								<string>84B60B9810512AF80022E5BC</string>
+								<string>84B60C4B10512E410022E5BC</string>
 								<string>84B60C4410512E1C0022E5BC</string>
 								<string>1C37FBAC04509CD000000102</string>
-								<string>84B60E66105136980022E5BC</string>
 								<string>1C08E77C0454961000C914BD</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
@@ -283,7 +285,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {186, 445}}</string>
+							<string>{{0, 39}, {186, 445}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -330,11 +332,11 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84B60E80105136C00022E5BC</string>
+										<string>844CE02C1051571800178124</string>
 										<key>history</key>
 										<array>
 											<string>84B60E7D105136C00022E5BC</string>
-											<string>84B60E7E105136C00022E5BC</string>
+											<string>844CE02B1051571800178124</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -360,8 +362,6 @@
 							<string>285pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -398,9 +398,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84B60E81105136C00022E5BC</string>
+				<string>844CE02D1051571800178124</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84B60E82105136C00022E5BC</string>
+				<string>844CE02E1051571800178124</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -534,7 +534,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>84B60C7C10512EE20022E5BC</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/libpng/Mac/libpng.xcodeproj</string>
 	</array>
 	<key>WindowString</key>

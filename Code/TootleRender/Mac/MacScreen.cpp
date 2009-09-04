@@ -146,16 +146,18 @@ void TLRender::Platform::Screen::Draw()
 	TLRender::Opengl::Unbind();
 
 	//	flip buffers
-	SwapBuffers( pWindow->m_HDC );
+//	SwapBuffers( pWindow->m_HDC );
 
 	
 	//	post-draw make sure the swap interval is limited/not limited
 	if ( OpenglExtensions::IsHardwareEnabled( OpenglExtensions::GHardware_SwapInterval ) )
 	{
+		/*
 		if ( GetFlag( TScreen::Flag_SyncFrameRate ) )
 			OpenglExtensions::glSwapIntervalEXT()( 1 );
 		else
 			OpenglExtensions::glSwapIntervalEXT()( 0 );
+		 */
 	}
 
 }

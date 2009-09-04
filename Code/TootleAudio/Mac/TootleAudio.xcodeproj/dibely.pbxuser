@@ -68,16 +68,13 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 273758975;
-			PBXWorkspaceStateSaveDate = 273758975;
+			PBXPerProjectTemplateStateSaveDate = 273771065;
+			PBXWorkspaceStateSaveDate = 273771065;
 		};
 		perUserProjectItems = {
-			844CDDD610513B1F00178124 /* PBXTextBookmark */ = 844CDDD610513B1F00178124 /* PBXTextBookmark */;
-			844CDDD710513B1F00178124 /* PBXTextBookmark */ = 844CDDD710513B1F00178124 /* PBXTextBookmark */;
-			844CDDD810513B1F00178124 /* PBXTextBookmark */ = 844CDDD810513B1F00178124 /* PBXTextBookmark */;
-			844CDDD910513B1F00178124 /* PBXTextBookmark */ = 844CDDD910513B1F00178124 /* PBXTextBookmark */;
+			844CE2DA105169D600178124 /* PBXTextBookmark */ = 844CE2DA105169D600178124 /* PBXTextBookmark */;
+			844CE3C210516B8D00178124 /* PBXTextBookmark */ = 844CE3C210516B8D00178124 /* PBXTextBookmark */;
 			84B60571104FF8100022E5BC /* PBXTextBookmark */ = 84B60571104FF8100022E5BC /* PBXTextBookmark */;
-			84B60572104FF8100022E5BC /* PBXTextBookmark */ = 84B60572104FF8100022E5BC /* PBXTextBookmark */;
 			84B60E3A105134AA0022E5BC /* PBXTextBookmark */ = 84B60E3A105134AA0022E5BC /* PBXTextBookmark */;
 			84B60E3B105134AA0022E5BC /* PBXTextBookmark */ = 84B60E3B105134AA0022E5BC /* PBXTextBookmark */;
 			84B60E3C105134AA0022E5BC /* PBXTextBookmark */ = 84B60E3C105134AA0022E5BC /* PBXTextBookmark */;
@@ -86,7 +83,6 @@
 			84B60E41105134AA0022E5BC /* PBXTextBookmark */ = 84B60E41105134AA0022E5BC /* PBXTextBookmark */;
 			84B60E46105134AA0022E5BC /* PBXTextBookmark */ = 84B60E46105134AA0022E5BC /* PBXTextBookmark */;
 			84B60E58105135E00022E5BC /* PBXTextBookmark */ = 84B60E58105135E00022E5BC /* PBXTextBookmark */;
-			84B60E59105135E00022E5BC /* PBXTextBookmark */ = 84B60E59105135E00022E5BC /* PBXTextBookmark */;
 		};
 		sourceControlManager = 8418ECFC0F4DA63E00B956C9 /* Source Control */;
 		userBuildSettings = {
@@ -115,49 +111,29 @@
 	};
 	8418F1530F4DB94D00B956C9 /* MacAudio.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 1274}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 1260}}";
 			sepNavSelRange = "{197, 0}";
-			sepNavVisRange = "{0, 486}";
+			sepNavVisRange = "{0, 516}";
 		};
 	};
-	844CDDD610513B1F00178124 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84B60301104FF0700022E5BC /* TootleRelease.xcconfig */;
-		name = "TootleRelease.xcconfig: 28";
-		rLen = 0;
-		rLoc = 868;
-		rType = 0;
-		vrLen = 1032;
-		vrLoc = 327;
-	};
-	844CDDD710513B1F00178124 /* PBXTextBookmark */ = {
+	844CE2DA105169D600178124 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 8418F1530F4DB94D00B956C9 /* MacAudio.h */;
 		name = "MacAudio.h: 16";
 		rLen = 0;
 		rLoc = 197;
 		rType = 0;
-		vrLen = 486;
+		vrLen = 516;
 		vrLoc = 0;
 	};
-	844CDDD810513B1F00178124 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84B60301104FF0700022E5BC /* TootleRelease.xcconfig */;
-		name = "TootleRelease.xcconfig: 28";
-		rLen = 0;
-		rLoc = 868;
-		rType = 0;
-		vrLen = 1032;
-		vrLoc = 327;
-	};
-	844CDDD910513B1F00178124 /* PBXTextBookmark */ = {
+	844CE3C210516B8D00178124 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 8418F1530F4DB94D00B956C9 /* MacAudio.h */;
 		name = "MacAudio.h: 16";
 		rLen = 0;
 		rLoc = 197;
 		rType = 0;
-		vrLen = 486;
+		vrLen = 516;
 		vrLoc = 0;
 	};
 	84B60300104FF0700022E5BC /* TootleDebug.xcconfig */ = {
@@ -190,16 +166,6 @@
 		rType = 0;
 		vrLen = 291;
 		vrLoc = 0;
-	};
-	84B60572104FF8100022E5BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84B60300104FF0700022E5BC /* TootleDebug.xcconfig */;
-		name = "TootleDebug.xcconfig: 135";
-		rLen = 0;
-		rLoc = 4016;
-		rType = 0;
-		vrLen = 589;
-		vrLoc = 3902;
 	};
 	84B60D6E105133140022E5BC /* MacAudioOpenAL.cpp */ = {
 		uiCtxt = {
@@ -308,15 +274,5 @@
 		rType = 0;
 		vrLen = 804;
 		vrLoc = 3727;
-	};
-	84B60E59105135E00022E5BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84B60300104FF0700022E5BC /* TootleDebug.xcconfig */;
-		name = "TootleDebug.xcconfig: 28";
-		rLen = 0;
-		rLoc = 866;
-		rType = 0;
-		vrLen = 1073;
-		vrLoc = 210;
 	};
 }

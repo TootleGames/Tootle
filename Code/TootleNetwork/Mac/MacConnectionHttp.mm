@@ -1,4 +1,6 @@
-#include "IPodConnectionHttp.h"
+#include "MacConnectionHttp.h"
+
+#import <Foundation/NSData.h>
 
 namespace TLNetwork
 {

@@ -35,8 +35,8 @@ public:
 class Win32::GOpenglWindow : public Win32::GWindow
 {
 public:
-	HDC				m_HDC;
-	HGLRC			m_HGLRC;
+//	HDC				m_HDC;
+//	HGLRC			m_HGLRC;
 	Bool			m_HasArbMultiSample;
 
 public:

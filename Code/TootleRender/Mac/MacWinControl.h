@@ -11,6 +11,7 @@
 #include <TootleCore/TRef.h>
 #include <TootleCore/TClassFactory.h>
 #include <TootleCore/TLMessaging.h>
+#include <TootleCore/TPublisher.h>
 
 //#include <COMMCTRL.H>
 #include "MacRender.h"
@@ -129,9 +130,9 @@ public:
 	virtual void			OnClose()									{	m_Closed = TRUE;	}
 	virtual void			OnMenuPopup( GMenuSubMenu* pSubMenu )		{	}					//	menu was popped up in this control
 	virtual void			OnMenuClick( GMenuItem* pMenuItem )			{	}					//	menu item was selected in this control
-	virtual GMenuSubMenu*	GetSubMenu( HMENU HMenu )					{	return NULL;	};	//	find a menu in this control
+//	virtual GMenuSubMenu*	GetSubMenu( HMENU HMenu )					{	return NULL;	};	//	find a menu in this control
 	virtual GMenuItem*		GetMenuItem( u16 ItemID )					{	return NULL;	};	//	find a menu item in this control
-	virtual GMenuSubMenu*	GetChildSubMenu( HMENU HMenu, TPtr<GWinControl>& pControl );		//	find a menu in this control
+//	virtual GMenuSubMenu*	GetChildSubMenu( HMENU HMenu, TPtr<GWinControl>& pControl );		//	find a menu in this control
 	virtual GMenuItem*		GetChildMenuItem( u16 ItemID, TPtr<GWinControl>& pControl );		//	find a menu item in this control
 	virtual Bool			OnButtonDown(int MouseButton, int2 Pos)		{	return FALSE;	};
 	virtual Bool			OnButtonUp(int MouseButton, int2 Pos)		{	return FALSE;	};
@@ -143,7 +144,7 @@ public:
 	virtual Bool			OnShow()									{	return FALSE;	};	//	window is now visible
 	virtual Bool			OnHide()									{	return FALSE;	};	//	window is now hidden
 	virtual Bool			OnMouseMove(int2 MousePos, Bool InClientArea)	{	return FALSE;	};	//	mouse has been moved in window
-	virtual void			OnTimer(WPARAM TimerID)						{	};					//	timer caught
+//	virtual void			OnTimer(WPARAM TimerID)						{	};					//	timer caught
 	virtual void			OnActivate();
 	virtual void			OnDeactivate();
 
@@ -153,18 +154,18 @@ public:
 	static Bool					DestroyClass(const char* pClassName);
 	virtual Bool				Init(TPtr<GWinControl>& pOwner, u32 Flags);		//	create control
 	void						Destroy();																		//	destroy control
-	virtual Bool				HandleMessage(u32 message, WPARAM wParam, LPARAM lParam, u32& Result);	//	message has been sent to this control matching the hwnd
-	virtual int					HandleNotifyMessage(u32 message, NMHDR* pNotifyData);		//	message has been sent to this control matching the hwnd
+//	virtual Bool				HandleMessage(u32 message, WPARAM wParam, LPARAM lParam, u32& Result);	//	message has been sent to this control matching the hwnd
+//	virtual int					HandleNotifyMessage(u32 message, NMHDR* pNotifyData);		//	message has been sent to this control matching the hwnd
 	virtual Bool				HasMenu()								{	return FALSE;	};	//	used for windows to return if they have a main menu
-	virtual HICON				GetIconHandle()							{	return LoadIcon( NULL, IDI_APPLICATION );	};
-	virtual HBRUSH				GetBackgroundBrush()					{	return GetSysColorBrush(COLOR_WINDOW);	};
+//	virtual HICON				GetIconHandle()							{	return LoadIcon( NULL, IDI_APPLICATION );	};
+//	virtual HBRUSH				GetBackgroundBrush()					{	return GetSysColorBrush(COLOR_WINDOW);	};
 	virtual u32					DefaultFlags()							{	return 0x0;	};
 	virtual Bool				GetVertScrollProperties(int& Min, int& Max, int& Jump, int& Pos)	{	return FALSE;	};
 	virtual Bool				GetHorzScrollProperties(int& Min, int& Max, int& Jump, int& Pos)	{	return FALSE;	};
 
 	//	general win32 interfacing calls which dont need to be overloaded
-	//inline HWND&			Hwnd()									{	return m_Hwnd;	};
-	//inline const HWND&		HwndConst() const						{	return m_Hwnd;	};
+//	inline HWND&			Hwnd()									{	return m_Hwnd;	};
+//	inline const HWND&		HwndConst() const						{	return m_Hwnd;	};
 	void					PosToScreen(int2& ClientPos);								//	convert a pos on this object to a position on the screen
 	void					ScreenToPos(int2& ScreenPos);								//	convert a pos in the screen to a relative pos on the object
 	void					Show(Bool Show=TRUE);
@@ -182,10 +183,10 @@ public:
 	inline u32				StyleExFlags()							{	return (m_StyleFlags&GWinControlFlags::ExStyleFlags);	};
 	void					UpdateScrollBars();						//	post-resize, updates scroll bar info
 	Bool					Visible()								{	return (StyleFlags()&GWinControlFlags::Visible)? TRUE : FALSE;	};
-	HBRUSH					GetBrushFromResource(int Resource);		
+//	HBRUSH					GetBrushFromResource(int Resource);		
 	void					StartTimer(int TimerID,int Time);		//	setup a timer
 	void					StopTimer(int TimerID);					//	stop a registered timer
-	static void				OnWindowCreate(TPtr<GWinControl>& pControl,HWND Hwnd);	//	callback after a window has been created
+//	static void				OnWindowCreate(TPtr<GWinControl>& pControl,HWND Hwnd);	//	callback after a window has been created
 	Bool					IsClosed() const						{	return m_Closed;	}
 	const TRef&				GetRef() const							{	return m_Ref;	}
 	void					SetRef(const TRef& Ref);

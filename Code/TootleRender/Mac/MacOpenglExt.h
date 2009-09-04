@@ -50,11 +50,12 @@ namespace TLRender
 
 			#define DECLARE_EXT(TYPE, FUNC, HARDWARE, INDEX )	inline TYPE FUNC() {	return (TYPE)GetExtensionFunctionAddress( HARDWARE, INDEX );	}
 
-/*	
+	
  // [19/02/09] DB - Removed form MAC build
+#define APIENTRY
 
 			//	multitexture
-			typedef void (APIENTRY * PFNGLACTIVETEXTUREARBPROC) (GLenum texture);
+			typedef void (*PFNGLACTIVETEXTUREARBPROC) (GLenum texture);
 			typedef void (APIENTRY * PFNGLCLIENTACTIVETEXTUREARBPROC) (GLenum texture);
 			typedef void (APIENTRY * PFNGLMULTITEXCOORD1DARBPROC) (GLenum target, GLdouble s);
 			typedef void (APIENTRY * PFNGLMULTITEXCOORD1DVARBPROC) (GLenum target, const GLdouble *v);
@@ -89,7 +90,6 @@ namespace TLRender
 			typedef void (APIENTRY * PFNGLMULTITEXCOORD4SARBPROC) (GLenum target, GLshort s, GLshort t, GLshort r, GLshort q);
 			typedef void (APIENTRY * PFNGLMULTITEXCOORD4SVARBPROC) (GLenum target, const GLshort *v);
 
-*/
 			//	array buffer arb
 			#define GL_ARRAY_BUFFER_ARB 0x8892
 			#define  GL_STREAM_DRAW_ARB   0x88E0 
@@ -105,17 +105,18 @@ namespace TLRender
 			#define  GL_WRITE_ONLY_ARB   0x88B9 
 			#define  GL_READ_WRITE_ARB   0x88BA 
 			
-/*		
+		
 // [19/02/09] DB - Removed form MAC build
  
-			typedef void (APIENTRY * PFNGLBINDBUFFERARBPROC) (GLenum target, GLuint buffer);
-			typedef void (APIENTRY * PFNGLDELETEBUFFERSARBPROC) (GLsizei n, const GLuint *buffers);
-			typedef void (APIENTRY * PFNGLGENBUFFERSARBPROC) (GLsizei n, GLuint *buffers);
-			typedef void (APIENTRY * PFNGLBUFFERDATAARBPROC) (GLenum target, int size, const GLvoid *data, GLenum usage);
-			typedef void (APIENTRY * PFNGLDRAWRANGEELEMENTSPROC) (GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid *indices);
+ 
+			typedef void (*PFNGLBINDBUFFERARBPROC) (GLenum target, GLuint buffer);
+			typedef void (*PFNGLDELETEBUFFERSARBPROC) (GLsizei n, const GLuint *buffers);
+			typedef void (*PFNGLGENBUFFERSARBPROC) (GLsizei n, GLuint *buffers);
+			typedef void (*PFNGLBUFFERDATAARBPROC) (GLenum target, int size, const GLvoid *data, GLenum usage);
+			typedef void (*PFNGLDRAWRANGEELEMENTSPROC) (GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid *indices);
 
 			//	nv vertex program function
-			typedef GLboolean (APIENTRY * PFNGLAREPROGRAMSRESIDENTNVPROC) (GLsizei n, const GLuint *programs, GLboolean *residences);
+			typedef GLboolean (* PFNGLAREPROGRAMSRESIDENTNVPROC) (GLsizei n, const GLuint *programs, GLboolean *residences);
 			typedef void (APIENTRY * PFNGLBINDPROGRAMNVPROC) (GLenum target, GLuint id);
 			typedef void (APIENTRY * PFNGLDELETEPROGRAMSNVPROC) (GLsizei n, const GLuint *programs);
 			typedef void (APIENTRY * PFNGLEXECUTEPROGRAMNVPROC) (GLenum target, GLuint id, const GLfloat *params);
@@ -257,10 +258,10 @@ namespace TLRender
 			DECLARE_EXT( PFNGLDELETEBUFFERSARBPROC,				glDeleteBuffersARB,				GHardware_VertexBufferObjects,	3	);
 
 			//	draw elements
-			DECLARE_EXT( PFNGLDRAWRANGEELEMENTSPROC,			glDrawRangeElementsARB,			GHardware_DrawRangeElements,	0	);
+			//DECLARE_EXT( PFNGLDRAWRANGEELEMENTSPROC,			glDrawRangeElementsARB,			GHardware_DrawRangeElements,	0	);
 			
 			//	swap interval
-			DECLARE_EXT( PFNWGLSWAPINTERVALEXTPROC,				glSwapIntervalEXT,				GHardware_SwapInterval,	0	);
+			//DECLARE_EXT( PFNWGLSWAPINTERVALEXTPROC,				glSwapIntervalEXT,				GHardware_SwapInterval,	0	);
 
 			//	NV vertex program
 			DECLARE_EXT( PFNGLAREPROGRAMSRESIDENTNVPROC,		glAreProgramsResidentNV,		GHardware_NVVertexProgram,	0	);
@@ -389,7 +390,7 @@ namespace TLRender
 			DECLARE_EXT( PFNGLGETVERTEXATTRIBPOINTERVARB,		glGetVertexAttribPointervARB,	GHardware_ARBVertexProgram,	60	);
 			DECLARE_EXT( PFNGLISPROGRAMARB,						glIsProgramARB,					GHardware_ARBVertexProgram,	61	);
  
- */
+ 
 		};
 
 		namespace TLShader

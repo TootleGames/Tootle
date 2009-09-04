@@ -233,8 +233,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -276,17 +274,18 @@
 								<string>8418F15C0F4DB9AC00B956C9</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FAAC04509CD000000102</string>
-								<string>1C08E77C0454961000C914BD</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>79</integer>
+									<integer>5</integer>
+									<integer>4</integer>
+									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 868}, {186, 611}}</string>
+							<string>{{0, 0}, {186, 611}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -316,12 +315,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>MacCore.h</string>
+								<string>TLCoreMisc.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -329,11 +330,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>MacCore.h</string>
+										<string>TLCoreMisc.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84B60878105010480022E5BC</string>
+										<string>844CE4581051704800178124</string>
 										<key>history</key>
 										<array>
 											<string>8418F3180F4DC18900B956C9</string>
@@ -349,7 +350,13 @@
 											<string>84B60200104FEF140022E5BC</string>
 											<string>84B60872105010480022E5BC</string>
 											<string>84B60873105010480022E5BC</string>
-											<string>84B60874105010480022E5BC</string>
+											<string>844CE29E105164BB00178124</string>
+											<string>844CE29F105164BB00178124</string>
+											<string>844CE2A91051667800178124</string>
+										</array>
+										<key>nextStack</key>
+										<array>
+											<string>844CE2A3105164BB00178124</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -365,7 +372,6 @@
 											<string>84B601D0104FEA760022E5BC</string>
 											<string>84B601D1104FEA760022E5BC</string>
 											<string>84B601D4104FEA760022E5BC</string>
-											<string>84B60875105010480022E5BC</string>
 											<string>84B60876105010480022E5BC</string>
 											<string>84B60877105010480022E5BC</string>
 										</array>
@@ -425,9 +431,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84B60879105010480022E5BC</string>
+				<string>844CE45A1051704800178124</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84B6087A105010480022E5BC</string>
+				<string>844CE45B1051704800178124</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -642,7 +648,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>8418F2EF0F4DC0D400B956C9</string>
-				<string>84B6087B105010480022E5BC</string>
+				<string>844CE45C1051704800178124</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

@@ -6,7 +6,10 @@
 -------------------------------------------------------*/
 #pragma once
 #include "../TConnection.h"
-#import <UIKit/UIKit.h>
+#import <Foundation/NSUrl.h>
+#import <Foundation/NSUrlConnection.h>
+#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSString.h>
 #import <TootleCore/TKeyArray.h>
 
 
@@ -42,10 +45,10 @@ public:
 	FORCEINLINE Bool	operator==(NSURLConnection* pConnection) const	{	return m_pConnection == pConnection;	}
 
 public:
-	NSString*			m_pUrlString;
-	NSURL*				m_pUrl;
-	NSURLRequest*		m_pUrlRequest;
-	NSURLConnection*	m_pConnection;
+	NSString*				m_pUrlString;
+	NSURL*					m_pUrl;
+	NSMutableURLRequest*	m_pUrlRequest;
+	NSURLConnection*		m_pConnection;
 };
 
 

@@ -86,7 +86,7 @@
 		8418F1A10F4DBB9300B956C9 /* MacRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacRender.h; sourceTree = "<group>"; };
 		8418F1A20F4DBB9300B956C9 /* MacRenderTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacRenderTarget.cpp; sourceTree = "<group>"; };
 		8418F1A30F4DBB9300B956C9 /* MacRenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacRenderTarget.h; sourceTree = "<group>"; };
-		8418F1A40F4DBB9300B956C9 /* MacScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacScreen.cpp; sourceTree = "<group>"; };
+		8418F1A40F4DBB9300B956C9 /* MacScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = MacScreen.cpp; sourceTree = "<group>"; };
 		8418F1A50F4DBB9300B956C9 /* MacScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacScreen.h; sourceTree = "<group>"; };
 		8418F1A60F4DBB9300B956C9 /* MacWinControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacWinControl.cpp; sourceTree = "<group>"; };
 		8418F1A70F4DBB9300B956C9 /* MacWinControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacWinControl.h; sourceTree = "<group>"; };

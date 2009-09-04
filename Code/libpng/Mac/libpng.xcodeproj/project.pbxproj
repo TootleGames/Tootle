@@ -20,7 +20,6 @@
 		84B60E72105136B80022E5BC /* pngrtran.c in Sources */ = {isa = PBXBuildFile; fileRef = 84B60C5910512EC20022E5BC /* pngrtran.c */; };
 		84B60E73105136B80022E5BC /* pngrutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 84B60C5A10512EC20022E5BC /* pngrutil.c */; };
 		84B60E74105136B80022E5BC /* pngset.c in Sources */ = {isa = PBXBuildFile; fileRef = 84B60C5B10512EC20022E5BC /* pngset.c */; };
-		84B60E75105136B80022E5BC /* pngtest.c in Sources */ = {isa = PBXBuildFile; fileRef = 84B60C5C10512EC20022E5BC /* pngtest.c */; };
 		84B60E76105136B80022E5BC /* pngtrans.c in Sources */ = {isa = PBXBuildFile; fileRef = 84B60C5D10512EC20022E5BC /* pngtrans.c */; };
 		84B60E77105136B80022E5BC /* pngvcrd.c in Sources */ = {isa = PBXBuildFile; fileRef = 84B60C5E10512EC20022E5BC /* pngvcrd.c */; };
 		84B60E78105136B80022E5BC /* pngwio.c in Sources */ = {isa = PBXBuildFile; fileRef = 84B60C5F10512EC20022E5BC /* pngwio.c */; };
@@ -45,7 +44,6 @@
 		84B60C5910512EC20022E5BC /* pngrtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngrtran.c; path = ../pngrtran.c; sourceTree = SOURCE_ROOT; };
 		84B60C5A10512EC20022E5BC /* pngrutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngrutil.c; path = ../pngrutil.c; sourceTree = SOURCE_ROOT; };
 		84B60C5B10512EC20022E5BC /* pngset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngset.c; path = ../pngset.c; sourceTree = SOURCE_ROOT; };
-		84B60C5C10512EC20022E5BC /* pngtest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngtest.c; path = ../pngtest.c; sourceTree = SOURCE_ROOT; };
 		84B60C5D10512EC20022E5BC /* pngtrans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngtrans.c; path = ../pngtrans.c; sourceTree = SOURCE_ROOT; };
 		84B60C5E10512EC20022E5BC /* pngvcrd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngvcrd.c; path = ../pngvcrd.c; sourceTree = SOURCE_ROOT; };
 		84B60C5F10512EC20022E5BC /* pngwio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwio.c; path = ../pngwio.c; sourceTree = SOURCE_ROOT; };
@@ -99,7 +97,6 @@
 				84B60C5910512EC20022E5BC /* pngrtran.c */,
 				84B60C5A10512EC20022E5BC /* pngrutil.c */,
 				84B60C5B10512EC20022E5BC /* pngset.c */,
-				84B60C5C10512EC20022E5BC /* pngtest.c */,
 				84B60C5D10512EC20022E5BC /* pngtrans.c */,
 				84B60C5E10512EC20022E5BC /* pngvcrd.c */,
 				84B60C5F10512EC20022E5BC /* pngwio.c */,
@@ -185,7 +182,6 @@
 				84B60E72105136B80022E5BC /* pngrtran.c in Sources */,
 				84B60E73105136B80022E5BC /* pngrutil.c in Sources */,
 				84B60E74105136B80022E5BC /* pngset.c in Sources */,
-				84B60E75105136B80022E5BC /* pngtest.c in Sources */,
 				84B60E76105136B80022E5BC /* pngtrans.c in Sources */,
 				84B60E77105136B80022E5BC /* pngvcrd.c in Sources */,
 				84B60E78105136B80022E5BC /* pngwio.c in Sources */,

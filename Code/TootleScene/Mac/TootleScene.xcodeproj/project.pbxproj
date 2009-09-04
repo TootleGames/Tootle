@@ -30,7 +30,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8418EE5C0F4DAAF200B956C9 /* TootleScene. */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = TootleScene.; sourceTree = BUILT_PRODUCTS_DIR; };
+		8418EE5C0F4DAAF200B956C9 /* libTootleScene.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleScene.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8418EF1A0F4DAC8500B956C9 /* TLScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLScene.cpp; path = ../TLScene.cpp; sourceTree = SOURCE_ROOT; };
 		8418EF1B0F4DAC8500B956C9 /* TLScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLScene.h; path = ../TLScene.h; sourceTree = SOURCE_ROOT; };
 		8418EF1C0F4DAC8500B956C9 /* TScenegraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TScenegraph.cpp; path = ../TScenegraph.cpp; sourceTree = SOURCE_ROOT; };
@@ -79,7 +79,7 @@
 		8418ED0E0F4DA70B00B956C9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8418EE5C0F4DAAF200B956C9 /* TootleScene. */,
+				8418EE5C0F4DAAF200B956C9 /* libTootleScene.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -164,7 +164,7 @@
 			);
 			name = TootleScene;
 			productName = TootleScene;
-			productReference = 8418EE5C0F4DAAF200B956C9 /* TootleScene. */;
+			productReference = 8418EE5C0F4DAAF200B956C9 /* libTootleScene.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
