@@ -21,48 +21,25 @@ TLRender::Platform::RenderTarget::RenderTarget(const TRef& Ref) :
 //-------------------------------------------------------
 //
 //-------------------------------------------------------
-Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& MaxSize,const TScreen& Screen)			
+Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& RenderTargetMaxSize,const Type4<s32>& ViewportMaxSize,const TScreen& Screen)			
 {
-	//	do base checks
-	if ( !TRenderTarget::BeginDraw(MaxSize, Screen) )
-		return FALSE;
-	
-	Type4<s32> ViewportSize;
-	if ( !GetViewportSize( ViewportSize, MaxSize ) )
+	//	do base stuff
+	if ( !TRenderTarget::BeginDraw( RenderTargetMaxSize, ViewportMaxSize, Screen) )
 		return FALSE;
 
-	//	setup viewport and sissor outside the viewport
-	glViewport( ViewportSize.Left(), ViewportSize.Top(), ViewportSize.Width(), ViewportSize.Height() );
-	glScissor( ViewportSize.Left(), ViewportSize.Top(), ViewportSize.Width(), ViewportSize.Height() );
-	Opengl::Debug_CheckForError();		
-
-	//	calculate new view sizes etc for this viewport
-	TPtr<TLRender::TCamera>& pCamera = GetCamera();
-	pCamera->SetViewport( ViewportSize, Screen.GetScreenShape() );
-
-	//	do projection vs orthographic setup
-	if ( GetCamera()->IsOrtho() )
-	{
-		if ( !BeginOrthoDraw( pCamera.GetObject<TLRender::TOrthoCamera>(), Screen.GetScreenShape() ) )
-			return FALSE;
-	}
-	else
-	{
-		if ( !BeginProjectDraw( pCamera.GetObject<TLRender::TProjectCamera>(), Screen.GetScreenShape() ) )
-			return FALSE;
-	}
+	//	platform specific stuff...
 
 	//	enable/disable antialiasing
-	if ( GetFlag( Flag_AntiAlias ) )
-		glEnable( GL_MULTISAMPLE_ARB );
-	else
+//	if ( GetFlag( Flag_AntiAlias ) )
+//		glEnable( GL_MULTISAMPLE_ARB );
+//	else
 		glDisable( GL_MULTISAMPLE_ARB );
 
 	//	clear render target (viewport has been set)
 	GLbitfield ClearMask = 0x0;
 	if ( GetFlag( Flag_ClearColour ) )
 	{
-#ifndef FORCE_RENDERNODE_CLEAR
+#if !defined(TLRENDER_DISABLE_CLEAR) && !defined(FORCE_RENDERNODE_CLEAR)
 		//	if the clear colour has an alpha, we dont use the opengl clear as it doesnt support alpha
 		if ( !m_ClearColour.IsTransparent() )
 			ClearMask |= GL_COLOR_BUFFER_BIT;
@@ -81,7 +58,7 @@ Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& MaxSize,const
 
 	//	set the clear colour
 	if ( ( ClearMask & GL_COLOR_BUFFER_BIT ) != 0x0 )
-		glClearColor( m_ClearColour.GetRed(),  m_ClearColour.GetGreen(),  m_ClearColour.GetBlue(),  m_ClearColour.GetAlpha() );
+		glClearColor( m_ClearColour.GetRedf(),  m_ClearColour.GetGreenf(),  m_ClearColour.GetBluef(),  m_ClearColour.GetAlphaf() );
 
 	//	set the clear depth
 	float ClearDepth = GetCamera()->GetFarZ();
@@ -92,7 +69,7 @@ Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& MaxSize,const
 	//	clear
 	glClear( ClearMask );
 
-	Opengl::Debug_CheckForError();		
+	Opengl::Debug_CheckForError();
 
 	return TRUE;	
 }
@@ -102,7 +79,7 @@ Bool TLRender::Platform::RenderTarget::BeginDraw(const Type4<s32>& MaxSize,const
 //-------------------------------------------------------
 //	setup projection mode
 //-------------------------------------------------------
-Bool TLRender::Platform::RenderTarget::BeginProjectDraw(TLRender::TProjectCamera* pCamera,TLRender::TScreenShape ScreenShape)
+Bool TLRender::Platform::RenderTarget::BeginProjectDraw(TLRender::TProjectCamera& Camera,TLRender::TScreenShape ScreenShape)
 {
 	//	get the camera
 	//	init projection matrix
@@ -110,15 +87,15 @@ Bool TLRender::Platform::RenderTarget::BeginProjectDraw(TLRender::TProjectCamera
 	glLoadIdentity();
 
 	//	get view box
-	const TLMaths::TBox2D& ScreenViewBox = pCamera->GetScreenViewBox();
+	const TLMaths::TBox2D& ScreenViewBox = Camera.GetScreenViewBox();
 	
 	//	set projection matrix - 
 	//	gr: note, Bottom and Top are the WRONG way around to invert opengl's upside coordinate system and makes things simpiler in our own code
-	glFrustum( ScreenViewBox.GetLeft(), ScreenViewBox.GetRight(), ScreenViewBox.GetTop(), ScreenViewBox.GetBottom(), pCamera->GetNearZ(), pCamera->GetFarZ() );
+	glFrustum( ScreenViewBox.GetLeft(), ScreenViewBox.GetRight(), ScreenViewBox.GetTop(), ScreenViewBox.GetBottom(), Camera.GetNearZ(), Camera.GetFarZ() );
 
 	//	rotate the view matrix so that UP is properly relative to the new screen
 	//	gr: another "thing what is backwards" - as is the -/+ of the shape rotation....
-	float ProjectionRotationDeg = -pCamera->GetCameraRoll().GetDegrees();
+	float ProjectionRotationDeg = -Camera.GetCameraRoll().GetDegrees();
 
 	if ( ScreenShape == TLRender::ScreenShape_WideRight )
 		ProjectionRotationDeg -= 90.f;
@@ -128,32 +105,19 @@ Bool TLRender::Platform::RenderTarget::BeginProjectDraw(TLRender::TProjectCamera
 	//	roll around z
 	Opengl::SceneRotate( TLMaths::TAngle(ProjectionRotationDeg), float3( 0.f, 0.f, 1.f ) );
 
-	//	update projection matrix
-	//	gr: todo; calc the projection matrix in the camera (like we used to) then we don't need to
-	//		re-calculate it again for the frustum code, nor would we need this get-flaotv code
-	TLMaths::TMatrix& ProjectionMatrix = pCamera->GetProjectionMatrix(TRUE);
-	glGetFloatv( GL_PROJECTION_MATRIX, ProjectionMatrix );
-
 	//	setup camera
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
 	//	setup camera
 	m_CameraTransform.SetInvalid();
-	m_CameraTransform.SetTranslate( pCamera->GetPosition() * -1.f );
+	m_CameraTransform.SetTranslate( Camera.GetPosition() * -1.f );
 
 	//	apply look at matrix (rotate)
-	const TLMaths::TMatrix& LookAtMatrix = pCamera->GetCameraLookAtMatrix();
-	m_CameraTransform.SetMatrix( LookAtMatrix );
+	const TLMaths::TMatrix& LookAtMatrix = Camera.GetCameraLookAtMatrix();
+	m_pCameraMatrix = &LookAtMatrix;
 
-	Opengl::SceneTransform( m_CameraTransform );
-
-	//	update the modelview matrix on the camera
-	TLMaths::TMatrix& ModelViewMatrix = pCamera->GetModelViewMatrix(TRUE);
-	glGetFloatv( GL_MODELVIEW_MATRIX, ModelViewMatrix );
-
-	//	gr: redundant now, but using temporarily for testing
-	BeginSceneReset();
+	Opengl::SceneTransform( m_CameraTransform, m_pCameraMatrix);
 
 	return TRUE;
 }
@@ -164,25 +128,24 @@ Bool TLRender::Platform::RenderTarget::BeginProjectDraw(TLRender::TProjectCamera
 //-------------------------------------------------------
 void TLRender::Platform::RenderTarget::EndProjectDraw()
 {
-	EndScene();
 }
 
 
 //-------------------------------------------------------
 //	setup projection mode
 //-------------------------------------------------------
-Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(TLRender::TOrthoCamera* pCamera,TLRender::TScreenShape ScreenShape)
+Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(TLRender::TOrthoCamera& Camera,TLRender::TScreenShape ScreenShape)
 {
 	//	setup ortho projection
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	//	get ortho dimensions box
-	const TLMaths::TBox2D& OrthoBox = pCamera->GetOrthoBox();
-	
+	//	get ortho coordinates box (same as world extents)
+	const TLMaths::TBox2D& OrthoBox = Camera.GetOrthoCoordinateBox();
+
 	//	rotate the view matrix so that UP is properly relative to the new screen
 	//	gr: another "thing what is backwards" - as is the -/+ of the shape rotation....
-	float ProjectionRotationDeg = -pCamera->GetCameraRoll().GetDegrees();
+	float ProjectionRotationDeg = -Camera.GetCameraRoll().GetDegrees();
 
 	if ( ScreenShape == TLRender::ScreenShape_WideRight )
 		ProjectionRotationDeg -= 90.f;
@@ -193,20 +156,15 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(TLRender::TOrthoCamera* pC
 	Opengl::SceneRotate( TLMaths::TAngle(ProjectionRotationDeg), float3( 0.f, 0.f, 1.f ) );
 
 	//	set the world coordinates
-	glOrtho( OrthoBox.GetLeft(), OrthoBox.GetRight(), OrthoBox.GetBottom(), OrthoBox.GetTop(), GetCamera()->GetNearZ(), GetCamera()->GetFarZ() );
+	glOrtho( OrthoBox.GetLeft(), OrthoBox.GetRight(), OrthoBox.GetBottom(), OrthoBox.GetTop(), Camera.GetNearZ(), Camera.GetFarZ() );
 
 	Opengl::Debug_CheckForError();		
 
-	//	update projection matrix
-	TLMaths::TMatrix& ProjectionMatrix = pCamera->GetProjectionMatrix(TRUE);
-	glGetFloatv( GL_PROJECTION_MATRIX, ProjectionMatrix );
-	
-	Bool UseClearRenderNode = (m_ClearColour.GetAlpha() > 0.f && m_ClearColour.IsTransparent());
+	Bool UseClearRenderNode = (m_ClearColour.IsVisible() && m_ClearColour.IsTransparent());
 	
 #ifdef FORCE_RENDERNODE_CLEAR
 	UseClearRenderNode = TRUE;
 #endif
-	/*
 	//	clear the screen manually if we need to apply alpha
 	if ( UseClearRenderNode )
 	{
@@ -214,14 +172,14 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(TLRender::TOrthoCamera* pC
 		{
 			m_pRenderNodeClear = new TRenderNodeClear("Clear","Clear");
 		}
-		m_pRenderNodeClear->SetSize( OrthoSize, -1.f, m_ClearColour );
+		m_pRenderNodeClear->SetSize( OrthoBox, -1.f/*Camera.GetNearZ()*/ );
+		m_pRenderNodeClear->SetColour( m_ClearColour );
 	}
 	else
 	{
 		//	remove the clear object
 		m_pRenderNodeClear = NULL;
 	}
-	*/
 
 	//	setup camera
 	glMatrixMode(GL_MODELVIEW);
@@ -230,19 +188,12 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(TLRender::TOrthoCamera* pC
 	//	translate
 	m_CameraTransform.SetInvalid();
 
-	m_CameraTransform.SetTranslate( pCamera->GetPosition() );
+	m_CameraTransform.SetTranslate( Camera.GetPosition() );
 
 	//	apply look at matrix (rotate)
-//	const TLMaths::TMatrix& LookAtMatrix = pCamera->GetCameraLookAtMatrix();
+//	const TLMaths::TMatrix& LookAtMatrix = Camera.GetCameraLookAtMatrix();
 //	m_CameraTransform.SetMatrix( LookAtMatrix );
 	Opengl::SceneTransform( m_CameraTransform );
-
-	//	update the modelview matrix on the camera
-	TLMaths::TMatrix& ModelViewMatrix = pCamera->GetModelViewMatrix(TRUE);
-	glGetFloatv( GL_MODELVIEW_MATRIX, ModelViewMatrix );
-
-	//	gr: redundant now, but using temporarily for testing
-	BeginSceneReset();
 
 	return TRUE;
 }
@@ -253,7 +204,6 @@ Bool TLRender::Platform::RenderTarget::BeginOrthoDraw(TLRender::TOrthoCamera* pC
 //-------------------------------------------------------
 void TLRender::Platform::RenderTarget::EndOrthoDraw()
 {
-	EndScene();
 }
 
 
@@ -287,7 +237,7 @@ void TLRender::Platform::RenderTarget::BeginSceneReset(Bool ApplyCamera)
 	//	and reset to camera pos
 	if ( ApplyCamera )
 	{
-		Opengl::SceneTransform( m_CameraTransform );
+		Opengl::SceneTransform( m_CameraTransform, m_pCameraMatrix );
 	}
 }
 

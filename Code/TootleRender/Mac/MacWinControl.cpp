@@ -57,6 +57,10 @@ SyncBool Win32::Shutdown()
 
 	//	free factory
 	g_pFactory = NULL;
+
+	//	empty global array
+	g_ClassCreatedList.Empty(TRUE);
+
 	return Result;
 }
 
@@ -429,6 +433,7 @@ void Win32::GWinControl::Move(int2 Pos)
 //-------------------------------------------------------------------------
 void Win32::GWinControl::Resize(int2 Size)
 {
+	//	gr: client size is not window size
 	//	update our size
 	m_ClientSize = Size;
 

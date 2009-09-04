@@ -247,6 +247,13 @@ SyncBool TLRender::Platform::OpenglExtensions::Shutdown()
 	SetHardwareSupported( GHardware_ARBVertexProgram,		SyncWait );
 	SetHardwareSupported( GHardware_ARBFragmentProgram,		SyncWait );
 
+	//	empty globals
+	for ( u32 i=0;	i<GHardware_Max;	i++ )
+	{
+		TArray<void*>& ExtensionArray = g_ExtensionAddresses[i];
+		ExtensionArray.Empty(TRUE);
+	}
+
 	return SyncTrue;
 }
 

@@ -10,17 +10,13 @@
 
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/TLCore.h>
-#include <TootleCore/TPtr.h>
 #include <TootleCore/TColour.h>
 
-
+//	include opengl stuff
 #include <OpenGL/gl.h>
 #include <OpenGL/glext.h>
 //#include <OpenGL/wglext.h>
 
-
-//	forward declaration
-class TColour;
 
 
 
@@ -42,25 +38,26 @@ namespace TLRender
 			SyncBool				Shutdown();	//	cleanup opengl
 
 			Bool					Debug_CheckForError();		//	check for opengl error - returns TRUE on error
-
-			//Bool					BindFixedVertexes(const TArray<TLAsset::TFixedVertex>* pVertexes);
-			Bool					BindVertexes(const TArray<float3>* pVertexes);
-			Bool					BindColours(const TArray<TColour>* pColours);
-			void					DrawPrimitives(u32 GLPrimType,u32 IndexCount,const u16* pIndexData);	//	main renderer, just needs primitive type, and the data
 			
 			FORCEINLINE u16			GetPrimTypeTriangle()		{	return GL_TRIANGLES;	}
 			FORCEINLINE u16			GetPrimTypeTristrip()		{	return GL_TRIANGLE_STRIP;	}
 			FORCEINLINE u16			GetPrimTypeTrifan()			{	return GL_TRIANGLE_FAN;	}
 			FORCEINLINE u16			GetPrimTypeLineStrip()		{	return GL_LINE_STRIP;	}
+			FORCEINLINE u16			GetPrimTypeLine()			{	return GL_LINES;	}
 			FORCEINLINE u16			GetPrimTypePoint()			{	return GL_POINTS;	}
 
 			FORCEINLINE void		EnableWireframe(Bool Enable)			{	glPolygonMode( GL_FRONT_AND_BACK, Enable ? GL_LINE : GL_FILL );	}
 			FORCEINLINE void		EnableAlpha(Bool Enable)				{	if ( Enable )	glEnable( GL_BLEND );		else	glDisable( GL_BLEND );	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	}
+			FORCEINLINE void		EnableAddBlending(Bool Enable)			{	if ( Enable )	glBlendFunc(GL_SRC_ALPHA, GL_ONE);	else	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	}
 			FORCEINLINE void		EnableDepthRead(Bool Enable)			{	if ( Enable )	glEnable( GL_DEPTH_TEST );	else	glDisable( GL_DEPTH_TEST );	}
 			FORCEINLINE void		EnableDepthWrite(Bool Enable)			{	glDepthMask( Enable ? GL_TRUE : GL_FALSE );	}
+			FORCEINLINE void		EnableScissor(Bool Enable)				{	if ( Enable )	glEnable( GL_SCISSOR_TEST );	else	glDisable( GL_SCISSOR_TEST );	}
+			FORCEINLINE void		SetScissor(u32 x, u32 y, u32 width, u32 height)	{ 	glScissor( x, y, width, height ); }
 			FORCEINLINE void		SetSceneColour(const TColour& Colour)	{	glColor4fv( Colour.GetData() );	}
 			FORCEINLINE void		SetLineWidth(float Width)				{	glLineWidth( Width );	}
 			FORCEINLINE void		SetPointSize(float Size)				{	glPointSize( Size );	}
+			FORCEINLINE void		EnablePointSprites(Bool Enable)			{	if ( Enable )	glEnable( GL_POINT_SPRITE_ARB );		else	glDisable( GL_POINT_SPRITE_ARB );	}
+			FORCEINLINE void		EnablePointSizeUVMapping(Bool Enable)	{	GLint GLEnable = (Enable ? GL_TRUE : GL_FALSE);	glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GLEnable);	}
 		}
 	}
 

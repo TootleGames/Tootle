@@ -20,8 +20,8 @@ TLRender::Platform::Screen::Screen(TRefRef ScreenRef,TScreenShape ScreenShape) :
 	TLRender::TScreen	( ScreenRef, ScreenShape )
 {
 	//	gr: default to double iphone resolution for now
-	m_Size.Width() = (s16)( 320.f * 1.5f );
-	m_Size.Height() = (s16)( 480.f * 1.5f );
+	m_Size.Width() = 320;
+	m_Size.Height() = 480;
 }
 
 
@@ -82,14 +82,12 @@ SyncBool TLRender::Platform::Screen::Init()
 		}
 
 		// The window has changed.  Notify to all subscribers.
-		TPtr<TLMessaging::TMessage> pMessage = new TLMessaging::TMessage("SCREEN");
+		TLMessaging::TMessage Message("ScreenChanged", "ScreenManager");
 
-		if(pMessage.IsValid())
-		{
-			TRef change = "NEW";
-			pMessage->Write(change);
-			PublishMessage(pMessage);
-		}
+		TRef change = "Added";
+		Message.ExportData("State", change);
+		Message.ExportData("ScreenRef", GetRef() );
+		PublishMessage(Message);
 	}
 
 	//	failed to be created
@@ -107,6 +105,9 @@ SyncBool TLRender::Platform::Screen::Init()
 
 	//	make the window visible
 	m_pWindow->Show();
+
+	// Subscirbe to the window
+	SubscribeTo(m_pWindow);
 
 	return TLRender::TScreen::Init();
 }
@@ -220,11 +221,11 @@ void TLRender::Platform::Screen::GetCenteredSize(Type4<s32>& Size) const
 //---------------------------------------------------------------
 //	need to max-out to client-area on the window 
 //---------------------------------------------------------------
-void TLRender::Platform::Screen::GetRenderTargetMaxSize(Type4<s32>& MaxSize)
+void TLRender::Platform::Screen::GetViewportMaxSize(Type4<s32>& MaxSize)
 {
 	if ( !m_pWindow )
 	{
-		TScreen::GetRenderTargetMaxSize( MaxSize );
+		TScreen::GetViewportMaxSize( MaxSize );
 		return;
 	}
 
@@ -241,6 +242,6 @@ void TLRender::Platform::Screen::GetRenderTargetMaxSize(Type4<s32>& MaxSize)
 //------------------------------------------------------------
 Win32::GOpenglWindow* TLRender::Platform::Screen::GetOpenglWindow()
 {
-	return m_pWindow.GetObject<Win32::GOpenglWindow>();
+	return m_pWindow.GetObjectPointer<Win32::GOpenglWindow>();
 }
 

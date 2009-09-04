@@ -30,7 +30,7 @@ namespace Win32
 	{
 		//	style flags
 		const u32	Popup						= WS_POPUP;
-		const u32	OverlappedWindow			= WS_OVERLAPPEDWINDOW;
+		const u32	OverlappedWindow			= WS_OVERLAPPEDWINDOW;// &~WS_SIZEBOX);
 		const u32	Visible						= WS_VISIBLE;
 		const u32	Child						= WS_CHILD;
 		const u32	ClipSiblings				= WS_CLIPSIBLINGS;
@@ -84,7 +84,7 @@ class Win32::GMenuItem
 //------------------------------------------------
 //	base win32 control/window class
 //------------------------------------------------
-class Win32::GWinControl
+class Win32::GWinControl : public TLMessaging::TPublisher
 {
 public:
 	static u32			g_MouseWheelMsg;	//	mouse wheel's message ID
@@ -142,6 +142,8 @@ public:
 	virtual Bool			OnHide()									{	return FALSE;	};	//	window is now hidden
 	virtual Bool			OnMouseMove(int2 MousePos, Bool InClientArea)	{	return FALSE;	};	//	mouse has been moved in window
 	virtual void			OnTimer(WPARAM TimerID)						{	};					//	timer caught
+	virtual void			OnActivate();
+	virtual void			OnDeactivate();
 
 	//	generic win32 stuff
 	virtual Bool				CreateClass();													//	create class
@@ -171,7 +173,6 @@ public:
 	void					SetDimensions(int2 Pos, int2 Size);		//	set new pos and dimensions at once
 	void					SetDimensions(const Type4<s32>& PosSize);		//	set new pos and dimensions at once
 	void					Refresh();
-	void					ResizeClientArea(int2 ClientSize);
 	void					SetStyleFlags(u32 Flags);
 	void					ClearStyleFlags(u32 Flags);
 	inline u32				HasStyleFlags(u32 Flags)				{	return (m_StyleFlags & Flags);	};
