@@ -1,5 +1,5 @@
 /*
- *  PCSocial.h
+ *  MacSocial.h
  *  TootleSocial
  *
  *  Created by Duane Bradbury on 04/06/2009.

@@ -1,0 +1,218 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		84B60922105118030022E5BC /* TLSocial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B6091F105118030022E5BC /* TLSocial.cpp */; };
+		84B60923105118030022E5BC /* TLSocial.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60920105118030022E5BC /* TLSocial.h */; };
+		84B60924105118030022E5BC /* TSocialNetworkingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60921105118030022E5BC /* TSocialNetworkingManager.h */; };
+		84B60929105118190022E5BC /* MacSocial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B60926105118190022E5BC /* MacSocial.cpp */; };
+		84B6092A105118190022E5BC /* MacSocial.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60927105118190022E5BC /* MacSocial.h */; };
+		84B6092B105118190022E5BC /* MacSocialNetworkingPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60928105118190022E5BC /* MacSocialNetworkingPlatform.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		84B60916105117A50022E5BC /* TootleSocial. */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = TootleSocial.; sourceTree = BUILT_PRODUCTS_DIR; };
+		84B6091D105117D90022E5BC /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		84B6091E105117D90022E5BC /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		84B6091F105118030022E5BC /* TLSocial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLSocial.cpp; path = ../TLSocial.cpp; sourceTree = SOURCE_ROOT; };
+		84B60920105118030022E5BC /* TLSocial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLSocial.h; path = ../TLSocial.h; sourceTree = SOURCE_ROOT; };
+		84B60921105118030022E5BC /* TSocialNetworkingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSocialNetworkingManager.h; path = ../TSocialNetworkingManager.h; sourceTree = SOURCE_ROOT; };
+		84B60926105118190022E5BC /* MacSocial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacSocial.cpp; sourceTree = "<group>"; };
+		84B60927105118190022E5BC /* MacSocial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacSocial.h; sourceTree = "<group>"; };
+		84B60928105118190022E5BC /* MacSocialNetworkingPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacSocialNetworkingPlatform.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		84B60914105117A50022E5BC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		84B608FB105116E00022E5BC = {
+			isa = PBXGroup;
+			children = (
+				84B6091C105117C10022E5BC /* Build Configurations */,
+				84B6091B105117B90022E5BC /* Source Files */,
+				84B60917105117A50022E5BC /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		84B60917105117A50022E5BC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84B60916105117A50022E5BC /* TootleSocial. */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84B6091B105117B90022E5BC /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				84B60925105118080022E5BC /* Mac Source Files */,
+				84B6091F105118030022E5BC /* TLSocial.cpp */,
+				84B60920105118030022E5BC /* TLSocial.h */,
+				84B60921105118030022E5BC /* TSocialNetworkingManager.h */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		84B6091C105117C10022E5BC /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				84B6091D105117D90022E5BC /* TootleDebug.xcconfig */,
+				84B6091E105117D90022E5BC /* TootleRelease.xcconfig */,
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+		84B60925105118080022E5BC /* Mac Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				84B60926105118190022E5BC /* MacSocial.cpp */,
+				84B60927105118190022E5BC /* MacSocial.h */,
+				84B60928105118190022E5BC /* MacSocialNetworkingPlatform.h */,
+			);
+			name = "Mac Source Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		84B60912105117A50022E5BC /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84B60923105118030022E5BC /* TLSocial.h in Headers */,
+				84B60924105118030022E5BC /* TSocialNetworkingManager.h in Headers */,
+				84B6092A105118190022E5BC /* MacSocial.h in Headers */,
+				84B6092B105118190022E5BC /* MacSocialNetworkingPlatform.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		84B60915105117A50022E5BC /* TootleSocial */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84B6091A105117A60022E5BC /* Build configuration list for PBXNativeTarget "TootleSocial" */;
+			buildPhases = (
+				84B60912105117A50022E5BC /* Headers */,
+				84B60913105117A50022E5BC /* Sources */,
+				84B60914105117A50022E5BC /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleSocial;
+			productName = TootleSocial;
+			productReference = 84B60916105117A50022E5BC /* TootleSocial. */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		84B608FD105116E00022E5BC /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 84B60900105116E00022E5BC /* Build configuration list for PBXProject "TootleSocial" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 0;
+			mainGroup = 84B608FB105116E00022E5BC;
+			productRefGroup = 84B60917105117A50022E5BC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				84B60915105117A50022E5BC /* TootleSocial */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		84B60913105117A50022E5BC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84B60922105118030022E5BC /* TLSocial.cpp in Sources */,
+				84B60929105118190022E5BC /* MacSocial.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		84B608FE105116E00022E5BC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84B6091D105117D90022E5BC /* TootleDebug.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		84B608FF105116E00022E5BC /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84B6091E105117D90022E5BC /* TootleRelease.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			name = Release;
+		};
+		84B60918105117A60022E5BC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleSocial;
+			};
+			name = Debug;
+		};
+		84B60919105117A60022E5BC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleSocial;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		84B60900105116E00022E5BC /* Build configuration list for PBXProject "TootleSocial" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84B608FE105116E00022E5BC /* Debug */,
+				84B608FF105116E00022E5BC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84B6091A105117A60022E5BC /* Build configuration list for PBXNativeTarget "TootleSocial" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84B60918105117A60022E5BC /* Debug */,
+				84B60919105117A60022E5BC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 84B608FD105116E00022E5BC /* Project object */;
+}

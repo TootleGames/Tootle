@@ -46,6 +46,11 @@ namespace TLSocial
 #include "IPod/IPodSocialNetworkingPlatform_AGONOnline.h"
 #endif
 
+#if defined(TL_TARGET_MAC)	
+#include "Mac/MacSocialnetworkingPlatform.h"
+#endif
+
+
 
 
 

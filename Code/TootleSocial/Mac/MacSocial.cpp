@@ -1,5 +1,5 @@
 /*
- *  PCSocial.cpp
+ *  MacSocial.cpp
  *  TootleSocial
  *
  *  Created by Duane Bradbury on 04/06/2009.
@@ -7,7 +7,7 @@
  *
  */
 
-#include "PCSocial.h"
+#include "MacSocial.h"
 
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/TRef.h>
