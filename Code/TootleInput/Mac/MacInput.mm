@@ -21,20 +21,21 @@ namespace TLInput
 		namespace Mac 
 		{						
 			void	SetCursorPosition(u8 uIndex, int2 uPos);			
+			
+			const u32 MAX_CURSOR_POSITIONS = 1;
+			
+			//TKeyArray<u32, TRef>	g_KeyboardRefMap;
+			TKeyArray<TRef, TRef>	g_KeyboardRefMap;
+			
 			// Internal
 			void			InitialiseKeyboadRefMap();
 			
 			Bool			InitialisePhysicalDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef);
 			Bool			InitialiseVirtualDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef);
-
-			Bool			CreateVirtualKeyboard();
-			Bool			DestroyVirtualKeyboard();
 			
 			Bool			UpdatePhysicalDevice(TLInput::TInputDevice& Device);
-			Bool			UpdateVirtualDevice(TLInput::TInputDevice& Device);
+			Bool			UpdateVirtualDevice(TLInput::TInputDevice& Device) { return FALSE; }
 
-			// TEMP test routine
-			void			VibrateDevice();
 		}
 	}
 }
@@ -45,12 +46,13 @@ using namespace TLInput;
 // Not used on the ipod
 SyncBool Platform::Init()
 {		
-	IPod::InitialiseKeyboadRefMap();
+	Mac::InitialiseKeyboadRefMap();
 	return SyncTrue;	
 }
 
-void Platform::IPod::InitialiseKeyboadRefMap()
+void Platform::Mac::InitialiseKeyboadRefMap()
 {
+	/*
 	g_KeyboardRefMap.Add("ESC", "K_ESC");
 	g_KeyboardRefMap.Add("1", "K_1");
 	g_KeyboardRefMap.Add("2", "K_2");
@@ -108,37 +110,27 @@ void Platform::IPod::InitialiseKeyboadRefMap()
 	g_KeyboardRefMap.Add("*", "K_MULTIPLY");
 	g_KeyboardRefMap.Add(" ", "K_SPACE");
 	g_KeyboardRefMap.Add("CAPS", "K_CAPS");
+	*/
 }
 
 
 
 SyncBool Platform::CreateVirtualDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef)
 {	
-	// Check to see if the virtual device alreay exists
-	TPtr<TInputDevice>& pDevice = g_pInputSystem->GetInstance(InstanceRef, FALSE);
 	
-	if(!pDevice)
-		IPod::CreateDevice(InstanceRef, DeviceTypeRef, TRUE);
-	
-	return SyncTrue;
+	return SyncFalse;
 }
 
 SyncBool Platform::RemoveVirtualDevice(TRefRef InstanceRef)
 {
-	// Remove the virtual device
-	//TODO: Call a removedevice routine that also broadcasts a message to say the device has been removed
-	
-	//TEST - Remove the keyboard object.  Need a nice way to tie this to the destruction of the virtual device object
-	IPod::DestroyVirtualKeyboard();
-	
-	g_pInputSystem->RemoveInstance(InstanceRef);
+	return SyncFalse;
 }
 
 
 
 
 // Create Ipod input device
-Bool Platform::IPod::CreateDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef, Bool bVirtual)
+Bool Platform::Mac::CreateDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef, Bool bVirtual)
 {
 	// Create the generic input object
 	TPtr<TInputDevice>& pGenericDevice = g_pInputSystem->GetInstance(InstanceRef, TRUE, DeviceTypeRef);
@@ -175,7 +167,7 @@ Bool Platform::IPod::CreateDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef, Bo
 }
 
 // Initialise the device
-Bool Platform::IPod::InitialiseDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef, Bool bVirtual)
+Bool Platform::Mac::InitialiseDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef, Bool bVirtual)
 {
 	// Intitialise a virtual device?
 	if(bVirtual)
@@ -186,43 +178,12 @@ Bool Platform::IPod::InitialiseDevice(TPtr<TInputDevice> pDevice, TRefRef Device
 }
 
 
-Bool Platform::IPod::InitialiseVirtualDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef)
-{
-	if(DeviceTypeRef == TLInput::KeyboardRef)
-	{
-		if(CreateVirtualKeyboard())
-		{
-			// Now add a sensor for each keyboard button we can process
-			for(u32 uIndex = 0; uIndex < g_KeyboardRefMap.GetSize(); uIndex++)
-			{				
-				const TLKeyArray::TPair<TRef, TRef>& Pair= g_KeyboardRefMap.GetPairAt(uIndex);
-				TRef KeyRef = Pair.m_Key;
-				
-				TPtr<TInputSensor>& pSensor = pDevice->AttachSensor(KeyRef, Button);
-				
-				if(pSensor.IsValid())
-				{
-					// Add the default button ref 'BNxxx'
-					TRef refLabel = GetDefaultButtonRef(uIndex);
-					pSensor->AddLabel(refLabel);
-
-					// Add the ID ref which for the virtual keyboard is the letter of the key because the letter is what is passed to us via the obj-c callbacks
-					refLabel = Pair.m_Item;
-					pSensor->AddLabel(refLabel);
-					
-				}
-				
-				
-			}
-			
-			return TRUE;
-		}
-	}
-	
+Bool Platform::Mac::InitialiseVirtualDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef)
+{	
 	return FALSE;
 }
 
-Bool Platform::IPod::InitialisePhysicalDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef)
+Bool Platform::Mac::InitialisePhysicalDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef)
 {
 	// Create four 'buttons' and 'axis' sensors to be able to send data from
 	// and for actions to be mapped to
@@ -236,7 +197,7 @@ Bool Platform::IPod::InitialisePhysicalDevice(TPtr<TInputDevice> pDevice, TRefRe
 	TRef refLabel;
 	
 	
-	for(uIndex = 0; uIndex < IPod::MAX_CURSOR_POSITIONS; uIndex++)
+	for(uIndex = 0; uIndex < Mac::MAX_CURSOR_POSITIONS; uIndex++)
 	{
 		// For buttons we need to label them based on what type and the model
 		// so get this information from a function in stead which will lookup the details required
@@ -254,7 +215,7 @@ Bool Platform::IPod::InitialisePhysicalDevice(TPtr<TInputDevice> pDevice, TRefRe
 	}
 
 	u32 uAxisIndex = 0;
-	for(uIndex = 0; uIndex < IPod::MAX_CURSOR_POSITIONS; uIndex++)
+	for(uIndex = 0; uIndex < Mac::MAX_CURSOR_POSITIONS; uIndex++)
 	{		
 		uAxisIndex = uIndex * 3;
 		
@@ -313,19 +274,8 @@ SyncBool Platform::Update()
 SyncBool Platform::Shutdown()	
 {	
 	// Shutdown the mac hardware
-
-	//Clear the touch data array
-	IPod::g_TouchData.Empty(TRUE);
-	IPod::g_AccelerationData.Empty(TRUE);
 	
-	IPod::g_ActiveTouchObjects.Empty(TRUE);
-	IPod::g_TouchObjects.Empty(TRUE);
-	
-	// Cleanup if the keyboard is active
-	IPod::DestroyVirtualKeyboard();
-	
-	IPod::g_KeyboardRefMap.Empty(TRUE);
-	IPod::g_KeyboardKeyArray.Empty(TRUE);
+	Mac::g_KeyboardRefMap.Empty(TRUE);
 	
 	return SyncTrue;
 }
@@ -338,7 +288,7 @@ SyncBool Platform::EnumerateDevices()
 	TPtr<TInputDevice>& pDevice = g_pInputSystem->GetInstance(InstanceRef, FALSE);
 	
 	if(!pDevice)
-		IPod::CreateDevice(InstanceRef, /*TLInput::TrackpadRef*/ TLInput::MouseRef, FALSE);
+		Mac::CreateDevice(InstanceRef, /*TLInput::TrackpadRef*/ TLInput::MouseRef, FALSE);
 	
 	return SyncTrue; 
 }
@@ -355,19 +305,19 @@ Bool Platform::UpdateDevice(TLInput::TInputDevice& Device)
 	if(Device.GetDeviceType() == /*TLInput::TrackpadRef*/ TLInput::MouseRef)
 	{
 		// Physical device
-		return IPod::UpdatePhysicalDevice(Device);
+		return Mac::UpdatePhysicalDevice(Device);
 	}
 	else
 	{
 		// Virtual device
-		return IPod::UpdateVirtualDevice(Device);
+		return Mac::UpdateVirtualDevice(Device);
 	}	
 	
 	return FALSE;
 }
 
 
-Bool Platform::IPod::UpdatePhysicalDevice(TLInput::TInputDevice& Device)
+Bool Platform::Mac::UpdatePhysicalDevice(TLInput::TInputDevice& Device)
 {
 #ifdef ENABLE_INPUTSYSTEM_TRACE
 	TLDebug_Print("INPUT: Begin update");
@@ -396,16 +346,5 @@ void Platform::Mac::SetCursorPosition(u8 uIndex, int2 uPos)
 	//TODO: Set cursor pos
 }
 
-void TLInput::Platform::IPod::ProcessVirtualKey(TRefRef KeyRef)
-{
-	//TODO: Need to be able to handle other virtual device inputs
-	// Add the key to the keyboard array
-	IPod::g_KeyboardKeyArray.Add(KeyRef);
-}
 
-// TEMP test routine
-void TLInput::Platform::TestVibrateDevice()
-{
-	IPod::VibrateDevice();
-}
 

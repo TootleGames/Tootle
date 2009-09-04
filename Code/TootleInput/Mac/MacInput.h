@@ -24,12 +24,12 @@ namespace TLInput
 		SyncBool		RemoveVirtualDevice(TRefRef InstanceRef);
 
 		// TEMP test routine
-		void TestVibrateDevice();
+		void TestVibrateDevice() {}
 				
 		namespace Mac
 		{			
-			Bool CreateDevice();
-			Bool InitialiseDevice(TPtr<TInputDevice> pDevice);
+			Bool CreateDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef, Bool bVirtual);
+			Bool InitialiseDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef, Bool bVirtual);
 		}
 	};
 };
