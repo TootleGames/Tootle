@@ -10,7 +10,6 @@ using namespace TLFileSys;
 
 Platform::LocalFileSys::LocalFileSys(TRefRef FileSysRef,TRefRef FileSysTypeRef) :
 	TFileSys			( FileSysRef, FileSysTypeRef ),
-	m_FileFindHandle	( INVALID_HANDLE_VALUE ),
 	m_IsWritable		( TRUE )
 {
 }
@@ -40,12 +39,6 @@ SyncBool Platform::LocalFileSys::Init()
 //---------------------------------------------------------------
 SyncBool Platform::LocalFileSys::Shutdown()
 {
-	//	close file file handle
-	if ( m_FileFindHandle != INVALID_HANDLE_VALUE )
-	{
-		FindClose( m_FileFindHandle );
-		m_FileFindHandle = INVALID_HANDLE_VALUE;
-	}
 
 	return SyncTrue;
 }
@@ -119,7 +112,7 @@ Bool Platform::LocalFileSys::LoadFileList(const char* pFileSearch)
 				TTempString DebugString("Created new file instance ");
 				pFile->GetFileRef().GetString( DebugString );
 				DebugString.Append(", type: ");
-				pFile->GetFileTypeRef().GetString( DebugString );
+				pFile->GetFileAndTypeRef().GetString( DebugString );
 				TLDebug_Print( DebugString );
 			}		
 			
@@ -196,11 +189,10 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 	FullFilename.Append( pFile->GetFilename() );
 
 	//	open
-	FILE* pFileHandle = NULL;
-	errno_t Result = fopen_s( &pFileHandle, FullFilename.GetData(), "rb" );
+	FILE* pFileHandle = fopen( FullFilename.GetData(), "rb" );
 
 	//	failed to open
-	if ( Result != 0 )
+	if ( pFileHandle == NULL )
 	{
 		UpdateFileInstance( pFile, NULL );
 		pFile->SetIsLoaded( SyncFalse );
@@ -360,7 +352,7 @@ void Platform::LocalFileSys::SetDirectory(const TString& Directory)
 	if ( m_Directory != RootDirectory )
 	{
 		m_Directory = RootDirectory;
-		Empty(TRUE);
+		GetFileList().Empty(TRUE);
 		m_LastFileListUpdate.SetInvalid();
 	}
 }
@@ -451,11 +443,10 @@ SyncBool Platform::LocalFileSys::WriteFile(TPtr<TFile>& pFile)
 	FullFilename.Append( pFile->GetFilename() );
 
 	//	open file for writing
-	FILE* pFileHandle = NULL;
-	errno_t Result = fopen_s( &pFileHandle, FullFilename.GetData(), "wb" );
+	FILE* pFileHandle = fopen( FullFilename.GetData(), "wb" );
 
 	//	failed to open
-	if ( Result != 0 )
+	if ( pFileHandle == NULL )
 	{
 		TLDebug_Break("gr: update file instance null should set loaded to false anyway? follow this code");
 		UpdateFileInstance( pFile, NULL );

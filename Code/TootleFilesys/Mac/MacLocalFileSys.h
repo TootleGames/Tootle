@@ -37,7 +37,7 @@ public:
 
 protected:
 	Bool					IsDirectoryValid();					//	returns FALSE if m_Directory isn't a directory
-	TPtr<TFile>				CreateFileInstance(Bool LostIfEmpty);						//	create a new file from find data
+	TPtr<TFile>				CreateFileInstance(TTempString& filename);						//	create a new file from find data
 	void					UpdateFileInstance(TPtr<TFile> pFile,Bool LostIfEmpty);										//	update file info by doing a win32 search for it and fetching its file details
 
 	Bool					LoadFileList(const char* pFileSearch);	//	load files with a filter, returns number of files found. -1 on error

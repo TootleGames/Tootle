@@ -187,7 +187,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8418EEC00F4DAB5A00B956C9 /* TootleFilesys. */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = TootleFilesys.; sourceTree = BUILT_PRODUCTS_DIR; };
+		8418EEC00F4DAB5A00B956C9 /* libTootleFilesys.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleFilesys.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8418F0480F4DB85200B956C9 /* TFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFile.cpp; path = ../TFile.cpp; sourceTree = SOURCE_ROOT; };
 		8418F0490F4DB85200B956C9 /* TFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFile.h; path = ../TFile.h; sourceTree = SOURCE_ROOT; };
 		8418F04A0F4DB85200B956C9 /* TFileAsset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileAsset.cpp; path = ../TFileAsset.cpp; sourceTree = SOURCE_ROOT; };
@@ -393,7 +393,7 @@
 		8418ED0E0F4DA70B00B956C9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8418EEC00F4DAB5A00B956C9 /* TootleFilesys. */,
+				8418EEC00F4DAB5A00B956C9 /* libTootleFilesys.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -830,7 +830,7 @@
 			);
 			name = TootleFilesys;
 			productName = TootleFilesys;
-			productReference = 8418EEC00F4DAB5A00B956C9 /* TootleFilesys. */;
+			productReference = 8418EEC00F4DAB5A00B956C9 /* libTootleFilesys.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
