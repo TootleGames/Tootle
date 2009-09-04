@@ -101,7 +101,6 @@
 		844CE35110516B6B00178124 /* ftchapters.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60422104FF3FB0022E5BC /* ftchapters.h */; };
 		844CE35210516B6B00178124 /* freetype.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B6041D104FF3FB0022E5BC /* freetype.h */; };
 		844CE35310516B6B00178124 /* ftstroke.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60439104FF3FB0022E5BC /* ftstroke.h */; };
-		844CE35410516B6B00178124 /* MacLocalFileSys.h in Headers */ = {isa = PBXBuildFile; fileRef = 844CE0F61051579600178124 /* MacLocalFileSys.h */; };
 		844CE35510516B6B00178124 /* ftcmru.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60487104FF3FB0022E5BC /* ftcmru.h */; };
 		844CE35610516B6B00178124 /* ftlzw.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B6042E104FF3FB0022E5BC /* ftlzw.h */; };
 		844CE35710516B6B00178124 /* ftsnames.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60438104FF3FB0022E5BC /* ftsnames.h */; };
@@ -184,7 +183,8 @@
 		844CE3A410516B6B00178124 /* tttypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60465104FF3FB0022E5BC /* tttypes.h */; };
 		844CE3A510516B6B00178124 /* autohint.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60441104FF3FB0022E5BC /* autohint.h */; };
 		844CE3A610516B6B00178124 /* TFileCollada.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F04F0F4DB85200B956C9 /* TFileCollada.h */; };
-		844CE3A710516B7D00178124 /* MacLocalFileSys.mm in Sources */ = {isa = PBXBuildFile; fileRef = 844CE0F71051579600178124 /* MacLocalFileSys.mm */; };
+		844CE6381051860100178124 /* MacLocalFileSys.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F17B0F4DBA3D00B956C9 /* MacLocalFileSys.h */; };
+		844CE6391051860700178124 /* MacLocalFileSys.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8418F17C0F4DBA3D00B956C9 /* MacLocalFileSys.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -218,155 +218,6 @@
 		8418F0630F4DB85200B956C9 /* TXml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TXml.h; path = ../TXml.h; sourceTree = SOURCE_ROOT; };
 		8418F17B0F4DBA3D00B956C9 /* MacLocalFileSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacLocalFileSys.h; sourceTree = "<group>"; };
 		8418F17C0F4DBA3D00B956C9 /* MacLocalFileSys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacLocalFileSys.mm; sourceTree = "<group>"; };
-		844CE0591051579500178124 /* libTootleFilesys.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTootleFilesys.a; sourceTree = "<group>"; };
-		844CE05F1051579500178124 /* autofit.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = autofit.o; sourceTree = "<group>"; };
-		844CE0601051579500178124 /* bdf.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = bdf.o; sourceTree = "<group>"; };
-		844CE0611051579500178124 /* cff.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = cff.o; sourceTree = "<group>"; };
-		844CE0621051579500178124 /* ftbase.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftbase.o; sourceTree = "<group>"; };
-		844CE0631051579500178124 /* ftbbox.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftbbox.o; sourceTree = "<group>"; };
-		844CE0641051579500178124 /* ftbitmap.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftbitmap.o; sourceTree = "<group>"; };
-		844CE0651051579500178124 /* ftcbasic.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftcbasic.o; sourceTree = "<group>"; };
-		844CE0661051579500178124 /* ftccache.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftccache.o; sourceTree = "<group>"; };
-		844CE0671051579500178124 /* ftccmap.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftccmap.o; sourceTree = "<group>"; };
-		844CE0681051579500178124 /* ftcglyph.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftcglyph.o; sourceTree = "<group>"; };
-		844CE0691051579500178124 /* ftcimage.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftcimage.o; sourceTree = "<group>"; };
-		844CE06A1051579500178124 /* ftcmanag.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftcmanag.o; sourceTree = "<group>"; };
-		844CE06B1051579500178124 /* ftcmru.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftcmru.o; sourceTree = "<group>"; };
-		844CE06C1051579500178124 /* ftcsbits.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftcsbits.o; sourceTree = "<group>"; };
-		844CE06D1051579500178124 /* ftdebug.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftdebug.o; sourceTree = "<group>"; };
-		844CE06E1051579500178124 /* ftglyph.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftglyph.o; sourceTree = "<group>"; };
-		844CE06F1051579500178124 /* ftgxval.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftgxval.o; sourceTree = "<group>"; };
-		844CE0701051579500178124 /* ftgzip.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftgzip.o; sourceTree = "<group>"; };
-		844CE0711051579500178124 /* ftinit.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftinit.o; sourceTree = "<group>"; };
-		844CE0721051579500178124 /* ftlzw.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftlzw.o; sourceTree = "<group>"; };
-		844CE0731051579500178124 /* ftmm.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftmm.o; sourceTree = "<group>"; };
-		844CE0741051579500178124 /* ftotval.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftotval.o; sourceTree = "<group>"; };
-		844CE0751051579500178124 /* ftpfr.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftpfr.o; sourceTree = "<group>"; };
-		844CE0761051579500178124 /* ftstroke.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftstroke.o; sourceTree = "<group>"; };
-		844CE0771051579500178124 /* ftsynth.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftsynth.o; sourceTree = "<group>"; };
-		844CE0781051579500178124 /* ftsystem.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftsystem.o; sourceTree = "<group>"; };
-		844CE0791051579500178124 /* fttype1.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = fttype1.o; sourceTree = "<group>"; };
-		844CE07A1051579500178124 /* ftwinfnt.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftwinfnt.o; sourceTree = "<group>"; };
-		844CE07B1051579500178124 /* gxvalid.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = gxvalid.o; sourceTree = "<group>"; };
-		844CE07C1051579500178124 /* MacLocalFileSys.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = MacLocalFileSys.o; sourceTree = "<group>"; };
-		844CE07D1051579500178124 /* otvalid.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = otvalid.o; sourceTree = "<group>"; };
-		844CE07E1051579500178124 /* pcf.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = pcf.o; sourceTree = "<group>"; };
-		844CE07F1051579500178124 /* pfr.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = pfr.o; sourceTree = "<group>"; };
-		844CE0801051579500178124 /* psaux.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = psaux.o; sourceTree = "<group>"; };
-		844CE0811051579500178124 /* pshinter.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = pshinter.o; sourceTree = "<group>"; };
-		844CE0821051579500178124 /* psnames.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = psnames.o; sourceTree = "<group>"; };
-		844CE0831051579500178124 /* raster.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = raster.o; sourceTree = "<group>"; };
-		844CE0841051579500178124 /* sfnt.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = sfnt.o; sourceTree = "<group>"; };
-		844CE0851051579500178124 /* smooth.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = smooth.o; sourceTree = "<group>"; };
-		844CE0861051579500178124 /* TFile.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFile.o; sourceTree = "<group>"; };
-		844CE0871051579500178124 /* TFileAsset.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileAsset.o; sourceTree = "<group>"; };
-		844CE0881051579500178124 /* TFileAssetMarkup.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileAssetMarkup.o; sourceTree = "<group>"; };
-		844CE0891051579500178124 /* TFileCollada.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileCollada.o; sourceTree = "<group>"; };
-		844CE08A1051579500178124 /* TFileFnt.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileFnt.o; sourceTree = "<group>"; };
-		844CE08B1051579500178124 /* TFileFreetype.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileFreetype.o; sourceTree = "<group>"; };
-		844CE08C1051579500178124 /* TFileMenu.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileMenu.o; sourceTree = "<group>"; };
-		844CE08D1051579500178124 /* TFileParticle.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileParticle.o; sourceTree = "<group>"; };
-		844CE08E1051579500178124 /* TFilePng.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFilePng.o; sourceTree = "<group>"; };
-		844CE08F1051579500178124 /* TFileScheme.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileScheme.o; sourceTree = "<group>"; };
-		844CE0901051579500178124 /* TFileSimpleVector.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileSimpleVector.o; sourceTree = "<group>"; };
-		844CE0911051579500178124 /* TFileSys.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileSys.o; sourceTree = "<group>"; };
-		844CE0921051579500178124 /* TFileTextDatabase.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileTextDatabase.o; sourceTree = "<group>"; };
-		844CE0931051579500178124 /* TFileTimeline.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileTimeline.o; sourceTree = "<group>"; };
-		844CE0941051579500178124 /* TFileWAV.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileWAV.o; sourceTree = "<group>"; };
-		844CE0951051579500178124 /* TFileXml.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileXml.o; sourceTree = "<group>"; };
-		844CE0961051579500178124 /* TLFile.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TLFile.o; sourceTree = "<group>"; };
-		844CE0971051579500178124 /* TLFileSys.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TLFileSys.o; sourceTree = "<group>"; };
-		844CE0981051579500178124 /* TLocalFileSys.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TLocalFileSys.o; sourceTree = "<group>"; };
-		844CE0991051579500178124 /* TootleFilesys.LinkFileList */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TootleFilesys.LinkFileList; sourceTree = "<group>"; };
-		844CE09A1051579500178124 /* truetype.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = truetype.o; sourceTree = "<group>"; };
-		844CE09B1051579500178124 /* TVirtualFileSys.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TVirtualFileSys.o; sourceTree = "<group>"; };
-		844CE09C1051579500178124 /* TXml.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TXml.o; sourceTree = "<group>"; };
-		844CE09D1051579500178124 /* type1.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = type1.o; sourceTree = "<group>"; };
-		844CE09E1051579500178124 /* type1cid.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = type1cid.o; sourceTree = "<group>"; };
-		844CE09F1051579500178124 /* type42.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = type42.o; sourceTree = "<group>"; };
-		844CE0A01051579500178124 /* winfnt.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = winfnt.o; sourceTree = "<group>"; };
-		844CE0A11051579500178124 /* TootleFilesys.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = TootleFilesys.hmap; sourceTree = "<group>"; };
-		844CE0A61051579500178124 /* autofit.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = autofit.o; sourceTree = "<group>"; };
-		844CE0A71051579500178124 /* bdf.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = bdf.o; sourceTree = "<group>"; };
-		844CE0A81051579500178124 /* cff.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = cff.o; sourceTree = "<group>"; };
-		844CE0A91051579500178124 /* ftbase.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftbase.o; sourceTree = "<group>"; };
-		844CE0AA1051579500178124 /* ftbbox.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftbbox.o; sourceTree = "<group>"; };
-		844CE0AB1051579500178124 /* ftbitmap.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftbitmap.o; sourceTree = "<group>"; };
-		844CE0AC1051579500178124 /* ftcbasic.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftcbasic.o; sourceTree = "<group>"; };
-		844CE0AD1051579500178124 /* ftccache.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftccache.o; sourceTree = "<group>"; };
-		844CE0AE1051579500178124 /* ftccmap.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftccmap.o; sourceTree = "<group>"; };
-		844CE0AF1051579500178124 /* ftcglyph.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftcglyph.o; sourceTree = "<group>"; };
-		844CE0B01051579500178124 /* ftcimage.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftcimage.o; sourceTree = "<group>"; };
-		844CE0B11051579500178124 /* ftcmanag.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftcmanag.o; sourceTree = "<group>"; };
-		844CE0B21051579500178124 /* ftcmru.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftcmru.o; sourceTree = "<group>"; };
-		844CE0B31051579500178124 /* ftcsbits.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftcsbits.o; sourceTree = "<group>"; };
-		844CE0B41051579500178124 /* ftdebug.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftdebug.o; sourceTree = "<group>"; };
-		844CE0B51051579500178124 /* ftglyph.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftglyph.o; sourceTree = "<group>"; };
-		844CE0B61051579500178124 /* ftgxval.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftgxval.o; sourceTree = "<group>"; };
-		844CE0B71051579500178124 /* ftgzip.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftgzip.o; sourceTree = "<group>"; };
-		844CE0B81051579500178124 /* ftinit.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftinit.o; sourceTree = "<group>"; };
-		844CE0B91051579500178124 /* ftlzw.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftlzw.o; sourceTree = "<group>"; };
-		844CE0BA1051579500178124 /* ftmm.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftmm.o; sourceTree = "<group>"; };
-		844CE0BB1051579500178124 /* ftotval.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftotval.o; sourceTree = "<group>"; };
-		844CE0BC1051579500178124 /* ftpfr.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftpfr.o; sourceTree = "<group>"; };
-		844CE0BD1051579500178124 /* ftstroke.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftstroke.o; sourceTree = "<group>"; };
-		844CE0BE1051579500178124 /* ftsynth.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftsynth.o; sourceTree = "<group>"; };
-		844CE0BF1051579500178124 /* ftsystem.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftsystem.o; sourceTree = "<group>"; };
-		844CE0C01051579500178124 /* fttype1.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = fttype1.o; sourceTree = "<group>"; };
-		844CE0C11051579500178124 /* ftwinfnt.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ftwinfnt.o; sourceTree = "<group>"; };
-		844CE0C21051579500178124 /* gxvalid.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = gxvalid.o; sourceTree = "<group>"; };
-		844CE0C31051579500178124 /* otvalid.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = otvalid.o; sourceTree = "<group>"; };
-		844CE0C41051579500178124 /* pcf.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = pcf.o; sourceTree = "<group>"; };
-		844CE0C51051579500178124 /* pfr.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = pfr.o; sourceTree = "<group>"; };
-		844CE0C61051579500178124 /* psaux.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = psaux.o; sourceTree = "<group>"; };
-		844CE0C71051579500178124 /* pshinter.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = pshinter.o; sourceTree = "<group>"; };
-		844CE0C81051579500178124 /* psnames.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = psnames.o; sourceTree = "<group>"; };
-		844CE0C91051579500178124 /* raster.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = raster.o; sourceTree = "<group>"; };
-		844CE0CA1051579500178124 /* sfnt.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = sfnt.o; sourceTree = "<group>"; };
-		844CE0CB1051579500178124 /* smooth.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = smooth.o; sourceTree = "<group>"; };
-		844CE0CC1051579500178124 /* TFile.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFile.o; sourceTree = "<group>"; };
-		844CE0CD1051579500178124 /* TFileAsset.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileAsset.o; sourceTree = "<group>"; };
-		844CE0CE1051579500178124 /* TFileAssetMarkup.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileAssetMarkup.o; sourceTree = "<group>"; };
-		844CE0CF1051579500178124 /* TFileCollada.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileCollada.o; sourceTree = "<group>"; };
-		844CE0D01051579500178124 /* TFileFnt.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileFnt.o; sourceTree = "<group>"; };
-		844CE0D11051579500178124 /* TFileFreetype.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileFreetype.o; sourceTree = "<group>"; };
-		844CE0D21051579500178124 /* TFileMenu.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileMenu.o; sourceTree = "<group>"; };
-		844CE0D31051579500178124 /* TFileParticle.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileParticle.o; sourceTree = "<group>"; };
-		844CE0D41051579500178124 /* TFilePng.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFilePng.o; sourceTree = "<group>"; };
-		844CE0D51051579500178124 /* TFileScheme.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileScheme.o; sourceTree = "<group>"; };
-		844CE0D61051579500178124 /* TFileSimpleVector.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileSimpleVector.o; sourceTree = "<group>"; };
-		844CE0D71051579500178124 /* TFileSys.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileSys.o; sourceTree = "<group>"; };
-		844CE0D81051579500178124 /* TFileTextDatabase.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileTextDatabase.o; sourceTree = "<group>"; };
-		844CE0D91051579500178124 /* TFileTimeline.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileTimeline.o; sourceTree = "<group>"; };
-		844CE0DA1051579500178124 /* TFileWAV.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileWAV.o; sourceTree = "<group>"; };
-		844CE0DB1051579500178124 /* TFileXml.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TFileXml.o; sourceTree = "<group>"; };
-		844CE0DC1051579500178124 /* TLFile.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TLFile.o; sourceTree = "<group>"; };
-		844CE0DD1051579500178124 /* TLocalFileSys.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TLocalFileSys.o; sourceTree = "<group>"; };
-		844CE0DE1051579500178124 /* TootleFilesys.LinkFileList */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TootleFilesys.LinkFileList; sourceTree = "<group>"; };
-		844CE0DF1051579500178124 /* truetype.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = truetype.o; sourceTree = "<group>"; };
-		844CE0E01051579500178124 /* TVirtualFileSys.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TVirtualFileSys.o; sourceTree = "<group>"; };
-		844CE0E11051579500178124 /* TXml.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = TXml.o; sourceTree = "<group>"; };
-		844CE0E21051579500178124 /* type1.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = type1.o; sourceTree = "<group>"; };
-		844CE0E31051579500178124 /* type1cid.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = type1cid.o; sourceTree = "<group>"; };
-		844CE0E41051579500178124 /* type42.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = type42.o; sourceTree = "<group>"; };
-		844CE0E51051579600178124 /* winfnt.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = winfnt.o; sourceTree = "<group>"; };
-		844CE0E61051579600178124 /* TootleFilesys.dep */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TootleFilesys.dep; sourceTree = "<group>"; };
-		844CE0E71051579600178124 /* TootleFilesys.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = TootleFilesys.hmap; sourceTree = "<group>"; };
-		844CE0E91051579600178124 /* categories.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; path = categories.pbxbtree; sourceTree = "<group>"; };
-		844CE0EA1051579600178124 /* cdecls.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; path = cdecls.pbxbtree; sourceTree = "<group>"; };
-		844CE0EB1051579600178124 /* decls.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; path = decls.pbxbtree; sourceTree = "<group>"; };
-		844CE0EC1051579600178124 /* files.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; path = files.pbxbtree; sourceTree = "<group>"; };
-		844CE0ED1051579600178124 /* imports.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; path = imports.pbxbtree; sourceTree = "<group>"; };
-		844CE0EE1051579600178124 /* pbxindex.header */ = {isa = PBXFileReference; lastKnownFileType = file; path = pbxindex.header; sourceTree = "<group>"; };
-		844CE0EF1051579600178124 /* protocols.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; path = protocols.pbxbtree; sourceTree = "<group>"; };
-		844CE0F01051579600178124 /* refs.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; path = refs.pbxbtree; sourceTree = "<group>"; };
-		844CE0F21051579600178124 /* control */ = {isa = PBXFileReference; lastKnownFileType = file; path = control; sourceTree = "<group>"; };
-		844CE0F31051579600178124 /* strings */ = {isa = PBXFileReference; lastKnownFileType = file; path = strings; sourceTree = "<group>"; };
-		844CE0F41051579600178124 /* subclasses.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; path = subclasses.pbxbtree; sourceTree = "<group>"; };
-		844CE0F51051579600178124 /* symbols0.pbxsymbols */ = {isa = PBXFileReference; lastKnownFileType = file; path = symbols0.pbxsymbols; sourceTree = "<group>"; };
-		844CE0F61051579600178124 /* MacLocalFileSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacLocalFileSys.h; sourceTree = "<group>"; };
-		844CE0F71051579600178124 /* MacLocalFileSys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacLocalFileSys.mm; sourceTree = "<group>"; };
-		844CE0F81051579600178124 /* TootleFilesys.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = TootleFilesys.xcodeproj; sourceTree = "<group>"; };
 		844CE0FB1051579600178124 /* TFileObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileObject.h; path = ../TFileObject.h; sourceTree = SOURCE_ROOT; };
 		844CE2EE10516A8E00178124 /* libTootleFileSys.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleFileSys.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84B6031B104FF33B0022E5BC /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -559,7 +410,7 @@
 		8418F0460F4DB83D00B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
-				844CE0561051579500178124 /* Mac */,
+				8418F1780F4DB9F900B956C9 /* Mac */,
 				844CE0FB1051579600178124 /* TFileObject.h */,
 				84B60414104FF3FB0022E5BC /* Freetype */,
 				84B6031D104FF3600022E5BC /* TFileFnt.cpp */,
@@ -576,7 +427,6 @@
 				84B60328104FF3600022E5BC /* TFileTimeline.h */,
 				84B60329104FF3600022E5BC /* TLFile.cpp */,
 				84B6032A104FF3600022E5BC /* TLFile.h */,
-				8418F1780F4DB9F900B956C9 /* Mac */,
 				8418F0480F4DB85200B956C9 /* TFile.cpp */,
 				8418F0490F4DB85200B956C9 /* TFile.h */,
 				8418F04A0F4DB85200B956C9 /* TFileAsset.cpp */,
@@ -625,273 +475,6 @@
 				8418F17C0F4DBA3D00B956C9 /* MacLocalFileSys.mm */,
 			);
 			name = Mac;
-			sourceTree = "<group>";
-		};
-		844CE0561051579500178124 /* Mac */ = {
-			isa = PBXGroup;
-			children = (
-				844CE0571051579500178124 /* build */,
-				844CE0F61051579600178124 /* MacLocalFileSys.h */,
-				844CE0F71051579600178124 /* MacLocalFileSys.mm */,
-				844CE0F81051579600178124 /* TootleFilesys.xcodeproj */,
-			);
-			name = Mac;
-			sourceTree = "<group>";
-		};
-		844CE0571051579500178124 /* build */ = {
-			isa = PBXGroup;
-			children = (
-				844CE0581051579500178124 /* Debug */,
-				844CE05A1051579500178124 /* TootleFilesys.build */,
-			);
-			path = build;
-			sourceTree = "<group>";
-		};
-		844CE0581051579500178124 /* Debug */ = {
-			isa = PBXGroup;
-			children = (
-				844CE0591051579500178124 /* libTootleFilesys.a */,
-			);
-			path = Debug;
-			sourceTree = "<group>";
-		};
-		844CE05A1051579500178124 /* TootleFilesys.build */ = {
-			isa = PBXGroup;
-			children = (
-				844CE05B1051579500178124 /* Debug */,
-				844CE0A21051579500178124 /* Release */,
-				844CE0E81051579600178124 /* TootleFilesys.pbxindex */,
-			);
-			path = TootleFilesys.build;
-			sourceTree = "<group>";
-		};
-		844CE05B1051579500178124 /* Debug */ = {
-			isa = PBXGroup;
-			children = (
-				844CE05C1051579500178124 /* TootleFilesys.build */,
-			);
-			path = Debug;
-			sourceTree = "<group>";
-		};
-		844CE05C1051579500178124 /* TootleFilesys.build */ = {
-			isa = PBXGroup;
-			children = (
-				844CE05D1051579500178124 /* Objects-normal */,
-				844CE0A11051579500178124 /* TootleFilesys.hmap */,
-			);
-			path = TootleFilesys.build;
-			sourceTree = "<group>";
-		};
-		844CE05D1051579500178124 /* Objects-normal */ = {
-			isa = PBXGroup;
-			children = (
-				844CE05E1051579500178124 /* x86_64 */,
-			);
-			path = "Objects-normal";
-			sourceTree = "<group>";
-		};
-		844CE05E1051579500178124 /* x86_64 */ = {
-			isa = PBXGroup;
-			children = (
-				844CE05F1051579500178124 /* autofit.o */,
-				844CE0601051579500178124 /* bdf.o */,
-				844CE0611051579500178124 /* cff.o */,
-				844CE0621051579500178124 /* ftbase.o */,
-				844CE0631051579500178124 /* ftbbox.o */,
-				844CE0641051579500178124 /* ftbitmap.o */,
-				844CE0651051579500178124 /* ftcbasic.o */,
-				844CE0661051579500178124 /* ftccache.o */,
-				844CE0671051579500178124 /* ftccmap.o */,
-				844CE0681051579500178124 /* ftcglyph.o */,
-				844CE0691051579500178124 /* ftcimage.o */,
-				844CE06A1051579500178124 /* ftcmanag.o */,
-				844CE06B1051579500178124 /* ftcmru.o */,
-				844CE06C1051579500178124 /* ftcsbits.o */,
-				844CE06D1051579500178124 /* ftdebug.o */,
-				844CE06E1051579500178124 /* ftglyph.o */,
-				844CE06F1051579500178124 /* ftgxval.o */,
-				844CE0701051579500178124 /* ftgzip.o */,
-				844CE0711051579500178124 /* ftinit.o */,
-				844CE0721051579500178124 /* ftlzw.o */,
-				844CE0731051579500178124 /* ftmm.o */,
-				844CE0741051579500178124 /* ftotval.o */,
-				844CE0751051579500178124 /* ftpfr.o */,
-				844CE0761051579500178124 /* ftstroke.o */,
-				844CE0771051579500178124 /* ftsynth.o */,
-				844CE0781051579500178124 /* ftsystem.o */,
-				844CE0791051579500178124 /* fttype1.o */,
-				844CE07A1051579500178124 /* ftwinfnt.o */,
-				844CE07B1051579500178124 /* gxvalid.o */,
-				844CE07C1051579500178124 /* MacLocalFileSys.o */,
-				844CE07D1051579500178124 /* otvalid.o */,
-				844CE07E1051579500178124 /* pcf.o */,
-				844CE07F1051579500178124 /* pfr.o */,
-				844CE0801051579500178124 /* psaux.o */,
-				844CE0811051579500178124 /* pshinter.o */,
-				844CE0821051579500178124 /* psnames.o */,
-				844CE0831051579500178124 /* raster.o */,
-				844CE0841051579500178124 /* sfnt.o */,
-				844CE0851051579500178124 /* smooth.o */,
-				844CE0861051579500178124 /* TFile.o */,
-				844CE0871051579500178124 /* TFileAsset.o */,
-				844CE0881051579500178124 /* TFileAssetMarkup.o */,
-				844CE0891051579500178124 /* TFileCollada.o */,
-				844CE08A1051579500178124 /* TFileFnt.o */,
-				844CE08B1051579500178124 /* TFileFreetype.o */,
-				844CE08C1051579500178124 /* TFileMenu.o */,
-				844CE08D1051579500178124 /* TFileParticle.o */,
-				844CE08E1051579500178124 /* TFilePng.o */,
-				844CE08F1051579500178124 /* TFileScheme.o */,
-				844CE0901051579500178124 /* TFileSimpleVector.o */,
-				844CE0911051579500178124 /* TFileSys.o */,
-				844CE0921051579500178124 /* TFileTextDatabase.o */,
-				844CE0931051579500178124 /* TFileTimeline.o */,
-				844CE0941051579500178124 /* TFileWAV.o */,
-				844CE0951051579500178124 /* TFileXml.o */,
-				844CE0961051579500178124 /* TLFile.o */,
-				844CE0971051579500178124 /* TLFileSys.o */,
-				844CE0981051579500178124 /* TLocalFileSys.o */,
-				844CE0991051579500178124 /* TootleFilesys.LinkFileList */,
-				844CE09A1051579500178124 /* truetype.o */,
-				844CE09B1051579500178124 /* TVirtualFileSys.o */,
-				844CE09C1051579500178124 /* TXml.o */,
-				844CE09D1051579500178124 /* type1.o */,
-				844CE09E1051579500178124 /* type1cid.o */,
-				844CE09F1051579500178124 /* type42.o */,
-				844CE0A01051579500178124 /* winfnt.o */,
-			);
-			path = x86_64;
-			sourceTree = "<group>";
-		};
-		844CE0A21051579500178124 /* Release */ = {
-			isa = PBXGroup;
-			children = (
-				844CE0A31051579500178124 /* TootleFilesys.build */,
-			);
-			path = Release;
-			sourceTree = "<group>";
-		};
-		844CE0A31051579500178124 /* TootleFilesys.build */ = {
-			isa = PBXGroup;
-			children = (
-				844CE0A41051579500178124 /* Objects-normal */,
-				844CE0E61051579600178124 /* TootleFilesys.dep */,
-				844CE0E71051579600178124 /* TootleFilesys.hmap */,
-			);
-			path = TootleFilesys.build;
-			sourceTree = "<group>";
-		};
-		844CE0A41051579500178124 /* Objects-normal */ = {
-			isa = PBXGroup;
-			children = (
-				844CE0A51051579500178124 /* x86_64 */,
-			);
-			path = "Objects-normal";
-			sourceTree = "<group>";
-		};
-		844CE0A51051579500178124 /* x86_64 */ = {
-			isa = PBXGroup;
-			children = (
-				844CE0A61051579500178124 /* autofit.o */,
-				844CE0A71051579500178124 /* bdf.o */,
-				844CE0A81051579500178124 /* cff.o */,
-				844CE0A91051579500178124 /* ftbase.o */,
-				844CE0AA1051579500178124 /* ftbbox.o */,
-				844CE0AB1051579500178124 /* ftbitmap.o */,
-				844CE0AC1051579500178124 /* ftcbasic.o */,
-				844CE0AD1051579500178124 /* ftccache.o */,
-				844CE0AE1051579500178124 /* ftccmap.o */,
-				844CE0AF1051579500178124 /* ftcglyph.o */,
-				844CE0B01051579500178124 /* ftcimage.o */,
-				844CE0B11051579500178124 /* ftcmanag.o */,
-				844CE0B21051579500178124 /* ftcmru.o */,
-				844CE0B31051579500178124 /* ftcsbits.o */,
-				844CE0B41051579500178124 /* ftdebug.o */,
-				844CE0B51051579500178124 /* ftglyph.o */,
-				844CE0B61051579500178124 /* ftgxval.o */,
-				844CE0B71051579500178124 /* ftgzip.o */,
-				844CE0B81051579500178124 /* ftinit.o */,
-				844CE0B91051579500178124 /* ftlzw.o */,
-				844CE0BA1051579500178124 /* ftmm.o */,
-				844CE0BB1051579500178124 /* ftotval.o */,
-				844CE0BC1051579500178124 /* ftpfr.o */,
-				844CE0BD1051579500178124 /* ftstroke.o */,
-				844CE0BE1051579500178124 /* ftsynth.o */,
-				844CE0BF1051579500178124 /* ftsystem.o */,
-				844CE0C01051579500178124 /* fttype1.o */,
-				844CE0C11051579500178124 /* ftwinfnt.o */,
-				844CE0C21051579500178124 /* gxvalid.o */,
-				844CE0C31051579500178124 /* otvalid.o */,
-				844CE0C41051579500178124 /* pcf.o */,
-				844CE0C51051579500178124 /* pfr.o */,
-				844CE0C61051579500178124 /* psaux.o */,
-				844CE0C71051579500178124 /* pshinter.o */,
-				844CE0C81051579500178124 /* psnames.o */,
-				844CE0C91051579500178124 /* raster.o */,
-				844CE0CA1051579500178124 /* sfnt.o */,
-				844CE0CB1051579500178124 /* smooth.o */,
-				844CE0CC1051579500178124 /* TFile.o */,
-				844CE0CD1051579500178124 /* TFileAsset.o */,
-				844CE0CE1051579500178124 /* TFileAssetMarkup.o */,
-				844CE0CF1051579500178124 /* TFileCollada.o */,
-				844CE0D01051579500178124 /* TFileFnt.o */,
-				844CE0D11051579500178124 /* TFileFreetype.o */,
-				844CE0D21051579500178124 /* TFileMenu.o */,
-				844CE0D31051579500178124 /* TFileParticle.o */,
-				844CE0D41051579500178124 /* TFilePng.o */,
-				844CE0D51051579500178124 /* TFileScheme.o */,
-				844CE0D61051579500178124 /* TFileSimpleVector.o */,
-				844CE0D71051579500178124 /* TFileSys.o */,
-				844CE0D81051579500178124 /* TFileTextDatabase.o */,
-				844CE0D91051579500178124 /* TFileTimeline.o */,
-				844CE0DA1051579500178124 /* TFileWAV.o */,
-				844CE0DB1051579500178124 /* TFileXml.o */,
-				844CE0DC1051579500178124 /* TLFile.o */,
-				844CE0DD1051579500178124 /* TLocalFileSys.o */,
-				844CE0DE1051579500178124 /* TootleFilesys.LinkFileList */,
-				844CE0DF1051579500178124 /* truetype.o */,
-				844CE0E01051579500178124 /* TVirtualFileSys.o */,
-				844CE0E11051579500178124 /* TXml.o */,
-				844CE0E21051579500178124 /* type1.o */,
-				844CE0E31051579500178124 /* type1cid.o */,
-				844CE0E41051579500178124 /* type42.o */,
-				844CE0E51051579600178124 /* winfnt.o */,
-			);
-			path = x86_64;
-			sourceTree = "<group>";
-		};
-		844CE0E81051579600178124 /* TootleFilesys.pbxindex */ = {
-			isa = PBXGroup;
-			children = (
-				844CE0E91051579600178124 /* categories.pbxbtree */,
-				844CE0EA1051579600178124 /* cdecls.pbxbtree */,
-				844CE0EB1051579600178124 /* decls.pbxbtree */,
-				844CE0EC1051579600178124 /* files.pbxbtree */,
-				844CE0ED1051579600178124 /* imports.pbxbtree */,
-				844CE0EE1051579600178124 /* pbxindex.header */,
-				844CE0EF1051579600178124 /* protocols.pbxbtree */,
-				844CE0F01051579600178124 /* refs.pbxbtree */,
-				844CE0F11051579600178124 /* strings.pbxstrings */,
-				844CE0F41051579600178124 /* subclasses.pbxbtree */,
-				844CE0F51051579600178124 /* symbols0.pbxsymbols */,
-			);
-			path = TootleFilesys.pbxindex;
-			sourceTree = "<group>";
-		};
-		844CE0F11051579600178124 /* strings.pbxstrings */ = {
-			isa = PBXGroup;
-			children = (
-				844CE0F21051579600178124 /* control */,
-				844CE0F31051579600178124 /* strings */,
-			);
-			path = strings.pbxstrings;
-			sourceTree = "<group>";
-		};
-		844CE0F91051579600178124 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		84B60414104FF3FB0022E5BC /* Freetype */ = {
@@ -1148,7 +731,6 @@
 				844CE35110516B6B00178124 /* ftchapters.h in Headers */,
 				844CE35210516B6B00178124 /* freetype.h in Headers */,
 				844CE35310516B6B00178124 /* ftstroke.h in Headers */,
-				844CE35410516B6B00178124 /* MacLocalFileSys.h in Headers */,
 				844CE35510516B6B00178124 /* ftcmru.h in Headers */,
 				844CE35610516B6B00178124 /* ftlzw.h in Headers */,
 				844CE35710516B6B00178124 /* ftsnames.h in Headers */,
@@ -1231,6 +813,7 @@
 				844CE3A410516B6B00178124 /* tttypes.h in Headers */,
 				844CE3A510516B6B00178124 /* autohint.h in Headers */,
 				844CE3A610516B6B00178124 /* TFileCollada.h in Headers */,
+				844CE6381051860100178124 /* MacLocalFileSys.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1265,12 +848,6 @@
 			mainGroup = 8418ECF60F4DA63E00B956C9;
 			productRefGroup = 8418ED0E0F4DA70B00B956C9 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 844CE0F91051579600178124 /* Products */;
-					ProjectRef = 844CE0F81051579600178124 /* TootleFilesys.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				844CE2ED10516A8E00178124 /* TootleFileSys */,
@@ -1347,7 +924,7 @@
 				844CE33310516B5100178124 /* TFileXml.cpp in Sources */,
 				844CE33410516B5100178124 /* TFileSys.cpp in Sources */,
 				844CE33510516B5100178124 /* TVirtualFileSys.cpp in Sources */,
-				844CE3A710516B7D00178124 /* MacLocalFileSys.mm in Sources */,
+				844CE6391051860700178124 /* MacLocalFileSys.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

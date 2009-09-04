@@ -194,7 +194,7 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 	//	failed to open
 	if ( pFileHandle == NULL )
 	{
-		UpdateFileInstance( pFile, NULL );
+		//UpdateFileInstance( pFile, NULL );
 		pFile->SetIsLoaded( SyncFalse );
 		return SyncFalse;
 	}
@@ -211,7 +211,7 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 	if ( FileSize == 0 )
 	{
 		fclose( pFileHandle );
-		UpdateFileInstance( pFile, NULL );
+		//UpdateFileInstance( pFile, NULL );
 		pFile->SetIsLoaded( SyncFalse );
 		return SyncFalse;
 	}
@@ -449,7 +449,7 @@ SyncBool Platform::LocalFileSys::WriteFile(TPtr<TFile>& pFile)
 	if ( pFileHandle == NULL )
 	{
 		TLDebug_Break("gr: update file instance null should set loaded to false anyway? follow this code");
-		UpdateFileInstance( pFile, NULL );
+		//UpdateFileInstance( pFile, NULL );
 		pFile->SetIsLoaded( SyncFalse );
 		return SyncFalse;
 	}
@@ -490,7 +490,10 @@ SyncBool Platform::LocalFileSys::WriteFile(TPtr<TFile>& pFile)
 	pFile->GetFlags().Clear( TFile::OutOfDate );
 
 	//	refresh file info
-	UpdateFileInstance( pFile, FALSE );
+	//UpdateFileInstance( pFile, FALSE );
 
 	return SyncTrue;
 }
+
+
+
