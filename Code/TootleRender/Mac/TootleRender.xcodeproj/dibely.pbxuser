@@ -16,7 +16,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
 					300,
-					231,
+					723,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXErrorsWarningsDataSource_TypeID,
@@ -29,7 +29,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					341,
+					833,
 					20,
 					48,
 					43,
@@ -68,12 +68,11 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 273677582;
-			PBXWorkspaceStateSaveDate = 273677582;
+			PBXPerProjectTemplateStateSaveDate = 273759013;
+			PBXWorkspaceStateSaveDate = 273759013;
 		};
 		perUserProjectItems = {
 			8418F3A00F4DC4CC00B956C9 /* PBXTextBookmark */ = 8418F3A00F4DC4CC00B956C9 /* PBXTextBookmark */;
-			8418F3A50F4DC4CC00B956C9 /* PBXTextBookmark */ = 8418F3A50F4DC4CC00B956C9 /* PBXTextBookmark */;
 			8418F3AB0F4DC4CC00B956C9 /* PBXTextBookmark */ = 8418F3AB0F4DC4CC00B956C9 /* PBXTextBookmark */;
 			8418F3AC0F4DC4CC00B956C9 /* PBXTextBookmark */ = 8418F3AC0F4DC4CC00B956C9 /* PBXTextBookmark */;
 			8418F3AD0F4DC4CC00B956C9 /* PBXTextBookmark */ = 8418F3AD0F4DC4CC00B956C9 /* PBXTextBookmark */;
@@ -91,7 +90,6 @@
 			8418F4F50F4DD12B00B956C9 /* PBXTextBookmark */ = 8418F4F50F4DD12B00B956C9 /* PBXTextBookmark */;
 			8418F4F60F4DD12B00B956C9 /* PBXTextBookmark */ = 8418F4F60F4DD12B00B956C9 /* PBXTextBookmark */;
 			8418F4F70F4DD12B00B956C9 /* PBXTextBookmark */ = 8418F4F70F4DD12B00B956C9 /* PBXTextBookmark */;
-			8418F4F80F4DD12B00B956C9 /* PBXTextBookmark */ = 8418F4F80F4DD12B00B956C9 /* PBXTextBookmark */;
 			8418F4F90F4DD12B00B956C9 /* PBXTextBookmark */ = 8418F4F90F4DD12B00B956C9 /* PBXTextBookmark */;
 			8418F4FA0F4DD12B00B956C9 /* PBXTextBookmark */ = 8418F4FA0F4DD12B00B956C9 /* PBXTextBookmark */;
 			8418F4FB0F4DD12B00B956C9 /* PBXTextBookmark */ = 8418F4FB0F4DD12B00B956C9 /* PBXTextBookmark */;
@@ -101,8 +99,13 @@
 			8418F5010F4DD12B00B956C9 /* PBXTextBookmark */ = 8418F5010F4DD12B00B956C9 /* PBXTextBookmark */;
 			8418F5030F4DD12B00B956C9 /* PBXTextBookmark */ = 8418F5030F4DD12B00B956C9 /* PBXTextBookmark */;
 			8418F5050F4DD12B00B956C9 /* PBXTextBookmark */ = 8418F5050F4DD12B00B956C9 /* PBXTextBookmark */;
-			8418F55C0F4DD38C00B956C9 /* PBXTextBookmark */ = 8418F55C0F4DD38C00B956C9 /* PBXTextBookmark */;
-			84B606A2104FFD940022E5BC /* PBXTextBookmark */ = 84B606A2104FFD940022E5BC /* PBXTextBookmark */;
+			844CDDE510513B5600178124 /* PBXTextBookmark */ = 844CDDE510513B5600178124 /* PBXTextBookmark */;
+			844CDDE610513B5600178124 /* PBXTextBookmark */ = 844CDDE610513B5600178124 /* PBXTextBookmark */;
+			844CDDE710513B5600178124 /* PBXTextBookmark */ = 844CDDE710513B5600178124 /* PBXTextBookmark */;
+			844CDDE810513B5600178124 /* PBXTextBookmark */ = 844CDDE810513B5600178124 /* PBXTextBookmark */;
+			844CDDE910513B5600178124 /* PBXTextBookmark */ = 844CDDE910513B5600178124 /* PBXTextBookmark */;
+			844CDDEA10513B5600178124 /* PBXTextBookmark */ = 844CDDEA10513B5600178124 /* PBXTextBookmark */;
+			844CDDEF10513B6700178124 /* PBXTextBookmark */ = 844CDDEF10513B6700178124 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 8418ECFC0F4DA63E00B956C9 /* Source Control */;
 		userBuildSettings = {
@@ -166,9 +169,9 @@
 	};
 	8418F1A40F4DBB9300B956C9 /* MacScreen.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {522, 3538}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 3500}}";
 			sepNavSelRange = "{5071, 56}";
-			sepNavVisRange = "{4995, 586}";
+			sepNavVisRange = "{4659, 976}";
 		};
 	};
 	8418F1A50F4DBB9300B956C9 /* MacScreen.h */ = {
@@ -183,6 +186,13 @@
 			sepNavIntBoundsRect = "{{0, 0}, {624, 15932}}";
 			sepNavSelRange = "{165, 73}";
 			sepNavVisRange = "{0, 424}";
+		};
+	};
+	8418F1A70F4DBB9300B956C9 /* MacWinControl.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1050, 3248}}";
+			sepNavSelRange = "{318, 0}";
+			sepNavVisRange = "{0, 580}";
 		};
 	};
 	8418F1A80F4DBB9300B956C9 /* MacWinWindow.cpp */ = {
@@ -202,9 +212,15 @@
 	8418F37D0F4DC3E000B956C9 /* MacWinControl.h */ = {
 		isa = PBXFileReference;
 		lastKnownFileType = sourcecode.c.h;
+		lineEnding = 2;
 		name = MacWinControl.h;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleRender/Mac/MacWinControl.h;
 		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1050, 3248}}";
+			sepNavSelRange = "{318, 0}";
+			sepNavVisRange = "{0, 580}";
+		};
 	};
 	8418F3860F4DC3EA00B956C9 /* MacWinWindow.h */ = {
 		isa = PBXFileReference;
@@ -213,19 +229,17 @@
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleRender/Mac/MacWinWindow.h;
 		sourceTree = "<absolute>";
 	};
-	8418F3900F4DC40800B956C9 /* MacWinControl.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = MacWinControl.h;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleRender/Mac/MacWinControl.h;
-		sourceTree = "<absolute>";
-	};
 	8418F3990F4DC41900B956C9 /* MacWinWindow.h */ = {
 		isa = PBXFileReference;
 		lastKnownFileType = sourcecode.c.h;
 		name = MacWinWindow.h;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleRender/Mac/MacWinWindow.h;
 		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 854}}";
+			sepNavSelRange = "{209, 37}";
+			sepNavVisRange = "{0, 751}";
+		};
 	};
 	8418F39F0F4DC4BD00B956C9 /* TRenderTarget.h */ = {
 		isa = PBXFileReference;
@@ -242,16 +256,6 @@
 		rLoc = 182;
 		rType = 0;
 		vrLen = 241;
-		vrLoc = 0;
-	};
-	8418F3A50F4DC4CC00B956C9 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8418F3990F4DC41900B956C9 /* MacWinWindow.h */;
-		name = "MacWinWindow.h: 11";
-		rLen = 37;
-		rLoc = 209;
-		rType = 0;
-		vrLen = 316;
 		vrLoc = 0;
 	};
 	8418F3AB0F4DC4CC00B956C9 /* PBXTextBookmark */ = {
@@ -466,16 +470,6 @@
 		vrLen = 316;
 		vrLoc = 0;
 	};
-	8418F4F80F4DD12B00B956C9 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8418F3900F4DC40800B956C9 /* MacWinControl.h */;
-		name = "MacWinControl.h: 13";
-		rLen = 0;
-		rLoc = 318;
-		rType = 0;
-		vrLen = 410;
-		vrLoc = 0;
-	};
 	8418F4F90F4DD12B00B956C9 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 8418F1A00F4DBB9300B956C9 /* MacRender.cpp */;
@@ -566,24 +560,74 @@
 		vrLen = 315;
 		vrLoc = 0;
 	};
-	8418F55C0F4DD38C00B956C9 /* PBXTextBookmark */ = {
+	844CDDE510513B5600178124 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 8418F1A40F4DBB9300B956C9 /* MacScreen.cpp */;
-		name = "MacScreen.cpp: 199";
+		name = "MacScreen.cpp: 200";
 		rLen = 56;
 		rLoc = 5071;
 		rType = 0;
-		vrLen = 496;
-		vrLoc = 4891;
+		vrLen = 976;
+		vrLoc = 4659;
 	};
-	84B606A2104FFD940022E5BC /* PBXTextBookmark */ = {
+	844CDDE610513B5600178124 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8418F3990F4DC41900B956C9 /* MacWinWindow.h */;
+		name = "MacWinWindow.h: 11";
+		rLen = 37;
+		rLoc = 209;
+		rType = 0;
+		vrLen = 751;
+		vrLoc = 0;
+	};
+	844CDDE710513B5600178124 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8418F37D0F4DC3E000B956C9 /* MacWinControl.h */;
+		name = "MacWinControl.h: 13";
+		rLen = 0;
+		rLoc = 318;
+		rType = 0;
+		vrLen = 580;
+		vrLoc = 0;
+	};
+	844CDDE810513B5600178124 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 8418F1A40F4DBB9300B956C9 /* MacScreen.cpp */;
-		name = "MacScreen.cpp: 199";
+		name = "MacScreen.cpp: 200";
 		rLen = 56;
 		rLoc = 5071;
 		rType = 0;
-		vrLen = 555;
-		vrLoc = 4829;
+		vrLen = 976;
+		vrLoc = 4659;
+	};
+	844CDDE910513B5600178124 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8418F37D0F4DC3E000B956C9 /* MacWinControl.h */;
+		name = "MacWinControl.h: 13";
+		rLen = 0;
+		rLoc = 318;
+		rType = 0;
+		vrLen = 580;
+		vrLoc = 0;
+	};
+	844CDDEA10513B5600178124 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8418F3990F4DC41900B956C9 /* MacWinWindow.h */;
+		name = "MacWinWindow.h: 11";
+		rLen = 37;
+		rLoc = 209;
+		rType = 0;
+		vrLen = 751;
+		vrLoc = 0;
+	};
+	844CDDEF10513B6700178124 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8418F1A70F4DBB9300B956C9 /* MacWinControl.h */;
+		name = "MacWinControl.h: 13";
+		rLen = 0;
+		rLoc = 318;
+		rType = 0;
+		vrLen = 580;
+		vrLoc = 0;
 	};
 }

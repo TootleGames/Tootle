@@ -2,10 +2,27 @@
 {
 	84B60B9A10512AF80022E5BC /* Project object */ = {
 		activeBuildConfigurationName = Debug;
+		activeTarget = 84B60CD7105130180022E5BC /* libpng */;
+		addToTargets = (
+		);
 		codeSenseManager = 84B60B9F10512AF80022E5BC /* Code sense */;
 		ignoreBreakpointsInProjectsDict = {
 		};
 		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXErrorsWarningsDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXErrorsWarningsDataSource_LocationID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					300,
+					231,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXErrorsWarningsDataSource_TypeID,
+					PBXErrorsWarningsDataSource_MessageID,
+					PBXErrorsWarningsDataSource_LocationID,
+				);
+			};
 			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
 				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
@@ -13,7 +30,7 @@
 					20,
 					341,
 					20,
-					48.16259765625,
+					48,
 					43,
 					43,
 					20,
@@ -28,8 +45,36 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 273754872;
-			PBXWorkspaceStateSaveDate = 273754872;
+			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					301,
+					60,
+					20,
+					48,
+					43,
+					43,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXTargetDataSource_PrimaryAttribute,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 273757848;
+			PBXWorkspaceStateSaveDate = 273757848;
+		};
+		perUserProjectItems = {
+			84B60E7D105136C00022E5BC /* PBXTextBookmark */ = 84B60E7D105136C00022E5BC /* PBXTextBookmark */;
+			84B60E7E105136C00022E5BC /* PBXTextBookmark */ = 84B60E7E105136C00022E5BC /* PBXTextBookmark */;
+			84B60E7F105136C00022E5BC /* PBXTextBookmark */ = 84B60E7F105136C00022E5BC /* PBXTextBookmark */;
+			84B60E80105136C00022E5BC /* PBXTextBookmark */ = 84B60E80105136C00022E5BC /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84B60B9E10512AF80022E5BC /* Source Control */;
 		userBuildSettings = {
@@ -45,5 +90,66 @@
 	84B60B9F10512AF80022E5BC /* Code sense */ = {
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
+	};
+	84B60C4F10512EC20022E5BC /* png.c */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {519, 12558}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 694}";
+		};
+	};
+	84B60CD7105130180022E5BC /* libpng */ = {
+		activeExec = 0;
+	};
+	84B60CE1105130480022E5BC /* NSObjCRuntime.h */ = {
+		isa = PBXFileReference;
+		name = NSObjCRuntime.h;
+		path = /System/Library/Frameworks/Foundation.framework/Headers/NSObjCRuntime.h;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {684, 2366}}";
+			sepNavSelRange = "{3897, 27}";
+			sepNavVisRange = "{3663, 523}";
+		};
+	};
+	84B60E7D105136C00022E5BC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60CE1105130480022E5BC /* NSObjCRuntime.h */;
+		name = "NSObjCRuntime.h: 124";
+		rLen = 27;
+		rLoc = 3897;
+		rType = 0;
+		vrLen = 523;
+		vrLoc = 3663;
+	};
+	84B60E7E105136C00022E5BC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60C4F10512EC20022E5BC /* png.c */;
+		name = "png.c: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 694;
+		vrLoc = 0;
+	};
+	84B60E7F105136C00022E5BC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60CE1105130480022E5BC /* NSObjCRuntime.h */;
+		name = "NSObjCRuntime.h: 124";
+		rLen = 27;
+		rLoc = 3897;
+		rType = 0;
+		vrLen = 523;
+		vrLoc = 3663;
+	};
+	84B60E80105136C00022E5BC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60C4F10512EC20022E5BC /* png.c */;
+		name = "png.c: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 694;
+		vrLoc = 0;
 	};
 }

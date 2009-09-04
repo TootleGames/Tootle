@@ -59,7 +59,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8418EE6B0F4DAB0400B956C9 /* TootleRender. */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = TootleRender.; sourceTree = BUILT_PRODUCTS_DIR; };
+		8418EE6B0F4DAB0400B956C9 /* libTootleRender.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleRender.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8418EF640F4DAD2200B956C9 /* TCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TCamera.cpp; path = ../TCamera.cpp; sourceTree = SOURCE_ROOT; };
 		8418EF650F4DAD2200B956C9 /* TCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCamera.h; path = ../TCamera.h; sourceTree = SOURCE_ROOT; };
 		8418EF660F4DAD2200B956C9 /* TLRender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLRender.cpp; path = ../TLRender.cpp; sourceTree = SOURCE_ROOT; };
@@ -137,7 +137,7 @@
 		8418ED0E0F4DA70B00B956C9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8418EE6B0F4DAB0400B956C9 /* TootleRender. */,
+				8418EE6B0F4DAB0400B956C9 /* libTootleRender.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -274,7 +274,7 @@
 			);
 			name = TootleRender;
 			productName = TootleRender;
-			productReference = 8418EE6B0F4DAB0400B956C9 /* TootleRender. */;
+			productReference = 8418EE6B0F4DAB0400B956C9 /* libTootleRender.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */

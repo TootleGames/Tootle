@@ -16,7 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		84B60916105117A50022E5BC /* TootleSocial. */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = TootleSocial.; sourceTree = BUILT_PRODUCTS_DIR; };
+		84B60916105117A50022E5BC /* libTootleSocial.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleSocial.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84B6091D105117D90022E5BC /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B6091E105117D90022E5BC /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B6091F105118030022E5BC /* TLSocial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLSocial.cpp; path = ../TLSocial.cpp; sourceTree = SOURCE_ROOT; };
@@ -50,7 +50,7 @@
 		84B60917105117A50022E5BC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				84B60916105117A50022E5BC /* TootleSocial. */,
+				84B60916105117A50022E5BC /* libTootleSocial.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -116,7 +116,7 @@
 			);
 			name = TootleSocial;
 			productName = TootleSocial;
-			productReference = 84B60916105117A50022E5BC /* TootleSocial. */;
+			productReference = 84B60916105117A50022E5BC /* libTootleSocial.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */

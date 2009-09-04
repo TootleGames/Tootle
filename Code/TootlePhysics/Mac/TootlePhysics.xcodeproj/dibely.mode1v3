@@ -271,6 +271,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateExpansionKey</key>
 							<array>
 								<string>8418ECF60F4DA63E00B956C9</string>
+								<string>8418EF990F4DAD4300B956C9</string>
 								<string>8418EF980F4DAD3D00B956C9</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FAAC04509CD000000102</string>
@@ -280,7 +281,6 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>2</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -385,9 +385,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84B6066A104FFCD70022E5BC</string>
+				<string>84B60C1810512D430022E5BC</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84B6066B104FFCD70022E5BC</string>
+				<string>84B60C1910512D430022E5BC</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -521,7 +521,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>8418EFB50F4DB73300B956C9</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootlePhysics/Mac/TootlePhysics.xcodeproj</string>
 	</array>
 	<key>WindowString</key>

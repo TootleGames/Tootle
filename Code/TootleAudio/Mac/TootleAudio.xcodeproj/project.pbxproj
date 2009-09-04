@@ -17,10 +17,12 @@
 		8418F1550F4DB94D00B956C9 /* MacAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F1530F4DB94D00B956C9 /* MacAudio.h */; };
 		84B60304104FF07E0022E5BC /* TAudioNode_Music.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B60302104FF07E0022E5BC /* TAudioNode_Music.cpp */; };
 		84B60305104FF07E0022E5BC /* TAudioNode_Music.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60303104FF07E0022E5BC /* TAudioNode_Music.h */; };
+		84B60D70105133140022E5BC /* MacAudioOpenAL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B60D6E105133140022E5BC /* MacAudioOpenAL.cpp */; };
+		84B60D71105133140022E5BC /* MacAudioOpenAL.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60D6F105133140022E5BC /* MacAudioOpenAL.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8418EEE20F4DAB7E00B956C9 /* TootleAudio. */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = TootleAudio.; sourceTree = BUILT_PRODUCTS_DIR; };
+		8418EEE20F4DAB7E00B956C9 /* libTootleAudio.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleAudio.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8418F10A0F4DB89D00B956C9 /* TAudiograph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAudiograph.cpp; path = ../TAudiograph.cpp; sourceTree = SOURCE_ROOT; };
 		8418F10B0F4DB89D00B956C9 /* TAudiograph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAudiograph.h; path = ../TAudiograph.h; sourceTree = SOURCE_ROOT; };
 		8418F10E0F4DB89D00B956C9 /* TAudioNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAudioNode.cpp; path = ../TAudioNode.cpp; sourceTree = SOURCE_ROOT; };
@@ -28,11 +30,13 @@
 		8418F1100F4DB89D00B956C9 /* TLAudio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLAudio.cpp; path = ../TLAudio.cpp; sourceTree = SOURCE_ROOT; };
 		8418F1110F4DB89D00B956C9 /* TLAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLAudio.h; path = ../TLAudio.h; sourceTree = SOURCE_ROOT; };
 		8418F1520F4DB94D00B956C9 /* MacAudio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacAudio.cpp; sourceTree = "<group>"; };
-		8418F1530F4DB94D00B956C9 /* MacAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacAudio.h; sourceTree = "<group>"; };
+		8418F1530F4DB94D00B956C9 /* MacAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; path = MacAudio.h; sourceTree = "<group>"; };
 		84B60300104FF0700022E5BC /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B60301104FF0700022E5BC /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B60302104FF07E0022E5BC /* TAudioNode_Music.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAudioNode_Music.cpp; path = ../TAudioNode_Music.cpp; sourceTree = SOURCE_ROOT; };
 		84B60303104FF07E0022E5BC /* TAudioNode_Music.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAudioNode_Music.h; path = ../TAudioNode_Music.h; sourceTree = SOURCE_ROOT; };
+		84B60D6E105133140022E5BC /* MacAudioOpenAL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacAudioOpenAL.cpp; sourceTree = "<group>"; };
+		84B60D6F105133140022E5BC /* MacAudioOpenAL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacAudioOpenAL.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,7 +63,7 @@
 		8418ED0E0F4DA70B00B956C9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8418EEE20F4DAB7E00B956C9 /* TootleAudio. */,
+				8418EEE20F4DAB7E00B956C9 /* libTootleAudio.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -99,6 +103,8 @@
 		8418F1510F4DB94000B956C9 /* Mac */ = {
 			isa = PBXGroup;
 			children = (
+				84B60D6E105133140022E5BC /* MacAudioOpenAL.cpp */,
+				84B60D6F105133140022E5BC /* MacAudioOpenAL.h */,
 				8418F1520F4DB94D00B956C9 /* MacAudio.cpp */,
 				8418F1530F4DB94D00B956C9 /* MacAudio.h */,
 			);
@@ -117,6 +123,7 @@
 				8418F1190F4DB89D00B956C9 /* TLAudio.h in Headers */,
 				8418F1550F4DB94D00B956C9 /* MacAudio.h in Headers */,
 				84B60305104FF07E0022E5BC /* TAudioNode_Music.h in Headers */,
+				84B60D71105133140022E5BC /* MacAudioOpenAL.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,7 +144,7 @@
 			);
 			name = TootleAudio;
 			productName = TootleAudio;
-			productReference = 8418EEE20F4DAB7E00B956C9 /* TootleAudio. */;
+			productReference = 8418EEE20F4DAB7E00B956C9 /* libTootleAudio.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -168,6 +175,7 @@
 				8418F1180F4DB89D00B956C9 /* TLAudio.cpp in Sources */,
 				8418F1540F4DB94D00B956C9 /* MacAudio.cpp in Sources */,
 				84B60304104FF07E0022E5BC /* TAudioNode_Music.cpp in Sources */,
+				84B60D70105133140022E5BC /* MacAudioOpenAL.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -2,6 +2,10 @@
 {
 	84B60BA710512B120022E5BC /* Project object */ = {
 		activeBuildConfigurationName = Debug;
+		activeTarget = 84B60C8D10512F450022E5BC /* zlib */;
+		addToTargets = (
+			84B60C8D10512F450022E5BC /* zlib */,
+		);
 		codeSenseManager = 84B60BAC10512B120022E5BC /* Code sense */;
 		ignoreBreakpointsInProjectsDict = {
 		};
@@ -13,7 +17,7 @@
 					20,
 					341,
 					20,
-					48.16259765625,
+					48,
 					43,
 					43,
 					20,
@@ -28,8 +32,30 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 273754898;
-			PBXWorkspaceStateSaveDate = 273754898;
+			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					301,
+					60,
+					20,
+					48.16259765625,
+					43,
+					43,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXTargetDataSource_PrimaryAttribute,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 273755958;
+			PBXWorkspaceStateSaveDate = 273755958;
 		};
 		sourceControlManager = 84B60BAB10512B120022E5BC /* Source Control */;
 		userBuildSettings = {
@@ -45,5 +71,8 @@
 	84B60BAC10512B120022E5BC /* Code sense */ = {
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
+	};
+	84B60C8D10512F450022E5BC /* zlib */ = {
+		activeExec = 0;
 	};
 }

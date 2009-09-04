@@ -1,5 +1,5 @@
-#include "IPodAudio.h"
-#include "IPodAudioOpenAL.h"
+#include "MacAudio.h"
+#include "MacAudioOpenAL.h"
 
 #include <TootleAsset/TAsset.h>
 #include <TootleAsset/TAudio.h>
