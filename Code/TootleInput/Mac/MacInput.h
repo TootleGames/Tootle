@@ -13,12 +13,19 @@ namespace TLInput
 		SyncBool		Update();
 		SyncBool		Shutdown();
 		
-		Bool			UpdateDevice(TPtr<TInputDevice> pDevice);
+		Bool			UpdateDevice(TInputDevice& Device);
 		int2			GetCursorPosition(u8 uIndex);
 		
 		SyncBool		EnumerateDevices();
 		void			RemoveAllDevices();
 		
+		
+		SyncBool		CreateVirtualDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef);
+		SyncBool		RemoveVirtualDevice(TRefRef InstanceRef);
+
+		// TEMP test routine
+		void TestVibrateDevice();
+				
 		namespace Mac
 		{			
 			Bool CreateDevice();
