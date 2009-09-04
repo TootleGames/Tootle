@@ -75,6 +75,7 @@ protected:
 	virtual void				OnNodeClickReleased(TRefRef NodeRef, Bool WasDragged);		//	overloadable behaviour when mouse is released from a node
 
 	virtual void				ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRefRef ActionRef,TLMessaging::TMessage& Message);		//	handle a [widget]message from a editor icon
+	virtual TRef				InstanceIconNode(TPtr<TBinaryTree>& pIconData, TLMessaging::TMessage& InitMessage);
 	void						EnableIconWidgets(Bool Enable);												//	enable/disable node widgets
 	virtual void				CreateEditorIcons(TRefRef ParentRenderNode);								//	create icons for the editor - overload this to render your own icons
 	void						OnCreatedIconRenderNode(TRefRef IconRenderNodeRef,TBinaryTree& IconData);	//	internal UI setup when an icon render node is created

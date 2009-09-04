@@ -6,7 +6,6 @@
 #include <TootleScene/TScenegraph.h>
 #include <TootleRender/TRendergraph.h>
 #include <TootleRender/TRenderTarget.h>
-#include <TootleAsset/TObject.h>
 
 
 
@@ -637,83 +636,12 @@ void TLGame::TSchemeEditor::ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRef
 			InitMessage.ReferenceDataTree( pInitData );
 
 		//	create node either from type or importing scheme under it
-		TRef Type;
-		TRef NewSceneNode;
-		if ( pIconData->ImportData("Type", Type) )
+
+		TRef NewSceneNode = InstanceIconNode(pIconData, InitMessage);
+
+		if(!NewSceneNode.IsValid())
 		{
-			//	set this new node as the "new scene node" that we're dropping into the game.
-			//	the editor's mouse controls take over now
-			TRef BaseNodeRef = "EdNode";
-			//TRef BaseNodeRef = Type;
-			NewSceneNode = m_pGraph->CreateNode( BaseNodeRef, Type, m_SchemeRootNode, &InitMessage );
-	
-			TTempString Debug_String("Created new scene node ");
-			NewSceneNode.GetString( Debug_String );
-			Debug_String.Append(" from node TYPE ");
-			Type.GetString( Debug_String );
-			TLDebug_Print( Debug_String );
-		}
-		else if ( pIconData->ImportData("Scheme", Type) )
-		{
-			TRefRef SchemeRef = Type;
-			TLAsset::TScheme* pScheme = TLAsset::GetAsset<TLAsset::TScheme>(SchemeRef);
-			if ( !pScheme )
-			{
-				TTempString Debug_String("Failed to load scheme ");
-				SchemeRef.GetString( Debug_String );
-				Debug_String.Append(" for new icon-node");
-				TLDebug_Break( Debug_String );
-				return;
-			}
-
-			//	make a base node - still trying to decide if this is the best method
-			TRef BaseNodeRef = "EdNode";
-			//TRef BaseNodeRef = Type;
-			NewSceneNode = m_pGraph->CreateNode( BaseNodeRef, "object", m_SchemeRootNode, &InitMessage );
-
-			TTempString Debug_String("Created new scene node ");
-			NewSceneNode.GetString( Debug_String );
-			Debug_String.Append(" from SCEHEME ");
-			SchemeRef.GetString( Debug_String );
-			TLDebug_Print( Debug_String );
-
-			//	import the scheme under neath it
-			//	we do NOT use strict refs as the scheme is to be re-instanced...
-			//	maybe move this option INTO the scheme XML itself?
-			TLScene::g_pScenegraph->ImportScheme( *pScheme, NewSceneNode, FALSE, &m_CommonNodeData );
-		}
-		else if ( pIconData->ImportData("Object", Type) )
-		{
-			TRefRef SchemeRef = Type;
-			TLAsset::TObject* pObject = TLAsset::GetAsset<TLAsset::TObject>(SchemeRef);
-			if ( !pObject )
-			{
-				TTempString Debug_String("Failed to load object ");
-				SchemeRef.GetString( Debug_String );
-				Debug_String.Append(" for new icon-node");
-				TLDebug_Break( Debug_String );
-				return;
-			}
-
-			//	make a base node - still trying to decide if this is the best method
-			TRef BaseNodeRef = "EdNode";
-			//TRef BaseNodeRef = Type;
-			NewSceneNode = m_pGraph->CreateNode( BaseNodeRef, "object", m_SchemeRootNode, &InitMessage );
-
-			TTempString Debug_String("Created new scene node ");
-			NewSceneNode.GetString( Debug_String );
-			Debug_String.Append(" from OBJECT ");
-			SchemeRef.GetString( Debug_String );
-			TLDebug_Print( Debug_String );
-
-			//	import the scheme under neath it
-			//	we do NOT use strict refs as the scheme is to be re-instanced...
-			//	maybe move this option INTO the scheme XML itself?
-			TLScene::g_pScenegraph->ImportScheme( *pObject, NewSceneNode, FALSE, &m_CommonNodeData );
-		}
-		else 
-		{
-			TLDebug_Break("type or scheme expected");
+			TLDebug_Break("Failed to instance icon node(s)");
 			return;
 		}		
 
@@ -756,6 +684,60 @@ void TLGame::TSchemeEditor::ProcessIconMessage(TPtr<TBinaryTree>& pIconData,TRef
 		}
 	}
 	
+}
+
+
+TRef TLGame::TSchemeEditor::InstanceIconNode(TPtr<TBinaryTree>& pIconData, TLMessaging::TMessage& InitMessage)
+{
+	TRef Type;
+	TRef NewSceneNode;
+	if ( pIconData->ImportData("Type", Type) )
+	{
+		//	set this new node as the "new scene node" that we're dropping into the game.
+		//	the editor's mouse controls take over now
+		TRef BaseNodeRef = "EdNode";
+		//TRef BaseNodeRef = Type;
+		NewSceneNode = m_pGraph->CreateNode( BaseNodeRef, Type, m_SchemeRootNode, &InitMessage );
+
+		TTempString Debug_String("Created new scene node ");
+		NewSceneNode.GetString( Debug_String );
+		Debug_String.Append(" from node TYPE ");
+		Type.GetString( Debug_String );
+		TLDebug_Print( Debug_String );
+
+		return NewSceneNode;
+	}
+	else if ( pIconData->ImportData("Scheme", Type) )
+	{
+		TRefRef SchemeRef = Type;
+		TLAsset::TScheme* pScheme = TLAsset::GetAsset<TLAsset::TScheme>(SchemeRef);
+		if ( !pScheme )
+		{
+			TTempString Debug_String("Failed to load scheme ");
+			SchemeRef.GetString( Debug_String );
+			Debug_String.Append(" for new icon-node");
+			TLDebug_Break( Debug_String );
+			return NewSceneNode;
+		}
+
+		//	make a base node - still trying to decide if this is the best method
+		TRef BaseNodeRef = "EdNode";
+		//TRef BaseNodeRef = Type;
+		NewSceneNode = m_pGraph->CreateNode( BaseNodeRef, "object", m_SchemeRootNode, &InitMessage );
+
+		TTempString Debug_String("Created new scene node ");
+		NewSceneNode.GetString( Debug_String );
+		Debug_String.Append(" from SCEHEME ");
+		SchemeRef.GetString( Debug_String );
+		TLDebug_Print( Debug_String );
+
+		//	import the scheme under neath it
+		//	we do NOT use strict refs as the scheme is to be re-instanced...
+		//	maybe move this option INTO the scheme XML itself?
+		TLScene::g_pScenegraph->ImportScheme( *pScheme, NewSceneNode, FALSE, &m_CommonNodeData );
+	}
+
+	return NewSceneNode;
 }
 
 
