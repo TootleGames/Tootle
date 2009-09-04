@@ -42,7 +42,7 @@ namespace TLRender
 			FORCEINLINE u16			GetPrimTypeTriangle()		{	return GL_TRIANGLES;	}
 			FORCEINLINE u16			GetPrimTypeTristrip()		{	return GL_TRIANGLE_STRIP;	}
 			FORCEINLINE u16			GetPrimTypeTrifan()			{	return GL_TRIANGLE_FAN;	}
-			FORCEINLINE u16			GetPrimTypeLineStrip()		{	return GL_LINE_STRIP;	}
+			FORCEINLINE u16			GetPrimTypeLinestrip()		{	return GL_LINE_STRIP;	}
 			FORCEINLINE u16			GetPrimTypeLine()			{	return GL_LINES;	}
 			FORCEINLINE u16			GetPrimTypePoint()			{	return GL_POINTS;	}
 

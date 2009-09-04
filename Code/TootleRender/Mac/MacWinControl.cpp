@@ -773,6 +773,22 @@ int Win32::GWinControl::HandleNotifyMessage(u32 message, NMHDR* pNotifyData)
  */
 
 
+void Win32::GWinControl::OnActivate()
+{
+	TLMessaging::TMessage Message("OnWindowChanged");
+	Message.ExportData("State", TRef("Activate"));
+	PublishMessage(Message);
+}
+
+
+void Win32::GWinControl::OnDeactivate()
+{
+	TLMessaging::TMessage Message("OnWindowChanged");
+	Message.ExportData("State", TRef("Deactivate"));
+	PublishMessage(Message);
+}
+
+
 
 
 
