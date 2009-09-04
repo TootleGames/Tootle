@@ -12,9 +12,10 @@ namespace TLNetwork
 
 TLNetwork::Platform::TNSUrlConnectionTask::~TNSUrlConnectionTask()
 {
+/*
 	if ( m_pConnection )
 		[m_pConnection release];
-/*
+
 	if ( m_pUrlRequest )
 		[m_pUrlRequest release];
 		
@@ -122,6 +123,7 @@ void TLNetwork::Platform::TConnectionHttp::StartUploadTask(TTask& Task)
 		Task.SetStatusFailed("NoUrl");
 		return;
 	}
+	
 
 	//	create request
 	ConnectionTask.m_pUrlString = [[NSString alloc] initWithUTF8String:UrlString.GetData() ];
@@ -140,11 +142,50 @@ void TLNetwork::Platform::TConnectionHttp::StartUploadTask(TTask& Task)
 
     //	setup the post body
     NSMutableData *postBody = [NSMutableData data];
-    [postBody appendData:[[NSString stringWithFormat:@"\r\n\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
-    [postBody appendData:[[NSString stringWithString:@"Content-Disposition: form-data; name=\"title\"\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
-    [postBody appendData:[[NSString stringWithString:[edTitle stringValue]] dataUsingEncoding:NSUTF8StringEncoding]];
+	
+	//	add form data for each bit of upload data
+	TPtr<TBinaryTree>& pUploadData = ConnectionTask.GetData().GetChild("Upload");
+	if ( !pUploadData )
+	{
+		Task.SetStatusFailed("NoData");
+		return;
+	}
+	
+	TPtrArray<TBinaryTree>& UploadDatas = pUploadData->GetChildren();
+	for ( u32 i=0;	i<UploadDatas.GetSize();	i++ )
+	{
+		TBinaryTree& UploadData = *UploadDatas[i];
+		
+		//	the data's ref represents the field name
+		TTempString DataRefString;
+		UploadData.GetDataRef().GetUrlString( DataRefString );
+		
+		//	append the data type if we have it. Parenthesis are safe to use as theyre not in the ref alphabet, and are safe url-enc characters
+		if ( UploadData.GetDataTypeHint().IsValid() )
+		{
+			//	this produces "MYINT(U16)=00FF" instead of just "MYINT=00FF"
+			DataRefString.Append('(');
+			UploadData.GetDataTypeHint().GetUrlString( DataRefString );
+			DataRefString.Append(')');
+		}
+		
+		//	convert the raw data to a hex string(UTF8 compatible)
+		//	we're doing this to match the IPod code which I can't see a way to send raw data
+		//	without converting it to a string
+		TString DataString;
+		UploadData.GetData().GetDataHexString( DataString );
+		
+		TString NameString = "Content-Disposition: form-data; name=\"";
+		NameString.Append( DataRefString );
+		NameString.Append( "\"\r\n\r\n" );
+		
+		[postBody appendData:[[NSString stringWithFormat:@"\r\n\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
+		
+		[postBody appendData:[[NSString stringWithUTF8String:NameString.GetData()] dataUsingEncoding:NSUTF8StringEncoding]];
+		[postBody appendData:[[NSString stringWithUTF8String:DataString.GetData()] dataUsingEncoding:NSUTF8StringEncoding]];
+	}
  
- 
+	/*
     [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
     [postBody appendData:[[NSString stringWithString:@"Content-Disposition: form-data; name=\"description\"\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
     [postBody appendData:[[NSString stringWithString:@"some description"] dataUsingEncoding:NSUTF8StringEncoding]];
@@ -157,7 +198,7 @@ void TLNetwork::Platform::TConnectionHttp::StartUploadTask(TTask& Task)
  
     [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
     [postBody appendData:[[NSString stringWithString:@"Content-Disposition: form-data; name=\"password\"\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
-    [postBody appendData:[[NSString stringWithString:@"some password"]] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postBody appendData:[[NSString stringWithString:@"some password"] dataUsingEncoding:NSUTF8StringEncoding]];
  
  /*
     [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
@@ -168,7 +209,7 @@ void TLNetwork::Platform::TConnectionHttp::StartUploadTask(TTask& Task)
     [postBody appendData:[NSData dataWithContentsOfFile:[edFileName stringValue]]];
 */ 
     [postBody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
-    [postRequest setHTTPBody:postBody];
+    [ConnectionTask.m_pUrlRequest setHTTPBody:postBody];
  
  
 	//	create connection - 
