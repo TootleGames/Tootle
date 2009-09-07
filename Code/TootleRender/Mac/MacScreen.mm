@@ -204,9 +204,8 @@ void TLRender::Platform::Screen::GetDesktopSize(Type4<s32>& DesktopSize) const
 
 	NSRect screenRect = [[NSScreen mainScreen] frame];
 
-	TLDebug_Break("Needs updating to query the OS for the width and height");
-	DesktopSize.Width() = [screenRect ];
-	DesktopSize.Height() = [screenRect ];
+	DesktopSize.Width() = screenRect.size.width;
+	DesktopSize.Height() = screenRect.size.height;
 }
 
 

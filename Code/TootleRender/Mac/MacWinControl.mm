@@ -354,7 +354,7 @@ void Win32::GWinControl::Destroy()
 
 void Win32::GWinControl::Show(Bool Show)
 {
-	TLDebug_Break("not implemented");
+	//TLDebug_Break("not implemented");
 
 /*	
 	if ( m_Hwnd )
