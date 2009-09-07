@@ -6,23 +6,25 @@
 
 #include "MacMemory.h"
 
-//#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+
+
 
 namespace TLMemory
 {
 	namespace Platform
 	{
+		NSAutoreleasePool*			g_pMemoryAutoReleasePool = NULL;
 	}
 }
 
-using namespace TLMemory;
-
-void Platform::Initialise()
+void TLMemory::Platform::Initialise()
 {
+	g_pMemoryAutoReleasePool = [[NSAutoreleasePool alloc] init];
 }
 
-void Platform::Shutdown()
+void TLMemory::Platform::Shutdown()
 {
+	[TLMemory::Platform::g_pMemoryAutoReleasePool release];	
 }
-
 
