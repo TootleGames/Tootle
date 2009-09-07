@@ -44,7 +44,7 @@ SyncBool TApplication::Initialise()
 		#if defined(TL_TARGET_PC)
 			TTempString AssetDir = "Assets\\";
 		#elif defined(TL_TARGET_MAC)
-			TTempString AssetDir = "Assets\\";
+			TTempString AssetDir = "Documents/Tootle/Game/Assets/";
 		#elif defined(TL_TARGET_IPOD)
 			TTempString AppName = GetName();
 			TTempString AssetDir = AppName;	
@@ -82,7 +82,7 @@ SyncBool TApplication::Initialise()
 		#if defined(TL_TARGET_PC)
 			TTempString AssetDir = "Assets\\User\\";
 		#elif defined(TL_TARGET_MAC)
-			TTempString AssetDir = "Assets\\User\\";
+			TTempString AssetDir = "Documents/Tootle/Game/Assets/User/";
 		#elif defined(TL_TARGET_IPOD)
 			TTempString AssetDir = "Documents/";	//	gr: I'm pretty sure the documents dir is above the app dir
 		#endif

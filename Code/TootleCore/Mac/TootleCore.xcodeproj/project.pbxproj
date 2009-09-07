@@ -143,7 +143,7 @@
 		8418F0C30F4DB87A00B956C9 /* TSyncQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSyncQueue.cpp; path = ../TSyncQueue.cpp; sourceTree = SOURCE_ROOT; };
 		8418F0C40F4DB87A00B956C9 /* TSyncQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSyncQueue.h; path = ../TSyncQueue.h; sourceTree = SOURCE_ROOT; };
 		8418F15D0F4DB9B900B956C9 /* MacApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacApp.h; sourceTree = "<group>"; };
-		8418F15E0F4DB9B900B956C9 /* MacApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacApp.mm; sourceTree = "<group>"; };
+		8418F15E0F4DB9B900B956C9 /* MacApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 2; path = MacApp.mm; sourceTree = "<group>"; };
 		8418F15F0F4DB9B900B956C9 /* MacCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; path = MacCore.h; sourceTree = "<group>"; };
 		8418F1600F4DB9B900B956C9 /* MacCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacCore.mm; sourceTree = "<group>"; };
 		8418F1610F4DB9B900B956C9 /* MacMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacMemory.h; sourceTree = "<group>"; };
@@ -428,7 +428,6 @@
 					_DEBUG,
 					TL_TARGET_MAC,
 				);
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = ../..;
 				ONLY_ACTIVE_ARCH = YES;
 			};
@@ -441,7 +440,6 @@
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = TL_TARGET_MAC;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = ../..;
 				ONLY_ACTIVE_ARCH = YES;
 			};
@@ -450,7 +448,6 @@
 		8418EED20F4DAB6B00B956C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
