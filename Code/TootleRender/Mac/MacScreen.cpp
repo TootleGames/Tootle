@@ -4,6 +4,9 @@
 #include <TootleCore/TPtr.h>
 #include "MacOpenglExt.h"
 
+#import <Foundation/Foundation.h>
+#import <Appkit/Appkit.h>
+
 
 namespace TLRender
 {
@@ -198,10 +201,12 @@ void TLRender::Platform::Screen::GetDesktopSize(Type4<s32>& DesktopSize) const
 {
 	DesktopSize.x = 0;
 	DesktopSize.y = 0;
-	
+
+	NSRect screenRect = [[NSScreen mainScreen] frame];
+
 	TLDebug_Break("Needs updating to query the OS for the width and height");
-	DesktopSize.Width() = 0;
-	DesktopSize.Height() = 0;
+	DesktopSize.Width() = [screenRect ];
+	DesktopSize.Height() = [screenRect ];
 }
 
 

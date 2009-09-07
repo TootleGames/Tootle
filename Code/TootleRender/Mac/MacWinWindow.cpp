@@ -106,9 +106,9 @@ Bool Win32::GOpenglWindow::InitDisplay()
 {
 	using namespace TLRender::Platform;
 
-	TLDebug_Break("not implemented");
+	//TLDebug_Break("not implemented");
 
-	return FALSE;
+	return TRUE;
 /*	
 	//	make the pixel format descriptor
 	PIXELFORMATDESCRIPTOR pfd=				// pfd Tells Windows How We Want Things To Be
@@ -194,7 +194,7 @@ Bool Win32::GOpenglWindow::InitDisplay()
 
 void Win32::GOpenglWindow::ShutdownDisplay()
 {
-	TLDebug_Break("not implemented");
+	//TLDebug_Break("not implemented");
 
 	/*
 	if ( m_HDC )											// Does The Window Have A Device Context?

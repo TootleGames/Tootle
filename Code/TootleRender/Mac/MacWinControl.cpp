@@ -158,7 +158,7 @@ void Win32::GWinControl::ScreenToPos(int2& ScreenPos)
 
 Bool Win32::GWinControl::Init(TPtr<GWinControl>& pOwner, u32 Flags)
 {
-	return FALSE;
+	return TRUE;
 	
 /*
  // REMOVED FROM MAC BUILD
@@ -248,8 +248,8 @@ void Win32::GWinControl::OnWindowCreate(TPtr<GWinControl>& pControl,HWND Hwnd)
 
 Bool Win32::GWinControl::CreateClass()
 {
-	TLDebug_Break("not implemented");
-	return FALSE;
+	//TLDebug_Break("not implemented");
+	return TRUE;
 /*
 	//	if class already created we dont need to create it
 	if ( g_ClassCreatedList.Find( ClassName() ) )
@@ -283,8 +283,8 @@ Bool Win32::GWinControl::CreateClass()
 
 /*static*/Bool Win32::GWinControl::DestroyClass(const char* pClassName)
 {
-	TLDebug_Break("not implemented");
-	return FALSE;
+	//TLDebug_Break("not implemented");
+	return TRUE;
 
 	/*
 	if ( !UnregisterClass( pClassName, TLCore::Platform::g_HInstance ) )
@@ -322,7 +322,7 @@ void Win32::GWinControl::Destroy()
 {
 	OnDestroy();
 	
-	TLDebug_Break("not fully implemented");
+	//TLDebug_Break("not implemented");
 
 /*
 	//	destroy the control if we still have a handle
