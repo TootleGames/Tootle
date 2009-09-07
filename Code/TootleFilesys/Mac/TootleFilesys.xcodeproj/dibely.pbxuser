@@ -132,14 +132,15 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 273778095;
-			PBXWorkspaceStateSaveDate = 273778095;
+			PBXPerProjectTemplateStateSaveDate = 274027172;
+			PBXWorkspaceStateSaveDate = 274027172;
 		};
 		perUserProjectItems = {
 			8418F4010F4DC5F100B956C9 /* PBXTextBookmark */ = 8418F4010F4DC5F100B956C9 /* PBXTextBookmark */;
 			8418F4050F4DC5F100B956C9 /* PBXTextBookmark */ = 8418F4050F4DC5F100B956C9 /* PBXTextBookmark */;
 			8418F73B0F4DD8CE00B956C9 /* PBXTextBookmark */ = 8418F73B0F4DD8CE00B956C9 /* PBXTextBookmark */;
 			8418F73D0F4DD8CE00B956C9 /* PBXTextBookmark */ = 8418F73D0F4DD8CE00B956C9 /* PBXTextBookmark */;
+			8440DB1A105552AD0045E57E /* PBXTextBookmark */ = 8440DB1A105552AD0045E57E /* PBXTextBookmark */;
 			844CDEB7105148BB00178124 /* PBXTextBookmark */ = 844CDEB7105148BB00178124 /* PBXTextBookmark */;
 			844CDEB8105148BB00178124 /* PBXTextBookmark */ = 844CDEB8105148BB00178124 /* PBXTextBookmark */;
 			844CDEB9105148BB00178124 /* PBXTextBookmark */ = 844CDEB9105148BB00178124 /* PBXTextBookmark */;
@@ -169,11 +170,7 @@
 			844CE63B1051862400178124 /* PBXTextBookmark */ = 844CE63B1051862400178124 /* PBXTextBookmark */;
 			844CE63C1051862400178124 /* PBXTextBookmark */ = 844CE63C1051862400178124 /* PBXTextBookmark */;
 			844CE63D1051862400178124 /* PBXTextBookmark */ = 844CE63D1051862400178124 /* PBXTextBookmark */;
-			844CE63E1051862400178124 /* PBXBookmark */ = 844CE63E1051862400178124 /* PBXBookmark */;
 			844CE63F1051862400178124 /* PBXTextBookmark */ = 844CE63F1051862400178124 /* PBXTextBookmark */;
-			844CE6401051862400178124 /* PBXTextBookmark */ = 844CE6401051862400178124 /* PBXTextBookmark */;
-			844CE6411051862400178124 /* PBXTextBookmark */ = 844CE6411051862400178124 /* PBXTextBookmark */;
-			844CE6421051862400178124 /* PBXTextBookmark */ = 844CE6421051862400178124 /* PBXTextBookmark */;
 			844CE6431051862400178124 /* PBXTextBookmark */ = 844CE6431051862400178124 /* PBXTextBookmark */;
 			84B60543104FF58D0022E5BC /* PBXTextBookmark */ = 84B60543104FF58D0022E5BC /* PBXTextBookmark */;
 			84B60544104FF58D0022E5BC /* PBXTextBookmark */ = 84B60544104FF58D0022E5BC /* PBXTextBookmark */;
@@ -307,11 +304,6 @@
 		name = TLFileSys.cpp;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleFilesys/Mac/../TLFileSys.cpp;
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1098, 9912}}";
-			sepNavSelRange = "{19015, 18}";
-			sepNavVisRange = "{20004, 269}";
-		};
 	};
 	8418F73B0F4DD8CE00B956C9 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -332,6 +324,16 @@
 		rType = 0;
 		vrLen = 569;
 		vrLoc = 2857;
+	};
+	8440DB1A105552AD0045E57E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8418F0560F4DB85200B956C9 /* TFileSimpleVector.cpp */;
+		name = "TFileSimpleVector.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 788;
+		vrLoc = 0;
 	};
 	844CDEB7105148BB00178124 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -586,11 +588,6 @@
 		name = TFile.cpp;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleFilesys/Mac/../TFile.cpp;
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 4298}}";
-			sepNavSelRange = "{8147, 11}";
-			sepNavVisRange = "{7602, 657}";
-		};
 	};
 	844CE5EE1051815D00178124 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -652,10 +649,6 @@
 		vrLen = 651;
 		vrLoc = 7335;
 	};
-	844CE63E1051862400178124 /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = 8418F0560F4DB85200B956C9 /* TFileSimpleVector.cpp */;
-	};
 	844CE63F1051862400178124 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 8418F0600F4DB85200B956C9 /* TVirtualFileSys.cpp */;
@@ -665,36 +658,6 @@
 		rType = 0;
 		vrLen = 921;
 		vrLoc = 5972;
-	};
-	844CE6401051862400178124 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8418F17C0F4DBA3D00B956C9 /* MacLocalFileSys.mm */;
-		name = "MacLocalFileSys.mm: 328";
-		rLen = 12;
-		rLoc = 7697;
-		rType = 0;
-		vrLen = 651;
-		vrLoc = 7335;
-	};
-	844CE6411051862400178124 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8418F17B0F4DBA3D00B956C9 /* MacLocalFileSys.h */;
-		name = "MacLocalFileSys.h: 23";
-		rLen = 0;
-		rLoc = 519;
-		rType = 0;
-		vrLen = 1092;
-		vrLoc = 311;
-	};
-	844CE6421051862400178124 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8418F17C0F4DBA3D00B956C9 /* MacLocalFileSys.mm */;
-		name = "MacLocalFileSys.mm: 328";
-		rLen = 12;
-		rLoc = 7697;
-		rType = 0;
-		vrLen = 651;
-		vrLoc = 7335;
 	};
 	844CE6431051862400178124 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;

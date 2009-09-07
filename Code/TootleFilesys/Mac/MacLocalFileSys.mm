@@ -99,8 +99,15 @@ Bool Platform::LocalFileSys::LoadFileList(const char* pFileSearch)
 			if ( FileType == NSFileTypeDirectory )
 				continue;
 			
+			
 			const char* pRealFilename = (const char*)[pFilename fileSystemRepresentation];
 			TTempString Filename = pRealFilename;
+			
+			// is hidden file? On the Mac the first character is a '.' to represent a hidden file.
+			if(Filename.GetLength() && Filename[0] == '.')
+				continue;
+
+			
 			TPtr<TFile> pFile = CreateFileInstance( Filename );
 			
 			if ( !pFile )
