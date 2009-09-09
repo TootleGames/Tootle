@@ -282,7 +282,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {186, 609}}</string>
+							<string>{{0, 154}, {186, 609}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -329,7 +329,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8446CAE0103AACE900DFD24F</string>
+										<string>842A2D0A104E9F4600051E4B</string>
 										<key>history</key>
 										<array>
 											<string>84F90F3C0F13E208007455BB</string>
@@ -363,7 +363,7 @@
 											<string>84E2214F0FF3D59C0081287A</string>
 											<string>847466C510020E8100599207</string>
 											<string>8446CADD103AACE900DFD24F</string>
-											<string>8446CADE103AACE900DFD24F</string>
+											<string>8446CAE0103AACE900DFD24F</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -398,7 +398,6 @@
 											<string>84E217610FF18C140081287A</string>
 											<string>84E217640FF18C140081287A</string>
 											<string>84E219040FF249BA0081287A</string>
-											<string>8446CADF103AACE900DFD24F</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -458,9 +457,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>8446CAE1103AACE900DFD24F</string>
+				<string>842A2D0B104E9F4600051E4B</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>8446CAE2103AACE900DFD24F</string>
+				<string>842A2D0C104E9F4600051E4B</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>

@@ -67,14 +67,14 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 271161833;
-			PBXWorkspaceStateSaveDate = 271161833;
+			PBXPerProjectTemplateStateSaveDate = 273754507;
+			PBXWorkspaceStateSaveDate = 273754507;
 		};
 		perUserProjectItems = {
-			841360BA0FFBA39A00FD81A5 /* PBXTextBookmark */ = 841360BA0FFBA39A00FD81A5 /* PBXTextBookmark */;
 			842E51E1102999F00037C5B1 /* PBXTextBookmark */ = 842E51E1102999F00037C5B1 /* PBXTextBookmark */;
 			844232EE0FF92AC10024EFEF /* PBXTextBookmark */ = 844232EE0FF92AC10024EFEF /* PBXTextBookmark */;
 			844232F00FF92AC10024EFEF /* PBXTextBookmark */ = 844232F00FF92AC10024EFEF /* PBXTextBookmark */;
+			84B60A7B1051299D0022E5BC /* PBXTextBookmark */ = 84B60A7B1051299D0022E5BC /* PBXTextBookmark */;
 			84CC91E80FFA718C00B36FD6 /* PBXTextBookmark */ = 84CC91E80FFA718C00B36FD6 /* PBXTextBookmark */;
 			84CC91EA0FFA718C00B36FD6 /* PBXTextBookmark */ = 84CC91EA0FFA718C00B36FD6 /* PBXTextBookmark */;
 		};
@@ -84,23 +84,6 @@
 	};
 	840EC1810F7781BC00BA6F4C /* box2d */ = {
 		activeExec = 0;
-	};
-	841360BA0FFBA39A00FD81A5 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 841360BB0FFBA39A00FD81A5 /* b2Distance.cpp */;
-		name = "b2Distance.cpp: 43";
-		rLen = 0;
-		rLoc = 1620;
-		rType = 0;
-		vrLen = 755;
-		vrLoc = 1349;
-	};
-	841360BB0FFBA39A00FD81A5 /* b2Distance.cpp */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.cpp.cpp;
-		name = b2Distance.cpp;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/box2d/IPod/../Source/Collision/b2Distance.cpp;
-		sourceTree = "<absolute>";
 	};
 	842E51E1102999F00037C5B1 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -114,6 +97,7 @@
 	};
 	842E51E2102999F00037C5B1 /* b2Distance.cpp */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.cpp.cpp;
 		name = b2Distance.cpp;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/box2d/IPod/../Source/Collision/b2Distance.cpp;
 		sourceTree = "<absolute>";
@@ -148,6 +132,22 @@
 		rType = 0;
 		vrLen = 691;
 		vrLoc = 1714;
+	};
+	84B60A7B1051299D0022E5BC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60A7C1051299D0022E5BC /* b2Distance.cpp */;
+		name = "b2Distance.cpp: 43";
+		rLen = 0;
+		rLoc = 1620;
+		rType = 0;
+		vrLen = 865;
+		vrLoc = 1263;
+	};
+	84B60A7C1051299D0022E5BC /* b2Distance.cpp */ = {
+		isa = PBXFileReference;
+		name = b2Distance.cpp;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/box2d/IPod/../Source/Collision/b2Distance.cpp;
+		sourceTree = "<absolute>";
 	};
 	84CC91E80FFA718C00B36FD6 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;

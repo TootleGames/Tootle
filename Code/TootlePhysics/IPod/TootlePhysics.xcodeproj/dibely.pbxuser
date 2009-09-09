@@ -1,5 +1,37 @@
 // !$*UTF8*$!
 {
+	842A2E2F104ECC5700051E4B /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 842A2E30104ECC5700051E4B /* TPhysicsNode.h */;
+		name = "TPhysicsNode.h: 93";
+		rLen = 0;
+		rLoc = 4300;
+		rType = 0;
+		vrLen = 1378;
+		vrLoc = 4157;
+	};
+	842A2E30104ECC5700051E4B /* TPhysicsNode.h */ = {
+		isa = PBXFileReference;
+		name = TPhysicsNode.h;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleGame/IPod/../../TootlePhysics/TPhysicsNode.h;
+		sourceTree = "<absolute>";
+	};
+	842A2E41104ECCDD00051E4B /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 842A2E42104ECCDD00051E4B /* TPhysicsNode.h */;
+		name = "TPhysicsNode.h: 93";
+		rLen = 0;
+		rLoc = 4300;
+		rType = 0;
+		vrLen = 1378;
+		vrLoc = 4157;
+	};
+	842A2E42104ECCDD00051E4B /* TPhysicsNode.h */ = {
+		isa = PBXFileReference;
+		name = TPhysicsNode.h;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleGame/IPod/../../TootlePhysics/TPhysicsNode.h;
+		sourceTree = "<absolute>";
+	};
 	8442318B0FF919FE0024EFEF /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84C10AC60F0A7DF900B2DF7A /* TPhysicsNode.cpp */;
@@ -61,7 +93,7 @@
 		vrLoc = 893;
 	};
 	84C108AE0F0A760800B2DF7A /* Project object */ = {
-		activeBuildConfigurationName = Release;
+		activeBuildConfigurationName = Debug;
 		activeTarget = 84C10AB70F0A7DD700B2DF7A /* TootlePhysics */;
 		addToTargets = (
 			84C10AB70F0A7DD700B2DF7A /* TootlePhysics */,
@@ -114,7 +146,7 @@
 					301,
 					60,
 					20,
-					48.16259765625,
+					48,
 					43,
 					43,
 				);
@@ -128,10 +160,12 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 272680220;
-			PBXWorkspaceStateSaveDate = 272680220;
+			PBXPerProjectTemplateStateSaveDate = 273599676;
+			PBXWorkspaceStateSaveDate = 273599676;
 		};
 		perUserProjectItems = {
+			842A2E2F104ECC5700051E4B /* PBXTextBookmark */ = 842A2E2F104ECC5700051E4B /* PBXTextBookmark */;
+			842A2E41104ECCDD00051E4B /* PBXTextBookmark */ = 842A2E41104ECCDD00051E4B /* PBXTextBookmark */;
 			8442318B0FF919FE0024EFEF /* PBXTextBookmark */ = 8442318B0FF919FE0024EFEF /* PBXTextBookmark */;
 			8461C1320F5C142700ED9509 /* PBXTextBookmark */ = 8461C1320F5C142700ED9509 /* PBXTextBookmark */;
 			8488F46B0F8A86E2008A08AF /* PBXTextBookmark */ = 8488F46B0F8A86E2008A08AF /* PBXTextBookmark */;
@@ -146,8 +180,6 @@
 			84C3F30F0FB84B67001BBE93 /* PBXTextBookmark */ = 84C3F30F0FB84B67001BBE93 /* PBXTextBookmark */;
 			84C80E061040C2F8004FC72E /* PBXTextBookmark */ = 84C80E061040C2F8004FC72E /* PBXTextBookmark */;
 			84C80E081040C2F8004FC72E /* PBXTextBookmark */ = 84C80E081040C2F8004FC72E /* PBXTextBookmark */;
-			84C80E491040C5AE004FC72E /* PBXTextBookmark */ = 84C80E491040C5AE004FC72E /* PBXTextBookmark */;
-			84C80E4A1040C5AE004FC72E /* PBXTextBookmark */ = 84C80E4A1040C5AE004FC72E /* PBXTextBookmark */;
 			84E21B830FF252C60081287A /* PBXTextBookmark */ = 84E21B830FF252C60081287A /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84C108B20F0A760800B2DF7A /* Source Control */;
@@ -310,29 +342,6 @@
 		rType = 0;
 		vrLen = 315;
 		vrLoc = 0;
-	};
-	84C80E491040C5AE004FC72E /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C10AC70F0A7DF900B2DF7A /* TPhysicsNode.h */;
-		rLen = 16;
-		rLoc = 4453;
-		rType = 0;
-	};
-	84C80E4A1040C5AE004FC72E /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C80E4B1040C5AE004FC72E /* TPhysicsNode.h */;
-		name = "TPhysicsNode.h: 95";
-		rLen = 0;
-		rLoc = 4300;
-		rType = 0;
-		vrLen = 1567;
-		vrLoc = 4143;
-	};
-	84C80E4B1040C5AE004FC72E /* TPhysicsNode.h */ = {
-		isa = PBXFileReference;
-		name = TPhysicsNode.h;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleGame/IPod/../../TootlePhysics/TPhysicsNode.h;
-		sourceTree = "<absolute>";
 	};
 	84E21B830FF252C60081287A /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;

@@ -104,10 +104,12 @@ Bool Win32::GOpenglWindow::Init(TPtr<GWinControl>& pOwner, u32 Flags)
 
 Bool Win32::GOpenglWindow::InitDisplay()
 {
-	using namespace TLRender::Platform;
 
 	//TLDebug_Break("not implemented");
 
+	//	mark opengl as initialised once we've created a GL wglCreateContext
+	TLRender::Platform::g_OpenglInitialised = SyncTrue;
+	
 	return TRUE;
 /*	
 	//	make the pixel format descriptor
@@ -184,8 +186,6 @@ Bool Win32::GOpenglWindow::InitDisplay()
 		return FALSE;
 	}
 
-	//	mark opengl as initialised once we've created a GL wglCreateContext
-	TLRender::Platform::g_OpenglInitialised = SyncTrue;
 
 	return TRUE;
  */

@@ -233,6 +233,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -269,6 +271,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateExpansionKey</key>
 							<array>
 								<string>8418ECF60F4DA63E00B956C9</string>
+								<string>8418F0050F4DB7DD00B956C9</string>
 								<string>8418F0040F4DB7D600B956C9</string>
 								<string>8418F1880F4DBA4700B956C9</string>
 								<string>1C37FBAC04509CD000000102</string>
@@ -278,9 +281,8 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>5</integer>
-									<integer>3</integer>
 									<integer>2</integer>
+									<integer>1</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -315,14 +317,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>MacInput.mm</string>
+								<string>TootleDebug.xcconfig</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -330,17 +330,19 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>MacInput.mm</string>
+										<string>TootleDebug.xcconfig</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>844CE54310517B1A00178124</string>
+										<string>841DC8FE1057A4C000BFE98F</string>
 										<key>history</key>
 										<array>
-											<string>8418F5D40F4DD7A900B956C9</string>
 											<string>844CE52C105179F500178124</string>
 											<string>844CE52D105179F500178124</string>
-											<string>844CE53E10517B1600178124</string>
+											<string>841DC8ED1057A4A600BFE98F</string>
+											<string>841DC8EE1057A4A600BFE98F</string>
+											<string>841DC8FB1057A4C000BFE98F</string>
+											<string>841DC8FC1057A4C000BFE98F</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -348,6 +350,8 @@
 											<string>8418F5D80F4DD7A900B956C9</string>
 											<string>8418F5DA0F4DD7A900B956C9</string>
 											<string>844CE52F105179F500178124</string>
+											<string>841DC8F11057A4A600BFE98F</string>
+											<string>841DC8FD1057A4C000BFE98F</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -405,9 +409,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>844CE54410517B1A00178124</string>
+				<string>841DC8FF1057A4C000BFE98F</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>844CE54510517B1A00178124</string>
+				<string>841DC9001057A4C000BFE98F</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -541,8 +545,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>8418F2CD0F4DBFFD00B956C9</string>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleInput/Mac/TootleInput.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -623,7 +625,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>8418F2CD0F4DBFFD00B956C9</string>
-				<string>844CE54610517B1A00178124</string>
+				<string>841DC8F61057A4A600BFE98F</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

@@ -273,9 +273,6 @@
 								<string>840EC16A0F77816700BA6F4C</string>
 								<string>840EC1900F77820800BA6F4C</string>
 								<string>840EC1850F7781ED00BA6F4C</string>
-								<string>BFAC1A7E0FA0D28300F69941</string>
-								<string>BFAC1AA40FA0D28300F69941</string>
-								<string>BFAC1AAF0FA0D28300F69941</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C08E77C0454961000C914BD</string>
 								<string>1C37FABC05509CD000000102</string>
@@ -283,7 +280,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>57</integer>
+									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
@@ -334,12 +331,12 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>842E51E1102999F00037C5B1</string>
+										<string>84B60A7B1051299D0022E5BC</string>
 										<key>history</key>
 										<array>
 											<string>844232EE0FF92AC10024EFEF</string>
 											<string>84CC91E80FFA718C00B36FD6</string>
-											<string>841360BA0FFBA39A00FD81A5</string>
+											<string>842E51E1102999F00037C5B1</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -402,9 +399,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>842E51E3102999F00037C5B1</string>
+				<string>84B60A7D1051299D0022E5BC</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>842E51E4102999F00037C5B1</string>
+				<string>84B60A7E1051299D0022E5BC</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -538,7 +535,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/box2d/IPod/box2d.xcodeproj</string>
 	</array>
 	<key>WindowString</key>

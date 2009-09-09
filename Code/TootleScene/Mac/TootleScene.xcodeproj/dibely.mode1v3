@@ -233,8 +233,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -314,12 +312,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>MacRender.h</string>
+								<string>TScenegraph.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -327,19 +327,19 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>MacRender.h</string>
+										<string>TScenegraph.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>844CE194105157C000178124</string>
+										<string>841DC84F1057993E00BFE98F</string>
 										<key>history</key>
 										<array>
 											<string>8418EF550F4DACF200B956C9</string>
 											<string>8418F28E0F4DBDE600B956C9</string>
-											<string>8418F28F0F4DBDE600B956C9</string>
 											<string>8418F34A0F4DC33400B956C9</string>
 											<string>8418F34B0F4DC33400B956C9</string>
-											<string>84B606BB104FFE240022E5BC</string>
+											<string>841DC84C1057993E00BFE98F</string>
+											<string>841DC84D1057993E00BFE98F</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -348,6 +348,7 @@
 											<string>8418F2930F4DBDE600B956C9</string>
 											<string>8418F2940F4DBDE600B956C9</string>
 											<string>8418F34D0F4DC33400B956C9</string>
+											<string>841DC84E1057993E00BFE98F</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -405,9 +406,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>844CE196105157C100178124</string>
+				<string>841DC8501057993E00BFE98F</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>844CE197105157C100178124</string>
+				<string>841DC8511057993E00BFE98F</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>

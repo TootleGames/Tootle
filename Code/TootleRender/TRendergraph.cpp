@@ -33,11 +33,15 @@ SyncBool TLRender::TRendergraph::Initialise()
 	if ( TLGraph::TGraph<TLRender::TRenderNode>::Initialise() == SyncFalse )
 		return SyncFalse;
 
+	SyncBool Result = TLRender::Platform::Init();
+
+	if(Result != SyncTrue)
+		return Result;
+	
 	//	create generic render node factory
 	TPtr<TClassFactory<TRenderNode,FALSE> > pFactory = new TRenderNodeFactory();
 	AddFactory(pFactory);
-
-	return TLRender::Platform::Init();
+	return SyncTrue;
 }
 
 

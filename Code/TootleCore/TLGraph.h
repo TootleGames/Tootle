@@ -667,13 +667,16 @@ void TLGraph::TGraphNode<T>::ProcessMessageFromQueue(TLMessaging::TMessage& Mess
 template <class T>
 SyncBool TLGraph::TGraph<T>::Initialise()
 {
-	// Create the root node
-	m_pRootNode = new T( "Root", TRef() );
-	
-	//	call notifications for root node - 
-	//	gr: note - root node has no Init message...
-	OnNodeAdded( m_pRootNode, TRUE );
-	m_pRootNode->OnAdded();
+	if(!m_pRootNode)
+	{
+		// Create the root node
+		m_pRootNode = new T( "Root", TRef() );
+		
+		//	call notifications for root node - 
+		//	gr: note - root node has no Init message...
+		OnNodeAdded( m_pRootNode, TRUE );
+		m_pRootNode->OnAdded();
+	}
 
 	return SyncTrue;
 }

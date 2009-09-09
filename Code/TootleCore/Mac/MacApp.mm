@@ -4,7 +4,7 @@
 #include "../TLCore.h"
 #include "../TPtr.h"
 
-#include <OpenGL/gl.h>
+
 
 
 namespace TLCore
@@ -24,37 +24,53 @@ namespace TLCore
 
 @implementation TootleNSApplicationDelegate
 
-@synthesize window;
+//@synthesize window;
 @synthesize glView;
 
 -(void) applicationDidFinishLaunching:(NSNotification *)notification
 {
 	TLDebug_Print("applicationDidFinishLaunching");
-			
-	/*
+
+	//	 do very basic init
+	TLCore::g_pCoreManager = new TLCore::TCoreManager("CORE");
+	
+	
 	/////////////////////////////////////
 	// Create the window and view
 	/////////////////////////////////////
-	CGRect					rect = [[UIScreen mainScreen] applicationFrame];
+	/*
+	 NSRect					rect = [[NSScreen mainScreen] frame];
+	 
+	 //Create a full-screen window
+	 window = [[NSWindow alloc] initWithFrame:[[NSScreen mainScreen] frame]];
+	 
+	 // Use a red window for debug so we can see any glitchy views of it
+	 //	gr: always pink background
+	 [window setBackgroundColor:[NSColor magentaColor]];
+	 
+	 //Create the OpenGL drawing view and add it to the window
+	 glView = [[TootleOpenGLView alloc] initWithFrame:CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height)]; // - kPaletteHeight 
+	 [window addSubview:glView];
+	 //Show the window
+	 [window makeKeyAndVisible];	
+	 */
 	
-	//Create a full-screen window
-	window = [[NSWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	
-	// Use a red window for debug so we can see any glitchy views of it
-	//	gr: always pink background
-	[window setBackgroundColor:[NSColor magentaColor]];
-	
-	//Create the OpenGL drawing view and add it to the window
-	glView = [[TootleOpenGLView alloc] initWithFrame:CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height)]; // - kPaletteHeight 
-	[window addSubview:glView];
-	//Show the window
-	[window makeKeyAndVisible];	
-	//////////////////////////////////////
+	/*
+	//Create the OpenGL drawing view and add it to the window programatically
+	// NOTE: Only needed if the window is not setup in a project .nib file
+	NSRect					rect = [[NSScreen mainScreen] frame];
+	glView = [[TootleOpenGLView alloc] initWithFrame:rect]; // - kPaletteHeight
+	//[[NSApp mainWindow] addSubview:glView];
+	 
+	if(!glView)
+	{
+	}
+	[[NSApp mainWindow] setContentView:glView];
 	*/
 	
-	
-	//	 do very basic init
-	TLCore::g_pCoreManager = new TLCore::TCoreManager("CORE");
+	//////////////////////////////////////
+
 	
 	// Register the engine managers
 	TLCore::RegisterManagers_Engine( TLCore::g_pCoreManager );
@@ -63,13 +79,11 @@ namespace TLCore
 	//	start update timer
 	init = FALSE;
 	shutdown = FALSE;
-	
-	
-	
+
 	//	mark as ready for first update
 	if ( TLCore::g_pCoreManager )
 		TLCore::g_pCoreManager->SetReadyForUpdate();
-	
+
 	//	do init loop
 	SyncBool Result = SyncWait;
 	
@@ -193,7 +207,7 @@ namespace TLCore
 
 
 - (void)dealloc {
-	[window release];
+	//[window release];
 	[glView release];
 	[super dealloc];
 }
@@ -244,34 +258,6 @@ namespace TLCore
 @end
 
 
-@implementation TootleOpenGLView
-
-
-static void drawAnObject ()
-{
-	
-    glColor3f(1.0f, 0.85f, 0.35f);
-    glBegin(GL_TRIANGLES);	
-    {
-        glVertex3f(  0.0,  0.6, 0.0);
-        glVertex3f( -0.2, -0.3, 0.0);
-        glVertex3f(  0.2, -0.3 ,0.0);		
-    }
-
-    glEnd();
-
-}
-
--(void) drawRect: (NSRect) bounds
-{
-    glClearColor(0, 0, 0, 0);
-    glClear(GL_COLOR_BUFFER_BIT);
-    drawAnObject();
-    glFlush();
-}
-
-
-@end
 
 
 

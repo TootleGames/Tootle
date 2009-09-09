@@ -33,6 +33,8 @@
 		8418F1B10F4DBB9300B956C9 /* MacScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F1A50F4DBB9300B956C9 /* MacScreen.h */; };
 		8418F1B30F4DBB9300B956C9 /* MacWinControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F1A70F4DBB9300B956C9 /* MacWinControl.h */; };
 		8418F1B50F4DBB9300B956C9 /* MacWinWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F1A90F4DBB9300B956C9 /* MacWinWindow.h */; };
+		841DC3EF1056527200BFE98F /* MacView.h in Headers */ = {isa = PBXBuildFile; fileRef = 841DC3ED1056527200BFE98F /* MacView.h */; };
+		841DC3F01056527200BFE98F /* MacView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 841DC3EE1056527200BFE98F /* MacView.mm */; };
 		8440DBE41055622D0045E57E /* MacOpenglExt.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8440DBDE1055622D0045E57E /* MacOpenglExt.mm */; };
 		8440DBE51055622D0045E57E /* MacRender.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8440DBDF1055622D0045E57E /* MacRender.mm */; };
 		8440DBE61055622D0045E57E /* MacRenderTarget.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8440DBE01055622D0045E57E /* MacRenderTarget.mm */; };
@@ -64,7 +66,7 @@
 		8418EF650F4DAD2200B956C9 /* TCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCamera.h; path = ../TCamera.h; sourceTree = SOURCE_ROOT; };
 		8418EF660F4DAD2200B956C9 /* TLRender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLRender.cpp; path = ../TLRender.cpp; sourceTree = SOURCE_ROOT; };
 		8418EF670F4DAD2200B956C9 /* TLRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLRender.h; path = ../TLRender.h; sourceTree = SOURCE_ROOT; };
-		8418EF680F4DAD2200B956C9 /* TRendergraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRendergraph.cpp; path = ../TRendergraph.cpp; sourceTree = SOURCE_ROOT; };
+		8418EF680F4DAD2200B956C9 /* TRendergraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TRendergraph.cpp; path = ../TRendergraph.cpp; sourceTree = SOURCE_ROOT; };
 		8418EF690F4DAD2200B956C9 /* TRendergraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRendergraph.h; path = ../TRendergraph.h; sourceTree = SOURCE_ROOT; };
 		8418EF6A0F4DAD2200B956C9 /* TRenderNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNode.cpp; path = ../TRenderNode.cpp; sourceTree = SOURCE_ROOT; };
 		8418EF6B0F4DAD2200B956C9 /* TRenderNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNode.h; path = ../TRenderNode.h; sourceTree = SOURCE_ROOT; };
@@ -86,6 +88,8 @@
 		8418F1A50F4DBB9300B956C9 /* MacScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacScreen.h; sourceTree = "<group>"; };
 		8418F1A70F4DBB9300B956C9 /* MacWinControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacWinControl.h; sourceTree = "<group>"; };
 		8418F1A90F4DBB9300B956C9 /* MacWinWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacWinWindow.h; sourceTree = "<group>"; };
+		841DC3ED1056527200BFE98F /* MacView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacView.h; sourceTree = "<group>"; };
+		841DC3EE1056527200BFE98F /* MacView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacView.mm; sourceTree = "<group>"; };
 		8440DBDE1055622D0045E57E /* MacOpenglExt.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacOpenglExt.mm; sourceTree = "<group>"; };
 		8440DBDF1055622D0045E57E /* MacRender.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacRender.mm; sourceTree = "<group>"; };
 		8440DBE01055622D0045E57E /* MacRenderTarget.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacRenderTarget.mm; sourceTree = "<group>"; };
@@ -218,6 +222,8 @@
 				8418F1A50F4DBB9300B956C9 /* MacScreen.h */,
 				8418F1A70F4DBB9300B956C9 /* MacWinControl.h */,
 				8418F1A90F4DBB9300B956C9 /* MacWinWindow.h */,
+				841DC3ED1056527200BFE98F /* MacView.h */,
+				841DC3EE1056527200BFE98F /* MacView.mm */,
 			);
 			name = Mac;
 			sourceTree = "<group>";
@@ -254,6 +260,7 @@
 				84B6069B104FFD2B0022E5BC /* TRenderNodeSwoosh.h in Headers */,
 				84B6069D104FFD2B0022E5BC /* TRenderNodeTimeline.h in Headers */,
 				84B6069E104FFD2B0022E5BC /* TScreenShape.h in Headers */,
+				841DC3EF1056527200BFE98F /* MacView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,6 +331,7 @@
 				8440DBE71055622D0045E57E /* MacScreen.mm in Sources */,
 				8440DBE81055622D0045E57E /* MacWinControl.mm in Sources */,
 				8440DBE91055622D0045E57E /* MacWinWindow.mm in Sources */,
+				841DC3F01056527200BFE98F /* MacView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
