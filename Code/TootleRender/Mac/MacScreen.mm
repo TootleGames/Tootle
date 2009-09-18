@@ -149,18 +149,28 @@ void TLRender::Platform::Screen::Draw()
 	TLRender::Opengl::Unbind();
 
 	//	flip buffers
-//	SwapBuffers( pWindow->m_HDC );
+	// Get the view in use byt he window
+	NSOpenGLView* view = [[NSApp mainWindow] contentView];
+	NSOpenGLContext* context = [view openGLContext];
+	[context flushBuffer];
 
 	
 	//	post-draw make sure the swap interval is limited/not limited
 	if ( OpenglExtensions::IsHardwareEnabled( OpenglExtensions::GHardware_SwapInterval ) )
 	{
-		/*
+		
 		if ( GetFlag( TScreen::Flag_SyncFrameRate ) )
-			OpenglExtensions::glSwapIntervalEXT()( 1 );
+		{
+			GLint swap = 1;
+			//OpenglExtensions::glSwapIntervalEXT()( 1 );
+			[context setValues:&swap forParameter:NSOpenGLCPSwapInterval];
+		}
 		else
-			OpenglExtensions::glSwapIntervalEXT()( 0 );
-		 */
+		{
+			GLint swap = 0;
+			//OpenglExtensions::glSwapIntervalEXT()( 0 );
+			[context setValues:&swap forParameter:NSOpenGLCPSwapInterval];
+		}
 	}
 
 }
