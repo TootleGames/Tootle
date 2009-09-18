@@ -4,6 +4,7 @@
 #import <Cocoa/Cocoa.h>
 
 #include <TootleRender/Mac/MacView.h> // dependancy on the TootleOpenGLView
+#include <TootleRender/Mac/MacWindowDelegate.h> // dependancy on the TootleWindowDelegate
 
 
 @interface TootleNSApplicationDelegate : NSObject
@@ -16,7 +17,6 @@
 }
 - (void) onTimer:(NSTimer*)timer;
 //-(void) applicationDidFinishLaunching:(NSNotification *)notification;
-
 
 //@property (nonatomic, retain) IBOutlet NSWindow *window;
 @property (nonatomic, retain) IBOutlet TootleOpenGLView *glView;

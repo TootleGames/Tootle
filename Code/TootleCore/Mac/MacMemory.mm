@@ -20,11 +20,15 @@ namespace TLMemory
 
 void TLMemory::Platform::Initialise()
 {
-	g_pMemoryAutoReleasePool = [[NSAutoreleasePool alloc] init];
+	g_pMemoryAutoReleasePool = [NSAutoreleasePool alloc];
+	
+	if(g_pMemoryAutoReleasePool)
+		[g_pMemoryAutoReleasePool init];
 }
 
 void TLMemory::Platform::Shutdown()
 {
-	[TLMemory::Platform::g_pMemoryAutoReleasePool release];	
+	if(g_pMemoryAutoReleasePool)
+		[g_pMemoryAutoReleasePool release];	
 }
 

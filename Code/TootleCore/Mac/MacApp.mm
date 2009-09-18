@@ -34,41 +34,84 @@ namespace TLCore
 	//	 do very basic init
 	TLCore::g_pCoreManager = new TLCore::TCoreManager("CORE");
 	
-	
+	NSApplication* app = [NSApplication sharedApplication];	
 	/////////////////////////////////////
 	// Create the window and view
 	/////////////////////////////////////
-	/*
-	 NSRect					rect = [[NSScreen mainScreen] frame];
+	NSRect					rect = [[NSScreen mainScreen] frame];
 	 
+	NSArray* windowlist = [app windows];
+	NSWindow* window = nil;
+	
+	if([windowlist count] > 0)
+	{
+		window = [windowlist objectAtIndex:0];
+	}
+	
+	
+	if(window == nil)
+	{
+		//fail
+	}
 	 //Create a full-screen window
-	 window = [[NSWindow alloc] initWithFrame:[[NSScreen mainScreen] frame]];
+	 //NSWindow* window = [[NSWindow alloc] initWithFrame:[[NSScreen mainScreen] frame]];
 	 
+	//Show the window
+	[window makeKeyAndOrderFront:nil];	
+	
+	// Set window for application
+	//[app setWindow:window];
+	
 	 // Use a red window for debug so we can see any glitchy views of it
 	 //	gr: always pink background
-	 [window setBackgroundColor:[NSColor magentaColor]];
-	 
-	 //Create the OpenGL drawing view and add it to the window
-	 glView = [[TootleOpenGLView alloc] initWithFrame:CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height)]; // - kPaletteHeight 
-	 [window addSubview:glView];
-	 //Show the window
-	 [window makeKeyAndVisible];	
-	 */
+	[window setBackgroundColor:[NSColor magentaColor]];
 	
+	TootleWindowDelegate* pWindowDelegate = [TootleWindowDelegate alloc];
 	
-	/*
+	if(pWindowDelegate)
+	{
+		[window setDelegate:pWindowDelegate];
+		[pWindowDelegate setWindow:window];
+	}
+	
 	//Create the OpenGL drawing view and add it to the window programatically
 	// NOTE: Only needed if the window is not setup in a project .nib file
-	NSRect					rect = [[NSScreen mainScreen] frame];
+	
 	glView = [[TootleOpenGLView alloc] initWithFrame:rect]; // - kPaletteHeight
 	//[[NSApp mainWindow] addSubview:glView];
 	 
 	if(!glView)
 	{
+		TLDebug_Print("Application failed to initialise view");
+		TLDebug_Print("Sending terminate message to application");
+		
+		// Send terminate message to the application
+		NSApplication* app = [NSApplication sharedApplication];
+		SEL selector = @selector( terminate: );
+		
+		if ( [app respondsToSelector:selector] )
+		{
+			[app performSelector:selector];
+		}		
+		return;
 	}
-	[[NSApp mainWindow] setContentView:glView];
-	*/
 	
+
+	//NSView* contentview = [[NSApp mainWindow] contentView];
+	//[contentview addSubview:glView];
+	[window setContentView:glView];
+//	[glView setWindow:window];
+	
+	// Now we are part of the window we can setup the opengl context
+	// NOTE: Has to be done AFTER the view is added to the window
+	[glView initOpenGLContext];	
+	
+	
+
+	
+	// finsihed with the window now so we can release it
+	//[window release];
+
 	//////////////////////////////////////
 
 	

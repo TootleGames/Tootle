@@ -37,8 +37,10 @@
 		8418F00F0F4DB7F400B956C9 /* TSensor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSensor.h; path = ../TSensor.h; sourceTree = SOURCE_ROOT; };
 		8418F0100F4DB7F400B956C9 /* TUser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TUser.cpp; path = ../TUser.cpp; sourceTree = SOURCE_ROOT; };
 		8418F0110F4DB7F400B956C9 /* TUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TUser.h; path = ../TUser.h; sourceTree = SOURCE_ROOT; };
-		8418F18B0F4DBA6F00B956C9 /* MacInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacInput.h; sourceTree = "<group>"; };
+		8418F18B0F4DBA6F00B956C9 /* MacInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; path = MacInput.h; sourceTree = "<group>"; };
 		8418F18C0F4DBA6F00B956C9 /* MacInput.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacInput.mm; sourceTree = "<group>"; };
+		842B26F310602757003AEB96 /* PCInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCInput.cpp; path = ../PC/PCInput.cpp; sourceTree = SOURCE_ROOT; };
+		842B26F410602757003AEB96 /* PCInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCInput.h; path = ../PC/PCInput.h; sourceTree = SOURCE_ROOT; };
 		84B605D3104FF9710022E5BC /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B605D4104FF9710022E5BC /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -82,6 +84,7 @@
 		8418F0040F4DB7D600B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				842B26F210602739003AEB96 /* PC */,
 				8418F1880F4DBA4700B956C9 /* Mac */,
 				8418F0060F4DB7F400B956C9 /* TAction.cpp */,
 				8418F0070F4DB7F400B956C9 /* TAction.h */,
@@ -115,6 +118,15 @@
 				8418F18C0F4DBA6F00B956C9 /* MacInput.mm */,
 			);
 			name = Mac;
+			sourceTree = "<group>";
+		};
+		842B26F210602739003AEB96 /* PC */ = {
+			isa = PBXGroup;
+			children = (
+				842B26F310602757003AEB96 /* PCInput.cpp */,
+				842B26F410602757003AEB96 /* PCInput.h */,
+			);
+			name = PC;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

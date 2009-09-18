@@ -17,7 +17,8 @@ namespace TLInput
 
 	namespace DeviceFlags
 	{
-		const u32 Attached = 0;		//	gr: TFlags work off indexes, not bits. bits are internal to the TFlags class
+		const u32 Attached = 0;		// Signifies whether the device is attached
+		const u32 Virtual = 1;		// Specifies a virtual device i.e. one without a physical counterpart
 	};
 
 	const TRef KeyboardRef		= TRef_Static(K,e,y,b,o); // "Keyboard"
@@ -64,6 +65,9 @@ public:
 
 	FORCEINLINE void	SetAttached(Bool bAttached)			{	m_Flags.Set(DeviceFlags::Attached, bAttached);	}
 	FORCEINLINE Bool	IsAttached()	const				{	return m_Flags.IsSet(DeviceFlags::Attached);	}
+
+	FORCEINLINE Bool	IsVirtual()	const				{	return m_Flags.IsSet(DeviceFlags::Virtual);	}
+
 	FORCEINLINE Bool	AssignToHardwareDevice(TRefRef HardwareDeviceRef);
 
 	// Sensor access

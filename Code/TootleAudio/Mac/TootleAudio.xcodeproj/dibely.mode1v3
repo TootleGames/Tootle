@@ -233,8 +233,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -275,17 +273,16 @@
 								<string>8418F1080F4DB88900B956C9</string>
 								<string>8418F1510F4DB94000B956C9</string>
 								<string>1C37FBAC04509CD000000102</string>
-								<string>844CE3C010516B8D00178124</string>
-								<string>844CE3C110516B8D00178124</string>
 								<string>1C37FAAC04509CD000000102</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>23</integer>
-									<integer>21</integer>
-									<integer>20</integer>
+									<integer>8</integer>
+									<integer>7</integer>
+									<integer>4</integer>
+									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
@@ -319,12 +316,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>MacAudio.h</string>
+								<string>MacAudioOpenAL.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -332,18 +331,19 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>MacAudio.h</string>
+										<string>MacAudioOpenAL.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>844CE3C210516B8D00178124</string>
+										<string>842B2307105E383F003AEB96</string>
 										<key>history</key>
 										<array>
-											<string>84B60E3A105134AA0022E5BC</string>
-											<string>84B60E3B105134AA0022E5BC</string>
 											<string>84B60E3C105134AA0022E5BC</string>
 											<string>84B60E58105135E00022E5BC</string>
-											<string>844CE2DA105169D600178124</string>
+											<string>842B2301105E383F003AEB96</string>
+											<string>842B2302105E383F003AEB96</string>
+											<string>842B2303105E383F003AEB96</string>
+											<string>84B60E3B105134AA0022E5BC</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -352,6 +352,9 @@
 											<string>84B60E40105134AA0022E5BC</string>
 											<string>84B60E41105134AA0022E5BC</string>
 											<string>84B60E46105134AA0022E5BC</string>
+											<string>842B2304105E383F003AEB96</string>
+											<string>842B2305105E383F003AEB96</string>
+											<string>842B2306105E383F003AEB96</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -409,9 +412,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>844CE3C310516B8D00178124</string>
+				<string>842B2308105E383F003AEB96</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>844CE3C410516B8D00178124</string>
+				<string>842B2309105E383F003AEB96</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
