@@ -49,6 +49,8 @@
 - (id) initWithFrame:(NSRect)frame pixelFormat:(GLuint)format;
 - (id) initWithFrame:(NSRect)frame pixelFormat:(GLuint)format depthFormat:(GLuint)depth preserveBackbuffer:(BOOL)retained;
 
+-(void)initOpenGLContext;
+
 - (BOOL) createFramebuffer;
 - (void) destroyFramebuffer;
 
@@ -63,5 +65,17 @@
 
 - (void)image:(NSImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo;
 
+/*
+// Input events
+- (void)mouseDown:(NSEvent *)theEvent;
+- (void)mouseDragged:(NSEvent *)theEvent;
+- (void)mouseUp:(NSEvent *)theEvent;
+
+- (void)mouseEntered:(NSEvent *)theEvent;
+- (void)mouseExited:(NSEvent *)theEvent;
+
+- (void)keyUp:(NSEvent *)theEvent;
+- (void)keyDown:(NSEvent *)theEvent;
+*/
 
 @end

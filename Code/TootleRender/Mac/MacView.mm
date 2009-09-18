@@ -71,18 +71,31 @@
 - (id) initWithFrame:(NSRect)frame pixelFormat:(GLuint)format depthFormat:(GLuint)depth preserveBackbuffer:(BOOL)retained
 {
 	NSOpenGLPixelFormatAttribute attribs[] = {
-		NSOpenGLPFAWindow,
+		//NSOpenGLPFAWindow,
+		
+		// Specifying "NoRecovery" gives us a context that cannot fall back to the software renderer.  This makes the View-based context a compatible with the fullscreen context, enabling us to use the "shareContext" feature to share textures, display lists, and other OpenGL objects between the two.
+        NSOpenGLPFANoRecovery,
+		
+        // Attributes Common to FullScreen and non-FullScreen
+        NSOpenGLPFAColorSize, 24,
+        NSOpenGLPFADepthSize, 16,
+
 		NSOpenGLPFAAccelerated,
 		NSOpenGLPFADoubleBuffer,
-		NSOpenGLPFASingleRenderer,
+		//NSOpenGLPFASingleRenderer,
+		
 		(NSOpenGLPixelFormatAttribute)0
 	};
 	
-	NSOpenGLPixelFormat *pixelformat = [[self class] defaultPixelFormat ];//[[NSOpenGLPixelFormat alloc] initWithAttributes:attribs];
+	//NSOpenGLPixelFormat *pixelformat = [[self class] defaultPixelFormat ];
+	NSOpenGLPixelFormat *pixelformat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attribs];
 	
 	self = [super initWithFrame:frame pixelFormat:pixelformat];
 	if(!self) 
+	{
+		[pixelformat release];
 		return nil;
+	}
 	
 		/*
 		CAEAGLLayer*			eaglLayer = (NSOpenGLLayer*)[self layer];
@@ -94,29 +107,11 @@
 		//_format = format;
 		//_depthFormat = depth;
 		
-		context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
-        if (!context || ![EAGLContext setCurrentContext:context]) {
-            [self release];
-            return nil;
-		}
 		
 		 
 		 */
 				
-		/*
-		NSOpenGLContext* context = [[NSOpenGLContext alloc] initWithFormat:pixelformat  shareContext:nil];
-		
-		[context setView:self];
-		[context makeCurrentContext];
-		
-		[self setOpenGLContext:context];
-		[self setPixelFormat:pixelformat];
-		
-		[self prepareOpenGL];
-		
-		
-		}
-		 */
+
 	
 /*
  if(![self createFramebuffer]) 
@@ -125,11 +120,27 @@
 		return nil;
  }
 */
-
 	
 	self.bSendImage = FALSE;
-	
+	[pixelformat release];
+
 	return self;
+}
+
+
+-(void)initOpenGLContext
+{
+	// Setup the OpenGL render context
+	NSOpenGLContext* context = [[NSOpenGLContext alloc] initWithFormat:[super pixelFormat]  shareContext:nil];
+	
+	[self setOpenGLContext:context];
+	[context setView:self];
+	
+	[context makeCurrentContext];
+	[self prepareOpenGL];
+
+	[context release];
+
 }
 
 
@@ -397,6 +408,54 @@ void releaseData(void *info, const void *data, size_t dataSize)
 	return image;
 }
 ////////////////////////////////////////////////////////
+
+/*
+- (BOOL) acceptsFirstResponder
+{
+    // We want this view to be able to receive key events.
+    return YES;
+}
+
+- (void)mouseDown:(NSEvent *)theEvent
+{
+	TLDebug_Break("Mouse event occured");
+}
+
+
+- (void)mouseDragged:(NSEvent *)theEvent
+{
+	TLDebug_Break("Mouse event occured");
+
+}
+
+- (void)mouseUp:(NSEvent *)theEvent
+{	
+	TLDebug_Break("Mouse event occured");
+
+}
+
+- (void)mouseEntered:(NSEvent *)theEvent
+{
+	TLDebug_Break("Mouse event occured");
+
+}
+
+- (void)mouseExited:(NSEvent *)theEvent
+{
+	TLDebug_Break("Mouse event occured");
+
+}
+
+- (void)keyUp:(NSEvent *)theEvent
+{
+	TLDebug_Break("Keyboard event occured");
+}
+
+- (void)keyDown:(NSEvent *)theEvent
+{
+	TLDebug_Break("Keyboard event occured");
+}
+ */
 
 
 @end
