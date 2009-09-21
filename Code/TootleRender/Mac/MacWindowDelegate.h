@@ -10,7 +10,7 @@
 
 #import <Appkit/NSWindow.h>
 
-@interface TootleWindowDelegate : NSObject
+@interface TootleWindowDelegate : NSObject<NSWindowDelegate>
 {
 	@private
 	NSWindow* m_pWindow;
