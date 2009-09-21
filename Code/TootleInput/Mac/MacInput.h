@@ -20,7 +20,6 @@ namespace TLInput
 
 			class	TLInputHIDDevice;
 			
-			Bool CreateDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef, Bool bVirtual);
 			Bool InitialiseDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef, Bool bVirtual);
 			
 			Bool InitialiseDevice(TPtr<TInputDevice> pDevice, const IOHIDDeviceRef device);
@@ -67,7 +66,7 @@ public:
 	~TLInputHIDDevice();
 	
 	
-	inline Bool			operator==(TRefRef DXDeviceRef)							const	{	return GetDeviceRef() == DXDeviceRef;	}
+	inline Bool			operator==(TRefRef HIDDeviceRef)							const	{	return GetDeviceRef() == HIDDeviceRef;	}
 	inline Bool			operator==(const TLInputHIDDevice& HIDDevice)	const 	{	return GetDeviceRef() == HIDDevice.GetDeviceRef();	}
 	
 	
@@ -86,7 +85,10 @@ public:
 	uint8_t*									GetReportBuffer()						{ return m_pReportBuffer; }
 	
 	Bool										EnumerateObjects();
+protected:	
 	
+	void										EnumDeviceObject(IOHIDElementRef elementRef);
+
 private:
 	TRef									m_DeviceRef;
 	IOHIDDeviceRef							m_HIDDevice;

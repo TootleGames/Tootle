@@ -19,7 +19,7 @@ void TInputDevice::ProcessSensors()
 #ifdef _DEBUG
 	if(m_InputBuffer.GetSize() == 0)
 	{
-		TLDebug_Break("Device has no sensors!");
+		TLDebug_Break("Device has no sensor data!");
 	}
 #endif
 	

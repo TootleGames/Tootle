@@ -348,6 +348,48 @@ TRef Platform::HID::GetDeviceRefFromProductID(u32 DeviceGuid,Bool CreateNew)
 	return *pRef;
 }
 
+Bool Platform::HID::GetSpecificButtonRef(const u32& uButtonID, TRefRef DeviceType, const u32& uProductID, TRef& LabelRef)
+{
+	TKeyArray<u32, TRef>* pArray = NULL;
+	
+	if(DeviceType == TLInput::KeyboardRef)
+	{
+		pArray = &g_KeyboardRefMap;
+	}
+	else if(DeviceType == TLInput::MouseRef)
+	{
+		pArray = &g_MouseRefMap;
+	}
+	else if(DeviceType == TLInput::GamepadRef)
+	{
+		/*
+		// Test the product ID for known I'ds
+		switch(uProductID)
+		{
+			case 0x028e045e:	// XBox 360 pad
+				pArray = &g_Xbox360PadButtonRefs;
+				break;
+		}
+		 */
+	}
+	
+	if(pArray != NULL)
+	{
+		// Look for the specified ID
+		TRef* pRef = pArray->Find(uButtonID);
+		
+		if(pRef)
+		{
+			LabelRef = *pRef;
+			return TRUE;
+		}
+	}
+	
+	// No label found
+	return FALSE;
+}
+
+
 void Platform::HID::DeviceEnumerateCallback(void* context, IOReturn result,  void* sender, IOHIDDeviceRef device)
 {
 	TLDebug_Print("HID Device enumerated");
@@ -579,7 +621,6 @@ Bool Platform::HID::InitialiseDevice(TPtr<TInputDevice> pDevice, const IOHIDDevi
 	return TRUE;
 	
 }
-
 
 void Platform::HID::EnumDeviceObject(void* context, IOReturn result, void* sender, IOHIDReportType type, uint32_t reportID, uint8_t* report, CFIndex reportLength)
 {
@@ -878,45 +919,6 @@ SyncBool Platform::RemoveVirtualDevice(TRefRef InstanceRef)
 }
 
 
-
-
-// Create Ipod input device
-Bool Platform::HID::CreateDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef, Bool bVirtual)
-{
-	// Create the generic input object
-	TPtr<TInputDevice>& pGenericDevice = g_pInputSystem->GetInstance(InstanceRef, TRUE, DeviceTypeRef);
-	
-	if(pGenericDevice.IsValid())
-	{
-		if(!InitialiseDevice(pGenericDevice, DeviceTypeRef, bVirtual))
-		{
-			// Failed to initialise the input device data						
-			pGenericDevice = NULL;
-			
-			g_pInputSystem->RemoveInstance(InstanceRef);
-			
-			return FALSE;
-		}
-		else
-		{
-			// Notify to all subscribers of the input system that a new device was added
-			TLMessaging::TMessage Message("DeviceChanged");			
-			
-			TRef refState = "ADDED";
-			Message.ExportData("State", refState);					// state change
-			Message.ExportData("DEVID", pGenericDevice->GetDeviceRef() );	// device ID
-			Message.ExportData("TYPE", pGenericDevice->GetDeviceType() );						// device type
-			
-			g_pInputSystem->PublishMessage(Message);
-				
-			// Success
-			return TRUE;
-		}
-	}
-	
-	return FALSE;
-}
-
 // Initialise the device
 Bool Platform::HID::InitialiseDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef, Bool bVirtual)
 {
@@ -936,82 +938,7 @@ Bool Platform::HID::InitialiseVirtualDevice(TPtr<TInputDevice> pDevice, TRefRef 
 
 Bool Platform::HID::InitialisePhysicalDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef)
 {
-	// Create four 'buttons' and 'axis' sensors to be able to send data from
-	// and for actions to be mapped to
-	
-	// Add button inputs
-	u32 uIndex = 0;
-	
-	u32 uUniqueID = 0;
-	
-	TString stringLabel;
-	TRef refLabel;
-	
-	
-	for(uIndex = 0; uIndex < HID::MAX_CURSOR_POSITIONS; uIndex++)
-	{
-		// For buttons we need to label them based on what type and the model
-		// so get this information from a function in stead which will lookup the details required
-		
-		TPtr<TInputSensor>& pSensor = pDevice->AttachSensor(uUniqueID, Button);
-		
-		if(pSensor.IsValid())
-		{
-		
-			refLabel = GetDefaultButtonRef(uIndex);
-			pSensor->AddLabel(refLabel);
-			pSensor->SetCursorIndex(uIndex);
-			uUniqueID++;
-		}
-	}
-
-	u32 uAxisIndex = 0;
-	for(uIndex = 0; uIndex < HID::MAX_CURSOR_POSITIONS; uIndex++)
-	{		
-		uAxisIndex = uIndex * 3;
-		
-		// Add X axis sensor
-		TPtr<TInputSensor> pSensor = pDevice->AttachSensor(TRef(uUniqueID), Axis);
-		
-		if(pSensor.IsValid())
-		{
-			refLabel = GetDefaultAxisRef(uAxisIndex);
-			pSensor->AddLabel(refLabel);
-			pSensor->SetCursorIndex(uIndex);
-			uUniqueID++;			
-		}
-		
-		// Add Y axis sensor
-		pSensor = pDevice->AttachSensor(uUniqueID, Axis);
-		
-		if(pSensor.IsValid())
-		{
-			refLabel = GetDefaultAxisRef(uAxisIndex+1);
-			pSensor->AddLabel(refLabel);
-			pSensor->SetCursorIndex(uIndex);
-			uUniqueID++;
-		}
-	}
-	
-	TArray<TRef> AxisRefs;
-	AxisRefs.Add("ACCX");
-	AxisRefs.Add("ACCY");
-	AxisRefs.Add("ACCZ");
-	
-	for(uIndex = 0; uIndex < 3; uIndex++)
-	{
-		// Add accelerometer axis
-		TPtr<TInputSensor>& pSensor = pDevice->AttachSensor(uUniqueID, Axis);
-		
-		if(pSensor.IsValid())
-		{
-			TRef refLabel = AxisRefs.ElementAt(uIndex);
-			pSensor->AddLabel(refLabel);
-			uUniqueID++;
-		}
-	}
-	
-	return TRUE;
+	return FALSE;
 }
 
 
@@ -1064,8 +991,7 @@ void Platform::HID::RemoveAllDevices()
 
 Bool Platform::UpdateDevice(TLInput::TInputDevice& Device)
 {
-	//TODO: Add proper device type checking for virtual and physical devices
-	if(Device.GetDeviceType() == /*TLInput::TrackpadRef*/ TLInput::MouseRef)
+	if(!Device.IsVirtual())
 	{
 		// Physical device
 		return HID::UpdatePhysicalDevice(Device);
@@ -1535,8 +1461,278 @@ Bool TLInput::Platform::HID::TLInputHIDDevice::EnumerateObjects()
 	if(result != kIOReturnSuccess)
 		return FALSE;
 	*/
+	
+	
+	CFArrayRef elementCFArrayRef = IOHIDDeviceCopyMatchingElements( GetHIDDevice(), NULL, kIOHIDOptionsTypeNone );
+
+	CFIndex numberOfElements = CFArrayGetCount(elementCFArrayRef);
+	
+	for(u32 uIndex = 0; uIndex < numberOfElements; uIndex++)
+	{
+		IOHIDElementRef elementRef = ( IOHIDElementRef ) CFArrayGetValueAtIndex( elementCFArrayRef, uIndex );
+
+		if(elementRef) 
+			EnumDeviceObject(elementRef);
+	}	
+
 	return TRUE;
 }
+
+void Platform::HID::TLInputHIDDevice::EnumDeviceObject(IOHIDElementRef elementRef)
+{	
+	TRef InstanceRef = TLInput::Platform::HID::GetDeviceRefFromProductID( (u32)GetHIDDevice(), FALSE );
+
+	TPtr<TInputDevice> pDevice = g_pInputSystem->GetInstance(InstanceRef);
+	
+	if(pDevice.IsValid())
+	{
+		TPtr<TLInputHIDDevice> pHIDDevice = g_TLHIDDevices.FindPtr(pDevice->GetHardwareDeviceID());
+		
+		if(pHIDDevice.IsValid())
+		{			
+			IOHIDElementType elementType = IOHIDElementGetType( elementRef );	
+			//CFStringRef nameCFStringRef = IOHIDElementGetName( elementRef );
+
+			
+			// We have the associated device
+			// Now setup the hardware device object for the generic device
+			TSensorType SensorType = Unknown;
+			TRef	LabelRef;
+			switch(elementType)
+			{
+				case kIOHIDElementTypeInput_Button:
+					SensorType = Button;
+					LabelRef = GetDefaultButtonRef(pDevice->GetSensorCount(SensorType));
+					break;
+			 
+				case kIOHIDElementTypeInput_Axis:
+					SensorType = Axis;
+					LabelRef = GetDefaultAxisRef(pDevice->GetSensorCount(SensorType));
+					break;
+
+				case kIOHIDElementTypeInput_Misc:
+					{	
+						// Misc input found.
+						// Get the usage page and usage ref's.  Use these to determine any extra sensor types
+						u32 uUsagePageID = (u32)IOHIDElementGetUsagePage(elementRef);
+						u32 uUsageID = (u32)IOHIDElementGetUsage(elementRef);
+
+						switch(uUsagePageID)
+						{
+							case kHIDPage_GenericDesktop:
+							{
+								switch(uUsageID)
+								{
+									// Misc input axis definitions 
+									case kHIDUsage_GD_X:
+									case kHIDUsage_GD_Y:
+									case kHIDUsage_GD_Z:
+									case kHIDUsage_GD_Slider:
+									case kHIDUsage_GD_Wheel:
+									{
+										SensorType = Axis;
+										LabelRef = GetDefaultAxisRef(pDevice->GetSensorCount(SensorType));
+									}
+									break;
+								}
+							}
+							break;								
+						}
+						
+#ifdef _DEBUG
+						// If the sensor type is still invalid output what the usage page and usage are
+						// so we can use these if required.
+						if(SensorType == Unknown)
+						{
+							TLDebug_Print("Input Misc");
+							
+							TTempString str;
+							
+							str.Appendf("Usage Page - %d", uUsagePageID);
+							TLDebug_Print(str);
+							str.Empty();
+							
+							str.Appendf("Usage - %d", uUsageID);
+							TLDebug_Print(str);
+							str.Empty();
+							
+						}
+#endif
+											
+					}					
+
+					break;
+	
+				case kIOHIDElementTypeOutput:
+					{
+						// Output found.
+						// Get the usage page and usage ref's.  Use these to determine any extra sensor types
+
+						u32 uUsagePageID = (u32)IOHIDElementGetUsagePage(elementRef);
+						u32 uUsageID = (u32)IOHIDElementGetUsage(elementRef);
+
+#ifdef _DEBUG
+						// If the sensor type is still invalid output what the usage page and usage are
+						// so we can use these if required.
+						if(SensorType == Unknown)
+						{							
+							TLDebug_Print("Output");
+							
+							TTempString str;
+							
+							str.Appendf("Usage Page - %d", uUsagePageID);
+							TLDebug_Print(str);
+							str.Empty();
+							
+							str.Appendf("Usage - %d", uUsageID);
+							TLDebug_Print(str);
+							str.Empty();
+						}
+#endif
+					}
+					break;
+	
+				case kIOHIDElementTypeFeature:
+					{
+						// Feature found.
+						// Get the usage page and usage ref's.  Use these to determine any extra sensor types
+
+						u32 uUsagePageID = (u32)IOHIDElementGetUsagePage(elementRef);
+						u32 uUsageID = (u32)IOHIDElementGetUsage(elementRef);
+
+#ifdef _DEBUG			
+						// If the sensor type is still invalid output what the usage page and usage are
+						// so we can use these if required.
+						if(SensorType == Unknown)
+						{
+							
+							TLDebug_Print("Feature");
+
+							TTempString str;
+
+							str.Appendf("Usage Page - %d", uUsagePageID);
+							TLDebug_Print(str);
+							str.Empty();
+							
+							str.Appendf("Usage - %d", uUsageID);
+							TLDebug_Print(str);
+							str.Empty();
+						}
+#endif
+					}					
+					break;
+					
+				case kIOHIDElementTypeCollection:
+					{
+						IOHIDElementCollectionType collectionType = IOHIDElementGetCollectionType( elementRef );	
+						
+						TTempString str;
+						str.Appendf("Collection Found - Type %d", collectionType);
+						TLDebug_Print(str);
+						str.Empty();
+						
+						// Get the child elements of the collection
+						CFArrayRef tCFArrayRef = IOHIDElementGetChildren( elementRef );
+						
+						CFIndex numberOfElements = CFArrayGetCount(tCFArrayRef);
+
+						str.Appendf("Enumerating %d children", numberOfElements);
+						TLDebug_Print(str);
+						str.Empty();
+						
+
+						for(u32 uIndex = 0; uIndex < numberOfElements; uIndex++)
+						{
+							IOHIDElementRef collectionElementRef = ( IOHIDElementRef ) CFArrayGetValueAtIndex( tCFArrayRef, uIndex );
+
+							// Enumerate the element within the collection.  (Recursive)
+							if(collectionElementRef) 
+								EnumDeviceObject(collectionElementRef);
+						}
+						
+						str.Appendf("Collection enumeration end");
+						TLDebug_Print(str);
+						str.Empty();
+						
+					}
+					break;
+#ifdef _DEBUG					
+				default:
+				{
+					TLDebug_Print("Unhandled device element type");
+					TTempString str;
+					str.Appendf("Element Type: %d", elementType);
+					TLDebug_Print(str);
+					str.Empty();
+					
+					// Get Usage Page ID.  This will be used to index the specific button array
+					u32 uUsagePageID = (u32)IOHIDElementGetUsagePage(elementRef);
+					str.Appendf("Usage Page - %d", uUsagePageID);
+					TLDebug_Print(str);
+					str.Empty();
+					
+					// Get Usage ID.  This will be used to index the specific button array
+					u32 uUsageID = (u32)IOHIDElementGetUsage(elementRef);
+					str.Appendf("Usage - %d", uUsageID);
+					TLDebug_Print(str);
+					str.Empty();
+					
+					
+				}
+#endif
+			}
+			 
+			if(SensorType != Unknown)
+			{
+				// Get the cookie of the element.  This is a unique reference within the specific device.
+				IOHIDElementCookie cookie = IOHIDElementGetCookie(elementRef);
+
+				/*
+				TTempString str;
+				str.Appendf("Cookie: %ld", cookie);
+				TLDebug_Print(str);
+				*/
+					
+				// Use the cookie as a unique instance ID for the sensor
+				u32 uInstanceID = (u32)cookie;
+								
+				TPtr<TInputSensor> pSensor = pDevice->AttachSensor(uInstanceID, SensorType);
+
+				if(pSensor.IsValid())
+				{
+					pSensor->AddLabel(LabelRef);
+					pSensor->SubscribeTo(pHIDDevice);
+
+
+					if(SensorType == Button)
+					{
+						
+						// Get Usage ID.  This will be used to index the specific button array
+						u32 uUsageID = (u32)IOHIDElementGetUsage(elementRef);
+						
+						// Add any additional labels
+						if(HID::GetSpecificButtonRef(uUsageID, pDevice->GetDeviceType(), pHIDDevice->GetProductID(), LabelRef))
+						{
+							pSensor->AddLabel(LabelRef);
+						}
+						/*
+						else
+						{
+							TLDebug::Break("Failed to find additional label for sensor");
+							TTempString str;
+							str.Appendf("Usage ID: %d", uUsageID);
+							TLDebug_Print(str);
+						 
+						}
+						*/
+					}
+				}
+			}
+		}
+	}	
+}
+
+
 
 
 
