@@ -3,7 +3,8 @@
 #import <IOKit/IOKitLib.h>
 #import <IOKit/hid/IOHIDManager.h>
 #import <IOKit/hid/IOHIDKeys.h>
-#import <Appkit/NSCursor.h>
+
+#import <Appkit/Appkit.h>
 
 
 #include <TootleCore/TLMemory.h> // TEMP
@@ -11,7 +12,7 @@
 
 
 #ifdef _DEBUG
-	#define ENABLE_INPUTSYSTEM_TRACE
+	//#define ENABLE_INPUTSYSTEM_TRACE
 #endif
 
 // [16/12/08] DB -	Possible responsiveness improvement
@@ -22,7 +23,9 @@
 #define ACCEL_MAXPROCESS	10		//	at most, per device update only process the last N accelerometer data's
 #define ACCEL_MINCHANGE		0.025f	//	minimum amount of change on an axis to register a change. anything smaller than this will be ignored and "jitter"
 
-
+#define MAX_MOUSE_QUEUE_ELEMENTS 100
+#define MAX_KEYBOARD_QUEUE_ELEMENTS 100
+#define MAX_GAMEPAD_QUEUE_ELEMENTS 100
 
 namespace TLInput
 {
@@ -80,15 +83,6 @@ namespace TLInput
 			void			DeviceRemovedCallback(void* context, IOReturn result,  void* sender, IOHIDDeviceRef device);
 
 			void			DeviceReportCallback(void* inContext, IOReturn inResult, void* inSender, IOHIDReportType inType, uint32_t inReportID, uint8_t* inReport, CFIndex inReportLength);
-
-			void			EnumDeviceObject(void* context, IOReturn result, void* sender, IOHIDReportType type, uint32_t reportID, uint8_t* report, CFIndex reportLength);
-
-			/*
-			// Platform specific device creation
-			void			CreateDevice_Keyboard(const IOHIDDeviceRef device);
-			void			CreateDevice_Mouse(const IOHIDDeviceRef device);
-			void			CreateDevice_Gamepad(const IOHIDDeviceRef device);
-			 */	
 			
 			// Special update routines for devices in Mac OS HID.  Hopefully at some point I can remove these as this shouldn't really be necessary.
 			Bool UpdateHIDDevice_Mouse(TInputDevice& Device, TLInputHIDDevice& TLHIDDevice);
@@ -602,13 +596,29 @@ Bool Platform::HID::InitialiseDevice(TPtr<TInputDevice> pDevice, const IOHIDDevi
 	
 	// Set quick access to the device type without having to go through the HID interface
 	pHIDDevice->SetDeviceType(uDeviceType);
-
-	// Intiialise the report buffer
-	pHIDDevice->InitialiseReportBuffer();
 	
 	pDevice->AssignToHardwareDevice(HardwareDeviceRef);
 	
 	g_TLHIDDevices.Add(pHIDDevice);
+	
+	u32 uSensorQueueSize = MAX_KEYBOARD_QUEUE_ELEMENTS;
+	
+	if(uDeviceType == kHIDUsage_GD_Mouse)
+		uSensorQueueSize = MAX_MOUSE_QUEUE_ELEMENTS;
+	else if(uDeviceType == kHIDUsage_GD_GamePad)
+		uSensorQueueSize = MAX_GAMEPAD_QUEUE_ELEMENTS;
+		
+	
+	// Create sensor queue and assign it to the device
+	IOHIDQueueRef sensorQueue = IOHIDQueueCreate(	kCFAllocatorDefault,   // Allocator to be used during creation
+													device,   // the HID device to be associated with this queue
+													uSensorQueueSize,            // the maximum number of values to queue
+													kIOHIDOptionsTypeNone ); // options ( currently reserved )
+	
+	if(!sensorQueue || (CFGetTypeID( sensorQueue ) != IOHIDQueueGetTypeID( ) ) )
+		return FALSE;
+	
+	pHIDDevice->SetSensorQueue(sensorQueue);
 	
 	// Enumerate device elements
 	if(!pHIDDevice->EnumerateObjects())
@@ -616,266 +626,16 @@ Bool Platform::HID::InitialiseDevice(TPtr<TInputDevice> pDevice, const IOHIDDevi
 		
 	
 	pDevice->SetAttached(TRUE);
+	
+	// Start updating the queue for the device objects data
+	IOHIDQueueStart(sensorQueue);
 		
 	// Success
 	return TRUE;
 	
 }
 
-void Platform::HID::EnumDeviceObject(void* context, IOReturn result, void* sender, IOHIDReportType type, uint32_t reportID, uint8_t* report, CFIndex reportLength)
-{
-	//u32* pContext = (u32*)context;
-	//TRef refDeviceID = (*pContext);
-	TRef* pTRef = static_cast<TRef*>(context);
-	TRef refDeviceID = *pTRef;
 
-	
-	TPtr<TInputDevice> pDevice = g_pInputSystem->GetInstance(refDeviceID);
-	
-	if(pDevice.IsValid())
-	{
-		TPtr<TLInputHIDDevice> pHIDDevice = g_TLHIDDevices.FindPtr(pDevice->GetHardwareDeviceID());
-		
-		if(pHIDDevice.IsValid())
-		{			
-			// We have the associated device
-			// Now setup the hardware device object for the generic device
-			
-			/*
-			TSensorType SensorType = Unknown;
-			TRef	LabelRef;
-			switch(DIDFT_GETTYPE(pdidObjectInstance->dwType))
-			{
-				case DIDFT_PSHBUTTON:
-				case DIDFT_TGLBUTTON:
-				case DIDFT_BUTTON:
-					SensorType = Button;
-					LabelRef = GetDefaultButtonRef(pDevice->GetSensorCount(SensorType));
-					break;
-					
-				case DIDFT_RELAXIS:
-				case DIDFT_ABSAXIS:
-				case DIDFT_AXIS:
-					SensorType = Axis;
-					LabelRef = GetDefaultAxisRef(pDevice->GetSensorCount(SensorType));
-					break;
-					
-				case DIDFT_POV:
-					SensorType = POV;
-					LabelRef = GetDefaultPOVRef(pDevice->GetSensorCount(SensorType));
-					break;
-			}
-			
-			if(SensorType != Unknown)
-			{
-				//u32 uInstanceID = DIDFT_GETINSTANCE(pdidObjectInstance->dwType);
-				// Use the offset as the ID
-				u32 uInstanceID = pdidObjectInstance->dwOfs;
-				
-				TPtr<TInputSensor> pSensor = pDevice->AttachSensor(uInstanceID, SensorType);
-				
-				if(pSensor.IsValid())
-				{
-					pSensor->AddLabel(LabelRef);
-					pSensor->SubscribeTo(pDXDevice);
-					
-					
-					if(SensorType == Button)
-					{
-						// Calcualte the index of the button - used for when accessing the 
-						// button specific arrays as they can only be accessed via index
-						// because the ID isn;t know in advance
-						//u32	uIndex = pDevice->GetSensorCount(SensorType);
-						
-						// Add any additional labels
-						if(GetSpecificButtonRef(uInstanceID, pDevice->GetDeviceType(), pDXDevice->GetProductID(), LabelRef))
-						{
-							pSensor->AddLabel(LabelRef);
-						}
-						else
-						{
-							//TLDebug::Break("Failed to find additional label for sensor");
-						}
-					}
-				}
-			}
-			 */
-		}
-	}	
-}
-
-
-
-/*
-void Platform::HID::CreateDevice_Keyboard(const IOHIDDeviceRef device)
-{
-	TLDebug_Print("Device Type - Keyboard");
-	
-	// For USB devices we need to use reports or transactions via the HID to be able to send and recieve data
-	// Get the max erport size for this device
-	if(!l_pKeyboardReportBuffer)
-	{	
-		u32 maxreportsize = 0;
-		
-		CFTypeRef tCFTypeRef = IOHIDDeviceGetProperty( device, CFSTR( kIOHIDMaxInputReportSizeKey ) );
-		if ( tCFTypeRef ) 
-		{
-			// if this is a number
-			if ( CFNumberGetTypeID( ) == CFGetTypeID( tCFTypeRef ) ) 
-			{			
-				// get its value
-				if(CFNumberGetValue( ( CFNumberRef ) tCFTypeRef, kCFNumberSInt32Type, &maxreportsize ))
-				{
-					TTempString str;
-					str.Appendf("Buffersize: ");
-					str.Appendf("%d", maxreportsize);
-					TLDebug_Print(str);
-					str.Empty();
-				}
-			}
-		}	
-	
-		// TEST
-		l_pKeyboardReportBuffer = (uint8_t*)TLMemory::Platform::MemAlloc(maxreportsize);
-		
-		
-		// Register a report callback for this device
-		IOHIDDeviceRegisterInputReportCallback( device, l_pKeyboardReportBuffer, maxreportsize, DeviceReportCallback, 0 );	
-		
-		//IOHIDDeviceRegisterRemovalCallback( device, DeviceRemovedCallback, 0 );
-		//IOHIDDeviceScheduleWithRunLoop( device, CFRunLoopGetCurrent( ), kCFRunLoopDefaultMode );
-	}
-}
-
-void Platform::HID::CreateDevice_Mouse(const IOHIDDeviceRef device)
-{
-	TLDebug_Print("Device Type - Mouse");
-
-	if(!l_pMouseReportBuffer)
-	{
-		u32 maxreportsize = 0;
-		
-		CFTypeRef tCFTypeRef = IOHIDDeviceGetProperty( device, CFSTR( kIOHIDMaxInputReportSizeKey ) );
-		if ( tCFTypeRef ) 
-		{
-			// if this is a number
-			if ( CFNumberGetTypeID( ) == CFGetTypeID( tCFTypeRef ) ) 
-			{			
-				// get its value
-				if(CFNumberGetValue( ( CFNumberRef ) tCFTypeRef, kCFNumberSInt32Type, &maxreportsize ))
-				{
-					TTempString str;
-
-					str.Appendf("Buffer size: ");
-					str.Appendf("%d", maxreportsize);
-					TLDebug_Print(str);
-					str.Empty();
-				}
-			}
-		}	
-		
-		// TEST
-		l_pMouseReportBuffer = (uint8_t*)TLMemory::Platform::MemAlloc(maxreportsize);
-		
-		
-		// Register a report callback for this device
-		IOHIDDeviceRegisterInputReportCallback( device, l_pMouseReportBuffer, maxreportsize, DeviceReportCallback, 0 );	
-		
-		//IOHIDDeviceRegisterRemovalCallback( device, DeviceRemovedCallback, 0 );
-		//IOHIDDeviceScheduleWithRunLoop( device, CFRunLoopGetCurrent( ), kCFRunLoopDefaultMode );
-	}	
-}
-
-void Platform::HID::CreateDevice_Gamepad(const IOHIDDeviceRef device)
-{
-	TLDebug_Print("Device Type - Gamepad");
-	
-	TTempString str;
-	s32 vendorID = 0;
-	s32 productID = 0;
-	
-	// Get the vendor ID
-	CFTypeRef tCFTypeRef = IOHIDDeviceGetProperty( device, CFSTR( kIOHIDVendorIDKey ) );
-    if ( tCFTypeRef ) 
-	{
-        // if this is a number
-        if ( CFNumberGetTypeID( ) == CFGetTypeID( tCFTypeRef ) ) 
-		{
-            // get its value
-			if(CFNumberGetValue( ( CFNumberRef ) tCFTypeRef, kCFNumberSInt32Type, &vendorID ))
-			{
-				str.Appendf("Vendor ID: ");
-				str.Appendf("%x", vendorID);
-				TLDebug_Print(str);
-				str.Empty();
-			}
-        }
-    }
-	
-	// Get the product ID
-	tCFTypeRef = IOHIDDeviceGetProperty( device, CFSTR( kIOHIDProductIDKey ) );
-    if ( tCFTypeRef ) 
-	{
-        // if this is a number
-        if ( CFNumberGetTypeID( ) == CFGetTypeID( tCFTypeRef ) ) 
-		{			
-            // get its value
-			if(CFNumberGetValue( ( CFNumberRef ) tCFTypeRef, kCFNumberSInt32Type, &productID ))
-			{
-				str.Appendf("Product ID: ");
-				str.Appendf("%x", productID);
-				TLDebug_Print(str);
-				str.Empty();
-			}
-        }
-    }	
-	
-	switch(vendorID)
-	{
-		case Vendor_Nintendo:
-		{
-			if(productID == Gamepad_Wiimote)
-			{
-				TLDebug_Print("Wiimote found");
-				
-			}
-		}
-			break;
-	}
-	
-	
-	// For USB devices we need to use reports or transactions via the HID to be able to send and recieve data
-	// Get the max erport size for this device	
-	u32 maxreportsize = 0;
-	
-	tCFTypeRef = IOHIDDeviceGetProperty( device, CFSTR( kIOHIDMaxInputReportSizeKey ) );
-    if ( tCFTypeRef ) 
-	{
-        // if this is a number
-        if ( CFNumberGetTypeID( ) == CFGetTypeID( tCFTypeRef ) ) 
-		{			
-            // get its value
-			if(CFNumberGetValue( ( CFNumberRef ) tCFTypeRef, kCFNumberSInt32Type, &maxreportsize ))
-			{
-				str.Appendf("Buffer size: ");
-				str.Appendf("%d", maxreportsize);
-				TLDebug_Print(str);
-				str.Empty();
-			}
-        }
-    }	
-	
-	// TEST
-	l_pReportBuffer = (uint8_t*)TLMemory::Platform::MemAlloc(maxreportsize);
-	
-	
-	// Register a report callback for this device
-	IOHIDDeviceRegisterInputReportCallback( device, l_pReportBuffer, maxreportsize, DeviceReportCallback, 0 );	
-	//IOHIDDeviceRegisterRemovalCallback( device, DeviceRemovedCallback, 0 );
-	//IOHIDDeviceScheduleWithRunLoop( device, CFRunLoopGetCurrent( ), kCFRunLoopDefaultMode );
-}
-
-*/
 
 void Platform::HID::DeviceRemovedCallback(void* context, IOReturn result,  void* sender, IOHIDDeviceRef device)
 {
@@ -1037,53 +797,107 @@ Bool Platform::HID::UpdatePhysicalDevice(TLInput::TInputDevice& Device)
 
 
 Bool Platform::HID::UpdateHIDDevice_Mouse(TInputDevice& Device,TLInputHIDDevice& TLHIDDevice)
-{
-	IOHIDDeviceRef HIDDeviceRef = TLHIDDevice.GetHIDDevice();
-	
-	// If valid poll and acquire the device ensuring no errors.
-	if(HIDDeviceRef == 0)
+{	
+	// Poll the queue for any data
+	IOHIDValueRef valueRef = IOHIDQueueCopyNextValueWithTimeout( TLHIDDevice.GetSensorQueue(), 0 );
+
+	// No data?
+	if(!valueRef)
 		return FALSE;
-	
-/*	
-	lpdiDevice->Poll();
-	
-	// Now read some data
-	DIDEVICEOBJECTDATA		rgdod[INPUT_MOUSE_BUFFER_SIZE];
-	DWORD					dwItems = INPUT_MOUSE_BUFFER_SIZE;
-	
-	HRESULT hr = lpdiDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), rgdod, &dwItems, 0);
-	
-	if(FAILED(hr) || (dwItems == 0)) 
-	{ 
-		return FALSE;
-	}
-	
-	// dwItems = Number of elements read (could be zero).
-	if (hr == DI_BUFFEROVERFLOW) 
-	{	
-		// Buffer had overflowed. 
-		TLDebug_Print("Mouse Input Buffer overflow");
-	} 
-	
-	/////////////////////////////////////////////////////////////
-	// Copy data from the physical device to the generic input device for the sensors to use
-	/////////////////////////////////////////////////////////////
-	
-#ifdef _DEBUG
-	TTempString inputinfo = "Mouse processing buffer: ";
-	inputinfo.Appendf("%d items", dwItems);
-	TLDebug::Print(inputinfo);
-#endif
 	
 	//	make a list of axes to consolidate after processing
 	TFixedArray<TRef,100> ConsolidateAxes;
 	
-	//	pre-alloc input buffer space
+	// Get the input buffer for the device
 	TArray<TInputData>& InputBuffer = Device.GetInputBuffer();
-	InputBuffer.AddAllocSize( dwItems );
-	
+	InputBuffer.AddAllocSize( MAX_MOUSE_QUEUE_ELEMENTS );
 	TInputData data;
 	
+	
+	// Process the input data and add to the data buffer for the generic device
+	while(valueRef)
+	{
+		IOHIDElementRef elementRef = IOHIDValueGetElement(valueRef);
+
+		// Get the cookie of the element.  This is a unique reference within the specific device.
+		IOHIDElementCookie cookie = IOHIDElementGetCookie(elementRef);
+		
+		// Use the cookie as a unique instance ID for the sensor
+		u32 uInstanceID = (u32)cookie;
+
+		// Does the device have a sensor with the same ID??
+		// NOTE: They should.  If we don;t then the queue is getting populated with extra data?
+		TPtr<TLInput::TInputSensor> pSensor = Device.GetSensor(uInstanceID);
+		if(pSensor.IsValid())
+		{
+			
+			// Get the raw value
+			s32 sValue = IOHIDValueGetIntegerValue( valueRef );
+
+		
+			// Get the scaled value of the input
+			//float fValue = IOHIDValueGetScaledValue( valueRef, kIOHIDValueScaleTypeCalibrated );
+			float fValue = ((float)sValue);
+			
+			// Scale down the axis values
+			if(pSensor->GetSensorType() == Axis)
+			{
+				fValue /= 100.0f;
+				
+				ConsolidateAxes.AddUnique( uInstanceID );				
+			}
+			else 
+			{
+				// Limit button input to 0-1 range 
+				TLMaths::Limit(fValue, 0.0f, 1.0f);
+			}
+
+			
+#ifdef ENABLE_INPUTSYSTEM_TRACE			
+			TTempString str;
+			str.Appendf("Mouse input data %.2f (raw %d) for element %d - labels ", fValue, sValue, elementRef);
+			
+			const TArray<TRef>& labels = pSensor->GetSensorLabels();
+			
+			for(u32 uIndex = 0; uIndex < labels.GetSize(); uIndex++)
+			{
+				const TRef& label = labels[uIndex];
+				label.GetString(str);
+			}
+			
+			TLDebug_Print(str);
+#endif
+			
+			// Add to buffer
+			data.m_SensorRef = uInstanceID;
+			
+			// For every keyboard button publish it's value - if any sensors subscribe to the 
+			// keyboard buttons they will process the information
+			data.m_fData = fValue;
+			
+			// Add to the buffer
+			InputBuffer.Add( data );
+		}
+#ifdef ENABLE_INPUTSYSTEM_TRACE
+		else
+		{
+			TLDebug_Print("Sensor not found?");
+		}
+#endif
+	
+		CFRelease( valueRef );
+		
+		// Get the next one in the queue
+		valueRef = IOHIDQueueCopyNextValueWithTimeout( TLHIDDevice.GetSensorQueue(), 0 );
+
+	}
+	
+	//	consolidate axis data
+	for ( u32 i=0;	i<ConsolidateAxes.GetSize();	i++ )
+		ConslidateAxisMovement( InputBuffer, ConsolidateAxes[i] );
+	
+	
+/*		
 	for(u32 uCount = 0; uCount < dwItems; uCount++)
 	{
 		// get the data from the buffer
@@ -1139,15 +953,7 @@ Bool Platform::HID::UpdateHIDDevice_Mouse(TInputDevice& Device,TLInputHIDDevice&
 		data.m_fData = fValue;
 		InputBuffer.Add(data);
 		
-		if ( IsAxisData )
-		{
-			ConsolidateAxes.AddUnique( data.m_SensorRef );
-		}
 #ifdef _DEBUG
-		// In debug print what button was pressed
-		TString inputinfo = "Mouse input: ";
-		inputinfo.Appendf("%d %.4f", rgdod[uCount].dwOfs, fValue);
-		TLDebug::Print(inputinfo);
 		
 		if(fValue > 10000.0f)
 		{
@@ -1157,11 +963,6 @@ Bool Platform::HID::UpdateHIDDevice_Mouse(TInputDevice& Device,TLInputHIDDevice&
 		
 	}
 	
-	//	consolidate axis data
-	for ( u32 i=0;	i<ConsolidateAxes.GetSize();	i++ )
-		ConslidateAxisMovement( InputBuffer, ConsolidateAxes[i] );
-	
-	return (hr == DI_OK);
  */
 	
 	return TRUE;
@@ -1204,7 +1005,7 @@ Bool Platform::HID::ConslidateAxisMovement(TArray<TInputData>& InputBuffer,TRefR
 		PreviousValueIndex = i;
 	}
 	
-#ifdef _DEBUG
+#ifdef ENABLE_INPUTSYSTEM_TRACE
 	if ( Debug_DatasRemoved > 0 )
 	{
 		TTempString Debug_String("Removed ");
@@ -1223,78 +1024,84 @@ Bool Platform::HID::ConslidateAxisMovement(TArray<TInputData>& InputBuffer,TRefR
 //-------------------------------------------------------------------
 Bool Platform::HID::UpdateHIDDevice_Keyboard(TInputDevice& Device,TLInputHIDDevice& TLHIDDevice)
 {
-	IOHIDDeviceRef HIDDeviceRef = TLHIDDevice.GetHIDDevice();
+	// Poll the queue for any data
+	IOHIDValueRef valueRef = IOHIDQueueCopyNextValueWithTimeout( TLHIDDevice.GetSensorQueue(), 0 );
 	
-	// If valid poll and acquire the device ensuring no errors.
-	if(HIDDeviceRef == 0)
+	// No data?
+	if(!valueRef)
 		return FALSE;
-	
-	/*
-	// Acquire the device
-	HRESULT hr = lpdiDevice->Acquire(); 
-	
-	if(FAILED( hr ))
-		return FALSE;
-	
-	lpdiDevice->Poll();
-	
-	
-	// Now read some data
-	DIDEVICEOBJECTDATA		rgdod[INPUT_KEYBOARD_BUFFER_SIZE];
-	DWORD					dwItems = INPUT_KEYBOARD_BUFFER_SIZE;
-	
-	hr = lpdiDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), rgdod, &dwItems, 0);
-	
-	
-	if( FAILED( hr ) || (dwItems == 0) )
-	{
-		// DirectInput may be telling us that the input stream has been
-		// interrupted.  We aren't tracking any state between polls, so
-		// we don't have any special reset that needs to be done.
-		// We just re-acquire and try again.
-		return FALSE;
-	}
-	
-	// dwItems = Number of elements read (could be zero).
-	if (hr == DI_BUFFEROVERFLOW) 
-	{	
-		// Buffer had overflowed. 
-		TLDebug_Print("Keyboard Input Buffer overflow");
-	} 
-	
-	
-#ifdef _DEBUG
-	TTempString inputinfo = "Keyboard processing buffer: ";
-	inputinfo.Appendf("%d items", dwItems);
-	TLDebug::Print(inputinfo);
-#endif
-	
+
+	// Get the input buffer for the device
 	TArray<TInputData>& InputBuffer = Device.GetInputBuffer();
-	InputBuffer.AddAllocSize( dwItems );
-	
+	InputBuffer.AddAllocSize( MAX_KEYBOARD_QUEUE_ELEMENTS );
 	TInputData data;
-	
-	// Publish the keyboard data
-	for(u32 uIndex = 0; uIndex < dwItems; uIndex++)
+
+	// Process the input data and add to the data buffer for the generic device
+	while(valueRef)
 	{
-		data.m_SensorRef = rgdod[uIndex].dwOfs;
+		IOHIDElementRef elementRef = IOHIDValueGetElement(valueRef);
 		
-		// For every keyboard button publish it's value - if any sensors subscribe to the 
-		// keyboard buttons they will process the information
-		float fValue = (rgdod[uIndex].dwData & 0x80) ? 1.0f : 0.0f;
-		data.m_fData = fValue;
+		// Get the cookie of the element.  This is a unique reference within the specific device.
+		IOHIDElementCookie cookie = IOHIDElementGetCookie(elementRef);
 		
-		// Add to the buffer
-		InputBuffer.Add( data );
+		// Use the cookie as a unique instance ID for the sensor
+		u32 uInstanceID = (u32)cookie;
 		
-#ifdef _DEBUG
-		// In debug print what key was pressed
-		TString inputinfo = "Keyboard input: ";
-		inputinfo.Appendf("%d %.2f", rgdod[uIndex].dwOfs, fValue);
-		TLDebug::Print(inputinfo);
+		// Does the device have a sensor with the same ID??
+		// NOTE: They should.  If we don;t then the queue is getting populated with extra data?
+		TPtr<TLInput::TInputSensor> pSensor = Device.GetSensor(uInstanceID);
+		if(pSensor.IsValid())
+		{
+							
+			// Get the raw value
+			s32 sValue = IOHIDValueGetIntegerValue( valueRef );
+			
+			// Simply convert the raw value to a float
+			float fValue = (float) sValue;
+
+			// Limit values to within range
+			TLMaths::Limit(fValue, 0.0f, 1.0f); 
+
+#ifdef ENABLE_INPUTSYSTEM_TRACE			
+			TTempString str;
+			str.Appendf("Keyboard input data %.2f (raw %d) for element %d - labels ", fValue, sValue, elementRef);
+									
+			const TArray<TRef>& labels = pSensor->GetSensorLabels();
+			
+			for(u32 uIndex = 0; uIndex < labels.GetSize(); uIndex++)
+			{
+				const TRef& label = labels[uIndex];
+				label.GetString(str);
+			}
+
+			TLDebug_Print(str);
+#endif			
+			// Add to buffer
+			data.m_SensorRef = uInstanceID;
+			
+			// For every keyboard button publish it's value - if any sensors subscribe to the 
+			// keyboard buttons they will process the information
+			data.m_fData = fValue;
+			
+			// Add to the buffer
+			InputBuffer.Add( data );
+			
+		}
+#ifdef ENABLE_INPUTSYSTEM_TRACE
+		else
+		{
+			TLDebug_Print("Sensor not found?");
+		}
 #endif
+		
+		
+		CFRelease( valueRef );
+		
+		// Get the next one in the queue
+		valueRef = IOHIDQueueCopyNextValueWithTimeout( TLHIDDevice.GetSensorQueue(), 0 );
+		
 	}
-	*/
+	
 	
 	return TRUE;
 }
@@ -1304,26 +1111,39 @@ Bool Platform::HID::UpdateHIDDevice_Keyboard(TInputDevice& Device,TLInputHIDDevi
  */
 Bool Platform::HID::UpdateHIDDevice_Gamepad(TInputDevice& Device,TLInputHIDDevice& TLHIDDevice)
 {
-	IOHIDDeviceRef HIDDeviceRef = TLHIDDevice.GetHIDDevice();
 	
-	// If valid poll and acquire the device ensuring no errors.
-	if(HIDDeviceRef == 0)
+	// Poll the queue for any data
+	IOHIDValueRef valueRef = IOHIDQueueCopyNextValueWithTimeout( TLHIDDevice.GetSensorQueue(), 0 );
+	
+	// No data?
+	if(!valueRef)
 		return FALSE;
+	
+	// Process the input data and add to the data buffer for the generic device
+	while(valueRef)
+	{
+		
+		// Get the scaled value of the input
+		float fValue = IOHIDValueGetScaledValue( valueRef, kIOHIDValueScaleTypeCalibrated );
+		
+		TTempString str;
+		str.Appendf("Gamepad input data %.2f", fValue);
+		TLDebug_Print(str);
+		
+		// Add to buffer
+		
+		CFRelease( valueRef );
+		
+		// Get the next one in the queue
+		valueRef = IOHIDQueueCopyNextValueWithTimeout( TLHIDDevice.GetSensorQueue(), 0 );
+		
+	}
+	
+	// TEMP
+	return FALSE;
 	
 	/*
-	// Poll and acquire the device
-	HRESULT hr = lpdiDevice->Acquire(); 
-	
-	if(FAILED(hr))
-		return FALSE;
-	
-	// NOTE: May need to test for DIERR_INPUTLOST
-	hr = lpdiDevice->Poll(); 
-	
-	if(FAILED(hr))
-		return FALSE;
-	
-	
+		
 	// Now read some data
 	DIDEVICEOBJECTDATA		rgdod[INPUT_GAMEPAD_BUFFER_SIZE];
 	DWORD					dwItems = INPUT_GAMEPAD_BUFFER_SIZE;
@@ -1381,7 +1201,61 @@ Bool Platform::HID::UpdateHIDDevice_Gamepad(TInputDevice& Device,TLInputHIDDevic
 int2 Platform::GetCursorPosition(u8 uIndex)
 {
 	// TODO: Return cursor pos
-	return int2(0,0);
+	//return int2(0,0);
+
+	// Get screen info	
+	NSArray* windowlist = [NSApp windows];
+
+	NSWindow* window = nil;
+	NSPoint pos = {0,0};
+	
+	if([windowlist count] > 0)
+	{
+		window = [windowlist objectAtIndex:0];
+		
+		NSRect	rect = [window frame];
+
+		TTempString str;
+#ifdef USE_MOUSELOC_OUTSIDE_OF_EVENT		
+		// Get mouse pos relative to window
+		pos = [window mouseLocationOutsideOfEventStream];
+		
+		str.Appendf("Mouse pos (%.2f, %.2f)", pos.x, pos.y);
+
+		// On the Mac the y position is from the bottom of the window
+		// So invert it		
+		float fYPos = rect.size.height - pos.y;
+		
+		pos.y = fYPos;		
+
+		str.Appendf("-> (%.2f, %.2f)", pos.x, pos.y);
+
+#else		
+		// Get mouse coordinates in screen space
+		pos = [NSEvent mouseLocation];
+		
+		str.Appendf("Mouse pos (%.2f, %.2f)", pos.x, pos.y);
+		
+		// Now make relative to window
+		NSPoint windowpos = [window convertScreenToBase:pos];
+		
+		pos = windowpos;
+		str.Appendf("-> (%.2f, %.2f)", pos.x, pos.y);
+		
+		// On the Mac the y position is from the bottom of the window
+		// So invert it		
+		float fYPos = rect.size.height - pos.y;
+		pos.y = fYPos;
+
+		str.Appendf("-> (%.2f, %.2f)", pos.x, pos.y);
+		
+#endif
+		TLDebug_Print(str);
+
+	}
+	
+	
+	return int2(pos.x, pos.y);
 }
 
 
@@ -1394,48 +1268,18 @@ void Platform::HID::SetCursorPosition(u8 uIndex, int2 uPos)
 
 TLInput::Platform::HID::TLInputHIDDevice::~TLInputHIDDevice()
 {
-	// Release the buffer
-	if(m_pReportBuffer)
-		TLMemory::Platform::MemDealloc(m_pReportBuffer);
+	
+	if(m_SensorDataQueue)
+	{
+		IOHIDQueueStop(m_SensorDataQueue);
+		CFRelease(m_SensorDataQueue);
+	}
 
 	// Remove from callbacks and runloop schedule
 	IOHIDDeviceRegisterInputReportCallback( GetHIDDevice(), NULL, 0, NULL, 0 );		
 
 }
 
-void TLInput::Platform::HID::TLInputHIDDevice::InitialiseReportBuffer()
-{
-	// Initialise the data buffer for the HID reports		
-	 u32 maxreportsize = 0;
-	 
-	 CFTypeRef tCFTypeRef = IOHIDDeviceGetProperty( GetHIDDevice(), CFSTR( kIOHIDMaxInputReportSizeKey ) );
-	 if ( tCFTypeRef ) 
-	 {
-		 // if this is a number
-		 if ( CFNumberGetTypeID( ) == CFGetTypeID( tCFTypeRef ) ) 
-		 {			
-			 // get its value
-			 if(CFNumberGetValue( ( CFNumberRef ) tCFTypeRef, kCFNumberSInt32Type, &maxreportsize ))
-			 {
-				 TTempString str;
-				 str.Appendf("Buffersize: ");
-				 str.Appendf("%d", maxreportsize);
-				 TLDebug_Print(str);
-				 str.Empty();
-			 }
-		 }
-	 }	
-	
-	// Allocate the memory for the report buffer
-	m_pReportBuffer = static_cast<uint8_t*>(TLMemory::Platform::MemAlloc(maxreportsize)); 
-	 
-	// Setup the callback
-	IOHIDDeviceRegisterInputReportCallback( GetHIDDevice(), 
-										   GetReportBuffer(), 
-										   maxreportsize, 
-										   HID::DeviceReportCallback, 
-										   &m_DeviceRef );		
-}
 
 void TLInput::Platform::HID::TLInputHIDDevice::PublishData(u32 uUniqueID, float fValue)
 {
@@ -1446,23 +1290,6 @@ void TLInput::Platform::HID::TLInputHIDDevice::PublishData(u32 uUniqueID, float 
 
 Bool TLInput::Platform::HID::TLInputHIDDevice::EnumerateObjects()
 {
-	/*
-	 kIOHIDMaxFeatureReportSizeKey
-	CFIndex ReportIndex = 0;
-	IOReturn result = IOHIDDeviceGetReportWithCallback(GetHIDDevice(), 
-													   kIOHIDReportTypeFeature, 
-													   ReportIndex, 
-													   GetReportBuffer(), 
-													   NULL,
-													   0L, 
-													   HID::EnumDeviceObject, 
-													   &m_DeviceRef);
-	
-	if(result != kIOReturnSuccess)
-		return FALSE;
-	*/
-	
-	
 	CFArrayRef elementCFArrayRef = IOHIDDeviceCopyMatchingElements( GetHIDDevice(), NULL, kIOHIDOptionsTypeNone );
 
 	CFIndex numberOfElements = CFArrayGetCount(elementCFArrayRef);
@@ -1700,6 +1527,9 @@ void Platform::HID::TLInputHIDDevice::EnumDeviceObject(IOHIDElementRef elementRe
 
 				if(pSensor.IsValid())
 				{
+					// Add the element to the sensor queue
+					IOHIDQueueAddElement( GetSensorQueue(), elementRef);
+					
 					pSensor->AddLabel(LabelRef);
 					pSensor->SubscribeTo(pHIDDevice);
 

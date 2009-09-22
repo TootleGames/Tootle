@@ -57,7 +57,7 @@ public:
 	m_DeviceRef(DeviceRef),
 	m_HIDDevice(HIDDevice),
 	m_uDeviceType(0),
-	m_pReportBuffer(NULL)
+	m_SensorDataQueue(NULL)
 	{
 		// Create data buffer?
 		// register call back and init runloop schedule?
@@ -66,24 +66,24 @@ public:
 	~TLInputHIDDevice();
 	
 	
-	inline Bool			operator==(TRefRef HIDDeviceRef)							const	{	return GetDeviceRef() == HIDDeviceRef;	}
-	inline Bool			operator==(const TLInputHIDDevice& HIDDevice)	const 	{	return GetDeviceRef() == HIDDevice.GetDeviceRef();	}
+	FORCEINLINE Bool			operator==(TRefRef HIDDeviceRef)							const	{	return GetDeviceRef() == HIDDeviceRef;	}
+	FORCEINLINE Bool			operator==(const TLInputHIDDevice& HIDDevice)	const 	{	return GetDeviceRef() == HIDDevice.GetDeviceRef();	}
 	
 	
-	const	TRef&								GetDeviceRef()														const	{ return m_DeviceRef; }
-	const 	IOHIDDeviceRef						GetHIDDevice()														const	{ return m_HIDDevice; }
+	FORCEINLINE const	TRef&					GetDeviceRef()														const	{ return m_DeviceRef; }
+	FORCEINLINE const 	IOHIDDeviceRef			GetHIDDevice()														const	{ return m_HIDDevice; }
 	
-	const	u32									GetDeviceType()														const	{ return m_uDeviceType; }
-	inline void									SetDeviceType(u32 uDeviceType)										{ m_uDeviceType = uDeviceType; }		
+	FORCEINLINE const	u32						GetDeviceType()														const	{ return m_uDeviceType; }
+	FORCEINLINE void							SetDeviceType(u32 uDeviceType)										{ m_uDeviceType = uDeviceType; }		
 		
 	void										PublishData(u32 uUniqueID, float fValue);
 	
-	inline void									SetProductID(u32 uProductID)			{ m_uProductID = uProductID; }
-	inline u32									GetProductID()					const	{ return m_uProductID; }
-	
-	void										InitialiseReportBuffer();
-	uint8_t*									GetReportBuffer()						{ return m_pReportBuffer; }
-	
+	FORCEINLINE void							SetProductID(u32 uProductID)			{ m_uProductID = uProductID; }
+	FORCEINLINE u32								GetProductID()					const	{ return m_uProductID; }
+		
+	FORCEINLINE void							SetSensorQueue(IOHIDQueueRef sensorQueue)			{ m_SensorDataQueue = sensorQueue;}
+	FORCEINLINE const IOHIDQueueRef&			GetSensorQueue()							const	{ return m_SensorDataQueue; }
+
 	Bool										EnumerateObjects();
 protected:	
 	
@@ -94,8 +94,8 @@ private:
 	IOHIDDeviceRef							m_HIDDevice;
 	u32										m_uDeviceType;
 	u32										m_uProductID;
-	uint8_t*								m_pReportBuffer;
-//	CFIndex									m_ReportLength;
+	
+	IOHIDQueueRef							m_SensorDataQueue;
 };
 
 
