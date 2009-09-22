@@ -88,6 +88,7 @@ public:
 	template<typename TYPE> FORCEINLINE void	Write(const TYPE& Var)				{	SetDataTypeHint<TYPE>();	WriteData( (u8*)&Var, sizeof(TYPE) );		}
 	template<typename TYPE> FORCEINLINE void	Write(const TArray<TYPE>& Array)	{	SetDataTypeHint<TYPE>();	WriteArray( Array );	}
 	template<typename> FORCEINLINE void			Write(const TString& String)		{	WriteString( String );	}
+	//specialised below! template<> FORCEINLINE void	Write(const TBinary& Data)
 	template<typename TYPE> FORCEINLINE void	Write(const TPtr<TYPE>& Pointer)	{	Debug_ReadWritePointerError();	}	//	cant read/write a pointer
 	template<typename TYPE> FORCEINLINE void	Write(const TYPE*& Pointer)			{	Debug_ReadWritePointerError();	}	//	cant read/write a pointer
 	template<typename TYPE> FORCEINLINE void	WriteToStart(const TYPE& Var)		{	SetDataTypeHint<TYPE>();	WriteDataToStart( (u8*)&Var, sizeof(TYPE) );	}
@@ -334,6 +335,10 @@ FORCEINLINE Bool TBinary::CheckDataAvailible(u32 DataSize) const
 #define TLBinary_TypeRef_Type2_s8		TRef_Static4(s,EIGHT,UNDERSCORE,TWO)
 #define TLBinary_TypeRef_Type3_s8		TRef_Static4(s,EIGHT,UNDERSCORE,THREE)
 #define TLBinary_TypeRef_Type4_s8		TRef_Static4(s,EIGHT,UNDERSCORE,FOUR)
+#define TLBinary_TypeRef_char			TLBinary_TypeRef_s8
+#define TLBinary_TypeRef_Type2_char		TLBinary_TypeRef_Type2_s8
+#define TLBinary_TypeRef_Type3_char		TLBinary_TypeRef_Type3_s8
+#define TLBinary_TypeRef_Type4_char		TLBinary_TypeRef_Type4_s8
 #define TLBinary_TypeRef_s16			TRef_Static3(s,ONE,SIX)
 #define TLBinary_TypeRef_Type2_s16		TRef_Static5(s,ONE,SIX,UNDERSCORE,TWO)
 #define TLBinary_TypeRef_Type3_s16		TRef_Static5(s,ONE,SIX,UNDERSCORE,THREE)
@@ -360,6 +365,7 @@ TLBinary_DeclareDataTypeRefAll( u16 );
 TLBinary_DeclareDataTypeRefAll( u32 );
 TLBinary_DeclareDataTypeRefAll( u64 );
 TLBinary_DeclareDataTypeRefAll( s8 );
+TLBinary_DeclareDataTypeRefAll( char );	//	gr: pc compiler thinks this is a different type to s8...
 TLBinary_DeclareDataTypeRefAll( s16 );
 TLBinary_DeclareDataTypeRefAll( s32 );
 TLBinary_DeclareDataTypeRefAll( s64 );

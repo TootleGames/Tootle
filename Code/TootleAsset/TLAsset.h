@@ -60,8 +60,8 @@ namespace TLAsset
 	TTypedRef					GetFreeAssetRef(TTypedRef BaseAndTypeRef);			//	get an asset ref that isn't in use (starting from base ref)
 	FORCEINLINE TTypedRef		GetFreeAssetRef(TRefRef AssetRef,TRefRef AssetType)	{	return GetFreeAssetRef( TTypedRef( AssetRef, AssetType ) );	}
 
-	Bool						SaveAsset(const TTypedRef& AssetAndTypeRef);		//	write an asset's current state back to the file system - fails if the asset isn't currently loaded
-	FORCEINLINE Bool			SaveAsset(TRefRef AssetRef,TRefRef AssetType)		{	return SaveAsset( TTypedRef( AssetRef, AssetType ) );	}
+	TLFileSys::TFileAsset*		SaveAsset(const TTypedRef& AssetAndTypeRef);		//	write an asset's current state back to the file system - fails if the asset isn't currently loaded
+	FORCEINLINE Bool			SaveAsset(TRefRef AssetRef,TRefRef AssetType)		{	return SaveAsset( TTypedRef( AssetRef, AssetType ) ) != NULL;	}
 	Bool						SaveAsset(const TLAsset::TAsset* pAsset);
 
 	FORCEINLINE Bool			DeleteAsset(const TTypedRef& AssetAndTypeRef);		//	delete an asset from the asset Manager

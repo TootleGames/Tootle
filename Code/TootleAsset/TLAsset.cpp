@@ -206,21 +206,21 @@ TPtr<TLAsset::TAsset>& TLAsset::GetAssetPtr(const TTypedRef& AssetAndTypeRef,Syn
 //----------------------------------------------------------
 Bool TLAsset::SaveAsset(const TLAsset::TAsset* pAsset)	
 {
-	return SaveAsset( pAsset->GetAssetAndTypeRef() );	
+	return SaveAsset( pAsset->GetAssetAndTypeRef() ) != NULL;	
 }
 
 
 //----------------------------------------------------------
 //	write an asset's current state back to the file system - fails if the asset isn't currently loaded
 //----------------------------------------------------------
-Bool TLAsset::SaveAsset(const TTypedRef& AssetAndTypeRef)
+TLFileSys::TFileAsset* TLAsset::SaveAsset(const TTypedRef& AssetAndTypeRef)
 {
 	//	get asset
 	TPtr<TAsset>& pAssetPtr = GetAssetInstance( AssetAndTypeRef );
 	if ( !pAssetPtr || (pAssetPtr && !pAssetPtr->IsLoaded() ) )
 	{
 		TLDebug_Break("Failed to save asset as it isn't loaded");
-		return FALSE;
+		return NULL;
 	}
 
 	//	todo: find out the original file system the asset came from...
@@ -240,32 +240,32 @@ Bool TLAsset::SaveAsset(const TTypedRef& AssetAndTypeRef)
 	{
 		//	failed to create new file
 		TLDebug_Break("Failed to create new .Asset file");
-		return FALSE;
+		return NULL;
 	}
 
 	//	export asset to asset file
 	if ( pAssetPtr->Export( pAssetFile ) != SyncTrue )
-		return FALSE;
+		return NULL;
 
 	//	export asset file to plain file
 	if ( pAssetFile->Export() != SyncTrue )
-		return FALSE;
+		return NULL;
 
 	//	get the file sys for the file so we can write to it
 	TPtr<TLFileSys::TFileSys> pFileSys = pAssetFile->GetFileSys();
 	if ( !pFileSys )
 	{
 		TLDebug_Break("Expected file sys on new asset file");
-		return FALSE;
+		return NULL;
 	}
 
 	//	write file to filesys
 	TPtr<TLFileSys::TFile> pFile = pAssetFile;
 	if ( !pFileSys->WriteFile( pFile ) )
-		return FALSE;
+		return NULL;
 
 	//	all done!
-	return TRUE;
+	return pAssetFile;
 }
 
 

@@ -88,7 +88,8 @@ public:
 	FORCEINLINE Bool			MoveNode(TRefRef NodeRef,TRefRef NewParentRef)		{	return MoveNode( FindNode( NodeRef ), NewParentRef.IsValid() ? FindNode( NewParentRef ) : GetRootNode() );	}
 	virtual Bool				RemoveNode(TRefRef NodeRef)							{	return RemoveNode( FindNode( NodeRef ) );	}
 	FORCEINLINE Bool			RemoveNode(TRef& NodeRef);							//	simple remove node wrapper which invalidates the node ref as well
-	virtual Bool				RemoveChildren(TRefRef NodeRef)						{	return RemoveChildren( FindNode( NodeRef ) );	}			//	remove pNode's children (but not pNode)
+	virtual Bool				RemoveChildren(TRefRef NodeRef)						{	TPtr<T>& pNode = FindNode( NodeRef )	;	return pNode ? RemoveChildren( *pNode ) : FALSE;	}			//	remove pNode's children (but not pNode)
+	Bool						RemoveChildren(T& Node);							//	remove pNode's children (but not pNode)
 
 	//	factory access
 	FORCEINLINE Bool			AddFactory(TPtr< TClassFactory<T,FALSE> >& pFactory);	//	add factory to graph
@@ -114,7 +115,6 @@ public:
 
 //	FORCEINLINE Bool			RemoveNode(const T* pNode)				{	return RemoveNode( FindNode( pNode->GetNodeRef() ) );	}
 	Bool						RemoveNode(TPtr<T> pNode);				//	Requests a node to be removed from the graph.  The node will be removed at a 'safe' time so is not immediate
-	Bool						RemoveChildren(TPtr<T> pNode);			//	remove pNode's children (but not pNode)
 
 	Bool						MoveNode(TPtr<T>& pNode,TPtr<T>& pParent);		//	give this node a new parent via a request
 
@@ -1162,11 +1162,9 @@ Bool TLGraph::TGraph<T>::RemoveNode(TRef& NodeRef)
 //	remove pNode's children (but not pNode)
 //-----------------------------------------------------
 template <class T>
-Bool TLGraph::TGraph<T>::RemoveChildren(TPtr<T> pNode)
+Bool TLGraph::TGraph<T>::RemoveChildren(T& Node)
 {
-	if ( !pNode )
-		return FALSE;
-
+	/*
 	//	counter is only 1? did you try and remove a c-pointer? this?
 	//	must be at least 2 because the param is NOT a reference
 	if ( pNode.GetRefCount() == 1 )
@@ -1174,11 +1172,11 @@ Bool TLGraph::TGraph<T>::RemoveChildren(TPtr<T> pNode)
 		if ( !TLDebug_Break("RemoveChildren called with a new TPtr... called with a c-pointer and not a real TPtr or TRef?") )
 			return NULL;
 	}
-
+*/
 	Bool AnyRemoved = FALSE;
 
 	//	remove each child from the graph
-	TPtrArray<T>& Children = pNode->GetChildren();
+	TPtrArray<T>& Children = Node.GetChildren();
 	for ( u32 c=0;	c<Children.GetSize();	c++ )
 	{
 		AnyRemoved |= RemoveNode( Children[c] );

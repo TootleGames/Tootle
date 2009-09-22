@@ -756,7 +756,7 @@ void TArray<TYPE>::QuickSort(s32 First, s32 Last)
 //----------------------------------------------------------------------
 template<typename TYPE>
 template<class MATCHTYPE>
-s32 TArray<TYPE>::FindIndexSorted(const MATCHTYPE& val,u32 Low,s32 High) const
+s32 TArray<TYPE>::FindIndexSorted(const MATCHTYPE& val,u32 Low,s32 High,const TYPE* pData) const
 {
 	if ( High < (s32)Low )
 		return -1;
@@ -768,16 +768,18 @@ s32 TArray<TYPE>::FindIndexSorted(const MATCHTYPE& val,u32 Low,s32 High) const
 		return -1;
 
 	//	see if we've found the element...
-	const TYPE& MidElement = ElementAtConst( Mid );
+	//	gr: array of data is pre-fetched now and provided, removes unncessary index check (may want to keep this in for _DEBUG builds?) and virtual call
+	//const TYPE& MidElement = ElementAtConst( Mid );
+	const TYPE& MidElement = pData[Mid];
 	TLArray::SortResult Sort = m_pSortFunc( MidElement, MidElement, &val );
 	if ( Sort == TLArray::IsEqual )
 		return Mid;
 
 	//	search next half of array
 	if ( Sort == TLArray::IsLess )
-		return FindIndexSorted( val, Mid+1, High );
+		return FindIndexSorted( val, Mid+1, High, pData );
 	else //if ( Sort == TLArray::IsGreater )
-		return FindIndexSorted( val, Low, Mid-1 );
+		return FindIndexSorted( val, Low, Mid-1, pData );
 }
 
 
@@ -825,10 +827,10 @@ s32 TArray<TYPE>::FindIndex(const MATCHTYPE& val,u32 FromIndex) const
 
 		//	make use of the binary chop as our list is in order
 		if ( IsSorted() )
-			return FindIndexSorted( val, 0, GetSize() );
+			return FindIndexSorted( val, 0, GetSize(), GetData() );
 	}
 
-	//	search elements
+	//	walk through elements
 	const TYPE* pFirstElement = &ElementAtConst(0);
 	for ( u32 i=FromIndex;	i<Size;	i++ )
 	{
@@ -854,14 +856,16 @@ s32 TArray<TYPE>::FindIndex(const MATCHTYPE& val,u32 FromIndex)
 	//	if this is a sorted array, do a sort when we need to, then we can use a binary chop
 	if ( m_pSortFunc && Size > 2 )
 	{
-		Sort();
+		if ( !IsSorted() )
+			Sort();
 
 		//	make use of the binary chop as our list is in order
+		//	gr: check is sorted again incase we couldn't sort for some reason
 		if ( IsSorted() )
-			return FindIndexSorted( val, 0, GetSize()-1 );
+			return FindIndexSorted( val, 0, GetSize()-1, GetData() );
 	}
 
-	//	search elements
+	//	walk through elements
 	const TYPE* pFirstElement = &ElementAtConst(0);
 	for ( u32 i=FromIndex;	i<Size;	i++ )
 	{

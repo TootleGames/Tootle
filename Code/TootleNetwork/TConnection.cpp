@@ -39,9 +39,9 @@ void TLNetwork::TTask::SetStatusFailed(TRefRef ErrorRef)
 	//	set as failed
 	m_Status = SyncFalse;
 
-	//	store error ref
+	//	store error ref (TaskERROR - "Error" is used in the default php output)
 	if ( ErrorRef.IsValid() )
-		m_Data.ExportData("Error", ErrorRef );
+		m_Data.ExportData("TError", ErrorRef );
 
 	//	print out fail
 	TTempString Debug_String("Network task ");

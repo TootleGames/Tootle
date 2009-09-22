@@ -223,7 +223,7 @@ SyncBool TLFileSys::TFileAsset::Export()
 	m_Header.m_DataCheckSum = pFile->GetChecksum();
 
 	//	try to compress
-	if ( pFile->Compress() )
+	if ( pFile->Compress() == SyncTrue )
 		m_Header.m_Flags.Set( TFileAsset::Compressed );
 
 	//	inject header to start of the file

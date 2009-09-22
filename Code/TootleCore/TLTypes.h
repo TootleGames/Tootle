@@ -158,6 +158,7 @@ class Type4;
 
 TLCore_DeclareIsDataType( u8 );
 TLCore_DeclareIsDataType( s8 );
+TLCore_DeclareIsDataType( char );	//	gr: vs compiler seems to see s8 and char as different types
 TLCore_DeclareIsDataType( u16 );
 TLCore_DeclareIsDataType( s16 );
 TLCore_DeclareIsDataType( u32 );

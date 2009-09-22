@@ -24,6 +24,11 @@ TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TRefRef RenderNodeRef, TRefRef U
 	m_WidgetData				("WidgetData"),
 	m_Enabled					( TRUE )
 {
+	if ( !m_RenderTargetRef.IsValid() )
+	{
+		TLDebug_Break("No render target specified for widget");
+	}
+
 	//	no actions going out means this TWidget wont do anything
 	if ( !m_ActionOutDown.IsValid() && !m_ActionOutUp.IsValid() )
 	{
@@ -47,6 +52,11 @@ TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TBinaryTree& WidgetData)  :
 	m_WidgetData				("WidgetData"),
 	m_Enabled					( TRUE )
 {
+	if ( !m_RenderTargetRef.IsValid() )
+	{
+		TLDebug_Break("No render target specified for widget");
+	}
+
 	//	read actions out of the TBinary
 	WidgetData.ImportData("ActDown", m_ActionOutDown );
 	WidgetData.ImportData("ActUp", m_ActionOutUp );
@@ -176,7 +186,16 @@ void TLGui::TWidget::QueueClick(const int2& CursorPos,float ActionValue, TRefRef
 	//	if no render target at all then assume error - ignore click
 	if ( !pRenderTarget )
 	{
-		TLDebug_Break("Render target expected");
+#ifdef _DEBUG
+		TTempString Debug_String("Render target missing ");
+		m_RenderTargetRef.GetString( Debug_String );
+
+		//	break if no render target specified
+		if ( !m_RenderTargetRef.IsValid() )
+			TLDebug_Break( Debug_String );
+		else
+			TLDebug_Print( Debug_String );
+#endif
 		return;
 	}
 
