@@ -18,6 +18,8 @@ namespace TLFileSys
 	namespace Platform
 	{
 		Bool GetAssetDirectory(TTempString& AssetDir);
+		Bool GetAssetSubDirectory(TTempString& AssetDir, const TTempString& Subdirectory);
+		
 		Bool GetUserDirectory(TTempString& UserDir);
 		
 		Bool GetApplicationURL(TTempString& url);

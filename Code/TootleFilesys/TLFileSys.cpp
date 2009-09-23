@@ -43,6 +43,8 @@ namespace TLFileSys
 	namespace Platform
 	{
 		Bool GetAssetDirectory(TTempString& AssetDir);
+		Bool GetAssetSubDirectory(TTempString& AssetDir, const TTempString& Subdirectory);
+		
 		Bool GetUserDirectory(TTempString& UserDir);
 	}
 
@@ -52,6 +54,13 @@ Bool TLFileSys::GetAssetDirectory(TTempString& AssetDir)
 {
 	return Platform::GetAssetDirectory(AssetDir);
 }
+
+Bool TLFileSys::GetAssetSubDirectory(TTempString& AssetDir, const TTempString& Subdirectory)
+{
+	return Platform::GetAssetSubDirectory(AssetDir, Subdirectory);
+}
+
+
 
 Bool TLFileSys::GetUserDirectory(TTempString& UserDir)
 {

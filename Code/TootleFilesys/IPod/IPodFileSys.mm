@@ -40,6 +40,23 @@ Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 	
 }
 
+
+Bool TLFileSys::Platform::GetAssetSubDirectory(TTempString& AssetDir, const TTempString& Subdirectory)
+{
+	// On the iPod we don't have sub directories per se
+	// The application bundle/package contains resources in a flat structure so resources
+	// should be added specifically for a given project and care must be taken not to add files
+	// with the same name and extension.
+	// If you *need* a subdirectory you can use folder references within the project that will structure the bundle
+	// with a 'directory' but all files within the filesystem folder will be added to the project so may not help
+	// Additionally if this route is used then the subdirectory will need to be accessed via another routine other than this one.
+	
+	// Print a warnign to say that we are looking for a subdirectory that may not be found
+	TLDebug_Print("WARNING: GetAssetSubDirectory called which may not find the resource you are looking for");
+	return GetAssetDirectory(AssetDir);
+}
+
+
 Bool TLFileSys::Platform::GetUserDirectory(TTempString& UserDir)
 {
 	// Get the 'Documents' path for the user directory.

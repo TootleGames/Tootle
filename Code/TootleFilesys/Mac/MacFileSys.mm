@@ -55,29 +55,37 @@ Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 	
 }
 
-Bool TLFileSys::Platform::GetUserDirectory(TTempString& UserDir)
+Bool TLFileSys::Platform::GetAssetSubDirectory(TTempString& UserDir, const TTempString& Subdirectory)
 {
 	
 	TTempString tmpassetdir;
 	
 	if(GetAssetDirectory(tmpassetdir))
 	{
-		NSString* tmpdir = [NSString stringWithUTF8String:tmpassetdir.GetData()];
-
-		NSString* path = [tmpdir stringByAppendingString:@"User/"];
+		NSString* tmpdir = [NSString stringWithUTF8String:tmpassetdir.GetData()];		
+		NSString* subdir = [NSString stringWithUTF8String:Subdirectory.GetData()];
+		
+		// Append the subdirectory to the asset directory
+		NSString* tmppath = [tmpdir stringByAppendingString:subdir];
+		
+		// Add seperator
+		NSString* path = [tmppath stringByAppendingString:@"/"];
 		
 		// Copy path string
 		const char* pUserDir = (const char*)[path UTF8String];
 		UserDir =  pUserDir;
-		
-		///////////////////////////////////////////////////////////////////////////
-		
 		
 		return TRUE;
 		
 	}
 	
 	return FALSE;
+}		
+
+
+Bool TLFileSys::Platform::GetUserDirectory(TTempString& UserDir)
+{
+	return GetAssetSubDirectory(UserDir, "User");
 }		
 
 Bool TLFileSys::Platform::GetApplicationURL(TTempString& url)
