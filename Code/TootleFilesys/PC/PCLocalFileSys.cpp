@@ -272,27 +272,10 @@ Bool Platform::LocalFileSys::IsDirectoryValid()
 //---------------------------------------------------------------
 void Platform::LocalFileSys::SetDirectory(const TString& Directory)	
 {
-	//	prepend with the root directory all directories come from
-	//	note: currently vunerable to .. attacks
-	TString NewDirectory = TLCore::Platform::GetAppExe();
-	TLFileSys::GetParentDir( NewDirectory );		
-	NewDirectory.Append( Directory );
-
-	if ( NewDirectory.GetLength() != 0 )
-	{
-		char BackSlash = '\\';
-		char ForwardSlash = '/';
-
-		//	if the directory doesnt end with a slash then go up a level (should cut off filename)
-		char LastChar = NewDirectory.GetCharLast();
-		if ( LastChar != BackSlash && LastChar != ForwardSlash )
-			TLFileSys::GetParentDir( NewDirectory );
-	}
-
 	//	if directory name has changed reset the file list and invalidate the time stamp
-	if ( m_Directory != NewDirectory )
+	if ( m_Directory != Directory )
 	{
-		m_Directory = NewDirectory;
+		m_Directory = Directory;
 
 		//	remove current files
 		for ( s32 f=GetFileList().GetLastIndex();	f>=0;	f-- )

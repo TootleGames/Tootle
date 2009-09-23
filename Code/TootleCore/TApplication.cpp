@@ -91,16 +91,9 @@ SyncBool TApplication::CreateLocalFilesystems()
 	TRef FileSystemRef;
 	
 	TTempString Directory;
-#if defined(TL_TARGET_PC)
-	Directory = "Assets\\";
-#elif defined(TL_TARGET_MAC)	
-	if(!TLFileSys::GetAssetDirectory(Directory))
-		return SyncFalse;
 
-#elif defined(TL_TARGET_IPOD)
 	if(!TLFileSys::GetAssetDirectory(Directory))
 		return SyncFalse;
-#endif
 
 	TLDebug_Print(Directory);
 
@@ -114,15 +107,8 @@ SyncBool TApplication::CreateLocalFilesystems()
 	FileSystemRef.SetInvalid();
 	
 	// Now create the local writable file system
-#if defined(TL_TARGET_PC)
-	Directory.Append("User\\");
-#elif defined(TL_TARGET_MAC)
 	if(!TLFileSys::GetUserDirectory(Directory))
 		return SyncFalse;
-#elif defined(TL_TARGET_IPOD)
-	if(!TLFileSys::GetUserDirectory(Directory))
-		return SyncFalse;
-#endif
 	
 	TLDebug_Print(Directory);
 
