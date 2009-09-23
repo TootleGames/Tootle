@@ -82,6 +82,9 @@ protected:
 	virtual SyncBool			Update(float fTimestep);
 	virtual SyncBool			Shutdown();
 	
+	virtual SyncBool			CreateLocalFilesystems();
+	virtual SyncBool			InitialiseLocalFilesystems();
+	
 	virtual void				AddModes();
 	
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);	//	process messages
@@ -107,8 +110,12 @@ protected:
 		
 private:
 	TPtr<TLGame::TGame>		m_pGame;				//	The application's game object
-	TRef					m_LocalFileSysRef;		//	ref of local file sys
-	TRef					m_UserFileSysRef;		//	ref of local file sys user's runtime assets/save files etc
+	
+	TArray<TRef>			m_FileSystemRefs;
+	
+//	TRef					m_LocalFileSysRef;		//	ref of local file sys
+//	TRef					m_UserFileSysRef;		//	ref of local file sys user's runtime assets/save files etc
+	
 	TBinaryTree				m_Options;				//	Global & app specific preferences
 	TBinaryTree				m_LevelData;			//	Level specific information
 	TRef					m_NewAppMode;			//	if valid, we switch to this app mode on next update

@@ -40,6 +40,11 @@ namespace TLFileSys
 	TTypedRef					GetFileAndTypeRef(const TString& Filename);			//	generate file ref with explicit type
 
 	extern TPtr<TFileSysFactory>	g_pFactory;			//	extern'd as it's a manager, the file factory is not exposed
+	
+
+	// System specific directory helper routines
+	Bool GetAssetDirectory(TTempString& AssetDir);
+	Bool GetUserDirectory(TTempString& UserDir);
 };
 
 

@@ -57,10 +57,10 @@ TScreen* TScreenManager::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 		pScreen = new TLRender::Platform::Screen( InstanceRef, TLRender::ScreenShape_WideRight );
 	else if ( TypeRef == "widescreen" )
 	{
-#if defined(TL_TARGET_PC)
-		pScreen = new TLRender::Platform::ScreenWide( InstanceRef );
-#elif defined(TL_TARGET_IPOD)
+#if defined(TL_TARGET_IPOD)
 		pScreen = new TLRender::Platform::Screen( InstanceRef, TLRender::ScreenShape_WideRight );
+#else	
+		pScreen = new TLRender::Platform::ScreenWide( InstanceRef );
 #endif
 	}
 

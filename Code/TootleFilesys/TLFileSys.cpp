@@ -38,7 +38,26 @@ namespace TLFileSys
 {
 	TPtr<TLFileSys::TFileSysFactory>	g_pFactory;		//	factory for filesystems
 	TPtr<TLFileSys::TFileFactory>		g_pFileFactory;	//	factory for all the files we have, seperated from individual file systems now
+	
+	
+	namespace Platform
+	{
+		Bool GetAssetDirectory(TTempString& AssetDir);
+		Bool GetUserDirectory(TTempString& UserDir);
+	}
+
 }
+
+Bool TLFileSys::GetAssetDirectory(TTempString& AssetDir)
+{
+	return Platform::GetAssetDirectory(AssetDir);
+}
+
+Bool TLFileSys::GetUserDirectory(TTempString& UserDir)
+{
+	return Platform::GetUserDirectory(UserDir);
+}
+
 
 
 //--------------------------------------------------

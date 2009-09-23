@@ -185,6 +185,8 @@
 		844CE3A610516B6B00178124 /* TFileCollada.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F04F0F4DB85200B956C9 /* TFileCollada.h */; };
 		844CE6381051860100178124 /* MacLocalFileSys.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F17B0F4DBA3D00B956C9 /* MacLocalFileSys.h */; };
 		844CE6391051860700178124 /* MacLocalFileSys.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8418F17C0F4DBA3D00B956C9 /* MacLocalFileSys.mm */; };
+		84E4BA6F106934C700E301FC /* MacFileSys.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E4BA6D106934C700E301FC /* MacFileSys.h */; };
+		84E4BA70106934C700E301FC /* MacFileSys.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84E4BA6E106934C700E301FC /* MacFileSys.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -369,6 +371,8 @@
 		84B604A0104FF3FB0022E5BC /* pshinter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pshinter.c; path = ../Freetype/src/pshinter/pshinter.c; sourceTree = SOURCE_ROOT; };
 		84B604A1104FF3FB0022E5BC /* psnames.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = psnames.c; path = ../Freetype/src/psnames/psnames.c; sourceTree = SOURCE_ROOT; };
 		84B604A2104FF3FB0022E5BC /* autofit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = autofit.c; path = ../Freetype/src/autofit/autofit.c; sourceTree = SOURCE_ROOT; };
+		84E4BA6D106934C700E301FC /* MacFileSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacFileSys.h; sourceTree = "<group>"; };
+		84E4BA6E106934C700E301FC /* MacFileSys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacFileSys.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -473,6 +477,8 @@
 			children = (
 				8418F17B0F4DBA3D00B956C9 /* MacLocalFileSys.h */,
 				8418F17C0F4DBA3D00B956C9 /* MacLocalFileSys.mm */,
+				84E4BA6D106934C700E301FC /* MacFileSys.h */,
+				84E4BA6E106934C700E301FC /* MacFileSys.mm */,
 			);
 			name = Mac;
 			sourceTree = "<group>";
@@ -814,6 +820,7 @@
 				844CE3A510516B6B00178124 /* autohint.h in Headers */,
 				844CE3A610516B6B00178124 /* TFileCollada.h in Headers */,
 				844CE6381051860100178124 /* MacLocalFileSys.h in Headers */,
+				84E4BA6F106934C700E301FC /* MacFileSys.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -925,6 +932,7 @@
 				844CE33410516B5100178124 /* TFileSys.cpp in Sources */,
 				844CE33510516B5100178124 /* TVirtualFileSys.cpp in Sources */,
 				844CE6391051860700178124 /* MacLocalFileSys.mm in Sources */,
+				84E4BA70106934C700E301FC /* MacFileSys.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

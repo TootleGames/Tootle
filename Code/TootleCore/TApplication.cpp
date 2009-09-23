@@ -36,78 +36,23 @@ using namespace TLCore;
 //-----------------------------------------------------------
 SyncBool TApplication::Initialise()
 {
-	Bool Waiting = FALSE;
-
-	//	create file systems
-	if ( !m_LocalFileSysRef.IsValid() )
-	{
-		#if defined(TL_TARGET_PC)
-			TTempString AssetDir = "Assets\\";
-		#elif defined(TL_TARGET_MAC)
-			TTempString AssetDir = "Documents/Tootle/Game/Assets/";
-		#elif defined(TL_TARGET_IPOD)
-			TTempString AppName = GetName();
-			TTempString AssetDir = AppName;	
-			AssetDir.Append(".app/");
-		#endif
-
-		TLFileSys::CreateLocalFileSys( m_LocalFileSysRef, AssetDir, FALSE );
-	}
-
-	//	continue init of file system
-	if ( m_LocalFileSysRef.IsValid() )
-	{
-		SyncBool Result = SyncFalse;
-
-		TPtr<TLFileSys::TFileSys>& pFileSys = TLFileSys::GetFileSys( m_LocalFileSysRef );
-		if ( pFileSys )
-			Result = pFileSys->Init();
-
-		if ( Result == SyncFalse )
-		{
-			//	gr: fail if asset dir cannot be opened
-			TLDebug_Break("failed to create local file sys");
-			m_LocalFileSysRef.SetInvalid();
-			return SyncFalse;
-		}
-			
-		Waiting |= (Result == SyncWait);
-	}
-
-
-
-	//	create docs file sys
-	if ( !m_UserFileSysRef.IsValid() )
-	{
-		#if defined(TL_TARGET_PC)
-			TTempString AssetDir = "Assets\\User\\";
-		#elif defined(TL_TARGET_MAC)
-			TTempString AssetDir = "Documents/Tootle/Game/Assets/User/";
-		#elif defined(TL_TARGET_IPOD)
-			TTempString AssetDir = "Documents/";	//	gr: I'm pretty sure the documents dir is above the app dir
-		#endif
-
-		TLFileSys::CreateLocalFileSys( m_UserFileSysRef, AssetDir, TRUE );
-	}	
+	SyncBool Result = SyncFalse;
 	
-	//	continue init of file system
-	if ( m_UserFileSysRef.IsValid() )
+	// Create the local filesystems if we don't have any references already
+	if(m_FileSystemRefs.GetSize() == 0)
 	{
-		SyncBool Result = SyncFalse;
-
-		TPtr<TLFileSys::TFileSys>& pFileSys = TLFileSys::GetFileSys( m_UserFileSysRef );
-		if ( pFileSys )
-			Result = pFileSys->Init();
-
-		if ( Result == SyncFalse )
-		{
-			//	gr: let system continue if this dir cannot be used
-			TLDebug_Print("failed to create local user file sys");
-			m_UserFileSysRef.SetInvalid();
-		}
-			
-		Waiting |= (Result == SyncWait);
+		Result = CreateLocalFilesystems();
+		
+		if(Result != SyncTrue)
+			return Result;
 	}
+	
+	
+	// Initialise the local filesytems
+	Result = InitialiseLocalFilesystems();
+	
+	if(Result != SyncTrue)
+		return Result;
 
 
 	//	subscribe to screen manager to get screen-deleted messages
@@ -126,7 +71,7 @@ SyncBool TApplication::Initialise()
 	}
 	
 	// Initialise the screen object
-	SyncBool Result = pScreen->Init();
+	Result = pScreen->Init();
 	if ( Result != SyncTrue )
 	{
 		TLDebug_Print("Error: Failed to initialise screen");
@@ -137,6 +82,87 @@ SyncBool TApplication::Initialise()
 	AddModes();
 
 	return TManager::Initialise();
+}
+
+
+SyncBool TApplication::CreateLocalFilesystems()
+{
+	// Create the local read-only files sytem
+	TRef FileSystemRef;
+	
+	TTempString Directory;
+#if defined(TL_TARGET_PC)
+	Directory = "Assets\\";
+#elif defined(TL_TARGET_MAC)	
+	if(!TLFileSys::GetAssetDirectory(Directory))
+		return SyncFalse;
+
+#elif defined(TL_TARGET_IPOD)
+	if(!TLFileSys::GetAssetDirectory(Directory))
+		return SyncFalse;
+#endif
+
+	TLDebug_Print(Directory);
+
+	if(TLFileSys::CreateLocalFileSys( FileSystemRef, Directory, FALSE ) == SyncFalse)
+	{
+		TLDebug_Break("failed to create local file system (read-only)");
+		return SyncFalse;
+	}
+	
+	m_FileSystemRefs.Add(FileSystemRef);
+	FileSystemRef.SetInvalid();
+	
+	// Now create the local writable file system
+#if defined(TL_TARGET_PC)
+	Directory.Append("User\\");
+#elif defined(TL_TARGET_MAC)
+	if(!TLFileSys::GetUserDirectory(Directory))
+		return SyncFalse;
+#elif defined(TL_TARGET_IPOD)
+	if(!TLFileSys::GetUserDirectory(Directory))
+		return SyncFalse;
+#endif
+	
+	TLDebug_Print(Directory);
+
+	if(TLFileSys::CreateLocalFileSys( FileSystemRef, Directory, TRUE ) == SyncFalse)	
+	{
+		TLDebug_Break("failed to create local file system (writable)");	
+		return SyncFalse;
+	}
+	
+	m_FileSystemRefs.Add(FileSystemRef);
+	
+	// Success
+	return SyncTrue;
+}
+
+
+SyncBool TApplication::InitialiseLocalFilesystems()
+{
+	SyncBool Result = SyncFalse;
+
+	for(u32 uIndex = 0; uIndex < m_FileSystemRefs.GetSize(); uIndex++)
+	{
+		TRef FileSystemRef = m_FileSystemRefs.ElementAt(uIndex);
+		
+		TPtr<TLFileSys::TFileSys>& pFileSys = TLFileSys::GetFileSys( FileSystemRef );
+		if ( pFileSys )
+			Result = pFileSys->Init();
+		
+		if(Result != SyncTrue)
+		{
+#ifdef _DEBUG
+			// Trace out if we fail to initialise the filesystem
+			if(Result == SyncFalse)
+				TLDebug_Break("Failed to initialise local file system");
+#endif				
+			return Result;		
+		}
+	}
+	
+	return SyncTrue;
 }
 
 

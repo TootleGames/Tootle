@@ -298,34 +298,21 @@ Bool Platform::LocalFileSys::IsDirectoryValid()
 {
 	NSString *pDirString = [[NSString alloc] initWithUTF8String:m_Directory.GetData()];
 
-	//	no such file/path
-	if ( [[NSFileManager defaultManager] fileExistsAtPath:pDirString] == NO )
-	{
-		[pDirString release];
-		return FALSE;
-	}
+	BOOL isDir = NO;
 	
-
-		
-	/*	
-	BOOL isDirectory = NO;
-
-	//	no such file/path
-	if ( [[NSFileManager defaultManager] fileExistsAtPath:pDirString :isDirectory] == NO )
-	{
-		[pDirString release];
-		return FALSE;
-	}
-	 
-	[pDirString release];
+	// Check to see if the directory exist at the path specified
+	BOOL result = [[NSFileManager defaultManager] fileExistsAtPath:pDirString isDirectory:&isDir];
 
 	
-	//	not a directory
-	if ( isDirectory == NO )
-		return FALSE;
-*/		
+#ifdef _DEBUG
+	
+	if(result == NO)
+		TLDebug_Break("Directory is invalid");
+#endif
+	
 	[pDirString release];
-	return TRUE;
+	
+	return (result == YES && isDir == YES);
 }
 
 
@@ -334,26 +321,29 @@ Bool Platform::LocalFileSys::IsDirectoryValid()
 //---------------------------------------------------------------
 void Platform::LocalFileSys::SetDirectory(const TString& Directory)	
 {
-	TTempString NewDirectory = Directory;
-	
-	if ( NewDirectory.GetLength() != 0 )
-	{
-		char BackSlash = '\\';
-		
-		//	if the directory doesnt end with a slash then go up a level (should cut off filename)
-		char LastChar = NewDirectory.GetCharLast();
-		if ( LastChar != BackSlash )
-			TLFileSys::GetParentDir( NewDirectory );
-	}
-
-
 	//	get the root directory all directories come from
 	NSString *HomeDir = NSHomeDirectory();
-	const char* pAppHomeDir = (const char*)[HomeDir UTF8String];
-	TTempString RootDirectory = pAppHomeDir;
-	RootDirectory.Append("/");
+	
 
-	RootDirectory.Append( NewDirectory );
+	TTempString RootDirectory;
+	
+	// Check to see if the 'home' dir exists already in the directory being passed in
+	// if so use it as-is otherwise we need to setup the home dir and then append the new directory path to it
+	NSString* path = [[NSString alloc] initWithUTF8String:Directory.GetData()];
+	
+	NSRange range = [path rangeOfString:HomeDir];
+	
+	if(range.location == NSNotFound)
+	{
+		const char* pAppHomeDir = (const char*)[HomeDir UTF8String];
+		RootDirectory = pAppHomeDir;
+		RootDirectory.Append("/");
+		RootDirectory.Append( Directory );
+	}	
+	else 
+		RootDirectory = Directory;
+
+	
 	
 	//	if directory name has changed reset the file list and invalidate the time stamp
 	if ( m_Directory != RootDirectory )
