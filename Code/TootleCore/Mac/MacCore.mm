@@ -84,10 +84,94 @@ SyncBool TLCore::Platform::Init()
 
 void TLCore::Platform::QueryHardwareInformation(TBinaryTree& Data)	
 {
+	TLDebug_Print("Device Information:");
+	
+	/////////////////////////////////////////////////////////////
+	// Device ID, OS and type
+	/////////////////////////////////////////////////////////////	
+
+	u32 processorcount = [[NSProcessInfo processInfo] processorCount];
+	Data.ExportData("CPU#", processorcount);
+
+	TTempString devicedata;
+	devicedata.Appendf("Processor count: %d", processorcount);
+
+	TLDebug_Print(devicedata);
+	
+	
+	// Write the OS
+	NSString* pNSString = [[NSProcessInfo processInfo] operatingSystemName];				// @"Mac OS"
+	const char* pString = [pNSString UTF8String];	
+	devicedata = pString;	
+	Data.ExportData("OS", devicedata);
+	
+	TLDebug_Print(devicedata);
+	
+	// Write the OS version
+	pNSString = [[NSProcessInfo processInfo] operatingSystemVersionString];			// @"10.0"
+	pString = [pNSString UTF8String];	
+	devicedata = pString;	
+	Data.ExportData("OSVer", devicedata);
+	
+	TLDebug_Print(devicedata);
+	
+	/////////////////////////////////////////////////////////////
+	TLDebug_Print("End Device Information");
 }
+
 
 void TLCore::Platform::QueryLanguageInformation(TBinaryTree& Data)	
 {
+	TLDebug_Print("Language Information:");
+	
+	/////////////////////////////////////////////////////////////
+	// Langauge
+	/////////////////////////////////////////////////////////////
+	NSUserDefaults* defs = [NSUserDefaults standardUserDefaults];
+	
+	NSArray* languages = [defs objectForKey:@"AppleLanguages"];
+	
+	NSString* preferredLang = [languages objectAtIndex:0];
+	
+	//Convert the string to a TRef version so we don't need to pass a string around
+	const char* pString = [preferredLang UTF8String];
+	
+	TTempString languagestr(pString);
+	TLDebug_Print(languagestr);
+	
+	// Test the preferredLang and store our TRef version in the data tree
+	// Default to english
+	TRef LanguageRef = "eng";
+	
+	// Go through the language string and return an appropriate TRef of the specified language.
+	// This will test *all* languages we will possibly support.
+	if(languagestr == "en")				// English
+		LanguageRef = "eng";
+	else if(languagestr == "fr")		// French
+		LanguageRef = "fre";
+	else if(languagestr == "ge")		// German
+		LanguageRef = "ger";
+	else if(languagestr == "sp")		// Spanish
+		LanguageRef = "spa";
+	else if(languagestr == "it")		// Italian
+		LanguageRef = "ita";
+	else if(languagestr == "nl")		// Netherlands
+		LanguageRef = "ned";
+	else if(languagestr == "ja")		// Japanese
+		LanguageRef = "jap";
+	else
+	{
+		TLDebug_Print("Hardware langauge not supported - defaulting to english");
+	}
+	
+	// Export the language selected to the data - actual language selection will be done 
+	// via the core manager
+	Data.ExportData("Language", LanguageRef);
+	
+	/////////////////////////////////////////////////////////////
+	
+	TLDebug_Print("End Language Information");
+	
 }
 
 
