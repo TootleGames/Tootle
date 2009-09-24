@@ -4,9 +4,11 @@
 
 void TLSocial::Platform::IPod::AGONOnline::BeginSession(const TString& APIKey, const TString& APISecret)
 {
+#ifdef _DEBUG
 	// Enable logging from inside of AGON.
 	AgonShowLogs(YES);
-
+#endif
+	
 	//NSString* pAPIKey = [NSString stringWithUTF8String:APIKey.GetData()];
 	NSString* pAPISecret = [NSString stringWithUTF8String:APISecret.GetData()];
 	
