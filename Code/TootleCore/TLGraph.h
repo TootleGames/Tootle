@@ -217,6 +217,9 @@ public:
 	FORCEINLINE Bool				HasParent() const					{	return m_pParent.IsValid();	}
 	virtual const TGraphNodeBase*	GetParentBase() const				{	return m_pParent;	}	//	gr: automaticcly casts down
 
+	FORCEINLINE TRef				GetParentRef()						{	return (m_pParent.IsValid() ? m_pParent->GetNodeRef() : TRef());	}
+
+
 	// Child manipulation
 	FORCEINLINE Bool				HasChildren() const					{	return (m_Children.GetSize() > 0);	}
 	FORCEINLINE TPtrArray<T>&		GetChildren()						{	return m_Children;	}
@@ -529,7 +532,7 @@ void TLGraph::TGraphNode<T>::ProcessMessage(TLMessaging::TMessage& Message)
 				// Now send the response message 
 				TRefRef Sender = Message.GetSenderRef();
 
-				TLCore::g_pCoreManager->SendMessageTo(Sender, Manager, Message);
+				TLCore::g_pCoreManager->SendMessageTo(Sender, Manager, Response);
 			}
 			return;
 		}

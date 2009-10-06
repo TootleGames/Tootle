@@ -46,12 +46,16 @@ public:
 
 protected:
 
+	virtual void		Initialise(TLMessaging::TMessage& Message);
 	virtual void		SetProperty(TLMessaging::TMessage& Message);
 
 	virtual void		PostUpdate(float fTimestep)		{	}	//	gr: an update that occurs immediately after normal update. 
 
 	virtual void		OnEnable()		{}
 	virtual void		OnDisable()		{}
+
+private:
+	Bool				CreateChildNode(TBinaryTree& ChildInitData);
 
 private:
 	Bool				m_bEnabled;

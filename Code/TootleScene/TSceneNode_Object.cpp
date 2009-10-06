@@ -216,6 +216,40 @@ void TSceneNode_Object::SetProperty(TLMessaging::TMessage& Message)
 	TSceneNode_Transform::SetProperty( Message );
 }
 
+void TSceneNode_Object::GetProperty(TLMessaging::TMessage& Message, TLMessaging::TMessage& Response)
+{
+	/*
+	// Export the render data to the response (immediate physics node only)
+	TPtr<TLRender::TRenderNode>& pRenderNode = GetRenderNode();
+
+	if(pRenderNode)
+	{
+		TPtr<TBinaryTree>& pRenderData = Response.AddChild("RNode");
+
+		if(pRenderData)
+			pRenderData->ReferenceDataTree(pRenderNode->GetNodeData());
+	}
+
+	// Export the physics data to the response (immediate physics node only)
+	TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = GetPhysicsNode();
+
+	if(pPhysicsNode)
+	{
+		TPtr<TBinaryTree>& pPhysicsData = Response.AddChild("PNode");
+
+		if(pPhysicsData)
+			pPhysicsData->ReferenceDataTree(pPhysicsNode->GetNodeData());	
+	}
+	*/
+
+	// Export this nodes data
+	Response.ExportData("RNode", m_RenderNodeRef);
+	Response.ExportData("PNode", m_PhysicsNodeRef);
+	Response.ExportData("Life", m_fLife);
+
+	TLScene::TSceneNode_Transform::GetProperty(Message, Response);
+}
+
 void TSceneNode_Object::UpdateNodeData()
 {
 	// Update and serialise the render node data

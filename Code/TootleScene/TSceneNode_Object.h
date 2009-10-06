@@ -43,7 +43,10 @@ public:
 
 protected:
 	virtual void					Initialise(TLMessaging::TMessage& Message);
+
 	virtual void					SetProperty(TLMessaging::TMessage& Message);
+	virtual void					GetProperty(TLMessaging::TMessage& Message, TLMessaging::TMessage& Response);
+
 	virtual void					Shutdown();
 	virtual void					ProcessMessage(TLMessaging::TMessage& Message);
 	virtual void					UpdateNodeData();
