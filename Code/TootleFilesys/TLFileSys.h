@@ -12,11 +12,6 @@
 #include "TFileSys.h"
 
 
-namespace TLCore
-{
-	class TApplication;
-}
-
 namespace TLFileSys
 {
 	class TFileSysFactory;		//	file system class factory

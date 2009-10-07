@@ -11,11 +11,6 @@
 #include "TFile.h"
 
 
-namespace TLCore
-{
-	class TApplication;
-}
-
 namespace TLFileSys
 {
 	class TFile;			//	base file type - same as the old Binary data class
