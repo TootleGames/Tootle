@@ -42,10 +42,10 @@ public:
 	FORCEINLINE Bool	operator==(NSURLConnection* pConnection) const	{	return m_pConnection == pConnection;	}
 
 public:
-	NSString*			m_pUrlString;
-	NSURL*				m_pUrl;
-	NSURLRequest*		m_pUrlRequest;
-	NSURLConnection*	m_pConnection;
+	NSString*				m_pUrlString;
+	NSURL*					m_pUrl;
+	NSMutableURLRequest*	m_pUrlRequest;
+	NSURLConnection*		m_pConnection;
 };
 
 
