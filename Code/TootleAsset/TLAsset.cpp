@@ -160,6 +160,11 @@ TPtr<TLAsset::TAsset>& TLAsset::GetAssetPtr(const TTypedRef& AssetAndTypeRef,Syn
 	//	finished already! dont need to add the task to the queue
 	if ( FirstUpdateResult == SyncTrue )
 	{
+		// Remove the load task from the array if it exists already - we may have obtained the task
+		// form the list.  This fixes an issue with the TAM files attempting to output a reference
+		// .svg file in the same frame triggering a debug break when in fact there is no error.
+		g_LoadTasks.Remove(pLoadTask);
+
 		pLoadTask = NULL;
 
 		//	check type
