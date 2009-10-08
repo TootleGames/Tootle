@@ -51,10 +51,17 @@ FORCEINLINE void TLPhysics::TPhysicsNode::ResetForces()
 
 FORCEINLINE void TLPhysics::TPhysicsNode::SetFriction(float Friction)
 {
-	TLDebug_Break("todo - modify box2d");
-	//b2Shape* pBodyShape = GetBodyShape();
-	//if ( pBodyShape )
-	//	pBodyShape->SetFriction( Friction );
+	b2Body* pBody = GetBody();
+	if ( pBody )
+	{
+		b2Fixture* pFixture = pBody->GetFixtureList();
+
+		while(pFixture != NULL)
+		{
+			pFixture->SetFriction( Friction );
+			pFixture = pFixture->GetNext();
+		}
+	}
 }
 
 
