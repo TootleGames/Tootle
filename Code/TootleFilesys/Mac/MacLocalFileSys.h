@@ -42,6 +42,6 @@ protected:
 
 protected:
 	Bool					m_IsWritable;						//	overriding readonly setting
-	TString					m_Directory;						//	path to dir
+	TString					m_Directory;
 };
 

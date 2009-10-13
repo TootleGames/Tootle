@@ -4,7 +4,6 @@
 #import <Foundation/NSString.h>
 #import <Foundation/Foundation.h>
 
-
 using namespace TLFileSys;
 
 
@@ -29,7 +28,7 @@ SyncBool Platform::LocalFileSys::Init()
 	//	check directory exists
 	if ( !IsDirectoryValid() )
 		return SyncFalse;
-
+	
 	return SyncTrue;
 }
 
@@ -39,7 +38,6 @@ SyncBool Platform::LocalFileSys::Init()
 //---------------------------------------------------------------
 SyncBool Platform::LocalFileSys::Shutdown()
 {
-
 	return SyncTrue;
 }
 
@@ -76,7 +74,19 @@ SyncBool Platform::LocalFileSys::LoadFileList()
 Bool Platform::LocalFileSys::LoadFileList(const char* pFileSearch)
 {
 	NSString *pDirString = [[NSString alloc] initWithUTF8String:m_Directory.GetData()];
-	 
+
+#ifdef _DEBUG
+	//	fail to make instances with no type (eg. executable name on ipod) 
+	TTempString Debug_String("LoadFileList checking directory: ");
+
+	const char* pNSChars = [pDirString UTF8String];
+	u32 NsLength = [pDirString length];
+	
+	Debug_String.Append( pNSChars, NsLength );
+	
+	TLDebug_Print( Debug_String );
+#endif
+	
 	//	make a directory enumerator
 	NSDirectoryEnumerator *direnum = [[NSFileManager defaultManager] enumeratorAtPath: pDirString];
 	
@@ -94,11 +104,21 @@ Bool Platform::LocalFileSys::LoadFileList(const char* pFileSearch)
 			//	found a file! - check it's not a dir
 			NSDictionary *pFileAttribs = [direnum fileAttributes];
 			NSString *FileType = [pFileAttribs objectForKey:@"NSFileType"];
-			
+	
 			//	is a directory
 			if ( FileType == NSFileTypeDirectory )
+			{
+#ifdef _DEBUG
+				const char* pRealFilename = (const char*)[pFilename fileSystemRepresentation];
+				//TTempString Filename = pRealFilename;
+	
+				TTempString DebugString("Ignoring directory ");
+				//pFile->GetFileRef().GetString( DebugString );
+				DebugString.Append(pRealFilename);
+				TLDebug_Print( DebugString );
+#endif
 				continue;
-			
+			}
 			
 			const char* pRealFilename = (const char*)[pFilename fileSystemRepresentation];
 			TTempString Filename = pRealFilename;
@@ -121,6 +141,11 @@ Bool Platform::LocalFileSys::LoadFileList(const char* pFileSearch)
 				DebugString.Append(", type: ");
 				pFile->GetFileAndTypeRef().GetString( DebugString );
 				TLDebug_Print( DebugString );
+				
+				// Clear the Lost flag to ensure the file is subsequently removed from the system if 
+				// this was called from the LoadFileList where it will set this flag assuming it will be reset 
+				// when found.  The CreateFileInstance above will simply return if the file already exists.
+				pFile->GetFlags().Clear( TFile::Lost );
 			}		
 			
 		}
@@ -128,49 +153,6 @@ Bool Platform::LocalFileSys::LoadFileList(const char* pFileSearch)
 	
 	[pDirString release];
 
-			
-	/*
-	//	no file list handle, start
-	if ( m_FileFindHandle == INVALID_HANDLE_VALUE )
-	{
-		//	make a wildcard search from the directory name
-		TTempString FileSearch = m_Directory;
-		FileSearch.Append(pFileSearch);
-
-		//	init the search
-		m_FileFindHandle = FindFirstFile( FileSearch.GetData(), &m_FileFindData );
-
-		//	failed
-		if ( m_FileFindHandle == INVALID_HANDLE_VALUE )
-		{
-			//	just because dir is empty? that's okay. 
-			if ( GetLastError() == ERROR_FILE_NOT_FOUND )
-			{
-				return TRUE;
-			}
-
-			//	failed for other reason
-			return FALSE;
-		}
-
-		//	pull out info of first file
-		CreateFileInstance( m_FileFindData, TRUE );
-	}
-
-
-	//	goto next file
-	while ( FindNextFile( m_FileFindHandle, &m_FileFindData ) )
-	{
-		CreateFileInstance( m_FileFindData, TRUE );
-	}
-
-	//	find next file has failed... assume out of files?
-	//if ( GetLastError() == ERROR_NO_MORE_FILES )
-
-	//	close find handle
-	FindClose( m_FileFindHandle );
-	m_FileFindHandle = INVALID_HANDLE_VALUE;
-	*/
 	return TRUE;
 }
 
@@ -197,9 +179,9 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 
 	//	open
 	FILE* pFileHandle = fopen( FullFilename.GetData(), "rb" );
-
+	
 	//	failed to open
-	if ( pFileHandle == NULL )
+	if ( !pFileHandle )
 	{
 		//UpdateFileInstance( pFile, NULL );
 		pFile->SetIsLoaded( SyncFalse );
@@ -286,7 +268,7 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 	//	reset read pos ready for first use
 	//	gr: dont do this any more, we use the read pos to determine if we've attempted to read data post-import
 	//pFile->ResetReadPos();
-	
+
 	return SyncTrue;
 }
 
@@ -297,12 +279,12 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 Bool Platform::LocalFileSys::IsDirectoryValid()
 {
 	NSString *pDirString = [[NSString alloc] initWithUTF8String:m_Directory.GetData()];
-
+	
 	BOOL isDir = NO;
 	
 	// Check to see if the directory exist at the path specified
 	BOOL result = [[NSFileManager defaultManager] fileExistsAtPath:pDirString isDirectory:&isDir];
-
+	
 	
 #ifdef _DEBUG
 	
@@ -324,7 +306,6 @@ void Platform::LocalFileSys::SetDirectory(const TString& Directory)
 	//	get the root directory all directories come from
 	NSString *HomeDir = NSHomeDirectory();
 	
-
 	TTempString RootDirectory;
 	
 	// Check to see if the 'home' dir exists already in the directory being passed in
@@ -338,12 +319,11 @@ void Platform::LocalFileSys::SetDirectory(const TString& Directory)
 		const char* pAppHomeDir = (const char*)[HomeDir UTF8String];
 		RootDirectory = pAppHomeDir;
 		RootDirectory.Append("/");
-		RootDirectory.Append( Directory );
-	}	
-	else 
+		RootDirectory.Append( Directory );		
+	}
+	else
 		RootDirectory = Directory;
-
-	
+		
 	
 	//	if directory name has changed reset the file list and invalidate the time stamp
 	if ( m_Directory != RootDirectory )
@@ -359,9 +339,6 @@ void Platform::LocalFileSys::SetDirectory(const TString& Directory)
 //---------------------------------------------------------
 TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateNewFile(const TString& Filename)
 {
- return NULL;
-
-/*
 	//	not allowed to write to this file sys
 	if ( !m_IsWritable )
 		return NULL;
@@ -380,11 +357,10 @@ TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateNewFile(const TString& File
 	FullFilename.Append( Filename );
 
 	//	attempt to open file before creating instance
-	FILE* pFileHandle = NULL;
-	errno_t Result = fopen_s( &pFileHandle, FullFilename.GetData(), "wb" );
+	FILE* pFileHandle = fopen( FullFilename.GetData(), "wb" );
 
 	//	failed to open
-	if ( Result != 0 )
+	if ( !pFileHandle )
 	{
 		return NULL;
 	}
@@ -393,29 +369,17 @@ TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateNewFile(const TString& File
 	fclose( pFileHandle );
 	pFileHandle = NULL;
 
-	//	get file data by searching for it
-	HANDLE FileFindHandle;
-	WIN32_FIND_DATA FileFindData;
-	FileFindHandle = FindFirstFile( FullFilename.GetData(), &FileFindData );
-
-	//	failed to find our new file
-	if ( FileFindHandle == INVALID_HANDLE_VALUE )
-		return NULL;
-
-	FindClose( FileFindHandle );
-	FileFindHandle = INVALID_HANDLE_VALUE;
-
+	
 	//	create instance
-	TPtr<TLFileSys::TFile> pNewFile = CreateFileInstance( FileFindData, FALSE );
+	TPtr<TLFileSys::TFile> pNewFile = CreateFileInstance( Filename );
 	if ( !pNewFile )
 	{
-		TLDebug_Break("failed to find newly created file?");
+		TLDebug_Break( TString("Failed to create file instance for %s", Filename.GetData() ) );
 		return NULL;
 	}
 
 	//	return new instance if it worked
 	return pNewFile;
- */
 }
 
 
@@ -441,9 +405,9 @@ SyncBool Platform::LocalFileSys::WriteFile(TPtr<TFile>& pFile)
 
 	//	open file for writing
 	FILE* pFileHandle = fopen( FullFilename.GetData(), "wb" );
-
+	
 	//	failed to open
-	if ( pFileHandle == NULL )
+	if ( !pFileHandle )
 	{
 		TLDebug_Break("gr: update file instance null should set loaded to false anyway? follow this code");
 		//UpdateFileInstance( pFile, NULL );
@@ -488,9 +452,6 @@ SyncBool Platform::LocalFileSys::WriteFile(TPtr<TFile>& pFile)
 
 	//	refresh file info
 	//UpdateFileInstance( pFile, FALSE );
-
+	
 	return SyncTrue;
 }
-
-
-

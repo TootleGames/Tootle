@@ -124,7 +124,9 @@ Bool Platform::LocalFileSys::DoLoadFileList()
 			else
 			{
 				TTempString DebugString("Created new file instance ");
-				pFile->Debug_GetString( DebugString );
+				pFile->GetFileRef().GetString( DebugString );
+				DebugString.Append(", type: ");
+				pFile->GetFileAndTypeRef().GetString( DebugString );
 				TLDebug_Print( DebugString );
 				
 				// Clear the Lost flag to ensure the file is subsequently removed from the system if 

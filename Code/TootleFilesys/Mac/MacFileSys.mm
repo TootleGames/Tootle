@@ -91,11 +91,11 @@ Bool TLFileSys::Platform::GetUserDirectory(TTempString& UserDir)
 Bool TLFileSys::Platform::GetApplicationURL(TTempString& url)
 {
 	NSBundle* bundle = [NSBundle mainBundle];
-
+	
 	if(bundle)
 	{
 		NSString* bundlepath = [bundle bundlePath];
-				
+		
 		const char* pApplicationDir = (const char*)[bundlepath UTF8String];
 		url = pApplicationDir;
 		
