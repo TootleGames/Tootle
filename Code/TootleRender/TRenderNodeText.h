@@ -45,11 +45,11 @@ class TLRender::TRenderNodeVectorGlyph : public TLRender::TRenderNode
 protected:
 	TRenderNodeVectorGlyph(TRefRef RenderNodeRef,TRefRef TypeRef);
 
-	virtual TPtr<TLAsset::TMesh>&	GetMeshAsset() 				{	return m_pGlyphMesh;	}
+	virtual TLAsset::TMesh*	GetMeshAsset() 				{	return m_pGlyphMesh;	}
 	virtual Bool					Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList)	{	return TRUE;	}
 
 public:
-	TPtr<TLAsset::TMesh>	m_pGlyphMesh;
+	TLAsset::TMesh*			m_pGlyphMesh;
 	u16						m_Character;		//	character in string
 };
 
@@ -150,11 +150,11 @@ public:
 
 protected:
 	virtual Bool					SetGlyphs(TLMaths::TBox2D& TextBounds);	//	setup geometry
-	virtual TPtr<TLAsset::TMesh>&	GetMeshAsset()							{	return m_pMesh;	}
+	virtual TLAsset::TMesh*			GetMeshAsset()							{	return m_pMesh.GetObjectPointer();	}
 	virtual void					Initialise(TLMessaging::TMessage& Message);
 
 protected:
-	TPtr<TLAsset::TMesh>			m_pMesh;				//	mesh with our "sprites" in
+	TPtr<TLAsset::TMesh>					m_pMesh;				//	mesh with our "sprites" in. Created manually so can be a TPtr
 };
 
 

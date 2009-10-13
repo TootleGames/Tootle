@@ -1,9 +1,9 @@
 #include "TRenderNodeClear.h"
 
 
-
 TLRender::TRenderNodeClear::TRenderNodeClear(TRefRef NodeRef,TRefRef TypeRef) :
-	TRenderNode	( NodeRef, TypeRef )
+	TRenderNode		( NodeRef, TypeRef ),
+	m_pClearMesh	( NULL )
 {
 	//	set specific flags
 	m_RenderFlags.Clear( RenderFlags::DepthRead );
@@ -18,15 +18,17 @@ TLRender::TRenderNodeClear::TRenderNodeClear(TRefRef NodeRef,TRefRef TypeRef) :
 //-------------------------------------------------------
 void TLRender::TRenderNodeClear::SetSize(const TLMaths::TBox2D& ClearBox,float NearZ)
 {
-	TLAsset::TMesh* pClearMesh = m_pClearMesh.GetObjectPointer();
+	TLAsset::TMesh* pClearMesh = m_pClearMesh;
 
 	//	create mesh
 	if ( !pClearMesh )
 	{
-		m_pClearMesh = TLAsset::CreateAsset( TLAsset::GetFreeAssetRef("Clear","Mesh") );
-		pClearMesh = m_pClearMesh.GetObjectPointer();
+		TPtr<TLAsset::TAsset>& pNewAsset = TLAsset::CreateAsset( TLAsset::GetFreeAssetRef("Clear","Mesh") );
+		m_pClearMesh = dynamic_cast<TLAsset::TMesh*>(pNewAsset.GetObjectPointer());
 
-		InitMesh( *pClearMesh );
+		InitMesh( *m_pClearMesh );
+
+		pClearMesh = m_pClearMesh;
 	}
 
 	//	stretch past borders to cope with float precision

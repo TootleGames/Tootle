@@ -70,7 +70,7 @@ private:
 
 private:
 	TRef						m_TimelineAssetRef;			// Ref of the Asset script object loaded from the XML data that we are using
-	TPtr<TLAsset::TTimeline>	m_pTimeline;				//	timeline asset
+	TLAsset::TTimeline*			m_pTimeline;				//	timeline asset.  Raw pointer because TPtr's are non-intrusive
 	float						m_fTime;					// Current time of the asset script instance
 	float						m_fPlaybackRateModifier;	// Playback rate modifier. Allows you to pause, play forward and backward at any speed
 

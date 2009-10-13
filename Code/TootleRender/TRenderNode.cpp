@@ -83,7 +83,7 @@ SyncBool TLRender::TRenderZoneNode::IsInShape(const TLMaths::TBox2D& Shape)
 	{
 #ifdef _DEBUG
 		//	if there is no mesh, then this is understandable and wont throw up an error
-		TPtr<TLAsset::TMesh>& pMesh = pRenderNode->GetMeshAsset();
+		TLAsset::TMesh* pMesh = pRenderNode->GetMeshAsset();
 		if ( pMesh )
 		{
 			//	gr: if we get here whilst the zone we're in is splitting, then we return Wait, 
@@ -170,7 +170,9 @@ TLRender::TRenderNode::TRenderNode(TRefRef RenderNodeRef,TRefRef TypeRef) :
 	m_WorldPosValid				( SyncFalse ),
 	m_Colour					( 1.f, 1.f, 1.f, 1.f ),
 	m_WorldTransformValid		( SyncFalse ),
-	m_AttachDatumValid			( TRUE )
+	m_AttachDatumValid			( TRUE ),
+	m_pMeshCache				( NULL ),
+	m_pTextureCache				( NULL )
 {
 	//	setup defualt render flags
 	m_RenderFlags.Set( RenderFlags::DepthRead );
@@ -209,12 +211,12 @@ void TLRender::TRenderNode::Copy(const TRenderNode& OtherRenderNode)
 //------------------------------------------------------------
 //	default behaviour fetches the mesh from the asset lib with our mesh ref
 //------------------------------------------------------------
-TPtr<TLAsset::TMesh>& TLRender::TRenderNode::GetMeshAsset()
+TLAsset::TMesh* TLRender::TRenderNode::GetMeshAsset()
 {
 	//	re-fetch mesh if we need to
 	if ( GetMeshRef().IsValid() && !m_pMeshCache )
 	{
-		m_pMeshCache = TLAsset::GetAssetPtr<TLAsset::TMesh>( GetMeshRef() );
+		m_pMeshCache = TLAsset::GetAssetPtr<TLAsset::TMesh>( GetMeshRef() ).GetObjectPointer();
 	}
 
 	return m_pMeshCache;
@@ -223,12 +225,12 @@ TPtr<TLAsset::TMesh>& TLRender::TRenderNode::GetMeshAsset()
 //------------------------------------------------------------
 //	default behaviour fetches the mesh from the asset lib with our mesh ref
 //------------------------------------------------------------
-TPtr<TLAsset::TTexture>& TLRender::TRenderNode::GetTextureAsset()
+TLAsset::TTexture* TLRender::TRenderNode::GetTextureAsset()
 {
 	//	re-fetch mesh if we need to
 	if ( GetTextureRef().IsValid() && !m_pTextureCache )
 	{
-		m_pTextureCache = TLAsset::GetAssetPtr<TLAsset::TTexture>( GetTextureRef() );
+		m_pTextureCache = TLAsset::GetAssetPtr<TLAsset::TTexture>( GetTextureRef() ).GetObjectPointer();
 	}
 
 	return m_pTextureCache;
@@ -606,6 +608,9 @@ void TLRender::TRenderNode::Shutdown()
 {
 	//	these contain TPtr's back to us, so we need to clear them
 	m_RenderZoneNodes.Empty();
+
+	m_pMeshCache = NULL;
+	m_pTextureCache = NULL;
 
 	//	inherited cleanup
 	TLGraph::TGraphNode<TLRender::TRenderNode>::Shutdown();

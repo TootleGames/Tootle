@@ -163,8 +163,8 @@ public:
 	FORCEINLINE const TRef&					GetTextureRef() const						{	return m_TextureRef;	}
 	FORCEINLINE void						SetTextureRef(TRefRef TextureRef)			{	if ( m_TextureRef != TextureRef )	{	m_TextureRef = TextureRef;	OnTextureRefChanged();	}	}
 
-	virtual TPtr<TLAsset::TMesh>&			GetMeshAsset();								//	default behaviour fetches the mesh from the asset lib with our mesh ref
-	virtual TPtr<TLAsset::TTexture>&		GetTextureAsset();							//	default behaviour fetches the texutre from the asset lib with our mesh ref
+	virtual TLAsset::TMesh*					GetMeshAsset();								//	default behaviour fetches the mesh from the asset lib with our mesh ref
+	virtual TLAsset::TTexture*				GetTextureAsset();							//	default behaviour fetches the texutre from the asset lib with our mesh ref
 
 	FORCEINLINE void						SetRenderNodeRef(TRefRef Ref)				{	SetNodeRef( Ref );	}
 	virtual TRef							GetRenderNodeRef() const					{	return GetNodeRef();	}
@@ -283,9 +283,9 @@ protected:
 
 	//	todo: turn all these into ref properties in a KeyArray to make it a bit more flexible
 	TRef						m_MeshRef;
-	TPtr<TLAsset::TMesh>		m_pMeshCache;
+	TLAsset::TMesh*				m_pMeshCache;
 	TRef						m_TextureRef;
-	TPtr<TLAsset::TTexture>		m_pTextureCache;
+	TLAsset::TTexture*			m_pTextureCache;
 
 	TArray<TRef>				m_Debug_RenderDatums;	//	list of datums to debug-render
 

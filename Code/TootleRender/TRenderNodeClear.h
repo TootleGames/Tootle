@@ -19,7 +19,7 @@ class TLRender::TRenderNodeClear : public TLRender::TRenderNode
 public:
 	TRenderNodeClear(TRefRef NodeRef,TRefRef TypeRef=TRef());
 
-	virtual TPtr<TLAsset::TMesh>&	GetMeshAsset() 											{	return m_pClearMesh;	}
+	virtual TLAsset::TMesh*			GetMeshAsset() 											{	return m_pClearMesh;	}
 	virtual Bool					Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList)	{	return TRUE;	}
 
 	void							SetSize(const TLMaths::TBox2D& ClearBox,float NearZ);	//	resize the mesh (also creates as required)
@@ -28,5 +28,5 @@ protected:
 	virtual void					InitMesh(TLAsset::TMesh& ClearMesh);
 
 public:
-	TPtr<TLAsset::TMesh>			m_pClearMesh;		//	just a quad
+	TLAsset::TMesh*			m_pClearMesh;		//	just a quad.  Asset reference so cannot be a TPtr.
 };

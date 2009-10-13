@@ -500,7 +500,7 @@ void TLRender::TRenderNodeVectorText::SetGlyph(TRenderNodeVectorGlyph& RenderGly
 
 	//	get the mesh's lead in/out box
 	const TLMaths::TBox* pLeadInOutBox = NULL;
-	TLAsset::TMesh* pGlyphMesh = RenderGlyph.m_pGlyphMesh.GetObjectPointer();
+	TLAsset::TMesh* pGlyphMesh = RenderGlyph.m_pGlyphMesh;
 	if ( pGlyphMesh )
 	{
 		TPtr<TBinaryTree>& pLeadInOutBoxData = pGlyphMesh->GetData("LeadBox");
@@ -578,6 +578,7 @@ void TLRender::TRenderNodeVectorText::SetGlyph(TRenderNodeVectorGlyph& RenderGly
 
 TLRender::TRenderNodeVectorGlyph::TRenderNodeVectorGlyph(TRefRef RenderNodeRef,TRefRef TypeRef) :
 	TRenderNode		( RenderNodeRef, TypeRef ),
+	m_pGlyphMesh	( NULL ),
 	m_Character		( 0 )
 {
 }

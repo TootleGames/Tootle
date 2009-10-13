@@ -20,7 +20,7 @@ TLAnimation::TTimelineInstance::TTimelineInstance(TRefRef TimelineAssetRef) :
 	m_fPlaybackRateModifier(1.0f)
 {
 	//	get timeline specified
-	m_pTimeline = TLAsset::GetAssetPtr<TLAsset::TTimeline>( m_TimelineAssetRef );
+	m_pTimeline = TLAsset::GetAssetPtr<TLAsset::TTimeline>( m_TimelineAssetRef ).GetObjectPointer();
 
 	//	gr: check timeline asset is valid
 	if ( !m_pTimeline )
@@ -31,7 +31,7 @@ TLAnimation::TTimelineInstance::TTimelineInstance(TRefRef TimelineAssetRef) :
 
 TLAnimation::TTimelineInstance::TTimelineInstance(TPtr<TLAsset::TTimeline>& pTimelineAsset) :
 	m_TimelineAssetRef		( pTimelineAsset ? pTimelineAsset->GetAssetRef() : TRef_Invalid ),
-	m_pTimeline				( pTimelineAsset ),
+	m_pTimeline				( pTimelineAsset.GetObjectPointer() ),
 	m_fTime					(0.0f),
 	m_fPlaybackRateModifier	(1.0f)
 {

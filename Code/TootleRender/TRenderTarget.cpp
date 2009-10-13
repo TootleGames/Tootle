@@ -740,10 +740,10 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode* pRenderNode,TRenderNode* pPa
 	if ( pRenderNode->Draw( this, pParentRenderNode, PostRenderList ) )
 	{
 		//	get mesh
-		TPtr<TLAsset::TMesh>& pMeshAsset = pRenderNode->GetMeshAsset();
+		TLAsset::TMesh* pMeshAsset = pRenderNode->GetMeshAsset();
 
 		//	draw mesh!
-		DrawMeshWrapper( pMeshAsset.GetObjectPointer(), pRenderNode, SceneColour, PostRenderList );
+		DrawMeshWrapper( pMeshAsset, pRenderNode, SceneColour, PostRenderList );
 	}
 
 	//	if this render node is in a zone under the camera's zone, then we KNOW the child nodes are going to be visible, so we dont need to provide the camera's
