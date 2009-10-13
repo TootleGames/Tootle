@@ -91,7 +91,7 @@ void TLCore::Platform::QueryHardwareInformation(TBinaryTree& Data)
 	/////////////////////////////////////////////////////////////	
 
 	u32 processorcount = [[NSProcessInfo processInfo] processorCount];
-	Data.ExportData("CPU#", processorcount);
+	Data.ExportData("CPUCount", processorcount);
 
 	TTempString devicedata;
 	devicedata.Appendf("Processor count: %d", processorcount);
