@@ -155,7 +155,7 @@ SyncBool TLFileSys::TFileAssetMarkup::ImportMesh_ImportTag(TPtr<TLAsset::TMesh>&
 	}
 
 	//	get the asset we're importing from
-	TLAsset::TMesh* pImportMesh = TLAsset::GetAsset<TLAsset::TMesh>( ImportMeshRef );
+	TPtr<TLAsset::TMesh> pImportMesh = TLAsset::GetAssetPtr<TLAsset::TMesh>( ImportMeshRef );
 	if ( !pImportMesh )
 	{
 		TLDebug_Print("TAM mesh import: Unknown asset");
