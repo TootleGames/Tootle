@@ -22,6 +22,17 @@ namespace TLAsset
 {
 	TPtr<TLAsset::TAssetManager>		g_pManager;
 	TPtrArray<TLoadTask>				g_LoadTasks;
+
+#ifdef CHECK_ASSETARRAY_INTEGRITY
+	static void Debug_CheckAssetArrayIntegrity()
+	{
+		// call manager asset marray check
+		if(g_pManager)
+			g_pManager->Debug_CheckAssetArrayIntegrity();
+	}
+#endif
+
+
 };
 
 
@@ -161,7 +172,7 @@ TPtr<TLAsset::TAsset>& TLAsset::GetAssetPtr(const TTypedRef& AssetAndTypeRef,Syn
 	if ( FirstUpdateResult == SyncTrue )
 	{
 		// Remove the load task from the array if it exists already - we may have obtained the task
-		// form the list.  This fixes an issue with the TAM files attempting to output a reference
+		// from the list.  This fixes an issue with the TAM files attempting to output a reference
 		// .svg file in the same frame triggering a debug break when in fact there is no error.
 		g_LoadTasks.Remove(pLoadTask);
 
@@ -374,6 +385,10 @@ SyncBool TLAsset::TAssetManager::Initialise()
 	{
 		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "OnAssetChanged");
 
+#ifdef CHECK_ASSETARRAY_INTEGRITY
+		TLMemory::TMemorySystem::Instance().SetAllCallbacks(&TLAsset::Debug_CheckAssetArrayIntegrity);
+#endif
+
 		return SyncTrue;
 	}
 
@@ -460,6 +475,56 @@ SyncBool TLAsset::TAssetManager::Update(float fTimeStep)
 	return SyncTrue;
 }
 
+#ifdef CHECK_ASSETARRAY_INTEGRITY
+
+#include <assert.h>
+
+void TLAsset::TAssetManager::Debug_CheckAssetArrayIntegrity()
+{
+	for(u32 uIndex = 0; uIndex < m_Assets.GetSize(); uIndex++)
+	{
+		TPtr<TLAsset::TAsset>& pAsset = m_Assets[uIndex];
+
+		TLAsset::TAsset* pObj = pAsset.GetObjectPointer();
+
+		// pObj *may* sometime be NULL when the object is being removed from the array
+		// in which case it is still valid.
+		if(pObj)
+		{
+			// Get the v-table pointer
+			int* vptr = *(int**)pObj;
+
+			// Check the v-table hasn;t been trashed
+			if(((int)vptr == 0xffffffff) ||
+				((int)vptr == 0xfeeefeee) ||
+				(((int)vptr & 0xffff0000) == 0x0))
+			{
+				// Can't use the debug routines when using this routine as a memory allocation 
+				// callback because the TString created will try to be allocated and we will 
+				// recursively call the callback.  This may be corrected if we utilise a buffer 
+				// for the debug output
+				//TLDebug_Break("Asset is invalid");
+				assert(FALSE);
+			}
+
+			// Check the loading state hasn't been trashed
+			if((pObj->GetLoadingState() < LoadingState_Init) ||
+				(pObj->GetLoadingState() > LoadingState_Deleted))
+			{
+				// Can't use the debug routines when using this routine as a memory allocation 
+				// callback because the TString created will try to be allocated and we will 
+				// recursively call the callback.  This may be corrected if we utilise a buffer 
+				// for the debug output
+				//TLDebug_Break("Asset is invalid");
+				assert(FALSE);
+			}
+		
+		}
+
+	}
+}
+#endif
+
 
 SyncBool TLAsset::TAssetManager::Shutdown()
 {
@@ -471,6 +536,11 @@ SyncBool TLAsset::TAssetManager::Shutdown()
 
 	//	free factories
 	m_Factories.Empty(TRUE);
+
+#ifdef CHECK_ASSETARRAY_INTEGRITY
+	TLMemory::TMemorySystem::Instance().SetAllCallbacks(NULL);
+#endif
+
 
 	return TManager::Shutdown();	
 }

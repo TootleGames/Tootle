@@ -22,7 +22,9 @@
 #endif
 
 
-
+// Memory system callback definition
+// Used for calling a routine at strategic points during allocation and deallocation
+typedef void (*memcallback)();
 
 
 //#define ENABLE_SOA
@@ -121,6 +123,11 @@ public:
 	// Custom memory allocation
 	FORCEINLINE void*		Allocate(std::size_t size)
 	{
+#ifdef _DEBUG
+		if(m_prealloc_callback)
+			m_prealloc_callback();
+#endif
+
 		void* pData = Platform::MemAlloc( size );
 		if ( !pData )
 		{
@@ -137,6 +144,11 @@ public:
 		#endif
 
 		m_totalAlloc += size;
+
+#ifdef _DEBUG
+		if(m_postalloc_callback)
+			m_postalloc_callback();
+#endif
 
 		return pData;
 		/*
@@ -162,6 +174,10 @@ public:
 	// Custom memory deallocation
 	FORCEINLINE void	Deallocate(void* pObj)
 	{
+#ifdef _DEBUG
+		if(m_predealloc_callback)
+			m_predealloc_callback();
+#endif
 		if ( !pObj )
 			return;
 
@@ -180,7 +196,39 @@ public:
 		//	delete memory
 		Platform::MemDealloc( pObj );
 		
+#ifdef _DEBUG
+		if(m_postdealloc_callback)
+			m_postdealloc_callback();
+#endif
 	}
+
+	// Memory callback handlers
+#ifdef _DEBUG
+	FORCEINLINE void SetPreAllocCallback(memcallback pCallback)		{ m_prealloc_callback = pCallback; }
+	FORCEINLINE void SetPostAllocCallback(memcallback pCallback)	{ m_postalloc_callback = pCallback; }
+
+	FORCEINLINE void SetPreDeallocCallback(memcallback pCallback)	{ m_predealloc_callback = pCallback; }
+	FORCEINLINE void SetPostDeallocCallback(memcallback pCallback)	{ m_postdealloc_callback = pCallback; }
+
+	FORCEINLINE void SetAllCallbacks(memcallback pCallback)	
+	{
+		m_prealloc_callback = pCallback;
+		m_postalloc_callback = pCallback;
+		m_predealloc_callback = pCallback;
+		m_postdealloc_callback = pCallback; 
+	}
+#else
+	FORCEINLINE void SetPreAllocCallback(memcallback pCallback)		{}
+	FORCEINLINE void SetPostAllocCallback(memcallback pCallback)	{}
+
+	FORCEINLINE void SetPreDeallocCallback(memcallback pCallback)	{}
+	FORCEINLINE void SetPostDeallocCallback(memcallback pCallback)	{}
+
+	FORCEINLINE void SetAllCallbacks(memcallback pCallback)			{}
+
+#endif
+
+
 #ifdef ENABLE_SOA
 	
 	FORCEINLINE TSmallObjectAllocator& GetSmallObjectAllocator()	 
@@ -232,6 +280,17 @@ private:
 	static Bool				m_bDestroyed;
 
 	std::size_t				m_totalAlloc;
+
+#ifdef _DEBUG
+	// Callback function pointers for memory changes
+	// Debug only due to speed implications and for thorough 
+	// inspection of the callstack and variables
+	memcallback				m_prealloc_callback;
+	memcallback				m_postalloc_callback;
+
+	memcallback				m_predealloc_callback;
+	memcallback				m_postdealloc_callback;
+#endif
 };
 
 

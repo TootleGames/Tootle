@@ -18,6 +18,15 @@
 #pragma comment(lib,"../../../Tootle/Code/Lib/zlib.lib")
 
 
+#ifdef _DEBUG
+	// Enable this to test the asset array everytime memory is allocated.
+	// This will make the system slow but will trap any problem with an asset being 
+	// deleted prematurely or overwritten
+	//#define CHECK_ASSETARRAY_INTEGRITY
+#endif
+
+
+
 
 namespace TLFileSys
 {
@@ -31,18 +40,30 @@ namespace TLAsset
 	class TAssetFactory;	//	asset factory
 	class TLoadTask;		//	loading-asset task
 
+	// TPtr asset access.
 	//	this replaces the old LoadAsset and GetAsset functions.
 	//	get an asset from the sytem. If it's not loaded, it will try to.
 	//	if Blocking is SyncTrue and the file is still loading then NULL will be returned.
 	//	use SyncTrue to load, SyncFalse to NOT load, SyncWait to async-load
-	TPtr<TAsset>&				GetAssetPtr(const TTypedRef& AssetAndTypeRef,SyncBool LoadAsset=SyncTrue);	
+	TPtr<TAsset>&				GetAssetPtr(const TTypedRef& AssetAndTypeRef,SyncBool LoadAsset=SyncTrue);
+
+	template<class ASSETTYPE>
+	FORCEINLINE TPtr<ASSETTYPE>	GetAssetPtr(TRefRef AssetRef,SyncBool LoadAsset=SyncTrue);
+
+	TPtr<TLAsset::TAsset>&		GetAssetInstance(const TTypedRef& AssetAndTypeRef);				//	not really for general public usage
+
+
+	// Raw pointer asset access.  
+	// IMPORTANT NOTE: When using these routines DO NOT use 
+	//			TPtr<ASSETYPE> pAsset = GetAsset(...);
+	//			TPtr<ASSETYPE>& pAsset = GetAsset(...);
+	// as these will compile but because the TPtr is non-intrusive they will delete the asset 
+	// being pointed to when the TPtr is released.  For all TPtr<ASSETTYPE> access
+	// use GetAssetPtr() instead.
 	template<class ASSETTYPE>
 	FORCEINLINE ASSETTYPE*		GetAsset(TRefRef AssetRef,SyncBool LoadAsset=SyncTrue)		{	return GetAssetPtr( TTypedRef( AssetRef, ASSETTYPE::GetAssetType_Static() ), LoadAsset ).GetObjectPointer<ASSETTYPE>();	}
 	FORCEINLINE TLAsset::TAsset* GetAsset(const TTypedRef& AssetAndTypeRef,SyncBool LoadAsset=SyncTrue)		{	return GetAssetPtr( AssetAndTypeRef, LoadAsset ).GetObjectPointer();	}
 	FORCEINLINE TLAsset::TAsset* GetAsset(TRefRef AssetRef,TRefRef AssetType,SyncBool LoadAsset=SyncTrue)	{	return GetAsset( TTypedRef( AssetRef, AssetType ), LoadAsset );	}
-	template<class ASSETTYPE>
-	FORCEINLINE TPtr<ASSETTYPE>	GetAssetPtr(TRefRef AssetRef,SyncBool LoadAsset=SyncTrue);
-	TPtr<TLAsset::TAsset>&		GetAssetInstance(const TTypedRef& AssetAndTypeRef);				//	not really for general public usage
 
 	template<class ASSETTYPE>
 	u32							GetAllAssets(TPtrArray<ASSETTYPE>& AssetArray);					//	get an array containing all the assets of this type
@@ -103,6 +124,11 @@ public:
 	TPtr<TAsset>&				GetAsset(const TTypedRef& AssetAndTypeRef)			{	return m_Assets.FindPtr( AssetAndTypeRef );	}
 	TPtrArray<TAsset>&			GetAllAssets()										{	return m_Assets;	}
 	Bool						DeleteAsset(const TTypedRef& AssetAndTypeRef);
+
+	// Debug only routines
+#ifdef CHECK_ASSETARRAY_INTEGRITY
+	void						Debug_CheckAssetArrayIntegrity();
+#endif
 
 protected:
 	virtual SyncBool			Initialise();
