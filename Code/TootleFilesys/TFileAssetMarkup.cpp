@@ -12,6 +12,7 @@ namespace TLFileAssetMarkup
 		Part_Colours,
 		Part_Polygons,
 		Part_Lines,
+		Part_Datums,
 	};
 }
 
@@ -237,18 +238,21 @@ SyncBool TLFileSys::TFileAssetMarkup::ImportMesh_ImportTag_Part(TPtr<TLAsset::TM
 		ImportPartFlags.Set( TLFileAssetMarkup::Part_Colours );
 		ImportPartFlags.Set( TLFileAssetMarkup::Part_Polygons );
 		ImportPartFlags.Set( TLFileAssetMarkup::Part_Lines );
+		ImportPartFlags.Set( TLFileAssetMarkup::Part_Datums );
 	}
 	else if ( ImportMeshPartRef == "polygons" )
 	{
 		ImportPartFlags.Set( TLFileAssetMarkup::Part_Vertexes );
 		ImportPartFlags.Set( TLFileAssetMarkup::Part_Colours );
 		ImportPartFlags.Set( TLFileAssetMarkup::Part_Polygons );
+		ImportPartFlags.Set( TLFileAssetMarkup::Part_Datums );
 	}
 	else if ( ImportMeshPartRef == "lines" )
 	{
 		ImportPartFlags.Set( TLFileAssetMarkup::Part_Vertexes );
 		ImportPartFlags.Set( TLFileAssetMarkup::Part_Colours );
 		ImportPartFlags.Set( TLFileAssetMarkup::Part_Lines );
+		ImportPartFlags.Set( TLFileAssetMarkup::Part_Datums );
 	}
 	else
 	{
@@ -298,6 +302,22 @@ SyncBool TLFileSys::TFileAssetMarkup::ImportMesh_ImportTag_Part(TPtr<TLAsset::TM
 	{
 		AppendGeometry( pMesh->GetLines(), pImportMesh->GetLines(), FirstVertexIndex );
 	}
+
+
+	//	import datums
+	if ( ImportPartFlags( TLFileAssetMarkup::Part_Datums ) )
+	{
+		const TPtrKeyArray<TRef,TLMaths::TShape>& pDatums = pImportMesh->GetDatums();
+
+		for(u32 uIndex = 0; uIndex < pDatums.GetSize(); uIndex++)
+		{
+			TRef DatumRef = pDatums.GetKeyAt(uIndex);
+			TPtr<TLMaths::TShape> pShape = pDatums.GetItemAt(uIndex);
+
+			pMesh->AddDatum(DatumRef, pShape);
+		}
+	}
+
 
 	//	manipulate geometry using the properties
 	//	apply them in order so that we can do shader-like things
@@ -360,6 +380,11 @@ SyncBool TLFileSys::TFileAssetMarkup::ImportMesh_ImportTag_Part(TPtr<TLAsset::TM
 				TColour& MeshColour = pMesh->GetColours().ElementAt(v);
 				MeshColour -= ColourChange;
 			}
+		}
+		else if ( PropertyName == "/" )
+		{
+			// End of tag
+			continue;
 		}
 		else
 		{
