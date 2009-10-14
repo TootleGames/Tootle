@@ -48,8 +48,11 @@ SyncBool TLPhysics::TPhysicsgraph::Shutdown()
 	if ( TLGraph::TGraph<TLPhysics::TPhysicsNode>::Shutdown() == SyncFalse )
 		return SyncFalse;
 
-	delete m_pWorld;
-	m_pWorld = NULL;
+	if(m_pWorld)
+	{
+		delete m_pWorld;
+		m_pWorld = NULL;
+	}
 
 	return SyncTrue;
 }
@@ -185,16 +188,24 @@ void TLPhysics::TPhysicsgraph::SetRootCollisionZone(TPtr<TLMaths::TQuadTreeZone>
 	//	create box2d world[bounds]
 	if ( pZone )
 	{
-		const TLMaths::TBox2D& WorldShape = pZone->GetShape();
+		m_WorldShape = pZone->GetShape();
+
 		b2AABB WorldBox;
-		WorldBox.lowerBound.Set( WorldShape.GetLeft(), WorldShape.GetTop() );
-		WorldBox.upperBound.Set( WorldShape.GetRight(), WorldShape.GetBottom() );
+		WorldBox.lowerBound.Set( m_WorldShape.GetLeft(), m_WorldShape.GetTop() );
+		WorldBox.upperBound.Set( m_WorldShape.GetRight(), m_WorldShape.GetBottom() );
 
 		//	gravity is I think is still meters/sec
 		//float2 Gravity = g_WorldUpNormal.xy() * TLPhysics::g_GravityMetresSec;
 		
 		//	gr: gravity is applied by node, not by system
 		float2 Gravity( 0.f, 0.f );
+
+		// World already exists?
+		if(m_pWorld)
+		{
+			delete m_pWorld;
+			m_pWorld = NULL;
+		}
 
 		//	create box2d world with the shape of our zone
 		//	gr: note our world up is opposite to box2d...
@@ -206,9 +217,12 @@ void TLPhysics::TPhysicsgraph::SetRootCollisionZone(TPtr<TLMaths::TQuadTreeZone>
 	}
 	else
 	{
-		//	delete old world
-		delete m_pWorld;
-		m_pWorld = NULL;
+		if(m_pWorld)
+		{
+			//	delete old world
+			delete m_pWorld;
+			m_pWorld = NULL;
+		}
 	}
 }
 

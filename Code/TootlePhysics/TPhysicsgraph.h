@@ -48,7 +48,9 @@ public:
 	void					GetNodesInShape(const TLMaths::TSphere2D& Shape,TArray<TLPhysics::TPhysicsNode*>& NearPhysicsNodes,Bool StrictSphere);	//	get all the nodes in this shape - for spheres optionally do strict sphere checks - box2D uses Boxes for its query so it can return objects outside the sphere. this does an extra loop to make sure distance is within the radius
 	void					GetNodesInShape(const TLMaths::TBox2D& Shape,TArray<TLPhysics::TPhysicsNode*>& NearPhysicsNodes);						//	get all the nodes in this shape
 
-	FORCEINLINE const b2World*		GetWorld()					const {	return m_pWorld;	}				//	box2d's world
+	FORCEINLINE const b2World*			GetWorld()					const {	return m_pWorld;	}				//	box2d's world
+	FORCEINLINE const TLMaths::TBox2D&	GetWorldShape()				const { return m_WorldShape; }
+
 	FORCEINLINE void				AddJoint(const TJoint& Joint)	{	m_NodeJointQueue.Add( Joint );	};	//	add a joint to be created on next update
 	FORCEINLINE void				RefilterShape(b2Fixture* pShape)	{	m_RefilterQueue.Add( pShape );	}	//	add to list of shapes that need refiltering
 	FORCEINLINE Bool				RemoveRefilterShape(b2Fixture* pShape)		{	return m_RefilterQueue.Remove( pShape );	}	//	remvoe from the list of shapes that need refiltering
@@ -82,6 +84,7 @@ private:
 	virtual bool			ShouldCollide(b2Fixture* fixtureA, b2Fixture* fixtureB);
 
 protected:
+	TLMaths::TBox2D					m_WorldShape;					//  World shape - stored so we can access it as you can't get this from box2d
 	b2World*						m_pWorld;						//	box2d's world
 	TArray<TJoint>					m_NodeJoints;					//	list of joints created
 	TArray<TJoint>					m_NodeJointQueue;				//	list of joints that are to be created in the next update
