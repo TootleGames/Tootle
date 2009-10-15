@@ -1,5 +1,6 @@
 #import "IPodCore.h"
 #import "IPodApp.h"
+#import "IPodDebug.h"
 
 #include "../TLCore.h"
 #include "../TLTypes.h"
@@ -216,83 +217,6 @@ const TString& TLCore::Platform::GetAppExe()
 }
 
 
-//--------------------------------------------------
-//	platform specific debug text output
-//--------------------------------------------------
-void TLDebug::Platform::Print(const TString& String)
-{
-	NSString *logString = [[NSString alloc] initWithUTF8String: String.GetData()];
-	NSLog(@"%@", logString );
-	[logString release];
-
-//	printf( String.GetData() );
-//	printf("\n");
-}
-
-
-
-
-//--------------------------------------------------
-//	return FALSE to stop app, TRUE and will attempt to continue
-//--------------------------------------------------
-Bool TLDebug::Platform::Break(const TString& String)
-{
-	Print( String );
-/*
-	// Create an alert so that we can skip debugger or breaking
-	NSString* errornsstring = [[NSString alloc] initWithCString:String.GetData() ];
-		
-	AlertsViewController *alertsViewController = [[AlertsViewController alloc] init];
-	[alertsViewController dialogueOKCancelAction: errornsstring];
-	
-	// Wait for the error dialogue to be dismissed
-	SyncBool Res = SyncWait;
-	
-	do
-	{
-		Res = [alertsViewController dialogueResult];
-	} while(Res == SyncWait);
-	
-	[errornsstring release];
-	[alertsViewController release];	
-*/
-
-	// Drop into debugger if possible
-	// DB:	Found solution to getting the CoreServices linked *only* for the iphone simulator build
-	//		In the target's info goto the Linking->Other Link Flags option and add -framework CoreServices
-	//		via the cog at the bottom of the pane (add build setting condition) then select Any iPhone Simulator for the SDK option
-	// and this should link correctly only on a simulator build :)
-#if !TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
-	Debugger();
-#elif defined(_DEBUG)
-	//	gr: hacky break for debug builds
-	//	gr: removed because there's no way to get out of this in xcode if we trigger it..
-	int* pNull = 0x0;
-	//*pNull = 99;
-	
-	
-	//assert(FALSE);
-	
-	
-	//	gr: new method, untested, see https://devforums.apple.com/message/99580
-	/*
-	__builtin_trap() is one option. If the debugger is running then you'll stop in the debugger, 
-	otherwise you'll crash with a crash log. But there's no guarantee that you can tell the debugger 
-	to continue running your program after that - the compiler thinks __builtin_trap() halts the process 
-	so it may optimize away any code after it.
-
-	asm("trap") or asm("int3") is an architecture-specific option. The behavior is the same as __builtin_trap(), 
-	except the compiler doesn't optimize around it so you should be able to continue running afterwards.
-	*/
-	//__builtin_trap();
-	//asm("int3");		//	note: same as PC version
-	
-#endif
-	
-	
-	//	fail
-	return FALSE;
-}
 
 
 
@@ -332,7 +256,13 @@ void TLCore::Platform::Sleep(u32 Millisecs)
 // IPod Initialisation
 - (void)applicationDidFinishLaunching:(UIApplication *)application 
 {
+	// Initialise debug console stuff... perhaps we should have a log manager that can log to files and console etc.
+	// and publish to other things such as a connected network app that records the log messages. It could be more flexible than
+	// what we have at the moment.
+	TLDebug::Platform::Initialise();
+
 	TLDebug_Print("applicationDidFinishLaunching");
+
 	
 	TLCore::Platform::g_pIPodApp = self;
 	
@@ -485,6 +415,9 @@ void TLCore::Platform::Sleep(u32 Millisecs)
 	TLCore::g_pCoreManager = NULL;
 	
 	TLCore::Platform::g_AppExe.Empty(TRUE);
+	
+	// Final termination of the debug console
+	TLDebug::Platform::Shutdown();
 
 }
 
@@ -514,7 +447,7 @@ void TLCore::Platform::Sleep(u32 Millisecs)
 - (void) onTimer:(NSTimer*)timer
 {
 	// If enabled go through the update loop
-	if(TLCore::g_pCoreManager->IsEnabled())
+	if(TLCore::g_pCoreManager && TLCore::g_pCoreManager->IsEnabled())
 	{
 		//	mark core as ready for another update
 		if ( TLCore::g_pCoreManager )

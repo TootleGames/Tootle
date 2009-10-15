@@ -75,6 +75,8 @@
 		8418F16A0F4DB9B900B956C9 /* MacMemory.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8418F1620F4DB9B900B956C9 /* MacMemory.mm */; };
 		8418F16B0F4DB9B900B956C9 /* MacTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F1630F4DB9B900B956C9 /* MacTime.h */; };
 		8418F16C0F4DB9B900B956C9 /* MacTime.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8418F1640F4DB9B900B956C9 /* MacTime.mm */; };
+		8421B0AD1086239900439A7E /* MacDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 8421B0AB1086239900439A7E /* MacDebug.h */; };
+		8421B0AE1086239900439A7E /* MacDebug.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8421B0AC1086239900439A7E /* MacDebug.mm */; };
 		844CE21310515D3000178124 /* TLCoreMisc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 844CE21010515D3000178124 /* TLCoreMisc.cpp */; };
 		844CE21410515D3000178124 /* TLCoreMisc.h in Headers */ = {isa = PBXBuildFile; fileRef = 844CE21110515D3000178124 /* TLCoreMisc.h */; };
 		844CE21510515D3000178124 /* TLRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 844CE21210515D3000178124 /* TLRandom.h */; };
@@ -150,6 +152,8 @@
 		8418F1620F4DB9B900B956C9 /* MacMemory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacMemory.mm; sourceTree = "<group>"; };
 		8418F1630F4DB9B900B956C9 /* MacTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacTime.h; sourceTree = "<group>"; };
 		8418F1640F4DB9B900B956C9 /* MacTime.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacTime.mm; sourceTree = "<group>"; };
+		8421B0AB1086239900439A7E /* MacDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacDebug.h; sourceTree = "<group>"; };
+		8421B0AC1086239900439A7E /* MacDebug.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacDebug.mm; sourceTree = "<group>"; };
 		844CE21010515D3000178124 /* TLCoreMisc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLCoreMisc.cpp; path = ../TLCoreMisc.cpp; sourceTree = SOURCE_ROOT; };
 		844CE21110515D3000178124 /* TLCoreMisc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLCoreMisc.h; path = ../TLCoreMisc.h; sourceTree = SOURCE_ROOT; };
 		844CE21210515D3000178124 /* TLRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLRandom.h; path = ../TLRandom.h; sourceTree = SOURCE_ROOT; };
@@ -284,6 +288,8 @@
 				8418F1620F4DB9B900B956C9 /* MacMemory.mm */,
 				8418F1630F4DB9B900B956C9 /* MacTime.h */,
 				8418F1640F4DB9B900B956C9 /* MacTime.mm */,
+				8421B0AB1086239900439A7E /* MacDebug.h */,
+				8421B0AC1086239900439A7E /* MacDebug.mm */,
 			);
 			name = Mac;
 			sourceTree = "<group>";
@@ -339,6 +345,7 @@
 				8418F16B0F4DB9B900B956C9 /* MacTime.h in Headers */,
 				844CE21410515D3000178124 /* TLCoreMisc.h in Headers */,
 				844CE21510515D3000178124 /* TLRandom.h in Headers */,
+				8421B0AD1086239900439A7E /* MacDebug.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -412,6 +419,7 @@
 				8418F16A0F4DB9B900B956C9 /* MacMemory.mm in Sources */,
 				8418F16C0F4DB9B900B956C9 /* MacTime.mm in Sources */,
 				844CE21310515D3000178124 /* TLCoreMisc.cpp in Sources */,
+				8421B0AE1086239900439A7E /* MacDebug.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -97,7 +97,7 @@ void TLDebug::Print(const TString& String,const char* pSourceFunction)
 	if ( !String.GetData() || !String.GetLength() )
 		return;
 
-	Platform::Print( String );
+	Platform::PrintToBuffer( String );
 }
 
 

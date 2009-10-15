@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8421B17E108628DE00439A7E /* IPodDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 8421B17C108628DE00439A7E /* IPodDebug.h */; };
+		8421B17F108628DE00439A7E /* IPodDebug.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8421B17D108628DE00439A7E /* IPodDebug.mm */; };
 		8434C8D9100B484C0063673E /* TLRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 8434C8D8100B484C0063673E /* TLRandom.h */; };
 		8440D7A2105528CD0045E57E /* IPodAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = 8440D7A0105528CD0045E57E /* IPodAlert.h */; };
 		8440D7A3105528CD0045E57E /* IPodAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8440D7A1105528CD0045E57E /* IPodAlert.mm */; };
@@ -88,6 +90,8 @@
 /* Begin PBXFileReference section */
 		8418E89D0F4C2D8C00B956C9 /* TootleSimDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleSimDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleSimDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		8418E89E0F4C2D8C00B956C9 /* TootleSimRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleSimRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleSimRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		8421B17C108628DE00439A7E /* IPodDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodDebug.h; sourceTree = "<group>"; };
+		8421B17D108628DE00439A7E /* IPodDebug.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodDebug.mm; sourceTree = "<group>"; };
 		84237DEA1046CA7E009E67C3 /* TootleBuild.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; lineEnding = 0; name = TootleBuild.sh; path = ../../BuildConfigurations/IPod/TootleBuild.sh; sourceTree = SOURCE_ROOT; };
 		8434C8D8100B484C0063673E /* TLRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLRandom.h; path = ../TLRandom.h; sourceTree = SOURCE_ROOT; };
 		8440D7A0105528CD0045E57E /* IPodAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodAlert.h; sourceTree = "<group>"; };
@@ -291,6 +295,8 @@
 		84C109CE0F0A791F00B2DF7A /* IPod */ = {
 			isa = PBXGroup;
 			children = (
+				8421B17C108628DE00439A7E /* IPodDebug.h */,
+				8421B17D108628DE00439A7E /* IPodDebug.mm */,
 				8440D7A0105528CD0045E57E /* IPodAlert.h */,
 				8440D7A1105528CD0045E57E /* IPodAlert.mm */,
 				84C109CF0F0A793000B2DF7A /* IPodApp.h */,
@@ -359,6 +365,7 @@
 				8434C8D9100B484C0063673E /* TLRandom.h in Headers */,
 				8446CFFB103B514B00DFD24F /* TLCoreMisc.h in Headers */,
 				8440D7A2105528CD0045E57E /* IPodAlert.h in Headers */,
+				8421B17E108628DE00439A7E /* IPodDebug.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -434,6 +441,7 @@
 				8461F1100FBAC46800742359 /* TSmallObjectAllocator.cpp in Sources */,
 				8446CFFA103B514B00DFD24F /* TLCoreMisc.cpp in Sources */,
 				8440D7A3105528CD0045E57E /* IPodAlert.mm in Sources */,
+				8421B17F108628DE00439A7E /* IPodDebug.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

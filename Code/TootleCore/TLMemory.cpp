@@ -56,7 +56,7 @@ TLMemory::TMemorySystem::~TMemorySystem()
 	if(m_totalAlloc > 0)
 	{
 		// We still have things allocated
-		TLDebug_Break("Memory system still has memory allocated");
+		//TLDebug_Break("Memory system still has memory allocated");
 
 	}
 

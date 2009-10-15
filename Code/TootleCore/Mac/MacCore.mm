@@ -1,5 +1,6 @@
 #import "MacCore.h"
 #import "MacApp.h"
+#import "MacDebug.h"
 
 #include "../TLCore.h"
 #include "../TLTypes.h"
@@ -28,7 +29,6 @@ namespace TLCore
 		TString						g_AppExe;
 		
 		void				GetString(TString& String, const NSString* pNSString);
-
 	}
 	
 	void RegisterManagers_Engine(TPtr<TCoreManager>& pCoreManager);
@@ -36,6 +36,7 @@ namespace TLCore
 
 	extern TPtr<TCoreManager>		g_pCoreManager;
 }
+
 
 
 
@@ -215,44 +216,7 @@ const TString& TLCore::Platform::GetAppExe()
 }
 
 
-//--------------------------------------------------
-//	platform specific debug text output
-//--------------------------------------------------
-void TLDebug::Platform::Print(const TString& String)
-{
-	NSString *logString = [[NSString alloc] initWithUTF8String: String.GetData()];
-	NSLog(@"%@", logString );
-	[logString release];
 
-//	printf( String.GetData() );
-//	printf("\n");
-}
-
-
-//--------------------------------------------------
-//	return FALSE to stop app, TRUE and will attempt to continue
-//--------------------------------------------------
-Bool TLDebug::Platform::Break(const TString& String)
-{
-	Print( String );
-
-	// Drop into debugger if possible
-	// DB:	Found solution to getting the CoreServices linked *only* for the iphone simulator build
-	//		In the target's info goto the Linking->Other Link Flags option and add -framework CoreServices
-	//		via the cog at the bottom of the pane (add build setting condition) then select Any iPhone Simulator for the SDK option
-	// and this should link correctly only on a simulator build :)
-#if !TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
-	Debugger();
-#elif defined(_DEBUG)
-	//	gr: hacky break for debug builds
-	//	gr: removed because there's no way to get out of this in xcode if we trigger it..
-	int* pNull = 0x0;
-	//*pNull = 99;
-#endif
-	
-	//	fail
-	return FALSE;
-}
 
 
 

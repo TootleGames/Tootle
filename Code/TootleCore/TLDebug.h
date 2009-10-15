@@ -113,7 +113,7 @@ namespace TLDebug
 
 	namespace Platform 
 	{
-		void		Print(const TString& String);	//	platform specific debug output
+		void		PrintToBuffer(const TString& String);	//	platform specific debug output - buffered
 		Bool		Break(const TString& String);	//	return FALSE to stop app, TRUE and will attempt to continue
 	}
 }
