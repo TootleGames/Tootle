@@ -28,15 +28,6 @@ class TString;
 class TBinaryTree;
 
 
-namespace TLDebug
-{
-	namespace Platform
-	{
-		void		Print(const TString& String);	//	platform specific debug output
-		Bool		Break(const TString& String);	//	return FALSE to stop app, TRUE and will attempt to continue
-		Bool		CheckWin32Error();				//	checks for a win32 error and does a break
-	}
-};
 
 
 namespace TLTime

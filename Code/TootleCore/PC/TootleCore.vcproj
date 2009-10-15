@@ -280,6 +280,14 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\PCDebug.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PCDebug.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PCMemory.cpp"
 				>
 			</File>

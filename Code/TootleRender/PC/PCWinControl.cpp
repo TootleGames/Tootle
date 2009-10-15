@@ -6,6 +6,7 @@
 
 #if defined(_MSC_EXTENSIONS)
 #include <TootleCore/PC/PCCore.h>
+#include <TootleCore/PC/PCDebug.h>
 #endif
 
 //	globals
