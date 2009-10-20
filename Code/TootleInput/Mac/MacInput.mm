@@ -1301,6 +1301,8 @@ Bool TLInput::Platform::HID::TLInputHIDDevice::EnumerateObjects()
 		if(elementRef) 
 			EnumDeviceObject(elementRef);
 	}	
+	
+	CFRelease(elementCFArrayRef);
 
 	return TRUE;
 }
