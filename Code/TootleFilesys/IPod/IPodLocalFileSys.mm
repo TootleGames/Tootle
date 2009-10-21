@@ -319,6 +319,8 @@ void Platform::LocalFileSys::SetDirectory(const TString& Directory)
 		GetFileList().Empty(TRUE);
 		m_LastFileListUpdate.SetInvalid();
 	}
+	
+	[path release];
 }
 
 //---------------------------------------------------------

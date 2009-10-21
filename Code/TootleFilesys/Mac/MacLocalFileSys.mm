@@ -87,69 +87,88 @@ Bool Platform::LocalFileSys::LoadFileList(const char* pFileSearch)
 	TLDebug_Print( Debug_String );
 #endif
 	
-	//	make a directory enumerator
-	NSDirectoryEnumerator *direnum = [[NSFileManager defaultManager] enumeratorAtPath: pDirString];
+
+	// Enumerate the files (and direcotories) within the root directory.  This is a shallow search so no sub-directory
+	// files will be listed.
+	NSArray* pArray = [[NSFileManager defaultManager]contentsOfDirectoryAtPath:pDirString error:NULL];
+
 	
-	NSString *pFilename;
-	
-	while ( pFilename = [direnum nextObject] )
+	if(!pArray)
 	{
-		if ( [[pFilename pathExtension] isEqualToString:@"rtfd"] )
+		// Error getting file list for the directory
+		TLDebug_Print( "Invalid filelist pointer" );
+		return FALSE;
+	}
+	
+	
+	for(u32 uIndex = 0; uIndex < [pArray count]; uIndex++)
+	{
+		NSString* pFilename = [pArray objectAtIndex:uIndex];
+		
+		const char* pRealFilename = (const char*)[pFilename fileSystemRepresentation];
+
+		TLDebug_Print( pRealFilename );
+		
+		NSString* fullfilepath = [pDirString stringByAppendingString:pFilename];
+				
+		
+		NSDictionary* pFileAttribs = [[NSFileManager defaultManager] attributesOfItemAtPath:fullfilepath error:NULL];
+		
+		//[fullfilepath release];
+		
+		NSString *FileType = [pFileAttribs objectForKey:@"NSFileType"];
+				
+		TTempString Filename = pRealFilename;
+
+		//	is a directory
+		if ( FileType == NSFileTypeDirectory )
 		{
-			//	skip tree under "rtfd"
-			[direnum skipDescendents];
+#ifdef _DEBUG			
+			TTempString DebugString("Ignoring directory ");
+			//pFile->GetFileRef().GetString( DebugString );
+			DebugString.Append(pRealFilename);
+			TLDebug_Print( DebugString );
+#endif
+			continue;
+		}
+		
+		
+		// is hidden file? On the Mac the first character is a '.' to represent a hidden file.
+		if(Filename.GetLength() && Filename[0] == '.')
+		{
+#ifdef _DEBUG
+			
+			TTempString DebugString("Ignoring hiden file/directory ");
+			//pFile->GetFileRef().GetString( DebugString );
+			DebugString.Append(pRealFilename);
+			TLDebug_Print( DebugString );
+#endif				
+			continue;
+		}
+		
+		
+		TPtr<TFile> pFile = CreateFileInstance( Filename );
+		
+		if ( !pFile )
+		{
+			TLDebug_Print( TString("Failed to create file instance for %s", Filename.GetData() ) );
 		}
 		else
 		{
-			//	found a file! - check it's not a dir
-			NSDictionary *pFileAttribs = [direnum fileAttributes];
-			NSString *FileType = [pFileAttribs objectForKey:@"NSFileType"];
-	
-			//	is a directory
-			if ( FileType == NSFileTypeDirectory )
-			{
-#ifdef _DEBUG
-				const char* pRealFilename = (const char*)[pFilename fileSystemRepresentation];
-				//TTempString Filename = pRealFilename;
-	
-				TTempString DebugString("Ignoring directory ");
-				//pFile->GetFileRef().GetString( DebugString );
-				DebugString.Append(pRealFilename);
-				TLDebug_Print( DebugString );
-#endif
-				continue;
-			}
+			TTempString DebugString("Created new file instance ");
+			pFile->GetFileRef().GetString( DebugString );
+			DebugString.Append(", type: ");
+			pFile->GetFileAndTypeRef().GetString( DebugString );
+			TLDebug_Print( DebugString );
 			
-			const char* pRealFilename = (const char*)[pFilename fileSystemRepresentation];
-			TTempString Filename = pRealFilename;
-			
-			// is hidden file? On the Mac the first character is a '.' to represent a hidden file.
-			if(Filename.GetLength() && Filename[0] == '.')
-				continue;
-
-			
-			TPtr<TFile> pFile = CreateFileInstance( Filename );
-			
-			if ( !pFile )
-			{
-				TLDebug_Print( TString("Failed to create file instance for %s", Filename.GetData() ) );
-			}
-			else
-			{
-				TTempString DebugString("Created new file instance ");
-				pFile->GetFileRef().GetString( DebugString );
-				DebugString.Append(", type: ");
-				pFile->GetFileAndTypeRef().GetString( DebugString );
-				TLDebug_Print( DebugString );
-				
-				// Clear the Lost flag to ensure the file is subsequently removed from the system if 
-				// this was called from the LoadFileList where it will set this flag assuming it will be reset 
-				// when found.  The CreateFileInstance above will simply return if the file already exists.
-				pFile->GetFlags().Clear( TFile::Lost );
-			}		
-			
-		}
+			// Clear the Lost flag to ensure the file is subsequently removed from the system if 
+			// this was called from the LoadFileList where it will set this flag assuming it will be reset 
+			// when found.  The CreateFileInstance above will simply return if the file already exists.
+			pFile->GetFlags().Clear( TFile::Lost );
+		}	
+		
 	}
+
 	
 	[pDirString release];
 
@@ -332,6 +351,8 @@ void Platform::LocalFileSys::SetDirectory(const TString& Directory)
 		GetFileList().Empty(TRUE);
 		m_LastFileListUpdate.SetInvalid();
 	}
+	
+	[path release];
 }
 
 //---------------------------------------------------------
