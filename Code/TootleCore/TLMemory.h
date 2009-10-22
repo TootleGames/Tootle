@@ -66,10 +66,16 @@ namespace TLMemory
 		FORCEINLINE void		MemMove(void* pDest,const void* pSrc,u32 Size);	//	memmove
 		FORCEINLINE void*		MemRealloc(void* pMem,u32 Size);				//	realloc
 		FORCEINLINE void		MemValidate(void* pMem=NULL);					//	validate memory heaps
+
+		FORCEINLINE void		MemFillPattern(void* pMem, u32 Size, u8 Pattern);	// Fills memory with a specifiec pattern to spot uninitialised/deleted/overwritten memory
 	}
 
 	class TMemoryTrack;								//	allocation tracking entry
 	class TMemorySystem;							//	memory interface...
+
+
+	const u8 Debug_AllocPattern		= 0xfa;				// Memory Allocation pattern (Debug only)
+	const u8 Debug_DeallocPattern		= 0xfe;				// Memory Deallocation pattern (Debug only)
 };
 
 
@@ -135,12 +141,16 @@ public:
 			return NULL;
 		}
 
+		// Fill the memory with a pattern to be able to spot un-initialised data
+		Platform::MemFillPattern(pData, size, TLMemory::Debug_AllocPattern);
+
 		//	do memory debugging/logging
 		//	this is per-lib
 		#ifdef _DEBUG
-		{
-			TLMemory::Debug::Debug_Alloc( pData, size );
-		}
+
+
+		TLMemory::Debug::Debug_Alloc( pData, size );
+
 		#endif
 
 		m_totalAlloc += size;
@@ -191,7 +201,25 @@ public:
 		}
 		#endif
 
-		m_totalAlloc -= sizeof(pObj);
+		/////////////////////////////////////////////////////////////////////////////////////////////
+		// DB - OK this doesn't work at all because by the point the object itself has been destroyed (destructor called) 
+		// and we are simply getting the sizeof a pointer but not the object.  I have no idea how the free()
+		// figures out how much memory to deallocate and can't find anything to tell me.
+		// Therefore the only way to know the size of any specific object is to overload the new and delete per class
+		// and call the Deallocate specifically passing in the size which is possible because the class
+		// operator delete can have a size parameter whereas the global one cannot
+		// Alternatively we could custom allocate a structure that stores the size and the pointer to the mem 
+		// used by the requested object to keep track of objects all of the time
+		// but this may also have issues when freeing the memory and also with performance?
+		// Either way a lot more work required here to be able to track memory correctly ourselves.
+		/////////////////////////////////////////////////////////////////////////////////////////////
+		std::size_t size = sizeof(pObj);
+		m_totalAlloc -= size;
+		/////////////////////////////////////////////////////////////////////////////////////////////
+
+		// Fill the memory with a pattern to be able to spot deleted and overwritten data
+		// NOTE: Currently the size is incorrect - see comment above.
+		Platform::MemFillPattern(pObj, size, TLMemory::Debug_DeallocPattern);
 
 		//	delete memory
 		Platform::MemDealloc( pObj );
@@ -268,9 +296,9 @@ private:
 
 	static void OnDeadReference()
 	{
-		// Memory system being used after it has been deleted. We *could* recreste the memory system and add it to the atexit list
-		// (known as the pheonix pattern) which would probably work whiclst we are simply allocating form the 
-		// system bu if we had our own pool/heap then this would probably not help much.
+		// Memory system being used after it has been deleted. We *could* recreate the memory system and add it to the atexit list
+		// (known as the pheonix pattern) which would probably work whilst we are simply allocating from the 
+		// system but if we had our own pool/heap then this would probably not help much.
 		//throw std::runtime_error("Allocation from Memory system when it has been deleted");
 	}
 

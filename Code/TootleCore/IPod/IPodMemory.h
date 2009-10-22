@@ -24,6 +24,13 @@ namespace TLMemory
 		FORCEINLINE void	MemCopy(void* pDest,const void* pSrc,u32 Size)	{	memcpy( pDest, pSrc, Size );	}
 		FORCEINLINE void	MemMove(void* pDest,const void* pSrc,u32 Size)	{	memmove( pDest, pSrc, Size );	}
 		FORCEINLINE void	MemValidate(void* pMem)							{	}
+
+#ifdef _DEBUG
+		FORCEINLINE void	MemFillPattern(void* pMem, u32 Size, u8 Pattern) { memset(pMem, Pattern, Size); }
+#else
+		FORCEINLINE void	MemFillPattern(void* pMem, u32 Size, u8 Pattern)	{}
+#endif
+
 	}
 }
 

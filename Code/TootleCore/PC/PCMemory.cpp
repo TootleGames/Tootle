@@ -35,11 +35,7 @@ void TLMemory::Platform::Shutdown()
 
 void*	TLMemory::Platform::MemAlloc(u32 Size)								
 {	
-#ifdef _DEBUG
-	return HeapAlloc( g_MemHeap, HEAP_ZERO_MEMORY, Size );	
-#else
 	return HeapAlloc( g_MemHeap, 0x0, Size );	
-#endif
 }
 
 void	TLMemory::Platform::MemDealloc(void* pMem)							{	HeapFree( g_MemHeap, 0x0, pMem );	}	//	free
@@ -47,3 +43,10 @@ void	TLMemory::Platform::MemCopy(void* pDest,const void* pSrc,u32 Size)	{	memcpy
 void	TLMemory::Platform::MemMove(void* pDest,const void* pSrc,u32 Size)	{	memmove( pDest, pSrc, Size );	}	//	memcpy
 void*	TLMemory::Platform::MemRealloc(void* pMem,u32 Size)					{	return HeapReAlloc( g_MemHeap, 0x0, pMem, Size );	}	//	realloc
 void	TLMemory::Platform::MemValidate(void* pMem)							{	HeapValidate( g_MemHeap, 0x0, pMem );	}
+
+#ifdef _DEBUG
+void	TLMemory::Platform::MemFillPattern(void* pMem, u32 Size, u8 Pattern)
+{
+	memset(pMem, Pattern, Size);
+}
+#endif

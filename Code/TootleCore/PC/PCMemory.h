@@ -20,6 +20,12 @@ namespace TLMemory
 		void	MemMove(void* pDest,const void* pSrc,u32 Size);
 		void*	MemRealloc(void* pMem,u32 Size);
 		void	MemValidate(void* pMem);
+
+#ifdef _DEBUG
+		void	MemFillPattern(void* pMem, u32 Size, u8 Pattern);
+#else
+		FORCEINLINE void	MemFillPattern(void* pMem, u32 Size, u8 Pattern)	{}
+#endif
 	}
 }
 
