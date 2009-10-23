@@ -6,7 +6,7 @@
 #pragma once
 
 #include "IPodCore.h"
-#include <stdlib.h>	//	needed for malloc
+#include <cstdlib>	//	needed for malloc and size_t
 #include <string.h>	//	needed for memcpy
 
 
