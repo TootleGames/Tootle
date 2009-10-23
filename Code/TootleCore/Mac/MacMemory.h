@@ -28,6 +28,10 @@ namespace TLMemory
 		FORCEINLINE void	MemMove(void* pDest,const void* pSrc,u32 Size)	{	memmove( pDest, pSrc, Size );	}
 		FORCEINLINE void	MemValidate(void* pMem)							{	}
 
+		FORCEINLINE std::size_t		MemSize(void* pMem)						{	return sizeof(pMem); }
+
+		FORCEINLINE void	MemOuputAllocations()							{}
+
 #ifdef _DEBUG
 		FORCEINLINE void	MemFillPattern(void* pMem, u32 Size, u8 Pattern) { memset(pMem, Pattern, Size); }
 #else

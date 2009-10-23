@@ -53,12 +53,15 @@ void TLMemory::TMemorySystem::Shutdown()
 
 TLMemory::TMemorySystem::~TMemorySystem()
 {
+#ifdef _DEBUG
 	if(m_totalAlloc > 0)
 	{
 		// We still have things allocated
 		//TLDebug_Break("Memory system still has memory allocated");
 
+		Platform::MemOuputAllocations();
 	}
+#endif
 
 	TLMemory::Platform::Shutdown();
 

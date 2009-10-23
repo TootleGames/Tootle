@@ -66,7 +66,8 @@ namespace TLMemory
 		FORCEINLINE void		MemMove(void* pDest,const void* pSrc,u32 Size);	//	memmove
 		FORCEINLINE void*		MemRealloc(void* pMem,u32 Size);				//	realloc
 		FORCEINLINE void		MemValidate(void* pMem=NULL);					//	validate memory heaps
-
+		FORCEINLINE void		MemOuputAllocations();
+		FORCEINLINE std::size_t	MemSize(void* pMem);							//  get the size of the memory pointed to by pMem
 		FORCEINLINE void		MemFillPattern(void* pMem, u32 Size, u8 Pattern);	// Fills memory with a specifiec pattern to spot uninitialised/deleted/overwritten memory
 	}
 
@@ -213,7 +214,7 @@ public:
 		// but this may also have issues when freeing the memory and also with performance?
 		// Either way a lot more work required here to be able to track memory correctly ourselves.
 		/////////////////////////////////////////////////////////////////////////////////////////////
-		std::size_t size = sizeof(pObj);
+		std::size_t size = Platform::MemSize(pObj); //sizeof(pObj);
 		m_totalAlloc -= size;
 		/////////////////////////////////////////////////////////////////////////////////////////////
 
