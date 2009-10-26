@@ -722,6 +722,17 @@ SyncBool TLGraph::TGraph<T>::Update(float fTimeStep)
 template <class T>
 SyncBool TLGraph::TGraph<T>::Shutdown()
 {
+	// Remove all update requests
+	m_RequestQueue.SetAll(NULL);
+	m_RequestQueue.Empty(TRUE);
+
+
+	// Remove the root node from the graph.  This will cause the entire graph to be shutdown and removed.
+	TPtr<T> pNullPtr = NULL;
+	DoRemoveNode(m_pRootNode, pNullPtr);
+
+	TLDebug_Assert(m_pRootNode.GetRefCount() == 1, "Root node is still being referenced outside of the graph");
+
 	m_pRootNode = NULL;
 
 	return SyncTrue;
@@ -1385,7 +1396,8 @@ void TLGraph::TGraph<T>::DoRemoveNode(TPtr<T>& pNode,TPtr<T>& pParent)
 
 	//	remove from parent - gr: there is now always a parent, if none specified then the parent would have been set to the root
 	//	note: if the node is MISSING from the NodeIndex this line will probably delete the node
-	pParent->RemoveChild(pNode);
+	if(pParent.IsValid())
+		pParent->RemoveChild(pNode);
 
 	//	remove from index
 	s32 NodeIndexIndex = m_NodeIndex.FindIndex( NodeRef );
