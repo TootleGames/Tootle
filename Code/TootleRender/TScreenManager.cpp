@@ -159,6 +159,8 @@ SyncBool TScreenManager::Update(float fTimeStep)
 //----------------------------------------------------------
 SyncBool TScreenManager::Shutdown()
 {
+	TLDebug_Print("Screenmanager shutdown");
+
 	SyncBool ManagerShutdown = TManager::Shutdown();
 	SyncBool FactoryShutdown = TObjectFactory<TLRender::TScreen>::Shutdown();
 

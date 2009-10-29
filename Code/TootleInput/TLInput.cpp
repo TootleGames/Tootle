@@ -1,6 +1,7 @@
 #include "TLInput.h"
 #include <TootleCore/TEventChannel.h>
 #include <TootleCore/TLTime.h>
+#include <TootleCore/TLCoreMisc.h>
 
 #include <ctype.h> // for tolower routine
 
@@ -456,6 +457,7 @@ Bool TInputManager::RemoveVirtualDevice(TRefRef InstanceRef)
 
 SyncBool TInputManager::Shutdown()
 {
+	TLDebug_Print("Inputmanager shutdown");
 	RemoveAllDevices();
 
 	return Platform::Shutdown();

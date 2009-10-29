@@ -47,6 +47,7 @@ SyncBool TLRender::TRendergraph::Initialise()
 
 SyncBool TLRender::TRendergraph::Shutdown()
 {
+	TLDebug_Print("Rendergraph shutdown");
 	SyncBool ShutdownResult = TLGraph::TGraph<TLRender::TRenderNode>::Shutdown();
 	if ( ShutdownResult == SyncWait )
 		return SyncWait;

@@ -38,6 +38,9 @@ public:
 	FORCEINLINE TRef	GetMoveActionFromClickAction(TRefRef ClickActionRef);
 
 protected:
+	virtual SyncBool Shutdown();
+
+	
 	virtual void	OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
 	virtual void	ProcessMessage(TLMessaging::TMessage& Message);	
 

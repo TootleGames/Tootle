@@ -22,9 +22,11 @@
 #include "TGraphBase.h"
 #include "TLMessaging.h"
 #include "TRelay.h"
-#include <TootleCore/TEventChannel.h>
-#include <TootleCore/TClassFactory.h>
-#include <TootleCore/TCoreManager.h>
+#include "TEventChannel.h"
+#include "TClassFactory.h"
+#include "TCoreManager.h"
+#include "TLCoreMisc.h"
+
 #include <TootleAsset/TScheme.h>
 
 

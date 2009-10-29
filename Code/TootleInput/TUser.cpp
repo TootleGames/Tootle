@@ -1,6 +1,8 @@
 #include "TUser.h"
 
 #include <TootleCore/TEventChannel.h>
+#include <TootleCore/TLCoreMisc.h>
+
 
 #include "TLInput.h"
 

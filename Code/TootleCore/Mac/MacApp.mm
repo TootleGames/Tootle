@@ -3,6 +3,7 @@
 #import "MacApp.h"
 #include "../TLCore.h"
 #include "../TPtr.h"
+#import "MacDebug.h"
 
 
 
@@ -230,6 +231,8 @@ namespace TLCore
 	
 	TLCore::Platform::g_AppExe.Empty(TRUE);
 	
+	// Do final output of the debug buffer
+	TLDebug::Platform::Shutdown();	
 }
 
 

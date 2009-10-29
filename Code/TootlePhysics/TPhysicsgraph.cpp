@@ -45,6 +45,8 @@ SyncBool TLPhysics::TPhysicsgraph::Initialise()
 
 SyncBool TLPhysics::TPhysicsgraph::Shutdown()
 {
+	TLDebug_Print("Physicsgraph shutdown");
+
 	if ( TLGraph::TGraph<TLPhysics::TPhysicsNode>::Shutdown() == SyncFalse )
 		return SyncFalse;
 

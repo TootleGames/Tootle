@@ -15,6 +15,8 @@
 #include "TLoadTask.h"
 #include <TootleCore/TPtr.h>
 #include <TootleCore/TEventChannel.h>
+#include <TootleCore/TLCoreMisc.h>
+
 #include <TootleFileSys/TFileAsset.h>
 #include <TootleFileSys/TLFileSys.h>
 
@@ -528,6 +530,8 @@ void TLAsset::TAssetManager::Debug_CheckAssetArrayIntegrity()
 
 SyncBool TLAsset::TAssetManager::Shutdown()
 {
+	TLDebug_Print("Assetmanager shutdown");
+
 	//	free tasks
 	g_LoadTasks.Empty( TRUE );
 

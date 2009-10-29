@@ -58,6 +58,8 @@ SyncBool TScenegraph::Initialise()
 
 SyncBool TScenegraph::Shutdown()
 {
+	TLDebug_Print("Scenegraph shutdown");
+
 	//	remove active zone
 	m_pActiveZone = NULL;
 	m_ActiveZoneList.Empty();

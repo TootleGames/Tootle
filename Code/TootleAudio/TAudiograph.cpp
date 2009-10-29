@@ -146,6 +146,8 @@ SyncBool TAudiograph::Update(float fTimeStep)
 
 SyncBool TAudiograph::Shutdown()
 {
+	TLDebug_Print("Audiograph shutdown");
+
 	if(Platform::Shutdown() != SyncTrue)
 		return SyncFalse;
 

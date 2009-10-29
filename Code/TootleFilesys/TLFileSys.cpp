@@ -1,6 +1,8 @@
 #include <TootleCore/TLMaths.h>	//	gr: I don't know why but this needs to be included before "TFileFreetype.h" or "rand" isn't found
 #include <TootleCore/TEventChannel.h>
 #include <TootleCore/TLCore.h>
+#include <TootleCore/TLCoreMisc.h>
+
 
 #include "TLFileSys.h"
 #include "TVirtualFileSys.h"

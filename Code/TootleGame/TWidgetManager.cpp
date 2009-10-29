@@ -28,6 +28,17 @@ void TWidgetManager::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChan
 	TLCore::TManager::OnEventChannelAdded(refPublisherID, refChannelID);
 }
 
+
+SyncBool TWidgetManager::Shutdown()
+{ 	
+	TLDebug_Print("Widgetmanager shutdown");
+	
+	TLMessaging::g_pEventChannelManager->UnsubscribeFrom(this, "INPUT", "DeviceChanged"); 
+	
+	return TManager::Shutdown();
+}
+
+
 //-----------------------------------------------------------
 //	process messages
 //-----------------------------------------------------------
