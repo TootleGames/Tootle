@@ -114,7 +114,7 @@
 		846C18C6109748AE0098DFAF /* TTransform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTransform.cpp; path = ../TTransform.cpp; sourceTree = SOURCE_ROOT; };
 		846C18C7109748AE0098DFAF /* TTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTransform.h; path = ../TTransform.h; sourceTree = SOURCE_ROOT; };
 		84C109590F0A78EE00B2DF7A /* libTootleCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleCore.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		84C109600F0A791900B2DF7A /* TArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = TArray.h; path = ../TArray.h; sourceTree = SOURCE_ROOT; };
+		84C109600F0A791900B2DF7A /* TArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TArray.h; path = ../TArray.h; sourceTree = SOURCE_ROOT; };
 		84C109610F0A791900B2DF7A /* TArray.inc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TArray.inc.h; path = ../TArray.inc.h; sourceTree = SOURCE_ROOT; };
 		84C109620F0A791900B2DF7A /* TBinary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TBinary.cpp; path = ../TBinary.cpp; sourceTree = SOURCE_ROOT; };
 		84C109630F0A791900B2DF7A /* TBinary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBinary.h; path = ../TBinary.h; sourceTree = SOURCE_ROOT; };
@@ -126,7 +126,7 @@
 		84C109690F0A791900B2DF7A /* TCoreManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TCoreManager.h; path = ../TCoreManager.h; sourceTree = SOURCE_ROOT; };
 		84C1096A0F0A791900B2DF7A /* TEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TEventChannel.cpp; path = ../TEventChannel.cpp; sourceTree = SOURCE_ROOT; };
 		84C1096B0F0A791900B2DF7A /* TEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TEventChannel.h; path = ../TEventChannel.h; sourceTree = SOURCE_ROOT; };
-		84C1096C0F0A791900B2DF7A /* TFixedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = TFixedArray.h; path = ../TFixedArray.h; sourceTree = SOURCE_ROOT; };
+		84C1096C0F0A791900B2DF7A /* TFixedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TFixedArray.h; path = ../TFixedArray.h; sourceTree = SOURCE_ROOT; };
 		84C1096D0F0A791900B2DF7A /* TFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFlags.h; path = ../TFlags.h; sourceTree = SOURCE_ROOT; };
 		84C1096E0F0A791900B2DF7A /* TKeyArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TKeyArray.h; path = ../TKeyArray.h; sourceTree = SOURCE_ROOT; };
 		84C1096F0F0A791900B2DF7A /* TLArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLArray.cpp; path = ../TLArray.cpp; sourceTree = SOURCE_ROOT; };
