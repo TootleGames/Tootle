@@ -190,10 +190,15 @@ SyncBool TLDebugFile::LoadDebugFile_MeshCross(TPtr<TLFileSys::TFile>& pFile)
 	TPtr<TLAsset::TMesh> pMesh = new TLAsset::TMesh( pFile->GetFileRef() );
 	TLAsset::TMesh& Mesh = *pMesh;
 
+	TColour col(1.f, 0.f, 0.f, 1.f);
 	//	generate a cross...
-	Mesh.GenerateLine( float3( -1.f, 0.f, 0.f ), float3(  1.f, 0.f, 0.f ), &TColour( 1.f, 0.f, 0.f, 1.f ) );
-	Mesh.GenerateLine( float3( 0.f, -1.f, 0.f ), float3( 0.f,  1.f, 0.f ), &TColour( 0.f, 1.f, 0.f, 1.f ) );
-	Mesh.GenerateLine( float3( 0.f, 0.f, -1.f ), float3( 0.f, 0.f,  1.f ), &TColour( 0.f, 0.f, 1.f, 1.f ) );
+	Mesh.GenerateLine( float3( -1.f, 0.f, 0.f ), float3(  1.f, 0.f, 0.f ), &col );
+	
+	col.Set(0.f, 1.f, 0.f, 1.f);
+	Mesh.GenerateLine( float3( 0.f, -1.f, 0.f ), float3( 0.f,  1.f, 0.f ), &col );
+	
+	col.Set(0.f, 0.f, 1.f, 1.f);
+	Mesh.GenerateLine( float3( 0.f, 0.f, -1.f ), float3( 0.f, 0.f,  1.f ), &col );
 
 	return LoadDebugFile_Asset( pFile, pMesh );
 }
