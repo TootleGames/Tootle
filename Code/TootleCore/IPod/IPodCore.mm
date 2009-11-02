@@ -84,7 +84,7 @@ void TLCore::Platform::QueryHardwareInformation(TBinaryTree& Data)
 
 	// iPod and iPhone have only one ARM processor
 	// Add this to the data so it can be used at a later date
-	Data.ExportData("CPU#", 1);	
+	Data.ExportData("CPUCount", 1);	
 
 	// Write the UDID
 	NSString* pNSString = [[UIDevice currentDevice] uniqueIdentifier];		// a string unique to each device based on various hardware info.
