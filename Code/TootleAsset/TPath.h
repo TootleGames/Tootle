@@ -10,6 +10,7 @@
 #include <TootleMaths/TBox.h>
 #include <TootleMaths/TSphere.h>
 #include <TootleMaths/TLine.h>
+#include <TootleCore/TArrayMisc.h>
 
 
 namespace TLAsset
@@ -163,7 +164,8 @@ public:
 	static TRef						GetAssetType_Static()										{	return TRef_Static(P,a,t,h,N);	}
 
 	TPtr<TLPath::TPathNode>&		GetNode(TRefRef NodeRef)									{	return m_Nodes.FindPtr( NodeRef );	}
-	TPtr<TLPath::TPathNode>&		GetRandomNode()												{	return m_Nodes.ElementRand();	}
+	TPtr<TLPath::TPathNode>&		GetRandomNode()												{	return TLArray::GetRandomElement(m_Nodes);	}
+
 	TPtr<TLPath::TPathNode>&		GetNearestNode(const float2& Position);						//	find the nearest node to this position
 	TPtr<TLPath::TPathNode>&		GetNearestNode(const float3& Position)						{	return GetNearestNode( Position.xy() );	}
 	TPtrArray<TLPath::TPathNode>&	GetNodeArray()												{	return m_Nodes;	}

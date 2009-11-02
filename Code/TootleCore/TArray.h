@@ -1,12 +1,12 @@
 /*------------------------------------------------------
 	Dynamic array type with various templated type options
 
-	TYPE		the arrays object type
-	SORTED		true/false, inserts objects in order 
-				benefit is that searches are quicker
-				requires the > operator
-				array is always ascending
-
+	TYPE				The arrays object type
+	SORTPOLICY			Sorting policy class - handles sorting of the array depending on class used.
+						Default is the TLArray::SortPolicy_None<TYPE> class that provides no sorting
+	ALLOCATORPOLICY		Allocator policy class - handles allocation and deallocation of the array data.
+						Default is the TLArray::AllocatorPolicy_Default<TYPE> class
+ 
 	Sorting:
 	To make use of the sorting, your class needs to provide
 	and == and a < operator. These operators MUST work on the 
@@ -24,7 +24,14 @@
 #pragma once
 #include "TLTypes.h"
 #include "TLDebug.h"
-#include "TLMaths.h"
+
+#include "TArraySort.h"  // Array Sorting policies
+
+#include "TArrayAllocator.h"  // Allocator policies
+
+//#define USE_SORT_POLICY
+//#define USE_ALLOCATOR_POLICY
+
 
 class TBinary;
 
@@ -48,36 +55,16 @@ namespace TLArray
 	}
 
 	#define TArray_GrowByDefault	4
-
-	enum SortResult
-	{
-		IsLess = -1,	//	
-		IsGreater = 0,	//	for (A==B) == FALSE == 0 == IsGreater
-		IsEqual = 1,	//	for (A==B) == TRUE == 1 == IsEqual
-	};
-
-	
-	//	simple type sort function
-	template<typename TYPE>
-	SortResult		SimpleSort(const TYPE& a,const TYPE& b,const void* pTestVal)
-	{
-		//	normally you KNOW what pTestVal's type will be and cast
-		//	as the "default" sort func, we ASSUME that pTestVal is of TYPE type.
-		const TYPE& TestWith = pTestVal ? *(const TYPE*)pTestVal :  b;
-		//	== turns into 0 (is greater) or 1(equals)
-		return a < TestWith ? IsLess : (SortResult)(a==TestWith);	
-	}
-
 };
 
 
 
 
-
-template<typename TYPE>
-class TArray
+template< typename TYPE, class SORTPOLICY=TLArray::SortPolicy_None<TYPE>, class ALLOCATORPOLICY=TLArray::AllocatorPolicy_Default<TYPE> >
+class TArray : public SORTPOLICY, ALLOCATORPOLICY
 {
 	friend class TBinary;
+
 public:
 	typedef TLArray::SortResult(TSortFunc)(const TYPE&,const TYPE&,const void*);
 
@@ -93,14 +80,14 @@ public:
 
 	FORCEINLINE const u32&	GetSize() const							{	return m_Size;	}						//	number of elements
 	FORCEINLINE s32			GetLastIndex() const					{	return (s32)GetSize() - 1;	};
-	FORCEINLINE s32			GetRandIndex() const					{	return TLMaths::Rand( GetSize() );	};
+	FORCEINLINE s32			GetRandIndex() const					{	return 0;} //TLMaths::Rand( GetSize() );	};
 	virtual TYPE*		GetData()								{	return m_pData;	}
 	virtual const TYPE*	GetData() const							{	return m_pData;	}
 	FORCEINLINE u32			GetDataSize() const						{	return ( GetSize() * sizeof(TYPE) );	};	//	memory consumption of elements
 
-	template <typename OTHERTYPE>
-	void				Copy(const TArray<OTHERTYPE>& Array);	//	make this a copy of the specified array
-	virtual void		Copy(const TArray<TYPE>& Array);		//	make this a copy of the specified array
+	template<typename OTHERTYPE, class OTHERSORTPOLICY, class OTHERALLOCATORPOLICY>
+	void				Copy(const TArray<OTHERTYPE, OTHERSORTPOLICY, OTHERALLOCATORPOLICY>& Array);	//	make this a copy of the specified array
+	virtual void		Copy(const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array);		//	make this a copy of the specified array
 	void				SetAll(const TYPE& Val);				//	set all elements to match this one (uses = operator)
 
 	virtual Bool		SetSize(s32 Size);
@@ -115,16 +102,16 @@ public:
 	virtual const TYPE&	ElementAtConst(u32 Index) const			{	TLDebug_CheckIndex( Index, GetSize() );	return m_pData[Index];	}
 	FORCEINLINE TYPE&		ElementLast()							{	return ElementAt( GetLastIndex() );	};
 	FORCEINLINE const TYPE&	ElementLastConst() const				{	return ElementAtConst( GetLastIndex() );	};
-	FORCEINLINE TYPE&		ElementRand()							{	return ElementAt( GetRandIndex() );	}
-	FORCEINLINE const TYPE&	ElementRandConst() const				{	return ElementAtConst( GetRandIndex() );	}
+	DEPRECATED TYPE&		ElementRand()							{	return ElementAt( GetRandIndex() );	}
+	DEPRECATED const TYPE&	ElementRandConst() const				{	return ElementAtConst( GetRandIndex() );	}
 
 	virtual s32			Add(const TYPE& val);					//	add an element onto the end of the list
 	FORCEINLINE s32		AddUnique(const TYPE& val)				{	s32 Index = FindIndex( val );	return (Index == -1) ? Add( val ) : Index;	}
 	virtual s32			Add(const TYPE* pData,u32 Length=1);	//	add a number of elements onto the end of the list
-	virtual s32			Add(const TArray<TYPE>& Array);			//	add a whole array of this type onto the end of the list
-	template <typename OTHERTYPE>
-	s32					Add(const TArray<OTHERTYPE>& Array);	//	add a whole array of this type onto the end of the list
-	s32					AddUnique(const TArray<TYPE>& Array);	//	add each element from an array using AddUnique
+	virtual s32			Add(const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array);			//	add a whole array of this type onto the end of the list
+	template<typename OTHERTYPE, class OTHERSORTPOLICY, class OTHERALLOCATORPOLICY>
+	s32					Add(const TArray<OTHERTYPE, OTHERSORTPOLICY, OTHERALLOCATORPOLICY>& Array);	//	add a whole array of this type onto the end of the list
+	s32					AddUnique(const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array);	//	add each element from an array using AddUnique
 	virtual TYPE*		AddNew();								//	add a new element onto the end of the array and return it. often fastest because if we dont need to grow there's no copying
 	template <class MATCHTYPE>
 	FORCEINLINE Bool	Remove(const MATCHTYPE& val);				// remove the specifed object
@@ -133,28 +120,33 @@ public:
 	Bool				RemoveLast()							{	return ( GetSize() ? RemoveAt( GetLastIndex() ) : FALSE );	};
 	virtual s32			InsertAt(u32 Index, const TYPE& val,Bool ForcePosition=FALSE);
 	virtual s32			InsertAt(u32 Index, const TYPE* val, u32 Length, Bool ForcePosition=FALSE);
-	virtual s32			InsertAt(u32 Index, const TArray<TYPE>& array, Bool ForcePosition=FALSE)		{	return InsertAt( Index, array.GetData(), array.GetSize(), ForcePosition );	};
+	virtual s32			InsertAt(u32 Index, const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& array, Bool ForcePosition=FALSE)		{	return InsertAt( Index, array.GetData(), array.GetSize(), ForcePosition );	};
 	
-	FORCEINLINE void	Sort();									//	quick sort the array - this func bails out early if it doesn't need sorting
-	FORCEINLINE Bool	IsSorted() const						{	return m_Sorted;	};	//	is the list sorted?
-	FORCEINLINE void	SetUnsorted()							{	m_Sorted = FALSE;	}	//	set list as not sorted if we KNOW we might have broken the order
+	FORCEINLINE void	Sort();	
+	FORCEINLINE void	SetSortOrder(const TLArray::SortOrder& order);	
+
+#ifdef	USE_SORT_POLICY
+	DEPRECATED FORCEINLINE void	SwapElements(u32 a, u32 b);				//	swap 2 elements in the array - DB Deprecated.  Do we want to allow this externally?  The sort policy implements this internally now so this shouldn't be necessary
+#else	
 	FORCEINLINE void	SwapElements(u32 a, u32 b);				//	swap 2 elements in the array
+#endif
 
 	template <class MATCHTYPE>
 	s32					FindIndex(const MATCHTYPE& val,u32 FromIndex=0) const;	//	get the index of a matching element. -1 if none matched
 	template <class MATCHTYPE>
 	s32					FindIndex(const MATCHTYPE& val,u32 FromIndex=0);		//	get the index of a matching element. -1 if none matched
-	template <class MATCHTYPE>
-	s32					FindIndexNoSort(const MATCHTYPE& val,u32 FromIndex=0) const;	//	matches elements but specificlly doesnt use sorting. Use this if you need to find a match that the array is not sorted by
 
 	template <class MATCHTYPE>	
 	s32					FindIndexReverse(const MATCHTYPE& val,s32 FromIndex=-1) const;	//	same as FindIndex but works backwards through the array
+
+	template <class MATCHTYPE>
+	DEPRECATED s32					FindIndexNoSort(const MATCHTYPE& val,u32 FromIndex=0) const;	//	matches elements but specificlly doesnt use sorting. Use this if you need to find a match that the array is not sorted by
 
 	template <class MATCHTYPE>	
 	FORCEINLINE TYPE*		Find(const MATCHTYPE& val)					{	u32 Index = FindIndex(val);	return (Index==-1) ? NULL : &ElementAt(Index);	};
 
 	template<class MATCHTYPE>	
-	u32					FindAll(TArray<TYPE>& Array,const MATCHTYPE& val);		//	find all matches to this value and put them in an array
+	u32					FindAll(TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array,const MATCHTYPE& val);		//	find all matches to this value and put them in an array
 
 	template<class MATCHTYPE>	
 	FORCEINLINE const TYPE*	FindConst(const MATCHTYPE& val) const		{	u32 Index = FindIndex(val);	return (Index==-1) ? NULL : &ElementAtConst(Index);	};
@@ -175,17 +167,19 @@ public:
 	FORCEINLINE const TYPE&	operator[](s32 Index) const					{	return ElementAtConst(Index);	}
 	FORCEINLINE const TYPE&	operator[](u32 Index) const					{	return ElementAtConst(Index);	}
 
-	FORCEINLINE void			operator=(const TArray<TYPE>& Array)			{	Copy( Array );	}
-	FORCEINLINE Bool			operator<(const TArray<TYPE>& Array) const	{	return FALSE;	}
-	FORCEINLINE Bool			operator==(const TArray<TYPE>& Array) const	{	return (this == &Array);	}
+	FORCEINLINE void			operator=(const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array)			{	Copy( Array );	}
+	FORCEINLINE Bool			operator<(const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array) const	{	return FALSE;	}
+	FORCEINLINE Bool			operator==(const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array) const	{	return (this == &Array);	}
 
 protected:
+
+#ifndef	USE_SORT_POLICY
 	void				QuickSort(s32 First, s32 Last);
-	FORCEINLINE void	SetSorted(Bool IsSorted)					{	m_Sorted = IsSorted;	};			//	called when list order changes
 
 	//	binary chop search
 	template<class MATCHTYPE>
-	s32					FindIndexSorted(const MATCHTYPE& val,u32 Low,s32 High,const TYPE* pData) const;
+	s32					FindIndexSorted(const MATCHTYPE& val,u32 Low,s32 High,const TYPE* pData) const;	
+#endif	
 
 	virtual void		Move(u32 CurrIndex,u32 NewIndex);			//	remove from list in one place and insert it back in
 	Bool				CopyElements(const TYPE* pData,u32 Length,u32 Index=0);
@@ -197,8 +191,8 @@ protected:
 
 protected:
 	u32					m_Size;			//	runtime size of the array
-	TSortFunc*			m_pSortFunc;
-	Bool				m_Sorted;		//	set to true everytime the list is sorted. if any elemets are added, this becomes invalid
+
+	TSortFunc*			m_pSortFunc;	// Sort routine pointer.  Now that sorting is abstracted out of the TArray class we should be able to remove this and just have custom policies for specific sorting instead
 
 private:
 	TYPE*				m_pData;		//	array itself

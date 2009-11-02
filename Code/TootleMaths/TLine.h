@@ -5,7 +5,7 @@
 -------------------------------------------------------*/
 #pragma once
 #include <TootleCore/TLMaths.h>
-#include <TootleCore/TLTypes.h>
+#include <TootleCore/TLMathsMisc.h>
 #include <TootleCore/TArray.h>
 
 
@@ -13,7 +13,9 @@ namespace TLMaths
 {
 	class TLine;		//	3D line shape
 	class TLine2D;		//	2D line shape
-	class TSphere2D;	//	
+	class TSphere2D;	//
+	
+	class TTransform;
 
 	void		ExpandLineStrip(const TArray<float3>& LineStrip,float Width,TArray<float3>& OutsideLineStrip,TArray<float3>& InsideLineStrip);	//	create an outside and inside linestrip for an existing linestrip
 	void		ExpandLineStrip(const TArray<float3*>& LineStrip,const TArray<float*>& LineWidths,const TArray<float*>& OutsetScalars,TArray<float3>& OutsideLineStrip,TArray<float3>& InsideLineStrip);	//	create an outside and inside linestrip for an existing linestrip

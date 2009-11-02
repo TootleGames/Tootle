@@ -1,6 +1,7 @@
 #pragma once
 
 #include <TootleCore/TLMaths.h>
+#include <TootleCore/TTransform.h>
 #include <TootleMaths/TQuadTree.h>
 #include "TSceneNode.h"
 

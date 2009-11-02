@@ -26,7 +26,7 @@ private:
 	FORCEINLINE void	UnsubscribeAll();							// Unsubscribe from all publishers
 
 private:
-	TArray<TLMessaging::TPublisher*>		m_Publishers;			// List of publishers
+	TPointerArray<TLMessaging::TPublisher>		m_Publishers;			// List of publishers
 };
 
 

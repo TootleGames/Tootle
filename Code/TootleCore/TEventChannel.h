@@ -43,6 +43,7 @@ protected:
 			PublishMessage(Message);
 		}
 	}
+	
 
 private:
 	TRef				m_refChannelID;
@@ -111,10 +112,19 @@ public:
 
 	Bool							UnsubscribeFrom(TSubscriber* pSubscriber, TRefRef refPublisherID, TRefRef refChannelID);
 	FORCEINLINE Bool				UnsubscribeFrom(TPtr<TSubscriber>& pSubscriber, TRefRef refPublisherID, TRefRef refChannelID);
-
+	
 	// Message sending
 	Bool							BroadcastMessage(TLMessaging::TMessage& pData, TRefRef refPublisherID, TRefRef refChannelID);
 
+	// Wrapper routines for altering the event channel message sending
+	FORCEINLINE void				SetPublishOrder(const TLArray::SortOrder& order, TRefRef refPublisherID, TRefRef refChannelID)
+	{
+		TPtr<TEventChannel>& pChannel = FindEventChannel(refPublisherID, refChannelID);
+		
+		if(pChannel)
+			pChannel->SetPublishOrder(order);		
+	}
+	
 private:
 
 	FORCEINLINE TPtr<TEventChannelGroup>&		FindEventChannelGroup(TRefRef refPublisherID)				{	return m_EventChannelGroups.FindPtr( refPublisherID );	}
@@ -158,6 +168,5 @@ FORCEINLINE TPtr<TLMessaging::TEventChannel>& TLMessaging::TEventChannelInterfac
 //------------------------------------------------
 FORCEINLINE Bool TLMessaging::TEventChannelInterface::UnregisterEventChannel(TRefRef refChannelID)	
 {
-	TPtr<TLMessaging::TEventChannel> pChannel = new TEventChannel( refChannelID );
 	return m_EventChannels.Remove( refChannelID );
 }

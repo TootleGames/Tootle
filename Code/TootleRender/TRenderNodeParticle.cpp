@@ -1,6 +1,7 @@
 #include "TRenderNodeParticle.h"
 #include <TootleAsset/TParticle.h>
 
+#include <TootleCore/TArrayMisc.h>
 
 
 
@@ -250,6 +251,6 @@ void TLRender::TRenderNodeParticle::SpawnParticles(s32 Count,TLAsset::TMesh& Mes
 TLMaths::TShape* TLRender::TRenderNodeParticle::GetRandomEmitShape()
 {
 	//	gr: todo: weight this towards larger shapes so particles are evenly distributed
-	return m_EmitShapes.ElementRand();
+	return TLArray::GetRandomElement(m_EmitShapes);
 }
 

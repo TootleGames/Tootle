@@ -209,15 +209,15 @@
 			<key>ChosenToolbarItems</key>
 			<array>
 				<string>active-combo-popup</string>
+				<string>active-buildstyle-popup</string>
 				<string>action</string>
 				<string>NSToolbarFlexibleSpaceItem</string>
 				<string>build</string>
-				<string>go</string>
 				<string>build-and-go</string>
+				<string>go</string>
 				<string>clean-target</string>
 				<string>clean</string>
-				<string>servicesModulefind</string>
-				<string>com.apple.ide.PBXToolbarStopButton</string>
+				<string>debugger-enable-breakpoints</string>
 				<string>get-info</string>
 				<string>NSToolbarFlexibleSpaceItem</string>
 				<string>com.apple.pbx.toolbar.searchfield</string>
@@ -239,7 +239,6 @@
 						<array>
 							<string>1C37FBAC04509CD000000102</string>
 							<string>1C37FAAC04509CD000000102</string>
-							<string>1C08E77C0454961000C914BD</string>
 							<string>1C37FABC05509CD000000102</string>
 							<string>1C37FABC05539CD112110102</string>
 							<string>E2644B35053B69B200211256</string>
@@ -271,7 +270,6 @@
 								<string>8418ECF60F4DA63E00B956C9</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FAAC04509CD000000102</string>
-								<string>1C08E77C0454961000C914BD</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
@@ -331,7 +329,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>841DC84F1057993E00BFE98F</string>
+										<string>84D9BD7A10986CC6000042D8</string>
 										<key>history</key>
 										<array>
 											<string>8418EF550F4DACF200B956C9</string>
@@ -339,16 +337,7 @@
 											<string>8418F34A0F4DC33400B956C9</string>
 											<string>8418F34B0F4DC33400B956C9</string>
 											<string>841DC84C1057993E00BFE98F</string>
-											<string>841DC84D1057993E00BFE98F</string>
-										</array>
-										<key>prevStack</key>
-										<array>
-											<string>8418EF580F4DACF200B956C9</string>
-											<string>8418F2920F4DBDE600B956C9</string>
-											<string>8418F2930F4DBDE600B956C9</string>
-											<string>8418F2940F4DBDE600B956C9</string>
-											<string>8418F34D0F4DC33400B956C9</string>
-											<string>841DC84E1057993E00BFE98F</string>
+											<string>841DC84F1057993E00BFE98F</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -360,14 +349,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {580, 285}}</string>
+								<string>{{0, 0}, {580, 277}}</string>
 								<key>RubberWindowFrame</key>
 								<string>246 233 788 504 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>285pt</string>
+							<string>277pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -380,14 +369,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 290}, {580, 173}}</string>
+								<string>{{0, 282}, {580, 181}}</string>
 								<key>RubberWindowFrame</key>
 								<string>246 233 788 504 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>173pt</string>
+							<string>181pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -406,12 +395,14 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>841DC8501057993E00BFE98F</string>
+				<string>84D9BD7B10986CC6000042D8</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>841DC8511057993E00BFE98F</string>
+				<string>84D9BD7C10986CC6000042D8</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
+			<key>ToolbarConfigUserDefaultsMinorVersion</key>
+			<string>2</string>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.defaultV3</string>
 		</dict>
@@ -542,6 +533,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>8418EF510F4DACCD00B956C9</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleScene/Mac/TootleScene.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -588,7 +580,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>XCMainBuildResultsModuleGUID</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>Build</string>
+								<string>Build Results</string>
 								<key>XCBuildResultsTrigger_Collapse</key>
 								<integer>1021</integer>
 								<key>XCBuildResultsTrigger_Open</key>
@@ -622,7 +614,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>8418EF510F4DACCD00B956C9</string>
-				<string>84B606BF104FFE240022E5BC</string>
+				<string>84D9BD7D10986CC6000042D8</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

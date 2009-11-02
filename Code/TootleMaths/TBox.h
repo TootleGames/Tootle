@@ -5,8 +5,7 @@
 -------------------------------------------------------*/
 #pragma once
 #include <TootleCore/TLMaths.h>
-#include <TootleCore/TLTypes.h>
-#include <TootleCore/TArray.h>
+#include <TootleCore/TLMathsMisc.h>
 #include <TootleCore/TFixedArray.h>
 #include "TLine.h"
 

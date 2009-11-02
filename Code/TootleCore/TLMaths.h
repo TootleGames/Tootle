@@ -19,8 +19,6 @@
 
 //	forward declarations
 class TBinaryTree;
-template<typename TYPE>
-class TArray;
 
 
 namespace TLMaths
@@ -32,7 +30,6 @@ namespace TLMaths
 	class TQuaternion;	//	quaternion type
 	class TMatrix;		//	matrix type
 	class TLine;		//	3D line/ray
-	class TTransform;	//	Transform class - encapsulates common usage of position, rotation and scale
 
 	class TEuler;		// Simple convenience class to represent a set of 3 Euler angles
 	class TAxisAngle;	// Simple convenience class to represent an axis and angle
@@ -120,23 +117,6 @@ namespace TLMaths
 	#define TLMaths_NearZero				0.0001f
 	#define TLMaths_NearOne					(1.f - TLMaths_NearZero)		//	value just less than one - used to check stuff is almost at 1 when normally between 0..1
 
-	//	gr: these macros are just here to keep the compiled ref usage, they're not NEEDED but saves us using TRef_Static(B,o,x,2) etc everywhere
-	#define TLMaths_ShapeRef_TBox			TRef_Static3(B,o,x)
-	#define TLMaths_ShapeRef_TBox2D			TRef_Static4(B,o,x,TWO)
-	#define TLMaths_ShapeRef_TCapsule		TRef_Static3(C,a,p)
-	#define TLMaths_ShapeRef_TCapsule2D		TRef_Static4(C,a,p,TWO)
-	#define TLMaths_ShapeRef_TLine			TRef_Static4(L,i,n,e)
-	#define TLMaths_ShapeRef_TLine2D		TRef_Static(L,i,n,e,TWO)
-	#define TLMaths_ShapeRef_TOblong		TRef_Static3(O,b,l)
-	#define TLMaths_ShapeRef_TOblong2D		TRef_Static4(O,b,l,TWO)
-	#define TLMaths_ShapeRef_TPolygon		TRef_Static4(P,o,l,y)
-	#define TLMaths_ShapeRef_TPolygon2D		TRef_Static5(P,o,l,y,TWO)
-	#define TLMaths_ShapeRef_TSphere		TRef_Static3(S,p,h)
-	#define TLMaths_ShapeRef_TSphere2D		TRef_Static4(S,p,h,TWO)
-	#define TLMaths_ShapeRef_Polygon		TRef_Static4(P,o,l,y)
-	#define TLMaths_ShapeRef_Polygon2D		TRef_Static5(P,o,l,y,TWO)
-
-	#define TLMaths_ShapeRef(ShapeType)		TLMaths_ShapeRef_##ShapeType
 }
 
 
@@ -410,82 +390,6 @@ private:
 
 
 
-class TLMaths::TTransform
-{
-public:
-	TTransform() : m_Valid ( 0x0 )			{	}
-
-	FORCEINLINE void				SetScale(const float3& Scale)							{	m_Scale = Scale;			SetScaleValid();	}
-	FORCEINLINE void				SetTranslate(const float3& Translate)					{	m_Translate = Translate;	SetTranslateValid();	}
-	FORCEINLINE void				SetRotation(const TQuaternion& Rotation)				{	m_Rotation = Rotation;		SetRotationValid();	}
-
-	FORCEINLINE u8					SetHasChanged(const TLMaths::TTransform& NewTransform);					//	set all elements and return what bits have changed
-	FORCEINLINE u8					SetScaleHasChanged(const float3& Scale);								//	set scale, return's the Transform bit that has changed
-	FORCEINLINE u8					SetTranslateHasChanged(const float3& Translate);						//	set translation, return's the Transform bit that has changed
-	FORCEINLINE u8					SetTranslateHasChanged(const float3& Translate,float MinChange);		//	set translation, return's the Transform bit that has changed
-	FORCEINLINE u8					SetRotationHasChanged(const TQuaternion& Rotation);						//	set rotation, return's the Transform bit that has changed
-	FORCEINLINE u8					SetRotationHasChanged(const TQuaternion& Rotation,float MinChange);		//	set rotation, return's the Transform bit that has changed
-
-	FORCEINLINE float3&				GetTranslate() 			{	return m_Translate;	}	//	only use if HasTranslate()
-	FORCEINLINE float3&				GetScale()				{	return m_Scale;	}		//	only use if HasScale()
-	FORCEINLINE TQuaternion&		GetRotation() 			{	return m_Rotation;	}	//	only use if HasRotation()
-	FORCEINLINE const float3&		GetTranslate() const	{	Debug_Assert( HasTranslate(), "Translate accessed but is invalid");	return m_Translate;	}
-	FORCEINLINE const float3&		GetScale() const		{	Debug_Assert( HasScale(), "Scale accessed but is invalid");			return m_Scale;	}
-	FORCEINLINE const TQuaternion&	GetRotation() const		{	Debug_Assert( HasRotation(), "Rotation accessed but is invalid");	return m_Rotation;	}
-
-	FORCEINLINE void				SetInvalid()			{	m_Valid = 0x0;	}
-	FORCEINLINE void				SetTranslateInvalid()	{	m_Valid &= ~TLMaths_TransformBitTranslate;	/*m_Translate.Set( 0.f, 0.f, 0.f );*/	}
-	FORCEINLINE void				SetScaleInvalid()		{	m_Valid &= ~TLMaths_TransformBitScale;		/*m_Scale.Set( 1.f, 1.f, 1.f );*/	}
-	FORCEINLINE void				SetRotationInvalid()	{	m_Valid &= ~TLMaths_TransformBitRotation;		/*m_Rotation.SetIdentity();*/	}
-
-	FORCEINLINE void				SetTranslateValid()				{	m_Valid |= TLMaths_TransformBitTranslate;	}
-	FORCEINLINE void				SetTranslateValid(Bool Valid)	{	if ( Valid )	SetTranslateValid();	else SetTranslateInvalid();	}
-	FORCEINLINE void				SetScaleValid()					{	m_Valid |= TLMaths_TransformBitScale;		}
-	FORCEINLINE void				SetRotationValid()				{	m_Valid |= TLMaths_TransformBitRotation;	}
-
-	FORCEINLINE Bool				HasAnyTransform() const			{	return (m_Valid != 0x0);	}
-	FORCEINLINE Bool				HasTranslate() const			{	return (m_Valid & TLMaths_TransformBitTranslate) != 0x0;	}
-	FORCEINLINE Bool				HasScale() const				{	return (m_Valid & TLMaths_TransformBitScale) != 0x0;	}
-	FORCEINLINE Bool				HasRotation() const				{	return (m_Valid & TLMaths_TransformBitRotation) != 0x0;	}
-	FORCEINLINE u8					GetHasTransformBits() const		{	return m_Valid;	}
-
-	//	these Transform()'s are like matrix multiplies
-	void				Transform(const TLMaths::TTransform& Trans);			//	transform this by another transform, this is like a local tranform, if Trans says "move right", it will move right, relative to the rotation. dumb faster method which doesn't do checks
-	u8					Transform_HasChanged(const TLMaths::TTransform& Trans);	//	transform this by another transform, this is like a local tranform, if Trans says "move right", it will move right, relative to the rotation. returns elements that have changed (slightly slower, but if your caller does much LESS work if nothing changed then use this)
-	void				Transform(float3& Vector) const;				//	transform vector
-	void				Transform(float2& Vector) const;				//	transform vector
-	void				Untransform(float3& Vector) const;				//	untransform vector
-	void				Untransform(float2& Vector) const;				//	untransform vector
-	void				Invert();										//	make an "untransform" from this transform. (inverts rotation, scale, trans)
-
-	template<typename TYPE>	void	Transform(TArray<TYPE>& VectorArray) const		{	for ( u32 i=0;	i<VectorArray.GetSize();	i++ )	Transform( VectorArray[i] );	}
-	template<typename TYPE>	void	Untransform(TArray<TYPE>& VectorArray) const	{	for ( u32 i=0;	i<VectorArray.GetSize();	i++ )	Untransform( VectorArray[i] );	}
-
-	//	matrix style "adds"
-	void				AddTransform(const TLMaths::TTransform& Trans);				//	Modify the transform values by another transform, Translates the translate, scales the scale, rotates the rotation. Doesn't multiply and rotate the translate etc
-	u8					AddTransform_HasChanged(const TLMaths::TTransform& Trans);	//	Modify the transform values by another transform, Translates the translate, scales the scale, rotates the rotation. Doesn't multiply and rotate the translate etc. returns elements that have changed (slightly slower, but if your caller does much LESS work if nothing changed then use this)
-
-	u8					ImportData(TBinaryTree& Data);				//	import transform data from binary data/message/etc- returns bitmask of the attributes that have changed
-	u8					ExportData(TBinaryTree& Data,u8 TransformBits=TLMaths_TransformBitAll);	//	export all our valid data to this binary data- can optionally make it only write certain attributes. Returns bits of the attributes written.
-
-	Bool				operator==(const TLMaths::TTransform& Transform) const;		//	see if transforms are same
-	Bool				operator!=(const TLMaths::TTransform& Transform) const;		//	see if transforms are different 
-
-private:
-#ifdef _DEBUG
-	FORCEINLINE void	Debug_Assert(Bool Condition,const char* pString) const		{	if ( !Condition )	Debug_Assert( pString );	}
-#else
-	FORCEINLINE void	Debug_Assert(Bool Condition,const char* pString) const		{	}
-#endif
-	
-	void				Debug_Assert(const char* pString) const;
-
-protected:
-	float3				m_Translate;		//	simple translation
-	float3				m_Scale;			//	scale
-	TQuaternion			m_Rotation;			//	human-usable rotation
-	u8					m_Valid;			//	bit mask of validity.	TRANSFORM_BIT_XXX - last for byte alignment
-};
 
 
 
@@ -643,131 +547,6 @@ FORCEINLINE float TLMaths::Sinf(float RadAngle)
 }
 
 	
-
-//--------------------------------------------------
-//	set all elements and return what bits have changed
-//--------------------------------------------------
-FORCEINLINE u8 TLMaths::TTransform::SetHasChanged(const TLMaths::TTransform& NewTransform)
-{
-	u8 Changes = 0x0;
-
-	if ( NewTransform.HasScale() )
-		Changes |= SetScaleHasChanged( NewTransform.GetScale() );
-
-	if ( NewTransform.HasRotation() )
-		Changes |= SetRotationHasChanged( NewTransform.GetRotation() );
-
-	if ( NewTransform.HasTranslate() )
-		Changes |= SetTranslateHasChanged( NewTransform.GetTranslate() );
-
-	return Changes;
-}
-
-
-//--------------------------------------------------
-//	set scale, return's the Transform bit that has changed
-//--------------------------------------------------
-FORCEINLINE u8 TLMaths::TTransform::SetScaleHasChanged(const float3& Scale)
-{
-	if ( !HasScale() || Scale != m_Scale )
-	{
-		SetScale( Scale );
-		return TLMaths_TransformBitScale;
-	}
-	else
-		return 0x0;
-}
-
-
-//--------------------------------------------------
-//	set translation, return's the Transform bit that has changed
-//--------------------------------------------------
-FORCEINLINE u8 TLMaths::TTransform::SetTranslateHasChanged(const float3& Translate)
-{
-	if ( !HasTranslate() || Translate != m_Translate )
-	{
-		SetTranslate( Translate );
-		return TLMaths_TransformBitTranslate;
-	}
-	else
-		return 0x0;
-}
-
-
-
-//--------------------------------------------------
-//	set translation, return's the Transform bit that has changed
-//--------------------------------------------------
-FORCEINLINE u8 TLMaths::TTransform::SetTranslateHasChanged(const float3& Translate,float MinChange)
-{
-	if ( !HasTranslate() )
-	{
-		SetTranslate( Translate );
-		return TLMaths_TransformBitTranslate;
-	}
-	else
-	{
-		if ( m_Translate.HasDifferenceMin( Translate, MinChange ) )
-		{
-			SetTranslate( Translate );
-			return TLMaths_TransformBitTranslate;
-		}
-		else
-		{
-			//	very minor change - don't apply
-			return 0x0;
-		}
-	}
-}
-
-
-
-
-//--------------------------------------------------
-//	set rotation, return's the Transform bit that has changed
-//--------------------------------------------------
-FORCEINLINE u8 TLMaths::TTransform::SetRotationHasChanged(const TLMaths::TQuaternion& Rotation,float MinChange)
-{
-	if ( !HasRotation() )
-	{
-		SetRotation( Rotation );
-		return TLMaths_TransformBitRotation;
-	}
-	else
-	{
-		if ( m_Rotation.GetData().HasDifferenceMin( Rotation.GetData(), MinChange ) )
-		{
-			SetRotation( Rotation );
-			return TLMaths_TransformBitRotation;
-		}
-		else
-		{
-			//	very minor change - don't apply
-			return 0x0;
-		}
-	}
-}
-
-
-
-
-//--------------------------------------------------
-//	set rotation, return's the Transform bit that has changed
-//--------------------------------------------------
-FORCEINLINE u8 TLMaths::TTransform::SetRotationHasChanged(const TLMaths::TQuaternion& Rotation)
-{
-	if ( !HasRotation() || Rotation != m_Rotation )
-	{
-		SetRotation( Rotation );
-		return TLMaths_TransformBitRotation;
-	}
-	else
-		return 0x0;
-}
-
-
-
-
 
 /*
 //	gr: add these back in when we need them

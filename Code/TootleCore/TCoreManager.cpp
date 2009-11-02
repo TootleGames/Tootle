@@ -209,7 +209,11 @@ SyncBool TCoreManager::InitialiseLoop()
 		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), RenderRef);
 		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), ShutdownRef);
 
-
+		
+		// re-order the shutdown channel so that managers are sent messages in reverse order
+		TLMessaging::g_pEventChannelManager->SetPublishOrder(TLArray::Descending, GetManagerRef(), ShutdownRef);
+		
+		
 		//TODO: Platform specific manager??
 		TLCore::Platform::Init();
 
@@ -384,7 +388,7 @@ void TCoreManager::PublishShutdownMessage()
 {
 	TLMessaging::TMessage Message(ShutdownRef);
 	
-	PublishMessageReverse( Message );
+	PublishMessage( Message );
 }
 
 

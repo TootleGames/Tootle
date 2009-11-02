@@ -5,8 +5,12 @@
 
 -------------------------------------------------------*/
 #pragma once
-#include <TootleCore/TLMaths.h>
 #include <TootleCore/TLTypes.h>
+
+#include <TootleCore/TLMaths.h>
+#include <TootleCore/TLMathsMisc.h>
+
+#include <TootleCore/TTransform.h>
 #include <TootleCore/TArray.h>
 
 namespace TLMaths

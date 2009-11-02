@@ -4,8 +4,6 @@
 
 -------------------------------------------------------*/
 #pragma once
-#include <TootleCore/TLMaths.h>
-#include <TootleCore/TFixedArray.h>
 #include "TOblong.h"
 
 

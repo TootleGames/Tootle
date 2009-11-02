@@ -1,11 +1,43 @@
 // !$*UTF8*$!
 {
+	84154532106774BB006FA797 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60591104FF8800022E5BC /* TootleDebug.xcconfig */;
+		name = "TootleDebug.xcconfig: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 879;
+		vrLoc = 1099;
+	};
+	84154A6110682268006FA797 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60592104FF8800022E5BC /* TootleRelease.xcconfig */;
+		name = "TootleRelease.xcconfig: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 994;
+		vrLoc = 3241;
+	};
+	84154A6210682268006FA797 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B605A7104FF8A80022E5BC /* TWidgetButton.cpp */;
+		name = "TWidgetButton.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 534;
+		vrLoc = 0;
+	};
 	8418ECF80F4DA63E00B956C9 /* Project object */ = {
 		activeArchitecturePreference = x86_64;
 		activeBuildConfigurationName = Debug;
 		activeTarget = 8418EEAE0F4DAB4500B956C9 /* TootleGame */;
 		addToTargets = (
 			8418EEAE0F4DAB4500B956C9 /* TootleGame */,
+		);
+		breakpoints = (
 		);
 		codeSenseManager = 8418ECFD0F4DA63E00B956C9 /* Code sense */;
 		ignoreBreakpointsInProjectsDict = {
@@ -69,8 +101,23 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 273770334;
-			PBXWorkspaceStateSaveDate = 273770334;
+			PBXPerProjectTemplateStateSaveDate = 278850123;
+			PBXWorkspaceStateSaveDate = 278850123;
+		};
+		perUserProjectItems = {
+			84154532106774BB006FA797 /* PBXTextBookmark */ = 84154532106774BB006FA797 /* PBXTextBookmark */;
+			84154A6110682268006FA797 /* PBXTextBookmark */ = 84154A6110682268006FA797 /* PBXTextBookmark */;
+			84154A6210682268006FA797 /* PBXTextBookmark */ = 84154A6210682268006FA797 /* PBXTextBookmark */;
+			84D9BE4910987591000042D8 /* PBXTextBookmark */ = 84D9BE4910987591000042D8 /* PBXTextBookmark */;
+			84D9BF5B109898B5000042D8 /* PBXTextBookmark */ = 84D9BF5B109898B5000042D8 /* PBXTextBookmark */;
+			84D9BF5C109898B5000042D8 /* PBXTextBookmark */ = 84D9BF5C109898B5000042D8 /* PBXTextBookmark */;
+			84D9BF5E109898B5000042D8 /* PBXTextBookmark */ = 84D9BF5E109898B5000042D8 /* PBXTextBookmark */;
+			84D9BF5F109898B5000042D8 /* PBXTextBookmark */ = 84D9BF5F109898B5000042D8 /* PBXTextBookmark */;
+			84D9BF60109898B5000042D8 /* PBXTextBookmark */ = 84D9BF60109898B5000042D8 /* PBXTextBookmark */;
+			84D9C0E010998EDA000042D8 /* PBXTextBookmark */ = 84D9C0E010998EDA000042D8 /* PBXTextBookmark */;
+			84F88ACF109EEAB1004BAF8B /* XCBuildMessageTextBookmark */ = 84F88ACF109EEAB1004BAF8B /* XCBuildMessageTextBookmark */;
+			84F88AD8109EEACF004BAF8B /* PBXTextBookmark */ = 84F88AD8109EEACF004BAF8B /* PBXTextBookmark */;
+			84F88AD9109EEACF004BAF8B /* PBXTextBookmark */ = 84F88AD9109EEACF004BAF8B /* PBXTextBookmark */;
 		};
 		sourceControlManager = 8418ECFC0F4DA63E00B956C9 /* Source Control */;
 		userBuildSettings = {
@@ -81,6 +128,9 @@
 		fallbackIsa = XCSourceControlManager;
 		isSCMEnabled = 0;
 		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
 		};
 	};
 	8418ECFD0F4DA63E00B956C9 /* Code sense */ = {
@@ -89,5 +139,188 @@
 	};
 	8418EEAE0F4DAB4500B956C9 /* TootleGame */ = {
 		activeExec = 0;
+	};
+	8418F02F0F4DB82500B956C9 /* TMenu.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1125, 7189}}";
+			sepNavSelRange = "{10614, 0}";
+			sepNavVisRange = "{10468, 1162}";
+		};
+	};
+	84B60591104FF8800022E5BC /* TootleDebug.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 2691}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{1099, 879}";
+		};
+	};
+	84B60592104FF8800022E5BC /* TootleRelease.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 2691}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{3241, 994}";
+		};
+	};
+	84B60593104FF8970022E5BC /* TWidgetText.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 1859}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 662}";
+		};
+	};
+	84B6059B104FF8A80022E5BC /* TPath.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1219, 9178}}";
+			sepNavSelRange = "{20, 0}";
+			sepNavVisRange = "{0, 704}";
+		};
+	};
+	84B605A5104FF8A80022E5BC /* TWidget.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1244, 8463}}";
+			sepNavSelRange = "{3198, 7}";
+			sepNavVisRange = "{2688, 1000}";
+		};
+	};
+	84B605A7104FF8A80022E5BC /* TWidgetButton.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 407}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 534}";
+		};
+	};
+	84B605A8104FF8A80022E5BC /* TWidgetButton.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1328, 494}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 833}";
+		};
+	};
+	84B605AB104FF8A80022E5BC /* TWidgetManager.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 5642}}";
+			sepNavSelRange = "{723, 0}";
+			sepNavVisRange = "{211, 791}";
+		};
+	};
+	84B605AC104FF8A80022E5BC /* TWidgetManager.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 1846}}";
+			sepNavSelRange = "{836, 0}";
+			sepNavVisRange = "{439, 1027}";
+		};
+	};
+	84D9BE4910987591000042D8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B605A5104FF8A80022E5BC /* TWidget.cpp */;
+		name = "TWidget.cpp: 105";
+		rLen = 7;
+		rLoc = 3198;
+		rType = 0;
+		vrLen = 1000;
+		vrLoc = 2688;
+	};
+	84D9BF5B109898B5000042D8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B605A8104FF8A80022E5BC /* TWidgetButton.h */;
+		name = "TWidgetButton.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 833;
+		vrLoc = 0;
+	};
+	84D9BF5C109898B5000042D8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84D9BF5D109898B5000042D8 /* TManager.h */;
+		name = "TManager.h: 33";
+		rLen = 53;
+		rLoc = 499;
+		rType = 0;
+		vrLen = 598;
+		vrLoc = 359;
+	};
+	84D9BF5D109898B5000042D8 /* TManager.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = TManager.h;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleCore/TManager.h;
+		sourceTree = "<absolute>";
+	};
+	84D9BF5E109898B5000042D8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B605AC104FF8A80022E5BC /* TWidgetManager.h */;
+		name = "TWidgetManager.h: 41";
+		rLen = 0;
+		rLoc = 836;
+		rType = 0;
+		vrLen = 1027;
+		vrLoc = 439;
+	};
+	84D9BF5F109898B5000042D8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60593104FF8970022E5BC /* TWidgetText.cpp */;
+		name = "TWidgetText.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 662;
+		vrLoc = 0;
+	};
+	84D9BF60109898B5000042D8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84D9BF61109898B5000042D8 /* TEventChannel.h */;
+		name = "TEventChannel.h: 153";
+		rLen = 145;
+		rLoc = 4549;
+		rType = 0;
+		vrLen = 1634;
+		vrLoc = 3132;
+	};
+	84D9BF61109898B5000042D8 /* TEventChannel.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = TEventChannel.h;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleCore/TEventChannel.h;
+		sourceTree = "<absolute>";
+	};
+	84D9C0E010998EDA000042D8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B605AB104FF8A80022E5BC /* TWidgetManager.cpp */;
+		name = "TWidgetManager.cpp: 35";
+		rLen = 0;
+		rLoc = 723;
+		rType = 0;
+		vrLen = 791;
+		vrLoc = 211;
+	};
+	84F88ACF109EEAB1004BAF8B /* XCBuildMessageTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "Compile /Users/dibely/Documents/Tootle/Tootle/Code/TootleGame/Mac/../TPath.cpp";
+		fRef = 84B6059B104FF8A80022E5BC /* TPath.cpp */;
+		fallbackIsa = XCBuildMessageTextBookmark;
+		rLen = 0;
+		rLoc = 0;
+		rType = 1;
+	};
+	84F88AD8109EEACF004BAF8B /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8418F02F0F4DB82500B956C9 /* TMenu.cpp */;
+		name = "TMenu.cpp: 421";
+		rLen = 0;
+		rLoc = 10614;
+		rType = 0;
+		vrLen = 1162;
+		vrLoc = 10468;
+	};
+	84F88AD9109EEACF004BAF8B /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B6059B104FF8A80022E5BC /* TPath.cpp */;
+		name = "TPath.cpp: 2";
+		rLen = 0;
+		rLoc = 20;
+		rType = 0;
+		vrLen = 814;
+		vrLoc = 0;
 	};
 }

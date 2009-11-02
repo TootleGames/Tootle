@@ -11,11 +11,7 @@
 class TBinaryTree;
 
 namespace TLCore
-{
-	//	useful functions
-	u32				PointerToInteger(void* pAddress);	//	convert a pointer to an integer
-	void*			IntegerToPointer(u32 Integer);		//	convert an integer to a pointer
-	
+{	
 	// DB - Global TRef's that get used often.  Performance optimisation
 	const TRef InitialiseRef	= TRef_Static(I,n,i,t,i);	//"Initialise";
 	const TRef UpdateRef		= TRef_Static(U,p,d,a,t);	//"Update";

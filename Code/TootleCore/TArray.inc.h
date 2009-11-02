@@ -1,17 +1,18 @@
-#include "TLMemory.h"
 
 
+
+//#define USE_SORT_POLICY
+//#define USE_ALLOCATOR_POLICY
 
 //------------------------------------------------
 //	initialise members
 //------------------------------------------------
-template<typename TYPE>
-TArray<TYPE>::TArray(TSortFunc* pSortFunc,u16 GrowBy) :
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::TArray(TSortFunc* pSortFunc,u16 GrowBy) :
 m_Size			( 0 ),
 m_pData			( NULL ),
 m_Alloc			( 0 ),
 m_pSortFunc		( pSortFunc ),
-m_Sorted		( TRUE ),
 m_GrowBy		( GrowBy )
 {
 	if ( m_GrowBy == 0 )
@@ -41,18 +42,22 @@ m_GrowBy		( OtherArray.m_GrowBy )
 //------------------------------------------------
 //	cleanup
 //------------------------------------------------
-template<typename TYPE>
-TArray<TYPE>::~TArray()
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::~TArray()
 {
+#ifdef USE_ALLOCATOR_POLICY		
+	ALLOCATORPOLICY::Deallocate( m_pData );
+#else										
 	TLMemory::DeleteArray( m_pData );
+#endif
 	m_Alloc = 0;
 	m_Size = 0;
 }
 
 
 
-template<typename TYPE>
-s32 TArray<TYPE>::Add(const TYPE& val)
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+s32 TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::Add(const TYPE& val)
 {
 	//	add additional element to set
 	if ( !SetSize( GetSize()+1 ) )
@@ -62,8 +67,12 @@ s32 TArray<TYPE>::Add(const TYPE& val)
 	TYPE& LastElement = ElementLast();
 	LastElement = val;
 
+#ifdef USE_SORT_POLICY	
+	if(GetSize() > 1)
+		SORTPOLICY::OnAdded( ElementAt( GetLastIndex()-1 ), LastElement);
+#else	
 	//	check to see if adding this element keeps the array sorted
-	if ( IsSorted() && GetSize() > 1 && m_pSortFunc )
+	if ( SORTPOLICY::IsSorted() && GetSize() > 1 && m_pSortFunc )
 	{
 		TYPE& OldLastElement = ElementAt( GetLastIndex()-1 );
 
@@ -71,16 +80,17 @@ s32 TArray<TYPE>::Add(const TYPE& val)
 		TLArray::SortResult Sorted = m_pSortFunc( OldLastElement, LastElement, NULL );
 		if ( Sorted == TLArray::IsGreater )
 		{
-			SetSorted( FALSE );
+			SORTPOLICY::SetSorted( FALSE );
 		}
 	}
+#endif
 
 	return GetLastIndex();
 }
 
 
-template<typename TYPE>
-s32 TArray<TYPE>::Add(const TYPE* pData,u32 Length)
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+s32 TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::Add(const TYPE* pData,u32 Length)
 {
 	//	check params
 	if ( pData == NULL || Length == 0 )
@@ -103,7 +113,11 @@ s32 TArray<TYPE>::Add(const TYPE* pData,u32 Length)
 			return -1;
 
 		//	memcpy data in
+#ifdef USE_ALLOCATOR_POLICY		
+		ALLOCATORPOLICY::CopyData( &ElementAt(FirstIndex), pData, Length );
+#else											
 		TLMemory::CopyData( &ElementAt(FirstIndex), pData, Length );
+#endif
 	}
 	else
 	{
@@ -125,8 +139,8 @@ s32 TArray<TYPE>::Add(const TYPE* pData,u32 Length)
 
 
 
-template<typename TYPE>
-TYPE* TArray<TYPE>::AddNew()
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+TYPE* TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::AddNew()
 {
 	//	grow the array 
 	if ( !SetSize( GetSize()+1 ) )
@@ -142,9 +156,9 @@ TYPE* TArray<TYPE>::AddNew()
 //-------------------------------------------------------------------------
 //	remove an element explicitly
 //-------------------------------------------------------------------------
-template<typename TYPE>
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
 template<typename MATCHTYPE>
-Bool TArray<TYPE>::Remove(const MATCHTYPE& val)
+Bool TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::Remove(const MATCHTYPE& val)
 {
 	s32 uIndex = FindIndex(val);
 
@@ -159,8 +173,8 @@ Bool TArray<TYPE>::Remove(const MATCHTYPE& val)
 //-------------------------------------------------------------------------
 //	remove an element based on its index. doesnt affect sorted state
 //-------------------------------------------------------------------------
-template<typename TYPE>
-Bool TArray<TYPE>::RemoveAt(u32 Index)
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+Bool TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::RemoveAt(u32 Index)
 {
 	if ( (s32)Index>GetLastIndex() )
 		return FALSE;
@@ -173,8 +187,8 @@ Bool TArray<TYPE>::RemoveAt(u32 Index)
 
 
 
-template<typename TYPE>
-s32 TArray<TYPE>::InsertAt(u32 Index, const TYPE& val, Bool ForcePosition)
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+s32 TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::InsertAt(u32 Index, const TYPE& val, Bool ForcePosition)
 {
 	//	need to add it onto the end
 	if ( (s32)Index > GetLastIndex() )
@@ -202,14 +216,14 @@ s32 TArray<TYPE>::InsertAt(u32 Index, const TYPE& val, Bool ForcePosition)
 	ElementAt(Index) = val;
 
 	//	list may no longer be sorted
-	SetSorted(FALSE);
+	SORTPOLICY::SetSorted(FALSE);
 
 	return Index;
 }
 
 
-template<typename TYPE>
-s32 TArray<TYPE>::InsertAt(u32 Index, const TYPE* val, u32 Length, Bool ForcePosition)
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+s32 TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::InsertAt(u32 Index, const TYPE* val, u32 Length, Bool ForcePosition)
 {
 	//	need to add it onto the end
 	if ( (s32)Index > GetLastIndex() )
@@ -239,14 +253,14 @@ s32 TArray<TYPE>::InsertAt(u32 Index, const TYPE* val, u32 Length, Bool ForcePos
 	CopyElements( val, Length, Index);
 
 	//	assume no longer sorted
-	SetSorted( FALSE );
+	SORTPOLICY::SetSorted( FALSE );
 
 	return Index;
 }
 
 
-template<typename TYPE>
-s32 TArray<TYPE>::Add(const TArray<TYPE>& Array)
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+s32 TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::Add(const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array)
 {
 	if ( !Array.GetSize() )
 		return -1;
@@ -256,8 +270,8 @@ s32 TArray<TYPE>::Add(const TArray<TYPE>& Array)
 }
 
 
-template<typename TYPE>
-s32 TArray<TYPE>::AddUnique(const TArray<TYPE>& Array)
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+s32 TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::AddUnique(const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array)
 {
 	s32 FirstPos = -1;
 
@@ -272,8 +286,8 @@ s32 TArray<TYPE>::AddUnique(const TArray<TYPE>& Array)
 }
 
 
-template<typename TYPE>
-void TArray<TYPE>::Copy(const TArray<TYPE>& Array)
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+void TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::Copy(const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array)
 {
 	if ( !SetSize(Array.GetSize()) )
 		return;
@@ -283,9 +297,9 @@ void TArray<TYPE>::Copy(const TArray<TYPE>& Array)
 
 
 
-template<typename TYPE>
-template <typename OTHERTYPE>
-s32 TArray<TYPE>::Add(const TArray<OTHERTYPE>& Array)
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+template<typename OTHERTYPE, class OTHERSORTPOLICY, class OTHERALLOCATORPOLICY>
+s32 TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::Add(const TArray<OTHERTYPE, OTHERSORTPOLICY, OTHERALLOCATORPOLICY>& Array)
 {
 	Empty();
 
@@ -303,9 +317,9 @@ s32 TArray<TYPE>::Add(const TArray<OTHERTYPE>& Array)
 	return FirstIndex;
 }
 
-template<typename TYPE>
-template<typename OTHERTYPE>
-void TArray<TYPE>::Copy(const TArray<OTHERTYPE>& Array)
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+template<typename OTHERTYPE, class OTHERSORTPOLICY, class OTHERALLOCATORPOLICY>
+void TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::Copy(const TArray<OTHERTYPE, OTHERSORTPOLICY, OTHERALLOCATORPOLICY>& Array)
 {
 	Empty();
 
@@ -322,8 +336,8 @@ void TArray<TYPE>::Copy(const TArray<OTHERTYPE>& Array)
 //-------------------------------------------------------------------------
 //	copy Length elements from another source into our array at Index
 //-------------------------------------------------------------------------
-template<typename TYPE>
-Bool TArray<TYPE>::CopyElements(const TYPE* pData,u32 Length,u32 Index)
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+Bool TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::CopyElements(const TYPE* pData,u32 Length,u32 Index)
 {
 	//	check for size/allocation errors
 	if ( Length < 1 )
@@ -347,7 +361,11 @@ Bool TArray<TYPE>::CopyElements(const TYPE* pData,u32 Length,u32 Index)
 	if ( IsElementDataType() )
 	{
 		//	copy a load of raw data
+#ifdef USE_ALLOCATOR_POLICY		
+		ALLOCATORPOLICY::CopyData( &ElementAt(Index), pData, Length );
+#else											
 		TLMemory::CopyData( &ElementAt(Index), pData, Length );	
+#endif
 	}
 	else
 	{
@@ -361,29 +379,29 @@ Bool TArray<TYPE>::CopyElements(const TYPE* pData,u32 Length,u32 Index)
 	}
 
 	//	list may no longer be sorted
-	SetSorted(FALSE);
+	SORTPOLICY::SetSorted(FALSE);
 
 	return TRUE;
 }
 
 
-template<typename TYPE>
-void TArray<TYPE>::Move(u32 CurrIndex,u32 NewIndex)
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+void TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::Move(u32 CurrIndex,u32 NewIndex)
 {
 	TYPE Item = ElementAt(CurrIndex);
 	RemoveAt(CurrIndex);
 	InsertAt(NewIndex,Item);
 
 	//	list may no longer be sorted
-	SetSorted(FALSE);
+	SORTPOLICY::SetSorted(FALSE);
 }
 
 
 //---------------------------------------------------------
 //	remove a range of elements from the array
 //---------------------------------------------------------
-template<typename TYPE>
-void TArray<TYPE>::RemoveAt(u32 Index,u32 Amount)
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+void TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::RemoveAt(u32 Index,u32 Amount)
 {
 	u32 From = Index + Amount;
 	s32 ShiftAmount = - (s32)Amount;
@@ -392,8 +410,8 @@ void TArray<TYPE>::RemoveAt(u32 Index,u32 Amount)
 }
 
 
-template<typename TYPE>
-void TArray<TYPE>::ShiftArray(u32 From, s32 Amount )
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+void TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::ShiftArray(u32 From, s32 Amount )
 {
 	//	nothing to do
 	if ( Amount == 0 )	
@@ -428,8 +446,12 @@ void TArray<TYPE>::ShiftArray(u32 From, s32 Amount )
 			//u32 MoveAmount = OldSize;
 			s32 MoveAmount = OldSize - From;
 			
+#ifdef USE_ALLOCATOR_POLICY		
+			ALLOCATORPOLICY::MoveData( &ElementAt(ToIndex), &ElementAt(From), MoveAmount );
+#else												
 			TLMemory::MoveData( &ElementAt(ToIndex), &ElementAt(From), MoveAmount );
-
+#endif
+			
 			//	testing
 			//	gr: should be <=? this MoveData() doesnt seem to corrupt heap..
 			for ( s32 i=0;	i<(s32)MoveAmount;	i++ )
@@ -441,7 +463,11 @@ void TArray<TYPE>::ShiftArray(u32 From, s32 Amount )
 				TLDebug::CheckIndex( DestIndex, GetSize(), __FUNCTION__ );
 			}
 
+#ifdef USE_ALLOCATOR_POLICY		
+			ALLOCATORPOLICY::Validate();
+#else															
 			TLMemory::Platform::MemValidate();
+#endif
 		}
 		else
 		{
@@ -490,7 +516,11 @@ void TArray<TYPE>::ShiftArray(u32 From, s32 Amount )
 		{
 			if ( IsElementDataType() )
 			{
+#ifdef USE_ALLOCATOR_POLICY		
+				ALLOCATORPOLICY::MoveData( &ElementAt(CopyToFirst), &ElementAt(CopyFromFirst), (u32)MoveAmount );
+#else																
 				TLMemory::MoveData( &ElementAt(CopyToFirst), &ElementAt(CopyFromFirst), (u32)MoveAmount );
+#endif
 			}
 			else
 			{
@@ -514,15 +544,15 @@ void TArray<TYPE>::ShiftArray(u32 From, s32 Amount )
 
 	//	list may no longer be sorted
 	//	gr: not determined by this func any more. Remove()'s dont break sort order
-	//SetSorted(FALSE);
+	//SORTPOLICY::SetSorted(FALSE);
 }
 
 
 //--------------------------------------------------------
 //	Set a new size for the array, re-alloc as neccesary
 //--------------------------------------------------------
-template<typename TYPE>
-Bool TArray<TYPE>::SetSize(s32 NewSize)
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+Bool TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::SetSize(s32 NewSize)
 {
 	//	check param
 	if ( NewSize < 0 )
@@ -542,7 +572,7 @@ Bool TArray<TYPE>::SetSize(s32 NewSize)
 		m_Size = uSize;
 
 		if ( m_Size < 2 )
-			SetSorted(TRUE);
+			SORTPOLICY::SetSorted(TRUE);
 		
 
 		return TRUE;
@@ -559,7 +589,7 @@ Bool TArray<TYPE>::SetSize(s32 NewSize)
 	m_Size = uSize;
 
 	//	list must be sorted if there will be 1 or less elements, otherwise assume new elements will make it out of order
-	SetSorted( uSize<2 );
+	SORTPOLICY::SetSorted( uSize<2 );
 
 	return TRUE;
 }
@@ -569,13 +599,17 @@ Bool TArray<TYPE>::SetSize(s32 NewSize)
 //--------------------------------------------------------
 //	reallocate the memory in the array to a new sized array
 //--------------------------------------------------------
-template<typename TYPE>
-void TArray<TYPE>::SetAllocSize(u32 NewSize)
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+void TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::SetAllocSize(u32 NewSize)
 {
 	//	0 size specified delete all data
 	if ( NewSize <= 0 )
 	{
+#ifdef USE_ALLOCATOR_POLICY		
+		ALLOCATORPOLICY::Deallocate( m_pData );
+#else		
 		TLMemory::DeleteArray( m_pData );
+#endif		
 		m_Alloc = 0;
 		m_Size	= 0;
 		return;
@@ -595,7 +629,11 @@ void TArray<TYPE>::SetAllocSize(u32 NewSize)
 	TYPE* pOldData = m_pData;
 
 	//	alloc new data
+#ifdef USE_ALLOCATOR_POLICY		
+	m_pData = ALLOCATORPOLICY::Allocate( NewAlloc );
+#else			
 	m_pData	= TLMemory::AllocArray<TYPE>( NewAlloc );
+#endif	
 	
 	//	failed to alloc...
 	if ( !m_pData )
@@ -624,7 +662,11 @@ void TArray<TYPE>::SetAllocSize(u32 NewSize)
 
 		if ( IsElementDataType() )
 		{
+#ifdef USE_ALLOCATOR_POLICY		
+			ALLOCATORPOLICY::CopyData( m_pData, pOldData, CopySize );
+#else					
 			TLMemory::CopyData( m_pData, pOldData, CopySize );
+#endif
 		}
 		else
 		{
@@ -637,17 +679,20 @@ void TArray<TYPE>::SetAllocSize(u32 NewSize)
 		}
 	
 		//	delete old data
+#ifdef USE_ALLOCATOR_POLICY		
+		ALLOCATORPOLICY::Deallocate( pOldData );
+#else				
 		TLMemory::DeleteArray( pOldData );
+#endif
 	}
 
 }
 
-
 //-------------------------------------------------------------------------
 //	swap order of two elements
 //-------------------------------------------------------------------------
-template<typename TYPE>
-void TArray<TYPE>::SwapElements(u32 a, u32 b)
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+void TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::SwapElements(u32 a, u32 b)
 {
 	//	don't do anything when trying to swap the "same" element
 	if ( a == b )
@@ -658,7 +703,7 @@ void TArray<TYPE>::SwapElements(u32 a, u32 b)
 	ElementAt(b) = Tmp;
 
 	//	list may no longer be sorted
-	SetSorted(FALSE);
+	SORTPOLICY::SetSorted(FALSE);
 }
 
 
@@ -666,8 +711,8 @@ void TArray<TYPE>::SwapElements(u32 a, u32 b)
 //-------------------------------------------------------------------------
 //	make all elements the same
 //-------------------------------------------------------------------------
-template<typename TYPE>
-void TArray<TYPE>::SetAll(const TYPE& Val)
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+void TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::SetAll(const TYPE& Val)
 {
 	if ( IsElementDataType() )
 	{
@@ -684,7 +729,11 @@ void TArray<TYPE>::SetAll(const TYPE& Val)
 			for ( u32 i=0;	i<GetSize();	i++ )
 			{
 				//	gr: memcpy the Val over our 1 ELEMENT
+#ifdef USE_ALLOCATOR_POLICY		
+				ALLOCATORPOLICY::CopyData( &ElementAt(i), &Val, 1 );
+#else									
 				TLMemory::CopyData( &ElementAt(i), &Val, 1 );
+#endif
 			}
 		}
 	}
@@ -699,20 +748,23 @@ void TArray<TYPE>::SetAll(const TYPE& Val)
 	}
 
 	//	list is no longer sorted
-	SetSorted(FALSE);
+	SORTPOLICY::SetSorted(FALSE);
 }
 
 
 //-------------------------------------------------------------------------
 //	initial sorting func does stuff that only needs to be done once
 //-------------------------------------------------------------------------
-template<typename TYPE>
-FORCEINLINE void TArray<TYPE>::Sort()
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+FORCEINLINE void TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::Sort()
 {
+#ifdef USE_SORT_POLICY	
+	SORTPOLICY::Sort(GetData(), GetSize());
+#else
 	//	already sorted or nothing to sort
-	if ( m_Sorted || GetSize() < 2 )
+	if ( SORTPOLICY::IsSorted() || GetSize() < 2 )
 	{
-		SetSorted( TRUE );
+		SORTPOLICY::SetSorted( TRUE );
 		return;
 	}
 
@@ -720,15 +772,46 @@ FORCEINLINE void TArray<TYPE>::Sort()
 	QuickSort( 0, GetSize()-1 );
 
 	//	we're now sorted!
-	SetSorted( TRUE );
+	SORTPOLICY::SetSorted( TRUE );
+#endif
 }
 
 
 //-------------------------------------------------------------------------
+//	initial sorting func does stuff that only needs to be done once
+//-------------------------------------------------------------------------
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+FORCEINLINE void TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::SetSortOrder(const TLArray::SortOrder& order)
+{
+#ifdef USE_SORT_POLICY	
+	SORTPOLICY::SetSortOrder(order, GetData(), GetSize());
+#else
+	
+	u32 uSize = GetSize();
+	// Simply swap all elements every time this is called for non-sorted arrays
+	// Essentially a toogle of data order in the array but not sorted
+	if(uSize > 1)
+	{
+		u32 uLast = uSize-1;
+	
+		// Rearrange all data elements
+		for(u32 uIndex = 0; uIndex < uLast; uIndex++)
+		{
+			SwapElements(uIndex, uLast--);
+		}	
+	}
+	
+#endif
+}
+
+
+#ifndef USE_SORT_POLICY	
+
+//-------------------------------------------------------------------------
 //	Quicksort recursive func
 //-------------------------------------------------------------------------
-template<typename TYPE>
-void TArray<TYPE>::QuickSort(s32 First, s32 Last)
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+void TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::QuickSort(s32 First, s32 Last)
 {
 	//	check params
 	if ( First >= Last )	return;
@@ -754,9 +837,9 @@ void TArray<TYPE>::QuickSort(s32 First, s32 Last)
 //	binary chop search
 //	recursive version
 //----------------------------------------------------------------------
-template<typename TYPE>
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
 template<class MATCHTYPE>
-s32 TArray<TYPE>::FindIndexSorted(const MATCHTYPE& val,u32 Low,s32 High,const TYPE* pData) const
+s32 TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::FindIndexSorted(const MATCHTYPE& val,u32 Low,s32 High,const TYPE* pData) const
 {
 	if ( High < (s32)Low )
 		return -1;
@@ -782,18 +865,101 @@ s32 TArray<TYPE>::FindIndexSorted(const MATCHTYPE& val,u32 Low,s32 High,const TY
 		return FindIndexSorted( val, Low, Mid-1, pData );
 }
 
+#endif
+
+
+
+//----------------------------------------------------------------------
+//	get the index of a matching element. -1 if none matched
+//----------------------------------------------------------------------
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+template<class MATCHTYPE>
+s32 TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::FindIndex(const MATCHTYPE& val,u32 FromIndex) const
+{
+	u32 uSize = GetSize();
+	if ( uSize == 0 )
+		return -1;
+
+#ifdef USE_SORT_POLICY	
+	return SORTPOLICY::FindIndex(val, GetData(), FromIndex, uSize);
+#else
+	if ( m_pSortFunc && uSize > 2 )
+	{
+		if ( !SORTPOLICY::IsSorted() )
+		{
+			TLArray::Debug::Print("Warning; unsorted array cannot be sorted because of const FindIndex()", __FUNCTION__ );
+			//Sort();
+		}
+
+		//	make use of the binary chop as our list is in order
+		if ( SORTPOLICY::IsSorted() )
+			return FindIndexSorted( val, 0, GetSize(), GetData() );
+	}
+	
+	//	walk through elements
+	const TYPE* pFirstElement = &ElementAtConst(0);
+	for ( u32 i=FromIndex;	i<uSize;	i++ )
+	{
+		//	gr: less safe, but faster access...
+		if ( pFirstElement[i] == val )
+			return (s32)i;
+	}
+	return -1;
+	
+#endif
+
+};
+
+
+//----------------------------------------------------------------------
+//	get the index of a matching element. -1 if none matched
+//----------------------------------------------------------------------
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+template<class MATCHTYPE>
+s32 TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::FindIndex(const MATCHTYPE& val,u32 FromIndex)
+{
+	u32 uSize = GetSize();
+	if ( uSize == 0 )
+		return -1;
+
+#ifdef USE_SORT_POLICY	
+	return SORTPOLICY::FindIndex(val, GetData(), FromIndex, uSize);
+#else	
+	//	if this is a sorted array, do a sort when we need to, then we can use a binary chop
+	if ( m_pSortFunc && uSize > 2 )
+	{
+		if ( !SORTPOLICY::IsSorted() )
+			Sort();
+
+		//	make use of the binary chop as our list is in order
+		//	gr: check is sorted again incase we couldn't sort for some reason
+		if ( SORTPOLICY::IsSorted() )
+			return FindIndexSorted( val, 0, GetSize()-1, GetData() );
+	}
+
+	//	walk through elements
+	const TYPE* pFirstElement = &ElementAtConst(0);
+	for ( u32 i=FromIndex;	i<uSize;	i++ )
+	{
+		if ( pFirstElement[i] == val )
+			return (s32)i;
+	}
+	return -1;
+#endif
+};
+
 
 //----------------------------------------------------------------------
 //	matches elements but specificlly doesnt use sorting. Use this if you need to find a match that the array is not sorted by
 //----------------------------------------------------------------------
-template<typename TYPE>
+template<typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
 template<class MATCHTYPE>
-s32 TArray<TYPE>::FindIndexNoSort(const MATCHTYPE& val,u32 FromIndex) const
+s32 TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::FindIndexNoSort(const MATCHTYPE& val,u32 FromIndex) const
 {
 	u32 Size = GetSize();
 	if ( Size == 0 )
 		return -1;
-
+	
 	//	search elements
 	const TYPE* pFirstElement = &ElementAtConst(0);
 	for ( u32 i=FromIndex;	i<Size;	i++ )
@@ -806,82 +972,13 @@ s32 TArray<TYPE>::FindIndexNoSort(const MATCHTYPE& val,u32 FromIndex) const
 };
 
 
-//----------------------------------------------------------------------
-//	get the index of a matching element. -1 if none matched
-//----------------------------------------------------------------------
-template<typename TYPE>
-template<class MATCHTYPE>
-s32 TArray<TYPE>::FindIndex(const MATCHTYPE& val,u32 FromIndex) const
-{
-	u32 Size = GetSize();
-	if ( Size == 0 )
-		return -1;
-
-	if ( m_pSortFunc && Size > 2 )
-	{
-		if ( !IsSorted() )
-		{
-			TLArray::Debug::Print("Warning; unsorted array cannot be sorted because of const FindIndex()", __FUNCTION__ );
-			//Sort();
-		}
-
-		//	make use of the binary chop as our list is in order
-		if ( IsSorted() )
-			return FindIndexSorted( val, 0, GetSize(), GetData() );
-	}
-
-	//	walk through elements
-	const TYPE* pFirstElement = &ElementAtConst(0);
-	for ( u32 i=FromIndex;	i<Size;	i++ )
-	{
-		//	gr: less safe, but faster access...
-		if ( pFirstElement[i] == val )
-			return (s32)i;
-	}
-	return -1;
-};
-
-
-//----------------------------------------------------------------------
-//	get the index of a matching element. -1 if none matched
-//----------------------------------------------------------------------
-template<typename TYPE>
-template<class MATCHTYPE>
-s32 TArray<TYPE>::FindIndex(const MATCHTYPE& val,u32 FromIndex)
-{
-	u32 Size = GetSize();
-	if ( Size == 0 )
-		return -1;
-
-	//	if this is a sorted array, do a sort when we need to, then we can use a binary chop
-	if ( m_pSortFunc && Size > 2 )
-	{
-		if ( !IsSorted() )
-			Sort();
-
-		//	make use of the binary chop as our list is in order
-		//	gr: check is sorted again incase we couldn't sort for some reason
-		if ( IsSorted() )
-			return FindIndexSorted( val, 0, GetSize()-1, GetData() );
-	}
-
-	//	walk through elements
-	const TYPE* pFirstElement = &ElementAtConst(0);
-	for ( u32 i=FromIndex;	i<Size;	i++ )
-	{
-		if ( pFirstElement[i] == val )
-			return (s32)i;
-	}
-	return -1;
-};
-
 
 //----------------------------------------------------------------------
 //	same as FindIndex but works backwards through the array
 //----------------------------------------------------------------------
-template<typename TYPE>
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
 template<class MATCHTYPE>
-s32 TArray<TYPE>::FindIndexReverse(const MATCHTYPE& val,s32 FromIndex) const
+s32 TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::FindIndexReverse(const MATCHTYPE& val,s32 FromIndex) const
 {
 	if ( FromIndex == -1 )
 		FromIndex = GetSize()-1;
@@ -898,9 +995,9 @@ s32 TArray<TYPE>::FindIndexReverse(const MATCHTYPE& val,s32 FromIndex) const
 //----------------------------------------------------------------------
 //	find all matches to this value and put them in an array
 //----------------------------------------------------------------------
-template<typename TYPE>
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
 template<class MATCHTYPE>
-u32 TArray<TYPE>::FindAll(TArray<TYPE>& Array,const MATCHTYPE& val)
+u32 TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::FindAll(TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array,const MATCHTYPE& val)
 {
 	u32 InitialSize = Array.GetSize();
 
@@ -918,9 +1015,9 @@ u32 TArray<TYPE>::FindAll(TArray<TYPE>& Array,const MATCHTYPE& val)
 //----------------------------------------------------------------------
 //	execute this function on every member. will fail if the TYPE isn't a pointer of somekind
 //----------------------------------------------------------------------
-template<typename TYPE>
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
 template<typename FUNCTIONPOINTER>
-FORCEINLINE void TArray<TYPE>::FunctionAll(FUNCTIONPOINTER pFunc)
+FORCEINLINE void TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::FunctionAll(FUNCTIONPOINTER pFunc)
 {
 	for ( u32 i=0;	i<GetSize();	i++ )
 	{
@@ -933,9 +1030,9 @@ FORCEINLINE void TArray<TYPE>::FunctionAll(FUNCTIONPOINTER pFunc)
 //----------------------------------------------------------------------
 //	execute this function for every member as a parameter. Like FunctionAll but can be used with other types of elements.
 //----------------------------------------------------------------------
-template<typename TYPE>
+template< typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
 template<typename FUNCTIONPOINTER>
-FORCEINLINE void TArray<TYPE>::FunctionAllAsParam(FUNCTIONPOINTER pFunc)
+FORCEINLINE void TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::FunctionAllAsParam(FUNCTIONPOINTER pFunc)
 {
 	for ( u32 i=0;	i<GetSize();	i++ )
 	{

@@ -9,6 +9,8 @@
 #include <TootleCore/TLGraph.h>
 #include <TootleCore/TFlags.h>
 #include <TootleCore/TLMaths.h>
+#include <TootleCore/TTransform.h>
+
 #include "TCollisionShape.h"
 
 #include <box2d/source/common/b2Settings.h> // required for float32

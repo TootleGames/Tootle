@@ -57,6 +57,36 @@ namespace TLGraph
 
 
 
+
+namespace TLPtrArray
+{
+	template<typename TYPE>
+	class SortPolicy_TPtrArrayRef;	// Array sorting using the object of the TPtr (node)
+}
+
+template<typename TYPE>
+class TLPtrArray::SortPolicy_TPtrArrayRef : public TLArray::SortPolicy_Base< TPtr<TYPE> >
+{
+private:	
+	virtual TLArray::SortResult	SortElementComparison(const TPtr<TYPE>& pa,const TPtr<TYPE>& pb,const void* pTestVal) const;
+	
+};
+
+template<typename TYPE>
+TLArray::SortResult TLPtrArray::SortPolicy_TPtrArrayRef<TYPE>::SortElementComparison(const TPtr<TYPE>& pa,const TPtr<TYPE>& pb,const void* pTestVal) const
+{
+	//	if pTestVal provided it's the ref
+	TRefRef aRef = pa->GetNodeRef();
+	TRefRef bRef = pTestVal ? *(const TRef*)pTestVal : pb->GetNodeRef();
+	
+	//	== turns into 0 (is greater) or 1(equals)
+	return aRef < bRef ? TLArray::IsLess : (TLArray::SortResult)(aRef==bRef);	
+}
+
+
+
+
+
 //--------------------------------------------------------------------
 //	TGraph class - templated graph management class
 //--------------------------------------------------------------------
@@ -187,7 +217,7 @@ private:
 private:
 	TPtr<T>								m_pRootNode;			//	The root of the graph
 	TPtrArray<TGraphUpdateRequest>		m_RequestQueue;			//	List of objects to add/remove from the graph
-	TPtrArray<T>						m_NodeIndex;			//	list of all the nodes, used for fast node finding
+	TPtrArray<T, TLPtrArray::SortPolicy_TPtrArrayRef<T> >						m_NodeIndex;			//	list of all the nodes, used for fast node finding
 
 	TPtrArray< TClassFactory<T,FALSE> >	m_NodeFactories;		//	array of graph node factories. if none, T is created
 };

@@ -1,5 +1,19 @@
 // !$*UTF8*$!
 {
+	843A9288106B6715004473CB /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 84B60C9910512F930022E5BC /* TootleRelease.xcconfig */;
+	};
+	843A9289106B6715004473CB /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60C9910512F930022E5BC /* TootleRelease.xcconfig */;
+		name = "TootleRelease.xcconfig: 28";
+		rLen = 0;
+		rLoc = 883;
+		rType = 0;
+		vrLen = 642;
+		vrLoc = 586;
+	};
 	84B60BA710512B120022E5BC /* Project object */ = {
 		activeBuildConfigurationName = Debug;
 		activeTarget = 84B60C8D10512F450022E5BC /* zlib */;
@@ -54,8 +68,12 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 273755958;
-			PBXWorkspaceStateSaveDate = 273755958;
+			PBXPerProjectTemplateStateSaveDate = 275474175;
+			PBXWorkspaceStateSaveDate = 275474175;
+		};
+		perUserProjectItems = {
+			843A9288106B6715004473CB /* PBXBookmark */ = 843A9288106B6715004473CB /* PBXBookmark */;
+			843A9289106B6715004473CB /* PBXTextBookmark */ = 843A9289106B6715004473CB /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84B60BAB10512B120022E5BC /* Source Control */;
 		userBuildSettings = {
@@ -66,6 +84,9 @@
 		fallbackIsa = XCSourceControlManager;
 		isSCMEnabled = 0;
 		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
 		};
 	};
 	84B60BAC10512B120022E5BC /* Code sense */ = {
@@ -74,5 +95,12 @@
 	};
 	84B60C8D10512F450022E5BC /* zlib */ = {
 		activeExec = 0;
+	};
+	84B60C9910512F930022E5BC /* TootleRelease.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {621, 2639}}";
+			sepNavSelRange = "{883, 0}";
+			sepNavVisRange = "{586, 642}";
+		};
 	};
 }

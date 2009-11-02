@@ -26,8 +26,8 @@
 #pragma once
 #include "TLTypes.h"
 
-//	forward decalrations
-template<typename TYPE> class TArray;
+#include "TArray.h"
+
 class TString;
 class TRef;
 typedef const TRef& TRefRef;	//	TRefRef is just shorthand for passing ref's around
@@ -135,7 +135,6 @@ namespace TLRef
 			Index_UNDERSCORE
 		};
 	}
-
 }
 
 
@@ -156,7 +155,7 @@ public:
 	TRef(const TString& RefString) 							:	m_Ref	( TRef_InvalidValue )	{	Set( RefString );	}
 	TRef(const TString* pRefString) 						:	m_Ref	( TRef_InvalidValue )	{	if ( pRefString )	Set( *pRefString );	}
 	TRef(const char* pRefString) 							:	m_Ref	( TRef_InvalidValue )	{	Set( pRefString );	}
-	TRef(const TArray<char>& RefStringChars)				:	m_Ref	( TRef_InvalidValue )	{	Set( RefStringChars );	}
+	TRef(const TArray<char>& RefStringChars)	:	m_Ref	( TRef_InvalidValue )	{	Set( RefStringChars );	}
 
 	FORCEINLINE void			SetInvalid()							{	m_Ref = TRef_InvalidValue;	}
 	FORCEINLINE void			Set(u32 Ref)							{	m_Ref = Ref;	Debug_IsValid();	}	//	gr: call IsValid() to check for invalid values

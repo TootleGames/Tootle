@@ -1,5 +1,6 @@
 #include "TPath.h"
 
+#include <TootleCore/TArrayMisc.h>
 
 
 namespace TLRef
@@ -123,7 +124,7 @@ SyncBool TLPath::TPath::FindPathRandom(TRefRef StartNode,u32 NodesInRoute, Bool 
 		}
 
 		//	pick a link to follow
-		TLPath::TPathNodeLink* pFollowLink = ValidNodeLinks.ElementRand();
+		TLPath::TPathNodeLink* pFollowLink = TLArray::GetRandomElement(ValidNodeLinks);
 		pNode = pPathNetwork->GetNode( pFollowLink->GetLinkNodeRef() );
 		if ( !pNode )
 		{
@@ -674,7 +675,7 @@ Bool TLPath::TPathNetworkZones::GetRandomPathPositionInRandomZone(TLMaths::TTran
 		return FALSE;
 
 	//	k now pick a random path from the list
-	const TLPath::TPathLink& FoundPathLink = pPathLinksInZone->ElementRandConst();
+	const TLPath::TPathLink& FoundPathLink = TLArray::GetRandomElementConst(*pPathLinksInZone);
 	const TLMaths::TLine2D& PathLinkLine = FoundPathLink.GetLinkLine();
 
 	//	now find a point along the path that's in the zone

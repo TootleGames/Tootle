@@ -11,8 +11,7 @@
 -------------------------------------------------------*/
 #pragma once
 
-#include "TLCoreMisc.h"
-//#include "TLTypes.h"
+#include "TLTypes.h"
 
 #if defined(__GNUG__)
 	#include <new>
@@ -33,6 +32,14 @@ typedef void (*memcallback)();
 #ifdef ENABLE_SOA
 #include "TSmallObjectAllocator.h"
 #endif
+
+
+namespace TLCore
+{
+	//	useful functions
+	u32				PointerToInteger(void* pAddress);	//	convert a pointer to an integer
+	void*			IntegerToPointer(u32 Integer);		//	convert an integer to a pointer	
+}
 
 namespace TLMemory
 {

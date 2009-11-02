@@ -48,9 +48,31 @@ namespace TLKeyArray
 	//	sort function for key arrays	
 	template<typename KEYTYPE,typename TYPE>
 	TLArray::SortResult KeyArraySort(const TLKeyArray::TPair<KEYTYPE,TYPE>& PairA,const TLKeyArray::TPair<KEYTYPE,TYPE>& PairB,const void* pVal);
+	
+	
+	// Key array sorting policy class
+	template<typename KEYTYPE, typename TYPE>
+	class SortPolicy_KeyArray;
 };
 
 
+template<typename KEYTYPE, typename TYPE>
+class TLKeyArray::SortPolicy_KeyArray : public TLArray::SortPolicy_Base< TLKeyArray::TPair<KEYTYPE, TYPE> >
+{
+private:	
+	virtual TLArray::SortResult	SortElementComparison(const TLKeyArray::TPair<KEYTYPE,TYPE>& PairA,const TLKeyArray::TPair<KEYTYPE,TYPE>& PairB,const void* pVal) const;
+	
+};
+
+// Comparison routine for the key array sort policy.  Not sure if we can actually remove this and use the normal sort instead
+// utilising the TPair == and < operators?
+template<typename KEYTYPE, typename TYPE>
+TLArray::SortResult TLKeyArray::SortPolicy_KeyArray<KEYTYPE, TYPE>::SortElementComparison(const TLKeyArray::TPair<KEYTYPE,TYPE>& PairA,const TLKeyArray::TPair<KEYTYPE,TYPE>& PairB,const void* pVal) const
+{
+	const KEYTYPE& Key = PairA.m_Key;
+	const KEYTYPE& OtherKey = pVal ? *((const KEYTYPE*)pVal) : PairB.m_Key;
+	return Key < OtherKey ? TLArray::IsLess : (TLArray::SortResult)(Key == OtherKey);
+}
 
 //-------------------------------------------------------
 //	declare the Pair type as a Data type if both key and item are data types
@@ -72,7 +94,7 @@ namespace TLCore
 //	integer, float or specific other types)
 //	there is only every 1 instance of a key in the array
 //-------------------------------------------------------
-template<typename KEYTYPE,typename TYPE>
+template<typename KEYTYPE,typename TYPE, class ALLOCATORPOLICY=TLArray::AllocatorPolicy_Default< TLKeyArray::TPair<KEYTYPE,TYPE> > >
 class TKeyArray
 {
 public:
@@ -80,7 +102,7 @@ public:
 
 public:
 	TKeyArray() : m_Array( &TLKeyArray::KeyArraySort<KEYTYPE,TYPE> )						{	}
-	TKeyArray(const TKeyArray<KEYTYPE,TYPE>& OtherArray)				{	Copy( OtherArray );	}
+	TKeyArray(const TKeyArray<KEYTYPE,TYPE,ALLOCATORPOLICY>& OtherArray)				{	Copy( OtherArray );	}
 
 	FORCEINLINE u32				GetSize() const							{	return m_Array.GetSize();	}
 
@@ -112,10 +134,10 @@ public:
 	Bool						RemoveAt(u32 Index);					//	remove the item at this index
 	Bool						RemoveItem(const TYPE& Item,Bool RemoveAllMatches=FALSE);	//	remove matching item. (for when we dont know the key) returns if anything was removed
 
-	FORCEINLINE void			Copy(const TKeyArray<KEYTYPE,TYPE>& OtherArray)	{	m_Array.Copy( OtherArray.m_Array );	}
+	FORCEINLINE void			Copy(const TKeyArray<KEYTYPE,TYPE,ALLOCATORPOLICY>& OtherArray)	{	m_Array.Copy( OtherArray.m_Array );	}
 
 protected:
-	TArray<TLKeyArray::TPair<KEYTYPE,TYPE> >		m_Array;		//	array of pairs
+	TArray<TLKeyArray::TPair<KEYTYPE,TYPE>, TLKeyArray::SortPolicy_KeyArray<KEYTYPE,TYPE>, ALLOCATORPOLICY>		m_Array;		//	array of pairs
 };			
 
 
@@ -150,8 +172,8 @@ public:
 //-------------------------------------------------------
 //	find the key for a pair matching this item
 //-------------------------------------------------------
-template<typename KEYTYPE,typename TYPE>
-const KEYTYPE* TKeyArray<KEYTYPE,TYPE>::FindKey(const TYPE& Item,const KEYTYPE* pPreviousMatch) const
+template<typename KEYTYPE,typename TYPE, class ALLOCATORPOLICY>
+const KEYTYPE* TKeyArray<KEYTYPE,TYPE, ALLOCATORPOLICY>::FindKey(const TYPE& Item,const KEYTYPE* pPreviousMatch) const
 {
 	Bool FoundLastMatch = pPreviousMatch ? FALSE : TRUE;
 	
@@ -182,8 +204,8 @@ const KEYTYPE* TKeyArray<KEYTYPE,TYPE>::FindKey(const TYPE& Item,const KEYTYPE* 
 //	add an item with this key. if the key already exists the item is overwritten. 
 //	returns if the item was NEW. if false is returned the key's item was overwritten
 //-------------------------------------------------------
-template<typename KEYTYPE,typename TYPE>
-TYPE* TKeyArray<KEYTYPE,TYPE>::Add(const KEYTYPE& Key,const TYPE& Item,Bool Overwrite)
+template<typename KEYTYPE,typename TYPE, class ALLOCATORPOLICY>
+TYPE* TKeyArray<KEYTYPE,TYPE, ALLOCATORPOLICY>::Add(const KEYTYPE& Key,const TYPE& Item,Bool Overwrite)
 {
 	//	have we already got a pair for this key?
 	PAIRTYPE* pPair = m_Array.Find( Key );
@@ -210,8 +232,8 @@ TYPE* TKeyArray<KEYTYPE,TYPE>::Add(const KEYTYPE& Key,const TYPE& Item,Bool Over
 //-------------------------------------------------------
 //	add a new key and un-set item to the list - returns NULL if the key already exists. returns the item for the key
 //-------------------------------------------------------
-template<typename KEYTYPE,typename TYPE>
-TYPE* TKeyArray<KEYTYPE,TYPE>::AddNew(const KEYTYPE& Key)
+template<typename KEYTYPE,typename TYPE, class ALLOCATORPOLICY>
+TYPE* TKeyArray<KEYTYPE,TYPE, ALLOCATORPOLICY>::AddNew(const KEYTYPE& Key)
 {
 	//	have we already got a pair for this key?
 	PAIRTYPE* pPair = m_Array.Find( Key );
@@ -230,8 +252,8 @@ TYPE* TKeyArray<KEYTYPE,TYPE>::AddNew(const KEYTYPE& Key)
 //-------------------------------------------------------
 //	remove the item with this key. returns if anything was removed
 //-------------------------------------------------------
-template<typename KEYTYPE,typename TYPE>
-Bool TKeyArray<KEYTYPE,TYPE>::Remove(const KEYTYPE& Key)
+template<typename KEYTYPE,typename TYPE, class ALLOCATORPOLICY>
+Bool TKeyArray<KEYTYPE,TYPE, ALLOCATORPOLICY>::Remove(const KEYTYPE& Key)
 {
 	//	get the index for the existing pair
 	s32 PairIndex = m_Array.FindIndex( Key );
@@ -252,8 +274,8 @@ Bool TKeyArray<KEYTYPE,TYPE>::Remove(const KEYTYPE& Key)
 //-------------------------------------------------------
 //	remove item from the key array at index
 //-------------------------------------------------------
-template<typename KEYTYPE,typename TYPE>
-Bool TKeyArray<KEYTYPE,TYPE>::RemoveAt(u32 Index)
+template<typename KEYTYPE,typename TYPE, class ALLOCATORPOLICY>
+Bool TKeyArray<KEYTYPE,TYPE, ALLOCATORPOLICY>::RemoveAt(u32 Index)
 {
 	//	remove from array
 	return m_Array.RemoveAt( Index );
@@ -265,8 +287,8 @@ Bool TKeyArray<KEYTYPE,TYPE>::RemoveAt(u32 Index)
 //-------------------------------------------------------
 //	remove matching item. (for when we dont know the key) returns if anything was removed
 //-------------------------------------------------------
-template<typename KEYTYPE,typename TYPE>
-Bool TKeyArray<KEYTYPE,TYPE>::RemoveItem(const TYPE& Item,Bool RemoveAllMatches)
+template<typename KEYTYPE,typename TYPE, class ALLOCATORPOLICY>
+Bool TKeyArray<KEYTYPE,TYPE, ALLOCATORPOLICY>::RemoveItem(const TYPE& Item,Bool RemoveAllMatches)
 {
 	Bool AnyRemoved = FALSE;
 

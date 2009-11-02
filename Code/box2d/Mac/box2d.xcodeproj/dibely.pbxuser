@@ -1,7 +1,58 @@
 // !$*UTF8*$!
 {
+	8415459810677D1C006FA797 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60AB2105129B00022E5BC /* b2World.h */;
+		name = "b2World.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 920;
+		vrLoc = 0;
+	};
+	8415459910677D1C006FA797 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60A8B105129B00022E5BC /* b2Distance.h */;
+		name = "b2Distance.h: 29";
+		rLen = 0;
+		rLoc = 1140;
+		rType = 0;
+		vrLen = 459;
+		vrLoc = 965;
+	};
+	8415459A10677D1C006FA797 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60A8A105129B00022E5BC /* b2Distance.cpp */;
+		name = "b2Distance.cpp: 39";
+		rLen = 14;
+		rLoc = 1465;
+		rType = 0;
+		vrLen = 700;
+		vrLoc = 1404;
+	};
+	8415459B10677D1C006FA797 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8415459C10677D1C006FA797 /* b2Distance.cpp */;
+		name = "b2Distance.cpp: 43";
+		rLen = 0;
+		rLoc = 1623;
+		rType = 0;
+		vrLen = 615;
+		vrLoc = 1383;
+	};
+	8415459C10677D1C006FA797 /* b2Distance.cpp */ = {
+		isa = PBXFileReference;
+		name = b2Distance.cpp;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/box2d/Mac/../Source/Collision/b2Distance.cpp;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {544, 7007}}";
+			sepNavSelRange = "{1623, 0}";
+			sepNavVisRange = "{1383, 564}";
+		};
+	};
 	84B609CC105127500022E5BC /* Project object */ = {
-		activeBuildConfigurationName = Debug;
+		activeBuildConfigurationName = Release;
 		activeTarget = 84B60CED105130580022E5BC /* box2d */;
 		addToTargets = (
 		);
@@ -91,16 +142,15 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 273756234;
-			PBXWorkspaceStateSaveDate = 273756234;
+			PBXPerProjectTemplateStateSaveDate = 275217202;
+			PBXWorkspaceStateSaveDate = 275217202;
 		};
 		perUserProjectItems = {
-			84B60D52105130A10022E5BC /* PBXTextBookmark */ = 84B60D52105130A10022E5BC /* PBXTextBookmark */;
+			8415459810677D1C006FA797 /* PBXTextBookmark */ = 8415459810677D1C006FA797 /* PBXTextBookmark */;
+			8415459910677D1C006FA797 /* PBXTextBookmark */ = 8415459910677D1C006FA797 /* PBXTextBookmark */;
+			8415459A10677D1C006FA797 /* PBXTextBookmark */ = 8415459A10677D1C006FA797 /* PBXTextBookmark */;
+			8415459B10677D1C006FA797 /* PBXTextBookmark */ = 8415459B10677D1C006FA797 /* PBXTextBookmark */;
 			84B60D53105130A10022E5BC /* PBXTextBookmark */ = 84B60D53105130A10022E5BC /* PBXTextBookmark */;
-			84B60D54105130A10022E5BC /* PBXBookmark */ = 84B60D54105130A10022E5BC /* PBXBookmark */;
-			84B60D55105130A10022E5BC /* PBXTextBookmark */ = 84B60D55105130A10022E5BC /* PBXTextBookmark */;
-			84B60D56105130A10022E5BC /* PBXTextBookmark */ = 84B60D56105130A10022E5BC /* PBXTextBookmark */;
-			84B60D57105130A10022E5BC /* PBXTextBookmark */ = 84B60D57105130A10022E5BC /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84B609D0105127500022E5BC /* Source Control */;
 		userBuildSettings = {
@@ -111,11 +161,28 @@
 		fallbackIsa = XCSourceControlManager;
 		isSCMEnabled = 0;
 		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
 		};
 	};
 	84B609D1105127500022E5BC /* Code sense */ = {
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
+	};
+	84B60A8A105129B00022E5BC /* b2Distance.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {544, 7007}}";
+			sepNavSelRange = "{1623, 0}";
+			sepNavVisRange = "{1383, 615}";
+		};
+	};
+	84B60A8B105129B00022E5BC /* b2Distance.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {544, 2522}}";
+			sepNavSelRange = "{1140, 0}";
+			sepNavVisRange = "{965, 459}";
+		};
 	};
 	84B60A9C105129B00022E5BC /* b2BlockAllocator.cpp */ = {
 		uiCtxt = {
@@ -126,34 +193,13 @@
 	};
 	84B60AB2105129B00022E5BC /* b2World.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {519, 4592}}";
+			sepNavIntBoundsRect = "{{0, 0}, {544, 4264}}";
 			sepNavSelRange = "{0, 0}";
 			sepNavVisRange = "{0, 920}";
 		};
 	};
-	84B60C3710512DFA0022E5BC /* b2Distance.cpp */ = {
-		isa = PBXFileReference;
-		name = b2Distance.cpp;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/box2d/Mac/../Source/Collision/b2Distance.cpp;
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {519, 7642}}";
-			sepNavSelRange = "{1595, 53}";
-			sepNavVisRange = "{1349, 503}";
-		};
-	};
 	84B60CED105130580022E5BC /* box2d */ = {
 		activeExec = 0;
-	};
-	84B60D52105130A10022E5BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84B60C3710512DFA0022E5BC /* b2Distance.cpp */;
-		name = "b2Distance.cpp: 43";
-		rLen = 53;
-		rLoc = 1595;
-		rType = 0;
-		vrLen = 358;
-		vrLoc = 1349;
 	};
 	84B60D53105130A10022E5BC /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -163,40 +209,6 @@
 		rLoc = 0;
 		rType = 0;
 		vrLen = 950;
-		vrLoc = 0;
-	};
-	84B60D54105130A10022E5BC /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = 84B60AB2105129B00022E5BC /* b2World.h */;
-	};
-	84B60D55105130A10022E5BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84B60C3710512DFA0022E5BC /* b2Distance.cpp */;
-		name = "b2Distance.cpp: 43";
-		rLen = 53;
-		rLoc = 1595;
-		rType = 0;
-		vrLen = 358;
-		vrLoc = 1349;
-	};
-	84B60D56105130A10022E5BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84B60A9C105129B00022E5BC /* b2BlockAllocator.cpp */;
-		name = "b2BlockAllocator.cpp: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 950;
-		vrLoc = 0;
-	};
-	84B60D57105130A10022E5BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84B60AB2105129B00022E5BC /* b2World.h */;
-		name = "b2World.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 920;
 		vrLoc = 0;
 	};
 }
