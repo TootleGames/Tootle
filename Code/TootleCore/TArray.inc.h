@@ -1,8 +1,8 @@
 
 
 
-//#define USE_SORT_POLICY
-//#define USE_ALLOCATOR_POLICY
+#define USE_SORT_POLICY
+#define USE_ALLOCATOR_POLICY
 
 //------------------------------------------------
 //	initialise members

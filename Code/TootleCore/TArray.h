@@ -29,8 +29,8 @@
 
 #include "TArrayAllocator.h"  // Allocator policies
 
-//#define USE_SORT_POLICY
-//#define USE_ALLOCATOR_POLICY
+#define USE_SORT_POLICY
+#define USE_ALLOCATOR_POLICY
 
 
 class TBinary;
