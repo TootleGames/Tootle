@@ -31,7 +31,14 @@ class TLFileSys::TFileSys
 	friend class TLFileSys::TFileSysFactory;
 public:
 	TFileSys(TRefRef FileSysRef,TRefRef FileSysTypeRef);
-	virtual ~TFileSys()															{	Shutdown();	}
+	virtual ~TFileSys()															
+	{
+#ifdef _DEBUG
+		for(u32 uIndex = 0; uIndex < m_Files.GetSize(); uIndex++)
+			TLDebug_Assert(m_Files.ElementAt(uIndex).GetRefCount() == 1, "File is still being referenced outside of file system");
+#endif
+		Shutdown();	
+	}
 
 	virtual SyncBool			Init()											{	return SyncTrue;	}
 	virtual SyncBool			Shutdown()										{	return SyncTrue;	}

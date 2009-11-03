@@ -535,6 +535,14 @@ SyncBool TLAsset::TAssetManager::Shutdown()
 	//	free tasks
 	g_LoadTasks.Empty( TRUE );
 
+#ifdef _DEBUG
+
+	for(u32 uIndex = 0; uIndex < m_Assets.GetSize(); uIndex++)
+	{
+		TLDebug_Assert(m_Assets.ElementAt(uIndex).GetRefCount() == 1, "Asset is still being referenced outside of the asset system");
+	}
+#endif
+
 	//	free assets
 	m_Assets.Empty(TRUE);
 

@@ -1031,6 +1031,18 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TArrayAllocator.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TArrayMisc.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TArraySort.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TClassFactory.h"
 			>
 		</File>
@@ -1087,6 +1099,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TLMathsMisc.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TLRandom.h"
 			>
 		</File>
@@ -1120,6 +1136,14 @@
 		</File>
 		<File
 			RelativePath="..\TManager.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TMemoryAllocators.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TPointerArray.h"
 			>
 		</File>
 		<File
@@ -1160,6 +1184,14 @@
 		</File>
 		<File
 			RelativePath="..\TSyncQueue.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TTransform.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TTransform.h"
 			>
 		</File>
 	</Files>

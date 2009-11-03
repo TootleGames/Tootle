@@ -9,6 +9,8 @@
 
 #include "PCFileSys.h"
 
+#include <TootleCore/TLCoreMisc.h>
+
 Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 {
 	

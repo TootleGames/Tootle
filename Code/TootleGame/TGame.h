@@ -55,7 +55,7 @@ class TLGame::TGame : public TLCore::TManager, public TStateMachine
 	friend class TLCore::TApplication;
 public:
 	TGame(TRefRef ManagerRef,TLCore::TApplication& Application);
-	~TGame();
+	virtual ~TGame();
 	
 	FORCEINLINE TLCore::TApplication&	GetApplication()			{	return *m_pApplication;	}
 
