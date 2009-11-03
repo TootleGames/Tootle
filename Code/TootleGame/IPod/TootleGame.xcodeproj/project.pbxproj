@@ -35,6 +35,8 @@
 		84DE35020F12AFED00608F8C /* TAssetBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DE34FE0F12AFED00608F8C /* TAssetBrowser.h */; };
 		84E117040F3CA26200471397 /* TGame.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E117020F3CA26200471397 /* TGame.h */; };
 		84E117050F3CA26200471397 /* TGame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E117030F3CA26200471397 /* TGame.cpp */; };
+		84F1FE4B10A073B40030B1F2 /* TApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84F1FE4910A073B40030B1F2 /* TApplication.cpp */; };
+		84F1FE4C10A073B40030B1F2 /* TApplication.h in Headers */ = {isa = PBXBuildFile; fileRef = 84F1FE4A10A073B40030B1F2 /* TApplication.h */; };
 		BF1B9E9C0FE192020014C702 /* TWidgetThumbStick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF1B9E9A0FE192020014C702 /* TWidgetThumbStick.cpp */; };
 		BF1B9E9D0FE192020014C702 /* TWidgetThumbStick.h in Headers */ = {isa = PBXBuildFile; fileRef = BF1B9E9B0FE192020014C702 /* TWidgetThumbStick.h */; };
 		BFAC1C200FA0DE1100F69941 /* TWidgetDrag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFAC1BF80FA0DE1000F69941 /* TWidgetDrag.cpp */; };
@@ -75,6 +77,8 @@
 		84DE34FE0F12AFED00608F8C /* TAssetBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAssetBrowser.h; path = ../TAssetBrowser.h; sourceTree = SOURCE_ROOT; };
 		84E117020F3CA26200471397 /* TGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGame.h; path = ../TGame.h; sourceTree = SOURCE_ROOT; };
 		84E117030F3CA26200471397 /* TGame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGame.cpp; path = ../TGame.cpp; sourceTree = SOURCE_ROOT; };
+		84F1FE4910A073B40030B1F2 /* TApplication.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TApplication.cpp; path = ../TApplication.cpp; sourceTree = SOURCE_ROOT; };
+		84F1FE4A10A073B40030B1F2 /* TApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TApplication.h; path = ../TApplication.h; sourceTree = SOURCE_ROOT; };
 		BF1B9E9A0FE192020014C702 /* TWidgetThumbStick.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidgetThumbStick.cpp; path = ../TWidgetThumbStick.cpp; sourceTree = SOURCE_ROOT; };
 		BF1B9E9B0FE192020014C702 /* TWidgetThumbStick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TWidgetThumbStick.h; path = ../TWidgetThumbStick.h; sourceTree = SOURCE_ROOT; };
 		BFAC1BF80FA0DE1000F69941 /* TWidgetDrag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TWidgetDrag.cpp; path = ../TWidgetDrag.cpp; sourceTree = SOURCE_ROOT; };
@@ -112,6 +116,8 @@
 		84C10A3C0F0A7C2000B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				84F1FE4910A073B40030B1F2 /* TApplication.cpp */,
+				84F1FE4A10A073B40030B1F2 /* TApplication.h */,
 				8434CB76100DBB410063673E /* TSchemeEditor.cpp */,
 				8434CB77100DBB410063673E /* TSchemeEditor.h */,
 				8434CB78100DBB410063673E /* TWidget.cpp */,
@@ -190,6 +196,7 @@
 				BF1B9E9D0FE192020014C702 /* TWidgetThumbStick.h in Headers */,
 				8434CB7B100DBB410063673E /* TSchemeEditor.h in Headers */,
 				8434CB7D100DBB410063673E /* TWidget.h in Headers */,
+				84F1FE4C10A073B40030B1F2 /* TApplication.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -252,6 +259,7 @@
 				BF1B9E9C0FE192020014C702 /* TWidgetThumbStick.cpp in Sources */,
 				8434CB7A100DBB410063673E /* TSchemeEditor.cpp in Sources */,
 				8434CB7C100DBB410063673E /* TWidget.cpp in Sources */,
+				84F1FE4B10A073B40030B1F2 /* TApplication.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -272,7 +272,6 @@
 								<string>84C108D30F0A76EC00B2DF7A</string>
 								<string>84C1095E0F0A78F800B2DF7A</string>
 								<string>84C1095F0F0A790100B2DF7A</string>
-								<string>84C109CE0F0A791F00B2DF7A</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FAAC04509CD000000102</string>
 								<string>1C37FABC05509CD000000102</string>
@@ -280,13 +279,12 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>46</integer>
 									<integer>9</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 495}, {186, 609}}</string>
+							<string>{{0, 0}, {186, 609}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -333,7 +331,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8411F854109F490800FCD3F9</string>
+										<string>84F1FDD610A0739A0030B1F2</string>
 										<key>history</key>
 										<array>
 											<string>84D692970F42F71C002CFFE1</string>
@@ -369,7 +367,6 @@
 											<string>844DEB9A0FC686C2004AB3AB</string>
 											<string>844DEBB10FC688D4004AB3AB</string>
 											<string>84BBC2520FD56A2D0046E316</string>
-											<string>84BBC2530FD56A2D0046E316</string>
 											<string>84BBC2540FD56A2D0046E316</string>
 											<string>84BBC2850FD5725C0046E316</string>
 											<string>8434CA4A100BB8230063673E</string>
@@ -379,7 +376,6 @@
 											<string>84EABE79103D8E5100A46ECD</string>
 											<string>849059F7104C008B001930A3</string>
 											<string>84905C3D104C0B77001930A3</string>
-											<string>84FAD566106A728E00DC7803</string>
 											<string>84FAD567106A728E00DC7803</string>
 											<string>843A913C106AD017004473CB</string>
 											<string>8421B18C108629D700439A7E</string>
@@ -412,7 +408,7 @@
 											<string>8411F845109F489300FCD3F9</string>
 											<string>8411F851109F490800FCD3F9</string>
 											<string>8411F852109F490800FCD3F9</string>
-											<string>8411F853109F490800FCD3F9</string>
+											<string>84F1FDC310A073580030B1F2</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -424,14 +420,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1072, 316}}</string>
+								<string>{{0, 0}, {1072, 295}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 110 1280 668 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>316pt</string>
+							<string>295pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -444,14 +440,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 321}, {1072, 306}}</string>
+								<string>{{0, 300}, {1072, 327}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 110 1280 668 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>306pt</string>
+							<string>327pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -470,9 +466,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>8411F848109F489300FCD3F9</string>
+				<string>84F1FDD710A0739A0030B1F2</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>8411F849109F489300FCD3F9</string>
+				<string>84F1FDD810A0739A0030B1F2</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -689,7 +685,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>84E1160F0F3C6C8900471397</string>
-				<string>8411F84A109F489300FCD3F9</string>
+				<string>84F1FDD910A0739A0030B1F2</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

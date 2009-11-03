@@ -11,9 +11,10 @@
 
 #pragma once
 
-#include "TManager.h"
-#include "TBinaryTree.h"
-#include "TStateMachine.h"
+#include <TootleCore/TManager.h>
+#include <TootleCore/TBinaryTree.h>
+#include <TootleCore/TStateMachine.h>
+#include <TootleCore/TLanguage.h>
 
 #include <TootleGame/TGame.h>
 #include <TootleGame/TTimeline.h>
@@ -23,9 +24,6 @@ namespace TLCore
 	class TApplication;
 
 };
-
-
-#include "TLanguage.h"
 
 
 //---------------------------------------------------------

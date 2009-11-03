@@ -233,6 +233,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -278,8 +280,6 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>12</integer>
-									<integer>8</integer>
 									<integer>4</integer>
 									<integer>0</integer>
 								</array>
@@ -315,14 +315,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>MacCore.mm</string>
+								<string>TKeyArray.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -330,11 +328,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>MacCore.mm</string>
+										<string>TKeyArray.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8411F7AE109F46EC00FCD3F9</string>
+										<string>84F1FD4B10A073360030B1F2</string>
 										<key>history</key>
 										<array>
 											<string>84B601CC104FEA760022E5BC</string>
@@ -365,7 +363,6 @@
 											<string>846C16F9109738270098DFAF</string>
 											<string>846C16FA109738270098DFAF</string>
 											<string>846C176310973D5E0098DFAF</string>
-											<string>846C176410973D5E0098DFAF</string>
 											<string>846C176510973D5E0098DFAF</string>
 											<string>846C176610973D5E0098DFAF</string>
 											<string>846C17D0109741660098DFAF</string>
@@ -378,7 +375,6 @@
 											<string>84D9BEF31098891C000042D8</string>
 											<string>84D9BEF71098891C000042D8</string>
 											<string>84D9BFA510989DCA000042D8</string>
-											<string>84D9BFA710989DCA000042D8</string>
 											<string>84D9BFA810989DCA000042D8</string>
 											<string>84D9BFA910989DCA000042D8</string>
 											<string>84D9BFAA10989DCA000042D8</string>
@@ -406,12 +402,12 @@
 											<string>8411F631109F3B4100FCD3F9</string>
 											<string>8411F632109F3B4100FCD3F9</string>
 											<string>8411F633109F3B4100FCD3F9</string>
-											<string>8411F634109F3B4100FCD3F9</string>
 											<string>8411F6AB109F437700FCD3F9</string>
 											<string>8411F6AC109F437700FCD3F9</string>
 											<string>8411F7AC109F46EC00FCD3F9</string>
 											<string>8411F7AD109F46EC00FCD3F9</string>
-											<string>84D9BFAC10989DCA000042D8</string>
+											<string>8411F8C710A03B1F00FCD3F9</string>
+											<string>84F1FD3C10A073020030B1F2</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -423,14 +419,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1072, 429}}</string>
+								<string>{{0, 0}, {1072, 408}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 108 1280 670 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>429pt</string>
+							<string>408pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -443,14 +439,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 434}, {1072, 195}}</string>
+								<string>{{0, 413}, {1072, 216}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 108 1280 670 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>195pt</string>
+							<string>216pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -469,9 +465,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>8411F7AF109F46EC00FCD3F9</string>
+				<string>84F1FD4C10A073360030B1F2</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>8411F7B0109F46EC00FCD3F9</string>
+				<string>84F1FD4D10A073360030B1F2</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -607,6 +603,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>8418F2EF0F4DC0D400B956C9</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleCore/Mac/TootleCore.xcodeproj</string>
 	</array>
@@ -688,7 +685,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>8418F2EF0F4DC0D400B956C9</string>
-				<string>8411F7B1109F46EC00FCD3F9</string>
+				<string>84F1FD4710A0732E0030B1F2</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -841,14 +838,12 @@
 							<key>Dock</key>
 							<array>
 								<dict>
-									<key>BecomeActive</key>
-									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TArray.h</string>
+										<string></string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -869,6 +864,8 @@
 							<string>340pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -904,8 +901,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>84F88A47109E2512004BAF8B</string>
-				<string>84F88A48109E2512004BAF8B</string>
+				<string>84F1FD4910A0732E0030B1F2</string>
+				<string>84F1FD4A10A0732E0030B1F2</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>

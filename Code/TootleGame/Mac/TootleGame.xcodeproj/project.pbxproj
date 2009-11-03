@@ -39,6 +39,8 @@
 		84B605BC104FF8A80022E5BC /* TWidgetDrag.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B605AA104FF8A80022E5BC /* TWidgetDrag.h */; };
 		84B605BD104FF8A80022E5BC /* TWidgetManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B605AB104FF8A80022E5BC /* TWidgetManager.cpp */; };
 		84B605BE104FF8A80022E5BC /* TWidgetManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B605AC104FF8A80022E5BC /* TWidgetManager.h */; };
+		84F1FEB210A073D20030B1F2 /* TApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84F1FEB010A073D20030B1F2 /* TApplication.cpp */; };
+		84F1FEB310A073D20030B1F2 /* TApplication.h in Headers */ = {isa = PBXBuildFile; fileRef = 84F1FEB110A073D20030B1F2 /* TApplication.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -77,6 +79,8 @@
 		84B605AA104FF8A80022E5BC /* TWidgetDrag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWidgetDrag.h; path = ../TWidgetDrag.h; sourceTree = SOURCE_ROOT; };
 		84B605AB104FF8A80022E5BC /* TWidgetManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidgetManager.cpp; path = ../TWidgetManager.cpp; sourceTree = SOURCE_ROOT; };
 		84B605AC104FF8A80022E5BC /* TWidgetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWidgetManager.h; path = ../TWidgetManager.h; sourceTree = SOURCE_ROOT; };
+		84F1FEB010A073D20030B1F2 /* TApplication.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TApplication.cpp; path = ../TApplication.cpp; sourceTree = SOURCE_ROOT; };
+		84F1FEB110A073D20030B1F2 /* TApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TApplication.h; path = ../TApplication.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +122,8 @@
 		8418F0250F4DB80400B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				84F1FEB010A073D20030B1F2 /* TApplication.cpp */,
+				84F1FEB110A073D20030B1F2 /* TApplication.h */,
 				84B6059B104FF8A80022E5BC /* TPath.cpp */,
 				84B6059C104FF8A80022E5BC /* TPath.h */,
 				84B6059D104FF8A80022E5BC /* TSchemeEditor.cpp */,
@@ -186,6 +192,7 @@
 				84B605BA104FF8A80022E5BC /* TWidgetButton.h in Headers */,
 				84B605BC104FF8A80022E5BC /* TWidgetDrag.h in Headers */,
 				84B605BE104FF8A80022E5BC /* TWidgetManager.h in Headers */,
+				84F1FEB310A073D20030B1F2 /* TApplication.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,6 +255,7 @@
 				84B605B9104FF8A80022E5BC /* TWidgetButton.cpp in Sources */,
 				84B605BB104FF8A80022E5BC /* TWidgetDrag.cpp in Sources */,
 				84B605BD104FF8A80022E5BC /* TWidgetManager.cpp in Sources */,
+				84F1FEB210A073D20030B1F2 /* TApplication.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

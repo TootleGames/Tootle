@@ -17,7 +17,7 @@
 #include <TootleRender/TRendertarget.h>
 #include <TootleRender/TCamera.h>
 
-#include "TEventChannel.h"
+#include <TootleCore/TEventChannel.h>
 
 
 // Time for the bootup sequence to occur over
