@@ -172,6 +172,8 @@ void TBinaryTree::Debug_PrintTree(u32 TreeLevel) const
 	{
 		m_Children[c]->Debug_PrintTree( TreeLevel+1 );
 	}
+	
+	TLDebug_FlushBuffer();
 }
 
 

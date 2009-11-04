@@ -41,11 +41,13 @@
 	#define TLDebug_Assert(Condition,String)		( (Condition) ? TRUE : TLDebug::Break( String, (const char*)__FUNCTION__ ) )
 	#define TLDebug_Print(String)					TLDebug::Print( String, (const char*)__FUNCTION__ )
 	#define TLDebug_Warning(String)					TLDebug::Print( String, (const char*)__FUNCTION__ )
+	#define TLDebug_FlushBuffer()					TLDebug::FlushBuffer()
 #else
 	#define TLDebug_Assert(Conditon,String)			FALSE	
 	#define TLDebug_Break(String)					FALSE	//	by default do NOT continue from breaks
 	#define TLDebug_Print(String)					{}
 	#define TLDebug_Warning(String)					{}
+	#define TLDebug_FlushBuffer()					{}
 #endif
 
 
@@ -77,6 +79,13 @@ namespace TLMaths
 
 namespace TLDebug
 {
+	namespace Platform 
+	{
+		void		PrintToBuffer(const TString& String);	//	platform specific debug output - buffered
+		Bool		Break(const TString& String);	//	return FALSE to stop app, TRUE and will attempt to continue
+		void		FlushBuffer();
+	}
+	
 	extern Bool			g_IsEnabled;		//	gr: require a global Debug-is-enabled flag as the use of _DEBUG cannot garuntee the same results project to project if using a mix of release and debug
 	extern Bool			g_IsBreaking;		//	stops recursive debug break calls
 
@@ -90,7 +99,10 @@ namespace TLDebug
 	FORCEINLINE Bool			Break(const TString& String)														{	return Break( String, NULL );	}
 	void				Print(const TString& String,const char* pSourceFunction);							//	print to console
 	FORCEINLINE void			Print(const TString& String)														{	Print( String, NULL );	}
-
+	
+	
+	FORCEINLINE void	FlushBuffer()	{	Platform::FlushBuffer(); }
+	
 	FORCEINLINE Bool	CheckIndex(int Index,int Max,const char* pSourceFunction);							//	check & assert if index is out of bounds. Max is NOT inclusive... Min <= N < Max
 	FORCEINLINE Bool	CheckIndex(int Index,int Max)														{	return CheckIndex( Index, Max, NULL );	}
 	FORCEINLINE Bool	CheckInRange(int Value,int Min,int Max,const char* pSourceFunction);				//	check & assert if range is out of bounds. Max IS inclusive... Min <= N <= Max
@@ -111,11 +123,6 @@ namespace TLDebug
 	Bool				DoCheckRangeBreak(int Value,int Min,int Max,const char* pSourceFunction);
 
 
-	namespace Platform 
-	{
-		void		PrintToBuffer(const TString& String);	//	platform specific debug output - buffered
-		Bool		Break(const TString& String);	//	return FALSE to stop app, TRUE and will attempt to continue
-	}
 }
 
 
