@@ -215,10 +215,15 @@
 				<string>build</string>
 				<string>build-and-go</string>
 				<string>go</string>
+				<string>NSToolbarSeparatorItem</string>
 				<string>clean-target</string>
 				<string>clean</string>
 				<string>debugger-enable-breakpoints</string>
 				<string>get-info</string>
+				<string>servicesModulefind</string>
+				<string>NSToolbarSeparatorItem</string>
+				<string>servicesModuledebug</string>
+				<string>com.apple.ide.organizer</string>
 				<string>NSToolbarFlexibleSpaceItem</string>
 				<string>com.apple.pbx.toolbar.searchfield</string>
 			</array>
@@ -270,6 +275,8 @@
 								<string>84C108E00F0A770B00B2DF7A</string>
 								<string>84C109F40F0A799D00B2DF7A</string>
 								<string>84C10A210F0A79B400B2DF7A</string>
+								<string>84C10C180F0A862B00B2DF7A</string>
+								<string>84C10C700F0A864500B2DF7A</string>
 								<string>84C109F00F0A799500B2DF7A</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FABC05509CD000000102</string>
@@ -277,14 +284,13 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>25</integer>
-									<integer>23</integer>
+									<integer>43</integer>
 									<integer>2</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {186, 609}}</string>
+							<string>{{0, 393}, {186, 609}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -321,7 +327,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>IPodLocalFileSys.mm</string>
+								<string>TLFileSys.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -329,11 +335,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>IPodLocalFileSys.mm</string>
+										<string>TLFileSys.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84046BFF108F247D000E2C72</string>
+										<string>8464DE1A10A2E76F00EAF14E</string>
 										<key>history</key>
 										<array>
 											<string>84E6432C0F15293C005A4DC9</string>
@@ -348,28 +354,27 @@
 											<string>842A9E650F1629B1004BF60A</string>
 											<string>842AA35F0F1C989A004BF60A</string>
 											<string>8418FD450F4F52C900B956C9</string>
-											<string>8418FD460F4F52C900B956C9</string>
 											<string>84C0CA260F6D6C250080B167</string>
 											<string>84C0CA290F6D6C250080B167</string>
 											<string>84C0CA2A0F6D6C250080B167</string>
 											<string>84C0CA2B0F6D6C250080B167</string>
-											<string>84C0CA8C0F6D70DB0080B167</string>
 											<string>84C0CA8D0F6D70DB0080B167</string>
 											<string>84C0CA8E0F6D70DB0080B167</string>
 											<string>84C0CA910F6D70DB0080B167</string>
 											<string>84C0CA920F6D70DB0080B167</string>
 											<string>84795E1E0FE64752000D0EDA</string>
 											<string>8446CABB103AABC000DFD24F</string>
-											<string>8446CEB3103B021F00DFD24F</string>
-											<string>84EABBE5103C547900A46ECD</string>
 											<string>84FAD1D9106A445B00DC7803</string>
 											<string>84FAD291106A503400DC7803</string>
 											<string>84FAD58A106A75CC00DC7803</string>
 											<string>84FAD58B106A75CC00DC7803</string>
-											<string>84FAD58D106A75CC00DC7803</string>
 											<string>84FAD58E106A75CC00DC7803</string>
-											<string>84046BFE108F247D000E2C72</string>
-											<string>84FAD589106A75CC00DC7803</string>
+											<string>8464DE1410A2E76F00EAF14E</string>
+											<string>8464DE1510A2E76F00EAF14E</string>
+											<string>8464DE1610A2E76F00EAF14E</string>
+											<string>8464DE1710A2E76F00EAF14E</string>
+											<string>8464DE1810A2E76F00EAF14E</string>
+											<string>8464DE1910A2E76F00EAF14E</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -381,14 +386,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1072, 313}}</string>
+								<string>{{0, 0}, {1072, 292}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 110 1280 668 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>313pt</string>
+							<string>292pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -401,14 +406,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 318}, {1072, 309}}</string>
+								<string>{{0, 297}, {1072, 330}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 110 1280 668 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>309pt</string>
+							<string>330pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -427,9 +432,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84046C00108F247D000E2C72</string>
+				<string>8464DE1B10A2E76F00EAF14E</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84046C01108F247D000E2C72</string>
+				<string>8464DE1C10A2E76F00EAF14E</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -646,7 +651,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>84C10BF00F0A84D400B2DF7A</string>
-				<string>84046C02108F247D000E2C72</string>
+				<string>8464DE1D10A2E76F00EAF14E</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

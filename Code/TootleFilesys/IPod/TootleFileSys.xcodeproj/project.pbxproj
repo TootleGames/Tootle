@@ -202,6 +202,14 @@
 		8418FCF40F4F4D5900B956C9 /* TFileSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileSys.h; path = ../TFileSys.h; sourceTree = SOURCE_ROOT; };
 		8450985710219F7200B78F2B /* TFileParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileParticle.cpp; path = ../TFileParticle.cpp; sourceTree = SOURCE_ROOT; };
 		8450985810219F7200B78F2B /* TFileParticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileParticle.h; path = ../TFileParticle.h; sourceTree = SOURCE_ROOT; };
+		8464DD8110A2E5E500EAF14E /* MacFileSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacFileSys.h; path = ../Mac/MacFileSys.h; sourceTree = SOURCE_ROOT; };
+		8464DD8210A2E5E500EAF14E /* MacFileSys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacFileSys.mm; path = ../Mac/MacFileSys.mm; sourceTree = SOURCE_ROOT; };
+		8464DD8310A2E5E500EAF14E /* MacLocalFileSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacLocalFileSys.h; path = ../Mac/MacLocalFileSys.h; sourceTree = SOURCE_ROOT; };
+		8464DD8410A2E5E500EAF14E /* MacLocalFileSys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacLocalFileSys.mm; path = ../Mac/MacLocalFileSys.mm; sourceTree = SOURCE_ROOT; };
+		8464DD8610A2E5FB00EAF14E /* PCFileSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCFileSys.cpp; path = ../PC/PCFileSys.cpp; sourceTree = SOURCE_ROOT; };
+		8464DD8710A2E5FB00EAF14E /* PCFileSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCFileSys.h; path = ../PC/PCFileSys.h; sourceTree = SOURCE_ROOT; };
+		8464DD8810A2E5FB00EAF14E /* PCLocalFileSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCLocalFileSys.h; path = ../PC/PCLocalFileSys.h; sourceTree = SOURCE_ROOT; };
+		8464DE0810A2E69900EAF14E /* PCLocalFileSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCLocalFileSys.cpp; path = ../PC/PCLocalFileSys.cpp; sourceTree = SOURCE_ROOT; };
 		849E9C7D0F83852700037332 /* TFileTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileTimeline.cpp; path = ../TFileTimeline.cpp; sourceTree = SOURCE_ROOT; };
 		849E9C7E0F83852700037332 /* TFileTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileTimeline.h; path = ../TFileTimeline.h; sourceTree = SOURCE_ROOT; };
 		84B607A8105002D70022E5BC /* TFileObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileObject.h; path = ../TFileObject.h; sourceTree = SOURCE_ROOT; };
@@ -388,6 +396,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8464DD8010A2E5D600EAF14E /* Mac */ = {
+			isa = PBXGroup;
+			children = (
+				8464DD8110A2E5E500EAF14E /* MacFileSys.h */,
+				8464DD8210A2E5E500EAF14E /* MacFileSys.mm */,
+				8464DD8310A2E5E500EAF14E /* MacLocalFileSys.h */,
+				8464DD8410A2E5E500EAF14E /* MacLocalFileSys.mm */,
+			);
+			name = Mac;
+			sourceTree = "<group>";
+		};
+		8464DD8510A2E5E900EAF14E /* PC */ = {
+			isa = PBXGroup;
+			children = (
+				8464DE0810A2E69900EAF14E /* PCLocalFileSys.cpp */,
+				8464DD8610A2E5FB00EAF14E /* PCFileSys.cpp */,
+				8464DD8710A2E5FB00EAF14E /* PCFileSys.h */,
+				8464DD8810A2E5FB00EAF14E /* PCLocalFileSys.h */,
+			);
+			name = PC;
+			sourceTree = "<group>";
+		};
 		84C108E00F0A770B00B2DF7A = {
 			isa = PBXGroup;
 			children = (
@@ -408,6 +438,11 @@
 		84C109F40F0A799D00B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				8464DD8510A2E5E900EAF14E /* PC */,
+				8464DD8010A2E5D600EAF14E /* Mac */,
+				84C10A210F0A79B400B2DF7A /* IPod */,
+				84C109F50F0A79AE00B2DF7A /* TFile.cpp */,
+				84C109F60F0A79AE00B2DF7A /* TFile.h */,
 				84B607A8105002D70022E5BC /* TFileObject.h */,
 				8450985710219F7200B78F2B /* TFileParticle.cpp */,
 				8450985810219F7200B78F2B /* TFileParticle.h */,
@@ -427,10 +462,6 @@
 				84E114DD0F3C478A00471397 /* TFileCollada.h */,
 				84DE340E0F12A94D00608F8C /* TFileScheme.cpp */,
 				84DE340F0F12A94D00608F8C /* TFileScheme.h */,
-				84C10C180F0A862B00B2DF7A /* Freetype */,
-				84C10A210F0A79B400B2DF7A /* IPod */,
-				84C109F50F0A79AE00B2DF7A /* TFile.cpp */,
-				84C109F60F0A79AE00B2DF7A /* TFile.h */,
 				84C109F70F0A79AE00B2DF7A /* TFileAsset.cpp */,
 				84C109F80F0A79AE00B2DF7A /* TFileAsset.h */,
 				84C109F90F0A79AE00B2DF7A /* TFileAssetMarkup.cpp */,
@@ -453,6 +484,7 @@
 				84C10A0A0F0A79AE00B2DF7A /* TXml.h */,
 				84C0CA210F6D6BE80080B167 /* TFileTextDatabase.h */,
 				84C0CA220F6D6BE80080B167 /* TFileTextDatabase.cpp */,
+				84C10C180F0A862B00B2DF7A /* Freetype */,
 			);
 			name = "Source Code";
 			sourceTree = "<group>";

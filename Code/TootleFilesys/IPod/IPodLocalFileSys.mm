@@ -129,6 +129,22 @@ Bool Platform::LocalFileSys::DoLoadFileList()
 				pFile->GetFileAndTypeRef().GetString( DebugString );
 				TLDebug_Print( DebugString );
 				
+				/*
+				// Get the timestamp of the file
+				NSDate *Timestamp = [pFileAttribs objectForKey:@"NSFileModificationDate"];
+				
+				// Get time since reference date in seconds (double)
+				NSTimeInterval time = [Timestamp timeIntervalSinceReferenceDate];
+				
+				u32 EpochSeconds = (u32) time;
+				TLTime::TTimestamp FileTimestamp;
+				FileTimestamp.SetEpochSeconds( EpochSeconds );
+				
+				// Set the file timestamp
+				pFile->SetTimestamp(FileTimestamp);
+				*/
+				
+				
 				// Clear the Lost flag to ensure the file is subsequently removed from the system if 
 				// this was called from the LoadFileList where it will set this flag assuming it will be reset 
 				// when found.  The CreateFileInstance above will simply return if the file already exists.

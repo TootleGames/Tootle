@@ -222,6 +222,14 @@
 		8418F17C0F4DBA3D00B956C9 /* MacLocalFileSys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacLocalFileSys.mm; sourceTree = "<group>"; };
 		844CE0FB1051579600178124 /* TFileObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileObject.h; path = ../TFileObject.h; sourceTree = SOURCE_ROOT; };
 		844CE2EE10516A8E00178124 /* libTootleFileSys.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleFileSys.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8464DC4010A2D54000EAF14E /* PCFileSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCFileSys.cpp; path = ../PC/PCFileSys.cpp; sourceTree = SOURCE_ROOT; };
+		8464DC4110A2D54000EAF14E /* PCFileSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCFileSys.h; path = ../PC/PCFileSys.h; sourceTree = SOURCE_ROOT; };
+		8464DC4210A2D54000EAF14E /* PCLocalFileSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCLocalFileSys.cpp; path = ../PC/PCLocalFileSys.cpp; sourceTree = SOURCE_ROOT; };
+		8464DC4310A2D54000EAF14E /* PCLocalFileSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCLocalFileSys.h; path = ../PC/PCLocalFileSys.h; sourceTree = SOURCE_ROOT; };
+		8464DD0010A2E53600EAF14E /* IPodFileSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodFileSys.h; path = ../IPod/IPodFileSys.h; sourceTree = SOURCE_ROOT; };
+		8464DD0110A2E53600EAF14E /* IPodFileSys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodFileSys.mm; path = ../IPod/IPodFileSys.mm; sourceTree = SOURCE_ROOT; };
+		8464DD0210A2E53600EAF14E /* IPodLocalFileSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodLocalFileSys.h; path = ../IPod/IPodLocalFileSys.h; sourceTree = SOURCE_ROOT; };
+		8464DD0310A2E53600EAF14E /* IPodLocalFileSys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodLocalFileSys.mm; path = ../IPod/IPodLocalFileSys.mm; sourceTree = SOURCE_ROOT; };
 		84B6031B104FF33B0022E5BC /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B6031C104FF33B0022E5BC /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B6031D104FF3600022E5BC /* TFileFnt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileFnt.cpp; path = ../TFileFnt.cpp; sourceTree = SOURCE_ROOT; };
@@ -414,6 +422,8 @@
 		8418F0460F4DB83D00B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				8464DCFF10A2E52400EAF14E /* IPod */,
+				8464DC3F10A2D52100EAF14E /* PC */,
 				8418F1780F4DB9F900B956C9 /* Mac */,
 				844CE0FB1051579600178124 /* TFileObject.h */,
 				84B60414104FF3FB0022E5BC /* Freetype */,
@@ -481,6 +491,28 @@
 				84E4BA6E106934C700E301FC /* MacFileSys.mm */,
 			);
 			name = Mac;
+			sourceTree = "<group>";
+		};
+		8464DC3F10A2D52100EAF14E /* PC */ = {
+			isa = PBXGroup;
+			children = (
+				8464DC4010A2D54000EAF14E /* PCFileSys.cpp */,
+				8464DC4110A2D54000EAF14E /* PCFileSys.h */,
+				8464DC4210A2D54000EAF14E /* PCLocalFileSys.cpp */,
+				8464DC4310A2D54000EAF14E /* PCLocalFileSys.h */,
+			);
+			name = PC;
+			sourceTree = "<group>";
+		};
+		8464DCFF10A2E52400EAF14E /* IPod */ = {
+			isa = PBXGroup;
+			children = (
+				8464DD0010A2E53600EAF14E /* IPodFileSys.h */,
+				8464DD0110A2E53600EAF14E /* IPodFileSys.mm */,
+				8464DD0210A2E53600EAF14E /* IPodLocalFileSys.h */,
+				8464DD0310A2E53600EAF14E /* IPodLocalFileSys.mm */,
+			);
+			name = IPod;
 			sourceTree = "<group>";
 		};
 		84B60414104FF3FB0022E5BC /* Freetype */ = {
