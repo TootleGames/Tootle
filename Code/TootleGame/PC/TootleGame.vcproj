@@ -215,6 +215,14 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="..\TApplication.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TApplication.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TAssetBrowser.cpp"
 			>
 		</File>
