@@ -109,6 +109,14 @@ TPtr<TLAsset::TSchemeNode> TLGraph::TGraphBase::ExportSchemeNode(TGraphNodeBase*
 		TLDebug_Break("Node expected");
 		return NULL;
 	}
+	
+	// Test to see if the node is flagged to be ignored when storing to a scheme
+	if(pNode->GetNodeData().HasChild("IgnoreData"))
+	{
+		TLDebug_Print("IgnoreData flag found - Node being ignored");
+		return NULL;
+	}
+
 
 #ifdef DEBUG_SCHEME_IMPORT_EXPORT
 	TTempString Debug_String("Exporting scheme node: ");
@@ -122,23 +130,19 @@ TPtr<TLAsset::TSchemeNode> TLGraph::TGraphBase::ExportSchemeNode(TGraphNodeBase*
 	//	create scheme node
 	TPtr<TLAsset::TSchemeNode> pSchemeNode = new TLAsset::TSchemeNode( pNode->GetNodeRef(), GetGraphRef(), pNode->GetNodeTypeRef() );
 
-	// Test to see if the node is flagged to be ignored when storing to a scheme
-	if(!pNode->GetNodeData().HasChild("IgnoreData"))
+	//	export data from node to scheme node
+	pNode->UpdateNodeData();
+
+	const TBinaryTree& NodeData = pNode->GetNodeData();
+	pSchemeNode->GetData().ReferenceDataTree( NodeData );
+
+	//	export children into this node
+	TArray<TGraphNodeBase*> RootChildren;
+	pNode->GetChildrenBase( RootChildren );
+	for ( u32 c=0;	c<RootChildren.GetSize();	c++ )
 	{
-		//	export data from node to scheme node
-		pNode->UpdateNodeData();
-
-		const TBinaryTree& NodeData = pNode->GetNodeData();
-		pSchemeNode->GetData().ReferenceDataTree( NodeData );
-
-		//	export children into this node
-		TArray<TGraphNodeBase*> RootChildren;
-		pNode->GetChildrenBase( RootChildren );
-		for ( u32 c=0;	c<RootChildren.GetSize();	c++ )
-		{
-			TPtr<TLAsset::TSchemeNode> pChildSchemeNode = ExportSchemeNode( RootChildren[c] );
-			pSchemeNode->AddChild( pChildSchemeNode );
-		}
+		TPtr<TLAsset::TSchemeNode> pChildSchemeNode = ExportSchemeNode( RootChildren[c] );
+		pSchemeNode->AddChild( pChildSchemeNode );
 	}
 
 	return pSchemeNode;
@@ -196,7 +200,9 @@ Bool TLGraph::TGraphBase::ExportScheme(TLAsset::TScheme& Scheme,TRef SchemeRootN
 		for ( u32 c=0;	c<RootChildren.GetSize();	c++ )
 		{
 			TPtr<TLAsset::TSchemeNode> pSchemeNode = ExportSchemeNode( RootChildren[c] );
-			Scheme.AddNode( pSchemeNode );
+			
+			if(pSchemeNode.IsValid())
+				Scheme.AddNode( pSchemeNode );
 		}
 	}
 

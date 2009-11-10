@@ -843,6 +843,8 @@ void TLScene::TSceneNode_Object::Debug_EnableRenderDebugPhysics(Bool Enable)
 		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
 		InitMessage.ExportData("PhNode", GetPhysicsNodeRef() );
 		InitMessage.ExportData("Colour", DEBUG_PHYSICS_RENDERNODE_COLOUR );		//	gr: use a colour so we can have transparency
+		InitMessage.ExportData<bool>("IgnoreData", TRUE);
+
 		m_Debug_RenderDebugPhysicsNodeRef = TLRender::g_pRendergraph->CreateNode( GetNodeRef(), "DbgPhys", GetRenderNodeRef(), &InitMessage );
 	}
 	else if ( !Enable && m_Debug_RenderDebugPhysicsNodeRef.IsValid() )

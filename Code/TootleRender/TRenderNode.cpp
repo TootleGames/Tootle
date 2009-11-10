@@ -556,9 +556,10 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 Bool TLRender::TRenderNode::CreateChildNode(TBinaryTree& ChildInitData)
 {
 	/*
-	TTempString Debug_String("Creating child node from RenderNode ");
+	TTempString Debug_String("Creating child node from RenderNode: ");
 	this->GetNodeRef().GetString( Debug_String );
 	TLDebug_Print( Debug_String );
+	TLDebug_FlushBuffer();
 	ChildInitData.Debug_PrintTree();
 	*/
 
@@ -571,7 +572,7 @@ Bool TLRender::TRenderNode::CreateChildNode(TBinaryTree& ChildInitData)
 	{
 		if ( Parent != this->GetNodeRef() )
 		{
-			TTempString Debug_String("Import \"child\" data for render node ");
+			TTempString Debug_String("Import \"child\" data for render node: ");
 			this->GetNodeRef().GetString( Debug_String );
 			Debug_String.Append(", and child's parent is ");
 			Parent.GetString( Debug_String );
@@ -867,13 +868,6 @@ Bool TLRender::TRenderNode::SetWorldTransformOld(Bool SetPosOld,Bool SetTransfor
 
 void TLRender::TRenderNode::UpdateNodeData()
 {
-	TLRender::TRenderNode* pParent = GetParent();
-	if(pParent)
-	{
-		GetNodeData().RemoveChild("Parent");
-		GetNodeData().ExportData("Parent", pParent->GetNodeRef());
-	}
-
 	//	gr: i wonder if the type should be stored in itself, as (for editor-style reflection at least) it cannot be changed
 	GetNodeData().RemoveChild("Type");
 	GetNodeData().ExportData("Type", GetNodeTypeRef());
