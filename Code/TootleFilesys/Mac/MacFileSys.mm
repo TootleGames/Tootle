@@ -11,6 +11,12 @@
 
 #import <Foundation/Foundation.h>
 
+// Filesystem versions
+#define FS_DEVELOPMENT 0
+#define FS_RELEASE 1
+
+#define FILESYS_VERSION FS_DEVELOPMENT	
+
 
 
 Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
@@ -20,13 +26,15 @@ Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 	
 	if(GetApplicationURL(applicationdir))
 	{
-		//	For a developer build we need to remove components until we find the project 
-		// directory and then append 'Asset'
-		// For a release build we will need to use the bundle path as-is and append the 'Asset' directory to it
 
+#if(FILESYS_VERSION == FS_DEVELOPMENT)	
 		///////////////////////////////////////////////////////////////////////////
 		// Developer version
 		///////////////////////////////////////////////////////////////////////////
+		
+		//	For a developer build we need to remove components until we find the project 
+		// directory and then append 'Asset'
+
 		
 		NSString* appdir = [NSString stringWithUTF8String:applicationdir.GetData()];
 
@@ -47,6 +55,27 @@ Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 				
 		///////////////////////////////////////////////////////////////////////////
 
+#else
+		
+		///////////////////////////////////////////////////////////////////////////
+		// Release version
+		///////////////////////////////////////////////////////////////////////////
+
+		// For a release build we will need to use the bundle path as-is and append the 'Asset' directory to it
+
+		
+		NSString* appdir = [NSString stringWithUTF8String:applicationdir.GetData()];
+		
+		// On the ipod/iphone the assets are stored in the bundle root.
+		//NSString* path = [appdir stringByAppendingString:@"/Assets/"];
+		NSString* path = [appdir stringByAppendingString:@"/Contents/Resources/"];
+		
+		// Copy path string
+		const char* pAssetDir = (const char*)[path UTF8String];
+		AssetDir =  pAssetDir;
+		
+		///////////////////////////////////////////////////////////////////////////
+#endif
 		
 		return TRUE;
 	}	
@@ -57,6 +86,12 @@ Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 
 Bool TLFileSys::Platform::GetAssetSubDirectory(TTempString& UserDir, const TTempString& Subdirectory)
 {
+#if(FILESYS_VERSION == FS_DEVELOPMENT)	
+	///////////////////////////////////////////////////////////////////////////
+	// Developer verison
+	///////////////////////////////////////////////////////////////////////////
+
+	// For a developer version we append the subdirectory onto the asset directory
 	
 	TTempString tmpassetdir;
 	
@@ -80,12 +115,66 @@ Bool TLFileSys::Platform::GetAssetSubDirectory(TTempString& UserDir, const TTemp
 	}
 	
 	return FALSE;
+	
+	///////////////////////////////////////////////////////////////////////////
+	
+#else
+
+	///////////////////////////////////////////////////////////////////////////
+	// Release version
+	///////////////////////////////////////////////////////////////////////////
+
+	// For a release version we do not use subdirectories per se.  All assets are stored in the 
+	// root of the package so we simply access the root asset directory instead.
+	
+	// Print a warnign to say that we are looking for a subdirectory that may not be found
+	TLDebug_Print("WARNING: GetAssetSubDirectory called which may not find the resource you are looking for");
+	return GetAssetDirectory(UserDir);
+	
+	///////////////////////////////////////////////////////////////////////////
+
+#endif	
+	
 }		
 
 
 Bool TLFileSys::Platform::GetUserDirectory(TTempString& UserDir)
 {
+#if(FILESYS_VERSION == FS_DEVELOPMENT)	
+	///////////////////////////////////////////////////////////////////////////
+	// Developer version
+	///////////////////////////////////////////////////////////////////////////
+
+	// The developer version uses a 'User' sub directory of the 'Asset' directory
+	
 	return GetAssetSubDirectory(UserDir, "User");
+	///////////////////////////////////////////////////////////////////////////
+
+#else
+	
+	///////////////////////////////////////////////////////////////////////////
+	// Release version
+	///////////////////////////////////////////////////////////////////////////
+	
+	// In release we want to use the users directory on the system rather than our developer user sub directory
+
+	// Get the 'Documents' path for the user directory.
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES); 
+	
+	NSString *tmppath = [paths objectAtIndex:0];
+	
+	// Append the seperator (just in case it causes issues)
+	NSString *path = [tmppath stringByAppendingString:@"/"];
+	
+	// Copy path string
+	const char* pUserDir = (const char*)[path UTF8String];
+	UserDir =  pUserDir;
+	
+	return TRUE;
+	
+	///////////////////////////////////////////////////////////////////////////
+
+#endif
 }		
 
 Bool TLFileSys::Platform::GetApplicationURL(TTempString& url)
