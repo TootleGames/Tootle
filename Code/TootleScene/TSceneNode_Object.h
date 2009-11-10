@@ -82,6 +82,7 @@ protected:
 	// Life handling
 	FORCEINLINE void				SetLife(const float& fLife)			{ DoChangeLife(fLife - m_fLife); }
 	FORCEINLINE	float				GetLife()					const	{ return m_fLife; }
+	FORCEINLINE	void				ResetLife()							{ m_fLife = 100.0f; }	// Set life to initial value.
 
 	void							DoChangeLife(const float& fLifeChange);
 
