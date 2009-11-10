@@ -87,7 +87,7 @@ Bool TLMaths::TShapePolygon2D::CalcNormals(TArray<float2>& Normals) const
 
 		if ( edge.LengthSquared() < TLMaths_NearZero )
 		{
-			TLDebug_Break("Polygon shape has edge of no length (two points on top of each other)");
+			TLDebug_Print("Polygon shape has edge of no length (two points on top of each other)");
 			//	can't return false as the box shape definition will get stuck in a loop. this function needs
 			//	to either return valid/true/false
 			//	im just going to set a normal and let it continue

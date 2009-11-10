@@ -988,7 +988,7 @@ void TLPhysics::TPhysicsNode::SetBodyTransform(u8 TransformChangedBits)
 	//	so when it changes we need to remake all our shape defs
 	if ( (TransformChangedBits & TLMaths_TransformBitScale) != 0x0 )
 	{
-		TLDebug_Break("todo: when scale changes, rebuild all the collision shape body shapes");
+		TLDebug_Print("todo: when scale changes, rebuild all the collision shape body shapes");
 	}
 
 	b2Vec2 Translate( 0.f, 0.f );
@@ -1000,6 +1000,8 @@ void TLPhysics::TPhysicsNode::SetBodyTransform(u8 TransformChangedBits)
 	{
 		//	failed to set the transform, must be frozen
 		m_BodyTransformChangedBits |= TransformChangedBits;
+		
+		TLDebug_Print("Physics body frozen (out of world bounds)");
 		return;
 	}
 	

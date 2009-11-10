@@ -487,7 +487,7 @@ void TLAsset::TMesh::GenerateLine(const TArray<float3>& LinePoints,Bool Loop,con
 {
 	if ( LinePoints.GetSize() < 2 )
 	{
-		TLDebug_Break("Line too short");
+		TLDebug_Print("Error: Line too short in TLAsset::TMesh::GenerateLine");
 		return;
 	}
 
