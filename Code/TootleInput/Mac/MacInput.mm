@@ -1197,6 +1197,7 @@ Bool Platform::HID::UpdateHIDDevice_Gamepad(TInputDevice& Device,TLInputHIDDevic
 	return TRUE;
 }
 
+#define USE_MOUSELOC_OUTSIDE_OF_EVENT
 
 int2 Platform::GetCursorPosition(u8 uIndex)
 {
@@ -1222,14 +1223,6 @@ int2 Platform::GetCursorPosition(u8 uIndex)
 		
 		str.Appendf("Mouse pos (%.2f, %.2f)", pos.x, pos.y);
 
-		// On the Mac the y position is from the bottom of the window
-		// So invert it		
-		float fYPos = rect.size.height - pos.y;
-		
-		pos.y = fYPos;		
-
-		str.Appendf("-> (%.2f, %.2f)", pos.x, pos.y);
-
 #else		
 		// Get mouse coordinates in screen space
 		pos = [NSEvent mouseLocation];
@@ -1240,16 +1233,16 @@ int2 Platform::GetCursorPosition(u8 uIndex)
 		NSPoint windowpos = [window convertScreenToBase:pos];
 		
 		pos = windowpos;
-		str.Appendf("-> (%.2f, %.2f)", pos.x, pos.y);
 		
+		str.Appendf("-> (%.2f, %.2f)", pos.x, pos.y);
+#endif		
 		// On the Mac the y position is from the bottom of the window
 		// So invert it		
 		float fYPos = rect.size.height - pos.y;
-		pos.y = fYPos;
+		pos.y = fYPos - 20;	// HACK - Pixel offset of the toolbar border or cursor graphic?  There must be a better way of compensating for this?
 
 		str.Appendf("-> (%.2f, %.2f)", pos.x, pos.y);
 		
-#endif
 		TLDebug_Print(str);
 
 	}
