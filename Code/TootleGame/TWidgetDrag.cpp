@@ -98,7 +98,7 @@ void TLGui::TWidgetDrag::OnClickEnd(const TLGui::TWidget::TClick& Click)
 {
 	//	if the mouse isn't actually released then we might just be outside the render node now
 	//	only continue if we really have released the mouse
-	if ( Click.GetActionType() == TLGui_WidgetActionType_Down && m_Dragging )
+	if ( Click.GetActionType() == TLGui_WidgetActionType_Down && (m_Dragging != SyncFalse) )
 	{
 		//	continue drag...
 		OnClickBegin( Click );
@@ -128,7 +128,7 @@ void TLGui::TWidgetDrag::OnCursorMove(const int2& NewCursorPosition, TRefRef Act
 	//		if that changes (which would be for hover-detection, which would be windows only)
 	//		then we need to work out the button's raw state from this message...
 	float RawValue = 1.f;
-	QueueClick( NewCursorPosition, RawValue, ActionRef, TLGui_WidgetActionType_Down );	
+	QueueClick( NewCursorPosition, RawValue, ActionRef, TLGui_WidgetActionType_Move );	
 }
 
 

@@ -406,7 +406,7 @@ SyncBool TLGui::TWidget::ProcessQueuedClicks()
 //-------------------------------------------------
 SyncBool TLGui::TWidget::ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode,const TLMaths::TShapeSphere2D& BoundsDatum,const TLMaths::TShape* pClickDatum)
 {
-	Bool bMoveAction = Click.GetActionRef() == TLGui_WidgetActionType_Move;
+	Bool bMoveAction = Click.GetActionType() == TLGui_WidgetActionType_Move;
 	Bool bClickAction = !bMoveAction;
 	Bool bIsCurrentAction = FALSE;
 	Bool bIsActionPair = FALSE;
@@ -472,7 +472,7 @@ SyncBool TLGui::TWidget::ProcessClick(TClick& Click,TLRender::TScreen& Screen,TL
 			{
 				if ( Click.GetActionType() == TLGui_WidgetActionType_Move )
 				{
-					TLDebug_Break("gr: should we be calling OnClickBegin during a move?");
+					TLDebug_Print("gr: should we be calling OnClickBegin during a move?");
 				}
 
 				// This is where we *should* check for being able to hover 'onto' a button
@@ -488,7 +488,7 @@ SyncBool TLGui::TWidget::ProcessClick(TClick& Click,TLRender::TScreen& Screen,TL
 
 		// Click pos does not intersect shape
 		case SyncFalse:
-		{
+		{			
 			//if((bClickAction  && bCurrentAction) || (bMoveAction && bActionPair))
 			if(m_ActionBeingProcessedRef.IsValid())
 			{

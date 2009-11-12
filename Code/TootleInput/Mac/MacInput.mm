@@ -15,6 +15,9 @@
 	//#define ENABLE_INPUTSYSTEM_TRACE
 #endif
 
+// HACK - Pixel offset of the toolbar border or cursor graphic?  There must be a better way of compensating for this?
+#define HACK_PIXEL_OFFSET 20
+
 // [16/12/08] DB -	Possible responsiveness improvement
 //					Calls the update manually from the touch events which should mean the inptu is processed immediately
 //				    instead of during the next frame update
@@ -1239,8 +1242,8 @@ int2 Platform::GetCursorPosition(u8 uIndex)
 		// On the Mac the y position is from the bottom of the window
 		// So invert it		
 		float fYPos = rect.size.height - pos.y;
-		pos.y = fYPos - 20;	// HACK - Pixel offset of the toolbar border or cursor graphic?  There must be a better way of compensating for this?
-
+		pos.y = fYPos - HACK_PIXEL_OFFSET;
+		
 		str.Appendf("-> (%.2f, %.2f)", pos.x, pos.y);
 		
 		TLDebug_Print(str);
