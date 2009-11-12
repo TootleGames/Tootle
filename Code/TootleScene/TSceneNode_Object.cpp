@@ -807,7 +807,11 @@ void TLScene::TSceneNode_Object::DoChangeLife(const float& fLifeChange)
 
 Bool TLScene::TSceneNode_Object::CanChangeLife(const float& fLifeChange)
 { 
-	if(m_fLife <= 0.0f)
+	// If the object is dead and the life change is negative then there's no need
+	// to allow any further changes.
+	// A positive change if the object is dead is acceptable to allow for object 
+	// respawning (rather than recreation)
+	if(m_fLife <= 0.0f && fLifeChange < 0.0f)
 		return FALSE;
 
 	// Check the node data to see if the node has been flagged as indestructible.
