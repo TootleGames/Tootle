@@ -80,10 +80,11 @@ protected:
 	Bool							RemoveAudioNode(TRefRef AudioRef);
 
 	// Life handling
-	FORCEINLINE void				SetLife(const float& fLife)			{ DoChangeLife(fLife - m_fLife); }
-	FORCEINLINE	float				GetLife()					const	{ return m_fLife; }
+	FORCEINLINE void				SetLife(const float& fLife, TRefRef LifeChangeType)		{ DoChangeLife( (fLife - m_fLife), LifeChangeType); }
+	FORCEINLINE	float				GetLife()										const	{ return m_fLife; }
+	FORCEINLINE TRef				GetLifeChangeType()								const	{ return m_LifeChangeType; }
 
-	void							DoChangeLife(const float& fLifeChange);
+	void							DoChangeLife(const float& fLifeChange, TRefRef LifeChangeType);
 
 	Bool							CanChangeLife(const float& fLifeChange);
 	virtual void					OnLifeChange(const float& fLifeChange)		{ if(GetLife() <= 0.0f)	OnDeath(); }
@@ -97,6 +98,7 @@ private:
 	TRef					m_PhysicsNodeRef;
 	TRef					m_Debug_RenderDebugPhysicsNodeRef;	//	debug rendernode to render our physics
 
+	TRef					m_LifeChangeType;				// Type of life change i.e electrical, fire, fall, crush.   
 	float					m_fLife;						// Object life
 
 	u8						m_PublishTransformOnWake;		//	TTransform bitmask - true if our transform was changed by the physics whilst we were asleep. When we wake, we send our latest transform to the render node

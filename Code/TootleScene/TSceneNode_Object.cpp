@@ -210,7 +210,13 @@ void TSceneNode_Object::SetProperty(TLMessaging::TMessage& Message)
 	// Import life
 	float fLife;
 	if(Message.ImportData("Life", fLife))
-		SetLife(fLife);
+	{
+		// [13/11/09] DB - Pass the type of life change with the set life message?  
+		// For now use a specific "set" type instead
+		//TRef LifeChangeType;
+		//Message.ImportData("Type", LifeChangeType);
+		SetLife(fLife, TRef_Static3(S,e,t));
+	}
 
 	//	read super-properties
 	TSceneNode_Transform::SetProperty( Message );
@@ -451,7 +457,12 @@ void TSceneNode_Object::ProcessMessage(TLMessaging::TMessage& Message)
 	{
 		float fLifeChange;
 		if(Message.Read(fLifeChange))
-			DoChangeLife(fLifeChange);
+		{
+			// Default type to 'change' so we know it came from a life change message
+			TRef LifeChangeType("Change");
+			Message.ImportData("Type", LifeChangeType);
+			DoChangeLife(fLifeChange, LifeChangeType);
+		}
 	}
 
 
@@ -794,11 +805,13 @@ void TLScene::TSceneNode_Object::EnableRenderNode(Bool Enable)
 }
 
 
-void TLScene::TSceneNode_Object::DoChangeLife(const float& fLifeChange)
+void TLScene::TSceneNode_Object::DoChangeLife(const float& fLifeChange, TRefRef LifeChangeType)
 {
 	if((fLifeChange != 0.0f) && CanChangeLife(fLifeChange))
 	{
 		m_fLife += fLifeChange;
+		
+		m_LifeChangeType = LifeChangeType;
 
 		OnLifeChange(fLifeChange);
 	}
