@@ -23,10 +23,12 @@ public:
 	TRenderNodeScrollableView(TRefRef RenderNodeRef=TRef(),TRefRef TypeRef=TRef()) :
 		TRenderNode					( RenderNodeRef, TypeRef ),
 		m_ClipDatumRef				( TLRender_TRenderNode_DatumBoundsBox2D ),
+		m_uTempMomentumUpdateCount	( 0 ),
 		m_bVerticalScroll			( TRUE ),
 		m_bHorizontalScroll			( TRUE ),
 		m_bDepthScroll				( FALSE ),
 		m_AlignChildrenToClipDatum	( TRUE ),
+		m_bUseMomentum				( FALSE ),
 		m_ChildWorldTransformValid	( SyncFalse )
 	{
 	}
@@ -62,11 +64,16 @@ private:
 	TRef						m_ClipDatumRef;
 	TLMaths::TTransform			m_ClipDatumOffset;		//	"cached" offset for aligning children to the clip datum in local space (the offset will be local)
 	TRef						m_RenderTargetRef;
+	
+	float3						m_fMomentum;					// Momentum of the scroll
+	float3						m_fTempMomentum;				// Temp momentum from touch/mouse movements
+	u8							m_uTempMomentumUpdateCount;		// Number of times the temp momentum is updated - avoids using an array
 
 	Bool						m_bVerticalScroll;
 	Bool						m_bHorizontalScroll;
 	Bool						m_bDepthScroll;				//	allow scroll on z
 	Bool						m_AlignChildrenToClipDatum;	//	if true, 0,0,0 position on a child will be at the top left of the clipping box
+	Bool						m_bUseMomentum;				//	allow momentum movement
 
 	TLMaths::TTransform			m_ChildWorldTransform;		//	cache of the children's world transform
 	SyncBool					m_ChildWorldTransformValid;	//	

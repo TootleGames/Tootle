@@ -21,6 +21,8 @@ void TRenderNodeScrollableView::SetProperty(TLMessaging::TMessage& Message)
 
 	if ( Message.ImportData("AlignChildren", m_AlignChildrenToClipDatum ) )
 		OnOffsetChanged();
+	
+	Message.ImportData("Momentum", m_bUseMomentum);	
 }
 
 
@@ -32,7 +34,7 @@ void TRenderNodeScrollableView::ProcessMessage(TLMessaging::TMessage& Message)
 		Message.Read(ActionRef);
 
 		if(ActionRef == STRef(S,c,r,o,l)) // "Scroll"
-		{
+		{	
 			float3 Change;
 			if(Message.ImportData("Move3", Change ))
 			{
@@ -45,11 +47,23 @@ void TRenderNodeScrollableView::ProcessMessage(TLMessaging::TMessage& Message)
 				if(m_bDepthScroll)			GetScroll().z += Change.z;
 
 				OnScrollChanged();
+				
+				if(m_bUseMomentum)
+				{
+					// Update the temp momentum
+					if(m_bVerticalScroll)	m_fTempMomentum.y += Change.y;
+					if(m_bHorizontalScroll)	m_fTempMomentum.x += Change.x;
+					if(m_bDepthScroll)		m_fTempMomentum.z += Change.z;
+					
+					m_uTempMomentumUpdateCount++;
+				}				
 			}
+			
 		}
 	}
 	else if ( Message.GetMessageRef() == TRef_Static(D,o,S,c,r) )
 	{
+		
 		//	apply a scroll change
 		float3 Change;
 		Message.ResetReadPos();
@@ -64,8 +78,39 @@ void TRenderNodeScrollableView::ProcessMessage(TLMessaging::TMessage& Message)
 			if(m_bDepthScroll)		GetScroll().z += Change.z;
 		
 			OnScrollChanged();
+			
+			if(m_bUseMomentum)
+			{
+				// Update the temp momentum
+				if(m_bVerticalScroll)	m_fTempMomentum.y += Change.y;
+				if(m_bHorizontalScroll)	m_fTempMomentum.x += Change.x;
+				if(m_bDepthScroll)		m_fTempMomentum.z += Change.z;
+				
+				m_uTempMomentumUpdateCount++;
+				
+			}
+			
 		}
 	}
+	else if ( Message.GetMessageRef() == TRef_Static(E,n,d,S,c) )	// EndScroll
+	{
+		// Scroll has finished - trigger the momentum scrolling
+		if(m_bUseMomentum && (m_uTempMomentumUpdateCount > 0))
+		{
+			// Set the final momentum
+			m_fMomentum = m_fTempMomentum / m_uTempMomentumUpdateCount;
+			
+			// Reset the temp momentum data
+			m_fTempMomentum.Set(0.0f, 0.0f, 0.0f);
+			m_uTempMomentumUpdateCount = 0;
+		}
+	}
+	else if ( Message.GetMessageRef() == TRef_Static(B,e,g,S,c) )	// BegScroll (begin scroll)
+	{
+		// Stop any momentum motion
+		m_fMomentum.Set(0.0f, 0.0f, 0.0f);
+	}
+
 
 	TRenderNode::ProcessMessage(Message);
 }
@@ -184,6 +229,16 @@ void TRenderNodeScrollableView::OnRenderTargetRefChange(TLRender::TRenderTarget*
 
 void TRenderNodeScrollableView::PreDrawChildren(TLRender::TRenderTarget& RenderTarget,TLMaths::TTransform& SceneTransform)
 {
+	// Update the momentum
+	if(m_bUseMomentum && m_fMomentum.LengthSq() > 0.0f)
+	{
+		m_fMomentum = TLMaths::Interp(m_fMomentum, float3(0.0f,0.0f,0.0f), 0.07f);
+	
+		GetScroll() += m_fMomentum;
+		
+		OnScrollChanged();
+	}
+	
 	//	if we havent calculated a view box for this render target, then do it
 	if ( m_RenderTargetRef != RenderTarget.GetRef() )
 	{
