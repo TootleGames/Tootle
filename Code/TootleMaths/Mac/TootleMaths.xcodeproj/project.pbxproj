@@ -57,6 +57,10 @@
 		8418EFEE0F4DB7C400B956C9 /* TTessellate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTessellate.h; path = ../TTessellate.h; sourceTree = SOURCE_ROOT; };
 		8418F1940F4DBAB500B956C9 /* MacTessellate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacTessellate.h; sourceTree = "<group>"; };
 		8418F1950F4DBAB500B956C9 /* MacTessellate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacTessellate.mm; sourceTree = "<group>"; };
+		843C226A10B2AA46004E70F5 /* IPodTessellate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodTessellate.h; path = ../IPod/IPodTessellate.h; sourceTree = SOURCE_ROOT; };
+		843C226B10B2AA46004E70F5 /* IPodTessellate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodTessellate.mm; path = ../IPod/IPodTessellate.mm; sourceTree = SOURCE_ROOT; };
+		843C226C10B2AA60004E70F5 /* PCTessellate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCTessellate.cpp; path = ../PC/PCTessellate.cpp; sourceTree = SOURCE_ROOT; };
+		843C226D10B2AA60004E70F5 /* PCTessellate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCTessellate.h; path = ../PC/PCTessellate.h; sourceTree = SOURCE_ROOT; };
 		84B605F2104FFB1A0022E5BC /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B605F3104FFB1A0022E5BC /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B605F4104FFB300022E5BC /* TOblong.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TOblong.cpp; path = ../TOblong.cpp; sourceTree = SOURCE_ROOT; };
@@ -114,6 +118,9 @@
 		8418EFDF0F4DB7A600B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				843C226910B2AA2C004E70F5 /* IPod */,
+				843C226810B2AA25004E70F5 /* PC */,
+				8418F1930F4DBAA300B956C9 /* Mac */,
 				84B605F4104FFB300022E5BC /* TOblong.cpp */,
 				84B605F5104FFB300022E5BC /* TOblong.h */,
 				84B605F6104FFB300022E5BC /* TShape.cpp */,
@@ -128,7 +135,6 @@
 				84B605FF104FFB300022E5BC /* TShapePolygon.h */,
 				84B60600104FFB300022E5BC /* TShapeSphere.cpp */,
 				84B60601104FFB300022E5BC /* TShapeSphere.h */,
-				8418F1930F4DBAA300B956C9 /* Mac */,
 				8418EFE10F4DB7C400B956C9 /* TBox.cpp */,
 				8418EFE20F4DB7C400B956C9 /* TBox.h */,
 				8418EFE30F4DB7C400B956C9 /* TCapsule.cpp */,
@@ -163,6 +169,24 @@
 				8418F1950F4DBAB500B956C9 /* MacTessellate.mm */,
 			);
 			name = Mac;
+			sourceTree = "<group>";
+		};
+		843C226810B2AA25004E70F5 /* PC */ = {
+			isa = PBXGroup;
+			children = (
+				843C226C10B2AA60004E70F5 /* PCTessellate.cpp */,
+				843C226D10B2AA60004E70F5 /* PCTessellate.h */,
+			);
+			name = PC;
+			sourceTree = "<group>";
+		};
+		843C226910B2AA2C004E70F5 /* IPod */ = {
+			isa = PBXGroup;
+			children = (
+				843C226A10B2AA46004E70F5 /* IPodTessellate.h */,
+				843C226B10B2AA46004E70F5 /* IPodTessellate.mm */,
+			);
+			name = IPod;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
