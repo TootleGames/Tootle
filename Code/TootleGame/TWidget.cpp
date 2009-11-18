@@ -12,6 +12,17 @@
 #include "TWidgetManager.h"
 
 
+TLGui::TWidget::TWidget(TRefRef InstanceRef, TRefRef TypeRef)	:
+	m_WidgetRef					( InstanceRef ),
+	m_TypeRef					( TypeRef ),
+	m_RenderNodeDatum			( TLRender_TRenderNode_DatumBoundsBox2D ),
+	m_RenderNodeDatumKeepShape	( TRUE ),
+	m_WidgetData				("WidgetData"),
+	m_Enabled					( FALSE )
+{
+}
+
+
 
 TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TRefRef RenderNodeRef, TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,TBinaryTree* pWidgetData, TRefRef DatumRef)  : 
 	m_RenderTargetRef			( RenderTargetRef ),
@@ -90,6 +101,44 @@ TLGui::TWidget::~TWidget()
 
 
 
+void TLGui::TWidget::Initialise(TLMessaging::TMessage& Message)	
+{ 
+	//	copy user-supplied data
+	//	gr: changed back to putting ALL the node's data in the widget data so we can re-use nodes, datums etc
+	m_WidgetData.ReferenceDataTree( Message );	
+}
+
+void TLGui::TWidget::SetProperty(TLMessaging::TMessage& Message)
+{
+	// import render target ref
+	Message.ImportData("RTarget", m_RenderTargetRef );
+
+	
+	//	read actions out of the TBinary
+	Message.ImportData("ActDown", m_ActionOutDown );
+	Message.ImportData("ActUp", m_ActionOutUp );
+	
+	//	read user ref
+	Message.ImportData("User", m_UserRef);
+	
+	//	read render node
+	Message.ImportData("Node", m_RenderNodeRef );
+	
+	//	read out a datum
+	Message.ImportData("Datum", m_RenderNodeDatum );
+	
+	Message.ImportData("DtKeepShape", m_RenderNodeDatumKeepShape );	
+		
+	// Read enabled state
+	Bool bEnabled;
+	if(Message.ImportData("Enable", bEnabled ))
+		SetEnabled(bEnabled);	   
+	
+}
+
+
+
+
 //-------------------------------------------------
 //	get array of all the render nodes we're using
 //-------------------------------------------------
@@ -114,7 +163,9 @@ void TLGui::TWidget::Shutdown()
 //-------------------------------------------------
 void TLGui::TWidget::ProcessMessage(TLMessaging::TMessage& Message)
 {
-	if(Message.GetMessageRef() == TRef_Static(A,c,t,i,o))
+	TRef MessageRef = Message.GetMessageRef();
+	
+	if( MessageRef == TRef_Static(A,c,t,i,o) )
 	{
 		if ( !HasSubscribers() )
 		{
@@ -154,13 +205,26 @@ void TLGui::TWidget::ProcessMessage(TLMessaging::TMessage& Message)
 			}
 		}
 	}
-	else if ( Message.GetMessageRef() == TLCore::UpdateRef )
+	else if ( MessageRef == TLCore::UpdateRef )
 	{
 		if ( !Update() )
 		{
 			TLCore::g_pCoreManager->Unsubscribe(this);
 		}
 	}
+	else if( MessageRef == TLCore::InitialiseRef )
+	{
+		// Set properties
+		SetProperty(Message);
+		
+		// Initialise the widget
+		Initialise(Message);
+	}	
+	else if( MessageRef == TLCore::SetPropertyRef )
+	{
+		// Set properties
+		SetProperty(Message);
+	}	
 }
 
 

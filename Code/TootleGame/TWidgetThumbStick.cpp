@@ -4,12 +4,26 @@
 
 #include "TWidgetManager.h"
 
+
+TLGui::TWidgetThumbStick::TWidgetThumbStick(TRefRef InstanceRef, TRefRef TypeRef)	:
+	TLGui::TWidget(InstanceRef, TypeRef)
+{
+}
+
+
 TLGui::TWidgetThumbStick::TWidgetThumbStick(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,float DeadZone) : 
 	TLGui::TWidget	( RenderTargetRef, RenderNodeRef, UserRef, ActionOutDown, ActionOutUp ),
 	m_DeadZone					( DeadZone )
 {
 }
 
+
+void TLGui::TWidgetThumbStick::SetProperty(TLMessaging::TMessage& Message)	
+{ 
+	TWidget::SetProperty(Message);	
+	
+	Message.ImportData("DeadZone", m_DeadZone);
+}
 
 
 //-------------------------------------------------

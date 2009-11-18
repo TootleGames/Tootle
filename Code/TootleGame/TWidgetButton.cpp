@@ -2,6 +2,19 @@
 
 
 
+TLGui::TWidgetButton::TWidgetButton(TRefRef InstanceRef, TRefRef TypeRef)	:
+	TLGui::TWidget(InstanceRef, TypeRef),
+	m_bAllowClickOnCursorMove(FALSE)
+{
+}
+
+void TLGui::TWidgetButton::SetProperty(TLMessaging::TMessage& Message)	
+{ 
+	TWidget::SetProperty(Message);
+	
+	Message.ImportData("CkMove", m_bAllowClickOnCursorMove );
+}
+
 
 void TLGui::TWidgetButton::OnCursorMove(const int2& NewCursorPosition, TRefRef ActionRef)
 {

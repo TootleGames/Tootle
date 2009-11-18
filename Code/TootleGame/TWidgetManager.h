@@ -5,6 +5,11 @@
 #include <TootleCore/TManager.h>
 #include <TootleInput/TUser.h>
 
+#include <TootleCore/TRef.h>
+#include <TootleCore/TKeyArray.h>
+
+#include "TWidgetFactory.h"
+
 namespace TLGui
 {
 	class TWidgetManager;
@@ -30,6 +35,12 @@ public:
 	{
 	}
 	
+	TRef				CreateWidget(TRefRef RenderTargetRef, TRefRef InstanceRef, TRefRef TypeRef);
+	
+	void				SendMessageToWidget(TRefRef WidgetRef, TLMessaging::TMessage& Message);
+
+	Bool				SubscribeToWidget(TRefRef WidgetRef, TSubscriber* pSubscriber);
+	
 	FORCEINLINE Bool	IsClickActionRef(TRefRef ClickActionRef);
 	FORCEINLINE Bool	IsMoveActionRef(TRefRef MoveActionRef);
 	FORCEINLINE Bool	IsActionPair(TRefRef ClickActionRef, TRefRef MoveActionRef);
@@ -37,7 +48,11 @@ public:
 	FORCEINLINE TRef	GetClickActionFromMoveAction(TRefRef MoveActionRef);
 	FORCEINLINE TRef	GetMoveActionFromClickAction(TRefRef ClickActionRef);
 
+
+	FORCEINLINE Bool	AddFactory(TPtr< TClassFactory<TWidget,TRUE> >& pFactory)	{ return m_WidgetFactories.Add(pFactory); }
+	
 protected:
+	virtual SyncBool Initialise();
 	virtual SyncBool Shutdown();
 
 	
@@ -58,7 +73,14 @@ protected:
 	
 private:
 	
+	TPtr<TWidget>	FindWidget(TRefRef WidgetRef);
+	
+private:
+	
 	TArray<TActionRefData>	m_WidgetActionRefs;
+	
+	TKeyArray< TRef, TArray<TRef> >	m_pWidgets;			// Array of widget ref's organised with a TRenderTarget TRef as the key
+	TPtrArray< TClassFactory<TWidget,TRUE> >	m_WidgetFactories;		//	array of widget factories.
 };
 
 
@@ -131,5 +153,6 @@ FORCEINLINE TRef TLGui::TWidgetManager::GetMoveActionFromClickAction(TRefRef Cli
 	
 	return TRef_Invalid;
 }
+
 
 

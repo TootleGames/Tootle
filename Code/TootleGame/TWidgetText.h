@@ -19,12 +19,18 @@ namespace TLGui
 
 class TLGui::TWidgetText : public TLGui::TWidget
 {
+	friend class TWidgetFactory;
+
 public:
 	TWidgetText(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef());
 
 	void						SetString(const TTempString& str) { m_Text = str; OnTextChange(); }
 	
 protected:
+	TWidgetText(TRefRef InstanceRef, TRefRef TypeRef);
+	
+	virtual void				SetProperty(TLMessaging::TMessage& Message);
+
 	virtual void				OnClickEnd(const TClick& Click);
 	
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);	

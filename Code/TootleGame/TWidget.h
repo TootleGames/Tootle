@@ -26,6 +26,9 @@ namespace TLGui
 #define TLGui_WidgetActionType_Down		TRef_Static4(D,o,w,n)
 #define TLGui_WidgetActionType_Move		TRef_Static4(M,o,v,e)
 #define TLGui_WidgetActionType_Up		TRef_Static2(U,p)
+	
+	class TWidgetFactory;
+	class TWidgetManager;
 };
 
 namespace TLRender
@@ -43,6 +46,9 @@ namespace TLRender
 //----------------------------------------------
 class TLGui::TWidget : public TLMessaging::TPublisher, public TLMessaging::TSubscriber
 {
+	friend class TLGui::TWidgetFactory;
+	friend class TLGui::TWidgetManager;
+	
 public:
 	class TClick
 	{
@@ -81,11 +87,13 @@ public:
 	};
 
 public:
+	
 	TWidget(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef(),TBinaryTree* pWidgetData=NULL, TRefRef DatumRef=TLRender_TRenderNode_DatumBoundsBox2D);
 	TWidget(TRefRef RenderTargetRef,TBinaryTree& WidgetData);
-	~TWidget();
-	
+	virtual ~TWidget();
+
 	void						Shutdown();							//	shutdown code - just unsubscribes from publishers - this is to release all the TPtr's so we can be destructed
+	
 	virtual TRefRef				GetSubscriberRef() const		{	static TRef Ref("inpint");	return Ref;	}
 
 	TBinaryTree&				GetWidgetData()					{	return m_WidgetData;	}
@@ -98,7 +106,18 @@ public:
 
 	FORCEINLINE TRefRef			GetRenderNodeRef() const		{	return m_RenderNodeRef;	}	//	can be invalid, or used in more than one widget, so dont rely on this to be unique!
 
+	TRef						GetWidgetRef()	const			{ return m_WidgetRef; }
+	TRef						GetTypeRef()	const			{ return m_TypeRef; }
+	
+	FORCEINLINE Bool			operator==(TRefRef WidgetRef) const			{	return m_WidgetRef == WidgetRef;	}
+	
 protected:
+	TWidget(TRefRef InstanceRef, TRefRef TypeRef);
+
+	
+	virtual void				Initialise(TLMessaging::TMessage& Message);
+	virtual void				SetProperty(TLMessaging::TMessage& Message);
+	
 	virtual Bool				Update();											//	update routine - return FALSE if we don't need updates any more
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);	//	
 	virtual SyncBool			ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode,const TLMaths::TShapeSphere2D& BoundsDatum,const TLMaths::TShape* pClickDatum);	//	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
@@ -128,6 +147,10 @@ private:
 	SyncBool					PrefetchProcessData(TLRender::TScreen*& pScreen,TLRender::TRenderTarget*& pRenderTarget,TLRender::TRenderNode*& pRenderNode,const TLMaths::TShapeSphere2D*& pWorldBoundsSphere,TPtr<TLMaths::TShape>& pClickDatum);
 
 protected:
+	TRef						m_WidgetRef;			// Widget ref
+	TRef						m_TypeRef;				// Type ref
+			
+	
 	TRef						m_RenderTargetRef;		//	render target where we can see the render node to click on
 	TRef						m_RenderNodeRef;		//	render node we're clicking on
 	TRef						m_RenderNodeDatum;		//	after a fast sphere check we check for a click inside this datum shape (if none supplied at construction we use the bounds box)

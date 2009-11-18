@@ -30,6 +30,47 @@ TLGui::TWidgetScrollbar::TWidgetScrollbar(TRefRef RenderTargetRef,TRefRef Scroll
 
 }
 
+TLGui::TWidgetScrollbar::TWidgetScrollbar(TRefRef InstanceRef, TRefRef TypeRef)	:
+	TLGui::TWidget		( InstanceRef, TypeRef ),
+	m_ScrollValue		( 0.0f ),
+	m_SliderPosValid	( FALSE )
+{
+}
+
+
+void TLGui::TWidgetScrollbar::Initialise(TLMessaging::TMessage& Message)
+{
+	TWidget::Initialise(Message);
+	
+	UpdateSliderPos();
+	
+	//	need to update slider pos
+	if ( !m_SliderPosValid )
+	{
+		this->SubscribeTo( TLCore::g_pCoreManager );
+	}
+}
+
+
+void TLGui::TWidgetScrollbar::SetProperty(TLMessaging::TMessage& Message)	
+{ 
+	TWidget::SetProperty(Message);	
+	
+	Message.ImportData("ScrRender", m_ScrollBarRenderNode);
+	Message.ImportData("SliRender", m_SliderRenderNode);
+	
+	Message.ImportData("Scroll", m_ScrollValue);
+	
+	//	check an invalid scroll value provided is valid
+	if ( m_ScrollValue < 0.f || m_ScrollValue > 1.f )
+	{
+		TLDebug_Break("Scrollbar value should be between 0 and 1");
+		TLMaths::Limit( m_ScrollValue, 0.f, 1.f );
+	}
+	
+}
+
+
 
 //-------------------------------------------------
 //	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again

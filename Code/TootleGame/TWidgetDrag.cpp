@@ -5,6 +5,11 @@
 #define DEFAULT_DRAG_MIN	((100.f/480.f) * 5.f)	//	the effectiveness of this varies, in ortho (100/480) is one pixel. In perspective... it depends where the camera is
 
 
+TLGui::TWidgetDrag::TWidgetDrag(TRefRef InstanceRef, TRefRef TypeRef)	:
+	TLGui::TWidget(InstanceRef, TypeRef)
+{
+}
+
 
 TLGui::TWidgetDrag::TWidgetDrag(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,TRefRef ActionOutDrag,TBinaryTree* pWidgetData) :
 	m_ActionOutDrag			( ActionOutDrag ),
@@ -34,6 +39,17 @@ TLGui::TWidgetDrag::TWidgetDrag(TRefRef RenderTargetRef,TBinaryTree& WidgetData)
 	WidgetData.ImportData("MinDrag", m_DragMinimum );
 	WidgetData.ImportData("HorzDrag", m_HoriztonalDragEnabled );
 	WidgetData.ImportData("VertDrag", m_VerticalDragEnabled );
+}
+
+
+void TLGui::TWidgetDrag::SetProperty(TLMessaging::TMessage& Message)	
+{ 
+	TWidget::SetProperty(Message);
+	
+	Message.ImportData("ActDrag", m_ActionOutDrag );
+	Message.ImportData("MinDrag", m_DragMinimum );
+	Message.ImportData("HorzDrag", m_HoriztonalDragEnabled );
+	Message.ImportData("VertDrag", m_VerticalDragEnabled );
 }
 
 

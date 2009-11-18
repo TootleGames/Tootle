@@ -16,11 +16,18 @@ namespace TLGui
 
 class TLGui::TWidgetDrag : public TLGui::TWidget
 {
+	friend class TWidgetFactory;
+
 public:
+
 	TWidgetDrag(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,TRefRef ActionOutDrag,TBinaryTree* pWidgetData=NULL);
 	TWidgetDrag(TRefRef RenderTargetRef,TBinaryTree& WidgetData);
 
 protected:
+	TWidgetDrag(TRefRef InstanceRef, TRefRef TypeRef);
+
+	virtual void				SetProperty(TLMessaging::TMessage& Message);
+
 	virtual void				OnClickBegin(const TClick& Click);
 	virtual void				OnClickEnd(const TClick& Click);
 	virtual void				OnCursorMove(const int2& NewCursorPosition, TRefRef ActionRef);		

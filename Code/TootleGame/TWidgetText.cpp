@@ -15,11 +15,23 @@
 
 using namespace TLGui;
 
+TLGui::TWidgetText::TWidgetText(TRefRef InstanceRef, TRefRef TypeRef)	:
+	TLGui::TWidget(InstanceRef, TypeRef)
+{
+}
 
 TWidgetText::TWidgetText(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp) : 
 	TLGui::TWidget( RenderTargetRef, RenderNodeRef, UserRef, ActionOutDown, ActionOutUp ),
 	m_bEditing(FALSE)
 {
+}
+
+
+void TLGui::TWidgetText::SetProperty(TLMessaging::TMessage& Message)	
+{ 
+	TWidget::SetProperty(Message);
+	
+	Message.ImportData("Editing", m_bEditing);
 }
 
 

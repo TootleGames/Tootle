@@ -23,12 +23,18 @@ namespace TLGui
 //----------------------------------------------
 class TLGui::TWidgetScrollbar : public TLGui::TWidget
 {
+	friend class TLGui::TWidgetFactory;
 public:
 	TWidgetScrollbar(TRefRef RenderTargetRef,TRefRef ScrollBarRenderNode,TRefRef SliderRenderNode,TRefRef UserRef,TRefRef ActionOut,float InitialScrollValue=0.f);
 
 	FORCEINLINE void		PublishScrollValue();			//	make up a fake click message with our vlaue and send it out
 
 protected:
+	TWidgetScrollbar(TRefRef InstanceRef, TRefRef TypeRef);
+	
+	virtual void			Initialise(TLMessaging::TMessage& Message);
+	virtual void			SetProperty(TLMessaging::TMessage& Message);
+	
 	virtual Bool			Update();											//	update routine - return FALSE if we don't need updates any more
 	virtual SyncBool		ProcessClick(TClick& Click,TLRender::TScreen& Screen,TLRender::TRenderTarget& RenderTarget,TLRender::TRenderNode& RenderNode,const TLMaths::TShapeSphere2D& BoundsDatum,const TLMaths::TShape* pClickDatum);	//	process a click and detect clicks on/off our render node. return SyncWait if we didnt process it and want to process again
 	virtual void			GetRenderNodes(TArray<TRef>& RenderNodeArray);		//	get array of all the render nodes we're using

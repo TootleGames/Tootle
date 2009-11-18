@@ -17,6 +17,8 @@
 		8418F03C0F4DB82500B956C9 /* TMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F0300F4DB82500B956C9 /* TMenu.h */; };
 		8418F03D0F4DB82500B956C9 /* TWidgetScrollbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F0310F4DB82500B956C9 /* TWidgetScrollbar.cpp */; };
 		8418F03E0F4DB82500B956C9 /* TWidgetScrollbar.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F0320F4DB82500B956C9 /* TWidgetScrollbar.h */; };
+		843C270610B31635004E70F5 /* TWidgetFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 843C270410B31635004E70F5 /* TWidgetFactory.h */; };
+		843C270710B31635004E70F5 /* TWidgetFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 843C270510B31635004E70F5 /* TWidgetFactory.cpp */; };
 		84B60597104FF8970022E5BC /* TWidgetText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B60593104FF8970022E5BC /* TWidgetText.cpp */; };
 		84B60598104FF8970022E5BC /* TWidgetText.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60594104FF8970022E5BC /* TWidgetText.h */; };
 		84B60599104FF8970022E5BC /* TWidgetThumbStick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B60595104FF8970022E5BC /* TWidgetThumbStick.cpp */; };
@@ -55,6 +57,8 @@
 		8418F0300F4DB82500B956C9 /* TMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TMenu.h; path = ../TMenu.h; sourceTree = SOURCE_ROOT; };
 		8418F0310F4DB82500B956C9 /* TWidgetScrollbar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidgetScrollbar.cpp; path = ../TWidgetScrollbar.cpp; sourceTree = SOURCE_ROOT; };
 		8418F0320F4DB82500B956C9 /* TWidgetScrollbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWidgetScrollbar.h; path = ../TWidgetScrollbar.h; sourceTree = SOURCE_ROOT; };
+		843C270410B31635004E70F5 /* TWidgetFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWidgetFactory.h; path = ../TWidgetFactory.h; sourceTree = SOURCE_ROOT; };
+		843C270510B31635004E70F5 /* TWidgetFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidgetFactory.cpp; path = ../TWidgetFactory.cpp; sourceTree = SOURCE_ROOT; };
 		84B60591104FF8800022E5BC /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B60592104FF8800022E5BC /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B60593104FF8970022E5BC /* TWidgetText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidgetText.cpp; path = ../TWidgetText.cpp; sourceTree = SOURCE_ROOT; };
@@ -140,12 +144,16 @@
 				84B605A8104FF8A80022E5BC /* TWidgetButton.h */,
 				84B605A9104FF8A80022E5BC /* TWidgetDrag.cpp */,
 				84B605AA104FF8A80022E5BC /* TWidgetDrag.h */,
-				84B605AB104FF8A80022E5BC /* TWidgetManager.cpp */,
-				84B605AC104FF8A80022E5BC /* TWidgetManager.h */,
 				84B60593104FF8970022E5BC /* TWidgetText.cpp */,
 				84B60594104FF8970022E5BC /* TWidgetText.h */,
 				84B60595104FF8970022E5BC /* TWidgetThumbStick.cpp */,
 				84B60596104FF8970022E5BC /* TWidgetThumbStick.h */,
+				8418F0310F4DB82500B956C9 /* TWidgetScrollbar.cpp */,
+				8418F0320F4DB82500B956C9 /* TWidgetScrollbar.h */,
+				84B605AB104FF8A80022E5BC /* TWidgetManager.cpp */,
+				84B605AC104FF8A80022E5BC /* TWidgetManager.h */,
+				843C270410B31635004E70F5 /* TWidgetFactory.h */,
+				843C270510B31635004E70F5 /* TWidgetFactory.cpp */,
 				8418F0270F4DB82500B956C9 /* TAssetBrowser.cpp */,
 				8418F0280F4DB82500B956C9 /* TAssetBrowser.h */,
 				8418F0290F4DB82500B956C9 /* TGame.cpp */,
@@ -154,8 +162,6 @@
 				8418F02E0F4DB82500B956C9 /* TLGame.h */,
 				8418F02F0F4DB82500B956C9 /* TMenu.cpp */,
 				8418F0300F4DB82500B956C9 /* TMenu.h */,
-				8418F0310F4DB82500B956C9 /* TWidgetScrollbar.cpp */,
-				8418F0320F4DB82500B956C9 /* TWidgetScrollbar.h */,
 			);
 			name = "Source Code";
 			sourceTree = "<group>";
@@ -193,6 +199,7 @@
 				84B605BC104FF8A80022E5BC /* TWidgetDrag.h in Headers */,
 				84B605BE104FF8A80022E5BC /* TWidgetManager.h in Headers */,
 				84F1FEB310A073D20030B1F2 /* TApplication.h in Headers */,
+				843C270610B31635004E70F5 /* TWidgetFactory.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,6 +263,7 @@
 				84B605BB104FF8A80022E5BC /* TWidgetDrag.cpp in Sources */,
 				84B605BD104FF8A80022E5BC /* TWidgetManager.cpp in Sources */,
 				84F1FEB210A073D20030B1F2 /* TApplication.cpp in Sources */,
+				843C270710B31635004E70F5 /* TWidgetFactory.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -29,6 +29,23 @@ void TWidgetManager::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChan
 }
 
 
+SyncBool TWidgetManager::Initialise()
+{
+	SyncBool Result = TManager::Initialise();
+	
+	if(Result != SyncTrue)
+		return Result;
+	
+	// Attach the base widget factory by default
+	TPtr<TClassFactory<TWidget,TRUE> > pFactory = new TWidgetFactory();
+	
+	if(pFactory)
+		AddFactory(pFactory);
+	
+	return SyncTrue;
+}
+
+
 SyncBool TWidgetManager::Shutdown()
 { 	
 	TLDebug_Print("Widgetmanager shutdown");
@@ -75,6 +92,8 @@ void TWidgetManager::ProcessMessage(TLMessaging::TMessage& Message)
 			return;
 		}
 	}
+	
+	// Action messages
 
 	TLCore::TManager::ProcessMessage(Message);
 }
@@ -413,4 +432,99 @@ void TWidgetManager::OnInputDeviceRemoved(TRefRef DeviceRef, TRefRef DeviceTypeR
 		}
 		
 	}		
+}
+
+
+TRef TWidgetManager::CreateWidget(TRefRef RenderTargetRef, TRefRef InstanceRef, TRefRef TypeRef)
+{
+	// Find group to add the widget ref to and if not ofund create a new one
+	Bool bGroupCreated = FALSE;
+	
+	TArray<TRef>* pGroupArray = m_pWidgets.Find(RenderTargetRef);
+	
+	if(!pGroupArray)
+	{
+		TArray<TRef> NewArray;
+		pGroupArray = m_pWidgets.Add(RenderTargetRef, NewArray);
+		
+		// Failed?
+		if(!pGroupArray)
+		{
+			TLDebug_Break("Failed to create new widget group");
+			return TRef();
+		}
+		
+		bGroupCreated = TRUE;
+	}
+	
+	// Now create the actual widget object
+	TPtr<TWidget> pWidget;
+	
+	
+	// Create new widget via the factories
+	for(u32 uIndex=0; uIndex < m_WidgetFactories.GetSize(); uIndex++)
+	{
+		m_WidgetFactories[uIndex]->CreateInstance( pWidget, InstanceRef, TypeRef );
+		
+		// If a widget was created then carry on otherwise try the next factory
+		if ( pWidget )
+			break;
+
+	}
+	
+	if(!pWidget)	
+	{
+		if(bGroupCreated)
+		{
+			//TODO: Remove the group again if no widget was created
+		}
+		
+		return TRef();
+	}
+	
+	TRef FinalWidgetRef = pWidget->GetWidgetRef();
+	
+	// Add the widget ref to our group of widgets
+	pGroupArray->Add(FinalWidgetRef);
+	
+	return FinalWidgetRef;
+}
+
+void TWidgetManager::SendMessageToWidget(TRefRef WidgetRef, TLMessaging::TMessage& Message)
+{
+	//TODO: Queue up the message for sending to the widget
+	
+	//TEMP: Instant process of message
+	TPtr<TWidget> pWidget = FindWidget(WidgetRef);
+
+	pWidget->ProcessMessage(Message);
+}
+
+
+Bool TWidgetManager::SubscribeToWidget(TRefRef WidgetRef, TSubscriber* pSubscriber)
+{
+	TPtr<TWidget> pWidget = FindWidget(WidgetRef);
+		
+	if(pWidget)
+		return pSubscriber->SubscribeTo(pWidget);
+
+	return FALSE;
+}
+
+
+TPtr<TWidget> TWidgetManager::FindWidget(TRefRef WidgetRef)
+{
+	TPtr<TWidget> pWidget;
+	
+	// Find the widget via the factories
+	for(u32 uIndex=0; uIndex < m_WidgetFactories.GetSize(); uIndex++)
+	{
+		pWidget = m_WidgetFactories[uIndex]->GetInstance(WidgetRef);
+		
+		// If a widget was created then carry on otherwise try the next factory
+		if ( pWidget )
+			break;		
+	}
+	
+	return pWidget;
 }

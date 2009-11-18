@@ -37,10 +37,41 @@
 	};
 	8434CB79100DBB410063673E /* TWidget.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {2574, 2262}}";
+			sepNavIntBoundsRect = "{{0, 0}, {2574, 2574}}";
 			sepNavSelRange = "{1241, 7}";
-			sepNavVisRange = "{3062, 2340}";
+			sepNavVisRange = "{3059, 2125}";
 		};
+	};
+	843C291B10B481BA004E70F5 /* TWidgetFactory.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 507}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 740}";
+		};
+	};
+	843C291F10B481E9004E70F5 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8434CB79100DBB410063673E /* TWidget.h */;
+		name = "TWidget.h: 46";
+		rLen = 7;
+		rLoc = 1241;
+		rType = 0;
+		vrLen = 2125;
+		vrLoc = 3059;
+	};
+	843C292010B481E9004E70F5 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 843C291B10B481BA004E70F5 /* TWidgetFactory.cpp */;
+	};
+	843C292110B481E9004E70F5 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 843C291B10B481BA004E70F5 /* TWidgetFactory.cpp */;
+		name = "TWidgetFactory.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 740;
+		vrLoc = 0;
 	};
 	843CD7CA0FD02E4C003550FD /* TWidgetText.cpp */ = {
 		isa = PBXFileReference;
@@ -376,10 +407,13 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 278950821;
-			PBXWorkspaceStateSaveDate = 278950821;
+			PBXPerProjectTemplateStateSaveDate = 280265119;
+			PBXWorkspaceStateSaveDate = 280265119;
 		};
 		perUserProjectItems = {
+			843C291F10B481E9004E70F5 /* PBXTextBookmark */ = 843C291F10B481E9004E70F5 /* PBXTextBookmark */;
+			843C292010B481E9004E70F5 /* PBXBookmark */ = 843C292010B481E9004E70F5 /* PBXBookmark */;
+			843C292110B481E9004E70F5 /* PBXTextBookmark */ = 843C292110B481E9004E70F5 /* PBXTextBookmark */;
 			8446CADD103AACE900DFD24F /* PBXTextBookmark */ = 8446CADD103AACE900DFD24F /* PBXTextBookmark */;
 			844DEBF30FC6A0A9004AB3AB /* PBXTextBookmark */ = 844DEBF30FC6A0A9004AB3AB /* PBXTextBookmark */;
 			844DED290FC6C6F8004AB3AB /* PBXTextBookmark */ = 844DED290FC6C6F8004AB3AB /* PBXTextBookmark */;
@@ -393,7 +427,6 @@
 			84E117AA0F3CBBAB00471397 /* PBXTextBookmark */ = 84E117AA0F3CBBAB00471397 /* PBXTextBookmark */;
 			84E117AB0F3CBBAB00471397 /* PBXTextBookmark */ = 84E117AB0F3CBBAB00471397 /* PBXTextBookmark */;
 			84E1E708107CDCAB0097C321 /* PBXTextBookmark */ = 84E1E708107CDCAB0097C321 /* PBXTextBookmark */;
-			84E1E70A107CDCAB0097C321 /* PBXTextBookmark */ = 84E1E70A107CDCAB0097C321 /* PBXTextBookmark */;
 			84E2173C0FF18C140081287A /* PBXTextBookmark */ = 84E2173C0FF18C140081287A /* PBXTextBookmark */;
 			84E2173D0FF18C140081287A /* PBXTextBookmark */ = 84E2173D0FF18C140081287A /* PBXTextBookmark */;
 			84E2173F0FF18C140081287A /* PBXTextBookmark */ = 84E2173F0FF18C140081287A /* PBXTextBookmark */;
@@ -412,7 +445,6 @@
 			84E21FAB0FF392380081287A /* PBXTextBookmark */ = 84E21FAB0FF392380081287A /* PBXTextBookmark */;
 			84E2214E0FF3D59C0081287A /* PBXTextBookmark */ = 84E2214E0FF3D59C0081287A /* PBXTextBookmark */;
 			84E2214F0FF3D59C0081287A /* PBXTextBookmark */ = 84E2214F0FF3D59C0081287A /* PBXTextBookmark */;
-			84F1FE4D10A073B60030B1F2 /* PBXTextBookmark */ = 84F1FE4D10A073B60030B1F2 /* PBXTextBookmark */;
 			84F90F3C0F13E208007455BB /* PBXTextBookmark */ = 84F90F3C0F13E208007455BB /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84C109000F0A775200B2DF7A /* Source Control */;
@@ -535,16 +567,6 @@
 		rType = 0;
 		vrLen = 695;
 		vrLoc = 561;
-	};
-	84E1E70A107CDCAB0097C321 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8434CB79100DBB410063673E /* TWidget.h */;
-		name = "TWidget.h: 44";
-		rLen = 7;
-		rLoc = 1241;
-		rType = 0;
-		vrLen = 2342;
-		vrLoc = 3062;
 	};
 	84E2170D0FF179230081287A /* TInputInterface.cpp:72 */ = {
 		isa = PBXFileBreakpoint;
@@ -943,16 +965,6 @@
 		modificationTime = 276617265.226296;
 		originalNumberOfMultipleMatches = 0;
 		state = 2;
-	};
-	84F1FE4D10A073B60030B1F2 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8434CB79100DBB410063673E /* TWidget.h */;
-		name = "TWidget.h: 44";
-		rLen = 7;
-		rLoc = 1241;
-		rType = 0;
-		vrLen = 2340;
-		vrLoc = 3062;
 	};
 	84F90F3C0F13E208007455BB /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
