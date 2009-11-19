@@ -260,6 +260,7 @@ public:
 	template<typename MATCHTYPE>
 	TPtr<T>&						FindChildMatch(const MATCHTYPE& Value);				//	find a TPtr in the graph that matches the specified value (will use == operator of node type to match)
 	FORCEINLINE TPtr<T>&			FindChild(const TRef& NodeRef)						{	return FindChildMatch(NodeRef);	}
+	TRef							FindChildOfType(TRefRef NodeTypeRef);
 
 	FORCEINLINE Bool				operator==(const TPtr<TGraphNode<T> >& pNode) const	{	return this == pNode.GetObjectPointer();	}
 	FORCEINLINE Bool				operator==(const TGraphNode<T>& Node) const			{	return this == (&Node);	}
@@ -440,6 +441,30 @@ TPtr<T>&	TLGraph::TGraphNode<T>::FindChildMatch(const MATCHTYPE& Value)
 	//	no match
 	return TLPtr::GetNullPtr<T>();
 }
+
+
+//---------------------------------------------------------
+// Searches for a child node of the type TypeRef.
+// Returns a TRef of a child of the specified type if found, otherwise returns an invalid TRef
+//---------------------------------------------------------
+template <class T>
+TRef	TLGraph::TGraphNode<T>::FindChildOfType(TRefRef TypeRef)		
+{
+	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
+	{
+		TPtr<T>& pChild = m_Children[c];
+		if ( pChild->GetNodeTypeRef() == TypeRef )
+			return pChild->GetNodeRef();
+		
+		TRef ChildRef = pChild->FindChildOfType( TypeRef );
+		if ( ChildRef.IsValid() )
+			return ChildRef;
+	}
+	
+	//	no match
+	return TRef();
+}
+
 
 
 //-------------------------------------------------------

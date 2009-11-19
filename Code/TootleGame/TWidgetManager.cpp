@@ -437,15 +437,15 @@ void TWidgetManager::OnInputDeviceRemoved(TRefRef DeviceRef, TRefRef DeviceTypeR
 
 TRef TWidgetManager::CreateWidget(TRefRef RenderTargetRef, TRefRef InstanceRef, TRefRef TypeRef)
 {
-	// Find group to add the widget ref to and if not ofund create a new one
+	// Find group to add the widget ref to and if not found create a new one
 	Bool bGroupCreated = FALSE;
 	
-	TArray<TRef>* pGroupArray = m_pWidgets.Find(RenderTargetRef);
+	TArray<TRef>* pGroupArray = m_WidgetRefs.Find(RenderTargetRef);
 	
 	if(!pGroupArray)
 	{
 		TArray<TRef> NewArray;
-		pGroupArray = m_pWidgets.Add(RenderTargetRef, NewArray);
+		pGroupArray = m_WidgetRefs.Add(RenderTargetRef, NewArray);
 		
 		// Failed?
 		if(!pGroupArray)
@@ -476,7 +476,9 @@ TRef TWidgetManager::CreateWidget(TRefRef RenderTargetRef, TRefRef InstanceRef, 
 	{
 		if(bGroupCreated)
 		{
-			//TODO: Remove the group again if no widget was created
+			pGroupArray = NULL;
+			// Remove the group again if no widget was created
+			m_WidgetRefs.Remove(RenderTargetRef);
 		}
 		
 		return TRef();
@@ -489,6 +491,49 @@ TRef TWidgetManager::CreateWidget(TRefRef RenderTargetRef, TRefRef InstanceRef, 
 	
 	return FinalWidgetRef;
 }
+
+Bool TWidgetManager::RemoveWidget(TRefRef InstanceRef)
+{
+	Bool bResult = FALSE;
+	u32 uIndex = 0;
+	
+	// Remove the ref from our rendertarget-widget mapping
+	for(; uIndex < m_WidgetRefs.GetSize(); uIndex++)
+	{
+		TArray<TRef>& Array = m_WidgetRefs.GetItemAt(uIndex);
+		
+		bResult = Array.Remove(InstanceRef);
+		
+		// InstanceRef removed from the array?
+		if(bResult)
+		{
+			// No more items in the array?  Remove from the key array
+			if(Array.GetSize() == 0)
+				m_WidgetRefs.RemoveAt(uIndex);
+			
+			break;
+		}
+	}
+
+	TLDebug_Assert(bResult,"Failed to remove widget instanceref");
+
+	
+	// Now remove from the factory
+	bResult = FALSE;
+	
+	for(uIndex = 0; uIndex < m_WidgetFactories.GetSize(); uIndex++)
+	{
+		bResult = m_WidgetFactories[uIndex]->Remove(InstanceRef);		
+		
+		if(bResult)
+			break;
+	}
+
+	TLDebug_Assert(bResult,"Failed to remove widget");
+	
+	return bResult;
+}
+
 
 void TWidgetManager::SendMessageToWidget(TRefRef WidgetRef, TLMessaging::TMessage& Message)
 {

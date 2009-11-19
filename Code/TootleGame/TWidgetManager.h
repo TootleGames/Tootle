@@ -36,6 +36,7 @@ public:
 	}
 	
 	TRef				CreateWidget(TRefRef RenderTargetRef, TRefRef InstanceRef, TRefRef TypeRef);
+	Bool				RemoveWidget(TRefRef InstanceRef);
 	
 	void				SendMessageToWidget(TRefRef WidgetRef, TLMessaging::TMessage& Message);
 
@@ -79,7 +80,7 @@ private:
 	
 	TArray<TActionRefData>	m_WidgetActionRefs;
 	
-	TKeyArray< TRef, TArray<TRef> >	m_pWidgets;			// Array of widget ref's organised with a TRenderTarget TRef as the key
+	TKeyArray< TRef, TArray<TRef> >	m_WidgetRefs;			// Array of widget ref's organised with a TRenderTarget TRef as the key
 	TPtrArray< TClassFactory<TWidget,TRUE> >	m_WidgetFactories;		//	array of widget factories.
 };
 
