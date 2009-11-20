@@ -15,24 +15,19 @@
 namespace TLRender
 {
 	class TRenderNodeScrollableView;
+
+	const u8 TRenderNodeScrollableView_LimitX = 1<<0;
+	const u8 TRenderNodeScrollableView_LimitY = 1<<1;
+	const u8 TRenderNodeScrollableView_LimitZ = 1<<2;	
+	
 }
 
 class TLRender::TRenderNodeScrollableView : public TLRender::TRenderNode
 {
-public:
-	TRenderNodeScrollableView(TRefRef RenderNodeRef=TRef(),TRefRef TypeRef=TRef()) :
-		TRenderNode					( RenderNodeRef, TypeRef ),
-		m_ClipDatumRef				( TLRender_TRenderNode_DatumBoundsBox2D ),
-		m_uTempMomentumUpdateCount	( 0 ),
-		m_bVerticalScroll			( TRUE ),
-		m_bHorizontalScroll			( TRUE ),
-		m_bDepthScroll				( FALSE ),
-		m_AlignChildrenToClipDatum	( TRUE ),
-		m_bUseMomentum				( FALSE ),
-		m_ChildWorldTransformValid	( SyncFalse )
-	{
-	}
 
+	
+public:
+	TRenderNodeScrollableView(TRefRef RenderNodeRef=TRef(),TRefRef TypeRef=TRef());
 	//virtual Bool							Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList)		{ return FALSE; }
 
 protected:
@@ -53,17 +48,22 @@ protected:
 
 private:
 	void									OnRenderTargetRefChange(TLRender::TRenderTarget* pRenderTarget=NULL);
-	void									OnScrollChanged();														//	called when scroll changes
 	void									OnOffsetChanged()														{	OnScrollChanged();	}
 	void									OnDatumChanged()														{	OnRenderTargetRefChange(NULL);	}		//	recalc view box if datum changes or moves
+
+	void									ChangeScroll(const float3& delta, u8& uLimited);
+	void									OnScrollChanged();														//	called when scroll changes
 
 private:
 	TLMaths::TTransform			m_ScrollTransform;		//	gr: keep the scroll in a transform so we don't need to create a transform twice every render
 	TLMaths::TBox2D				m_ViewBox;				//	gr: if we end up having multiple render targets then turn this into a keyarray so we have a view box for each render target
 
+	TLMaths::TBox2D				m_LimitBox;				//	Box to limit the movement within. NOTE: may need to be 3D one day. 
+	
 	TRef						m_ClipDatumRef;
 	TLMaths::TTransform			m_ClipDatumOffset;		//	"cached" offset for aligning children to the clip datum in local space (the offset will be local)
 	TRef						m_RenderTargetRef;
+
 	
 	float3						m_fMomentum;					// Momentum of the scroll
 	float3						m_fTempMomentum;				// Temp momentum from touch/mouse movements
@@ -74,7 +74,8 @@ private:
 	Bool						m_bDepthScroll;				//	allow scroll on z
 	Bool						m_AlignChildrenToClipDatum;	//	if true, 0,0,0 position on a child will be at the top left of the clipping box
 	Bool						m_bUseMomentum;				//	allow momentum movement
-
+	Bool						m_bLimitToBounds;			//  allow limiting movement to within bounds
+	
 	TLMaths::TTransform			m_ChildWorldTransform;		//	cache of the children's world transform
 	SyncBool					m_ChildWorldTransformValid;	//	
 };

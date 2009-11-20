@@ -2,8 +2,27 @@
 #include "TRenderTarget.h"
 #include "TScreenManager.h"
 #include <TootleMaths/TShapeBox.h>
+#include <TootleCore/TLMaths.h>
 
 using namespace TLRender;
+
+
+TRenderNodeScrollableView::TRenderNodeScrollableView(TRefRef RenderNodeRef,TRefRef TypeRef) :
+	TRenderNode					( RenderNodeRef, TypeRef ),
+	m_LimitBox					( -TLMaths_FloatMax, -TLMaths_FloatMax, TLMaths_FloatMax, TLMaths_FloatMax),
+	m_ClipDatumRef				( TLRender_TRenderNode_DatumBoundsBox2D ),
+	m_uTempMomentumUpdateCount	( 0 ),
+	m_bVerticalScroll			( TRUE ),
+	m_bHorizontalScroll			( TRUE ),
+	m_bDepthScroll				( FALSE ),
+	m_AlignChildrenToClipDatum	( TRUE ),
+	m_bUseMomentum				( FALSE ),
+	m_bLimitToBounds			( FALSE ),
+	m_ChildWorldTransformValid	( SyncFalse )
+{
+}
+
+
 
 void TRenderNodeScrollableView::SetProperty(TLMessaging::TMessage& Message)
 {
@@ -23,6 +42,12 @@ void TRenderNodeScrollableView::SetProperty(TLMessaging::TMessage& Message)
 		OnOffsetChanged();
 	
 	Message.ImportData("Momentum", m_bUseMomentum);	
+
+	m_bLimitToBounds |= Message.ImportData("XMinLimit", m_LimitBox.GetMin().x);
+	m_bLimitToBounds |= Message.ImportData("YMinLimit", m_LimitBox.GetMin().y);
+	
+	m_bLimitToBounds |= Message.ImportData("XMaxLimit", m_LimitBox.GetMax().x);
+	m_bLimitToBounds |= Message.ImportData("YMaxLimit", m_LimitBox.GetMax().y);
 }
 
 
@@ -42,11 +67,8 @@ void TRenderNodeScrollableView::ProcessMessage(TLMessaging::TMessage& Message)
 				m_ScrollTransform.SetTranslateValid();
 
 				//	 change scroll
-				if(m_bVerticalScroll)		GetScroll().y += Change.y;
-				if(m_bHorizontalScroll)		GetScroll().x += Change.x;
-				if(m_bDepthScroll)			GetScroll().z += Change.z;
-
-				OnScrollChanged();
+				u8 uLimited = 0;
+				ChangeScroll(Change, uLimited);
 				
 				if(m_bUseMomentum)
 				{
@@ -73,11 +95,8 @@ void TRenderNodeScrollableView::ProcessMessage(TLMessaging::TMessage& Message)
 			m_ScrollTransform.SetTranslateValid();
 
 			//	 change scroll
-			if(m_bVerticalScroll)	GetScroll().y += Change.y;
-			if(m_bHorizontalScroll)	GetScroll().x += Change.x;
-			if(m_bDepthScroll)		GetScroll().z += Change.z;
-		
-			OnScrollChanged();
+			u8 uLimited = 0;
+			ChangeScroll(Change, uLimited);
 			
 			if(m_bUseMomentum)
 			{
@@ -114,6 +133,82 @@ void TRenderNodeScrollableView::ProcessMessage(TLMessaging::TMessage& Message)
 
 	TRenderNode::ProcessMessage(Message);
 }
+
+
+void TRenderNodeScrollableView::ChangeScroll(const float3& delta, u8& uLimited)
+{
+	//	 change scroll
+	if(m_bVerticalScroll)	GetScroll().y += delta.y;
+	if(m_bHorizontalScroll)	GetScroll().x += delta.x;
+	if(m_bDepthScroll)		GetScroll().z += delta.z;
+	
+	
+	// Get the bounds box for the child node(s)
+	/*
+	 
+	// NOTE: Bounds are going to be in 3D world space. Need transforming into screen space but not clipped to world view
+	//		 Also, the bounds needs to be of the children not this node which doesn't *appear* to include
+	//		 the children.  This could be because they don't get drawn in the same way or something?  Not sure.
+	//		 Either way this is wrong.  When sorted should precalc everything and store in the m_LimitBox
+	//		 so we don't have to do too much work to get this info.
+	 
+	TPtr<TLRender::TScreen> pScreen;
+	TLRender::TRenderTarget* pRenderTarget = TLRender::g_pScreenManager->GetRenderTarget( m_RenderTargetRef, pScreen );
+
+	const TLMaths::TBox2D& box = GetLocalBoundsBox2D().GetBox();
+	
+		 
+	Type2<s32> ScreenPos;
+	float fHeight = 10000.0f;
+	
+	float z = GetTransform().HasTranslate() ? GetTranslate().z : 0.f;
+	float3 BoxBottomLeft( box.GetMin().x, box.GetMax().y, z );
+	
+	// Get bottom left corner of box as min point
+	if(pScreen->GetScreenPosFromWorldPos(*pRenderTarget, BoxBottomLeft, ScreenPos))
+		fHeight = ScreenPos.y;
+	*/
+	
+	if(m_bLimitToBounds)
+	{
+		// Limit the scroll changes to within the bounds of the child nodes
+		if(m_bVerticalScroll)
+		{
+			//NOTE: These checks are inverted due to how the menu on Rocket uses them for now.
+			if(GetScroll().y > m_LimitBox.GetMin().y)
+			{
+				GetScroll().y = m_LimitBox.GetMin().y;
+				uLimited |= TLRender::TRenderNodeScrollableView_LimitY;
+			}
+			else if(GetScroll().y < -m_LimitBox.GetHeight())
+			{
+				GetScroll().y = -m_LimitBox.GetHeight();
+				uLimited |= TLRender::TRenderNodeScrollableView_LimitY;		
+			}
+		}
+		
+		if(m_bHorizontalScroll)
+		{
+			//NOTE: These checks are inverted due to how the menu on Rocket uses them for now.
+			if(GetScroll().x > m_LimitBox.GetMin().x)
+			{
+				GetScroll().x = m_LimitBox.GetMin().x;
+				uLimited |= TLRender::TRenderNodeScrollableView_LimitX;
+			}
+			else if(GetScroll().x < -m_LimitBox.GetWidth())
+			{
+				GetScroll().x = -m_LimitBox.GetWidth();
+				uLimited |= TLRender::TRenderNodeScrollableView_LimitX;		
+			}
+		}
+		
+		//TODO: Depth scroll limiting
+	}
+	
+	
+	OnScrollChanged();	
+}
+
 
 
 void TRenderNodeScrollableView::OnRenderTargetRefChange(TLRender::TRenderTarget* pRenderTarget)
@@ -234,9 +329,21 @@ void TRenderNodeScrollableView::PreDrawChildren(TLRender::TRenderTarget& RenderT
 	{
 		m_fMomentum = TLMaths::Interp(m_fMomentum, float3(0.0f,0.0f,0.0f), 0.07f);
 	
-		GetScroll() += m_fMomentum;
+		u8 uLimited = 0;
+		ChangeScroll(m_fMomentum, uLimited);
+		/*
+		// NOTE: Gives a bounce-off-wall type of effect which could be useful at some point
+		// If limited, invert the momentum.
+		if(uLimited & TLRender::TRenderNodeScrollableView_LimitY)
+			m_fMomentum.y *= -1.0f;
+
+		if(uLimited & TLRender::TRenderNodeScrollableView_LimitX)
+			m_fMomentum.x *= -1.0f;
 		
-		OnScrollChanged();
+		if(uLimited & TLRender::TRenderNodeScrollableView_LimitZ)
+			m_fMomentum.z *= -1.0f;
+		 */
+
 	}
 	
 	//	if we havent calculated a view box for this render target, then do it
