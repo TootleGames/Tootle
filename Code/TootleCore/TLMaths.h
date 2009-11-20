@@ -7,6 +7,7 @@
 
 
 #include <math.h>		//	gr: not sure if this is platform specific?
+#include <float.h>		//	db: platform specific? Needed for FLT_MAX and FLT_MIN
 #include <stdlib.h>		//	gr: platform specific? needed for rand() and srand()
 #include "TLTypes.h"
 #include "TLDebug.h"
@@ -117,6 +118,8 @@ namespace TLMaths
 	#define TLMaths_NearZero				0.0001f
 	#define TLMaths_NearOne					(1.f - TLMaths_NearZero)		//	value just less than one - used to check stuff is almost at 1 when normally between 0..1
 
+	#define TLMaths_FloatMax				FLT_MAX
+	#define TLMaths_FloatMin				FLT_MIN
 }
 
 
