@@ -460,11 +460,19 @@ TRef TWidgetManager::CreateWidget(TRefRef RenderTargetRef, TRefRef InstanceRef, 
 	// Now create the actual widget object
 	TPtr<TWidget> pWidget;
 	
+	TRef FinalWidgetRef = InstanceRef;
+	
+	// While the instance ref is not unique, increment the ref
+	while(FindWidget(FinalWidgetRef).IsValid())
+	{
+		FinalWidgetRef.Increment();
+	}
+	
 	
 	// Create new widget via the factories
 	for(u32 uIndex=0; uIndex < m_WidgetFactories.GetSize(); uIndex++)
 	{
-		m_WidgetFactories[uIndex]->CreateInstance( pWidget, InstanceRef, TypeRef );
+		m_WidgetFactories[uIndex]->CreateInstance( pWidget, FinalWidgetRef, TypeRef );
 		
 		// If a widget was created then carry on otherwise try the next factory
 		if ( pWidget )
@@ -484,7 +492,7 @@ TRef TWidgetManager::CreateWidget(TRefRef RenderTargetRef, TRefRef InstanceRef, 
 		return TRef();
 	}
 	
-	TRef FinalWidgetRef = pWidget->GetWidgetRef();
+	FinalWidgetRef = pWidget->GetWidgetRef();
 	
 	// Add the widget ref to our group of widgets
 	pGroupArray->Add(FinalWidgetRef);
@@ -492,8 +500,9 @@ TRef TWidgetManager::CreateWidget(TRefRef RenderTargetRef, TRefRef InstanceRef, 
 	return FinalWidgetRef;
 }
 
-Bool TWidgetManager::RemoveWidget(TRefRef InstanceRef)
+Bool TWidgetManager::DoRemoveWidget(TRefRef InstanceRef)
 {
+
 	Bool bResult = FALSE;
 	u32 uIndex = 0;
 	

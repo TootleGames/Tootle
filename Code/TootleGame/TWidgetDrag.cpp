@@ -6,7 +6,11 @@
 
 
 TLGui::TWidgetDrag::TWidgetDrag(TRefRef InstanceRef, TRefRef TypeRef)	:
-	TLGui::TWidget(InstanceRef, TypeRef)
+	TLGui::TWidget(InstanceRef, TypeRef),
+	m_Dragging				( SyncFalse ),
+	m_DragMinimum			( DEFAULT_DRAG_MIN ),
+	m_HoriztonalDragEnabled	( TRUE ),
+	m_VerticalDragEnabled	( TRUE )
 {
 }
 

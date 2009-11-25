@@ -36,7 +36,7 @@ public:
 	}
 	
 	TRef				CreateWidget(TRefRef RenderTargetRef, TRefRef InstanceRef, TRefRef TypeRef);
-	Bool				RemoveWidget(TRefRef InstanceRef);
+	FORCEINLINE Bool	RemoveWidget(TRefRef InstanceRef);
 	
 	void				SendMessageToWidget(TRefRef WidgetRef, TLMessaging::TMessage& Message);
 
@@ -62,6 +62,8 @@ protected:
 
 	void			OnInputDeviceAdded(TRefRef refDeviceID, TRefRef refDeviceType);
 	void			OnInputDeviceRemoved(TRefRef refDeviceID, TRefRef refDeviceType);
+	
+	Bool			DoRemoveWidget(TRefRef InstanceRef);
 
 	// Action mapping
 #ifdef TL_TARGET_IPOD
@@ -83,6 +85,16 @@ private:
 	TKeyArray< TRef, TArray<TRef> >	m_WidgetRefs;			// Array of widget ref's organised with a TRenderTarget TRef as the key
 	TPtrArray< TClassFactory<TWidget,TRUE> >	m_WidgetFactories;		//	array of widget factories.
 };
+
+
+FORCEINLINE Bool TLGui::TWidgetManager::RemoveWidget(TRefRef InstanceRef)
+{ 
+	if(InstanceRef.IsValid()) 
+		return DoRemoveWidget(InstanceRef); 
+	
+	TLDebug_Print("Passing invalid widget ref to TWidgetManager::RemoveWidget");
+	return FALSE;
+}
 
 
 
