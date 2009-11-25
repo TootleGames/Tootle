@@ -1052,7 +1052,13 @@ void TLRender::TRenderNode::OnAttachDatumChanged()
 	}
 
 	//	position to datum's center
-	SetTranslate( pDatum->GetCenter() );
+	float3 vPos = pDatum->GetCenter();
+	
+	// [24/11/09] DB - Hmm... a bit arbitrary.  This is an offset in the z so that the node doesn't end up behind it's parent node.
+	// There must be a better way of doing this via the data so it can be customised per node.
+	// 2.5 works for the 'sign' object in the Rocket project.  Any less and it appears behind the parent node. :(
+	vPos.z = 2.5f;
+	SetTranslate( vPos );
 
 	//	position is now up to date
 	m_AttachDatumValid = TRUE;
