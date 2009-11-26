@@ -1598,7 +1598,7 @@ Bool TLAsset::TMesh::CreateDatum(const TArray<float3>& PolygonPoints,TRefRef Dat
 		AddDatum( DatumRef, pShape );
 		return TRUE;
 	}
-	else if ( DatumShapeType == TLMaths::TBox::GetTypeRef() )
+	else if ( DatumShapeType == TLMaths_ShapeRef_TBox3D || DatumShapeType == TLMaths::TBox::GetTypeRef() )
 	{
 		//	get box of points for extents
 		TLMaths::TBox Box;

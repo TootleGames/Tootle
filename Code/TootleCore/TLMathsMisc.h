@@ -15,6 +15,7 @@ namespace TLMaths
 	//	gr: these macros are just here to keep the compiled ref usage, they're not NEEDED but saves us using TRef_Static(B,o,x,2) etc everywhere
 	#define TLMaths_ShapeRef_TBox			TRef_Static3(B,o,x)
 	#define TLMaths_ShapeRef_TBox2D			TRef_Static4(B,o,x,TWO)
+	#define TLMaths_ShapeRef_TBox3D			TRef_Static4(B,o,x,THREE)
 	#define TLMaths_ShapeRef_TCapsule		TRef_Static3(C,a,p)
 	#define TLMaths_ShapeRef_TCapsule2D		TRef_Static4(C,a,p,TWO)
 	#define TLMaths_ShapeRef_TLine			TRef_Static4(L,i,n,e)

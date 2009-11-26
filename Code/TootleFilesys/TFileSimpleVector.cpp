@@ -313,6 +313,7 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 					break;
 				}
 
+				case 'm':
 				case 'M':	//	new contour
 				{
 					//	finish current contour
@@ -337,6 +338,12 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 				}
 				break;
 
+				case 'l':
+				{
+					LastCommand = NewCommand;
+				}
+				break;
+					
 				case 'L':	//	line to here
 				case 'C':	//	line to here
 				{
@@ -371,11 +378,11 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 		//	no command, continue last command
 		
 		//	line
-		if ( LastCommand == 'L' || LastCommand == 'H' || LastCommand == 'V' )
+		if ( LastCommand == 'L' || LastCommand == 'l' || LastCommand == 'H' || LastCommand == 'V' )
 		{
 			float2 NewPos = CurrentPosition;
 
-			if  ( LastCommand == 'L' )
+			if  ( LastCommand == 'L' || LastCommand == 'l')
 			{
 				//	read new pos
 				if ( !TLString::ReadNextFloat( String, CharIndex, NewPos ) )
