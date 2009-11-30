@@ -339,12 +339,8 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 				break;
 
 				case 'l':
-				{
-					LastCommand = NewCommand;
-				}
-				break;
-					
 				case 'L':	//	line to here
+				case 'c':
 				case 'C':	//	line to here
 				{
 					//	set command and let code continue to do simple process
@@ -419,7 +415,7 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 			PathCurves.Add( TLMaths::ContourCurve_On );
 			CurrentPosition = NewPos;
 		}
-		else if ( LastCommand == 'C' )
+		else if(( LastCommand == 'C' ) || ( LastCommand == 'c' ))
 		{
 			//	cubic curve - 
 			//	read control point A (before)
@@ -443,18 +439,35 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 				TLDebug_Break("Expected a previous point to start the cubic curve from... maybe need to add the pos from M?");
 				continue;
 			}
+			
+			float2 NewPosition, NewCubicControlPointA, NewCubicControlPointB;
+			
+			if ( TLString::IsCharLowercase( LastCommand ) )
+			{
+				// Relative points
+				NewPosition = CurrentPosition + CubicPointPosition;				
+				NewCubicControlPointA = CurrentPosition + CubicControlPointA;
+				NewCubicControlPointB = CurrentPosition + CubicControlPointB;
+			}
+			else 
+			{
+				// Absolute point
+				NewPosition = CubicPointPosition;
+				NewCubicControlPointA = CubicControlPointA;
+				NewCubicControlPointB = CubicControlPointB;
+			}
 
 			//	add these in the right order (as per tesselator)
-			PathPoints.Add( CoordinateToVertexPos( CubicControlPointA ) );
+			PathPoints.Add( CoordinateToVertexPos( NewCubicControlPointA ) );
 			PathCurves.Add( TLMaths::ContourCurve_Cubic );
-
-			PathPoints.Add( CoordinateToVertexPos( CubicControlPointB ) );
+			
+			PathPoints.Add( CoordinateToVertexPos( NewCubicControlPointB ) );
 			PathCurves.Add( TLMaths::ContourCurve_Cubic );
-
-			PathPoints.Add( CoordinateToVertexPos( CubicPointPosition ) );
+			
+			PathPoints.Add( CoordinateToVertexPos( NewPosition ) );
 			PathCurves.Add( TLMaths::ContourCurve_On );
-
-			CurrentPosition = CubicPointPosition;
+			
+			CurrentPosition = NewPosition;
 		}
 		else if ( LastCommand == 'Z' || LastCommand == 'z' )
 		{
