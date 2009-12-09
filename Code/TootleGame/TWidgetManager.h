@@ -50,7 +50,7 @@ public:
 	FORCEINLINE TRef	GetMoveActionFromClickAction(TRefRef ClickActionRef);
 
 
-	FORCEINLINE Bool	AddFactory(TPtr< TClassFactory<TWidget,TRUE> >& pFactory)	{ return m_WidgetFactories.Add(pFactory); }
+	FORCEINLINE Bool	AddFactory(TPtr< TClassFactory<TWidget,TRUE> >& pFactory)	{ return m_WidgetFactories.Add(pFactory)!=-1; }
 	
 protected:
 	virtual SyncBool Initialise();
