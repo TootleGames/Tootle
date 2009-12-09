@@ -2,10 +2,6 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#ifdef _MSC_EXTENSIONS
-	#include <string.h>		// strlen
-#endif
-
 #if defined(_VA_LIST_DEFINED) || defined(_VA_LIST)
 	#define ENABLE_VA_LIST
 #else
@@ -16,7 +12,7 @@
 //-------------------------------------------------------------
 //	test if a character is a whitespace
 //-------------------------------------------------------------
-Bool TLString::IsCharWhitespace(const char& Char)
+Bool TLString::IsCharWhitespace(const TChar& Char)
 {
 	//	gr: I *think* ! is the first char...
 	if ( Char < '!' )
@@ -36,7 +32,7 @@ Bool TLString::IsCharWhitespace(const char& Char)
 //-------------------------------------------------------------
 //	test if a character is a whitespace
 //-------------------------------------------------------------
-Bool TLString::IsCharLetter(const char& Char)
+Bool TLString::IsCharLetter(const TChar& Char)
 {
 	if ( ( Char >= 'A' && Char <= 'Z' ) || ( Char >= 'a' && Char <= 'z' ) )
 	{
@@ -49,7 +45,7 @@ Bool TLString::IsCharLetter(const char& Char)
 //-------------------------------------------------------------
 //	test if a character is a lowercase letter
 //-------------------------------------------------------------
-Bool TLString::IsCharLowercase(const char& Char)
+Bool TLString::IsCharLowercase(const TChar& Char)
 {
 	if ( Char >= 'a' && Char <= 'z' )
 	{
@@ -62,7 +58,7 @@ Bool TLString::IsCharLowercase(const char& Char)
 //-------------------------------------------------------------
 //	test if a character is an uppercase letter
 //-------------------------------------------------------------
-Bool TLString::IsCharUppercase( const char& Char)
+Bool TLString::IsCharUppercase( const TChar& Char)
 {
 	if ( Char >= 'A' && Char <= 'Z' )
 	{
@@ -75,7 +71,7 @@ Bool TLString::IsCharUppercase( const char& Char)
 //-------------------------------------------------------------
 //	test if a character is a whitespace
 //-------------------------------------------------------------
-Bool TLString::SetCharLowercase(char& Char)
+Bool TLString::SetCharLowercase(TChar& Char)
 {
 	if ( Char >= 'A' && Char <= 'Z' )
 	{
@@ -90,13 +86,13 @@ Bool TLString::SetCharLowercase(char& Char)
 //-------------------------------------------------------------
 //	return lowercase version of char
 //-------------------------------------------------------------
-char TLString::GetCharLowercase(const char& Char)
+TChar TLString::GetCharLowercase(const TChar& Char)
 {
-	if ( Char >= 'A' && Char <= 'Z' )
+	if ( Char >= TLCharString('A') && Char <= TLCharString('Z') )
 	{
-		char NewChar = Char;
-		NewChar -= 'A';
-		NewChar += 'a';
+		TChar NewChar = Char;			//	A..Z
+		NewChar -= TLCharString('A');	//	0..26
+		NewChar += TLCharString('a');	//	a..z
 		return NewChar;
 	}
 
@@ -106,7 +102,7 @@ char TLString::GetCharLowercase(const char& Char)
 //-------------------------------------------------------------
 //	test if a character is a whitespace
 //-------------------------------------------------------------
-Bool TLString::SetCharUppercase(char& Char)
+Bool TLString::SetCharUppercase(TChar& Char)
 {
 	if ( Char >= 'a' && Char <= 'z' )
 	{
@@ -122,7 +118,7 @@ Bool TLString::SetCharUppercase(char& Char)
 //-------------------------------------------------------------
 //	turn this character into an integer, -1 means its not a number
 //-------------------------------------------------------------
-s32 TLString::GetCharInteger(const char& Char)
+s32 TLString::GetCharInteger(const TChar& Char)
 {
 	if ( Char >= '0' && Char <= '9' )
 	{
@@ -136,7 +132,7 @@ s32 TLString::GetCharInteger(const char& Char)
 //-------------------------------------------------------------
 //	turn this hexidecimal character into an integer, -1 means its not a number
 //-------------------------------------------------------------
-s32 TLString::GetCharHexInteger(const char& Char)
+s32 TLString::GetCharHexInteger(const TChar& Char)
 {
 	if ( Char >= '0' && Char <= '9' )
 		return Char - '0';
@@ -151,25 +147,10 @@ s32 TLString::GetCharHexInteger(const char& Char)
 }
 
 
-u32 TLString::Platform::Strlen(const char* pString)
-{
-#ifdef _MSC_EXTENSIONS
-	return strlen( pString );
-#else
-	u32 Len = 0;
-	while ( pString[Len] != 0x0 )
-	{
-		Len++;
-	}
-	return Len;
-#endif
-}
-
-
 //-------------------------------------------------------------
 //	formatted constructor
 //-------------------------------------------------------------
-TString::TString(const CHARTYPE* pString,...) : 
+TString::TString(const TChar8* pString,...) : 
 	m_DataArray ( NULL, TLString_StringGrowBy )
 {
 	if ( !pString )
@@ -178,137 +159,22 @@ TString::TString(const CHARTYPE* pString,...) :
 #ifdef ENABLE_VA_LIST
 	va_list v;
 	va_start( v, pString );
-
-	u32 BufferSize = TLString::Platform::Strlen( pString ) + 100;
-	if ( BufferSize < 512 )
-		BufferSize = 512;
-	
-	SetLength( BufferSize );
-#if defined(TL_TARGET_IPOD)
-	int NewLength = vsprintf( GetData(), pString, v );
-#elif defined(TL_TARGET_MAC)
-	int NewLength = vsprintf( GetData(), pString, v );
-#else
-	int NewLength = vsprintf_s( GetData(), GetLength(), pString, v );
-#endif
-
-	//	set the length of the string - but dont force terminator
-	SetLength( NewLength, FALSE );
-
+	AppendVaList( pString, v );
 	va_end( v );
 #else
 	Set( pString );
-#endif
 
 	//	string has been set
 	OnStringChanged();
+#endif
 }
 
 
-
-//------------------------------------------------------
-//		currently just dynamic char's
-//------------------------------------------------------
-void TString::Append(const CHARTYPE* pString,s32 Length)
-{
-	//	nothing to append...
-	if ( Length == 0 || !pString )
-		return;
-
-	//	string starts with a terminator
-	if ( pString[0] == TLString_Terminator )
-		return;
-
-	//	remove existing terminator to write following straight after
-	RemoveTerminator();
-
-	//	append string
-	u32 Start = GetStringArray().GetSize();
-
-	//	grow if we know the length
-	if ( Length != -1 )
-	{
-		u32 NewLength = Start + Length;
-		if ( !GetStringArray().SetSize( NewLength ) )
-		{
-			Length = GetLength() - Start;
-			TTempString DebugString;
-			DebugString.Appendf("Warning: String chopped - wanted to add %d - only appending %d chars (%d total)", NewLength-Start, Length, GetLength() );
-			TLDebug_Print( DebugString );
-		}
-
-		TArray<char>& StringArray = GetStringArray();
-		for ( u32 i=0;	i<(u32)Length;	i++ )
-		{
-			//	buffer allocated so write straight into buffer
-			StringArray[Start+i] = pString[i];
-		}
-	}
-	else
-	{
-		TArray<char>& StringArray = GetStringArray();
-		const char* pChar = &pString[0];
-		while ( (*pChar) != 0x0 )
-		{
-			//	buffer not allocated so do normal add routine
-			s32 NewIndex = StringArray.Add( *pChar );
-
-			//	run out of memory/array
-			if ( NewIndex == -1 )
-				break;
-
-			pChar++;
-		}
-	}
-
-	//	ensure there's a terminator on the end
-	AddTerminator();
-
-	OnStringChanged( Start );
-}
-
-
-//------------------------------------------------------
-//	append a single character onto the string
-//------------------------------------------------------
-void TString::Append(const CHARTYPE& Char)
-{
-	s32 CharIndex = -1;
-	TArray<char>& StringArray = GetStringArray();
-
-	//	string is empty, just add character and terminator directly
-	if ( GetLength() == 0 )
-	{
-		CharIndex = StringArray.Add( Char );
-	}
-	else
-	{
-		//	replace terminator
-		s32 LastIndex = StringArray.GetLastIndex();
-		if ( StringArray[LastIndex] == TLString_Terminator )
-		{
-			StringArray[LastIndex] = Char;
-			CharIndex = LastIndex;
-		}
-		else
-		{
-			//	terminator is not last char, so just add this character
-			CharIndex = StringArray.Add( Char );
-		}
-	}
-
-	//	now add a terminator
-	AddTerminator();
-
-	OnStringChanged( CharIndex );
-}
-
-
-
-//------------------------------------------------------
-//		currently just dynamic char's
-//------------------------------------------------------
-void TString::Appendf(const CHARTYPE* pString,...)
+//-------------------------------------------------------------
+//	formatted constructor
+//-------------------------------------------------------------
+TString::TString(const TChar16* pString,...) : 
+	m_DataArray ( NULL, TLString_StringGrowBy )
 {
 	if ( !pString )
 		return;
@@ -316,32 +182,96 @@ void TString::Appendf(const CHARTYPE* pString,...)
 #ifdef ENABLE_VA_LIST
 	va_list v;
 	va_start( v, pString );
-
-	//	format up a new string and append that
-	/*
-	//	gr: stop recursive issues by not using a TString for the buffer
-	char Buffer[512];
-	int BufferStringLength = vsprintf_s( &Buffer[0], sizeof(Buffer), pString, v );
-	Append( Buffer, BufferStringLength );
-	*/
-	TBufferString<512> Buffer;
-	Buffer.SetLength(512);
-#if defined(TL_TARGET_IPOD)
-	int BufferStringLength = vsprintf( Buffer.GetData(), pString, v );
-#elif defined(TL_TARGET_MAC)
-	int BufferStringLength = vsprintf( Buffer.GetData(), pString, v );
+	AppendVaList( pString, v );
+	va_end( v );
 #else
-	int BufferStringLength = vsprintf_s( Buffer.GetData(), Buffer.GetLength(), pString, v );
-#endif
-	Buffer.SetLength( BufferStringLength );
-	Append( Buffer );
+	//	just set the format string
+	Set( pString );
 
+	//	string has been set
+	OnStringChanged();
+#endif
+}
+
+
+//-------------------------------------------------------------
+//	
+//-------------------------------------------------------------
+TString& TString::Appendf(const TChar8* pString,...)
+{
+	if ( !pString )
+		return *this;
+
+#ifdef ENABLE_VA_LIST
+	va_list v;
+	va_start( v, pString );
+	AppendVaList( pString, v );
+	va_end( v );
+#else
+	Append( pString );
+#endif
+
+	return *this;
+}
+
+//------------------------------------------------------
+//		currently just dynamic char's
+//------------------------------------------------------
+TString& TString::Appendf(const TChar16* pString,...)
+{
+	if ( !pString )
+		return (*this);
+
+#ifdef ENABLE_VA_LIST
+	va_list v;
+	va_start( v, pString );
+	AppendVaList( pString, v );
 	va_end( v );	
 #else
 	Append( pString );
 #endif
+
+	return (*this);
 }
 
+
+//------------------------------------------------------
+//	
+//------------------------------------------------------
+void TString::AppendVaList(const TChar16* pString,va_list& v)
+{
+	//	format up a new string and append that
+	TBufferString<512> Buffer;
+	Buffer.SetLength(512);
+
+#if defined(TL_TARGET_PC)
+	int BufferStringLength = _vsnwprintf_s( Buffer.GetData(), Buffer.GetLength(), _TRUNCATE, pString, v );
+#else
+	int BufferStringLength = _vsnwprintf_s( Buffer.GetData(), Buffer.GetLength(), pString, v );
+	//int BufferStringLength = vsprintf_s( Buffer.GetData(), Buffer.GetLength(), pString, v );
+#endif
+
+	Buffer.SetLength( BufferStringLength );
+	Append( Buffer );
+}
+
+//------------------------------------------------------
+//	
+//------------------------------------------------------
+void TString::AppendVaList(const TChar8* pString,va_list& v)
+{
+	//	format up a new string and append that
+	TArray<TChar8> Buffer;
+	Buffer.SetSize( TLString::Strlen( pString ) + 256 );
+
+#if defined(TL_TARGET_PC)
+	int BufferStringLength = vsprintf_s( Buffer.GetData(), Buffer.GetDataSize(), pString, v );
+#else
+	int BufferStringLength = vsprintf_s( Buffer.GetData(), Buffer.GetDataSize(), pString, v );
+#endif
+
+	Append( Buffer.GetData(), BufferStringLength );
+}
 
 
 //------------------------------------------------------
@@ -355,7 +285,7 @@ void TString::AddTerminator(Bool ForceTerminator)
 	if ( GetLength() <= 0 )
 		return;
 
-	TArray<char>& StringArray = GetStringArray();
+	TArray<TChar>& StringArray = GetStringArray();
 
 	//	last element is NOT a terminator... append one
 	if ( StringArray.ElementLast() != TLString_Terminator )
@@ -363,7 +293,7 @@ void TString::AddTerminator(Bool ForceTerminator)
 		if ( !ForceTerminator )
 		{
 			//	if we can't add a terminator, resort to forcing a terminator
-			if ( StringArray.Add( (CHARTYPE)TLString_Terminator ) == -1 )
+			if ( StringArray.Add( TLString_Terminator ) == -1 )
 				ForceTerminator = TRUE;
 		}
 
@@ -384,7 +314,7 @@ void TString::RemoveTerminator()
 	if ( GetLength() <= 0 )
 		return;
 
-	TArray<char>& StringArray = GetStringArray();
+	TArray<TChar>& StringArray = GetStringArray();
 
 	//	last element is a terminator so cut it off
 	while ( StringArray.ElementLast() == TLString_Terminator )
@@ -401,7 +331,7 @@ void TString::RemoveTerminator()
 //------------------------------------------------------
 //	get the length from some other type of string
 //------------------------------------------------------
-u32 TString::GetLength(const CHARTYPE* pString)
+u32 TString::GetLength(const TChar* pString)
 {
 	if ( !pString )
 		return 0;
@@ -430,8 +360,8 @@ Bool TString::IsEqual(const TString& String,Bool CaseSensitive) const
 	//	loop through chars and compare
 	for ( u32 i=0;	i<GetLength();	i++ )
 	{
-		char thischar = (!CaseSensitive) ? GetLowercaseCharAt(i) : GetCharAt(i);
-		char stringchar = (!CaseSensitive) ? String.GetLowercaseCharAt(i) : String.GetCharAt(i);
+		TChar thischar = (!CaseSensitive) ? GetLowercaseCharAt(i) : GetCharAt(i);
+		TChar stringchar = (!CaseSensitive) ? String.GetLowercaseCharAt(i) : String.GetCharAt(i);
 
 		//	different char found! abort!
 		if ( thischar != stringchar )
@@ -442,11 +372,11 @@ Bool TString::IsEqual(const TString& String,Bool CaseSensitive) const
 	return TRUE;
 }
 
-
+/*
 //------------------------------------------------------
 //	comparison to string
 //------------------------------------------------------
-Bool TString::IsEqual(const CHARTYPE* pString,s32 Length,Bool CaseSensitive) const
+Bool TString::IsEqual(const TChar* pString,s32 Length,Bool CaseSensitive) const
 {
 	//	some string types can always be/not be case sensitive
 	ForceCaseSensitivity( CaseSensitive );
@@ -475,8 +405,8 @@ Bool TString::IsEqual(const CHARTYPE* pString,s32 Length,Bool CaseSensitive) con
 	for ( u32 i=0;	i<(u32)ThisLength;	i++ )
 	{
 		//	different char found! abort!
-		char thischar = (!CaseSensitive) ? GetLowercaseCharAt(i) : GetCharAt(i);
-		char stringchar = (!CaseSensitive) ? TLString::GetCharLowercase( pString[i] ) : pString[i];
+		TChar thischar = (!CaseSensitive) ? GetLowercaseCharAt(i) : GetCharAt(i);
+		TChar stringchar = (!CaseSensitive) ? TLString::GetCharLowercase( pString[i] ) : pString[i];
 
 		if ( thischar != stringchar )
 			return FALSE;
@@ -485,15 +415,15 @@ Bool TString::IsEqual(const CHARTYPE* pString,s32 Length,Bool CaseSensitive) con
 	//	all matched
 	return TRUE;
 }
-
+*/
 
 //------------------------------------------------------
 //	append part of a string (use -1 as the length to copy everything FROM from)
 //------------------------------------------------------
-void TString::Append(const TString& String,u32 From,s32 Length)
+TString& TString::Append(const TString& String,u32 From,s32 Length)
 {
 	if ( !TLDebug_CheckIndex( From, String.GetLength() ) )
-		return;
+		return *this;
 
 	if ( Length == -1 )
 	{
@@ -506,7 +436,7 @@ void TString::Append(const TString& String,u32 From,s32 Length)
 	}
 
 	//	append part
-	Append( &String.GetCharAt(From), Length );
+	return Append( &String.GetCharAt(From), Length );
 }
 
 
@@ -549,7 +479,7 @@ s32 TString::GetCharGetLastIndex() const
 	s32 Index = (s32)GetLength() - 1;
 	while ( Index >= 0 )
 	{
-		const CHARTYPE& Char = GetCharAt(Index);
+		const TChar& Char = GetCharAt(Index);
 
 		//	if not a terminator, return it
 		if ( Char != TLString_Terminator )
@@ -568,7 +498,7 @@ s32 TString::GetCharGetLastIndex() const
 //	get the last char. if string is empty a terminator is returned. 
 //	If the string ends with a terminator, it returns the last char before terminator (if any)
 //------------------------------------------------------
-TString::CHARTYPE TString::GetCharLast() const
+TChar TString::GetCharLast() const
 {
 	s32 LastCharIndex = GetCharGetLastIndex();
 
@@ -704,7 +634,7 @@ Bool TString::GetInteger(s32& Integer,Bool* pIsPositive) const
 	u32 Mult = 1;
 	while ( CharIndex >= 0 )
 	{
-		const char& Char = GetCharAt( CharIndex );
+		const TChar& Char = GetCharAt( CharIndex );
 		s32 CharInt = TLString::GetCharInteger( Char );
 
 		//	char isnt an int
@@ -843,7 +773,7 @@ Bool TString::GetHexInteger(u32& Integer) const
 	u32 Shift = 0;
 	while ( CharIndex >= 0 )
 	{
-		const char& Char = GetCharAt( CharIndex );
+		const TChar& Char = GetCharAt( CharIndex );
 		s32 CharHexInt = TLString::GetCharHexInteger( Char );
 
 		//	char isnt an int
@@ -901,7 +831,7 @@ Bool TString::GetHexBytes(TArray<u8>& ParsedBytes) const
 	Bool FirstHalfByte = TRUE;
 	while ( CharIndex >= 0 )
 	{
-		const char& Char = GetCharAt( CharIndex );
+		const TChar& Char = GetCharAt( CharIndex );
 		s32 CharHexInt = TLString::GetCharHexInteger( Char );
 
 		//	char isnt an int
@@ -969,8 +899,8 @@ s32 TString::GetCharIndexWhitespace(u32 From) const
 //------------------------------------------------------
 void TString::InsertAt(u32 Index,const TString& String)
 {
-	const TArray<char>& OtherStringArray = String.GetStringArray();
-	TArray<char>& StringArray = this->GetStringArray();
+	const TArray<TChar>& OtherStringArray = String.GetStringArray();
+	TArray<TChar>& StringArray = this->GetStringArray();
 
 	StringArray.InsertAt( Index, OtherStringArray );
 }

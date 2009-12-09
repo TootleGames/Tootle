@@ -8,12 +8,12 @@ namespace TLXml
 {
 	//	parse string to new tag
 	TPtr<TXmlTag>	ParseTag(const TString& XmlString,u32 TagOpenIndex,u32 TagCloseIndex );
-	Bool			IsCharText(char Char);			//	is character valid text for a tag
+	Bool			IsCharText(TChar Char);			//	is character valid text for a tag
 }
 
 
 
-Bool TLXml::IsCharText(char Char)
+Bool TLXml::IsCharText(TChar Char)
 {
 	if ( Char >= 'a' && Char <= 'z' )
 		return TRUE;
@@ -172,7 +172,7 @@ Bool TXmlTag::SetProperties(TString& PropertiesString)
 			else
 			{
 				//	does this property have an equals after it? if so, pull out the value assigned to property
-				char& NextChar = PropertiesString.GetCharAt(CharIndex);
+				TChar& NextChar = PropertiesString.GetCharAt(CharIndex);
 				if ( NextChar == '=' )
 					HasValue = TRUE;
 			}

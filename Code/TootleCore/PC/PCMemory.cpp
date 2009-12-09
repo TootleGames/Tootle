@@ -53,7 +53,7 @@ void	TLMemory::Platform::MemOuputAllocations()
 	DWORD LastError;
 	PROCESS_HEAP_ENTRY Entry;
 
-	char buffer[256];
+	TChar buffer[256] = {0};
 
     // Lock the heap to prevent other threads from accessing the heap 
     // during enumeration.

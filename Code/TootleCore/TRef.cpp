@@ -34,29 +34,27 @@ namespace TLRef
 
 	//	gr: new ref alphabet, some symbols have been repalced to aid URL-Encoding (so I don't need to encode a ref and can just send it as a string
 	//	table for string->ref conversions (+1 for terminator) and an ALT table for capitalisation
-	const char	g_RefCharTable[g_RefCharTable_Size+1]			= {	" abcdefghijklmnopqrstuvwxyz0123456789'-!_"	};	//	file system safe
-	const char	g_RefCharTableAlt[g_RefCharTable_Size+1]		= {	"*ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'-!_"	};	//	web safe
-	//const char	g_RefCharTable[g_RefCharTable_Size+1]		= {	" abcdefghijklmnopqrstuvwxyz0123456789?-#_"	};	//	old table
-	//const char	g_RefCharTableAlt[g_RefCharTable_Size+1]	= {	" ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?-#_"	};	//	old alt table
+	const TChar				g_RefCharTable[g_RefCharTable_Size+1]			= {	TLCharString(" abcdefghijklmnopqrstuvwxyz0123456789'-!_")	};	//	file system safe
+	const TChar				g_RefCharTableAlt[g_RefCharTable_Size+1]		= {	TLCharString("*ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'-!_")	};	//	web safe
 
 	//	when url-encoding, we can't use a space, but we definatly want to use that in code as it's such a useful and common character. 
-	const char	g_RefCharUrlSpace	= g_RefCharTableAlt[0];		//	'apostraphe
+	const TChar				g_RefCharUrlSpace		= g_RefCharTableAlt[0];		//	'apostraphe
 	
-	Bool		g_RefCharLookupValid	= FALSE;
-	u32			g_InvalidRefMask		= 0x0;			//	uninitialised! I can probably work out an actual number but calculations are more accurate
+	Bool					g_RefCharLookupValid	= FALSE;
+	u32						g_InvalidRefMask		= 0x0;			//	uninitialised! I can probably work out an actual number but calculations are more accurate
 
 #ifdef ENABLE_DUMB_LOOKUP
-	u32			g_RefCharLookupDumb[256];				//	lookup table for char->refchar
+	u32						g_RefCharLookupDumb[256];				//	lookup table for char->refchar
 #endif
 
-	TKeyArray<char,u32>	g_RefCharLookup;				//	lookup table for char->refchar
+	TKeyArray<TChar,u32>	g_RefCharLookup;				//	lookup table for char->refchar
 
-	FORCEINLINE u32		GetRefCharIndex(char c);					//	get a refchar index from a string character
-	FORCEINLINE char	GetCharFromRefCharIndex(u32 Index,Bool UseAltTable=FALSE);			//	get a string character from a refchar index
-	FORCEINLINE u32		GetRefBitsFromChar(char Char,u32 Index,Bool CheckIndex);
+	FORCEINLINE u32			GetRefCharIndex(TChar c);					//	get a refchar index from a string character
+	FORCEINLINE TChar		GetCharFromRefCharIndex(u32 Index,Bool UseAltTable=FALSE);			//	get a string character from a refchar index
+	FORCEINLINE u32			GetRefBitsFromChar(TChar Char,u32 Index,Bool CheckIndex);
 
-	void		GenerateCharLookupTable();
-	void		DestroyCharLookupTable();
+	void					GenerateCharLookupTable();
+	void					DestroyCharLookupTable();
 
 	TLArray::SortResult		RefSort(const TRef& aRef,const TRef& bRef,const void* pTestVal);	//	simple ref-sort func - for arrays of TRef's
 }
@@ -95,9 +93,9 @@ void TLRef::GenerateCharLookupTable()
 	for ( u32 i=0;	i<g_RefCharTable_Size;	i++ )
 	{
 		//	slightly modified to ensure terminator has an index of zero
-		char Char = g_RefCharTable[i];
+		TChar Char = g_RefCharTable[i];
 		u32 Index = (Char == 0x0) ? 0 : i;
-		char AltChar = g_RefCharTableAlt[i];
+		TChar AltChar = g_RefCharTableAlt[i];
 		u32 AltIndex = (AltChar == 0x0) ? 0 : i;
 
 		g_RefCharLookup.Add( Char, Index );
@@ -128,7 +126,7 @@ void TLRef::DestroyCharLookupTable()
 //---------------------------------------------------
 //	get a refchar index from a string character
 //---------------------------------------------------
-FORCEINLINE u32 TLRef::GetRefCharIndex(char c)
+FORCEINLINE u32 TLRef::GetRefCharIndex(TChar c)
 {
 	//	use key lookup table if it's been generated as it's faster
 	if ( g_RefCharLookupValid )
@@ -158,14 +156,14 @@ FORCEINLINE u32 TLRef::GetRefCharIndex(char c)
 
 	//	unsupported character
 	TLDebug_Break( TString("unsupported character %c provided for ref. Replacing with underscore", c ) );
-	return GetRefCharIndex('_');
+	return GetRefCharIndex( TLCharString('_') );
 }
 
 
 //---------------------------------------------------
 //	get a string character from a refchar index
 //---------------------------------------------------
-FORCEINLINE char TLRef::GetCharFromRefCharIndex(u32 Index,Bool UseAltTable)
+FORCEINLINE TChar TLRef::GetCharFromRefCharIndex(u32 Index,Bool UseAltTable)
 {
 	//	invalid index
 	if ( Index >= g_RefCharTable_Size )
@@ -178,7 +176,7 @@ FORCEINLINE char TLRef::GetCharFromRefCharIndex(u32 Index,Bool UseAltTable)
 //---------------------------------------------------
 //	get a string character from a refchar index
 //---------------------------------------------------
-FORCEINLINE u32 TLRef::GetRefBitsFromChar(char Char,u32 Index,Bool CheckIndex)
+FORCEINLINE u32 TLRef::GetRefBitsFromChar(TChar Char,u32 Index,Bool CheckIndex)
 {
 	if ( CheckIndex )
 	{
@@ -350,7 +348,7 @@ void TRef::GetString(TString& RefString,Bool Capitalise,Bool Trim,Bool UrlSafe) 
 
 		//	convert index to character
 		Bool UseAltTable = UrlSafe || (Capitalise && (i==0));
-		char RefChar = TLRef::GetCharFromRefCharIndex( RefCharIndex, UseAltTable );
+		TChar RefChar = TLRef::GetCharFromRefCharIndex( RefCharIndex, UseAltTable );
 
 		RefString.Append( RefChar );
 	}

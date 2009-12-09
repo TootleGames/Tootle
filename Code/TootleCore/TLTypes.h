@@ -30,6 +30,15 @@
 #pragma once
 
 
+/*	gr: we don't use the UNICODE define, everything IS treated as unicode. 
+		OS-specific stuff is handled by OS-specific wrappers (ie. wxWidgets on PC and mac)
+		the engine itself now should avoid direct use of OS-specific unicode related stuff 
+		(ie. windows and message boxes etc)
+#if !defined(UNICODE)
+#error Tootle engine should always be built as unicode now
+#endif
+*/
+
 //-------------------------------------------------------
 //	basic types
 //-------------------------------------------------------
@@ -40,6 +49,14 @@ typedef	unsigned short		u16;
 typedef	signed short		s16;
 typedef	unsigned char		u8;
 typedef	signed char			s8;
+typedef wchar_t				TChar16;
+typedef char				TChar8;
+typedef TChar16				TChar;
+
+//	like wxT() or _T or _TEXT, make literal strings widestring. 
+//	Mostly required when not using a TString which will do the automatic conversion for us
+#define TLCharString(Quote)		TLMacroConCat(L , Quote)
+#define TLMacroConCat(a,b)		a ## b
 
 #if defined(TL_TARGET_PC)
 typedef unsigned __int64	u64;
@@ -158,7 +175,10 @@ class Type4;
 
 TLCore_DeclareIsDataType( u8 );
 TLCore_DeclareIsDataType( s8 );
-TLCore_DeclareIsDataType( char );	//	gr: vs compiler seems to see s8 and char as different types
+//TLCore_DeclareIsDataType( char );	//	gr: vs compiler seems to see s8 and char as different types
+TLCore_DeclareIsDataType( TChar8 );
+TLCore_DeclareIsDataType( TChar16 );
+//TLCore_DeclareIsDataType( TChar );
 TLCore_DeclareIsDataType( u16 );
 TLCore_DeclareIsDataType( s16 );
 TLCore_DeclareIsDataType( u32 );

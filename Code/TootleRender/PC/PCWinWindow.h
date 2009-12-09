@@ -25,7 +25,7 @@ public:
 
 	virtual u32					DefaultFlags()						{	return GWinControlFlags::ClientEdge|GWinControlFlags::OverlappedWindow;	};
 
-	virtual const char*			ClassName()							{	return "Window";	};
+	virtual const TChar*		ClassName()							{	return TLCharString("Window");	};
 	virtual Bool				Init(TPtr<GWinControl>& pOwner, u32 Flags);	//	window is overloaded to create class
 };
 
@@ -43,7 +43,7 @@ public:
 	GOpenglWindow(TRefRef InstanceRef);
 	~GOpenglWindow()	{}
 	
-	virtual const char*		ClassName()				{	return "OpenGL";	};	//	what class this window creates
+	virtual const TChar*	ClassName()				{	return TLCharString("OpenGL");	};	//	what class this window creates
 	virtual Bool			Init(TPtr<GWinControl>& pOwner, u32 Flags);	//	overloaded to create rendering stuff
 	virtual Bool			OnEraseBackground()		{	return FALSE;	};		//	dont erase backgroud over the opegnl display (stops WM_PAINT flicker)
 	Bool					HasArbMultiSample()		{	return m_HasArbMultiSample;	}

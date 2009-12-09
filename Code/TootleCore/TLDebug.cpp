@@ -51,7 +51,7 @@ void TLDebug::GetLastBreak(TString& String)
 	}
 	else
 	{
-		String.Appendf("%s", g_pLastBreakSourceFunction );
+		String.Append( g_pLastBreakSourceFunction );
 	}
 }
 

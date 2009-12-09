@@ -1,5 +1,6 @@
-#include <windows.h>
+//#include <windows.h>
 #include "cpuid.h"
+#include "PCCore.h"
 
 
 // These are the bit flags that get set on calling cpuid

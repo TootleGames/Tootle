@@ -281,7 +281,7 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 	TPtrArray<TLMaths::TContour> Contours;
 	TArray<TLMaths::TContourCurve> PathCurves;
 	TArray<float3> PathPoints;
-	char LastCommand = 0x0;
+	TChar LastCommand = 0x0;
 	float2 CurrentPosition;
 
 	//	parse commands in string
@@ -289,7 +289,7 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 	while ( CharIndex<String.GetLengthWithoutTerminator() )
 	{
 		//	read next command
-		char NewCommand;
+		TChar NewCommand;
 		if ( TLString::ReadNextLetter( String, CharIndex, NewCommand ) )
 		{
 			Bool FindNewCommand = FALSE;

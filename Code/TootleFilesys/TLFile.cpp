@@ -6,7 +6,7 @@
 //--------------------------------------------------------
 //	
 //--------------------------------------------------------
-Bool TLString::ReadNextLetter(const TString& String,u32& CharIndex, char& Char)
+Bool TLString::ReadNextLetter(const TString& String,u32& CharIndex, TChar& Char)
 {
 	//	step over whitespace
 	s32 NonWhitespaceIndex = String.GetCharIndexNonWhitespace( CharIndex );
@@ -15,7 +15,7 @@ Bool TLString::ReadNextLetter(const TString& String,u32& CharIndex, char& Char)
 
 	//	move char past whitespace
 	CharIndex = (u32)NonWhitespaceIndex;
-	const char& NextChar = String.GetCharAt(CharIndex);
+	const TChar& NextChar = String.GetCharAt(CharIndex);
 
 	//	is next char a letter?
 	if ( TLString::IsCharLetter( NextChar ) )
@@ -497,7 +497,7 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 		//	read first char, we can work out true/false/0/1 from that
 		if ( DataString.GetLength() == 0 )
 			return SyncFalse;
-		const char& BoolChar = DataString.GetCharAt(0);
+		const TChar& BoolChar = DataString.GetCharAt(0);
 		if ( BoolChar == 't' || BoolChar == 'T' || BoolChar == '1' )
 		{
 			BinaryData.Write( (Bool)TRUE );
@@ -710,19 +710,19 @@ Bool TLString::CleanString(TString& String)
 {
 	Bool Changes = FALSE;
 
-	TArray<char>& StringCharArray = String.GetStringArray();
+	TArray<TChar>& StringCharArray = String.GetStringArray();
 
 	//	run through the string until we find something we might want to change
 	for ( u32 i=0;	i<StringCharArray.GetSize();	i++ )
 	{
 		char Prevc = (i==0) ? 0 : StringCharArray.ElementAt(i-1);
-		char& c = StringCharArray.ElementAt(i);
+		TChar& c = StringCharArray.ElementAt(i);
 		Bool IsLast = (i==StringCharArray.GetLastIndex());
 
 		//	it's a slash, check the next control char - but ignore if previous char was also a slash
 		if ( c == '\\' && !IsLast && Prevc != '\\' )
 		{
-			char& Nextc = StringCharArray.ElementAt(i+1);
+			TChar& Nextc = StringCharArray.ElementAt(i+1);
 
 			//	line feed, replace the 2 characters with one line feed
 			if ( Nextc == 'n' ||  Nextc == 'N' )

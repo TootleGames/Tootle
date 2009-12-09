@@ -38,7 +38,7 @@ void TLCore::RegisterManagers_Engine(TPtr<TCoreManager>& pManager)
 //---------------------------------------------------
 //	win32 entry
 //---------------------------------------------------
-Bool TLCore::TootMain()
+Bool TLCore::TootInit()
 {
 	g_pCoreManager = new TCoreManager("CORE");
 
@@ -77,9 +77,13 @@ Bool TLCore::TootMain()
 	}
 	///////////////////////////////////////////////////////////////////
 
+	return (InitLoopResult==SyncTrue);
+}
 	
+Bool TLCore::TootLoop(Bool InitLoopResult)
+{
 	//	init was okay, do update loop
-	SyncBool UpdateLoopResult = (InitLoopResult == SyncTrue) ? SyncWait : SyncFalse;
+	SyncBool UpdateLoopResult = InitLoopResult ? SyncWait : SyncFalse;
 	while ( UpdateLoopResult == SyncWait )
 	{
 		// If enabled go through the update loop
@@ -90,7 +94,57 @@ Bool TLCore::TootMain()
 	///////////////////////////////////////////////////////////////////
 	// Calculate total run time
 	///////////////////////////////////////////////////////////////////
-	if(InitLoopResult == SyncTrue)
+	if( InitLoopResult )
+	{
+		TLTime::TTimestampMicro EndTime(TRUE);
+
+		g_pCoreManager->StoreTimestamp("TSEndTime", EndTime);
+		
+		TLTime::TTimestampMicro InitTime;
+		
+		if(g_pCoreManager->RetrieveTimestamp("TSInitTime", InitTime))
+		{	
+			s32 Secs, MilliSecs, MicroSecs;
+			InitTime.GetTimeDiff(EndTime, Secs, MilliSecs, MicroSecs);
+		
+			TTempString time;
+			time.Appendf("%d.%d:%d Seconds", Secs, MilliSecs, MicroSecs);
+			TLDebug_Print("App shutting down");
+			TLDebug_Print("Total run time:");
+			TLDebug_Print(time.GetData());
+		}
+	}
+
+	return (UpdateLoopResult == SyncTrue);
+}
+
+
+//---------------------------------------------------
+//	win32 entry
+//---------------------------------------------------
+Bool TLCore::TootMain()
+{
+	//	do init loop
+	Bool InitLoopResult = TootInit();
+	
+	//	init was okay, do update loop
+	Bool UpdateLoopResult = TootLoop( InitLoopResult );
+
+	//	shutdown loop
+	Bool ShutdownLoopResult = TootShutdown( InitLoopResult );
+
+	return ShutdownLoopResult;
+}
+
+//---------------------------------------------------
+//	shutdown
+//---------------------------------------------------
+Bool TLCore::TootShutdown(Bool InitLoopResult)
+{
+	///////////////////////////////////////////////////////////////////
+	// Calculate total run time
+	///////////////////////////////////////////////////////////////////
+	if ( InitLoopResult )
 	{
 		TLTime::TTimestampMicro EndTime(TRUE);
 
@@ -123,8 +177,6 @@ Bool TLCore::TootMain()
 
 	return (ShutdownLoopResult == SyncTrue);
 }
-
-
 
 
 /*

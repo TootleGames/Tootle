@@ -219,7 +219,7 @@
 			Name="PC Source Files"
 			>
 			<File
-				RelativePath=".\cpuid.c"
+				RelativePath=".\cpuid.cpp"
 				>
 			</File>
 			<File

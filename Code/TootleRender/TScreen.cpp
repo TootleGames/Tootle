@@ -1,6 +1,7 @@
 #include "TScreen.h"
 #include "TRenderTarget.h"
 #include "TRenderNodeText.h"
+#include "TRenderGraph.h"
 
 #if defined(TL_TARGET_PC)
 	#include "PC/PCRenderTarget.h"

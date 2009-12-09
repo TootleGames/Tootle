@@ -235,7 +235,7 @@ Bool TLFileSys::GetParentDir(TString& Directory)
 	s32 SearchFrom = LastCharIndex;
 
 	//	ends with a slash, so get the slash BEFORE the last one to go up a directory
-	char& LastChar = Directory.GetCharAt( LastCharIndex );
+	TChar& LastChar = Directory.GetCharAt( LastCharIndex );
 	if ( LastChar == BackSlash || LastChar == ForwardSlash )
 	{
 		SearchFrom--;

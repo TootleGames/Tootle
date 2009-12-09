@@ -14,7 +14,7 @@
 //----------------------------------------------------
 namespace TLString
 {
-	Bool				ReadNextLetter(const TString& String,u32& CharIndex,char& Char);
+	Bool				ReadNextLetter(const TString& String,u32& CharIndex,TChar& Char);
 	Bool				ReadNextInteger(const TString& String,u32& CharIndex,s32& Integer);
 	Bool				ReadIntegerInRange(const TString& String,s32& Integer,s32 Min,s32 Max);	//	reads an integer out of a string, and does a min/max CheckInRange check. returns FALSE if out of range (in debug only, uses TLDebug_CHeckInRange)
 

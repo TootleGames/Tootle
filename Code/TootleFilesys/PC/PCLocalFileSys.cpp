@@ -1,4 +1,5 @@
 #include "PCLocalFileSys.h"
+#include <TootleCore/PC/PCCore.h>
 
 #if defined(_MSC_EXTENSIONS)
 #include <TootleCore/PC/PCTime.h>
@@ -149,7 +150,7 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 
 	//	open
 	FILE* pFileHandle = NULL;
-	errno_t Result = fopen_s( &pFileHandle, FullFilename.GetData(), "rb" );
+	errno_t Result = _wfopen_s( &pFileHandle, FullFilename.GetData(), TLCharString("rb") );
 
 	//	failed to open
 	if ( Result != 0 )
@@ -445,7 +446,7 @@ TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateNewFile(const TString& File
 
 	//	attempt to open file before creating instance
 	FILE* pFileHandle = NULL;
-	errno_t Result = fopen_s( &pFileHandle, FullFilename.GetData(), "wb" );
+	errno_t Result = _wfopen_s( &pFileHandle, FullFilename.GetData(), TLCharString("wb") );
 
 	//	failed to open
 	if ( Result != 0 )
@@ -504,7 +505,7 @@ SyncBool Platform::LocalFileSys::WriteFile(TPtr<TFile>& pFile)
 
 	//	open file for writing
 	FILE* pFileHandle = NULL;
-	errno_t Result = fopen_s( &pFileHandle, FullFilename.GetData(), "wb" );
+	errno_t Result = _wfopen_s( &pFileHandle, FullFilename.GetData(), TLCharString("wb") );
 
 	//	failed to open
 	if ( Result != 0 )

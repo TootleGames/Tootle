@@ -109,12 +109,30 @@ void TBinary::Debug_ReadWritePointerError()
 //--------------------------------------------------------------------
 //	get all the data in the form of a hex string (does not include size, type hint or read info)
 //--------------------------------------------------------------------
-void TBinary::GetDataHexString(TString& String) const
+void TBinary::GetDataHexString(TString& String,bool FromWideString,bool ToWideString) const
 {
+	TLDebug_Break("gr: untested with unicode");
+
+	//	don't allow cropping of ascii strings
+	if ( FromWideString && !ToWideString )
+	{
+		if ( !TLDebug_Break("Converting from wide-string to non-widestring, this will lose data, so not allowed - retry to allow...") )
+		{
+			return;
+		}
+	}
+
 	const char HexChars[16+1] = "0123456789ABCDEF";
 	for ( u32 i=0;	i<m_Data.GetSize();	i++ )
 	{
 		const u8& Data = m_Data[i];
+
+		//	if source is missing first byte, add zeros
+		if ( ToWideString && !FromWideString )
+		{
+			String.Append('0');
+			String.Append('0');
+		}
 
 		u8 PartAIndex = (Data >> 4) & 0x0F;
 		String.Append( HexChars[PartAIndex] );
@@ -125,12 +143,15 @@ void TBinary::GetDataHexString(TString& String) const
 }
 
 //--------------------------------------------------------------------
-//	write data from hex string
+//	write data from hex string "00112233aabbccff"
+//	each character (ascii or unicode) in the string is half a byte
 //--------------------------------------------------------------------
 Bool TBinary::WriteDataHexString(const TString& String,TRef TypeHint)
 {
+	TLDebug_Break("gr: untested with unicode");
+
 	u32 StringDataLength = String.GetLengthWithoutTerminator();
-	const TArray<char>& StringArray = String.GetStringArray();
+	const TArray<TChar>& StringArray = String.GetStringArray();
 
 	//	string shouldn't have an odd character left over
 	if ( StringDataLength % 2 == 1 )
@@ -144,7 +165,7 @@ Bool TBinary::WriteDataHexString(const TString& String,TRef TypeHint)
 	for ( u32 i=0;	i<StringDataLength;	i+=2 )
 	{
 		//	work out the numbers from the hex characters
-		s32 PartA = TLString::GetCharHexInteger( StringArray[i] );
+		s32 PartA = TLString::GetCharHexInteger( StringArray[i+0] );
 		s32 PartB = TLString::GetCharHexInteger( StringArray[i+1] );
 		if ( PartA == -1 || PartB == -1 )
 		{
@@ -163,6 +184,27 @@ Bool TBinary::WriteDataHexString(const TString& String,TRef TypeHint)
 		m_Data.Add( Byte );
 	}
 
+	return TRUE;
+}
+
+
+//--------------------------------------------------------------------
+//	
+//--------------------------------------------------------------------
+Bool TBinary::ReadString(TString& String)			
+{
+	//	if data is known as a widestring we can just do a simple read-array
+	if ( GetDataTypeHint() == TLBinary_TypeRef_WideString )
+		return ReadArray( String.GetStringArray() );
+
+	//	read into ascii array
+	TArray<TChar8> AsciiString;
+	if ( !ReadArray( AsciiString ) )
+		return FALSE;
+
+	//	set string (does our conversion)
+	String.Set( AsciiString.GetData(), AsciiString.GetSize() );
+	
 	return TRUE;
 }
 

@@ -96,9 +96,9 @@ namespace TLDebug
 	void				SetLastBreak(const char* pSourceFunction);											//	note last break place in the code
 
 	Bool				Break(const TString& String,const char* pSourceFunction);							//	halt! return TRUE to ignore the error and continue
-	FORCEINLINE Bool			Break(const TString& String)														{	return Break( String, NULL );	}
+	FORCEINLINE Bool	Break(const TString& String)														{	return Break( String, NULL );	}
 	void				Print(const TString& String,const char* pSourceFunction);							//	print to console
-	FORCEINLINE void			Print(const TString& String)														{	Print( String, NULL );	}
+	FORCEINLINE void	Print(const TString& String)														{	Print( String, NULL );	}
 	
 	
 	FORCEINLINE void	FlushBuffer()	{	Platform::FlushBuffer(); }

@@ -3,18 +3,21 @@
 	Render lib interface
 
 
-
-
-
-
-
 -------------------------------------------------------*/
 #pragma once
 
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/TColour.h>
 
-#include "TRendergraph.h"
+namespace TLAsset
+{
+	class TTexture;
+}
+
+namespace TLMaths
+{
+	class TTransform;
+}
 
 namespace TLRender
 {

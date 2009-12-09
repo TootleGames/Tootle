@@ -12,9 +12,12 @@ class TString;
 
 namespace TLCore
 {
-	//	forward declaration of the generic app loop
-	Bool			TootMain();			//	
-	Bool			TootUpdate();		//	lib update
+	Bool			TootMain();						//	all-ecompassing loop if just using WinMain() and nothing clever
+	Bool			TootUpdate();					//	manager update invoked from TootLoop
+
+	Bool			TootInit();						//	engine init
+	Bool			TootLoop(Bool InitResult);		//	engine update
+	Bool			TootShutdown(Bool InitResult);	//	engine shutdown
 
 
 	namespace Platform

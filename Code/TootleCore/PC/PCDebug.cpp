@@ -7,7 +7,7 @@ namespace TLDebug
 {
 	namespace Platform
 	{
-		static TTempString consolebuffer;
+		static TTempString g_ConsoleBuffer;
 
 		void		Print(const TString& String);	//	platform specific debug output - immediate
 		void		FlushBuffer();
@@ -30,17 +30,21 @@ SyncBool TLDebug::Platform::Shutdown()
 
 void TLDebug::Platform::PrintToBuffer(const TString& String)
 {
-	// Check to see if the buffer is full (buffer size 512 less one due to terminator)
-	if(consolebuffer.GetLength() + String.GetLength() >= 511 )
+	// Check to see if the buffer is full (buffer size 512 less one due to line feed)
+	if(g_ConsoleBuffer.GetLength() + String.GetLength() >= 511 )
 		FlushBuffer();
 
-	consolebuffer.Appendf("%s\n", String.GetData());
+	g_ConsoleBuffer.Append( String.GetData() );
+	g_ConsoleBuffer.Append('\n');
 }
 	
 void TLDebug::Platform::FlushBuffer()
 {
-	Print(consolebuffer);
-	consolebuffer.Empty();
+	if ( g_ConsoleBuffer.GetLength() )
+	{
+		Print( g_ConsoleBuffer );
+		g_ConsoleBuffer.Empty();
+	}
 }
 
 //--------------------------------------------------
@@ -48,7 +52,8 @@ void TLDebug::Platform::FlushBuffer()
 //--------------------------------------------------
 void TLDebug::Platform::Print(const TString& String)
 {
-	OutputDebugString( String.GetData() );
+	if ( String.GetLength() )
+		OutputDebugString( String.GetData() );
 }
 
 
@@ -79,7 +84,7 @@ Bool TLDebug::Platform::Break(const TString& String)
 	Flags |= MB_TASKMODAL;			//	no easily accessible hwnd so make it thread modal
 	Flags |= MB_ICONERROR;			//	icons R COOL
 
-	int Result = MessageBox( NULL, BreakMessage.GetData(), "Debug break", Flags );
+	int Result = MessageBox( NULL, BreakMessage.GetData(), TLCharString("Debug break"), Flags );
 
 	//	anything other than cancel will continue without breaking
 	if ( Result != IDCANCEL )

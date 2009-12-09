@@ -260,7 +260,7 @@ void TLNetwork::Platform::TConnectionHttp::StartUploadTask(TTask& Task)
 		//	we're doing this to match the IPod code which I can't see a way to send raw data
 		//	without converting it to a string
 		TString DataString;
-		UploadData.GetData().GetDataHexString( DataString );
+		UploadData.GetData().GetDataHexString( DataString, TRUE, FALSE );
 
 		//	add pointers to the data for the form
 		CURLFORMcode FormError = curl_formadd(	&pForm,

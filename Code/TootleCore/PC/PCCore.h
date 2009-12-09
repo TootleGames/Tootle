@@ -8,11 +8,19 @@
 	#error PC file should not be included in ansi builds
 #endif
 
-#include "../TLTypes.h"
+/*
+//	include the wx headers
+//	disable "This function or variable may be unsafe." warning which isn't corrected in wx yet
+#pragma warning(disable : 4996)	
+#include <wx/wx.h>
+
+*/
 
 //	include windows stuff
 #define WIN32_LEAN_AND_MEAN
 #define _WIN32_WINNT 0x0501	// specify the minimum windows OS we are supporting (0x0501 == Windows XP)
+#define _UNICODE
+#define UNICODE
 
 
 #include <math.h>
@@ -23,11 +31,13 @@
 #include <windowsx.h>
 
 
+
+
+#include "../TLTypes.h"
+
 //	forward declarations
 class TString;
 class TBinaryTree;
-
-
 
 
 namespace TLTime
@@ -58,10 +68,8 @@ namespace TLCore
 		
 		void				QueryHardwareInformation(TBinaryTree& Data);
 		void				QueryLanguageInformation(TBinaryTree& Data);
+
 	}
-}
-
-
-
+};
 
 

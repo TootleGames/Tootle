@@ -81,7 +81,7 @@ public:
 	template<typename TYPE> FORCEINLINE Bool		ReadArray(TArray<TYPE>& Array);		//	reads out the size of the array from our data then the array elements
 	FORCEINLINE Bool								ReadAll(TBinary& Data)				{	return Read( Data, GetSizeUnread() );	}	//	read the remaining data into this binary data
 	Bool											Read(TBinary& Data,u32 Length);		//	read a chunk of data into this binary data
-	FORCEINLINE Bool								ReadString(TString& String)			{	return ReadArray( String.GetStringArray() );	}
+	Bool											ReadString(TString& String);		//	read data into a string - handles ascii and unicode
 //	template<typename TYPE> FORCEINLINE Bool		ReadConvert(TYPE& Var);				//	read data, if the types mis match do a conversion (= operator)
 	Bool											ReadData(u8* pData,u32 Length,Bool CutData=FALSE);	//	read data into address - CutData cuts the read data out of the array
 
@@ -93,7 +93,7 @@ public:
 	template<typename TYPE> FORCEINLINE void	Write(const TYPE*& Pointer)			{	Debug_ReadWritePointerError();	}	//	cant read/write a pointer
 	template<typename TYPE> FORCEINLINE void	WriteToStart(const TYPE& Var)		{	SetDataTypeHint<TYPE>();	WriteDataToStart( (u8*)&Var, sizeof(TYPE) );	}
 	template<typename TYPE> void				WriteArray(const TArray<TYPE>& Array);	//	write an array to the data. we write the element count into the data too to save doing it client side
-	FORCEINLINE void							WriteString(const TString& String)	{	WriteArray( String.GetStringArray() );	SetDataTypeHint( TLBinary_TypeRef(String), TRUE );	}	//	gr: set the FORCED hint AFTER we write the string, the string uses the array functionality whihc writes an array size first. As long as strings are parsed with ReadString this isn't a problem
+	FORCEINLINE void							WriteString(const TString& String)	{	WriteArray( String.GetStringArray() );	SetDataTypeHint( TLBinary_TypeRef(WideString), TRUE );	}	//	gr: set the FORCED hint AFTER we write the string, the string uses the array functionality whihc writes an array size first. As long as strings are parsed with ReadString this isn't a problem
 	FORCEINLINE void							WriteData(const u8* pData,u32 Length)	{	m_Data.Add( pData, Length );	}	//	add raw data to array
 	Bool										WriteDataHexString(const TString& String,TRef TypeHint);	//	write data from hex string
 
@@ -110,7 +110,7 @@ public:
 	FORCEINLINE const u8*			GetData(u32 Offset=0) const			{	return &m_Data[Offset];	}
 	FORCEINLINE TArray<u8>&			GetDataArray()						{	return m_Data;	}
 	FORCEINLINE const TArray<u8>&	GetDataArray() const				{	return m_Data;	}
-	void							GetDataHexString(TString& String) const;	//	get all the data in the form of a hex string (does not include size, type hint or read info)
+	void							GetDataHexString(TString& String,bool FromWideString,bool ToWideString) const;	//	get all the data in the form of a hex string (does not include size, type hint or read info)
 	FORCEINLINE TRefRef				GetDataTypeHint() const				{	return m_DataTypeHint;	}
 	FORCEINLINE void				SetDataTypeHint(TRefRef DataTypeHint,Bool Force=FALSE)	{	m_DataTypeHint = DataTypeHint.GetData() * ( DataTypeHint == m_DataTypeHint || GetSize() == 0 || Force );	}	//	if we're mixing data types, then set the hint to "unknown". 
 	template<typename TYPE> void	SetDataTypeHint()					{	SetDataTypeHint( TLBinary::GetDataTypeRef<TYPE>() );	}

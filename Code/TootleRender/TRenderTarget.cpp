@@ -1,6 +1,7 @@
 #include "TRenderTarget.h"
 #include "TScreen.h"
 #include "TScreenManager.h"
+#include "TRenderGraph.h"
 
 
 //#define DEBUG_RENDER_DATUMS_IN_WORLD	//	if not defined, renders datums in local space which is faster (in world space will show up transform multiplication errors)

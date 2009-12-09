@@ -51,14 +51,12 @@ class TLAsset::TAtlas : public TLAsset::TAsset
 public:
 	TAtlas(TRefRef AssetRef);
 
-	static TRef					GetAssetType_Static()						{	return TRef_Static(A,t,l,a,s);	}
+	static TRef					GetAssetType_Static()							{	return TRef_Static(A,t,l,a,s);	}
 
-	FORCEINLINE const TAtlasGlyph*	GetGlyph(u16 Key) 						{	return m_Glyphs.Find(Key);	}
-	FORCEINLINE const TAtlasGlyph*	GetGlyph(char KeyChar) 					{	u16 Key16 = ((u16)KeyChar) & 0x00ff;	return GetGlyph( Key16);	}
-	FORCEINLINE const TAtlasGlyph*	GetGlyph(u16 Key) const					{	return m_Glyphs.Find(Key);	}
-	FORCEINLINE const TAtlasGlyph*	GetGlyph(char KeyChar) const			{	u16 Key16 = ((u16)KeyChar) & 0x00ff;	return GetGlyph( Key16);	}
-	FORCEINLINE TAtlasGlyph*	AddGlyph(u16 Key)							{	return m_Glyphs.AddNew( Key );	}
-	FORCEINLINE TAtlasGlyph*	AddGlyph(u16 Key,const TAtlasGlyph& Glyph)	{	return m_Glyphs.Add( Key, Glyph );	}
+	FORCEINLINE const TAtlasGlyph*	GetGlyph(TChar Key) 						{	return m_Glyphs.Find(Key);	}
+	FORCEINLINE const TAtlasGlyph*	GetGlyph(TChar Key) const					{	return m_Glyphs.Find(Key);	}
+	FORCEINLINE TAtlasGlyph*	AddGlyph(TChar Key)								{	return m_Glyphs.AddNew( Key );	}
+	FORCEINLINE TAtlasGlyph*	AddGlyph(TChar Key,const TAtlasGlyph& Glyph)	{	return m_Glyphs.Add( Key, Glyph );	}
 
 	FORCEINLINE void			SetTextureRef(TRefRef TextureRef)			{	m_TextureRef = TextureRef;	}
 	FORCEINLINE TRefRef			GetTextureRef() const						{	return m_TextureRef;	}

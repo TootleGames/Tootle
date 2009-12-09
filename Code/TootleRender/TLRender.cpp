@@ -1,5 +1,8 @@
 #include "TLRender.h"
-
+#include <TootleCore/TKeyArray.h>
+#include <TootleCore/TRef.h>
+#include <TootleCore/TTransform.h>
+#include <TootleAsset/TTexture.h>
 
 
 #ifdef _DEBUG

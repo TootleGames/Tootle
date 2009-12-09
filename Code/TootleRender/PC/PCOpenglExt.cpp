@@ -22,7 +22,7 @@ namespace TLRender
 			u32					g_ArbMultiSamplePixelFormat	= 0;
 
 			Bool				IsExtensionNameSupported(const TString& ExtensionName,Bool CheckWGLExtensions);
-			Bool				IsExtensionNameInString(const TString& ExtensionName,const char* pExtensionListString);
+			Bool				IsExtensionNameInString(const TString& ExtensionName,const TChar* pExtensionListString);
 			void*				GetExtensionFunctionAddress(u32 HardwareIndex,u32 FunctionIndex);	//	fetch the address for a func out of the array
 	
 			Bool				GetExtensionName(u32 HardwareIndex,TString& String);				//	get the string identifier for an extension and put it into a string. the string is the extension's name in the OGL list
@@ -284,9 +284,12 @@ Bool TLRender::Platform::OpenglExtensions::AddExtensionFunction(u32 HardwareInde
 
 	//	if no function name is provided then the function name IS the extension name
 	if ( !pFunctionName )
-		pFunctionName = ExtensionName.GetData();
+	{
+		//	todo: convert ExtensionName to ascii char to use with wglGetProcAddress
+		//pFunctionName = ExtensionName.GetData();
+	}
 
-	void* pAddr = wglGetProcAddress(pFunctionName);
+	void* pAddr = pFunctionName ? wglGetProcAddress(pFunctionName) : NULL;
 
 	//	no such address - remove support
 	if ( !pAddr )
@@ -315,7 +318,7 @@ Bool TLRender::Platform::OpenglExtensions::IsExtensionNameSupported(const TStrin
 		// Try To Use wglGetExtensionStringARB On Current DC, If Possible
 		PROC wglGetExtString = wglGetProcAddress("wglGetExtensionsStringARB");
 		if (wglGetExtString)
-			pExtensions = ((char*(__stdcall*)(HDC))wglGetExtString)(wglGetCurrentDC());
+			pExtensions = ((const char*(__stdcall*)(HDC))wglGetExtString)(wglGetCurrentDC());
 	}
 	else
 	{
@@ -326,14 +329,18 @@ Bool TLRender::Platform::OpenglExtensions::IsExtensionNameSupported(const TStrin
 	if ( !pExtensions )
 		return FALSE;
 
-	return IsExtensionNameInString( ExtensionName, pExtensions );
+	//	convert to widestring for a search
+	TString Extensions( pExtensions );
+
+	//	check if extension is inside extension list
+	return IsExtensionNameInString( ExtensionName, Extensions.GetData() );
 }
 
 
 //-----------------------------------------------------------
 //	is this extension name supported in opengl?
 //-----------------------------------------------------------
-Bool TLRender::Platform::OpenglExtensions::IsExtensionNameInString(const TString& ExtensionName,const char* pExtensionListString)
+Bool TLRender::Platform::OpenglExtensions::IsExtensionNameInString(const TString& ExtensionName,const TChar* pExtensionListString)
 {
 	//	check for an invalid extension name...
 	//	no spaces!
@@ -356,14 +363,16 @@ Bool TLRender::Platform::OpenglExtensions::IsExtensionNameInString(const TString
 		//	gr: count up to 100 for safety - no extension is going to be that long
 		for ( Length=0;	Length<100;	Length++ )
 		{
-			const char& Char = pExtensionListString[Length];
+			const TChar& Char = pExtensionListString[Length];
 			FoundTerminator = ( Char == 0x0 );
 			if ( Char == ' ' || Char == 0x0 )
 				break;
 		}
 
 		//	compare chunk of extension string to our extension name
-		if ( ExtensionName.IsEqual( pExtensionListString, Length, FALSE ) )
+		TString NextExtension;
+		NextExtension.Append( pExtensionListString, Length );
+		if ( ExtensionName.IsEqual( NextExtension, FALSE ) )
 		{
 			//	match! is supported!
 			return TRUE;
@@ -397,7 +406,9 @@ void TLRender::Platform::OpenglExtensions::InitHardwareSupport(u32 HardwareIndex
 	}
 
 	//	check extension supported in GL_EXTENSIONS
-	if ( wglGetProcAddress( ExtensionName.GetData() ) )
+	//	todo: convert unicode down to ascii string to use with wglGetProcAddress
+	//if ( wglGetProcAddress( ExtensionName.GetData() ) )
+	if ( FALSE )
 	{
 		//	see if function with that name is supported
 		SetHardwareSupported( HardwareIndex, SyncTrue );

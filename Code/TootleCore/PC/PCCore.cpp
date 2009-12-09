@@ -13,7 +13,22 @@
 #include "../TCoreManager.h"
 #include <mmsystem.h>
 
- 
+/*
+//	link to wx libs
+#ifdef _DEBUG
+	//	*ud libs (unicode debug)
+	#pragma comment(lib,"../../../Tootle/Code/wxWidgets/lib/vc_lib/wxbase29ud.lib")
+	#pragma comment(lib,"../../../Tootle/Code/wxWidgets/lib/vc_lib/wxmsw29ud_core.lib")
+	#pragma comment(lib,"../../../Tootle/Code/wxWidgets/lib/vc_lib/wxmsw29ud_adv.lib")
+
+#else
+	//	*u libs (unicode)
+	#pragma comment(lib,"../../../Tootle/Code/wxWidgets/lib/vc_lib/wxbase29u.lib")
+	#pragma comment(lib,"../../../Tootle/Code/wxWidgets/lib/vc_lib/wxmsw29u_core.lib")
+	#pragma comment(lib,"../../../Tootle/Code/wxWidgets/lib/vc_lib/wxmsw29u_adv.lib")
+#endif
+*/
+
 #pragma comment( lib, "user32.lib" )
 #pragma comment( lib, "gdi32.lib" )
 #pragma comment( lib, "kernel32.lib" )
@@ -21,6 +36,18 @@
 //#pragma comment(linker, "/NODEFAULTLIB:msvcrt.lib") 
 #pragma comment(linker, "/NODEFAULTLIB:libcmt.lib") 
 //#pragma comment( lib, "libc.lib" )
+#pragma comment( lib, "comdlg32.lib" )
+#pragma comment( lib, "winspool.lib" )
+#pragma comment( lib, "shell32.lib" )
+#pragma comment( lib, "comctl32.lib" )
+#pragma comment( lib, "ole32.lib" )
+#pragma comment( lib, "oleaut32.lib" )
+#pragma comment( lib, "uuid.lib" )
+#pragma comment( lib, "rpcrt4.lib" )
+#pragma comment( lib, "advapi32.lib" )
+#pragma comment( lib, "wsock32.lib" )
+#pragma comment( lib, "wininet.lib" )
+
 
 #include "cpuid.h"
 
@@ -209,7 +236,7 @@ Bool TLCore::Platform::GetVerboseProcessorInformation(CPUINFOEX& cpudata)
     PCACHE_DESCRIPTOR Cache;
 
     glpi = (LPFN_GLPI) GetProcAddress(
-                            GetModuleHandle(TEXT("kernel32")),
+                            GetModuleHandle(TLCharString("kernel32")),
                             "GetLogicalProcessorInformation");
     if (NULL == glpi) 
     {
@@ -331,30 +358,17 @@ void TLCore::Platform::QueryHardwareInformation(TBinaryTree& Data)
 
 	SYSTEM_INFO SysInfo;
 	GetSystemInfo(&SysInfo);
-
-#ifdef _DEBUG
-	TTempString cpustr;
-	cpustr.Appendf("Physical CPU Count:\t\t%d", SysInfo.dwNumberOfProcessors);
-    TLDebug_Print(cpustr);
-	cpustr.Empty();
-#endif
+    TLDebug_Print( TString( "Physical CPU Count:\t\t%d", SysInfo.dwNumberOfProcessors ) );
 
 	CPUINFOEX morecpudata;
 
 	if(GetVerboseProcessorInformation(morecpudata))
 	{
-
-#ifdef _DEBUG
-		cpustr.Appendf("Core count:\t\t%d", morecpudata.numProcessorCores);
-		TLDebug_Print(cpustr);
-		cpustr.Empty();
-
-		cpustr.Appendf("Logical Processor count:\t\t%d", morecpudata.numLogicalProcessors);
-		TLDebug_Print(cpustr);
-		cpustr.Empty();
-#endif
+		TLDebug_Print( TString("Core count:\t\t%d", morecpudata.numProcessorCores) );
+		TLDebug_Print( TString("Logical Processor count:\t\t%d", morecpudata.numLogicalProcessors) );
+		
 		// Number of processors
-		Data.ExportData("CPU_", morecpudata.numLogicalProcessors);
+		TLDebug_Print( TString("CPU_", morecpudata.numLogicalProcessors) );
 	}
 	else
 	{
@@ -366,53 +380,25 @@ void TLCore::Platform::QueryHardwareInformation(TBinaryTree& Data)
 	_p_info info;
 
 	_cpuid(&info);
-
-#ifdef _DEBUG
-	cpustr.Appendf("Name:\t\t%s", info.v_name);
-    TLDebug_Print(cpustr);
-	cpustr.Empty();
-
-	cpustr.Appendf("Model:\t\t%s", info.model_name);
-    TLDebug_Print(cpustr);
-	cpustr.Empty();
-
-	cpustr.Appendf("Family:\t\t%d", info.family);
-    TLDebug_Print(cpustr);
-	cpustr.Empty();
-
-	cpustr.Appendf("Model:\t\t%d", info.model);
-    TLDebug_Print(cpustr);
-	cpustr.Empty();
-
-	cpustr.Appendf("Stepping:\t%d", info.stepping);
-    TLDebug_Print(cpustr);
-	cpustr.Empty();
-
-	cpustr.Appendf("Feature:\t%08x", info.feature);
-    TLDebug_Print(cpustr);
-	cpustr.Empty();
+    TLDebug_Print( TString("Name:\t\t%s", info.v_name) );
+	TLDebug_Print( TString("Model:\t\t%s", info.model_name) );
+	TLDebug_Print( TString("Family:\t\t%d", info.family) );
+	TLDebug_Print( TString("Model:\t\t%d", info.model) );
+	TLDebug_Print( TString("Stepping:\t%d", info.stepping) );
+	TLDebug_Print( TString("Feature:\t%08x", info.feature) );
 
     expand(info.feature, info.checks);
-
-	cpustr.Appendf("OS Support:\t%08x", info.os_support);
-    TLDebug_Print(cpustr);
-	cpustr.Empty();
+	TLDebug_Print( TString("OS Support:\t%08x", info.os_support ) );
 
     expand(info.os_support, info.checks);
-
-	cpustr.Appendf("Checks:\t\t%08x", info.checks);
-    TLDebug_Print(cpustr);
-	cpustr.Empty();
-#endif
+	TLDebug_Print( TString("Checks:\t\t%08x", info.checks ) );
 
 	// Can also use IsProcessorFeaturePresent() to test for specific features of the processor if required.
 
 	// OS Version info
 
 	OSVERSIONINFO OSInfo;
-
 	OSInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-
 	GetVersionEx(&OSInfo);
 
 	TTempString OS("Unknown");
@@ -490,16 +476,11 @@ void TLCore::Platform::QueryHardwareInformation(TBinaryTree& Data)
 	TLDebug_Print(OS);
 	TLDebug_Print(OSVer);
 
-#ifdef _DEBUG
 	// Print out the major and minor version anyway
-	TTempString osstr;
-	osstr.Appendf("Major: %d \nMinor:%d", OSInfo.dwMajorVersion, OSInfo.dwMinorVersion);
-	TLDebug_Print(osstr);
+	TLDebug_Print( TString("Major: %d \nMinor:%d", OSInfo.dwMajorVersion, OSInfo.dwMinorVersion) );
 
 	// Print out any extra data such as service pack info
 	TLDebug_Print(OSInfo.szCSDVersion);
-
-#endif
 
 	// Add the OS to the data
 	Data.ExportData("OS", OS);
@@ -521,16 +502,10 @@ void TLCore::Platform::QueryLanguageInformation(TBinaryTree& Data)
 
 	WORD PrimaryLanguage = PRIMARYLANGID(UserLanguage);
 	WORD SubLanguage = SUBLANGID(UserLanguage);
-#ifdef _DEBUG
-	// Print the primary and sub anguage ID's
-	TTempString languagestr;
-	languagestr.Appendf("Primary: %d", PrimaryLanguage);
-	TLDebug_Print(languagestr);
 
-	languagestr.Empty();
-	languagestr.Appendf("Secondary: %d", SubLanguage);
-	TLDebug_Print(languagestr);
-#endif	
+	// Print the primary and sub anguage ID's
+	TLDebug_Print( TString("Primary: %d", PrimaryLanguage ) );
+	TLDebug_Print( TString("Secondary: %d", SubLanguage ) );
 
 	// Convert the language ID into a TRef we can use
 	// Default to english
@@ -542,16 +517,14 @@ void TLCore::Platform::QueryLanguageInformation(TBinaryTree& Data)
 			{
 				switch(SubLanguage)
 				{
-					case SUBLANG_ENGLISH_US: 
-						LanguageRef = "usa";
-						break;
-					case SUBLANG_ENGLISH_UK:
-						LanguageRef = "eng";
-						break;
-
 					default:
 						TLDebug_Print("Hardware langauge not supported - defaulting to english");
-						LanguageRef = "eng";
+					case SUBLANG_ENGLISH_UK:	
+						LanguageRef = "eng";	
+						break;
+					
+					case SUBLANG_ENGLISH_US: 	
+						LanguageRef = "usa";	
 						break;
 				}
 			}
@@ -576,6 +549,7 @@ void TLCore::Platform::QueryLanguageInformation(TBinaryTree& Data)
 			break;
 		default:
 			TLDebug_Print("Hardware langauge not supported - defaulting to english");
+			TRef LanguageRef = "eng";
 			break;
 	}
 	
@@ -713,3 +687,38 @@ void CALLBACK TLCore::Platform::UpdateTimerCallback(HWND hwnd,UINT uMsg,UINT_PTR
 	if ( TLCore::g_pCoreManager )
 		TLCore::g_pCoreManager->SetReadyForUpdate();
 }
+
+
+/*
+
+namespace TLCore
+{
+	namespace Platform
+	{
+		class TApp;
+	}
+}
+
+//--------------------------------------------------
+//	
+//--------------------------------------------------
+class TLCore::Platform::TApp : public wxApp
+{
+public:
+    virtual bool	OnInit()
+	{
+		if ( !wxApp::OnInit() )
+			return FALSE;
+
+		//	do engine init
+		if ( !TLCore::TootInit() )
+			return FALSE;
+		
+		return TRUE;
+	}
+};
+
+
+//	implement Main() and bootup which enters our app's own init
+IMPLEMENT_APP(TLCore::Platform::TApp)
+*/

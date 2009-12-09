@@ -18,7 +18,7 @@ namespace Win32
 	LRESULT CALLBACK			Win32CallBack(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam );
 	u32							GWinControl::g_MouseWheelMsg = 0;
 
-	TArray<const char*>			g_ClassCreatedList;	//	array of strings of classes we've created
+	TArray<const TChar*>		g_ClassCreatedList;	//	array of strings of classes we've created
 };
 
 
@@ -299,7 +299,7 @@ Bool Win32::GWinControl::CreateClass()
 	return TRUE;
 }
 
-/*static*/Bool Win32::GWinControl::DestroyClass(const char* pClassName)
+/*static*/Bool Win32::GWinControl::DestroyClass(const TChar* pClassName)
 {
 	if ( !UnregisterClass( pClassName, TLCore::Platform::g_HInstance ) )
 	{

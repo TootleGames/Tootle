@@ -117,7 +117,7 @@ public:
 	virtual SyncBool		Shutdown()								{	return SyncTrue;	}
 
 	//	control-specific stuff
-	virtual const char*		ClassName()								{	return "Class";	};	//	what class this window creates
+	virtual const TChar*	ClassName()								{	return TLCharString("Class");	};	//	what class this window creates
 	virtual u32				AdditionalStyleFlags()					{	return 0x0;	};		//	extra style flags for this particular type of control
 	virtual u16				ClassStyle()							{	return CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;	};
 	virtual Bool			ClassExists();
@@ -151,7 +151,7 @@ public:
 	//	generic win32 stuff
 	virtual Bool				CreateClass();													//	create class
 	virtual Bool				DestroyClass();
-	static Bool					DestroyClass(const char* pClassName);
+	static Bool					DestroyClass(const TChar* pClassName);
 	virtual Bool				Init(TPtr<GWinControl>& pOwner, u32 Flags);		//	create control
 	void						Destroy();																		//	destroy control
 	virtual Bool				HandleMessage(u32 message, WPARAM wParam, LPARAM lParam, u32& Result);	//	message has been sent to this control matching the hwnd
