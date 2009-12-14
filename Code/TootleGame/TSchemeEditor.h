@@ -31,7 +31,7 @@ namespace TLGame
 //	customisable scheme editor, currently to
 //	manipulate just scene nodes, but designing it to manipulate all node types
 //----------------------------------------------
-class TLGame::TSchemeEditor : public TLMessaging::TSubscriber, public TLMessaging::TPublisher, public TStateMachine
+class TLGame::TSchemeEditor : public TLMessaging::TPublisherSubscriber, public TLMessaging::TMessageQueue, public TStateMachine
 {
 protected:
 	class Mode_Base;	
@@ -53,6 +53,9 @@ public:
 	FORCEINLINE TRef						GetGameRenderNodeRef() const		{	TLRender::TRenderTarget* pRenderTarget = GetGameRenderTarget();	return pRenderTarget ? pRenderTarget->GetRootRenderNodeRef() : TRef();	}
 
 protected:
+	
+	virtual void				ProcessMessageFromQueue(TLMessaging::TMessage& Message)			{	ProcessMessage( Message );	}
+
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);		//	
 	virtual void				AddStateModes();									//	add state machine modes here. overload to add custom modes
 	void						ChangeMode(TRefRef NewMode)							{	m_NextMode = NewMode;	}	//	on next update change mode

@@ -126,6 +126,8 @@ void TLGame::TSchemeEditor::Update(float Timestep)
 	}
 
 	TStateMachine::Update( Timestep );	
+	
+	TMessageQueue::ProcessMessageQueue();
 }
 
 

@@ -89,16 +89,16 @@ protected:
 	virtual void		Update();
 
 	//	outgoing events
-	virtual void		OnMenuOpen();						//	moved onto new menu
+	virtual void		OnMenuOpen();	//	moved onto new menu
 	virtual void		OnMenuClose();						//	moved to previous menu
 	virtual void		OnMenuCloseAll();					//	closed all menus
 	virtual void		OnMenuItemHighlighted();			//	highlighted menu item
-	virtual void		OnMenuItemExecuted(TRefRef MenuCommand);	//	menu item executed
+	virtual void		OnMenuItemExecuted(TRefRef MenuCommand, TBinaryTree& MenuData);	//	menu item executed
 
 protected:
 	TPtrArray<TMenu>	m_MenuStack;						//	menu stack
 
-	TTypedRef			m_QueuedCommand;
+	TTypedRef			m_QueuedCommand;					// Queued command
 };
 
 

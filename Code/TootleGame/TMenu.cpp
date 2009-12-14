@@ -156,7 +156,7 @@ Bool TLMenu::TMenuController::ExecuteMenuItem(TRefRef MenuItemRef)
 	}
 
 	//	publish that command has been executed
-	OnMenuItemExecuted( MenuCommand );
+	OnMenuItemExecuted( MenuCommand, pMenuItem->GetData() );
 
 	return TRUE;
 }
@@ -248,7 +248,7 @@ void TLMenu::TMenuController::ProcessMessage(TLMessaging::TMessage& Message)
 		if(!m_QueuedCommand.GetRef().IsValid())
 		{
 			// Queue up the command.  
-			m_QueuedCommand.SetRef(MessageRef);
+			m_QueuedCommand.SetRef(MessageRef);			
 		}
 		return;
 	}
@@ -332,12 +332,16 @@ void TLMenu::TMenuController::OnMenuItemHighlighted()
 //----------------------------------------------
 //	menu item executed
 //----------------------------------------------
-void TLMenu::TMenuController::OnMenuItemExecuted(TRefRef MenuCommand)
+void TLMenu::TMenuController::OnMenuItemExecuted(TRefRef MenuCommand, TBinaryTree& MenuData)
 {
 	TLMessaging::TMessage Message("Execute");
 	
 	//	write the command into the message
 	Message.ExportData("Command", MenuCommand );
+	
+	TPtr<TBinaryTree> pChild = Message.AddChild("Menudata");
+	if(pChild)
+		pChild->ReferenceDataTree(MenuData);
 
 	PublishMessage( Message );
 }

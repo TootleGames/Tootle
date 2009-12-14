@@ -59,6 +59,9 @@ public:
 	
 	FORCEINLINE TLCore::TApplication&	GetApplication()			{	return *m_pApplication;	}
 
+	template<class TYPE>
+	FORCEINLINE TYPE&	GetApplication()			{	return *static_cast<TYPE*>(m_pApplication);	}
+
 protected:
 	virtual SyncBool			Initialise();
 	virtual SyncBool			Update(float fTimeStep);
