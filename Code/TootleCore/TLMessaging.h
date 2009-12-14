@@ -21,14 +21,15 @@ namespace TLMessaging
 class TLMessaging::TMessageQueue
 {
 public:
-	virtual ~TMessageQueue()	{}
 
 	FORCEINLINE Bool		QueueMessage(TLMessaging::TMessage& Message);		//	queue up message 
 
 	FORCEINLINE u32			GetMessageQueueSize() const			{	return m_MessageQueue.GetSize();	}
 	FORCEINLINE Bool		HasMessagesInQueue() const			{	return m_MessageQueue.GetSize() > 0;	}
 
-protected:
+protected:	
+	virtual ~TMessageQueue()	{}
+
 	virtual void			ProcessMessageFromQueue(TLMessaging::TMessage& Message)	= 0;		// Individual message processing - behaviour dependent on where it is used
 	FORCEINLINE void		ProcessMessageQueue();				//	inline wrapper for the main message queue process call
 

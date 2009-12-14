@@ -32,11 +32,6 @@ class TLMessaging::TPublisher
 {
 	friend class TLMessaging::TSubscriber;
 public:
-	TPublisher()				{}
-	virtual ~TPublisher()		{	Shutdown();	}
-
-	void				Shutdown()										{	RemoveAllSubscribers();	}
-
 	Bool				Subscribe(TSubscriber* pSubscriber);
 	Bool				Unsubscribe(TSubscriber* pSubscriber);
 
@@ -48,6 +43,10 @@ public:
 	FORCEINLINE void	SetPublishOrder(const TLArray::SortOrder& order)	{ m_Subscribers.SetSortOrder(order); }
 
 protected:
+	virtual ~TPublisher()		{	Shutdown();	}
+	
+	FORCEINLINE void			Shutdown()										{	RemoveAllSubscribers();	}
+	
 	TPointerArray<TLMessaging::TSubscriber>&	GetSubscribers()							{	return m_Subscribers;	}
 	void				DoPublishMessage(TLMessaging::TMessage& Message,TSubscriber& Subscriber);
 
