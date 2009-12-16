@@ -8,8 +8,7 @@
  */
 
 #include "IPodDebug.h"
-
-#include "../TString.h"
+#include "IPodString.h"
 
 #import <UIKit/UIKit.h>
 
@@ -47,14 +46,14 @@ void TLDebug::Platform::PrintToBuffer(const TString& String)
 	// Check to see if we can add to the buffer (less one for the terminator)
 	if(consolebuffer.GetLength() + String.GetLength() < 511)
 	{
-		consolebuffer.Appendf("\n%s", String.GetData());	
+		consolebuffer.Appendf("\n%S", String.GetData());	
 	}
 	else 
 	{
 		// will excedd buffer length so flush the buffer and start fresh
 		FlushBuffer();
 		
-		consolebuffer.Appendf("\n%s", String.GetData());	
+		consolebuffer.Appendf("\n%S", String.GetData());	
 	}
 }
 
@@ -72,7 +71,7 @@ void TLDebug::Platform::FlushBuffer()
 //--------------------------------------------------
 void TLDebug::Platform::Print(const TString& String)
 {
-	NSString *logString = [[NSString alloc] initWithUTF8String: String.GetData()];
+	NSString *logString = TLString::ConvertToUnicharString(String);
 	NSLog(@"%@", logString );
 	[logString release];
 }

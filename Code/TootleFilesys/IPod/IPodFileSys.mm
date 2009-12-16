@@ -10,6 +10,8 @@
 #include "IPodFileSys.h"
 
 #import <Foundation/Foundation.h>
+#import <TootleCore/IPod/IPodString.h>
+
 
 
 
@@ -20,7 +22,10 @@ Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 	
 	if(GetApplicationURL(applicationdir))
 	{
-		NSString* appdir = [NSString stringWithUTF8String:applicationdir.GetData()];
+		applicationdir.Append("/");
+		AssetDir =  applicationdir;
+/*
+		NSString* appdir = TLString::ConvertToUnicharString(applicationdir, FALSE);
 		
 		// On the ipod/iphone the assets are stored in the bundle root.
 		//NSString* path = [appdir stringByAppendingString:@"/Assets/"];
@@ -29,9 +34,10 @@ Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 		// Copy path string
 		const char* pAssetDir = (const char*)[path UTF8String];
 		AssetDir =  pAssetDir;
-		
+
 		///////////////////////////////////////////////////////////////////////////
-		
+		[appdir release];
+ */
 		
 		return TRUE;
 	}	

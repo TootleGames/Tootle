@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		840A926F10D7E81700F8960C /* IPodString.h in Headers */ = {isa = PBXBuildFile; fileRef = 840A926D10D7E81700F8960C /* IPodString.h */; };
+		840A927010D7E81700F8960C /* IPodString.mm in Sources */ = {isa = PBXBuildFile; fileRef = 840A926E10D7E81700F8960C /* IPodString.mm */; };
 		8421B17E108628DE00439A7E /* IPodDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 8421B17C108628DE00439A7E /* IPodDebug.h */; };
 		8421B17F108628DE00439A7E /* IPodDebug.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8421B17D108628DE00439A7E /* IPodDebug.mm */; };
 		8434C8D9100B484C0063673E /* TLRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 8434C8D8100B484C0063673E /* TLRandom.h */; };
@@ -94,6 +96,21 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		840A926D10D7E81700F8960C /* IPodString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodString.h; sourceTree = "<group>"; };
+		840A926E10D7E81700F8960C /* IPodString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodString.mm; sourceTree = "<group>"; };
+		840A927210D7E83B00F8960C /* MacApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacApp.h; path = ../Mac/MacApp.h; sourceTree = SOURCE_ROOT; };
+		840A927310D7E83B00F8960C /* MacApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacApp.mm; path = ../Mac/MacApp.mm; sourceTree = SOURCE_ROOT; };
+		840A927410D7E83B00F8960C /* MacCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacCore.h; path = ../Mac/MacCore.h; sourceTree = SOURCE_ROOT; };
+		840A927510D7E83B00F8960C /* MacCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacCore.mm; path = ../Mac/MacCore.mm; sourceTree = SOURCE_ROOT; };
+		840A927610D7E83B00F8960C /* MacDebug copy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "MacDebug copy.mm"; path = "../Mac/MacDebug copy.mm"; sourceTree = SOURCE_ROOT; };
+		840A927710D7E83B00F8960C /* MacDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacDebug.h; path = ../Mac/MacDebug.h; sourceTree = SOURCE_ROOT; };
+		840A927810D7E83B00F8960C /* MacDebug.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacDebug.mm; path = ../Mac/MacDebug.mm; sourceTree = SOURCE_ROOT; };
+		840A927910D7E83B00F8960C /* MacMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacMemory.h; path = ../Mac/MacMemory.h; sourceTree = SOURCE_ROOT; };
+		840A927A10D7E83B00F8960C /* MacMemory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacMemory.mm; path = ../Mac/MacMemory.mm; sourceTree = SOURCE_ROOT; };
+		840A927B10D7E83B00F8960C /* MacString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacString.h; path = ../Mac/MacString.h; sourceTree = SOURCE_ROOT; };
+		840A927C10D7E83B00F8960C /* MacString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacString.mm; path = ../Mac/MacString.mm; sourceTree = SOURCE_ROOT; };
+		840A927D10D7E83B00F8960C /* MacTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacTime.h; path = ../Mac/MacTime.h; sourceTree = SOURCE_ROOT; };
+		840A927E10D7E83B00F8960C /* MacTime.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacTime.mm; path = ../Mac/MacTime.mm; sourceTree = SOURCE_ROOT; };
 		8418E89D0F4C2D8C00B956C9 /* TootleSimDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleSimDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleSimDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		8418E89E0F4C2D8C00B956C9 /* TootleSimRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleSimRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleSimRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		8421B17C108628DE00439A7E /* IPodDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodDebug.h; sourceTree = "<group>"; };
@@ -199,6 +216,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		840A927110D7E82300F8960C /* Mac Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				840A927210D7E83B00F8960C /* MacApp.h */,
+				840A927310D7E83B00F8960C /* MacApp.mm */,
+				840A927410D7E83B00F8960C /* MacCore.h */,
+				840A927510D7E83B00F8960C /* MacCore.mm */,
+				840A927610D7E83B00F8960C /* MacDebug copy.mm */,
+				840A927710D7E83B00F8960C /* MacDebug.h */,
+				840A927810D7E83B00F8960C /* MacDebug.mm */,
+				840A927910D7E83B00F8960C /* MacMemory.h */,
+				840A927A10D7E83B00F8960C /* MacMemory.mm */,
+				840A927B10D7E83B00F8960C /* MacString.h */,
+				840A927C10D7E83B00F8960C /* MacString.mm */,
+				840A927D10D7E83B00F8960C /* MacTime.h */,
+				840A927E10D7E83B00F8960C /* MacTime.mm */,
+			);
+			name = "Mac Source Files";
+			sourceTree = "<group>";
+		};
 		84C108D30F0A76EC00B2DF7A = {
 			isa = PBXGroup;
 			children = (
@@ -233,6 +270,8 @@
 		84C1095F0F0A790100B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				840A927110D7E82300F8960C /* Mac Source Files */,
+				84C109CE0F0A791F00B2DF7A /* IPod */,
 				846C18C6109748AE0098DFAF /* TTransform.cpp */,
 				846C18C7109748AE0098DFAF /* TTransform.h */,
 				8446CFF8103B514B00DFD24F /* TLCoreMisc.cpp */,
@@ -240,7 +279,6 @@
 				84E116040F3C6C7900471397 /* TGraphBase.cpp */,
 				84E116050F3C6C7900471397 /* TGraphBase.h */,
 				84E116060F3C6C7900471397 /* TLanguage.h */,
-				84C109CE0F0A791F00B2DF7A /* IPod */,
 				84C109600F0A791900B2DF7A /* TArray.h */,
 				84C109610F0A791900B2DF7A /* TArray.inc.h */,
 				84CDD7D31096EC1A0006D0BA /* TArraySort.h */,
@@ -325,6 +363,8 @@
 				84C109D40F0A793000B2DF7A /* IPodMemory.mm */,
 				84C109D50F0A793000B2DF7A /* IPodTime.h */,
 				84C109D60F0A793000B2DF7A /* IPodTime.mm */,
+				840A926D10D7E81700F8960C /* IPodString.h */,
+				840A926E10D7E81700F8960C /* IPodString.mm */,
 			);
 			name = IPod;
 			sourceTree = "<group>";
@@ -390,6 +430,7 @@
 				84F88B70109EEEB6004BAF8B /* TArrayAllocator.h in Headers */,
 				84F88B71109EEEB6004BAF8B /* TArrayMisc.h in Headers */,
 				84F88B72109EEEB6004BAF8B /* TPointerArray.h in Headers */,
+				840A926F10D7E81700F8960C /* IPodString.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -466,6 +507,7 @@
 				8440D7A3105528CD0045E57E /* IPodAlert.mm in Sources */,
 				8421B17F108628DE00439A7E /* IPodDebug.mm in Sources */,
 				846C18CA109748AE0098DFAF /* TTransform.cpp in Sources */,
+				840A927010D7E81700F8960C /* IPodString.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,6 +1,6 @@
 // !$*UTF8*$!
 {
-	844CE02B1051571800178124 /* PBXTextBookmark */ = {
+	840A8CAB10D64BB100F8960C /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84B60C4F10512EC20022E5BC /* png.c */;
 		name = "png.c: 1";
@@ -87,14 +87,13 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 273766152;
-			PBXWorkspaceStateSaveDate = 273766152;
+			PBXPerProjectTemplateStateSaveDate = 282479525;
+			PBXWorkspaceStateSaveDate = 282479525;
 		};
 		perUserProjectItems = {
-			844CE02B1051571800178124 /* PBXTextBookmark */ = 844CE02B1051571800178124 /* PBXTextBookmark */;
+			840A8CAB10D64BB100F8960C /* PBXTextBookmark */ = 840A8CAB10D64BB100F8960C /* PBXTextBookmark */;
 			844CE02C1051571800178124 /* PBXTextBookmark */ = 844CE02C1051571800178124 /* PBXTextBookmark */;
 			84B60E7D105136C00022E5BC /* PBXTextBookmark */ = 84B60E7D105136C00022E5BC /* PBXTextBookmark */;
-			84B60E7F105136C00022E5BC /* PBXTextBookmark */ = 84B60E7F105136C00022E5BC /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84B60B9E10512AF80022E5BC /* Source Control */;
 		userBuildSettings = {
@@ -105,6 +104,9 @@
 		fallbackIsa = XCSourceControlManager;
 		isSCMEnabled = 0;
 		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
 		};
 	};
 	84B60B9F10512AF80022E5BC /* Code sense */ = {
@@ -113,7 +115,7 @@
 	};
 	84B60C4F10512EC20022E5BC /* png.c */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {519, 12558}}";
+			sepNavIntBoundsRect = "{{0, 0}, {544, 11648}}";
 			sepNavSelRange = "{0, 0}";
 			sepNavVisRange = "{0, 694}";
 		};
@@ -129,16 +131,6 @@
 		sourceTree = "<absolute>";
 	};
 	84B60E7D105136C00022E5BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84B60CE1105130480022E5BC /* NSObjCRuntime.h */;
-		name = "NSObjCRuntime.h: 124";
-		rLen = 27;
-		rLoc = 3897;
-		rType = 0;
-		vrLen = 523;
-		vrLoc = 3663;
-	};
-	84B60E7F105136C00022E5BC /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84B60CE1105130480022E5BC /* NSObjCRuntime.h */;
 		name = "NSObjCRuntime.h: 124";

@@ -17,7 +17,8 @@
 
 #define FILESYS_VERSION FS_DEVELOPMENT	
 
-
+#include <TootleCore/TLTypes.h>
+#include <TootleCore/Mac/MacString.h>
 
 Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 {
@@ -34,16 +35,20 @@ Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 		
 		//	For a developer build we need to remove components until we find the project 
 		// directory and then append 'Asset'
-
 		
-		NSString* appdir = [NSString stringWithUTF8String:applicationdir.GetData()];
+		NSString* appdir = TLString::ConvertToUnicharString(applicationdir);
 
 		NSArray* array = [appdir componentsSeparatedByString:@"Code"];
 
 		// Failed to split string into two parts?  If more than two then 'code' appears mutliple times in string
 		// and may need concatenating.  If less than then this may be a deployment build?
 		if([array count] != 2)
+		{
+			[appdir release];			
+			
+			TLDebug_Break("Failed to find 'Code' directory in developer build");
 			return FALSE;
+		}
 		
 		// now remove the 'Code' directory and append 'Asset'
 		NSString* rawpath = [array objectAtIndex:0];
@@ -52,6 +57,8 @@ Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 		// Copy path string
 		const char* pAssetDir = (const char*)[path UTF8String];
 		AssetDir =  pAssetDir;
+		
+		[appdir release];
 				
 		///////////////////////////////////////////////////////////////////////////
 
@@ -62,9 +69,8 @@ Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 		///////////////////////////////////////////////////////////////////////////
 
 		// For a release build we will need to use the bundle path as-is and append the 'Asset' directory to it
+		NSString* appdir = TLString::ConvertToUnicharString(applicationdir);
 
-		
-		NSString* appdir = [NSString stringWithUTF8String:applicationdir.GetData()];
 		
 		// On the ipod/iphone the assets are stored in the bundle root.
 		//NSString* path = [appdir stringByAppendingString:@"/Assets/"];
@@ -73,6 +79,8 @@ Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 		// Copy path string
 		const char* pAssetDir = (const char*)[path UTF8String];
 		AssetDir =  pAssetDir;
+		[appdir release];
+
 		
 		///////////////////////////////////////////////////////////////////////////
 #endif
@@ -97,8 +105,9 @@ Bool TLFileSys::Platform::GetAssetSubDirectory(TTempString& UserDir, const TTemp
 	
 	if(GetAssetDirectory(tmpassetdir))
 	{
-		NSString* tmpdir = [NSString stringWithUTF8String:tmpassetdir.GetData()];		
-		NSString* subdir = [NSString stringWithUTF8String:Subdirectory.GetData()];
+		NSString* tmpdir = TLString::ConvertToUnicharString(tmpassetdir);
+		NSString* subdir = TLString::ConvertToUnicharString(Subdirectory);
+
 		
 		// Append the subdirectory to the asset directory
 		NSString* tmppath = [tmpdir stringByAppendingString:subdir];
@@ -109,6 +118,9 @@ Bool TLFileSys::Platform::GetAssetSubDirectory(TTempString& UserDir, const TTemp
 		// Copy path string
 		const char* pUserDir = (const char*)[path UTF8String];
 		UserDir =  pUserDir;
+		
+		[tmpdir release];
+		[subdir release];
 		
 		return TRUE;
 		
@@ -186,8 +198,8 @@ Bool TLFileSys::Platform::GetApplicationURL(TTempString& url)
 		NSString* bundlepath = [bundle bundlePath];
 		
 		const char* pApplicationDir = (const char*)[bundlepath UTF8String];
-		url = pApplicationDir;
 		
+		url = pApplicationDir;
 		return TRUE;
 		
 	}

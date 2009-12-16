@@ -1,5 +1,25 @@
 // !$*UTF8*$!
 {
+	843C268C10B3056D004E70F5 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60921105118030022E5BC /* TSocialNetworkingManager.h */;
+		name = "TSocialNetworkingManager.h: 49";
+		rLen = 0;
+		rLoc = 1293;
+		rType = 0;
+		vrLen = 1080;
+		vrLoc = 1359;
+	};
+	843C268D10B3056D004E70F5 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60928105118190022E5BC /* MacSocialNetworkingPlatform.h */;
+		name = "MacSocialNetworkingPlatform.h: 26";
+		rLen = 0;
+		rLoc = 594;
+		rType = 0;
+		vrLen = 944;
+		vrLoc = 229;
+	};
 	84B608FD105116E00022E5BC /* Project object */ = {
 		activeBuildConfigurationName = Debug;
 		activeTarget = 84B60915105117A50022E5BC /* TootleSocial */;
@@ -54,19 +74,19 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 278076786;
-			PBXWorkspaceStateSaveDate = 278076786;
+			PBXPerProjectTemplateStateSaveDate = 280167402;
+			PBXWorkspaceStateSaveDate = 280167402;
 		};
 		perUserProjectItems = {
+			843C268C10B3056D004E70F5 /* PBXTextBookmark */ = 843C268C10B3056D004E70F5 /* PBXTextBookmark */;
+			843C268D10B3056D004E70F5 /* PBXTextBookmark */ = 843C268D10B3056D004E70F5 /* PBXTextBookmark */;
 			84B6092D105118910022E5BC /* PBXTextBookmark */ = 84B6092D105118910022E5BC /* PBXTextBookmark */;
 			84B6092F105118910022E5BC /* PBXTextBookmark */ = 84B6092F105118910022E5BC /* PBXTextBookmark */;
 			84B60930105118910022E5BC /* PBXTextBookmark */ = 84B60930105118910022E5BC /* PBXTextBookmark */;
-			84B60C0E10512D210022E5BC /* PBXTextBookmark */ = 84B60C0E10512D210022E5BC /* PBXTextBookmark */;
 			84B60C0F10512D210022E5BC /* PBXTextBookmark */ = 84B60C0F10512D210022E5BC /* PBXTextBookmark */;
 			84BD210B10931D89003BAE7D /* PBXTextBookmark */ = 84BD210B10931D89003BAE7D /* PBXTextBookmark */;
 			84BD210C10931D89003BAE7D /* PBXTextBookmark */ = 84BD210C10931D89003BAE7D /* PBXTextBookmark */;
 			84BD210D10931D89003BAE7D /* PBXTextBookmark */ = 84BD210D10931D89003BAE7D /* PBXTextBookmark */;
-			84BD210E10931D89003BAE7D /* PBXTextBookmark */ = 84BD210E10931D89003BAE7D /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84B60901105116E00022E5BC /* Source Control */;
 		userBuildSettings = {
@@ -121,7 +141,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1181, 3029}}";
 			sepNavSelRange = "{1293, 0}";
-			sepNavVisRange = "{1341, 988}";
+			sepNavVisRange = "{1359, 1080}";
 		};
 	};
 	84B60926105118190022E5BC /* MacSocial.cpp */ = {
@@ -140,9 +160,9 @@
 	};
 	84B60928105118190022E5BC /* MacSocialNetworkingPlatform.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 658}}";
-			sepNavSelRange = "{12, 0}";
-			sepNavVisRange = "{39, 733}";
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 611}}";
+			sepNavSelRange = "{594, 0}";
+			sepNavVisRange = "{229, 944}";
 		};
 	};
 	84B6092D105118910022E5BC /* PBXTextBookmark */ = {
@@ -174,16 +194,6 @@
 		rType = 0;
 		vrLen = 306;
 		vrLoc = 0;
-	};
-	84B60C0E10512D210022E5BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84B60921105118030022E5BC /* TSocialNetworkingManager.h */;
-		name = "TSocialNetworkingManager.h: 49";
-		rLen = 0;
-		rLoc = 1293;
-		rType = 0;
-		vrLen = 878;
-		vrLoc = 624;
 	};
 	84B60C0F10512D210022E5BC /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -224,15 +234,5 @@
 		rType = 0;
 		vrLen = 558;
 		vrLoc = 0;
-	};
-	84BD210E10931D89003BAE7D /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84B60921105118030022E5BC /* TSocialNetworkingManager.h */;
-		name = "TSocialNetworkingManager.h: 49";
-		rLen = 0;
-		rLoc = 1293;
-		rType = 0;
-		vrLen = 988;
-		vrLoc = 1341;
 	};
 }

@@ -11,7 +11,7 @@
 
 #include <TootleCore/IPod/IPodApp.h>
 #include <TootleCore/TRef.h>
-#include <TootleCore/TString.h>
+#include <TootleCore/IPod/IPodString.h>
 
 #include "IPodInput.h"
 
@@ -73,7 +73,7 @@
 	
 	TString initialText = TLInput::g_pInputSystem->GetVirtualKeyboardText();
 	
-	NSString *initialString = [[NSString alloc] initWithUTF8String: initialText.GetData()];
+	NSString *initialString = TLString::ConvertToUnicharString(initialText);
 	
 	[m_textField setText:initialString];
 

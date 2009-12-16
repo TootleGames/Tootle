@@ -16,6 +16,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		840A8D4210D6561700F8960C /* PCConnectionHttp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCConnectionHttp.cpp; path = ../PC/PCConnectionHttp.cpp; sourceTree = SOURCE_ROOT; };
+		840A8D4310D6561700F8960C /* PCConnectionHttp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCConnectionHttp.h; path = ../PC/PCConnectionHttp.h; sourceTree = SOURCE_ROOT; };
 		8418EE7C0F4DAB1500B956C9 /* libTootleNetwork.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleNetwork.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8418EFD10F4DB78E00B956C9 /* TLNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLNetwork.cpp; path = ../TLNetwork.cpp; sourceTree = SOURCE_ROOT; };
 		8418EFD20F4DB78E00B956C9 /* TLNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLNetwork.h; path = ../TLNetwork.h; sourceTree = SOURCE_ROOT; };
@@ -38,6 +40,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		840A8D4110D655FF00F8960C /* PC Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				840A8D4210D6561700F8960C /* PCConnectionHttp.cpp */,
+				840A8D4310D6561700F8960C /* PCConnectionHttp.h */,
+			);
+			name = "PC Source Files";
+			sourceTree = "<group>";
+		};
 		8418ECF60F4DA63E00B956C9 = {
 			isa = PBXGroup;
 			children = (
@@ -66,6 +77,7 @@
 		8418EFCF0F4DB77100B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				840A8D4110D655FF00F8960C /* PC Source Files */,
 				844CE1A71051590900178124 /* Mac Source Files */,
 				84B60627104FFBFA0022E5BC /* TConnection.cpp */,
 				84B60628104FFBFA0022E5BC /* TConnection.h */,

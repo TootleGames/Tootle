@@ -4,6 +4,8 @@
 #include "../TLCore.h"
 #include "../TPtr.h"
 
+#include "IPodString.h"
+
 
 OpenglESAppAppDelegate* TLCore::Platform::g_pIPodApp = NULL;
 
@@ -16,7 +18,8 @@ OpenglESAppAppDelegate* TLCore::Platform::g_pIPodApp = NULL;
 
 void TLCore::Platform::OpenWebURL(TString& urlstr)
 {
-	NSString* NSAddress = [[NSString alloc] initWithCString:urlstr.GetData() ];
+	NSString* NSAddress = TLString::ConvertToUnicharString(urlstr);
+	
 	NSURL* url = [NSURL URLWithString: NSAddress];
 	[[UIApplication sharedApplication] openURL:url];
 	

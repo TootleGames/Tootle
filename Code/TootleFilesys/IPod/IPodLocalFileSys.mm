@@ -2,6 +2,9 @@
 #include <stdio.h>
 #import <Foundation/Foundation.h>
 
+#import <TootleCore/IPod/IPodString.h>
+
+
 using namespace TLFileSys;
 
 
@@ -65,7 +68,7 @@ SyncBool Platform::LocalFileSys::LoadFileList()
 //---------------------------------------------------------------
 Bool Platform::LocalFileSys::DoLoadFileList()
 {
-	NSString *pDirString = [[NSString alloc] initWithUTF8String:m_Directory.GetData()];
+	NSString *pDirString = TLString::ConvertToUnicharString(m_Directory);
 
 #ifdef _DEBUG
 	//	fail to make instances with no type (eg. executable name on ipod) 
@@ -80,79 +83,164 @@ Bool Platform::LocalFileSys::DoLoadFileList()
 #endif
 	
 	//	make a directory enumerator
+	
+	// Enumerate the files (and direcotories) within the root directory.  This is a shallow search so no sub-directory
+	// files will be listed.
+	NSArray* pArray = [[NSFileManager defaultManager]contentsOfDirectoryAtPath:pDirString error:NULL];
+	
+	
+	if(!pArray)
+	{
+		[pDirString release];
+		
+		// Error getting file list for the directory
+		TLDebug_Print( "Invalid filelist pointer" );
+		return FALSE;
+	}
+	
+	
+	for(u32 uIndex = 0; uIndex < [pArray count]; uIndex++)
+	{
+		NSString* pFilename = [pArray objectAtIndex:uIndex];
+		
+		const char* pRealFilename = (const char*)[pFilename fileSystemRepresentation];
+		
+		TLDebug_Print( pRealFilename );
+		
+		TTempString filepath = m_Directory;
+		filepath.Append(pRealFilename);		
+		
+		NSString* fullfilepath = TLString::ConvertToUnicharString(filepath);
+		
+		NSDictionary* pFileAttribs = [[NSFileManager defaultManager] attributesOfItemAtPath:fullfilepath error:NULL];
+		
+		[fullfilepath release];
+		
+		NSString *FileType = [pFileAttribs objectForKey:@"NSFileType"];
+		
+		TTempString Filename = pRealFilename;
+		//	is a directory
+		if ( FileType != NSFileTypeRegular )
+		{
+#ifdef _DEBUG
+			TTempString DebugString("Ignoring directory/invalid file: ");
+			//pFile->GetFileRef().GetString( DebugString );
+			DebugString.Append(pRealFilename);
+			TLDebug_Print( DebugString );
+#endif
+			continue;
+		}
+				
+		TPtr<TFile> pFile = CreateFileInstance( Filename );
+		
+		if ( !pFile )
+		{
+			TLDebug_Print( TString("Failed to create file instance for %s", Filename.GetData() ) );
+		}
+		else
+		{
+			TTempString DebugString("Created new file instance ");
+			pFile->GetFileRef().GetString( DebugString );
+			DebugString.Append(", type: ");
+			pFile->GetFileAndTypeRef().GetString( DebugString );
+			TLDebug_Print( DebugString );
+			
+			/*
+			 // Get the timestamp of the file
+			 NSDate *Timestamp = [pFileAttribs objectForKey:@"NSFileModificationDate"];
+			 
+			 // Get time since reference date in seconds (double)
+			 NSTimeInterval time = [Timestamp timeIntervalSinceReferenceDate];
+			 
+			 u32 EpochSeconds = (u32) time;
+			 TLTime::TTimestamp FileTimestamp;
+			 FileTimestamp.SetEpochSeconds( EpochSeconds );
+			 
+			 // Set the file timestamp
+			 pFile->SetTimestamp(FileTimestamp);
+			 */
+			 
+			 
+			 // Clear the Lost flag to ensure the file is subsequently removed from the system if 
+			 // this was called from the LoadFileList where it will set this flag assuming it will be reset 
+			 // when found.  The CreateFileInstance above will simply return if the file already exists.
+			 pFile->GetFlags().Clear( TFile::Lost );
+		}		
+			 
+	}
+			 
+	
+	
+	
+	/*
 	NSDirectoryEnumerator *direnum = [[NSFileManager defaultManager] enumeratorAtPath: pDirString];
 	
 	NSString *pFilename;
 	
 	while ( pFilename = [direnum nextObject] )
 	{
-		if ( [[pFilename pathExtension] isEqualToString:@"rtfd"] )
+		//	found a file! - check it's not a dir
+		NSDictionary *pFileAttribs = [direnum fileAttributes];
+		NSString *FileType = [pFileAttribs objectForKey:@"NSFileType"];
+
+		//	is a directory
+		if ( FileType == NSFileTypeDirectory )
 		{
-			//	skip tree under "rtfd"
+#ifdef _DEBUG
+			const char* pRealFilename = (const char*)[pFilename fileSystemRepresentation];
+			//TTempString Filename = pRealFilename;
+
+			TTempString DebugString("Ignoring directory ");
+			//pFile->GetFileRef().GetString( DebugString );
+			DebugString.Append(pRealFilename);
+			TLDebug_Print( DebugString );
+#endif
 			[direnum skipDescendents];
+
+			continue;
+		}
+		
+		const char* pRealFilename = (const char*)[pFilename fileSystemRepresentation];
+		TTempString Filename = pRealFilename;
+		
+		TPtr<TFile> pFile = CreateFileInstance( Filename );
+		
+		if ( !pFile )
+		{
+			TLDebug_Print( TString("Failed to create file instance for %s", Filename.GetData() ) );
 		}
 		else
 		{
-			//	found a file! - check it's not a dir
-			NSDictionary *pFileAttribs = [direnum fileAttributes];
-			NSString *FileType = [pFileAttribs objectForKey:@"NSFileType"];
-	
-			//	is a directory
-			if ( FileType == NSFileTypeDirectory )
-			{
-#ifdef _DEBUG
-				const char* pRealFilename = (const char*)[pFilename fileSystemRepresentation];
-				//TTempString Filename = pRealFilename;
-	
-				TTempString DebugString("Ignoring directory ");
-				//pFile->GetFileRef().GetString( DebugString );
-				DebugString.Append(pRealFilename);
-				TLDebug_Print( DebugString );
-#endif
-				continue;
-			}
+			TTempString DebugString("Created new file instance ");
+			pFile->GetFileRef().GetString( DebugString );
+			DebugString.Append(", type: ");
+			pFile->GetFileAndTypeRef().GetString( DebugString );
+			TLDebug_Print( DebugString );
 			
-			const char* pRealFilename = (const char*)[pFilename fileSystemRepresentation];
-			TTempString Filename = pRealFilename;
+			/*
+			// Get the timestamp of the file
+			NSDate *Timestamp = [pFileAttribs objectForKey:@"NSFileModificationDate"];
 			
-			TPtr<TFile> pFile = CreateFileInstance( Filename );
+			// Get time since reference date in seconds (double)
+			NSTimeInterval time = [Timestamp timeIntervalSinceReferenceDate];
 			
-			if ( !pFile )
-			{
-				TLDebug_Print( TString("Failed to create file instance for %s", Filename.GetData() ) );
-			}
-			else
-			{
-				TTempString DebugString("Created new file instance ");
-				pFile->GetFileRef().GetString( DebugString );
-				DebugString.Append(", type: ");
-				pFile->GetFileAndTypeRef().GetString( DebugString );
-				TLDebug_Print( DebugString );
-				
-				/*
-				// Get the timestamp of the file
-				NSDate *Timestamp = [pFileAttribs objectForKey:@"NSFileModificationDate"];
-				
-				// Get time since reference date in seconds (double)
-				NSTimeInterval time = [Timestamp timeIntervalSinceReferenceDate];
-				
-				u32 EpochSeconds = (u32) time;
-				TLTime::TTimestamp FileTimestamp;
-				FileTimestamp.SetEpochSeconds( EpochSeconds );
-				
-				// Set the file timestamp
-				pFile->SetTimestamp(FileTimestamp);
-				*/
-				
-				
-				// Clear the Lost flag to ensure the file is subsequently removed from the system if 
-				// this was called from the LoadFileList where it will set this flag assuming it will be reset 
-				// when found.  The CreateFileInstance above will simply return if the file already exists.
-				pFile->GetFlags().Clear( TFile::Lost );
-			}		
+			u32 EpochSeconds = (u32) time;
+			TLTime::TTimestamp FileTimestamp;
+			FileTimestamp.SetEpochSeconds( EpochSeconds );
 			
-		}
+			// Set the file timestamp
+			pFile->SetTimestamp(FileTimestamp);
+			/*
+			
+			
+			// Clear the Lost flag to ensure the file is subsequently removed from the system if 
+			// this was called from the LoadFileList where it will set this flag assuming it will be reset 
+			// when found.  The CreateFileInstance above will simply return if the file already exists.
+			pFile->GetFlags().Clear( TFile::Lost );
+		}		
+		
 	}
+*/
 	
 	[pDirString release];
 
@@ -180,8 +268,13 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 	TString FullFilename = m_Directory;
 	FullFilename.Append( pFile->GetFilename() );
 
+	
+	NSString *pFileString = TLString::ConvertToUnicharString(FullFilename);
+
 	//	open
-	FILE* pFileHandle = fopen( FullFilename.GetData(), "rb" );
+	FILE* pFileHandle = fopen( [pFileString UTF8String], "rb" );
+	
+	[pFileString release];
 	
 	//	failed to open
 	if ( !pFileHandle )
@@ -281,7 +374,7 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 //---------------------------------------------------------------
 Bool Platform::LocalFileSys::IsDirectoryValid()
 {
-	NSString *pDirString = [[NSString alloc] initWithUTF8String:m_Directory.GetData()];
+	NSString *pDirString = TLString::ConvertToUnicharString(m_Directory);
 	
 	BOOL isDir = NO;
 	
@@ -313,7 +406,7 @@ void Platform::LocalFileSys::SetDirectory(const TString& Directory)
 	
 	// Check to see if the 'home' dir exists already in the directory being passed in
 	// if so use it as-is otherwise we need to setup the home dir and then append the new directory path to it
-	NSString* path = [[NSString alloc] initWithUTF8String:Directory.GetData()];
+	NSString* path = TLString::ConvertToUnicharString(Directory);
 	
 	NSRange range = [path rangeOfString:HomeDir];
 	
@@ -361,9 +454,13 @@ TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateNewFile(const TString& File
 	TTempString FullFilename = m_Directory;
 	FullFilename.Append( Filename );
 
+	NSString* pFileString = TLString::ConvertToUnicharString(FullFilename);
+	
 	//	attempt to open file before creating instance
-	FILE* pFileHandle = fopen( FullFilename.GetData(), "wb" );
+	FILE* pFileHandle = fopen( [pFileString UTF8String], "wb" );
 
+	[pFileString release];
+	
 	//	failed to open
 	if ( !pFileHandle )
 	{
@@ -408,8 +505,12 @@ SyncBool Platform::LocalFileSys::WriteFile(TPtr<TFile>& pFile)
 	TTempString FullFilename = m_Directory;
 	FullFilename.Append( pFile->GetFilename() );
 
+	NSString* pFileString = TLString::ConvertToUnicharString(FullFilename);
+
 	//	open file for writing
-	FILE* pFileHandle = fopen( FullFilename.GetData(), "wb" );
+	FILE* pFileHandle = fopen( [pFileString UTF8String], "wb" );
+	
+	[pFileString release];
 	
 	//	failed to open
 	if ( !pFileHandle )

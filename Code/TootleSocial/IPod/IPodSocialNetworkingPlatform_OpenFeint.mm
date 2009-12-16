@@ -9,6 +9,8 @@
 
 #import "IPodSocialNetworkingPlatform_OpenFeint.h"
 
+#import <TootleCore/IPod/IPodString.h>
+
 #import "TOpenFeint.h"
 
 #import "OFHighScoreService.h"
@@ -17,8 +19,8 @@
 
 void TLSocial::Platform::SocialNetworkingPlatform_OpenFeint::BeginSession(const TString& APIKey, const TString& APISecret)
 {
-	NSString* pAPIKey = [NSString stringWithUTF8String:APIKey.GetData()];
-	NSString* pAPISecret = [NSString stringWithUTF8String:APISecret.GetData()];
+	NSString* pAPIKey = TLString::ConvertToUnicharString(APIKey);
+	NSString* pAPISecret = TLString::ConvertToUnicharString(APISecret);
 	
 	[OpenFeint initializeWithProductKey: pAPIKey
 							  andSecret: pAPISecret
@@ -26,6 +28,8 @@ void TLSocial::Platform::SocialNetworkingPlatform_OpenFeint::BeginSession(const 
 							andSettings:nil 
 							andDelegate:nil];
 		
+	[pAPISecret release];
+	[pAPIKey release];
 }
 
 

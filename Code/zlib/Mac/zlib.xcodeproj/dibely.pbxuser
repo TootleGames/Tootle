@@ -1,18 +1,31 @@
 // !$*UTF8*$!
 {
-	843A9288106B6715004473CB /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = 84B60C9910512F930022E5BC /* TootleRelease.xcconfig */;
-	};
-	843A9289106B6715004473CB /* PBXTextBookmark */ = {
+	840A8CB910D64BD200F8960C /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84B60C9910512F930022E5BC /* TootleRelease.xcconfig */;
 		name = "TootleRelease.xcconfig: 28";
 		rLen = 0;
 		rLoc = 883;
 		rType = 0;
-		vrLen = 642;
+		vrLen = 607;
 		vrLoc = 586;
+	};
+	840A8CBA10D64BD200F8960C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60CAF10512FDA0022E5BC /* zutil.c */;
+		rLen = 8;
+		rLoc = 2302;
+		rType = 0;
+	};
+	840A8CBB10D64BD200F8960C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60CAF10512FDA0022E5BC /* zutil.c */;
+		name = "zutil.c: 91";
+		rLen = 8;
+		rLoc = 2302;
+		rType = 0;
+		vrLen = 365;
+		vrLoc = 2082;
 	};
 	84B60BA710512B120022E5BC /* Project object */ = {
 		activeBuildConfigurationName = Debug;
@@ -68,12 +81,13 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 275474175;
-			PBXWorkspaceStateSaveDate = 275474175;
+			PBXPerProjectTemplateStateSaveDate = 282479538;
+			PBXWorkspaceStateSaveDate = 282479538;
 		};
 		perUserProjectItems = {
-			843A9288106B6715004473CB /* PBXBookmark */ = 843A9288106B6715004473CB /* PBXBookmark */;
-			843A9289106B6715004473CB /* PBXTextBookmark */ = 843A9289106B6715004473CB /* PBXTextBookmark */;
+			840A8CB910D64BD200F8960C /* PBXTextBookmark */ = 840A8CB910D64BD200F8960C /* PBXTextBookmark */;
+			840A8CBA10D64BD200F8960C /* PBXTextBookmark */ = 840A8CBA10D64BD200F8960C /* PBXTextBookmark */;
+			840A8CBB10D64BD200F8960C /* PBXTextBookmark */ = 840A8CBB10D64BD200F8960C /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84B60BAB10512B120022E5BC /* Source Control */;
 		userBuildSettings = {
@@ -100,7 +114,21 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {621, 2639}}";
 			sepNavSelRange = "{883, 0}";
-			sepNavVisRange = "{586, 642}";
+			sepNavVisRange = "{586, 607}";
+		};
+	};
+	84B60CA010512FDA0022E5BC /* gzio.c */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {720, 13572}}";
+			sepNavSelRange = "{19993, 8}";
+			sepNavVisRange = "{20443, 567}";
+		};
+	};
+	84B60CAF10512FDA0022E5BC /* zutil.c */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {544, 4173}}";
+			sepNavSelRange = "{2302, 8}";
+			sepNavVisRange = "{2082, 365}";
 		};
 	};
 }

@@ -1,5 +1,15 @@
 // !$*UTF8*$!
 {
+	840A8E8810D69BB900F8960C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8418F1110F4DB89D00B956C9 /* TLAudio.h */;
+		name = "TLAudio.h: 18";
+		rLen = 42;
+		rLoc = 271;
+		rType = 0;
+		vrLen = 729;
+		vrLoc = 2;
+	};
 	8418ECF80F4DA63E00B956C9 /* Project object */ = {
 		activeArchitecturePreference = i386;
 		activeBuildConfigurationName = Debug;
@@ -69,17 +79,17 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 278438111;
-			PBXWorkspaceStateSaveDate = 278438111;
+			PBXPerProjectTemplateStateSaveDate = 282500019;
+			PBXWorkspaceStateSaveDate = 282500019;
 		};
 		perUserProjectItems = {
+			840A8E8810D69BB900F8960C /* PBXTextBookmark */ = 840A8E8810D69BB900F8960C /* PBXTextBookmark */;
 			846C16B9109736A10098DFAF /* PBXTextBookmark */ = 846C16B9109736A10098DFAF /* PBXTextBookmark */;
 			84B60E58105135E00022E5BC /* PBXTextBookmark */ = 84B60E58105135E00022E5BC /* PBXTextBookmark */;
 			84D9BD6410986C60000042D8 /* PBXTextBookmark */ = 84D9BD6410986C60000042D8 /* PBXTextBookmark */;
 			84D9BFD51098A1CB000042D8 /* PBXTextBookmark */ = 84D9BFD51098A1CB000042D8 /* PBXTextBookmark */;
 			84D9BFD61098A1CB000042D8 /* PBXTextBookmark */ = 84D9BFD61098A1CB000042D8 /* PBXTextBookmark */;
 			84D9BFD71098A1CB000042D8 /* PBXTextBookmark */ = 84D9BFD71098A1CB000042D8 /* PBXTextBookmark */;
-			84D9BFD81098A1CB000042D8 /* PBXTextBookmark */ = 84D9BFD81098A1CB000042D8 /* PBXTextBookmark */;
 			84D9BFD91098A1CB000042D8 /* PBXTextBookmark */ = 84D9BFD91098A1CB000042D8 /* PBXTextBookmark */;
 			84FACEC4106A339300DC7803 /* PBXTextBookmark */ = 84FACEC4106A339300DC7803 /* PBXTextBookmark */;
 			84FACEC7106A339300DC7803 /* PBXTextBookmark */ = 84FACEC7106A339300DC7803 /* PBXTextBookmark */;
@@ -138,7 +148,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1011, 962}}";
 			sepNavSelRange = "{271, 42}";
-			sepNavVisRange = "{2, 774}";
+			sepNavVisRange = "{2, 729}";
 		};
 	};
 	8418F1520F4DB94D00B956C9 /* MacAudio.cpp */ = {
@@ -249,13 +259,6 @@
 		rType = 0;
 		vrLen = 770;
 		vrLoc = 195;
-	};
-	84D9BFD81098A1CB000042D8 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8418F1110F4DB89D00B956C9 /* TLAudio.h */;
-		rLen = 1;
-		rLoc = 17;
-		rType = 1;
 	};
 	84D9BFD91098A1CB000042D8 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;

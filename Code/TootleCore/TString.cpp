@@ -247,7 +247,7 @@ void TString::AppendVaList(const TChar16* pString,va_list& v)
 #if defined(TL_TARGET_PC)
 	int BufferStringLength = _vsnwprintf_s( Buffer.GetData(), Buffer.GetLength(), _TRUNCATE, pString, v );
 #else
-	int BufferStringLength = _vsnwprintf_s( Buffer.GetData(), Buffer.GetLength(), pString, v );
+	int BufferStringLength = vsnprintf( (char*)Buffer.GetData(), Buffer.GetLength(), (const char*)pString, v );
 	//int BufferStringLength = vsprintf_s( Buffer.GetData(), Buffer.GetLength(), pString, v );
 #endif
 
@@ -267,7 +267,7 @@ void TString::AppendVaList(const TChar8* pString,va_list& v)
 #if defined(TL_TARGET_PC)
 	int BufferStringLength = vsprintf_s( Buffer.GetData(), Buffer.GetDataSize(), pString, v );
 #else
-	int BufferStringLength = vsprintf_s( Buffer.GetData(), Buffer.GetDataSize(), pString, v );
+	int BufferStringLength = vsprintf( (char*)Buffer.GetData(), (const char*)pString, v );
 #endif
 
 	Append( Buffer.GetData(), BufferStringLength );

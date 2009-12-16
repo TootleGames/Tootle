@@ -8,6 +8,7 @@
  */
 
 #import "IPodSocialNetworkingPlatform_AGONOnline.h"
+#import <TootleCore/IPod/IPodString.h>
 
 #import "TAGONOnline.h"
 
@@ -19,11 +20,13 @@ void TLSocial::Platform::SocialNetworkingPlatform_AGONOnline::BeginSession(const
 #endif
 	
 	//NSString* pAPIKey = [NSString stringWithUTF8String:APIKey.GetData()];
-	NSString* pAPISecret = [NSString stringWithUTF8String:APISecret.GetData()];
+	NSString* pAPISecret = TLString::ConvertToUnicharString(APISecret);
 	
 	// Test App Secret - @"F6F99887E71B210A7DE512050EAD22894B72952A"
 	
 	AgonCreate(pAPISecret); // App secret that matches the DevDB environment.
+	
+	[pAPISecret release];
 	
 	// Tint AGON backgrounds to match app
 	// NOTE: Seaman Count specific atm
@@ -51,7 +54,9 @@ void TLSocial::Platform::SocialNetworkingPlatform_AGONOnline::OpenLeaderboard()
 void TLSocial::Platform::SocialNetworkingPlatform_AGONOnline::SubmitScore(const s32& Score, const TString& Format, const s32& LeaderboardID)	
 {
 	// Covert our TString into an NSString
-	NSString* pFormatString = [NSString stringWithUTF8String:Format.GetData()];
+	NSString* pFormatString = TLString::ConvertToUnicharString(Format);
 	
-	AgonSubmitScore(Score, pFormatString, LeaderboardID);	
+	AgonSubmitScore(Score, pFormatString, LeaderboardID);
+	
+	[pFormatString release];
 }

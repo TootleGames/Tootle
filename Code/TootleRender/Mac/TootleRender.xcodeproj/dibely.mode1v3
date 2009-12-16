@@ -337,7 +337,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>843C24BC10B2E746004E70F5</string>
+										<string>8448A0E310D38E07001A61A4</string>
 										<key>history</key>
 										<array>
 											<string>8418F4F40F4DD12B00B956C9</string>
@@ -350,7 +350,6 @@
 											<string>841DC5771056606600BFE98F</string>
 											<string>841DC64E10566BED00BFE98F</string>
 											<string>841DC7D110578E9300BFE98F</string>
-											<string>841DC86510579B4200BFE98F</string>
 											<string>841DC8921057A0CD00BFE98F</string>
 											<string>841DC8941057A0CD00BFE98F</string>
 											<string>841DC8CE1057A2CC00BFE98F</string>
@@ -387,15 +386,19 @@
 											<string>8464DAA910A1B28F00EAF14E</string>
 											<string>8464DACE10A1B6B300EAF14E</string>
 											<string>8464DAD710A1B73200EAF14E</string>
-											<string>845C91AB10A88A5000FC76E6</string>
 											<string>843C227210B2AB78004E70F5</string>
 											<string>843C248B10B2E027004E70F5</string>
-											<string>843C24B410B2E746004E70F5</string>
 											<string>843C24B510B2E746004E70F5</string>
 											<string>843C24B710B2E746004E70F5</string>
 											<string>843C24B910B2E746004E70F5</string>
-											<string>843C24BA10B2E746004E70F5</string>
-											<string>843C24BB10B2E746004E70F5</string>
+											<string>84785CA210B5A4A200E9F3C2</string>
+											<string>84785E1210B6DD2D00E9F3C2</string>
+											<string>84785E1410B6DD2D00E9F3C2</string>
+											<string>84785E5F10B6E24D00E9F3C2</string>
+											<string>8482CF9210BBFB53009067B8</string>
+											<string>8482CF9310BBFB53009067B8</string>
+											<string>8448A04E10D15F67001A61A4</string>
+											<string>8448A0E210D38E07001A61A4</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -407,14 +410,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1018, 349}}</string>
+								<string>{{0, 0}, {1018, 414}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 108 1280 670 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>349pt</string>
+							<string>414pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -427,14 +430,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 354}, {1018, 275}}</string>
+								<string>{{0, 419}, {1018, 210}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 108 1280 670 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>275pt</string>
+							<string>210pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -453,9 +456,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>843C24BD10B2E746004E70F5</string>
+				<string>8448A05110D15F67001A61A4</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>843C24BE10B2E746004E70F5</string>
+				<string>8448A05210D15F67001A61A4</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -616,7 +619,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TRenderNodeScrollableView.cpp</string>
+								<string></string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -633,8 +636,6 @@
 							<string>387pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -674,7 +675,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>8418F29F0F4DBE3D00B956C9</string>
-				<string>843C24B110B2E704004E70F5</string>
+				<string>8448A05310D15F67001A61A4</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -794,13 +795,13 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1CD10A99069EF8BA00B06720</string>
-				<string>8464DAC110A1B6A800EAF14E</string>
+				<string>8482D05510BC3A52009067B8</string>
 				<string>1C162984064C10D400B95A72</string>
-				<string>8464DAC210A1B6A800EAF14E</string>
-				<string>8464DAC310A1B6A800EAF14E</string>
-				<string>8464DAC410A1B6A800EAF14E</string>
-				<string>8464DAC510A1B6A800EAF14E</string>
-				<string>8464DAC610A1B6A800EAF14E</string>
+				<string>8482D05610BC3A52009067B8</string>
+				<string>8482D05710BC3A52009067B8</string>
+				<string>8482D05810BC3A52009067B8</string>
+				<string>8482D05910BC3A52009067B8</string>
+				<string>8482D05A10BC3A52009067B8</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.debugV3</string>
@@ -827,14 +828,12 @@
 							<key>Dock</key>
 							<array>
 								<dict>
-									<key>BecomeActive</key>
-									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TCamera.cpp</string>
+										<string></string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -855,6 +854,8 @@
 							<string>382pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -890,8 +891,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>845C91A910A88A4200FC76E6</string>
-				<string>845C91AA10A88A4200FC76E6</string>
+				<string>84489EA310D1160C001A61A4</string>
+				<string>84489EA410D1160C001A61A4</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>

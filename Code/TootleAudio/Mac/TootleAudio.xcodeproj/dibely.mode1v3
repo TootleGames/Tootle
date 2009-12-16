@@ -215,10 +215,15 @@
 				<string>build</string>
 				<string>build-and-go</string>
 				<string>go</string>
+				<string>NSToolbarSeparatorItem</string>
 				<string>clean-target</string>
 				<string>clean</string>
 				<string>debugger-enable-breakpoints</string>
 				<string>get-info</string>
+				<string>servicesModulefind</string>
+				<string>NSToolbarSeparatorItem</string>
+				<string>servicesModuledebug</string>
+				<string>com.apple.ide.organizer</string>
 				<string>NSToolbarFlexibleSpaceItem</string>
 				<string>com.apple.pbx.toolbar.searchfield</string>
 			</array>
@@ -333,7 +338,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84D9BFD91098A1CB000042D8</string>
+										<string>840A8E8810D69BB900F8960C</string>
 										<key>history</key>
 										<array>
 											<string>84B60E58105135E00022E5BC</string>
@@ -345,7 +350,7 @@
 											<string>84D9BFD51098A1CB000042D8</string>
 											<string>84D9BFD61098A1CB000042D8</string>
 											<string>84D9BFD71098A1CB000042D8</string>
-											<string>84D9BFD81098A1CB000042D8</string>
+											<string>84D9BFD91098A1CB000042D8</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -357,14 +362,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1072, 399}}</string>
+								<string>{{0, 0}, {1072, 391}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 108 1280 670 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>399pt</string>
+							<string>391pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -377,14 +382,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 404}, {1072, 225}}</string>
+								<string>{{0, 396}, {1072, 233}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 108 1280 670 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>225pt</string>
+							<string>233pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -403,9 +408,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84D9BFDA1098A1CB000042D8</string>
+				<string>840A8E8910D69BB900F8960C</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84D9BFDB1098A1CB000042D8</string>
+				<string>840A8E8A10D69BB900F8960C</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -622,7 +627,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>8418F2F90F4DC11200B956C9</string>
-				<string>84D9BFDC1098A1CB000042D8</string>
+				<string>840A8E8B10D69BB900F8960C</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

@@ -2,6 +2,8 @@
 
 #import <Foundation/NSData.h>
 
+#include <TootleCore/Mac/MacString.h>
+
 namespace TLNetwork
 {
 	namespace Platform
@@ -24,9 +26,11 @@ TLNetwork::Platform::TNSUrlConnectionTask::~TNSUrlConnectionTask()
 	if ( m_pUrl )
 		[m_pUrl release];
 
+ */
+	
 	if ( m_pUrlString )
 		[m_pUrlString release];
- */
+
 }
 
 
@@ -72,7 +76,7 @@ void TLNetwork::Platform::TConnectionHttp::StartDownloadTask(TTask& Task)
 	}
 
 	//	create request
-	ConnectionTask.m_pUrlString = [[NSString alloc] initWithUTF8String:UrlString.GetData() ];
+	ConnectionTask.m_pUrlString = TLString::ConvertToUnicharString(UrlString);
 	ConnectionTask.m_pUrl = [[NSURL alloc] initWithString:ConnectionTask.m_pUrlString ];
 	ConnectionTask.m_pUrlRequest = [NSURLRequest	requestWithURL:ConnectionTask.m_pUrl
 								cachePolicy:NSURLRequestReloadIgnoringLocalCacheData 
@@ -128,7 +132,7 @@ void TLNetwork::Platform::TConnectionHttp::StartUploadTask(TTask& Task)
 	
 
 	//	create request
-	ConnectionTask.m_pUrlString = [[NSString alloc] initWithUTF8String:UrlString.GetData() ];
+	ConnectionTask.m_pUrlString = TLString::ConvertToUnicharString(UrlString);
 	ConnectionTask.m_pUrl = [[NSURL alloc] initWithString:ConnectionTask.m_pUrlString ];
 	ConnectionTask.m_pUrlRequest = [NSMutableURLRequest	requestWithURL:ConnectionTask.m_pUrl];
 
@@ -175,7 +179,7 @@ void TLNetwork::Platform::TConnectionHttp::StartUploadTask(TTask& Task)
 		//	we're doing this to match the IPod code which I can't see a way to send raw data
 		//	without converting it to a string
 		TString DataString;
-		UploadData.GetData().GetDataHexString( DataString );
+		UploadData.GetData().GetDataHexString( DataString, TRUE, TRUE );
 		
 		TString NameString = "Content-Disposition: form-data; name=\"";
 		NameString.Append( DataRefString );
@@ -183,8 +187,11 @@ void TLNetwork::Platform::TConnectionHttp::StartUploadTask(TTask& Task)
 		
 		[postBody appendData:[[NSString stringWithFormat:@"\r\n\r\n--%@\r\n",stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
 		
-		[postBody appendData:[[NSString stringWithUTF8String:NameString.GetData()] dataUsingEncoding:NSUTF8StringEncoding]];
-		[postBody appendData:[[NSString stringWithUTF8String:DataString.GetData()] dataUsingEncoding:NSUTF8StringEncoding]];
+		NSString* pNameString = TLString::ConvertToUnicharString(NameString);
+		NSString* pDataString = TLString::ConvertToUnicharString(DataString);
+		
+		[postBody appendData:[pNameString dataUsingEncoding:NSUTF8StringEncoding]];
+		[postBody appendData:[pDataString dataUsingEncoding:NSUTF8StringEncoding]];
 	}
  
 	/*

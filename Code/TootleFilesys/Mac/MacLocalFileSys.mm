@@ -4,6 +4,8 @@
 #import <Foundation/NSString.h>
 #import <Foundation/Foundation.h>
 
+#include <TootleCore/Mac/MacString.h>
+
 using namespace TLFileSys;
 
 
@@ -73,7 +75,7 @@ SyncBool Platform::LocalFileSys::LoadFileList()
 //---------------------------------------------------------------
 Bool Platform::LocalFileSys::LoadFileList(const char* pFileSearch)
 {
-	NSString *pDirString = [[NSString alloc] initWithUTF8String:m_Directory.GetData()];
+	NSString *pDirString = TLString::ConvertToUnicharString(m_Directory);
 
 #ifdef _DEBUG
 	//	fail to make instances with no type (eg. executable name on ipod) 
@@ -95,6 +97,8 @@ Bool Platform::LocalFileSys::LoadFileList(const char* pFileSearch)
 	
 	if(!pArray)
 	{
+		[pDirString release];
+		
 		// Error getting file list for the directory
 		TLDebug_Print( "Invalid filelist pointer" );
 		return FALSE;
@@ -108,13 +112,15 @@ Bool Platform::LocalFileSys::LoadFileList(const char* pFileSearch)
 		const char* pRealFilename = (const char*)[pFilename fileSystemRepresentation];
 
 		TLDebug_Print( pRealFilename );
+
+		TTempString filepath = m_Directory;
+		filepath.Append(pRealFilename);		
 		
-		NSString* fullfilepath = [pDirString stringByAppendingString:pFilename];
-				
-		
+		NSString* fullfilepath = TLString::ConvertToUnicharString(filepath);
+
 		NSDictionary* pFileAttribs = [[NSFileManager defaultManager] attributesOfItemAtPath:fullfilepath error:NULL];
 		
-		//[fullfilepath release];
+		[fullfilepath release];
 		
 		NSString *FileType = [pFileAttribs objectForKey:@"NSFileType"];
 				
@@ -211,8 +217,12 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 	FullFilename.Append( pFile->GetFilename() );
 
 	//	open
-	FILE* pFileHandle = fopen( FullFilename.GetData(), "rb" );
+	NSString *pFileString = TLString::ConvertToUnicharString(FullFilename);
 	
+	FILE* pFileHandle = fopen( [pFileString UTF8String], "rb" );
+	
+	[pFileString release];
+
 	//	failed to open
 	if ( !pFileHandle )
 	{
@@ -311,8 +321,8 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 //---------------------------------------------------------------
 Bool Platform::LocalFileSys::IsDirectoryValid()
 {
-	NSString *pDirString = [[NSString alloc] initWithUTF8String:m_Directory.GetData()];
-	
+	NSString *pDirString = TLString::ConvertToUnicharString(m_Directory);
+
 	BOOL isDir = NO;
 	
 	// Check to see if the directory exist at the path specified
@@ -343,8 +353,8 @@ void Platform::LocalFileSys::SetDirectory(const TString& Directory)
 	
 	// Check to see if the 'home' dir exists already in the directory being passed in
 	// if so use it as-is otherwise we need to setup the home dir and then append the new directory path to it
-	NSString* path = [[NSString alloc] initWithUTF8String:Directory.GetData()];
-	
+	NSString *path = TLString::ConvertToUnicharString(Directory);
+
 	NSRange range = [path rangeOfString:HomeDir];
 	
 	if(range.location == NSNotFound)
@@ -391,9 +401,14 @@ TPtr<TLFileSys::TFile> Platform::LocalFileSys::CreateNewFile(const TString& File
 	TTempString FullFilename = m_Directory;
 	FullFilename.Append( Filename );
 
-	//	attempt to open file before creating instance
-	FILE* pFileHandle = fopen( FullFilename.GetData(), "wb" );
+	NSString *pFileString = TLString::ConvertToUnicharString(FullFilename);
 
+	//	attempt to open file before creating instance
+	
+	FILE* pFileHandle = fopen( [pFileString UTF8String], "wb" );
+
+	[pFileString release];
+	
 	//	failed to open
 	if ( !pFileHandle )
 	{
@@ -438,8 +453,12 @@ SyncBool Platform::LocalFileSys::WriteFile(TPtr<TFile>& pFile)
 	TTempString FullFilename = m_Directory;
 	FullFilename.Append( pFile->GetFilename() );
 
+	NSString *pFileString = TLString::ConvertToUnicharString(FullFilename);
+
 	//	open file for writing
-	FILE* pFileHandle = fopen( FullFilename.GetData(), "wb" );
+	FILE* pFileHandle = fopen( [pFileString UTF8String], "wb" );
+	
+	[pFileString release];
 	
 	//	failed to open
 	if ( !pFileHandle )

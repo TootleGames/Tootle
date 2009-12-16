@@ -49,14 +49,31 @@ typedef	unsigned short		u16;
 typedef	signed short		s16;
 typedef	unsigned char		u8;
 typedef	signed char			s8;
+
+// In GCC wchar_t is 4-bytes whereas for the VS compiler it's 2-bytes.  We want to use a 2-byte TChar16 type.
+// Therefore use the equivalent of the NSString 'unichar' without having to include the NSString header which is obj-c only
+#if defined(__GNUG__)
+//typedef unsigned short				TChar16;		
+
+// TEMP - For now use conversion routines
+typedef wchar_t				TChar16;	
+#else
 typedef wchar_t				TChar16;
+#endif
+
 typedef char				TChar8;
 typedef TChar16				TChar;
 
+#if defined(__GNUG__)
+	//#define TLCharString(Quote)		(TChar)Quote
+	#define TLCharString(Quote)		TLMacroConCat(L , Quote)
+	#define TLMacroConCat(a,b)		a ## b
+#else
 //	like wxT() or _T or _TEXT, make literal strings widestring. 
 //	Mostly required when not using a TString which will do the automatic conversion for us
-#define TLCharString(Quote)		TLMacroConCat(L , Quote)
-#define TLMacroConCat(a,b)		a ## b
+	#define TLCharString(Quote)		TLMacroConCat(L , Quote)
+	#define TLMacroConCat(a,b)		a ## b
+#endif
 
 #if defined(TL_TARGET_PC)
 typedef unsigned __int64	u64;
@@ -177,7 +194,9 @@ TLCore_DeclareIsDataType( u8 );
 TLCore_DeclareIsDataType( s8 );
 //TLCore_DeclareIsDataType( char );	//	gr: vs compiler seems to see s8 and char as different types
 TLCore_DeclareIsDataType( TChar8 );
+#if !defined(__GNUG__)
 TLCore_DeclareIsDataType( TChar16 );
+#endif
 //TLCore_DeclareIsDataType( TChar );
 TLCore_DeclareIsDataType( u16 );
 TLCore_DeclareIsDataType( s16 );

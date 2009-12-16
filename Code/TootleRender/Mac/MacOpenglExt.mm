@@ -374,7 +374,7 @@ Bool TLRender::Platform::OpenglExtensions::IsExtensionNameInString(const TString
 		}
 
 		//	compare chunk of extension string to our extension name
-		if ( ExtensionName.IsEqual( pExtensionListString, Length, FALSE ) )
+		if ( ExtensionName.IsEqual( pExtensionListString, FALSE ) )
 		{
 			//	match! is supported!
 			return TRUE;
