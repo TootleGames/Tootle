@@ -247,6 +247,7 @@ void TString::AppendVaList(const TChar16* pString,va_list& v)
 #if defined(TL_TARGET_PC)
 	int BufferStringLength = _vsnwprintf_s( Buffer.GetData(), Buffer.GetLength(), _TRUNCATE, pString, v );
 #else
+	// TODO: Not sure what the equivalent _vsnwprintf_s routine is on the Mac/Ipod :( 
 	int BufferStringLength = vsnprintf( (char*)Buffer.GetData(), Buffer.GetLength(), (const char*)pString, v );
 	//int BufferStringLength = vsprintf_s( Buffer.GetData(), Buffer.GetLength(), pString, v );
 #endif

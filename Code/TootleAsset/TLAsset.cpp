@@ -784,7 +784,7 @@ Bool TLAsset::LoadAllAssets(TRefRef AssetType)
 
 		TTempString Debug_String("Found asset in file system: ");
 		AssetFileAssetRef.GetString( Debug_String );
-		Debug_String.Appendf(" from file %s", pAssetFile->GetFilename().GetData() );
+		Debug_String.Appendf(" from file %S", pAssetFile->GetFilename().GetData() );
 		TLDebug_Print( Debug_String );
 	}
 

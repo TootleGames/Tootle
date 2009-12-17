@@ -69,18 +69,10 @@ Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 		///////////////////////////////////////////////////////////////////////////
 
 		// For a release build we will need to use the bundle path as-is and append the 'Asset' directory to it
-		NSString* appdir = TLString::ConvertToUnicharString(applicationdir);
 
-		
-		// On the ipod/iphone the assets are stored in the bundle root.
-		//NSString* path = [appdir stringByAppendingString:@"/Assets/"];
-		NSString* path = [appdir stringByAppendingString:@"/Contents/Resources/"];
-		
-		// Copy path string
-		const char* pAssetDir = (const char*)[path UTF8String];
-		AssetDir =  pAssetDir;
-		[appdir release];
-
+		// On the Mac the assets are stored in the bundle under 'contents/resources/'
+		applicationdir.Append("/Contents/Resources/");
+		AssetDir = applicationdir;
 		
 		///////////////////////////////////////////////////////////////////////////
 #endif
@@ -105,23 +97,11 @@ Bool TLFileSys::Platform::GetAssetSubDirectory(TTempString& UserDir, const TTemp
 	
 	if(GetAssetDirectory(tmpassetdir))
 	{
-		NSString* tmpdir = TLString::ConvertToUnicharString(tmpassetdir);
-		NSString* subdir = TLString::ConvertToUnicharString(Subdirectory);
-
+		tmpassetdir.Append(Subdirectory);
+		tmpassetdir.Append("/");
 		
-		// Append the subdirectory to the asset directory
-		NSString* tmppath = [tmpdir stringByAppendingString:subdir];
-		
-		// Add seperator
-		NSString* path = [tmppath stringByAppendingString:@"/"];
-		
-		// Copy path string
-		const char* pUserDir = (const char*)[path UTF8String];
-		UserDir =  pUserDir;
-		
-		[tmpdir release];
-		[subdir release];
-		
+		UserDir = tmpassetdir;
+				
 		return TRUE;
 		
 	}
