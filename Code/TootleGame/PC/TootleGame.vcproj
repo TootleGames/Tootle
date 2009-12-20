@@ -255,6 +255,22 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TMenuController.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TMenuController.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TMenuWrapper.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TMenuWrapper.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TPath.cpp"
 			>
 		</File>
