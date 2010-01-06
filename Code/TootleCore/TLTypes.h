@@ -39,6 +39,13 @@
 #endif
 */
 
+
+//	compile time assert (FALSE will fail to compile)
+#define TLCompileAssertWithVar(predicate,Var)	typedef char Var[2*((predicate)!=0)-1];
+#define TLCompileAssertWithLine(predicate,line)	TLCompileAssertWithVar( (predicate) , TLCompileAssertion##line )
+#define TLCompileAssert(predicate,msg)			TLCompileAssertWithLine( (predicate) && msg, __LINE__ )
+
+
 //-------------------------------------------------------
 //	basic types
 //-------------------------------------------------------
@@ -50,50 +57,40 @@ typedef	signed short		s16;
 typedef	unsigned char		u8;
 typedef	signed char			s8;
 
-// In GCC wchar_t is 4-bytes whereas for the VS compiler it's 2-bytes.  We want to use a 2-byte TChar16 type.
-// Therefore use the equivalent of the NSString 'unichar' without having to include the NSString header which is obj-c only
-#if defined(__GNUG__)
-//typedef unsigned short				TChar16;		
-
-// TEMP - For now use conversion routines
-typedef wchar_t				TChar16;	
-#else
-typedef wchar_t				TChar16;
-#endif
-
-typedef char				TChar8;
-typedef TChar16				TChar;
-
-#if defined(__GNUG__)
-	//#define TLCharString(Quote)		(TChar)Quote
-	#define TLCharString(Quote)		TLMacroConCat(L , Quote)
-	#define TLMacroConCat(a,b)		a ## b
-#else
-//	like wxT() or _T or _TEXT, make literal strings widestring. 
-//	Mostly required when not using a TString which will do the automatic conversion for us
-	#define TLCharString(Quote)		TLMacroConCat(L , Quote)
-	#define TLMacroConCat(a,b)		a ## b
-#endif
-
 #if defined(TL_TARGET_PC)
 typedef unsigned __int64	u64;
 typedef signed __int64		s64;
-#endif
-
-#if defined(TL_TARGET_IPOD)
+#else
 typedef long unsigned int	u64;
 typedef long signed int		s64;
 #endif
 
-#if defined(TL_TARGET_MAC)
-typedef long unsigned int	u64;
-typedef long signed int		s64;
+typedef wchar_t				TChar16;
+typedef char				TChar8;
+typedef TChar16				TChar;
+
+
+//	by default in GCC the wchar_t type is 32 bit. We want it 16 bit so that literal wide strings won't need conversion to
+//	our standardised 16-bit widestring characters. From GCC 4.4 we can use the prefix of U (instead of L) to dictate a utf-16
+//	literal instead of a wchar_t literal, but we're currently using GCC 4.2.
+//	the compiler option -fshort-wchar will make literal strings (whcar_t's) utf-16 instead of utf-32
+TLCompileAssert( sizeof(wchar_t) == sizeof(u16), "wchar_t is not 16 bit." )
+
+
+//	like wxT() or _T or _TEXT, make literal strings widestring. 
+//	Mostly required when not using a TString which will do the automatic conversion for us
+//	gr: in GCC 4.4 we can use the new prefixes to make specific length UTF literals (currently have to use -fshort-wchar compile flag to work around UTF32/16 issues)
+//	U gives a UTF 32 literal
+//	u gives a UTF 16 literal
+//	L gives a system-defined literal (whcar_t)
+#define TLMacroConCat(a,b)		a ## b
+#if 0//defined(__GNUG__)	//	4.4
+	#define TLCharString(Quote)		TLMacroConCat(u , Quote)
+#else
+	#define TLCharString(Quote)		TLMacroConCat(L , Quote)
 #endif
 
-#if defined(TL_TARGET_WII)
-typedef long unsigned int	u64;
-typedef long signed int		s64;
-#endif
+
 
 
 
