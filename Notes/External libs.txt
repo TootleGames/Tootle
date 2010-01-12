@@ -1,0 +1,67 @@
+wxWidgets
+==========================================================================
+Repository;
+http://svn.wxwidgets.org/svn/wx/wxWidgets/trunk
+
+windows:
+--------------------------
+modify Setup0.h (and rename to Setup.h) 
+Then open the wx solution and build all to generate the libs.
+link and include
+
+mac:
+--------------------------
+modify Setup0.h (and rename to Setup.h) 
+open terminal
+cd <widgetsdir>
+mkdir osx-build
+cd osx-build
+../configure --disable-shared --with-opengl
+	--disable-shared builds a static lib instead of a dynamic lib
+	--with-opengl enables opengl support. (gr: the configure log for me says it cant find the opengl libs though)
+make
+*wait to build*
+Now use everything in the osx-build directory
+call ./wx-config --cppflags and add the resulting string to "other cpp flags" in the tootle core .xcodeproj
+call ./wx-config --libs and add the result to "link with libraries" in the tootle core .xcodeproj
+
+
+
+box2d
+==========================================================================
+Repository;
+http://box2d.googlecode.com/svn/trunk
+
+get latest. 
+Export everything to Tootle/Box2D dir
+Build
+Commit changes.
+
+
+lib png
+==========================================================================
+???
+
+Get latest
+Export everything (gr: Check this)
+Add all the source files to the project
+
+
+zlib
+==========================================================================
+???
+
+Get latest
+Export everything (gr: Check this)
+Add all the source files to the project
+
+
+libcurl
+==========================================================================
+???
+
+Get latest
+Export everything (gr: Check this)
+Add all the source files to the project
+
+
