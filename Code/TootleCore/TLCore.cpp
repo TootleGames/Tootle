@@ -79,16 +79,28 @@ Bool TLCore::TootInit()
 
 	return (InitLoopResult==SyncTrue);
 }
-	
+
+
+//---------------------------------------------------
+//	manager update invoked from TootLoop
+//---------------------------------------------------
+SyncBool TLCore::TootUpdate()
+{
+	// If enabled go through the update loop
+	if ( !g_pCoreManager->IsEnabled() )
+		return SyncWait;
+			
+	return g_pCoreManager->UpdateLoop();
+}
+
+
 Bool TLCore::TootLoop(Bool InitLoopResult)
 {
 	//	init was okay, do update loop
 	SyncBool UpdateLoopResult = InitLoopResult ? SyncWait : SyncFalse;
 	while ( UpdateLoopResult == SyncWait )
 	{
-		// If enabled go through the update loop
-		if(g_pCoreManager->IsEnabled())
-			UpdateLoopResult = g_pCoreManager->UpdateLoop();
+		UpdateLoopResult = TootUpdate();
 	}
 
 	///////////////////////////////////////////////////////////////////

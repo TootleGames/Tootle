@@ -13,7 +13,7 @@ class TString;
 namespace TLCore
 {
 	Bool			TootMain();						//	all-ecompassing loop if just using WinMain() and nothing clever
-	Bool			TootUpdate();					//	manager update invoked from TootLoop
+	SyncBool		TootUpdate();					//	manager update invoked from TootLoop
 
 	Bool			TootInit();						//	engine init
 	Bool			TootLoop(Bool InitResult);		//	engine update
