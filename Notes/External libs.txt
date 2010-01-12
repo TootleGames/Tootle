@@ -11,19 +11,25 @@ link and include
 
 mac:
 --------------------------
-modify Setup0.h (and rename to Setup.h) 
+modify Setup0.h (and rename to Setup.h) to include opengl and make sure dataview control is enabled (other defaults are fine as of writing this)
+
 open terminal
 cd <widgetsdir>
 mkdir osx-build
 cd osx-build
 ../configure --disable-shared --with-opengl
 	--disable-shared builds a static lib instead of a dynamic lib
-	--with-opengl enables opengl support. (gr: the configure log for me says it cant find the opengl libs though)
+	--with-opengl enables opengl support. (gr: the configure log for me says it cant find the opengl libs but it seems to work still… probably explains the later issues)
 make
-*wait to build*
-Now use everything in the osx-build directory
-call ./wx-config --cppflags and add the resulting string to "other cpp flags" in the tootle core .xcodeproj
-call ./wx-config --libs and add the result to "link with libraries" in the tootle core .xcodeproj
+*wait to wx build*
+Now make sure you use everything in the osx-build directory (libs, includes etc) and not /usr/*
+call ./wx-config --cppflags and add the resulting string to "other cpp flags" in the tootle core .xcodeproj (or any projects that use WX)
+call ./wx-config --libs and add the result to "link with libraries" in game .xcodeproj (because they're linker options, not compile.)
+Also need to add
+/Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_osx_carbonu_gl-2.9.a
+(or whatever the wx opengl lib is named)
+and -framework AGL
+
 
 
 
