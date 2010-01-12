@@ -200,4 +200,16 @@ GCC_WARN_UNUSED_VALUE = NO
 GCC_WARN_UNUSED_VARIABLE = NO
 GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES
 GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = YES
-OTHER_CPLUSPLUSFLAGS = -fshort-wchar
+OTHER_CPLUSPLUSFLAGS = -fshort-wchar $(OTHER_CFLAGS)
+
+//	gr: common flags, but not project defaults. Use them like $(WHATEVER)
+
+//	gr: if your project includes wx code, add these compile flags. ("Other c++ flags")
+//		generated from <wxwidgets-build-dir>/wx-config --cppflags
+//		fill xcode with $(OTHER_CFLAGS) $(OTHER_CPLUSPLUSFLAGS) $(WX_CPLUSPLUSFLAGS)
+WX_CPLUSPLUSFLAGS = -I/Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/wx/include/osx_carbon-unicode-static-2.9 -I/Users/graham/Tootle/wxWidgetsSVN/include -D_FILE_OFFSET_BITS=64 -D__WXMAC__ -D__WXOSX_CARBON__
+
+//	gr: if your [game] project needs the wx libs, add these linker flags ("Other linker flags")
+//		generated from <wxwidgets-build-dir>/wx-config --cppflags
+//		but with amendments (see "Notes/External Libs.txt")
+WX_LINKERFLAGS = -framework AGL /Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_osx_carbonu_gl-2.9.a -liconv -L/Users/graham/Tootle/wxWidgetsSVN/osx-build/lib -framework IOKit -framework Carbon -framework Cocoa -framework AudioToolbox -framework System -framework OpenGL -framework QuickTime /Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_osx_carbonu_xrc-2.9.a /Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_osx_carbonu_html-2.9.a /Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_osx_carbonu_qa-2.9.a /Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_osx_carbonu_adv-2.9.a /Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_osx_carbonu_core-2.9.a /Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_baseu_xml-2.9.a /Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_baseu_net-2.9.a /Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_baseu-2.9.a -framework WebKit -lwxregexu-2.9 -lwxtiff-2.9 -lwxjpeg-2.9 -lwxpng-2.9
