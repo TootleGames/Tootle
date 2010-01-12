@@ -48,6 +48,9 @@ protected:
 	virtual TYPE*			CreateObject(TRefRef InstanceRef,TRefRef TypeRef) = 0;
 
 	void					Debug_CheckFactoryIntegrity();					//	make sure there are no dupes, and no NULL entries
+
+private:
+	TRef					m_LastCreatedRef;								//	to speed up GetFreeInstanceRef we store the last one we created and start with that when checking against duplicates rather than starting from "zero"
 };
 
 
@@ -132,6 +135,9 @@ s32 TClassFactory<TYPE, STOREINSTANCES>::CreateInstance(TPtr<TYPE>& pNewInstance
 		TYPE* pObject = CreateObject( InstanceRef, TypeRef );
 		if ( !pObject )
 			return -1;
+
+		//	store the last ref we created to help speed up GetFreeInstanceRef
+		m_LastCreatedRef = InstanceRef;		
 
 		if(STOREINSTANCES)
 		{
@@ -222,6 +228,15 @@ TRef TClassFactory<TYPE, STOREINSTANCES>::GetFreeInstanceRef(TRef BaseRef) const
 	{
 		TLDebug_Break("Cannot search for a free ref on a factory that doesn't store the instances");
 		return TRef();	//	return BaseRef;
+	}
+
+	//	if no base ref provided, then start at the last one we created and +1. This means
+	//	we won't have to loop through a load of instances we already know exist...
+	//	though using a base ref (which we often do to get quite readable refs) means we don't see this benefit
+	if ( !BaseRef.IsValid() )
+	{
+		BaseRef = m_LastCreatedRef;
+		BaseRef.Increment();
 	}
 
 	//	keep searching until we find one unused
