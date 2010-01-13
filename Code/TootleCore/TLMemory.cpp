@@ -184,13 +184,17 @@ Bool TLMemory::Debug::Break(const char* pErrorString,const char* pSourceFunction
 //---------------------------------------------------
 u32 TLCore::PointerToInteger(void* pAddress)
 {
-	u32 Address = 0;
 	
+	uintptr_t ptr = (uintptr_t)pAddress;
+	
+	u32 Address = ptr & 0xffffffff;
+	/*
 	//	ignore pointer truncation warning (void* to integer)
 #pragma warning(push)
 #pragma warning(disable : 4311) 
 	Address = reinterpret_cast<u32>( pAddress );
 #pragma warning(pop)
+	 */
 	
 	return Address;
 }

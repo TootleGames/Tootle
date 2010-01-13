@@ -56,7 +56,7 @@ namespace TLInput
 			TKeyArray<u32, TRef>					g_PS3PadButtonRefs;			// PS3 pad button refs
 			
 
-			TKeyArray<u32, TRef>					g_HIDDeviceProductIDRefs;	//	table mapping HID device ProductID to TRefs - the Guids are not always valid TRef's (we use 30 bits exclusivly) - so this keeps an internal Ref<->Guid map
+			TKeyArray<IOHIDDeviceRef, TRef>					g_HIDDeviceProductIDRefs;	//	table mapping HID device ProductID to TRefs - the Guids are not always valid TRef's (we use 30 bits exclusivly) - so this keeps an internal Ref<->Guid map
 
 			
 			// Internal
@@ -70,8 +70,8 @@ namespace TLInput
 			
 			Bool	GetSpecificButtonRef(const u32& uButtonID, TRefRef DeviceType, const u32& uProductID, TRef& LabelRef);
 			
-			u32		GetDeviceProductIDFromRef(TRefRef DeviceRef);				//	get the ProductID thats mapped to this ref. ZERO returned is assumed invalid
-			TRef	GetDeviceRefFromProductID(u32 ProductID,Bool CreateNew);	//	get the ref thats mapped to this device ProductID. Optionally create a new entry
+			IOHIDDeviceRef		GetDeviceProductIDFromRef(TRefRef DeviceRef);				//	get the ProductID thats mapped to this ref. NULL pointer returned is assumed invalid
+			TRef				GetDeviceRefFromProductID(const IOHIDDeviceRef ProductID,Bool CreateNew);	//	get the ref thats mapped to this device ProductID. Optionally create a new entry
 			
 			
 			Bool			InitialisePhysicalDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef);
@@ -316,9 +316,9 @@ void Platform::HID::InitialisePS3PadRefMap()
 //---------------------------------------------------
 //	get the ProductID thats mapped to this ref. ZERO returned is assumed invalid
 //---------------------------------------------------
-u32 Platform::HID::GetDeviceProductIDFromRef(TRefRef DeviceRef)
+IOHIDDeviceRef Platform::HID::GetDeviceProductIDFromRef(TRefRef DeviceRef)
 {
-	const u32* pGuid = g_HIDDeviceProductIDRefs.FindKey( DeviceRef );
+	const IOHIDDeviceRef* pGuid = g_HIDDeviceProductIDRefs.FindKey( DeviceRef );
 	if ( !pGuid )
 		return 0;
 	
@@ -328,7 +328,7 @@ u32 Platform::HID::GetDeviceProductIDFromRef(TRefRef DeviceRef)
 //---------------------------------------------------
 //	get the ref thats mapped to this device ProductID. Optionally create a new entry
 //---------------------------------------------------
-TRef Platform::HID::GetDeviceRefFromProductID(u32 DeviceGuid,Bool CreateNew)
+TRef Platform::HID::GetDeviceRefFromProductID(const IOHIDDeviceRef DeviceGuid,Bool CreateNew)
 {
 	const TRef* pRef = g_HIDDeviceProductIDRefs.Find( DeviceGuid );
 	if ( pRef )
@@ -396,9 +396,8 @@ void Platform::HID::DeviceEnumerateCallback(void* context, IOReturn result,  voi
 	TLDebug_Print(str);
 	str.Empty();
 	
-	
 	//	get device ref mapped to this guid
-	TRef InstanceRef = TLInput::Platform::HID::GetDeviceRefFromProductID( (u32)device, TRUE );
+	TRef InstanceRef = TLInput::Platform::HID::GetDeviceRefFromProductID( device, TRUE );
 	
 	//	if device already exists, skip over (as per comments above)
 	if ( InstanceRef.IsValid() )
@@ -1305,7 +1304,7 @@ Bool TLInput::Platform::HID::TLInputHIDDevice::EnumerateObjects()
 
 void Platform::HID::TLInputHIDDevice::EnumDeviceObject(IOHIDElementRef elementRef)
 {	
-	TRef InstanceRef = TLInput::Platform::HID::GetDeviceRefFromProductID( (u32)GetHIDDevice(), FALSE );
+	TRef InstanceRef = TLInput::Platform::HID::GetDeviceRefFromProductID( GetHIDDevice(), FALSE );
 
 	TPtr<TInputDevice> pDevice = g_pInputSystem->GetInstance(InstanceRef);
 	
