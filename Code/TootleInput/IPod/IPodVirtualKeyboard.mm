@@ -61,7 +61,7 @@
 {
 	CGRect Position = CGRectMake(0, 0, 320, 32);
 	m_textField  = [[UITextField alloc] initWithFrame:Position];
-	[m_textField setHidden:NO];
+	[m_textField setHidden:YES];
 	[m_textField setBorderStyle:UITextBorderStyleRoundedRect];
 	[m_textField setAutocorrectionType:UITextAutocorrectionTypeNo];
 	[m_textField setAutocapitalizationType:UITextAutocapitalizationTypeWords];
@@ -123,6 +123,21 @@
 	
 	return YES;
 }
+
+
+/*
+ // May not be needed.  Set a key in the info.plist of your project as follows:
+ //
+ //		<key>UIInterfaceOrientation</key>
+ //		<string>UIInterfaceOrientationLandscapeRight</string>
+ //
+ // for fixed orientations.  Change the UIInterfaceOrientationLandscapeRight accordingly for your projects orientation.
+ //
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+	return YES;
+}
+*/
 
 
 
