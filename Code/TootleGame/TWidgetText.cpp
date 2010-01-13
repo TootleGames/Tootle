@@ -32,6 +32,10 @@ void TLGui::TWidgetText::SetProperty(TLMessaging::TMessage& Message)
 	TWidget::SetProperty(Message);
 	
 	Message.ImportData("Editing", m_bEditing);
+	
+	// Import the text
+	if(Message.ImportDataString("String", m_Text))
+		OnTextChange();
 }
 
 
