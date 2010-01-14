@@ -30,12 +30,17 @@ SyncBool TLDebug::Platform::Shutdown()
 
 void TLDebug::Platform::PrintToBuffer(const TString& String)
 {
-	// Check to see if the buffer is full (buffer size 512 less one due to line feed)
-	if(g_ConsoleBuffer.GetLength() + String.GetLength() >= 511 )
-		FlushBuffer();
+	TTempString newline("\n");
 
+	// Final buffer size is buffer size less the size of the newline terminator 
+	u32 uSize = 512 - newline.GetLength();
+	
+	// Check to see if we can add to the buffer
+	if(g_ConsoleBuffer.GetLength() + String.GetLength() >= uSize)
+		FlushBuffer(); // will exceed the buffer length so flush the buffer and start fresh
+	
 	g_ConsoleBuffer.Append( String.GetData() );
-	g_ConsoleBuffer.Append('\n');
+	g_ConsoleBuffer.Append( newline );
 }
 	
 void TLDebug::Platform::FlushBuffer()

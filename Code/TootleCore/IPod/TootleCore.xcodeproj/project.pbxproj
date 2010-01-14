@@ -102,7 +102,6 @@
 		840A927310D7E83B00F8960C /* MacApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacApp.mm; path = ../Mac/MacApp.mm; sourceTree = SOURCE_ROOT; };
 		840A927410D7E83B00F8960C /* MacCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacCore.h; path = ../Mac/MacCore.h; sourceTree = SOURCE_ROOT; };
 		840A927510D7E83B00F8960C /* MacCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacCore.mm; path = ../Mac/MacCore.mm; sourceTree = SOURCE_ROOT; };
-		840A927610D7E83B00F8960C /* MacDebug copy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "MacDebug copy.mm"; path = "../Mac/MacDebug copy.mm"; sourceTree = SOURCE_ROOT; };
 		840A927710D7E83B00F8960C /* MacDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacDebug.h; path = ../Mac/MacDebug.h; sourceTree = SOURCE_ROOT; };
 		840A927810D7E83B00F8960C /* MacDebug.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacDebug.mm; path = ../Mac/MacDebug.mm; sourceTree = SOURCE_ROOT; };
 		840A927910D7E83B00F8960C /* MacMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacMemory.h; path = ../Mac/MacMemory.h; sourceTree = SOURCE_ROOT; };
@@ -111,6 +110,17 @@
 		840A927C10D7E83B00F8960C /* MacString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacString.mm; path = ../Mac/MacString.mm; sourceTree = SOURCE_ROOT; };
 		840A927D10D7E83B00F8960C /* MacTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacTime.h; path = ../Mac/MacTime.h; sourceTree = SOURCE_ROOT; };
 		840A927E10D7E83B00F8960C /* MacTime.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacTime.mm; path = ../Mac/MacTime.mm; sourceTree = SOURCE_ROOT; };
+		8413627210FF5365007A948A /* cpuid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cpuid.cpp; path = ../PC/cpuid.cpp; sourceTree = SOURCE_ROOT; };
+		8413627310FF5365007A948A /* cpuid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cpuid.h; path = ../PC/cpuid.h; sourceTree = SOURCE_ROOT; };
+		8413627410FF5365007A948A /* PCCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCCore.cpp; path = ../PC/PCCore.cpp; sourceTree = SOURCE_ROOT; };
+		8413627510FF5365007A948A /* PCDebug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCDebug.cpp; path = ../PC/PCDebug.cpp; sourceTree = SOURCE_ROOT; };
+		8413627610FF5365007A948A /* PCDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCDebug.h; path = ../PC/PCDebug.h; sourceTree = SOURCE_ROOT; };
+		8413627710FF5365007A948A /* PCMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCMemory.cpp; path = ../PC/PCMemory.cpp; sourceTree = SOURCE_ROOT; };
+		8413627810FF5365007A948A /* PCMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCMemory.h; path = ../PC/PCMemory.h; sourceTree = SOURCE_ROOT; };
+		8413627910FF5365007A948A /* PCThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCThread.cpp; path = ../PC/PCThread.cpp; sourceTree = SOURCE_ROOT; };
+		8413627A10FF5365007A948A /* PCThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCThread.h; path = ../PC/PCThread.h; sourceTree = SOURCE_ROOT; };
+		8413627B10FF5365007A948A /* PCTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCTime.cpp; path = ../PC/PCTime.cpp; sourceTree = SOURCE_ROOT; };
+		8413627C10FF5365007A948A /* PCTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCTime.h; path = ../PC/PCTime.h; sourceTree = SOURCE_ROOT; };
 		8418E89D0F4C2D8C00B956C9 /* TootleSimDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleSimDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleSimDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		8418E89E0F4C2D8C00B956C9 /* TootleSimRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleSimRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleSimRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		8421B17C108628DE00439A7E /* IPodDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodDebug.h; sourceTree = "<group>"; };
@@ -223,7 +233,6 @@
 				840A927310D7E83B00F8960C /* MacApp.mm */,
 				840A927410D7E83B00F8960C /* MacCore.h */,
 				840A927510D7E83B00F8960C /* MacCore.mm */,
-				840A927610D7E83B00F8960C /* MacDebug copy.mm */,
 				840A927710D7E83B00F8960C /* MacDebug.h */,
 				840A927810D7E83B00F8960C /* MacDebug.mm */,
 				840A927910D7E83B00F8960C /* MacMemory.h */,
@@ -234,6 +243,24 @@
 				840A927E10D7E83B00F8960C /* MacTime.mm */,
 			);
 			name = "Mac Source Files";
+			sourceTree = "<group>";
+		};
+		8413627110FF5345007A948A /* PC Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				8413627210FF5365007A948A /* cpuid.cpp */,
+				8413627310FF5365007A948A /* cpuid.h */,
+				8413627410FF5365007A948A /* PCCore.cpp */,
+				8413627510FF5365007A948A /* PCDebug.cpp */,
+				8413627610FF5365007A948A /* PCDebug.h */,
+				8413627710FF5365007A948A /* PCMemory.cpp */,
+				8413627810FF5365007A948A /* PCMemory.h */,
+				8413627910FF5365007A948A /* PCThread.cpp */,
+				8413627A10FF5365007A948A /* PCThread.h */,
+				8413627B10FF5365007A948A /* PCTime.cpp */,
+				8413627C10FF5365007A948A /* PCTime.h */,
+			);
+			name = "PC Source Files";
 			sourceTree = "<group>";
 		};
 		84C108D30F0A76EC00B2DF7A = {
@@ -270,6 +297,7 @@
 		84C1095F0F0A790100B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				8413627110FF5345007A948A /* PC Source Files */,
 				840A927110D7E82300F8960C /* Mac Source Files */,
 				84C109CE0F0A791F00B2DF7A /* IPod */,
 				846C18C6109748AE0098DFAF /* TTransform.cpp */,

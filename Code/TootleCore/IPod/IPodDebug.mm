@@ -18,7 +18,7 @@ namespace TLDebug
 {
 	namespace Platform
 	{
-		static TTempString			consolebuffer;
+		static TTempString			g_ConsoleBuffer;
 		
 		void	FlushBuffer();
 		
@@ -43,26 +43,25 @@ SyncBool TLDebug::Platform::Shutdown()
 
 void TLDebug::Platform::PrintToBuffer(const TString& String)
 {
-	// Check to see if we can add to the buffer (less one for the terminator)
-	if(consolebuffer.GetLength() + String.GetLength() < 511)
-	{
-		consolebuffer.Appendf("\n%S", String.GetData());	
-	}
-	else 
-	{
-		// will excedd buffer length so flush the buffer and start fresh
-		FlushBuffer();
-		
-		consolebuffer.Appendf("\n%S", String.GetData());	
-	}
+	TTempString newline("\n");
+	
+	// Final buffer size is buffer size less the size of the newline terminator 
+	u32 uSize = 512 - newline.GetLength();
+	
+	// Check to see if we can add to the buffer
+	if(g_ConsoleBuffer.GetLength() + String.GetLength() >= uSize)
+		FlushBuffer(); // will exceed the buffer length so flush the buffer and start fresh
+	
+	g_ConsoleBuffer.Append( String.GetData() );
+	g_ConsoleBuffer.Append( newline );
 }
 
 
 void TLDebug::Platform::FlushBuffer()
 {
-	Print(consolebuffer);
+	Print(g_ConsoleBuffer);
 	
-	consolebuffer.Empty();
+	g_ConsoleBuffer.Empty();
 }
 
 
