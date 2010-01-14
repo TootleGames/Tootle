@@ -63,28 +63,18 @@ namespace TLDebug
 
 namespace TLPtr
 {
-	//---------------------------------------------------------
-	//	to sort various issues, and speed things up the counter type is now just a u32
-	//---------------------------------------------------------
-	typedef u32 TCounter;
-	
-	/*
-	class TCounter //: public TLMemory::SmallValueObject<>
+	namespace Private
 	{
-	public:
-		inline Bool operator==(const u32& value)	const	{ return count == value; }
-		inline void operator=(const u32& value)				{ count = value; }
-		inline void operator++(int value)					{ count+=value; }
-		inline void operator--(int value)					{ count-=value; }
+		//	allocate a counter object
+		//	the counter allocation is awkward because of template function specialisation restrictions. We *have* to implement this for every COUNTERTYPE we use :(
+		template<typename TYPE>			FORCEINLINE void	NewCounter(TYPE& Object,u32*& pCounter);
 		
-		// DB - Not sure why but this just doesn't work how I expect it to work :S
-		//inline u32	operator*()						const	{ return count; }
-	//private:
-		u32 count;
-	};
-	*/
-	
-
+		//	delete counter object (default assumes some kind of integer)
+		template<typename COUNTERTYPE>	FORCEINLINE void	DeleteCounter(COUNTERTYPE*& pCounter);
+		
+		//	get the counter from a counter object (default assumes some kind of integer)
+		template<typename COUNTERTYPE>	FORCEINLINE u32&	GetCounter(COUNTERTYPE& Counter)					{	return Counter;	}
+	}
 
 	template<typename TYPE>
 	FORCEINLINE TPtr<TYPE>&	GetNullPtr();	//	get a static Null ptr for a type;
@@ -95,6 +85,7 @@ template <typename TYPE>
 class TPtr
 {
 	template<typename OTHERTYPE> friend class TPtr;
+	typedef u32 COUNTERTYPE;		//	todo: change this into a template param
 
 public:
 	template<typename OBJTYPE>
@@ -107,19 +98,17 @@ public:
 	~TPtr()																						{	ReleaseObject();	}
 	
 	//	accessors
-	FORCEINLINE Bool			IsValid() const								{	return (m_pCounter != NULL);	}
-	//FORCEINLINE u32				GetRefCount() const							{	if(m_pCounter != NULL) return m_pCounter->count; return 0;	}
-	FORCEINLINE u32				GetRefCount() const							{	if(m_pCounter != NULL) return *m_pCounter; return 0;	}
-
-	//FORCEINLINE TYPE&			operator*()	const							{	return *GetObject();	}	//	gr: safer not to have this... unless required?? easier, safer and clearer to use GetPtr()
+	FORCEINLINE Bool			IsValid() const								{	return (m_pObject != NULL);	}
+	FORCEINLINE u32				GetRefCount() const							{	return m_pCounter ? TLPtr::Private::GetCounter( *m_pCounter ) : 0;	}
+	
 	FORCEINLINE TYPE*			operator->()								{	return m_pObject;	}	//	note: no pointer check here for efficieny
 	FORCEINLINE const TYPE*		operator->() const							{	return m_pObject;	}	//	note: no pointer check here for efficieny
-	FORCEINLINE TYPE*			GetObjectPointer()									{	return m_pObject;	}	//	note: no pointer check here for efficieny
-	FORCEINLINE const TYPE*		GetObjectPointer() const							{	return m_pObject;	}	//	note: no pointer check here for efficieny
+	FORCEINLINE TYPE*			GetObjectPointer()							{	return m_pObject;	}	//	note: no pointer check here for efficieny
+	FORCEINLINE const TYPE*		GetObjectPointer() const					{	return m_pObject;	}	//	note: no pointer check here for efficieny
 	template<typename OBJTYPE>
-	FORCEINLINE OBJTYPE*		GetObjectPointer()									{	return static_cast<OBJTYPE*>( m_pObject );	}	//	note: no pointer check here for efficieny
+	FORCEINLINE OBJTYPE*		GetObjectPointer()							{	return static_cast<OBJTYPE*>( m_pObject );	}	//	note: no pointer check here for efficieny
 	template<typename OBJTYPE>
-	FORCEINLINE const OBJTYPE*	GetObjectPointer() const							{	return static_cast<const OBJTYPE*>( m_pObject );	}	//	note: no pointer check here for efficieny
+	FORCEINLINE const OBJTYPE*	GetObjectPointer() const					{	return static_cast<const OBJTYPE*>( m_pObject );	}	//	note: no pointer check here for efficieny
 	FORCEINLINE					operator TYPE*() const						{	return m_pObject;	}
 
 	template<typename OBJTYPE>
@@ -130,7 +119,7 @@ public:
 	FORCEINLINE TPtr<TYPE>&		operator=(TYPE* pObject)					{	AssignToObject( static_cast<TYPE*>(pObject) );	return *this;	}	//	assign this pointer to an object
 
 	template<typename OBJTYPE>
-	FORCEINLINE Bool			operator==(const OBJTYPE& Object) const;	//	gr: GENIUS! now == operators in our TYPE type work through TPtr! :)
+	FORCEINLINE Bool			operator==(const OBJTYPE& Object) const		{	const TYPE* pObjectA = GetObjectPointer();	return pObjectA ? (*pObjectA) == Object : FALSE;	}	//	gr: oddly, this doesn't work if we use m_pObject directly... only using GetObjectPointer ? (maybe the explicit const pointer use is what removes the ambiguity)
 	template<typename OBJTYPE>
 	FORCEINLINE Bool			operator==(const TPtr<OBJTYPE>& Ptr) const	{	return m_pObject == Ptr.GetObjectPointer<TYPE>();	}
 	FORCEINLINE Bool			operator==(const TPtr<TYPE>& Ptr) const		{	return m_pObject == Ptr.GetObjectPointer();	}
@@ -140,44 +129,29 @@ public:
 	FORCEINLINE Bool			operator!=(const TPtr<OBJTYPE>& Ptr) const	{	return m_pObject != Ptr.GetObjectPointer<TYPE>();	}
 	FORCEINLINE Bool			operator!=(const TPtr<TYPE>& Ptr) const		{	return m_pObject != Ptr.GetObjectPointer();	}
 	FORCEINLINE Bool			operator!=(const TYPE* pObject) const		{	return m_pObject != pObject;	}
-/*
-	template<typename OBJTYPE>
-	FORCEINLINE Bool			operator<(const OBJTYPE& Object) const;
-	template<typename OBJTYPE>
-	FORCEINLINE Bool			operator<(const TPtr<OBJTYPE>& Ptr) const;
-	FORCEINLINE Bool			operator<(const TPtr<TYPE>& Ptr) const;
-	FORCEINLINE Bool			operator<(const TYPE* pObject) const;
-*/
-	FORCEINLINE operator Bool	() const									{	return m_pObject != NULL;	} //	gr: compiler usually uses the TYPE* operator for if ( Ptr ) checks now
 
-	FORCEINLINE void			Debug_CheckNotOnlyPtr() const;				//	in a debug build this will break if the counter is 1. If it is 1 then that means if this is a reference param in a function (TPtr<X>&), a variable or c-pointer has been converted into a TPtr and will dealloc when the function returns, which is never what we want when passing a TPtr reference
+	FORCEINLINE operator Bool	() const									{	return IsValid();	} //	gr: compiler usually uses the TYPE* operator for if ( Ptr ) checks now
 
 protected:
-	FORCEINLINE TLPtr::TCounter*	GetRefCounter() const					{	return m_pCounter;	}
+	FORCEINLINE COUNTERTYPE*	GetCounter() const							{	return m_pCounter;	}
 
 private:
 	template<typename OBJTYPE>
-	FORCEINLINE void	AssignToPtr(const TPtr<OBJTYPE>& Ptr);			//	link to counter and increment
-	FORCEINLINE void	AssignToObject(TYPE* pObject);					//	create a counter and link to this object
-	FORCEINLINE void	ReleaseObject();								//	decrement the counter and delete if this is the last reference
-
+	FORCEINLINE void			AssignToPtr(const TPtr<OBJTYPE>& Ptr);			//	link to counter and increment
+	FORCEINLINE void			AssignToObject(TYPE* pObject);					//	create a counter and link to this object
+	FORCEINLINE void			ReleaseObject();								//	decrement the counter and delete if this is the last reference
+	
 private:
-	TLPtr::TCounter*	m_pCounter;		//	this is a pointer to the global counter (a u32)
+	FORCEINLINE void			IncrementCounter()								{	u32& RealCounter = GetCounterValue();	RealCounter++;	}
+	FORCEINLINE void			DecrementCounter()								{	u32& RealCounter = GetCounterValue();	RealCounter--;	}
+	FORCEINLINE u32&			GetCounterValue()								{	return TLPtr::Private::GetCounter( *m_pCounter );	}
+	FORCEINLINE void			NewCounter()									{	TLPtr::Private::NewCounter( *m_pObject, m_pCounter );	}			//	default type, the object IS the counter
+	FORCEINLINE void			DeleteCounter()									{	TLPtr::Private::DeleteCounter( m_pCounter );	}		//	default type is the object, so nothing to delete, just NULL the counter pointer
+	
+private:
+	COUNTERTYPE*		m_pCounter;		//	this is a pointer to the global counter (a u32)
 	TYPE*				m_pObject;		//	this is a pointer to the real object. its stored in our type. due to the way the new system works, this poitner could be non-null but deleted. But if you always use isvalid/etc(m_pCounter should be null) then not a problem! The theory goes that this will be valid anyway, if we reach zero count, then this should be the last pointer!
 };
-
-
-
-//---------------------------------------------------------
-//	gr: GENIUS! now == operators in our TYPE type work through TPtr! :)
-//---------------------------------------------------------
-template <typename TYPE>
-template<typename OBJTYPE>
-FORCEINLINE Bool TPtr<TYPE>::operator==(const OBJTYPE& Object) const	
-{
-	const TYPE* pObjectA = GetObjectPointer();	
-	return pObjectA ? (*pObjectA) == Object : FALSE;		
-}
 
 
 //----------------------------------------------------------
@@ -207,14 +181,8 @@ FORCEINLINE void TPtr<TYPE>::AssignToObject(TYPE* pObject)
 		return;
 
 	//	create a new counter...
-#ifdef TEST_COUNTER_USING_SOA
-	// Allocate from the SOA
-	m_pCounter = TLMemory::SOAAllocate<TLPtr::TCounter>(sizeof(TLPtr::TCounter), TRUE);
-#else
-	m_pCounter = new TLPtr::TCounter;
-#endif
-	
-	*m_pCounter = 1;
+	NewCounter();
+	IncrementCounter();
 
 	//	store pointer to object
 	m_pObject = pObject;
@@ -231,47 +199,48 @@ template<typename OBJTYPE>
 FORCEINLINE void TPtr<TYPE>::AssignToPtr(const TPtr<OBJTYPE>& Ptr)
 {
 	//	we are already assigned to this object... no change
-	if ( GetRefCounter() == Ptr.GetRefCounter() )
+	if ( GetCounter() == Ptr.GetCounter() )
 		return;
 
 	//	counter is different, release the current assignment (if any)
 	ReleaseObject();
 
-	//	now assign ourselves to this new counter...
-	if ( Ptr.GetRefCounter() )
-	{
-		//	and store pointer to the actual object
-		//	use a static_cast to allow TPtr<B> (derived from A) = TPtr<A>
-		//	dynamic_cast is a runtime-type check
+	//	nothing to do
+	if( !Ptr )
+		return;
+	
+	//	and store pointer to the actual object
+	//	use a static_cast to allow TPtr<B> (derived from A) = TPtr<A>
+	//	dynamic_cast is a runtime-type check
 #ifdef _DEBUG
-		const TYPE* pConstObject = dynamic_cast<const TYPE*>( Ptr.GetObjectPointer() );
+	const TYPE* pConstObject = dynamic_cast<const TYPE*>( Ptr.GetObjectPointer() );
 
-		//	cast failed, break and static cast if we continue
-		if ( !pConstObject )
+	//	cast failed, break and static cast if we continue
+	if ( !pConstObject )
+	{
+		if ( TLDebug::Break("Failed to cast pointer type to other type", __FUNCTION__ ) )
 		{
-			if ( TLDebug::Break("Failed to cast pointer type to other type", __FUNCTION__ ) )
-			{
-				pConstObject = static_cast<const TYPE*>( Ptr.GetObjectPointer() );
-			}
-		}
-#else
-		const TYPE* pConstObject = static_cast<const TYPE*>( Ptr.GetObjectPointer() );
-#endif
-
-		//	cast succeeded
-		if ( pConstObject )
-		{
-			//	special case to allow a cast down, technically we shouldn't allow TYPE* p = const TYPE* o though...
-			//	maybe we should change this so we can't assign a const TPtr to a TPtr...
-			m_pObject = const_cast<TYPE*>( pConstObject );
-		
-			//	store pointer to counter
-			m_pCounter = Ptr.GetRefCounter();
-
-			//	... and increment pointer counter
-			(*m_pCounter)++;
+			pConstObject = static_cast<const TYPE*>( Ptr.GetObjectPointer() );
 		}
 	}
+#else
+	const TYPE* pConstObject = static_cast<const TYPE*>( Ptr.GetObjectPointer() );
+#endif
+
+	//	cast succeeded
+	if ( pConstObject )
+	{
+		//	special case to allow a cast down, technically we shouldn't allow TYPE* p = const TYPE* o though...
+		//	maybe we should change this so we can't assign a const TPtr to a TPtr...
+		m_pObject = const_cast<TYPE*>( pConstObject );
+		
+		//	store pointer to counter
+		m_pCounter = Ptr.GetCounter();
+
+		//	... and increment pointer counter
+		IncrementCounter();
+	}
+	
 }
 
 
@@ -286,17 +255,14 @@ FORCEINLINE void TPtr<TYPE>::ReleaseObject()
 		return;
 
 	//	decrement counter
-	(*m_pCounter)--;
+	DecrementCounter();
 
 	//	delete object if needbe
-	if ( (*m_pCounter) == 0 )
+	if ( GetCounterValue() == 0 )
 	{
 		//	delete data and null pointers
-#ifdef TEST_COUNTER_USING_SOA
-		TLMemory::SOADelete( m_pCounter );
-#else
-		TLMemory::Delete( m_pCounter );
-#endif
+		DeleteCounter();
+
 		TLMemory::Delete( m_pObject );
 	}
 	else
@@ -309,6 +275,83 @@ FORCEINLINE void TPtr<TYPE>::ReleaseObject()
 
 
 
+
+//----------------------------------------------------------
+//	allocate a new counter object (u32 specialisation)
+//----------------------------------------------------------
+template<typename TYPE>
+FORCEINLINE void TLPtr::Private::NewCounter(TYPE& Object,u32*& pCounter)		
+{
+#ifdef _DEBUG
+	if ( pCounter )
+	{
+		TLDebug_Break("Allocating counter in smart pointer when it already has one. Design error!");
+		DeleteCounter(pCounter);
+	}
+#endif	
+	
+#ifdef TEST_COUNTER_USING_SOA
+	pCounter = TLMemory::SOAAllocate<u32>(sizeof(u32), TRUE);
+#else
+	pCounter = new u32;
+#endif
+	
+	//	initialise counter
+	*pCounter = 0;
+}
+
+
+//----------------------------------------------------------
+//	delete a generic counter object
+//----------------------------------------------------------
+template<typename COUNTERTYPE>
+FORCEINLINE void TLPtr::Private::DeleteCounter(COUNTERTYPE*& pCounter)		
+{
+#ifdef _DEBUG
+	if ( !pCounter )
+	{
+		TLDebug_Break("Trying to delete counter that doesn't exist. Design error!");
+		return;
+	}
+#endif	
+	
+#ifdef TEST_COUNTER_USING_SOA
+	TLMemory::SOADelete( pCounter );
+#else
+	delete pCounter;
+#endif
+	pCounter = NULL;
+}
+
+
+
+//------------------------------------------------------------------
+//	this is the intrusive part of the intrusive smart pointer.
+//	contains the reference count, but doesn't do anything else.
+//------------------------------------------------------------------
+class TIntPtrObject
+{
+public:
+	TIntPtrObject() : m_PtrCounter ( 0 )	{}
+	
+	u32&		GetPtrRefCounter()		{	return m_PtrCounter;	}
+	//	FORCEINLINE operator++()			{	m_PtrCounter++;	}
+	//	FORCEINLINE operator--()			{	m_PtrCounter--;	}
+	
+private:
+	u32			m_PtrCounter;		//	ref count for this object
+};
+
+//	specialisations for the TIntPtrObject counter type
+namespace TLPtr
+{
+	namespace Private
+	{
+		template<typename TYPE>	FORCEINLINE void NewCounter(TYPE& Object,TIntPtrObject*& pCounter)	{	pCounter = &Object;	}
+		template<>				FORCEINLINE void DeleteCounter(TIntPtrObject*& pCounter)			{	pCounter = NULL;	}
+		template<>				FORCEINLINE u32& GetCounter(TIntPtrObject& Counter)					{	return Counter.GetPtrRefCounter();	}
+	}
+}
 
 
 
@@ -329,20 +372,4 @@ FORCEINLINE TPtr<TYPE>&	TLPtr::GetNullPtr()
 }
 
 
-//----------------------------------------------------
-//	in a debug build this will break if the counter is 1. If it is 1 then that 
-//	means if this is a reference param in a function (TPtr<X>&), a variable or 
-//	c-pointer has been converted into a TPtr and will dealloc when the function 
-//	returns, which is never what we want when passing a TPtr reference
-//----------------------------------------------------
-template<typename TYPE>
-FORCEINLINE void TPtr<TYPE>::Debug_CheckNotOnlyPtr() const
-{
-#ifdef _DEBUG
-	if ( m_pCounter && (*m_pCounter) == 1 )
-	{
-		TLDebug_Break("Counter for TPtr is 1. This debug break should be placed somewhere where we expect this TPtr to already exist. Check callstack above to ensure a TPtr has been passed in.");
-	}
-#endif	
-}
 
