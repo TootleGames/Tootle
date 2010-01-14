@@ -3,11 +3,13 @@
 
 #include "../TString.h"
 
+#define DEBUG_CONSOLE_BUFFER_SIZE 512
+
 namespace TLDebug
 {
 	namespace Platform
 	{
-		static TTempString g_ConsoleBuffer;
+		static TBufferString<DEBUG_CONSOLE_BUFFER_SIZE> g_ConsoleBuffer;
 
 		void		Print(const TString& String);	//	platform specific debug output - immediate
 		void		FlushBuffer();
@@ -30,17 +32,16 @@ SyncBool TLDebug::Platform::Shutdown()
 
 void TLDebug::Platform::PrintToBuffer(const TString& String)
 {
-	TTempString newline("\n");
-
-	// Final buffer size is buffer size less the size of the newline terminator 
-	u32 uSize = 512 - newline.GetLength();
+	// Final buffer size is buffer size less the size of a newline special character '\n' and 
+	// a terminator '\0' which would be added automatically 
+	u32 uSize = g_ConsoleBuffer.GetAllocSize() - 4; 
 	
 	// Check to see if we can add to the buffer
 	if(g_ConsoleBuffer.GetLength() + String.GetLength() >= uSize)
 		FlushBuffer(); // will exceed the buffer length so flush the buffer and start fresh
 	
 	g_ConsoleBuffer.Append( String.GetData() );
-	g_ConsoleBuffer.Append( newline );
+	g_ConsoleBuffer.Append( "\n" );
 }
 	
 void TLDebug::Platform::FlushBuffer()
