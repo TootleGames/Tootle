@@ -12,7 +12,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8418EE4B0F4DAADD00B956C9 /* TootleNeuralNetwork. */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = TootleNeuralNetwork.; sourceTree = BUILT_PRODUCTS_DIR; };
+		8418EE4B0F4DAADD00B956C9 /* libTootleNeuralNetwork.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleNeuralNetwork.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8418EFC40F4DB76000B956C9 /* TLNeuralNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLNeuralNetwork.cpp; path = ../TLNeuralNetwork.cpp; sourceTree = SOURCE_ROOT; };
 		8418EFC50F4DB76000B956C9 /* TLNeuralNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLNeuralNetwork.h; path = ../TLNeuralNetwork.h; sourceTree = SOURCE_ROOT; };
 		84B6063F104FFC470022E5BC /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -43,7 +43,7 @@
 		8418ED0E0F4DA70B00B956C9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8418EE4B0F4DAADD00B956C9 /* TootleNeuralNetwork. */,
+				8418EE4B0F4DAADD00B956C9 /* libTootleNeuralNetwork.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -101,7 +101,7 @@
 			);
 			name = TootleNeuralNetwork;
 			productName = TootleNeuralNetwork;
-			productReference = 8418EE4B0F4DAADD00B956C9 /* TootleNeuralNetwork. */;
+			productReference = 8418EE4B0F4DAADD00B956C9 /* libTootleNeuralNetwork.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */

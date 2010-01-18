@@ -29,7 +29,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					341,
+					550,
 					20,
 					48,
 					43,
@@ -68,12 +68,13 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 273677365;
-			PBXWorkspaceStateSaveDate = 273677365;
+			PBXPerProjectTemplateStateSaveDate = 282951358;
+			PBXWorkspaceStateSaveDate = 282951358;
 		};
 		perUserProjectItems = {
-			8418F3D10F4DC50A00B956C9 /* PBXTextBookmark */ = 8418F3D10F4DC50A00B956C9 /* PBXTextBookmark */;
-			84B60642104FFC6C0022E5BC /* PBXTextBookmark */ = 84B60642104FFC6C0022E5BC /* PBXTextBookmark */;
+			84CC1E3410DD824F00B60255 /* PBXTextBookmark */ = 84CC1E3410DD824F00B60255 /* PBXTextBookmark */;
+			84CC1E3510DD824F00B60255 /* PBXBookmark */ = 84CC1E3510DD824F00B60255 /* PBXBookmark */;
+			84CC1E3610DD824F00B60255 /* PBXTextBookmark */ = 84CC1E3610DD824F00B60255 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 8418ECFC0F4DA63E00B956C9 /* Source Control */;
 		userBuildSettings = {
@@ -84,6 +85,9 @@
 		fallbackIsa = XCSourceControlManager;
 		isSCMEnabled = 0;
 		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
 		};
 	};
 	8418ECFD0F4DA63E00B956C9 /* Code sense */ = {
@@ -93,37 +97,47 @@
 	8418EE4A0F4DAADD00B956C9 /* TootleNeuralNetwork */ = {
 		activeExec = 0;
 	};
-	8418F3CE0F4DC4F400B956C9 /* TBinary.h */ = {
+	8418EFC50F4DB76000B956C9 /* TLNeuralNetwork.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1720, 1794}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{2884, 1273}";
+		};
+	};
+	84B60643104FFC6C0022E5BC /* TBinary.h */ = {
 		isa = PBXFileReference;
 		lastKnownFileType = sourcecode.c.h;
 		name = TBinary.h;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleNeuralNetwork/Mac/../../TootleCore/TBinary.h;
 		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1916, 4992}}";
+			sepNavSelRange = "{8871, 43}";
+			sepNavVisRange = "{8501, 998}";
+		};
 	};
-	8418F3D10F4DC50A00B956C9 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8418F3CE0F4DC4F400B956C9 /* TBinary.h */;
-		name = "TBinary.h: 203";
-		rLen = 43;
-		rLoc = 8871;
-		rType = 0;
-		vrLen = 487;
-		vrLoc = 8738;
-	};
-	84B60642104FFC6C0022E5BC /* PBXTextBookmark */ = {
+	84CC1E3410DD824F00B60255 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84B60643104FFC6C0022E5BC /* TBinary.h */;
-		name = "TBinary.h: 139";
+		name = "TBinary.h: 134";
 		rLen = 43;
 		rLoc = 8871;
 		rType = 0;
-		vrLen = 844;
-		vrLoc = 8591;
+		vrLen = 998;
+		vrLoc = 8501;
 	};
-	84B60643104FFC6C0022E5BC /* TBinary.h */ = {
-		isa = PBXFileReference;
-		name = TBinary.h;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleNeuralNetwork/Mac/../../TootleCore/TBinary.h;
-		sourceTree = "<absolute>";
+	84CC1E3510DD824F00B60255 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 8418EFC50F4DB76000B956C9 /* TLNeuralNetwork.h */;
+	};
+	84CC1E3610DD824F00B60255 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8418EFC50F4DB76000B956C9 /* TLNeuralNetwork.h */;
+		name = "TLNeuralNetwork.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1273;
+		vrLoc = 2884;
 	};
 }
