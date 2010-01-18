@@ -2,14 +2,12 @@
 
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/TClassFactory.h>
-#include <TootleNeuralNetwork/TLNeuralNetwork.h>
 
 #include "TSensor.h"
 
 namespace TLInput
 {
 	class TAction;
-	class TAction_Gesture;
 
 	typedef enum TActionCondition
 	{
@@ -61,21 +59,3 @@ private:
 };
 
 
-class TLInput::TAction_Gesture : public TLInput::TAction
-{
-public:
-	TAction_Gesture(TRef refActionID);
-
-	// Neural Network manipulation
-	Bool						AddNeuralNetworkInput(TRef refDeviceID, TRef refSensorID);
-	Bool						RemoveNeuralNetworkInput(TRef refDeviceID, TRef refSensorID);
-
-	Bool						CreateDefaultButtonNeuralNetwork(TRef refDeviceID, TRef refSensorID);
-
-private:
-	// Internal Neural Network manipulation
-	TPtr<TLNeuralNetwork::TNeuron>				AddNeuralNetworkInput(TPtr<TInputSensor> pSensor);
-
-private:
-	TPtr<TLNeuralNetwork::TNeuralNetwork>		m_pNeuralNetwork;
-};

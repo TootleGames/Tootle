@@ -1,5 +1,12 @@
 // !$*UTF8*$!
 {
+	841365AA1104D603007A948A /* TAction_Gesture.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {728, 1638}}";
+			sepNavSelRange = "{228, 0}";
+			sepNavVisRange = "{0, 605}";
+		};
+	};
 	8418ECF80F4DA63E00B956C9 /* Project object */ = {
 		activeBuildConfigurationName = Debug;
 		activeTarget = 8418EE4A0F4DAADD00B956C9 /* TootleNeuralNetwork */;
@@ -68,13 +75,14 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 282951358;
-			PBXWorkspaceStateSaveDate = 282951358;
+			PBXPerProjectTemplateStateSaveDate = 285530874;
+			PBXWorkspaceStateSaveDate = 285530874;
 		};
 		perUserProjectItems = {
 			84CC1E3410DD824F00B60255 /* PBXTextBookmark */ = 84CC1E3410DD824F00B60255 /* PBXTextBookmark */;
-			84CC1E3510DD824F00B60255 /* PBXBookmark */ = 84CC1E3510DD824F00B60255 /* PBXBookmark */;
-			84CC1E3610DD824F00B60255 /* PBXTextBookmark */ = 84CC1E3610DD824F00B60255 /* PBXTextBookmark */;
+			84E751491104DAE600CB69BA /* PBXTextBookmark */ = 84E751491104DAE600CB69BA /* PBXTextBookmark */;
+			84E7514B1104DAE600CB69BA /* PBXTextBookmark */ = 84E7514B1104DAE600CB69BA /* PBXTextBookmark */;
+			84E7515E1104DB1300CB69BA /* PBXTextBookmark */ = 84E7515E1104DB1300CB69BA /* PBXTextBookmark */;
 		};
 		sourceControlManager = 8418ECFC0F4DA63E00B956C9 /* Source Control */;
 		userBuildSettings = {
@@ -99,7 +107,7 @@
 	};
 	8418EFC50F4DB76000B956C9 /* TLNeuralNetwork.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1720, 1794}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1720, 1716}}";
 			sepNavSelRange = "{0, 0}";
 			sepNavVisRange = "{2884, 1273}";
 		};
@@ -110,11 +118,6 @@
 		name = TBinary.h;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleNeuralNetwork/Mac/../../TootleCore/TBinary.h;
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1916, 4992}}";
-			sepNavSelRange = "{8871, 43}";
-			sepNavVisRange = "{8501, 998}";
-		};
 	};
 	84CC1E3410DD824F00B60255 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -126,11 +129,7 @@
 		vrLen = 998;
 		vrLoc = 8501;
 	};
-	84CC1E3510DD824F00B60255 /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = 8418EFC50F4DB76000B956C9 /* TLNeuralNetwork.h */;
-	};
-	84CC1E3610DD824F00B60255 /* PBXTextBookmark */ = {
+	84E751491104DAE600CB69BA /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 8418EFC50F4DB76000B956C9 /* TLNeuralNetwork.h */;
 		name = "TLNeuralNetwork.h: 1";
@@ -139,5 +138,25 @@
 		rType = 0;
 		vrLen = 1273;
 		vrLoc = 2884;
+	};
+	84E7514B1104DAE600CB69BA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841365AA1104D603007A948A /* TAction_Gesture.cpp */;
+		name = "TAction_Gesture.cpp: 29";
+		rLen = 0;
+		rLoc = 608;
+		rType = 0;
+		vrLen = 823;
+		vrLoc = 234;
+	};
+	84E7515E1104DB1300CB69BA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841365AA1104D603007A948A /* TAction_Gesture.cpp */;
+		name = "TAction_Gesture.cpp: 13";
+		rLen = 0;
+		rLoc = 228;
+		rType = 0;
+		vrLen = 605;
+		vrLoc = 0;
 	};
 }

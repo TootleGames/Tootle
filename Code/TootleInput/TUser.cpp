@@ -248,14 +248,13 @@ Bool TUser::AddAction(TRefRef refActionType, TRefRef refActionID)
 
 		// Gesture vaiety of action?  Only two types atm and want to merge the two into 
 		// one so I've not added a factory for the action classes
-		if(refActionType == "Gesture")
+		/*if(refActionType == "Gesture")
 		{
 			pNewAction = new TLInput::TAction_Gesture(refActionID);
 		}
-		else
-		{
+		*/
+		if(refActionType == "Simple")
 			pNewAction = new TLInput::TAction(refActionID);
-		}
 
 		if(pNewAction)
 		{

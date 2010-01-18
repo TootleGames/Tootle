@@ -7,11 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		841365AB1104D603007A948A /* TAction_Gesture.h in Headers */ = {isa = PBXBuildFile; fileRef = 841365A91104D603007A948A /* TAction_Gesture.h */; };
+		841365AC1104D603007A948A /* TAction_Gesture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 841365AA1104D603007A948A /* TAction_Gesture.cpp */; };
 		8418EFC60F4DB76000B956C9 /* TLNeuralNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EFC40F4DB76000B956C9 /* TLNeuralNetwork.cpp */; };
 		8418EFC70F4DB76000B956C9 /* TLNeuralNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EFC50F4DB76000B956C9 /* TLNeuralNetwork.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		841365A91104D603007A948A /* TAction_Gesture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAction_Gesture.h; path = ../TAction_Gesture.h; sourceTree = SOURCE_ROOT; };
+		841365AA1104D603007A948A /* TAction_Gesture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAction_Gesture.cpp; path = ../TAction_Gesture.cpp; sourceTree = SOURCE_ROOT; };
 		8418EE4B0F4DAADD00B956C9 /* libTootleNeuralNetwork.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleNeuralNetwork.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8418EFC40F4DB76000B956C9 /* TLNeuralNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLNeuralNetwork.cpp; path = ../TLNeuralNetwork.cpp; sourceTree = SOURCE_ROOT; };
 		8418EFC50F4DB76000B956C9 /* TLNeuralNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLNeuralNetwork.h; path = ../TLNeuralNetwork.h; sourceTree = SOURCE_ROOT; };
@@ -60,6 +64,8 @@
 			children = (
 				8418EFC40F4DB76000B956C9 /* TLNeuralNetwork.cpp */,
 				8418EFC50F4DB76000B956C9 /* TLNeuralNetwork.h */,
+				841365A91104D603007A948A /* TAction_Gesture.h */,
+				841365AA1104D603007A948A /* TAction_Gesture.cpp */,
 			);
 			name = "Source Code";
 			sourceTree = "<group>";
@@ -81,6 +87,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8418EFC70F4DB76000B956C9 /* TLNeuralNetwork.h in Headers */,
+				841365AB1104D603007A948A /* TAction_Gesture.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,6 +135,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8418EFC60F4DB76000B956C9 /* TLNeuralNetwork.cpp in Sources */,
+				841365AC1104D603007A948A /* TAction_Gesture.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
