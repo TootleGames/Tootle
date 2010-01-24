@@ -29,8 +29,12 @@ Also need to add
 (or whatever the wx opengl lib is named)
 and -framework AGL
 
-gr: Currently the cppflags and ldflags need updating in Tootle.xcconfig per system to make sure the URL is correct. Still coming up with a solution for this. May have to revert to a make install which installs the lib at /usr/lib/wx... or use a symbolic link in ~/Tootle/Code/Libs/ to get around this...
+gr: Currently the cppflags and ldflags need updating in Tootle.xcconfig per system to make sure the URL is correct. Still coming up with a final solution for this....
+A) May have to do a make install which installs the lib at /usr/lib/wxwhatever
+B) use a symbolic link in ~/Tootle/Code/Libs/ link to your built dir/lib
+C) commit libs and headers
 
+B is probably best, but may have problems when we come to automated builds.
 
 
 box2d
