@@ -17,9 +17,8 @@ open terminal
 cd <widgetsdir>
 mkdir osx-build
 cd osx-build
-../configure --disable-shared --with-opengl
-	--disable-shared builds a static lib instead of a dynamic lib
-	--with-opengl enables opengl support. (gr: the configure log for me says it cant find the opengl libs but it seems to work still… probably explains the later issues)
+../configure --disable-shared --with-opengl --enable-debug
+	see http://wiki.wxwidgets.org/Possible_Configure_Flags_under_OS_X
 make
 *wait to wx build*
 Now make sure you use everything in the osx-build directory (libs, includes etc) and not /usr/*
