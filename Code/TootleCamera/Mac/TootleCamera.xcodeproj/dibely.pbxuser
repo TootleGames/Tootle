@@ -1,0 +1,476 @@
+// !$*UTF8*$!
+{
+	841B454811109A1000ACC2AE /* Project object */ = {
+		activeBuildConfigurationName = Release;
+		activeTarget = 841B455B11109A9D00ACC2AE /* TootleCamera */;
+		addToTargets = (
+		);
+		breakpoints = (
+			841B486E1111AAE400ACC2AE /* MacCameraController.mm:88 */,
+			841B48701111AAE900ACC2AE /* MacCameraController.mm:41 */,
+			841B48C51111B53100ACC2AE /* MacCamera.mm:45 */,
+		);
+		codeSenseManager = 841B454D11109A1000ACC2AE /* Code sense */;
+		ignoreBreakpointsInProjectsDict = {
+		};
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					833,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					793,
+					60,
+					20,
+					48,
+					43,
+					43,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXTargetDataSource_PrimaryAttribute,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 286387528;
+			PBXWorkspaceStateSaveDate = 286387528;
+		};
+		perUserProjectItems = {
+			841B466C1110AD1600ACC2AE /* PBXTextBookmark */ = 841B466C1110AD1600ACC2AE /* PBXTextBookmark */;
+			841B475F1111885700ACC2AE /* PBXTextBookmark */ = 841B475F1111885700ACC2AE /* PBXTextBookmark */;
+			841B47C61111A13E00ACC2AE /* PBXTextBookmark */ = 841B47C61111A13E00ACC2AE /* PBXTextBookmark */;
+			841B489D1111AF5100ACC2AE /* PBXTextBookmark */ = 841B489D1111AF5100ACC2AE /* PBXTextBookmark */;
+			841B48A21111AF5100ACC2AE /* PBXTextBookmark */ = 841B48A21111AF5100ACC2AE /* PBXTextBookmark */;
+			841B48CF1111B56F00ACC2AE /* PBXTextBookmark */ = 841B48CF1111B56F00ACC2AE /* PBXTextBookmark */;
+			841B48D01111B56F00ACC2AE /* PBXTextBookmark */ = 841B48D01111B56F00ACC2AE /* PBXTextBookmark */;
+			841B48D21111B56F00ACC2AE /* PBXTextBookmark */ = 841B48D21111B56F00ACC2AE /* PBXTextBookmark */;
+			841B48D41111B56F00ACC2AE /* PBXTextBookmark */ = 841B48D41111B56F00ACC2AE /* PBXTextBookmark */;
+			841B49151111B8D600ACC2AE /* PBXTextBookmark */ = 841B49151111B8D600ACC2AE /* PBXTextBookmark */;
+			841B49171111B8D600ACC2AE /* PBXTextBookmark */ = 841B49171111B8D600ACC2AE /* PBXTextBookmark */;
+			841B49341111BE1A00ACC2AE /* PBXTextBookmark */ = 841B49341111BE1A00ACC2AE /* PBXTextBookmark */;
+			841B49351111BE1A00ACC2AE /* PBXTextBookmark */ = 841B49351111BE1A00ACC2AE /* PBXTextBookmark */;
+			841B49371111BE1A00ACC2AE /* PBXTextBookmark */ = 841B49371111BE1A00ACC2AE /* PBXTextBookmark */;
+			841B49391111BE1A00ACC2AE /* PBXTextBookmark */ = 841B49391111BE1A00ACC2AE /* PBXTextBookmark */;
+			841B4CB81111ED5A00ACC2AE /* PBXTextBookmark */ = 841B4CB81111ED5A00ACC2AE /* PBXTextBookmark */;
+			841B4CC01111EDE400ACC2AE /* PBXTextBookmark */ = 841B4CC01111EDE400ACC2AE /* PBXTextBookmark */;
+			841B4CC11111EDE400ACC2AE /* PBXTextBookmark */ = 841B4CC11111EDE400ACC2AE /* PBXTextBookmark */;
+			841B4CC71111EE3800ACC2AE /* PBXTextBookmark */ = 841B4CC71111EE3800ACC2AE /* PBXTextBookmark */;
+		};
+		sourceControlManager = 841B454C11109A1000ACC2AE /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	841B454C11109A1000ACC2AE /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
+		};
+	};
+	841B454D11109A1000ACC2AE /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	841B455B11109A9D00ACC2AE /* TootleCamera */ = {
+		activeExec = 0;
+	};
+	841B456411109AF400ACC2AE /* TLCamera.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 390}}";
+			sepNavSelRange = "{314, 0}";
+			sepNavVisRange = "{0, 315}";
+		};
+	};
+	841B456511109AF400ACC2AE /* TLCamera.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 598}}";
+			sepNavSelRange = "{349, 0}";
+			sepNavVisRange = "{250, 415}";
+		};
+	};
+	841B456B11109B6900ACC2AE /* MacCameraView.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 390}}";
+			sepNavSelRange = "{236, 13}";
+			sepNavVisRange = "{0, 328}";
+		};
+	};
+	841B456C11109B6900ACC2AE /* MacCameraView.mm */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 377}}";
+			sepNavSelRange = "{563, 0}";
+			sepNavVisRange = "{0, 588}";
+		};
+	};
+	841B456F11109B7F00ACC2AE /* MacCamera.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 390}}";
+			sepNavSelRange = "{347, 0}";
+			sepNavVisRange = "{0, 354}";
+		};
+	};
+	841B457011109B7F00ACC2AE /* MacCamera.mm */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 1053}}";
+			sepNavSelRange = "{1004, 0}";
+			sepNavVisRange = "{354, 586}";
+		};
+	};
+	841B45EF11109E5E00ACC2AE /* NSObjCRuntime.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = NSObjCRuntime.h;
+		path = /System/Library/Frameworks/Foundation.framework/Headers/NSObjCRuntime.h;
+		sourceTree = "<absolute>";
+	};
+	841B46321110A42900ACC2AE /* TCameraManager.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 481}}";
+			sepNavSelRange = "{517, 57}";
+			sepNavVisRange = "{44, 544}";
+		};
+	};
+	841B46331110A42900ACC2AE /* TCameraManager.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 572}}";
+			sepNavSelRange = "{718, 0}";
+			sepNavVisRange = "{214, 511}";
+		};
+	};
+	841B466C1110AD1600ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B45EF11109E5E00ACC2AE /* NSObjCRuntime.h */;
+		name = "NSObjCRuntime.h: 180";
+		rLen = 0;
+		rLoc = 6179;
+		rType = 0;
+		vrLen = 1120;
+		vrLoc = 5761;
+	};
+	841B466E1110AD1600ACC2AE /* TManager.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = TManager.h;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleCore/TManager.h;
+		sourceTree = "<absolute>";
+	};
+	841B475F1111885700ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B466E1110AD1600ACC2AE /* TManager.h */;
+		name = "TManager.h: 36";
+		rLen = 33;
+		rLoc = 564;
+		rType = 0;
+		vrLen = 782;
+		vrLoc = 417;
+	};
+	841B47A811119D8B00ACC2AE /* MacCameraController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 377}}";
+			sepNavSelRange = "{385, 58}";
+			sepNavVisRange = "{0, 566}";
+		};
+	};
+	841B47A911119D8B00ACC2AE /* MacCameraController.mm */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 1651}}";
+			sepNavSelRange = "{2279, 0}";
+			sepNavVisRange = "{2171, 401}";
+		};
+	};
+	841B47C61111A13E00ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B46331110A42900ACC2AE /* TCameraManager.cpp */;
+		name = "TCameraManager.cpp: 41";
+		rLen = 0;
+		rLoc = 718;
+		rType = 0;
+		vrLen = 511;
+		vrLoc = 214;
+	};
+	841B486E1111AAE400ACC2AE /* MacCameraController.mm:88 */ = {
+		isa = PBXFileBreakpoint;
+		actions = (
+		);
+		breakpointStyle = 0;
+		continueAfterActions = 0;
+		countType = 0;
+		delayBeforeContinue = 0;
+		fileReference = 841B47A911119D8B00ACC2AE /* MacCameraController.mm */;
+		functionName = "-CreateCameraView";
+		hitCount = 1;
+		ignoreCount = 0;
+		lineNumber = 88;
+		location = TestGame;
+		modificationTime = 286375467.34558;
+		originalNumberOfMultipleMatches = 1;
+		state = 1;
+	};
+	841B48701111AAE900ACC2AE /* MacCameraController.mm:41 */ = {
+		isa = PBXFileBreakpoint;
+		actions = (
+		);
+		breakpointStyle = 0;
+		continueAfterActions = 0;
+		countType = 0;
+		delayBeforeContinue = 0;
+		fileReference = 841B47A911119D8B00ACC2AE /* MacCameraController.mm */;
+		functionName = "-ConnectToCamera";
+		hitCount = 1;
+		ignoreCount = 0;
+		lineNumber = 41;
+		location = TestGame;
+		modificationTime = 286375471.175648;
+		originalNumberOfMultipleMatches = 1;
+		state = 1;
+	};
+	841B489D1111AF5100ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B46321110A42900ACC2AE /* TCameraManager.h */;
+		name = "TCameraManager.h: 30";
+		rLen = 57;
+		rLoc = 517;
+		rType = 0;
+		vrLen = 544;
+		vrLoc = 44;
+	};
+	841B48A21111AF5100ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B48A31111AF5100ACC2AE /* NSGeometry.h */;
+		name = "NSGeometry.h: 100";
+		rLen = 74;
+		rLoc = 2081;
+		rType = 0;
+		vrLen = 706;
+		vrLoc = 1962;
+	};
+	841B48A31111AF5100ACC2AE /* NSGeometry.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = NSGeometry.h;
+		path = /System/Library/Frameworks/Foundation.framework/Versions/C/Headers/NSGeometry.h;
+		sourceTree = "<absolute>";
+	};
+	841B48C51111B53100ACC2AE /* MacCamera.mm:45 */ = {
+		isa = PBXFileBreakpoint;
+		actions = (
+		);
+		breakpointStyle = 0;
+		continueAfterActions = 0;
+		countType = 0;
+		delayBeforeContinue = 0;
+		fileReference = 841B457011109B7F00ACC2AE /* MacCamera.mm */;
+		functionName = "Platform::ConnectToCamera()";
+		hitCount = 1;
+		ignoreCount = 0;
+		lineNumber = 45;
+		location = TestGame;
+		modificationTime = 286375462.938968;
+		originalNumberOfMultipleMatches = 1;
+		state = 1;
+	};
+	841B48CF1111B56F00ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B456411109AF400ACC2AE /* TLCamera.h */;
+		name = "TLCamera.h: 19";
+		rLen = 0;
+		rLoc = 314;
+		rType = 0;
+		vrLen = 315;
+		vrLoc = 0;
+	};
+	841B48D01111B56F00ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B456511109AF400ACC2AE /* TLCamera.cpp */;
+		name = "TLCamera.cpp: 25";
+		rLen = 0;
+		rLoc = 349;
+		rType = 0;
+		vrLen = 415;
+		vrLoc = 250;
+	};
+	841B48D21111B56F00ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B48D31111B56F00ACC2AE /* NSApplication.h */;
+		name = "NSApplication.h: 146";
+		rLen = 10;
+		rLoc = 5747;
+		rType = 0;
+		vrLen = 906;
+		vrLoc = 5589;
+	};
+	841B48D31111B56F00ACC2AE /* NSApplication.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = NSApplication.h;
+		path = /System/Library/Frameworks/AppKit.framework/Versions/C/Headers/NSApplication.h;
+		sourceTree = "<absolute>";
+	};
+	841B48D41111B56F00ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B48D51111B56F00ACC2AE /* NSWindow.h */;
+		name = "NSWindow.h: 156";
+		rLen = 34;
+		rLoc = 5473;
+		rType = 0;
+		vrLen = 2161;
+		vrLoc = 29315;
+	};
+	841B48D51111B56F00ACC2AE /* NSWindow.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = NSWindow.h;
+		path = /System/Library/Frameworks/AppKit.framework/Versions/C/Headers/NSWindow.h;
+		sourceTree = "<absolute>";
+	};
+	841B49151111B8D600ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B49161111B8D600ACC2AE /* QTCaptureInput.h */;
+		name = "QTCaptureInput.h: 17";
+		rLen = 16;
+		rLoc = 349;
+		rType = 0;
+		vrLen = 611;
+		vrLoc = 0;
+	};
+	841B49161111B8D600ACC2AE /* QTCaptureInput.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = QTCaptureInput.h;
+		path = /System/Library/Frameworks/QTKit.framework/Versions/A/Headers/QTCaptureInput.h;
+		sourceTree = "<absolute>";
+	};
+	841B49171111B8D600ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B49181111B8D600ACC2AE /* QTCaptureSession.h */;
+		name = "QTCaptureSession.h: 43";
+		rLen = 11;
+		rLoc = 1204;
+		rType = 0;
+		vrLen = 778;
+		vrLoc = 567;
+	};
+	841B49181111B8D600ACC2AE /* QTCaptureSession.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = QTCaptureSession.h;
+		path = /System/Library/Frameworks/QTKit.framework/Versions/A/Headers/QTCaptureSession.h;
+		sourceTree = "<absolute>";
+	};
+	841B49341111BE1A00ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B456F11109B7F00ACC2AE /* MacCamera.h */;
+		name = "MacCamera.h: 21";
+		rLen = 0;
+		rLoc = 347;
+		rType = 0;
+		vrLen = 354;
+		vrLoc = 0;
+	};
+	841B49351111BE1A00ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B457011109B7F00ACC2AE /* MacCamera.mm */;
+		name = "MacCamera.mm: 57";
+		rLen = 0;
+		rLoc = 1004;
+		rType = 0;
+		vrLen = 586;
+		vrLoc = 354;
+	};
+	841B49371111BE1A00ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B49381111BE1A00ACC2AE /* QTCaptureView.h */;
+		name = "QTCaptureView.h: 45";
+		rLen = 11;
+		rLoc = 1201;
+		rType = 0;
+		vrLen = 1033;
+		vrLoc = 448;
+	};
+	841B49381111BE1A00ACC2AE /* QTCaptureView.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = QTCaptureView.h;
+		path = /System/Library/Frameworks/QTKit.framework/Versions/A/Headers/QTCaptureView.h;
+		sourceTree = "<absolute>";
+	};
+	841B49391111BE1A00ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B456B11109B6900ACC2AE /* MacCameraView.h */;
+		name = "MacCameraView.h: 15";
+		rLen = 13;
+		rLoc = 236;
+		rType = 0;
+		vrLen = 328;
+		vrLoc = 0;
+	};
+	841B4CB81111ED5A00ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B456C11109B6900ACC2AE /* MacCameraView.mm */;
+		name = "MacCameraView.mm: 25";
+		rLen = 0;
+		rLoc = 563;
+		rType = 0;
+		vrLen = 588;
+		vrLoc = 0;
+	};
+	841B4CC01111EDE400ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B47A811119D8B00ACC2AE /* MacCameraController.h */;
+		name = "MacCameraController.h: 19";
+		rLen = 58;
+		rLoc = 385;
+		rType = 0;
+		vrLen = 566;
+		vrLoc = 0;
+	};
+	841B4CC11111EDE400ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B47A911119D8B00ACC2AE /* MacCameraController.mm */;
+		name = "MacCameraController.mm: 61";
+		rLen = 13;
+		rLoc = 1034;
+		rType = 0;
+		vrLen = 742;
+		vrLoc = 615;
+	};
+	841B4CC71111EE3800ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B47A911119D8B00ACC2AE /* MacCameraController.mm */;
+		name = "MacCameraController.mm: 112";
+		rLen = 0;
+		rLoc = 2279;
+		rType = 0;
+		vrLen = 401;
+		vrLoc = 2171;
+	};
+}
