@@ -16,6 +16,23 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		841B47F11111A31100ACC2AE /* IPodSocial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodSocial.h; path = ../IPod/IPodSocial.h; sourceTree = SOURCE_ROOT; };
+		841B47F21111A31100ACC2AE /* IPodSocial.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodSocial.mm; path = ../IPod/IPodSocial.mm; sourceTree = SOURCE_ROOT; };
+		841B47F31111A31100ACC2AE /* IPodSocialNetworkingPlatform_AGONOnline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodSocialNetworkingPlatform_AGONOnline.h; path = ../IPod/IPodSocialNetworkingPlatform_AGONOnline.h; sourceTree = SOURCE_ROOT; };
+		841B47F41111A31100ACC2AE /* IPodSocialNetworkingPlatform_AGONOnline.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodSocialNetworkingPlatform_AGONOnline.mm; path = ../IPod/IPodSocialNetworkingPlatform_AGONOnline.mm; sourceTree = SOURCE_ROOT; };
+		841B47F51111A31100ACC2AE /* IPodSocialNetworkingPlatform_Facebook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodSocialNetworkingPlatform_Facebook.h; path = ../IPod/IPodSocialNetworkingPlatform_Facebook.h; sourceTree = SOURCE_ROOT; };
+		841B47F61111A31100ACC2AE /* IPodSocialNetworkingPlatform_OpenFeint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodSocialNetworkingPlatform_OpenFeint.h; path = ../IPod/IPodSocialNetworkingPlatform_OpenFeint.h; sourceTree = SOURCE_ROOT; };
+		841B47F71111A31100ACC2AE /* IPodSocialNetworkingPlatform_OpenFeint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodSocialNetworkingPlatform_OpenFeint.mm; path = ../IPod/IPodSocialNetworkingPlatform_OpenFeint.mm; sourceTree = SOURCE_ROOT; };
+		841B47F81111A31100ACC2AE /* IPodSocialNetworkingPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodSocialNetworkingPlatform.h; path = ../IPod/IPodSocialNetworkingPlatform.h; sourceTree = SOURCE_ROOT; };
+		841B47F91111A31100ACC2AE /* TAGONOnline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAGONOnline.h; path = ../IPod/TAGONOnline.h; sourceTree = SOURCE_ROOT; };
+		841B47FA1111A31100ACC2AE /* TAGONOnline.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TAGONOnline.mm; path = ../IPod/TAGONOnline.mm; sourceTree = SOURCE_ROOT; };
+		841B47FB1111A31100ACC2AE /* TFacebookConnect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFacebookConnect.h; path = ../IPod/TFacebookConnect.h; sourceTree = SOURCE_ROOT; };
+		841B47FC1111A31100ACC2AE /* TFacebookConnect.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TFacebookConnect.mm; path = ../IPod/TFacebookConnect.mm; sourceTree = SOURCE_ROOT; };
+		841B47FD1111A31100ACC2AE /* TFacebookSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFacebookSession.h; path = ../IPod/TFacebookSession.h; sourceTree = SOURCE_ROOT; };
+		841B47FE1111A31100ACC2AE /* TFacebookSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TFacebookSession.mm; path = ../IPod/TFacebookSession.mm; sourceTree = SOURCE_ROOT; };
+		841B47FF1111A31100ACC2AE /* TootleSocialPrefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TootleSocialPrefix.pch; path = ../IPod/TootleSocialPrefix.pch; sourceTree = SOURCE_ROOT; };
+		841B48001111A31100ACC2AE /* TOpenFeint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TOpenFeint.h; path = ../IPod/TOpenFeint.h; sourceTree = SOURCE_ROOT; };
+		841B48011111A31100ACC2AE /* TOpenFeint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TOpenFeint.mm; path = ../IPod/TOpenFeint.mm; sourceTree = SOURCE_ROOT; };
 		84B60916105117A50022E5BC /* libTootleSocial.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleSocial.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84B6091D105117D90022E5BC /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B6091E105117D90022E5BC /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -38,6 +55,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		841B47F01111A2EE00ACC2AE /* IPod Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				841B47F11111A31100ACC2AE /* IPodSocial.h */,
+				841B47F21111A31100ACC2AE /* IPodSocial.mm */,
+				841B47F31111A31100ACC2AE /* IPodSocialNetworkingPlatform_AGONOnline.h */,
+				841B47F41111A31100ACC2AE /* IPodSocialNetworkingPlatform_AGONOnline.mm */,
+				841B47F51111A31100ACC2AE /* IPodSocialNetworkingPlatform_Facebook.h */,
+				841B47F61111A31100ACC2AE /* IPodSocialNetworkingPlatform_OpenFeint.h */,
+				841B47F71111A31100ACC2AE /* IPodSocialNetworkingPlatform_OpenFeint.mm */,
+				841B47F81111A31100ACC2AE /* IPodSocialNetworkingPlatform.h */,
+				841B47F91111A31100ACC2AE /* TAGONOnline.h */,
+				841B47FA1111A31100ACC2AE /* TAGONOnline.mm */,
+				841B47FB1111A31100ACC2AE /* TFacebookConnect.h */,
+				841B47FC1111A31100ACC2AE /* TFacebookConnect.mm */,
+				841B47FD1111A31100ACC2AE /* TFacebookSession.h */,
+				841B47FE1111A31100ACC2AE /* TFacebookSession.mm */,
+				841B47FF1111A31100ACC2AE /* TootleSocialPrefix.pch */,
+				841B48001111A31100ACC2AE /* TOpenFeint.h */,
+				841B48011111A31100ACC2AE /* TOpenFeint.mm */,
+			);
+			name = "IPod Source Files";
+			sourceTree = "<group>";
+		};
 		84B608FB105116E00022E5BC = {
 			isa = PBXGroup;
 			children = (
@@ -58,6 +99,7 @@
 		84B6091B105117B90022E5BC /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
+				841B47F01111A2EE00ACC2AE /* IPod Source Files */,
 				84B60925105118080022E5BC /* Mac Source Files */,
 				84B6091F105118030022E5BC /* TLSocial.cpp */,
 				84B60920105118030022E5BC /* TLSocial.h */,
