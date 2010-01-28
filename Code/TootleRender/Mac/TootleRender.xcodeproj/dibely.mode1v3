@@ -337,7 +337,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>840B1DBC10D967D8005FBB4C</string>
+										<string>841B47E71111A2D100ACC2AE</string>
 										<key>history</key>
 										<array>
 											<string>8418F4F40F4DD12B00B956C9</string>
@@ -396,7 +396,7 @@
 											<string>8482CF9310BBFB53009067B8</string>
 											<string>8448A04E10D15F67001A61A4</string>
 											<string>840B1C9F10D929EF005FBB4C</string>
-											<string>840B1DBB10D967D8005FBB4C</string>
+											<string>8413618D10FF0975007A948A</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -408,14 +408,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1018, 407}}</string>
+								<string>{{0, 0}, {1018, 392}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 108 1280 670 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>407pt</string>
+							<string>392pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -428,14 +428,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 412}, {1018, 217}}</string>
+								<string>{{0, 397}, {1018, 232}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 108 1280 670 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>217pt</string>
+							<string>232pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -454,9 +454,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>840B1C8210D9288B005FBB4C</string>
+				<string>841B47E81111A2D100ACC2AE</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>840B1C8310D9288B005FBB4C</string>
+				<string>841B47E91111A2D100ACC2AE</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -592,9 +592,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
-		<string>1CD10A99069EF8BA00B06720</string>
-		<string>840B1C7710D92873005FBB4C</string>
 		<string>8418F29F0F4DBE3D00B956C9</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleRender/Mac/TootleRender.xcodeproj</string>
 	</array>
@@ -676,7 +673,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>8418F29F0F4DBE3D00B956C9</string>
-				<string>840B1C7610D92873005FBB4C</string>
+				<string>841B47EA1111A2D100ACC2AE</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

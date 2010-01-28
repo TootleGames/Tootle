@@ -389,6 +389,12 @@ void TLMaths::TContour::SetParity(u32 parity)
     {
         // Contour orientation is wrong! We must reverse all points.
         // FIXME: could it be worth writing FTVector::reverse() for this?
+		// [26/01/10] DB - No.  This should be done internally within the array using the array sort order policy.
+		// It shoudl use the array SetOrder() interface routine (when complete) to swap the order as required and will be
+		// policy specific: 
+		// * In a no sort order policy class it should simply flip the array back and forth like it is done here.  
+		// * In a sorted policy class it should re-sort the array with the order required or do nothing if necessary.
+		//TODO: This needs moving into the array handling
         for ( u32 i=0;	i<size/2;	i++ )
         {
 			//	gr: use swap func

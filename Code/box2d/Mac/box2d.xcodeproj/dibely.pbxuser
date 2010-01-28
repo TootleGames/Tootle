@@ -20,17 +20,19 @@
 		vrLen = 459;
 		vrLoc = 965;
 	};
-	8415459A10677D1C006FA797 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84B60A8A105129B00022E5BC /* b2Distance.cpp */;
-		name = "b2Distance.cpp: 39";
-		rLen = 14;
-		rLoc = 1465;
-		rType = 0;
-		vrLen = 700;
-		vrLoc = 1404;
+	8415459C10677D1C006FA797 /* b2Distance.cpp */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.cpp.cpp;
+		name = b2Distance.cpp;
+		path = /Users/dibely/Documents/Tootle/Tootle/Code/box2d/Mac/../Source/Collision/b2Distance.cpp;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {691, 7033}}";
+			sepNavSelRange = "{1623, 0}";
+			sepNavVisRange = "{1383, 615}";
+		};
 	};
-	8415459B10677D1C006FA797 /* PBXTextBookmark */ = {
+	841B46EA11117FF700ACC2AE /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 8415459C10677D1C006FA797 /* b2Distance.cpp */;
 		name = "b2Distance.cpp: 43";
@@ -40,16 +42,25 @@
 		vrLen = 615;
 		vrLoc = 1383;
 	};
-	8415459C10677D1C006FA797 /* b2Distance.cpp */ = {
-		isa = PBXFileReference;
-		name = b2Distance.cpp;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/box2d/Mac/../Source/Collision/b2Distance.cpp;
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {544, 7007}}";
-			sepNavSelRange = "{1623, 0}";
-			sepNavVisRange = "{1383, 564}";
-		};
+	841B46EB11117FF700ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60B42105129C50022E5BC /* TootleRelease.xcconfig */;
+		name = "TootleRelease.xcconfig: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 586;
+		vrLoc = 0;
+	};
+	841B46EC11117FF700ACC2AE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60B42105129C50022E5BC /* TootleRelease.xcconfig */;
+		name = "TootleRelease.xcconfig: 203";
+		rLen = 29;
+		rLoc = 6441;
+		rType = 0;
+		vrLen = 976;
+		vrLoc = 6114;
 	};
 	84B609CC105127500022E5BC /* Project object */ = {
 		activeBuildConfigurationName = Release;
@@ -142,14 +153,15 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 275217202;
-			PBXWorkspaceStateSaveDate = 275217202;
+			PBXPerProjectTemplateStateSaveDate = 286359528;
+			PBXWorkspaceStateSaveDate = 286359528;
 		};
 		perUserProjectItems = {
 			8415459810677D1C006FA797 /* PBXTextBookmark */ = 8415459810677D1C006FA797 /* PBXTextBookmark */;
 			8415459910677D1C006FA797 /* PBXTextBookmark */ = 8415459910677D1C006FA797 /* PBXTextBookmark */;
-			8415459A10677D1C006FA797 /* PBXTextBookmark */ = 8415459A10677D1C006FA797 /* PBXTextBookmark */;
-			8415459B10677D1C006FA797 /* PBXTextBookmark */ = 8415459B10677D1C006FA797 /* PBXTextBookmark */;
+			841B46EA11117FF700ACC2AE /* PBXTextBookmark */ = 841B46EA11117FF700ACC2AE /* PBXTextBookmark */;
+			841B46EB11117FF700ACC2AE /* PBXTextBookmark */ = 841B46EB11117FF700ACC2AE /* PBXTextBookmark */;
+			841B46EC11117FF700ACC2AE /* PBXTextBookmark */ = 841B46EC11117FF700ACC2AE /* PBXTextBookmark */;
 			84B60D53105130A10022E5BC /* PBXTextBookmark */ = 84B60D53105130A10022E5BC /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84B609D0105127500022E5BC /* Source Control */;
@@ -196,6 +208,13 @@
 			sepNavIntBoundsRect = "{{0, 0}, {544, 4264}}";
 			sepNavSelRange = "{0, 0}";
 			sepNavVisRange = "{0, 920}";
+		};
+	};
+	84B60B42105129C50022E5BC /* TootleRelease.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {6697, 2808}}";
+			sepNavSelRange = "{6441, 29}";
+			sepNavVisRange = "{6114, 976}";
 		};
 	};
 	84B60CED105130580022E5BC /* box2d */ = {

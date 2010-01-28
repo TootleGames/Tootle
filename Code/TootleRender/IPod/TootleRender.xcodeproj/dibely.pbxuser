@@ -1,5 +1,35 @@
 // !$*UTF8*$!
 {
+	8413609A10FE306F007A948A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8434CB8C100DBB910063673E /* TRenderNodeScrollableView.cpp */;
+		name = "TRenderNodeScrollableView.cpp: 34";
+		rLen = 0;
+		rLoc = 1000;
+		rType = 0;
+		vrLen = 781;
+		vrLoc = 2599;
+	};
+	8413609B10FE306F007A948A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10AFA0F0A7E6000B2DF7A /* TRenderNodeText.cpp */;
+		name = "TRenderNodeText.cpp: 165";
+		rLen = 0;
+		rLoc = 4820;
+		rType = 0;
+		vrLen = 588;
+		vrLoc = 4329;
+	};
+	8413609C10FE306F007A948A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10AFA0F0A7E6000B2DF7A /* TRenderNodeText.cpp */;
+		name = "TRenderNodeText.cpp: 163";
+		rLen = 47;
+		rLoc = 4750;
+		rType = 0;
+		vrLen = 776;
+		vrLoc = 4521;
+	};
 	8418FAEF0F4EDFEE00B956C9 /* IPodInput.h */ = {
 		isa = PBXFileReference;
 		lastKnownFileType = sourcecode.c.h;
@@ -80,9 +110,9 @@
 	};
 	8434CB8C100DBB910063673E /* TRenderNodeScrollableView.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {955, 5122}}";
+			sepNavIntBoundsRect = "{{0, 0}, {955, 6461}}";
 			sepNavSelRange = "{1000, 0}";
-			sepNavVisRange = "{2454, 779}";
+			sepNavVisRange = "{2599, 781}";
 		};
 	};
 	8434CB8D100DBB910063673E /* TRenderNodeScrollableView.h */ = {
@@ -128,6 +158,7 @@
 	};
 	843C254210B2ED38004E70F5 /* TLTypes.h */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
 		name = TLTypes.h;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleCore/TLTypes.h;
 		sourceTree = "<absolute>";
@@ -144,6 +175,7 @@
 	};
 	843C254410B2ED38004E70F5 /* TLTypes.inc.h */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
 		name = TLTypes.inc.h;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleCore/TLTypes.inc.h;
 		sourceTree = "<absolute>";
@@ -157,26 +189,6 @@
 		rType = 0;
 		vrLen = 1848;
 		vrLoc = 2024;
-	};
-	843C254710B2ED38004E70F5 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8434CB8C100DBB910063673E /* TRenderNodeScrollableView.cpp */;
-		name = "TRenderNodeScrollableView.cpp: 108";
-		rLen = 0;
-		rLoc = 2770;
-		rType = 0;
-		vrLen = 736;
-		vrLoc = 1633;
-	};
-	843C257010B2EFD2004E70F5 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8434CB8C100DBB910063673E /* TRenderNodeScrollableView.cpp */;
-		name = "TRenderNodeScrollableView.cpp: 37";
-		rLen = 0;
-		rLoc = 1000;
-		rType = 0;
-		vrLen = 779;
-		vrLoc = 2454;
 	};
 	8450984110219F3C00B78F2B /* TRenderNodeParticle.cpp */ = {
 		uiCtxt = {
@@ -228,11 +240,6 @@
 		name = UITouch.h;
 		path = /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.2.1.sdk/System/Library/Frameworks/UIKit.framework/Headers/UITouch.h;
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {955, 663}}";
-			sepNavSelRange = "{1281, 131}";
-			sepNavVisRange = "{731, 895}";
-		};
 	};
 	845FE2250FBD8FC900F88607 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -334,16 +341,6 @@
 		rType = 0;
 		vrLen = 824;
 		vrLoc = 2778;
-	};
-	84A0E7B00FE91A5E004646AF /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C10AFA0F0A7E6000B2DF7A /* TRenderNodeText.cpp */;
-		name = "TRenderNodeText.cpp: 161";
-		rLen = 0;
-		rLoc = 4820;
-		rType = 0;
-		vrLen = 505;
-		vrLoc = 4410;
 	};
 	84A0E7B10FE91A5E004646AF /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -503,10 +500,13 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 280161767;
-			PBXWorkspaceStateSaveDate = 280161767;
+			PBXPerProjectTemplateStateSaveDate = 285093978;
+			PBXWorkspaceStateSaveDate = 285093978;
 		};
 		perUserProjectItems = {
+			8413609A10FE306F007A948A /* PBXTextBookmark */ = 8413609A10FE306F007A948A /* PBXTextBookmark */;
+			8413609B10FE306F007A948A /* PBXTextBookmark */ = 8413609B10FE306F007A948A /* PBXTextBookmark */;
+			8413609C10FE306F007A948A /* PBXTextBookmark */ = 8413609C10FE306F007A948A /* PBXTextBookmark */;
 			8418FB000F4EE07D00B956C9 /* PBXTextBookmark */ = 8418FB000F4EE07D00B956C9 /* PBXTextBookmark */;
 			841DC7571056C39900BFE98F /* PBXTextBookmark */ = 841DC7571056C39900BFE98F /* PBXTextBookmark */;
 			842A2D73104EC37100051E4B /* PBXTextBookmark */ = 842A2D73104EC37100051E4B /* PBXTextBookmark */;
@@ -516,8 +516,6 @@
 			843C254110B2ED38004E70F5 /* PBXTextBookmark */ = 843C254110B2ED38004E70F5 /* PBXTextBookmark */;
 			843C254310B2ED38004E70F5 /* PBXTextBookmark */ = 843C254310B2ED38004E70F5 /* PBXTextBookmark */;
 			843C254510B2ED38004E70F5 /* PBXTextBookmark */ = 843C254510B2ED38004E70F5 /* PBXTextBookmark */;
-			843C254710B2ED38004E70F5 /* PBXTextBookmark */ = 843C254710B2ED38004E70F5 /* PBXTextBookmark */;
-			843C257010B2EFD2004E70F5 /* PBXTextBookmark */ = 843C257010B2EFD2004E70F5 /* PBXTextBookmark */;
 			845C912010A878C000FC76E6 /* PBXTextBookmark */ = 845C912010A878C000FC76E6 /* PBXTextBookmark */;
 			845C912110A878C000FC76E6 /* PBXTextBookmark */ = 845C912110A878C000FC76E6 /* PBXTextBookmark */;
 			845C912610A87B7A00FC76E6 /* PBXTextBookmark */ = 845C912610A87B7A00FC76E6 /* PBXTextBookmark */;
@@ -529,7 +527,6 @@
 			846C1BE1109790690098DFAF /* PBXTextBookmark */ = 846C1BE1109790690098DFAF /* PBXTextBookmark */;
 			847F008F0F67C55A00121D77 /* PBXTextBookmark */ = 847F008F0F67C55A00121D77 /* PBXTextBookmark */;
 			8488F4AB0F8B3264008A08AF /* PBXTextBookmark */ = 8488F4AB0F8B3264008A08AF /* PBXTextBookmark */;
-			84A0E7B00FE91A5E004646AF /* PBXTextBookmark */ = 84A0E7B00FE91A5E004646AF /* PBXTextBookmark */;
 			84A0E7B10FE91A5E004646AF /* PBXTextBookmark */ = 84A0E7B10FE91A5E004646AF /* PBXTextBookmark */;
 			84BF761D0F7DAFFC008C3BA9 /* PBXTextBookmark */ = 84BF761D0F7DAFFC008C3BA9 /* PBXTextBookmark */;
 			84BF761E0F7DAFFC008C3BA9 /* PBXTextBookmark */ = 84BF761E0F7DAFFC008C3BA9 /* PBXTextBookmark */;
@@ -639,9 +636,9 @@
 	};
 	84C10AFA0F0A7E6000B2DF7A /* TRenderNodeText.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {955, 10542}}";
-			sepNavSelRange = "{4820, 0}";
-			sepNavVisRange = "{4410, 505}";
+			sepNavIntBoundsRect = "{{0, 0}, {1034, 9594}}";
+			sepNavSelRange = "{4750, 47}";
+			sepNavVisRange = "{4521, 776}";
 		};
 	};
 	84C10AFB0F0A7E6000B2DF7A /* TRenderNodeText.h */ = {

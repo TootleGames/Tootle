@@ -348,7 +348,14 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 				}
 				break;
 
-				case 'A':	//	arc
+				case 'a':	//	arc (relative)
+				case 'A':	//	arc (absolute)
+				{
+					//	set command and let code continue to do simple process
+					LastCommand = NewCommand;
+				}
+				break;	
+					
 				case 'S':	//	shorthand curve
 				case 'Q':	//	quadratic bezier curve
 				case 'T':	//	shorthand quadratic bezier curve
@@ -469,6 +476,61 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 			
 			CurrentPosition = NewPosition;
 		}
+		else if(( LastCommand == 'A' ) || ( LastCommand == 'a' ))
+		{
+			//	arc - 
+			// Read radii (rx,ry)
+			float2 Radii;
+			if ( !TLString::ReadNextFloat( String, CharIndex, Radii ) )
+				return FALSE;
+			
+			//	read x-axis rotation
+			float XAxisRot;
+			if ( !TLString::ReadNextFloat( String, CharIndex, XAxisRot ) )
+				return FALSE;
+			
+			// read sweep flag and arc flag
+			float2 flags;
+			if ( !TLString::ReadNextFloat( String, CharIndex, flags ) )
+				return FALSE;
+			
+			//	read end point (on)
+			float2 ArcEndPosition;
+			if ( !TLString::ReadNextFloat( String, CharIndex, ArcEndPosition ) )
+				return FALSE;
+			
+			//	first cubic point is last point in points
+			if ( !PathPoints.GetSize() )
+			{
+				TLDebug_Break("Expected a previous point to start the cubic curve from... maybe need to add the pos from M?");
+				continue;
+			}
+			
+			float2 NewPosition;
+			
+			if ( TLString::IsCharLowercase( LastCommand ) )
+			{
+				// Relative points
+				
+				
+				NewPosition = CurrentPosition + ArcEndPosition;				
+			}
+			else 
+			{
+				// Absolute point
+				
+				NewPosition = ArcEndPosition;
+			}
+			
+			//	add these in the right order (as per tesselator)
+			//PathPoints.Add( Radii);
+			//PathCurves.Add( TLMaths::ContourCurve_Arc );
+						
+			PathPoints.Add( CoordinateToVertexPos( NewPosition ) );
+			PathCurves.Add( TLMaths::ContourCurve_On );
+			
+			CurrentPosition = NewPosition;
+		}		
 		else if ( LastCommand == 'Z' || LastCommand == 'z' )
 		{
 			CharIndex++;
