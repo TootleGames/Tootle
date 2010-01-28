@@ -5,6 +5,8 @@
 #include <TootleInput/TLInput.h>
 
 
+
+
 namespace TLGui
 {
 	TPtr<TWidgetManager>	g_pWidgetManager = NULL;
@@ -37,7 +39,7 @@ SyncBool TWidgetManager::Initialise()
 		return Result;
 	
 	// Attach the base widget factory by default
-	TPtr<TClassFactory<TWidget,TRUE> > pFactory = new TWidgetFactory();
+	TPtr<TClassFactory<TWidget,FALSE> > pFactory = new TWidgetFactory();
 	
 	if(pFactory)
 		AddFactory(pFactory);
@@ -49,6 +51,8 @@ SyncBool TWidgetManager::Initialise()
 SyncBool TWidgetManager::Shutdown()
 { 	
 	TLDebug_Print("Widgetmanager shutdown");
+	
+	m_WidgetCache.Clear();
 	
 	TLMessaging::g_pEventChannelManager->UnsubscribeFrom(this, "INPUT", "DeviceChanged"); 
 	
@@ -435,17 +439,36 @@ void TWidgetManager::OnInputDeviceRemoved(TRefRef DeviceRef, TRefRef DeviceTypeR
 }
 
 
-TRef TWidgetManager::CreateWidget(TRefRef RenderTargetRef, TRefRef InstanceRef, TRefRef TypeRef)
+TRef TWidgetManager::CreateWidget(TRefRef WidgetGroupRef, TRefRef InstanceRef, TRefRef TypeRef, Bool bStrict)
 {
+#ifdef _DEBUG
+	TTempString str("Attempting to create widget ");
+	InstanceRef.GetString(str);
+	str.Append(" with group ");
+	WidgetGroupRef.GetString(str);
+	TLDebug_Print(str);	
+#endif
+	
 	// Find group to add the widget ref to and if not found create a new one
 	Bool bGroupCreated = FALSE;
 	
-	TArray<TRef>* pGroupArray = m_WidgetRefs.Find(RenderTargetRef);
+	TPtrArray<TWidget>* pGroupArray;
+	
+	if(m_WidgetCache.GetWidgetGroupRef() == WidgetGroupRef)
+		pGroupArray = m_WidgetCache.GetWidgetGroup();
+	else 
+	{
+		// Different group so clear the cache
+		m_WidgetCache.Clear();
+		
+		pGroupArray = m_WidgetRefs.Find(WidgetGroupRef);
+	}
+	
+
 	
 	if(!pGroupArray)
 	{
-		TArray<TRef> NewArray;
-		pGroupArray = m_WidgetRefs.Add(RenderTargetRef, NewArray);
+		pGroupArray = m_WidgetRefs.AddNew(WidgetGroupRef);
 		
 		// Failed?
 		if(!pGroupArray)
@@ -455,17 +478,42 @@ TRef TWidgetManager::CreateWidget(TRefRef RenderTargetRef, TRefRef InstanceRef, 
 		}
 		
 		bGroupCreated = TRUE;
+		
+		TLDebug_Print("Created new widget group");
 	}
+	
 	
 	// Now create the actual widget object
 	TPtr<TWidget> pWidget;
 	
 	TRef FinalWidgetRef = InstanceRef;
-	
-	// While the instance ref is not unique, increment the ref
-	while(FindWidget(FinalWidgetRef).IsValid())
+
+	if(bStrict)
 	{
-		FinalWidgetRef.Increment();
+		// does the widget need to be an exact ref?  (usually only when created from schemes)
+		if(pGroupArray->FindPtr(FinalWidgetRef).IsValid())
+		{
+			if(bGroupCreated)
+			{
+				pGroupArray = NULL;
+				// Remove the group again if no widget was created
+				m_WidgetRefs.Remove(WidgetGroupRef);
+				TLDebug_Print("Removing newly created group");
+			}				
+
+			TLDebug_Break("Widget with ref already exists with strict ref creation");
+
+			// Failed
+			return TRef();
+		}
+	}
+	else 
+	{
+		// While the instance ref is not unique within the group, increment the ref
+		while(pGroupArray->FindPtr(FinalWidgetRef).IsValid())
+		{
+			FinalWidgetRef.Increment();
+		}
 	}
 	
 	
@@ -482,82 +530,139 @@ TRef TWidgetManager::CreateWidget(TRefRef RenderTargetRef, TRefRef InstanceRef, 
 	
 	if(!pWidget)	
 	{
+		TLDebug_Break("Failed to create widget");
+
 		if(bGroupCreated)
 		{
 			pGroupArray = NULL;
 			// Remove the group again if no widget was created
-			m_WidgetRefs.Remove(RenderTargetRef);
+			m_WidgetRefs.Remove(WidgetGroupRef);
+			TLDebug_Print("Removing newly created group");
+
 		}
 		
 		return TRef();
 	}
 	
-	FinalWidgetRef = pWidget->GetWidgetRef();
+	pGroupArray->Add(pWidget);
 	
-	// Add the widget ref to our group of widgets
-	pGroupArray->Add(FinalWidgetRef);
-	
+	// Update the cache
+	m_WidgetCache.Set(WidgetGroupRef, pGroupArray, pWidget);
+		
 	return FinalWidgetRef;
 }
 
-Bool TWidgetManager::DoRemoveWidget(TRefRef InstanceRef)
+Bool TWidgetManager::DoRemoveWidget(TRefRef WidgetGroupRef, TRefRef InstanceRef)
 {
-
-	Bool bResult = FALSE;
-	u32 uIndex = 0;
+#ifdef _DEBUG
+	TTempString str("Attempting to remove widget ");
+	InstanceRef.GetString(str);
+	str.Append(" from group ");
+	WidgetGroupRef.GetString(str);
+	TLDebug_Print(str);
 	
-	// Remove the ref from our rendertarget-widget mapping
-	for(; uIndex < m_WidgetRefs.GetSize(); uIndex++)
+#endif
+	
+	TPtrArray<TWidget>* pGroupArray;
+	
+	// Check the cache first, otherwise do a find of the group
+	if(m_WidgetCache.GetWidgetGroupRef() == WidgetGroupRef)
+		pGroupArray = m_WidgetCache.GetWidgetGroup();
+	else
 	{
-		TArray<TRef>& Array = m_WidgetRefs.GetItemAt(uIndex);
+		// Different group so clear the cache
+		m_WidgetCache.Clear();
 		
-		bResult = Array.Remove(InstanceRef);
+		pGroupArray = m_WidgetRefs.Find(WidgetGroupRef);
 		
-		// InstanceRef removed from the array?
-		if(bResult)
+		if(pGroupArray)
 		{
-			// No more items in the array?  Remove from the key array
-			if(Array.GetSize() == 0)
-				m_WidgetRefs.RemoveAt(uIndex);
-			
-			break;
+			// Going to be removing the widget so set the caches group data only - subsequent removals can then use
+			// the group in the cache rather than looking it up
+			m_WidgetCache.Set(WidgetGroupRef, pGroupArray, NULL);
 		}
 	}
-
-	TLDebug_Assert(bResult,"Failed to remove widget instanceref");
-
 	
-	// Now remove from the factory
-	bResult = FALSE;
+	TLDebug_Assert(pGroupArray,"Failed to find group for widget");
 	
-	for(uIndex = 0; uIndex < m_WidgetFactories.GetSize(); uIndex++)
+	TPtr<TWidget> pWidget = pGroupArray->FindPtr(InstanceRef);
+	
+	if(!pWidget.IsValid())
 	{
-		bResult = m_WidgetFactories[uIndex]->Remove(InstanceRef);		
+		TLDebug_Break("Failed to find widget for removal");
+
+		return FALSE;
+	}
+	
+	// Check the widget cache and reset the widget pointer if it is this widget
+	if(pWidget == m_WidgetCache.GetWidget())
+	{
+		m_WidgetCache.SetWidget(NULL);
+	}
+	
+	// Now remove the widget
+	if(!pGroupArray->Remove(pWidget))
+	{
+		TLDebug_Break("Failed to remove widget");
+		return FALSE;
+	}
+	
+	// At this point the only reference to the widget object should be our temporary pWidget TPtr.
+	// Check the TPtr counter to ensure nothing is referencing it outside of the widget system and then null the pointer 
+	// to delete the object
+#ifdef _DEBUG
+	if(pWidget.GetRefCount() > 1)
+	{
+		TLDebug_Break("Widget is still being reference outside of the widget system");
+	}
+#endif
+	pWidget = NULL;
+
+	// No more items in the array?  Remove from the key array item/group for the widgets
+	if(pGroupArray->GetSize() == 0)
+	{
+		TLDebug_Print("Widget group empty - removing");
+		//m_WidgetRefs.RemoveAt(uIndex);
 		
-		if(bResult)
-			break;
+		// Find and remove group
+		s32 sIndex = m_WidgetRefs.FindIndex(WidgetGroupRef);
+		
+		if(sIndex > -1)
+		{
+			m_WidgetRefs.RemoveAt(sIndex);
+			
+			// Removed the group so clear the cache
+			m_WidgetCache.Clear();
+		}
+		else 
+			TLDebug_Break("Invalid index for widget group removal");
+	}
+	else 
+	{		
+		// Clear the widget pointer in the cache.  The group can remain the same for further removal requests.
+		m_WidgetCache.SetWidget(TPtr<TWidget>(NULL));
 	}
 
-	TLDebug_Assert(bResult,"Failed to remove widget");
 	
-	return bResult;
+	return TRUE;
 }
 
 
-void TWidgetManager::SendMessageToWidget(TRefRef WidgetRef, TLMessaging::TMessage& Message)
+void TWidgetManager::SendMessageToWidget(TRefRef WidgetGroupRef, TRefRef WidgetRef, TLMessaging::TMessage& Message)
 {
 	//TODO: Queue up the message for sending to the widget
 	
 	//TEMP: Instant process of message
-	TPtr<TWidget> pWidget = FindWidget(WidgetRef);
+	TPtr<TWidget> pWidget = FindWidget(WidgetGroupRef, WidgetRef);
 
-	pWidget->ProcessMessage(Message);
+	if(pWidget)
+		pWidget->ProcessMessage(Message);
 }
 
 
-Bool TWidgetManager::SubscribeToWidget(TRefRef WidgetRef, TSubscriber* pSubscriber)
+Bool TWidgetManager::SubscribeToWidget(TRefRef WidgetGroupRef, TRefRef WidgetRef, TSubscriber* pSubscriber)
 {
-	TPtr<TWidget> pWidget = FindWidget(WidgetRef);
+	TPtr<TWidget> pWidget = FindWidget(WidgetGroupRef, WidgetRef);
 		
 	if(pWidget)
 		return pSubscriber->SubscribeTo(pWidget);
@@ -565,15 +670,64 @@ Bool TWidgetManager::SubscribeToWidget(TRefRef WidgetRef, TSubscriber* pSubscrib
 	return FALSE;
 }
 
-
-TPtr<TWidget> TWidgetManager::FindWidget(TRefRef WidgetRef)
+Bool TWidgetManager::SubscribeWidgetTo(TRefRef WidgetGroupRef, TRefRef WidgetRef, TPublisher* pPublisher)
 {
-	TPtr<TWidget> pWidget;
+	TPtr<TWidget> pWidget = FindWidget(WidgetGroupRef, WidgetRef);
 	
-	// Find the widget via the factories
-	for(u32 uIndex=0; uIndex < m_WidgetFactories.GetSize(); uIndex++)
+	if(pWidget)
+		return pWidget->SubscribeTo(pPublisher);
+	
+	return FALSE;
+}
+
+
+
+TPtr<TWidget> TWidgetManager::FindWidget(TRefRef WidgetGroupRef, TRefRef WidgetRef)
+{
+	
+	TPtrArray<TWidget>* pGroupArray;
+	
+	if(m_WidgetCache.GetWidgetGroupRef() == WidgetGroupRef)
+		pGroupArray = m_WidgetCache.GetWidgetGroup();
+	else 
 	{
-		pWidget = m_WidgetFactories[uIndex]->GetInstance(WidgetRef);
+		// Different group so clear the cache
+		m_WidgetCache.Clear();
+
+		pGroupArray = m_WidgetRefs.Find(WidgetGroupRef);
+		
+		if(pGroupArray)
+		{
+			// When using a new group set the group data in the cache and reset the widget pointer
+			m_WidgetCache.Set(WidgetGroupRef, pGroupArray, NULL);
+		}
+	}
+
+
+	if(!pGroupArray)
+		return TPtr<TWidget>(NULL);
+
+	
+	// Check the widget in the cache first and return that if it's the same ref.
+	if(m_WidgetCache.GetWidget() && (m_WidgetCache.GetWidget()->GetWidgetRef() == WidgetRef))
+		return m_WidgetCache.GetWidget();
+	else 
+	{
+		TPtr<TWidget> pWidget = pGroupArray->FindPtr(WidgetRef);
+		
+		// Set the widget in the cache
+		m_WidgetCache.SetWidget(pWidget);
+
+		return pWidget;
+	}
+	
+	/*
+	TPtr<TWidget> pWidget;
+
+	// Find the widget via the factories
+	for(u32 uIndex=0; uIndex < pGroupArray.GetSize(); uIndex++)
+	{
+		pWidget = pGroupArray->ElementAt(uIndex);
 		
 		// If a widget was created then carry on otherwise try the next factory
 		if ( pWidget )
@@ -581,4 +735,6 @@ TPtr<TWidget> TWidgetManager::FindWidget(TRefRef WidgetRef)
 	}
 	
 	return pWidget;
+	 */
 }
+

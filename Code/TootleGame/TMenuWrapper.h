@@ -13,7 +13,6 @@
 #include <TootleCore/TSubscriber.h>
 
 #include "TMenuController.h"
-#include "TWidget.h"
 
 
 namespace TLGame
@@ -27,19 +26,20 @@ namespace TLGame
 class TLGame::TMenuWrapper
 {
 public:
-	TMenuWrapper(TLMenu::TMenuController& MenuController);
+	TMenuWrapper(TLMenu::TMenuController& MenuController, TRefRef RenderTargetRef);
 	virtual ~TMenuWrapper();
 	
 	Bool						IsValid()			{	return m_MenuRef.IsValid();	}
 	void						SetInvalid()		{	m_MenuRef.SetInvalid();	}
 	
 protected:
-	virtual void				OnWidgetsRemoved(TPtrArray<TLGui::TWidget>& Widgets)	{	}	//	callback so we can do extra widget-removed code
+	virtual void				OnWidgetsRemoved(TArray<TRef>& Widgets)	{	}	//	callback so we can do extra widget-removed code
 	
 protected:
 	TRef						m_MenuRef;
+	TRef						m_RenderTargetRef;
 	TRef						m_RenderNode;		//	root render node added to the parent specified in the constructor
-	TPtrArray<TLGui::TWidget>	m_Widgets;			//	widget storage
+	TArray<TRef>				m_Widgets;			//	widget storage
 	TLMenu::TMenuController*	m_pMenuController;		//	owner menu controller
 };
 

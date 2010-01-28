@@ -111,8 +111,8 @@ protected:
 	TRef							m_EditorRenderTarget;	//	render target of our editor
 	TRef							m_EditorRenderNodeRef;	//	root node for our editors render target
 	TRef							m_EditorIconRootNodeRef;	//	node to put icons under
-	TPtrArray<TLGui::TWidget>		m_EditorWidgets;		//	general UI widgets
-	TPtrArray<TLGui::TWidget>		m_EditorIconWidgets;	//	widgets to drag from editor to game
+	TArray<TRef>					m_EditorWidgets;		//	general UI widgets
+	TArray<TRef>					m_EditorIconWidgets;	//	widgets to drag from editor to game
 	TPtr<TLAsset::TMenu>			m_pEditorIconMenu;		//	icons in menu form with NewNode data attached
 
 	TPtr<TLGraph::TGraphBase>		m_pGraph;				//	which graph are we modifying

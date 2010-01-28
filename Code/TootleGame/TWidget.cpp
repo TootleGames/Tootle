@@ -96,6 +96,15 @@ TLGui::TWidget::TWidget(TRefRef RenderTargetRef,TBinaryTree& WidgetData)  :
 
 TLGui::TWidget::~TWidget()
 {
+//TEST	
+/*
+	if(m_RenderNodeRef == TRef("m_pla"))
+	{
+		TLDebug_Break("m_Play widget shutdown");
+	}
+*/
+//TEST
+	
 	Shutdown();
 }
 
@@ -123,6 +132,16 @@ void TLGui::TWidget::SetProperty(TLMessaging::TMessage& Message)
 	
 	//	read render node
 	Message.ImportData("Node", m_RenderNodeRef );
+
+//TEST
+/*	
+	if(m_RenderNodeRef == TRef("m_pla"))
+	{
+		TLDebug_Break("m_Play widget created");
+	}
+*/	
+//TEST
+	
 	
 	//	read out a datum
 	Message.ImportData("Datum", m_RenderNodeDatum );

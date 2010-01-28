@@ -13,7 +13,7 @@ class TLGui::TWidgetThumbStick : public TLGui::TWidget
 {
 	friend class TWidgetFactory;
 public:
-	TWidgetThumbStick(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef(),float DeadZone=TLMaths_NearZero);
+	DEPRECATED TWidgetThumbStick(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef(),float DeadZone=TLMaths_NearZero);
 	
 	FORCEINLINE void		SetDeadZone(const float DeadZone)					{	m_DeadZone = DeadZone;	}
 

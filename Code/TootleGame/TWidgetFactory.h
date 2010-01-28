@@ -18,7 +18,7 @@ namespace TLGui
 	class TWidgetFactory;
 }
 
-class TLGui::TWidgetFactory : public TClassFactory<TLGui::TWidget>
+class TLGui::TWidgetFactory : public TClassFactory<TLGui::TWidget, FALSE>
 {
 protected:
 	virtual TLGui::TWidget*			CreateObject(TRefRef InstanceRef,TRefRef TypeRef);

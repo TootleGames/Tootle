@@ -20,8 +20,8 @@ class TLGui::TWidgetDrag : public TLGui::TWidget
 
 public:
 
-	TWidgetDrag(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,TRefRef ActionOutDrag,TBinaryTree* pWidgetData=NULL);
-	TWidgetDrag(TRefRef RenderTargetRef,TBinaryTree& WidgetData);
+	DEPRECATED TWidgetDrag(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp,TRefRef ActionOutDrag,TBinaryTree* pWidgetData=NULL);
+	DEPRECATED TWidgetDrag(TRefRef RenderTargetRef,TBinaryTree& WidgetData);
 
 protected:
 	TWidgetDrag(TRefRef InstanceRef, TRefRef TypeRef);

@@ -88,11 +88,12 @@ public:
 
 public:
 	
-	TWidget(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef(),TBinaryTree* pWidgetData=NULL, TRefRef DatumRef=TLRender_TRenderNode_DatumBoundsBox2D);
-	TWidget(TRefRef RenderTargetRef,TBinaryTree& WidgetData);
+	DEPRECATED TWidget(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef(),TBinaryTree* pWidgetData=NULL, TRefRef DatumRef=TLRender_TRenderNode_DatumBoundsBox2D);
+	DEPRECATED TWidget(TRefRef RenderTargetRef,TBinaryTree& WidgetData);
+	
 	virtual ~TWidget();
 
-	void						Shutdown();							//	shutdown code - just unsubscribes from publishers - this is to release all the TPtr's so we can be destructed
+	DEPRECATED void				Shutdown();							//	shutdown code - just unsubscribes from publishers - this is to release all the TPtr's so we can be destructed
 	
 	virtual TRefRef				GetSubscriberRef() const		{	static TRef Ref("inpint");	return Ref;	}
 

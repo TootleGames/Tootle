@@ -16,14 +16,14 @@ class TLGui::TWidgetButton : public TLGui::TWidget
 public:
 
 	
-	TWidgetButton(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef(), TRefRef DatumRef=TLRender_TRenderNode_DatumBoundsBox2D) : 
+	DEPRECATED TWidgetButton(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef(), TRefRef DatumRef=TLRender_TRenderNode_DatumBoundsBox2D) : 
 		TLGui::TWidget				( RenderTargetRef, RenderNodeRef, UserRef, ActionOutDown, ActionOutUp, NULL, DatumRef  ),
 		m_bAllowClickOnCursorMove	( FALSE )
 	{
 	}
 
 	
-	TWidgetButton(TRefRef RenderTargetRef,TBinaryTree& WidgetData) : 
+	DEPRECATED TWidgetButton(TRefRef RenderTargetRef,TBinaryTree& WidgetData) : 
 		TLGui::TWidget				( RenderTargetRef, WidgetData ),
 		m_bAllowClickOnCursorMove	( FALSE )
 	{

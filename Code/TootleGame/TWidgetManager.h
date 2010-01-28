@@ -17,6 +17,8 @@ namespace TLGui
 	extern TPtr<TWidgetManager>	g_pWidgetManager;
 }
 
+// Widget cache should help with searches within the widget system
+//#define ENABLE_WIDGET_CACHE
 
 class TLGui::TWidgetManager : public TLCore::TManager
 {
@@ -28,6 +30,35 @@ private:
 		TRef	m_ClickActionRef;
 		TRef	m_MoveActionRef;
 	};
+	
+	class TWidgetCache
+	{
+	public:
+		
+		TWidgetCache() :
+			m_pWidgetGroup	( NULL ),
+			m_pWidget		( NULL )
+		{}
+		
+		FORCEINLINE	void		Clear()				{ Set(TRef(), NULL, NULL); }
+		
+		FORCEINLINE TRef					GetWidgetGroupRef()	const	{ return m_WidgetGroupRef; }
+		FORCEINLINE TPtrArray<TWidget>*		GetWidgetGroup()	const	{ return m_pWidgetGroup; }
+		FORCEINLINE TPtr<TWidget>			GetWidget()			const	{ return m_pWidget; }
+		
+#ifdef ENABLE_WIDGET_CACHE
+		FORCEINLINE void		Set(TRef WidgetGroupRef, TPtrArray<TWidget>* pArray, TPtr<TWidget> pWidget) { m_WidgetGroupRef = WidgetGroupRef; m_pWidgetGroup = pArray; m_pWidget = pWidget; }
+		FORCEINLINE void		SetWidget(TPtr<TWidget> pWidget)	{ m_pWidget = pWidget; }
+#else
+		FORCEINLINE void		Set(TRef WidgetGroupRef, TPtrArray<TWidget>* pArray, TPtr<TWidget> pWidget)	{ }
+		FORCEINLINE void		SetWidget(TPtr<TWidget> pWidget)											{ }
+#endif
+
+	private:
+		TRef					m_WidgetGroupRef;		// Last group used ref
+		TPtrArray<TWidget>*		m_pWidgetGroup;			// Last group used
+		TPtr<TWidget>			m_pWidget;				// Last widget used
+	};
 
 public:
 	TWidgetManager(TRefRef ManagerRef) :
@@ -35,12 +66,24 @@ public:
 	{
 	}
 	
-	TRef				CreateWidget(TRefRef RenderTargetRef, TRefRef InstanceRef, TRefRef TypeRef);
-	FORCEINLINE Bool	RemoveWidget(TRefRef InstanceRef);
-	
-	void				SendMessageToWidget(TRefRef WidgetRef, TLMessaging::TMessage& Message);
+	TRef				CreateWidget(TRefRef WidgetGroupRef, TRefRef InstanceRef, TRefRef TypeRef, Bool bStrict=FALSE);
+	FORCEINLINE TRef	CreateWidget(TTypedRef& GroupInstanceRef, TRefRef TypeRef) 										{ return CreateWidget(GroupInstanceRef.GetRef(), GroupInstanceRef.GetTypeRef(), TypeRef); }
 
-	Bool				SubscribeToWidget(TRefRef WidgetRef, TSubscriber* pSubscriber);
+	
+	FORCEINLINE Bool	RemoveWidget(TRefRef GroupInstanceRef, TRefRef InstanceRef);
+	FORCEINLINE Bool	RemoveWidget(TTypedRef& GroupInstanceRef)														{ return RemoveWidget(GroupInstanceRef.GetRef(), GroupInstanceRef.GetTypeRef()); }
+	
+	void				SendMessageToWidget(TRefRef WidgetGroupRef, TRefRef WidgetRef, TLMessaging::TMessage& Message);
+	FORCEINLINE void	SendMessageToWidget(TTypedRef& GroupInstanceRef, TLMessaging::TMessage& Message)				{ return SendMessageToWidget(GroupInstanceRef.GetRef(), GroupInstanceRef.GetTypeRef(), Message); }
+	
+	Bool				SubscribeToWidget(TRefRef WidgetGroupRef, TRefRef WidgetRef, TSubscriber* pSubscriber);
+	FORCEINLINE Bool	SubscribeToWidget(TTypedRef& GroupInstanceRef, TSubscriber* pSubscriber)						{ return SubscribeToWidget(GroupInstanceRef.GetRef(), GroupInstanceRef.GetTypeRef(), pSubscriber); }
+
+	
+	Bool				SubscribeWidgetTo(TRefRef WidgetGroupRef, TRefRef WidgetRef, TPublisher* pPublisher);
+	FORCEINLINE Bool	SubscribeWidgetTo(TTypedRef& GroupInstanceRef, TPublisher* pPublisher)						{ return SubscribeWidgetTo(GroupInstanceRef.GetRef(), GroupInstanceRef.GetTypeRef(), pPublisher); }
+
+
 	
 	FORCEINLINE Bool	IsClickActionRef(TRefRef ClickActionRef);
 	FORCEINLINE Bool	IsMoveActionRef(TRefRef MoveActionRef);
@@ -49,8 +92,7 @@ public:
 	FORCEINLINE TRef	GetClickActionFromMoveAction(TRefRef MoveActionRef);
 	FORCEINLINE TRef	GetMoveActionFromClickAction(TRefRef ClickActionRef);
 
-
-	FORCEINLINE Bool	AddFactory(TPtr< TClassFactory<TWidget,TRUE> >& pFactory)	{ return m_WidgetFactories.Add(pFactory)!=-1; }
+	FORCEINLINE Bool	AddFactory(TPtr< TClassFactory<TWidget,FALSE> >& pFactory)	{ return m_WidgetFactories.Add(pFactory)!=-1; }
 	
 protected:
 	virtual SyncBool Initialise();
@@ -63,7 +105,7 @@ protected:
 	void			OnInputDeviceAdded(TRefRef refDeviceID, TRefRef refDeviceType);
 	void			OnInputDeviceRemoved(TRefRef refDeviceID, TRefRef refDeviceType);
 	
-	Bool			DoRemoveWidget(TRefRef InstanceRef);
+	Bool			DoRemoveWidget(TRefRef RenderTargetRef, TRefRef InstanceRef);
 
 	// Action mapping
 #ifdef TL_TARGET_IPOD
@@ -76,21 +118,23 @@ protected:
 	
 private:
 	
-	TPtr<TWidget>	FindWidget(TRefRef WidgetRef);
+	TPtr<TWidget>	FindWidget(TRefRef WidgetGroupRef, TRefRef WidgetRef);
 	
 private:
 	
+	TWidgetCache				m_WidgetCache;		// Widget cache for speeding up some routines that get called with the same data consecutively
+	
 	TArray<TActionRefData>	m_WidgetActionRefs;
 	
-	TKeyArray< TRef, TArray<TRef> >	m_WidgetRefs;			// Array of widget ref's organised with a TRenderTarget TRef as the key
-	TPtrArray< TClassFactory<TWidget,TRUE> >	m_WidgetFactories;		//	array of widget factories.
+	TKeyArray< TRef, TPtrArray<TWidget> >	m_WidgetRefs;			// Array of widget ref's organised with a TRenderTarget TRef as the key
+	TPtrArray< TClassFactory<TWidget,FALSE> >	m_WidgetFactories;		//	array of widget factories.
 };
 
 
-FORCEINLINE Bool TLGui::TWidgetManager::RemoveWidget(TRefRef InstanceRef)
+FORCEINLINE Bool TLGui::TWidgetManager::RemoveWidget(TRefRef RenderTargetRef, TRefRef InstanceRef)
 { 
 	if(InstanceRef.IsValid()) 
-		return DoRemoveWidget(InstanceRef); 
+		return DoRemoveWidget(RenderTargetRef, InstanceRef); 
 	
 	TLDebug_Print("Passing invalid widget ref to TWidgetManager::RemoveWidget");
 	return FALSE;

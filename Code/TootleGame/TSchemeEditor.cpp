@@ -22,6 +22,26 @@ TLGame::TSchemeEditor::~TSchemeEditor()
 {
 	//	unselect all the nodes - need to do this to send out the end-edit message for node cleanups
 	UnselectAllNodes();
+	
+	// Remove all widgets
+	for(u32 uIndex = 0; uIndex < m_EditorWidgets.GetSize(); uIndex++)
+	{
+		TRef WidgetRef = m_EditorWidgets.ElementAt(uIndex);
+		TLGui::g_pWidgetManager->RemoveWidget(m_EditorRenderTarget, WidgetRef);
+	}
+	
+	m_EditorWidgets.Empty();
+	
+	// Remove all editor icon widgets
+	for(u32 uIndex = 0; uIndex < m_EditorIconWidgets.GetSize(); uIndex++)
+	{
+		TRef WidgetRef = m_EditorIconWidgets.ElementAt(uIndex);
+		TLGui::g_pWidgetManager->RemoveWidget(m_EditorRenderNodeRef, WidgetRef);
+	}
+	
+	m_EditorIconWidgets.Empty();
+	
+
 
 	//	delete render target
 	if ( m_EditorRenderTarget.IsValid() )
@@ -221,6 +241,10 @@ void TLGame::TSchemeEditor::CreateNodeWidgets(TLGraph::TGraphNodeBase& Node)
 		if ( CreateWidget )
 		{
 			//	export the node information so when we get the widget callback we know what node it's for in this graph
+			
+			
+			
+			
 			TBinaryTree WidgetData( TRef_Invalid );	//	ref irrelavant
 			WidgetData.ExportData("GrNode", Node.GetNodeRef() );
 
@@ -363,11 +387,26 @@ Bool TLGame::TSchemeEditor::CreateEditorGui(TRefRef EditorScheme)
 //----------------------------------------------------------
 void TLGame::TSchemeEditor::CreateEditorWidget(TBinaryTree& WidgetData)
 {
-	//	todo: need a "widget is valid" function
-	TPtr<TLGui::TWidget> pWidget = new TLGui::TWidgetButton( m_EditorRenderTarget, WidgetData );
+	TRef ButtonWidget = TLGui::g_pWidgetManager->CreateWidget(m_EditorRenderTarget, "ebutton", "button");
 	
-	this->SubscribeTo( pWidget );
-	m_EditorWidgets.Add( pWidget );
+	if(ButtonWidget.IsValid())
+	{
+		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
+		
+		InitMessage.ExportData("RTarget", m_EditorRenderTarget); // NOTE: should be able to remove this soon		
+		InitMessage.ExportData("User", TRef_Static(g,l,o,b,a));
+		
+		InitMessage.CopyDataTree(WidgetData, FALSE);
+		
+		InitMessage.ExportData<bool>("Enable", TRUE);
+		
+		m_EditorWidgets.Add(ButtonWidget);
+		
+		TLGui::g_pWidgetManager->SendMessageToWidget(m_EditorRenderTarget, ButtonWidget, InitMessage);
+		TLGui::g_pWidgetManager->SubscribeToWidget(m_EditorRenderTarget, ButtonWidget, this );
+		
+	}		
+	
 }
 
 
@@ -830,6 +869,44 @@ void TLGame::TSchemeEditor::CreateEditorIcons(TRefRef ParentRenderNode)
 void TLGame::TSchemeEditor::OnCreatedIconRenderNode(TRefRef IconRenderNodeRef,TBinaryTree& IconData)
 {
 #ifdef ENABLE_ICON_WIDGETS
+	
+	TRef DragWidget = TLGui::g_pWidgetManager->CreateWidget(m_EditorRenderNodeRef, "eicon", "drag");
+	
+	if(DragWidget.IsValid())
+	{
+		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
+		
+		InitMessage.ExportData("RTarget", m_EditorRenderNodeRef); // NOTE: should be able to remove this soon		
+		InitMessage.ExportData("User", TRef_Static(g,l,o,b,a));
+		
+		InitMessage.ExportData("Node", IconRenderNodeRef );
+		InitMessage.ExportData("ActDown", TRef("IcoDown") );
+		InitMessage.ExportData("ActDrag", TRef("IcoDrag") );
+		InitMessage.ExportData("VertDrag", FALSE );
+		
+		
+		TPtr<TBinaryTree>& pWidgetIconData = InitMessage.AddChild("Icon");
+		if ( pWidgetIconData )
+		{
+			//	mark all the icon data as unread so it will be added to the widget
+			IconData.SetTreeUnread();
+			
+			//	add all the data specified in the XML including "init" data for the node when it's created
+			//	this will include the "Type" or "Scheme" specification
+			pWidgetIconData->ReferenceDataTree( IconData );
+		}
+		
+		InitMessage.ExportData<bool>("Enable", TRUE);
+		
+		m_EditorIconWidgets.Add(DragWidget);
+		
+		TLGui::g_pWidgetManager->SendMessageToWidget(m_EditorRenderNodeRef, DragWidget, InitMessage);
+		TLGui::g_pWidgetManager->SubscribeToWidget(m_EditorRenderNodeRef, DragWidget, this );
+		
+	}		
+	
+	
+/*	
 	//	create draggable widget on this icon
 	TBinaryTree WidgetData("Widget");
 	WidgetData.ExportData("Node", IconRenderNodeRef );
@@ -853,6 +930,7 @@ void TLGame::TSchemeEditor::OnCreatedIconRenderNode(TRefRef IconRenderNodeRef,TB
 	TPtr<TLGui::TWidgetDrag> pWidget = new TLGui::TWidgetDrag( m_EditorRenderNodeRef, WidgetData );
 	m_EditorIconWidgets.Add( pWidget );
 	this->SubscribeTo( pWidget );
+*/
 #endif
 }
 
@@ -863,9 +941,16 @@ void TLGame::TSchemeEditor::OnCreatedIconRenderNode(TRefRef IconRenderNodeRef,TB
 void TLGame::TSchemeEditor::EnableIconWidgets(Bool EnableIcons)
 {
 	//	enable/disable icon widgets
-	for ( u32 i=0;	i<m_EditorIconWidgets.GetSize();	i++ )
+	for ( u32 uIndex = 0;	uIndex < m_EditorIconWidgets.GetSize();	uIndex++ )
 	{
-		m_EditorIconWidgets[i]->SetEnabled( EnableIcons );
+		//m_EditorIconWidgets[uIndex]->SetEnabled( EnableIcons );
+
+		// Send an enable message to the widget
+		TRef Widget = m_EditorIconWidgets.ElementAt(uIndex);
+		TLMessaging::TMessage EnableMessage(TLCore::SetPropertyRef);
+		
+		EnableMessage.ExportData("Enable", EnableIcons);
+		TLGui::g_pWidgetManager->SendMessageToWidget(m_EditorRenderNodeRef, Widget, EnableMessage);
 	}
 }
 

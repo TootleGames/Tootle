@@ -12,12 +12,13 @@
 #include <TootleAsset/TScheme.h>
 #include <TootleRender/TRendergraph.h>
 #include <TootleRender/TRenderNodeText.h>
-#include <TootleGame/TWidgetButton.h>
+#include <TootleGame/TWidgetManager.h>
 
 
 
-TLGame::TMenuWrapper::TMenuWrapper(TLMenu::TMenuController& MenuController) :
-m_pMenuController	( &MenuController )
+TLGame::TMenuWrapper::TMenuWrapper(TLMenu::TMenuController& MenuController, TRefRef RenderTargetRef) :
+	m_RenderTargetRef	( RenderTargetRef ),
+	m_pMenuController	( &MenuController )
 {
 	if ( !m_pMenuController )
 	{
@@ -38,8 +39,17 @@ TLGame::TMenuWrapper::~TMenuWrapper()
 	OnWidgetsRemoved( m_Widgets );
 	
 	//	dealloc widgets - shut them down first to make sure all TPtr's are released
-	m_Widgets.FunctionAll( &TLGui::TWidget::Shutdown );
+	//m_Widgets.FunctionAll( &TLGui::TWidget::Shutdown );
+	
+	// Remove widgets from the widget system
+	for(u32 uIndex = 0; uIndex < m_Widgets.GetSize(); uIndex++)
+	{
+		TRef WidgetRef = m_Widgets.ElementAt(uIndex);
+		TLGui::g_pWidgetManager->RemoveWidget(m_RenderTargetRef, WidgetRef);
+	}
+	
 	m_Widgets.Empty();
+	
 }
 
 
@@ -48,7 +58,7 @@ TLGame::TMenuWrapper::~TMenuWrapper()
 //	create menu/render nodes etc
 //---------------------------------------------------
 TLGame::TMenuWrapperScheme::TMenuWrapperScheme(TLMenu::TMenuController& MenuController,TRefRef SchemeRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef) :
-TMenuWrapper		( MenuController )
+TMenuWrapper		( MenuController, RenderTargetRef )
 {
 	if ( !m_pMenuController )
 		return;
@@ -114,17 +124,24 @@ TMenuWrapper		( MenuController )
 
 void TLGame::TMenuWrapperScheme::CreateButtonWidget(TRefRef RenderTargetRef, TBinaryTree& WidgetData)
 {
-	//	make the rendernode of this menu item clickable, the action coming out of the TWidget
-	//	is the ref of the menu item that was clicked
-	TPtr<TLGui::TWidgetButton> pWidget = new TLGui::TWidgetButton( RenderTargetRef, WidgetData );
+	TRef ButtonWidget = TLGui::g_pWidgetManager->CreateWidget(RenderTargetRef, "msbutton", "button");
 	
-	//	subscribe the menu controller to the gui to get the clicked messages
-	//	gr: THIS now gets the gui messages and handles them and invokes execution of the menu item
-	if ( this->SubscribeTo( pWidget ) )
+	if(ButtonWidget.IsValid())
 	{
-		m_Widgets.Add( pWidget );
-	}
-	
+		TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
+		
+		InitMessage.CopyDataTree(WidgetData, FALSE);
+
+		InitMessage.ExportData("RTarget", RenderTargetRef); // NOTE: should be able to remove this soon
+		InitMessage.ExportData("User", TRef_Static(g,l,o,b,a));
+		InitMessage.ExportData<bool>("Enable", TRUE);
+		
+		m_Widgets.Add(ButtonWidget);
+		
+		TLGui::g_pWidgetManager->SendMessageToWidget(RenderTargetRef, ButtonWidget, InitMessage);
+		TLGui::g_pWidgetManager->SubscribeToWidget(RenderTargetRef, ButtonWidget, this );
+		
+	}	
 }
 
 
@@ -168,7 +185,7 @@ void TLGame::TMenuWrapperScheme::OnSchemeInstanced()
 //	create menu/render nodes etc
 //---------------------------------------------------
 TLGame::TMenuWrapperText::TMenuWrapperText(TLMenu::TMenuController& MenuController,TRefRef FontRef,float FontScale,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef,TRef ParentRenderNodeDatum) :
-TMenuWrapper		( MenuController )
+TMenuWrapper		( MenuController, RenderTargetRef )
 {
 	if ( !m_pMenuController )
 		return;
@@ -229,23 +246,30 @@ TMenuWrapper		( MenuController )
 		//	move along position
 		TextPosition += TextPositionStep;
 		
-		//	create widget
-		TBinaryTree WidgetData( TRef_Static(W,i,d,g,e) );
-		WidgetData.ExportData( TRef_Static4(N,o,d,e), MenuItemRenderNodeRef );
-		
-		//	the action from the widget is the menu item ref
-		WidgetData.ExportData("ActDown", MenuItem.GetMenuItemRef() );
-		
+				
 		//	make the rendernode of this menu item clickable, the action coming out of the TWidget
 		//	is the ref of the menu item that was clicked
-		TPtr<TLGui::TWidgetButton> pWidget = new TLGui::TWidgetButton( RenderTargetRef, WidgetData );
+		TRef ButtonWidget = TLGui::g_pWidgetManager->CreateWidget(RenderTargetRef, "mtbutton", "button");
 		
-		//	subscribe the menu controller to the gui to get the clicked messages
-		//	gr: THIS now gets the gui messages and handles them and invokes execution of the menu item
-		if ( this->SubscribeTo( pWidget ) )
+		if(ButtonWidget.IsValid())
 		{
-			m_Widgets.Add( pWidget );
-		}
+			TLMessaging::TMessage InitMessage(TLCore::InitialiseRef);
+			
+			InitMessage.ExportData("RTarget", RenderTargetRef); // NOTE: should be able to remove this soon
+			InitMessage.ExportData( TRef_Static4(N,o,d,e), MenuItemRenderNodeRef );
+			
+			InitMessage.ExportData("User", TRef_Static(g,l,o,b,a));
+			
+			//	the action from the widget is the menu item ref
+			InitMessage.ExportData("ActDown", MenuItem.GetMenuItemRef() );
+
+			InitMessage.ExportData<bool>("Enable", TRUE);
+			
+			m_Widgets.Add(ButtonWidget);
+			
+			TLGui::g_pWidgetManager->SendMessageToWidget(RenderTargetRef, ButtonWidget, InitMessage);
+			TLGui::g_pWidgetManager->SubscribeToWidget(RenderTargetRef, ButtonWidget, this );
+		}		
 	}
 }
 

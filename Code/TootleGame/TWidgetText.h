@@ -22,7 +22,7 @@ class TLGui::TWidgetText : public TLGui::TWidget
 	friend class TWidgetFactory;
 
 public:
-	TWidgetText(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef());
+	DEPRECATED TWidgetText(TRefRef RenderTargetRef,TRefRef RenderNodeRef,TRefRef UserRef,TRefRef ActionOutDown,TRefRef ActionOutUp=TRef());
 
 	DEPRECATED void						SetString(const TTempString& str) { m_Text = str; OnTextChange(); }
 	
