@@ -14,6 +14,8 @@
 #include "TArray.h"
 #include "TPtr.h"
 
+//#define TEST_TPAIR_CHANGES
+//#define TEST_KEYARRAY_CHANGES
 
 //	namespace only used by TKeyArray
 namespace TLKeyArray
@@ -23,11 +25,27 @@ namespace TLKeyArray
 	{
 	public:
 		TPair()											{}		//	note: members are not initialised, but required for the array mem alloc
-		TPair(const KEYTYPE& Key,const TYPE& Item) : 
-			m_Key	( Key ),
-			m_Item	( Item )
+
+#ifdef TEST_TPAIR_CHANGES		
+		TPair(const KEYTYPE& Key,const TYPE& Item)
 		{
+			m_Key = Key;
+			m_Item = Item;
 		}
+		
+		TPair(const TPair<KEYTYPE, TYPE>& Pair)
+		{
+			*this = Pair;
+		}
+#else
+		 TPair(const KEYTYPE& Key,const TYPE& Item) : 
+		 m_Key	( Key ),
+		 m_Item	( Item )
+		 {
+		 }
+#endif		
+		
+		
 
 		FORCEINLINE Bool	operator<(const KEYTYPE& Key) const					{	return m_Key < Key;	}
 		FORCEINLINE Bool	operator<(const TPair<KEYTYPE,TYPE>& Pair) const	{	return m_Key < Pair.m_Key;	}
@@ -53,8 +71,49 @@ namespace TLKeyArray
 	// Key array sorting policy class
 	template<typename KEYTYPE, typename TYPE>
 	class SortPolicy_KeyArray;
+	
+	
 };
 
+#ifdef TEST_KEYARRAY_CHANGES
+
+template<typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+class TActualKeyArray;
+
+// Overloaded TArray class.  This is so I can use the virtual OnArrayShrink routine
+// that needs to remove/deallcoate data in the 'item' because it could be an array of TPtr's (TPtrArray),
+// or a TPtr itself so when shrinking the item will stay resident otherwise.
+template<typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+class TActualKeyArray : public TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>
+{
+public:
+	typedef TLArray::SortResult(TSortFunc)(const TYPE&,const TYPE&,const void*);
+
+public:
+	TActualKeyArray(TSortFunc* pSortFunc=NULL, u16 GrowBy=TArray_GrowByDefault) : TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY >::TArray( pSortFunc, GrowBy )	{	}
+
+protected:	
+	virtual void				OnArrayShrink(u32 OldSize,u32 NewSize);
+
+};
+
+template<typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>
+void TActualKeyArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::OnArrayShrink(u32 OldSize,u32 NewSize)
+{
+	// Not data type so delete the data we are 'shrinking' away to ensure objects are deleted and TPtr's counters updated
+	// Shoud this be the base TArray functionality??
+	if(!TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::IsElementDataType())
+	{
+		TYPE emptyobject;
+		for ( u32 uIndex = NewSize;	uIndex < OldSize;	uIndex++ )
+		{
+			TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>::ElementAt(uIndex) = emptyobject;
+		}
+	}
+}
+
+
+#endif
 
 template<typename KEYTYPE, typename TYPE>
 class TLKeyArray::SortPolicy_KeyArray : public TLArray::SortPolicy_Base< TLKeyArray::TPair<KEYTYPE, TYPE> >
@@ -137,7 +196,11 @@ public:
 	FORCEINLINE void			Copy(const TKeyArray<KEYTYPE,TYPE,ALLOCATORPOLICY>& OtherArray)	{	m_Array.Copy( OtherArray.m_Array );	}
 
 protected:
+#ifdef TEST_KEYARRAY_CHANGES
+	TActualKeyArray<TLKeyArray::TPair<KEYTYPE,TYPE>, TLKeyArray::SortPolicy_KeyArray<KEYTYPE,TYPE>, ALLOCATORPOLICY>		m_Array;		//	array of pairs
+#else
 	TArray<TLKeyArray::TPair<KEYTYPE,TYPE>, TLKeyArray::SortPolicy_KeyArray<KEYTYPE,TYPE>, ALLOCATORPOLICY>		m_Array;		//	array of pairs
+#endif
 };			
 
 
@@ -314,4 +377,7 @@ Bool TKeyArray<KEYTYPE,TYPE, ALLOCATORPOLICY>::RemoveItem(const TYPE& Item,Bool 
 
 	return AnyRemoved;
 }
+
+
+
 

@@ -7,6 +7,7 @@
 #include "TArray.h"
 #include "TPtr.h"
 
+//#define TEST_PTRARRAY_CHANGES
 
 namespace TLPtrArray
 {
@@ -66,6 +67,14 @@ public:
 
 public:
 	TPtrArray(TSortFunc* pSortFunc=NULL,u16 GrowBy=TArray_GrowByDefault) : TArray<TPtr<TYPE>, SORTPOLICY, ALLOCATORPOLICY >::TArray	( pSortFunc, GrowBy )	{	}
+	
+#ifdef TEST_PTRARRAY_CHANGES	
+	TPtrArray(const TPtrArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& OtherArray)
+	{
+		*this = OtherArray;
+	}
+#endif
+
 	virtual ~TPtrArray()
 	{
 		TArray<TPtr<TYPE>, SORTPOLICY, ALLOCATORPOLICY >::SetAll(NULL);
