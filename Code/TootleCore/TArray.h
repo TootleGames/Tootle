@@ -93,6 +93,7 @@ public:
 	virtual Bool		SetSize(s32 Size);
 	void				Empty(Bool Dealloc=FALSE)				{	SetSize(0);	if ( Dealloc )	SetAllocSize(0);	};
 	virtual u32			GetAllocSize() const					{	return m_Alloc;	}
+	virtual u32			GetMaxAllocSize() const					{	return GetAllocSize();	}	//	todo: implement this properly!
 	virtual void		SetAllocSize(u32 Size);					//	set new amount of allocated data
 	FORCEINLINE void	AddAllocSize(u32 Size)					{	SetAllocSize( GetSize() + Size );	}	//	alloc N extra data than we already have
 	virtual void		Compact()								{	SetAllocSize( GetSize() );	}	//	free-up over-allocated data
