@@ -285,6 +285,10 @@ TTypedRef TLFileSys::GetFileAndTypeRef(const TString& Filename)
 		FileRef.Set( FilenameParts[0] );
 	}
 
+	TTempString DebugString;
+	DebugString << Filename << " becomes " << FileRef << "." << TypeRef;
+	TLDebug_Print( DebugString );
+
 	return TTypedRef( FileRef, TypeRef );
 }
 

@@ -269,7 +269,7 @@ void TLNetwork::Platform::TConnectionHttp::StartUploadTask(TTask& Task)
 												//CURLFORM_PTRCONTENTS, UploadData.GetData().GetData(),
 												//CURLFORM_CONTENTSLENGTH, UploadData.GetSize(),
 												CURLFORM_COPYCONTENTS, DataString.GetData(),
-												CURLFORM_CONTENTSLENGTH, DataString.GetLengthWithoutTerminator(),
+												CURLFORM_CONTENTSLENGTH, DataString.GetLength(),
 												CURLFORM_END);
 
 		//	setup okay, continue

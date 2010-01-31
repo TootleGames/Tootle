@@ -276,56 +276,42 @@ void TString::AppendVaList(const TChar8* pString,va_list& v)
 
 
 //------------------------------------------------------
-//	make sure there's a terminator on the end
-//	OverwriteTerminator tends to be used as a safety terminator
-//	normally when we just add strings we dont need to force the 
-//	last character to be a terminator
-//------------------------------------------------------
-void TString::AddTerminator(Bool ForceTerminator)
-{
-	if ( GetLength() <= 0 )
-		return;
-
-	TArray<TChar>& StringArray = GetStringArray();
-
-	//	last element is NOT a terminator... append one
-	if ( StringArray.ElementLast() != TLString_Terminator )
-	{
-		if ( !ForceTerminator )
-		{
-			//	if we can't add a terminator, resort to forcing a terminator
-			if ( StringArray.Add( TLString_Terminator ) == -1 )
-				ForceTerminator = TRUE;
-		}
-
-		//	if overwrite terminator, then just set the last character as terminator
-		if ( ForceTerminator )
-		{
-			StringArray.ElementLast() = TLString_Terminator;
-		}
-	}
-}
-
-
-//------------------------------------------------------
-//	remove the terminator off the end
+//	remove terminator from the array, so the last element is a character
 //------------------------------------------------------
 void TString::RemoveTerminator()
 {
-	if ( GetLength() <= 0 )
-		return;
-
 	TArray<TChar>& StringArray = GetStringArray();
-
-	//	last element is a terminator so cut it off
-	while ( StringArray.ElementLast() == TLString_Terminator )
+	
+	//	trim string until we have no more terminators
+	while ( StringArray.GetSize() > 0 )
 	{
-		if ( !StringArray.SetSize( StringArray.GetSize() - 1 ) )
+		if ( StringArray.ElementLast() != TLString_Terminator )
 			break;
 
-		if ( StringArray.GetSize() <= 0 )
+		//	error check so we don't get stuck in a loop
+		if ( !StringArray.RemoveLast() )
 			break;
 	}
+}
+
+//------------------------------------------------------
+//	make sure there's a terminator on the end
+//------------------------------------------------------
+void TString::SetTerminator()
+{
+	//	trim terminator[s] from the string
+	RemoveTerminator();
+
+	//	add a terminator
+	//	if we can't add a terminator, resort to forcing a terminator
+	TArray<TChar>& StringArray = GetStringArray();
+	if ( StringArray.Add( TLString_Terminator ) == -1 )
+	{
+		StringArray.ElementLast() = TLString_Terminator;
+	}
+
+	//	check the string is terminated correctly
+	TLDebug_Assert( GetLength() == GetLength( GetData() ), "String's length and null-terminated length don't match. Terminator improperly set");
 }
 
 
@@ -700,7 +686,7 @@ Bool TString::GetFloat(float& Float) const
 	//	gr: as it's floating point, what we need to do is base the max decimal places based on the size of the 
 	//	integer. todo: lookup schematics for a float. I think it's 8 in either direction?...
 	//	parse through the decimal string
-	u32 MaxDecPlaces = FloatDecimalString.GetLengthWithoutTerminator();
+	u32 MaxDecPlaces = FloatDecimalString.GetLength();
 	if ( MaxDecPlaces > 4 )
 		MaxDecPlaces = 4;
 
@@ -871,7 +857,7 @@ Bool TString::GetHexBytes(TArray<u8>& ParsedBytes) const
 //------------------------------------------------------
 s32 TString::GetCharIndexNonWhitespace(u32 From) const
 {
-	for ( u32 i=From;	i<GetLengthWithoutTerminator();	i++ )
+	for ( u32 i=From;	i<GetLength();	i++ )
 	{
 		if ( !TLString::IsCharWhitespace( GetCharAt(i) ) )
 			return i;
@@ -885,7 +871,7 @@ s32 TString::GetCharIndexNonWhitespace(u32 From) const
 //------------------------------------------------------
 s32 TString::GetCharIndexWhitespace(u32 From) const
 {
-	for ( u32 i=From;	i<GetLengthWithoutTerminator();	i++ )
+	for ( u32 i=From;	i<GetLength();	i++ )
 	{
 		if ( TLString::IsCharWhitespace( GetCharAt(i) ) )
 			return i;

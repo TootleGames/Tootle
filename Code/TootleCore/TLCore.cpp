@@ -10,7 +10,6 @@
 #include "TEventChannel.h"
 
 #include "TLTime.h"
-#include "TRefManager.h"
 #include "TMemoryManager.h"
 #include "TLRandom.h"
 
@@ -27,8 +26,7 @@ namespace TLCore
 void TLCore::RegisterManagers_Engine(TPtr<TCoreManager>& pManager)
 {
 	TLDebug_Print("Registering Engine Managers");
-	
-	pManager->CreateAndRegisterManager<TLRef::TRefManager>("REFMANAGER");				// NOTE: No global pointer for this manager
+
 	pManager->CreateAndRegisterManager<TLMessaging::TEventChannelManager>(TLMessaging::g_pEventChannelManager, "EVENTCHANNEL");
 	pManager->CreateAndRegisterManager<TLTime::TTimeManager>("TIMEMANAGER");			// NOTE: No global pointer for this manager
 	pManager->CreateAndRegisterManager<TLRandom::TRandomNumberManager>("RANDOMNUMBERMANAGER");	// NOTE: No global pointer for this manager
@@ -89,7 +87,11 @@ SyncBool TLCore::TootUpdate()
 	// If enabled go through the update loop
 	if ( !g_pCoreManager->IsEnabled() )
 		return SyncWait;
-			
+	
+	//	wait until something says the core manager is ready for an update (ie. a timer enables the update)
+	if ( !g_pCoreManager->IsReadyForUpdate() )
+		return SyncWait;
+	
 	return g_pCoreManager->UpdateLoop();
 }
 

@@ -7,22 +7,8 @@
 #define ENABLE_DEBUG_REF_TRUNCATION		FALSE
 //#define ENABLE_DEBUG_REF_TRUNCATION		TLDebug::IsEnabled()
 
-
-//	much faster ref char lookup table - faster than keyarray as keyarray isnt sorted (but probbaly will be faster either way)
-#define ENABLE_DUMB_LOOKUP
-
-//----------------------------------------------------------
-//	predefined alphabet for the characters that fit into ref's
-//----------------------------------------------------------
 namespace TLRef
 {
-	const u32	g_BitsPerRefChar		= 6;	//	32bits / TRef::g_CharsPerRef
-	const u32	g_RefCharTableSizeMax	= 1<<g_BitsPerRefChar;	//	64
-	const u32	g_RefCharTable_Size		= 41;	//	supported chars in a ref
-	const u32	g_CharIndexBitMask		= g_RefCharTableSizeMax-1;
-
-
-
 	//	symbols allowed in urls
 	//	-_.!*'() a-z A-Z 0-9
 
@@ -34,27 +20,22 @@ namespace TLRef
 
 	//	gr: new ref alphabet, some symbols have been repalced to aid URL-Encoding (so I don't need to encode a ref and can just send it as a string
 	//	table for string->ref conversions (+1 for terminator) and an ALT table for capitalisation
-	const TChar				g_RefCharTable[g_RefCharTable_Size+1]			= {	TLCharString(" abcdefghijklmnopqrstuvwxyz0123456789'-!_")	};	//	file system safe
-	const TChar				g_RefCharTableAlt[g_RefCharTable_Size+1]		= {	TLCharString("*ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'-!_")	};	//	web safe
+	const char				g_RefAlphabet[TLRef_AlphabetSize+1]			= {" abcdefghijklmnopqrstuvwxyz0123456789'-!_"};	//	file system safe
+	const char				g_RefAlphabetAlt[TLRef_AlphabetSize+1]		= {"*ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'-!_"};	//	web safe
 
 	//	when url-encoding, we can't use a space, but we definatly want to use that in code as it's such a useful and common character. 
-	const TChar				g_RefCharUrlSpace		= g_RefCharTableAlt[0];		//	'apostraphe
+	const char&				g_RefCharUrlSpace		= g_RefAlphabetAlt[0];		//	'apostraphe
 	
 	Bool					g_RefCharLookupValid	= FALSE;
-	u32						g_InvalidRefMask		= 0x0;			//	uninitialised! I can probably work out an actual number but calculations are more accurate
+	u32						g_RefCharLookup[256];								//	lookup table for char->refchar
+	u32						g_RefCharLookupSize = sizeofarray(g_RefCharLookup);	//	lookup table for char->refchar
+	u32						g_InvalidRefMask		= 0x0;						//	uninitialised! I can probably work out an actual number but calculations are more accurate
 
-#ifdef ENABLE_DUMB_LOOKUP
-	u32						g_RefCharLookupDumb[256];				//	lookup table for char->refchar
-#endif
-
-	TKeyArray<TChar,u32>	g_RefCharLookup;				//	lookup table for char->refchar
-
-	FORCEINLINE u32			GetRefCharIndex(TChar c);					//	get a refchar index from a string character
+	FORCEINLINE u32			GetRefCharIndex(TChar c);							//	get a refchar index from a string character
 	FORCEINLINE TChar		GetCharFromRefCharIndex(u32 Index,Bool UseAltTable=FALSE);			//	get a string character from a refchar index
 	FORCEINLINE u32			GetRefBitsFromChar(TChar Char,u32 Index,Bool CheckIndex);
 
 	void					GenerateCharLookupTable();
-	void					DestroyCharLookupTable();
 
 	TLArray::SortResult		RefSort(const TRef& aRef,const TRef& bRef,const void* pTestVal);	//	simple ref-sort func - for arrays of TRef's
 }
@@ -82,44 +63,31 @@ TLArray::SortResult TLRef::RefSort(const TRef& aRef,const TRef& bRef,const void*
 
 void TLRef::GenerateCharLookupTable()
 {
-#ifdef ENABLE_DUMB_LOOKUP
-	for ( u32 x=0;	x<sizeof(g_RefCharLookupDumb)/sizeof(g_RefCharLookupDumb[0]);	x++ )
-		g_RefCharLookupDumb[x] = 0;
-#endif
-
-	g_RefCharLookup.Empty();
+	for ( u32 x=0;	x<g_RefCharLookupSize;	x++ )
+		g_RefCharLookup[x] = 0;
 
 	//	loop through the alphabets and add the keys
-	for ( u32 i=0;	i<g_RefCharTable_Size;	i++ )
+	for ( u32 i=0;	i<TLRef_AlphabetSize;	i++ )
 	{
 		//	slightly modified to ensure terminator has an index of zero
-		TChar Char = g_RefCharTable[i];
+		const char& Char = g_RefAlphabet[i];
 		u32 Index = (Char == 0x0) ? 0 : i;
-		TChar AltChar = g_RefCharTableAlt[i];
+		const char& AltChar = g_RefAlphabetAlt[i];
 		u32 AltIndex = (AltChar == 0x0) ? 0 : i;
 
-		g_RefCharLookup.Add( Char, Index );
-		g_RefCharLookup.Add( AltChar, AltIndex );
-
-#ifdef ENABLE_DUMB_LOOKUP
-		g_RefCharLookupDumb[ Char ] = Index;
-		g_RefCharLookupDumb[ AltChar ] = AltIndex;
-#endif
+		g_RefCharLookup[ Char ] = Index;
+		g_RefCharLookup[ AltChar ] = AltIndex;
 	}
 
 	//	work out a VALID bit mask
 	u32 ValidMask = 0x0;
-	for ( u32 i=0;	i<TRef::g_CharsPerRef;	i++ )
-		ValidMask |= TLRef::g_CharIndexBitMask << (i*TLRef::g_BitsPerRefChar);
+	for ( u32 i=0;	i<TLRef_CharsPerRef;	i++ )
+		ValidMask |= TLRef_CharIndexBitMask << (i*TLRef_BitsPerChar);
+	
 	//	get the invalid mask to test against
 	g_InvalidRefMask = ~ValidMask;
 
 	g_RefCharLookupValid = TRUE;
-}
-
-void TLRef::DestroyCharLookupTable()
-{
-	g_RefCharLookup.Empty(TRUE);
 }
 
 
@@ -130,33 +98,31 @@ FORCEINLINE u32 TLRef::GetRefCharIndex(TChar c)
 {
 	//	use key lookup table if it's been generated as it's faster
 	if ( g_RefCharLookupValid )
-	//if ( g_RefCharLookup.GetSize() )
 	{
-#ifdef ENABLE_DUMB_LOOKUP
 		//	fast dumb version
-		return g_RefCharLookupDumb[c];
-#endif
-
-		u32* pRefCharIndex = g_RefCharLookup.Find(c);
-		if ( pRefCharIndex )
-			return *pRefCharIndex;
+		if ( c < g_RefCharLookupSize )
+			return g_RefCharLookup[c];
 	}
 	else
 	{
+		//	gr: special case that won't cause an assert. Not neccessary when the lookup is valid.
+		if ( c == 0x0 )
+			c = TChar('_');
+
 		//	slow version, but must be used before TLRef::Init()
-		for ( u32 i=0;	i<g_RefCharTable_Size;	i++ )
+		for ( u32 i=0;	i<TLRef_AlphabetSize;	i++ )
 		{
-			if ( g_RefCharTable[i] == c )
+			if ( g_RefAlphabet[i] == c )
 				return i;
 
-			if ( g_RefCharTableAlt[i] == c )
+			if ( g_RefAlphabetAlt[i] == c )
 				return i;
 		}	
 	}
 
 	//	unsupported character
-	TLDebug_Break( TString("unsupported character %c provided for ref. Replacing with underscore", c ) );
-	return GetRefCharIndex( TLCharString('_') );
+	TLDebug_Break( TString("unsupported character %c/%d/0x%20d provided for ref. Replacing with underscore", c,c,c ) );
+	return GetRefCharIndex( TChar('_') );
 }
 
 
@@ -166,10 +132,10 @@ FORCEINLINE u32 TLRef::GetRefCharIndex(TChar c)
 FORCEINLINE TChar TLRef::GetCharFromRefCharIndex(u32 Index,Bool UseAltTable)
 {
 	//	invalid index
-	if ( Index >= g_RefCharTable_Size )
+	if ( Index >= TLRef_AlphabetSize )
 		return 0;
 
-	return UseAltTable ? g_RefCharTableAlt[Index] : g_RefCharTable[Index];
+	return UseAltTable ? g_RefAlphabetAlt[Index] : g_RefAlphabet[Index];
 }
 
 
@@ -180,7 +146,7 @@ FORCEINLINE u32 TLRef::GetRefBitsFromChar(TChar Char,u32 Index,Bool CheckIndex)
 {
 	if ( CheckIndex )
 	{
-		if ( !TLDebug_CheckIndex( Index, TRef::g_CharsPerRef ) )
+		if ( !TLDebug_CheckIndex( Index, TLRef_CharsPerRef ) )
 			return 0x0;
 	}
 
@@ -188,15 +154,15 @@ FORCEINLINE u32 TLRef::GetRefBitsFromChar(TChar Char,u32 Index,Bool CheckIndex)
 	u32 RefIndex = TLRef::GetRefCharIndex( Char );
 
 	//	mask it off (just in case) so it doesnt overflow
-	if ( CheckIndex && RefIndex > TLRef::g_CharIndexBitMask )
+	if ( CheckIndex && RefIndex > TLRef_CharIndexBitMask )
 	{
 		TLDebug_Break("RefCharIndex greater than allowed - lookup table is corrupt?");
-		RefIndex &= TLRef::g_CharIndexBitMask;
+		RefIndex &= TLRef_CharIndexBitMask;
 	}
 
 	//	add bits for this index to the Ref
 	//	shift along to it's position in the 32 bits
-	return RefIndex << (Index*TLRef::g_BitsPerRefChar);
+	return RefIndex << (Index*TLRef_BitsPerChar);
 }
 
 //-----------------------------------------------------
@@ -208,9 +174,9 @@ void TRef::Set(const TString& RefString)
 
 	//	pull out first 5 characters (or less) from our string
 	u32 StringLength = RefString.GetLength();
-	if ( StringLength > TRef::g_CharsPerRef )
+	if ( StringLength > TLRef_CharsPerRef )
 	{
-		StringLength = TRef::g_CharsPerRef;
+		StringLength = TLRef_CharsPerRef;
 		DebugTruncation = ENABLE_DEBUG_REF_TRUNCATION;
 	}
 
@@ -250,13 +216,13 @@ void TRef::Set(const char* pRefString)
 
 	//	extract chars up to terminator
 	u32 i = 0;
-	while ( i<TRef::g_CharsPerRef && pRefString[i] != 0x0 )
+	while ( i<TLRef_CharsPerRef && pRefString[i] != 0x0 )
 	{
 		m_Ref |= TLRef::GetRefBitsFromChar( pRefString[i], i, CheckIndex );
 		i++;
 	}
 
-	Bool DebugTruncation = ENABLE_DEBUG_REF_TRUNCATION && (i >= TRef::g_CharsPerRef) && (pRefString[i] != 0x0);
+	Bool DebugTruncation = ENABLE_DEBUG_REF_TRUNCATION && (i >= TLRef_CharsPerRef) && (pRefString[i] != 0x0);
 
 	//	debug that string was truncated
 	if ( DebugTruncation )
@@ -278,8 +244,8 @@ void TRef::Set(const TArray<char>& RefStringChars)
 	m_Ref = 0;
 
 	u32 Size = RefStringChars.GetSize();
-	if ( Size > TRef::g_CharsPerRef )
-		Size = TRef::g_CharsPerRef;
+	if ( Size > TLRef_CharsPerRef )
+		Size = TLRef_CharsPerRef;
 
 	//	convert the string characters to refalphabet indexes
 	//	NULL characters are switched to spaces, aside from the first one which is set to ?
@@ -300,8 +266,8 @@ void TRef::Set(const TArray<u32>& RefIndexes)
 	m_Ref = 0;
 
 	u32 Size = RefIndexes.GetSize();
-	if ( Size > TRef::g_CharsPerRef )
-		Size = TRef::g_CharsPerRef;
+	if ( Size > TLRef_CharsPerRef )
+		Size = TLRef_CharsPerRef;
 
 	//	convert the string characters to refalphabet indexes
 	//	NULL characters are switched to spaces, aside from the first one which is set to ?
@@ -311,11 +277,11 @@ void TRef::Set(const TArray<u32>& RefIndexes)
 		u32 RefIndex = RefIndexes[i];
 
 		//	mask it off (just in case) so it doesnt overflow
-		RefIndex &= TLRef::g_CharIndexBitMask;
+		RefIndex &= TLRef_CharIndexBitMask;
 
 		//	add bits for this index to the Ref
 		//	shift along to it's position in the 32 bits
-		m_Ref |= RefIndex << (i*TLRef::g_BitsPerRefChar);
+		m_Ref |= RefIndex << (i*TLRef_BitsPerChar);
 	}
 }
 
@@ -324,12 +290,12 @@ void TRef::Set(const TArray<u32>& RefIndexes)
 //-----------------------------------------------------
 u32 TRef::GetRefCharIndex(u32 Index) const
 {
-	if ( !TLDebug_CheckIndex( Index, TRef::g_CharsPerRef ) )
+	if ( !TLDebug_CheckIndex( Index, TLRef_CharsPerRef ) )
 		return 0;
 
 	//	extract index
-	u32 BitIndex = Index * TLRef::g_BitsPerRefChar;
-	u32 RefCharIndex = ( m_Ref >> BitIndex ) & TLRef::g_CharIndexBitMask;
+	u32 BitIndex = Index * TLRef_BitsPerChar;
+	u32 RefCharIndex = ( m_Ref >> BitIndex ) & TLRef_CharIndexBitMask;
 
 	return RefCharIndex;
 }
@@ -341,7 +307,7 @@ u32 TRef::GetRefCharIndex(u32 Index) const
 //-----------------------------------------------------
 void TRef::GetString(TString& RefString,Bool Capitalise,Bool Trim,Bool UrlSafe) const
 {
-	for ( u32 i=0;	i<TRef::g_CharsPerRef;	i++ )
+	for ( u32 i=0;	i<TLRef_CharsPerRef;	i++ )
 	{
 		//	extract index
 		u32 RefCharIndex = GetRefCharIndex( i );
@@ -365,7 +331,7 @@ void TRef::GetString(TString& RefString,Bool Capitalise,Bool Trim,Bool UrlSafe) 
 const TRef& TRef::Increment()
 {
 	//	gather indexes
-	TFixedArray<u32,TRef::g_CharsPerRef> CharIndexes(TRef::g_CharsPerRef);
+	TFixedArray<u32,TLRef_CharsPerRef> CharIndexes(TLRef_CharsPerRef);
 
 	for ( u32 i=0;	i<CharIndexes.GetSize();	i++ )
 	{
@@ -378,7 +344,7 @@ const TRef& TRef::Increment()
 	while ( TRUE )
 	{
 		//	if character is last in the alphabet rollover and change the previous char too
-		if ( CharIndexes[IncIndex] == TLRef::g_RefCharTable_Size-1 )
+		if ( CharIndexes[IncIndex] == TLRef_AlphabetSize-1 )
 		{
 			CharIndexes[IncIndex] = 0;
 			IncIndex--;

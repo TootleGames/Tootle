@@ -6,38 +6,44 @@
 	devices etc etc 
 
 	Pros:
-	- Stores as u32
-	- Therefore easy to sort, search, compare etc
-	- very low memory consumption
-	- Database independent
-	- Converts to and from human-readable strings
-	- Possible expansion to u64? if we need more characters...
+	+ Stores as u32
+		+ Therefore easy to sort, search, compare etc
+	+ very low memory consumption
+	+ Database independent
+	+ Converts to and from human-readable strings
+	+ Possible expansion to u64? if we need more characters...
 
 	Cons:
 	- Character set limitation	(26 letters + X symbols)
+		+ though conviniently can match the url enc character set
 	- Character length limitation (Can only fit 5 characters into 32 bits)
+		+ would be fixed with 64bit implementation
 	- Inefficient string conversion (though shouldn't be required often)
-
-	Todo:
-	- Speed up construction of a ref by making a sorted key array char->index
-		and use it in GetRefCharIndex() to get rid of the loop
+		+ fixed via the static refs
+	- Can't get a string from a u32 whilst debugging
 
 -------------------------------------------------------*/
 #pragma once
 #include "TLTypes.h"
-
 #include "TArray.h"
+#include "TString.h" //gr: crap, but need to include this for the << template specialisation, wonder if I can declare it to get around this....ß
 
 class TString;
 class TRef;
 typedef const TRef& TRefRef;	//	TRefRef is just shorthand for passing ref's around
 
-#define TLRef_CharIndexBitMask					(41-1)
-#define TLRef_BitsPerRefChar					6	//	32bits / TRef::g_CharsPerRef
-#define TLRef_StaticCharIndex(Char)				TLRef::StaticCharIndex::Index_##Char
-#define TLRef_StaticOffsetChar(CharOffset,Char)	((u32)(TLRef_StaticCharIndex(Char) << (CharOffset*TLRef_BitsPerRefChar)))
+#define TLRef_AlphabetSizeMax					(1<<(TLRef_BitsPerChar))	//	maximum in theory: 64
+#define TLRef_AlphabetSize						41							//	actual number of characters in the alphabet.
+#define TLRef_CharIndexBitMask					(TLRef_AlphabetSizeMax-1)	//	mask for the maximum index (in theory, the index could be greater than the alphabet size still)
+#define TLRef_CharsPerRef						5
+#define TLRef_BitsPerChar						6							//	32bits / TLRef_CharsPerRef
+
 #define TRef_InvalidValue						0
 #define TRef_Invalid							TRef( (u32)TRef_InvalidValue )
+
+#define TLRef_StaticCharIndex(Char)				TLRef::StaticCharIndex::Index_##Char
+#define TLRef_StaticOffsetChar(CharOffset,Char)	((u32)(TLRef_StaticCharIndex(Char) << (CharOffset*TLRef_BitsPerChar)))
+
 #define TRef_Static1(a)							TRef_Static(a,SPACE,SPACE,SPACE,SPACE)
 #define TRef_Static2(a,b)						TRef_Static(a,b,SPACE,SPACE,SPACE)
 #define TRef_Static3(a,b,c)						TRef_Static(a,b,c,SPACE,SPACE)
@@ -56,17 +62,18 @@ namespace TLRef
 	//	gr: extern this if you want to use it... sorry!
 //	TLArray::SortResult		RefSort(const TRef& aRef,const TRef& bRef,const void* pTestVal);	//	simple ref-sort func - for arrays of TRef's
 	extern u32				g_InvalidRefMask;
+	void					GenerateCharLookupTable();
 
 	// Use the g_InvalidRefMask to validate a tref ensuring it is valid
-	FORCEINLINE s32 CreateValidTRef(s32 sValue)		{ return (sValue&(~g_InvalidRefMask)); }
+	FORCEINLINE u32			GetValidTRef(u32 Value)		{	return (Value&(~g_InvalidRefMask));	}
 
 	namespace StaticCharIndex
 	{
-		//	const char	g_RefCharTable[g_RefCharTable_Size+1]		= {	" abcdefghijklmnopqrstuvwxyz0123456789?-#_"	};
-		//	const char	g_RefCharTableAlt[g_RefCharTable_Size+1]	= {	" ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?-#_"	};
+		//	these indexes should match up to the alphabet indexes for the appropriate character
 		enum
 		{
 			Index_SPACE = 0,
+			Index_ASERISK = 0,
 			Index_a = 1,
 			Index_b,
 			Index_c,
@@ -129,9 +136,9 @@ namespace TLRef
 			Index_SEVEN, 
 			Index_EIGHT, 
 			Index_NINE,
-			Index_QUESTION, 
+			Index_APOSTRAPHE, 
 			Index_DASH, 
-			Index_HASH, 
+			Index_EXCLAMATION, 
 			Index_UNDERSCORE
 		};
 	}
@@ -145,9 +152,6 @@ namespace TLRef
 //---------------------------------------------------------
 class TRef
 {
-public:
-	static const u32	g_CharsPerRef = 5;
-
 public:
 	TRef() 													:	m_Ref	( TRef_InvalidValue )	{	}
 	TRef(u32 Ref)											:	m_Ref	( Ref )				{	Debug_IsValid();	}	//	gr: call IsValid() to check for invalid values
@@ -276,9 +280,28 @@ FORCEINLINE Bool TTypedRef::operator<(const TTypedRef& TypedRef) const
 }
 
 
+//--------------------------------------------------------
+//	specialised TString append operators
+//--------------------------------------------------------
+template<>
+FORCEINLINE TString& operator<<(TString& String,const TRef& Ref)		
+{
+	Ref.GetString( String );	
+	return String;
+}	
+
+template<>
+FORCEINLINE TString& operator<<(TString& String,const TTypedRef& Ref)	
+{
+	Ref.GetString( String );	
+	return String;
+}	
 
 
 
+//--------------------------------------------------------
+//	declare ref types as data types
+//--------------------------------------------------------
 TLCore_DeclareIsDataType( TRef );
 TLCore_DeclareIsDataType( TTypedRef );
 

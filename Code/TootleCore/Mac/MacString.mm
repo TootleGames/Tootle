@@ -34,3 +34,20 @@ NSString* TLString::ConvertToUnicharString(const TString& String)
 	
 	return pString;
 }
+
+
+
+
+//--------------------------------------------------
+//	append cocoa string to TString
+//--------------------------------------------------
+void TLString::Append(TString& String,const NSString* pNSString)
+{
+	//	gr: todo: don't convert down to utf8, get the utf16 string
+	const char* pNSChars = [pNSString UTF8String];
+	u32 NsLength = [pNSString length];
+	
+	String.Append( pNSChars, NsLength );
+}
+
+

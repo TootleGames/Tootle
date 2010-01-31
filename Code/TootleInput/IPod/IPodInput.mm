@@ -132,8 +132,8 @@ void Platform::IPod::InitialiseKeyboadRefMap()
 	g_KeyboardRefMap.Add("B", "K_B");
 	g_KeyboardRefMap.Add("N", "K_N");
 	g_KeyboardRefMap.Add("M", "K_M");
-	g_KeyboardRefMap.Add(",", "K_,");
-	g_KeyboardRefMap.Add(".", "K_.");
+	g_KeyboardRefMap.Add(",", "K_COMMA");
+	g_KeyboardRefMap.Add(".", "K_PERIOD");
 	g_KeyboardRefMap.Add("/", "K_FORWARDSLASH");
 	g_KeyboardRefMap.Add("RSHIFT", "K_RSHIFT");
 	g_KeyboardRefMap.Add("*", "K_MULTIPLY");

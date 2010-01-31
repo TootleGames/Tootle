@@ -10,7 +10,7 @@
 
 class TString;
 
-#define TLString_Terminator		TLCharString('\0')
+#define TLString_Terminator		((TChar)'\0')
 
 namespace TLString
 {
@@ -59,17 +59,17 @@ public:
 	TString(const TChar16* pString,...);										//	formatted constructor
 	virtual ~TString()															{	}
 
-	FORCEINLINE u32				GetLength() const					{	return GetStringArray().GetSize();	}
-	FORCEINLINE u32				GetLengthWithoutTerminator() const	{	return GetCharGetLastIndex() + 1;	}
+	FORCEINLINE u32				GetLength() const					{	u32 Size = GetStringArray().GetSize();	return (Size == 0) ? 0 : Size-1;	}	//	length = size - terminator
 	FORCEINLINE const TChar*	GetData() const						{	return GetStringArray().GetData();	}
 
 	//	gr: only temporary access - todo: revoke non-const accessor
 	FORCEINLINE TChar*		GetData()				{	return GetStringArray().GetData();	}
 
 	//	accessors
-	FORCEINLINE void		SetLength(u32 NewLength)						{	GetStringArray().SetSize( NewLength );	AddTerminator(FALSE);	}	//	set the string to a certain size (usually for buffering)
+	FORCEINLINE void		SetLength(u32 NewLength)						{	GetStringArray().SetSize( NewLength );	SetTerminator();	}	//	set the string to a certain size (usually for buffering)
 	void					SetAllocSize(u32 AllocLength);					//	allocate buffer for string data so that it doesnt need to alloc more later
 	FORCEINLINE u32			GetAllocSize() const							{	return GetStringArray().GetAllocSize();	}
+	FORCEINLINE u32			GetMaxAllocSize() const							{	return GetStringArray().GetMaxAllocSize();	}
 	FORCEINLINE void		Empty(Bool Dealloc=FALSE)						{	GetStringArray().Empty(Dealloc);	}
 	FORCEINLINE void		Set(const TString& String)						{	Empty();	Append( String );	}
 	FORCEINLINE void		Set(const TChar8* pString,s32 Length=-1)		{	Empty();	Append( pString, Length );	}
@@ -78,7 +78,9 @@ public:
 	FORCEINLINE TString&	Append(const TChar8& Char)						{	TChar c = TLString::GetChar<TChar>(Char);	return Append( &c, 1 );	}
 	FORCEINLINE TString&	Append(const TChar16& Char)						{	TChar c = TLString::GetChar<TChar>(Char);	return Append( &c, 1 );	}
 	FORCEINLINE TString&	Append(const TString& String,s32 Length=-1)		{	return Append( String.GetData(), (Length<0 || Length > (s32)String.GetLength()) ? String.GetLength() : Length );	}
-	
+
+//	template<class TYPE>
+//	TString&				Append(const TYPE& Object)						{	Object.GetString( *this );	return *this;	}
 	template<typename CHARTYPE>
 	TString&				Append(const CHARTYPE* pString,s32 Length=-1);	//	add string onto the end of the current string
 	TString&				Append(const TString& String,u32 From,s32 Length);	//	append part of a string (use -1 as the length to copy everything FROM from)
@@ -134,10 +136,8 @@ protected:
 	u32							GetLength(const TChar* pString);			//	get the length from some other type of string
 
 	//	internal manipulation of buffer only!
-	inline void					SetTerminator()									{	AddTerminator( TRUE );	}
-	void						AddTerminator(Bool ForceTerminator=FALSE);		//	make sure there's a terminator on the end. ForceTerminator will overwrite the last character with a terminator if there isn't one (string wont grow)
-	void						RemoveTerminator();								//	remove terminators from end of string
-	void						SetLength(u32 NewLength,Bool ForceTerminator)	{	GetStringArray().SetSize( NewLength );	AddTerminator(ForceTerminator);	}	//	set the string to a certain size (usually for buffering)
+	void						RemoveTerminator();							//	remove terminator from the string array
+	void						SetTerminator();							//	make sure there is ONE terminator on the end of the string
 	virtual void				OnStringChanged(u32 FirstChanged=0,s32 LastChanged=-1)	{	}	//	post-string change call
 
 	void						AppendVaList(const TChar16* pFormat,va_list& v);	//	append formatted widestring - any %s's need to be widestring chars!
@@ -146,6 +146,30 @@ protected:
 protected:
 	TArray<TChar>				m_DataArray;
 };
+
+
+//---------------------------------------------------------
+//	append operator... specialise this for your own types. 
+//	Annoyingly we can't make this a class/member operator because it would force us to include
+//	TString.h in whatever type we have. Instead we have a global operator and then can redeclare the template
+//	*then* overload it.
+//	an alternative would be to standardise the string append for classes. eg. Any class we want to append
+//	would implement GetString() and that would be called...
+//---------------------------------------------------------
+template<typename TYPE>
+TString& operator<<(TString& String,const TYPE& Type)					
+{	
+	String.Append( Type );	
+	return String;
+}
+
+//---------------------------
+template<typename TYPE>
+TString& operator<<(TString& String,const TYPE* Type)					
+{	
+	String.Append( Type );	
+	return String;
+}
 
 
 
@@ -167,6 +191,7 @@ public:
 
 	FORCEINLINE const TChar&		operator[](u32 Index) const					{	return GetCharAt(Index);	}
 
+	//	gr: only need to overload = operator?
 	FORCEINLINE TString&			operator=(const TChar8* pString)			{	Set( pString );	return *this;	}
 	FORCEINLINE TString&			operator=(const TChar16* pString)			{	Set( pString );	return *this;	}
 	FORCEINLINE TString&			operator=(const TString& String)			{	Set( String );	return *this;	}
@@ -238,10 +263,11 @@ TString& TString::Append(const CHARTYPE* pString,s32 Length)
 		return (*this);
 
 	//	string starts with a terminator
-	if ( pString[0] == TLString_Terminator )
+	const CHARTYPE& FirstChar = pString[0];
+	if ( FirstChar == TLString_Terminator )
 		return (*this);
 
-	//	remove existing terminator to write following straight after
+	//	remove existing terminator to write straight after the current string
 	RemoveTerminator();
 
 	//	append string
@@ -286,7 +312,7 @@ TString& TString::Append(const CHARTYPE* pString,s32 Length)
 	}
 
 	//	ensure there's a terminator on the end
-	AddTerminator();
+	SetTerminator();
 
 	OnStringChanged( Start );
 
@@ -353,7 +379,7 @@ template<class BASESTRINGTYPE>
 void TStringLowercase<BASESTRINGTYPE>::OnStringChanged(u32 FirstChanged,s32 LastChanged)
 {
 	if ( LastChanged < 0 )
-		LastChanged = BASESTRINGTYPE::GetLengthWithoutTerminator();
+		LastChanged = BASESTRINGTYPE::GetLength();
 
 	TArray<TChar>& StringArray = BASESTRINGTYPE::GetStringArray();
 	for ( u32 i=FirstChanged;	i<(u32)LastChanged;	i++ )

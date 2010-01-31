@@ -286,7 +286,7 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 
 	//	parse commands in string
 	u32 CharIndex = 0;
-	while ( CharIndex<String.GetLengthWithoutTerminator() )
+	while ( CharIndex<String.GetLength() )
 	{
 		//	read next command
 		TChar NewCommand;
@@ -807,7 +807,7 @@ TLFileSys::TFileSimpleVector::Style::Style(const TString* pStyleString) :
 Bool TLFileSys::TFileSimpleVector::Style::Parse(const TString& StyleString)
 {
 	//	empty string
-	if ( StyleString.GetLengthWithoutTerminator() == 0 )
+	if ( StyleString.GetLength() == 0 )
 		return FALSE;
 
 	//	example:
@@ -875,7 +875,7 @@ Bool TLFileSys::TFileSimpleVector::Style::Parse(const TString& StyleString)
 //--------------------------------------------------------
 Bool TLFileSys::TFileSimpleVector::Style::SetColourFromString(TColour& Colour,const TString& ColourString)
 {
-	u32 Length = ColourString.GetLengthWithoutTerminator();
+	u32 Length = ColourString.GetLength();
 
 	//	if string is empty, no colour
 	if ( Length < 1 )

@@ -246,10 +246,8 @@ void TRenderNodeScrollableView::OnRenderTargetRefChange(TLRender::TRenderTarget*
 	const TLMaths::TShapeBox2D* pLocalDatum = GetLocalDatum<TLMaths::TShapeBox2D>( m_ClipDatumRef );
 	if ( !pLocalDatum )
 	{
-		TTempString Debug_String("Datum ");
-		m_ClipDatumRef.GetString( Debug_String );
-		Debug_String.Append(" not found (or not box2d shape) for scroll render node ");
-		this->GetNodeRef().GetString( Debug_String );
+		TTempString Debug_String;
+		Debug_String << "Datum " << m_ClipDatumRef << " not found (or not box2d shape) for scroll render node " << this->GetNodeRef();
 		TLDebug_Print( Debug_String );
 		return;
 	}

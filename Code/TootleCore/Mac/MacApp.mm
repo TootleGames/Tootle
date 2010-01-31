@@ -4,9 +4,7 @@
 #include "../TLCore.h"
 #include "../TPtr.h"
 #import "MacDebug.h"
-
-
-
+#import "MacString.h"
 
 namespace TLCore
 {
@@ -34,7 +32,7 @@ namespace TLCore
 
 	//	 do very basic init
 	TLCore::g_pCoreManager = new TLCore::TCoreManager("CORE");
-	
+
 	NSApplication* app = [NSApplication sharedApplication];	
 	/////////////////////////////////////
 	// Create the window and view
@@ -303,6 +301,83 @@ namespace TLCore
 
 @end
 
+
+
+
+// For compilers that support precompilation, includes "wx.h".
+#include "wx/wxprec.h"
+#ifndef WX_PRECOMP
+	#include "wx/wx.h"
+#endif
+
+
+namespace TLCore
+{
+    namespace Platform
+    {
+        class TwxApp;
+    }
+}
+
+
+//--------------------------------------------------
+//   
+//--------------------------------------------------
+class TLCore::Platform::TwxApp : public wxApp
+{
+private:
+	TPtr<wxTimer>	m_pUpdateTimer;
+
+public:
+	TwxApp()
+	{
+	}
+	
+    void OnIdle(wxIdleEvent& Event)
+    {
+		TLCore::TootUpdate();
+    }
+
+	void OnTimer(wxTimerEvent& Event)
+    {
+		if ( g_pCoreManager )
+		{
+			g_pCoreManager->SetReadyForUpdate();
+			wxWakeUpIdle();
+		}
+    }
+    
+    virtual bool    OnInit()
+    {
+        if ( !wxApp::OnInit() )
+            return FALSE;
+		
+		//	get the root directory that the app is in
+		NSString *HomeDir = NSHomeDirectory();
+		TLCore::Platform::g_AppExe << (HomeDir);
+		
+        //    do engine init
+        if ( !TLCore::TootInit() )
+            return FALSE;
+		
+        //    get the app idle to do an update in
+		Bind( wxEVT_IDLE, &TLCore::Platform::TwxApp::OnIdle, this );
+		
+		//	start the update timer
+		m_pUpdateTimer = new wxTimer( this );
+		u32 UpdateInterval = (u32)TLTime::GetUpdateTimeMilliSecsf();
+		m_pUpdateTimer->Start( UpdateInterval );
+		Bind( wxEVT_TIMER, &TLCore::Platform::TwxApp::OnTimer, this );
+
+        return TRUE;
+    }
+	
+	
+};
+
+
+//    implement Main() and bootup which enters our app's own init
+IMPLEMENT_APP(TLCore::Platform::TwxApp)
 
 
 

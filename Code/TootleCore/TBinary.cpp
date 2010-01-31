@@ -150,7 +150,7 @@ Bool TBinary::WriteDataHexString(const TString& String,TRef TypeHint)
 {
 	TLDebug_Break("gr: untested with unicode");
 
-	u32 StringDataLength = String.GetLengthWithoutTerminator();
+	u32 StringDataLength = String.GetLength();
 	const TArray<TChar>& StringArray = String.GetStringArray();
 
 	//	string shouldn't have an odd character left over

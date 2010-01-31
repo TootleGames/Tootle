@@ -412,7 +412,7 @@ Bool TLRender::TRenderNodeVectorText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 
 		//	gr: just set not enabled?
 		//	remove children we dont need any more
-		if ( charindex >= m_Text.GetLengthWithoutTerminator() )
+		if ( charindex >= m_Text.GetLength() )
 		{
 			TLRender::g_pRendergraph->RemoveNode( pChild->GetNodeRef() );
 			//RemoveChild( pRemoveChild );
@@ -432,7 +432,7 @@ Bool TLRender::TRenderNodeVectorText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 	}
 	
 	//	need to add more children
-	while ( charindex<m_Text.GetLengthWithoutTerminator() )
+	while ( charindex<m_Text.GetLength() )
 	{
 		//	cast to glyph
 		TTempString GlyphName;
@@ -641,7 +641,7 @@ Bool TLRender::TRenderNodeTextureText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 	GlyphTransform.SetTranslate( float3( 0,0,0 ) );
 
 	//	setup geometry - currently rebuild the entire string
-	for ( u32 i=0;	i<m_Text.GetLengthWithoutTerminator();	i++ )
+	for ( u32 i=0;	i<m_Text.GetLength();	i++ )
 	{
 	//	check for line feed
 		if ( m_Text[i] == '\n' )

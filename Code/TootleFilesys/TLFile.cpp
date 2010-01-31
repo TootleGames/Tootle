@@ -579,7 +579,7 @@ Bool TLFile::ParseXMLDataTree(TPtr<TXmlTag>& pTag,TBinaryTree& Data)
 	//	if the tag has no children (eg. type like <float />) but DOES have data (eg. 1.0) throw up an error and fail
 	//	assume the data is malformed and someone has forgotten to add the type specifier. 
 	//	if something automated has output it and doesnt know the type it should still output it as hex raw data
-	if ( !pTag->GetChildren().GetSize() && pTag->GetDataString().GetLengthWithoutTerminator() > 0 )
+	if ( !pTag->GetChildren().GetSize() && pTag->GetDataString().GetLength() > 0 )
 	{
 		TTempString Debug_String("<Data ");
 		DataRef.GetString( Debug_String );

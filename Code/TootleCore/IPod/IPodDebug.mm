@@ -12,15 +12,13 @@
 
 #import <UIKit/UIKit.h>
 
-#define DEBUG_CONSOLE_BUFFER_SIZE 512
-
 
 // Internal routines and variables
 namespace TLDebug
 {
 	namespace Platform
 	{
-		static TBufferString<DEBUG_CONSOLE_BUFFER_SIZE>			g_ConsoleBuffer;
+		static TTempString			consolebuffer;
 		
 		void	FlushBuffer();
 		
@@ -45,24 +43,26 @@ SyncBool TLDebug::Platform::Shutdown()
 
 void TLDebug::Platform::PrintToBuffer(const TString& String)
 {
-	// Final buffer size is buffer size less the size of a newline special character '\n' and 
-	// a terminator '\0' which would be added automatically 
-	u32 uSize = g_ConsoleBuffer.GetAllocSize() - 4; 
-	
-	// Check to see if we can add to the buffer
-	if(g_ConsoleBuffer.GetLength() + String.GetLength() >= uSize)
-		FlushBuffer(); // will exceed the buffer length so flush the buffer and start fresh
-	
-	g_ConsoleBuffer.Append( String.GetData() );
-	g_ConsoleBuffer.Append( "\n" );
+	// Check to see if we can add to the buffer (less one for the terminator)
+	if(consolebuffer.GetLength() + String.GetLength() < 511)
+	{
+		consolebuffer.Appendf("\n%S", String.GetData());	
+	}
+	else 
+	{
+		// will excedd buffer length so flush the buffer and start fresh
+		FlushBuffer();
+		
+		consolebuffer.Appendf("\n%S", String.GetData());	
+	}
 }
 
 
 void TLDebug::Platform::FlushBuffer()
 {
-	Print(g_ConsoleBuffer);
+	Print(consolebuffer);
 	
-	g_ConsoleBuffer.Empty();
+	consolebuffer.Empty();
 }
 
 

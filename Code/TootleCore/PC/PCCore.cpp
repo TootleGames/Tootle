@@ -135,8 +135,11 @@ SyncBool TLCore::Platform::Init()
 
 	//	to make debugging easier in VS (ie. let windows breath) we dont use the MM timer, this way the windows
 	//	message queue is blocking
-	if ( TLDebug::IsEnabled() )
-		UseMMTimer = FALSE;
+	//	gr: with the current engine update layout, we have to use MM timer, this 
+	//		platform update won't get called until we get a timer message, but we dont
+	//		get a timer message unless platform update is called. wx will fix this
+//	if ( TLDebug::IsEnabled() )
+//		UseMMTimer = FALSE;
 
 	if ( UseMMTimer )
 	{

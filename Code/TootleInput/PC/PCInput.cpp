@@ -181,8 +181,8 @@ void Platform::DirectX::InitialiseKeyboadRefMap()
 	g_KeyboardRefMap.Add(DIK_B, "K_B");
 	g_KeyboardRefMap.Add(DIK_N, "K_N");
 	g_KeyboardRefMap.Add(DIK_M, "K_M");
-	g_KeyboardRefMap.Add(DIK_COMMA, "K_,");
-	g_KeyboardRefMap.Add(DIK_PERIOD, "K_.");
+	g_KeyboardRefMap.Add(DIK_COMMA, "K_COMMA");
+	g_KeyboardRefMap.Add(DIK_PERIOD, "K_PERIOD");
 	g_KeyboardRefMap.Add(DIK_SLASH, "K_FORWARDSLASH");
 	g_KeyboardRefMap.Add(DIK_RSHIFT, "K_RSHIFT");
 	g_KeyboardRefMap.Add(DIK_MULTIPLY, "K_MULTIPLY");

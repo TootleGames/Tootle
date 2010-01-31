@@ -337,10 +337,8 @@ TRef Mode_GetAssetFile::Update(float Timestep)
 		if ( FileExportAssetType.IsValid() && FileExportAssetType != GetAssetAndTypeRef().GetTypeRef() )
 		{
 #ifdef _DEBUG
-			TTempString Debug_String("File export type is invalid or incorrect type ");
-			GetAssetAndTypeRef().GetRef().GetString( Debug_String );
-			Debug_String.Append(" - should be ");
-			FileExportAssetType.GetString(Debug_String);
+			TTempString Debug_String("File export type is invalid or incorrect type: ");
+			Debug_String << GetAssetAndTypeRef() << " - should be " << FileExportAssetType;
 			TLDebug_Print( Debug_String );
 #endif			
 			FileGroupFiles.RemoveAt( f );

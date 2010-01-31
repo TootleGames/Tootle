@@ -43,8 +43,10 @@
 //	compile time assert (FALSE will fail to compile)
 #define TLCompileAssertWithVar(predicate,Var)	typedef char Var[2*((predicate)!=0)-1];
 #define TLCompileAssertWithLine(predicate,line)	TLCompileAssertWithVar( (predicate) , TLCompileAssertion##line )
-#define TLCompileAssert(predicate,msg)			TLCompileAssertWithLine( (predicate) && msg, __LINE__ )
+#define TLCompileAssert(predicate,msg)			TLCompileAssertWithLine( (predicate), __LINE__ )
 
+//	small helper function to get the size of a literal array
+#define sizeofarray(array)		( sizeof( (array) ) / sizeof( (array)[0] ) )
 
 //-------------------------------------------------------
 //	basic types
@@ -60,21 +62,29 @@ typedef	signed char			s8;
 #if defined(TL_TARGET_PC)
 typedef unsigned __int64	u64;
 typedef signed __int64		s64;
+typedef char				TChar8;
+typedef wchar_t				TChar16;
+typedef s32					TChar32;
 #else
 typedef long unsigned int	u64;
 typedef long signed int		s64;
+typedef char				TChar8;
+typedef s16					TChar16;
+typedef wchar_t				TChar32;
 #endif
 
-typedef wchar_t				TChar16;
-typedef char				TChar8;
+//	these aren't really required, but stops the use of wchar_t in case we change it later
+//	shouldn't have to use these types explicitly very often so avoid where possible (hence strict constness)
+typedef const wchar_t		TCharLiteral;
+typedef TCharLiteral*		TStringLiteral;
+
+//	our engine char type (TChar) is 16 bit, it's international, and smallest.
 typedef TChar16				TChar;
 
-
-//	by default in GCC the wchar_t type is 32 bit. We want it 16 bit so that literal wide strings won't need conversion to
-//	our standardised 16-bit widestring characters. From GCC 4.4 we can use the prefix of U (instead of L) to dictate a utf-16
-//	literal instead of a wchar_t literal, but we're currently using GCC 4.2.
-//	the compiler option -fshort-wchar will make literal strings (whcar_t's) utf-16 instead of utf-32
-TLCompileAssert( sizeof(wchar_t) == sizeof(u16), "wchar_t is not 16 bit." )
+//	if any of these asserts fail then either you have some erroneous flags, or the TChar* typedefs are not configuring correctly for your platform
+TLCompileAssert( sizeof(TChar8) == sizeof(u8), "TChar8 not setup correctly." )
+TLCompileAssert( sizeof(TChar16) == sizeof(u16), "TChar16 not setup correctly." )
+TLCompileAssert( sizeof(TChar32) == sizeof(u32), "TChar32 not setup correctly." )
 
 
 //	like wxT() or _T or _TEXT, make literal strings widestring. 

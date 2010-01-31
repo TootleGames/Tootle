@@ -3,9 +3,9 @@
 #include "TSyncQueue.h"
 
 #include "TLMaths.h"
-#include "TRefManager.h"
 #include "TLTime.h"
 #include "TLanguage.h"
+#include "TRef.h"
 
 #include "TLCoreMisc.h"
 
@@ -129,6 +129,9 @@ void TCoreManager::UnregisterAllManagers()
 
 SyncBool TCoreManager::Initialise()
 {
+	//	generate the TRef lookup table
+	TLRef::GenerateCharLookupTable();
+	
 	return SyncTrue;
 }
 
@@ -226,6 +229,9 @@ SyncBool TCoreManager::InitialiseLoop()
 	// Initialisation of all other managers
 	// NOTE: May be able to move this into the TootMain routine which also does the
 	//		 Initialisation of the core manager.   Maybe even add the core manager to itself?
+
+	//gr: core manager wasn't being initialised, or checked for it's error state. Fix this
+	this->Initialise();
 
 	// Send out initialisation messages until the managers are either in the 'ready' state
 	PublishInitMessage();
