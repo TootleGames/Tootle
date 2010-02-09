@@ -7,6 +7,8 @@
 #pragma once
 #include <TootleCore/TBinaryTree.h>
 
+#include <TootleCore/TPublisher.h>
+
 
 namespace TLNetwork
 {
@@ -47,7 +49,7 @@ protected:
 //-------------------------------------------------------------
 //	interface to a network connection of some kind
 //-------------------------------------------------------------
-class TLNetwork::TConnection
+class TLNetwork::TConnection : public TLMessaging::TPublisher
 {
 public:
 	TConnection()			{	}

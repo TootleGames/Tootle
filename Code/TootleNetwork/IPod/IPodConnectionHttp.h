@@ -85,6 +85,6 @@ protected:
 	virtual void			StartUploadTask(TTask& Task);				//	start a POST task
 
 private:
-	TConnectionDelegate*	m_pDelegate;
+	//TConnectionDelegate*	m_pDelegate;
 };
 

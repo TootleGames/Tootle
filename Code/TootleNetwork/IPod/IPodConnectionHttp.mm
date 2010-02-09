@@ -1,5 +1,6 @@
 #include "IPodConnectionHttp.h"
 
+//#include <TootleCore/TLDebug.h>
 #import <TootleCore/IPod/IPodString.h>
 
 namespace TLNetwork
@@ -14,6 +15,19 @@ namespace TLNetwork
 
 TLNetwork::Platform::TNSUrlConnectionTask::~TNSUrlConnectionTask()
 {
+	TLDebug_Print("Connection destroyed");
+	
+	if ( m_pConnection )
+	{
+		// Stop the connection
+		//[m_pConnection cancel];
+		
+		// now release it
+		[m_pConnection release];
+		
+		m_pConnection = NULL;
+	}
+
 /*
 	if ( m_pConnection )
 		[m_pConnection release];
@@ -23,16 +37,15 @@ TLNetwork::Platform::TNSUrlConnectionTask::~TNSUrlConnectionTask()
 		
 	if ( m_pUrl )
 		[m_pUrl release];
-
-	if ( m_pUrlString )
-		[m_pUrlString release];
- */
+*/
+//	if ( m_pUrlString )
+//		[m_pUrlString release];
 }
 
 
 
-TLNetwork::Platform::TConnectionHttp::TConnectionHttp() :
-	m_pDelegate				( NULL )
+TLNetwork::Platform::TConnectionHttp::TConnectionHttp() //:
+//	m_pDelegate				( NULL )
 {
 }
 
@@ -42,13 +55,33 @@ TLNetwork::Platform::TConnectionHttp::TConnectionHttp() :
 //---------------------------------------------------------
 SyncBool TLNetwork::Platform::TConnectionHttp::Initialise(TRef& ErrorRef)
 {
+	/*
 	//	create connection delegate
 	m_pDelegate = [[TConnectionDelegate alloc] Initialise:this ];
 	if ( !m_pDelegate )
 		return SyncFalse;
+	*/
 
 	return SyncTrue;
 }
+
+//---------------------------------------------------------
+//	
+//---------------------------------------------------------
+SyncBool TLNetwork::Platform::TConnectionHttp::Shutdown()
+{
+	TLDebug_Print("Connection shutting down");
+	/*
+	if ( m_pDelegate )
+	{
+		[m_pDelegate release];
+		m_pDelegate = NULL;
+	}
+	*/
+	
+	return TConnection::Shutdown();
+}
+
 
 
 //---------------------------------------------------------
@@ -56,12 +89,17 @@ SyncBool TLNetwork::Platform::TConnectionHttp::Initialise(TRef& ErrorRef)
 //---------------------------------------------------------
 void TLNetwork::Platform::TConnectionHttp::StartDownloadTask(TTask& Task)
 {
+	TLDebug_Print("Starting download task");
+
 	TNSUrlConnectionTask& ConnectionTask = static_cast<TNSUrlConnectionTask&>( Task );
+
+	/*
 	if ( !m_pDelegate )
 	{
 		Task.SetStatusFailed("NoInit");
 		return;
 	}
+	*/
 
 	//	get the url string
 	TTempString UrlString;
@@ -70,6 +108,8 @@ void TLNetwork::Platform::TConnectionHttp::StartDownloadTask(TTask& Task)
 		Task.SetStatusFailed("NoUrl");
 		return;
 	}
+
+	TLDebug_Print("Creating request...");
 
 	//	create request
 	ConnectionTask.m_pUrlString = TLString::ConvertToUnicharString(UrlString);
@@ -83,14 +123,30 @@ void TLNetwork::Platform::TConnectionHttp::StartDownloadTask(TTask& Task)
 		return;
 	}
 
+	TLDebug_Print("Creating connection...");
+
 	//	create connection - 
 	//	gr: DO NOT START IT YET!
 	//	to avoid race condition problems, we wait until we've created a connection <-> task link
 	//	before starting in case we recieve data before they;re linked and would have no where to 
 	//	put the downloaded data	
+	
+	
+
+	// Create a delegate and assign it to the connection
+	TConnectionDelegate* pDelegate = [[TConnectionDelegate alloc] Initialise:this ];
+
 	ConnectionTask.m_pConnection = [[NSURLConnection alloc]	initWithRequest:ConnectionTask.m_pUrlRequest 
-												delegate:m_pDelegate
+												delegate:pDelegate
 												startImmediately:YES];
+	
+	// Now we can release the delegate
+	[pDelegate release];
+	
+//	ConnectionTask.m_pConnection = [[NSURLConnection alloc]	initWithRequest:ConnectionTask.m_pUrlRequest 
+//																   delegate:m_pDelegate
+//														   startImmediately:YES];
+	
 	
 	//	failed to create/init connection with request
 	if ( !ConnectionTask.m_pConnection ) 
@@ -99,8 +155,14 @@ void TLNetwork::Platform::TConnectionHttp::StartDownloadTask(TTask& Task)
 		return;
 	}
 
+	TLDebug_Print("Starting connection...");
+	
+	// [04/01/10] DB - Using the start routine post creating the connection with NO as the startimmediately parameter causes a crash immediately.
+	//		   If this is done and the YES parameter is specific when creating the connection a crash will occur at a later stage.
+	//	       This is difficult to debug as it is created on a new thread within the Webkit so the thread dies with no obvious callstack	
 	//	now start connection
-	[ConnectionTask.m_pConnection start];
+	//[ConnectionTask.m_pConnection start];
+	TLDebug_Print("Connection started");
 
 	//	now we just wait for it to do it's thing!...	
 }
@@ -112,11 +174,14 @@ void TLNetwork::Platform::TConnectionHttp::StartDownloadTask(TTask& Task)
 void TLNetwork::Platform::TConnectionHttp::StartUploadTask(TTask& Task)
 {
 	TNSUrlConnectionTask& ConnectionTask = static_cast<TNSUrlConnectionTask&>( Task );
+
+	/*
 	if ( !m_pDelegate )
 	{
 		Task.SetStatusFailed("NoInit");
 		return;
 	}
+	*/
 
 	//	get the url string
 	TTempString UrlString;
@@ -149,6 +214,8 @@ void TLNetwork::Platform::TConnectionHttp::StartUploadTask(TTask& Task)
 	TPtr<TBinaryTree>& pUploadData = ConnectionTask.GetData().GetChild("Upload");
 	if ( !pUploadData )
 	{
+		TLDebug_Print("No data to upload");
+
 		Task.SetStatusFailed("NoData");
 		return;
 	}
@@ -226,37 +293,41 @@ void TLNetwork::Platform::TConnectionHttp::StartUploadTask(TTask& Task)
 	//	to avoid race condition problems, we wait until we've created a connection <-> task link
 	//	before starting in case we recieve data before they;re linked and would have no where to 
 	//	put the downloaded data	
-	ConnectionTask.m_pConnection = [[NSURLConnection alloc]	initWithRequest:ConnectionTask.m_pUrlRequest 
-												delegate:m_pDelegate
-												startImmediately:YES];
 	
+	// Create a delegate and assign it to the connection
+	TConnectionDelegate* pDelegate = [[TConnectionDelegate alloc] Initialise:this ];
+
+	
+	ConnectionTask.m_pConnection = [[NSURLConnection alloc]	initWithRequest:ConnectionTask.m_pUrlRequest 
+												delegate:pDelegate
+												startImmediately:YES];
+
+	// Now we can release the delegate
+	[pDelegate release];
+
+//	ConnectionTask.m_pConnection = [[NSURLConnection alloc]	initWithRequest:ConnectionTask.m_pUrlRequest 
+//														   delegate:m_pDelegate
+//														   startImmediately:YES];
+	
+
 	//	failed to create/init connection with request
 	if ( !ConnectionTask.m_pConnection ) 
 	{
+		TLDebug_Print("No connection");
+
 		Task.SetStatusFailed("NoConnection");
 		return;
 	}
 
+	// [04/01/10] DB - Using the start routine post creating the connection with NO as the startimmediately parameter causes a crash immediately.
+	//		   If this is done and the YES parameter is specific when creating the connection a crash will occur at a later stage.
+	//	       This is difficult to debug as it is created on a new thread within the Webkit so the thread dies with no obvious callstack
 	//	now start connection
-	[ConnectionTask.m_pConnection start];
+	//[ConnectionTask.m_pConnection start];
 
 	//	now we just wait for it to do it's thing!...
 }
 
-
-//---------------------------------------------------------
-//	
-//---------------------------------------------------------
-SyncBool TLNetwork::Platform::TConnectionHttp::Shutdown()
-{
-	if ( m_pDelegate )
-	{
-		[m_pDelegate release];
-		m_pDelegate = NULL;
-	}
-	
-	return TConnection::Shutdown();
-}
 
 
 //---------------------------------------------------------
@@ -302,6 +373,16 @@ TLNetwork::TTask* TLNetwork::Platform::TConnectionHttp::GetTask(NSURLConnection*
 }
 
 
+-(void) dealloc
+{
+	TLDebug_Print("Connection delegate destroyed");
+	
+	m_pConnection = NULL;
+	
+	[super dealloc];
+}
+
+
 
 - (void) connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
@@ -344,6 +425,8 @@ TLNetwork::TTask* TLNetwork::Platform::TConnectionHttp::GetTask(NSURLConnection*
 		return;
 	}
 
+	TLDebug_Print("HTTP task failed");
+	
 	//	fail task
 	pTask->SetStatusFailed("Fail");
 }
@@ -366,6 +449,8 @@ TLNetwork::TTask* TLNetwork::Platform::TConnectionHttp::GetTask(NSURLConnection*
 		return;
 	}
 		
+	TLDebug_Print("HTTP Task complete");
+
 	pTask->SetStatusSuccess();
 }
 

@@ -13,6 +13,8 @@
 		844CE1AB1051591A00178124 /* MacConnectionHttp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 844CE1A91051591A00178124 /* MacConnectionHttp.mm */; };
 		84B60629104FFBFA0022E5BC /* TConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B60627104FFBFA0022E5BC /* TConnection.cpp */; };
 		84B6062A104FFBFA0022E5BC /* TConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60628104FFBFA0022E5BC /* TConnection.h */; };
+		84C1CC3E1119AB7D00392FEE /* MacNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C1CC3D1119AB7D00392FEE /* MacNetwork.h */; };
+		84C1CC401119ABFF00392FEE /* MacNetwork.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C1CC3F1119ABFF00392FEE /* MacNetwork.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +29,14 @@
 		84B60626104FFBC40022E5BC /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B60627104FFBFA0022E5BC /* TConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TConnection.cpp; path = ../TConnection.cpp; sourceTree = SOURCE_ROOT; };
 		84B60628104FFBFA0022E5BC /* TConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TConnection.h; path = ../TConnection.h; sourceTree = SOURCE_ROOT; };
+		84C1CC13111997E300392FEE /* IPodConnectionHttp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodConnectionHttp.h; path = ../IPod/IPodConnectionHttp.h; sourceTree = SOURCE_ROOT; };
+		84C1CC14111997E300392FEE /* IPodConnectionHttp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodConnectionHttp.mm; path = ../IPod/IPodConnectionHttp.mm; sourceTree = SOURCE_ROOT; };
+		84C1CC3D1119AB7D00392FEE /* MacNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacNetwork.h; sourceTree = "<group>"; };
+		84C1CC3F1119ABFF00392FEE /* MacNetwork.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacNetwork.mm; sourceTree = "<group>"; };
+		84F32C031119CB00006E1DE7 /* PCNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCNetwork.cpp; path = ../PC/PCNetwork.cpp; sourceTree = SOURCE_ROOT; };
+		84F32C041119CB00006E1DE7 /* PCNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCNetwork.h; path = ../PC/PCNetwork.h; sourceTree = SOURCE_ROOT; };
+		84F32C051119CB0C006E1DE7 /* IPodNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodNetwork.h; path = ../IPod/IPodNetwork.h; sourceTree = SOURCE_ROOT; };
+		84F32C061119CB0C006E1DE7 /* IPodNetwork.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodNetwork.mm; path = ../IPod/IPodNetwork.mm; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +53,8 @@
 		840A8D4110D655FF00F8960C /* PC Source Files */ = {
 			isa = PBXGroup;
 			children = (
+				84F32C031119CB00006E1DE7 /* PCNetwork.cpp */,
+				84F32C041119CB00006E1DE7 /* PCNetwork.h */,
 				840A8D4210D6561700F8960C /* PCConnectionHttp.cpp */,
 				840A8D4310D6561700F8960C /* PCConnectionHttp.h */,
 			);
@@ -77,6 +89,7 @@
 		8418EFCF0F4DB77100B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				84C1CC12111997C100392FEE /* IPod Source Files */,
 				840A8D4110D655FF00F8960C /* PC Source Files */,
 				844CE1A71051590900178124 /* Mac Source Files */,
 				84B60627104FFBFA0022E5BC /* TConnection.cpp */,
@@ -101,8 +114,21 @@
 			children = (
 				844CE1A81051591A00178124 /* MacConnectionHttp.h */,
 				844CE1A91051591A00178124 /* MacConnectionHttp.mm */,
+				84C1CC3D1119AB7D00392FEE /* MacNetwork.h */,
+				84C1CC3F1119ABFF00392FEE /* MacNetwork.mm */,
 			);
 			name = "Mac Source Files";
+			sourceTree = "<group>";
+		};
+		84C1CC12111997C100392FEE /* IPod Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				84F32C051119CB0C006E1DE7 /* IPodNetwork.h */,
+				84F32C061119CB0C006E1DE7 /* IPodNetwork.mm */,
+				84C1CC13111997E300392FEE /* IPodConnectionHttp.h */,
+				84C1CC14111997E300392FEE /* IPodConnectionHttp.mm */,
+			);
+			name = "IPod Source Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -115,6 +141,7 @@
 				8418EFD40F4DB78E00B956C9 /* TLNetwork.h in Headers */,
 				84B6062A104FFBFA0022E5BC /* TConnection.h in Headers */,
 				844CE1AA1051591A00178124 /* MacConnectionHttp.h in Headers */,
+				84C1CC3E1119AB7D00392FEE /* MacNetwork.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -164,6 +191,7 @@
 				8418EFD30F4DB78E00B956C9 /* TLNetwork.cpp in Sources */,
 				84B60629104FFBFA0022E5BC /* TConnection.cpp in Sources */,
 				844CE1AB1051591A00178124 /* MacConnectionHttp.mm in Sources */,
+				84C1CC401119ABFF00392FEE /* MacNetwork.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
