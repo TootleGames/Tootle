@@ -19,9 +19,14 @@
 //	include windows stuff
 #define WIN32_LEAN_AND_MEAN
 #define _WIN32_WINNT 0x0501	// specify the minimum windows OS we are supporting (0x0501 == Windows XP)
-#define _UNICODE
-#define UNICODE
 
+#ifndef _UNICODE
+#define _UNICODE
+#endif
+
+#ifndef UNICODE
+#define UNICODE
+#endif
 
 #include <math.h>
 #include <stdio.h>

@@ -162,7 +162,6 @@ SyncBool TLCore::Platform::Init()
 	return SyncTrue;
 }
 
-#ifdef _DEBUG
 void expand(int avail, int mask)
 {
 	TTempString cpustr;
@@ -193,9 +192,6 @@ void expand(int avail, int mask)
 		cpustr.Empty();
     }
 }
-
-
-#endif
 
 
 typedef BOOL (WINAPI *LPFN_GLPI)(

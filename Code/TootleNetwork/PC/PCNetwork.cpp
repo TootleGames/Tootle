@@ -1,5 +1,5 @@
 /*
- *  PCNetwork.mm
+ *  PCNetwork.cpp
  *  TootleNetwork
  *
  *  Created by Duane Bradbury on 03/02/2010.
@@ -7,9 +7,9 @@
  *
  */
 
-#import "PCNetwork.h"
+#include "PCNetwork.h"
 
-#import "PCConnectionHttp.h"
+#include "PCConnectionHttp.h"
 
 TPtr<TLNetwork::TConnection> TLNetwork::Platform::CreateConnection()
 {
