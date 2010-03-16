@@ -71,13 +71,8 @@
 		844CE03E1051577700178124 /* TTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTexture.h; path = ../TTexture.h; sourceTree = SOURCE_ROOT; };
 		844CE03F1051577700178124 /* TTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTimeline.cpp; path = ../TTimeline.cpp; sourceTree = SOURCE_ROOT; };
 		844CE0401051577700178124 /* TTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTimeline.h; path = ../TTimeline.h; sourceTree = SOURCE_ROOT; };
-		BF3C25DA110707D10000951F /* Tootle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Tootle.xcconfig; path = ../../BuildConfigurations/Tootle.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF3C25DD110707E70000951F /* Mac.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Mac.xcconfig; path = ../../BuildConfigurations/Mac/Mac.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF89CCE6110C9E22009C2101 /* Lib.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Lib.xcconfig; path = ../../BuildConfigurations/Mac/Lib.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF89CCE7110C9E22009C2101 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF89CCE8110C9E22009C2101 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF89CCE9110C9E22009C2101 /* MacDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacDebug.xcconfig; path = ../../BuildConfigurations/Mac/MacDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF89CCEA110C9E22009C2101 /* MacRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacRelease.xcconfig; path = ../../BuildConfigurations/Mac/MacRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		84C50987114FC3D8007F096A /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = "<group>"; };
+		84C50988114FC3D8007F096A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,13 +151,8 @@
 		8418F1220F4DB8B400B956C9 /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				BF89CCE6110C9E22009C2101 /* Lib.xcconfig */,
-				BF89CCE7110C9E22009C2101 /* LibDebug.xcconfig */,
-				BF89CCE8110C9E22009C2101 /* LibRelease.xcconfig */,
-				BF89CCE9110C9E22009C2101 /* MacDebug.xcconfig */,
-				BF89CCEA110C9E22009C2101 /* MacRelease.xcconfig */,
-				BF3C25DD110707E70000951F /* Mac.xcconfig */,
-				BF3C25DA110707D10000951F /* Tootle.xcconfig */,
+				84C50987114FC3D8007F096A /* TootleDebug.xcconfig */,
+				84C50988114FC3D8007F096A /* TootleRelease.xcconfig */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
@@ -258,14 +248,14 @@
 /* Begin XCBuildConfiguration section */
 		8418ECF90F4DA63E00B956C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BF89CCE7110C9E22009C2101 /* LibDebug.xcconfig */;
+			baseConfigurationReference = 84C50987114FC3D8007F096A /* TootleDebug.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		8418ECFA0F4DA63E00B956C9 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BF89CCE8110C9E22009C2101 /* LibRelease.xcconfig */;
+			baseConfigurationReference = 84C50988114FC3D8007F096A /* TootleRelease.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
@@ -273,12 +263,14 @@
 		8418ED0F0F4DA70B00B956C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				PRODUCT_NAME = TootleAsset;
 			};
 			name = Debug;
 		};
 		8418ED100F4DA70B00B956C9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				PRODUCT_NAME = TootleAsset;
 			};
 			name = Release;
 		};
