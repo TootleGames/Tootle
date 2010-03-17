@@ -1,15 +1,5 @@
 // !$*UTF8*$!
 {
-	840A8E8810D69BB900F8960C /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8418F1110F4DB89D00B956C9 /* TLAudio.h */;
-		name = "TLAudio.h: 18";
-		rLen = 42;
-		rLoc = 271;
-		rType = 0;
-		vrLen = 729;
-		vrLoc = 2;
-	};
 	8418ECF80F4DA63E00B956C9 /* Project object */ = {
 		activeArchitecturePreference = i386;
 		activeBuildConfigurationName = Debug;
@@ -79,21 +69,21 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 282500019;
-			PBXWorkspaceStateSaveDate = 282500019;
+			PBXPerProjectTemplateStateSaveDate = 290440772;
+			PBXWorkspaceStateSaveDate = 290440772;
 		};
 		perUserProjectItems = {
-			840A8E8810D69BB900F8960C /* PBXTextBookmark */ = 840A8E8810D69BB900F8960C /* PBXTextBookmark */;
-			846C16B9109736A10098DFAF /* PBXTextBookmark */ = 846C16B9109736A10098DFAF /* PBXTextBookmark */;
 			84B60E58105135E00022E5BC /* PBXTextBookmark */ = 84B60E58105135E00022E5BC /* PBXTextBookmark */;
+			84C50A1C114FC5B9007F096A /* PBXTextBookmark */ = 84C50A1C114FC5B9007F096A /* PBXTextBookmark */;
+			84C50A48114FC64B007F096A /* PBXTextBookmark */ = 84C50A48114FC64B007F096A /* PBXTextBookmark */;
 			84D9BD6410986C60000042D8 /* PBXTextBookmark */ = 84D9BD6410986C60000042D8 /* PBXTextBookmark */;
 			84D9BFD51098A1CB000042D8 /* PBXTextBookmark */ = 84D9BFD51098A1CB000042D8 /* PBXTextBookmark */;
 			84D9BFD61098A1CB000042D8 /* PBXTextBookmark */ = 84D9BFD61098A1CB000042D8 /* PBXTextBookmark */;
 			84D9BFD71098A1CB000042D8 /* PBXTextBookmark */ = 84D9BFD71098A1CB000042D8 /* PBXTextBookmark */;
-			84D9BFD91098A1CB000042D8 /* PBXTextBookmark */ = 84D9BFD91098A1CB000042D8 /* PBXTextBookmark */;
+			84F848BD11468B8B0090EA4D /* PBXTextBookmark */ = 84F848BD11468B8B0090EA4D /* PBXTextBookmark */;
+			84F848BE11468B8B0090EA4D /* PBXTextBookmark */ = 84F848BE11468B8B0090EA4D /* PBXTextBookmark */;
 			84FACEC4106A339300DC7803 /* PBXTextBookmark */ = 84FACEC4106A339300DC7803 /* PBXTextBookmark */;
 			84FACEC7106A339300DC7803 /* PBXTextBookmark */ = 84FACEC7106A339300DC7803 /* PBXTextBookmark */;
-			84FACEC8106A339300DC7803 /* PBXTextBookmark */ = 84FACEC8106A339300DC7803 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 8418ECFC0F4DA63E00B956C9 /* Source Control */;
 		userBuildSettings = {
@@ -148,7 +138,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1011, 962}}";
 			sepNavSelRange = "{271, 42}";
-			sepNavVisRange = "{2, 729}";
+			sepNavVisRange = "{2, 709}";
 		};
 	};
 	8418F1520F4DB94D00B956C9 /* MacAudio.cpp */ = {
@@ -165,42 +155,18 @@
 			sepNavVisRange = "{195, 770}";
 		};
 	};
-	846C16B9109736A10098DFAF /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84B60D6E105133140022E5BC /* MacAudioOpenAL.cpp */;
-		name = "MacAudioOpenAL.cpp: 28";
-		rLen = 0;
-		rLoc = 457;
-		rType = 0;
-		vrLen = 717;
-		vrLoc = 2704;
-	};
-	84B60300104FF0700022E5BC /* TootleDebug.xcconfig */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 2940}}";
-			sepNavSelRange = "{866, 0}";
-			sepNavVisRange = "{210, 1073}";
-		};
-	};
-	84B60301104FF0700022E5BC /* TootleRelease.xcconfig */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 2870}}";
-			sepNavSelRange = "{868, 0}";
-			sepNavVisRange = "{327, 1032}";
-		};
-	};
 	84B60D6E105133140022E5BC /* MacAudioOpenAL.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 14430}}";
-			sepNavSelRange = "{457, 0}";
-			sepNavVisRange = "{2704, 717}";
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 14703}}";
+			sepNavSelRange = "{4844, 0}";
+			sepNavVisRange = "{4494, 512}";
 		};
 	};
 	84B60D6F105133140022E5BC /* MacAudioOpenAL.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 1430}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 1495}}";
 			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 513}";
+			sepNavVisRange = "{80, 495}";
 		};
 	};
 	84B60E36105134640022E5BC /* alc.h */ = {
@@ -219,6 +185,26 @@
 		rType = 0;
 		vrLen = 804;
 		vrLoc = 3727;
+	};
+	84C50A1C114FC5B9007F096A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60D6E105133140022E5BC /* MacAudioOpenAL.cpp */;
+		name = "MacAudioOpenAL.cpp: 212";
+		rLen = 0;
+		rLoc = 4844;
+		rType = 0;
+		vrLen = 512;
+		vrLoc = 4494;
+	};
+	84C50A48114FC64B007F096A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60D6E105133140022E5BC /* MacAudioOpenAL.cpp */;
+		name = "MacAudioOpenAL.cpp: 212";
+		rLen = 0;
+		rLoc = 4844;
+		rType = 0;
+		vrLen = 512;
+		vrLoc = 4494;
 	};
 	84D9BD6410986C60000042D8 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -260,15 +246,25 @@
 		vrLen = 770;
 		vrLoc = 195;
 	};
-	84D9BFD91098A1CB000042D8 /* PBXTextBookmark */ = {
+	84F848BD11468B8B0090EA4D /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 8418F1110F4DB89D00B956C9 /* TLAudio.h */;
 		name = "TLAudio.h: 18";
 		rLen = 42;
 		rLoc = 271;
 		rType = 0;
-		vrLen = 774;
+		vrLen = 709;
 		vrLoc = 2;
+	};
+	84F848BE11468B8B0090EA4D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84B60D6F105133140022E5BC /* MacAudioOpenAL.h */;
+		name = "MacAudioOpenAL.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 495;
+		vrLoc = 80;
 	};
 	84FACEC4106A339300DC7803 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -288,16 +284,6 @@
 		rLoc = 0;
 		rType = 0;
 		vrLen = 477;
-		vrLoc = 0;
-	};
-	84FACEC8106A339300DC7803 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84B60D6F105133140022E5BC /* MacAudioOpenAL.h */;
-		name = "MacAudioOpenAL.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 513;
 		vrLoc = 0;
 	};
 }

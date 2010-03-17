@@ -35,13 +35,8 @@
 		84B60303104FF07E0022E5BC /* TAudioNode_Music.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAudioNode_Music.h; path = ../TAudioNode_Music.h; sourceTree = SOURCE_ROOT; };
 		84B60D6E105133140022E5BC /* MacAudioOpenAL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacAudioOpenAL.cpp; sourceTree = "<group>"; };
 		84B60D6F105133140022E5BC /* MacAudioOpenAL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacAudioOpenAL.h; sourceTree = "<group>"; };
-		BF3C25C7110707860000951F /* Tootle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Tootle.xcconfig; path = ../../BuildConfigurations/Tootle.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF3C25CB1107079F0000951F /* Mac.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Mac.xcconfig; path = ../../BuildConfigurations/Mac/Mac.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF89CCD6110C9DF8009C2101 /* Lib.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Lib.xcconfig; path = ../../BuildConfigurations/Mac/Lib.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF89CCD7110C9DF8009C2101 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF89CCD8110C9DF8009C2101 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF89CCD9110C9DF8009C2101 /* MacDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacDebug.xcconfig; path = ../../BuildConfigurations/Mac/MacDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF89CCDA110C9DF8009C2101 /* MacRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacRelease.xcconfig; path = ../../BuildConfigurations/Mac/MacRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		84C50A10114FC547007F096A /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		84C50A11114FC547007F096A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,13 +94,8 @@
 		8418F1090F4DB88F00B956C9 /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				BF89CCD6110C9DF8009C2101 /* Lib.xcconfig */,
-				BF89CCD7110C9DF8009C2101 /* LibDebug.xcconfig */,
-				BF89CCD8110C9DF8009C2101 /* LibRelease.xcconfig */,
-				BF89CCD9110C9DF8009C2101 /* MacDebug.xcconfig */,
-				BF89CCDA110C9DF8009C2101 /* MacRelease.xcconfig */,
-				BF3C25CB1107079F0000951F /* Mac.xcconfig */,
-				BF3C25C7110707860000951F /* Tootle.xcconfig */,
+				84C50A10114FC547007F096A /* TootleDebug.xcconfig */,
+				84C50A11114FC547007F096A /* TootleRelease.xcconfig */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
@@ -194,14 +184,14 @@
 /* Begin XCBuildConfiguration section */
 		8418ECF90F4DA63E00B956C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BF89CCD7110C9DF8009C2101 /* LibDebug.xcconfig */;
+			baseConfigurationReference = 84C50A10114FC547007F096A /* TootleDebug.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		8418ECFA0F4DA63E00B956C9 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BF89CCD8110C9DF8009C2101 /* LibRelease.xcconfig */;
+			baseConfigurationReference = 84C50A11114FC547007F096A /* TootleRelease.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
@@ -209,12 +199,14 @@
 		8418EEE30F4DAB7F00B956C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				PRODUCT_NAME = TootleAudio;
 			};
 			name = Debug;
 		};
 		8418EEE40F4DAB7F00B956C9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				PRODUCT_NAME = TootleAudio;
 			};
 			name = Release;
 		};

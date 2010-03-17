@@ -238,6 +238,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -276,6 +278,7 @@
 								<string>8418F1090F4DB88F00B956C9</string>
 								<string>8418F1080F4DB88900B956C9</string>
 								<string>8418F1510F4DB94000B956C9</string>
+								<string>8418ED0E0F4DA70B00B956C9</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FAAC04509CD000000102</string>
 								<string>1C37FABC05509CD000000102</string>
@@ -283,9 +286,8 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>14</integer>
-									<integer>4</integer>
-									<integer>0</integer>
+									<integer>22</integer>
+									<integer>21</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
@@ -319,14 +321,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TLAudio.h</string>
+								<string>MacAudioOpenAL.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -334,23 +334,23 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TLAudio.h</string>
+										<string>MacAudioOpenAL.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>840A8E8810D69BB900F8960C</string>
+										<string>84C50A48114FC64B007F096A</string>
 										<key>history</key>
 										<array>
 											<string>84B60E58105135E00022E5BC</string>
 											<string>84FACEC4106A339300DC7803</string>
 											<string>84FACEC7106A339300DC7803</string>
-											<string>84FACEC8106A339300DC7803</string>
-											<string>846C16B9109736A10098DFAF</string>
 											<string>84D9BD6410986C60000042D8</string>
 											<string>84D9BFD51098A1CB000042D8</string>
 											<string>84D9BFD61098A1CB000042D8</string>
 											<string>84D9BFD71098A1CB000042D8</string>
-											<string>84D9BFD91098A1CB000042D8</string>
+											<string>84F848BD11468B8B0090EA4D</string>
+											<string>84F848BE11468B8B0090EA4D</string>
+											<string>84C50A1C114FC5B9007F096A</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -362,14 +362,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1072, 391}}</string>
+								<string>{{0, 0}, {1072, 358}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 108 1280 670 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>391pt</string>
+							<string>358pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -382,14 +382,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 396}, {1072, 233}}</string>
+								<string>{{0, 363}, {1072, 266}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 108 1280 670 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>233pt</string>
+							<string>266pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -408,9 +408,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>840A8E8910D69BB900F8960C</string>
+				<string>84C50A49114FC64B007F096A</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>840A8E8A10D69BB900F8960C</string>
+				<string>84C50A4A114FC64B007F096A</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -627,7 +627,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>8418F2F90F4DC11200B956C9</string>
-				<string>840A8E8B10D69BB900F8960C</string>
+				<string>84C50A4B114FC64B007F096A</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
