@@ -64,7 +64,7 @@
 	if(!m_CameraInput)
 	{
 		[m_Session release];
-		[m_Camera release];
+		//[m_Camera release];
 		
 		return false;		
 	}
@@ -84,8 +84,10 @@
 
 -(bool) CreateCameraView
 {
-	NSRect frame = NSMakeRect(0, 0, 320, 480);
-	//NSRect frame = [NSMakeRect(0, 0, 480, 320)];
+	//NSRect frame = NSMakeRect(0, 0, 320, 480);
+	NSRect frame = NSMakeRect(160, 240, 320, 480);
+	//NSRect frame = NSMakeRect(0, 0, 480, 320);
+	//NSRect frame = NSMakeRect(0, 0, 512, 512);
 	
 	MacCameraView *view = [[MacCameraView alloc] initWithFrame:frame];
 	
@@ -95,7 +97,15 @@
 
 	// Create the camera view delegate so we can intercept the image to be displayed 
 	// and do some post processing on it before it is displayed
-	[view setDelegate: [MacCameraViewDelegate alloc]];
+	
+	MacCameraViewDelegate* pDelegate = [MacCameraViewDelegate alloc];
+	
+	
+	[view setDelegate: pDelegate];
+	
+	// Hide the view so it isn't visible
+	// NOTE: View may still be being processed.
+	//[view setHidden: TRUE];
 	
     self.view = view;
 	
@@ -108,15 +118,28 @@
 - (bool) DisconnectFromCamera 
 {
 	// Stop the camera
-	[m_Session stopRunning];
 	
-	[m_Session removeInput:m_CameraInput];
+	if( [m_Session isRunning] )
+	{	
+		[m_Session stopRunning];
 	
-	[m_Camera close];
+		[m_Session removeInput:m_CameraInput];
+		
+		if( [m_Session isRunning] )
+			return false;
+	}
+
+	if( [m_Camera isOpen] )
+	{
+		[m_Camera close];
+		
+		if( [m_Camera isOpen] )
+			return false;
+	}
 
 	
 	// Release the camera and session
-	[m_Camera release];
+	//[m_Camera release];
 	[m_Session release];
 	
 	
@@ -135,6 +158,28 @@
 	return false;
 }
 
+
+-(void) SubscribeToCamera:(TLMessaging::TSubscriber*)pSubscriber
+{
+	// Wrapper to subscribe to the camera view delegate
+	
+	MacCameraView* pView = (MacCameraView*)self.view;
+
+	if(pView)
+	{
+		MacCameraViewDelegate* pDelegate = [pView delegate];
+
+		if(pDelegate)
+		{
+			[pDelegate addSubscriber:pSubscriber];
+		}
+	}
+}
+
+-(void) UnsubscribeFromCamera:(TLMessaging::TSubscriber*)pSubscriber
+{
+	// Wrapper to unsubscribe from the camera view delegate
+}
 
 
 @end

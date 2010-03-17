@@ -11,6 +11,13 @@
 #import <Cocoa/Cocoa.h>
 #import <QTKit/QTKit.h>
 
+#include <TootleCore/TSubscriber.h>
+
+
+class TPublisherProxy : public TLMessaging::TPublisher
+{
+};
+
 
 @interface MacCameraView : QTCaptureView 
 {
@@ -19,8 +26,16 @@
 @end
 
 
+
 @interface MacCameraViewDelegate : NSObject 
 {
+	TPublisherProxy		m_PublisherProxy;
 }
+
+- (void)addSubscriber:(TLMessaging::TSubscriber*) pSubscriber;
+
+//- (NSImage *)getNSImageFromCIImage:(CIImage*)image;
+//- (NSBitmapImageRep *)RGBABitmapImageRepFromCImage:(CIImage *) ciImage;
+
 
 @end

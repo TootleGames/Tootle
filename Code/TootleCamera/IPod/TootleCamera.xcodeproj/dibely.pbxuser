@@ -14,7 +14,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					833,
+					772,
 					20,
 					48,
 					43,
@@ -53,15 +53,29 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 286378904;
-			PBXWorkspaceStateSaveDate = 286378904;
+			PBXPerProjectTemplateStateSaveDate = 290444415;
+			PBXWorkspaceStateSaveDate = 290444415;
 		};
 		perUserProjectItems = {
-			841B4ADE1111CCF700ACC2AE /* PBXTextBookmark */ = 841B4ADE1111CCF700ACC2AE /* PBXTextBookmark */;
-			841B4ADF1111CCF700ACC2AE /* PBXTextBookmark */ = 841B4ADF1111CCF700ACC2AE /* PBXTextBookmark */;
-			841B4AE01111CCF700ACC2AE /* PBXTextBookmark */ = 841B4AE01111CCF700ACC2AE /* PBXTextBookmark */;
-			841B4AE11111CCF700ACC2AE /* PBXTextBookmark */ = 841B4AE11111CCF700ACC2AE /* PBXTextBookmark */;
-			841B4AE21111CCF700ACC2AE /* PBXTextBookmark */ = 841B4AE21111CCF700ACC2AE /* PBXTextBookmark */;
+			84A655E71118828E00B11F5C /* PBXTextBookmark */ = 84A655E71118828E00B11F5C /* PBXTextBookmark */;
+			84A655E81118828E00B11F5C /* PBXTextBookmark */ = 84A655E81118828E00B11F5C /* PBXTextBookmark */;
+			84A655E91118828E00B11F5C /* PBXTextBookmark */ = 84A655E91118828E00B11F5C /* PBXTextBookmark */;
+			84A655EA1118828E00B11F5C /* PBXTextBookmark */ = 84A655EA1118828E00B11F5C /* PBXTextBookmark */;
+			84A655EB1118828E00B11F5C /* PBXTextBookmark */ = 84A655EB1118828E00B11F5C /* PBXTextBookmark */;
+			84A655EC1118828E00B11F5C /* PBXTextBookmark */ = 84A655EC1118828E00B11F5C /* PBXTextBookmark */;
+			84A655ED1118828E00B11F5C /* PBXTextBookmark */ = 84A655ED1118828E00B11F5C /* PBXTextBookmark */;
+			84A655EE1118828E00B11F5C /* PBXTextBookmark */ = 84A655EE1118828E00B11F5C /* PBXTextBookmark */;
+			84A655EF1118828E00B11F5C /* PBXTextBookmark */ = 84A655EF1118828E00B11F5C /* PBXTextBookmark */;
+			84A655F01118828E00B11F5C /* PBXTextBookmark */ = 84A655F01118828E00B11F5C /* PBXTextBookmark */;
+			84A655F11118828E00B11F5C /* PBXTextBookmark */ = 84A655F11118828E00B11F5C /* PBXTextBookmark */;
+			84C50BD1114FD59A007F096A /* PBXTextBookmark */ = 84C50BD1114FD59A007F096A /* PBXTextBookmark */;
+			84C50BD2114FD59A007F096A /* PBXTextBookmark */ = 84C50BD2114FD59A007F096A /* PBXTextBookmark */;
+			84C50BD3114FD59A007F096A /* PBXTextBookmark */ = 84C50BD3114FD59A007F096A /* PBXTextBookmark */;
+			84C50BD4114FD59A007F096A /* PBXTextBookmark */ = 84C50BD4114FD59A007F096A /* PBXTextBookmark */;
+			84C50BD5114FD59A007F096A /* PBXTextBookmark */ = 84C50BD5114FD59A007F096A /* PBXTextBookmark */;
+			84C50BD6114FD59A007F096A /* PBXTextBookmark */ = 84C50BD6114FD59A007F096A /* PBXTextBookmark */;
+			84C50BD7114FD59A007F096A /* PBXTextBookmark */ = 84C50BD7114FD59A007F096A /* PBXTextBookmark */;
+			84C50BD8114FD59A007F096A /* PBXTextBookmark */ = 84C50BD8114FD59A007F096A /* PBXTextBookmark */;
 		};
 		sourceControlManager = 841B4A971111CA5C00ACC2AE /* Source Control */;
 		userBuildSettings = {
@@ -81,35 +95,133 @@
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
 	};
+	841B4AA91111CB0400ACC2AE /* TootleDebug.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {950, 2483}}";
+			sepNavSelRange = "{4283, 0}";
+			sepNavVisRange = "{4056, 1211}";
+		};
+	};
+	841B4AAA1111CB0400ACC2AE /* TootleRelease.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {950, 2470}}";
+			sepNavSelRange = "{4620, 0}";
+			sepNavVisRange = "{4064, 1228}";
+		};
+	};
+	841B4AAB1111CB0400ACC2AE /* TootleReleaseAdHoc.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {950, 2483}}";
+			sepNavSelRange = "{4618, 0}";
+			sepNavVisRange = "{4062, 1228}";
+		};
+	};
+	841B4AAC1111CB0400ACC2AE /* TootleReleaseAppStore.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {950, 2483}}";
+			sepNavSelRange = "{4618, 0}";
+			sepNavVisRange = "{4062, 1228}";
+		};
+	};
+	841B4AAD1111CB0400ACC2AE /* TootleSimDebug.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {950, 2470}}";
+			sepNavSelRange = "{4640, 0}";
+			sepNavVisRange = "{4114, 1271}";
+		};
+	};
+	841B4AAE1111CB0400ACC2AE /* TootleSimRelease.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {950, 2457}}";
+			sepNavSelRange = "{4595, 0}";
+			sepNavVisRange = "{4039, 1228}";
+		};
+	};
 	841B4ACE1111CC0000ACC2AE /* MacCamera.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 450}}";
+			sepNavIntBoundsRect = "{{0, 0}, {950, 448}}";
 			sepNavSelRange = "{149, 205}";
 			sepNavVisRange = "{0, 354}";
 		};
 	};
 	841B4ACF1111CC0000ACC2AE /* MacCamera.mm */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 1040}}";
-			sepNavSelRange = "{356, 1226}";
-			sepNavVisRange = "{699, 883}";
+			sepNavIntBoundsRect = "{{0, 0}, {950, 1183}}";
+			sepNavSelRange = "{322, 0}";
+			sepNavVisRange = "{23, 591}";
+		};
+	};
+	841B4AD01111CC0000ACC2AE /* MacCameraController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {950, 448}}";
+			sepNavSelRange = "{344, 0}";
+			sepNavVisRange = "{0, 566}";
+		};
+	};
+	841B4AD11111CC0000ACC2AE /* MacCameraController.mm */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {950, 1924}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{267, 525}";
+		};
+	};
+	841B4AD21111CC0000ACC2AE /* MacCameraView.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {950, 448}}";
+			sepNavSelRange = "{211, 0}";
+			sepNavVisRange = "{0, 328}";
+		};
+	};
+	841B4AD31111CC0000ACC2AE /* MacCameraView.mm */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {950, 448}}";
+			sepNavSelRange = "{218, 0}";
+			sepNavVisRange = "{0, 588}";
 		};
 	};
 	841B4AD41111CC2B00ACC2AE /* IPodCamera.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 450}}";
+			sepNavIntBoundsRect = "{{0, 0}, {950, 448}}";
 			sepNavSelRange = "{355, 0}";
 			sepNavVisRange = "{0, 355}";
 		};
 	};
 	841B4AD51111CC2B00ACC2AE /* IPodCamera.mm */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 455}}";
-			sepNavSelRange = "{184, 0}";
-			sepNavVisRange = "{0, 447}";
+			sepNavIntBoundsRect = "{{0, 0}, {950, 559}}";
+			sepNavSelRange = "{209, 0}";
+			sepNavVisRange = "{140, 423}";
 		};
 	};
-	841B4ADE1111CCF700ACC2AE /* PBXTextBookmark */ = {
+	84A655B111186B6100B11F5C /* IPodCameraController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {950, 572}}";
+			sepNavSelRange = "{319, 0}";
+			sepNavVisRange = "{4, 865}";
+		};
+	};
+	84A655B211186B6100B11F5C /* IPodCameraController.mm */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {950, 2782}}";
+			sepNavSelRange = "{650, 0}";
+			sepNavVisRange = "{4323, 845}";
+		};
+	};
+	84A655B511186B7500B11F5C /* IPodCameraView.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {950, 448}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 154}";
+		};
+	};
+	84A655B611186B7500B11F5C /* IPodCameraView.mm */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {950, 448}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 186}";
+		};
+	};
+	84A655E71118828E00B11F5C /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 841B4ACE1111CC0000ACC2AE /* MacCamera.h */;
 		name = "MacCamera.h: 10";
@@ -119,7 +231,7 @@
 		vrLen = 354;
 		vrLoc = 0;
 	};
-	841B4ADF1111CCF700ACC2AE /* PBXTextBookmark */ = {
+	84A655E81118828E00B11F5C /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 841B4AD41111CC2B00ACC2AE /* IPodCamera.h */;
 		name = "IPodCamera.h: 23";
@@ -129,35 +241,175 @@
 		vrLen = 355;
 		vrLoc = 0;
 	};
-	841B4AE01111CCF700ACC2AE /* PBXTextBookmark */ = {
+	84A655E91118828E00B11F5C /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = 841B4ACF1111CC0000ACC2AE /* MacCamera.mm */;
-		name = "MacCamera.mm: 25";
-		rLen = 1226;
-		rLoc = 356;
-		rType = 0;
-		vrLen = 883;
-		vrLoc = 699;
-	};
-	841B4AE11111CCF700ACC2AE /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 841B4AD51111CC2B00ACC2AE /* IPodCamera.mm */;
-		name = "IPodCamera.mm: 1";
+		fRef = 841B4AD11111CC0000ACC2AE /* MacCameraController.mm */;
+		name = "MacCameraController.mm: 1";
 		rLen = 0;
 		rLoc = 0;
 		rType = 0;
-		vrLen = 178;
+		vrLen = 525;
+		vrLoc = 267;
+	};
+	84A655EA1118828E00B11F5C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B4AD01111CC0000ACC2AE /* MacCameraController.h */;
+		name = "MacCameraController.h: 18";
+		rLen = 0;
+		rLoc = 344;
+		rType = 0;
+		vrLen = 566;
 		vrLoc = 0;
 	};
-	841B4AE21111CCF700ACC2AE /* PBXTextBookmark */ = {
+	84A655EB1118828E00B11F5C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B4ACF1111CC0000ACC2AE /* MacCamera.mm */;
+		name = "MacCamera.mm: 19";
+		rLen = 0;
+		rLoc = 322;
+		rType = 0;
+		vrLen = 591;
+		vrLoc = 23;
+	};
+	84A655EC1118828E00B11F5C /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 841B4AD51111CC2B00ACC2AE /* IPodCamera.mm */;
-		name = "IPodCamera.mm: 12";
+		name = "IPodCamera.mm: 11";
 		rLen = 0;
-		rLoc = 184;
+		rLoc = 209;
 		rType = 0;
-		vrLen = 447;
+		vrLen = 423;
+		vrLoc = 140;
+	};
+	84A655ED1118828E00B11F5C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84A655B611186B7500B11F5C /* IPodCameraView.mm */;
+		name = "IPodCameraView.mm: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 186;
 		vrLoc = 0;
+	};
+	84A655EE1118828E00B11F5C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84A655B511186B7500B11F5C /* IPodCameraView.h */;
+		name = "IPodCameraView.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 154;
+		vrLoc = 0;
+	};
+	84A655EF1118828E00B11F5C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B4AD21111CC0000ACC2AE /* MacCameraView.h */;
+		name = "MacCameraView.h: 15";
+		rLen = 0;
+		rLoc = 211;
+		rType = 0;
+		vrLen = 328;
+		vrLoc = 0;
+	};
+	84A655F01118828E00B11F5C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B4AD31111CC0000ACC2AE /* MacCameraView.mm */;
+		name = "MacCameraView.mm: 14";
+		rLen = 0;
+		rLoc = 218;
+		rType = 0;
+		vrLen = 588;
+		vrLoc = 0;
+	};
+	84A655F11118828E00B11F5C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84A655B111186B6100B11F5C /* IPodCameraController.h */;
+		name = "IPodCameraController.h: 16";
+		rLen = 0;
+		rLoc = 319;
+		rType = 0;
+		vrLen = 865;
+		vrLoc = 4;
+	};
+	84C50BD1114FD59A007F096A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84A655B211186B6100B11F5C /* IPodCameraController.mm */;
+		name = "IPodCameraController.mm: 30";
+		rLen = 0;
+		rLoc = 650;
+		rType = 0;
+		vrLen = 845;
+		vrLoc = 4323;
+	};
+	84C50BD2114FD59A007F096A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B4AAA1111CB0400ACC2AE /* TootleRelease.xcconfig */;
+		name = "TootleRelease.xcconfig: 150";
+		rLen = 0;
+		rLoc = 4620;
+		rType = 0;
+		vrLen = 1228;
+		vrLoc = 4064;
+	};
+	84C50BD3114FD59A007F096A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B4AA91111CB0400ACC2AE /* TootleDebug.xcconfig */;
+		name = "TootleDebug.xcconfig: 140";
+		rLen = 0;
+		rLoc = 4283;
+		rType = 0;
+		vrLen = 1211;
+		vrLoc = 4056;
+	};
+	84C50BD4114FD59A007F096A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B4AAB1111CB0400ACC2AE /* TootleReleaseAdHoc.xcconfig */;
+		name = "TootleReleaseAdHoc.xcconfig: 150";
+		rLen = 0;
+		rLoc = 4618;
+		rType = 0;
+		vrLen = 1228;
+		vrLoc = 4062;
+	};
+	84C50BD5114FD59A007F096A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B4AAC1111CB0400ACC2AE /* TootleReleaseAppStore.xcconfig */;
+		name = "TootleReleaseAppStore.xcconfig: 150";
+		rLen = 0;
+		rLoc = 4618;
+		rType = 0;
+		vrLen = 1228;
+		vrLoc = 4062;
+	};
+	84C50BD6114FD59A007F096A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B4AAD1111CB0400ACC2AE /* TootleSimDebug.xcconfig */;
+		name = "TootleSimDebug.xcconfig: 150";
+		rLen = 0;
+		rLoc = 4640;
+		rType = 0;
+		vrLen = 1271;
+		vrLoc = 4114;
+	};
+	84C50BD7114FD59A007F096A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B4AAE1111CB0400ACC2AE /* TootleSimRelease.xcconfig */;
+		name = "TootleSimRelease.xcconfig: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1020;
+		vrLoc = 0;
+	};
+	84C50BD8114FD59A007F096A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841B4AAE1111CB0400ACC2AE /* TootleSimRelease.xcconfig */;
+		name = "TootleSimRelease.xcconfig: 149";
+		rLen = 0;
+		rLoc = 4595;
+		rType = 0;
+		vrLen = 1228;
+		vrLoc = 4039;
 	};
 	D2AAC07D0554694100DB518D /* TootleCamera */ = {
 		activeExec = 0;

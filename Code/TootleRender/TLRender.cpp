@@ -294,11 +294,26 @@ Bool TLRender::Opengl::BindTexture(const TLAsset::TTexture* pTexture)
 	//	get texture Index for texture
 	if ( pTexture )
 	{
+
 		TextureIndex = GetTextureIndex( pTexture->GetAssetRef() );
 
 		//	isn't one... upload texture
 		if ( TextureIndex == 0 )
+		{
 			TextureIndex = UploadTexture( *pTexture );
+		}
+		else if(pTexture->HasChanged())
+		{
+			// Texture has changed (dynamic at runtime) and now needs to be re-uploaded 
+			TextureIndex = UploadTexture( *pTexture );
+			
+			// texture uploaded so set the flag on the texture to say it 
+			// is now up-to-date on the rendering side
+			
+			// NOTE: Need to change const pTexture to non-const
+			TLAsset::TTexture* pNonConstTexture = const_cast<TLAsset::TTexture*>(pTexture);
+			pNonConstTexture->SetHasChanged(FALSE);
+		}
 	}
 
 	//	no change to binding

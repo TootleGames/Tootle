@@ -19,6 +19,7 @@ namespace TLCamera
 		SyncBool	Initialise();
 		SyncBool	Shutdown();
 		
+		void		SubscribeToCamera(TLMessaging::TSubscriber* pSubscriber);		
 	}
 }
 
@@ -43,3 +44,10 @@ Bool TLCamera::DisconnectFromCamera()
 {
 	return Platform::DisconnectFromCamera();
 }
+
+
+void TLCamera::SubscribeToCamera(TLMessaging::TSubscriber* pSubscriber)
+{
+	Platform::SubscribeToCamera(pSubscriber);
+}
+

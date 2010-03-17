@@ -9,6 +9,8 @@
 #include <math.h>		//	gr: not sure if this is platform specific?
 #include <float.h>		//	db: platform specific? Needed for FLT_MAX and FLT_MIN
 #include <stdlib.h>		//	gr: platform specific? needed for rand() and srand()
+#include <limits.h>		//	db: platform specific? needed for CHAR_BIT
+
 #include "TLTypes.h"
 #include "TLDebug.h"
 
@@ -120,6 +122,61 @@ namespace TLMaths
 
 	#define TLMaths_FloatMax				FLT_MAX
 	#define TLMaths_FloatMin				FLT_MIN
+	
+	
+	
+	// Power of 2 routines
+
+	// Check to see if a value is a power of 2
+	template <class T>
+	bool IsPowerOf2(T k)
+	{
+		if(k = 0)
+			return false;
+		
+		return ((k & (k - 1)) == 0);
+	}
+	
+	// Get the nearest power of 2 value to v
+	// i.e. 240 -> 256, 257 -> 256
+	template <class T>
+	T GetNearestPowerOf2(T v)
+	{
+        int k;
+        if (v == 0)
+			return 1;
+        for (k = sizeof(T) * 8 - 1; ((static_cast<T>(1U) << k) & v) == 0; k--);
+        if (((static_cast<T>(1U) << (k - 1)) & v) == 0)
+			return static_cast<T>(1U) << k;
+        return static_cast<T>(1U) << (k + 1);
+	}
+	
+	// Get the next power of 2 value from k
+	// i.e. 240 -> 256, 257 -> 512
+	template <class T>
+	T GetNextPowerOf2(T k) 
+	{
+        k--;
+        for (int i=1; i<sizeof(T)*CHAR_BIT; i<<=1)
+			k = k | k >> i;
+        return k+1;
+	}
+	
+	/*
+	 // Unsigned integer version
+	template <class T>
+	T GetNextPowerOf2(T k) 
+	 {
+        if (k == 0)
+			return 1;
+        k--;
+        for (int i=1; i<sizeof(T)*CHAR_BIT; i<<=1)
+			k = k | k >> i;
+        return k+1;
+	 }
+	 */
+
+
 }
 
 

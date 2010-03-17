@@ -8,8 +8,10 @@
  */
 
 #import <Cocoa/Cocoa.h>
-
 #import <QTKit/QTKit.h>
+
+#include <TootleCore/TSubscriber.h>
+
 
 @interface MacCameraController : NSViewController 
 {
@@ -25,5 +27,8 @@
 
 
 -(bool) CreateCameraView;
+
+-(void) SubscribeToCamera:(TLMessaging::TSubscriber*)pSubscriber;
+-(void) UnsubscribeFromCamera:(TLMessaging::TSubscriber*)pSubscriber;
 
 @end

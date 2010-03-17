@@ -8,6 +8,8 @@
  */
 
 #include <TootleCore/TLTypes.h>
+#include <TootleCore/TSubscriber.h>
+
 
 namespace TLCamera
 {
@@ -19,5 +21,8 @@ namespace TLCamera
 		
 		Bool	ConnectToCamera();
 		Bool	DisconnectFromCamera();
+		
+		
+		void	SubscribeToCamera(TLMessaging::TSubscriber* pSubscriber);
 	}
 }

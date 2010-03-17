@@ -8,6 +8,14 @@
  */
 
 #include "IPodCamera.h"
+#include "IPodCameraController.h"
+
+namespace TLCamera
+{
+	IPodCameraController* m_CameraController = nil;	
+}
+
+
 
 using namespace TLCamera;
 

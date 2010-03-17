@@ -13,6 +13,10 @@
 		841B4ACD1111CBD900ACC2AE /* TLCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 841B4AC91111CBD900ACC2AE /* TLCamera.h */; };
 		841B4AD61111CC2B00ACC2AE /* IPodCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 841B4AD41111CC2B00ACC2AE /* IPodCamera.h */; };
 		841B4AD71111CC2B00ACC2AE /* IPodCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = 841B4AD51111CC2B00ACC2AE /* IPodCamera.mm */; };
+		84A655B311186B6100B11F5C /* IPodCameraController.h in Headers */ = {isa = PBXBuildFile; fileRef = 84A655B111186B6100B11F5C /* IPodCameraController.h */; };
+		84A655B411186B6100B11F5C /* IPodCameraController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84A655B211186B6100B11F5C /* IPodCameraController.mm */; };
+		84A655B711186B7500B11F5C /* IPodCameraView.h in Headers */ = {isa = PBXBuildFile; fileRef = 84A655B511186B7500B11F5C /* IPodCameraView.h */; };
+		84A655B811186B7500B11F5C /* IPodCameraView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84A655B611186B7500B11F5C /* IPodCameraView.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +38,10 @@
 		841B4AD31111CC0000ACC2AE /* MacCameraView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacCameraView.mm; path = ../Mac/MacCameraView.mm; sourceTree = SOURCE_ROOT; };
 		841B4AD41111CC2B00ACC2AE /* IPodCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodCamera.h; sourceTree = "<group>"; };
 		841B4AD51111CC2B00ACC2AE /* IPodCamera.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodCamera.mm; sourceTree = "<group>"; };
+		84A655B111186B6100B11F5C /* IPodCameraController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodCameraController.h; sourceTree = "<group>"; };
+		84A655B211186B6100B11F5C /* IPodCameraController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodCameraController.mm; sourceTree = "<group>"; };
+		84A655B511186B7500B11F5C /* IPodCameraView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodCameraView.h; sourceTree = "<group>"; };
+		84A655B611186B7500B11F5C /* IPodCameraView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodCameraView.mm; sourceTree = "<group>"; };
 		D2AAC07E0554694100DB518D /* libTootleCamera.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleCamera.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -106,6 +114,10 @@
 			children = (
 				841B4AD41111CC2B00ACC2AE /* IPodCamera.h */,
 				841B4AD51111CC2B00ACC2AE /* IPodCamera.mm */,
+				84A655B111186B6100B11F5C /* IPodCameraController.h */,
+				84A655B211186B6100B11F5C /* IPodCameraController.mm */,
+				84A655B511186B7500B11F5C /* IPodCameraView.h */,
+				84A655B611186B7500B11F5C /* IPodCameraView.mm */,
 			);
 			name = "IPod Source Files";
 			sourceTree = "<group>";
@@ -140,6 +152,8 @@
 				841B4ACB1111CBD900ACC2AE /* TCameraManager.h in Headers */,
 				841B4ACD1111CBD900ACC2AE /* TLCamera.h in Headers */,
 				841B4AD61111CC2B00ACC2AE /* IPodCamera.h in Headers */,
+				84A655B311186B6100B11F5C /* IPodCameraController.h in Headers */,
+				84A655B711186B7500B11F5C /* IPodCameraView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -189,6 +203,8 @@
 				841B4ACA1111CBD900ACC2AE /* TCameraManager.cpp in Sources */,
 				841B4ACC1111CBD900ACC2AE /* TLCamera.cpp in Sources */,
 				841B4AD71111CC2B00ACC2AE /* IPodCamera.mm in Sources */,
+				84A655B411186B6100B11F5C /* IPodCameraController.mm in Sources */,
+				84A655B811186B7500B11F5C /* IPodCameraView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -29,7 +29,7 @@ public:
 
 	static TRef						GetAssetType_Static()					{	return TRef_Static(T,e,x,t,u);	}
 
-	Bool							SetSize(const Type2<u16>& NewSize,Bool EnableAlpha);	//	set a new size, re-alloc data etc - fails if size is incompatbile
+	Bool							SetSize(const Type2<u16>& NewSize,Bool EnableAlpha, Bool AutoCreateIfNonsquare=FALSE);	//	set a new size, re-alloc data etc - fails if size is incompatbile
 	FORCEINLINE const Type2<u16>&	GetSize() const							{	return m_Size;	}
 	FORCEINLINE const u16&			GetWidth() const						{	return m_Size.x;	}
 	FORCEINLINE const u16&			GetHeight() const						{	return m_Size.y;	}
@@ -56,7 +56,11 @@ public:
 	FORCEINLINE const u8*			GetPixelData(u32 PixelX,u32 PixelY) const	{	return GetPixelData( GetPixelIndex( PixelX, PixelY ) );	}
 	FORCEINLINE u32					GetPixelIndex(u32 PixelX,u32 PixelY) const	{	return (PixelY * GetWidth() ) + PixelX;	}
 
-protected:
+	Bool							SetTextureData(const Type2<u16>& ImageSize, TBinary& ImageData);
+
+	FORCEINLINE Bool				HasChanged()						const	{	return m_HasChanged; }
+	FORCEINLINE void				SetHasChanged(Bool bChanged)				{	m_HasChanged = bChanged; }
+//protected:
 	virtual SyncBool			ImportData(TBinaryTree& Data);		//	load asset data out binary data
 	virtual SyncBool			ExportData(TBinaryTree& Data);		//	save asset data to binary data
 
@@ -64,7 +68,7 @@ protected:
 	TBinary						m_TextureData;	//	binary texture data
 	Type2<u16>					m_Size;
 	Bool						m_HasAlpha;		//	data has/hasnt got an alpha channel
+	Bool						m_HasChanged;
 };
-
 
 

@@ -16,7 +16,7 @@
 
 namespace TLCamera
 {
-	MacCameraController* m_CameraController;	
+	MacCameraController* m_CameraController = nil;	
 }
 
 using namespace TLCamera;
@@ -29,8 +29,13 @@ SyncBool Platform::Initialise()
 
 SyncBool Platform::Shutdown()
 {
-	if([m_CameraController IsConnected])
-		[m_CameraController DisconnectFromCamera];
+	if( [m_CameraController IsConnected] )
+	{
+		if(! [m_CameraController DisconnectFromCamera] )
+		{
+			return SyncFalse;
+		}
+	}
 	
 	// release the camera controller
 	[m_CameraController release];
@@ -59,6 +64,8 @@ Bool Platform::ConnectToCamera()
 		NSView* pMainView = [pWindow contentView];
 		
 		[pMainView addSubview: m_CameraController.view];
+		
+		
 		//[TLCore::Platform::g_pMacApp.window addSubview:m_CameraController.view];		
 	}
 	
@@ -77,3 +84,13 @@ Bool Platform::DisconnectFromCamera()
 	
 	return [m_CameraController DisconnectFromCamera];
 }
+
+
+void Platform::SubscribeToCamera(TLMessaging::TSubscriber* pSubscriber)
+{
+	if(m_CameraController)
+	{
+		[m_CameraController SubscribeToCamera:pSubscriber];
+	}
+}
+
