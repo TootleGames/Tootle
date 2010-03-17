@@ -203,7 +203,7 @@
 		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
 		// Use the address of the ipod touch obejct for the ID masked to ensure it's valid
-		TRef TouchRef = TLRef::CreateValidTRef((s32)(touch));	
+		TRef TouchRef = TLRef::GetValidTRef((u32)(touch));	
 		
 		/*
 #ifdef _DEBUG
@@ -249,7 +249,7 @@
 		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
 		// Use the address of the ipod touch obejct for the ID masked to ensure it's valid
-		TRef TouchRef = TLRef::CreateValidTRef((s32)(touch));	
+		TRef TouchRef = TLRef::GetValidTRef((u32)(touch));	
 		TLInput::Platform::IPod::TTouchData TouchData(TouchRef);
 		/*
 #ifdef _DEBUG
@@ -293,7 +293,7 @@
 		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
 		// Use the address of the ipod touch obejct for the ID masked to ensure it's valid
-		TRef TouchRef = TLRef::CreateValidTRef((s32)(touch));	
+		TRef TouchRef = TLRef::GetValidTRef((u32)(touch));	
 
 		/*
 #ifdef _DEBUG
@@ -337,7 +337,7 @@
 		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
 		// Use the address of the ipod touch obejct for the ID masked to ensure it's valid
-		TRef TouchRef = TLRef::CreateValidTRef((s32)(touch));
+		TRef TouchRef = TLRef::GetValidTRef((u32)(touch));
 		/*
 #ifdef _DEBUG
 		TString str;
