@@ -40,3 +40,9 @@ Bool Platform::DisconnectFromCamera()
 {
 	return FALSE;
 }
+
+void Platform::SubscribeToCamera(TLMessaging::TSubscriber* pSubscriber)
+{
+	
+}
+

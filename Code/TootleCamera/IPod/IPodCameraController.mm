@@ -25,11 +25,20 @@
 	if (self = [super init]) 
 	{
 		self.sourceType = UIImagePickerControllerSourceTypeCamera;
-		self.showsCameraControls = NO;
+
 		self.navigationBarHidden = YES;
+	
+#ifdef __MAC_OS_X_VERSION_MIN_REQUIRED
+		
+	// Note: Test the value explictly rather than __IPHONE_3_0 as the define won't be available when compiling against 
+	// the 2.2.1 SDK for example
+	#if __IPHONE_OS_VERSION_MIN_REQUIRED > 30000
+		self.showsCameraControls = NO;
 		self.toolbarHidden = YES;
 		self.wantsFullScreenLayout = YES;
-		self.cameraViewTransform = CGAffineTransformScale(self.cameraViewTransform, CAMERA_SCALAR, CAMERA_SCALAR);    				
+		self.cameraViewTransform = CGAffineTransformScale(self.cameraViewTransform, CAMERA_SCALAR, CAMERA_SCALAR);    			
+	#endif
+#endif
 	}
 	
 	return self;
@@ -80,16 +89,26 @@
 
 - (UIImage*)dumpOverlayViewToImage 
 {
-	CGSize imageSize = self.cameraOverlayView.bounds.size;
-	UIGraphicsBeginImageContext(imageSize);
+#ifdef __MAC_OS_X_VERSION_MIN_REQUIRED
 	
-	[self.cameraOverlayView.layer renderInContext:UIGraphicsGetCurrentContext()];
+	// Note: Test the value explictly rather than __IPHONE_3_0 as the define won't be available when compiling against 
+	// the 2.2.1 SDK for example
+	#if __IPHONE_OS_VERSION_MIN_REQUIRED > 30000
 	
-	UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
+		CGSize imageSize = self.cameraOverlayView.bounds.size;
+		UIGraphicsBeginImageContext(imageSize);
 	
-	UIGraphicsEndImageContext();
+		[self.cameraOverlayView.layer renderInContext:UIGraphicsGetCurrentContext()];
 	
-	return viewImage;
+		UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
+	
+		UIGraphicsEndImageContext();
+	
+		return viewImage;
+	#endif
+#endif
+	// Fails in pre iPhone OS 3.0 SDK
+	return nil;
 }
 
 - (UIImage*)addOverlayToBaseImage:(UIImage*)baseImage 

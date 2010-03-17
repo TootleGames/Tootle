@@ -284,13 +284,14 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>7</integer>
-									<integer>1</integer>
+									<integer>23</integer>
+									<integer>21</integer>
+									<integer>8</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {247, 617}}</string>
+							<string>{{0, 43}, {247, 617}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -327,7 +328,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TootleSimRelease.xcconfig</string>
+								<string>IPodCamera.mm</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -335,31 +336,37 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TootleSimRelease.xcconfig</string>
+										<string>IPodCamera.mm</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84C50BD8114FD59A007F096A</string>
+										<string>841636151150EE1000E13BE8</string>
 										<key>history</key>
 										<array>
-											<string>84A655E71118828E00B11F5C</string>
-											<string>84A655E81118828E00B11F5C</string>
 											<string>84A655E91118828E00B11F5C</string>
 											<string>84A655EA1118828E00B11F5C</string>
-											<string>84A655EB1118828E00B11F5C</string>
-											<string>84A655EC1118828E00B11F5C</string>
 											<string>84A655ED1118828E00B11F5C</string>
 											<string>84A655EE1118828E00B11F5C</string>
 											<string>84A655EF1118828E00B11F5C</string>
 											<string>84A655F01118828E00B11F5C</string>
 											<string>84A655F11118828E00B11F5C</string>
-											<string>84C50BD1114FD59A007F096A</string>
 											<string>84C50BD2114FD59A007F096A</string>
 											<string>84C50BD3114FD59A007F096A</string>
 											<string>84C50BD4114FD59A007F096A</string>
 											<string>84C50BD5114FD59A007F096A</string>
 											<string>84C50BD6114FD59A007F096A</string>
-											<string>84C50BD7114FD59A007F096A</string>
+											<string>841635F81150EDAA00E13BE8</string>
+											<string>841635F91150EDAA00E13BE8</string>
+											<string>841635FB1150EDAA00E13BE8</string>
+											<string>841635FD1150EDAA00E13BE8</string>
+											<string>841635FF1150EDAA00E13BE8</string>
+											<string>841636011150EDAA00E13BE8</string>
+											<string>8416360F1150EE1000E13BE8</string>
+											<string>841636101150EE1000E13BE8</string>
+											<string>841636111150EE1000E13BE8</string>
+											<string>841636121150EE1000E13BE8</string>
+											<string>841636131150EE1000E13BE8</string>
+											<string>841636141150EE1000E13BE8</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -371,14 +378,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1011, 475}}</string>
+								<string>{{0, 0}, {1011, 465}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 102 1280 676 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>475pt</string>
+							<string>465pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -391,14 +398,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 480}, {1011, 155}}</string>
+								<string>{{0, 470}, {1011, 165}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 102 1280 676 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>155pt</string>
+							<string>165pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -417,9 +424,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84C50BD9114FD59A007F096A</string>
+				<string>841636161150EE1000E13BE8</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84C50BDA114FD59A007F096A</string>
+				<string>841636171150EE1000E13BE8</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -638,7 +645,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>841B4A9D1111CAA800ACC2AE</string>
-				<string>84C50BDB114FD59A007F096A</string>
+				<string>841636181150EE1000E13BE8</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
