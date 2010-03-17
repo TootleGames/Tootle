@@ -1,16 +1,16 @@
 // !$*UTF8*$!
 {
-	842A2E2F104ECC5700051E4B /* PBXTextBookmark */ = {
+	841633D711503AE800E13BE8 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = 842A2E30104ECC5700051E4B /* TPhysicsNode.h */;
-		name = "TPhysicsNode.h: 93";
+		fRef = 841633D811503AE800E13BE8 /* TPhysicsNode.h */;
+		name = "TPhysicsNode.h: 94";
 		rLen = 0;
 		rLoc = 4300;
 		rType = 0;
 		vrLen = 1378;
-		vrLoc = 4157;
+		vrLoc = 4195;
 	};
-	842A2E30104ECC5700051E4B /* TPhysicsNode.h */ = {
+	841633D811503AE800E13BE8 /* TPhysicsNode.h */ = {
 		isa = PBXFileReference;
 		name = TPhysicsNode.h;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleGame/IPod/../../TootlePhysics/TPhysicsNode.h;
@@ -28,6 +28,7 @@
 	};
 	842A2E42104ECCDD00051E4B /* TPhysicsNode.h */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
 		name = TPhysicsNode.h;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleGame/IPod/../../TootlePhysics/TPhysicsNode.h;
 		sourceTree = "<absolute>";
@@ -42,16 +43,6 @@
 		vrLen = 455;
 		vrLoc = 23832;
 	};
-	8461C1320F5C142700ED9509 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C10AC60F0A7DF900B2DF7A /* TPhysicsNode.cpp */;
-		name = "TPhysicsNode.cpp: 402";
-		rLen = 0;
-		rLoc = 11280;
-		rType = 0;
-		vrLen = 703;
-		vrLoc = 10984;
-	};
 	8488F46B0F8A86E2008A08AF /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84C10ABF0F0A7DF900B2DF7A /* TCollisionShape.h */;
@@ -63,26 +54,6 @@
 		vrLoc = 1920;
 	};
 	8488F46C0F8A86E2008A08AF /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C10AC20F0A7DF900B2DF7A /* TLPhysics.cpp */;
-		name = "TLPhysics.cpp: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 489;
-		vrLoc = 893;
-	};
-	8488F46E0F8A86E2008A08AF /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C10ABF0F0A7DF900B2DF7A /* TCollisionShape.h */;
-		name = "TCollisionShape.h: 26";
-		rLen = 15;
-		rLoc = 469;
-		rType = 0;
-		vrLen = 706;
-		vrLoc = 1920;
-	};
-	8488F46F0F8A86E2008A08AF /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84C10AC20F0A7DF900B2DF7A /* TLPhysics.cpp */;
 		name = "TLPhysics.cpp: 1";
@@ -160,27 +131,19 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 273599676;
-			PBXWorkspaceStateSaveDate = 273599676;
+			PBXPerProjectTemplateStateSaveDate = 290470626;
+			PBXWorkspaceStateSaveDate = 290470626;
 		};
 		perUserProjectItems = {
-			842A2E2F104ECC5700051E4B /* PBXTextBookmark */ = 842A2E2F104ECC5700051E4B /* PBXTextBookmark */;
+			841633D711503AE800E13BE8 /* PBXTextBookmark */ = 841633D711503AE800E13BE8 /* PBXTextBookmark */;
 			842A2E41104ECCDD00051E4B /* PBXTextBookmark */ = 842A2E41104ECCDD00051E4B /* PBXTextBookmark */;
 			8442318B0FF919FE0024EFEF /* PBXTextBookmark */ = 8442318B0FF919FE0024EFEF /* PBXTextBookmark */;
-			8461C1320F5C142700ED9509 /* PBXTextBookmark */ = 8461C1320F5C142700ED9509 /* PBXTextBookmark */;
 			8488F46B0F8A86E2008A08AF /* PBXTextBookmark */ = 8488F46B0F8A86E2008A08AF /* PBXTextBookmark */;
 			8488F46C0F8A86E2008A08AF /* PBXTextBookmark */ = 8488F46C0F8A86E2008A08AF /* PBXTextBookmark */;
-			8488F46E0F8A86E2008A08AF /* PBXTextBookmark */ = 8488F46E0F8A86E2008A08AF /* PBXTextBookmark */;
-			8488F46F0F8A86E2008A08AF /* PBXTextBookmark */ = 8488F46F0F8A86E2008A08AF /* PBXTextBookmark */;
 			84C3EFA00FB82C81001BBE93 /* PBXTextBookmark */ = 84C3EFA00FB82C81001BBE93 /* PBXTextBookmark */;
-			84C3EFA20FB82C81001BBE93 /* PBXTextBookmark */ = 84C3EFA20FB82C81001BBE93 /* PBXTextBookmark */;
 			84C3F2E60FB84AB8001BBE93 /* PBXTextBookmark */ = 84C3F2E60FB84AB8001BBE93 /* PBXTextBookmark */;
-			84C3F2E80FB84AB8001BBE93 /* PBXTextBookmark */ = 84C3F2E80FB84AB8001BBE93 /* PBXTextBookmark */;
 			84C3F30D0FB84B67001BBE93 /* PBXTextBookmark */ = 84C3F30D0FB84B67001BBE93 /* PBXTextBookmark */;
-			84C3F30F0FB84B67001BBE93 /* PBXTextBookmark */ = 84C3F30F0FB84B67001BBE93 /* PBXTextBookmark */;
 			84C80E061040C2F8004FC72E /* PBXTextBookmark */ = 84C80E061040C2F8004FC72E /* PBXTextBookmark */;
-			84C80E081040C2F8004FC72E /* PBXTextBookmark */ = 84C80E081040C2F8004FC72E /* PBXTextBookmark */;
-			84E21B830FF252C60081287A /* PBXTextBookmark */ = 84E21B830FF252C60081287A /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84C108B20F0A760800B2DF7A /* Source Control */;
 		userBuildSettings = {
@@ -191,6 +154,9 @@
 		fallbackIsa = XCSourceControlManager;
 		isSCMEnabled = 0;
 		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
 		};
 	};
 	84C108B30F0A760800B2DF7A /* Code sense */ = {
@@ -266,16 +232,6 @@
 		vrLen = 418;
 		vrLoc = 0;
 	};
-	84C3EFA20FB82C81001BBE93 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C10AC40F0A7DF900B2DF7A /* TPhysicsgraph.cpp */;
-		name = "TPhysicsgraph.cpp: 24";
-		rLen = 35;
-		rLoc = 564;
-		rType = 0;
-		vrLen = 418;
-		vrLoc = 0;
-	};
 	84C3F2E60FB84AB8001BBE93 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84C10AC80F0A7DF900B2DF7A /* TPhysicsNodeSphere.cpp */;
@@ -286,27 +242,7 @@
 		vrLen = 856;
 		vrLoc = 759;
 	};
-	84C3F2E80FB84AB8001BBE93 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C10AC80F0A7DF900B2DF7A /* TPhysicsNodeSphere.cpp */;
-		name = "TPhysicsNodeSphere.cpp: 43";
-		rLen = 0;
-		rLoc = 1149;
-		rType = 0;
-		vrLen = 856;
-		vrLoc = 759;
-	};
 	84C3F30D0FB84B67001BBE93 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C10AC50F0A7DF900B2DF7A /* TPhysicsgraph.h */;
-		name = "TPhysicsgraph.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 300;
-		vrLoc = 0;
-	};
-	84C3F30F0FB84B67001BBE93 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84C10AC50F0A7DF900B2DF7A /* TPhysicsgraph.h */;
 		name = "TPhysicsgraph.h: 1";
@@ -332,25 +268,5 @@
 		rType = 0;
 		vrLen = 315;
 		vrLoc = 0;
-	};
-	84C80E081040C2F8004FC72E /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C10AC30F0A7DF900B2DF7A /* TLPhysics.h */;
-		name = "TLPhysics.h: 6";
-		rLen = 0;
-		rLoc = 119;
-		rType = 0;
-		vrLen = 315;
-		vrLoc = 0;
-	};
-	84E21B830FF252C60081287A /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C10AC70F0A7DF900B2DF7A /* TPhysicsNode.h */;
-		name = "TPhysicsNode.h: 110";
-		rLen = 15;
-		rLoc = 5814;
-		rType = 0;
-		vrLen = 1897;
-		vrLoc = 5228;
 	};
 }

@@ -130,20 +130,20 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 285085695;
-			PBXWorkspaceStateSaveDate = 285085695;
+			PBXPerProjectTemplateStateSaveDate = 290470649;
+			PBXWorkspaceStateSaveDate = 290470649;
 		};
 		perUserProjectItems = {
 			84135E1F0FFB54DC00FD81A5 /* PBXTextBookmark */ = 84135E1F0FFB54DC00FD81A5 /* PBXTextBookmark */;
 			84135E390FFB555C00FD81A5 /* PBXTextBookmark */ = 84135E390FFB555C00FD81A5 /* PBXTextBookmark */;
 			84135E3A0FFB555C00FD81A5 /* PBXTextBookmark */ = 84135E3A0FFB555C00FD81A5 /* PBXTextBookmark */;
 			84135E3B0FFB555C00FD81A5 /* PBXTextBookmark */ = 84135E3B0FFB555C00FD81A5 /* PBXTextBookmark */;
+			841633E911503B0600E13BE8 /* PBXTextBookmark */ = 841633E911503B0600E13BE8 /* PBXTextBookmark */;
 			8418FBD50F4EFE5400B956C9 /* PBXTextBookmark */ = 8418FBD50F4EFE5400B956C9 /* PBXTextBookmark */;
 			847D66C010FE17650082ACAC /* PBXTextBookmark */ = 847D66C010FE17650082ACAC /* PBXTextBookmark */;
 			847D66C110FE17650082ACAC /* PBXTextBookmark */ = 847D66C110FE17650082ACAC /* PBXTextBookmark */;
 			847D66C210FE17650082ACAC /* PBXTextBookmark */ = 847D66C210FE17650082ACAC /* PBXTextBookmark */;
 			847D66C310FE17650082ACAC /* PBXTextBookmark */ = 847D66C310FE17650082ACAC /* PBXTextBookmark */;
-			847DF8740FD9359B005F9EDC /* PBXTextBookmark */ = 847DF8740FD9359B005F9EDC /* PBXTextBookmark */;
 			847DF88D0FD9705F005F9EDC /* PBXTextBookmark */ = 847DF88D0FD9705F005F9EDC /* PBXTextBookmark */;
 			84BBBFBC0FD47C250046E316 /* PBXTextBookmark */ = 84BBBFBC0FD47C250046E316 /* PBXTextBookmark */;
 			84BBBFBD0FD47C250046E316 /* PBXTextBookmark */ = 84BBBFBD0FD47C250046E316 /* PBXTextBookmark */;
@@ -264,9 +264,9 @@
 	};
 	841007890EF92CC000542F4A /* TEffect.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 767}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 780}}";
 			sepNavSelRange = "{520, 0}";
-			sepNavVisRange = "{308, 787}";
+			sepNavVisRange = "{308, 775}";
 		};
 	};
 	8410078A0EF92CC000542F4A /* TLInput.h */ = {
@@ -329,6 +329,16 @@
 		rType = 0;
 		vrLen = 875;
 		vrLoc = 499;
+	};
+	841633E911503B0600E13BE8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 841007890EF92CC000542F4A /* TEffect.h */;
+		name = "TEffect.h: 23";
+		rLen = 0;
+		rLoc = 520;
+		rType = 0;
+		vrLen = 775;
+		vrLoc = 308;
 	};
 	8418FBD50F4EFE5400B956C9 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -428,16 +438,6 @@
 		vrLoc = 4113;
 	};
 	847D66C310FE17650082ACAC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 841007890EF92CC000542F4A /* TEffect.h */;
-		name = "TEffect.h: 23";
-		rLen = 0;
-		rLoc = 520;
-		rType = 0;
-		vrLen = 787;
-		vrLoc = 308;
-	};
-	847DF8740FD9359B005F9EDC /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 841007890EF92CC000542F4A /* TEffect.h */;
 		name = "TEffect.h: 23";

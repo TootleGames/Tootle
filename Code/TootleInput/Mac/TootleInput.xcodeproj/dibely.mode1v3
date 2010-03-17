@@ -287,13 +287,12 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>24</integer>
-									<integer>4</integer>
-									<integer>0</integer>
+									<integer>33</integer>
+									<integer>32</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 65}, {186, 611}}</string>
+							<string>{{0, 78}, {186, 611}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -340,7 +339,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>841B46591110A57700ACC2AE</string>
+										<string>84C50A32114FC5FB007F096A</string>
 										<key>history</key>
 										<array>
 											<string>842B25FB105E9A11003AEB96</string>
@@ -382,7 +381,7 @@
 											<string>84E751721104DB8400CB69BA</string>
 											<string>841B46471110A54100ACC2AE</string>
 											<string>841B46571110A57700ACC2AE</string>
-											<string>841B46581110A57700ACC2AE</string>
+											<string>841B46591110A57700ACC2AE</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -394,14 +393,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1072, 355}}</string>
+								<string>{{0, 0}, {1072, 346}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 108 1280 670 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>355pt</string>
+							<string>346pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -414,14 +413,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 360}, {1072, 269}}</string>
+								<string>{{0, 351}, {1072, 278}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 108 1280 670 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>269pt</string>
+							<string>278pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -440,9 +439,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>841B465A1110A57700ACC2AE</string>
+				<string>84C50A33114FC5FB007F096A</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>841B465B1110A57700ACC2AE</string>
+				<string>84C50A34114FC5FB007F096A</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -620,6 +619,8 @@
 							<string>242pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -659,7 +660,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>8418F2CD0F4DBFFD00B956C9</string>
-				<string>841B465C1110A57700ACC2AE</string>
+				<string>84C50A31114FC5F2007F096A</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

@@ -238,8 +238,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -292,7 +290,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 11}, {186, 560}}</string>
+							<string>{{0, 0}, {186, 560}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -322,12 +320,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TTessellate.h</string>
+								<string>TShape.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -335,11 +335,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TTessellate.h</string>
+										<string>TShape.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>847DC05810C4591F008ECBD6</string>
+										<string>8456C9D7114A5B9600E3E6FE</string>
 										<key>history</key>
 										<array>
 											<string>846C17FA109742D90098DFAF</string>
@@ -362,8 +362,8 @@
 											<string>8482D5C210BEEA11009067B8</string>
 											<string>8482D5C310BEEA11009067B8</string>
 											<string>847DC05510C4591F008ECBD6</string>
-											<string>847DC05610C4591F008ECBD6</string>
-											<string>847DC05710C4591F008ECBD6</string>
+											<string>8456C9D5114A5B9600E3E6FE</string>
+											<string>8456C9D6114A5B9600E3E6FE</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -375,14 +375,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {881, 321}}</string>
+								<string>{{0, 0}, {881, 302}}</string>
 								<key>RubberWindowFrame</key>
 								<string>170 128 1089 619 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>321pt</string>
+							<string>302pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -395,14 +395,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 326}, {881, 252}}</string>
+								<string>{{0, 307}, {881, 271}}</string>
 								<key>RubberWindowFrame</key>
 								<string>170 128 1089 619 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>252pt</string>
+							<string>271pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -421,9 +421,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>847DC05910C4591F008ECBD6</string>
+				<string>8456C9D8114A5B9600E3E6FE</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>847DC05A10C4591F008ECBD6</string>
+				<string>8456C9D9114A5B9600E3E6FE</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -561,7 +561,6 @@
 	<array>
 		<string>8418F3E50F4DC54400B956C9</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleMaths/Mac/TootleMaths.xcodeproj</string>
-		<string>1C530D57069F1CE1000CFCEE</string>
 	</array>
 	<key>WindowString</key>
 	<string>170 128 1089 619 0 0 1280 778 </string>
@@ -641,7 +640,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>8418F3E50F4DC54400B956C9</string>
-				<string>847DC05B10C4591F008ECBD6</string>
+				<string>8456C9DA114A5B9600E3E6FE</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

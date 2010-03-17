@@ -285,13 +285,13 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>29</integer>
+									<integer>26</integer>
 									<integer>4</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 319}, {186, 611}}</string>
+							<string>{{0, 0}, {186, 611}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -328,7 +328,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TLFileSys.cpp</string>
+								<string>TFilePng.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -336,11 +336,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TLFileSys.cpp</string>
+										<string>TFilePng.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>84CCD9C81108B812002900EA</string>
+										<string>84C50A52114FC65C007F096A</string>
 										<key>history</key>
 										<array>
 											<string>8418F4010F4DC5F100B956C9</string>
@@ -361,9 +361,7 @@
 											<string>84046A40108DE351000E2C72</string>
 											<string>84046A41108DE351000E2C72</string>
 											<string>84046A52108DEB73000E2C72</string>
-											<string>8464DC3810A2D4D200EAF14E</string>
 											<string>8464DC4E10A2D5DA00EAF14E</string>
-											<string>8464DCB310A2DFE800EAF14E</string>
 											<string>8464DCB610A2DFE800EAF14E</string>
 											<string>8464DCB810A2DFE800EAF14E</string>
 											<string>840A8CC410D64BE800F8960C</string>
@@ -378,12 +376,19 @@
 											<string>84136546110496E7007A948A</string>
 											<string>84136547110496E7007A948A</string>
 											<string>84136552110497E5007A948A</string>
-											<string>84136553110497E5007A948A</string>
 											<string>84CCD9C01108B76D002900EA</string>
 											<string>84CCD9C11108B76D002900EA</string>
-											<string>84CCD9C21108B76D002900EA</string>
-											<string>84CCD9C31108B76D002900EA</string>
-											<string>84CCD9C41108B76D002900EA</string>
+											<string>84F32D2B111AD54E006E1DE7</string>
+											<string>84F32D2C111AD54E006E1DE7</string>
+											<string>847133F7113E85D800B58675</string>
+											<string>8471359D113FB0D300B58675</string>
+											<string>8471359F113FB0D300B58675</string>
+											<string>84F848C511468B8D0090EA4D</string>
+											<string>84F848C611468B8D0090EA4D</string>
+											<string>84F848C711468B8D0090EA4D</string>
+											<string>84F848C811468B8D0090EA4D</string>
+											<string>84F848C911468B8D0090EA4D</string>
+											<string>84F848CB11468B8D0090EA4D</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -395,14 +400,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1072, 414}}</string>
+								<string>{{0, 0}, {1072, 376}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 108 1280 670 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>414pt</string>
+							<string>376pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -415,14 +420,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 419}, {1072, 210}}</string>
+								<string>{{0, 381}, {1072, 248}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 108 1280 670 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>210pt</string>
+							<string>248pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -441,9 +446,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>84CCD9C61108B76D002900EA</string>
+				<string>84C50A53114FC65C007F096A</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>84CCD9C71108B76D002900EA</string>
+				<string>84C50A54114FC65C007F096A</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -579,7 +584,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>8418F2DF0F4DC07100B956C9</string>
 		<string>/Users/dibely/Documents/Tootle/Tootle/Code/TootleFilesys/Mac/TootleFilesys.xcodeproj</string>
 	</array>
@@ -661,7 +665,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>8418F2DF0F4DC07100B956C9</string>
-				<string>84CCD9B61108B769002900EA</string>
+				<string>84C50A55114FC65C007F096A</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

@@ -372,12 +372,24 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
+			PBXConfiguration.PBXFileTableDataSource3.PBXFindDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFindDataSource_LocationID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					200,
+					847,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFindDataSource_MessageID,
+					PBXFindDataSource_LocationID,
+				);
+			};
 			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
 				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					301,
+					793,
 					60,
 					20,
 					48,
@@ -394,8 +406,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 286303599;
-			PBXWorkspaceStateSaveDate = 286303599;
+			PBXPerProjectTemplateStateSaveDate = 290440650;
+			PBXWorkspaceStateSaveDate = 290440650;
 		};
 		perUserProjectItems = {
 			8413618410FF0965007A948A /* PBXTextBookmark */ = 8413618410FF0965007A948A /* PBXTextBookmark */;
@@ -422,7 +434,6 @@
 			84154A4C1068214A006FA797 /* PBXTextBookmark */ = 84154A4C1068214A006FA797 /* PBXTextBookmark */;
 			841B46471110A54100ACC2AE /* PBXTextBookmark */ = 841B46471110A54100ACC2AE /* PBXTextBookmark */;
 			841B46571110A57700ACC2AE /* PBXTextBookmark */ = 841B46571110A57700ACC2AE /* PBXTextBookmark */;
-			841B46581110A57700ACC2AE /* PBXTextBookmark */ = 841B46581110A57700ACC2AE /* PBXTextBookmark */;
 			841B46591110A57700ACC2AE /* PBXTextBookmark */ = 841B46591110A57700ACC2AE /* PBXTextBookmark */;
 			842B25FB105E9A11003AEB96 /* PBXTextBookmark */ = 842B25FB105E9A11003AEB96 /* PBXTextBookmark */;
 			842B263E105ED6D5003AEB96 /* PBXTextBookmark */ = 842B263E105ED6D5003AEB96 /* PBXTextBookmark */;
@@ -437,6 +448,7 @@
 			8492046010614117007EF52A /* PBXTextBookmark */ = 8492046010614117007EF52A /* PBXTextBookmark */;
 			8492046310614117007EF52A /* PBXTextBookmark */ = 8492046310614117007EF52A /* PBXTextBookmark */;
 			849204C710615B20007EF52A /* PBXTextBookmark */ = 849204C710615B20007EF52A /* PBXTextBookmark */;
+			84C50A32114FC5FB007F096A /* PBXTextBookmark */ = 84C50A32114FC5FB007F096A /* PBXTextBookmark */;
 			84E751531104DAF500CB69BA /* PBXTextBookmark */ = 84E751531104DAF500CB69BA /* PBXTextBookmark */;
 			84E751721104DB8400CB69BA /* PBXTextBookmark */ = 84E751721104DB8400CB69BA /* PBXTextBookmark */;
 		};
@@ -492,9 +504,9 @@
 	};
 	8418F00C0F4DB7F400B956C9 /* TLInput.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1188, 6981}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1160, 7371}}";
 			sepNavSelRange = "{8619, 38}";
-			sepNavVisRange = "{0, 736}";
+			sepNavVisRange = "{176, 797}";
 		};
 	};
 	8418F00D0F4DB7F400B956C9 /* TLInput.h */ = {
@@ -566,16 +578,6 @@
 		rType = 0;
 		vrLen = 517;
 		vrLoc = 703;
-	};
-	841B46581110A57700ACC2AE /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8418F00C0F4DB7F400B956C9 /* TLInput.cpp */;
-		name = "TLInput.cpp: 311";
-		rLen = 38;
-		rLoc = 8619;
-		rType = 0;
-		vrLen = 668;
-		vrLoc = 8929;
 	};
 	841B46591110A57700ACC2AE /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -702,9 +704,9 @@
 	};
 	842B26F410602757003AEB96 /* PCInput.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1328, 1495}}";
-			sepNavSelRange = "{2316, 19}";
-			sepNavVisRange = "{1516, 866}";
+			sepNavIntBoundsRect = "{{0, 0}, {1328, 1560}}";
+			sepNavSelRange = "{1833, 165}";
+			sepNavVisRange = "{1122, 1260}";
 		};
 	};
 	842B273610603F82003AEB96 /* PBXTextBookmark */ = {
@@ -872,6 +874,16 @@
 			sepNavSelRange = "{4155, 0}";
 			sepNavVisRange = "{3876, 537}";
 		};
+	};
+	84C50A32114FC5FB007F096A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8418F00C0F4DB7F400B956C9 /* TLInput.cpp */;
+		name = "TLInput.cpp: 311";
+		rLen = 38;
+		rLoc = 8619;
+		rType = 0;
+		vrLen = 797;
+		vrLoc = 176;
 	};
 	84E751531104DAF500CB69BA /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
