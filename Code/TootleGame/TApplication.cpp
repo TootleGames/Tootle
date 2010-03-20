@@ -89,7 +89,6 @@ SyncBool TApplication::CreateLocalFilesystems()
 {
 	// Create the local read-only files sytem
 	TRef FileSystemRef;
-	
 	TTempString Directory;
 
 	if(!TLFileSys::GetAssetDirectory(Directory))
@@ -97,29 +96,46 @@ SyncBool TApplication::CreateLocalFilesystems()
 
 	TLDebug_Print(Directory);
 
-	if(TLFileSys::CreateLocalFileSys( FileSystemRef, Directory, FALSE ) == SyncFalse)
+	SyncBool Result = TLFileSys::CreateLocalFileSys( FileSystemRef, Directory, FALSE );
+	if ( Result == SyncWait )
 	{
-		TLDebug_Break("failed to create local file system (read-only)");
-		return SyncFalse;
+		return SyncWait;
 	}
-	
-	m_FileSystemRefs.Add(FileSystemRef);
-	FileSystemRef.SetInvalid();
-	
+	else if ( Result == SyncFalse)
+	{
+		if ( !TLDebug_Break("failed to create local file system (read-only)") )
+			return SyncFalse;
+	}
+	else
+	{
+		m_FileSystemRefs.Add(FileSystemRef);
+		FileSystemRef.SetInvalid();
+	}
+
 	// Now create the local writable file system
 	if(!TLFileSys::GetUserDirectory(Directory))
-		return SyncFalse;
-	
-	TLDebug_Print(Directory);
-
-	if(TLFileSys::CreateLocalFileSys( FileSystemRef, Directory, TRUE ) == SyncFalse)	
 	{
-		TLDebug_Break("failed to create local file system (writable)");	
-		return SyncFalse;
+		//	gr: no local user file sys, game is read-only so success
+		return SyncTrue;
 	}
 	
-	m_FileSystemRefs.Add(FileSystemRef);
-	
+	TLDebug_Print(Directory);
+	Result = TLFileSys::CreateLocalFileSys( FileSystemRef, Directory, TRUE );
+	if ( Result == SyncWait )
+	{
+		return SyncWait;
+	}
+	else if ( Result == SyncFalse)	
+	{
+		//	gr; return synctrue and allow read-only game... (writable assets go to virtual fs)
+		if ( !TLDebug_Break("failed to create local file system (writable)") )
+			return SyncFalse;
+	}
+	else if ( Result == SyncTrue )
+	{
+		m_FileSystemRefs.Add(FileSystemRef);
+	}
+
 	// Success
 	return SyncTrue;
 }
