@@ -39,8 +39,6 @@ namespace TLInput
 			
 			const u32 MAX_CURSOR_POSITIONS = 4;
 			TFixedArray<int2, MAX_CURSOR_POSITIONS>					g_aCursorPositions(MAX_CURSOR_POSITIONS);
-			//TFixedArray<float, MAX_CURSOR_POSITIONS>				g_aIpodButtonState;		// DB - MAY BE ABLE TO REMOVE THIS AND USE THE NEW TOUCH OBJECT ARRAY
-						
 			TFixedArray< TRef, MAX_CURSOR_POSITIONS>				g_ActiveTouchObjects(MAX_CURSOR_POSITIONS);	// Fixed array of touch object ID's
 			TArray<TTouchObject>									g_TouchObjects;			// Dynamic array of touch objects that persist over time
 						
@@ -650,18 +648,6 @@ Bool Platform::IPod::UpdateVirtualDevice(TLInput::TInputDevice& Device)
 	}
 	
 	return TRUE;
-}
-
-
-int2 Platform::GetCursorPosition(u8 uIndex)
-{
-	if(uIndex < Platform::IPod::MAX_CURSOR_POSITIONS)
-	{
-		// Get cursor position from array
-		return Platform::IPod::g_aCursorPositions[uIndex];
-	}
-	
-	return int2(0,0);
 }
 
 

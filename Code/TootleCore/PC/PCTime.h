@@ -10,7 +10,7 @@
 #endif
 
 #include "../TLTime.h"
-#include "PCCore.h"
+#include <TootleGui/PC/PCGui.h>	//	windows headers
 
 
 namespace TLTime
@@ -26,4 +26,5 @@ namespace TLTime
 		void		GetTimestampFromTickCount(TTimestamp& Timestamp,u32 TickCount);		//	convert win32 tick count to timestamp
 	}
 }
+
 

@@ -15,6 +15,9 @@ namespace TLMessaging
 */
 class TLMessaging::TPublisherSubscriber : public TPublisher, public TSubscriber
 {
+public:
+	virtual TRefRef			GetPublisherRef() const		{	return GetSubscriberRef();	}
+
 };
 
 

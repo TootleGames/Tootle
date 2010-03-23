@@ -8,11 +8,4 @@
  */
 
 #pragma once
-
-#include "../TString.h"
-#include <Foundation/NSString.h>
-
-namespace TLString
-{	
-	NSString* ConvertToUnicharString(const TString& String, Bool bStripTerminator=FALSE);
-}
+#include "../Mac/MacString.h"

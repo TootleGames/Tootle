@@ -1,7 +1,7 @@
 #include "TLInput.h"
 #include <TootleCore/TEventChannel.h>
 #include <TootleCore/TLTime.h>
-#include <TootleCore/TLCoreMisc.h>
+#include <TootleCore/TLCore.h>
 
 #include <ctype.h> // for tolower routine
 

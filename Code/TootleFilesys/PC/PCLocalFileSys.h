@@ -4,10 +4,11 @@
 
 -------------------------------------------------------*/
 #pragma once
-#include "../TLFileSys.h"
+#include "PCFileSys.h"
 
-
-#include <TootleCore/TLCore.h>
+//	need to include windows file find defintions.
+//	gr: this may need wx wrappers for the find-file stuff in wx builds...
+#include <TootleGui/PC/PCGui.h>
 
 namespace TLFileSys
 {

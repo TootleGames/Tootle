@@ -9,12 +9,15 @@
 
 #import "IPodVirtualKeyboard.h"
 
-#include <TootleCore/IPod/IPodApp.h>
 #include <TootleCore/TRef.h>
 #include <TootleCore/IPod/IPodString.h>
 
 #include "IPodInput.h"
 
+//	gr: need the screen and gui to get hold of the window to attach the keyboard to
+#include <TootleRender/TScreen.h>
+#include <TootleRender/TScreenManager.h>
+#include <TootleGui/IPod/IPodWindow.h>
 
 // the amount of vertical shift upwards keep the text field in view as the keyboard appears
 #define kOFFSET_FOR_KEYBOARD					150.0
@@ -79,11 +82,25 @@
 
 
 	[initialString release];
+
+	//	gr: get the window from the default screen
+	//	gr: todo; get the window from this [subview]'s parent/view owner - which is a window.
+	TLRender::TScreen* pScreen = TLRender::g_pScreenManager->GetDefaultScreen();
+	TLGui::TWindow* pWindow = pScreen ? pScreen->GetWindow() : NULL;
+	TLGui::Platform::Window* pPlatformWindow = static_cast<TLGui::Platform::Window*>( pWindow );
+	UIWindow* pUiWindow = pPlatformWindow ? pPlatformWindow->m_pWindow : NULL;
 	
+	//	can't get a window to attach to, probably want this function to fail rather than fail silently
+	if ( !pUiWindow )
+	{
+		TLDebug_Break("Failed to find window to attach text field to");
+		return;
+	}
+
 	// DB - The plan was to add the controller as a subview of the window and then the text as a subview of the controller.
 	// Alas for some reaosn that doesn't quite work so now the plan is to simply add the text as a subview of the window.
 	//[self.view addSubview:m_textField];
-	[TLCore::Platform::g_pIPodApp.window addSubview:m_textField];
+	[pUiWindow addSubview:m_textField];
 
 	[m_textField becomeFirstResponder];
 	
@@ -187,15 +204,25 @@
 
 using namespace TLInput;
 
-Bool Platform::IPod::CreateVirtualKeyboard()
+Bool TLInput::Platform::IPod::CreateVirtualKeyboard()
 {
-#ifdef ENABLE_VIRTUAL_KEYBOARD	
-	g_TextFieldViewController = [[TextFieldController alloc] init];
+#ifdef ENABLE_VIRTUAL_KEYBOARD
+	if ( !g_TextFieldViewController )
+		g_TextFieldViewController = [[TextFieldController alloc] init];
 	
 	//[g_TextFieldViewController loadView];
 	
 	// add this a subview of the main window
-	[TLCore::Platform::g_pIPodApp.window addSubview: g_TextFieldViewController.view];
+	TLRender::TScreen* pScreen = TLRender::g_pScreenManager->GetDefaultScreen();
+	TLGui::TWindow* pWindow = pScreen ? pScreen->GetWindow() : NULL;
+	TLGui::Platform::Window* pPlatformWindow = static_cast<TLGui::Platform::Window*>( pWindow );
+	UIWindow* pUiWindow = pPlatformWindow ? pPlatformWindow->m_pWindow : NULL;
+	
+	//	can't get a window to attach to, probably want this function to fail rather than fail silently
+	if ( !pUiWindow )
+		return false;
+	
+	[pUiWindow addSubview: g_TextFieldViewController.view];
 
 
 	/*

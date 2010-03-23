@@ -5,9 +5,9 @@
 	#error PC file should not be included in ansi builds
 #endif
 
-#include "../TLCore.h"
+#include <TootleGui/PC/PCGui.h>	//	windows headers
 
-#include "process.h"	// threads - may want to use pthreads lib instead for maximum portability
+#include <process.h>	// threads - may want to use pthreads lib instead for maximum portability
 
 
 namespace TLThread
@@ -63,8 +63,8 @@ public:
 	}
 
 private:
-	T*					m_pThreadClass;
-	HANDLE		m_ThreadHandle;
+	T*				m_pThreadClass;
+	HANDLE			m_ThreadHandle;
 	unsigned int	m_uiThreadID;
 };
 

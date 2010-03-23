@@ -9,6 +9,10 @@ Bool TLMessaging::TPublisher::Subscribe(TSubscriber* pSubscriber)
 	if ( !AddSubscriber(pSubscriber) )
 		return FALSE;
 	
+	TTempString Debug_String;
+	TRef PublisherRef = this->GetPublisherRef();
+	Debug_String << PublisherRef << " new subscriber " << pSubscriber->GetSubscriberRef();
+	TLDebug_Print( Debug_String );
 	return pSubscriber->AddPublisher(this);
 }
 
@@ -18,6 +22,10 @@ Bool TLMessaging::TPublisher::Unsubscribe(TSubscriber* pSubscriber)
 	if ( !RemoveSubscriber(pSubscriber) )
 		return FALSE;
 	
+	TTempString Debug_String;
+	Debug_String << this->GetPublisherRef() << " removed subscriber " << pSubscriber->GetSubscriberRef();
+	TLDebug_Print( Debug_String );
+
 	return pSubscriber->RemovePublisher(this);
 }
 

@@ -48,6 +48,9 @@
 //	small helper function to get the size of a literal array
 #define sizeofarray(array)		( sizeof( (array) ) / sizeof( (array)[0] ) )
 
+//	small helper function to get the size of a literal array
+#define sizeofarray(array)		( sizeof( (array) ) / sizeof( (array)[0] ) )
+
 //-------------------------------------------------------
 //	basic types
 //-------------------------------------------------------
@@ -103,7 +106,10 @@ TLCompileAssert( sizeof(TChar32) == sizeof(u32), "TChar32 not setup correctly." 
 
 
 
-
+//	gr: Remove these and use the c++ true and false in the code instead. or True/False to go with Bool
+//	BOOL = TRUE/FALSE	//	c, defined randomly by different headers on different platforms
+//	bool = true/false	//	c++, defined by compiler
+//	Bool = True/False	//	non-existant.. safe to "overload"
 #ifndef TRUE
 	#define TRUE				true
 #endif

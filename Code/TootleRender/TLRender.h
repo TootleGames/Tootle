@@ -21,19 +21,18 @@ namespace TLMaths
 
 namespace TLRender
 {
-
-	//	forward declaration of platform specific implementations
-	namespace Platform
-	{
-		SyncBool	Init();
-		SyncBool	Shutdown();
-	}
+	FORCEINLINE SyncBool Init()			{	return SyncTrue;	}
+	FORCEINLINE SyncBool Shutdown()		{	return SyncTrue;	}
 
 	extern u32				g_PolyCount;
 	extern u32				g_VertexCount;
 
+	//	todo: move to rasteriser
 	namespace Opengl
 	{
+		SyncBool				Init();						//	init opengl
+		SyncBool				Shutdown();					//	cleanup opengl
+
 		FORCEINLINE Bool		Debug_CheckForError();
 
 		Bool					BindVertexes(const TArray<float3>* pVertexes);
@@ -71,7 +70,6 @@ namespace TLRender
 		FORCEINLINE void		EnablePointSprites(Bool Enable);
 		FORCEINLINE void		EnablePointSizeUVMapping(Bool Enable);
 
-		void Shutdown();
 
 		//	platform specific implementations - dumb - just do whatever is specified
 		//	gr: if your code cannot resolve these functions, include the platform header 
@@ -109,10 +107,11 @@ namespace TLRender
 }
 
 
-
 //	gr: because I made the platform opengl calls inline (for super speed) we have to include the platform header
+//	gr: want to remove this asap. Probably when rasteriser goes in.
 #if defined(TL_TARGET_PC) && defined(_MSC_EXTENSIONS)
-	#include "PC/PCRender.h"
+	//	gr: don't include PC header here, it causes compile errors where GetMessage gets turned into GetMessageW because of the windows include
+	//#include "PC/PCRender.h"
 #elif defined(TL_TARGET_PC) 
 	//	ansi build can't include any headers
 #elif defined(TL_TARGET_IPOD)
@@ -122,7 +121,6 @@ namespace TLRender
 #else
 	#error unknown platform
 #endif
-
 
 
 

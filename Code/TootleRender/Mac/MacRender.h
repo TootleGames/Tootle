@@ -26,8 +26,6 @@ namespace TLRender
 	{
 		SyncBool		Init();			//	platform/opengl initialisation
 		SyncBool		Shutdown();		//	platform/opengl shutdown
-
-		extern SyncBool	g_OpenglInitialised;
 	}
 
 	namespace Opengl

@@ -29,6 +29,7 @@ public:
 
 	FORCEINLINE TRefRef		GetChannelRef()	const					{	return m_refChannelID; }
 	virtual TRefRef			GetSubscriberRef() const				{	return m_refChannelID;	}
+	virtual TRefRef			GetPublisherRef() const					{	return m_refChannelID;	}
 
 	FORCEINLINE Bool	operator==(TRefRef ChannelRef) const		{	return GetChannelRef() == ChannelRef;	}
 

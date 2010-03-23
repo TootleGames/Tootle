@@ -1,18 +1,23 @@
 /*------------------------------------------------------
-	
-	For future expansion; camera is contained in its own
-	class.
-	All the clever generic camera maths (clip tests etc)
-	should be in here
+ 
+	Core camera math class. This does:
+ 
+	* rendertarget-space (note; not screen space!) to world-space conversions.
+	* Calculates clip boxes, planes etc and unit conversion for 
+		orthographic and perspective cameras. 
+	* shouldn't ever need more than an orthographic and a perspective camera
+	* All the values on the camera can be freely changed at any time; 
+		Position(world), lookat(w), up(w), rotation/roll(screen), render target size(s), 
+		horizontal field of view (w), near & far z (w)
 
-
-
-	todo:
-	3d world pos -> 2d rendertarget pos
-	http://www.gamedev.net/community/forums/topic.asp?topic_id=426094
-
-
-
+	Clip tests etc are not in this class, but the class returns the information (world space bounds)
+	to clip against so it can be handled by whatever wants to. (RenderGraph)
+ 
+	The Viewport box is calculated in here as for some cases (eg. square projection which is required to roll the camera)
+	the viewport box will not match the render target box (scissoring)
+ 
+	NO control code should be in here, that's for the game to do.
+ 
 -------------------------------------------------------*/
 #pragma once
 

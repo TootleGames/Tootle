@@ -62,6 +62,19 @@ namespace TLInput
 	const float AXIS_SCALE				= 1000.0f;
 };
 
+namespace Win32
+{
+	extern HWND g_HWnd;
+}
+
+namespace TLGui
+{
+	namespace Platform
+	{
+		extern HINSTANCE g_HInstance;
+	}
+}
+
 using namespace TLInput;
 
 
@@ -69,18 +82,6 @@ using namespace TLInput;
 Bool Platform::UpdateDevice(TInputDevice& Device)
 {
 	return DirectX::UpdateDevice( Device );
-}
-
-int2 Platform::GetCursorPosition(u8 uIndex)
-{
-	// On PC there is only one cursor for all users really and that is the mouse position.
-	// So simply get the mouse pos in screen space and return it
-	POINT MouseScreenPos;
-	GetCursorPos( &MouseScreenPos );
-	ScreenToClient( TLCore::Platform::g_HWnd, &MouseScreenPos );
-	int2 MousePos( MouseScreenPos.x, MouseScreenPos.y );
-
-	return MousePos;
 }
 
 
@@ -98,7 +99,12 @@ SyncBool Platform::DirectX::Init()
 	if(g_pTLDirectInputInterface)
 		return SyncTrue;
 
-	HINSTANCE hInstance = TLCore::Platform::g_HInstance;
+	HINSTANCE hInstance = TLGui::Platform::g_HInstance;
+	if ( !hInstance )
+	{
+		TLDebug_Break("Program instance handle expected (Setup in main)");
+		return SyncFalse;
+	}
 
 	// Create the directx device interface
 	HRESULT res = DirectInput8Create( hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&g_pTLDirectInputInterface, NULL );
@@ -651,16 +657,26 @@ Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, const LPDIR
 	if(DI_OK != hr)
 		return FALSE;
 
-	HWND hWnd = TLCore::Platform::g_HWnd;
+	//	gr: to continue using directx we'll need to assign the "main" TLGui::Window 
+	//	or something as the "directx" window. This doesn't bode well for multiple render
+	//	windows. Or handling(ignoring) input when a different window is open...
+	HWND hWnd = Win32::g_HWnd;
 
-	// Set the cooperative level
-	hr = lpdiDevice->SetCooperativeLevel(hWnd, dwExclusivity );
+	if ( hWnd != NULL )	//	gr: I'm sure this should be INVALID_HANDLE...
+	{
+		TLDebug_Print("No win32 window created for directx to get exclusivity on...");
+	}
+	else
+	{	
+		// Set the cooperative level
+		hr = lpdiDevice->SetCooperativeLevel(hWnd, dwExclusivity );
 
-	//NOTE: needs to be exclusive access for release
-	//hr = lpdiDevice->SetCooperativeLevel(hWnd, DISCL_EXCLUSIVE | DISCL_FOREGROUND);
+		//NOTE: needs to be exclusive access for release
+		//hr = lpdiDevice->SetCooperativeLevel(hWnd, DISCL_EXCLUSIVE | DISCL_FOREGROUND);
 
-	if(DI_OK != hr)
-		return FALSE;
+		if(DI_OK != hr)
+			return false;
+	}
 
 	u32 uBufferSize = INPUT_MOUSE_BUFFER_SIZE;
 

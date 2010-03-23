@@ -9,8 +9,6 @@
 
 #include "IPodSocial.h"
 
-#include <TootleCore/IPod/IPodApp.h>
-
 #include "TFacebookConnect.h"
 #include "TAGONOnline.h"
 #include "TOpenFeint.h"

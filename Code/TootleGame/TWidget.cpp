@@ -182,6 +182,9 @@ void TLGui::TWidget::Shutdown()
 //-------------------------------------------------
 void TLGui::TWidget::ProcessMessage(TLMessaging::TMessage& Message)
 {
+	if ( !TLGui::g_pWidgetManager )
+		return;
+
 	TRef MessageRef = Message.GetMessageRef();
 	
 	if( MessageRef == TRef_Static(A,c,t,i,o) )

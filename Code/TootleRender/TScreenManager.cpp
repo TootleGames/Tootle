@@ -5,14 +5,6 @@
 #include "TRenderTarget.h"
 
 
-#if defined(TL_TARGET_PC) && defined(_MSC_EXTENSIONS)
-	#include "PC/PCScreen.h"
-#elif defined(TL_TARGET_IPOD)
-	#include "IPod/IPodScreen.h"
-#elif defined(TL_TARGET_MAC)
-	#include "Mac/MacScreen.h"
-#endif
-
 
 namespace TLRender
 {

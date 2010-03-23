@@ -14,8 +14,6 @@
 		8434C8D9100B484C0063673E /* TLRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 8434C8D8100B484C0063673E /* TLRandom.h */; };
 		8440D7A2105528CD0045E57E /* IPodAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = 8440D7A0105528CD0045E57E /* IPodAlert.h */; };
 		8440D7A3105528CD0045E57E /* IPodAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8440D7A1105528CD0045E57E /* IPodAlert.mm */; };
-		8446CFFA103B514B00DFD24F /* TLCoreMisc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8446CFF8103B514B00DFD24F /* TLCoreMisc.cpp */; };
-		8446CFFB103B514B00DFD24F /* TLCoreMisc.h in Headers */ = {isa = PBXBuildFile; fileRef = 8446CFF9103B514B00DFD24F /* TLCoreMisc.h */; };
 		8461F1100FBAC46800742359 /* TSmallObjectAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8461F10F0FBAC46800742359 /* TSmallObjectAllocator.cpp */; };
 		8461F1130FBAC4B800742359 /* TSmallObjectAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8461F1120FBAC4B800742359 /* TSmallObjectAllocator.h */; };
 		8461F3420FBAE7F200742359 /* TSmallObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 8461F3410FBAE7F200742359 /* TSmallObject.h */; };
@@ -78,8 +76,6 @@
 		84C109CB0F0A791900B2DF7A /* TSubscriber.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109940F0A791900B2DF7A /* TSubscriber.h */; };
 		84C109CC0F0A791900B2DF7A /* TSyncQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109950F0A791900B2DF7A /* TSyncQueue.cpp */; };
 		84C109CD0F0A791900B2DF7A /* TSyncQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109960F0A791900B2DF7A /* TSyncQueue.h */; };
-		84C109D70F0A793000B2DF7A /* IPodApp.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109CF0F0A793000B2DF7A /* IPodApp.h */; };
-		84C109D80F0A793000B2DF7A /* IPodApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C109D00F0A793000B2DF7A /* IPodApp.mm */; };
 		84C109D90F0A793000B2DF7A /* IPodCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109D10F0A793000B2DF7A /* IPodCore.h */; };
 		84C109DA0F0A793000B2DF7A /* IPodCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C109D20F0A793000B2DF7A /* IPodCore.mm */; };
 		84C109DB0F0A793000B2DF7A /* IPodMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109D30F0A793000B2DF7A /* IPodMemory.h */; };
@@ -98,11 +94,6 @@
 /* Begin PBXFileReference section */
 		840A926D10D7E81700F8960C /* IPodString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodString.h; sourceTree = "<group>"; };
 		840A926E10D7E81700F8960C /* IPodString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodString.mm; sourceTree = "<group>"; };
-		840A927210D7E83B00F8960C /* MacApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacApp.h; path = ../Mac/MacApp.h; sourceTree = SOURCE_ROOT; };
-		840A927310D7E83B00F8960C /* MacApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacApp.mm; path = ../Mac/MacApp.mm; sourceTree = SOURCE_ROOT; };
-		840A927410D7E83B00F8960C /* MacCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacCore.h; path = ../Mac/MacCore.h; sourceTree = SOURCE_ROOT; };
-		840A927510D7E83B00F8960C /* MacCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacCore.mm; path = ../Mac/MacCore.mm; sourceTree = SOURCE_ROOT; };
-		840A927610D7E83B00F8960C /* MacDebug copy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "MacDebug copy.mm"; path = "../Mac/MacDebug copy.mm"; sourceTree = SOURCE_ROOT; };
 		840A927710D7E83B00F8960C /* MacDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacDebug.h; path = ../Mac/MacDebug.h; sourceTree = SOURCE_ROOT; };
 		840A927810D7E83B00F8960C /* MacDebug.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacDebug.mm; path = ../Mac/MacDebug.mm; sourceTree = SOURCE_ROOT; };
 		840A927910D7E83B00F8960C /* MacMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacMemory.h; path = ../Mac/MacMemory.h; sourceTree = SOURCE_ROOT; };
@@ -119,8 +110,6 @@
 		8434C8D8100B484C0063673E /* TLRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLRandom.h; path = ../TLRandom.h; sourceTree = SOURCE_ROOT; };
 		8440D7A0105528CD0045E57E /* IPodAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodAlert.h; sourceTree = "<group>"; };
 		8440D7A1105528CD0045E57E /* IPodAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodAlert.mm; sourceTree = "<group>"; };
-		8446CFF8103B514B00DFD24F /* TLCoreMisc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLCoreMisc.cpp; path = ../TLCoreMisc.cpp; sourceTree = SOURCE_ROOT; };
-		8446CFF9103B514B00DFD24F /* TLCoreMisc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLCoreMisc.h; path = ../TLCoreMisc.h; sourceTree = SOURCE_ROOT; };
 		8461F10F0FBAC46800742359 /* TSmallObjectAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TSmallObjectAllocator.cpp; path = ../TSmallObjectAllocator.cpp; sourceTree = SOURCE_ROOT; };
 		8461F1120FBAC4B800742359 /* TSmallObjectAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TSmallObjectAllocator.h; path = ../TSmallObjectAllocator.h; sourceTree = SOURCE_ROOT; };
 		8461F3410FBAE7F200742359 /* TSmallObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSmallObject.h; path = ../TSmallObject.h; sourceTree = SOURCE_ROOT; };
@@ -184,8 +173,6 @@
 		84C109940F0A791900B2DF7A /* TSubscriber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSubscriber.h; path = ../TSubscriber.h; sourceTree = SOURCE_ROOT; };
 		84C109950F0A791900B2DF7A /* TSyncQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSyncQueue.cpp; path = ../TSyncQueue.cpp; sourceTree = SOURCE_ROOT; };
 		84C109960F0A791900B2DF7A /* TSyncQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSyncQueue.h; path = ../TSyncQueue.h; sourceTree = SOURCE_ROOT; };
-		84C109CF0F0A793000B2DF7A /* IPodApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodApp.h; sourceTree = "<group>"; };
-		84C109D00F0A793000B2DF7A /* IPodApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodApp.mm; sourceTree = "<group>"; };
 		84C109D10F0A793000B2DF7A /* IPodCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodCore.h; sourceTree = "<group>"; };
 		84C109D20F0A793000B2DF7A /* IPodCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 2; path = IPodCore.mm; sourceTree = "<group>"; };
 		84C109D30F0A793000B2DF7A /* IPodMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodMemory.h; sourceTree = "<group>"; };
@@ -219,11 +206,6 @@
 		840A927110D7E82300F8960C /* Mac Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				840A927210D7E83B00F8960C /* MacApp.h */,
-				840A927310D7E83B00F8960C /* MacApp.mm */,
-				840A927410D7E83B00F8960C /* MacCore.h */,
-				840A927510D7E83B00F8960C /* MacCore.mm */,
-				840A927610D7E83B00F8960C /* MacDebug copy.mm */,
 				840A927710D7E83B00F8960C /* MacDebug.h */,
 				840A927810D7E83B00F8960C /* MacDebug.mm */,
 				840A927910D7E83B00F8960C /* MacMemory.h */,
@@ -274,8 +256,6 @@
 				84C109CE0F0A791F00B2DF7A /* IPod */,
 				846C18C6109748AE0098DFAF /* TTransform.cpp */,
 				846C18C7109748AE0098DFAF /* TTransform.h */,
-				8446CFF8103B514B00DFD24F /* TLCoreMisc.cpp */,
-				8446CFF9103B514B00DFD24F /* TLCoreMisc.h */,
 				84E116040F3C6C7900471397 /* TGraphBase.cpp */,
 				84E116050F3C6C7900471397 /* TGraphBase.h */,
 				84E116060F3C6C7900471397 /* TLanguage.h */,
@@ -355,8 +335,6 @@
 				8421B17D108628DE00439A7E /* IPodDebug.mm */,
 				8440D7A0105528CD0045E57E /* IPodAlert.h */,
 				8440D7A1105528CD0045E57E /* IPodAlert.mm */,
-				84C109CF0F0A793000B2DF7A /* IPodApp.h */,
-				84C109D00F0A793000B2DF7A /* IPodApp.mm */,
 				84C109D10F0A793000B2DF7A /* IPodCore.h */,
 				84C109D20F0A793000B2DF7A /* IPodCore.mm */,
 				84C109D30F0A793000B2DF7A /* IPodMemory.h */,
@@ -411,7 +389,6 @@
 				84C109CA0F0A791900B2DF7A /* TString.h in Headers */,
 				84C109CB0F0A791900B2DF7A /* TSubscriber.h in Headers */,
 				84C109CD0F0A791900B2DF7A /* TSyncQueue.h in Headers */,
-				84C109D70F0A793000B2DF7A /* IPodApp.h in Headers */,
 				84C109D90F0A793000B2DF7A /* IPodCore.h in Headers */,
 				84C109DB0F0A793000B2DF7A /* IPodMemory.h in Headers */,
 				84C109DD0F0A793000B2DF7A /* IPodTime.h in Headers */,
@@ -420,7 +397,6 @@
 				8461F1130FBAC4B800742359 /* TSmallObjectAllocator.h in Headers */,
 				8461F3420FBAE7F200742359 /* TSmallObject.h in Headers */,
 				8434C8D9100B484C0063673E /* TLRandom.h in Headers */,
-				8446CFFB103B514B00DFD24F /* TLCoreMisc.h in Headers */,
 				8440D7A2105528CD0045E57E /* IPodAlert.h in Headers */,
 				8421B17E108628DE00439A7E /* IPodDebug.h in Headers */,
 				84CDD7D41096EC1A0006D0BA /* TArraySort.h in Headers */,
@@ -497,13 +473,11 @@
 				84C109C70F0A791900B2DF7A /* TStateMachine.cpp in Sources */,
 				84C109C90F0A791900B2DF7A /* TString.cpp in Sources */,
 				84C109CC0F0A791900B2DF7A /* TSyncQueue.cpp in Sources */,
-				84C109D80F0A793000B2DF7A /* IPodApp.mm in Sources */,
 				84C109DA0F0A793000B2DF7A /* IPodCore.mm in Sources */,
 				84C109DC0F0A793000B2DF7A /* IPodMemory.mm in Sources */,
 				84C109DE0F0A793000B2DF7A /* IPodTime.mm in Sources */,
 				84E116070F3C6C7900471397 /* TGraphBase.cpp in Sources */,
 				8461F1100FBAC46800742359 /* TSmallObjectAllocator.cpp in Sources */,
-				8446CFFA103B514B00DFD24F /* TLCoreMisc.cpp in Sources */,
 				8440D7A3105528CD0045E57E /* IPodAlert.mm in Sources */,
 				8421B17F108628DE00439A7E /* IPodDebug.mm in Sources */,
 				846C18CA109748AE0098DFAF /* TTransform.cpp in Sources */,

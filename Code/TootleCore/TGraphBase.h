@@ -79,6 +79,7 @@ public:
 	TGraphNodeBase(TRefRef NodeRef,TRefRef NodeTypeRef);
 	virtual ~TGraphNodeBase()											{	}
 
+	virtual TRefRef				GetSubscriberRef() const				{	return GetNodeRef();	}
 	FORCEINLINE TRefRef			GetNodeRef() const						{	return m_NodeRef; }
 	FORCEINLINE TRefRef			GetNodeTypeRef() const					{	return m_NodeTypeRef; }
 
@@ -86,7 +87,7 @@ public:
 	Bool						IsKindOf(TRefRef TypeRef) const			{	return (GetNodeTypeRef() == TypeRef) ? TRUE : IsParentKindOf( TypeRef );	}
 	FORCEINLINE Bool			IsParentKindOf(TRefRef TypeRef) const	{	return GetParentBase() ? GetParentBase()->IsKindOf(TypeRef) : FALSE;	}
 	
-	virtual void				UpdateNodeData()						{	}						//	overload this to make sure all properties on your node (that aren't stored/read directly out of the data) is up to date and reayd for export
+	virtual void				UpdateNodeData();						//	overload this to make sure all properties on your node (that aren't stored/read directly out of the data) is up to date and reayd for export
 	virtual TBinaryTree&		GetNodeData()							{	return m_NodeData;	}	//	overload this to handle UpdateData for specific nodes
 
 	//	gr: big hack here! instead... use node data? it's more class based than instance based... cant think of a great solution right now...
@@ -106,8 +107,11 @@ protected:
 	virtual void					GetProperty(TLMessaging::TMessage& Message, TLMessaging::TMessage& Response);	//	GetProperty message handler
 	virtual void					ProcessMessage(TLMessaging::TMessage& Message)			{	}	//	gr: only implemented as its pure virtual. Maybe in the future move the common Initialise, shutdown, SetProperty into this class...
 
-	FORCEINLINE void				SetNodeRef(TRefRef NodeRef)			{	m_NodeRef = NodeRef;	m_NodeRef.GetString( m_Debug_NodeRefString );	}
+	FORCEINLINE void				SetNodeRef(TRefRef NodeRef)			{	m_NodeRef = NodeRef;	m_NodeRef.GetString( m_Debug_NodeRefString );	GetNodeData().ReplaceData( TRef_Static3(R,e,f), GetNodeRef() );	}
 
+private:
+	FORCEINLINE void				OnNodeTypeRefChanged()				{	m_NodeTypeRef.GetString( m_Debug_NodeTypeRefString );	GetNodeData().ReplaceData( TRef_Static4(T,y,p,e), m_NodeTypeRef );	}
+	
 protected:
 	TRef					m_NodeRef;			//	Node unique ID
 

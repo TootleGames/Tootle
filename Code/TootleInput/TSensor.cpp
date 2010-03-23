@@ -3,7 +3,7 @@
 #include <TootleCore/TLMaths.h>
 
 #ifdef _DEBUG
-//#define ENABLE_INPUTSENSOR_TRACE
+	#define ENABLE_INPUTSENSOR_TRACE
 #endif
 
 using namespace TLInput;
@@ -36,9 +36,14 @@ void TInputSensor::Process(float fRawValue)
 	{
 #ifdef ENABLE_INPUTSENSOR_TRACE
 		TTempString Debug_SensorString("Sensor ");
-		m_refSensorID.GetString(Debug_SensorString);
+		m_SensorRef.GetString(Debug_SensorString);
 		Debug_SensorString.Append(" (");
-		m_refSensorLabel.GetString(Debug_SensorString);
+		for ( u32 l=0;	l<m_SensorLabels.GetSize();	l++ )
+		{
+			m_SensorLabels[l].GetString(Debug_SensorString);
+			if ( l != m_SensorLabels.GetLastIndex() )
+				Debug_SensorString.Append(", ");
+		}
 		Debug_SensorString.Appendf(") value changed; %.3f", fValue);
 		TLDebug_Print( Debug_SensorString );
 #endif

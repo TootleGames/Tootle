@@ -98,6 +98,7 @@ public:
 	virtual TRef			Update();
 	virtual void			OnEnd(TRefRef NextMode);	
 protected:
+	virtual TRefRef		GetSubscriberRef() const		{	static TRef Ref("CamStateManual");	return Ref;	}
 	virtual void		ProcessMessage(TLMessaging::TMessage& Message);
 
 };

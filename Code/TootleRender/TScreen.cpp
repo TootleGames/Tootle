@@ -548,3 +548,163 @@ void TLRender::TScreen::OnRenderTargetZChanged(const TRenderTarget& RenderTarget
 	m_RenderTargetsZOrdered.Sort();
 }
 
+
+
+
+TLRender::Platform::Screen::Screen(TRefRef ScreenRef,TScreenShape ScreenShape) :
+TLRender::TScreen	( ScreenRef, ScreenShape ),
+m_pCanvas			( NULL ),
+m_pWindow			( NULL )
+{
+	//	gr: default to double iphone resolution for now
+	m_Size.Width() = 320;
+	m_Size.Height() = 480;
+}
+
+
+//----------------------------------------------------------
+//	create window
+//----------------------------------------------------------
+SyncBool TLRender::Platform::Screen::Init()
+{
+	//	already initialised with window
+	if ( m_pWindow )
+		return SyncTrue;
+	
+	//	allocate window
+	m_pWindow = TLGui::CreateGuiWindow( GetRef() );
+	if ( !m_pWindow )
+		return SyncFalse;
+	
+	//	set size
+	m_pWindow->SetSize( int2( m_Size.Width(), m_Size.Height() ) );
+	
+	//	center the window
+	int4 WindowDimensions;
+	WindowDimensions.zw() = m_pWindow->GetSize();
+	GetCenteredSize( WindowDimensions );
+	m_pWindow->SetPosition( WindowDimensions.xy() );
+	
+	//	create opengl canvas
+	m_pCanvas = TLGui::CreateOpenglCanvas( *m_pWindow, GetRef() );
+	if ( !m_pCanvas )
+		return SyncFalse;
+	
+	//	make the window visible
+	m_pWindow->Show();
+	
+	// Subscirbe to the window
+	SubscribeTo(m_pWindow);
+	
+	return TLRender::TScreen::Init();
+}
+
+
+
+//----------------------------------------------------------
+//	update window
+//----------------------------------------------------------
+SyncBool TLRender::Platform::Screen::Update()
+{
+	//	lost window?
+	if ( !m_pWindow )
+		return SyncFalse;
+	
+	//	continue
+	return SyncTrue;
+}
+
+
+void TLRender::Platform::Screen::Draw()
+{
+	if ( !m_pCanvas )
+		return;
+	
+	//	setup context/canvas in case of first render, and set current
+	if ( !m_pCanvas->BeginRender() )
+		return;
+	
+	//	do inherited draw
+	TScreen::Draw();
+	
+	//	unbind data
+	TLRender::Opengl::Unbind();
+	
+	//	flip buffers
+	m_pCanvas->EndRender();
+}
+
+//----------------------------------------------------------
+//	clean up
+//----------------------------------------------------------
+SyncBool TLRender::Platform::Screen::Shutdown()
+{
+	m_pWindow = NULL;
+	m_pCanvas = NULL;
+	
+	return TLRender::TScreen::Shutdown();
+}
+
+
+//----------------------------------------------------------
+//	get size of the screen
+//----------------------------------------------------------
+Type4<s32> TLRender::Platform::Screen::GetSize() const
+{
+	Type4<s32> Size = TScreen::GetSize();
+	Type4<s32> DesktopSize;
+	GetDesktopSize( DesktopSize );
+	
+	if ( Size.x == TLRender::g_MaxSize )		Size.x = DesktopSize.x;
+	if ( Size.y == TLRender::g_MaxSize )		Size.y = DesktopSize.y;
+	if ( Size.Width() == TLRender::g_MaxSize )	Size.Width() = DesktopSize.Width();
+	if ( Size.Height() == TLRender::g_MaxSize )	Size.Height() = DesktopSize.Height();
+	
+	return Size;
+}
+
+
+//----------------------------------------------------------
+//	get the desktop dimensions
+//----------------------------------------------------------
+void TLRender::Platform::Screen::GetDesktopSize(Type4<s32>& DesktopSize) const
+{
+	TLGui::Platform::GetDesktopSize( DesktopSize );
+}
+
+
+//----------------------------------------------------------
+//	take a screen size and center it on the desktop
+//----------------------------------------------------------
+void TLRender::Platform::Screen::GetCenteredSize(Type4<s32>& Size) const
+{
+	Type4<s32> DesktopSize;
+	GetDesktopSize( DesktopSize );
+	
+	s32 DesktopCenterX = DesktopSize.x + (DesktopSize.Width() / 2);
+	s32 DesktopCenterY = DesktopSize.y + (DesktopSize.Height() / 2);
+	
+	Size.x = DesktopCenterX - (Size.Width() / 2);
+	Size.y = DesktopCenterY - (Size.Height() / 2);
+}
+
+
+
+//---------------------------------------------------------------
+//	need to max-out to client-area on the window 
+//---------------------------------------------------------------
+void TLRender::Platform::Screen::GetViewportMaxSize(Type4<s32>& MaxSize)
+{
+	if ( !m_pWindow )
+	{
+		TScreen::GetViewportMaxSize( MaxSize );
+		return;
+	}
+	
+	//	gr: don't know if I have to cut off x/y here?
+	MaxSize.Left() = 0;
+	MaxSize.Top() = 0;
+	
+	MaxSize.Width() = m_pWindow->GetSize().x;
+	MaxSize.Height() = m_pWindow->GetSize().y;
+}

@@ -24,14 +24,16 @@ class TLInput::TAction : public TLMessaging::TRelay
 public:
 	explicit TAction(TRefRef refActionID);
 
-	FORCEINLINE TRefRef		GetActionID() const								{	return m_refActionID; }
+	virtual TRefRef			GetSubscriberRef() const					{	return GetActionRef();	}
+	DEPRECATED TRefRef		GetActionID() const							{	return m_refActionID; }
+	FORCEINLINE TRefRef		GetActionRef() const						{	return m_refActionID; }
 
 	FORCEINLINE void		SetCondition(TActionCondition uActionCondition, float fThreshold)	{	m_uActionCondition = uActionCondition;	m_fThreshold = fThreshold; 	}
 
 	FORCEINLINE Bool		HasParentAction(TRefRef ParentActionRef) const	{	return m_refParentActions.Exists(ParentActionRef); }
 	void					AddParentAction(TRefRef ParentActionRef, Bool bCondition = TRUE);
 
-	FORCEINLINE Bool	operator==(TRefRef ActionRef) const					{	return GetActionID() == ActionRef;	}
+	FORCEINLINE Bool	operator==(TRefRef ActionRef) const					{	return GetActionRef() == ActionRef;	}
 
 protected:
 	virtual void	ProcessMessage(TLMessaging::TMessage& Message);

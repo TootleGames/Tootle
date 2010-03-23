@@ -25,6 +25,8 @@ class TLUser::TUser : public TLMessaging::TRelay
 public:
 	TUser(TRefRef UserRef);
 
+	virtual TRefRef				GetSubscriberRef() const		{	return GetUserRef();	}
+
 	// Action Mapping
 	Bool						AddAction(TRefRef refActionType, TRefRef refActionID);
 	Bool						AddAction(TRefRef refActionType, TRefRef refActionID, TRefRef refParentActionID);
@@ -69,7 +71,7 @@ private:
 	TRef							m_UserRef;			// Unique ID of the user
 
 	TPtrArray<TLInput::TAction>		m_ActionMap;		// Maps actions to inputs for a user
-	int2							m_CursorPosition;	// Users cursor position
+	int2							m_CursorPosition;	// Users cursor position (in TScreen space. this comes from the default screen.) gr: todo: remove this! there should be no need to save the cursor pos for a user, and there is no screen context with it 
 
 	TString							m_strUserName;
 

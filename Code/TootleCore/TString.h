@@ -6,7 +6,7 @@
 
 #include "TArray.h"
 #include "TFixedArray.h"
-
+#include <stdarg.h>	//	for va_list on mac
 
 class TString;
 
@@ -341,8 +341,22 @@ Bool TString::Split(const TChar& SplitChar,TArray<STRINGTYPE>& StringArray) cons
 	{
 		if ( (s32)SplitFrom >= SplitTo )
 		{
-			TLDebug_Break( TString("String split has got confused; SplitFrom: %d, SplitTo: %d", SplitFrom, SplitTo ) );
-			break;
+			//	gr: exception here, if the first character is a split character
+			//		then push an empty string at the start.
+			//		i've done this for the file system which wants to distingiush 
+			//		.DS_Store into ""."DS_Store" (two strings so we know the 2nd is
+			//		an extension. If that's not the case for general use (ie. don't 
+			//		push an empty string first) then make the file system check for
+			//		no filename before the extension
+			if ( SplitFrom==0 && SplitTo==0 )
+			{
+				//	continue with code below to add an empty string
+			}
+			else
+			{
+				TLDebug_Break( TString("String split has got confused; SplitFrom: %d, SplitTo: %d", SplitFrom, SplitTo ) );
+				break;
+			}
 		}
 
 		//	make up new string

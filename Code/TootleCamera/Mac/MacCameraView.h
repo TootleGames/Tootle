@@ -16,6 +16,8 @@
 
 class TPublisherProxy : public TLMessaging::TPublisher
 {
+public:
+	virtual TRefRef		GetPublisherRef() const	{	static TRef Ref("PubProx");	return Ref;	}
 };
 
 

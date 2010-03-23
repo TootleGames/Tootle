@@ -4,6 +4,17 @@
 #include <TootleCore/TTransform.h>
 #include <TootleAsset/TTexture.h>
 
+//	include platform specific render code for glTranslate etc
+//	this kinda code will move to the rasteriser (as will these includes)
+#if defined(TL_TARGET_PC)
+	#include "PC/PCRender.h"
+#elif defined(TL_TARGET_MAC)
+	#include "Mac/MacRender.h"
+#elif defined(TL_TARGET_IPOD)
+	#include "IPod/IPodRender.h"
+#else
+	#error "Unknown target platform"
+#endif
 
 #ifdef _DEBUG
 	#define DEBUG_CHECK_PRIMITIVE_INDEXES	//	check indexes of all the primitives are within bound vertex range
@@ -655,8 +666,15 @@ void TLRender::Opengl::DrawPrimitives(u16 GLPrimType,u32 IndexCount,const u16* p
 // due to the memory manager being destroyed first.
 // Tmep fix until we have a way of spotting memory still allocated when the memory manager 
 // is deleted and someway of alolowing it to prevent deletion so it's always deleted last.
-void TLRender::Opengl::Shutdown()
+SyncBool TLRender::Opengl::Shutdown()
 {
 	g_TextureIndexes.Empty(TRUE);
+	
+	return Platform::Shutdown();
+}
+
+SyncBool TLRender::Opengl::Init()
+{	
+	return Platform::Init();
 }
 

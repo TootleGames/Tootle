@@ -1,0 +1,52 @@
+//
+//  Project.xcconfig
+//  
+//
+//  Created by Duane Bradbury on 18/12/2008.
+//  Copyright 2008 Tootle. All rights reserved.
+//
+//	combine this with MacRelease.xcconfig or MacDebug.xcconfig to make ProjectXXX.xcconfig
+
+//	project/game settings
+TOOTLE_ROOT = ../../../Tootle/Code
+HEADER_SEARCH_PATHS = $(TOOTLE_ROOT)
+
+EXECUTABLE_EXTENSION =	//	gr: should be nothing!
+EXECUTABLE_PREFIX = 
+WRAPPER_EXTENSION = app
+//INSTALL_PATH = "/users/Graham/Applications"
+SKIP_INSTALL = NO
+PREBINDING = NO				//	gr: needed?
+GENERATE_PKGINFO_FILE = NO
+GCC_DYNAMIC_NO_PIC = YES	//	gr: needed?
+
+INFOPLIST_FILE = $(PROJECT_NAME)-Info.plist
+
+DEAD_CODE_STRIPPING = YES
+
+//	only build active architecture (libs build all arch types)
+ONLY_ACTIVE_ARCH = YES
+
+//	gr: OS frameworks
+//	gr: after some testing... this seems to have no influence at all, and the framework still needs to be in the final project
+//		in order to resolve functions...
+//PROJECT_LDFLAGS = -framework IOKit -framework Carbon -framework Cocoa -framework AudioToolbox -framework System -framework QuickTime -framework webkit 
+//	AppKit CoreData Foundation Cocoa IOKit OpenAL OpenGL
+PROJECT_LDFLAGS = -framework Foundation -framework AppKit -framework CoreData -framework IOKit -framework Cocoa -framework AudioToolbox -framework System -framework QuickTime -framework webkit 
+PROJECT_CPLUSPLUSFLAGS = 
+PROJECT_LDFLAGS = 
+
+//	gr: these libs to link with should all be in $(WX_LDFLAGS)
+//	-liconv
+//					"-lwxregexu-2.9",
+//					"-lwxtiff-2.9",
+//					"-lwxjpeg-2.9",
+//					"-lwxpng-2.9",
+//	"/Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_osx_carbonu_xrc-2.9.a",
+//	"/Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_osx_carbonu_html-2.9.a",
+//	"/Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_osx_carbonu_qa-2.9.a",
+//	"/Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_osx_carbonu_adv-2.9.a",
+//	"/Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_osx_carbonu_core-2.9.a",
+//	"/Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_baseu_xml-2.9.a",
+//	"/Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_baseu_net-2.9.a",
+//	"/Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_baseu-2.9.a",

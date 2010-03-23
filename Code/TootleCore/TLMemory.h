@@ -67,15 +67,15 @@ namespace TLMemory
 		void		Initialise();
 		void		Shutdown();
 		
-		FORCEINLINE void*		MemAlloc(u32 Size);								//	malloc
-		FORCEINLINE void		MemDealloc(void* pMem);							//	free
-		FORCEINLINE void		MemCopy(void* pDest,const void* pSrc,u32 Size);	//	memcpy
-		FORCEINLINE void		MemMove(void* pDest,const void* pSrc,u32 Size);	//	memmove
-		FORCEINLINE void*		MemRealloc(void* pMem,u32 Size);				//	realloc
-		FORCEINLINE void		MemValidate(void* pMem=NULL);					//	validate memory heaps
-		FORCEINLINE void		MemOuputAllocations();
-		FORCEINLINE std::size_t	MemSize(void* pMem);							//  get the size of the memory pointed to by pMem
-		FORCEINLINE void		MemFillPattern(void* pMem, u32 Size, u8 Pattern);	// Fills memory with a specifiec pattern to spot uninitialised/deleted/overwritten memory
+		void*		MemAlloc(u32 Size);								//	malloc
+		void		MemDealloc(void* pMem);							//	free
+		void		MemCopy(void* pDest,const void* pSrc,u32 Size);	//	memcpy
+		void		MemMove(void* pDest,const void* pSrc,u32 Size);	//	memmove
+		void*		MemRealloc(void* pMem,u32 Size);				//	realloc
+		void		MemValidate(void* pMem=NULL);					//	validate memory heaps
+		void		MemOuputAllocations();
+		std::size_t	MemSize(void* pMem);							//  get the size of the memory pointed to by pMem
+		void		MemFillPattern(void* pMem, u32 Size, u8 Pattern);	// Fills memory with a specifiec pattern to spot uninitialised/deleted/overwritten memory
 	}
 
 	class TMemoryTrack;								//	allocation tracking entry
@@ -364,12 +364,12 @@ FORCEINLINE void operator delete[](void* pObj) throw()
 {
 	return TLMemory::TMemorySystem::Instance().Deallocate( pObj );
 }
-
+/*
 //	include the platform specific header
 #if defined(_MSC_EXTENSIONS) && defined(TL_TARGET_PC)
 	#include "PC/PCMemory.h"
 #endif
-
+*/
 #if defined(TL_TARGET_IPOD)
 	#include "IPod/IPodMemory.h"
 #endif

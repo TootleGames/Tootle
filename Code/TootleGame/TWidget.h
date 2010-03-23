@@ -44,7 +44,7 @@ namespace TLRender
 //	consider turning the GUI (this) into another input device that 
 //	piggy backs on the mouse input?
 //----------------------------------------------
-class TLGui::TWidget : public TLMessaging::TPublisher, public TLMessaging::TSubscriber
+class TLGui::TWidget : public TLMessaging::TPublisherSubscriber
 {
 	friend class TLGui::TWidgetFactory;
 	friend class TLGui::TWidgetManager;

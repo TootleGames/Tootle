@@ -39,9 +39,6 @@ namespace TLCore
 		SyncBool			Shutdown();				//	platform shutdown
 		void				Sleep(u32 Millisecs);	//	platform thread/process sleep
 		
-		void				DoQuit();			// Notification of app quit
-		const TString&		GetAppExe();		//	get the application exe (full path)
-
 		//	ipoddy specific funcs
 		//void				GetString(TString& String, const NSString* pNSString);	//	append ipod foundation string to TString
 		

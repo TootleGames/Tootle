@@ -229,6 +229,29 @@ TPtr<TBinaryTree>& TBinaryTree::ExportDataString(TRefRef DataRef,const TString& 
 
 
 //------------------------------------------------------
+//	
+//------------------------------------------------------
+Bool TBinaryTree::ReplaceDataString(TRefRef DataRef,const TString& DataString)
+{
+	//	get existing data
+	TPtr<TBinaryTree>& pExistingData = GetChild( DataRef );
+	if ( pExistingData )
+	{
+		//	todo: compare existing data
+		pExistingData->Empty();
+		pExistingData->WriteString( DataString );
+		return TRUE;
+	}
+	
+	//	create a child
+	ExportDataString( DataRef, DataString );
+
+	return TRUE;
+}
+
+
+
+//------------------------------------------------------
 //	print out what data we failed to read
 //------------------------------------------------------
 void TBinaryTree::Debug_FailedToRead(TRefRef ChildDataRef,TRefRef TypeRef)

@@ -34,14 +34,19 @@
 		841B48001111A31100ACC2AE /* TOpenFeint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TOpenFeint.h; path = ../IPod/TOpenFeint.h; sourceTree = SOURCE_ROOT; };
 		841B48011111A31100ACC2AE /* TOpenFeint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TOpenFeint.mm; path = ../IPod/TOpenFeint.mm; sourceTree = SOURCE_ROOT; };
 		84B60916105117A50022E5BC /* libTootleSocial.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleSocial.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		84B6091D105117D90022E5BC /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		84B6091E105117D90022E5BC /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B6091F105118030022E5BC /* TLSocial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLSocial.cpp; path = ../TLSocial.cpp; sourceTree = SOURCE_ROOT; };
 		84B60920105118030022E5BC /* TLSocial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLSocial.h; path = ../TLSocial.h; sourceTree = SOURCE_ROOT; };
 		84B60921105118030022E5BC /* TSocialNetworkingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSocialNetworkingManager.h; path = ../TSocialNetworkingManager.h; sourceTree = SOURCE_ROOT; };
 		84B60926105118190022E5BC /* MacSocial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacSocial.cpp; sourceTree = "<group>"; };
 		84B60927105118190022E5BC /* MacSocial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacSocial.h; sourceTree = "<group>"; };
 		84B60928105118190022E5BC /* MacSocialNetworkingPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacSocialNetworkingPlatform.h; sourceTree = "<group>"; };
+		BF3C2529110704290000951F /* Tootle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Tootle.xcconfig; path = ../../BuildConfigurations/Tootle.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF3C252C110704360000951F /* Mac.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Mac.xcconfig; path = ../../BuildConfigurations/Mac/Mac.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF89CBCC110999DB009C2101 /* Lib.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Lib.xcconfig; path = ../../BuildConfigurations/Mac/Lib.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF89CBCD110999DB009C2101 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF89CBCE110999DB009C2101 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF89CBCF110999DB009C2101 /* MacDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacDebug.xcconfig; path = ../../BuildConfigurations/Mac/MacDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF89CBD0110999DB009C2101 /* MacRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacRelease.xcconfig; path = ../../BuildConfigurations/Mac/MacRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,8 +116,13 @@
 		84B6091C105117C10022E5BC /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				84B6091D105117D90022E5BC /* TootleDebug.xcconfig */,
-				84B6091E105117D90022E5BC /* TootleRelease.xcconfig */,
+				BF89CBCC110999DB009C2101 /* Lib.xcconfig */,
+				BF89CBCD110999DB009C2101 /* LibDebug.xcconfig */,
+				BF89CBCE110999DB009C2101 /* LibRelease.xcconfig */,
+				BF89CBCF110999DB009C2101 /* MacDebug.xcconfig */,
+				BF89CBD0110999DB009C2101 /* MacRelease.xcconfig */,
+				BF3C252C110704360000951F /* Mac.xcconfig */,
+				BF3C2529110704290000951F /* Tootle.xcconfig */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
@@ -194,42 +204,27 @@
 /* Begin XCBuildConfiguration section */
 		84B608FE105116E00022E5BC /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84B6091D105117D90022E5BC /* TootleDebug.xcconfig */;
+			baseConfigurationReference = BF89CBCD110999DB009C2101 /* LibDebug.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
 			};
 			name = Debug;
 		};
 		84B608FF105116E00022E5BC /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84B6091E105117D90022E5BC /* TootleRelease.xcconfig */;
+			baseConfigurationReference = BF89CBCE110999DB009C2101 /* LibRelease.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
 			};
 			name = Release;
 		};
 		84B60918105117A60022E5BC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleSocial;
 			};
 			name = Debug;
 		};
 		84B60919105117A60022E5BC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleSocial;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};

@@ -25,7 +25,7 @@
 #include "TEventChannel.h"
 #include "TClassFactory.h"
 #include "TCoreManager.h"
-#include "TLCoreMisc.h"
+#include "TLCore.h"
 
 #include <TootleAsset/TScheme.h>
 
@@ -104,11 +104,13 @@ public:
 	
 	//	Node access
 	FORCEINLINE TPtr<T>&		GetRootNode()							{	return m_pRootNode; }
+	FORCEINLINE const TPtr<T>&	GetRootNode() const						{	return m_pRootNode; }
 	FORCEINLINE TPtrArray<T>&	GetNodeList()							{	return m_NodeIndex;	}
 	FORCEINLINE u32				GetNodeCount() const					{	return m_NodeIndex.GetSize();	}
 	template<typename MATCHTYPE>
 	TPtr<T>&					FindNodeMatch(const MATCHTYPE& Value,Bool CheckRequestQueue=TRUE);	//	find a TPtr in the graph that matches the specified value (will use == operator of node type to match)
 	TPtr<T>&					FindNode(TRefRef NodeRef,Bool CheckRequestQueue=TRUE);				//	find a node
+	const TPtr<T>&				FindNode(TRefRef NodeRef,Bool CheckRequestQueue=TRUE) const;		//	find a node
 	virtual TRef				GetFreeNodeRef(TRefRef BaseRef=TRef());	//	find an unused ref for a node - returns the ref
 	TRefRef						GetFreeNodeRef(TRef& Ref);				//	find an unused ref for a node, modifies the ref provided
 
@@ -198,15 +200,16 @@ private:
 		{
 		}
 
-		FORCEINLINE TPtr<T>&	GetNode()					{	return m_pNode;	}
-		FORCEINLINE TPtr<T>&	GetNodeParent()				{	return m_pNodeParent;	}
-		FORCEINLINE TRefRef		GetCommand() const			{	return m_Command;	}
+		FORCEINLINE TPtr<T>&		GetNode()					{	return m_pNode;	}
+		FORCEINLINE const TPtr<T>&	GetNode() const			{	return m_pNode;	}
+		FORCEINLINE TPtr<T>&		GetNodeParent()				{	return m_pNodeParent;	}
+		FORCEINLINE TRefRef			GetCommand() const			{	return m_Command;	}
 		
-		FORCEINLINE Bool		IsAddRequest() const		{	return m_Command == STRef3(A,d,d);	}
-		FORCEINLINE Bool		IsRemoveRequest() const		{	return m_Command == STRef(R,e,m,o,v);	}
-		FORCEINLINE Bool		IsMoveRequest() const		{	return m_Command == STRef4(M,o,v,e);	}
+		FORCEINLINE Bool			IsAddRequest() const		{	return m_Command == STRef3(A,d,d);	}
+		FORCEINLINE Bool			IsRemoveRequest() const		{	return m_Command == STRef(R,e,m,o,v);	}
+		FORCEINLINE Bool			IsMoveRequest() const		{	return m_Command == STRef4(M,o,v,e);	}
 
-		FORCEINLINE Bool		operator==(TRefRef NodeRef) const		{	return m_pNode == NodeRef;	}
+		FORCEINLINE Bool			operator==(TRefRef NodeRef) const		{	return m_pNode == NodeRef;	}
 
 	protected:
 		TPtr<T>		m_pNode;			//	Node to update
@@ -811,7 +814,7 @@ TPtr<T>& TLGraph::TGraph<T>::FindNode(TRefRef NodeRef,Bool CheckRequestQueue)
 	TPtr<T>& pIndexNode = m_NodeIndex.FindPtr( NodeRef );
 	if ( pIndexNode )
 		return pIndexNode;
-
+	
 	//	look in the update queue for new nodes (will be doing redundant checks for the nodes being removed, but never mind
 	if ( CheckRequestQueue )
 	{
@@ -819,8 +822,34 @@ TPtr<T>& TLGraph::TGraph<T>::FindNode(TRefRef NodeRef,Bool CheckRequestQueue)
 		if ( pMatchingUpdate )
 			return pMatchingUpdate->GetNode();
 	}
-
+	
 	return TLPtr::GetNullPtr<T>();
+}
+
+//-------------------------------------------------------
+//	find node in the graph by ref
+//-------------------------------------------------------
+template <class T>
+const TPtr<T>& TLGraph::TGraph<T>::FindNode(TRefRef NodeRef,Bool CheckRequestQueue) const
+{	
+	//	invalid ref is not gonna be in the graph
+	if ( !NodeRef.IsValid() )
+		return TLPtr::GetNullPtrConst<T>();
+	
+	//	search the graph list
+	const TPtr<T>& pIndexNode = m_NodeIndex.FindPtr( NodeRef );
+	if ( pIndexNode )
+		return pIndexNode;
+	
+	//	look in the update queue for new nodes (will be doing redundant checks for the nodes being removed, but never mind
+	if ( CheckRequestQueue )
+	{
+		const TPtr<TGraphUpdateRequest>& pMatchingUpdate = m_RequestQueue.FindPtr( NodeRef );
+		if ( pMatchingUpdate )
+			return pMatchingUpdate->GetNode();
+	}
+	
+	return TLPtr::GetNullPtrConst<T>();
 }
 
 
@@ -1592,6 +1621,7 @@ void TLGraph::TGraph<T>::OnNodeRemoved(TRefRef NodeRef)
 	// Send the removed node notificaiton
 	TLMessaging::TMessage Message("NodeRemoved", GetGraphRef());
 	Message.Write(NodeRef);
+	Message.ExportData("Node", NodeRef );
 
 	PublishMessage(Message);
 }
@@ -1613,6 +1643,12 @@ void TLGraph::TGraph<T>::OnNodeAdded(TPtr<T>& pNode,Bool SendAddedMessage)
 		// Send the added node notificaiton
 		TLMessaging::TMessage Message("NodeAdded", GetGraphRef());
 		Message.Write(pNode->GetNodeRef());
+		Message.ExportData("Node", pNode->GetNodeRef() );
+		
+		//	if no parent data, then node has no parent
+		T* pParent = pNode->GetParent();
+		if ( pParent )
+			Message.ExportData("Parent", pParent->GetNodeRef() );
 
 		PublishMessage(Message);
 	}
@@ -1628,8 +1664,12 @@ void TLGraph::TGraph<T>::OnNodeMoved(TPtr<T>& pNode,TPtr<T>& pOldParentNode)
 	//	make up a moved node notificaiton
 	TLMessaging::TMessage Message("NodeMoved", GetGraphRef());
 	Message.Write( pNode->GetNodeRef() );
-	Message.ExportData("OldParent", pOldParentNode->GetNodeRef() );
-	Message.ExportData("NewParent", pNode->GetParent()->GetNodeRef() );
+	Message.ExportData("Node", pNode->GetNodeRef() );
+	
+	if ( pOldParentNode )
+		Message.ExportData("OldParent", pOldParentNode->GetNodeRef() );
+	if ( pNode->GetParent() )
+		Message.ExportData("NewParent", pNode->GetParent()->GetNodeRef() );
 
 	PublishMessage(Message);
 }

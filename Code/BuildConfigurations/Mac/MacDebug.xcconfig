@@ -1,0 +1,13 @@
+//
+//  TootleDebug.xcconfig
+//  
+//
+//  Created by Duane Bradbury on 18/12/2008.
+//  Copyright 2008 Tootle. All rights reserved.
+//
+#include "Mac.xcconfig"
+
+//	gr: debug specific setup
+COPY_PHASE_STRIP = NO
+GCC_OPTIMIZATION_LEVEL = 0
+MAC_DEBUG_DEFINITIONS = $(MAC_DEFINITIONS) _DEBUG

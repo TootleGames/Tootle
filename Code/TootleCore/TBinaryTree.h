@@ -67,6 +67,7 @@ public:
 
 	template<typename TYPE> 
 	Bool						ReplaceData(TRefRef DataRef,const TYPE& Data);			//	remove existing data and swap it for this new data. if the new value is the same as before then FALSE is returned							
+	Bool						ReplaceDataString(TRefRef DataRef,const TString& DataString);			//	remove existing data and swap it for this new data. if the new value is the same as before then FALSE is returned							
 
 	FORCEINLINE Bool			operator==(TRefRef DataRef)const		{	return GetDataRef() == DataRef;	}
 

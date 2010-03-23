@@ -130,6 +130,8 @@ public:
 
 	void						Shutdown();				//	because of backwards referencing, we should shutdown before NULL'ing otherwise nothing will get released until graphs/nodes etc are.
 
+	virtual TRefRef				GetPublisherRef() const								{	static TRef Ref = TRef_Static(Q,Z,o,n,e);	return Ref;	}						//	ref for this publisher (doesn't need to be unique, just an identifier)
+
 	Bool						AddNode(TPtr<TQuadTreeNode>& pNode,TPtr<TQuadTreeZone>& pThis,Bool DoCheckInShape);	//	attempt to add this node to this zone. checks with children first to see if it fits into just one child better. returns FALSE if not in this zone
 	FORCEINLINE Bool			IsBelowZone(const TQuadTreeZone* pZone) const		{	return (this == pZone) ? TRUE : (!m_pParent.IsValid()) ? FALSE : m_pParent->IsBelowZone( pZone );	}
 	FORCEINLINE Bool			IsBelowZone(const TPtr<TQuadTreeZone>& pZone) const	{	return IsBelowZone( pZone.GetObjectPointer() );	}

@@ -6,7 +6,7 @@
 
 #include "PCMemory.h"
 
-#include "PCCore.h"
+#include <TootleGui/PC/PCGui.h>	//	windows headers
 
 #include <tchar.h>
 

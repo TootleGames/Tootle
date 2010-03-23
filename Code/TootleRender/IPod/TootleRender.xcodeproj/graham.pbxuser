@@ -2,7 +2,11 @@
 {
 	84C109090F0A779700B2DF7A /* Project object */ = {
 		activeBuildConfigurationName = "Release AdHoc";
+		activeSDKPreference = iphoneos2.2.1;
 		activeTarget = 84C10AE70F0A7E3B00B2DF7A /* TootleRender */;
+		addToTargets = (
+			84C10AE70F0A7E3B00B2DF7A /* TootleRender */,
+		);
 		codeSenseManager = BF81C3A30F30F633001ACEC3 /* Code sense */;
 		perUserDictionary = {
 			PBXConfiguration.PBXFileTableDataSource3.PBXErrorsWarningsDataSource = {
@@ -24,7 +28,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					364,
+					834,
 					20,
 					48,
 					43,
@@ -63,8 +67,18 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 262272298;
-			PBXWorkspaceStateSaveDate = 262272298;
+			PBXPerProjectTemplateStateSaveDate = 290875695;
+			PBXWorkspaceStateSaveDate = 290875695;
+		};
+		perUserProjectItems = {
+			BFC7ABC71156A21600FFFC81 /* PBXTextBookmark */ = BFC7ABC71156A21600FFFC81 /* PBXTextBookmark */;
+			BFC7ABC81156A21600FFFC81 /* PBXTextBookmark */ = BFC7ABC81156A21600FFFC81 /* PBXTextBookmark */;
+			BFC7ABC91156A21600FFFC81 /* PBXTextBookmark */ = BFC7ABC91156A21600FFFC81 /* PBXTextBookmark */;
+			BFC7ABCA1156A21600FFFC81 /* PBXTextBookmark */ = BFC7ABCA1156A21600FFFC81 /* PBXTextBookmark */;
+			BFC7ABCC1156A21600FFFC81 /* PBXTextBookmark */ = BFC7ABCC1156A21600FFFC81 /* PBXTextBookmark */;
+			BFC7ABD31156A6BB00FFFC81 /* PBXTextBookmark */ = BFC7ABD31156A6BB00FFFC81 /* PBXTextBookmark */;
+			BFC7ABD41156A6BB00FFFC81 /* XCBuildMessageTextBookmark */ = BFC7ABD41156A6BB00FFFC81 /* XCBuildMessageTextBookmark */;
+			BFC7ABD51156A6BB00FFFC81 /* PBXTextBookmark */ = BFC7ABD51156A6BB00FFFC81 /* PBXTextBookmark */;
 		};
 		sourceControlManager = BF81C3A20F30F633001ACEC3 /* Source Control */;
 		userBuildSettings = {
@@ -139,37 +153,16 @@
 	};
 	84C10B170F0A7E7400B2DF7A /* IPodRender.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1684, 1072}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1556, 976}}";
 			sepNavSelRange = "{772, 0}";
-			sepNavVisRange = "{616, 1774}";
+			sepNavVisRange = "{221, 507}";
 		};
 	};
-	84C10B180F0A7E7400B2DF7A /* IPodRender.mm */ = {
+	84DE34490F12AA6C00608F8C /* TRenderNodeTile.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1076, 3360}}";
-			sepNavSelRange = "{80, 0}";
-			sepNavVisRange = "{3630, 943}";
-		};
-	};
-	84C10B190F0A7E7400B2DF7A /* IPodRenderTarget.h */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1424, 944}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1024, 1760}}";
 			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 607}";
-		};
-	};
-	84C10B1A0F0A7E7400B2DF7A /* IPodRenderTarget.mm */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1424, 4848}}";
-			sepNavSelRange = "{2812, 0}";
-			sepNavVisRange = "{2619, 1464}";
-		};
-	};
-	84C10B1C0F0A7E7400B2DF7A /* IPodScreen.mm */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1372, 7552}}";
-			sepNavSelRange = "{13003, 0}";
-			sepNavVisRange = "{12824, 340}";
+			sepNavVisRange = "{0, 246}";
 		};
 	};
 	BF81C3A20F30F633001ACEC3 /* Source Control */ = {
@@ -177,10 +170,127 @@
 		fallbackIsa = XCSourceControlManager;
 		isSCMEnabled = 0;
 		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
 		};
 	};
 	BF81C3A30F30F633001ACEC3 /* Code sense */ = {
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
+	};
+	BFC7ABB21156697F00FFFC81 /* MacRenderTarget.mm */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1252, 4128}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{5699, 675}";
+		};
+	};
+	BFC7ABB31156697F00FFFC81 /* MacRender.mm */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1276, 2176}}";
+			sepNavSelRange = "{186, 4294}";
+			sepNavVisRange = "{3216, 1264}";
+		};
+	};
+	BFC7ABB41156697F00FFFC81 /* MacRender.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1684, 1040}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{429, 755}";
+		};
+	};
+	BFC7ABBF1156A0BF00FFFC81 /* IPodRenderTarget.mm */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1228, 4128}}";
+			sepNavSelRange = "{58, 123}";
+			sepNavVisRange = "{0, 791}";
+		};
+	};
+	BFC7ABC11156A0BF00FFFC81 /* IPodRender.mm */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1024, 608}}";
+			sepNavSelRange = "{796, 0}";
+			sepNavVisRange = "{253, 543}";
+		};
+	};
+	BFC7ABC71156A21600FFFC81 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84DE34490F12AA6C00608F8C /* TRenderNodeTile.cpp */;
+		name = "TRenderNodeTile.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 246;
+		vrLoc = 0;
+	};
+	BFC7ABC81156A21600FFFC81 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BFC7ABB41156697F00FFFC81 /* MacRender.h */;
+		name = "MacRender.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 755;
+		vrLoc = 429;
+	};
+	BFC7ABC91156A21600FFFC81 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10B170F0A7E7400B2DF7A /* IPodRender.h */;
+		name = "IPodRender.h: 36";
+		rLen = 0;
+		rLoc = 772;
+		rType = 0;
+		vrLen = 507;
+		vrLoc = 221;
+	};
+	BFC7ABCA1156A21600FFFC81 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BFC7ABB21156697F00FFFC81 /* MacRenderTarget.mm */;
+		name = "MacRenderTarget.mm: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 675;
+		vrLoc = 5699;
+	};
+	BFC7ABCC1156A21600FFFC81 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BFC7ABB31156697F00FFFC81 /* MacRender.mm */;
+		name = "MacRender.mm: 7";
+		rLen = 4294;
+		rLoc = 186;
+		rType = 0;
+		vrLen = 1264;
+		vrLoc = 3216;
+	};
+	BFC7ABD31156A6BB00FFFC81 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BFC7ABBF1156A0BF00FFFC81 /* IPodRenderTarget.mm */;
+		name = "IPodRenderTarget.mm: 4";
+		rLen = 123;
+		rLoc = 58;
+		rType = 0;
+		vrLen = 791;
+		vrLoc = 0;
+	};
+	BFC7ABD41156A6BB00FFFC81 /* XCBuildMessageTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "'GL_POLYGON_SMOOTH_HINT' was not declared in this scope";
+		fRef = BFC7ABC11156A0BF00FFFC81 /* IPodRender.mm */;
+		fallbackIsa = XCBuildMessageTextBookmark;
+		rLen = 1;
+		rLoc = 51;
+		rType = 1;
+	};
+	BFC7ABD51156A6BB00FFFC81 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BFC7ABC11156A0BF00FFFC81 /* IPodRender.mm */;
+		name = "IPodRender.mm: 38";
+		rLen = 0;
+		rLoc = 796;
+		rType = 0;
+		vrLen = 543;
+		vrLoc = 253;
 	};
 }

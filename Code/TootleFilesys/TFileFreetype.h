@@ -21,6 +21,12 @@ namespace TLAsset
 
 
 
+//	freetype needs memcmp and wcscpy... though I'm sure it 
+//	already includes string.h, we'll just have to do it 
+//	ourselves.
+#if defined(TL_TARGET_PC)
+	#include <string.h>
+#endif // PC
 
 namespace TLFreetype
 {

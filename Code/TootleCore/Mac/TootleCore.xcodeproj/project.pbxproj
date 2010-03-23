@@ -60,7 +60,6 @@
 		8418F0F50F4DB87A00B956C9 /* TPublisher.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F0B90F4DB87A00B956C9 /* TPublisher.h */; };
 		8418F0F60F4DB87A00B956C9 /* TRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F0BA0F4DB87A00B956C9 /* TRef.cpp */; };
 		8418F0F70F4DB87A00B956C9 /* TRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F0BB0F4DB87A00B956C9 /* TRef.h */; };
-		8418F0F80F4DB87A00B956C9 /* TRefManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F0BC0F4DB87A00B956C9 /* TRefManager.h */; };
 		8418F0F90F4DB87A00B956C9 /* TRelay.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F0BD0F4DB87A00B956C9 /* TRelay.h */; };
 		8418F0FA0F4DB87A00B956C9 /* TStateMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F0BE0F4DB87A00B956C9 /* TStateMachine.cpp */; };
 		8418F0FB0F4DB87A00B956C9 /* TStateMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F0BF0F4DB87A00B956C9 /* TStateMachine.h */; };
@@ -69,10 +68,6 @@
 		8418F0FE0F4DB87A00B956C9 /* TSubscriber.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F0C20F4DB87A00B956C9 /* TSubscriber.h */; };
 		8418F0FF0F4DB87A00B956C9 /* TSyncQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F0C30F4DB87A00B956C9 /* TSyncQueue.cpp */; };
 		8418F1000F4DB87A00B956C9 /* TSyncQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F0C40F4DB87A00B956C9 /* TSyncQueue.h */; };
-		8418F1650F4DB9B900B956C9 /* MacApp.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F15D0F4DB9B900B956C9 /* MacApp.h */; };
-		8418F1660F4DB9B900B956C9 /* MacApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8418F15E0F4DB9B900B956C9 /* MacApp.mm */; };
-		8418F1670F4DB9B900B956C9 /* MacCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F15F0F4DB9B900B956C9 /* MacCore.h */; };
-		8418F1680F4DB9B900B956C9 /* MacCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8418F1600F4DB9B900B956C9 /* MacCore.mm */; };
 		8418F1690F4DB9B900B956C9 /* MacMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F1610F4DB9B900B956C9 /* MacMemory.h */; };
 		8418F16A0F4DB9B900B956C9 /* MacMemory.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8418F1620F4DB9B900B956C9 /* MacMemory.mm */; };
 		8418F16B0F4DB9B900B956C9 /* MacTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F1630F4DB9B900B956C9 /* MacTime.h */; };
@@ -80,8 +75,6 @@
 		8421B0AD1086239900439A7E /* MacDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 8421B0AB1086239900439A7E /* MacDebug.h */; };
 		8421B0AE1086239900439A7E /* MacDebug.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8421B0AC1086239900439A7E /* MacDebug.mm */; };
 		842A0786109730C300BE64F8 /* TTransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 842A0785109730C300BE64F8 /* TTransform.cpp */; };
-		844CE21310515D3000178124 /* TLCoreMisc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 844CE21010515D3000178124 /* TLCoreMisc.cpp */; };
-		844CE21410515D3000178124 /* TLCoreMisc.h in Headers */ = {isa = PBXBuildFile; fileRef = 844CE21110515D3000178124 /* TLCoreMisc.h */; };
 		844CE21510515D3000178124 /* TLRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 844CE21210515D3000178124 /* TLRandom.h */; };
 		846C17BD109740DF0098DFAF /* TLMathsMisc.h in Headers */ = {isa = PBXBuildFile; fileRef = 846C17BC109740DF0098DFAF /* TLMathsMisc.h */; };
 		84C8D7F810972DF500E3D0F8 /* TTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C8D7F710972DF500E3D0F8 /* TTransform.h */; };
@@ -158,7 +151,6 @@
 		8418F0B90F4DB87A00B956C9 /* TPublisher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPublisher.h; path = ../TPublisher.h; sourceTree = SOURCE_ROOT; };
 		8418F0BA0F4DB87A00B956C9 /* TRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRef.cpp; path = ../TRef.cpp; sourceTree = SOURCE_ROOT; };
 		8418F0BB0F4DB87A00B956C9 /* TRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRef.h; path = ../TRef.h; sourceTree = SOURCE_ROOT; };
-		8418F0BC0F4DB87A00B956C9 /* TRefManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRefManager.h; path = ../TRefManager.h; sourceTree = SOURCE_ROOT; };
 		8418F0BD0F4DB87A00B956C9 /* TRelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRelay.h; path = ../TRelay.h; sourceTree = SOURCE_ROOT; };
 		8418F0BE0F4DB87A00B956C9 /* TStateMachine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TStateMachine.cpp; path = ../TStateMachine.cpp; sourceTree = SOURCE_ROOT; };
 		8418F0BF0F4DB87A00B956C9 /* TStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TStateMachine.h; path = ../TStateMachine.h; sourceTree = SOURCE_ROOT; };
@@ -167,10 +159,6 @@
 		8418F0C20F4DB87A00B956C9 /* TSubscriber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSubscriber.h; path = ../TSubscriber.h; sourceTree = SOURCE_ROOT; };
 		8418F0C30F4DB87A00B956C9 /* TSyncQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSyncQueue.cpp; path = ../TSyncQueue.cpp; sourceTree = SOURCE_ROOT; };
 		8418F0C40F4DB87A00B956C9 /* TSyncQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSyncQueue.h; path = ../TSyncQueue.h; sourceTree = SOURCE_ROOT; };
-		8418F15D0F4DB9B900B956C9 /* MacApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacApp.h; sourceTree = "<group>"; };
-		8418F15E0F4DB9B900B956C9 /* MacApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 2; path = MacApp.mm; sourceTree = "<group>"; };
-		8418F15F0F4DB9B900B956C9 /* MacCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; path = MacCore.h; sourceTree = "<group>"; };
-		8418F1600F4DB9B900B956C9 /* MacCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacCore.mm; sourceTree = "<group>"; };
 		8418F1610F4DB9B900B956C9 /* MacMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacMemory.h; sourceTree = "<group>"; };
 		8418F1620F4DB9B900B956C9 /* MacMemory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacMemory.mm; sourceTree = "<group>"; };
 		8418F1630F4DB9B900B956C9 /* MacTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacTime.h; sourceTree = "<group>"; };
@@ -178,12 +166,8 @@
 		8421B0AB1086239900439A7E /* MacDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacDebug.h; sourceTree = "<group>"; };
 		8421B0AC1086239900439A7E /* MacDebug.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacDebug.mm; sourceTree = "<group>"; };
 		842A0785109730C300BE64F8 /* TTransform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTransform.cpp; path = ../TTransform.cpp; sourceTree = SOURCE_ROOT; };
-		844CE21010515D3000178124 /* TLCoreMisc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLCoreMisc.cpp; path = ../TLCoreMisc.cpp; sourceTree = SOURCE_ROOT; };
-		844CE21110515D3000178124 /* TLCoreMisc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLCoreMisc.h; path = ../TLCoreMisc.h; sourceTree = SOURCE_ROOT; };
 		844CE21210515D3000178124 /* TLRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLRandom.h; path = ../TLRandom.h; sourceTree = SOURCE_ROOT; };
 		846C17BC109740DF0098DFAF /* TLMathsMisc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLMathsMisc.h; path = ../TLMathsMisc.h; sourceTree = SOURCE_ROOT; };
-		84B601B9104FE7ED0022E5BC /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		84B601BA104FE7ED0022E5BC /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C7FE1F10D0467500782138 /* cpuid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cpuid.h; path = ../PC/cpuid.h; sourceTree = SOURCE_ROOT; };
 		84C7FE2010D0467500782138 /* PCCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCCore.cpp; path = ../PC/PCCore.cpp; sourceTree = SOURCE_ROOT; };
 		84C7FE2110D0467500782138 /* PCCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCCore.h; path = ../PC/PCCore.h; sourceTree = SOURCE_ROOT; };
@@ -199,6 +183,21 @@
 		84D9C02A1098A5FE000042D8 /* TPointerArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPointerArray.h; path = ../TPointerArray.h; sourceTree = SOURCE_ROOT; };
 		84D9C16010999C86000042D8 /* TArrayAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TArrayAllocator.h; path = ../TArrayAllocator.h; sourceTree = SOURCE_ROOT; };
 		84F88A4A109E2530004BAF8B /* TArrayMisc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TArrayMisc.h; path = ../TArrayMisc.h; sourceTree = SOURCE_ROOT; };
+		BF1794AC112824F700A5A056 /* Lib.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Lib.xcconfig; path = ../../BuildConfigurations/Mac/Lib.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF1794AD112824F700A5A056 /* Mac.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Mac.xcconfig; path = ../../BuildConfigurations/Mac/Mac.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF1794AE112824F700A5A056 /* MacDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacDebug.xcconfig; path = ../../BuildConfigurations/Mac/MacDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF1794AF112824F700A5A056 /* MacRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacRelease.xcconfig; path = ../../BuildConfigurations/Mac/MacRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF1794B0112824F700A5A056 /* Project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Project.xcconfig; path = ../../BuildConfigurations/Mac/Project.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF1794B1112824F700A5A056 /* ProjectDebug_wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = ProjectDebug_wx.xcconfig; path = ../../BuildConfigurations/Mac/ProjectDebug_wx.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF1794B2112824F700A5A056 /* ProjectDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = ProjectDebug.xcconfig; path = ../../BuildConfigurations/Mac/ProjectDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF1794B3112824F700A5A056 /* ProjectRelease_wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = ProjectRelease_wx.xcconfig; path = ../../BuildConfigurations/Mac/ProjectRelease_wx.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF1794B4112824F700A5A056 /* ProjectRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = ProjectRelease.xcconfig; path = ../../BuildConfigurations/Mac/ProjectRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF1794B5112824F700A5A056 /* Wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Wx.xcconfig; path = ../../BuildConfigurations/Mac/Wx.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF1794B6112824F700A5A056 /* Tootle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Tootle.xcconfig; path = ../../BuildConfigurations/Tootle.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF89CB6B11099696009C2101 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF89CB6C11099696009C2101 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF8ACB001125511D0087FAEC /* LibDebug_wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug_wx.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug_wx.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF8ACB011125511D0087FAEC /* LibRelease_wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease_wx.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease_wx.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -234,6 +233,7 @@
 		8418ECF60F4DA63E00B956C9 = {
 			isa = PBXGroup;
 			children = (
+				BF1794AB112824D200A5A056 /* Base Build Configurations */,
 				8418F0880F4DB86900B956C9 /* Build Configurations */,
 				8418F0870F4DB86300B956C9 /* Source Code */,
 				8418F0860F4DB85C00B956C9 /* Frameworks */,
@@ -261,8 +261,6 @@
 			children = (
 				840A918910D7D36C00F8960C /* IPod Source Files */,
 				84C7FE1D10D0465F00782138 /* PC Soure Files */,
-				844CE21010515D3000178124 /* TLCoreMisc.cpp */,
-				844CE21110515D3000178124 /* TLCoreMisc.h */,
 				844CE21210515D3000178124 /* TLRandom.h */,
 				8418F15C0F4DB9AC00B956C9 /* Mac Source Files */,
 				8418F08B0F4DB87A00B956C9 /* TArray.h */,
@@ -322,7 +320,6 @@
 				8418F0B90F4DB87A00B956C9 /* TPublisher.h */,
 				8418F0BA0F4DB87A00B956C9 /* TRef.cpp */,
 				8418F0BB0F4DB87A00B956C9 /* TRef.h */,
-				8418F0BC0F4DB87A00B956C9 /* TRefManager.h */,
 				8418F0BD0F4DB87A00B956C9 /* TRelay.h */,
 				8418F0BE0F4DB87A00B956C9 /* TStateMachine.cpp */,
 				8418F0BF0F4DB87A00B956C9 /* TStateMachine.h */,
@@ -338,8 +335,10 @@
 		8418F0880F4DB86900B956C9 /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				84B601B9104FE7ED0022E5BC /* TootleDebug.xcconfig */,
-				84B601BA104FE7ED0022E5BC /* TootleRelease.xcconfig */,
+				BF8ACB001125511D0087FAEC /* LibDebug_wx.xcconfig */,
+				BF8ACB011125511D0087FAEC /* LibRelease_wx.xcconfig */,
+				BF89CB6B11099696009C2101 /* LibDebug.xcconfig */,
+				BF89CB6C11099696009C2101 /* LibRelease.xcconfig */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
@@ -347,10 +346,6 @@
 		8418F15C0F4DB9AC00B956C9 /* Mac Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				8418F15D0F4DB9B900B956C9 /* MacApp.h */,
-				8418F15E0F4DB9B900B956C9 /* MacApp.mm */,
-				8418F15F0F4DB9B900B956C9 /* MacCore.h */,
-				8418F1600F4DB9B900B956C9 /* MacCore.mm */,
 				8418F1610F4DB9B900B956C9 /* MacMemory.h */,
 				8418F1620F4DB9B900B956C9 /* MacMemory.mm */,
 				8418F1630F4DB9B900B956C9 /* MacTime.h */,
@@ -380,6 +375,24 @@
 				84C7FE2910D0467500782138 /* PCTime.h */,
 			);
 			name = "PC Soure Files";
+			sourceTree = "<group>";
+		};
+		BF1794AB112824D200A5A056 /* Base Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				BF1794AC112824F700A5A056 /* Lib.xcconfig */,
+				BF1794AD112824F700A5A056 /* Mac.xcconfig */,
+				BF1794AE112824F700A5A056 /* MacDebug.xcconfig */,
+				BF1794AF112824F700A5A056 /* MacRelease.xcconfig */,
+				BF1794B0112824F700A5A056 /* Project.xcconfig */,
+				BF1794B1112824F700A5A056 /* ProjectDebug_wx.xcconfig */,
+				BF1794B2112824F700A5A056 /* ProjectDebug.xcconfig */,
+				BF1794B3112824F700A5A056 /* ProjectRelease_wx.xcconfig */,
+				BF1794B4112824F700A5A056 /* ProjectRelease.xcconfig */,
+				BF1794B5112824F700A5A056 /* Wx.xcconfig */,
+				BF1794B6112824F700A5A056 /* Tootle.xcconfig */,
+			);
+			name = "Base Build Configurations";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -420,17 +433,13 @@
 				8418F0F30F4DB87A00B956C9 /* TPtrArray.h in Headers */,
 				8418F0F50F4DB87A00B956C9 /* TPublisher.h in Headers */,
 				8418F0F70F4DB87A00B956C9 /* TRef.h in Headers */,
-				8418F0F80F4DB87A00B956C9 /* TRefManager.h in Headers */,
 				8418F0F90F4DB87A00B956C9 /* TRelay.h in Headers */,
 				8418F0FB0F4DB87A00B956C9 /* TStateMachine.h in Headers */,
 				8418F0FD0F4DB87A00B956C9 /* TString.h in Headers */,
 				8418F0FE0F4DB87A00B956C9 /* TSubscriber.h in Headers */,
 				8418F1000F4DB87A00B956C9 /* TSyncQueue.h in Headers */,
-				8418F1650F4DB9B900B956C9 /* MacApp.h in Headers */,
-				8418F1670F4DB9B900B956C9 /* MacCore.h in Headers */,
 				8418F1690F4DB9B900B956C9 /* MacMemory.h in Headers */,
 				8418F16B0F4DB9B900B956C9 /* MacTime.h in Headers */,
-				844CE21410515D3000178124 /* TLCoreMisc.h in Headers */,
 				844CE21510515D3000178124 /* TLRandom.h in Headers */,
 				8421B0AD1086239900439A7E /* MacDebug.h in Headers */,
 				840760681095DC390008D5A5 /* TArraySort.h in Headers */,
@@ -508,11 +517,8 @@
 				8418F0FA0F4DB87A00B956C9 /* TStateMachine.cpp in Sources */,
 				8418F0FC0F4DB87A00B956C9 /* TString.cpp in Sources */,
 				8418F0FF0F4DB87A00B956C9 /* TSyncQueue.cpp in Sources */,
-				8418F1660F4DB9B900B956C9 /* MacApp.mm in Sources */,
-				8418F1680F4DB9B900B956C9 /* MacCore.mm in Sources */,
 				8418F16A0F4DB9B900B956C9 /* MacMemory.mm in Sources */,
 				8418F16C0F4DB9B900B956C9 /* MacTime.mm in Sources */,
-				844CE21310515D3000178124 /* TLCoreMisc.cpp in Sources */,
 				8421B0AE1086239900439A7E /* MacDebug.mm in Sources */,
 				842A0786109730C300BE64F8 /* TTransform.cpp in Sources */,
 				840A910510D7BB6C00F8960C /* MacString.mm in Sources */,
@@ -524,52 +530,35 @@
 /* Begin XCBuildConfiguration section */
 		8418ECF90F4DA63E00B956C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84B601B9104FE7ED0022E5BC /* TootleDebug.xcconfig */;
+			baseConfigurationReference = BF89CB6B11099696009C2101 /* LibDebug.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				COPY_PHASE_STRIP = NO;
-				HEADER_SEARCH_PATHS = ../..;
-				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(WX_CPLUSPLUSFLAGS)",
+					"$(OTHER_CFLAGS)",
+				);
 			};
 			name = Debug;
 		};
 		8418ECFA0F4DA63E00B956C9 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84B601BA104FE7ED0022E5BC /* TootleRelease.xcconfig */;
+			baseConfigurationReference = BF89CB6C11099696009C2101 /* LibRelease.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				COPY_PHASE_STRIP = YES;
-				HEADER_SEARCH_PATHS = ../..;
-				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(WX_CPLUSPLUSFLAGS)",
+					"$(OTHER_CFLAGS)",
+				);
 			};
 			name = Release;
 		};
 		8418EED20F4DAB6B00B956C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleCore;
 			};
 			name = Debug;
 		};
 		8418EED30F4DAB6B00B956C9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleCore;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};

@@ -1,0 +1,25 @@
+//
+//  TootleDebug.xcconfig
+//  
+//
+//  Created by Duane Bradbury on 18/12/2008.
+//  Copyright 2008 Tootle. All rights reserved.
+//
+//	combine this with MacRelease.xcconfig or MacDebug.xcconfig to make LibXXX.xcconfig
+
+//	lib settings
+TOOTLE_ROOT = ../..
+
+EXECUTABLE_EXTENSION = a
+EXECUTABLE_PREFIX = lib
+WRAPPER_EXTENSION = 
+LIB_DEFINITIONS = 
+LIB_LDFLAGS =
+LIB_CPLUSPLUSFLAGS =
+
+//	gr: needed? could be left as defaults?
+INSTALL_PATH = 
+SKIP_INSTALL = NO
+PREBINDING = YES
+GENERATE_PKGINFO_FILE = NO
+GCC_DYNAMIC_NO_PIC = NO

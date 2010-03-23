@@ -869,9 +869,6 @@ Bool TLRender::TRenderNode::SetWorldTransformOld(Bool SetPosOld,Bool SetTransfor
 void TLRender::TRenderNode::UpdateNodeData()
 {
 	//	gr: i wonder if the type should be stored in itself, as (for editor-style reflection at least) it cannot be changed
-	GetNodeData().RemoveChild("Type");
-	GetNodeData().ExportData("Type", GetNodeTypeRef());
-
 	GetNodeData().RemoveChild("MeshRef");
 	GetNodeData().ExportData("MeshRef", m_MeshRef);
 

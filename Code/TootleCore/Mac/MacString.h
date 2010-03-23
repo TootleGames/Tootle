@@ -34,8 +34,8 @@ FORCEINLINE TString& operator<<(TString& String,const NSString* pNSString)
 //		NSString* pString; to a const NSString* pString;
 //		so the normal templated << operator above doesn't get called (It does call the base template though?!)
 //		so this is done to workaround it so we don't have to put const NSString* everywhere
+//	note: this is not one of the templated string << operators, it just exists globally. (all the templated stirng ones take const params)
 //---------------------------------------------------
-template<>
 FORCEINLINE TString& operator<<(TString& String,NSString* pNSString)
 {
 	const NSString* pConstString = pNSString;

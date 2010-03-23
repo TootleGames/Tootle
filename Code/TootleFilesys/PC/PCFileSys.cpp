@@ -8,8 +8,9 @@
  */
 
 #include "PCFileSys.h"
+#include <TootleCore/TLCore.h>
+#include <TootleGui/TLGui.h>
 
-#include <TootleCore/TLCoreMisc.h>
 
 Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 {
@@ -67,7 +68,7 @@ Bool TLFileSys::Platform::GetUserDirectory(TTempString& UserDir)
 
 Bool TLFileSys::Platform::GetApplicationURL(TTempString& url)
 {
-	TString NewDirectory = TLCore::Platform::GetAppExe();
+	TString NewDirectory = TLGui::GetAppExe();
 	TLFileSys::GetParentDir( NewDirectory );
 
 	url = NewDirectory;

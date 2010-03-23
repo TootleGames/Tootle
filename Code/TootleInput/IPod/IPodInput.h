@@ -13,7 +13,6 @@ namespace TLInput
 		SyncBool		Shutdown();
 		
 		Bool			UpdateDevice(TInputDevice& Device);
-		int2			GetCursorPosition(u8 uIndex);
 		
 		SyncBool		EnumerateDevices();
 		void			RemoveAllDevices();
@@ -98,7 +97,7 @@ namespace TLInput
 			Bool CreateDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef, Bool bVirtual);
 			Bool InitialiseDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef, Bool bVirtual);
 		
-			extern Bool						g_bVirtualKeyboardActive;
+			extern Bool						g_bVirtualKeyboardActive;	//	gr: replace this with a function to see if the textview controller exists or not
 		}
 	};
 };

@@ -1,7 +1,8 @@
 #include "TManager.h"
 #include "TEventChannel.h"
 
-#include "TLCoreMisc.h"
+#include "TLCore.h"
+#include "TLCore.h"
 
 //------------------------------------------------------
 //	Process basic messages a manager will receive
@@ -32,7 +33,7 @@ void TLCore::TManager::ProcessMessage(TLMessaging::TMessage& Message)
 				SetState(TLManager::S_Ready);
 			else
 			{
-				TLCore::Platform::DoQuit();
+				TLCore::Quit();
 				SetState(TLManager::S_Error);
 			}
 		}
@@ -49,7 +50,7 @@ void TLCore::TManager::ProcessMessage(TLMessaging::TMessage& Message)
 			
 			if(Result == SyncFalse)
 			{
-				TLCore::Platform::DoQuit();
+				TLCore::Quit();
 				
 				SetState(TLManager::S_Error);
 			}

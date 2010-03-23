@@ -8,10 +8,8 @@
  */
 
 #include "MacCamera.h"
-
 #include "MacCameraController.h"
-
-#include <TootleCore/Mac/MacApp.h>
+//#include <TootleCore/Mac/MacApp.h>
 
 
 namespace TLCamera

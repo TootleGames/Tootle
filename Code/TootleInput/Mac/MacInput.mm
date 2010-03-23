@@ -9,14 +9,15 @@
 
 #include <TootleCore/TLMemory.h> // TEMP
 
+//	gr: enable this to use the HID mouse.
+//		the GUI library now
+#define ENABLE_HID_MOUSE
+#define ENABLE_HID_KEYBOARD
 
 
 #ifdef _DEBUG
 	//#define ENABLE_INPUTSYSTEM_TRACE
 #endif
-
-// HACK - Pixel offset of the toolbar border or cursor graphic?  There must be a better way of compensating for this?
-#define HACK_PIXEL_OFFSET 20
 
 // [16/12/08] DB -	Possible responsiveness improvement
 //					Calls the update manually from the touch events which should mean the inptu is processed immediately
@@ -110,6 +111,34 @@ namespace TLInput
 		}
 	}
 }
+
+
+
+SyncBool TLInput::Platform::Init()
+{
+	return HID::Init();	
+}
+
+SyncBool TLInput::Platform::Update()	
+{
+	return SyncTrue;	
+}
+
+SyncBool TLInput::Platform::Shutdown()		
+{
+	return HID::Shutdown();	
+}
+
+SyncBool TLInput::Platform::EnumerateDevices()		
+{
+	return SyncTrue; 
+}
+
+void TLInput::Platform::RemoveAllDevices()		
+{
+	HID::RemoveAllDevices(); 
+}
+
 
 
 using namespace TLInput;
@@ -208,8 +237,8 @@ void Platform::HID::InitialiseKeyboadRefMap()
 	g_KeyboardRefMap.Add(kHIDUsage_KeyboardB, "K_B");
 	g_KeyboardRefMap.Add(kHIDUsage_KeyboardN, "K_N");
 	g_KeyboardRefMap.Add(kHIDUsage_KeyboardM, "K_M");
-	g_KeyboardRefMap.Add(kHIDUsage_KeypadComma, "K_,");
-	g_KeyboardRefMap.Add(kHIDUsage_KeyboardPeriod, "K_.");
+	g_KeyboardRefMap.Add(kHIDUsage_KeypadComma, "K_COMMA");
+	g_KeyboardRefMap.Add(kHIDUsage_KeyboardPeriod, "K_PERIOD");
 	g_KeyboardRefMap.Add(kHIDUsage_KeyboardSlash, "K_FORWARDSLASH");
 	g_KeyboardRefMap.Add(kHIDUsage_KeyboardRightShift, "K_RSHIFT");
 	g_KeyboardRefMap.Add(kHIDUsage_KeypadAsterisk, "K_MULTIPLY");
@@ -389,12 +418,7 @@ Bool Platform::HID::GetSpecificButtonRef(const u32& uButtonID, TRefRef DeviceTyp
 
 void Platform::HID::DeviceEnumerateCallback(void* context, IOReturn result,  void* sender, IOHIDDeviceRef device)
 {
-	TLDebug_Print("HID Device enumerated");
-	
-	TTempString str("Device Ref: ");
-	str.Appendf("%x", device);
-	TLDebug_Print(str);
-	str.Empty();
+	TLDebug_Print( TString("HID Device enumerated; Ref: %x", device) );
 	
 	//	get device ref mapped to this guid
 	TRef InstanceRef = TLInput::Platform::HID::GetDeviceRefFromProductID( device, TRUE );
@@ -441,6 +465,7 @@ void Platform::HID::DeviceEnumerateCallback(void* context, IOReturn result,  voi
     }	
 	
 
+	TTempString str;
 	str.Appendf("Usage Page: ");
 	str.Appendf("0x%x", usagePage );
 	TLDebug_Print(str);
@@ -467,7 +492,10 @@ void Platform::HID::DeviceEnumerateCallback(void* context, IOReturn result,  voi
 			case kHIDUsage_GD_Mouse:
 					//CreateDevice_Mouse(device);
 					refDeviceType = TLInput::MouseRef;
-					bProcessDevice = TRUE;
+					
+					#ifdef ENABLE_HID_MOUSE
+						bProcessDevice = TRUE;
+					#endif
 					break;					
 			case kHIDUsage_GD_GamePad:
 					//CreateDevice_Gamepad(device);
@@ -480,7 +508,9 @@ void Platform::HID::DeviceEnumerateCallback(void* context, IOReturn result,  voi
 			case kHIDUsage_GD_Keyboard:
 					//CreateDevice_Keyboard(device);
 					refDeviceType = TLInput::KeyboardRef;
-					bProcessDevice = TRUE;
+					#ifdef ENABLE_HID_MOUSE
+						bProcessDevice = TRUE;
+					#endif
 					break;
 					
 			// Unknown usage		
@@ -1201,56 +1231,12 @@ Bool Platform::HID::UpdateHIDDevice_Gamepad(TInputDevice& Device,TLInputHIDDevic
 
 #define USE_MOUSELOC_OUTSIDE_OF_EVENT
 
+#include <TootleGui/TLGui.h>
+
 int2 Platform::GetCursorPosition(u8 uIndex)
 {
-	// TODO: Return cursor pos
-	//return int2(0,0);
-
-	// Get screen info	
-	NSArray* windowlist = [NSApp windows];
-
-	NSWindow* window = nil;
-	NSPoint pos = {0,0};
-	
-	if([windowlist count] > 0)
-	{
-		window = [windowlist objectAtIndex:0];
-		
-		NSRect	rect = [window frame];
-
-		TTempString str;
-#ifdef USE_MOUSELOC_OUTSIDE_OF_EVENT		
-		// Get mouse pos relative to window
-		pos = [window mouseLocationOutsideOfEventStream];
-		
-		str.Appendf("Mouse pos (%.2f, %.2f)", pos.x, pos.y);
-
-#else		
-		// Get mouse coordinates in screen space
-		pos = [NSEvent mouseLocation];
-		
-		str.Appendf("Mouse pos (%.2f, %.2f)", pos.x, pos.y);
-		
-		// Now make relative to window
-		NSPoint windowpos = [window convertScreenToBase:pos];
-		
-		pos = windowpos;
-		
-		str.Appendf("-> (%.2f, %.2f)", pos.x, pos.y);
-#endif		
-		// On the Mac the y position is from the bottom of the window
-		// So invert it		
-		float fYPos = rect.size.height - pos.y;
-		pos.y = fYPos - HACK_PIXEL_OFFSET;
-		
-		str.Appendf("-> (%.2f, %.2f)", pos.x, pos.y);
-		
-		TLDebug_Print(str);
-
-	}
-	
-	
-	return int2(pos.x, pos.y);
+	//	gr: get mouse pos from OS (gui lib)
+	return TLGui::GetDefaultScreenMousePosition(uIndex);
 }
 
 

@@ -1,11 +1,62 @@
 //
-//  TootleRelease.xcconfig
+//  Mac.xcconfig
 //  
+//	cross configuration, Mac-specific build flags
 //
-//  Created by Duane Bradbury on 18/12/2008.
-//  Copyright 2008 Tootle. All rights reserved.
-//
+#include "../Tootle.xcconfig"
 
+
+//	gr: add the mac target define
+MAC_DEFINITIONS = $(TOOTLE_DEFINITIONS) TL_TARGET_MAC
+
+
+//	gr: not sure what this is for, but it was defined in some projects (under user settings, so not a regular build option...)
+ZERO_LINK = NO
+
+//	gr: speed up
+GCC_UNROLL_LOOPS = YES
+GCC_FAST_MATH = YES
+
+//	gr: many of the lib's targets had this setting... but not everything. I presume it was explicitly set, but not sure.
+DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
+
+//	gr: small bools to match win32
+GCC_ONE_BYTE_BOOL = YES
+
+//	gr: some better warnings
+GCC_WARN_INHIBIT_ALL_WARNINGS = NO
+GCC_TREAT_WARNINGS_AS_ERRORS = NO				//	turn this on one day :)
+
+//	gr: turn these on asap
+GCC_WARN_SHADOW = NO							//	warn if a local variable has the same name as a global or another local or a func (risk of ambiguity)
+GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO	//	good-practise warnings (eg. = operator 
+GCC_WARN_SIGN_COMPARE = NO
+GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO			//	maybe a bit OTT to turn this on...
+GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO			//	covered by EFFECTIVE_CPLUSPLUS_VIOLATIONS I think... (this is compilers guess at virtual classes though, so may need to turn this off if it's giving out spurious warnings)
+GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO			//	overloaded function doesn't have "virtual" in front of it
+GCC_WARN_CHECK_SWITCH_STATEMENTS = NO
+
+GCC_WARN_ABOUT_RETURN_TYPE = YES
+GCC_WARN_UNKNOWN_PRAGMAS = YES
+GCC_WARN_UNUSED_VARIABLE = YES
+GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES
+GCC_WARN_64_TO_32_BIT_CONVERSION = YES			//	warn if casting down to 32 bit (in case we make refs 64bit and end up losing data)
+GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES	//	multi-dimensional-array/union initialiser warning (don't think we ever do this though)
+GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES	//	bad struct initialisation.
+GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES			//	not sure how you'd cause this... (signed vs unsigned pointers...)
+GCC_WARN_PROTOTYPE_CONVERSION = YES				//	catch unexpected type conversions - turn off if this warns about custom conversions too much. we DON'T want to cast classes in code
+GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES		//	enabled, but phase out ... functions in favour of iostream << style operators
+CC_WARN_UNUSED_VALUE = YES						//	catch when we do a calculation, but nothing with the result
+
+
+//	gr: don't define these, we can leave them as xcode wants
+//MACH_O_TYPE = staticlib
+
+//	gr: make all symbols visible
+GCC_INLINES_ARE_PRIVATE_EXTERN = NO
+GCC_SYMBOLS_PRIVATE_EXTERN = NO
+
+//	common mac compiler setup
 ADDITIONAL_SDKS = 
 ARCHS = $(ARCHS_STANDARD_32_64_BIT)
 SDKROOT = 
@@ -17,7 +68,6 @@ CONFIGURATION_BUILD_DIR = $(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME
 CONFIGURATION_TEMP_DIR = $(PROJECT_TEMP_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
 SHARED_PRECOMPS_DIR = $(CACHE_ROOT)/SharedPrecompiledHeaders
 BUILD_VARIANTS = normal
-DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
 ENABLE_OPENMP_SUPPORT = NO
 GENERATE_PROFILING_CODE = 
 PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES
@@ -38,9 +88,6 @@ INSTALL_GROUP = $(GROUP)
 INSTALL_OWNER = $(USER)
 INSTALL_MODE_FLAG = u+w,go-w,a+rX
 DSTROOT = /tmp/$(PROJECT_NAME).dst
-INSTALL_PATH = 
-SKIP_INSTALL = NO
-COPY_PHASE_STRIP = YES
 STRIP_INSTALLED_PRODUCT = YES
 STRIP_STYLE = all
 SEPARATE_STRIP = NO
@@ -59,13 +106,10 @@ LD_DYLIB_INSTALL_NAME =
 EXPORTED_SYMBOLS_FILE = 
 INIT_ROUTINE = 
 LINK_WITH_STANDARD_LIBRARIES = YES
-MACH_O_TYPE = staticlib
 LD_OPENMP_FLAGS = -fopenmp
 ORDER_FILE = 
-OTHER_LDFLAGS = 
 LD_MAP_FILE_PATH = $(TARGET_TEMP_DIR)/$(PRODUCT_NAME)-LinkMap-$(CURRENT_VARIANT)-$(CURRENT_ARCH).txt
 GENERATE_MASTER_OBJECT_FILE = NO
-PREBINDING = YES
 PRELINK_LIBS = 
 KEEP_PRIVATE_EXTERNS = NO
 LD_RUNPATH_SEARCH_PATHS = 
@@ -76,10 +120,7 @@ UNEXPORTED_SYMBOLS_FILE =
 WARNING_LDFLAGS = 
 LD_GENERATE_MAP_FILE = NO
 APPLY_RULES_IN_COPY_FILES = NO
-EXECUTABLE_EXTENSION = a
-EXECUTABLE_PREFIX = lib
 INFOPLIST_EXPAND_BUILD_SETTINGS = YES
-GENERATE_PKGINFO_FILE = NO
 FRAMEWORK_VERSION = A
 INFOPLIST_FILE = 
 INFOPLIST_OTHER_PREPROCESSOR_FLAGS = 
@@ -89,14 +130,11 @@ INFOPLIST_PREFIX_HEADER =
 INFOPLIST_PREPROCESS = NO
 COPYING_PRESERVES_HFS_DATA = NO
 PRIVATE_HEADERS_FOLDER_PATH = 
-PRODUCT_NAME = 
 PLIST_FILE_OUTPUT_FORMAT = same-as-input
 PUBLIC_HEADERS_FOLDER_PATH = 
 STRINGS_FILE_OUTPUT_ENCODING = UTF-16
-WRAPPER_EXTENSION = 
 ALWAYS_SEARCH_USER_PATHS = YES
 FRAMEWORK_SEARCH_PATHS = 
-HEADER_SEARCH_PATHS = ../..
 LIBRARY_SEARCH_PATHS = 
 REZ_SEARCH_PATHS = 
 EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = *.nib *.lproj *.framework *.gch *.xcode* (*) CVS .svn
@@ -121,9 +159,7 @@ GCC_STRICT_ALIASING = NO
 GCC_FEEDBACK_DIRECTED_OPTIMIZATION = Off
 GCC_ENABLE_FIX_AND_CONTINUE = NO
 GCC_GENERATE_DEBUGGING_SYMBOLS = YES
-GCC_DYNAMIC_NO_PIC = NO
 GCC_GENERATE_TEST_COVERAGE_FILES = NO
-GCC_INLINES_ARE_PRIVATE_EXTERN = YES
 GCC_MODEL_TUNING = G4
 GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO
 GCC_ENABLE_KERNEL_DEVELOPMENT = NO
@@ -132,12 +168,8 @@ LLVM_LTO = NO
 GCC_REUSE_STRINGS = YES
 GCC_NO_COMMON_BLOCKS = NO
 GCC_ENABLE_OBJC_GC = unsupported
-GCC_OPTIMIZATION_LEVEL = s
-GCC_FAST_MATH = NO
 GCC_ENABLE_SYMBOL_SEPARATION = YES
 GCC_THREADSAFE_STATICS = YES
-GCC_SYMBOLS_PRIVATE_EXTERN = YES
-GCC_UNROLL_LOOPS = NO
 GCC_MODEL_PPC64 = NO
 GCC_CHAR_IS_UNSIGNED_CHAR = NO
 GCC_ENABLE_ASM_KEYWORD = YES
@@ -156,7 +188,6 @@ GCC_ENABLE_FLOATING_POINT_LIBRARY_CALLS = NO
 GCC_USE_INDIRECT_FUNCTION_CALLS = NO
 GCC_USE_REGISTER_FUNCTION_CALLS = NO
 GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO
-OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS)
 GCC_PRECOMPILE_PREFIX_HEADER = NO
 GCC_PREFIX_HEADER = 
 GCC_ENABLE_BUILTIN_FUNCTIONS = YES
@@ -164,51 +195,8 @@ GCC_ENABLE_PASCAL_STRINGS = YES
 GCC_FORCE_CPU_SUBTYPE_ALL = NO
 GCC_SHORT_ENUMS = NO
 GCC_USE_GCC3_PFE_SUPPORT = YES
-GCC_ONE_BYTE_BOOL = NO
 GCC_USE_STANDARD_INCLUDE_SEARCHING = YES
-GCC_PREPROCESSOR_DEFINITIONS = TL_TARGET_MAC
 GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = 
-GCC_WARN_CHECK_SWITCH_STATEMENTS = NO
-GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO
-GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO
-GCC_WARN_SHADOW = NO
-GCC_WARN_64_TO_32_BIT_CONVERSION = NO
-GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = YES
-GCC_WARN_INHIBIT_ALL_WARNINGS = NO
-GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO
-GCC_WARN_ABOUT_RETURN_TYPE = NO
-GCC_WARN_MISSING_PARENTHESES = NO
-GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO
-GCC_WARN_ABOUT_MISSING_NEWLINE = NO
-GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO
-WARNING_CFLAGS = 
-GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO
-GCC_WARN_PEDANTIC = NO
-GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES
-GCC_WARN_PROTOTYPE_CONVERSION = NO
-GCC_WARN_SIGN_COMPARE = NO
-GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = NO
-GCC_TREAT_NONCONFORMANT_CODE_ERRORS_AS_WARNINGS = NO
-GCC_TREAT_WARNINGS_AS_ERRORS = NO
-GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = NO
-GCC_WARN_UNINITIALIZED_AUTOS = NO
-GCC_WARN_UNKNOWN_PRAGMAS = NO
-GCC_WARN_UNUSED_FUNCTION = NO
-GCC_WARN_UNUSED_LABEL = NO
-GCC_WARN_UNUSED_PARAMETER = NO
-GCC_WARN_UNUSED_VALUE = NO
-GCC_WARN_UNUSED_VARIABLE = NO
-GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES
-GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = YES
 
-//	gr: common flags, but not project defaults. Use them like $(WHATEVER)
 
-//	gr: if your project includes wx code, add these compile flags. ("Other c++ flags")
-//		generated from <wxwidgets-build-dir>/wx-config --cppflags
-//		fill xcode with $(OTHER_CFLAGS) $(OTHER_CPLUSPLUSFLAGS) $(WX_CPLUSPLUSFLAGS)
-WX_CPLUSPLUSFLAGS = -I/Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/wx/include/osx_carbon-unicode-static-2.9 -I/Users/graham/Tootle/wxWidgetsSVN/include -D_FILE_OFFSET_BITS=64 -D__WXMAC__ -D__WXOSX_CARBON__
 
-//	gr: if your [game] project needs the wx libs, add these linker flags ("Other linker flags")
-//		generated from <wxwidgets-build-dir>/wx-config --cppflags
-//		but with amendments (see "Notes/External Libs.txt")
-WX_LINKERFLAGS = -framework AGL /Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_osx_carbonu_gl-2.9.a -liconv -L/Users/graham/Tootle/wxWidgetsSVN/osx-build/lib -framework IOKit -framework Carbon -framework Cocoa -framework AudioToolbox -framework System -framework OpenGL -framework QuickTime /Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_osx_carbonu_xrc-2.9.a /Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_osx_carbonu_html-2.9.a /Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_osx_carbonu_qa-2.9.a /Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_osx_carbonu_adv-2.9.a /Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_osx_carbonu_core-2.9.a /Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_baseu_xml-2.9.a /Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_baseu_net-2.9.a /Users/graham/Tootle/wxWidgetsSVN/osx-build/lib/libwx_baseu-2.9.a -framework WebKit -lwxregexu-2.9 -lwxtiff-2.9 -lwxjpeg-2.9 -lwxpng-2.9

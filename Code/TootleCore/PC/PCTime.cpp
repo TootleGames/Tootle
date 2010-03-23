@@ -1,5 +1,4 @@
 #include "PCTime.h"
-#include "PCCore.h"
 #include <mmsystem.h>
 #include <ctime>
 #include "../TString.h"
@@ -136,6 +135,7 @@ void TLTime::Platform::GetMicroTimeNow(TTimestampMicro& Timestamp)
 
 	return;
 }
+
 
 
 //-----------------------------------------------------------------------
@@ -291,4 +291,3 @@ void TLTime::Platform::Debug_PrintTimestamp(const TTimestamp& Timestamp,s32 Micr
 
 	TLDebug_Print( DebugString );
 }
-

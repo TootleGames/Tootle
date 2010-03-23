@@ -57,9 +57,7 @@ namespace TLInput
 		SyncBool		CreateVirtualDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef);
 		SyncBool		RemoveVirtualDevice(TRefRef InstanceRef);
 
-		Bool			UpdateDevice(TInputDevice& Device);
-		int2			GetCursorPosition(u8 uIndex);
-		
+		Bool			UpdateDevice(TInputDevice& Device);		
 		
 		// TEMP test routine
 		void TestVibrateDevice() {}
@@ -92,6 +90,7 @@ public:
 	inline Bool			operator==(const TLInputDirectXDevice& DXInputDevice)	const 	{	return GetDeviceRef() == DXInputDevice.GetDeviceRef();	}
 
 
+	virtual TRefRef								GetPublisherRef() const						{	return GetDeviceRef();	}
 	const	TRef&								GetDeviceRef()														const	{ return m_DeviceRef; }
 	const 	LPDIRECTINPUTDEVICE8				GetDevice()															const	{ return m_pDevice; }
 

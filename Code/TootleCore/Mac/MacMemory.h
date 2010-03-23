@@ -9,7 +9,7 @@
 //#import <Foundation/Foundation.h>
 //#import <UIKit/UIKit.h>
 
-#include "MacCore.h"
+#include "../TLTypes.h"
 
 #include <cstdlib>	//	needed for malloc and size_t
 #include <string.h>	//	needed for memcpy

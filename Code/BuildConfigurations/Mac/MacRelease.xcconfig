@@ -1,0 +1,13 @@
+//
+//  TootleRelease.xcconfig
+//  
+//
+//  Created by Duane Bradbury on 18/12/2008.
+//  Copyright 2008 Tootle. All rights reserved.
+//
+#include "Mac.xcconfig"
+
+//	gr: release setup
+COPY_PHASE_STRIP = YES
+GCC_OPTIMIZATION_LEVEL = s
+MAC_RELEASE_DEFINITIONS = $(MAC_DEFINITIONS)

@@ -56,6 +56,8 @@ public:
 	{
 	}
 
+	virtual TRefRef		GetSubscriberRef() const		{	return GetDeviceRef();	}
+
 	TRefRef				GetDeviceRef() const			{	return m_DeviceRef;	}
 	TRefRef				GetHardwareDeviceID() const		{	return m_HardwareDeviceRef;	}
 	TRefRef				GetDeviceType() const			{	return m_DeviceType;	}
@@ -85,7 +87,8 @@ public:
 	TPtr<TLInput::TInputEffect>&	AttachEffect(TRefRef EffectRef, TRefRef TypeRef);
 
 	// Data buffer access - sensor information from hardware
-	TArray<TInputData>&				GetInputBuffer()				{ return m_InputBuffer; }
+	void							PushInputData(const TInputData& InputData)	{	m_InputBuffer.Add( InputData );	}
+	TArray<TInputData>&				GetInputBuffer()							{	return m_InputBuffer;	}
 
 	void							Debug_GetSensorLabels(TArray<TRef>& LabelRefs);		//	get a list of labels availible for all the sensors on this device
 

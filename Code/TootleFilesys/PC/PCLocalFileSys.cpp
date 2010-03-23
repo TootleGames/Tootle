@@ -1,5 +1,4 @@
 #include "PCLocalFileSys.h"
-#include <TootleCore/PC/PCCore.h>
 
 #if defined(_MSC_EXTENSIONS)
 #include <TootleCore/PC/PCTime.h>

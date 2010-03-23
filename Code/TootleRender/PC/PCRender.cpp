@@ -1,87 +1,70 @@
 #include "../TLRender.h"
 #include "PCRender.h"
-#include "PCWinControl.h"
 #include <TootleCore/TSyncQueue.h>
-#include "PCOpenglExt.h"
-#include "PCWinControl.h"
-#include "PCWinWindow.h"
 #include <TootleAsset/TMesh.h>
 #include <TootleCore/TColour.h>
 #include <TootleCore/TKeyArray.h>
 
 
-//---------------------------------------------------
-//	globals
-//---------------------------------------------------
 namespace TLRender
 {
-	namespace Platform
+	namespace Opengl
 	{
-		SyncBool					g_OpenglInitialised = SyncWait;
-		TPtr<Win32::GOpenglWindow>	g_pSpareWindow;
+		namespace Platform
+		{
+			SyncBool g_Initialised = SyncWait;
+		}
 	}
-
 }
-
-
-//---------------------------------------------------
-//	platform/opengl initialisation
-//---------------------------------------------------
-SyncBool TLRender::Platform::Init()
-{
-	//	setup default states
-	glEnable( GL_SCISSOR_TEST );
-	glDisable( GL_TEXTURE_2D );
-	glDisable( GL_CULL_FACE );
-
-	TSyncQueue Jobs;
-	Jobs.Add( Win32::Init, "Win32::Init", FALSE );
-	Jobs.Add( Opengl::Platform::Init, "Opengl::Platform::Init", FALSE );
-	Jobs.Add( OpenglExtensions::Init, "OpenglExtensions::Init", FALSE );
-
-	return Jobs.Update();
-}
-
-
-//---------------------------------------------------
-//	platform/opengl shutdown
-//---------------------------------------------------
-SyncBool TLRender::Platform::Shutdown()	
-{
-	TSyncQueue Jobs;
-	Jobs.Add( Opengl::Platform::Shutdown, "Opengl::Shutdown", FALSE );
-	Jobs.Add( OpenglExtensions::Shutdown, "OpenglExtensions::Shutdown", FALSE );
-	Jobs.Add( Win32::Shutdown, "Win32::Shutdown", FALSE );
-
-	return Jobs.Update();
-}
-
 
 //---------------------------------------------------
 //	opengl init
 //---------------------------------------------------
 SyncBool TLRender::Opengl::Platform::Init()
 {
-	//	need to create a window to initialise the opengl system
-	if ( g_pSpareWindow )
-		return SyncTrue;
+	//	already initalised
+	if ( g_Initialised != SyncWait )
+		return g_Initialised;
 
-	g_pSpareWindow = Win32::g_pFactory->GetInstance("Spare",TRUE,"OpenglWindow");
-	if ( !g_pSpareWindow )
-		return SyncFalse;
-
-	TPtr<Win32::GWinControl> pNullParent;
-	if ( !g_pSpareWindow->Init( pNullParent, g_pSpareWindow->DefaultFlags() ) )
-	{
-		Win32::g_pFactory->RemoveInstance( g_pSpareWindow->GetRef() );
-		g_pSpareWindow = NULL;
-		return SyncFalse;
-	}
+	//	gr: should check for an active context here (the caller should have created 
+	//		a context and made it current. Otherwise the commands below will fail
 	
 	//	init opengl state
 	glDisable( GL_CULL_FACE );
+	glEnable( GL_SCISSOR_TEST );
+	glDisable( GL_TEXTURE_2D );
+	glDisable( GL_LIGHTING );
+	glEnable( GL_DEPTH_TEST );
+	glDepthFunc(GL_LEQUAL);
 
+	//	antialiasing for polys
+	glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+	
+	//	fastest for debug line/points
+	glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
+	glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+	
+	//	make perspective correction good (mostly for textures)
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	glEnable(GL_POLYGON_SMOOTH);
+	//glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
+	
+	//	setup the texture alpha blending mode
+	glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
+	//glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL );
+	//glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND );
+	
+	//	enable sphere map generation
+	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+	
+	
+	TLDebug_Print( TString("Device %s", glGetString( GL_RENDERER ) ) );
+	TLDebug_Print( TString("Driver %s %s", glGetString( GL_VENDOR ), glGetString( GL_VERSION ) ) );
+	
 	Debug_CheckForError();		
+
+	g_Initialised = SyncTrue;
 
 	//	all succeeded
 	return SyncTrue;
@@ -93,9 +76,12 @@ SyncBool TLRender::Opengl::Platform::Init()
 //---------------------------------------------------
 SyncBool TLRender::Opengl::Platform::Shutdown()
 {
-	//	make sure the initial window is deleted if it hasn't been used
-	g_pSpareWindow = NULL;
-
+	//	gr: any shutdown required here? just need the opengl canvas's to free their contexts....
+	//	maybe we need a ref counter to make sure there are no more context's left
+	
+	//	back to uninitialised gl state
+	g_Initialised = SyncWait;
+	
 	return SyncTrue;
 }
 
@@ -106,7 +92,7 @@ SyncBool TLRender::Opengl::Platform::Shutdown()
 Bool TLRender::Opengl::Platform::Debug_CheckForError()
 {
 	//	can't detect errors until opengl initialised
-	if ( g_OpenglInitialised != SyncTrue )
+	if ( g_Initialised != SyncTrue )
 		return FALSE;
 
 	//	won't see result anyway

@@ -10,7 +10,7 @@
 #include "TRenderNodeTimeline.h"
 #include "TRenderNodeParticle.h"
 #include <TootleCore/TLTime.h>
-
+#include "TLRender.h"
 
 
 namespace TLRender
@@ -33,7 +33,7 @@ SyncBool TLRender::TRendergraph::Initialise()
 	if ( TLGraph::TGraph<TLRender::TRenderNode>::Initialise() == SyncFalse )
 		return SyncFalse;
 
-	SyncBool Result = TLRender::Platform::Init();
+	SyncBool Result = TLRender::Init();
 
 	if(Result != SyncTrue)
 		return Result;
@@ -52,9 +52,8 @@ SyncBool TLRender::TRendergraph::Shutdown()
 	if ( ShutdownResult == SyncWait )
 		return SyncWait;
 
-	TLRender::Opengl::Shutdown();
-
-	return TLRender::Platform::Shutdown();
+	//	gr; this looks odd but the render graph
+	return TLRender::Shutdown();
 }
 
 

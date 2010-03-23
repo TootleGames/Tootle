@@ -1,5 +1,5 @@
 #include "PCDebug.h"
-#include "PCCore.h"
+#include <TootleGui/PC/PCGui.h>	//	windows headers
 
 #include "../TString.h"
 

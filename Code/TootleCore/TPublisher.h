@@ -42,6 +42,8 @@ public:
 	
 	FORCEINLINE void	SetPublishOrder(const TLArray::SortOrder& order)	{ m_Subscribers.SetSortOrder(order); }
 
+	virtual TRefRef		GetPublisherRef() const=0;						//	ref for this publisher (doesn't need to be unique, just an identifier)
+
 protected:
 	virtual ~TPublisher()		{	Shutdown();	}
 	

@@ -23,6 +23,7 @@ protected:
 	virtual SyncBool				Update(float fTimestep)								{ return SyncTrue; }
 	virtual SyncBool				Shutdown()											{ return SyncTrue; }
 	
+	virtual TRefRef					GetSubscriberRef() const							{	return m_InstanceRef;	}
 	virtual void					ProcessMessage(TLMessaging::TMessage& Message)		{}
 
 	

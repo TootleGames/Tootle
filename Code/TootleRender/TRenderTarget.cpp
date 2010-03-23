@@ -3,6 +3,18 @@
 #include "TScreenManager.h"
 #include "TRenderGraph.h"
 
+//	include platform specific render code for glTranslate etc
+//	this kinda code will move to the rasteriser (as will these includes)
+#if defined(TL_TARGET_PC)
+	#include "PC/PCRender.h"
+#elif defined(TL_TARGET_MAC)
+	#include "Mac/MacRender.h"
+#elif defined(TL_TARGET_IPOD)
+	#include "IPod/IPodRender.h"
+#else
+	#error "Unknown target platform"
+#endif
+
 
 //#define DEBUG_RENDER_DATUMS_IN_WORLD	//	if not defined, renders datums in local space which is faster (in world space will show up transform multiplication errors)
 #define DEBUG_RENDER_ALL_DATUMS			FALSE

@@ -219,65 +219,12 @@
 			Name="PC Source Files"
 			>
 			<File
-				RelativePath=".\cpuid.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\cpuid.h"
-				>
-			</File>
-			<File
 				RelativePath=".\PCCore.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						DisableLanguageExtensions="false"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						DisableLanguageExtensions="false"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Final|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						DisableLanguageExtensions="false"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\PCCore.h"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Final|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\PCDebug.cpp"
@@ -1064,14 +1011,6 @@
 		</File>
 		<File
 			RelativePath="..\TLCore.h"
-			>
-		</File>
-		<File
-			RelativePath="..\TLCoreMisc.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\TLCoreMisc.h"
 			>
 		</File>
 		<File

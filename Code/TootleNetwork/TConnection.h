@@ -55,6 +55,7 @@ public:
 	TConnection()			{	}
 	virtual ~TConnection()	{	Shutdown();	}
 
+	virtual TRefRef			GetPublisherRef() const						{	static TRef Ref("NetCon"); return Ref;	}
 	virtual SyncBool		Initialise(TRef& ErrorRef)					{	return SyncTrue;	}	//	async function to initialise/test connection
 	virtual SyncBool		Shutdown()									{	return SyncTrue;	}	//	async function to close connection
 

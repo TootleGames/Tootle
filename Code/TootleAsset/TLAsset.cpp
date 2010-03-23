@@ -15,7 +15,7 @@
 #include "TLoadTask.h"
 #include <TootleCore/TPtr.h>
 #include <TootleCore/TEventChannel.h>
-#include <TootleCore/TLCoreMisc.h>
+#include <TootleCore/TLCore.h>
 
 #include <TootleFileSys/TFileAsset.h>
 #include <TootleFileSys/TLFileSys.h>

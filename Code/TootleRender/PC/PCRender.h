@@ -12,13 +12,9 @@
 #include <TootleCore/TLCore.h>
 #include <TootleCore/TColour.h>
 
-//	include opengl stuff
-#pragma comment( lib, "Opengl32.lib" )
-#pragma comment( lib, "glu32.lib" )
+//	include the gl headers etc, this is in the gui canvas atm, but will move to the rasteriser
+#include <TootleGui/PC/PCOpenglCanvas.h>
 
-#include "glsdk/gl.h"
-#include "glsdk/glext.h"
-#include "glsdk/wglext.h"
 
 namespace TLRender
 {
@@ -26,8 +22,6 @@ namespace TLRender
 	{
 		SyncBool		Init();			//	platform/opengl initialisation
 		SyncBool		Shutdown();		//	platform/opengl shutdown
-
-		extern SyncBool	g_OpenglInitialised;
 	}
 
 	namespace Opengl

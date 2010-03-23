@@ -1,5 +1,5 @@
 #include "TGraphBase.h"
-#include "TLCoreMisc.h"
+#include "TLCore.h"
 
 #include <TootleAsset/TScheme.h>
 
@@ -314,8 +314,8 @@ TLGraph::TGraphNodeBase::TGraphNodeBase(TRefRef NodeRef,TRefRef NodeTypeRef) :
 	m_NodeData		( "Data" )
 {
 	//	get debug strings
-	m_NodeRef.GetString( m_Debug_NodeRefString );	
-	m_NodeTypeRef.GetString( m_Debug_NodeTypeRefString );
+	SetNodeRef( GetNodeRef() );
+	OnNodeTypeRefChanged();
 }
 
 
@@ -339,6 +339,14 @@ void TLGraph::TGraphNodeBase::SetProperty(TLMessaging::TMessage& Message)
 //	GetProperty message handler
 //------------------------------------------------------------
 void TLGraph::TGraphNodeBase::GetProperty(TLMessaging::TMessage& Message, TLMessaging::TMessage& Response)
+{
+}
+
+
+//------------------------------------------------------------
+//	overload this to make sure all properties on your node (that aren't stored/read directly out of the data) is up to date and reayd for export
+//------------------------------------------------------------
+void TLGraph::TGraphNodeBase::UpdateNodeData()
 {
 }
 

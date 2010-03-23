@@ -67,8 +67,6 @@
 		8446B39E10DA149600C83113 /* TMenuWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TMenuWrapper.cpp; path = ../TMenuWrapper.cpp; sourceTree = SOURCE_ROOT; };
 		8446B3A110DA14DC00C83113 /* TMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TMenuController.h; path = ../TMenuController.h; sourceTree = SOURCE_ROOT; };
 		8446B3A210DA14DC00C83113 /* TMenuController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TMenuController.cpp; path = ../TMenuController.cpp; sourceTree = SOURCE_ROOT; };
-		84B60591104FF8800022E5BC /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		84B60592104FF8800022E5BC /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B60593104FF8970022E5BC /* TWidgetText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidgetText.cpp; path = ../TWidgetText.cpp; sourceTree = SOURCE_ROOT; };
 		84B60594104FF8970022E5BC /* TWidgetText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWidgetText.h; path = ../TWidgetText.h; sourceTree = SOURCE_ROOT; };
 		84B60595104FF8970022E5BC /* TWidgetThumbStick.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidgetThumbStick.cpp; path = ../TWidgetThumbStick.cpp; sourceTree = SOURCE_ROOT; };
@@ -93,6 +91,13 @@
 		84B605AC104FF8A80022E5BC /* TWidgetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWidgetManager.h; path = ../TWidgetManager.h; sourceTree = SOURCE_ROOT; };
 		84F1FEB010A073D20030B1F2 /* TApplication.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TApplication.cpp; path = ../TApplication.cpp; sourceTree = SOURCE_ROOT; };
 		84F1FEB110A073D20030B1F2 /* TApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TApplication.h; path = ../TApplication.h; sourceTree = SOURCE_ROOT; };
+		BF3C25A2110706470000951F /* Tootle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Tootle.xcconfig; path = ../../BuildConfigurations/Tootle.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF3C25A3110706550000951F /* Mac.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Mac.xcconfig; path = ../../BuildConfigurations/Mac/Mac.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF89CCA1110B3487009C2101 /* Lib.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Lib.xcconfig; path = ../../BuildConfigurations/Mac/Lib.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF89CCA2110B3487009C2101 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF89CCA3110B3487009C2101 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF89CCA4110B3487009C2101 /* MacDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacDebug.xcconfig; path = ../../BuildConfigurations/Mac/MacDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF89CCA5110B3487009C2101 /* MacRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacRelease.xcconfig; path = ../../BuildConfigurations/Mac/MacRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,8 +186,13 @@
 		8418F0260F4DB80A00B956C9 /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				84B60591104FF8800022E5BC /* TootleDebug.xcconfig */,
-				84B60592104FF8800022E5BC /* TootleRelease.xcconfig */,
+				BF89CCA1110B3487009C2101 /* Lib.xcconfig */,
+				BF89CCA2110B3487009C2101 /* LibDebug.xcconfig */,
+				BF89CCA3110B3487009C2101 /* LibRelease.xcconfig */,
+				BF89CCA4110B3487009C2101 /* MacDebug.xcconfig */,
+				BF89CCA5110B3487009C2101 /* MacRelease.xcconfig */,
+				BF3C25A3110706550000951F /* Mac.xcconfig */,
+				BF3C25A2110706470000951F /* Tootle.xcconfig */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
@@ -288,14 +298,14 @@
 /* Begin XCBuildConfiguration section */
 		8418ECF90F4DA63E00B956C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84B60591104FF8800022E5BC /* TootleDebug.xcconfig */;
+			baseConfigurationReference = BF89CCA2110B3487009C2101 /* LibDebug.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		8418ECFA0F4DA63E00B956C9 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84B60592104FF8800022E5BC /* TootleRelease.xcconfig */;
+			baseConfigurationReference = BF89CCA3110B3487009C2101 /* LibRelease.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
@@ -303,30 +313,12 @@
 		8418EEB00F4DAB4600B956C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleGame;
 			};
 			name = Debug;
 		};
 		8418EEB10F4DAB4600B956C9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleGame;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};

@@ -21,10 +21,11 @@ class TLNeuralNetwork::TNeuron : public TLMessaging::TRelay
 public:
 	TNeuron();
 
-	void	Update();
-	Bool	Activate();
+	virtual TRefRef		GetSubscriberRef() const		{	static TRef Ref("Neuron");	return Ref;	} 
+	void				Update();
+	Bool				Activate();
 
-//	TRef	GetNeuronID()	{ return m_refNeuronID; }
+//	TRef				GetNeuronID()	{ return m_refNeuronID; }
 
 	inline void			AddInput(float fInput)			{ m_fInputs.Add(fInput); }
 	inline Bool			HasInput()				const	{ return (m_fInputs.GetSize() > 0); }
@@ -54,9 +55,11 @@ public:
 	  {
 	  }
 
-	  // Weight access
-	  inline float		GetWeight()					const		{ return m_fWeight; }
-	  inline void		SetWeight(float fWeight)					{ m_fWeight = fWeight; }
+	virtual TRefRef		GetSubscriberRef() const		{	static TRef Ref("Axon");	return Ref;	} 
+
+	// Weight access
+	inline float		GetWeight()					const		{ return m_fWeight; }
+	inline void		SetWeight(float fWeight)					{ m_fWeight = fWeight; }
 
 protected:
 	virtual void	ProcessMessage(TLMessaging::TMessage& Message)
@@ -96,6 +99,7 @@ public:
 	explicit TNeuralNetwork(TRef refNeuralNetworkID);
 	virtual ~TNeuralNetwork(void);
 
+	virtual const TRefRef		GetSubscriberRef() const	{	return m_refNeuralNetworkID;	}
 	void						Update();		
 
 	TPtr<TNeuron>		AddInputNeuron();

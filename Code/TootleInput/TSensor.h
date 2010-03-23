@@ -34,6 +34,8 @@ public:
 			m_uCursorIndex(0)
 	{}
 
+	virtual TRefRef		GetSubscriberRef() const						{	return m_SensorRef;	}
+
 	inline Bool			operator==(const TRef& SensorRef)				const	{	return m_SensorRef == SensorRef;	}
 	inline Bool			operator==(const TInputSensor& InputSensor)		const 	{	return m_SensorRef == InputSensor.m_SensorRef;	}
 

@@ -15,6 +15,8 @@
 #include <TootleCore/TFlags.h>
 #include "TRenderTarget.h"		//	gr: needed to include the array type because of templated destructor... would be good to find a way to avoid that
 //#include "TLRender.h"		//	gr: needed to include the array type because of templated destructor... would be good to find a way to avoid that
+#include <TootleGui/TWindow.h>
+#include <TootleGui/TOpenglCanvas.h>
 
 #include "TScreenShape.h"
 
@@ -24,14 +26,23 @@ namespace TLRender
 	class TRenderTarget;
 	class TRenderNodeText;
 
+	//	gr: these are no longer platform specific... move them out of the Platform namespace
 	namespace Platform
 	{
 		class Screen;
+		class ScreenWide;
+		class ScreenWideLeft;	//	rotated-left display for ipod (or ipod emulation)
+		class ScreenWideRight;	//	rotated-right display for ipod (or ipod emulation)
 	}
 
 	static const s32		g_MaxSize		= -1;	//	for screen & render target sizes -1 indicates max extents
 }
 
+//	forward declaration
+namespace TLGui
+{
+	class TWindow;
+}
 
 //---------------------------------------------------------
 //	base screen type
@@ -49,6 +60,7 @@ public:
 	TScreen(TRefRef ScreenRef,TScreenShape ScreenShape);
 	~TScreen();
 
+	virtual TRefRef						GetSubscriberRef() const			{	return GetRef();	}
 	FORCEINLINE TRefRef					GetRef() const						{	return m_Ref;	}
 	virtual Type4<s32>					GetSize() const						{	return m_Size;	}
 	FORCEINLINE TFlags<Flags>&			GetFlags()							{	return m_Flags;	}
@@ -62,6 +74,8 @@ public:
 
 	virtual void					Draw();			//	render our render targets
 
+	virtual TLGui::TWindow*			GetWindow()		{	return NULL;	}	//	get the GUI window for this screen
+	
 	TPtr<TLRender::TRenderTarget>	CreateRenderTarget(TRefRef TargetRef);					// Creates a new render target
 	SyncBool						DeleteRenderTarget(TRefRef TargetRef);					//	shutdown a render target
 	void							OnRenderTargetZChanged(const TRenderTarget& RenderTarget);	//	z has changed on render target - resorts render targets
@@ -103,4 +117,73 @@ protected:
 	TKeyArray<TRef,TRef>			m_DebugRenderText;			//	keyed list of debug strings -> render nodes
 };
 
+
+
+//----------------------------------------------------------
+//	win32 screen (it's actually just an opengl window)
+//----------------------------------------------------------
+class TLRender::Platform::Screen : public TLRender::TScreen
+{
+public:
+	Screen(TRefRef ScreenRef,TScreenShape ScreenShape);
+	
+	virtual SyncBool		Init();
+	virtual SyncBool		Update();
+	virtual SyncBool		Shutdown();
+	
+	virtual void			Draw();
+	virtual Type4<s32>		GetSize() const;	//	get size of the screen
+	virtual TLGui::TWindow*	GetWindow()			{	return m_pWindow;	}	//	get the GUI window for this screen
+	
+protected:
+	void					GetDesktopSize(Type4<s32>& DesktopSize) const;	//	get the desktop dimensions
+	void					GetCenteredSize(Type4<s32>& Size) const;		//	take a screen size and center it on the desktop
+	virtual void			GetViewportMaxSize(Type4<s32>& MaxSize);	//	need to max-out to client-area on the window 
+	
+protected:
+	TPtr<TLGui::TWindow>		m_pWindow;
+	TPtr<TLGui::TOpenglCanvas>	m_pCanvas;
+};
+
+
+
+//----------------------------------------------------------
+//	widescreen screen
+//----------------------------------------------------------
+class TLRender::Platform::ScreenWide : public TLRender::Platform::Screen
+{
+public:
+	ScreenWide(TRefRef ScreenRef) :
+	TLRender::Platform::Screen	( ScreenRef, TLRender::ScreenShape_Wide )
+	{
+		//	swap dimensions
+		TLMaths::SwapVars( m_Size.Height(), m_Size.Width() );
+	}
+};
+
+
+//----------------------------------------------------------
+//	widescreen screen
+//----------------------------------------------------------
+class TLRender::Platform::ScreenWideLeft : public TLRender::Platform::Screen
+{
+public:
+	ScreenWideLeft(TRefRef ScreenRef) :
+		TLRender::Platform::Screen	( ScreenRef, TLRender::ScreenShape_WideLeft )
+	{
+	}
+};
+
+
+//----------------------------------------------------------
+//	widescreen screen
+//----------------------------------------------------------
+class TLRender::Platform::ScreenWideRight : public TLRender::Platform::Screen
+{
+public:
+	ScreenWideRight(TRefRef ScreenRef) :
+		TLRender::Platform::Screen	( ScreenRef, TLRender::ScreenShape_WideRight )
+	{
+	}
+};
 

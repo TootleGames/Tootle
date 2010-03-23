@@ -56,6 +56,7 @@ public:
 	TMenuWrapperScheme(TLMenu::TMenuController& MenuController,TRefRef SchemeRef,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef);	//	create menu/render nodes etc
 	
 protected:
+	virtual TRefRef					GetSubscriberRef() const	{	static TRef Ref("MenuWrapper");	return Ref;	}
 	virtual void					ProcessMessage(TLMessaging::TMessage& Message);	//	catch widget's messages and turn them into menu item execution for our owner menu controller
 	
 	void							CreateButtonWidget(TRefRef RenderTargetRef, TBinaryTree& WidgetData);
@@ -74,6 +75,7 @@ public:
 	TMenuWrapperText(TLMenu::TMenuController& MenuController,TRefRef FontRef,float FontScale,TRefRef ParentRenderNodeRef,TRefRef RenderTargetRef,TRef ParentRenderNodeDatum=TRef());	//	create menu/render nodes etc
 	
 protected:
+	virtual TRefRef					GetSubscriberRef() const	{	static TRef Ref("MenuText");	return Ref;	}
 	virtual void					ProcessMessage(TLMessaging::TMessage& Message);	//	catch widget's messages and turn them into menu item execution for our owner menu controller
 };
 

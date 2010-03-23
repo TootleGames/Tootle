@@ -26,16 +26,17 @@ namespace TLInput
 			
 		}
 		
-		SyncBool		Init()					{	return HID::Init();	}
-		SyncBool		Update()				{	return SyncTrue;	}
-		SyncBool		Shutdown()				{	return HID::Shutdown();	}
+		//	gr: I can't seem to inline these (not found in linker). If I don't inline, I get multiple references... 
+		//	todo: sort it so they're not stripped as we want them inlined
+		SyncBool	Init();
+		SyncBool	Update();
+		SyncBool	Shutdown();
 		
 		// On the Mac the enumeration of devices is done automatically by registering callbacks and 
 		// scheduling the callbacks with the runloop.  We therefore don't need to explicitly re-enumerate devices
 		// like on Windows.		
-		SyncBool		EnumerateDevices()		{ return SyncTrue; }
-		
-		void			RemoveAllDevices()		{ HID::RemoveAllDevices(); }
+		SyncBool	EnumerateDevices();
+		void		RemoveAllDevices();
 		
 		Bool			UpdateDevice(TInputDevice& Device);
 		int2			GetCursorPosition(u8 uIndex);				
@@ -44,7 +45,7 @@ namespace TLInput
 		SyncBool		RemoveVirtualDevice(TRefRef InstanceRef);
 
 		// TEMP test routine
-		void TestVibrateDevice() {}
+		FORCEINLINE void TestVibrateDevice() {}
 				
 	};
 };
@@ -65,6 +66,7 @@ public:
 	
 	~TLInputHIDDevice();
 	
+	virtual TRefRef		GetPublisherRef() const	{	static TRef Ref("Hid");	return Ref; }
 	
 	FORCEINLINE Bool			operator==(TRefRef HIDDeviceRef)							const	{	return GetDeviceRef() == HIDDeviceRef;	}
 	FORCEINLINE Bool			operator==(const TLInputHIDDevice& HIDDevice)	const 	{	return GetDeviceRef() == HIDDevice.GetDeviceRef();	}

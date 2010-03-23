@@ -84,6 +84,8 @@ class TLScheme::TSchemeManager::TSchemeUpdateRequest : public TStateMachine, pub
 public:
 	TSchemeUpdateRequest(TRefRef SchemeRef, TRefRef SchemeAssetRef, TSchemeUpdateType UpdateType);
 	
+	virtual TRefRef		GetPublisherRef() const			{	return m_SchemeRef;	}
+
 	TRefRef				GetSchemeRef()			const	{ return m_SchemeRef;}
 	TRefRef				GetSchemeAssetRef()		const	{ return m_SchemeAssetRef;}
 	TSchemeUpdateType	GetUpdateType()			const	{ return m_Type; }

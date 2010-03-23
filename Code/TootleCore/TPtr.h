@@ -77,7 +77,9 @@ namespace TLPtr
 	}
 
 	template<typename TYPE>
-	FORCEINLINE TPtr<TYPE>&	GetNullPtr();	//	get a static Null ptr for a type;
+	FORCEINLINE TPtr<TYPE>&			GetNullPtr();		//	get a static Null ptr for a type;
+	template<typename TYPE>
+	FORCEINLINE const TPtr<TYPE>&	GetNullPtrConst();	//	get a static Null ptr for a type;
 };
 
 
@@ -362,6 +364,24 @@ template<typename TYPE>
 FORCEINLINE TPtr<TYPE>&	TLPtr::GetNullPtr()
 {
 	static TPtr<TYPE> g_pNull;
+	
+	if ( g_pNull )
+	{
+		TLDebug_Break("Null TPtr should always be NULL!");
+	}
+	
+	return g_pNull;
+}
+
+
+
+//----------------------------------------------------
+//	get a static Null ptr for a type;
+//----------------------------------------------------
+template<typename TYPE>
+FORCEINLINE const TPtr<TYPE>& TLPtr::GetNullPtrConst()
+{
+	static const TPtr<TYPE> g_pNull;
 	
 	if ( g_pNull )
 	{

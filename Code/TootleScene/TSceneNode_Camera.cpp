@@ -51,6 +51,9 @@ void TSceneNode_Camera::ProcessMessage(TLMessaging::TMessage& Message)
 
 /*
 	Calculates the field of view from the current camera settings
+ 
+	gr: add focal length calculations to the TCamera? Remove the Horizontal 
+	FOV value from TCamera and replace it with a focal length...
 */
 void TSceneNode_Camera::CalculateFOV()
 {
@@ -102,6 +105,10 @@ TPtr<TLScene::TSceneNode_Transform> TSceneNode_Camera::GetTargetObject()
 // NOTE: This should really be done via a 'camera manager'
 //		 It needs to take into account multiple cameras, switching to different cameras
 //		 and initial render target camera assignment
+//	gr: should it? The rendering camera on the render target is dumb (aside from being bound to being perspective or orthographic...)
+//		you can just set the values on it. Any "camera manager" would be managing the camera logic,(ie. these cameras) not managing which camera is assigned
+//		to which render target... You will always know which TCamera you want to manipulate, there is no need to have multiple TCameras, just different sets 
+//		of values to apply to it. A camera manager render-side would be OTT. A game-side camera manager (managing these camera scene nodes) would be more appropriate
 void TSceneNode_Camera::UpdateRenderTargetCamera()
 {
 	TPtr<TLRender::TScreen> pScreen = TLRender::g_pScreenManager->GetInstance("Screen",FALSE);

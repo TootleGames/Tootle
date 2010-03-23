@@ -253,22 +253,6 @@
 		<Filter
 			Name="Base Node Types"
 			>
-			<File
-				RelativePath="..\TAudioNode.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\TAudioNode.h"
-				>
-			</File>
-			<File
-				RelativePath="..\TAudioNode_Music.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\TAudioNode_Music.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Ipod Source Files"
@@ -392,6 +376,22 @@
 		</File>
 		<File
 			RelativePath="..\TAudiograph.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TAudioNode.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TAudioNode.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TAudioNode_Music.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TAudioNode_Music.h"
 			>
 		</File>
 		<File

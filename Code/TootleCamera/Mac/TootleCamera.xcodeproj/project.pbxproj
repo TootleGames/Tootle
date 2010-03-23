@@ -21,8 +21,6 @@
 
 /* Begin PBXFileReference section */
 		841B455C11109A9D00ACC2AE /* libTootleCamera.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleCamera.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		841B456211109AC300ACC2AE /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/Mac/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		841B456311109AC300ACC2AE /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/Mac/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		841B456411109AF400ACC2AE /* TLCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLCamera.h; path = ../TLCamera.h; sourceTree = SOURCE_ROOT; };
 		841B456511109AF400ACC2AE /* TLCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLCamera.cpp; path = ../TLCamera.cpp; sourceTree = SOURCE_ROOT; };
 		841B456B11109B6900ACC2AE /* MacCameraView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacCameraView.h; sourceTree = "<group>"; };
@@ -35,6 +33,10 @@
 		841B47A911119D8B00ACC2AE /* MacCameraController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacCameraController.mm; sourceTree = "<group>"; };
 		841B4C811111DF1B00ACC2AE /* IPodCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodCamera.h; path = ../IPod/IPodCamera.h; sourceTree = SOURCE_ROOT; };
 		841B4C821111DF1B00ACC2AE /* IPodCamera.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodCamera.mm; path = ../IPod/IPodCamera.mm; sourceTree = SOURCE_ROOT; };
+		BF4417411153E3B0000162DD /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF4417421153E3B0000162DD /* LibRelease_wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease_wx.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease_wx.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF4417431153E3B0000162DD /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF4417441153E3B0000162DD /* LibDebug_wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug_wx.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug_wx.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,8 +85,10 @@
 		841B456111109AAE00ACC2AE /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				841B456211109AC300ACC2AE /* TootleDebug.xcconfig */,
-				841B456311109AC300ACC2AE /* TootleRelease.xcconfig */,
+				BF4417411153E3B0000162DD /* LibRelease.xcconfig */,
+				BF4417421153E3B0000162DD /* LibRelease_wx.xcconfig */,
+				BF4417431153E3B0000162DD /* LibDebug.xcconfig */,
+				BF4417441153E3B0000162DD /* LibDebug_wx.xcconfig */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
@@ -199,17 +203,15 @@
 /* Begin XCBuildConfiguration section */
 		841B454911109A1000ACC2AE /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 841B456211109AC300ACC2AE /* TootleDebug.xcconfig */;
+			baseConfigurationReference = BF4417431153E3B0000162DD /* LibDebug.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
 			};
 			name = Debug;
 		};
 		841B454A11109A1000ACC2AE /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 841B456311109AC300ACC2AE /* TootleRelease.xcconfig */;
+			baseConfigurationReference = BF4417411153E3B0000162DD /* LibRelease.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
 			};
 			name = Release;
 		};

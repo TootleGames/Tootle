@@ -7,8 +7,14 @@
 #include "TLanguage.h"
 #include "TRef.h"
 
-#include "TLCoreMisc.h"
+#include "TLCore.h"
 
+#pragma message("todo: gr: replace this with a gui manager. BUT remember, the GUI lib is now the first to startup...")
+namespace TLGui
+{
+	extern SyncBool Init();
+	extern SyncBool Shutdown();
+}
 
 using namespace TLCore;
 
@@ -39,6 +45,8 @@ TCoreManager::TCoreManager(TRefRef ManagerRef) :
 	m_TimerUpdateCount					( 0 ),
 	m_MachineData						( "Machine" )
 {
+	//	gr: I've turned this off... they use memory routines before we've created a memory manager...
+/*
 	// Query the hardware for various hardware and OS specific data as soon as we create the core manager.
 	// Some of this data we may need in advance of creating any other managers.
 	// Query the device specific information - UDID, OS and version etc
@@ -46,6 +54,7 @@ TCoreManager::TCoreManager(TRefRef ManagerRef) :
 	
 	// Query user selected data on the device - languages and other settings
 	TLCore::Platform::QueryLanguageInformation( m_MachineData );
+	*/
 }
 
 TCoreManager::~TCoreManager()
@@ -216,9 +225,7 @@ SyncBool TCoreManager::InitialiseLoop()
 		// re-order the shutdown channel so that managers are sent messages in reverse order
 		TLMessaging::g_pEventChannelManager->SetPublishOrder(TLArray::Descending, GetManagerRef(), ShutdownRef);
 		
-		
-		//TODO: Platform specific manager??
-		TLCore::Platform::Init();
+		TLGui::Init();
 
 		//	other non complex one-off init's
 		TLMaths::Init();
@@ -270,12 +277,6 @@ SyncBool TCoreManager::UpdateLoop()
 	// Send the update and render message
 	// Not required when using multithreading?
 	//TLTime::TScopeTimer Timer("loop");
-
-	{
-		// TODO: Add Platform manager to handle platform related stuff?
-	//	TLTime::TScopeTimer Timer("Platform update");
-		TLCore::Platform::Update();
-	}
 
 	// Main update loop phase
 	u32 TimerUpdateCount = m_TimerUpdateCount;
@@ -369,8 +370,8 @@ SyncBool TCoreManager::UpdateShutdown()
 	if ( !CheckManagersInState(TLManager::S_Shutdown) )
 		return SyncWait;
 
-	// TODO: Platform specific manager?
-	TLCore::Platform::Shutdown();
+	//	gr: will probbaly move this out of the core manager's responsiblity now
+	TLGui::Shutdown();
 
 	return SyncTrue;
 }

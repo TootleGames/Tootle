@@ -91,7 +91,7 @@ Bool TLMaths::ImportShapeData(TBinaryTree& Data,TLMaths::TShape& Shape)
 	if ( !Data.ImportData("Type", ShapeType ) )
 	{
 		if ( !Data.Read( ShapeType ) )
-			return NULL;
+			return false;
 	}
 
 	//	make sure shape type matches

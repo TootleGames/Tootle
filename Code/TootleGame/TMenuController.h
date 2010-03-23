@@ -27,7 +27,9 @@ class TLMenu::TMenuController : public TLMessaging::TPublisher, public TLMessagi
 {
 public:
 	TMenuController()	{};
-	
+
+	virtual TRefRef		GetSubscriberRef() const				{	static TRef Ref("MnuCon");	return Ref;	}
+	virtual TRefRef		GetPublisherRef() const					{	return GetSubscriberRef();	}
 	void				Shutdown()								{	TLMessaging::TPublisher::Shutdown();	TLMessaging::TSubscriber::Shutdown();	}
 	
 	//	external commands

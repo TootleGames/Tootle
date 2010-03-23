@@ -1,10 +1,9 @@
 #include "TUser.h"
-
 #include <TootleCore/TEventChannel.h>
-#include <TootleCore/TLCoreMisc.h>
-
-
+#include <TootleCore/TLCore.h>
 #include "TLInput.h"
+
+#include <TootleGui/TLGui.h>	//	gr: deprecated mouse access
 
 namespace TLUser
 {
@@ -204,6 +203,7 @@ void TUser::ProcessMessage(TLMessaging::TMessage& Message)
 		uCursorIndex = GetUserIndex();
 #endif	
 	
+#pragma message("gr: needs updating... which screen? and why pass this here anyway? any mouse information comes from mouse action/sensor messages")
 	// Update the cursor position to ensure it's the latest one before being passed on
 	UpdateCursorPosition(uCursorIndex);
 	
@@ -222,18 +222,15 @@ void TUser::ProcessMessage(TLMessaging::TMessage& Message)
 void TUser::UpdateCursorPosition(u8 uCursorIndex)
 {
 #ifdef _DEBUG
-	
 	if(uCursorIndex != 0)
 	{
 		TTempString Debug_SensorString("Updating cursor pos for index: ");
 		Debug_SensorString.Appendf("%d", uCursorIndex);
 		TLDebug_Print( Debug_SensorString );
 	}
-	
-#endif	
-	int2 sPos = TLInput::Platform::GetCursorPosition(uCursorIndex);
+#endif
 
-	m_CursorPosition = sPos;
+	m_CursorPosition = TLGui::GetDefaultScreenMousePosition( uCursorIndex );
 }
 
 
@@ -347,7 +344,7 @@ Bool TUser::MapActionParentPtr(TLInput::TAction* pAction,TLInput::TAction* pPare
 		return FALSE;
 	}
 
-	TRef refParentActionID = pParentAction->GetActionID();
+	TRef refParentActionID = pParentAction->GetActionRef();
 
 	if(!pAction->HasParentAction(refParentActionID))
 	{

@@ -31,6 +31,7 @@ public:
 	TTimelineInstance(TRefRef TimelineAssetRef);
 	TTimelineInstance(TPtr<TLAsset::TTimeline>& pTimelineAsset);
 
+	virtual TRefRef			GetSubscriberRef() const		{	return m_TimelineAssetRef;	}
 	void					Initialise();
 	void					Initialise(TLMessaging::TMessage& InitMessage);
 

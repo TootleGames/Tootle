@@ -61,13 +61,13 @@ public:
 	FORCEINLINE Bool		IsEnabled() const							{	return m_bEnabled;	}
 
 	
-	TRef					GetHardwareLanguage();
+	TRef					GetHardwareLanguage();						//	gr: move this to TLGui?
 
 	FORCEINLINE void		StoreTimestamp(TRefRef TimestampRef,const TLTime::TTimestampMicro& Timestamp)	{	m_MachineData.ExportData(TimestampRef, Timestamp);	}
 	FORCEINLINE Bool		RetrieveTimestamp(TRefRef TimestampRef, TLTime::TTimestampMicro& Timestamp)	{	return m_MachineData.ImportData(TimestampRef, Timestamp);	}
 	
 	// Messaging
-	Bool					SendMessageTo(TRefRef RecipientRef, TRefRef ManagerRef, TLMessaging::TMessage& Message);
+	virtual Bool			SendMessageTo(TRefRef RecipientRef, TRefRef ManagerRef, TLMessaging::TMessage& Message);
 	
 	// Manager access
 	template<class TYPE>

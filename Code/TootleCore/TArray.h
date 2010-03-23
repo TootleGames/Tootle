@@ -67,7 +67,7 @@ class TArray : public SORTPOLICY, ALLOCATORPOLICY
 
 public:
 	typedef TLArray::SortResult(TSortFunc)(const TYPE&,const TYPE&,const void*);
-
+	typedef TArray<TYPE,SORTPOLICY,ALLOCATORPOLICY> TArrayType;			//	short hand for this array type
 public:
 	TArray(TSortFunc* pSortFunc=NULL,u16 GrowBy=TArray_GrowByDefault);
 	//	gr: DO NOT IMPLEMENT THIS - the problem is that it has to make use of the virtual functions in the constructor (bad). 
@@ -87,7 +87,7 @@ public:
 
 	template<typename OTHERTYPE, class OTHERSORTPOLICY, class OTHERALLOCATORPOLICY>
 	void				Copy(const TArray<OTHERTYPE, OTHERSORTPOLICY, OTHERALLOCATORPOLICY>& Array);	//	make this a copy of the specified array
-	virtual void		Copy(const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array);		//	make this a copy of the specified array
+	virtual void		Copy(const TArrayType& Array);			//	make this a copy of the specified array
 	void				SetAll(const TYPE& Val);				//	set all elements to match this one (uses = operator)
 
 	virtual Bool		SetSize(s32 Size);
@@ -109,10 +109,10 @@ public:
 	virtual s32			Add(const TYPE& val);					//	add an element onto the end of the list
 	FORCEINLINE s32		AddUnique(const TYPE& val)				{	s32 Index = FindIndex( val );	return (Index == -1) ? Add( val ) : Index;	}
 	virtual s32			Add(const TYPE* pData,u32 Length=1);	//	add a number of elements onto the end of the list
-	virtual s32			Add(const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array);			//	add a whole array of this type onto the end of the list
+	virtual s32			Add(const TArrayType& Array);			//	add a whole array of this type onto the end of the list
 	template<typename OTHERTYPE, class OTHERSORTPOLICY, class OTHERALLOCATORPOLICY>
 	s32					Add(const TArray<OTHERTYPE, OTHERSORTPOLICY, OTHERALLOCATORPOLICY>& Array);	//	add a whole array of this type onto the end of the list
-	s32					AddUnique(const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array);	//	add each element from an array using AddUnique
+	s32					AddUnique(const TArrayType& Array);		//	add each element from an array using AddUnique
 	virtual TYPE*		AddNew();								//	add a new element onto the end of the array and return it. often fastest because if we dont need to grow there's no copying
 	template <class MATCHTYPE>
 	FORCEINLINE Bool	Remove(const MATCHTYPE& val);				// remove the specifed object
@@ -121,7 +121,7 @@ public:
 	Bool				RemoveLast()							{	return ( GetSize() ? RemoveAt( GetLastIndex() ) : FALSE );	};
 	virtual s32			InsertAt(u32 Index, const TYPE& val,Bool ForcePosition=FALSE);
 	virtual s32			InsertAt(u32 Index, const TYPE* val, u32 Length, Bool ForcePosition=FALSE);
-	virtual s32			InsertAt(u32 Index, const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& array, Bool ForcePosition=FALSE)		{	return InsertAt( Index, array.GetData(), array.GetSize(), ForcePosition );	};
+	virtual s32			InsertAt(u32 Index, const TArrayType& array, Bool ForcePosition=FALSE)		{	return InsertAt( Index, array.GetData(), array.GetSize(), ForcePosition );	};
 	
 	FORCEINLINE void	Sort();	
 	FORCEINLINE void	SetSortOrder(const TLArray::SortOrder& order);	
@@ -147,7 +147,7 @@ public:
 	FORCEINLINE TYPE*		Find(const MATCHTYPE& val)					{	u32 Index = FindIndex(val);	return (Index==-1) ? NULL : &ElementAt(Index);	};
 
 	template<class MATCHTYPE>	
-	u32					FindAll(TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array,const MATCHTYPE& val);		//	find all matches to this value and put them in an array
+	u32					FindAll(TArrayType& Array,const MATCHTYPE& val);		//	find all matches to this value and put them in an array
 
 	template<class MATCHTYPE>	
 	FORCEINLINE const TYPE*	FindConst(const MATCHTYPE& val) const		{	u32 Index = FindIndex(val);	return (Index==-1) ? NULL : &ElementAtConst(Index);	};
@@ -168,9 +168,15 @@ public:
 	FORCEINLINE const TYPE&	operator[](s32 Index) const					{	return ElementAtConst(Index);	}
 	FORCEINLINE const TYPE&	operator[](u32 Index) const					{	return ElementAtConst(Index);	}
 
-	FORCEINLINE void			operator=(const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array)			{	Copy( Array );	}
-	FORCEINLINE Bool			operator<(const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array) const	{	return FALSE;	}
-	FORCEINLINE Bool			operator==(const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array) const	{	return (this == &Array);	}
+	//	append operator - this means you can now initialise an array in a constructor like so (without a massive performance penalty, but convience can be worth it:)
+	//	: m_Array ( TFixedArray<TYPE>() << 0 << 1 << 2 << 3 )
+	//	no need to wait for the gcc array initialiser :) (4.5 spec IIRC)
+	//	not tested this to see if we can use it in a global, but will try. An in-place array type will be made up and can serve that purpose too.
+	FORCEINLINE TArrayType&	operator<<(const TYPE& val)					{	Add( val );		return *this;	}
+
+	FORCEINLINE TArrayType&	operator=(const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array)			{	Copy( Array );		return *this;	}
+	FORCEINLINE Bool		operator<(const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array) const		{	return FALSE;	}
+	FORCEINLINE Bool		operator==(const TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& Array) const	{	return (this == &Array);	}
 
 protected:
 

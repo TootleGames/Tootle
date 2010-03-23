@@ -1,0 +1,27 @@
+//
+//  Tootle.xcconfig
+//  
+//	generic, cross platform, cross configuration type, build flags
+//
+
+
+//	gr: next xcconfig should inherit these defines. Settings don't seem to be inheritable
+//		eg. this doesn't work
+//			a.xcconfig	DEFINES = XXX
+//			b.xcconfig	DEFINES = $(DEFINES) YYY (b includes a)
+//			DEFINES is YYY (not XXX YYY)
+TOOTLE_DEFINITIONS = 
+TOOTLE_LDFLAGS =
+TOOTLE_CPLUSPLUSFLAGS = 
+
+//	gr: have to make symbols visible because the way wx is built, all the symbols are visible (for external access. Not sure why WE don't get missing symbols...)
+//		but they're hidden for us. So if a Tootle lib includes some wx stuff, it's private in tootle and visible in wx so we get link warnings.
+//		this makes it visible for both
+GCC_SYMBOLS_PRIVATE_EXTERN = NO 
+
+
+//	gr: make the product name (eg. TootleCore) the same as the project so we don't need to set it on the target
+PRODUCT_NAME = $(PROJECT_NAME)
+
+//	gr: include <> dir. TOOTLE_ROOT is defined at lib or project level
+HEADER_SEARCH_PATHS = $(TOOTLE_ROOT)

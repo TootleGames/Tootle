@@ -148,12 +148,12 @@ public:
 	virtual void			OnEnd(TRefRef NextMode);
 
 protected:	
+	virtual TRefRef		GetSubscriberRef() const		{	static TRef Ref("AppBootup");	return Ref;	}
+	virtual void		ProcessMessage(TLMessaging::TMessage& Message);
 
-	void		ProcessMessage(TLMessaging::TMessage& Message);
+	Bool				CreateIntroScreen();
 
-	Bool		CreateIntroScreen();
-
-	FORCEINLINE Bool ArePreloadFilesLoaded()	{ return (m_PreloadFiles.GetSize() == 0); }
+	FORCEINLINE Bool	ArePreloadFilesLoaded()	{ return (m_PreloadFiles.GetSize() == 0); }
 	
 private:
 	TRef									m_LogoRenderNode;	//	

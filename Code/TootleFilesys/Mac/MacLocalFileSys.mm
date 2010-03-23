@@ -323,21 +323,22 @@ Bool Platform::LocalFileSys::IsDirectoryValid()
 {
 	NSString *pDirString = TLString::ConvertToUnicharString(m_Directory);
 
-	BOOL isDir = NO;
-	
 	// Check to see if the directory exist at the path specified
+	BOOL isDir = NO;
 	BOOL result = [[NSFileManager defaultManager] fileExistsAtPath:pDirString isDirectory:&isDir];
-	
-	
-#ifdef _DEBUG
-	
-	if(result == NO)
-		TLDebug_Break("Directory is invalid");
-#endif
-	
+
+	//	release string
 	[pDirString release];
 	
-	return (result == YES && isDir == YES);
+	//	failed - file/dir doesn't exist
+	if ( result == NO )
+		return false;
+	
+	//	not a dir (but file exists)
+	if ( isDir == NO )
+		return false;
+	
+	return true;
 }
 
 

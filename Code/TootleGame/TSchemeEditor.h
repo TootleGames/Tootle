@@ -56,6 +56,7 @@ protected:
 	
 	virtual void				ProcessMessageFromQueue(TLMessaging::TMessage& Message)			{	ProcessMessage( Message );	}
 
+	virtual TRefRef				GetSubscriberRef() const							{	static TRef Ref("ScEditor");	return Ref;	}
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);		//	
 	virtual void				AddStateModes();									//	add state machine modes here. overload to add custom modes
 	void						ChangeMode(TRefRef NewMode)							{	m_NextMode = NewMode;	}	//	on next update change mode

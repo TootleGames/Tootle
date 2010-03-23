@@ -1,7 +1,6 @@
 #include "PCOpenglExt.h"
 #include <TootleCore/TArray.h>
 #include <TootleCore/TString.h>
-#include "PCWinWindow.h"
 
 
 //----------------------------------------------------------
@@ -37,6 +36,15 @@ namespace TLRender
 }
 
 
+namespace TLRender
+{
+	namespace Opengl
+	{
+		namespace Platform
+		{
+			extern SyncBool g_Initialised;
+		}
+	}
 
 
 //------------------------------------------------------------
@@ -212,8 +220,8 @@ Bool TLRender::Platform::OpenglExtensions::IsHardwareEnabled(u32 HardwareIndex)
 SyncBool TLRender::Platform::OpenglExtensions::Init()
 {
 	//	wait for opengl to initialise
-	if ( TLRender::Platform::g_OpenglInitialised != SyncTrue )
-		return TLRender::Platform::g_OpenglInitialised;
+	if ( TLRender::Opengl::Platform::g_Initialised != SyncTrue )
+		return TLRender::Opengl::Platform::g_Initialised;
 
 	//	probe to see what hardware is supported
 	for ( u32 i=0;	i<GHardware_Max;	i++ )
