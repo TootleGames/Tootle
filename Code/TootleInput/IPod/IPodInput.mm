@@ -35,14 +35,12 @@ namespace TLInput
 			TKeyArray<TRef, TRef>		g_KeyboardRefMap;		// iPod virtual keybord button refs
 			TArray<TRef>				g_KeyboardKeyArray;		// iPod virtual keyboard keys pressed
 			
-			Bool						g_bVirtualKeyboardActive = FALSE;
-			
-			const u32 MAX_CURSOR_POSITIONS = 4;
-			TFixedArray<int2, MAX_CURSOR_POSITIONS>					g_aCursorPositions(MAX_CURSOR_POSITIONS);
-			TFixedArray< TRef, MAX_CURSOR_POSITIONS>				g_ActiveTouchObjects(MAX_CURSOR_POSITIONS);	// Fixed array of touch object ID's
-			TArray<TTouchObject>									g_TouchObjects;			// Dynamic array of touch objects that persist over time
+			Bool										g_bVirtualKeyboardActive = false;
+			TFixedArray<int2, MAX_CURSOR_POSITIONS>		g_CursorPositions(MAX_CURSOR_POSITIONS);
+			TFixedArray< TRef, MAX_CURSOR_POSITIONS>	g_ActiveTouchObjects(MAX_CURSOR_POSITIONS);	// Fixed array of touch object ID's
+			TArray<TTouchObject>						g_TouchObjects;			// Dynamic array of touch objects that persist over time
 						
-			void	SetCursorPosition(u8 uIndex, int2 uPos);
+			void	SetCursorPosition(u8 uIndex,int2 uPos);
 			
 			void	ProcessTouchData(TPtr<TLInput::TInputDevice> pDevice);
 			
@@ -648,17 +646,6 @@ Bool Platform::IPod::UpdateVirtualDevice(TLInput::TInputDevice& Device)
 	}
 	
 	return TRUE;
-}
-
-
-// On Ipod set the cursor position
-void Platform::IPod::SetCursorPosition(u8 uIndex, int2 uPos)
-{
-	if(uIndex < Platform::IPod::MAX_CURSOR_POSITIONS)
-	{
-		// Set cursor position 
-		Platform::IPod::g_aCursorPositions[uIndex] = uPos;
-	}
 }
 
 

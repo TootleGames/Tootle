@@ -25,7 +25,11 @@ namespace TLInput
 		void TestVibrateDevice();
 				
 		namespace IPod
-		{			
+		{
+			const u32 MAX_CURSOR_POSITIONS = 4;
+			extern TFixedArray<int2,MAX_CURSOR_POSITIONS>	g_CursorPositions;
+			extern Bool										g_bVirtualKeyboardActive;	//	gr: replace this with a function to see if the textview controller exists or not
+
 			// Base touch data - used for the persistent TouchObject class and as temp data passed form the
 			// ipod touch system to the engine input system
 			class TTouchData
@@ -97,7 +101,9 @@ namespace TLInput
 			Bool CreateDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef, Bool bVirtual);
 			Bool InitialiseDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef, Bool bVirtual);
 		
-			extern Bool						g_bVirtualKeyboardActive;	//	gr: replace this with a function to see if the textview controller exists or not
+			
+			void		SetCursorPosition(u8 Index,const int2& Pos)	{	g_CursorPositions[Index] = Pos;	}
+			const int2&	GetCursorPosition(u8 Index)					{	return g_CursorPositions[Index];	}
 		}
 	};
 };
