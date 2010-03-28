@@ -85,7 +85,7 @@ SyncBool TLFileSys::TFileParticle::ImportRoot(TPtr<TXmlTag>& pTag,TLAsset::TPart
 		if ( pChildTag->GetTagName() == "Data" )
 		{
 			//	read-in data and add to the asset's generic data
-			if ( TLFile::ParseXMLDataTree( pChildTag, Particle.GetData() ) )
+			if ( TLFile::ParseXMLDataTree( *pChildTag, Particle.GetData() ) )
 				TagImportResult = SyncTrue;
 			else
 				TagImportResult = SyncFalse;

@@ -11,6 +11,7 @@
 #include "TAtlas.h"
 #include "TParticle.h"
 #include "TObject.h"
+#include "TTileMap.h"
 
 #include "TLoadTask.h"
 #include <TootleCore/TPtr.h>
@@ -491,6 +492,8 @@ void TLAsset::TAssetManager::Debug_CheckAssetArrayIntegrity()
 
 		// pObj *may* sometime be NULL when the object is being removed from the array
 		// in which case it is still valid.
+		//	gr: this problem occurs if an extra TPtr(an extra ref count) is created for the asset.
+		//		Somewhere a c-pointer is being turned into a TPtr... an intrusive smart pointer will fix this.
 		if(pObj)
 		{
 			// Get the v-table pointer
@@ -673,6 +676,7 @@ TLAsset::TAsset* TLAsset::TAssetFactory::CreateObject(TRefRef InstanceRef,TRefRe
 	case STRef(A,t,l,a,s):	return new TLAsset::TAtlas( InstanceRef );	//	"Atlas" 
 	case STRef(P,a,r,t,i):	return new TLAsset::TParticle( InstanceRef );	//	"Particle" 
 	case STRef(O,b,j,e,c): return new TLAsset::TObject( InstanceRef );		// "Object"
+	case STRef(T,i,l,e,M): return new TLAsset::TTileMap( InstanceRef );		// "TileMap"
 
 	//	gr: dumb asset - just stores data - consider turning this into a specific TBinaryTree/"Data" asset
 	case STRef(A,s,s,e,t):	return new TLAsset::TAsset( TLAsset::TAsset::GetAssetType_Static(), InstanceRef );	//	"Asset"

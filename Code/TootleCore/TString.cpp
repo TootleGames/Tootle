@@ -891,3 +891,82 @@ void TString::InsertAt(u32 Index,const TString& String)
 
 	StringArray.InsertAt( Index, OtherStringArray );
 }
+
+
+//--------------------------------------------------------
+//	get an array of floats from a string (expects just floats)
+//--------------------------------------------------------
+Bool TString::GetFloats(TArray<float>& Floats) const
+{
+	//	split the string
+	TFixedArray<TChar,4> SplitChars;
+	SplitChars << '\t' << '\n' << ' ' << ',' << ':';
+
+	//	gr: I've made it so it ignore's f or F in floats so we can put in 1.f or 1.0f etc
+	//		this may cause a problem if we're pulling out floats in commands (like SVG's but
+	//		i don't think those cases will use this function anyway. If it is a problem, move
+	//		the "acceptance" of a trailing f into GetFloat()
+	SplitChars << 'f' << 'F';
+
+	TArray<TTempString> FloatStrings;
+	if ( !this->Split( SplitChars, FloatStrings ) )
+		return false;
+
+	//	now go through all the strings we split and pull out the floats
+	for ( u32 s=0;	s<FloatStrings.GetSize();	s++ )
+	{
+		const TString& FloatString = FloatStrings[s];
+		float f;
+
+		//	one of these strings is not a float
+		if ( !FloatString.GetFloat( f ) )
+		{
+			TTempString Debug_String;
+			Debug_String << "Split string \"" << FloatString << "\" in GetFloats() is not a float";
+			TLDebug_Break( Debug_String );
+			return false;
+		}
+
+		//	add to float list
+		Floats.Add( f );
+	}
+
+	return true;	
+}
+
+
+
+//----------------------------------------------------------
+//	read an array of integers from a string
+//----------------------------------------------------------
+Bool TString::GetIntegers(TArray<s32>& Integers) const
+{
+	//	split the string
+	TFixedArray<TChar,4> SplitChars;
+	SplitChars << '\t' << '\n' << ' ' << ',' << ':';
+
+	TArray<TTempString> IntegerStrings;
+	if ( !this->Split( SplitChars, IntegerStrings ) )
+		return false;
+
+	//	now go through all the strings we split and pull out the floats
+	for ( u32 s=0;	s<IntegerStrings.GetSize();	s++ )
+	{
+		const TString& IntegerString = IntegerStrings[s];
+		s32 i;
+
+		//	one of these strings is not an integer
+		if ( !IntegerString.GetInteger( i ) )
+		{
+			TTempString Debug_String;
+			Debug_String << "Split string \"" << IntegerString << "\" in GetIntegers() is not an integer";
+			TLDebug_Break( Debug_String );
+			return false;
+		}
+
+		//	add to list
+		Integers.Add( i );
+	}
+
+	return true;	
+}

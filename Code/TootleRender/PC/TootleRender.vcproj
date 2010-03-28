@@ -648,6 +648,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TEffect.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TEffect.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TLRender.cpp"
 			>
 		</File>

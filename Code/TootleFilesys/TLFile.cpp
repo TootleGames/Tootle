@@ -2,6 +2,60 @@
 #include <TootleCore/TBinaryTree.h>
 
 
+//	specialise these
+template<typename TYPE> Type2<s32>	GetIntegerMinMax(TYPE x)	{	return Type2<s32>(0,0);	}
+template<> Type2<s32>				GetIntegerMinMax(u8 x)		{	return Type2<s32>( 0, 255 );	}
+template<> Type2<s32>				GetIntegerMinMax(s8 x)		{	return Type2<s32>( -127, 127 );	}
+template<> Type2<s32>				GetIntegerMinMax(u16 x)		{	return Type2<s32>( 0, 65535 );	}
+template<> Type2<s32>				GetIntegerMinMax(s16 x)		{	return Type2<s32>( -32767, 32767 );	}
+template<> Type2<s32>				GetIntegerMinMax(u32 x)		{	return Type2<s32>( 0, 4294967295U );	}
+template<> Type2<s32>				GetIntegerMinMax(s32 x)		{	return Type2<s32>( -2147483647, 2147483647 );	}
+
+
+
+//--------------------------------------------------------
+//	
+//--------------------------------------------------------
+template<typename TYPE>
+SyncBool ImportBinaryDataIntegerInRange(TBinary& Data,const TString& DataString)
+{
+	Type2<s32> MinMax = GetIntegerMinMax( (TYPE)0 );
+	TArray<s32> Integers;
+	if ( !DataString.GetIntegers( Integers ) )
+		return SyncFalse;
+
+	//	make sure they're in range
+	for ( u32 i=0;	i<Integers.GetSize();	i++ )
+	{
+		const s32& Integer = Integers[i];
+		if ( Integer >= MinMax.x && Integer <= MinMax.y )
+			continue;
+
+		TTempString Debug_String;
+		Debug_String << "Integer out of range: " << MinMax.x << " < " << Integer << " < " << MinMax.y;
+		TLDebug_Break( Debug_String );
+		return SyncFalse;
+	}
+
+	//	no integers found...
+	if ( Integers.GetSize() == 0 )
+		return SyncFalse;
+
+	//	single value, just write it
+	if ( Integers.GetSize() == 1 )
+	{
+		Data.Write( (TYPE)Integers[0] );
+		return SyncTrue;
+	}
+
+	//	array. have to convert to type to write properly
+	TArray<TYPE> TypeIntegers;
+	TypeIntegers.Copy( Integers );
+
+	Data.WriteArray( TypeIntegers );
+	return SyncTrue;
+}
+
 
 //--------------------------------------------------------
 //	
@@ -240,10 +294,10 @@ TRef TLFile::GetDataTypeFromString(const TString& String)
 //--------------------------------------------------------
 //	
 //--------------------------------------------------------
-SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRef DataType)
+SyncBool TLFile::ImportBinaryData(TXmlTag& Tag,TBinary& BinaryData,TRefRef DataType)
 {
 	//	grab data string
-	const TString& DataString = pTag->GetDataString();
+	const TString& DataString = Tag.GetDataString();
 	u32 CharIndex = 0;
 
 	switch ( DataType.GetData() )
@@ -439,58 +493,22 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 	}
 
 	case TLBinary_TypeRef(u8):
-	{
-		s32 Integer;
-		if ( !TLString::ReadIntegerInRange( DataString, Integer, 0, 255 ) )
-			return SyncFalse;
-		BinaryData.Write( (u8)Integer );
-		return SyncTrue;
-	}
+		return ImportBinaryDataIntegerInRange<u8>( BinaryData, DataString );
 
 	case TLBinary_TypeRef(s8):
-	{
-		s32 Integer;
-		if ( !TLString::ReadIntegerInRange( DataString, Integer, -127, 127 ) )
-			return SyncFalse;
-		BinaryData.Write( (s8)Integer );
-		return SyncTrue;
-	}
+		return ImportBinaryDataIntegerInRange<s8>( BinaryData, DataString );
 
 	case TLBinary_TypeRef(u16):
-	{
-		s32 Integer;
-		if ( !TLString::ReadIntegerInRange( DataString, Integer, 0, 65535 ) )
-			return SyncFalse;
-		BinaryData.Write( (u16)Integer );
-		return SyncTrue;
-	}
+		return ImportBinaryDataIntegerInRange<u16>( BinaryData, DataString );
 
 	case TLBinary_TypeRef(s16):
-	{
-		s32 Integer;
-		if ( !TLString::ReadIntegerInRange( DataString, Integer, -32767, 32767 ) )
-			return SyncFalse;
-		BinaryData.Write( (s16)Integer );
-		return SyncTrue;
-	}
+		return ImportBinaryDataIntegerInRange<s16>( BinaryData, DataString );
 
 	case TLBinary_TypeRef(u32):
-	{
-		s32 Integer;
-		if ( !TLString::ReadIntegerInRange( DataString, Integer, 0, 4294967295U ) )
-			return SyncFalse;
-		BinaryData.Write( (u32)Integer );
-		return SyncTrue;
-	}
+		return ImportBinaryDataIntegerInRange<u32>( BinaryData, DataString );
 
 	case TLBinary_TypeRef(s32):
-	{
-		s32 Integer;
-		if ( !TLString::ReadIntegerInRange( DataString, Integer, -2147483647, 2147483647 ) )
-			return SyncFalse;
-		BinaryData.Write( (s32)Integer );
-		return SyncTrue;
-	}
+		return ImportBinaryDataIntegerInRange<s32>( BinaryData, DataString );
 
 	case TLBinary_TypeRef(Bool):
 	{
@@ -536,7 +554,7 @@ SyncBool TLFile::ImportBinaryData(TPtr<TXmlTag>& pTag,TBinary& BinaryData,TRefRe
 //--------------------------------------------------------
 //	parse XML tag to Binary data[tree]
 //--------------------------------------------------------
-Bool TLFile::ParseXMLDataTree(TPtr<TXmlTag>& pTag,TBinaryTree& Data)
+Bool TLFile::ParseXMLDataTree(TXmlTag& Tag,TBinaryTree& Data)
 {
 	/*
 		XML examples
@@ -555,7 +573,7 @@ Bool TLFile::ParseXMLDataTree(TPtr<TXmlTag>& pTag,TBinaryTree& Data)
 	*/
 
 	//	read the data ref
-	const TString* pDataRefString = pTag->GetProperty("DataRef");
+	const TString* pDataRefString = Tag.GetProperty("DataRef");
 	TRef DataRef( pDataRefString ? *pDataRefString : "" );
 
 	//	establish the data we're writing data to
@@ -579,27 +597,27 @@ Bool TLFile::ParseXMLDataTree(TPtr<TXmlTag>& pTag,TBinaryTree& Data)
 	//	if the tag has no children (eg. type like <float />) but DOES have data (eg. 1.0) throw up an error and fail
 	//	assume the data is malformed and someone has forgotten to add the type specifier. 
 	//	if something automated has output it and doesnt know the type it should still output it as hex raw data
-	if ( !pTag->GetChildren().GetSize() && pTag->GetDataString().GetLength() > 0 )
+	if ( !Tag.GetChildren().GetSize() && Tag.GetDataString().GetLength() > 0 )
 	{
 		TTempString Debug_String("<Data ");
 		DataRef.GetString( Debug_String );
 		Debug_String.Append("> tag with no children, but DOES have data inside (eg. 1.0). Missing type specifier? (eg. <flt3>)\n");
-		Debug_String.Append( pTag->GetDataString() );
+		Debug_String.Append( Tag.GetDataString() );
 		TLDebug_Break( Debug_String );
 		return SyncFalse;
 	}
 
 	//	deal with child tags
-	for ( u32 c=0;	c<pTag->GetChildren().GetSize();	c++ )
+	for ( u32 c=0;	c<Tag.GetChildren().GetSize();	c++ )
 	{
-		TPtr<TXmlTag>& pChildTag = pTag->GetChildren().ElementAt(c);
+		TPtr<TXmlTag>& pChildTag = Tag.GetChildren().ElementAt(c);
 
 		SyncBool TagImportResult = SyncFalse;
 
 		if ( pChildTag->GetTagName() == "data" )
 		{
 			//	import child data
-			if ( ParseXMLDataTree( pChildTag, NodeData ) )
+			if ( ParseXMLDataTree( *pChildTag, NodeData ) )
 				TagImportResult = SyncTrue;
 			else
 				TagImportResult = SyncFalse;
@@ -615,7 +633,7 @@ Bool TLFile::ParseXMLDataTree(TPtr<TXmlTag>& pTag,TBinaryTree& Data)
 			//	gr: DONT do this, if the type is mixed, this overwrites it. Setting the DataTypeHint should be automaticly done when we Write() in ImportBinaryData
 			//NodeData.SetDataTypeHint( DataTypeRef );
 
-			TagImportResult = TLFile::ImportBinaryData( pChildTag, NodeData, DataTypeRef );
+			TagImportResult = TLFile::ImportBinaryData( *pChildTag, NodeData, DataTypeRef );
 
 			//	gr: just to check the data hint is being set from the above function...
 			if ( TagImportResult == SyncTrue && !NodeData.GetDataTypeHint().IsValid() && NodeData.GetSize() > 0 )
@@ -632,8 +650,7 @@ Bool TLFile::ParseXMLDataTree(TPtr<TXmlTag>& pTag,TBinaryTree& Data)
 		if ( TagImportResult == SyncFalse )
 		{			
 			TTempString str;
-			str.Appendf("failed to import <data> tag \"%s\" in scheme", pChildTag->GetTagName().GetData() );
-			
+			str << "failed to import <data> tag \"" << pChildTag->GetTagName() << "\"";			
 			TLDebug_Break( str );
 			return FALSE;
 		}

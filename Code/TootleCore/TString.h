@@ -101,11 +101,15 @@ public:
 	Bool					IsLessThan(const TString& String) const;					//	comparison to string
 	template<class STRINGTYPE>
 	Bool					Split(const TChar& SplitChar,TArray<STRINGTYPE>& StringArray) const;		//	split string by SplitChar into array. if no cases of SplitChar then FALSE is return and no strings are added to the array
-	Bool					GetInteger(s32& Integer,Bool* pIsPositive=NULL) const;	//	turn string into an integer - fails if some non-integer stuff in it (best to trim first where possible). The extra pIsPositive param (if not null) stores the posititivy/negativity of the number. This is needed for -0.XYZ numbers. we still need the sign for floats, but as an int -0 is just 0.
-	Bool					GetFloat(float& Float) const;					//	turn string into a float
-	Bool					GetHexInteger(u32& Integer) const;				//	turn hexidecimal string into an integer (best to trim first where possible)
-	Bool					GetHexBytes(TArray<u8>& ParsedBytes) const;		//	turn hexidecimal string into an array of bytes. so string is expected to be like 0011223344aabbff etc
-	
+	template<class STRINGTYPE>
+	Bool					Split(const TArray<TChar>& SplitChars,TArray<STRINGTYPE>& StringArray) const;		//	split string by SplitChar into array. if no cases of SplitChar then FALSE is return and no strings are added to the array
+	Bool					GetInteger(s32& Integer,Bool* pIsPositive=NULL) const;		//	turn string into an integer - fails if some non-integer stuff in it (best to trim first where possible). The extra pIsPositive param (if not null) stores the posititivy/negativity of the number. This is needed for -0.XYZ numbers. we still need the sign for floats, but as an int -0 is just 0.
+	Bool					GetIntegers(TArray<s32>& Integers) const;					//	read an array of integers from a string
+	Bool					GetFloat(float& Float) const;								//	turn string into a float
+	Bool					GetFloats(TArray<float>& Floats) const;						//	get an array of floats from a string (expects just floats)
+	Bool					GetHexInteger(u32& Integer) const;							//	turn hexidecimal string into an integer (best to trim first where possible)
+	Bool					GetHexBytes(TArray<u8>& ParsedBytes) const;					//	turn hexidecimal string into an array of bytes. so string is expected to be like 0011223344aabbff etc
+
 	//	gr: I *think* it's safe to expose these now...
 	virtual TArray<TChar>&			GetStringArray()						{	return m_DataArray;	}
 	virtual const TArray<TChar>&	GetStringArray() const					{	return m_DataArray;	}
@@ -114,8 +118,8 @@ public:
 	const TChar&			GetCharAt(u32 Index) const						{	return GetStringArray().ElementAtConst(Index);	}
 	virtual TChar			GetLowercaseCharAt(u32 Index) const				{	return TLString::GetCharLowercase( GetCharAt( Index ) );	}
 	TChar					GetCharLast() const;							//	get the last char. if string is empty a terminator is returned. If the string ends with a terminator, it returns the last char before terminator (if any)
-	s32						GetCharGetLastIndex() const;						//	get the index of last char. -1 if empty or all terminators
-	void					RemoveCharAt(u32 Index,u32 Amount)				{	GetStringArray().RemoveAt(Index,Amount);	}
+	s32						GetCharGetLastIndex() const;					//	get the index of last char. -1 if empty or all terminators
+	void					RemoveCharAt(u32 Index,u32 Amount=1)			{	GetStringArray().RemoveAt(Index,Amount);	}
 
 	FORCEINLINE const TChar&	operator[](u32 Index) const					{	return GetCharAt(Index);	}
 
@@ -387,6 +391,76 @@ Bool TString::Split(const TChar& SplitChar,TArray<STRINGTYPE>& StringArray) cons
 
 
 //------------------------------------------------------
+//	get all the strings seperated by the split chars (eg. white spaces)
+//------------------------------------------------------
+template<class STRINGTYPE>
+Bool TString::Split(const TArray<TChar>& SplitChars,TArray<STRINGTYPE>& StringArray) const
+{
+	s32 StringStart = -1;
+
+	//	walk through the string until we hit a split char
+	u32 LastCharIndex = GetCharGetLastIndex();
+	const TArray<TChar>& ThisString = GetStringArray();
+	for ( u32 i=0;	i<=LastCharIndex+1;	i++ )
+	{
+		//	gr: we go up to past the last character so we keep all the end-of-string code together
+		Bool IsTerminator = (i == LastCharIndex+1);
+		Bool IsSplitChar = IsTerminator;
+
+		//	check for a non-string character
+		if ( !IsSplitChar )
+		{
+			const TChar& Char = ThisString[i];
+			IsSplitChar = SplitChars.Exists( Char );
+		}
+
+		//	end of current string
+		if ( IsSplitChar )
+		{
+			//	more white space, not doing a string atm...
+			if ( StringStart == -1 )
+				continue;
+
+			//	terminate current string
+
+			//	get a new string in the array
+			STRINGTYPE* pNewString = StringArray.AddNew();
+			if ( !pNewString )
+			{
+				//	failed to alloc. run out of space, or memory etc. not sure what to return
+				TLDebug_Break("Failed to allocate another string for the split... gr: not sure what to return... success or fail?");
+				return !StringArray.IsEmpty();
+			}
+
+			//	work out the length of the string we've found
+			s32 Length = (i - StringStart);
+			if ( Length <= 0 )
+			{
+				TLDebug_Break("coding error: string in string is too short");
+				Length = 1;
+			}
+
+			//	put our part of a string into this new string
+			pNewString->Append( *this, (u32)StringStart, Length );
+
+			//	reset start for next string
+			StringStart = -1;
+			continue;
+		}
+
+		//	real character! store the index if it's the start of a new string
+		if ( StringStart == -1 )
+			StringStart = i;
+
+		//	wait for something to terminate the current string
+		continue;
+	}
+
+	return !StringArray.IsEmpty();
+}
+
+
+//------------------------------------------------------
 //	post-string change call
 //------------------------------------------------------
 template<class BASESTRINGTYPE>
@@ -401,4 +475,67 @@ void TStringLowercase<BASESTRINGTYPE>::OnStringChanged(u32 FirstChanged,s32 Last
 		TLString::SetCharLowercase( StringArray[i] );
 	}
 }
+
+
+
+//--------------------------------------------------------
+//	append integer
+//	I'd add this as a member function, but makes a good example for overloaded appends for different types
+//--------------------------------------------------------
+template<>
+FORCEINLINE TString& operator<<(TString& String,const u32& Value)		
+{
+	TLDebug_Break("Untested");
+	TFixedArray<TChar,12> IntegerChars;
+	u32 i=Value;
+
+	while ( true )
+	{
+		int OfTen = i % 10;
+		IntegerChars.InsertAt( 0, '0' + OfTen );
+
+		//	won't shrink any further
+		if ( Value < 10 )
+			break;
+
+		//	next 10th
+		i /= 10;
+	}
+
+	//	append our array of characters we've made up
+	String.Append( IntegerChars.GetData(), IntegerChars.GetSize() );
+
+	return String;
+}	
+//--------------------------------------------------------
+//	append signed integer
+//--------------------------------------------------------
+template<>
+FORCEINLINE TString& operator<<(TString& String,const s32& Value)		
+{
+	//	if negative, append a - then treat as if it was unsigned
+	if ( Value < 0 )
+		String.Append('-');
+
+	u32 v = Value < 0 ? -Value : Value;
+	String << v;
+	return String;
+}	
+
+template<> FORCEINLINE TString& operator<<(TString& String,const u8& Value)		{	u32 v = Value;	String << v;	return String;	}
+template<> FORCEINLINE TString& operator<<(TString& String,const u16& Value)	{	u32 v = Value;	String << v;	return String;	}
+template<> FORCEINLINE TString& operator<<(TString& String,const s8& Value)		{	s32 v = Value;	String << v;	return String;	}
+template<> FORCEINLINE TString& operator<<(TString& String,const s16& Value)	{	s32 v = Value;	String << v;	return String;	}
+
+
+//--------------------------------------------------------
+//	append float
+//--------------------------------------------------------
+template<>
+FORCEINLINE TString& operator<<(TString& String,const float& Value)
+{
+	String.Appendf("%2.2f", Value );
+	return String;
+}
+
 

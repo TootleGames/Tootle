@@ -75,7 +75,8 @@ public:
 	u8					AddTransform_HasChanged(const TLMaths::TTransform& Trans);	//	Modify the transform values by another transform, Translates the translate, scales the scale, rotates the rotation. Doesn't multiply and rotate the translate etc. returns elements that have changed (slightly slower, but if your caller does much LESS work if nothing changed then use this)
 	
 	u8					ImportData(TBinaryTree& Data);				//	import transform data from binary data/message/etc- returns bitmask of the attributes that have changed
-	u8					ExportData(TBinaryTree& Data,u8 TransformBits=TLMaths_TransformBitAll);	//	export all our valid data to this binary data- can optionally make it only write certain attributes. Returns bits of the attributes written.
+	u8					ExportData(TBinaryTree& Data,u8 TransformBits=TLMaths_TransformBitAll) const;	//	export all our valid data to this binary data- can optionally make it only write certain attributes. Returns bits of the attributes written.
+	u8					ReplaceData(TBinaryTree& Data,u8 TransformBits=TLMaths_TransformBitAll) const;	//	export all our valid data to this binary data- can optionally make it only write certain attributes. Returns bits of the attributes written.
 	
 	Bool				operator==(const TLMaths::TTransform& Transform) const;		//	see if transforms are same
 	Bool				operator!=(const TLMaths::TTransform& Transform) const;		//	see if transforms are different 

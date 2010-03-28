@@ -111,10 +111,10 @@ public:
 	FORCEINLINE Bool		operator==(const TRenderTarget& RenderTarget) const					{	return GetScreenZ() == RenderTarget.GetScreenZ();	}
 
 protected:
-	Bool							DrawNode(TRenderNode* pRenderNode,TRenderNode* pParentRenderNode,const TLMaths::TTransform* pSceneTransform,TColour SceneColour,TLMaths::TQuadTreeNode* pCameraZoneNode);	//	render a render object
-	void							DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRenderNode* pRenderNode, TColour SceneColour,TPtrArray<TRenderNode>& PostRenderList);	
-	void							DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset::TTexture* pTexture,const TRenderNode* pRenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags,Bool HasAlpha);
-	void							DrawMeshShape(const TLMaths::TShape& Shape,const TRenderNode* pRenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags,Bool ResetScene);
+	Bool							DrawNode(TRenderNode& RenderNode,TRenderNode* pParentRenderNode,const TLMaths::TTransform* pSceneTransform,TColour SceneColour,TLMaths::TQuadTreeNode* pCameraZoneNode);	//	render a render object
+	void							DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRenderNode& RenderNode, TColour SceneColour,TPtrArray<TRenderNode>& PostRenderList);	
+	void							DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset::TTexture* pTexture,TRenderNode& RenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags,Bool HasAlpha);
+	void							DrawMeshShape(const TLMaths::TShape& Shape,TRenderNode& RenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags,Bool ResetScene);
 
 	virtual Bool					BeginProjectDraw(TLRender::TProjectCamera& Camera,TScreenShape ScreenShape)	{	return TRUE;	}	//	setup projection mode
 	virtual void					EndProjectDraw()																{	}

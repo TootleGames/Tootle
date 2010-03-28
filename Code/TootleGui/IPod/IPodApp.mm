@@ -5,6 +5,7 @@
 #include <TootleInput/IPod/IPodInput.h>
 
 
+
 @implementation TAppDelegate
 
 
@@ -31,8 +32,12 @@
 	float UpdateInterval = TLTime::GetUpdateTimeSecondsf();
 	m_pTimer = [NSTimer scheduledTimerWithTimeInterval:UpdateInterval target:self selector:@selector(onTimer:) userInfo:nil repeats:YES];
 	
-	
-	
+	// Setup the accelerometer
+	// Configure and start the accelerometer
+	float AccellInterval = TLTime::GetUpdateTimeMilliSecsf();
+    [[UIAccelerometer sharedAccelerometer] setUpdateInterval:AccellInterval];
+    [[UIAccelerometer sharedAccelerometer] setDelegate:self];
+		
 	//	Send terminate message to the application if we failed to init
 	if ( !InitResult )
 	{
@@ -41,7 +46,6 @@
 	}
 	
 	m_HasInitialised = TRUE;
-	
 	
 	// Force an update and render.  This fixes the glitch between the Default.png file and the very first frame of the logo
 	TLCore::g_pCoreManager->ForceUpdate();

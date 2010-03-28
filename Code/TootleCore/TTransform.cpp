@@ -69,7 +69,7 @@ u8 TLMaths::TTransform::ImportData(TBinaryTree& Data)
 //-----------------------------------------------------------
 //	export all our valid data to this binary data- can optionally make it only write certain attributes. Returns attributes written
 //-----------------------------------------------------------
-u8 TLMaths::TTransform::ExportData(TBinaryTree& Data,u8 TransformBits)
+u8 TLMaths::TTransform::ExportData(TBinaryTree& Data,u8 TransformBits) const
 {
 	//	only write bits that are valid
 	TransformBits &= m_Valid;
@@ -90,6 +90,51 @@ u8 TLMaths::TTransform::ExportData(TBinaryTree& Data,u8 TransformBits)
 	{
 		TLDebug_CheckFloat( m_Rotation );
 		Data.ExportData(TRef_Static(R,o,t,a,t), m_Rotation );
+	}
+	
+	return TransformBits;
+}
+
+
+//-----------------------------------------------------------
+//	export all our valid data to this binary data- can optionally make it only write certain attributes. Returns attributes written
+//-----------------------------------------------------------
+u8 TLMaths::TTransform::ReplaceData(TBinaryTree& Data,u8 TransformBits) const
+{
+	//	need to remove some parts of the data
+	u8 RemoveBits = m_Valid & ~TransformBits; 
+
+	//	only write bits that are valid
+	TransformBits &= m_Valid;
+	
+	if ( (TransformBits & TLMaths_TransformBitTranslate) != 0x0 )
+	{
+		TLDebug_CheckFloat( m_Translate );
+		Data.ReplaceData(TRef_Static(T,r,a,n,s), m_Translate );
+	}
+	else if ( ( RemoveBits & TLMaths_TransformBitTranslate ) != 0x0 )
+	{
+		Data.RemoveChild( TRef_Static(T,r,a,n,s) );
+	}
+
+	if ( (TransformBits & TLMaths_TransformBitScale) != 0x0 )
+	{
+		TLDebug_CheckFloat( m_Scale );
+		Data.ReplaceData(TRef_Static(S,c,a,l,e), m_Scale );
+	}
+	else if ( ( RemoveBits & TLMaths_TransformBitScale ) != 0x0 )
+	{
+		Data.RemoveChild( TRef_Static(S,c,a,l,e) );
+	}
+
+	if ( (TransformBits & TLMaths_TransformBitRotation) != 0x0 )
+	{
+		TLDebug_CheckFloat( m_Rotation );
+		Data.ReplaceData(TRef_Static(R,o,t,a,t), m_Rotation );
+	}
+	else if ( ( RemoveBits & TLMaths_TransformBitRotation ) != 0x0 )
+	{
+		Data.RemoveChild( TRef_Static(R,o,t,a,t) );
 	}
 	
 	return TransformBits;

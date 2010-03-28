@@ -8,15 +8,3 @@
  */
 #pragma once
 
-#import <Appkit/NSWindow.h>
-
-@interface TootleWindowDelegate : NSObject<NSWindowDelegate>
-{
-	@private
-	NSWindow* m_pWindow;
-}
-
--(void) setWindow:(NSWindow*)window;
-
-
-@end

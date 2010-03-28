@@ -3,10 +3,6 @@
 
 //	mac cocoa includes, NSApp, NSArray etc
 #include <TootleInput/IPod/IPodInput.h>
-#import <IOKit/IOKitLib.h>
-#import <IOKit/hid/IOHIDManager.h>
-#import <IOKit/hid/IOHIDKeys.h>
-#import <Appkit/Appkit.h>
 #include <TootleCore/TLMemory.h> // TEMP
 #import "IPodWindowDelegate.h"
 
@@ -88,11 +84,12 @@ void TLGui::Platform::OpenglCanvas::EndRender()
 	}
 	
 	//	gr: flush flips on the mac...
-	NSOpenGLContext* context = [m_pView openGLContext];
+	EAGLContext* context = [m_pView openGLContext];
 	//[context flushBuffer];
     glBindRenderbufferOES(GL_RENDERBUFFER_OES, m_pView.viewRenderbuffer);
     [context presentRenderbuffer:GL_RENDERBUFFER_OES];
 
+	/*
 	// Take a screenshot if flagged to do so.  
 	// I'm not sure this is the right place but...
 	if(GetFlag(Flag_TakeScreenshot))
@@ -101,6 +98,6 @@ void TLGui::Platform::OpenglCanvas::EndRender()
 		//[glView saveViewToPhotoLibraryAndSetupEmail];
 		m_Flags.Set(Flag_TakeScreenshot, FALSE);
 	}
-
+*/
 }
 

@@ -98,10 +98,11 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 290899002;
-			PBXWorkspaceStateSaveDate = 290899002;
+			PBXPerProjectTemplateStateSaveDate = 291499262;
+			PBXWorkspaceStateSaveDate = 291499262;
 		};
 		perUserProjectItems = {
+			BF1AE5AD115FED03004B2216 /* PBXTextBookmark */ = BF1AE5AD115FED03004B2216 /* PBXTextBookmark */;
 			BF4CA8650F7BF2CC0096592A /* PBXTextBookmark */ = BF4CA8650F7BF2CC0096592A /* PBXTextBookmark */;
 			BF4CA8670F7BF2CC0096592A /* PBXTextBookmark */ = BF4CA8670F7BF2CC0096592A /* PBXTextBookmark */;
 			BF4CA8690F7BF2CC0096592A /* PBXTextBookmark */ = BF4CA8690F7BF2CC0096592A /* PBXTextBookmark */;
@@ -116,7 +117,6 @@
 			BFC7ABF41156ABEA00FFFC81 /* PBXTextBookmark */ = BFC7ABF41156ABEA00FFFC81 /* PBXTextBookmark */;
 			BFC7ABF51156ABEA00FFFC81 /* PBXTextBookmark */ = BFC7ABF51156ABEA00FFFC81 /* PBXTextBookmark */;
 			BFC7AC1C1156C45000FFFC81 /* PBXTextBookmark */ = BFC7AC1C1156C45000FFFC81 /* PBXTextBookmark */;
-			BFC7AC1D1156C45000FFFC81 /* PBXTextBookmark */ = BFC7AC1D1156C45000FFFC81 /* PBXTextBookmark */;
 			BFC7AC1E1156C45000FFFC81 /* PBXTextBookmark */ = BFC7AC1E1156C45000FFFC81 /* PBXTextBookmark */;
 		};
 		sourceControlManager = BF4CA8450F7BE8E00096592A /* Source Control */;
@@ -156,9 +156,9 @@
 	};
 	84C109D20F0A793000B2DF7A /* IPodCore.mm */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1024, 6816}}";
-			sepNavSelRange = "{136, 0}";
-			sepNavVisRange = "{0, 374}";
+			sepNavIntBoundsRect = "{{0, 0}, {1024, 2832}}";
+			sepNavSelRange = "{160, 0}";
+			sepNavVisRange = "{0, 396}";
 		};
 	};
 	84C109D30F0A793000B2DF7A /* IPodMemory.h */ = {
@@ -168,6 +168,16 @@
 			sepNavVisRange = "{0, 449}";
 			sepNavWindowFrame = "{{38, 162}, {983, 814}}";
 		};
+	};
+	BF1AE5AD115FED03004B2216 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C109D20F0A793000B2DF7A /* IPodCore.mm */;
+		name = "IPodCore.mm: 8";
+		rLen = 0;
+		rLoc = 160;
+		rType = 0;
+		vrLen = 396;
+		vrLoc = 0;
 	};
 	BF4CA8450F7BE8E00096592A /* Source Control */ = {
 		isa = PBXSourceControlManager;
@@ -364,16 +374,6 @@
 		rType = 0;
 		vrLen = 424;
 		vrLoc = 41;
-	};
-	BFC7AC1D1156C45000FFFC81 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C109D20F0A793000B2DF7A /* IPodCore.mm */;
-		name = "IPodCore.mm: 34";
-		rLen = 0;
-		rLoc = 753;
-		rType = 0;
-		vrLen = 374;
-		vrLoc = 0;
 	};
 	BFC7AC1E1156C45000FFFC81 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;

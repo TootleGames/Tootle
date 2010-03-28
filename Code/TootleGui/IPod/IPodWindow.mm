@@ -1,14 +1,9 @@
-#include "MacWindow.h"
+#include "IPodWindow.h"
 
 //	include NSApp, NSArray etc
-#include <TootleInput/Mac/MacInput.h>
-#import <IOKit/IOKitLib.h>
-#import <IOKit/hid/IOHIDManager.h>
-#import <IOKit/hid/IOHIDKeys.h>
-#import <Appkit/Appkit.h>
+#include <TootleInput/IPod/IPodInput.h>
 #include <TootleCore/TLMemory.h> // TEMP
-#import "MacWindowDelegate.h"
-
+#import <UIKit/UIKit.h>
 
 //	temp whilst the factory functions are in this file
 #include "../TTree.h"
@@ -35,14 +30,17 @@ TPtr<TLGui::TTree> TLGui::CreateTree(TLGui::TWindow& Parent,TRefRef Ref,TPtr<TLG
 
 TLGui::Platform::Window::Window(TRefRef WindowRef) : 
 	TLGui::TWindow		( WindowRef ),
-	m_pWindow			( NULL ),
-	m_pDelegate			( NULL )
+	m_pWindow			( NULL )
 {
 	//	Create a full-screen window
 	//	create window (hidden so size is irrelevent but we'll use the full size)
 	Type4<s32> DesktopSize;
 	TLGui::Platform::GetDesktopSize(DesktopSize);
-	NSRect Frame = NSMakeRect( DesktopSize.x, DesktopSize.y, DesktopSize.GetWidth(), DesktopSize.GetHeight() );
+	CGRect Frame;
+	Frame.origin.x = DesktopSize.x;
+	Frame.origin.y = DesktopSize.y;
+	Frame.size.width = DesktopSize.Width();
+	Frame.size.height = DesktopSize.Height();
 	
 	//	alloc
 	m_pWindow = [UIWindow alloc];
@@ -60,12 +58,8 @@ TLGui::Platform::Window::Window(TRefRef WindowRef) :
 	
 	// Use a red window for debug so we can see any glitchy views of it
 	//	gr: always pink background
-	[m_pWindow setBackgroundColor:[NSColor magentaColor]];
+	[m_pWindow setBackgroundColor:[UIColor magentaColor]];
 
-	// Setup the accelerometer
-	// Configure and start the accelerometer
-    [[UIAccelerometer sharedAccelerometer] setUpdateInterval:(1.0 / ACCELEROMETER_FREQUENCY)];
-    [[UIAccelerometer sharedAccelerometer] setDelegate:self];
 }
 
 
@@ -93,10 +87,12 @@ void TLGui::Platform::Window::Show()
 void TLGui::Platform::Window::SetSize(const int2& WidthHeight)
 {
 	//	gr: fail on ipod?
-	NSSize Size;
+	/*
+	CGSize Size;
 	Size.width = WidthHeight.x;
 	Size.height = WidthHeight.y;
 	[m_pWindow setContentSize:Size];
+	 */
 }
 
 
@@ -106,7 +102,7 @@ void TLGui::Platform::Window::SetSize(const int2& WidthHeight)
 int2 TLGui::Platform::Window::GetSize()
 {
 	//	gr: i think this is the window size, not the content size
-	NSRect Rect = m_pWindow.frame;
+	CGRect Rect = m_pWindow.frame;
 	
 	//	gr: cast required as mac window dimensions are in floats...
 	return int2( (int)Rect.size.width, (int)Rect.size.height );
@@ -117,11 +113,13 @@ int2 TLGui::Platform::Window::GetSize()
 //---------------------------------------------------
 void TLGui::Platform::Window::SetPosition(const int2& xy)
 {
+	/*
 	//	gr: fail on ipod?
-	NSPoint TopLeft;
+	CGPoint TopLeft;
 	TopLeft.x = xy.x;
 	TopLeft.y = xy.y;
 	[m_pWindow setFrameTopLeftPoint:TopLeft];
+*/
 }
 
 

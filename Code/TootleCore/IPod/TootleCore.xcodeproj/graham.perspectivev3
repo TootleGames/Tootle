@@ -351,7 +351,7 @@
 										<key>_historyCapacity</key>
 										<integer>20</integer>
 										<key>bookmark</key>
-										<string>BFC7AC1E1156C45000FFFC81</string>
+										<string>BF1AE5AD115FED03004B2216</string>
 										<key>history</key>
 										<array>
 											<string>BF4CA8650F7BF2CC0096592A</string>
@@ -368,7 +368,7 @@
 											<string>BFC7ABF41156ABEA00FFFC81</string>
 											<string>BFC7ABF51156ABEA00FFFC81</string>
 											<string>BFC7AC1C1156C45000FFFC81</string>
-											<string>BFC7AC1D1156C45000FFFC81</string>
+											<string>BFC7AC1E1156C45000FFFC81</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -382,18 +382,18 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1073, 316}}</string>
+								<string>{{0, 0}, {1073, 308}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 208 1280 570 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>316pt</string>
+							<string>308pt</string>
 						</dict>
 						<dict>
 							<key>Proportion</key>
-							<string>208pt</string>
+							<string>216pt</string>
 							<key>Tabs</key>
 							<array>
 								<dict>
@@ -407,7 +407,7 @@
 									<key>GeometryConfiguration</key>
 									<dict>
 										<key>Frame</key>
-										<string>{{10, 27}, {1073, 181}}</string>
+										<string>{{10, 27}, {1073, 189}}</string>
 										<key>RubberWindowFrame</key>
 										<string>0 208 1280 570 0 0 1280 778 </string>
 									</dict>
@@ -491,11 +491,11 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>BFC7AC1F1156C45000FFFC81</string>
+				<string>BF1AE5AE115FED03004B2216</string>
 				<string>1CA23ED40692098700951B8B</string>
-				<string>BFC7AC201156C45000FFFC81</string>
+				<string>BF1AE5AF115FED03004B2216</string>
 				<string>BF4CA8480F7BE9380096592A</string>
-				<string>BFC7AC211156C45000FFFC81</string>
+				<string>BF1AE5B0115FED03004B2216</string>
 				<string>1CA23EDF0692099D00951B8B</string>
 				<string>1CA23EE00692099D00951B8B</string>
 				<string>1CA23EE10692099D00951B8B</string>
@@ -648,7 +648,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>290899024.806319</real>
+	<real>291499267.03766</real>
 	<key>ToolbarDisplayMode</key>
 	<integer>1</integer>
 	<key>ToolbarIsVisible</key>
@@ -663,7 +663,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>/Users/graham/Tootle/Tootle/Code/TootleCore/IPod/TootleCore.xcodeproj</string>
+		<string>/Users/graham/tootleshader/Tootle/Code/TootleCore/IPod/TootleCore.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
 	<string>0 208 1280 570 0 0 1280 778 </string>

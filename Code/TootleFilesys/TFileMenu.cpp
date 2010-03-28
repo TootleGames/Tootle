@@ -186,7 +186,7 @@ SyncBool TLFileSys::TFileMenu::ImportMenuItem(TPtr<TXmlTag>& pTag,TPtr<TLAsset::
 	{
 		TPtr<TXmlTag>& pDataTag = DataTags[i];
 
-		if ( !TLFile::ParseXMLDataTree( pDataTag, pItem->GetData() ) )
+		if ( !TLFile::ParseXMLDataTree( *pDataTag, pItem->GetData() ) )
 			return SyncFalse;
 	}
 

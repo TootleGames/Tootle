@@ -691,6 +691,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TFileAtlas.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TFileAtlas.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TFileCollada.cpp"
 			>
 		</File>
@@ -772,6 +780,14 @@
 		</File>
 		<File
 			RelativePath="..\TFileTextDatabase.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TFileTileMap.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TFileTileMap.h"
 			>
 		</File>
 		<File

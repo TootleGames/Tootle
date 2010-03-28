@@ -8,6 +8,14 @@
  */
 #include "../TLGui.h"
 
+//	g++ defines __thumb__ 1 when building thumb code...
+#if __thumb__
+#warning Compiling in Thumb mode
+#endif
+
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+
 
 namespace TLGui
 {

@@ -7,14 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BF1AE515115FB013004B2216 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1AE514115FB013004B2216 /* Foundation.framework */; };
+		BF1AE517115FB013004B2216 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1AE516115FB013004B2216 /* UIKit.framework */; };
+		BF1AE51F115FB02E004B2216 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1AE51E115FB02E004B2216 /* CoreFoundation.framework */; };
+		BF1AE521115FB02E004B2216 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1AE520115FB02E004B2216 /* CoreGraphics.framework */; };
+		BF1AE523115FB02E004B2216 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1AE522115FB02E004B2216 /* CoreLocation.framework */; };
 		BFC7AC831156C86B00FFFC81 /* IPodApp.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC7AC671156C86B00FFFC81 /* IPodApp.h */; };
 		BFC7AC841156C86B00FFFC81 /* IPodApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = BFC7AC681156C86B00FFFC81 /* IPodApp.mm */; };
 		BFC7AC851156C86B00FFFC81 /* IPodGui.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC7AC691156C86B00FFFC81 /* IPodGui.h */; };
 		BFC7AC861156C86B00FFFC81 /* IPodGui.mm in Sources */ = {isa = PBXBuildFile; fileRef = BFC7AC6A1156C86B00FFFC81 /* IPodGui.mm */; };
 		BFC7AC871156C86B00FFFC81 /* IPodOpenglCanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC7AC6B1156C86B00FFFC81 /* IPodOpenglCanvas.h */; };
 		BFC7AC881156C86B00FFFC81 /* IPodOpenglCanvas.mm in Sources */ = {isa = PBXBuildFile; fileRef = BFC7AC6C1156C86B00FFFC81 /* IPodOpenglCanvas.mm */; };
-		BFC7AC891156C86B00FFFC81 /* IPodView.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC7AC6D1156C86B00FFFC81 /* IPodView.h */; };
-		BFC7AC8A1156C86B00FFFC81 /* IPodView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BFC7AC6E1156C86B00FFFC81 /* IPodView.mm */; };
 		BFC7AC8B1156C86B00FFFC81 /* IPodWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC7AC6F1156C86B00FFFC81 /* IPodWindow.h */; };
 		BFC7AC8C1156C86B00FFFC81 /* IPodWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = BFC7AC701156C86B00FFFC81 /* IPodWindow.mm */; };
 		BFC7AC8D1156C86B00FFFC81 /* IPodWindowDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC7AC711156C86B00FFFC81 /* IPodWindowDelegate.h */; };
@@ -31,8 +34,6 @@
 		BFC7AC981156C86B00FFFC81 /* TOpenglCanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFC7AC7F1156C86B00FFFC81 /* TOpenglCanvas.cpp */; };
 		BFC7AC991156C86B00FFFC81 /* TControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFC7AC801156C86B00FFFC81 /* TControl.cpp */; };
 		BFC7AC9A1156C86B00FFFC81 /* TControl.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC7AC811156C86B00FFFC81 /* TControl.h */; };
-		BFC7AD211156C90D00FFFC81 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFC7AD201156C90D00FFFC81 /* Cocoa.framework */; };
-		BFC7AD231156C90D00FFFC81 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFC7AD221156C90D00FFFC81 /* IOKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,14 +42,17 @@
 		84C109480F0A78C600B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C109490F0A78C600B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C1094A0F0A78C600B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF1AE514115FB013004B2216 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		BF1AE516115FB013004B2216 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		BF1AE51E115FB02E004B2216 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		BF1AE520115FB02E004B2216 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		BF1AE522115FB02E004B2216 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		BFC7AC671156C86B00FFFC81 /* IPodApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodApp.h; path = ../IPod/IPodApp.h; sourceTree = SOURCE_ROOT; };
 		BFC7AC681156C86B00FFFC81 /* IPodApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodApp.mm; path = ../IPod/IPodApp.mm; sourceTree = SOURCE_ROOT; };
 		BFC7AC691156C86B00FFFC81 /* IPodGui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodGui.h; path = ../IPod/IPodGui.h; sourceTree = SOURCE_ROOT; };
 		BFC7AC6A1156C86B00FFFC81 /* IPodGui.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodGui.mm; path = ../IPod/IPodGui.mm; sourceTree = SOURCE_ROOT; };
 		BFC7AC6B1156C86B00FFFC81 /* IPodOpenglCanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodOpenglCanvas.h; path = ../IPod/IPodOpenglCanvas.h; sourceTree = SOURCE_ROOT; };
 		BFC7AC6C1156C86B00FFFC81 /* IPodOpenglCanvas.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodOpenglCanvas.mm; path = ../IPod/IPodOpenglCanvas.mm; sourceTree = SOURCE_ROOT; };
-		BFC7AC6D1156C86B00FFFC81 /* IPodView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodView.h; path = ../IPod/IPodView.h; sourceTree = SOURCE_ROOT; };
-		BFC7AC6E1156C86B00FFFC81 /* IPodView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodView.mm; path = ../IPod/IPodView.mm; sourceTree = SOURCE_ROOT; };
 		BFC7AC6F1156C86B00FFFC81 /* IPodWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodWindow.h; path = ../IPod/IPodWindow.h; sourceTree = SOURCE_ROOT; };
 		BFC7AC701156C86B00FFFC81 /* IPodWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodWindow.mm; path = ../IPod/IPodWindow.mm; sourceTree = SOURCE_ROOT; };
 		BFC7AC711156C86B00FFFC81 /* IPodWindowDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodWindowDelegate.h; path = ../IPod/IPodWindowDelegate.h; sourceTree = SOURCE_ROOT; };
@@ -99,8 +103,6 @@
 		BFC7AD091156C89800FFFC81 /* MacWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacWindow.mm; path = ../Mac/MacWindow.mm; sourceTree = SOURCE_ROOT; };
 		BFC7AD0A1156C89800FFFC81 /* MacWindowDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacWindowDelegate.h; path = ../Mac/MacWindowDelegate.h; sourceTree = SOURCE_ROOT; };
 		BFC7AD0B1156C89800FFFC81 /* MacWindowDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacWindowDelegate.mm; path = ../Mac/MacWindowDelegate.mm; sourceTree = SOURCE_ROOT; };
-		BFC7AD201156C90D00FFFC81 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		BFC7AD221156C90D00FFFC81 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,8 +110,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BFC7AD211156C90D00FFFC81 /* Cocoa.framework in Frameworks */,
-				BFC7AD231156C90D00FFFC81 /* IOKit.framework in Frameworks */,
+				BF1AE515115FB013004B2216 /* Foundation.framework in Frameworks */,
+				BF1AE517115FB013004B2216 /* UIKit.framework in Frameworks */,
+				BF1AE51F115FB02E004B2216 /* CoreFoundation.framework in Frameworks */,
+				BF1AE521115FB02E004B2216 /* CoreGraphics.framework in Frameworks */,
+				BF1AE523115FB02E004B2216 /* CoreLocation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -122,6 +127,11 @@
 				84C109460F0A78AC00B2DF7A /* Build Configurations */,
 				84C109450F0A789D00B2DF7A /* Source Code */,
 				84C109200F0A785200B2DF7A /* Products */,
+				BF1AE514115FB013004B2216 /* Foundation.framework */,
+				BF1AE516115FB013004B2216 /* UIKit.framework */,
+				BF1AE51E115FB02E004B2216 /* CoreFoundation.framework */,
+				BF1AE520115FB02E004B2216 /* CoreGraphics.framework */,
+				BF1AE522115FB02E004B2216 /* CoreLocation.framework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -169,16 +179,12 @@
 		BFC7AC421156C86A00FFFC81 /* IPod */ = {
 			isa = PBXGroup;
 			children = (
-				BFC7AD221156C90D00FFFC81 /* IOKit.framework */,
-				BFC7AD201156C90D00FFFC81 /* Cocoa.framework */,
 				BFC7AC671156C86B00FFFC81 /* IPodApp.h */,
 				BFC7AC681156C86B00FFFC81 /* IPodApp.mm */,
 				BFC7AC691156C86B00FFFC81 /* IPodGui.h */,
 				BFC7AC6A1156C86B00FFFC81 /* IPodGui.mm */,
 				BFC7AC6B1156C86B00FFFC81 /* IPodOpenglCanvas.h */,
 				BFC7AC6C1156C86B00FFFC81 /* IPodOpenglCanvas.mm */,
-				BFC7AC6D1156C86B00FFFC81 /* IPodView.h */,
-				BFC7AC6E1156C86B00FFFC81 /* IPodView.mm */,
 				BFC7AC6F1156C86B00FFFC81 /* IPodWindow.h */,
 				BFC7AC701156C86B00FFFC81 /* IPodWindow.mm */,
 				BFC7AC711156C86B00FFFC81 /* IPodWindowDelegate.h */,
@@ -248,7 +254,6 @@
 				BFC7AC831156C86B00FFFC81 /* IPodApp.h in Headers */,
 				BFC7AC851156C86B00FFFC81 /* IPodGui.h in Headers */,
 				BFC7AC871156C86B00FFFC81 /* IPodOpenglCanvas.h in Headers */,
-				BFC7AC891156C86B00FFFC81 /* IPodView.h in Headers */,
 				BFC7AC8B1156C86B00FFFC81 /* IPodWindow.h in Headers */,
 				BFC7AC8D1156C86B00FFFC81 /* IPodWindowDelegate.h in Headers */,
 				BFC7AC911156C86B00FFFC81 /* TLGui.h in Headers */,
@@ -306,7 +311,6 @@
 				BFC7AC841156C86B00FFFC81 /* IPodApp.mm in Sources */,
 				BFC7AC861156C86B00FFFC81 /* IPodGui.mm in Sources */,
 				BFC7AC881156C86B00FFFC81 /* IPodOpenglCanvas.mm in Sources */,
-				BFC7AC8A1156C86B00FFFC81 /* IPodView.mm in Sources */,
 				BFC7AC8C1156C86B00FFFC81 /* IPodWindow.mm in Sources */,
 				BFC7AC8E1156C86B00FFFC81 /* IPodWindowDelegate.mm in Sources */,
 				BFC7AC8F1156C86B00FFFC81 /* TLGui.cpp in Sources */,
@@ -325,6 +329,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C109470F0A78C600B2DF7A /* TootleDebug.xcconfig */;
 			buildSettings = {
+				SDKROOT = iphoneos2.2.1;
 			};
 			name = Debug;
 		};
@@ -332,6 +337,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C109480F0A78C600B2DF7A /* TootleRelease.xcconfig */;
 			buildSettings = {
+				SDKROOT = iphoneos2.2.1;
 			};
 			name = Release;
 		};
@@ -372,6 +378,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C109490F0A78C600B2DF7A /* TootleReleaseAdHoc.xcconfig */;
 			buildSettings = {
+				SDKROOT = iphoneos2.2.1;
 			};
 			name = "Release AdHoc";
 		};
@@ -396,6 +403,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C1094A0F0A78C600B2DF7A /* TootleReleaseAppStore.xcconfig */;
 			buildSettings = {
+				SDKROOT = iphoneos2.2.1;
 			};
 			name = "Release AppStore";
 		};

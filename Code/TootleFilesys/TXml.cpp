@@ -68,9 +68,16 @@ TPtr<TXmlTag> TLXml::ParseTag(const TString& XmlString,u32 TagOpenIndex,u32 TagC
 
 		//	plain tag type, check if it's self closing though
 		if ( TagContents.GetCharLast() == '/' )
+		{
 			Type = TLXml::TagType_SelfClose;
+
+			//	remove the / off the end of the contents string otherwise the properties fail to parse
+			TagContents.RemoveCharAt( TagContents.GetCharGetLastIndex() );
+		}
 		else
+		{
 			Type = TLXml::TagType_OpenClose;
+		}
 	}
 
 	//	cut out character's we've parsed
@@ -193,11 +200,13 @@ Bool TXmlTag::SetProperties(TString& PropertiesString)
 			s32 FirstQuoteIndex = PropertiesString.GetCharIndex('"', CharIndex);
 			if ( FirstQuoteIndex == -1 )
 			{
+				TLDebug_Break( TString("Quote missing after property %s= in xml", PropertyName.GetData() ) );
 				return FALSE;
 			}
 			s32 SecondQuoteIndex = PropertiesString.GetCharIndex('"', FirstQuoteIndex+1);
 			if ( SecondQuoteIndex == -1 )
 			{
+				TLDebug_Break( TString("Unmatched Quote after property %s= in xml", PropertyName.GetData() ) );
 				return FALSE;
 			}
 

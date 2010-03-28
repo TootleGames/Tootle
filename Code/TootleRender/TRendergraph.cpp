@@ -9,6 +9,7 @@
 #include "TRenderNodeScrollableView.h"
 #include "TRenderNodeTimeline.h"
 #include "TRenderNodeParticle.h"
+#include "TEffect.h"
 #include <TootleCore/TLTime.h>
 #include "TLRender.h"
 
@@ -41,6 +42,11 @@ SyncBool TLRender::TRendergraph::Initialise()
 	//	create generic render node factory
 	TPtr<TClassFactory<TRenderNode,FALSE> > pFactory = new TRenderNodeFactory();
 	AddFactory(pFactory);
+
+	//	create effects factory
+	if ( !g_pEffectFactory )
+		g_pEffectFactory = new TLRender::TEffectFactory();
+
 	return SyncTrue;
 }
 
@@ -52,7 +58,10 @@ SyncBool TLRender::TRendergraph::Shutdown()
 	if ( ShutdownResult == SyncWait )
 		return SyncWait;
 
-	//	gr; this looks odd but the render graph
+	TLRender::Opengl::Shutdown();
+
+	g_pEffectFactory = NULL;
+
 	return TLRender::Shutdown();
 }
 

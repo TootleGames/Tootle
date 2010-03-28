@@ -39,9 +39,7 @@ namespace TLInput
 			TFixedArray<int2, MAX_CURSOR_POSITIONS>		g_CursorPositions(MAX_CURSOR_POSITIONS);
 			TFixedArray< TRef, MAX_CURSOR_POSITIONS>	g_ActiveTouchObjects(MAX_CURSOR_POSITIONS);	// Fixed array of touch object ID's
 			TArray<TTouchObject>						g_TouchObjects;			// Dynamic array of touch objects that persist over time
-						
-			void	SetCursorPosition(u8 uIndex,int2 uPos);
-			
+									
 			void	ProcessTouchData(TPtr<TLInput::TInputDevice> pDevice);
 			
 			void	CheckRemoveTouchObjects();

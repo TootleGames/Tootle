@@ -79,6 +79,7 @@ public:
 	virtual ~TArray();
 
 	FORCEINLINE const u32&	GetSize() const							{	return m_Size;	}						//	number of elements
+	FORCEINLINE bool		IsEmpty() const							{	return GetSize() == 0;	}
 	FORCEINLINE s32			GetLastIndex() const					{	return (s32)GetSize() - 1;	};
 	FORCEINLINE s32			GetRandIndex() const					{	return 0;} //TLMaths::Rand( GetSize() );	};
 	virtual TYPE*		GetData()								{	return m_pData;	}

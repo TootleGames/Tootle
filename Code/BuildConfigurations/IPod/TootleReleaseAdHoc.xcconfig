@@ -8,7 +8,7 @@
 
 ADDITIONAL_SDKS = 
 ARCHS = armv6
-SDKROOT = iphoneos2.1
+SDKROOT = iphoneos2.2.1
 ONLY_ACTIVE_ARCH = YES
 VALID_ARCHS = armv6
 SYMROOT = build

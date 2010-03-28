@@ -35,8 +35,6 @@ void Debug_PrintCalculating(const TLRender::TRenderNode* pObject,const char* pSp
 
 
 
-
-
 TLRender::TRenderZoneNode::TRenderZoneNode(TRefRef RenderNodeRef) :
 	m_RenderNodeRef		( RenderNodeRef ),
 	m_pRenderNode		( TLRender::g_pRendergraph->FindNode( m_RenderNodeRef ) )
@@ -545,10 +543,69 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 		for ( u32 c=0;	c<InitChildDatas.GetSize();	c++ )
 			CreateChildNode( *InitChildDatas[c] );
 	
+	//	create effects
+	TPtrArray<TBinaryTree> EffectDatas;
+	if ( Message.GetChildren("TEffect", EffectDatas ) )
+		for ( u32 e=0;	e<EffectDatas.GetSize();	e++ )
+			AddEffect( *EffectDatas[e] );
+
+
 	//	do inherited init
 	TLGraph::TGraphNode<TLRender::TRenderNode>::Initialise( Message );
 }
 
+//---------------------------------------------------------
+//	create an effect from plain data
+//---------------------------------------------------------
+Bool TLRender::TRenderNode::AddEffect(TBinaryTree& EffectData)
+{
+	//	read type
+	TRef EffectType;
+	if ( !EffectData.ImportData("Type", EffectType ) )
+	{
+		TLDebug_Break("Type data required to create effect");
+		return false;
+	}
+
+	//	create the effect
+	if ( !g_pEffectFactory )
+	{
+		TLDebug_Break("Effect factory expected");
+		return false;
+	}
+
+	//	allocate effect
+	TPtr<TLRender::TEffect> pEffect;
+	g_pEffectFactory->CreateInstance( pEffect, TRef(), EffectType );
+	
+	//	failed to alloc
+	if ( !pEffect )
+	{
+		TTempString Debug_String;
+		Debug_String << "Failed to create effect of type " << EffectType;
+		TLDebug_Break( Debug_String );
+		return false;
+	}
+
+	//	allocate rendernode data to store the effect data
+	TPtr<TBinaryTree>& pNodeEffectData = GetNodeData().AddChild("TEffect");
+	
+	//	copy all the init data
+	pNodeEffectData->ReferenceDataTree( EffectData );
+
+	//	init the effect
+	if ( !pEffect->Initialise( pNodeEffectData ) )
+	{
+		TLDebug_Break("failed to init effect");
+		GetNodeData().RemoveChild( pNodeEffectData );
+		return false;
+	}
+
+	//	add to effect list
+	m_Effects.Add( pEffect );
+
+	return true;
+}
 
 //---------------------------------------------------------
 //	create a child node from plain data
@@ -612,6 +669,7 @@ void TLRender::TRenderNode::Shutdown()
 
 	m_pMeshCache = NULL;
 	m_pTextureCache = NULL;
+	m_Effects.Empty();
 
 	//	inherited cleanup
 	TLGraph::TGraphNode<TLRender::TRenderNode>::Shutdown();
@@ -690,7 +748,7 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 	{
 		//	start loading the asset in case we havent loaded it already
 		if ( m_MeshRef.IsValid() )
-			TLAsset::LoadAsset( m_MeshRef, TRef_Static4(M,e,s,h), FALSE );
+			TLAsset::LoadAsset<TLAsset::TMesh>( m_MeshRef, FALSE );
 
 		//	mesh ref changed
 		OnMeshRefChanged();
@@ -701,7 +759,7 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 	{
 		//	start loading the asset in case we havent loaded it already
 		if ( m_TextureRef.IsValid() )
-			TLAsset::LoadAsset( m_TextureRef, TRef_Static(T,e,x,t,u), FALSE );
+			TLAsset::LoadAsset<TLAsset::TTexture>( m_TextureRef, FALSE );
 
 		//	texture ref changed
 		OnTextureRefChanged();
@@ -1223,5 +1281,4 @@ Bool TLRender::TRenderNode::GetLocalPos(float3& LocalPos,const float3& WorldPos)
 //	Untransform.Untransform( LocalPos );
 	return TRUE;
 }
-
 

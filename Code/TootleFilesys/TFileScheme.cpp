@@ -99,7 +99,7 @@ SyncBool TLFileSys::TFileScheme::ImportScheme(TPtr<TXmlTag>& pTag,TPtr<TLAsset::
 		else if ( pChildTag->GetTagName() == "Data" )
 		{
 			//	read-in data and add to the asset's generic data
-			if ( TLFile::ParseXMLDataTree( pChildTag, pScheme->GetData() ) )
+			if ( TLFile::ParseXMLDataTree( *pChildTag, pScheme->GetData() ) )
 				TagImportResult = SyncTrue;
 			else
 				TagImportResult = SyncFalse;
@@ -250,7 +250,7 @@ SyncBool TLFileSys::TFileScheme::ImportNode(TPtr<TXmlTag>& pTag,TRefRef GraphRef
 //--------------------------------------------------------
 SyncBool TLFileSys::TFileScheme::ImportNode_Data(TPtr<TXmlTag>& pTag,TPtr<TLAsset::TSchemeNode>& pNode)
 {
-	if ( !TLFile::ParseXMLDataTree( pTag, pNode->GetData() ) )
+	if ( !TLFile::ParseXMLDataTree( *pTag, pNode->GetData() ) )
 		return SyncFalse;
 
 	return SyncTrue;

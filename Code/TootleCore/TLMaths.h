@@ -113,6 +113,7 @@ namespace TLMaths
 			Value = Max - 1;
 	}
 
+	#define TLMaths_TransformBitNone		(0x0)
 	#define TLMaths_TransformBitTranslate	(1<<0)
 	#define TLMaths_TransformBitRotation	(1<<1)
 	#define TLMaths_TransformBitScale		(1<<2)

@@ -17,7 +17,7 @@ namespace TLGui
 
 //	forward declarations
 @class TootleWindowDelegate;
-@class NSWindow;
+@class UIWindow;
 
 
 class TLGui::Platform::Window : public TLGui::TWindow

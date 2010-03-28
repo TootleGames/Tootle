@@ -26,6 +26,9 @@ public:
 	Bool						ImportData(TBinaryTree& Data);	//	load glyph data
 	void						ExportData(TBinaryTree& Data);	//	save glyph data
 
+	FORCEINLINE float2			GetSize() const					{	return GetUV_BottomRight() - GetUV_TopLeft();	}
+	FORCEINLINE const float2&	GetTopLeft() const				{	return GetUV_TopLeft();	}
+
 	FORCEINLINE float2&			GetUV_TopLeft()					{	return m_UVs.x;	}
 	FORCEINLINE float2&			GetUV_TopRight()				{	return m_UVs.y;	}
 	FORCEINLINE float2&			GetUV_BottomRight()				{	return m_UVs.z;	}
@@ -36,9 +39,10 @@ public:
 	FORCEINLINE const float2&	GetUV_BottomLeft() const		{	return m_UVs.w;	}
 
 public:
-//	TFixedArray<float2,4>	m_UVs;			//	uv's in quad order - topleft, topright, bottomright, bottomleft
 	Type4<float2>			m_UVs;			//	uv's in quad order - topleft, topright, bottomright, bottomleft
-	TLMaths::TBox2D			m_GlyphBox;		//	normalised (to the overall font's size) size of the glyph for use as geometry
+	TLMaths::TBox2D			m_GlyphBox;		//	size of the glyph for use as geometry
+	
+	//	gr: change this to an origin point (for lead-in) and some spacing w/h
 	TLMaths::TBox2D			m_SpacingBox;	//	size of the glyph irrelavant of geometry - lead in/leadout/offset etc
 };
 
@@ -51,12 +55,13 @@ class TLAsset::TAtlas : public TLAsset::TAsset
 public:
 	TAtlas(TRefRef AssetRef);
 
-	static TRef					GetAssetType_Static()							{	return TRef_Static(A,t,l,a,s);	}
+	static TRef					GetAssetType_Static()						{	return TRef_Static(A,t,l,a,s);	}
 
-	FORCEINLINE const TAtlasGlyph*	GetGlyph(TChar Key) 						{	return m_Glyphs.Find(Key);	}
-	FORCEINLINE const TAtlasGlyph*	GetGlyph(TChar Key) const					{	return m_Glyphs.Find(Key);	}
-	FORCEINLINE TAtlasGlyph*	AddGlyph(TChar Key)								{	return m_Glyphs.AddNew( Key );	}
-	FORCEINLINE TAtlasGlyph*	AddGlyph(TChar Key,const TAtlasGlyph& Glyph)	{	return m_Glyphs.Add( Key, Glyph );	}
+	FORCEINLINE const TAtlasGlyph*	GetGlyph(u16 Key) 						{	return m_Glyphs.Find(Key);	}
+	FORCEINLINE const TAtlasGlyph*	GetGlyph(u16 Key) const					{	return m_Glyphs.Find(Key);	}
+	FORCEINLINE TAtlasGlyph*	AddGlyph(u16 Key)							{	return m_Glyphs.AddNew( Key );	}
+	FORCEINLINE TAtlasGlyph*	AddGlyph(u16 Key,const TAtlasGlyph& Glyph)	{	return m_Glyphs.Add( Key, Glyph );	}
+	const TKeyArray<u16,TAtlasGlyph>&	GetGlyphs() const					{	return m_Glyphs;	}
 
 	FORCEINLINE void			SetTextureRef(TRefRef TextureRef)			{	m_TextureRef = TextureRef;	}
 	FORCEINLINE TRefRef			GetTextureRef() const						{	return m_TextureRef;	}

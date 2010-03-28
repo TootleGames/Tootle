@@ -88,15 +88,20 @@
 	TLRender::TScreen* pScreen = TLRender::g_pScreenManager->GetDefaultScreen();
 	TLGui::TWindow* pWindow = pScreen ? pScreen->GetWindow() : NULL;
 	TLGui::Platform::Window* pPlatformWindow = static_cast<TLGui::Platform::Window*>( pWindow );
-	UIWindow* pUiWindow = pPlatformWindow ? pPlatformWindow->m_pWindow : NULL;
 	
 	//	can't get a window to attach to, probably want this function to fail rather than fail silently
+	if ( !pPlatformWindow )
+	{
+		TLDebug_Break("Failed to find window to attach text field to");
+		return;
+	}
+	UIWindow* pUiWindow = pPlatformWindow->m_pWindow;
 	if ( !pUiWindow )
 	{
 		TLDebug_Break("Failed to find window to attach text field to");
 		return;
 	}
-
+	
 	// DB - The plan was to add the controller as a subview of the window and then the text as a subview of the controller.
 	// Alas for some reaosn that doesn't quite work so now the plan is to simply add the text as a subview of the window.
 	//[self.view addSubview:m_textField];
@@ -220,7 +225,10 @@ Bool TLInput::Platform::IPod::CreateVirtualKeyboard()
 	
 	//	can't get a window to attach to, probably want this function to fail rather than fail silently
 	if ( !pUiWindow )
+	{
+		TLDebug_Break("Failed to get UIWindow to attach virtual ipod keyboard to");
 		return false;
+	}
 	
 	[pUiWindow addSubview: g_TextFieldViewController.view];
 

@@ -10,11 +10,12 @@
 #include <TootleCore/TKeyArray.h>
 #include <TootleAsset/TMesh.h>
 #include <TootleAsset/TTexture.h>
+#include <TootleAsset/TShader.h>
 #include <TootleCore/TFlags.h>
 #include <TootleCore/TLGraph.h>
 #include <TootleMaths/TQuadTree.h>
 #include <TootleMaths/TCapsule.h>
-
+#include "TEffect.h"
 
 
 namespace TLRender
@@ -57,7 +58,9 @@ public:
 };
 
 
-
+//---------------------------------------------------------------
+//	Node in the render tree
+//---------------------------------------------------------------
 class TLRender::TRenderNode : public TLGraph::TGraphNode<TLRender::TRenderNode>
 {
 public:
@@ -163,8 +166,11 @@ public:
 	FORCEINLINE const TRef&					GetTextureRef() const						{	return m_TextureRef;	}
 	FORCEINLINE void						SetTextureRef(TRefRef TextureRef)			{	if ( m_TextureRef != TextureRef )	{	m_TextureRef = TextureRef;	OnTextureRefChanged();	}	}
 
+	Bool									AddEffect(TBinaryTree& EffectData);			//	create an effect from plain data
+
 	virtual TLAsset::TMesh*					GetMeshAsset();								//	default behaviour fetches the mesh from the asset lib with our mesh ref
-	virtual TLAsset::TTexture*				GetTextureAsset();							//	default behaviour fetches the texutre from the asset lib with our mesh ref
+	virtual TLAsset::TTexture*				GetTextureAsset();							//	default behaviour fetches the texutre from the asset lib with our texture ref
+	TPtrArray<TEffect>&						GetEffects()								{	return m_Effects;	}
 
 	FORCEINLINE void						SetRenderNodeRef(TRefRef Ref)				{	SetNodeRef( Ref );	}
 	virtual TRef							GetRenderNodeRef() const					{	return GetNodeRef();	}
@@ -282,10 +288,12 @@ protected:
 	TKeyArray<TRef,TPtr<TLMaths::TQuadTreeNode> >	m_RenderZoneNodes;	//	for each render target we can have a Node(TRenderZoneNode) for Render Zones
 
 	//	todo: turn all these into ref properties in a KeyArray to make it a bit more flexible
+	//	gr: restore these to TPtr's asap! bug in asset management; http://grahamgrahamreeves.getmyip.com:1984/Trac/changeset/776
 	TRef						m_MeshRef;
 	TLAsset::TMesh*				m_pMeshCache;
 	TRef						m_TextureRef;
 	TLAsset::TTexture*			m_pTextureCache;
+	TPtrArray<TEffect>			m_Effects;				//	effects attached to render node
 
 	TArray<TRef>				m_Debug_RenderDatums;	//	list of datums to debug-render
 

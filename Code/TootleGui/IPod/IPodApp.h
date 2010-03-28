@@ -5,15 +5,7 @@
 -------------------------------------------------------*/
 #pragma once
 #include "../TApp.h"
-
-//	g++ defines __thumb__ 1 when building thumb code...
-#if __thumb__
-	#warning Compiling in Thumb mode
-#endif
-
-
-#import <UIKit/UIKit.h>
-
+#include "IPodGui.h"
 
 
 namespace TLGui

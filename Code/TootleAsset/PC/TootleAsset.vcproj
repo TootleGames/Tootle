@@ -328,6 +328,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TTileMap.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TTileMap.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TTimeline.cpp"
 			>
 		</File>
