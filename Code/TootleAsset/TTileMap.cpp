@@ -23,7 +23,7 @@ SyncBool TLAsset::TTileMap::ImportData(TBinaryTree& Data)
 		return SyncFalse;
 	}
 
-	if ( !Data.ImportData("TileSize", m_TileSize ) )
+	if ( !Data.ImportData("TlSize", m_TileSize ) )
 	{
 		TLDebug_Break("TileSize data missing from tilemap");
 		return SyncFalse;
@@ -31,6 +31,8 @@ SyncBool TLAsset::TTileMap::ImportData(TBinaryTree& Data)
 
 	//	import tiles
 	TPtr<TBinaryTree>& pTileDataRoot = Data.GetChild("Tiles");
+	if ( !pTileDataRoot )
+		return SyncFalse;
 
 	//	tile for each child of the data root
 	TPtrArray<TBinaryTree>& TileDatas = pTileDataRoot->GetChildren();
@@ -51,7 +53,7 @@ SyncBool TLAsset::TTileMap::ImportData(TBinaryTree& Data)
 SyncBool TLAsset::TTileMap::ExportData(TBinaryTree& Data)				
 {
 	Data.ExportData("Size", m_GridSize );
-	Data.ExportData("TileSize", m_TileSize );
+	Data.ExportData("TLSize", m_TileSize );
 
 	//	export tiles
 	TPtr<TBinaryTree> pTileDataRoot = Data.AddChild("Tiles");
