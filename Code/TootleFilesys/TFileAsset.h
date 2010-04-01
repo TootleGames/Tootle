@@ -51,7 +51,8 @@ public:
 
 	Bool				CopyAssetFileData(TFileAsset& OtherAssetFile);		//	copy contents of other asset file into this (note: uses ReferenceDataTree, does NOT duplicate data)
 
-	virtual TRef		GetFileExportAssetType() const	{	return GetAssetTypeRef();	}
+	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType)	{	return SyncFalse;	}	//	gr: errr what should this be doing??
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes.Add( GetAssetTypeRef() );	}
 
 	TRefRef				GetAssetTypeRef() const		{	return m_Header.m_AssetType;	}
 	TTypedRef			GetAssetAndTypeRef() const	{	return TTypedRef( GetFileRef(), GetAssetTypeRef() );	}

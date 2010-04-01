@@ -92,7 +92,7 @@ void TLFileSys::TFile::SetTimestampNow()
 //-----------------------------------------------------------
 //	turn this file into an asset file, when we create it, put it into this file system
 //-----------------------------------------------------------
-SyncBool TLFileSys::TFile::Export(TPtr<TFileAsset>& pAssetFile)
+SyncBool TLFileSys::TFile::Export(TPtr<TFileAsset>& pAssetFile,TRefRef ExportAssetType)
 {
 	if ( !pAssetFile )
 	{
@@ -102,12 +102,31 @@ SyncBool TLFileSys::TFile::Export(TPtr<TFileAsset>& pAssetFile)
 
 	//	does this file convert to an asset? if so genericlly create assetfile from asset that we create
 	Bool DoExportAsset = TRUE;
-	
+
+	//	fetch a pointer to the Ptr where we're keeping our exported asset
+	TPtr<TLAsset::TAsset>* ppExportAsset = m_ExportedAssets.Find( ExportAssetType );
+
+	//	if there isn't already an entry for an asset ptr, add one
+	if ( !ppExportAsset )
+	{
+		ppExportAsset = m_ExportedAssets.AddNew( ExportAssetType );
+		if ( !ppExportAsset )
+		{
+			TDebugString Debug_String;
+			Debug_String << "Failed to add key entry for exporting asset of type " << ExportAssetType;
+			TLDebug_Break( Debug_String );
+			return SyncFalse;
+		}
+	}
+
+	//	get regular ptr
+	TPtr<TLAsset::TAsset>& pExportAsset = *ppExportAsset;
+
 	//	do we need to continue loading an existing asset?
-	if ( m_pExportAsset )
+	if ( pExportAsset )
 	{
 		//	if a valid asset already exists, it doesn't need exporting
-		switch ( m_pExportAsset->GetLoadingState() )
+		switch ( pExportAsset->GetLoadingState() )
 		{
 			case TLAsset::LoadingState_Loaded:
 			case TLAsset::LoadingState_Failed:
@@ -116,112 +135,88 @@ SyncBool TLFileSys::TFile::Export(TPtr<TFileAsset>& pAssetFile)
 		};
 	}
 
+	//	need to start/do some more exporting
 	if ( DoExportAsset )
 	{
-		Bool Supported = FALSE;
-		SyncBool ExportAssetResult = ExportAsset( m_pExportAsset, Supported );
+		//	export the asset
+		SyncBool ExportAssetResult = ExportAsset( pExportAsset, ExportAssetType );
 
-		//	is supported so see how it went... and convert
-		if ( Supported )
+		//	success... but no asset?
+		if ( ExportAssetResult == SyncTrue && !pExportAsset )
 		{
-			//	update state of existing asset
-			if ( m_pExportAsset )
-			{
-				if ( ExportAssetResult == SyncFalse )
-					m_pExportAsset->SetLoadingState( TLAsset::LoadingState_Failed );
-				else if ( ExportAssetResult == SyncWait )
-					m_pExportAsset->SetLoadingState( TLAsset::LoadingState_Loading );
-				else if ( ExportAssetResult == SyncTrue )
-					m_pExportAsset->SetLoadingState( TLAsset::LoadingState_Loaded );
-			}
-
-			//	supported but still processing
-			if ( ExportAssetResult == SyncWait )
-				return SyncWait;
-
-			//	failed to export to asset
-			if ( ExportAssetResult == SyncFalse )
-			{
-				m_pExportAsset = NULL;
-				return SyncFalse;
-			}
-		}
-		else
-		{
-			if ( m_pExportAsset )
-			{
-				if ( !TLDebug_Break("ExportAsset() unsupported... but generated asset...") )
-				{
-					m_pExportAsset = NULL;
-					return SyncFalse;
-				}
-			}
-
-			m_pExportAsset = NULL;
-
-			#ifdef _DEBUG
-			TTempString Debug_String("TFile ");
-			Debug_String.Append( GetFilename() );
-			Debug_String.Append(" (");
-			GetTypeRef().GetString( Debug_String );
-			Debug_String.Append(") does not support exporting asset - marked as unknown type");
+			TDebugString Debug_String;
+			Debug_String << "File " << this->GetFilename() << " succeeded export of " << ExportAssetType << " but returned no asset";
 			TLDebug_Break( Debug_String );
-			#endif
-			SetUnknownType();
+			ExportAssetResult = SyncFalse;
+		}
+
+		//	update state of asset
+		if ( pExportAsset )
+		{
+			if ( ExportAssetResult == SyncFalse )
+				pExportAsset->SetLoadingState( TLAsset::LoadingState_Failed );
+			else if ( ExportAssetResult == SyncWait )
+				pExportAsset->SetLoadingState( TLAsset::LoadingState_Loading );
+			else if ( ExportAssetResult == SyncTrue )
+				pExportAsset->SetLoadingState( TLAsset::LoadingState_Loaded );
+		}
+
+		//	still processing
+		if ( ExportAssetResult == SyncWait )
+			return SyncWait;
+
+		//	failed to export to asset - NULL resulting asset for flow below
+		if ( ExportAssetResult == SyncFalse )
+		{
+			pExportAsset = NULL;
+		}
+	}
+
+	//	check the file exported the right asset type (if we have an asset here, the export must have succeeeded)
+	//	gr: I've done this here, outside the export stuff in case this file keeps a pointer to a previously-output asset [of a different type]
+	//		so we can catch in case we need to clean up pointers somewhere in this routine
+	if ( pExportAsset && ExportAssetType.IsValid() )
+	{
+		if ( pExportAsset->GetAssetType() != ExportAssetType )
+		{
+			TDebugString Debug_String;
+			Debug_String << "File " << this->GetFilename() << " exported a " << pExportAsset->GetAssetType() << " asset type. We expected " << ExportAssetType;
+			TLDebug_Break( Debug_String );
+
+			//	gr: should we/do we need to null this asset?
+			pExportAsset = NULL;
+
 			return SyncFalse;
 		}
 	}
 
-	//	convert asset to asset file
-	if ( m_pExportAsset )
+	//	failed to export
+	if ( !pExportAsset )
 	{
-		//	loading state should be loaded
-		if ( !m_pExportAsset->IsLoaded() )
-		{
-			TLDebug_Break("Asset should be loaded at this point");
-			return SyncWait;
-		}
-
-		//	export asset to asset file
-		SyncBool ExportResult = m_pExportAsset->Export( pAssetFile );
-		if ( ExportResult == SyncWait )
-			return SyncWait;
-
-		//	failed, cleanup
-		if ( ExportResult == SyncFalse )
-		{
-			m_pExportAsset = NULL;
-			return SyncFalse;
-		}
-	}
-	else
-	{
-		//	gr: from now on, we do not turn files we don't recognise into .asset files
-		//	instead we mark them as unknown file types and fail to convert.
-		//	if we still want to get the pure data out of a file [I THINK] you just need to
-		//	get the TFileFactory::CreateObject to return an "asset" type of file.
-		//	[gr: if that doesn't work, then make up some binary type and use the code below]
-		TLDebug_Break("This should have already been caught - TFile type export must be supported, but failed to generate asset?");
+		TTempString Debug_String;
+		Debug_String << "Failed to export asset type " << ExportAssetType << " from file " << this->GetFilename();
+		TLDebug_Break( Debug_String );
 		return SyncFalse;
-		/*
-		//	masquerade as a generic binary file
-		pAssetFile->GetHeader().m_TootFileRef = TLFileSys::g_TootFileRef;
-		pAssetFile->GetHeader().m_AssetType = "Asset";
+	}
 
-		//	base code just sticks all our binary data into the root of the asset file 
-		TBinaryTree& BinaryTree = pAssetFile->GetData();
-		BinaryTree.Write( this->GetData() );
+	//	convert asset to asset file...
+	//	loading state should be loaded
+	if ( !pExportAsset->IsLoaded() )
+	{
+		TLDebug_Break("Asset should be loaded at this point");
+		return SyncWait;
+	}
 
-		//	set root of binary data to be called "data"
-		BinaryTree.SetDataRef("Data");
+	//	export asset to asset file
+	SyncBool ExportResult = pExportAsset->Export( pAssetFile );
+	if ( ExportResult == SyncWait )
+		return SyncWait;
 
-		//	just set data info in header to what it is
-		pAssetFile->GetHeader().m_DataLength = this->GetSize();
-		pAssetFile->GetHeader().m_DataCheckSum = this->GetChecksum();
-
-		//	data is not compressed
-		pAssetFile->GetHeader().m_Flags.Clear( TFileAsset::Compressed );
-		*/
+	//	failed, cleanup
+	if ( ExportResult == SyncFalse )
+	{
+		pExportAsset = NULL;
+		return SyncFalse;
 	}
 
 	//	this file no longer needs to be imported, but the binary file itself is out of date
@@ -289,5 +284,26 @@ Bool TLFileSys::TFile::Load(TBinary& Data)
 	OnFileLoaded();
 
 	return TRUE;
+}
+
+
+//-----------------------------------------------------------
+//	is this an asset type supported by the asset export?
+//-----------------------------------------------------------
+Bool TLFileSys::TFile::IsSupportedExportAssetType(TRefRef AssetType) const			
+{	
+	TFixedArray<TRef,100> SupportedTypes;
+	GetSupportedExportAssetTypes( SupportedTypes );
+
+	//	this asset type is explicitly supported
+	if ( SupportedTypes.Exists( AssetType ) )
+		return true;
+
+	//	see if this file supports any/unknown type
+	if ( SupportedTypes.Exists( TRef() ) )
+		return true;
+
+	//	not supported
+	return false;
 }
 

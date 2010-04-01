@@ -29,8 +29,8 @@ class TLFileSys::TFileParticle : public TLFileSys::TFileXml
 public:
 	TFileParticle(TRefRef FileRef,TRefRef FileTypeRef);
 
-	virtual TRef		GetFileExportAssetType() const										{	return TRef_Static(P,a,r,t,i);	}
-	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);			//	import the XML and convert from SVG to mesh
+	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType);
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes << TRef_Static(P,a,r,t,i);	}
 
 protected:
 	SyncBool			ImportRoot(TPtr<TXmlTag>& pTag,TLAsset::TParticle& Particle);

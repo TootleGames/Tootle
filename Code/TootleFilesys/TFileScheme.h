@@ -25,8 +25,8 @@ class TLFileSys::TFileScheme : public TLFileSys::TFileXml
 public:
 	TFileScheme(TRefRef FileRef,TRefRef FileTypeRef);
 
-	virtual TRef				GetFileExportAssetType() const								{	return TRef_Static(S,c,h,e,m);	}
-	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);			//	import the XML and convert from SVG to mesh
+	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType);
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes << TRef_Static(S,c,h,e,m);	}
 
 	virtual TLAsset::TScheme* CreateAsset() { 	return new TLAsset::TScheme( GetFileRef()); }
 

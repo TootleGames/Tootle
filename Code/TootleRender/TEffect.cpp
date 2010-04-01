@@ -108,6 +108,7 @@ bool TLRender::TEffect_TextureAnimate::Initialise(TPtr<TBinaryTree>& pData)
 	u32 InitialFrame = 0;
 	pData->ImportData("FrInit", InitialFrame );
 	pData->ImportData("FrRate", m_FrameRate );
+	pData->ImportArrays("Frames", m_FrameIndexes );
 
 	float InitialTime = 0.f;
 	pData->ImportData("Time", InitialTime );
@@ -146,20 +147,34 @@ void TLRender::TEffect_TextureAnimate::OnAtlasChanged(const TLAsset::TAtlas& Atl
 	//	clean out old frames
 	m_Frames.Empty();
 
-	//	todo; some kinda glyph order...
+	//	fetch glyph array
 	const TKeyArray<u16,TLAsset::TAtlasGlyph>& Glyphs = Atlas.GetGlyphs();
 
-	for ( u32 g=0;	g<Glyphs.GetSize();	g++ )
+	//	if no frames then add a default
+	if ( m_FrameIndexes.GetSize() == 0 )
 	{
-		const TLAsset::TAtlasGlyph& Glyph = Glyphs.ElementAt(g);
+		TLMaths::TTransform* pTransform = m_Frames.AddNew();
+		pTransform->SetTranslate( float3( 0.f, 0.f, 0.f ) );
+		pTransform->SetScale( float3( 1.f, 1.f, 1.f ) );
+	}
 
-		//	get transform
+	for ( u32 f=0;	f<m_FrameIndexes.GetSize();	f++ )
+	{
+		u16 FrameKey = m_FrameIndexes[f];
+		const TLAsset::TAtlasGlyph* pGlyph = Glyphs.Find( FrameKey );
+		
+		//	no such glyph for this key in this atlas
+		if ( !pGlyph )
+			continue;
+
+		//	alloc transform
 		TLMaths::TTransform* pTransform = m_Frames.AddNew();
 		if ( !pTransform )
 			continue;
 
-		pTransform->SetTranslate( Glyph.GetTopLeft().xyz(0.f) );
-		pTransform->SetScale( Glyph.GetSize().xyz(1.f) );
+		//	set transform
+		pTransform->SetTranslate( pGlyph->GetTopLeft().xyz(0.f) );
+		pTransform->SetScale( pGlyph->GetSize().xyz(1.f) );
 	}
 }
 

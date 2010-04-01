@@ -29,8 +29,8 @@ class TLFileSys::TFileAtlas : public TLFileSys::TFileXml
 public:
 	TFileAtlas(TRefRef FileRef,TRefRef FileTypeRef);
 	
-	virtual TRef		GetFileExportAssetType() const										{	return TRef_Static(A,t,l,a,s);	}
-	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);
+	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType);
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes.Add( TRef_Static(A,t,l,a,s) );	}
 
 protected:
 	SyncBool			ImportAtlas(TXmlTag& Tag,TLAsset::TAtlas& Atlas);

@@ -21,15 +21,13 @@ TLFileSys::TFileSimpleVector::TFileSimpleVector(TRefRef FileRef,TRefRef FileType
 //--------------------------------------------------------
 //	import the XML and convert from SVG to mesh
 //--------------------------------------------------------
-SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported)
+SyncBool TLFileSys::TFileSimpleVector::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType)
 {
 	if ( pAsset )
 	{
 		TLDebug_Break("Async export not supported yet. asset should be NULL");
 		return SyncFalse;
 	}
-
-	Supported = TRUE;
 
 	//	import xml
 	SyncBool ImportResult = TFileXml::Import();

@@ -659,7 +659,7 @@ TLFileSys::TFile* TLFileSys::TFileFactory::CreateObject(TRefRef InstanceRef,TRef
 
 	default:
 		//	generic binary file
-		return new TLFileSys::TFile( InstanceRef, TypeRef );
+		return new TLFileSys::TFileBinary( InstanceRef, TypeRef );
 	}
 }
 

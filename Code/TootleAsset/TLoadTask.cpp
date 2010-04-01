@@ -234,7 +234,7 @@ TRef Mode_PlainFileExport::Update(float Timestep)
 	}
 
 	//	export plain file to asset file
-	SyncBool ExportResult = pPlainFile->Export( pAssetFile );
+	SyncBool ExportResult = pPlainFile->Export( pAssetFile, GetAssetAndTypeRef().GetTypeRef() );
 	if ( ExportResult == SyncWait )
 		return TRef();
 
@@ -273,14 +273,11 @@ TRef Mode_PlainFileExport::Update(float Timestep)
 	}
 
 	//	created an asset file, check if it's creating the right kind of asset we want
-	if ( pAssetFile->GetFileExportAssetType() != GetAssetAndTypeRef().GetTypeRef() )
+	if ( pAssetFile->GetAssetTypeRef() != GetAssetAndTypeRef().GetTypeRef() )
 	{
 		TTempString Debug_String("Exported plain file ");
 		pPlainFile->Debug_GetString( Debug_String );
-		Debug_String.Append(" but asset file's asset type is ");
-		pAssetFile->GetFileExportAssetType().GetString( Debug_String );
-		Debug_String.Append(", looking for asset ref ");
-		GetAssetAndTypeRef().GetString( Debug_String );
+		Debug_String << " but asset file's asset type is " << pAssetFile->GetAssetTypeRef() << ", looking for asset ref " << GetAssetAndTypeRef().GetTypeRef();
 		TLDebug_Print( Debug_String );
 
 		//	add to list of files we tried to convert but failed and try again
@@ -331,16 +328,10 @@ TRef Mode_GetAssetFile::Update(float Timestep)
 	for ( s32 f=FileGroupFiles.GetLastIndex();	f>=0;	f-- )
 	{
 		TLFileSys::TFile& File = *FileGroupFiles[f];
-		TRef FileExportAssetType = File.GetFileExportAssetType();
 
 		//	remove files we know will convert to wrong asset type
-		if ( FileExportAssetType.IsValid() && FileExportAssetType != GetAssetAndTypeRef().GetTypeRef() )
+		if ( !File.IsSupportedExportAssetType( GetAssetAndTypeRef().GetTypeRef() ) )
 		{
-#ifdef _DEBUG
-			TTempString Debug_String("File export type is invalid or incorrect type: ");
-			Debug_String << GetAssetAndTypeRef() << " - should be " << FileExportAssetType;
-			TLDebug_Print( Debug_String );
-#endif			
 			FileGroupFiles.RemoveAt( f );
 			continue;
 		}
@@ -350,8 +341,8 @@ TRef Mode_GetAssetFile::Update(float Timestep)
 			if ( GetLoadTask()->HasFailedToConvertFile( File ) )
 			{
 #ifdef _DEBUG
-				TTempString Debug_String("Failed to convert file ");
-				GetAssetAndTypeRef().GetRef().GetString( Debug_String );
+				TTempString Debug_String;
+				Debug_String << "Failed to convert file " << GetAssetAndTypeRef().GetRef();
 				TLDebug_Print( Debug_String );
 #endif			
 				FileGroupFiles.RemoveAt( f );
@@ -364,9 +355,8 @@ TRef Mode_GetAssetFile::Update(float Timestep)
 	if ( FileGroupFiles.GetSize() == 0 )
 	{
 		//	no file at all with a matching name
-		TTempString Debug_String("Failed to find any more files with a file name/ref matching ");
-		GetAssetAndTypeRef().GetString( Debug_String );
-		Debug_String.Append(" to try and load/convert");
+		TTempString Debug_String;
+		Debug_String << "Failed to find any more files with a file name/ref matching " << GetAssetAndTypeRef() << " to try and load/convert";
 		TLDebug_Print( Debug_String );
 		return "Failed";
 	}
@@ -419,13 +409,12 @@ TRef Mode_GetAssetFile::Update(float Timestep)
 		return "AFImport";
 	}
 
-	//	check type...
-	if ( GetAssetFile()->GetFileExportAssetType() != GetAssetAndTypeRef().GetTypeRef() )
+	//	check type... this asset file should be of our desired type... we shouldn't really get into this situation
+	if ( GetAssetFile()->GetAssetTypeRef() != GetAssetAndTypeRef().GetTypeRef() )
 	{
-		TTempString Debug_String("latest file asset type: ");
-		GetAssetFile()->GetFileExportAssetType().GetString( Debug_String );
-		Debug_String.Append(" doesn't convert to desired asset type ");
-		GetAssetAndTypeRef().GetTypeRef().GetString( Debug_String );
+		//	gr: should probably abort here? (or get to a previous step to start again)
+		TTempString Debug_String;
+		Debug_String << "latest file asset type: " << GetAssetFile()->GetAssetTypeRef() << " doesn't convert to desired asset type " << GetAssetAndTypeRef().GetTypeRef();
 		TLDebug_Break( Debug_String );
 	}
 

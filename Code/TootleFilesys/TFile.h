@@ -17,7 +17,8 @@
 namespace TLFileSys
 {
 	class TFileSys;
-	class TFile;		//	base file type - same as the old Binary data class
+	class TFile;		//	base file type 
+	class TFileBinary;	//	plain file containing just binary data. Doesn't support any asset exporting
 	class TFileAsset;	
 	class TFileFactory;
 };
@@ -60,8 +61,10 @@ public:
 	
 	SyncBool						Init(TRefRef FileRef,TRefRef FileSysRef,const TString& Filename);	//	assign values we couldn't do via CreateObject/constructor
 
-	virtual SyncBool				Export(TPtr<TFileAsset>& pAssetFile);	//	turn this file into an asset file
-	virtual SyncBool				ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported)		{	Supported = FALSE;	return SyncFalse;	}	//	turn this file into an asset - set Supported to FALSE if this file doesnt convert to an asset (i.e. SyncFalse doesnt mean ERROR)
+	virtual SyncBool				Export(TPtr<TFileAsset>& pAssetFile,TRefRef ExportAssetType);			//	turn this file into an asset file
+	virtual SyncBool				ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType)=0;	//	extract an asset of the specified type. return SyncTrue on success, SyncWait for async processing, SyncFalse if unsupported or parsing failed
+	Bool							IsSupportedExportAssetType(TRefRef AssetType) const;					//	is this an asset type supported by the asset export?
+	virtual void					GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const=0;		//	append all the asset types this file supports export of
 
 	Bool							Copy(TPtr<TFile>& pFile,Bool CopyFilename=FALSE);		//	copy file data and attributes (timestamp, flags)
 	Bool							Load(TBinary& Data);			//	copy data into file - this sets new timestamp, file size, and marks file as out of date
@@ -81,7 +84,6 @@ public:
 	TRefRef							GetFileRef() const				{	return m_FileAndTypeRef.GetRef();	}		
 	TRefRef							GetTypeRef() const				{	return m_FileAndTypeRef.GetTypeRef();	}
 	const TTypedRef&				GetFileAndTypeRef() const		{	return m_FileAndTypeRef;	}
-	virtual TRef					GetFileExportAssetType() const	{	return TRef();	}	//	if the file type knows what type of Asset it exports to, return it. (aids loading)
 
 	TBinary&						GetData()						{	return *this;	}
 	TFlags<TFile::Flags>&			GetFlags()						{	return m_Flags;	}
@@ -113,7 +115,25 @@ protected:
 	TLTime::TTimestamp				m_Timestamp;		//	last-modified timestamp
 	TFlags<TFile::Flags>			m_Flags;			//	file flags
 
-	TPtr<TLAsset::TAsset>			m_pExportAsset;		//	if ExportAsset() is supported then this is the asset that's being exported
+	TPtrKeyArray<TRef,TLAsset::TAsset>	m_ExportedAssets;	//	this is a pointer to the asset currently being exported (or has been exported) per asset type
 };
 
 
+
+
+
+//---------------------------------------------------------
+//	gr: to keep the base TFile type abstract, this TFileBinary type
+//		is just a plain file with no asset exporting
+//---------------------------------------------------------
+class TLFileSys::TFileBinary : public TLFileSys::TFile
+{
+public:
+	TFileBinary(TRefRef FileRef,TRefRef FileTypeRef) :
+		TFile( FileRef, FileTypeRef )
+	{
+	}
+	
+	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType)	{	return SyncFalse;	}
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	}
+};

@@ -25,10 +25,8 @@ TFileWAV::~TFileWAV()
 //--------------------------------------------------------------
 //	turn this file into a audio asset then turn that to a asset file
 //--------------------------------------------------------------	
-SyncBool TFileWAV::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported)
+SyncBool TFileWAV::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType)
 {
-	Supported = TRUE;
-	
 	if( !InitExport(pAsset) )
 	{
 		ShutdownExport(TRUE);

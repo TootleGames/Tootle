@@ -29,8 +29,8 @@ class TLFileSys::TFileMenu : public TLFileSys::TFileXml
 public:
 	TFileMenu(TRefRef FileRef,TRefRef FileTypeRef);
 
-	virtual TRef		GetFileExportAssetType() const										{	return TRef_Static4(M,e,n,u);	}
-	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);			//	import the XML and convert from SVG to mesh
+	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType);
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes << TRef_Static4(M,e,n,u);	}
 
 protected:
 	SyncBool			ImportMenu(TPtr<TXmlTag>& pTag,TPtr<TLAsset::TMenu>& pMenu);

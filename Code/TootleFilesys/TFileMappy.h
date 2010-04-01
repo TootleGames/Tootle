@@ -35,9 +35,8 @@ public:
 	TFileMappy(TRefRef FileRef,TRefRef FileTypeRef);
 	~TFileMappy();
 	
-//	virtual TRef				GetFileExportAssetType() const							{	return TRef_Static(T,i,l,e,M);	}
-	virtual TRef				GetFileExportAssetType() const							{	return TRef_Static(T,e,x,t,u);	}
-	virtual SyncBool			ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);
+	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType);
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes << TRef_Static(T,e,x,t,u) << TRef_Static(T,i,l,e,M) << TRef_Static5(A,t,l,a,s);	}
 	
 protected:
 	Bool	ImportAuthor(TLAsset::TTileMap& TileMap,TBinary& Data);
@@ -47,7 +46,7 @@ protected:
 	Bool	ImportBlockData(TLAsset::TTileMap& TileMap,TBinary& Data,Mappy::TImportData& ImportData);
 	Bool	ImportAnimationData(TLAsset::TTileMap& TileMap,TBinary& Data);
 	Bool	ImportGraphics(TLAsset::TTileMap& TileMap,TBinary& Data,Mappy::TImportData& ImportData);
-	Bool	ImportLayer(TLAsset::TTileMap& TileMap,TBinary& Data,u8 LayerIndex);
+	Bool	ImportLayer(TLAsset::TTileMap& TileMap,TBinary& Data,Mappy::TImportData& ImportData,u8 LayerIndex);
 
 
 

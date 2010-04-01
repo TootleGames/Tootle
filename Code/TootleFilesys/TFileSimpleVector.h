@@ -54,8 +54,8 @@ protected:
 public:
 	TFileSimpleVector(TRefRef FileRef,TRefRef FileTypeRef);
 
-	virtual TRef		GetFileExportAssetType() const										{	return TRef_Static4(M,e,s,h);	}
-	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);			//	import the XML and convert from SVG to mesh
+	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType);
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes << TRef_Static4(M,e,s,h);	}
 
 protected:
 	Bool				ImportMesh(TPtr<TLAsset::TMesh>& pMesh,TXmlTag& Tag);			//	generate mesh data from this SVG tag

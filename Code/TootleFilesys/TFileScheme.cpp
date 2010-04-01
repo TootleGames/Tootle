@@ -15,15 +15,13 @@ TLFileSys::TFileScheme::TFileScheme(TRefRef FileRef,TRefRef FileTypeRef) :
 //--------------------------------------------------------
 //	import the XML
 //--------------------------------------------------------
-SyncBool TLFileSys::TFileScheme::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported)
+SyncBool TLFileSys::TFileScheme::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType)
 {
 	if ( pAsset )
 	{
 		TLDebug_Break("Async export not supported yet. asset should be NULL");
 		return SyncFalse;
 	}
-
-	Supported = TRUE;
 
 	//	import xml
 	SyncBool ImportResult = TFileXml::Import();

@@ -19,7 +19,8 @@ namespace TLFileSys
 
 
 //---------------------------------------------------------
-//	
+//	use this class to parse XML file types by deriving from it, but
+//	it can be used just to read XML files anyway (just doesn't support any exporting)
 //---------------------------------------------------------
 class TLFileSys::TFileXml : public TLFileSys::TFile
 {
@@ -27,11 +28,12 @@ public:
 	TFileXml(TRefRef FileRef,TRefRef FileTypeRef);
 
 	SyncBool			Import();					//	turn this TFile into XML
-//	SyncBool			Export();					//	export XML to binary data
 
 	TXml&				GetXmlData()				{	return m_XmlData;	}
 
-//	virtual SyncBool	Export(TPtr<TFileAsset>& pAssetFile);	//	turn XML into a more binary format. XML tags become ref's, data and properties become child binarytree's
+	//	xml file doesnt support any asset exporting
+	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType)	{	return SyncFalse;	}
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	}
 
 protected:
 	TXml				m_XmlData;	//	parsed xml

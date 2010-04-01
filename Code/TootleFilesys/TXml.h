@@ -1,6 +1,9 @@
 /*------------------------------------------------------
 	
-	XML type
+	XML type - stores strings in a heirachy format after 
+	extracting from a string (containing xml, ie. a file)
+
+	todo: move to core types?
 
 -------------------------------------------------------*/
 #pragma once

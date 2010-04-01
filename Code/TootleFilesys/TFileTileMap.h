@@ -30,8 +30,8 @@ class TLFileSys::TFileTileMap : public TLFileSys::TFileXml
 public:
 	TFileTileMap(TRefRef FileRef,TRefRef FileTypeRef);
 	
-	virtual TRef		GetFileExportAssetType() const						{	return TRef_Static(T,i,l,e,M);	}
-	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);
+	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType);
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes << TRef_Static(T,i,l,e,M);	}
 
 protected:
 	SyncBool			ImportTileMap(TXmlTag& Tag,TLAsset::TTileMap& TileMap);

@@ -153,7 +153,7 @@ SyncBool TLAsset::TTexture::ExportData(TBinaryTree& Data)
 //-------------------------------------------------------
 //	insert texture data into the texture at a certain point
 //-------------------------------------------------------
-bool TLAsset::TTexture::PasteTextureData(const Type2<u16>& PasteAt,const TArray<TColour24>& TextureData,const Type2<u16>& DataSize)
+bool TLAsset::TTexture::PasteTextureData(const Type2<u16>& PasteAt,const TArray<TColour24>& TextureData,const Type2<u16>& DataSize,TLMaths::TBox2D* pGlyphBox)
 {
 	//	check this fits in
 	Type2<u16> BottomRight = PasteAt + DataSize;
@@ -183,6 +183,15 @@ bool TLAsset::TTexture::PasteTextureData(const Type2<u16>& PasteAt,const TArray<
 		TLMemory::CopyData( pTextureRowData, pPasteRowData, DataSize.x );
 	}
 
+	//	generate UV box
+	if ( pGlyphBox )
+	{
+		float Widthf = (float)GetWidth();
+		float Heightf = (float)GetHeight();
+		pGlyphBox->SetMin( (float)PasteAt.x / Widthf, (float)PasteAt.y / Heightf );
+		pGlyphBox->SetMax( (float)BottomRight.x / Widthf, (float)BottomRight.y / Heightf );
+	}
+
 	return true;
 }
 
@@ -190,7 +199,7 @@ bool TLAsset::TTexture::PasteTextureData(const Type2<u16>& PasteAt,const TArray<
 //-------------------------------------------------------
 //	insert texture data into the texture at a certain point
 //-------------------------------------------------------
-bool TLAsset::TTexture::PasteTextureData(const Type2<u16>& PasteAt,const TArray<TColour32>& TextureData,const Type2<u16>& DataSize)
+bool TLAsset::TTexture::PasteTextureData(const Type2<u16>& PasteAt,const TArray<TColour32>& TextureData,const Type2<u16>& DataSize,TLMaths::TBox2D* pGlyphBox)
 {
 	//	check this fits in
 	Type2<u16> BottomRight = PasteAt + DataSize;
@@ -218,6 +227,15 @@ bool TLAsset::TTexture::PasteTextureData(const Type2<u16>& PasteAt,const TArray<
 		pTextureRowData = GetPixelData32At( PasteAt.x, PasteAt.y + y );
 		const TColour32* pPasteRowData = &TextureData[ 0 + (y * DataSize.y) ];
 		TLMemory::CopyData( pTextureRowData, pPasteRowData, DataSize.x );
+	}
+
+	//	generate UV box
+	if ( pGlyphBox )
+	{
+		float Widthf = (float)GetWidth();
+		float Heightf = (float)GetHeight();
+		pGlyphBox->SetMin( (float)PasteAt.x / Widthf, (float)PasteAt.y / Heightf );
+		pGlyphBox->SetMax( (float)BottomRight.x / Widthf, (float)BottomRight.y / Heightf );
 	}
 
 	return true;

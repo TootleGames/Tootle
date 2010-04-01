@@ -20,7 +20,7 @@ public:
 	  TFileScheme(FileRef, FileTypeRef)
 	 {}
 
-	virtual TRef				GetFileExportAssetType() const								{	return TRef_Static(O,b,j,e,c);	}
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes << TRef_Static(O,b,j,e,c);	}
 
 	virtual TLAsset::TScheme* CreateAsset() { 	return new TLAsset::TObject( GetFileRef()); }
 

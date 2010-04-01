@@ -3,6 +3,24 @@
 
 
 
+//-------------------------------------------------------
+//	setup a glyph from a UV box
+//-------------------------------------------------------
+TLAsset::TAtlasGlyph::TAtlasGlyph(const TLMaths::TBox2D& UVBox,const Type2<u16>& TextureSize)
+{
+	m_UVs[0] = UVBox.GetTopLeft();	
+	m_UVs[1] = UVBox.GetTopRight();	
+	m_UVs[2] = UVBox.GetBottomRight();	
+	m_UVs[3] = UVBox.GetBottomLeft();	
+
+	//	scale up the glyphbox
+	m_GlyphBox = UVBox;
+	m_GlyphBox *= float2( (float)TextureSize.x, (float)TextureSize.y );
+
+	//	spacing box is just a copy of the glyph box
+	m_SpacingBox = m_GlyphBox;
+}
+
 
 //-------------------------------------------------------
 //	load glyph data

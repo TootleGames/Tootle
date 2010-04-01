@@ -30,8 +30,8 @@ class TLFileSys::TFileFnt : public TLFileSys::TFileXml
 public:
 	TFileFnt(TRefRef FileRef,TRefRef FileTypeRef);
 	
-	virtual TRef		GetFileExportAssetType() const										{	return TRef_Static(A,t,l,a,s);	}
-	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);
+	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType);
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes.Add( TRef_Static(A,t,l,a,s) );	}
 
 protected:
 	SyncBool			ImportChar(TXmlTag& Tag,TLAsset::TAtlas& Atlas,const float2& ImageScale,float GlyphScale,u32 LineBaseLine);

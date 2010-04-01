@@ -31,8 +31,8 @@ class TLFileSys::TFileTimeline : public TLFileSys::TFileXml
 public:
 	TFileTimeline(TRefRef FileRef,TRefRef FileTypeRef);
 	
-	virtual TRef		GetFileExportAssetType() const										{	return TRef_Static(T,i,m,e,l);	}
-	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);			//	import the XML and convert from Collada to mesh
+	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType);
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes << TRef_Static(T,i,m,e,L);	}
 	
 protected:
 

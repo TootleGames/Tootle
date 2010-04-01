@@ -45,8 +45,8 @@ public:
 	TFileFreetype(TRefRef FileRef,TRefRef FileTypeRef);
 	~TFileFreetype();
 
-	virtual TRef				GetFileExportAssetType() const										{	return TRef_Static4(F,o,n,t);	}
-	virtual SyncBool			ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);
+	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType);
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes.Add( TRef_Static4(F,o,n,t) );	}
 
 protected:
 	Bool						InitExport(TPtr<TLAsset::TAsset>& pAsset);

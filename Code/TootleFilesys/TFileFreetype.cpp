@@ -76,10 +76,8 @@ TLFileSys::TFileFreetype::~TFileFreetype()
 //--------------------------------------------------------------
 //	turn this file into a font asset then turn that to a asset file
 //--------------------------------------------------------------	
-SyncBool TLFileSys::TFileFreetype::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported)
+SyncBool TLFileSys::TFileFreetype::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType)
 {
-	Supported = TRUE;
-
 	if ( !InitExport(pAsset) )
 	{
 		ShutdownExport(TRUE);

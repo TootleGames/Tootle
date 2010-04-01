@@ -140,7 +140,7 @@ TLFileSys::TFilePng::TFilePng(TRefRef FileRef,TRefRef FileTypeRef) :
 //--------------------------------------------------------------
 //	parse PNG file and turn it into a texture asset
 //--------------------------------------------------------------	
-SyncBool TLFileSys::TFilePng::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported)
+SyncBool TLFileSys::TFilePng::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType)
 {
 	if ( pAsset )
 	{
@@ -148,8 +148,6 @@ SyncBool TLFileSys::TFilePng::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Su
 		return SyncFalse;
 	}
 
-	Supported = TRUE;
-	
 	//	check first 8 bytes for validity
 	TFixedArray<u8,8> Header(8);
 

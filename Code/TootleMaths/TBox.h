@@ -165,6 +165,10 @@ public:
 	float&			GetRight()			{	return m_Max.x;	}
 	const float&	GetBottom() const	{	return m_Max.y;	}
 	float&			GetBottom()			{	return m_Max.y;	}
+	const float2&	GetTopLeft() const	{	return m_Min;	}
+	float2			GetTopRight() const	{	return float2( m_Max.x, m_Min.y );	}
+	float2			GetBottomLeft() const	{	return float2( m_Min.x, m_Max.y );	}
+	const float2&	GetBottomRight() const	{	return m_Max;	}
 	const float		GetWidth() const	{	return (m_Max.x - m_Min.x);	}
 	const float		GetHeight() const	{	return (m_Max.y - m_Min.y);	}
 	float			GetHalfWidth() const	{	return (m_Max.x - m_Min.x) * 0.5f;	}
@@ -176,7 +180,9 @@ public:
 	void			Set(const float2& MinMax)					{	m_Min = MinMax;	m_Max = MinMax;	m_IsValid = TRUE;	}
 	void			Set(const TBox& Box)						{	m_Min = Box.GetMin().xy();	m_Max = Box.GetMax().xy();	m_IsValid = Box.IsValid();	}
 	void			SetMin(const float2& Min)					{	m_Min = Min;	m_IsValid = TRUE;	}
+	void			SetMin(float x,float y)						{	SetMin( float2(x,y) );	}
 	void			SetMax(const float2& Max)					{	m_Max = Max;	m_IsValid = TRUE;	}
+	void			SetMax(float x,float y)						{	SetMax( float2(x,y) );	}
 	void			SetInvalid()								{	m_IsValid = FALSE;	}
 	void			SetValid(Bool Valid=TRUE)					{	m_IsValid = Valid;	}
 	Bool&			IsValid()									{	return m_IsValid;	}

@@ -38,6 +38,7 @@ You can add your own chunks to a map file, if you load it into mappy, when you s
 #include "TFileMappy.h"
 #include <TootleAsset/TTileMap.h>
 #include <TootleAsset/TTexture.h>
+#include <TootleAsset/TAtlas.h>
 
 namespace Mappy
 {
@@ -176,7 +177,26 @@ namespace Mappy
 		long int anstartoff;	/* Points to start of blkstr offsets list, AFTER ref. blkstr offset */
 		long int anendoff;	/* Points to end of blkstr offsets list */
 	} ANISTR;
-	
+
+	typedef struct {	/* Editor prefs structure */
+		/* char E,D,H,D;	4 byte chunk identification. */
+		/* long int edhdsize;	size of editor header. */
+		short int xmapoffset;	/* editor offset, in blocks, from left. */
+		short int ymapoffset;	/* editor offset, in blocks, from right. */
+		long int fgcolour;	/* fg colour for text, buttons etc. */
+		long int bgcolour;	/* bg colour for text, buttons etc. */
+		short int swidth;		/* width of current screen res */
+		short int sheight;	/* height of current screen res */
+		short int strtstr;	/* first structure in view */
+		short int strtblk;	/* first block graphic in view */
+		short int curstr;		/* current block structure */
+		short int curanim;	/* current anim structure */
+		short int animspd;	/* gap in frames between anims */
+		short int span;		/* control panel height */
+		short int numbrushes;	/* number of brushes to follow. */
+		short int pad;
+	} EDHD;
+
 }
 
 
@@ -193,7 +213,7 @@ public:
 	u16								m_BlockDataSize;	//	size of the block data
 	Type2<u16>						m_BlockSize;		//	block texture dimensions
 	TPtrArray<TArray<TColour32> >	m_BlockTextures;	//	texture data for blocks (not sure as texture assets atm because these might not be square/power2 etc)
-	TArray<TLAsset::TTile>			m_BlockLibrary;		//	blocks by their index in the form of a tile
+	TPtrArray<TFixedArray<s32,4> >	m_BlockLibrary;		//	blocks by index in the form of an array of atlas indexes (4 because mappy has 4 graphics per block)
 	TRef							m_AtlasRef;			//	ref for the atlas that will be generated
 	TRef							m_TextureRef;		//	ref for the texture that will be generated
 	u8								m_TransparentPaletteIndex;	//	when using a palette, this is the transparent colour index
@@ -219,12 +239,31 @@ TLFileSys::TFileMappy::~TFileMappy()
 //--------------------------------------------------------------
 //	turn this file into an asset
 //--------------------------------------------------------------	
-SyncBool TLFileSys::TFileMappy::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported)
+SyncBool TLFileSys::TFileMappy::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType)
 {
-	Supported = true;
-	
-	TPtr<TLAsset::TTileMap> pTilemap = new TLAsset::TTileMap( this->GetFileRef() );
+	if ( pAsset )
+	{
+		TLDebug_Break("Async not supported.");
+		return SyncFalse;
+	}
+
+	TPtr<TLAsset::TTileMap> pTileMap = new TLAsset::TTileMap( this->GetFileRef() );
 	TPtr<TLAsset::TTexture> pTexture = new TLAsset::TTexture( this->GetFileRef() );
+	TPtr<TLAsset::TAtlas> pAtlas = new TLAsset::TAtlas( this->GetFileRef() );
+	
+	//	set the resulting asset as requested
+	switch ( ExportAssetType.GetData() )
+	{
+		case TRef_Static(T,e,x,t,u):	pAsset = pTexture;	break;
+		case TRef_Static(A,t,l,a,s):	pAsset = pAtlas;	break;
+		case TRef_Static(T,i,l,e,M):	pAsset = pTileMap;	break;
+		default:
+		{
+			TDebugString Debug_String;
+			Debug_String << "TFileMappy doesn't support exporting asset type " << ExportAssetType;
+			return SyncFalse;
+		}
+	};
 
 	//	load header
 	ResetReadPos();
@@ -241,6 +280,8 @@ SyncBool TLFileSys::TFileMappy::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& 
 	
 	//	import data for processing the chunks
 	Mappy::TImportData ImportData;
+	ImportData.m_AtlasRef = pAtlas->GetAssetRef();
+	ImportData.m_TextureRef = pTexture->GetAssetRef();
 
 	//	load chunks!
 	while ( GetData().GetSizeUnread() > 0 )
@@ -253,21 +294,21 @@ SyncBool TLFileSys::TFileMappy::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& 
 		Bool Result = true;
 		switch ( Chunk.m_Ident.m_IdentAsRef.GetData() )
 		{
-		case TRef_Static4(A,T,H,R):	Result = ImportAuthor( *pTilemap, Chunk.m_Data );	break;
-		case TRef_Static4(M,P,H,D):	Result = ImportMapHeader( *pTilemap, Chunk.m_Data, ImportData );	break;
-		case TRef_Static4(E,D,H,D):	Result = ImportEditorInfo( *pTilemap, Chunk.m_Data );	break;
-		case TRef_Static4(C,M,A,P):	Result = ImportColourPalette( *pTilemap, Chunk.m_Data, ImportData );	break;
-		case TRef_Static4(B,K,D,T):	Result = ImportBlockData( *pTilemap, Chunk.m_Data, ImportData );	break;
-		case TRef_Static4(A,N,D,T):	Result = ImportAnimationData( *pTilemap, Chunk.m_Data );	break;
-		case TRef_Static4(B,G,F,X):	Result = ImportGraphics( *pTilemap, Chunk.m_Data, ImportData );	break;
-		case TRef_Static4(B,O,D,Y):	Result = ImportLayer( *pTilemap, Chunk.m_Data, 0 );	break;
-		case TRef_Static4(L,Y,R,ONE):	Result = ImportLayer( *pTilemap, Chunk.m_Data, 1 );	break;
-		case TRef_Static4(L,Y,R,TWO):	Result = ImportLayer( *pTilemap, Chunk.m_Data, 2 );	break;
-		case TRef_Static4(L,Y,R,THREE):	Result = ImportLayer( *pTilemap, Chunk.m_Data, 3 );	break;
-		case TRef_Static4(L,Y,R,FOUR):	Result = ImportLayer( *pTilemap, Chunk.m_Data, 4 );	break;
-		case TRef_Static4(L,Y,R,FIVE):	Result = ImportLayer( *pTilemap, Chunk.m_Data, 5 );	break;
-		case TRef_Static4(L,Y,R,SIX):	Result = ImportLayer( *pTilemap, Chunk.m_Data, 6 );	break;
-		case TRef_Static4(L,Y,R,SEVEN):	Result = ImportLayer( *pTilemap, Chunk.m_Data, 7 );	break;
+		case TRef_Static4(A,T,H,R):	Result = ImportAuthor( *pTileMap, Chunk.m_Data );	break;
+		case TRef_Static4(M,P,H,D):	Result = ImportMapHeader( *pTileMap, Chunk.m_Data, ImportData );	break;
+		case TRef_Static4(E,D,H,D):	Result = ImportEditorInfo( *pTileMap, Chunk.m_Data );	break;
+		case TRef_Static4(C,M,A,P):	Result = ImportColourPalette( *pTileMap, Chunk.m_Data, ImportData );	break;
+		case TRef_Static4(B,K,D,T):	Result = ImportBlockData( *pTileMap, Chunk.m_Data, ImportData );	break;
+		case TRef_Static4(A,N,D,T):	Result = ImportAnimationData( *pTileMap, Chunk.m_Data );	break;
+		case TRef_Static4(B,G,F,X):	Result = ImportGraphics( *pTileMap, Chunk.m_Data, ImportData );	break;
+		case TRef_Static4(B,O,D,Y):	Result = ImportLayer( *pTileMap, Chunk.m_Data, ImportData, 0 );	break;
+		case TRef_Static4(L,Y,R,ONE):	Result = ImportLayer( *pTileMap, Chunk.m_Data, ImportData, 1 );	break;
+		case TRef_Static4(L,Y,R,TWO):	Result = ImportLayer( *pTileMap, Chunk.m_Data, ImportData, 2 );	break;
+		case TRef_Static4(L,Y,R,THREE):	Result = ImportLayer( *pTileMap, Chunk.m_Data, ImportData, 3 );	break;
+		case TRef_Static4(L,Y,R,FOUR):	Result = ImportLayer( *pTileMap, Chunk.m_Data, ImportData, 4 );	break;
+		case TRef_Static4(L,Y,R,FIVE):	Result = ImportLayer( *pTileMap, Chunk.m_Data, ImportData, 5 );	break;
+		case TRef_Static4(L,Y,R,SIX):	Result = ImportLayer( *pTileMap, Chunk.m_Data, ImportData, 6 );	break;
+		case TRef_Static4(L,Y,R,SEVEN):	Result = ImportLayer( *pTileMap, Chunk.m_Data, ImportData, 7 );	break;
 		default:
 			{
 				//	gr: just show this as a warning, extra (non-standard) chunks are okay, it's just we don't use them
@@ -312,16 +353,24 @@ SyncBool TLFileSys::TFileMappy::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& 
 			if ( BlockIndex >= ImportData.m_BlockTextures.GetSize() )
 				break;
 
+			//	get the texture data we're about to paste into the main texture
 			TArray<TColour32>& TextureData = *ImportData.m_BlockTextures[BlockIndex];
+
+			//	get the glyph where we're pasting the texture to put into the atlas
+			TLMaths::TBox2D PastedGlyph;
 			
-			if ( !pTexture->PasteTextureData( Type2<u16>( x * BlockSize, y * BlockSize ), TextureData, ImportData.m_BlockSize ) )
+			if ( !pTexture->PasteTextureData( Type2<u16>( x * BlockSize, y * BlockSize ), TextureData, ImportData.m_BlockSize, &PastedGlyph ) )
 				return SyncFalse;
+
+			//	put glyph into atlas
+			if ( pAtlas )
+			{
+				u16 AtlasKey = BlockIndex;
+				TLAsset::TAtlasGlyph Glyph( PastedGlyph, pTexture->GetSize() );
+				pAtlas->AddGlyph( AtlasKey, Glyph );
+			}
 		}
 	}
-	
-	//	return the texture
-	//	gr: need to support multiple asset output! (or at least choose what to return)
-	pAsset = pTexture;
 	
 	return SyncTrue;
 }	
@@ -383,25 +432,6 @@ Bool TLFileSys::TFileMappy::ImportMapHeader(TLAsset::TTileMap& TileMap,TBinary& 
 //--------------------------------------------------------------
 Bool TLFileSys::TFileMappy::ImportEditorInfo(TLAsset::TTileMap& TileMap,TBinary& Data)
 {
-	typedef struct {	/* Editor prefs structure */
-	/* char E,D,H,D;	4 byte chunk identification. */
-	/* long int edhdsize;	size of editor header. */
-	short int xmapoffset;	/* editor offset, in blocks, from left. */
-	short int ymapoffset;	/* editor offset, in blocks, from right. */
-	long int fgcolour;	/* fg colour for text, buttons etc. */
-	long int bgcolour;	/* bg colour for text, buttons etc. */
-	short int swidth;		/* width of current screen res */
-	short int sheight;	/* height of current screen res */
-	short int strtstr;	/* first structure in view */
-	short int strtblk;	/* first block graphic in view */
-	short int curstr;		/* current block structure */
-	short int curanim;	/* current anim structure */
-	short int animspd;	/* gap in frames between anims */
-	short int span;		/* control panel height */
-	short int numbrushes;	/* number of brushes to follow. */
-	short int pad;
-	} EDHD;
-
 	//	gr: not fussed about editor info
 	return true;
 }
@@ -447,46 +477,31 @@ Bool TLFileSys::TFileMappy::ImportBlockData(TLAsset::TTileMap& TileMap,TBinary& 
 			return false;
 
 		//	convert the block layers to a tile
-		TPtr<TBinaryTree> pTileData = new TBinaryTree("Lyr0");
+		TPtr<TFixedArray<s32,4> > pBlockData = new TFixedArray<s32,4>;
 
-		//	todo: support all the bg/fg's as layers
-		s32 GfxOffset = TempBlock.bgoff;
+		TFixedArray<long,4> GfxOffsets;
+		GfxOffsets.Add( TempBlock.bgoff );
+		GfxOffsets.Add( TempBlock.fgoff );
+		GfxOffsets.Add( TempBlock.fgoff2 );
+		GfxOffsets.Add( TempBlock.fgoff3 );
 
-		//	gfx 0 is a no-tile tile
-		if ( GfxOffset != 0 )
+		for ( u32 i=0;	i<GfxOffsets.GetSize();	i++ )
 		{
-			//	turn the graphic offset to a graphic index (this will become the atlas index)
-			TFixedArray<u16,100> AtlasFrames;
-			if ( GfxOffset > 0 )
+			long GfxOffset = GfxOffsets[i];
+			if ( GfxOffset < 0 )
 			{
-				u32 GfxOffsetScalar = (ImportData.m_BlockDepth / 8) * ImportData.m_BlockSize.x * ImportData.m_BlockSize.y;
-				u32 AtlasIndex = GfxOffset / GfxOffsetScalar;
-				AtlasFrames.Add( AtlasIndex );
-			}
-			else if ( GfxOffset < 0 )
-			{
-				//	negative number points to an animation index
-				s32 AnimIndex = -GfxOffset;
-				//	todo!
-				AtlasFrames.Add( (u16)0 );
-
-				//	todo: get framerate from animation data
-				float FrameRate = 0.1f;
-				pTileData->ExportData("FrRate", FrameRate);
+				TLDebug_Break("Not expecting negative gfx index");
+				GfxOffset = 0;
 			}
 
-			//	export atlas frames
-			pTileData->ExportArray("Frames", AtlasFrames);
+			u32 GfxOffsetScalar = (ImportData.m_BlockDepth / 8) * ImportData.m_BlockSize.x * ImportData.m_BlockSize.y;
+			u16 AtlasIndex = (u32)GfxOffset / GfxOffsetScalar;
 
-			//	export atlas ref
-			pTileData->ExportData("Atlas", ImportData.m_AtlasRef );
-
-			//	export texture ref
-			pTileData->ExportData("Texture", ImportData.m_TextureRef );
+			pBlockData->Add( AtlasIndex );
 		}
 
-		//	add block to tile lib
-		ImportData.m_BlockLibrary.Add( TLAsset::TTile( pTileData ) );
+		//	add block to block lib
+		ImportData.m_BlockLibrary.Add( pBlockData );
 	}
 
 	return true;
@@ -566,8 +581,74 @@ Bool TLFileSys::TFileMappy::ImportGraphics(TLAsset::TTileMap& TileMap,TBinary& D
 //--------------------------------------------------------------
 //	import chunk data - 
 //--------------------------------------------------------------
-Bool TLFileSys::TFileMappy::ImportLayer(TLAsset::TTileMap& TileMap,TBinary& Data,u8 LayerIndex)
+Bool TLFileSys::TFileMappy::ImportLayer(TLAsset::TTileMap& TileMap,TBinary& Data,Mappy::TImportData& ImportData,u8 LayerIndex)
 {
+	/*
+	BODY - An array of short ints containing positive offsets into BKDT, and negative offsets into ANDT.
+LYR? - Where ? is an ASCII number form 1 to 7. These are the same size and format as BODY, and allow object layers to be used.
+You can add your own chunks to a map file, if you load it into mappy, when you save it, those additional chunks will be saved in the file, but not necessarily in the same place as before.
+*/
+	//	make up the tile map entries for this layer
+	TArray<s16> LayerBlockIndexes;
+	if ( !Data.ReadDataIntoArray( LayerBlockIndexes, TileMap.GetWidth() * TileMap.GetHeight() ) )
+		return false;
+
+	//	gr: only layer 0 atm until I change the tilemap format to support layers
+	if ( LayerIndex != 0 )
+		return true;
+
+	//	convert indexes into tiles
+	for ( u16 y=0;	y<TileMap.GetHeight();	y++ )
+	{
+		for ( u16 x=0;	x<TileMap.GetWidth();	x++ )
+		{
+			//	get tile
+			TLAsset::TTile& Tile = TileMap.GetTile( x, y );
+			TBinaryTree& TileData = Tile.GetData();
+
+			u32 TileIndex = x + ( y * TileMap.GetWidth() );
+			s16 BlockIndex = LayerBlockIndexes[ TileIndex ];
+			
+			//	todo: animated tiles have negative indexes
+			if ( BlockIndex < 0 )
+			{
+				BlockIndex /= 16;
+				BlockIndex = 0;
+			}
+			else
+			{
+				BlockIndex /= ImportData.m_BlockDataSize;
+			}
+
+			//	get the atlas indexes at this layer's tile
+			TFixedArray<s32,4>& BlockAtlasIndexes = *ImportData.m_BlockLibrary[ BlockIndex ];
+			for ( u32 Layer=0;	Layer<BlockAtlasIndexes.GetSize();	Layer++ )
+			{
+				s32 BlockAtlasIndex = BlockAtlasIndexes[Layer];
+
+				//	block atlas index 0 is the transparent one
+				//	todo: make this index -1 if it's the mappy transparent one and ditch graphic tile 0 as it's all-transparent.
+				if ( BlockAtlasIndex <= 0 )
+					continue;
+
+				//	get pointer to data, if it's not the base layer then alloc a layer data
+				TBinaryTree* pTileLayerData = (Layer==0) ? &TileData : TileData.AddChild("Layer");
+				if ( !pTileLayerData )
+					continue;
+
+				TBinaryTree& TileLayerData = *pTileLayerData;
+
+				//	export tile data
+				TileLayerData.ExportData("Atlas", ImportData.m_AtlasRef );
+				TileLayerData.ExportData("Texture", ImportData.m_TextureRef );
+
+				TFixedArray<u16,100> AtlasFrames;
+				AtlasFrames << (u16)BlockAtlasIndex;
+				TileLayerData.ExportArray("Frames", AtlasFrames );
+			}
+		}
+	}
+
 	return true;
 }
 

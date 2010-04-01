@@ -27,8 +27,8 @@ class TLFileSys::TFilePng : public TLFileSys::TFile
 public:
 	TFilePng(TRefRef FileRef,TRefRef FileTypeRef);
 	
-	virtual TRef				GetFileExportAssetType() const										{	return TRef_Static(T,e,x,t,u);	}
-	virtual SyncBool			ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);
+	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType);
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes << TRef_Static(T,e,x,t,u);	}
 
 };
 

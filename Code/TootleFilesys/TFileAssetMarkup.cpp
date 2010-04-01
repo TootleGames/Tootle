@@ -28,15 +28,13 @@ TLFileSys::TFileAssetMarkup::TFileAssetMarkup(TRefRef FileRef,TRefRef FileTypeRe
 //--------------------------------------------------------
 //	import the XML and do all the commands
 //--------------------------------------------------------
-SyncBool TLFileSys::TFileAssetMarkup::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported)
+SyncBool TLFileSys::TFileAssetMarkup::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType)
 {
 	if ( pAsset )
 	{
 		TLDebug_Break("Async export not supported yet. asset should be NULL");
 		return SyncFalse;
 	}
-
-	Supported = TRUE;
 
 	//	import xml
 	SyncBool ImportResult = TFileXml::Import();

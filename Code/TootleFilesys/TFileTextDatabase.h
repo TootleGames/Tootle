@@ -29,8 +29,8 @@ class TLFileSys::TFileTextDatabase : public TLFileSys::TFileXml
 public:
 	TFileTextDatabase(TRefRef FileRef,TRefRef FileTypeRef);
 	
-	virtual TRef		GetFileExportAssetType() const										{	return TRef_Static4(T,e,x,t);	}
-	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);			//	import the XML and convert from Collada to mesh
+	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType);
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes << TRef_Static4(T,e,x,t);	}
 
 protected:
 	SyncBool			ImportText(TPtr<TLAsset::TText> pText, TPtr<TXmlTag>& pTag);

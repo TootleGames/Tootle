@@ -31,7 +31,8 @@ class TLFileSys::TFileAssetMarkup : public TLFileSys::TFileXml
 public:
 	TFileAssetMarkup(TRefRef FileRef,TRefRef FileTypeRef);
 
-	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);			//	import the XML and convert from SVG to mesh
+	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType);
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes.Add( TRef() );	}
 
 protected:
 	SyncBool			ImportMesh(TPtr<TLAsset::TMesh> pMesh,TPtr<TXmlTag>& pTag);	//	generate mesh TAM tag

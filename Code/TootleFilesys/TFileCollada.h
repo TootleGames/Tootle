@@ -113,8 +113,8 @@ class TLFileSys::TFileCollada : public TLFileSys::TFileXml
 public:
 	TFileCollada(TRefRef FileRef,TRefRef FileTypeRef);
 
-	virtual TRef		GetFileExportAssetType() const										{	return TRef_Static4(M,e,s,h);	}
-	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);			//	import the XML and convert from Collada to mesh
+	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType);
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes.Add( TRef_Static4(M,e,s,h) );	}
 
 protected:
 	Bool				ImportGeometryLibraries(TXmlTag& RootTag);				//	import geometry information

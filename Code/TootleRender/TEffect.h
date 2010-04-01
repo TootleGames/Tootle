@@ -80,7 +80,8 @@ protected:
 	u32				GetFrameCount() const				{	return m_Frames.GetSize();	}
 
 protected:
-	TArray<TLMaths::TTransform>	m_Frames;		//	frames in the atlas to cycle through
+	TArray<TLMaths::TTransform>	m_Frames;		//	frames in the atlas to cycle through (stored in transforms)
+	TArray<u16>					m_FrameIndexes;	//	indexes in the atlas to cycle through
 	float						m_Time;			//	current time counter
 	float						m_FrameRate;	//	change frame every N amount (frames per second)
 };

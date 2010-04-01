@@ -241,8 +241,8 @@ TString& TString::Appendf(const TChar16* pString,...)
 void TString::AppendVaList(const TChar16* pString,va_list& v)
 {
 	//	format up a new string and append that
-	TBufferString<512> Buffer;
-	Buffer.SetLength(512);
+	TBufferString<1024> Buffer;
+	Buffer.SetLength( 1024 );
 
 #if defined(TL_TARGET_PC)
 	int BufferStringLength = _vsnwprintf_s( Buffer.GetData(), Buffer.GetLength(), _TRUNCATE, pString, v );
@@ -263,7 +263,7 @@ void TString::AppendVaList(const TChar8* pString,va_list& v)
 {
 	//	format up a new string and append that
 	TArray<TChar8> Buffer;
-	Buffer.SetSize( TLString::Strlen( pString ) + 256 );
+	Buffer.SetSize( TLString::Strlen( pString ) + 1024 );
 
 #if defined(TL_TARGET_PC)
 	int BufferStringLength = vsprintf_s( Buffer.GetData(), Buffer.GetDataSize(), pString, v );

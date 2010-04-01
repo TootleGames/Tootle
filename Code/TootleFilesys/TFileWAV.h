@@ -26,8 +26,8 @@ public:
 	TFileWAV(TRefRef FileRef,TRefRef FileTypeRef);
 	~TFileWAV();
 	
-	virtual TRef				GetFileExportAssetType() const										{	return TRef_Static(A,u,d,i,o);	}
-	virtual SyncBool			ExportAsset(TPtr<TLAsset::TAsset>& pAsset,Bool& Supported);
+	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType);
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes << TRef_Static(A,u,d,i,o);	}
 	
 protected:
 	Bool						InitExport(TPtr<TLAsset::TAsset>& pAsset);

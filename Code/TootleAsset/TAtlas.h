@@ -23,6 +23,9 @@ namespace TLAsset
 class TLAsset::TAtlasGlyph
 {
 public:
+	TAtlasGlyph()	{}
+	TAtlasGlyph(const TLMaths::TBox2D& UVBox,const Type2<u16>& TextureSize);
+
 	Bool						ImportData(TBinaryTree& Data);	//	load glyph data
 	void						ExportData(TBinaryTree& Data);	//	save glyph data
 
