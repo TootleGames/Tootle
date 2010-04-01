@@ -27,10 +27,10 @@ public:
 	TYPE	y;
 
 public:
-	Type2()															{	Set(0,0);	};
-	Type2(const TYPE& a)											{	Set(a,a);	};
-	Type2(const TYPE& a, const TYPE& b)								{	Set(a,b);	};
-	template<typename OTHERTYPE> Type2(const Type2<OTHERTYPE>& t)	{	Set( t.x, t.y );	};
+	Type2()								: x(0), y(0)				{	};
+	explicit Type2(const TYPE& a)		: x(a), y(a)				{	};
+	Type2(const TYPE& a, const TYPE& b)	: x(a), y(b)				{	};
+	template<typename OTHERTYPE> Type2(const Type2<OTHERTYPE>& t) : x(t.x), y(t.y)	{	};
 
 	FORCEINLINE static u32		GetSize() 									{	return 2;	}
 	FORCEINLINE void			Set(const TYPE& a, const TYPE& b)			{	x = a;	y = b;	};
@@ -113,12 +113,12 @@ template <typename TYPE>
 class Type3
 {
 public:
-	Type3() : x(0), y(0), z(0)												{	}
-	Type3(const TYPE& a) : x(a), y(a), z(a)									{	}
-	Type3(const TYPE& a, const TYPE& b, const TYPE& c) : x(a), y(b), z(c)	{	}
+	Type3()														: x(0), y(0), z(0)	{	}
+	explicit Type3(const TYPE& a)								: x(a), y(a), z(a)	{	}
+	Type3(const TYPE& a, const TYPE& b, const TYPE& c)			: x(a), y(b), z(c)	{	}
 //	template<typename OTHERTYPE> Type3(const Type3<OTHERTYPE>& t)			{	Set( t.x, t.y, t.z );	};
-	Type3(const Type2<TYPE>& t,TYPE tz=0.f) : x(t.x), y(t.y), z(tz)				{	}
-	Type3(const Type3<TYPE>& t) : x(t.x), y(t.y), z(t.z)				{	}
+	Type3(const Type2<TYPE>& t,TYPE tz=0.f)						: x(t.x), y(t.y), z(tz)				{	}
+	Type3(const Type3<TYPE>& t)									: x(t.x), y(t.y), z(t.z)				{	}
 	template<typename OTHERTYPE> Type3(const Type4<OTHERTYPE>& t);
 
 	FORCEINLINE static u32			GetSize() 											{	return 3;	}
@@ -212,10 +212,10 @@ template <typename TYPE>
 class Type4
 {
 public:
-	Type4() : x(0), y(0), z(0), w(0)								{	}
-	Type4(const TYPE& a) : x(a), y(a), z(a), w(a)					{	}
-	Type4(const TYPE& a, const TYPE& b, const TYPE& c, const TYPE& d) : x(a), y(b), z(c), w(d)	{}
-	Type4(TYPE* p) : x(p[0]), y(p[1]), z(p[2]), w(p[3])				{	}
+	Type4()																: x(0), y(0), z(0), w(0)				{}
+	explicit Type4(const TYPE& a)										: x(a), y(a), z(a), w(a)				{}
+	Type4(const TYPE& a, const TYPE& b, const TYPE& c, const TYPE& d)	: x(a), y(b), z(c), w(d)				{}
+	Type4(TYPE* p)														: x(p[0]), y(p[1]), z(p[2]), w(p[3])	{}
 	template<typename OTHERTYPE> Type4(const Type4<OTHERTYPE>& t)	{	Set( (TYPE)t.x, (TYPE)t.y, (TYPE)t.z, (TYPE)t.w );	};	
 	template<typename OTHERTYPE> Type4(const Type3<OTHERTYPE>& t)	{	Set( (TYPE)t.x, (TYPE)t.y, (TYPE)t.z, (TYPE)0 );	};
 

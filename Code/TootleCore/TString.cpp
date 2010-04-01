@@ -908,6 +908,7 @@ Bool TString::GetFloats(TArray<float>& Floats) const
 	//		the "acceptance" of a trailing f into GetFloat()
 	SplitChars << 'f' << 'F';
 
+	//	failed to split at all? must be empty string
 	TArray<TTempString> FloatStrings;
 	if ( !this->Split( SplitChars, FloatStrings ) )
 		return false;
@@ -928,7 +929,15 @@ Bool TString::GetFloats(TArray<float>& Floats) const
 		}
 
 		//	add to float list
-		Floats.Add( f );
+		s32 FloatIndex = Floats.Add( f );
+
+		//	out of space for float... 
+		//	gr: I've allowed this as success, just look out for this warning if we want an indetermined number of floats
+		if ( FloatIndex == -1 )
+		{
+			TLDebug_Print("Warning: in GetFloats we ran out of space to add an additional float");
+			return true;
+		}
 	}
 
 	return true;	

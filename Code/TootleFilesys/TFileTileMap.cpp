@@ -98,10 +98,16 @@ SyncBool TLFileSys::TFileTileMap::ImportTileMap(TXmlTag& Tag,TLAsset::TTileMap& 
 		return SyncFalse;
 	}
 
-		
-	s32 Width;		pWidthString->GetInteger( Width );
-	s32 Height;		pHeightString->GetInteger( Height );
-	float TileSize;	pTileSizeString->GetFloat( TileSize );
+	Bool Success = true;
+	s32 Width;			Success &= pWidthString->GetInteger( Width );
+	s32 Height;			Success &= pHeightString->GetInteger( Height );
+	float2 TileSize;	Success &= pTileSizeString->GetFloat( TileSize );
+
+	if ( !Success )
+	{
+		TLDebug_Break("Failed to extract width/height/tilesize");
+		return SyncFalse;
+	}
 
 	if ( Width < 1 || Height < 1 || Width >= 0xffff || Height >= 0xffff )
 	{

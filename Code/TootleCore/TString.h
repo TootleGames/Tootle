@@ -105,6 +105,8 @@ public:
 	Bool					Split(const TArray<TChar>& SplitChars,TArray<STRINGTYPE>& StringArray) const;		//	split string by SplitChar into array. if no cases of SplitChar then FALSE is return and no strings are added to the array
 	Bool					GetInteger(s32& Integer,Bool* pIsPositive=NULL) const;		//	turn string into an integer - fails if some non-integer stuff in it (best to trim first where possible). The extra pIsPositive param (if not null) stores the posititivy/negativity of the number. This is needed for -0.XYZ numbers. we still need the sign for floats, but as an int -0 is just 0.
 	Bool					GetIntegers(TArray<s32>& Integers) const;					//	read an array of integers from a string
+	template<class TYPE_N>
+	Bool					GetFloat(TYPE_N/*<float>*/& FloatN) const;					//	extract N floats (no more, no less) into a TypeN<float> type
 	Bool					GetFloat(float& Float) const;								//	turn string into a float
 	Bool					GetFloats(TArray<float>& Floats) const;						//	get an array of floats from a string (expects just floats)
 	Bool					GetHexInteger(u32& Integer) const;							//	turn hexidecimal string into an integer (best to trim first where possible)
@@ -457,6 +459,28 @@ Bool TString::Split(const TArray<TChar>& SplitChars,TArray<STRINGTYPE>& StringAr
 	}
 
 	return !StringArray.IsEmpty();
+}
+
+
+//------------------------------------------------------
+//	extract N floats (no more, no less) into a TypeN<float> type
+//------------------------------------------------------
+template<class TYPE_N>
+Bool TString::GetFloat(TYPE_N/*<float>*/& FloatN) const
+{
+	//	gr: replace this with an in-place array when they're implemented. will save copying the array afterwards
+	//	TInPlaceArray<float> ExtractedFloats( FloatN.GetData(), FloatN.GetSize() );
+	TFixedArray<float,4> ExtractedFloats;
+	if ( !GetFloats( ExtractedFloats ) )
+		return false;
+
+	//	if number of floats mis-matches what we want then fail
+	if ( ExtractedFloats.GetSize() != FloatN.GetSize() )
+		return false;
+
+	//	put floats we extracted into the variable
+	TLMemory::CopyData( FloatN.GetData(), ExtractedFloats.GetData(), FloatN.GetSize() );
+	return true;
 }
 
 
