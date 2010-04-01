@@ -216,7 +216,14 @@ protected:
 };
 
 
+//	commonly used string for the stack(temp variables)
 typedef TBufferString<512> TTempString;
+
+//	string for debug-builds only.
+//	todo: make a stub class for release builds where this class does nothing in case one is left in the code
+//		or ifdef this out so it's not availible in release and so never used
+typedef TBufferString<1024> TDebugString;
+
 
 
 
