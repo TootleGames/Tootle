@@ -124,6 +124,59 @@ namespace Mappy
 	};
 
 	class TImportData;	//	import data
+	
+	
+	
+	
+	typedef struct {	/* Map header structure */
+		/* char M,P,H,D;	4 byte chunk identification. */
+		/* long int mphdsize;	size of map header. */
+		char mapverhigh;	/* map version number to left of . (ie X.0). */
+		char mapverlow;		/* map version number to right of . (ie 0.X). */
+		char lsb;		/* if 1, data stored LSB first, otherwise MSB first. */
+		char maptype;	/* 0 for 32 offset still, -16 offset anim shorts in BODY added FMP0.5*/
+		short int mapwidth;	/* width in blocks. */
+		short int mapheight;	/* height in blocks. */
+		short int reserved1;
+		short int reserved2;
+		short int blockwidth;	/* width of a block (tile) in pixels. */
+		short int blockheight;	/* height of a block (tile) in pixels. */
+		short int blockdepth;	/* depth of a block (tile) in planes (ie. 256 colours is 8) */
+		short int blockstrsize;	/* size of a block data structure */
+		short int numblockstr;	/* Number of block structures in BKDT */
+		short int numblockgfx;	/* Number of 'blocks' in graphics (BODY) */
+		unsigned char ckey8bit, ckeyred, ckeygreen, ckeyblue; /* colour key values added FMP0.4*/
+		/* info for non rectangular block maps added FMP0.5*/
+		short int blockgapx, blockgapy, blockstaggerx, blockstaggery;
+		short int clickmask, pillars;
+	} MPHD;
+	
+	typedef struct {	/* Structure for data blocks */
+		long int bgoff, fgoff;	/* offsets from start of graphic blocks */
+		long int fgoff2, fgoff3; /* more overlay blocks */
+		unsigned long int user1, user2;	/* user long data */
+		unsigned short int user3, user4;	/* user short data */
+		unsigned char user5, user6, user7;	/* user byte data */
+		unsigned char tl : 1;	/* bits for collision detection */
+		unsigned char tr : 1;
+		unsigned char bl : 1;
+		unsigned char br : 1;
+		unsigned char trigger : 1;	/* bit to trigger an event */
+		unsigned char unused1 : 1;
+		unsigned char unused2 : 1;
+		unsigned char unused3 : 1;
+	} BLKSTR;
+	
+	typedef struct { /* Animation control structure */
+		signed char antype;	/* Type of anim, AN_? */
+		signed char andelay;	/* Frames to go before next frame */
+		signed char ancount;	/* Counter, decs each frame, till 0, then resets to andelay */
+		signed char anuser;	/* User info */
+		long int ancuroff;	/* Points to current offset in list */
+		long int anstartoff;	/* Points to start of blkstr offsets list, AFTER ref. blkstr offset */
+		long int anendoff;	/* Points to end of blkstr offsets list */
+	} ANISTR;
+	
 }
 
 
@@ -283,35 +336,15 @@ Bool TLFileSys::TFileMappy::ImportAuthor(TLAsset::TTileMap& TileMap,TBinary& Dat
 	return true;
 }
 
+
+
 //--------------------------------------------------------------
 //	import chunk data - 
 //--------------------------------------------------------------
 Bool TLFileSys::TFileMappy::ImportMapHeader(TLAsset::TTileMap& TileMap,TBinary& Data,Mappy::TImportData& ImportData)
 {
-	typedef struct {	/* Map header structure */
-		/* char M,P,H,D;	4 byte chunk identification. */
-		/* long int mphdsize;	size of map header. */
-		char mapverhigh;	/* map version number to left of . (ie X.0). */
-		char mapverlow;		/* map version number to right of . (ie 0.X). */
-		char lsb;		/* if 1, data stored LSB first, otherwise MSB first. */
-		char maptype;	/* 0 for 32 offset still, -16 offset anim shorts in BODY added FMP0.5*/
-		short int mapwidth;	/* width in blocks. */
-		short int mapheight;	/* height in blocks. */
-		short int reserved1;
-		short int reserved2;
-		short int blockwidth;	/* width of a block (tile) in pixels. */
-		short int blockheight;	/* height of a block (tile) in pixels. */
-		short int blockdepth;	/* depth of a block (tile) in planes (ie. 256 colours is 8) */
-		short int blockstrsize;	/* size of a block data structure */
-		short int numblockstr;	/* Number of block structures in BKDT */
-		short int numblockgfx;	/* Number of 'blocks' in graphics (BODY) */
-		unsigned char ckey8bit, ckeyred, ckeygreen, ckeyblue; /* colour key values added FMP0.4*/
-		/* info for non rectangular block maps added FMP0.5*/
-		short int blockgapx, blockgapy, blockstaggerx, blockstaggery;
-		short int clickmask, pillars;
-	} MPHD;
 
-	MPHD Header;
+	Mappy::MPHD Header;
 	if ( !Data.Read( Header ) )
 		return false;
 
@@ -403,24 +436,8 @@ Bool TLFileSys::TFileMappy::ImportColourPalette(TLAsset::TTileMap& TileMap,TBina
 //--------------------------------------------------------------
 Bool TLFileSys::TFileMappy::ImportBlockData(TLAsset::TTileMap& TileMap,TBinary& Data,Mappy::TImportData& ImportData)
 {	
-	typedef struct {	/* Structure for data blocks */
-	long int bgoff, fgoff;	/* offsets from start of graphic blocks */
-	long int fgoff2, fgoff3; /* more overlay blocks */
-	unsigned long int user1, user2;	/* user long data */
-	unsigned short int user3, user4;	/* user short data */
-	unsigned char user5, user6, user7;	/* user byte data */
-	unsigned char tl : 1;	/* bits for collision detection */
-	unsigned char tr : 1;
-	unsigned char bl : 1;
-	unsigned char br : 1;
-	unsigned char trigger : 1;	/* bit to trigger an event */
-	unsigned char unused1 : 1;
-	unsigned char unused2 : 1;
-	unsigned char unused3 : 1;
-	} BLKSTR;
-
 	//	read block datas and convert them to our type
-	BLKSTR TempBlock;
+	Mappy::BLKSTR TempBlock;
 	if ( sizeof(TempBlock) != ImportData.m_BlockDataSize )
 		TLDebug_Break("block size is variable...");
 
@@ -480,20 +497,11 @@ Bool TLFileSys::TFileMappy::ImportBlockData(TLAsset::TTileMap& TileMap,TBinary& 
 //--------------------------------------------------------------
 Bool TLFileSys::TFileMappy::ImportAnimationData(TLAsset::TTileMap& TileMap,TBinary& Data)
 {
-	typedef struct { /* Animation control structure */
-	signed char antype;	/* Type of anim, AN_? */
-	signed char andelay;	/* Frames to go before next frame */
-	signed char ancount;	/* Counter, decs each frame, till 0, then resets to andelay */
-	signed char anuser;	/* User info */
-	long int ancuroff;	/* Points to current offset in list */
-	long int anstartoff;	/* Points to start of blkstr offsets list, AFTER ref. blkstr offset */
-	long int anendoff;	/* Points to end of blkstr offsets list */
-	} ANISTR;
 
 	//	gr: not processing yet, something wrong with reading the struct atm
 	return true;
 
-	ANISTR AnimData;
+	Mappy::ANISTR AnimData;
 	while ( Data.GetSizeUnread() > 0 )
 	{
 		if ( !Data.Read(AnimData) )

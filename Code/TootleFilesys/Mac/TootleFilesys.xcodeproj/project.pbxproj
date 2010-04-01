@@ -185,12 +185,14 @@
 		844CE3A610516B6B00178124 /* TFileCollada.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F04F0F4DB85200B956C9 /* TFileCollada.h */; };
 		844CE6381051860100178124 /* MacLocalFileSys.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F17B0F4DBA3D00B956C9 /* MacLocalFileSys.h */; };
 		844CE6391051860700178124 /* MacLocalFileSys.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8418F17C0F4DBA3D00B956C9 /* MacLocalFileSys.mm */; };
+		84829C0F1164E5070000C579 /* TFileAtlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84829C091164E5070000C579 /* TFileAtlas.cpp */; };
+		84829C101164E5070000C579 /* TFileAtlas.h in Headers */ = {isa = PBXBuildFile; fileRef = 84829C0A1164E5070000C579 /* TFileAtlas.h */; };
+		84829C111164E5070000C579 /* TFileMappy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84829C0B1164E5070000C579 /* TFileMappy.cpp */; };
+		84829C121164E5070000C579 /* TFileMappy.h in Headers */ = {isa = PBXBuildFile; fileRef = 84829C0C1164E5070000C579 /* TFileMappy.h */; };
+		84829C131164E5070000C579 /* TFileTileMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84829C0D1164E5070000C579 /* TFileTileMap.cpp */; };
+		84829C141164E5070000C579 /* TFileTileMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 84829C0E1164E5070000C579 /* TFileTileMap.h */; };
 		84E4BA6F106934C700E301FC /* MacFileSys.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E4BA6D106934C700E301FC /* MacFileSys.h */; };
 		84E4BA70106934C700E301FC /* MacFileSys.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84E4BA6E106934C700E301FC /* MacFileSys.mm */; };
-		BFB118871162951B0066C380 /* TFileTileMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFB118851162951B0066C380 /* TFileTileMap.cpp */; };
-		BFB118881162951B0066C380 /* TFileTileMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BFB118861162951B0066C380 /* TFileTileMap.h */; };
-		BFB11891116295670066C380 /* TFileMappy.h in Headers */ = {isa = PBXBuildFile; fileRef = BFB1188F116295670066C380 /* TFileMappy.h */; };
-		BFB11892116295670066C380 /* TFileMappy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFB11890116295670066C380 /* TFileMappy.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -234,6 +236,12 @@
 		8464DD0110A2E53600EAF14E /* IPodFileSys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodFileSys.mm; path = ../IPod/IPodFileSys.mm; sourceTree = SOURCE_ROOT; };
 		8464DD0210A2E53600EAF14E /* IPodLocalFileSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodLocalFileSys.h; path = ../IPod/IPodLocalFileSys.h; sourceTree = SOURCE_ROOT; };
 		8464DD0310A2E53600EAF14E /* IPodLocalFileSys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodLocalFileSys.mm; path = ../IPod/IPodLocalFileSys.mm; sourceTree = SOURCE_ROOT; };
+		84829C091164E5070000C579 /* TFileAtlas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileAtlas.cpp; path = ../TFileAtlas.cpp; sourceTree = SOURCE_ROOT; };
+		84829C0A1164E5070000C579 /* TFileAtlas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileAtlas.h; path = ../TFileAtlas.h; sourceTree = SOURCE_ROOT; };
+		84829C0B1164E5070000C579 /* TFileMappy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileMappy.cpp; path = ../TFileMappy.cpp; sourceTree = SOURCE_ROOT; };
+		84829C0C1164E5070000C579 /* TFileMappy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileMappy.h; path = ../TFileMappy.h; sourceTree = SOURCE_ROOT; };
+		84829C0D1164E5070000C579 /* TFileTileMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileTileMap.cpp; path = ../TFileTileMap.cpp; sourceTree = SOURCE_ROOT; };
+		84829C0E1164E5070000C579 /* TFileTileMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileTileMap.h; path = ../TFileTileMap.h; sourceTree = SOURCE_ROOT; };
 		84B6031D104FF3600022E5BC /* TFileFnt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileFnt.cpp; path = ../TFileFnt.cpp; sourceTree = SOURCE_ROOT; };
 		84B6031E104FF3600022E5BC /* TFileFnt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileFnt.h; path = ../TFileFnt.h; sourceTree = SOURCE_ROOT; };
 		84B6031F104FF3600022E5BC /* TFileParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileParticle.cpp; path = ../TFileParticle.cpp; sourceTree = SOURCE_ROOT; };
@@ -390,10 +398,6 @@
 		BF89CCB3110C5C3B009C2101 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF89CCB4110C5C3B009C2101 /* MacDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacDebug.xcconfig; path = ../../BuildConfigurations/Mac/MacDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF89CCB5110C5C3B009C2101 /* MacRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacRelease.xcconfig; path = ../../BuildConfigurations/Mac/MacRelease.xcconfig; sourceTree = SOURCE_ROOT; };
-		BFB118851162951B0066C380 /* TFileTileMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileTileMap.cpp; path = ../../../../../TootleShader/Tootle/Code/TootleFilesys/TFileTileMap.cpp; sourceTree = SOURCE_ROOT; };
-		BFB118861162951B0066C380 /* TFileTileMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileTileMap.h; path = ../../../../../TootleShader/Tootle/Code/TootleFilesys/TFileTileMap.h; sourceTree = SOURCE_ROOT; };
-		BFB1188F116295670066C380 /* TFileMappy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileMappy.h; path = ../../../../../TootleShader/Tootle/Code/TootleFilesys/TFileMappy.h; sourceTree = SOURCE_ROOT; };
-		BFB11890116295670066C380 /* TFileMappy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileMappy.cpp; path = ../../../../../TootleShader/Tootle/Code/TootleFilesys/TFileMappy.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -435,8 +439,12 @@
 		8418F0460F4DB83D00B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
-				BFB118851162951B0066C380 /* TFileTileMap.cpp */,
-				BFB118861162951B0066C380 /* TFileTileMap.h */,
+				84829C091164E5070000C579 /* TFileAtlas.cpp */,
+				84829C0A1164E5070000C579 /* TFileAtlas.h */,
+				84829C0B1164E5070000C579 /* TFileMappy.cpp */,
+				84829C0C1164E5070000C579 /* TFileMappy.h */,
+				84829C0D1164E5070000C579 /* TFileTileMap.cpp */,
+				84829C0E1164E5070000C579 /* TFileTileMap.h */,
 				8464DCFF10A2E52400EAF14E /* IPod */,
 				8464DC3F10A2D52100EAF14E /* PC */,
 				8418F1780F4DB9F900B956C9 /* Mac */,
@@ -484,8 +492,6 @@
 				8418F0610F4DB85200B956C9 /* TVirtualFileSys.h */,
 				8418F0620F4DB85200B956C9 /* TXml.cpp */,
 				8418F0630F4DB85200B956C9 /* TXml.h */,
-				BFB1188F116295670066C380 /* TFileMappy.h */,
-				BFB11890116295670066C380 /* TFileMappy.cpp */,
 			);
 			name = "Source Code";
 			sourceTree = "<group>";
@@ -875,8 +881,9 @@
 				844CE3A610516B6B00178124 /* TFileCollada.h in Headers */,
 				844CE6381051860100178124 /* MacLocalFileSys.h in Headers */,
 				84E4BA6F106934C700E301FC /* MacFileSys.h in Headers */,
-				BFB118881162951B0066C380 /* TFileTileMap.h in Headers */,
-				BFB11891116295670066C380 /* TFileMappy.h in Headers */,
+				84829C101164E5070000C579 /* TFileAtlas.h in Headers */,
+				84829C121164E5070000C579 /* TFileMappy.h in Headers */,
+				84829C141164E5070000C579 /* TFileTileMap.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -989,8 +996,9 @@
 				844CE33510516B5100178124 /* TVirtualFileSys.cpp in Sources */,
 				844CE6391051860700178124 /* MacLocalFileSys.mm in Sources */,
 				84E4BA70106934C700E301FC /* MacFileSys.mm in Sources */,
-				BFB118871162951B0066C380 /* TFileTileMap.cpp in Sources */,
-				BFB11892116295670066C380 /* TFileMappy.cpp in Sources */,
+				84829C0F1164E5070000C579 /* TFileAtlas.cpp in Sources */,
+				84829C111164E5070000C579 /* TFileMappy.cpp in Sources */,
+				84829C131164E5070000C579 /* TFileTileMap.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

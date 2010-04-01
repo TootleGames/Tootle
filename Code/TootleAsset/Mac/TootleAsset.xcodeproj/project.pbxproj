@@ -37,8 +37,8 @@
 		844CE04B1051577700178124 /* TTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 844CE03E1051577700178124 /* TTexture.h */; };
 		844CE04C1051577700178124 /* TTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 844CE03F1051577700178124 /* TTimeline.cpp */; };
 		844CE04D1051577700178124 /* TTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 844CE0401051577700178124 /* TTimeline.h */; };
-		BFB11870116294D90066C380 /* TTileMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFB1186D116294D90066C380 /* TTileMap.cpp */; };
-		BFB11872116294D90066C380 /* TTileMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BFB1186F116294D90066C380 /* TTileMap.h */; };
+		84829C331164E74B0000C579 /* TTileMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84829C311164E74B0000C579 /* TTileMap.cpp */; };
+		84829C341164E74B0000C579 /* TTileMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 84829C321164E74B0000C579 /* TTileMap.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -73,12 +73,12 @@
 		844CE03E1051577700178124 /* TTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTexture.h; path = ../TTexture.h; sourceTree = SOURCE_ROOT; };
 		844CE03F1051577700178124 /* TTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTimeline.cpp; path = ../TTimeline.cpp; sourceTree = SOURCE_ROOT; };
 		844CE0401051577700178124 /* TTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTimeline.h; path = ../TTimeline.h; sourceTree = SOURCE_ROOT; };
+		84829C311164E74B0000C579 /* TTileMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTileMap.cpp; path = ../TTileMap.cpp; sourceTree = SOURCE_ROOT; };
+		84829C321164E74B0000C579 /* TTileMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTileMap.h; path = ../TTileMap.h; sourceTree = SOURCE_ROOT; };
 		BF4416751153C95F000162DD /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF4416761153C95F000162DD /* LibRelease_wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease_wx.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease_wx.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF4416771153C95F000162DD /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF4416781153C95F000162DD /* LibDebug_wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug_wx.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug_wx.xcconfig; sourceTree = SOURCE_ROOT; };
-		BFB1186D116294D90066C380 /* TTileMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTileMap.cpp; path = ../../../../../TootleShader/Tootle/Code/TootleAsset/TTileMap.cpp; sourceTree = SOURCE_ROOT; };
-		BFB1186F116294D90066C380 /* TTileMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTileMap.h; path = ../../../../../TootleShader/Tootle/Code/TootleAsset/TTileMap.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,8 +120,8 @@
 		8418F1210F4DB8AD00B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
-				BFB1186D116294D90066C380 /* TTileMap.cpp */,
-				BFB1186F116294D90066C380 /* TTileMap.h */,
+				84829C311164E74B0000C579 /* TTileMap.cpp */,
+				84829C321164E74B0000C579 /* TTileMap.h */,
 				844CE0341051577700178124 /* TAtlas.cpp */,
 				844CE0351051577700178124 /* TAtlas.h */,
 				844CE0361051577700178124 /* TObject.h */,
@@ -190,7 +190,7 @@
 				844CE0491051577700178124 /* TText.h in Headers */,
 				844CE04B1051577700178124 /* TTexture.h in Headers */,
 				844CE04D1051577700178124 /* TTimeline.h in Headers */,
-				BFB11872116294D90066C380 /* TTileMap.h in Headers */,
+				84829C341164E74B0000C579 /* TTileMap.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -251,7 +251,7 @@
 				844CE0481051577700178124 /* TText.cpp in Sources */,
 				844CE04A1051577700178124 /* TTexture.cpp in Sources */,
 				844CE04C1051577700178124 /* TTimeline.cpp in Sources */,
-				BFB11870116294D90066C380 /* TTileMap.cpp in Sources */,
+				84829C331164E74B0000C579 /* TTileMap.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

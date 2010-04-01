@@ -1,7 +1,7 @@
 // !$*UTF8*$!
 {
 	8418ECF80F4DA63E00B956C9 /* Project object */ = {
-		activeBuildConfigurationName = Debug;
+		activeBuildConfigurationName = Release;
 		activeTarget = 8418ED0C0F4DA70B00B956C9 /* TootleAsset */;
 		addToTargets = (
 			8418ED0C0F4DA70B00B956C9 /* TootleAsset */,
@@ -92,8 +92,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 290442396;
-			PBXWorkspaceStateSaveDate = 290442396;
+			PBXPerProjectTemplateStateSaveDate = 291825455;
+			PBXWorkspaceStateSaveDate = 291825455;
 		};
 		perUserProjectItems = {
 			843C220F10B29DC7004E70F5 /* PBXTextBookmark */ = 843C220F10B29DC7004E70F5 /* PBXTextBookmark */;
@@ -105,6 +105,8 @@
 			84713365113D995F00B58675 /* PBXTextBookmark */ = 84713365113D995F00B58675 /* PBXTextBookmark */;
 			84713366113D995F00B58675 /* PBXTextBookmark */ = 84713366113D995F00B58675 /* PBXTextBookmark */;
 			8471342A113E8FE700B58675 /* PBXTextBookmark */ = 8471342A113E8FE700B58675 /* PBXTextBookmark */;
+			84829C351164E7590000C579 /* PBXBookmark */ = 84829C351164E7590000C579 /* PBXBookmark */;
+			84829C361164E7590000C579 /* PBXTextBookmark */ = 84829C361164E7590000C579 /* PBXTextBookmark */;
 			8482D58E10BECAB5009067B8 /* PBXTextBookmark */ = 8482D58E10BECAB5009067B8 /* PBXTextBookmark */;
 			84C5098A114FC454007F096A /* PBXTextBookmark */ = 84C5098A114FC454007F096A /* PBXTextBookmark */;
 			84C5098D114FC454007F096A /* PBXTextBookmark */ = 84C5098D114FC454007F096A /* PBXTextBookmark */;
@@ -112,7 +114,6 @@
 			84C50A9A114FCCB6007F096A /* PBXTextBookmark */ = 84C50A9A114FCCB6007F096A /* PBXTextBookmark */;
 			84C50AA1114FCD81007F096A /* PBXTextBookmark */ = 84C50AA1114FCD81007F096A /* PBXTextBookmark */;
 			84C50AA2114FCD81007F096A /* PBXTextBookmark */ = 84C50AA2114FCD81007F096A /* PBXTextBookmark */;
-			84C50AA3114FCD81007F096A /* PBXTextBookmark */ = 84C50AA3114FCD81007F096A /* PBXTextBookmark */;
 			84C8D7E810972D8B00E3D0F8 /* PBXTextBookmark */ = 84C8D7E810972D8B00E3D0F8 /* PBXTextBookmark */;
 			84D9BD8F10986D05000042D8 /* PBXTextBookmark */ = 84D9BD8F10986D05000042D8 /* PBXTextBookmark */;
 			84F88A89109EE5FC004BAF8B /* PBXTextBookmark */ = 84F88A89109EE5FC004BAF8B /* PBXTextBookmark */;
@@ -534,6 +535,27 @@
 		originalNumberOfMultipleMatches = 1;
 		state = 2;
 	};
+	84829C311164E74B0000C579 /* TTileMap.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 1937}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 489}";
+		};
+	};
+	84829C351164E7590000C579 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 84829C311164E74B0000C579 /* TTileMap.cpp */;
+	};
+	84829C361164E7590000C579 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84829C311164E74B0000C579 /* TTileMap.cpp */;
+		name = "TTileMap.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 489;
+		vrLoc = 0;
+	};
 	8482D58E10BECAB5009067B8 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 8418F12F0F4DB8C100B956C9 /* TMesh.cpp */;
@@ -543,20 +565,6 @@
 		rType = 0;
 		vrLen = 859;
 		vrLoc = 44584;
-	};
-	84C50987114FC3D8007F096A /* TootleDebug.xcconfig */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {6697, 2405}}";
-			sepNavSelRange = "{6422, 0}";
-			sepNavVisRange = "{5988, 2129}";
-		};
-	};
-	84C50988114FC3D8007F096A /* TootleRelease.xcconfig */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 2886}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 885}";
-		};
 	};
 	84C5098A114FC454007F096A /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -570,7 +578,6 @@
 	};
 	84C5098D114FC454007F096A /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = 84C50988114FC3D8007F096A /* TootleRelease.xcconfig */;
 		name = "TootleRelease.xcconfig: 1";
 		rLen = 0;
 		rLoc = 0;
@@ -610,23 +617,12 @@
 	};
 	84C50AA2114FCD81007F096A /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = 84C50987114FC3D8007F096A /* TootleDebug.xcconfig */;
 		name = "TootleDebug.xcconfig: 1";
 		rLen = 0;
 		rLoc = 0;
 		rType = 0;
 		vrLen = 838;
 		vrLoc = 0;
-	};
-	84C50AA3114FCD81007F096A /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C50987114FC3D8007F096A /* TootleDebug.xcconfig */;
-		name = "TootleDebug.xcconfig: 203";
-		rLen = 0;
-		rLoc = 6422;
-		rType = 0;
-		vrLen = 2129;
-		vrLoc = 5988;
 	};
 	84C8D7E810972D8B00E3D0F8 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;

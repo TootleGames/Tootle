@@ -31,6 +31,8 @@
 		8418F1AF0F4DBB9300B956C9 /* MacRenderTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F1A30F4DBB9300B956C9 /* MacRenderTarget.h */; };
 		8440DBE51055622D0045E57E /* MacRender.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8440DBDF1055622D0045E57E /* MacRender.mm */; };
 		8440DBE61055622D0045E57E /* MacRenderTarget.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8440DBE01055622D0045E57E /* MacRenderTarget.mm */; };
+		84829C541164EC5A0000C579 /* TEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84829C521164EC5A0000C579 /* TEffect.cpp */; };
+		84829C551164EC5A0000C579 /* TEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 84829C531164EC5A0000C579 /* TEffect.h */; };
 		84B6068E104FFD2B0022E5BC /* TRenderNodeDebugMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B6067D104FFD2B0022E5BC /* TRenderNodeDebugMesh.cpp */; };
 		84B6068F104FFD2B0022E5BC /* TRenderNodeDebugMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B6067E104FFD2B0022E5BC /* TRenderNodeDebugMesh.h */; };
 		84B60690104FFD2B0022E5BC /* TRenderNodeParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B6067F104FFD2B0022E5BC /* TRenderNodeParticle.cpp */; };
@@ -93,6 +95,8 @@
 		8418F1A30F4DBB9300B956C9 /* MacRenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacRenderTarget.h; sourceTree = "<group>"; };
 		8440DBDF1055622D0045E57E /* MacRender.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacRender.mm; sourceTree = "<group>"; };
 		8440DBE01055622D0045E57E /* MacRenderTarget.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacRenderTarget.mm; sourceTree = "<group>"; };
+		84829C521164EC5A0000C579 /* TEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TEffect.cpp; path = ../TEffect.cpp; sourceTree = SOURCE_ROOT; };
+		84829C531164EC5A0000C579 /* TEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TEffect.h; path = ../TEffect.h; sourceTree = SOURCE_ROOT; };
 		84B6067D104FFD2B0022E5BC /* TRenderNodeDebugMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeDebugMesh.cpp; path = ../TRenderNodeDebugMesh.cpp; sourceTree = SOURCE_ROOT; };
 		84B6067E104FFD2B0022E5BC /* TRenderNodeDebugMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeDebugMesh.h; path = ../TRenderNodeDebugMesh.h; sourceTree = SOURCE_ROOT; };
 		84B6067F104FFD2B0022E5BC /* TRenderNodeParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeParticle.cpp; path = ../TRenderNodeParticle.cpp; sourceTree = SOURCE_ROOT; };
@@ -121,10 +125,6 @@
 		BF05BCC1112D35B8009D5085 /* IPodRender.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodRender.mm; path = ../IPod/IPodRender.mm; sourceTree = SOURCE_ROOT; };
 		BF05BCC2112D35B8009D5085 /* IPodRenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodRenderTarget.h; path = ../IPod/IPodRenderTarget.h; sourceTree = SOURCE_ROOT; };
 		BF05BCC3112D35B8009D5085 /* IPodRenderTarget.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodRenderTarget.mm; path = ../IPod/IPodRenderTarget.mm; sourceTree = SOURCE_ROOT; };
-		BF05BCC4112D35B8009D5085 /* IPodScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodScreen.h; path = ../IPod/IPodScreen.h; sourceTree = SOURCE_ROOT; };
-		BF05BCC5112D35B8009D5085 /* IPodScreen.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodScreen.mm; path = ../IPod/IPodScreen.mm; sourceTree = SOURCE_ROOT; };
-		BF05BCC6112D35B8009D5085 /* IPodView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodView.h; path = ../IPod/IPodView.h; sourceTree = SOURCE_ROOT; };
-		BF05BCC7112D35B8009D5085 /* IPodView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodView.mm; path = ../IPod/IPodView.mm; sourceTree = SOURCE_ROOT; };
 		BF3C2544110704AE0000951F /* Tootle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Tootle.xcconfig; path = ../../BuildConfigurations/Tootle.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF3C2545110704BE0000951F /* Mac.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Mac.xcconfig; path = ../../BuildConfigurations/Mac/Mac.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF89CBF011099A8B009C2101 /* Lib.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Lib.xcconfig; path = ../../BuildConfigurations/Mac/Lib.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -174,6 +174,8 @@
 		8418EF620F4DAD0300B956C9 /* SourceCode */ = {
 			isa = PBXGroup;
 			children = (
+				84829C521164EC5A0000C579 /* TEffect.cpp */,
+				84829C531164EC5A0000C579 /* TEffect.h */,
 				BF05BD57112E8650009D5085 /* Opengl */,
 				BF05BCA1112D357B009D5085 /* IPod */,
 				BF05BCA0112D3574009D5085 /* PC */,
@@ -272,10 +274,6 @@
 				BF05BCC1112D35B8009D5085 /* IPodRender.mm */,
 				BF05BCC2112D35B8009D5085 /* IPodRenderTarget.h */,
 				BF05BCC3112D35B8009D5085 /* IPodRenderTarget.mm */,
-				BF05BCC4112D35B8009D5085 /* IPodScreen.h */,
-				BF05BCC5112D35B8009D5085 /* IPodScreen.mm */,
-				BF05BCC6112D35B8009D5085 /* IPodView.h */,
-				BF05BCC7112D35B8009D5085 /* IPodView.mm */,
 			);
 			name = IPod;
 			sourceTree = "<group>";
@@ -315,6 +313,7 @@
 				84B6069B104FFD2B0022E5BC /* TRenderNodeSwoosh.h in Headers */,
 				84B6069D104FFD2B0022E5BC /* TRenderNodeTimeline.h in Headers */,
 				84B6069E104FFD2B0022E5BC /* TScreenShape.h in Headers */,
+				84829C551164EC5A0000C579 /* TEffect.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -398,6 +397,7 @@
 				84B6069C104FFD2B0022E5BC /* TRenderNodeTimeline.cpp in Sources */,
 				8440DBE51055622D0045E57E /* MacRender.mm in Sources */,
 				8440DBE61055622D0045E57E /* MacRenderTarget.mm in Sources */,
+				84829C541164EC5A0000C579 /* TEffect.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

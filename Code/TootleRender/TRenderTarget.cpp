@@ -843,7 +843,7 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 	//RenderNodeRenderFlags.Set( TRenderNode::RenderFlags::Debug_WorldBoundsBox );
 
 #else
-	TFlags<TRenderNode::RenderFlags::Flags>& RenderNodeRenderFlags = pRenderNode->GetRenderFlags();
+	TFlags<TRenderNode::RenderFlags::Flags>& RenderNodeRenderFlags = RenderNode.GetRenderFlags();
 #endif
 
 	//	mesh renders
