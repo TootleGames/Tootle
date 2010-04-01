@@ -132,7 +132,7 @@ namespace TLMaths
 	template <class T>
 	bool IsPowerOf2(T k)
 	{
-		if(k = 0)
+		if(k == 0)
 			return false;
 		
 		return ((k & (k - 1)) == 0);

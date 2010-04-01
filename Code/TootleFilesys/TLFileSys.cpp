@@ -25,6 +25,7 @@
 #include "TFileObject.h"
 #include "TFileAtlas.h"
 #include "TFileTileMap.h"
+#include "TFileMappy.h"
 
 #if defined(TL_TARGET_IPOD)
 	#include "IPod/IPodLocalFileSys.h"
@@ -654,6 +655,7 @@ TLFileSys::TFile* TLFileSys::TFileFactory::CreateObject(TRefRef InstanceRef,TRef
 	case TRef_Static(P,a,r,t,i):	return new TLFileSys::TFileParticle( InstanceRef, TypeRef );		//	"Particle" markup
 	case TRef_Static(O,b,j,e,c):	return new TLFileSys::TFileObject( InstanceRef, TypeRef );			//	"Object" markup (same as scheme just different extension to differetiate)
 	case TRef_Static(T,i,l,e,m):	return new TLFileSys::TFileTileMap( InstanceRef, TypeRef );			//	"tilemap" markup
+	case TRef_Static3(F,M,P):		return new TLFileSys::TFileMappy( InstanceRef, TypeRef );			//	Mappy FMP tilemap
 
 	default:
 		//	generic binary file

@@ -51,6 +51,7 @@ namespace TLMaths
 //--------------------------------------------------------------
 class TLRender::TCamera : public TLMaths::TQuadTreeNode
 {
+	friend class TRenderTarget;
 public:
 	TCamera();
 	
@@ -64,7 +65,6 @@ public:
 
 	virtual void				SetPosition(const float3& Position)	{	m_vPreviousPos = GetPosition(); m_ViewLine.SetStart( Position );	OnCameraChanged();	}
 	virtual void				SetLookAt(const float3& LookAt)		{	m_ViewLine.SetEnd( LookAt );	OnCameraChanged();	}
-	virtual void				SetRenderTargetSize(const Type4<s32>& RenderTargetSize,const Type4<s32>& RenderTargetMaxSize,const Type4<s32>& ViewportMaxSize,TScreenShape ScreenShape)=0;
 
 	const TLMaths::TBox2D&		GetViewportBox() const	{	return m_ViewportBox;	}
 	const TLMaths::TBox2D&		GetScissorBox() const	{	return m_ScissorBox;	}
@@ -85,6 +85,7 @@ public:
 	virtual const TLMaths::TBox2D&	GetWorldViewBox(float WorldDepth) const=0;					//	the world-space box for the extents at the edges of the screen.
 
 protected:
+	virtual void				SetRenderTargetSize(const Type4<s32>& RenderTargetSize,const Type4<s32>& RenderTargetMaxSize,const Type4<s32>& ViewportMaxSize,TScreenShape ScreenShape)=0;
 	virtual void				OnCameraChanged();			//	
 	void						CalculateViewVectors();		//	calculate new view vectors
 
@@ -118,7 +119,6 @@ public:
 
 	const TLMaths::TAngle&	GetHorzFov() const													{	return m_HorzFov;	}
 //	const TLMaths::TAngle&	GetVertFov() const													{	return GetHorzFov();	}	//	gr: todo
-	virtual void			SetRenderTargetSize(const Type4<s32>& RenderTargetSize,const Type4<s32>& RenderTargetMaxSize,const Type4<s32>& ViewportMaxSize,TScreenShape ScreenShape);	//	calc new view sizes
 
 	const TLMaths::TBox2D&	GetScreenViewBox() const											{	return m_ScreenViewBox;	}		//	view dimensions - NOT rotated
 	const TLMaths::TBox2D&	GetProjectionViewBox() const										{	return m_ProjectionViewBox;	}	//	view dimensions - rotated!
@@ -134,6 +134,7 @@ public:
 	virtual const TLMaths::TBox2D&	GetZoneShape();												//	get the shape of this node (frustum shape)
 
 protected:
+	virtual void			SetRenderTargetSize(const Type4<s32>& RenderTargetSize,const Type4<s32>& RenderTargetMaxSize,const Type4<s32>& ViewportMaxSize,TScreenShape ScreenShape);	//	calc new view sizes
 	const TLMaths::TMatrix&	UpdateCameraLookAtMatrix();
 
 	virtual void			OnCameraChanged();
@@ -162,6 +163,7 @@ protected:
 //--------------------------------------------------------------
 class TLRender::TOrthoCamera : public TCamera
 {
+	friend class TRenderTarget;
 public:
 	TOrthoCamera(Bool SquareProjection=FALSE,float OrthoRange=100.f) :
 		m_WorldToPixelScale	( 0.f ),
@@ -172,11 +174,11 @@ public:
 	}
 
 	virtual Bool			IsOrtho() const			{	return TRUE;	}
-	virtual void			SetRenderTargetSize(const Type4<s32>& RenderTargetSize,const Type4<s32>& RenderTargetMaxSize,const Type4<s32>& ViewportMaxSize,TScreenShape ScreenShape);	//	calc new view sizes
 
 	const TLMaths::TBox2D&				GetOrthoCoordinateBox() const		{	return m_OrthoCoorindateBox;	}	
 	DEPRECATED const TLMaths::TBox2D&	GetOrthoRenderTargetBox() const		{	return m_OrthoWorldBox;	}	//	use TLRender::TRenderTarget::GetWorldViewBox (or GetWorldViewBox if you have a camera pointer already)
 	float								GetOrthoRange() const				{	return m_OrthoRange;	}
+	void								SetOrthoRange(float OrthoRange)		{	m_OrthoRange = OrthoRange;	}	//	gr: need to call rendertarget::OnCameraChanged if this is changed
 
 	virtual Bool						GetWorldRay(TLMaths::TLine& WorldRay,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;			//	convert point on screen to a 3D ray
 	virtual Bool						GetWorldPos(float3& WorldPos,float WorldDepth,const Type2<s32>& RenderTargetPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const;	//	convert point on screen to a 3D position
@@ -184,6 +186,9 @@ public:
 
 	virtual Bool			GetRenderTargetPos(Type2<s32>& RenderTargetPos, const float3& WorldPos,const Type4<s32>& RenderTargetSize,TScreenShape ScreenShape) const; // convert 3d pos into rendertarget-space 2d point
 	virtual float			GetScreenSizeFromWorldSize(float WorldUnit,float Depth)		{	return WorldUnit * m_WorldToPixelScale;	};	//	convert a world unit to pixel size
+
+protected:
+	virtual void			SetRenderTargetSize(const Type4<s32>& RenderTargetSize,const Type4<s32>& RenderTargetMaxSize,const Type4<s32>& ViewportMaxSize,TScreenShape ScreenShape);	//	calc new view sizes
 
 protected:
 	float					m_WorldToPixelScale;		//	world -> pixel scalar

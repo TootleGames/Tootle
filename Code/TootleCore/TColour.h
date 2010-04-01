@@ -190,7 +190,7 @@ public:
 	TColour32(u8 r, u8 g,u8 b,u8 a=255) : m_Rgba ( r,g,b,a )			{	}
 	TColour32(u32 rgba)													{	Set( rgba );	}
 	TColour32(const TColour& Colour);
-	TColour32(const TColour24& Colour);
+	TColour32(const TColour24& Colour,u8 Alpha=255);
 	TColour32(const TColour32& Colour);
 	TColour32(const TColour64& Colour);
 
@@ -327,7 +327,7 @@ FORCEINLINE void TColour24::operator=(const TColour32& Colour)		{	m_Rgb.Set( Col
 FORCEINLINE void TColour24::operator=(const TColour64& Colour)		{	m_Rgb.Set( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8() );	}
 
 FORCEINLINE TColour32::TColour32(const TColour& Colour) : m_Rgba ( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8(), Colour.GetAlpha8() )		{	}
-FORCEINLINE TColour32::TColour32(const TColour24& Colour) : m_Rgba ( Colour.m_Rgb.xyzw(255) )	{	}
+FORCEINLINE TColour32::TColour32(const TColour24& Colour,u8 Alpha) : m_Rgba ( Colour.m_Rgb.xyzw(Alpha) )	{	}
 FORCEINLINE TColour32::TColour32(const TColour32& Colour) : m_Rgba ( Colour.m_Rgba )		{	}
 FORCEINLINE TColour32::TColour32(const TColour64& Colour) : m_Rgba ( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8(), Colour.GetAlpha8() )		{	}
 FORCEINLINE void TColour32::operator=(const TColour& Colour)		{	m_Rgba.Set( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8(), Colour.GetAlpha8() );	}

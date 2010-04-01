@@ -58,6 +58,10 @@ public:
 
 	Bool							SetTextureData(const Type2<u16>& ImageSize, TBinary& ImageData);
 
+	//	insert texture data into the texture at a certain point
+	bool							PasteTextureData(const Type2<u16>& PasteAt,const TArray<TColour24>& TextureData,const Type2<u16>& DataSize);
+	bool							PasteTextureData(const Type2<u16>& PasteAt,const TArray<TColour32>& TextureData,const Type2<u16>& DataSize);
+
 	FORCEINLINE Bool				HasChanged()						const	{	return m_HasChanged; }
 	FORCEINLINE void				SetHasChanged(Bool bChanged)				{	m_HasChanged = bChanged; }
 //protected:

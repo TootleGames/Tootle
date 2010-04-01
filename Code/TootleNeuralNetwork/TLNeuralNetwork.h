@@ -99,41 +99,41 @@ public:
 	explicit TNeuralNetwork(TRef refNeuralNetworkID);
 	virtual ~TNeuralNetwork(void);
 
-	virtual const TRefRef		GetSubscriberRef() const	{	return m_refNeuralNetworkID;	}
-	void						Update();		
+	virtual TRefRef		GetSubscriberRef() const	{	return m_refNeuralNetworkID;	}
+	void				Update();		
 
 	TPtr<TNeuron>		AddInputNeuron();
-	Bool						AddInputNeurons(u32 uNumberOfNeurons, TPtrArray<TNeuron>& NeuronList);
+	Bool				AddInputNeurons(u32 uNumberOfNeurons, TPtrArray<TNeuron>& NeuronList);
 
 
 	// Neuron manipulation
 	TPtr<TNeuron>		AddNeuron(TPtr<TNeuron> pNeuronTo = NULL);																								// Adds a new neuron and automatically links it to the specified neuron				
-	Bool						AddNeurons(u32 uNumberOfNeurons, TPtrArray<TNeuron>& NeuronList, TPtr<TNeuron> pNeuronTo = NULL);		// Adds a new list of neurons and automatically links them to the specified neuron
+	Bool				AddNeurons(u32 uNumberOfNeurons, TPtrArray<TNeuron>& NeuronList, TPtr<TNeuron> pNeuronTo = NULL);		// Adds a new list of neurons and automatically links them to the specified neuron
 
-	void						RemoveNeuron(TPtr<TNeuron> pNeuron);					// Removes a neuron removing all links to and from the neuron
+	void				RemoveNeuron(TPtr<TNeuron> pNeuron);					// Removes a neuron removing all links to and from the neuron
 
 	TPtr<TNeuron>		AddNeuron(TPtrArray<TNeuron>& pNeuronsTo);																								// Adds a new neuron and connects it to the list of neurons
-	Bool						AddNeurons(u32 uNumberOfNeurons, TPtrArray<TNeuron>& NeuronList, TPtrArray<TNeuron>& pNeuronsTo);		// Adds a new list of neurons and connects them to the list of neurons
+	Bool				AddNeurons(u32 uNumberOfNeurons, TPtrArray<TNeuron>& NeuronList, TPtrArray<TNeuron>& pNeuronsTo);		// Adds a new list of neurons and connects them to the list of neurons
 
 	// Connection manipulation
 	TPtr<TAxon>			Connect(TPtr<TNeuron> pNeuronA, TPtr<TNeuron> pNeuronB);			// Connect neuron A to neuron B
 
-	void						Disconnect(TPtr<TNeuron> pNeuron);												// Disconnects the specified neuron from all links to and from the neuron
-	void						Disconnect(TPtr<TNeuron> pNeuronA, TPtr<TNeuron> pNeuronB);		// Disconnect neuron A from neuron B
+	void				Disconnect(TPtr<TNeuron> pNeuron);												// Disconnects the specified neuron from all links to and from the neuron
+	void				Disconnect(TPtr<TNeuron> pNeuronA, TPtr<TNeuron> pNeuronB);		// Disconnect neuron A from neuron B
 
 	TPtr<TAxon>			GetConnection(TPtr<TNeuron> pNeuronA, TPtr<TNeuron> pNeuronB);									// Gets the axon connection between two neurons
-	void						SetConnectionWeight(TPtr<TNeuron> pNeuronA, TPtr<TNeuron> pNeuronB, float fWeight);		// Sets the weight between two neurons A and B
+	void				SetConnectionWeight(TPtr<TNeuron> pNeuronA, TPtr<TNeuron> pNeuronB, float fWeight);		// Sets the weight between two neurons A and B
 
-	TRefRef					GetNeuralNetworkID()					{ return m_refNeuralNetworkID; }
-
-private:
-
-	void						RemoveAllNeurons();
+	TRefRef				GetNeuralNetworkID()					{ return m_refNeuralNetworkID; }
 
 private:
-	TRef								m_refNeuralNetworkID;
 
-	TArray<float>					m_fInputBuffer;
+	void				RemoveAllNeurons();
+
+private:
+	TRef					m_refNeuralNetworkID;
+
+	TArray<float>			m_fInputBuffer;
 	TPtrArray<TNeuron>		m_InputNeurons;
 
 	TPtrArray<TNeuron>		m_Neurons;

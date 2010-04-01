@@ -42,7 +42,7 @@ Bool TLAsset::TTexture::SetSize(const Type2<u16>& NewSize,Bool EnableAlpha, Bool
 		}
 		else 
 		{
-			TLDebug_Break("Texture size must be square; 256x256, NOT 256x128");
+			TLDebug_Break("Texture size must be square; eg. 256x256, NOT 256x128");
 			return FALSE;
 		}
 	}
@@ -50,6 +50,7 @@ Bool TLAsset::TTexture::SetSize(const Type2<u16>& NewSize,Bool EnableAlpha, Bool
 	// sizes are the same, so can just check x or y is power of 2 and less than max texture size
 	// TODO: max texture size may be platform specific so may need a platform specific function
 	// to get this information rather than assuming a set size
+	//	gr: for portability, we have a max of 1024 which is the iphone's limit.
 	if ( FinalSize.x > 1024 || !TLMaths::IsPowerOf2(FinalSize.x) )
 	{
 		TLDebug_Break("Texture size MUST be power of 2; 2,4,8...1024 etc and MUST be 1024 or less");
@@ -103,7 +104,7 @@ Bool TLAsset::TTexture::SetTextureData(const Type2<u16>& ImageSize, TBinary& Ima
 		TLMemory::CopyData(pPixelData, pImageData, uSize);
 									 
 		uPixelOffset += m_Size.x;
-		uImageOffset += ImageSize.x * 4.0F;
+		uImageOffset += ImageSize.x * 4;
 	}
 
 	GetPixelData().ResetReadPos();
@@ -149,5 +150,75 @@ SyncBool TLAsset::TTexture::ExportData(TBinaryTree& Data)
 }
 
 
+//-------------------------------------------------------
+//	insert texture data into the texture at a certain point
+//-------------------------------------------------------
+bool TLAsset::TTexture::PasteTextureData(const Type2<u16>& PasteAt,const TArray<TColour24>& TextureData,const Type2<u16>& DataSize)
+{
+	//	check this fits in
+	Type2<u16> BottomRight = PasteAt + DataSize;
+	if ( BottomRight.x >= GetWidth() || BottomRight.y >= GetHeight() )
+	{
+		TTempString Debug_String;
+		Debug_String << "Data being pasted into texture at (" << PasteAt.x << "," << PasteAt.y << " -> " << BottomRight.x << "," << BottomRight.y << ")"
+					<< " does not fit into texture sized (" << GetWidth() << "," << GetHeight() << ")";
+		TLDebug_Break( Debug_String );
+		return false;
+	}
+
+	//	make sure we're pasting into the right format
+	//	todo: convert as we paste
+	TColour24* pTextureRowData = GetPixelData24At( PasteAt );
+	if ( !pTextureRowData )
+	{
+		TLDebug_Break("Missing colour data in texture... wrong format? (24bit into 32bit texture?");
+		return false;
+	}
+
+	//	write data in, row-by-row
+	for ( u32 y=0;	y<DataSize.y;	y++ )
+	{
+		pTextureRowData = GetPixelData24At( PasteAt.x, PasteAt.y + y );
+		const TColour24* pPasteRowData = &TextureData[ 0 + (y * DataSize.y) ];
+		TLMemory::CopyData( pTextureRowData, pPasteRowData, DataSize.x );
+	}
+
+	return true;
+}
 
 
+//-------------------------------------------------------
+//	insert texture data into the texture at a certain point
+//-------------------------------------------------------
+bool TLAsset::TTexture::PasteTextureData(const Type2<u16>& PasteAt,const TArray<TColour32>& TextureData,const Type2<u16>& DataSize)
+{
+	//	check this fits in
+	Type2<u16> BottomRight = PasteAt + DataSize;
+	if ( BottomRight.x >= GetWidth() || BottomRight.y >= GetHeight() )
+	{
+		TTempString Debug_String;
+		Debug_String << "Data being pasted into texture at (" << PasteAt.x << "," << PasteAt.y << " -> " << BottomRight.x << "," << BottomRight.y << ")"
+					<< " does not fit into texture sized (" << GetWidth() << "," << GetHeight() << ")";
+		TLDebug_Break( Debug_String );
+		return false;
+	}
+
+	//	make sure we're pasting into the right format
+	//	todo: convert as we paste
+	TColour32* pTextureRowData = GetPixelData32At( PasteAt );
+	if ( !pTextureRowData )
+	{
+		TLDebug_Break("Missing colour data in texture... wrong format? (24bit into 32bit texture?");
+		return false;
+	}
+
+	//	write data in, row-by-row
+	for ( u32 y=0;	y<DataSize.y;	y++ )
+	{
+		pTextureRowData = GetPixelData32At( PasteAt.x, PasteAt.y + y );
+		const TColour32* pPasteRowData = &TextureData[ 0 + (y * DataSize.y) ];
+		TLMemory::CopyData( pTextureRowData, pPasteRowData, DataSize.x );
+	}
+
+	return true;
+}

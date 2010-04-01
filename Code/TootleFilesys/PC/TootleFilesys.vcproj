@@ -723,6 +723,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TFileMappy.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TFileMappy.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TFileMenu.cpp"
 			>
 		</File>

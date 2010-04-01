@@ -27,6 +27,9 @@ namespace TLAsset
 class TLAsset::TTile
 {
 public:
+	TTile()	{}
+	TTile(TPtr<TBinaryTree>& pData) : m_pData	( pData )	{}
+
 	//	different types of tile
 	bool				IsValid() const		{	return m_pData;	}
 	bool				IsNullTile() const	{	return !IsValid();	}
@@ -59,8 +62,8 @@ public:
 	TTile&						GetTile(u16 x,u16 y)			{	return GetTile( Type2<u16>( x,y ) );	}
 	u32							GetTileCount() const			{	return m_GridSize.x * m_GridSize.y;	}
 
-	void						SetTileSize(float TileSize)		{	m_TileSize = TileSize;	}
-	float						GetTileSize() const				{	return m_TileSize;	}
+	void						SetTileSize(const float2& TileSize)		{	m_TileSize = TileSize;	}
+	const float2&				GetTileSize() const						{	return m_TileSize;	}
 
 	bool						AddTile(TPtr<TBinaryTree>& pTileData);	//	add a new tile, returns false if we cannot fit any more tiles or invalid data etc
 	void						PadTiles();						//	add more tiles till we fill the array
@@ -72,7 +75,7 @@ protected:
 protected:
 	TArray<TTile>		m_Tiles;		//	tile at each grid coordinate
 	Type2<u16>			m_GridSize;		//	grid size
-	float				m_TileSize;		//	expected size of render node tiles - gr: maybe don't store that here?
+	float2				m_TileSize;		//	expected size of render node tiles - gr: maybe don't store that here?
 };
 
 

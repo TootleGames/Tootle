@@ -73,6 +73,7 @@ public:
 	void					OnScreenSizeChanged()						{	OnSizeChanged();	}
 
 	void					SetCamera(TPtr<TCamera>& pCamera)			{	m_pCamera = pCamera;	OnSizeChanged();	}	//	gr: call OnSizeChanged to do camera some initialisation - specficcly for the ortho
+	void					OnCameraChanged()							{	OnSizeChanged();	}	//	recalculate some camera stuff - only required when viewport, orthoscale etc change, not pos/lookat/roll/up etc
 	TPtr<TCamera>&			GetCamera()									{	return m_pCamera;	}
 	const TColour&			GetClearColour() const						{	return m_ClearColour;	}
 	void					SetClearColour(const TColour& Colour);		//	set new clear colour

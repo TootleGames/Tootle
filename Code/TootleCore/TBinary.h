@@ -84,6 +84,8 @@ public:
 	Bool											ReadString(TString& String);		//	read data into a string - handles ascii and unicode
 //	template<typename TYPE> FORCEINLINE Bool		ReadConvert(TYPE& Var);				//	read data, if the types mis match do a conversion (= operator)
 	Bool											ReadData(u8* pData,u32 Length,Bool CutData=FALSE);	//	read data into address - CutData cuts the read data out of the array
+	template<typename TYPE>
+	Bool											ReadDataIntoArray(TArray<TYPE>& Array,u32 Elements)	{	u32 OldSize = Array.GetSize();	if ( !Array.SetSize( OldSize + Elements ) )	return false;	return ReadData( (u8*)&Array.ElementAt(OldSize), Elements * sizeof(TYPE) );	}
 
 	template<typename TYPE> FORCEINLINE void	Write(const TYPE& Var)				{	SetDataTypeHint<TYPE>();	WriteData( (u8*)&Var, sizeof(TYPE) );		}
 	template<typename TYPE> FORCEINLINE void	Write(const TArray<TYPE>& Array)	{	SetDataTypeHint<TYPE>();	WriteArray( Array );	}
