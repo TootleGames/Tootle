@@ -516,7 +516,6 @@ void TStringLowercase<BASESTRINGTYPE>::OnStringChanged(u32 FirstChanged,s32 Last
 template<>
 FORCEINLINE TString& operator<<(TString& String,const u32& Value)		
 {
-	TLDebug_Break("Untested");
 	TFixedArray<TChar,12> IntegerChars;
 	u32 i=Value;
 

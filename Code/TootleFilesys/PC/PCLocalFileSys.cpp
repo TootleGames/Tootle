@@ -71,9 +71,9 @@ SyncBool Platform::LocalFileSys::LoadFileList()
 	}
 
 	//	finalise file list (updates timestamp and flushes missing files)
-	FinaliseFileList();
+	Bool Changed = FinaliseFileList();
 
-	return SyncTrue;
+	return Changed ? SyncTrue : SyncWait;
 }
 
 
@@ -139,9 +139,14 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 		return SyncFalse;
 	}
 
-	//	already loaded
-	if ( pFile->IsLoaded() == SyncTrue )
+	//	if already loaded and not out of date, skip the load
+	if ( pFile->IsLoaded() == SyncTrue && !pFile->IsOutOfDate() )
+	{
+		TDebugString Debug_String;
+		Debug_String << "LoadFile() with file " << pFile->GetFilename() << " which is already loaded and not out of date. Shouldn't be any need to call this...";
+		TLDebug_Break( Debug_String );
 		return SyncTrue;
+	}
 
 	//	get full path and filename
 	TString FullFilename = m_Directory;
@@ -157,10 +162,6 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 		UpdateFileInstance( pFile, NULL );
 		pFile->SetIsLoaded( SyncFalse );
 		return SyncFalse;
-	}
-	else
-	{
-		pFile->GetFlags().Clear( TFile::OutOfDate );
 	}
 
 	//	move cursor to end and get position
@@ -223,7 +224,6 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 	//	make sure file is marked as okay
 	pFile->GetFlags().Clear( TFile::Lost );
 	pFile->GetFlags().Clear( TFile::TooBig );
-	pFile->GetFlags().Clear( TFile::OutOfDate );
 
 	//	file was too big
 	if ( FileTooBig )

@@ -383,21 +383,112 @@ TLAsset::TAssetManager::TAssetManager(TRefRef ManagerRef) :
 
 
 SyncBool TLAsset::TAssetManager::Initialise() 
-{	
-	if(TLMessaging::g_pEventChannelManager)
-	{
-		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "OnAssetChanged");
+{
+	//	wait for file system so we can subscribe to it
+	if ( !TLFileSys::g_pFactory )
+		return SyncWait;
+
+	//	wait for channel manager
+	if ( !TLMessaging::g_pEventChannelManager )
+		return SyncWait;
+
+
+	//	subscribe to file system so we can tell when files change and reload their assets
+	this->SubscribeTo( TLFileSys::g_pFactory );
+
+	//	register channel
+	TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "OnAssetChanged");
 
 #ifdef CHECK_ASSETARRAY_INTEGRITY
 		TLMemory::TMemorySystem::Instance().SetAllCallbacks(&TLAsset::Debug_CheckAssetArrayIntegrity);
 #endif
 
-		return SyncTrue;
-	}
-
-	return SyncWait; 
+	return SyncTrue;
 }
 
+
+//---------------------------------------------------------
+//	
+//---------------------------------------------------------
+void TLAsset::TAssetManager::ProcessMessage(TLMessaging::TMessage& Message)
+{
+	//	catch change in file system
+	if ( Message.GetMessageRef() == TRef_Static(F,C,h,n,g) )
+	{
+		TTypedRef FileRef;
+		TRef FileSysRef;
+		if ( Message.ImportData("File", FileRef) && Message.ImportData("FileSys", FileSysRef ) )
+		{
+			ReExportAssetForFile( FileRef, FileSysRef );
+		}
+	}
+
+	//	do super-processing
+	TLCore::TManager::ProcessMessage( Message );
+}
+
+
+//---------------------------------------------------------
+//	re-export any assets for this file
+//---------------------------------------------------------
+bool TLAsset::TAssetManager::ReExportAssetForFile(TTypedRefRef FileRef,TRefRef FileSysRef)
+{
+	//	gr: use the usual method to fetch the file of this ref and 
+	//		see if that file sys is the most up to date file sys for the file
+	//	find file
+	TPtr<TLFileSys::TFile>& pFile = TLFileSys::GetLatestFile( FileRef );
+	if ( !pFile )
+	{
+		TDebugString Debug_String;
+		Debug_String << "Failed to find latest file " << FileRef << " after FileChanged message";
+		TLDebug_Break( Debug_String );
+		return false;
+	}
+
+	//	check filesys of the file matches the one we were told has changed
+	//	if not, we just kinda ignore the change.
+	if ( pFile->GetFileSysRef() != FileSysRef )
+	{
+		TDebugString Debug_String;
+		Debug_String << "File " << FileRef << " in " << FileSysRef << " changed but is not the latest file.";
+		TLDebug_Print( Debug_String );
+		return false;
+	}
+
+	//	see what assets this file could output
+	TFixedArray<TRef,100> AssetTypeRefs;
+	pFile->GetSupportedExportAssetTypes( AssetTypeRefs );
+
+	bool AnyReloaded = false;
+
+	//	see if any of these assets are loaded...
+	for ( u32 a=0;	a<AssetTypeRefs.GetSize();	a++ )
+	{
+		TTypedRef ExportAssetRef( pFile->GetFileRef(), AssetTypeRefs[a] );
+
+		//	gr: this is a "could be anything" file... should we process this one?
+		if ( !ExportAssetRef.GetTypeRef().IsValid() )
+			continue;
+
+		//	get existing asset with this ref and type
+		TLAsset::TAsset* pAsset = TLAsset::GetAsset( ExportAssetRef, SyncFalse );
+
+		//	if this asset doesnt exist, it's not been loaded, so we won't re-load it
+		if ( !pAsset )
+			continue;
+
+		//	asset exists and is loaded! lets re-load it by unloading the old one and starting 
+		//	the load process which should find this file that's changed because it's the latest 
+		//	one (we checked that above)
+		TLAsset::DeleteAsset( pAsset );
+
+		//	start loading the asset again
+		SyncBool LoadResult = TLAsset::LoadAsset( ExportAssetRef, false );
+		AnyReloaded |= (LoadResult != SyncFalse);
+	}
+
+	return AnyReloaded;
+}
 
 
 void TLAsset::TAssetManager::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID)
@@ -635,14 +726,20 @@ Bool TLAsset::TAssetManager::DeleteAsset(const TTypedRef& AssetAndTypeRef)
 	}
 
 	//	mark asset as unavailible in case it's lingering around somewhere to help debugging
-	TPtr<TAsset>& pAssetPtr = m_Assets[AssetIndex];
+	//	gr: hold onto TPtr for the messages (so not a reference!)
+	TPtr<TAsset> pAssetPtr = m_Assets[AssetIndex];
 	if ( pAssetPtr )
 		pAssetPtr->SetLoadingState( TLAsset::LoadingState_Deleted );
 
 	//	remove from array
 	m_Assets.RemoveAt(AssetIndex);
-	
-	//	pAssetPtr is now invalid
+
+	//	send out a notification from the asset
+	pAssetPtr->OnRemoved();
+
+	//	this final line should delete the asset (unless there is a pointer that will be hopefully 
+	//	cleaned up in the asset manager notification
+	pAssetPtr = NULL;
 
 	#ifdef _DEBUG
 		TTempString DebugString("Deleted asset ");
@@ -650,7 +747,7 @@ Bool TLAsset::TAssetManager::DeleteAsset(const TTypedRef& AssetAndTypeRef)
 		TLDebug_Print( DebugString );
 	#endif
 
-	// Do a notification to say the asset has been removed
+	// Do a notification to say the asset has been removed via the asset manager AFTER it's deleted
 	OnAssetUnload( AssetAndTypeRef );
 
 	return TRUE;

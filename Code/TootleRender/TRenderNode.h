@@ -256,8 +256,8 @@ protected:
 
 	Bool									CreateChildNode(TBinaryTree& ChildInitData);	//	create a child node from plain data
 
-	FORCEINLINE void						OnMeshRefChanged()							{	m_pMeshCache = NULL;	OnMeshChanged();	}
-	FORCEINLINE void						OnTextureRefChanged()						{	m_pTextureCache = NULL;	}
+	FORCEINLINE void						OnMeshRefChanged()							{	this->UnsubscribeFrom( m_pMeshCache );	m_pMeshCache = NULL;	OnMeshChanged();	}
+	FORCEINLINE void						OnTextureRefChanged()						{	this->UnsubscribeFrom( m_pTextureCache );	m_pTextureCache = NULL;	}
 	void									OnAttachDatumChanged();						//	called when attach datum needs repositioning
 	//void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags=TInvalidateFlags(InvalidateLocalBounds,InvalidateWorldBounds,InvalidateWorldPos,InvalidateParents,InvalidateChildren));	//	set all bounds as invalid
 	void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags);

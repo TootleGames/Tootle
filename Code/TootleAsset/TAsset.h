@@ -8,6 +8,7 @@
 #include <TootleCore/TRef.h>
 #include <TootleCore/TPtr.h>
 #include <TootleCore/TBinaryTree.h>
+#include <TootleCore/TPublisher.h>
 
 
 class TString;
@@ -21,6 +22,7 @@ namespace TLFileSys
 namespace TLAsset
 {
 	class TAsset;			//	base asset type
+	class TAssetManager;
 
 	enum TLoadingState
 	{
@@ -37,11 +39,13 @@ namespace TLAsset
 //----------------------------------------------------
 //	base asset type
 //----------------------------------------------------
-class TLAsset::TAsset
+class TLAsset::TAsset : public TLMessaging::TPublisher
 {
+	friend class TLAsset::TAssetManager;	//	allow asset manager to invoke the notifications
 public:
 	TAsset(TRefRef AssetType,TRefRef AssetRef);
 
+	virtual TRefRef		GetPublisherRef() const					{	return GetAssetRef();	}
 	static TRef			GetAssetType_Static()					{	return TRef_Static(A,s,s,e,t);	}
 
 	Bool				IsLoaded() const						{	return GetLoadingState() == TLAsset::LoadingState_Loaded;	}
@@ -71,6 +75,8 @@ protected:
 	virtual SyncBool	ExportData(TBinaryTree& Data);			//	save asset data to binary data - base type just exports dumb m_Data
 	void				ImportUnknownData(TBinaryTree& Data);	//	take any data in this binary tree that we didn't read after importing and put it into this asset's data (m_Data)
 	void				ExportUnknownData(TBinaryTree& Data);	//	write out our unknown data
+
+	void				OnRemoved();							//	asset is being removed from the system, send notification to our subscribers
 
 protected:
 	TBinaryTree			m_Data;							//	after importing, this data was not read in. could just be additonal meta data or old data we don't use any more

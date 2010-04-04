@@ -87,10 +87,18 @@ SyncBool TLAsset::TAtlas::ImportData(TBinaryTree& Data)
 
 			//	create glyph
 			TAtlasGlyph* pGlyph = AddGlyph( GlyphKey );
-
-			//	import data
-			if ( !pGlyph->ImportData( *pChildData ) )
-				return SyncFalse;
+			if ( pGlyph )
+			{
+				//	import data
+				if ( !pGlyph->ImportData( *pChildData ) )
+					return SyncFalse;
+			}
+			else
+			{
+				TDebugString Debug_String;
+				Debug_String << "Warning: failed to add glyph " << GlyphKey << " to atlas " << this->GetAssetAndTypeRef();
+				TLDebug_Print( Debug_String );
+			}
 		}
 	}
 

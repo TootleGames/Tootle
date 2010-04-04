@@ -122,7 +122,7 @@ public:
 	s32				GetMilliSecondsDiff(const TTimestamp& Timestamp) const	{	return SecsToMilliSecs(GetSecondsDiff(Timestamp)) + (Timestamp.GetMilliSeconds() - GetMilliSeconds());	}
 	void			GetTimeDiff(const TTimestamp& Timestamp,s32& Secs,s32& MilliSecs);		//	get difference between timestamp in parts
 	
-	Bool			IsValid() const										{	return (m_Date != 0) && (m_MilliSeconds != 0);	}
+	Bool			IsValid() const										{	return (m_Date != 0) || (m_MilliSeconds != 0);	}
 
 	Bool			operator<(const TTimestamp& Timestamp) const;
 	Bool			operator>(const TTimestamp& Timestamp) const;

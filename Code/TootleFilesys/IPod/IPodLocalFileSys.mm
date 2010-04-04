@@ -57,9 +57,9 @@ SyncBool Platform::LocalFileSys::LoadFileList()
 	}
 
 	//	finalise file list (updates timestamp and flushes missing files)
-	FinaliseFileList();
+	Bool Changed = FinaliseFileList();
 
-	return SyncTrue;
+	return Changed ? SyncTrue : SyncWait;
 }
 
 
@@ -260,9 +260,14 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 		return SyncFalse;
 	}
 
-	//	already loaded
-	if ( pFile->IsLoaded() == SyncTrue )
+	//	if already loaded and not out of date, skip the load
+	if ( pFile->IsLoaded() == SyncTrue && !pFile->IsOutOfDate() )
+	{
+		TDebugString Debug_String;
+		Debug_String << "LoadFile() with file " << pFile->GetFilename() << " which is already loaded and not out of date. Shouldn't be any need to call this...";
+		TLDebug_Break( Debug_String );
 		return SyncTrue;
+	}
 
 	//	get full path and filename
 	TString FullFilename = m_Directory;

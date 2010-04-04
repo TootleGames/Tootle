@@ -18,7 +18,8 @@ namespace TLFileSys
 //----------------------------------------------------------
 TLFileSys::TFileSys::TFileSys(TRefRef FileSysRef,TRefRef FileSysTypeRef) :
 	m_FileSysRef		( FileSysRef ),
-	m_FileSysTypeRef	( FileSysTypeRef )
+	m_FileSysTypeRef	( FileSysTypeRef ),
+	m_UpdatingFileList	( false )
 {
 }
 
@@ -51,6 +52,7 @@ Bool TLFileSys::TFileSys::CheckIsFileFromThisFileSys(TPtr<TFile>& pFile)
 TPtr<TLFileSys::TFile> TLFileSys::TFileSys::CreateFileInstance(const TString& Filename)
 {
 	//	see if this file already exists
+	//	gr: note: NOT a reference! don't want to overwrite the NULL TPtr
 	TPtr<TFile> pFile = GetFile( Filename );
 
 	//	already created/exists just return current one
@@ -115,6 +117,20 @@ Bool TLFileSys::TFileSys::RemoveFileInstance(TPtr<TFile> pFile)
 //----------------------------------------------------------
 SyncBool TLFileSys::TFileSys::UpdateFileList()
 {
+	//	gr: just to stop recursing -although we're not getting stuck in a loop-
+	//		we're doing excessive work.
+	//		routine updateFileList, a file changes, triggers a reload of the asset
+	//		which triggers another UpdateFileList  but the timestamp is out of date
+	//		(over 10 seconds, so this probably only goes wrong when debugging...)
+	//		and causes duplicated work.
+	//	when we become threaded, in theory the file system[s] will be locked from message
+	//	handling until it's all done anyway so we won't have this trouble...
+	if ( m_UpdatingFileList )
+	{
+		//	no changes
+		return SyncWait;
+	}
+
 	Bool ReloadFilelist = FALSE;
 
 	//	if timestamp is valid compare with current time
@@ -141,38 +157,45 @@ SyncBool TLFileSys::TFileSys::UpdateFileList()
 	if ( !ReloadFilelist )
 		return SyncFalse;
 	
+	//	mark as updating file list
+	m_UpdatingFileList = true;
+
 	//	reload file list, if failed return no change
 	SyncBool LoadResult = LoadFileList();
 
 	//	update timestamp
 	m_LastFileListUpdate.SetTimestampNow();
 
-	if ( LoadResult == SyncFalse )
-		return SyncFalse;
-
-#ifdef _DEBUG
-	TTempString Debug_String("New file list for file sys: ");
-	this->GetFileSysRef().GetString( Debug_String );
-	Debug_String.Appendf(". %d files: \n", GetFileList().GetSize() );
-	for ( u32 f=0;	f<GetFileList().GetSize();	f++ )
+	if ( LoadResult == SyncTrue )
 	{
-		TLFileSys::TFile& File = *(GetFileList().ElementAt(f));
-		File.Debug_GetString( Debug_String );
-		TLDebug_Print( Debug_String );
-		Debug_String.Empty();
+	#ifdef _DEBUG
+		TTempString Debug_String("New file list for file sys: ");
+		this->GetFileSysRef().GetString( Debug_String );
+		Debug_String.Appendf(". %d files: \n", GetFileList().GetSize() );
+		for ( u32 f=0;	f<GetFileList().GetSize();	f++ )
+		{
+			TLFileSys::TFile& File = *(GetFileList().ElementAt(f));
+			File.Debug_GetString( Debug_String );
+			TLDebug_Print( Debug_String );
+			Debug_String.Empty();
+		}
+	#endif
 	}
-#endif
 
-	//	gr: was SyncWait... not sure why, now when it returns SyncTrue we 
+	//	no longer updating
+	m_UpdatingFileList = false;
+
 	return LoadResult;
 }
 
 
 //----------------------------------------------------------
-//	update timestamp and flush missing files
+//	update timestamp and flush missing files. returns true if any files were removed or changed
 //----------------------------------------------------------
-void TLFileSys::TFileSys::FinaliseFileList()
+Bool TLFileSys::TFileSys::FinaliseFileList()
 {
+	Bool Changed = false;
+
 	//	update time stamp of file list
 	m_LastFileListUpdate.SetTimestampNow();
 
@@ -185,8 +208,21 @@ void TLFileSys::TFileSys::FinaliseFileList()
 		if ( pFile->GetFlags()( TFile::Lost ) )
 		{
 			RemoveFileInstance( pFile );
+			Changed = true;
 			continue;
 		}
+
+		//	for any files that have changed, send out notification
+		if ( pFile->IsOutOfDate() )
+		{
+			//	get manager to notify that file has changed
+			TLFileSys::g_pFactory->OnFileChanged( pFile->GetFileAndTypeRef(), this->GetFileSysRef() );	
+
+			Changed = true;
+		}
 	}
+
+	return Changed;
 }
+
 

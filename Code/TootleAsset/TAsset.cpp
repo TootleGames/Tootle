@@ -179,3 +179,20 @@ SyncBool TLAsset::TAsset::ImportData(TBinaryTree& Data)
 	return SyncTrue;
 }
 
+
+//----------------------------------------------------
+//	asset is being removed from the system, send notification to our subscribers
+//----------------------------------------------------
+void TLAsset::TAsset::OnRemoved()
+{
+	if ( !HasSubscribers() )
+		return;
+
+	//	send the "ASSetReMoved" message
+	TLMessaging::TMessage Message( TRef_Static(A,s,s,R,m), GetAssetRef() );
+	
+	//	send asset type info so we can distinguish between two assets with the same ref
+	Message.ExportData( TRef_Static4(T,y,p,e), GetAssetType() );
+
+	PublishMessage( Message );
+}

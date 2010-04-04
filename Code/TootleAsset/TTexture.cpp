@@ -183,6 +183,9 @@ bool TLAsset::TTexture::PasteTextureData(const Type2<u16>& PasteAt,const TArray<
 		TLMemory::CopyData( pTextureRowData, pPasteRowData, DataSize.x );
 	}
 
+	//	mark as changed
+	SetHasChanged(true);
+
 	//	generate UV box
 	if ( pGlyphBox )
 	{
@@ -228,6 +231,9 @@ bool TLAsset::TTexture::PasteTextureData(const Type2<u16>& PasteAt,const TArray<
 		const TColour32* pPasteRowData = &TextureData[ 0 + (y * DataSize.y) ];
 		TLMemory::CopyData( pTextureRowData, pPasteRowData, DataSize.x );
 	}
+
+	//	mark as changed
+	SetHasChanged(true);
 
 	//	generate UV box
 	if ( pGlyphBox )

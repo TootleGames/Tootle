@@ -269,6 +269,13 @@ u32 TLRender::Opengl::UploadTexture(const TLAsset::TTexture& Texture)
 	//	add to indexing
 	g_TextureIndexes.Add( Texture.GetAssetRef(), NewTextureIndex );
 
+
+	//	gr: hack until the re-uploading on messages happens;
+	//	need to set texture as not-changed as on first-use of the texture it gets uploaded...
+	//	then uploaded again as the HasChanged is true from the first import
+	TLAsset::TTexture& NonConstTexture = const_cast<TLAsset::TTexture&>(Texture);
+	NonConstTexture.SetHasChanged(false);
+
 	return NewTextureIndex;
 }
 
@@ -313,6 +320,10 @@ Bool TLRender::Opengl::BindTexture(const TLAsset::TTexture* pTexture)
 		{
 			TextureIndex = UploadTexture( *pTexture );
 		}
+		//	gr: todo: change this to;
+		//		rasteriser subscribes to textures it uploads
+		//		on AssCh then re-upload contents of the texture
+		//		on AssRm then delete the uploaded texture
 		else if(pTexture->HasChanged())
 		{
 			// Texture has changed (dynamic at runtime) and now needs to be re-uploaded 

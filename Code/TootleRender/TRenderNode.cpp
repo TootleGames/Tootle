@@ -215,6 +215,10 @@ TLAsset::TMesh* TLRender::TRenderNode::GetMeshAsset()
 	if ( GetMeshRef().IsValid() && !m_pMeshCache )
 	{
 		m_pMeshCache = TLAsset::GetAssetPtr<TLAsset::TMesh>( GetMeshRef() ).GetObjectPointer();
+		
+		//	if we get an asset then subscribe to it to catch when it's about to be removed from the asset system
+		if ( m_pMeshCache )
+			this->SubscribeTo( m_pMeshCache );
 	}
 
 	return m_pMeshCache;
@@ -229,6 +233,10 @@ TLAsset::TTexture* TLRender::TRenderNode::GetTextureAsset()
 	if ( GetTextureRef().IsValid() && !m_pTextureCache )
 	{
 		m_pTextureCache = TLAsset::GetAssetPtr<TLAsset::TTexture>( GetTextureRef() ).GetObjectPointer();
+
+		//	if we get an asset then subscribe to it to catch when it's about to be removed from the asset system
+		if ( m_pTextureCache )
+			this->SubscribeTo( m_pTextureCache );
 	}
 
 	return m_pTextureCache;
@@ -720,6 +728,28 @@ void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 		u8 TransformChangedBits = m_Transform.AddTransform_HasChanged( Transform );
 		OnTransformChanged( TransformChangedBits );
 		return;
+	}
+	else if ( Message.GetMessageRef() == TRef_Static(A,s,s,R,M) )
+	{
+		//	get type
+		TRef AssetType;
+		Message.ImportData( TRef_Static4(T,y,p,e), AssetType );
+
+		//	asset being deleted, remove our cached pointers
+		if ( Message.GetSenderRef() == m_MeshRef && AssetType == TRef_Static4(M,e,s,h) )
+		{
+			OnMeshRefChanged();
+		}
+		else if ( Message.GetSenderRef() == m_TextureRef  && AssetType == TRef_Static(T,e,x,t,u) )
+		{
+			OnTextureRefChanged();
+		}
+		else
+		{
+			TDebugString Debug_String;
+			Debug_String << "Warning, an asset we're subscribed to wasn't handled when it was removed..." << TTypedRef( Message.GetSenderRef(), AssetType );
+			TLDebug_Break( Debug_String );
+		}
 	}
 
 	//	do inherited init

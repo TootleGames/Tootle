@@ -74,6 +74,7 @@ public:
 	const TLTime::TTimestamp&		GetTimestamp() const			{	return m_Timestamp;	}
 	void							SetTimestamp(const TLTime::TTimestamp& NewTimestamp);	//	update timestamp
 	void							SetTimestampNow();				//	update timestamp
+	bool							IsOutOfDate() const				{	return GetFlags()( OutOfDate );	}
 
 	s32								GetFileSize() const				{	return m_FileSize;	}		
 	void							SetFileSize(s32 FileSize,Bool IsTooBig=FALSE)	{	m_FileSize = FileSize;	GetFlags().Set( TooBig, IsTooBig );	}
@@ -92,7 +93,7 @@ public:
 	FORCEINLINE void				SetUnknownType(Bool IsUnknown=TRUE)	{	m_Flags.Set( UnknownType, IsUnknown );	}
 	FORCEINLINE Bool				IsUnknownType() const				{	return m_Flags.IsSet( UnknownType );	}
 
-	virtual void					OnFileLoaded()					{	SetIsLoaded(SyncTrue);	TBinary::Compact();	m_Flags.Clear( OutOfDate );	};		//	binary file data has finished loading from file sys
+	virtual void					OnFileLoaded();						//	file has been loaded and it's contents changed
 
 	FORCEINLINE Bool				operator==(const TString& Filename) const			{	return GetFilename().IsEqual( Filename, FALSE );	}	//	gr: although files are stored as case-sensitive (CS on unix/mac/ipod, not windows) we do case-insenstive comparisons. do not STORE case insenstive though
 	FORCEINLINE Bool				operator==(const TFile& File) const					{	return GetInstanceRef() == File.GetInstanceRef();	}

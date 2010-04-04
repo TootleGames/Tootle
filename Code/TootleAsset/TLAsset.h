@@ -136,12 +136,15 @@ protected:
 	virtual SyncBool			Initialise();
 	virtual SyncBool			Update(float fTimeStep);
 	virtual SyncBool			Shutdown();
-	
+
+	virtual void				ProcessMessage(TLMessaging::TMessage& Message);
 	virtual void				OnEventChannelAdded(TRefRef refPublisherID,TRefRef refChannelID);
 
 	// Asset events - should be private but called from the LoadTask
 	void						OnAssetLoad(const TTypedRef& AssetAndTypeRef, Bool bStatus);
 	void						OnAssetUnload(const TTypedRef& AssetAndTypeRef);
+
+	bool						ReExportAssetForFile(TTypedRefRef FileRef,TRefRef FileSysRef);	//	re-export any assets for this file
 
 private:
 	TPtrArray<TAssetFactory>	m_Factories;	//	asset factories, including default

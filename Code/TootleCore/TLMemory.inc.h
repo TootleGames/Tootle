@@ -87,7 +87,9 @@ void TLMemory::CopyData(TYPE* pToData,const TYPE* pFromData,u32 Elements)
 	if ( !Elements || !pToData || !pFromData )
 		return;
 
-	Platform::MemCopy( pToData, pFromData, Elements * sizeof(TYPE) );
+	//	gr: put size into 32 bit to get rid of loads of warnings on 64bit mac build
+	u32 Size = Elements * (u32)sizeof(TYPE);
+	Platform::MemCopy( pToData, pFromData, Size );
 }
 
 

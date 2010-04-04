@@ -96,6 +96,22 @@ Bool TLFileSys::UpdateFileLists()
 
 
 //--------------------------------------------------
+//	given a file & type - get the latest version of that file from the file groups
+//--------------------------------------------------
+TPtr<TLFileSys::TFile>& TLFileSys::GetLatestFile(TTypedRefRef FileRef)
+{
+	//	get the group
+	TPtr<TLFileSys::TFileGroup>& pGroup = GetFileGroup( FileRef.GetRef() );
+
+	//	no such group
+	if ( !pGroup )
+		return TLPtr::GetNullPtr<TLFileSys::TFile>();
+
+	//	get latest of this type in the group
+	return pGroup->GetNewestFile( FileRef.GetTypeRef() );
+}
+
+//--------------------------------------------------
 //	from a list of files, return the one with the most recent timestamp
 //--------------------------------------------------
 TPtr<TLFileSys::TFile>& TLFileSys::GetLatestFile(TPtrArray<TLFileSys::TFile>& Files,TRef FileType)
@@ -426,6 +442,18 @@ SyncBool TLFileSys::TFileSysFactory::Initialise()
 	return SyncTrue;
 }
 
+
+//---------------------------------------------
+//	regular file system manager update
+//---------------------------------------------
+SyncBool TLFileSys::TFileSysFactory::Update(float fTimeStep)
+{
+	//	do regular check on the file system's for new files
+	UpdateFileLists();
+
+	return SyncTrue;
+}
+
 void TLFileSys::TFileSysFactory::OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID)
 {
 	if(refPublisherID == "CORE")
@@ -460,6 +488,26 @@ Bool TLFileSys::TFileSysFactory::UpdateFileLists()
 	}
 
 	return AnyChanged;
+}
+
+
+//------------------------------------------------------------
+//	notify subscribers that this file has changed
+//------------------------------------------------------------
+void TLFileSys::TFileSysFactory::OnFileChanged(TTypedRefRef FileRef,TRefRef FileSysRef)
+{
+	//	notify subscribers that this file has changed
+	if ( !HasSubscribers() )
+		return;
+
+	//	then it's the asset manager's responsibility to reload assets as it wants
+	TLMessaging::TMessage Message( TRef_Static(F,C,h,n,g), this->GetPublisherRef() );
+
+	//	add info to identify file
+	Message.ExportData("File", FileRef );
+	Message.ExportData("FileSys", FileSysRef );
+
+	PublishMessage( Message );
 }
 
 
@@ -578,7 +626,6 @@ TPtr<TLFileSys::TFile> TLFileSys::CreateFileInFileSys(const TString& Filename,TP
 
 	return NULL;
 }
-
 
 
 //------------------------------------------------------------
@@ -719,7 +766,7 @@ Bool TLFileSys::TFileFactory::RemoveFileInstance(TPtr<TLFileSys::TFile>& pFile)
 
 #ifdef _DEBUG
 	//	fail to make instances with no type (eg. executable name on ipod) 
-	TTempString Debug_String("Removing file from group: ");
+	TDebugString Debug_String("Removing file from group: ");
 	pFile->GetFileAndTypeRef().GetString(Debug_String);
 	TLDebug_Print( Debug_String );
 #endif

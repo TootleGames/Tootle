@@ -19,7 +19,8 @@ namespace TLDebugFile
 
 
 TLFileSys::TVirtualFileSys::TVirtualFileSys(TRefRef FileSysRef,TRefRef FileSysTypeRef) :
-	TFileSys			( FileSysRef, FileSysTypeRef )
+	TFileSys			( FileSysRef, FileSysTypeRef ),
+	m_CreatedDebugFiles	( false )
 {
 }
 
@@ -29,18 +30,26 @@ TLFileSys::TVirtualFileSys::TVirtualFileSys(TRefRef FileSysRef,TRefRef FileSysTy
 //-------------------------------------------------------
 SyncBool TLFileSys::TVirtualFileSys::LoadFileList()
 {
-	//	
-	CreateFileInstance("d_sphere.asset");
-	CreateFileInstance("d_cube.asset");
-	CreateFileInstance("d_quad.asset");
-	CreateFileInstance("d_cross.asset");
-	CreateFileInstance("d_circle.asset");
-	CreateFileInstance("d_Texture.asset");
+	Bool Changes = false;
+
+	//	first run create the debug virtual assets
+	if ( !m_CreatedDebugFiles )
+	{
+		CreateFileInstance("d_sphere.asset");
+		CreateFileInstance("d_cube.asset");
+		CreateFileInstance("d_quad.asset");
+		CreateFileInstance("d_cross.asset");
+		CreateFileInstance("d_circle.asset");
+		CreateFileInstance("d_Texture.asset");
+	
+		m_CreatedDebugFiles = true;
+		Changes |= true;
+	}
 
 	//	update time stamp of file list
-	FinaliseFileList();
+	Changes |= FinaliseFileList();
 
-	return SyncTrue;
+	return Changes ? SyncTrue : SyncWait;
 }
 
 
@@ -49,9 +58,14 @@ SyncBool TLFileSys::TVirtualFileSys::LoadFileList()
 //-------------------------------------------------------
 SyncBool TLFileSys::TVirtualFileSys::LoadFile(TPtr<TLFileSys::TFile>& pFile)
 {
-	//	file is already loaded (if not broken)
-	if ( pFile->IsLoaded() == SyncTrue )
+	//	if already loaded and not out of date, skip the load
+	if ( pFile->IsLoaded() == SyncTrue && !pFile->IsOutOfDate() )
+	{
+		TDebugString Debug_String;
+		Debug_String << "LoadFile() with file " << pFile->GetFilename() << " which is already loaded and not out of date. Shouldn't be any need to call this...";
+		TLDebug_Break( Debug_String );
 		return SyncTrue;
+	}
 
 	switch ( pFile->GetFileRef().GetData() )
 	{

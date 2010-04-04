@@ -7,8 +7,10 @@ class TLMessaging::TSubscriber
 {
 	friend class TLMessaging::TPublisher;
 public:
-	FORCEINLINE Bool	SubscribeTo(TPublisher* pPublisher)				{	return pPublisher->Subscribe(this);	}
-	FORCEINLINE Bool	UnsubscribeFrom(TPublisher* pPublisher)			{	return pPublisher->Unsubscribe(this);	}
+	FORCEINLINE Bool	SubscribeTo(TPublisher* pPublisher)				{	return pPublisher ? pPublisher->Subscribe(this) : false;	}
+	FORCEINLINE Bool	UnsubscribeFrom(TPublisher* pPublisher)			{	return pPublisher ? pPublisher->Unsubscribe(this) : false;	}
+	FORCEINLINE Bool	SubscribeTo(TPublisher& Publisher)				{	return Publisher.Subscribe(this);	}
+	FORCEINLINE Bool	UnsubscribeFrom(TPublisher& Publisher)			{	return Publisher.Unsubscribe(this);	}
 
 	virtual TRefRef		GetSubscriberRef() const=0;
 

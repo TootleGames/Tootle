@@ -21,6 +21,7 @@ namespace TLFileSys
 	TPtr<TLFileSys::TFileSys>&	GetFileSys(TRefRef FileSysRef);		//	return a file system
 	void						GetFileSys(TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef FileSysRef,TRefRef FileSysTypeRef);	//	return all matching file systems to these refs/types
 	void						GetFileList(TArray<TRef>& FileList);																//	get a list of all files in all the file systems (gets refs out of the groups)
+	TPtr<TFile>&				GetLatestFile(TTypedRefRef FileRef);	//	given a file & type - get the latest version of that file from the file groups
 	TPtr<TFileGroup>&			GetFileGroup(TRefRef FileRef);		//	get the group of files for a file ref
 	Bool						UpdateFileLists();					//	update the file lists on the file systems, returns TRUE if any file sys' has change
 	
@@ -61,10 +62,13 @@ public:
 protected:
 	virtual SyncBool				Initialise();
 	virtual SyncBool				Shutdown();
+	virtual SyncBool				Update(float fTimeStep);
 
 	virtual TLFileSys::TFileSys*	CreateObject(TRefRef InstanceRef,TRefRef TypeRef);
 	
 	virtual void					OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);
+
+	void							OnFileChanged(TTypedRefRef FileRef,TRefRef FileSysRef);	//	notify subscribers that this file has changed
 };
 
 

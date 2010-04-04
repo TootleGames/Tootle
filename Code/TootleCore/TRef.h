@@ -30,7 +30,9 @@
 
 class TString;
 class TRef;
-typedef const TRef& TRefRef;	//	TRefRef is just shorthand for passing ref's around
+class TTypedRef;
+typedef const TRef& TRefRef;			//	TRefRef is just shorthand for passing ref's around
+typedef const TTypedRef& TTypedRefRef;
 
 #define TLRef_AlphabetSizeMax					(1<<(TLRef_BitsPerChar))	//	maximum in theory: 64
 #define TLRef_AlphabetSize						41							//	actual number of characters in the alphabet.
