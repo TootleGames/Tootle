@@ -3,6 +3,7 @@
 #include <TootleCore/TRef.h>
 #include <TootleCore/TTransform.h>
 #include <TootleAsset/TTexture.h>
+#include "Opengl/GLRasteriser.h"
 
 //	include platform specific render code for glTranslate etc
 //	this kinda code will move to the rasteriser (as will these includes)
@@ -26,6 +27,7 @@
 
 namespace TLRender
 {
+	TPtr<TLRaster::TRasteriser>	g_pRasteriser;
 	u32							g_PolyCount;
 	u32							g_VertexCount;
 
@@ -42,7 +44,8 @@ namespace TLRender
 		void				BindTextureIndex(u32 TextureIndex);					//	set current texture - no change if same as currently bound texture
 		void				UnbindTextureIndex(u32 TextureIndex);				//	unbind texture index if it's currently bound
 		u32					UploadTexture(const TLAsset::TTexture& Texture);		//	generate opengl texture ID for this asset - if a texture already has an entry it will be destroyed and re-created
-		void				DestroyTexture(u32& TextureIndex);					//	destroy opengl texture
+		Bool				DestroyTexture(TRefRef TextureRef);					//	destroy opengl texture by texture reference
+		Bool				DestroyTexture(u32& TextureIndex);					//	destroy opengl texture
 		u32					GetTextureIndex(TRefRef TextureRef);				//	search the texture lookup table for the correct texture ID for this asset
 	}
 };
@@ -243,6 +246,10 @@ u32 TLRender::Opengl::UploadTexture(const TLAsset::TTexture& Texture)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 	}	
 
+	TDebugString Debug_String;
+	Debug_String << "Uploading texture " << Texture.GetAssetAndTypeRef();
+	TLDebug_Print( Debug_String );
+
 	//	generate texture
 	u32 SourceColourFormat = Texture.HasAlphaChannel() ? GL_RGBA : GL_RGB;
 	u32 DestinationColourFormat = Texture.HasAlphaChannel() ? GL_RGBA : GL_RGB;
@@ -269,26 +276,41 @@ u32 TLRender::Opengl::UploadTexture(const TLAsset::TTexture& Texture)
 	//	add to indexing
 	g_TextureIndexes.Add( Texture.GetAssetRef(), NewTextureIndex );
 
-
-	//	gr: hack until the re-uploading on messages happens;
-	//	need to set texture as not-changed as on first-use of the texture it gets uploaded...
-	//	then uploaded again as the HasChanged is true from the first import
-	TLAsset::TTexture& NonConstTexture = const_cast<TLAsset::TTexture&>(Texture);
-	NonConstTexture.SetHasChanged(false);
-
 	return NewTextureIndex;
 }
 
+//---------------------------------------------------
+//	destroy opengl texture by texture reference
+//---------------------------------------------------
+Bool TLRender::Opengl::DestroyTexture(TRefRef TextureRef)
+{
+	u32 TextureIndex = GetTextureIndex( TextureRef );
+	if ( TextureIndex == 0 )
+		return false;
+
+	//	destroy texture
+	DestroyTexture( TextureIndex );
+
+	return true;
+}
 
 //---------------------------------------------------
-//	destroy opengl texture
+//	destroy opengl texture by its internal index
 //---------------------------------------------------
-void TLRender::Opengl::DestroyTexture(u32& TextureIndex)
+Bool TLRender::Opengl::DestroyTexture(u32& TextureIndex)
 {
 	if ( TextureIndex == 0 )
 	{
 		TLDebug_Break("Invalid texture index provided to delete");
-		return;
+		return false;
+	}
+
+	//	gr: in debug, we should probably check that this texture index actually exists
+	s32 TextureIndexIndex = g_TextureIndexes.FindKeyIndex( TextureIndex );
+	if ( TextureIndexIndex == -1 )
+	{
+		TLDebug_Break("Trying to delete texture index that hasn't been created (or not entered into the index!)");
+		return false;
 	}
 
 	//	make sure it's not bound
@@ -297,8 +319,13 @@ void TLRender::Opengl::DestroyTexture(u32& TextureIndex)
 	//	delete texture
 	glDeleteTextures( 1, &TextureIndex );
 
+	//	remove from the texture index
+	g_TextureIndexes.RemoveAt( TextureIndexIndex );
+
 	//	overwrite the original data just in case it's not invalidated by the caller
 	TextureIndex = 0;
+
+	return true;
 }
 
 
@@ -312,29 +339,12 @@ Bool TLRender::Opengl::BindTexture(const TLAsset::TTexture* pTexture)
 	//	get texture Index for texture
 	if ( pTexture )
 	{
-
 		TextureIndex = GetTextureIndex( pTexture->GetAssetRef() );
 
 		//	isn't one... upload texture
 		if ( TextureIndex == 0 )
 		{
 			TextureIndex = UploadTexture( *pTexture );
-		}
-		//	gr: todo: change this to;
-		//		rasteriser subscribes to textures it uploads
-		//		on AssCh then re-upload contents of the texture
-		//		on AssRm then delete the uploaded texture
-		else if(pTexture->HasChanged())
-		{
-			// Texture has changed (dynamic at runtime) and now needs to be re-uploaded 
-			TextureIndex = UploadTexture( *pTexture );
-			
-			// texture uploaded so set the flag on the texture to say it 
-			// is now up-to-date on the rendering side
-			
-			// NOTE: Need to change const pTexture to non-const
-			TLAsset::TTexture* pNonConstTexture = const_cast<TLAsset::TTexture*>(pTexture);
-			pNonConstTexture->SetHasChanged(FALSE);
 		}
 	}
 
@@ -679,13 +689,23 @@ void TLRender::Opengl::DrawPrimitives(u16 GLPrimType,u32 IndexCount,const u16* p
 // is deleted and someway of alolowing it to prevent deletion so it's always deleted last.
 SyncBool TLRender::Opengl::Shutdown()
 {
+	g_pRasteriser = NULL;
 	g_TextureIndexes.Empty(TRUE);
 	
 	return Platform::Shutdown();
 }
 
 SyncBool TLRender::Opengl::Init()
-{	
+{
+	//	create and init rasteriser
+	if ( !g_pRasteriser )
+		g_pRasteriser = new TLRaster::Opengl::GLRasteriser();
+
+	SyncBool InitResult = g_pRasteriser->Initialise();
+	if ( InitResult != SyncTrue )
+		return InitResult;
+
+	//	platform specific opengl init
 	return Platform::Init();
 }
 

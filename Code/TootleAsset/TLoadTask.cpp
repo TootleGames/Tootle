@@ -383,7 +383,7 @@ TRef Mode_GetAssetFile::Update(float Timestep)
 		GetPlainFile() = pLatestFile;
 
 		//	if the plain file needs loading/reloading then load it...
-		if ( GetPlainFile()->IsLoaded() != SyncTrue || GetPlainFile()->GetFlags()( TLFileSys::TFile::OutOfDate ) )
+		if ( GetPlainFile()->IsLoaded() != SyncTrue || GetPlainFile()->IsOutOfDate() )
 		{
 			return "PFLoad";
 		}
@@ -448,7 +448,7 @@ TRef Mode_AssetFileLoad::Update(float Timestep)
 	}
 
 	//	load the file as required
-	if ( pAssetFile->IsLoaded() != SyncTrue )
+	if ( pAssetFile->IsLoaded() != SyncTrue || pAssetFile->IsOutOfDate() )
 	{
 		TPtr<TLFileSys::TFileSys> pFileSys = pAssetFile->GetFileSys();
 		if ( !pFileSys )
@@ -465,10 +465,8 @@ TRef Mode_AssetFileLoad::Update(float Timestep)
 		
 		if ( LoadResult == SyncFalse )
 		{
-			TTempString Debug_String("File sys ");
-			pFileSys->GetFileSysRef().GetString( Debug_String );
-			Debug_String.Append(" failed to load file ");
-			Debug_String.Append( pAssetFile->GetFilename() );
+			TTempString Debug_String;
+			Debug_String << "File sys " << pFileSys->GetFileSysRef() << " failed to load file " << pAssetFile->GetFilename();
 			TLDebug_Break( Debug_String );
 			return "Failed";
 		}

@@ -63,17 +63,14 @@ public:
 	bool							PasteTextureData(const Type2<u16>& PasteAt,const TArray<TColour24>& TextureData,const Type2<u16>& DataSize,TLMaths::TBox2D* pGlyphBox=NULL);
 	bool							PasteTextureData(const Type2<u16>& PasteAt,const TArray<TColour32>& TextureData,const Type2<u16>& DataSize,TLMaths::TBox2D* pGlyphBox=NULL);
 
-	FORCEINLINE Bool				HasChanged()						const	{	return m_HasChanged; }
-	FORCEINLINE void				SetHasChanged(Bool bChanged)				{	m_HasChanged = bChanged; }
-//protected:
-	virtual SyncBool			ImportData(TBinaryTree& Data);		//	load asset data out binary data
-	virtual SyncBool			ExportData(TBinaryTree& Data);		//	save asset data to binary data
+protected:
+	virtual SyncBool				ImportData(TBinaryTree& Data);		//	load asset data out binary data
+	virtual SyncBool				ExportData(TBinaryTree& Data);		//	save asset data to binary data
 
 protected:
 	TBinary						m_TextureData;	//	binary texture data
 	Type2<u16>					m_Size;
 	Bool						m_HasAlpha;		//	data has/hasnt got an alpha channel
-	Bool						m_HasChanged;
 };
 
 

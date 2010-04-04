@@ -548,7 +548,7 @@ SyncBool Platform::LocalFileSys::WriteFile(TPtr<TFile>& pFile)
 	pFileHandle = NULL;
 
 	//	file can't be out of date any more!
-	pFile->GetFlags().Clear( TFile::OutOfDate );
+	pFile->SetOutOfDate( false );
 
 	//	refresh file info
 	UpdateFileInstance( pFile, FALSE );

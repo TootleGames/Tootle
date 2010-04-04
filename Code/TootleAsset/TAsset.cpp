@@ -1,6 +1,7 @@
 #include "TAsset.h"
 #include <TootleFileSys/TLFileSys.h>
 #include <TootleFileSys/TFileAsset.h>
+#include "TLAsset.h"
 
 
 
@@ -196,3 +197,26 @@ void TLAsset::TAsset::OnRemoved()
 
 	PublishMessage( Message );
 }
+
+
+//----------------------------------------------------
+//	contents of this asset have changed. send out a notification, then tell the asset manager to send out a message too. 
+//	todo: expand to pass in TBinaryTree data to send with the message
+//----------------------------------------------------
+void TLAsset::TAsset::OnChanged()
+{
+	if ( HasSubscribers() )
+	{
+		//	send the "ASSetCHanged" message
+		TLMessaging::TMessage Message( TRef_Static(A,s,s,C,h), GetAssetRef() );
+
+		//	send asset type info so we can distinguish between two assets with the same ref
+		Message.ExportData( TRef_Static4(T,y,p,e), GetAssetType() );
+
+		PublishMessage( Message );
+	}
+
+	//	tell asset manager to send out notification too
+	TLAsset::g_pManager->OnAssetChanged( *this );
+}
+

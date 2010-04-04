@@ -141,11 +141,6 @@ SyncBool TLFileSys::TFileSys::UpdateFileList()
 		{
 			ReloadFilelist = TRUE;
 		}
-		else
-		{
-			//	file list doesn't need updating
-			TLDebug_Print("File list of file sys doesn't need updating");
-		}
 	}
 	else
 	{

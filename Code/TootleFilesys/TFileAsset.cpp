@@ -232,7 +232,9 @@ SyncBool TLFileSys::TFileAsset::Export()
 	//	the file is "laoded" now... the assetfile binary tree is now binary in the TFile
 	pFile->SetTimestampNow();
 	pFile->SetIsLoaded( SyncTrue );
-	pFile->GetFlags().Clear( TLFileSys::TFile::OutOfDate );
+
+	//	gr: remove this? out of date now means, the file has changed, so this is probably okay now...
+	pFile->SetOutOfDate( false );
 	SetNeedsExport(FALSE);
 
 	return SyncTrue;

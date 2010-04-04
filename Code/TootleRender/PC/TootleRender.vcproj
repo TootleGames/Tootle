@@ -638,6 +638,14 @@
 		<Filter
 			Name="Opengl"
 			>
+			<File
+				RelativePath="..\Opengl\GLRasteriser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Opengl\GLRasteriser.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="..\TCamera.cpp"
@@ -661,6 +669,14 @@
 		</File>
 		<File
 			RelativePath="..\TLRender.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TRasteriser.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TRasteriser.h"
 			>
 		</File>
 		<File

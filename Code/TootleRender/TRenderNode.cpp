@@ -214,7 +214,7 @@ TLAsset::TMesh* TLRender::TRenderNode::GetMeshAsset()
 	//	re-fetch mesh if we need to
 	if ( GetMeshRef().IsValid() && !m_pMeshCache )
 	{
-		m_pMeshCache = TLAsset::GetAssetPtr<TLAsset::TMesh>( GetMeshRef() ).GetObjectPointer();
+		m_pMeshCache = TLAsset::GetAssetPtr<TLAsset::TMesh>( GetMeshRef() );
 		
 		//	if we get an asset then subscribe to it to catch when it's about to be removed from the asset system
 		if ( m_pMeshCache )
@@ -232,11 +232,18 @@ TLAsset::TTexture* TLRender::TRenderNode::GetTextureAsset()
 	//	re-fetch mesh if we need to
 	if ( GetTextureRef().IsValid() && !m_pTextureCache )
 	{
-		m_pTextureCache = TLAsset::GetAssetPtr<TLAsset::TTexture>( GetTextureRef() ).GetObjectPointer();
+		m_pTextureCache = TLAsset::GetAssetPtr<TLAsset::TTexture>( GetTextureRef() );
 
 		//	if we get an asset then subscribe to it to catch when it's about to be removed from the asset system
 		if ( m_pTextureCache )
+		{
 			this->SubscribeTo( m_pTextureCache );
+		}
+		else
+		{
+			//	return the debug texture because we couldn't find the texture we wanted
+			return TLAsset::GetAsset<TLAsset::TTexture>("d_texture");
+		}
 	}
 
 	return m_pTextureCache;

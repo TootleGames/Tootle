@@ -91,7 +91,6 @@ namespace TLAsset
 	FORCEINLINE Bool			DeleteAsset(TRefRef AssetRef,TRefRef AssetType)		{	return DeleteAsset( TTypedRef( AssetRef, AssetType ) );	}
 	Bool						DeleteAsset(const TLAsset::TAsset* pAsset);
 
-
 	TLArray::SortResult			AssetSort(const TPtr<TAsset>& a,const TPtr<TAsset>& b,const void* pTestRef);	//	asset sort
 
 	extern TPtr<TLAsset::TAssetManager>	g_pManager;
@@ -117,6 +116,7 @@ protected:
 class TLAsset::TAssetManager : public TLCore::TManager
 {
 	friend class TLAsset::TLoadTask;
+	friend class TLAsset::TAsset;
 public:
 	TAssetManager(TRefRef ManagerRef);
 
@@ -125,7 +125,7 @@ public:
 	TPtr<TAsset>&				CreateAsset(const TTypedRef& AssetAndTypeRef);		//	return a pointer to a new asset - mostly used for runtime asssets
 	TPtr<TAsset>&				GetAsset(const TTypedRef& AssetAndTypeRef)			{	return m_Assets.FindPtr( AssetAndTypeRef );	}
 	TPtrArray<TAsset>&			GetAllAssets()										{	return m_Assets;	}
-	Bool						DeleteAsset(const TTypedRef& AssetAndTypeRef);
+	Bool						DeleteAsset(TTypedRef AssetAndTypeRef);				//	gr: note, ref is not a reference in case the ref is a reference to a member of the asset being deleted
 
 	// Debug only routines
 #ifdef CHECK_ASSETARRAY_INTEGRITY
@@ -142,9 +142,11 @@ protected:
 
 	// Asset events - should be private but called from the LoadTask
 	void						OnAssetLoad(const TTypedRef& AssetAndTypeRef, Bool bStatus);
-	void						OnAssetUnload(const TTypedRef& AssetAndTypeRef);
+	void						OnAssetChanged(const TLAsset::TAsset& Asset);					//	contents of this asset have changed - called from Asset
 
+private:
 	bool						ReExportAssetForFile(TTypedRefRef FileRef,TRefRef FileSysRef);	//	re-export any assets for this file
+	void						OnAssetDeleted(const TTypedRef& AssetAndTypeRef);
 
 private:
 	TPtrArray<TAssetFactory>	m_Factories;	//	asset factories, including default

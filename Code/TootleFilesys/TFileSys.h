@@ -69,7 +69,7 @@ protected:
 	TPtr<TFile>					CreateFileInstance(const TString& Filename);	//	create new file into the file list - returns existing file if it already exists
 	Bool						RemoveFileInstance(TPtr<TFile> pFile);			//	remove file - NULL's ptr too
 
-	virtual u32					GetFilelistTimeoutSecs() const					{	return 10;	}	//	update file list every N seconds
+	virtual u32					GetFilelistTimeoutSecs() const					{	return 5;	}	//	update file list every N seconds
 	Bool						FinaliseFileList();								//	update timestamp and flush missing files. returns true if any files changed or were removed
 
 protected:

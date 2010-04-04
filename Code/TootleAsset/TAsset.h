@@ -77,6 +77,7 @@ protected:
 	void				ExportUnknownData(TBinaryTree& Data);	//	write out our unknown data
 
 	void				OnRemoved();							//	asset is being removed from the system, send notification to our subscribers
+	void				OnChanged();							//	contents of this asset have changed. send out a notification, then tell the asset manager to send out a message too. todo: expand to pass in TBinaryTree data to send with the message
 
 protected:
 	TBinaryTree			m_Data;							//	after importing, this data was not read in. could just be additonal meta data or old data we don't use any more

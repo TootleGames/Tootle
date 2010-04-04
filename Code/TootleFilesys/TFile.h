@@ -75,6 +75,7 @@ public:
 	void							SetTimestamp(const TLTime::TTimestamp& NewTimestamp);	//	update timestamp
 	void							SetTimestampNow();				//	update timestamp
 	bool							IsOutOfDate() const				{	return GetFlags()( OutOfDate );	}
+	void							SetOutOfDate(bool OutOfDate=true);		//	mark file as out of date
 
 	s32								GetFileSize() const				{	return m_FileSize;	}		
 	void							SetFileSize(s32 FileSize,Bool IsTooBig=FALSE)	{	m_FileSize = FileSize;	GetFlags().Set( TooBig, IsTooBig );	}

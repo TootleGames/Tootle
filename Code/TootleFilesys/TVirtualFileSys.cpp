@@ -287,6 +287,9 @@ SyncBool TLFileSys::TVirtualFileSys::WriteFile(TPtr<TFile>& pFile)
 	//	update timestamp
 	pNewFile->SetTimestampNow();
 
+	//	we've updated the file, so no longer out of date
+	pNewFile->SetOutOfDate( false );
+
 	return SyncTrue;
 }
 

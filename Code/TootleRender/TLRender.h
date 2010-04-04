@@ -8,6 +8,7 @@
 
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/TColour.h>
+#include <TootleCore/TRef.h>
 
 namespace TLAsset
 {
@@ -44,7 +45,10 @@ namespace TLRender
 		Bool					BindUVs(const TArray<float2>* pUVs);
 		Bool					BindTexture(const TLAsset::TTexture* pTexture);			//	bind texture - returns FALSE if no texture is bound (either fail or expected)
 		void					Unbind();			//	unbind all verts/colours etc
-		
+
+		//	gr: don't expose this when moved into rasteriser as the rasteriser could call this directly
+		Bool					DestroyTexture(TRefRef TextureRef);					//	destroy opengl texture by texture reference
+
 		void					DrawPrimitives(u16 GLPrimType,u32 IndexCount,const u16* pIndexData);		//	main renderer, just needs primitive type, and the data
 		template<class TYPE>
 		FORCEINLINE void		DrawPrimitives(u16 GLPrimType,const TArray<TYPE>& PrimitivesArray);			//	wrapper to pull out the index data for different types

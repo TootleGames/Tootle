@@ -527,15 +527,43 @@ void TLAsset::TAssetManager::OnAssetLoad(const TTypedRef& AssetAndTypeRef, Bool 
 	PublishMessage(Message);
 }
 
-void TLAsset::TAssetManager::OnAssetUnload(const TTypedRef& AssetAndTypeRef)
+void TLAsset::TAssetManager::OnAssetChanged(const TLAsset::TAsset& Asset)
 {
-	TLMessaging::TMessage Message("OnAssetChanged");
-	Message.Write( AssetAndTypeRef.GetRef() );
-	Message.Write( AssetAndTypeRef.GetTypeRef() );
-	Message.Write(TRef("Unload"));
-	Message.Write( (Bool)TRUE );
+	//	gr: only send out message if this is the asset that's in the manager
+	//		we don't want to send out that an asset has changed if that asset
+	//		just happens to have the same ref, but isn't the one in use
+	TPtr<TLAsset::TAsset>& pAsset = GetAssetInstance( Asset.GetAssetAndTypeRef() );
+	if ( pAsset.GetObjectPointer() != &Asset )
+		return;
+
+	//	send out ASSetCHanged message
+	TLMessaging::TMessage Message( TRef_Static(A,s,s,C,h) );
+	Message.Write( Asset.GetAssetAndTypeRef() );
 
 	PublishMessage(Message);
+}
+
+void TLAsset::TAssetManager::OnAssetDeleted(const TTypedRef& AssetAndTypeRef)
+{
+	//	new message; ASSetDEleted
+	{
+		//	gr: there is a distinction here, AssetRemoved comes from an asset before it's deleted
+		//		here, we assume the asset is deleted now and won't be found in the system
+		TLMessaging::TMessage Message( TRef_Static(A,s,s,D,e) );
+		Message.Write( AssetAndTypeRef );
+		PublishMessage(Message);
+	}
+
+	//	old mesage... todo: remove this
+	{
+		TLMessaging::TMessage Message("OnAssetChanged");
+		Message.Write( AssetAndTypeRef.GetRef() );
+		Message.Write( AssetAndTypeRef.GetTypeRef() );
+		Message.Write(TRef("Unload"));
+		Message.Write( (Bool)TRUE );
+
+		PublishMessage(Message);
+	}
 }
 
 
@@ -709,7 +737,7 @@ TPtr<TLAsset::TAsset>& TLAsset::TAssetManager::CreateAsset(const TTypedRef& Asse
 //----------------------------------------------------------
 //	delete an asset - returns true if it did exist
 //----------------------------------------------------------
-Bool TLAsset::TAssetManager::DeleteAsset(const TTypedRef& AssetAndTypeRef)
+Bool TLAsset::TAssetManager::DeleteAsset(TTypedRef AssetAndTypeRef)
 {
 	//	find the existing asset
 	s32 AssetIndex = m_Assets.FindIndex( AssetAndTypeRef );
@@ -747,8 +775,8 @@ Bool TLAsset::TAssetManager::DeleteAsset(const TTypedRef& AssetAndTypeRef)
 		TLDebug_Print( DebugString );
 	#endif
 
-	// Do a notification to say the asset has been removed via the asset manager AFTER it's deleted
-	OnAssetUnload( AssetAndTypeRef );
+	// Do a notification to say the asset has been deleted via the asset manager AFTER it's deleted
+	OnAssetDeleted( AssetAndTypeRef );
 
 	return TRUE;
 }

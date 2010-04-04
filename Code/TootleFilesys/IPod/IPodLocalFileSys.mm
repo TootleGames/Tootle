@@ -290,7 +290,7 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 	}
 	else
 	{
-		pFile->GetFlags().Clear( TFile::OutOfDate );
+		pFile->SetOutOfDate( false );
 	}
 
 	//	move cursor to end and get position
@@ -353,7 +353,7 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 	//	make sure file is marked as okay
 	pFile->GetFlags().Clear( TFile::Lost );
 	pFile->GetFlags().Clear( TFile::TooBig );
-	pFile->GetFlags().Clear( TFile::OutOfDate );
+	pFile->GetFlags().SetOutOfDate( false );
 
 	//	file was too big
 	if ( FileTooBig )
@@ -558,7 +558,7 @@ SyncBool Platform::LocalFileSys::WriteFile(TPtr<TFile>& pFile)
 	pFileHandle = NULL;
 
 	//	file can't be out of date any more!
-	pFile->GetFlags().Clear( TFile::OutOfDate );
+	pFile->SetOutOfDate( false );
 
 	//	refresh file info
 	//UpdateFileInstance( pFile, FALSE );

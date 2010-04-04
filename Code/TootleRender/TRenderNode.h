@@ -290,9 +290,9 @@ protected:
 	//	todo: turn all these into ref properties in a KeyArray to make it a bit more flexible
 	//	gr: restore these to TPtr's asap! bug in asset management; http://grahamgrahamreeves.getmyip.com:1984/Trac/changeset/776
 	TRef						m_MeshRef;
-	TLAsset::TMesh*				m_pMeshCache;
+	TPtr<TLAsset::TMesh>		m_pMeshCache;
 	TRef						m_TextureRef;
-	TLAsset::TTexture*			m_pTextureCache;
+	TPtr<TLAsset::TTexture>		m_pTextureCache;
 	TPtrArray<TEffect>			m_Effects;				//	effects attached to render node
 
 	TArray<TRef>				m_Debug_RenderDatums;	//	list of datums to debug-render

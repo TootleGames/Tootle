@@ -73,6 +73,11 @@ FORCEINLINE void TLMessaging::TPublisher::PublishMessage(TLMessaging::TMessage& 
 	//	Make sure there are subscribers to send to before sending message
 	if ( HasSubscribers() )
 	{
+		//	gr: set the publisher ref if it's not set
+		if ( !Message.GetSenderRef().IsValid() )
+			Message.SetSenderRef( this->GetPublisherRef() );
+
+		//	publish
 		DoPublishMessage(Message);
 	}
 }

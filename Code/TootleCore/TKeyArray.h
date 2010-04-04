@@ -186,7 +186,8 @@ public:
 	FORCEINLINE Bool			Exists(const KEYTYPE& Key)				{	return m_Array.Exists( Key );	}
 	FORCEINLINE Bool			Exists(const KEYTYPE& Key) const		{	return m_Array.Exists( Key );	}
 
-	const KEYTYPE*				FindKey(const TYPE& Item,const KEYTYPE* pPreviousMatch=NULL) const;	//	find the key for a pair matching this item
+	const KEYTYPE*				FindKey(const TYPE& Item,const KEYTYPE* pPreviousMatch=NULL) const			{	s32 Index = FindKeyIndex( Item, pPreviousMatch );	return (Index == -1) ? NULL : &GetKeyAt( (u32)Index );	}
+	s32							FindKeyIndex(const TYPE& Item,const KEYTYPE* pPreviousMatch=NULL) const;	//	find the key for a pair matching this item
 	TYPE*						Add(const KEYTYPE& Key,const TYPE& Item,Bool Overwrite=TRUE);	//	add an item with this key. if the key already exists the item is overwritten if specified, returns the item for the key, overwritten or not. NULL if failed
 	TYPE*						AddNew(const KEYTYPE& Key);				//	add a new key and un-set item to the list - returns NULL if the key already exists. returns the item for the key
 	Bool						Remove(const KEYTYPE& Key);				//	remove the item with this key. returns if anything was removed
@@ -236,7 +237,7 @@ public:
 //	find the key for a pair matching this item
 //-------------------------------------------------------
 template<typename KEYTYPE,typename TYPE, class ALLOCATORPOLICY>
-const KEYTYPE* TKeyArray<KEYTYPE,TYPE, ALLOCATORPOLICY>::FindKey(const TYPE& Item,const KEYTYPE* pPreviousMatch) const
+s32 TKeyArray<KEYTYPE,TYPE, ALLOCATORPOLICY>::FindKeyIndex(const TYPE& Item,const KEYTYPE* pPreviousMatch) const
 {
 	Bool FoundLastMatch = pPreviousMatch ? FALSE : TRUE;
 	
@@ -251,7 +252,7 @@ const KEYTYPE* TKeyArray<KEYTYPE,TYPE, ALLOCATORPOLICY>::FindKey(const TYPE& Ite
 
 		//	found the item, if we're not hunting for the previous match then return it
 		if ( FoundLastMatch )
-			return &Pair.m_Key;
+			return i;
 
 		//	looking for previous match... is this it?
 		if ( pPreviousMatch == &Pair.m_Key )
@@ -259,7 +260,7 @@ const KEYTYPE* TKeyArray<KEYTYPE,TYPE, ALLOCATORPOLICY>::FindKey(const TYPE& Ite
 	}
 
 	//	none/no more found
-	return NULL;
+	return -1;
 }
 
 

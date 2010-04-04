@@ -70,10 +70,26 @@ void TLFileSys::TFile::SetTimestamp(const TLTime::TTimestamp& NewTimestamp)
 	//	gr: set this even if it's not loaded. this way if we overwtite Cat.png
 	//		the cat texture will get reloaded, even if we originally loaded cat.texture.asset
 	//if ( IsLoaded() != SyncFalse )
-		GetFlags().Set( TFile::OutOfDate );
+		SetOutOfDate();
 
 	//	set new timestamp
 	m_Timestamp = NewTimestamp;	
+}
+
+
+//-----------------------------------------------------------
+//	mark file as out of date
+//-----------------------------------------------------------
+void TLFileSys::TFile::SetOutOfDate(bool OutOfDate)
+{
+	//	update flag
+	GetFlags().Set( TFile::OutOfDate, OutOfDate );
+
+	//	if it's now out of date, clear the exported assets
+	if ( OutOfDate )
+	{
+		m_ExportedAssets.Empty( true );
+	}
 }
 
 
@@ -316,7 +332,7 @@ void TLFileSys::TFile::OnFileLoaded()
 {
 	SetIsLoaded(SyncTrue);	
 	TBinary::Compact();	
-	m_Flags.Clear( OutOfDate );
+	SetOutOfDate( false );
 
 	//	clear out the cache of any exported assets we exported from the previous version of the file
 	m_ExportedAssets.Empty(true);

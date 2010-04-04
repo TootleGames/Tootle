@@ -7,8 +7,7 @@
 TLAsset::TTexture::TTexture(TRefRef AssetRef) :
 	TAsset		( GetAssetType_Static(), AssetRef ),
 	m_Size		( 0, 0 ),
-	m_HasAlpha	( FALSE ),
-	m_HasChanged(FALSE)
+	m_HasAlpha	( FALSE )
 {
 }
 
@@ -74,7 +73,8 @@ Bool TLAsset::TTexture::SetSize(const Type2<u16>& NewSize,Bool EnableAlpha, Bool
 	//	initialise to all-white-full-alpha (easiest way :)
 	m_TextureData.GetDataArray().SetAll( 255 );
 
-	SetHasChanged(TRUE);
+	//	notify that asset's contents have changed
+	OnChanged();
 	
 	return TRUE;
 }
@@ -109,7 +109,8 @@ Bool TLAsset::TTexture::SetTextureData(const Type2<u16>& ImageSize, TBinary& Ima
 
 	GetPixelData().ResetReadPos();
 
-	SetHasChanged(TRUE);
+	//	notify that asset's contents have changed
+	OnChanged();
 	
 	return TRUE;
 }
@@ -129,7 +130,9 @@ SyncBool TLAsset::TTexture::ImportData(TBinaryTree& Data)
 	if ( !Data.ImportArrays("TexData", m_TextureData.GetDataArray() ) )	
 		return SyncFalse;
 	
-	SetHasChanged(TRUE);
+	//	notify that asset's contents have changed
+	//	gr: this might want to go somewhere else rather than the import?
+	OnChanged();
 	
 	m_TextureData.ResetReadPos();
 
@@ -183,8 +186,8 @@ bool TLAsset::TTexture::PasteTextureData(const Type2<u16>& PasteAt,const TArray<
 		TLMemory::CopyData( pTextureRowData, pPasteRowData, DataSize.x );
 	}
 
-	//	mark as changed
-	SetHasChanged(true);
+	//	notify that asset's contents have changed
+	OnChanged();
 
 	//	generate UV box
 	if ( pGlyphBox )
@@ -232,8 +235,8 @@ bool TLAsset::TTexture::PasteTextureData(const Type2<u16>& PasteAt,const TArray<
 		TLMemory::CopyData( pTextureRowData, pPasteRowData, DataSize.x );
 	}
 
-	//	mark as changed
-	SetHasChanged(true);
+	//	notify that asset's contents have changed
+	OnChanged();
 
 	//	generate UV box
 	if ( pGlyphBox )
