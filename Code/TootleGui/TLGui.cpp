@@ -28,6 +28,8 @@ SyncBool TLGui::Init()
 //------------------------------------------------------
 SyncBool TLGui::Shutdown()
 {
+	g_AppExe.Empty(TRUE);
+	
 	return TLGui::Platform::Shutdown();
 }
 
