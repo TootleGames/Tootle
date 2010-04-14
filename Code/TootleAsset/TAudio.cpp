@@ -1,6 +1,13 @@
 #include "TAudio.h"
 
-#include <TootleAudio/TLAudio.h>
+namespace TLAudio
+{
+	namespace Platform
+	{
+		Bool CreateBuffer(TLAsset::TAudio&);
+		Bool RemoveBuffer(TRefRef);
+	}
+}
 
 using namespace TLAsset;
 
