@@ -708,11 +708,9 @@ void TTimelineInstance::AttachInterpedDataToMessage(TPtr<TBinaryTree>& pFromData
 	else
 	{
 		// Unhandled type
-		TTempString str;
-		DataType.GetString(str);
-		TTempString errorstr;
-		errorstr.Appendf("Unhandled timeline interpolation data type - %s", str.GetData());
-		TLDebug_Break(errorstr);
+		TDebugString Debug_String;
+		Debug_String << "Unhandled timeline interpolation data type - " << DataType;
+		TLDebug_Break( Debug_String );
 	}
 #endif
 }

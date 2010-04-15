@@ -97,8 +97,8 @@ protected:
 class TLMaths::TOblong2D
 {
 public:
-	TOblong2D() : m_IsValid ( FALSE ), m_Corners ( 4 )																	{	}
-	TOblong2D(const TLMaths::TBox2D& Box,const TLMaths::TTransform& Transform) : m_IsValid( FALSE ), m_Corners ( 4 )	{	Set( Box, Transform );	}
+	TOblong2D() : m_IsValid ( FALSE ), m_Corners ( 4, float2(0,0) )																	{	}
+	TOblong2D(const TLMaths::TBox2D& Box,const TLMaths::TTransform& Transform) : m_IsValid( FALSE ), m_Corners ( 4, float2(0,0) )	{	Set( Box, Transform );	}
 
 	static TRef		GetTypeRef()		{	return TLMaths_ShapeRef(TOblong2D);	}
 

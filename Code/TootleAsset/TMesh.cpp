@@ -123,7 +123,7 @@ void TLAsset::TMesh::GenerateQuad(const float2& Center,float Size,const TColour*
 //-------------------------------------------------------
 void TLAsset::TMesh::GenerateQuadOutline(const TLMaths::TBox2D& Box,const TColour* pColour,float z)
 {
-	TFixedArray<float3,4> Outline(4);
+	TFixedArray<float3,4> Outline( 4, float3(0,0,0) );
 	float3& TopLeft = Outline[0];
 	float3& BottomRight = Outline[2];
 	float3& TopRight = Outline[1];
@@ -389,9 +389,9 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere2D& Sphere,const TColo
 void TLAsset::TMesh::GenerateCapsule(const TLMaths::TCapsule2D& Capsule,const TColour* pColour,float z)
 {
 	const TLMaths::TLine2D& CapsuleLine = Capsule.GetLine();
-	TFixedArray<float3,2> Line(2);
-	Line[0] = CapsuleLine.GetStart().xyz( z );
-	Line[1] = CapsuleLine.GetEnd().xyz( z );
+	TFixedArray<float3,2> Line;
+	Line.Add( CapsuleLine.GetStart().xyz( z ) );
+	Line.Add( CapsuleLine.GetEnd().xyz( z ) );
 
 	TFixedArray<float3,2> LineOutside;
 	TFixedArray<float3,2> LineInside;
@@ -413,9 +413,9 @@ void TLAsset::TMesh::GenerateCapsule(const TLMaths::TCapsule2D& Capsule,const TC
 void TLAsset::TMesh::GenerateCapsuleOutline(const TLMaths::TCapsule2D& Capsule,const TColour* pColour,float z)
 {
 	const TLMaths::TLine2D& CapsuleLine = Capsule.GetLine();
-	TFixedArray<float3,2> Line(2);
-	Line[0] = CapsuleLine.GetStart().xyz( z );
-	Line[1] = CapsuleLine.GetEnd().xyz( z );
+	TFixedArray<float3,2> Line;
+	Line.Add( CapsuleLine.GetStart().xyz( z ) );
+	Line.Add( CapsuleLine.GetEnd().xyz( z ) );
 
 	TFixedArray<float3,2> LineOutside;
 	TFixedArray<float3,2> LineInside;

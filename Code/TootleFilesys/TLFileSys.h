@@ -20,7 +20,8 @@ namespace TLFileSys
 
 	TPtr<TLFileSys::TFileSys>&	GetFileSys(TRefRef FileSysRef);		//	return a file system
 	void						GetFileSys(TPtrArray<TLFileSys::TFileSys>& FileSysList,TRefRef FileSysRef,TRefRef FileSysTypeRef);	//	return all matching file systems to these refs/types
-	void						GetFileList(TArray<TRef>& FileList);																//	get a list of all files in all the file systems (gets refs out of the groups)
+	TPtrArray<TLFileSys::TFileSys>&	GetFileSystems();					//	return al the file systems
+	void						GetFileList(TArray<TRef>& FileList);	//	get a list of all files in all the file systems (gets refs out of the groups)
 	TPtr<TFile>&				GetLatestFile(TTypedRefRef FileRef);	//	given a file & type - get the latest version of that file from the file groups
 	TPtr<TFileGroup>&			GetFileGroup(TRefRef FileRef);		//	get the group of files for a file ref
 	Bool						UpdateFileLists();					//	update the file lists on the file systems, returns TRUE if any file sys' has change
@@ -125,3 +126,12 @@ protected:
 	TPtrArray<TFile>	m_Files;		//	list of files in this group
 };
 
+
+
+//-----------------------------------------------------------
+//	return al the file systems
+//-----------------------------------------------------------
+FORCEINLINE TPtrArray<TLFileSys::TFileSys>& TLFileSys::GetFileSystems()
+{
+	return g_pFactory->GetInstanceArray();
+}

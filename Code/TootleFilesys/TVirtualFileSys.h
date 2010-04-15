@@ -23,6 +23,7 @@ class TLFileSys::TVirtualFileSys : public TLFileSys::TFileSys
 public:
 	TVirtualFileSys(TRefRef FileSysRef,TRefRef FileSysTypeRef);
 
+	virtual bool			IsWritable() const					{	return true;	}
 	virtual SyncBool		LoadFileList();
 	virtual SyncBool		LoadFile(TPtr<TFile>& pFile);
 	virtual SyncBool		WriteFile(TPtr<TFile>& pFile);		//	add this file into the file system if it's not there

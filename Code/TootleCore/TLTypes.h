@@ -150,6 +150,26 @@ TLCompileAssert( sizeof(TChar32) == sizeof(u32), "TChar32 not setup correctly." 
 #endif
 
 
+namespace TLTypes
+{
+	template<typename TYPE> FORCEINLINE s32	GetIntegerMin(TYPE x=0)		{	return 0;	}
+	template<> FORCEINLINE s32				GetIntegerMin(u8 x)			{	return 0;	}
+	template<> FORCEINLINE s32				GetIntegerMin(s8 x)			{	return -127;	}
+	template<> FORCEINLINE s32				GetIntegerMin(u16 x)		{	return 0;	}
+	template<> FORCEINLINE s32				GetIntegerMin(s16 x)		{	return -32767;	}
+	template<> FORCEINLINE s32				GetIntegerMin(u32 x)		{	return 0;	}
+	template<> FORCEINLINE s32				GetIntegerMin(s32 x)		{	return -2147483647;	}
+
+	template<typename TYPE> u32	GetIntegerMax(TYPE x=0)		{	return 0;	}
+	template<> FORCEINLINE u32				GetIntegerMax(u8 x)			{	return 255;	}
+	template<> FORCEINLINE u32				GetIntegerMax(s8 x)			{	return 127;	}
+	template<> FORCEINLINE u32				GetIntegerMax(u16 x)		{	return 65535;	}
+	template<> FORCEINLINE u32				GetIntegerMax(s16 x)		{	return 32767;	}
+	template<> FORCEINLINE u32				GetIntegerMax(u32 x)		{	return 4294967295U;	}
+	template<> FORCEINLINE u32				GetIntegerMax(s32 x)		{	return 2147483647;	}
+}
+
+
 //-------------------------------------------------------
 //	Tootle specific, but global, types
 //	gr: rename to TTBool?

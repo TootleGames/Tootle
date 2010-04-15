@@ -46,11 +46,16 @@ public:
 	inline TRefRef				GetFileSysRef() const							{	return m_FileSysRef;	}
 	inline TRefRef				GetFileSysTypeRef() const						{	return m_FileSysTypeRef;	}
 
+	virtual bool				IsWritable() const=0;							//	is this file system writable or read-only
 	virtual SyncBool			LoadFile(TPtr<TFile>& pFile)					{	return SyncFalse;	}		//	read-in file
 	virtual SyncBool			WriteFile(TPtr<TFile>& pFile)					{	return SyncFalse;	}		//	write file into file system if possible - if the filesys is read-only we cannot add external files and this fails
-	virtual TPtr<TFile>			CreateNewFile(const TString& Filename)				=0;//{	return NULL;	}		//	create a new empty file into file system if possible - if the filesys is read-only we cannot add external files and this fails
+	virtual TPtr<TFile>			CreateNewFile(const TString& Filename)=0;//{	return NULL;	}		//	create a new empty file into file system if possible - if the filesys is read-only we cannot add external files and this fails
 	virtual SyncBool			DeleteFile(TPtr<TFile>& pFile)					{	return RemoveFileInstance( pFile ) ? SyncTrue : SyncFalse;	}		//	delete file from file sys
 	TPtr<TFile>&				GetFile(TRefRef FileRef)						{	return GetFileList().FindPtr( FileRef );	}	//	returns a file of the specified ref if it exists - this should be rarely used, ONLY if you know you want a file out of a certain file sys
+	TPtr<TFile>&				GetFile(const TString& Filename)				{	return GetFileList().FindPtr( Filename );	}
+	const TPtrArray<TFile>&		GetFileList() const								{	return m_Files;	}
+
+	const TLTime::TTimestamp&	GetTimestamp() const							{	return m_LastFileListUpdate;	}	//	return timestamp for filesys, might want to change this to the most-recent timestamp of all the files in the filesys
 
 	inline Bool					operator==(const TRef& FileSysRef) const		{	return (GetFileSysRef() == FileSysRef);	}
 
@@ -60,10 +65,8 @@ protected:
 
 	Bool						CheckIsFileFromThisFileSys(TPtr<TFile>& pFile);	//	check this file belongs to this file system, if not break
 	Bool						GetFileExists(const TString& Filename) const	{	return m_Files.Exists( Filename );	}	
-	TPtr<TFile>&				GetFile(const TString& Filename)				{	return m_Files.FindPtr( Filename );	}
 
 	TPtrArray<TFile>&			GetFileList()									{	return m_Files;	}
-	const TPtrArray<TFile>&		GetFileList() const								{	return m_Files;	}
 
 protected:
 	TPtr<TFile>					CreateFileInstance(const TString& Filename);	//	create new file into the file list - returns existing file if it already exists

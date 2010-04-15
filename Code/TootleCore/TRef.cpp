@@ -331,7 +331,7 @@ void TRef::GetString(TString& RefString,Bool Capitalise,Bool Trim,Bool UrlSafe) 
 const TRef& TRef::Increment()
 {
 	//	gather indexes
-	TFixedArray<u32,TLRef_CharsPerRef> CharIndexes(TLRef_CharsPerRef);
+	TFixedArray<u32,TLRef_CharsPerRef> CharIndexes(TLRef_CharsPerRef,0);
 
 	for ( u32 i=0;	i<CharIndexes.GetSize();	i++ )
 	{

@@ -69,6 +69,7 @@ public:
 	Bool							Copy(TPtr<TFile>& pFile,Bool CopyFilename=FALSE);		//	copy file data and attributes (timestamp, flags)
 	Bool							Load(TBinary& Data);			//	copy data into file - this sets new timestamp, file size, and marks file as out of date
 
+	bool							IsWritable() const;				//	can we overwrite this file?
 	SyncBool						IsLoaded() const				{	return m_IsLoaded;	}
 	void							SetIsLoaded(SyncBool Loaded)	{	m_IsLoaded = Loaded;	}
 	const TLTime::TTimestamp&		GetTimestamp() const			{	return m_Timestamp;	}
@@ -88,6 +89,7 @@ public:
 	const TTypedRef&				GetFileAndTypeRef() const		{	return m_FileAndTypeRef;	}
 
 	TBinary&						GetData()						{	return *this;	}
+	const TBinary&					GetData() const					{	return *this;	}
 	TFlags<TFile::Flags>&			GetFlags()						{	return m_Flags;	}
 	const TFlags<TFile::Flags>&		GetFlags() const				{	return m_Flags;	}
 

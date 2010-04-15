@@ -15,8 +15,18 @@
 #pragma comment( lib, "gdi32.lib" )
 #pragma comment( lib, "kernel32.lib" )
 #pragma comment( lib, "winmm.lib" )	//	required for [multimedia] time functions
-//#pragma comment(linker, "/NODEFAULTLIB:msvcrt.lib") 
-#pragma comment(linker, "/NODEFAULTLIB:libcmt.lib") 
+
+//	gr: changed these ignore-default-libs to ignore the defualt or release version 
+//	based on the DEBUG build of this lib (tootleGUI). Gets rid of the linker warning
+//	"defaultlib "library" conflicts with use of other libs" in debug/release builds configs
+#if defined(_DEBUG)
+	#pragma comment(linker, "/NODEFAULTLIB:msvcrt.lib") 
+	#pragma comment(linker, "/NODEFAULTLIB:libcmt.lib")
+#else // release/final
+	#pragma comment(linker, "/NODEFAULTLIB:msvcrtd.lib") 
+	#pragma comment(linker, "/NODEFAULTLIB:libcmtd.lib")
+#endif
+
 //#pragma comment( lib, "libc.lib" )
 #pragma comment( lib, "comdlg32.lib" )
 #pragma comment( lib, "winspool.lib" )
@@ -27,8 +37,11 @@
 #pragma comment( lib, "uuid.lib" )
 #pragma comment( lib, "rpcrt4.lib" )
 #pragma comment( lib, "advapi32.lib" )
-#pragma comment( lib, "wsock32.lib" )
-#pragma comment( lib, "wininet.lib" )
+
+//	gr: I've removed these libs as we're using winsock 2 (ws2) in TLNetwork.
+//		I didn't get any linker errors, so presumably they're not needed?
+//#pragma comment( lib, "wsock32.lib" )
+//#pragma comment( lib, "wininet.lib" )
 
 
 //----------------------------------------------------

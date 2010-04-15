@@ -39,14 +39,12 @@ TRef TLInput::GetDefaultAxisRef(u32 AxisIndex,const char AxisChar)
 //	TTempString stringLabel = "AXX";
 //	stringLabel.Appendf("%02d",AxisIndex);
 	//	gr: faster method, not sure if speed is an issue though?
-	TFixedArray<char,5> RefStringChars(5);
-	RefStringChars[0] = 'A';
-	RefStringChars[1] = 'x';
-	RefStringChars[2] = AxisChar;
-	RefStringChars[3] = '0' + (AxisIndex / 10);
-	RefStringChars[4] = '0' + (AxisIndex % 10);
+	TFixedArray<char,5> RefStringChars;
+	RefStringChars << 'A' << 'x' << AxisChar;
+	RefStringChars.Add( '0' + (AxisIndex / 10) );
+	RefStringChars.Add( '0' + (AxisIndex % 10) );
 
-	//	make AXX01 AXX1 etc
+	//	make AXX01 turn into AXX1
 	if ( AxisIndex < 10 )
 	{
 		RefStringChars[3] = RefStringChars[4];

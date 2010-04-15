@@ -149,7 +149,7 @@ SyncBool TLFileSys::TFilePng::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef 
 	}
 
 	//	check first 8 bytes for validity
-	TFixedArray<u8,8> Header(8);
+	TFixedArray<u8,8> Header(8,0);
 
 	//	gr: use the TBinary functions to move the read pos along
 	GetData().ResetReadPos();

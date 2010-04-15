@@ -241,19 +241,20 @@ TString& TString::Appendf(const TChar16* pString,...)
 void TString::AppendVaList(const TChar16* pString,va_list& v)
 {
 	//	format up a new string and append that
-	TBufferString<1024> Buffer;
-	Buffer.SetLength( 1024 );
+	TBufferString<1024> BufferString;
+	TArray<TChar>& Buffer = BufferString.GetStringArray();
+	Buffer.SetSize( 1024 );
 
 #if defined(TL_TARGET_PC)
-	int BufferStringLength = _vsnwprintf_s( Buffer.GetData(), Buffer.GetLength(), _TRUNCATE, pString, v );
+	int BufferStringLength = _vsnwprintf_s( Buffer.GetData(), Buffer.GetSize(), _TRUNCATE, pString, v );
 #else
 	// TODO: Not sure what the equivalent _vsnwprintf_s routine is on the Mac/Ipod :( 
 	int BufferStringLength = vsnprintf( (char*)Buffer.GetData(), Buffer.GetLength(), (const char*)pString, v );
 	//int BufferStringLength = vsprintf_s( Buffer.GetData(), Buffer.GetLength(), pString, v );
 #endif
 
-	Buffer.SetLength( BufferStringLength );
-	Append( Buffer );
+	BufferString.SetLength( BufferStringLength );
+	Append( BufferString );
 }
 
 //------------------------------------------------------
@@ -979,3 +980,44 @@ Bool TString::GetIntegers(TArray<s32>& Integers) const
 
 	return true;	
 }
+
+//----------------------------------------------------------
+//	export this string into an ansi string in the form of an array
+//----------------------------------------------------------
+void TString::GetAnsi(TArray<char>& AnsiString,bool IncludeTerminator) const
+{
+	//	get length
+	u32 Length = GetLength();
+
+	//	nothing to append
+	if ( Length == 0 )
+		return;
+
+	//	pre-alloc data
+	AnsiString.AddAllocSize( Length + (IncludeTerminator ? 1 : 0 ) );
+
+	//	convert each char and add to array
+	for ( u32 i=0;	i<Length;	i++ )
+	{
+		const TChar& Char = GetCharAt(i);
+		char c = TLString::GetChar<char>( Char );
+		
+		//	add char
+		s32 Index = AnsiString.Add( c );
+
+		//	if we failed to add break out of the loop early
+		if ( Index == -1 )
+			break;
+	}
+
+	//	add terminator
+	if ( IncludeTerminator )
+	{
+		if ( AnsiString.Add( (char)0 ) == -1 )
+		{
+			//	if we failed to add terminator, then foribly set the last char to be a terminator
+			AnsiString.ElementLast() = (char)0;
+		}
+	}
+}
+

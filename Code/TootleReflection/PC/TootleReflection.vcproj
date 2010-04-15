@@ -214,58 +214,6 @@
 	<References>
 	</References>
 	<Files>
-		<Filter
-			Name="CFtpServer"
-			>
-			<File
-				RelativePath="..\CFTPServer\ConnectThread.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\CFTPServer\ConnectThread.h"
-				>
-			</File>
-			<File
-				RelativePath="..\CFTPServer\ControlSocket.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\CFTPServer\ControlSocket.h"
-				>
-			</File>
-			<File
-				RelativePath="..\CFTPServer\DataSocket.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\CFTPServer\DataSocket.h"
-				>
-			</File>
-			<File
-				RelativePath="..\CFTPServer\FTPEventSink.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\CFTPServer\FTPEventSink.h"
-				>
-			</File>
-			<File
-				RelativePath="..\CFTPServer\FTPServer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\CFTPServer\FTPServer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\CFTPServer\ListenSocket.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\CFTPServer\ListenSocket.h"
-				>
-			</File>
-		</Filter>
 		<File
 			RelativePath="..\TFileServer.cpp"
 			>

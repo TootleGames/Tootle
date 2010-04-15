@@ -126,7 +126,7 @@ Bool TLDebug::Platform::CheckWin32Error()
 	//	get error string from windows
 	TTempString ErrorString;
 	ErrorString.SetLength(256);
-	u32 NewLength = FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, &Error, Error, 0, ErrorString.GetData(), ErrorString.GetLength(), NULL );
+	u32 NewLength = FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, &Error, Error, 0, ErrorString.GetStringArray().GetData(), ErrorString.GetLength(), NULL );
 	ErrorString.SetLength( NewLength );
 
 	TTempString BreakString;

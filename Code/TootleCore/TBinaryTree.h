@@ -63,6 +63,8 @@ public:
 	TPtr<TBinaryTree>&			ImportDataString(TRefRef DataRef,TString& DataString);	//	gr: remove if I can get Read/Write() to work with a TString in TBinary
 	template<typename TYPE> 
 	TPtr<TBinaryTree>&			ExportData(TRefRef DataRef,const TYPE& Data);
+	template<typename TYPE> 
+	TPtr<TBinaryTree>&			ExportDataData(TRefRef DataRef,const TYPE& Data);
 	TPtr<TBinaryTree>&			ExportDataString(TRefRef DataRef,const TString& DataString);	//	gr: remove if I can get Read/Write() to work with a TString in TBinary
 
 	template<typename TYPE> 
@@ -170,6 +172,18 @@ TPtr<TBinaryTree>& TBinaryTree::ExportData(TRefRef DataRef,const TYPE& Data)
 	//	create a child
 	TPtr<TBinaryTree>& pData = AddChild( DataRef );
 	pData->Write( Data );
+	return pData;
+}
+
+//------------------------------------------------------
+//	explicitly use the WriteData routines
+//------------------------------------------------------
+template<typename TYPE> 
+TPtr<TBinaryTree>& TBinaryTree::ExportDataData(TRefRef DataRef,const TYPE& Data)
+{
+	//	create a child
+	TPtr<TBinaryTree>& pData = AddChild( DataRef );
+	pData->WriteData( Data );
 	return pData;
 }
 

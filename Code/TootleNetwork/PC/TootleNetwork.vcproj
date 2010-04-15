@@ -226,6 +226,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PCConnectionServerSocket.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PCConnectionServerSocket.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PCNetwork.cpp"
 				>
 			</File>

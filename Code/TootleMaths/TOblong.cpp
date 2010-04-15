@@ -9,7 +9,7 @@
 
 TLMaths::TOblong::TOblong() :
 	m_IsValid	( FALSE ),
-	m_Corners	( 8 )
+	m_Corners	( 8, float3(0,0,0) )
 {
 }
 

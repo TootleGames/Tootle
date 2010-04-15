@@ -338,3 +338,12 @@ void TLFileSys::TFile::OnFileLoaded()
 	m_ExportedAssets.Empty(true);
 }
 
+
+//-----------------------------------------------------------
+//	can we overwrite this file?
+//-----------------------------------------------------------
+bool TLFileSys::TFile::IsWritable() const
+{	
+	TFileSys* pFileSys = GetFileSys();	
+	return pFileSys ? pFileSys->IsWritable() : false;	
+}

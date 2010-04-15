@@ -2,16 +2,6 @@
 #include <TootleCore/TBinaryTree.h>
 
 
-//	specialise these
-template<typename TYPE> Type2<s32>	GetIntegerMinMax(TYPE x)	{	return Type2<s32>(0,0);	}
-template<> Type2<s32>				GetIntegerMinMax(u8 x)		{	return Type2<s32>( 0, 255 );	}
-template<> Type2<s32>				GetIntegerMinMax(s8 x)		{	return Type2<s32>( -127, 127 );	}
-template<> Type2<s32>				GetIntegerMinMax(u16 x)		{	return Type2<s32>( 0, 65535 );	}
-template<> Type2<s32>				GetIntegerMinMax(s16 x)		{	return Type2<s32>( -32767, 32767 );	}
-template<> Type2<s32>				GetIntegerMinMax(u32 x)		{	return Type2<s32>( 0, 4294967295U );	}
-template<> Type2<s32>				GetIntegerMinMax(s32 x)		{	return Type2<s32>( -2147483647, 2147483647 );	}
-
-
 
 //--------------------------------------------------------
 //	
@@ -19,7 +9,8 @@ template<> Type2<s32>				GetIntegerMinMax(s32 x)		{	return Type2<s32>( -21474836
 template<typename TYPE>
 SyncBool ImportBinaryDataIntegerInRange(TBinary& Data,const TString& DataString)
 {
-	Type2<s32> MinMax = GetIntegerMinMax( (TYPE)0 );
+	s32 Min = TLTypes::GetIntegerMin<TYPE>();
+	s32 Max = (s32)TLTypes::GetIntegerMax<TYPE>();	//	gr: note, we lose the max for u32 here, but assume that will never be a problem...
 	TArray<s32> Integers;
 	if ( !DataString.GetIntegers( Integers ) )
 		return SyncFalse;
@@ -28,11 +19,11 @@ SyncBool ImportBinaryDataIntegerInRange(TBinary& Data,const TString& DataString)
 	for ( u32 i=0;	i<Integers.GetSize();	i++ )
 	{
 		const s32& Integer = Integers[i];
-		if ( Integer >= MinMax.x && Integer <= MinMax.y )
+		if ( Integer >= Min && Integer <= Max )
 			continue;
 
 		TTempString Debug_String;
-		Debug_String << "Integer out of range: " << MinMax.x << " < " << Integer << " < " << MinMax.y;
+		Debug_String << "Integer out of range: " << Min << " < " << Integer << " < " << Max;
 		TLDebug_Break( Debug_String );
 		return SyncFalse;
 	}
@@ -673,13 +664,17 @@ Bool TLFile::ParseXMLDataTree(TXmlTag& Tag,TBinaryTree& Data)
 //--------------------------------------------------------
 Bool TLString::IsDatumString(const TString& String,TRef& DatumRef,TRef& ShapeType,Bool& IsJustDatum)
 {
-	//	split the string - max at 4 splits, if it splits 4 times, there's too many parts
+	//	split the string - max at 4 splits
 	TFixedArray<TStringLowercase<TTempString>, 4> StringParts;
 	if ( !String.Split( '_', StringParts ) )
 	{
 		//	didn't split at all, can't be valid
 		return FALSE;
 	}
+
+	//	if it splits 4 times, there's too many parts
+	if ( StringParts.GetSize() >= 4 )
+		return false;
 
 	//	check first part is named "datum"
 	if ( StringParts[0] == "datum" )

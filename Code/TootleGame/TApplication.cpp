@@ -194,6 +194,13 @@ SyncBool TApplication::Update(float fTimeStep)
 
 	// Udpate the state machine
 	TStateMachine::Update(fTimeStep);
+
+	//	if there is an error with the state (eg. failed to go into a test game)
+	//	switch back to bootup mode
+	if ( !TStateMachine::GetCurrentModeRef().IsValid() )
+	{
+		SetAppMode("Bootup");
+	}
 		
 	return TManager::Update(fTimeStep);
 }

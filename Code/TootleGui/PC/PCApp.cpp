@@ -154,8 +154,9 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
 
 	//	set global app exe
 	TBufferString<MAX_PATH> Filename;
-	Filename.SetLength( MAX_PATH );
-	u32 ExeStringLength = GetModuleFileName( NULL, Filename.GetData(), Filename.GetLength() );
+	TArray<TChar>& Buffer = Filename.GetStringArray();
+	Buffer.SetSize( MAX_PATH );
+	u32 ExeStringLength = GetModuleFileName( NULL, Buffer.GetData(), Buffer.GetSize() );
 	Filename.SetLength( ExeStringLength );
 	TLGui::SetAppExe( Filename );
 

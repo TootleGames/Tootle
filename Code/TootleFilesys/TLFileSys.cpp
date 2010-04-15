@@ -201,13 +201,14 @@ SyncBool TLFileSys::CreateLocalFileSys(TRef& FileSysRef,const TString& Directory
 		
 	//	[continue] init
 	SyncBool Result = pFileSys->Init();
-	
-#ifdef _DEBUG
+
+	//	if init fails, destroy the instance
 	if(Result == SyncFalse)
 	{
-		TLDebug_Print("Failed to initialise file system");		
+		TLDebug_Print("Failed to initialise local file system (maybe dir doesn't exist?)");		
+		g_pFactory->RemoveInstance( pFileSys->GetFileSysRef() );
+		pFileSys = NULL;
 	}
-#endif
 
 	return Result;
 }

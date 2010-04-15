@@ -72,6 +72,7 @@ public:
 	FORCEINLINE TBinary() : m_ReadPos ( -1 )								{	}
 	FORCEINLINE TBinary(const u8* pData,u32 DataLength) : m_ReadPos ( -1 )	{	WriteData( pData, DataLength );	}
 	FORCEINLINE TBinary(const TArray<u8>& Data) : m_ReadPos ( -1 )			{	WriteArray( Data );	}
+	FORCEINLINE TBinary(const TBinary& Data) : m_ReadPos ( -1 )				{	WriteData( Data );	}
 
 	template<typename TYPE> FORCEINLINE TYPE*		ReadNoCopy();						//	"read" the data for this next type, but return it as a pointer to the data. and move along the read pos too
 	template<typename TYPE> FORCEINLINE Bool		Read(TYPE& Var)						{	return ReadData( (u8*)&Var, sizeof(TYPE) );		}
@@ -97,6 +98,9 @@ public:
 	template<typename TYPE> void				WriteArray(const TArray<TYPE>& Array);	//	write an array to the data. we write the element count into the data too to save doing it client side
 	FORCEINLINE void							WriteString(const TString& String)	{	WriteArray( String.GetStringArray() );	SetDataTypeHint( TLBinary_TypeRef(WideString), TRUE );	}	//	gr: set the FORCED hint AFTER we write the string, the string uses the array functionality whihc writes an array size first. As long as strings are parsed with ReadString this isn't a problem
 	FORCEINLINE void							WriteData(const u8* pData,u32 Length)	{	m_Data.Add( pData, Length );	}	//	add raw data to array
+	FORCEINLINE void							WriteData(const TBinary& Data)		{	WriteData( Data.GetData(), Data.GetSize() );	}	//	add raw data to array
+	template<typename TYPE>
+	FORCEINLINE void							WriteData(const TArray<TYPE>& Data)	{	m_Data.Add( (const u8*)Data.GetData(), sizeof(TYPE) * Data.GetSize() );	}	//	write an array as if it were raw data
 	Bool										WriteDataHexString(const TString& String,TRef TypeHint);	//	write data from hex string
 
 	template<typename TYPE> FORCEINLINE void	AllocData(u32 Elements)				{	m_Data.AddAllocSize( Elements * sizeof(TYPE) );	}

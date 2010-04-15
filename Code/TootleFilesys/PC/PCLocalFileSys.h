@@ -28,6 +28,7 @@ class TLFileSys::Platform::LocalFileSys : public TLFileSys::TFileSys
 public:
 	LocalFileSys(TRefRef FileSysRef,TRefRef FileSysTypeRef);
 
+	virtual bool			IsWritable() const					{	return m_IsWritable;	}
 	virtual SyncBool		Init();								//	check directory exists
 	virtual SyncBool		LoadFileList();						//	search for all files
 	virtual SyncBool		LoadFile(TPtr<TFile>& pFile);		//	load a file

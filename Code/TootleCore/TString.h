@@ -59,13 +59,13 @@ public:
 	TString(const TChar16* pString,...);										//	formatted constructor
 	virtual ~TString()															{	}
 
-	FORCEINLINE u32				GetLength() const					{	u32 Size = GetStringArray().GetSize();	return (Size == 0) ? 0 : Size-1;	}	//	length = size - terminator
-	FORCEINLINE const TChar*	GetData() const						{	return GetStringArray().GetData();	}
-
-	//	gr: only temporary access - todo: revoke non-const accessor
-	FORCEINLINE TChar*		GetData()				{	return GetStringArray().GetData();	}
+	//	gr: no mutable version of this func. instead, use GetStringArray to access the data, then make sure you SetTerminator after modifying it!
+	FORCEINLINE const TChar*	GetData() const								{	return GetStringArray().GetData();	}
+	void						GetAnsi(TArray<char>& String,bool IncludeTerminator=true) const;		//	export this string into an ansi string in the form of an array
 
 	//	accessors
+	FORCEINLINE u32			GetLength() const								{	u32 Size = GetStringArray().GetSize();	return (Size == 0) ? 0 : Size-1;	}	//	length = size - terminator
+	FORCEINLINE Bool		IsEmpty() const									{	return (GetLength() == 0);	}
 	FORCEINLINE void		SetLength(u32 NewLength)						{	GetStringArray().SetSize( NewLength );	SetTerminator();	}	//	set the string to a certain size (usually for buffering)
 	void					SetAllocSize(u32 AllocLength);					//	allocate buffer for string data so that it doesnt need to alloc more later
 	FORCEINLINE u32			GetAllocSize() const							{	return GetStringArray().GetAllocSize();	}
@@ -189,11 +189,14 @@ template<int SIZE>
 class TBufferString : public TString
 {
 public:
-	//	gr: note: do not use TString constructors as VTable isn't setup so doesn't use the TFixedArray properly
-	TBufferString() : m_FixedDataArray(0)									{	}
-	TBufferString(const TString& String) : m_FixedDataArray(0)				{	Append( String );	}
-	TBufferString(const TChar8* pString) : m_FixedDataArray(0)				{	Append( pString );	}
-	TBufferString(const TChar16* pString) : m_FixedDataArray(0)				{	Append( pString );	}
+	//	gr: note: do not use TString constructors as VTable isn't setup so doesn't use the TFixedArray
+	//	gr: the fixed array is initialised with a size of 1 terminator so that the initial strlen() is okay.
+	//		this is probably not really required as we don't (and shouldn't) use strlen() on the string anyway, but
+	//		we do ensure this for printing purposes and such. We need to initialise the array because of alloc patterns (see TFixedArray)
+	TBufferString()							: m_FixedDataArray(1,TLString_Terminator)	{	}
+	TBufferString(const TString& String)	: m_FixedDataArray(1,TLString_Terminator)	{	Append( String );	}
+	TBufferString(const TChar8* pString)	: m_FixedDataArray(1,TLString_Terminator)	{	Append( pString );	}
+	TBufferString(const TChar16* pString)	: m_FixedDataArray(1,TLString_Terminator)	{	Append( pString );	}
 
 	FORCEINLINE const TChar&		operator[](u32 Index) const					{	return GetCharAt(Index);	}
 
@@ -207,7 +210,6 @@ public:
 	FORCEINLINE Bool				operator!=(const TChar* pString) const		{	return !IsEqual( pString, -1, TRUE );	}
 	FORCEINLINE Bool				operator<(const TString& String) const		{	return IsLessThan( String );	}
 
-protected:
 	virtual TArray<TChar>&			GetStringArray()		{	return m_FixedDataArray;	}
 	virtual const TArray<TChar>&	GetStringArray() const	{	return m_FixedDataArray;	}
 
@@ -348,6 +350,14 @@ Bool TString::Split(const TChar& SplitChar,TArray<STRINGTYPE>& StringArray) cons
 	if ( SplitTo == -1 )
 		return FALSE;
 
+	//	calc max number of strings we can split into
+	u32 MaxSplitStrings = StringArray.GetMaxAllocSize();
+	if ( MaxSplitStrings == 0 )
+	{
+		TLDebug_Break("Error; Array returned 0 for MaxAllocSize... should not happen and cannot continue with split");
+		return false;
+	}
+
 	u32 LastCharIndex = GetCharGetLastIndex();
 
 	while ( SplitFrom <= LastCharIndex )
@@ -380,6 +390,7 @@ Bool TString::Split(const TChar& SplitChar,TArray<STRINGTYPE>& StringArray) cons
 		s32 AddIndex = StringArray.Add( SplitString );
 		if ( AddIndex == -1 )
 		{
+			TLDebug_Break("gr: This shouldn't occur any more... end-of-array checked below!");
 			//	cannot fit any more strings into this array
 			return TRUE;
 		}
@@ -387,8 +398,19 @@ Bool TString::Split(const TChar& SplitChar,TArray<STRINGTYPE>& StringArray) cons
 		//	step over the character we split at, so +1
 		SplitFrom = SplitTo + 1;
 
-		//	find next split
-		SplitTo = GetCharIndex( SplitChar, SplitFrom );
+		//	if there is only one space left then put the whole of the rest of the string in
+		s32 NextIndex = AddIndex + 1;
+
+		//	MaxSplitStrings-1 == last-possible index in this array
+		if ( NextIndex == MaxSplitStrings-1 )
+		{
+			SplitTo = -1;
+		}
+		else
+		{
+			//	find next split
+			SplitTo = GetCharIndex( SplitChar, SplitFrom );
+		}
 
 		//	split at end of the string
 		if ( SplitTo == -1 )
@@ -525,7 +547,7 @@ FORCEINLINE TString& operator<<(TString& String,const u32& Value)
 		IntegerChars.InsertAt( 0, '0' + OfTen );
 
 		//	won't shrink any further
-		if ( Value < 10 )
+		if ( i < 10 )
 			break;
 
 		//	next 10th

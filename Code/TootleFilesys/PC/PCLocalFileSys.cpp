@@ -547,11 +547,12 @@ SyncBool Platform::LocalFileSys::WriteFile(TPtr<TFile>& pFile)
 	fclose( pFileHandle );
 	pFileHandle = NULL;
 
-	//	file can't be out of date any more!
-	pFile->SetOutOfDate( false );
-
 	//	refresh file info
 	UpdateFileInstance( pFile, FALSE );
+
+	//	gr; set contents-not-out-of-date state AFTER we update file instance as that could set it out of date
+	//	file can't be out of date any more!
+	pFile->SetOutOfDate( false );
 
 	return SyncTrue;
 }

@@ -308,7 +308,7 @@ SyncBool TCoreManager::UpdateLoop()
 		m_TimerUpdateCount -= TimerUpdateCount;	
 		if ( m_TimerUpdateCount > 0 )
 		{
-			TLDebug_Print( TString("%d timer hits during update/render", m_TimerUpdateCount ) );
+		//	TLDebug_Print( TString("%d timer hits during update/render", m_TimerUpdateCount ) );
 		}
 
 		//	error with manager[s]
