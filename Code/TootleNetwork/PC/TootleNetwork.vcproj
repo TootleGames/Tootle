@@ -226,19 +226,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\PCConnectionServerSocket.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PCConnectionServerSocket.h"
-				>
-			</File>
-			<File
 				RelativePath=".\PCNetwork.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\PCNetwork.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PCSocket.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PCSocket.h"
 				>
 			</File>
 		</Filter>
@@ -440,6 +440,22 @@
 		</File>
 		<File
 			RelativePath="..\TLNetwork.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TSocket.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TSocket.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TSocketServer.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TSocketServer.h"
 			>
 		</File>
 	</Files>

@@ -1,6 +1,8 @@
 #include "TLNetwork.h"
 #include <TootleCore/TLCore.h>
 #include <TootleCore/TCoreManager.h>
+#include "TSocketServer.h"
+#include "TConnection.h"
 
 
 namespace TLNetwork
@@ -20,6 +22,9 @@ namespace TLNetwork
 
 
 
+//---------------------------------------------------
+//	
+//---------------------------------------------------
 TPtr<TLNetwork::TConnection> TLNetwork::CreateConnection()
 {
 	return Platform::CreateConnection();
@@ -27,6 +32,18 @@ TPtr<TLNetwork::TConnection> TLNetwork::CreateConnection()
 
 
 
+//---------------------------------------------------
+//	gr: more temporaryness (this doesn't derive from TConnection yet)
+//---------------------------------------------------
+TPtr<TLNetwork::TSocketServer> TLNetwork::CreateServerSocket(TBinaryTree& ServerInfo)
+{
+	return new TSocketServer( ServerInfo );
+}
+
+
+//---------------------------------------------------
+//	
+//---------------------------------------------------
 TLNetwork::TPeer::TPeer() :
 	m_PeerRef	( g_PeerCounter.Increment() )
 {

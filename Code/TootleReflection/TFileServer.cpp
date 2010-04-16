@@ -5,8 +5,6 @@
 		http://www.faqs.org/rfcs/rfc959.html
 
 -------------------------------------------------------*/
-#pragma once
-
 #include "TFileServer.h"
 #include <TootleFileSys/TLFileSys.h>
 #include <TootleCore/TLCore.h>
@@ -84,7 +82,7 @@ SyncBool TLReflection::TFileServer::Initialise()
 		TBinaryTree ServerInfo( TRef("Command") );
 		ServerInfo.ExportData("Protocol", TRef("TCP") );
 		ServerInfo.ExportData("Port", (u16)g_Port );
-		m_pServer = new TLNetwork::TConnectionServerSocket( ServerInfo );
+		m_pServer = new TLNetwork::TSocketServer( ServerInfo );
 
 		//	failed to alloc server
 		if ( !m_pServer )
@@ -279,7 +277,7 @@ TLReflection::TFtpClient::TFtpClient(TRefRef PeerRef) :
 //----------------------------------------------------------------------------//
 //	update routine, required to catch the finishing of a data transfer
 //----------------------------------------------------------------------------//
-void TLReflection::TFtpClient::Update(TLNetwork::TConnectionServerSocket& Server)
+void TLReflection::TFtpClient::Update(TLNetwork::TSocketServer& Server)
 {
 	if ( m_pDataTask )
 	{
@@ -299,7 +297,7 @@ void TLReflection::TFtpClient::Update(TLNetwork::TConnectionServerSocket& Server
 //----------------------------------------------------------------------------//
 //	send ftp packet to server
 //----------------------------------------------------------------------------//
-bool TLReflection::TFtpClient::SendPacket(u32 FtpCommand,const TString& String,TLNetwork::TConnectionServerSocket& Server)
+bool TLReflection::TFtpClient::SendPacket(u32 FtpCommand,const TString& String,TLNetwork::TSocketServer& Server)
 {
 	//	put the command, the string and a line terminator into a packet
 	TString FinalString;
@@ -321,7 +319,7 @@ bool TLReflection::TFtpClient::SendPacket(u32 FtpCommand,const TString& String,T
 //----------------------------------------------------------------------------//
 //	execute any/all the commands we've put onto the client. return false if we want to disconnect the client
 //----------------------------------------------------------------------------//
-bool TLReflection::TFtpClient::ExecuteCommands(TLNetwork::TConnectionServerSocket& Server)
+bool TLReflection::TFtpClient::ExecuteCommands(TLNetwork::TSocketServer& Server)
 {
 	while ( m_CommandQueue.GetSize() > 0 )
 	{
@@ -342,7 +340,7 @@ bool TLReflection::TFtpClient::ExecuteCommands(TLNetwork::TConnectionServerSocke
 //----------------------------------------------------------------------------//
 //	
 //----------------------------------------------------------------------------//
-bool TLReflection::TFtpClient::SendPacketCurrentDir(u32 FtpCommand,TLNetwork::TConnectionServerSocket& Server)
+bool TLReflection::TFtpClient::SendPacketCurrentDir(u32 FtpCommand,TLNetwork::TSocketServer& Server)
 {
 	TTempString CurrentDirString;
 
@@ -473,7 +471,7 @@ bool TLReflection::TFtpClient::GetDirectoryList(const TString& Arguments,TString
 //----------------------------------------------------------------------------//
 //	execute a command. return false if we want to disconnect the client
 //----------------------------------------------------------------------------//
-bool TLReflection::TFtpClient::ExecuteCommand(const TFtpCommand& Command,TLNetwork::TConnectionServerSocket& Server)
+bool TLReflection::TFtpClient::ExecuteCommand(const TFtpCommand& Command,TLNetwork::TSocketServer& Server)
 {
 	/*
 	case TRef_Static4( 
@@ -694,12 +692,18 @@ bool TLReflection::TFtpClient::ExecuteCommand(const TFtpCommand& Command,TLNetwo
 			m_PassiveMode = true;
 
 			//	get data address & port
-			TLNetwork::TAddress DataAddress = m_pDataServer->GetAddress();
-			if ( !DataAddress.IsValid() )
+			TLNetwork::TAddress DataAddress = m_pDataServer->GetLocalAddress();
+			TLNetwork::TAddress ServerAddress = Server.GetLocalAddress( this->m_PeerRef );
+			if ( !DataAddress.IsValid() || !ServerAddress.IsValid() )
 				return false;
 
+			//	gr: the ip address of the data server will be unresolved atm (0.0.0.0) until someone has connected.
+			//		so we have to use the ip address of the server (the connect port that the client has connected to)
+			//		and the data port.
+			DataAddress = TLNetwork::TAddress( ServerAddress.GetIP(), DataAddress.GetPort() );
+
 			//	format of PORT is ip0,ip1,ip2,ip3,portblock,portremainder
-			//	the port is divided into blocks of 256, so port 1,2 is (1*256)+2
+			//	the port is divided into blocks of 256, so port 1,2 == (1*256)+2 == 258
 
 			//	tell the client which address/port to connect to
 			TTempString Reply;
@@ -764,7 +768,7 @@ bool TLReflection::TFtpClient::ExecuteCommand(const TFtpCommand& Command,TLNetwo
 		{
 			const TString& Filename = Command.m_Arguments;
 			TLFileSys::TFileSys* pFileSys = TLFileSys::GetFileSys( m_FileSystem );
-			TPtr<TLFileSys::TFile> pNewFile = pFileSys ? pFileSys->CreateNewFile( Filename ) : NULL;
+			TPtr<TLFileSys::TFile> pNewFile = pFileSys ? pFileSys->CreateNewFile( Filename ) : TPtr<TLFileSys::TFile>();
 
 			//	failed to create file...
 			if ( !pNewFile )
@@ -785,7 +789,7 @@ bool TLReflection::TFtpClient::ExecuteCommand(const TFtpCommand& Command,TLNetwo
 			//	get file from current file system
 			const TString& Filename = Command.m_Arguments;
 			TLFileSys::TFileSys* pFileSys = TLFileSys::GetFileSys( m_FileSystem );
-			TLFileSys::TFile* pFile = pFileSys ? pFileSys->GetFile( Filename ) : NULL;
+			TLFileSys::TFile* pFile = pFileSys ? pFileSys->GetFile( Filename ).GetObjectPointer() : NULL;
 
 			//	no such file/sys
 			if ( !pFile )
@@ -890,7 +894,7 @@ bool TLReflection::TFtpClient::CreateDataServer()
 	TBinaryTree ServerInfo( TRef("Data") );
 	ServerInfo.ExportData("Protocol", TRef("TCP") );
 	ServerInfo.ExportData("Port", (u16)g_Port-1 );		//	gr; todo: make this automatic!
-	m_pDataServer = new TLNetwork::TConnectionServerSocket( ServerInfo );
+	m_pDataServer = new TLNetwork::TSocketServer( ServerInfo );
 
 	//	failed alloc?
 	if ( !m_pDataServer )
@@ -944,7 +948,7 @@ void TLReflection::TFtpClient::DestroyDataTask()
 //----------------------------------------------------------
 //	create a data server to transfer something
 //----------------------------------------------------------
-bool TLReflection::TFtpClient::CreateDataTask(TPtr<TFtpDataTask>& pNewTask,TLNetwork::TConnectionServerSocket& CommandServer)
+bool TLReflection::TFtpClient::CreateDataTask(TPtr<TFtpDataTask>& pNewTask,TLNetwork::TSocketServer& CommandServer)
 {
 	if ( !pNewTask )
 	{
@@ -994,7 +998,7 @@ bool TLReflection::TFtpClient::CreateDataTask(TPtr<TFtpDataTask>& pNewTask,TLNet
 //----------------------------------------------------------
 //	send dir listing via data connection
 //----------------------------------------------------------
-bool TLReflection::TFtpClient::SendDataDirListing(const TString& DirListing,TLNetwork::TConnectionServerSocket& CommandServer)
+bool TLReflection::TFtpClient::SendDataDirListing(const TString& DirListing,TLNetwork::TSocketServer& CommandServer)
 {
 	//	create data socket
 	if ( !CreateDataServer() )
@@ -1008,7 +1012,7 @@ bool TLReflection::TFtpClient::SendDataDirListing(const TString& DirListing,TLNe
 //----------------------------------------------------------
 //	send file via data connection
 //----------------------------------------------------------
-bool TLReflection::TFtpClient::SendDataSendFile(TPtr<TLFileSys::TFile>& pFile,TLNetwork::TConnectionServerSocket& CommandServer)
+bool TLReflection::TFtpClient::SendDataSendFile(TPtr<TLFileSys::TFile>& pFile,TLNetwork::TSocketServer& CommandServer)
 {
 	//	create data socket
 	if ( !CreateDataServer() )
@@ -1022,7 +1026,7 @@ bool TLReflection::TFtpClient::SendDataSendFile(TPtr<TLFileSys::TFile>& pFile,TL
 //----------------------------------------------------------
 //	recieve into this file via data connection
 //----------------------------------------------------------
-bool TLReflection::TFtpClient::SendDataRecieveFile(TPtr<TLFileSys::TFile>& pNewFile,TLNetwork::TConnectionServerSocket& CommandServer)
+bool TLReflection::TFtpClient::SendDataRecieveFile(TPtr<TLFileSys::TFile>& pNewFile,TLNetwork::TSocketServer& CommandServer)
 {
 	//	create data socket
 	if ( !CreateDataServer() )
@@ -1036,7 +1040,7 @@ bool TLReflection::TFtpClient::SendDataRecieveFile(TPtr<TLFileSys::TFile>& pNewF
 //----------------------------------------------------------
 //	current data task has finished
 //----------------------------------------------------------
-void TLReflection::TFtpClient::OnDataTaskFinished(bool Success,TLNetwork::TConnectionServerSocket& CommandServer)
+void TLReflection::TFtpClient::OnDataTaskFinished(bool Success,TLNetwork::TSocketServer& CommandServer)
 {
 	//	clean up task
 	DestroyDataServer();
@@ -1206,7 +1210,7 @@ SyncBool TLReflection::TFtpDataTask::GetState()
 //----------------------------------------------------------------------------
 //	our client has connected, send out the queued packet (if there is one)
 //----------------------------------------------------------------------------
-void TLReflection::TFtpDataTask::OnPeerConnected(TPtr<TLNetwork::TConnectionServerSocket>& pSocket,TRefRef Peer)
+void TLReflection::TFtpDataTask::OnPeerConnected(TPtr<TLNetwork::TSocketServer>& pSocket,TRefRef Peer)
 {
 	//	store connection info
 	m_pSocket = pSocket;

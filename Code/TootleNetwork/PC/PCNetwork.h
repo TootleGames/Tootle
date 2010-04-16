@@ -11,6 +11,7 @@
 
 #include "../TConnection.h"
 
+
 namespace TLNetwork
 {
 	namespace Platform 
@@ -22,3 +23,4 @@ namespace TLNetwork
 		TPtr<TLNetwork::TConnection> CreateConnection();
 	}
 }
+
