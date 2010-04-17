@@ -3,7 +3,7 @@
 #include <TootleCore/TLMaths.h>
 
 #ifdef _DEBUG
-	#define ENABLE_INPUTSENSOR_TRACE
+	//#define ENABLE_INPUTSENSOR_TRACE
 #endif
 
 using namespace TLInput;
