@@ -1569,21 +1569,31 @@ void TLGraph::TGraph<T>::ProcessMessageFromQueue(TLMessaging::TMessage& Message)
 			TargetList.Add(refTargetID);
 	}
 
-	// Go through and find the target to send the message to
-	for( u32 uIndex=0;	uIndex<TargetList.GetSize();	uIndex++)
+	if(TargetList.GetSize() > 0)
 	{
-		TRefRef refTargetID = TargetList.ElementAt(uIndex);
+		// Go through and find the target to send the message to
+		for( u32 uIndex=0;	uIndex<TargetList.GetSize();	uIndex++)
+		{
+			TRefRef refTargetID = TargetList.ElementAt(uIndex);
 
-		TPtr<T>& pNode = FindNode(refTargetID);
-		if (  pNode.IsValid() )
-		{
-			pNode->QueueMessage(Message);
+			TPtr<T>& pNode = FindNode(refTargetID);
+			if (  pNode.IsValid() )
+			{
+				pNode->QueueMessage(Message);
+			}
+			else
+			{
+				// Not found.  Could bring up an error message here or just ignore...
+				TLDebug_Break("Graph Message for node that doesn't exist... what to do?");
+			}
 		}
-		else
-		{
-			// Not found.  Could bring up an error message here or just ignore...
-			TLDebug_Break("Graph Message for node that doesn't exist... what to do?");
-		}
+	}
+	else
+	{
+		// No target nodes to send the message to so process the 
+		// message by the graph instead
+		Message.ResetReadPos();
+		ProcessMessage(Message);
 	}
 }
 

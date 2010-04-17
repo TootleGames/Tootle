@@ -4,8 +4,6 @@
 #include <TootleCore/TLCore.h>
 #include <TootleCore/TPtr.h>
 
-#include "../TLAudio.h"
-
 #import <OpenAL/al.h>
 #import <OpenAL/alc.h>
 
@@ -102,6 +100,14 @@ namespace TLAudio
 
 			// Set listener details - in OpenAL there is only ever one listener
 			void SetListener(const TListenerProperties& Props);
+
+			Bool Enable();
+			Bool Disable();
+			
+			Bool Activate();
+			Bool Deactivate();
+
+			Bool IsEnabled();
 		}
 	}
 }

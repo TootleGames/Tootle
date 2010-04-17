@@ -41,7 +41,18 @@ public:
 	
 	FORCEINLINE TRefRef			GetGraphRef() const						{	return TLCore::TManager::GetManagerRef();	}
 
-	virtual Bool				SendMessageTo(TRefRef RecipientRef, TLMessaging::TMessage& Message) 		{	return SendMessageToNode(RecipientRef, Message);	}	// Generic manager SendMessage routine wrapper for the graph SendMessageToNode
+	virtual Bool				SendMessageTo(TRefRef RecipientRef, TLMessaging::TMessage& Message) 		
+	{	
+		// If the recipient is the graph then process the message
+		if(RecipientRef == GetManagerRef())
+		{
+			ProcessMessage(Message);
+			return TRUE;
+		}
+
+		return SendMessageToNode(RecipientRef, Message);	
+	}	// Generic manager SendMessage routine wrapper for the graph SendMessageToNode
+
 	virtual Bool				SendMessageToNode(TRefRef NodeRef,TLMessaging::TMessage& Message)=0;	//	send message to node
 
 	virtual TRef				CreateNode(TRefRef NodeRef,TRefRef TypeRef,TRefRef ParentRef,TLMessaging::TMessage* pInitMessage=NULL,Bool StrictNodeRef=FALSE)=0;	//	create node and add to the graph. returns ref of new node

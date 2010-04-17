@@ -216,12 +216,26 @@ void Platform::SetListener(const TListenerProperties& Props)
 
 Bool Platform::Enable()
 {
-	// Not used on the mac
+	// Not used on the Mac
 	return FALSE;
 }
 
 Bool Platform::Disable()
 {
-	// Not used on the mac
+	// Not used on the Mac
 	return FALSE;
 }
+
+
+Bool Platform::Activate()
+{
+	// Not used on the Mac
+	return FALSE;
+}
+
+Bool Platform::Deactivate()
+{
+	// Not used on the Mac
+	return FALSE;
+}
+

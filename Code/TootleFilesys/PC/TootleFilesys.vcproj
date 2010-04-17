@@ -739,7 +739,23 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TFileMP3.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TFileMP3.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TFileObject.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TFileOptions.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TFileOptions.h"
 			>
 		</File>
 		<File

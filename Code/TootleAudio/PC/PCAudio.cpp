@@ -344,3 +344,22 @@ Bool Platform::Disable()
 
 	return FALSE;
 }
+
+Bool Platform::Activate()
+{
+#if(AUDIO_SYSTEM == AUDIO_OPENAL)
+	return OpenAL::Activate();
+#endif
+	
+	return FALSE;
+}
+
+Bool Platform::Deactivate()
+{
+#if(AUDIO_SYSTEM == AUDIO_OPENAL)
+	return OpenAL::Deactivate();
+#endif
+	
+	return FALSE;
+}
+

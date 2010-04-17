@@ -5,11 +5,10 @@
 #include <TootleInput/TUser.h>
 #include "TAudioNode.h"
 #include "TAudioNode_Music.h"
+#include "TAudioListener.h"
 
 namespace TLAudio
 {
-	class TListenerProperties;
-
 	class TAudiograph;
 	class TAudioNodeFactory;
 
@@ -17,15 +16,6 @@ namespace TLAudio
 };
 
 
-// Data for the audio system listener
-class TLAudio::TListenerProperties
-{
-public:
-	float3		m_vPosition;
-	float3		m_vVelocity;
-	float3		m_vLookAt;
-	float3		m_vUp;
-};
 
 
 /*
@@ -49,6 +39,7 @@ public:
 
 	FORCEINLINE Bool		IsPaused()			const	{ return m_bPause; }
 	FORCEINLINE Bool		IsEnabled()			const	{ return m_bEnabled; }
+	FORCEINLINE Bool		IsActive()			const	{ return m_bActive; }
 	FORCEINLINE Bool		IsMuted()			const	{ return m_bMute; }
 	////////////////////////////////////////////////////////
 
@@ -106,15 +97,14 @@ protected:
 
 	void					Enable();
 	void					Disable();
+	
+	void					Activate();
+	void					Deactivate();
 
 	virtual void			ProcessMessage(TLMessaging::TMessage& Message);
 	virtual void			OnEventChannelAdded(TRefRef refPublisherID, TRefRef refChannelID);	
 
 	SyncBool				InitDevices();
-
-	void					OnMusicVolumeChanged();
-	void					OnEffectsVolumeChanged();
-	void					OnPauseStateChanged();
 
 	TPtr<TAudioNode_Music>	GetMusicNode()	{ return FindNode(m_MusicRef); }
 
@@ -122,7 +112,22 @@ protected:
 	void					MapActions_Keyboard(TRefRef DeviceRef, TPtr<TLUser::TUser> pUser);
 
 	FORCEINLINE	void		ToggleMute()	{ m_bMute = !m_bMute; OnMuteChanged(); }
+	
+	FORCEINLINE void		SetMute(Bool bMute);			
+	FORCEINLINE void		SetPause(Bool bPause);
+	FORCEINLINE void		SetEnabled(Bool bEnabled);
+	FORCEINLINE void		SetActive(Bool bActive);
+	FORCEINLINE void		SetEffectsVolume(float fVolume);
+	FORCEINLINE void		SetMusicVolume(float fVolume);
+
+	virtual void			SetProperty(TLMessaging::TMessage& Message);
+
+private:
+	void					OnMusicVolumeChanged();
+	void					OnEffectsVolumeChanged();
+	void					OnPauseStateChanged();
 	void					OnMuteChanged();
+	void					OnEnableChanged();
 
 
 private:
@@ -134,9 +139,74 @@ private:
 	TListenerProperties		m_Listener;			// The audio listener aka microphone
 
 	Bool					m_bPause;			// Audio system pause - system will pause all audio
-	Bool					m_bEnabled;			// Audio system enabled - system completely stopped from generating audio
+	Bool					m_bEnabled;			// Audio system enabled - low level system is initialised for use
+	Bool					m_bActive;			// Audio system active - sounds can be generated 
 	Bool					m_bMute;			// Audio system muted - all audio not audible
 };
+
+
+FORCEINLINE void TLAudio::TAudiograph::SetMute(Bool bMute)			
+{ 
+	if(m_bMute != bMute) 
+	{ 
+		m_bMute = bMute; 
+		OnMuteChanged();
+	} 
+}
+
+FORCEINLINE void TLAudio::TAudiograph::SetPause(Bool bPause)
+{
+	if(m_bPause != bPause)
+	{
+		m_bPause = bPause; 
+		OnPauseStateChanged(); 
+	}
+}
+
+
+FORCEINLINE void TLAudio::TAudiograph::SetEnabled(Bool bEnable)
+{
+	if(m_bEnabled != bEnable)
+	{
+		if(bEnable)
+			Enable();
+		else 
+			Disable();
+	}
+}
+
+
+FORCEINLINE void TLAudio::TAudiograph::SetActive(Bool bActive)
+{
+	if(m_bActive != bActive)
+	{
+		if(bActive)
+			Activate();
+		else 
+			Deactivate();
+	}
+}
+
+FORCEINLINE void TLAudio::TAudiograph::SetEffectsVolume(float fVolume)
+{
+	if(m_fEffectsVolume != fVolume)
+	{
+		m_fEffectsVolume = fVolume;
+		OnEffectsVolumeChanged();
+	}
+}
+
+FORCEINLINE void TLAudio::TAudiograph::SetMusicVolume(float fVolume)
+{
+	if(m_fMusicVolume != fVolume)
+	{
+		m_fMusicVolume = fVolume;
+		OnMusicVolumeChanged();
+	}
+}
+
+
+
 
 
 //----------------------------------------------------------

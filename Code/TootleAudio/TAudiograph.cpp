@@ -5,9 +5,73 @@
 #include <TootleInput/TDevice.h>
 
 
+
 namespace TLAudio
 {
 	TPtr<TAudiograph> g_pAudiograph;
+	
+	
+	namespace Platform
+	{
+		SyncBool	Init();
+		SyncBool	Update();
+		SyncBool	Shutdown();
+		
+		// Low level audio routines		
+		Bool		CreateSource(TRefRef SourceRef);
+		Bool		RemoveSource(TRefRef SourceRef);
+		
+		Bool		CreateBuffer(TRefRef AudioAssetRef);		//	wrapper which loads the asset then does create buffer
+		Bool		CreateBuffer(TLAsset::TAudio& AudioAsset);
+		Bool		RemoveBuffer(TRefRef AudioAssetRef);
+		
+		Bool		HasSource(TRefRef AudioSourceRef);
+		Bool		HasBuffer(TRefRef AudioAssetRef);
+		
+		Bool		AttachSourceToBuffer(TRefRef AudioSourceRef, TRefRef AudioAssetRef, Bool bStreaming);
+		
+		// Audio control
+		Bool		StartAudio(TRefRef AudioSourceRef);
+		Bool		StopAudio(TRefRef AudioSourceRef);
+		Bool		PauseAudio(TRefRef AudioSourceRef);
+		
+		Bool		DetermineFinishedAudio(TArray<TRef>& refArray);
+		
+		// Audio Properties
+		Bool		SetPitch(TRefRef AudioSourceRef, const float fPitch);
+		Bool		GetPitch(TRefRef AudioSourceRef, float& fPitch);
+		
+		Bool		SetVolume(TRefRef AudioSourceRef, const float fVolume);
+		Bool		GetVolume(TRefRef AudioSourceRef, float& fVolume);
+		
+		Bool		SetLooping(TRefRef AudioSourceRef, const Bool bLooping);
+		Bool		GetIsLooping(TRefRef AudioSourceRef, Bool& bLooping);
+		
+		Bool		SetRelative(TRefRef AudioSourceRef, const Bool bRelative);
+		Bool		GetIsRelative(TRefRef AudioSourceRef, Bool& bRelative);
+		
+		Bool		SetPosition(TRefRef AudioSourceRef, const float3 vPosition);
+		Bool		GetPosition(TRefRef AudioSourceRef, float3& vPosition);
+		
+		Bool		SetVelocity(TRefRef AudioSourceRef, const float3 vVelocity);
+		Bool		GetVelocity(TRefRef AudioSourceRef, float3& vVelocity);
+		
+		Bool		SetMinRange(TRefRef AudioSourceRef, const float fDistance);
+		Bool		SetMaxRange(TRefRef AudioSourceRef, const float fDistance);
+		Bool		SetRateOfDecay(TRefRef AudioSourceRef, const float fRateOfDecay);
+		
+		
+		// Audio system listener (aka a virtual microphone)	
+		void SetListener(const TListenerProperties& Props);
+		
+		Bool Enable();
+		Bool Disable();
+		
+		Bool Activate();
+		Bool Deactivate();
+		
+	}
+	
 };
 
 
@@ -31,7 +95,8 @@ TAudiograph::TAudiograph() :
 	m_fMusicVolume							(1.0f),
 	m_fEffectsVolume						(1.0f),
 	m_bPause								(FALSE),
-	m_bEnabled								(TRUE),
+	m_bEnabled								(FALSE),
+	m_bActive								(TRUE),
 	m_bMute									(FALSE)
 {
 }
@@ -50,6 +115,7 @@ SyncBool TAudiograph::Initialise()
 		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "Pause");
 		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "OnVolumeChanged");
 		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "OnMuteChanged");
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "OnEnableChanged");
 
 		if(TLGraph::TGraph<TLAudio::TAudioNode>::Initialise() == SyncTrue)
 		{	
@@ -114,8 +180,12 @@ SyncBool TAudiograph::Update(float fTimeStep)
 {
 	TLTime::TScopeTimer Timer( TRef_Static(A,u,d,i,o) );
 
-	if(!IsEnabled())
+	if(!IsEnabled() || !IsActive())
+	{
+		// Still need to process queued messages
+		ProcessMessageQueue();
 		return SyncTrue;
+	}
 
 	// Disable the audio whilst we make mass changes
 	//Disable();
@@ -138,6 +208,19 @@ SyncBool TAudiograph::Update(float fTimeStep)
 
 	SyncBool Result = TLGraph::TGraph<TLAudio::TAudioNode>::Update(fTimeStep);
 
+	// Update the low level system
+	TLAudio::Platform::Update();
+	
+	// TODO: 
+	// Determine audible audio nodes as a list using distance to listener position
+	// OpenAL is limited to 16 'channels' so limit the list bearing in mind some nodes will need multiple
+	// channels - i.e. music may need 3 or 4.
+	// Remove any buffers for audio not now audible
+	// Create buffers and sources dynamically per-frame
+	// and bind
+	// IMPORTANT: change low level system to allow for multiple buffers/sources for 
+	//            one audio node - currently only allows for one of each per node.
+	
 	// Enable the audio again
 	//Enable();
 
@@ -161,14 +244,14 @@ void TAudiograph::ProcessMessage(TLMessaging::TMessage& Message)
 
 	if(MessageRef == "SetVolume")
 	{
+		TLDebug_Break("Redundant - use SetProperty");
 		float fVolume; 
 		if(Message.ImportData("Effects", fVolume))
 		{
 			// Clamp to within range
 			TLMaths::Limit(fVolume, 0.0f, 1.0f);
 
-			m_fEffectsVolume = fVolume;
-			OnEffectsVolumeChanged();
+			SetEffectsVolume(fVolume);
 		}
 
 		if(Message.ImportData("Music", fVolume))
@@ -176,24 +259,43 @@ void TAudiograph::ProcessMessage(TLMessaging::TMessage& Message)
 			// Clamp to within range
 			TLMaths::Limit(fVolume, 0.0f, 1.0f);
 
-			m_fMusicVolume = fVolume;
-			OnMusicVolumeChanged();
+			SetMusicVolume(fVolume);
 		}
 
 		return;
 	}
 	else if(MessageRef == "Pause")
 	{
-		m_bPause = TRUE;
-		OnPauseStateChanged();
+		SetPause(TRUE);
 		return;
 	}
 	else if(MessageRef == "UnPause")
 	{
-		m_bPause = FALSE;
-		OnPauseStateChanged();
+		SetPause(FALSE);
 		return;
 	}
+	else if(MessageRef == "Mute")
+	{
+		SetMute(TRUE);
+		return;
+	}
+	else if(MessageRef == "UnMute")
+	{
+		SetMute(FALSE);
+		return;
+	}
+	else if(MessageRef == "Enable")
+	{
+		// Enable the audio system, creating low-level device
+		SetEnabled(TRUE);
+		return;
+	}
+	else if(MessageRef == "Disable")
+	{
+		// Disable the audio system completely, destroying low-level device
+		SetEnabled(FALSE);
+		return;
+	}	
 	else if(MessageRef == TRef_Static(A,c,t,i,o))
 	{
 		TRef InputActionRef;
@@ -219,13 +321,13 @@ void TAudiograph::ProcessMessage(TLMessaging::TMessage& Message)
 		{
 			if(State == "Deactivate")
 			{
-				if(IsEnabled())
-					Disable();
+				// Deactivate/suspend the audio
+				SetActive(FALSE);
 			}
 			else
 			{
-				if(!IsEnabled())
-					Enable();
+				// Activate/unsuspend the audio
+				SetActive(TRUE);
 			}
 
 			return;
@@ -262,35 +364,142 @@ void TAudiograph::ProcessMessage(TLMessaging::TMessage& Message)
 		}
 	}
 
-
-
 	// Super class process message
 	TLGraph::TGraph<TLAudio::TAudioNode>::ProcessMessage(Message);
 }
 
 
+void TAudiograph::SetProperty(TLMessaging::TMessage& Message)
+{
+	if(Message.HasChild("Volume"))
+	{
+		TPtr<TBinaryTree> pChild = Message.GetChild("Volume");
+		float fVolume; 
+		if(pChild->ImportData("Effects", fVolume))
+		{
+			// Clamp to within range
+			TLMaths::Limit(fVolume, 0.0f, 1.0f);
+
+			SetEffectsVolume(fVolume);
+		}
+
+		if(pChild->ImportData("Music", fVolume))
+		{
+			// Clamp to within range
+			TLMaths::Limit(fVolume, 0.0f, 1.0f);
+
+			SetMusicVolume(fVolume);
+		}
+	}
+	
+	Bool bOption = FALSE;
+
+	if(Message.ImportData("Pause", bOption))
+	{
+		SetPause(bOption);
+	}
+
+	if(Message.ImportData("Mute", bOption))
+	{
+		SetMute(bOption);
+	}
+	
+	if(Message.ImportData("Enable", bOption))
+	{
+		SetEnabled(bOption);
+	}
+}
+
+
+// Enables the low level audio system by initialising the device and allowing 
+// audio objects to be created
 void TAudiograph::Enable()
 {
 	if(Platform::Enable())
 	{
 		m_bEnabled = TRUE;
+		OnEnableChanged();
 	}
 }
 
+// Disables the low level audio system destroying all current sound objects
+// and shutting down the audio device
 void TAudiograph::Disable()
 {
 	if(Platform::Disable())
 	{
+		// Remove all nodes
+		RemoveChildren(GetRootNode()->GetNodeRef());
+		m_MusicRef.SetInvalid();
+
 		m_bEnabled = FALSE;
+		OnEnableChanged();
 	}
 }
+
+// Switches the low level audio system 'on' to allow audio to be heard
+// No changes are made to the device or the audio objects
+void TAudiograph::Activate()
+{
+	if(Platform::Activate())
+	{
+		m_bActive = TRUE;
+	}
+}
+
+// Switches the low level audio system 'off' so no audio will be heard
+// No changes are made to the device or the audio objects
+void TAudiograph::Deactivate()
+{
+	if(Platform::Deactivate())
+	{
+		m_bActive = FALSE;
+	}
+}
+
 
 void TAudiograph::OnMuteChanged()
 {
 	TLMessaging::TMessage Message("OnMuteChanged", GetGraphRef());
+	Message.ExportData("Mute", m_bMute);
 	PublishMessage(Message);
 }
 
+void TAudiograph::OnEnableChanged()
+{
+	TLMessaging::TMessage Message("OnEnableChanged", GetGraphRef());
+	Message.ExportData("Enable", m_bEnabled);
+
+	PublishMessage(Message);
+}
+
+void TAudiograph::OnMusicVolumeChanged()
+{
+	TLMessaging::TMessage Message("OnVolumeChanged", GetGraphRef());
+	Message.ExportData("Type", TRef("Music"));
+	Message.ExportData("Volume", GetMusicVolume());
+
+	PublishMessage(Message);
+}
+
+void TAudiograph::OnEffectsVolumeChanged()
+{
+	TLMessaging::TMessage Message("OnVolumeChanged", GetGraphRef());
+	Message.ExportData("Type", TRef("Effects"));
+	Message.ExportData("Volume", GetEffectsVolume());
+
+	PublishMessage(Message);
+}
+
+
+void TAudiograph::OnPauseStateChanged()
+{
+	// Broadcast pause message to all subscribers
+	TLMessaging::TMessage Message("Pause", GetGraphRef());
+	Message.ExportData("State", m_bPause);
+
+	PublishMessage(Message);
+}
 
 
 void TAudiograph::OnInputDeviceAdded(TRefRef DeviceRef,TRefRef DeviceTypeRef)
@@ -547,34 +756,5 @@ float TAudiograph::GetAudioLengthSeconds(TRefRef AudioRef)
 
 
 
-
-
-
-
-void TAudiograph::OnMusicVolumeChanged()
-{
-	TLMessaging::TMessage Message("OnVolumeChanged");
-	Message.ExportData("Volume", GetMusicVolume());
-
-	PublishMessage(Message);
-}
-
-void TAudiograph::OnEffectsVolumeChanged()
-{
-	TLMessaging::TMessage Message("OnVolumeChanged");
-	Message.ExportData("Volume", GetEffectsVolume());
-
-	PublishMessage(Message);
-}
-
-
-void TAudiograph::OnPauseStateChanged()
-{
-	// Broadcast pause message to all subscribers
-	TLMessaging::TMessage Message("Pause", "Audio");
-	Message.ExportData("State", m_bPause);
-
-	PublishMessage(Message);
-}
 
 	

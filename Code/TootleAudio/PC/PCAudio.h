@@ -66,6 +66,9 @@ namespace TLAudio
 
 		Bool Enable();
 		Bool Disable();
+		
+		Bool Activate();
+		Bool Deactivate();
 	}
 }
 

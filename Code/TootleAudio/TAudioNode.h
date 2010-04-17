@@ -138,6 +138,8 @@ private:
 	
 	Bool				CreateSource();						// Generates the source audio data using the audio asset specified
 	void				RemoveSource();						// Removes the source audio data
+
+	Bool				CreateBuffer();						// TEMP: Buffer creation
 	
 	Bool				IsSourceActive();					// Checs the low level audio system to see if a source is active with the node ID
 

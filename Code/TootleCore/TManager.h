@@ -50,7 +50,17 @@ public:
 	FORCEINLINE Bool					operator<(const TManager& Manager)const	{	return (GetManagerRef() < Manager.GetManagerRef());	}
 
 	// Messaging
-	virtual Bool				SendMessageTo(TRefRef RecipientRef, TLMessaging::TMessage& Message) { return FALSE; }
+	virtual Bool				SendMessageTo(TRefRef RecipientRef, TLMessaging::TMessage& Message) 
+	{ 
+		// If the recipient is the graph then process the message
+		if(RecipientRef == GetManagerRef())
+		{
+			ProcessMessage(Message);
+			return TRUE;
+		}
+
+		return FALSE; 
+	}
 
 	FORCEINLINE Bool			operator==(const TRef& Ref) const				{	return (m_ManagerRef == Ref);	}
 
@@ -64,6 +74,9 @@ protected:
 	void			SetState(TLManager::ManagerState NewState);
 	
 	virtual void	OnEventChannelAdded(TRefRef PublisherRef, TRefRef ChannelRef);
+
+	virtual void					SetProperty(TLMessaging::TMessage& Message) {}			//	base manager SetProperty that can be used without having a pointer to the manager by using the messaging system via the coremanager
+	virtual void					GetProperty(TLMessaging::TMessage& Message, TLMessaging::TMessage& Response) {}	//	base manager GetProperty message handler
 
 private:
 	TRef					m_ManagerRef;	// Manager unique ID

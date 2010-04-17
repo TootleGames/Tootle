@@ -2,8 +2,11 @@
 #pragma once
 
 #include <TootleCore/TLCore.h>
+#include <TootleCore/TLTypes.h>
+#include <TootleCore/TRef.h>
+#include "../TAudioListener.h"
 
-#include "../TLAudio.h"
+#include <TootleAsset/TAudio.h>
 
 #import <OpenAL/al.h>
 #import <OpenAL/alc.h>
@@ -70,6 +73,13 @@ namespace TLAudio
 
 		// Audio system listener (aka a virtual microphone)	
 		void SetListener(const TListenerProperties& Props);
+		
+		Bool Enable();
+		Bool Disable();
+		
+		Bool Activate();
+		Bool Deactivate();
+		
 	}
 }
 

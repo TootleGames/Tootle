@@ -9,6 +9,9 @@
 
 #include "TLCore.h"
 
+//#define ENABLE_TIMER_HITS_OUTPUT
+
+
 #pragma message("todo: gr: replace this with a gui manager. BUT remember, the GUI lib is now the first to startup...")
 namespace TLGui
 {
@@ -306,10 +309,14 @@ SyncBool TCoreManager::UpdateLoop()
 
 		//	covered these timer hits
 		m_TimerUpdateCount -= TimerUpdateCount;	
+
+#ifdef ENABLE_TIMER_HITS_OUTPUT
 		if ( m_TimerUpdateCount > 0 )
 		{
 		//	TLDebug_Print( TString("%d timer hits during update/render", m_TimerUpdateCount ) );
 		}
+#endif
+
 
 		//	error with manager[s]
 		//	gr: assume no managers will fail if we did no update
@@ -658,8 +665,10 @@ Bool TCoreManager::SendMessageTo(TRefRef RecipientRef, TRefRef ManagerRef, TLMes
 	}
 	else
 	{
-		TLDebug_Print("Unable to find manager");
-		TLDebug_Break("Unable to send message");
+		TTempString str("Coremanager unable to find manager: ");
+		ManagerRef.GetString(str); 
+		TLDebug_Print(str);
+		TLDebug_Print("Unable to send message");
 	}
 
 	return FALSE;

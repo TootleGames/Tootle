@@ -2,7 +2,7 @@
 #include "TEventChannel.h"
 
 #include "TLCore.h"
-#include "TLCore.h"
+#include "TCoreManager.h"
 
 //------------------------------------------------------
 //	Process basic messages a manager will receive
@@ -97,6 +97,36 @@ void TLCore::TManager::ProcessMessage(TLMessaging::TMessage& Message)
 				SetState(TLManager::S_ShuttingDown);
 		}
 		break;
+
+		// Reflection for setting property data on a manager via the messaging system
+		case TRef_Static(S,e,t,P,r):	//	TLCore::SetPropertyRef:
+		{
+			SetProperty(Message);
+			return;
+		}
+
+		// Reflection for getting property data from a manager via the messaging system
+		case TRef_Static(G,e,t,P,r):	//	TLCore::GetPropertyRef:
+		{
+			TRef Manager;
+			Message.ImportData(TLCore::ManagerRef, Manager);
+
+			// Valid manager?  If so we can send a response
+			if(Manager.IsValid())
+			{
+				TLMessaging::TMessage Response(TLCore::PropertyRef, GetManagerRef());
+
+				// generate a response with the property information requested
+				GetProperty(Message, Response);
+
+				// Now send the response message 
+				TRefRef Sender = Message.GetSenderRef();
+
+				TLCore::g_pCoreManager->SendMessageTo(Sender, Manager, Response);
+			}
+			return;
+		}
+
 
 	}
 

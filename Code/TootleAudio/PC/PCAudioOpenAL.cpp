@@ -10,6 +10,7 @@ namespace TLAudio
 	{
 		namespace OpenAL
 		{
+			ALCcontext*					g_pContext = NULL;
 			ALboolean					g_bEAX = FALSE;
 						
 			TArray<AudioObj> g_Sources;
@@ -25,122 +26,16 @@ using namespace TLAudio;
 
 SyncBool Platform::OpenAL::Init()
 {
-	// Initialization
-	ALCdevice* pDevice = alcOpenDevice(NULL); // select the "preferred device"
-
-	if(!pDevice)
-	{
-		TLDebug_Print("Unable to create OpenAL device");
-		return SyncFalse;
-	}
-
-
-	ALCcontext* pContext = alcCreateContext(pDevice,NULL);
-
-	// If the audio fails to create a context then something is wrong and we need to bail out
-	if(pContext == NULL)
-	{
-		TLDebug_Print("Unable to create OpenAL context");
-
-		
-		ALCenum alcerror;
-
-		if((alcerror = alcGetError(pDevice)) != AL_NO_ERROR)
-		{
-			TString strerr = GetALCErrorString(alcerror);
-			TLDebug_Print(strerr);
-		}
-		
-		// Destroy the device
-		alcCloseDevice(pDevice);
-
-		return SyncFalse;
-	}
-
-	
-	ALCboolean bSuccess = alcMakeContextCurrent(pContext);
-
-	
-	// Failed?
-	if(bSuccess == ALC_FALSE)
-	{
-		TLDebug_Print("Faied to set OpenAL context");
-
-		//TString strerr = GetALCErrorString(alcerror);
-		//TLDebug_Print(strerr);
-
-		alcMakeContextCurrent(NULL);
-		alcDestroyContext(pContext);
-		alcCloseDevice(pDevice);
-
-		return SyncFalse;
-	}
-	
-	// Check for EAX 2.0 support
-	Platform::OpenAL::g_bEAX = alIsExtensionPresent("EAX2.0");
-	
-	ALenum error;
-
-	if ((error = alGetError()) != AL_NO_ERROR)
-	{
-		TLDebug_Print("Faied to check EAX2.0");
-		
-		alcMakeContextCurrent(NULL);
-		alcDestroyContext(pContext);
-		alcCloseDevice(pDevice);
-
-		return SyncFalse;
-	}
-
-	//Set the default distance model to use
-	//alDistanceModel(AL_NONE);
-	//alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
-	//alDistanceModel(AL_INVERSE_DISTANCE);
-	//alDistanceModel(AL_LINEAR_DISTANCE);
-	alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
-	
-	// Setup doppler shift
-	alDopplerFactor(1.0f);			// Set to 0.0f to switch off the doppler effect
-	alDopplerVelocity(1.0f);
-
-	/*
-	alEnable(ALC_CONVERT_DATA_UPON_LOADING);
-
-	if ((error = alGetError()) != AL_NO_ERROR)
-	{
-		TLDebug_Print("Faied to set convert data parameter");
-	}
-
-	// Set low quality audio rendering
-	alSetInteger(ALC_SPATIAL_RENDERING_QUALITY, ALC_SPATIAL_RENDERING_QUALITY_LOW);
-
-	if ((error = alGetError()) != AL_NO_ERROR)
-	{
-		TLDebug_Print("Faied to set spatial quality");
-	}
-
-	alSetInteger(ALC_RENDER_CHANNEL_COUNT, ALC_RENDER_CHANNEL_COUNT_STEREO);
-
-	if ((error = alGetError()) != AL_NO_ERROR)
-	{
-		TLDebug_Print("Faied to set channel count");
-	}
-	*/
-
-
-	ALfloat data[3] = {0,0,0};
-	// Set the listener
-	alListenerfv(AL_POSITION,    data);
-    alListenerfv(AL_VELOCITY,    data);
-   
-	// Orientation uses 6 consecutive floats
-	//alListenerfv(AL_ORIENTATION, data);
+	//Enable();
 
 	return SyncTrue;
 }
 
 SyncBool Platform::OpenAL::Update()
 {
+	if(g_pContext)
+		alcMakeContextCurrent(g_pContext);
+
 	return SyncTrue;
 }
 
@@ -202,8 +97,8 @@ Bool Platform::OpenAL::DetermineFinishedAudio(TArray<TRef>& refArray)
 Bool Platform::OpenAL::CreateBuffer(TLAsset::TAudio& AudioAsset)
 {
 	// Test to see if we already have a buffer for the audio asset
-	// If so return 
-	AudioObj* pAO = g_Buffers.Find(AudioAsset.GetAssetRef());
+	// If so return that
+	AudioObj* pAO = g_Buffers.Find( AudioAsset.GetAssetRef() );
 	
 	if(pAO)
 		return TRUE;
@@ -397,29 +292,8 @@ Bool Platform::OpenAL::ReleaseSource(TRefRef AudioSourceRef)
 
 SyncBool Platform::OpenAL::Shutdown()
 {
-	
-	// TODO: The removal of the sources will be done when the nodes shutdown
-	//		 The removal of the buffers will be done when the file assets are shutdown
-	
-	// Delete the Sources
-	RemoveAllSources();
-	
-	// Delete the Buffers	
-	RemoveAllBuffers();
-	
-	ALCcontext* pContext = alcGetCurrentContext();
-
-	if(pContext)
-	{
-		alcMakeContextCurrent(NULL);
-		
-		ALCdevice* pDevice = alcGetContextsDevice(pContext);
-
-		alcDestroyContext(pContext);
-	
-		if(pDevice)
-			alcCloseDevice(pDevice);
-	}
+	if(IsEnabled())
+		Disable();
 
 	return SyncTrue;
 }
@@ -1104,47 +978,213 @@ TString Platform::OpenAL::GetALCErrorString(ALCenum err)
 	return TString("AL_UNKNOWN_ERROR");
 }
 
+
+Bool Platform::OpenAL::IsEnabled()
+{
+	return (g_pContext != NULL);
+}
+
+
 Bool Platform::OpenAL::Enable()
 {
-	ALCcontext* pContext = alcGetCurrentContext();
+	// Context exists therefore already enabled
+	if(g_pContext)
+		return TRUE;
 
-	if(pContext)
+	// Initialization
+	ALCdevice* pDevice = alcOpenDevice(NULL); // select the "preferred device"
+
+	if(!pDevice)
 	{
-		ALCdevice* pDevice = alcGetContextsDevice(pContext);
+		TLDebug_Print("Unable to create OpenAL device");
+		return FALSE;
+	}
 
+	const ALCchar* actualDeviceName = alcGetString(pDevice, ALC_DEVICE_SPECIFIER);
+	
+	TTempString devicename("OpenAL Audio Device: ");
+	devicename.Appendf("%s", actualDeviceName);
+	TLDebug_Print("OpenAL Audio Device opened successfully");
+	TLDebug_Print(devicename);
+
+	g_pContext = alcCreateContext(pDevice,NULL);
+
+	// If the audio fails to create a context then something is wrong and we need to bail out
+	if(g_pContext == NULL)
+	{
+		TLDebug_Print("Unable to create OpenAL context");
+
+		
+		ALCenum alcerror;
+
+		if((alcerror = alcGetError(pDevice)) != AL_NO_ERROR)
+		{
+			TString strerr = GetALCErrorString(alcerror);
+			TLDebug_Print(strerr);
+		}
+		
+		// Destroy the device
+		alcCloseDevice(pDevice);
+
+		return FALSE;
+	}
+
+	
+	ALCboolean bSuccess = alcMakeContextCurrent(g_pContext);
+
+	
+	// Failed?
+	if(bSuccess == ALC_FALSE)
+	{
+		TLDebug_Print("Faied to set OpenAL context");
+
+		//TString strerr = GetALCErrorString(alcerror);
+		//TLDebug_Print(strerr);
+
+		alcMakeContextCurrent(NULL);
+		alcDestroyContext(g_pContext);
+		alcCloseDevice(pDevice);
+
+		return FALSE;
+	}
+	
+	// Check for EAX 2.0 support
+	Platform::OpenAL::g_bEAX = alIsExtensionPresent("EAX2.0");
+	
+	ALenum error;
+
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("Faied to check EAX2.0");
+		
+		alcMakeContextCurrent(NULL);
+		alcDestroyContext(g_pContext);
+		alcCloseDevice(pDevice);
+
+		return FALSE;
+	}
+
+	//Set the default distance model to use
+	//alDistanceModel(AL_NONE);
+	//alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
+	//alDistanceModel(AL_INVERSE_DISTANCE);
+	//alDistanceModel(AL_LINEAR_DISTANCE);
+	alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
+	
+	// Setup doppler shift
+	alDopplerFactor(1.0f);			// Set to 0.0f to switch off the doppler effect
+	alDopplerVelocity(1.0f);
+
+	/*
+	alEnable(ALC_CONVERT_DATA_UPON_LOADING);
+
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("Faied to set convert data parameter");
+	}
+
+	// Set low quality audio rendering
+	alSetInteger(ALC_SPATIAL_RENDERING_QUALITY, ALC_SPATIAL_RENDERING_QUALITY_LOW);
+
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("Faied to set spatial quality");
+	}
+
+	alSetInteger(ALC_RENDER_CHANNEL_COUNT, ALC_RENDER_CHANNEL_COUNT_STEREO);
+
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TLDebug_Print("Faied to set channel count");
+	}
+	*/
+
+
+	ALfloat data[3] = {0,0,0};
+	// Set the listener
+	alListenerfv(AL_POSITION,    data);
+    alListenerfv(AL_VELOCITY,    data);
+   
+	// Orientation uses 6 consecutive floats
+	//alListenerfv(AL_ORIENTATION, data);
+
+	return TRUE;
+}
+
+Bool Platform::OpenAL::Disable()
+{	
+	// TODO: The removal of the sources will be done when the nodes shutdown
+	//		 The removal of the buffers will be done when the file assets are shutdown
+	
+	// Delete the Sources
+	RemoveAllSources();
+	
+	// Delete the Buffers	
+	RemoveAllBuffers();
+	
+	if(g_pContext)
+	{
+		alcMakeContextCurrent(NULL);
+		
+		ALCdevice* pDevice = alcGetContextsDevice(g_pContext);
+
+		alcDestroyContext(g_pContext);
+		g_pContext = NULL;
+	
 		if(pDevice)
 		{
-			alcProcessContext(pContext);
+			const ALCchar* actualDeviceName = alcGetString(pDevice, ALC_DEVICE_SPECIFIER);
+			
+			TTempString devicename("Closing OpenAL Audio Device: ");
+			devicename.Appendf("%s", actualDeviceName);
+			TLDebug_Print(devicename);
+			
+			alcCloseDevice(pDevice);
+			TLDebug_Print("OpenAL Audio Device closed successfully");
 
+		}
+	}
+
+
+	return TRUE;
+}
+
+Bool Platform::OpenAL::Activate()
+{
+	if(g_pContext)
+	{
+		ALCdevice* pDevice = alcGetContextsDevice(g_pContext);
+		
+		if(pDevice)
+		{
+			alcProcessContext(g_pContext);
+			
 			// Success?
 			ALCenum error;
 			if ((error = alcGetError(pDevice)) == ALC_NO_ERROR)
 				return TRUE;
 		}
 	}
-
+	
 	return FALSE;
 }
 
-Bool Platform::OpenAL::Disable()
+Bool Platform::OpenAL::Deactivate()
 {
-	ALCcontext* pContext = alcGetCurrentContext();
-
-	if(pContext)
+	if(g_pContext)
 	{
-		ALCdevice* pDevice = alcGetContextsDevice(pContext);
-
+		ALCdevice* pDevice = alcGetContextsDevice(g_pContext);
+		
 		if(pDevice)
 		{
-			alcSuspendContext(pContext);
-
+			alcSuspendContext(g_pContext);
+			
 			ALCenum error;
 			if ((error = alcGetError(pDevice)) == ALC_NO_ERROR)
 				return TRUE;
 		}
 	}
-
+	
 	return FALSE;
-
+	
 }
-

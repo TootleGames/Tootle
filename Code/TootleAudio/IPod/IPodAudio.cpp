@@ -225,3 +225,15 @@ Bool Platform::Disable()
 	// Not used on the iPod
 	return FALSE;
 }
+
+Bool Platform::Activate()
+{
+	// Not used on the iPod
+	return FALSE;
+}
+
+Bool Platform::Deactivate()
+{
+	// Not used on the iPod
+	return FALSE;
+}

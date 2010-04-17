@@ -284,6 +284,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TOptions.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TParticle.cpp"
 			>
 		</File>

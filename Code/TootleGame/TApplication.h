@@ -23,6 +23,7 @@ namespace TLCore
 {
 	class TApplication;
 
+	class TOptions;
 };
 
 
@@ -100,11 +101,14 @@ protected:
 	Bool						CreateGame();
 	void						DestroyGame();
 	
-	// Import and export of the global preferences
-	virtual Bool				ExportData(TBinaryTree& data)			{ return FALSE; }
-	virtual Bool				ImportData(TBinaryTree& data)			{ return FALSE; }
-
 	void						OnOptionChanged(TRefRef OptionRef);		//	notify subscribers when option changes - and do any specific option stuff
+
+	virtual TRef				GetOptionsRef() const { return TRef("bootup"); } // default options file reference
+
+	void						SaveOptions();
+
+private:
+	void						LoadOptions();
 		
 private:
 	TPtr<TLGame::TGame>		m_pGame;				//	The application's game object
@@ -117,6 +121,13 @@ private:
 	TBinaryTree				m_Options;				//	Global & app specific preferences
 	TBinaryTree				m_LevelData;			//	Level specific information
 	TRef					m_NewAppMode;			//	if valid, we switch to this app mode on next update
+};
+
+
+// Options class is a TBinaryTree with accessors to data
+class TLCore::TOptions : public TBinaryTree
+{
+
 };
 
 

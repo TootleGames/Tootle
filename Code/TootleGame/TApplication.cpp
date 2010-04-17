@@ -18,6 +18,7 @@
 #include <TootleRender/TCamera.h>
 
 #include <TootleCore/TEventChannel.h>
+#include <TootleAsset/TOptions.h>
 
 
 // Time for the bootup sequence to occur over
@@ -80,6 +81,9 @@ SyncBool TApplication::Initialise()
 	
 	// Add the application modes
 	AddModes();
+
+	// Load options file
+	LoadOptions();
 
 	return TManager::Initialise();
 }
@@ -180,6 +184,76 @@ void TApplication::AddModes()
 }
 
 
+void TApplication::LoadOptions()
+{
+	// Import options fomr an options file
+	TPtr<TLAsset::TOptions> pOptionsAsset = TLAsset::GetAssetPtr(TTypedRef(GetOptionsRef(), "options"));
+
+	if(pOptionsAsset)
+	{
+		m_Options.CopyDataTree(pOptionsAsset->GetData(), FALSE);
+
+		// Print out the options
+		m_Options.Debug_PrintTree();
+
+		// TODO: Go through the options and send out messages to managers for specific data
+
+		//TPtrArray<TBinaryTree> Children;
+		//m_Options.GetChildren(TRef("Manager"), Children); 
+		TPtrArray<TBinaryTree> Children = m_Options.GetChildren();
+
+		// Find the manager refs and send out messages to those manages with the appropriate data
+		for(u32 uIndex = 0; uIndex < Children.GetSize(); uIndex++)
+		{
+			TPtr<TBinaryTree> pChild = Children[uIndex];
+
+			TRef ManagerRef;
+			
+			if(pChild->ImportData("Manager", ManagerRef))
+			{
+				TLMessaging::TMessage OptionsMessage(TLCore::SetPropertyRef);
+
+				// Use the child data as the message information
+				OptionsMessage.ReferenceDataTree(*pChild);
+
+				// Send message to the manager via the core manager
+				TLCore::g_pCoreManager->SendMessageTo(ManagerRef, ManagerRef, OptionsMessage);
+			}
+		}
+	}
+}
+
+
+void TApplication::SaveOptions()
+{
+	//TODO:
+	// * Copy data back to asset overwriting previous options
+	// * Trigger asset to be exported/saved
+
+	TPtr<TLAsset::TOptions> pOptionsAsset = TLAsset::GetAssetPtr(TTypedRef(GetOptionsRef(), "options"));
+
+	if(!pOptionsAsset)
+	{
+		// Create a new options asset
+		pOptionsAsset = new TLAsset::TOptions(GetOptionsRef());
+	}
+
+	// Remove previous data
+	//pOptionsAsset->GetData().Empty();
+
+	// Copy the options data
+	//NOTE: Using CopyDataTree to *overwrite* the data corrupts the data for some reason?
+	//pOptionsAsset->GetData().CopyDataTree(m_Options, FALSE);
+
+	pOptionsAsset->SetLoadingState(TLAsset::LoadingState_Loaded);
+
+	if ( !TLAsset::SaveAsset( pOptionsAsset ) )
+	{
+		TLDebug_Break("failed to save options asset");
+	}
+}
+
+
 
 //-----------------------------------------------------------
 //	Application update
@@ -216,6 +290,9 @@ SyncBool TApplication::Shutdown()
 
 	//	clean up game if it hasnt been done
 	DestroyGame();
+
+	// Store the options
+	SaveOptions();
 
 	return TManager::Shutdown();
 }
