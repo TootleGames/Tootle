@@ -19,7 +19,7 @@
 
 namespace TLReflection
 {
-	static const u16	g_Port = 21;	//	connection port
+	static const u16	g_Port = 7007;	//	connection port
 	SyncBool	StartFileServer();		//	create file server
 	SyncBool	StopFileServer();		//	kill file server
 

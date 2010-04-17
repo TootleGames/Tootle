@@ -87,7 +87,9 @@
 {
 	//TODO: Enter a sleep mode with minimal updates occuring
 	// switch off render etc
-	TLCore::g_pCoreManager->Enable(FALSE);
+	
+	//	gr: turned this off for now cos im trying to use another tool at the same time
+	//TLCore::g_pCoreManager->Enable(FALSE);
 }
 
 // Active mode

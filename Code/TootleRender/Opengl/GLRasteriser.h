@@ -26,6 +26,8 @@ namespace TLRaster
 class TLRaster::Opengl::GLRasteriser : public TLRaster::TRasteriser
 {
 public:
+	GLRasteriser()			{}
+	virtual ~GLRasteriser()	{}
 
 protected:
 	virtual void		OnTextureDeleted(TRefRef TextureRef);

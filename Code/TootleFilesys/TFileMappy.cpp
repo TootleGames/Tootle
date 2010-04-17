@@ -397,12 +397,14 @@ Bool TLFileSys::TFileMappy::ImportMapHeader(TLAsset::TTileMap& TileMap,TBinary& 
 	if ( !Data.Read( Header ) )
 		return false;
 
+	/*	gr: redundant, the mapwidth/height is a u16
 	//	check tilemap size isn't too large
 	if ( Header.mapwidth > 0xffff || Header.mapheight > 0xffff )
 	{
 		TLDebug_Break("Tilemap is too large for our format");
 		return false;
 	}
+	 */
 
 	//	set tilemap size
 	TileMap.SetSize( Type2<u16>( Header.mapwidth, Header.mapheight ) );
@@ -632,7 +634,7 @@ You can add your own chunks to a map file, if you load it into mappy, when you s
 					continue;
 
 				//	get pointer to data, if it's not the base layer then alloc a layer data
-				TBinaryTree* pTileLayerData = (Layer==0) ? &TileData : TileData.AddChild("Layer");
+				TBinaryTree* pTileLayerData = (Layer==0) ? &TileData : TileData.AddChild("Layer").GetObjectPointer();
 				if ( !pTileLayerData )
 					continue;
 

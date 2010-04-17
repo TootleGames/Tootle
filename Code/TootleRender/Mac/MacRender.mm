@@ -14,6 +14,8 @@ namespace TLRender
 	namespace Opengl
 	{
 		SyncBool	g_Initialised = SyncWait;	//	has opengl been initialied? (ie first Init() after context is created)
+
+		TPtr<TLAsset::TAssetFactory>	g_pShaderAssetFactory;
 	}
 }
 
@@ -68,7 +70,25 @@ SyncBool TLRender::Opengl::Platform::Init()
 	TLDebug_Print( TString("Driver %s %s", glGetString( GL_VENDOR ), glGetString( GL_VERSION ) ) );
 	
 	Debug_CheckForError();		
-
+	
+	//	create fixed function shader asset factory
+	if ( TLAsset::g_pManager )
+	{
+		g_pShaderAssetFactory = new TLRender::Platform::TShaderAssetFactory;
+		TLAsset::g_pManager->AddAssetFactory( g_pShaderAssetFactory );
+		
+		//	pre-create assets
+		//	gr: change this to actually create the assets and then add them to the asset directory
+		TPtr<TLAsset::TAsset>& pShader = TLAsset::CreateAsset( TLAsset::TShader_TextureMatrix::GetShaderInstanceRef(), TLAsset::TShader::GetAssetType_Static() );
+		if ( pShader )
+			pShader->SetLoadingState( TLAsset::LoadingState_Loaded );
+	}
+	else
+	{
+		TLDebug_Break("cannot create fixed function shader assets as asset manager doesn't yet exist");
+	}
+	
+	
 	//	all succeeded
 	return SyncTrue;
 }
@@ -133,3 +153,62 @@ Bool TLRender::Opengl::Platform::Debug_CheckForError()
 	return FALSE;
 }
 
+
+
+//-------------------------------------------------------
+//	custom shader creation
+//-------------------------------------------------------
+TLAsset::TAsset* TLRender::Platform::TShaderAssetFactory::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
+{
+	//	specifically create texture matrix shader
+	if ( InstanceRef == TLAsset::TShader_TextureMatrix::GetShaderInstanceRef() && TypeRef == TLAsset::TShader::GetAssetType_Static() )
+		return new TLAsset::TShader_TextureMatrix( InstanceRef );
+	
+	return NULL;
+}
+
+
+TLAsset::TShader_TextureMatrix::TShader_TextureMatrix(TRefRef AssetRef) :
+TLAsset::TShader	( AssetRef )
+{
+}
+
+
+//-------------------------------------------------------
+//	pre-render, setup the texture matrix as dictated by data
+//-------------------------------------------------------
+Bool TLAsset::TShader_TextureMatrix::PreRender(TBinaryTree& ShaderData)	
+{
+	//	switch to texture matrix mode
+	glMatrixMode(GL_TEXTURE);
+	
+	//	gr: identity should be redundant...
+	glLoadIdentity();
+	
+	//	read transform from shader data
+	TLMaths::TTransform TextureTransform;
+	if ( TextureTransform.ImportData( ShaderData ) != TLMaths_TransformBitNone )
+	{
+		//	apply the transform to the scene (currently the texture mode)
+		TLRender::Opengl::SceneTransform( TextureTransform );
+	}
+	
+	//	gr: assuming we were in modelview mode before
+	glMatrixMode(GL_MODELVIEW);
+	
+	return true;	
+}
+
+
+//-------------------------------------------------------
+//	post-render, restore default texture matrix
+//-------------------------------------------------------
+void TLAsset::TShader_TextureMatrix::PostRender()
+{
+	//	restore matrix for texture mode
+	glMatrixMode(GL_TEXTURE);
+	glLoadIdentity();
+	
+	//	gr: again, assuming we were in modelview mode before
+	glMatrixMode(GL_MODELVIEW);
+}

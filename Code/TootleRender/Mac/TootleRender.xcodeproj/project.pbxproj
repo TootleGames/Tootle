@@ -50,6 +50,10 @@
 		84B6069C104FFD2B0022E5BC /* TRenderNodeTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B6068B104FFD2B0022E5BC /* TRenderNodeTimeline.cpp */; };
 		84B6069D104FFD2B0022E5BC /* TRenderNodeTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B6068C104FFD2B0022E5BC /* TRenderNodeTimeline.h */; };
 		84B6069E104FFD2B0022E5BC /* TScreenShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B6068D104FFD2B0022E5BC /* TScreenShape.h */; };
+		BF3DA2171178CBAE00EBD76C /* TRasteriser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF3DA2151178CBAE00EBD76C /* TRasteriser.cpp */; };
+		BF3DA2181178CBAE00EBD76C /* TRasteriser.h in Headers */ = {isa = PBXBuildFile; fileRef = BF3DA2161178CBAE00EBD76C /* TRasteriser.h */; };
+		BF3DA2811178D43600EBD76C /* GLRasteriser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF3DA27F1178D43600EBD76C /* GLRasteriser.cpp */; };
+		BF3DA2821178D43600EBD76C /* GLRasteriser.h in Headers */ = {isa = PBXBuildFile; fileRef = BF3DA2801178D43600EBD76C /* GLRasteriser.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -127,6 +131,10 @@
 		BF05BCC3112D35B8009D5085 /* IPodRenderTarget.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodRenderTarget.mm; path = ../IPod/IPodRenderTarget.mm; sourceTree = SOURCE_ROOT; };
 		BF3C2544110704AE0000951F /* Tootle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Tootle.xcconfig; path = ../../BuildConfigurations/Tootle.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF3C2545110704BE0000951F /* Mac.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Mac.xcconfig; path = ../../BuildConfigurations/Mac/Mac.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF3DA2151178CBAE00EBD76C /* TRasteriser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRasteriser.cpp; path = ../../../../Tootle/Code/TootleRender/TRasteriser.cpp; sourceTree = SOURCE_ROOT; };
+		BF3DA2161178CBAE00EBD76C /* TRasteriser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRasteriser.h; path = ../../../../Tootle/Code/TootleRender/TRasteriser.h; sourceTree = SOURCE_ROOT; };
+		BF3DA27F1178D43600EBD76C /* GLRasteriser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLRasteriser.cpp; path = ../../../../Tootle/Code/TootleRender/Opengl/GLRasteriser.cpp; sourceTree = SOURCE_ROOT; };
+		BF3DA2801178D43600EBD76C /* GLRasteriser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLRasteriser.h; path = ../../../../Tootle/Code/TootleRender/Opengl/GLRasteriser.h; sourceTree = SOURCE_ROOT; };
 		BF89CBF011099A8B009C2101 /* Lib.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Lib.xcconfig; path = ../../BuildConfigurations/Mac/Lib.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF89CBF111099A8B009C2101 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF89CBF211099A8B009C2101 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -174,6 +182,8 @@
 		8418EF620F4DAD0300B956C9 /* SourceCode */ = {
 			isa = PBXGroup;
 			children = (
+				BF3DA2151178CBAE00EBD76C /* TRasteriser.cpp */,
+				BF3DA2161178CBAE00EBD76C /* TRasteriser.h */,
 				84829C521164EC5A0000C579 /* TEffect.cpp */,
 				84829C531164EC5A0000C579 /* TEffect.h */,
 				BF05BD57112E8650009D5085 /* Opengl */,
@@ -281,6 +291,8 @@
 		BF05BD57112E8650009D5085 /* Opengl */ = {
 			isa = PBXGroup;
 			children = (
+				BF3DA27F1178D43600EBD76C /* GLRasteriser.cpp */,
+				BF3DA2801178D43600EBD76C /* GLRasteriser.h */,
 			);
 			name = Opengl;
 			sourceTree = "<group>";
@@ -314,6 +326,8 @@
 				84B6069D104FFD2B0022E5BC /* TRenderNodeTimeline.h in Headers */,
 				84B6069E104FFD2B0022E5BC /* TScreenShape.h in Headers */,
 				84829C551164EC5A0000C579 /* TEffect.h in Headers */,
+				BF3DA2181178CBAE00EBD76C /* TRasteriser.h in Headers */,
+				BF3DA2821178D43600EBD76C /* GLRasteriser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -398,6 +412,8 @@
 				8440DBE51055622D0045E57E /* MacRender.mm in Sources */,
 				8440DBE61055622D0045E57E /* MacRenderTarget.mm in Sources */,
 				84829C541164EC5A0000C579 /* TEffect.cpp in Sources */,
+				BF3DA2171178CBAE00EBD76C /* TRasteriser.cpp in Sources */,
+				BF3DA2811178D43600EBD76C /* GLRasteriser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

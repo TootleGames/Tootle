@@ -128,8 +128,9 @@ SyncBool TApplication::CreateLocalFilesystems()
 	else if ( Result == SyncFalse)	
 	{
 		//	gr; return synctrue and allow read-only game... (writable assets go to virtual fs)
-		if ( !TLDebug_Break("failed to create local file system (writable)") )
-			return SyncFalse;
+		//if ( !TLDebug_Break("failed to create local file system (writable)") )
+		//	return SyncFalse;
+		return SyncTrue;
 	}
 	else if ( Result == SyncTrue )
 	{

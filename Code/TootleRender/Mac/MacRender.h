@@ -11,6 +11,8 @@
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/TLCore.h>
 #include <TootleCore/TColour.h>
+#include <TootleAsset/TLAsset.h>
+#include <TootleAsset/TShader.h>
 
 //	include opengl stuff
 #include <OpenGL/gl.h>
@@ -26,6 +28,9 @@ namespace TLRender
 	{
 		SyncBool		Init();			//	platform/opengl initialisation
 		SyncBool		Shutdown();		//	platform/opengl shutdown
+
+		class TShaderAssetFactory;		//	asset factory for fixed-function shaders
+		extern SyncBool	g_OpenglInitialised;
 	}
 
 	namespace Opengl
@@ -61,4 +66,39 @@ namespace TLRender
 
 }
 
+
+//	fixed functions opengl shaders
+namespace TLAsset
+{
+	class TShader_TextureMatrix;
+}
+
+
+//------------------------------------------------
+//	asset factory for fixed-function shaders
+//------------------------------------------------
+class TLRender::Platform::TShaderAssetFactory : public TLAsset::TAssetFactory
+{
+protected:
+	virtual TLAsset::TAsset*	CreateObject(TRefRef InstanceRef,TRefRef TypeRef);	
+};
+
+//------------------------------------------------
+//	Fixed function shader which modifies the texture matrix. This allows us to modify 
+//	ALL the uv's on a mesh in one go. Useful for sprites for animated textures.
+//	Possible that a software shader which modifies the UV's might be faster (no state change).
+//	Certainly a vertex shader would be faster.
+//	
+//	shader data expects to find a TTransform
+//------------------------------------------------
+class TLAsset::TShader_TextureMatrix : public TLAsset::TShader
+{
+public:
+	TShader_TextureMatrix(TRefRef AssetRef);
+	
+	static TRef			GetShaderInstanceRef()		{	return TRef_Static(F,F,T,x,M);	}	//	FixedFunctionTeXtureMatrix
+	
+	virtual Bool		PreRender(TBinaryTree& ShaderData);
+	virtual void		PostRender();
+};
 

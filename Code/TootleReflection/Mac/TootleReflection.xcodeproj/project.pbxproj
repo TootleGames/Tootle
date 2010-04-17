@@ -7,10 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BF6A7FF211035E8700199EB7 /* TLReflection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF6A7FF011035E8700199EB7 /* TLReflection.cpp */; };
-		BF6A7FF311035E8700199EB7 /* TLReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = BF6A7FF111035E8700199EB7 /* TLReflection.h */; };
-		BF6A7FF611035F3800199EB7 /* TGraphTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BF6A7FF411035F3800199EB7 /* TGraphTree.h */; };
-		BF6A7FF711035F3800199EB7 /* TGraphTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF6A7FF511035F3800199EB7 /* TGraphTree.cpp */; };
+		BF3DA5271178FB8700EBD76C /* TFileServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF3DA5211178FB8700EBD76C /* TFileServer.cpp */; };
+		BF3DA5281178FB8700EBD76C /* TFileServer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF3DA5221178FB8700EBD76C /* TFileServer.h */; };
+		BF3DA5291178FB8700EBD76C /* TGraphTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF3DA5231178FB8700EBD76C /* TGraphTree.cpp */; };
+		BF3DA52A1178FB8700EBD76C /* TGraphTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BF3DA5241178FB8700EBD76C /* TGraphTree.h */; };
+		BF3DA52B1178FB8700EBD76C /* TLReflection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF3DA5251178FB8700EBD76C /* TLReflection.cpp */; };
+		BF3DA52C1178FB8700EBD76C /* TLReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = BF3DA5261178FB8700EBD76C /* TLReflection.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,16 +30,26 @@
 			remoteGlobalIDString = 8418EEAF0F4DAB4500B956C9;
 			remoteInfo = TootleGui;
 		};
+		BF6FBB5B11775B8F00490A7B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF6FBB5711775B8F00490A7B /* TootleNetwork.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8418EE7C0F4DAB1500B956C9;
+			remoteInfo = TootleNetwork;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		8418EEAF0F4DAB4500B956C9 /* libTootleReflection.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleReflection.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		BF6A7FF011035E8700199EB7 /* TLReflection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLReflection.cpp; path = ../TLReflection.cpp; sourceTree = SOURCE_ROOT; };
-		BF6A7FF111035E8700199EB7 /* TLReflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLReflection.h; path = ../TLReflection.h; sourceTree = SOURCE_ROOT; };
-		BF6A7FF411035F3800199EB7 /* TGraphTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGraphTree.h; path = ../TGraphTree.h; sourceTree = SOURCE_ROOT; };
-		BF6A7FF511035F3800199EB7 /* TGraphTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGraphTree.cpp; path = ../TGraphTree.cpp; sourceTree = SOURCE_ROOT; };
+		BF3DA5211178FB8700EBD76C /* TFileServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileServer.cpp; path = ../../../../Tootle/Code/TootleReflection/TFileServer.cpp; sourceTree = SOURCE_ROOT; };
+		BF3DA5221178FB8700EBD76C /* TFileServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileServer.h; path = ../../../../Tootle/Code/TootleReflection/TFileServer.h; sourceTree = SOURCE_ROOT; };
+		BF3DA5231178FB8700EBD76C /* TGraphTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGraphTree.cpp; path = ../../../../Tootle/Code/TootleReflection/TGraphTree.cpp; sourceTree = SOURCE_ROOT; };
+		BF3DA5241178FB8700EBD76C /* TGraphTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGraphTree.h; path = ../../../../Tootle/Code/TootleReflection/TGraphTree.h; sourceTree = SOURCE_ROOT; };
+		BF3DA5251178FB8700EBD76C /* TLReflection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLReflection.cpp; path = ../../../../Tootle/Code/TootleReflection/TLReflection.cpp; sourceTree = SOURCE_ROOT; };
+		BF3DA5261178FB8700EBD76C /* TLReflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLReflection.h; path = ../../../../Tootle/Code/TootleReflection/TLReflection.h; sourceTree = SOURCE_ROOT; };
 		BF6A7FF81103603100199EB7 /* TootleCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TootleCore.xcodeproj; path = ../../TootleCore/Mac/TootleCore.xcodeproj; sourceTree = SOURCE_ROOT; };
 		BF6A7FFE1103604300199EB7 /* TootleGui.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TootleGui.xcodeproj; path = ../../TootleGui/Mac/TootleGui.xcodeproj; sourceTree = SOURCE_ROOT; };
+		BF6FBB5711775B8F00490A7B /* TootleNetwork.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TootleNetwork.xcodeproj; path = ../../../../Tootle/Code/TootleNetwork/Mac/TootleNetwork.xcodeproj; sourceTree = SOURCE_ROOT; };
 		BF89CB8D1109988B009C2101 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF89CB8E1109988B009C2101 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -56,6 +68,7 @@
 		8418ECF60F4DA63E00B956C9 = {
 			isa = PBXGroup;
 			children = (
+				BF6FBB5711775B8F00490A7B /* TootleNetwork.xcodeproj */,
 				BF6A7FFE1103604300199EB7 /* TootleGui.xcodeproj */,
 				BF6A7FF81103603100199EB7 /* TootleCore.xcodeproj */,
 				8418F0260F4DB80A00B956C9 /* Build Configurations */,
@@ -83,10 +96,12 @@
 		8418F0250F4DB80400B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
-				BF6A7FF011035E8700199EB7 /* TLReflection.cpp */,
-				BF6A7FF111035E8700199EB7 /* TLReflection.h */,
-				BF6A7FF411035F3800199EB7 /* TGraphTree.h */,
-				BF6A7FF511035F3800199EB7 /* TGraphTree.cpp */,
+				BF3DA5211178FB8700EBD76C /* TFileServer.cpp */,
+				BF3DA5221178FB8700EBD76C /* TFileServer.h */,
+				BF3DA5231178FB8700EBD76C /* TGraphTree.cpp */,
+				BF3DA5241178FB8700EBD76C /* TGraphTree.h */,
+				BF3DA5251178FB8700EBD76C /* TLReflection.cpp */,
+				BF3DA5261178FB8700EBD76C /* TLReflection.h */,
 			);
 			name = "Source Code";
 			sourceTree = "<group>";
@@ -116,6 +131,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		BF6FBB5811775B8F00490A7B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BF6FBB5C11775B8F00490A7B /* libTootleNetwork.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -123,8 +146,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF6A7FF311035E8700199EB7 /* TLReflection.h in Headers */,
-				BF6A7FF611035F3800199EB7 /* TGraphTree.h in Headers */,
+				BF3DA5281178FB8700EBD76C /* TFileServer.h in Headers */,
+				BF3DA52A1178FB8700EBD76C /* TGraphTree.h in Headers */,
+				BF3DA52C1178FB8700EBD76C /* TLReflection.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,6 +192,10 @@
 					ProductGroup = BF6A7FFF1103604300199EB7 /* Products */;
 					ProjectRef = BF6A7FFE1103604300199EB7 /* TootleGui.xcodeproj */;
 				},
+				{
+					ProductGroup = BF6FBB5811775B8F00490A7B /* Products */;
+					ProjectRef = BF6FBB5711775B8F00490A7B /* TootleNetwork.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -191,6 +219,13 @@
 			remoteRef = BF6A80021103604300199EB7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		BF6FBB5C11775B8F00490A7B /* libTootleNetwork.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libTootleNetwork.a;
+			remoteRef = BF6FBB5B11775B8F00490A7B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -198,8 +233,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF6A7FF211035E8700199EB7 /* TLReflection.cpp in Sources */,
-				BF6A7FF711035F3800199EB7 /* TGraphTree.cpp in Sources */,
+				BF3DA5271178FB8700EBD76C /* TFileServer.cpp in Sources */,
+				BF3DA5291178FB8700EBD76C /* TGraphTree.cpp in Sources */,
+				BF3DA52B1178FB8700EBD76C /* TLReflection.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

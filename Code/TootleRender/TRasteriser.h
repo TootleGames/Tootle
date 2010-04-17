@@ -22,6 +22,9 @@ namespace TLRaster
 class TLRaster::TRasteriser : public TLMessaging::TSubscriber
 {
 public:
+	TRasteriser()			{}
+	virtual ~TRasteriser()	{}
+	
 	virtual SyncBool	Initialise();
 	virtual SyncBool	Shutdown();
 
