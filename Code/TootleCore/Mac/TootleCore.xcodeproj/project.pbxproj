@@ -91,8 +91,6 @@
 		840A910410D7BB6C00F8960C /* MacString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacString.mm; sourceTree = "<group>"; };
 		840A918A10D7D39E00F8960C /* IPodAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodAlert.h; path = ../IPod/IPodAlert.h; sourceTree = SOURCE_ROOT; };
 		840A918B10D7D39E00F8960C /* IPodAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodAlert.mm; path = ../IPod/IPodAlert.mm; sourceTree = SOURCE_ROOT; };
-		840A918C10D7D39E00F8960C /* IPodApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodApp.h; path = ../IPod/IPodApp.h; sourceTree = SOURCE_ROOT; };
-		840A918D10D7D39E00F8960C /* IPodApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodApp.mm; path = ../IPod/IPodApp.mm; sourceTree = SOURCE_ROOT; };
 		840A918E10D7D39E00F8960C /* IPodCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodCore.h; path = ../IPod/IPodCore.h; sourceTree = SOURCE_ROOT; };
 		840A918F10D7D39E00F8960C /* IPodCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodCore.mm; path = ../IPod/IPodCore.mm; sourceTree = SOURCE_ROOT; };
 		840A919010D7D39E00F8960C /* IPodDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodDebug.h; path = ../IPod/IPodDebug.h; sourceTree = SOURCE_ROOT; };
@@ -216,8 +214,6 @@
 			children = (
 				840A918A10D7D39E00F8960C /* IPodAlert.h */,
 				840A918B10D7D39E00F8960C /* IPodAlert.mm */,
-				840A918C10D7D39E00F8960C /* IPodApp.h */,
-				840A918D10D7D39E00F8960C /* IPodApp.mm */,
 				840A918E10D7D39E00F8960C /* IPodCore.h */,
 				840A918F10D7D39E00F8960C /* IPodCore.mm */,
 				840A919010D7D39E00F8960C /* IPodDebug.h */,

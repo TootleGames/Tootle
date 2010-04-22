@@ -16,7 +16,6 @@ namespace TLGui
 {
 	namespace Platform
 	{
-		TString						g_AppExe;
 #if !defined(TL_ENABLE_WX)
 		u32							g_TimerUpdateID = 0;			//	ID of the win32 timer we're using for the update intervals
 		MMRESULT					g_MMTimerUpdateID = NULL;		//	gr: null is the correct "invalid" state	
