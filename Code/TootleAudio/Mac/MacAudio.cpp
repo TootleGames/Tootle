@@ -216,26 +216,22 @@ void Platform::SetListener(const TListenerProperties& Props)
 
 Bool Platform::Enable()
 {
-	// Not used on the Mac
-	return FALSE;
+	return OpenAL::Enable();
 }
 
 Bool Platform::Disable()
 {
-	// Not used on the Mac
-	return FALSE;
+	return OpenAL::Disable();
 }
 
 
 Bool Platform::Activate()
 {
-	// Not used on the Mac
-	return FALSE;
+	return OpenAL::Activate();
 }
 
 Bool Platform::Deactivate()
 {
-	// Not used on the Mac
-	return FALSE;
+	return OpenAL::Deactivate();
 }
 

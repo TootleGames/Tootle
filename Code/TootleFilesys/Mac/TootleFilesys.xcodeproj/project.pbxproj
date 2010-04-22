@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		840CC54F117A4BDC0057BFD9 /* TFileMP3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840CC54B117A4BDC0057BFD9 /* TFileMP3.cpp */; };
+		840CC550117A4BDC0057BFD9 /* TFileMP3.h in Headers */ = {isa = PBXBuildFile; fileRef = 840CC54C117A4BDC0057BFD9 /* TFileMP3.h */; };
+		840CC551117A4BDC0057BFD9 /* TFileOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840CC54D117A4BDC0057BFD9 /* TFileOptions.cpp */; };
+		840CC552117A4BDC0057BFD9 /* TFileOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 840CC54E117A4BDC0057BFD9 /* TFileOptions.h */; };
 		844CE2F610516B5100178124 /* cff.c in Sources */ = {isa = PBXBuildFile; fileRef = 84B6046F104FF3FB0022E5BC /* cff.c */; };
 		844CE2F710516B5100178124 /* ftlzw.c in Sources */ = {isa = PBXBuildFile; fileRef = 84B6049C104FF3FB0022E5BC /* ftlzw.c */; };
 		844CE2F810516B5100178124 /* ftgxval.c in Sources */ = {isa = PBXBuildFile; fileRef = 84B60490104FF3FB0022E5BC /* ftgxval.c */; };
@@ -196,6 +200,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		840CC54B117A4BDC0057BFD9 /* TFileMP3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileMP3.cpp; path = ../TFileMP3.cpp; sourceTree = SOURCE_ROOT; };
+		840CC54C117A4BDC0057BFD9 /* TFileMP3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileMP3.h; path = ../TFileMP3.h; sourceTree = SOURCE_ROOT; };
+		840CC54D117A4BDC0057BFD9 /* TFileOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileOptions.cpp; path = ../TFileOptions.cpp; sourceTree = SOURCE_ROOT; };
+		840CC54E117A4BDC0057BFD9 /* TFileOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileOptions.h; path = ../TFileOptions.h; sourceTree = SOURCE_ROOT; };
 		8418F0480F4DB85200B956C9 /* TFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFile.cpp; path = ../TFile.cpp; sourceTree = SOURCE_ROOT; };
 		8418F0490F4DB85200B956C9 /* TFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFile.h; path = ../TFile.h; sourceTree = SOURCE_ROOT; };
 		8418F04A0F4DB85200B956C9 /* TFileAsset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileAsset.cpp; path = ../TFileAsset.cpp; sourceTree = SOURCE_ROOT; };
@@ -439,6 +447,10 @@
 		8418F0460F4DB83D00B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				840CC54B117A4BDC0057BFD9 /* TFileMP3.cpp */,
+				840CC54C117A4BDC0057BFD9 /* TFileMP3.h */,
+				840CC54D117A4BDC0057BFD9 /* TFileOptions.cpp */,
+				840CC54E117A4BDC0057BFD9 /* TFileOptions.h */,
 				84829C091164E5070000C579 /* TFileAtlas.cpp */,
 				84829C0A1164E5070000C579 /* TFileAtlas.h */,
 				84829C0B1164E5070000C579 /* TFileMappy.cpp */,
@@ -884,6 +896,8 @@
 				84829C101164E5070000C579 /* TFileAtlas.h in Headers */,
 				84829C121164E5070000C579 /* TFileMappy.h in Headers */,
 				84829C141164E5070000C579 /* TFileTileMap.h in Headers */,
+				840CC550117A4BDC0057BFD9 /* TFileMP3.h in Headers */,
+				840CC552117A4BDC0057BFD9 /* TFileOptions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -999,6 +1013,8 @@
 				84829C0F1164E5070000C579 /* TFileAtlas.cpp in Sources */,
 				84829C111164E5070000C579 /* TFileMappy.cpp in Sources */,
 				84829C131164E5070000C579 /* TFileTileMap.cpp in Sources */,
+				840CC54F117A4BDC0057BFD9 /* TFileMP3.cpp in Sources */,
+				840CC551117A4BDC0057BFD9 /* TFileOptions.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1076,10 +1076,14 @@ Bool Platform::OpenAL::Enable()
 
 		alcMakeContextCurrent(NULL);
 		alcDestroyContext(g_pContext);
+		g_pContext = NULL;
 		alcCloseDevice(pDevice);
 
 		return FALSE;
 	}
+	
+	
+	//TODO: Test to see if extensions are supported
 	
 	// Check for EAX 2.0 support
 	Platform::OpenAL::g_bEAX = alIsExtensionPresent("EAX2.0");
@@ -1088,13 +1092,11 @@ Bool Platform::OpenAL::Enable()
 
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
+		TTempString str("OpenAL Error: ");
+		TTempString errstr = GetALErrorString(error);
+		str << errstr;
+		TLDebug_Print(str);
 		TLDebug_Print("Faied to check EAX2.0");
-		
-		alcMakeContextCurrent(NULL);
-		alcDestroyContext(g_pContext);
-		alcCloseDevice(pDevice);
-
-		return FALSE;
 	}
 
 	//Set the default distance model to use

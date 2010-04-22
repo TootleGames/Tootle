@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		840CC55D117A4BF20057BFD9 /* TOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 840CC55C117A4BF20057BFD9 /* TOptions.h */; };
 		8418F1340F4DB8C100B956C9 /* TAsset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F1230F4DB8C100B956C9 /* TAsset.cpp */; };
 		8418F1350F4DB8C100B956C9 /* TAsset.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F1240F4DB8C100B956C9 /* TAsset.h */; };
 		8418F1360F4DB8C100B956C9 /* TAudio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F1250F4DB8C100B956C9 /* TAudio.cpp */; };
@@ -42,6 +43,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		840CC55C117A4BF20057BFD9 /* TOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TOptions.h; path = ../TOptions.h; sourceTree = SOURCE_ROOT; };
 		8418ED0D0F4DA70B00B956C9 /* libTootleAsset.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleAsset.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8418F1230F4DB8C100B956C9 /* TAsset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAsset.cpp; path = ../TAsset.cpp; sourceTree = SOURCE_ROOT; };
 		8418F1240F4DB8C100B956C9 /* TAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAsset.h; path = ../TAsset.h; sourceTree = SOURCE_ROOT; };
@@ -120,6 +122,7 @@
 		8418F1210F4DB8AD00B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				840CC55C117A4BF20057BFD9 /* TOptions.h */,
 				84829C311164E74B0000C579 /* TTileMap.cpp */,
 				84829C321164E74B0000C579 /* TTileMap.h */,
 				844CE0341051577700178124 /* TAtlas.cpp */,
@@ -191,6 +194,7 @@
 				844CE04B1051577700178124 /* TTexture.h in Headers */,
 				844CE04D1051577700178124 /* TTimeline.h in Headers */,
 				84829C341164E74B0000C579 /* TTileMap.h in Headers */,
+				840CC55D117A4BF20057BFD9 /* TOptions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
