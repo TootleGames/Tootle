@@ -45,7 +45,7 @@ namespace TLInput
 		SyncBool		RemoveVirtualDevice(TRefRef InstanceRef);
 
 		// TEMP test routine
-		FORCEINLINE void TestVibrateDevice() {}
+		void TestVibrateDevice();
 				
 	};
 };

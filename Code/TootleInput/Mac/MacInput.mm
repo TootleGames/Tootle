@@ -1547,6 +1547,11 @@ void Platform::HID::TLInputHIDDevice::EnumDeviceObject(IOHIDElementRef elementRe
 
 
 
+void Platform::TestVibrateDevice() 
+{
+}
+
+
 
 
 
