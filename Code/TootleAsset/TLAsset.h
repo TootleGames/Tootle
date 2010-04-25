@@ -15,7 +15,7 @@
 
 
 //	gr: this has no effect on the mac (GCC maybe?) so ifdef'd this to remove the warning
-#ifndef TL_TARGET_MAC
+#if defined(TL_TARGET_PC)
 	#pragma comment(lib,"../../../Tootle/Code/Lib/libpng.lib")
 	#pragma comment(lib,"../../../Tootle/Code/Lib/zlib.lib")
 #endif

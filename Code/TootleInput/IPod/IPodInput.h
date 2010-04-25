@@ -102,8 +102,8 @@ namespace TLInput
 			Bool InitialiseDevice(TPtr<TInputDevice> pDevice, TRefRef DeviceTypeRef, Bool bVirtual);
 		
 			
-			void		SetCursorPosition(u8 Index,const int2& Pos)	{	g_CursorPositions[Index] = Pos;	}
-			const int2&	GetCursorPosition(u8 Index)					{	return g_CursorPositions[Index];	}
+			FORCEINLINE void		SetCursorPosition(u8 Index,const int2& Pos)	{	g_CursorPositions[Index] = Pos;	}
+			FORCEINLINE const int2&	GetCursorPosition(u8 Index)					{	return g_CursorPositions[Index];	}
 		}
 	};
 };

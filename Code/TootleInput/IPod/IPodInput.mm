@@ -36,8 +36,8 @@ namespace TLInput
 			TArray<TRef>				g_KeyboardKeyArray;		// iPod virtual keyboard keys pressed
 			
 			Bool										g_bVirtualKeyboardActive = false;
-			TFixedArray<int2, MAX_CURSOR_POSITIONS>		g_CursorPositions(MAX_CURSOR_POSITIONS);
-			TFixedArray< TRef, MAX_CURSOR_POSITIONS>	g_ActiveTouchObjects(MAX_CURSOR_POSITIONS);	// Fixed array of touch object ID's
+			TFixedArray<int2, MAX_CURSOR_POSITIONS>		g_CursorPositions(MAX_CURSOR_POSITIONS,int2(0,0));
+			TFixedArray< TRef, MAX_CURSOR_POSITIONS>	g_ActiveTouchObjects(MAX_CURSOR_POSITIONS,TRef());	// Fixed array of touch object ID's
 			TArray<TTouchObject>						g_TouchObjects;			// Dynamic array of touch objects that persist over time
 									
 			void	ProcessTouchData(TPtr<TLInput::TInputDevice> pDevice);

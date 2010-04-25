@@ -353,7 +353,7 @@ SyncBool Platform::LocalFileSys::LoadFile(TPtr<TFile>& pFile)
 	//	make sure file is marked as okay
 	pFile->GetFlags().Clear( TFile::Lost );
 	pFile->GetFlags().Clear( TFile::TooBig );
-	pFile->GetFlags().SetOutOfDate( false );
+	pFile->SetOutOfDate( false );
 
 	//	file was too big
 	if ( FileTooBig )
