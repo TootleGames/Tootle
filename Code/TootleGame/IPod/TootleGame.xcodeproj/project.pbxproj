@@ -78,7 +78,7 @@
 		849E9C950F83861300037332 /* TTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTimeline.h; path = ../TTimeline.h; sourceTree = SOURCE_ROOT; };
 		849E9C960F83861300037332 /* TTimelineManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTimelineManager.cpp; path = ../TTimelineManager.cpp; sourceTree = SOURCE_ROOT; };
 		849E9C970F83861300037332 /* TTimelineManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTimelineManager.h; path = ../TTimelineManager.h; sourceTree = SOURCE_ROOT; };
-		84C10A370F0A7C1800B2DF7A /* libTootleGame.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleGame.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		84C10A370F0A7C1800B2DF7A /* libTootleInput.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleInput.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C10A3D0F0A7C3000B2DF7A /* TMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TMenu.cpp; path = ../TMenu.cpp; sourceTree = SOURCE_ROOT; };
 		84C10A3E0F0A7C3000B2DF7A /* TMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TMenu.h; path = ../TMenu.h; sourceTree = SOURCE_ROOT; };
 		84C10A420F0A7C4E00B2DF7A /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -120,7 +120,7 @@
 		84C10A380F0A7C1800B2DF7A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				84C10A370F0A7C1800B2DF7A /* libTootleGame.a */,
+				84C10A370F0A7C1800B2DF7A /* libTootleInput.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -238,7 +238,7 @@
 			);
 			name = TootleGame;
 			productName = TootleGame;
-			productReference = 84C10A370F0A7C1800B2DF7A /* libTootleGame.a */;
+			productReference = 84C10A370F0A7C1800B2DF7A /* libTootleInput.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -294,9 +294,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C10A420F0A7C4E00B2DF7A /* TootleDebug.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_THUMB_SUPPORT = NO;
-				SDKROOT = iphoneos2.1;
 			};
 			name = Debug;
 		};
@@ -304,9 +301,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C10A430F0A7C4E00B2DF7A /* TootleRelease.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_THUMB_SUPPORT = NO;
-				SDKROOT = iphoneos2.1;
 			};
 			name = Release;
 		};
@@ -314,9 +308,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/build/Debug-iphoneos\"",
@@ -324,8 +315,6 @@
 					"\"$(SRCROOT)/build/Release-iphonesimulator\"",
 					"\"$(SRCROOT)/build/UninstalledProducts\"",
 				);
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleGame;
 			};
 			name = Debug;
 		};
@@ -333,9 +322,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/build/Debug-iphoneos\"",
@@ -343,9 +329,6 @@
 					"\"$(SRCROOT)/build/Release-iphonesimulator\"",
 					"\"$(SRCROOT)/build/UninstalledProducts\"",
 				);
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleGame;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -353,9 +336,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C10A440F0A7C4E00B2DF7A /* TootleReleaseAdHoc.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_THUMB_SUPPORT = NO;
-				SDKROOT = iphoneos2.1;
 			};
 			name = "Release AdHoc";
 		};
@@ -363,9 +343,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/build/Debug-iphoneos\"",
@@ -373,9 +350,6 @@
 					"\"$(SRCROOT)/build/Release-iphonesimulator\"",
 					"\"$(SRCROOT)/build/UninstalledProducts\"",
 				);
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleGame;
-				ZERO_LINK = NO;
 			};
 			name = "Release AdHoc";
 		};
@@ -383,9 +357,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C10A450F0A7C4E00B2DF7A /* TootleReleaseAppStore.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_THUMB_SUPPORT = NO;
-				SDKROOT = iphoneos2.1;
 			};
 			name = "Release AppStore";
 		};
@@ -393,9 +364,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/build/Debug-iphoneos\"",
@@ -403,9 +371,6 @@
 					"\"$(SRCROOT)/build/Release-iphonesimulator\"",
 					"\"$(SRCROOT)/build/UninstalledProducts\"",
 				);
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleGame;
-				ZERO_LINK = NO;
 			};
 			name = "Release AppStore";
 		};

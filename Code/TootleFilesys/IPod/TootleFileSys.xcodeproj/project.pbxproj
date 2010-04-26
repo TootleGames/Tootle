@@ -187,6 +187,12 @@
 		84E114DF0F3C478A00471397 /* TFileCollada.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E114DD0F3C478A00471397 /* TFileCollada.h */; };
 		84FAD16E106A439300DC7803 /* IPodFileSys.h in Headers */ = {isa = PBXBuildFile; fileRef = 84FAD16C106A439300DC7803 /* IPodFileSys.h */; };
 		84FAD16F106A439300DC7803 /* IPodFileSys.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84FAD16D106A439300DC7803 /* IPodFileSys.mm */; };
+		BF44F0001184E45E00FE77CE /* TFileTileMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF44EFFE1184E45E00FE77CE /* TFileTileMap.cpp */; };
+		BF44F0011184E45E00FE77CE /* TFileTileMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44EFFF1184E45E00FE77CE /* TFileTileMap.h */; };
+		BF44F0AC1184E94200FE77CE /* TFileMappy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF44F0AA1184E94200FE77CE /* TFileMappy.cpp */; };
+		BF44F0AD1184E94200FE77CE /* TFileMappy.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44F0AB1184E94200FE77CE /* TFileMappy.h */; };
+		BF44F0BE1184E96300FE77CE /* TFileAtlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF44F0BC1184E96300FE77CE /* TFileAtlas.cpp */; };
+		BF44F0BF1184E96300FE77CE /* TFileAtlas.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44F0BD1184E96300FE77CE /* TFileAtlas.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -383,6 +389,12 @@
 		84E114DD0F3C478A00471397 /* TFileCollada.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileCollada.h; path = ../TFileCollada.h; sourceTree = SOURCE_ROOT; };
 		84FAD16C106A439300DC7803 /* IPodFileSys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodFileSys.h; sourceTree = "<group>"; };
 		84FAD16D106A439300DC7803 /* IPodFileSys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodFileSys.mm; sourceTree = "<group>"; };
+		BF44EFFE1184E45E00FE77CE /* TFileTileMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileTileMap.cpp; path = ../../../../Tootle/Code/TootleFilesys/TFileTileMap.cpp; sourceTree = SOURCE_ROOT; };
+		BF44EFFF1184E45E00FE77CE /* TFileTileMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileTileMap.h; path = ../../../../Tootle/Code/TootleFilesys/TFileTileMap.h; sourceTree = SOURCE_ROOT; };
+		BF44F0AA1184E94200FE77CE /* TFileMappy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileMappy.cpp; path = ../../../../Tootle/Code/TootleFilesys/TFileMappy.cpp; sourceTree = SOURCE_ROOT; };
+		BF44F0AB1184E94200FE77CE /* TFileMappy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileMappy.h; path = ../../../../Tootle/Code/TootleFilesys/TFileMappy.h; sourceTree = SOURCE_ROOT; };
+		BF44F0BC1184E96300FE77CE /* TFileAtlas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileAtlas.cpp; path = ../../../../Tootle/Code/TootleFilesys/TFileAtlas.cpp; sourceTree = SOURCE_ROOT; };
+		BF44F0BD1184E96300FE77CE /* TFileAtlas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileAtlas.h; path = ../../../../Tootle/Code/TootleFilesys/TFileAtlas.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -438,6 +450,12 @@
 		84C109F40F0A799D00B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				BF44F0BC1184E96300FE77CE /* TFileAtlas.cpp */,
+				BF44F0BD1184E96300FE77CE /* TFileAtlas.h */,
+				BF44F0AA1184E94200FE77CE /* TFileMappy.cpp */,
+				BF44F0AB1184E94200FE77CE /* TFileMappy.h */,
+				BF44EFFE1184E45E00FE77CE /* TFileTileMap.cpp */,
+				BF44EFFF1184E45E00FE77CE /* TFileTileMap.h */,
 				8464DD8510A2E5E900EAF14E /* PC */,
 				8464DD8010A2E5D600EAF14E /* Mac */,
 				84C10A210F0A79B400B2DF7A /* IPod */,
@@ -846,6 +864,9 @@
 				8450985A10219F7200B78F2B /* TFileParticle.h in Headers */,
 				84B607A9105002D70022E5BC /* TFileObject.h in Headers */,
 				84FAD16E106A439300DC7803 /* IPodFileSys.h in Headers */,
+				BF44F0011184E45E00FE77CE /* TFileTileMap.h in Headers */,
+				BF44F0AD1184E94200FE77CE /* TFileMappy.h in Headers */,
+				BF44F0BF1184E96300FE77CE /* TFileAtlas.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -958,6 +979,9 @@
 				849E9C7F0F83852700037332 /* TFileTimeline.cpp in Sources */,
 				8450985910219F7200B78F2B /* TFileParticle.cpp in Sources */,
 				84FAD16F106A439300DC7803 /* IPodFileSys.mm in Sources */,
+				BF44F0001184E45E00FE77CE /* TFileTileMap.cpp in Sources */,
+				BF44F0AC1184E94200FE77CE /* TFileMappy.cpp in Sources */,
+				BF44F0BE1184E96300FE77CE /* TFileAtlas.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -968,13 +992,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C10A270F0A79DE00B2DF7A /* TootleDebug.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_THUMB_SUPPORT = NO;
 				HEADER_SEARCH_PATHS = (
 					../Freetype/include,
 					../..,
 				);
-				SDKROOT = iphoneos2.2.1;
 			};
 			name = Debug;
 		};
@@ -982,13 +1003,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C10A280F0A79DE00B2DF7A /* TootleRelease.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_THUMB_SUPPORT = NO;
 				HEADER_SEARCH_PATHS = (
 					../Freetype/include,
 					../..,
 				);
-				SDKROOT = iphoneos2.2.1;
 			};
 			name = Release;
 		};
@@ -996,9 +1014,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/build/Debug-iphoneos\"",
@@ -1009,8 +1024,6 @@
 					"\"$(SRCROOT)/build/Release-iphonesimulator\"",
 					"\"$(SRCROOT)/build/UninstalledProducts\"",
 				);
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleFileSys;
 			};
 			name = Debug;
 		};
@@ -1018,9 +1031,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/build/Debug-iphoneos\"",
@@ -1031,9 +1041,7 @@
 					"\"$(SRCROOT)/build/Release-iphonesimulator\"",
 					"\"$(SRCROOT)/build/UninstalledProducts\"",
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = TootleFileSys;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};

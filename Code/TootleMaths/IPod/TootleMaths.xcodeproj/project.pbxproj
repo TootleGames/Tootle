@@ -42,7 +42,7 @@
 /* Begin PBXFileReference section */
 		8461C3EB0F5E8DCB00ED9509 /* TShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TShape.cpp; path = ../TShape.cpp; sourceTree = SOURCE_ROOT; };
 		8461C3EC0F5E8DCB00ED9509 /* TShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TShape.h; path = ../TShape.h; sourceTree = SOURCE_ROOT; };
-		84C10A520F0A7C7600B2DF7A /* libTootleMaths.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleMaths.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		84C10A520F0A7C7600B2DF7A /* libTootleInput.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleInput.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C10A580F0A7C9700B2DF7A /* TBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TBox.cpp; path = ../TBox.cpp; sourceTree = SOURCE_ROOT; };
 		84C10A590F0A7C9700B2DF7A /* TBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBox.h; path = ../TBox.h; sourceTree = SOURCE_ROOT; };
 		84C10A5A0F0A7C9700B2DF7A /* TCapsule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TCapsule.cpp; path = ../TCapsule.cpp; sourceTree = SOURCE_ROOT; };
@@ -100,7 +100,7 @@
 		84C10A530F0A7C7600B2DF7A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				84C10A520F0A7C7600B2DF7A /* libTootleMaths.a */,
+				84C10A520F0A7C7600B2DF7A /* libTootleInput.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -203,7 +203,7 @@
 			);
 			name = TootleMaths;
 			productName = TootleMaths;
-			productReference = 84C10A520F0A7C7600B2DF7A /* libTootleMaths.a */;
+			productReference = 84C10A520F0A7C7600B2DF7A /* libTootleInput.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -254,9 +254,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C10A720F0A7CC800B2DF7A /* TootleDebug.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_THUMB_SUPPORT = NO;
-				SDKROOT = iphoneos2.1;
 			};
 			name = Debug;
 		};
@@ -264,9 +261,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C10A730F0A7CC800B2DF7A /* TootleRelease.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_THUMB_SUPPORT = NO;
-				SDKROOT = iphoneos2.1;
 			};
 			name = Release;
 		};
@@ -274,11 +268,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleMaths;
 			};
 			name = Debug;
 		};
@@ -286,12 +275,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleMaths;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -299,9 +282,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C10A740F0A7CC800B2DF7A /* TootleReleaseAdHoc.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_THUMB_SUPPORT = NO;
-				SDKROOT = iphoneos2.1;
 			};
 			name = "Release AdHoc";
 		};
@@ -309,12 +289,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleMaths;
-				ZERO_LINK = NO;
 			};
 			name = "Release AdHoc";
 		};
@@ -322,9 +296,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C10A750F0A7CC800B2DF7A /* TootleReleaseAppStore.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_THUMB_SUPPORT = NO;
-				SDKROOT = iphoneos2.1;
 			};
 			name = "Release AppStore";
 		};
@@ -332,12 +303,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleMaths;
-				ZERO_LINK = NO;
 			};
 			name = "Release AppStore";
 		};

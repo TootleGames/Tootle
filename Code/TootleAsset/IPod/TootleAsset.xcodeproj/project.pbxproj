@@ -37,6 +37,8 @@
 		84C109430F0A787B00B2DF7A /* TShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109340F0A787B00B2DF7A /* TShader.h */; };
 		84DE342B0F12A9C500608F8C /* TScheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DE34290F12A9C500608F8C /* TScheme.cpp */; };
 		84DE342C0F12A9C500608F8C /* TScheme.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DE342A0F12A9C500608F8C /* TScheme.h */; };
+		BF44EFEC1184E3FA00FE77CE /* TTileMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF44EFEA1184E3FA00FE77CE /* TTileMap.cpp */; };
+		BF44EFED1184E3FA00FE77CE /* TTileMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44EFEB1184E3FA00FE77CE /* TTileMap.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -75,6 +77,8 @@
 		84C1094A0F0A78C600B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
 		84DE34290F12A9C500608F8C /* TScheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TScheme.cpp; path = ../TScheme.cpp; sourceTree = SOURCE_ROOT; };
 		84DE342A0F12A9C500608F8C /* TScheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TScheme.h; path = ../TScheme.h; sourceTree = SOURCE_ROOT; };
+		BF44EFEA1184E3FA00FE77CE /* TTileMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTileMap.cpp; path = ../../../../Tootle/Code/TootleAsset/TTileMap.cpp; sourceTree = SOURCE_ROOT; };
+		BF44EFEB1184E3FA00FE77CE /* TTileMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTileMap.h; path = ../../../../Tootle/Code/TootleAsset/TTileMap.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +112,8 @@
 		84C109450F0A789D00B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				BF44EFEA1184E3FA00FE77CE /* TTileMap.cpp */,
+				BF44EFEB1184E3FA00FE77CE /* TTileMap.h */,
 				84B607B0105002E70022E5BC /* TObject.h */,
 				8450984C10219F5900B78F2B /* TParticle.cpp */,
 				8450984D10219F5900B78F2B /* TParticle.h */,
@@ -176,6 +182,7 @@
 				849E9C8C0F8385FC00037332 /* TTimeline.h in Headers */,
 				8450984F10219F5900B78F2B /* TParticle.h in Headers */,
 				84B607B1105002E70022E5BC /* TObject.h in Headers */,
+				BF44EFED1184E3FA00FE77CE /* TTileMap.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +243,7 @@
 				840EBDB40F777B5600BA6F4C /* TTexture.cpp in Sources */,
 				849E9C8B0F8385FC00037332 /* TTimeline.cpp in Sources */,
 				8450984E10219F5900B78F2B /* TParticle.cpp in Sources */,
+				BF44EFEC1184E3FA00FE77CE /* TTileMap.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,9 +254,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C109470F0A78C600B2DF7A /* TootleDebug.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_THUMB_SUPPORT = NO;
-				SDKROOT = iphoneos2.1;
 			};
 			name = Debug;
 		};
@@ -256,34 +261,18 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C109480F0A78C600B2DF7A /* TootleRelease.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_THUMB_SUPPORT = NO;
-				SDKROOT = iphoneos2.1;
 			};
 			name = Release;
 		};
 		84C109210F0A785300B2DF7A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleAsset;
 			};
 			name = Debug;
 		};
 		84C109220F0A785300B2DF7A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleAsset;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -291,22 +280,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C109490F0A78C600B2DF7A /* TootleReleaseAdHoc.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_THUMB_SUPPORT = NO;
-				SDKROOT = iphoneos2.1;
 			};
 			name = "Release AdHoc";
 		};
 		84C10B860F0A81B000B2DF7A /* Release AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleAsset;
-				ZERO_LINK = NO;
 			};
 			name = "Release AdHoc";
 		};
@@ -314,22 +293,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C1094A0F0A78C600B2DF7A /* TootleReleaseAppStore.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_THUMB_SUPPORT = NO;
-				SDKROOT = iphoneos2.1;
 			};
 			name = "Release AppStore";
 		};
 		84C10B880F0A81B700B2DF7A /* Release AppStore */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleAsset;
-				ZERO_LINK = NO;
 			};
 			name = "Release AppStore";
 		};

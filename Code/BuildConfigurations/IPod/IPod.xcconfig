@@ -1,0 +1,102 @@
+//
+//  IPod.xcconfig
+//  
+//	cross configuration, IPod-specific build flags
+//
+#include "../Tootle.xcconfig"
+
+
+//	gr: new ipod vars from project
+
+//	gr: needed for openfeint
+GCC_OBJC_CALL_CXX_CDTORS = YES
+//GCC_OPTIMIZATION_LEVEL = 3
+GCC_C_LANGUAGE_STANDARD = c99
+//GCC_C_LANGUAGE_STANDARD = compiler-default
+GCC_ENABLE_FLOATING_POINT_LIBRARY_CALLS = YES
+//include path? "$(SRCROOT)/../IPod/build/Debug-iphoneos"
+
+//	gr: add the target define
+IPOD_DEFINITIONS = $(TOOTLE_DEFINITIONS) TL_TARGET_IPOD 
+
+
+DEAD_CODE_STRIPPING = NO
+
+//DEPLOYMENT_LOCATION = NO
+
+//	gr: not sure what this is for, but it was defined in some projects (under user settings, so not a regular build option...)
+ZERO_LINK = NO
+
+//	gr: speed up
+GCC_UNROLL_LOOPS = YES
+GCC_FAST_MATH = YES
+GCC_THUMB_SUPPORT = NO
+
+GCC_ENABLE_SSE3_EXTENSIONS = YES
+GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES
+
+//	gr: many of the lib's targets had this setting... but not everything. I presume it was explicitly set, but not sure.
+DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
+
+//	gr: small bools to match win32
+GCC_ONE_BYTE_BOOL = YES
+
+//	gr: some better warnings
+GCC_WARN_INHIBIT_ALL_WARNINGS = NO
+GCC_TREAT_WARNINGS_AS_ERRORS = NO				//	turn this on one day :)
+
+//	gr: turn these on asap
+GCC_WARN_SHADOW = NO							//	warn if a local variable has the same name as a global or another local or a func (risk of ambiguity)
+GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO	//	good-practise warnings (eg. = operator 
+GCC_WARN_SIGN_COMPARE = NO
+GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO			//	maybe a bit OTT to turn this on...
+GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO			//	covered by EFFECTIVE_CPLUSPLUS_VIOLATIONS I think... (this is compilers guess at virtual classes though, so may need to turn this off if it's giving out spurious warnings)
+GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO			//	overloaded function doesn't have "virtual" in front of it
+GCC_WARN_CHECK_SWITCH_STATEMENTS = NO
+
+GCC_WARN_ABOUT_RETURN_TYPE = YES
+GCC_WARN_UNKNOWN_PRAGMAS = YES
+GCC_WARN_UNUSED_VARIABLE = YES
+GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES
+GCC_WARN_64_TO_32_BIT_CONVERSION = YES			//	warn if casting down to 32 bit (in case we make refs 64bit and end up losing data)
+GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES	//	multi-dimensional-array/union initialiser warning (don't think we ever do this though)
+GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES	//	bad struct initialisation.
+GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES			//	not sure how you'd cause this... (signed vs unsigned pointers...)
+GCC_WARN_PROTOTYPE_CONVERSION = NO				//	catch unexpected type conversions - turn off if this warns about custom conversions too much. we DON'T want to cast classes in code
+GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES		//	enabled, but phase out ... functions in favour of iostream << style operators
+CC_WARN_UNUSED_VALUE = YES						//	catch when we do a calculation, but nothing with the result
+
+//	new ones for ipod... (or at least were declared, im sure all these exist on the mac...)
+GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO
+GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = YES
+GCC_WARN_MISSING_PARENTHESES = NO
+GCC_WARN_ABOUT_MISSING_NEWLINE = NO
+GCC_WARN_PEDANTIC = NO
+GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = NO
+GCC_TREAT_NONCONFORMANT_CODE_ERRORS_AS_WARNINGS = NO
+
+GCC_WARN_UNINITIALIZED_AUTOS = NO
+GCC_WARN_UNUSED_FUNCTION = NO
+GCC_WARN_UNUSED_LABEL = NO
+GCC_WARN_UNUSED_PARAMETER = NO
+GCC_WARN_UNUSED_VALUE = NO
+GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = YES
+
+
+
+//	gr: make all symbols visible
+GCC_INLINES_ARE_PRIVATE_EXTERN = NO
+GCC_SYMBOLS_PRIVATE_EXTERN = NO
+KEEP_PRIVATE_EXTERNS = NO
+
+
+GCC_VERSION = 4.0 
+
+ADDITIONAL_SDKS = 
+//ARCHS = armv6 armv7
+//VALID_ARCHS = armv6 armv7
+ARCHS = armv6
+VALID_ARCHS = armv6
+SDKROOT = iphoneos2.2.1
+ONLY_ACTIVE_ARCH = YES
+

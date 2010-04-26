@@ -329,7 +329,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C109470F0A78C600B2DF7A /* TootleDebug.xcconfig */;
 			buildSettings = {
-				SDKROOT = iphoneos2.2.1;
 			};
 			name = Debug;
 		};
@@ -337,7 +336,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C109480F0A78C600B2DF7A /* TootleRelease.xcconfig */;
 			buildSettings = {
-				SDKROOT = iphoneos2.2.1;
 			};
 			name = Release;
 		};
@@ -345,15 +343,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../IPod/build/Debug-iphoneos\"",
 				);
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleGui;
 			};
 			name = Debug;
 		};
@@ -361,16 +354,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../IPod/build/Debug-iphoneos\"",
 				);
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleGui;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -378,7 +365,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C109490F0A78C600B2DF7A /* TootleReleaseAdHoc.xcconfig */;
 			buildSettings = {
-				SDKROOT = iphoneos2.2.1;
 			};
 			name = "Release AdHoc";
 		};
@@ -386,16 +372,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../IPod/build/Debug-iphoneos\"",
 				);
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleGui;
-				ZERO_LINK = NO;
 			};
 			name = "Release AdHoc";
 		};
@@ -403,7 +383,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C1094A0F0A78C600B2DF7A /* TootleReleaseAppStore.xcconfig */;
 			buildSettings = {
-				SDKROOT = iphoneos2.2.1;
 			};
 			name = "Release AppStore";
 		};
@@ -411,16 +390,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../IPod/build/Debug-iphoneos\"",
 				);
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleGui;
-				ZERO_LINK = NO;
 			};
 			name = "Release AppStore";
 		};

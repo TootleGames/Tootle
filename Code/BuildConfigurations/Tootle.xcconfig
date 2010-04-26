@@ -10,7 +10,7 @@
 //			a.xcconfig	DEFINES = XXX
 //			b.xcconfig	DEFINES = $(DEFINES) YYY (b includes a)
 //			DEFINES is YYY (not XXX YYY)
-TOOTLE_DEFINITIONS = 
+TOOTLE_DEFINITIONS = DEF
 TOOTLE_LDFLAGS =
 TOOTLE_CPLUSPLUSFLAGS = 
 
@@ -25,3 +25,7 @@ PRODUCT_NAME = $(PROJECT_NAME)
 
 //	gr: include <> dir. TOOTLE_ROOT is defined at lib or project level
 HEADER_SEARCH_PATHS = $(TOOTLE_ROOT)
+
+//	generic exclusion..
+EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = *.nib *.lproj *.framework *.gch *.xcode* (*) CVS .svn build *.vcproj
+

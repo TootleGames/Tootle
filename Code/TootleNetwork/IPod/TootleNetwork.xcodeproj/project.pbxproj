@@ -198,12 +198,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C10A8D0F0A7D5700B2DF7A /* TootleDebug.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
 				HEADER_SEARCH_PATHS = (
 					src/,
 					../..,
 				);
-				SDKROOT = iphoneos2.1;
 			};
 			name = Debug;
 		};
@@ -211,37 +209,22 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C10A8E0F0A7D5700B2DF7A /* TootleRelease.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
 				HEADER_SEARCH_PATHS = (
 					src/,
 					../..,
 				);
-				SDKROOT = iphoneos2.1;
 			};
 			name = Release;
 		};
 		84C10A840F0A7D0F00B2DF7A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleNetwork;
 			};
 			name = Debug;
 		};
 		84C10A850F0A7D0F00B2DF7A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleNetwork;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -249,25 +232,16 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C10A8F0F0A7D5700B2DF7A /* TootleReleaseAdHoc.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
 				HEADER_SEARCH_PATHS = (
 					src/,
 					../..,
 				);
-				SDKROOT = iphoneos2.1;
 			};
 			name = "Release AdHoc";
 		};
 		84C110870F0A8B0000B2DF7A /* Release AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleNetwork;
-				ZERO_LINK = NO;
 			};
 			name = "Release AdHoc";
 		};
@@ -275,25 +249,16 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C10A900F0A7D5700B2DF7A /* TootleReleaseAppStore.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
 				HEADER_SEARCH_PATHS = (
 					src/,
 					../..,
 				);
-				SDKROOT = iphoneos2.1;
 			};
 			name = "Release AppStore";
 		};
 		84C110890F0A8B0700B2DF7A /* Release AppStore */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleNetwork;
-				ZERO_LINK = NO;
 			};
 			name = "Release AppStore";
 		};

@@ -42,13 +42,19 @@
 		84C10B130F0A7E6000B2DF7A /* TScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AFF0F0A7E6000B2DF7A /* TScreen.h */; };
 		84C10B140F0A7E6000B2DF7A /* TScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10B000F0A7E6000B2DF7A /* TScreenManager.cpp */; };
 		84C10B150F0A7E6000B2DF7A /* TScreenManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10B010F0A7E6000B2DF7A /* TScreenManager.h */; };
-		84C10B1D0F0A7E7400B2DF7A /* IPodRender.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10B170F0A7E7400B2DF7A /* IPodRender.h */; };
 		84DE344B0F12AA6C00608F8C /* TRenderNodeTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DE34490F12AA6C00608F8C /* TRenderNodeTile.cpp */; };
 		84DE344C0F12AA6C00608F8C /* TRenderNodeTile.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DE344A0F12AA6C00608F8C /* TRenderNodeTile.h */; };
 		84DE371B0F13630600608F8C /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84DE371A0F13630600608F8C /* OpenGL.framework */; };
-		BFC7ABC21156A0BF00FFFC81 /* IPodRenderTarget.mm in Sources */ = {isa = PBXBuildFile; fileRef = BFC7ABBF1156A0BF00FFFC81 /* IPodRenderTarget.mm */; };
-		BFC7ABC31156A0BF00FFFC81 /* IPodRenderTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC7ABC01156A0BF00FFFC81 /* IPodRenderTarget.h */; };
-		BFC7ABC41156A0BF00FFFC81 /* IPodRender.mm in Sources */ = {isa = PBXBuildFile; fileRef = BFC7ABC11156A0BF00FFFC81 /* IPodRender.mm */; };
+		BF44EEC41184D89B00FE77CE /* IPodRender.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44EEBD1184D89B00FE77CE /* IPodRender.h */; };
+		BF44EEC51184D89B00FE77CE /* IPodRender.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF44EEBE1184D89B00FE77CE /* IPodRender.mm */; };
+		BF44EEC61184D89B00FE77CE /* IPodRenderTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44EEBF1184D89B00FE77CE /* IPodRenderTarget.h */; };
+		BF44EEC71184D89B00FE77CE /* IPodRenderTarget.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF44EEC01184D89B00FE77CE /* IPodRenderTarget.mm */; };
+		BF44EED21184D8D500FE77CE /* GLRasteriser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF44EECE1184D8D500FE77CE /* GLRasteriser.cpp */; };
+		BF44EED31184D8D500FE77CE /* GLRasteriser.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44EECF1184D8D500FE77CE /* GLRasteriser.h */; };
+		BF44EED41184D8D500FE77CE /* TRasteriser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF44EED01184D8D500FE77CE /* TRasteriser.cpp */; };
+		BF44EED51184D8D500FE77CE /* TRasteriser.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44EED11184D8D500FE77CE /* TRasteriser.h */; };
+		BF44F1B81184F96B00FE77CE /* TEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF44F1B61184F96B00FE77CE /* TEffect.cpp */; };
+		BF44F1B91184F96B00FE77CE /* TEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44F1B71184F96B00FE77CE /* TEffect.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -88,7 +94,6 @@
 		84C10AFF0F0A7E6000B2DF7A /* TScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TScreen.h; path = ../TScreen.h; sourceTree = SOURCE_ROOT; };
 		84C10B000F0A7E6000B2DF7A /* TScreenManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TScreenManager.cpp; path = ../TScreenManager.cpp; sourceTree = SOURCE_ROOT; };
 		84C10B010F0A7E6000B2DF7A /* TScreenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TScreenManager.h; path = ../TScreenManager.h; sourceTree = SOURCE_ROOT; };
-		84C10B170F0A7E7400B2DF7A /* IPodRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodRender.h; sourceTree = "<group>"; };
 		84C10B240F0A7E9600B2DF7A /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C10B250F0A7E9600B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C10B260F0A7E9600B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -96,6 +101,17 @@
 		84DE34490F12AA6C00608F8C /* TRenderNodeTile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeTile.cpp; path = ../TRenderNodeTile.cpp; sourceTree = SOURCE_ROOT; };
 		84DE344A0F12AA6C00608F8C /* TRenderNodeTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeTile.h; path = ../TRenderNodeTile.h; sourceTree = SOURCE_ROOT; };
 		84DE371A0F13630600608F8C /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
+		BF44EEBD1184D89B00FE77CE /* IPodRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodRender.h; path = ../../../../Tootle/Code/TootleRender/IPod/IPodRender.h; sourceTree = SOURCE_ROOT; };
+		BF44EEBE1184D89B00FE77CE /* IPodRender.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodRender.mm; path = ../../../../Tootle/Code/TootleRender/IPod/IPodRender.mm; sourceTree = SOURCE_ROOT; };
+		BF44EEBF1184D89B00FE77CE /* IPodRenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodRenderTarget.h; path = ../../../../Tootle/Code/TootleRender/IPod/IPodRenderTarget.h; sourceTree = SOURCE_ROOT; };
+		BF44EEC01184D89B00FE77CE /* IPodRenderTarget.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodRenderTarget.mm; path = ../../../../Tootle/Code/TootleRender/IPod/IPodRenderTarget.mm; sourceTree = SOURCE_ROOT; };
+		BF44EECE1184D8D500FE77CE /* GLRasteriser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLRasteriser.cpp; path = ../../../../Tootle/Code/TootleRender/Opengl/GLRasteriser.cpp; sourceTree = SOURCE_ROOT; };
+		BF44EECF1184D8D500FE77CE /* GLRasteriser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLRasteriser.h; path = ../../../../Tootle/Code/TootleRender/Opengl/GLRasteriser.h; sourceTree = SOURCE_ROOT; };
+		BF44EED01184D8D500FE77CE /* TRasteriser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRasteriser.cpp; path = ../../../../Tootle/Code/TootleRender/TRasteriser.cpp; sourceTree = SOURCE_ROOT; };
+		BF44EED11184D8D500FE77CE /* TRasteriser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRasteriser.h; path = ../../../../Tootle/Code/TootleRender/TRasteriser.h; sourceTree = SOURCE_ROOT; };
+		BF44F1B61184F96B00FE77CE /* TEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TEffect.cpp; path = ../../../../Tootle/Code/TootleRender/TEffect.cpp; sourceTree = SOURCE_ROOT; };
+		BF44F1B71184F96B00FE77CE /* TEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TEffect.h; path = ../../../../Tootle/Code/TootleRender/TEffect.h; sourceTree = SOURCE_ROOT; };
+		BF44F1F01184FD9D00FE77CE /* IPod.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = IPod.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/IPod.xcconfig; sourceTree = SOURCE_ROOT; };
 		BFC7ABB21156697F00FFFC81 /* MacRenderTarget.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacRenderTarget.mm; path = ../Mac/MacRenderTarget.mm; sourceTree = SOURCE_ROOT; };
 		BFC7ABB31156697F00FFFC81 /* MacRender.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacRender.mm; path = ../Mac/MacRender.mm; sourceTree = SOURCE_ROOT; };
 		BFC7ABB41156697F00FFFC81 /* MacRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacRender.h; path = ../Mac/MacRender.h; sourceTree = SOURCE_ROOT; };
@@ -106,9 +122,6 @@
 		BFC7ABB91156697F00FFFC81 /* PCRenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCRenderTarget.h; path = ../PC/PCRenderTarget.h; sourceTree = SOURCE_ROOT; };
 		BFC7ABBA1156697F00FFFC81 /* PCRenderTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCRenderTarget.cpp; path = ../PC/PCRenderTarget.cpp; sourceTree = SOURCE_ROOT; };
 		BFC7ABBB1156697F00FFFC81 /* PCOpenglExt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCOpenglExt.h; path = ../PC/PCOpenglExt.h; sourceTree = SOURCE_ROOT; };
-		BFC7ABBF1156A0BF00FFFC81 /* IPodRenderTarget.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodRenderTarget.mm; sourceTree = SOURCE_ROOT; };
-		BFC7ABC01156A0BF00FFFC81 /* IPodRenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodRenderTarget.h; sourceTree = SOURCE_ROOT; };
-		BFC7ABC11156A0BF00FFFC81 /* IPodRender.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodRender.mm; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,7 +157,12 @@
 		84C10AED0F0A7E4E00B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
-				84C10B160F0A7E6400B2DF7A /* IPod */,
+				BF44F1B61184F96B00FE77CE /* TEffect.cpp */,
+				BF44F1B71184F96B00FE77CE /* TEffect.h */,
+				BF44EECD1184D8D500FE77CE /* Opengl */,
+				BF44EED01184D8D500FE77CE /* TRasteriser.cpp */,
+				BF44EED11184D8D500FE77CE /* TRasteriser.h */,
+				BF44EE9B1184D89B00FE77CE /* IPod */,
 				BFC7ABB11156696400FFFC81 /* PC */,
 				BFC7ABB01156696000FFFC81 /* Mac */,
 				8446D004103B515C00DFD24F /* TScreenShape.h */,
@@ -188,20 +206,10 @@
 			name = "Source Code";
 			sourceTree = "<group>";
 		};
-		84C10B160F0A7E6400B2DF7A /* IPod */ = {
-			isa = PBXGroup;
-			children = (
-				BFC7ABBF1156A0BF00FFFC81 /* IPodRenderTarget.mm */,
-				BFC7ABC01156A0BF00FFFC81 /* IPodRenderTarget.h */,
-				BFC7ABC11156A0BF00FFFC81 /* IPodRender.mm */,
-				84C10B170F0A7E7400B2DF7A /* IPodRender.h */,
-			);
-			name = IPod;
-			sourceTree = "<group>";
-		};
 		84C10B230F0A7E7D00B2DF7A /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				BF44F1F01184FD9D00FE77CE /* IPod.xcconfig */,
 				84C10B240F0A7E9600B2DF7A /* TootleDebug.xcconfig */,
 				84C10B250F0A7E9600B2DF7A /* TootleRelease.xcconfig */,
 				84C10B260F0A7E9600B2DF7A /* TootleReleaseAdHoc.xcconfig */,
@@ -217,6 +225,28 @@
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
+		};
+		BF44EE9B1184D89B00FE77CE /* IPod */ = {
+			isa = PBXGroup;
+			children = (
+				BF44EEBD1184D89B00FE77CE /* IPodRender.h */,
+				BF44EEBE1184D89B00FE77CE /* IPodRender.mm */,
+				BF44EEBF1184D89B00FE77CE /* IPodRenderTarget.h */,
+				BF44EEC01184D89B00FE77CE /* IPodRenderTarget.mm */,
+			);
+			name = IPod;
+			path = ../../../../Tootle/Code/TootleRender/IPod;
+			sourceTree = SOURCE_ROOT;
+		};
+		BF44EECD1184D8D500FE77CE /* Opengl */ = {
+			isa = PBXGroup;
+			children = (
+				BF44EECE1184D8D500FE77CE /* GLRasteriser.cpp */,
+				BF44EECF1184D8D500FE77CE /* GLRasteriser.h */,
+			);
+			name = Opengl;
+			path = ../../../../Tootle/Code/TootleRender/Opengl;
+			sourceTree = SOURCE_ROOT;
 		};
 		BFC7ABB01156696000FFFC81 /* Mac */ = {
 			isa = PBXGroup;
@@ -258,7 +288,6 @@
 				84C10B110F0A7E6000B2DF7A /* TRenderTarget.h in Headers */,
 				84C10B130F0A7E6000B2DF7A /* TScreen.h in Headers */,
 				84C10B150F0A7E6000B2DF7A /* TScreenManager.h in Headers */,
-				84C10B1D0F0A7E7400B2DF7A /* IPodRender.h in Headers */,
 				84DE344C0F12AA6C00608F8C /* TRenderNodeTile.h in Headers */,
 				8461BD710F582DA300ED9509 /* TRenderNodeDebugMesh.h in Headers */,
 				8461C1400F5C1B6300ED9509 /* TRenderNodePathNetwork.h in Headers */,
@@ -269,7 +298,11 @@
 				84ADBE74101877FA0090EAFB /* TRenderNodeTimeline.h in Headers */,
 				8450984410219F3C00B78F2B /* TRenderNodeParticle.h in Headers */,
 				8446D005103B515C00DFD24F /* TScreenShape.h in Headers */,
-				BFC7ABC31156A0BF00FFFC81 /* IPodRenderTarget.h in Headers */,
+				BF44EEC41184D89B00FE77CE /* IPodRender.h in Headers */,
+				BF44EEC61184D89B00FE77CE /* IPodRenderTarget.h in Headers */,
+				BF44EED31184D8D500FE77CE /* GLRasteriser.h in Headers */,
+				BF44EED51184D8D500FE77CE /* TRasteriser.h in Headers */,
+				BF44F1B91184F96B00FE77CE /* TEffect.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -334,8 +367,11 @@
 				8434CB8E100DBB910063673E /* TRenderNodeScrollableView.cpp in Sources */,
 				84ADBE73101877FA0090EAFB /* TRenderNodeTimeline.cpp in Sources */,
 				8450984310219F3C00B78F2B /* TRenderNodeParticle.cpp in Sources */,
-				BFC7ABC21156A0BF00FFFC81 /* IPodRenderTarget.mm in Sources */,
-				BFC7ABC41156A0BF00FFFC81 /* IPodRender.mm in Sources */,
+				BF44EEC51184D89B00FE77CE /* IPodRender.mm in Sources */,
+				BF44EEC71184D89B00FE77CE /* IPodRenderTarget.mm in Sources */,
+				BF44EED21184D8D500FE77CE /* GLRasteriser.cpp in Sources */,
+				BF44EED41184D8D500FE77CE /* TRasteriser.cpp in Sources */,
+				BF44F1B81184F96B00FE77CE /* TEffect.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -346,9 +382,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C10B240F0A7E9600B2DF7A /* TootleDebug.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_THUMB_SUPPORT = NO;
-				SDKROOT = iphoneos2.1;
 			};
 			name = Debug;
 		};
@@ -356,34 +389,18 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C10B250F0A7E9600B2DF7A /* TootleRelease.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_THUMB_SUPPORT = NO;
-				SDKROOT = iphoneos2.1;
 			};
 			name = Release;
 		};
 		84C10AEA0F0A7E3B00B2DF7A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleRender;
 			};
 			name = Debug;
 		};
 		84C10AEB0F0A7E3B00B2DF7A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleRender;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -391,22 +408,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C10B260F0A7E9600B2DF7A /* TootleReleaseAdHoc.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_THUMB_SUPPORT = NO;
-				SDKROOT = iphoneos2.1;
 			};
 			name = "Release AdHoc";
 		};
 		84C110C40F0A8C5A00B2DF7A /* Release AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleRender;
-				ZERO_LINK = NO;
 			};
 			name = "Release AdHoc";
 		};
@@ -414,22 +421,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C10B270F0A7E9600B2DF7A /* TootleReleaseAppStore.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_THUMB_SUPPORT = NO;
-				SDKROOT = iphoneos2.1;
 			};
 			name = "Release AppStore";
 		};
 		84C110C60F0A8C6000B2DF7A /* Release AppStore */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleRender;
-				ZERO_LINK = NO;
 			};
 			name = "Release AppStore";
 		};

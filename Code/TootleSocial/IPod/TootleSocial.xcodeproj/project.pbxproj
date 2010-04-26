@@ -257,8 +257,6 @@
 			baseConfigurationReference = 8404EC960FD7DA2C00F280AF /* TootleDebug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				COPY_PHASE_STRIP = NO;
-				GCC_THUMB_SUPPORT = NO;
 				HEADER_SEARCH_PATHS = (
 					"OpenFeint/**",
 					../..,
@@ -267,7 +265,6 @@
 				);
 				LIBRARY_SEARCH_PATHS = libagon/lib;
 				OTHER_LDFLAGS = "-ObjC";
-				SDKROOT = iphoneos2.2.1;
 			};
 			name = Debug;
 		};
@@ -276,8 +273,6 @@
 			baseConfigurationReference = 8404EC970FD7DA2C00F280AF /* TootleRelease.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				COPY_PHASE_STRIP = YES;
-				GCC_THUMB_SUPPORT = NO;
 				HEADER_SEARCH_PATHS = (
 					"OpenFeint/**",
 					../..,
@@ -286,21 +281,16 @@
 				);
 				LIBRARY_SEARCH_PATHS = libagon/lib;
 				OTHER_LDFLAGS = "-ObjC";
-				SDKROOT = iphoneos2.2.1;
 			};
 			name = Release;
 		};
 		8404EA5E0FD7CF8200F280AF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = TootleSocialPrefix.pch;
 				PREBINDING = NO;
-				PRODUCT_NAME = TootleSocial;
 			};
 			name = Debug;
 		};
@@ -308,15 +298,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Don't Code Sign";
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = TootleSocialPrefix.pch;
 				PREBINDING = NO;
-				PRODUCT_NAME = TootleSocial;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};

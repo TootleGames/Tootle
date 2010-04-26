@@ -1,0 +1,39 @@
+//
+//  Project.xcconfig
+//  
+//
+//  Created by Duane Bradbury on 18/12/2008.
+//  Copyright 2008 Tootle. All rights reserved.
+//
+//	combine this with MacRelease.xcconfig or MacDebug.xcconfig to make ProjectXXX.xcconfig
+
+//	project/game settings
+TOOTLE_ROOT = ../../../Tootle/Code
+//HEADER_SEARCH_PATHS = $(TOOTLE_ROOT) $(TOOTLE_ROOT)/TootleFileSys/Freetype/include
+HEADER_SEARCH_PATHS = $(TOOTLE_ROOT)
+//LIBRARY_SEARCH_PATHS = $(inherited) ../../../build/**
+LIBRARY_SEARCH_PATHS = ../../../Tootle/Code/TootleSocial/IPod/libagon/lib/$(SDK_NAME)
+PROJECT_DEFINITIONS = FT2_BUILD_LIBRARY 
+
+//EXECUTABLE_EXTENSION =	//	gr: should be nothing!
+//EXECUTABLE_PREFIX = 
+//WRAPPER_EXTENSION = app
+//SKIP_INSTALL = NO
+//PREBINDING = NO				//	gr: needed?
+//GENERATE_PKGINFO_FILE = NO
+//GCC_DYNAMIC_NO_PIC = YES	//	gr: needed?
+
+INFOPLIST_FILE = $(PROJECT_NAME)-Info.plist
+
+DEAD_CODE_STRIPPING = YES
+
+//	only build active architecture (libs build all arch types)
+ONLY_ACTIVE_ARCH = YES
+
+//	gr: OS frameworks
+//	gr: after some testing... this seems to have no influence at all, and the framework still needs to be in the final project
+//		in order to resolve functions...
+//PROJECT_LDFLAGS = -framework QuartzCore -framework Foundation -framework AppKit -framework CoreData -framework IOKit -framework Cocoa -framework AudioToolbox -framework System -framework QuickTime -framework webkit 
+PROJECT_LDFLAGS = -framework QuartzCore -framework Foundation -framework UIKit -framework OpenGLES
+PROJECT_CPLUSPLUSFLAGS = -ObjC
+
