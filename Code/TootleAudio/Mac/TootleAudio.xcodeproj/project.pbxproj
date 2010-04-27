@@ -15,6 +15,7 @@
 		8418F1190F4DB89D00B956C9 /* TLAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F1110F4DB89D00B956C9 /* TLAudio.h */; };
 		8418F1540F4DB94D00B956C9 /* MacAudio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F1520F4DB94D00B956C9 /* MacAudio.cpp */; };
 		8418F1550F4DB94D00B956C9 /* MacAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F1530F4DB94D00B956C9 /* MacAudio.h */; };
+		849DF8C7118735A900E8C319 /* TAudioDistance.h in Headers */ = {isa = PBXBuildFile; fileRef = 849DF8C6118735A900E8C319 /* TAudioDistance.h */; };
 		84B60304104FF07E0022E5BC /* TAudioNode_Music.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B60302104FF07E0022E5BC /* TAudioNode_Music.cpp */; };
 		84B60305104FF07E0022E5BC /* TAudioNode_Music.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60303104FF07E0022E5BC /* TAudioNode_Music.h */; };
 		84B60D70105133140022E5BC /* MacAudioOpenAL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B60D6E105133140022E5BC /* MacAudioOpenAL.cpp */; };
@@ -46,6 +47,7 @@
 		849504961176007D0028A0DE /* PCAudioItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCAudioItem.h; path = ../PC/PCAudioItem.h; sourceTree = SOURCE_ROOT; };
 		849504971176007D0028A0DE /* PCAudioOpenAL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCAudioOpenAL.cpp; path = ../PC/PCAudioOpenAL.cpp; sourceTree = SOURCE_ROOT; };
 		849504981176007D0028A0DE /* PCAudioOpenAL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCAudioOpenAL.h; path = ../PC/PCAudioOpenAL.h; sourceTree = SOURCE_ROOT; };
+		849DF8C6118735A900E8C319 /* TAudioDistance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAudioDistance.h; path = ../TAudioDistance.h; sourceTree = SOURCE_ROOT; };
 		84B60302104FF07E0022E5BC /* TAudioNode_Music.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAudioNode_Music.cpp; path = ../TAudioNode_Music.cpp; sourceTree = SOURCE_ROOT; };
 		84B60303104FF07E0022E5BC /* TAudioNode_Music.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAudioNode_Music.h; path = ../TAudioNode_Music.h; sourceTree = SOURCE_ROOT; };
 		84B60D6E105133140022E5BC /* MacAudioOpenAL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacAudioOpenAL.cpp; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 				8418F10F0F4DB89D00B956C9 /* TAudioNode.h */,
 				8418F1100F4DB89D00B956C9 /* TLAudio.cpp */,
 				8418F1110F4DB89D00B956C9 /* TLAudio.h */,
+				849DF8C6118735A900E8C319 /* TAudioDistance.h */,
 			);
 			name = "Source Code";
 			sourceTree = "<group>";
@@ -179,6 +182,7 @@
 				84B60D71105133140022E5BC /* MacAudioOpenAL.h in Headers */,
 				84FE02B7115A4DEA00D696D1 /* TAudioListener.h in Headers */,
 				84FE030D115A583900D696D1 /* MacMicrophone.h in Headers */,
+				849DF8C7118735A900E8C319 /* TAudioDistance.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

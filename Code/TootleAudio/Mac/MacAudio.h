@@ -4,12 +4,15 @@
 #include <TootleCore/TLCore.h>
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/TRef.h>
+
 #include "../TAudioListener.h"
+#include "../TAudioDistance.h"
 
 #include <TootleAsset/TAudio.h>
 
 #import <OpenAL/al.h>
 #import <OpenAL/alc.h>
+
 
 /*
 // OpenAL audio include
@@ -21,6 +24,7 @@
 */
 namespace TLAudio
 {
+	
 	namespace Platform
 	{
 		SyncBool		Init();			
@@ -80,6 +84,9 @@ namespace TLAudio
 		Bool Activate();
 		Bool Deactivate();
 		
+		
+		Bool	SetDistanceModel(TLAudio::DistanceModel uDistanceModel);
+		Bool	SetDopplerEffect(float fFactor, float fVelocity);		
 	}
 }
 

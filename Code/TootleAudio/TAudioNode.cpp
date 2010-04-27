@@ -489,7 +489,7 @@ void TAudioNode::SetMaxRange(float fDistance)
 void TAudioNode::SetRateOfDecay(float fRateOfDecay)
 {
 	// Clamp the rate of decay to within range
-	TLMaths::Limit(fRateOfDecay, 0.01f, 1.0f);
+	TLMaths::Limit(fRateOfDecay, 0.0f, 1.0f);
 
 	if(m_AudioProperties.m_fRateOfDecay != fRateOfDecay)
 	{

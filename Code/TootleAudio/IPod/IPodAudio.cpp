@@ -235,3 +235,14 @@ Bool Platform::Deactivate()
 	return OpenAL::Deactivate();
 }
 
+Bool Platform::SetDistanceModel(TLAudio::DistanceModel uDistanceModel)
+{
+	return OpenAL::SetDistanceModel(uDistanceModel);
+}
+
+Bool Platform::SetDopplerEffect(float fFactor, float fVelocity)
+{
+	return OpenAL::SetDopplerEffect(fFactor, fVelocity);
+}
+
+

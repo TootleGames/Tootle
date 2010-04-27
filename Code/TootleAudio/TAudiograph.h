@@ -6,6 +6,7 @@
 #include "TAudioNode.h"
 #include "TAudioNode_Music.h"
 #include "TAudioListener.h"
+#include "TAudioDistance.h"
 
 namespace TLAudio
 {
@@ -37,10 +38,16 @@ public:
 	FORCEINLINE float		GetMusicVolume()	const	{ return m_fMusicVolume; }
 	FORCEINLINE float		GetEffectsVolume()	const	{ return m_fEffectsVolume; }
 
+
 	FORCEINLINE Bool		IsPaused()			const	{ return m_bPause; }
 	FORCEINLINE Bool		IsEnabled()			const	{ return m_bEnabled; }
 	FORCEINLINE Bool		IsActive()			const	{ return m_bActive; }
 	FORCEINLINE Bool		IsMuted()			const	{ return m_bMute; }
+	
+	FORCEINLINE DistanceModel		GetDistanceModel()	const	{ return m_DistanceModel; }
+	FORCEINLINE float			GetDopplerFactor()		const	{ return m_fDopplerFactor; }
+	FORCEINLINE float			GetDopplerVelocity()	const	{ return m_fDopplerVelocity; }
+
 	////////////////////////////////////////////////////////
 
 	////////////////////////////////////////////////////////
@@ -119,6 +126,12 @@ protected:
 	FORCEINLINE void		SetActive(Bool bActive);
 	FORCEINLINE void		SetEffectsVolume(float fVolume);
 	FORCEINLINE void		SetMusicVolume(float fVolume);
+	
+	void					SetDistanceModel(TLAudio::DistanceModel model);
+
+	void					SetDopplerFactor(float fFactor);
+	void					SetDopplerVelocity(float fVelocity);
+
 
 	virtual void			SetProperty(TLMessaging::TMessage& Message);
 
@@ -129,14 +142,20 @@ private:
 	void					OnMuteChanged();
 	void					OnEnableChanged();
 
+	void					OnDistanceModelChanged();
+	void					OnDopplerEffectChanged();
+
 
 private:
 	TRef					m_MusicRef;			// Music node reference
 
 	float					m_fMusicVolume;		// Audio system master music volume
 	float					m_fEffectsVolume;	// Audio system master effects volume
-
+	
 	TListenerProperties		m_Listener;			// The audio listener aka microphone
+	DistanceModel			m_DistanceModel;	// The audio system distance model
+	float					m_fDopplerFactor;	// Doppler effect
+	float					m_fDopplerVelocity;	// Doppler effect
 
 	Bool					m_bPause;			// Audio system pause - system will pause all audio
 	Bool					m_bEnabled;			// Audio system enabled - low level system is initialised for use
@@ -204,6 +223,7 @@ FORCEINLINE void TLAudio::TAudiograph::SetMusicVolume(float fVolume)
 		OnMusicVolumeChanged();
 	}
 }
+
 
 
 

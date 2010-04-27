@@ -2,7 +2,7 @@
 {
 	84179CF30EFB9E4E005375E5 /* Project object */ = {
 		activeBuildConfigurationName = Release;
-		activeSDKPreference = iphonesimulator2.1;
+		activeSDKPreference = iphoneos2.2.1;
 		activeTarget = 84179D090EFBA035005375E5 /* TootleAudio */;
 		addToTargets = (
 			84179D090EFBA035005375E5 /* TootleAudio */,
@@ -74,51 +74,25 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 273757072;
-			PBXWorkspaceStateSaveDate = 273757072;
+			PBXPerProjectTemplateStateSaveDate = 294081423;
+			PBXWorkspaceStateSaveDate = 294081423;
 		};
 		perUserProjectItems = {
-			84179D7E0EFBAE84005375E5 /* PBXTextBookmark */ = 84179D7E0EFBAE84005375E5 /* PBXTextBookmark */;
-			84179D9C0EFBD639005375E5 /* PBXTextBookmark */ = 84179D9C0EFBD639005375E5 /* PBXTextBookmark */;
-			84179D9E0EFBD639005375E5 /* PBXTextBookmark */ = 84179D9E0EFBD639005375E5 /* PBXTextBookmark */;
-			84179DA00EFBD639005375E5 /* PBXTextBookmark */ = 84179DA00EFBD639005375E5 /* PBXTextBookmark */;
-			84179DA40EFBD639005375E5 /* PBXTextBookmark */ = 84179DA40EFBD639005375E5 /* PBXTextBookmark */;
-			84179DA60EFBD639005375E5 /* PBXTextBookmark */ = 84179DA60EFBD639005375E5 /* PBXTextBookmark */;
-			84179DA80EFBD639005375E5 /* PBXTextBookmark */ = 84179DA80EFBD639005375E5 /* PBXTextBookmark */;
-			842AA02F0F1B6333004BF60A /* PBXTextBookmark */ = 842AA02F0F1B6333004BF60A /* PBXTextBookmark */;
-			842AA0350F1B6333004BF60A /* PBXTextBookmark */ = 842AA0350F1B6333004BF60A /* PBXTextBookmark */;
-			842AA0400F1B6333004BF60A /* PBXTextBookmark */ = 842AA0400F1B6333004BF60A /* PBXTextBookmark */;
-			842AA05A0F1B6333004BF60A /* PBXTextBookmark */ = 842AA05A0F1B6333004BF60A /* PBXTextBookmark */;
-			842AA14B0F1B9A0F004BF60A /* PBXTextBookmark */ = 842AA14B0F1B9A0F004BF60A /* PBXTextBookmark */;
 			842AA2450F1BA9C8004BF60A /* PBXTextBookmark */ = 842AA2450F1BA9C8004BF60A /* PBXTextBookmark */;
-			842AA2470F1BA9C8004BF60A /* PBXTextBookmark */ = 842AA2470F1BA9C8004BF60A /* PBXTextBookmark */;
-			8461C5AC0F5EE3C400ED9509 /* PBXTextBookmark */ = 8461C5AC0F5EE3C400ED9509 /* PBXTextBookmark */;
-			8461C5AD0F5EE3C400ED9509 /* PBXTextBookmark */ = 8461C5AD0F5EE3C400ED9509 /* PBXTextBookmark */;
 			846B6C390F2A1BD2005EB752 /* PBXTextBookmark */ = 846B6C390F2A1BD2005EB752 /* PBXTextBookmark */;
-			846B6C3E0F2A1BD2005EB752 /* PBXTextBookmark */ = 846B6C3E0F2A1BD2005EB752 /* PBXTextBookmark */;
-			846B6C400F2A1BD2005EB752 /* PBXTextBookmark */ = 846B6C400F2A1BD2005EB752 /* PBXTextBookmark */;
 			846B6C570F2A1C4F005EB752 /* PBXTextBookmark */ = 846B6C570F2A1C4F005EB752 /* PBXTextBookmark */;
 			848705340FE1524A008411A4 /* PBXTextBookmark */ = 848705340FE1524A008411A4 /* PBXTextBookmark */;
-			848705350FE1524A008411A4 /* PBXTextBookmark */ = 848705350FE1524A008411A4 /* PBXTextBookmark */;
 			848F0CF70F2E59410000E033 /* PBXTextBookmark */ = 848F0CF70F2E59410000E033 /* PBXTextBookmark */;
 			848F0D320F2E5B840000E033 /* PBXTextBookmark */ = 848F0D320F2E5B840000E033 /* PBXTextBookmark */;
 			848F0D6D0F2E5F3A0000E033 /* PBXTextBookmark */ = 848F0D6D0F2E5F3A0000E033 /* PBXTextBookmark */;
+			849DFB87118753ED00E8C319 /* PBXTextBookmark */ = 849DFB87118753ED00E8C319 /* PBXTextBookmark */;
 			84B60E1C105133B20022E5BC /* PBXTextBookmark */ = 84B60E1C105133B20022E5BC /* PBXTextBookmark */;
 			84B60E1D105133B20022E5BC /* PBXTextBookmark */ = 84B60E1D105133B20022E5BC /* PBXTextBookmark */;
 			84B60E1E105133B20022E5BC /* PBXTextBookmark */ = 84B60E1E105133B20022E5BC /* PBXTextBookmark */;
 			84B60E1F105133B20022E5BC /* PBXTextBookmark */ = 84B60E1F105133B20022E5BC /* PBXTextBookmark */;
-			84B60E20105133B20022E5BC /* PBXTextBookmark */ = 84B60E20105133B20022E5BC /* PBXTextBookmark */;
-			84B60E21105133B20022E5BC /* PBXTextBookmark */ = 84B60E21105133B20022E5BC /* PBXTextBookmark */;
-			84B60E22105133B20022E5BC /* PBXTextBookmark */ = 84B60E22105133B20022E5BC /* PBXTextBookmark */;
-			84B60E23105133B20022E5BC /* PBXTextBookmark */ = 84B60E23105133B20022E5BC /* PBXTextBookmark */;
 			84B60E24105133B20022E5BC /* PBXTextBookmark */ = 84B60E24105133B20022E5BC /* PBXTextBookmark */;
 			84C0C5820F6AC17A0080B167 /* PBXTextBookmark */ = 84C0C5820F6AC17A0080B167 /* PBXTextBookmark */;
-			84C0C92B0F6C21960080B167 /* PBXTextBookmark */ = 84C0C92B0F6C21960080B167 /* PBXTextBookmark */;
 			84C0C92D0F6C21960080B167 /* PBXTextBookmark */ = 84C0C92D0F6C21960080B167 /* PBXTextBookmark */;
-			84C0C9380F6C21960080B167 /* PBXTextBookmark */ = 84C0C9380F6C21960080B167 /* PBXTextBookmark */;
-			84E642DA0F150513005A4DC9 /* PBXTextBookmark */ = 84E642DA0F150513005A4DC9 /* PBXTextBookmark */;
-			84E642E10F150513005A4DC9 /* PBXTextBookmark */ = 84E642E10F150513005A4DC9 /* PBXTextBookmark */;
-			84E642E50F150513005A4DC9 /* PBXTextBookmark */ = 84E642E50F150513005A4DC9 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 84179CF70EFB9E4E005375E5 /* Source Control */;
 		userBuildSettings = {
@@ -129,6 +103,9 @@
 		fallbackIsa = XCSourceControlManager;
 		isSCMEnabled = 0;
 		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
 		};
 	};
 	84179CF80EFB9E4E005375E5 /* Code sense */ = {
@@ -194,118 +171,6 @@
 			sepNavVisRange = "{2439, 1035}";
 		};
 	};
-	84179D7E0EFBAE84005375E5 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84179D330EFBA727005375E5 /* TLAudio.h */;
-		name = "TLAudio.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 258;
-		vrLoc = 0;
-	};
-	84179D9C0EFBD639005375E5 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84179D9D0EFBD639005375E5 /* oalStaticBufferExtension.h */;
-		name = "oalStaticBufferExtension.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 2075;
-		vrLoc = 304;
-	};
-	84179D9D0EFBD639005375E5 /* oalStaticBufferExtension.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = oalStaticBufferExtension.h;
-		path = /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.1.sdk/System/Library/Frameworks/OpenAL.framework/Headers/oalStaticBufferExtension.h;
-		sourceTree = "<absolute>";
-	};
-	84179D9E0EFBD639005375E5 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84179D9F0EFBD639005375E5 /* oalMacOSX_OALExtensions.h */;
-		name = "oalMacOSX_OALExtensions.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 2114;
-		vrLoc = 0;
-	};
-	84179D9F0EFBD639005375E5 /* oalMacOSX_OALExtensions.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = oalMacOSX_OALExtensions.h;
-		path = /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.1.sdk/System/Library/Frameworks/OpenAL.framework/Headers/oalMacOSX_OALExtensions.h;
-		sourceTree = "<absolute>";
-	};
-	84179DA00EFBD639005375E5 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84179DA10EFBD639005375E5 /* alc.h */;
-		name = "alc.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 631;
-		vrLoc = 0;
-	};
-	84179DA10EFBD639005375E5 /* alc.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = alc.h;
-		path = /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.1.sdk/System/Library/Frameworks/OpenAL.framework/Headers/alc.h;
-		sourceTree = "<absolute>";
-	};
-	84179DA40EFBD639005375E5 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84179DA50EFBD639005375E5 /* oalStaticBufferExtension.h */;
-		name = "oalStaticBufferExtension.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 2075;
-		vrLoc = 304;
-	};
-	84179DA50EFBD639005375E5 /* oalStaticBufferExtension.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = oalStaticBufferExtension.h;
-		path = /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.1.sdk/System/Library/Frameworks/OpenAL.framework/Headers/oalStaticBufferExtension.h;
-		sourceTree = "<absolute>";
-	};
-	84179DA60EFBD639005375E5 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84179DA70EFBD639005375E5 /* oalMacOSX_OALExtensions.h */;
-		name = "oalMacOSX_OALExtensions.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 2114;
-		vrLoc = 0;
-	};
-	84179DA70EFBD639005375E5 /* oalMacOSX_OALExtensions.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = oalMacOSX_OALExtensions.h;
-		path = /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.1.sdk/System/Library/Frameworks/OpenAL.framework/Headers/oalMacOSX_OALExtensions.h;
-		sourceTree = "<absolute>";
-	};
-	84179DA80EFBD639005375E5 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84179DA90EFBD639005375E5 /* alc.h */;
-		name = "alc.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 631;
-		vrLoc = 0;
-	};
-	84179DA90EFBD639005375E5 /* alc.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = alc.h;
-		path = /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.1.sdk/System/Library/Frameworks/OpenAL.framework/Headers/alc.h;
-		sourceTree = "<absolute>";
-	};
 	842617CD0F60521B002812BA /* TAudioNode_Music.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1011, 416}}";
@@ -313,75 +178,11 @@
 			sepNavVisRange = "{0, 305}";
 		};
 	};
-	842AA02F0F1B6333004BF60A /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84179D300EFBA727005375E5 /* TAudioNode.cpp */;
-		name = "TAudioNode.cpp: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 163;
-		vrLoc = 0;
-	};
-	842AA0350F1B6333004BF60A /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84179D310EFBA727005375E5 /* TAudioNode.h */;
-		name = "TAudioNode.h: 27";
-		rLen = 0;
-		rLoc = 1401;
-		rType = 0;
-		vrLen = 513;
-		vrLoc = 137;
-	};
-	842AA0400F1B6333004BF60A /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84179D500EFBA767005375E5 /* IPodAudio.h */;
-		name = "IPodAudio.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 667;
-		vrLoc = 118;
-	};
-	842AA05A0F1B6333004BF60A /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84179D2D0EFBA727005375E5 /* TAudiograph.h */;
-		name = "TAudiograph.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 554;
-		vrLoc = 0;
-	};
-	842AA0B50F1B992F004BF60A /* TPtr.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = TPtr.h;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleAudio/IPod/../../TootleCore/TPtr.h;
-		sourceTree = "<absolute>";
-	};
-	842AA14B0F1B9A0F004BF60A /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 842AA0B50F1B992F004BF60A /* TPtr.h */;
-		name = "TPtr.h: 182";
-		rLen = 52;
-		rLoc = 8030;
-		rType = 0;
-		vrLen = 957;
-		vrLoc = 7626;
-	};
 	842AA1700F1B9A92004BF60A /* TPtr.h */ = {
 		isa = PBXFileReference;
 		lastKnownFileType = sourcecode.c.h;
 		name = TPtr.h;
 		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleAudio/IPod/../../TootleCore/TPtr.h;
-		sourceTree = "<absolute>";
-	};
-	842AA1B70F1B9D3B004BF60A /* IPodAudio.cpp */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.cpp.cpp;
-		name = IPodAudio.cpp;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleAudio/IPod/IPodAudio.cpp;
 		sourceTree = "<absolute>";
 	};
 	842AA2110F1BA796004BF60A /* IPodAudio.cpp */ = {
@@ -399,13 +200,14 @@
 		continueAfterActions = 0;
 		countType = 0;
 		delayBeforeContinue = 0;
-		fileReference = 842AA2110F1BA796004BF60A /* IPodAudio.cpp */;
+		fileReference = 84179D4F0EFBA767005375E5 /* IPodAudio.cpp */;
 		functionName = "Platform::OpenAL::CreateBuffer(TRefRef AudioAssetRef)";
 		hitCount = 0;
 		ignoreCount = 0;
 		lineNumber = 211;
 		location = Theremin;
 		modificationTime = 266425810.866129;
+		originalNumberOfMultipleMatches = 0;
 		state = 2;
 	};
 	842AA2450F1BA9C8004BF60A /* PBXTextBookmark */ = {
@@ -418,21 +220,11 @@
 		vrLen = 1907;
 		vrLoc = 4827;
 	};
-	842AA2470F1BA9C8004BF60A /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 842AA1B70F1B9D3B004BF60A /* IPodAudio.cpp */;
-		name = "IPodAudio.cpp: 321";
-		rLen = 0;
-		rLoc = 4350;
-		rType = 0;
-		vrLen = 0;
-		vrLoc = 4350;
-	};
 	8461C5990F5EE2A800ED9509 /* IPodAudioOpenAL.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1011, 15582}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1011, 16705}}";
 			sepNavSelRange = "{405, 24}";
-			sepNavVisRange = "{0, 558}";
+			sepNavVisRange = "{0, 536}";
 		};
 	};
 	8461C59A0F5EE2A800ED9509 /* IPodAudioOpenAL.h */ = {
@@ -442,33 +234,6 @@
 			sepNavVisRange = "{0, 511}";
 		};
 	};
-	8461C5AC0F5EE3C400ED9509 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8461C59A0F5EE2A800ED9509 /* IPodAudioOpenAL.h */;
-		name = "IPodAudioOpenAL.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 714;
-		vrLoc = 177;
-	};
-	8461C5AD0F5EE3C400ED9509 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8461C5990F5EE2A800ED9509 /* IPodAudioOpenAL.cpp */;
-		name = "IPodAudioOpenAL.cpp: 2";
-		rLen = 0;
-		rLoc = 31;
-		rType = 0;
-		vrLen = 477;
-		vrLoc = 0;
-	};
-	846B6BDD0F2A124E005EB752 /* IPodAudio.cpp */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.cpp.cpp;
-		name = IPodAudio.cpp;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleAudio/IPod/IPodAudio.cpp;
-		sourceTree = "<group>";
-	};
 	846B6BDF0F2A124E005EB752 /* IPodAudio.cpp:211 */ = {
 		isa = PBXFileBreakpoint;
 		actions = (
@@ -477,13 +242,14 @@
 		continueAfterActions = 0;
 		countType = 0;
 		delayBeforeContinue = 0;
-		fileReference = 846B6BDD0F2A124E005EB752 /* IPodAudio.cpp */;
+		fileReference = 84179D4F0EFBA767005375E5 /* IPodAudio.cpp */;
 		functionName = "Platform::OpenAL::Init()";
 		hitCount = 0;
 		ignoreCount = 0;
 		lineNumber = 211;
 		location = ValentinesLines;
 		modificationTime = 266425810.871216;
+		originalNumberOfMultipleMatches = 0;
 		state = 2;
 	};
 	846B6C390F2A1BD2005EB752 /* PBXTextBookmark */ = {
@@ -497,40 +263,6 @@
 		vrLoc = 1436;
 	};
 	846B6C3A0F2A1BD2005EB752 /* TLDebug.cpp */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.cpp.cpp;
-		name = TLDebug.cpp;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleCore/TLDebug.cpp;
-		sourceTree = "<absolute>";
-	};
-	846B6C3E0F2A1BD2005EB752 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 846B6C3F0F2A1BD2005EB752 /* TLDebug.h */;
-		name = "TLDebug.h: 81";
-		rLen = 91;
-		rLoc = 3318;
-		rType = 0;
-		vrLen = 2466;
-		vrLoc = 2721;
-	};
-	846B6C3F0F2A1BD2005EB752 /* TLDebug.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = TLDebug.h;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleCore/TLDebug.h;
-		sourceTree = "<absolute>";
-	};
-	846B6C400F2A1BD2005EB752 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 846B6C410F2A1BD2005EB752 /* TLDebug.cpp */;
-		name = "TLDebug.cpp: 78";
-		rLen = 5;
-		rLoc = 1724;
-		rType = 0;
-		vrLen = 616;
-		vrLoc = 1436;
-	};
-	846B6C410F2A1BD2005EB752 /* TLDebug.cpp */ = {
 		isa = PBXFileReference;
 		lastKnownFileType = sourcecode.cpp.cpp;
 		name = TLDebug.cpp;
@@ -554,13 +286,6 @@
 		vrLen = 767;
 		vrLoc = 5396;
 	};
-	846B6CA10F2A21A7005EB752 /* IPodAudio.cpp */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.cpp.cpp;
-		name = IPodAudio.cpp;
-		path = /Users/dibely/Documents/Tootle/Tootle/Code/TootleAudio/IPod/IPodAudio.cpp;
-		sourceTree = "<group>";
-	};
 	846B6CA30F2A21A7005EB752 /* IPodAudio.cpp:211 */ = {
 		isa = PBXFileBreakpoint;
 		actions = (
@@ -569,26 +294,17 @@
 		continueAfterActions = 0;
 		countType = 0;
 		delayBeforeContinue = 0;
-		fileReference = 846B6CA10F2A21A7005EB752 /* IPodAudio.cpp */;
+		fileReference = 84179D4F0EFBA767005375E5 /* IPodAudio.cpp */;
 		functionName = "Platform::OpenAL::Init()";
 		hitCount = 0;
 		ignoreCount = 0;
 		lineNumber = 211;
 		location = ValentinesLines;
 		modificationTime = 266425810.874046;
+		originalNumberOfMultipleMatches = 0;
 		state = 2;
 	};
 	848705340FE1524A008411A4 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84179D2C0EFBA727005375E5 /* TAudiograph.cpp */;
-		name = "TAudiograph.cpp: 357";
-		rLen = 0;
-		rLoc = 7879;
-		rType = 0;
-		vrLen = 722;
-		vrLoc = 7685;
-	};
-	848705350FE1524A008411A4 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 84179D2C0EFBA727005375E5 /* TAudiograph.cpp */;
 		name = "TAudiograph.cpp: 357";
@@ -627,6 +343,16 @@
 		rType = 0;
 		vrLen = 1130;
 		vrLoc = 1805;
+	};
+	849DFB87118753ED00E8C319 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8461C5990F5EE2A800ED9509 /* IPodAudioOpenAL.cpp */;
+		name = "IPodAudioOpenAL.cpp: 23";
+		rLen = 24;
+		rLoc = 405;
+		rType = 0;
+		vrLen = 536;
+		vrLoc = 0;
 	};
 	84B60E1C105133B20022E5BC /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -668,46 +394,6 @@
 		vrLen = 511;
 		vrLoc = 0;
 	};
-	84B60E20105133B20022E5BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84179D300EFBA727005375E5 /* TAudioNode.cpp */;
-		name = "TAudioNode.cpp: 314";
-		rLen = 57;
-		rLoc = 7582;
-		rType = 0;
-		vrLen = 872;
-		vrLoc = 0;
-	};
-	84B60E21105133B20022E5BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84179D2D0EFBA727005375E5 /* TAudiograph.h */;
-		name = "TAudiograph.h: 7";
-		rLen = 0;
-		rLoc = 124;
-		rType = 0;
-		vrLen = 473;
-		vrLoc = 0;
-	};
-	84B60E22105133B20022E5BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84179D330EFBA727005375E5 /* TLAudio.h */;
-		name = "TLAudio.h: 37";
-		rLen = 256;
-		rLoc = 964;
-		rType = 0;
-		vrLen = 1136;
-		vrLoc = 194;
-	};
-	84B60E23105133B20022E5BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8461C59A0F5EE2A800ED9509 /* IPodAudioOpenAL.h */;
-		name = "IPodAudioOpenAL.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 511;
-		vrLoc = 0;
-	};
 	84B60E24105133B20022E5BC /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 8461C5990F5EE2A800ED9509 /* IPodAudioOpenAL.cpp */;
@@ -728,16 +414,6 @@
 		vrLen = 524;
 		vrLoc = 1412;
 	};
-	84C0C92B0F6C21960080B167 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 8461C5990F5EE2A800ED9509 /* IPodAudioOpenAL.cpp */;
-		name = "IPodAudioOpenAL.cpp: 26";
-		rLen = 24;
-		rLoc = 405;
-		rType = 0;
-		vrLen = 701;
-		vrLoc = 2542;
-	};
 	84C0C92D0F6C21960080B167 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 842617CD0F60521B002812BA /* TAudioNode_Music.cpp */;
@@ -746,53 +422,6 @@
 		rLoc = 0;
 		rType = 0;
 		vrLen = 305;
-		vrLoc = 0;
-	};
-	84C0C9380F6C21960080B167 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 842617CD0F60521B002812BA /* TAudioNode_Music.cpp */;
-		name = "TAudioNode_Music.cpp: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 305;
-		vrLoc = 0;
-	};
-	84C108990F0A750500B2DF7A /* al.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = al.h;
-		path = /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.1.sdk/System/Library/Frameworks/OpenAL.framework/Headers/al.h;
-		sourceTree = "<absolute>";
-	};
-	84E642DA0F150513005A4DC9 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C108990F0A750500B2DF7A /* al.h */;
-		name = "al.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 2803;
-		vrLoc = 19652;
-	};
-	84E642E10F150513005A4DC9 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C108990F0A750500B2DF7A /* al.h */;
-		name = "al.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 2803;
-		vrLoc = 19652;
-	};
-	84E642E50F150513005A4DC9 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84179D320EFBA727005375E5 /* TLAudio.cpp */;
-		name = "TLAudio.cpp: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 49;
 		vrLoc = 0;
 	};
 }

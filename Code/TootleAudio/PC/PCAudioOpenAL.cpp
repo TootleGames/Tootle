@@ -1055,15 +1055,13 @@ Bool Platform::OpenAL::Enable()
 
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
+		TTempString str("OpenAL Error: ");
+		TTempString errstr = GetALErrorString(error);
+		str << errstr;
+		TLDebug_Print(str);
 		TLDebug_Print("Faied to check EAX2.0");
-		
-		alcMakeContextCurrent(NULL);
-		alcDestroyContext(g_pContext);
-		alcCloseDevice(pDevice);
-
-		return FALSE;
 	}
-
+/*
 	//Set the default distance model to use
 	//alDistanceModel(AL_NONE);
 	//alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
@@ -1099,7 +1097,7 @@ Bool Platform::OpenAL::Enable()
 	}
 	*/
 
-
+/*
 	ALfloat data[3] = {0,0,0};
 	// Set the listener
 	alListenerfv(AL_POSITION,    data);
@@ -1107,9 +1105,87 @@ Bool Platform::OpenAL::Enable()
    
 	// Orientation uses 6 consecutive floats
 	//alListenerfv(AL_ORIENTATION, data);
-
+*/
 	return TRUE;
 }
+
+
+Bool Platform::OpenAL::SetDistanceModel(TLAudio::DistanceModel uDistanceModel)
+{
+	if(!g_pContext)
+		return FALSE;
+	
+	if(uDistanceModel == Type2D)
+	{
+		alDistanceModel(AL_NONE);
+	}
+	else if(uDistanceModel == Type3DLinear)
+	{
+		alDistanceModel(AL_LINEAR_DISTANCE);
+	}
+	else if(uDistanceModel == Type3DLinearClamped)
+	{
+		alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
+	}
+	else if(uDistanceModel == Type3DInverse)
+	{
+		alDistanceModel(AL_INVERSE_DISTANCE);
+	}
+	else if(uDistanceModel == Type3DInverseClamped)
+	{
+		alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
+	}
+	
+	else 
+	{
+		TLDebug_Break("Invalid distance model");
+	}
+	
+	ALenum error;
+	
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TString strerr = GetALErrorString(error);
+		TLDebug_Break(strerr);
+		
+		return FALSE;
+	}
+	
+	return TRUE;
+	
+}
+
+
+Bool Platform::OpenAL::SetDopplerEffect(float fFactor, float fVelocity)
+{
+	if(!g_pContext)
+		return FALSE;
+	
+	ALenum error;
+	
+	alDopplerFactor(fFactor);			// Set to 0.0f to switch off the doppler effect
+	
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TString strerr = GetALErrorString(error);
+		TLDebug_Break(strerr);
+		
+		return FALSE;
+	}
+	
+	alDopplerVelocity(fVelocity);
+	
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TString strerr = GetALErrorString(error);
+		TLDebug_Break(strerr);
+		
+		return FALSE;
+	}
+	
+	return TRUE;
+}
+
 
 Bool Platform::OpenAL::Disable()
 {	

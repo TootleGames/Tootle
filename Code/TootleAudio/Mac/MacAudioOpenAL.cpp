@@ -7,6 +7,9 @@
 
 //#define AUDIO_DISABLED
 
+// Define to enable some extra debug traces
+#define ENABLE_AUDIO_TRACE
+
 namespace TLAudio
 {
 	namespace Platform
@@ -22,8 +25,6 @@ namespace TLAudio
 	}
 }
 
-// Define to enable some extra debug traces
-//#define ENABLE_AUDIO_TRACE
 
 using namespace TLAudio;
 
@@ -85,7 +86,7 @@ Bool Platform::OpenAL::DetermineFinishedAudio(TArray<TRef>& refArray)
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
 			TString strerr = GetALErrorString(error);
-			TLDebug_Print(strerr);
+			TLDebug_Break(strerr);
 		}
 		else
 		{
@@ -156,7 +157,7 @@ Bool Platform::OpenAL::CreateBuffer(TLAsset::TAudio& AudioAsset)
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		// Failed
 		return FALSE;
@@ -168,13 +169,14 @@ Bool Platform::OpenAL::CreateBuffer(TLAsset::TAudio& AudioAsset)
 	
 	
 	// Success - add to the array
-	AudioObj AO;
-	
-	AO.m_AudioObjRef = AudioAsset.GetAssetRef();
-	AO.m_OpenALID = uBufferID;
-	
+	AudioObj AO(AudioAsset.GetAssetRef(), uBufferID);
+		
 	g_Buffers.Add(AO);
 	
+#ifdef ENABLE_AUDIO_TRACE
+	TLDebug_Print("Audio buffer created");
+#endif
+		
 	return TRUE;
 #endif
 }
@@ -212,6 +214,10 @@ Bool Platform::OpenAL::ReleaseBuffer(TRefRef AudioAssetRef)
 		return FALSE;
 	}
 	
+#ifdef ENABLE_AUDIO_TRACE
+	TLDebug_Print("Removing audio buffer");
+#endif
+	
 	// Remove the buffer from the array
 	return g_Buffers.RemoveAt(sIndex);
 #endif
@@ -239,19 +245,20 @@ Bool Platform::OpenAL::CreateSource(TRefRef AudioSourceRef)
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		// Failed
 		return FALSE;
 	}
 	
 	// Success add to the array
-	AudioObj AO;
+	AudioObj AO(AudioSourceRef, uSourceID);
 	
-	AO.m_AudioObjRef = AudioSourceRef;
-	AO.m_OpenALID = uSourceID;
-
 	g_Sources.Add(AO);
+	
+#ifdef ENABLE_AUDIO_TRACE
+	TLDebug_Print("Audio source created");
+#endif
 	
 	return TRUE;
 #endif
@@ -274,7 +281,7 @@ Bool Platform::OpenAL::AttachSourceToBuffer(ALuint& uSource, ALuint& uBuffer, co
 	{
 		TLDebug_Print("Failed to attach source to buffer");
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		return FALSE;
 	}
@@ -317,6 +324,10 @@ Bool Platform::OpenAL::ReleaseSource(TRefRef AudioSourceRef)
 		return FALSE;
 	}
 
+#ifdef ENABLE_AUDIO_TRACE
+	TLDebug_Print("Removing audio source");
+#endif
+	
 	// Remove the source object from the array
 	return g_Sources.RemoveAt(sIndex);	
 #endif
@@ -400,7 +411,7 @@ Bool Platform::OpenAL::StartAudio(TRefRef AudioSourceRef)
 		TLDebug_Print("alSourcePlay error: ");
 
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 
 		return FALSE;
 	}
@@ -426,7 +437,7 @@ Bool Platform::OpenAL::StopAudio(TRefRef AudioSourceRef)
 		TLDebug_Print("alSourceStop error: ");
 		
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		return FALSE;
 	}
@@ -453,7 +464,7 @@ Bool Platform::OpenAL::PauseAudio(TRefRef AudioSourceRef)
 		TLDebug_Print("alSourcePause error: ");
 		
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		return FALSE;
 	}
@@ -481,7 +492,7 @@ Bool Platform::OpenAL::SetPitch(TRefRef AudioSourceRef, const float fPitch)
 		TLDebug_Print("setpitch alSourcef error: ");
 		
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		return FALSE;
 	}
@@ -510,7 +521,7 @@ Bool Platform::OpenAL::GetPitch(TRefRef AudioSourceRef, float& fPitch)
 		TLDebug_Print("getpitch alGetSourcef error: ");
 		
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		return FALSE;
 	}
@@ -540,7 +551,7 @@ Bool Platform::OpenAL::SetVolume(TRefRef AudioSourceRef, const float fVolume)
 		TLDebug_Print("setvolume alSourcef error: ");
 		
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		return FALSE;
 	}
@@ -569,7 +580,7 @@ Bool Platform::OpenAL::GetVolume(TRefRef AudioSourceRef, float& fVolume)
 		TLDebug_Print("getvolume alGetSourcef error: ");
 		
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		return FALSE;
 	}
@@ -599,7 +610,7 @@ Bool Platform::OpenAL::SetLooping(TRefRef AudioSourceRef, const Bool bLooping)
 		TLDebug_Print("setlooping alSourcei error: ");
 		
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		return FALSE;
 	}
@@ -628,7 +639,7 @@ Bool Platform::OpenAL::GetIsLooping(TRefRef AudioSourceRef, Bool& bLooping)
 		TLDebug_Print("getislooping alGetSourcef error: ");
 		
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		return FALSE;
 	}
@@ -658,7 +669,7 @@ Bool Platform::OpenAL::SetRelative(TRefRef AudioSourceRef, const Bool bRelative)
 		TLDebug_Print("setrelative alSourcei error: ");
 		
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		return FALSE;
 	}
@@ -687,7 +698,7 @@ Bool Platform::OpenAL::GetIsRelative(TRefRef AudioSourceRef, Bool& bRelative)
 		TLDebug_Print("getisrelative alGetSourcef error: ");
 		
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		return FALSE;
 	}
@@ -717,7 +728,7 @@ Bool Platform::OpenAL::SetPosition(TRefRef AudioSourceRef, const float3 vPositio
 		TLDebug_Print("setposition alSourcefv error: ");
 		
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		return FALSE;
 	}
@@ -752,7 +763,7 @@ Bool Platform::OpenAL::GetPosition(TRefRef AudioSourceRef, float3& vPosition)
 		TLDebug_Print("getposition alGetSourcefv error: ");
 		
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		return FALSE;
 	}
@@ -782,7 +793,7 @@ Bool Platform::OpenAL::SetVelocity(TRefRef AudioSourceRef, const float3 vVelocit
 		TLDebug_Print("setvelocity alSourcefv error: ");
 		
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		return FALSE;
 	}
@@ -811,7 +822,7 @@ Bool Platform::OpenAL::GetVelocity(TRefRef AudioSourceRef, float3& vVelocity)
 		TLDebug_Print("getvelocity alGetSourcefv error: ");
 		
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		return FALSE;
 	}
@@ -841,7 +852,7 @@ Bool Platform::OpenAL::SetReferenceDistance(TRefRef AudioSourceRef, const float 
 		TLDebug_Print("setreferencedistance alSourcef error: ");
 		
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		return FALSE;
 	}
@@ -867,7 +878,7 @@ Bool Platform::OpenAL::SetMaxDistance(TRefRef AudioSourceRef, const float fDista
 		TLDebug_Print("setmaxdistance alSourcef error: ");
 		
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		return FALSE;
 	}
@@ -894,7 +905,7 @@ Bool Platform::OpenAL::SetRollOffFactor(TRefRef AudioSourceRef, const float fRol
 		TLDebug_Print("setrollofffactor alSourcef error: ");
 		
 		TString strerr = GetALErrorString(error);
-		TLDebug_Print(strerr);
+		TLDebug_Break(strerr);
 		
 		return FALSE;
 	}
@@ -1024,6 +1035,26 @@ Bool Platform::OpenAL::Enable()
 	if(g_pContext)
 		return TRUE;
 
+	ALCenum alcerror;
+	ALenum alerror;
+
+	TLDebug_Print("Checking persistent OpenAL errors");
+	// [27/04/10] DB - not sure why but the OpenAL system sometimes has errors from previous instances
+	// which alGetError will remove when it's called.
+	// Check for errors still in the system
+	if ((alerror = alGetError()) != AL_NO_ERROR)
+	{
+		TString strerr = GetALErrorString(alerror);
+		TLDebug_Print(strerr);
+	}
+	else 
+	{
+		TLDebug_Print("No persistent OpenAL errors");
+		
+	}
+
+	
+	
 	// Initialization
 	ALCdevice* pDevice = alcOpenDevice(NULL); // select the "preferred device"
 
@@ -1048,8 +1079,6 @@ Bool Platform::OpenAL::Enable()
 		TLDebug_Print("Unable to create OpenAL context");
 
 		
-		ALCenum alcerror;
-
 		if((alcerror = alcGetError(pDevice)) != AL_NO_ERROR)
 		{
 			TString strerr = GetALCErrorString(alcerror);
@@ -1088,23 +1117,19 @@ Bool Platform::OpenAL::Enable()
 	// Check for EAX 2.0 support
 	Platform::OpenAL::g_bEAX = alIsExtensionPresent("EAX2.0");
 	
-	ALenum error;
-
-	if ((error = alGetError()) != AL_NO_ERROR)
+	if ((alerror = alGetError()) != AL_NO_ERROR)
 	{
 		TTempString str("OpenAL Error: ");
-		TTempString errstr = GetALErrorString(error);
+		TTempString errstr = GetALErrorString(alerror);
 		str << errstr;
 		TLDebug_Print(str);
 		TLDebug_Print("Faied to check EAX2.0");
 	}
+	
 
 	//Set the default distance model to use
-	//alDistanceModel(AL_NONE);
-	//alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
-	//alDistanceModel(AL_INVERSE_DISTANCE);
-	//alDistanceModel(AL_LINEAR_DISTANCE);
-	alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
+	//SetDistanceModel(Type2D);
+	//SetDistanceModel(Type3DLinearClamped);
 	
 	// Setup doppler shift
 	alDopplerFactor(1.0f);			// Set to 0.0f to switch off the doppler effect
@@ -1135,14 +1160,114 @@ Bool Platform::OpenAL::Enable()
 	*/
 
 
+	/*
+	 // Done via the audiograph when the system is enabled
 	ALfloat data[3] = {0,0,0};
 	// Set the listener
 	alListenerfv(AL_POSITION,    data);
+	
+	if ((alerror = alGetError()) != AL_NO_ERROR)
+	{
+		TString strerr = GetALErrorString(alerror);
+		TLDebug_Break(strerr);
+	}
+	
     alListenerfv(AL_VELOCITY,    data);
    
 	// Orientation uses 6 consecutive floats
 	//alListenerfv(AL_ORIENTATION, data);
+	*/
 
+	if ((alerror = alGetError()) != AL_NO_ERROR)
+	{
+		TString strerr = GetALErrorString(alerror);
+		TLDebug_Break(strerr);
+	}
+	
+	if ((alcerror = alcGetError(pDevice)) != ALC_NO_ERROR)
+	{
+		TString strerr = GetALCErrorString(alcerror);
+		TLDebug_Break(strerr);
+	}
+	
+		
+	return TRUE;
+}
+
+
+Bool Platform::OpenAL::SetDistanceModel(TLAudio::DistanceModel uDistanceModel)
+{
+	if(!g_pContext)
+		return FALSE;
+	
+	if(uDistanceModel == Type2D)
+	{
+		alDistanceModel(AL_NONE);
+	}
+	else if(uDistanceModel == Type3DLinear)
+	{
+		alDistanceModel(AL_LINEAR_DISTANCE);
+	}
+	else if(uDistanceModel == Type3DLinearClamped)
+	{
+		alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
+	}
+	else if(uDistanceModel == Type3DInverse)
+	{
+		alDistanceModel(AL_INVERSE_DISTANCE);
+	}
+	else if(uDistanceModel == Type3DInverseClamped)
+	{
+		alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
+	}
+
+	else 
+	{
+		TLDebug_Break("Invalid distance model");
+	}
+
+	ALenum error;
+	
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TString strerr = GetALErrorString(error);
+		TLDebug_Break(strerr);
+		
+		return FALSE;
+	}
+	
+	return TRUE;
+	
+}
+
+
+Bool Platform::OpenAL::SetDopplerEffect(float fFactor, float fVelocity)
+{
+	if(!g_pContext)
+		return FALSE;
+	
+	ALenum error;
+	
+	alDopplerFactor(fFactor);			// Set to 0.0f to switch off the doppler effect
+	
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TString strerr = GetALErrorString(error);
+		TLDebug_Break(strerr);
+		
+		return FALSE;
+	}
+	
+	alDopplerVelocity(fVelocity);
+	
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		TString strerr = GetALErrorString(error);
+		TLDebug_Break(strerr);
+		
+		return FALSE;
+	}
+	
 	return TRUE;
 }
 

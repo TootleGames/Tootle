@@ -363,3 +363,22 @@ Bool Platform::Deactivate()
 	return FALSE;
 }
 
+
+Bool Platform::SetDistanceModel(TLAudio::DistanceModel uDistanceModel)
+{
+#if(AUDIO_SYSTEM == AUDIO_OPENAL)
+	return OpenAL::SetDistanceModel(uDistanceModel);
+#endif
+
+	return FALSE;
+}
+
+Bool Platform::SetDopplerEffect(float fFactor, float fVelocity)
+{
+#if(AUDIO_SYSTEM == AUDIO_OPENAL)
+	return OpenAL::SetDopplerEffect(fFactor, fVelocity);
+#endif
+	
+	return FALSE;
+}
+

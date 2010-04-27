@@ -16,6 +16,12 @@ namespace TLAudio
 			class AudioObj
 			{
 			public:
+				AudioObj()	{};
+				AudioObj(TRefRef AudioObjRef, u32 OpenALID) :
+					m_AudioObjRef	(AudioObjRef),
+					m_OpenALID		(OpenALID)
+				{}
+				
 				TRef	m_AudioObjRef;
 				ALuint	m_OpenALID;
 				
@@ -108,6 +114,10 @@ namespace TLAudio
 			Bool Deactivate();
 
 			Bool IsEnabled();
+			
+			Bool	SetDistanceModel(TLAudio::DistanceModel uDistanceModel);
+			Bool	SetDopplerEffect(float fFactor, float fVelocity);		
+
 		}
 	}
 }

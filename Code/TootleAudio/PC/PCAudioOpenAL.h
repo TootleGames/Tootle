@@ -110,6 +110,9 @@ namespace TLAudio
 			Bool Deactivate();
 
 			Bool IsEnabled();
+			
+			Bool	SetDistanceModel(TLAudio::DistanceModel uDistanceModel);
+			Bool	SetDopplerEffect(float fFactor, float fVelocity);		
 		}
 	}
 }

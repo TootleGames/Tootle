@@ -70,6 +70,9 @@ namespace TLAudio
 		Bool Activate();
 		Bool Deactivate();
 		
+		Bool	SetDistanceModel(TLAudio::DistanceModel uDistanceModel);
+		Bool	SetDopplerEffect(float fFactor, float fVelocity);		
+
 	}
 	
 };
@@ -92,6 +95,9 @@ TAudioNode* TAudioNodeFactory::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 
 TAudiograph::TAudiograph() :
 	TLGraph::TGraph<TLAudio::TAudioNode>	( "Audio" ),
+	m_DistanceModel							(Type2D),
+	m_fDopplerFactor						(1.0f),
+	m_fDopplerVelocity						(1.0f),
 	m_fMusicVolume							(1.0f),
 	m_fEffectsVolume						(1.0f),
 	m_bPause								(FALSE),
@@ -116,6 +122,8 @@ SyncBool TAudiograph::Initialise()
 		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "OnVolumeChanged");
 		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "OnMuteChanged");
 		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "OnEnableChanged");
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "OnDistanceModelChanged");
+		TLMessaging::g_pEventChannelManager->RegisterEventChannel(this, GetManagerRef(), "OnDopplerEffectChanged");
 
 		if(TLGraph::TGraph<TLAudio::TAudioNode>::Initialise() == SyncTrue)
 		{	
@@ -371,6 +379,7 @@ void TAudiograph::ProcessMessage(TLMessaging::TMessage& Message)
 
 void TAudiograph::SetProperty(TLMessaging::TMessage& Message)
 {
+	// Import the volume data
 	if(Message.HasChild("Volume"))
 	{
 		TPtr<TBinaryTree> pChild = Message.GetChild("Volume");
@@ -392,22 +401,57 @@ void TAudiograph::SetProperty(TLMessaging::TMessage& Message)
 		}
 	}
 	
+	// Import the doppler effect data
+	if(Message.HasChild("Doppler"))
+	{
+		TPtr<TBinaryTree> pChild = Message.GetChild("Doppler");
+		float fData; 
+		if(pChild->ImportData("Factor", fData))
+		{
+			// Clamp to within range
+			TLMaths::Limit(fData, 0.0f, 1.0f);
+			
+			SetDopplerFactor(fData);
+		}
+		
+		if(pChild->ImportData("Velocity", fData))
+		{
+			// Clamp to within range
+			TLMaths::Limit(fData, 0.0f, 1.0f);
+			
+			SetDopplerVelocity(fData);
+		}
+	}
+	
+	
 	Bool bOption = FALSE;
 
+	// Import the pause state
 	if(Message.ImportData("Pause", bOption))
 	{
 		SetPause(bOption);
 	}
 
+	// Import the mute state
 	if(Message.ImportData("Mute", bOption))
 	{
 		SetMute(bOption);
 	}
-	
+
+	// Import the enable state
 	if(Message.ImportData("Enable", bOption))
 	{
 		SetEnabled(bOption);
 	}
+	
+	// Import the distance model
+	u8 uData;
+	if(Message.ImportData("DistModel", uData))
+	{
+		DistanceModel model = (DistanceModel) uData;
+		SetDistanceModel(model);
+	}
+	
 }
 
 
@@ -418,7 +462,21 @@ void TAudiograph::Enable()
 	if(Platform::Enable())
 	{
 		m_bEnabled = TRUE;
+
+		// Reset the distance model
+		Platform::SetDistanceModel(m_DistanceModel);
+		
+		if(m_DistanceModel != Type2D)
+		{
+			// Reset 3D effects i.e. dopplershift
+			Platform::SetDopplerEffect(m_fDopplerFactor, m_fDopplerVelocity);
+		}
+
+		// Reset listener position
+		Platform::SetListener(m_Listener);
+		
 		OnEnableChanged();
+		
 	}
 }
 
@@ -456,6 +514,46 @@ void TAudiograph::Deactivate()
 		m_bActive = FALSE;
 	}
 }
+
+
+void TAudiograph::SetDistanceModel(TLAudio::DistanceModel model)
+{
+	if(m_DistanceModel != model)
+	{
+		if(Platform::SetDistanceModel(model))
+		{
+			m_DistanceModel = model;
+			OnDistanceModelChanged();
+		}
+	}
+}
+
+
+void TLAudio::TAudiograph::SetDopplerFactor(float fFactor)
+{
+	if(m_fDopplerFactor != fFactor)
+	{
+		if(Platform::SetDopplerEffect(fFactor, m_fDopplerVelocity))
+		{
+			m_fDopplerFactor = fFactor;
+			OnDopplerEffectChanged();
+		}
+	}
+}
+
+
+void TLAudio::TAudiograph::SetDopplerVelocity(float fVelocity)
+{
+	if(m_fDopplerVelocity != fVelocity)
+	{
+		if(Platform::SetDopplerEffect(m_fDopplerFactor, fVelocity))
+		{
+			m_fDopplerVelocity = fVelocity;
+			OnDopplerEffectChanged();
+		}
+	}
+}
+
 
 
 void TAudiograph::OnMuteChanged()
@@ -498,6 +596,26 @@ void TAudiograph::OnPauseStateChanged()
 	TLMessaging::TMessage Message("Pause", GetGraphRef());
 	Message.ExportData("State", m_bPause);
 
+	PublishMessage(Message);
+}
+
+
+void TAudiograph::OnDistanceModelChanged()
+{
+	// Broadcast distance model change message to all subscribers
+	TLMessaging::TMessage Message("OnDistanceModelChange", GetGraphRef());
+	Message.ExportData("Model", m_DistanceModel);
+	
+	PublishMessage(Message);
+}
+
+void TAudiograph::OnDopplerEffectChanged()
+{
+	// Broadcast doppler effect change message to all subscribers
+	TLMessaging::TMessage Message("OnDopplerChange", GetGraphRef());
+	Message.ExportData("Factor", m_fDopplerFactor);
+	Message.ExportData("Velocity", m_fDopplerVelocity);
+	
 	PublishMessage(Message);
 }
 

@@ -37,7 +37,7 @@ Bool Platform::CreateSource(TRefRef AudioSourceRef)
 Bool Platform::RemoveSource(TRefRef AudioSourceRef)
 {	
 	// Release the platform specific buffer data	
-	if(!Platform::OpenAL::ReleaseSource(AudioSourceRef))
+	if(!OpenAL::ReleaseSource(AudioSourceRef))
 	{
 		// Failed? No low level buffer? 
 		TLDebug_Print("Failed to release low level audio source");
@@ -60,7 +60,7 @@ Bool Platform::CreateBuffer(TLAsset::TAudio& AudioAsset)
 Bool Platform::RemoveBuffer(TRefRef AudioAssetRef)
 {
 	// Release the platform specific buffer data		
-	if(!Platform::OpenAL::ReleaseBuffer(AudioAssetRef))
+	if(!OpenAL::ReleaseBuffer(AudioAssetRef))
 	{
 		// Failed? No low level buffer? 
 		TLDebug_Print("Failed to release low level audio buffer");
@@ -233,5 +233,15 @@ Bool Platform::Activate()
 Bool Platform::Deactivate()
 {
 	return OpenAL::Deactivate();
+}
+
+Bool Platform::SetDistanceModel(TLAudio::DistanceModel uDistanceModel)
+{
+	return OpenAL::SetDistanceModel(uDistanceModel);
+}
+
+Bool Platform::SetDopplerEffect(float fFactor, float fVelocity)
+{
+	return OpenAL::SetDopplerEffect(fFactor, fVelocity);
 }
 

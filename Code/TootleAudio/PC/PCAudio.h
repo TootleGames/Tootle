@@ -1,7 +1,17 @@
 
 #pragma once
 
-#include "../TLAudio.h"
+#include <TootleCore/TLCore.h>
+#include <TootleCore/TLTypes.h>
+#include <TootleCore/TRef.h>
+
+#include "../TAudioListener.h"
+//#include "../TLAudio.h"
+
+#include "../TAudioDistance.h"
+
+#include <TootleAsset/TAudio.h>
+
 
 // Different audio system types
 #define AUDIO_DIRECTX		0
@@ -69,6 +79,10 @@ namespace TLAudio
 		
 		Bool Activate();
 		Bool Deactivate();
+		
+		Bool	SetDistanceModel(TLAudio::DistanceModel uDistanceModel);
+		Bool	SetDopplerEffect(float fFactor, float fVelocity);				
+
 	}
 }
 
