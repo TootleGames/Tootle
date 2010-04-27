@@ -1,0 +1,57 @@
+// !$*UTF8*$!
+{
+	84C108A10F0A755700B2DF7A /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeTarget = 84C1091E0F0A785200B2DF7A /* TootleReflection */;
+		addToTargets = (
+			84C1091E0F0A785200B2DF7A /* TootleReflection */,
+		);
+		codeSenseManager = BF44EF011184DC1D00FE77CE /* Code sense */;
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					364,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 293925979;
+			PBXWorkspaceStateSaveDate = 293925979;
+		};
+		sourceControlManager = BF44EF001184DC1D00FE77CE /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	84C1091E0F0A785200B2DF7A /* TootleReflection */ = {
+		activeExec = 0;
+	};
+	BF44EF001184DC1D00FE77CE /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
+		};
+	};
+	BF44EF011184DC1D00FE77CE /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+}

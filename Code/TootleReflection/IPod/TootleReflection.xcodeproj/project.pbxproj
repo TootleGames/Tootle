@@ -1,0 +1,292 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BF1AE515115FB013004B2216 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1AE514115FB013004B2216 /* Foundation.framework */; };
+		BF1AE517115FB013004B2216 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1AE516115FB013004B2216 /* UIKit.framework */; };
+		BF1AE51F115FB02E004B2216 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1AE51E115FB02E004B2216 /* CoreFoundation.framework */; };
+		BF1AE521115FB02E004B2216 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1AE520115FB02E004B2216 /* CoreGraphics.framework */; };
+		BF1AE523115FB02E004B2216 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1AE522115FB02E004B2216 /* CoreLocation.framework */; };
+		BF44EF081184DC2D00FE77CE /* TFileServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF44EF021184DC2D00FE77CE /* TFileServer.cpp */; };
+		BF44EF091184DC2D00FE77CE /* TFileServer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44EF031184DC2D00FE77CE /* TFileServer.h */; };
+		BF44EF0A1184DC2D00FE77CE /* TGraphTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF44EF041184DC2D00FE77CE /* TGraphTree.cpp */; };
+		BF44EF0B1184DC2D00FE77CE /* TGraphTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44EF051184DC2D00FE77CE /* TGraphTree.h */; };
+		BF44EF0C1184DC2D00FE77CE /* TLReflection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF44EF061184DC2D00FE77CE /* TLReflection.cpp */; };
+		BF44EF0D1184DC2D00FE77CE /* TLReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44EF071184DC2D00FE77CE /* TLReflection.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		84C1091F0F0A785200B2DF7A /* libTootleReflection.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleReflection.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		84C109470F0A78C600B2DF7A /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		84C109480F0A78C600B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		84C109490F0A78C600B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
+		84C1094A0F0A78C600B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF1AE514115FB013004B2216 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		BF1AE516115FB013004B2216 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		BF1AE51E115FB02E004B2216 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		BF1AE520115FB02E004B2216 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		BF1AE522115FB02E004B2216 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		BF44EF021184DC2D00FE77CE /* TFileServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileServer.cpp; path = ../../../../Tootle/Code/TootleReflection/TFileServer.cpp; sourceTree = SOURCE_ROOT; };
+		BF44EF031184DC2D00FE77CE /* TFileServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileServer.h; path = ../../../../Tootle/Code/TootleReflection/TFileServer.h; sourceTree = SOURCE_ROOT; };
+		BF44EF041184DC2D00FE77CE /* TGraphTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGraphTree.cpp; path = ../../../../Tootle/Code/TootleReflection/TGraphTree.cpp; sourceTree = SOURCE_ROOT; };
+		BF44EF051184DC2D00FE77CE /* TGraphTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGraphTree.h; path = ../../../../Tootle/Code/TootleReflection/TGraphTree.h; sourceTree = SOURCE_ROOT; };
+		BF44EF061184DC2D00FE77CE /* TLReflection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLReflection.cpp; path = ../../../../Tootle/Code/TootleReflection/TLReflection.cpp; sourceTree = SOURCE_ROOT; };
+		BF44EF071184DC2D00FE77CE /* TLReflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLReflection.h; path = ../../../../Tootle/Code/TootleReflection/TLReflection.h; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		84C1091D0F0A785200B2DF7A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF1AE515115FB013004B2216 /* Foundation.framework in Frameworks */,
+				BF1AE517115FB013004B2216 /* UIKit.framework in Frameworks */,
+				BF1AE51F115FB02E004B2216 /* CoreFoundation.framework in Frameworks */,
+				BF1AE521115FB02E004B2216 /* CoreGraphics.framework in Frameworks */,
+				BF1AE523115FB02E004B2216 /* CoreLocation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		84C1089F0F0A755700B2DF7A = {
+			isa = PBXGroup;
+			children = (
+				84C109460F0A78AC00B2DF7A /* Build Configurations */,
+				84C109450F0A789D00B2DF7A /* Source Code */,
+				84C109200F0A785200B2DF7A /* Products */,
+				BF1AE514115FB013004B2216 /* Foundation.framework */,
+				BF1AE516115FB013004B2216 /* UIKit.framework */,
+				BF1AE51E115FB02E004B2216 /* CoreFoundation.framework */,
+				BF1AE520115FB02E004B2216 /* CoreGraphics.framework */,
+				BF1AE522115FB02E004B2216 /* CoreLocation.framework */,
+			);
+			sourceTree = "<group>";
+		};
+		84C109200F0A785200B2DF7A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84C1091F0F0A785200B2DF7A /* libTootleReflection.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84C109450F0A789D00B2DF7A /* Source Code */ = {
+			isa = PBXGroup;
+			children = (
+				BF44EF021184DC2D00FE77CE /* TFileServer.cpp */,
+				BF44EF031184DC2D00FE77CE /* TFileServer.h */,
+				BF44EF041184DC2D00FE77CE /* TGraphTree.cpp */,
+				BF44EF051184DC2D00FE77CE /* TGraphTree.h */,
+				BF44EF061184DC2D00FE77CE /* TLReflection.cpp */,
+				BF44EF071184DC2D00FE77CE /* TLReflection.h */,
+			);
+			name = "Source Code";
+			sourceTree = "<group>";
+		};
+		84C109460F0A78AC00B2DF7A /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				84C109470F0A78C600B2DF7A /* TootleDebug.xcconfig */,
+				84C109480F0A78C600B2DF7A /* TootleRelease.xcconfig */,
+				84C109490F0A78C600B2DF7A /* TootleReleaseAdHoc.xcconfig */,
+				84C1094A0F0A78C600B2DF7A /* TootleReleaseAppStore.xcconfig */,
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		84C1091B0F0A785200B2DF7A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF44EF091184DC2D00FE77CE /* TFileServer.h in Headers */,
+				BF44EF0B1184DC2D00FE77CE /* TGraphTree.h in Headers */,
+				BF44EF0D1184DC2D00FE77CE /* TLReflection.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		84C1091E0F0A785200B2DF7A /* TootleReflection */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84C109230F0A785300B2DF7A /* Build configuration list for PBXNativeTarget "TootleReflection" */;
+			buildPhases = (
+				84C1091B0F0A785200B2DF7A /* Headers */,
+				84C1091C0F0A785200B2DF7A /* Sources */,
+				84C1091D0F0A785200B2DF7A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleReflection;
+			productName = TootleReflection;
+			productReference = 84C1091F0F0A785200B2DF7A /* libTootleReflection.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		84C108A10F0A755700B2DF7A /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 84C108A40F0A755700B2DF7A /* Build configuration list for PBXProject "TootleReflection" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 0;
+			mainGroup = 84C1089F0F0A755700B2DF7A;
+			productRefGroup = 84C109200F0A785200B2DF7A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				84C1091E0F0A785200B2DF7A /* TootleReflection */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		84C1091C0F0A785200B2DF7A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF44EF081184DC2D00FE77CE /* TFileServer.cpp in Sources */,
+				BF44EF0A1184DC2D00FE77CE /* TGraphTree.cpp in Sources */,
+				BF44EF0C1184DC2D00FE77CE /* TLReflection.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		84C108A20F0A755700B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84C109470F0A78C600B2DF7A /* TootleDebug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		84C108A30F0A755700B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84C109480F0A78C600B2DF7A /* TootleRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		84C109210F0A785300B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../IPod/build/Debug-iphoneos\"",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleReflection;
+			};
+			name = Debug;
+		};
+		84C109220F0A785300B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../IPod/build/Debug-iphoneos\"",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleReflection;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		84C10B850F0A81B000B2DF7A /* Release AdHoc */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84C109490F0A78C600B2DF7A /* TootleReleaseAdHoc.xcconfig */;
+			buildSettings = {
+			};
+			name = "Release AdHoc";
+		};
+		84C10B860F0A81B000B2DF7A /* Release AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../IPod/build/Debug-iphoneos\"",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleReflection;
+				ZERO_LINK = NO;
+			};
+			name = "Release AdHoc";
+		};
+		84C10B870F0A81B700B2DF7A /* Release AppStore */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84C1094A0F0A78C600B2DF7A /* TootleReleaseAppStore.xcconfig */;
+			buildSettings = {
+			};
+			name = "Release AppStore";
+		};
+		84C10B880F0A81B700B2DF7A /* Release AppStore */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../IPod/build/Debug-iphoneos\"",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = TootleReflection;
+				ZERO_LINK = NO;
+			};
+			name = "Release AppStore";
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		84C108A40F0A755700B2DF7A /* Build configuration list for PBXProject "TootleReflection" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C108A20F0A755700B2DF7A /* Debug */,
+				84C108A30F0A755700B2DF7A /* Release */,
+				84C10B850F0A81B000B2DF7A /* Release AdHoc */,
+				84C10B870F0A81B700B2DF7A /* Release AppStore */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84C109230F0A785300B2DF7A /* Build configuration list for PBXNativeTarget "TootleReflection" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C109210F0A785300B2DF7A /* Debug */,
+				84C109220F0A785300B2DF7A /* Release */,
+				84C10B860F0A81B000B2DF7A /* Release AdHoc */,
+				84C10B880F0A81B700B2DF7A /* Release AppStore */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 84C108A10F0A755700B2DF7A /* Project object */;
+}
