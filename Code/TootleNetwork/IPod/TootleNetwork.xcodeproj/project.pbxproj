@@ -17,6 +17,10 @@
 		84F32DB0111AD90A006E1DE7 /* IPodNetwork.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84F32DAE111AD90A006E1DE7 /* IPodNetwork.mm */; };
 		BF0BDDC41188E49D009E510A /* IPodSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF0BDDC21188E49D009E510A /* IPodSocket.cpp */; };
 		BF0BDDC51188E49D009E510A /* IPodSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0BDDC31188E49D009E510A /* IPodSocket.h */; };
+		BF0BDE5C1188EBD6009E510A /* TSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF0BDE581188EBD6009E510A /* TSocket.cpp */; };
+		BF0BDE5D1188EBD6009E510A /* TSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0BDE591188EBD6009E510A /* TSocket.h */; };
+		BF0BDE5E1188EBD6009E510A /* TSocketServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF0BDE5A1188EBD6009E510A /* TSocketServer.cpp */; };
+		BF0BDE5F1188EBD6009E510A /* TSocketServer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0BDE5B1188EBD6009E510A /* TSocketServer.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +51,10 @@
 		BF0BDDC11188E413009E510A /* PCSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCSocket.h; path = ../../../../Tootle/Code/TootleNetwork/PC/PCSocket.h; sourceTree = SOURCE_ROOT; };
 		BF0BDDC21188E49D009E510A /* IPodSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IPodSocket.cpp; path = ../../../../Tootle/Code/TootleNetwork/IPod/IPodSocket.cpp; sourceTree = SOURCE_ROOT; };
 		BF0BDDC31188E49D009E510A /* IPodSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodSocket.h; path = ../../../../Tootle/Code/TootleNetwork/IPod/IPodSocket.h; sourceTree = SOURCE_ROOT; };
+		BF0BDE581188EBD6009E510A /* TSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSocket.cpp; path = ../../../../Tootle/Code/TootleNetwork/TSocket.cpp; sourceTree = SOURCE_ROOT; };
+		BF0BDE591188EBD6009E510A /* TSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSocket.h; path = ../../../../Tootle/Code/TootleNetwork/TSocket.h; sourceTree = SOURCE_ROOT; };
+		BF0BDE5A1188EBD6009E510A /* TSocketServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSocketServer.cpp; path = ../../../../Tootle/Code/TootleNetwork/TSocketServer.cpp; sourceTree = SOURCE_ROOT; };
+		BF0BDE5B1188EBD6009E510A /* TSocketServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSocketServer.h; path = ../../../../Tootle/Code/TootleNetwork/TSocketServer.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +101,10 @@
 		84C10A870F0A7D2300B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				BF0BDE581188EBD6009E510A /* TSocket.cpp */,
+				BF0BDE591188EBD6009E510A /* TSocket.h */,
+				BF0BDE5A1188EBD6009E510A /* TSocketServer.cpp */,
+				BF0BDE5B1188EBD6009E510A /* TSocketServer.h */,
 				84F32DF8111AE474006E1DE7 /* PC Source Files */,
 				84F32DF7111AE467006E1DE7 /* Mac Source Files */,
 				84906353104D382C001930A3 /* IPod Source Files */,
@@ -153,6 +165,8 @@
 				84906356104D383F001930A3 /* IPodConnectionHttp.h in Headers */,
 				84F32DAF111AD90A006E1DE7 /* IPodNetwork.h in Headers */,
 				BF0BDDC51188E49D009E510A /* IPodSocket.h in Headers */,
+				BF0BDE5D1188EBD6009E510A /* TSocket.h in Headers */,
+				BF0BDE5F1188EBD6009E510A /* TSocketServer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,6 +218,8 @@
 				84906357104D383F001930A3 /* IPodConnectionHttp.mm in Sources */,
 				84F32DB0111AD90A006E1DE7 /* IPodNetwork.mm in Sources */,
 				BF0BDDC41188E49D009E510A /* IPodSocket.cpp in Sources */,
+				BF0BDE5C1188EBD6009E510A /* TSocket.cpp in Sources */,
+				BF0BDE5E1188EBD6009E510A /* TSocketServer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
