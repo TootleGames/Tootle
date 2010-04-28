@@ -253,6 +253,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -292,6 +294,7 @@
 								<string>84C109460F0A78AC00B2DF7A</string>
 								<string>84C109450F0A789D00B2DF7A</string>
 								<string>84C109200F0A785200B2DF7A</string>
+								<string>1C37FBAC04509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
@@ -369,8 +372,6 @@
 							<key>Tabs</key>
 							<array>
 								<dict>
-									<key>BecomeActive</key>
-									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
@@ -465,11 +466,11 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>BF44F10E1184F4A800FE77CE</string>
+				<string>BF0BDD1F1188DAC7009E510A</string>
 				<string>1CA23ED40692098700951B8B</string>
-				<string>BF44F10F1184F4A800FE77CE</string>
+				<string>BF0BDD201188DAC7009E510A</string>
 				<string>BF44EF101184DC3C00FE77CE</string>
-				<string>BF44F1101184F4A800FE77CE</string>
+				<string>BF0BDD211188DAC7009E510A</string>
 				<string>1CA23EDF0692099D00951B8B</string>
 				<string>1CA23EE00692099D00951B8B</string>
 				<string>1CA23EE10692099D00951B8B</string>
@@ -622,7 +623,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>293926056.24645901</real>
+	<real>294181575.09391701</real>
 	<key>ToolbarConfigUserDefaultsMinorVersion</key>
 	<string>2</string>
 	<key>ToolbarDisplayMode</key>

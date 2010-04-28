@@ -1,7 +1,7 @@
 // !$*UTF8*$!
 {
 	840EC16C0F77816700BA6F4C /* Project object */ = {
-		activeBuildConfigurationName = "Release AdHoc";
+		activeBuildConfigurationName = Debug;
 		activeTarget = 840EC1810F7781BC00BA6F4C /* box2d */;
 		addToTargets = (
 			840EC1810F7781BC00BA6F4C /* box2d */,
@@ -73,7 +73,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					324,
+					390,
 					60,
 					20,
 					48,
@@ -90,8 +90,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 262267426;
-			PBXWorkspaceStateSaveDate = 262267426;
+			PBXPerProjectTemplateStateSaveDate = 294181591;
+			PBXWorkspaceStateSaveDate = 294181591;
 		};
 		sourceControlManager = BFAC1A7C0FA0D23C00F69941 /* Source Control */;
 		userBuildSettings = {
@@ -105,6 +105,9 @@
 		fallbackIsa = XCSourceControlManager;
 		isSCMEnabled = 0;
 		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
 		};
 	};
 	BFAC1A7D0FA0D23C00F69941 /* Code sense */ = {

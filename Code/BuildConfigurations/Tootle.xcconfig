@@ -10,7 +10,7 @@
 //			a.xcconfig	DEFINES = XXX
 //			b.xcconfig	DEFINES = $(DEFINES) YYY (b includes a)
 //			DEFINES is YYY (not XXX YYY)
-TOOTLE_DEFINITIONS = DEF
+TOOTLE_DEFINITIONS = 
 TOOTLE_LDFLAGS =
 TOOTLE_CPLUSPLUSFLAGS = 
 
@@ -18,6 +18,9 @@ TOOTLE_CPLUSPLUSFLAGS =
 //		but they're hidden for us. So if a Tootle lib includes some wx stuff, it's private in tootle and visible in wx so we get link warnings.
 //		this makes it visible for both
 GCC_SYMBOLS_PRIVATE_EXTERN = NO 
+GCC_INLINES_ARE_PRIVATE_EXTERN = NO
+KEEP_PRIVATE_EXTERNS = NO
+
 
 
 //	gr: make the product name (eg. TootleCore) the same as the project so we don't need to set it on the target

@@ -42,7 +42,6 @@
 /* Begin PBXFileReference section */
 		8461C3EB0F5E8DCB00ED9509 /* TShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TShape.cpp; path = ../TShape.cpp; sourceTree = SOURCE_ROOT; };
 		8461C3EC0F5E8DCB00ED9509 /* TShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TShape.h; path = ../TShape.h; sourceTree = SOURCE_ROOT; };
-		84C10A520F0A7C7600B2DF7A /* libTootleInput.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleInput.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C10A580F0A7C9700B2DF7A /* TBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TBox.cpp; path = ../TBox.cpp; sourceTree = SOURCE_ROOT; };
 		84C10A590F0A7C9700B2DF7A /* TBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBox.h; path = ../TBox.h; sourceTree = SOURCE_ROOT; };
 		84C10A5A0F0A7C9700B2DF7A /* TCapsule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TCapsule.cpp; path = ../TCapsule.cpp; sourceTree = SOURCE_ROOT; };
@@ -59,6 +58,10 @@
 		84C10A730F0A7CC800B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C10A740F0A7CC800B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C10A750F0A7CC800B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF0BDC32118794BF009E510A /* IPod.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = IPod.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/IPod.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF0BDC33118794BF009E510A /* Lib.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Lib.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/Lib.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF0BDC34118794D4009E510A /* Tootle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Tootle.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/Tootle.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF0BDC401187951C009E510A /* libTootleMaths.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleMaths.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF1B973F0F64566400E2B516 /* TOblong.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TOblong.cpp; path = ../TOblong.cpp; sourceTree = SOURCE_ROOT; };
 		BF1B97400F64566400E2B516 /* TOblong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TOblong.h; path = ../TOblong.h; sourceTree = SOURCE_ROOT; };
 		BF81C4170F30FA55001ACEC3 /* TFrustum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFrustum.cpp; path = ../TFrustum.cpp; sourceTree = SOURCE_ROOT; };
@@ -100,7 +103,7 @@
 		84C10A530F0A7C7600B2DF7A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				84C10A520F0A7C7600B2DF7A /* libTootleInput.a */,
+				BF0BDC401187951C009E510A /* libTootleMaths.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -153,6 +156,9 @@
 		84C10A710F0A7CB100B2DF7A /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				BF0BDC34118794D4009E510A /* Tootle.xcconfig */,
+				BF0BDC32118794BF009E510A /* IPod.xcconfig */,
+				BF0BDC33118794BF009E510A /* Lib.xcconfig */,
 				84C10A720F0A7CC800B2DF7A /* TootleDebug.xcconfig */,
 				84C10A730F0A7CC800B2DF7A /* TootleRelease.xcconfig */,
 				84C10A740F0A7CC800B2DF7A /* TootleReleaseAdHoc.xcconfig */,
@@ -203,7 +209,7 @@
 			);
 			name = TootleMaths;
 			productName = TootleMaths;
-			productReference = 84C10A520F0A7C7600B2DF7A /* libTootleInput.a */;
+			productReference = BF0BDC401187951C009E510A /* libTootleMaths.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */

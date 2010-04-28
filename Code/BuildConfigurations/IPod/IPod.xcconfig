@@ -10,22 +10,22 @@
 
 //	gr: needed for openfeint
 GCC_OBJC_CALL_CXX_CDTORS = YES
-//GCC_OPTIMIZATION_LEVEL = 3
 GCC_C_LANGUAGE_STANDARD = c99
-//GCC_C_LANGUAGE_STANDARD = compiler-default
 GCC_ENABLE_FLOATING_POINT_LIBRARY_CALLS = YES
 //include path? "$(SRCROOT)/../IPod/build/Debug-iphoneos"
 
 //	gr: add the target define
 IPOD_DEFINITIONS = $(TOOTLE_DEFINITIONS) TL_TARGET_IPOD 
 
-
+//	gr: enable pre-binding to check symbols against dynamic (and static?) libs at link time
+//		this should spot errors with mis-matched libs
+PREBINDING = YES
 DEAD_CODE_STRIPPING = NO
 
-//DEPLOYMENT_LOCATION = NO
-
-//	gr: not sure what this is for, but it was defined in some projects (under user settings, so not a regular build option...)
+//	gr: zero link is no longer part of xcode as of 3.0 so not required. 
+//	BUT, fix & continue being enabled still enables zero link
 ZERO_LINK = NO
+GCC_ENABLE_FIX_AND_CONTINUE = NO
 
 //	gr: speed up
 GCC_UNROLL_LOOPS = YES
@@ -83,11 +83,6 @@ GCC_WARN_UNUSED_VALUE = NO
 GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = YES
 
 
-
-//	gr: make all symbols visible
-GCC_INLINES_ARE_PRIVATE_EXTERN = NO
-GCC_SYMBOLS_PRIVATE_EXTERN = NO
-KEEP_PRIVATE_EXTERNS = NO
 
 
 GCC_VERSION = 4.0 

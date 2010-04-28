@@ -78,7 +78,6 @@
 		849E9C950F83861300037332 /* TTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTimeline.h; path = ../TTimeline.h; sourceTree = SOURCE_ROOT; };
 		849E9C960F83861300037332 /* TTimelineManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTimelineManager.cpp; path = ../TTimelineManager.cpp; sourceTree = SOURCE_ROOT; };
 		849E9C970F83861300037332 /* TTimelineManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTimelineManager.h; path = ../TTimelineManager.h; sourceTree = SOURCE_ROOT; };
-		84C10A370F0A7C1800B2DF7A /* libTootleInput.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleInput.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C10A3D0F0A7C3000B2DF7A /* TMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TMenu.cpp; path = ../TMenu.cpp; sourceTree = SOURCE_ROOT; };
 		84C10A3E0F0A7C3000B2DF7A /* TMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TMenu.h; path = ../TMenu.h; sourceTree = SOURCE_ROOT; };
 		84C10A420F0A7C4E00B2DF7A /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -91,6 +90,7 @@
 		84E117030F3CA26200471397 /* TGame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGame.cpp; path = ../TGame.cpp; sourceTree = SOURCE_ROOT; };
 		84F1FE4910A073B40030B1F2 /* TApplication.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TApplication.cpp; path = ../TApplication.cpp; sourceTree = SOURCE_ROOT; };
 		84F1FE4A10A073B40030B1F2 /* TApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TApplication.h; path = ../TApplication.h; sourceTree = SOURCE_ROOT; };
+		BF0BDC6C11879895009E510A /* libTootleGame.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libTootleGame.a; path = "build/Release AdHoc-iphoneos/lib.a"; sourceTree = "<group>"; };
 		BF1B9E9A0FE192020014C702 /* TWidgetThumbStick.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidgetThumbStick.cpp; path = ../TWidgetThumbStick.cpp; sourceTree = SOURCE_ROOT; };
 		BF1B9E9B0FE192020014C702 /* TWidgetThumbStick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TWidgetThumbStick.h; path = ../TWidgetThumbStick.h; sourceTree = SOURCE_ROOT; };
 		BFAC1BF80FA0DE1000F69941 /* TWidgetDrag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TWidgetDrag.cpp; path = ../TWidgetDrag.cpp; sourceTree = SOURCE_ROOT; };
@@ -120,7 +120,7 @@
 		84C10A380F0A7C1800B2DF7A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				84C10A370F0A7C1800B2DF7A /* libTootleInput.a */,
+				BF0BDC6C11879895009E510A /* libTootleGame.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -238,7 +238,7 @@
 			);
 			name = TootleGame;
 			productName = TootleGame;
-			productReference = 84C10A370F0A7C1800B2DF7A /* libTootleInput.a */;
+			productReference = BF0BDC6C11879895009E510A /* libTootleGame.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */

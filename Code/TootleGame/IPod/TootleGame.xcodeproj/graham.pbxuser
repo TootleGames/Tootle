@@ -4,11 +4,11 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {554, 5744}}";
 			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 148}";
+			sepNavVisRange = "{0, 144}";
 		};
 	};
 	84C108FC0F0A775200B2DF7A /* Project object */ = {
-		activeBuildConfigurationName = "Release AdHoc";
+		activeBuildConfigurationName = Debug;
 		activeTarget = 84C10A360F0A7C1800B2DF7A /* TootleGame */;
 		addToTargets = (
 			84C10A360F0A7C1800B2DF7A /* TootleGame */,
@@ -45,7 +45,7 @@
 					324,
 					60,
 					20,
-					48.16259765625,
+					48,
 					43,
 					43,
 				);
@@ -59,11 +59,11 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 293922484;
-			PBXWorkspaceStateSaveDate = 293922484;
+			PBXPerProjectTemplateStateSaveDate = 294099085;
+			PBXWorkspaceStateSaveDate = 294099085;
 		};
 		perUserProjectItems = {
-			BF44F0961184E6DE00FE77CE /* PBXTextBookmark */ = BF44F0961184E6DE00FE77CE /* PBXTextBookmark */;
+			BF0BDC6E118798B4009E510A /* PBXTextBookmark */ = BF0BDC6E118798B4009E510A /* PBXTextBookmark */;
 			BF44F0971184E6DE00FE77CE /* PBXTextBookmark */ = BF44F0971184E6DE00FE77CE /* PBXTextBookmark */;
 		};
 		sourceControlManager = BF81C3D00F30F8AC001ACEC3 /* Source Control */;
@@ -73,14 +73,14 @@
 	84C10A360F0A7C1800B2DF7A /* TootleGame */ = {
 		activeExec = 0;
 	};
-	BF44F0961184E6DE00FE77CE /* PBXTextBookmark */ = {
+	BF0BDC6E118798B4009E510A /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 8446B6EB10DA1E2600C83113 /* TMenuController.cpp */;
 		name = "TMenuController.cpp: 1";
 		rLen = 0;
 		rLoc = 0;
 		rType = 0;
-		vrLen = 148;
+		vrLen = 144;
 		vrLoc = 0;
 	};
 	BF44F0971184E6DE00FE77CE /* PBXTextBookmark */ = {

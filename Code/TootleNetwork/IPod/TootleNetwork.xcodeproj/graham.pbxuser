@@ -13,7 +13,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					364,
+					834,
 					20,
 					48,
 					43,
@@ -52,8 +52,13 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 293922439;
-			PBXWorkspaceStateSaveDate = 293922439;
+			PBXPerProjectTemplateStateSaveDate = 294183915;
+			PBXWorkspaceStateSaveDate = 294183915;
+		};
+		perUserProjectItems = {
+			BF0BDDC81188E4DA009E510A /* PBXTextBookmark */ = BF0BDDC81188E4DA009E510A /* PBXTextBookmark */;
+			BF0BDDCD1188E50F009E510A /* XCBuildMessageTextBookmark */ = BF0BDDCD1188E50F009E510A /* XCBuildMessageTextBookmark */;
+			BF0BDDCE1188E50F009E510A /* PBXTextBookmark */ = BF0BDDCE1188E50F009E510A /* PBXTextBookmark */;
 		};
 		sourceControlManager = BFAE4233104D1FD600DBCF14 /* Source Control */;
 		userBuildSettings = {
@@ -61,6 +66,49 @@
 	};
 	84C10A810F0A7D0F00B2DF7A /* TootleNetwork */ = {
 		activeExec = 0;
+	};
+	BF0BDDC21188E49D009E510A /* IPodSocket.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1024, 7872}}";
+			sepNavSelRange = "{7237, 0}";
+			sepNavVisRange = "{7113, 434}";
+		};
+	};
+	BF0BDDC31188E49D009E510A /* IPodSocket.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1024, 1904}}";
+			sepNavSelRange = "{41, 0}";
+			sepNavVisRange = "{768, 537}";
+		};
+	};
+	BF0BDDC81188E4DA009E510A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BF0BDDC31188E49D009E510A /* IPodSocket.h */;
+		name = "IPodSocket.h: 4";
+		rLen = 0;
+		rLoc = 41;
+		rType = 0;
+		vrLen = 537;
+		vrLoc = 768;
+	};
+	BF0BDDCD1188E50F009E510A /* XCBuildMessageTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "'close' was not declared in this scope";
+		fRef = BF0BDDC21188E49D009E510A /* IPodSocket.cpp */;
+		fallbackIsa = XCBuildMessageTextBookmark;
+		rLen = 1;
+		rLoc = 283;
+		rType = 1;
+	};
+	BF0BDDCE1188E50F009E510A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BF0BDDC21188E49D009E510A /* IPodSocket.cpp */;
+		name = "IPodSocket.cpp: 284";
+		rLen = 0;
+		rLoc = 7237;
+		rType = 0;
+		vrLen = 434;
+		vrLoc = 7113;
 	};
 	BFAE4233104D1FD600DBCF14 /* Source Control */ = {
 		isa = PBXSourceControlManager;

@@ -19,13 +19,10 @@ PROJECT_DEFINITIONS = FT2_BUILD_LIBRARY
 //EXECUTABLE_PREFIX = 
 //WRAPPER_EXTENSION = app
 //SKIP_INSTALL = NO
-//PREBINDING = NO				//	gr: needed?
 //GENERATE_PKGINFO_FILE = NO
 //GCC_DYNAMIC_NO_PIC = YES	//	gr: needed?
 
 INFOPLIST_FILE = $(PROJECT_NAME)-Info.plist
-
-DEAD_CODE_STRIPPING = YES
 
 //	only build active architecture (libs build all arch types)
 ONLY_ACTIVE_ARCH = YES
@@ -37,3 +34,5 @@ ONLY_ACTIVE_ARCH = YES
 PROJECT_LDFLAGS = -framework QuartzCore -framework Foundation -framework UIKit -framework OpenGLES
 PROJECT_CPLUSPLUSFLAGS = -ObjC
 
+//	gr: trying to fix static linking...
+STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static

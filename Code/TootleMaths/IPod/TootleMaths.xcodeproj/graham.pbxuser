@@ -1,7 +1,7 @@
 // !$*UTF8*$!
 {
 	84C108EF0F0A772600B2DF7A /* Project object */ = {
-		activeBuildConfigurationName = Release;
+		activeBuildConfigurationName = Debug;
 		activeTarget = 84C10A510F0A7C7600B2DF7A /* TootleMaths */;
 		addToTargets = (
 			84C10A510F0A7C7600B2DF7A /* TootleMaths */,
@@ -13,7 +13,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					138,
+					834,
 					20,
 					48,
 					43,
@@ -35,10 +35,10 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					324,
+					794,
 					60,
 					20,
-					48.16259765625,
+					48,
 					43,
 					43,
 				);
@@ -52,12 +52,18 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 293922449;
-			PBXWorkspaceStateSaveDate = 293922449;
+			PBXPerProjectTemplateStateSaveDate = 294181139;
+			PBXWorkspaceStateSaveDate = 294181139;
 		};
 		perUserProjectItems = {
-			BF44F0891184E6B100FE77CE /* PBXTextBookmark */ = BF44F0891184E6B100FE77CE /* PBXTextBookmark */;
-			BF82B0B70FA1CCFD005BC1CC /* PBXTextBookmark */ = BF82B0B70FA1CCFD005BC1CC /* PBXTextBookmark */;
+			BF0BDC39118794F9009E510A /* PBXTextBookmark */ = BF0BDC39118794F9009E510A /* PBXTextBookmark */;
+			BF0BDC3A118794F9009E510A /* PBXTextBookmark */ = BF0BDC3A118794F9009E510A /* PBXTextBookmark */;
+			BF0BDC3B118794F9009E510A /* PBXTextBookmark */ = BF0BDC3B118794F9009E510A /* PBXTextBookmark */;
+			BF0BDC3C118794F9009E510A /* PBXTextBookmark */ = BF0BDC3C118794F9009E510A /* PBXTextBookmark */;
+			BF0BDC4711879542009E510A /* PBXTextBookmark */ = BF0BDC4711879542009E510A /* PBXTextBookmark */;
+			BF0BDC4811879542009E510A /* PBXTextBookmark */ = BF0BDC4811879542009E510A /* PBXTextBookmark */;
+			BF0BDCED1188D917009E510A /* PBXTextBookmark */ = BF0BDCED1188D917009E510A /* PBXTextBookmark */;
+			BF0BDCF01188D96B009E510A /* PBXTextBookmark */ = BF0BDCF01188D96B009E510A /* PBXTextBookmark */;
 		};
 		sourceControlManager = BF81C41F0F30FA55001ACEC3 /* Source Control */;
 		userBuildSettings = {
@@ -74,14 +80,133 @@
 			sepNavWindowFrame = "{{15, 73}, {983, 625}}";
 		};
 	};
-	BF44F0891184E6B100FE77CE /* PBXTextBookmark */ = {
+	84C10A730F0A7CC800B2DF7A /* TootleRelease.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1060, 3184}}";
+			sepNavSelRange = "{2559, 0}";
+			sepNavVisRange = "{1713, 357}";
+		};
+	};
+	84C10A740F0A7CC800B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1060, 3168}}";
+			sepNavSelRange = "{2557, 0}";
+			sepNavVisRange = "{2380, 364}";
+		};
+	};
+	84C10A750F0A7CC800B2DF7A /* TootleReleaseAppStore.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1060, 3152}}";
+			sepNavSelRange = "{2557, 0}";
+			sepNavVisRange = "{2380, 364}";
+		};
+	};
+	BF0BDC25118793B9009E510A /* TootleDebug.xcconfig */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = text.xcconfig;
+		name = TootleDebug.xcconfig;
+		path = /Users/graham/Tootle/Tootle/Code/BuildConfigurations/IPod/TootleDebug.xcconfig;
+		sourceTree = "<absolute>";
+	};
+	BF0BDC32118794BF009E510A /* IPod.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1024, 1712}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 386}";
+		};
+	};
+	BF0BDC33118794BF009E510A /* Lib.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1024, 272}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 486}";
+		};
+	};
+	BF0BDC34118794D4009E510A /* Tootle.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1300, 560}}";
+			sepNavSelRange = "{100, 0}";
+			sepNavVisRange = "{0, 577}";
+		};
+	};
+	BF0BDC39118794F9009E510A /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = 84C10A720F0A7CC800B2DF7A /* TootleDebug.xcconfig */;
-		name = "TootleDebug.xcconfig: 1";
+		fRef = BF0BDC25118793B9009E510A /* TootleDebug.xcconfig */;
+		name = "TootleDebug.xcconfig: 2";
+		rLen = 0;
+		rLoc = 26;
+		rType = 0;
+		vrLen = 444;
+		vrLoc = 582;
+	};
+	BF0BDC3A118794F9009E510A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10A730F0A7CC800B2DF7A /* TootleRelease.xcconfig */;
+		name = "TootleRelease.xcconfig: 88";
+		rLen = 0;
+		rLoc = 2559;
+		rType = 0;
+		vrLen = 357;
+		vrLoc = 1713;
+	};
+	BF0BDC3B118794F9009E510A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10A740F0A7CC800B2DF7A /* TootleReleaseAdHoc.xcconfig */;
+		name = "TootleReleaseAdHoc.xcconfig: 88";
+		rLen = 0;
+		rLoc = 2557;
+		rType = 0;
+		vrLen = 364;
+		vrLoc = 2380;
+	};
+	BF0BDC3C118794F9009E510A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 84C10A750F0A7CC800B2DF7A /* TootleReleaseAppStore.xcconfig */;
+		name = "TootleReleaseAppStore.xcconfig: 88";
+		rLen = 0;
+		rLoc = 2557;
+		rType = 0;
+		vrLen = 364;
+		vrLoc = 2380;
+	};
+	BF0BDC4711879542009E510A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BF0BDC34118794D4009E510A /* Tootle.xcconfig */;
+		name = "Tootle.xcconfig: 5";
+		rLen = 0;
+		rLoc = 100;
+		rType = 0;
+		vrLen = 577;
+		vrLoc = 0;
+	};
+	BF0BDC4811879542009E510A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BF0BDC33118794BF009E510A /* Lib.xcconfig */;
+		name = "Lib.xcconfig: 1";
 		rLen = 0;
 		rLoc = 0;
 		rType = 0;
-		vrLen = 135;
+		vrLen = 486;
+		vrLoc = 0;
+	};
+	BF0BDCED1188D917009E510A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BF0BDC32118794BF009E510A /* IPod.xcconfig */;
+		name = "IPod.xcconfig: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 386;
+		vrLoc = 0;
+	};
+	BF0BDCF01188D96B009E510A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BF0BDC32118794BF009E510A /* IPod.xcconfig */;
+		name = "IPod.xcconfig: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 386;
 		vrLoc = 0;
 	};
 	BF81C41F0F30FA55001ACEC3 /* Source Control */ = {
@@ -97,15 +222,5 @@
 	BF81C4200F30FA55001ACEC3 /* Code sense */ = {
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
-	};
-	BF82B0B70FA1CCFD005BC1CC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C10A720F0A7CC800B2DF7A /* TootleDebug.xcconfig */;
-		name = "TootleDebug.xcconfig: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 132;
-		vrLoc = 0;
 	};
 }

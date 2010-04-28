@@ -67,10 +67,11 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 293928283;
-			PBXWorkspaceStateSaveDate = 293928283;
+			PBXPerProjectTemplateStateSaveDate = 294181349;
+			PBXWorkspaceStateSaveDate = 294181349;
 		};
 		perUserProjectItems = {
+			BF0BDD0F1188DA4C009E510A /* PBXTextBookmark */ = BF0BDD0F1188DA4C009E510A /* PBXTextBookmark */;
 			BF44F1891184F80800FE77CE /* PBXTextBookmark */ = BF44F1891184F80800FE77CE /* PBXTextBookmark */;
 			BF44F1951184F90B00FE77CE /* PBXTextBookmark */ = BF44F1951184F90B00FE77CE /* PBXTextBookmark */;
 			BF44F1971184F90B00FE77CE /* PBXTextBookmark */ = BF44F1971184F90B00FE77CE /* PBXTextBookmark */;
@@ -161,6 +162,22 @@
 			sepNavSelRange = "{0, 0}";
 			sepNavVisRange = "{0, 246}";
 		};
+	};
+	BF0BDD0F1188DA4C009E510A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BF0BDD101188DA4C009E510A /* IPod.xcconfig */;
+		name = "IPod.xcconfig: 55";
+		rLen = 39;
+		rLoc = 1913;
+		rType = 0;
+		vrLen = 523;
+		vrLoc = 3342;
+	};
+	BF0BDD101188DA4C009E510A /* IPod.xcconfig */ = {
+		isa = PBXFileReference;
+		name = IPod.xcconfig;
+		path = /Users/graham/Tootle/tootle/code/BuildConfigurations/IPod/IPod.xcconfig;
+		sourceTree = "<absolute>";
 	};
 	BF44EEBD1184D89B00FE77CE /* IPodRender.h */ = {
 		uiCtxt = {
@@ -281,13 +298,14 @@
 	};
 	BF44F1F61184FDC700FE77CE /* IPod.xcconfig */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = text.xcconfig;
 		name = IPod.xcconfig;
 		path = /Users/graham/Tootle/tootle/code/BuildConfigurations/IPod/IPod.xcconfig;
 		sourceTree = "<absolute>";
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1796, 1440}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1796, 1456}}";
 			sepNavSelRange = "{1913, 39}";
-			sepNavVisRange = "{3397, 428}";
+			sepNavVisRange = "{3342, 523}";
 		};
 	};
 	BF81C3A20F30F633001ACEC3 /* Source Control */ = {

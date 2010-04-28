@@ -67,7 +67,6 @@
 		84C109C20F0A791900B2DF7A /* TPublisher.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C1098B0F0A791900B2DF7A /* TPublisher.h */; };
 		84C109C30F0A791900B2DF7A /* TRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C1098C0F0A791900B2DF7A /* TRef.cpp */; };
 		84C109C40F0A791900B2DF7A /* TRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C1098D0F0A791900B2DF7A /* TRef.h */; };
-		84C109C50F0A791900B2DF7A /* TRefManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C1098E0F0A791900B2DF7A /* TRefManager.h */; };
 		84C109C60F0A791900B2DF7A /* TRelay.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C1098F0F0A791900B2DF7A /* TRelay.h */; };
 		84C109C70F0A791900B2DF7A /* TStateMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109900F0A791900B2DF7A /* TStateMachine.cpp */; };
 		84C109C80F0A791900B2DF7A /* TStateMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109910F0A791900B2DF7A /* TStateMachine.h */; };
@@ -164,7 +163,6 @@
 		84C1098B0F0A791900B2DF7A /* TPublisher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPublisher.h; path = ../TPublisher.h; sourceTree = SOURCE_ROOT; };
 		84C1098C0F0A791900B2DF7A /* TRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRef.cpp; path = ../TRef.cpp; sourceTree = SOURCE_ROOT; };
 		84C1098D0F0A791900B2DF7A /* TRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRef.h; path = ../TRef.h; sourceTree = SOURCE_ROOT; };
-		84C1098E0F0A791900B2DF7A /* TRefManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRefManager.h; path = ../TRefManager.h; sourceTree = SOURCE_ROOT; };
 		84C1098F0F0A791900B2DF7A /* TRelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRelay.h; path = ../TRelay.h; sourceTree = SOURCE_ROOT; };
 		84C109900F0A791900B2DF7A /* TStateMachine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TStateMachine.cpp; path = ../TStateMachine.cpp; sourceTree = SOURCE_ROOT; };
 		84C109910F0A791900B2DF7A /* TStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TStateMachine.h; path = ../TStateMachine.h; sourceTree = SOURCE_ROOT; };
@@ -317,7 +315,6 @@
 				84C1098B0F0A791900B2DF7A /* TPublisher.h */,
 				84C1098C0F0A791900B2DF7A /* TRef.cpp */,
 				84C1098D0F0A791900B2DF7A /* TRef.h */,
-				84C1098E0F0A791900B2DF7A /* TRefManager.h */,
 				84C1098F0F0A791900B2DF7A /* TRelay.h */,
 				84C109900F0A791900B2DF7A /* TStateMachine.cpp */,
 				84C109910F0A791900B2DF7A /* TStateMachine.h */,
@@ -385,7 +382,6 @@
 				84C109C00F0A791900B2DF7A /* TPtrArray.h in Headers */,
 				84C109C20F0A791900B2DF7A /* TPublisher.h in Headers */,
 				84C109C40F0A791900B2DF7A /* TRef.h in Headers */,
-				84C109C50F0A791900B2DF7A /* TRefManager.h in Headers */,
 				84C109C60F0A791900B2DF7A /* TRelay.h in Headers */,
 				84C109C80F0A791900B2DF7A /* TStateMachine.h in Headers */,
 				84C109CA0F0A791900B2DF7A /* TString.h in Headers */,

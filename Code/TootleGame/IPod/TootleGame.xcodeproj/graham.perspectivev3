@@ -298,11 +298,12 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>0</integer>
+									<integer>47</integer>
+									<integer>46</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {185, 428}}</string>
+							<string>{{0, 524}, {185, 428}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -347,10 +348,10 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>BF44F0971184E6DE00FE77CE</string>
+										<string>BF0BDC6E118798B4009E510A</string>
 										<key>history</key>
 										<array>
-											<string>BF44F0961184E6DE00FE77CE</string>
+											<string>BF44F0971184E6DE00FE77CE</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -364,18 +365,18 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {603, 132}}</string>
+								<string>{{0, 0}, {603, 117}}</string>
 								<key>RubberWindowFrame</key>
 								<string>21 257 810 487 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>132pt</string>
+							<string>117pt</string>
 						</dict>
 						<dict>
 							<key>Proportion</key>
-							<string>309pt</string>
+							<string>324pt</string>
 							<key>Tabs</key>
 							<array>
 								<dict>
@@ -389,7 +390,7 @@
 									<key>GeometryConfiguration</key>
 									<dict>
 										<key>Frame</key>
-										<string>{{10, 27}, {603, 282}}</string>
+										<string>{{10, 27}, {603, 297}}</string>
 										<key>RubberWindowFrame</key>
 										<string>21 257 810 487 0 0 1280 778 </string>
 									</dict>
@@ -473,11 +474,11 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>BF44F0981184E6DE00FE77CE</string>
+				<string>BF0BDC6F118798B4009E510A</string>
 				<string>1CA23ED40692098700951B8B</string>
-				<string>BF44F0991184E6DE00FE77CE</string>
+				<string>BF0BDC70118798B4009E510A</string>
 				<string>BF8889C30F7E6520008581B5</string>
-				<string>BF44F09A1184E6DE00FE77CE</string>
+				<string>BF0BDC71118798B4009E510A</string>
 				<string>1CA23EDF0692099D00951B8B</string>
 				<string>1CA23EE00692099D00951B8B</string>
 				<string>1CA23EE10692099D00951B8B</string>
@@ -630,7 +631,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>293922526.668962</real>
+	<real>294099124.31914502</real>
 	<key>ToolbarDisplayMode</key>
 	<integer>1</integer>
 	<key>ToolbarIsVisible</key>

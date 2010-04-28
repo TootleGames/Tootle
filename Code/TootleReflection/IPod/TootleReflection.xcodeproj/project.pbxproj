@@ -184,15 +184,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../IPod/build/Debug-iphoneos\"",
 				);
-				PREBINDING = NO;
-				PRODUCT_NAME = TootleReflection;
 			};
 			name = Debug;
 		};
