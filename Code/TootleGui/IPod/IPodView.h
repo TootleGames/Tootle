@@ -1,19 +1,17 @@
 /*
- *  MacView.h
- *  TootleRender
- *
- *  Created by Duane Bradbury on 08/09/2009.
- *  Copyright 2009 Tootle. All rights reserved.
- *
+
+	gr: due to xcode link/strip bug, the source is inside IPodOpenglCanvas.
+ 
  */
 
 #pragma once
 
 #include <TootleCore/TLTypes.h>
 
-#import <Cocoa/Cocoa.h>
+#import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
-#import <OpenGL/glext.h>
+#import <OpenGLES/ES1/glext.h>
+
 
 
 /*
@@ -21,13 +19,15 @@
  The view content is basically an EAGL surface you render your OpenGL scene into.
  Note that setting the view non-opaque will only work if the EAGL surface has an alpha channel.
  */
-@interface TootleOpenGLView : NSOpenGLView {
+@interface IPodGLView : UIView {
     
 @private
     /* The pixel dimensions of the backbuffer */
     GLint backingWidth;
     GLint backingHeight;
-        
+    
+    EAGLContext *context;
+    
     /* OpenGL names for the renderbuffer and framebuffers used to render to this view */
     GLuint viewRenderbuffer, viewFramebuffer;
     
@@ -38,6 +38,7 @@
 	Bool	bSendImage;
 }
 
+@property (nonatomic, retain) EAGLContext *context;
 @property GLuint viewRenderbuffer;
 @property GLuint viewFramebuffer;
 @property GLuint depthRenderbuffer;
@@ -45,37 +46,23 @@
 @property GLint backingHeight;
 @property Bool	bSendImage;
 
-- (id) initWithFrame:(NSRect)frame; //These also set the current context
-- (id) initWithFrame:(NSRect)frame pixelFormat:(GLuint)format;
-- (id) initWithFrame:(NSRect)frame pixelFormat:(GLuint)format depthFormat:(GLuint)depth preserveBackbuffer:(BOOL)retained;
-
--(void)initOpenGLContext;
+- (id) initWithFrame:(CGRect)frame; //These also set the current context
+- (id) initWithFrame:(CGRect)frame pixelFormat:(GLuint)format;
+- (id) initWithFrame:(CGRect)frame pixelFormat:(GLuint)format depthFormat:(GLuint)depth preserveBackbuffer:(BOOL)retained;
 
 - (BOOL) createFramebuffer;
 - (void) destroyFramebuffer;
 
-- (NSImage *)createImageFromView;
+- (UIImage *)createImageFromView;
 - (void)saveViewToPhotoLibrary;
 - (void)saveViewToPhotoLibraryAndSetupEmail;
-- (void)saveImageToPhotoLibrary:(NSImage*) image;
+- (void)saveImageToPhotoLibrary:(UIImage*) image;
 - (NSString*)saveViewToFile;
-- (NSString*)saveImageToFile:(NSImage*)image;
-- (void)saveImageToFileAndSetupEmail:(NSImage*)image;
+- (NSString*)saveImageToFile:(UIImage*)image;
+- (void)saveImageToFileAndSetupEmail:(UIImage*)image;
 
 
-- (void)image:(NSImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo;
+- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo;
 
-/*
-// Input events
-- (void)mouseDown:(NSEvent *)theEvent;
-- (void)mouseDragged:(NSEvent *)theEvent;
-- (void)mouseUp:(NSEvent *)theEvent;
-
-- (void)mouseEntered:(NSEvent *)theEvent;
-- (void)mouseExited:(NSEvent *)theEvent;
-
-- (void)keyUp:(NSEvent *)theEvent;
-- (void)keyDown:(NSEvent *)theEvent;
-*/
 
 @end

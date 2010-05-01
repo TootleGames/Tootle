@@ -562,9 +562,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 841360B60FFBA37300FD81A5 /* TootleRelease.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos2.2.1;
 			};
 			name = Release;
 		};
@@ -577,13 +574,6 @@
 		840EC1840F7781BC00BA6F4C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PREBINDING = NO;
-				PRODUCT_NAME = box2d;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};

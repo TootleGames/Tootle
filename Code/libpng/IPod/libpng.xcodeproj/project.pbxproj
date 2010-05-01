@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 45;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -29,7 +29,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		840EC1820F7781BC00BA6F4C /* libpng.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpng.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		840EC1820F7781BC00BA6F4C /* liblibpng.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibpng.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		840EC1D10F7782BB00BA6F4C /* png.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = png.c; path = ../png.c; sourceTree = SOURCE_ROOT; };
 		840EC1D20F7782BB00BA6F4C /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = png.h; path = ../png.h; sourceTree = SOURCE_ROOT; };
 		840EC1D30F7782BB00BA6F4C /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngconf.h; path = ../pngconf.h; sourceTree = SOURCE_ROOT; };
@@ -49,6 +49,8 @@
 		840EC1E20F7782BB00BA6F4C /* pngwrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwrite.c; path = ../pngwrite.c; sourceTree = SOURCE_ROOT; };
 		840EC1E30F7782BB00BA6F4C /* pngwtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwtran.c; path = ../pngwtran.c; sourceTree = SOURCE_ROOT; };
 		840EC1E40F7782BB00BA6F4C /* pngwutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwutil.c; path = ../pngwutil.c; sourceTree = SOURCE_ROOT; };
+		BF8FB7E2118C2C54005391AF /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF8FB7E3118C2C54005391AF /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,7 +76,7 @@
 		840EC17A0F77818900BA6F4C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				840EC1820F7781BC00BA6F4C /* libpng.a */,
+				840EC1820F7781BC00BA6F4C /* liblibpng.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -108,6 +110,8 @@
 		840EC1900F77820800BA6F4C /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				BF8FB7E2118C2C54005391AF /* TootleDebug.xcconfig */,
+				BF8FB7E3118C2C54005391AF /* TootleRelease.xcconfig */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
@@ -141,7 +145,7 @@
 			);
 			name = png;
 			productName = png;
-			productReference = 840EC1820F7781BC00BA6F4C /* libpng.a */;
+			productReference = 840EC1820F7781BC00BA6F4C /* liblibpng.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -192,42 +196,27 @@
 /* Begin XCBuildConfiguration section */
 		840EC16D0F77816700BA6F4C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF8FB7E2118C2C54005391AF /* TootleDebug.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
 			};
 			name = Debug;
 		};
 		840EC16E0F77816700BA6F4C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF8FB7E3118C2C54005391AF /* TootleRelease.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
 			};
 			name = Release;
 		};
 		840EC1830F7781BC00BA6F4C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PREBINDING = NO;
-				PRODUCT_NAME = png;
-				SDKROOT = iphoneos2.2;
 			};
 			name = Debug;
 		};
 		840EC1840F7781BC00BA6F4C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PREBINDING = NO;
-				PRODUCT_NAME = png;
-				SDKROOT = iphoneos2.2;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};

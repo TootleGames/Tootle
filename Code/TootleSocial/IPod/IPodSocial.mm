@@ -22,11 +22,15 @@ void TLSocial::Platform::BeginSession(TRefRef SessionTypeRef, const TString& API
 	{
 		IPod::Facebook::BeginSession(APIKey, APISecret);
 	}
-	else if(SessionTypeRef == TLSocial::AGONOnlineRef)
+
+#if defined(ENABLE_AGONONLINE)
+	if(SessionTypeRef == TLSocial::AGONOnlineRef)
 	{
 		IPod::AGONOnline::BeginSession(APIKey, APISecret);
 	}
-	else if(SessionTypeRef == TLSocial::OpenFeintRef)
+#endif
+
+	if(SessionTypeRef == TLSocial::OpenFeintRef)
 	{
 		IPod::OpenFeint::BeginSession(APIKey, APISecret);
 	}

@@ -14,8 +14,15 @@ GCC_C_LANGUAGE_STANDARD = c99
 GCC_ENABLE_FLOATING_POINT_LIBRARY_CALLS = YES
 //include path? "$(SRCROOT)/../IPod/build/Debug-iphoneos"
 
+//	gr: on iphone, when png's are bundled into the package they get compressed and modified to a 
+//		compressed format (which leaves artifacts) that libpng can't handle. Add this to stop it
+//		compressing our resources (assets) when building
+IPHONE_OPTIMIZE_OPTIONS=-skip-PNGs
+
 //	gr: add the target define
 IPOD_DEFINITIONS = $(TOOTLE_DEFINITIONS) TL_TARGET_IPOD 
+//	this linker flag is required if we're linking with any libs with objective-c code in them
+IPOD_LDFLAGS = -ObjC -all_load 
 
 //	gr: enable pre-binding to check symbols against dynamic (and static?) libs at link time
 //		this should spot errors with mis-matched libs

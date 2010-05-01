@@ -1,7 +1,7 @@
-#include "MacSocket.h"
+#include "IPodSocket.h"
 #include <TootleCore/TLCore.h>
 #include <TootleCore/TCoreManager.h>
-
+#include <errno.h>
 
 
 //----------------------------------------------------------
@@ -10,7 +10,6 @@
 int WSAGetLastError()
 {
 	//	in the unix kernal (osx) the last-error is set to the errno global
-	extern int errno;
 	return errno;
 }
 

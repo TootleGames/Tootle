@@ -12,7 +12,7 @@
 // Additionally you will need to add some bundles to your project resources:
 //	AgonData.bundle		- found in the libagon/resources directory
 //	AgonPackage.bundle	- project specific and is downloaded from the AGON online developer site.
-#define ENABLE_AGONONLINE
+//#define ENABLE_AGONONLINE
 
 
 #include <TootleCore/TLTypes.h>

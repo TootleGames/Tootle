@@ -32,7 +32,7 @@ ONLY_ACTIVE_ARCH = YES
 //		in order to resolve functions...
 //PROJECT_LDFLAGS = -framework QuartzCore -framework Foundation -framework AppKit -framework CoreData -framework IOKit -framework Cocoa -framework AudioToolbox -framework System -framework QuickTime -framework webkit 
 PROJECT_LDFLAGS = -framework QuartzCore -framework Foundation -framework UIKit -framework OpenGLES
-PROJECT_CPLUSPLUSFLAGS = -ObjC
+PROJECT_CPLUSPLUSFLAGS =
 
 //	gr: trying to fix static linking...
 STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static

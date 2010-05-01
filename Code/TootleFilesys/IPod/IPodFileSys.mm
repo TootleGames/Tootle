@@ -22,7 +22,7 @@ Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 	
 	if(GetApplicationURL(applicationdir))
 	{
-		applicationdir.Append("/");
+		applicationdir.Append("/Assets/");
 		AssetDir =  applicationdir;
 /*
 		NSString* appdir = TLString::ConvertToUnicharString(applicationdir, FALSE);

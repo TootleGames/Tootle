@@ -301,12 +301,11 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>10</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 1427}, {185, 511}}</string>
+							<string>{{0, 0}, {185, 511}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -339,7 +338,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>BF4CA8480F7BE9380096592A</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>TootleDebug.xcconfig</string>
+								<string>Lib.xcconfig</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -347,11 +346,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>BF4CA8490F7BE9380096592A</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>TootleDebug.xcconfig</string>
+										<string>Lib.xcconfig</string>
 										<key>_historyCapacity</key>
 										<integer>20</integer>
 										<key>bookmark</key>
-										<string>BF0BDD001188D9C4009E510A</string>
+										<string>BF0BDF0D118A2A48009E510A</string>
 										<key>history</key>
 										<array>
 											<string>BF4CA8650F7BF2CC0096592A</string>
@@ -369,8 +368,10 @@
 											<string>BFC7ABF51156ABEA00FFFC81</string>
 											<string>BFC7AC1C1156C45000FFFC81</string>
 											<string>BF44EE681184D64900FE77CE</string>
-											<string>BF44EF261184DED800FE77CE</string>
-											<string>BF0BDCFF1188D9B6009E510A</string>
+											<string>BF0BDF06118A2A48009E510A</string>
+											<string>BF0BDF08118A2A48009E510A</string>
+											<string>BF0BDF0A118A2A48009E510A</string>
+											<string>BF0BDF0C118A2A48009E510A</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -384,18 +385,18 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1073, 261}}</string>
+								<string>{{0, 0}, {1073, 250}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 208 1280 570 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>261pt</string>
+							<string>250pt</string>
 						</dict>
 						<dict>
 							<key>Proportion</key>
-							<string>263pt</string>
+							<string>274pt</string>
 							<key>Tabs</key>
 							<array>
 								<dict>
@@ -409,7 +410,9 @@
 									<key>GeometryConfiguration</key>
 									<dict>
 										<key>Frame</key>
-										<string>{{10, 27}, {1073, 236}}</string>
+										<string>{{10, 27}, {1073, 247}}</string>
+										<key>RubberWindowFrame</key>
+										<string>0 208 1280 570 0 0 1280 778 </string>
 									</dict>
 									<key>Module</key>
 									<string>XCDetailModule</string>
@@ -464,8 +467,6 @@
 									<dict>
 										<key>Frame</key>
 										<string>{{10, 27}, {1073, 236}}</string>
-										<key>RubberWindowFrame</key>
-										<string>0 208 1280 570 0 0 1280 778 </string>
 									</dict>
 									<key>Module</key>
 									<string>PBXBuildResultsModule</string>
@@ -493,11 +494,11 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>BF0BDD011188D9C4009E510A</string>
+				<string>BF0BDF0E118A2A48009E510A</string>
 				<string>1CA23ED40692098700951B8B</string>
-				<string>BF0BDD021188D9C4009E510A</string>
+				<string>BF0BDF0F118A2A48009E510A</string>
 				<string>BF4CA8480F7BE9380096592A</string>
-				<string>BF0BDD031188D9C4009E510A</string>
+				<string>BF0BDF10118A2A48009E510A</string>
 				<string>1CA23EDF0692099D00951B8B</string>
 				<string>1CA23EE00692099D00951B8B</string>
 				<string>1CA23EE10692099D00951B8B</string>
@@ -650,7 +651,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>294181316.00629997</real>
+	<real>294267464.807679</real>
 	<key>ToolbarDisplayMode</key>
 	<integer>1</integer>
 	<key>ToolbarIsVisible</key>

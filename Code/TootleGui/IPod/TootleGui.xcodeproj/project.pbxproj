@@ -12,6 +12,8 @@
 		BF1AE51F115FB02E004B2216 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1AE51E115FB02E004B2216 /* CoreFoundation.framework */; };
 		BF1AE521115FB02E004B2216 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1AE520115FB02E004B2216 /* CoreGraphics.framework */; };
 		BF1AE523115FB02E004B2216 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1AE522115FB02E004B2216 /* CoreLocation.framework */; };
+		BF8FB60B118B8038005391AF /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF8FB60A118B8038005391AF /* OpenGLES.framework */; };
+		BF8FB6C0118B9B17005391AF /* IPodView.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8FB63B118B8168005391AF /* IPodView.h */; };
 		BFC7AC831156C86B00FFFC81 /* IPodApp.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC7AC671156C86B00FFFC81 /* IPodApp.h */; };
 		BFC7AC841156C86B00FFFC81 /* IPodApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = BFC7AC681156C86B00FFFC81 /* IPodApp.mm */; };
 		BFC7AC851156C86B00FFFC81 /* IPodGui.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC7AC691156C86B00FFFC81 /* IPodGui.h */; };
@@ -47,6 +49,8 @@
 		BF1AE51E115FB02E004B2216 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		BF1AE520115FB02E004B2216 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		BF1AE522115FB02E004B2216 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		BF8FB60A118B8038005391AF /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		BF8FB63B118B8168005391AF /* IPodView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodView.h; path = ../../../../Tootle/Code/TootleGui/IPod/IPodView.h; sourceTree = SOURCE_ROOT; };
 		BFC7AC671156C86B00FFFC81 /* IPodApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodApp.h; path = ../IPod/IPodApp.h; sourceTree = SOURCE_ROOT; };
 		BFC7AC681156C86B00FFFC81 /* IPodApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodApp.mm; path = ../IPod/IPodApp.mm; sourceTree = SOURCE_ROOT; };
 		BFC7AC691156C86B00FFFC81 /* IPodGui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodGui.h; path = ../IPod/IPodGui.h; sourceTree = SOURCE_ROOT; };
@@ -115,6 +119,7 @@
 				BF1AE51F115FB02E004B2216 /* CoreFoundation.framework in Frameworks */,
 				BF1AE521115FB02E004B2216 /* CoreGraphics.framework in Frameworks */,
 				BF1AE523115FB02E004B2216 /* CoreLocation.framework in Frameworks */,
+				BF8FB60B118B8038005391AF /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,6 +137,7 @@
 				BF1AE51E115FB02E004B2216 /* CoreFoundation.framework */,
 				BF1AE520115FB02E004B2216 /* CoreGraphics.framework */,
 				BF1AE522115FB02E004B2216 /* CoreLocation.framework */,
+				BF8FB60A118B8038005391AF /* OpenGLES.framework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -179,6 +185,7 @@
 		BFC7AC421156C86A00FFFC81 /* IPod */ = {
 			isa = PBXGroup;
 			children = (
+				BF8FB63B118B8168005391AF /* IPodView.h */,
 				BFC7AC671156C86B00FFFC81 /* IPodApp.h */,
 				BFC7AC681156C86B00FFFC81 /* IPodApp.mm */,
 				BFC7AC691156C86B00FFFC81 /* IPodGui.h */,
@@ -262,6 +269,7 @@
 				BFC7AC941156C86B00FFFC81 /* TWindow.h in Headers */,
 				BFC7AC961156C86B00FFFC81 /* TOpenglCanvas.h in Headers */,
 				BFC7AC9A1156C86B00FFFC81 /* TControl.h in Headers */,
+				BF8FB6C0118B9B17005391AF /* IPodView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

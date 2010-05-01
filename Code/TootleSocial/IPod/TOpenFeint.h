@@ -21,12 +21,12 @@ namespace TLSocial
 				
 				void SubmitScore(const s32& Score, const TString& Format, const s32& LeaderboardID);
 #else
-				void BeginSession(const TString& APIKey, const TString& APISecret)		{}
-				void OpenDashboard()	{}
-				void OpenLeaderboard()	{}
-				void EndSession()		{}
+				inline void BeginSession(const TString& APIKey, const TString& APISecret)		{}
+				inline void OpenDashboard()	{}
+				inline void OpenLeaderboard()	{}
+				inline void EndSession()		{}
 				
-				void SubmitScore(const s32& Score, const TString& Format, const s32& LeaderboardID) {}
+				inline void SubmitScore(const s32& Score, const TString& Format, const s32& LeaderboardID) {}
 #endif
 			}
 		}

@@ -101,14 +101,16 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 294181236;
-			PBXWorkspaceStateSaveDate = 294181236;
+			PBXPerProjectTemplateStateSaveDate = 294267371;
+			PBXWorkspaceStateSaveDate = 294267371;
 		};
 		perUserProjectItems = {
-			BF0BDCFF1188D9B6009E510A /* PBXTextBookmark */ = BF0BDCFF1188D9B6009E510A /* PBXTextBookmark */;
-			BF0BDD001188D9C4009E510A /* PBXTextBookmark */ = BF0BDD001188D9C4009E510A /* PBXTextBookmark */;
+			BF0BDF06118A2A48009E510A /* PBXTextBookmark */ = BF0BDF06118A2A48009E510A /* PBXTextBookmark */;
+			BF0BDF08118A2A48009E510A /* PBXTextBookmark */ = BF0BDF08118A2A48009E510A /* PBXTextBookmark */;
+			BF0BDF0A118A2A48009E510A /* PBXTextBookmark */ = BF0BDF0A118A2A48009E510A /* PBXTextBookmark */;
+			BF0BDF0C118A2A48009E510A /* PBXBookmark */ = BF0BDF0C118A2A48009E510A /* PBXBookmark */;
+			BF0BDF0D118A2A48009E510A /* PBXTextBookmark */ = BF0BDF0D118A2A48009E510A /* PBXTextBookmark */;
 			BF44EE681184D64900FE77CE /* PBXTextBookmark */ = BF44EE681184D64900FE77CE /* PBXTextBookmark */;
-			BF44EF261184DED800FE77CE /* PBXTextBookmark */ = BF44EF261184DED800FE77CE /* PBXTextBookmark */;
 			BF4CA8650F7BF2CC0096592A /* PBXTextBookmark */ = BF4CA8650F7BF2CC0096592A /* PBXTextBookmark */;
 			BF4CA8670F7BF2CC0096592A /* PBXTextBookmark */ = BF4CA8670F7BF2CC0096592A /* PBXTextBookmark */;
 			BF4CA8690F7BF2CC0096592A /* PBXTextBookmark */ = BF4CA8690F7BF2CC0096592A /* PBXTextBookmark */;
@@ -181,25 +183,74 @@
 			sepNavVisRange = "{1703, 472}";
 		};
 	};
-	BF0BDCFF1188D9B6009E510A /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 84C109DF0F0A794A00B2DF7A /* TootleDebug.xcconfig */;
-		name = "TootleDebug.xcconfig: 148";
-		rLen = 0;
-		rLoc = 4673;
-		rType = 0;
-		vrLen = 472;
-		vrLoc = 1703;
+	BF0BDF05118A2A31009E510A /* Lib.xcconfig */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1024, 368}}";
+			sepNavSelRange = "{539, 0}";
+			sepNavVisRange = "{228, 339}";
+		};
 	};
-	BF0BDD001188D9C4009E510A /* PBXTextBookmark */ = {
+	BF0BDF06118A2A48009E510A /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = 84C109DF0F0A794A00B2DF7A /* TootleDebug.xcconfig */;
-		name = "TootleDebug.xcconfig: 148";
+		fRef = BF0BDF07118A2A48009E510A /* TootleDebug.xcconfig */;
+		name = "TootleDebug.xcconfig: 146";
 		rLen = 0;
-		rLoc = 4673;
+		rLoc = 4601;
 		rType = 0;
-		vrLen = 472;
-		vrLoc = 1703;
+		vrLen = 439;
+		vrLoc = 1691;
+	};
+	BF0BDF07118A2A48009E510A /* TootleDebug.xcconfig */ = {
+		isa = PBXFileReference;
+		name = TootleDebug.xcconfig;
+		path = /Users/graham/Tootle/Tootle/Code/BuildConfigurations/IPod/TootleDebug.xcconfig;
+		sourceTree = "<absolute>";
+	};
+	BF0BDF08118A2A48009E510A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BF0BDF09118A2A48009E510A /* TootleDebug.xcconfig */;
+		name = "TootleDebug.xcconfig: 32";
+		rLen = 0;
+		rLoc = 999;
+		rType = 0;
+		vrLen = 396;
+		vrLoc = 841;
+	};
+	BF0BDF09118A2A48009E510A /* TootleDebug.xcconfig */ = {
+		isa = PBXFileReference;
+		name = TootleDebug.xcconfig;
+		path = /Users/graham/Tootle/Tootle/Code/BuildConfigurations/IPod/TootleDebug.xcconfig;
+		sourceTree = "<absolute>";
+	};
+	BF0BDF0A118A2A48009E510A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BF0BDF0B118A2A48009E510A /* IPod.xcconfig */;
+		name = "IPod.xcconfig: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 248;
+		vrLoc = 0;
+	};
+	BF0BDF0B118A2A48009E510A /* IPod.xcconfig */ = {
+		isa = PBXFileReference;
+		name = IPod.xcconfig;
+		path = /Users/graham/Tootle/tootle/code/BuildConfigurations/IPod/IPod.xcconfig;
+		sourceTree = "<absolute>";
+	};
+	BF0BDF0C118A2A48009E510A /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = BF0BDF05118A2A31009E510A /* Lib.xcconfig */;
+	};
+	BF0BDF0D118A2A48009E510A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = BF0BDF05118A2A31009E510A /* Lib.xcconfig */;
+		name = "Lib.xcconfig: 21";
+		rLen = 0;
+		rLoc = 539;
+		rType = 0;
+		vrLen = 339;
+		vrLoc = 228;
 	};
 	BF44EE651184C88D00FE77CE /* IPod.xcconfig */ = {
 		uiCtxt = {
@@ -217,16 +268,6 @@
 		rType = 0;
 		vrLen = 368;
 		vrLoc = 0;
-	};
-	BF44EF261184DED800FE77CE /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = BF44EE651184C88D00FE77CE /* IPod.xcconfig */;
-		name = "IPod.xcconfig: 83";
-		rLen = 0;
-		rLoc = 3533;
-		rType = 0;
-		vrLen = 277;
-		vrLoc = 3533;
 	};
 	BF4CA8450F7BE8E00096592A /* Source Control */ = {
 		isa = PBXSourceControlManager;

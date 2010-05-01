@@ -188,6 +188,7 @@
 		84F88B6D109EEEB6004BAF8B /* TArrayAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TArrayAllocator.h; path = ../TArrayAllocator.h; sourceTree = SOURCE_ROOT; };
 		84F88B6E109EEEB6004BAF8B /* TArrayMisc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TArrayMisc.h; path = ../TArrayMisc.h; sourceTree = SOURCE_ROOT; };
 		84F88B6F109EEEB6004BAF8B /* TPointerArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPointerArray.h; path = ../TPointerArray.h; sourceTree = SOURCE_ROOT; };
+		BF0BDF05118A2A31009E510A /* Lib.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Lib.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/Lib.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF44EE651184C88D00FE77CE /* IPod.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = IPod.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/IPod.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -237,6 +238,7 @@
 		84C1095E0F0A78F800B2DF7A /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				BF0BDF05118A2A31009E510A /* Lib.xcconfig */,
 				BF44EE651184C88D00FE77CE /* IPod.xcconfig */,
 				84237DEA1046CA7E009E67C3 /* TootleBuild.sh */,
 				8418E89D0F4C2D8C00B956C9 /* TootleSimDebug.xcconfig */,
@@ -537,7 +539,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 84C109DF0F0A794A00B2DF7A /* TootleDebug.xcconfig */;
 			buildSettings = {
-				DEPLOYMENT_LOCATION = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					_DEBUG,
 					FT2_BUILD_LIBRARY,
