@@ -42,8 +42,8 @@ namespace TLSocial
 #if defined(TL_TARGET_IPOD)
 #include "IPod/IPodSocialnetworkingPlatform.h"
 #include "IPod/IPodSocialnetworkingPlatform_Facebook.h"
-//#include "IPod/IPodSocialNetworkingPlatform_OpenFeint.h"
-//#include "IPod/IPodSocialNetworkingPlatform_AGONOnline.h"
+#include "IPod/IPodSocialNetworkingPlatform_OpenFeint.h"
+#include "IPod/IPodSocialNetworkingPlatform_AGONOnline.h"
 #endif
 
 #if defined(TL_TARGET_MAC)	

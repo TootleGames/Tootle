@@ -7,6 +7,19 @@
  *
  */
 
+
+// If you use this you will also need to link with the AGON library.
+// To do that add the following to your project build settings:
+//		Other Linker Flags 
+//			Debug	- "-lagond"
+//			Release - "-lagon"
+//		Library Search Paths
+//			All - "../../../Tootle/Code/TootleSocial/IPod/libagon/lib/$(SDK_NAME)"
+//
+// Additionally you will need to add some bundles to your project resources:
+//	AgonData.bundle		- found in the libagon/resources directory
+//	AgonPackage.bundle	- project specific and is downloaded from the AGON online developer site.
+
 #pragma once
 
 #include <TootleCore/TLTypes.h>

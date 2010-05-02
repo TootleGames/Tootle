@@ -27,6 +27,8 @@ INFOPLIST_FILE = $(PROJECT_NAME)-Info.plist
 //	only build active architecture (libs build all arch types)
 ONLY_ACTIVE_ARCH = YES
 
+DEAD_CODE_STRIPPING = YES
+
 //	gr: OS frameworks
 //	gr: after some testing... this seems to have no influence at all, and the framework still needs to be in the final project
 //		in order to resolve functions...

@@ -12,6 +12,8 @@
 
 #import "TAGONOnline.h"
 
+#include "AGON.h"
+
 void TLSocial::Platform::SocialNetworkingPlatform_AGONOnline::BeginSession(const TString& APIKey, const TString& APISecret)
 {
 	// Enable logging from inside of AGON.
