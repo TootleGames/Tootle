@@ -166,7 +166,7 @@ Bool TLMaths::TShapePolygon2D::IsClockwise() const
 		//cross = b2Clamp(cross, -1.0f, 1.0f);
 
 		// You have consecutive edges that are almost parallel on your polygon.
-		float32 angle = asinf(cross);
+		float32 angle = TLMaths::Asinf(cross);
 		if ( angle > b2_angularSlop )
 			return TRUE;
 	}

@@ -561,7 +561,7 @@ TLMaths::TAngle TLMaths::TLine2D::GetAngle() const
 	float2 Direction = GetDirection();
 
 	//	gr: not sure why but have to invert this
-	float AngRad = atan2f( -Direction.x, -Direction.y );
+	float AngRad = TLMaths::Atan2f( -Direction.x, -Direction.y );
 
 	TLMaths::TAngle Angle;
 	Angle.SetRadians( AngRad );

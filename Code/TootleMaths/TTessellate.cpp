@@ -46,7 +46,7 @@ TLMaths::TContour::TContour(const TArray<float3>& Contours,const TArray<TLMaths:
     float3 prev;
     float3 a;
 	float3 b = next - cur;
-    float olddir, dir = atan2f((next - cur).y, (next - cur).x);
+	float olddir, dir = TLMaths::Atan2f((next - cur).y, (next - cur).x);
     float angle = 0.0f;
 	
 	
@@ -58,7 +58,7 @@ TLMaths::TContour::TContour(const TArray<float3>& Contours,const TArray<TLMaths:
         cur = next;
         next = Contours[(i + 1) % n];
         olddir = dir;
-        dir = atan2f( (next - cur).y, (next - cur).x );
+		dir = TLMaths::Atan2f( (next - cur).y, (next - cur).x );
 		
         // Compute our path's new direction.
         float t = dir - olddir;

@@ -328,8 +328,8 @@ void TLAsset::TMesh::GenerateSphereOutline(const TLMaths::TSphere2D& Sphere,cons
 		
 		float3 Pos( Sphere.GetPos().xyz( z ) );
 		
-		Pos.x += cosf( AngleRad ) * Sphere.GetRadius();
-		Pos.y += sinf( AngleRad ) * Sphere.GetRadius();
+		Pos.x += TLMaths::Cosf( AngleRad ) * Sphere.GetRadius();
+		Pos.y += TLMaths::Sinf( AngleRad ) * Sphere.GetRadius();
 
 		Outline.Add( Pos );
 	}
@@ -361,8 +361,8 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere2D& Sphere,const TColo
 		
 		float3 Pos( Sphere.GetPos().xyz( z ) );
 		
-		Pos.x += cosf( AngleRad ) * Sphere.GetRadius();
-		Pos.y += sinf( AngleRad ) * Sphere.GetRadius();
+		Pos.x += TLMaths::Cosf( AngleRad ) * Sphere.GetRadius();
+		Pos.y += TLMaths::Sinf( AngleRad ) * Sphere.GetRadius();
 
 		u16 Vertex = AddVertex( Pos, pColour );
 		s32 VertexIndex = OutlineVerts.Add( Vertex );

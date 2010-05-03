@@ -305,7 +305,7 @@ void TLRender::TProjectCamera::SetRenderTargetSize(const Type4<s32>& RenderTarge
 	float AspectRatio = (float)m_ViewportBox.GetWidth() / (float)m_ViewportBox.GetHeight();
 
 	//	calc the un-rotated screen view size
-	float ViewHalfHeight = tanf( GetHorzFov().GetRadians() / 2.f );
+	float ViewHalfHeight = TLMaths::Tanf( GetHorzFov().GetRadians() / 2.f );
 	float ViewHalfWidth = ViewHalfHeight * AspectRatio;
 	m_ScreenViewBox.SetMin( float2( -ViewHalfWidth, -ViewHalfHeight ) );
 	m_ScreenViewBox.SetMax( float2( ViewHalfWidth, ViewHalfHeight ) );
