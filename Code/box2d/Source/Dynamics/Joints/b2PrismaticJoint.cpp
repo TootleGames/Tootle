@@ -107,7 +107,7 @@ b2PrismaticJoint::b2PrismaticJoint(const b2PrismaticJointDef* def)
 	m_refAngle = def->referenceAngle;
 
 	m_impulse.SetZero();
-	m_motorMass = 0.0;
+	m_motorMass = 0.0f;
 	m_motorImpulse = 0.0f;
 
 	m_lowerTranslation = def->lowerTranslation;

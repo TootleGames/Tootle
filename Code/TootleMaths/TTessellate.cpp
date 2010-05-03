@@ -47,7 +47,7 @@ TLMaths::TContour::TContour(const TArray<float3>& Contours,const TArray<TLMaths:
     float3 a;
 	float3 b = next - cur;
     float olddir, dir = atan2f((next - cur).y, (next - cur).x);
-    float angle = 0.0;
+    float angle = 0.0f;
 	
 	
     // See http://freetype.sourceforge.net/freetype2/docs/glyphs/glyphs-6.html

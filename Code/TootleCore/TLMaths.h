@@ -54,11 +54,29 @@ namespace TLMaths
 	extern float					g_SineLookupTable[360];
 
 	//	various maths stuff
+	// NOTE: These can potentailly be optimised per-platform so may need to at some stage move into 
+	// some platform specific files
 	FORCEINLINE float			Sqrtf(float SquaredValue)				{	return sqrtf( SquaredValue );	}
+
 	FORCEINLINE float			Cosf(float RadAngle);
 	FORCEINLINE float			Sinf(float RadAngle);
 	FORCEINLINE float			Tanf(float RadAngle)					{	return tanf( RadAngle );	}
+
+	FORCEINLINE float			Atanf(float RadAngle)					{	return atanf( RadAngle );	}
+	FORCEINLINE float			Asinf(float RadAngle)					{	return asinf( RadAngle );	}
+	FORCEINLINE float			Acosf(float RadAngle)					{	return acosf( RadAngle );	}
+
+	FORCEINLINE float			Atan2f(float fX, float fY)				{	return atan2f( fX, fY );	}
+		
 	FORCEINLINE float			Absf(float Value)						{	return fabsf( Value );	}
+	FORCEINLINE float			Modf(float Value, float Mod)			{	return fmodf( Value, Mod );	}
+	FORCEINLINE float			Ceilf(float Value)						{	return ceilf( Value );	}
+	FORCEINLINE float			Floorf(float Value)						{	return floorf( Value );	}
+
+	FORCEINLINE float			S32ToFloat(s32 Value)						{ return (float)( Value );	}
+	FORCEINLINE s32				FloatToS32(float Value)						{ return (s32)( Value );	}
+
+	
 	FORCEINLINE u32				GetFixedf(float f)						{	return (u32)(f * 65536.0f);	}
 	
 	template<typename TYPE>

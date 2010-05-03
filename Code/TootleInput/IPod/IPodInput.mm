@@ -157,6 +157,8 @@ SyncBool Platform::RemoveVirtualDevice(TRefRef InstanceRef)
 	IPod::DestroyVirtualKeyboard();
 	
 	g_pInputSystem->RemoveInstance(InstanceRef);
+	
+	return SyncTrue;
 }
 
 

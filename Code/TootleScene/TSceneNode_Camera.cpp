@@ -63,13 +63,13 @@ void TSceneNode_Camera::CalculateFOV()
 	float fv = 24;		// Vertical image size
 
 	float fd = (fh * fh) + (fv * fv);	// Diagonal image size
-	fd = sqrt(fd);
+	fd = TLMaths::Sqrtf(fd);
 
 	float f2FocalLength = 2*m_fFocalLength;
 
-	m_fHFOV = 2 * atan( fh / f2FocalLength );
-	m_fVFOV = 2 * atan( fv / f2FocalLength );
-	m_fDFOV = 2 * atan( fd / f2FocalLength );
+	m_fHFOV = 2 * TLMaths::Atanf( fh / f2FocalLength );
+	m_fVFOV = 2 * TLMaths::Atanf( fv / f2FocalLength );
+	m_fDFOV = 2 * TLMaths::Atanf( fd / f2FocalLength );
 
 	/*
 		NOTE: Apart from wide angle lenses these values can be aproximated for each dimension

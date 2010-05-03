@@ -56,8 +56,8 @@ void TLMaths::Init()
 		fastxy.y = TLMaths::Sinf( Angle.GetRadians() );
 
 		float2 realxy;
-		realxy.x = cosf( Angle.GetRadians() );
-		realxy.y = sinf( Angle.GetRadians() );
+		realxy.x = TLMaths::Cosf( Angle.GetRadians() );
+		realxy.y = TLMaths::Sinf( Angle.GetRadians() );
 
 		float2 diff = fastxy - realxy;
 
@@ -137,7 +137,7 @@ void TLMaths::QuaternionToMatrix(const TLMaths::TQuaternion& Quaternion,TLMaths:
 	Matrix.GetCol(kW)[kZ] = 
 	Matrix.GetCol(kX)[kW] = 
 	Matrix.GetCol(kY)[kW] = 
-	Matrix.GetCol(kZ)[kW] = 0.0;
+	Matrix.GetCol(kZ)[kW] = 0.0f;
 	Matrix.GetCol(kW)[kW] = 1.0f;
 
 #undef kX
@@ -699,12 +699,12 @@ void TLMaths::TMatrix::TransformVector(float2& v) const
 
 void TLMaths::TMatrix::SetRotationRadians(const float3& Angles)
 {
-	float cr = cosf( Angles[0] );
-	float sr = sinf( Angles[0] );
-	float cp = cosf( Angles[1] );
-	float sp = sinf( Angles[1] );
-	float cy = cosf( Angles[2] );
-	float sy = sinf( Angles[2] );
+	float cr = TLMaths::Cosf( Angles[0] );
+	float sr = TLMaths::Sinf( Angles[0] );
+	float cp = TLMaths::Cosf( Angles[1] );
+	float sp = TLMaths::Sinf( Angles[1] );
+	float cy = TLMaths::Cosf( Angles[2] );
+	float sy = TLMaths::Sinf( Angles[2] );
 
 	SetIdentity();
 
@@ -890,7 +890,7 @@ float3 TLMaths::TQuaternion::GetEuler() const
 	{ 
 		// singularity at north pole
 		vector.x = 0;
-		vector.y = 2 * atan2(xyzw.x, xyzw.w);
+		vector.y = 2 * TLMaths::Atan2f(xyzw.x, xyzw.w);
 		vector.z = HALF_PI;
 		return vector;
 	}
@@ -898,7 +898,7 @@ float3 TLMaths::TQuaternion::GetEuler() const
 	{ 
 		// singularity at south pole
 		vector.x = 0;
-		vector.y = -2 * atan2(xyzw.x,xyzw.w);
+		vector.y = -2 * TLMaths::Atan2f(xyzw.x,xyzw.w);
 		vector.z = - HALF_PI;
 		return vector;
 	}
@@ -907,9 +907,9 @@ float3 TLMaths::TQuaternion::GetEuler() const
     float sqy = xyzw.y*xyzw.y;
     float sqz = xyzw.z*xyzw.z;
 	
-	vector.x = atan2(2*xyzw.x*xyzw.w-2*xyzw.y*xyzw.z , 1 - 2*sqx - 2*sqz);
-    vector.y = atan2(2*xyzw.y*xyzw.w-2*xyzw.x*xyzw.z , 1 - 2*sqy - 2*sqz);
-	vector.z = asin(2*test);
+	vector.x = TLMaths::Atan2f(2*xyzw.x*xyzw.w-2*xyzw.y*xyzw.z , 1 - 2*sqx - 2*sqz);
+    vector.y = TLMaths::Atan2f(2*xyzw.y*xyzw.w-2*xyzw.x*xyzw.z , 1 - 2*sqy - 2*sqz);
+	vector.z = TLMaths::Asinf(2*test);
 	return vector;
 }
 
@@ -999,9 +999,9 @@ void TLMaths::TQuaternion::Slerp(const TLMaths::TQuaternion &From, const TLMaths
 	if ((1.0f - cosO) > 0.0001f)
 	{
 		omega = (float)acos(cosO);
-		sinO = sinf(omega);
-		scale0 = sinf((1.0f - t) * omega) / sinO;
-		scale1 = sinf(t * omega) / sinO;
+		sinO = TLMaths::Sinf(omega);
+		scale0 = TLMaths::Sinf((1.0f - t) * omega) / sinO;
+		scale1 = TLMaths::Sinf(t * omega) / sinO;
 	}
 	else
 	{
@@ -1026,7 +1026,7 @@ void TLMaths::TQuaternion::Slerp(const TQuaternion& From, const TQuaternion& To,
 	TQuaternion FlipTo = To;
 
 	float fCosTheta = From.DotProduct(FlipTo);
-	float fTheta = acosf(fCosTheta);
+	float fTheta = TLMaths::Acosf(fCosTheta);
 	float fSinTheta = TLMaths::Sinf(fTheta);
 
 	if ( fCosTheta < 0)
@@ -1114,10 +1114,10 @@ TLMaths::TQuaternion Slerp(TLMaths::TQuaternion &From, TLMaths::TQuaternion &To,
 	else
 	{  
 		// Spherical interpolation 
-		float angle    = acosf(fabsf(cosAngle)); 
-		float sinAngle = sinf(angle); 
-		c1 = sinf(angle * (1.0f - Interpolation)) / sinAngle; 
-		c2 = sinf(angle * Interpolation) / sinAngle; 
+		float angle    = TLMaths::Acosf(fabsf(cosAngle)); 
+		float sinAngle = TLMaths::Sinf(angle); 
+		c1 = TLMaths::Sinf(angle * (1.0f - Interpolation)) / sinAngle; 
+		c2 = TLMaths::Sinf(angle * Interpolation) / sinAngle; 
 	} 
 
 	// Use the shortest path 
@@ -1159,10 +1159,10 @@ TLMaths::TQuaternion Slerp(TLMaths::TQuaternion& From, TLMaths::TQuaternion& To,
 	{
 		if (( 1.0f-cosom ) > 0.00000001f )
 		{
-			float omega = acosf( cosom );
-			float sinom = sinf( omega );
-			sclFrom = sinf(( 1.0f-Interpolation )*omega )/sinom;
-			sclTo = sinf( Interpolation*omega )/sinom;
+			float omega = TLMAths::Acosf( cosom );
+			float sinom = TLMaths::Sinf( omega );
+			sclFrom = TLMaths::Sinf(( 1.0f-Interpolation )*omega )/sinom;
+			sclTo = TLMaths::Sinf( Interpolation*omega )/sinom;
 		}
 		else
 		{
@@ -1185,8 +1185,8 @@ TLMaths::TQuaternion Slerp(TLMaths::TQuaternion& From, TLMaths::TQuaternion& To,
 		Result.xyzw.z = -From.xyzw.w;
 		Result.xyzw.w =  From.xyzw.z;
 
-		sclFrom = sinf(( 1.0f-Interpolation )*0.5f*PI );
-		sclTo = sinf( Interpolation*0.5f*PI );
+		sclFrom = TLMaths::Sinf(( 1.0f-Interpolation )*0.5f*PI );
+		sclTo = TLMaths::Sinf( Interpolation*0.5f*PI );
 
 		Result.xyzw.x = (sclFrom*From.xyzw.x) + (sclTo*Result.xyzw.x);
 		Result.xyzw.y = (sclFrom*From.xyzw.y) + (sclTo*Result.xyzw.y);
@@ -1523,7 +1523,7 @@ void TLMaths::TAngle::SetAngle(const float2& Direction)
 	//	doesn't need to be normalised
 	//	gr: Atan2f is supposed to be y/x but that's wrong. Maybe because of our world co-ordinates...
 	//	y is inverted as math co-ordinates go +ve when they go UP, but in our world, -Y is UP
-	float AngRad = atan2f( Direction.x, -Direction.y );
+	float AngRad = TLMaths::Atan2f( Direction.x, -Direction.y );
 
 	SetRadians( AngRad );
 

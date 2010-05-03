@@ -201,21 +201,20 @@ void TLRender::TEffect_TextureAnimate::ProcessMessage(TLMessaging::TMessage& Mes
 //------------------------------------------------
 bool TLRender::TEffect_TextureAnimate::Update(float Timestep)
 {
-	int PreviousFrameIndex = (int)(m_Time / m_FrameRate );
+	s32 PreviousFrameIndex = TLMaths::FloatToS32( m_Time / m_FrameRate );
 
 	//	increase time
 	m_Time += Timestep;
 
 	//	get frame index
-	int FrameIndex = (int)(m_Time / m_FrameRate);
+	s32 FrameIndex = TLMaths::FloatToS32(m_Time / m_FrameRate);
 
 	//	no change in frame
 	if ( PreviousFrameIndex == FrameIndex )
 		return false;
 
 	//	store remainder
-#pragma message("gr: implement a generic float modulus func in TootleMath")
-	float FrameRemainder = fmodf( m_Time, m_FrameRate );
+	float FrameRemainder = TLMaths::Modf( m_Time, m_FrameRate );
 
 	//	if we've overflowed the frame rate loop around
 	int FrameCount = GetFrameCount();
@@ -237,7 +236,7 @@ bool TLRender::TEffect_TextureAnimate::Update(float Timestep)
 	//	reset time if we looped to help floating point inaccuracies
 	if ( Loop )
 	{
-		m_Time = (m_FrameRate * (float)FrameIndex) + FrameRemainder;
+		m_Time = (m_FrameRate * TLMaths::S32ToFloat(FrameIndex) ) + FrameRemainder;
 	}
 
 	//	calc new frame in the texture atlas

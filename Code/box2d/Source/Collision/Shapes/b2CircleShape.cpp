@@ -112,7 +112,7 @@ float32 b2CircleShape::ComputeSubmergedArea(	const b2Vec2& normal,
 	float32 r2 = m_radius*m_radius;
 	float32 l2 = l*l;
 	float32 area = r2 * (asinf(l/m_radius) + b2_pi/2.0f)+ l * b2Sqrt(r2 - l2);
-	float32 com = -2.0f/3.0f*pow(r2-l2,1.5f)/area;
+	float32 com = -2.0f/3.0f*powf(r2-l2,1.5f)/area;
 	
 	c->x = p.x + normal.x * com;
 	c->y = p.y + normal.y * com;

@@ -98,7 +98,7 @@ b2LineJoint::b2LineJoint(const b2LineJointDef* def)
 	m_localYAxis1 = b2Cross(1.0f, m_localXAxis1);
 
 	m_impulse.SetZero();
-	m_motorMass = 0.0;
+	m_motorMass = 0.0f;
 	m_motorImpulse = 0.0f;
 
 	m_lowerTranslation = def->lowerTranslation;

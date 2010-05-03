@@ -32,8 +32,8 @@ void TLSocial::Platform::SocialNetworkingPlatform_AGONOnline::BeginSession(const
 	
 	// Tint AGON backgrounds to match app
 	// NOTE: Seaman Count specific atm
-	AgonSetStartBackgroundTint([UIColor colorWithRed:125/255.0 green:208/255.0 blue:1 alpha:1]);
-	AgonSetEndBackgroundTint([UIColor colorWithRed:0/255.0 green:76/255.0 blue:120/255.0 alpha:1]);
+	AgonSetStartBackgroundTint([UIColor colorWithRed:125.0f/255.0f green:208.0f/255.0f blue:1 alpha:1]);
+	AgonSetEndBackgroundTint([UIColor colorWithRed:0.0f/255.0f green:76.0f/255.0f blue:120.0f/255.0f alpha:1]);
 	
 }
 
