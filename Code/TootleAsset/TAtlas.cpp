@@ -2,7 +2,6 @@
 #include <TootleCore/TBinaryTree.h>
 
 
-
 //-------------------------------------------------------
 //	setup a glyph from a UV box
 //-------------------------------------------------------
@@ -142,3 +141,16 @@ SyncBool TLAsset::TAtlas::ExportData(TBinaryTree& Data)
 
 	return SyncTrue;
 }	
+
+//-------------------------------------------------------
+//	get all the glyph keys into an array
+//-------------------------------------------------------
+void TLAsset::TAtlas::GetGlyphs(TArray<u16>& GlyphKeys) const
+{
+	for ( u32 g=0;	g<m_Glyphs.GetSize();	g++ )
+	{
+		GlyphKeys.Add( m_Glyphs.GetKeyAt( g ) );
+	}
+}
+
+

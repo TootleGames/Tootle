@@ -32,7 +32,7 @@ public:
 	TFileAssetMarkup(TRefRef FileRef,TRefRef FileTypeRef);
 
 	virtual SyncBool	ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef ExportAssetType);
-	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes.Add( TRef() );	}
+	virtual void		GetSupportedExportAssetTypes(TArray<TRef>& SupportedTypes) const	{	SupportedTypes.Add( TRef_Static4(M,e,s,h) );	}
 
 protected:
 	SyncBool			ImportMesh(TPtr<TLAsset::TMesh> pMesh,TPtr<TXmlTag>& pTag);	//	generate mesh TAM tag

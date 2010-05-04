@@ -36,7 +36,7 @@ public:
 protected:
 	TPtr<TLRender::TRenderTarget>	GetRenderTarget();	//	find our render target
 
-	virtual TPtr<TLMenu::TMenu>		CreateMenu(TRefRef MenuRef);
+	virtual TPtr<TLAsset::TMenu>	CreateMenu(TRefRef MenuRef);
 	virtual Bool					ExecuteCommand(TRefRef MenuCommand);
 	virtual void					ProcessMessage(TLMessaging::TMessage& Message);
 

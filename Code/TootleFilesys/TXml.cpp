@@ -196,18 +196,43 @@ Bool TXmlTag::SetProperties(TString& PropertiesString)
 				continue;
 			}
 			
-			//	find required pair of " after =
-			s32 FirstQuoteIndex = PropertiesString.GetCharIndex('"', CharIndex);
-			if ( FirstQuoteIndex == -1 )
+			//	gr: adding support for non-quoted values.
+			//		the next character must be a quote in order to be quoted. This may need to change if we XML allows
+			//		property= "value", but I don't think it does.
+			//	is the next character a quote?
+			s32 FirstQuoteIndex = -1;
+			s32 SecondQuoteIndex = -1;
+			if ( PropertiesString[CharIndex+1] == '"' )
 			{
-				TLDebug_Break( TString("Quote missing after property %s= in xml", PropertyName.GetData() ) );
-				return FALSE;
+				FirstQuoteIndex = CharIndex+1;
+				/*
+				//	find required pair of " after =
+				s32 FirstQuoteIndex = PropertiesString.GetCharIndex('"', CharIndex);
+				if ( FirstQuoteIndex == -1 )
+				{
+					TLDebug_Break( TString("Quote missing after property %s= in xml", PropertyName.GetData() ) );
+					return FALSE;
+				}
+				*/
+				SecondQuoteIndex = PropertiesString.GetCharIndex('"', FirstQuoteIndex+1);
+				if ( SecondQuoteIndex == -1 )
+				{
+					TLDebug_Break( TString("Unmatched Quote after property %s= in xml", PropertyName.GetData() ) );
+					return FALSE;
+				}
 			}
-			s32 SecondQuoteIndex = PropertiesString.GetCharIndex('"', FirstQuoteIndex+1);
-			if ( SecondQuoteIndex == -1 )
+			else
 			{
-				TLDebug_Break( TString("Unmatched Quote after property %s= in xml", PropertyName.GetData() ) );
-				return FALSE;
+				//	start at the =
+				FirstQuoteIndex = CharIndex;
+
+				//	end at next white space
+				SecondQuoteIndex = PropertiesString.GetCharIndexWhitespace(FirstQuoteIndex);
+				
+				//	no more white space, so the value extends to the end of the propertes string;
+				//	eg. hello=goodbye>
+				if ( SecondQuoteIndex == -1 )
+					SecondQuoteIndex = PropertiesString.GetLength();
 			}
 
 			//	make up data string

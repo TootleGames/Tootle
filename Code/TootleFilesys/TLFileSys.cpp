@@ -115,7 +115,7 @@ TPtr<TLFileSys::TFile>& TLFileSys::GetLatestFile(TTypedRefRef FileRef)
 //--------------------------------------------------
 //	from a list of files, return the one with the most recent timestamp
 //--------------------------------------------------
-TPtr<TLFileSys::TFile>& TLFileSys::GetLatestFile(TPtrArray<TLFileSys::TFile>& Files,TRef FileType)
+TPtr<TLFileSys::TFile>& TLFileSys::GetLatestFile(TPtrArray<TLFileSys::TFile>& Files,TRef FileType,TRefRef ExportAssetType)
 {
 	s32 NewestIndex = -1;
 	TLTime::TTimestamp NewestTimestamp;
@@ -127,6 +127,10 @@ TPtr<TLFileSys::TFile>& TLFileSys::GetLatestFile(TPtrArray<TLFileSys::TFile>& Fi
 
 		//	looking for specific file type
 		if ( FileType.IsValid() && File.GetTypeRef() != FileType )
+			continue;
+
+		//	looking for specific export-asset type
+		if ( ExportAssetType.IsValid() && !File.IsSupportedExportAssetType( ExportAssetType ) )
 			continue;
 
 		//	ignore files that cannot be loaded
@@ -668,9 +672,9 @@ void TLFileSys::TFileGroup::Remove(TPtr<TLFileSys::TFile>& pFile)
 //------------------------------------------------------------
 //	get file with newest timestamp
 //------------------------------------------------------------
-TPtr<TLFileSys::TFile>& TLFileSys::TFileGroup::GetNewestFile(TRefRef FileType)
+TPtr<TLFileSys::TFile>& TLFileSys::TFileGroup::GetNewestFile(TRefRef FileType,TRefRef ExportAssetType)
 {
-	return TLFileSys::GetLatestFile( m_Files, FileType );
+	return TLFileSys::GetLatestFile( m_Files, FileType, ExportAssetType );
 }
 
 

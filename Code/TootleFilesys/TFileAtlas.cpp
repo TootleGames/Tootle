@@ -1,5 +1,6 @@
 #include "TFileAtlas.h"
 #include <TootleAsset/TAtlas.h>
+#include <TootleAsset/TTexture.h>
 #include <TootleFileSys/TLFileSys.h>
 
 
@@ -114,19 +115,68 @@ SyncBool TLFileSys::TFileAtlas::ImportGlyph(TXmlTag& Tag,TLAsset::TAtlas& Atlas)
 	*/
 
 	//	get properties we're going to use
-	const TString* pXString = Tag.GetProperty("x");
-	const TString* pYString = Tag.GetProperty("y");
-	const TString* pWidthString = Tag.GetProperty("w");
-	const TString* pHeightString = Tag.GetProperty("h");
 	const TString* pRefString = Tag.GetProperty("ref");
+	const TString* pXY = Tag.GetProperty("xy");
+	const TString* pWH = Tag.GetProperty("wh");
+	const TString* pUV = Tag.GetProperty("uv");
+	const TString* pST = Tag.GetProperty("st");
 
-	//	get char's char/key (these are all integers, but to make code easier to read we read them out as floats)
-	s32 Ref;		pRefString ? pRefString->GetInteger( Ref ) : 0;
-	float ImageX;	pXString ? pXString->GetFloat( ImageX ) : 0.f;
-	float ImageY;	pYString ? pYString->GetFloat( ImageY ) : 0.f;
-	float Width;	pWidthString ? pWidthString->GetFloat( Width ) : 1.f;
-	float Height;	pHeightString ? pHeightString->GetFloat( Height ) : 1.f;
+	//	get glyph's char/key (these are all integers, but to make code easier to read we read them out as floats)
+	s32 Ref;	
+	pRefString ? pRefString->GetInteger( Ref ) : 0;
+
+	//	need at least 1 start and end coordinate
+	if ( !pXY && !pUV )
+	{
+		TDebugString Debug_String;
+		Debug_String << "Glyph " << Ref << " (in " << this->GetFilename() << ") missing xy or uv property. Cannot calculate glyph";
+		TLDebug_Break( Debug_String );
+		return SyncFalse;
+	}
+
+	if ( !pWH && !pST )
+	{
+		TLDebug_Break("Glyph missing wh or st property. Cannot calculate glyph");
+		return SyncFalse;
+	}
+
+	//	convert params from strings
+	float2 uv,st;
+	int2 xy,wh;
+	bool Success = true;
+	if ( pXY )	Success &= pXY->GetInteger( xy );
+	if ( pWH )	Success &= pWH->GetInteger( wh );
+	if ( pUV )	Success &= pUV->GetFloat( uv );
+	if ( pST )	Success &= pST->GetFloat( st );
 	
+	//	error reading params
+	if ( !Success )
+	{
+		TLDebug_Break("Error parsing glyph properties");
+		return SyncFalse;
+	}
+
+	//	convert texture pixel coords to uv's
+	if ( pXY || pWH )
+	{
+		//	get texture
+		TLAsset::TTexture* pTexture = TLAsset::GetAsset<TLAsset::TTexture>( Atlas.GetTextureRef() );
+		if ( !pTexture )
+		{
+			TDebugString Debug_String;
+			Debug_String << "Texture " << Atlas.GetTextureRef() << " not found for atlas xy/wh conversion to uv/st";
+			TLDebug_Break( Debug_String );
+			return SyncFalse;
+		}
+
+		//	convert coords to uv/st
+		if ( pXY )
+			uv = float2(xy) / float2(pTexture->GetSize());
+
+		if ( pWH )
+			st = uv + ( float2(wh) / float2(pTexture->GetSize()) );
+	}
+
 	//	check ref isn't already in use
 	if ( Atlas.GetGlyph( (u16)Ref ) )
 	{
@@ -140,14 +190,31 @@ SyncBool TLFileSys::TFileAtlas::ImportGlyph(TXmlTag& Tag,TLAsset::TAtlas& Atlas)
 		return SyncFalse;
 	TLAsset::TAtlasGlyph& Glyph = *pGlyph;
 	
+	//	work out the real glyph size if a texture has been specified
+	float2 ImageScale( 1.f, 1.f );
+
+	if ( Atlas.GetTextureRef().IsValid() )
+	{
+		//	get texture
+		TLAsset::TTexture* pTexture = TLAsset::GetAsset<TLAsset::TTexture>( Atlas.GetTextureRef() );
+		if ( !pTexture )
+		{
+			TDebugString Debug_String;
+			Debug_String << "Texture " << Atlas.GetTextureRef() << " not found for glyph image size calculation";
+			TLDebug_Break( Debug_String );
+			return SyncFalse;
+		}
+		ImageScale = pTexture->GetSize();
+	}
+
 	//	image box inside texture
-	TLMaths::TBox2D ImageBox( float2( ImageX, ImageY ), float2( ImageX + Width, ImageY + Height ) );
+	TLMaths::TBox2D ImageBox( uv, st );
 
 	//	work out uv's (normalised position inside texture)
-	Glyph.GetUV_TopLeft() =		float2( ImageBox.GetLeft(),		ImageBox.GetTop() )		/ 1.f;
-	Glyph.GetUV_TopRight() =	float2( ImageBox.GetRight(),	ImageBox.GetTop() )		/ 1.f;
-	Glyph.GetUV_BottomRight() =	float2( ImageBox.GetRight(),	ImageBox.GetBottom() )	/ 1.f;
-	Glyph.GetUV_BottomLeft() =	float2( ImageBox.GetLeft(),		ImageBox.GetBottom() )	/ 1.f;
+	Glyph.GetUV_TopLeft() =		uv;
+	Glyph.GetUV_TopRight() =	float2( st.x, uv.y );
+	Glyph.GetUV_BottomRight() =	st;
+	Glyph.GetUV_BottomLeft() =	float2( uv.x, st.y );
 
 	//	work out the glyph's box (normalised to character sizes)
 	//	gr: for general atlases this is just the size of 1

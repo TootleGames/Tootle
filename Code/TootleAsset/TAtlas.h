@@ -65,6 +65,7 @@ public:
 	FORCEINLINE TAtlasGlyph*	AddGlyph(u16 Key)							{	return m_Glyphs.AddNew( Key );	}
 	FORCEINLINE TAtlasGlyph*	AddGlyph(u16 Key,const TAtlasGlyph& Glyph)	{	return m_Glyphs.Add( Key, Glyph );	}
 	const TKeyArray<u16,TAtlasGlyph>&	GetGlyphs() const					{	return m_Glyphs;	}
+	void						GetGlyphs(TArray<u16>& GlyphKeys) const;	//	get all the glyph keys into an array
 
 	FORCEINLINE void			SetTextureRef(TRefRef TextureRef)			{	m_TextureRef = TextureRef;	}
 	FORCEINLINE TRefRef			GetTextureRef() const						{	return m_TextureRef;	}

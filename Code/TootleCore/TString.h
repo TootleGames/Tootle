@@ -103,6 +103,8 @@ public:
 	Bool					Split(const TChar& SplitChar,TArray<STRINGTYPE>& StringArray) const;		//	split string by SplitChar into array. if no cases of SplitChar then FALSE is return and no strings are added to the array
 	template<class STRINGTYPE>
 	Bool					Split(const TArray<TChar>& SplitChars,TArray<STRINGTYPE>& StringArray) const;		//	split string by SplitChar into array. if no cases of SplitChar then FALSE is return and no strings are added to the array
+	template<class TYPE_N>
+	Bool					GetInteger(TYPE_N/*<int>*/& IntN) const;					//	extract N ints (no more, no less) into a TypeN<int> type - gr: this should support u8,u16 etc, but might throw up type-cast warnings. We could build in the signed/range checking into this routine...
 	Bool					GetInteger(s32& Integer,Bool* pIsPositive=NULL) const;		//	turn string into an integer - fails if some non-integer stuff in it (best to trim first where possible). The extra pIsPositive param (if not null) stores the posititivy/negativity of the number. This is needed for -0.XYZ numbers. we still need the sign for floats, but as an int -0 is just 0.
 	Bool					GetIntegers(TArray<s32>& Integers) const;					//	read an array of integers from a string
 	template<class TYPE_N>
@@ -488,6 +490,28 @@ Bool TString::Split(const TArray<TChar>& SplitChars,TArray<STRINGTYPE>& StringAr
 	}
 
 	return !StringArray.IsEmpty();
+}
+
+
+//------------------------------------------------------
+//	extract N ints (no more, no less) into a TypeN<int> type - gr: this should support u8,u16 etc, but might throw up type-cast warnings. We could build in the signed/range checking into this routine...
+//------------------------------------------------------
+template<class TYPE_N>
+Bool TString::GetInteger(TYPE_N/*<int>*/& IntN) const
+{
+	//	gr: replace this with an in-place array when they're implemented. will save copying the array afterwards
+	//	TInPlaceArray<float> ExtractedFloats( FloatN.GetData(), FloatN.GetSize() );
+	TFixedArray<int,4> ExtractedIntegers;
+	if ( !GetIntegers( ExtractedIntegers) )
+		return false;
+
+	//	if number of integers mis-matches what we want then fail
+	if ( ExtractedIntegers.GetSize() != IntN.GetSize() )
+		return false;
+
+	//	put ints we extracted into the variable
+	TLMemory::CopyData( IntN.GetData(), ExtractedIntegers.GetData(), IntN.GetSize() );
+	return true;
 }
 
 

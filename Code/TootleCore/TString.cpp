@@ -959,6 +959,7 @@ Bool TString::GetIntegers(TArray<s32>& Integers) const
 	TFixedArray<TChar,4> SplitChars;
 	SplitChars << '\t' << '\n' << ' ' << ',' << ':';
 
+	//	failed to split at all? must be empty string
 	TArray<TTempString> IntegerStrings;
 	if ( !this->Split( SplitChars, IntegerStrings ) )
 		return false;
@@ -979,7 +980,15 @@ Bool TString::GetIntegers(TArray<s32>& Integers) const
 		}
 
 		//	add to list
-		Integers.Add( i );
+		int Index = Integers.Add( i );
+
+		//	out of space for float... 
+		//	gr: I've allowed this as success, just look out for this warning if we want an indetermined number of floats
+		if ( Index == -1 )
+		{
+			TLDebug_Print("Warning: in GetIntegers we ran out of space to add an additional float");
+			return true;
+		}
 	}
 
 	return true;	

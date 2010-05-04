@@ -840,82 +840,19 @@ Bool TLAsset::LoadAllAssets(TRefRef AssetType)
 			continue;
 		}
 
-		//	fetch the newest asset-type file from the group
-		TPtr<TLFileSys::TFile>& pFile = pFileGroup->GetNewestFile( TRef_Static(A,s,s,e,t) );
+		//	fetch the newest file from the group that will conver to our asset-type
+		TPtr<TLFileSys::TFile>& pFile = pFileGroup->GetNewestFile( TRef(), AssetType );
 
-		//	if null returned, this ref doesn't represent any asset files...
+		//	if null returned, this ref doesn't represent any files that match the asset type we want...
 		if ( !pFile )
 			continue;
 
-		//	is an asset file type, cast it (extra type check)
-		TPtr<TLFileSys::TFileAsset> pAssetFile = pFile;
-		if ( !pAssetFile )
-		{
-			TLDebug_Break("Found a file when looking for asset files, that isn't an asset file");
-			continue;
-		}
-
-		//	file needs to load header
-		if ( !pAssetFile->IsHeaderLoaded() || pAssetFile->GetNeedsImport() )
-		{
-			//	load plain file
-			if ( !pAssetFile->IsLoaded() )
-			{
-				TLFileSys::TFileSys* pFileSys = pAssetFile->GetFileSys();
-				if ( !pFileSys )
-				{
-					TLDebug_Break("File sys missing from file");
-					continue;
-				}
-				//	block load from file sys
-				SyncBool LoadResult = SyncWait;
-				int SafetyCounter = 100;
-				while ( LoadResult == SyncWait && SafetyCounter-->0 )
-					LoadResult = pFileSys->LoadFile( pFile );
-
-				//	failed to load from file sys
-				if ( LoadResult != SyncTrue )
-					continue;
-			}
-
-			//	import asset file
-			if ( pAssetFile->GetNeedsImport() )
-			{
-				//	todo: just need to import header here!
-				//	block import file
-				SyncBool LoadResult = SyncWait;
-				int SafetyCounter = 100;
-				while ( LoadResult == SyncWait && SafetyCounter-->0 )
-					LoadResult = pAssetFile->Import();
-				
-				//	failed to import plain file
-				if ( LoadResult != SyncTrue )
-					continue;
-			}
-
-			//	imported broken/out dated asset file?
-			if ( !pAssetFile->IsHeaderLoaded() )
-				continue;
-		}
-
-		//	asset file is loaded, see what kind of asset is inside
-		TTypedRef AssetFileAssetRef = pAssetFile->GetAssetAndTypeRef();
-		if ( !AssetFileAssetRef.IsValid() )
-		{
-			TLDebug_Break("Invalid type of asset recognised by AssetFile");
-			continue;
-		}
-			
-		//	check type is the same type of asset we're looking for
-		if ( AssetFileAssetRef.GetTypeRef() != AssetType )
-			continue;
-
 		//	it's the right type! add to list and we'll see if we need to load it
-		AssetList.Add( AssetFileAssetRef );
+		TTypedRef AssetRef( pFile->GetFileRef(), AssetType );
+		AssetList.Add( AssetRef );
 
-		TTempString Debug_String("Found asset in file system: ");
-		AssetFileAssetRef.GetString( Debug_String );
-		Debug_String.Appendf(" from file %S", pAssetFile->GetFilename().GetData() );
+		TDebugString Debug_String;
+		Debug_String << "Found asset of type " << AssetType << " in file system: " << AssetRef << " from file " << pFile->GetFilename();
 		TLDebug_Print( Debug_String );
 	}
 

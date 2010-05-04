@@ -194,9 +194,11 @@ SyncBool TLFileSys::TFile::Export(TPtr<TFileAsset>& pAssetFile,TRefRef ExportAss
 	{
 		if ( pExportAsset->GetAssetType() != ExportAssetType )
 		{
+			//	gr: this is no longer an error, if we've converted a file type where we didn't know what assets it's going
+			//		to output, we might have still tried. so let this continue.
 			TDebugString Debug_String;
 			Debug_String << "File " << this->GetFilename() << " exported a " << pExportAsset->GetAssetType() << " asset type. We expected " << ExportAssetType;
-			TLDebug_Break( Debug_String );
+			TLDebug_Print( Debug_String );
 
 			//	gr: should we/do we need to null this asset?
 			pExportAsset = NULL;

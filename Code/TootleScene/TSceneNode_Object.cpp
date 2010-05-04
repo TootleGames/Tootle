@@ -554,10 +554,10 @@ Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TRefRef Ren
 	if ( Transform.HasTranslate() && !pInitMessage->HasChild(TRef_Static(T,r,a,n,s)) )
 		pInitMessage->ExportData( TRef_Static(T,r,a,n,s), Transform.GetTranslate() );
 	
-	if ( Transform.HasScale() && !pInitMessage->HasChild(TRef_Static(T,r,a,n,s)) )
+	if ( Transform.HasScale() && !pInitMessage->HasChild(TRef_Static(S,c,a,l,e)) )
 		pInitMessage->ExportData( TRef_Static(S,c,a,l,e), Transform.GetScale() );
 	
-	if ( Transform.HasRotation() && !pInitMessage->HasChild(TRef_Static(T,r,a,n,s)) )
+	if ( Transform.HasRotation() && !pInitMessage->HasChild(TRef_Static(R,o,t,a,t)) )
 		pInitMessage->ExportData( TRef_Static(R,o,t,a,t), Transform.GetRotation() );
 
 	//	export ownership info

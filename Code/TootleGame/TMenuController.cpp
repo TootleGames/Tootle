@@ -17,20 +17,26 @@
 //----------------------------------------------
 Bool TLMenu::TMenuController::OpenMenu(TRefRef MenuRef)
 {
-	//	create new menu
-	TPtr<TMenu> pNewMenu = CreateMenu(MenuRef);
-	if ( !pNewMenu )
+	//	create new menu, get/create the asset to base it on...
+	TPtr<TLAsset::TMenu> pNewMenuAsset = CreateMenu(MenuRef);
+	if ( !pNewMenuAsset )
 		return FALSE;
+
+	//	now create the runtime menu
+	TPtr<TMenu> pNewMenu = new TMenu( pNewMenuAsset );
+	if ( !pNewMenu )
+		return false;
 	
 	//	add to end of stack
-	m_MenuStack.Add( pNewMenu );
+	if ( m_MenuStack.Add( pNewMenu ) == -1 )
+		return false;
 	
 	//	todo: show menu-is-hidden message?
 	
 	//	send menu-is-open message
 	OnMenuOpen();
 	
-	return TRUE;
+	return true;
 }
 
 //----------------------------------------------
@@ -170,20 +176,18 @@ Bool TLMenu::TMenuController::ExecuteMenuItem(TRefRef MenuItemRef)
 //----------------------------------------------
 //	create a menu. default just loads menu definition from assets, overload to create custom menus
 //----------------------------------------------
-TPtr<TLMenu::TMenu> TLMenu::TMenuController::CreateMenu(TRefRef MenuRef)
+TPtr<TLAsset::TMenu> TLMenu::TMenuController::CreateMenu(TRefRef MenuRef)
 {
 	//	find menu asset - note: this has to be block loaded because its not too easy to make this an async operation
-	TPtr<TLAsset::TMenu> pMenuAsset = TLAsset::GetAssetPtr<TLAsset::TMenu>( MenuRef );
+	TPtr<TLAsset::TMenu>& pMenuAsset = TLAsset::GetAssetPtr<TLAsset::TMenu>( MenuRef );
 	if ( !pMenuAsset )
 	{
 		TTempString Debug_String("Failed to find menu asset ");
 		MenuRef.GetString( Debug_String );
 		TLDebug_Warning( Debug_String );
-		return NULL;
 	}
 	
-	TPtr<TLMenu::TMenu> pNewMenu = new TLMenu::TMenu( pMenuAsset );
-	return pNewMenu;
+	return pMenuAsset;
 }
 
 

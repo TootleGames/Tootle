@@ -113,13 +113,12 @@ TPtr<TLRender::TRenderTarget> TLGame::TAssetBrowser::GetRenderTarget()
 //----------------------------------------------
 //	
 //----------------------------------------------
-TPtr<TLMenu::TMenu> TLGame::TAssetBrowser::CreateMenu(TRefRef MenuRef)
+TPtr<TLAsset::TMenu> TLGame::TAssetBrowser::CreateMenu(TRefRef MenuRef)
 {
 	//	"root" menu is the list of assets
 	if ( MenuRef == "Root" )
 	{
 		TPtr<TLAsset::TMenu> pNewMenuAsset = new TLAsset::TMenu( MenuRef );
-		TPtr<TLMenu::TMenu> pNewMenu = new TLMenu::TMenu( pNewMenuAsset );
 		TPtr<TLMenu::TMenuItem> pItem;
 		
 		//	add a "refresh" menu command
@@ -139,7 +138,7 @@ TPtr<TLMenu::TMenu> TLGame::TAssetBrowser::CreateMenu(TRefRef MenuRef)
 			pItem->SetNextMenu( AssetRef );
 		}
 */
-		return pNewMenu;
+		return pNewMenuAsset;
 	}
 	
 	TLDebug_Break("gr: need to rework how this works, need to duplicate existing menu asset i think");

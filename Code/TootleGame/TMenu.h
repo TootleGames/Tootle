@@ -24,7 +24,7 @@ namespace TLMenu
 class TLMenu::TMenu
 {
 public:
-	TMenu(TPtr<TLAsset::TMenu> pMenuAsset) :	m_pMenuAsset ( pMenuAsset )				{	}
+	TMenu(TPtr<TLAsset::TMenu>& pMenuAsset) :	m_pMenuAsset ( pMenuAsset )				{	}
 		
 	FORCEINLINE TRefRef						GetMenuRef()								{	return m_pMenuAsset->GetAssetRef();	}
 	

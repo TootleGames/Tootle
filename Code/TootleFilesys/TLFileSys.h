@@ -28,7 +28,7 @@ namespace TLFileSys
 	
 	TPtr<TFile>					CreateFileInFileSys(const TString& Filename,TPtrArray<TLFileSys::TFileSys>& FileSysList);
 	TPtr<TFile>					CreateAssetFileInFileSys(const TTypedRef& AssetAndTypeRef,TPtrArray<TLFileSys::TFileSys>& FileSysList);	//	wrapper to create a file for a .asset file (to ensure consistent filenames)
-	TPtr<TFile>&				GetLatestFile(TPtrArray<TLFileSys::TFile>& Files,TRef FileType=TRef());	//	from a list of files, return the one with the most recent timestamp
+	TPtr<TFile>&				GetLatestFile(TPtrArray<TLFileSys::TFile>& Files,TRef FileType=TRef(),TRefRef ExportAssetType=TRef());	//	from a list of files, return the one with the most recent timestamp
 
 	//	create a local file system
 	SyncBool					CreateLocalFileSys(TRef& FileSysRef,const TString& Directory,Bool IsWritable);	//	async create a local filesystem for the specified path. FileSysRef is set to the new file system's ref for the purposes of asynchronousness so keep using it when async calling this func
@@ -114,7 +114,7 @@ public:
 
 	void				Add(TPtr<TFile>& pFile);						//	add file to group
 	void				Remove(TPtr<TFile>& pFile);						//	remove file from group
-	TPtr<TFile>&		GetNewestFile(TRefRef FileType=TRef());			//	get file with newest timestamp
+	TPtr<TFile>&		GetNewestFile(TRefRef FileType=TRef(),TRefRef ExportAssetType=TRef());	//	get file with newest timestamp. FileType filters file types, ExportAssetType filters only files that can export this asset type
 	FORCEINLINE Bool	IsEmpty() const									{	return (m_Files.GetSize() == 0);	}
 	TPtrArray<TFile>&	GetFiles()										{	return m_Files;	}
 
