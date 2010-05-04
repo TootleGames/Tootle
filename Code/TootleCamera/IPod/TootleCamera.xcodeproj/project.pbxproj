@@ -20,12 +20,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		841B4AA91111CB0400ACC2AE /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		841B4AAA1111CB0400ACC2AE /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
-		841B4AAB1111CB0400ACC2AE /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
-		841B4AAC1111CB0400ACC2AE /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
-		841B4AAD1111CB0400ACC2AE /* TootleSimDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleSimDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleSimDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		841B4AAE1111CB0400ACC2AE /* TootleSimRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleSimRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleSimRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		841B4AC61111CBD900ACC2AE /* TCameraManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TCameraManager.cpp; path = ../TCameraManager.cpp; sourceTree = SOURCE_ROOT; };
 		841B4AC71111CBD900ACC2AE /* TCameraManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCameraManager.h; path = ../TCameraManager.h; sourceTree = SOURCE_ROOT; };
 		841B4AC81111CBD900ACC2AE /* TLCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLCamera.cpp; path = ../TLCamera.cpp; sourceTree = SOURCE_ROOT; };
@@ -42,6 +36,9 @@
 		84A655B211186B6100B11F5C /* IPodCameraController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodCameraController.mm; sourceTree = "<group>"; };
 		84A655B511186B7500B11F5C /* IPodCameraView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodCameraView.h; sourceTree = "<group>"; };
 		84A655B611186B7500B11F5C /* IPodCameraView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodCameraView.mm; sourceTree = "<group>"; };
+		BF8FC10A118C9EE0005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
+		BF8FC10B118C9EEA005391AF /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF8FC10C118C9EEA005391AF /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		D2AAC07E0554694100DB518D /* libTootleCamera.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleCamera.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -99,12 +96,9 @@
 		841B4AA81111CAE800ACC2AE /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				841B4AA91111CB0400ACC2AE /* TootleDebug.xcconfig */,
-				841B4AAA1111CB0400ACC2AE /* TootleRelease.xcconfig */,
-				841B4AAB1111CB0400ACC2AE /* TootleReleaseAdHoc.xcconfig */,
-				841B4AAC1111CB0400ACC2AE /* TootleReleaseAppStore.xcconfig */,
-				841B4AAD1111CB0400ACC2AE /* TootleSimDebug.xcconfig */,
-				841B4AAE1111CB0400ACC2AE /* TootleSimRelease.xcconfig */,
+				BF8FC10B118C9EEA005391AF /* LibDebug.xcconfig */,
+				BF8FC10C118C9EEA005391AF /* LibRelease.xcconfig */,
+				BF8FC10A118C9EE0005391AF /* BuildConfigurations */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
@@ -214,36 +208,26 @@
 		1DEB921F08733DC00010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				DSTROOT = /tmp/TootleCamera.dst;
-				INSTALL_PATH = /usr/local/lib;
 			};
 			name = Debug;
 		};
 		1DEB922008733DC00010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				DSTROOT = /tmp/TootleCamera.dst;
-				INSTALL_PATH = /usr/local/lib;
 			};
 			name = Release;
 		};
 		1DEB922308733DC00010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 841B4AA91111CB0400ACC2AE /* TootleDebug.xcconfig */;
+			baseConfigurationReference = BF8FC10B118C9EEA005391AF /* LibDebug.xcconfig */;
 			buildSettings = {
-				GCC_C_LANGUAGE_STANDARD = c99;
-				OTHER_LDFLAGS = "-ObjC";
 			};
 			name = Debug;
 		};
 		1DEB922408733DC00010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 841B4AAA1111CB0400ACC2AE /* TootleRelease.xcconfig */;
+			baseConfigurationReference = BF8FC10C118C9EEA005391AF /* LibRelease.xcconfig */;
 			buildSettings = {
-				GCC_C_LANGUAGE_STANDARD = c99;
-				OTHER_LDFLAGS = "-ObjC";
 			};
 			name = Release;
 		};

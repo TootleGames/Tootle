@@ -44,17 +44,14 @@ SyncBool TLDebug::Platform::Shutdown()
 void TLDebug::Platform::PrintToBuffer(const TString& String)
 {
 	// Check to see if we can add to the buffer (less one for the terminator)
-	if(consolebuffer.GetLength() + String.GetLength() < 511)
-	{
-		consolebuffer.Appendf("\n%S", String.GetData());	
-	}
-	else 
+	if(consolebuffer.GetLength() + String.GetLength() >= consolebuffer.GetMaxAllocSize()-1 )
 	{
 		// will excedd buffer length so flush the buffer and start fresh
 		FlushBuffer();
-		
-		consolebuffer.Appendf("\n%S", String.GetData());	
 	}
+	
+	//	append to console buffer
+	consolebuffer << '\n' << String;	
 }
 
 

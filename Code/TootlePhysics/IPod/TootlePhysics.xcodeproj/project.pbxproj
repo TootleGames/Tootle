@@ -39,10 +39,6 @@
 		84C10AC70F0A7DF900B2DF7A /* TPhysicsNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TPhysicsNode.h; path = ../TPhysicsNode.h; sourceTree = SOURCE_ROOT; };
 		84C10AC80F0A7DF900B2DF7A /* TPhysicsNodeSphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPhysicsNodeSphere.cpp; path = ../TPhysicsNodeSphere.cpp; sourceTree = SOURCE_ROOT; };
 		84C10AC90F0A7DF900B2DF7A /* TPhysicsNodeSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPhysicsNodeSphere.h; path = ../TPhysicsNodeSphere.h; sourceTree = SOURCE_ROOT; };
-		84C10AD70F0A7E1300B2DF7A /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		84C10AD80F0A7E1300B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
-		84C10AD90F0A7E1300B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
-		84C10ADA0F0A7E1300B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
 		84C80DEF1040C2DC004FC72E /* TCollisionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCollisionInfo.h; path = ../TCollisionInfo.h; sourceTree = SOURCE_ROOT; };
 		84C80DF01040C2DC004FC72E /* TCollisionShapeInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCollisionShapeInline.h; path = ../TCollisionShapeInline.h; sourceTree = SOURCE_ROOT; };
 		84C80DF11040C2DC004FC72E /* TJoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TJoint.cpp; path = ../TJoint.cpp; sourceTree = SOURCE_ROOT; };
@@ -51,6 +47,9 @@
 		84C80DF41040C2DC004FC72E /* TPhysicsNodeChain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPhysicsNodeChain.cpp; path = ../TPhysicsNodeChain.cpp; sourceTree = SOURCE_ROOT; };
 		84C80DF51040C2DC004FC72E /* TPhysicsNodeChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPhysicsNodeChain.h; path = ../TPhysicsNodeChain.h; sourceTree = SOURCE_ROOT; };
 		84C80DF61040C2DC004FC72E /* TPhysicsNodeInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPhysicsNodeInline.h; path = ../TPhysicsNodeInline.h; sourceTree = SOURCE_ROOT; };
+		BF8FC314118DFEB7005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
+		BF8FC315118DFEC4005391AF /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF8FC316118DFEC4005391AF /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,10 +108,9 @@
 		84C10AD60F0A7DFE00B2DF7A /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				84C10AD70F0A7E1300B2DF7A /* TootleDebug.xcconfig */,
-				84C10AD80F0A7E1300B2DF7A /* TootleRelease.xcconfig */,
-				84C10AD90F0A7E1300B2DF7A /* TootleReleaseAdHoc.xcconfig */,
-				84C10ADA0F0A7E1300B2DF7A /* TootleReleaseAppStore.xcconfig */,
+				BF8FC315118DFEC4005391AF /* LibDebug.xcconfig */,
+				BF8FC316118DFEC4005391AF /* LibRelease.xcconfig */,
+				BF8FC314118DFEB7005391AF /* BuildConfigurations */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
@@ -196,14 +194,14 @@
 /* Begin XCBuildConfiguration section */
 		84C108AF0F0A760800B2DF7A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84C10AD70F0A7E1300B2DF7A /* TootleDebug.xcconfig */;
+			baseConfigurationReference = BF8FC315118DFEC4005391AF /* LibDebug.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		84C108B00F0A760800B2DF7A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84C10AD80F0A7E1300B2DF7A /* TootleRelease.xcconfig */;
+			baseConfigurationReference = BF8FC316118DFEC4005391AF /* LibRelease.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
@@ -211,44 +209,14 @@
 		84C10ABA0F0A7DD800B2DF7A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 			};
 			name = Debug;
 		};
 		84C10ABB0F0A7DD800B2DF7A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 			};
 			name = Release;
-		};
-		84C110BA0F0A8C2200B2DF7A /* Release AdHoc */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84C10AD90F0A7E1300B2DF7A /* TootleReleaseAdHoc.xcconfig */;
-			buildSettings = {
-			};
-			name = "Release AdHoc";
-		};
-		84C110BB0F0A8C2200B2DF7A /* Release AdHoc */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-			};
-			name = "Release AdHoc";
-		};
-		84C110BC0F0A8C2800B2DF7A /* Release AppStore */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84C10ADA0F0A7E1300B2DF7A /* TootleReleaseAppStore.xcconfig */;
-			buildSettings = {
-			};
-			name = "Release AppStore";
-		};
-		84C110BD0F0A8C2800B2DF7A /* Release AppStore */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-			};
-			name = "Release AppStore";
 		};
 /* End XCBuildConfiguration section */
 
@@ -258,8 +226,6 @@
 			buildConfigurations = (
 				84C108AF0F0A760800B2DF7A /* Debug */,
 				84C108B00F0A760800B2DF7A /* Release */,
-				84C110BA0F0A8C2200B2DF7A /* Release AdHoc */,
-				84C110BC0F0A8C2800B2DF7A /* Release AppStore */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -269,8 +235,6 @@
 			buildConfigurations = (
 				84C10ABA0F0A7DD800B2DF7A /* Debug */,
 				84C10ABB0F0A7DD800B2DF7A /* Release */,
-				84C110BB0F0A8C2200B2DF7A /* Release AdHoc */,
-				84C110BD0F0A8C2800B2DF7A /* Release AppStore */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

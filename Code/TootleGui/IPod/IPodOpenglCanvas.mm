@@ -6,6 +6,10 @@
 #include <TootleCore/TLMemory.h> // TEMP
 #import "IPodWindowDelegate.h"
 
+//	gr: once the opengl context has been created we need to initialise opengl
+//	this will move to the rasteriser, but will still need to be called from here.
+#include <TootleRender/TLRender.h>
+
 
 
 //------------------------------------------------------
@@ -51,7 +55,13 @@ TLGui::Platform::OpenglCanvas::OpenglCanvas(TLGui::TWindow& Parent,TRefRef Contr
 	// Now we are part of the window we can setup the opengl context
 	// NOTE: Has to be done AFTER the view is added to the window
 	//	gr: this has gone... did I delete it?
-//	[m_pView initOpenGLContext];	
+//	[m_pView initOpenGLContext];
+	
+	//	context has been initialised (successfully?) so init opengl	
+	if ( TLRender::Opengl::Init() != SyncTrue )
+	{
+		TLDebug_Break("Failed to init opengl");
+	}
 }
 
 

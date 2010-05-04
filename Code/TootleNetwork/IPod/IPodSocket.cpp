@@ -2,6 +2,8 @@
 #include <TootleCore/TLCore.h>
 #include <TootleCore/TCoreManager.h>
 #include <errno.h>
+#include <unistd.h>
+
 
 
 //----------------------------------------------------------
@@ -34,7 +36,7 @@ TLNetwork::TAddress GetSockAddrAddress(const sockaddr_storage& SocketAddress,boo
 	}
 	
 	//	set address
-	u8* pAddr = (u8*)SocketAddress4.sin_addr.s_addr;
+	u8* pAddr = (u8*)&SocketAddress4.sin_addr.s_addr;
 	TLNetwork::TAddress Result( Type4<u8>( pAddr[0], pAddr[1], pAddr[2], pAddr[3] ), SocketAddress4.sin_port );
 	
 	TDebugString Debug_String;
@@ -105,7 +107,7 @@ void TLNetwork::Platform::Socket::Shutdown()
 	//	delete socket
 	if ( m_Socket != INVALID_SOCKET )
 	{
-//xxx		close( m_Socket );
+		close( m_Socket );
 		m_Socket = INVALID_SOCKET;
 		m_IsOpen = false;
 	}
@@ -280,7 +282,7 @@ TLNetwork::Platform::PeerSocket::~PeerSocket()
     // cleanup
 	if ( m_Socket != INVALID_SOCKET )
 	{
-//xxx		close( m_Socket );
+		close( m_Socket );
 		m_Socket = INVALID_SOCKET;
 	}
 }

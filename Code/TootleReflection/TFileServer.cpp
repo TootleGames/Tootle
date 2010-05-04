@@ -682,10 +682,12 @@ bool TLReflection::TFtpClient::ExecuteCommand(const TFtpCommand& Command,TLNetwo
 		case TRef_Static4(P,A,S,V):
 		{
 			//	create data server
-			if ( !CreateDataServer() )
+			TRef Error;
+			if ( !CreateDataServer(Error) )
 			{
-				//SendPacket( 425, "425 Can't open data connection.", Server );
-				return SendPacket( 421, "Failed to create data socket", Server );
+				TTempString ErrorString;
+				ErrorString << "Failed to create data socket. " << Error;
+				return SendPacket( 421, ErrorString, Server );
 			}
 
 			//	set passive mode
@@ -733,8 +735,13 @@ bool TLReflection::TFtpClient::ExecuteCommand(const TFtpCommand& Command,TLNetwo
 			}
 
 			//	start dir-listing data transfer
-			if ( !SendDataDirListing( DirListing, Server ) )
-				return SendPacket( 425, "Cannot open data connection.", Server );
+			TRef Error;
+			if ( !SendDataDirListing( DirListing, Error, Server ) )
+			{
+				TTempString ErrorString;
+				ErrorString << "Cannot open data connection. " << Error;
+				return SendPacket( 425, ErrorString, Server );
+			}
 
 			return SendPacket( 150, "Opening ASCII mode data connection for directory list.", Server ); 
 		} 
@@ -755,7 +762,8 @@ bool TLReflection::TFtpClient::ExecuteCommand(const TFtpCommand& Command,TLNetwo
 			}
 
 			//	start sending file
-			if ( !SendDataSendFile( pFile, Server ) )
+			TRef Error;
+			if ( !SendDataSendFile( pFile, Error, Server ) )
 				return false;
 
 			//	send response
@@ -775,7 +783,8 @@ bool TLReflection::TFtpClient::ExecuteCommand(const TFtpCommand& Command,TLNetwo
 				return SendPacket( 550, "Failed to create new file", Server );
 
 			//	start data connection to retrieve new file
-			if ( !SendDataRecieveFile( pNewFile, Server ) )
+			TRef Error;
+			if ( !SendDataRecieveFile( pNewFile, Error, Server ) )
 				return false;
 
 			//	send confirmation
@@ -884,8 +893,10 @@ bool TLReflection::TFtpClient::ExecuteCommand(const TFtpCommand& Command,TLNetwo
 //----------------------------------------------------------
 //	create data server (this gets pre-created for PASV mode)
 //----------------------------------------------------------
-bool TLReflection::TFtpClient::CreateDataServer()
+bool TLReflection::TFtpClient::CreateDataServer(TRef& Error)
 {
+	Error.SetInvalid();
+	
 	//	already have a data socket
 	if ( m_pDataServer )
 		return true;
@@ -901,7 +912,6 @@ bool TLReflection::TFtpClient::CreateDataServer()
 		return false;
 
 	//	initialise
-	TRef Error;
 	SyncBool Result = SyncWait;
 
 	//	gr: need a better async system!
@@ -948,10 +958,11 @@ void TLReflection::TFtpClient::DestroyDataTask()
 //----------------------------------------------------------
 //	create a data server to transfer something
 //----------------------------------------------------------
-bool TLReflection::TFtpClient::CreateDataTask(TPtr<TFtpDataTask>& pNewTask,TLNetwork::TSocketServer& CommandServer)
+bool TLReflection::TFtpClient::CreateDataTask(TPtr<TFtpDataTask>& pNewTask,TRef& Error,TLNetwork::TSocketServer& CommandServer)
 {
 	if ( !pNewTask )
 	{
+		Error = "NoTask";
 		TLDebug_Break("Task expected");
 		return false;
 	}
@@ -962,6 +973,7 @@ bool TLReflection::TFtpClient::CreateDataTask(TPtr<TFtpDataTask>& pNewTask,TLNet
 	//	expect a data server to have already been created
 	if ( !m_pDataServer )
 	{
+		Error = "NoServer";
 		TLDebug_Break("Expected existing data server");
 		return false;
 	}
@@ -998,42 +1010,60 @@ bool TLReflection::TFtpClient::CreateDataTask(TPtr<TFtpDataTask>& pNewTask,TLNet
 //----------------------------------------------------------
 //	send dir listing via data connection
 //----------------------------------------------------------
-bool TLReflection::TFtpClient::SendDataDirListing(const TString& DirListing,TLNetwork::TSocketServer& CommandServer)
+bool TLReflection::TFtpClient::SendDataDirListing(const TString& DirListing,TRef& Error,TLNetwork::TSocketServer& CommandServer)
 {
 	//	create data socket
-	if ( !CreateDataServer() )
+	if ( !CreateDataServer(Error) )
 		return false;
 
 	TPtr<TFtpDataTask> pNewTask = new TFtpDataTaskDirListing( DirListing );
-	return CreateDataTask( pNewTask, CommandServer );
+	if ( !pNewTask )
+	{
+		Error = "Alloc";
+		return false;
+	}
+	
+	return CreateDataTask( pNewTask, Error, CommandServer );
 }
 
 
 //----------------------------------------------------------
 //	send file via data connection
 //----------------------------------------------------------
-bool TLReflection::TFtpClient::SendDataSendFile(TPtr<TLFileSys::TFile>& pFile,TLNetwork::TSocketServer& CommandServer)
+bool TLReflection::TFtpClient::SendDataSendFile(TPtr<TLFileSys::TFile>& pFile,TRef& Error,TLNetwork::TSocketServer& CommandServer)
 {
 	//	create data socket
-	if ( !CreateDataServer() )
+	if ( !CreateDataServer(Error) )
 		return false;
 
 	TPtr<TFtpDataTask> pNewTask = new TFtpDataTaskSendFile( pFile );
-	return CreateDataTask( pNewTask, CommandServer );
+	if ( !pNewTask )
+	{
+		Error = "Alloc";
+		return false;
+	}
+	
+	return CreateDataTask( pNewTask, Error, CommandServer );
 }
 
 
 //----------------------------------------------------------
 //	recieve into this file via data connection
 //----------------------------------------------------------
-bool TLReflection::TFtpClient::SendDataRecieveFile(TPtr<TLFileSys::TFile>& pNewFile,TLNetwork::TSocketServer& CommandServer)
+bool TLReflection::TFtpClient::SendDataRecieveFile(TPtr<TLFileSys::TFile>& pNewFile,TRef& Error,TLNetwork::TSocketServer& CommandServer)
 {
 	//	create data socket
-	if ( !CreateDataServer() )
+	if ( !CreateDataServer(Error) )
 		return false;
 
 	TPtr<TFtpDataTask> pNewTask = new TFtpDataTaskRecieveFile( pNewFile );
-	return CreateDataTask( pNewTask, CommandServer );
+	if ( !pNewTask )
+	{
+		Error = "Alloc";
+		return false;
+	}
+	
+	return CreateDataTask( pNewTask, Error, CommandServer );
 }
 
 

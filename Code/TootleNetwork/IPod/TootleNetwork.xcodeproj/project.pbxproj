@@ -31,10 +31,6 @@
 		84C10A820F0A7D0F00B2DF7A /* libTootleNetwork.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleNetwork.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C10A880F0A7D3800B2DF7A /* TLNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLNetwork.cpp; path = ../TLNetwork.cpp; sourceTree = SOURCE_ROOT; };
 		84C10A890F0A7D3800B2DF7A /* TLNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLNetwork.h; path = ../TLNetwork.h; sourceTree = SOURCE_ROOT; };
-		84C10A8D0F0A7D5700B2DF7A /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		84C10A8E0F0A7D5700B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
-		84C10A8F0F0A7D5700B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
-		84C10A900F0A7D5700B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
 		84F32DAD111AD90A006E1DE7 /* IPodNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodNetwork.h; sourceTree = "<group>"; };
 		84F32DAE111AD90A006E1DE7 /* IPodNetwork.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodNetwork.mm; sourceTree = "<group>"; };
 		84F32DF9111AE488006E1DE7 /* PCConnectionHttp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCConnectionHttp.cpp; path = ../PC/PCConnectionHttp.cpp; sourceTree = SOURCE_ROOT; };
@@ -55,6 +51,9 @@
 		BF0BDE591188EBD6009E510A /* TSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSocket.h; path = ../../../../Tootle/Code/TootleNetwork/TSocket.h; sourceTree = SOURCE_ROOT; };
 		BF0BDE5A1188EBD6009E510A /* TSocketServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSocketServer.cpp; path = ../../../../Tootle/Code/TootleNetwork/TSocketServer.cpp; sourceTree = SOURCE_ROOT; };
 		BF0BDE5B1188EBD6009E510A /* TSocketServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSocketServer.h; path = ../../../../Tootle/Code/TootleNetwork/TSocketServer.h; sourceTree = SOURCE_ROOT; };
+		BF8FC2F8118DFC03005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
+		BF8FC2F9118DFC1B005391AF /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF8FC2FA118DFC1B005391AF /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,10 +118,9 @@
 		84C10A8C0F0A7D3D00B2DF7A /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				84C10A8D0F0A7D5700B2DF7A /* TootleDebug.xcconfig */,
-				84C10A8E0F0A7D5700B2DF7A /* TootleRelease.xcconfig */,
-				84C10A8F0F0A7D5700B2DF7A /* TootleReleaseAdHoc.xcconfig */,
-				84C10A900F0A7D5700B2DF7A /* TootleReleaseAppStore.xcconfig */,
+				BF8FC2F9118DFC1B005391AF /* LibDebug.xcconfig */,
+				BF8FC2FA118DFC1B005391AF /* LibRelease.xcconfig */,
+				BF8FC2F8118DFC03005391AF /* BuildConfigurations */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
@@ -228,7 +226,7 @@
 /* Begin XCBuildConfiguration section */
 		84C108BC0F0A765A00B2DF7A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84C10A8D0F0A7D5700B2DF7A /* TootleDebug.xcconfig */;
+			baseConfigurationReference = BF8FC2F9118DFC1B005391AF /* LibDebug.xcconfig */;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
 					src/,
@@ -239,7 +237,7 @@
 		};
 		84C108BD0F0A765A00B2DF7A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84C10A8E0F0A7D5700B2DF7A /* TootleRelease.xcconfig */;
+			baseConfigurationReference = BF8FC2FA118DFC1B005391AF /* LibRelease.xcconfig */;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
 					src/,
@@ -260,40 +258,6 @@
 			};
 			name = Release;
 		};
-		84C110860F0A8B0000B2DF7A /* Release AdHoc */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84C10A8F0F0A7D5700B2DF7A /* TootleReleaseAdHoc.xcconfig */;
-			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					src/,
-					../..,
-				);
-			};
-			name = "Release AdHoc";
-		};
-		84C110870F0A8B0000B2DF7A /* Release AdHoc */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-			};
-			name = "Release AdHoc";
-		};
-		84C110880F0A8B0700B2DF7A /* Release AppStore */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84C10A900F0A7D5700B2DF7A /* TootleReleaseAppStore.xcconfig */;
-			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					src/,
-					../..,
-				);
-			};
-			name = "Release AppStore";
-		};
-		84C110890F0A8B0700B2DF7A /* Release AppStore */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-			};
-			name = "Release AppStore";
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -302,8 +266,6 @@
 			buildConfigurations = (
 				84C108BC0F0A765A00B2DF7A /* Debug */,
 				84C108BD0F0A765A00B2DF7A /* Release */,
-				84C110860F0A8B0000B2DF7A /* Release AdHoc */,
-				84C110880F0A8B0700B2DF7A /* Release AppStore */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -313,8 +275,6 @@
 			buildConfigurations = (
 				84C10A840F0A7D0F00B2DF7A /* Debug */,
 				84C10A850F0A7D0F00B2DF7A /* Release */,
-				84C110870F0A8B0000B2DF7A /* Release AdHoc */,
-				84C110890F0A8B0700B2DF7A /* Release AppStore */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -49,8 +49,9 @@
 		840EC1E20F7782BB00BA6F4C /* pngwrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwrite.c; path = ../pngwrite.c; sourceTree = SOURCE_ROOT; };
 		840EC1E30F7782BB00BA6F4C /* pngwtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwtran.c; path = ../pngwtran.c; sourceTree = SOURCE_ROOT; };
 		840EC1E40F7782BB00BA6F4C /* pngwutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwutil.c; path = ../pngwutil.c; sourceTree = SOURCE_ROOT; };
-		BF8FB7E2118C2C54005391AF /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF8FB7E3118C2C54005391AF /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF8FC192118CA31F005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
+		BF8FC193118CA328005391AF /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF8FC194118CA328005391AF /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,8 +111,9 @@
 		840EC1900F77820800BA6F4C /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				BF8FB7E2118C2C54005391AF /* TootleDebug.xcconfig */,
-				BF8FB7E3118C2C54005391AF /* TootleRelease.xcconfig */,
+				BF8FC193118CA328005391AF /* LibDebug.xcconfig */,
+				BF8FC194118CA328005391AF /* LibRelease.xcconfig */,
+				BF8FC192118CA31F005391AF /* BuildConfigurations */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
@@ -196,14 +198,14 @@
 /* Begin XCBuildConfiguration section */
 		840EC16D0F77816700BA6F4C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BF8FB7E2118C2C54005391AF /* TootleDebug.xcconfig */;
+			baseConfigurationReference = BF8FC193118CA328005391AF /* LibDebug.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		840EC16E0F77816700BA6F4C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BF8FB7E3118C2C54005391AF /* TootleRelease.xcconfig */;
+			baseConfigurationReference = BF8FC194118CA328005391AF /* LibRelease.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;

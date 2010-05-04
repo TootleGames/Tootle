@@ -31,10 +31,6 @@
 		8404EC6A0FD7D75800F280AF /* TLSocial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TLSocial.cpp; path = ../TLSocial.cpp; sourceTree = SOURCE_ROOT; };
 		8404EC6D0FD7D78B00F280AF /* TFacebookConnect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFacebookConnect.h; sourceTree = "<group>"; };
 		8404EC6E0FD7D78B00F280AF /* TFacebookConnect.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TFacebookConnect.mm; sourceTree = "<group>"; };
-		8404EC960FD7DA2C00F280AF /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		8404EC970FD7DA2C00F280AF /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
-		8404EC980FD7DA2C00F280AF /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
-		8404EC990FD7DA2C00F280AF /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
 		842382F31047E346009E67C3 /* PCSocialNetworkingPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCSocialNetworkingPlatform.h; path = ../PC/PCSocialNetworkingPlatform.h; sourceTree = SOURCE_ROOT; };
 		843CDACE1048234300E6295B /* TSocialNetworkingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSocialNetworkingManager.h; path = ../TSocialNetworkingManager.h; sourceTree = SOURCE_ROOT; };
 		845086FF101F475800B78F2B /* AGON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGON.h; path = libagon/include/AGON.h; sourceTree = "<group>"; };
@@ -53,6 +49,9 @@
 		8468113B118CDD0B00D71BEF /* IPodSocialNetworkingPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodSocialNetworkingPlatform.h; sourceTree = "<group>"; };
 		847DF81F0FD9325E005F9EDC /* TFacebookSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFacebookSession.h; sourceTree = "<group>"; };
 		847DF8200FD9325E005F9EDC /* TFacebookSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TFacebookSession.mm; sourceTree = "<group>"; };
+		BF8FC638118F7509005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
+		BF8FC639118F7526005391AF /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF8FC63A118F7526005391AF /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,10 +86,9 @@
 		8404EA610FD7CF9700F280AF /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				8404EC960FD7DA2C00F280AF /* TootleDebug.xcconfig */,
-				8404EC970FD7DA2C00F280AF /* TootleRelease.xcconfig */,
-				8404EC980FD7DA2C00F280AF /* TootleReleaseAdHoc.xcconfig */,
-				8404EC990FD7DA2C00F280AF /* TootleReleaseAppStore.xcconfig */,
+				BF8FC639118F7526005391AF /* LibDebug.xcconfig */,
+				BF8FC63A118F7526005391AF /* LibRelease.xcconfig */,
+				BF8FC638118F7509005391AF /* BuildConfigurations */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
@@ -240,10 +238,11 @@
 /* Begin XCBuildConfiguration section */
 		8404EA460FD7CF4F00F280AF /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8404EC960FD7DA2C00F280AF /* TootleDebug.xcconfig */;
+			baseConfigurationReference = BF8FC639118F7526005391AF /* LibDebug.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = YES;
 				DEAD_CODE_STRIPPING = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = TootleSocialPrefix.pch;
 				HEADER_SEARCH_PATHS = (
 					"OpenFeint/**",
 					../..,
@@ -256,38 +255,30 @@
 		};
 		8404EA470FD7CF4F00F280AF /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8404EC970FD7DA2C00F280AF /* TootleRelease.xcconfig */;
+			baseConfigurationReference = BF8FC63A118F7526005391AF /* LibRelease.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = YES;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = TootleSocialPrefix.pch;
 				HEADER_SEARCH_PATHS = (
 					"OpenFeint/**",
 					../..,
-					FacebookConnect/src,
-					libagon/include,
+					"FacebookConnect/src/**",
+					"libagon/include/**",
 				);
 				LIBRARY_SEARCH_PATHS = libagon/lib;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = TootleSocial;
-				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;
 		};
 		8404EA5E0FD7CF8200F280AF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = TootleSocialPrefix.pch;
 			};
 			name = Debug;
 		};
 		8404EA5F0FD7CF8200F280AF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Don't Code Sign";
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = TootleSocialPrefix.pch;
-				PREBINDING = NO;
 			};
 			name = Release;
 		};

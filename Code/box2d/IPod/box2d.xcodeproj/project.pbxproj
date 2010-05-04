@@ -103,10 +103,6 @@
 
 /* Begin PBXFileReference section */
 		840EC1820F7781BC00BA6F4C /* libbox2d.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libbox2d.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		841360B50FFBA37300FD81A5 /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../BuildConfigurations/IPod/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		841360B60FFBA37300FD81A5 /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
-		841360B70FFBA37300FD81A5 /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
-		841360B80FFBA37300FD81A5 /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
 		8442331E0FF92BF50024EFEF /* b2DynamicTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = b2DynamicTree.cpp; sourceTree = "<group>"; };
 		8442331F0FF92BF50024EFEF /* b2DynamicTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = b2DynamicTree.h; sourceTree = "<group>"; };
 		844233220FF92C520024EFEF /* b2EdgeAndCircleContact.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = b2EdgeAndCircleContact.cpp; sourceTree = "<group>"; };
@@ -152,6 +148,9 @@
 		84CC92090FFA72DA00B36FD6 /* b2PulleyJoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = b2PulleyJoint.h; sourceTree = "<group>"; };
 		84CC920A0FFA72DA00B36FD6 /* b2RevoluteJoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = b2RevoluteJoint.cpp; sourceTree = "<group>"; };
 		84CC920B0FFA72DA00B36FD6 /* b2RevoluteJoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = b2RevoluteJoint.h; sourceTree = "<group>"; };
+		BF8FC160118CA273005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
+		BF8FC161118CA27E005391AF /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF8FC162118CA27E005391AF /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		BFAC1A7F0FA0D28300F69941 /* b2Body.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = b2Body.cpp; path = ../Source/Dynamics/b2Body.cpp; sourceTree = SOURCE_ROOT; };
 		BFAC1A800FA0D28300F69941 /* b2Body.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = b2Body.h; path = ../Source/Dynamics/b2Body.h; sourceTree = SOURCE_ROOT; };
 		BFAC1A810FA0D28300F69941 /* b2ContactManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = b2ContactManager.cpp; path = ../Source/Dynamics/b2ContactManager.cpp; sourceTree = SOURCE_ROOT; };
@@ -242,10 +241,9 @@
 		840EC1900F77820800BA6F4C /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				841360B50FFBA37300FD81A5 /* TootleDebug.xcconfig */,
-				841360B60FFBA37300FD81A5 /* TootleRelease.xcconfig */,
-				841360B70FFBA37300FD81A5 /* TootleReleaseAdHoc.xcconfig */,
-				841360B80FFBA37300FD81A5 /* TootleReleaseAppStore.xcconfig */,
+				BF8FC161118CA27E005391AF /* LibDebug.xcconfig */,
+				BF8FC162118CA27E005391AF /* LibRelease.xcconfig */,
+				BF8FC160118CA273005391AF /* BuildConfigurations */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
@@ -553,14 +551,14 @@
 /* Begin XCBuildConfiguration section */
 		840EC16D0F77816700BA6F4C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 841360B50FFBA37300FD81A5 /* TootleDebug.xcconfig */;
+			baseConfigurationReference = BF8FC161118CA27E005391AF /* LibDebug.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		840EC16E0F77816700BA6F4C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 841360B60FFBA37300FD81A5 /* TootleRelease.xcconfig */;
+			baseConfigurationReference = BF8FC162118CA27E005391AF /* LibRelease.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;

@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+//	gr: todo; remove/deprecate use of Appendf, but first, we need to replace the float->string append function
+//		either using ftoa() or our own implementation.
+#pragma message("replace <<(float)'s use of appendf with http://www.edaboard.com/ftopic41714.html")
+
 #if defined(_VA_LIST_DEFINED) || defined(_VA_LIST)
 	#define ENABLE_VA_LIST
 #else

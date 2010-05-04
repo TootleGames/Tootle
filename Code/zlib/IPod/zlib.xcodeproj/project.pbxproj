@@ -57,10 +57,9 @@
 		840EC25F0F77853900BA6F4C /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zlib.h; path = ../zlib.h; sourceTree = SOURCE_ROOT; };
 		840EC2600F77853900BA6F4C /* zutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zutil.c; path = ../zutil.c; sourceTree = SOURCE_ROOT; };
 		840EC2610F77853900BA6F4C /* zutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zutil.h; path = ../zutil.h; sourceTree = SOURCE_ROOT; };
-		BF0BDF8C118A2D9B009E510A /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleDebug.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/TootleDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF0BDF8D118A2D9B009E510A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleRelease.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/TootleRelease.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF0BDF8E118A2D9B009E510A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAdHoc.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/TootleReleaseAdHoc.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF0BDF8F118A2D9B009E510A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TootleReleaseAppStore.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/TootleReleaseAppStore.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF8FC179118CA2B9005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
+		BF8FC17A118CA2C6005391AF /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF8FC17B118CA2C6005391AF /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,10 +123,9 @@
 		BF0BDF8B118A2D7D009E510A /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				BF0BDF8C118A2D9B009E510A /* TootleDebug.xcconfig */,
-				BF0BDF8D118A2D9B009E510A /* TootleRelease.xcconfig */,
-				BF0BDF8E118A2D9B009E510A /* TootleReleaseAdHoc.xcconfig */,
-				BF0BDF8F118A2D9B009E510A /* TootleReleaseAppStore.xcconfig */,
+				BF8FC17A118CA2C6005391AF /* LibDebug.xcconfig */,
+				BF8FC17B118CA2C6005391AF /* LibRelease.xcconfig */,
+				BF8FC179118CA2B9005391AF /* BuildConfigurations */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
@@ -216,14 +214,14 @@
 /* Begin XCBuildConfiguration section */
 		840EC21F0F77841300BA6F4C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BF0BDF8C118A2D9B009E510A /* TootleDebug.xcconfig */;
+			baseConfigurationReference = BF8FC17A118CA2C6005391AF /* LibDebug.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		840EC2200F77841300BA6F4C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BF0BDF8D118A2D9B009E510A /* TootleRelease.xcconfig */;
+			baseConfigurationReference = BF8FC17B118CA2C6005391AF /* LibRelease.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
@@ -231,14 +229,12 @@
 		840EC22D0F77842B00BA6F4C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 			};
 			name = Debug;
 		};
 		840EC22E0F77842B00BA6F4C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 			};
 			name = Release;
 		};

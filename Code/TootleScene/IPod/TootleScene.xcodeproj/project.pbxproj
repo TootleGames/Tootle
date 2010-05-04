@@ -47,14 +47,13 @@
 		84C107AC0F0A686E00B2DF7A /* TSceneNode_Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSceneNode_Object.h; path = ../TSceneNode_Object.h; sourceTree = SOURCE_ROOT; };
 		84C107AD0F0A686E00B2DF7A /* TSceneNode_Transform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSceneNode_Transform.cpp; path = ../TSceneNode_Transform.cpp; sourceTree = SOURCE_ROOT; };
 		84C107AE0F0A686E00B2DF7A /* TSceneNode_Transform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSceneNode_Transform.h; path = ../TSceneNode_Transform.h; sourceTree = SOURCE_ROOT; };
-		84C107CB0F0A6A3100B2DF7A /* TootleDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TootleDebug.xcconfig; sourceTree = "<group>"; };
-		84C107CC0F0A6A3100B2DF7A /* TootleRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TootleRelease.xcconfig; sourceTree = "<group>"; };
-		84C107CD0F0A6A3100B2DF7A /* TootleReleaseAdHoc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TootleReleaseAdHoc.xcconfig; sourceTree = "<group>"; };
-		84C107CE0F0A6A3100B2DF7A /* TootleReleaseAppStore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TootleReleaseAppStore.xcconfig; sourceTree = "<group>"; };
 		84E1156A0F3C515B00471397 /* TSchemeManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSchemeManager.h; path = ../TSchemeManager.h; sourceTree = SOURCE_ROOT; };
 		84E1156B0F3C515B00471397 /* TSchemeManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSchemeManager.cpp; path = ../TSchemeManager.cpp; sourceTree = SOURCE_ROOT; };
 		84E1156E0F3C51DF00471397 /* TSchemeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSchemeNode.cpp; path = ../TSchemeNode.cpp; sourceTree = SOURCE_ROOT; };
 		84E1156F0F3C51DF00471397 /* TSchemeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSchemeNode.h; path = ../TSchemeNode.h; sourceTree = SOURCE_ROOT; };
+		BF8FC1E5118CA6E4005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
+		BF8FC1E6118CA6F8005391AF /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF8FC1E7118CA6F8005391AF /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,10 +101,9 @@
 		84C107CA0F0A6A3100B2DF7A /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				84C107CB0F0A6A3100B2DF7A /* TootleDebug.xcconfig */,
-				84C107CC0F0A6A3100B2DF7A /* TootleRelease.xcconfig */,
-				84C107CD0F0A6A3100B2DF7A /* TootleReleaseAdHoc.xcconfig */,
-				84C107CE0F0A6A3100B2DF7A /* TootleReleaseAppStore.xcconfig */,
+				BF8FC1E6118CA6F8005391AF /* LibDebug.xcconfig */,
+				BF8FC1E7118CA6F8005391AF /* LibRelease.xcconfig */,
+				BF8FC1E5118CA6E4005391AF /* BuildConfigurations */,
 			);
 			name = "Build Configurations";
 			path = ../../BuildConfigurations/IPod;
@@ -213,14 +211,14 @@
 /* Begin XCBuildConfiguration section */
 		84C107830F0A679500B2DF7A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84C107CB0F0A6A3100B2DF7A /* TootleDebug.xcconfig */;
+			baseConfigurationReference = BF8FC1E6118CA6F8005391AF /* LibDebug.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		84C107840F0A679500B2DF7A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84C107CC0F0A6A3100B2DF7A /* TootleRelease.xcconfig */;
+			baseConfigurationReference = BF8FC1E7118CA6F8005391AF /* LibRelease.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
@@ -228,44 +226,14 @@
 		84C107910F0A67BD00B2DF7A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 			};
 			name = Debug;
 		};
 		84C107920F0A67BD00B2DF7A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 			};
 			name = Release;
-		};
-		84C107C40F0A6A0500B2DF7A /* Release AdHoc */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84C107CD0F0A6A3100B2DF7A /* TootleReleaseAdHoc.xcconfig */;
-			buildSettings = {
-			};
-			name = "Release AdHoc";
-		};
-		84C107C50F0A6A0500B2DF7A /* Release AdHoc */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-			};
-			name = "Release AdHoc";
-		};
-		84C107C60F0A6A0B00B2DF7A /* Release AppStore */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84C107CE0F0A6A3100B2DF7A /* TootleReleaseAppStore.xcconfig */;
-			buildSettings = {
-			};
-			name = "Release AppStore";
-		};
-		84C107C70F0A6A0B00B2DF7A /* Release AppStore */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-			};
-			name = "Release AppStore";
 		};
 /* End XCBuildConfiguration section */
 
@@ -275,8 +243,6 @@
 			buildConfigurations = (
 				84C107830F0A679500B2DF7A /* Debug */,
 				84C107840F0A679500B2DF7A /* Release */,
-				84C107C40F0A6A0500B2DF7A /* Release AdHoc */,
-				84C107C60F0A6A0B00B2DF7A /* Release AppStore */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -286,8 +252,6 @@
 			buildConfigurations = (
 				84C107910F0A67BD00B2DF7A /* Debug */,
 				84C107920F0A67BD00B2DF7A /* Release */,
-				84C107C50F0A6A0500B2DF7A /* Release AdHoc */,
-				84C107C70F0A6A0B00B2DF7A /* Release AppStore */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -159,13 +159,13 @@ protected:
 	bool		SendPacketCurrentDir(u32 FtpCommand,TLNetwork::TSocketServer& Server);
 	bool		GetDirectoryList(const TString& Arguments,TString& DirListing,bool JustNames) const;
 
-	bool		CreateDataServer();										//	create data server (this gets pre-created for PASV mode)
+	bool		CreateDataServer(TRef& Error);							//	create data server (this gets pre-created for PASV mode)
 	void		DestroyDataServer();									//	destroy, close and clean up the data server
-	bool		CreateDataTask(TPtr<TFtpDataTask>& pNewTask,TLNetwork::TSocketServer& CommandServer);			//	create a data server to transfer something
+	bool		CreateDataTask(TPtr<TFtpDataTask>& pNewTask,TRef& Error,TLNetwork::TSocketServer& CommandServer);			//	create a data server to transfer something
 	void		DestroyDataTask();										//	clean up the task
-	bool		SendDataDirListing(const TString& DirListing,TLNetwork::TSocketServer& CommandServer);			//	send dir listing via data connection
-	bool		SendDataSendFile(TPtr<TLFileSys::TFile>& pFile,TLNetwork::TSocketServer& CommandServer);	//	send file via data connection
-	bool		SendDataRecieveFile(TPtr<TLFileSys::TFile>& pNewFile,TLNetwork::TSocketServer& CommandServer);	//	recieve into this file via data connection
+	bool		SendDataDirListing(const TString& DirListing,TRef& Error,TLNetwork::TSocketServer& CommandServer);			//	send dir listing via data connection
+	bool		SendDataSendFile(TPtr<TLFileSys::TFile>& pFile,TRef& Error,TLNetwork::TSocketServer& CommandServer);	//	send file via data connection
+	bool		SendDataRecieveFile(TPtr<TLFileSys::TFile>& pNewFile,TRef& Error,TLNetwork::TSocketServer& CommandServer);	//	recieve into this file via data connection
 
 protected:
 	TRef					m_FileSystem;		//	where in the file system the client is. if invalid then currently browsing the root. as each "dir" is a file system, we can simply represent their CWD this way

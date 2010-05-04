@@ -9,18 +9,16 @@
 //	gr: new ipod vars from project
 
 //	gr: needed for openfeint
-GCC_OBJC_CALL_CXX_CDTORS = YES
 GCC_C_LANGUAGE_STANDARD = c99
-GCC_ENABLE_FLOATING_POINT_LIBRARY_CALLS = YES
-//include path? "$(SRCROOT)/../IPod/build/Debug-iphoneos"
+
 
 //	gr: on iphone, when png's are bundled into the package they get compressed and modified to a 
 //		compressed format (which leaves artifacts) that libpng can't handle. Add this to stop it
 //		compressing our resources (assets) when building
-IPHONE_OPTIMIZE_OPTIONS=-skip-PNGs
+IPHONE_OPTIMIZE_OPTIONS = -skip-PNGs
 
 //	gr: add the target define
-IPOD_DEFINITIONS = $(TOOTLE_DEFINITIONS) TL_TARGET_IPOD 
+IPOD_DEFINITIONS = $(TOOTLE_DEFINITIONS) TL_TARGET_IPOD FT2_BUILD_LIBRARY 
 //	this linker flag is required if we're linking with any libs with objective-c code in them
 IPOD_LDFLAGS = -ObjC -all_load 
 
@@ -33,11 +31,13 @@ DEAD_CODE_STRIPPING = NO
 //	BUT, fix & continue being enabled still enables zero link
 ZERO_LINK = NO
 GCC_ENABLE_FIX_AND_CONTINUE = NO
+GCC_OBJC_CALL_CXX_CDTORS = YES
 
 //	gr: speed up
 GCC_UNROLL_LOOPS = YES
 GCC_FAST_MATH = YES
 GCC_THUMB_SUPPORT = NO
+GCC_ENABLE_FLOATING_POINT_LIBRARY_CALLS = YES
 
 GCC_ENABLE_SSE3_EXTENSIONS = YES
 GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES
@@ -102,3 +102,13 @@ VALID_ARCHS = armv6
 SDKROOT = iphoneos2.2.1
 ONLY_ACTIVE_ARCH = YES
 
+EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = *.nib *.lproj *.framework *.gch (*) CVS .svn *.xcodeproj *.xcode *.pbproj *.pbxproj
+INCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = 
+
+GCC_ENABLE_PASCAL_STRINGS = YES
+STRINGS_FILE_OUTPUT_ENCODING = UTF-16
+GCC_REUSE_STRINGS = YES
+GCC_FAST_OBJC_DISPATCH = YES
+
+//	required for openfient
+GCC_AUTO_VECTORIZATION = YES	
