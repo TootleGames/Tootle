@@ -43,7 +43,8 @@ namespace TLString
 };
 
 
-
+// Forard declaration
+class TBinaryTree;
 
 //----------------------------------------------------
 //	generic tootle <Data> xml data formatting -> TBinary data conversion

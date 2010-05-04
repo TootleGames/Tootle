@@ -2,6 +2,7 @@
 #include <TootleCore/TKeyArray.h>
 #include <TootleCore/TRef.h>
 #include <TootleCore/TTransform.h>
+#include <TootleCore/TMatrix.h>
 #include <TootleAsset/TTexture.h>
 #include "Opengl/GLRasteriser.h"
 

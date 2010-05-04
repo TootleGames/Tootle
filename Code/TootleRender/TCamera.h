@@ -25,6 +25,7 @@
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/TSubscriber.h>
 #include <TootleCore/TLMaths.h>
+#include <TootleCore/TMatrix.h>
 #include <TootleMaths/TQuadTree.h>
 #include <TootleMaths/TFrustum.h>
 #include <TootleMaths/TLine.h>

@@ -1,6 +1,7 @@
 #include "TLDebug.h"
 #include "TString.h"
-#include "TLMaths.h"
+#include "TQuaternion.h"
+#include "TMatrix.h"
 
 //	include the right header for float checks
 #ifdef __GNUG__

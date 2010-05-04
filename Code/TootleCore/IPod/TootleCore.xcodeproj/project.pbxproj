@@ -14,6 +14,14 @@
 		8434C8D9100B484C0063673E /* TLRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 8434C8D8100B484C0063673E /* TLRandom.h */; };
 		8440D7A2105528CD0045E57E /* IPodAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = 8440D7A0105528CD0045E57E /* IPodAlert.h */; };
 		8440D7A3105528CD0045E57E /* IPodAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8440D7A1105528CD0045E57E /* IPodAlert.mm */; };
+		845EC9E2119072B200362CA4 /* IPodMaths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845EC9E0119072B200362CA4 /* IPodMaths.cpp */; };
+		845EC9E3119072B200362CA4 /* IPodMaths.h in Headers */ = {isa = PBXBuildFile; fileRef = 845EC9E1119072B200362CA4 /* IPodMaths.h */; };
+		845EC9EA119072C800362CA4 /* TAxisAngle.h in Headers */ = {isa = PBXBuildFile; fileRef = 845EC9E4119072C800362CA4 /* TAxisAngle.h */; };
+		845EC9EB119072C800362CA4 /* TEuler.h in Headers */ = {isa = PBXBuildFile; fileRef = 845EC9E5119072C800362CA4 /* TEuler.h */; };
+		845EC9EC119072C800362CA4 /* TMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845EC9E6119072C800362CA4 /* TMatrix.cpp */; };
+		845EC9ED119072C800362CA4 /* TMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 845EC9E7119072C800362CA4 /* TMatrix.h */; };
+		845EC9EE119072C800362CA4 /* TQuaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845EC9E8119072C800362CA4 /* TQuaternion.cpp */; };
+		845EC9EF119072C800362CA4 /* TQuaternion.h in Headers */ = {isa = PBXBuildFile; fileRef = 845EC9E9119072C800362CA4 /* TQuaternion.h */; };
 		8461F1100FBAC46800742359 /* TSmallObjectAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8461F10F0FBAC46800742359 /* TSmallObjectAllocator.cpp */; };
 		8461F1130FBAC4B800742359 /* TSmallObjectAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8461F1120FBAC4B800742359 /* TSmallObjectAllocator.h */; };
 		8461F3420FBAE7F200742359 /* TSmallObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 8461F3410FBAE7F200742359 /* TSmallObject.h */; };
@@ -106,6 +114,27 @@
 		8434C8D8100B484C0063673E /* TLRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLRandom.h; path = ../TLRandom.h; sourceTree = SOURCE_ROOT; };
 		8440D7A0105528CD0045E57E /* IPodAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodAlert.h; sourceTree = "<group>"; };
 		8440D7A1105528CD0045E57E /* IPodAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodAlert.mm; sourceTree = "<group>"; };
+		845EC9E0119072B200362CA4 /* IPodMaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IPodMaths.cpp; sourceTree = "<group>"; };
+		845EC9E1119072B200362CA4 /* IPodMaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodMaths.h; sourceTree = "<group>"; };
+		845EC9E4119072C800362CA4 /* TAxisAngle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAxisAngle.h; path = ../TAxisAngle.h; sourceTree = SOURCE_ROOT; };
+		845EC9E5119072C800362CA4 /* TEuler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TEuler.h; path = ../TEuler.h; sourceTree = SOURCE_ROOT; };
+		845EC9E6119072C800362CA4 /* TMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TMatrix.cpp; path = ../TMatrix.cpp; sourceTree = SOURCE_ROOT; };
+		845EC9E7119072C800362CA4 /* TMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TMatrix.h; path = ../TMatrix.h; sourceTree = SOURCE_ROOT; };
+		845EC9E8119072C800362CA4 /* TQuaternion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TQuaternion.cpp; path = ../TQuaternion.cpp; sourceTree = SOURCE_ROOT; };
+		845EC9E9119072C800362CA4 /* TQuaternion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TQuaternion.h; path = ../TQuaternion.h; sourceTree = SOURCE_ROOT; };
+		845EC9F0119072D900362CA4 /* MacMaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacMaths.h; path = ../Mac/MacMaths.h; sourceTree = SOURCE_ROOT; };
+		845EC9F2119072FD00362CA4 /* cpuid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cpuid.cpp; path = ../PC/cpuid.cpp; sourceTree = SOURCE_ROOT; };
+		845EC9F3119072FD00362CA4 /* cpuid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cpuid.h; path = ../PC/cpuid.h; sourceTree = SOURCE_ROOT; };
+		845EC9F4119072FD00362CA4 /* PCCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCCore.cpp; path = ../PC/PCCore.cpp; sourceTree = SOURCE_ROOT; };
+		845EC9F5119072FD00362CA4 /* PCDebug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCDebug.cpp; path = ../PC/PCDebug.cpp; sourceTree = SOURCE_ROOT; };
+		845EC9F6119072FD00362CA4 /* PCDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCDebug.h; path = ../PC/PCDebug.h; sourceTree = SOURCE_ROOT; };
+		845EC9F7119072FD00362CA4 /* PCMaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCMaths.h; path = ../PC/PCMaths.h; sourceTree = SOURCE_ROOT; };
+		845EC9F8119072FD00362CA4 /* PCMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCMemory.cpp; path = ../PC/PCMemory.cpp; sourceTree = SOURCE_ROOT; };
+		845EC9F9119072FD00362CA4 /* PCMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCMemory.h; path = ../PC/PCMemory.h; sourceTree = SOURCE_ROOT; };
+		845EC9FA119072FD00362CA4 /* PCThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCThread.cpp; path = ../PC/PCThread.cpp; sourceTree = SOURCE_ROOT; };
+		845EC9FB119072FD00362CA4 /* PCThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCThread.h; path = ../PC/PCThread.h; sourceTree = SOURCE_ROOT; };
+		845EC9FC119072FD00362CA4 /* PCTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCTime.cpp; path = ../PC/PCTime.cpp; sourceTree = SOURCE_ROOT; };
+		845EC9FD119072FD00362CA4 /* PCTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCTime.h; path = ../PC/PCTime.h; sourceTree = SOURCE_ROOT; };
 		8461F10F0FBAC46800742359 /* TSmallObjectAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TSmallObjectAllocator.cpp; path = ../TSmallObjectAllocator.cpp; sourceTree = SOURCE_ROOT; };
 		8461F1120FBAC4B800742359 /* TSmallObjectAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TSmallObjectAllocator.h; path = ../TSmallObjectAllocator.h; sourceTree = SOURCE_ROOT; };
 		8461F3410FBAE7F200742359 /* TSmallObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSmallObject.h; path = ../TSmallObject.h; sourceTree = SOURCE_ROOT; };
@@ -200,6 +229,7 @@
 		840A927110D7E82300F8960C /* Mac Source Files */ = {
 			isa = PBXGroup;
 			children = (
+				845EC9F0119072D900362CA4 /* MacMaths.h */,
 				840A927710D7E83B00F8960C /* MacDebug.h */,
 				840A927810D7E83B00F8960C /* MacDebug.mm */,
 				840A927910D7E83B00F8960C /* MacMemory.h */,
@@ -210,6 +240,25 @@
 				840A927E10D7E83B00F8960C /* MacTime.mm */,
 			);
 			name = "Mac Source Files";
+			sourceTree = "<group>";
+		};
+		845EC9F1119072E100362CA4 /* PC Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				845EC9F2119072FD00362CA4 /* cpuid.cpp */,
+				845EC9F3119072FD00362CA4 /* cpuid.h */,
+				845EC9F4119072FD00362CA4 /* PCCore.cpp */,
+				845EC9F5119072FD00362CA4 /* PCDebug.cpp */,
+				845EC9F6119072FD00362CA4 /* PCDebug.h */,
+				845EC9F7119072FD00362CA4 /* PCMaths.h */,
+				845EC9F8119072FD00362CA4 /* PCMemory.cpp */,
+				845EC9F9119072FD00362CA4 /* PCMemory.h */,
+				845EC9FA119072FD00362CA4 /* PCThread.cpp */,
+				845EC9FB119072FD00362CA4 /* PCThread.h */,
+				845EC9FC119072FD00362CA4 /* PCTime.cpp */,
+				845EC9FD119072FD00362CA4 /* PCTime.h */,
+			);
+			name = "PC Source Files";
 			sourceTree = "<group>";
 		};
 		84C108D30F0A76EC00B2DF7A = {
@@ -242,6 +291,13 @@
 		84C1095F0F0A790100B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				845EC9F1119072E100362CA4 /* PC Source Files */,
+				845EC9E4119072C800362CA4 /* TAxisAngle.h */,
+				845EC9E5119072C800362CA4 /* TEuler.h */,
+				845EC9E6119072C800362CA4 /* TMatrix.cpp */,
+				845EC9E7119072C800362CA4 /* TMatrix.h */,
+				845EC9E8119072C800362CA4 /* TQuaternion.cpp */,
+				845EC9E9119072C800362CA4 /* TQuaternion.h */,
 				840A927110D7E82300F8960C /* Mac Source Files */,
 				84C109CE0F0A791F00B2DF7A /* IPod */,
 				846C18C6109748AE0098DFAF /* TTransform.cpp */,
@@ -320,6 +376,8 @@
 		84C109CE0F0A791F00B2DF7A /* IPod */ = {
 			isa = PBXGroup;
 			children = (
+				845EC9E0119072B200362CA4 /* IPodMaths.cpp */,
+				845EC9E1119072B200362CA4 /* IPodMaths.h */,
 				8421B17C108628DE00439A7E /* IPodDebug.h */,
 				8421B17D108628DE00439A7E /* IPodDebug.mm */,
 				8440D7A0105528CD0045E57E /* IPodAlert.h */,
@@ -395,6 +453,11 @@
 				84F88B71109EEEB6004BAF8B /* TArrayMisc.h in Headers */,
 				84F88B72109EEEB6004BAF8B /* TPointerArray.h in Headers */,
 				840A926F10D7E81700F8960C /* IPodString.h in Headers */,
+				845EC9E3119072B200362CA4 /* IPodMaths.h in Headers */,
+				845EC9EA119072C800362CA4 /* TAxisAngle.h in Headers */,
+				845EC9EB119072C800362CA4 /* TEuler.h in Headers */,
+				845EC9ED119072C800362CA4 /* TMatrix.h in Headers */,
+				845EC9EF119072C800362CA4 /* TQuaternion.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -470,6 +533,9 @@
 				8421B17F108628DE00439A7E /* IPodDebug.mm in Sources */,
 				846C18CA109748AE0098DFAF /* TTransform.cpp in Sources */,
 				840A927010D7E81700F8960C /* IPodString.mm in Sources */,
+				845EC9E2119072B200362CA4 /* IPodMaths.cpp in Sources */,
+				845EC9EC119072C800362CA4 /* TMatrix.cpp in Sources */,
+				845EC9EE119072C800362CA4 /* TQuaternion.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

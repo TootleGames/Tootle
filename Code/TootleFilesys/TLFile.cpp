@@ -1,6 +1,10 @@
 #include "TLFile.h"
 #include <TootleCore/TBinaryTree.h>
 
+#include <TootleCore/TAxisAngle.h>
+#include <TootleCore/TEuler.h>
+#include <TootleCore/TQuaternion.h>
+#include <TootleCore/TMatrix.h>
 
 
 //--------------------------------------------------------

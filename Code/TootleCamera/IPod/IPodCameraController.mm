@@ -121,7 +121,7 @@
 	CGFloat scaledX = 480 * baseImage.size.width / baseImage.size.height;
 	CGFloat offsetX = (scaledX - 320) / -2;
 	
-	scaledRect.origin = CGPointMake(offsetX, 0.0);
+	scaledRect.origin = CGPointMake(offsetX, 0.0f);
 	scaledRect.size.width  = scaledX;
 	scaledRect.size.height = 480;
 	

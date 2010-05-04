@@ -10,8 +10,13 @@
 #pragma once
 
 #include "TLTypes.h"
+#include "TQuaternion.h"
 #include "TLMaths.h"
 #include "TArray.h" 
+
+//	forward declarations
+class TBinaryTree;
+
 
 namespace TLMaths
 {

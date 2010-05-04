@@ -3,6 +3,8 @@
 #include "TBox.h"
 #include <TootleCore/TString.h>
 
+#include <TootleCore/TMatrix.h>
+
 
 TLMaths::TSphere::TSphere() :
 	m_Pos				( 0.f, 0.f, 0.f ),

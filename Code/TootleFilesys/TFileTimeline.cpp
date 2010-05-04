@@ -11,6 +11,12 @@
 #include <TootleAsset/TTimeline.h>
 #include "TLFile.h"
 
+#include <TootleCore/TAxisAngle.h>
+#include <TootleCore/TEuler.h>
+#include <TootleCore/TQuaternion.h>
+#include <TootleCore/TMatrix.h>
+
+
 
 
 TLFileSys::TFileTimeline::TFileTimeline(TRefRef FileRef,TRefRef FileTypeRef) :

@@ -57,16 +57,13 @@ SyncBool TSchemeManager::Shutdown()
 	}	
 	
 	// Remove all request objects
-	for(u32 uIndex = 0; uIndex < m_SchemeUpdateRequests.GetSize(); uIndex++)
-	{
-		m_SchemeUpdateRequests.ElementAt(uIndex) = NULL;
-	}
+	m_SchemeUpdateRequests.SetAll(NULL);
 
 	// Empty request list
-	m_SchemeUpdateRequests.Empty();
+	m_SchemeUpdateRequests.Empty(TRUE);
 	
 	// Empty the list of remove requests
-	m_SchemeUpdateRemove.Empty();
+	m_SchemeUpdateRemove.Empty(TRUE);
 	
 	return SyncTrue; 
 }
