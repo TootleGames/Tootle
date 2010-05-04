@@ -179,7 +179,7 @@ Bool TLMenu::TMenuController::ExecuteMenuItem(TRefRef MenuItemRef)
 TPtr<TLAsset::TMenu> TLMenu::TMenuController::CreateMenu(TRefRef MenuRef)
 {
 	//	find menu asset - note: this has to be block loaded because its not too easy to make this an async operation
-	TPtr<TLAsset::TMenu>& pMenuAsset = TLAsset::GetAssetPtr<TLAsset::TMenu>( MenuRef );
+	TPtr<TLAsset::TMenu> pMenuAsset = TLAsset::GetAssetPtr<TLAsset::TMenu>( MenuRef );
 	if ( !pMenuAsset )
 	{
 		TTempString Debug_String("Failed to find menu asset ");
