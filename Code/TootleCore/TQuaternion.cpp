@@ -10,7 +10,8 @@
 #include "TQuaternion.h"
 
 #include "TMatrix.h"  // Needed for RotateVector & UnrotateVector
-#include "TAngle.h"
+#include "TLMaths.h"
+
 
 #include "TLDebug.h"
 #include "TString.h"

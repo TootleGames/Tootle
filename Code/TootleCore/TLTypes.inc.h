@@ -288,7 +288,7 @@ public:
 	FORCEINLINE void		Normalise(float NormalLength=1.f)			{	(*this) *= NormalLength/Length();	};			//	normalises vector
 	Type4<TYPE>				Normal(float NormalLength=1.f) const		{	return (*this) * (NormalLength/Length());	};	//	returns the normal of thsi vector
 	FORCEINLINE TYPE		LengthSq() const							{	return (x*x) + (y*y) + (z*z) + (w*w);	};
-	FORCEINLINE TYPE		Length() const								{	return sqrtf( LengthSq() );	};
+	FORCEINLINE TYPE		Length() const								{	return TLMaths::Sqrtf( LengthSq() );	};
 	float					DotProduct(const Type4<TYPE>& v) const		{	return (x * v.x) + (y * v.y) + (z * v.z) + (w * v.w);	}
 
 	//	2d functions

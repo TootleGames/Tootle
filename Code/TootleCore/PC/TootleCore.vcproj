@@ -235,6 +235,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PCMaths.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PCMemory.cpp"
 				>
 			</File>
@@ -437,6 +441,30 @@
 			Name="IPod Source Files"
 			>
 			<File
+				RelativePath="..\IPod\IPodAlert.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\IPod\IPodAlert.mm"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\IPod\IPodApp.h"
 				>
 				<FileConfiguration
@@ -549,6 +577,54 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\IPod\IPodDebug.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\IPod\IPodDebug.mm"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\IPod\IPodMaths.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\IPod\IPodMaths.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\IPod\IPodMemory.h"
 				>
 				<FileConfiguration
@@ -597,6 +673,30 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Final|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\IPod\IPodString.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\IPod\IPodString.mm"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -857,6 +957,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\Mac\MacMaths.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Mac\MacMemory.h"
 				>
 				<FileConfiguration
@@ -905,6 +1009,30 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Final|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\Mac\MacString.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\Mac\MacString.mm"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -982,6 +1110,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TAxisAngle.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TClassFactory.h"
 			>
 		</File>
@@ -995,6 +1127,10 @@
 		</File>
 		<File
 			RelativePath="..\TCoreManager.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TEuler.h"
 			>
 		</File>
 		<File
@@ -1070,6 +1206,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TMatrix.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TMatrix.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TMemoryAllocators.h"
 			>
 		</File>
@@ -1079,6 +1223,14 @@
 		</File>
 		<File
 			RelativePath="..\TPtr.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TQuaternion.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TQuaternion.h"
 			>
 		</File>
 		<File
