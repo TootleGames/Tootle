@@ -16,6 +16,9 @@ TLRender::TEffect* TLRender::TEffectFactory::CreateObject(TRefRef InstanceRef,TR
 	if ( TypeRef == "TxAnim" )
 		return new TEffect_TextureAnimate();
 
+	if ( TypeRef == "Sprite" )
+		return new TEffect_Sprite();
+
 	return NULL;
 }
 
@@ -243,5 +246,60 @@ bool TLRender::TEffect_TextureAnimate::Update(float Timestep)
 	SetFrame( FrameIndex );
 
 	return true;
+}
+
+
+
+
+
+TLRender::TEffect_Sprite::TEffect_Sprite() :
+	TLRender::TEffect	( TFixedArray<TRef,3>() << "FFTxM" ),
+	m_Glyph				( 0 )
+{
+}
+
+
+bool TLRender::TEffect_Sprite::Initialise(TPtr<TBinaryTree>& pData)
+{
+	//	do super initialise
+	if ( !TEffect::Initialise( pData ) )
+		return false;
+
+	//	read atlas asset
+	bool Changed = false;
+
+	Changed |= pData->ImportData("Atlas", m_Atlas );
+	Changed |= pData->ImportData("Glyph", m_Glyph );
+
+	//	atlas or glyph has changed
+	if ( Changed )
+		OnChanged();
+
+	return true;
+}
+
+
+//------------------------------------------------
+//	update frame transforms
+//------------------------------------------------
+void TLRender::TEffect_Sprite::OnChanged()
+{
+	//	get asset
+	TLAsset::TAtlas* pAtlas = TLAsset::GetAsset<TLAsset::TAtlas>( m_Atlas );
+	if ( !pAtlas )
+		return;
+
+	//	fetch glyph
+	const TLAsset::TAtlasGlyph* pGlyph = pAtlas->GetGlyph( m_Glyph );
+	if ( !pGlyph )
+		return;
+
+	//	get the transform for the glyph
+	TLMaths::TTransform Transform;
+	Transform.SetTranslate( pGlyph->GetTopLeft().xyz(0.f) );
+	Transform.SetScale( pGlyph->GetSize().xyz(1.f) );
+
+	//	update shader
+	SetTransform( Transform );
 }
 

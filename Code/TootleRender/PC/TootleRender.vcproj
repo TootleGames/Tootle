@@ -752,6 +752,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TRenderNodeSprite.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TRenderNodeSprite.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TRenderNodeSwoosh.cpp"
 			>
 		</File>

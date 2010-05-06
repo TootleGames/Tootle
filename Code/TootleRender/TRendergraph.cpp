@@ -9,6 +9,7 @@
 #include "TRenderNodeScrollableView.h"
 #include "TRenderNodeTimeline.h"
 #include "TRenderNodeParticle.h"
+#include "TRenderNodeSprite.h"
 #include "TEffect.h"
 #include <TootleCore/TLTime.h>
 #include "TLRender.h"
@@ -139,50 +140,35 @@ Bool TLRender::TRendergraph::SendMessageToNode(TRefRef NodeRef,TLMessaging::TMes
 
 TLRender::TRenderNode* TLRender::TRenderNodeFactory::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 {
-	if ( TypeRef == "Tile" )
-		return new TLRender::TRenderNodeTile(InstanceRef,TypeRef);
-
-	if ( TypeRef == "Text" )
+	switch ( TypeRef.GetData() )
 	{
-		TLDebug_Warning("Text type of render node is deprecated, please use VText for vector text now");
+	case TRef_Static4(T,i,l,e):		return new TLRender::TRenderNodeTile(InstanceRef,TypeRef);
+	case TRef_Static4(T,e,x,t):	
+	{
+		TLDebug_Break("Text type of render node is deprecated, please use VText for vector text now");
 		return new TLRender::TRenderNodeVectorText(InstanceRef,"VText");
 	}
 
-	if ( TypeRef == "VText" )
-		return new TLRender::TRenderNodeVectorText(InstanceRef,TypeRef);
-
-	if ( TypeRef == "TxText" )
-		return new TLRender::TRenderNodeTextureText(InstanceRef,TypeRef);
+	case TRef_Static(V,T,e,x,t):	return new TLRender::TRenderNodeVectorText(InstanceRef,TypeRef);
+	case TRef_Static(T,x,T,e,x):	return new TLRender::TRenderNodeTextureText(InstanceRef,TypeRef);
+	case TRef_Static(D,b,g,M,e):	return new TLRender::TRenderNodeDebugMesh(InstanceRef,TypeRef);
 
 // [06/03/09] DB - The glyph render node needs changing to be publicly creatable.  
 // This is the only render node that has this issue
 //	if ( TypeRef == "Glyph" )
 //		return new TLRender::TRenderNodeGlyph(InstanceRef,TypeRef);
 
-	if ( TypeRef == "DbgMesh" )
-		return new TLRender::TRenderNodeDebugMesh(InstanceRef,TypeRef);
+	case TRef_Static(D,b,g,P,a):	return new TLRender::TRenderNodePathNetwork(InstanceRef,TypeRef);
+	case TRef_Static(D,b,g,P,h):	return new TLRender::TRenderNodePhysicsNode(InstanceRef,TypeRef);
+	case TRef_Static(D,b,g,Q,u):	return new TLRender::TRenderNodeQuadTreeZone(InstanceRef,TypeRef);
+	case TRef_Static(S,w,o,o,s):	return new TLRender::TRenderNodeSwoosh(InstanceRef,TypeRef);
+	case TRef_Static(S,c,r,o,l):	return new TLRender::TRenderNodeScrollableView(InstanceRef,TypeRef);
+	case TRef_Static(T,i,m,e,l):	return new TLRender::TRenderNodeTimeline(InstanceRef,TypeRef);
+	case TRef_Static(P,a,r,t,i):	return new TLRender::TRenderNodeParticle(InstanceRef,TypeRef);
+	case TRef_Static(S,p,r,i,t):	return new TLRender::TRenderNodeSprite(InstanceRef,TypeRef);
 
-	if ( TypeRef == "DbgPath" )
-		return new TLRender::TRenderNodePathNetwork(InstanceRef,TypeRef);
-
-	if ( TypeRef == "DbgPhys" )
-		return new TLRender::TRenderNodePhysicsNode(InstanceRef,TypeRef);
-
-	if ( TypeRef == "DbgQuad" )
-		return new TLRender::TRenderNodeQuadTreeZone(InstanceRef,TypeRef);
-
-	if ( TypeRef == "Swoosh" )
-		return new TLRender::TRenderNodeSwoosh(InstanceRef,TypeRef);
-
-	if ( TypeRef == "Scroll" )
-		return new TLRender::TRenderNodeScrollableView(InstanceRef,TypeRef);
-
-	if ( TypeRef == "Timeline" )
-		return new TLRender::TRenderNodeTimeline(InstanceRef,TypeRef);
-
-	if ( TypeRef == "Particle" )
-		return new TLRender::TRenderNodeParticle(InstanceRef,TypeRef);
-
-	return NULL;
+	default:
+		return NULL;
+	}
 }
 

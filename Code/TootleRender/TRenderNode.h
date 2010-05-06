@@ -166,7 +166,7 @@ public:
 	FORCEINLINE const TRef&					GetTextureRef() const						{	return m_TextureRef;	}
 	FORCEINLINE void						SetTextureRef(TRefRef TextureRef)			{	if ( m_TextureRef != TextureRef )	{	m_TextureRef = TextureRef;	OnTextureRefChanged();	}	}
 
-	Bool									AddEffect(TBinaryTree& EffectData);			//	create an effect from plain data
+	TPtr<TLRender::TEffect>& 				AddEffect(TBinaryTree& EffectData);			//	create an effect from plain data
 
 	virtual TLAsset::TMesh*					GetMeshAsset();								//	default behaviour fetches the mesh from the asset lib with our mesh ref
 	virtual TLAsset::TTexture*				GetTextureAsset();							//	default behaviour fetches the texutre from the asset lib with our texture ref

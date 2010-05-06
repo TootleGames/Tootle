@@ -572,21 +572,21 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 //---------------------------------------------------------
 //	create an effect from plain data
 //---------------------------------------------------------
-Bool TLRender::TRenderNode::AddEffect(TBinaryTree& EffectData)
+TPtr<TLRender::TEffect>& TLRender::TRenderNode::AddEffect(TBinaryTree& EffectData)
 {
 	//	read type
 	TRef EffectType;
 	if ( !EffectData.ImportData("Type", EffectType ) )
 	{
 		TLDebug_Break("Type data required to create effect");
-		return false;
+		return TLPtr::GetNullPtr<TLRender::TEffect>();
 	}
 
 	//	create the effect
 	if ( !g_pEffectFactory )
 	{
 		TLDebug_Break("Effect factory expected");
-		return false;
+		return TLPtr::GetNullPtr<TLRender::TEffect>();
 	}
 
 	//	allocate effect
@@ -599,7 +599,7 @@ Bool TLRender::TRenderNode::AddEffect(TBinaryTree& EffectData)
 		TTempString Debug_String;
 		Debug_String << "Failed to create effect of type " << EffectType;
 		TLDebug_Break( Debug_String );
-		return false;
+		return TLPtr::GetNullPtr<TLRender::TEffect>();
 	}
 
 	//	allocate rendernode data to store the effect data
@@ -613,13 +613,13 @@ Bool TLRender::TRenderNode::AddEffect(TBinaryTree& EffectData)
 	{
 		TLDebug_Break("failed to init effect");
 		GetNodeData().RemoveChild( pNodeEffectData );
-		return false;
+		return TLPtr::GetNullPtr<TLRender::TEffect>();
 	}
 
 	//	add to effect list
-	m_Effects.Add( pEffect );
+	TPtr<TLRender::TEffect>& pEffectRef = m_Effects.AddPtr( pEffect );
 
-	return true;
+	return pEffectRef;
 }
 
 //---------------------------------------------------------

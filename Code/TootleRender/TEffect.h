@@ -17,6 +17,7 @@ namespace TLRender
 {
 	class TEffect;
 	class TEffect_TextureAnimate;
+	class TEffect_Sprite;
 
 	class TEffectFactory;
 
@@ -62,6 +63,8 @@ protected:
 
 
 //------------------------------------------------
+//	
+//------------------------------------------------
 class TLRender::TEffect_TextureAnimate : public TLRender::TEffect, public TLMessaging::TSubscriber
 {
 public:
@@ -84,5 +87,27 @@ protected:
 	TArray<u16>					m_FrameIndexes;	//	indexes in the atlas to cycle through
 	float						m_Time;			//	current time counter
 	float						m_FrameRate;	//	change frame every N amount (frames per second)
+};
+
+
+//------------------------------------------------
+//	
+//------------------------------------------------
+class TLRender::TEffect_Sprite : public TLRender::TEffect
+{
+public:
+	TEffect_Sprite();
+
+	void			SetAtlas(TRefRef Atlas)									{	m_Atlas = Atlas;	OnChanged();	}
+	void			SetGlyph(u16 Glyph)										{	m_Glyph = Glyph;	OnChanged();	}
+	virtual bool	Initialise(TPtr<TBinaryTree>& pData);					//	set our data pointer and initialise vars from that data
+
+protected:
+	void			OnChanged();											//	call when glyph or atlas changes to update shader
+	void			SetTransform(const TLMaths::TTransform& Transform)		{	Transform.ReplaceData( GetShaderData() );	}
+
+protected:
+	TRef			m_Atlas;
+	u16				m_Glyph;
 };
 
