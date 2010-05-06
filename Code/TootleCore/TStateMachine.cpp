@@ -59,7 +59,10 @@ Bool TStateMachine::SetMode(TRefRef NextModeRef)
 		pNextMode->PreBegin();
 
 		if ( !pNextMode->OnBegin( CurrentModeRef ) )
+		{
+			TLDebug_Print("Next mode OnBegin failed!");
 			pNextMode = NULL;
+		}
 	}
 
 	//	end current mode
