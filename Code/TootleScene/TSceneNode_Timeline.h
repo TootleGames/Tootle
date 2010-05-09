@@ -29,14 +29,15 @@ protected:
 	virtual void 			Update(float Timestep);					
 	virtual void			Shutdown();							
 
-	virtual void			UpdateNodeData();
-	
 	virtual void			SetProperty(TLMessaging::TMessage& Message);	
-
+	virtual void			UpdateNodeData();
 	virtual void			ProcessMessage(TLMessaging::TMessage& Message);
 
 	virtual void			OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode);
 
+	TLAnimation::TTimelineInstance*	GetTimelineInstance()	{	return m_pTimelineInstance;	}
+	virtual void			OnTimelineComplete(TLAnimation::TTimelineInstance& Timeline);	//	timeline has finished (this won't occur if the timeline loops)
+	virtual void			OnTimelineJump()			{}									//	timeline has jumped, probably looped
 
 private:
 	void				CreateTimelineInstance();

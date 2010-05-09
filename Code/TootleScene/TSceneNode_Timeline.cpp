@@ -64,15 +64,12 @@ void TSceneNode_Timeline::ProcessMessage(TLMessaging::TMessage& Message)
 	else if(MessageRef == "TimeJump")
 	{
 		// Timejump event
+		OnTimelineJump();
 	}
 	if(MessageRef == "OnComplete")
 	{
 		// Timeline complete
-		// Queue up a deactivate message so we can remove it a t a safe time
-		// deleting the object now will cause issues as the call will be from the object
-
-		TLMessaging::TMessage DeactivateMessage("Deactivate");
-		QueueMessage(DeactivateMessage);
+		OnTimelineComplete( *m_pTimelineInstance );
 	}
 
 	// Super process message
@@ -121,8 +118,15 @@ void TSceneNode_Timeline::CreateTimelineInstance()
 		// Bind the timeline instance to the render node and init
 		if(m_pTimelineInstance)
 		{
-			m_pTimelineInstance->BindTo(GetRenderNodeRef());
+			//	get messages from timeline
+			this->SubscribeTo( m_pTimelineInstance );
 
+			//	map special refs to specific nodes
+			m_pTimelineInstance->MapNodeRef("This", GetNodeRef() );
+			m_pTimelineInstance->MapNodeRef("RNode", GetRenderNodeRef());
+			m_pTimelineInstance->MapNodeRef("PNode", GetPhysicsNodeRef());
+
+			//	initialse with time
 			TLMessaging::TMessage Message(TLCore::InitialiseRef);
 			Message.ExportData("Time", 0.0f);
 			m_pTimelineInstance->Initialise(Message);
@@ -165,5 +169,23 @@ void TSceneNode_Timeline::OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRender
 		CreateTimelineInstance();
 	}
 
+	//	update binding
+	if ( m_pTimelineInstance )
+		m_pTimelineInstance->MapNodeRef("RNode", GetRenderNodeRef());
+
 	TSceneNode_Object::OnRenderNodeAdded(pRenderNode);
 }
+
+
+//-------------------------------------------------
+//	timeline has finished (this won't occur if the timeline loops)
+//-------------------------------------------------
+void TSceneNode_Timeline::OnTimelineComplete(TLAnimation::TTimelineInstance& Timeline)
+{
+	//	gr: this onimous "deactivate" deletes the timeline
+	// Queue up a deactivate message so we can remove it a t a safe time
+	// deleting the object now will cause issues as the call will be from the object
+	TLMessaging::TMessage DeactivateMessage("Deactivate");
+	QueueMessage(DeactivateMessage);
+}
+

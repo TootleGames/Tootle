@@ -43,6 +43,8 @@ public:
 	void					SetTime(float fTime);
 	FORCEINLINE float		GetTime()			const	{ return m_fTime; }
 
+	TRefRef					GetTimelineRef() const		{	return m_TimelineAssetRef;	}	//	get asset ref
+
 	// Set the playback rate modifier
 	FORCEINLINE void		SetPlaybackRateModifier(const float& fRateModifier)	{ m_fPlaybackRateModifier = fRateModifier; }
 	FORCEINLINE float		GetPlaybackRateModifier()					const	{ return m_fPlaybackRateModifier; }
