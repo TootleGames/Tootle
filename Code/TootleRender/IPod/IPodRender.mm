@@ -90,6 +90,11 @@ SyncBool TLRender::Opengl::Platform::Shutdown()
 {
 	//	gr: any shutdown required here? just need the opengl canvas's to free their contexts....
 	//	maybe we need a ref counter to make sure there are no more context's left
+	
+	//	back to uninitialised gl state
+	g_Initialised = SyncWait;
+
+	g_pShaderAssetFactory = NULL;
 		
 	return SyncTrue;
 }

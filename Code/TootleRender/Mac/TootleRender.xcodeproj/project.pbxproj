@@ -33,6 +33,8 @@
 		8440DBE61055622D0045E57E /* MacRenderTarget.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8440DBE01055622D0045E57E /* MacRenderTarget.mm */; };
 		84829C541164EC5A0000C579 /* TEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84829C521164EC5A0000C579 /* TEffect.cpp */; };
 		84829C551164EC5A0000C579 /* TEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 84829C531164EC5A0000C579 /* TEffect.h */; };
+		848F0943119AE052009D8C1E /* TRenderNodeSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 848F0941119AE052009D8C1E /* TRenderNodeSprite.cpp */; };
+		848F0944119AE052009D8C1E /* TRenderNodeSprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 848F0942119AE052009D8C1E /* TRenderNodeSprite.h */; };
 		84B6068E104FFD2B0022E5BC /* TRenderNodeDebugMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B6067D104FFD2B0022E5BC /* TRenderNodeDebugMesh.cpp */; };
 		84B6068F104FFD2B0022E5BC /* TRenderNodeDebugMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B6067E104FFD2B0022E5BC /* TRenderNodeDebugMesh.h */; };
 		84B60690104FFD2B0022E5BC /* TRenderNodeParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B6067F104FFD2B0022E5BC /* TRenderNodeParticle.cpp */; };
@@ -101,6 +103,8 @@
 		8440DBE01055622D0045E57E /* MacRenderTarget.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacRenderTarget.mm; sourceTree = "<group>"; };
 		84829C521164EC5A0000C579 /* TEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TEffect.cpp; path = ../TEffect.cpp; sourceTree = SOURCE_ROOT; };
 		84829C531164EC5A0000C579 /* TEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TEffect.h; path = ../TEffect.h; sourceTree = SOURCE_ROOT; };
+		848F0941119AE052009D8C1E /* TRenderNodeSprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeSprite.cpp; path = ../TRenderNodeSprite.cpp; sourceTree = SOURCE_ROOT; };
+		848F0942119AE052009D8C1E /* TRenderNodeSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeSprite.h; path = ../TRenderNodeSprite.h; sourceTree = SOURCE_ROOT; };
 		84B6067D104FFD2B0022E5BC /* TRenderNodeDebugMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeDebugMesh.cpp; path = ../TRenderNodeDebugMesh.cpp; sourceTree = SOURCE_ROOT; };
 		84B6067E104FFD2B0022E5BC /* TRenderNodeDebugMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeDebugMesh.h; path = ../TRenderNodeDebugMesh.h; sourceTree = SOURCE_ROOT; };
 		84B6067F104FFD2B0022E5BC /* TRenderNodeParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeParticle.cpp; path = ../TRenderNodeParticle.cpp; sourceTree = SOURCE_ROOT; };
@@ -182,6 +186,8 @@
 		8418EF620F4DAD0300B956C9 /* SourceCode */ = {
 			isa = PBXGroup;
 			children = (
+				848F0941119AE052009D8C1E /* TRenderNodeSprite.cpp */,
+				848F0942119AE052009D8C1E /* TRenderNodeSprite.h */,
 				BF3DA2151178CBAE00EBD76C /* TRasteriser.cpp */,
 				BF3DA2161178CBAE00EBD76C /* TRasteriser.h */,
 				84829C521164EC5A0000C579 /* TEffect.cpp */,
@@ -328,6 +334,7 @@
 				84829C551164EC5A0000C579 /* TEffect.h in Headers */,
 				BF3DA2181178CBAE00EBD76C /* TRasteriser.h in Headers */,
 				BF3DA2821178D43600EBD76C /* GLRasteriser.h in Headers */,
+				848F0944119AE052009D8C1E /* TRenderNodeSprite.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -414,6 +421,7 @@
 				84829C541164EC5A0000C579 /* TEffect.cpp in Sources */,
 				BF3DA2171178CBAE00EBD76C /* TRasteriser.cpp in Sources */,
 				BF3DA2811178D43600EBD76C /* GLRasteriser.cpp in Sources */,
+				848F0943119AE052009D8C1E /* TRenderNodeSprite.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

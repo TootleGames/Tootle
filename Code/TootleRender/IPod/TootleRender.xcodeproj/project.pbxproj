@@ -42,6 +42,8 @@
 		84C10B130F0A7E6000B2DF7A /* TScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AFF0F0A7E6000B2DF7A /* TScreen.h */; };
 		84C10B140F0A7E6000B2DF7A /* TScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10B000F0A7E6000B2DF7A /* TScreenManager.cpp */; };
 		84C10B150F0A7E6000B2DF7A /* TScreenManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10B010F0A7E6000B2DF7A /* TScreenManager.h */; };
+		84CDC2771197FC5C002649F4 /* TRenderNodeSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84CDC2751197FC5C002649F4 /* TRenderNodeSprite.cpp */; };
+		84CDC2781197FC5C002649F4 /* TRenderNodeSprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 84CDC2761197FC5C002649F4 /* TRenderNodeSprite.h */; };
 		84DE344B0F12AA6C00608F8C /* TRenderNodeTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DE34490F12AA6C00608F8C /* TRenderNodeTile.cpp */; };
 		84DE344C0F12AA6C00608F8C /* TRenderNodeTile.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DE344A0F12AA6C00608F8C /* TRenderNodeTile.h */; };
 		84DE371B0F13630600608F8C /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84DE371A0F13630600608F8C /* OpenGL.framework */; };
@@ -94,6 +96,8 @@
 		84C10AFF0F0A7E6000B2DF7A /* TScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TScreen.h; path = ../TScreen.h; sourceTree = SOURCE_ROOT; };
 		84C10B000F0A7E6000B2DF7A /* TScreenManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TScreenManager.cpp; path = ../TScreenManager.cpp; sourceTree = SOURCE_ROOT; };
 		84C10B010F0A7E6000B2DF7A /* TScreenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TScreenManager.h; path = ../TScreenManager.h; sourceTree = SOURCE_ROOT; };
+		84CDC2751197FC5C002649F4 /* TRenderNodeSprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeSprite.cpp; path = ../TRenderNodeSprite.cpp; sourceTree = SOURCE_ROOT; };
+		84CDC2761197FC5C002649F4 /* TRenderNodeSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeSprite.h; path = ../TRenderNodeSprite.h; sourceTree = SOURCE_ROOT; };
 		84DE34490F12AA6C00608F8C /* TRenderNodeTile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeTile.cpp; path = ../TRenderNodeTile.cpp; sourceTree = SOURCE_ROOT; };
 		84DE344A0F12AA6C00608F8C /* TRenderNodeTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeTile.h; path = ../TRenderNodeTile.h; sourceTree = SOURCE_ROOT; };
 		84DE371A0F13630600608F8C /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
@@ -155,6 +159,8 @@
 		84C10AED0F0A7E4E00B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				84CDC2751197FC5C002649F4 /* TRenderNodeSprite.cpp */,
+				84CDC2761197FC5C002649F4 /* TRenderNodeSprite.h */,
 				BF44F1B61184F96B00FE77CE /* TEffect.cpp */,
 				BF44F1B71184F96B00FE77CE /* TEffect.h */,
 				BF44EECD1184D8D500FE77CE /* Opengl */,
@@ -299,6 +305,7 @@
 				BF44EED31184D8D500FE77CE /* GLRasteriser.h in Headers */,
 				BF44EED51184D8D500FE77CE /* TRasteriser.h in Headers */,
 				BF44F1B91184F96B00FE77CE /* TEffect.h in Headers */,
+				84CDC2781197FC5C002649F4 /* TRenderNodeSprite.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -368,6 +375,7 @@
 				BF44EED21184D8D500FE77CE /* GLRasteriser.cpp in Sources */,
 				BF44EED41184D8D500FE77CE /* TRasteriser.cpp in Sources */,
 				BF44F1B81184F96B00FE77CE /* TEffect.cpp in Sources */,
+				84CDC2771197FC5C002649F4 /* TRenderNodeSprite.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

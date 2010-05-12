@@ -101,6 +101,8 @@ SyncBool TLRender::Opengl::Platform::Shutdown()
 	//	back to uninitialised gl state
 	g_Initialised = SyncWait;
 	
+	g_pShaderAssetFactory = NULL;
+	
 	return SyncTrue;
 }
 
