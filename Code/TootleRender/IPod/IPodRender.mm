@@ -92,7 +92,8 @@ SyncBool TLRender::Opengl::Platform::Shutdown()
 	//	maybe we need a ref counter to make sure there are no more context's left
 	
 	//	back to uninitialised gl state
-	g_Initialised = SyncWait;
+	// [13/05/10] DB - not used on the ipod?  it's on the MAc and Win32 versions
+	//g_Initialised = SyncWait;
 
 	g_pShaderAssetFactory = NULL;
 		
