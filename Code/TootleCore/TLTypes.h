@@ -149,6 +149,19 @@ TLCompileAssert( sizeof(TChar32) == sizeof(u32), "TChar32 not setup correctly." 
 #endif
 #endif
 
+// Specify a symbol (class, function or variable) as visible outside of the build module 
+// Only really useful for shared (dynamic) libraries but added in case we ever change from static libs
+#ifndef EXPORT
+#if defined(__GNUG__)
+	#define EXPORT	__attribute__((visibility("default")))
+	#define IMPORT	__attribute__((visibility("default")))
+#else
+	#define EXPORT __declspec(dllexport)
+	#define IMPORT __declspec(dllimport)
+#endif
+#endif
+
+
 
 namespace TLTypes
 {

@@ -156,7 +156,7 @@
 		840EC16C0F77816700BA6F4C /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 840EC16F0F77816700BA6F4C /* Build configuration list for PBXProject "libpng" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.1";
 			hasScannedForEncodings = 0;
 			mainGroup = 840EC16A0F77816700BA6F4C;
 			productRefGroup = 840EC17A0F77818900BA6F4C /* Products */;

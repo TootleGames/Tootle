@@ -1008,7 +1008,7 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
 					../Freetype/include,
-					../..,
+					"$(TOOTLE_ROOT)",
 				);
 			};
 			name = Debug;
@@ -1019,7 +1019,7 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
 					../Freetype/include,
-					../..,
+					"$(TOOTLE_ROOT)",
 				);
 			};
 			name = Release;

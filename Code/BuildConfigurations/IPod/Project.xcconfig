@@ -12,7 +12,13 @@ TOOTLE_ROOT = ../../../Tootle/Code
 //HEADER_SEARCH_PATHS = $(TOOTLE_ROOT) $(TOOTLE_ROOT)/TootleFileSys/Freetype/include
 HEADER_SEARCH_PATHS = $(TOOTLE_ROOT)
 //LIBRARY_SEARCH_PATHS = $(inherited) ../../../build/**
+
+// The AGON lib is now a universal lib built against the latest SDK.
+// We can safely link with this for previous SDK targets but must not use functionality
+// that may be for an SDK greater than the target
+//LIBRARY_SEARCH_PATHS = ../../../Tootle/Code/TootleSocial/IPod/libagon/lib/iphoneos3.2
 LIBRARY_SEARCH_PATHS = ../../../Tootle/Code/TootleSocial/IPod/libagon/lib/$(SDK_NAME)
+
 PROJECT_DEFINITIONS = FT2_BUILD_LIBRARY 
 
 //EXECUTABLE_EXTENSION =	//	gr: should be nothing!
@@ -20,14 +26,17 @@ PROJECT_DEFINITIONS = FT2_BUILD_LIBRARY
 //WRAPPER_EXTENSION = app
 //SKIP_INSTALL = NO
 //GENERATE_PKGINFO_FILE = NO
-//GCC_DYNAMIC_NO_PIC = YES	//	gr: needed?
+
+// Position dependent code generation is faster than non-position dependent code for applications
+// Position independent code is only really need for shared (dynamic only?) libraries
+// See http://developer.apple.com/mac/library/documentation/Performance/Conceptual/CodeFootprint/Articles/CompilerOptions.html#//apple_ref/doc/uid/20001861-CJBJFIDD
+GCC_DYNAMIC_NO_PIC = YES
 
 INFOPLIST_FILE = $(PROJECT_NAME)-Info.plist
 
 //	only build active architecture (libs build all arch types)
 ONLY_ACTIVE_ARCH = YES
 
-DEAD_CODE_STRIPPING = YES
 
 //	gr: OS frameworks
 //	gr: after some testing... this seems to have no influence at all, and the framework still needs to be in the final project
@@ -36,5 +45,5 @@ DEAD_CODE_STRIPPING = YES
 PROJECT_LDFLAGS = -framework QuartzCore -framework Foundation -framework UIKit -framework OpenGLES
 PROJECT_CPLUSPLUSFLAGS =
 
-//	gr: trying to fix static linking...
-STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static
+MACH_O_TYPE = mh_execute
+

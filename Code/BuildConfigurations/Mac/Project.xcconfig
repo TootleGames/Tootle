@@ -18,11 +18,13 @@ WRAPPER_EXTENSION = app
 SKIP_INSTALL = NO
 PREBINDING = NO				//	gr: needed?
 GENERATE_PKGINFO_FILE = NO
-GCC_DYNAMIC_NO_PIC = YES	//	gr: needed?
+
+// Position dependent code generation is faster than non-position dependent code for applications
+// Position independent code is only really need for shared (dynamic) libraries
+// See http://developer.apple.com/mac/library/documentation/Performance/Conceptual/CodeFootprint/Articles/CompilerOptions.html#//apple_ref/doc/uid/20001861-CJBJFIDD
+GCC_DYNAMIC_NO_PIC = YES
 
 INFOPLIST_FILE = $(PROJECT_NAME)-Info.plist
-
-DEAD_CODE_STRIPPING = YES
 
 //	only build active architecture (libs build all arch types)
 ONLY_ACTIVE_ARCH = YES

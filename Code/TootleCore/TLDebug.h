@@ -25,6 +25,22 @@
 #include "TLTypes.h"
 
 
+// ENABLE_DEBUG_TRACE can now be used in debug or release.  This will enable the debug break, assert and printing.
+// Ideally we want to have this functionality available at all times and switch it on/off based on some
+// runtime setting but there is a large overhead to the debug printing code.  Perhaps we need to alter the
+// debug code to be some kind of static object that publishers messages and have the console printing an optional subscriber?
+// - it would be nice to be able to intercept debug calls and send them via the network to a network client for instance 
+// rather than just being output to the console.  We could intercept these debug messages and send them to a file instead of or as well?
+// We probably need a couple more debug routines too i.e. Debug_Informational, Debug_Critical that could be enabled/disabled based on 
+// the release type. Rather than using the _DEBUG option we should try and use some kind of define with granularity 
+// such as DEBUG_LEVEL == [ NONE | CRITICAL | MINIMAL |  ALL ] or some kind of runtime bitwise set of flags for each type so we can alter the 
+// level of debug information at runtime? Things to consider is code within the debug that is ONLY available in debug or not.
+#ifdef _DEBUG
+	#define ENABLE_DEBUG_TRACE
+#else
+	//#define ENABLE_DEBUG_TRACE
+#endif
+
 //	gr: turn this into a game/engine option or something
 //	enable this define to enable array/float/limit checks
 //#define DEBUG_CHECK_INDEXES
@@ -36,7 +52,7 @@
 //	gr: because of how _DEBUG is defined, if your lib is release the do-nothing-macros will do nothing. The use of these
 //		is per-lib, not how the Core lib is built.
 //		use TLDebug::IsEnabled() for more accurate global debug support
-#if defined(_DEBUG)
+#if defined(ENABLE_DEBUG_TRACE)
 	#define TLDebug_Break(String)					TLDebug::Break( String, (const char*)__FUNCTION__ )
 	#define TLDebug_Assert(Condition,String)		( (Condition) ? TRUE : TLDebug::Break( String, (const char*)__FUNCTION__ ) )
 	#define TLDebug_Print(String)					TLDebug::Print( String, (const char*)__FUNCTION__ )
@@ -44,10 +60,25 @@
 	#define TLDebug_FlushBuffer()					TLDebug::FlushBuffer()
 #else
 	#define TLDebug_Assert(Conditon,String)			FALSE	
-	#define TLDebug_Break(String)					FALSE	//	by default do NOT continue from breaks
+	
+	// [13/05/10] DB -	When testing for why the release build often fails when setting the optimisation level (to anything now) I was 
+	//					able to swap the debug break from a FALSE define to a function returning FALSE that fixed the problem.
+	//					It only seemed to occur for this routine ( I tested each of the other debug routines in turn and in combinations)
+	//					and it could be coincidence due to volume of this call combined with code re-ordering, macro replacement as well 
+	//					as the optimisation but for now this appeared to fix the issue.
+	//#define TLDebug_Break(String)					FALSE	//	by default do NOT continue from breaks
+	#define TLDebug_Break(String)					TLDebug::NoBreak( String )
+	
 	#define TLDebug_Print(String)					{}
 	#define TLDebug_Warning(String)					{}
 	#define TLDebug_FlushBuffer()					{}
+
+//#define TLDebug_Assert(Condition,String)		( (Condition) ? TRUE : TLDebug::Break( String, (const char*)__FUNCTION__ ) )
+//#define TLDebug_Break(String)					TLDebug::Break( String, (const char*)__FUNCTION__ )
+//#define TLDebug_Print(String)					TLDebug::Print( String, (const char*)__FUNCTION__ )
+//#define TLDebug_Warning(String)					TLDebug::Print( String, (const char*)__FUNCTION__ )
+//#define TLDebug_FlushBuffer()					TLDebug::FlushBuffer()
+
 #endif
 
 
@@ -100,7 +131,10 @@ namespace TLDebug
 	void				Print(const TString& String,const char* pSourceFunction);							//	print to console
 	FORCEINLINE void	Print(const TString& String)														{	Print( String, NULL );	}
 	
-	
+#ifndef ENABLE_DEBUG_TRACE
+	Bool				NoBreak(const TString& String);
+#endif
+		
 	FORCEINLINE void	FlushBuffer()	{	Platform::FlushBuffer(); }
 	
 	FORCEINLINE Bool	CheckIndex(int Index,int Max,const char* pSourceFunction);							//	check & assert if index is out of bounds. Max is NOT inclusive... Min <= N < Max

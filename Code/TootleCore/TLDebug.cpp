@@ -19,7 +19,7 @@ namespace TLDebug
 {
 	const char* g_pLastBreakSourceFunction = NULL;
 
-#ifdef _DEBUG
+#ifdef ENABLE_DEBUG_TRACE
 	Bool		g_IsEnabled = TRUE;
 #else
 	Bool		g_IsEnabled = FALSE;
@@ -56,6 +56,15 @@ void TLDebug::GetLastBreak(TString& String)
 	}
 }
 
+
+#ifndef ENABLE_DEBUG_TRACE
+
+Bool TLDebug::NoBreak(const TString& String)
+{
+	return FALSE;
+}
+
+#endif
 
 //-------------------------------------------------------
 //	halt! return TRUE to ignore the error and continue

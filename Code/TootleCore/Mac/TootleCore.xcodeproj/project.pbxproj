@@ -280,7 +280,6 @@
 			children = (
 				840A918910D7D36C00F8960C /* IPod Source Files */,
 				84C7FE1D10D0465F00782138 /* PC Soure Files */,
-				844CE21210515D3000178124 /* TLRandom.h */,
 				8418F15C0F4DB9AC00B956C9 /* Mac Source Files */,
 				8418F08B0F4DB87A00B956C9 /* TArray.h */,
 				8418F08C0F4DB87A00B956C9 /* TArray.inc.h */,
@@ -320,6 +319,7 @@
 				845EC667118F6A2900362CA4 /* TQuaternion.cpp */,
 				84C8D7F710972DF500E3D0F8 /* TTransform.h */,
 				842A0785109730C300BE64F8 /* TTransform.cpp */,
+				844CE21210515D3000178124 /* TLRandom.h */,
 				8418F0A50F4DB87A00B956C9 /* TLMemory.cpp */,
 				8418F0A60F4DB87A00B956C9 /* TLMemory.h */,
 				8418F0A70F4DB87A00B956C9 /* TLMemory.inc.h */,
@@ -528,6 +528,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8418F0E10F4DB87A00B956C9 /* TLMemory.cpp in Sources */,
 				8418F0C90F4DB87A00B956C9 /* TBinary.cpp in Sources */,
 				8418F0CB0F4DB87A00B956C9 /* TBinaryTree.cpp in Sources */,
 				8418F0CF0F4DB87A00B956C9 /* TCoreManager.cpp in Sources */,
@@ -537,7 +538,6 @@
 				8418F0DA0F4DB87A00B956C9 /* TLCore.cpp in Sources */,
 				8418F0DC0F4DB87A00B956C9 /* TLDebug.cpp in Sources */,
 				8418F0DF0F4DB87A00B956C9 /* TLMaths.cpp in Sources */,
-				8418F0E10F4DB87A00B956C9 /* TLMemory.cpp in Sources */,
 				8418F0E40F4DB87A00B956C9 /* TLMessaging.cpp in Sources */,
 				8418F0E60F4DB87A00B956C9 /* TLThread.cpp in Sources */,
 				8418F0E80F4DB87A00B956C9 /* TLTime.cpp in Sources */,

@@ -14,9 +14,6 @@ GCC_PREPROCESSOR_DEFINITIONS = $(IPOD_DEFINITIONS) $(PROJECT_DEFINITIONS)
 //	gr: change to iPhone Distribution: once I've sorted my provision
 CODE_SIGN_IDENTITY = iPhone Developer:
 
-//	gr: not set yet, IIRC optimisation level 3 wouldn't run on the ipod...
-GCC_OPTIMIZATION_LEVEL = 0
-
 OTHER_LDFLAGS = $(IPOD_LDFLAGS) $(PROJECT_LDFLAGS)
 OTHER_CPLUSPLUSFLAGS = $(IPOD_CPLUSPLUSFLAGS) $(PROJECT_CPLUSPLUSFLAGS) 
 

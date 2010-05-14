@@ -177,7 +177,7 @@
 		840EC21E0F77841300BA6F4C /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 840EC2210F77841300BA6F4C /* Build configuration list for PBXProject "zlib" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.1";
 			hasScannedForEncodings = 0;
 			mainGroup = 840EC21C0F77841300BA6F4C;
 			productRefGroup = 840EC22C0F77842A00BA6F4C /* Products */;

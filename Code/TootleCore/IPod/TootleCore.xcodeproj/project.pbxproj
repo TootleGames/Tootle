@@ -504,6 +504,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84C109AE0F0A791900B2DF7A /* TLMemory.cpp in Sources */,
 				84C109990F0A791900B2DF7A /* TBinary.cpp in Sources */,
 				84C1099B0F0A791900B2DF7A /* TBinaryTree.cpp in Sources */,
 				84C1099F0F0A791900B2DF7A /* TCoreManager.cpp in Sources */,
@@ -512,7 +513,6 @@
 				84C109A70F0A791900B2DF7A /* TLCore.cpp in Sources */,
 				84C109A90F0A791900B2DF7A /* TLDebug.cpp in Sources */,
 				84C109AC0F0A791900B2DF7A /* TLMaths.cpp in Sources */,
-				84C109AE0F0A791900B2DF7A /* TLMemory.cpp in Sources */,
 				84C109B10F0A791900B2DF7A /* TLMessaging.cpp in Sources */,
 				84C109B30F0A791900B2DF7A /* TLThread.cpp in Sources */,
 				84C109B50F0A791900B2DF7A /* TLTime.cpp in Sources */,
@@ -546,6 +546,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BF8FC1AC118CA38F005391AF /* LibDebug.xcconfig */;
 			buildSettings = {
+				GCC_MODEL_TUNING = "";
 			};
 			name = Debug;
 		};
