@@ -1,0 +1,170 @@
+//
+//  IPad.xcconfig
+//  
+//	cross configuration, IPod-specific build flags
+//
+#include "../Tootle.xcconfig"
+
+
+//	gr: new ipod vars from project
+
+//	gr: needed for openfeint
+GCC_C_LANGUAGE_STANDARD = c99
+
+
+//	gr: on iphone, when png's are bundled into the package they get compressed and modified to a 
+//		compressed format (which leaves artifacts) that libpng can't handle. Add this to stop it
+//		compressing our resources (assets) when building
+IPHONE_OPTIMIZE_OPTIONS = -skip-PNGs
+
+//	gr: add the target define
+IPOD_DEFINITIONS = $(TOOTLE_DEFINITIONS) TL_TARGET_IPOD FT2_BUILD_LIBRARY 
+//	this linker flag is required if we're linking with any libs with objective-c code in them
+//IPOD_LDFLAGS = -ObjC -all_load 
+IPOD_LDFLAGS = -ObjC
+
+//	gr: enable pre-binding to check symbols against dynamic (and static?) libs at link time
+//		this should spot errors with mis-matched libs
+PREBINDING = YES
+
+//	gr: zero link is no longer part of xcode as of 3.0 so not required. 
+//	BUT, fix & continue being enabled still enables zero link
+ZERO_LINK = NO
+GCC_ENABLE_FIX_AND_CONTINUE = NO
+
+// Call trivial Obj-C constructors and destrructors.  Needed for OpenFeint.
+GCC_OBJC_CALL_CXX_CDTORS = YES
+
+//	gr: speed up
+GCC_UNROLL_LOOPS = YES
+GCC_FAST_MATH = YES
+GCC_THUMB_SUPPORT = NO
+GCC_ENABLE_FLOATING_POINT_LIBRARY_CALLS = YES
+
+// Enable SSE3 instructions - Intel processors only
+GCC_ENABLE_SSE3_EXTENSIONS = NO
+GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = NO
+
+//	gr: many of the lib's targets had this setting... but not everything. I presume it was explicitly set, but not sure.
+DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
+
+// Level of debugging symbols to be generated
+// If using dead code stripping this must be 'full' for the stripping to work
+// See http://developer.apple.com/mac/library/documentation/DeveloperTools/Reference/XcodeBuildSettingRef/1-Build_Setting_Reference/build_setting_ref.html#//apple_ref/doc/uid/TP40003931-CH3-SW5
+GCC_DEBUGGING_SYMBOLS = full
+
+// For dead code stripping to work the level of debug symbols needs to be full
+// See http://developer.apple.com/mac/library/documentation/DeveloperTools/Reference/XcodeBuildSettingRef/1-Build_Setting_Reference/build_setting_ref.html#//apple_ref/doc/uid/TP40003931-CH3-SW91
+DEAD_CODE_STRIPPING = YES
+
+// Preserve initialisers and terminator routines from being stripped
+// Only valid when dead code stripping is enabled
+PRESERVE_DEAD_CODE_INITS_AND_TERMS = NO
+
+
+// C++ runtime librry to link against.  Requires GCC_SYMBOLS_PRIVATE_EXTERN = YES for linking with the static C++ runtime
+// See http://developer.apple.com/mac/library/documentation/DeveloperTools/Reference/XcodeBuildSettingRef/1-Build_Setting_Reference/build_setting_ref.html#//apple_ref/doc/uid/TP40003931-CH3-SW91
+// and http://developer.apple.com/mac/library/documentation/DeveloperTools/Conceptual/CppRuntimeEnv/Articles/LibCPPDeployment.html#//apple_ref/doc/uid/TP40001668-SW3
+// NOTE: When updating to iPhone OS SDK 3.0 and above as the base SDK, this will need changing to dynamic as no static library is provided.
+// The following document suggests this will the preferred method of linking with the C++ runtime:
+// http://developer.apple.com/mac/library/documentation/DeveloperTools/Conceptual/CppRuntimeEnv/Articles/CPPROverview.html 
+STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static
+//STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic
+
+
+//	gr: have to make symbols visible because the way wx is built, all the symbols are visible (for external access. Not sure why WE don't get missing symbols...)
+//		but they're hidden for us. So if a Tootle lib includes some wx stuff, it's private in tootle and visible in wx so we get link warnings.
+//		this makes it visible for both
+
+// [10/05/10] DB - Symbols should be hidden by default for a static library to work correctly
+// It is also better performance wise to explicitly declare symbols that need to be exported
+// which is only generally needed for shared (dynamic) libraries
+// To explicitly make a symbol visible (if building a shared lib) use the EXPORT and IMPORT macros (in TLTypes.h)
+// See http://developer.apple.com/mac/library/documentation/DeveloperTools/Conceptual/CppRuntimeEnv/Articles/SymbolVisibility.html#//apple_ref/doc/uid/TP40001670
+GCC_SYMBOLS_PRIVATE_EXTERN = YES 
+//GCC_SYMBOLS_PRIVATE_EXTERN = NO 
+GCC_INLINES_ARE_PRIVATE_EXTERN = NO
+KEEP_PRIVATE_EXTERNS = NO
+
+//	gr: small bools to match win32
+GCC_ONE_BYTE_BOOL = YES
+
+//	gr: some better warnings
+GCC_WARN_INHIBIT_ALL_WARNINGS = NO
+GCC_TREAT_WARNINGS_AS_ERRORS = NO				//	turn this on one day :)
+
+//	gr: turn these on asap
+GCC_WARN_SHADOW = NO							//	warn if a local variable has the same name as a global or another local or a func (risk of ambiguity)
+GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO	//	good-practise warnings (eg. = operator 
+GCC_WARN_SIGN_COMPARE = NO
+GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO			//	maybe a bit OTT to turn this on...
+GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO			//	covered by EFFECTIVE_CPLUSPLUS_VIOLATIONS I think... (this is compilers guess at virtual classes though, so may need to turn this off if it's giving out spurious warnings)
+GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO			//	overloaded function doesn't have "virtual" in front of it
+GCC_WARN_CHECK_SWITCH_STATEMENTS = NO
+
+GCC_WARN_ABOUT_RETURN_TYPE = YES
+GCC_WARN_UNKNOWN_PRAGMAS = YES
+GCC_WARN_UNUSED_VARIABLE = YES
+GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES
+GCC_WARN_64_TO_32_BIT_CONVERSION = YES			//	warn if casting down to 32 bit (in case we make refs 64bit and end up losing data)
+GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES	//	multi-dimensional-array/union initialiser warning (don't think we ever do this though)
+GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES	//	bad struct initialisation.
+GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES			//	not sure how you'd cause this... (signed vs unsigned pointers...)
+GCC_WARN_PROTOTYPE_CONVERSION = NO				//	catch unexpected type conversions - turn off if this warns about custom conversions too much. we DON'T want to cast classes in code
+GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES		//	enabled, but phase out ... functions in favour of iostream << style operators
+CC_WARN_UNUSED_VALUE = YES						//	catch when we do a calculation, but nothing with the result
+
+//	new ones for ipod... (or at least were declared, im sure all these exist on the mac...)
+GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO
+GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = YES
+GCC_WARN_MISSING_PARENTHESES = NO
+GCC_WARN_ABOUT_MISSING_NEWLINE = NO
+GCC_WARN_PEDANTIC = NO
+GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = NO
+GCC_TREAT_NONCONFORMANT_CODE_ERRORS_AS_WARNINGS = NO
+
+GCC_WARN_UNINITIALIZED_AUTOS = NO
+GCC_WARN_UNUSED_FUNCTION = NO
+GCC_WARN_UNUSED_LABEL = NO
+GCC_WARN_UNUSED_PARAMETER = NO
+GCC_WARN_UNUSED_VALUE = NO
+GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = YES
+
+
+
+
+GCC_VERSION = 4.0 
+
+ADDITIONAL_SDKS = 
+//ARCHS = armv6 armv7
+//VALID_ARCHS = armv6 armv7
+ARCHS = armv6
+VALID_ARCHS = armv6
+
+// SDK is the SDK we are building against.  It is possible to use a newer SDK to the deployment target.
+SDKROOT = iphoneos3.2
+ONLY_ACTIVE_ARCH = YES
+
+// The deployment target is the lowest iphone OS the code will work on
+IPHONE_OS_DEPLOYMENT_TARGET = 3.2
+
+
+EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = *.nib *.lproj *.framework *.gch (*) CVS .svn *.xcodeproj *.xcode *.pbproj *.pbxproj
+INCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = 
+
+GCC_ENABLE_PASCAL_STRINGS = YES
+STRINGS_FILE_OUTPUT_ENCODING = UTF-16
+GCC_REUSE_STRINGS = YES
+GCC_FAST_OBJC_DISPATCH = YES
+
+
+// Specifies whether the compiler performs automatic loop vectorization when appropriate. 
+// Automatic loop vectorization is supported only in the PPC architectures
+// Also only valid when the optimisation level is >= 2
+GCC_AUTO_VECTORIZATION = NO
+
+// No model tuning - PowerPC only
+GCC_MODEL_TUNING = 
+
+LD_GENERATE_MAP_FILE = NO
+

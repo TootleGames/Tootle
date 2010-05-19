@@ -1,0 +1,13 @@
+//
+//  LibDebug.xcconfig
+//  
+//
+//  Created by Duane Bradbury on 18/12/2008.
+//  Copyright 2008 Tootle. All rights reserved.
+//
+#include "IPadRelease.xcconfig"
+#include "Lib.xcconfig"
+
+OTHER_LDFLAGS = $(IPOD_LDFLAGS) $(LIB_LDFLAGS)
+GCC_PREPROCESSOR_DEFINITIONS = $(IPOD_DEFINITIONS)
+

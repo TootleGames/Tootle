@@ -1,0 +1,11 @@
+//
+//  IPadDebug.xcconfig
+//  
+//
+//  Created by Duane Bradbury on 18/12/2008.
+//  Copyright 2008 Tootle. All rights reserved.
+//
+#include "IPad.xcconfig"
+
+//	gr: not set yet, IIRC optimisation level 3 wouldn't run on the ipod...
+GCC_OPTIMIZATION_LEVEL = 0

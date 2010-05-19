@@ -1,0 +1,25 @@
+//
+//  ProjectDebug.xcconfig
+//  
+//
+//  Created by Duane Bradbury on 18/12/2008.
+//  Copyright 2008 Tootle. All rights reserved.
+//
+#include "IPadDebug.xcconfig"
+#include "Project.xcconfig"
+
+
+GCC_PREPROCESSOR_DEFINITIONS = _DEBUG $(IPOD_DEFINITIONS) $(PROJECT_DEFINITIONS)
+
+CODE_SIGN_IDENTITY = iPhone Developer:
+
+//	agon/d are the agon libs
+OTHER_LDFLAGS = $(IPOD_LDFLAGS) $(PROJECT_LDFLAGS)
+OTHER_CPLUSPLUSFLAGS = $(IPOD_CPLUSPLUSFLAGS) $(PROJECT_CPLUSPLUSFLAGS) 
+
+
+
+//			Debug	- "-lagond"
+//			Release - "-lagon"
+//		Library Search Paths
+//			All - "../../../Tootle/Code/TootleSocial/IPod/libagon/lib/$(SDK_NAME)"
