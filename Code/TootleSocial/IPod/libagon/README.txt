@@ -1,5 +1,5 @@
 +----------------------------------------------------------------------------+
-                             AGON Online 1.2
+                             AGON Online
 
             Copyright (c) 2009 Aptocore ApS. All Rights Reserved.
 +----------------------------------------------------------------------------+
@@ -7,17 +7,45 @@
 +----------------------------------------------------------------------------+
 +++ Getting Started
 +----------------------------------------------------------------------------+
-You should integrate the AGON Online DocSet into XCode:
-http://devsupport.agon-online.com/faqs/documentation/agon-online-docset
+There is a developer wiki available with detailed information about AGON integration: 
+http://developer.agon-online.com/wiki/
 
-Alternatively you may read the documentation online:
-http://devdb.agon-online.com/developer/doc/index.html
+The AGON API reference documentation is available online here:
+http://developer.agon-online.com/documentation/latest
 
-For users of the Unity Engine a Quick Start Guide can be found here:
-http://devdb.agon-online.com/developer/doc/html/unity_quick_start.html
+The AGON reference documentation is provided as an Online DocSet and can be integrated into XCode:
+http://developer.agon-online.com/wiki/doku.php?id=docs:xcode_documentation_integration
 
-The documentation includes all of the details required to integrate AGON Online
-into your game.
+For Objective-C developers a Quick Start Guide can be found here:
+http://developer.agon-online.com/wiki/doku.php?id=docs:quick_start
+
+For Unity Engine developers a Quick Start Guide can be found here:
+http://developer.agon-online.com/wiki/doku.php?id=docs:unity_quick_start
+
+For Cocos2D developers a Quick Start Guide can be found here:
+http://www.cocos2d-iphone.org/wiki/doku.php/prog_guide:social_networks#integrating_agon_online_into_cocos2d-iphone
+
+The wiki and reference documentation include all of the details required to 
+integrate AGON Online into your game.
+
++----------------------------------------------------------------------------+
++++ Upgrading
++----------------------------------------------------------------------------+
+To upgrade to the latest version of AGON you should make sure that everything
+inside the existing libagon folder is overwritten. Please make sure you do not
+merge the old folder with the new folder, since you might then have files that
+are no longer needed.
+
+If you have an AgonData.bundle folder added to your Xcode project's resource
+then you should delete the folder from the project. The AgonData.bundle is now
+provided as part of the AgonPackage.bundle.
+
+Make sure you re-download the AgonPackage.bundle to ensure that the 
+AgonPackage.bundle is compatible with the latest version.
+
+Finally you need to update your code to work with the API interface changes
+for the latest version. It is imperative that you get AGON.h updated so that
+you discover interface changes.
 
 +----------------------------------------------------------------------------+
 +++ Support
@@ -28,7 +56,7 @@ http://devsupport.agon-online.com/
 If you have any other questions or comments feel free to write us at:
 developer@agon-online.com
 
-We are continuously improving Agon based on your feedback, so:
+We are continuously improving AGON based on your feedback, so:
 Have your say - write to us!
 
 +----------------------------------------------------------------------------+
@@ -48,24 +76,9 @@ g19bf1f19: Short ID of the changelist that generated the release.
 +----------------------------------------------------------------------------+
 +++ Changelog
 +----------------------------------------------------------------------------+
-- 1.2.5
- * [NEW] A UnityPackage is now provided for very easy Unity integration.
- * [IMPROVED] AGON is now supported on iPhone OS 2.1 devices as well.
- * [CHANGED] Minor API changes in the Unity API compared to the pre-release
-             that a few individuals have tried.
- * [CHANGED] All AGON builds now has the deployment target set to iPhone OS 
-             2.1. This means you can use any of the SDK versions to build 
-             for any OS version greater than 2.1. AGON builds for 
-             SDK 2.2 and 2.2.1 will be deprecated in the future. Please
-             note that this does NOT mean that you can only support 3.0
-             devices; it simply means that you must use the 3.0 SDK
-             to build your game and set the iPhone OS Deployment Target
-             to the OS version your game supports. Please let us know
-             if you think this will be a problem by contacting us at 
-             developer@agon-online.com
- * [FIXED] Fixed problem when the profile picker if rotated while shown.
- * [FIXED] Problem with AGON not being shown if the device was put to sleep
-           while showing AGON - this only affected 2.x devices.
+- 1.5.1
+ * [FIXED] Crash when a memory warning was issued after the "profile" tab had been activated inside AGON.
+ * [FIXED] A number of memory leaks.
 
 The full changelog is available in the manual:
-http://devdb.agon-online.com/developer/doc/change_log_history.html
+http://developer.agon-online.com/documentation/latest/change_log_history.html

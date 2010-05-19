@@ -18,7 +18,10 @@ namespace TLSocial
 		class SocialNetworkingPlatform_Facebook
 		{
 		public:
-			FORCEINLINE void BeginSession(const TString& APIKey, const TString& APISecret)		{}
+			FORCEINLINE Bool CreateSession(TLMessaging::TMessage& InitMessage)					{ return TRUE; }
+			FORCEINLINE void DestroySession()													{}
+			
+			FORCEINLINE void BeginSession()														{}
 			FORCEINLINE void EndSession()														{}
 			
 			FORCEINLINE void OpenDashboard()													{}

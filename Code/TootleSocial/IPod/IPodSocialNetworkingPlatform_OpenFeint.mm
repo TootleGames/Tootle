@@ -11,29 +11,66 @@
 
 #import <TootleCore/IPod/IPodString.h>
 
-#import "TOpenFeint.h"
-
 #import "OFHighScoreService.h"
 #import "OpenFeint.h"
 #import "OFViewHelper.h"
 
-void TLSocial::Platform::SocialNetworkingPlatform_OpenFeint::BeginSession(const TString& APIKey, const TString& APISecret)
+#import "../TLSocial.h"
+
+Bool TLSocial::Platform::SocialNetworkingPlatform_OpenFeint::CreateSession(TLMessaging::TMessage& InitMessage)
 {
+	TTempString APIKey;
+	
+	if(!InitMessage.ImportDataString(TLSocial::APIKeyRef, APIKey))
+	{
+		TLDebug_Break("Failed to import API key");
+		return FALSE;
+	}
+	
+	TTempString APISecret;
+	
+	if(!InitMessage.ImportDataString(TLSocial::APISecretRef, APISecret))
+	{
+		TLDebug_Break("Failed to import API secret");
+		return FALSE;
+	}
+	
+	TTempString AppName;
+	
+	if(!InitMessage.ImportDataString("AppName", AppName))
+	{
+		TLDebug_Break("Failed to import app name");
+		return FALSE;
+	}
+	
+	
+	
 	NSString* pAPIKey = TLString::ConvertToUnicharString(APIKey);
 	NSString* pAPISecret = TLString::ConvertToUnicharString(APISecret);
+	NSString* pAppName = TLString::ConvertToUnicharString(AppName);
 	
 	[OpenFeint initializeWithProductKey: pAPIKey
 							  andSecret: pAPISecret
-						 andDisplayName:@"TestGame" 
+						 andDisplayName: pAppName 
 							andSettings:nil 
 							andDelegate:nil];
 		
 	[pAPISecret release];
 	[pAPIKey release];
+	[pAppName release];
+	
+	return TRUE;
 }
 
+void TLSocial::Platform::SocialNetworkingPlatform_OpenFeint::BeginSession()
+{
+}
 
 void TLSocial::Platform::SocialNetworkingPlatform_OpenFeint::EndSession()
+{
+}
+
+void TLSocial::Platform::SocialNetworkingPlatform_OpenFeint::DestroySession()
 {
 	[OpenFeint shutdown];
 }

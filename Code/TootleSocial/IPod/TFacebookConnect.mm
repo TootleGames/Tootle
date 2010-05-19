@@ -32,7 +32,7 @@ namespace TLSocial
 	}
 }
 
-void TLSocial::Platform::IPod::Facebook::BeginSession(const TString& APIKey, const TString& APISecret)
+Bool TLSocial::Platform::IPod::Facebook::CreateSession(const TString& APIKey, const TString& APISecret)
 {
 	g_pFacebookSession = [[SessionViewController alloc] init];
 
@@ -43,12 +43,22 @@ void TLSocial::Platform::IPod::Facebook::BeginSession(const TString& APIKey, con
 	TLGui::Platform::Window* pPlatformWindow = static_cast<TLGui::Platform::Window*>( pWindow );
 	UIWindow* pUiWindow = pPlatformWindow ? pPlatformWindow->m_pWindow : NULL;
 	
-	[pUiWindow addSubview:g_pFacebookSession.view];		
+	[pUiWindow addSubview:g_pFacebookSession.view];	
+	
+	return TRUE; 
+}
+
+void TLSocial::Platform::IPod::Facebook::DestroySession()
+{
+	[g_pFacebookSession release];
+}
+
+void TLSocial::Platform::IPod::Facebook::BeginSession()
+{
 }
 
 void TLSocial::Platform::IPod::Facebook::EndSession()
 {
-	[g_pFacebookSession release];
 }
 
 void TLSocial::Platform::IPod::Facebook::OpenDashboard()	

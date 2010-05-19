@@ -10,43 +10,32 @@
 		84B60922105118030022E5BC /* TLSocial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B6091F105118030022E5BC /* TLSocial.cpp */; };
 		84B60923105118030022E5BC /* TLSocial.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60920105118030022E5BC /* TLSocial.h */; };
 		84B60924105118030022E5BC /* TSocialNetworkingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60921105118030022E5BC /* TSocialNetworkingManager.h */; };
-		84B60929105118190022E5BC /* MacSocial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B60926105118190022E5BC /* MacSocial.cpp */; };
-		84B6092A105118190022E5BC /* MacSocial.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60927105118190022E5BC /* MacSocial.h */; };
 		84B6092B105118190022E5BC /* MacSocialNetworkingPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B60928105118190022E5BC /* MacSocialNetworkingPlatform.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		841B47F11111A31100ACC2AE /* IPodSocial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodSocial.h; path = ../IPod/IPodSocial.h; sourceTree = SOURCE_ROOT; };
-		841B47F21111A31100ACC2AE /* IPodSocial.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodSocial.mm; path = ../IPod/IPodSocial.mm; sourceTree = SOURCE_ROOT; };
 		841B47F31111A31100ACC2AE /* IPodSocialNetworkingPlatform_AGONOnline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodSocialNetworkingPlatform_AGONOnline.h; path = ../IPod/IPodSocialNetworkingPlatform_AGONOnline.h; sourceTree = SOURCE_ROOT; };
 		841B47F41111A31100ACC2AE /* IPodSocialNetworkingPlatform_AGONOnline.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodSocialNetworkingPlatform_AGONOnline.mm; path = ../IPod/IPodSocialNetworkingPlatform_AGONOnline.mm; sourceTree = SOURCE_ROOT; };
 		841B47F51111A31100ACC2AE /* IPodSocialNetworkingPlatform_Facebook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodSocialNetworkingPlatform_Facebook.h; path = ../IPod/IPodSocialNetworkingPlatform_Facebook.h; sourceTree = SOURCE_ROOT; };
 		841B47F61111A31100ACC2AE /* IPodSocialNetworkingPlatform_OpenFeint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodSocialNetworkingPlatform_OpenFeint.h; path = ../IPod/IPodSocialNetworkingPlatform_OpenFeint.h; sourceTree = SOURCE_ROOT; };
 		841B47F71111A31100ACC2AE /* IPodSocialNetworkingPlatform_OpenFeint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodSocialNetworkingPlatform_OpenFeint.mm; path = ../IPod/IPodSocialNetworkingPlatform_OpenFeint.mm; sourceTree = SOURCE_ROOT; };
 		841B47F81111A31100ACC2AE /* IPodSocialNetworkingPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodSocialNetworkingPlatform.h; path = ../IPod/IPodSocialNetworkingPlatform.h; sourceTree = SOURCE_ROOT; };
-		841B47F91111A31100ACC2AE /* TAGONOnline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAGONOnline.h; path = ../IPod/TAGONOnline.h; sourceTree = SOURCE_ROOT; };
-		841B47FA1111A31100ACC2AE /* TAGONOnline.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TAGONOnline.mm; path = ../IPod/TAGONOnline.mm; sourceTree = SOURCE_ROOT; };
 		841B47FB1111A31100ACC2AE /* TFacebookConnect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFacebookConnect.h; path = ../IPod/TFacebookConnect.h; sourceTree = SOURCE_ROOT; };
 		841B47FC1111A31100ACC2AE /* TFacebookConnect.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TFacebookConnect.mm; path = ../IPod/TFacebookConnect.mm; sourceTree = SOURCE_ROOT; };
 		841B47FD1111A31100ACC2AE /* TFacebookSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFacebookSession.h; path = ../IPod/TFacebookSession.h; sourceTree = SOURCE_ROOT; };
 		841B47FE1111A31100ACC2AE /* TFacebookSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TFacebookSession.mm; path = ../IPod/TFacebookSession.mm; sourceTree = SOURCE_ROOT; };
 		841B47FF1111A31100ACC2AE /* TootleSocialPrefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TootleSocialPrefix.pch; path = ../IPod/TootleSocialPrefix.pch; sourceTree = SOURCE_ROOT; };
-		841B48001111A31100ACC2AE /* TOpenFeint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TOpenFeint.h; path = ../IPod/TOpenFeint.h; sourceTree = SOURCE_ROOT; };
-		841B48011111A31100ACC2AE /* TOpenFeint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TOpenFeint.mm; path = ../IPod/TOpenFeint.mm; sourceTree = SOURCE_ROOT; };
+		848F0E7A119C2819009D8C1E /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../BuildConfigurations; sourceTree = SOURCE_ROOT; };
+		848F0E9E119C2904009D8C1E /* LibDebug_wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug_wx.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug_wx.xcconfig; sourceTree = SOURCE_ROOT; };
+		848F0E9F119C2904009D8C1E /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		848F0EA0119C2904009D8C1E /* LibRelease_wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease_wx.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease_wx.xcconfig; sourceTree = SOURCE_ROOT; };
+		848F0EA1119C2904009D8C1E /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		84B60916105117A50022E5BC /* libTootleSocial.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleSocial.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84B6091F105118030022E5BC /* TLSocial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLSocial.cpp; path = ../TLSocial.cpp; sourceTree = SOURCE_ROOT; };
 		84B60920105118030022E5BC /* TLSocial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLSocial.h; path = ../TLSocial.h; sourceTree = SOURCE_ROOT; };
 		84B60921105118030022E5BC /* TSocialNetworkingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSocialNetworkingManager.h; path = ../TSocialNetworkingManager.h; sourceTree = SOURCE_ROOT; };
-		84B60926105118190022E5BC /* MacSocial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacSocial.cpp; sourceTree = "<group>"; };
-		84B60927105118190022E5BC /* MacSocial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacSocial.h; sourceTree = "<group>"; };
 		84B60928105118190022E5BC /* MacSocialNetworkingPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacSocialNetworkingPlatform.h; sourceTree = "<group>"; };
-		BF3C2529110704290000951F /* Tootle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Tootle.xcconfig; path = ../../BuildConfigurations/Tootle.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF3C252C110704360000951F /* Mac.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Mac.xcconfig; path = ../../BuildConfigurations/Mac/Mac.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF89CBCC110999DB009C2101 /* Lib.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Lib.xcconfig; path = ../../BuildConfigurations/Mac/Lib.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF89CBCD110999DB009C2101 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF89CBCE110999DB009C2101 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF89CBCF110999DB009C2101 /* MacDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacDebug.xcconfig; path = ../../BuildConfigurations/Mac/MacDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF89CBD0110999DB009C2101 /* MacRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacRelease.xcconfig; path = ../../BuildConfigurations/Mac/MacRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		84C5EF2F11A2C226006304BD /* PCSocialNetworkingPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCSocialNetworkingPlatform.h; path = ../PC/PCSocialNetworkingPlatform.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,23 +52,17 @@
 		841B47F01111A2EE00ACC2AE /* IPod Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				841B47F11111A31100ACC2AE /* IPodSocial.h */,
-				841B47F21111A31100ACC2AE /* IPodSocial.mm */,
 				841B47F31111A31100ACC2AE /* IPodSocialNetworkingPlatform_AGONOnline.h */,
 				841B47F41111A31100ACC2AE /* IPodSocialNetworkingPlatform_AGONOnline.mm */,
 				841B47F51111A31100ACC2AE /* IPodSocialNetworkingPlatform_Facebook.h */,
 				841B47F61111A31100ACC2AE /* IPodSocialNetworkingPlatform_OpenFeint.h */,
 				841B47F71111A31100ACC2AE /* IPodSocialNetworkingPlatform_OpenFeint.mm */,
 				841B47F81111A31100ACC2AE /* IPodSocialNetworkingPlatform.h */,
-				841B47F91111A31100ACC2AE /* TAGONOnline.h */,
-				841B47FA1111A31100ACC2AE /* TAGONOnline.mm */,
 				841B47FB1111A31100ACC2AE /* TFacebookConnect.h */,
 				841B47FC1111A31100ACC2AE /* TFacebookConnect.mm */,
 				841B47FD1111A31100ACC2AE /* TFacebookSession.h */,
 				841B47FE1111A31100ACC2AE /* TFacebookSession.mm */,
 				841B47FF1111A31100ACC2AE /* TootleSocialPrefix.pch */,
-				841B48001111A31100ACC2AE /* TOpenFeint.h */,
-				841B48011111A31100ACC2AE /* TOpenFeint.mm */,
 			);
 			name = "IPod Source Files";
 			sourceTree = "<group>";
@@ -104,6 +87,7 @@
 		84B6091B105117B90022E5BC /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
+				84C5EF2E11A2C20C006304BD /* PC Source Files */,
 				841B47F01111A2EE00ACC2AE /* IPod Source Files */,
 				84B60925105118080022E5BC /* Mac Source Files */,
 				84B6091F105118030022E5BC /* TLSocial.cpp */,
@@ -116,13 +100,11 @@
 		84B6091C105117C10022E5BC /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				BF89CBCC110999DB009C2101 /* Lib.xcconfig */,
-				BF89CBCD110999DB009C2101 /* LibDebug.xcconfig */,
-				BF89CBCE110999DB009C2101 /* LibRelease.xcconfig */,
-				BF89CBCF110999DB009C2101 /* MacDebug.xcconfig */,
-				BF89CBD0110999DB009C2101 /* MacRelease.xcconfig */,
-				BF3C252C110704360000951F /* Mac.xcconfig */,
-				BF3C2529110704290000951F /* Tootle.xcconfig */,
+				848F0E9E119C2904009D8C1E /* LibDebug_wx.xcconfig */,
+				848F0E9F119C2904009D8C1E /* LibDebug.xcconfig */,
+				848F0EA0119C2904009D8C1E /* LibRelease_wx.xcconfig */,
+				848F0EA1119C2904009D8C1E /* LibRelease.xcconfig */,
+				848F0E7A119C2819009D8C1E /* BuildConfigurations */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
@@ -130,11 +112,17 @@
 		84B60925105118080022E5BC /* Mac Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				84B60926105118190022E5BC /* MacSocial.cpp */,
-				84B60927105118190022E5BC /* MacSocial.h */,
 				84B60928105118190022E5BC /* MacSocialNetworkingPlatform.h */,
 			);
 			name = "Mac Source Files";
+			sourceTree = "<group>";
+		};
+		84C5EF2E11A2C20C006304BD /* PC Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				84C5EF2F11A2C226006304BD /* PCSocialNetworkingPlatform.h */,
+			);
+			name = "PC Source Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -146,7 +134,6 @@
 			files = (
 				84B60923105118030022E5BC /* TLSocial.h in Headers */,
 				84B60924105118030022E5BC /* TSocialNetworkingManager.h in Headers */,
-				84B6092A105118190022E5BC /* MacSocial.h in Headers */,
 				84B6092B105118190022E5BC /* MacSocialNetworkingPlatform.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -195,7 +182,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				84B60922105118030022E5BC /* TLSocial.cpp in Sources */,
-				84B60929105118190022E5BC /* MacSocial.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,14 +190,14 @@
 /* Begin XCBuildConfiguration section */
 		84B608FE105116E00022E5BC /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BF89CBCD110999DB009C2101 /* LibDebug.xcconfig */;
+			baseConfigurationReference = 848F0E9F119C2904009D8C1E /* LibDebug.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		84B608FF105116E00022E5BC /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BF89CBCE110999DB009C2101 /* LibRelease.xcconfig */;
+			baseConfigurationReference = 848F0EA1119C2904009D8C1E /* LibRelease.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;

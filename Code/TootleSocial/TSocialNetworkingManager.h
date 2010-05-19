@@ -2,6 +2,16 @@
  *  TSocialNetworkingManager.h
  *  TootleSocial
  *
+ *	The Social Networking Manager handles requests to the social networking systems
+ *	such as facebook, twitter, AGON, OpenFeint etc.
+ *
+ *	At the moment this uses one exclusive system dictated by the social platform
+ *	type in use.
+ *
+ *	Long term we should be able to have multiple social netwoking platforms working together
+ *	where possible.  We should be able to have twitter and facebook sessions at the same time for instance.
+ *	We may not be able to mix some social networking platforms however eg. AGON and OpenFeint.
+ *
  *  Created by Duane Bradbury on 28/08/2009.
  *  Copyright 2009 Tootle. All rights reserved.
  *
@@ -19,18 +29,6 @@ namespace TLSocial
 {
 	template<class SocialNetworkingPlatform>
 	class TSocialNetworkingManager;
-	
-	namespace Platform
-	{
-		void BeginSession(TRefRef SessionTypeRef, const TString& APIKey, const TString& APISecret);
-		void EndSession(TRefRef SessionTypeRef);
-		
-		void OpenDashboard(TRefRef SessionTypeRef);
-		void OpenLeaderboard(TRefRef SessionTypeRef);
-		
-		void SubmitScore(TRefRef SessionTypeRef, const s32& Score, const TString& Format, const s32& LeaderboardID);
-	}				
-	
 }
 
 
@@ -44,6 +42,7 @@ namespace TLSocial
 #include "IPod/IPodSocialnetworkingPlatform_Facebook.h"
 #include "IPod/IPodSocialNetworkingPlatform_OpenFeint.h"
 #include "IPod/IPodSocialNetworkingPlatform_AGONOnline.h"
+#include "IPod/IPodSocialnetworkingPlatform_GameCenter.h"
 #endif
 
 #if defined(TL_TARGET_MAC)	
@@ -58,13 +57,14 @@ template<class SocialNetworkingPlatform>
 class TLSocial::TSocialNetworkingManager : public TLCore::TManager, public SocialNetworkingPlatform
 {
 public:
-	TSocialNetworkingManager(TRefRef ManagerRef) :
-	TLCore::TManager		(ManagerRef)
-	{
-	}
+	TSocialNetworkingManager(TRefRef ManagerRef);
+	~TSocialNetworkingManager();
 	
 	// Session management
-	Bool		BeginSession(TRefRef SessionRef, TRefRef UserRef, TRefRef SessionTypeRef, const TString& APIKey, const TString& APISecret);
+	Bool		CreateSession(TRefRef SessionRef, TRefRef UserRef, TRefRef SessionTypeRef, TLMessaging::TMessage& InitMessage);
+	Bool		DestroySession(TRefRef SessionRef);
+
+	Bool		BeginSession(TRefRef SessionRef);
 	Bool		EndSession(TRefRef SessionRef);
 	
 	Bool		OpenDashboard();
@@ -78,8 +78,12 @@ public:
 	// Achievement processing
 	
 	// Accessors
-	FORCEINLINE const TString&		GetKey()					const	{ return m_Key; }	
-	FORCEINLINE const TString&		GetSecret()					const	{ return m_Secret; }
+//	FORCEINLINE const TString&		GetKey()					const	{ return m_Key; }	
+//	FORCEINLINE const TString&		GetSecret()					const	{ return m_Secret; }
+	
+protected:
+
+	virtual SyncBool	Shutdown();
 	
 private:
 	
@@ -98,18 +102,46 @@ private:
 	
 	TKeyArray<TRef, s32>	m_Leaderboards;
 	
-	TRef				m_SessionTypeRef;	// Type of session
-	
-	// Common social networking platform data
-	TString				m_Key;
-	TString				m_Secret;
+	TRef				m_SessionTypeRef;	// Type of session	
 };
 
+
+template<class SocialNetworkingPlatform>
+TLSocial::TSocialNetworkingManager<SocialNetworkingPlatform>::TSocialNetworkingManager(TRefRef ManagerRef) :
+TLCore::TManager		(ManagerRef)
+{
+}
+
+
+template<class SocialNetworkingPlatform>
+TLSocial::TSocialNetworkingManager<SocialNetworkingPlatform>::~TSocialNetworkingManager()
+{
+	// Last resort - destroy the social networking session if still active
+	// Shouldn;t really be valid at this point as the session should be destroyed either
+	// via the game of via the shutdown of the manager
+	if(m_SessionTypeRef.IsValid())
+	{
+		TLDebug_Break("Social netowrking session still active");
+		DestroySession(TRef());
+	}
+}
+
+template<class SocialNetworkingPlatform>
+SyncBool TLSocial::TSocialNetworkingManager<SocialNetworkingPlatform>::Shutdown()
+{
+	// Destroy the social networking session if still active
+	if(m_SessionTypeRef.IsValid())
+	{
+		DestroySession(TRef());
+	}
+	
+	return TManager::Shutdown();
+}
 
 
 // Begins a social networking session - initiates login dialogue and session object for a given user
 template<class SocialNetworkingPlatform>
-Bool TLSocial::TSocialNetworkingManager<SocialNetworkingPlatform>::BeginSession(TRefRef SessionRef, TRefRef UserRef, TRefRef SessionTypeRef, const TString& APIKey, const TString& APISecret)
+Bool TLSocial::TSocialNetworkingManager<SocialNetworkingPlatform>::CreateSession(TRefRef SessionRef, TRefRef UserRef, TRefRef SessionTypeRef, TLMessaging::TMessage& InitMessage)
 {
 	if(m_SessionTypeRef.IsValid())
 	{
@@ -125,18 +157,36 @@ Bool TLSocial::TSocialNetworkingManager<SocialNetworkingPlatform>::BeginSession(
 		return FALSE;
 	}
 	
-	m_SessionTypeRef = SessionTypeRef;
-	
-	m_Key = APIKey;
-	m_Secret = APISecret;
 	
 	// Social Networking platform policy begin session
-	SocialNetworkingPlatform::BeginSession(m_Key, m_Secret);
-	
-	//TLSocial::Platform::BeginSession(m_SessionTypeRef, m_Key, m_Secret);
-	
+	if(!SocialNetworkingPlatform::CreateSession(InitMessage))
+		return FALSE;
+
+	// Session created
+	m_SessionTypeRef = SessionTypeRef;
+		
+	//m_Key = APIKey;
+	//m_Secret = APISecret;
 	return TRUE;
 }
+
+
+template<class SocialNetworkingPlatform>
+Bool TLSocial::TSocialNetworkingManager<SocialNetworkingPlatform>::BeginSession(TRefRef SessionRef)
+{
+	if(!m_SessionTypeRef.IsValid())
+	{
+		// Session already active
+		return FALSE;
+	}
+	
+	
+	// Social Networking platform policy begin session
+	SocialNetworkingPlatform::BeginSession();
+		
+	return TRUE;
+}
+
 
 // Ends a session for a user - logs out of social network
 template<class SocialNetworkingPlatform>
@@ -147,13 +197,25 @@ Bool TLSocial::TSocialNetworkingManager<SocialNetworkingPlatform>::EndSession(TR
 		
 	// Social Networking platform policy begin session
 	SocialNetworkingPlatform::EndSession();
+	
+	return TRUE;
+}
 
-	//Platform::EndSession(m_SessionTypeRef);
+
+template<class SocialNetworkingPlatform>
+Bool TLSocial::TSocialNetworkingManager<SocialNetworkingPlatform>::DestroySession(TRefRef SessionRef)
+{
+	if(!m_SessionTypeRef.IsValid())
+		return FALSE;
+	
+	// Social Networking platform policy begin session
+	SocialNetworkingPlatform::DestroySession();
 	
 	m_SessionTypeRef.SetInvalid();
 	
 	return TRUE;
 }
+
 
 
 // Opens social network platform dashboard

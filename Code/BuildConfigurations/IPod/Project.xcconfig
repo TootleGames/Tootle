@@ -16,8 +16,7 @@ HEADER_SEARCH_PATHS = $(TOOTLE_ROOT)
 // The AGON lib is now a universal lib built against the latest SDK.
 // We can safely link with this for previous SDK targets but must not use functionality
 // that may be for an SDK greater than the target
-//LIBRARY_SEARCH_PATHS = ../../../Tootle/Code/TootleSocial/IPod/libagon/lib/iphoneos3.2
-LIBRARY_SEARCH_PATHS = ../../../Tootle/Code/TootleSocial/IPod/libagon/lib/$(SDK_NAME)
+LIBRARY_SEARCH_PATHS = ../../../Tootle/Code/TootleSocial/IPod/libagon/lib/iphoneos3.2
 
 PROJECT_DEFINITIONS = FT2_BUILD_LIBRARY 
 

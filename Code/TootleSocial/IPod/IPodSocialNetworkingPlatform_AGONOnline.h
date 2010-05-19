@@ -24,6 +24,7 @@
 
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/TString.h>
+#include <TootleCore/TLMessaging.h>
 
 namespace TLSocial
 {
@@ -33,7 +34,10 @@ namespace TLSocial
 		class SocialNetworkingPlatform_AGONOnline
 		{
 		public:
-			void BeginSession(const TString& APIKey, const TString& APISecret);
+			Bool CreateSession(TLMessaging::TMessage& InitMessage);
+			void DestroySession();
+			
+			void BeginSession();
 			void EndSession();
 			
 			void OpenDashboard();													

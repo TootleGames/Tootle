@@ -20,7 +20,10 @@ namespace TLSocial
 			namespace Facebook
 			{
 				
-				void BeginSession(const TString& APIKey, const TString& APISecret);
+				Bool CreateSession(const TString& APIKey, const TString& APISecret);
+				void DestroySession();
+				
+				void BeginSession();
 				void EndSession();
 				
 				void OpenDashboard();

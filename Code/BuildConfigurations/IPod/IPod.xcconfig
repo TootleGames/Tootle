@@ -19,8 +19,9 @@ IPHONE_OPTIMIZE_OPTIONS = -skip-PNGs
 
 //	gr: add the target define
 IPOD_DEFINITIONS = $(TOOTLE_DEFINITIONS) TL_TARGET_IPOD FT2_BUILD_LIBRARY 
+
 //	this linker flag is required if we're linking with any libs with objective-c code in them
-IPOD_LDFLAGS = -ObjC -all_load 
+IPOD_LDFLAGS = -ObjC
 
 //	gr: enable pre-binding to check symbols against dynamic (and static?) libs at link time
 //		this should spot errors with mis-matched libs
@@ -81,6 +82,7 @@ STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static
 // To explicitly make a symbol visible (if building a shared lib) use the EXPORT and IMPORT macros (in TLTypes.h)
 // See http://developer.apple.com/mac/library/documentation/DeveloperTools/Conceptual/CppRuntimeEnv/Articles/SymbolVisibility.html#//apple_ref/doc/uid/TP40001670
 GCC_SYMBOLS_PRIVATE_EXTERN = YES 
+//GCC_SYMBOLS_PRIVATE_EXTERN = NO 
 GCC_INLINES_ARE_PRIVATE_EXTERN = NO
 KEEP_PRIVATE_EXTERNS = NO
 
