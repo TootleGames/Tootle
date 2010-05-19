@@ -63,15 +63,18 @@ GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES		//	enabled, but phase out ... function
 CC_WARN_UNUSED_VALUE = YES						//	catch when we do a calculation, but nothing with the result
 
 
-//	gr: don't define these, we can leave them as xcode wants
-//MACH_O_TYPE = staticlib
-
 //	common mac compiler setup
 ADDITIONAL_SDKS = 
 ARCHS = $(ARCHS_STANDARD_32_64_BIT)
 SDKROOT = 
+
 ONLY_ACTIVE_ARCH = YES
-VALID_ARCHS = i386 ppc ppc64 ppc7400 ppc970 x86_64
+
+// Valid architectures to build for. 
+// Targetting only Intel Macs as PowerPC is legacy hardware.
+//VALID_ARCHS = i386 ppc ppc64 ppc7400 ppc970 x86_64
+VALID_ARCHS = i386 x86_64
+
 SYMROOT = build
 OBJROOT = $(SYMROOT)
 CONFIGURATION_BUILD_DIR = $(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
@@ -93,7 +96,10 @@ ALTERNATE_MODE = $(INSTALL_MODE_FLAG)
 ALTERNATE_PERMISSIONS_FILES = 
 DEPLOYMENT_LOCATION = NO
 DEPLOYMENT_POSTPROCESSING = NO
-MACOSX_DEPLOYMENT_TARGET = $(inherited)
+
+// Mac OS X deployment target is the lowest OS we will support.
+MACOSX_DEPLOYMENT_TARGET = 10.5
+
 INSTALL_GROUP = $(GROUP)
 INSTALL_OWNER = $(USER)
 INSTALL_MODE_FLAG = u+w,go-w,a+rX
@@ -144,7 +150,10 @@ PRELINK_FLAGS =
 SECTORDER_FLAGS = 
 UNEXPORTED_SYMBOLS_FILE = 
 WARNING_LDFLAGS = 
-LD_GENERATE_MAP_FILE = NO
+
+// Generate symbols map file
+LD_GENERATE_MAP_FILE = YES
+
 APPLY_RULES_IN_COPY_FILES = NO
 INFOPLIST_EXPAND_BUILD_SETTINGS = YES
 FRAMEWORK_VERSION = A
@@ -186,9 +195,13 @@ GCC_AUTO_VECTORIZATION = NO
 // Call trivial Obj-C constructors and destrructors.
 GCC_OBJC_CALL_CXX_CDTORS = NO
 
-// Enable SSE3 instructions - Intel processors only
+
+// Enable Streaming SIMD Extension (SSE) instructions - Intel processors only
+// See http://software.intel.com/en-us/articles/performance-tools-for-software-developers-intel-compiler-options-for-sse-generation-and-processor-specific-optimizations/
 GCC_ENABLE_SSE3_EXTENSIONS = YES
 GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES
+GCC_ENABLE_SSE41_EXTENSIONS = NO
+GCC_ENABLE_SSE42_EXTENSIONS = NO
 
 GCC_STRICT_ALIASING = NO
 GCC_FEEDBACK_DIRECTED_OPTIMIZATION = Off

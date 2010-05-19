@@ -10,6 +10,10 @@
 //	lib settings
 TOOTLE_ROOT = ../..
 
+// Static library generation
+MACH_O_TYPE = staticlib
+
+
 EXECUTABLE_EXTENSION = a
 EXECUTABLE_PREFIX = lib
 WRAPPER_EXTENSION = 

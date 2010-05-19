@@ -38,6 +38,10 @@ PROJECT_LDFLAGS = -framework Foundation -framework AppKit -framework CoreData -f
 PROJECT_CPLUSPLUSFLAGS = 
 PROJECT_LDFLAGS = 
 
+// Exectuable generation
+MACH_O_TYPE = mh_execute
+
+
 //	gr: these libs to link with should all be in $(WX_LDFLAGS)
 //	-liconv
 //					"-lwxregexu-2.9",
