@@ -24,20 +24,6 @@ Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 	{
 		applicationdir.Append("/Assets/");
 		AssetDir =  applicationdir;
-/*
-		NSString* appdir = TLString::ConvertToUnicharString(applicationdir, FALSE);
-		
-		// On the ipod/iphone the assets are stored in the bundle root.
-		//NSString* path = [appdir stringByAppendingString:@"/Assets/"];
-		NSString* path = [appdir stringByAppendingString:@"/"];
-		
-		// Copy path string
-		const char* pAssetDir = (const char*)[path UTF8String];
-		AssetDir =  pAssetDir;
-
-		///////////////////////////////////////////////////////////////////////////
-		[appdir release];
- */
 		
 		return TRUE;
 	}	
@@ -49,17 +35,21 @@ Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 
 Bool TLFileSys::Platform::GetAssetSubDirectory(TTempString& AssetDir, const TTempString& Subdirectory)
 {
-	// On the iPod we don't have sub directories per se
-	// The application bundle/package contains resources in a flat structure so resources
-	// should be added specifically for a given project and care must be taken not to add files
-	// with the same name and extension.
-	// If you *need* a subdirectory you can use folder references within the project that will structure the bundle
-	// with a 'directory' but all files within the filesystem folder will be added to the project so may not help
-	// Additionally if this route is used then the subdirectory will need to be accessed via another routine other than this one.
+	// Get the subdirectory requested.
+	TTempString tmpassetdir;
 	
-	// Print a warnign to say that we are looking for a subdirectory that may not be found
-	TLDebug_Print("WARNING: GetAssetSubDirectory called which may not find the resource you are looking for");
-	return GetAssetDirectory(AssetDir);
+	if(GetAssetDirectory(tmpassetdir))
+	{
+		tmpassetdir.Append(Subdirectory);
+		tmpassetdir.Append("/");
+		
+		AssetDir = tmpassetdir;
+		
+		return TRUE;
+		
+	}
+	
+	return FALSE;
 }
 
 

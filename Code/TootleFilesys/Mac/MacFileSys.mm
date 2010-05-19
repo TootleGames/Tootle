@@ -70,8 +70,8 @@ Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 
 		// For a release build we will need to use the bundle path as-is and append the 'Asset' directory to it
 
-		// On the Mac the assets are stored in the bundle under 'contents/resources/'
-		applicationdir.Append("/Contents/Resources/");
+		// On the Mac the assets are stored in the bundle under 'contents/resources/assets'
+		applicationdir.Append("/Contents/Resources/Assets");
 		AssetDir = applicationdir;
 		
 		///////////////////////////////////////////////////////////////////////////
@@ -86,13 +86,7 @@ Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 
 Bool TLFileSys::Platform::GetAssetSubDirectory(TTempString& UserDir, const TTempString& Subdirectory)
 {
-#if(FILESYS_VERSION == FS_DEVELOPMENT)	
-	///////////////////////////////////////////////////////////////////////////
-	// Developer verison
-	///////////////////////////////////////////////////////////////////////////
-
-	// For a developer version we append the subdirectory onto the asset directory
-	
+	// Get the subdirectory requested
 	TTempString tmpassetdir;
 	
 	if(GetAssetDirectory(tmpassetdir))
@@ -106,27 +100,7 @@ Bool TLFileSys::Platform::GetAssetSubDirectory(TTempString& UserDir, const TTemp
 		
 	}
 	
-	return FALSE;
-	
-	///////////////////////////////////////////////////////////////////////////
-	
-#else
-
-	///////////////////////////////////////////////////////////////////////////
-	// Release version
-	///////////////////////////////////////////////////////////////////////////
-
-	// For a release version we do not use subdirectories per se.  All assets are stored in the 
-	// root of the package so we simply access the root asset directory instead.
-	
-	// Print a warnign to say that we are looking for a subdirectory that may not be found
-	TLDebug_Print("WARNING: GetAssetSubDirectory called which may not find the resource you are looking for");
-	return GetAssetDirectory(UserDir);
-	
-	///////////////////////////////////////////////////////////////////////////
-
-#endif	
-	
+	return FALSE;		
 }		
 
 
