@@ -10,6 +10,7 @@
 #include "TOblong.h"
 #include "TCapsule.h"
 #include <TootleCore/TPtr.h>
+#include <TootleCore/TLRandom.h>
 
 
 namespace TLMaths

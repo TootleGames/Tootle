@@ -1,7 +1,5 @@
 #include "TPath.h"
 
-#include <TootleCore/TArrayMisc.h>
-
 
 namespace TLRef
 {
@@ -124,7 +122,7 @@ SyncBool TLPath::TPath::FindPathRandom(TRefRef StartNode,u32 NodesInRoute, Bool 
 		}
 
 		//	pick a link to follow
-		TLPath::TPathNodeLink* pFollowLink = TLArray::GetRandomElement(ValidNodeLinks);
+		TLPath::TPathNodeLink* pFollowLink = ValidNodeLinks.GetRandomElement();
 		pNode = pPathNetwork->GetNode( pFollowLink->GetLinkNodeRef() );
 		if ( !pNode )
 		{
@@ -654,7 +652,7 @@ Bool TLPath::TPathNetworkZones::GetRandomPathPositionInRandomZone(TLMaths::TTran
 	const TLMaths::TQuadTreeZone* pPathLinkZone = NULL;
 	while ( !pPathLinksInZone && TempZoneList.GetSize() )
 	{
-		s32 ZoneIndex = TempZoneList.GetRandIndex();
+		s32 ZoneIndex = TempZoneList.GetRandomIndex();
 		pPathLinkZone = TempZoneList[ZoneIndex];
 		pPathLinksInZone = GetZonePathLinks( pPathLinkZone );
 		
@@ -675,7 +673,7 @@ Bool TLPath::TPathNetworkZones::GetRandomPathPositionInRandomZone(TLMaths::TTran
 		return FALSE;
 
 	//	k now pick a random path from the list
-	const TLPath::TPathLink& FoundPathLink = TLArray::GetRandomElementConst(*pPathLinksInZone);
+	const TLPath::TPathLink& FoundPathLink = (*pPathLinksInZone).GetRandomElementConst();
 	const TLMaths::TLine2D& PathLinkLine = FoundPathLink.GetLinkLine();
 
 	//	now find a point along the path that's in the zone

@@ -11,7 +11,7 @@
 
 #include "TLTime.h"
 #include "TMemoryManager.h"
-#include "TLRandom.h"
+#include "TRandomManager.h"
 
 namespace TLCore
 {

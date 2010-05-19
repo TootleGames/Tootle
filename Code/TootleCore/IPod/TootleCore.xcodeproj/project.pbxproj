@@ -14,6 +14,9 @@
 		8434C8D9100B484C0063673E /* TLRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 8434C8D8100B484C0063673E /* TLRandom.h */; };
 		8440D7A2105528CD0045E57E /* IPodAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = 8440D7A0105528CD0045E57E /* IPodAlert.h */; };
 		8440D7A3105528CD0045E57E /* IPodAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8440D7A1105528CD0045E57E /* IPodAlert.mm */; };
+		84477D84119ED1950094CB73 /* IPodRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 84477D83119ED1950094CB73 /* IPodRandom.h */; };
+		84477D87119ED1B30094CB73 /* TRandomManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84477D85119ED1B30094CB73 /* TRandomManager.cpp */; };
+		84477D88119ED1B30094CB73 /* TRandomManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 84477D86119ED1B30094CB73 /* TRandomManager.h */; };
 		845EC9E2119072B200362CA4 /* IPodMaths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845EC9E0119072B200362CA4 /* IPodMaths.cpp */; };
 		845EC9E3119072B200362CA4 /* IPodMaths.h in Headers */ = {isa = PBXBuildFile; fileRef = 845EC9E1119072B200362CA4 /* IPodMaths.h */; };
 		845EC9EA119072C800362CA4 /* TAxisAngle.h in Headers */ = {isa = PBXBuildFile; fileRef = 845EC9E4119072C800362CA4 /* TAxisAngle.h */; };
@@ -94,7 +97,6 @@
 		84E116080F3C6C7900471397 /* TGraphBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E116050F3C6C7900471397 /* TGraphBase.h */; };
 		84E116090F3C6C7900471397 /* TLanguage.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E116060F3C6C7900471397 /* TLanguage.h */; };
 		84F88B70109EEEB6004BAF8B /* TArrayAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 84F88B6D109EEEB6004BAF8B /* TArrayAllocator.h */; };
-		84F88B71109EEEB6004BAF8B /* TArrayMisc.h in Headers */ = {isa = PBXBuildFile; fileRef = 84F88B6E109EEEB6004BAF8B /* TArrayMisc.h */; };
 		84F88B72109EEEB6004BAF8B /* TPointerArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 84F88B6F109EEEB6004BAF8B /* TPointerArray.h */; };
 /* End PBXBuildFile section */
 
@@ -114,6 +116,12 @@
 		8434C8D8100B484C0063673E /* TLRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLRandom.h; path = ../TLRandom.h; sourceTree = SOURCE_ROOT; };
 		8440D7A0105528CD0045E57E /* IPodAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodAlert.h; sourceTree = "<group>"; };
 		8440D7A1105528CD0045E57E /* IPodAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodAlert.mm; sourceTree = "<group>"; };
+		84477D80119ED1780094CB73 /* PCCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCCore.h; path = ../PC/PCCore.h; sourceTree = SOURCE_ROOT; };
+		84477D81119ED1780094CB73 /* PCRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCRandom.h; path = ../PC/PCRandom.h; sourceTree = SOURCE_ROOT; };
+		84477D82119ED18A0094CB73 /* MacRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacRandom.h; path = ../Mac/MacRandom.h; sourceTree = SOURCE_ROOT; };
+		84477D83119ED1950094CB73 /* IPodRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodRandom.h; sourceTree = "<group>"; };
+		84477D85119ED1B30094CB73 /* TRandomManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRandomManager.cpp; path = ../TRandomManager.cpp; sourceTree = SOURCE_ROOT; };
+		84477D86119ED1B30094CB73 /* TRandomManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRandomManager.h; path = ../TRandomManager.h; sourceTree = SOURCE_ROOT; };
 		845EC9E0119072B200362CA4 /* IPodMaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IPodMaths.cpp; sourceTree = "<group>"; };
 		845EC9E1119072B200362CA4 /* IPodMaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodMaths.h; sourceTree = "<group>"; };
 		845EC9E4119072C800362CA4 /* TAxisAngle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAxisAngle.h; path = ../TAxisAngle.h; sourceTree = SOURCE_ROOT; };
@@ -208,7 +216,6 @@
 		84E116050F3C6C7900471397 /* TGraphBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGraphBase.h; path = ../TGraphBase.h; sourceTree = SOURCE_ROOT; };
 		84E116060F3C6C7900471397 /* TLanguage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLanguage.h; path = ../TLanguage.h; sourceTree = SOURCE_ROOT; };
 		84F88B6D109EEEB6004BAF8B /* TArrayAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TArrayAllocator.h; path = ../TArrayAllocator.h; sourceTree = SOURCE_ROOT; };
-		84F88B6E109EEEB6004BAF8B /* TArrayMisc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TArrayMisc.h; path = ../TArrayMisc.h; sourceTree = SOURCE_ROOT; };
 		84F88B6F109EEEB6004BAF8B /* TPointerArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPointerArray.h; path = ../TPointerArray.h; sourceTree = SOURCE_ROOT; };
 		BF8FC1AB118CA380005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
 		BF8FC1AC118CA38F005391AF /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -229,6 +236,7 @@
 		840A927110D7E82300F8960C /* Mac Source Files */ = {
 			isa = PBXGroup;
 			children = (
+				84477D82119ED18A0094CB73 /* MacRandom.h */,
 				845EC9F0119072D900362CA4 /* MacMaths.h */,
 				840A927710D7E83B00F8960C /* MacDebug.h */,
 				840A927810D7E83B00F8960C /* MacDebug.mm */,
@@ -245,6 +253,8 @@
 		845EC9F1119072E100362CA4 /* PC Source Files */ = {
 			isa = PBXGroup;
 			children = (
+				84477D80119ED1780094CB73 /* PCCore.h */,
+				84477D81119ED1780094CB73 /* PCRandom.h */,
 				845EC9F2119072FD00362CA4 /* cpuid.cpp */,
 				845EC9F3119072FD00362CA4 /* cpuid.h */,
 				845EC9F4119072FD00362CA4 /* PCCore.cpp */,
@@ -299,7 +309,7 @@
 				845EC9E8119072C800362CA4 /* TQuaternion.cpp */,
 				845EC9E9119072C800362CA4 /* TQuaternion.h */,
 				840A927110D7E82300F8960C /* Mac Source Files */,
-				84C109CE0F0A791F00B2DF7A /* IPod */,
+				84C109CE0F0A791F00B2DF7A /* IPod Source Files */,
 				846C18C6109748AE0098DFAF /* TTransform.cpp */,
 				846C18C7109748AE0098DFAF /* TTransform.h */,
 				84E116040F3C6C7900471397 /* TGraphBase.cpp */,
@@ -309,7 +319,6 @@
 				84C109610F0A791900B2DF7A /* TArray.inc.h */,
 				84CDD7D31096EC1A0006D0BA /* TArraySort.h */,
 				84F88B6D109EEEB6004BAF8B /* TArrayAllocator.h */,
-				84F88B6E109EEEB6004BAF8B /* TArrayMisc.h */,
 				84F88B6F109EEEB6004BAF8B /* TPointerArray.h */,
 				84C109620F0A791900B2DF7A /* TBinary.cpp */,
 				84C109630F0A791900B2DF7A /* TBinary.h */,
@@ -334,6 +343,8 @@
 				846C18C4109748AE0098DFAF /* TLMathsMisc.h */,
 				84C109760F0A791900B2DF7A /* TLMaths.h */,
 				8434C8D8100B484C0063673E /* TLRandom.h */,
+				84477D85119ED1B30094CB73 /* TRandomManager.cpp */,
+				84477D86119ED1B30094CB73 /* TRandomManager.h */,
 				84C109770F0A791900B2DF7A /* TLMemory.cpp */,
 				84C109780F0A791900B2DF7A /* TLMemory.h */,
 				84C109790F0A791900B2DF7A /* TLMemory.inc.h */,
@@ -373,9 +384,10 @@
 			name = "Source Code";
 			sourceTree = "<group>";
 		};
-		84C109CE0F0A791F00B2DF7A /* IPod */ = {
+		84C109CE0F0A791F00B2DF7A /* IPod Source Files */ = {
 			isa = PBXGroup;
 			children = (
+				84477D83119ED1950094CB73 /* IPodRandom.h */,
 				845EC9E0119072B200362CA4 /* IPodMaths.cpp */,
 				845EC9E1119072B200362CA4 /* IPodMaths.h */,
 				8421B17C108628DE00439A7E /* IPodDebug.h */,
@@ -391,7 +403,7 @@
 				840A926D10D7E81700F8960C /* IPodString.h */,
 				840A926E10D7E81700F8960C /* IPodString.mm */,
 			);
-			name = IPod;
+			name = "IPod Source Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -450,7 +462,6 @@
 				846C18C9109748AE0098DFAF /* TMemoryAllocators.h in Headers */,
 				846C18CB109748AE0098DFAF /* TTransform.h in Headers */,
 				84F88B70109EEEB6004BAF8B /* TArrayAllocator.h in Headers */,
-				84F88B71109EEEB6004BAF8B /* TArrayMisc.h in Headers */,
 				84F88B72109EEEB6004BAF8B /* TPointerArray.h in Headers */,
 				840A926F10D7E81700F8960C /* IPodString.h in Headers */,
 				845EC9E3119072B200362CA4 /* IPodMaths.h in Headers */,
@@ -458,6 +469,8 @@
 				845EC9EB119072C800362CA4 /* TEuler.h in Headers */,
 				845EC9ED119072C800362CA4 /* TMatrix.h in Headers */,
 				845EC9EF119072C800362CA4 /* TQuaternion.h in Headers */,
+				84477D84119ED1950094CB73 /* IPodRandom.h in Headers */,
+				84477D88119ED1B30094CB73 /* TRandomManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -536,6 +549,7 @@
 				845EC9E2119072B200362CA4 /* IPodMaths.cpp in Sources */,
 				845EC9EC119072C800362CA4 /* TMatrix.cpp in Sources */,
 				845EC9EE119072C800362CA4 /* TQuaternion.cpp in Sources */,
+				84477D87119ED1B30094CB73 /* TRandomManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -546,7 +560,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BF8FC1AC118CA38F005391AF /* LibDebug.xcconfig */;
 			buildSettings = {
-				GCC_MODEL_TUNING = "";
 			};
 			name = Debug;
 		};

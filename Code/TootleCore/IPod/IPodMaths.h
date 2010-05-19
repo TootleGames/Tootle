@@ -14,7 +14,6 @@
 
 #include <math.h>		
 #include <float.h>		
-#include <stdlib.h>		
 #include <limits.h>	
 
 namespace TLMaths
@@ -44,9 +43,6 @@ namespace TLMaths
 	
 	FORCEINLINE float			S32ToFloat(s32 Value)					{ return (float)( Value );	}
 	FORCEINLINE s32				FloatToS32(float Value)					{ return (s32)( Value );	}
-	
-	FORCEINLINE u32				Rand(u32 Max);							//	number between 0 and Max inclusive
-	
 	
 #define TLMaths_FloatMax				FLT_MAX
 #define TLMaths_FloatMin				FLT_MIN
@@ -82,12 +78,4 @@ FORCEINLINE float TLMaths::Qsinf(float RadAngle)
 }
 
 
-//-----------------------------------------------
-//	get random u32 up to max (NOT inclusive... 0 <= rand < Max)
-//-----------------------------------------------
-FORCEINLINE u32 TLMaths::Rand(u32 Max)
-{
-	u32 RandInt = rand() % Max;
-	return RandInt;
-}
 

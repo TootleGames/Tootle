@@ -75,6 +75,9 @@
 		8421B0AD1086239900439A7E /* MacDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 8421B0AB1086239900439A7E /* MacDebug.h */; };
 		8421B0AE1086239900439A7E /* MacDebug.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8421B0AC1086239900439A7E /* MacDebug.mm */; };
 		842A0786109730C300BE64F8 /* TTransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 842A0785109730C300BE64F8 /* TTransform.cpp */; };
+		84477C30119EAEFD0094CB73 /* MacRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 84477C2F119EAEFD0094CB73 /* MacRandom.h */; };
+		84477CC8119EC9C80094CB73 /* TRandomManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 84477CC7119EC9C80094CB73 /* TRandomManager.h */; };
+		84477CCA119ECA6E0094CB73 /* TRandomManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84477CC9119ECA6E0094CB73 /* TRandomManager.cpp */; };
 		844CE21510515D3000178124 /* TLRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 844CE21210515D3000178124 /* TLRandom.h */; };
 		845EC664118F6A1700362CA4 /* TMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 845EC662118F6A1700362CA4 /* TMatrix.h */; };
 		845EC665118F6A1700362CA4 /* TMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845EC663118F6A1700362CA4 /* TMatrix.cpp */; };
@@ -171,6 +174,12 @@
 		8421B0AB1086239900439A7E /* MacDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacDebug.h; sourceTree = "<group>"; };
 		8421B0AC1086239900439A7E /* MacDebug.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacDebug.mm; sourceTree = "<group>"; };
 		842A0785109730C300BE64F8 /* TTransform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTransform.cpp; path = ../TTransform.cpp; sourceTree = SOURCE_ROOT; };
+		84477BBD119E98080094CB73 /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../BuildConfigurations; sourceTree = SOURCE_ROOT; };
+		84477C2D119EAEDA0094CB73 /* IPodRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodRandom.h; path = ../IPod/IPodRandom.h; sourceTree = SOURCE_ROOT; };
+		84477C2E119EAEF00094CB73 /* PCRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCRandom.h; path = ../PC/PCRandom.h; sourceTree = SOURCE_ROOT; };
+		84477C2F119EAEFD0094CB73 /* MacRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacRandom.h; sourceTree = "<group>"; };
+		84477CC7119EC9C80094CB73 /* TRandomManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRandomManager.h; path = ../TRandomManager.h; sourceTree = SOURCE_ROOT; };
+		84477CC9119ECA6E0094CB73 /* TRandomManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRandomManager.cpp; path = ../TRandomManager.cpp; sourceTree = SOURCE_ROOT; };
 		844CE21210515D3000178124 /* TLRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLRandom.h; path = ../TLRandom.h; sourceTree = SOURCE_ROOT; };
 		845EC662118F6A1700362CA4 /* TMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TMatrix.h; path = ../TMatrix.h; sourceTree = SOURCE_ROOT; };
 		845EC663118F6A1700362CA4 /* TMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TMatrix.cpp; path = ../TMatrix.cpp; sourceTree = SOURCE_ROOT; };
@@ -200,17 +209,6 @@
 		84D9C02A1098A5FE000042D8 /* TPointerArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPointerArray.h; path = ../TPointerArray.h; sourceTree = SOURCE_ROOT; };
 		84D9C16010999C86000042D8 /* TArrayAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TArrayAllocator.h; path = ../TArrayAllocator.h; sourceTree = SOURCE_ROOT; };
 		84F88A4A109E2530004BAF8B /* TArrayMisc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TArrayMisc.h; path = ../TArrayMisc.h; sourceTree = SOURCE_ROOT; };
-		BF1794AC112824F700A5A056 /* Lib.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Lib.xcconfig; path = ../../BuildConfigurations/Mac/Lib.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF1794AD112824F700A5A056 /* Mac.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Mac.xcconfig; path = ../../BuildConfigurations/Mac/Mac.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF1794AE112824F700A5A056 /* MacDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacDebug.xcconfig; path = ../../BuildConfigurations/Mac/MacDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF1794AF112824F700A5A056 /* MacRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacRelease.xcconfig; path = ../../BuildConfigurations/Mac/MacRelease.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF1794B0112824F700A5A056 /* Project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Project.xcconfig; path = ../../BuildConfigurations/Mac/Project.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF1794B1112824F700A5A056 /* ProjectDebug_wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = ProjectDebug_wx.xcconfig; path = ../../BuildConfigurations/Mac/ProjectDebug_wx.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF1794B2112824F700A5A056 /* ProjectDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = ProjectDebug.xcconfig; path = ../../BuildConfigurations/Mac/ProjectDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF1794B3112824F700A5A056 /* ProjectRelease_wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = ProjectRelease_wx.xcconfig; path = ../../BuildConfigurations/Mac/ProjectRelease_wx.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF1794B4112824F700A5A056 /* ProjectRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = ProjectRelease.xcconfig; path = ../../BuildConfigurations/Mac/ProjectRelease.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF1794B5112824F700A5A056 /* Wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Wx.xcconfig; path = ../../BuildConfigurations/Mac/Wx.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF1794B6112824F700A5A056 /* Tootle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Tootle.xcconfig; path = ../../BuildConfigurations/Tootle.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF89CB6B11099696009C2101 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF89CB6C11099696009C2101 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF8ACB001125511D0087FAEC /* LibDebug_wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug_wx.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug_wx.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -245,6 +243,7 @@
 				840A919310D7D39E00F8960C /* IPodMemory.mm */,
 				840A919410D7D39E00F8960C /* IPodTime.h */,
 				840A919510D7D39E00F8960C /* IPodTime.mm */,
+				84477C2D119EAEDA0094CB73 /* IPodRandom.h */,
 			);
 			name = "IPod Source Files";
 			sourceTree = "<group>";
@@ -252,7 +251,6 @@
 		8418ECF60F4DA63E00B956C9 = {
 			isa = PBXGroup;
 			children = (
-				BF1794AB112824D200A5A056 /* Base Build Configurations */,
 				8418F0880F4DB86900B956C9 /* Build Configurations */,
 				8418F0870F4DB86300B956C9 /* Source Code */,
 				8418F0860F4DB85C00B956C9 /* Frameworks */,
@@ -320,6 +318,8 @@
 				84C8D7F710972DF500E3D0F8 /* TTransform.h */,
 				842A0785109730C300BE64F8 /* TTransform.cpp */,
 				844CE21210515D3000178124 /* TLRandom.h */,
+				84477CC7119EC9C80094CB73 /* TRandomManager.h */,
+				84477CC9119ECA6E0094CB73 /* TRandomManager.cpp */,
 				8418F0A50F4DB87A00B956C9 /* TLMemory.cpp */,
 				8418F0A60F4DB87A00B956C9 /* TLMemory.h */,
 				8418F0A70F4DB87A00B956C9 /* TLMemory.inc.h */,
@@ -360,6 +360,7 @@
 		8418F0880F4DB86900B956C9 /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				84477BBD119E98080094CB73 /* BuildConfigurations */,
 				BF8ACB001125511D0087FAEC /* LibDebug_wx.xcconfig */,
 				BF8ACB011125511D0087FAEC /* LibRelease_wx.xcconfig */,
 				BF89CB6B11099696009C2101 /* LibDebug.xcconfig */,
@@ -380,6 +381,7 @@
 				8421B0AC1086239900439A7E /* MacDebug.mm */,
 				840A907A10D7A58B00F8960C /* MacString.h */,
 				840A910410D7BB6C00F8960C /* MacString.mm */,
+				84477C2F119EAEFD0094CB73 /* MacRandom.h */,
 			);
 			name = "Mac Source Files";
 			sourceTree = "<group>";
@@ -400,26 +402,9 @@
 				84C7FE2710D0467500782138 /* PCThread.h */,
 				84C7FE2810D0467500782138 /* PCTime.cpp */,
 				84C7FE2910D0467500782138 /* PCTime.h */,
+				84477C2E119EAEF00094CB73 /* PCRandom.h */,
 			);
 			name = "PC Soure Files";
-			sourceTree = "<group>";
-		};
-		BF1794AB112824D200A5A056 /* Base Build Configurations */ = {
-			isa = PBXGroup;
-			children = (
-				BF1794AC112824F700A5A056 /* Lib.xcconfig */,
-				BF1794AD112824F700A5A056 /* Mac.xcconfig */,
-				BF1794AE112824F700A5A056 /* MacDebug.xcconfig */,
-				BF1794AF112824F700A5A056 /* MacRelease.xcconfig */,
-				BF1794B0112824F700A5A056 /* Project.xcconfig */,
-				BF1794B1112824F700A5A056 /* ProjectDebug_wx.xcconfig */,
-				BF1794B2112824F700A5A056 /* ProjectDebug.xcconfig */,
-				BF1794B3112824F700A5A056 /* ProjectRelease_wx.xcconfig */,
-				BF1794B4112824F700A5A056 /* ProjectRelease.xcconfig */,
-				BF1794B5112824F700A5A056 /* Wx.xcconfig */,
-				BF1794B6112824F700A5A056 /* Tootle.xcconfig */,
-			);
-			name = "Base Build Configurations";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -482,6 +467,8 @@
 				845EC69E118F6F3000362CA4 /* TEuler.h in Headers */,
 				845EC6A2118F6F7A00362CA4 /* TAxisAngle.h in Headers */,
 				845EC6EE1190619500362CA4 /* MacMaths.h in Headers */,
+				84477C30119EAEFD0094CB73 /* MacRandom.h in Headers */,
+				84477CC8119EC9C80094CB73 /* TRandomManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -556,6 +543,7 @@
 				840A910510D7BB6C00F8960C /* MacString.mm in Sources */,
 				845EC665118F6A1700362CA4 /* TMatrix.cpp in Sources */,
 				845EC669118F6A2900362CA4 /* TQuaternion.cpp in Sources */,
+				84477CCA119ECA6E0094CB73 /* TRandomManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

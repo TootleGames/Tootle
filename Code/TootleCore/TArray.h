@@ -25,6 +25,8 @@
 #include "TLTypes.h"
 #include "TLDebug.h"
 
+#include "TLRandom.h"
+
 #include "TArraySort.h"  // Array Sorting policies
 
 #include "TArrayAllocator.h"  // Allocator policies
@@ -81,7 +83,6 @@ public:
 	FORCEINLINE const u32&	GetSize() const							{	return m_Size;	}						//	number of elements
 	FORCEINLINE bool		IsEmpty() const							{	return GetSize() == 0;	}
 	FORCEINLINE s32			GetLastIndex() const					{	return (s32)GetSize() - 1;	};
-	FORCEINLINE s32			GetRandIndex() const					{	return 0;} //TLMaths::Rand( GetSize() );	};
 	virtual TYPE*		GetData()								{	return m_pData;	}
 	virtual const TYPE*	GetData() const							{	return m_pData;	}
 	FORCEINLINE u32			GetDataSize() const						{	return ( GetSize() * sizeof(TYPE) );	};	//	memory consumption of elements
@@ -104,8 +105,10 @@ public:
 	virtual const TYPE&	ElementAtConst(u32 Index) const			{	TLDebug_CheckIndex( Index, GetSize() );	return m_pData[Index];	}
 	FORCEINLINE TYPE&		ElementLast()							{	return ElementAt( GetLastIndex() );	};
 	FORCEINLINE const TYPE&	ElementLastConst() const				{	return ElementAtConst( GetLastIndex() );	};
-	DEPRECATED TYPE&		ElementRand()							{	return ElementAt( GetRandIndex() );	}
-	DEPRECATED const TYPE&	ElementRandConst() const				{	return ElementAtConst( GetRandIndex() );	}
+
+	FORCEINLINE s32				GetRandomIndex() const						{	return TLMaths::Rand( GetSize() );	};
+	FORCEINLINE TYPE&			GetRandomElement()							{	return ElementAt( GetRandomIndex() );	}
+	FORCEINLINE const TYPE&		GetRandomElementConst() const				{	return ElementAtConst( GetRandomIndex() );	}
 
 	virtual s32			Add(const TYPE& val);					//	add an element onto the end of the list
 	FORCEINLINE s32		AddUnique(const TYPE& val)				{	s32 Index = FindIndex( val );	return (Index == -1) ? Add( val ) : Index;	}

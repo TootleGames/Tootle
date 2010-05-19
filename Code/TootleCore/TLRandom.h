@@ -1,39 +1,75 @@
-/*------------------------------------------------------
-	
-	Graham doesn't know why this is a manager and not
-	just some maths static Init function called from
-	the core/bootup Init...
+/*
+ *  TLRandom.h
+ *  TootleCore
+ *
+ *  Created by Duane Bradbury on 15/05/2010.
+ *  Copyright 2010 Tootle. All rights reserved.
+ *
+ */
 
--------------------------------------------------------*/
 #pragma once
 
-#include "TManager.h"
-#include "TLMaths.h"
-#include "TLTime.h"
 
-namespace TLRandom
+//	include the platform specific header
+#if defined(_MSC_EXTENSIONS) && defined(TL_TARGET_PC)
+
+#include "PC/PCRandom.h"
+
+#elif defined(TL_TARGET_IPOD)
+
+#include "IPod/IPodRandom.h"
+
+#elif defined(TL_TARGET_MAC)
+
+#include "Mac/MacRandom.h"
+
+#elif
+
+#pragma message("Invalid platform for maths random library")
+
+#endif
+
+
+namespace TLMaths
 {
-	class TRandomNumberManager;
+	//	gr: all random functions are max INCLUSIVE. Want a random element in an array? use GetGetLastIndex()!
+	FORCEINLINE float			Randf(float Max=1.f);									//	fraction between 0.f and X inclusive (float has 4 decimal places)
+	FORCEINLINE float			Randf(float Min,float Max);								//	fraction between X and Y inclusive (float has 4 decimal places)
+	FORCEINLINE s32				Rand(s32 Min,s32 Max);									//	Min <= N <= Max (inclusive!)
+	
+}
+
+//-----------------------------------------------
+//	fraction between 0.f and 1.f inclusive
+//-----------------------------------------------
+FORCEINLINE float TLMaths::Randf(float Max)
+{
+	//return (rand() / RAND_MAX) * Max;
+	
+	u32 RandInt = Rand( 0, 10000 );
+	
+	return ((float)RandInt * Max) / 10000.f;
 }
 
 
-class TLRandom::TRandomNumberManager : public TLCore::TManager
+//-----------------------------------------------
+//	fraction between X and Y inclusive
+//-----------------------------------------------
+FORCEINLINE float TLMaths::Randf(float Min,float Max)
 {
-public:
-	TRandomNumberManager(TRefRef ManagerRef) :
-		TLCore::TManager(ManagerRef)
-	{
-	}
+	return Randf( Max - Min ) + Min;
+}
 
-protected:
+//-----------------------------------------------
+//	get random number inclusive Min <= N <= Max
+//-----------------------------------------------
+FORCEINLINE s32 TLMaths::Rand(s32 Min,s32 Max)
+{
+	s32 Random = Rand( Max - Min + 1 );
+	Random += Min;
+	return Random;
+}
 
-	virtual SyncBool Initialise()
-	{
-		//	init random seed
-		TLTime::TTimestamp TimeNow(TRUE);
-		srand( TimeNow.GetTotalMilliSeconds() );
 
-		return SyncTrue;
-	}
 
-};
+
