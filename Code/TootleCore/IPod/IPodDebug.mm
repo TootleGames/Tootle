@@ -109,14 +109,9 @@ Bool TLDebug::Platform::Break(const TString& String)
 #if !TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
 	Debugger();
 #elif defined(_DEBUG)
-	//	gr: hacky break for debug builds
-	//	gr: removed because there's no way to get out of this in xcode if we trigger it..
-	int* pNull = 0x0;
-	//*pNull = 99;
-	
-	
+
+	// assert will kill off the application therefore doesn't continue :(
 	//assert(FALSE);
-	
 	
 	//	gr: new method, untested, see https://devforums.apple.com/message/99580
 	/*
@@ -128,8 +123,13 @@ Bool TLDebug::Platform::Break(const TString& String)
 	 asm("trap") or asm("int3") is an architecture-specific option. The behavior is the same as __builtin_trap(), 
 	 except the compiler doesn't optimize around it so you should be able to continue running afterwards.
 	 */
-	//__builtin_trap();
-	//asm("int3");		//	note: same as PC version
+	// Device only - use asm("int3") for simulator builds.
+	// NOTE: Can't continue from this asm instruction :(
+	//asm("trap");
+	
+	// [18/05/10] DB - Found a new type of break that seems to work, kicking the device into the debugger and allowing it to continue
+	// See: http://stackoverflow.com/questions/1149113/breaking-into-the-debugger-on-iphone
+	kill( getpid(), SIGINT ) ;
 	
 #endif
 	
