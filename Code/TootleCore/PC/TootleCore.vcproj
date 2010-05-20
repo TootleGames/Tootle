@@ -247,6 +247,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PCRandom.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PCThread.cpp"
 				>
 				<FileConfiguration
@@ -1231,6 +1235,14 @@
 		</File>
 		<File
 			RelativePath="..\TQuaternion.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TRandomManager.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TRandomManager.h"
 			>
 		</File>
 		<File

@@ -216,41 +216,13 @@
 			Name="PC Source Files"
 			>
 			<File
-				RelativePath=".\PCSocial.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PCSocial.h"
+				RelativePath=".\PCSocialNetworkingPlatform.h"
 				>
 			</File>
 		</Filter>
 		<Filter
-			Name="IPod"
+			Name="IPod Source Files"
 			>
-			<File
-				RelativePath="..\IPod\IPodSocial.h"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\IPod\IPodSocial.mm"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
 		</Filter>
 		<File
 			RelativePath="..\TLSocial.cpp"
