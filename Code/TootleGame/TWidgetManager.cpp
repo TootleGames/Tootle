@@ -621,6 +621,11 @@ Bool TWidgetManager::DoRemoveWidget(TRefRef WidgetGroupRef, TRefRef InstanceRef)
 	// No more items in the array?  Remove from the key array item/group for the widgets
 	if(pGroupArray->GetSize() == 0)
 	{
+		//TEMP -	Leave the group as-is because the re-ordering of the group array of TPtr's
+		//			means some TPtr's don't get deallocated correctly when the array is shrunk
+		//TODO: Fix issue with the re-ordering of the TPtrArrays within the TKeyArray
+		//		such that the TPtr counters remain correct
+		/*
 		TLDebug_Print("Widget group empty - removing");
 		//m_WidgetRefs.RemoveAt(uIndex);
 		
@@ -636,6 +641,8 @@ Bool TWidgetManager::DoRemoveWidget(TRefRef WidgetGroupRef, TRefRef InstanceRef)
 		}
 		else 
 			TLDebug_Break("Invalid index for widget group removal");
+			*/
+		m_WidgetCache.Clear();
 	}
 	else 
 	{		

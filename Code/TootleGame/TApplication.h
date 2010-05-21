@@ -27,6 +27,23 @@ namespace TLCore
 };
 
 
+// Options class is a TBinaryTree with accessors to data
+class TLCore::TOptions : public TBinaryTree
+{
+public:
+	TOptions(TRefRef DataRef) :
+	  TBinaryTree	( DataRef ),
+	  m_bChanged	( FALSE )
+	{
+	}
+	
+	FORCEINLINE Bool			HasChanged() const { return m_bChanged; }
+
+private:
+	Bool					m_bChanged;		// Flag to say the options data has changed
+};
+
+
 //---------------------------------------------------------
 //	base application type
 //---------------------------------------------------------
@@ -103,7 +120,7 @@ protected:
 	
 	void						OnOptionChanged(TRefRef OptionRef);		//	notify subscribers when option changes - and do any specific option stuff
 
-	virtual TRef				GetOptionsRef() const { return TRef("bootup"); } // default options file reference
+	virtual TRef				GetOptionsRef() const { return TRef(GetName()); } // default options file reference
 
 	void						SaveOptions();
 
@@ -115,19 +132,9 @@ private:
 	
 	TArray<TRef>			m_FileSystemRefs;
 	
-//	TRef					m_LocalFileSysRef;		//	ref of local file sys
-//	TRef					m_UserFileSysRef;		//	ref of local file sys user's runtime assets/save files etc
-	
-	TBinaryTree				m_Options;				//	Global & app specific preferences
 	TBinaryTree				m_LevelData;			//	Level specific information
+	TOptions				m_Options;				//	Global & app specific preferences
 	TRef					m_NewAppMode;			//	if valid, we switch to this app mode on next update
-};
-
-
-// Options class is a TBinaryTree with accessors to data
-class TLCore::TOptions : public TBinaryTree
-{
-
 };
 
 

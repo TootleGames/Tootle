@@ -7,7 +7,7 @@
 #include "TArray.h"
 #include "TPtr.h"
 
-//#define TEST_PTRARRAY_CHANGES
+#define TEST_PTRARRAY_CHANGES
 
 namespace TLPtrArray
 {
@@ -71,6 +71,12 @@ public:
 #ifdef TEST_PTRARRAY_CHANGES	
 	TPtrArray(const TPtrArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& OtherArray)
 	{
+		// [20/05/10] DB - Enabling this as it fixes an issue with the destruction of TBinaryTree
+		// when we have duplicated the data (i.e via CopyDataTree), presumably because the data is just a 
+		// straight copy using an implicit copy constructor,
+		// whereas the TPtrArrays within the TBinaryTree need to be new.
+		// Potential issue with this however is that the =operator calls virtual Copy function which is 
+		// bad from a constructor as the behaviour is technically undefined (but currently works from tests)
 		*this = OtherArray;
 	}
 #endif

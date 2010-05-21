@@ -989,6 +989,7 @@ LRESULT CALLBACK Win32::Win32CallBack(HWND hwnd, UINT message, WPARAM wParam, LP
 			if ( pControl )
 			{
 				pControl->OnClose();
+				TLCore::Quit();
 				return 0;
 			}
 			break;

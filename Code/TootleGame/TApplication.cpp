@@ -226,24 +226,19 @@ void TApplication::LoadOptions()
 
 void TApplication::SaveOptions()
 {
-	//TODO:
-	// * Copy data back to asset overwriting previous options
-	// * Trigger asset to be exported/saved
-
 	TPtr<TLAsset::TOptions> pOptionsAsset = TLAsset::GetAssetPtr(TTypedRef(GetOptionsRef(), "options"));
 
 	if(!pOptionsAsset)
 	{
 		// Create a new options asset
-		pOptionsAsset = new TLAsset::TOptions(GetOptionsRef());
+		pOptionsAsset = TLAsset::CreateAsset(GetOptionsRef(), TRef("options"));
 	}
 
 	// Remove previous data
-	//pOptionsAsset->GetData().Empty();
+	pOptionsAsset->GetData().Empty();
 
 	// Copy the options data
-	//NOTE: Using CopyDataTree to *overwrite* the data corrupts the data for some reason?
-	//pOptionsAsset->GetData().CopyDataTree(m_Options, FALSE);
+	pOptionsAsset->GetData().CopyDataTree(m_Options, FALSE);
 
 	pOptionsAsset->SetLoadingState(TLAsset::LoadingState_Loaded);
 
@@ -292,7 +287,8 @@ SyncBool TApplication::Shutdown()
 	DestroyGame();
 
 	// Store the options
-	SaveOptions();
+	if(m_Options.HasChanged())
+		SaveOptions();
 
 	return TManager::Shutdown();
 }
