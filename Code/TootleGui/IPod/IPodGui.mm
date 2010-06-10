@@ -77,10 +77,6 @@ SyncBool TLGui::Platform::Shutdown()
 //---------------------------------------------------
 int main(int argc, char *argv[])
 {
-	//	get the root directory that the app is in
-	NSString *HomeDir = NSHomeDirectory();
-	TTempString HomeDirString;
-	HomeDirString << HomeDir << "/myapp.app";
 
 //	int retVal = UIApplicationMain(argc, argv, nil, [TAppDelegate class]);	//	
 	int retVal = UIApplicationMain(argc, argv, nil, @"TAppDelegate");	//	[TAppDelegate class]

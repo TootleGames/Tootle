@@ -117,9 +117,6 @@ void TLGui::Platform::OpenglCanvas::EndRender()
 
 
 
-#import <TootleInput/Ipod/IPodInput.h>
-
-
 #define USE_DEPTH_BUFFER 1
 
 
