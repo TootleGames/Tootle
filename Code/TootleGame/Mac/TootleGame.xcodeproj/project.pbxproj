@@ -91,13 +91,8 @@
 		84B605AC104FF8A80022E5BC /* TWidgetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWidgetManager.h; path = ../TWidgetManager.h; sourceTree = SOURCE_ROOT; };
 		84F1FEB010A073D20030B1F2 /* TApplication.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TApplication.cpp; path = ../TApplication.cpp; sourceTree = SOURCE_ROOT; };
 		84F1FEB110A073D20030B1F2 /* TApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TApplication.h; path = ../TApplication.h; sourceTree = SOURCE_ROOT; };
-		BF3C25A2110706470000951F /* Tootle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Tootle.xcconfig; path = ../../BuildConfigurations/Tootle.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF3C25A3110706550000951F /* Mac.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Mac.xcconfig; path = ../../BuildConfigurations/Mac/Mac.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF89CCA1110B3487009C2101 /* Lib.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Lib.xcconfig; path = ../../BuildConfigurations/Mac/Lib.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF89CCA2110B3487009C2101 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF89CCA3110B3487009C2101 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF89CCA4110B3487009C2101 /* MacDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacDebug.xcconfig; path = ../../BuildConfigurations/Mac/MacDebug.xcconfig; sourceTree = SOURCE_ROOT; };
-		BF89CCA5110B3487009C2101 /* MacRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacRelease.xcconfig; path = ../../BuildConfigurations/Mac/MacRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,13 +181,8 @@
 		8418F0260F4DB80A00B956C9 /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				BF89CCA1110B3487009C2101 /* Lib.xcconfig */,
 				BF89CCA2110B3487009C2101 /* LibDebug.xcconfig */,
 				BF89CCA3110B3487009C2101 /* LibRelease.xcconfig */,
-				BF89CCA4110B3487009C2101 /* MacDebug.xcconfig */,
-				BF89CCA5110B3487009C2101 /* MacRelease.xcconfig */,
-				BF3C25A3110706550000951F /* Mac.xcconfig */,
-				BF3C25A2110706470000951F /* Tootle.xcconfig */,
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";

@@ -90,7 +90,6 @@
 		84C8D7F810972DF500E3D0F8 /* TTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C8D7F710972DF500E3D0F8 /* TTransform.h */; };
 		84D9C02B1098A5FE000042D8 /* TPointerArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 84D9C02A1098A5FE000042D8 /* TPointerArray.h */; };
 		84D9C16110999C86000042D8 /* TArrayAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 84D9C16010999C86000042D8 /* TArrayAllocator.h */; };
-		84F88A4B109E2530004BAF8B /* TArrayMisc.h in Headers */ = {isa = PBXBuildFile; fileRef = 84F88A4A109E2530004BAF8B /* TArrayMisc.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -208,7 +207,6 @@
 		84C8D7F710972DF500E3D0F8 /* TTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTransform.h; path = ../TTransform.h; sourceTree = SOURCE_ROOT; };
 		84D9C02A1098A5FE000042D8 /* TPointerArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPointerArray.h; path = ../TPointerArray.h; sourceTree = SOURCE_ROOT; };
 		84D9C16010999C86000042D8 /* TArrayAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TArrayAllocator.h; path = ../TArrayAllocator.h; sourceTree = SOURCE_ROOT; };
-		84F88A4A109E2530004BAF8B /* TArrayMisc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TArrayMisc.h; path = ../TArrayMisc.h; sourceTree = SOURCE_ROOT; };
 		BF89CB6B11099696009C2101 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF89CB6C11099696009C2101 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF8ACB001125511D0087FAEC /* LibDebug_wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug_wx.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug_wx.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -283,7 +281,6 @@
 				8418F08C0F4DB87A00B956C9 /* TArray.inc.h */,
 				840760671095DC390008D5A5 /* TArraySort.h */,
 				84D9C16010999C86000042D8 /* TArrayAllocator.h */,
-				84F88A4A109E2530004BAF8B /* TArrayMisc.h */,
 				8418F08D0F4DB87A00B956C9 /* TBinary.cpp */,
 				8418F08E0F4DB87A00B956C9 /* TBinary.h */,
 				8418F08F0F4DB87A00B956C9 /* TBinaryTree.cpp */,
@@ -460,7 +457,6 @@
 				846C17BD109740DF0098DFAF /* TLMathsMisc.h in Headers */,
 				84D9C02B1098A5FE000042D8 /* TPointerArray.h in Headers */,
 				84D9C16110999C86000042D8 /* TArrayAllocator.h in Headers */,
-				84F88A4B109E2530004BAF8B /* TArrayMisc.h in Headers */,
 				840A907B10D7A58C00F8960C /* MacString.h in Headers */,
 				845EC664118F6A1700362CA4 /* TMatrix.h in Headers */,
 				845EC668118F6A2900362CA4 /* TQuaternion.h in Headers */,
