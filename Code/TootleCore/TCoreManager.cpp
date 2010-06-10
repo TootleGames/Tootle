@@ -25,7 +25,7 @@ using namespace TLCore;
 #define TIMESTEP_MIN 0.0f
 #define TIMESTEP_MAX 3.0f
 
-#if defined(TL_TARGET_IPOD)
+#if defined(TL_TARGET_IPOD) || defined(TL_TARGET_IPAD)
 	#define LIMIT_UPDATE_RATE
 #elif defined(TL_TARGET_PC)
 	#define LIMIT_UPDATE_RATE

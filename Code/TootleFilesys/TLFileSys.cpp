@@ -28,17 +28,8 @@
 #include "TFileMappy.h"
 #include "TFileOptions.h"
 
-#if defined(TL_TARGET_IPOD)
-	#include "IPod/IPodLocalFileSys.h"
-#endif
 
-#if defined(TL_TARGET_MAC)
-	#include "Mac/MacLocalFileSys.h"
-#endif
-
-#if defined(_MSC_EXTENSIONS) && defined(TL_TARGET_PC)
-	#include "PC/PCLocalFileSys.h"
-#endif
+#include PLATFORMHEADER(LocalFilesys.h)
 
 namespace TLFileSys
 {

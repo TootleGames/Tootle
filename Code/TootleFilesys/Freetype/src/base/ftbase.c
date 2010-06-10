@@ -31,7 +31,7 @@
 #include "fttrigon.c"
 #include "ftutil.c"
 
-#if !defined(TL_TARGET_IPOD)
+#if !defined(TL_TARGET_IPOD) && !defined(TL_TARGET_IPAD)
 
 #if defined( __APPLE__ ) && !defined ( DARWIN_NO_CARBON )
 #include "ftmac.c"

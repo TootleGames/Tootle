@@ -9,25 +9,10 @@
 
 #pragma once
 
+#include "TLTypes.h"
 
 //	include the platform specific header
-#if defined(_MSC_EXTENSIONS) && defined(TL_TARGET_PC)
-
-#include "PC/PCRandom.h"
-
-#elif defined(TL_TARGET_IPOD)
-
-#include "IPod/IPodRandom.h"
-
-#elif defined(TL_TARGET_MAC)
-
-#include "Mac/MacRandom.h"
-
-#elif
-
-#pragma message("Invalid platform for maths random library")
-
-#endif
+#include PLATFORMHEADER(Random.h)
 
 
 namespace TLMaths

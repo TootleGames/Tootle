@@ -181,7 +181,7 @@ void TAction::ProcessSensorMessage(TLMessaging::TMessage& Message)
 	if(pChild.IsValid())
 		NewMessage.AddChild(pChild);
 	
-#ifdef TL_TARGET_IPOD		
+#if defined(TL_TARGET_IPOD) || defined(TL_TARGET_IPAD)
 	TPtr<TBinaryTree>& pChild2 = Message.GetChild("CIDX");
 	
 	// Copy the cursor index value to the new message if it exists

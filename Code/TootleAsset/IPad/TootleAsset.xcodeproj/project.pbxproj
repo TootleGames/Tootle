@@ -1,0 +1,304 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		840EBDB20F777B5600BA6F4C /* TAtlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840EBDAE0F777B5600BA6F4C /* TAtlas.cpp */; };
+		840EBDB30F777B5600BA6F4C /* TAtlas.h in Headers */ = {isa = PBXBuildFile; fileRef = 840EBDAF0F777B5600BA6F4C /* TAtlas.h */; };
+		840EBDB40F777B5600BA6F4C /* TTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840EBDB00F777B5600BA6F4C /* TTexture.cpp */; };
+		840EBDB50F777B5600BA6F4C /* TTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 840EBDB10F777B5600BA6F4C /* TTexture.h */; };
+		8418F8CB0F4EB9C200B956C9 /* TPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418F8C90F4EB9C200B956C9 /* TPath.cpp */; };
+		8418F8CC0F4EB9C200B956C9 /* TPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F8CA0F4EB9C200B956C9 /* TPath.h */; };
+		8450984E10219F5900B78F2B /* TParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8450984C10219F5900B78F2B /* TParticle.cpp */; };
+		8450984F10219F5900B78F2B /* TParticle.h in Headers */ = {isa = PBXBuildFile; fileRef = 8450984D10219F5900B78F2B /* TParticle.h */; };
+		849E9C8B0F8385FC00037332 /* TTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 849E9C890F8385FC00037332 /* TTimeline.cpp */; };
+		849E9C8C0F8385FC00037332 /* TTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 849E9C8A0F8385FC00037332 /* TTimeline.h */; };
+		84B607B1105002E70022E5BC /* TObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B607B0105002E70022E5BC /* TObject.h */; };
+		84C0CA490F6D6C840080B167 /* TText.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C0CA470F6D6C840080B167 /* TText.h */; };
+		84C0CA4A0F6D6C840080B167 /* TText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C0CA480F6D6C840080B167 /* TText.cpp */; };
+		84C109350F0A787B00B2DF7A /* TAsset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109260F0A787B00B2DF7A /* TAsset.cpp */; };
+		84C109360F0A787B00B2DF7A /* TAsset.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109270F0A787B00B2DF7A /* TAsset.h */; };
+		84C109370F0A787B00B2DF7A /* TAudio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109280F0A787B00B2DF7A /* TAudio.cpp */; };
+		84C109380F0A787B00B2DF7A /* TAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109290F0A787B00B2DF7A /* TAudio.h */; };
+		84C109390F0A787B00B2DF7A /* TFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C1092A0F0A787B00B2DF7A /* TFont.cpp */; };
+		84C1093A0F0A787B00B2DF7A /* TFont.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C1092B0F0A787B00B2DF7A /* TFont.h */; };
+		84C1093B0F0A787B00B2DF7A /* TLAsset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C1092C0F0A787B00B2DF7A /* TLAsset.cpp */; };
+		84C1093C0F0A787B00B2DF7A /* TLAsset.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C1092D0F0A787B00B2DF7A /* TLAsset.h */; };
+		84C1093D0F0A787B00B2DF7A /* TLoadTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C1092E0F0A787B00B2DF7A /* TLoadTask.cpp */; };
+		84C1093E0F0A787B00B2DF7A /* TLoadTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C1092F0F0A787B00B2DF7A /* TLoadTask.h */; };
+		84C1093F0F0A787B00B2DF7A /* TMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109300F0A787B00B2DF7A /* TMenu.cpp */; };
+		84C109400F0A787B00B2DF7A /* TMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109310F0A787B00B2DF7A /* TMenu.h */; };
+		84C109410F0A787B00B2DF7A /* TMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109320F0A787B00B2DF7A /* TMesh.cpp */; };
+		84C109420F0A787B00B2DF7A /* TMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109330F0A787B00B2DF7A /* TMesh.h */; };
+		84C109430F0A787B00B2DF7A /* TShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109340F0A787B00B2DF7A /* TShader.h */; };
+		84DE342B0F12A9C500608F8C /* TScheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DE34290F12A9C500608F8C /* TScheme.cpp */; };
+		84DE342C0F12A9C500608F8C /* TScheme.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DE342A0F12A9C500608F8C /* TScheme.h */; };
+		BF44EFEC1184E3FA00FE77CE /* TTileMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF44EFEA1184E3FA00FE77CE /* TTileMap.cpp */; };
+		BF44EFED1184E3FA00FE77CE /* TTileMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44EFEB1184E3FA00FE77CE /* TTileMap.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		840EBDAE0F777B5600BA6F4C /* TAtlas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAtlas.cpp; path = ../TAtlas.cpp; sourceTree = SOURCE_ROOT; };
+		840EBDAF0F777B5600BA6F4C /* TAtlas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAtlas.h; path = ../TAtlas.h; sourceTree = SOURCE_ROOT; };
+		840EBDB00F777B5600BA6F4C /* TTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTexture.cpp; path = ../TTexture.cpp; sourceTree = SOURCE_ROOT; };
+		840EBDB10F777B5600BA6F4C /* TTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTexture.h; path = ../TTexture.h; sourceTree = SOURCE_ROOT; };
+		8418F8C90F4EB9C200B956C9 /* TPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPath.cpp; path = ../TPath.cpp; sourceTree = SOURCE_ROOT; };
+		8418F8CA0F4EB9C200B956C9 /* TPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPath.h; path = ../TPath.h; sourceTree = SOURCE_ROOT; };
+		8429F6FE11A83B2600AF0786 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/IPad/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		8429F6FF11A83B2600AF0786 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/IPad/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		8450984C10219F5900B78F2B /* TParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TParticle.cpp; path = ../TParticle.cpp; sourceTree = SOURCE_ROOT; };
+		8450984D10219F5900B78F2B /* TParticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TParticle.h; path = ../TParticle.h; sourceTree = SOURCE_ROOT; };
+		849E9C890F8385FC00037332 /* TTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTimeline.cpp; path = ../TTimeline.cpp; sourceTree = SOURCE_ROOT; };
+		849E9C8A0F8385FC00037332 /* TTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTimeline.h; path = ../TTimeline.h; sourceTree = SOURCE_ROOT; };
+		84B607B0105002E70022E5BC /* TObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TObject.h; path = ../TObject.h; sourceTree = SOURCE_ROOT; };
+		84C0CA470F6D6C840080B167 /* TText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TText.h; path = ../TText.h; sourceTree = SOURCE_ROOT; };
+		84C0CA480F6D6C840080B167 /* TText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TText.cpp; path = ../TText.cpp; sourceTree = SOURCE_ROOT; };
+		84C1091F0F0A785200B2DF7A /* libTootleAsset.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleAsset.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		84C109260F0A787B00B2DF7A /* TAsset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAsset.cpp; path = ../TAsset.cpp; sourceTree = SOURCE_ROOT; };
+		84C109270F0A787B00B2DF7A /* TAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAsset.h; path = ../TAsset.h; sourceTree = SOURCE_ROOT; };
+		84C109280F0A787B00B2DF7A /* TAudio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAudio.cpp; path = ../TAudio.cpp; sourceTree = SOURCE_ROOT; };
+		84C109290F0A787B00B2DF7A /* TAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAudio.h; path = ../TAudio.h; sourceTree = SOURCE_ROOT; };
+		84C1092A0F0A787B00B2DF7A /* TFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFont.cpp; path = ../TFont.cpp; sourceTree = SOURCE_ROOT; };
+		84C1092B0F0A787B00B2DF7A /* TFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFont.h; path = ../TFont.h; sourceTree = SOURCE_ROOT; };
+		84C1092C0F0A787B00B2DF7A /* TLAsset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TLAsset.cpp; path = ../TLAsset.cpp; sourceTree = SOURCE_ROOT; };
+		84C1092D0F0A787B00B2DF7A /* TLAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLAsset.h; path = ../TLAsset.h; sourceTree = SOURCE_ROOT; };
+		84C1092E0F0A787B00B2DF7A /* TLoadTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLoadTask.cpp; path = ../TLoadTask.cpp; sourceTree = SOURCE_ROOT; };
+		84C1092F0F0A787B00B2DF7A /* TLoadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLoadTask.h; path = ../TLoadTask.h; sourceTree = SOURCE_ROOT; };
+		84C109300F0A787B00B2DF7A /* TMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TMenu.cpp; path = ../TMenu.cpp; sourceTree = SOURCE_ROOT; };
+		84C109310F0A787B00B2DF7A /* TMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TMenu.h; path = ../TMenu.h; sourceTree = SOURCE_ROOT; };
+		84C109320F0A787B00B2DF7A /* TMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TMesh.cpp; path = ../TMesh.cpp; sourceTree = SOURCE_ROOT; };
+		84C109330F0A787B00B2DF7A /* TMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TMesh.h; path = ../TMesh.h; sourceTree = SOURCE_ROOT; };
+		84C109340F0A787B00B2DF7A /* TShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TShader.h; path = ../TShader.h; sourceTree = SOURCE_ROOT; };
+		84DE34290F12A9C500608F8C /* TScheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TScheme.cpp; path = ../TScheme.cpp; sourceTree = SOURCE_ROOT; };
+		84DE342A0F12A9C500608F8C /* TScheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TScheme.h; path = ../TScheme.h; sourceTree = SOURCE_ROOT; };
+		BF44EFEA1184E3FA00FE77CE /* TTileMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTileMap.cpp; path = ../../../../Tootle/Code/TootleAsset/TTileMap.cpp; sourceTree = SOURCE_ROOT; };
+		BF44EFEB1184E3FA00FE77CE /* TTileMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTileMap.h; path = ../../../../Tootle/Code/TootleAsset/TTileMap.h; sourceTree = SOURCE_ROOT; };
+		BF8FC276118DE92E005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		84C1091D0F0A785200B2DF7A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		84C1089F0F0A755700B2DF7A = {
+			isa = PBXGroup;
+			children = (
+				84C109460F0A78AC00B2DF7A /* Build Configurations */,
+				84C109450F0A789D00B2DF7A /* Source Code */,
+				84C109200F0A785200B2DF7A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		84C109200F0A785200B2DF7A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84C1091F0F0A785200B2DF7A /* libTootleAsset.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84C109450F0A789D00B2DF7A /* Source Code */ = {
+			isa = PBXGroup;
+			children = (
+				BF44EFEA1184E3FA00FE77CE /* TTileMap.cpp */,
+				BF44EFEB1184E3FA00FE77CE /* TTileMap.h */,
+				84B607B0105002E70022E5BC /* TObject.h */,
+				8450984C10219F5900B78F2B /* TParticle.cpp */,
+				8450984D10219F5900B78F2B /* TParticle.h */,
+				849E9C890F8385FC00037332 /* TTimeline.cpp */,
+				849E9C8A0F8385FC00037332 /* TTimeline.h */,
+				840EBDAE0F777B5600BA6F4C /* TAtlas.cpp */,
+				840EBDAF0F777B5600BA6F4C /* TAtlas.h */,
+				840EBDB00F777B5600BA6F4C /* TTexture.cpp */,
+				840EBDB10F777B5600BA6F4C /* TTexture.h */,
+				8418F8C90F4EB9C200B956C9 /* TPath.cpp */,
+				8418F8CA0F4EB9C200B956C9 /* TPath.h */,
+				84DE34290F12A9C500608F8C /* TScheme.cpp */,
+				84DE342A0F12A9C500608F8C /* TScheme.h */,
+				84C109260F0A787B00B2DF7A /* TAsset.cpp */,
+				84C109270F0A787B00B2DF7A /* TAsset.h */,
+				84C109280F0A787B00B2DF7A /* TAudio.cpp */,
+				84C109290F0A787B00B2DF7A /* TAudio.h */,
+				84C1092A0F0A787B00B2DF7A /* TFont.cpp */,
+				84C1092B0F0A787B00B2DF7A /* TFont.h */,
+				84C1092C0F0A787B00B2DF7A /* TLAsset.cpp */,
+				84C1092D0F0A787B00B2DF7A /* TLAsset.h */,
+				84C1092E0F0A787B00B2DF7A /* TLoadTask.cpp */,
+				84C1092F0F0A787B00B2DF7A /* TLoadTask.h */,
+				84C109300F0A787B00B2DF7A /* TMenu.cpp */,
+				84C109310F0A787B00B2DF7A /* TMenu.h */,
+				84C109320F0A787B00B2DF7A /* TMesh.cpp */,
+				84C109330F0A787B00B2DF7A /* TMesh.h */,
+				84C109340F0A787B00B2DF7A /* TShader.h */,
+				84C0CA470F6D6C840080B167 /* TText.h */,
+				84C0CA480F6D6C840080B167 /* TText.cpp */,
+			);
+			name = "Source Code";
+			sourceTree = "<group>";
+		};
+		84C109460F0A78AC00B2DF7A /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				8429F6FE11A83B2600AF0786 /* LibDebug.xcconfig */,
+				8429F6FF11A83B2600AF0786 /* LibRelease.xcconfig */,
+				BF8FC276118DE92E005391AF /* BuildConfigurations */,
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		84C1091B0F0A785200B2DF7A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C109360F0A787B00B2DF7A /* TAsset.h in Headers */,
+				84C109380F0A787B00B2DF7A /* TAudio.h in Headers */,
+				84C1093A0F0A787B00B2DF7A /* TFont.h in Headers */,
+				84C1093C0F0A787B00B2DF7A /* TLAsset.h in Headers */,
+				84C1093E0F0A787B00B2DF7A /* TLoadTask.h in Headers */,
+				84C109400F0A787B00B2DF7A /* TMenu.h in Headers */,
+				84C109420F0A787B00B2DF7A /* TMesh.h in Headers */,
+				84C109430F0A787B00B2DF7A /* TShader.h in Headers */,
+				84DE342C0F12A9C500608F8C /* TScheme.h in Headers */,
+				8418F8CC0F4EB9C200B956C9 /* TPath.h in Headers */,
+				84C0CA490F6D6C840080B167 /* TText.h in Headers */,
+				840EBDB30F777B5600BA6F4C /* TAtlas.h in Headers */,
+				840EBDB50F777B5600BA6F4C /* TTexture.h in Headers */,
+				849E9C8C0F8385FC00037332 /* TTimeline.h in Headers */,
+				8450984F10219F5900B78F2B /* TParticle.h in Headers */,
+				84B607B1105002E70022E5BC /* TObject.h in Headers */,
+				BF44EFED1184E3FA00FE77CE /* TTileMap.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		84C1091E0F0A785200B2DF7A /* TootleAsset */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84C109230F0A785300B2DF7A /* Build configuration list for PBXNativeTarget "TootleAsset" */;
+			buildPhases = (
+				84C1091B0F0A785200B2DF7A /* Headers */,
+				84C1091C0F0A785200B2DF7A /* Sources */,
+				84C1091D0F0A785200B2DF7A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleAsset;
+			productName = TootleAsset;
+			productReference = 84C1091F0F0A785200B2DF7A /* libTootleAsset.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		84C108A10F0A755700B2DF7A /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 84C108A40F0A755700B2DF7A /* Build configuration list for PBXProject "TootleAsset" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 0;
+			mainGroup = 84C1089F0F0A755700B2DF7A;
+			productRefGroup = 84C109200F0A785200B2DF7A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				84C1091E0F0A785200B2DF7A /* TootleAsset */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		84C1091C0F0A785200B2DF7A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C109350F0A787B00B2DF7A /* TAsset.cpp in Sources */,
+				84C109370F0A787B00B2DF7A /* TAudio.cpp in Sources */,
+				84C109390F0A787B00B2DF7A /* TFont.cpp in Sources */,
+				84C1093B0F0A787B00B2DF7A /* TLAsset.cpp in Sources */,
+				84C1093D0F0A787B00B2DF7A /* TLoadTask.cpp in Sources */,
+				84C1093F0F0A787B00B2DF7A /* TMenu.cpp in Sources */,
+				84C109410F0A787B00B2DF7A /* TMesh.cpp in Sources */,
+				84DE342B0F12A9C500608F8C /* TScheme.cpp in Sources */,
+				8418F8CB0F4EB9C200B956C9 /* TPath.cpp in Sources */,
+				84C0CA4A0F6D6C840080B167 /* TText.cpp in Sources */,
+				840EBDB20F777B5600BA6F4C /* TAtlas.cpp in Sources */,
+				840EBDB40F777B5600BA6F4C /* TTexture.cpp in Sources */,
+				849E9C8B0F8385FC00037332 /* TTimeline.cpp in Sources */,
+				8450984E10219F5900B78F2B /* TParticle.cpp in Sources */,
+				BF44EFEC1184E3FA00FE77CE /* TTileMap.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		84C108A20F0A755700B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8429F6FE11A83B2600AF0786 /* LibDebug.xcconfig */;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
+				SDKROOT = iphoneos3.2;
+			};
+			name = Debug;
+		};
+		84C108A30F0A755700B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8429F6FF11A83B2600AF0786 /* LibRelease.xcconfig */;
+			buildSettings = {
+				SDKROOT = iphoneos3.2;
+			};
+			name = Release;
+		};
+		84C109210F0A785300B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		84C109220F0A785300B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		84C108A40F0A755700B2DF7A /* Build configuration list for PBXProject "TootleAsset" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C108A20F0A755700B2DF7A /* Debug */,
+				84C108A30F0A755700B2DF7A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84C109230F0A785300B2DF7A /* Build configuration list for PBXNativeTarget "TootleAsset" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C109210F0A785300B2DF7A /* Debug */,
+				84C109220F0A785300B2DF7A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 84C108A10F0A755700B2DF7A /* Project object */;
+}

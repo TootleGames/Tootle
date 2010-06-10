@@ -1,0 +1,335 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		840DECD80F545DAE005C7CFF /* TPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DECD60F545DAE005C7CFF /* TPath.cpp */; };
+		840DECD90F545DAE005C7CFF /* TPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 840DECD70F545DAE005C7CFF /* TPath.h */; };
+		840EBCD10F7296D300BA6F4C /* TTextManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840EBCCD0F7296D300BA6F4C /* TTextManager.cpp */; };
+		840EBCD20F7296D300BA6F4C /* TTextManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 840EBCCE0F7296D300BA6F4C /* TTextManager.h */; };
+		8418EB180F4C769A00B956C9 /* TWidgetScrollbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EB160F4C769A00B956C9 /* TWidgetScrollbar.cpp */; };
+		8418EB190F4C769A00B956C9 /* TWidgetScrollbar.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EB170F4C769A00B956C9 /* TWidgetScrollbar.h */; };
+		8434CB7A100DBB410063673E /* TSchemeEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8434CB76100DBB410063673E /* TSchemeEditor.cpp */; };
+		8434CB7B100DBB410063673E /* TSchemeEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8434CB77100DBB410063673E /* TSchemeEditor.h */; };
+		8434CB7C100DBB410063673E /* TWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8434CB78100DBB410063673E /* TWidget.cpp */; };
+		8434CB7D100DBB410063673E /* TWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 8434CB79100DBB410063673E /* TWidget.h */; };
+		843C291D10B481BA004E70F5 /* TWidgetFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 843C291B10B481BA004E70F5 /* TWidgetFactory.cpp */; };
+		843C291E10B481BA004E70F5 /* TWidgetFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 843C291C10B481BA004E70F5 /* TWidgetFactory.h */; };
+		8446B6EF10DA1E2600C83113 /* TMenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8446B6EB10DA1E2600C83113 /* TMenuController.cpp */; };
+		8446B6F010DA1E2600C83113 /* TMenuController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8446B6EC10DA1E2600C83113 /* TMenuController.h */; };
+		8446B6F110DA1E2600C83113 /* TMenuWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8446B6ED10DA1E2600C83113 /* TMenuWrapper.cpp */; };
+		8446B6F210DA1E2600C83113 /* TMenuWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 8446B6EE10DA1E2600C83113 /* TMenuWrapper.h */; };
+		846B711C0F2A366F005EB752 /* TLGame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 846B711A0F2A366F005EB752 /* TLGame.cpp */; };
+		846B711D0F2A366F005EB752 /* TLGame.h in Headers */ = {isa = PBXBuildFile; fileRef = 846B711B0F2A366F005EB752 /* TLGame.h */; };
+		847FFF500F66BE1300121D77 /* TWidgetButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 847FFF4A0F66BE1300121D77 /* TWidgetButton.cpp */; };
+		847FFF510F66BE1300121D77 /* TWidgetButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 847FFF4B0F66BE1300121D77 /* TWidgetButton.h */; };
+		847FFF520F66BE1300121D77 /* TWidgetManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 847FFF4C0F66BE1300121D77 /* TWidgetManager.cpp */; };
+		847FFF530F66BE1300121D77 /* TWidgetManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 847FFF4D0F66BE1300121D77 /* TWidgetManager.h */; };
+		8486172E0FCE95B400C22D6B /* TWidgetText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8486172C0FCE95B400C22D6B /* TWidgetText.cpp */; };
+		8486172F0FCE95B400C22D6B /* TWidgetText.h in Headers */ = {isa = PBXBuildFile; fileRef = 8486172D0FCE95B400C22D6B /* TWidgetText.h */; };
+		849E9C980F83861300037332 /* TTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 849E9C940F83861300037332 /* TTimeline.cpp */; };
+		849E9C990F83861300037332 /* TTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 849E9C950F83861300037332 /* TTimeline.h */; };
+		849E9C9A0F83861300037332 /* TTimelineManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 849E9C960F83861300037332 /* TTimelineManager.cpp */; };
+		849E9C9B0F83861300037332 /* TTimelineManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 849E9C970F83861300037332 /* TTimelineManager.h */; };
+		84C10A3F0F0A7C3000B2DF7A /* TMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10A3D0F0A7C3000B2DF7A /* TMenu.cpp */; };
+		84C10A400F0A7C3000B2DF7A /* TMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10A3E0F0A7C3000B2DF7A /* TMenu.h */; };
+		84DE35010F12AFED00608F8C /* TAssetBrowser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DE34FD0F12AFED00608F8C /* TAssetBrowser.cpp */; };
+		84DE35020F12AFED00608F8C /* TAssetBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DE34FE0F12AFED00608F8C /* TAssetBrowser.h */; };
+		84E117040F3CA26200471397 /* TGame.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E117020F3CA26200471397 /* TGame.h */; };
+		84E117050F3CA26200471397 /* TGame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E117030F3CA26200471397 /* TGame.cpp */; };
+		84F1FE4B10A073B40030B1F2 /* TApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84F1FE4910A073B40030B1F2 /* TApplication.cpp */; };
+		84F1FE4C10A073B40030B1F2 /* TApplication.h in Headers */ = {isa = PBXBuildFile; fileRef = 84F1FE4A10A073B40030B1F2 /* TApplication.h */; };
+		BF1B9E9C0FE192020014C702 /* TWidgetThumbStick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF1B9E9A0FE192020014C702 /* TWidgetThumbStick.cpp */; };
+		BF1B9E9D0FE192020014C702 /* TWidgetThumbStick.h in Headers */ = {isa = PBXBuildFile; fileRef = BF1B9E9B0FE192020014C702 /* TWidgetThumbStick.h */; };
+		BFAC1C200FA0DE1100F69941 /* TWidgetDrag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFAC1BF80FA0DE1000F69941 /* TWidgetDrag.cpp */; };
+		BFAC1C210FA0DE1100F69941 /* TWidgetDrag.h in Headers */ = {isa = PBXBuildFile; fileRef = BFAC1BF90FA0DE1000F69941 /* TWidgetDrag.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		840DECD60F545DAE005C7CFF /* TPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPath.cpp; path = ../TPath.cpp; sourceTree = SOURCE_ROOT; };
+		840DECD70F545DAE005C7CFF /* TPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPath.h; path = ../TPath.h; sourceTree = SOURCE_ROOT; };
+		840EBCCD0F7296D300BA6F4C /* TTextManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTextManager.cpp; path = ../TTextManager.cpp; sourceTree = SOURCE_ROOT; };
+		840EBCCE0F7296D300BA6F4C /* TTextManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTextManager.h; path = ../TTextManager.h; sourceTree = SOURCE_ROOT; };
+		8418EB160F4C769A00B956C9 /* TWidgetScrollbar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TWidgetScrollbar.cpp; path = ../TWidgetScrollbar.cpp; sourceTree = SOURCE_ROOT; };
+		8418EB170F4C769A00B956C9 /* TWidgetScrollbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TWidgetScrollbar.h; path = ../TWidgetScrollbar.h; sourceTree = SOURCE_ROOT; };
+		8429F81E11A8403100AF0786 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/IPad/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		8429F81F11A8403100AF0786 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/IPad/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		8434CB76100DBB410063673E /* TSchemeEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSchemeEditor.cpp; path = ../TSchemeEditor.cpp; sourceTree = SOURCE_ROOT; };
+		8434CB77100DBB410063673E /* TSchemeEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSchemeEditor.h; path = ../TSchemeEditor.h; sourceTree = SOURCE_ROOT; };
+		8434CB78100DBB410063673E /* TWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidget.cpp; path = ../TWidget.cpp; sourceTree = SOURCE_ROOT; };
+		8434CB79100DBB410063673E /* TWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWidget.h; path = ../TWidget.h; sourceTree = SOURCE_ROOT; };
+		843C291B10B481BA004E70F5 /* TWidgetFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidgetFactory.cpp; path = ../TWidgetFactory.cpp; sourceTree = SOURCE_ROOT; };
+		843C291C10B481BA004E70F5 /* TWidgetFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWidgetFactory.h; path = ../TWidgetFactory.h; sourceTree = SOURCE_ROOT; };
+		8446B6EB10DA1E2600C83113 /* TMenuController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TMenuController.cpp; path = ../TMenuController.cpp; sourceTree = SOURCE_ROOT; };
+		8446B6EC10DA1E2600C83113 /* TMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TMenuController.h; path = ../TMenuController.h; sourceTree = SOURCE_ROOT; };
+		8446B6ED10DA1E2600C83113 /* TMenuWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TMenuWrapper.cpp; path = ../TMenuWrapper.cpp; sourceTree = SOURCE_ROOT; };
+		8446B6EE10DA1E2600C83113 /* TMenuWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TMenuWrapper.h; path = ../TMenuWrapper.h; sourceTree = SOURCE_ROOT; };
+		846B711A0F2A366F005EB752 /* TLGame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLGame.cpp; path = ../TLGame.cpp; sourceTree = SOURCE_ROOT; };
+		846B711B0F2A366F005EB752 /* TLGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLGame.h; path = ../TLGame.h; sourceTree = SOURCE_ROOT; };
+		847FFF4A0F66BE1300121D77 /* TWidgetButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TWidgetButton.cpp; path = ../TWidgetButton.cpp; sourceTree = SOURCE_ROOT; };
+		847FFF4B0F66BE1300121D77 /* TWidgetButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TWidgetButton.h; path = ../TWidgetButton.h; sourceTree = SOURCE_ROOT; };
+		847FFF4C0F66BE1300121D77 /* TWidgetManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TWidgetManager.cpp; path = ../TWidgetManager.cpp; sourceTree = SOURCE_ROOT; };
+		847FFF4D0F66BE1300121D77 /* TWidgetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWidgetManager.h; path = ../TWidgetManager.h; sourceTree = SOURCE_ROOT; };
+		8486172C0FCE95B400C22D6B /* TWidgetText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidgetText.cpp; path = ../TWidgetText.cpp; sourceTree = SOURCE_ROOT; };
+		8486172D0FCE95B400C22D6B /* TWidgetText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TWidgetText.h; path = ../TWidgetText.h; sourceTree = SOURCE_ROOT; };
+		849E9C940F83861300037332 /* TTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTimeline.cpp; path = ../TTimeline.cpp; sourceTree = SOURCE_ROOT; };
+		849E9C950F83861300037332 /* TTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTimeline.h; path = ../TTimeline.h; sourceTree = SOURCE_ROOT; };
+		849E9C960F83861300037332 /* TTimelineManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTimelineManager.cpp; path = ../TTimelineManager.cpp; sourceTree = SOURCE_ROOT; };
+		849E9C970F83861300037332 /* TTimelineManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTimelineManager.h; path = ../TTimelineManager.h; sourceTree = SOURCE_ROOT; };
+		84C10A3D0F0A7C3000B2DF7A /* TMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TMenu.cpp; path = ../TMenu.cpp; sourceTree = SOURCE_ROOT; };
+		84C10A3E0F0A7C3000B2DF7A /* TMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TMenu.h; path = ../TMenu.h; sourceTree = SOURCE_ROOT; };
+		84DE34FD0F12AFED00608F8C /* TAssetBrowser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAssetBrowser.cpp; path = ../TAssetBrowser.cpp; sourceTree = SOURCE_ROOT; };
+		84DE34FE0F12AFED00608F8C /* TAssetBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAssetBrowser.h; path = ../TAssetBrowser.h; sourceTree = SOURCE_ROOT; };
+		84E117020F3CA26200471397 /* TGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGame.h; path = ../TGame.h; sourceTree = SOURCE_ROOT; };
+		84E117030F3CA26200471397 /* TGame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGame.cpp; path = ../TGame.cpp; sourceTree = SOURCE_ROOT; };
+		84F1FE4910A073B40030B1F2 /* TApplication.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TApplication.cpp; path = ../TApplication.cpp; sourceTree = SOURCE_ROOT; };
+		84F1FE4A10A073B40030B1F2 /* TApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TApplication.h; path = ../TApplication.h; sourceTree = SOURCE_ROOT; };
+		BF0BDC6C11879895009E510A /* libTootleGame.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleGame.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF1B9E9A0FE192020014C702 /* TWidgetThumbStick.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TWidgetThumbStick.cpp; path = ../TWidgetThumbStick.cpp; sourceTree = SOURCE_ROOT; };
+		BF1B9E9B0FE192020014C702 /* TWidgetThumbStick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TWidgetThumbStick.h; path = ../TWidgetThumbStick.h; sourceTree = SOURCE_ROOT; };
+		BF8FC2C3118DEFB6005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
+		BFAC1BF80FA0DE1000F69941 /* TWidgetDrag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TWidgetDrag.cpp; path = ../TWidgetDrag.cpp; sourceTree = SOURCE_ROOT; };
+		BFAC1BF90FA0DE1000F69941 /* TWidgetDrag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TWidgetDrag.h; path = ../TWidgetDrag.h; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		84C10A350F0A7C1800B2DF7A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		84C108FA0F0A775200B2DF7A = {
+			isa = PBXGroup;
+			children = (
+				84C10A410F0A7C3600B2DF7A /* Build Configurations */,
+				84C10A3C0F0A7C2000B2DF7A /* Source Code */,
+				84C10A380F0A7C1800B2DF7A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		84C10A380F0A7C1800B2DF7A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BF0BDC6C11879895009E510A /* libTootleGame.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84C10A3C0F0A7C2000B2DF7A /* Source Code */ = {
+			isa = PBXGroup;
+			children = (
+				8446B6EB10DA1E2600C83113 /* TMenuController.cpp */,
+				8446B6EC10DA1E2600C83113 /* TMenuController.h */,
+				8446B6ED10DA1E2600C83113 /* TMenuWrapper.cpp */,
+				8446B6EE10DA1E2600C83113 /* TMenuWrapper.h */,
+				84F1FE4910A073B40030B1F2 /* TApplication.cpp */,
+				84F1FE4A10A073B40030B1F2 /* TApplication.h */,
+				8434CB76100DBB410063673E /* TSchemeEditor.cpp */,
+				8434CB77100DBB410063673E /* TSchemeEditor.h */,
+				8434CB78100DBB410063673E /* TWidget.cpp */,
+				8434CB79100DBB410063673E /* TWidget.h */,
+				849E9C940F83861300037332 /* TTimeline.cpp */,
+				849E9C950F83861300037332 /* TTimeline.h */,
+				849E9C960F83861300037332 /* TTimelineManager.cpp */,
+				849E9C970F83861300037332 /* TTimelineManager.h */,
+				840EBCCD0F7296D300BA6F4C /* TTextManager.cpp */,
+				840EBCCE0F7296D300BA6F4C /* TTextManager.h */,
+				847FFF4A0F66BE1300121D77 /* TWidgetButton.cpp */,
+				847FFF4B0F66BE1300121D77 /* TWidgetButton.h */,
+				BFAC1BF90FA0DE1000F69941 /* TWidgetDrag.h */,
+				BFAC1BF80FA0DE1000F69941 /* TWidgetDrag.cpp */,
+				8418EB170F4C769A00B956C9 /* TWidgetScrollbar.h */,
+				8418EB160F4C769A00B956C9 /* TWidgetScrollbar.cpp */,
+				8486172C0FCE95B400C22D6B /* TWidgetText.cpp */,
+				8486172D0FCE95B400C22D6B /* TWidgetText.h */,
+				BF1B9E9A0FE192020014C702 /* TWidgetThumbStick.cpp */,
+				BF1B9E9B0FE192020014C702 /* TWidgetThumbStick.h */,
+				847FFF4C0F66BE1300121D77 /* TWidgetManager.cpp */,
+				847FFF4D0F66BE1300121D77 /* TWidgetManager.h */,
+				843C291B10B481BA004E70F5 /* TWidgetFactory.cpp */,
+				843C291C10B481BA004E70F5 /* TWidgetFactory.h */,
+				840DECD60F545DAE005C7CFF /* TPath.cpp */,
+				840DECD70F545DAE005C7CFF /* TPath.h */,
+				846B711A0F2A366F005EB752 /* TLGame.cpp */,
+				846B711B0F2A366F005EB752 /* TLGame.h */,
+				84DE34FD0F12AFED00608F8C /* TAssetBrowser.cpp */,
+				84DE34FE0F12AFED00608F8C /* TAssetBrowser.h */,
+				84C10A3D0F0A7C3000B2DF7A /* TMenu.cpp */,
+				84C10A3E0F0A7C3000B2DF7A /* TMenu.h */,
+				84E117020F3CA26200471397 /* TGame.h */,
+				84E117030F3CA26200471397 /* TGame.cpp */,
+			);
+			name = "Source Code";
+			sourceTree = "<group>";
+		};
+		84C10A410F0A7C3600B2DF7A /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				8429F81E11A8403100AF0786 /* LibDebug.xcconfig */,
+				8429F81F11A8403100AF0786 /* LibRelease.xcconfig */,
+				BF8FC2C3118DEFB6005391AF /* BuildConfigurations */,
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		84C10A330F0A7C1800B2DF7A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C10A400F0A7C3000B2DF7A /* TMenu.h in Headers */,
+				84DE35020F12AFED00608F8C /* TAssetBrowser.h in Headers */,
+				846B711D0F2A366F005EB752 /* TLGame.h in Headers */,
+				84E117040F3CA26200471397 /* TGame.h in Headers */,
+				8418EB190F4C769A00B956C9 /* TWidgetScrollbar.h in Headers */,
+				840DECD90F545DAE005C7CFF /* TPath.h in Headers */,
+				847FFF510F66BE1300121D77 /* TWidgetButton.h in Headers */,
+				847FFF530F66BE1300121D77 /* TWidgetManager.h in Headers */,
+				840EBCD20F7296D300BA6F4C /* TTextManager.h in Headers */,
+				849E9C990F83861300037332 /* TTimeline.h in Headers */,
+				849E9C9B0F83861300037332 /* TTimelineManager.h in Headers */,
+				BFAC1C210FA0DE1100F69941 /* TWidgetDrag.h in Headers */,
+				8486172F0FCE95B400C22D6B /* TWidgetText.h in Headers */,
+				BF1B9E9D0FE192020014C702 /* TWidgetThumbStick.h in Headers */,
+				8434CB7B100DBB410063673E /* TSchemeEditor.h in Headers */,
+				8434CB7D100DBB410063673E /* TWidget.h in Headers */,
+				84F1FE4C10A073B40030B1F2 /* TApplication.h in Headers */,
+				843C291E10B481BA004E70F5 /* TWidgetFactory.h in Headers */,
+				8446B6F010DA1E2600C83113 /* TMenuController.h in Headers */,
+				8446B6F210DA1E2600C83113 /* TMenuWrapper.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		84C10A360F0A7C1800B2DF7A /* TootleGame */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84C10A3B0F0A7C1800B2DF7A /* Build configuration list for PBXNativeTarget "TootleGame" */;
+			buildPhases = (
+				84C10A330F0A7C1800B2DF7A /* Headers */,
+				84C10A340F0A7C1800B2DF7A /* Sources */,
+				84C10A350F0A7C1800B2DF7A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleGame;
+			productName = TootleGame;
+			productReference = BF0BDC6C11879895009E510A /* libTootleGame.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		84C108FC0F0A775200B2DF7A /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 84C108FF0F0A775200B2DF7A /* Build configuration list for PBXProject "TootleGame" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 0;
+			mainGroup = 84C108FA0F0A775200B2DF7A;
+			productRefGroup = 84C10A380F0A7C1800B2DF7A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				84C10A360F0A7C1800B2DF7A /* TootleGame */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		84C10A340F0A7C1800B2DF7A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C10A3F0F0A7C3000B2DF7A /* TMenu.cpp in Sources */,
+				84DE35010F12AFED00608F8C /* TAssetBrowser.cpp in Sources */,
+				846B711C0F2A366F005EB752 /* TLGame.cpp in Sources */,
+				84E117050F3CA26200471397 /* TGame.cpp in Sources */,
+				8418EB180F4C769A00B956C9 /* TWidgetScrollbar.cpp in Sources */,
+				840DECD80F545DAE005C7CFF /* TPath.cpp in Sources */,
+				847FFF500F66BE1300121D77 /* TWidgetButton.cpp in Sources */,
+				847FFF520F66BE1300121D77 /* TWidgetManager.cpp in Sources */,
+				840EBCD10F7296D300BA6F4C /* TTextManager.cpp in Sources */,
+				849E9C980F83861300037332 /* TTimeline.cpp in Sources */,
+				849E9C9A0F83861300037332 /* TTimelineManager.cpp in Sources */,
+				BFAC1C200FA0DE1100F69941 /* TWidgetDrag.cpp in Sources */,
+				8486172E0FCE95B400C22D6B /* TWidgetText.cpp in Sources */,
+				BF1B9E9C0FE192020014C702 /* TWidgetThumbStick.cpp in Sources */,
+				8434CB7A100DBB410063673E /* TSchemeEditor.cpp in Sources */,
+				8434CB7C100DBB410063673E /* TWidget.cpp in Sources */,
+				84F1FE4B10A073B40030B1F2 /* TApplication.cpp in Sources */,
+				843C291D10B481BA004E70F5 /* TWidgetFactory.cpp in Sources */,
+				8446B6EF10DA1E2600C83113 /* TMenuController.cpp in Sources */,
+				8446B6F110DA1E2600C83113 /* TMenuWrapper.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		84C108FD0F0A775200B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8429F81E11A8403100AF0786 /* LibDebug.xcconfig */;
+			buildSettings = {
+				SDKROOT = iphoneos3.2;
+			};
+			name = Debug;
+		};
+		84C108FE0F0A775200B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8429F81F11A8403100AF0786 /* LibRelease.xcconfig */;
+			buildSettings = {
+				SDKROOT = iphoneos3.2;
+			};
+			name = Release;
+		};
+		84C10A390F0A7C1800B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		84C10A3A0F0A7C1800B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		84C108FF0F0A775200B2DF7A /* Build configuration list for PBXProject "TootleGame" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C108FD0F0A775200B2DF7A /* Debug */,
+				84C108FE0F0A775200B2DF7A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84C10A3B0F0A7C1800B2DF7A /* Build configuration list for PBXNativeTarget "TootleGame" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C10A390F0A7C1800B2DF7A /* Debug */,
+				84C10A3A0F0A7C1800B2DF7A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 84C108FC0F0A775200B2DF7A /* Project object */;
+}

@@ -8,33 +8,13 @@
 
 #include "TLTypes.h"
 
-
-//	include the platform specific header
-#if defined(_MSC_EXTENSIONS) && defined(TL_TARGET_PC)
-
-#include "PC/PCMaths.h"
-
-#elif defined(TL_TARGET_IPOD)
-
-#include "IPod/IPodMaths.h"
-
-#elif defined(TL_TARGET_MAC)
-
-#include "Mac/MacMaths.h"
-
-#elif
-
-#pragma message("Invalid platform for maths library")
-
-#endif
+#include PLATFORMHEADER(Maths.h)
 
 
 //	gr: this value of PI is what the cmath libs return
 #define	PI				((float)3.1415927f )
 #define TWO_PI			((float)6.2831853f)
 #define HALF_PI			((float)1.5707963f)
-
-
 
 
 namespace TLMaths

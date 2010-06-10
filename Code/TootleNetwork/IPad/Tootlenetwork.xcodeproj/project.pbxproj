@@ -1,0 +1,285 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		84906351104D3814001930A3 /* TConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8490634F104D3814001930A3 /* TConnection.cpp */; };
+		84906352104D3814001930A3 /* TConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 84906350104D3814001930A3 /* TConnection.h */; };
+		84906356104D383F001930A3 /* IPodConnectionHttp.h in Headers */ = {isa = PBXBuildFile; fileRef = 84906354104D383F001930A3 /* IPodConnectionHttp.h */; };
+		84906357104D383F001930A3 /* IPodConnectionHttp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84906355104D383F001930A3 /* IPodConnectionHttp.mm */; };
+		84C10A8A0F0A7D3800B2DF7A /* TLNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10A880F0A7D3800B2DF7A /* TLNetwork.cpp */; };
+		84C10A8B0F0A7D3800B2DF7A /* TLNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10A890F0A7D3800B2DF7A /* TLNetwork.h */; };
+		84F32DAF111AD90A006E1DE7 /* IPodNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 84F32DAD111AD90A006E1DE7 /* IPodNetwork.h */; };
+		84F32DB0111AD90A006E1DE7 /* IPodNetwork.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84F32DAE111AD90A006E1DE7 /* IPodNetwork.mm */; };
+		BF0BDDC41188E49D009E510A /* IPodSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF0BDDC21188E49D009E510A /* IPodSocket.cpp */; };
+		BF0BDDC51188E49D009E510A /* IPodSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0BDDC31188E49D009E510A /* IPodSocket.h */; };
+		BF0BDE5C1188EBD6009E510A /* TSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF0BDE581188EBD6009E510A /* TSocket.cpp */; };
+		BF0BDE5D1188EBD6009E510A /* TSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0BDE591188EBD6009E510A /* TSocket.h */; };
+		BF0BDE5E1188EBD6009E510A /* TSocketServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF0BDE5A1188EBD6009E510A /* TSocketServer.cpp */; };
+		BF0BDE5F1188EBD6009E510A /* TSocketServer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0BDE5B1188EBD6009E510A /* TSocketServer.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		8490634F104D3814001930A3 /* TConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TConnection.cpp; path = ../TConnection.cpp; sourceTree = SOURCE_ROOT; };
+		84906350104D3814001930A3 /* TConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TConnection.h; path = ../TConnection.h; sourceTree = SOURCE_ROOT; };
+		84906354104D383F001930A3 /* IPodConnectionHttp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodConnectionHttp.h; sourceTree = "<group>"; };
+		84906355104D383F001930A3 /* IPodConnectionHttp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodConnectionHttp.mm; sourceTree = "<group>"; };
+		84C10A820F0A7D0F00B2DF7A /* libTootleNetwork.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleNetwork.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		84C10A880F0A7D3800B2DF7A /* TLNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLNetwork.cpp; path = ../TLNetwork.cpp; sourceTree = SOURCE_ROOT; };
+		84C10A890F0A7D3800B2DF7A /* TLNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLNetwork.h; path = ../TLNetwork.h; sourceTree = SOURCE_ROOT; };
+		84F32DAD111AD90A006E1DE7 /* IPodNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodNetwork.h; sourceTree = "<group>"; };
+		84F32DAE111AD90A006E1DE7 /* IPodNetwork.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodNetwork.mm; sourceTree = "<group>"; };
+		84F32DF9111AE488006E1DE7 /* PCConnectionHttp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCConnectionHttp.cpp; path = ../PC/PCConnectionHttp.cpp; sourceTree = SOURCE_ROOT; };
+		84F32DFA111AE488006E1DE7 /* PCConnectionHttp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCConnectionHttp.h; path = ../PC/PCConnectionHttp.h; sourceTree = SOURCE_ROOT; };
+		84F32DFB111AE488006E1DE7 /* PCNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCNetwork.cpp; path = ../PC/PCNetwork.cpp; sourceTree = SOURCE_ROOT; };
+		84F32DFC111AE488006E1DE7 /* PCNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCNetwork.h; path = ../PC/PCNetwork.h; sourceTree = SOURCE_ROOT; };
+		84F32DFD111AE49D006E1DE7 /* MacConnectionHttp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacConnectionHttp.h; path = ../Mac/MacConnectionHttp.h; sourceTree = SOURCE_ROOT; };
+		84F32DFE111AE49D006E1DE7 /* MacConnectionHttp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacConnectionHttp.mm; path = ../Mac/MacConnectionHttp.mm; sourceTree = SOURCE_ROOT; };
+		84F32DFF111AE49D006E1DE7 /* MacNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacNetwork.h; path = ../Mac/MacNetwork.h; sourceTree = SOURCE_ROOT; };
+		84F32E00111AE49D006E1DE7 /* MacNetwork.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacNetwork.mm; path = ../Mac/MacNetwork.mm; sourceTree = SOURCE_ROOT; };
+		BF0BDDBE1188E3FF009E510A /* MacSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MacSocket.cpp; path = ../../../../Tootle/Code/TootleNetwork/Mac/MacSocket.cpp; sourceTree = SOURCE_ROOT; };
+		BF0BDDBF1188E3FF009E510A /* MacSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacSocket.h; path = ../../../../Tootle/Code/TootleNetwork/Mac/MacSocket.h; sourceTree = SOURCE_ROOT; };
+		BF0BDDC01188E413009E510A /* PCSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCSocket.cpp; path = ../../../../Tootle/Code/TootleNetwork/PC/PCSocket.cpp; sourceTree = SOURCE_ROOT; };
+		BF0BDDC11188E413009E510A /* PCSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCSocket.h; path = ../../../../Tootle/Code/TootleNetwork/PC/PCSocket.h; sourceTree = SOURCE_ROOT; };
+		BF0BDDC21188E49D009E510A /* IPodSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IPodSocket.cpp; path = ../../../../Tootle/Code/TootleNetwork/IPod/IPodSocket.cpp; sourceTree = SOURCE_ROOT; };
+		BF0BDDC31188E49D009E510A /* IPodSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodSocket.h; path = ../../../../Tootle/Code/TootleNetwork/IPod/IPodSocket.h; sourceTree = SOURCE_ROOT; };
+		BF0BDE581188EBD6009E510A /* TSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSocket.cpp; path = ../../../../Tootle/Code/TootleNetwork/TSocket.cpp; sourceTree = SOURCE_ROOT; };
+		BF0BDE591188EBD6009E510A /* TSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSocket.h; path = ../../../../Tootle/Code/TootleNetwork/TSocket.h; sourceTree = SOURCE_ROOT; };
+		BF0BDE5A1188EBD6009E510A /* TSocketServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSocketServer.cpp; path = ../../../../Tootle/Code/TootleNetwork/TSocketServer.cpp; sourceTree = SOURCE_ROOT; };
+		BF0BDE5B1188EBD6009E510A /* TSocketServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSocketServer.h; path = ../../../../Tootle/Code/TootleNetwork/TSocketServer.h; sourceTree = SOURCE_ROOT; };
+		BF8FC2F8118DFC03005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
+		BF8FC2F9118DFC1B005391AF /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF8FC2FA118DFC1B005391AF /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		84C10A800F0A7D0F00B2DF7A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		84906353104D382C001930A3 /* IPod Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				BF0BDDC21188E49D009E510A /* IPodSocket.cpp */,
+				BF0BDDC31188E49D009E510A /* IPodSocket.h */,
+				84F32DAD111AD90A006E1DE7 /* IPodNetwork.h */,
+				84F32DAE111AD90A006E1DE7 /* IPodNetwork.mm */,
+				84906354104D383F001930A3 /* IPodConnectionHttp.h */,
+				84906355104D383F001930A3 /* IPodConnectionHttp.mm */,
+			);
+			name = "IPod Source Files";
+			sourceTree = "<group>";
+		};
+		84C108B90F0A765A00B2DF7A = {
+			isa = PBXGroup;
+			children = (
+				84C10A8C0F0A7D3D00B2DF7A /* Build Configurations */,
+				84C10A870F0A7D2300B2DF7A /* Source Code */,
+				84C10A830F0A7D0F00B2DF7A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		84C10A830F0A7D0F00B2DF7A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84C10A820F0A7D0F00B2DF7A /* libTootleNetwork.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84C10A870F0A7D2300B2DF7A /* Source Code */ = {
+			isa = PBXGroup;
+			children = (
+				BF0BDE581188EBD6009E510A /* TSocket.cpp */,
+				BF0BDE591188EBD6009E510A /* TSocket.h */,
+				BF0BDE5A1188EBD6009E510A /* TSocketServer.cpp */,
+				BF0BDE5B1188EBD6009E510A /* TSocketServer.h */,
+				84F32DF8111AE474006E1DE7 /* PC Source Files */,
+				84F32DF7111AE467006E1DE7 /* Mac Source Files */,
+				84906353104D382C001930A3 /* IPod Source Files */,
+				8490634F104D3814001930A3 /* TConnection.cpp */,
+				84906350104D3814001930A3 /* TConnection.h */,
+				84C10A880F0A7D3800B2DF7A /* TLNetwork.cpp */,
+				84C10A890F0A7D3800B2DF7A /* TLNetwork.h */,
+			);
+			name = "Source Code";
+			sourceTree = "<group>";
+		};
+		84C10A8C0F0A7D3D00B2DF7A /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				BF8FC2F9118DFC1B005391AF /* LibDebug.xcconfig */,
+				BF8FC2FA118DFC1B005391AF /* LibRelease.xcconfig */,
+				BF8FC2F8118DFC03005391AF /* BuildConfigurations */,
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+		84F32DF7111AE467006E1DE7 /* Mac Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				BF0BDDBE1188E3FF009E510A /* MacSocket.cpp */,
+				BF0BDDBF1188E3FF009E510A /* MacSocket.h */,
+				84F32DFD111AE49D006E1DE7 /* MacConnectionHttp.h */,
+				84F32DFE111AE49D006E1DE7 /* MacConnectionHttp.mm */,
+				84F32DFF111AE49D006E1DE7 /* MacNetwork.h */,
+				84F32E00111AE49D006E1DE7 /* MacNetwork.mm */,
+			);
+			name = "Mac Source Files";
+			sourceTree = "<group>";
+		};
+		84F32DF8111AE474006E1DE7 /* PC Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				BF0BDDC01188E413009E510A /* PCSocket.cpp */,
+				BF0BDDC11188E413009E510A /* PCSocket.h */,
+				84F32DF9111AE488006E1DE7 /* PCConnectionHttp.cpp */,
+				84F32DFA111AE488006E1DE7 /* PCConnectionHttp.h */,
+				84F32DFB111AE488006E1DE7 /* PCNetwork.cpp */,
+				84F32DFC111AE488006E1DE7 /* PCNetwork.h */,
+			);
+			name = "PC Source Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		84C10A7E0F0A7D0F00B2DF7A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C10A8B0F0A7D3800B2DF7A /* TLNetwork.h in Headers */,
+				84906352104D3814001930A3 /* TConnection.h in Headers */,
+				84906356104D383F001930A3 /* IPodConnectionHttp.h in Headers */,
+				84F32DAF111AD90A006E1DE7 /* IPodNetwork.h in Headers */,
+				BF0BDDC51188E49D009E510A /* IPodSocket.h in Headers */,
+				BF0BDE5D1188EBD6009E510A /* TSocket.h in Headers */,
+				BF0BDE5F1188EBD6009E510A /* TSocketServer.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		84C10A810F0A7D0F00B2DF7A /* TootleNetwork */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84C10A860F0A7D0F00B2DF7A /* Build configuration list for PBXNativeTarget "TootleNetwork" */;
+			buildPhases = (
+				84C10A7E0F0A7D0F00B2DF7A /* Headers */,
+				84C10A7F0F0A7D0F00B2DF7A /* Sources */,
+				84C10A800F0A7D0F00B2DF7A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleNetwork;
+			productName = TootleNetwork;
+			productReference = 84C10A820F0A7D0F00B2DF7A /* libTootleNetwork.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		84C108BB0F0A765A00B2DF7A /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 84C108BE0F0A765A00B2DF7A /* Build configuration list for PBXProject "TootleNetwork" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 0;
+			mainGroup = 84C108B90F0A765A00B2DF7A;
+			productRefGroup = 84C10A830F0A7D0F00B2DF7A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				84C10A810F0A7D0F00B2DF7A /* TootleNetwork */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		84C10A7F0F0A7D0F00B2DF7A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C10A8A0F0A7D3800B2DF7A /* TLNetwork.cpp in Sources */,
+				84906351104D3814001930A3 /* TConnection.cpp in Sources */,
+				84906357104D383F001930A3 /* IPodConnectionHttp.mm in Sources */,
+				84F32DB0111AD90A006E1DE7 /* IPodNetwork.mm in Sources */,
+				BF0BDDC41188E49D009E510A /* IPodSocket.cpp in Sources */,
+				BF0BDE5C1188EBD6009E510A /* TSocket.cpp in Sources */,
+				BF0BDE5E1188EBD6009E510A /* TSocketServer.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		84C108BC0F0A765A00B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF8FC2F9118DFC1B005391AF /* LibDebug.xcconfig */;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					src/,
+					../..,
+				);
+			};
+			name = Debug;
+		};
+		84C108BD0F0A765A00B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF8FC2FA118DFC1B005391AF /* LibRelease.xcconfig */;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					src/,
+					../..,
+				);
+			};
+			name = Release;
+		};
+		84C10A840F0A7D0F00B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		84C10A850F0A7D0F00B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		84C108BE0F0A765A00B2DF7A /* Build configuration list for PBXProject "TootleNetwork" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C108BC0F0A765A00B2DF7A /* Debug */,
+				84C108BD0F0A765A00B2DF7A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84C10A860F0A7D0F00B2DF7A /* Build configuration list for PBXNativeTarget "TootleNetwork" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C10A840F0A7D0F00B2DF7A /* Debug */,
+				84C10A850F0A7D0F00B2DF7A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 84C108BB0F0A765A00B2DF7A /* Project object */;
+}

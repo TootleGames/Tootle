@@ -49,7 +49,7 @@ TScreen* TScreenManager::CreateObject(TRefRef InstanceRef,TRefRef TypeRef)
 		pScreen = new TLRender::Platform::Screen( InstanceRef, TLRender::ScreenShape_WideRight );
 	else if ( TypeRef == "widescreen" )
 	{
-#if defined(TL_TARGET_IPOD)
+#if defined(TL_TARGET_IPOD) || defined(TL_TARGET_IPAD)
 		pScreen = new TLRender::Platform::Screen( InstanceRef, TLRender::ScreenShape_WideRight );
 #else	
 		pScreen = new TLRender::Platform::ScreenWide( InstanceRef );
@@ -74,12 +74,12 @@ void TScreenManager::ProcessMessage(TLMessaging::TMessage& Message)
 	TRefRef MessageRef = Message.GetMessageRef();
 
 	//	gr: ipod does no update in the screen - just break out now
-	#ifdef TL_TARGET_IPOD
+#if defined(TL_TARGET_IPOD) || defined(TL_TARGET_IPAD)
 	{
 		if ( MessageRef == TLCore::UpdateRef )
 			return;
 	}
-	#endif // TL_TARGET_IPOD
+#endif // TL_TARGET_IPOD
 
 	if ( MessageRef == TRef_Static(R,e,n,d,e) )
 	{

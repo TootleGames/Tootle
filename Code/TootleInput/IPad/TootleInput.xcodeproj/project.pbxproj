@@ -1,0 +1,299 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		841006170EF91D8D00542F4A /* TAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 841005530EF913CE00542F4A /* TAction.cpp */; };
+		841006190EF91D8D00542F4A /* TDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 841005550EF913CE00542F4A /* TDevice.cpp */; };
+		8410061B0EF91D8D00542F4A /* TEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 841005570EF913CE00542F4A /* TEffect.cpp */; };
+		8410061D0EF91D8D00542F4A /* TLInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 841005590EF913CE00542F4A /* TLInput.cpp */; };
+		8410061F0EF91D8D00542F4A /* TSensor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8410055B0EF913CE00542F4A /* TSensor.cpp */; };
+		841006210EF91D8D00542F4A /* TUser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8410055D0EF913CE00542F4A /* TUser.cpp */; };
+		8410078D0EF92CC000542F4A /* TAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 841007870EF92CC000542F4A /* TAction.h */; };
+		8410078E0EF92CC000542F4A /* TDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 841007880EF92CC000542F4A /* TDevice.h */; };
+		8410078F0EF92CC000542F4A /* TEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 841007890EF92CC000542F4A /* TEffect.h */; };
+		841007900EF92CC000542F4A /* TLInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 8410078A0EF92CC000542F4A /* TLInput.h */; };
+		841007910EF92CC000542F4A /* TSensor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8410078B0EF92CC000542F4A /* TSensor.h */; };
+		841007920EF92CC000542F4A /* TUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 8410078C0EF92CC000542F4A /* TUser.h */; };
+		8429F8C111A8433900AF0786 /* IPadInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 8429F8BB11A8433900AF0786 /* IPadInput.h */; };
+		8429F8C211A8433900AF0786 /* IPadInput.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8429F8BC11A8433900AF0786 /* IPadInput.mm */; };
+		8429F8C311A8433900AF0786 /* IPadVibration.h in Headers */ = {isa = PBXBuildFile; fileRef = 8429F8BD11A8433900AF0786 /* IPadVibration.h */; };
+		8429F8C411A8433900AF0786 /* IPadVibration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8429F8BE11A8433900AF0786 /* IPadVibration.mm */; };
+		8429F8C511A8433900AF0786 /* IPadVirtualKeyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 8429F8BF11A8433900AF0786 /* IPadVirtualKeyboard.h */; };
+		8429F8C611A8433900AF0786 /* IPadVirtualKeyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8429F8C011A8433900AF0786 /* IPadVirtualKeyboard.mm */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		841005530EF913CE00542F4A /* TAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TAction.cpp; path = ../TAction.cpp; sourceTree = SOURCE_ROOT; };
+		841005550EF913CE00542F4A /* TDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TDevice.cpp; path = ../TDevice.cpp; sourceTree = SOURCE_ROOT; };
+		841005570EF913CE00542F4A /* TEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TEffect.cpp; path = ../TEffect.cpp; sourceTree = SOURCE_ROOT; };
+		841005590EF913CE00542F4A /* TLInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TLInput.cpp; path = ../TLInput.cpp; sourceTree = SOURCE_ROOT; };
+		8410055B0EF913CE00542F4A /* TSensor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSensor.cpp; path = ../TSensor.cpp; sourceTree = SOURCE_ROOT; };
+		8410055D0EF913CE00542F4A /* TUser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TUser.cpp; path = ../TUser.cpp; sourceTree = SOURCE_ROOT; };
+		841005760EF9144200542F4A /* libTootleInput.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleInput.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		841007870EF92CC000542F4A /* TAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAction.h; path = ../TAction.h; sourceTree = SOURCE_ROOT; };
+		841007880EF92CC000542F4A /* TDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDevice.h; path = ../TDevice.h; sourceTree = SOURCE_ROOT; };
+		841007890EF92CC000542F4A /* TEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TEffect.h; path = ../TEffect.h; sourceTree = SOURCE_ROOT; };
+		8410078A0EF92CC000542F4A /* TLInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TLInput.h; path = ../TLInput.h; sourceTree = SOURCE_ROOT; };
+		8410078B0EF92CC000542F4A /* TSensor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSensor.h; path = ../TSensor.h; sourceTree = SOURCE_ROOT; };
+		8410078C0EF92CC000542F4A /* TUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TUser.h; path = ../TUser.h; sourceTree = SOURCE_ROOT; };
+		8429F8B311A8431D00AF0786 /* MacInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacInput.h; path = ../Mac/MacInput.h; sourceTree = SOURCE_ROOT; };
+		8429F8B411A8431D00AF0786 /* MacInput.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacInput.mm; path = ../Mac/MacInput.mm; sourceTree = SOURCE_ROOT; };
+		8429F8B511A8432A00AF0786 /* IPodInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodInput.h; path = ../IPod/IPodInput.h; sourceTree = SOURCE_ROOT; };
+		8429F8B611A8432A00AF0786 /* IPodInput.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodInput.mm; path = ../IPod/IPodInput.mm; sourceTree = SOURCE_ROOT; };
+		8429F8B711A8432A00AF0786 /* IPodVibration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodVibration.h; path = ../IPod/IPodVibration.h; sourceTree = SOURCE_ROOT; };
+		8429F8B811A8432A00AF0786 /* IPodVibration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodVibration.mm; path = ../IPod/IPodVibration.mm; sourceTree = SOURCE_ROOT; };
+		8429F8B911A8432A00AF0786 /* IPodVirtualKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodVirtualKeyboard.h; path = ../IPod/IPodVirtualKeyboard.h; sourceTree = SOURCE_ROOT; };
+		8429F8BA11A8432A00AF0786 /* IPodVirtualKeyboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodVirtualKeyboard.mm; path = ../IPod/IPodVirtualKeyboard.mm; sourceTree = SOURCE_ROOT; };
+		8429F8BB11A8433900AF0786 /* IPadInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadInput.h; sourceTree = "<group>"; };
+		8429F8BC11A8433900AF0786 /* IPadInput.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPadInput.mm; sourceTree = "<group>"; };
+		8429F8BD11A8433900AF0786 /* IPadVibration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadVibration.h; sourceTree = "<group>"; };
+		8429F8BE11A8433900AF0786 /* IPadVibration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPadVibration.mm; sourceTree = "<group>"; };
+		8429F8BF11A8433900AF0786 /* IPadVirtualKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadVirtualKeyboard.h; sourceTree = "<group>"; };
+		8429F8C011A8433900AF0786 /* IPadVirtualKeyboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPadVirtualKeyboard.mm; sourceTree = "<group>"; };
+		8429F8C711A843B600AF0786 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/IPad/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		8429F8C811A843B600AF0786 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/IPad/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		8461BD320F5816C500ED9509 /* PCInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCInput.cpp; path = ../PC/PCInput.cpp; sourceTree = SOURCE_ROOT; };
+		8461BD330F5816C500ED9509 /* PCInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = PCInput.h; path = ../PC/PCInput.h; sourceTree = SOURCE_ROOT; };
+		BF8FC28A118DEAB1005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		841005740EF9144200542F4A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8410053E0EF912FC00542F4A = {
+			isa = PBXGroup;
+			children = (
+				84179C340EFA7470005375E5 /* Build Configurations */,
+				841006160EF91D3D00542F4A /* Source Code */,
+				841005770EF9144200542F4A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		841005610EF913F200542F4A /* IPad Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				8429F8BB11A8433900AF0786 /* IPadInput.h */,
+				8429F8BC11A8433900AF0786 /* IPadInput.mm */,
+				8429F8BD11A8433900AF0786 /* IPadVibration.h */,
+				8429F8BE11A8433900AF0786 /* IPadVibration.mm */,
+				8429F8BF11A8433900AF0786 /* IPadVirtualKeyboard.h */,
+				8429F8C011A8433900AF0786 /* IPadVirtualKeyboard.mm */,
+			);
+			name = "IPad Source Files";
+			sourceTree = "<group>";
+		};
+		841005770EF9144200542F4A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				841005760EF9144200542F4A /* libTootleInput.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		841006160EF91D3D00542F4A /* Source Code */ = {
+			isa = PBXGroup;
+			children = (
+				8429F8B211A8430800AF0786 /* IPod Source Files */,
+				8429F8B111A8430000AF0786 /* Mac Source Files */,
+				8461BD310F5816B300ED9509 /* PC Source Files */,
+				841007870EF92CC000542F4A /* TAction.h */,
+				841007880EF92CC000542F4A /* TDevice.h */,
+				841007890EF92CC000542F4A /* TEffect.h */,
+				8410078A0EF92CC000542F4A /* TLInput.h */,
+				8410078B0EF92CC000542F4A /* TSensor.h */,
+				8410078C0EF92CC000542F4A /* TUser.h */,
+				841005610EF913F200542F4A /* IPad Source Files */,
+				841005530EF913CE00542F4A /* TAction.cpp */,
+				841005550EF913CE00542F4A /* TDevice.cpp */,
+				841005570EF913CE00542F4A /* TEffect.cpp */,
+				841005590EF913CE00542F4A /* TLInput.cpp */,
+				8410055B0EF913CE00542F4A /* TSensor.cpp */,
+				8410055D0EF913CE00542F4A /* TUser.cpp */,
+			);
+			name = "Source Code";
+			sourceTree = "<group>";
+		};
+		84179C340EFA7470005375E5 /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				8429F8C711A843B600AF0786 /* LibDebug.xcconfig */,
+				8429F8C811A843B600AF0786 /* LibRelease.xcconfig */,
+				BF8FC28A118DEAB1005391AF /* BuildConfigurations */,
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+		8429F8B111A8430000AF0786 /* Mac Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				8429F8B311A8431D00AF0786 /* MacInput.h */,
+				8429F8B411A8431D00AF0786 /* MacInput.mm */,
+			);
+			name = "Mac Source Files";
+			sourceTree = "<group>";
+		};
+		8429F8B211A8430800AF0786 /* IPod Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				8429F8B511A8432A00AF0786 /* IPodInput.h */,
+				8429F8B611A8432A00AF0786 /* IPodInput.mm */,
+				8429F8B711A8432A00AF0786 /* IPodVibration.h */,
+				8429F8B811A8432A00AF0786 /* IPodVibration.mm */,
+				8429F8B911A8432A00AF0786 /* IPodVirtualKeyboard.h */,
+				8429F8BA11A8432A00AF0786 /* IPodVirtualKeyboard.mm */,
+			);
+			name = "IPod Source Files";
+			sourceTree = "<group>";
+		};
+		8461BD310F5816B300ED9509 /* PC Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				8461BD320F5816C500ED9509 /* PCInput.cpp */,
+				8461BD330F5816C500ED9509 /* PCInput.h */,
+			);
+			name = "PC Source Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		841005720EF9144200542F4A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8410078D0EF92CC000542F4A /* TAction.h in Headers */,
+				8410078E0EF92CC000542F4A /* TDevice.h in Headers */,
+				8410078F0EF92CC000542F4A /* TEffect.h in Headers */,
+				841007900EF92CC000542F4A /* TLInput.h in Headers */,
+				841007910EF92CC000542F4A /* TSensor.h in Headers */,
+				841007920EF92CC000542F4A /* TUser.h in Headers */,
+				8429F8C111A8433900AF0786 /* IPadInput.h in Headers */,
+				8429F8C311A8433900AF0786 /* IPadVibration.h in Headers */,
+				8429F8C511A8433900AF0786 /* IPadVirtualKeyboard.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		841005750EF9144200542F4A /* TootleInput */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8410057A0EF9144300542F4A /* Build configuration list for PBXNativeTarget "TootleInput" */;
+			buildPhases = (
+				841005720EF9144200542F4A /* Headers */,
+				841005730EF9144200542F4A /* Sources */,
+				841005740EF9144200542F4A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleInput;
+			productName = TootleInput;
+			productReference = 841005760EF9144200542F4A /* libTootleInput.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		841005400EF912FC00542F4A /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 841005430EF912FC00542F4A /* Build configuration list for PBXProject "TootleInput" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 0;
+			mainGroup = 8410053E0EF912FC00542F4A;
+			productRefGroup = 841005770EF9144200542F4A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				841005750EF9144200542F4A /* TootleInput */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		841005730EF9144200542F4A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				841006170EF91D8D00542F4A /* TAction.cpp in Sources */,
+				841006190EF91D8D00542F4A /* TDevice.cpp in Sources */,
+				8410061B0EF91D8D00542F4A /* TEffect.cpp in Sources */,
+				8410061D0EF91D8D00542F4A /* TLInput.cpp in Sources */,
+				8410061F0EF91D8D00542F4A /* TSensor.cpp in Sources */,
+				841006210EF91D8D00542F4A /* TUser.cpp in Sources */,
+				8429F8C211A8433900AF0786 /* IPadInput.mm in Sources */,
+				8429F8C411A8433900AF0786 /* IPadVibration.mm in Sources */,
+				8429F8C611A8433900AF0786 /* IPadVirtualKeyboard.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		841005410EF912FC00542F4A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8429F8C711A843B600AF0786 /* LibDebug.xcconfig */;
+			buildSettings = {
+				SDKROOT = iphoneos3.2;
+			};
+			name = Debug;
+		};
+		841005420EF912FC00542F4A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8429F8C811A843B600AF0786 /* LibRelease.xcconfig */;
+			buildSettings = {
+				SDKROOT = iphoneos3.2;
+			};
+			name = Release;
+		};
+		841005780EF9144300542F4A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		841005790EF9144300542F4A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		841005430EF912FC00542F4A /* Build configuration list for PBXProject "TootleInput" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				841005410EF912FC00542F4A /* Debug */,
+				841005420EF912FC00542F4A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8410057A0EF9144300542F4A /* Build configuration list for PBXNativeTarget "TootleInput" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				841005780EF9144300542F4A /* Debug */,
+				841005790EF9144300542F4A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 841005400EF912FC00542F4A /* Project object */;
+}

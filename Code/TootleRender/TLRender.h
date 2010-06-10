@@ -118,12 +118,8 @@ namespace TLRender
 	//#include "PC/PCRender.h"
 #elif defined(TL_TARGET_PC) 
 	//	ansi build can't include any headers
-#elif defined(TL_TARGET_IPOD)
-	#include "IPod/IPodRender.h"
-#elif defined(TL_TARGET_MAC)
-	#include "Mac/MacRender.h"
 #else
-	#error unknown platform
+	#include PLATFORMHEADER(Render.h)
 #endif
 
 
@@ -131,7 +127,7 @@ namespace TLRender
 
 FORCEINLINE Bool TLRender::Opengl::Debug_CheckForError()
 {
-#if defined(_DEBUG)&&!defined(TL_TARGET_IPOD)
+#if defined(_DEBUG) && !defined(TL_TARGET_IPOD) && !defined(TL_TARGET_IPAD)
 	return Platform::Debug_CheckForError();
 #else
 	return FALSE;

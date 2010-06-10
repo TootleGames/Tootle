@@ -162,6 +162,21 @@ TLCompileAssert( sizeof(TChar32) == sizeof(u32), "TChar32 not setup correctly." 
 #endif
 
 
+#define STRINGIFY(x) #x
+// PLATFORMHEADER header include define to make it easier to include a platform header without having to test each platform
+// in the code in numerous places
+#if defined(TL_TARGET_IPOD)
+	#define PLATFORMHEADER(Header)	STRINGIFY(IPod/IPod##Header)
+#elif defined(TL_TARGET_IPAD)
+	#define PLATFORMHEADER(Header)	STRINGIFY(IPad/IPad##Header)
+#elif defined(TL_TARGET_MAC)
+	#define PLATFORMHEADER(Header)	STRINGIFY(Mac/Mac##Header)
+#elif defined(_MSC_EXTENSIONS) && defined(TL_TARGET_PC)
+	#define PLATFORMHEADER(Header)	STRINGIFY(PC/PC##Header)
+#else
+	#error "Invalid platform for project"
+#endif
+
 
 namespace TLTypes
 {

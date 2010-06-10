@@ -1,0 +1,311 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8404EC6B0FD7D75800F280AF /* TLSocial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8404EC690FD7D75800F280AF /* TLSocial.h */; };
+		8404EC6C0FD7D75800F280AF /* TLSocial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8404EC6A0FD7D75800F280AF /* TLSocial.cpp */; };
+		8429FA2511A95C5000AF0786 /* IPadSocialNetworkingPlatform_AGONOnline.h in Headers */ = {isa = PBXBuildFile; fileRef = 8429FA1D11A95C5000AF0786 /* IPadSocialNetworkingPlatform_AGONOnline.h */; };
+		8429FA2611A95C5000AF0786 /* IPadSocialNetworkingPlatform_AGONOnline.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8429FA1E11A95C5000AF0786 /* IPadSocialNetworkingPlatform_AGONOnline.mm */; };
+		8429FA2711A95C5000AF0786 /* IPadSocialNetworkingPlatform_Facebook.h in Headers */ = {isa = PBXBuildFile; fileRef = 8429FA1F11A95C5000AF0786 /* IPadSocialNetworkingPlatform_Facebook.h */; };
+		8429FA2811A95C5000AF0786 /* IPadSocialNetworkingPlatform_GameCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8429FA2011A95C5000AF0786 /* IPadSocialNetworkingPlatform_GameCenter.h */; };
+		8429FA2911A95C5000AF0786 /* IPadSocialNetworkingPlatform_GameCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8429FA2111A95C5000AF0786 /* IPadSocialNetworkingPlatform_GameCenter.mm */; };
+		8429FA2A11A95C5000AF0786 /* IPadSocialNetworkingPlatform_OpenFeint.h in Headers */ = {isa = PBXBuildFile; fileRef = 8429FA2211A95C5000AF0786 /* IPadSocialNetworkingPlatform_OpenFeint.h */; };
+		8429FA2B11A95C5000AF0786 /* IPadSocialNetworkingPlatform_OpenFeint.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8429FA2311A95C5000AF0786 /* IPadSocialNetworkingPlatform_OpenFeint.mm */; };
+		8429FA2C11A95C5000AF0786 /* IPadSocialNetworkingPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 8429FA2411A95C5000AF0786 /* IPadSocialNetworkingPlatform.h */; };
+		843CDACF1048234300E6295B /* TSocialNetworkingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 843CDACE1048234300E6295B /* TSocialNetworkingManager.h */; };
+		8471D25511A98EE20026240A /* TootleSocialPrefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 8471D25411A98EE20026240A /* TootleSocialPrefix.pch */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		8404EA5C0FD7CF8100F280AF /* libTootleSocial.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleSocial.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8404EC690FD7D75800F280AF /* TLSocial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TLSocial.h; path = ../TLSocial.h; sourceTree = SOURCE_ROOT; };
+		8404EC6A0FD7D75800F280AF /* TLSocial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TLSocial.cpp; path = ../TLSocial.cpp; sourceTree = SOURCE_ROOT; };
+		842382F31047E346009E67C3 /* PCSocialNetworkingPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCSocialNetworkingPlatform.h; path = ../PC/PCSocialNetworkingPlatform.h; sourceTree = SOURCE_ROOT; };
+		8429FA1D11A95C5000AF0786 /* IPadSocialNetworkingPlatform_AGONOnline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadSocialNetworkingPlatform_AGONOnline.h; sourceTree = "<group>"; };
+		8429FA1E11A95C5000AF0786 /* IPadSocialNetworkingPlatform_AGONOnline.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPadSocialNetworkingPlatform_AGONOnline.mm; sourceTree = "<group>"; };
+		8429FA1F11A95C5000AF0786 /* IPadSocialNetworkingPlatform_Facebook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadSocialNetworkingPlatform_Facebook.h; sourceTree = "<group>"; };
+		8429FA2011A95C5000AF0786 /* IPadSocialNetworkingPlatform_GameCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadSocialNetworkingPlatform_GameCenter.h; sourceTree = "<group>"; };
+		8429FA2111A95C5000AF0786 /* IPadSocialNetworkingPlatform_GameCenter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPadSocialNetworkingPlatform_GameCenter.mm; sourceTree = "<group>"; };
+		8429FA2211A95C5000AF0786 /* IPadSocialNetworkingPlatform_OpenFeint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadSocialNetworkingPlatform_OpenFeint.h; sourceTree = "<group>"; };
+		8429FA2311A95C5000AF0786 /* IPadSocialNetworkingPlatform_OpenFeint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPadSocialNetworkingPlatform_OpenFeint.mm; sourceTree = "<group>"; };
+		8429FA2411A95C5000AF0786 /* IPadSocialNetworkingPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadSocialNetworkingPlatform.h; sourceTree = "<group>"; };
+		8429FA2D11A95CC700AF0786 /* IPodSocialNetworkingPlatform_AGONOnline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodSocialNetworkingPlatform_AGONOnline.h; path = ../IPod/IPodSocialNetworkingPlatform_AGONOnline.h; sourceTree = SOURCE_ROOT; };
+		8429FA2E11A95CC700AF0786 /* IPodSocialNetworkingPlatform_AGONOnline.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodSocialNetworkingPlatform_AGONOnline.mm; path = ../IPod/IPodSocialNetworkingPlatform_AGONOnline.mm; sourceTree = SOURCE_ROOT; };
+		8429FA2F11A95CC700AF0786 /* IPodSocialNetworkingPlatform_Facebook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodSocialNetworkingPlatform_Facebook.h; path = ../IPod/IPodSocialNetworkingPlatform_Facebook.h; sourceTree = SOURCE_ROOT; };
+		8429FA3011A95CC700AF0786 /* IPodSocialNetworkingPlatform_GameCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodSocialNetworkingPlatform_GameCenter.h; path = ../IPod/IPodSocialNetworkingPlatform_GameCenter.h; sourceTree = SOURCE_ROOT; };
+		8429FA3111A95CC700AF0786 /* IPodSocialNetworkingPlatform_GameCenter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodSocialNetworkingPlatform_GameCenter.mm; path = ../IPod/IPodSocialNetworkingPlatform_GameCenter.mm; sourceTree = SOURCE_ROOT; };
+		8429FA3211A95CC700AF0786 /* IPodSocialNetworkingPlatform_OpenFeint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodSocialNetworkingPlatform_OpenFeint.h; path = ../IPod/IPodSocialNetworkingPlatform_OpenFeint.h; sourceTree = SOURCE_ROOT; };
+		8429FA3311A95CC700AF0786 /* IPodSocialNetworkingPlatform_OpenFeint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodSocialNetworkingPlatform_OpenFeint.mm; path = ../IPod/IPodSocialNetworkingPlatform_OpenFeint.mm; sourceTree = SOURCE_ROOT; };
+		8429FA3411A95CC700AF0786 /* IPodSocialNetworkingPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodSocialNetworkingPlatform.h; path = ../IPod/IPodSocialNetworkingPlatform.h; sourceTree = SOURCE_ROOT; };
+		8429FA3511A95CC700AF0786 /* TFacebookConnect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFacebookConnect.h; path = ../IPod/TFacebookConnect.h; sourceTree = SOURCE_ROOT; };
+		8429FA3611A95CC700AF0786 /* TFacebookConnect.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TFacebookConnect.mm; path = ../IPod/TFacebookConnect.mm; sourceTree = SOURCE_ROOT; };
+		8429FA3711A95CC700AF0786 /* TFacebookSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFacebookSession.h; path = ../IPod/TFacebookSession.h; sourceTree = SOURCE_ROOT; };
+		8429FA3811A95CC700AF0786 /* TFacebookSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TFacebookSession.mm; path = ../IPod/TFacebookSession.mm; sourceTree = SOURCE_ROOT; };
+		8429FA3911A95CF700AF0786 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/IPad/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		8429FA3A11A95CF700AF0786 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/IPad/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		843CDACE1048234300E6295B /* TSocialNetworkingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSocialNetworkingManager.h; path = ../TSocialNetworkingManager.h; sourceTree = SOURCE_ROOT; };
+		84681136118CDCF900D71BEF /* MacSocialNetworkingPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacSocialNetworkingPlatform.h; path = ../Mac/MacSocialNetworkingPlatform.h; sourceTree = SOURCE_ROOT; };
+		8471D25411A98EE20026240A /* TootleSocialPrefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TootleSocialPrefix.pch; sourceTree = "<group>"; };
+		BF8FC638118F7509005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8404EA5A0FD7CF8100F280AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8404EA430FD7CF4F00F280AF = {
+			isa = PBXGroup;
+			children = (
+				8404EA610FD7CF9700F280AF /* Build Configurations */,
+				8404EA620FD7CFA200F280AF /* Source Code */,
+				8404EAE00FD7D0F100F280AF /* Frameworks */,
+				8404EA5D0FD7CF8100F280AF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8404EA5D0FD7CF8100F280AF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8404EA5C0FD7CF8100F280AF /* libTootleSocial.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8404EA610FD7CF9700F280AF /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				8429FA3911A95CF700AF0786 /* LibDebug.xcconfig */,
+				8429FA3A11A95CF700AF0786 /* LibRelease.xcconfig */,
+				BF8FC638118F7509005391AF /* BuildConfigurations */,
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+		8404EA620FD7CFA200F280AF /* Source Code */ = {
+			isa = PBXGroup;
+			children = (
+				8429FA1A11A95C2000AF0786 /* IPod Source Files */,
+				8404EA6D0FD7CFD000F280AF /* Mac Source Files */,
+				8404EA6C0FD7CFCA00F280AF /* IPad Source Files */,
+				8404EA6B0FD7CFC400F280AF /* PC Source Files */,
+				8404EC690FD7D75800F280AF /* TLSocial.h */,
+				8404EC6A0FD7D75800F280AF /* TLSocial.cpp */,
+				843CDACE1048234300E6295B /* TSocialNetworkingManager.h */,
+			);
+			name = "Source Code";
+			sourceTree = "<group>";
+		};
+		8404EA6B0FD7CFC400F280AF /* PC Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				842382F31047E346009E67C3 /* PCSocialNetworkingPlatform.h */,
+			);
+			name = "PC Source Files";
+			sourceTree = "<group>";
+		};
+		8404EA6C0FD7CFCA00F280AF /* IPad Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				8471D25411A98EE20026240A /* TootleSocialPrefix.pch */,
+				8429FA1D11A95C5000AF0786 /* IPadSocialNetworkingPlatform_AGONOnline.h */,
+				8429FA1E11A95C5000AF0786 /* IPadSocialNetworkingPlatform_AGONOnline.mm */,
+				8429FA1F11A95C5000AF0786 /* IPadSocialNetworkingPlatform_Facebook.h */,
+				8429FA2011A95C5000AF0786 /* IPadSocialNetworkingPlatform_GameCenter.h */,
+				8429FA2111A95C5000AF0786 /* IPadSocialNetworkingPlatform_GameCenter.mm */,
+				8429FA2211A95C5000AF0786 /* IPadSocialNetworkingPlatform_OpenFeint.h */,
+				8429FA2311A95C5000AF0786 /* IPadSocialNetworkingPlatform_OpenFeint.mm */,
+				8429FA2411A95C5000AF0786 /* IPadSocialNetworkingPlatform.h */,
+			);
+			name = "IPad Source Files";
+			sourceTree = "<group>";
+		};
+		8404EA6D0FD7CFD000F280AF /* Mac Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				84681136118CDCF900D71BEF /* MacSocialNetworkingPlatform.h */,
+			);
+			name = "Mac Source Files";
+			sourceTree = "<group>";
+		};
+		8404EAE00FD7D0F100F280AF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8429FA1A11A95C2000AF0786 /* IPod Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				8429FA2D11A95CC700AF0786 /* IPodSocialNetworkingPlatform_AGONOnline.h */,
+				8429FA2E11A95CC700AF0786 /* IPodSocialNetworkingPlatform_AGONOnline.mm */,
+				8429FA2F11A95CC700AF0786 /* IPodSocialNetworkingPlatform_Facebook.h */,
+				8429FA3011A95CC700AF0786 /* IPodSocialNetworkingPlatform_GameCenter.h */,
+				8429FA3111A95CC700AF0786 /* IPodSocialNetworkingPlatform_GameCenter.mm */,
+				8429FA3211A95CC700AF0786 /* IPodSocialNetworkingPlatform_OpenFeint.h */,
+				8429FA3311A95CC700AF0786 /* IPodSocialNetworkingPlatform_OpenFeint.mm */,
+				8429FA3411A95CC700AF0786 /* IPodSocialNetworkingPlatform.h */,
+				8429FA3511A95CC700AF0786 /* TFacebookConnect.h */,
+				8429FA3611A95CC700AF0786 /* TFacebookConnect.mm */,
+				8429FA3711A95CC700AF0786 /* TFacebookSession.h */,
+				8429FA3811A95CC700AF0786 /* TFacebookSession.mm */,
+			);
+			name = "IPod Source Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		8404EA580FD7CF8100F280AF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8404EC6B0FD7D75800F280AF /* TLSocial.h in Headers */,
+				843CDACF1048234300E6295B /* TSocialNetworkingManager.h in Headers */,
+				8429FA2511A95C5000AF0786 /* IPadSocialNetworkingPlatform_AGONOnline.h in Headers */,
+				8429FA2711A95C5000AF0786 /* IPadSocialNetworkingPlatform_Facebook.h in Headers */,
+				8429FA2811A95C5000AF0786 /* IPadSocialNetworkingPlatform_GameCenter.h in Headers */,
+				8429FA2A11A95C5000AF0786 /* IPadSocialNetworkingPlatform_OpenFeint.h in Headers */,
+				8429FA2C11A95C5000AF0786 /* IPadSocialNetworkingPlatform.h in Headers */,
+				8471D25511A98EE20026240A /* TootleSocialPrefix.pch in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		8404EA5B0FD7CF8100F280AF /* TootleSocial */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8404EA600FD7CF8200F280AF /* Build configuration list for PBXNativeTarget "TootleSocial" */;
+			buildPhases = (
+				8404EA580FD7CF8100F280AF /* Headers */,
+				8404EA590FD7CF8100F280AF /* Sources */,
+				8404EA5A0FD7CF8100F280AF /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleSocial;
+			productName = TootleSocial;
+			productReference = 8404EA5C0FD7CF8100F280AF /* libTootleSocial.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8404EA450FD7CF4F00F280AF /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 8404EA480FD7CF4F00F280AF /* Build configuration list for PBXProject "TootleSocial" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 0;
+			mainGroup = 8404EA430FD7CF4F00F280AF;
+			productRefGroup = 8404EA5D0FD7CF8100F280AF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8404EA5B0FD7CF8100F280AF /* TootleSocial */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8404EA590FD7CF8100F280AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8404EC6C0FD7D75800F280AF /* TLSocial.cpp in Sources */,
+				8429FA2611A95C5000AF0786 /* IPadSocialNetworkingPlatform_AGONOnline.mm in Sources */,
+				8429FA2911A95C5000AF0786 /* IPadSocialNetworkingPlatform_GameCenter.mm in Sources */,
+				8429FA2B11A95C5000AF0786 /* IPadSocialNetworkingPlatform_OpenFeint.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		8404EA460FD7CF4F00F280AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8429FA3911A95CF700AF0786 /* LibDebug.xcconfig */;
+			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = TootleSocialPrefix.pch;
+				HEADER_SEARCH_PATHS = (
+					"../IPod/OpenFeint/**",
+					../..,
+					../Agon/include,
+					"FacebookConnect/src/**",
+				);
+				LIBRARY_SEARCH_PATHS = libagon/lib;
+				SDKROOT = iphoneos3.2;
+			};
+			name = Debug;
+		};
+		8404EA470FD7CF4F00F280AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8429FA3A11A95CF700AF0786 /* LibRelease.xcconfig */;
+			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = TootleSocialPrefix.pch;
+				HEADER_SEARCH_PATHS = (
+					"../IPod/OpenFeint/**",
+					../..,
+					../Agon/include,
+					"FacebookConnect/src/**",
+				);
+				LIBRARY_SEARCH_PATHS = libagon/lib;
+				SDKROOT = iphoneos3.2;
+			};
+			name = Release;
+		};
+		8404EA5E0FD7CF8200F280AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		8404EA5F0FD7CF8200F280AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8404EA480FD7CF4F00F280AF /* Build configuration list for PBXProject "TootleSocial" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8404EA460FD7CF4F00F280AF /* Debug */,
+				8404EA470FD7CF4F00F280AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8404EA600FD7CF8200F280AF /* Build configuration list for PBXNativeTarget "TootleSocial" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8404EA5E0FD7CF8200F280AF /* Debug */,
+				8404EA5F0FD7CF8200F280AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8404EA450FD7CF4F00F280AF /* Project object */;
+}

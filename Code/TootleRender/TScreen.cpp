@@ -3,14 +3,7 @@
 #include "TRenderNodeText.h"
 #include "TRenderGraph.h"
 
-#if defined(TL_TARGET_PC)
-	#include "PC/PCRenderTarget.h"
-#elif defined(TL_TARGET_IPOD)
-	#include "IPod/IPodRenderTarget.h"
-#elif defined(TL_TARGET_MAC)
-	#include "IPod/IPodRenderTarget.h"
-#endif
-
+#include PLATFORMHEADER(RenderTarget.h)
 
 
 //----------------------------------------------------

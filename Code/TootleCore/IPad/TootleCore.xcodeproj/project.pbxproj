@@ -1,0 +1,649 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8429F79411A83D0B00AF0786 /* IPadAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = 8429F78511A83D0A00AF0786 /* IPadAlert.h */; };
+		8429F79511A83D0B00AF0786 /* IPadAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8429F78611A83D0A00AF0786 /* IPadAlert.mm */; };
+		8429F79611A83D0B00AF0786 /* IPadCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8429F78711A83D0A00AF0786 /* IPadCore.h */; };
+		8429F79711A83D0B00AF0786 /* IPadCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8429F78811A83D0A00AF0786 /* IPadCore.mm */; };
+		8429F79811A83D0B00AF0786 /* IPadDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 8429F78911A83D0A00AF0786 /* IPadDebug.h */; };
+		8429F79911A83D0B00AF0786 /* IPadDebug.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8429F78A11A83D0B00AF0786 /* IPadDebug.mm */; };
+		8429F79A11A83D0B00AF0786 /* IPadMaths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8429F78B11A83D0B00AF0786 /* IPadMaths.cpp */; };
+		8429F79B11A83D0B00AF0786 /* IPadMaths.h in Headers */ = {isa = PBXBuildFile; fileRef = 8429F78C11A83D0B00AF0786 /* IPadMaths.h */; };
+		8429F79C11A83D0B00AF0786 /* IPadMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 8429F78D11A83D0B00AF0786 /* IPadMemory.h */; };
+		8429F79D11A83D0B00AF0786 /* IPadMemory.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8429F78E11A83D0B00AF0786 /* IPadMemory.mm */; };
+		8429F79E11A83D0B00AF0786 /* IPadRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 8429F78F11A83D0B00AF0786 /* IPadRandom.h */; };
+		8429F79F11A83D0B00AF0786 /* IPadString.h in Headers */ = {isa = PBXBuildFile; fileRef = 8429F79011A83D0B00AF0786 /* IPadString.h */; };
+		8429F7A011A83D0B00AF0786 /* IPadString.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8429F79111A83D0B00AF0786 /* IPadString.mm */; };
+		8429F7A111A83D0B00AF0786 /* IPadTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 8429F79211A83D0B00AF0786 /* IPadTime.h */; };
+		8429F7A211A83D0B00AF0786 /* IPadTime.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8429F79311A83D0B00AF0786 /* IPadTime.mm */; };
+		8434C8D9100B484C0063673E /* TLRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 8434C8D8100B484C0063673E /* TLRandom.h */; };
+		84477D87119ED1B30094CB73 /* TRandomManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84477D85119ED1B30094CB73 /* TRandomManager.cpp */; };
+		84477D88119ED1B30094CB73 /* TRandomManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 84477D86119ED1B30094CB73 /* TRandomManager.h */; };
+		845EC9EA119072C800362CA4 /* TAxisAngle.h in Headers */ = {isa = PBXBuildFile; fileRef = 845EC9E4119072C800362CA4 /* TAxisAngle.h */; };
+		845EC9EB119072C800362CA4 /* TEuler.h in Headers */ = {isa = PBXBuildFile; fileRef = 845EC9E5119072C800362CA4 /* TEuler.h */; };
+		845EC9EC119072C800362CA4 /* TMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845EC9E6119072C800362CA4 /* TMatrix.cpp */; };
+		845EC9ED119072C800362CA4 /* TMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 845EC9E7119072C800362CA4 /* TMatrix.h */; };
+		845EC9EE119072C800362CA4 /* TQuaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845EC9E8119072C800362CA4 /* TQuaternion.cpp */; };
+		845EC9EF119072C800362CA4 /* TQuaternion.h in Headers */ = {isa = PBXBuildFile; fileRef = 845EC9E9119072C800362CA4 /* TQuaternion.h */; };
+		8461F1100FBAC46800742359 /* TSmallObjectAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8461F10F0FBAC46800742359 /* TSmallObjectAllocator.cpp */; };
+		8461F1130FBAC4B800742359 /* TSmallObjectAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8461F1120FBAC4B800742359 /* TSmallObjectAllocator.h */; };
+		8461F3420FBAE7F200742359 /* TSmallObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 8461F3410FBAE7F200742359 /* TSmallObject.h */; };
+		846C18C8109748AE0098DFAF /* TLMathsMisc.h in Headers */ = {isa = PBXBuildFile; fileRef = 846C18C4109748AE0098DFAF /* TLMathsMisc.h */; };
+		846C18C9109748AE0098DFAF /* TMemoryAllocators.h in Headers */ = {isa = PBXBuildFile; fileRef = 846C18C5109748AE0098DFAF /* TMemoryAllocators.h */; };
+		846C18CA109748AE0098DFAF /* TTransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 846C18C6109748AE0098DFAF /* TTransform.cpp */; };
+		846C18CB109748AE0098DFAF /* TTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 846C18C7109748AE0098DFAF /* TTransform.h */; };
+		84C109970F0A791900B2DF7A /* TArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109600F0A791900B2DF7A /* TArray.h */; };
+		84C109980F0A791900B2DF7A /* TArray.inc.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109610F0A791900B2DF7A /* TArray.inc.h */; };
+		84C109990F0A791900B2DF7A /* TBinary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109620F0A791900B2DF7A /* TBinary.cpp */; };
+		84C1099A0F0A791900B2DF7A /* TBinary.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109630F0A791900B2DF7A /* TBinary.h */; };
+		84C1099B0F0A791900B2DF7A /* TBinaryTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109640F0A791900B2DF7A /* TBinaryTree.cpp */; };
+		84C1099C0F0A791900B2DF7A /* TBinaryTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109650F0A791900B2DF7A /* TBinaryTree.h */; };
+		84C1099D0F0A791900B2DF7A /* TClassFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109660F0A791900B2DF7A /* TClassFactory.h */; };
+		84C1099E0F0A791900B2DF7A /* TColour.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109670F0A791900B2DF7A /* TColour.h */; };
+		84C1099F0F0A791900B2DF7A /* TCoreManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109680F0A791900B2DF7A /* TCoreManager.cpp */; };
+		84C109A00F0A791900B2DF7A /* TCoreManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109690F0A791900B2DF7A /* TCoreManager.h */; };
+		84C109A10F0A791900B2DF7A /* TEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C1096A0F0A791900B2DF7A /* TEventChannel.cpp */; };
+		84C109A20F0A791900B2DF7A /* TEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C1096B0F0A791900B2DF7A /* TEventChannel.h */; };
+		84C109A30F0A791900B2DF7A /* TFixedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C1096C0F0A791900B2DF7A /* TFixedArray.h */; };
+		84C109A40F0A791900B2DF7A /* TFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C1096D0F0A791900B2DF7A /* TFlags.h */; };
+		84C109A50F0A791900B2DF7A /* TKeyArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C1096E0F0A791900B2DF7A /* TKeyArray.h */; };
+		84C109A60F0A791900B2DF7A /* TLArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C1096F0F0A791900B2DF7A /* TLArray.cpp */; };
+		84C109A70F0A791900B2DF7A /* TLCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109700F0A791900B2DF7A /* TLCore.cpp */; };
+		84C109A80F0A791900B2DF7A /* TLCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109710F0A791900B2DF7A /* TLCore.h */; };
+		84C109A90F0A791900B2DF7A /* TLDebug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109720F0A791900B2DF7A /* TLDebug.cpp */; };
+		84C109AA0F0A791900B2DF7A /* TLDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109730F0A791900B2DF7A /* TLDebug.h */; };
+		84C109AB0F0A791900B2DF7A /* TLGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109740F0A791900B2DF7A /* TLGraph.h */; };
+		84C109AC0F0A791900B2DF7A /* TLMaths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109750F0A791900B2DF7A /* TLMaths.cpp */; };
+		84C109AD0F0A791900B2DF7A /* TLMaths.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109760F0A791900B2DF7A /* TLMaths.h */; };
+		84C109AE0F0A791900B2DF7A /* TLMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109770F0A791900B2DF7A /* TLMemory.cpp */; };
+		84C109AF0F0A791900B2DF7A /* TLMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109780F0A791900B2DF7A /* TLMemory.h */; };
+		84C109B00F0A791900B2DF7A /* TLMemory.inc.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109790F0A791900B2DF7A /* TLMemory.inc.h */; };
+		84C109B10F0A791900B2DF7A /* TLMessaging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C1097A0F0A791900B2DF7A /* TLMessaging.cpp */; };
+		84C109B20F0A791900B2DF7A /* TLMessaging.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C1097B0F0A791900B2DF7A /* TLMessaging.h */; };
+		84C109B30F0A791900B2DF7A /* TLThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C1097C0F0A791900B2DF7A /* TLThread.cpp */; };
+		84C109B40F0A791900B2DF7A /* TLThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C1097D0F0A791900B2DF7A /* TLThread.h */; };
+		84C109B50F0A791900B2DF7A /* TLTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C1097E0F0A791900B2DF7A /* TLTime.cpp */; };
+		84C109B60F0A791900B2DF7A /* TLTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C1097F0F0A791900B2DF7A /* TLTime.h */; };
+		84C109B70F0A791900B2DF7A /* TLTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109800F0A791900B2DF7A /* TLTypes.h */; };
+		84C109B80F0A791900B2DF7A /* TLTypes.inc.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109810F0A791900B2DF7A /* TLTypes.inc.h */; };
+		84C109B90F0A791900B2DF7A /* TManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109820F0A791900B2DF7A /* TManager.cpp */; };
+		84C109BA0F0A791900B2DF7A /* TManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109830F0A791900B2DF7A /* TManager.h */; };
+		84C109BB0F0A791900B2DF7A /* TMemoryManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109840F0A791900B2DF7A /* TMemoryManager.cpp */; };
+		84C109BC0F0A791900B2DF7A /* TMemoryManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109850F0A791900B2DF7A /* TMemoryManager.h */; };
+		84C109BD0F0A791900B2DF7A /* TMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109860F0A791900B2DF7A /* TMessage.cpp */; };
+		84C109BE0F0A791900B2DF7A /* TMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109870F0A791900B2DF7A /* TMessage.h */; };
+		84C109BF0F0A791900B2DF7A /* TPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109880F0A791900B2DF7A /* TPtr.h */; };
+		84C109C00F0A791900B2DF7A /* TPtrArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109890F0A791900B2DF7A /* TPtrArray.h */; };
+		84C109C10F0A791900B2DF7A /* TPublisher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C1098A0F0A791900B2DF7A /* TPublisher.cpp */; };
+		84C109C20F0A791900B2DF7A /* TPublisher.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C1098B0F0A791900B2DF7A /* TPublisher.h */; };
+		84C109C30F0A791900B2DF7A /* TRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C1098C0F0A791900B2DF7A /* TRef.cpp */; };
+		84C109C40F0A791900B2DF7A /* TRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C1098D0F0A791900B2DF7A /* TRef.h */; };
+		84C109C60F0A791900B2DF7A /* TRelay.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C1098F0F0A791900B2DF7A /* TRelay.h */; };
+		84C109C70F0A791900B2DF7A /* TStateMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109900F0A791900B2DF7A /* TStateMachine.cpp */; };
+		84C109C80F0A791900B2DF7A /* TStateMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109910F0A791900B2DF7A /* TStateMachine.h */; };
+		84C109C90F0A791900B2DF7A /* TString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109920F0A791900B2DF7A /* TString.cpp */; };
+		84C109CA0F0A791900B2DF7A /* TString.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109930F0A791900B2DF7A /* TString.h */; };
+		84C109CB0F0A791900B2DF7A /* TSubscriber.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109940F0A791900B2DF7A /* TSubscriber.h */; };
+		84C109CC0F0A791900B2DF7A /* TSyncQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C109950F0A791900B2DF7A /* TSyncQueue.cpp */; };
+		84C109CD0F0A791900B2DF7A /* TSyncQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C109960F0A791900B2DF7A /* TSyncQueue.h */; };
+		84CDD7D41096EC1A0006D0BA /* TArraySort.h in Headers */ = {isa = PBXBuildFile; fileRef = 84CDD7D31096EC1A0006D0BA /* TArraySort.h */; };
+		84E116070F3C6C7900471397 /* TGraphBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E116040F3C6C7900471397 /* TGraphBase.cpp */; };
+		84E116080F3C6C7900471397 /* TGraphBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E116050F3C6C7900471397 /* TGraphBase.h */; };
+		84E116090F3C6C7900471397 /* TLanguage.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E116060F3C6C7900471397 /* TLanguage.h */; };
+		84F88B70109EEEB6004BAF8B /* TArrayAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 84F88B6D109EEEB6004BAF8B /* TArrayAllocator.h */; };
+		84F88B72109EEEB6004BAF8B /* TPointerArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 84F88B6F109EEEB6004BAF8B /* TPointerArray.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		840A927710D7E83B00F8960C /* MacDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacDebug.h; path = ../Mac/MacDebug.h; sourceTree = SOURCE_ROOT; };
+		840A927810D7E83B00F8960C /* MacDebug.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacDebug.mm; path = ../Mac/MacDebug.mm; sourceTree = SOURCE_ROOT; };
+		840A927910D7E83B00F8960C /* MacMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacMemory.h; path = ../Mac/MacMemory.h; sourceTree = SOURCE_ROOT; };
+		840A927A10D7E83B00F8960C /* MacMemory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacMemory.mm; path = ../Mac/MacMemory.mm; sourceTree = SOURCE_ROOT; };
+		840A927B10D7E83B00F8960C /* MacString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacString.h; path = ../Mac/MacString.h; sourceTree = SOURCE_ROOT; };
+		840A927C10D7E83B00F8960C /* MacString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacString.mm; path = ../Mac/MacString.mm; sourceTree = SOURCE_ROOT; };
+		840A927D10D7E83B00F8960C /* MacTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacTime.h; path = ../Mac/MacTime.h; sourceTree = SOURCE_ROOT; };
+		840A927E10D7E83B00F8960C /* MacTime.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacTime.mm; path = ../Mac/MacTime.mm; sourceTree = SOURCE_ROOT; };
+		8429F78311A83CD300AF0786 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/IPad/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		8429F78411A83CD300AF0786 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/IPad/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		8429F78511A83D0A00AF0786 /* IPadAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadAlert.h; sourceTree = "<group>"; };
+		8429F78611A83D0A00AF0786 /* IPadAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPadAlert.mm; sourceTree = "<group>"; };
+		8429F78711A83D0A00AF0786 /* IPadCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadCore.h; sourceTree = "<group>"; };
+		8429F78811A83D0A00AF0786 /* IPadCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPadCore.mm; sourceTree = "<group>"; };
+		8429F78911A83D0A00AF0786 /* IPadDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadDebug.h; sourceTree = "<group>"; };
+		8429F78A11A83D0B00AF0786 /* IPadDebug.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPadDebug.mm; sourceTree = "<group>"; };
+		8429F78B11A83D0B00AF0786 /* IPadMaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IPadMaths.cpp; sourceTree = "<group>"; };
+		8429F78C11A83D0B00AF0786 /* IPadMaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadMaths.h; sourceTree = "<group>"; };
+		8429F78D11A83D0B00AF0786 /* IPadMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadMemory.h; sourceTree = "<group>"; };
+		8429F78E11A83D0B00AF0786 /* IPadMemory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPadMemory.mm; sourceTree = "<group>"; };
+		8429F78F11A83D0B00AF0786 /* IPadRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadRandom.h; sourceTree = "<group>"; };
+		8429F79011A83D0B00AF0786 /* IPadString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadString.h; sourceTree = "<group>"; };
+		8429F79111A83D0B00AF0786 /* IPadString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPadString.mm; sourceTree = "<group>"; };
+		8429F79211A83D0B00AF0786 /* IPadTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadTime.h; sourceTree = "<group>"; };
+		8429F79311A83D0B00AF0786 /* IPadTime.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPadTime.mm; sourceTree = "<group>"; };
+		8429F7A411A83D2400AF0786 /* IPodAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodAlert.h; path = ../IPod/IPodAlert.h; sourceTree = SOURCE_ROOT; };
+		8429F7A511A83D2400AF0786 /* IPodAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodAlert.mm; path = ../IPod/IPodAlert.mm; sourceTree = SOURCE_ROOT; };
+		8429F7A611A83D2400AF0786 /* IPodCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodCore.h; path = ../IPod/IPodCore.h; sourceTree = SOURCE_ROOT; };
+		8429F7A711A83D2400AF0786 /* IPodCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodCore.mm; path = ../IPod/IPodCore.mm; sourceTree = SOURCE_ROOT; };
+		8429F7A811A83D2400AF0786 /* IPodDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodDebug.h; path = ../IPod/IPodDebug.h; sourceTree = SOURCE_ROOT; };
+		8429F7A911A83D2400AF0786 /* IPodDebug.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodDebug.mm; path = ../IPod/IPodDebug.mm; sourceTree = SOURCE_ROOT; };
+		8429F7AA11A83D2400AF0786 /* IPodMaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IPodMaths.cpp; path = ../IPod/IPodMaths.cpp; sourceTree = SOURCE_ROOT; };
+		8429F7AB11A83D2400AF0786 /* IPodMaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodMaths.h; path = ../IPod/IPodMaths.h; sourceTree = SOURCE_ROOT; };
+		8429F7AC11A83D2400AF0786 /* IPodMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodMemory.h; path = ../IPod/IPodMemory.h; sourceTree = SOURCE_ROOT; };
+		8429F7AD11A83D2400AF0786 /* IPodMemory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodMemory.mm; path = ../IPod/IPodMemory.mm; sourceTree = SOURCE_ROOT; };
+		8429F7AE11A83D2400AF0786 /* IPodRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodRandom.h; path = ../IPod/IPodRandom.h; sourceTree = SOURCE_ROOT; };
+		8429F7AF11A83D2400AF0786 /* IPodString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodString.h; path = ../IPod/IPodString.h; sourceTree = SOURCE_ROOT; };
+		8429F7B011A83D2400AF0786 /* IPodString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodString.mm; path = ../IPod/IPodString.mm; sourceTree = SOURCE_ROOT; };
+		8429F7B111A83D2400AF0786 /* IPodTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodTime.h; path = ../IPod/IPodTime.h; sourceTree = SOURCE_ROOT; };
+		8429F7B211A83D2400AF0786 /* IPodTime.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodTime.mm; path = ../IPod/IPodTime.mm; sourceTree = SOURCE_ROOT; };
+		8434C8D8100B484C0063673E /* TLRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLRandom.h; path = ../TLRandom.h; sourceTree = SOURCE_ROOT; };
+		84477D80119ED1780094CB73 /* PCCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCCore.h; path = ../PC/PCCore.h; sourceTree = SOURCE_ROOT; };
+		84477D81119ED1780094CB73 /* PCRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCRandom.h; path = ../PC/PCRandom.h; sourceTree = SOURCE_ROOT; };
+		84477D82119ED18A0094CB73 /* MacRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacRandom.h; path = ../Mac/MacRandom.h; sourceTree = SOURCE_ROOT; };
+		84477D85119ED1B30094CB73 /* TRandomManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRandomManager.cpp; path = ../TRandomManager.cpp; sourceTree = SOURCE_ROOT; };
+		84477D86119ED1B30094CB73 /* TRandomManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRandomManager.h; path = ../TRandomManager.h; sourceTree = SOURCE_ROOT; };
+		845EC9E4119072C800362CA4 /* TAxisAngle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAxisAngle.h; path = ../TAxisAngle.h; sourceTree = SOURCE_ROOT; };
+		845EC9E5119072C800362CA4 /* TEuler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TEuler.h; path = ../TEuler.h; sourceTree = SOURCE_ROOT; };
+		845EC9E6119072C800362CA4 /* TMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TMatrix.cpp; path = ../TMatrix.cpp; sourceTree = SOURCE_ROOT; };
+		845EC9E7119072C800362CA4 /* TMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TMatrix.h; path = ../TMatrix.h; sourceTree = SOURCE_ROOT; };
+		845EC9E8119072C800362CA4 /* TQuaternion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TQuaternion.cpp; path = ../TQuaternion.cpp; sourceTree = SOURCE_ROOT; };
+		845EC9E9119072C800362CA4 /* TQuaternion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TQuaternion.h; path = ../TQuaternion.h; sourceTree = SOURCE_ROOT; };
+		845EC9F0119072D900362CA4 /* MacMaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacMaths.h; path = ../Mac/MacMaths.h; sourceTree = SOURCE_ROOT; };
+		845EC9F2119072FD00362CA4 /* cpuid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cpuid.cpp; path = ../PC/cpuid.cpp; sourceTree = SOURCE_ROOT; };
+		845EC9F3119072FD00362CA4 /* cpuid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cpuid.h; path = ../PC/cpuid.h; sourceTree = SOURCE_ROOT; };
+		845EC9F4119072FD00362CA4 /* PCCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCCore.cpp; path = ../PC/PCCore.cpp; sourceTree = SOURCE_ROOT; };
+		845EC9F5119072FD00362CA4 /* PCDebug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCDebug.cpp; path = ../PC/PCDebug.cpp; sourceTree = SOURCE_ROOT; };
+		845EC9F6119072FD00362CA4 /* PCDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCDebug.h; path = ../PC/PCDebug.h; sourceTree = SOURCE_ROOT; };
+		845EC9F7119072FD00362CA4 /* PCMaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCMaths.h; path = ../PC/PCMaths.h; sourceTree = SOURCE_ROOT; };
+		845EC9F8119072FD00362CA4 /* PCMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCMemory.cpp; path = ../PC/PCMemory.cpp; sourceTree = SOURCE_ROOT; };
+		845EC9F9119072FD00362CA4 /* PCMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCMemory.h; path = ../PC/PCMemory.h; sourceTree = SOURCE_ROOT; };
+		845EC9FA119072FD00362CA4 /* PCThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCThread.cpp; path = ../PC/PCThread.cpp; sourceTree = SOURCE_ROOT; };
+		845EC9FB119072FD00362CA4 /* PCThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCThread.h; path = ../PC/PCThread.h; sourceTree = SOURCE_ROOT; };
+		845EC9FC119072FD00362CA4 /* PCTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCTime.cpp; path = ../PC/PCTime.cpp; sourceTree = SOURCE_ROOT; };
+		845EC9FD119072FD00362CA4 /* PCTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCTime.h; path = ../PC/PCTime.h; sourceTree = SOURCE_ROOT; };
+		8461F10F0FBAC46800742359 /* TSmallObjectAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TSmallObjectAllocator.cpp; path = ../TSmallObjectAllocator.cpp; sourceTree = SOURCE_ROOT; };
+		8461F1120FBAC4B800742359 /* TSmallObjectAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TSmallObjectAllocator.h; path = ../TSmallObjectAllocator.h; sourceTree = SOURCE_ROOT; };
+		8461F3410FBAE7F200742359 /* TSmallObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSmallObject.h; path = ../TSmallObject.h; sourceTree = SOURCE_ROOT; };
+		846C18C4109748AE0098DFAF /* TLMathsMisc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLMathsMisc.h; path = ../TLMathsMisc.h; sourceTree = SOURCE_ROOT; };
+		846C18C5109748AE0098DFAF /* TMemoryAllocators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TMemoryAllocators.h; path = ../TMemoryAllocators.h; sourceTree = SOURCE_ROOT; };
+		846C18C6109748AE0098DFAF /* TTransform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TTransform.cpp; path = ../TTransform.cpp; sourceTree = SOURCE_ROOT; };
+		846C18C7109748AE0098DFAF /* TTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTransform.h; path = ../TTransform.h; sourceTree = SOURCE_ROOT; };
+		84C109590F0A78EE00B2DF7A /* libTootleCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleCore.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		84C109600F0A791900B2DF7A /* TArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TArray.h; path = ../TArray.h; sourceTree = SOURCE_ROOT; };
+		84C109610F0A791900B2DF7A /* TArray.inc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TArray.inc.h; path = ../TArray.inc.h; sourceTree = SOURCE_ROOT; };
+		84C109620F0A791900B2DF7A /* TBinary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TBinary.cpp; path = ../TBinary.cpp; sourceTree = SOURCE_ROOT; };
+		84C109630F0A791900B2DF7A /* TBinary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBinary.h; path = ../TBinary.h; sourceTree = SOURCE_ROOT; };
+		84C109640F0A791900B2DF7A /* TBinaryTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TBinaryTree.cpp; path = ../TBinaryTree.cpp; sourceTree = SOURCE_ROOT; };
+		84C109650F0A791900B2DF7A /* TBinaryTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBinaryTree.h; path = ../TBinaryTree.h; sourceTree = SOURCE_ROOT; };
+		84C109660F0A791900B2DF7A /* TClassFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TClassFactory.h; path = ../TClassFactory.h; sourceTree = SOURCE_ROOT; };
+		84C109670F0A791900B2DF7A /* TColour.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TColour.h; path = ../TColour.h; sourceTree = SOURCE_ROOT; };
+		84C109680F0A791900B2DF7A /* TCoreManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TCoreManager.cpp; path = ../TCoreManager.cpp; sourceTree = SOURCE_ROOT; };
+		84C109690F0A791900B2DF7A /* TCoreManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TCoreManager.h; path = ../TCoreManager.h; sourceTree = SOURCE_ROOT; };
+		84C1096A0F0A791900B2DF7A /* TEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TEventChannel.cpp; path = ../TEventChannel.cpp; sourceTree = SOURCE_ROOT; };
+		84C1096B0F0A791900B2DF7A /* TEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TEventChannel.h; path = ../TEventChannel.h; sourceTree = SOURCE_ROOT; };
+		84C1096C0F0A791900B2DF7A /* TFixedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TFixedArray.h; path = ../TFixedArray.h; sourceTree = SOURCE_ROOT; };
+		84C1096D0F0A791900B2DF7A /* TFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFlags.h; path = ../TFlags.h; sourceTree = SOURCE_ROOT; };
+		84C1096E0F0A791900B2DF7A /* TKeyArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TKeyArray.h; path = ../TKeyArray.h; sourceTree = SOURCE_ROOT; };
+		84C1096F0F0A791900B2DF7A /* TLArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLArray.cpp; path = ../TLArray.cpp; sourceTree = SOURCE_ROOT; };
+		84C109700F0A791900B2DF7A /* TLCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLCore.cpp; path = ../TLCore.cpp; sourceTree = SOURCE_ROOT; };
+		84C109710F0A791900B2DF7A /* TLCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLCore.h; path = ../TLCore.h; sourceTree = SOURCE_ROOT; };
+		84C109720F0A791900B2DF7A /* TLDebug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLDebug.cpp; path = ../TLDebug.cpp; sourceTree = SOURCE_ROOT; };
+		84C109730F0A791900B2DF7A /* TLDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLDebug.h; path = ../TLDebug.h; sourceTree = SOURCE_ROOT; };
+		84C109740F0A791900B2DF7A /* TLGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLGraph.h; path = ../TLGraph.h; sourceTree = SOURCE_ROOT; };
+		84C109750F0A791900B2DF7A /* TLMaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLMaths.cpp; path = ../TLMaths.cpp; sourceTree = SOURCE_ROOT; };
+		84C109760F0A791900B2DF7A /* TLMaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLMaths.h; path = ../TLMaths.h; sourceTree = SOURCE_ROOT; };
+		84C109770F0A791900B2DF7A /* TLMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = TLMemory.cpp; path = ../TLMemory.cpp; sourceTree = SOURCE_ROOT; };
+		84C109780F0A791900B2DF7A /* TLMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TLMemory.h; path = ../TLMemory.h; sourceTree = SOURCE_ROOT; };
+		84C109790F0A791900B2DF7A /* TLMemory.inc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = TLMemory.inc.h; path = ../TLMemory.inc.h; sourceTree = SOURCE_ROOT; };
+		84C1097A0F0A791900B2DF7A /* TLMessaging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLMessaging.cpp; path = ../TLMessaging.cpp; sourceTree = SOURCE_ROOT; };
+		84C1097B0F0A791900B2DF7A /* TLMessaging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLMessaging.h; path = ../TLMessaging.h; sourceTree = SOURCE_ROOT; };
+		84C1097C0F0A791900B2DF7A /* TLThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLThread.cpp; path = ../TLThread.cpp; sourceTree = SOURCE_ROOT; };
+		84C1097D0F0A791900B2DF7A /* TLThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLThread.h; path = ../TLThread.h; sourceTree = SOURCE_ROOT; };
+		84C1097E0F0A791900B2DF7A /* TLTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLTime.cpp; path = ../TLTime.cpp; sourceTree = SOURCE_ROOT; };
+		84C1097F0F0A791900B2DF7A /* TLTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLTime.h; path = ../TLTime.h; sourceTree = SOURCE_ROOT; };
+		84C109800F0A791900B2DF7A /* TLTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLTypes.h; path = ../TLTypes.h; sourceTree = SOURCE_ROOT; };
+		84C109810F0A791900B2DF7A /* TLTypes.inc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLTypes.inc.h; path = ../TLTypes.inc.h; sourceTree = SOURCE_ROOT; };
+		84C109820F0A791900B2DF7A /* TManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TManager.cpp; path = ../TManager.cpp; sourceTree = SOURCE_ROOT; };
+		84C109830F0A791900B2DF7A /* TManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TManager.h; path = ../TManager.h; sourceTree = SOURCE_ROOT; };
+		84C109840F0A791900B2DF7A /* TMemoryManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TMemoryManager.cpp; path = ../TMemoryManager.cpp; sourceTree = SOURCE_ROOT; };
+		84C109850F0A791900B2DF7A /* TMemoryManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TMemoryManager.h; path = ../TMemoryManager.h; sourceTree = SOURCE_ROOT; };
+		84C109860F0A791900B2DF7A /* TMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TMessage.cpp; path = ../TMessage.cpp; sourceTree = SOURCE_ROOT; };
+		84C109870F0A791900B2DF7A /* TMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TMessage.h; path = ../TMessage.h; sourceTree = SOURCE_ROOT; };
+		84C109880F0A791900B2DF7A /* TPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPtr.h; path = ../TPtr.h; sourceTree = SOURCE_ROOT; };
+		84C109890F0A791900B2DF7A /* TPtrArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPtrArray.h; path = ../TPtrArray.h; sourceTree = SOURCE_ROOT; };
+		84C1098A0F0A791900B2DF7A /* TPublisher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TPublisher.cpp; path = ../TPublisher.cpp; sourceTree = SOURCE_ROOT; };
+		84C1098B0F0A791900B2DF7A /* TPublisher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPublisher.h; path = ../TPublisher.h; sourceTree = SOURCE_ROOT; };
+		84C1098C0F0A791900B2DF7A /* TRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRef.cpp; path = ../TRef.cpp; sourceTree = SOURCE_ROOT; };
+		84C1098D0F0A791900B2DF7A /* TRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRef.h; path = ../TRef.h; sourceTree = SOURCE_ROOT; };
+		84C1098F0F0A791900B2DF7A /* TRelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRelay.h; path = ../TRelay.h; sourceTree = SOURCE_ROOT; };
+		84C109900F0A791900B2DF7A /* TStateMachine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TStateMachine.cpp; path = ../TStateMachine.cpp; sourceTree = SOURCE_ROOT; };
+		84C109910F0A791900B2DF7A /* TStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TStateMachine.h; path = ../TStateMachine.h; sourceTree = SOURCE_ROOT; };
+		84C109920F0A791900B2DF7A /* TString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TString.cpp; path = ../TString.cpp; sourceTree = SOURCE_ROOT; };
+		84C109930F0A791900B2DF7A /* TString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TString.h; path = ../TString.h; sourceTree = SOURCE_ROOT; };
+		84C109940F0A791900B2DF7A /* TSubscriber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSubscriber.h; path = ../TSubscriber.h; sourceTree = SOURCE_ROOT; };
+		84C109950F0A791900B2DF7A /* TSyncQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSyncQueue.cpp; path = ../TSyncQueue.cpp; sourceTree = SOURCE_ROOT; };
+		84C109960F0A791900B2DF7A /* TSyncQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSyncQueue.h; path = ../TSyncQueue.h; sourceTree = SOURCE_ROOT; };
+		84CDD7D31096EC1A0006D0BA /* TArraySort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TArraySort.h; path = ../TArraySort.h; sourceTree = SOURCE_ROOT; };
+		84E116040F3C6C7900471397 /* TGraphBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGraphBase.cpp; path = ../TGraphBase.cpp; sourceTree = SOURCE_ROOT; };
+		84E116050F3C6C7900471397 /* TGraphBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGraphBase.h; path = ../TGraphBase.h; sourceTree = SOURCE_ROOT; };
+		84E116060F3C6C7900471397 /* TLanguage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLanguage.h; path = ../TLanguage.h; sourceTree = SOURCE_ROOT; };
+		84F88B6D109EEEB6004BAF8B /* TArrayAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TArrayAllocator.h; path = ../TArrayAllocator.h; sourceTree = SOURCE_ROOT; };
+		84F88B6F109EEEB6004BAF8B /* TPointerArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPointerArray.h; path = ../TPointerArray.h; sourceTree = SOURCE_ROOT; };
+		BF8FC1AB118CA380005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		84C109570F0A78EE00B2DF7A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		840A927110D7E82300F8960C /* Mac Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				84477D82119ED18A0094CB73 /* MacRandom.h */,
+				845EC9F0119072D900362CA4 /* MacMaths.h */,
+				840A927710D7E83B00F8960C /* MacDebug.h */,
+				840A927810D7E83B00F8960C /* MacDebug.mm */,
+				840A927910D7E83B00F8960C /* MacMemory.h */,
+				840A927A10D7E83B00F8960C /* MacMemory.mm */,
+				840A927B10D7E83B00F8960C /* MacString.h */,
+				840A927C10D7E83B00F8960C /* MacString.mm */,
+				840A927D10D7E83B00F8960C /* MacTime.h */,
+				840A927E10D7E83B00F8960C /* MacTime.mm */,
+			);
+			name = "Mac Source Files";
+			sourceTree = "<group>";
+		};
+		8429F7A311A83D1000AF0786 /* IPod Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				8429F7A411A83D2400AF0786 /* IPodAlert.h */,
+				8429F7A511A83D2400AF0786 /* IPodAlert.mm */,
+				8429F7A611A83D2400AF0786 /* IPodCore.h */,
+				8429F7A711A83D2400AF0786 /* IPodCore.mm */,
+				8429F7A811A83D2400AF0786 /* IPodDebug.h */,
+				8429F7A911A83D2400AF0786 /* IPodDebug.mm */,
+				8429F7AA11A83D2400AF0786 /* IPodMaths.cpp */,
+				8429F7AB11A83D2400AF0786 /* IPodMaths.h */,
+				8429F7AC11A83D2400AF0786 /* IPodMemory.h */,
+				8429F7AD11A83D2400AF0786 /* IPodMemory.mm */,
+				8429F7AE11A83D2400AF0786 /* IPodRandom.h */,
+				8429F7AF11A83D2400AF0786 /* IPodString.h */,
+				8429F7B011A83D2400AF0786 /* IPodString.mm */,
+				8429F7B111A83D2400AF0786 /* IPodTime.h */,
+				8429F7B211A83D2400AF0786 /* IPodTime.mm */,
+			);
+			name = "IPod Source Files";
+			sourceTree = "<group>";
+		};
+		845EC9F1119072E100362CA4 /* PC Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				84477D80119ED1780094CB73 /* PCCore.h */,
+				84477D81119ED1780094CB73 /* PCRandom.h */,
+				845EC9F2119072FD00362CA4 /* cpuid.cpp */,
+				845EC9F3119072FD00362CA4 /* cpuid.h */,
+				845EC9F4119072FD00362CA4 /* PCCore.cpp */,
+				845EC9F5119072FD00362CA4 /* PCDebug.cpp */,
+				845EC9F6119072FD00362CA4 /* PCDebug.h */,
+				845EC9F7119072FD00362CA4 /* PCMaths.h */,
+				845EC9F8119072FD00362CA4 /* PCMemory.cpp */,
+				845EC9F9119072FD00362CA4 /* PCMemory.h */,
+				845EC9FA119072FD00362CA4 /* PCThread.cpp */,
+				845EC9FB119072FD00362CA4 /* PCThread.h */,
+				845EC9FC119072FD00362CA4 /* PCTime.cpp */,
+				845EC9FD119072FD00362CA4 /* PCTime.h */,
+			);
+			name = "PC Source Files";
+			sourceTree = "<group>";
+		};
+		84C108D30F0A76EC00B2DF7A = {
+			isa = PBXGroup;
+			children = (
+				84C1095E0F0A78F800B2DF7A /* Build Configurations */,
+				84C1095F0F0A790100B2DF7A /* Source Code */,
+				84C1095A0F0A78EE00B2DF7A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		84C1095A0F0A78EE00B2DF7A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84C109590F0A78EE00B2DF7A /* libTootleCore.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84C1095E0F0A78F800B2DF7A /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				8429F78311A83CD300AF0786 /* LibDebug.xcconfig */,
+				8429F78411A83CD300AF0786 /* LibRelease.xcconfig */,
+				BF8FC1AB118CA380005391AF /* BuildConfigurations */,
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+		84C1095F0F0A790100B2DF7A /* Source Code */ = {
+			isa = PBXGroup;
+			children = (
+				8429F7A311A83D1000AF0786 /* IPod Source Files */,
+				845EC9F1119072E100362CA4 /* PC Source Files */,
+				845EC9E4119072C800362CA4 /* TAxisAngle.h */,
+				845EC9E5119072C800362CA4 /* TEuler.h */,
+				845EC9E6119072C800362CA4 /* TMatrix.cpp */,
+				845EC9E7119072C800362CA4 /* TMatrix.h */,
+				845EC9E8119072C800362CA4 /* TQuaternion.cpp */,
+				845EC9E9119072C800362CA4 /* TQuaternion.h */,
+				840A927110D7E82300F8960C /* Mac Source Files */,
+				84C109CE0F0A791F00B2DF7A /* IPad Source Files */,
+				846C18C6109748AE0098DFAF /* TTransform.cpp */,
+				846C18C7109748AE0098DFAF /* TTransform.h */,
+				84E116040F3C6C7900471397 /* TGraphBase.cpp */,
+				84E116050F3C6C7900471397 /* TGraphBase.h */,
+				84E116060F3C6C7900471397 /* TLanguage.h */,
+				84C109600F0A791900B2DF7A /* TArray.h */,
+				84C109610F0A791900B2DF7A /* TArray.inc.h */,
+				84CDD7D31096EC1A0006D0BA /* TArraySort.h */,
+				84F88B6D109EEEB6004BAF8B /* TArrayAllocator.h */,
+				84F88B6F109EEEB6004BAF8B /* TPointerArray.h */,
+				84C109620F0A791900B2DF7A /* TBinary.cpp */,
+				84C109630F0A791900B2DF7A /* TBinary.h */,
+				84C109640F0A791900B2DF7A /* TBinaryTree.cpp */,
+				84C109650F0A791900B2DF7A /* TBinaryTree.h */,
+				84C109660F0A791900B2DF7A /* TClassFactory.h */,
+				84C109670F0A791900B2DF7A /* TColour.h */,
+				84C109680F0A791900B2DF7A /* TCoreManager.cpp */,
+				84C109690F0A791900B2DF7A /* TCoreManager.h */,
+				84C1096A0F0A791900B2DF7A /* TEventChannel.cpp */,
+				84C1096B0F0A791900B2DF7A /* TEventChannel.h */,
+				84C1096C0F0A791900B2DF7A /* TFixedArray.h */,
+				84C1096D0F0A791900B2DF7A /* TFlags.h */,
+				84C1096E0F0A791900B2DF7A /* TKeyArray.h */,
+				84C1096F0F0A791900B2DF7A /* TLArray.cpp */,
+				84C109700F0A791900B2DF7A /* TLCore.cpp */,
+				84C109710F0A791900B2DF7A /* TLCore.h */,
+				84C109720F0A791900B2DF7A /* TLDebug.cpp */,
+				84C109730F0A791900B2DF7A /* TLDebug.h */,
+				84C109740F0A791900B2DF7A /* TLGraph.h */,
+				84C109750F0A791900B2DF7A /* TLMaths.cpp */,
+				846C18C4109748AE0098DFAF /* TLMathsMisc.h */,
+				84C109760F0A791900B2DF7A /* TLMaths.h */,
+				8434C8D8100B484C0063673E /* TLRandom.h */,
+				84477D85119ED1B30094CB73 /* TRandomManager.cpp */,
+				84477D86119ED1B30094CB73 /* TRandomManager.h */,
+				84C109770F0A791900B2DF7A /* TLMemory.cpp */,
+				84C109780F0A791900B2DF7A /* TLMemory.h */,
+				84C109790F0A791900B2DF7A /* TLMemory.inc.h */,
+				846C18C5109748AE0098DFAF /* TMemoryAllocators.h */,
+				84C109840F0A791900B2DF7A /* TMemoryManager.cpp */,
+				84C109850F0A791900B2DF7A /* TMemoryManager.h */,
+				8461F3410FBAE7F200742359 /* TSmallObject.h */,
+				8461F1120FBAC4B800742359 /* TSmallObjectAllocator.h */,
+				8461F10F0FBAC46800742359 /* TSmallObjectAllocator.cpp */,
+				84C1097A0F0A791900B2DF7A /* TLMessaging.cpp */,
+				84C1097B0F0A791900B2DF7A /* TLMessaging.h */,
+				84C1097C0F0A791900B2DF7A /* TLThread.cpp */,
+				84C1097D0F0A791900B2DF7A /* TLThread.h */,
+				84C1097E0F0A791900B2DF7A /* TLTime.cpp */,
+				84C1097F0F0A791900B2DF7A /* TLTime.h */,
+				84C109800F0A791900B2DF7A /* TLTypes.h */,
+				84C109810F0A791900B2DF7A /* TLTypes.inc.h */,
+				84C109820F0A791900B2DF7A /* TManager.cpp */,
+				84C109830F0A791900B2DF7A /* TManager.h */,
+				84C109860F0A791900B2DF7A /* TMessage.cpp */,
+				84C109870F0A791900B2DF7A /* TMessage.h */,
+				84C109880F0A791900B2DF7A /* TPtr.h */,
+				84C109890F0A791900B2DF7A /* TPtrArray.h */,
+				84C1098A0F0A791900B2DF7A /* TPublisher.cpp */,
+				84C1098B0F0A791900B2DF7A /* TPublisher.h */,
+				84C1098C0F0A791900B2DF7A /* TRef.cpp */,
+				84C1098D0F0A791900B2DF7A /* TRef.h */,
+				84C1098F0F0A791900B2DF7A /* TRelay.h */,
+				84C109900F0A791900B2DF7A /* TStateMachine.cpp */,
+				84C109910F0A791900B2DF7A /* TStateMachine.h */,
+				84C109920F0A791900B2DF7A /* TString.cpp */,
+				84C109930F0A791900B2DF7A /* TString.h */,
+				84C109940F0A791900B2DF7A /* TSubscriber.h */,
+				84C109950F0A791900B2DF7A /* TSyncQueue.cpp */,
+				84C109960F0A791900B2DF7A /* TSyncQueue.h */,
+			);
+			name = "Source Code";
+			sourceTree = "<group>";
+		};
+		84C109CE0F0A791F00B2DF7A /* IPad Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				8429F78511A83D0A00AF0786 /* IPadAlert.h */,
+				8429F78611A83D0A00AF0786 /* IPadAlert.mm */,
+				8429F78711A83D0A00AF0786 /* IPadCore.h */,
+				8429F78811A83D0A00AF0786 /* IPadCore.mm */,
+				8429F78911A83D0A00AF0786 /* IPadDebug.h */,
+				8429F78A11A83D0B00AF0786 /* IPadDebug.mm */,
+				8429F78B11A83D0B00AF0786 /* IPadMaths.cpp */,
+				8429F78C11A83D0B00AF0786 /* IPadMaths.h */,
+				8429F78D11A83D0B00AF0786 /* IPadMemory.h */,
+				8429F78E11A83D0B00AF0786 /* IPadMemory.mm */,
+				8429F78F11A83D0B00AF0786 /* IPadRandom.h */,
+				8429F79011A83D0B00AF0786 /* IPadString.h */,
+				8429F79111A83D0B00AF0786 /* IPadString.mm */,
+				8429F79211A83D0B00AF0786 /* IPadTime.h */,
+				8429F79311A83D0B00AF0786 /* IPadTime.mm */,
+			);
+			name = "IPad Source Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		84C109550F0A78EE00B2DF7A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C109970F0A791900B2DF7A /* TArray.h in Headers */,
+				84C109980F0A791900B2DF7A /* TArray.inc.h in Headers */,
+				84C1099A0F0A791900B2DF7A /* TBinary.h in Headers */,
+				84C1099C0F0A791900B2DF7A /* TBinaryTree.h in Headers */,
+				84C1099D0F0A791900B2DF7A /* TClassFactory.h in Headers */,
+				84C1099E0F0A791900B2DF7A /* TColour.h in Headers */,
+				84C109A00F0A791900B2DF7A /* TCoreManager.h in Headers */,
+				84C109A20F0A791900B2DF7A /* TEventChannel.h in Headers */,
+				84C109A30F0A791900B2DF7A /* TFixedArray.h in Headers */,
+				84C109A40F0A791900B2DF7A /* TFlags.h in Headers */,
+				84C109A50F0A791900B2DF7A /* TKeyArray.h in Headers */,
+				84C109A80F0A791900B2DF7A /* TLCore.h in Headers */,
+				84C109AA0F0A791900B2DF7A /* TLDebug.h in Headers */,
+				84C109AB0F0A791900B2DF7A /* TLGraph.h in Headers */,
+				84C109AD0F0A791900B2DF7A /* TLMaths.h in Headers */,
+				84C109AF0F0A791900B2DF7A /* TLMemory.h in Headers */,
+				84C109B00F0A791900B2DF7A /* TLMemory.inc.h in Headers */,
+				84C109B20F0A791900B2DF7A /* TLMessaging.h in Headers */,
+				84C109B40F0A791900B2DF7A /* TLThread.h in Headers */,
+				84C109B60F0A791900B2DF7A /* TLTime.h in Headers */,
+				84C109B70F0A791900B2DF7A /* TLTypes.h in Headers */,
+				84C109B80F0A791900B2DF7A /* TLTypes.inc.h in Headers */,
+				84C109BA0F0A791900B2DF7A /* TManager.h in Headers */,
+				84C109BC0F0A791900B2DF7A /* TMemoryManager.h in Headers */,
+				84C109BE0F0A791900B2DF7A /* TMessage.h in Headers */,
+				84C109BF0F0A791900B2DF7A /* TPtr.h in Headers */,
+				84C109C00F0A791900B2DF7A /* TPtrArray.h in Headers */,
+				84C109C20F0A791900B2DF7A /* TPublisher.h in Headers */,
+				84C109C40F0A791900B2DF7A /* TRef.h in Headers */,
+				84C109C60F0A791900B2DF7A /* TRelay.h in Headers */,
+				84C109C80F0A791900B2DF7A /* TStateMachine.h in Headers */,
+				84C109CA0F0A791900B2DF7A /* TString.h in Headers */,
+				84C109CB0F0A791900B2DF7A /* TSubscriber.h in Headers */,
+				84C109CD0F0A791900B2DF7A /* TSyncQueue.h in Headers */,
+				84E116080F3C6C7900471397 /* TGraphBase.h in Headers */,
+				84E116090F3C6C7900471397 /* TLanguage.h in Headers */,
+				8461F1130FBAC4B800742359 /* TSmallObjectAllocator.h in Headers */,
+				8461F3420FBAE7F200742359 /* TSmallObject.h in Headers */,
+				8434C8D9100B484C0063673E /* TLRandom.h in Headers */,
+				84CDD7D41096EC1A0006D0BA /* TArraySort.h in Headers */,
+				846C18C8109748AE0098DFAF /* TLMathsMisc.h in Headers */,
+				846C18C9109748AE0098DFAF /* TMemoryAllocators.h in Headers */,
+				846C18CB109748AE0098DFAF /* TTransform.h in Headers */,
+				84F88B70109EEEB6004BAF8B /* TArrayAllocator.h in Headers */,
+				84F88B72109EEEB6004BAF8B /* TPointerArray.h in Headers */,
+				845EC9EA119072C800362CA4 /* TAxisAngle.h in Headers */,
+				845EC9EB119072C800362CA4 /* TEuler.h in Headers */,
+				845EC9ED119072C800362CA4 /* TMatrix.h in Headers */,
+				845EC9EF119072C800362CA4 /* TQuaternion.h in Headers */,
+				84477D88119ED1B30094CB73 /* TRandomManager.h in Headers */,
+				8429F79411A83D0B00AF0786 /* IPadAlert.h in Headers */,
+				8429F79611A83D0B00AF0786 /* IPadCore.h in Headers */,
+				8429F79811A83D0B00AF0786 /* IPadDebug.h in Headers */,
+				8429F79B11A83D0B00AF0786 /* IPadMaths.h in Headers */,
+				8429F79C11A83D0B00AF0786 /* IPadMemory.h in Headers */,
+				8429F79E11A83D0B00AF0786 /* IPadRandom.h in Headers */,
+				8429F79F11A83D0B00AF0786 /* IPadString.h in Headers */,
+				8429F7A111A83D0B00AF0786 /* IPadTime.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		84C109580F0A78EE00B2DF7A /* TootleCore */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84C1095D0F0A78EE00B2DF7A /* Build configuration list for PBXNativeTarget "TootleCore" */;
+			buildPhases = (
+				84C109550F0A78EE00B2DF7A /* Headers */,
+				84C109560F0A78EE00B2DF7A /* Sources */,
+				84C109570F0A78EE00B2DF7A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleCore;
+			productName = TootleCore;
+			productReference = 84C109590F0A78EE00B2DF7A /* libTootleCore.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		84C108D50F0A76EC00B2DF7A /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 84C108D80F0A76EC00B2DF7A /* Build configuration list for PBXProject "TootleCore" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 0;
+			mainGroup = 84C108D30F0A76EC00B2DF7A;
+			productRefGroup = 84C1095A0F0A78EE00B2DF7A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				84C109580F0A78EE00B2DF7A /* TootleCore */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		84C109560F0A78EE00B2DF7A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C109AE0F0A791900B2DF7A /* TLMemory.cpp in Sources */,
+				84C109990F0A791900B2DF7A /* TBinary.cpp in Sources */,
+				84C1099B0F0A791900B2DF7A /* TBinaryTree.cpp in Sources */,
+				84C1099F0F0A791900B2DF7A /* TCoreManager.cpp in Sources */,
+				84C109A10F0A791900B2DF7A /* TEventChannel.cpp in Sources */,
+				84C109A60F0A791900B2DF7A /* TLArray.cpp in Sources */,
+				84C109A70F0A791900B2DF7A /* TLCore.cpp in Sources */,
+				84C109A90F0A791900B2DF7A /* TLDebug.cpp in Sources */,
+				84C109AC0F0A791900B2DF7A /* TLMaths.cpp in Sources */,
+				84C109B10F0A791900B2DF7A /* TLMessaging.cpp in Sources */,
+				84C109B30F0A791900B2DF7A /* TLThread.cpp in Sources */,
+				84C109B50F0A791900B2DF7A /* TLTime.cpp in Sources */,
+				84C109B90F0A791900B2DF7A /* TManager.cpp in Sources */,
+				84C109BB0F0A791900B2DF7A /* TMemoryManager.cpp in Sources */,
+				84C109BD0F0A791900B2DF7A /* TMessage.cpp in Sources */,
+				84C109C10F0A791900B2DF7A /* TPublisher.cpp in Sources */,
+				84C109C30F0A791900B2DF7A /* TRef.cpp in Sources */,
+				84C109C70F0A791900B2DF7A /* TStateMachine.cpp in Sources */,
+				84C109C90F0A791900B2DF7A /* TString.cpp in Sources */,
+				84C109CC0F0A791900B2DF7A /* TSyncQueue.cpp in Sources */,
+				84E116070F3C6C7900471397 /* TGraphBase.cpp in Sources */,
+				8461F1100FBAC46800742359 /* TSmallObjectAllocator.cpp in Sources */,
+				846C18CA109748AE0098DFAF /* TTransform.cpp in Sources */,
+				845EC9EC119072C800362CA4 /* TMatrix.cpp in Sources */,
+				845EC9EE119072C800362CA4 /* TQuaternion.cpp in Sources */,
+				84477D87119ED1B30094CB73 /* TRandomManager.cpp in Sources */,
+				8429F79511A83D0B00AF0786 /* IPadAlert.mm in Sources */,
+				8429F79711A83D0B00AF0786 /* IPadCore.mm in Sources */,
+				8429F79911A83D0B00AF0786 /* IPadDebug.mm in Sources */,
+				8429F79A11A83D0B00AF0786 /* IPadMaths.cpp in Sources */,
+				8429F79D11A83D0B00AF0786 /* IPadMemory.mm in Sources */,
+				8429F7A011A83D0B00AF0786 /* IPadString.mm in Sources */,
+				8429F7A211A83D0B00AF0786 /* IPadTime.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		84C108D60F0A76EC00B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8429F78311A83CD300AF0786 /* LibDebug.xcconfig */;
+			buildSettings = {
+				SDKROOT = iphoneos3.2;
+			};
+			name = Debug;
+		};
+		84C108D70F0A76EC00B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8429F78411A83CD300AF0786 /* LibRelease.xcconfig */;
+			buildSettings = {
+				SDKROOT = iphoneos3.2;
+			};
+			name = Release;
+		};
+		84C1095B0F0A78EE00B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		84C1095C0F0A78EE00B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		84C108D80F0A76EC00B2DF7A /* Build configuration list for PBXProject "TootleCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C108D60F0A76EC00B2DF7A /* Debug */,
+				84C108D70F0A76EC00B2DF7A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84C1095D0F0A78EE00B2DF7A /* Build configuration list for PBXNativeTarget "TootleCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C1095B0F0A78EE00B2DF7A /* Debug */,
+				84C1095C0F0A78EE00B2DF7A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 84C108D50F0A76EC00B2DF7A /* Project object */;
+}

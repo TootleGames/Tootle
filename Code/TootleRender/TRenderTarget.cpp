@@ -5,15 +5,7 @@
 
 //	include platform specific render code for glTranslate etc
 //	this kinda code will move to the rasteriser (as will these includes)
-#if defined(TL_TARGET_PC)
-	#include "PC/PCRender.h"
-#elif defined(TL_TARGET_MAC)
-	#include "Mac/MacRender.h"
-#elif defined(TL_TARGET_IPOD)
-	#include "IPod/IPodRender.h"
-#else
-	#error "Unknown target platform"
-#endif
+#include PLATFORMHEADER(Render.h)
 
 
 //#define DEBUG_RENDER_DATUMS_IN_WORLD	//	if not defined, renders datums in local space which is faster (in world space will show up transform multiplication errors)
@@ -21,7 +13,7 @@
 #define DEBUG_DATUMS_FORCE_RECALC		FALSE	//	when true will force the render node code to use the GetWorldTransform call that goes UP the render tree
 #define DEBUG_ALWAYS_RESET_SCENE		FALSE	//	if things render incorrectly it suggests our calculated scene transform is incorrect
 
-#if defined(_DEBUG) && !defined(TL_TARGET_IPOD)
+#if defined(_DEBUG) && !defined(TL_TARGET_IPOD) && !defined(TL_TARGET_IPAD)
 //#define DEBUG_DRAW_RENDERZONES
 #define DEBUG_DRAW_FRUSTUM
 //#define DEBUG_NODE_RENDERED_COUNT

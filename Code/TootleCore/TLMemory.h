@@ -364,18 +364,14 @@ FORCEINLINE void operator delete[](void* pObj) throw()
 {
 	return TLMemory::TMemorySystem::Instance().Deallocate( pObj );
 }
-/*
-//	include the platform specific header
-#if defined(_MSC_EXTENSIONS) && defined(TL_TARGET_PC)
-	#include "PC/PCMemory.h"
-#endif
-*/
-#if defined(TL_TARGET_IPOD)
-	#include "IPod/IPodMemory.h"
-#endif
 
-#if defined(TL_TARGET_MAC)
-	#include "Mac/MacMemory.h"
+//	include the platform specific header
+#if defined(TL_TARGET_PC)
+	#if defined(_MSC_EXTENSIONS)
+		//#include "PC/PCMemory.h"
+	#endif
+#else
+	#include PLATFORMHEADER(Memory.h)
 #endif
 
 

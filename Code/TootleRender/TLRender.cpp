@@ -8,15 +8,7 @@
 
 //	include platform specific render code for glTranslate etc
 //	this kinda code will move to the rasteriser (as will these includes)
-#if defined(TL_TARGET_PC)
-	#include "PC/PCRender.h"
-#elif defined(TL_TARGET_MAC)
-	#include "Mac/MacRender.h"
-#elif defined(TL_TARGET_IPOD)
-	#include "IPod/IPodRender.h"
-#else
-	#error "Unknown target platform"
-#endif
+#include PLATFORMHEADER(Render.h)
 
 #ifdef _DEBUG
 	#define DEBUG_CHECK_PRIMITIVE_INDEXES	//	check indexes of all the primitives are within bound vertex range

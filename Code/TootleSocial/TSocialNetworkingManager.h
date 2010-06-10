@@ -33,22 +33,20 @@ namespace TLSocial
 
 
 //	include the platform specific header
-#if defined(_MSC_EXTENSIONS)&&defined(TL_TARGET_PC)	//	dont include PC stuff when doing an ANSI build
-#include "PC/PCSocialnetworkingPlatform.h"
-#endif
+#include PLATFORMHEADER(SocialnetworkingPlatform.h)
 
+// Etra headers for the IPod and IPad
 #if defined(TL_TARGET_IPOD)
-#include "IPod/IPodSocialnetworkingPlatform.h"
-#include "IPod/IPodSocialnetworkingPlatform_Facebook.h"
-#include "IPod/IPodSocialNetworkingPlatform_OpenFeint.h"
-#include "IPod/IPodSocialNetworkingPlatform_AGONOnline.h"
-#include "IPod/IPodSocialnetworkingPlatform_GameCenter.h"
+	#include "IPod/IPodSocialnetworkingPlatform_Facebook.h"
+	#include "IPod/IPodSocialNetworkingPlatform_OpenFeint.h"
+	#include "IPod/IPodSocialNetworkingPlatform_AGONOnline.h"
+	#include "IPod/IPodSocialnetworkingPlatform_GameCenter.h"
+#elif defined(TL_TARGET_IPAD)
+	#include "IPad/IPadSocialnetworkingPlatform_Facebook.h"
+	#include "IPad/IPadSocialNetworkingPlatform_OpenFeint.h"
+	#include "IPad/IPadSocialNetworkingPlatform_AGONOnline.h"
+	#include "IPad/IPadSocialnetworkingPlatform_GameCenter.h"
 #endif
-
-#if defined(TL_TARGET_MAC)	
-#include "Mac/MacSocialnetworkingPlatform.h"
-#endif
-
 
 
 

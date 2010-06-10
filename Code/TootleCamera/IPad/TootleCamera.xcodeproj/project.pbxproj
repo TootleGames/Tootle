@@ -1,0 +1,258 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		841B4ACA1111CBD900ACC2AE /* TCameraManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 841B4AC61111CBD900ACC2AE /* TCameraManager.cpp */; };
+		841B4ACB1111CBD900ACC2AE /* TCameraManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 841B4AC71111CBD900ACC2AE /* TCameraManager.h */; };
+		841B4ACC1111CBD900ACC2AE /* TLCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 841B4AC81111CBD900ACC2AE /* TLCamera.cpp */; };
+		841B4ACD1111CBD900ACC2AE /* TLCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 841B4AC91111CBD900ACC2AE /* TLCamera.h */; };
+		841B4AD61111CC2B00ACC2AE /* IPodCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 841B4AD41111CC2B00ACC2AE /* IPodCamera.h */; };
+		841B4AD71111CC2B00ACC2AE /* IPodCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = 841B4AD51111CC2B00ACC2AE /* IPodCamera.mm */; };
+		84A655B311186B6100B11F5C /* IPodCameraController.h in Headers */ = {isa = PBXBuildFile; fileRef = 84A655B111186B6100B11F5C /* IPodCameraController.h */; };
+		84A655B411186B6100B11F5C /* IPodCameraController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84A655B211186B6100B11F5C /* IPodCameraController.mm */; };
+		84A655B711186B7500B11F5C /* IPodCameraView.h in Headers */ = {isa = PBXBuildFile; fileRef = 84A655B511186B7500B11F5C /* IPodCameraView.h */; };
+		84A655B811186B7500B11F5C /* IPodCameraView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84A655B611186B7500B11F5C /* IPodCameraView.mm */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		841B4AC61111CBD900ACC2AE /* TCameraManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TCameraManager.cpp; path = ../TCameraManager.cpp; sourceTree = SOURCE_ROOT; };
+		841B4AC71111CBD900ACC2AE /* TCameraManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCameraManager.h; path = ../TCameraManager.h; sourceTree = SOURCE_ROOT; };
+		841B4AC81111CBD900ACC2AE /* TLCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLCamera.cpp; path = ../TLCamera.cpp; sourceTree = SOURCE_ROOT; };
+		841B4AC91111CBD900ACC2AE /* TLCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLCamera.h; path = ../TLCamera.h; sourceTree = SOURCE_ROOT; };
+		841B4ACE1111CC0000ACC2AE /* MacCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacCamera.h; path = ../Mac/MacCamera.h; sourceTree = SOURCE_ROOT; };
+		841B4ACF1111CC0000ACC2AE /* MacCamera.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacCamera.mm; path = ../Mac/MacCamera.mm; sourceTree = SOURCE_ROOT; };
+		841B4AD01111CC0000ACC2AE /* MacCameraController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacCameraController.h; path = ../Mac/MacCameraController.h; sourceTree = SOURCE_ROOT; };
+		841B4AD11111CC0000ACC2AE /* MacCameraController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacCameraController.mm; path = ../Mac/MacCameraController.mm; sourceTree = SOURCE_ROOT; };
+		841B4AD21111CC0000ACC2AE /* MacCameraView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacCameraView.h; path = ../Mac/MacCameraView.h; sourceTree = SOURCE_ROOT; };
+		841B4AD31111CC0000ACC2AE /* MacCameraView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacCameraView.mm; path = ../Mac/MacCameraView.mm; sourceTree = SOURCE_ROOT; };
+		841B4AD41111CC2B00ACC2AE /* IPodCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodCamera.h; sourceTree = "<group>"; };
+		841B4AD51111CC2B00ACC2AE /* IPodCamera.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodCamera.mm; sourceTree = "<group>"; };
+		84A655B111186B6100B11F5C /* IPodCameraController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodCameraController.h; sourceTree = "<group>"; };
+		84A655B211186B6100B11F5C /* IPodCameraController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodCameraController.mm; sourceTree = "<group>"; };
+		84A655B511186B7500B11F5C /* IPodCameraView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodCameraView.h; sourceTree = "<group>"; };
+		84A655B611186B7500B11F5C /* IPodCameraView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodCameraView.mm; sourceTree = "<group>"; };
+		BF8FC10A118C9EE0005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
+		BF8FC10B118C9EEA005391AF /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF8FC10C118C9EEA005391AF /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		D2AAC07E0554694100DB518D /* libTootleCamera.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleCamera.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D2AAC07C0554694100DB518D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DFFF38A50411DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D2AAC07E0554694100DB518D /* libTootleCamera.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* TootleCamera */ = {
+			isa = PBXGroup;
+			children = (
+				841B4AA81111CAE800ACC2AE /* Build Configurations */,
+				32C88DFF0371C24200C91783 /* Source Files */,
+				0867D69AFE84028FC02AAC07 /* Frameworks */,
+				034768DFFF38A50411DB9C8B /* Products */,
+			);
+			name = TootleCamera;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		32C88DFF0371C24200C91783 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				841B4AC61111CBD900ACC2AE /* TCameraManager.cpp */,
+				841B4AC71111CBD900ACC2AE /* TCameraManager.h */,
+				841B4AC81111CBD900ACC2AE /* TLCamera.cpp */,
+				841B4AC91111CBD900ACC2AE /* TLCamera.h */,
+				841B4AC51111CBC500ACC2AE /* PC Source Files */,
+				841B4AC41111CBBD00ACC2AE /* Mac Source Files */,
+				841B4AC31111CBB200ACC2AE /* IPod Source Files */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		841B4AA81111CAE800ACC2AE /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				BF8FC10B118C9EEA005391AF /* LibDebug.xcconfig */,
+				BF8FC10C118C9EEA005391AF /* LibRelease.xcconfig */,
+				BF8FC10A118C9EE0005391AF /* BuildConfigurations */,
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+		841B4AC31111CBB200ACC2AE /* IPod Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				841B4AD41111CC2B00ACC2AE /* IPodCamera.h */,
+				841B4AD51111CC2B00ACC2AE /* IPodCamera.mm */,
+				84A655B111186B6100B11F5C /* IPodCameraController.h */,
+				84A655B211186B6100B11F5C /* IPodCameraController.mm */,
+				84A655B511186B7500B11F5C /* IPodCameraView.h */,
+				84A655B611186B7500B11F5C /* IPodCameraView.mm */,
+			);
+			name = "IPod Source Files";
+			sourceTree = "<group>";
+		};
+		841B4AC41111CBBD00ACC2AE /* Mac Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				841B4ACE1111CC0000ACC2AE /* MacCamera.h */,
+				841B4ACF1111CC0000ACC2AE /* MacCamera.mm */,
+				841B4AD01111CC0000ACC2AE /* MacCameraController.h */,
+				841B4AD11111CC0000ACC2AE /* MacCameraController.mm */,
+				841B4AD21111CC0000ACC2AE /* MacCameraView.h */,
+				841B4AD31111CC0000ACC2AE /* MacCameraView.mm */,
+			);
+			name = "Mac Source Files";
+			sourceTree = "<group>";
+		};
+		841B4AC51111CBC500ACC2AE /* PC Source Files */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "PC Source Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D2AAC07A0554694100DB518D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				841B4ACB1111CBD900ACC2AE /* TCameraManager.h in Headers */,
+				841B4ACD1111CBD900ACC2AE /* TLCamera.h in Headers */,
+				841B4AD61111CC2B00ACC2AE /* IPodCamera.h in Headers */,
+				84A655B311186B6100B11F5C /* IPodCameraController.h in Headers */,
+				84A655B711186B7500B11F5C /* IPodCameraView.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D2AAC07D0554694100DB518D /* TootleCamera */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB921E08733DC00010E9CD /* Build configuration list for PBXNativeTarget "TootleCamera" */;
+			buildPhases = (
+				D2AAC07A0554694100DB518D /* Headers */,
+				D2AAC07B0554694100DB518D /* Sources */,
+				D2AAC07C0554694100DB518D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleCamera;
+			productName = TootleCamera;
+			productReference = D2AAC07E0554694100DB518D /* libTootleCamera.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "TootleCamera" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 0867D691FE84028FC02AAC07 /* TootleCamera */;
+			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D2AAC07D0554694100DB518D /* TootleCamera */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D2AAC07B0554694100DB518D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				841B4ACA1111CBD900ACC2AE /* TCameraManager.cpp in Sources */,
+				841B4ACC1111CBD900ACC2AE /* TLCamera.cpp in Sources */,
+				841B4AD71111CC2B00ACC2AE /* IPodCamera.mm in Sources */,
+				84A655B411186B6100B11F5C /* IPodCameraController.mm in Sources */,
+				84A655B811186B7500B11F5C /* IPodCameraView.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB921F08733DC00010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		1DEB922008733DC00010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		1DEB922308733DC00010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF8FC10B118C9EEA005391AF /* LibDebug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		1DEB922408733DC00010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF8FC10C118C9EEA005391AF /* LibRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB921E08733DC00010E9CD /* Build configuration list for PBXNativeTarget "TootleCamera" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB921F08733DC00010E9CD /* Debug */,
+				1DEB922008733DC00010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "TootleCamera" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB922308733DC00010E9CD /* Debug */,
+				1DEB922408733DC00010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}

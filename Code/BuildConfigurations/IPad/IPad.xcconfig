@@ -18,10 +18,10 @@ GCC_C_LANGUAGE_STANDARD = c99
 IPHONE_OPTIMIZE_OPTIONS = -skip-PNGs
 
 //	gr: add the target define
-IPOD_DEFINITIONS = $(TOOTLE_DEFINITIONS) TL_TARGET_IPOD FT2_BUILD_LIBRARY 
+IPAD_DEFINITIONS = $(TOOTLE_DEFINITIONS) TL_TARGET_IPAD FT2_BUILD_LIBRARY 
+
 //	this linker flag is required if we're linking with any libs with objective-c code in them
-//IPOD_LDFLAGS = -ObjC -all_load 
-IPOD_LDFLAGS = -ObjC
+IPAD_LDFLAGS = -ObjC
 
 //	gr: enable pre-binding to check symbols against dynamic (and static?) libs at link time
 //		this should spot errors with mis-matched libs
@@ -68,8 +68,7 @@ PRESERVE_DEAD_CODE_INITS_AND_TERMS = NO
 // NOTE: When updating to iPhone OS SDK 3.0 and above as the base SDK, this will need changing to dynamic as no static library is provided.
 // The following document suggests this will the preferred method of linking with the C++ runtime:
 // http://developer.apple.com/mac/library/documentation/DeveloperTools/Conceptual/CppRuntimeEnv/Articles/CPPROverview.html 
-STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static
-//STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic
+STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic
 
 
 //	gr: have to make symbols visible because the way wx is built, all the symbols are visible (for external access. Not sure why WE don't get missing symbols...)
@@ -133,7 +132,7 @@ GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = YES
 
 
 
-GCC_VERSION = 4.0 
+GCC_VERSION = 4.2 
 
 ADDITIONAL_SDKS = 
 //ARCHS = armv6 armv7
@@ -146,7 +145,11 @@ SDKROOT = iphoneos3.2
 ONLY_ACTIVE_ARCH = YES
 
 // The deployment target is the lowest iphone OS the code will work on
-IPHONE_OS_DEPLOYMENT_TARGET = 3.2
+IPHONEOS_DEPLOYMENT_TARGET = 3.2
+
+TARGETED_DEVICE_FAMILY = 2
+
+
 
 
 EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = *.nib *.lproj *.framework *.gch (*) CVS .svn *.xcodeproj *.xcode *.pbproj *.pbxproj

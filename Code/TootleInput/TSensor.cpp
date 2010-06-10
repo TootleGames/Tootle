@@ -56,7 +56,7 @@ void TInputSensor::Process(float fRawValue)
 		// Add the raw data to the message - for things that may need access to this information
 		Message.ExportData("RAWDATA", fRawValue);
 		
-#ifdef TL_TARGET_IPOD
+#if defined(TL_TARGET_IPOD) || defined(TL_TARGET_IPAD)
 		
 		Message.ExportData("CIDX", GetCursorIndex());
 		

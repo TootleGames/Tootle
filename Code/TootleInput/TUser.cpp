@@ -194,7 +194,7 @@ void TUser::ProcessMessage(TLMessaging::TMessage& Message)
 {
 	u8 uCursorIndex = GetUserIndex();
 
-#ifdef TL_TARGET_IPOD		
+#if defined(TL_TARGET_IPOD) || defined(TL_TARGET_IPAD)
 	// [13/03/09] DB - On the iPod we can have upto four cursor positions for one user
 	// unlike PC where we have one cursor position for one user.
 	// So to be able to pass on the right cursor I now attach a marker to the message at the sensor level
