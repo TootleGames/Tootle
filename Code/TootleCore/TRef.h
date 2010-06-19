@@ -1,4 +1,3 @@
-//	test
 /*------------------------------------------------------
 	Generic reference type. simple, database-independant
 	system to convert a u32 to a string and back.
