@@ -36,28 +36,11 @@ namespace TLRef
 	FORCEINLINE u32			GetRefBitsFromChar(TChar Char,u32 Index,Bool CheckIndex);
 
 	void					GenerateCharLookupTable();
-
-	TLArray::SortResult		RefSort(const TRef& aRef,const TRef& bRef,const void* pTestVal);	//	simple ref-sort func - for arrays of TRef's
 }
 
 
 
 //////////////////////////////////////////////////////
-
-
-
-
-//----------------------------------------------------
-//	simple ref-sort func - for arrays of TRef's
-//----------------------------------------------------
-TLArray::SortResult TLRef::RefSort(const TRef& aRef,const TRef& bRef,const void* pTestVal)
-{
-	//	if pTestVal provided it's the ref
-	const TRef& TestRef = pTestVal ? *(const TRef*)pTestVal : bRef;
-
-	//	== turns into 0 (is greater) or 1(equals)
-	return aRef < TestRef ? TLArray::IsLess : (TLArray::SortResult)(aRef==TestRef);	
-}
 
 
 
@@ -331,14 +314,15 @@ void TRef::GetString(TString& RefString,Bool Capitalise,Bool Trim,Bool UrlSafe) 
 const TRef& TRef::Increment()
 {
 	//	gather indexes
-	TFixedArray<u32,TLRef_CharsPerRef> CharIndexes(TLRef_CharsPerRef,0);
+	TFixedArray<u32,TLRef_CharsPerRef> CharIndexes;
+	CharIndexes.SetSize(TLRef_CharsPerRef);
+	CharIndexes[0] = GetRefCharIndex(0);
+	CharIndexes[1] = GetRefCharIndex(1);
+	CharIndexes[2] = GetRefCharIndex(2);
+	CharIndexes[3] = GetRefCharIndex(3);
+	CharIndexes[4] = GetRefCharIndex(4);
 
-	for ( u32 i=0;	i<CharIndexes.GetSize();	i++ )
-	{
-		CharIndexes[i] = GetRefCharIndex(i);
-	}
-
-	s32 IncIndex = CharIndexes.GetSize()-1;
+	s32 IncIndex = CharIndexes.GetLastIndex();
 	
 	//	increment last character
 	while ( TRUE )
@@ -349,7 +333,7 @@ const TRef& TRef::Increment()
 			CharIndexes[IncIndex] = 0;
 			IncIndex--;
 			if ( IncIndex<0 )
-				IncIndex = CharIndexes.GetSize()-1;
+				IncIndex = CharIndexes.GetLastIndex();
 		}
 		else
 		{

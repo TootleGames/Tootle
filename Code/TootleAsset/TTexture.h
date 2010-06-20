@@ -38,7 +38,7 @@ public:
 	FORCEINLINE Bool				IsMinFilterLinear() const				{	return TRUE;	}
 	FORCEINLINE Bool				IsMagFilterLinear() const				{	return TRUE;	}
 	FORCEINLINE Bool				IsMipMapEnabled() const					{	return FALSE;	}
-	FORCEINLINE Bool				IsClampEnabled() const					{	return FALSE;	}
+	FORCEINLINE Bool				IsClampEnabled() const					{	return true;	}
 
 	FORCEINLINE TColour32*			GetPixelData32(u32 PixelIndex=0)				{	return HasAlphaChannel() ? (TColour32*)GetPixelData( PixelIndex ) : NULL;	}
 	FORCEINLINE TColour32*			GetPixelData32At(u32 PixelX,u32 PixelY)			{	return GetPixelData32( GetPixelIndex( PixelX, PixelY ) );	}

@@ -260,7 +260,7 @@ void TLGame::TSchemeEditor::CreateNodeWidgets(TLGraph::TGraphNodeBase& Node)
 	this->SubscribeTo( &Node );
 
 	//	create widgets for children
-	TArray<TLGraph::TGraphNodeBase*> ChildNodes;
+	THeapArray<TLGraph::TGraphNodeBase*> ChildNodes;
 	Node.GetChildrenBase( ChildNodes );
 	for ( u32 c=0;	c<ChildNodes.GetSize();	c++ )
 	{
@@ -1063,7 +1063,7 @@ Bool TLGame::TSchemeEditor::ProcessCommandMessage(TRefRef CommandRef,TLMessaging
 		//	delete selected node[s]
 		case TRef_Static(D,e,l,e,t):
 			{
-				TArray<TRef> SelectedNodes;
+				THeapArray<TRef> SelectedNodes;
 				SelectedNodes.Copy( m_SelectedNodes );
 				for ( u32 i=0;	i<SelectedNodes.GetSize();	i++ )
 					DeleteNode( SelectedNodes[i] );
@@ -1228,7 +1228,7 @@ void TLGame::TSchemeEditor::DeleteNode(TRefRef NodeRef)
 		TLDebug_Break("Scehem root node expected");
 		return;
 	}
-	TArray<TRef> RootNodeRefs;
+	THeapArray<TRef> RootNodeRefs;
 	pSchemeRootNode->GetChildren( RootNodeRefs );
 
 	//	loop through list of ROOT nodes associated with the editor - if we're trying to delete a sub-node then we need to delete the parent node
@@ -1263,7 +1263,7 @@ void TLGame::TSchemeEditor::DeleteNode(TRefRef NodeRef)
 	}
 
 	//	get a list of all the child node refs
-	TArray<TRef> ChildNodeRefs;
+	THeapArray<TRef> ChildNodeRefs;
 	pNode->GetChildrenTree( ChildNodeRefs );
 
 	//	remove root node from graph (will remove children)

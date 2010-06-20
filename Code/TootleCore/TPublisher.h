@@ -32,6 +32,8 @@ class TLMessaging::TPublisher
 {
 	friend class TLMessaging::TSubscriber;
 public:
+	virtual ~TPublisher()		{	Shutdown();	}	//	gr: moved this out of being protected so the arrays can delete them, not sure what this exposes as there were no comments as to why it was protected...
+	
 	Bool				Subscribe(TSubscriber* pSubscriber);
 	Bool				Unsubscribe(TSubscriber* pSubscriber);
 
@@ -39,17 +41,15 @@ public:
 	FORCEINLINE Bool	HasSubscribers(TRefRef MessageRef) const		{	return HasSubscribers();	}	//	gr: for future enhancement, check if any subscribers are going to recieve this specific message...
 	FORCEINLINE void	PublishMessage(TLMessaging::TMessage& Message);	//	send message to subscribers if we have any
 	//FORCEINLINE void	PublishMessageReverse(TLMessaging::TMessage& Message);	//	send message to subscribers if we have any in reverse order
-	
-	FORCEINLINE void	SetPublishOrder(const TLArray::SortOrder& order)	{ m_Subscribers.SetSortOrder(order); }
+
+	FORCEINLINE void	SetPublishOrder(TLArray::TSortOrder::Type Order)	{	m_Subscribers.SetSortOrder(Order);	}
 
 	virtual TRefRef		GetPublisherRef() const=0;						//	ref for this publisher (doesn't need to be unique, just an identifier)
 
 protected:
-	virtual ~TPublisher()		{	Shutdown();	}
-	
 	FORCEINLINE void			Shutdown()										{	RemoveAllSubscribers();	}
 	
-	TPointerArray<TLMessaging::TSubscriber>&	GetSubscribers()							{	return m_Subscribers;	}
+	TPointerArray<TLMessaging::TSubscriber,false>&	GetSubscribers()							{	return m_Subscribers;	}
 	void				DoPublishMessage(TLMessaging::TMessage& Message,TSubscriber& Subscriber);
 
 private:
@@ -60,8 +60,11 @@ private:
 	void				DoPublishMessage(TLMessaging::TMessage& Message);
 
 private:
-	TPointerArray<TLMessaging::TSubscriber>		m_Subscribers;
+	TPointerArray<TLMessaging::TSubscriber,false>		m_Subscribers;
 };
+
+//	explicitly set pointer as data type (need to find a way to do this generically!)
+TLCore_DeclareIsDataType(TLMessaging::TPublisher*);
 
 
 

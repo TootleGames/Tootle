@@ -39,7 +39,7 @@ protected:
 	TRef						m_MenuRef;
 	TRef						m_RenderTargetRef;
 	TRef						m_RenderNode;		//	root render node added to the parent specified in the constructor
-	TArray<TRef>				m_Widgets;			//	widget storage
+	THeapArray<TRef>			m_Widgets;			//	widget storage
 	TLMenu::TMenuController*	m_pMenuController;		//	owner menu controller
 };
 

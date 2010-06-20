@@ -134,7 +134,7 @@ void TLReflection::TGraphTreeItem::CreateChildren()
 	}
 	
 	//	add an item for every child node
-	TArray<TRef> ChildNodeRefs;
+	THeapArray<TRef> ChildNodeRefs;
 	pNode->GetChildren( ChildNodeRefs );
 	for ( u32 c=0;	c<ChildNodeRefs.GetSize();	c++ )
 	{
@@ -181,7 +181,7 @@ TLReflection::TGraphTree::TGraphTree(TPtr<TLGraph::TGraphBase>& pGraph) :
 	}
 	
 	//	setup column structure for the tree
-	TArray<TRef> Columns;
+	THeapArray<TRef> Columns;
 #pragma message("note: use of virtuals in constructor. May have to make this a constructor param. Overloaded classes can provide their columns through that")
 	GetColumns( Columns );
 

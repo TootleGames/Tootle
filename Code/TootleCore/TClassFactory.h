@@ -20,15 +20,23 @@
 #define TClassFactory_GrowByDefault	40
 
 
+
+template<class TYPE>
+class TBaseClassFactory
+{	
+protected:
+	virtual TYPE*			CreateObjectBase(TRefRef InstanceRef,TRefRef TypeRef)=0;
+};
+
+
+
+
 template<class TYPE, bool STOREINSTANCES = true>
-class TClassFactory : public TPtrArray<TYPE>
+class TClassFactory : public TBaseClassFactory<TYPE>, public TPtrArray<TYPE>
 {
 public:
-	typedef TLArray::SortResult(TSortFunc)(const TPtr<TYPE>&,const TPtr<TYPE>&,const void*);
-
-public:
-	TClassFactory(TSortFunc* pSortFunc=NULL,u16 GrowBy=TClassFactory_GrowByDefault) : TPtrArray<TYPE>	( pSortFunc, GrowBy )	{	}
-
+	TRef					GetFreeInstanceRef(TRef BaseRef=TRef()) const;	//	get an unused ref for an instance
+	
 	template<class MATCHTYPE>
 	TPtr<TYPE>&				GetInstance(const MATCHTYPE& Match)				{	return FindPtr(Match);	}
 	TPtr<TYPE>&				GetInstance(TRefRef InstanceRef,Bool CreateNew=FALSE,TRefRef TypeRef=TRef());	//	get an instance from the list. If it doesnt exist option to create a new one. if STOREINSTANCES is false, this will never return a valid ptr.. use CreateInstance isntead
@@ -42,12 +50,12 @@ public:
 	TPtrArray<TYPE>&		GetInstanceArray()								{	return *this;	}
 	const TPtrArray<TYPE>&	GetInstanceArray() const						{	return *this;	}
 
-	TRef					GetFreeInstanceRef(TRef BaseRef=TRef()) const;	//	get an unused ref for an instance
-
 protected:
-	virtual TYPE*			CreateObject(TRefRef InstanceRef,TRefRef TypeRef) = 0;
-
+	virtual TYPE*			CreateObject(TRefRef InstanceRef,TRefRef TypeRef)=0;
 	void					Debug_CheckFactoryIntegrity();					//	make sure there are no dupes, and no NULL entries
+
+private:
+	virtual TYPE*			CreateObjectBase(TRefRef InstanceRef,TRefRef TypeRef)	{	return CreateObject( InstanceRef, TypeRef );	}
 
 private:
 	TRef					m_LastCreatedRef;								//	to speed up GetFreeInstanceRef we store the last one we created and start with that when checking against duplicates rather than starting from "zero"
@@ -62,12 +70,8 @@ private:
 //--------------------------------------------------------------
 template<class TYPE>
 class TObjectFactory : public TClassFactory<TYPE>
-{
+{	
 public:
-	typedef TLArray::SortResult(TSortFunc)(const TPtr<TYPE>&,const TPtr<TYPE>&,const void*);
-	
-public:
-	TObjectFactory(TSortFunc* pSortFunc=NULL) : TClassFactory<TYPE>	( pSortFunc )	{	}
 	~TObjectFactory()		{	ShutdownObjects();	}
 
 	virtual SyncBool		Shutdown()			{	return ShutdownObjects();	}

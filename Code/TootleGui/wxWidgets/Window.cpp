@@ -6,11 +6,25 @@
  *  Copyright 2010 __MyCompanyName__. All rights reserved.
  *
  */
-#if defined(TL_ENABLE_WX)
+#if !defined(TL_ENABLE_WX)
+#error Should only be built in wx only build
+#endif // TL_ENABLE_WX
 
 
 #include "Window.h"
 #include <TootleInput/TLInput.h>
+
+
+//------------------------------------------------------
+//	
+//------------------------------------------------------
+TPtr<TLGui::TWindow> TLGui::CreateGuiWindow(TRefRef Ref)
+{
+	TPtr<TLGui::TWindow> pWindow = new wx::Window( Ref );
+	return pWindow;
+}
+
+
 
 
 wx::Window::Window(TRefRef WindowRef) :
@@ -62,5 +76,3 @@ void wx::Window::OnMouseMove(wxMouseEvent& Event)
 	
 }
 
-
-#endif // TL_ENABLE_WX

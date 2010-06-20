@@ -154,8 +154,7 @@ s32 TLString::GetCharHexInteger(const TChar& Char)
 //-------------------------------------------------------------
 //	formatted constructor
 //-------------------------------------------------------------
-TString::TString(const TChar8* pString,...) : 
-	m_DataArray ( NULL, TLString_StringGrowBy )
+TString::TString(const TChar8* pString,...)
 {
 	if ( !pString )
 		return;
@@ -177,8 +176,7 @@ TString::TString(const TChar8* pString,...) :
 //-------------------------------------------------------------
 //	formatted constructor
 //-------------------------------------------------------------
-TString::TString(const TChar16* pString,...) : 
-	m_DataArray ( NULL, TLString_StringGrowBy )
+TString::TString(const TChar16* pString,...)
 {
 	if ( !pString )
 		return;
@@ -267,7 +265,7 @@ void TString::AppendVaList(const TChar16* pString,va_list& v)
 void TString::AppendVaList(const TChar8* pString,va_list& v)
 {
 	//	format up a new string and append that
-	TArray<TChar8> Buffer;
+	THeapArray<TChar8> Buffer;
 	Buffer.SetSize( TLString::Strlen( pString ) + 1024 );
 
 #if defined(TL_TARGET_PC)
@@ -701,6 +699,12 @@ Bool TString::GetFloat(float& Float) const
 	float DecimalDiv = 1.f * 0.1f;
 	for ( u32 i=0;	i<MaxDecPlaces;	i++ )
 	{
+		//	as an exception, we allow 'f' as the last char. This should be changed, the calling func should have cut this out. The new GetFloats()/Array function
+		if ( i == MaxDecPlaces-1 )
+			if ( FloatDecimalString[i] == 'f' || FloatDecimalString[i] == 'F' )
+				continue;
+
+		//	convert the char to an integer
 		s32 CharInteger = TLString::GetCharInteger( FloatDecimalString[i] );
 		
 		//	not a number and we only want numbers
@@ -914,7 +918,7 @@ Bool TString::GetFloats(TArray<float>& Floats) const
 	SplitChars << 'f' << 'F';
 
 	//	failed to split at all? must be empty string
-	TArray<TTempString> FloatStrings;
+	THeapArray<TTempString> FloatStrings;
 	if ( !this->Split( SplitChars, FloatStrings ) )
 		return false;
 
@@ -960,7 +964,7 @@ Bool TString::GetIntegers(TArray<s32>& Integers) const
 	SplitChars << '\t' << '\n' << ' ' << ',' << ':';
 
 	//	failed to split at all? must be empty string
-	TArray<TTempString> IntegerStrings;
+	THeapArray<TTempString> IntegerStrings;
 	if ( !this->Split( SplitChars, IntegerStrings ) )
 		return false;
 

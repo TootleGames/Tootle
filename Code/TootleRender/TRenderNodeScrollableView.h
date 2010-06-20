@@ -36,7 +36,7 @@ protected:
 
 	virtual void							OnTransformChanged(u8 TransformChangedBits=TLMaths_TransformBitAll);			//	gr
 
-	virtual TPtrArray<TRenderNode>&			GetLocalBoundsChildren()						{	static TPtrArray<TRenderNode> NoChildren;	return NoChildren;	}	//	we don't include our children when calculating the local bounds as they're going to be clipped somewhere inside the node anyway
+	virtual TArray<TRenderNode*>&			GetLocalBoundsChildren()						{	static TFixedArray<TRenderNode*,1> NoChildren;	return NoChildren;	}	//	we don't include our children when calculating the local bounds as they're going to be clipped somewhere inside the node anyway
 	virtual const TLMaths::TTransform&		GetChildWorldTransform(TRenderNode* pRootNode=NULL,Bool ForceCalculation=FALSE);
 	virtual Bool							SetWorldTransformOld(Bool SetPosOld,Bool SetTransformOld,Bool SetShapesOld);	//	world transform has changed, invalidate child world transform
 

@@ -40,11 +40,6 @@ namespace TLPhysics
 }
 
 
-namespace TLRef
-{
-	TLArray::SortResult		RefSort(const TRef& aRef,const TRef& bRef,const void* pTestVal);	//	simple ref-sort func - for arrays of TRef's
-}
-
 
 TLPhysics::TPhysicsNode::TPhysicsNode(TRefRef NodeRef,TRefRef TypeRef) :
 	TLGraph::TGraphNode<TPhysicsNode>	( NodeRef, TypeRef ),
@@ -104,7 +99,7 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 	//	need to subscribe to a scene node - todo: expand to get all children like this
 	if ( Message.ImportData("SubTo",SceneNodeRef) )
 	{
-		TPtr<TLScene::TSceneNode>& pSceneNode = TLScene::g_pScenegraph->FindNode(SceneNodeRef);
+		TLScene::TSceneNode* pSceneNode = TLScene::g_pScenegraph->FindNode(SceneNodeRef);
 		if ( pSceneNode )
 		{
 			this->SubscribeTo( pSceneNode );
@@ -118,7 +113,7 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 	//	need to publish to a scene node - todo: expand to get all children like this
 	if ( Message.ImportData("PubTo",SceneNodeRef) )
 	{
-		TPtr<TLScene::TSceneNode>& pSceneNode = TLScene::g_pScenegraph->FindNode(SceneNodeRef);
+		TLScene::TSceneNode* pSceneNode = TLScene::g_pScenegraph->FindNode(SceneNodeRef);
 		if ( pSceneNode )
 		{
 			pSceneNode->SubscribeTo( this );
@@ -141,9 +136,9 @@ void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
 	if(Message.ImportData("Owner", m_OwnerSceneNode))
 	{
 		// Get the scenegraph node
-		TPtr<TLScene::TSceneNode> pOwner = TLScene::g_pScenegraph->FindNode(m_OwnerSceneNode);
+		TLScene::TSceneNode* pOwner = TLScene::g_pScenegraph->FindNode(m_OwnerSceneNode);
 
-		if(pOwner.IsValid())
+		if(pOwner)
 		{
 			pOwner->SubscribeTo(this);
 			SubscribeTo(pOwner);
@@ -453,7 +448,7 @@ void TLPhysics::TPhysicsNode::Update(float fTimeStep)
 //----------------------------------------------------
 //	after collisions are handled
 //----------------------------------------------------
-void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgraph& Graph,TPtr<TPhysicsNode>& pThis)
+void TLPhysics::TPhysicsNode::PostUpdate(float fTimeStep,TLPhysics::TPhysicsgraph& Graph)
 {
 	if ( m_PhysicsFlags( Flag_HasCollision ) && !HasCollision() )
 	{
@@ -551,19 +546,19 @@ void TLPhysics::TPhysicsNode::PublishTransformChanges()
 //----------------------------------------------------------
 //	update tree: update self, and children and siblings
 //----------------------------------------------------------
-void TLPhysics::TPhysicsNode::PostUpdateAll(float fTimestep,TLPhysics::TPhysicsgraph& Graph,TPtr<TLPhysics::TPhysicsNode>& pThis)
+void TLPhysics::TPhysicsNode::PostUpdateAll(float fTimestep,TLPhysics::TPhysicsgraph& Graph)
 {
 	if ( !IsEnabled() )
 		return;
 
 	// Update this
-	PostUpdate( fTimestep, Graph, pThis );
+	PostUpdate( fTimestep, Graph );
 
-	TPtrArray<TPhysicsNode>& NodeChildren = GetChildren();
+	TArray<TPhysicsNode*>& NodeChildren = GetChildren();
 	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 	{
-		TPtr<TPhysicsNode>& pNode = NodeChildren.ElementAt(c);
-		pNode->PostUpdateAll( fTimestep, Graph, pNode );
+		TPhysicsNode& Node = *NodeChildren.ElementAt(c);
+		Node.PostUpdateAll( fTimestep, Graph );
 	}
 
 }
@@ -793,8 +788,6 @@ void TLPhysics::TPhysicsNode::SetTransform(const TLMaths::TTransform& NewTransfo
 //-------------------------------------------------------------
 Bool TLPhysics::TPhysicsNode::CreateBody(b2World& World)
 {
-	const TLMaths::TTransform& Transform = GetTransform();
-
 	b2BodyDef BodyDef;
 
 	//	get values for the box2D body transform

@@ -13,44 +13,15 @@
 
 
 #if defined(TL_ENABLE_WX)
-#include "wxWidgets/Window.h"
-#include "wxWidgets/OpenglCanvas.h"
-#include "wxWidgets/Tree.h"
+#include "../wxWidgets/Window.h"
+#include "../wxWidgets/OpenglCanvas.h"
+#include "../wxWidgets/Tree.h"
 #endif
 
 
 
 //	temp whilst the factory functions are in this file
 #include "../TTree.h"
-
-
-//------------------------------------------------------
-//	
-//------------------------------------------------------
-TPtr<TLGui::TWindow> TLGui::CreateGuiWindow(TRefRef Ref)
-{
-#if defined(TL_ENABLE_WX)
-	TPtr<TLGui::TWindow> pWindow = new wx::Window( Ref );
-#else
-	TPtr<TLGui::TWindow> pWindow = new TLGui::Platform::Window( Ref );
-#endif // TL_ENABLE_WX
-	
-	return pWindow;
-}
-
-
-
-TPtr<TLGui::TTree> TLGui::CreateTree(TLGui::TWindow& Parent,TRefRef Ref,TPtr<TLGui::TTreeItem>& pRootItem,const TArray<TRef>& Columns)
-{
-#if defined(TL_ENABLE_WX)
-	TPtr<TLGui::TTree> pControl = new wx::Tree( Parent, Ref, pRootItem, Columns );
-#else
-	TPtr<TLGui::TTree> pControl;
-#endif
-	return pControl;
-}
-
-
 
 TLGui::Platform::Window::Window(TRefRef WindowRef) : 
 	TLGui::TWindow		( WindowRef ),

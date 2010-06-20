@@ -278,7 +278,7 @@ Bool TLFileSys::GetParentDir(TString& Directory)
 TTypedRef TLFileSys::GetFileAndTypeRef(const TString& Filename)
 {	
 	//	extract a file type from the extension of the filename if it's not been provided
-	TArray<TString> FilenameParts;
+	THeapArray<TString> FilenameParts;
 	TRef FileRef,TypeRef;
 
 	//	no .'s in the filename, so use invalid file type and generate filename in the normal way
@@ -413,7 +413,7 @@ TLFileSys::TFileSys* TLFileSys::TFileSysFactory::CreateObject(TRefRef InstanceRe
 SyncBool TLFileSys::TFileSysFactory::Initialise()
 {
 	//	list of file systems to create (maybe take this from the app as a param)
-	TArray<TRef> FileSystemRefs;
+	THeapArray<TRef> FileSystemRefs;
 	FileSystemRefs.Add("Virtual");
 
 	SyncBool Result = SyncTrue;

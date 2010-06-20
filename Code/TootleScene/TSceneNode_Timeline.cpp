@@ -173,7 +173,7 @@ void TSceneNode_Timeline::OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRender
 	if ( m_pTimelineInstance )
 		m_pTimelineInstance->MapNodeRef("RNode", GetRenderNodeRef());
 
-	TSceneNode_Object::OnRenderNodeAdded(pRenderNode);
+	TSceneNode_Object::OnRenderNodeAdded(*pRenderNode);
 }
 
 

@@ -6,10 +6,21 @@
  *  Copyright 2010 __MyCompanyName__. All rights reserved.
  *
  */
-#if defined(TL_ENABLE_WX)
+#if !defined(TL_ENABLE_WX)
+#error Should only be built in wx only build
+#endif // TL_ENABLE_WX
 
 #include "Tree.h"
 #include "Window.h"
+
+
+
+TPtr<TLGui::TTree> TLGui::CreateTree(TLGui::TWindow& Parent,TRefRef Ref,TPtr<TLGui::TTreeItem>& pRootItem,const TArray<TRef>& Columns)
+{
+	TPtr<TLGui::TTree> pControl = new wx::Tree( Parent, Ref, pRootItem, Columns );
+	return pControl;
+}
+
 
 
 
@@ -237,5 +248,3 @@ unsigned int wx::TreeDataModel::GetChildren( const wxDataViewItem &item, wxDataV
 	return children.size();
 }
 
-
-#endif // TL_ENABLE_WX

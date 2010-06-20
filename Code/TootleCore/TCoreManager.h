@@ -16,7 +16,6 @@ namespace TLCore
 };
 
 
-
 // Core manager class - monitors all other managers
 class TLCore::TCoreManager : public TManager, public TLMessaging::TMessageQueue
 {
@@ -113,7 +112,7 @@ private:
 	float						m_Debug_CurrentFrameTimePerSecond;	//	time counter
 
 	TPtrArray<TManager>			m_Managers;				// Array of TPtr's to managers
-	TArray< TPtr<TManager>* >	m_ManagerPointers;		// Array of pointers to the global TPtr's to managers
+	TPointerArray<TPtr<TManager> >	m_ManagerPointers;		// Array of pointers to the global TPtr's to managers
 
 	TKeyArray<TRef, float>		m_aTimeStepModifiers;	// Game mechanics time step modifier - allows the game to sped up/slowed down/paused etc
 	

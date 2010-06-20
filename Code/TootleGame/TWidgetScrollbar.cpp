@@ -82,7 +82,7 @@ SyncBool TLGui::TWidgetScrollbar::ProcessClick(TClick& Click,TLRender::TScreen& 
 		return SyncFalse;
 
 	//	get render node for the scroll bar
-	TPtr<TLRender::TRenderNode>& pScrollBarRenderNode = TLRender::g_pRendergraph->FindNode( m_ScrollBarRenderNode );
+	TLRender::TRenderNode* pScrollBarRenderNode = TLRender::g_pRendergraph->FindNode( m_ScrollBarRenderNode );
 	if ( !pScrollBarRenderNode )
 		return SyncWait;
 
@@ -202,11 +202,11 @@ void TLGui::TWidgetScrollbar::UpdateSliderPos()
 	//	this is a kind of reverse of the ProcessClick code... get the box, then find point along it, and turn it 3D
 
 	//	get render node for the slider and scroll bar
-	TPtr<TLRender::TRenderNode>& pSliderRenderNode = TLRender::g_pRendergraph->FindNode( m_SliderRenderNode );
+	TLRender::TRenderNode* pSliderRenderNode = TLRender::g_pRendergraph->FindNode( m_SliderRenderNode );
 	if ( !pSliderRenderNode )
 		return;
 
-	TPtr<TLRender::TRenderNode>& pScrollBarRenderNode = TLRender::g_pRendergraph->FindNode( m_ScrollBarRenderNode );
+	TLRender::TRenderNode* pScrollBarRenderNode = TLRender::g_pRendergraph->FindNode( m_ScrollBarRenderNode );
 	if ( !pScrollBarRenderNode )
 		return;
 

@@ -10,12 +10,42 @@
 #include "MacGui.h"
 #include "MacApp.h"
 #include "MacWindow.h"
+#include "MacOpenglCanvas.h"
+#include "../TTree.h"
 #include <TootleCore/Mac/MacString.h>
 
 //	needed to get desktop size
 #import <Foundation/Foundation.h>
 #import <Appkit/Appkit.h>
 
+
+
+//------------------------------------------------------
+//	
+//------------------------------------------------------
+TPtr<TLGui::TWindow> TLGui::CreateGuiWindow(TRefRef Ref)
+{
+	TPtr<TLGui::TWindow> pWindow = new TLGui::Platform::Window( Ref );
+	return pWindow;
+}
+
+
+
+TPtr<TLGui::TTree> TLGui::CreateTree(TLGui::TWindow& Parent,TRefRef Ref,TPtr<TLGui::TTreeItem>& pRootItem,const TArray<TRef>& Columns)
+{
+	TPtr<TLGui::TTree> pControl;
+	return pControl;
+}
+
+
+//------------------------------------------------------
+//	
+//------------------------------------------------------
+TPtr<TLGui::TOpenglCanvas> TLGui::CreateOpenglCanvas(TWindow& Parent,TRefRef Ref)
+{
+	TPtr<TLGui::TOpenglCanvas> pControl = new TLGui::Platform::OpenglCanvas( Parent, Ref );
+	return pControl;
+}
 
 
 
@@ -42,10 +72,6 @@ SyncBool TLGui::Platform::Shutdown()
 //---------------------------------------------------------------
 int2 TLGui::Platform::GetScreenMousePosition(TLGui::TWindow& Window,u8 MouseIndex)
 {
-#if defined(TL_ENABLE_WX)
-	return wx::GetScreenMousePosition( Window );
-#else	
-
 #define USE_MOUSELOC_OUTSIDE_OF_EVENT	//	this IS defined in macinput.mm
 	
 	TLGui::Platform::Window& PlatformWindow = static_cast<TLGui::Platform::Window&>( Window );
@@ -68,7 +94,6 @@ int2 TLGui::Platform::GetScreenMousePosition(TLGui::TWindow& Window,u8 MouseInde
 	TLDebug_Print( Debug_String );
 	
 	return int2( (int)pos.x, (int)pos.y );
-#endif // TL_ENABLE_WX
 }
 
 
@@ -83,8 +108,8 @@ void TLGui::Platform::GetDesktopSize(Type4<s32>& DesktopSize)
 	
 	NSRect screenRect = [[NSScreen mainScreen] frame];
 	
-	DesktopSize.Width() = screenRect.size.width;
-	DesktopSize.Height() = screenRect.size.height;
+	DesktopSize.Width() = (int)screenRect.size.width;
+	DesktopSize.Height() = (int)screenRect.size.height;
 }
 
 

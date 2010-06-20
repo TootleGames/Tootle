@@ -12,7 +12,7 @@
 
 NSString* TLString::ConvertToUnicharString(const TString& String)
 {	
-	TArray<unichar> unichararray;
+	THeapArray<unichar> unichararray;
 	
 	// Build array of unichar characters from the string
 	u32 StringLength = String.GetLength();

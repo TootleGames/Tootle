@@ -31,3 +31,7 @@ GENERATE_PKGINFO_FILE = NO
 // Position independent code is only really need for shared (dynamic) libraries
 // See http://developer.apple.com/mac/library/documentation/Performance/Conceptual/CodeFootprint/Articles/CompilerOptions.html#//apple_ref/doc/uid/20001861-CJBJFIDD
 GCC_DYNAMIC_NO_PIC = NO
+
+//	this is set in project and lib configs atm...
+DEAD_CODE_STRIPPING = NO
+

@@ -382,8 +382,8 @@ void releaseData(void *info, const void *data, size_t dataSize)
 -(NSImage*)createImageFromView 
 {
 	NSRect rect = [[NSScreen mainScreen] frame];
-	int width = rect.size.width;
-	int height = rect.size.height;
+	int width = (int)rect.size.width;
+	int height = (int)rect.size.height;
 	
 	NSInteger myDataLength = width * height * 4;
 	GLubyte *buffer = (GLubyte *) malloc(myDataLength);

@@ -45,20 +45,14 @@
 -------------------------------------------------------*/
 #pragma once
 #include "TLMemory.h"
-#include "TLDebug.h"
 #include "TString.h"
+#include "TLDebug.h"
 
 //#include "TSmallObject.h"
 //#define TEST_COUNTER_USING_SOA
 
 template <typename TYPE>
 class TPtr;
-
-
-namespace TLDebug
-{
-	Bool				Break(const TString& String,const char* pSourceFunction);
-}
 
 
 namespace TLPtr
@@ -121,9 +115,17 @@ public:
 	FORCEINLINE TPtr<TYPE>&		operator=(TYPE* pObject)					{	AssignToObject( static_cast<TYPE*>(pObject) );	return *this;	}	//	assign this pointer to an object
 
 	template<typename OBJTYPE>
+	FORCEINLINE Bool			operator<(const OBJTYPE& Object) const		{	const TYPE* pObjectA = GetObjectPointer();	return pObjectA ? (*pObjectA) < Object : false;	}	//	gr: oddly, this doesn't work if we use m_pObject directly... only using GetObjectPointer ? (maybe the explicit const pointer use is what removes the ambiguity)
+	FORCEINLINE Bool			operator<(const TPtr<TYPE>& Ptr) const		{	const TYPE* pObjectA = GetObjectPointer();	const TYPE* pObjectB = Ptr;	return (pObjectA && pObjectB) ? (*pObjectA) < (*pObjectB) : false;	}
+/*
+	template<typename MATCHTYPE>
+	FORCEINLINE Bool			operator<(const TSorter<TYPE,MATCHTYPE>& That) const	{	const TYPE* pObjectA = GetObjectPointer();	return pObjectA ? (*pObjectA) == That : false;	}
+*/	template<typename OBJTYPE>
 	FORCEINLINE Bool			operator==(const OBJTYPE& Object) const		{	const TYPE* pObjectA = GetObjectPointer();	return pObjectA ? (*pObjectA) == Object : FALSE;	}	//	gr: oddly, this doesn't work if we use m_pObject directly... only using GetObjectPointer ? (maybe the explicit const pointer use is what removes the ambiguity)
 	template<typename OBJTYPE>
 	FORCEINLINE Bool			operator==(const TPtr<OBJTYPE>& Ptr) const	{	return m_pObject == Ptr.GetObjectPointer<TYPE>();	}
+	template<typename OBJTYPE>
+	FORCEINLINE Bool			operator==(const TPtr<OBJTYPE>* pPtr) const	{	return pPtr ? m_pObject == pPtr->GetObjectPointer<TYPE>() : NULL;	}
 	FORCEINLINE Bool			operator==(const TPtr<TYPE>& Ptr) const		{	return m_pObject == Ptr.GetObjectPointer();	}
 	FORCEINLINE Bool			operator==(const TYPE* pObject) const		{	return m_pObject == pObject;	}
 
@@ -175,7 +177,7 @@ FORCEINLINE void TPtr<TYPE>::AssignToObject(TYPE* pObject)
 
 	if ( m_pCounter || m_pObject )
 	{
-		TLDebug_Break( TString("Unexpected TPtr counter/object") );
+		TLDebug_Break("Unexpected TPtr counter/object");
 	}
 
 	//	nothing to assign to
@@ -220,7 +222,7 @@ FORCEINLINE void TPtr<TYPE>::AssignToPtr(const TPtr<OBJTYPE>& Ptr)
 	//	cast failed, break and static cast if we continue
 	if ( !pConstObject )
 	{
-		if ( TLDebug::Break("Failed to cast pointer type to other type", __FUNCTION__ ) )
+		if ( TLDebug_Break("Failed to cast pointer type to other type") )
 		{
 			pConstObject = static_cast<const TYPE*>( Ptr.GetObjectPointer() );
 		}

@@ -149,7 +149,7 @@ TPtr<TLMaths::TShape> TLMaths::TShapeSphere::Transform(const TLMaths::TTransform
 	TLMaths::TSphere NewSphere( m_Shape );
 	NewSphere.Transform( Transform );
 
-	TLDebug_CheckFloat( m_Sphere.GetPos() );
+	TLDebug_CheckFloat( NewSphere.GetPos() );
 
 	//	re-use old shape
 	if ( pOldShape && pOldShape.GetObjectPointer() != this && pOldShape->GetShapeType() == TLMaths::TSphere::GetTypeRef() )
@@ -176,7 +176,7 @@ TPtr<TLMaths::TShape> TLMaths::TShapeSphere::Untransform(const TLMaths::TTransfo
 	TLMaths::TSphere NewSphere( m_Shape );
 	NewSphere.Untransform( Transform );
 
-	TLDebug_CheckFloat( m_Sphere.GetPos() );
+	TLDebug_CheckFloat( NewSphere.GetPos() );
 
 	//	re-use old shape
 	if ( pOldShape && pOldShape.GetObjectPointer() != this && pOldShape->GetShapeType() == TLMaths::TSphere::GetTypeRef() )

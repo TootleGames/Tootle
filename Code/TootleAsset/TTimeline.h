@@ -85,7 +85,7 @@ public:
 	FORCEINLINE void				SetNodeGraphRef(TRefRef NodeGraphRef)	{ m_NodeGraphRef = NodeGraphRef; }
 	FORCEINLINE TRefRef				GetNodeGraphRef()				const	{ return m_NodeGraphRef; }
 
-	TArray<TTimelineCommand>&	GetCommands()			{ return m_Commands; }
+	TArray<TTimelineCommand>&		GetCommands()			{ return m_Commands; }
 
 	SyncBool						ImportData(TBinaryTree& Data);	//	load asset data out binary data
 	SyncBool						ExportData(TBinaryTree& Data);	//	save asset data to binary data
@@ -94,7 +94,7 @@ private:
 	TRef							m_NodeRef;			// Node associated with the commands
 	TRef							m_NodeGraphRef;		// Node graph to use 
 
-	TArray<TTimelineCommand>				m_Commands;			// Array of command messages
+	THeapArray<TTimelineCommand>	m_Commands;			// Array of command messages
 };
 
 

@@ -15,9 +15,8 @@ namespace TLMemory
 {
 	//static TMemorySystem	g_sMemorySystem;		// global static memory system
 
-	TLArray::SortResult	SortMemoryTracks(const TMemoryTrack& a,const TMemoryTrack& b,const void* pTestMemoryTrack);	//	sort memory trackers
 	TMemoryTrack*		FindMemoryTrack(void* pAddress);			//	find a memory tracker from an address
-	Bool				RemoveMemoryTrack(u32 Address);			//	remove a memory tracker from the list by address
+	Bool				RemoveMemoryTrack(u32 Address);				//	remove a memory tracker from the list by address
 	Bool				RemoveMemoryTrack(void* pAddress)			{	return RemoveMemoryTrack( TLCore::PointerToInteger( pAddress ) );	}
 	Bool				RemoveMemoryTrack(TMemoryTrack*& pTrack)	{	if ( !RemoveMemoryTrack( pTrack->m_Address ) )	return FALSE;	pTrack = NULL;	return TRUE;	}
 
@@ -67,17 +66,6 @@ TLMemory::TMemorySystem::~TMemorySystem()
 
 	ms_pMemorySystem = NULL;
 	m_bDestroyed = TRUE;
-}
-
-
-//------------------------------------------------------
-//	sort memory trackers
-//------------------------------------------------------
-TLArray::SortResult TLMemory::SortMemoryTracks(const TMemoryTrack& a,const TMemoryTrack& b,const void* pTestAddress)
-{
-	const u32& TestA = a.m_Address;
-	const u32& TestB = pTestAddress ? *(const u32*)pTestAddress : b.m_Address;
-	return (TestA < TestB) ? TLArray::IsLess : (TLArray::SortResult)(TestA == TestB);
 }
 
 

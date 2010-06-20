@@ -130,7 +130,7 @@ private:
 private:
 	TPtr<TLGame::TGame>		m_pGame;				//	The application's game object
 	
-	TArray<TRef>			m_FileSystemRefs;
+	THeapArray<TRef>		m_FileSystemRefs;
 	
 	TBinaryTree				m_LevelData;			//	Level specific information
 	TOptions				m_Options;				//	Global & app specific preferences
@@ -177,7 +177,7 @@ private:
 	TRef									m_LogoRenderNode;	//	
 	TPtr<TLAnimation::TTimelineInstance>	m_pTimelineInstance;
 	TRef									m_RenderTarget;		//	our render target
-	TArray<TTypedRef>						m_PreloadFiles;		//	waiting for these files to async load
+	THeapArray<TTypedRef>					m_PreloadFiles;		//	waiting for these files to async load
 	Bool									m_SkipBootup;		//	skip bootup if we failed to create rendernode/screen/logo etc
 };
 

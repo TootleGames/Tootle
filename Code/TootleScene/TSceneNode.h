@@ -35,6 +35,7 @@ public:
 	// Saves u having to either add unnecessary properties to base classes or
 	// the use of RTTI IsKindOf etc
 	virtual Bool		HasTransform()			{	return FALSE; }
+	Bool				HasZone()				{	return HasTransform(); }
 	virtual Bool		HasRender()				{	return FALSE; }
 	virtual Bool		HasPhysics()			{	return FALSE; }
 
@@ -43,6 +44,12 @@ public:
 	//		if a node HasRender(), I still can't assume it's an Object node...
 	virtual TRef		GetPhysicsNodeRef() const		{	return TRef();	}
 	virtual TRef		GetRenderNodeRef() const		{	return TRef();	}
+
+	FORCEINLINE Bool			operator<(TRefRef NodeRef) const			{	return GetNodeRef() < NodeRef;	}
+	FORCEINLINE Bool			operator==(TRefRef NodeRef) const			{	return GetNodeRef() == NodeRef;	}
+//	FORCEINLINE Bool		operator==(const TSceneNode& That) const	{	return GetNodeRef() == That.GetNodeRef();	}
+	FORCEINLINE Bool		operator<(const TSorter<TSceneNode*,TRef>& That) const	{	return GetNodeRef() < That.This()->GetNodeRef();	}
+	FORCEINLINE Bool		operator<(const TSorter<TSceneNode,TRef>& That) const	{	return GetNodeRef() < That->GetNodeRef();	}
 
 protected:
 
@@ -62,3 +69,4 @@ private:
 };
 
 
+FORCEINLINE bool operator==(const TLScene::TSceneNode* pNode,const TRef& Ref)	{	return pNode ? (*pNode == Ref) : false;	}

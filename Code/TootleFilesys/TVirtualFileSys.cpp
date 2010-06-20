@@ -7,6 +7,8 @@
 namespace TLDebugFile
 {
 	SyncBool		LoadDebugFile_Asset(TPtr<TLFileSys::TFile>& pFile,TPtr<TLAsset::TAsset> pAsset);	//	create a cube mesh
+
+	//	debug assets
 	SyncBool		LoadDebugFile_MeshCube(TPtr<TLFileSys::TFile>& pFile);		//	create a cube mesh
 	SyncBool		LoadDebugFile_MeshQuad(TPtr<TLFileSys::TFile>& pFile);		//	create a cube mesh
 	SyncBool		LoadDebugFile_MeshSphere(TPtr<TLFileSys::TFile>& pFile);	//	create a cube mesh
@@ -35,13 +37,25 @@ SyncBool TLFileSys::TVirtualFileSys::LoadFileList()
 	//	first run create the debug virtual assets
 	if ( !m_CreatedDebugFiles )
 	{
-		CreateFileInstance("d_sphere.asset");
-		CreateFileInstance("d_cube.asset");
-		CreateFileInstance("d_quad.asset");
-		CreateFileInstance("d_cross.asset");
-		CreateFileInstance("d_circle.asset");
-		CreateFileInstance("d_Texture.asset");
-	
+		//	todo: make _DEBUG only
+		//	gr: preload these files so we know their types and they don't show up as unknown export types
+		TPtrArray<TFile> Files;
+		Files.Add( CreateFileInstance("d_sphere.asset") );
+		Files.Add( CreateFileInstance("d_cube.asset") );
+		Files.Add( CreateFileInstance("d_quad.asset") );
+		Files.Add( CreateFileInstance("d_cross.asset") );
+		Files.Add( CreateFileInstance("d_circle.asset") );
+		Files.Add( CreateFileInstance("d_Texture.asset") );
+
+		for ( u32 f=0;	f<Files.GetSize();	f++ )
+		{
+			TPtr<TFile>& pFile = Files[f];
+			if ( !pFile )
+				continue;
+
+			LoadFile( pFile );
+		}
+		
 		m_CreatedDebugFiles = true;
 		Changes |= true;
 	}
@@ -58,6 +72,9 @@ SyncBool TLFileSys::TVirtualFileSys::LoadFileList()
 //-------------------------------------------------------
 SyncBool TLFileSys::TVirtualFileSys::LoadFile(TPtr<TLFileSys::TFile>& pFile)
 {
+	if ( !pFile )
+		return SyncFalse;
+	
 	//	if already loaded and not out of date, skip the load
 	if ( pFile->IsLoaded() == SyncTrue && !pFile->IsOutOfDate() )
 	{
@@ -106,6 +123,9 @@ SyncBool TLDebugFile::LoadDebugFile_Asset(TPtr<TLFileSys::TFile>& pFile,TPtr<TLA
 	SyncBool ExportResult = pAsset->Export( pAssetFile );
 	if ( ExportResult != SyncTrue )
 		return ExportResult;
+
+	THeapArray<TRef> Types;
+	pAssetFile->GetSupportedExportAssetTypes( Types );
 
 	//	need to export the asset file data to a normal file
 	ExportResult = pAssetFile->Export();

@@ -107,7 +107,7 @@ private:
 	static void				OutsetPoint(u32 Index,float Distance,TArray<float3>& NewPoints,const TArray<float3>& OriginalPoints,Bool ContourIsClockwise);			//	move point in/out with outset
 	
 private:
-	TArray<float3>			m_Points;
+	THeapArray<float3>		m_Points;
 	Bool					m_IsClockwise;
 };
 

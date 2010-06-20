@@ -113,7 +113,7 @@ protected:
 
 	SyncBool				InitDevices();
 
-	TPtr<TAudioNode_Music>	GetMusicNode()	{ return FindNode(m_MusicRef); }
+	TAudioNode_Music*		GetMusicNode()	{ return static_cast<TAudioNode_Music*>( FindNode(m_MusicRef) ); }
 
 	void					OnInputDeviceAdded(TRefRef DeviceRef,TRefRef DeviceTypeRef);
 	void					MapActions_Keyboard(TRefRef DeviceRef, TPtr<TLUser::TUser> pUser);
@@ -163,6 +163,7 @@ private:
 	Bool					m_bMute;			// Audio system muted - all audio not audible
 };
 
+TLGraph_DeclareGraph(TLAudio::TAudioNode);
 
 FORCEINLINE void TLAudio::TAudiograph::SetMute(Bool bMute)			
 { 
@@ -232,7 +233,7 @@ FORCEINLINE void TLAudio::TAudiograph::SetMusicVolume(float fVolume)
 //----------------------------------------------------------
 //	Generic audio node factory
 //----------------------------------------------------------
-class TLAudio::TAudioNodeFactory : public TClassFactory<TAudioNode,FALSE>
+class TLAudio::TAudioNodeFactory : public TNodeFactory<TAudioNode>
 {
 public:
 	virtual TAudioNode*	CreateObject(TRefRef InstanceRef,TRefRef TypeRef);

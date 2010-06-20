@@ -166,7 +166,7 @@ protected:
 
 private:
 	TRef						m_UserRef;
-	TArray<TClick>				m_QueuedClicks;			//	action's we had to wait for
+	THeapArray<TClick>			m_QueuedClicks;			//	action's we had to wait for
 	Bool						m_Enabled;				//	widget is/isn't enabled
 };
 

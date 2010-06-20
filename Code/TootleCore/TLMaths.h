@@ -162,6 +162,7 @@ class TLMaths::TAngle
 {
 public:
 	TAngle(float AngDegrees=0.f) : m_AngleDegrees (AngDegrees)	{}
+	TAngle(const float2& Direction) : m_AngleDegrees (0)	{	SetAngle(Direction);	}
 	
 	FORCEINLINE float	GetDegrees() const						{	return m_AngleDegrees;	}
 	FORCEINLINE float	GetInverseDegrees() const				{	return -m_AngleDegrees;	}

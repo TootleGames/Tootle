@@ -6,11 +6,6 @@
 #pragma once
 #include "../TApp.h"
 
-
-
-
-#if !defined(TL_ENABLE_WX)
-
 #import <Cocoa/Cocoa.h>
 
 
@@ -49,8 +44,6 @@ public:
 	SyncBool		Shutdown()		{	return SyncTrue;	}
 };
 
-
-#endif // !TL_ENABLE_WX
 
 
 

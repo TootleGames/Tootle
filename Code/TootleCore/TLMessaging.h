@@ -37,7 +37,7 @@ private:
 	FORCEINLINE void		DoProcessMessageQueue();			// Main message queue processing
 
 protected:
-	TArray<TLMessaging::TMessage>		m_MessageQueue;
+	THeapArray<TLMessaging::TMessage>		m_MessageQueue;
 };
 
 

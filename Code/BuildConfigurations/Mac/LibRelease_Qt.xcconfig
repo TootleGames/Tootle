@@ -1,0 +1,16 @@
+//
+//  TootleDebug.xcconfig
+//  
+//
+//  Created by Duane Bradbury on 18/12/2008.
+//  Copyright 2008 Tootle. All rights reserved.
+//
+#include "MacRelease.xcconfig"
+#include "Lib.xcconfig"
+#include "Qt.xcconfig"
+
+
+GCC_PREPROCESSOR_DEFINITIONS = $(MAC_RELEASE_DEFINITIONS) $(LIB_DEFINITIONS) $(QT_DEFINITIONS)
+OTHER_CPLUSPLUSFLAGS = $(MAC_RELEASE_CPLUSPLUSFLAGS) $(LIB_CPLUSPLUSFLAGS) $(QT_CPLUSPLUSFLAGS)
+OTHER_LDFLAGS = $(MAC_RELEASE_LDFLAGS) $(LIB_LDFLAGS) $(QT_LDFLAGS)
+

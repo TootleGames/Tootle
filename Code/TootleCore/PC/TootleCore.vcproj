@@ -388,58 +388,6 @@
 		<Filter
 			Name="Containers"
 			>
-			<File
-				RelativePath="..\TArray.h"
-				>
-			</File>
-			<File
-				RelativePath="..\TArray.inc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\TBinary.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\TBinary.h"
-				>
-			</File>
-			<File
-				RelativePath="..\TBinaryTree.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\TBinaryTree.h"
-				>
-			</File>
-			<File
-				RelativePath="..\TFixedArray.h"
-				>
-			</File>
-			<File
-				RelativePath="..\TGraphBase.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\TGraphBase.h"
-				>
-			</File>
-			<File
-				RelativePath="..\TKeyArray.h"
-				>
-			</File>
-			<File
-				RelativePath="..\TLArray.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\TLGraph.h"
-				>
-			</File>
-			<File
-				RelativePath="..\TPtrArray.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="IPod Source Files"
@@ -1102,6 +1050,14 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath="..\TArray.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TArray.inc.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TArrayAllocator.h"
 			>
 		</File>
@@ -1115,6 +1071,22 @@
 		</File>
 		<File
 			RelativePath="..\TAxisAngle.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TBinary.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TBinary.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TBinaryTree.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TBinaryTree.h"
 			>
 		</File>
 		<File
@@ -1138,11 +1110,31 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TFixedArray.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TFlags.h"
 			>
 		</File>
 		<File
+			RelativePath="..\TGraphBase.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TGraphBase.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TKeyArray.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TLanguage.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TLArray.cpp"
 			>
 		</File>
 		<File
@@ -1159,6 +1151,10 @@
 		</File>
 		<File
 			RelativePath="..\TLDebug.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TLGraph.h"
 			>
 		</File>
 		<File
@@ -1227,6 +1223,10 @@
 		</File>
 		<File
 			RelativePath="..\TPtr.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TPtrArray.h"
 			>
 		</File>
 		<File

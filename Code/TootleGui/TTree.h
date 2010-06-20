@@ -12,12 +12,12 @@
 #include <TootleCore/TLGraph.h>
 
 
+
 namespace TLGui
 {
 	class TTree;
 	class TTreeItem;
 };
-
 
 //-----------------------------------------------
 //	overload this for your own virtual item functionality

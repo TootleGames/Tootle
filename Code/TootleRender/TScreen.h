@@ -104,8 +104,7 @@ protected:
 	void							CreateDebugRenderTarget(TRefRef FontRef=TRef("FDebug"));
 
 protected:
-	TPtrArray<TRenderTarget>		m_RenderTargets;			//	list of active render targets
-	TPtrArray<TRenderTarget, TLPtrArray::SortPolicy_TPtrArray<TRenderTarget> >		m_RenderTargetsZOrdered;	//	render targets sorted by depth
+	TPtrArray<TRenderTarget,4,TSortPolicyPtrSorted<TRenderTarget,u8> >		m_RenderTargets;	//	render targets sorted by depth
 	TPtrArray<TRenderTarget>		m_ShutdownRenderTargets;	//	list of render targets we're destroying
 	Bool							m_HasShutdown;				//	
 	TRef							m_Ref;						//	reference to screen

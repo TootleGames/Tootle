@@ -7,28 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BF05BBCC112BEC3A009D5085 /* MacGui.h in Headers */ = {isa = PBXBuildFile; fileRef = BF05BBCA112BEC3A009D5085 /* MacGui.h */; };
-		BF05BBCD112BEC3A009D5085 /* MacGui.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF05BBCB112BEC3A009D5085 /* MacGui.mm */; };
-		BF05BBF9112BED5B009D5085 /* MacView.h in Headers */ = {isa = PBXBuildFile; fileRef = BF05BBE9112BED5B009D5085 /* MacView.h */; };
-		BF05BBFA112BED5B009D5085 /* MacView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF05BBEA112BED5B009D5085 /* MacView.mm */; };
-		BF05BBFD112BED5B009D5085 /* MacWindowDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BF05BBED112BED5B009D5085 /* MacWindowDelegate.h */; };
-		BF05BBFE112BED5B009D5085 /* MacWindowDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF05BBEE112BED5B009D5085 /* MacWindowDelegate.mm */; };
-		BF05BC56112C8781009D5085 /* MacOpenglCanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = BF05BC54112C8781009D5085 /* MacOpenglCanvas.h */; };
-		BF05BC57112C8781009D5085 /* MacOpenglCanvas.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF05BC55112C8781009D5085 /* MacOpenglCanvas.mm */; };
-		BF44164E1153C83B000162DD /* MacApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF44164C1153C83B000162DD /* MacApp.mm */; };
-		BF44164F1153C83B000162DD /* MacApp.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44164D1153C83B000162DD /* MacApp.h */; };
+		BF1A0585119C8B030099A0EB /* QtCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1A0584119C8B030099A0EB /* QtCore.framework */; };
+		BF1A0587119C8B030099A0EB /* QtGui.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1A0586119C8B030099A0EB /* QtGui.framework */; };
+		BF1A0589119C8B030099A0EB /* QtOpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1A0588119C8B030099A0EB /* QtOpenGL.framework */; };
+		BF1A0C9A119DC3560099A0EB /* MacApp.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44164D1153C83B000162DD /* MacApp.h */; };
+		BF1A0C9B119DC3570099A0EB /* MacApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF44164C1153C83B000162DD /* MacApp.mm */; };
+		BF1A0C9C119DC3570099A0EB /* MacGui.h in Headers */ = {isa = PBXBuildFile; fileRef = BF05BBCA112BEC3A009D5085 /* MacGui.h */; };
+		BF1A0C9D119DC3580099A0EB /* MacOpenglCanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = BF05BC54112C8781009D5085 /* MacOpenglCanvas.h */; };
+		BF1A0C9E119DC3580099A0EB /* MacGui.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF05BBCB112BEC3A009D5085 /* MacGui.mm */; };
+		BF1A0C9F119DC3590099A0EB /* MacOpenglCanvas.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF05BC55112C8781009D5085 /* MacOpenglCanvas.mm */; };
+		BF1A0CA0119DC3590099A0EB /* MacView.h in Headers */ = {isa = PBXBuildFile; fileRef = BF05BBE9112BED5B009D5085 /* MacView.h */; };
+		BF1A0CA1119DC35A0099A0EB /* MacView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF05BBEA112BED5B009D5085 /* MacView.mm */; };
+		BF1A0CA2119DC35A0099A0EB /* MacWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = BFD2732C10F4E8D8000083A0 /* MacWindow.h */; };
+		BF1A0CA3119DC35B0099A0EB /* MacWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = BFD2732D10F4E8D8000083A0 /* MacWindow.mm */; };
+		BF1A0CA4119DC35B0099A0EB /* MacWindowDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BF05BBED112BED5B009D5085 /* MacWindowDelegate.h */; };
+		BF1A0CA5119DC35C0099A0EB /* MacWindowDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF05BBEE112BED5B009D5085 /* MacWindowDelegate.mm */; };
 		BF4416F81153CDDA000162DD /* TApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF4416E01153CDDA000162DD /* TApp.cpp */; };
 		BF4416F91153CDDA000162DD /* TApp.h in Headers */ = {isa = PBXBuildFile; fileRef = BF4416E11153CDDA000162DD /* TApp.h */; };
-		BF5715241116DA1800767AD9 /* OpenglCanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF875A2410FF6DE0002C562F /* OpenglCanvas.cpp */; };
-		BF5715251116DA1C00767AD9 /* TLWx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF4E006B1100BA8300B19FDE /* TLWx.cpp */; };
-		BF5715261116DA1C00767AD9 /* OpenglCanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = BF875A2310FF6DE0002C562F /* OpenglCanvas.h */; };
-		BF5715271116DA1D00767AD9 /* TLWx.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8759A110FF4863002C562F /* TLWx.h */; };
-		BF5715281116DA1E00767AD9 /* Tree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFB82D7D111180FE00A5E5F3 /* Tree.cpp */; };
-		BF5715291116DA1F00767AD9 /* Tree.h in Headers */ = {isa = PBXBuildFile; fileRef = BFB82D7C111180FE00A5E5F3 /* Tree.h */; };
-		BF57152A1116DA1F00767AD9 /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF8759C410FF62C5002C562F /* Window.cpp */; };
-		BF57152B1116DA2000767AD9 /* Window.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8759C310FF62C5002C562F /* Window.h */; };
-		BF57152C1116DA2400767AD9 /* MacWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = BFD2732C10F4E8D8000083A0 /* MacWindow.h */; };
-		BF57152D1116DA2500767AD9 /* MacWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = BFD2732D10F4E8D8000083A0 /* MacWindow.mm */; };
 		BF8759BC10FF5C06002C562F /* TWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8759BA10FF5C06002C562F /* TWindow.h */; };
 		BF8759BD10FF5C06002C562F /* TWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF8759BB10FF5C06002C562F /* TWindow.cpp */; };
 		BF8759C010FF6151002C562F /* TControl.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8759BE10FF6151002C562F /* TControl.h */; };
@@ -61,6 +56,31 @@
 		BF05BBEE112BED5B009D5085 /* MacWindowDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacWindowDelegate.mm; sourceTree = SOURCE_ROOT; };
 		BF05BC54112C8781009D5085 /* MacOpenglCanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacOpenglCanvas.h; sourceTree = SOURCE_ROOT; };
 		BF05BC55112C8781009D5085 /* MacOpenglCanvas.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacOpenglCanvas.mm; sourceTree = SOURCE_ROOT; };
+		BF1A0545119C884A0099A0EB /* App.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = App.cpp; sourceTree = "<group>"; };
+		BF1A0546119C884A0099A0EB /* App.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = App.h; sourceTree = "<group>"; };
+		BF1A0547119C884A0099A0EB /* OpenglCanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpenglCanvas.cpp; sourceTree = "<group>"; };
+		BF1A0548119C884A0099A0EB /* OpenglCanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenglCanvas.h; sourceTree = "<group>"; };
+		BF1A0549119C884A0099A0EB /* TLQt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TLQt.cpp; sourceTree = "<group>"; };
+		BF1A054A119C884A0099A0EB /* TLQt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TLQt.h; sourceTree = "<group>"; };
+		BF1A054B119C884A0099A0EB /* Tree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tree.cpp; sourceTree = "<group>"; };
+		BF1A054C119C884A0099A0EB /* Tree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tree.h; sourceTree = "<group>"; };
+		BF1A054D119C884A0099A0EB /* Window.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Window.cpp; sourceTree = "<group>"; };
+		BF1A054E119C884A0099A0EB /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
+		BF1A0584119C8B030099A0EB /* QtCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtCore.framework; path = /Library/Frameworks/QtCore.framework; sourceTree = "<absolute>"; };
+		BF1A0586119C8B030099A0EB /* QtGui.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtGui.framework; path = /Library/Frameworks/QtGui.framework; sourceTree = "<absolute>"; };
+		BF1A0588119C8B030099A0EB /* QtOpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtOpenGL.framework; path = /Library/Frameworks/QtOpenGL.framework; sourceTree = "<absolute>"; };
+		BF1A0CA8119DC38C0099A0EB /* IPodApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodApp.h; path = ../IPod/IPodApp.h; sourceTree = SOURCE_ROOT; };
+		BF1A0CA9119DC38C0099A0EB /* IPodApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodApp.mm; path = ../IPod/IPodApp.mm; sourceTree = SOURCE_ROOT; };
+		BF1A0CAA119DC38C0099A0EB /* IPodGui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodGui.h; path = ../IPod/IPodGui.h; sourceTree = SOURCE_ROOT; };
+		BF1A0CAB119DC38C0099A0EB /* IPodGui.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodGui.mm; path = ../IPod/IPodGui.mm; sourceTree = SOURCE_ROOT; };
+		BF1A0CAC119DC38C0099A0EB /* IPodOpenglCanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodOpenglCanvas.h; path = ../IPod/IPodOpenglCanvas.h; sourceTree = SOURCE_ROOT; };
+		BF1A0CAD119DC38C0099A0EB /* IPodOpenglCanvas.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodOpenglCanvas.mm; path = ../IPod/IPodOpenglCanvas.mm; sourceTree = SOURCE_ROOT; };
+		BF1A0CAE119DC38C0099A0EB /* IPodView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodView.h; path = ../IPod/IPodView.h; sourceTree = SOURCE_ROOT; };
+		BF1A0CAF119DC38C0099A0EB /* IPodView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodView.mm; path = ../IPod/IPodView.mm; sourceTree = SOURCE_ROOT; };
+		BF1A0CB0119DC38C0099A0EB /* IPodWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodWindow.h; path = ../IPod/IPodWindow.h; sourceTree = SOURCE_ROOT; };
+		BF1A0CB1119DC38C0099A0EB /* IPodWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodWindow.mm; path = ../IPod/IPodWindow.mm; sourceTree = SOURCE_ROOT; };
+		BF1A0CB2119DC38C0099A0EB /* IPodWindowDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodWindowDelegate.h; path = ../IPod/IPodWindowDelegate.h; sourceTree = SOURCE_ROOT; };
+		BF1A0CB3119DC38C0099A0EB /* IPodWindowDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodWindowDelegate.mm; path = ../IPod/IPodWindowDelegate.mm; sourceTree = SOURCE_ROOT; };
 		BF44164C1153C83B000162DD /* MacApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacApp.mm; sourceTree = SOURCE_ROOT; };
 		BF44164D1153C83B000162DD /* MacApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacApp.h; sourceTree = SOURCE_ROOT; };
 		BF4416CA1153CDDA000162DD /* PCApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCApp.cpp; path = ../PC/PCApp.cpp; sourceTree = SOURCE_ROOT; };
@@ -107,6 +127,13 @@
 		BF8ACAD711254F030087FAEC /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF8ACAD811254F030087FAEC /* LibRelease_wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease_wx.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease_wx.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF8ACAD911254F030087FAEC /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		BFA6F567119B61D900964036 /* MacSetup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacSetup.h; path = ../wxWidgets/MacSetup.h; sourceTree = SOURCE_ROOT; };
+		BFA6F568119B61F000964036 /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../BuildConfigurations; sourceTree = SOURCE_ROOT; };
+		BFA6F56D119B640E00964036 /* App.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = App.cpp; path = ../wxWidgets/App.cpp; sourceTree = SOURCE_ROOT; };
+		BFA6F56E119B640E00964036 /* App.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = App.h; path = ../wxWidgets/App.h; sourceTree = SOURCE_ROOT; };
+		BFA6F56F119B640E00964036 /* PCSetup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCSetup.h; path = ../wxWidgets/PCSetup.h; sourceTree = SOURCE_ROOT; };
+		BFA6F58F119C7E7200964036 /* LibDebug_Qt.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug_Qt.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug_Qt.xcconfig; sourceTree = SOURCE_ROOT; };
+		BFA6F590119C7E7200964036 /* LibRelease_Qt.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease_Qt.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease_Qt.xcconfig; sourceTree = SOURCE_ROOT; };
 		BFB82D7C111180FE00A5E5F3 /* Tree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tree.h; path = ../wxWidgets/Tree.h; sourceTree = SOURCE_ROOT; };
 		BFB82D7D111180FE00A5E5F3 /* Tree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tree.cpp; path = ../wxWidgets/Tree.cpp; sourceTree = SOURCE_ROOT; };
 		BFD2732C10F4E8D8000083A0 /* MacWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacWindow.h; sourceTree = SOURCE_ROOT; };
@@ -119,6 +146,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF1A0585119C8B030099A0EB /* QtCore.framework in Frameworks */,
+				BF1A0587119C8B030099A0EB /* QtGui.framework in Frameworks */,
+				BF1A0589119C8B030099A0EB /* QtOpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,11 +158,8 @@
 		8418ECF60F4DA63E00B956C9 = {
 			isa = PBXGroup;
 			children = (
-				BF4416C91153CDBD000162DD /* PC Source Files */,
 				BF5715DC111ABF8300767AD9 /* TootleCore.xcodeproj */,
 				8418F0260F4DB80A00B956C9 /* Build Configurations */,
-				BF8759A010FF4780002C562F /* wxWidgets Wrapper */,
-				BFD2732A10F4E867000083A0 /* Mac Source Files */,
 				8418F0250F4DB80400B956C9 /* Source Code */,
 				8418F0240F4DB7FC00B956C9 /* Frameworks */,
 				8418ED0E0F4DA70B00B956C9 /* Products */,
@@ -150,6 +177,9 @@
 		8418F0240F4DB7FC00B956C9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF1A0584119C8B030099A0EB /* QtCore.framework */,
+				BF1A0586119C8B030099A0EB /* QtGui.framework */,
+				BF1A0588119C8B030099A0EB /* QtOpenGL.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -157,6 +187,11 @@
 		8418F0250F4DB80400B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				BF1A0544119C884A0099A0EB /* Qt */,
+				BFD2732A10F4E867000083A0 /* Mac Source Files */,
+				BF8759A010FF4780002C562F /* wxWidgets Wrapper */,
+				BFA6F579119B66FE00964036 /* IPod Source Files */,
+				BF4416C91153CDBD000162DD /* PC Source Files */,
 				BF4416E01153CDDA000162DD /* TApp.cpp */,
 				BF4416E11153CDDA000162DD /* TApp.h */,
 				BFD2733A10F4E952000083A0 /* TLGui.h */,
@@ -176,6 +211,9 @@
 		8418F0260F4DB80A00B956C9 /* Build Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				BFA6F568119B61F000964036 /* BuildConfigurations */,
+				BFA6F58F119C7E7200964036 /* LibDebug_Qt.xcconfig */,
+				BFA6F590119C7E7200964036 /* LibRelease_Qt.xcconfig */,
 				BF8ACAD611254F030087FAEC /* LibDebug_wx.xcconfig */,
 				BF8ACAD711254F030087FAEC /* LibDebug.xcconfig */,
 				BF8ACAD811254F030087FAEC /* LibRelease_wx.xcconfig */,
@@ -183,6 +221,24 @@
 			);
 			name = "Build Configurations";
 			sourceTree = "<group>";
+		};
+		BF1A0544119C884A0099A0EB /* Qt */ = {
+			isa = PBXGroup;
+			children = (
+				BF1A0545119C884A0099A0EB /* App.cpp */,
+				BF1A0546119C884A0099A0EB /* App.h */,
+				BF1A0547119C884A0099A0EB /* OpenglCanvas.cpp */,
+				BF1A0548119C884A0099A0EB /* OpenglCanvas.h */,
+				BF1A0549119C884A0099A0EB /* TLQt.cpp */,
+				BF1A054A119C884A0099A0EB /* TLQt.h */,
+				BF1A054B119C884A0099A0EB /* Tree.cpp */,
+				BF1A054C119C884A0099A0EB /* Tree.h */,
+				BF1A054D119C884A0099A0EB /* Window.cpp */,
+				BF1A054E119C884A0099A0EB /* Window.h */,
+			);
+			name = Qt;
+			path = ../Qt;
+			sourceTree = SOURCE_ROOT;
 		};
 		BF4416C91153CDBD000162DD /* PC Source Files */ = {
 			isa = PBXGroup;
@@ -224,6 +280,10 @@
 		BF8759A010FF4780002C562F /* wxWidgets Wrapper */ = {
 			isa = PBXGroup;
 			children = (
+				BFA6F56D119B640E00964036 /* App.cpp */,
+				BFA6F56E119B640E00964036 /* App.h */,
+				BFA6F56F119B640E00964036 /* PCSetup.h */,
+				BFA6F567119B61D900964036 /* MacSetup.h */,
 				BF8759A110FF4863002C562F /* TLWx.h */,
 				BF8759C310FF62C5002C562F /* Window.h */,
 				BF8759C410FF62C5002C562F /* Window.cpp */,
@@ -234,6 +294,25 @@
 				BFB82D7D111180FE00A5E5F3 /* Tree.cpp */,
 			);
 			name = "wxWidgets Wrapper";
+			sourceTree = "<group>";
+		};
+		BFA6F579119B66FE00964036 /* IPod Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				BF1A0CA8119DC38C0099A0EB /* IPodApp.h */,
+				BF1A0CA9119DC38C0099A0EB /* IPodApp.mm */,
+				BF1A0CAA119DC38C0099A0EB /* IPodGui.h */,
+				BF1A0CAB119DC38C0099A0EB /* IPodGui.mm */,
+				BF1A0CAC119DC38C0099A0EB /* IPodOpenglCanvas.h */,
+				BF1A0CAD119DC38C0099A0EB /* IPodOpenglCanvas.mm */,
+				BF1A0CAE119DC38C0099A0EB /* IPodView.h */,
+				BF1A0CAF119DC38C0099A0EB /* IPodView.mm */,
+				BF1A0CB0119DC38C0099A0EB /* IPodWindow.h */,
+				BF1A0CB1119DC38C0099A0EB /* IPodWindow.mm */,
+				BF1A0CB2119DC38C0099A0EB /* IPodWindowDelegate.h */,
+				BF1A0CB3119DC38C0099A0EB /* IPodWindowDelegate.mm */,
+			);
+			name = "IPod Source Files";
 			sourceTree = "<group>";
 		};
 		BFD2732A10F4E867000083A0 /* Mac Source Files */ = {
@@ -267,17 +346,13 @@
 				BF8759C010FF6151002C562F /* TControl.h in Headers */,
 				BF8759FC10FF68C5002C562F /* TOpenglCanvas.h in Headers */,
 				BF89CE2311103E7A009C2101 /* TTree.h in Headers */,
-				BF5715261116DA1C00767AD9 /* OpenglCanvas.h in Headers */,
-				BF5715271116DA1D00767AD9 /* TLWx.h in Headers */,
-				BF5715291116DA1F00767AD9 /* Tree.h in Headers */,
-				BF57152B1116DA2000767AD9 /* Window.h in Headers */,
-				BF57152C1116DA2400767AD9 /* MacWindow.h in Headers */,
-				BF05BBCC112BEC3A009D5085 /* MacGui.h in Headers */,
-				BF05BBF9112BED5B009D5085 /* MacView.h in Headers */,
-				BF05BBFD112BED5B009D5085 /* MacWindowDelegate.h in Headers */,
-				BF05BC56112C8781009D5085 /* MacOpenglCanvas.h in Headers */,
-				BF44164F1153C83B000162DD /* MacApp.h in Headers */,
 				BF4416F91153CDDA000162DD /* TApp.h in Headers */,
+				BF1A0C9A119DC3560099A0EB /* MacApp.h in Headers */,
+				BF1A0C9C119DC3570099A0EB /* MacGui.h in Headers */,
+				BF1A0C9D119DC3580099A0EB /* MacOpenglCanvas.h in Headers */,
+				BF1A0CA0119DC3590099A0EB /* MacView.h in Headers */,
+				BF1A0CA2119DC35A0099A0EB /* MacWindow.h in Headers */,
+				BF1A0CA4119DC35B0099A0EB /* MacWindowDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,17 +420,13 @@
 				BF8759FD10FF68C5002C562F /* TOpenglCanvas.cpp in Sources */,
 				BF8759FF10FF6A92002C562F /* TLGui.cpp in Sources */,
 				BF89CE2411103E7A009C2101 /* TTree.cpp in Sources */,
-				BF5715241116DA1800767AD9 /* OpenglCanvas.cpp in Sources */,
-				BF5715251116DA1C00767AD9 /* TLWx.cpp in Sources */,
-				BF5715281116DA1E00767AD9 /* Tree.cpp in Sources */,
-				BF57152A1116DA1F00767AD9 /* Window.cpp in Sources */,
-				BF57152D1116DA2500767AD9 /* MacWindow.mm in Sources */,
-				BF05BBCD112BEC3A009D5085 /* MacGui.mm in Sources */,
-				BF05BBFA112BED5B009D5085 /* MacView.mm in Sources */,
-				BF05BBFE112BED5B009D5085 /* MacWindowDelegate.mm in Sources */,
-				BF05BC57112C8781009D5085 /* MacOpenglCanvas.mm in Sources */,
-				BF44164E1153C83B000162DD /* MacApp.mm in Sources */,
 				BF4416F81153CDDA000162DD /* TApp.cpp in Sources */,
+				BF1A0C9B119DC3570099A0EB /* MacApp.mm in Sources */,
+				BF1A0C9E119DC3580099A0EB /* MacGui.mm in Sources */,
+				BF1A0C9F119DC3590099A0EB /* MacOpenglCanvas.mm in Sources */,
+				BF1A0CA1119DC35A0099A0EB /* MacView.mm in Sources */,
+				BF1A0CA3119DC35B0099A0EB /* MacWindow.mm in Sources */,
+				BF1A0CA5119DC35C0099A0EB /* MacWindowDelegate.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -366,23 +437,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BF8ACAD711254F030087FAEC /* LibDebug.xcconfig */;
 			buildSettings = {
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(WX_CPLUSPLUSFLAGS)",
-					"$(OTHER_CPLUSPLUSFLAGS)",
-					"$(OTHER_CFLAGS)",
-				);
 			};
 			name = Debug;
 		};
 		8418ECFA0F4DA63E00B956C9 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BF8ACAD911254F030087FAEC /* LibRelease.xcconfig */;
+			baseConfigurationReference = BFA6F590119C7E7200964036 /* LibRelease_Qt.xcconfig */;
 			buildSettings = {
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(WX_CPLUSPLUSFLAGS)",
-					"$(OTHER_CPLUSPLUSFLAGS)",
-					"$(OTHER_CFLAGS)",
-				);
 			};
 			name = Release;
 		};

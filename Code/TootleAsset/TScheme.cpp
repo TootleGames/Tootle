@@ -144,15 +144,26 @@ SyncBool TLAsset::TScheme::ExportData(TBinaryTree& Data)
 //----------------------------------------------------
 SyncBool TLAsset::TScheme::ImportData(TBinaryTree& Data)
 {
-	//	get an array of all the scheme nodes
-	TPtrArray<TBinaryTree> SchemeNodes;
-	Data.GetChildren("Node", SchemeNodes );
+	//	pre-alloc number of nodes if availible
+	u16 NodeCount = 0;
+	if ( !Data.ImportData("NodeCount", NodeCount ) )
+		NodeCount = Data.GetChildCount();
 
-	//	import nodes
-	for ( u32 n=0;	n<SchemeNodes.GetSize();	n++ )
+	//	pre-alloc
+	m_Nodes.AddAllocSize( NodeCount );
+
+	//	rather than fetching the children (which is slow when there's a lot) 
+	//	we just walk through the children and do the nodes we want
+	TPtrArray<TBinaryTree>& ChildDatas = Data.GetChildren();
+	for ( u32 d=0;	d<ChildDatas.GetSize();	d++ )
 	{
+		//	only interested in nodes...
+		TBinaryTree& NodeData = *ChildDatas[d];
+		if ( NodeData.GetDataRef() != TRef_Static4(N,o,d,e) )
+			continue;
+
 		TPtr<TSchemeNode> pChildNode = new TSchemeNode();
-		SyncBool ImportResult = pChildNode->ImportData( *SchemeNodes[n].GetObjectPointer() );
+		SyncBool ImportResult = pChildNode->ImportData( NodeData );
 
 		if ( ImportResult == SyncWait )
 		{

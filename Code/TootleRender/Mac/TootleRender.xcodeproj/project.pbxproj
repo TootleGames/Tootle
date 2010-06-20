@@ -73,6 +73,13 @@
 			remoteGlobalIDString = 8418EEAE0F4DAB4500B956C9;
 			remoteInfo = TootleGui;
 		};
+		BFBA3B0F119F2FF700B86151 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFBA3B0B119F2FF700B86151 /* TootleCore.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8418EED10F4DAB6A00B956C9;
+			remoteInfo = TootleCore;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -144,6 +151,7 @@
 		BF89CBF211099A8B009C2101 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF89CBF311099A8B009C2101 /* MacDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacDebug.xcconfig; path = ../../BuildConfigurations/Mac/MacDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF89CBF411099A8B009C2101 /* MacRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MacRelease.xcconfig; path = ../../BuildConfigurations/Mac/MacRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		BFBA3B0B119F2FF700B86151 /* TootleCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TootleCore.xcodeproj; path = ../../TootleCore/Mac/TootleCore.xcodeproj; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +168,7 @@
 		8418ECF60F4DA63E00B956C9 = {
 			isa = PBXGroup;
 			children = (
+				BFBA3B0B119F2FF700B86151 /* TootleCore.xcodeproj */,
 				BF05BC97112D351D009D5085 /* TootleGui.xcodeproj */,
 				8418EF630F4DAD0A00B956C9 /* Build Configurations */,
 				8418EF620F4DAD0300B956C9 /* SourceCode */,
@@ -303,6 +312,14 @@
 			name = Opengl;
 			sourceTree = "<group>";
 		};
+		BFBA3B0C119F2FF700B86151 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BFBA3B10119F2FF700B86151 /* libTootleCore.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -372,6 +389,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = BFBA3B0C119F2FF700B86151 /* Products */;
+					ProjectRef = BFBA3B0B119F2FF700B86151 /* TootleCore.xcodeproj */;
+				},
+				{
 					ProductGroup = BF05BC98112D351D009D5085 /* Products */;
 					ProjectRef = BF05BC97112D351D009D5085 /* TootleGui.xcodeproj */;
 				},
@@ -389,6 +410,13 @@
 			fileType = archive.ar;
 			path = libTootleGui.a;
 			remoteRef = BF05BC9B112D351D009D5085 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BFBA3B10119F2FF700B86151 /* libTootleCore.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libTootleCore.a;
+			remoteRef = BFBA3B0F119F2FF700B86151 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

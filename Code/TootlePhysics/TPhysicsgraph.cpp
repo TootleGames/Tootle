@@ -37,7 +37,7 @@ SyncBool TLPhysics::TPhysicsgraph::Initialise()
 		return SyncFalse;
 
 	//	create generic render node factory
-	TPtr<TClassFactory<TLPhysics::TPhysicsNode,FALSE> > pFactory = new TPhysicsNodeFactory();
+	TPtr<TNodeFactory<TLPhysics::TPhysicsNode> > pFactory = new TPhysicsNodeFactory();
 	AddFactory(pFactory);
 
 	return SyncTrue;
@@ -88,35 +88,32 @@ void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 	ProcessMessageQueue();
 	
 	//	no root? nothing to do
-	TPtr<TLPhysics::TPhysicsNode>& pRootNode = GetRootNode();
-	if ( pRootNode )
+	TLPhysics::TPhysicsNode& RootNode = GetRootNode();
+	//	do update
 	{
-		//	do update
+		TLTime::TScopeTimer Timer( TRef_Static(p,h,u,p,d) );
+		RootNode.UpdateAll( fTimeStep );
+	}
+	
+	//	do box2d world step
+	{
+		TLTime::TScopeTimer Timer( TRef_Static(C,o,l,l,i) );
+		
+		//	box2d prefers fixed timesteps... lets see how our variable rate goes...
+		float timeStep = fTimeStep;			//	1.0f / 60.0f;
+		if ( m_pWorld )
 		{
-			TLTime::TScopeTimer Timer( TRef_Static(p,h,u,p,d) );
-			pRootNode->UpdateAll( fTimeStep );
-		}
-
-		//	do box2d world step
-		{
-			TLTime::TScopeTimer Timer( TRef_Static(C,o,l,l,i) );
-
-			//	box2d prefers fixed timesteps... lets see how our variable rate goes...
-			float timeStep = fTimeStep;			//	1.0f / 60.0f;
-			if ( m_pWorld )
-			{
-				m_pWorld->Step( timeStep, BOX2D_VELOCITY_ITERATIONS, BOX2D_POSITION_ITERATIONS );
-			}
-		}
-
-
-		//	do post update
-		{
-			TLTime::TScopeTimer Timer( TRef_Static(p,p,o,s,t) );
-			pRootNode->PostUpdateAll( fTimeStep, *this, pRootNode );
+			m_pWorld->Step( timeStep, BOX2D_VELOCITY_ITERATIONS, BOX2D_POSITION_ITERATIONS );
 		}
 	}
 	
+	
+	//	do post update
+	{
+		TLTime::TScopeTimer Timer( TRef_Static(p,p,o,s,t) );
+		RootNode.PostUpdateAll( fTimeStep, *this );
+	}
+
 	//	gr: if this is before the world step, post updates etc, for some reason my 
 	//	render nodes don't show up (physics node doesn't MOVE i suppose and scene node 
 	//	needs an initial transform message...? seems odd to be dependant on the physics node)
@@ -139,17 +136,17 @@ void TLPhysics::TPhysicsgraph::UpdateGraph(float fTimeStep)
 //----------------------------------------------------------
 //
 //----------------------------------------------------------
-void TLPhysics::TPhysicsgraph::OnNodeRemoving(TPtr<TLPhysics::TPhysicsNode>& pNode)
+void TLPhysics::TPhysicsgraph::OnNodeRemoving(TLPhysics::TPhysicsNode& Node)
 {
 	//	inherited OnRemoving()
-	TLGraph::TGraph<TLPhysics::TPhysicsNode>::OnNodeRemoving( pNode );
+	TLGraph::TGraph<TLPhysics::TPhysicsNode>::OnNodeRemoving( Node );
 }
 
 
 //----------------------------------------------------------
 //
 //----------------------------------------------------------
-void TLPhysics::TPhysicsgraph::OnNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pNode,Bool SendAddedMessage)
+void TLPhysics::TPhysicsgraph::OnNodeAdded(TLPhysics::TPhysicsNode& Node,Bool SendAddedMessage)
 {
 	//	inherited OnAdded()
 	//	gr: do the inherited OnNodeAdded first, this means the Initialise() will be called BEFORE we
@@ -157,25 +154,25 @@ void TLPhysics::TPhysicsgraph::OnNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pNode,
 	//		if this is an issue for something, then just manually call ProcessMessageQueue and then move this back
 	//		to the end of OnNodeAdded
 	//	gr: DONT send the OnNodeAdded message here, we send it after we've created our body
-	TLGraph::TGraph<TLPhysics::TPhysicsNode>::OnNodeAdded( pNode, FALSE );
+	TLGraph::TGraph<TLPhysics::TPhysicsNode>::OnNodeAdded( Node, FALSE );
 
 #ifdef _DEBUG
-	TTempString DebugString("Added node to physics graph: ");
-	pNode->GetNodeRef().GetString( DebugString );
-	TLDebug_Print( DebugString );
+	TDebugString Debug_String;
+	Debug_String << "Added node to physics graph: " << Node.GetNodeRef();
+	TLDebug_Print( Debug_String );
 #endif
 
 	//	create box2d body
 	if ( m_pWorld )
 	{
-		pNode->CreateBody( *m_pWorld );
+		Node.CreateBody( *m_pWorld );
 	}
 
 	// Send the added node notificaiton
 	if ( SendAddedMessage )
 	{
-		TLMessaging::TMessage Message("NodeAdded", GetGraphRef());
-		Message.Write(pNode->GetNodeRef());
+		TLMessaging::TMessage Message( TRef_Static(N,o,d,e,A), GetGraphRef());
+		Message.Write( Node.GetNodeRef() );
 
 		PublishMessage(Message);
 	}
@@ -442,8 +439,8 @@ void TLPhysics::TPhysicsgraph::GetNodesInShape(const TLMaths::TBox2D& Shape,TArr
 //-----------------------------------------------------
 bool TLPhysics::TPhysicsgraph::ShouldCollide(b2Fixture* fixtureA, b2Fixture* fixtureB)
 {
-	const b2FilterData& filter1 = fixtureA->GetFilterData();
-	const b2FilterData& filter2 = fixtureB->GetFilterData();
+//	const b2FilterData& filter1 = fixtureA->GetFilterData();
+//	const b2FilterData& filter2 = fixtureB->GetFilterData();
 
 	//	increment collision test counter
 	TLCounter::Debug_Increment( TRef_Static(C,o,T,s,t) );

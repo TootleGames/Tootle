@@ -20,7 +20,7 @@ namespace Win32
 	u32							GWinControl::g_MouseWheelMsg = 0;
 	HWND						g_HWnd = NULL;
 
-	TArray<const TChar*>		g_ClassCreatedList;	//	array of strings of classes we've created
+	THeapArray<const TChar*>		g_ClassCreatedList;	//	array of strings of classes we've created
 };
 
 

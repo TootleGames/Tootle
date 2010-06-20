@@ -15,12 +15,12 @@
 Bool TLGraph::TGraphBase::ImportScheme(const TLAsset::TScheme& Scheme,TRefRef ParentNodeRef,Bool StrictNodeRefs,TBinaryTree* pCommonInitData)
 {
 	//	keep track of all the node's we've imported so we can remove them again if it fails
-	TArray<TRef> ImportedNodes;
+	THeapArray<TRef> ImportedNodes;
 	const TPtrArray<TLAsset::TSchemeNode>& SchemeNodes = Scheme.GetNodes();
 
 	for ( u32 n=0;	n<SchemeNodes.GetSize();	n++ )
 	{
-		TArray<TRef> NodeImportedNodes;
+		THeapArray<TRef> NodeImportedNodes;
 		if ( !ImportSchemeNode( *SchemeNodes[n], ParentNodeRef, NodeImportedNodes, StrictNodeRefs, pCommonInitData ) )
 		{
 			//	remove nodes we added 
@@ -137,7 +137,7 @@ TPtr<TLAsset::TSchemeNode> TLGraph::TGraphBase::ExportSchemeNode(TGraphNodeBase*
 	pSchemeNode->GetData().ReferenceDataTree( NodeData );
 
 	//	export children into this node
-	TArray<TGraphNodeBase*> RootChildren;
+	TPointerArray<TGraphNodeBase> RootChildren;
 	pNode->GetChildrenBase( RootChildren );
 	for ( u32 c=0;	c<RootChildren.GetSize();	c++ )
 	{
@@ -195,7 +195,7 @@ Bool TLGraph::TGraphBase::ExportScheme(TLAsset::TScheme& Scheme,TRef SchemeRootN
 	else
 	{
 		//	only adding children of the root node
-		TArray<TGraphNodeBase*> RootChildren;
+		TPointerArray<TGraphNodeBase> RootChildren;
 		pSchemeRootNode->GetChildrenBase( RootChildren );
 		for ( u32 c=0;	c<RootChildren.GetSize();	c++ )
 		{
@@ -237,7 +237,7 @@ Bool TLGraph::TGraphBase::ReimportScheme(const TLAsset::TScheme& Scheme,TRefRef 
 	const TPtrArray<TLAsset::TSchemeNode>& SchemeNodes = Scheme.GetNodes();
 	for ( u32 n=0;	n<SchemeNodes.GetSize();	n++ )
 	{
-		TArray<TRef> NodeImportedNodes;
+		THeapArray<TRef> NodeImportedNodes;
 		if ( !ReimportSchemeNode( *SchemeNodes[n], ParentNodeRef, StrictNodeRefs, AddMissingNodes, RemoveUnknownNodes, pCommonInitData ) )
 		{
 			//	remove nodes we added 
@@ -357,7 +357,7 @@ void TLGraph::TGraphNodeBase::UpdateNodeData()
 void TLGraph::TGraphNodeBase::GetChildren(TArray<TRef>& ChildNodeRefs,Bool Recursive)
 {
 	//	get children
-	TArray<TGraphNodeBase*> ChildNodes;
+	TPointerArray<TGraphNodeBase> ChildNodes;
 	GetChildrenBase( ChildNodes );
 
 	for ( u32 c=0;	c<ChildNodes.GetSize();	c++ )

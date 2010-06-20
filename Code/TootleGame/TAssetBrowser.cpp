@@ -63,7 +63,7 @@ SyncBool TLGame::TAssetBrowser::Initialise()
 	m_pMenuRenderNode = new TLRender::TRenderNode("AssetRoot");
 	if ( !m_pMenuRenderNode )
 		return SyncFalse;
-	pRenderTarget->SetRootRenderNode( m_pMenuRenderNode );
+	pRenderTarget->SetRootRenderNode( *m_pMenuRenderNode );
 
 	//	init menu
 	if ( !OpenMenu("Root") )

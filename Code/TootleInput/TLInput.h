@@ -124,7 +124,7 @@ private:
 	// Array of supported input 'text' characters mapped to an input 'key' ref to represent the character.  Actions will in turn be mapped to the key ref.
 	// NOTE: Should be Unicode? UTF8? Possibly?
 	TKeyArray<TRef, char>				m_SupportedTextCharacters;
-	TArray<TVirtualDeviceRequest>		m_VirtualDeviceRequests;
+	THeapArray<TVirtualDeviceRequest>	m_VirtualDeviceRequests;
 
 	TString								m_VKText;
 	

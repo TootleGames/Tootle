@@ -41,7 +41,7 @@ SyncBool TLRender::TRendergraph::Initialise()
 		return Result;
 	
 	//	create generic render node factory
-	TPtr<TClassFactory<TRenderNode,FALSE> > pFactory = new TRenderNodeFactory();
+	TPtr<TNodeFactory<TRenderNode> > pFactory = new TRenderNodeFactory();
 	AddFactory(pFactory);
 
 	//	create effects factory

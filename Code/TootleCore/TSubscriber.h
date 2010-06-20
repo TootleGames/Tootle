@@ -7,6 +7,8 @@ class TLMessaging::TSubscriber
 {
 	friend class TLMessaging::TPublisher;
 public:
+	virtual ~TSubscriber()			{	Shutdown();	}	//	gr: moved this out of being protected so the arrays can delete them, not sure what this exposes as there were no comments as to why it was protected...
+	
 	FORCEINLINE Bool	SubscribeTo(TPublisher* pPublisher)				{	return pPublisher ? pPublisher->Subscribe(this) : false;	}
 	FORCEINLINE Bool	UnsubscribeFrom(TPublisher* pPublisher)			{	return pPublisher ? pPublisher->Unsubscribe(this) : false;	}
 	FORCEINLINE Bool	SubscribeTo(TPublisher& Publisher)				{	return Publisher.Subscribe(this);	}
@@ -14,9 +16,9 @@ public:
 
 	virtual TRefRef		GetSubscriberRef() const=0;
 
-protected:
-	virtual ~TSubscriber()			{	Shutdown();	}
+	FORCEINLINE bool	operator==(const TSubscriber*& pSubscriber) const	{	return this == pSubscriber;	}
 	
+protected:
 	FORCEINLINE void	Shutdown()										{	UnsubscribeAll();	}
 	
 	virtual void		ProcessMessage(TLMessaging::TMessage& Message) = 0;
@@ -27,9 +29,11 @@ private:
 	FORCEINLINE void	UnsubscribeAll();							// Unsubscribe from all publishers
 
 private:
-	TPointerArray<TLMessaging::TPublisher>		m_Publishers;			// List of publishers
+	TPointerArray<TLMessaging::TPublisher,false>		m_Publishers;			// List of publishers
 };
 
+//	explicitly set pointer as data type (need to find a way to do this generically!)
+TLCore_DeclareIsDataType(TLMessaging::TSubscriber*);
 
 
 

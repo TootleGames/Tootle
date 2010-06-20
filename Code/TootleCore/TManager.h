@@ -47,7 +47,6 @@ public:
 	virtual TRefRef						GetPublisherRef() const					{	return GetManagerRef();	}
 	FORCEINLINE TRefRef					GetManagerRef() const					{	return m_ManagerRef;	}
 	FORCEINLINE TLManager::ManagerState	GetState() const						{	return m_ManagerState;	}
-	FORCEINLINE Bool					operator<(const TManager& Manager)const	{	return (GetManagerRef() < Manager.GetManagerRef());	}
 
 	// Messaging
 	virtual Bool				SendMessageTo(TRefRef RecipientRef, TLMessaging::TMessage& Message) 
@@ -62,7 +61,9 @@ public:
 		return FALSE; 
 	}
 
-	FORCEINLINE Bool			operator==(const TRef& Ref) const				{	return (m_ManagerRef == Ref);	}
+	FORCEINLINE Bool			operator<(const TManager& Manager)const				{	return (GetManagerRef() < Manager.GetManagerRef());	}
+	FORCEINLINE Bool			operator==(const TPtr<TManager>* ppManager)const	{	const TManager* pThat = ppManager ? (*ppManager).GetObjectPointer() : NULL;	return (this == pThat);	}
+	FORCEINLINE Bool			operator==(const TRef& Ref) const					{	return (m_ManagerRef == Ref);	}
 
 protected:
 	virtual SyncBool Initialise()					{	return SyncTrue; 	}

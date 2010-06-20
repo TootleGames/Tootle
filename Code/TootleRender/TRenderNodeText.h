@@ -46,7 +46,7 @@ protected:
 	TRenderNodeVectorGlyph(TRefRef RenderNodeRef,TRefRef TypeRef);
 
 	virtual TLAsset::TMesh*	GetMeshAsset() 				{	return m_pGlyphMesh;	}
-	virtual Bool					Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList)	{	return TRUE;	}
+	virtual Bool			Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList)	{	return TRUE;	}
 
 public:
 	TLAsset::TMesh*			m_pGlyphMesh;

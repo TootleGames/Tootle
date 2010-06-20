@@ -57,7 +57,7 @@ public:
 
 protected:
 	TPtr<TLAsset::TShader>	m_pShader;				//	shader we're using
-	TArray<TRef>			m_ShaderCandidates;		//	list of shader assets we can use for this in order of preference
+	TFixedArray<TRef,4>		m_ShaderCandidates;		//	list of shader assets we can use for this in order of preference
 	TPtr<TBinaryTree>		m_pShaderData;			//	shader data. this is usually "allocated" from the node data
 };
 
@@ -83,10 +83,10 @@ protected:
 	u32				GetFrameCount() const				{	return m_Frames.GetSize();	}
 
 protected:
-	TArray<TLMaths::TTransform>	m_Frames;		//	frames in the atlas to cycle through (stored in transforms)
-	TArray<u16>					m_FrameIndexes;	//	indexes in the atlas to cycle through
-	float						m_Time;			//	current time counter
-	float						m_FrameRate;	//	change frame every N amount (frames per second)
+	THeapArray<TLMaths::TTransform>	m_Frames;		//	frames in the atlas to cycle through (stored in transforms)
+	THeapArray<u16>					m_FrameIndexes;	//	indexes in the atlas to cycle through
+	float							m_Time;			//	current time counter
+	float							m_FrameRate;	//	change frame every N amount (frames per second)
 };
 
 

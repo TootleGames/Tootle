@@ -83,8 +83,6 @@ Bool TUserManager::UnregisterUser(TRefRef UserRef)
 	if(sUserIndex == -1)
 		return FALSE;
 
-	TPtr<TUser>& pUser = m_Users.ElementAt(sUserIndex);
-
 	// Broadcast message to say a user is being removed from the system
 	TLMessaging::TMessage Message("USER");
 	Message.Write(TRef("REMOVED"));				
@@ -389,7 +387,7 @@ Bool TUser::MapAction(TRefRef refActionID, TRefRef refDeviceID, TRefRef SensorLa
 
 		//	print out all the availible sensors;
 		Debug_String.Set("Valid sensor labels; ");
-		TArray<TRef> SensorLabels;
+		THeapArray<TRef> SensorLabels;
 		pDevice->Debug_GetSensorLabels( SensorLabels );
 		if ( SensorLabels.GetSize() == 0 )
 			Debug_String.Append("(none)");

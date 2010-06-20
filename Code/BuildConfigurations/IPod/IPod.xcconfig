@@ -6,7 +6,6 @@
 #include "../Tootle.xcconfig"
 
 
-//	gr: new ipod vars from project
 
 //	gr: needed for openfeint
 GCC_C_LANGUAGE_STANDARD = c99
@@ -15,6 +14,7 @@ GCC_C_LANGUAGE_STANDARD = c99
 //	gr: on iphone, when png's are bundled into the package they get compressed and modified to a 
 //		compressed format (which leaves artifacts) that libpng can't handle. Add this to stop it
 //		compressing our resources (assets) when building
+COMPRESS_PNG_FILES = NO	//	exposed in gcc4.2
 IPHONE_OPTIMIZE_OPTIONS = -skip-PNGs
 
 //	gr: add the target define
@@ -68,8 +68,7 @@ PRESERVE_DEAD_CODE_INITS_AND_TERMS = NO
 // NOTE: When updating to iPhone OS SDK 3.0 and above as the base SDK, this will need changing to dynamic as no static library is provided.
 // The following document suggests this will the preferred method of linking with the C++ runtime:
 // http://developer.apple.com/mac/library/documentation/DeveloperTools/Conceptual/CppRuntimeEnv/Articles/CPPROverview.html 
-STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static
-//STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic
+STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic
 
 
 //	gr: have to make symbols visible because the way wx is built, all the symbols are visible (for external access. Not sure why WE don't get missing symbols...)
@@ -132,8 +131,8 @@ GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = YES
 
 
 
-
-GCC_VERSION = 4.0 
+//	gr: upgrading to GCC 4.2 as this is a bit better than 4.0 and we can use it from sdk 3.0 onwards
+GCC_VERSION = 4.2
 
 ADDITIONAL_SDKS = 
 //ARCHS = armv6 armv7
@@ -142,11 +141,11 @@ ARCHS = armv6
 VALID_ARCHS = armv6
 
 // SDK is the SDK we are building against.  It is possible to use a newer SDK to the deployment target.
-SDKROOT = iphoneos2.2.1
+SDKROOT = iphoneos3.0
 ONLY_ACTIVE_ARCH = YES
 
 // The deployment target is the lowest iphone OS the code will work on
-IPHONE_OS_DEPLOYMENT_TARGET = 2.2.1
+IPHONE_OS_DEPLOYMENT_TARGET = 3.0
 
 
 EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = *.nib *.lproj *.framework *.gch (*) CVS .svn *.xcodeproj *.xcode *.pbproj *.pbxproj

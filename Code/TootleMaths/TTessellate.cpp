@@ -172,7 +172,7 @@ void TLMaths::TContour::evaluateCubicCurve(const float3& FromOn,const float3& Fr
 //----------------------------------------------------------
 void TLMaths::TContour::Shrink(float OutsetDistance)
 {
-	TArray<float3> OldPoints;
+	THeapArray<float3> OldPoints;
 	OldPoints.Copy( m_Points );
 
 	//	get a bounds sphere for the old points and we can use that radius to detect
@@ -180,7 +180,7 @@ void TLMaths::TContour::Shrink(float OutsetDistance)
 	TLMaths::TSphere2D BoundsSphere;
 	BoundsSphere.Accumulate( m_Points );
 	
-	TArray<TLMaths::TLine2D> EdgeLines;
+	THeapArray<TLMaths::TLine2D> EdgeLines;
 	GetEdgeLines( EdgeLines );
 
 	//	calculate the new outset point for each point
@@ -264,7 +264,7 @@ void TLMaths::TContour::Shrink(float OutsetDistance)
 //----------------------------------------------------------
 void TLMaths::TContour::Grow(float OutsetDistance)
 {
-	TArray<float3> OldPoints;
+	THeapArray<float3> OldPoints;
 	OldPoints.Copy( m_Points );
 
 	//	calculate the new outset point for each point
@@ -350,7 +350,7 @@ void TLMaths::TContour::GetEdgeLines(TArray<TLMaths::TLine2D>& EdgeLines) const
 Bool TLMaths::TContour::HasIntersections() const
 {
 	//	generate the edge lines
-	TArray<TLMaths::TLine2D> ContourEdges;
+	THeapArray<TLMaths::TLine2D> ContourEdges;
 	GetEdgeLines( ContourEdges );
 
 	for ( u32 e=0;	e<ContourEdges.GetSize();	e++ )

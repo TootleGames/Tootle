@@ -12,8 +12,18 @@
 #include <TootleCore/TString.h>
 #include <TootleCore/TRef.h>
 #include <TootleCore/TBinaryTree.h>
+#include "../TWindow.h"
 
 
+namespace TLGui
+{
+	namespace Platform
+	{
+		int2			GetScreenMousePosition(TLGui::TWindow& Window,u8 MouseIndex);
+		void			GetDesktopSize(Type4<s32>& DesktopSize);	//	get the desktop dimensions. note: need a window so we can decide which desktop?	
+	}
+	
+}
 
 namespace wx
 {

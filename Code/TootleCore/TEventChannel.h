@@ -118,12 +118,12 @@ public:
 	Bool							BroadcastMessage(TLMessaging::TMessage& pData, TRefRef refPublisherID, TRefRef refChannelID);
 
 	// Wrapper routines for altering the event channel message sending
-	FORCEINLINE void				SetPublishOrder(const TLArray::SortOrder& order, TRefRef refPublisherID, TRefRef refChannelID)
+	FORCEINLINE void				SetPublishOrder(TLArray::TSortOrder::Type Order, TRefRef refPublisherID, TRefRef refChannelID)
 	{
 		TPtr<TEventChannel>& pChannel = FindEventChannel(refPublisherID, refChannelID);
 		
 		if(pChannel)
-			pChannel->SetPublishOrder(order);		
+			pChannel->SetPublishOrder(Order);		
 	}
 	
 private:

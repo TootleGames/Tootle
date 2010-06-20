@@ -73,9 +73,9 @@ protected:
 
 private:
 
-	TArray<TRef>						m_Schemes;					// List of instanced schemes
-	TPtrArray<TSchemeUpdateRequest>		m_SchemeUpdateRequests;		// Scheme load/unload requests
-	TArray<TRef>						m_SchemeUpdateRemove;		// List of update requests to remove
+	THeapArray<TRef>				m_Schemes;					// List of instanced schemes
+	TPtrArray<TSchemeUpdateRequest>	m_SchemeUpdateRequests;		// Scheme load/unload requests
+	THeapArray<TRef>				m_SchemeUpdateRemove;		// List of update requests to remove
 };
 
 // TSchemeUpdateRequest class

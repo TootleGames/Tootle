@@ -46,7 +46,7 @@ SyncBool TScenegraph::Initialise()
 {
 
 	// Attach the base scene node factory by default
-	TPtr<TClassFactory<TSceneNode,FALSE> > pFactory = new TSceneNodeFactory();
+	TPtr<TNodeFactory<TSceneNode> > pFactory = new TSceneNodeFactory();
 
 	if(pFactory)
 		AddFactory(pFactory);
@@ -80,42 +80,44 @@ SyncBool TScenegraph::Shutdown()
 
 
 
-Bool TScenegraph::GetNearestNodes(const TLMaths::TLine& Line, const float& fDistance, TPtrArray<TSceneNode_Transform>& pArray)
+Bool TScenegraph::GetNearestNodes(const TLMaths::TLine& Line, const float& fDistance, TArray<TSceneNode_Transform*>& Array)
 {
-	TPtr<TSceneNode> pRootNode = GetRootNode();
-
-	if(pRootNode.IsValid())
-		GetNearestNodes(pRootNode, Line, fDistance, pArray);
+	TSceneNode& RootNode = GetRootNode();
+	GetNearestNodes( RootNode, Line, fDistance, Array);
 
 	// Return TRUE if we found any nodes ith range of the line
-	return (pArray.GetSize() > 0);
+	return (Array.GetSize() > 0);
 }
 
-void TScenegraph::GetNearestNodes(TPtr<TSceneNode>& pNode, const TLMaths::TLine& Line, const float& fDistance, TPtrArray<TSceneNode_Transform>& pArray)
+void TScenegraph::GetNearestNodes(TSceneNode& Node, const TLMaths::TLine& Line, const float& fDistance, TArray<TSceneNode_Transform*>& Array)
 {
 	// Check the node itself - if within range add to the array
-	if(IsNodeWithinRange(pNode, Line, fDistance))
-		pArray.Add(pNode);
+	if(IsNodeWithinRange(Node, Line, fDistance))
+	{
+		TSceneNode_Transform& TransformNode = static_cast<TSceneNode_Transform&>( Node );
+		Array.Add( &TransformNode );
+	}
+	
 
-	TPtrArray<TSceneNode>& NodeChildren = pNode->GetChildren();
+	TArray<TSceneNode*>& NodeChildren = Node.GetChildren();
 	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 	{
-		TPtr<TSceneNode>& pChild = NodeChildren[c];
-		GetNearestNodes( pChild, Line, fDistance, pArray );
+		TSceneNode& Child = *NodeChildren[c];
+		GetNearestNodes( Child, Line, fDistance, Array );
 	}
 
 }
 
-Bool TScenegraph::IsNodeWithinRange(TPtr<TSceneNode>& pNode, const TLMaths::TLine& Line, const float& fDistance)
+Bool TScenegraph::IsNodeWithinRange(TSceneNode& Node, const TLMaths::TLine& Line, const float& fDistance)
 {
-	if(pNode->HasTransform())
+	if(Node.HasTransform())
 	{
 		// If the node has transform then we can assume it is the transform node type
 		// Cast to a transform node
-		TSceneNode_Transform* pTransformNode = reinterpret_cast<TSceneNode_Transform*>(pNode.GetObjectPointer());
+		TSceneNode_Transform& TransformNode = static_cast<TSceneNode_Transform&>( Node );
 
 		// Do distance check from node to line
-		float fDistanceToLine = pTransformNode->GetDistanceTo(Line);
+		float fDistanceToLine = TransformNode.GetDistanceTo(Line);
 
 		// Is the distance to the line less than the threshold?
 		if(fDistanceToLine < fDistance)
@@ -129,13 +131,13 @@ Bool TScenegraph::IsNodeWithinRange(TPtr<TSceneNode>& pNode, const TLMaths::TLin
 //---------------------------------------------------
 //	set a new root zone	
 //---------------------------------------------------
-void TLScene::TScenegraph::SetRootZone(TPtr<TLMaths::TQuadTreeZone>& pZone)
+void TLScene::TScenegraph::SetRootZone(TLMaths::TQuadTreeZone* pZone)
 {
 	m_pRootZone = pZone;
 
 	//	predivide all the zones to their smallest level
-	m_pRootZone->DivideAll( m_pRootZone );
-	m_pRootZone->FindNeighboursAll( m_pRootZone );
+	m_pRootZone->DivideAll();
+	m_pRootZone->FindNeighboursAll();
 
 	//	set active zone as the root by default so everything is active (it's default state
 	SetActiveZone( m_pRootZone );
@@ -145,7 +147,7 @@ void TLScene::TScenegraph::SetRootZone(TPtr<TLMaths::TQuadTreeZone>& pZone)
 //---------------------------------------------------
 //	change active zone
 //---------------------------------------------------
-void TLScene::TScenegraph::SetActiveZone(TPtr<TLMaths::TQuadTreeZone>& pZone)	
+void TLScene::TScenegraph::SetActiveZone(TLMaths::TQuadTreeZone* pZone)	
 {
 	u32 z;
 
@@ -172,7 +174,7 @@ void TLScene::TScenegraph::SetActiveZone(TPtr<TLMaths::TQuadTreeZone>& pZone)
 		ZonesOn.Add( m_pActiveZone );
 
 		//	set neighbours as active...
-		TPtrArray<TLMaths::TQuadTreeZone>& ZoneNeighbours = m_pActiveZone->GetNeighbourZones();
+		TArray<TLMaths::TQuadTreeZone*>& ZoneNeighbours = m_pActiveZone->GetNeighbourZones();
 		for ( z=0;	z<ZoneNeighbours.GetSize();	z++ )
 		{
 			TLMaths::TQuadTreeZone* pNeighbourZone = ZoneNeighbours[z];
@@ -181,7 +183,7 @@ void TLScene::TScenegraph::SetActiveZone(TPtr<TLMaths::TQuadTreeZone>& pZone)
 			ZonesOnWait.Remove( pNeighbourZone );
 
 			//	and neighbours's neighbours as half-on
-			TPtrArray<TLMaths::TQuadTreeZone>& NeighbourNeighbours = pNeighbourZone->GetNeighbourZones();
+			TArray<TLMaths::TQuadTreeZone*>& NeighbourNeighbours = pNeighbourZone->GetNeighbourZones();
 			for ( u32 i=0;	i<NeighbourNeighbours.GetSize();	i++ )
 			{
 				TLMaths::TQuadTreeZone* pNeighbourNeighbourZone = NeighbourNeighbours[i];
@@ -246,7 +248,7 @@ void TLScene::TScenegraph::UpdateGraph(float TimeStep)
 	if ( !m_pRootZone )
 	{
 		// Update the graph nodes
-		GetRootNode()->UpdateAll(TimeStep);
+		GetRootNode().UpdateAll(TimeStep);
 	}
 	else
 	{
@@ -254,7 +256,14 @@ void TLScene::TScenegraph::UpdateGraph(float TimeStep)
 		for ( u32 n=0;	n<m_AlwaysUpdateNodes.GetSize();	n++ )
 		{
 			//	get node
-			TPtr<TSceneNode>& pNode = FindNode( m_AlwaysUpdateNodes[n] );
+			TSceneNode* pNode = FindNode( m_AlwaysUpdateNodes[n] );
+			if ( !pNode )
+			{
+				TDebugString Debug_String;
+				Debug_String << "Node " << m_AlwaysUpdateNodes[n] << " expected";
+				TLDebug_Warning( Debug_String );
+				continue;
+			}
 			pNode->UpdateAll( TimeStep );
 		}
 
@@ -275,11 +284,11 @@ void TLScene::TScenegraph::UpdateGraph(float TimeStep)
 //----------------------------------------------------
 void TLScene::TScenegraph::UpdateNodesByZone(float TimeStep,TLMaths::TQuadTreeZone& Zone)
 {
-	TPtrArray<TLMaths::TQuadTreeNode>& ZoneNodes = Zone.GetNodes();
+	TArray<TLMaths::TQuadTreeNode*>& ZoneNodes = Zone.GetNodes();
 	for ( u32 n=0;	n<ZoneNodes.GetSize();	n++ )
 	{
-		TPtr<TLMaths::TQuadTreeNode>& pQuadTreeNode = ZoneNodes[n];
-		TLScene::TSceneNode_Transform& SceneNode = *pQuadTreeNode.GetObjectPointer<TLScene::TSceneNode_Transform>();
+		TLMaths::TQuadTreeNode& ZoneNode = *ZoneNodes[n];
+		TSceneNode_Transform& SceneNode = static_cast<TSceneNode_Transform&>( ZoneNode );
 
 		//	node that is already updated
 		if ( IsAlwaysUpdateNode( SceneNode.GetNodeRef() ) )
@@ -304,25 +313,25 @@ void TLScene::TScenegraph::SetActiveZoneTrackNode(TRefRef SceneNodeRef)
 	m_ActiveZoneTrackNode = SceneNodeRef;	
 
 	//	get node
-	TPtr<TLScene::TSceneNode>& pSceneNode = FindNode( m_ActiveZoneTrackNode );
+	TLScene::TSceneNode* pSceneNode = FindNode( m_ActiveZoneTrackNode );
 	
 	//	node doesnt [currently] exist - NULL active zone and assume it'll initialise when the node does
 	if ( !pSceneNode )
 	{
-		SetActiveZone( TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>() );
+		SetActiveZone( NULL );
 		return;
 	}
 
 	//	not a zoned node
-	if ( !pSceneNode->HasTransform() )
+	if ( !pSceneNode->HasZone() )
 	{
 		m_ActiveZoneTrackNode.SetInvalid();
-		SetActiveZone( TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>() );
+		SetActiveZone( NULL );
 		return;
 	}
 
 	//	grab current zone of node and make it active
-	TLScene::TSceneNode_Transform& SceneNode = *(pSceneNode.GetObjectPointer<TLScene::TSceneNode_Transform>());
+	TSceneNode_Transform& SceneNode = static_cast<TSceneNode_Transform&>( *pSceneNode );
 	SetActiveZone( SceneNode.GetZone() );
 }
 

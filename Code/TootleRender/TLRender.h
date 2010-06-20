@@ -52,7 +52,7 @@ namespace TLRender
 		void					DrawPrimitives(u16 GLPrimType,u32 IndexCount,const u16* pIndexData);		//	main renderer, just needs primitive type, and the data
 		template<class TYPE>
 		FORCEINLINE void		DrawPrimitives(u16 GLPrimType,const TArray<TYPE>& PrimitivesArray);			//	wrapper to pull out the index data for different types
-		FORCEINLINE void		DrawPrimitives(u16 GLPrimType,const TArray<TArray<u16> >& PrimitivesArray);	//	specialisation for arrays of u16s (ie. strips)
+		FORCEINLINE void		DrawPrimitives(u16 GLPrimType,const TArray<THeapArray<u16> >& PrimitivesArray);	//	specialisation for arrays of u16s (ie. strips)
 		void					DrawPrimitivePoints(const TArray<float3>* pVertexes);
 
 		void					SceneTransform(const TLMaths::TTransform& Transform,const TLMaths::TMatrix* pMatrix=NULL);	//	transform scene
@@ -322,7 +322,7 @@ FORCEINLINE void TLRender::Opengl::DrawPrimitives(u16 GLPrimType,const TArray<TY
 }
 
 
-FORCEINLINE void TLRender::Opengl::DrawPrimitives(u16 GLPrimType,const TArray<TArray<u16> >& PrimitivesArray)
+FORCEINLINE void TLRender::Opengl::DrawPrimitives(u16 GLPrimType,const TArray<THeapArray<u16> >& PrimitivesArray)
 {
 	u32 Size = PrimitivesArray.GetSize();
 	for ( u32 i=0;	i<Size;	i++ )

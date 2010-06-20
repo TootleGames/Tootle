@@ -94,11 +94,14 @@ TPtr<TXmlTag> TLXml::ParseTag(const TString& XmlString,u32 TagOpenIndex,u32 TagC
 			break;
 	}
 
+	//	extract the name
 	TTempString TagName;
 	TagName.Append( TagContents, 0, TagNameLength );
 
+	//	extract the renaming text as the properties
 	TString TagProperties;
-	TagProperties.Append( TagContents, TagNameLength, -1 );
+	if ( TagNameLength < TagContents.GetLength() )
+		TagProperties.Append( TagContents, TagNameLength, -1 );
 
 	//	make up tag
 	TPtr<TXmlTag> pNewTag = new TXmlTag( TagName, Type );

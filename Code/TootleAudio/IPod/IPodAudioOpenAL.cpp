@@ -13,8 +13,8 @@ namespace TLAudio
 			ALCcontext*					g_pContext = NULL;
 			ALboolean					g_bEAX = FALSE;
 						
-			TArray<AudioObj> g_Sources;
-			TArray<AudioObj> g_Buffers;
+			THeapArray<AudioObj> g_Sources;
+			THeapArray<AudioObj> g_Buffers;
 		}
 	}
 }

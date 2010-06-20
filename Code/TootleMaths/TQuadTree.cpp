@@ -9,8 +9,6 @@ namespace TLMaths
 {
 	namespace TLQuadTree
 	{
-		FORCEINLINE TLArray::SortResult	SortNodes(const TPtr<TLMaths::TQuadTreeNode>& a,const TPtr<TLMaths::TQuadTreeNode>& b,const void* pTestVal);
-
 		TZonePos		GetMirrorPosition_Vertical(TZonePos Position);
 		TZonePos		GetMirrorPosition_Horizontal(TZonePos Position);
 
@@ -20,27 +18,11 @@ namespace TLMaths
 
 
 
-//	node sorting
-FORCEINLINE TLArray::SortResult	TLMaths::TLQuadTree::SortNodes(const TPtr<TLMaths::TQuadTreeNode>& a,const TPtr<TLMaths::TQuadTreeNode>& b,const void* pTestVal)
-{
-	//	cast test val
-	const TPtr<TLMaths::TQuadTreeNode>* ppTestNode = (const TPtr<TLMaths::TQuadTreeNode>*)pTestVal;
-
-	//	if pTestVal provided it's the ref
-	TRefRef aRef = a->GetQuadTreeNodeRef();
-	TRefRef bRef = pTestVal ? (*ppTestNode)->GetQuadTreeNodeRef() : b->GetQuadTreeNodeRef();
-		
-	//	== turns into 0 (is greater) or 1(equals)
-	return aRef < bRef ? TLArray::IsLess : (TLArray::SortResult)(aRef==bRef);	
-}
-
-
-
-
 
 TLMaths::TQuadTreeNode::TQuadTreeNode() : 
 //	m_IsZoneOutofDate		( TRUE ),
-	m_QuadTreeNodeRef		( TLMaths::TLQuadTree::g_NextQuadTreeNodeRef.Increment() )
+	m_QuadTreeNodeRef		( TLMaths::TLQuadTree::g_NextQuadTreeNodeRef.Increment() ),
+	m_pZone					( NULL )
 {
 }
 
@@ -48,7 +30,7 @@ TLMaths::TQuadTreeNode::TQuadTreeNode() :
 //-------------------------------------------------------------
 //	if the node has moved, update it's zone. returns TRUE if zone changed
 //-------------------------------------------------------------
-void TLMaths::TQuadTreeNode::UpdateZone(TPtr<TLMaths::TQuadTreeNode>& pThis,TPtr<TLMaths::TQuadTreeZone>& pRootZone)
+void TLMaths::TQuadTreeNode::UpdateZone(TLMaths::TQuadTreeZone& RootZone)
 {
 	if ( !IsZoneOutOfDate() )
 	{
@@ -63,7 +45,7 @@ void TLMaths::TQuadTreeNode::UpdateZone(TPtr<TLMaths::TQuadTreeNode>& pThis,TPtr
 	if ( !HasZoneShape() )
 	{
 		//	not in ANY zone any more
-		SetZone( TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>(), pThis, NULL );
+		SetZone( NULL, NULL );
 		return;
 	}
 
@@ -73,17 +55,17 @@ void TLMaths::TQuadTreeNode::UpdateZone(TPtr<TLMaths::TQuadTreeNode>& pThis,TPtr
 
 #ifdef ENABLE_FAST_CHECK
 	//	are we still in our parents zone?
-	TQuadTreeZone* pCurrentZone = pThis->GetZone();
+	TQuadTreeZone* pCurrentZone = this->GetZone();
 	if ( pCurrentZone )
 	{
-		if ( pCurrentZone->IsNodeInZoneShape( pThis ) )
+		if ( pCurrentZone->IsNodeInZoneShape( *this ) )
 		{
 			//	yes... see if we've crossed over to one of our parent's sibling zones
 			if ( pCurrentZone->HasSiblingZones() )
 			{
-				Bool InSibling0 = pCurrentZone->GetSiblingZone(0)->IsNodeInZoneShape( pThis ) == SyncTrue;
-				Bool InSibling1 = pCurrentZone->GetSiblingZone(1)->IsNodeInZoneShape( pThis ) == SyncTrue;
-				Bool InSibling2 = pCurrentZone->GetSiblingZone(2)->IsNodeInZoneShape( pThis ) == SyncTrue;
+				Bool InSibling0 = pCurrentZone->GetSiblingZone(0)->IsNodeInZoneShape( *this ) == SyncTrue;
+				Bool InSibling1 = pCurrentZone->GetSiblingZone(1)->IsNodeInZoneShape( *this ) == SyncTrue;
+				Bool InSibling2 = pCurrentZone->GetSiblingZone(2)->IsNodeInZoneShape( *this ) == SyncTrue;
 
 				//	crossed over so we're now in multiple zones... need to move UP a level
 				if ( InSibling0 || InSibling1 || InSibling2 )
@@ -95,14 +77,14 @@ void TLMaths::TQuadTreeNode::UpdateZone(TPtr<TLMaths::TQuadTreeNode>& pThis,TPtr
 					if ( InSibling1 )	ChildZoneList.Add( pCurrentZone->GetSiblingParentsChildIndex(1) );
 					if ( InSibling2 )	ChildZoneList.Add( pCurrentZone->GetSiblingParentsChildIndex(2) );
 	
-					SetZone( pCurrentZone->GetParentZone(), pThis, &ChildZoneList );
+					SetZone( pCurrentZone->GetParentZone(), this, &ChildZoneList );
 					return;
 				}
 			}
 
 			//	not in a sibling, see if we can go down to a smaller zone
 #ifdef ENABLE_FAST_GOTO_SMALLER_ZONE
-			pCurrentZone->AddNode( pThis, pThis->GetZone(), FALSE );
+			pCurrentZone->AddNode( this, this->GetZone(), FALSE );
 			return;
 #endif
 		}
@@ -117,19 +99,19 @@ void TLMaths::TQuadTreeNode::UpdateZone(TPtr<TLMaths::TQuadTreeNode>& pThis,TPtr
 
 	//	start at the parent and add, go upwards until we're in a zone
 #ifdef ENABLE_PARENT_TEST_MODE
-	TPtr<TQuadTreeZone> pParentZone = pThis->GetParentZone();
+	TQuadTreeZone* pParentZone = this->GetParentZone();
 
 	//	re-add to parent to evaluate if we now span multiple zones
 	if ( pParentZone )
 	{
-		while ( !pParentZone->AddNode( pThis, pParentZone, TRUE ) )
+		while ( !pParentZone->AddNode( this, pParentZone, TRUE ) )
 		{
 			//	no longer in parent zone, try parent of parent
 			pParentZone = pParentZone->GetParentZone();
 			if ( !pParentZone )
 			{
 				//	not in ANY zone any more
-				SetZone( pParentZone, pThis, NULL );
+				SetZone( pParentZone, this, NULL );
 				break;
 			}
 		}
@@ -137,10 +119,10 @@ void TLMaths::TQuadTreeNode::UpdateZone(TPtr<TLMaths::TQuadTreeNode>& pThis,TPtr
 #endif
 
 	//	simple brute force mode - add directly to the root node
-	if ( !pRootZone->AddNode( pThis, pRootZone, TRUE ) )
+	if ( !RootZone.AddNode( *this, TRUE ) )
 	{
 		//	not in ANY zone any more
-		SetZone( TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>(), pThis, NULL );
+		SetZone( NULL, NULL );
 	}
 }
 
@@ -171,7 +153,7 @@ void TLMaths::TQuadTreeNode::SetChildZones(const TFixedArray<u32,4>& InZones)
 //	attempt to add this node to this zone. checks with children 
 //	first to see if it fits into just one child better. returns FALSE if not in this zone
 //-------------------------------------------------------------
-Bool TLMaths::TQuadTreeNode::SetZone(TPtr<TQuadTreeZone>& pZone,TPtr<TLMaths::TQuadTreeNode>& pThis,const TFixedArray<u32,4>* pChildZoneList)
+Bool TLMaths::TQuadTreeNode::SetZone(TQuadTreeZone* pZone,const TFixedArray<u32,4>* pChildZoneList)
 {
 	//	already in this zone
 	if ( GetZone() == pZone )
@@ -189,14 +171,14 @@ Bool TLMaths::TQuadTreeNode::SetZone(TPtr<TQuadTreeZone>& pZone,TPtr<TLMaths::TQ
 	TQuadTreeZone* pOldZone = GetZone();
 	if ( pOldZone )
 	{
-		pOldZone->DoRemoveNode( pThis );
+		pOldZone->DoRemoveNode( *this );
 	}
 
 	//	add to this zone
 	if ( pZone )
 	{
 #ifdef _DEBUG
-		if ( pZone->GetNodes().Exists( pThis ) )
+		if ( pZone->GetNodes().Exists( this ) )
 		{
 			TLDebug_Break("Node shouldnt be in this list");
 		}
@@ -204,7 +186,7 @@ Bool TLMaths::TQuadTreeNode::SetZone(TPtr<TQuadTreeZone>& pZone,TPtr<TLMaths::TQ
 #endif
 		{
 			//	add node to collision zone
-			pZone->DoAddNode( pThis );
+			pZone->DoAddNode( *this );
 		}
 	}
 
@@ -262,8 +244,8 @@ const TLMaths::TBox2D& TLMaths::TQuadTreeNode::GetZoneShape()
 
 
 TLMaths::TQuadTreeZone::TQuadTreeZone(const TLMaths::TBox2D& ZoneShape,const TLMaths::TQuadTreeParams& ZoneParams) :
+	m_pParent				( NULL ),
 	m_Shape					( ZoneShape ),
-	m_Nodes					( &TLMaths::TLQuadTree::SortNodes ),
 	m_SiblingIndex			( -1 ),
 	m_ZoneParams			( ZoneParams ),
 	m_Active				( SyncTrue )
@@ -271,21 +253,13 @@ TLMaths::TQuadTreeZone::TQuadTreeZone(const TLMaths::TBox2D& ZoneShape,const TLM
 }
 
 
-TLMaths::TQuadTreeZone::TQuadTreeZone(const TLMaths::TBox2D& ZoneShape,TPtr<TLMaths::TQuadTreeZone>& pParent) :
-	m_pParent	( pParent ),
-	m_Shape		( ZoneShape ),
-	m_Nodes		( &TLMaths::TLQuadTree::SortNodes ),
-	m_SiblingZoneIndexes	( 0 ),
-	m_SiblingIndex			( -1 )
+TLMaths::TQuadTreeZone::TQuadTreeZone(const TLMaths::TBox2D& ZoneShape,TLMaths::TQuadTreeZone& Parent) :
+	m_pParent		( &Parent ),
+	m_Shape			( ZoneShape ),
+	m_SiblingIndex	( -1 )
 {
-	if ( !pParent )
-	{
-		TLDebug_Break("Wrong constructor for Zone. If root use the other one, if not, parent missing.");
-		return;
-	}
-
 	//	copy parent's params
-	m_ZoneParams = pParent->m_ZoneParams;
+	m_ZoneParams = m_pParent->m_ZoneParams;
 }
 
 
@@ -319,12 +293,12 @@ void TLMaths::TQuadTreeZone::Shutdown()
 //	attempt to add this node to this zone. checks with children first 
 //	to see if it fits into just one child better. returns FALSE if not in this zone
 //-------------------------------------------------------------
-Bool TLMaths::TQuadTreeZone::AddNode(TPtr<TLMaths::TQuadTreeNode>& pNode,TPtr<TLMaths::TQuadTreeZone>& pThis,Bool DoCheckInShape)
+Bool TLMaths::TQuadTreeZone::AddNode(TLMaths::TQuadTreeNode& Node,Bool DoCheckInShape)
 {
 	//	if not in this shape, return
 	if ( DoCheckInShape )
 	{
-		SyncBool IsInShape = IsNodeInZoneShape( *pNode );
+		SyncBool IsInShape = IsNodeInZoneShape( Node );
 		if ( IsInShape == SyncWait )
 		{
 			TLDebug_Break("todo: handle this");
@@ -341,14 +315,14 @@ Bool TLMaths::TQuadTreeZone::AddNode(TPtr<TLMaths::TQuadTreeNode>& pNode,TPtr<TL
 	{
 		//	gr: swapped around to do same check, but without the array traversal
 	//	Bool AlreadyInZone = m_Nodes.Exists( pNode );
-		Bool AlreadyInZone = (this == pNode->GetZone());
+		Bool AlreadyInZone = (this == Node.GetZone());
 		u32 NewSize = m_Nodes.GetSize() + ( AlreadyInZone ? 0 : 1);
 
 		//	fits in this zone, if we have X children already, we need to split
 		//	gr: changed this from >= to >
 		if ( NewSize > m_ZoneParams.m_MaxNodesPerZone )
 		{
-			if ( Divide(pThis) )
+			if ( Divide() )
 			{
 				//	if we process pNode in this code then we dont need to do it later
 				Bool DoneNode = FALSE;
@@ -356,13 +330,13 @@ Bool TLMaths::TQuadTreeZone::AddNode(TPtr<TLMaths::TQuadTreeNode>& pNode,TPtr<TL
 				//	re-evaluate existing nodes to see if they fit better in a child
 				for ( s32 n=m_Nodes.GetSize()-1;	n>=0;	n-- )
 				{
-					TPtr<TQuadTreeNode> pChildNode = m_Nodes[n];
+					TQuadTreeNode& ChildNode = *m_Nodes[n];
 				//	TPtr<TQuadTreeNode>& pChildNode = m_Nodes[n];
-					DoneNode |= (pNode == pChildNode);
+					DoneNode |= (&Node == &ChildNode);
 
 					//	see if child node is now in one of the new zones
 					TFixedArray<u32,4> InZones;
-					GetInChildZones( pChildNode.GetObjectPointer(), InZones );
+					GetInChildZones( ChildNode, InZones );
 
 					//	node is not in any of these zones... error...
 					if ( InZones.GetSize() == 0 )
@@ -375,14 +349,14 @@ Bool TLMaths::TQuadTreeZone::AddNode(TPtr<TLMaths::TQuadTreeNode>& pNode,TPtr<TL
 					//	in multiple zones, so stay in this zone, but assign the child zones
 					if ( InZones.GetSize() > 1 )
 					{
-						pChildNode->SetChildZones( InZones );
+						ChildNode.SetChildZones( InZones );
 						continue;
 					}
 
 					//	only in 1 child zone, so move out of this zone add into this new child zone
-					TPtr<TQuadTreeZone>& pNewZone = m_Children[ InZones[0] ];
-					pChildNode->SetChildZonesNone();
-					pNewZone->AddNode( pChildNode, pNewZone, FALSE );
+					TQuadTreeZone* pNewZone = m_Children[ InZones[0] ];
+					ChildNode.SetChildZonesNone();
+					pNewZone->AddNode( ChildNode, FALSE );
 				}
 
 				//	moved pNode around, don't need to do it again below
@@ -395,26 +369,26 @@ Bool TLMaths::TQuadTreeZone::AddNode(TPtr<TLMaths::TQuadTreeNode>& pNode,TPtr<TL
 	//	no child zones, so just add to this zone
 	if ( !m_Children.GetSize() )
 	{
-		return pNode->SetZone( pThis, pNode, NULL );
+		return Node.SetZone( this, NULL );
 	}
 
 	//	loop through the child zones to see if it fits into 1 or multiple zones
 	TFixedArray<u32,4> InZones;
-	GetInChildZones( pNode.GetObjectPointer(), InZones );
+	GetInChildZones( Node, InZones );
 
 	//	node is not in any of these zones... error... 
 	//	or
 	//	in multiple zones, so stay in this zone, but assign the child zones
 	if ( InZones.GetSize() != 1 )
-		return pNode->SetZone( pThis, pNode, &InZones );
+		return Node.SetZone( this, &InZones );
 
 	//	only in one child zone, add to this child zone (will go through same process, split child as neccessary etc)
-	TPtr<TQuadTreeZone>& pNewZone = m_Children[ InZones[0] ];
-	Bool AddedToChild = pNewZone->AddNode( pNode, pNewZone, FALSE );
+	TQuadTreeZone* pNewZone = m_Children[ InZones[0] ];
+	Bool AddedToChild = pNewZone->AddNode( Node, FALSE );
 	if ( !AddedToChild )
 	{
 		TLDebug_Break("Error: inside zone, inside child zone, but failed to add to child zone...");
-		return pNode->SetZone( pThis, pNode, &InZones );
+		return Node.SetZone( this, &InZones );
 	}
 
 	return TRUE;
@@ -424,13 +398,13 @@ Bool TLMaths::TQuadTreeZone::AddNode(TPtr<TLMaths::TQuadTreeNode>& pNode,TPtr<TL
 //---------------------------------------------------------------------
 //	return which child zone we're in, -1 if none
 //---------------------------------------------------------------------
-void TLMaths::TQuadTreeZone::GetInChildZones(TQuadTreeNode* pNode,TFixedArray<u32,4>& InZones)
+void TLMaths::TQuadTreeZone::GetInChildZones(TQuadTreeNode& Node,TFixedArray<u32,4>& InZones)
 {
 	//	loop through the child zones to see if it fits into 1 or multiple zones
 	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
 	{
-		TPtr<TQuadTreeZone>& pChildZone = m_Children[c];
-		SyncBool IsInShape = pChildZone->IsNodeInZoneShape( *pNode );
+		TQuadTreeZone& ChildZone = *m_Children[c];
+		SyncBool IsInShape = ChildZone.IsNodeInZoneShape( Node );
 
 		if ( IsInShape == SyncTrue )
 		{
@@ -441,7 +415,7 @@ void TLMaths::TQuadTreeZone::GetInChildZones(TQuadTreeNode* pNode,TFixedArray<u3
 		{
 			//	cant tell with this node at the moment...
 			//	todo: mark it to only check to see if it needs moving DOWN the tree
-			pNode->SetZoneOutOfDate();
+			Node.SetZoneOutOfDate();
 			break;
 		}
 	}
@@ -451,10 +425,10 @@ void TLMaths::TQuadTreeZone::GetInChildZones(TQuadTreeNode* pNode,TFixedArray<u3
 //-----------------------------------------------------------------
 //	remove node from this zone's list
 //-----------------------------------------------------------------
-void TLMaths::TQuadTreeZone::DoRemoveNode(TPtr<TQuadTreeNode>& pNode)
+void TLMaths::TQuadTreeZone::DoRemoveNode(TQuadTreeNode& Node)
 {
 #ifdef _DEBUG
-	if ( !m_Nodes.Exists( pNode ) )
+	if ( !m_Nodes.Exists( Node ) )
 	{
 		TLDebug_Break("Node missing from zone");
 		return;
@@ -462,11 +436,11 @@ void TLMaths::TQuadTreeZone::DoRemoveNode(TPtr<TQuadTreeNode>& pNode)
 #endif
 
 	//	remove node from our list
-	m_Nodes.Remove( pNode );
-	m_NonStaticNodes.Remove( pNode );
+	m_Nodes.Remove( &Node );
+	m_NonStaticNodes.Remove( &Node );
 	
 	//	notify parent changed state of children
-	TQuadTreeZone* pParentZone = GetParentZone().GetObjectPointer();
+	TQuadTreeZone* pParentZone = GetParentZone();
 	if ( pParentZone )
 		pParentZone->OnChildZoneNodesChanged();
 
@@ -476,10 +450,10 @@ void TLMaths::TQuadTreeZone::DoRemoveNode(TPtr<TQuadTreeNode>& pNode)
 //-----------------------------------------------------------------
 //	add node to this zone's list
 //-----------------------------------------------------------------
-void TLMaths::TQuadTreeZone::DoAddNode(TPtr<TQuadTreeNode>& pNode)
+void TLMaths::TQuadTreeZone::DoAddNode(TQuadTreeNode& Node)
 {
 #ifdef _DEBUG
-	if ( m_Nodes.Exists( pNode ) )
+	if ( m_Nodes.Exists( Node ) )
 	{
 		TLDebug_Break("Node already in zone");
 		return;
@@ -487,17 +461,17 @@ void TLMaths::TQuadTreeZone::DoAddNode(TPtr<TQuadTreeNode>& pNode)
 #endif
 
 	//	add to node array
-	m_Nodes.Add( pNode );
+	m_Nodes.Add( &Node );
 
 	//	add to static list
-	if ( !pNode->IsStatic() )
-		m_NonStaticNodes.Add( pNode );
+	if ( !Node.IsStatic() )
+		m_NonStaticNodes.Add( &Node );
 	
 	//	clear list, just in case...
-	pNode->SetChildZonesNone();
+	Node.SetChildZonesNone();
 
 	//	notify parent changed state of children
-	TQuadTreeZone* pParentZone = GetParentZone().GetObjectPointer();
+	TQuadTreeZone* pParentZone = GetParentZone();
 	if ( pParentZone )
 		pParentZone->OnChildZoneNodesChanged();
 }
@@ -518,7 +492,7 @@ void TLMaths::TQuadTreeZone::OnChildZoneNodesChanged()
 	u32 WithNonStaticNodesIndex = 0;
 	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
 	{
-		TPtr<TQuadTreeZone>& ChildZone = m_Children.ElementAt(c);
+		TQuadTreeZone* ChildZone = m_Children.ElementAt(c);
 		if ( !ChildZone->HasAnyNodesTotal() )
 			continue;
 		
@@ -553,7 +527,7 @@ void TLMaths::TQuadTreeZone::OnChildZoneNodesChanged()
 #endif // ENABLE_CULL_EMPTY_ZONES
 
 	//	update parent's children-with-nodes status too
-	TQuadTreeZone* pParentZone = GetParentZone().GetObjectPointer();
+	TQuadTreeZone* pParentZone = GetParentZone();
 	if ( pParentZone )
 		pParentZone->OnChildZoneNodesChanged();
 }
@@ -632,7 +606,7 @@ void TLMaths::TQuadTreeZone::OnZoneActiveChanged(SyncBool Active)
 //-----------------------------------------------------------------
 //	assign sibling
 //-----------------------------------------------------------------
-void TLMaths::TQuadTreeZone::SetSiblingZones(TPtrArray<TQuadTreeZone>& Siblings)
+void TLMaths::TQuadTreeZone::SetSiblingZones(TArray<TQuadTreeZone*>& Siblings)
 {
 	if ( HasSiblingZones() )
 	{
@@ -642,10 +616,10 @@ void TLMaths::TQuadTreeZone::SetSiblingZones(TPtrArray<TQuadTreeZone>& Siblings)
 
 	for ( u32 s=0;	s<Siblings.GetSize();	s++ )
 	{
-		TPtr<TQuadTreeZone>& pSibling = Siblings.ElementAt(s);
+		TQuadTreeZone* pSibling = Siblings.ElementAt(s);
 
 		//	if this new sibling is us, then store our index
-		if ( pSibling.GetObjectPointer() == this )
+		if ( pSibling == this )
 		{
 			m_SiblingIndex = s;
 			continue;
@@ -661,7 +635,7 @@ void TLMaths::TQuadTreeZone::SetSiblingZones(TPtrArray<TQuadTreeZone>& Siblings)
 //---------------------------------------------------
 //	subdivide zone
 //---------------------------------------------------
-Bool TLMaths::TQuadTreeZone::Divide(TPtr<TLMaths::TQuadTreeZone>& pThis)
+Bool TLMaths::TQuadTreeZone::Divide()
 {
 	//	gr: note, this is 2D, Z size is same as before, need 8 boxes for 3D
 	//	split shape
@@ -674,7 +648,6 @@ Bool TLMaths::TQuadTreeZone::Divide(TPtr<TLMaths::TQuadTreeZone>& pThis)
 
 	//	gr: this can all be sped up, but it's not a big deal
 	const float2& BoxMin = CollisionBox.GetMin();
-	const float2& BoxMax = CollisionBox.GetMax();
 
 	float2 BoxMinTL( BoxMin.x,				BoxMin.y );
 	float2 BoxMinTR( BoxMin.x + BoxHalfSize.x,	BoxMin.y );
@@ -687,10 +660,10 @@ Bool TLMaths::TQuadTreeZone::Divide(TPtr<TLMaths::TQuadTreeZone>& pThis)
 	TLMaths::TBox2D BoxBR( BoxMinBR, BoxMinBR + BoxHalfSize );
 
 	//	gr: order should match the TZonePos_XXX order
-	m_Children.Add( new TQuadTreeZone( BoxTL, pThis ) );
-	m_Children.Add( new TQuadTreeZone( BoxTR, pThis ) );
-	m_Children.Add( new TQuadTreeZone( BoxBL, pThis ) );
-	m_Children.Add( new TQuadTreeZone( BoxBR, pThis ) );
+	m_Children.Add( new TQuadTreeZone( BoxTL, *this ) );
+	m_Children.Add( new TQuadTreeZone( BoxTR, *this ) );
+	m_Children.Add( new TQuadTreeZone( BoxBL, *this ) );
+	m_Children.Add( new TQuadTreeZone( BoxBR, *this ) );
 
 	//	set sibling information
 	m_Children[0]->SetSiblingZones( m_Children );
@@ -708,17 +681,17 @@ Bool TLMaths::TQuadTreeZone::Divide(TPtr<TLMaths::TQuadTreeZone>& pThis)
 //---------------------------------------------------
 //	recursively divide until we're at our minimum size leafs
 //---------------------------------------------------
-Bool TLMaths::TQuadTreeZone::DivideAll(TPtr<TLMaths::TQuadTreeZone>& pThis)
+Bool TLMaths::TQuadTreeZone::DivideAll()
 {
 	//	divide this, if we cant (would be too small) then break out
-	if ( !Divide( pThis ) )
+	if ( !Divide() )
 		return FALSE;
 
 	//	divided, devide children again
 	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
 	{
-		TPtr<TLMaths::TQuadTreeZone>& pChild = m_Children[c];
-		pChild->DivideAll( pChild );
+		TLMaths::TQuadTreeZone* pChild = m_Children[c];
+		pChild->DivideAll();
 	}
 
 	return TRUE;
@@ -754,9 +727,8 @@ void TLMaths::TQuadTreeZone::SetActive(SyncBool Active,Bool SetChildren)
 	{
 		for ( u32 c=0;	c<m_Children.GetSize();	c++ )
 		{
-			TPtr<TLMaths::TQuadTreeZone>& pChild = m_Children[c];
-
-			pChild->SetActive( Active, SetChildren );
+			TLMaths::TQuadTreeZone& Child = *m_Children[c];
+			Child.SetActive( Active, SetChildren );
 		}
 	}
 }
@@ -765,16 +737,16 @@ void TLMaths::TQuadTreeZone::SetActive(SyncBool Active,Bool SetChildren)
 //---------------------------------------------------
 //	recursive call to FindNeighbours to sort out all the neighbours in the tree
 //---------------------------------------------------
-void TLMaths::TQuadTreeZone::FindNeighboursAll(TPtr<TLMaths::TQuadTreeZone>& pThis)
+void TLMaths::TQuadTreeZone::FindNeighboursAll()
 {
 	//	find neighbours...
-	FindNeighbours( pThis );
+	FindNeighbours();
 
 	//	do same for children
 	for ( u32 c=0;	c<m_Children.GetSize();	c++ )
 	{
-		TPtr<TLMaths::TQuadTreeZone>& pChildZone = m_Children[c];
-		pChildZone->FindNeighboursAll( pChildZone );
+		TLMaths::TQuadTreeZone& ChildZone = *m_Children[c];
+		ChildZone.FindNeighboursAll();
 	}
 }
 
@@ -782,7 +754,7 @@ void TLMaths::TQuadTreeZone::FindNeighboursAll(TPtr<TLMaths::TQuadTreeZone>& pTh
 //---------------------------------------------------
 //	calculate neighbours of ourselves
 //---------------------------------------------------
-void TLMaths::TQuadTreeZone::FindNeighbours(TPtr<TLMaths::TQuadTreeZone>& pThis)
+void TLMaths::TQuadTreeZone::FindNeighbours()
 {
 	//	do we have all our neighbour zones calculated already?
 	if ( m_NeighbourZones.GetSize() >= TQUADTREEZONE_MAX_NEIGHBOUR_ZONES )
@@ -811,15 +783,11 @@ void TLMaths::TQuadTreeZone::FindNeighbours(TPtr<TLMaths::TQuadTreeZone>& pThis)
 }
 
 
-TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::GetParentsNeighbourChild(TPtr<TLMaths::TQuadTreeZone>* ppParentNeighbour,TLMaths::TLQuadTree::TZonePos ParentNeighbourChildPositon)
+TLMaths::TQuadTreeZone* TLMaths::TQuadTreeZone::GetParentsNeighbourChild(TLMaths::TQuadTreeZone* pParentNeighbour,TLMaths::TLQuadTree::TZonePos ParentNeighbourChildPositon)
 {
 	//	parent is on an edge so nothing at the position we want
-	if ( !ppParentNeighbour )
-		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
-
-	TLMaths::TQuadTreeZone* pParentNeighbour = *ppParentNeighbour;
 	if ( !pParentNeighbour )
-		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+		return NULL;
 
 	//	now find that child
 	return pParentNeighbour->GetChildFromZonePosition( ParentNeighbourChildPositon );
@@ -848,7 +816,7 @@ TLMaths::TLQuadTree::TZonePos TLMaths::TLQuadTree::GetMirrorPosition_Horizontal(
 
 
 
-TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_West()
+TLMaths::TQuadTreeZone* TLMaths::TQuadTreeZone::FindNeighbourZone_West()
 {
 	//	is a sibling
 	TLQuadTree::TZonePos MirrorPositon = GetMirrorPosition_Horizontal( GetZonePos() );
@@ -858,16 +826,16 @@ TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_West()
 	//	looking for a node outside of the parent, so go into parent...
 	TQuadTreeZone* pParent = GetParentZone();
 	if ( !pParent )
-		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+		return NULL;
 
 	//	now work out where the neighbour will be 
-	TPtr<TQuadTreeZone>* pParentNeighbour = &pParent->FindNeighbourZone_West();
+	TQuadTreeZone* pParentNeighbour = pParent->FindNeighbourZone_West();
 	return GetParentsNeighbourChild( pParentNeighbour, MirrorPositon );
 }
 
 
 
-TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_North()
+TLMaths::TQuadTreeZone* TLMaths::TQuadTreeZone::FindNeighbourZone_North()
 {
 	//	is a sibling
 	TLQuadTree::TZonePos MirrorPositon = GetMirrorPosition_Vertical( GetZonePos() );
@@ -877,17 +845,17 @@ TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_North()
 	//	looking for a node outside of the parent, so go into parent...
 	TQuadTreeZone* pParent = GetParentZone();
 	if ( !pParent )
-		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+		return NULL;
 
 	//	now work out where the neighbour will be 
-	TPtr<TQuadTreeZone>* pParentNeighbour = &pParent->FindNeighbourZone_North();
+	TQuadTreeZone* pParentNeighbour = pParent->FindNeighbourZone_North();
 	return GetParentsNeighbourChild( pParentNeighbour, MirrorPositon );
 }
 
 
 
 
-TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_East()
+TLMaths::TQuadTreeZone* TLMaths::TQuadTreeZone::FindNeighbourZone_East()
 {
 	//	is a sibling
 	TLQuadTree::TZonePos MirrorPositon = GetMirrorPosition_Horizontal( GetZonePos() );
@@ -897,16 +865,16 @@ TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_East()
 	//	looking for a node outside of the parent, so go into parent...
 	TQuadTreeZone* pParent = GetParentZone();
 	if ( !pParent )
-		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+		return NULL;
 
 	//	now work out where the neighbour will be 
-	TPtr<TQuadTreeZone>* pParentNeighbour = &pParent->FindNeighbourZone_East();
+	TQuadTreeZone* pParentNeighbour = pParent->FindNeighbourZone_East();
 	return GetParentsNeighbourChild( pParentNeighbour, MirrorPositon );
 }
 
 
 
-TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_South()
+TLMaths::TQuadTreeZone* TLMaths::TQuadTreeZone::FindNeighbourZone_South()
 {
 	//	is a sibling
 	TLQuadTree::TZonePos MirrorPositon = GetMirrorPosition_Vertical( GetZonePos() );
@@ -916,17 +884,17 @@ TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_South()
 	//	looking for a node outside of the parent, so go into parent...
 	TQuadTreeZone* pParent = GetParentZone();
 	if ( !pParent )
-		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+		return NULL;
 
 	//	now work out where the neighbour will be 
-	TPtr<TQuadTreeZone>* pParentNeighbour = &pParent->FindNeighbourZone_South();
+	TQuadTreeZone* pParentNeighbour = pParent->FindNeighbourZone_South();
 	return GetParentsNeighbourChild( pParentNeighbour, MirrorPositon );
 }
 
 
 
 
-TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_SouthWest()
+TLMaths::TQuadTreeZone* TLMaths::TQuadTreeZone::FindNeighbourZone_SouthWest()
 {
 	//	is a sibling
 	if ( GetZonePos() == TLMaths::TLQuadTree::ZonePos_TopRight )
@@ -935,29 +903,29 @@ TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_SouthWes
 	//	looking for a node outside of the parent, so go into parent...
 	TQuadTreeZone* pParent = GetParentZone();
 	if ( !pParent )
-		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+		return NULL;
 
 	//	now work out where the neighbour will be 
-	TPtr<TQuadTreeZone>* pParentNeighbour = NULL;
+	TQuadTreeZone* pParentNeighbour = NULL;
 	TLQuadTree::TZonePos ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_Invalid;
 
 	switch ( GetZonePos() )
 	{
 	case TLMaths::TLQuadTree::ZonePos_TopLeft:
 		//	get parent's WEST neighbour
-		pParentNeighbour = &pParent->FindNeighbourZone_West();
+		pParentNeighbour = pParent->FindNeighbourZone_West();
 		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_BottomRight;
 		break;
 
 	case TLMaths::TLQuadTree::ZonePos_BottomLeft:
 		//	get parent's SOUTH WEST neighbour
-		pParentNeighbour = &pParent->FindNeighbourZone_SouthWest();
+		pParentNeighbour = pParent->FindNeighbourZone_SouthWest();
 		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_TopRight;
 		break;
 
 	case TLMaths::TLQuadTree::ZonePos_BottomRight:
 		//	get parent's SOUTH neighbour
-		pParentNeighbour = &pParent->FindNeighbourZone_South();
+		pParentNeighbour = pParent->FindNeighbourZone_South();
 		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_TopLeft;
 		break;
 	}
@@ -969,7 +937,7 @@ TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_SouthWes
 
 
 
-TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_NorthWest()
+TLMaths::TQuadTreeZone* TLMaths::TQuadTreeZone::FindNeighbourZone_NorthWest()
 {
 	//	is a sibling
 	if ( GetZonePos() == TLMaths::TLQuadTree::ZonePos_BottomRight )
@@ -978,29 +946,29 @@ TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_NorthWes
 	//	looking for a node outside of the parent, so go into parent...
 	TQuadTreeZone* pParent = GetParentZone();
 	if ( !pParent )
-		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+		return NULL;
 
 	//	now work out where the neighbour will be 
-	TPtr<TQuadTreeZone>* pParentNeighbour = NULL;
+	TQuadTreeZone* pParentNeighbour = NULL;
 	TLQuadTree::TZonePos ParentNeighbourChildPositon = TLQuadTree::ZonePos_Invalid;
 
 	switch ( GetZonePos() )
 	{
 	case TLMaths::TLQuadTree::ZonePos_TopLeft:
 		//	get parent's neighbour
-		pParentNeighbour = &pParent->FindNeighbourZone_NorthWest();
+		pParentNeighbour = pParent->FindNeighbourZone_NorthWest();
 		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_BottomRight;
 		break;
 
 	case TLMaths::TLQuadTree::ZonePos_BottomLeft:
 		//	get parent's neighbour
-		pParentNeighbour = &pParent->FindNeighbourZone_West();
+		pParentNeighbour = pParent->FindNeighbourZone_West();
 		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_TopRight;
 		break;
 
 	case TLMaths::TLQuadTree::ZonePos_TopRight:
 		//	get parent's neighbour
-		pParentNeighbour = &pParent->FindNeighbourZone_North();
+		pParentNeighbour = pParent->FindNeighbourZone_North();
 		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_BottomLeft;
 		break;
 	}
@@ -1011,7 +979,7 @@ TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_NorthWes
 
 
 
-TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_NorthEast()
+TLMaths::TQuadTreeZone* TLMaths::TQuadTreeZone::FindNeighbourZone_NorthEast()
 {
 	//	is a sibling
 	if ( GetZonePos() == TLMaths::TLQuadTree::ZonePos_BottomLeft )
@@ -1020,29 +988,29 @@ TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_NorthEas
 	//	looking for a node outside of the parent, so go into parent...
 	TQuadTreeZone* pParent = GetParentZone();
 	if ( !pParent )
-		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+		return NULL;
 
 	//	now work out where the neighbour will be 
-	TPtr<TQuadTreeZone>* pParentNeighbour = NULL;
+	TQuadTreeZone* pParentNeighbour = NULL;
 	TLQuadTree::TZonePos ParentNeighbourChildPositon = TLQuadTree::ZonePos_Invalid;
 
 	switch ( GetZonePos() )
 	{
 	case TLMaths::TLQuadTree::ZonePos_TopLeft:
 		//	get parent's neighbour
-		pParentNeighbour = &pParent->FindNeighbourZone_North();
+		pParentNeighbour = pParent->FindNeighbourZone_North();
 		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_BottomRight;
 		break;
 
 	case TLMaths::TLQuadTree::ZonePos_BottomRight:
 		//	get parent's neighbour
-		pParentNeighbour = &pParent->FindNeighbourZone_East();
+		pParentNeighbour = pParent->FindNeighbourZone_East();
 		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_TopLeft;
 		break;
 
 	case TLMaths::TLQuadTree::ZonePos_TopRight:
 		//	get parent's neighbour
-		pParentNeighbour = &pParent->FindNeighbourZone_NorthEast();
+		pParentNeighbour = pParent->FindNeighbourZone_NorthEast();
 		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_BottomLeft;
 		break;
 	}
@@ -1051,7 +1019,7 @@ TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_NorthEas
 }
 
 
-TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_SouthEast()
+TLMaths::TQuadTreeZone* TLMaths::TQuadTreeZone::FindNeighbourZone_SouthEast()
 {
 	//	is a sibling
 	if ( GetZonePos() == TLMaths::TLQuadTree::ZonePos_TopLeft )
@@ -1063,26 +1031,26 @@ TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_SouthEas
 		return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
 
 	//	now work out where the neighbour will be 
-	TPtr<TQuadTreeZone>* pParentNeighbour = NULL;
+	TQuadTreeZone* pParentNeighbour = NULL;
 	TLQuadTree::TZonePos ParentNeighbourChildPositon = TLQuadTree::ZonePos_Invalid;
 
 	switch ( GetZonePos() )
 	{
 	case TLMaths::TLQuadTree::ZonePos_BottomLeft:
 		//	get parent's neighbour
-		pParentNeighbour = &pParent->FindNeighbourZone_South();
+		pParentNeighbour = pParent->FindNeighbourZone_South();
 		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_TopRight;
 		break;
 
 	case TLMaths::TLQuadTree::ZonePos_BottomRight:
 		//	get parent's neighbour
-		pParentNeighbour = &pParent->FindNeighbourZone_SouthEast();
+		pParentNeighbour = pParent->FindNeighbourZone_SouthEast();
 		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_TopLeft;
 		break;
 
 	case TLMaths::TLQuadTree::ZonePos_TopRight:
 		//	get parent's neighbour
-		pParentNeighbour = &pParent->FindNeighbourZone_East();
+		pParentNeighbour = pParent->FindNeighbourZone_East();
 		ParentNeighbourChildPositon = TLMaths::TLQuadTree::ZonePos_BottomLeft;
 		break;
 	}
@@ -1094,16 +1062,16 @@ TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::FindNeighbourZone_SouthEas
 //----------------------------------------------
 //	find the sibling with this sibling index (ie. where in the parent they are placed)
 //----------------------------------------------
-TPtr<TLMaths::TQuadTreeZone>& TLMaths::TQuadTreeZone::GetSiblingFromZonePosition(TLMaths::TLQuadTree::TZonePos Position)
+TLMaths::TQuadTreeZone* TLMaths::TQuadTreeZone::GetSiblingFromZonePosition(TLMaths::TLQuadTree::TZonePos Position)
 {
 	for ( u32 s=0;	s<m_SiblingZones.GetSize();	s++ )
 	{
-		TPtr<TLMaths::TQuadTreeZone>& pSiblingZone = m_SiblingZones[s];
+		TLMaths::TQuadTreeZone* pSiblingZone = m_SiblingZones[s];
 		if ( pSiblingZone->GetZonePos() == Position )
 			return pSiblingZone;
 	}
 
-	return TLPtr::GetNullPtr<TLMaths::TQuadTreeZone>();
+	return NULL;
 }
 
 	

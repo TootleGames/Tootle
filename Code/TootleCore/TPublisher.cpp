@@ -44,10 +44,21 @@ void TLMessaging::TPublisher::DoPublishMessage(TLMessaging::TMessage& Message,TS
 
 void TLMessaging::TPublisher::DoPublishMessage(TLMessaging::TMessage& Message)		
 {
-	for(u32 uIndex = 0; uIndex < m_Subscribers.GetSize(); uIndex++)
+	u32 SubscriberCount = m_Subscribers.GetSize();
+	for(u32 uIndex = 0; uIndex <SubscriberCount; uIndex++)
 	{
 		// Reset the read pos for each subscriber so they read from the start
 		Message.ResetReadPos();
+		
+#ifdef _DEBUG
+		if ( m_Subscribers.GetSize() != SubscriberCount )
+		{
+			TDebugString Debug_String;
+			Debug_String << "Number of subscribers in " << GetPublisherRef() << " has changed from " << SubscriberCount << " to " << m_Subscribers.GetSize() << " during publish";
+			TLDebug_Print( Debug_String );
+			break;
+		}
+#endif
 
 		TSubscriber* pSubscriber = m_Subscribers.ElementAt(uIndex);
 

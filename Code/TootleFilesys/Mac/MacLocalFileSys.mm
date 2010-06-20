@@ -153,7 +153,7 @@ Bool Platform::LocalFileSys::LoadFileList(const char* pFileSearch)
 		}
 		
 		
-		TPtr<TFile> pFile = CreateFileInstance( Filename );
+		TFile* pFile = CreateFileInstance( Filename );
 		
 		if ( !pFile )
 		{

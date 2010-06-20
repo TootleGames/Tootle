@@ -6,24 +6,6 @@
 #include PLATFORMHEADER(RenderTarget.h)
 
 
-//----------------------------------------------------
-//	simple ref-sort func - for arrays of TRef's
-//----------------------------------------------------
-TLArray::SortResult ScreenRenderTargetSort(const TPtr<TLRender::TRenderTarget>& pRenderTargetA,const TPtr<TLRender::TRenderTarget>& pRenderTargetB,const void* pTestVal)
-{
-	if ( pTestVal )
-	{
-		TLDebug_Break("not yet implemented specific render target searching...");
-	}
-
-	const TLRender::TRenderTarget& RenderTargetA = *pRenderTargetA;
-	const TLRender::TRenderTarget& RenderTargetB = *pRenderTargetB;
-
-	//	== turns into 0 (is greater) or 1(equals)
-	return RenderTargetA < RenderTargetB ? TLArray::IsLess : (TLArray::SortResult)(RenderTargetA==RenderTargetB);	
-}
-
-
 //---------------------------------------------------------
 //	
 //---------------------------------------------------------
@@ -31,8 +13,7 @@ TLRender::TScreen::TScreen(TRefRef Ref,TScreenShape ScreenShape) :
 	m_HasShutdown	( FALSE ),
 	m_Ref			( Ref ),
 	m_Size			( g_MaxSize,g_MaxSize,g_MaxSize,g_MaxSize ),
-	m_ScreenShape	( ScreenShape ),
-	m_RenderTargetsZOrdered	( TLPtrArray::SimpleSort<TLRender::TRenderTarget> )
+	m_ScreenShape	( ScreenShape )
 {
 	//	gr: disabled for now, core manager limits frame rate instead of using hardware sync
 	//m_Flags.Set( Flag_SyncFrameRate );
@@ -90,9 +71,6 @@ SyncBool TLRender::TScreen::Shutdown()
 
 	SyncBool ShutdownResult = SyncTrue;
 
-	//	 empty this array first
-	m_RenderTargetsZOrdered.Empty();
-
 	//	clean up render targets
 	if ( m_RenderTargets.GetSize() )
 	{
@@ -138,11 +116,12 @@ void TLRender::TScreen::Draw()
 	GetViewportMaxSize( ViewportMaxSize );
 
 	//	render each render target in z order
-	for ( u32 r=0;	r<m_RenderTargetsZOrdered.GetSize();	r++ )
+	m_RenderTargets.Sort();
+	for ( u32 r=0;	r<m_RenderTargets.GetSize();	r++ )
 	{
 		//	get render target
-		TPtr<TRenderTarget>& pRenderTarget = m_RenderTargetsZOrdered[r];
-		if ( !pRenderTarget.IsValid() )
+		TRenderTarget* pRenderTarget = m_RenderTargets[r];
+		if ( !pRenderTarget )
 			continue;
 
 		//	begin draw of render target
@@ -172,7 +151,6 @@ TPtr<TLRender::TRenderTarget> TLRender::TScreen::CreateRenderTarget(TRefRef Targ
 
 	//	add render target to list
 	m_RenderTargets.Add( pRenderTarget );
-	m_RenderTargetsZOrdered.Add( pRenderTarget );
 
 	//	resort render targets by z
 	OnRenderTargetZChanged( *pRenderTarget );
@@ -214,9 +192,6 @@ SyncBool TLRender::TScreen::DeleteRenderTarget(const TRef& TargetRef)
 
 	//	remove from render target list
 	m_RenderTargets.RemoveAt( (u32)Index );
-
-	s32 zindex = m_RenderTargetsZOrdered.FindIndexNoSort( TargetRef );
-	m_RenderTargetsZOrdered.RemoveAt( zindex );
 
 	pRenderTarget = NULL;
 	/*
@@ -525,11 +500,11 @@ TLRender::TRenderNodeText* TLRender::TScreen::Debug_GetRenderNodeText(TRefRef De
 	if ( !ppRenderNodeRef )
 		return NULL;
 
-	TPtr<TLRender::TRenderNode>& pRenderNode = TLRender::g_pRendergraph->FindNode( *ppRenderNodeRef );
+	TLRender::TRenderNode* pRenderNode = TLRender::g_pRendergraph->FindNode( *ppRenderNodeRef );
 	if ( !pRenderNode )
 		return NULL;
 
-	return pRenderNode.GetObjectPointer<TLRender::TRenderNodeText>();
+	return static_cast<TLRender::TRenderNodeText*>(pRenderNode);
 }
 
 
@@ -538,7 +513,7 @@ TLRender::TRenderNodeText* TLRender::TScreen::Debug_GetRenderNodeText(TRefRef De
 //---------------------------------------------------------
 void TLRender::TScreen::OnRenderTargetZChanged(const TRenderTarget& RenderTarget)
 {
-	m_RenderTargetsZOrdered.Sort();
+	m_RenderTargets.Sort();
 }
 
 

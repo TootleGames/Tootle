@@ -300,8 +300,8 @@ Bool TLFileSys::TFileFreetype::VectoriseGlyph(TPtr<TLAsset::TMesh>& pMesh,const 
     for( s16 i=0;	i<Outline.n_contours;	i++ )
     {
         s16 endIndex = Outline.contours[i];
-		TArray<float3> ContourPoints;
-		TArray<TLMaths::TContourCurve> ContourCurves;
+		THeapArray<float3> ContourPoints;
+		THeapArray<TLMaths::TContourCurve> ContourCurves;
 
 		if ( startIndex < 0 || endIndex < 0 )
 		{

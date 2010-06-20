@@ -51,7 +51,13 @@ public:
 
 	FORCEINLINE Bool			operator==(const Type2<TYPE>& v) const		{	return ( x == v.x ) && ( y == v.y );	};
 	FORCEINLINE Bool			operator!=(const Type2<TYPE>& v) const		{	return ( x != v.x ) || ( y != v.y );	};
-	FORCEINLINE Bool			operator<(const Type2<TYPE>& v) const		{	return ( x < v.x ) && ( y < v.y );	};
+	FORCEINLINE Bool			operator<(const Type2<TYPE>& v) const		
+	{
+		//	sort by x, then y
+		if ( x < v.x )	return true;
+		if ( x > v.x )	return false;
+		return (y < v.y);
+	}
 
 	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type2<OTHERTYPE>& v);
 	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type3<OTHERTYPE>& v);
@@ -136,7 +142,16 @@ public:
 
 	FORCEINLINE Bool		operator==(const Type3<TYPE>& v) const				{	return ( x == v.x ) && ( y == v.y ) && ( z == v.z );	};
 	FORCEINLINE Bool		operator!=(const Type3<TYPE>& v) const				{	return ( x != v.x ) || ( y != v.y ) || ( z != v.z );	};
-	FORCEINLINE Bool		operator<(const Type3<TYPE>& v) const				{	return ( x < v.x ) && ( y < v.y ) && ( z < v.z );	};
+	FORCEINLINE Bool		operator<(const Type3<TYPE>& v) const	
+	{
+		//	sort by x, then y, then z
+		if ( x < v.x )	return true;
+		if ( x > v.x )	return false;
+		if ( y < v.y )	return true;
+		if ( y > v.y )	return false;
+			
+		return (z < v.z);
+	}
 	
 	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type2<OTHERTYPE>& v);
 	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type3<OTHERTYPE>& v);
@@ -235,8 +250,19 @@ public:
 
 	FORCEINLINE Bool			operator==(const Type4<TYPE>& v) const		{	return ( x == v.x ) && ( y == v.y ) && ( z == v.z ) && ( w == v.w );	};
 	FORCEINLINE Bool			operator!=(const Type4<TYPE>& v) const		{	return ( x != v.x ) || ( y != v.y ) || ( z != v.z ) || ( w != v.w );	};
-	FORCEINLINE Bool			operator<(const Type4<TYPE>& v) const		{	return ( x < v.x ) && ( y < v.y ) && ( z < v.z ) && ( w < v.w );	};
-
+	FORCEINLINE Bool			operator<(const Type4<TYPE>& v) const	
+	{
+		//	sort by x, then y, then z, then w
+		if ( x < v.x )	return true;
+		if ( x > v.x )	return false;
+		if ( y < v.y )	return true;
+		if ( y > v.y )	return false;
+		if ( z < v.z )	return true;
+		if ( z > v.z )	return false;
+		
+		return (w < v.w);
+	}
+	
 	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type2<OTHERTYPE>& v);
 	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type3<OTHERTYPE>& v);
 	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type4<OTHERTYPE>& v);

@@ -79,9 +79,11 @@ public:
 	
 	FORCEINLINE Bool		IsEnabled() const				{	return TRUE;	}	//	for the graph templating - audio nodes aren't explicitly disabled... (yet)
 
-	FORCEINLINE Bool		operator==(const TPtr<TLAudio::TAudioNode>& pNode) const	{	return this == pNode.GetObjectPointer();	}
-	FORCEINLINE Bool		operator==(const TLAudio::TAudioNode& Node) const			{	return this == (&Node);	}
-	FORCEINLINE Bool		operator==(TRefRef NodeRef) const							{	return GetNodeRef() == NodeRef;	}
+	FORCEINLINE Bool		operator==(const TLAudio::TAudioNode& Node) const		{	return this == (&Node);	}
+	FORCEINLINE Bool			operator<(TRefRef NodeRef) const			{	return GetNodeRef() < NodeRef;	}
+	FORCEINLINE Bool			operator==(TRefRef NodeRef) const			{	return GetNodeRef() == NodeRef;	}
+	FORCEINLINE Bool		operator<(const TSorter<TAudioNode*,TRef>& That) const	{	return GetNodeRef() < That.This()->GetNodeRef();	}
+	FORCEINLINE Bool		operator<(const TSorter<TAudioNode,TRef>& That) const	{	return GetNodeRef() < That->GetNodeRef();	}
 
 protected:
 	void				GetAudioAsset(TPtr<TLAsset::TAudio>& pAudio);						//	returns the audio asset from the asset library with the asset reference
@@ -154,3 +156,5 @@ private:
 	TFlags<AudioFlags>	m_AudioFlags;
 };
 
+
+FORCEINLINE bool operator==(const TLAudio::TAudioNode* pNode,const TRef& Ref)	{	return pNode ? (*pNode == Ref) : false;	}

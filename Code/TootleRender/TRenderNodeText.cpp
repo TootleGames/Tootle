@@ -405,22 +405,22 @@ Bool TLRender::TRenderNodeVectorText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 	//	setup RenderNodes
 	u32 charindex=0;
 
-	TPtrArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
+	TArray<TLRender::TRenderNode*>& NodeChildren = GetChildren();
 	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 	{
-		TPtr<TLRender::TRenderNode>& pChild = NodeChildren[c];
+		TLRender::TRenderNode& Child = *NodeChildren[c];
 
 		//	gr: just set not enabled?
 		//	remove children we dont need any more
 		if ( charindex >= m_Text.GetLength() )
 		{
-			TLRender::g_pRendergraph->RemoveNode( pChild->GetNodeRef() );
+			TLRender::g_pRendergraph->RemoveNode( Child );
 			//RemoveChild( pRemoveChild );
 			continue;
 		}
 
 		//	setup existing child
-		TRenderNodeVectorGlyph& RenderGlyph = *pChild.GetObjectPointer<TRenderNodeVectorGlyph>();
+		TRenderNodeVectorGlyph& RenderGlyph = static_cast<TRenderNodeVectorGlyph&>(Child);
 
 		//	update glyph
 		SetGlyph( RenderGlyph, *pFontAsset, GlyphPos, m_Text[charindex], TextBounds );
@@ -453,11 +453,9 @@ Bool TLRender::TRenderNodeVectorText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 		//	gr: if this is implemented we need to move the changes to the existing text to be a SetProperty message too
 		//		in order to sync the existing-glyph change and the new-glyph creation
 		///////////////////////////////////////////////////////////////////////////////
-		TPtr<TRenderNode> pRenderGlyphPtr = new TRenderNodeVectorGlyph( GlyphRef, "Glyph" );
-		TLRender::g_pRendergraph->AddNode( pRenderGlyphPtr, this->GetNodeRef() );
-
-		TRenderNodeVectorGlyph* pRenderGlyph = pRenderGlyphPtr.GetObjectPointer<TRenderNodeVectorGlyph>();
-		SetGlyph( *pRenderGlyph, *pFontAsset, GlyphPos, m_Text[charindex], TextBounds );
+		TRenderNodeVectorGlyph* pRenderGlyph = new TRenderNodeVectorGlyph( GlyphRef, "Glyph" );
+		if ( TLRender::g_pRendergraph->AddNode( *pRenderGlyph, *this ) )
+			SetGlyph( *pRenderGlyph, *pFontAsset, GlyphPos, m_Text[charindex], TextBounds );
 
 		///////////////////////////////////////////////////////////////////////////////
 	

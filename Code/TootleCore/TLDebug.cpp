@@ -56,10 +56,18 @@ void TLDebug::GetLastBreak(TString& String)
 	}
 }
 
+//-------------------------------------------------------
+//	halt! return TRUE to ignore the error and continue
+//-------------------------------------------------------
+Bool TLDebug::Break(const char* String,const char* pSourceFunction)
+{
+	TDebugString Debug_String( String );
+	return Break( Debug_String, pSourceFunction );
+}
 
 #ifndef ENABLE_DEBUG_TRACE
 
-Bool TLDebug::NoBreak(const TString& String)
+Bool TLDebug::NoBreak()
 {
 	return FALSE;
 }

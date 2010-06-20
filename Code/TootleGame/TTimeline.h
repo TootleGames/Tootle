@@ -80,10 +80,10 @@ private:
 	TFlags<TimelineFlags>		m_Flags;					// Optional flags for the instance
 
 	TKeyArray<TRef, TRef>		m_NodeRefMap;				// Node ref mapping - used for when nodes are added via the timeline commands
-	TArray<TRef>				m_CreatedSceneNodes;		// List of scene nodes created
-	TArray<TRef>				m_CreatedRenderNodes;		// List of render nodes created
-	TArray<TRef>				m_CreatedPhysicsNodes;		// List of physics nodes created
-	TArray<TRef>				m_CreatedAudioNodes;		// List of audio nodes created
+	THeapArray<TRef>			m_CreatedSceneNodes;		// List of scene nodes created
+	THeapArray<TRef>			m_CreatedRenderNodes;		// List of render nodes created
+	THeapArray<TRef>			m_CreatedPhysicsNodes;		// List of physics nodes created
+	THeapArray<TRef>			m_CreatedAudioNodes;		// List of audio nodes created
 };
 
 

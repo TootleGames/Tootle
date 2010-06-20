@@ -63,7 +63,7 @@ protected:
 		TLTime::TTimestamp	m_FirstTimestamp;	//	timestamp of when we did our first Update() - can use later to determine what takes ages to update/init etc
 	};
 
-	TArray<SyncJob>	m_SyncJobs;			//	array of jobs
+	THeapArray<SyncJob>	m_SyncJobs;			//	array of jobs
 
 };
 

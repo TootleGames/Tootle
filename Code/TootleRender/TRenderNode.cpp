@@ -400,7 +400,7 @@ void TLRender::TRenderNode::SetBoundsInvalid(const TInvalidateFlags& InvalidateF
 				ChildInvalidateFlags.Set( InvalidateChildWorldPos );
 			}
 
-			TPtrArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
+			TArray<TLRender::TRenderNode*>& NodeChildren = GetChildren();
 			for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 			{
 				TLRender::TRenderNode* pChild = NodeChildren[c];
@@ -478,9 +478,9 @@ void TLRender::TRenderNode::OnAdded()
 }
 
 
-void TLRender::TRenderNode::OnMoved(const TPtr<TLRender::TRenderNode>& pOldParent)
+void TLRender::TRenderNode::OnMoved(const TLRender::TRenderNode& OldParentNode)
 {
-	TLGraph::TGraphNode<TLRender::TRenderNode>::OnMoved(pOldParent);
+	TLGraph::TGraphNode<TLRender::TRenderNode>::OnMoved(OldParentNode);
 
 	//	invalidate bounds of self IF child affects bounds
 	if ( !GetRenderFlags().IsSet( RenderFlags::ResetScene ) )
@@ -500,7 +500,7 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 	//	need to subscribe to a scene node - todo: expand to get all children like this
 	if ( Message.ImportData("SubTo",SceneNodeRef) )
 	{
-		TPtr<TLScene::TSceneNode>& pSceneNode = TLScene::g_pScenegraph->FindNode(SceneNodeRef);
+		TLScene::TSceneNode* pSceneNode = TLScene::g_pScenegraph->FindNode(SceneNodeRef);
 		if ( pSceneNode )
 		{
 			this->SubscribeTo( pSceneNode );
@@ -514,7 +514,7 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 	//	need to publish to a scene node - todo: expand to get all children like this
 	if ( Message.ImportData("PubTo",SceneNodeRef) )
 	{
-		TPtr<TLScene::TSceneNode>& pSceneNode = TLScene::g_pScenegraph->FindNode(SceneNodeRef);
+		TLScene::TSceneNode* pSceneNode = TLScene::g_pScenegraph->FindNode(SceneNodeRef);
 		if ( pSceneNode )
 		{
 			pSceneNode->SubscribeTo( this );
@@ -530,9 +530,9 @@ void TLRender::TRenderNode::Initialise(TLMessaging::TMessage& Message)
 	if(Message.ImportData("Owner", m_OwnerSceneNode))
 	{
 		// Get the scenegraph node
-		TPtr<TLScene::TSceneNode>& pOwner = TLScene::g_pScenegraph->FindNode(m_OwnerSceneNode);
+		TLScene::TSceneNode* pOwner = TLScene::g_pScenegraph->FindNode(m_OwnerSceneNode);
 
-		if(pOwner.IsValid())
+		if(pOwner)
 		{
 			pOwner->SubscribeTo(this);
 			SubscribeTo(pOwner);
@@ -899,9 +899,8 @@ void TLRender::TRenderNode::SetWorldTransform(const TLMaths::TTransform& SceneTr
 		#ifdef _DEBUG
 		if ( m_WorldTransform != SceneTransform )
 		{
-			TTempString Debug_String("World transform of render node ");
-			this->GetRenderNodeRef().GetString( Debug_String );
-			Debug_String.Append(" doesn't match it's scene transform... but render node thinks its up to date... Invalidation missing somewhere");
+			TDebugString Debug_String;
+			Debug_String << "World transform of render node " << GetNodeRef() << " doesn't match it's scene transform... but render node thinks its up to date... Invalidation missing somewhere";
 			TLDebug_Break(Debug_String);
 		}
 		#endif
@@ -1289,7 +1288,7 @@ void TLRender::TRenderNode::GetWorldDatums(TPtrArray<TLMaths::TShape>& WorldDatu
 		return;
 
 	//	get all the local datums
-	TArray<const TLMaths::TShape*> LocalDatums;
+	TPointerArray<const TLMaths::TShape> LocalDatums;
 	GetLocalDatums( LocalDatums );
 
 	for ( u32 i=0;	i<LocalDatums.GetSize();	i++ )

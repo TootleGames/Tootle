@@ -23,6 +23,7 @@ public:
 	TRenderNodeSprite(TRefRef RenderNodeRef,TRefRef TypeRef);
 
 protected:
+	virtual void	Initialise(TLMessaging::TMessage& Message);
 	virtual void	SetProperty(TLMessaging::TMessage& Message);
 
 private:

@@ -284,7 +284,7 @@ void TWidgetManager::MapDeviceActions_Keyboard(TRefRef DeviceRef, TPtr<TLUser::T
 	*/
 			
 	// Get a list of the supported characters 
-	TArray<TRef> RefArray;
+	THeapArray<TRef> RefArray;
 	
 	if(TLInput::g_pInputSystem->BuildArrayOfSupportInputCharacterRefs(RefArray))
 	{
@@ -408,7 +408,7 @@ void TWidgetManager::OnInputDeviceRemoved(TRefRef DeviceRef, TRefRef DeviceTypeR
 	if(DeviceTypeRef == STRef(k,e,y,b,o))
 	{
 		// Get a list of the supported characters 
-		TArray<TRef> RefArray;
+		THeapArray<TRef> RefArray;
 		
 		if(TLInput::g_pInputSystem->BuildArrayOfSupportInputCharacterRefs(RefArray))
 		{

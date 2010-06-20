@@ -6,6 +6,9 @@
  *  Copyright 2010 __MyCompanyName__. All rights reserved.
  *
  */
+#if !defined(TL_ENABLE_WX)
+#error Should only be built in wx only build
+#endif // TL_ENABLE_WX
 
 
 
@@ -58,7 +61,7 @@ public:
 	const TPtr<TLGui::TTreeItem>&	GetRootTreeItem() const;
 	
 protected:
-	TArray<TRef>			m_Columns;		//	data-column -> binarydata-on-item lookup. column[N] = TreeItem.GetData(Ref)
+	THeapArray<TRef>		m_Columns;		//	data-column -> binarydata-on-item lookup. column[N] = TreeItem.GetData(Ref)
 	
 private:
 	wx::Tree*				m_pOwner;		//	store owner for node access - never null

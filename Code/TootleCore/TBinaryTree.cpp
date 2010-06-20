@@ -300,7 +300,13 @@ Bool TBinaryTree::AddUnreadChildren(TBinaryTree& Data,Bool ReplaceExisting)
 	for ( u32 i=0;	i<Data.GetChildren().GetSize();	i++ )
 	{
 		TPtr<TBinaryTree> pChild = Data.GetChildren().ElementAt(i);
-		
+		if ( !pChild )
+		{
+			//	gr: not sure we should have a null element...
+			TLDebug_Warning("Unexpected NULL data");
+			continue;
+		}
+
 		//	if read pos isnt reset we can assume we didn't read the data in
 		//	gr: now if any children HAVE been read we don't store this data
 		if ( pChild->IsDataTreeRead() )

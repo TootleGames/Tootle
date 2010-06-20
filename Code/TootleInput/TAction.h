@@ -53,8 +53,8 @@ protected:
 private:
 	TRef				m_refActionID;
 
-	TArray<TRef>					m_refParentActions;
-	TArray<TParentActionState>		m_bParentActionStates;	//	gr: merge these two arrays together?
+	THeapArray<TRef>				m_refParentActions;
+	THeapArray<TParentActionState>	m_bParentActionStates;	//	gr: merge these two arrays together?
 
 	TActionCondition	m_uActionCondition;
 	float				m_fThreshold;

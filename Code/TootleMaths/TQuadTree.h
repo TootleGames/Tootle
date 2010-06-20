@@ -19,7 +19,6 @@
 
 
 #include <TootleCore/TLTypes.h>
-#include <TootleCore/TPtrArray.h>
 #include "TBox.h"
 #include <TootleCore/TPublisher.h>
 
@@ -90,30 +89,36 @@ public:
 	virtual void					OnZoneWake(SyncBool ZoneActive)					{	}	//	notifcation when zone is set to active (from non-active)
 	virtual void					OnZoneSleep()									{	}	//	notifcation when zone is set to non-active (from active)
 
-	FORCEINLINE TPtr<TQuadTreeZone>&		GetZone()								{	return m_pZone;	}
-	FORCEINLINE const TPtr<TQuadTreeZone>&	GetZone() const							{	return m_pZone;	}
+	FORCEINLINE TQuadTreeZone*				GetZone()								{	return m_pZone;	}
+	FORCEINLINE const TQuadTreeZone*		GetZone() const							{	return m_pZone;	}
 	FORCEINLINE TFixedArray<u32,4>&			GetChildZones()							{	return m_ChildZones;	}
 	FORCEINLINE const TFixedArray<u32,4>&	GetChildZones() const					{	return m_ChildZones;	}
 
-	FORCEINLINE Bool				IsZoneOutOfDate() const							{	return m_IsZoneOutofDate;	}
-	FORCEINLINE void				SetZoneOutOfDate(Bool OutOfDate=TRUE)			{	m_IsZoneOutofDate = OutOfDate;	}
-	void							UpdateZone(TPtr<TLMaths::TQuadTreeNode>& pThis,TPtr<TLMaths::TQuadTreeZone>& pRootZone);	//	if the node has moved, update it's zone. returns TRUE if zone changed
+	FORCEINLINE Bool						IsZoneOutOfDate() const							{	return m_IsZoneOutofDate;	}
+	FORCEINLINE void						SetZoneOutOfDate(Bool OutOfDate=TRUE)			{	m_IsZoneOutofDate = OutOfDate;	}
+	void									UpdateZone(TLMaths::TQuadTreeZone& RootZone);	//	if the node has moved, update it's zone. returns TRUE if zone changed
 
-	FORCEINLINE Bool				operator==(TRefRef NodeRef) const				{	return (GetQuadTreeNodeRef() == NodeRef);	}
+	FORCEINLINE bool						operator==(const TQuadTreeNode& Node) const		{	return GetQuadTreeNodeRef() == Node.GetQuadTreeNodeRef();	}
+	FORCEINLINE bool						operator==(const TQuadTreeNode* pNode) const	{	return this == pNode;	}
+	FORCEINLINE Bool						operator==(TRefRef NodeRef) const				{	return (GetQuadTreeNodeRef() == NodeRef);	}
 
 protected:
-	Bool									SetZone(TPtr<TQuadTreeZone>& pZone,TPtr<TQuadTreeNode>& pThis,const TFixedArray<u32,4>* pChildZoneList);
+	Bool									SetZone(TQuadTreeZone* pZone,const TFixedArray<u32,4>* pChildZoneList);
 	FORCEINLINE void						SetChildZonesNone()									{	m_ChildZones.Empty();	}
 	void									SetChildZones(const TFixedArray<u32,4>& InZones);	//	
 	virtual void							OnZoneChanged(TQuadTreeZone* pOldZone)	{	}	//	zone has changed
 
 protected:
-	TPtr<TQuadTreeZone>		m_pZone;			//	collision zone we're in
+	TQuadTreeZone*			m_pZone;			//	collision zone we're in
 	TFixedArray<u32,4>		m_ChildZones;		//	zones we're intersecting (of m_pZone), these are direct children of m_pZone. if this is empty we're not intersecting any, otherwise MUST be intersecting more than 1 child zone
 	Bool					m_IsZoneOutofDate;	//	flag to say zone needs update
 	TRef					m_QuadTreeNodeRef;	//	
 };
 
+FORCEINLINE bool operator==(const TLMaths::TQuadTreeNode* pNodeA,const TLMaths::TQuadTreeNode& NodeB)
+{
+	return pNodeA == &NodeB;
+}
 
 
 //---------------------------------------------------------------
@@ -124,7 +129,7 @@ class TLMaths::TQuadTreeZone : public TLMessaging::TPublisher
 	friend class TLMaths::TQuadTreeNode;
 
 public:
-	TQuadTreeZone(const TLMaths::TBox2D& ZoneShape,TPtr<TQuadTreeZone>& pParent);
+	TQuadTreeZone(const TLMaths::TBox2D& ZoneShape,TQuadTreeZone& Parent);
 	TQuadTreeZone(const TLMaths::TBox2D& ZoneShape,const TLMaths::TQuadTreeParams& ZoneParams);
 	~TQuadTreeZone()			{	Shutdown();	}
 
@@ -132,30 +137,29 @@ public:
 
 	virtual TRefRef				GetPublisherRef() const								{	static TRef Ref = TRef_Static(Q,Z,o,n,e);	return Ref;	}						//	ref for this publisher (doesn't need to be unique, just an identifier)
 
-	Bool						AddNode(TPtr<TQuadTreeNode>& pNode,TPtr<TQuadTreeZone>& pThis,Bool DoCheckInShape);	//	attempt to add this node to this zone. checks with children first to see if it fits into just one child better. returns FALSE if not in this zone
-	FORCEINLINE Bool			IsBelowZone(const TQuadTreeZone* pZone) const		{	return (this == pZone) ? TRUE : (!m_pParent.IsValid()) ? FALSE : m_pParent->IsBelowZone( pZone );	}
-	FORCEINLINE Bool			IsBelowZone(const TPtr<TQuadTreeZone>& pZone) const	{	return IsBelowZone( pZone.GetObjectPointer() );	}
-	FORCEINLINE Bool			IsInZone(const TPtr<TQuadTreeNode>& pNode)			{	return m_Nodes.Exists( pNode.GetObjectPointer() );	}	//	test to see if node exists in this zone
+	Bool						AddNode(TQuadTreeNode& Node,Bool DoCheckInShape);	//	attempt to add this node to this zone. checks with children first to see if it fits into just one child better. returns FALSE if not in this zone
+	FORCEINLINE Bool			IsBelowZone(const TQuadTreeZone* pZone) const		{	return (this == pZone) ? TRUE : (!m_pParent) ? FALSE : m_pParent->IsBelowZone( pZone );	}
+	FORCEINLINE Bool			IsBelowZone(const TQuadTreeZone& Zone) const		{	return IsBelowZone( Zone );	}
 	FORCEINLINE Bool			IsInZone(const TQuadTreeNode& Node)					{	return m_Nodes.Exists( &Node );	}	//	test to see if node exists in this zone
 	const TQuadTreeZone*		GetZoneAt(const float2& Position) const;			//	search the tree to find the existing zone at this position - todo: expand to use shape
 	void						GetIntersectingLeafZones(const TLMaths::TLine2D& Shape,TArray<const TLMaths::TQuadTreeZone*>& IntersectZones);	//	get a list of all leaf zones that this shape intersects
 
-	TPtr<TQuadTreeZone>&		GetParentZone()										{	return m_pParent;	}
-	const TPtr<TQuadTreeZone>&	GetParentZone() const								{	return m_pParent;	}
+	TQuadTreeZone*				GetParentZone()										{	return m_pParent;	}
+	const TQuadTreeZone*		GetParentZone() const								{	return m_pParent;	}
 
-	TPtrArray<TQuadTreeNode>&	GetNodes()											{	return m_Nodes;	}
-	TPtrArray<TQuadTreeNode>&	GetNonStaticNodes()									{	return m_NonStaticNodes;	}
+	TArray<TQuadTreeNode*>&		GetNodes()											{	return m_Nodes;	}
+	TArray<TQuadTreeNode*>&		GetNonStaticNodes()									{	return m_NonStaticNodes;	}
 	u32							GetNodeCountTotal();
 	u32							GetNonStaticNodeCountTotal();
 	TLQuadTree::TZonePos		GetZonePos() const									{	return (TLQuadTree::TZonePos)m_SiblingIndex;	}
 
-	TPtrArray<TQuadTreeZone>&	GetChildZones()										{	return m_Children;	}
-	const TPtrArray<TQuadTreeZone>&	GetChildZones() const							{	return m_Children;	}
+	TArray<TQuadTreeZone*>&		GetChildZones()										{	return m_Children;	}
+	const TArray<TQuadTreeZone*>&	GetChildZones() const							{	return m_Children;	}
 	Bool						HasChildrenAnyNodes()								{	return m_ChildrenWithNodes.GetSize() > 0;	}
 	Bool						HasChildrenAnyNonStaticNodes()						{	return m_ChildrenWithNonStaticNodes.GetSize() > 0;	}
-	TPtrArray<TQuadTreeZone>&	GetChildZonesWithNodes()							{	return m_ChildrenWithNodes;	}
-	TPtrArray<TQuadTreeZone>&	GetChildZonesWithNonStaticNodes()					{	return m_ChildrenWithNonStaticNodes;	}
-	TPtr<TQuadTreeZone>&		GetChildFromZonePosition(TLQuadTree::TZonePos Positon)		{	return (m_Children.GetSize() > 0) ? m_Children[Positon] : TLPtr::GetNullPtr<TQuadTreeZone>();	}
+	TArray<TQuadTreeZone*>&		GetChildZonesWithNodes()							{	return m_ChildrenWithNodes;	}
+	TArray<TQuadTreeZone*>&		GetChildZonesWithNonStaticNodes()					{	return m_ChildrenWithNonStaticNodes;	}
+	TQuadTreeZone*				GetChildFromZonePosition(TLQuadTree::TZonePos Positon)		{	return (m_Children.GetSize() > 0) ? m_Children[Positon] : NULL;	}
 
 	Bool						HasAnyNodes()										{	return (m_Nodes.GetSize() > 0);	}
 	Bool						HasAnyNodesTotal()									{	return (m_Nodes.GetSize() > 0) || HasChildrenAnyNodes();	}
@@ -165,65 +169,65 @@ public:
 	FORCEINLINE SyncBool		IsNodeInZoneShape(TQuadTreeNode& Node);				//	test to see if this intersects into this zone
 	FORCEINLINE const TLMaths::TBox2D&	GetShape() const							{	return m_Shape;	}
 
-	void						SetSiblingZones(TPtrArray<TQuadTreeZone>& Siblings);	//	assign sibling
-	TPtr<TQuadTreeZone>&		GetSiblingZone(u32 SiblingIndex)					{	return m_SiblingZones[SiblingIndex];	}
-	u32							GetSiblingParentsChildIndex(u32 SiblingIndex) const	{	return m_SiblingZones[SiblingIndex];	}
+	void						SetSiblingZones(TArray<TQuadTreeZone*>& Siblings);	//	assign sibling
+	TQuadTreeZone*				GetSiblingZone(u32 SiblingIndex)					{	return m_SiblingZones[SiblingIndex];	}
+	u32							GetSiblingParentsChildIndex(u32 SiblingIndex) const	{	return m_SiblingZones[SiblingIndex]->m_SiblingIndex;	}	//	gr: this might be wrong, but I'm sure it's right. Code didn't compile before.
 	Bool						HasSiblingZones() const								{	return (m_SiblingIndex!=-1);	}	//	our has parent, or m_SiblingZones.GetSIze
 	u32							GetParentsChildIndex() const						{	return m_SiblingIndex;	}
-	TPtr<TQuadTreeZone>&		GetSiblingFromZonePosition(TLQuadTree::TZonePos Position);			//	find the sibling with this sibling index (ie. where in the parent they are placed)
+	TQuadTreeZone*				GetSiblingFromZonePosition(TLQuadTree::TZonePos Position);			//	find the sibling with this sibling index (ie. where in the parent they are placed)
 
-	TPtrArray<TQuadTreeZone>&	GetNeighbourZones()									{	return m_NeighbourZones;	}
-	void						FindNeighboursAll(TPtr<TLMaths::TQuadTreeZone>& pThis);	//	recursive call to FindNeighbours to sort out all the neighbours in the tree
-	void						FindNeighbours(TPtr<TLMaths::TQuadTreeZone>& pThis);	//	calculate neighbours of ourselves
+	TArray<TQuadTreeZone*>&		GetNeighbourZones()									{	return m_NeighbourZones;	}
+	void						FindNeighboursAll();								//	recursive call to FindNeighbours to sort out all the neighbours in the tree
+	void						FindNeighbours();									//	calculate neighbours of ourselves
 
-	Bool						DivideAll(TPtr<TLMaths::TQuadTreeZone>& pThis);		//	recursively divide until we're at our minimum size leafs
+	Bool						DivideAll();										//	recursively divide until we're at our minimum size leafs
 
 	FORCEINLINE SyncBool		IsActive() const									{	return m_Active;	}
 	void						SetActive(SyncBool Active,Bool SetChildren);		//	sets this zone and all it's child zones as active
 
 protected:
-	void						GetInChildZones(TQuadTreeNode* pNode,TFixedArray<u32,4>& InZones);			//	return which child zone we're in, -1 if none
+	void						GetInChildZones(TQuadTreeNode& Node,TFixedArray<u32,4>& InZones);			//	return which child zone we're in, -1 if none
 	void						OnChildZoneNodesChanged();							//	list of nodes in a child has changed
 
-	void						DoAddNode(TPtr<TQuadTreeNode>& pNode);				//	add node to this zone's list
-	void						DoRemoveNode(TPtr<TQuadTreeNode>& pNode);			//	remove node from this zone's list
+	void						DoAddNode(TQuadTreeNode& Node);						//	add node to this zone's list
+	void						DoRemoveNode(TQuadTreeNode& Node);					//	remove node from this zone's list
 
 	void						OnZoneStructureChanged();							//	if we subdivide, or delete child zones etc, then call this func - will go up to the root then notify subscribers of the change
 	void						OnZoneActiveChanged(SyncBool Active);					//	zone has gone to sleep/woken up
 
-	TPtr<TQuadTreeZone>&		FindNeighbourZone_West();
-	TPtr<TQuadTreeZone>&		FindNeighbourZone_North();
-	TPtr<TQuadTreeZone>&		FindNeighbourZone_East();
-	TPtr<TQuadTreeZone>&		FindNeighbourZone_South();
-	TPtr<TQuadTreeZone>&		FindNeighbourZone_SouthWest();
-	TPtr<TQuadTreeZone>&		FindNeighbourZone_NorthWest();
-	TPtr<TQuadTreeZone>&		FindNeighbourZone_NorthEast();
-	TPtr<TQuadTreeZone>&		FindNeighbourZone_SouthEast();
+	TQuadTreeZone*				FindNeighbourZone_West();
+	TQuadTreeZone*				FindNeighbourZone_North();
+	TQuadTreeZone*				FindNeighbourZone_East();
+	TQuadTreeZone*				FindNeighbourZone_South();
+	TQuadTreeZone*				FindNeighbourZone_SouthWest();
+	TQuadTreeZone*				FindNeighbourZone_NorthWest();
+	TQuadTreeZone*				FindNeighbourZone_NorthEast();
+	TQuadTreeZone*				FindNeighbourZone_SouthEast();
 
 private:
-	Bool						Divide(TPtr<TLMaths::TQuadTreeZone>& pThis);		//	subdivide ourselves into 4 children
+	Bool						Divide();									//	subdivide ourselves into 4 children
 
-	TPtr<TQuadTreeZone>&		GetParentsNeighbourChild(TPtr<TQuadTreeZone>* pParentNeighbour,TLQuadTree::TZonePos ParentNeighbourChildPositon);
+	TQuadTreeZone*				GetParentsNeighbourChild(TQuadTreeZone* pParentNeighbour,TLQuadTree::TZonePos ParentNeighbourChildPositon);
 
 protected:
-	TLMaths::TBox2D				m_Shape;				//	shape of the zone
-	TPtrArray<TQuadTreeNode>	m_Nodes;				//	nodes in this zone (includes static and non static)
-	TPtrArray<TQuadTreeNode>	m_NonStaticNodes;		//	non-static nodes in this zone
-	TPtrArray<TQuadTreeZone>	m_Children;				//	child zones
-	TPtr<TQuadTreeZone>			m_pParent;				//	parent zone
-	TPtrArray<TQuadTreeZone>	m_ChildrenWithNodes;			//	child zones which DO have nodes in them
-	TPtrArray<TQuadTreeZone>	m_ChildrenWithNonStaticNodes;	//	child zones which DO have nodes in them that ARE NOT static
-	//TPtrArray<TQuadTreeZone>	m_InactiveChildren;		//	former child zones - zones moved to here when we cull them, when we want to divide again we can re-use these
+	TLMaths::TBox2D						m_Shape;				//	shape of the zone
+	TPointerArray<TQuadTreeNode,false>	m_Nodes;				//	nodes in this zone (includes static and non static)
+	TPointerArray<TQuadTreeNode,false>	m_NonStaticNodes;		//	non-static nodes in this zone
+	TPointerArray<TQuadTreeZone,false>	m_Children;				//	child zones
+	TQuadTreeZone*						m_pParent;				//	parent zone
+	TPointerArray<TQuadTreeZone,false>	m_ChildrenWithNodes;			//	child zones which DO have nodes in them
+	TPointerArray<TQuadTreeZone,false>	m_ChildrenWithNonStaticNodes;	//	child zones which DO have nodes in them that ARE NOT static
+	//TPointerArray<TQuadTreeZone,false>	m_InactiveChildren;		//	former child zones - zones moved to here when we cull them, when we want to divide again we can re-use these
 	
-	TPtrArray<TQuadTreeZone>	m_SiblingZones;			//	zones next to us (also children of our parent)
-	TFixedArray<u32,3>			m_SiblingZoneIndexes;	//	m_SiblingZoneIndexes[SiblingIndex] == Parent's Child[Index]
-	s32							m_SiblingIndex;			//	our index in our parent's children. -1 when no parent
+	TPointerArray<TQuadTreeZone,false>	m_SiblingZones;			//	zones next to us (also children of our parent)
+	TFixedArray<u32,3>					m_SiblingZoneIndexes;	//	m_SiblingZoneIndexes[SiblingIndex] == Parent's Child[Index]
+	s32									m_SiblingIndex;			//	our index in our parent's children. -1 when no parent
 
-	TPtrArray<TQuadTreeZone>	m_NeighbourZones;		//	zones that surround us at the same depth, but may have different parents. Max of 8. In future these would be "zones that might be visible through portals"
+	TPointerArray<TQuadTreeZone,false>	m_NeighbourZones;		//	zones that surround us at the same depth, but may have different parents. Max of 8. In future these would be "zones that might be visible through portals"
 
-	TQuadTreeParams				m_ZoneParams;			//	zone parameters - copied from parent
+	TQuadTreeParams						m_ZoneParams;			//	zone parameters - copied from parent
 	
-	SyncBool					m_Active;				//	currently just used for the scene graph as this type doesnt get overloaded. when wait is used it means we're active, but not THE active zone (a neighbour)
+	SyncBool							m_Active;				//	currently just used for the scene graph as this type doesnt get overloaded. when wait is used it means we're active, but not THE active zone (a neighbour)
 };
 
 

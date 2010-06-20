@@ -11,6 +11,13 @@
 #include <TootleRender/TLRender.h>
 
 
+TRef GetTouchRef(UITouch* pTouch)
+{
+	//	return TLRef::GetValidTRef( (u32)pTouch );
+	static TRef g_UniqueRef;
+	g_UniqueRef.Increment();
+	return g_UniqueRef;
+}
 
 //------------------------------------------------------
 //	
@@ -308,8 +315,9 @@ void TLGui::Platform::OpenglCanvas::EndRender()
 		CGPoint currentTouchPosition = [touch locationInView:self]; 
 		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
+#pragma message("todo: change this code. increment a global, or something. I've had this assert if I tap the screen enough because of dupe refs")
 		// Use the address of the ipod touch obejct for the ID masked to ensure it's valid
-		TRef TouchRef = TLRef::GetValidTRef((u32)(touch));	
+		TRef TouchRef = GetTouchRef( touch );
 		
 		/*
 		 #ifdef _DEBUG
@@ -355,7 +363,7 @@ void TLGui::Platform::OpenglCanvas::EndRender()
 		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
 		// Use the address of the ipod touch obejct for the ID masked to ensure it's valid
-		TRef TouchRef = TLRef::GetValidTRef((u32)(touch));	
+		TRef TouchRef = GetTouchRef( touch );
 		TLInput::Platform::IPod::TTouchData TouchData(TouchRef);
 		/*
 		 #ifdef _DEBUG
@@ -399,7 +407,7 @@ void TLGui::Platform::OpenglCanvas::EndRender()
 		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
 		// Use the address of the ipod touch obejct for the ID masked to ensure it's valid
-		TRef TouchRef = TLRef::GetValidTRef((u32)(touch));	
+		TRef TouchRef = GetTouchRef( touch );
 		
 		/*
 		 #ifdef _DEBUG
@@ -443,7 +451,7 @@ void TLGui::Platform::OpenglCanvas::EndRender()
 		CGPoint previousTouchPosition = [touch previousLocationInView:self]; 
 		
 		// Use the address of the ipod touch obejct for the ID masked to ensure it's valid
-		TRef TouchRef = TLRef::GetValidTRef((u32)(touch));
+		TRef TouchRef = GetTouchRef( touch );
 		/*
 		 #ifdef _DEBUG
 		 TString str;

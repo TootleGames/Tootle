@@ -57,11 +57,11 @@ class TLAsset::TMesh : public TLAsset::TAsset
 {
 public:
 	friend class TLAsset::TFont;
-	typedef Type3<u16>	Triangle;
-	typedef TArray<u16>	Tristrip;
-	typedef TArray<u16>	Trifan;
-	typedef TArray<u16>	Linestrip;
-	typedef Type2<u16>	Line;
+	typedef Type3<u16>		Triangle;
+	typedef THeapArray<u16>	Tristrip;
+	typedef THeapArray<u16>	Trifan;
+	typedef THeapArray<u16>	Linestrip;
+	typedef Type2<u16>		Line;
 
 	enum TMeshFlags
 	{
@@ -262,18 +262,18 @@ private:
 	const float2*			GetGenerationUV(const float2* pUV);	//	returns a valid colour pointer if we expect one (mesh already has colours) - NULL's if we dont have colours - returns the original pointer if we can have colours
 
 protected:
-	TArray<float3>			m_Vertexes;				//	vertexes of mesh
-	TArray<TColour>			m_Colours;				//	vertex colours - float format (4*4)
-	TArray<TColour24>		m_Colours24;			//	vertex colours - u8 format, no alpha (3*1)
-	TArray<TColour32>		m_Colours32;			//	vertex colours - u8 format (4*1)
-	TArray<TColour64>		m_Colours64;			//	vertex colours - u16 format (4*2)
-	TArray<float2>			m_UVs;					//	vertex texture mapping
+	THeapArray<float3>			m_Vertexes;				//	vertexes of mesh
+	THeapArray<TColour>			m_Colours;				//	vertex colours - float format (4*4)
+	THeapArray<TColour24>		m_Colours24;			//	vertex colours - u8 format, no alpha (3*1)
+	THeapArray<TColour32>		m_Colours32;			//	vertex colours - u8 format (4*1)
+	THeapArray<TColour64>		m_Colours64;			//	vertex colours - u16 format (4*2)
+	THeapArray<float2>			m_UVs;					//	vertex texture mapping
 
-	TArray<Triangle>		m_Triangles;			//	triangles in mesh
-	TArray<Tristrip>		m_Tristrips;			//	tristrips in mesh
-	TArray<Trifan>			m_Trifans;				//	trifans in mesh
-	TArray<Linestrip>		m_Linestrips;			//	lineSTRIPS in mesh
-	TArray<Line>			m_Lines;				//	lines in mesh - evaluates to one large list of verts
+	THeapArray<Triangle>		m_Triangles;			//	triangles in mesh
+	THeapArray<Tristrip>		m_Tristrips;			//	tristrips in mesh
+	THeapArray<Trifan>			m_Trifans;				//	trifans in mesh
+	THeapArray<Linestrip>		m_Linestrips;			//	lineSTRIPS in mesh
+	THeapArray<Line>			m_Lines;				//	lines in mesh - evaluates to one large list of verts
 	
 	TPtrKeyArray<TRef,TLMaths::TShape>	m_Datums;	//	datum shapes on mesh
 

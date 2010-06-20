@@ -40,7 +40,7 @@ private:
 //	TRef					m_refNeuronID;
 	float					m_fThreshold;
 
-	TArray<float>		m_fInputs;
+	THeapArray<float>		m_fInputs;
 };
 
 
@@ -133,7 +133,7 @@ private:
 private:
 	TRef					m_refNeuralNetworkID;
 
-	TArray<float>			m_fInputBuffer;
+	THeapArray<float>		m_fInputBuffer;
 	TPtrArray<TNeuron>		m_InputNeurons;
 
 	TPtrArray<TNeuron>		m_Neurons;

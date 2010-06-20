@@ -5,6 +5,7 @@
 -------------------------------------------------------*/
 #pragma once
 
+#include <TootleCore/TLDebug.h>
 #include <TootleCore/TPtr.h>
 #include <TootleCore/TBinaryTree.h>
 

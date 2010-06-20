@@ -146,7 +146,7 @@ private:
 
 protected:
 	float2						m_Position;			//	node position
-	TArray<TPathNodeLink>		m_Links;			//	links to other nodes
+	THeapArray<TPathNodeLink>	m_Links;			//	links to other nodes
 };
 
 
@@ -163,7 +163,7 @@ public:
 	static TRef						GetAssetType_Static()										{	return TRef_Static(P,a,t,h,N);	}
 
 	TPtr<TLPath::TPathNode>&		GetNode(TRefRef NodeRef)									{	return m_Nodes.FindPtr( NodeRef );	}
-	TPtr<TLPath::TPathNode>&		GetRandomNode()												{	return m_Nodes.GetRandomElement();	}
+	TPtr<TLPath::TPathNode>&		GetRandomNode()												{	return m_Nodes.ElementRandom();	}
 
 	TPtr<TLPath::TPathNode>&		GetNearestNode(const float2& Position);						//	find the nearest node to this position
 	TPtr<TLPath::TPathNode>&		GetNearestNode(const float3& Position)						{	return GetNearestNode( Position.xy() );	}
@@ -197,7 +197,7 @@ protected:
 
 protected:
 	TPtrArray<TLPath::TPathNode>	m_Nodes;				//	todo: sort these
-	TArray<TLPath::TPathLink>		m_Links;				//	all node/node links. todo; sort
+	THeapArray<TLPath::TPathLink>	m_Links;				//	all node/node links. todo; sort
 	TLMaths::TBox2D					m_BoundsBox;			//	bounding box vertex extents
 	TLMaths::TSphere2D				m_BoundsSphere;			//	bounding sphere
 };

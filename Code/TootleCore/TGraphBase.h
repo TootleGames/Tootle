@@ -14,6 +14,8 @@
 #include "TRelay.h"
 #include "TManager.h"
 
+//	gr: todo: change this so the core is not dependent on the assets. 
+//	Instead, instance a scheme from the asset, not from the graph
 namespace TLAsset
 {
 	class TScheme;

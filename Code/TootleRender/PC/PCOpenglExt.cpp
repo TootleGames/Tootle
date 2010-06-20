@@ -16,7 +16,7 @@ namespace TLRender
 		{
 			u32					g_DisabledHardwareFlags		= 0x0;		//	manually disabled hardware features
 			u32					g_HardwareFlags				= 0x0;		//	flags for what hardware features are supported
-			TArray<void*>		g_ExtensionAddresses[GHardware_Max];	//	list of function pointers for each hardware extension
+			THeapArray<void*>	g_ExtensionAddresses[GHardware_Max];	//	list of function pointers for each hardware extension
 			SyncBool			g_ArbMultiSampleSupported	= SyncWait;	//	
 			u32					g_ArbMultiSamplePixelFormat	= 0;
 

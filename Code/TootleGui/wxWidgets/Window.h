@@ -6,6 +6,9 @@
  *  Copyright 2010 __MyCompanyName__. All rights reserved.
  *
  */
+#if !defined(TL_ENABLE_WX)
+#error Should only be built in wx only build
+#endif // TL_ENABLE_WX
 
 #pragma once
 #include "TLWx.h"

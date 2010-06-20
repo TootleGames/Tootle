@@ -135,7 +135,7 @@ void TLRender::TRenderNodePathNetwork::InitMeshFromPathNetwork(TLAsset::TPathNet
 				float LineLength = LineDir.Length();
 				LineDir.Normalise();
 
-				TArray<float> ArrowOffsets;
+				THeapArray<float> ArrowOffsets;
 
 				//	not gonna fit on more than 1 arrow, just add one in the middle
 				if ( LineLength <= PATH_DIRECTION_ARROW_RATE )

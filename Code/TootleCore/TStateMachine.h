@@ -51,7 +51,7 @@ protected:
 	TPtrArray<TStateMode>	m_Modes;
 	TPtr<TStateMode>		m_pCurrentMode;
 	Bool					m_ChangingMode;					//	true during OnBegin and OnEnd functions
-	TArray< TBufferString<6> >	m_Debug_ModeLog;			//	keep a log of what mode's we've been in for debugging
+	THeapArray<TBufferString<6> >	m_Debug_ModeLog;			//	keep a log of what mode's we've been in for debugging
 };
 
 

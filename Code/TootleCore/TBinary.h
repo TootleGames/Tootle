@@ -76,7 +76,14 @@ public:
 
 	template<typename TYPE> FORCEINLINE TYPE*		ReadNoCopy();						//	"read" the data for this next type, but return it as a pointer to the data. and move along the read pos too
 	template<typename TYPE> FORCEINLINE Bool		Read(TYPE& Var)						{	return ReadData( (u8*)&Var, sizeof(TYPE) );		}
-	template<typename TYPE> FORCEINLINE Bool		Read(TArray<TYPE>& Array)			{	return ReadArray( Array );	}
+
+	template<typename TYPE,u32 GROWBY,class SORTPOLICY> 
+	FORCEINLINE Bool								Read(THeapArray<TYPE,GROWBY,SORTPOLICY>& Array)			{	return ReadArray( Array );	}
+	template <typename TYPE,u32 SIZE,class SORTPOLICY>
+	FORCEINLINE Bool								Read(TFixedArray<TYPE,SIZE,SORTPOLICY>& Array)			{	return ReadArray( Array );	}
+	template<typename TYPE> 
+	FORCEINLINE Bool								Read(TArray<TYPE>& Array)			{	return ReadArray( Array );	}
+
 	template<typename> FORCEINLINE Bool				Read(TString& String)				{	return ReadString( String );	}
 	template<typename TYPE> FORCEINLINE Bool		ReadAndCut(TYPE& Var)				{	return ReadData( (u8*)&Var, sizeof(TYPE), TRUE );	}
 	template<typename TYPE> FORCEINLINE Bool		ReadArray(TArray<TYPE>& Array);		//	reads out the size of the array from our data then the array elements
@@ -90,6 +97,13 @@ public:
 
 	template<typename TYPE> FORCEINLINE void	Write(const TYPE& Var)				{	SetDataTypeHint<TYPE>();	WriteData( (u8*)&Var, sizeof(TYPE) );		}
 	template<typename TYPE> FORCEINLINE void	Write(const TArray<TYPE>& Array)	{	SetDataTypeHint<TYPE>();	WriteArray( Array );	}
+	template<typename TYPE,u32 GROWBY,class SORTPOLICY> 
+	FORCEINLINE void							Write(const THeapArray<TYPE,GROWBY,SORTPOLICY>& Array)			{	WriteArray( Array );	}
+	template <typename TYPE,u32 SIZE,class SORTPOLICY>
+	FORCEINLINE void							Write(const TFixedArray<TYPE,SIZE,SORTPOLICY>& Array)				{	WriteArray( Array );	}
+//	template<typename TYPE> 
+//	FORCEINLINE void							Write(const TArray<TYPE>& Array)	{	WriteArray( Array );	}
+	
 	template<typename> FORCEINLINE void			Write(const TString& String)		{	WriteString( String );	}
 	//specialised below! template<> FORCEINLINE void	Write(const TBinary& Data)
 	template<typename TYPE> FORCEINLINE void	Write(const TPtr<TYPE>& Pointer)	{	Debug_ReadWritePointerError();	}	//	cant read/write a pointer
@@ -144,7 +158,7 @@ private:
 
 protected:
 	s32								m_ReadPos;			//	current read position
-	TArray<u8>						m_Data;				//	all the file binary data
+	THeapArray<u8>					m_Data;				//	all the file binary data
 	TRef							m_DataTypeHint;		//	this tells us what kind of data is stored. this is NOT required, but merely a hint for XML output; so if the data is declared as a float[s] then it'll be turned into a readable float in XML
 };
 
@@ -189,6 +203,28 @@ template<> FORCEINLINE void TBinary::Write(const TBinary& Data)
 	WriteArray( Data.GetDataArray() );	
 }
 
+/*
+template<>
+template<typename TYPE,u32 GROWBY,class SORTPOLICY> 
+FORCEINLINE Bool TBinary::Read(THeapArray<TYPE,GROWBY,SORTPOLICY>& Array)			
+{
+	return ReadArray( Array );	
+}
+
+template<>
+template<typename TYPE,u32 SIZE,class SORTPOLICY>
+FORCEINLINE Bool TBinary::Read(TFixedArray<TYPE,SIZE,SORTPOLICY>& Array)
+{
+	return ReadArray( Array );	
+}
+
+template<>
+template<typename TYPE>
+FORCEINLINE Bool TBinary::Read(TArray<TYPE>& Array)
+{
+	return ReadArray( Array );	
+}
+*/
 
 //--------------------------------------------------------------------
 //	reads out the size of the array from our data then the array elements

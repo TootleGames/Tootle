@@ -41,8 +41,6 @@ namespace TLString
 		}
 		return Len;
 	}
-
-	#define TLString_StringGrowBy	8	//	our most common string is probably a ref so make this at least 6 chars...
 }
 
 
@@ -53,8 +51,8 @@ namespace TLString
 class TString
 {
 public:
-	TString() : m_DataArray ( NULL, TLString_StringGrowBy )						{	}
-	TString(const TString& String) : m_DataArray ( NULL, TLString_StringGrowBy ){	Append( String );	}
+	TString()								{	}
+	TString(const TString& String)			{	Append( String );	}
 	TString(const TChar8* pString,...);											//	formatted constructor
 	TString(const TChar16* pString,...);										//	formatted constructor
 	virtual ~TString()															{	}
@@ -152,7 +150,7 @@ protected:
 	void						AppendVaList(const TChar8* pFormat,va_list& v);		//	append formatted ascii string - %s is for ascii char*'s
 
 protected:
-	TArray<TChar>				m_DataArray;
+	THeapArray<TChar>			m_DataArray;
 };
 
 
@@ -379,7 +377,9 @@ Bool TString::Split(const TChar& SplitChar,TArray<STRINGTYPE>& StringArray) cons
 			}
 			else
 			{
-				TLDebug_Break( TString("String split has got confused; SplitFrom: %d, SplitTo: %d", SplitFrom, SplitTo ) );
+				TDebugString Debug_String;
+				Debug_String << "String split has got confused; SplitFrom: " << SplitFrom << ", SplitTo: " << SplitTo;				
+				TLDebug_Break( Debug_String );
 				break;
 			}
 		}

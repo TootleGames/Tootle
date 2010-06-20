@@ -42,19 +42,6 @@ namespace TLAsset
 
 
 //----------------------------------------------------------
-//	asset sort
-//----------------------------------------------------------
-TLArray::SortResult	TLAsset::AssetSort(const TPtr<TLAsset::TAsset>& a,const TPtr<TLAsset::TAsset>& b,const void* pTestRef)
-{
-	const TTypedRef& aRef = a->GetAssetAndTypeRef();
-	const TTypedRef& bRef = pTestRef ? *(const TTypedRef*)pTestRef : b->GetAssetAndTypeRef();
-	
-	//	== turns into 0 (is greater) or 1(equals)
-	return aRef < bRef ? TLArray::IsLess : (TLArray::SortResult)(aRef==bRef);	
-}
-
-
-//----------------------------------------------------------
 //	get an asset ref for this type that isn't in use (starting from base ref)
 //----------------------------------------------------------
 TTypedRef TLAsset::GetFreeAssetRef(TTypedRef BaseAndTypeRef)
@@ -373,8 +360,7 @@ SyncBool TLAsset::LoadAsset(const TTypedRef& AssetAndTypeRef,Bool BlockLoad)
 
 
 TLAsset::TAssetManager::TAssetManager(TRefRef ManagerRef) :
-	TLCore::TManager				( ManagerRef ),
-	m_Assets						( &TLAsset::AssetSort, 100 )
+	TLCore::TManager				( ManagerRef )
 {
 	//	add a core asset factory type
 	TPtr<TAssetFactory> pFactory = new TAssetFactory;
@@ -814,20 +800,16 @@ TLAsset::TAsset* TLAsset::TAssetFactory::CreateObject(TRefRef InstanceRef,TRefRe
 
 
 //----------------------------------------------------------
-//	load all assets from the file system of this type that we can identify. (ie. won't load non-compiled assets)
-//	Returns TRUE if we found any new assets of this type
+//	get refs of all assets from the file system of this type that we can identify. 
 //----------------------------------------------------------
-Bool TLAsset::LoadAllAssets(TRefRef AssetType)
+void TLAsset::GetAllAssets(TRefRef AssetType,TArray<TRef>& AssetRefs)
 {
 	//	update file lists first
 	TLFileSys::g_pFactory->UpdateFileLists();
 
 	//	get a list of all files...
-	TArray<TRef> FileList;
+	THeapArray<TRef> FileList;
 	TLFileSys::GetFileList( FileList );
-
-	//	get a list of all matching type assets we've found from the file sys
-	TArray<TTypedRef> AssetList;
 
 	//	go through all the files...
 	for ( u32 f=0;	f<FileList.GetSize();	f++ )
@@ -847,30 +829,36 @@ Bool TLAsset::LoadAllAssets(TRefRef AssetType)
 		if ( !pFile )
 			continue;
 
-		//	it's the right type! add to list and we'll see if we need to load it
-		TTypedRef AssetRef( pFile->GetFileRef(), AssetType );
-		AssetList.Add( AssetRef );
+		//	it's the right type! add to list
+		TRef AssetRef = pFile->GetFileRef();
+		AssetRefs.Add( AssetRef );
 
 		TDebugString Debug_String;
 		Debug_String << "Found asset of type " << AssetType << " in file system: " << AssetRef << " from file " << pFile->GetFilename();
 		TLDebug_Print( Debug_String );
 	}
+}
+
+
+//----------------------------------------------------------
+//	load all assets from the file system of this type that we can identify. (ie. won't load non-compiled assets)
+//	Returns TRUE if we found any new assets of this type
+//----------------------------------------------------------
+Bool TLAsset::LoadAllAssets(TRefRef AssetType)
+{
+	//	get a list of all matching type assets we've found from the file sys
+	THeapArray<TRef> AssetRefs;
+	GetAllAssets( AssetType, AssetRefs );
 
 	//	track how many we load
 	Bool LoadedNewAsset = FALSE;
 
 	//	now have a list of assets of the correct type (loaded or not), load ones that need loading
-	for ( u32 a=0;	a<AssetList.GetSize();	a++ )
+	for ( u32 a=0;	a<AssetRefs.GetSize();	a++ )
 	{
-		TTypedRef AssetRef = AssetList[a];
+		TTypedRef AssetRef( AssetRefs[a], AssetType );
 
-		//	see if it's currently loaded - dont need to try and load it if it is 
-		//	(we can just use LoadAsset below but we want to know what NEW assets we've loaded)
-		TLAsset::TAsset* pAsset = GetAsset( AssetRef, SyncFalse );
-		if ( pAsset )
-			continue;
-
-		//	not loaded, block load it
+		//	load the asset
 		SyncBool AssetLoadState = LoadAsset( AssetRef, TRUE );
 
 		//	failed to load
@@ -878,7 +866,7 @@ Bool TLAsset::LoadAllAssets(TRefRef AssetType)
 			continue;
 
 		//	loaded this asset
-		LoadedNewAsset |= TRUE;
+		LoadedNewAsset |= true;
 	}
 
 	return LoadedNewAsset;

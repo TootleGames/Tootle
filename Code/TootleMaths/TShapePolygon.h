@@ -47,6 +47,6 @@ protected:
 	Bool							CalcNormals(TArray<float2>& Normals) const;
 
 protected:
-	TArray<float2>					m_Outline;
+	THeapArray<float2>				m_Outline;
 };
 

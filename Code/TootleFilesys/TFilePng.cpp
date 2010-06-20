@@ -260,7 +260,7 @@ SyncBool TLFileSys::TFilePng::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRef 
 	}
 
 	//	alloc data for image
-	TArray<u8*> RowData;
+	TPointerArray<u8> RowData;
 	u32 RowDataSize = 0;
 	u32 TotalDataSize = 0;
 	TLFilePng::AllocRowData( RowData, info_ptr, RowDataSize, TotalDataSize );

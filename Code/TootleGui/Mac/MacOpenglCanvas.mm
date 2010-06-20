@@ -21,20 +21,6 @@
 
 
 
-//------------------------------------------------------
-//	
-//------------------------------------------------------
-TPtr<TLGui::TOpenglCanvas> TLGui::CreateOpenglCanvas(TWindow& Parent,TRefRef Ref)
-{
-#if defined(TL_ENABLE_WX)
-	TPtr<TLGui::TOpenglCanvas> pControl = new wx::OpenglCanvas( Parent, Ref );
-#else
-	TPtr<TLGui::TOpenglCanvas> pControl = new TLGui::Platform::OpenglCanvas( Parent, Ref );
-#endif
-	
-	return pControl;
-}
-
 
 
 TLGui::Platform::OpenglCanvas::OpenglCanvas(TLGui::TWindow& Parent,TRefRef ControlRef) :

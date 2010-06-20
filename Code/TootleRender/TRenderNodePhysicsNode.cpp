@@ -60,7 +60,7 @@ void TLRender::TRenderNodePhysicsNode::SetPhysicsNode(TRefRef PhysicsNodeRef)
 	GetMeshAsset()->Empty();
 
 	//	unsubscribe from old node
-	TPtr<TLPhysics::TPhysicsNode>& pOldPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef );
+	TLPhysics::TPhysicsNode* pOldPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef );
 	if ( pOldPhysicsNode )
 	{
 		this->UnsubscribeFrom( pOldPhysicsNode );
@@ -85,7 +85,7 @@ SyncBool TLRender::TRenderNodePhysicsNode::SubscribeToPhysicsNode()
 		return SyncFalse;
 
 	//	find node - gr: don't search the request queue, we only want nodes that have been initialised
-	TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef, FALSE );
+	TLPhysics::TPhysicsNode* pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef, FALSE );
 
 	//	didnt find node, subscribe to the graph so we catch when it is created
 	if ( !pPhysicsNode )
@@ -144,7 +144,7 @@ void TLRender::TRenderNodePhysicsNode::ProcessMessage(TLMessaging::TMessage& Mes
 		//	catch change in transform or collision shape
 		if ( Message.GetMessageRef() == TRef_Static(O,n,T,r,a) )
 		{
-			TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef );
+			TLPhysics::TPhysicsNode* pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef );
 			if ( pPhysicsNode )
 			{
 				OnPhysicsNodeChanged( *pPhysicsNode );
@@ -159,7 +159,7 @@ void TLRender::TRenderNodePhysicsNode::ProcessMessage(TLMessaging::TMessage& Mes
 		//	catch change in transform or collision shape
 		if ( Message.GetMessageRef() == TRef_Static(O,n,S,h,a) )
 		{
-			TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef );
+			TLPhysics::TPhysicsNode* pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef );
 			if ( pPhysicsNode )
 			{
 				OnPhysicsNodeChanged( *pPhysicsNode );

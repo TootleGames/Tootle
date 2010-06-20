@@ -38,7 +38,7 @@ protected:
 	void					OnSizeChanged() const;				//	when [client] size of the window changes, broadcast a message 
 	
 protected:
-	TArray<TControl*>		m_Controls;		//	child controls. Todo: change to TPtr's when we have intrusive ref counters
+	TPointerArray<TControl>	m_Controls;		//	child controls. Todo: change to TPtr's when we have intrusive ref counters
 	
 private:
 	TRef				m_WindowRef;

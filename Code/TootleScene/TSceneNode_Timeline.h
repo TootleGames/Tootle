@@ -35,6 +35,7 @@ protected:
 
 	virtual void			OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode);
 
+	TRefRef				GetTimeline() const	{	return m_TimelineAssetRef;	}
 	TLAnimation::TTimelineInstance*	GetTimelineInstance()	{	return m_pTimelineInstance;	}
 	virtual void			OnTimelineComplete(TLAnimation::TTimelineInstance& Timeline);	//	timeline has finished (this won't occur if the timeline loops)
 	virtual void			OnTimelineJump()			{}									//	timeline has jumped, probably looped

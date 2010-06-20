@@ -173,11 +173,11 @@ public:
 	TPtrArray<TEffect>&						GetEffects()								{	return m_Effects;	}
 
 	FORCEINLINE void						SetRenderNodeRef(TRefRef Ref)				{	SetNodeRef( Ref );	}
-	virtual TRef							GetRenderNodeRef() const					{	return GetNodeRef();	}
+	DEPRECATED virtual TRef					GetRenderNodeRef() const					{	return GetNodeRef();	}
 	FORCEINLINE TRefRef						GetOwnerSceneNodeRef() const				{	return m_OwnerSceneNode;	}
 
 	virtual void							OnAdded();
-	virtual void							OnMoved(const TPtr<TLRender::TRenderNode>& pOldParent);
+	virtual void							OnMoved(const TLRender::TRenderNode& OldParent);
 	void									Copy(const TRenderNode& OtherRenderNode);	//	copy render object DOES NOT COPY CHILDREN or parent! just properties
 
 	DEPRECATED FORCEINLINE TBinaryTree&			GetData()									{	return GetNodeData();	}
@@ -224,7 +224,7 @@ public:
 	const TLMaths::TShapeSphere&			GetWorldBoundsSphere(SyncBool& Validity) const		{	Validity = m_BoundsSphere.m_WorldValid;		return m_BoundsSphere.m_WorldShape;	}
 	const TLMaths::TShapeSphere2D&			GetWorldBoundsSphere2D(SyncBool& Validity) const	{	Validity = m_BoundsSphere2D.m_WorldValid;	return m_BoundsSphere2D.m_WorldShape;	}
 
-	virtual TPtrArray<TRenderNode>&			GetLocalBoundsChildren()						{	return GetChildren();	}	//	specialise this for your rendernode to have control over the local bounds calculation
+	virtual TArray<TRenderNode*>&			GetLocalBoundsChildren()						{	return GetChildren();	}	//	specialise this for your rendernode to have control over the local bounds calculation
 	
 	template<class SHAPETYPE> const SHAPETYPE&	GetLocalBounds()							{ TLDebug_Break("Specialise this for shapes we don't currently support");	static SHAPETYPE g_DummyShape;	return g_DummyShape; }
 	const TLMaths::TShapeBox&				GetLocalBoundsBox() 							{	CalcLocalBounds( m_BoundsBox.m_LocalShape );			return m_BoundsBox.m_LocalShape;	}
@@ -242,11 +242,14 @@ public:
 
 	const TArray<TRef>&						Debug_GetDebugRenderDatums() const				{	return m_Debug_RenderDatums;	}
 
-	FORCEINLINE TPtr<TLMaths::TQuadTreeNode>*	GetRenderZoneNode(TRefRef RenderTargetRef)	{	return m_RenderZoneNodes.Find( RenderTargetRef );	}
-	FORCEINLINE TPtr<TLMaths::TQuadTreeNode>*	SetRenderZoneNode(TRefRef RenderTargetRef,TPtr<TLMaths::TQuadTreeNode>& pRenderZoneNode)	{	return m_RenderZoneNodes.Add( RenderTargetRef, pRenderZoneNode );	}
+	FORCEINLINE TLMaths::TQuadTreeNode*		GetRenderZoneNode(TRefRef RenderTargetRef)	{	TLMaths::TQuadTreeNode** ppZoneNode = m_RenderZoneNodes.Find( RenderTargetRef );		return ppZoneNode ? (*ppZoneNode) : NULL;	}
+	FORCEINLINE bool						SetRenderZoneNode(TRefRef RenderTargetRef,TLMaths::TQuadTreeNode* pRenderZoneNode)	{	return m_RenderZoneNodes.Add( RenderTargetRef, pRenderZoneNode ) != NULL;	}
 
-	FORCEINLINE Bool						operator==(TRefRef Ref) const				{	return GetRenderNodeRef() == Ref;	}
-	FORCEINLINE Bool						operator<(TRefRef Ref) const				{	return GetRenderNodeRef() < Ref;	}
+	FORCEINLINE Bool			operator<(TRefRef NodeRef) const			{	return GetNodeRef() < NodeRef;	}
+	FORCEINLINE Bool			operator==(TRefRef NodeRef) const			{	return GetNodeRef() == NodeRef;	}
+	FORCEINLINE Bool						operator==(const TRenderNode& That) const				{	return GetNodeRef() == That.GetNodeRef();	}
+	FORCEINLINE Bool						operator<(const TSorter<TRenderNode*,TRef>& That) const	{	return GetNodeRef() < That.This()->GetNodeRef();	}
+	FORCEINLINE Bool						operator<(const TSorter<TRenderNode,TRef>& That) const	{	return GetNodeRef() < That->GetNodeRef();	}
 
 protected:
 	virtual void							Initialise(TLMessaging::TMessage& Message);	//	generic render node init
@@ -285,7 +288,7 @@ protected:
 
 	TFlags<RenderFlags::Flags>	m_RenderFlags;
 
-	TKeyArray<TRef,TPtr<TLMaths::TQuadTreeNode> >	m_RenderZoneNodes;	//	for each render target we can have a Node(TRenderZoneNode) for Render Zones
+	TKeyArray<TRef,TLMaths::TQuadTreeNode*>		m_RenderZoneNodes;	//	for each render target we can have a Node(TRenderZoneNode) for Render Zones
 
 	//	todo: turn all these into ref properties in a KeyArray to make it a bit more flexible
 	//	gr: restore these to TPtr's asap! bug in asset management; http://grahamgrahamreeves.getmyip.com:1984/Trac/changeset/776
@@ -295,10 +298,13 @@ protected:
 	TPtr<TLAsset::TTexture>		m_pTextureCache;
 	TPtrArray<TEffect>			m_Effects;				//	effects attached to render node
 
-	TArray<TRef>				m_Debug_RenderDatums;	//	list of datums to debug-render
+	THeapArray<TRef>			m_Debug_RenderDatums;	//	list of datums to debug-render
 
 	TRef						m_OwnerSceneNode;		//	"Owner" scene node - if this is set then we automaticcly process some stuff (ie. catching OnTransform of a scene node we set our transform)
 };
+
+FORCEINLINE bool operator==(const TLRender::TRenderNode* pNode,const TRef& Ref)	{	return pNode ? (*pNode == Ref) : false;	}
+
 
 
 namespace TLRender
@@ -322,7 +328,7 @@ public:
 
 protected:
 	TRef				m_RenderNodeRef;		//	render node that we're linked to
-	TPtr<TRenderNode>	m_pRenderNode;			//	cache of render node
+	TRenderNode*		m_pRenderNode;			//	cache of render node
 };
 
 
@@ -450,7 +456,7 @@ void TLRender::TRenderNode::CalcLocalBounds(SHAPETYPE& Shape)
 	}
 
 	//	accumulate children's bounds
-	TPtrArray<TLRender::TRenderNode>& NodeChildren = GetLocalBoundsChildren();
+	TArray<TLRender::TRenderNode*>& NodeChildren = GetLocalBoundsChildren();
 	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 	{
 		TLRender::TRenderNode& Child = *NodeChildren[c];

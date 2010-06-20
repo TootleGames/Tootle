@@ -11,6 +11,10 @@
 #include "PCWinControl.h"
 #include "PCWindow.h"	//	platform::window
 
+#if defined(TL_ENABLE_WX)
+#include "../wxWidgets/TLWx.h"
+#endif
+
 #pragma comment( lib, "user32.lib" )
 #pragma comment( lib, "gdi32.lib" )
 #pragma comment( lib, "kernel32.lib" )
@@ -50,7 +54,7 @@
 SyncBool TLGui::Platform::Init()
 {
 #if defined(TL_ENABLE_WX)
-	return wx::Init();
+	return SyncTrue;
 #else
 	return Win32::Init();
 #endif
@@ -63,7 +67,7 @@ SyncBool TLGui::Platform::Init()
 SyncBool TLGui::Platform::Shutdown()
 {
 #if defined(TL_ENABLE_WX)
-	return wx::Shutdown();
+	return SyncTrue;
 #else
 	return Win32::Shutdown();
 #endif

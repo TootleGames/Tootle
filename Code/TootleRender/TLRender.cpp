@@ -50,7 +50,7 @@ namespace TLRender
 void TLRender::Opengl::DrawPrimitivePoints(const TArray<float3>* pVertexes)
 {
 	//	have a static array of indexes and grow it as required
-	static TArray<u16> g_AllPoints;
+	static THeapArray<u16> g_AllPoints;
 
 	//	grow index array as required
 	if ( g_AllPoints.GetSize() < pVertexes->GetSize() )

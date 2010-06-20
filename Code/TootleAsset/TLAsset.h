@@ -67,15 +67,17 @@ namespace TLAsset
 	FORCEINLINE TLAsset::TAsset* GetAsset(const TTypedRef& AssetAndTypeRef,SyncBool LoadAsset=SyncTrue)		{	return GetAssetPtr( AssetAndTypeRef, LoadAsset ).GetObjectPointer();	}
 	FORCEINLINE TLAsset::TAsset* GetAsset(TRefRef AssetRef,TRefRef AssetType,SyncBool LoadAsset=SyncTrue)	{	return GetAsset( TTypedRef( AssetRef, AssetType ), LoadAsset );	}
 
+	//	this gets all existing assets of a certain type
 	template<class ASSETTYPE>
-	u32							GetAllAssets(TPtrArray<ASSETTYPE>& AssetArray);					//	get an array containing all the assets of this type
+	u32							GetAllAssets(TPtrArray<ASSETTYPE>& AssetArray);
 
 	//	wrapper to just simply load an asset - returns TRUE if currently loaded, SyncWait if loading, SyncFalse if failed
 	SyncBool					LoadAsset(const TTypedRef& AssetAndTypeRef,Bool BlockLoad);
 	FORCEINLINE SyncBool		LoadAsset(TRefRef AssetRef,TRefRef AssetType,Bool BlockLoad)	{	return LoadAsset( TTypedRef( AssetRef, AssetType ), BlockLoad );	}
 	template<class ASSETTYPE>
 	FORCEINLINE SyncBool		LoadAsset(TRefRef AssetRef,Bool BlockLoad)						{	return LoadAsset( TTypedRef( AssetRef, ASSETTYPE::GetAssetType_Static() ), BlockLoad );	}
-	Bool						LoadAllAssets(TRefRef AssetType);					//	load all assets from the file system of this type that we can identify. (ie. won't load non-compiled assets). Returns TRUE if we found any new assets of this type
+	Bool						LoadAllAssets(TRefRef AssetType);								//	load all assets from the file system of this type that we can identify. (ie. won't load non-compiled assets). Returns TRUE if we found any new assets of this type
+	void						GetAllAssets(TRefRef AssetType,TArray<TRef>& AssetRefs);		//	get refs of all assets from the file system of this type that we can identify. 
 
 	FORCEINLINE TPtr<TAsset>&	CreateAsset(const TTypedRef& AssetAndTypeRef);		//	return a pointer to a new asset - mostly used for runtime asssets
 	FORCEINLINE TPtr<TAsset>&	CreateAsset(TRefRef AssetRef,TRefRef AssetType)		{	return CreateAsset( TTypedRef( AssetRef, AssetType ) );	}
@@ -90,8 +92,6 @@ namespace TLAsset
 	FORCEINLINE Bool			DeleteAsset(const TTypedRef& AssetAndTypeRef);		//	delete an asset from the asset Manager
 	FORCEINLINE Bool			DeleteAsset(TRefRef AssetRef,TRefRef AssetType)		{	return DeleteAsset( TTypedRef( AssetRef, AssetType ) );	}
 	Bool						DeleteAsset(const TLAsset::TAsset* pAsset);
-
-	TLArray::SortResult			AssetSort(const TPtr<TAsset>& a,const TPtr<TAsset>& b,const void* pTestRef);	//	asset sort
 
 	extern TPtr<TLAsset::TAssetManager>	g_pManager;
 };
@@ -124,7 +124,7 @@ public:
 
 	TPtr<TAsset>&				CreateAsset(const TTypedRef& AssetAndTypeRef);		//	return a pointer to a new asset - mostly used for runtime asssets
 	TPtr<TAsset>&				GetAsset(const TTypedRef& AssetAndTypeRef)			{	return m_Assets.FindPtr( AssetAndTypeRef );	}
-	TPtrArray<TAsset>&			GetAllAssets()										{	return m_Assets;	}
+	TPtrArray<TAsset,100>&		GetAllAssets()										{	return m_Assets;	}
 	Bool						DeleteAsset(TTypedRef AssetAndTypeRef);				//	gr: note, ref is not a reference in case the ref is a reference to a member of the asset being deleted
 
 	// Debug only routines
@@ -150,7 +150,7 @@ private:
 
 private:
 	TPtrArray<TAssetFactory>	m_Factories;	//	asset factories, including default
-	TPtrArray<TAsset>			m_Assets;		//	global list of assets, they're not stored in the factory, stored in a single array instead
+	TPtrArray<TAsset,100>		m_Assets;		//	global list of assets, they're not stored in the factory, stored in a single array instead
 };
 
 

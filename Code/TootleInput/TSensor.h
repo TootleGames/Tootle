@@ -71,7 +71,7 @@ protected:
 public:
 
 	TRef			m_SensorRef;			// ID of the sensor - maps to hardware device sensor index, NOTE: Not sure this is totally needed?
-	TArray<TRef>	m_SensorLabels;			// Key type labels - 'x', 'ctrl' 'start' 'axis1'.
+	THeapArray<TRef>	m_SensorLabels;			// Key type labels - 'x', 'ctrl' 'start' 'axis1'.
 	TSensorType		m_Type;					// Sensor type - button, axes etc
 	float			m_fValue;				// Current value
 	float			m_fRangeLow;			// Lowest possible value

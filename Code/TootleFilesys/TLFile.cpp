@@ -14,8 +14,8 @@ template<typename TYPE>
 SyncBool ImportBinaryDataIntegerInRange(TBinary& Data,const TString& DataString)
 {
 	s32 Min = TLTypes::GetIntegerMin<TYPE>();
-	s32 Max = (s32)TLTypes::GetIntegerMax<TYPE>();	//	gr: note, we lose the max for u32 here, but assume that will never be a problem...
-	TArray<s32> Integers;
+	u32 Max = TLTypes::GetIntegerMax<TYPE>();	//	gr: note, we lose the max for u32 here, but assume that will never be a problem...
+	THeapArray<s32> Integers;
 	if ( !DataString.GetIntegers( Integers ) )
 		return SyncFalse;
 
@@ -23,7 +23,7 @@ SyncBool ImportBinaryDataIntegerInRange(TBinary& Data,const TString& DataString)
 	for ( u32 i=0;	i<Integers.GetSize();	i++ )
 	{
 		const s32& Integer = Integers[i];
-		if ( Integer >= Min && Integer <= Max )
+		if ( Integer >= Min && (u32)Integer <= Max )
 			continue;
 
 		TTempString Debug_String;
@@ -44,7 +44,7 @@ SyncBool ImportBinaryDataIntegerInRange(TBinary& Data,const TString& DataString)
 	}
 
 	//	array. have to convert to type to write properly
-	TArray<TYPE> TypeIntegers;
+	THeapArray<TYPE> TypeIntegers;
 	TypeIntegers.Copy( Integers );
 
 	Data.WriteArray( TypeIntegers );

@@ -54,13 +54,14 @@ protected:
 	TPtrArray<TLGraph::TNodeMessage>	m_NodeMessages;	//	queued up messages going to nodes
 };
 
+TLGraph_DeclareGraph(TLRender::TRenderNode);
 
 
 
 //----------------------------------------------------------
 //	Generic render node factory
 //----------------------------------------------------------
-class TLRender::TRenderNodeFactory : public TClassFactory<TRenderNode,FALSE>
+class TLRender::TRenderNodeFactory : public TNodeFactory<TRenderNode>
 {
 public:
 	virtual TRenderNode*	CreateObject(TRefRef InstanceRef,TRefRef TypeRef);

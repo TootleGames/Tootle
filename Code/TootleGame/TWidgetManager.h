@@ -40,12 +40,12 @@ private:
 			m_pWidget		( NULL )
 		{}
 		
-		FORCEINLINE	void		Clear()				{ Set(TRef(), NULL, NULL); }
+		FORCEINLINE	void			Clear()				{ Set(TRef(), NULL, NULL); }
 		
-		FORCEINLINE TRef					GetWidgetGroupRef()	const	{ return m_WidgetGroupRef; }
+		FORCEINLINE TRef			GetWidgetGroupRef()	const	{ return m_WidgetGroupRef; }
 		FORCEINLINE TPtrArray<TWidget>*		GetWidgetGroup()	const	{ return m_pWidgetGroup; }
-		FORCEINLINE TPtr<TWidget>			GetWidget()			const	{ return m_pWidget; }
-		
+		FORCEINLINE TPtr<TWidget>		GetWidget()		const	{ return m_pWidget; }
+	
 #ifdef ENABLE_WIDGET_CACHE
 		FORCEINLINE void		Set(TRef WidgetGroupRef, TPtrArray<TWidget>* pArray, TPtr<TWidget> pWidget) { m_WidgetGroupRef = WidgetGroupRef; m_pWidgetGroup = pArray; m_pWidget = pWidget; }
 		FORCEINLINE void		SetWidget(TPtr<TWidget> pWidget)	{ m_pWidget = pWidget; }
@@ -55,7 +55,7 @@ private:
 #endif
 
 	private:
-		TRef					m_WidgetGroupRef;		// Last group used ref
+		TRef				m_WidgetGroupRef;		// Last group used ref
 		TPtrArray<TWidget>*		m_pWidgetGroup;			// Last group used
 		TPtr<TWidget>			m_pWidget;				// Last widget used
 	};
@@ -66,22 +66,22 @@ public:
 	{
 	}
 	
-	TRef				CreateWidget(TRefRef WidgetGroupRef, TRefRef InstanceRef, TRefRef TypeRef, Bool bStrict=FALSE);
-	FORCEINLINE TRef	CreateWidget(TTypedRef& GroupInstanceRef, TRefRef TypeRef) 										{ return CreateWidget(GroupInstanceRef.GetRef(), GroupInstanceRef.GetTypeRef(), TypeRef); }
+	TRef			CreateWidget(TRefRef WidgetGroupRef, TRefRef InstanceRef, TRefRef TypeRef, Bool bStrict=FALSE);
+	FORCEINLINE TRef	CreateWidget(const TTypedRef& GroupInstanceRef, TRefRef TypeRef) 										{ return CreateWidget(GroupInstanceRef.GetRef(), GroupInstanceRef.GetTypeRef(), TypeRef); }
 
 	
 	FORCEINLINE Bool	RemoveWidget(TRefRef GroupInstanceRef, TRefRef InstanceRef);
-	FORCEINLINE Bool	RemoveWidget(TTypedRef& GroupInstanceRef)														{ return RemoveWidget(GroupInstanceRef.GetRef(), GroupInstanceRef.GetTypeRef()); }
+	FORCEINLINE Bool	RemoveWidget(const TTypedRef& GroupInstanceRef)														{ return RemoveWidget(GroupInstanceRef.GetRef(), GroupInstanceRef.GetTypeRef()); }
 	
-	void				SendMessageToWidget(TRefRef WidgetGroupRef, TRefRef WidgetRef, TLMessaging::TMessage& Message);
-	FORCEINLINE void	SendMessageToWidget(TTypedRef& GroupInstanceRef, TLMessaging::TMessage& Message)				{ return SendMessageToWidget(GroupInstanceRef.GetRef(), GroupInstanceRef.GetTypeRef(), Message); }
+	void			SendMessageToWidget(TRefRef WidgetGroupRef, TRefRef WidgetRef, TLMessaging::TMessage& Message);
+	FORCEINLINE void	SendMessageToWidget(const TTypedRef& GroupInstanceRef, TLMessaging::TMessage& Message)				{ return SendMessageToWidget(GroupInstanceRef.GetRef(), GroupInstanceRef.GetTypeRef(), Message); }
 	
-	Bool				SubscribeToWidget(TRefRef WidgetGroupRef, TRefRef WidgetRef, TSubscriber* pSubscriber);
-	FORCEINLINE Bool	SubscribeToWidget(TTypedRef& GroupInstanceRef, TSubscriber* pSubscriber)						{ return SubscribeToWidget(GroupInstanceRef.GetRef(), GroupInstanceRef.GetTypeRef(), pSubscriber); }
+	Bool			SubscribeToWidget(TRefRef WidgetGroupRef, TRefRef WidgetRef, TSubscriber* pSubscriber);
+	FORCEINLINE Bool	SubscribeToWidget(const TTypedRef& GroupInstanceRef, TSubscriber* pSubscriber)						{ return SubscribeToWidget(GroupInstanceRef.GetRef(), GroupInstanceRef.GetTypeRef(), pSubscriber); }
 
 	
-	Bool				SubscribeWidgetTo(TRefRef WidgetGroupRef, TRefRef WidgetRef, TPublisher* pPublisher);
-	FORCEINLINE Bool	SubscribeWidgetTo(TTypedRef& GroupInstanceRef, TPublisher* pPublisher)						{ return SubscribeWidgetTo(GroupInstanceRef.GetRef(), GroupInstanceRef.GetTypeRef(), pPublisher); }
+	Bool			SubscribeWidgetTo(TRefRef WidgetGroupRef, TRefRef WidgetRef, TPublisher* pPublisher);
+	FORCEINLINE Bool	SubscribeWidgetTo(const TTypedRef& GroupInstanceRef, TPublisher* pPublisher)						{ return SubscribeWidgetTo(GroupInstanceRef.GetRef(), GroupInstanceRef.GetTypeRef(), pPublisher); }
 
 
 	
@@ -124,7 +124,7 @@ private:
 	
 	TWidgetCache				m_WidgetCache;		// Widget cache for speeding up some routines that get called with the same data consecutively
 	
-	TArray<TActionRefData>	m_WidgetActionRefs;
+	THeapArray<TActionRefData>	m_WidgetActionRefs;
 	
 	TKeyArray< TRef, TPtrArray<TWidget> >	m_WidgetRefs;			// Array of widget ref's organised with a TRenderTarget TRef as the key
 	TPtrArray< TClassFactory<TWidget,FALSE> >	m_WidgetFactories;		//	array of widget factories.

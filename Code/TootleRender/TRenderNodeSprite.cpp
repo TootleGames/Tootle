@@ -26,6 +26,21 @@ bool TLRender::TRenderNodeSprite::CreateEffect()
 }
 
 //---------------------------------------------------------
+//	init
+//---------------------------------------------------------
+void TLRender::TRenderNodeSprite::Initialise(TLMessaging::TMessage& Message)
+{
+	//	if the mesh hasn't been set, default to a d_quad
+	if ( !m_MeshRef.IsValid() )
+	{
+		SetMeshRef( TRef_Static(d,UNDERSCORE,q,u,a) );
+	}
+
+	TRenderNode::Initialise( Message );
+}
+
+
+//---------------------------------------------------------
 //	set properties
 //---------------------------------------------------------
 void TLRender::TRenderNodeSprite::SetProperty(TLMessaging::TMessage& Message)

@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <TootleCore/TLDebug.h>
 #include <TootleCore/TPtr.h>
 #include <TootleCore/TManager.h>
 #include <TootleCore/TLanguage.h>
@@ -47,6 +48,6 @@ protected:
 private:
 	TRef				m_LanguageRef;		// Current selected language
 
-	TArray<TRef>		m_TextFiles;			// List of text files
-	TArray<TRef>		m_LanguagesSupported;	// List of supported languages as Tref's
+	THeapArray<TRef>	m_TextFiles;			// List of text files
+	THeapArray<TRef>	m_LanguagesSupported;	// List of supported languages as Tref's
 };

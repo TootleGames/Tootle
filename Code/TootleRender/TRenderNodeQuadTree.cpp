@@ -46,7 +46,7 @@ void CreateZoneMesh(TLAsset::TMesh& Mesh,const TPtr<TLMaths::TQuadTreeZone>& pZo
 //	Mesh.GenerateQuadOutline( ZoneShapeBox, &ZoneColour, z );
 
 	//	do children
-	const TPtrArray<TLMaths::TQuadTreeZone>& ChildZones = pZone->GetChildZones();
+	const TArray<TLMaths::TQuadTreeZone*>& ChildZones = pZone->GetChildZones();
 	for ( u32 c=0;	c<ChildZones.GetSize();	c++ )
 	{
 		CreateZoneMesh( Mesh, ChildZones[c], ZoneDepth+1 );

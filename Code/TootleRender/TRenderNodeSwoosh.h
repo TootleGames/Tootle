@@ -71,13 +71,13 @@ protected:
 	float					m_MinWidth;					//	width at the tapered end
 	Bool					m_Tapered;					//	line tapers to nothing at end; note runtime changes have no immediate effect
 	u32						m_BezierSteps;				//	how many steps between control points we generate for the beziers
-	TArray<TSwooshPoint>	m_LinePoints;				//	
-	TArray<u32>				m_ControlPoints;			//	index in linepoints of the control points
+	THeapArray<TSwooshPoint>	m_LinePoints;				//	
+	THeapArray<u32>			m_ControlPoints;			//	index in linepoints of the control points
 	Bool					m_LinePointsValid;			//	if true the line points/bezier needs recalculating and mesh needs re-generating
 
-	TArray<float3*>			m_LinePointPositions;		//	for faster line strip generation
-	TArray<float*>			m_LinePointWidths;			//	for faster line strip generation
-	TArray<float*>			m_LinePointOffsets;			//	for faster line strip generation
+	TPointerArray<float3>	m_LinePointPositions;		//	for faster line strip generation
+	TPointerArray<float>	m_LinePointWidths;			//	for faster line strip generation
+	TPointerArray<float>	m_LinePointOffsets;			//	for faster line strip generation
 };
 
 

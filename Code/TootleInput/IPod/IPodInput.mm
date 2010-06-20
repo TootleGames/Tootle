@@ -28,17 +28,17 @@ namespace TLInput
 	{
 		namespace IPod 
 		{
-			TArray<TTouchData>			g_TouchData;
-			TArray<float3>				g_AccelerationData;
+			THeapArray<TTouchData>		g_TouchData;
+			THeapArray<float3>			g_AccelerationData;
 			float3						g_LastAccelData = float3(0,0,0);		//	store the last accel data in case we dont have any for some immediate touch response, we will just send the last data we had. Also reduces the amount of processing done when values changes only slightly
 			
 			TKeyArray<TRef, TRef>		g_KeyboardRefMap;		// iPod virtual keybord button refs
-			TArray<TRef>				g_KeyboardKeyArray;		// iPod virtual keyboard keys pressed
+			THeapArray<TRef>			g_KeyboardKeyArray;		// iPod virtual keyboard keys pressed
 			
 			Bool										g_bVirtualKeyboardActive = false;
 			TFixedArray<int2, MAX_CURSOR_POSITIONS>		g_CursorPositions(MAX_CURSOR_POSITIONS,int2(0,0));
 			TFixedArray< TRef, MAX_CURSOR_POSITIONS>	g_ActiveTouchObjects(MAX_CURSOR_POSITIONS,TRef());	// Fixed array of touch object ID's
-			TArray<TTouchObject>						g_TouchObjects;			// Dynamic array of touch objects that persist over time
+			THeapArray<TTouchObject>					g_TouchObjects;			// Dynamic array of touch objects that persist over time
 									
 			void	ProcessTouchData(TPtr<TLInput::TInputDevice> pDevice);
 			
@@ -308,12 +308,12 @@ Bool Platform::IPod::InitialisePhysicalDevice(TPtr<TInputDevice> pDevice, TRefRe
 		}
 	}
 	
-	TArray<TRef> AxisRefs;
+	TFixedArray<TRef,3> AxisRefs;
 	AxisRefs.Add("ACCX");
 	AxisRefs.Add("ACCY");
 	AxisRefs.Add("ACCZ");
 	
-	for(uIndex = 0; uIndex < 3; uIndex++)
+	for(uIndex = 0; uIndex <AxisRefs.GetSize(); uIndex++)
 	{
 		// Add accelerometer axis
 		TPtr<TInputSensor>& pSensor = pDevice->AttachSensor(uUniqueID, Axis);
@@ -417,9 +417,9 @@ Bool Platform::IPod::UpdatePhysicalDevice(TLInput::TInputDevice& Device)
 	if(IPod::g_TouchData.GetSize() > 0)
 	{
 #ifdef _DEBUG
-		TTempString inputinfo = "Input processing ";
-		inputinfo.Appendf("%d touch items", IPod::g_TouchData.GetSize());
-		TLDebug::Print(inputinfo);
+		TDebugString Debug_String;
+		Debug_String << "Input processing " << IPod::g_TouchData.GetSize() << " touch items";
+		TLDebug_Print(Debug_String);
 #endif				
 			
 		// Process the touch data
@@ -658,9 +658,9 @@ void TLInput::Platform::IPod::ProcessTouchBegin(const TTouchData& TouchData)
 		return;
 	
 #ifdef ENABLE_INPUTSYSTEM_TRACE
-	TString str;
-	str.Appendf("TOUCH BEGIN %d", TouchData.TouchRef.GetData() );
-	TLDebug_Print(str);
+	TDebugString Debug_String;
+	Debug_String << "Touch begin; " << TouchData.TouchRef;
+	TLDebug_Print( Debug_String );
 #endif
 
 #ifdef ENABLE_MULTI_TOUCH	
@@ -696,12 +696,13 @@ void TLInput::Platform::IPod::ProcessTouchBegin(const TTouchData& TouchData)
 		}
 		else
 		{
-			TLDebug_Break("Unable to find free slot for ref");
+			TLDebug_Print("Unable to find free slot for ref");
 		}
 	}
 	else
 	{
-		TLDebug_Break("Touch object exists for ref");
+		//	changed to print because this kept firing off. See comments int he code where we create a ref from a touchdata pointer...
+		TLDebug_Print("Touch object exists for ref");
 	}
 #else
 	g_TouchData.Add(TouchData);
@@ -716,12 +717,13 @@ void TLInput::Platform::IPod::ProcessTouchMoved(const TTouchData& TouchData)
 		return;
 	
 #ifdef ENABLE_INPUTSYSTEM_TRACE
-	TString str;
-	str.Appendf("TOUCH MOVED %d", TouchData.TouchRef.GetData() );
-	TLDebug_Print(str);
-	str.Empty();
-	str.Appendf("CurrrentPos %d %d", TouchData.uCurrentPos.x, TouchData.uCurrentPos.y);
-	TLDebug_Print(str);
+	TDebugString Debug_String;
+	Debug_String << "Touch moved " << TouchData.TouchRef;
+	TLDebug_Print( Debug_String );
+
+	Debug_String = "CurrrentPos ";
+	Debug_String << TouchData.uCurrentPos.x << "," << TouchData.uCurrentPos.y;
+	TLDebug_Print( Debug_String );
 #endif
 	
 #ifdef ENABLE_MULTI_TOUCH	
@@ -735,7 +737,9 @@ void TLInput::Platform::IPod::ProcessTouchMoved(const TTouchData& TouchData)
 	}
 	else
 	{
-		TLDebug_Break("Active touch object doesn't exist for ref");
+		TDebugString Debug_String;
+		Debug_String << "Active touch object doesn't exist; " << TouchData.TouchRef;
+		TLDebug_Print( Debug_String );
 	}
 #else	
 	g_TouchData.Add(TouchData);
@@ -761,7 +765,8 @@ void TLInput::Platform::IPod::ProcessTouchEnd(const TTouchData& TouchData)
 	}
 	else
 	{
-		TLDebug_Break("Active touch object doesn't exist for ref");
+		//	gr: hit this too, presumably because there are cases where touches are NOT created because of duplicate refs.
+		TLDebug_Print("Active touch object doesn't exist for ref");
 	}
 #else 
 	g_TouchData.Add(TouchData);

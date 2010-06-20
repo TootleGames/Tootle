@@ -9,13 +9,13 @@
 //		to point at the root of your working-copy of the SVN repository of wxWidgets (see See /Tootle/Notes/External libs)
 //	the CONFDIR is the ./configure'd wx dir, so we'll stick to "Tootle" for clarity
 //WX_ROOTDIR = /Users/graham/Tootle/Tootle/Code/wxWidgets
-WX_ROOTDIR = $(TOOTLE_ROOT)/wxWidgets
-WX_CONFDIR = $(WX_ROOTDIR)/Tootle
+WX_ROOTDIR = $(TOOTLE_ROOT)/wxWidgets/
+WX_CONFDIR = $(WX_ROOTDIR)/osx-build/
 
 //	gr: if your project includes wx code, add these compile flags. ("Other c++ flags")
-//		generated from <wxwidgets-build-dir>/wx-config --cppflags
+//		generated from $(WX_CONFDIR)/./wx-config --cppflags
 //		fill xcode with $(OTHER_CFLAGS) $(OTHER_CPLUSPLUSFLAGS) $(WX_CPLUSPLUSFLAGS)
-WX_CPLUSPLUSFLAGS = -I$(WX_CONFDIR)/lib/wx/include/osx_carbon-unicode-static-2.9 -I$(WX_ROOTDIR)/include -D_FILE_OFFSET_BITS=64 -D__WXMAC__ -D__WXOSX_CARBON__
+WX_CPLUSPLUSFLAGS = -I$(WX_CONFDIR)/lib/wx/include/osx_carbon-unicode-debug-static-2.9 -I$(WX_ROOTDIR)/include -D_FILE_OFFSET_BITS=64 -D__WXMAC__ -D__WXOSX_CARBON__
 WX_DEFINITIONS = TL_ENABLE_WX
 
 //	opengl frameworks (AGL required for wx's implementation)

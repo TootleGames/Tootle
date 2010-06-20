@@ -68,8 +68,8 @@ protected:
 	virtual void			UpdateGraph(float TimeStep);
 	
 
-	virtual void			OnNodeRemoving(TPtr<TLPhysics::TPhysicsNode>& pNode);
-	virtual void			OnNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pNode,Bool SendAddedMessage);
+	virtual void			OnNodeRemoving(TLPhysics::TPhysicsNode& Node);
+	virtual void			OnNodeAdded(TLPhysics::TPhysicsNode& Node,Bool SendAddedMessage);
 
 	void					CalcWorldUpNormal();					//	world up has changed, recalc the normal
 	
@@ -86,18 +86,19 @@ private:
 protected:
 	TLMaths::TBox2D					m_WorldShape;					//  World shape - stored so we can access it as you can't get this from box2d
 	b2World*						m_pWorld;						//	box2d's world
-	TArray<TJoint>					m_NodeJoints;					//	list of joints created
-	TArray<TJoint>					m_NodeJointQueue;				//	list of joints that are to be created in the next update
-	TArray<b2Fixture*>				m_RefilterQueue;				//	queue of box2d shapes that need refiltering
+	THeapArray<TJoint>				m_NodeJoints;					//	list of joints created
+	THeapArray<TJoint>				m_NodeJointQueue;				//	list of joints that are to be created in the next update
+	TPointerArray<b2Fixture>		m_RefilterQueue;				//	queue of box2d shapes that need refiltering
 };
 
+TLGraph_DeclareGraph(TLPhysics::TPhysicsNode);
 
 
 
 //----------------------------------------------------------
 //	Generic physics node factory
 //----------------------------------------------------------
-class TLPhysics::TPhysicsNodeFactory : public TClassFactory<TPhysicsNode,FALSE>
+class TLPhysics::TPhysicsNodeFactory : public TNodeFactory<TPhysicsNode>
 {
 public:
 	virtual TPhysicsNode*	CreateObject(TRefRef InstanceRef,TRefRef TypeRef);

@@ -43,9 +43,9 @@ public:
 	void			FinishPoly();
 	
 public:
-	TArray<u32>		m_Errors;
-	u32				m_CurrentPolyType;
-	TArray<u16>		m_CurrentPolyIndexes;
-	TArray<float3>	m_TempVerts;			//	Holds extra points created by gluTesselator. See ftglCombine.
+	THeapArray<u32>		m_Errors;
+	u32					m_CurrentPolyType;
+	THeapArray<u16>		m_CurrentPolyIndexes;
+	THeapArray<float3>	m_TempVerts;			//	Holds extra points created by gluTesselator. See ftglCombine.
 };
 

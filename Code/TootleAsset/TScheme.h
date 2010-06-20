@@ -67,7 +67,7 @@ public:
 	void							RemoveNodes()						{	m_Nodes.Empty();	}
 	void							AddNode(TPtr<TSchemeNode>& pNode)	{	m_Nodes.Add( pNode );	}
 
-protected:
+public:	//	gr; I've exposed these for the TileMap where we import and export a scheme asset...
 	virtual SyncBool			ImportData(TBinaryTree& Data);	//	load asset data out binary data
 	virtual SyncBool			ExportData(TBinaryTree& Data);	//	save asset data to binary data
 

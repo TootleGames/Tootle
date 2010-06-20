@@ -35,11 +35,11 @@ public:
 
 	// Physics Object access
 	virtual TRef					GetPhysicsNodeRef() const					{ return m_PhysicsNodeRef; }
-	TPtr<TLPhysics::TPhysicsNode>&	GetPhysicsNode(Bool InitialisedOnly=FALSE);
+	TLPhysics::TPhysicsNode*		GetPhysicsNode(Bool InitialisedOnly=FALSE);
 
 	// Render object access
 	virtual TRef					GetRenderNodeRef() const					{ return m_RenderNodeRef; }
-	TPtr<TLRender::TRenderNode>&	GetRenderNode(Bool InitialisedOnly=FALSE);
+	TLRender::TRenderNode*			GetRenderNode(Bool InitialisedOnly=FALSE);
 
 protected:
 	virtual void					Initialise(TLMessaging::TMessage& Message);
@@ -61,16 +61,16 @@ protected:
 	Bool							InitialisePhysicsNode(TLMessaging::TMessage& Message);		//	create physics node from init message
 
 	virtual Bool					CreatePhysicsNode(TRefRef PhysicsNodeType=TRef(),TLMessaging::TMessage* pInitMessage=NULL);
-	virtual void					OnPhysicsNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode);
+	virtual void					OnPhysicsNodeAdded(TLPhysics::TPhysicsNode& PhysicsNode);
 	void							DeletePhysicsNode();
 	virtual void					OnPhysicsNodeRemoved(TRefRef PhysicsNodeRef)			{}	//	called when we get a message from the graph that our node has been removed - NOT invoked by DeletePhysicsNode()
 	void							EnablePhysicsNode(Bool Enable,SyncBool EnableCollision=SyncWait);		//	enable/disable physics node - can seperately enable collision, syncwait doesn't change collision setting
 	void							EnablePhysicsNodeCollision(Bool Enable);								//	enable/disable physics node's collisin
 
-	FORCEINLINE Bool				CreateRenderNode(TPtr<TLRender::TRenderNode> pParentRenderNode)	{	return CreateRenderNode( pParentRenderNode ? pParentRenderNode->GetNodeRef() : TRef() );	}
+	FORCEINLINE Bool				CreateRenderNode(TLRender::TRenderNode* pParentRenderNode)	{	return CreateRenderNode( pParentRenderNode ? pParentRenderNode->GetNodeRef() : TRef() );	}
 	virtual Bool					CreateRenderNode(TRefRef ParentRenderNode,TRefRef RenderNodeType=TRef(),TLMessaging::TMessage* pInitMessage=NULL);
 	virtual void					OnRenderNodeCreated()							{}	//	called after being created, ref is valid
-	virtual void					OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode);
+	virtual void					OnRenderNodeAdded(TLRender::TRenderNode& RenderNode);
 	void							DeleteRenderNode();
 	virtual void					OnRenderNodeRemoved(TRefRef RenderNodeRef)			{}	//	called when we get a message from the graph that our node has been removed - NOT invoked by DeleteRenderNode()
 	void							EnableRenderNode(Bool Enable);						//	enable/disable render node

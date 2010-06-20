@@ -91,9 +91,8 @@ void TAudioNode::Initialise(TLMessaging::TMessage& Message)
 	if(Message.ImportData("Owner", m_OwnerSceneNode))
 	{
 		// Get the scenegraph node
-		TPtr<TLScene::TSceneNode> pOwner = TLScene::g_pScenegraph->FindNode(m_OwnerSceneNode);
-
-		if(pOwner.IsValid())
+		TLScene::TSceneNode* pOwner = TLScene::g_pScenegraph->FindNode(m_OwnerSceneNode);
+		if(pOwner)
 		{
 			pOwner->SubscribeTo(this);
 			SubscribeTo(pOwner);

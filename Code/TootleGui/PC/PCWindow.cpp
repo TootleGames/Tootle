@@ -19,12 +19,7 @@
 //------------------------------------------------------
 TPtr<TLGui::TWindow> TLGui::CreateGuiWindow(TRefRef Ref)
 {
-#if defined(TL_ENABLE_WX)
-	TPtr<TLGui::TWindow> pWindow = new wx::Window( Ref );
-#else
 	TPtr<TLGui::TWindow> pWindow = new TLGui::Platform::Window( Ref );
-#endif // TL_ENABLE_WX
-	
 	return pWindow;
 }
 

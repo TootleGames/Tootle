@@ -53,7 +53,7 @@ protected:
 	TPtr<TLRender::TRenderNode>		m_pMenuRenderNode;	//	root render object for the menu
 	TRef							m_RootMenuNode;
 	TRef							m_AssetMenuNode;
-	TArray<TRef>					m_ClosingAssetMenuNodes;
+	THeapArray<TRef>				m_ClosingAssetMenuNodes;
 };
 
 

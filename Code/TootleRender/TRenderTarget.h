@@ -11,6 +11,7 @@
 #pragma once
 
 #include <TootleCore/TLTypes.h>
+#include <TootleCore/TLDebug.h>
 #include <TootleCore/TPtr.h>
 #include <TootleCore/TColour.h>
 #include <TootleCore/TRef.h>
@@ -66,7 +67,6 @@ public:
 	virtual void			EndDraw();
 
 	const TRef&				GetRef() const								{	return m_Ref;	}
-	inline Bool				operator==(const TRef& Ref) const			{	return GetRef() == Ref;	}
 
 	Bool					SetSize(const Type4<s32>& Size)				{	m_Size = Size;	OnSizeChanged();	return TRUE;	}
 	void					GetSize(Type4<s32>& Size,const Type4<s32>& RenderTargetMaxSize) const;			//	get the render target's dimensions. we need the screen in case dimensions are max's
@@ -87,12 +87,12 @@ public:
 	FORCEINLINE u8			GetScreenZ() const							{	return m_ScreenZ;	}
 
 	void					SetRootRenderNode(TRefRef NodeRef)			{	m_RootRenderNodeRef = NodeRef;	}
-	void					SetRootRenderNode(const TPtr<TRenderNode>& pRenderNode);
+	void					SetRootRenderNode(TRenderNode& RenderNode)	{	SetRootRenderNode( RenderNode.GetNodeRef() );	}
 	TRefRef					GetRootRenderNodeRef() const				{	return m_RootRenderNodeRef;	}
-	TPtr<TRenderNode>&		GetRootRenderNode() const;					//	gets the render node at the root
+	TRenderNode*			GetRootRenderNode() const;					//	gets the render node at the root
 
-	void					SetRootQuadTreeZone(TPtr<TLMaths::TQuadTreeZone>& pQuadTreeZone);
-	TPtr<TLMaths::TQuadTreeZone>&	GetRootQuadTreeZone()				{	return m_pRootQuadTreeZone;	}
+	void					SetRootQuadTreeZone(TLMaths::TQuadTreeZone* pQuadTreeZone);
+	TLMaths::TQuadTreeZone*	GetRootQuadTreeZone()						{	return m_pRootQuadTreeZone;	}
 
 	//	generic scene rendering controls
 	virtual void			BeginScene()										{	}					//	save off current scene (and optionally reset)
@@ -108,8 +108,11 @@ public:
 	const TLMaths::TBox2D&	GetWorldViewBox(float WorldDepth=0.f) const			{	return m_pCamera->GetWorldViewBox( WorldDepth );	}	//	the world-space box for the extents at the edges of the screen.
 	const TLMaths::TBox2D&	GetWorldViewBox(TPtr<TScreen>& pScreen,float WorldDepth=0.f);		//	same as GetWorldViewBox but can be used before a render
 
-	FORCEINLINE Bool		operator<(const TRenderTarget& RenderTarget) const					{	return GetScreenZ() < RenderTarget.GetScreenZ();	}
-	FORCEINLINE Bool		operator==(const TRenderTarget& RenderTarget) const					{	return GetScreenZ() == RenderTarget.GetScreenZ();	}
+	FORCEINLINE Bool		operator<(const TSorter<TLRender::TRenderTarget,u8>& RenderTarget) const	{	return GetScreenZ() < RenderTarget->GetScreenZ();	}
+	FORCEINLINE Bool		operator<(const TRef& Ref) const					{	return GetRef() < Ref;	}
+	FORCEINLINE Bool		operator==(const TRef& Ref) const					{	return GetRef() == Ref;	}
+	FORCEINLINE Bool		operator<(const u8& ZOrder) const					{	return GetScreenZ() < ZOrder;	}
+	FORCEINLINE Bool		operator==(const u8& ZOrder) const					{	return GetScreenZ() == ZOrder;	}
 
 protected:
 	Bool							DrawNode(TRenderNode& RenderNode,TRenderNode* pParentRenderNode,const TLMaths::TTransform* pSceneTransform,TColour SceneColour,TLMaths::TQuadTreeNode* pCameraZoneNode);	//	render a render object
@@ -122,12 +125,12 @@ protected:
 	virtual Bool					BeginOrthoDraw(TLRender::TOrthoCamera& Camera,TScreenShape ScreenShape)		{	return TRUE;	}	//	setup ortho projection mode
 	virtual void					EndOrthoDraw()																	{	}
 
-	SyncBool						IsRenderNodeVisible(TRenderNode& RenderNode,TPtr<TLMaths::TQuadTreeNode>*& ppRenderZoneNode,TLMaths::TQuadTreeNode* pCameraZoneNode,const TLMaths::TTransform* pSceneTransform,Bool& RenderNodeIsInsideCameraZone);	//	check zone of node against camera's zone to determine visibility. if no scene transform is provided then we only do quick tests with no calculations. This can result in a SyncWait returned which means we need to do calculations to make sure of visibility
+	SyncBool						IsRenderNodeVisible(TRenderNode& RenderNode,TLMaths::TQuadTreeNode*& pRenderZoneNode,TLMaths::TQuadTreeNode* pCameraZoneNode,const TLMaths::TTransform* pSceneTransform,Bool& RenderNodeIsInsideCameraZone);	//	check zone of node against camera's zone to determine visibility. if no scene transform is provided then we only do quick tests with no calculations. This can result in a SyncWait returned which means we need to do calculations to make sure of visibility
 	Bool							IsZoneVisible(TLMaths::TQuadTreeNode* pCameraZoneNode,TLMaths::TQuadTreeZone* pZone,TLMaths::TQuadTreeNode* pZoneNode,Bool& RenderNodeIsInsideCameraZone);
 
 	void							OnSizeChanged();		//	do any recalculations we need to when the render target's size changes
 
-	void							Debug_DrawZone(TPtr<TLMaths::TQuadTreeZone>& pZone,float z,TLMaths::TQuadTreeNode* pCameraZoneNode);
+	void							Debug_DrawZone(TLMaths::TQuadTreeZone& Zone,float z,TLMaths::TQuadTreeNode* pCameraZoneNode);
 
 protected:
 	TRef							m_Ref;					//	render target ref
@@ -140,7 +143,7 @@ protected:
 	TFlags<Flags>					m_Flags;				//	render target flags
 	u8								m_ScreenZ;				//	order of render targets in screen
 
-	TPtr<TLMaths::TQuadTreeZone>	m_pRootQuadTreeZone;	//	root visibility zone
+	TLMaths::TQuadTreeZone*			m_pRootQuadTreeZone;	//	root visibility zone
 
 	TRef							m_RootRenderNodeRef;	//	root render node
 	TPtr<TRenderNodeClear>			m_pRenderNodeClear;		//	clear-screen render object

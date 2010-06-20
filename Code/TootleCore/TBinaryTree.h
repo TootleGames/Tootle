@@ -42,6 +42,7 @@ public:
 
 	FORCEINLINE void			Empty(Bool Dealloc=FALSE)						{	TBinary::Empty(Dealloc);	m_Children.Empty(Dealloc);	}	//	delete tree
 	FORCEINLINE Bool			IsEmpty() const									{	return ( TBinary::GetSize() == 0 && m_Children.GetSize() == 0 );	}
+	void						AddAllocChildren(u32 Elements)					{	m_Children.AddAllocSize( Elements );	}	//	pre-alloc child data's
 	void						Compact();										//	compact binary data and all our children
 	FORCEINLINE TBinary&		GetData()										{	return (*this);	}
 	FORCEINLINE const TBinary&	GetData() const									{	return (*this);	}
@@ -72,6 +73,7 @@ public:
 	Bool						ReplaceDataString(TRefRef DataRef,const TString& DataString);			//	remove existing data and swap it for this new data. if the new value is the same as before then FALSE is returned							
 
 	FORCEINLINE Bool			operator==(TRefRef DataRef)const		{	return GetDataRef() == DataRef;	}
+	FORCEINLINE TBinaryTree&	operator=(const TBinaryTree& OtherTree)	{	SetDataRef( OtherTree.GetDataRef() );	Empty();	ReferenceDataTree( OtherTree );	return *this;	}
 
 	void						Debug_PrintTree(u32 TreeLevel=0) const;					//	debug_print the tree
 	void						Debug_FailedToRead(TRefRef ChildDataRef,TRefRef TypeRef);	//	print out what data we failed to read

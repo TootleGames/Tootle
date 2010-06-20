@@ -128,7 +128,7 @@ SyncBool TAudiograph::Initialise()
 		if(TLGraph::TGraph<TLAudio::TAudioNode>::Initialise() == SyncTrue)
 		{	
 			//	create generic audio node factory
-			TPtr<TClassFactory<TLAudio::TAudioNode,FALSE> > pFactory = new TAudioNodeFactory();
+			TPtr<TNodeFactory<TLAudio::TAudioNode> > pFactory = new TAudioNodeFactory();
 
 			if(!pFactory)
 			{
@@ -198,7 +198,7 @@ SyncBool TAudiograph::Update(float fTimeStep)
 	// Disable the audio whilst we make mass changes
 	//Disable();
 
-	TArray<TRef> refArray;
+	THeapArray<TRef> refArray;
 
 	if(Platform::DetermineFinishedAudio(refArray))
 	{
@@ -487,7 +487,7 @@ void TAudiograph::Disable()
 	if(Platform::Disable())
 	{
 		// Remove all nodes
-		RemoveChildren(GetRootNode()->GetNodeRef());
+		RemoveChildren(GetRootNode());
 		m_MusicRef.SetInvalid();
 
 		m_bEnabled = FALSE;
@@ -725,8 +725,7 @@ TRef TAudiograph::StartAudio(TRefRef AudioRef, TLMessaging::TMessage& Message)
 Bool TAudiograph::StopAudio(TRefRef AudioRef)
 {
 	// Find the audio node
-	TPtr<TLAudio::TAudioNode> pAudioNode = FindNode(AudioRef);
-
+	TLAudio::TAudioNode* pAudioNode = FindNode(AudioRef);
 	if(pAudioNode)
 	{
 		pAudioNode->Stop();
@@ -739,7 +738,7 @@ Bool TAudiograph::StopAudio(TRefRef AudioRef)
 Bool TAudiograph::PauseAudio(TRefRef AudioRef, const Bool& bPause)
 {
 	// Find the audio node
-	TPtr<TLAudio::TAudioNode> pAudioNode = TLAudio::g_pAudiograph->FindNode(AudioRef);
+	TLAudio::TAudioNode* pAudioNode = TLAudio::g_pAudiograph->FindNode(AudioRef);
 
 	if(pAudioNode)
 	{
@@ -754,7 +753,7 @@ Bool TAudiograph::PauseAudio(TRefRef AudioRef, const Bool& bPause)
 void TAudiograph::SetAudioTranslate(TRefRef AudioRef, const float3& vTranslate)
 {
 	// Find the audio node
-	TPtr<TLAudio::TAudioNode> pAudioNode = FindNode(AudioRef);
+	TLAudio::TAudioNode* pAudioNode = FindNode(AudioRef);
 	
 	if(pAudioNode)
 	{
@@ -766,7 +765,7 @@ void TAudiograph::SetAudioTranslate(TRefRef AudioRef, const float3& vTranslate)
 float3 TAudiograph::GetAudioTranslate(TRefRef AudioRef)
 {
 	// Find the audio node
-	TPtr<TLAudio::TAudioNode> pAudioNode = FindNode(AudioRef);
+	TLAudio::TAudioNode* pAudioNode = FindNode(AudioRef);
 	
 	if(pAudioNode)
 		return pAudioNode->GetTranslate();
@@ -777,7 +776,7 @@ float3 TAudiograph::GetAudioTranslate(TRefRef AudioRef)
 void TAudiograph::SetAudioPitch(TRefRef AudioRef, const float& fPitch)
 {
 	// Find the audio node
-	TPtr<TLAudio::TAudioNode> pAudioNode = FindNode(AudioRef);
+	TLAudio::TAudioNode* pAudioNode = FindNode(AudioRef);
 
 	if(pAudioNode)
 		pAudioNode->SetPitch(fPitch);
@@ -787,7 +786,7 @@ void TAudiograph::SetAudioPitch(TRefRef AudioRef, const float& fPitch)
 float TAudiograph::GetAudioPitch(TRefRef AudioRef)
 {
 	// Find the audio node
-	TPtr<TLAudio::TAudioNode> pAudioNode = FindNode(AudioRef);
+	TLAudio::TAudioNode* pAudioNode = FindNode(AudioRef);
 	
 	if(pAudioNode)
 		return pAudioNode->GetPitch();
@@ -801,7 +800,7 @@ float TAudiograph::GetAudioPitch(TRefRef AudioRef)
 void TAudiograph::SetAudioVolume(TRefRef AudioRef, const float& fVolume)
 {
 	// Find the audio node
-	TPtr<TLAudio::TAudioNode> pAudioNode = FindNode(AudioRef);
+	TLAudio::TAudioNode* pAudioNode = FindNode(AudioRef);
 	
 	if(pAudioNode)
 		pAudioNode->SetVolume(fVolume);
@@ -810,7 +809,7 @@ void TAudiograph::SetAudioVolume(TRefRef AudioRef, const float& fVolume)
 float TAudiograph::GetAudioVolume(TRefRef AudioRef)
 {
 	// Find the audio node
-	TPtr<TLAudio::TAudioNode> pAudioNode = FindNode(AudioRef);
+	TLAudio::TAudioNode* pAudioNode = FindNode(AudioRef);
 	
 	if(pAudioNode)
 		return pAudioNode->GetVolume();
@@ -821,7 +820,7 @@ float TAudiograph::GetAudioVolume(TRefRef AudioRef)
 void TAudiograph::SetAudioLooping(TRefRef AudioRef, const Bool& bLooping)
 {
 	// Find the audio node
-	TPtr<TLAudio::TAudioNode> pAudioNode = FindNode(AudioRef);
+	TLAudio::TAudioNode* pAudioNode = FindNode(AudioRef);
 	
 	if(pAudioNode)
 		pAudioNode->SetLooping(bLooping);
@@ -831,7 +830,7 @@ void TAudiograph::SetAudioLooping(TRefRef AudioRef, const Bool& bLooping)
 Bool TAudiograph::GetAudioIsLooping(TRefRef AudioRef)
 {
 	// Find the audio node
-	TPtr<TLAudio::TAudioNode> pAudioNode = FindNode(AudioRef);
+	TLAudio::TAudioNode* pAudioNode = FindNode(AudioRef);
 	
 	if(pAudioNode)
 		return pAudioNode->GetIsLooping();

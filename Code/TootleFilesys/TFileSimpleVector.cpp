@@ -183,7 +183,7 @@ Bool TLFileSys::TFileSimpleVector::ImportPolygonTag(TPtr<TLAsset::TMesh>& pMesh,
 		return TRUE;
 
 	//	
-	TArray<TTempString> NumberPairs;
+	THeapArray<TTempString> NumberPairs;
 	if ( !pString->Split(' ', NumberPairs ) )
 	{
 		TLDebug_Break("No numbers?");
@@ -191,11 +191,11 @@ Bool TLFileSys::TFileSimpleVector::ImportPolygonTag(TPtr<TLAsset::TMesh>& pMesh,
 	}
 
 	//	split pairs into point numbers, then into vertex positions
-	TArray<float3> OutlinePoints;
+	THeapArray<float3> OutlinePoints;
 
 	for ( u32 i=0;	i<NumberPairs.GetSize();	i++ )
 	{
-		TArray<TTempString> PointStrings;
+		THeapArray<TTempString> PointStrings;
 		if ( !NumberPairs[i].Split( ',', PointStrings ) )
 		{
 			if ( TLDebug_Break( TString("Error splitting pair of numbers: %s", NumberPairs[i].GetData() ) ) )
@@ -277,8 +277,8 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 		return TRUE;
 
 	TPtrArray<TLMaths::TContour> Contours;
-	TArray<TLMaths::TContourCurve> PathCurves;
-	TArray<float3> PathPoints;
+	THeapArray<TLMaths::TContourCurve> PathCurves;
+	THeapArray<float3> PathPoints;
 	TChar LastCommand = 0x0;
 	float2 CurrentPosition;
 
@@ -566,7 +566,7 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 		else
 		{
 			//	put all contour points into one array of points
-			TArray<float3> ContourPoints;
+			THeapArray<float3> ContourPoints;
 			for ( u32 c=0;	c<Contours.GetSize();	c++ )
 				ContourPoints.Add( Contours[c]->GetPoints() );
 			
@@ -812,7 +812,7 @@ Bool TLFileSys::TFileSimpleVector::Style::Parse(const TString& StyleString)
 	//	style="fill:#192bed;fill-opacity:0.44767445;stroke:none;stroke-width:2.26799989000000000;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
 
 	//	split string at semi colons
-	TArray<TTempString> PropertyStrings;
+	THeapArray<TTempString> PropertyStrings;
 	StyleString.Split( ';', PropertyStrings );
 
 	//	make up properties

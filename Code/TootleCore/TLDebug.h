@@ -35,17 +35,20 @@
 // the release type. Rather than using the _DEBUG option we should try and use some kind of define with granularity 
 // such as DEBUG_LEVEL == [ NONE | CRITICAL | MINIMAL |  ALL ] or some kind of runtime bitwise set of flags for each type so we can alter the 
 // level of debug information at runtime? Things to consider is code within the debug that is ONLY available in debug or not.
-#ifdef _DEBUG
+#if defined(_DEBUG)
 	#define ENABLE_DEBUG_TRACE
 #else
 	//#define ENABLE_DEBUG_TRACE
 #endif
 
-//	gr: turn this into a game/engine option or something
+//	gr: todo: turn this into a game/engine option or something
+//	gr: I've enabled this for mac because my mac is fast enough to run with it
+//		maybe we need a user.h with a #define USER GRAHAM kinda thing 
 //	enable this define to enable array/float/limit checks
-//#define DEBUG_CHECK_INDEXES
-//#define DEBUG_CHECK_VALUES
-
+#if defined(_DEBUG) && defined(TL_TARGET_MAC)
+	#define DEBUG_CHECK_INDEXES
+	#define DEBUG_CHECK_VALUES
+#endif
 
 //	macro interfaces to debug routines... why? because we want to catch the FILE and LINE where it breaks
 //	using these will also be faster in release mode because the strings won't be constructed
@@ -67,7 +70,7 @@
 	//					and it could be coincidence due to volume of this call combined with code re-ordering, macro replacement as well 
 	//					as the optimisation but for now this appeared to fix the issue.
 	//#define TLDebug_Break(String)					FALSE	//	by default do NOT continue from breaks
-	#define TLDebug_Break(String)					TLDebug::NoBreak( String )
+	#define TLDebug_Break(String)					TLDebug::NoBreak()
 	
 	#define TLDebug_Print(String)					{}
 	#define TLDebug_Warning(String)					{}
@@ -86,14 +89,14 @@
 	#define TLDebug_CheckIndex(Index,Max)			TLDebug::CheckIndex( Index, Max, (const char*)__FUNCTION__ )
 	#define TLDebug_CheckInRange(Value,Min,Max)		TLDebug::CheckInRange( Value, Min, Max, (const char*)__FUNCTION__ )
 #else
-	#define TLDebug_CheckIndex(Index,Max)			TRUE	//	by in realease just continue, assume index/value is fine
-	#define TLDebug_CheckInRange(Value,Min,Max)		TRUE	//	by in realease just continue, assume index/value is fine
+	#define TLDebug_CheckIndex(Index,Max)			TRUE	//	in realease just continue, assume index/value is fine
+	#define TLDebug_CheckInRange(Value,Min,Max)		TRUE	//	in realease just continue, assume index/value is fine
 #endif
 
 #if defined(_DEBUG) && defined(DEBUG_CHECK_VALUES)
 	#define TLDebug_CheckFloat(Value)				TLDebug::CheckFloatType( Value, (const char*)__FUNCTION__ )
 #else
-	#define TLDebug_CheckFloat(Value)				TRUE	//	by in realease just continue, assume index/value is fine
+	#define TLDebug_CheckFloat(Value)				TRUE	//	in realease just continue, assume index/value is fine
 #endif
 
 
@@ -127,12 +130,13 @@ namespace TLDebug
 	void				SetLastBreak(const char* pSourceFunction);											//	note last break place in the code
 
 	Bool				Break(const TString& String,const char* pSourceFunction);							//	halt! return TRUE to ignore the error and continue
+	Bool				Break(const char* String,const char* pSourceFunction);								//	Break for where we extern the use of break and can't include strings
 	FORCEINLINE Bool	Break(const TString& String)														{	return Break( String, NULL );	}
 	void				Print(const TString& String,const char* pSourceFunction);							//	print to console
 	FORCEINLINE void	Print(const TString& String)														{	Print( String, NULL );	}
 	
 #ifndef ENABLE_DEBUG_TRACE
-	Bool				NoBreak(const TString& String);
+	Bool				NoBreak();
 #endif
 		
 	FORCEINLINE void	FlushBuffer()	{	Platform::FlushBuffer(); }
@@ -142,6 +146,7 @@ namespace TLDebug
 	FORCEINLINE Bool	CheckInRange(int Value,int Min,int Max,const char* pSourceFunction);				//	check & assert if range is out of bounds. Max IS inclusive... Min <= N <= Max
 	FORCEINLINE Bool	CheckInRange(int Value,int Min,int Max)												{	return CheckInRange( Value, Min, Max, NULL );	}
 
+	//	todo: replace the specialisations for a generic template function and specialise it in the class-specific places and leave the basic float check here
 	Bool				CheckFloat(const float& Value,const char* pSourceFunction);							//	check float is valid
 	Bool				CheckFloat(const TLMaths::TMatrix& Value,const char* pSourceFunction);				//	check float is valid
 	Bool				CheckFloat(const TLMaths::TQuaternion& Value,const char* pSourceFunction);			//	check float is valid

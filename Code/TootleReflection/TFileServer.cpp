@@ -237,7 +237,7 @@ void TLReflection::TFileServer::OnPacket(TBinary& Packet,TFtpClient& Client)
 	//	gr: note, we're supposed to split at explicit \r\n, not \r OR \n... this may be an issue...
 	TFixedArray<TChar,2> SplitChars;
 	SplitChars << '\r' << '\n';
-	TArray<TString> CommandStrings;
+	THeapArray<TString> CommandStrings;
 	PacketString.Split( SplitChars, CommandStrings );
 	
 	//	put the commands into the client
@@ -304,7 +304,7 @@ bool TLReflection::TFtpClient::SendPacket(u32 FtpCommand,const TString& String,T
 	FinalString << FtpCommand << ' ' << String << "\r\n";
 
 	//	convert to ansi for sending
-	TArray<char> AnsiFinalString;
+	THeapArray<char> AnsiFinalString;
 
 	//	note: no terminator! very important! the last characters HAVE to be <crlf> other wise clients won't process the command
 	FinalString.GetAnsi( AnsiFinalString, false );
@@ -388,8 +388,8 @@ bool TLReflection::TFtpClient::GetDirectoryList(const TString& Arguments,TString
 	//	resolve directory
 	TRef FileSystem = m_FileSystem;
 
-	TPointerArray<TLFileSys::TFileSys> ListFileSystems;
-	TPointerArray<TLFileSys::TFile> ListFiles;
+	TPointerArray<TLFileSys::TFileSys,false> ListFileSystems;
+	TPointerArray<TLFileSys::TFile,false> ListFiles;
 
 	if ( !Arguments.IsEmpty() )
 	{
@@ -1285,7 +1285,7 @@ void TLReflection::TFtpDataTask::SendPacket(TBinary& PacketData)
 TLReflection::TFtpDataTaskDirListing::TFtpDataTaskDirListing(const TString& DirListing)
 {
 	//	convert to ansi string
-	TArray<char> AnsiListing;
+	THeapArray<char> AnsiListing;
 	DirListing.GetAnsi( AnsiListing );
 
 	//	send data

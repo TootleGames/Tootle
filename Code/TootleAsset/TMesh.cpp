@@ -209,9 +209,9 @@ void TLAsset::TMesh::GenerateSphere(const TLMaths::TSphere& Sphere,const TColour
 	u32 SegmentCount = TLAsset::TLMesh::GetSphereSegmentCount( Sphere.GetRadius() );
 	Type2<u32> Segments( SegmentCount, SegmentCount );
 
-	TArray<float3> Verts;
-	TArray<float3> Normals;
-	TArray<float2> TextureUV;
+	THeapArray<float3> Verts;
+	THeapArray<float3> Normals;
+	THeapArray<float2> TextureUV;
 
 	Verts.SetSize( Segments.x * Segments.y );
 	Normals.SetSize( Segments.x * Segments.y );
@@ -897,8 +897,6 @@ Bool TLAsset::TMesh::RemoveVertex(u16 VertexIndex,Bool CheckUsage)
 		return FALSE;
 	}
 
-	u32 OldLastIndex = m_Vertexes.GetLastIndex();
-
 	//	remove vertex and colour
 	m_Vertexes.RemoveAt( VertexIndex );
 	RemoveColourAt( VertexIndex );
@@ -1533,8 +1531,6 @@ Bool TLAsset::TMesh::ImportDatum(TBinaryTree& Data)
 //--------------------------------------------------------
 Bool TLAsset::TMesh::ExportDatum(TBinaryTree& Data,TRefRef DatumRef,TLMaths::TShape& Shape)
 {
-	TRefRef ShapeRef = Shape.GetShapeType();
-
 	//	write ref
 	Data.Write( DatumRef );
 

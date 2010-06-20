@@ -1,13 +1,6 @@
 #include "TPath.h"
 
 
-namespace TLRef
-{
-	//	gr: extern this if you want to use it... sorry!
-	TLArray::SortResult		RefSort(const TRef& aRef,const TRef& bRef,const void* pTestVal);	//	simple ref-sort func - for arrays of TRef's
-}
-
-
 //#define DEAD_END_CODE
 
 
@@ -122,7 +115,7 @@ SyncBool TLPath::TPath::FindPathRandom(TRefRef StartNode,u32 NodesInRoute, Bool 
 		}
 
 		//	pick a link to follow
-		TLPath::TPathNodeLink* pFollowLink = ValidNodeLinks.GetRandomElement();
+		TLPath::TPathNodeLink* pFollowLink = ValidNodeLinks.ElementRandom();
 		pNode = pPathNetwork->GetNode( pFollowLink->GetLinkNodeRef() );
 		if ( !pNode )
 		{
@@ -186,8 +179,6 @@ SyncBool TLPath::TPath::UpdateFindPath()
 //---------------------------------------------------------
 TLPath::TPathSpider::TPathSpider(TPtr<TLAsset::TPathNetwork>& pPathNetwork,TRef StartingNodeRef) :
 	m_pPathNetwork		( pPathNetwork ),
-	m_EndNodes			( TLRef::RefSort, 200 ),
-	m_CompletedNodes	( TLRef::RefSort, 200 ),
 	m_StartingNodeRef	( StartingNodeRef )
 {
 	//	add first road node to start from
@@ -208,7 +199,7 @@ SyncBool TLPath::TPathSpider::Update()
 		return SyncTrue;
 		
 	//	copy the array before we call the functions that change the array
-	TArray<TRef> OldEndNodes;
+	THeapArray<TRef> OldEndNodes;
 	OldEndNodes.Copy( m_EndNodes );
 
 	u32 e;
@@ -295,7 +286,7 @@ TLPath::TPathSpider_Path::TPathSpider_Path(TPtr<TLAsset::TPathNetwork>& pPathNet
 	m_EndNodeLength.Add( m_NodeFrom, 0.f );
 	m_EndNodeDistance.Add( m_NodeFrom, (pNodeTo->GetPosition() - pNodeFrom->GetPosition()).Length() );
 
-	TPtr<TArray<TRef> > pInitialPath = new TArray<TRef>();
+	TPtr<THeapArray<TRef> > pInitialPath = new THeapArray<TRef>();
 	pInitialPath->Add( m_NodeFrom );
 	m_EndNodePaths.Add( m_NodeFrom, pInitialPath );
 
@@ -389,7 +380,7 @@ SyncBool TLPath::TPathSpider_Path::Update()
 	}
 
 	//	get previous path so we don't go back on ourselves
-	TPtr<TArray<TRef> >* pPreviousPath = m_EndNodePaths.Find( FollowNode );
+	TPtr<THeapArray<TRef> >* pPreviousPath = m_EndNodePaths.Find( FollowNode );
 	if ( !pPreviousPath )
 	{
 		TLDebug_Break("Missing end node path");
@@ -492,7 +483,7 @@ SyncBool TLPath::TPathSpider_Path::Update()
 		}
 
 		//	copy path
-		TPtr<TArray<TRef> > pNewPath = new TArray<TRef>();
+		TPtr<THeapArray<TRef> > pNewPath = new THeapArray<TRef>();
 		pNewPath->Copy( PreviousPath );
 		pNewPath->Add( LinkRef );
 
@@ -673,7 +664,7 @@ Bool TLPath::TPathNetworkZones::GetRandomPathPositionInRandomZone(TLMaths::TTran
 		return FALSE;
 
 	//	k now pick a random path from the list
-	const TLPath::TPathLink& FoundPathLink = (*pPathLinksInZone).GetRandomElementConst();
+	const TLPath::TPathLink& FoundPathLink = (*pPathLinksInZone).ElementRandomConst();
 	const TLMaths::TLine2D& PathLinkLine = FoundPathLink.GetLinkLine();
 
 	//	now find a point along the path that's in the zone

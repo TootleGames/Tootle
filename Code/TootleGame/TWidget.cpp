@@ -361,7 +361,7 @@ SyncBool TLGui::TWidget::PrefetchProcessData(TLRender::TScreen*& pScreen,TLRende
 	}
 
 	//	got a render target, fetch a render node
-	pRenderNode = m_RenderNodeRef.IsValid() ? TLRender::g_pRendergraph->FindNode( m_RenderNodeRef ) : TLPtr::GetNullPtr<TLRender::TRenderNode>();
+	pRenderNode = m_RenderNodeRef.IsValid() ? TLRender::g_pRendergraph->FindNode( m_RenderNodeRef ) : NULL;
 
 	//	gr: for support of those that don't use this base render node variable, only check if the ref is valid
 	if ( m_RenderNodeRef.IsValid() && !pRenderNode )

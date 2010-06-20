@@ -22,7 +22,7 @@ TPtr<TLMaths::TShape> TLPhysics::GetShapeFromBodyShape(b2Fixture& BodyShape,cons
 	//	gr: change this to use box2D when ENABLED and use our node transform when DISABLED.
 //#define TRANSFORM_BY_BOX2D
 
-	b2Body& Body = *BodyShape.GetBody();
+//	b2Body& Body = *BodyShape.GetBody();
 	b2Shape* pBodyShape = BodyShape.GetShape();
 	
 	if ( !pBodyShape )

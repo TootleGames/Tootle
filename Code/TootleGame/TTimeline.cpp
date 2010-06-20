@@ -11,7 +11,7 @@ using namespace TLAnimation;
 //#define TEST_REVERSE_PLAYBACK
 
 #ifdef _DEBUG
-	//#define DEBUG_TIMELINE
+//	#define DEBUG_TIMELINE
 #endif
 
 TLAnimation::TTimelineInstance::TTimelineInstance(TRefRef TimelineAssetRef) :
@@ -113,7 +113,7 @@ SyncBool TTimelineInstance::DoUpdate(float fTimestep, Bool bForced)
 	if(!m_pTimeline)
 		return SyncWait;
 
-	TArray<TLAsset::TTempKeyframeData> pKeyframes;
+	THeapArray<TLAsset::TTempKeyframeData> pKeyframes;
 
 #ifdef TEST_REVERSE_PLAYBACK
 	// Manipulate the timestep by the playback rate modifier
@@ -571,7 +571,6 @@ SyncBool TTimelineInstance::SendCommandAsMessage(TLAsset::TTimelineCommand* pFro
 			for(u32 uIndex = 0; uIndex < uNumberOfDataElements; uIndex++)
 			{
 				TPtr<TBinaryTree>& pFromData = pFromCommand->GetChildren().ElementAt(uIndex);
-
 				TRef InterpMethod = "None";
 
 				// Now check to see if the command data needs interping
@@ -597,6 +596,12 @@ SyncBool TTimelineInstance::SendCommandAsMessage(TLAsset::TTimelineCommand* pFro
 		// Send message to the graph
 		if(NodeGraphRef.IsValid())
 		{
+			#ifdef DEBUG_TIMELINE
+			TLDebug_Print("Node message from timeline");
+			pMessage->Debug_PrintTree();
+			TLDebug::FlushBuffer();
+			#endif	
+			
 			if(TLCore::g_pCoreManager->SendMessageTo(NodeRef, NodeGraphRef, *pMessage))
 				return SyncTrue;
 
@@ -605,6 +610,11 @@ SyncBool TTimelineInstance::SendCommandAsMessage(TLAsset::TTimelineCommand* pFro
 		}
 		else
 		{
+#ifdef DEBUG_TIMELINE
+			TLDebug_Print("publish message from timeline");
+			pMessage->Debug_PrintTree();
+			TLDebug::FlushBuffer();
+#endif	
 			// Invalid graph ref
 			// Send the command to subscribers
 			PublishMessage(*pMessage);

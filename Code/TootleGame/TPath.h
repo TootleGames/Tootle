@@ -54,7 +54,7 @@ public:
 
 protected:
 	TRef					m_PathNetworkRef;	//	ref of path network asset
-	TArray<TRef>			m_Nodes;			//	list of nodes along the network to make up the path
+	THeapArray<TRef>		m_Nodes;			//	list of nodes along the network to make up the path
 	TPtr<TPathSpider_Path>	m_pPathSpider;		//	path spider
 };
 
@@ -80,8 +80,8 @@ protected:
 protected:
 	TRef						m_StartingNodeRef;	
 	TPtr<TLAsset::TPathNetwork>	m_pPathNetwork;
-	TArray<TRef>				m_EndNodes;			//	nodes to be processed next
-	TArray<TRef>				m_CompletedNodes;	//	nodes that have been visited
+	THeapArray<TRef,200,TSortPolicySorted<TRef> >	m_EndNodes;			//	nodes to be processed next
+	THeapArray<TRef,200,TSortPolicySorted<TRef> >	m_CompletedNodes;	//	nodes that have been visited
 };
 
 
@@ -92,7 +92,7 @@ public:
 	TPathSpider_Path(TPtr<TLAsset::TPathNetwork>& pPathNetwork,TRefRef PathFromNode,TRefRef PathToNode,TPathMode::Type PathMode);
 
 	virtual SyncBool		Update();		//	do next spidering
-	TPtr<TArray<TRef> >&	GetFinalPath()	{	return m_pFinalPath;	}
+	TPtr<THeapArray<TRef> >&	GetFinalPath()	{	return m_pFinalPath;	}
 
 protected:
 	void					RemoveEndNode(TRefRef EndNodeRef);		//	remove all end node data for this node
@@ -101,12 +101,12 @@ protected:
 	TRef								m_NodeFrom;
 	TRef								m_NodeTo;
 	TPathMode::Type						m_PathMode;
-	TPtr<TArray<TRef> >					m_pFinalPath;
+	TPtr<THeapArray<TRef> >					m_pFinalPath;
 
 	TKeyArray<TRef,float>				m_EndNodeLength;		//	current travel distance for each end node
 	TKeyArray<TRef,float>				m_EndNodeDistance;		//	for each end node, this is the distance to the ToNode
-	TKeyArray<TRef,TPtr<TArray<TRef> > >	m_EndNodePaths;		//	for each end node we keep a record of the path
-	TArray<TRef>						m_DeadEnds;			//	dead ends we've found
+	TKeyArray<TRef,TPtr<THeapArray<TRef> > >	m_EndNodePaths;		//	for each end node we keep a record of the path
+	THeapArray<TRef>						m_DeadEnds;			//	dead ends we've found
 };
 
 

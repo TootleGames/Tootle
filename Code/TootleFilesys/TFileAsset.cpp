@@ -56,6 +56,9 @@ Bool TLFileSys::TFileAsset::ImportTree(TPtr<TBinaryTree>& pChild,SectionHeader& 
 	//	reset read pos
 	ChildTreeData.ResetReadPos();
 
+	//	pre-alloc for incoming children
+	pChild->AddAllocChildren( Header.m_ChildCount );
+
 	//	if child has children, import them too
 	for ( u32 c=0;	c<Header.m_ChildCount;	c++ )
 	{

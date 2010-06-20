@@ -96,7 +96,7 @@ void TLScene::TSceneNode_Transform::ProcessMessage(TLMessaging::TMessage& Messag
 		//	read sent transform
 		TLMaths::TTransform Transform;
 		Transform.ImportData( Message );
-		
+
 		//	modify our existing transform by this transform
 		u8 TransformChangedBits = m_Transform.AddTransform_HasChanged( Transform );
 		OnTransformChanged( TransformChangedBits );
@@ -151,21 +151,10 @@ void TLScene::TSceneNode_Transform::PostUpdate(float fTimestep)
 	//	update zone if out of date
 	if ( IsZoneOutOfDate() )
 	{
-		TPtr<TLMaths::TQuadTreeZone>& pRootZone = TLScene::g_pScenegraph->GetRootZone();
+		TLMaths::TQuadTreeZone* pRootZone = TLScene::g_pScenegraph->GetRootZone();
 		if ( pRootZone )
 		{
-			//	get our ptr
-			TPtr<TLScene::TSceneNode>& pThisSceneNode = TLScene::g_pScenegraph->FindNode( GetNodeRef() );
-			if ( pThisSceneNode )
-			{
-				TPtr<TLScene::TSceneNode_Transform> pThisSceneNodeTransform = pThisSceneNode;
-				TPtr<TLMaths::TQuadTreeNode> pThisQuadTreeNode = pThisSceneNodeTransform;
-				UpdateZone( pThisQuadTreeNode, pRootZone );
-			}
-			else
-			{
-				TLDebug_Break("Failed to find TPtr for this!");
-			}
+			UpdateZone( *pRootZone );
 		}
 	}
 }
@@ -176,8 +165,9 @@ void TLScene::TSceneNode_Transform::PostUpdate(float fTimestep)
 //------------------------------------------------------
 void TLScene::TSceneNode_Transform::OnZoneChanged(TLMaths::TQuadTreeZone* pOldZone)
 {
-	TPtr<TLMaths::TQuadTreeZone>& pNewZone = GetZone();
+	TLMaths::TQuadTreeZone* pNewZone = GetZone();
 
+	//	gr: hacky code. replace this with subscription.
 	//	are we the tracked zone node
 	if ( TLScene::g_pScenegraph->GetActiveZoneTrackNode() == GetNodeRef() )
 	{
@@ -224,13 +214,11 @@ void TLScene::TSceneNode_Transform::InitialiseZone()
 		return;
 
 	//	cannot initialise zone without a root zone...
-	TPtr<TLMaths::TQuadTreeZone>& pRootZone = TLScene::g_pScenegraph->GetRootZone();
+	TLMaths::TQuadTreeZone* pRootZone = TLScene::g_pScenegraph->GetRootZone();
 	if ( !pRootZone )
 		return;
-
-	TPtr<TLScene::TSceneNode_Transform> pThis = TLScene::g_pScenegraph->FindNode( GetNodeRef() );
-	TPtr<TLMaths::TQuadTreeNode> pQuadTreeThis = pThis;
-	TLMaths::TQuadTreeNode::UpdateZone( pQuadTreeThis, pRootZone );
+	
+	TLMaths::TQuadTreeNode::UpdateZone( *pRootZone );
 
 	//	gr: replaced with IsZoneAwake() usage to cope with non-zoned scenegraphs
 	SyncBool ZoneActive = IsZoneAwake();

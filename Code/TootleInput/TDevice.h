@@ -105,7 +105,7 @@ private:
 	TRef						m_HardwareDeviceRef;	// internal hardware ref - Reference to the physical device
 	TRef						m_DeviceType;			//	device type
 
-	TArray<TInputData>			m_InputBuffer;			// Buffer for all input from the hardware device
+	THeapArray<TInputData>		m_InputBuffer;			// Buffer for all input from the hardware device
 	TPtrArray<TInputSensor>		m_Sensors;				// List of sensors that the device has access to
 	TPtrArray<TInputEffect>		m_Effects;				// List of (output) effects such as force feedback (rumble) and audio
 

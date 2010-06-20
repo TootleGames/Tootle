@@ -259,7 +259,7 @@ void TSceneNode_Object::GetProperty(TLMessaging::TMessage& Message, TLMessaging:
 void TSceneNode_Object::UpdateNodeData()
 {
 	// Update and serialise the render node data
-	TPtr<TLRender::TRenderNode>& pRenderNode = GetRenderNode();
+	TLRender::TRenderNode* pRenderNode = GetRenderNode();
 
 	//	gr: clear current render node data
 	GetNodeData().RemoveChild("RNode");
@@ -272,7 +272,7 @@ void TSceneNode_Object::UpdateNodeData()
 	}
 
 	// Update and serialise the physics node data
-	TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = GetPhysicsNode();
+	TLPhysics::TPhysicsNode* pPhysicsNode = GetPhysicsNode();
 
 	//	gr: clear current physics node data
 	GetNodeData().RemoveChild("PNode");
@@ -290,7 +290,7 @@ void TSceneNode_Object::UpdateNodeData()
 
 /*	
 	// Update and serialise the audio node data
-	TPtr<TLAudio::TAudioNode>& pAudioNode = GetAudioNode();
+	TLAudio::TAudioNode* pAudioNode = GetAudioNode();
 
 
 	// Test to see if the audio node is flagged to be ignored when storing the scene node
@@ -335,7 +335,7 @@ void TSceneNode_Object::UpdateOwnedNodeData(TLRender::TRenderNode& RenderNode,TB
 	//	now store this node's children too
 	for ( u32 c=0;	c<RenderNode.GetChildren().GetSize();	c++ )
 	{
-		TPtr<TLRender::TRenderNode>& pChildRenderNode = RenderNode.GetChildren().ElementAt(c);
+		TLRender::TRenderNode* pChildRenderNode = RenderNode.GetChildren().ElementAt(c);
 
 		// Test to see if the child render node is flagged to be ignored when storing to the scene node
 		if(!pChildRenderNode->GetNodeData().HasChild("IgnoreData"))
@@ -369,8 +369,8 @@ void TSceneNode_Object::ProcessMessage(TLMessaging::TMessage& Message)
 		if(NodeRef == m_RenderNodeRef && GraphRef == "RenderGraph" )
 		{
 			//	gr: change OnRenderNodeAdded to just take a TRef so functions that don't overload it skip this node search... or just make the callback an option to save the original subscription
-			TPtr<TLRender::TRenderNode>& pRenderNode = TLRender::g_pRendergraph->FindNode( NodeRef );
-			OnRenderNodeAdded( pRenderNode );
+			TLRender::TRenderNode* pRenderNode = TLRender::g_pRendergraph->FindNode( NodeRef );
+			OnRenderNodeAdded( *pRenderNode );
 			
 			//	no need to subscribe to this graph any more
 			this->UnsubscribeFrom( TLRender::g_pRendergraph );
@@ -379,8 +379,8 @@ void TSceneNode_Object::ProcessMessage(TLMessaging::TMessage& Message)
 		else if(NodeRef == m_PhysicsNodeRef && GraphRef == "PhysicsGraph" )
 		{
 			//	gr: change OnRenderNodeAdded to just take a TRef so functions that don't overload it skip this node search... or just make the callback an option to save the original subscription
-			TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( NodeRef );
-			OnPhysicsNodeAdded( pPhysicsNode );
+			TLPhysics::TPhysicsNode* pPhysicsNode = TLPhysics::g_pPhysicsgraph->FindNode( NodeRef );
+			OnPhysicsNodeAdded( *pPhysicsNode );
 			
 			//	no need to subscribe to this graph any more
 			this->UnsubscribeFrom( TLPhysics::g_pPhysicsgraph );
@@ -472,12 +472,12 @@ void TSceneNode_Object::ProcessMessage(TLMessaging::TMessage& Message)
 }
 
 
-TPtr<TLPhysics::TPhysicsNode>& TSceneNode_Object::GetPhysicsNode(Bool InitialisedOnly)
+TLPhysics::TPhysicsNode* TSceneNode_Object::GetPhysicsNode(Bool InitialisedOnly)
 {
 	return TLPhysics::g_pPhysicsgraph->FindNode( m_PhysicsNodeRef, !InitialisedOnly );
 }
 
-TPtr<TLRender::TRenderNode>& TSceneNode_Object::GetRenderNode(Bool InitialisedOnly)
+TLRender::TRenderNode* TSceneNode_Object::GetRenderNode(Bool InitialisedOnly)
 {
 	return TLRender::g_pRendergraph->FindNode( m_RenderNodeRef, !InitialisedOnly );
 }
@@ -581,7 +581,7 @@ Bool TSceneNode_Object::CreateRenderNode(TRefRef ParentRenderNodeRef,TRefRef Ren
 }
 
 
-void TSceneNode_Object::OnPhysicsNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pPhysicsNode)
+void TSceneNode_Object::OnPhysicsNodeAdded(TLPhysics::TPhysicsNode& PhysicsNode)
 {
 	//	re-enable/disable render node based on zone state
 	SyncBool ZoneActive = IsZoneAwake();
@@ -593,7 +593,7 @@ void TSceneNode_Object::OnPhysicsNodeAdded(TPtr<TLPhysics::TPhysicsNode>& pPhysi
 }
 
 
-void TSceneNode_Object::OnRenderNodeAdded(TPtr<TLRender::TRenderNode>& pRenderNode)
+void TSceneNode_Object::OnRenderNodeAdded(TLRender::TRenderNode& RenderNode)
 {
 	//	re-enable/disable render node based on zone state
 	SyncBool ZoneActive = IsZoneAwake();
@@ -656,8 +656,7 @@ float TSceneNode_Object::GetDistanceTo(const TLMaths::TLine& Line)
 	}
 	*/
 
-	TPtr<TLRender::TRenderNode>& pRenderNode = GetRenderNode();
-
+	TLRender::TRenderNode* pRenderNode = GetRenderNode();
 	if(pRenderNode)
 	{
 		const TLMaths::TShapeBox& Bounds = pRenderNode->GetWorldBoundsBox();

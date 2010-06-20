@@ -212,7 +212,7 @@ public:
 	u16								m_BlockDepth;		//	plane-depth of blocks...???
 	u16								m_BlockDataSize;	//	size of the block data
 	Type2<u16>						m_BlockSize;		//	block texture dimensions
-	TPtrArray<TArray<TColour32> >	m_BlockTextures;	//	texture data for blocks (not sure as texture assets atm because these might not be square/power2 etc)
+	TPtrArray<THeapArray<TColour32> >	m_BlockTextures;	//	texture data for blocks (not sure as texture assets atm because these might not be square/power2 etc)
 	TPtrArray<TFixedArray<s32,4> >	m_BlockLibrary;		//	blocks by index in the form of an array of atlas indexes (4 because mappy has 4 graphics per block)
 	TRef							m_AtlasRef;			//	ref for the atlas that will be generated
 	TRef							m_TextureRef;		//	ref for the texture that will be generated
@@ -548,12 +548,12 @@ Bool TLFileSys::TFileMappy::ImportGraphics(TLAsset::TTileMap& TileMap,TBinary& D
 		while ( Data.GetSizeUnread() > 0 )
 		{
 			//	read blocks of palette indexes...
-			TArray<u8> PaletteGfx;
+			THeapArray<u8> PaletteGfx;
 			if ( !Data.ReadDataIntoArray( PaletteGfx, ImportData.m_BlockSize.x * ImportData.m_BlockSize.y ) )
 				return false;
 			
 			//	convert paletted graphic into a texture format we can use...
-			TPtr<TArray<TColour32> > pBlockTextureData = new TArray<TColour32>;
+			TPtr<THeapArray<TColour32> > pBlockTextureData = new THeapArray<TColour32>;
 			TArray<TColour32>& BlockTextureData = *pBlockTextureData;
 			for ( u32 i=0;	i<PaletteGfx.GetSize();	i++ )
 			{
@@ -573,6 +573,37 @@ Bool TLFileSys::TFileMappy::ImportGraphics(TLAsset::TTileMap& TileMap,TBinary& D
 		TLDebug_Break("Unhandled format 16 bit");
 		return false;
 	}
+
+	if ( ImportData.m_BlockDepth == 24 )
+	{
+		//	8 bit data is paletted
+		while ( Data.GetSizeUnread() > 0 )
+		{
+			//	read blocks of colours
+			THeapArray<TColour24> TextureData24;
+			if ( !Data.ReadDataIntoArray( TextureData24, ImportData.m_BlockSize.x * ImportData.m_BlockSize.y ) )
+				return false;
+			
+			//	convert the 24bit graphics to 32 bit...
+			TPtr<THeapArray<TColour32> > pBlockTextureData = new THeapArray<TColour32>;
+			TArray<TColour32>& BlockTextureData = *pBlockTextureData;
+			for ( u32 i=0;	i<TextureData24.GetSize();	i++ )
+			{
+				TColour24& Texel = TextureData24[i];
+				
+				//	if this matches the transparent colour... make it transparent
+				u8 Alpha = 255;
+				if ( Texel == ImportData.m_TransparentColour )
+					Alpha = 0;
+
+				//	add 32bit colour texel
+				BlockTextureData.Add( TColour32( Texel, Alpha ) );
+			}
+
+			ImportData.m_BlockTextures.Add( pBlockTextureData );
+		}
+		return true;
+	}
 	
 	TTempString Debug_String;
 	Debug_String << "Unhandled block depth: " << ImportData.m_BlockDepth;
@@ -591,7 +622,7 @@ LYR? - Where ? is an ASCII number form 1 to 7. These are the same size and forma
 You can add your own chunks to a map file, if you load it into mappy, when you save it, those additional chunks will be saved in the file, but not necessarily in the same place as before.
 */
 	//	make up the tile map entries for this layer
-	TArray<s16> LayerBlockIndexes;
+	THeapArray<s16> LayerBlockIndexes;
 	if ( !Data.ReadDataIntoArray( LayerBlockIndexes, TileMap.GetWidth() * TileMap.GetHeight() ) )
 		return false;
 

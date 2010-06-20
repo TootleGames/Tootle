@@ -71,7 +71,7 @@ public:
 
 	virtual void				Update(float Timestep);						//	physics update
 	virtual void				Shutdown();									//	cleanup
-	virtual void				PostUpdate(float Timestep,TLPhysics::TPhysicsgraph& Graph,TPtr<TLPhysics::TPhysicsNode>& pThis);			//	after collisions are handled
+	virtual void				PostUpdate(float Timestep,TLPhysics::TPhysicsgraph& Graph);			//	after collisions are handled
 	virtual void				UpdateNodeData();							//	exposed public for the SceneNode_Object access when serialising
 
 	FORCEINLINE TRefRef			GetOwnerSceneNodeRef() const				{	return m_OwnerSceneNode;	}
@@ -132,13 +132,17 @@ public:
 	FORCEINLINE float			GetBounce() const							{ return m_Bounce;	}
 	FORCEINLINE void			SetBounce(float fBounce)					{ m_Bounce = fBounce; }
 
-	FORCEINLINE Bool			operator==(TRefRef Ref) const							{	return GetNodeRef() == Ref;	}
+	FORCEINLINE Bool			operator<(TRefRef NodeRef) const			{	return GetNodeRef() < NodeRef;	}
+	FORCEINLINE Bool			operator==(TRefRef NodeRef) const			{	return GetNodeRef() == NodeRef;	}
+	FORCEINLINE Bool			operator==(const TPhysicsNode& That) const	{	return GetNodeRef() == That.GetNodeRef();	}
+	FORCEINLINE Bool			operator<(const TSorter<TPhysicsNode*,TRef>& That) const	{	return GetNodeRef() < That.This()->GetNodeRef();	}
+	FORCEINLINE Bool			operator<(const TSorter<TPhysicsNode,TRef>& That) const	{	return GetNodeRef() < That->GetNodeRef();	}
 
 protected:
 	virtual void				Initialise(TLMessaging::TMessage& Message);	
 	virtual void				SetProperty(TLMessaging::TMessage& Message);	
 	virtual void				ProcessMessage(TLMessaging::TMessage& Message);
-	void						PostUpdateAll(float Timestep,TLPhysics::TPhysicsgraph& Graph,TPtr<TLPhysics::TPhysicsNode>& pThis);		//	update tree: update self, and children and siblings
+	void						PostUpdateAll(float Timestep,TLPhysics::TPhysicsgraph& Graph);		//	update tree: update self, and children and siblings
 
 	TCollisionInfo*				OnCollision();											//	called when we get a collision. return a collision info to write data into. return NULL to pre-empt not sending any collision info out (eg. if no subscribers)
 	void						OnEndCollision(TRefRef ShapeRef,TLPhysics::TPhysicsNode& OtherNode,TRefRef OtherShapeRef);	//	called when we are no longer colliding with a node
@@ -179,13 +183,15 @@ protected:
 	TRef					m_OwnerSceneNode;			//	"Owner" scene node - if this is set then we automaticcly process some stuff
 	TFlags<Flags>			m_PhysicsFlags;
 
-	TArray<TCollisionShape>	m_CollisionShapes;			//	list of collision shapes
-	TArray<TCollisionInfo>	m_Collisions;				//	list of collisions during our last update - published in PostUpdate to subscribers
-	TArray<TRef>			m_NonCollisionNodes;		//	list of nodes we're explicitly not allowed to collide with
+	THeapArray<TCollisionShape>	m_CollisionShapes;			//	list of collision shapes
+	THeapArray<TCollisionInfo>	m_Collisions;				//	list of collisions during our last update - published in PostUpdate to subscribers
+	THeapArray<TRef>			m_NonCollisionNodes;		//	list of nodes we're explicitly not allowed to collide with
 
 	b2Body*					m_pBody;					//	box2d body
 };
 
+
+FORCEINLINE bool operator==(const TLPhysics::TPhysicsNode* pNode,const TRef& Ref)	{	return pNode ? (*pNode == Ref) : false;	}
 
 
 

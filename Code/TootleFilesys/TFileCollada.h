@@ -64,7 +64,7 @@ public:
 	
 	const TString*			m_pSourceDataID;	//	our data is stored in a different GeometryData object
 
-	TArray<float>			m_Data;				//	array of the data (always assume its floats - or convert to float if its not)
+	THeapArray<float>		m_Data;				//	array of the data (always assume its floats - or convert to float if its not)
 	u32						m_ElementSize;		//	"stride" - number of compoenents per item - (ie. 3 for position, 2 for texcoord)
 	u32						m_ElementCount;		//	"count" == datasize/elementsize (ie. N positions)
 };
@@ -80,11 +80,11 @@ public:
 	FORCEINLINE Bool			operator==(const TString& GeometryID) const		{	return (m_GeometryID == GeometryID);	}
 
 public:
-	const TString*					m_pGeometryName;	//	name of the geometry - always seems to match ID
-	TString							m_GeometryID;		//	unique name of the geometry (ID) - copied so we pre-pend with # to make matching id's easier
-	TPtrArray<TGeometryData>		m_GeometryData;		//	array of all the geometry data for this mesh
-	TArray<TLCollada::VertexMap>	m_VertexMap;		//	mapping of vertexes we've already added
-	TPtr<TLAsset::TMesh>			m_pMesh;			//	mesh created from all the geometry data
+	const TString*						m_pGeometryName;	//	name of the geometry - always seems to match ID
+	TString								m_GeometryID;		//	unique name of the geometry (ID) - copied so we pre-pend with # to make matching id's easier
+	TPtrArray<TGeometryData>			m_GeometryData;		//	array of all the geometry data for this mesh
+	THeapArray<TLCollada::VertexMap>	m_VertexMap;		//	mapping of vertexes we've already added
+	TPtr<TLAsset::TMesh>				m_pMesh;			//	mesh created from all the geometry data
 };
 
 

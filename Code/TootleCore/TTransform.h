@@ -72,8 +72,8 @@ public:
 	void				Untransform(float2& Vector) const;				//	untransform vector
 	void				Invert();										//	make an "untransform" from this transform. (inverts rotation, scale, trans)
 	
-	template<typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>	void	Transform(TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& VectorArray) const		{	for ( u32 i=0;	i<VectorArray.GetSize();	i++ )	Transform( VectorArray[i] );	}
-	template<typename TYPE, class SORTPOLICY, class ALLOCATORPOLICY>	void	Untransform(TArray<TYPE, SORTPOLICY, ALLOCATORPOLICY>& VectorArray) const	{	for ( u32 i=0;	i<VectorArray.GetSize();	i++ )	Untransform( VectorArray[i] );	}
+	template<typename TYPE> void	Transform(TArray<TYPE>& VectorArray) const		{	for ( u32 i=0;	i<VectorArray.GetSize();	i++ )	Transform( VectorArray[i] );	}
+	template<typename TYPE> void	Untransform(TArray<TYPE>& VectorArray) const	{	for ( u32 i=0;	i<VectorArray.GetSize();	i++ )	Untransform( VectorArray[i] );	}
 	
 	//	matrix style "adds"
 	void				AddTransform(const TLMaths::TTransform& Trans);				//	Modify the transform values by another transform, Translates the translate, scales the scale, rotates the rotation. Doesn't multiply and rotate the translate etc

@@ -177,8 +177,8 @@ Bool TBinary::WriteDataHexString(const TString& String,TRef TypeHint)
 		//	make byte
 		u8 PartA8 = (u8)PartA;
 		u8 PartB8 = (u8)PartB;
-		u8 Byte = (PartA << 4) & 0xF0;
-		Byte |= (PartB) & 0x0F;
+		u8 Byte = (PartA8 << 4) & 0xF0;
+		Byte |= (PartB8) & 0x0F;
 
 		//	save byte
 		m_Data.Add( Byte );
@@ -198,7 +198,7 @@ Bool TBinary::ReadString(TString& String)
 		return ReadArray( String.GetStringArray() );
 
 	//	read into ascii array
-	TArray<TChar8> AsciiString;
+	THeapArray<TChar8> AsciiString;
 	if ( !ReadArray( AsciiString ) )
 		return FALSE;
 
