@@ -34,7 +34,7 @@ TLGui::Platform::OpenglCanvas::OpenglCanvas(TLGui::TWindow& Parent,TRefRef Contr
 	int2 Size = Parent.GetSize();
 	CGRect CanvasRect;
 	CanvasRect.origin.x = 0;
-	CanvasRect.origin.x = 0;
+	CanvasRect.origin.y = 0;
 	CanvasRect.size.width = Size.x;
 	CanvasRect.size.height = Size.y;
 	
@@ -241,7 +241,7 @@ void TLGui::Platform::OpenglCanvas::EndRender()
     
     if(glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES) != GL_FRAMEBUFFER_COMPLETE_OES) 
 	{
-		TLDebug_Print("Failed to create frame buffer");
+		TLDebug_Break("Failed to create frame buffer");
 		
         NSLog(@"failed to make complete framebuffer object %x", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
         return NO;
