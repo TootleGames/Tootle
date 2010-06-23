@@ -10,14 +10,47 @@
 //	this will move to the rasteriser, but will still need to be called from here.
 #include <TootleRender/TLRender.h>
 
+//	keep a list of touch associated refs
+TKeyArray<UITouch*,TRef> g_TouchTable;
 
+//	get the ref for this touch, or create a new one if it's new touch data
 TRef GetTouchRef(UITouch* pTouch)
 {
+	//	find existing 
+	const TRef* pExistingRef = g_TouchTable.Find( pTouch );
+	if ( !pExistingRef )
+	{
+		TLDebug_Print("No touch ref allocated");
+		return TRef();
+	}
+
+	return *pExistingRef;
+}
+
+TRef AllocTouchRef(UITouch* pTouch)
+{
+	//	assert if it already exists (must not have been free'd)
+	const TRef* pExistingRef = g_TouchTable.Find( pTouch );
+	if ( pExistingRef )
+	{
+		TLDebug_Break("Touch ref for this touch already exists");
+		return *pExistingRef;
+	}
+	
+	//	make up a new ref
 	//	return TLRef::GetValidTRef( (u32)pTouch );
 	static TRef g_UniqueRef;
 	g_UniqueRef.Increment();
+	g_TouchTable.Add( pTouch, g_UniqueRef );
 	return g_UniqueRef;
 }
+
+TRef FreeTouchRef(UITouch* pTouch)
+{
+	//	remove the existing key
+	g_TouchTable.Remove( pTouch );
+}
+
 
 //------------------------------------------------------
 //	
@@ -317,8 +350,7 @@ void TLGui::Platform::OpenglCanvas::EndRender()
 		
 #pragma message("todo: change this code. increment a global, or something. I've had this assert if I tap the screen enough because of dupe refs")
 		// Use the address of the ipod touch obejct for the ID masked to ensure it's valid
-		TRef TouchRef = GetTouchRef( touch );
-		
+		TRef TouchRef = AllocTouchRef( touch );
 		/*
 		 #ifdef _DEBUG
 		 TString str;
@@ -427,6 +459,8 @@ void TLGui::Platform::OpenglCanvas::EndRender()
 		TouchData.uPreviousPos = int2((s32)previousTouchPosition.x, (s32)previousTouchPosition.y);
 		
 		TLInput::Platform::IPod::ProcessTouchEnd(TouchData);
+		
+		FreeTouchRef( touch );
 	}
 }
 
