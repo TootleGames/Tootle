@@ -60,7 +60,7 @@ GCC_WARN_64_TO_32_BIT_CONVERSION = YES			//	warn if casting down to 32 bit (in c
 GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES	//	multi-dimensional-array/union initialiser warning (don't think we ever do this though)
 GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES	//	bad struct initialisation.
 GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES			//	not sure how you'd cause this... (signed vs unsigned pointers...)
-GCC_WARN_PROTOTYPE_CONVERSION = YES				//	catch unexpected type conversions - turn off if this warns about custom conversions too much. we DON'T want to cast classes in code
+GCC_WARN_PROTOTYPE_CONVERSION = NO				//	catch unexpected type conversions - turn off if this warns about custom conversions too much. we DON'T want to cast classes in code
 GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES		//	enabled, but phase out ... functions in favour of iostream << style operators
 CC_WARN_UNUSED_VALUE = YES						//	catch when we do a calculation, but nothing with the result
 

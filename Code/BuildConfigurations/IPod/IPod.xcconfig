@@ -62,7 +62,7 @@ DEAD_CODE_STRIPPING = YES
 PRESERVE_DEAD_CODE_INITS_AND_TERMS = NO
 
 
-// C++ runtime librry to link against.  Requires GCC_SYMBOLS_PRIVATE_EXTERN = YES for linking with the static C++ runtime
+// C++ runtime library to link against.  Requires GCC_SYMBOLS_PRIVATE_EXTERN = YES for linking with the static C++ runtime
 // See http://developer.apple.com/mac/library/documentation/DeveloperTools/Reference/XcodeBuildSettingRef/1-Build_Setting_Reference/build_setting_ref.html#//apple_ref/doc/uid/TP40003931-CH3-SW91
 // and http://developer.apple.com/mac/library/documentation/DeveloperTools/Conceptual/CppRuntimeEnv/Articles/LibCPPDeployment.html#//apple_ref/doc/uid/TP40001668-SW3
 // NOTE: When updating to iPhone OS SDK 3.0 and above as the base SDK, this will need changing to dynamic as no static library is provided.
@@ -111,7 +111,7 @@ GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES	//	bad struct initialisation.
 GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES			//	not sure how you'd cause this... (signed vs unsigned pointers...)
 GCC_WARN_PROTOTYPE_CONVERSION = NO				//	catch unexpected type conversions - turn off if this warns about custom conversions too much. we DON'T want to cast classes in code
 GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES		//	enabled, but phase out ... functions in favour of iostream << style operators
-CC_WARN_UNUSED_VALUE = YES						//	catch when we do a calculation, but nothing with the result
+GCC_WARN_UNUSED_VALUE = YES						//	catch when we do a calculation, but nothing with the result
 
 //	new ones for ipod... (or at least were declared, im sure all these exist on the mac...)
 GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO
@@ -131,21 +131,28 @@ GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = YES
 
 
 
-//	gr: upgrading to GCC 4.2 as this is a bit better than 4.0 and we can use it from sdk 3.0 onwards
-GCC_VERSION = 4.2
+GCC_VERSION = 4.2 
 
 ADDITIONAL_SDKS = 
 //ARCHS = armv6 armv7
 //VALID_ARCHS = armv6 armv7
-ARCHS = armv6
-VALID_ARCHS = armv6
+ARCHS = $(ARCHS_STANDARD_32_BIT)
+//ARCHS = armv6
+//VALID_ARCHS = armv6
+ONLY_ACTIVE_ARCH = YES
+VALID_ARCHS = armv6 armv7
 
 // SDK is the SDK we are building against.  It is possible to use a newer SDK to the deployment target.
-SDKROOT = iphoneos3.0
-ONLY_ACTIVE_ARCH = YES
+SDKROOT = iphoneos3.2
+
+// Targeted device family.  SDK 3.2 onwards.  
+// 1 = iPhone
+// 2 = iPad
+// 1,2 = Universal (iPhone and iPad)
+TARGETED_DEVICE_FAMILY = 1
 
 // The deployment target is the lowest iphone OS the code will work on
-IPHONE_OS_DEPLOYMENT_TARGET = 3.0
+IPHONEOS_DEPLOYMENT_TARGET = 3.0
 
 
 EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = *.nib *.lproj *.framework *.gch (*) CVS .svn *.xcodeproj *.xcode *.pbproj *.pbxproj
