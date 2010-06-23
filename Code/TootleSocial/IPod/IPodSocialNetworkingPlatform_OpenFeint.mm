@@ -48,12 +48,12 @@ Bool TLSocial::Platform::SocialNetworkingPlatform_OpenFeint::CreateSession(TLMes
 	NSString* pAPIKey = TLString::ConvertToUnicharString(APIKey);
 	NSString* pAPISecret = TLString::ConvertToUnicharString(APISecret);
 	NSString* pAppName = TLString::ConvertToUnicharString(AppName);
-	
+		
 	[OpenFeint initializeWithProductKey: pAPIKey
 							  andSecret: pAPISecret
 						 andDisplayName: pAppName 
 							andSettings:nil 
-							andDelegate:nil];
+						   andDelegates:nil];
 		
 	[pAPISecret release];
 	[pAPIKey release];

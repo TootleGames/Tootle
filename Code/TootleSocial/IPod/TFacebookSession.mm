@@ -198,11 +198,14 @@ static NSString* kGetSessionProxy = nil; // @"<YOUR SESSION CALLBACK)>";
 }
 
 - (void)publishFeed:(id)target {
-	FBFeedDialog* dialog = [[[FBFeedDialog alloc] init] autorelease];
+/*
+ // [23/06/10] DB - Temp removed
+ FBFeedDialog* dialog = [[[FBFeedDialog alloc] init] autorelease];
 	dialog.delegate = self;
 	dialog.templateBundleId = 66186134806LL;
 	dialog.templateData = @"{\"key1\": \"value1\"}";
 	[dialog show];
+ */
 }
 
 @end

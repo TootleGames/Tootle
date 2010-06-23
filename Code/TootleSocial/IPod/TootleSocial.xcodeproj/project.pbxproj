@@ -240,7 +240,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = TootleSocialPrefix.pch;
 				HEADER_SEARCH_PATHS = (
-					"OpenFeint/**",
+					"../OpenFeint/**",
 					../..,
 					"FacebookConnect/src/**",
 					"libagon/include/**",
@@ -257,7 +257,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = TootleSocialPrefix.pch;
 				HEADER_SEARCH_PATHS = (
-					"OpenFeint/**",
+					"../OpenFeint/**",
 					../..,
 					"FacebookConnect/src/**",
 					"libagon/include/**",
