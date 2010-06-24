@@ -100,6 +100,7 @@
 	
 	MacCameraViewDelegate* pDelegate = [MacCameraViewDelegate alloc];
 	
+	[pDelegate init];
 	
 	[view setDelegate: pDelegate];
 	

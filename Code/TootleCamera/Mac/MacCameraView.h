@@ -31,7 +31,7 @@ public:
 
 @interface MacCameraViewDelegate : NSObject 
 {
-	TPublisherProxy		m_PublisherProxy;
+	TPublisherProxy*		m_pPublisherProxy;
 }
 
 - (void)addSubscriber:(TLMessaging::TSubscriber*) pSubscriber;

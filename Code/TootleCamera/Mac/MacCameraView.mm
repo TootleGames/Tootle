@@ -18,6 +18,26 @@
 
 @implementation MacCameraViewDelegate
 
+
+
+-(id)init
+{
+	m_pPublisherProxy = new TPublisherProxy;
+	
+	return [super init];
+}
+
+-(void)dealloc
+{
+	if(m_pPublisherProxy)
+	{
+		delete m_pPublisherProxy;
+		m_pPublisherProxy = nil;
+	}
+	
+	[super dealloc];
+}
+
 // Intercept the image from the camera that will be displayed.
 // We can do some post processing on the image data at this point and display something else
 // or if we return nil it will display the image as-is
@@ -117,7 +137,7 @@
 		
 		// Send message to update texture
 		
-		m_PublisherProxy.PublishMessage(ImageMessage);
+		m_pPublisherProxy->PublishMessage(ImageMessage);
 		
 		// NSImage not needed anymore so we can release it now
 		[pImage release];
@@ -172,7 +192,7 @@
 
 - (void) addSubscriber:(TLMessaging::TSubscriber*) pSubscriber
 {
-	m_PublisherProxy.Subscribe(pSubscriber);
+	m_pPublisherProxy->Subscribe(pSubscriber);
 }
 
 
