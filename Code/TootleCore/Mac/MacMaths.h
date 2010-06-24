@@ -42,6 +42,28 @@ namespace TLMaths
 	FORCEINLINE float			S32ToFloat(s32 Value)					{ return (float)( Value );	}
 	FORCEINLINE s32				FloatToS32(float Value)					{ return (s32)( Value );	}
 	
+	// Floating point comparison routine to allow for floating point precision errors
+	// Should be used instead of == for two floating point values
+	FORCEINLINE Bool			FloatEqual(float fValue1, float fValue2, float fTolerance)
+	{
+		return ( (Absf(fValue2 - fValue1) <= fTolerance) ? TRUE : FALSE); 
+	}
+	
+	// Take into account a tolerance before testing less than.
+	// Required if using the FloatEqual routines to try and ensure no overlap.
+	FORCEINLINE Bool			FloatLessThan(float fValue1, float fValue2, float fTolerance)
+	{
+		return (fValue1 < (fValue2 - fTolerance)); 
+	}
+
+	// Take into account a tolerance before testing greater than.
+	// Required if using the FloatEqual routines to try and ensure no overlap.
+	FORCEINLINE Bool			FloatGreaterThan(float fValue1, float fValue2, float fTolerance)
+	{
+		return (fValue1 > (fValue2 + fTolerance)); 
+	}
+	
+	
 #define TLMaths_FloatMax				FLT_MAX
 #define TLMaths_FloatMin				FLT_MIN
 	

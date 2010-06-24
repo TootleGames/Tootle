@@ -18,6 +18,9 @@ using namespace TLAsset;
 //	#define DEBUG_PRINT_TIMELINE_TREE
 #endif
 
+//#define USE_KEYFRAME_TOLERANCE_TESTS
+#define TIMELINE_KEYFRAME_TOLERANCE 0.00001f
+
 
 SyncBool TKeyframe::ImportData(TBinaryTree& Data)
 {
@@ -284,7 +287,11 @@ Bool TTimeline::GetKeyframes_Forward(const float& fTimeFrom,const float& fTimeTo
 
 		// If the keyframe time is larger than the time we are searching to then we can 
 		// return as no further keyframes will be within range
+#ifdef USE_KEYFRAME_TOLERANCE_TESTS		
+		if(TLMaths::FloatGreaterThan(fTime, fTimeTo, TIMELINE_KEYFRAME_TOLERANCE))
+#else
 		if(fTime > fTimeTo)
+#endif
 		{
 			if(bAddFirstKey)
 			{
@@ -304,7 +311,11 @@ Bool TTimeline::GetKeyframes_Forward(const float& fTimeFrom,const float& fTimeTo
 
 			return TRUE;
 		}
+#ifdef USE_KEYFRAME_TOLERANCE_TESTS		
+		else if(TLMaths::FloatEqual(fTime, fTimeFrom, TIMELINE_KEYFRAME_TOLERANCE))
+#else
 		else if (fTime == fTimeFrom)
+#endif
 		{
 			// First keyframe
 			bAddFirstKey = FALSE;
@@ -316,8 +327,18 @@ Bool TTimeline::GetKeyframes_Forward(const float& fTimeFrom,const float& fTimeTo
 
 			pKeyframes.Add(data);
 		}
+#ifdef USE_KEYFRAME_TOLERANCE_TESTS		
+		else if(TLMaths::FloatEqual(fTime, fTimeTo, TIMELINE_KEYFRAME_TOLERANCE))
+#else
 		else if (fTime == fTimeTo)
+#endif
 		{
+			if(bAddFirstKey)
+			{
+				pKeyframes.Add(firstkey);
+			}
+			
+			
 			// Last keyframe
 			bAddLastKey = FALSE;
 
@@ -331,7 +352,11 @@ Bool TTimeline::GetKeyframes_Forward(const float& fTimeFrom,const float& fTimeTo
 			// We can return now as now more keys will match
 			return TRUE;
 		}
+#ifdef USE_KEYFRAME_TOLERANCE_TESTS		
+		else if(TLMaths::FloatGreaterThan(fTime, fTimeFrom, TIMELINE_KEYFRAME_TOLERANCE) && TLMaths::FloatLessThan(fTime, fTimeTo, TIMELINE_KEYFRAME_TOLERANCE))
+#else
 		else if(fTime > fTimeFrom && fTime < fTimeTo)
+#endif
 		{
 			// Keyframe in between to and from time range
 			// Add the keyframe temp data
@@ -351,7 +376,11 @@ Bool TTimeline::GetKeyframes_Forward(const float& fTimeFrom,const float& fTimeTo
 				return TRUE;
 			}
 		}
+#ifdef USE_KEYFRAME_TOLERANCE_TESTS		
+		else if(TLMaths::FloatLessThan(fTime, fTimeFrom, TIMELINE_KEYFRAME_TOLERANCE))
+#else
 		else if(fTime < fTimeFrom)
+#endif
 		{
 			// Potential first key
 			firstkey.m_fTime = fTime;
