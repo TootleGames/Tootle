@@ -653,7 +653,10 @@ SyncBool TLGraph::TGraph<T>::Shutdown()
 	if ( m_pRootNode )
 	{
 		DoRemoveNode(*m_pRootNode);
-		TLMemory::Delete( m_pRootNode );
+
+		// The root node will be deleted during the DoRemoveNode call
+		// so we can simply set the root node pointer to null
+		m_pRootNode = NULL;
 	}
 	
 	return SyncTrue;

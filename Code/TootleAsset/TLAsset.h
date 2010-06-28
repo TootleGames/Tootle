@@ -229,7 +229,7 @@ u32 TLAsset::GetAllAssets(TPtrArray<ASSETTYPE>& AssetArray)
 	TRef AssetType = ASSETTYPE::GetAssetType_Static();
 	
 	//	look through all the assets to find matching types
-	TPtrArray<TLAsset::TAsset>& AllAssets = g_pManager->GetAllAssets();
+	TPtrArray<TLAsset::TAsset, 100>& AllAssets = g_pManager->GetAllAssets();
 	for ( u32 i=0;	i<AllAssets.GetSize();	i++ )
 	{
 		//	check type
