@@ -260,7 +260,7 @@ void TLGame::TSchemeEditor::CreateNodeWidgets(TLGraph::TGraphNodeBase& Node)
 	this->SubscribeTo( &Node );
 
 	//	create widgets for children
-	THeapArray<TLGraph::TGraphNodeBase*> ChildNodes;
+	TPointerArray<TLGraph::TGraphNodeBase> ChildNodes;
 	Node.GetChildrenBase( ChildNodes );
 	for ( u32 c=0;	c<ChildNodes.GetSize();	c++ )
 	{

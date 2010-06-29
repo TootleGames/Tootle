@@ -109,9 +109,9 @@ public:
 	virtual TRef				GetRenderNodeRef() const				{	return TRef();	}	//	get a render node ref to represent this node. used in the scheme editor as the widget node. 
 	
 	//	gr: exposed for the scheme editor...
-	virtual void					GetChildrenBase(TArray<TGraphNodeBase*>& ChildNodes) = 0;
-	void							GetChildren(TArray<TRef>& ChildNodeRefs,Bool Recursive=FALSE);		//	get array of children's refs. if recursive will go through the whole tree
-	FORCEINLINE void				GetChildrenTree(TArray<TRef>& ChildNodeRefs)						{	GetChildren( ChildNodeRefs, TRUE );	}
+	virtual void					GetChildrenBase(TPointerArray<TGraphNodeBase>& ChildNodes) = 0;
+	void							GetChildren(THeapArray<TRef>& ChildNodeRefs,Bool Recursive=FALSE);		//	get array of children's refs. if recursive will go through the whole tree
+	FORCEINLINE void				GetChildrenTree(THeapArray<TRef>& ChildNodeRefs)						{	GetChildren( ChildNodeRefs, TRUE );	}
 	virtual const TGraphNodeBase*	GetParentBase() const = 0;
 	
 protected:

@@ -224,7 +224,7 @@ public:
 	const TLMaths::TShapeSphere&			GetWorldBoundsSphere(SyncBool& Validity) const		{	Validity = m_BoundsSphere.m_WorldValid;		return m_BoundsSphere.m_WorldShape;	}
 	const TLMaths::TShapeSphere2D&			GetWorldBoundsSphere2D(SyncBool& Validity) const	{	Validity = m_BoundsSphere2D.m_WorldValid;	return m_BoundsSphere2D.m_WorldShape;	}
 
-	virtual TArray<TRenderNode*>&			GetLocalBoundsChildren()						{	return GetChildren();	}	//	specialise this for your rendernode to have control over the local bounds calculation
+	virtual TPointerArray<TRenderNode>&			GetLocalBoundsChildren()						{	return GetChildren();	}	//	specialise this for your rendernode to have control over the local bounds calculation
 	
 	template<class SHAPETYPE> const SHAPETYPE&	GetLocalBounds()							{ TLDebug_Break("Specialise this for shapes we don't currently support");	static SHAPETYPE g_DummyShape;	return g_DummyShape; }
 	const TLMaths::TShapeBox&				GetLocalBoundsBox() 							{	CalcLocalBounds( m_BoundsBox.m_LocalShape );			return m_BoundsBox.m_LocalShape;	}

@@ -750,7 +750,7 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode& RenderNode,TRenderNode* pPar
 
 
 	//	process children
-	TArray<TLRender::TRenderNode*>& NodeChildren = RenderNode.GetChildren();
+	TPointerArray<TLRender::TRenderNode>& NodeChildren = RenderNode.GetChildren();
 	u32 ChildCount = NodeChildren.GetSize();
 	if ( ChildCount > 0 )
 	{

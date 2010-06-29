@@ -354,7 +354,7 @@ void TLGraph::TGraphNodeBase::UpdateNodeData()
 //------------------------------------------------------------
 //	get array of children's refs
 //------------------------------------------------------------
-void TLGraph::TGraphNodeBase::GetChildren(TArray<TRef>& ChildNodeRefs,Bool Recursive)
+void TLGraph::TGraphNodeBase::GetChildren(THeapArray<TRef>& ChildNodeRefs,Bool Recursive)
 {
 	//	get children
 	TPointerArray<TGraphNodeBase> ChildNodes;

@@ -94,8 +94,13 @@ public:
 	FORCEINLINE const T&		GetRootNode() const						{	return *m_pRootNode; }	//	we assume the root node is always valid
 	FORCEINLINE TArray<T*>&		GetNodeList()							{	return m_NodeIndex;	}
 	FORCEINLINE u32				GetNodeCount() const					{	return m_NodeIndex.GetSize();	}
+
 	T*							FindNode(TRefRef NodeRef,Bool CheckRequestQueue=TRUE);				//	find a node
 	const T*					FindNode(TRefRef NodeRef,Bool CheckRequestQueue=TRUE) const;		//	find a node
+
+	template<class OBJ>
+	OBJ*						FindNode(TRefRef NodeRef,Bool CheckRequestQueue=TRUE);				//	find a node
+
 	virtual TRef				GetFreeNodeRef(TRefRef BaseRef=TRef());	//	find an unused ref for a node - returns the ref
 	TRef						GetFreeNodeRef(TRef& Ref);				//	find an unused ref for a node, modifies the ref provided
 
@@ -235,9 +240,9 @@ public:
 
 	// Child manipulation
 	FORCEINLINE Bool				HasChildren() const					{	return (m_Children.GetSize() > 0);	}
-	FORCEINLINE TArray<T*>&			GetChildren()						{	return m_Children;	}
-	FORCEINLINE const TArray<T*>&	GetChildren() const					{	return m_Children;	}
-	virtual void					GetChildrenBase(TArray<TGraphNodeBase*>& ChildNodes);
+	FORCEINLINE TPointerArray<T>&			GetChildren()						{	return m_Children;	}
+	FORCEINLINE const TPointerArray<T>&		GetChildren() const					{	return m_Children;	}
+	virtual void					GetChildrenBase(TPointerArray<TGraphNodeBase>& ChildNodes);
 	template<typename MATCHTYPE>
 	T*								FindChildMatch(const MATCHTYPE& Value);				//	find a TPtr in the graph that matches the specified value (will use == operator of node type to match)
 	FORCEINLINE T*					FindChild(const TRef& NodeRef)						{	return FindChildMatch(NodeRef);	}
@@ -567,9 +572,9 @@ void TLGraph::TGraphNode<T>::ProcessSubscribeOrPublishTo(TRefRef SubOrPub,TBinar
 //	
 //---------------------------------------------------------
 template<class T>
-void TLGraph::TGraphNode<T>::GetChildrenBase(TArray<TGraphNodeBase*>& ChildNodes)
+void TLGraph::TGraphNode<T>::GetChildrenBase(TPointerArray<TGraphNodeBase>& ChildNodes)
 {
-	TArray<T*>& Children = GetChildren();
+	TPointerArray<T>& Children = GetChildren();
 
 	for ( u32 c=0;	c<Children.GetSize();	c++ )
 	{
@@ -717,6 +722,19 @@ const T* TLGraph::TGraph<T>::FindNode(TRefRef NodeRef,Bool CheckRequestQueue) co
 	
 	return NULL;
 }
+
+template <class T>
+template <class OBJ>
+OBJ* TLGraph::TGraph<T>::FindNode(TRefRef NodeRef,Bool CheckRequestQueue)
+{	
+	T* pObj = FindNode(NodeRef, CheckRequestQueue);
+
+	if(pObj)
+		return reinterpret_cast<OBJ*>(pObj);
+
+	return NULL;
+}
+
 
 
 //---------------------------------------------------
@@ -1139,7 +1157,7 @@ Bool TLGraph::TGraph<T>::RemoveChildren(T& Node)
 	Bool AnyRemoved = FALSE;
 
 	//	remove each child from the graph
-	TArray<T*>& Children = Node.GetChildren();
+	TPointerArray<T>& Children = Node.GetChildren();
 	for ( u32 c=0;	c<Children.GetSize();	c++ )
 	{
 		AnyRemoved |= RemoveNode( *Children[c] );
@@ -1306,7 +1324,7 @@ void TLGraph::TGraph<T>::DoRemoveNode(T& Node)
 {
 	//	remove children from tree - need to do this to shutdown all the nodes otherwise things won't get cleaned up and we'll leak memory
 	//	do this FIRST so that the tree gets cleaned up from the deepest leaf first
-	TArray<T*>& NodeChildren = Node.GetChildren();
+	TPointerArray<T>& NodeChildren = Node.GetChildren();
 
 	//	gr: go in reverse as the child nodes are removed from pNode in DoRemoveNode
 	for ( s32 c=NodeChildren.GetLastIndex();	c>=0;	c-- )

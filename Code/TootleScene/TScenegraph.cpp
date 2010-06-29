@@ -99,7 +99,7 @@ void TScenegraph::GetNearestNodes(TSceneNode& Node, const TLMaths::TLine& Line, 
 	}
 	
 
-	TArray<TSceneNode*>& NodeChildren = Node.GetChildren();
+	TPointerArray<TSceneNode>& NodeChildren = Node.GetChildren();
 	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 	{
 		TSceneNode& Child = *NodeChildren[c];

@@ -400,7 +400,7 @@ void TLRender::TRenderNode::SetBoundsInvalid(const TInvalidateFlags& InvalidateF
 				ChildInvalidateFlags.Set( InvalidateChildWorldPos );
 			}
 
-			TArray<TLRender::TRenderNode*>& NodeChildren = GetChildren();
+			TPointerArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
 			for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 			{
 				TLRender::TRenderNode* pChild = NodeChildren[c];

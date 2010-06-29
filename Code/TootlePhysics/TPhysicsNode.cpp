@@ -554,7 +554,7 @@ void TLPhysics::TPhysicsNode::PostUpdateAll(float fTimestep,TLPhysics::TPhysicsg
 	// Update this
 	PostUpdate( fTimestep, Graph );
 
-	TArray<TPhysicsNode*>& NodeChildren = GetChildren();
+	TPointerArray<TPhysicsNode>& NodeChildren = GetChildren();
 	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 	{
 		TPhysicsNode& Node = *NodeChildren.ElementAt(c);

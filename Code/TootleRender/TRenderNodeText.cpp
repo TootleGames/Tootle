@@ -405,7 +405,7 @@ Bool TLRender::TRenderNodeVectorText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 	//	setup RenderNodes
 	u32 charindex=0;
 
-	TArray<TLRender::TRenderNode*>& NodeChildren = GetChildren();
+	TPointerArray<TLRender::TRenderNode>& NodeChildren = GetChildren();
 	for ( u32 c=0;	c<NodeChildren.GetSize();	c++ )
 	{
 		TLRender::TRenderNode& Child = *NodeChildren[c];

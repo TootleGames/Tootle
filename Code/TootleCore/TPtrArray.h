@@ -401,8 +401,8 @@ private:
 	
 public:
 	TPtrArray()	{}
-	TPtrArray(const TArray<TPtr<TYPE> >& Array)	{	TSuper::Copy( Array );	}
-	virtual ~TPtrArray()						{	TSuper::SetAll(NULL);	}
+	TPtrArray(const TPtrArray<TYPE, GROWBY, SORTPOLICY>& Array)	{	TSuper::Copy( Array );	}
+	virtual ~TPtrArray()						{	TSuper::SetAll(TPtr<TYPE>(NULL));	}
 	
 	template<class MATCHTYPE>
 	FORCEINLINE TPtr<TYPE>&			FindPtr(const MATCHTYPE& val);
@@ -424,7 +424,7 @@ public:
 	template<typename FUNCTIONPOINTER>
 	FORCEINLINE void				FunctionAll(FUNCTIONPOINTER pFunc);	//	execute this function on every member. will fail if the TYPE isn't a pointer of somekind
 
-	FORCEINLINE TThis&				operator=(const TArray<TPtr<TYPE> >& Array)	{	TSuper::Copy( Array );	return *this;	}
+	FORCEINLINE TThis&				operator=(const TPtrArray<TYPE, GROWBY, SORTPOLICY>& Array)	{	TSuper::Copy( Array );	return *this;	}
 	
 protected:
 	virtual void					OnArrayShrink(u32 OldSize,u32 NewSize);	//	NULL pointers that have been "removed" but not deallocated

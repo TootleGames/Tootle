@@ -24,7 +24,7 @@ void TLScene::TSceneNode::UpdateAll(float Timestep)
 	PostUpdate( Timestep );
 
 	//	update tree
-	TArray<TLScene::TSceneNode*>& Children = GetChildren();
+	TPointerArray<TLScene::TSceneNode>& Children = GetChildren();
 	for ( u32 c=0;	c<Children.GetSize();	c++ )
 	{
 		TLScene::TSceneNode* pChild = Children[c];
