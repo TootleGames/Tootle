@@ -44,9 +44,9 @@ public:
 
 	void					SetRootCollisionZone(TPtr<TLMaths::TQuadTreeZone>& pZone,Bool AllowSleep=TRUE);	//	set a new root collision zone. Allow sleep to speed up idle objects, BUT without gravity, joints don't update/constrain properly... looking for a good soluition to this
 
-	void					GetNodesInShape(const TLMaths::TShapePolygon2D& Shape,TArray<TLPhysics::TPhysicsNode*>& NearPhysicsNodes);
-	void					GetNodesInShape(const TLMaths::TSphere2D& Shape,TArray<TLPhysics::TPhysicsNode*>& NearPhysicsNodes,Bool StrictSphere);	//	get all the nodes in this shape - for spheres optionally do strict sphere checks - box2D uses Boxes for its query so it can return objects outside the sphere. this does an extra loop to make sure distance is within the radius
-	void					GetNodesInShape(const TLMaths::TBox2D& Shape,TArray<TLPhysics::TPhysicsNode*>& NearPhysicsNodes);						//	get all the nodes in this shape
+	void					GetNodesInShape(const TLMaths::TShapePolygon2D& Shape,TPointerArray<TLPhysics::TPhysicsNode>& NearPhysicsNodes);
+	void					GetNodesInShape(const TLMaths::TSphere2D& Shape,TPointerArray<TLPhysics::TPhysicsNode>& NearPhysicsNodes,Bool StrictSphere);	//	get all the nodes in this shape - for spheres optionally do strict sphere checks - box2D uses Boxes for its query so it can return objects outside the sphere. this does an extra loop to make sure distance is within the radius
+	void					GetNodesInShape(const TLMaths::TBox2D& Shape,TPointerArray<TLPhysics::TPhysicsNode>& NearPhysicsNodes);						//	get all the nodes in this shape
 
 	FORCEINLINE const b2World*			GetWorld()					const {	return m_pWorld;	}				//	box2d's world
 	FORCEINLINE const TLMaths::TBox2D&	GetWorldShape()				const { return m_WorldShape; }
