@@ -187,6 +187,19 @@ public:
 	{
 		TArray<TYPE>::Copy( Array );
 	}
+	
+	virtual ~THeapArray()		
+	{ 
+		// Release the array data
+		if(m_pData)
+		{
+			TLMemory::DeleteArray( m_pData );
+			m_Alloc = 0;
+			m_Size	= 0;
+			m_pData = NULL;
+		}
+	}
+
 
 	virtual u32			GetSize() const		{	return m_Size;	}
 	virtual TYPE*		GetData()			{	return m_pData;	}
