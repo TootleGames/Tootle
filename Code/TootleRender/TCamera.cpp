@@ -139,84 +139,37 @@ const TLMaths::TMatrix& TLRender::TProjectCamera::UpdateCameraLookAtMatrix()
 			return m_CameraLookAtMatrix;
 	}
 
-	float3 up = GetWorldUp();
+	float3 Up = GetWorldUp();
 
-//	gluLookAt(	eye.x, eye.y, eye.z,
-//				center.x, center.y, center.z,
-//				up.x, up.y, up.z );
+	//	forward vector
+	float3 Forward = center - eye;
+	Forward.Normalise();
 
-	float mag;
+	//	calc right
+	float3 Right = Up.CrossProduct(Forward);
+	Right.Normalise();
 
-	// Make rotation matrix 
-
-	// Z vector
-	float3 z = eye - center;
-	mag = z.Length();
-
-	//	gr: isnt this a normalise?
-	if (mag) 
-	{			// mpichler, 19950515 
-	  z.x /= mag;
-	  z.y /= mag;
-	  z.z /= mag;
-	}
-
-	// Y vector
-	float3 y = up;
-
-	//	gr: could use the .CrossProduct(), but the .y computation is different?...
-	// X vector = Y cross Z
-	float3 x;
-	x.x =  y.y * z.z - y.z * z.y;
-	x.y = -y.x * z.z + y.z * z.x;
-	x.z =  y.x * z.y - y.y * z.x;
-
-	//	gr: could use the .CrossProduct(), but the .y computation is different?...
-	// Recompute Y = Z cross X
-	y.x =  z.y * x.z - z.z * x.y;
-	y.y = -z.x * x.z + z.z * x.x;
-	y.z =  z.x * x.y - z.y * x.x;
-
-	// mpichler, 19950515 
-	// cross product gives area of parallelogram, which is < 1.0 for
-	// non-perpendicular unit-length vectors; so normalize x, y here
-	
-	mag = x.Length();
-	//	gr: isnt this a normalise?
-	if (mag) 
-	{
-	  x[0] /= mag;
-	  x[1] /= mag;
-	  x[2] /= mag;
-	}
-
-	mag = y.Length();
-	//	gr: isnt this a normalise?
-	if (mag)
-	{
-	  y[0] /= mag;
-	  y[1] /= mag;
-	  y[2] /= mag;
-	}
-
+	//	need to recalculate the up vector from the new correct right and forward
+	Up = Forward.CrossProduct(Right);
+	Up.Normalise();
 
 	//	setup matrx
 	TLMaths::TMatrix& M = m_CameraLookAtMatrix;
-	M(0, 0) = x.x;
-	M(0, 1) = x.y;
-	M(0, 2) = x.z;
+	M(0, 0) = Right.x;
+	M(0, 1) = Right.y;
+	M(0, 2) = Right.z;
 	M(0, 3) = 0.0f;
-	M(1, 0) = y.x;
-	M(1, 1) = y.y;
-	M(1, 2) = y.z;
+	M(1, 0) = Up.x;
+	M(1, 1) = Up.y;
+	M(1, 2) = Up.z;
 	M(1, 3) = 0.0f;
-	M(2, 0) = z.x;
-	M(2, 1) = z.y;
-	M(2, 2) = z.z;
+	M(2, 0) = -Forward.x;
+	M(2, 1) = -Forward.y;
+	M(2, 2) = -Forward.z;
 	M(2, 3) = 0.0f;
-	M(3, 0) = 0.0f;
-	M(3, 1) = 0.0f;
-	M(3, 2) = 0.0f;
+	M(3, 0) = 0.f;
+	M(3, 1) = 0.f;
+	M(3, 2) = 0.f;
 	M(3, 3) = 1.0f;
 
 	//	camera matrix is now valid

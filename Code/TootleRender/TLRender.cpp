@@ -89,6 +89,12 @@ void TLRender::Opengl::Unbind()
 //---------------------------------------------------
 void TLRender::Opengl::SceneTransform(const TLMaths::TTransform& Transform,const TLMaths::TMatrix* pMatrix)
 {
+	//	apply rotation matrix first
+	if ( pMatrix )
+	{
+		glMultMatrixf( pMatrix->GetData() );
+	}
+	
 	//	gr: do this in the same order as the Transform() functions?
 	//		currently in old-render-code-order
 	if ( Transform.HasTranslate() )
@@ -103,11 +109,7 @@ void TLRender::Opengl::SceneTransform(const TLMaths::TTransform& Transform,const
 		glScalef( Scale.x, Scale.y, Scale.z );
 	}
 
-	if ( pMatrix )
-	{
-		glMultMatrixf( pMatrix->GetData() );
-	}
-
+	
 	if ( Transform.HasRotation() )
 	{
 		TLMaths::TMatrix RotMatrix;

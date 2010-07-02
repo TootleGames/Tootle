@@ -109,8 +109,11 @@ Bool TLRender::Platform::RenderTarget::BeginProjectDraw(TLRender::TProjectCamera
 	glLoadIdentity();
 
 	//	setup camera
+	//	the camera transform is the model position to move to after the rotation, the point where we are going to draw stuff
+	//	so it's the direction from lookat to center.
+	//	the camera is always at "position", we rotate (via matrix), the move along that rotation by the lookdir vector
 	m_CameraTransform.SetInvalid();
-	m_CameraTransform.SetTranslate( Camera.GetPosition() * -1.f );
+	m_CameraTransform.SetTranslate( Camera.GetLookAt() - Camera.GetPosition() );
 
 	//	apply look at matrix (rotate)
 	const TLMaths::TMatrix& LookAtMatrix = Camera.GetCameraLookAtMatrix();
