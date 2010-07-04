@@ -109,7 +109,8 @@ public:
 
 	// Graph change requests
 	virtual TRef				CreateNode(TRefRef NodeRef,TRefRef TypeRef,TRefRef ParentRef,TLMessaging::TMessage* pInitMessage=NULL,Bool StrictNodeRef=FALSE);		//	create node and add to the graph. returns ref of new node
-	FORCEINLINE Bool			MoveNode(TRefRef NodeRef,TRefRef NewParentRef)		{	return MoveNode( FindNode( NodeRef ), NewParentRef.IsValid() ? FindNode( NewParentRef ) : GetRootNode() );	}
+	FORCEINLINE Bool			MoveNode(TRefRef NodeRef,TRefRef NewParentRef)		{	return MoveNode( *FindNode( NodeRef ), (NewParentRef.IsValid() ? *FindNode( NewParentRef ) : GetRootNode()) );	}
+	
 	virtual Bool				RemoveNode(TRefRef NodeRef)							{	T* pNode = FindNode( NodeRef );		return pNode ? RemoveNode(*pNode) : false;	}
 	FORCEINLINE Bool			RemoveNode(TRef& NodeRef);							//	simple remove node wrapper which invalidates the node ref as well
 	virtual Bool				RemoveChildren(TRefRef NodeRef)						{	T* pNode = FindNode( NodeRef )	;	return pNode ? RemoveChildren( *pNode ) : false;	}			//	remove pNode's children (but not pNode)
