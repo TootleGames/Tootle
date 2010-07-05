@@ -84,15 +84,20 @@ void TSceneNode_Timeline::SetProperty(TLMessaging::TMessage& Message)
 		Message.ImportData("Timeline", m_TimelineAssetRef);
 	else
 	{
-		TRef CurrentTimelineRef = m_TimelineAssetRef;
+		TRef NewTimelineRef;
+		Message.ImportData("Timeline", NewTimelineRef);
 
-		Message.ImportData("Timeline", m_TimelineAssetRef);
-
-		if(m_pTimelineInstance && (CurrentTimelineRef != m_TimelineAssetRef))
+		// Change timeline?
+		if(m_TimelineAssetRef != NewTimelineRef)
 		{
-			// Change timeline
-			DeleteTimelineInstance();
+			// Delete old one if required
+			if(m_pTimelineInstance)
+				DeleteTimelineInstance();
 
+			// Set new timeline asset ref
+			m_TimelineAssetRef = NewTimelineRef;
+			
+			// Create new timeline instance
 			if(m_TimelineAssetRef.IsValid())
 				CreateTimelineInstance();
 		}
