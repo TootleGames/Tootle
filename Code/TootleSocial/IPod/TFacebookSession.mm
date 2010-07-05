@@ -7,6 +7,10 @@
  *
  */
 
+/*
+ 
+// [24/06/10] DB - TEMP REMOVED 
+ 
 #import "TFacebookSession.h"
 #import "FBConnect/FBConnect.h"
 
@@ -28,19 +32,6 @@ static NSString* kGetSessionProxy = nil; // @"<YOUR SESSION CALLBACK)>";
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // NSObject
 
-/*
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-	if (self = [super initWithNibName:@"SessionViewController" bundle:nibBundleOrNil]) {
-		if (kGetSessionProxy) {
-			_session = [[FBSession sessionForApplication:kApiKey getSessionProxy:kGetSessionProxy
-												delegate:self] retain];
-		} else {
-			_session = [[FBSession sessionForApplication:kApiKey secret:kApiSecret delegate:self] retain];
-		}
-	}
-	return self;
-}
-*/
 
 - (void)createSessionView
 {
@@ -198,14 +189,12 @@ static NSString* kGetSessionProxy = nil; // @"<YOUR SESSION CALLBACK)>";
 }
 
 - (void)publishFeed:(id)target {
-/*
- // [23/06/10] DB - Temp removed
  FBFeedDialog* dialog = [[[FBFeedDialog alloc] init] autorelease];
 	dialog.delegate = self;
 	dialog.templateBundleId = 66186134806LL;
 	dialog.templateData = @"{\"key1\": \"value1\"}";
 	[dialog show];
- */
 }
 
 @end
+*/

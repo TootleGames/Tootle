@@ -27,16 +27,21 @@ SyncBool Platform::Initialise()
 
 SyncBool Platform::Shutdown()
 {
-	if( [m_CameraController IsConnected] )
+	if(m_CameraController)
 	{
-		if(! [m_CameraController DisconnectFromCamera] )
+		if( [m_CameraController IsConnected] )
 		{
-			return SyncFalse;
+			if(! [m_CameraController DisconnectFromCamera] )
+			{
+				return SyncFalse;
+			}
 		}
+		
+		// release the camera controller
+		[m_CameraController release];
+		
+		m_CameraController = nil;
 	}
-	
-	// release the camera controller
-	[m_CameraController release];
 	
 	return SyncTrue;
 }

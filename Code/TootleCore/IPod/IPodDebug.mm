@@ -107,7 +107,11 @@ Bool TLDebug::Platform::Break(const TString& String)
 	//		via the cog at the bottom of the pane (add build setting condition) then select Any iPhone Simulator for the SDK option
 	// and this should link correctly only on a simulator build :)
 #if !TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
-	Debugger();
+	
+	// Not able to use the debugger anymore post 3.2
+	//Debugger();
+	kill( getpid(), SIGINT ) ;
+
 #elif defined(_DEBUG)
 
 	// assert will kill off the application therefore doesn't continue :(
