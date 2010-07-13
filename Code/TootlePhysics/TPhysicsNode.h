@@ -54,7 +54,7 @@ class TLPhysics::TPhysicsNode : public TLGraph::TGraphNode<TLPhysics::TPhysicsNo
 	friend class TLPhysics::TJoint;
 	
 public:
-	struct Properties
+	struct Properties : public TLMaths::TTransform::Properties
 	{
 		enum
 		{

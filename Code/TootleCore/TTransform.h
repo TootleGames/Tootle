@@ -12,7 +12,8 @@
 #include "TLTypes.h"
 #include "TQuaternion.h"
 #include "TLMaths.h"
-#include "TArray.h" 
+#include "TArray.h"
+#include "TRef.h"
 
 //	forward declarations
 class TBinaryTree;
@@ -26,6 +27,18 @@ namespace TLMaths
 
 class TLMaths::TTransform
 {
+public:
+	struct Properties
+	{
+		enum
+		{
+			Translation		= TRef_Static(T,r,a,n,s),
+			ZTranslation	= TRef_Static(Z,T,r,a,n),
+			Rotation		= TRef_Static(R,o,t,a,t),
+			Scale			= TRef_Static(S,c,a,l,e),
+		};
+	};
+	
 public:
 	TTransform() : m_Valid ( 0x0 )			{	}
 	

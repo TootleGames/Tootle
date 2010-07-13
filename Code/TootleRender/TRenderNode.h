@@ -70,7 +70,7 @@ public:
 	friend class TLMaths::TBoundsShape<TLMaths::TShapeSphere2D>;
 	friend class TLRender::TRendergraph;
 
-	struct Properties
+	struct Properties : public TLMaths::TTransform::Properties
 	{
 		enum
 		{

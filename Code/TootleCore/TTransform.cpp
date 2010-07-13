@@ -22,10 +22,10 @@ u8 TLMaths::TTransform::ImportData(TBinaryTree& Data)
 	
 	//	import translate
 	float3 OldTranslate = m_Translate;
-	Bool ChangedTransform = Data.ImportData( TRef_Static(T,r,a,n,s), m_Translate );
+	Bool ChangedTransform = Data.ImportData( Properties::Translation, m_Translate );
 	
 	//	gr: now support setting of just the Z
-	ChangedTransform |= Data.ImportData( TRef_Static(Z,T,r,a,n), m_Translate.z );
+	ChangedTransform |= Data.ImportData( Properties::ZTranslation, m_Translate.z );
 	
 	if ( ChangedTransform )
 	{
@@ -38,7 +38,7 @@ u8 TLMaths::TTransform::ImportData(TBinaryTree& Data)
 	
 	//	import scale
 	float3 OldScale = m_Scale;
-	if ( Data.ImportData( TRef_Static(S,c,a,l,e), m_Scale ) )
+	if ( Data.ImportData( Properties::Scale, m_Scale ) )
 	{
 		TLDebug_CheckFloat( m_Scale );
 		
@@ -50,7 +50,7 @@ u8 TLMaths::TTransform::ImportData(TBinaryTree& Data)
 	
 	//	import rotation
 	TQuaternion OldRotation = m_Rotation;
-	if ( Data.ImportData( TRef_Static(R,o,t,a,t), m_Rotation ) )
+	if ( Data.ImportData( Properties::Rotation, m_Rotation ) )
 	{
 		TLDebug_CheckFloat( m_Rotation );
 		
@@ -77,19 +77,19 @@ u8 TLMaths::TTransform::ExportData(TBinaryTree& Data,u8 TransformBits) const
 	if ( (TransformBits & TLMaths_TransformBitTranslate) != 0x0 )
 	{
 		TLDebug_CheckFloat( m_Translate );
-		Data.ExportData(TRef_Static(T,r,a,n,s), m_Translate );
+		Data.ExportData( Properties::Translation, m_Translate );
 	}
 	
 	if ( (TransformBits & TLMaths_TransformBitScale) != 0x0 )
 	{
 		TLDebug_CheckFloat( m_Scale );
-		Data.ExportData(TRef_Static(S,c,a,l,e), m_Scale );
+		Data.ExportData( Properties::Scale, m_Scale );
 	}
 	
 	if ( (TransformBits & TLMaths_TransformBitRotation) != 0x0 )
 	{
 		TLDebug_CheckFloat( m_Rotation );
-		Data.ExportData(TRef_Static(R,o,t,a,t), m_Rotation );
+		Data.ExportData( Properties::Rotation, m_Rotation );
 	}
 	
 	return TransformBits;
@@ -110,31 +110,31 @@ u8 TLMaths::TTransform::ReplaceData(TBinaryTree& Data,u8 TransformBits) const
 	if ( (TransformBits & TLMaths_TransformBitTranslate) != 0x0 )
 	{
 		TLDebug_CheckFloat( m_Translate );
-		Data.ReplaceData(TRef_Static(T,r,a,n,s), m_Translate );
+		Data.ReplaceData( Properties::Translation, m_Translate );
 	}
 	else if ( ( RemoveBits & TLMaths_TransformBitTranslate ) != 0x0 )
 	{
-		Data.RemoveChild( TRef_Static(T,r,a,n,s) );
+		Data.RemoveChild( Properties::Translation );
 	}
 
 	if ( (TransformBits & TLMaths_TransformBitScale) != 0x0 )
 	{
 		TLDebug_CheckFloat( m_Scale );
-		Data.ReplaceData(TRef_Static(S,c,a,l,e), m_Scale );
+		Data.ReplaceData( Properties::Scale, m_Scale );
 	}
 	else if ( ( RemoveBits & TLMaths_TransformBitScale ) != 0x0 )
 	{
-		Data.RemoveChild( TRef_Static(S,c,a,l,e) );
+		Data.RemoveChild( Properties::Scale );
 	}
 
 	if ( (TransformBits & TLMaths_TransformBitRotation) != 0x0 )
 	{
 		TLDebug_CheckFloat( m_Rotation );
-		Data.ReplaceData(TRef_Static(R,o,t,a,t), m_Rotation );
+		Data.ReplaceData( Properties::Rotation, m_Rotation );
 	}
 	else if ( ( RemoveBits & TLMaths_TransformBitRotation ) != 0x0 )
 	{
-		Data.RemoveChild( TRef_Static(R,o,t,a,t) );
+		Data.RemoveChild( Properties::Rotation );
 	}
 	
 	return TransformBits;

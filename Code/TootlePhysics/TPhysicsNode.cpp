@@ -1327,7 +1327,7 @@ Bool TLPhysics::TPhysicsNode::ImportCollisionShapeFromDatum(TBinaryTree& Collisi
 	if ( !pMesh )
 	{
 		TDebugString Debug_String;
-		Debug_String << "Collision datum " << DatumRef " specified, but mesh " << MeshRef << " is missing. Cannot create collision shapes for physics node";
+		Debug_String << "Collision datum " << DatumRef << " specified, but mesh " << MeshRef << " is missing. Cannot create collision shapes for physics node";
 		TLDebug_Break( Debug_String );
 		return FALSE;
 	}
