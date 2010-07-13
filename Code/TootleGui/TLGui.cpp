@@ -8,6 +8,8 @@
  */
 #include "TLGui.h"
 #include <TootleRender/TScreenManager.h>
+#include <TootleCore/TLUnitTest.h>
+
 
 namespace TLGui
 {
@@ -70,3 +72,19 @@ int2 TLGui::GetDefaultScreenMousePosition(u8 MouseIndex)
 	return TLGui::Platform::GetScreenMousePosition( *pWindow, MouseIndex );
 }
 
+
+//------------------------------------------------------
+//	handle command line params - if true is returned, return Result from main
+//------------------------------------------------------
+bool TLGui::OnCommandLine(const TString& CommandLine,int& Result)
+{
+	//	process UnitTest++ if "UnitTest" is on the command line
+	if ( CommandLine == "UnitTest" )
+	{
+		Result = TLUnitTest::RunAllTests();
+		return true;
+	}
+
+	//	not handled
+	return false; 
+}

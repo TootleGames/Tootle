@@ -135,9 +135,7 @@ namespace TLDebug
 	void				Print(const TString& String,const char* pSourceFunction);							//	print to console
 	FORCEINLINE void	Print(const TString& String)														{	Print( String, NULL );	}
 	
-#ifndef ENABLE_DEBUG_TRACE
-	Bool				NoBreak();
-#endif
+	FORCEINLINE Bool	NoBreak()		{}
 		
 	FORCEINLINE void	FlushBuffer()	{	Platform::FlushBuffer(); }
 	

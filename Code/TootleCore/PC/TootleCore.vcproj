@@ -1198,6 +1198,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TLUnitTest.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TLUnitTest.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TManager.cpp"
 			>
 		</File>

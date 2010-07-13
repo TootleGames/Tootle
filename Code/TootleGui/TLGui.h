@@ -27,6 +27,7 @@ namespace TLGui
 
 	const TString&			GetAppExe();
 	void					SetAppExe(const TString& NewExePath);
+	bool					OnCommandLine(const TString& CommandLine,int& Result);	//	handle command line params - if true is returned, return Result from main
 
 	//	factory style wrappers. Temporary implementation until I decide how data/factory driven I want this to be	
 	TPtr<TWindow>			CreateGuiWindow(TRefRef Ref);

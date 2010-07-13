@@ -4,6 +4,7 @@
 #include <TootleCore/TLTime.h>
 #include <TootleCore/PC/PCDebug.h>
 
+
 #if defined(TL_ENABLE_WX)
 #include "wxWidgets/App.h"
 #endif
@@ -141,13 +142,17 @@ SyncBool TLGui::Platform::App::Shutdown()
 }
 
 
-
 //---------------------------------------------------
 //	win32 entry
 //---------------------------------------------------
 #if !defined(TL_ENABLE_WX)
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
+	int Result = 0;
+	TStringLowercase<TTempString> Params = lpCmdLine;
+	if ( TLGui::OnCommandLine( Params, Result ) )
+		return Result;
+
 	//	set the global reference to HInstance
 	TLGui::Platform::g_HInstance = hInstance;
 
