@@ -52,6 +52,36 @@ class TLPhysics::TPhysicsNode : public TLGraph::TGraphNode<TLPhysics::TPhysicsNo
 {
 	friend class TLPhysics::TPhysicsgraph;
 	friend class TLPhysics::TJoint;
+	
+public:
+	struct Properties
+	{
+		enum
+		{
+			Owner			= TRef_Static(O,w,n,e,r),
+			Type			= TRef_Static4(T,y,p,e),
+			IsStatic		= TRef_Static(f,S,t,a,t),
+			AllowRotate		= TRef_Static(f,R,o,t,a),
+			HasGravity		= TRef_Static(f,G,r,a,v),
+			PhysicsFlags	= TRef_Static(P,F,l,a,g),
+			PhysicsFlagsOn	= TRef_Static(P,F,S,e,t),
+			PhysicsFlagsOff	= TRef_Static(P,F,C,l,e),
+			Friction		= TRef_Static(F,r,i,c,t),
+			Bounce			= TRef_Static(B,o,u,n,c),
+			Damping			= TRef_Static(D,a,m,p,i),
+			RelativeMovement	= TRef_Static(R,e,l,M,o),
+			CollisionDatum		= TRef_Static(c,o,l,d,a),
+			CollisionDatum_MeshRef	= TRef_Static(M,e,s,h,R),
+			CollisionShape		= TRef_Static(c,o,l,s,h),
+			CollisionShape_Ref	= TRef_Static3(R,e,f),
+			CollisionShape_IsSensor	= TRef_Static(S,e,n,s,o),
+			Joint				= TRef_Static(J,o,i,n,t),
+			Joint_Node			= TRef_Static4(N,o,d,e),
+			Joint_AnchorPos		= TRef_Static(A,n,c,P,o),
+			Joint_NodeAnchorPos	= TRef_Static(O,t,h,A,n),
+		};
+	};
+	
 public:
 	enum Flags
 	{

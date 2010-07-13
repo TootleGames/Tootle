@@ -704,7 +704,7 @@ void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 		OnTransformChanged(TransformChangedBits);
 		return;
 	}
-	else if(Message.GetMessageRef() == TRef_Static(S,e,t,T,r) )
+	else if(Message.GetMessageRef() == Messages::SetTransform )
 	{
 		//	overwrite our transform
 		u8 TransformChangedBits = m_Transform.ImportData( Message );
@@ -712,7 +712,7 @@ void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 
 		return;
 	}
-	else if(Message.GetMessageRef() == TRef_Static(L,o,c,T,r))	//	local transform
+	else if(Message.GetMessageRef() == Messages::LocalTransform )	//	local transform
 	{
 		//	read sent transform
 		TLMaths::TTransform Transform;
@@ -725,7 +725,7 @@ void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 		OnTransformChanged( TransformChangedBits );
 		return;
 	}
-	else if(Message.GetMessageRef() == TRef_Static(D,o,T,r,a))
+	else if(Message.GetMessageRef() == Messages::DoTransform )
 	{
 		//	read sent transform
 		TLMaths::TTransform Transform;
@@ -743,11 +743,11 @@ void TLRender::TRenderNode::ProcessMessage(TLMessaging::TMessage& Message)
 		Message.ImportData( TRef_Static4(T,y,p,e), AssetType );
 
 		//	asset being deleted, remove our cached pointers
-		if ( Message.GetSenderRef() == m_MeshRef && AssetType == TRef_Static4(M,e,s,h) )
+		if ( Message.GetSenderRef() == m_MeshRef && AssetType == TLAsset::TMesh::GetAssetType_Static() )
 		{
 			OnMeshRefChanged();
 		}
-		else if ( Message.GetSenderRef() == m_TextureRef  && AssetType == TRef_Static(T,e,x,t,u) )
+		else if ( Message.GetSenderRef() == m_TextureRef  && AssetType == TLAsset::TTexture::GetAssetType_Static() )
 		{
 			OnTextureRefChanged();
 		}
@@ -775,13 +775,13 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 		OnTransformChanged(TransformChangedBits);
 
 	//	line width
-	Message.ImportData("LineWidth", m_LineWidth );
+	Message.ImportData( Properties::LineWidth, m_LineWidth );
 
 	//	point sprite size
-	Message.ImportData("PointSize", m_PointSpriteSize );
+	Message.ImportData( Properties::PointSize, m_PointSpriteSize );
 
 	//	mesh
-	if ( Message.ImportData("MeshRef", m_MeshRef ) )
+	if ( Message.ImportData( Properties::Mesh, m_MeshRef ) )
 	{
 		//	start loading the asset in case we havent loaded it already
 		if ( m_MeshRef.IsValid() )
@@ -792,7 +792,7 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 	}
 
 	//	texture
-	if ( Message.ImportData("TextureRef", m_TextureRef ) )
+	if ( Message.ImportData( Properties::Texture, m_TextureRef ) )
 	{
 		//	start loading the asset in case we havent loaded it already
 		if ( m_TextureRef.IsValid() )
@@ -804,14 +804,14 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 
 	//	enable state
 	Bool Enabled = TRUE;
-	if ( Message.ImportData("Enabled", Enabled ) )
+	if ( Message.ImportData( Properties::Enabled, Enabled ) )
 	{
 		//	set/unset flag
 		SetEnabled( Enabled );
 	}
 
 	u32 RenderFlags = 0;
-	if(Message.ImportData("RFlags", RenderFlags))
+	if(Message.ImportData( Properties::RenderFlags, RenderFlags))
 	{
 		// Set the flags as a raw value.  Saves cycling through a load of 
 		// flag indices but should generally only be used for exporting and re-import
@@ -821,7 +821,7 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 	{
 		//	get render flags to set
 		TPtrArray<TBinaryTree> FlagChildren;
-		if ( Message.GetChildren("RFSet", FlagChildren ) )
+		if ( Message.GetChildren( Properties::RenderFlagsOn, FlagChildren ) )
 		{
 			u32 RenderFlagIndex = 0;
 			for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
@@ -834,7 +834,7 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 		}
 
 		//	get render flags to clear
-		if ( Message.GetChildren("RFClear", FlagChildren ) )
+		if ( Message.GetChildren( Properties::RenderFlagsOff, FlagChildren ) )
 		{
 			u32 RenderFlagIndex = 0;
 			for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
@@ -848,17 +848,17 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 	}
 
 	//	import colour
-	if ( Message.ImportData("Colour", m_Colour ) )
+	if ( Message.ImportData( Properties::Colour, m_Colour ) )
 		OnColourChanged();
 
 	//	set attach datum
 	TRef AttachDatum;
-	if ( Message.ImportData("AttachDatum", AttachDatum ) )
+	if ( Message.ImportData( Properties::AttachDatum, AttachDatum ) )
 		SetAttachDatum( AttachDatum );
 
 	//	get list of datums to debug-render
 	TPtrArray<TBinaryTree> DbgDatumDatas;
-	if ( Message.GetChildren("DbgDatum", DbgDatumDatas ) )
+	if ( Message.GetChildren( Properties::Debug_Datum, DbgDatumDatas ) )
 	{
 		for ( u32 c=0;	c<DbgDatumDatas.GetSize();	c++ )
 		{
@@ -871,7 +871,7 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 
 	//	get list of datums to remove from the debug-render list
 	DbgDatumDatas.Empty();
-	if ( Message.GetChildren("RmDbgDatum", DbgDatumDatas ) )
+	if ( Message.GetChildren( Properties::Debug_DatumRemove, DbgDatumDatas ) )
 	{
 		for ( u32 c=0;	c<DbgDatumDatas.GetSize();	c++ )
 		{

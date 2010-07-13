@@ -133,7 +133,7 @@ void TLPhysics::TPhysicsNode::Initialise(TLMessaging::TMessage& Message)
 //---------------------------------------------------------
 void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
 {
-	if(Message.ImportData("Owner", m_OwnerSceneNode))
+	if(Message.ImportData( Properties::Owner, m_OwnerSceneNode))
 	{
 		// Get the scenegraph node
 		TLScene::TSceneNode* pOwner = TLScene::g_pScenegraph->FindNode(m_OwnerSceneNode);
@@ -147,20 +147,20 @@ void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
 
 	//	static flag
 	Bool TempPhysicsFlag;
-	if ( Message.ImportData("fStatic", TempPhysicsFlag ) )
+	if ( Message.ImportData( Properties::IsStatic, TempPhysicsFlag ) )
 		m_PhysicsFlags.Set( Flag_Static, TempPhysicsFlag );
 
 	//	rotate flag
-	if ( Message.ImportData("fRotate", TempPhysicsFlag ) )
+	if ( Message.ImportData( Properties::AllowRotate, TempPhysicsFlag ) )
 		m_PhysicsFlags.Set( Flag_Rotate, TempPhysicsFlag );
 
 	// Gravity flag
-	if ( Message.ImportData("fGravity", TempPhysicsFlag ) )
+	if ( Message.ImportData( Properties::HasGravity, TempPhysicsFlag ) )
 		m_PhysicsFlags.Set( Flag_HasGravity, TempPhysicsFlag );
 
 	u32 PhysicsFlags = 0;
 
-	if(Message.ImportData("PFlags", PhysicsFlags))
+	if(Message.ImportData( Properties::PhysicsFlags, PhysicsFlags))
 	{
 		// Import raw physics flags value - saves going through individual flag bits
 		// NOTE: may need to do some stuff based on flags changed?
@@ -173,7 +173,7 @@ void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
 
 		//	get physics flags to set
 		TPtrArray<TBinaryTree> FlagChildren;
-		if ( Message.GetChildren("PFSet", FlagChildren ) )
+		if ( Message.GetChildren( Properties::PhysicsFlagsOn, FlagChildren ) )
 		{
 			u32 FlagIndex = 0;
 			for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
@@ -194,7 +194,7 @@ void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
 		}
 
 		//	get render flags to clear
-		if ( Message.GetChildren("PFClear", FlagChildren ) )
+		if ( Message.GetChildren( Properties::PhysicsFlagsOff, FlagChildren ) )
 		{
 			u32 FlagIndex = 0;
 			for ( u32 f=0;	f<FlagChildren.GetSize();	f++ )
@@ -216,20 +216,20 @@ void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
 	}
 
 	//	read physics properties
-	if ( Message.ImportData("Friction", m_Friction ) )
+	if ( Message.ImportData( Properties::Friction, m_Friction ) )
 		OnFrictionChanged();
 
-	if ( Message.ImportData("Bounce", m_Bounce ) )
+	if ( Message.ImportData( Properties::Bounce, m_Bounce ) )
 		OnBounceChanged();
 
-	if ( Message.ImportData("Damping", m_Damping ) )
+	if ( Message.ImportData( Properties::Damping, m_Damping ) )
 		OnDampingChanged();
 
-	Message.ImportData("RelMovement", m_RelativeMovement );
+	Message.ImportData( Properties::RelativeMovement, m_RelativeMovement );
 
 	//	read collision shapes-from-datums
 	TPtrArray<TBinaryTree> CollisionShapeDatas;
-	Message.GetChildren("coldatum", CollisionShapeDatas );
+	Message.GetChildren( Properties::CollisionDatum, CollisionShapeDatas );
 	for ( u32 i=0;	i<CollisionShapeDatas.GetSize();	i++ )
 	{
 		ImportCollisionShapeFromDatum( *CollisionShapeDatas.ElementAt(i) );
@@ -238,7 +238,7 @@ void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
 
 	//	read collision shapes
 	CollisionShapeDatas.Empty();
-	Message.GetChildren("colshape", CollisionShapeDatas );
+	Message.GetChildren( Properties::CollisionShape, CollisionShapeDatas );
 	for ( u32 i=0;	i<CollisionShapeDatas.GetSize();	i++ )
 	{
 		ImportCollisionShape( *CollisionShapeDatas.ElementAt(i) );
@@ -255,7 +255,7 @@ void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
 
 	//	has a joint[s] to create
 	TPtrArray<TBinaryTree> JointDatas;
-	Message.GetChildren( "Joint", JointDatas );
+	Message.GetChildren( Properties::Joint, JointDatas );
 	for ( u32 i=0;	i<JointDatas.GetSize();	i++ )
 	{
 		TBinaryTree& JointData = *(JointDatas[i]);
@@ -263,11 +263,11 @@ void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
 		NewJoint.m_NodeA = this->GetNodeRef();
 		
 		//	must has an other-node to link to
-		if ( !JointData.ImportData("Node", NewJoint.m_NodeB ) )
+		if ( !JointData.ImportData( Properties::Joint_Node, NewJoint.m_NodeB ) )
 			continue;
 		
-		JointData.ImportData("AncPos", NewJoint.m_JointPosA );
-		JointData.ImportData("OthAncPos", NewJoint.m_JointPosB );
+		JointData.ImportData( Properties::Joint_AnchorPos, NewJoint.m_JointPosA );
+		JointData.ImportData( Properties::Joint_NodeAnchorPos, NewJoint.m_JointPosB );
 
 		//	create new joint
 		TLPhysics::g_pPhysicsgraph->AddJoint( NewJoint );
@@ -280,8 +280,8 @@ void TLPhysics::TPhysicsNode::SetProperty(TLMessaging::TMessage& Message)
 
 void TLPhysics::TPhysicsNode::UpdateNodeData()
 {
-	GetNodeData().RemoveChild("Type");
-	GetNodeData().ExportData("Type", GetNodeTypeRef());
+	GetNodeData().RemoveChild( Properties::Type );
+	GetNodeData().ExportData( Properties::Type, GetNodeTypeRef());
 
 	// Export physics transform
 	GetNodeData().RemoveChild(TRef_Static(T,r,a,n,s));
@@ -290,27 +290,27 @@ void TLPhysics::TPhysicsNode::UpdateNodeData()
 	m_Transform.ExportData(GetNodeData());
 
 
-	GetNodeData().RemoveChild("Friction");
-	GetNodeData().ExportData("Friction", m_Friction);
+	GetNodeData().RemoveChild( Properties::Friction );
+	GetNodeData().ExportData( Properties::Friction, m_Friction);
 
-	GetNodeData().RemoveChild("Bounce");
-	GetNodeData().ExportData("Bounce", m_Bounce);
+	GetNodeData().RemoveChild( Properties::Bounce );
+	GetNodeData().ExportData( Properties::Bounce, m_Bounce);
 
-	GetNodeData().RemoveChild("Damping");
-	GetNodeData().ExportData("Damping", m_Damping);
+	GetNodeData().RemoveChild( Properties::Damping );
+	GetNodeData().ExportData( Properties::Damping, m_Damping);
 
-	GetNodeData().RemoveChild("PFlags");
-	GetNodeData().ExportData("PFlags", m_PhysicsFlags.GetData());
+	GetNodeData().RemoveChild( Properties::PhysicsFlags );
+	GetNodeData().ExportData( Properties::PhysicsFlags, m_PhysicsFlags.GetData());
 
-	GetNodeData().RemoveChild("RelMovement");
-	GetNodeData().ExportData("RelMovement", m_RelativeMovement );
+	GetNodeData().RemoveChild( Properties::RelativeMovement );
+	GetNodeData().ExportData( Properties::RelativeMovement , m_RelativeMovement );
 
 
 	// Remove all 'colshape' children formt he node data
 	Bool Result = TRUE;
 	do
 	{
-		Result = GetNodeData().RemoveChild("colshape");
+		Result = GetNodeData().RemoveChild( Properties::CollisionShape );
 	}while(Result == TRUE);
 
 	// Export all collision shapes
@@ -318,17 +318,17 @@ void TLPhysics::TPhysicsNode::UpdateNodeData()
 	{
 		const TCollisionShape& shape = m_CollisionShapes.ElementAt(uIndex);
 
-		TPtr<TBinaryTree>& pChild = GetNodeData().AddChild("colshape");
+		TPtr<TBinaryTree>& pChild = GetNodeData().AddChild( Properties::CollisionShape );
 
 		if(pChild)
 		{
 			if(TLMaths::ExportShapeData( pChild.GetObjectPointer(), *shape.GetShape().GetObjectPointer(), FALSE ))
 			{
-				pChild->ExportData("Ref", shape.GetShapeRef());
+				pChild->ExportData( Properties::CollisionShape_Ref, shape.GetShapeRef());
 
 				// Export if shape is a sensor but only if it is - save exporting a bit of data?
 				if(shape.IsSensor())
-					pChild->ExportData("Sensor", (Bool)TRUE);
+					pChild->ExportData( Properties::CollisionShape_IsSensor, (Bool)true );
 
 			}
 			else
@@ -1287,8 +1287,8 @@ Bool TLPhysics::TPhysicsNode::ImportCollisionShape(TBinaryTree& CollisionShapeDa
 	//	import ref and sensor settings
 	TRef ShapeRef;
 	Bool IsSensor = FALSE;
-	CollisionShapeData.ImportData("Ref", ShapeRef );
-	CollisionShapeData.ImportData("Sensor", IsSensor );
+	CollisionShapeData.ImportData( Properties::CollisionShape_Ref, ShapeRef );
+	CollisionShapeData.ImportData( Properties::CollisionShape_IsSensor, IsSensor );
 
 	//	add the collison shape
 	TRef NewShapRef = AddCollisionShape( pCollisionShape, IsSensor, ShapeRef );
@@ -1314,7 +1314,7 @@ Bool TLPhysics::TPhysicsNode::ImportCollisionShapeFromDatum(TBinaryTree& Collisi
 
 	//	read mesh to get datum from
 	TRef MeshRef;
-	if ( !CollisionShapeData.ImportData("MeshRef", MeshRef ) )
+	if ( !CollisionShapeData.ImportData( Properties::CollisionDatum_MeshRef, MeshRef ) )
 	{
 		TTempString Debug_String("Missing MeshRef data for ColDatum: ");
 		DatumRef.GetString( Debug_String );
@@ -1326,11 +1326,8 @@ Bool TLPhysics::TPhysicsNode::ImportCollisionShapeFromDatum(TBinaryTree& Collisi
 	TLAsset::TMesh* pMesh = TLAsset::GetAsset<TLAsset::TMesh>( MeshRef );
 	if ( !pMesh )
 	{
-		TTempString Debug_String("Collision datum \"");
-		DatumRef.GetString(Debug_String);
-		Debug_String.Append("\" specified, but mesh \"");
-		MeshRef.GetString( Debug_String );
-		Debug_String.Append("\" is missing. Cannot create collision shapes for physics node");
+		TDebugString Debug_String;
+		Debug_String << "Collision datum " << DatumRef " specified, but mesh " << MeshRef << " is missing. Cannot create collision shapes for physics node";
 		TLDebug_Break( Debug_String );
 		return FALSE;
 	}
@@ -1339,10 +1336,8 @@ Bool TLPhysics::TPhysicsNode::ImportCollisionShapeFromDatum(TBinaryTree& Collisi
 	TPtr<TLMaths::TShape>& pCollisionShape = pMesh->GetDatum( DatumRef );
 	if ( !pCollisionShape )
 	{
-		TTempString Debug_String("Collision datum (");
-		DatumRef.GetString( Debug_String );
-		Debug_String.Append(") is missing from mesh ");
-		MeshRef.GetString( Debug_String );
+		TDebugString Debug_String;
+		Debug_String << "Collision datum (" << DatumRef << ") is missing from mesh " << MeshRef;
 		TLDebug_Break( Debug_String );
 		return FALSE;
 	}
@@ -1350,8 +1345,8 @@ Bool TLPhysics::TPhysicsNode::ImportCollisionShapeFromDatum(TBinaryTree& Collisi
 	//	import ref and sensor settings
 	TRef ShapeRef = DatumRef;
 	Bool IsSensor = FALSE;
-	CollisionShapeData.ImportData("Ref", ShapeRef );
-	CollisionShapeData.ImportData("Sensor", IsSensor );
+	CollisionShapeData.ImportData( Properties::CollisionShape_Ref, ShapeRef );
+	CollisionShapeData.ImportData( Properties::CollisionShape_IsSensor, IsSensor );
 
 	//	add collision shape
 	TRef NewShapRef = AddCollisionShape( pCollisionShape, IsSensor, ShapeRef );

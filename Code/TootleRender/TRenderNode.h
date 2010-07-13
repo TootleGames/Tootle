@@ -70,6 +70,35 @@ public:
 	friend class TLMaths::TBoundsShape<TLMaths::TShapeSphere2D>;
 	friend class TLRender::TRendergraph;
 
+	struct Properties
+	{
+		enum
+		{
+			LineWidth	= TRef_Static(L,i,n,e,W),
+			PointSize	= TRef_Static(P,o,i,n,t),
+			Mesh		= TRef_Static(M,e,s,h,R),
+			Texture		= TRef_Static(T,e,x,t,u),
+			Enabled		= TRef_Static(E,n,a,b,l),
+			RenderFlags	= TRef_Static(R,F,l,a,g),
+			RenderFlagsOn	= TRef_Static(R,F,S,e,t),
+			RenderFlagsOff	= TRef_Static(R,F,C,l,e),
+			Colour		= TRef_Static(C,o,l,o,u),
+			AttachDatum	= TRef_Static(A,t,t,a,c),
+			Debug_Datum	= TRef_Static(D,b,g,D,a),
+			Debug_DatumRemove = TRef_Static(R,m,D,b,g),
+		};
+	};
+	
+	struct Messages
+	{
+		enum
+		{
+			SetTransform	= TRef_Static(S,e,t,T,r),
+			LocalTransform	= TRef_Static(L,o,c,T,r),
+			DoTransform		= TRef_Static(D,o,T,r,a),
+		};
+	};
+	
 protected:
 	enum InvalidateFlags
 	{
