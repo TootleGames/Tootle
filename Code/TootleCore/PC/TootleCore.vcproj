@@ -43,7 +43,7 @@
 				Optimization="0"
 				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="$(ProjectDir)..\..\"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;TL_TARGET_PC"
+				PreprocessorDefinitions="TL_$(RemoteMachine);WIN32;_DEBUG;_LIB;TL_TARGET_PC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"

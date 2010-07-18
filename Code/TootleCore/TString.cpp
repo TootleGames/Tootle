@@ -1,6 +1,181 @@
 #include "TString.h"
+#include "TLUnitTest.h"
 #include <stdio.h>
 #include <stdarg.h>
+
+
+namespace TLString
+{
+	namespace TLTest
+	{
+		template<typename INTEGERTYPE>
+		bool	Debug_TestIntegerExtraction(TString& String,const char* pString,const TArray<INTEGERTYPE>& ExpectedResults);
+	}
+}
+
+
+//-----------------------------------------------------------------
+//	this test extracts a string into numerous integer arrays/TypeX's and makes sure 
+//	- fails when it doesn't exract enough items
+//	- fails when it extracts too many items
+//	- fails if the extracted values don't match
+//-----------------------------------------------------------------
+template<typename INTEGERTYPE>
+bool TLString::TLTest::Debug_TestIntegerExtraction(TString& String,const char* pString,const TArray<INTEGERTYPE>& ExpectedResults)
+{
+	bool Result = true;
+	s32 OneInt;
+	Type2<INTEGERTYPE> TwoInt;
+	Type3<INTEGERTYPE> ThreeInt;
+	Type4<INTEGERTYPE> FourInt;
+	
+	//	copy the string
+	String = pString;
+	if ( String != pString )
+	{
+		TDebugString Debug_String;
+		Debug_String << "Failed to set string (\"" << String << "\") to \"" << pString << "\"";
+		TLDebug_Print( Debug_String );
+		Result = false;
+	}
+	
+/*
+	//	extract each type of integer pairing
+	TFixedArray<bool,4> Successes;
+	Successes.Add( String.GetInteger( OneInt ) );
+	Successes.Add( String.GetInteger( TwoInt ) );
+	Successes.Add( String.GetInteger( ThreeInt ) );
+	Successes.Add( String.GetInteger( FourInt ) );
+	
+	//	check the right ones succeeded
+	u32 ExpectedCount = ExpectedResults.GetSize();
+	for ( u32 i=0;	i<Successes.GetSize() && i<Successes.GetSize();	i++ )
+	{
+		bool ShouldSucceed = (i < ExpectedCount);
+		if ( Successes[i] != ShouldSucceed )
+		{
+			TDebugString Debug_String;
+			Debug_String << "Expected success " << TLString::GetTrueFalse(ShouldSucceed) << ", was " << TLString::GetTrueFalse(Successes[i]) << " for extracting element " << i << "/" << ExpectedCount << " (\"" << String << "\")";
+			TLDebug_Print( Debug_String );
+			Result = false;
+		}
+	}
+
+	
+	//	now test the extracted integers
+	for ( u32 i=0;	i<ExpectedResults.GetSize();	i++ )
+	{
+		INTEGERTYPE ExpectedResult = ExpectedResults[i];
+		
+		//	compare index i of the integer pairing indexes
+		if ( i < 1 )
+			if ( OneInt != ExpectedResult )
+				Result = false;
+
+		if ( i < TwoInt.GetSize() )
+			if ( TwoInt[i] != ExpectedResult )
+				Result = false;
+		
+		if ( i < ThreeInt.GetSize() )
+			if ( ThreeInt[i] != ExpectedResult )
+				Result = false;
+		
+		if ( i < FourInt.GetSize() )
+			if ( FourInt[i] != ExpectedResult )
+				Result = false;
+	}
+*/
+	//	test extracting an array
+	THeapArray<s32> ArrayInt;
+	bool ShouldSucceed = (ExpectedResults.GetSize() > 0);
+	if ( String.GetIntegers( ArrayInt ) != ShouldSucceed )
+	{
+		TDebugString Debug_String;
+		Debug_String << "Wrong success, was " << TLString::GetTrueFalse(!ShouldSucceed) << ", not " << TLString::GetTrueFalse(ShouldSucceed) << " (\"" << String << "\")";
+		TLDebug_Print( Debug_String );
+		Result = false;
+	}
+	
+	//	extracted wrong count
+	if ( ArrayInt.GetSize() != ExpectedResults.GetSize() )
+	{
+		TDebugString Debug_String;
+		Debug_String << "Extracted " << ArrayInt.GetSize() << " results, not " << ExpectedResults.GetSize() << " (\"" << String << "\")";
+		TLDebug_Print( Debug_String );
+		Result = false;
+	}
+	
+	//	compare the extracts
+	for ( u32 i=0;	i<ExpectedResults.GetSize();	i++ )
+	{
+		if ( ArrayInt[i] != ExpectedResults[i] )
+		{
+			TDebugString Debug_String;
+			Debug_String << "Extraction " << i << " is " << ArrayInt[i] << ", not " << ExpectedResults[i] << " (\"" << String << "\")";
+			TLDebug_Print( Debug_String );
+			Result = false;
+		}
+	}
+	
+	//	return result
+	return Result;
+}
+
+
+TEST(StringTest)
+{
+	TString String;
+	CHECK( String.GetLength() == 0 );
+	String.Append("Test");
+	CHECK( String == "Test" );
+	CHECK( String == TString("Test") );
+	CHECK( String == TTempString("Test") );
+	CHECK( String != "Wrong" );
+	CHECK( String.GetLength() == 4 );
+	CHECK( String.GetLastCharIndex('T') == 0 );
+	CHECK( String.GetCharExists('e') );
+	CHECK( String.GetCharIndex('s') == 2 );
+
+	//	check integer extraction
+	String = "1";
+	s32 Integer = 0;
+	bool IsPositive = false;
+	CHECK( String.GetInteger(Integer, &IsPositive ) );
+	CHECK( Integer == 1 );
+	CHECK( IsPositive == true );
+	
+	//	check negative integer extraction
+	String = "-456";
+	CHECK( String.GetInteger(Integer, &IsPositive ) );
+	CHECK( Integer == -456 );
+	CHECK( IsPositive == false );
+
+	//	make sure -0 returns a negative (required for extracting a float like -0.1f)
+	String = "-0";
+	CHECK( String.GetInteger(Integer, &IsPositive ) );
+	CHECK( Integer == 0 );
+	CHECK( IsPositive == false );
+
+	//	test extraction of multiple values
+	TFixedArray<s32,5> StringValues;
+	StringValues << 1;
+	CHECK( TLString::TLTest::Debug_TestIntegerExtraction( String, "1", StringValues ) );
+	
+	StringValues << 2;
+	CHECK( TLString::TLTest::Debug_TestIntegerExtraction( String, "1,2", StringValues ) );
+	
+	StringValues << 3;
+	CHECK( TLString::TLTest::Debug_TestIntegerExtraction( String, "1,2,3", StringValues ) );
+	
+	StringValues << 4;
+	CHECK( TLString::TLTest::Debug_TestIntegerExtraction( String, "1,2,3,4", StringValues ) );
+	
+	StringValues << 5;
+	CHECK( TLString::TLTest::Debug_TestIntegerExtraction( String, "1,2,3,4,5", StringValues ) );
+}
+
+
+
 
 //	gr: todo; remove/deprecate use of Appendf, but first, we need to replace the float->string append function
 //		either using ftoa() or our own implementation.

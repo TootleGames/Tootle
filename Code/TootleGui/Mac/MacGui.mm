@@ -120,6 +120,20 @@ void TLGui::Platform::GetDesktopSize(Type4<s32>& DesktopSize)
 //---------------------------------------------------
 int main(int argc, char *argv[])
 {
+	//	handle command line
+	int Result = 0;
+	TStringLowercase<TTempString> Params;
+	for ( u32 i=1;	i<argc;	i++ )
+	{
+		const char* pParamString = argv[1];
+		if ( i>1 )
+			Params << " ";
+		Params << pParamString;
+	}
+	if ( TLGui::OnCommandLine( Params, Result ) )
+		return Result;
+	
+	
 	//	get the root directory that the app is in
 	NSString *HomeDir = NSHomeDirectory();
 	TTempString HomeDirString;

@@ -41,11 +41,9 @@
 	//#define ENABLE_DEBUG_TRACE
 #endif
 
-//	gr: todo: turn this into a game/engine option or something
-//	gr: I've enabled this for mac because my mac is fast enough to run with it
-//		maybe we need a user.h with a #define USER GRAHAM kinda thing 
+
 //	enable this define to enable array/float/limit checks
-#if defined(_DEBUG) && defined(TL_TARGET_MAC)
+#if defined(_DEBUG) && defined(TL_USER_GRAHAM)
 	#define DEBUG_CHECK_INDEXES
 	#define DEBUG_CHECK_VALUES
 #endif
@@ -135,7 +133,7 @@ namespace TLDebug
 	void				Print(const TString& String,const char* pSourceFunction);							//	print to console
 	FORCEINLINE void	Print(const TString& String)														{	Print( String, NULL );	}
 	
-	FORCEINLINE Bool	NoBreak()		{}
+	FORCEINLINE Bool	NoBreak()		{	return false;	}
 		
 	FORCEINLINE void	FlushBuffer()	{	Platform::FlushBuffer(); }
 	

@@ -10,7 +10,9 @@
 //			a.xcconfig	DEFINES = XXX
 //			b.xcconfig	DEFINES = $(DEFINES) YYY (b includes a)
 //			DEFINES is YYY (not XXX YYY)
-TOOTLE_DEFINITIONS = 
+//	define a user, in xcode this is TL_USER_graham. On the PC its the computer name (eg. TL_USER_Zoidberg)
+//	as these aren't consistent enough in TLCore.h there are some #if's to convert into more generic names (eg. TL_USER_GRAHAM) for user-specific debug etc
+TOOTLE_DEFINITIONS = TL_USER_$(INSTALL_OWNER)
 TOOTLE_LDFLAGS =
 TOOTLE_CPLUSPLUSFLAGS = 
 

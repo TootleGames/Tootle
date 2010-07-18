@@ -39,6 +39,11 @@
 #endif
 */
 
+//	convert some automated build defines into more tangible ones
+#if defined(TL_USER_graham) || defined(TL_USER_zoidberg)
+#define TL_USER_GRAHAM
+#endif
+
 
 //	compile time assert (FALSE will fail to compile)
 #define TLCompileAssertWithVar(predicate,Var)	typedef char Var[2*((predicate)!=0)-1];

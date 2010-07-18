@@ -23,6 +23,7 @@ namespace TLString
 	Bool		SetCharUppercase(TChar& Char);			//	change this char to be upper case
 	s32			GetCharInteger(const TChar& Char);
 	s32			GetCharHexInteger(const TChar& Char);
+	FORCEINLINE const char*	GetTrueFalse(bool Boolean)			{	return Boolean ? "True" : "False";	}
 
 	template<typename TOCHAR,typename FROMCHAR>
 	inline TOCHAR	GetChar(const FROMCHAR& FromChar)	{	return (TOCHAR)FromChar;	}
@@ -246,7 +247,8 @@ public:
 	//		so could be initialised with non-lowercase strings
 	TStringLowercase()														{	}
 	TStringLowercase(const TString& String)									{	BASESTRINGTYPE::Append( String );	}		
-	TStringLowercase(const TChar* pString)								{	BASESTRINGTYPE::Append( pString );	}
+	TStringLowercase(const TChar8* pString)									{	BASESTRINGTYPE::Append( pString );	}
+	TStringLowercase(const TChar16* pString)								{	BASESTRINGTYPE::Append( pString );	}
 
 	virtual TChar				GetLowercaseCharAt(u32 Index) const				{	return BASESTRINGTYPE::GetCharAt( Index );	}
 

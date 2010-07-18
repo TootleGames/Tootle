@@ -90,6 +90,11 @@
 		84C8D7F810972DF500E3D0F8 /* TTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C8D7F710972DF500E3D0F8 /* TTransform.h */; };
 		84D9C02B1098A5FE000042D8 /* TPointerArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 84D9C02A1098A5FE000042D8 /* TPointerArray.h */; };
 		84D9C16110999C86000042D8 /* TArrayAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 84D9C16010999C86000042D8 /* TArrayAllocator.h */; };
+		BFD9C9E411F3289900FB908A /* TLUnitTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFD9C9DF11F3289900FB908A /* TLUnitTest.cpp */; };
+		BFD9C9E511F3289900FB908A /* TLUnitTest.h in Headers */ = {isa = PBXBuildFile; fileRef = BFD9C9E011F3289900FB908A /* TLUnitTest.h */; };
+		BFD9C9E611F3289900FB908A /* TSmallObjectAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFD9C9E111F3289900FB908A /* TSmallObjectAllocator.cpp */; };
+		BFD9C9E711F3289900FB908A /* TSmallObjectAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = BFD9C9E211F3289900FB908A /* TSmallObjectAllocator.h */; };
+		BFD9C9E811F3289900FB908A /* TSmallObject.h in Headers */ = {isa = PBXBuildFile; fileRef = BFD9C9E311F3289900FB908A /* TSmallObject.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -211,6 +216,11 @@
 		BF89CB6C11099696009C2101 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF8ACB001125511D0087FAEC /* LibDebug_wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug_wx.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug_wx.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF8ACB011125511D0087FAEC /* LibRelease_wx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease_wx.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease_wx.xcconfig; sourceTree = SOURCE_ROOT; };
+		BFD9C9DF11F3289900FB908A /* TLUnitTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLUnitTest.cpp; path = ../TLUnitTest.cpp; sourceTree = SOURCE_ROOT; };
+		BFD9C9E011F3289900FB908A /* TLUnitTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLUnitTest.h; path = ../TLUnitTest.h; sourceTree = SOURCE_ROOT; };
+		BFD9C9E111F3289900FB908A /* TSmallObjectAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSmallObjectAllocator.cpp; path = ../TSmallObjectAllocator.cpp; sourceTree = SOURCE_ROOT; };
+		BFD9C9E211F3289900FB908A /* TSmallObjectAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSmallObjectAllocator.h; path = ../TSmallObjectAllocator.h; sourceTree = SOURCE_ROOT; };
+		BFD9C9E311F3289900FB908A /* TSmallObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSmallObject.h; path = ../TSmallObject.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -274,6 +284,11 @@
 		8418F0870F4DB86300B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				BFD9C9DF11F3289900FB908A /* TLUnitTest.cpp */,
+				BFD9C9E011F3289900FB908A /* TLUnitTest.h */,
+				BFD9C9E111F3289900FB908A /* TSmallObjectAllocator.cpp */,
+				BFD9C9E211F3289900FB908A /* TSmallObjectAllocator.h */,
+				BFD9C9E311F3289900FB908A /* TSmallObject.h */,
 				840A918910D7D36C00F8960C /* IPod Source Files */,
 				84C7FE1D10D0465F00782138 /* PC Soure Files */,
 				8418F15C0F4DB9AC00B956C9 /* Mac Source Files */,
@@ -465,6 +480,9 @@
 				845EC6EE1190619500362CA4 /* MacMaths.h in Headers */,
 				84477C30119EAEFD0094CB73 /* MacRandom.h in Headers */,
 				84477CC8119EC9C80094CB73 /* TRandomManager.h in Headers */,
+				BFD9C9E511F3289900FB908A /* TLUnitTest.h in Headers */,
+				BFD9C9E711F3289900FB908A /* TSmallObjectAllocator.h in Headers */,
+				BFD9C9E811F3289900FB908A /* TSmallObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -540,6 +558,8 @@
 				845EC665118F6A1700362CA4 /* TMatrix.cpp in Sources */,
 				845EC669118F6A2900362CA4 /* TQuaternion.cpp in Sources */,
 				84477CCA119ECA6E0094CB73 /* TRandomManager.cpp in Sources */,
+				BFD9C9E411F3289900FB908A /* TLUnitTest.cpp in Sources */,
+				BFD9C9E611F3289900FB908A /* TSmallObjectAllocator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

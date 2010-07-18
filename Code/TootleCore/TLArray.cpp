@@ -3,7 +3,7 @@
 #include "TString.h"
 #include "TLUnitTest.h"
 
-TEST(TLArray_FixedSize)
+TEST(TLArray_FixedArray)
 {
 	TFixedArray<u8,1> a;
 	CHECK( a.GetSize() == 0 );		//	initial fixed array should have no size
@@ -12,6 +12,34 @@ TEST(TLArray_FixedSize)
 	CHECK( a.Add( 1u ) == -1 );		//	and becuase the buffer size is 1, we should fail to add another
 	CHECK( a.Exists( (u8)123 ) );	//	should be able to find that initial value
 	CHECK( a.Exists( a[0] ) );		//	should be able to find that initial value
+}
+
+
+TEST(TLArray_HeapArray)
+{
+	THeapArray<u8> a;
+	CHECK( a.GetSize() == 0 );		//	initial array should have no size
+
+	CHECK( a.Add( (u8)12 ) == 0 );
+	CHECK( a.FindIndex( a[0] ) == 0 );
+	CHECK( a.GetSize() == 1 );
+	CHECK( a.GetData() != NULL );
+
+	CHECK( a.Add( (u8)34 ) == 1 );
+	CHECK( a.Exists( a[1] ) == 1 );
+	CHECK( a.GetSize() == 2 );
+	CHECK( a.GetData() != NULL );
+
+	THeapArray<u8> b;
+	b.Copy(a);
+	CHECK( a.GetSize() == b.GetSize() );
+	CHECK( b.GetData() != NULL );
+	CHECK( a.GetData() != b.GetData() );
+
+	//	b = a;		//	<--- failing test! not copying properly!
+	CHECK( a.GetSize() == b.GetSize() );
+	CHECK( b.GetData() != NULL );
+	CHECK( a.GetData() != b.GetData() );
 }
 
 

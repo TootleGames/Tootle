@@ -81,7 +81,9 @@ bool TLGui::OnCommandLine(const TString& CommandLine,int& Result)
 	//	process UnitTest++ if "UnitTest" is on the command line
 	if ( CommandLine == "UnitTest" )
 	{
-		Result = TLUnitTest::RunAllTests();
+		//	if the tests aren't supported, return no error, but exit
+		if ( !TLUnitTest::RunAllTests( Result ) )
+			Result = 0;
 		return true;
 	}
 
