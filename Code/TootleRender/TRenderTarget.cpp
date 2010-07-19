@@ -7,6 +7,9 @@
 //	this kinda code will move to the rasteriser (as will these includes)
 #include PLATFORMHEADER(Render.h)
 
+#if defined(TL_USER_GRAHAM)
+	#define VERIFY_MESH_BEFORE_DRAW
+#endif
 
 //#define DEBUG_RENDER_DATUMS_IN_WORLD	//	if not defined, renders datums in local space which is faster (in world space will show up transform multiplication errors)
 #define DEBUG_RENDER_ALL_DATUMS			FALSE
@@ -975,6 +978,12 @@ void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRende
 //-------------------------------------------------------------
 void TLRender::TRenderTarget::DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset::TTexture* pTexture,TRenderNode& RenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags,Bool HasAlpha)
 {
+	//	don't draw invalid meshes
+#if defined(VERIFY_MESH_BEFORE_DRAW)
+	if ( !Mesh.Debug_Verify() )
+		return;
+#endif
+	
 	const TArray<float3>& Vertexes = Mesh.GetVertexes();
 
 	//	pre-render shaders/effects

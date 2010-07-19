@@ -138,7 +138,8 @@ public:
 
 	FORCEINLINE TArrayType&	operator=(const TArray<TYPE>& Array)			{	Copy( Array );		return *this;	}
 	FORCEINLINE Bool		operator<(const TArray<TYPE>& Array) const		{	return FALSE;	}
-	FORCEINLINE Bool		operator==(const TArray<TYPE>& Array) const		{	return (this == &Array);	}
+	FORCEINLINE bool		operator==(const TArray<TYPE>& Array) const;
+	FORCEINLINE bool		operator!=(const TArray<TYPE>& Array) const;
 
 public:	//	gr: temporarily exposed for the sort policies
 	void								ShiftArray(u32 From, s32 Amount );			//	move blocks of data in the array
@@ -185,7 +186,7 @@ public:
 		m_Size	( 0 ),
 		m_Alloc	( 0 )
 	{
-		TArray<TYPE>::Copy( Array );
+		TSuper::Copy( Array );
 	}
 	
 	virtual ~THeapArray()		
@@ -243,8 +244,8 @@ bool THeapArray<TYPE,GROWBY,SORTPOLICY>::SetAllocSize(u32 NewSize)
 	//	pad out new alloc size
 	u32 NewAlloc = NewSize + GROWBY - (NewSize % GROWBY);
 	
-	//	no change in allocation
-	if ( NewSize == m_Alloc )
+	//	no need to change allocation
+	if ( NewSize <= m_Alloc )
 		return true;
 	
 	//	save off the old data
@@ -260,7 +261,7 @@ bool THeapArray<TYPE,GROWBY,SORTPOLICY>::SetAllocSize(u32 NewSize)
 		return false;
 	}
 	
-	//	update alloc amount
+	//	update alloc info
 	m_pData = pNewData;
 	m_Alloc = NewAlloc;
 	
@@ -271,6 +272,7 @@ bool THeapArray<TYPE,GROWBY,SORTPOLICY>::SetAllocSize(u32 NewSize)
 	//	copy old elements
 	if ( pOldData )
 	{
+		//	copy as many of the old items as possible
 		u32 CopySize = m_Size;
 		if ( NewAlloc < CopySize )
 			CopySize = NewAlloc;

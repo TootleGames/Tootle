@@ -40,8 +40,8 @@ public:
 	}
 
 	virtual u32			GetSize() const						{	return m_Size;	}
-	virtual TYPE*		GetData()							{	return &m_Data[0];	}
-	virtual const TYPE*	GetData() const						{	return &m_Data[0];	}
+	virtual TYPE*		GetData()							{	return m_Size ? &m_Data[0] : NULL;	}
+	virtual const TYPE*	GetData() const						{	return m_Size ? &m_Data[0] : NULL;	}
 	virtual bool		SetAllocSize(u32 NewSize)			{	return NewSize <= SIZE;	}
 	virtual u32			GetAllocSize()	const				{	return SIZE;	}
 	virtual u32			GetMaxAllocSize() const				{	return SIZE;	}	//	gr: should be the min of this and the base version, but I presume we'll never have a fixed array with 2147483647 elements...

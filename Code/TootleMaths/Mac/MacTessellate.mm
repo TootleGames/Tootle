@@ -102,6 +102,10 @@ Bool TLMaths::TGlutTessellator::GenerateTessellations(TLMaths::TLTessellator::TW
 		return FALSE;
 	}
 	
+	//	abort early if the mesh is corrupted before we start
+	if ( !m_pMesh->Debug_Verify() )
+		return false;
+	
 	GLUtesselator* tobj = gluNewTess();
 	
 	gluTessCallback(tobj, GLU_TESS_BEGIN_DATA,		(GLUTesselatorFunction)ftglBegin);
@@ -161,6 +165,10 @@ Bool TLMaths::TGlutTessellator::GenerateTessellations(TLMaths::TLTessellator::TW
 	
     gluTessEndPolygon(tobj);
     gluDeleteTess(tobj);
+	
+	//	verify the tesselator hasn't corrupted our mesh
+	if ( !m_pMesh->Debug_Verify() )
+		return false;
 	
 	return TRUE;
 }

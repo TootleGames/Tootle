@@ -703,3 +703,66 @@ FORCEINLINE void TArray<TYPE>::FunctionAllAsParam(FUNCTIONPOINTER pFunc)
 		(*pFunc)( Element );
 	}
 }
+
+
+template<typename TYPE>
+FORCEINLINE bool TArray<TYPE>::operator==(const TArray<TYPE>& Array) const
+{
+	//	simple fast check in case we're comparing the same objects
+	if ( this == &Array )
+		return true;
+
+	u32 Size = GetSize();
+	
+	//	different sizes
+	if ( Size != Array.GetSize() )
+		return false;
+	
+	//	make sure all elements match
+	for ( u32 i=0;	i<Size;	i++ )
+	{
+		const TYPE& a = this->ElementAtConst(i);
+		const TYPE& b = Array.ElementAtConst(i);
+		
+		if ( a == b )
+			continue;
+		
+		//	elements are different
+		return false;
+	}
+	
+	//	all elements and size matched
+	return true;
+}
+
+
+template<typename TYPE>
+FORCEINLINE bool TArray<TYPE>::operator!=(const TArray<TYPE>& Array) const
+{
+	//	simple fast check in case we're comparing the same objects
+	if ( this == &Array )
+		return false;
+	
+	u32 Size = GetSize();
+	
+	//	different sizes
+	if ( Size != Array.GetSize() )
+		return true;
+	
+	//	make sure all elements match
+	for ( u32 i=0;	i<Size;	i++ )
+	{
+		const TYPE& a = this->ElementAtConst(i);
+		const TYPE& b = Array.ElementAtConst(i);
+		
+		if ( a == b )
+			continue;
+
+		//	elements are different
+		return true;
+	}
+	
+	//	all elements and size matched
+	return false;
+}
+

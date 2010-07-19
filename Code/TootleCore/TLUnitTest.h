@@ -22,7 +22,7 @@
 	#include <UnitTest++/src/UnitTest++.h>
 #else
 	//	for platforms that don't support unit tests, provide stub macros
-	#define TEST(TestName)		void TestName()
+	#define TEST(TestName)		void TLUnitTest_#TestName()
 	#define CHECK(x)
 #endif
 

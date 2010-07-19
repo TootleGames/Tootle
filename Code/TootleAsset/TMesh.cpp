@@ -5,8 +5,8 @@
 #include <TootleMaths/TShapeBox.h>
 #include <TootleMaths/TShapePolygon.h>
 
-#ifdef _DEBUG
-//#define DEBUG_CHECK_PRIMITIVES
+#ifdef DEBUG_CHECK_INDEXES
+	#define DEBUG_CHECK_PRIMITIVES
 #endif
 
 #define LINE_PADDING_HALF			(1.f)
@@ -1459,47 +1459,7 @@ void TLAsset::TMesh::ColoursMult(const TColour& MultColour)
 //--------------------------------------------------------
 void TLAsset::TMesh::OnPrimitivesChanged()
 {
-#ifdef DEBUG_CHECK_PRIMITIVES
-	u32 VertexCount = m_Vertexes.GetSize();
-	u32 i;
-
-	//	remove and correct polygons using this index
-	for ( i=0;	i<m_Triangles.GetSize();	i++ )
-	{
-		Triangle& t = m_Triangles[i];
-		TLDebug_CheckIndex( t.x, VertexCount );
-		TLDebug_CheckIndex( t.y, VertexCount );
-		TLDebug_CheckIndex( t.z, VertexCount );
-	}
-
-	for ( i=0;	i<m_Tristrips.GetSize();	i++ )
-	{
-		Tristrip& Polygon = m_Tristrips[i];
-		for ( u32 n=0;	n<Polygon.GetSize();	n++ )
-		{
-			TLDebug_CheckIndex( Polygon[n], VertexCount );
-		}
-	}
-
-	for ( i=0;	i<m_Trifans.GetSize();	i++ )
-	{
-		Trifan& Polygon = m_Trifans[i];
-		for ( u32 n=0;	n<Polygon.GetSize();	n++ )
-		{
-			TLDebug_CheckIndex( Polygon[n], VertexCount );
-		}
-	}
-	
-	for ( i=0;	i<m_Lines.GetSize();	i++ )
-	{
-		Line& Polygon = m_Lines[i];
-		for ( u32 n=0;	n<Polygon.GetSize();	n++ )
-		{
-			TLDebug_CheckIndex( Polygon[n], VertexCount );
-		}
-	}
-	
-#endif
+	Debug_Verify();
 }
 
 
@@ -1900,4 +1860,94 @@ void TLAsset::TMesh::CalcProjectionUVs()
 	}
 
 
+}
+
+
+//-------------------------------------------------
+//	verify the mesh is valid and has no corruption with indexes etc
+//-------------------------------------------------
+bool TLAsset::TMesh::Debug_Verify() const
+{
+	//	if it's empty there's nothing to verify
+	if ( IsEmpty() )
+		return true;
+	
+	bool Result = true;
+	
+	//	verify there are a correct number of colours, uv's, etc for the number of vertexes
+	u32 VertexCount = GetVertexCount();
+	if ( m_Colours.GetSize() != 0 && m_Colours.GetSize() < VertexCount )
+	{
+		TLDebug_Break("Colour vertex array is too small");
+		Result = false;
+	}
+	
+	if ( m_Colours24.GetSize() != 0 && m_Colours24.GetSize() < VertexCount )
+	{
+		TLDebug_Break("Colour24 vertex array is too small");
+		Result = false;
+	}
+	
+	if ( m_Colours32.GetSize() != 0 && m_Colours32.GetSize() < VertexCount )
+	{
+		TLDebug_Break("Colour32 vertex array is too small");
+		Result = false;
+	}
+	
+	if ( m_Colours64.GetSize() != 0 && m_Colours64.GetSize() < VertexCount )
+	{
+		TLDebug_Break("Colour64 vertex array is too small");
+		Result = false;
+	}
+	
+	if ( m_UVs.GetSize() != 0 && m_UVs.GetSize() < VertexCount )
+	{
+		TLDebug_Break("UV vertex array is too small");
+		Result = false;
+	}
+
+	//	verify the primitives aren't accessing vertexes out of range
+	#if defined(DEBUG_CHECK_PRIMITIVES)
+	{
+		u32 i;
+
+		//	remove and correct polygons using this index
+		for ( i=0;	i<m_Triangles.GetSize();	i++ )
+		{
+			const Triangle& t = m_Triangles[i];
+			Result &= TLDebug_CheckIndex( t.x, VertexCount );
+			Result &= TLDebug_CheckIndex( t.y, VertexCount );
+			Result &= TLDebug_CheckIndex( t.z, VertexCount );
+		}
+
+		for ( i=0;	i<m_Tristrips.GetSize();	i++ )
+		{
+			const Tristrip& Polygon = m_Tristrips[i];
+			for ( u32 n=0;	n<Polygon.GetSize();	n++ )
+			{
+				Result &= TLDebug_CheckIndex( Polygon[n], VertexCount );
+			}
+		}
+		
+		for ( i=0;	i<m_Trifans.GetSize();	i++ )
+		{
+			const Trifan& Polygon = m_Trifans[i];
+			for ( u32 n=0;	n<Polygon.GetSize();	n++ )
+			{
+				Result &= TLDebug_CheckIndex( Polygon[n], VertexCount );
+			}
+		}
+
+		for ( i=0;	i<m_Lines.GetSize();	i++ )
+		{
+			const Line& Polygon = m_Lines[i];
+			for ( u32 n=0;	n<Polygon.GetSize();	n++ )
+			{
+				Result &= TLDebug_CheckIndex( Polygon[n], VertexCount );
+			}
+		}
+	}
+	#endif
+		
+	return Result;
 }

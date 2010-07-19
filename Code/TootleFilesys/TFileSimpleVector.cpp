@@ -152,6 +152,10 @@ Bool TLFileSys::TFileSimpleVector::ImportMesh(TPtr<TLAsset::TMesh>& pMesh,TXmlTa
 
 		if ( !ImportMesh( pMesh, ChildTag ) )
 			return FALSE;
+		
+		//	verify mesh
+		if ( !pMesh->Debug_Verify() )
+			return false;
 
 		//	restore z
 		//m_SvgPointMove.z = OldZ;
@@ -249,7 +253,7 @@ Bool TLFileSys::TFileSimpleVector::ImportPolygonTag(TPtr<TLAsset::TMesh>& pMesh,
 		
 	if ( !pTessellator->GenerateTessellations( TLMaths::TLTessellator::WindingMode_Odd ) )
 		return FALSE;
-
+	
 	return TRUE;
 }
 
@@ -579,7 +583,7 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 	}
 	
 	//	create geometry
-	
+
 	//	get style
 	Style TagStyle( Tag.GetProperty("style") );
 
@@ -590,10 +594,14 @@ Bool TLFileSys::TFileSimpleVector::ImportPathTag(TPtr<TLAsset::TMesh>& pMesh,TXm
 		TLMaths::TTessellator* pTessellator = TLMaths::Platform::CreateTessellator( pMesh );
 		if ( pTessellator )
 		{
-			for ( u32 c=0;	c<Contours.GetSize();	c++ )
+			u32 ContourCount = Contours.GetSize();
+			if ( ContourCount > 1 )
+				ContourCount = 1;
+			for ( u32 c=0;	c<ContourCount;	c++ )
 			{
 				pTessellator->AddContour( Contours[c] );
 			}
+
 			pTessellator->SetVertexColour( m_VertexColoursEnabled ? &TagStyle.m_FillColour : NULL );
 			pTessellator->GenerateTessellations( TLMaths::TLTessellator::WindingMode_Odd );
 		}

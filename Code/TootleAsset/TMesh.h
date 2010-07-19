@@ -234,6 +234,8 @@ public:
 	void								OnVertexesChanged()					{	SetBoundsInvalid();	}
 	void								OnPrimitivesChanged();				//	just a check to make sure the integrety of all the polygons indexes are valid
 
+	bool								Debug_Verify() const;				//	verify the mesh is valid and has no corruption with indexes etc
+	
 protected:
 	virtual SyncBool		ImportData(TBinaryTree& Data);		//	load asset data out binary data
 	virtual SyncBool		ExportData(TBinaryTree& Data);		//	save asset data to binary data
