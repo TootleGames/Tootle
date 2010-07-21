@@ -197,7 +197,7 @@ TEST(TLArray_HeapArray)
 	CHECK( a.GetData() != NULL );
 	CHECK( TLArray::TLTest::Debug_Verify( a ) );
 
-	TFixedArray<u8,100> b;
+	THeapArray<u8> b;
 	CHECK( TLArray::TLTest::Debug_Verify( b ) );
 
 	//	check the "copy" func
@@ -208,7 +208,7 @@ TEST(TLArray_HeapArray)
 
 	//	check the = operator does the same as the Copy()
 	b = a;
-//	CHECK( TLArray::TLTest::Debug_Compare( a, b ) );
+	CHECK( TLArray::TLTest::Debug_Compare( a, b ) );
 /*
 	THeapArray<u8> c( a );
 	CHECK( TLArray::TLTest::Debug_Compare( a, c ) );
