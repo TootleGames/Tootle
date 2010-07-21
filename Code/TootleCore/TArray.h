@@ -181,7 +181,7 @@ public:
 		m_Alloc	( 0 )
 	{
 	}
-	THeapArray(const TArray<TYPE>& Array) :
+	explicit THeapArray(const TArray<TYPE>& Array) :
 		m_pData	( NULL ),
 		m_Size	( 0 ),
 		m_Alloc	( 0 )
@@ -209,6 +209,7 @@ public:
 	virtual u32			GetAllocSize() const	{	return m_Alloc;	}
 
 	FORCEINLINE TThis&	operator=(const TArray<TYPE>& Array)	{	TSuper::Copy( Array );		return *this;	}
+	FORCEINLINE TThis&	operator=(const TThis& Array)			{	TSuper::Copy( Array );		return *this;	}
 	
 protected:
 	virtual void		DoSetSize(u32 Size) {	m_Size = Size;	}
