@@ -21,6 +21,7 @@
 			OutputDirectory="$(ProjectDir)..\..\Lib\"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
+			InheritedPropertySheets="..\..\BuildConfigurations\PC\PC.vsprops;..\..\BuildConfigurations\PC\PCLibDebug.vsprops"
 			CharacterSet="0"
 			>
 			<Tool
@@ -43,7 +44,6 @@
 				Optimization="0"
 				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="$(ProjectDir)..\..\"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;TL_TARGET_PC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -86,6 +86,7 @@
 			OutputDirectory="$(ProjectDir)..\..\Lib\"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
+			InheritedPropertySheets="..\..\BuildConfigurations\PC\PC.vsprops;..\..\BuildConfigurations\PC\PCLibRelease.vsprops"
 			CharacterSet="0"
 			WholeProgramOptimization="1"
 			>
@@ -151,6 +152,7 @@
 			OutputDirectory="$(ProjectDir)..\..\Lib\"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
+			InheritedPropertySheets="..\..\BuildConfigurations\PC\PC.vsprops;..\..\BuildConfigurations\PC\PCLibRelease.vsprops"
 			CharacterSet="0"
 			WholeProgramOptimization="1"
 			>

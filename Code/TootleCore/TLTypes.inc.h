@@ -7,9 +7,9 @@
 namespace TLMaths
 {
 	//	gr: forward declarations so we don't need to include
-	float		Cosf(float RadAng);
-	float		Sinf(float RadAng);
-	float		Sqrtf(float);
+	extern float		Cosf(float RadAng);
+	extern float		Sinf(float RadAng);
+	extern float		Sqrtf(float);
 }
 
 //	forward declarations

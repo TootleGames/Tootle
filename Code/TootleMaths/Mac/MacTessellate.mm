@@ -215,23 +215,29 @@ void TLMaths::TGlutTessellator::FinishPoly()
 		case GL_TRIANGLES:
 		{
 			//	new triangle
+			m_pMesh->Debug_Verify();
 			m_pMesh->GenerateTriangle( m_CurrentPolyIndexes[0], m_CurrentPolyIndexes[1], m_CurrentPolyIndexes[2] );
+			m_pMesh->Debug_Verify();
 		}
-			break;
+		break;
 			
 		case GL_QUADS:
 		{
 			//	make up new quad
+			m_pMesh->Debug_Verify();
 			m_pMesh->GenerateQuad( m_CurrentPolyIndexes );
+			m_pMesh->Debug_Verify();
 		}
-			break;
+		break;
 			
 		case GL_TRIANGLE_STRIP:
 		{
 			//	new tri strip
+			m_pMesh->Debug_Verify();
 			m_pMesh->GenerateTristrip( m_CurrentPolyIndexes );
+			m_pMesh->Debug_Verify();
 		}
-			break;
+		break;
 			
 		case GL_POLYGON:
 		{
@@ -244,15 +250,21 @@ void TLMaths::TGlutTessellator::FinishPoly()
 			 pPolygon->Add( m_CurrentPolyIndexes[p] );
 			 */
 		}
-			break;
+		break;
 			
 		case GL_TRIANGLE_FAN:
 		{
 			//	new polygon
 			//	gr: todo: change to mesh function so we can degenerate small triangle fans
+			if ( m_pMesh->GetTrifans().GetSize() == m_pMesh->GetTrifans().GetAllocSize() )
+			{
+				TLDebug_Print("about to realloc");
+			}
 			TLAsset::TMesh::Trifan* pTrifan = m_pMesh->GetTrifans().AddNew();
+			m_pMesh->Debug_Verify();
 			for( u32 p=0;	p<m_CurrentPolyIndexes.GetSize();	p++ )
 				pTrifan->Add( m_CurrentPolyIndexes[p] );
+			m_pMesh->Debug_Verify();
 		}
 		break;
 

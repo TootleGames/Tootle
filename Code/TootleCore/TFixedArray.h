@@ -23,7 +23,7 @@ public:
 	{
 	}
 
-	TFixedArray(const TArray<TYPE>& Array) :
+	explicit TFixedArray(const TArray<TYPE>& Array) :
 		m_Size	( 0 )
 	{
 		Copy(Array);
@@ -47,6 +47,7 @@ public:
 	virtual u32			GetMaxAllocSize() const				{	return SIZE;	}	//	gr: should be the min of this and the base version, but I presume we'll never have a fixed array with 2147483647 elements...
 
 	FORCEINLINE TThis&	operator=(const TArray<TYPE>& Array)	{	Copy( Array );		return *this;	}
+	FORCEINLINE TThis&	operator=(const TThis& Array)			{	Copy( Array );		return *this;	}
 
 protected:
 	virtual void		DoSetSize(u32 NewSize)				{	m_Size = NewSize;	}

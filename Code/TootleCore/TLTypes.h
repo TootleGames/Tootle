@@ -40,7 +40,7 @@
 */
 
 //	convert some automated build defines into more tangible ones
-#if defined(TL_USER_graham) || defined(TL_USER_zoidberg)
+#if defined(TL_USER_graham) || defined(TL_USER_ZOIDBERG)
 #define TL_USER_GRAHAM
 #endif
 

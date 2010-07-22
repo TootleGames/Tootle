@@ -21,6 +21,7 @@
 			OutputDirectory="$(ProjectDir)..\..\Lib$(ConfigurationName)\"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
+			InheritedPropertySheets="..\..\BuildConfigurations\PC\PC.vsprops;..\..\BuildConfigurations\PC\PCLibDebug.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -84,6 +85,7 @@
 			OutputDirectory="$(ProjectDir)..\..\Lib$(ConfigurationName)\"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
+			InheritedPropertySheets="..\..\BuildConfigurations\PC\PC.vsprops;..\..\BuildConfigurations\PC\PCLibRelease.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="0"
 			>

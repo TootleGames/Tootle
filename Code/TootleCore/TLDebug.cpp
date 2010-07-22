@@ -65,14 +65,6 @@ Bool TLDebug::Break(const char* String,const char* pSourceFunction)
 	return Break( Debug_String, pSourceFunction );
 }
 
-#ifndef ENABLE_DEBUG_TRACE
-
-Bool TLDebug::NoBreak()
-{
-	return FALSE;
-}
-
-#endif
 
 //-------------------------------------------------------
 //	halt! return TRUE to ignore the error and continue
