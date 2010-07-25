@@ -45,7 +45,7 @@ GCC_TREAT_WARNINGS_AS_ERRORS = NO				//	turn this on one day :)
 
 //	gr: turn these on asap
 GCC_WARN_SHADOW = NO							//	warn if a local variable has the same name as a global or another local or a func (risk of ambiguity)
-GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO	//	good-practise warnings (eg. = operator 
+GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO	//	good-practise warnings (eg. = operator and copy constructor for classes with pointers)
 GCC_WARN_SIGN_COMPARE = NO
 GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO			//	maybe a bit OTT to turn this on...
 GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO			//	covered by EFFECTIVE_CPLUSPLUS_VIOLATIONS I think... (this is compilers guess at virtual classes though, so may need to turn this off if it's giving out spurious warnings)

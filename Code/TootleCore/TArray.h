@@ -8,9 +8,9 @@
 #include "TLDebug.h"
 #include "TLRandom.h"
 
-//	enable this to do extensive array verification (most for sorting)
+//	enable this to do extensive array sorting checks at runtime. The sort checks are always done in the unit test
 //	gr: I've only enabled this on the mac as my PC (in VM) is too slow, but my mac is fast enough
-#if defined(_DEBUG) && defined(TL_TARGET_MAC)
+#if defined(_DEBUG) && defined(TL_USER_GR) && defined(TL_TARGET_MAC)
 	#define ARRAY_SORT_CHECK
 #endif
 
@@ -98,7 +98,8 @@ public:
 	s32					InsertAt(u32 Index, const TYPE& val,Bool ForcePosition=FALSE);
 	s32					InsertAt(u32 Index, const TYPE* val, u32 Length, Bool ForcePosition=FALSE);
 	s32					InsertAt(u32 Index, const TArrayType& array, Bool ForcePosition=FALSE)		{	return InsertAt( Index, array.GetData(), array.GetSize(), ForcePosition );	};
-	
+
+	FORCEINLINE bool	IsSorted() const								{	return GetSortPolicy().IsSorted();	}
 	FORCEINLINE void	SetSortOrder(TLArray::TSortOrder::Type Order)	{	GetSortPolicy().SetSortOrder( Order );	}
 	FORCEINLINE void	Sort()											{	GetSortPolicy().Sort( GetData(), GetSize() );	}
 	FORCEINLINE void	SetUnsorted()									{	GetSortPolicy().SetUnsorted();	}
@@ -124,6 +125,8 @@ public:
 	template<typename FUNCTIONPOINTER>
 	FORCEINLINE void				FunctionAllAsParam(FUNCTIONPOINTER pFunc);		//	execute this function for every member as a parameter. Like FunctionAll but can be used with other types of elements.
 
+	bool					Debug_VerifyIsSorted() const;				//	if the array claims to be sorted, ensure it is
+	
 	//	operators
 	FORCEINLINE TYPE&		operator[](s32 Index)						{	return ElementAt(Index);	}
 	FORCEINLINE TYPE&		operator[](u32 Index)						{	return ElementAt(Index);	}
@@ -176,15 +179,25 @@ private:
 	typedef THeapArray<TYPE,GROWBY,SORTPOLICY> TThis;
 public:
 	THeapArray() :
-		m_pData	( NULL ),
-		m_Size	( 0 ),
-		m_Alloc	( 0 )
+		m_pData			( NULL ),
+		m_Size			( 0 ),
+		m_Alloc			( 0 ),
+		m_SortPolicy	()
 	{
 	}
-	explicit THeapArray(const TArray<TYPE>& Array) :
-		m_pData	( NULL ),
-		m_Size	( 0 ),
-		m_Alloc	( 0 )
+	THeapArray(const TThis& Array) :
+		m_pData			( NULL ),
+		m_Size			( 0 ),
+		m_Alloc			( 0 ),
+		m_SortPolicy	()
+	{
+		TSuper::Copy( Array );
+	}
+	THeapArray(const TArray<TYPE>& Array) :
+		m_pData			( NULL ),
+		m_Size			( 0 ),
+		m_Alloc			( 0 ),
+		m_SortPolicy	()
 	{
 		TSuper::Copy( Array );
 	}

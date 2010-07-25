@@ -33,6 +33,10 @@ typedef void (*memcallback)();
 #include "TSmallObjectAllocator.h"
 #endif
 
+//	gr: this cannot be done with _DEBUG in a header as symbols will sometimes be created and sometimes not.
+//	so isntead either, always enable it and disable implementation in source with _DEBUG, or control it with
+//	a different project-consistent flag
+#define ENABLE_MEMORY_DEBUG
 
 namespace TLCore
 {
@@ -111,7 +115,7 @@ public:
 #endif
 
 
-class TLMemory::TMemorySystem
+class TLMemory::TMemorySystem : public TNoCopy
 {
 
 public:
@@ -137,7 +141,7 @@ public:
 	// Custom memory allocation
 	FORCEINLINE void*		Allocate(std::size_t size)
 	{
-#ifdef _DEBUG
+#ifdef ENABLE_MEMORY_DEBUG
 		if(m_prealloc_callback)
 			m_prealloc_callback();
 #endif
@@ -163,7 +167,7 @@ public:
 
 		m_totalAlloc += size;
 
-#ifdef _DEBUG
+#ifdef ENABLE_MEMORY_DEBUG
 		if(m_postalloc_callback)
 			m_postalloc_callback();
 #endif
@@ -192,7 +196,7 @@ public:
 	// Custom memory deallocation
 	FORCEINLINE void	Deallocate(void* pObj)
 	{
-#ifdef _DEBUG
+#ifdef ENABLE_MEMORY_DEBUG
 		if(m_predealloc_callback)
 			m_predealloc_callback();
 #endif
@@ -232,14 +236,14 @@ public:
 		//	delete memory
 		Platform::MemDealloc( pObj );
 		
-#ifdef _DEBUG
+#ifdef ENABLE_MEMORY_DEBUG
 		if(m_postdealloc_callback)
 			m_postdealloc_callback();
 #endif
 	}
 
 	// Memory callback handlers
-#ifdef _DEBUG
+#ifdef ENABLE_MEMORY_DEBUG
 	FORCEINLINE void SetPreAllocCallback(memcallback pCallback)		{ m_prealloc_callback = pCallback; }
 	FORCEINLINE void SetPostAllocCallback(memcallback pCallback)	{ m_postalloc_callback = pCallback; }
 
@@ -281,9 +285,13 @@ private:
 
 private:
 	TMemorySystem();										// Prevent outside creation - can only be accessed via the Instance() routine
-	TMemorySystem(const TMemorySystem&)	{}					// Prevent automatic copy constructor creation
+/*
+	TMemorySystem(const TMemorySystem&) :
+		m_totalAlloc	( 0 )
+	{
+	}					// Prevent automatic copy constructor creation
 	TMemorySystem& operator=(const TMemorySystem&)	{ return *this; }		// Prevent assignment
-	~TMemorySystem();										// Prevent outside destruction - automated by atexit via compiler
+*/	~TMemorySystem();										// Prevent outside destruction - automated by atexit via compiler
 
 	void Initialise();
 	void Shutdown();
@@ -317,7 +325,7 @@ private:
 
 	std::size_t				m_totalAlloc;
 
-#ifdef _DEBUG
+#ifdef ENABLE_MEMORY_DEBUG
 	// Callback function pointers for memory changes
 	// Debug only due to speed implications and for thorough 
 	// inspection of the callstack and variables

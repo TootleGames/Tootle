@@ -19,19 +19,22 @@ private:
 public:
 	//	if using this default constructor, there is no garuntee as to the contents of the array! (depends where it was allocated, stack, memheap, CRT, and what kind of build)
 	TFixedArray() :
-		m_Size	( 0 )
+		m_Size			( 0 ),
+		m_SortPolicy	()
 	{
 	}
 
-	explicit TFixedArray(const TArray<TYPE>& Array) :
-		m_Size	( 0 )
+	TFixedArray(const TArray<TYPE>& Array) :
+		m_Size			( 0 ),
+		m_SortPolicy	()
 	{
 		Copy(Array);
 	}
 
 	//	gr: if you specify an initial size, you also need to specify an initial value
 	TFixedArray(u32 InitialSize,const TYPE& InitialValue) :
-		m_Size	( 0 )
+		m_Size			( 0 ),
+		m_SortPolicy	()
 	{
 		if ( TArray<TYPE>::SetSize( InitialSize ) )
 		{

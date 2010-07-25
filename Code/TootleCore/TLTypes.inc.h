@@ -59,9 +59,9 @@ public:
 		return (y < v.y);
 	}
 
-	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type2<OTHERTYPE>& v);
-	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type3<OTHERTYPE>& v);
-	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type4<OTHERTYPE>& v);
+	template<typename OTHERTYPE> FORCEINLINE Type2<TYPE>&	operator=(const Type2<OTHERTYPE>& v);
+	template<typename OTHERTYPE> FORCEINLINE Type2<TYPE>&	operator=(const Type3<OTHERTYPE>& v);
+	template<typename OTHERTYPE> FORCEINLINE Type2<TYPE>&	operator=(const Type4<OTHERTYPE>& v);
 	
 	FORCEINLINE void		operator+=(const TYPE& v)				{	x += v;		y += v;	};
 	FORCEINLINE void		operator-=(const TYPE& v)				{	x -= v;		y -= v;	};
@@ -153,9 +153,9 @@ public:
 		return (z < v.z);
 	}
 	
-	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type2<OTHERTYPE>& v);
-	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type3<OTHERTYPE>& v);
-	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type4<OTHERTYPE>& v);
+	template<typename OTHERTYPE> FORCEINLINE Type3<TYPE>&	operator=(const Type2<OTHERTYPE>& v);
+	template<typename OTHERTYPE> FORCEINLINE Type3<TYPE>&	operator=(const Type3<OTHERTYPE>& v);
+	template<typename OTHERTYPE> FORCEINLINE Type3<TYPE>&	operator=(const Type4<OTHERTYPE>& v);
 
 	FORCEINLINE void		operator+=(const TYPE v)				{	x += v;		y += v;		z += v;	};
 	FORCEINLINE void		operator-=(const TYPE v)				{	x -= v;		y -= v;		z -= v;	};
@@ -263,9 +263,9 @@ public:
 		return (w < v.w);
 	}
 	
-	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type2<OTHERTYPE>& v);
-	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type3<OTHERTYPE>& v);
-	template<typename OTHERTYPE> FORCEINLINE void		operator=(const Type4<OTHERTYPE>& v);
+	template<typename OTHERTYPE> FORCEINLINE Type4<TYPE>&	operator=(const Type2<OTHERTYPE>& v);
+	template<typename OTHERTYPE> FORCEINLINE Type4<TYPE>&	operator=(const Type3<OTHERTYPE>& v);
+	template<typename OTHERTYPE> FORCEINLINE Type4<TYPE>&	operator=(const Type4<OTHERTYPE>& v);
 
 	FORCEINLINE void			operator+=(const Type4<TYPE>& v)		{	x += v.x;		y += v.y;		z += v.z;		w += v.w;	};
 	FORCEINLINE void			operator-=(const Type4<TYPE>& v)		{	x -= v.x;		y -= v.y;		z -= v.z;		w -= v.w;	};
@@ -523,16 +523,16 @@ FORCEINLINE Bool Type4<TYPE>::HasDifferenceMin(const Type4<TYPE>& Other,const TY
 }
 
 
-template<typename TYPE> template<typename OTHERTYPE> void Type2<TYPE>::operator=(const Type2<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	}
-template<typename TYPE> template<typename OTHERTYPE> void Type2<TYPE>::operator=(const Type3<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	}
-template<typename TYPE> template<typename OTHERTYPE> void Type2<TYPE>::operator=(const Type4<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	}
+template<typename TYPE> template<typename OTHERTYPE> Type2<TYPE>& Type2<TYPE>::operator=(const Type2<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	return *this;	}
+template<typename TYPE> template<typename OTHERTYPE> Type2<TYPE>& Type2<TYPE>::operator=(const Type3<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	return *this;	}
+template<typename TYPE> template<typename OTHERTYPE> Type2<TYPE>& Type2<TYPE>::operator=(const Type4<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	return *this;	}
 
-template<typename TYPE> template<typename OTHERTYPE> void Type3<TYPE>::operator=(const Type2<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	}
-template<typename TYPE> template<typename OTHERTYPE> void Type3<TYPE>::operator=(const Type3<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	z = (TYPE)v.z;	}
-template<typename TYPE> template<typename OTHERTYPE> void Type3<TYPE>::operator=(const Type4<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	z = (TYPE)v.z;	}
+template<typename TYPE> template<typename OTHERTYPE> Type3<TYPE>& Type3<TYPE>::operator=(const Type2<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	return *this;	}
+template<typename TYPE> template<typename OTHERTYPE> Type3<TYPE>& Type3<TYPE>::operator=(const Type3<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	z = (TYPE)v.z;	return *this;	}
+template<typename TYPE> template<typename OTHERTYPE> Type3<TYPE>& Type3<TYPE>::operator=(const Type4<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	z = (TYPE)v.z;	return *this;	}
 
-template<typename TYPE> template<typename OTHERTYPE> void Type4<TYPE>::operator=(const Type2<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	}
-template<typename TYPE> template<typename OTHERTYPE> void Type4<TYPE>::operator=(const Type3<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	z = (TYPE)v.z;	}
-template<typename TYPE> template<typename OTHERTYPE> void Type4<TYPE>::operator=(const Type4<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	z = (TYPE)v.z;	w = (TYPE)v.w;	}
+template<typename TYPE> template<typename OTHERTYPE> Type4<TYPE>& Type4<TYPE>::operator=(const Type2<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	return *this;	}
+template<typename TYPE> template<typename OTHERTYPE> Type4<TYPE>& Type4<TYPE>::operator=(const Type3<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	z = (TYPE)v.z;	return *this;	}
+template<typename TYPE> template<typename OTHERTYPE> Type4<TYPE>& Type4<TYPE>::operator=(const Type4<OTHERTYPE>& v)	{	x = (TYPE)v.x;	y = (TYPE)v.y;	z = (TYPE)v.z;	w = (TYPE)v.w;	return *this;	}
 
 

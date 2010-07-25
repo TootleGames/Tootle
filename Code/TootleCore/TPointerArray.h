@@ -119,8 +119,10 @@ template<typename TYPE>
 class TSortPolicyPointerNone : public TSortPolicy<TYPE*>
 {
 public:
-	virtual TIterator<TYPE*>&	GetIterator(const TIteratorIdent<TYPE*>& IteratorIdent) const		{	return IteratorIdent.GetIterator();	}
-	virtual void				OnAdded(TArray<TYPE*>& Array,u32 FirstIndex,u32 AddedCount)	{	TSortPolicy<TYPE*>::SetUnsorted();	}
+	virtual TIterator<TYPE*>&	GetIterator(const TIteratorIdent<TYPE*>& IteratorIdent) const	{	return IteratorIdent.GetIterator();	}
+	virtual void				OnAdded(TArray<TYPE*>& Array,u32 FirstIndex,u32 AddedCount)		{	TSortPolicy<TYPE*>::SetUnsorted();	}
+
+	virtual bool				Debug_VerifyIsSorted(const TArray<TYPE*>& Array) const			{	return false;	}
 };
 
 
@@ -144,8 +146,9 @@ public:
 
 	virtual void				OnAdded(TArray<TYPE*>& Array,u32 FirstIndex,u32 AddedCount);
 	
+	virtual bool				Debug_VerifyIsSorted(const TArray<TYPE*>& Array) const;
+
 private:
-	void			Debug_VerifyIsSorted(TYPE** ppData,u32 Size) const;	
 	u32				FindInsertPoint(TYPE** pData,u32 Low,u32 High,const TSorter<TYPE*,MATCH>& ValueSorter);
 	void			SetSorted()							{	m_IsSorted = true;	}
 	void			SwapElements(TYPE** ppData,s32 A,s32 B);
@@ -320,7 +323,6 @@ void TSortPolicyPointerSorted<TYPE,MATCH,SORTONINSERT>::Sort(TYPE** ppData,u32 E
 	{
 		QuickSort( ppData, 0, Elements-1 );	
 		SetSorted();
-		Debug_VerifyIsSorted(ppData,Elements);	
 	}
 }
 
@@ -354,7 +356,9 @@ void TSortPolicyPointerSorted<TYPE,MATCH,SORTONINSERT>::OnAdded(TArray<TYPE*>& A
 		if ( AddedCount <= 1 )
 		{
 			SetSorted();
-			Debug_VerifyIsSorted(Array.GetData(),Array.GetSize());
+			#if defined(ARRAY_SORT_CHECK)
+			Debug_VerifyIsSorted( Array );
+			#endif
 		}
 		else
 		{
@@ -437,29 +441,30 @@ void TSortPolicyPointerSorted<TYPE,MATCH,SORTONINSERT>::OnAdded(TArray<TYPE*>& A
 
 	//	elements have been placed in the sorted points in the array
 	SetSorted();
-	Debug_VerifyIsSorted(Array.GetData(),Array.GetSize());
+
+#if defined(ARRAY_SORT_CHECK)
+	Debug_VerifyIsSorted( Array );
+#endif
 }
 
 
 template<typename TYPE,typename MATCH,bool SORTONINSERT>
-void TSortPolicyPointerSorted<TYPE,MATCH,SORTONINSERT>::Debug_VerifyIsSorted(TYPE** ppData,u32 Size) const
+bool TSortPolicyPointerSorted<TYPE,MATCH,SORTONINSERT>::Debug_VerifyIsSorted(const TArray<TYPE*>& Array) const
 {
-	#if defined(ARRAY_SORT_CHECK)
-	{
-		if ( !IsSorted() )
-			return;
+	if ( !IsSorted() )
+		return false;
 	
-		for ( u32 i=1;	i<Size;	i++ )
+	for ( u32 i=1;	i<Array.GetSize();	i++ )
+	{
+		const TYPE* pPrev = Array[i-1];
+		const TYPE* pThis = Array[i];
+		if ( TLPointerArray::IsThisLessThanThat<TYPE,MATCH>( pThis, pPrev ) )
 		{
-			const TYPE* pPrev = ppData[i-1];
-			const TYPE* pThis = ppData[i];
-			if ( TLPointerArray::IsThisLessThanThat<TYPE,MATCH>( pThis, pPrev ) )
-			{
-				TLDebug_Break("\"sorted\" array is out of order");		
-			}
+			TLDebug_Break("\"sorted\" array is out of order");	
+			return false;
 		}
 	}
-	#endif
+	return true;
 }
 
 

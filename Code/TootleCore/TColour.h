@@ -91,11 +91,11 @@ public:
 	FORCEINLINE void			Set(float r,float g,float b,float a)	{	m_Rgba.Set( r,g,b,a );	Limit();	}
 	FORCEINLINE void			Set(u8 r,u8 g,u8 b,u8 a)				{	m_Rgba.Set( TLColour::MakeComponentf(r), TLColour::MakeComponentf(g), TLColour::MakeComponentf(b), TLColour::MakeComponentf(a) );	}
 
-	FORCEINLINE void			operator=(const u32& rgba)				{	Set( TLColour::GetComponent8(rgba,0), TLColour::GetComponent8(rgba,1), TLColour::GetComponent8(rgba,2), TLColour::GetComponent8(rgba,3) );	}
-	FORCEINLINE void			operator=(const TColour& Colour);
-	FORCEINLINE void			operator=(const TColour24& Colour);
-	FORCEINLINE void			operator=(const TColour32& Colour);
-	FORCEINLINE void			operator=(const TColour64& Colour);
+	FORCEINLINE TColour&		operator=(const u32& rgba)				{	Set( TLColour::GetComponent8(rgba,0), TLColour::GetComponent8(rgba,1), TLColour::GetComponent8(rgba,2), TLColour::GetComponent8(rgba,3) );	return *this;	}
+	FORCEINLINE TColour&		operator=(const TColour& Colour);
+	FORCEINLINE TColour&		operator=(const TColour24& Colour);
+	FORCEINLINE TColour&		operator=(const TColour32& Colour);
+	FORCEINLINE TColour&		operator=(const TColour64& Colour);
 
 	FORCEINLINE					operator const float4&() const			{	return m_Rgba;	}
 	FORCEINLINE					operator float4&()						{	return m_Rgba;	}
@@ -166,10 +166,10 @@ public:
 
 	FORCEINLINE void			Set(u8 r,u8 g,u8 b)						{	m_Rgb.Set( r, g, b );	}
 
-	FORCEINLINE void			operator=(const TColour& Colour);
-	FORCEINLINE void			operator=(const TColour24& Colour);
-	FORCEINLINE void			operator=(const TColour32& Colour);
-	FORCEINLINE void			operator=(const TColour64& Colour);
+	FORCEINLINE TColour24&		operator=(const TColour& Colour);
+	FORCEINLINE TColour24&		operator=(const TColour24& Colour);
+	FORCEINLINE TColour24&		operator=(const TColour32& Colour);
+	FORCEINLINE TColour24&		operator=(const TColour64& Colour);
 
 	FORCEINLINE Bool			operator==(const TColour24& Colour) const	{	return m_Rgb == Colour.m_Rgb;	}
 	FORCEINLINE Bool			operator!=(const TColour24& Colour) const	{	return m_Rgb != Colour.m_Rgb;	}
@@ -218,10 +218,10 @@ public:
 
 	FORCEINLINE void			Set(u32 rgba)							{	*GetData32() = rgba;	}
 
-	FORCEINLINE void			operator=(const TColour& Colour);
-	FORCEINLINE void			operator=(const TColour24& Colour);
-	FORCEINLINE void			operator=(const TColour32& Colour);
-	FORCEINLINE void			operator=(const TColour64& Colour);
+	FORCEINLINE TColour32&		operator=(const TColour& Colour);
+	FORCEINLINE TColour32&		operator=(const TColour24& Colour);
+	FORCEINLINE TColour32&		operator=(const TColour32& Colour);
+	FORCEINLINE TColour32&		operator=(const TColour64& Colour);
 
 	FORCEINLINE Bool			operator==(const TColour32& Colour) const	{	return m_Rgba == Colour.m_Rgba;	}	//	required for sorting in arrays... maybe we'll have a need for this in future
 	FORCEINLINE Bool			operator!=(const TColour32& Colour) const	{	return m_Rgba != Colour.m_Rgba;	}	//	required for sorting in arrays... maybe we'll have a need for this in future
@@ -272,10 +272,10 @@ public:
 
 //	FORCEINLINE void			Set(u32 rgba)							{	*GetData32() = rgba;	}
 
-	FORCEINLINE void			operator=(const TColour& Colour);
-	FORCEINLINE void			operator=(const TColour24& Colour);
-	FORCEINLINE void			operator=(const TColour32& Colour);
-	FORCEINLINE void			operator=(const TColour64& Colour);
+	FORCEINLINE TColour64&		operator=(const TColour& Colour);
+	FORCEINLINE TColour64&		operator=(const TColour24& Colour);
+	FORCEINLINE TColour64&		operator=(const TColour32& Colour);
+	FORCEINLINE TColour64&		operator=(const TColour64& Colour);
 
 	FORCEINLINE Bool			operator==(const TColour64& Colour) const	{	return m_Rgba == Colour.m_Rgba;	}	//	required for sorting in arrays... maybe we'll have a need for this in future
 	FORCEINLINE Bool			operator!=(const TColour64& Colour) const	{	return m_Rgba != Colour.m_Rgba;	}	//	required for sorting in arrays... maybe we'll have a need for this in future
@@ -312,38 +312,38 @@ FORCEINLINE TColour::TColour(const TColour& Colour) : m_Rgba( Colour.m_Rgba )			
 FORCEINLINE TColour::TColour(const TColour24& Colour) : m_Rgba( Colour.GetRedf(), Colour.GetGreenf(), Colour.GetBluef(), Colour.GetAlphaf() )			{	}
 FORCEINLINE TColour::TColour(const TColour32& Colour) : m_Rgba( Colour.GetRedf(), Colour.GetGreenf(), Colour.GetBluef(), Colour.GetAlphaf() )			{	}
 FORCEINLINE TColour::TColour(const TColour64& Colour) : m_Rgba( Colour.GetRedf(), Colour.GetGreenf(), Colour.GetBluef(), Colour.GetAlphaf() )			{	}
-FORCEINLINE void TColour::operator=(const TColour& Colour)		{	m_Rgba = Colour.m_Rgba;	}
-FORCEINLINE void TColour::operator=(const TColour24& Colour)	{	Set( Colour.GetRedf(), Colour.GetGreenf(), Colour.GetBluef(), Colour.GetAlphaf() );	}
-FORCEINLINE void TColour::operator=(const TColour32& Colour)	{	Set( Colour.GetRedf(), Colour.GetGreenf(), Colour.GetBluef(), Colour.GetAlphaf() );	}
-FORCEINLINE void TColour::operator=(const TColour64& Colour)	{	Set( Colour.GetRedf(), Colour.GetGreenf(), Colour.GetBluef(), Colour.GetAlphaf() );	}
+FORCEINLINE TColour& TColour::operator=(const TColour& Colour)		{	m_Rgba = Colour.m_Rgba;	return *this;	}
+FORCEINLINE TColour& TColour::operator=(const TColour24& Colour)	{	Set( Colour.GetRedf(), Colour.GetGreenf(), Colour.GetBluef(), Colour.GetAlphaf() );	return *this;	}
+FORCEINLINE TColour& TColour::operator=(const TColour32& Colour)	{	Set( Colour.GetRedf(), Colour.GetGreenf(), Colour.GetBluef(), Colour.GetAlphaf() );	return *this;	}
+FORCEINLINE TColour& TColour::operator=(const TColour64& Colour)	{	Set( Colour.GetRedf(), Colour.GetGreenf(), Colour.GetBluef(), Colour.GetAlphaf() );	return *this;	}
 
 FORCEINLINE TColour24::TColour24(const TColour& Colour) : m_Rgb( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8() )	{	}
 FORCEINLINE TColour24::TColour24(const TColour24& Colour) : m_Rgb( Colour.m_Rgb )			{	}
 FORCEINLINE TColour24::TColour24(const TColour32& Colour) : m_Rgb( Colour.m_Rgba.xyz() )	{	}
 FORCEINLINE TColour24::TColour24(const TColour64& Colour) : m_Rgb( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8() )	{	}
-FORCEINLINE void TColour24::operator=(const TColour& Colour)		{	m_Rgb.Set( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8() );	}
-FORCEINLINE void TColour24::operator=(const TColour24& Colour)		{	m_Rgb = Colour.m_Rgb;	}
-FORCEINLINE void TColour24::operator=(const TColour32& Colour)		{	m_Rgb.Set( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8() );	}
-FORCEINLINE void TColour24::operator=(const TColour64& Colour)		{	m_Rgb.Set( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8() );	}
+FORCEINLINE TColour24& TColour24::operator=(const TColour& Colour)		{	m_Rgb.Set( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8() );	return *this;	}
+FORCEINLINE TColour24& TColour24::operator=(const TColour24& Colour)		{	m_Rgb = Colour.m_Rgb;	return *this;	}
+FORCEINLINE TColour24& TColour24::operator=(const TColour32& Colour)		{	m_Rgb.Set( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8() );	return *this;	}
+FORCEINLINE TColour24& TColour24::operator=(const TColour64& Colour)		{	m_Rgb.Set( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8() );	return *this;	}
 
 FORCEINLINE TColour32::TColour32(const TColour& Colour) : m_Rgba ( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8(), Colour.GetAlpha8() )		{	}
 FORCEINLINE TColour32::TColour32(const TColour24& Colour,u8 Alpha) : m_Rgba ( Colour.m_Rgb.xyzw(Alpha) )	{	}
 FORCEINLINE TColour32::TColour32(const TColour32& Colour) : m_Rgba ( Colour.m_Rgba )		{	}
 FORCEINLINE TColour32::TColour32(const TColour64& Colour) : m_Rgba ( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8(), Colour.GetAlpha8() )		{	}
-FORCEINLINE void TColour32::operator=(const TColour& Colour)		{	m_Rgba.Set( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8(), Colour.GetAlpha8() );	}
-FORCEINLINE void TColour32::operator=(const TColour24& Colour)		{	m_Rgba.Set( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8(), Colour.GetAlpha8() );	}
-FORCEINLINE void TColour32::operator=(const TColour32& Colour)		{	*GetData32() = *Colour.GetData32();	}
-FORCEINLINE void TColour32::operator=(const TColour64& Colour)		{	m_Rgba.Set( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8(), Colour.GetAlpha8() );	}
+FORCEINLINE TColour32& TColour32::operator=(const TColour& Colour)		{	m_Rgba.Set( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8(), Colour.GetAlpha8() );	return *this;	}
+FORCEINLINE TColour32& TColour32::operator=(const TColour24& Colour)		{	m_Rgba.Set( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8(), Colour.GetAlpha8() );	return *this;	}
+FORCEINLINE TColour32& TColour32::operator=(const TColour32& Colour)		{	*GetData32() = *Colour.GetData32();	return *this;	}
+FORCEINLINE TColour32& TColour32::operator=(const TColour64& Colour)		{	m_Rgba.Set( Colour.GetRed8(), Colour.GetGreen8(), Colour.GetBlue8(), Colour.GetAlpha8() );	return *this;	}
 
 
 FORCEINLINE TColour64::TColour64(const TColour& Colour) : m_Rgba ( Colour.GetRed16(), Colour.GetGreen16(), Colour.GetBlue16(), Colour.GetAlpha16() )		{	}
 FORCEINLINE TColour64::TColour64(const TColour24& Colour) : m_Rgba ( Colour.GetRed16(), Colour.GetGreen16(), Colour.GetBlue16(), Colour.GetAlpha16() )		{	}
 FORCEINLINE TColour64::TColour64(const TColour32& Colour) : m_Rgba ( Colour.GetRed16(), Colour.GetGreen16(), Colour.GetBlue16(), Colour.GetAlpha16() )		{	}
 FORCEINLINE TColour64::TColour64(const TColour64& Colour) : m_Rgba ( Colour.m_Rgba )		{	}
-FORCEINLINE void TColour64::operator=(const TColour& Colour)		{	m_Rgba.Set( Colour.GetRed16(), Colour.GetGreen16(), Colour.GetBlue16(), Colour.GetAlpha16() );	}
-FORCEINLINE void TColour64::operator=(const TColour24& Colour)		{	m_Rgba.Set( Colour.GetRed16(), Colour.GetGreen16(), Colour.GetBlue16(), Colour.GetAlpha16() );	}
-FORCEINLINE void TColour64::operator=(const TColour32& Colour)		{	m_Rgba = Colour.m_Rgba;	}
-FORCEINLINE void TColour64::operator=(const TColour64& Colour)		{	m_Rgba.Set( Colour.GetRed16(), Colour.GetGreen16(), Colour.GetBlue16(), Colour.GetAlpha16() );	}
+FORCEINLINE TColour64& TColour64::operator=(const TColour& Colour)		{	m_Rgba.Set( Colour.GetRed16(), Colour.GetGreen16(), Colour.GetBlue16(), Colour.GetAlpha16() );	return *this;	}
+FORCEINLINE TColour64& TColour64::operator=(const TColour24& Colour)		{	m_Rgba.Set( Colour.GetRed16(), Colour.GetGreen16(), Colour.GetBlue16(), Colour.GetAlpha16() );	return *this;	}
+FORCEINLINE TColour64& TColour64::operator=(const TColour32& Colour)		{	m_Rgba = Colour.m_Rgba;	return *this;	}
+FORCEINLINE TColour64& TColour64::operator=(const TColour64& Colour)		{	m_Rgba.Set( Colour.GetRed16(), Colour.GetGreen16(), Colour.GetBlue16(), Colour.GetAlpha16() );	return *this;	}
 
 
 

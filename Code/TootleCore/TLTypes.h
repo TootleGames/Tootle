@@ -183,6 +183,9 @@ TLCompileAssert( sizeof(TChar32) == sizeof(u32), "TChar32 not setup correctly." 
 #endif
 
 
+//-------------------------------------------------------
+//	tempalted integer ranges
+//-------------------------------------------------------
 namespace TLTypes
 {
 	template<typename TYPE> FORCEINLINE s32	GetIntegerMin(TYPE x=0)		{	return 0;	}
@@ -193,7 +196,7 @@ namespace TLTypes
 	template<> FORCEINLINE s32				GetIntegerMin(u32 x)		{	return 0;	}
 	template<> FORCEINLINE s32				GetIntegerMin(s32 x)		{	return -2147483647;	}
 
-	template<typename TYPE> u32	GetIntegerMax(TYPE x=0)		{	return 0;	}
+	template<typename TYPE> u32				GetIntegerMax(TYPE x=0)		{	return 0;	}
 	template<> FORCEINLINE u32				GetIntegerMax(u8 x)			{	return 255;	}
 	template<> FORCEINLINE u32				GetIntegerMax(s8 x)			{	return 127;	}
 	template<> FORCEINLINE u32				GetIntegerMax(u16 x)		{	return 65535;	}
@@ -218,6 +221,21 @@ typedef enum
 	SyncWait	= 0xffffffff,
 
 } SyncBool;
+
+
+//-------------------------------------------------------
+//	inherited from this type to prevent copying (stops compiler-generated copy constructors/=operators
+//-------------------------------------------------------
+class TNoCopy
+{
+private:
+	explicit TNoCopy(const TNoCopy& That)	{}
+	
+	FORCEINLINE TNoCopy&	operator=(const TNoCopy& That)	{	return *this;	}
+
+public:
+	TNoCopy()		{}
+};
 
 
 namespace TLCore

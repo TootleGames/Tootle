@@ -43,6 +43,7 @@ public:
 		
 		s32 Index = BinaryChop( Match, 0, Elements, ppData, Elements );
 
+		//	todo: move to unit test
 		#if defined(ARRAY_SORT_CHECK)
 		{
 			if ( Index == -1 )
@@ -104,14 +105,15 @@ class TSortPolicyPtrNone : public TSortPolicy<TPtr<TYPE> >
 public:
 	virtual TIterator<TPtr<TYPE> >&	GetIterator(const TIteratorIdent<TPtr<TYPE> >& IteratorIdent) const	{	return IteratorIdent.GetIterator();	}
 	virtual void					OnAdded(TArray<TPtr<TYPE> >& Array,u32 FirstIndex,u32 AddedCount)	{	}
+
+	virtual bool					Debug_VerifyIsSorted(const TArray<TPtr<TYPE> >& Array) const		{	return false;	};		//	verify this array is sorted
 };
 
 
 
 //----------------------------------------------------------------------------//
-//	gr: 
+//	
 //----------------------------------------------------------------------------//
-
 template<typename TYPE,typename MATCH=TPtr<TYPE>,bool SORTONINSERT=true>
 class TSortPolicyPtrSorted : public TSortPolicy<TPtr<TYPE> >
 {
@@ -122,15 +124,16 @@ public:
 	{
 	}
 	
-	virtual void				Sort(TPtr<TYPE>* ppData,u32 Elements)	{	if ( ppData && Elements > 0 && !IsSorted() )	QuickSort( ppData, 0, Elements-1 );	SetSorted();	Debug_VerifyIsSorted(ppData,Elements);	};		//	do quick sort
+	virtual void				Sort(TPtr<TYPE>* ppData,u32 Elements);	//	do a quick sort if not sorted
 	virtual bool				IsSorted() const						{	return m_IsSorted;	}
 	virtual void				SetUnsorted()							{	m_IsSorted = false;	}
 	
 	virtual TIterator<TPtr<TYPE> >&	GetIterator(const TIteratorIdent<TPtr<TYPE> >& IteratorIdent) const;
 	virtual void					OnAdded(TArray<TPtr<TYPE> >& Array,u32 FirstIndex,u32 AddedCount);
-	
+
+	virtual bool					Debug_VerifyIsSorted(const TArray<TPtr<TYPE> >& Array) const;		//	verify this array is sorted
+
 private:
-	void	Debug_VerifyIsSorted(TPtr<TYPE>* pData,u32 Size) const;	
 	void	SetSorted()						{	m_IsSorted = true;	}
 	u32		FindInsertPoint(TPtr<TYPE>* pData,u32 Low,u32 High,const TSorter<TPtr<TYPE>,MATCH>& ValueSorter);
 	void	QuickSort(TPtr<TYPE>* ppData, s32 First, s32 Last);
@@ -141,6 +144,17 @@ private:
 };
 
 
+
+template<typename TYPE,typename MATCH,bool SORTONINSERT>
+void TSortPolicyPtrSorted<TYPE,MATCH,SORTONINSERT>::Sort(TPtr<TYPE>* ppData,u32 Elements)
+{
+	if ( ppData && Elements > 0 && !IsSorted() )	
+		QuickSort( ppData, 0, Elements-1 );	
+
+	SetSorted();	
+	
+	//Debug_VerifyIsSorted(ppData,Elements);	
+}
 
 
 template<typename TYPE,typename MATCH,bool SORTONINSERT>
@@ -255,7 +269,7 @@ void TSortPolicyPtrSorted<TYPE,MATCH,SORTONINSERT>::OnAdded(TArray<TPtr<TYPE> >&
 	
 	//	elements have been placed in the sorted points in the array
 	SetSorted();
-	Debug_VerifyIsSorted(Array.GetData(),Array.GetSize());
+	Debug_VerifyIsSorted( Array );
 }
 
 
@@ -360,26 +374,26 @@ void TSortPolicyPtrSorted<TYPE,MATCH,SORTONINSERT>::SwapElements(TPtr<TYPE>* ppD
 
 
 
-
-
 template<typename TYPE,typename MATCH,bool SORTONINSERT>
-void TSortPolicyPtrSorted<TYPE,MATCH,SORTONINSERT>::Debug_VerifyIsSorted(TPtr<TYPE>* pData,u32 Size) const
+bool TSortPolicyPtrSorted<TYPE,MATCH,SORTONINSERT>::Debug_VerifyIsSorted(const TArray<TPtr<TYPE> >& Array) const
 {
 #if defined(ARRAY_SORT_CHECK)
 	{
 		if ( !IsSorted() )
-			return;
+			return false;
 		
 		for ( u32 i=1;	i<Size;	i++ )
 		{
-			TSorter<TPtr<TYPE>,MATCH> Prev( pData[i-1] );
-			if ( pData[i] < Prev )
+			TSorter<TPtr<TYPE>,MATCH> Prev( Array[i-1] );
+			if ( Array[i] < Prev )
 			{
-				TLDebug_Break("\"sorted\" array is out of order");			
+				TLDebug_Break("\"sorted\" array is out of order");
+				return false;
 			}
 		}
 	}
 #endif
+	return true;
 }
 
 

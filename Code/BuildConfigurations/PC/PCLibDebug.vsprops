@@ -1,7 +1,15 @@
-<?xml version="1.0"?>
-<VisualStudioPropertySheet 
-	ProjectType="Visual C++" 
-	Version="8.00" 
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
 	Name="PCLibDebug"
 	>
+	<Tool
+		Name="VCCLCompilerTool"
+		InlineFunctionExpansion="0"
+		FavorSizeOrSpeed="1"
+		PreprocessorDefinitions="_DEBUG;_LIB"
+		RuntimeLibrary="3"
+		DebugInformationFormat="4"
+	/>
 </VisualStudioPropertySheet>

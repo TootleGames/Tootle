@@ -30,7 +30,14 @@ TLMemory::TMemorySystem*	TLMemory::TMemorySystem::ms_pMemorySystem = NULL;
 Bool						TLMemory::TMemorySystem::m_bDestroyed = FALSE;
 
 
-TLMemory::TMemorySystem::TMemorySystem()
+TLMemory::TMemorySystem::TMemorySystem() :
+#ifdef ENABLE_MEMORY_DEBUG
+	m_prealloc_callback		( NULL ),
+	m_postalloc_callback	( NULL ),
+	m_predealloc_callback	( NULL ),
+	m_postdealloc_callback	( NULL ),
+#endif
+	m_totalAlloc	( 0 )
 {
 	Initialise();	
 }

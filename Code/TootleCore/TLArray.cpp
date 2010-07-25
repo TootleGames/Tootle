@@ -164,6 +164,50 @@ bool TLArray::TLTest::Debug_Alloc(TArray<TYPE>& a)
 }
 
 
+TEST(TLArray_Sort)
+{
+	//	sort on insert
+	TFixedArray<u32,2000,TSortPolicySorted<u32,u32,true> > a;
+
+	//	sort-on-demand
+	TFixedArray<u32,2000,TSortPolicySorted<u32,u32,false> > b;
+	TFixedArray<u32,2000,TSortPolicySorted<u32> > c;
+	a.Sort();
+
+	//	seed the randomiser so numbers are always the same
+	TLMaths::SRand(0);
+	for ( u32 i=0;	i<a.GetMaxAllocSize();	i++ )
+	{
+		u32 Rand = TLMaths::Rand( TLTypes::GetIntegerMax<u32>() );
+		a.Add( Rand );
+		b.Add( Rand );
+		c.Add( i );
+		
+		//	add some dupes
+		if ( (i % 100) == 0 )
+		{
+			a.Add( Rand );
+			b.Add( Rand );
+			c.Add( i );
+		}			
+	}
+
+	//	a is sort on insert, so it shouldn't have to be explicitly sorted
+	//a.Sort();
+	b.Sort();
+	c.Sort();
+	
+	//	all these should have been sorted now
+	CHECK( a.IsSorted() );
+	CHECK( b.IsSorted() );
+	CHECK( c.IsSorted() );
+	
+	CHECK( a.Debug_VerifyIsSorted() );
+	CHECK( b.Debug_VerifyIsSorted() );
+	CHECK( c.Debug_VerifyIsSorted() );		
+}
+
+
 TEST(TLArray_FixedArray)
 {
 	TFixedArray<u8,1> a;

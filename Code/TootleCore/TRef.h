@@ -179,11 +179,11 @@ public:
 
 	FORCEINLINE Bool			operator<(const TRef& Ref) const		{	return GetData() < Ref.GetData();	}
 	FORCEINLINE Bool			operator>(const TRef& Ref) const		{	return GetData() > Ref.GetData();	}
-	FORCEINLINE void			operator=(u32 Ref)						{	Set( Ref );	}
-	FORCEINLINE void			operator=(const TRef& Ref)				{	Set( Ref );	}
-	FORCEINLINE void			operator=(const char* pString)			{	Set( pString );	}
-	FORCEINLINE void			operator=(const TString& RefString)		{	Set( RefString );	}
-	FORCEINLINE void			operator=(const TString* pRefString)	{	if ( pRefString ) Set( *pRefString ); else SetInvalid();	}
+	FORCEINLINE TRef&			operator=(u32 Ref)						{	Set( Ref );	return *this;	}
+	FORCEINLINE TRef&			operator=(const TRef& Ref)				{	Set( Ref );	return *this;	}
+	FORCEINLINE TRef&			operator=(const char* pString)			{	Set( pString );	return *this;	}
+	FORCEINLINE TRef&			operator=(const TString& RefString)		{	Set( RefString );	return *this;	}
+	FORCEINLINE TRef&			operator=(const TString* pRefString)	{	if ( pRefString ) Set( *pRefString ); else SetInvalid();	return *this;	}
 
 	FORCEINLINE Bool			operator==(const TRef& Ref) const		{	return GetData() == Ref.GetData();	}
 	FORCEINLINE Bool			operator!=(const TRef& Ref) const		{	return GetData() != Ref.GetData();	}

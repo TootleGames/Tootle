@@ -766,3 +766,18 @@ FORCEINLINE bool TArray<TYPE>::operator!=(const TArray<TYPE>& Array) const
 	return false;
 }
 
+
+//----------------------------------------------------------------------
+//	if the array claims to be sorted, ensure it is
+//----------------------------------------------------------------------
+template<typename TYPE>
+bool TArray<TYPE>::Debug_VerifyIsSorted() const
+{
+	//	not sorted, so don't fail
+	if ( !GetSortPolicy().IsSorted() )
+		return true;
+	
+	//	sort policy verifies
+	return GetSortPolicy().Debug_VerifyIsSorted( *this );
+}
+
