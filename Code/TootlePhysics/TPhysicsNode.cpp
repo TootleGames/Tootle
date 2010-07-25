@@ -1076,7 +1076,14 @@ void TLPhysics::TPhysicsNode::OnShapeDefintionChanged()
 	if ( !GetBody() )
 		return;
 
-	TLDebug_Break("todo: alter body shape's properties (friction, restitution etc)");
+	//	update the per-shape variables on all the fixtures
+	b2Fixture* pShape = m_pBody->GetFixtureList();
+	while ( pShape )
+	{
+		pShape->SetFriction( m_Friction );
+		pShape->SetRestitution( m_Bounce );
+		pShape = pShape->GetNext();
+	}
 }
 
 
