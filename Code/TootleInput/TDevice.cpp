@@ -16,13 +16,6 @@ void TInputDevice::Update()
 
 void TInputDevice::ProcessSensors()
 {
-#ifdef _DEBUG
-	if(m_InputBuffer.GetSize() == 0)
-	{
-		TLDebug_Break("Device has no sensor data!");
-	}
-#endif
-	
 	for( u32 uIndex = 0; uIndex < m_InputBuffer.GetSize(); uIndex++ )
 	{
 		const TInputData& data = m_InputBuffer.ElementAt(uIndex);
@@ -37,16 +30,9 @@ void TInputDevice::ProcessSensors()
 		}
 		else
 		{
-#ifdef _DEBUG			
-			TString str;
-			str.Appendf("Unable to find sensor - %d ", data.m_SensorRef.GetData());			
-			TString sensorstr;
-			data.m_SensorRef.GetString(sensorstr);
-			str.Append(sensorstr);
-			TLDebug_Print(str);
-#endif
-			
-			TLDebug::Break("Sensor not found");
+			TDebugString Debug_String;
+			Debug_String << "Unable to find sensor " << data.m_SensorRef;
+			TLDebug_Break(Debug_String);
 		}
 	}
 
@@ -93,13 +79,13 @@ TPtr<TLInput::TInputSensor>& TInputDevice::AttachSensor(TRefRef SensorRef, TSens
 		{
 			s32 SensorIndex = m_Sensors.Add(pSensor);
 
+			//	by default now, the sensor ref is the[a] label, maybe ditch the labels?...
+			pSensor->AddLabel( SensorRef );
+			
 #ifdef _DEBUG
-			TString str;
-			str.Appendf("Attached sensor to device - %d %d - ", SensorRef.GetData(), SensorType);
-			TString sensorstr;
-			SensorRef.GetString(sensorstr);
-			str.Append(sensorstr);
-			TLDebug_Print(str);
+			TDebugString Debug_String;
+			Debug_String << "Attached sensor to device - " << SensorRef << " " << (int)SensorType;
+			TLDebug_Print(Debug_String);
 #endif
 
 			return m_Sensors[SensorIndex];

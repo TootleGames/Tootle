@@ -11,9 +11,6 @@
 #include "PCWinControl.h"
 #include "PCWindow.h"	//	platform::window
 
-#if defined(TL_ENABLE_WX)
-#include "../wxWidgets/TLWx.h"
-#endif
 
 #pragma comment( lib, "user32.lib" )
 #pragma comment( lib, "gdi32.lib" )
@@ -53,11 +50,7 @@
 //----------------------------------------------------
 SyncBool TLGui::Platform::Init()
 {
-#if defined(TL_ENABLE_WX)
-	return SyncTrue;
-#else
 	return Win32::Init();
-#endif
 }
 
 
@@ -66,11 +59,7 @@ SyncBool TLGui::Platform::Init()
 //----------------------------------------------------
 SyncBool TLGui::Platform::Shutdown()
 {
-#if defined(TL_ENABLE_WX)
-	return SyncTrue;
-#else
 	return Win32::Shutdown();
-#endif
 }
 
 
@@ -79,9 +68,6 @@ SyncBool TLGui::Platform::Shutdown()
 //---------------------------------------------------------------
 int2 TLGui::Platform::GetScreenMousePosition(TLGui::TWindow& Window,u8 MouseIndex)
 {
-#if defined(TL_ENABLE_WX)
-	return wx::GetScreenMousePosition( Window );
-#else
 	//	get cursor pos
 	POINT MousePos;
 	GetCursorPos( &MousePos );
@@ -92,7 +78,6 @@ int2 TLGui::Platform::GetScreenMousePosition(TLGui::TWindow& Window,u8 MouseInde
 	PlatformWindow.m_pWindow->ScreenToPos( ScreenPos );
 
 	return ScreenPos;
-#endif
 }
 
 
@@ -102,9 +87,6 @@ int2 TLGui::Platform::GetScreenMousePosition(TLGui::TWindow& Window,u8 MouseInde
 //----------------------------------------------------------
 void TLGui::Platform::GetDesktopSize(Type4<s32>& DesktopSize)
 {
-#if defined(TL_ENABLE_WX)
-#pragma message("use wx to get desktop size")
-#endif
 	DesktopSize.x = 0;
 	DesktopSize.y = 0;
 	DesktopSize.Width() = GetSystemMetrics(SM_CXSCREEN);

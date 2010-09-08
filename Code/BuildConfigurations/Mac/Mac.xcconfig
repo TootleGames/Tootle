@@ -67,7 +67,7 @@ CC_WARN_UNUSED_VALUE = YES						//	catch when we do a calculation, but nothing w
 
 //	common mac compiler setup
 ADDITIONAL_SDKS = 
-ARCHS = $(ARCHS_STANDARD_32_64_BIT)
+ARCHS = $(ARCHS_STANDARD_32_BIT)	// $(ARCHS_STANDARD_32_64_BIT) gr: removed 64 bit until we've sorted the warnings to make the team city builds go a bit smoother 
 SDKROOT = macosx10.6
 
 ONLY_ACTIVE_ARCH = YES

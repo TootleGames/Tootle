@@ -330,11 +330,11 @@ void TLRender::TRenderTarget::OnSizeChanged()
 		TPtr<TLRender::TScreen>& pScreen = TLRender::g_pScreenManager->GetDefaultScreen();
 		if ( pScreen )
 		{
-			Type4<s32> RenderTargetMaxSize;
-			pScreen->GetRenderTargetMaxSize( RenderTargetMaxSize );
+			Type4<s32> RenderTargetMaxSize = pScreen->GetRenderTargetMaxSize();
+			Type4<s32> ViewportSize = pScreen->GetViewportSize();
 			Type4<s32> RenderTargetSize;
 			GetSize( RenderTargetSize, RenderTargetMaxSize );
-			pCamera->SetRenderTargetSize( RenderTargetSize, RenderTargetMaxSize, pScreen->GetSize(), pScreen->GetScreenShape() );
+			pCamera->SetRenderTargetSize( RenderTargetSize, RenderTargetMaxSize, ViewportSize, pScreen->GetScreenShape() );
 		}
 	}
 

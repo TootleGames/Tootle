@@ -137,10 +137,10 @@ namespace TLDebug
 		
 	FORCEINLINE void	FlushBuffer()	{	Platform::FlushBuffer(); }
 	
-	FORCEINLINE Bool	CheckIndex(int Index,int Max,const char* pSourceFunction);							//	check & assert if index is out of bounds. Max is NOT inclusive... Min <= N < Max
-	FORCEINLINE Bool	CheckIndex(int Index,int Max)														{	return CheckIndex( Index, Max, NULL );	}
-	FORCEINLINE Bool	CheckInRange(int Value,int Min,int Max,const char* pSourceFunction);				//	check & assert if range is out of bounds. Max IS inclusive... Min <= N <= Max
-	FORCEINLINE Bool	CheckInRange(int Value,int Min,int Max)												{	return CheckInRange( Value, Min, Max, NULL );	}
+	FORCEINLINE Bool	CheckIndex(s32 Index,u32 Max,const char* pSourceFunction);							//	check & assert if index is out of bounds. Max is NOT inclusive... Min <= N < Max
+	FORCEINLINE Bool	CheckIndex(s32 Index,u32 Max)														{	return CheckIndex( Index, Max, NULL );	}
+	FORCEINLINE Bool	CheckInRange(s32 Value,s32 Min,u32 Max,const char* pSourceFunction);				//	check & assert if range is out of bounds. Max IS inclusive... Min <= N <= Max
+	FORCEINLINE Bool	CheckInRange(s32 Value,s32 Min,u32 Max)												{	return CheckInRange( Value, Min, Max, NULL );	}
 
 	//	todo: replace the specialisations for a generic template function and specialise it in the class-specific places and leave the basic float check here
 	Bool				CheckFloat(const float& Value,const char* pSourceFunction);							//	check float is valid
@@ -188,31 +188,39 @@ Bool TLDebug::CheckFloatType(const TYPE& Value,const char* pSourceFunction)
 //-------------------------------------------------------
 //	check & assert if index is out of bounds. Max is NOT inclusive... Min <= N < Max
 //-------------------------------------------------------
-FORCEINLINE Bool TLDebug::CheckIndex(int Index,int Max,const char* pSourceFunction)
+FORCEINLINE Bool TLDebug::CheckIndex(s32 Index,u32 Max,const char* pSourceFunction)
 {
-	if ( !IsEnabled() )
-		return TRUE;
+	//	don't let max go negative in the range check
+	if ( Max == 0 )
+		return DoCheckRangeBreak( Index, 0, Max, pSourceFunction );
 
-	//	index is in bounds
-	if ( Index >= 0 && Index < Max )
-		return TRUE;
-
-	return DoCheckIndexBreak( Index, Max, pSourceFunction );
+	//	range for an index is 0..Max-1
+	return CheckInRange( Index, 0, Max-1, pSourceFunction );
 }
 
 
 //-------------------------------------------------------
 //	check & assert if value is out of range. Max IS inclusive... Min <= N <= Max
+//	todo: handle a negative max
 //-------------------------------------------------------
-FORCEINLINE Bool TLDebug::CheckInRange(int Value,int Min,int Max,const char* pSourceFunction)
+FORCEINLINE Bool TLDebug::CheckInRange(s32 Value,s32 Min,u32 Max,const char* pSourceFunction)
 {
 	if ( !IsEnabled() )
-		return TRUE;
+		return true;
 
-	//	value is in bounds
-	if ( Value >= Min &&Value <= Max )
-		return TRUE;
+	//	check params are correct
+	if ( Min > 0 && Max < (u32)Min )
+	{
+		//TDebugString Debug_String;
+		//Debug_String << "Min/Max params are incorrect; " << Min << " <= " << Max;
+		//TLDebug_Break( Debug_String );
+		Break("Min/Max params are incorrect; Min <= Max", __FUNCTION__);
+		return false;
+	}
+
+	//	watch out for signed values! comparing Value as u32 when negative fails against max!
+	if ( Min <= Value && ( Value>0 ? (u32)Value <= Max : true ) )
+		return true;
 
 	return DoCheckRangeBreak( Value, Min, Max, pSourceFunction );
-
 }

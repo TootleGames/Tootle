@@ -719,7 +719,7 @@ Bool TLRender::TRenderNodeTextureText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 	//	cull unwanted triangles & vertexes
 	while ( Triangles.GetLastIndex() >= (s32)TriangleIndex )
 	{
-		m_pMesh->RemoveTriangle( Triangles.GetLastIndex(), TRUE, FALSE );
+		m_pMesh->RemoveTriangle( Triangles.GetLastIndex(), true, true );
 	}
 
 	//	geometry changed - invalidate bounds

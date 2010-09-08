@@ -20,20 +20,18 @@
 
 #include "TScreenShape.h"
 
+//	the default size is the iphone size
+#define TLScreen_DefaultSize	Type2<u16>( 320, 480 )
+
 namespace TLRender
 {
 	class TScreen;
 	class TRenderTarget;
 	class TRenderNodeText;
 
-	//	gr: these are no longer platform specific... move them out of the Platform namespace
-	namespace Platform
-	{
-		class Screen;
-		class ScreenWide;
-		class ScreenWideLeft;	//	rotated-left display for ipod (or ipod emulation)
-		class ScreenWideRight;	//	rotated-right display for ipod (or ipod emulation)
-	}
+	class TScreenWide;		//	should be deprecated now...
+	class TScreenWideLeft;	//	rotated-left display for ipod (or ipod emulation)
+	class TScreenWideRight;	//	rotated-right display for ipod (or ipod emulation)
 
 	static const s32		g_MaxSize		= -1;	//	for screen & render target sizes -1 indicates max extents
 }
@@ -57,24 +55,23 @@ public:
 	};
 
 public:
-	TScreen(TRefRef ScreenRef,TScreenShape ScreenShape);
+	TScreen(TRefRef ScreenRef,const Type2<u16>& Size=TLScreen_DefaultSize,TScreenShape ScreenShape=ScreenShape_Portrait);
 	~TScreen();
 
 	virtual TRefRef						GetSubscriberRef() const			{	return GetRef();	}
 	FORCEINLINE TRefRef					GetRef() const						{	return m_Ref;	}
-	virtual Type4<s32>					GetSize() const						{	return m_Size;	}
+	Type2<u16>							GetSize() const						{	return m_pCanvas ? m_pCanvas->GetSize() : Type2<u16>(0,0);	}
 	FORCEINLINE TFlags<Flags>&			GetFlags()							{	return m_Flags;	}
 	FORCEINLINE Bool					GetFlag(TScreen::Flags Flag) const	{	return m_Flags(Flag);	}
 	FORCEINLINE TScreenShape			GetScreenShape() const				{	return m_ScreenShape;	}
 	FORCEINLINE const TLMaths::TAngle&	GetScreenAngle() const				{	return TLRender::GetScreenAngle( GetScreenShape() );	}
-
+			
 	virtual SyncBool				Init();
 	virtual SyncBool				Update();
 	virtual SyncBool				Shutdown();
 
 	virtual void					Draw();			//	render our render targets
-
-	virtual TLGui::TWindow*			GetWindow()		{	return NULL;	}	//	get the GUI window for this screen
+	TLGui::TWindow*					GetWindow()			{	return m_pWindow;	}	//	get the GUI window for this screen
 	
 	TPtr<TLRender::TRenderTarget>	CreateRenderTarget(TRefRef TargetRef);					// Creates a new render target
 	SyncBool						DeleteRenderTarget(TRefRef TargetRef);					//	shutdown a render target
@@ -82,8 +79,9 @@ public:
 
 	TPtr<TRenderTarget>&			GetRenderTarget(TRefRef TargetRef);						//	fetch render target
 
-	void							GetRenderTargetMaxSize(Type4<s32>& MaxSize);			//	get the render target max size (in "render target space") - this is the viewport size, but rotated
-	virtual void					GetViewportMaxSize(Type4<s32>& MaxSize)					{	MaxSize.Set( 0, 0, GetSize().Width(), GetSize().Height() );	}
+	Type4<s32>						GetRenderTargetMaxSize();								//	get the render target max size (in "render target space") - this is the viewport size, but rotated
+	Type4<s32>						GetViewportSize() const									{	return Type4<s32>( 0, 0, GetSize().x, GetSize().y );	}
+	DEPRECATED Type4<s32>			GetViewportMaxSize() const								{	return GetViewportSize();	}
 	Bool							GetRenderTargetSize(Type4<s32>& Size,const TRenderTarget& RenderTarget);	//	get the dimensions of a render target
 	Bool							GetRenderTargetSize(Type4<s32>& Size,TRefRef TargetRef);
 
@@ -99,6 +97,8 @@ public:
 	FORCEINLINE Bool				operator==(const TScreen& Screen)	const 	{	return GetRef() == Screen.GetRef();	}
 
 protected:
+	void							GetDesktopSize(Type4<s32>& DesktopSize) const;	//	get the desktop dimensions
+	void							GetCenteredSize(Type4<s32>& Size) const;		//	take a screen size and center it on the desktop
 	Bool							GetRenderTargetPosFromScreenPos(const TRenderTarget& RenderTarget,Type2<s32>& RenderTargetPos,Type4<s32>& RenderTargetSize,const Type2<s32>& ScreenPos);	//	Get a render target-relative cursor position from a screen pos - fails if outside render target box
 	Bool							GetScreenPosFromRenderTargetPos(Type2<s32>& ScreenPos, const TRenderTarget& RenderTarget,const Type2<s32>& RenderTargetPos, Type4<s32>& RenderTargetSize);	//	Get a screen pos render target-relative cursor position- fails if outside render target box
 	void							CreateDebugRenderTarget(TRefRef FontRef=TRef("FDebug"));
@@ -108,40 +108,15 @@ protected:
 	TPtrArray<TRenderTarget>		m_ShutdownRenderTargets;	//	list of render targets we're destroying
 	Bool							m_HasShutdown;				//	
 	TRef							m_Ref;						//	reference to screen
-	Type4<s32>						m_Size;						//	pos + w + h. Note viewport maybe smaller (ie. because of window borders in windows)
 	TFlags<Flags>					m_Flags;					//	screen flags
 	TScreenShape					m_ScreenShape;				//	screen orientation
+	Type2<u16>						m_InitialSize;				//	desired size from constructor
 	
 	TRef							m_DebugRenderTarget;		//	debug render target
 	TKeyArray<TRef,TRef>			m_DebugRenderText;			//	keyed list of debug strings -> render nodes
-};
 
-
-
-//----------------------------------------------------------
-//	win32 screen (it's actually just an opengl window)
-//----------------------------------------------------------
-class TLRender::Platform::Screen : public TLRender::TScreen
-{
-public:
-	Screen(TRefRef ScreenRef,TScreenShape ScreenShape);
-	
-	virtual SyncBool		Init();
-	virtual SyncBool		Update();
-	virtual SyncBool		Shutdown();
-	
-	virtual void			Draw();
-	virtual Type4<s32>		GetSize() const;	//	get size of the screen
-	virtual TLGui::TWindow*	GetWindow()			{	return m_pWindow;	}	//	get the GUI window for this screen
-	
-protected:
-	void					GetDesktopSize(Type4<s32>& DesktopSize) const;	//	get the desktop dimensions
-	void					GetCenteredSize(Type4<s32>& Size) const;		//	take a screen size and center it on the desktop
-	virtual void			GetViewportMaxSize(Type4<s32>& MaxSize);	//	need to max-out to client-area on the window 
-	
-protected:
-	TPtr<TLGui::TWindow>		m_pWindow;
-	TPtr<TLGui::TOpenglCanvas>	m_pCanvas;
+	TPtr<TLGui::TWindow>			m_pWindow;					//	window for the screen which contains the canvas (todo; remove this and just have the screen work from a canvas - move window construction external)
+	TPtr<TLGui::TOpenglCanvas>		m_pCanvas;					//	canvas we render to. todo; when rasterisation goes in, the rasteriser will instance a base RasterCanvas type
 };
 
 
@@ -149,26 +124,11 @@ protected:
 //----------------------------------------------------------
 //	widescreen screen
 //----------------------------------------------------------
-class TLRender::Platform::ScreenWide : public TLRender::Platform::Screen
+class TLRender::TScreenWide : public TLRender::TScreen
 {
 public:
-	ScreenWide(TRefRef ScreenRef) :
-	TLRender::Platform::Screen	( ScreenRef, TLRender::ScreenShape_Wide )
-	{
-		//	swap dimensions
-		TLMaths::SwapVars( m_Size.Height(), m_Size.Width() );
-	}
-};
-
-
-//----------------------------------------------------------
-//	widescreen screen
-//----------------------------------------------------------
-class TLRender::Platform::ScreenWideLeft : public TLRender::Platform::Screen
-{
-public:
-	ScreenWideLeft(TRefRef ScreenRef) :
-		TLRender::Platform::Screen	( ScreenRef, TLRender::ScreenShape_WideLeft )
+	TScreenWide(TRefRef ScreenRef,const Type2<u16>& Size=TLScreen_DefaultSize) :
+		TScreen	( ScreenRef, Type2<u16>( Size.y, Size.x ), TLRender::ScreenShape_Wide )
 	{
 	}
 };
@@ -177,11 +137,24 @@ public:
 //----------------------------------------------------------
 //	widescreen screen
 //----------------------------------------------------------
-class TLRender::Platform::ScreenWideRight : public TLRender::Platform::Screen
+class TLRender::TScreenWideLeft : public TLRender::TScreen
 {
 public:
-	ScreenWideRight(TRefRef ScreenRef) :
-		TLRender::Platform::Screen	( ScreenRef, TLRender::ScreenShape_WideRight )
+	TScreenWideLeft(TRefRef ScreenRef,const Type2<u16>& Size=TLScreen_DefaultSize) :
+		TScreen	( ScreenRef, Size, TLRender::ScreenShape_WideLeft )
+	{
+	}
+};
+
+
+//----------------------------------------------------------
+//	widescreen screen
+//----------------------------------------------------------
+class TLRender::TScreenWideRight : public TLRender::TScreen
+{
+public:
+	TScreenWideRight(TRefRef ScreenRef,const Type2<u16>& Size=TLScreen_DefaultSize) :
+		TScreen	( ScreenRef, Size, TLRender::ScreenShape_WideRight )
 	{
 	}
 };

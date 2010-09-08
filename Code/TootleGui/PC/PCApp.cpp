@@ -3,12 +3,7 @@
 #include <TootleCore/TLCore.h>
 #include <TootleCore/TLTime.h>
 #include <TootleCore/PC/PCDebug.h>
-
-
-#if defined(TL_ENABLE_WX)
-#include "wxWidgets/App.h"
-#endif
-
+#include <TootleFileSys/TLFileSys.h>
 
 
 
@@ -17,11 +12,8 @@ namespace TLGui
 {
 	namespace Platform
 	{
-#if !defined(TL_ENABLE_WX)
 		u32							g_TimerUpdateID = 0;			//	ID of the win32 timer we're using for the update intervals
 		MMRESULT					g_MMTimerUpdateID = NULL;		//	gr: null is the correct "invalid" state	
-		HINSTANCE					g_HInstance = NULL;
-#endif
 	}
 }
 
@@ -41,7 +33,6 @@ namespace TLGui
 //--------------------------------------------------
 //	mmsystem update timer callback
 //--------------------------------------------------
-#if !defined(TL_ENABLE_WX)
 void CALLBACK TLGui::Platform::UpdateMMTimerCallback(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
 {
 	//	dont do any threaded code whilst breaking
@@ -51,13 +42,12 @@ void CALLBACK TLGui::Platform::UpdateMMTimerCallback(UINT uTimerID, UINT uMsg, D
 	if ( TLCore::g_pCoreManager )
 		TLCore::g_pCoreManager->SetReadyForUpdate();
 }
-#endif
+
 
 
 //--------------------------------------------------
 //	win32 update timer callback
 //--------------------------------------------------
-#if !defined(TL_ENABLE_WX)
 void CALLBACK TLGui::Platform::UpdateTimerCallback(HWND hwnd,UINT uMsg,UINT_PTR idEvent,DWORD dwTime)
 {
 	//	dont do any threaded code whilst breaking
@@ -80,7 +70,7 @@ void CALLBACK TLGui::Platform::UpdateTimerCallback(HWND hwnd,UINT uMsg,UINT_PTR 
 	if ( TLCore::g_pCoreManager )
 		TLCore::g_pCoreManager->SetReadyForUpdate();
 }
-#endif
+
 
 
 
@@ -88,7 +78,6 @@ void CALLBACK TLGui::Platform::UpdateTimerCallback(HWND hwnd,UINT uMsg,UINT_PTR 
 //--------------------------------------------------
 //	platform init
 //--------------------------------------------------
-#if !defined(TL_ENABLE_WX)
 Bool TLGui::Platform::App::Init()
 {
 	//	setup the update timer
@@ -124,7 +113,6 @@ Bool TLGui::Platform::App::Init()
 
 	return true;
 }
-#endif // TL_ENABLE_WX
 
 
 //--------------------------------------------------
@@ -132,12 +120,11 @@ Bool TLGui::Platform::App::Init()
 //--------------------------------------------------
 SyncBool TLGui::Platform::App::Shutdown()
 {
-#if !defined(TL_ENABLE_WX)
 	if ( g_TimerUpdateID != 0 )
 	{
 		KillTimer( NULL, g_TimerUpdateID );
 	}
-#endif
+
 	return SyncTrue;
 }
 
@@ -145,7 +132,6 @@ SyncBool TLGui::Platform::App::Shutdown()
 //---------------------------------------------------
 //	win32 entry
 //---------------------------------------------------
-#if !defined(TL_ENABLE_WX)
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
 	int Result = 0;
@@ -162,7 +148,8 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
 	Buffer.SetSize( MAX_PATH );
 	u32 ExeStringLength = GetModuleFileName( NULL, Buffer.GetData(), Buffer.GetSize() );
 	Filename.SetLength( ExeStringLength );
-	TLGui::SetAppExe( Filename );
+	TLFileSys::GetParentDir( Filename );
+	TLGui::SetAppPath( Filename );
 
 	//	allocate an app
 	TPtr<TLGui::Platform::App> pApp = new TLGui::Platform::App();
@@ -186,14 +173,12 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
 
 	return (UpdateLoopResult==SyncTrue) ? 0 : 255;
 }
-#endif
 
 
 
 //--------------------------------------------------
 //	platform update
 //--------------------------------------------------
-#if !defined(TL_ENABLE_WX)
 SyncBool TLGui::Platform::App::Update()
 {
 	MSG msg;
@@ -240,5 +225,5 @@ SyncBool TLGui::Platform::App::Update()
 	//	keep app running
 	return SyncTrue;
 }
-#endif
+
 

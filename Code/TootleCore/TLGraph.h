@@ -243,7 +243,7 @@ public:
 	FORCEINLINE Bool				HasChildren() const					{	return (m_Children.GetSize() > 0);	}
 	FORCEINLINE TPointerArray<T>&			GetChildren()						{	return m_Children;	}
 	FORCEINLINE const TPointerArray<T>&		GetChildren() const					{	return m_Children;	}
-	virtual void					GetChildrenBase(TPointerArray<TGraphNodeBase>& ChildNodes);
+	virtual void					GetChildrenBase(TArray<TGraphNodeBase*>& ChildNodes);
 	template<typename MATCHTYPE>
 	T*								FindChildMatch(const MATCHTYPE& Value);				//	find a TPtr in the graph that matches the specified value (will use == operator of node type to match)
 	FORCEINLINE T*					FindChild(const TRef& NodeRef)						{	return FindChildMatch(NodeRef);	}
@@ -485,14 +485,9 @@ void TLGraph::TGraphNode<T>::ProcessMessage(TLMessaging::TMessage& Message)
 			//	gr: this is a bit expensive. I'm sending small messages around now when car control changes. 
 			//	this gets to the physics node, which doesnt do anything with it - which is fine - but this then prints out and game slows to a crawl
 			/*
-			TTempString DebugString("Unhandled message ");
-			MessageRef.GetString( DebugString );
-			DebugString.Append(", node: ");
-			GetNodeRef().GetString( DebugString );
-			DebugString.Append(" (");
-			GetNodeTypeRef().GetString( DebugString );
-			DebugString.Append(")");
-			TLDebug_Print( DebugString );
+			TDebugString Debug_String;
+			Debug_String << "Unhandled message " << MessageRef << " on node " << GetNodeAndTypeRef();
+			TLDebug_Print( Debug_String );
 			*/
 		}
 		#endif
@@ -573,9 +568,9 @@ void TLGraph::TGraphNode<T>::ProcessSubscribeOrPublishTo(TRefRef SubOrPub,TBinar
 //	
 //---------------------------------------------------------
 template<class T>
-void TLGraph::TGraphNode<T>::GetChildrenBase(TPointerArray<TGraphNodeBase>& ChildNodes)
+void TLGraph::TGraphNode<T>::GetChildrenBase(TArray<TGraphNodeBase*>& ChildNodes)
 {
-	TPointerArray<T>& Children = GetChildren();
+	TArray<T*>& Children = GetChildren();
 
 	for ( u32 c=0;	c<Children.GetSize();	c++ )
 	{

@@ -14,6 +14,10 @@
 
 #define DEBUG_CONSOLE_BUFFER_SIZE 512
 
+#if defined(TL_USER_GRAHAM)
+	#define TL_DEBUG_AUTOFLUSH
+#endif
+
 // Internal routines and variables
 namespace TLDebug
 {
@@ -55,6 +59,10 @@ void TLDebug::Platform::PrintToBuffer(const TString& String)
 	
 	g_ConsoleBuffer.Append( String.GetData() );
 	g_ConsoleBuffer.Append( "\n" );
+	
+#if defined(TL_DEBUG_AUTOFLUSH)
+	FlushBuffer();
+#endif	
 }
 
 

@@ -381,7 +381,43 @@ SyncBool TLFileSys::TFileMappy::ExportAsset(TPtr<TLAsset::TAsset>& pAsset,TRefRe
 //--------------------------------------------------------------
 Bool TLFileSys::TFileMappy::ImportAuthor(TLAsset::TTileMap& TileMap,TBinary& Data)
 {
-	//	gr: don't care about author data
+	/*
+	//	"up to 4 ascii strings, seperated by 0'"
+	TFixedArray<TFixedString,4> Strings;
+	
+	while ( Strings.GetSize() < 4 && Data.DataUnread() > 0 )
+	{
+		//	read in chars until we hit a terminator
+		THeapArray<char> Buffer;
+		char NextChar;
+		do
+		{
+			//	unexpectedly out of data
+			if ( !Data.Read( NextChar ) )
+			{
+				NextChar = 0;
+				TLDebug_Break("Run out of data in author data");
+				break;
+			}
+
+			//	add to buffer
+			Buffer.Add( NextChar );
+		}
+		while ( NextChar != 0 );
+
+		//	add new string
+		TString& String = Strings.AddNew();
+		String = Buffer.GetData();
+	}
+	
+	//	now turn these strings into refs and use them as indexes to flags
+	THeapArray<TString> RefStrings;
+	
+	//	todo: change this to a split-by-not-chars and get the ref alphabet chars
+	THeapArray<TChar> SplitChars;
+	SplitChars << ' ' << ',';
+	Strings.Split( SplitChars, RefStrings );
+	*/
 	return true;
 }
 

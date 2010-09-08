@@ -19,6 +19,7 @@
 
 #include <TootleCore/TEventChannel.h>
 #include <TootleAsset/TOptions.h>
+#include <TootleReflection/TLReflection.h>
 
 
 // Time for the bootup sequence to occur over
@@ -67,7 +68,7 @@ SyncBool TApplication::Initialise()
 	TPtr<TLRender::TScreen>& pScreen = TLRender::g_pScreenManager->GetInstance(TRef("Screen"), TRUE, GetDefaultScreenType() );
 	if(!pScreen)
 	{
-		TLDebug_Print("Failed to create main screen object");
+		TLDebug_Break("Failed to create main screen object");
 		return SyncFalse;
 	}
 	
@@ -75,7 +76,7 @@ SyncBool TApplication::Initialise()
 	Result = pScreen->Init();
 	if ( Result != SyncTrue )
 	{
-		TLDebug_Print("Error: Failed to initialise screen");
+		TLDebug_Break("Error: Failed to initialise screen");
 		return Result;
 	}
 	
@@ -84,6 +85,11 @@ SyncBool TApplication::Initialise()
 
 	// Load options file
 	LoadOptions();
+	
+	//	create reflection menu
+#if defined(_DEBUG)
+	TLReflection::CreateReflectionMenu( *pScreen->GetWindow() );
+#endif
 
 	return TManager::Initialise();
 }

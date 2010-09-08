@@ -79,7 +79,7 @@ namespace TLMemory
 		void		MemValidate(void* pMem=NULL);					//	validate memory heaps
 		void		MemOuputAllocations();
 		std::size_t	MemSize(void* pMem);							//  get the size of the memory pointed to by pMem
-		void		MemFillPattern(void* pMem, u32 Size, u8 Pattern);	// Fills memory with a specifiec pattern to spot uninitialised/deleted/overwritten memory
+		void		MemFillPattern(void* pMem,u32 Size, u8 Pattern);	// Fills memory with a specifiec pattern to spot uninitialised/deleted/overwritten memory
 	}
 
 	class TMemoryTrack;								//	allocation tracking entry
@@ -146,7 +146,7 @@ public:
 			m_prealloc_callback();
 #endif
 
-		void* pData = Platform::MemAlloc( size );
+		void* pData = Platform::MemAlloc( static_cast<u32>(size) );
 		if ( !pData )
 		{
 			TLMemory::Debug::Break("Failed to allocate memory", __FUNCTION__ );
@@ -154,14 +154,14 @@ public:
 		}
 
 		// Fill the memory with a pattern to be able to spot un-initialised data
-		Platform::MemFillPattern(pData, size, TLMemory::Debug_AllocPattern);
+		Platform::MemFillPattern(pData, static_cast<u32>(size), TLMemory::Debug_AllocPattern);
 
 		//	do memory debugging/logging
 		//	this is per-lib
 		#ifdef _DEBUG
 
 
-		TLMemory::Debug::Debug_Alloc( pData, size );
+		TLMemory::Debug::Debug_Alloc( pData, static_cast<u32>(size) );
 
 		#endif
 
@@ -231,7 +231,7 @@ public:
 
 		// Fill the memory with a pattern to be able to spot deleted and overwritten data
 		// NOTE: Currently the size is incorrect - see comment above.
-		Platform::MemFillPattern(pObj, size, TLMemory::Debug_DeallocPattern);
+		Platform::MemFillPattern(pObj, static_cast<u32>(size), TLMemory::Debug_DeallocPattern);
 
 		//	delete memory
 		Platform::MemDealloc( pObj );

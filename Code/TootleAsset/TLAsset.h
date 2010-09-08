@@ -14,12 +14,6 @@
 #include "TAsset.h"
 
 
-//	gr: this has no effect on the mac (GCC maybe?) so ifdef'd this to remove the warning
-#if defined(TL_TARGET_PC)
-	#pragma comment(lib,"../../../Tootle/Code/Lib/libpng.lib")
-	#pragma comment(lib,"../../../Tootle/Code/Lib/zlib.lib")
-#endif
-
 #ifdef _DEBUG
 	// Enable this to test the asset array everytime memory is allocated.
 	// This will make the system slow but will trap any problem with an asset being 

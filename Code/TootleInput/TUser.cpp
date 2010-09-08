@@ -3,7 +3,10 @@
 #include <TootleCore/TLCore.h>
 #include "TLInput.h"
 
-#include <TootleGui/TLGui.h>	//	gr: deprecated mouse access
+//	gr: deprecated mouse access
+#include <TootleRender/TScreenManager.h>
+#include <TootleGui/TLGui.h>	
+
 
 namespace TLUser
 {
@@ -228,7 +231,17 @@ void TUser::UpdateCursorPosition(u8 uCursorIndex)
 	}
 #endif
 
-	m_CursorPosition = TLGui::GetDefaultScreenMousePosition( uCursorIndex );
+	//	get the default screen
+	TLRender::TScreen* pScreen = TLRender::g_pScreenManager ? TLRender::g_pScreenManager->GetDefaultScreen().GetObjectPointer() : NULL;
+	if ( !TLRender::g_pScreenManager )
+		return;
+
+	//	get the window of the screen
+	TLGui::TWindow* pWindow = pScreen->GetWindow();
+	if ( !pWindow )
+		return;
+
+	m_CursorPosition = pWindow->GetLastMousePos();
 }
 
 
@@ -376,29 +389,25 @@ Bool TUser::MapAction(TRefRef refActionID, TRefRef refDeviceID, TRefRef SensorLa
 	if ( !pSensor.IsValid() )
 	{
 #ifdef _DEBUG
-		TTempString Debug_String("Unknown sensor ");
-		SensorLabelRef.GetString( Debug_String );
-		Debug_String.Append(" on device ");
-		refDeviceID.GetString( Debug_String );
-		Debug_String.Append("(");
-		pDevice->GetDeviceType().GetString( Debug_String );
-		Debug_String.Append(")");
-		TLDebug_Print(Debug_String);
-
 		//	print out all the availible sensors;
-		Debug_String.Set("Valid sensor labels; ");
+		TDebugString Debug_String;
+		Debug_String = "Valid sensor labels; ";
 		THeapArray<TRef> SensorLabels;
 		pDevice->Debug_GetSensorLabels( SensorLabels );
 		if ( SensorLabels.GetSize() == 0 )
-			Debug_String.Append("(none)");
+			Debug_String << "(none)";
 		
 		for ( u32 i=0;	i<SensorLabels.GetSize();	i++ )
 		{
-			SensorLabels[i].GetString( Debug_String );
-			Debug_String.Append(",");
+			Debug_String << SensorLabels[i] << ",";
 		}
-
+		
 		TLDebug_Print(Debug_String);
+		
+		Debug_String.Empty();
+		Debug_String << "Unknown sensor " << SensorLabelRef << " on device " << refDeviceID << "(" << pDevice->GetDeviceType() << ")";
+		TLDebug_Break(Debug_String);
+
 #endif
 		return FALSE;
 	}

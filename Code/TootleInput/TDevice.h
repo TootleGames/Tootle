@@ -21,10 +21,14 @@ namespace TLInput
 		const u32 Virtual = 1;		// Specifies a virtual device i.e. one without a physical counterpart
 	};
 
-	const TRef KeyboardRef		= TRef_Static(K,e,y,b,o); // "Keyboard"
-	const TRef MouseRef			= TRef_Static(M,o,u,s,e); // "Mouse"
-	const TRef GamepadRef		= TRef_Static(G,a,m,e,p); // "Gamepad"
-	const TRef TrackpadRef		= TRef_Static(T,r,a,c,k); // "Trackpad"
+#define TLInput_DeviceType_Keyboard	TRef_Static(K,e,y,b,o)
+#define TLInput_DeviceType_Mouse	TRef_Static(M,o,u,s,e)
+#define TLInput_DeviceType_Gamepad	TRef_Static(G,a,m,e,p)
+#define TLInput_DeviceType_Trackpad	TRef_Static(T,r,a,c,k)
+	const TRef KeyboardRef		= TLInput_DeviceType_Keyboard; // "Keyboard"
+	const TRef MouseRef			= TLInput_DeviceType_Mouse; // "Mouse"
+	const TRef GamepadRef		= TLInput_DeviceType_Gamepad; // "Gamepad"
+	const TRef TrackpadRef		= TLInput_DeviceType_Trackpad; // "Trackpad"
 
 }
 
@@ -37,8 +41,7 @@ public:
 	TRef	m_SensorRef;			// The ref of the input device sensor
 	float	m_fData;				// Data for the sensor
 };
-
-//TLCore_DeclareIsDataType(TInputData);
+TLCore_DeclareIsDataType(TLInput::TInputData);
 
 /*
 	Generic input device that will be created per physical device
@@ -66,9 +69,9 @@ public:
 	inline Bool			operator==(const TInputDevice& InputDevice) const 	{	return GetDeviceRef() == InputDevice.GetDeviceRef();	}
 
 	FORCEINLINE void	SetAttached(Bool bAttached)			{	m_Flags.Set(DeviceFlags::Attached, bAttached);	}
-	FORCEINLINE Bool	IsAttached()	const				{	return m_Flags.IsSet(DeviceFlags::Attached);	}
+	virtual Bool		IsAttached()	const				{	return m_Flags.IsSet(DeviceFlags::Attached);	}
 
-	FORCEINLINE Bool	IsVirtual()	const				{	return m_Flags.IsSet(DeviceFlags::Virtual);	}
+	DEPRECATED Bool		IsVirtual()	const				{	return m_Flags.IsSet(DeviceFlags::Virtual);	}
 
 	FORCEINLINE Bool	AssignToHardwareDevice(TRefRef HardwareDeviceRef);
 
@@ -123,9 +126,5 @@ FORCEINLINE Bool TLInput::TInputDevice::AssignToHardwareDevice(TRefRef HardwareD
 	m_HardwareDeviceRef = HardwareDeviceRef;
 	return TRUE;
 }
-
-
-
-#include "TAction.h"
 
 

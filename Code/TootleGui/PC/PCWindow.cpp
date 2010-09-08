@@ -1,13 +1,5 @@
 #include "PCWindow.h"
-
-
-#if defined(TL_ENABLE_WX)
-#include "wxWidgets/Window.h"
-#include "wxWidgets/OpenglCanvas.h"
-#include "wxWidgets/Tree.h"
-#else
 #include "PCWinWindow.h"
-#endif
 
 
 //	temp whilst the factory functions are in this file
@@ -27,11 +19,7 @@ TPtr<TLGui::TWindow> TLGui::CreateGuiWindow(TRefRef Ref)
 
 TPtr<TLGui::TTree> TLGui::CreateTree(TLGui::TWindow& Parent,TRefRef Ref,TPtr<TLGui::TTreeItem>& pRootItem,const TArray<TRef>& Columns)
 {
-#if defined(TL_ENABLE_WX)
-	TPtr<TLGui::TTree> pControl = new wx::Tree( Parent, Ref, pRootItem, Columns );
-#else
 	TPtr<TLGui::TTree> pControl;
-#endif
 	return pControl;
 }
 
@@ -83,7 +71,7 @@ void TLGui::Platform::Window::Show()
 //---------------------------------------------------------
 //	set the CLIENT SIZE ("content" in os x) of the window
 //---------------------------------------------------------
-void TLGui::Platform::Window::SetSize(const int2& WidthHeight)
+void TLGui::Platform::Window::SetSize(const Type2<u16>& WidthHeight)
 {
 	if ( !m_pWindow )
 		return;
@@ -96,22 +84,39 @@ void TLGui::Platform::Window::SetSize(const int2& WidthHeight)
 //---------------------------------------------------------
 //	set the CLIENT SIZE ("content" in os x) of the window
 //---------------------------------------------------------	 
-int2 TLGui::Platform::Window::GetSize()
+Type2<u16> TLGui::Platform::Window::GetSize()
 {
 	if ( !m_pWindow )
-		return int2(0,0);
+		return Type2<u16>(0,0);
 
-	return m_pWindow->m_ClientSize;
+	return Type2<u16>( m_pWindow->m_ClientSize.x, m_pWindow->m_ClientSize.y );
 }
 
 //---------------------------------------------------
 //	set the top-left position of the window frame
 //---------------------------------------------------
-void TLGui::Platform::Window::SetPosition(const int2& xy)
+void TLGui::Platform::Window::SetPosition(const Type2<u16>& xy)
 {
 	if ( !m_pWindow )
 		return;
 
-	m_pWindow->Move( xy );
+	m_pWindow->Move( int2(xy) );
 }
 
+
+//---------------------------------------------------
+//	get the window's top left position
+//---------------------------------------------------
+Type2<u16> TLGui::Platform::Window::GetPosition() const
+{
+	if ( !m_pWindow )
+		return Type2<u16>();
+
+	return m_pWindow->m_ClientPos;
+}
+
+
+void* TLGui::Platform::Window::GetHandle() const						
+{
+	return m_pWindow ? m_pWindow->HwndConst() : NULL;	
+}

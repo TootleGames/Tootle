@@ -8,12 +8,8 @@
 #include "TString.h"
 
 
-
-//	this forces us to build unittest++ lib in the same mode as TootleCore...
-#if defined(TL_ENABLE_UNITTEST) && defined(_DEBUG)
-	#pragma comment(lib,"../../../Tootle/Code/LibDebug/UnitTest++.lib")
-#elif defined(TL_ENABLE_UNITTEST)
-	#pragma comment(lib,"../../../Tootle/Code/LibRelease/UnitTest++.lib")
+#if defined(TL_ENABLE_UNITTEST)
+	#pragma comment(lib,"../../../Tootle/Code/Lib/UnitTest++.lib")
 #endif
 
 

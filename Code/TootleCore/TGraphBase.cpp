@@ -303,8 +303,41 @@ Bool TLGraph::TGraphBase::ReimportSchemeNode(TLAsset::TSchemeNode& SchemeNode,TR
 }
 
 
+//--------------------------------------------------------------------	
+//	re-init and restore node tree
+//--------------------------------------------------------------------	
+TRef TLGraph::TGraphBase::GetRootNodeRef()	
+{
+	TGraphNodeBase* pRootNode = GetRootNodeBase();		
+	return pRootNode ? pRootNode->GetNodeRef() : TRef_Invalid;	
+}
 
 
+
+//------------------------------------------------------------
+//	rename a node
+//------------------------------------------------------------
+bool TLGraph::TGraphBase::RenameNode(TRefRef NodeRef,TRefRef NewNodeRef)
+{
+	//	todo in overloaded graph to do proper renaming
+	TLDebug_Break("todo");	
+	return false;
+}
+		
+
+//------------------------------------------------------------
+//	re-instance a node with a different type
+//------------------------------------------------------------
+bool TLGraph::TGraphBase::ChangeNodeType(TRefRef NodeRef,TRefRef TypeRef)
+{
+	//	get existing node
+	TLGraph::TGraphNodeBase* pNode = FindNodeBase( NodeRef );
+	if ( !pNode )
+		return false;
+
+	TLDebug_Break("todo");	
+	return false;
+}		
 
 
 
@@ -352,9 +385,25 @@ void TLGraph::TGraphNodeBase::UpdateNodeData()
 
 
 //------------------------------------------------------------
+//	notify that data has changed, this is mostly just for reflection, but may get called a lot so subscription filtering might be required again...
+//------------------------------------------------------------
+void TLGraph::TGraphNodeBase::OnPropertyChanged(TRefRef DataRef)
+{
+	if ( !HasSubscribers() )
+		return;
+	
+	//	send out property-changed message
+	TLMessaging::TMessage EventMessage(TLCore::Message::OnPropertyChanged);
+	if ( DataRef.IsValid() )
+		EventMessage.ExportData( TRef_Static4(D,a,t,a), DataRef );
+	PublishMessage( EventMessage );
+}
+
+
+//------------------------------------------------------------
 //	get array of children's refs
 //------------------------------------------------------------
-void TLGraph::TGraphNodeBase::GetChildren(THeapArray<TRef>& ChildNodeRefs,Bool Recursive)
+void TLGraph::TGraphNodeBase::GetChildren(TArray<TRef>& ChildNodeRefs,Bool Recursive)
 {
 	//	get children
 	TPointerArray<TGraphNodeBase> ChildNodes;
@@ -365,10 +414,29 @@ void TLGraph::TGraphNodeBase::GetChildren(THeapArray<TRef>& ChildNodeRefs,Bool R
 		TGraphNodeBase* pChild = ChildNodes[c];
 
 		//	add this child's ref...
-		ChildNodeRefs.Add( pChild->GetNodeRef() );	
+		s32 AddedIndex = ChildNodeRefs.Add( pChild->GetNodeRef() );
+		
+		//	break out early if array is full
+		if ( AddedIndex == -1 )
+			return;
 
 		//	now add childrens children
 		if ( Recursive )
 			pChild->GetChildrenTree( ChildNodeRefs );
 	}
 }
+
+//------------------------------------------------------------
+//	
+//------------------------------------------------------------
+bool TLGraph::TGraphNodeBase::HasChildren() const
+{
+	TFixedArray<TRef,1> ChildNodeRefs;
+	
+	//	gr: see if we can change the GetChildren funcs to be const
+	TGraphNodeBase& this_Mutable = const_cast<TGraphNodeBase&>( *this );
+	this_Mutable.GetChildren( ChildNodeRefs );
+	
+	return !ChildNodeRefs.IsEmpty();
+}
+

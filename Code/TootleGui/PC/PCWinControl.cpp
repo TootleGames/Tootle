@@ -185,7 +185,7 @@ Bool Win32::GWinControl::Init(TPtr<GWinControl>& pOwner, u32 Flags)
 
 //	HMENU hMenu		= (HMENU)ControlID;
 	HMENU hMenu		= (HMENU)NULL;
-	HINSTANCE hInstance = TLGui::Platform::g_HInstance;
+	HINSTANCE hInstance = static_cast<HINSTANCE>( TLGui::Platform::g_HInstance );
 	HWND OwnerHwnd	= pOwner ? pOwner->m_Hwnd : m_OwnerHwnd;
 
 	//	reset handle
@@ -279,7 +279,7 @@ Bool Win32::GWinControl::CreateClass()
 	wc.lpfnWndProc	= Win32::Win32CallBack; 
 	wc.cbClsExtra	= 0;
 	wc.cbWndExtra	= 0;
-	wc.hInstance	= TLGui::Platform::g_HInstance;
+	wc.hInstance	= static_cast<HINSTANCE>(TLGui::Platform::g_HInstance);
 	wc.hIcon		= GetIconHandle();
 	wc.hCursor		= NULL;//LoadCursor(NULL, IDC_ARROW);
 	wc.hbrBackground = GetBackgroundBrush();
@@ -300,7 +300,7 @@ Bool Win32::GWinControl::CreateClass()
 
 /*static*/Bool Win32::GWinControl::DestroyClass(const TChar* pClassName)
 {
-	if ( !UnregisterClass( pClassName, TLGui::Platform::g_HInstance ) )
+	if ( !UnregisterClass( pClassName, static_cast<HINSTANCE>( TLGui::Platform::g_HInstance ) ) )
 	{
 		TLDebug::Platform::CheckWin32Error();
 		return FALSE;
@@ -321,7 +321,7 @@ Bool Win32::GWinControl::DestroyClass()
 Bool Win32::GWinControl::ClassExists()
 {
 	WNDCLASS wc;
-	return GetClassInfo( TLGui::Platform::g_HInstance, ClassName(), &wc ) != 0;
+	return GetClassInfo( static_cast<HINSTANCE>( TLGui::Platform::g_HInstance ) , ClassName(), &wc ) != 0;
 }
 
 
@@ -680,7 +680,7 @@ HBRUSH Win32::GWinControl::GetBrushFromResource(int Resource)
 	HBRUSH HBrush = NULL;
 	
 	//	didnt load from external file, try loading internal resource
-	HBitmap = (HBITMAP)LoadImage( TLGui::Platform::g_HInstance, MAKEINTRESOURCE(Resource), IMAGE_BITMAP, 0, 0, 0x0 );
+	HBitmap = (HBITMAP)LoadImage( static_cast<HINSTANCE>(TLGui::Platform::g_HInstance), MAKEINTRESOURCE(Resource), IMAGE_BITMAP, 0, 0, 0x0 );
 	if ( HBitmap ) 
 	{
 		HBrush = CreatePatternBrush( HBitmap );

@@ -1,6 +1,7 @@
 #include "TSocketServer.h"
 #include <TootleCore/TLCore.h>
 #include <TootleCore/TCoreManager.h>
+#include <TootleCore/TLMaths.h>
 
 
 //	gr: this is a bit temporary. todo: replace with a generic 

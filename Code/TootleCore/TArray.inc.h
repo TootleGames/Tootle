@@ -5,24 +5,33 @@
 
 
 template< typename TYPE>
-s32 TArray<TYPE>::Add(const TYPE& val)
+s32 TArray<TYPE>::Add(const TYPE& val,u32 Count)
 {
+	if ( Count == 0 )
+	{
+		TLArray::Debug::Break("Expected count > 0",__FUNCTION__);
+		return -1;
+	}
+	
 	//	add additional element to set
 	u32 Size = GetSize();
-	if ( !SetSize( Size+1 ) )
+	if ( !SetSize( Size+Count ) )
 		return -1;
 
 	u32 NewIndex = Size;
-	Size = Size+1;	//	new size
+	Size = Size+Count;	//	new size
 
 	TYPE* pData = GetData();
 
-	//	set new last element
-	TYPE& LastElement = pData[NewIndex];
-	LastElement = val;
+	//	set new last element[s]
+	for ( u32 AddCount=0;	AddCount<Count;	AddCount++ )
+	{
+		TYPE& LastElement = pData[NewIndex+AddCount];
+		LastElement = val;
+	}
 
 	//	update sort policy
-	GetSortPolicy().OnAdded( *this, NewIndex, 1 );
+	GetSortPolicy().OnAdded( *this, NewIndex, Count );
 
 	return GetLastIndex();
 }

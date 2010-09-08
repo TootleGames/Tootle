@@ -84,9 +84,8 @@ void TLGui::Platform::Window::Show()
 //---------------------------------------------------------
 //	set the CLIENT SIZE ("content" in os x) of the window
 //---------------------------------------------------------
-void TLGui::Platform::Window::SetSize(const int2& WidthHeight)
+void TLGui::Platform::Window::SetSize(const Type2<u16>& WidthHeight)
 {
-	//	gr: fail on ipod?
 	/*
 	CGSize Size;
 	Size.width = WidthHeight.x;
@@ -99,7 +98,7 @@ void TLGui::Platform::Window::SetSize(const int2& WidthHeight)
 //---------------------------------------------------------
 //	set the CLIENT SIZE ("content" in os x) of the window
 //---------------------------------------------------------	 
-int2 TLGui::Platform::Window::GetSize()
+Type2<u16> TLGui::Platform::Window::GetSize()
 {
 	//	gr: i think this is the window size, not the content size
 	CGRect Rect = m_pWindow.frame;
@@ -111,7 +110,7 @@ int2 TLGui::Platform::Window::GetSize()
 //---------------------------------------------------
 //	set the top-left position of the window frame
 //---------------------------------------------------
-void TLGui::Platform::Window::SetPosition(const int2& xy)
+void TLGui::Platform::Window::SetPosition(const Type2<u16>& xy)
 {
 	/*
 	//	gr: fail on ipod?

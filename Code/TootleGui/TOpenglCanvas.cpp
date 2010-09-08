@@ -12,7 +12,7 @@
 
 
 
-TLGui::TOpenglCanvas::TOpenglCanvas(TWindow& Parent,TRefRef ControlRef) :
-	TLGui::TControl	( Parent, ControlRef )
+TLGui::TOpenglCanvas::TOpenglCanvas(TRefRef ControlRef) :
+	TLGui::TControl	( ControlRef )
 {
 }

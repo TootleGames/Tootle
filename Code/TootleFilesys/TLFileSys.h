@@ -40,9 +40,16 @@ namespace TLFileSys
 	
 
 	// System specific directory helper routines
-	Bool GetAssetDirectory(TTempString& AssetDir);
-	Bool GetAssetSubDirectory(TTempString& AssetDir, const TTempString& Subdirectory);
-	Bool GetUserDirectory(TTempString& UserDir);
+	Bool GetAssetDirectory(TString& AssetDir);
+	Bool GetAssetSubDirectory(TString& AssetDir, const TString& Subdirectory);
+	Bool GetUserDirectory(TString& UserDir);
+	
+	namespace Platform
+	{
+		Bool GetAssetDirectory(TString& AssetDir);
+		Bool GetUserDirectory(TString& UserDir);
+	}
+	
 };
 
 

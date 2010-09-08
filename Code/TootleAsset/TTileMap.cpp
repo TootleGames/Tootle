@@ -4,6 +4,18 @@
 #include <TootleCore/TKeyArray.h>
 
 
+//-------------------------------------------------------
+//	if the tile has a flag, this is it
+//-------------------------------------------------------
+TRef TLAsset::TTile::GetFlag() const
+{
+	TLAsset::TTile& This = const_cast<TLAsset::TTile&>(*this);
+	TBinaryTree& Data = This.GetData();
+	TRef Flag;
+	Data.ImportData( TRef_Static4(F,l,a,g), Flag );
+	return Flag;
+}
+
 
 //-------------------------------------------------------
 //	generate init data for a render node - return NULL if we don't need to put a render node here
@@ -105,7 +117,14 @@ SyncBool TLAsset::TTileMap::ImportData(TBinaryTree& Data)
 	for ( u32 t=0;	t<TileDatas.GetSize();	t++ )
 	{
 		TPtr<TBinaryTree>& pTileData = TileDatas[t];
-		AddTile( pTileData );
+		TTile* pNewTile = AddTile( pTileData );
+
+		//	if this is a flagged tile, save off the coord
+		TRef TileFlag = pNewTile ? pNewTile->GetFlag() : TRef();
+		if ( TileFlag.IsValid() )
+		{
+			m_FlaggedTiles.Add( t );
+		}			
 	}
 
 	//	import scheme asset
@@ -200,29 +219,29 @@ void TLAsset::TTileMap::SetSize(const Type2<u16>& Size)
 //-------------------------------------------------------
 //	add a new tile, returns false if we cannot fit any more tiles or invalid data etc
 //-------------------------------------------------------
-bool TLAsset::TTileMap::AddTile(TPtr<TBinaryTree>& pTileData)
+TLAsset::TTile* TLAsset::TTileMap::AddTile(TPtr<TBinaryTree>& pTileData)
 {
 	if ( !pTileData )
 	{
 		TLDebug_Break("Tile data expected");
-		return false;
+		return NULL;
 	}
 
 	//	don't exceed tile count
 	if ( m_Tiles.GetSize() >= GetTileCount() )
 	{
 		TLDebug_Break("Trying to add too many tiles to tilemap.");
-		return false;
+		return NULL;
 	}
 
 	//	add a new tile
 	TTile* pTile = m_Tiles.AddNew();
 	if ( !pTile )
-		return false;
+		return NULL;
 
 	pTile->SetData( pTileData );
 
-	return true;
+	return pTile;
 }
 
 

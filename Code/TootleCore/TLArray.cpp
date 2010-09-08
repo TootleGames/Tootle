@@ -2,6 +2,8 @@
 #include "TLDebug.h"
 #include "TString.h"
 #include "TLUnitTest.h"
+#include "TStructArray.h"
+
 
 namespace TLArray
 {

@@ -39,6 +39,8 @@ public:
 	TBinaryTree&		GetData()							{	return *m_pData;	}
 	TPtr<TBinaryTree>&	GetDataPtr()						{	return m_pData;	}
 
+	TRef				GetFlag() const;					//	if the tile has a flag, this is it
+	
 	TPtr<TBinaryTree>	GetRenderNodeData(const float3& Translate,float LayerZDepth=1.f);	//	generate init data for a render node - return NULL if we don't need to put a render node here
 
 protected:
@@ -60,15 +62,16 @@ public:
 	void						SetSize(const Type2<u16>& Size);	//	re-size grid
 	u16							GetWidth() const				{	return m_GridSize.x;	}
 	u16							GetHeight() const				{	return m_GridSize.y;	}
-	u32							GetIndex(const Type2<u16>& xy)	{	return xy.x + ( xy.y * m_GridSize.x );	}
-	TTile&						GetTile(const Type2<u16>& xy)	{	return m_Tiles[ GetIndex( xy ) ];	}
+	u32							GetTileIndex(const Type2<u16>& xy)	{	return xy.x + ( xy.y * GetWidth() );	}
+	Type2<u16>					GetTileCoord(u32 Index)			{	return Type2<u16>( Index % GetWidth(), Index / GetWidth() );	}
+	TTile&						GetTile(const Type2<u16>& xy)	{	return m_Tiles[ GetTileIndex( xy ) ];	}
 	TTile&						GetTile(u16 x,u16 y)			{	return GetTile( Type2<u16>( x,y ) );	}
-	u32							GetTileCount() const			{	return m_GridSize.x * m_GridSize.y;	}
+	u32							GetTileCount() const			{	return GetWidth() * GetHeight();	}
 
 	void						SetTileSize(const float2& TileSize)		{	m_TileSize = TileSize;	}
 	const float2&				GetTileSize() const						{	return m_TileSize;	}
 
-	bool						AddTile(TPtr<TBinaryTree>& pTileData);	//	add a new tile, returns false if we cannot fit any more tiles or invalid data etc
+	TTile*						AddTile(TPtr<TBinaryTree>& pTileData);	//	add a new tile, returns false if we cannot fit any more tiles or invalid data etc
 	void						PadTiles();								//	add more tiles till we fill the array
 
 	TPtr<TScheme>&				GetScheme()								{	return m_pScheme;	}
@@ -85,6 +88,7 @@ protected:
 	Type2<u16>			m_GridSize;		//	grid size
 	float2				m_TileSize;		//	expected size of render node tiles - gr: maybe don't store that here?
 	TPtr<TScheme>		m_pScheme;		//	tilemap converted into a scheme, for easy loading
+	THeapArray<u32>		m_FlaggedTiles;	//	tiles with flagged data (flag translates to a ref) - kept for fast lookup
 };
 
 

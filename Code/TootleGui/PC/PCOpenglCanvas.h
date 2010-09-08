@@ -34,11 +34,14 @@ public:
 	
 	virtual Bool	BeginRender();
 	virtual void	EndRender();
-		
+	
+	virtual Type2<u16>	GetSize() const						{	return m_Size;	}
+
 protected:
 	bool			InitContext(Win32::GWindow& Window);	//	create the device context and opengl context
 
 protected:
+	Type2<u16>		m_Size;		//	size of the DC
 	HDC				m_HDC;		//	DC we've setup for opengl
 	HGLRC			m_HGLRC;	//	opengl context
 	bool			m_HasArbMultiSample;	//	is antialiasing supported?

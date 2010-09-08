@@ -1,7 +1,6 @@
 #include "MacWindow.h"
 
 //	include NSApp, NSArray etc
-#if !defined(TL_ENABLE_WX)
 #include <TootleInput/Mac/MacInput.h>
 #import <IOKit/IOKitLib.h>
 #import <IOKit/hid/IOHIDManager.h>
@@ -9,14 +8,7 @@
 #import <Appkit/Appkit.h>
 #include <TootleCore/TLMemory.h> // TEMP
 #import "MacWindowDelegate.h"
-#endif
 
-
-#if defined(TL_ENABLE_WX)
-#include "../wxWidgets/Window.h"
-#include "../wxWidgets/OpenglCanvas.h"
-#include "../wxWidgets/Tree.h"
-#endif
 
 
 

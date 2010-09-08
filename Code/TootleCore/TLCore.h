@@ -20,7 +20,15 @@ namespace TLCore
 	Bool			TootShutdown(Bool InitResult);	//	engine shutdown
 	void			Quit();							//	instigate quitting of the application
 
-	// DB - Global TRef's that get used often.  Performance optimisation
+	//	use this format!
+	namespace Message
+	{
+		enum
+		{
+			OnPropertyChanged	= TRef_Static(O,n,P,r,o),
+		};
+	}
+	
 	const TRef InitialiseRef	= TRef_Static(I,n,i,t,i);	//"Initialise";
 	const TRef UpdateRef		= TRef_Static(U,p,d,a,t);	//"Update";
 	const TRef RenderRef		= TRef_Static(R,e,n,d,e);	//"Render";

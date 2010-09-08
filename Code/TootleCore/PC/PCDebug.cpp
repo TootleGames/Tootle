@@ -1,7 +1,9 @@
 #include "PCDebug.h"
 #include <TootleGui/PC/PCGui.h>	//	windows headers
-
 #include "../TString.h"
+
+#pragma comment(lib,"user32.lib")
+
 
 namespace TLDebug
 {

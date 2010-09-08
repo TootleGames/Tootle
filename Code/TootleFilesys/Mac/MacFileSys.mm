@@ -8,7 +8,7 @@
  */
 
 #include "MacFileSys.h"
-
+#include "../TLFileSys.h"
 #import <Foundation/Foundation.h>
 
 // Filesystem versions
@@ -20,13 +20,11 @@
 #include <TootleCore/TLTypes.h>
 #include <TootleCore/Mac/MacString.h>
 
-Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
+Bool TLFileSys::Platform::GetAssetDirectory(TString& AssetDir)
 {
-	
-	TTempString applicationdir;
-	
-	if(GetApplicationURL(applicationdir))
-	{
+	TTempString applicationdir;	
+	if(!GetApplicationURL(applicationdir))
+		return false;
 
 #if(FILESYS_VERSION == FS_DEVELOPMENT)	
 		///////////////////////////////////////////////////////////////////////////
@@ -76,35 +74,11 @@ Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
 		
 		///////////////////////////////////////////////////////////////////////////
 #endif
-		
-		return TRUE;
-	}	
-	
-	return FALSE;
-	
-}
-
-Bool TLFileSys::Platform::GetAssetSubDirectory(TTempString& UserDir, const TTempString& Subdirectory)
-{
-	// Get the subdirectory requested
-	TTempString tmpassetdir;
-	
-	if(GetAssetDirectory(tmpassetdir))
-	{
-		tmpassetdir.Append(Subdirectory);
-		tmpassetdir.Append("/");
-		
-		UserDir = tmpassetdir;
-				
-		return TRUE;
-		
-	}
-	
-	return FALSE;		
+	return true;
 }		
 
 
-Bool TLFileSys::Platform::GetUserDirectory(TTempString& UserDir)
+Bool TLFileSys::Platform::GetUserDirectory(TString& UserDir)
 {
 #if(FILESYS_VERSION == FS_DEVELOPMENT)	
 	///////////////////////////////////////////////////////////////////////////
@@ -112,7 +86,6 @@ Bool TLFileSys::Platform::GetUserDirectory(TTempString& UserDir)
 	///////////////////////////////////////////////////////////////////////////
 
 	// The developer version uses a 'User' sub directory of the 'Asset' directory
-	
 	return GetAssetSubDirectory(UserDir, "User");
 	///////////////////////////////////////////////////////////////////////////
 
@@ -143,20 +116,17 @@ Bool TLFileSys::Platform::GetUserDirectory(TTempString& UserDir)
 #endif
 }		
 
-Bool TLFileSys::Platform::GetApplicationURL(TTempString& url)
+Bool TLFileSys::Platform::GetApplicationURL(TString& url)
 {
 	NSBundle* bundle = [NSBundle mainBundle];
 	
-	if(bundle)
-	{
-		NSString* bundlepath = [bundle bundlePath];
+	if ( !bundle )
+		return false;
+
+	NSString* bundlepath = [bundle bundlePath];
 		
-		const char* pApplicationDir = (const char*)[bundlepath UTF8String];
-		
-		url = pApplicationDir;
-		return TRUE;
-		
-	}
+	const char* pApplicationDir = (const char*)[bundlepath UTF8String];
+	url = pApplicationDir;
 	
-	return FALSE;
+	return true;
 }

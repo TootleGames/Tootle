@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="QtLib"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="C:\Qt\2010.02.1\qt\include"
+		PreprocessorDefinitions="TL_ENABLE_QT"
+	/>
+	<Tool
+		Name="VCLibrarianTool"
+		AdditionalLibraryDirectories=""
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		AdditionalLibraryDirectories=""
+	/>
+</VisualStudioPropertySheet>

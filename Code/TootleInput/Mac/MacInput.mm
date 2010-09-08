@@ -1,4 +1,5 @@
 #include "MacInput.h"
+#include <TootleCore/TLMaths.h>
 
 #import <IOKit/IOKitLib.h>
 #import <IOKit/hid/IOHIDManager.h>
@@ -11,8 +12,8 @@
 
 //	gr: enable this to use the HID mouse.
 //		the GUI library now
-#define ENABLE_HID_MOUSE
-#define ENABLE_HID_KEYBOARD
+//#define ENABLE_HID_MOUSE
+//#define ENABLE_HID_KEYBOARD
 
 
 #ifdef _DEBUG
@@ -690,11 +691,6 @@ void Platform::HID::DeviceReportCallback(void * inContext, IOReturn inResult, vo
 		str.Appendf( "%02x", inReport[uIndex] );
 		TLDebug_Print(str);
 	}
-	
-	int2 cursorpos = GetCursorPosition(0);
-	TTempString str;
-	str.Appendf( "Cursor: (%d, %d)", cursorpos.x, cursorpos.y );
-	TLDebug_Print(str);
 }
 
 
@@ -786,15 +782,16 @@ Bool Platform::UpdateDevice(TLInput::TInputDevice& Device)
 	if(!Device.IsVirtual())
 	{
 		// Physical device
-		return HID::UpdatePhysicalDevice(Device);
+		HID::UpdatePhysicalDevice(Device);
 	}
 	else
 	{
 		// Virtual device
-		return HID::UpdateVirtualDevice(Device);
+		HID::UpdateVirtualDevice(Device);
 	}	
 	
-	return FALSE;
+	//	gr: return true to allow update of our new gui devices
+	return true;
 }
 
 
@@ -1233,11 +1230,6 @@ Bool Platform::HID::UpdateHIDDevice_Gamepad(TInputDevice& Device,TLInputHIDDevic
 
 #include <TootleGui/TLGui.h>
 
-int2 Platform::GetCursorPosition(u8 uIndex)
-{
-	//	gr: get mouse pos from OS (gui lib)
-	return TLGui::GetDefaultScreenMousePosition(uIndex);
-}
 
 
 // On Ipod set the cursor position

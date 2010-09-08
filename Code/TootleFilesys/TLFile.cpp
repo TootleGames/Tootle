@@ -1,10 +1,115 @@
 #include "TLFile.h"
 #include <TootleCore/TBinaryTree.h>
-
 #include <TootleCore/TAxisAngle.h>
 #include <TootleCore/TEuler.h>
 #include <TootleCore/TQuaternion.h>
 #include <TootleCore/TMatrix.h>
+#include <TootleCore/TLUnitTest.h>
+#include <TootleCore/TColour.h>
+#include <TootleCore/TRef.h>
+
+
+namespace TLBinary
+{
+	template<typename TYPE>
+	bool	Debug_CheckImportExport(const TYPE& That);
+}
+
+
+//---------------------------------------------
+//	test that the literal data types match with the typed ones
+//	can we put this into the declaration macro?
+//---------------------------------------------
+TEST(TBinary_Types)
+{
+	//	not sure how these could be wrong...
+	CHECK( TLBinary::GetDataTypeRef<TRef>() == TLBinary_TypeRef(TRef) );
+	CHECK( TLBinary::GetDataTypeRef<Bool>() == TLBinary_TypeRef(Bool) );
+	
+	CHECK( TLBinary::GetDataTypeRef<float>() == TLBinary_TypeRef(float) );
+}
+
+
+//---------------------------------------------
+//---------------------------------------------
+template<typename TYPE>
+bool TLBinary::Debug_CheckImportExport(const TYPE& That)
+{
+	//	check it matches the expected hint type
+	TRef ExpectedHintType = TLBinary::GetDataTypeRef<TYPE>();
+	if ( !ExpectedHintType.IsValid() )
+	{
+		TLDebug_Print("Failed to calculate the TYPE's hint.");
+		return false;
+	}
+	
+	//	write the variable out to the binary
+	TBinary b;
+	b.Write( That );
+	b.ResetReadPos();
+	
+	//	make sure the type hint is correct
+	if ( b.GetDataTypeHint() != ExpectedHintType )
+	{
+		TDebugString Debug_String;
+		Debug_String << "Binary failed to set data type hint " << ExpectedHintType << ". Instead determined type: " << b.GetDataTypeHint();
+		return false;
+	}
+	
+	//	if this doesn't return true then this type's not yet supported
+	TString s1;
+	if ( !TLFile::ExportBinaryData( s1, b ) )
+	{
+		TDebugString Debug_String;
+		Debug_String << "Export of " << TLBinary::GetDataTypeRef<TYPE>() << " not yet supported";
+		TLDebug_Print( Debug_String );
+		return true;
+	}
+	
+	//	do another export and ensure they match up
+	//	if this fails due to string length, then just increase the buffer size
+	TBufferString<4000> s2;
+	if ( !TLFile::ExportBinaryData( s2, b ) )
+	{
+		TDebugString Debug_String;
+		Debug_String << "Export of " << TLBinary::GetDataTypeRef<TYPE>() << " failed 2nd time.";
+		TLDebug_Print( Debug_String );
+		CHECK(false);
+		return false;
+	}
+
+	//	now re-import the string
+	TBinary b2;
+	if ( TLFile::ImportBinaryData( s1, b2, ExpectedHintType ) != SyncTrue )
+	{
+		TDebugString Debug_String;
+		Debug_String << "Exported string (\"" << s1 << "\") of data type " << TLBinary::GetDataTypeRef<TYPE>() << " failed to re-import";
+		TLDebug_Print( Debug_String );
+		return false;
+	}
+	
+	//	now make sure the binary data matches up
+	//	gr: todo
+	return true;
+}
+
+//---------------------------------------------
+//	that that the binary import/export values match up
+//---------------------------------------------
+TEST(TBinary_ImportExport)
+{
+	CHECK( TLBinary::Debug_CheckImportExport<bool>(true) );
+	CHECK( TLBinary::Debug_CheckImportExport( 12.34f ) );
+	CHECK( TLBinary::Debug_CheckImportExport<u8>( 255 ) );
+	CHECK( TLBinary::Debug_CheckImportExport<u16>( 1024 ) );
+	CHECK( TLBinary::Debug_CheckImportExport<u32>( 50000 ) );
+	CHECK( TLBinary::Debug_CheckImportExport<s16>( -300 ) );
+	CHECK( TLBinary::Debug_CheckImportExport<s32>( -50000 ) );
+	
+	TRef Hello = "Hello";
+	CHECK( TLBinary::Debug_CheckImportExport( Hello ) );
+}
+
 
 
 //--------------------------------------------------------
@@ -23,13 +128,8 @@ SyncBool ImportBinaryDataIntegerInRange(TBinary& Data,const TString& DataString)
 	for ( u32 i=0;	i<Integers.GetSize();	i++ )
 	{
 		const s32& Integer = Integers[i];
-		if ( Integer >= Min && (u32)Integer <= Max )
-			continue;
-
-		TTempString Debug_String;
-		Debug_String << "Integer out of range: " << Min << " < " << Integer << " < " << Max;
-		TLDebug_Break( Debug_String );
-		return SyncFalse;
+		if ( !TLDebug_CheckInRange( Integer, Min, (u32)Max ) )
+			return SyncFalse;
 	}
 
 	//	no integers found...
@@ -286,15 +386,75 @@ TRef TLFile::GetDataTypeFromString(const TString& String)
 }
 
 
+template<typename TYPE>
+bool AppendBinaryDataToString(TString& String,const TBinary& BinaryData)
+{
+	const TYPE* pData = BinaryData.Get<TYPE>();
+	if ( !pData )
+		return false;
+	
+	String << ( *pData );
+	return true;
+}
+
+bool TLFile::ExportBinaryData(TString& String,const TBinary& BinaryData)
+{
+	//	based on the type, turn the data [back] into a string in the same format that we import with
+	TRefRef BinaryDataType = BinaryData.GetDataTypeHint();
+
+#define case_ExportBinaryData(PodType)	\
+case TLBinary_TypeRef(PodType):			return AppendBinaryDataToString<PodType>( String, BinaryData );	\
+case TLBinary_TypeNRef(Type2,PodType):	return AppendBinaryDataToString<Type2<PodType> >( String, BinaryData );	\
+case TLBinary_TypeNRef(Type3,PodType):	return AppendBinaryDataToString<Type3<PodType> >( String, BinaryData );	\
+case TLBinary_TypeNRef(Type4,PodType):	return AppendBinaryDataToString<Type4<PodType> >( String, BinaryData );
+
+	switch ( BinaryDataType.GetData() )
+	{
+			case_ExportBinaryData(TRef);
+			case_ExportBinaryData(float);
+			case_ExportBinaryData(u8);
+			case_ExportBinaryData(u16);
+			case_ExportBinaryData(u32);
+			case_ExportBinaryData(s8);
+			case_ExportBinaryData(s16);
+			case_ExportBinaryData(s32);
+			case_ExportBinaryData(Bool);
+	}
+#undef case_ExportBinaryData
+	
+	String << "(???)";
+	return SyncTrue;
+}
+
+
 //--------------------------------------------------------
 //	
 //--------------------------------------------------------
-SyncBool TLFile::ImportBinaryData(TXmlTag& Tag,TBinary& BinaryData,TRefRef DataType)
+SyncBool TLFile::ImportBinaryData(const TString& DataString,TBinary& BinaryData,TRef DataType)
 {
-	//	grab data string
-	const TString& DataString = Tag.GetDataString();
+	/*
+	//	work out the type of data
+	TRefRef BinaryDataType = BinaryData.GetDataTypeHint();
+	
+	//	check for conflicting type hints
+	if ( DataType.IsValid() && BinaryDataType.IsValid() && DataType != BinaryDataType )
+	{
+		TDebugString Debug_String;
+		Debug_String << "Data import type hint mismatch; Tried to import as " << DataType << " but binary says it's " << BinaryDataType;
+		TLDebug_Break( Debug_String );
+		
+		//	fall through to use the data type embedded in the binary data
+		DataType = BinaryDataType;
+	}
+	else if ( BinaryDataType.IsValid() && !DataType.IsValid() )
+	{
+		//	use the type specified in the binary 
+		DataType = BinaryDataType;
+	}
+	 */
+	
+	//	import the data based on the type
 	u32 CharIndex = 0;
-
 	switch ( DataType.GetData() )
 	{
 	case TLBinary_TypeRef(float):
@@ -532,14 +692,10 @@ SyncBool TLFile::ImportBinaryData(TXmlTag& Tag,TBinary& BinaryData,TRefRef DataT
 		break;
 	};
 	
-#ifdef _DEBUG
-	TTempString Debug_String("Unsupported/todo data type ");
-	DataType.GetString( Debug_String );
-	Debug_String.Append(". Data [");
-	Debug_String.Append( DataString );
-	Debug_String.Append("]");
+
+	TDebugString Debug_String;
+	Debug_String << "Unsupported/todo data type " << DataType << ". Data string: [" << DataString << "]";
 	TLDebug_Break( Debug_String );
-#endif
 
 	return SyncFalse;
 }
@@ -628,7 +784,7 @@ Bool TLFile::ParseXMLDataTree(TXmlTag& Tag,TBinaryTree& Data)
 			//	gr: DONT do this, if the type is mixed, this overwrites it. Setting the DataTypeHint should be automaticly done when we Write() in ImportBinaryData
 			//NodeData.SetDataTypeHint( DataTypeRef );
 
-			TagImportResult = TLFile::ImportBinaryData( *pChildTag, NodeData, DataTypeRef );
+			TagImportResult = TLFile::ImportBinaryData( pChildTag->GetDataString(), NodeData, DataTypeRef );
 
 			//	gr: just to check the data hint is being set from the above function...
 			if ( TagImportResult == SyncTrue && !NodeData.GetDataTypeHint().IsValid() && NodeData.GetSize() > 0 )

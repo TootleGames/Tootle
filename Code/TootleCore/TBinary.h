@@ -17,6 +17,12 @@ namespace TLBinary
 	template<typename TYPE>
 	FORCEINLINE TRef	GetDataTypeRef()					{	return TRef();	}	
 
+	//	get the size of the data a ref refers to, but only useful at compile time (so for templated functions) ... 
+	//	... probably rarely used but in TLBinary::GetSizeOf() stops any potential code-errors
+	template<u32 TYPEREF>
+	FORCEINLINE u32		GetDataTypeSize()					{	return 0;	}
+	u32					GetDataTypeSize(TRefRef);
+	
 	//	same as above but ability to use a variable for the TYPE instead of explicitly using <XYZ>
 	template<typename TYPE>
 	FORCEINLINE TRef	GetDataTypeRef(const TYPE& Var)		{	return GetDataTypeRef<TYPE>();	}
@@ -26,7 +32,14 @@ namespace TLBinary
 	#define TLBinary_DeclareDataTypeRef(TYPE,TYPEREF)		\
 		namespace TLBinary									\
 		{													\
-			template<> FORCEINLINE TRef	GetDataTypeRef<TYPE>()	{	return TYPEREF;	}	\
+			template<> FORCEINLINE TRef	GetDataTypeRef<TYPE>()		{	return TYPEREF;	}	\
+			template<> FORCEINLINE u32	GetDataTypeSize<TYPEREF>()	{	return sizeof(TYPE);	}	\
+		}
+	
+	#define TLBinary_DeclareDataTypeRefNoSize(TYPE,TYPEREF)		\
+		namespace TLBinary									\
+		{													\
+			template<> FORCEINLINE TRef	GetDataTypeRef<TYPE>()		{	return TYPEREF;	}	\
 		}
 	
 	//	another one to do TYPE and TYPE2,TYPE3,TYPE4
@@ -35,7 +48,13 @@ namespace TLBinary
 		TLBinary_DeclareDataTypeRef( Type2<TYPE>,	TLBinary_TypeNRef( Type2, TYPE ) );	\
 		TLBinary_DeclareDataTypeRef( Type3<TYPE>,	TLBinary_TypeNRef( Type3, TYPE ) );	\
 		TLBinary_DeclareDataTypeRef( Type4<TYPE>,	TLBinary_TypeNRef( Type4, TYPE ) );	
-
+	
+	#define TLBinary_DeclareDataTypeRefAllNoSize(TYPE)	\
+		TLBinary_DeclareDataTypeRefNoSize( TYPE,			TLBinary_TypeRef( TYPE ) );			\
+		TLBinary_DeclareDataTypeRefNoSize( Type2<TYPE>,	TLBinary_TypeNRef( Type2, TYPE ) );	\
+		TLBinary_DeclareDataTypeRefNoSize( Type3<TYPE>,	TLBinary_TypeNRef( Type3, TYPE ) );	\
+		TLBinary_DeclareDataTypeRefNoSize( Type4<TYPE>,	TLBinary_TypeNRef( Type4, TYPE ) );	
+	
 	//	gr: accessor to get a define of a TRef for a type. You need to use these for case statements, plus it helps to pre-compile refs more
 	#define TLBinary_TypeRef(Type)				TLBinary_TypeRef_##Type
 	#define TLBinary_TypeNRef(TypeN,Type)		TLBinary_TypeRef_##TypeN##_##Type
@@ -74,7 +93,8 @@ public:
 	FORCEINLINE TBinary(const TArray<u8>& Data) : m_ReadPos ( -1 )			{	WriteArray( Data );	}
 	FORCEINLINE TBinary(const TBinary& Data) : m_ReadPos ( -1 )				{	WriteData( Data );	}
 
-	template<typename TYPE> FORCEINLINE TYPE*		ReadNoCopy();						//	"read" the data for this next type, but return it as a pointer to the data. and move along the read pos too
+	template<typename TYPE> DEPRECATED FORCEINLINE TYPE*		ReadNoCopy();						//	"read" the data for this next type, but return it as a pointer to the data. and move along the read pos too
+	template<typename TYPE> FORCEINLINE TYPE*		Get() const;						//	return the data as this type. Does type checking and will return NULL if mis-match of types.
 	template<typename TYPE> FORCEINLINE Bool		Read(TYPE& Var)						{	return ReadData( (u8*)&Var, sizeof(TYPE) );		}
 
 	template<typename TYPE,u32 GROWBY,class SORTPOLICY> 
@@ -294,6 +314,33 @@ void TBinary::WriteArray(const TArray<TYPE>& Array)
 
 
 //--------------------------------------------------------------------
+//	return the data as this type. Does type checking and will return NULL if mis-match of types. If the data type is unknown then we will blindly cast and return something
+//--------------------------------------------------------------------
+template<typename TYPE> 
+FORCEINLINE TYPE* TBinary::Get() const
+{
+	if ( !CheckDataAvailible( sizeof(TYPE) ) )	
+		return NULL;	
+
+	//	compare data type hints
+	TRef DataType = GetDataTypeHint();
+	if ( DataType.IsValid() )
+	{
+		TRef TypeHint = TLBinary::GetDataTypeRef<TYPE>();
+		if ( DataType != TypeHint )
+			return NULL;
+	}
+	else
+	{
+		//	hint not specified, so we assume it's okay to cast. These should be rare anyway
+	}
+
+	TYPE* pData = (TYPE*)GetData( m_ReadPos );
+	return pData;	
+}
+
+
+//--------------------------------------------------------------------
 //	"read" the data for this next type, but return it as a pointer to the data
 //	and move along the read pos too
 //--------------------------------------------------------------------
@@ -356,7 +403,6 @@ FORCEINLINE Bool TBinary::CheckDataAvailible(u32 DataSize) const
 
 
 
-
 #define TLBinary_TypeRef_u8				TRef_Static2(u,EIGHT)
 #define TLBinary_TypeRef_Type2_u8		TRef_Static4(u,EIGHT,UNDERSCORE,TWO)
 #define TLBinary_TypeRef_Type3_u8		TRef_Static4(u,EIGHT,UNDERSCORE,THREE)
@@ -400,6 +446,18 @@ FORCEINLINE Bool TBinary::CheckDataAvailible(u32 DataSize) const
 #define TLBinary_TypeRef_float2			TLBinary_TypeNRef(Type2,float)
 #define TLBinary_TypeRef_float3			TLBinary_TypeNRef(Type3,float)
 #define TLBinary_TypeRef_float4			TLBinary_TypeNRef(Type4,float)
+#define TLBinary_TypeRef_Bool			TRef_Static4(B,o,o,l)
+#define TLBinary_TypeRef_Type2_Bool		TRef_Static(B,o,o,l,TWO)
+#define TLBinary_TypeRef_Type3_Bool		TRef_Static(B,o,o,l,THREE)
+#define TLBinary_TypeRef_Type4_Bool		TRef_Static(B,o,o,l,FOUR)
+#define TLBinary_TypeRef_TRef			TRef_Static4(T,R,e,f)
+#define TLBinary_TypeRef_Type2_TRef		TRef_Static(T,R,e,f,TWO)
+#define TLBinary_TypeRef_Type3_TRef		TRef_Static(T,R,e,f,THREE)
+#define TLBinary_TypeRef_Type4_TRef		TRef_Static(T,R,e,f,FOUR)
+#define TLBinary_TypeRef_TTypedRef			TRef_Static(T,y,R,e,f)
+#define TLBinary_TypeRef_Type2_TTypedRef	TRef_Static(T,y,R,f,TWO)
+#define TLBinary_TypeRef_Type3_TTypedRef	TRef_Static(T,y,R,f,THREE)
+#define TLBinary_TypeRef_Type4_TTypedRef	TRef_Static(T,y,R,f,FOUR)
 
 
 TLBinary_DeclareDataTypeRefAll( u8 );
@@ -407,33 +465,17 @@ TLBinary_DeclareDataTypeRefAll( u16 );
 TLBinary_DeclareDataTypeRefAll( u32 );
 TLBinary_DeclareDataTypeRefAll( u64 );
 TLBinary_DeclareDataTypeRefAll( s8 );
-TLBinary_DeclareDataTypeRefAll( char );	//	gr: pc compiler thinks this is a different type to s8...
+TLBinary_DeclareDataTypeRefAllNoSize( char );	//	gr: pc compiler thinks this is a different type to s8...
 TLBinary_DeclareDataTypeRefAll( s16 );
 TLBinary_DeclareDataTypeRefAll( s32 );
 TLBinary_DeclareDataTypeRefAll( s64 );
 TLBinary_DeclareDataTypeRefAll( float );
+TLBinary_DeclareDataTypeRefAll( Bool );
 
 
-#include "TLMaths.h"
-#include "TColour.h"
+TLBinary_DeclareDataTypeRefAll( TRef );
 
-#define TLBinary_TypeRef_TColour				TRef_Static4(C,o,l,f)
-#define TLBinary_TypeRef_TColour24				TRef_Static5(C,o,l,TWO,FOUR)
-#define TLBinary_TypeRef_TColour32				TRef_Static5(C,o,l,THREE,TWO)
-#define TLBinary_TypeRef_TColour64				TRef_Static5(C,o,l,SIX,FOUR)
-#define TLBinary_TypeRef_TRef					TRef_Static4(T,R,e,f)
-#define TLBinary_TypeRef_TQuaternion			TRef_Static4(Q,u,a,t)
-#define TLBinary_TypeRef_TEuler					TRef_Static5(E,u,l,e,r)
-#define TLBinary_TypeRef_TAxisAngle				TRef_Static5(A,x,i,s,A)
-#define TLBinary_TypeRef_Bool					TRef_Static4(B,o,o,l)
+TLBinary_DeclareDataTypeRefAll( TTypedRef );
 
-TLBinary_DeclareDataTypeRef( TColour,				TLBinary_TypeRef(TColour) );
-TLBinary_DeclareDataTypeRef( TColour24,				TLBinary_TypeRef(TColour24) );
-TLBinary_DeclareDataTypeRef( TColour32,				TLBinary_TypeRef(TColour32) );
-TLBinary_DeclareDataTypeRef( TColour64,				TLBinary_TypeRef(TColour64) );
-TLBinary_DeclareDataTypeRef( TRef,					TLBinary_TypeRef(TRef) );
-TLBinary_DeclareDataTypeRef( TLMaths::TQuaternion,	TLBinary_TypeRef(TQuaternion) );
-TLBinary_DeclareDataTypeRef( TLMaths::TEuler,		TLBinary_TypeRef(TEuler) );
-TLBinary_DeclareDataTypeRef( TLMaths::TAxisAngle,	TLBinary_TypeRef(TAxisAngle) );
-TLBinary_DeclareDataTypeRef( Bool,					TLBinary_TypeRef(Bool) );
+
 

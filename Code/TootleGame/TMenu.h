@@ -27,6 +27,7 @@ public:
 	TMenu(TPtr<TLAsset::TMenu>& pMenuAsset) :	m_pMenuAsset ( pMenuAsset )				{	}
 		
 	FORCEINLINE TRefRef						GetMenuRef()								{	return m_pMenuAsset->GetAssetRef();	}
+	FORCEINLINE const TLAsset::TMenu&		GetAsset() const							{	return *m_pMenuAsset;	}
 	
 	FORCEINLINE TPtrArray<TMenuItem>&		GetMenuItems()								{	return m_pMenuAsset->GetMenuItems();	}
 	FORCEINLINE const TPtrArray<TMenuItem>&	GetMenuItems() const						{	return m_pMenuAsset->GetMenuItems();	}
@@ -37,7 +38,8 @@ public:
 	FORCEINLINE TRefRef					GetSchemeRef()									{	return m_pMenuAsset->GetSchemeRef();	}
 
 	FORCEINLINE void					SetHighlightedMenuItem(TRefRef MenuItemRef)		{	m_HighlightMenuItem = MenuItemRef;	}
-	
+
+
 protected:
 	TPtr<TLAsset::TMenu>		m_pMenuAsset;			//	menu asset
 	TRef						m_HighlightMenuItem;	//	currently highlighted menu item

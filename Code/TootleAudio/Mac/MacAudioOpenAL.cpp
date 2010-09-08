@@ -8,7 +8,7 @@
 //#define AUDIO_DISABLED
 
 // Define to enable some extra debug traces
-#define ENABLE_AUDIO_TRACE
+//#define ENABLE_AUDIO_TRACE
 
 namespace TLAudio
 {

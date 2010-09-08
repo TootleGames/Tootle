@@ -18,11 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(ProjectDir)..\..\Lib\"
-			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="..\..\BuildConfigurations\PC\PC.vsprops;..\..\BuildConfigurations\PC\PCLibDebug.vsprops"
-			CharacterSet="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -41,17 +38,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="$(ProjectDir)..\..\"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;TL_TARGET_PC"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				DisableLanguageExtensions="false"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				DebugInformationFormat="4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -83,12 +69,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(ProjectDir)..\..\Lib\"
-			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="..\..\BuildConfigurations\PC\PC.vsprops;..\..\BuildConfigurations\PC\PCLibRelease.vsprops"
-			CharacterSet="0"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -107,17 +89,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
-				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="$(ProjectDir)..\..\"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;TL_TARGET_PC"
-				RuntimeLibrary="2"
-				DisableLanguageExtensions="false"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -148,13 +119,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Final|Win32"
-			OutputDirectory="$(ProjectDir)..\..\Lib\"
-			IntermediateDirectory="$(ConfigurationName)"
+			Name="Debug_QT|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="..\..\BuildConfigurations\PC\PC.vsprops;..\..\BuildConfigurations\PC\PCLibRelease.vsprops"
-			CharacterSet="0"
-			WholeProgramOptimization="1"
+			InheritedPropertySheets="..\..\BuildConfigurations\PC\PC.vsprops;..\..\BuildConfigurations\PC\PCLibDebug.vsprops;..\..\BuildConfigurations\PC\QtLib.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -173,82 +140,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
-				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="$(ProjectDir)..\..\"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;TL_TARGET_PC"
-				RuntimeLibrary="2"
-				DisableLanguageExtensions="false"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				DebugInformationFormat="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug_wx|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="4"
-			InheritedPropertySheets="..\..\BuildConfigurations\PC\PC.vsprops;..\..\BuildConfigurations\PC\PCLibDebug.vsprops"
-			CharacterSet="0"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\..\wxWidgets\lib\vc_lib\mswud&quot;;&quot;$(ProjectDir)..\..\wxWidgets\include&quot;;&quot;$(ProjectDir)..\..\&quot;"
-				PreprocessorDefinitions="TL_ENABLE_WX;WIN32;_DEBUG;_LIB;TL_TARGET_PC"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				DisableLanguageExtensions="false"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				DebugInformationFormat="4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -303,14 +194,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -336,14 +220,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -355,7 +232,7 @@
 				RelativePath=".\glprocs.c"
 				>
 				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -381,14 +258,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -414,14 +284,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -433,7 +296,7 @@
 				RelativePath=".\PCApp.cpp"
 				>
 				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -459,14 +322,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -477,6 +333,14 @@
 			<File
 				RelativePath=".\PCGui.cpp"
 				>
+				<FileConfiguration
+					Name="Debug_QT|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\PCGui.h"
@@ -496,14 +360,8 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
+					ExcludedFromBuild="true"
 					>
 					<Tool
 						Name="VCCustomBuildTool"
@@ -514,7 +372,7 @@
 				RelativePath=".\PCOpenglCanvas.cpp"
 				>
 				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -540,14 +398,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -559,7 +410,7 @@
 				RelativePath=".\PCWinControl.cpp"
 				>
 				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -585,14 +436,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -604,7 +448,7 @@
 				RelativePath=".\PCWindow.cpp"
 				>
 				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -630,14 +474,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -649,7 +486,7 @@
 				RelativePath=".\PCWinWindow.cpp"
 				>
 				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -675,14 +512,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -708,306 +538,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-		</Filter>
-		<Filter
-			Name="wxWidgets"
-			>
-			<File
-				RelativePath="..\wxWidgets\App.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\wxWidgets\App.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\wxWidgets\MacSetup.h"
-				>
-			</File>
-			<File
-				RelativePath="..\wxWidgets\OpenglCanvas.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\wxWidgets\OpenglCanvas.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\wxWidgets\PCSetup.h"
-				>
-			</File>
-			<File
-				RelativePath="..\wxWidgets\TLWx.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\wxWidgets\TLWx.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\wxWidgets\Tree.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\wxWidgets\Tree.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\wxWidgets\Window.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\wxWidgets\Window.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Final|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1039,15 +570,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1075,15 +598,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1111,15 +626,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1147,15 +654,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1183,15 +682,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1219,15 +710,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1255,15 +738,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1291,15 +766,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1327,15 +794,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1363,15 +822,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1399,15 +850,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1435,15 +878,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1475,15 +910,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1511,15 +938,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1547,15 +966,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1583,15 +994,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1619,15 +1022,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1655,15 +1050,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1691,15 +1078,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1727,15 +1106,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1763,15 +1134,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1799,15 +1162,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1835,15 +1190,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1871,15 +1218,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Final|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_wx|Win32"
+					Name="Debug_QT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1887,6 +1226,394 @@
 					/>
 				</FileConfiguration>
 			</File>
+		</Filter>
+		<Filter
+			Name="Qt"
+			>
+			<File
+				RelativePath="..\Qt\App.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\Qt\App.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\Qt\BuildMocFiles.sh"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\Qt\Menu.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\Qt\Menu.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\Qt\ModelTest.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\Qt\ModelTest.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\Qt\OpenglCanvas.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\Qt\OpenglCanvas.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\Qt\TLQt.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\Qt\TLQt.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\Qt\Tree.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\Qt\Tree.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\Qt\Window.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\Qt\Window.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<Filter
+				Name="Moc"
+				>
+				<File
+					RelativePath="..\Qt\ModelTest.h.Moc.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\Qt\TLQt.h.Moc.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\Qt\Tree.h.Moc.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\Qt\Window.h.Moc.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath="..\TApp.cpp"
@@ -1910,6 +1637,14 @@
 		</File>
 		<File
 			RelativePath="..\TLGui.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TMenu.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TMenu.h"
 			>
 		</File>
 		<File

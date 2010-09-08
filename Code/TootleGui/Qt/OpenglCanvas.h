@@ -17,27 +17,34 @@
 
 
 
-/*
+
 
 namespace Qt
 {
-	class OpenglCanvas;
+	class TOpenglCanvas;
 }
 
 
-class Qt::OpenglCanvas : public TLGui::TOpenglCanvas, public QGLWidget
+class Qt::TOpenglCanvas : public TLGui::TOpenglCanvas, public QGLWidget, public Qt::TWidgetWrapper
 {
 public:
-	OpenglCanvas(TLGui::TWindow& Parent,TRefRef ControlRef);
+	TOpenglCanvas(TRefRef ControlRef);
 
 	//	gui virtual
-	virtual Bool	BeginRender();
-	virtual void	EndRender();
+	virtual bool		Initialise(TLGui::TWindow& Parent);
+	virtual Bool		BeginRender();
+	virtual void		EndRender();
+	virtual Type2<u16>	GetSize() const					{	return m_Size;	}	//	canvas(renderable area) size
 
 	//	widget virtual
 	//	The initialization of OpenGL rendering state, etc. should be done by overriding the initializeGL() function, rather than in the constructor of your QGLWidget subclass.
 	virtual void		initializeGL();					//	init opengl state
-	virtual void		resizeGL(int width, int height)	{	}//OnResized( int2(width,height) );	}
-}
+	virtual void		resizeGL(int width, int height)	{	m_Size = Type2<u16>( width, height );	OnResized();	}
+	
+protected:
+	virtual QWidget&	GetWidget()						{	return *this;	}
 
-*/
+protected:
+	Type2<u16>			m_Size;							//	size - same as QGLWidget::getSize() ?
+};
+

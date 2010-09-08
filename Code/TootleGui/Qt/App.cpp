@@ -1,9 +1,7 @@
 /*
  *  TWxWindow.cpp
  *  TootleGui
- *
- *  Created by Graham Reeves on 14/01/2010.
- *  Copyright 2010 __MyCompanyName__. All rights reserved.
+ *	mpanyName__. All rights reserved.
  *
  */
 #if defined(TL_TARGET_MAC)
@@ -13,32 +11,63 @@
 #include "App.h"
 #include <TootleCore/TCoreManager.h>
 #include <TootleCore/TLCore.h>
+#include <TootleFileSys/TLFileSys.h>
 
 
-
-MainWindow::MainWindow(QWidget *parent) :
-QMainWindow(parent),
-ui(new Ui::MainWindow)
+TLGui::Platform::App::App(int argc, char *argv[]) :
+	QApplication	( argc, argv )
 {
-    ui->setupUi(this);
 }
 
-MainWindow::~MainWindow()
+
+bool TLGui::Platform::App::Init()
 {
-    delete ui;
+	//	extract the application path
+	TTempString Path;
+	Path << applicationDirPath();
+	
+	//	on osx, this path will be inside the bundle. To get the .app's path we have to go up a directory.
+	//	Path should end with .app/
+#if defined(TL_TARGET_MAC)
+	TLFileSys::GetParentDir( Path );
+	TLFileSys::GetParentDir( Path );
+#endif
+	
+	//	end the path with a slash
+	if ( Path.GetCharLast() != '/' )
+		Path << '/';
+
+	//	set path
+	TLGui::SetAppPath( Path );
+	
+	
+    //    do engine init
+    if ( !TLCore::TootInit() )
+        return false;
+
+	//	setup the update timer
+	u32 UpdateInterval = (u32)TLTime::GetUpdateTimeMilliSecsf();
+	startTimer( UpdateInterval );
+	
+	return true;
 }
 
-void MainWindow::changeEvent(QEvent *e)
+void TLGui::Platform::App::Shutdown()
 {
-    QMainWindow::changeEvent(e);
-    switch (e->type()) {
-		case QEvent::LanguageChange:
-			ui->retranslateUi(this);
-			break;
-		default:
+	//	stop any timers
+//	killTimers();
+	
+	TLCore::TootShutdown(true);
+}
 
-			break;
-    }
+void TLGui::Platform::App::timerEvent(QTimerEvent* TimerEvent)
+{
+	//	ready for another update
+	if ( TLCore::g_pCoreManager )
+		TLCore::g_pCoreManager->SetReadyForUpdate();
+	
+	//	just do one!
+	TLCore::TootUpdate();
 }
 
 

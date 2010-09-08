@@ -84,7 +84,7 @@ SyncBool TLAsset::TMenu::ExportData(TBinaryTree& Data)
 		if ( MenuItem.GetNextMenu().IsValid() )
 			pItemData->ExportData("NextMenu", MenuItem.GetNextMenu() );
 
-		pItemData->ExportDataString("String", MenuItem.GetText() );
+		pItemData->ExportDataString("String", MenuItem.GetString() );
 
 		if ( MenuItem.GetAudioRef().IsValid() )
 			pItemData->ExportData("AudioRef", MenuItem.GetAudioRef() );
@@ -125,6 +125,23 @@ SyncBool TLAsset::TMenu::ExportData(TBinaryTree& Data)
 }	
 
 
+//----------------------------------------------
+//	add menu item to the menu - returns NULL if duplicated menu item ref. 
+//----------------------------------------------
+TPtr<TLAsset::TMenu::TMenuItem>& TLAsset::TMenu::AddMenuItem(const TLAsset::TMenu::TMenuItem& MenuItem)
+{
+	//	alloc the item
+	TPtr<TMenuItem>& pItem = AddMenuItem( MenuItem.GetMenuItemRef() );
+	if ( !pItem )
+		return pItem;
+	
+	//	copy details
+	(*pItem) = MenuItem;
+	
+	return pItem;
+}
+
+
 
 //----------------------------------------------
 //	create a menu item - returns NULL if duplicated menu item ref
@@ -147,6 +164,7 @@ TPtr<TLAsset::TMenu::TMenuItem>& TLAsset::TMenu::AddMenuItem(TRef MenuItemRef)
 			return TLPtr::GetNullPtr<TLAsset::TMenu::TMenuItem>();
 	}
 
+	//	create and add new menu item
 	TPtr<TLAsset::TMenu::TMenuItem> pNewItem = new TLAsset::TMenu::TMenuItem( MenuItemRef );
 	return m_MenuItems.AddPtr( pNewItem );
 }
@@ -157,5 +175,39 @@ TLAsset::TMenu::TMenuItem::TMenuItem(TRefRef MenuItemRef) :
 	m_MenuItemRef	( MenuItemRef ),
 	m_Data			( TRef_Static4(D,a,t,a) )
 {
+	//	default the string to the ref
+	m_String << MenuItemRef;
 }
 
+
+
+TLAsset::TMenu::TMenuItem::TMenuItem(TRefRef MenuItemRef,const TString& String) :
+	m_MenuItemRef	( MenuItemRef ),
+	m_Data			( TRef_Static4(D,a,t,a) ),
+	m_String		( String )
+{
+}
+
+
+void TLAsset::TMenu::TMenuItem::SetEnabled(bool Enabled)
+{
+	//	remove any enabled data
+	if ( Enabled )
+	{
+		GetData().RemoveChild("Enabled");
+	}
+	else
+	{
+		GetData().ReplaceData("Enabled", Enabled );
+	}
+}
+
+
+bool TLAsset::TMenu::TMenuItem::IsEnabled() const
+{
+	bool Enabled = true;
+	TBinaryTree& Data = const_cast<TBinaryTree&>( GetData() );
+	
+	Data.ImportData("Enabled", Enabled);
+	return Enabled;
+}

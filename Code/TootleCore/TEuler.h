@@ -8,6 +8,7 @@
  */
 
 #pragma once
+#include "TLMaths.h"
 
 namespace TLMaths
 {
@@ -36,3 +37,7 @@ private:
 	TAngle					m_Yaw;
 	TAngle					m_Roll;
 };
+
+#define TLBinary_TypeRef_TEuler					TRef_Static5(E,u,l,e,r)
+TLBinary_DeclareDataTypeRef( TLMaths::TEuler,		TLBinary_TypeRef(TEuler) );
+

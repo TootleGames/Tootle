@@ -24,7 +24,7 @@ template<typename INTEGERTYPE>
 bool TLString::TLTest::Debug_TestIntegerExtraction(TString& String,const char* pString,const TArray<INTEGERTYPE>& ExpectedResults)
 {
 	bool Result = true;
-	s32 OneInt;
+//	s32 OneInt;
 	Type2<INTEGERTYPE> TwoInt;
 	Type3<INTEGERTYPE> ThreeInt;
 	Type4<INTEGERTYPE> FourInt;

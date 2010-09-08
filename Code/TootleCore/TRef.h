@@ -172,21 +172,21 @@ public:
 	const TRef&					Increment();							//	increment the reference - don't just increment the u32 though! do it systematticly - returns itself so you can construct another TRef from the incremented version of this
 
 	FORCEINLINE const u32&		GetData() const							{	return m_Ref;	}
-	void						GetString(TString& RefString,Bool Capitalise=FALSE,Bool Trim=FALSE,Bool UrlSafe=FALSE) const;	//	convert ref to a string. if Trim then any white spaces are removed at the end of the string. If UrlSafe then we use the alternative symbol for Space instead of a space so the string doesnt need to be url encoded
+	void						GetString(TString& RefString,bool Capitalise=FALSE,bool Trim=FALSE,bool UrlSafe=FALSE) const;	//	convert ref to a string. if Trim then any white spaces are removed at the end of the string. If UrlSafe then we use the alternative symbol for Space instead of a space so the string doesnt need to be url encoded
 	FORCEINLINE void			GetUrlString(TString& RefString) const	{	GetString( RefString, FALSE, FALSE, TRUE );	}		//	get url-safe ref as a string
 	FORCEINLINE void			Debug_IsValid() const;					//	do a debug break on invalid refs - no release runtime functionality (use the normal one if you're checking IsValid)
-	FORCEINLINE Bool			IsValid() const;						//	check for invalid bits being set etc
+	FORCEINLINE bool			IsValid() const;						//	check for invalid bits being set etc
 
-	FORCEINLINE Bool			operator<(const TRef& Ref) const		{	return GetData() < Ref.GetData();	}
-	FORCEINLINE Bool			operator>(const TRef& Ref) const		{	return GetData() > Ref.GetData();	}
+	FORCEINLINE bool			operator<(const TRef& Ref) const		{	return GetData() < Ref.GetData();	}
+	FORCEINLINE bool			operator>(const TRef& Ref) const		{	return GetData() > Ref.GetData();	}
 	FORCEINLINE TRef&			operator=(u32 Ref)						{	Set( Ref );	return *this;	}
 	FORCEINLINE TRef&			operator=(const TRef& Ref)				{	Set( Ref );	return *this;	}
 	FORCEINLINE TRef&			operator=(const char* pString)			{	Set( pString );	return *this;	}
 	FORCEINLINE TRef&			operator=(const TString& RefString)		{	Set( RefString );	return *this;	}
 	FORCEINLINE TRef&			operator=(const TString* pRefString)	{	if ( pRefString ) Set( *pRefString ); else SetInvalid();	return *this;	}
 
-	FORCEINLINE Bool			operator==(const TRef& Ref) const		{	return GetData() == Ref.GetData();	}
-	FORCEINLINE Bool			operator!=(const TRef& Ref) const		{	return GetData() != Ref.GetData();	}
+	FORCEINLINE bool			operator==(const TRef& Ref) const		{	return GetData() == Ref.GetData();	}
+	FORCEINLINE bool			operator!=(const TRef& Ref) const		{	return GetData() != Ref.GetData();	}
 
 private:
 	u32					CharToRefAlphabet(const char& Char,u32 RefCharIndex=0);		//	convert a char to ref-alphabet bits
@@ -220,7 +220,7 @@ FORCEINLINE void TRef::Debug_IsValid() const
 //---------------------------------------------------------
 //	check for invalid bits being set etc
 //---------------------------------------------------------
-FORCEINLINE Bool TRef::IsValid() const
+FORCEINLINE bool TRef::IsValid() const
 {
 	//	not valid if zero
 	if ( m_Ref == TRef_InvalidValue )
@@ -246,21 +246,24 @@ public:
 	TTypedRef(const TTypedRef& TypedRef) :		m_Ref ( TypedRef.GetRef() ),	m_TypeRef ( TypedRef.GetTypeRef() )		{};
 	TTypedRef(TRefRef Ref,TRefRef TypeRef) :	m_Ref ( Ref ),					m_TypeRef ( TypeRef )					{};
 
-	FORCEINLINE Bool		IsValid() const						{	return GetRef().IsValid() && GetTypeRef().IsValid();	}
+	FORCEINLINE bool		IsValid() const						{	return GetRef().IsValid() && GetTypeRef().IsValid();	}
 
 	FORCEINLINE TRef&		GetRef()							{	return m_Ref;	}
 	FORCEINLINE TRefRef		GetRef() const						{	return m_Ref;	}
 	FORCEINLINE TRef&		GetTypeRef()						{	return m_TypeRef;	}
 	FORCEINLINE TRefRef		GetTypeRef() const					{	return m_TypeRef;	}
-	void					GetString(TString& RefString,Bool Capitalise=FALSE) const;
+	DEPRECATED void			GetString(TString& RefString,bool Capitalise) const;
+	void					GetString(TString& RefString) const;
 
+	void					Set(const TString& RefString);		//	set from string in the same format as GetString
 	FORCEINLINE void		Set(const TTypedRef& TypedRef)		{	m_Ref = TypedRef.GetRef();	m_TypeRef = TypedRef.GetTypeRef();	}
 	FORCEINLINE void		SetRef(TRefRef Ref)					{	m_Ref = Ref;	}
 	FORCEINLINE void		SetTypeRef(TRefRef TypeRef)			{	m_TypeRef = TypeRef;	}
 
-	FORCEINLINE Bool		operator<(const TTypedRef& TypedRef) const;
-	FORCEINLINE Bool		operator==(const TTypedRef& TypedRef) const	{	return (GetRef() == TypedRef.GetRef()) && (GetTypeRef()==TypedRef.GetTypeRef());	}
-	FORCEINLINE Bool		operator!=(const TTypedRef& TypedRef) const	{	return (GetRef() != TypedRef.GetRef()) || (GetTypeRef()!=TypedRef.GetTypeRef());	}
+	FORCEINLINE bool		operator<(const TTypedRef& TypedRef) const;
+	FORCEINLINE bool		operator==(const TTypedRef& TypedRef) const	{	return (GetRef() == TypedRef.GetRef()) && (GetTypeRef()==TypedRef.GetTypeRef());	}
+	FORCEINLINE bool		operator!=(const TTypedRef& TypedRef) const	{	return (GetRef() != TypedRef.GetRef()) || (GetTypeRef()!=TypedRef.GetTypeRef());	}
+	FORCEINLINE TTypedRef&	operator=(const TString& RefString)		{	Set( RefString );	return *this;	}
 
 private:
 	TRef		m_Ref;
@@ -268,7 +271,7 @@ private:
 };
 
 
-FORCEINLINE Bool TTypedRef::operator<(const TTypedRef& TypedRef) const	
+FORCEINLINE bool TTypedRef::operator<(const TTypedRef& TypedRef) const	
 {	
 	//	check main ref first
 	if ( GetRef() < TypedRef.GetRef() )			
@@ -284,26 +287,16 @@ FORCEINLINE Bool TTypedRef::operator<(const TTypedRef& TypedRef) const
 //--------------------------------------------------------
 //	specialised TString append operators
 //--------------------------------------------------------
-template<>
-FORCEINLINE TString& operator<<(TString& String,const TRef& Ref)		
-{
-	Ref.GetString( String );	
-	return String;
-}	
+template<> FORCEINLINE TString& operator<<(TString& String,const TRef& Ref)			{	Ref.GetString( String );	return String;	}	
+template<> FORCEINLINE TString& operator<<(TString& String,const Type2<TRef>& v)	{	return TLString::AppendType2(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type3<TRef>& v)	{	return TLString::AppendType3(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type4<TRef>& v)	{	return TLString::AppendType4(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const TTypedRef& Ref)	{	Ref.GetString( String );	return String;	}	
+template<> FORCEINLINE TString& operator<<(TString& String,const Type2<TTypedRef>& v)	{	return TLString::AppendType2(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type3<TTypedRef>& v)	{	return TLString::AppendType3(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type4<TTypedRef>& v)	{	return TLString::AppendType4(String,v);	}
 
-template<>
-FORCEINLINE TString& operator<<(TString& String,const TTypedRef& Ref)	
-{
-	Ref.GetString( String );	
-	return String;
-}	
-
-
-
-//--------------------------------------------------------
-//	declare ref types as data types
-//--------------------------------------------------------
-TLCore_DeclareIsDataType( TRef );
-TLCore_DeclareIsDataType( TTypedRef );
+template<> FORCEINLINE void operator>>(const TString& String,TRef& Ref)			{	Ref = String;	}
+template<> FORCEINLINE void operator>>(const TString& String,TTypedRef& Ref)	{	Ref = String;	}	
 
 

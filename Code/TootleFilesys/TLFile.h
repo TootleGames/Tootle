@@ -52,8 +52,10 @@ class TBinaryTree;
 namespace TLFile
 {
 	TRef		GetDataTypeFromString(const TString& String);
-	SyncBool	ImportBinaryData(TXmlTag& Tag,TBinary& BinaryData,TRefRef DataType);
 	Bool		ParseXMLDataTree(TXmlTag& Tag,TBinaryTree& Data);	//	parse XML tag to Binary data[tree]
+
+	SyncBool	ImportBinaryData(const TString& String,TBinary& BinaryData,TRef DataType);
+	bool		ExportBinaryData(TString& String,const TBinary& BinaryData);
 }
 
 

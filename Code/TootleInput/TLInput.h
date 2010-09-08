@@ -85,6 +85,11 @@ public:
 	Bool			GetSupportedInputCharacterRef(TRef& CharacterRef, const char& character);
 	Bool			BuildArrayOfSupportInputCharacterRefs(TArray<TRef>& array);
 
+	//	gr: new interface, 
+	TInputDevice*	CreateDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef);	//	just create a device! - this will fail if it already exists
+	void			OnDeviceCreated(TLInput::TInputDevice& Device);				//	post device-creation, call this once your sensors have been setup
+
+	
 	// Virtual device handling
 	Bool			CreateVirtualDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef);
 	Bool			RemoveVirtualDevice(TRefRef InstanceRef);

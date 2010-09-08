@@ -14,9 +14,20 @@
 //------------------------------------------------------
 //	
 //------------------------------------------------------
-TLGui::TControl::TControl(TWindow& Parent,TRefRef ControlRef) :
-	m_ControlRef	( ControlRef )
+TLGui::TControl::TControl(TRefRef ControlRef) :
+	m_ControlRef	( ControlRef ),
+	m_pParent		( NULL )
 {
-	Parent.AddChild( this );
+}
+
+
+//------------------------------------------------------
+//	initialise - this is seperated from the constructor so we can use virtual functions
+//------------------------------------------------------
+bool TLGui::TControl::Initialise(TWindow& Parent)
+{
+	Parent.AddChild( *this );
+	m_pParent = &Parent;
+	return true;
 }
 

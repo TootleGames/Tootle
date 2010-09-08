@@ -86,9 +86,11 @@ class TLGui::Platform::OpenglCanvas : public TLGui::TOpenglCanvas
 public:
 	OpenglCanvas(TLGui::TWindow& Parent,TRefRef ControlRef);
 	
-	virtual Bool	BeginRender();
-	virtual void	EndRender();
-		
+	virtual Bool		BeginRender();
+	virtual void		EndRender();
+
+	virtual Type2<u16>	GetSize() const;			//	canvas(renderable area) size
+	
 protected:
 	IPodGLView*	m_pView;
 };

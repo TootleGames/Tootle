@@ -45,16 +45,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".;..\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;BUILDING_LIBCURL"
-				StringPooling="true"
-				RuntimeLibrary="3"
-				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/libcurl.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
-				BrowseInformation="1"
+				AdditionalIncludeDirectories="..\include"
+				PreprocessorDefinitions="_WINDOWS;_USRDLL;BUILDING_LIBCURL"
 				WarningLevel="0"
 			/>
 			<Tool
@@ -91,8 +83,6 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops;..\..\BuildConfigurations\PC\PC.vsprops;..\..\BuildConfigurations\PC\PCLibDebug.vsprops"
 			UseOfMFC="0"
@@ -122,16 +112,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".;..\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;BUILDING_LIBCURL"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\Debug/libcurl.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
-				BrowseInformation="1"
+				AdditionalIncludeDirectories="..\include"
+				PreprocessorDefinitions="_WINDOWS;_USRDLL;BUILDING_LIBCURL"
 				WarningLevel="0"
 			/>
 			<Tool

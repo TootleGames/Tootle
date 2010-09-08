@@ -374,14 +374,52 @@ void TRef::Debug_BreakInvalidRef() const
 }
 
 
-
+//---------------------------------------------------------
+//	set from string in the same format as GetString
+//---------------------------------------------------------
+void TTypedRef::Set(const TString& RefString)
+{
+	//	split at square brackets
+	TFixedArray<TBufferString<10>,2 > RefParts;
+	
+	//	split by [ first
+	//	if character not found then fail
+	if ( !RefString.Split('[', RefParts ) )
+	{
+		TDebugString Debug_String;
+		Debug_String << "Invalid TTypedRef string, no [ \"" << RefString << "\"";
+		TLDebug_Break( Debug_String );
+		Set( TTypedRef() );
+		return;
+	}
+	
+	//	now make sure the string ends with ]
+	if ( RefParts[1].GetCharLast() != ']' )
+	{
+		TDebugString Debug_String;
+		Debug_String << "Invalid TTypedRef string, does not end with ]\"" << RefString << "\"";
+		TLDebug_Break( Debug_String );
+		Set( TTypedRef() );
+		return;
+	}
+	
+	//	set each part
+	m_Ref = RefParts[0];
+	m_TypeRef = RefParts[1];
+}
 
 
 void TTypedRef::GetString(TString& RefString,Bool Capitalise) const
 {
 	GetRef().GetString( RefString, Capitalise );
-	RefString.Append('[');
+	RefString << '[';
 	GetTypeRef().GetString( RefString, Capitalise );
-	RefString.Append(']');
+	RefString << ']';
+}
+
+
+void TTypedRef::GetString(TString& RefString) const
+{
+	RefString << GetRef() << '[' << GetTypeRef() << ']';
 }
 

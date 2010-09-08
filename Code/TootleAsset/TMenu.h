@@ -35,7 +35,8 @@ public:
 	FORCEINLINE Bool				GetMenuItemExists(TRefRef MenuItemRef) const	{	return GetMenuItems().Exists( MenuItemRef );	}
 	FORCEINLINE Bool				GetMenuItemExists(TRefRef MenuItemRef)			{	return GetMenuItems().Exists( MenuItemRef );	}
 
-	TPtr<TMenuItem>&				AddMenuItem(TRef MenuItemRef=TRef());		//	create a menu item - returns NULL if duplicated menu item ref. if Invalid ref specified next availible ref is used 
+	TPtr<TMenuItem>&				AddMenuItem(TRef MenuItemRef=TRef());			//	create a menu item - returns NULL if duplicated menu item ref. if Invalid ref specified next availible ref is used 
+	TPtr<TMenuItem>&				AddMenuItem(const TMenuItem& MenuItem);			//	add menu item to the menu - returns NULL if duplicated menu item ref. 
 
 	FORCEINLINE TRefRef				GetSchemeRef() const							{	return m_SchemeRef;	}
 	FORCEINLINE void				SetSchemeRef(TRefRef SchemeRef)					{	m_SchemeRef = SchemeRef;	}
@@ -62,6 +63,7 @@ public:
 
 public:
 	TMenuItem(TRefRef MenuItemRef);
+	TMenuItem(TRefRef MenuItemRef,const TString& String);
 
 	TRefRef						GetMenuItemRef() const		{	return m_MenuItemRef;	}
 	DEPRECATED const TString&	GetText() const				{	return m_String;	}
@@ -72,16 +74,21 @@ public:
 	TRefRef						GetAudioRef() const			{	return m_AudioRef; }
 	const TBinaryTree&			GetData() const				{	return m_Data;	}
 	TBinaryTree&				GetData()					{	return m_Data;	}
+	void						SetData(TBinaryTree& Data)	{	m_Data = Data;	}
 
 	void						SetString(const TString& String) 	{	m_String = String;	}
 	DEPRECATED void				SetText(const TString& String)		{	m_String = String;	}
-	void						SetMenuCommand(TRefRef Command)		{	m_Command = Command;	}
-	void						SetNextMenu(TRefRef NextMenu)		{	m_NextMenu = NextMenu;	SetMenuCommand("open");	};
+	DEPRECATED void				SetMenuCommand(TRefRef Command)		{	SetCommand( Command );	}
+	void						SetCommand(TRefRef Command)			{	m_Command = Command;	}
+	void						SetNextMenu(TRefRef NextMenu)		{	m_NextMenu = NextMenu;	SetCommand("open");	};
 	void						SetMeshRef(TRefRef MeshRef)			{	m_MeshRef = MeshRef;	}
 	void						SetAudioRef(TRefRef AudioRef)		{	m_AudioRef = AudioRef; }
+	void						SetEnabled(bool Enabled);			//	set the enabled data
 
-	Bool						IsHighlightable() const				{	return m_Command.IsValid();	}	
-
+	bool						IsHighlightable() const				{	return m_Command.IsValid();	}	
+	bool						IsExecutable() const				{	return IsHighlightable() && IsEnabled();	}	
+	bool						IsEnabled() const;
+	
 	inline Bool					operator==(TRefRef MenuItemRef) const	{	return GetMenuItemRef() == MenuItemRef;	}
 
 protected:

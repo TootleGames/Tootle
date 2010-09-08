@@ -41,7 +41,7 @@ public:
 
 	FORCEINLINE void			AddLabel(const TRef& refLabel)		
 	{ 
-		m_SensorLabels.Add(refLabel); 
+		m_SensorLabels.AddUnique(refLabel); 
 #ifdef _DEBUG
 		// Print out the label being set
 		TString inputinfo = "Sensor label added: ";

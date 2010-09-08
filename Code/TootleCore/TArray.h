@@ -72,7 +72,7 @@ public:
 	virtual u32				GetAllocSize() const=0;					//	get the currently allocated amount of data
 	virtual u32				GetMaxAllocSize() const					{	return TLTypes::GetIntegerMax<s32>();	}	//	gr: though technically we can store u32 elements, we use s32 because sometimes we return signed indexes.
 	virtual bool			SetAllocSize(u32 Size)=0;				//	set new amount of allocated data
-	FORCEINLINE void		AddAllocSize(u32 Size)					{	SetAllocSize( GetSize() + Size );	}	//	alloc N extra data than we already have
+	FORCEINLINE bool		AddAllocSize(u32 Size)					{	return SetAllocSize( GetSize() + Size );	}	//	alloc N extra data than we already have
 	void					Compact()								{	SetAllocSize( GetSize() );	}	//	free-up over-allocated data
 
 	TYPE&					ElementAt(u32 Index)					{	TLDebug_CheckIndex( Index, GetSize() );	return GetData()[Index];	}
@@ -82,27 +82,27 @@ public:
 	FORCEINLINE TYPE&		ElementRandom()							{	return ElementAt( GetRandomIndex() );	}
 	FORCEINLINE const TYPE&	ElementRandomConst() const				{	return ElementAtConst( GetRandomIndex() );	}
 
-	s32					Add(const TYPE& val);					//	add an element onto the end of the list
-	FORCEINLINE s32		AddUnique(const TYPE& val)				{	s32 Index = FindIndex( val );	return (Index == -1) ? Add( val ) : Index;	}
-	s32					Add(const TYPE* pData,u32 Length=1);	//	add a number of elements onto the end of the list
+	s32						Add(const TYPE& val,u32 Count=1);		//	add an element onto the end of the list
+	FORCEINLINE s32			AddUnique(const TYPE& val)				{	s32 Index = FindIndex( val );	return (Index == -1) ? Add( val ) : Index;	}
+	s32						Add(const TYPE* pData,u32 Length=1);	//	add a number of elements onto the end of the list
 	template<class ARRAYTYPE>
-	s32					Add(const TArray<ARRAYTYPE>& Array);	//	add a whole array of this type onto the end of the list
-//	template<> s32		Add(const TArrayType& Array)			{	return Add( Array.GetData(), Array.GetSize() );	}
-	s32					AddUnique(const TArrayType& Array);		//	add each element from an array using AddUnique
-	TYPE*				AddNew();								//	add a new element onto the end of the array and return it. often fastest because if we dont need to grow there's no copying
+	s32						Add(const TArray<ARRAYTYPE>& Array);	//	add a whole array of this type onto the end of the list
+//	template<> s32			Add(const TArrayType& Array)			{	return Add( Array.GetData(), Array.GetSize() );	}
+	s32						AddUnique(const TArrayType& Array);		//	add each element from an array using AddUnique
+	TYPE*					AddNew();								//	add a new element onto the end of the array and return it. often fastest because if we dont need to grow there's no copying
 	template<class MATCHTYPE>
-	FORCEINLINE Bool	Remove(const MATCHTYPE& val);			// remove the specifed object
-	Bool				RemoveAt(u32 Index);					//	remove an element from the array at the specified index
-	void				RemoveAt(u32 Index,u32 Amount);			//	remove a range of elements from the array
-	Bool				RemoveLast()							{	return ( GetSize() ? RemoveAt( GetLastIndex() ) : FALSE );	};
-	s32					InsertAt(u32 Index, const TYPE& val,Bool ForcePosition=FALSE);
-	s32					InsertAt(u32 Index, const TYPE* val, u32 Length, Bool ForcePosition=FALSE);
-	s32					InsertAt(u32 Index, const TArrayType& array, Bool ForcePosition=FALSE)		{	return InsertAt( Index, array.GetData(), array.GetSize(), ForcePosition );	};
+	FORCEINLINE Bool		Remove(const MATCHTYPE& val);			// remove the specifed object
+	Bool					RemoveAt(u32 Index);					//	remove an element from the array at the specified index
+	void					RemoveAt(u32 Index,u32 Amount);			//	remove a range of elements from the array
+	Bool					RemoveLast()							{	return ( GetSize() ? RemoveAt( GetLastIndex() ) : FALSE );	};
+	s32						InsertAt(u32 Index, const TYPE& val,Bool ForcePosition=FALSE);
+	s32						InsertAt(u32 Index, const TYPE* val, u32 Length, Bool ForcePosition=FALSE);
+	s32						InsertAt(u32 Index, const TArrayType& array, Bool ForcePosition=FALSE)		{	return InsertAt( Index, array.GetData(), array.GetSize(), ForcePosition );	};
 
-	FORCEINLINE bool	IsSorted() const								{	return GetSortPolicy().IsSorted();	}
-	FORCEINLINE void	SetSortOrder(TLArray::TSortOrder::Type Order)	{	GetSortPolicy().SetSortOrder( Order );	}
-	FORCEINLINE void	Sort()											{	GetSortPolicy().Sort( GetData(), GetSize() );	}
-	FORCEINLINE void	SetUnsorted()									{	GetSortPolicy().SetUnsorted();	}
+	FORCEINLINE bool		IsSorted() const								{	return GetSortPolicy().IsSorted();	}
+	FORCEINLINE void		SetSortOrder(TLArray::TSortOrder::Type Order)	{	GetSortPolicy().SetSortOrder( Order );	}
+	FORCEINLINE void		Sort()											{	GetSortPolicy().Sort( GetData(), GetSize() );	}
+	FORCEINLINE void		SetUnsorted()									{	GetSortPolicy().SetUnsorted();	}
 	DEPRECATED FORCEINLINE void	SwapElements(u32 a, u32 b);				//	swap 2 elements in the array - DB Deprecated.  Do we want to allow this externally?  The sort policy implements this internally now so this shouldn't be necessary
 
 
@@ -115,34 +115,34 @@ public:
 	template<class MATCHTYPE> const TYPE*	FindConst(const MATCHTYPE& val) const		{	u32 Index = FindIndex(val);	return (Index==-1) ? NULL : &ElementAtConst(Index);	};
 
 	template<class MATCHTYPE,class ARRAYTYPE>	
-	u32								FindAll(ARRAYTYPE& Array,const MATCHTYPE& val);		//	find all matches to this value and put them in an array
+	u32										FindAll(ARRAYTYPE& Array,const MATCHTYPE& val);		//	find all matches to this value and put them in an array
 		
-	template<class MATCHTYPE> Bool	Exists(const MATCHTYPE& val) const		{	return FindIndex(val)!=-1;	};
-	template<class MATCHTYPE> Bool	Exists(const MATCHTYPE& val)			{	return FindIndex(val)!=-1;	};
+	template<class MATCHTYPE> Bool			Exists(const MATCHTYPE& val) const		{	return FindIndex(val)!=-1;	};
+	template<class MATCHTYPE> Bool			Exists(const MATCHTYPE& val)			{	return FindIndex(val)!=-1;	};
 
 	template<typename FUNCTIONPOINTER>
-	FORCEINLINE void				FunctionAll(FUNCTIONPOINTER pFunc);				//	execute this function on every member. will fail if the TYPE isn't a pointer of somekind
+	FORCEINLINE void						FunctionAll(FUNCTIONPOINTER pFunc);				//	execute this function on every member. will fail if the TYPE isn't a pointer of somekind
 	template<typename FUNCTIONPOINTER>
-	FORCEINLINE void				FunctionAllAsParam(FUNCTIONPOINTER pFunc);		//	execute this function for every member as a parameter. Like FunctionAll but can be used with other types of elements.
+	FORCEINLINE void						FunctionAllAsParam(FUNCTIONPOINTER pFunc);		//	execute this function for every member as a parameter. Like FunctionAll but can be used with other types of elements.
 
-	bool					Debug_VerifyIsSorted() const;				//	if the array claims to be sorted, ensure it is
+	bool						Debug_VerifyIsSorted() const;				//	if the array claims to be sorted, ensure it is
 	
 	//	operators
-	FORCEINLINE TYPE&		operator[](s32 Index)						{	return ElementAt(Index);	}
-	FORCEINLINE TYPE&		operator[](u32 Index)						{	return ElementAt(Index);	}
-	FORCEINLINE const TYPE&	operator[](s32 Index) const					{	return ElementAtConst(Index);	}
-	FORCEINLINE const TYPE&	operator[](u32 Index) const					{	return ElementAtConst(Index);	}
+	FORCEINLINE TYPE&			operator[](s32 Index)						{	return ElementAt(Index);	}
+	FORCEINLINE TYPE&			operator[](u32 Index)						{	return ElementAt(Index);	}
+	FORCEINLINE const TYPE&		operator[](s32 Index) const					{	return ElementAtConst(Index);	}
+	FORCEINLINE const TYPE&		operator[](u32 Index) const					{	return ElementAtConst(Index);	}
 
 	//	append operator - this means you can now initialise an array in a constructor like so (without a massive performance penalty, but convience can be worth it:)
 	//	: m_Array ( TFixedArray<TYPE>() << 0 << 1 << 2 << 3 )
 	//	no need to wait for the gcc array initialiser :) (4.5 spec IIRC)
 	//	not tested this to see if we can use it in a global, but will try. An in-place array type will be made up and can serve that purpose too.
-	FORCEINLINE TArrayType&	operator<<(const TYPE& val)					{	Add( val );		return *this;	}
+	FORCEINLINE TArrayType&		operator<<(const TYPE& val)					{	Add( val );		return *this;	}
 
-	FORCEINLINE TArrayType&	operator=(const TArray<TYPE>& Array)			{	Copy( Array );		return *this;	}
-	FORCEINLINE Bool		operator<(const TArray<TYPE>& Array) const		{	return FALSE;	}
-	FORCEINLINE bool		operator==(const TArray<TYPE>& Array) const;
-	FORCEINLINE bool		operator!=(const TArray<TYPE>& Array) const;
+	FORCEINLINE TArrayType&		operator=(const TArray<TYPE>& Array)			{	Copy( Array );		return *this;	}
+	FORCEINLINE Bool			operator<(const TArray<TYPE>& Array) const		{	return FALSE;	}
+	FORCEINLINE bool			operator==(const TArray<TYPE>& Array) const;
+	FORCEINLINE bool			operator!=(const TArray<TYPE>& Array) const;
 
 public:	//	gr: temporarily exposed for the sort policies
 	void								ShiftArray(u32 From, s32 Amount );			//	move blocks of data in the array

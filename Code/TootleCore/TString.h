@@ -42,6 +42,11 @@ namespace TLString
 		}
 		return Len;
 	}
+
+	//	templated TypeX append operators. Trying to automate this some more so we don't need to call these at all
+	template<typename TYPE2> TString&	AppendType2(TString& String,const TYPE2& Value)	{	String << Value.x << ',' << Value.y;	return String;	}
+	template<typename TYPE3> TString&	AppendType3(TString& String,const TYPE3& Value)	{	String << Value.x << ',' << Value.y << ',' << Value.z;	return String;	}
+	template<typename TYPE4> TString&	AppendType4(TString& String,const TYPE4& Value)	{	String << Value.x << ',' << Value.y << ',' << Value.z << ',' << Value.w;	return String;	}	
 }
 
 
@@ -176,6 +181,12 @@ TString& operator<<(TString& String,const TYPE* Type)
 {	
 	String.Append( Type );	
 	return String;
+}
+
+template<typename TYPE>
+void operator>>(const TString& String,TYPE& Type)
+{
+	TLDebug_Break(">> operator not implemented for this type");
 }
 
 
@@ -584,7 +595,12 @@ FORCEINLINE TString& operator<<(TString& String,const u32& Value)
 	String.Append( IntegerChars.GetData(), IntegerChars.GetSize() );
 
 	return String;
-}	
+}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type2<u32>& v)	{	return TLString::AppendType2(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type3<u32>& v)	{	return TLString::AppendType3(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type4<u32>& v)	{	return TLString::AppendType4(String,v);	}
+
+
 //--------------------------------------------------------
 //	append signed integer
 //--------------------------------------------------------
@@ -598,22 +614,41 @@ FORCEINLINE TString& operator<<(TString& String,const s32& Value)
 	u32 v = Value < 0 ? -Value : Value;
 	String << v;
 	return String;
-}	
+}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type2<s32>& v)	{	return TLString::AppendType2(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type3<s32>& v)	{	return TLString::AppendType3(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type4<s32>& v)	{	return TLString::AppendType4(String,v);	}
+
+
 
 template<> FORCEINLINE TString& operator<<(TString& String,const u8& Value)		{	u32 v = Value;	String << v;	return String;	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type2<u8>& v)	{	return TLString::AppendType2(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type3<u8>& v)	{	return TLString::AppendType3(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type4<u8>& v)	{	return TLString::AppendType4(String,v);	}
+
 template<> FORCEINLINE TString& operator<<(TString& String,const u16& Value)	{	u32 v = Value;	String << v;	return String;	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type2<u16>& v)	{	return TLString::AppendType2(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type3<u16>& v)	{	return TLString::AppendType3(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type4<u16>& v)	{	return TLString::AppendType4(String,v);	}
+
 template<> FORCEINLINE TString& operator<<(TString& String,const s8& Value)		{	s32 v = Value;	String << v;	return String;	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type2<s8>& v)	{	return TLString::AppendType2(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type3<s8>& v)	{	return TLString::AppendType3(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type4<s8>& v)	{	return TLString::AppendType4(String,v);	}
+
 template<> FORCEINLINE TString& operator<<(TString& String,const s16& Value)	{	s32 v = Value;	String << v;	return String;	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type2<s16>& v)	{	return TLString::AppendType2(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type3<s16>& v)	{	return TLString::AppendType3(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type4<s16>& v)	{	return TLString::AppendType4(String,v);	}
 
+template<> FORCEINLINE TString& operator<<(TString& String,const float& Value)	{	String.Appendf("%2.2f", Value );	return String;	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type2<float>& v)	{	return TLString::AppendType2(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type3<float>& v)	{	return TLString::AppendType3(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type4<float>& v)	{	return TLString::AppendType4(String,v);	}
 
-//--------------------------------------------------------
-//	append float
-//--------------------------------------------------------
-template<>
-FORCEINLINE TString& operator<<(TString& String,const float& Value)
-{
-	String.Appendf("%2.2f", Value );
-	return String;
-}
+template<> FORCEINLINE TString& operator<<(TString& String,const bool& Value)		{	String << (Value ? "True" : "False");	return String;	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type2<bool>& v)	{	return TLString::AppendType2(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type3<bool>& v)	{	return TLString::AppendType3(String,v);	}
+template<> FORCEINLINE TString& operator<<(TString& String,const Type4<bool>& v)	{	return TLString::AppendType4(String,v);	}
 
 

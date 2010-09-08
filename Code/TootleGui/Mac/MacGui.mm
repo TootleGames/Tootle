@@ -147,14 +147,4 @@ int main(int argc, char *argv[])
 	//	start application
 	int retVal = NSApplicationMain(argc,  (const char **) argv);
 	return retVal;
-	
-	/*	
-	 [TootleNSApplication sharedApplication];
-	 
-	 [NSBundle loadNibNamed:@"MainMenu" owner:NSApp];
-	 
-	 [NSApp run];
-	 
-	 return 0;
-	 */
 }

@@ -9,8 +9,8 @@
 
 #pragma once
 
-//#include "TLMaths.h"
 #include "TLTypes.h"
+#include "TBinary.h"
 
 
 namespace TLMaths
@@ -99,3 +99,10 @@ public:
 public:
 	float4					xyzw;
 };
+
+
+
+
+#define TLBinary_TypeRef_TQuaternion			TRef_Static4(Q,u,a,t)
+TLBinary_DeclareDataTypeRef( TLMaths::TQuaternion,	TLBinary_TypeRef(TQuaternion) );
+

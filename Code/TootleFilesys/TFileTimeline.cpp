@@ -10,11 +10,12 @@
 #include "TFileTimeline.h"
 #include <TootleAsset/TTimeline.h>
 #include "TLFile.h"
-
 #include <TootleCore/TAxisAngle.h>
 #include <TootleCore/TEuler.h>
 #include <TootleCore/TQuaternion.h>
 #include <TootleCore/TMatrix.h>
+#include <TootleCore/TColour.h>
+#include <TootleCore/TBinary.h>
 
 
 
@@ -321,13 +322,13 @@ SyncBool TLFileSys::TFileTimeline::ImporTTimeline_ImportCommandData(TPtr<TLAsset
 						// for axis angle with radians for angle seeing as that isn't supported
 						// at the moment, or we could simply add an 'AngleFormat' property 
 						// to determine the angle format which would probably be more flexible.
-						TagImportResult = TLFile::ImportBinaryData( *pChildTag, *pCommandChildData, DataTypeRef );
+						TagImportResult = TLFile::ImportBinaryData( pChildTag->GetDataString(), *pCommandChildData, DataTypeRef );
 					}
 					else if(DataTypeRef == TLBinary::GetDataTypeRef<TLMaths::TAxisAngle>())
 					{
 						// Axis and Angle format so import as an AxisAngle and convert to a Quaternion
 						TBinary Data;
-						TagImportResult = TLFile::ImportBinaryData( *pChildTag, Data, DataTypeRef );
+						TagImportResult = TLFile::ImportBinaryData( pChildTag->GetDataString(), Data, DataTypeRef );
 
 						if(TagImportResult == SyncTrue)
 						{
@@ -384,7 +385,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTTimeline_ImportCommandData(TPtr<TLAsset
 
 						// Get the data and convert from a float3 euler data to a quaternion
 						TBinary Data;
-						TagImportResult = TLFile::ImportBinaryData( *pChildTag, Data, DataTypeRef );
+						TagImportResult = TLFile::ImportBinaryData( pChildTag->GetDataString(), Data, DataTypeRef );
 
 						if(TagImportResult == SyncTrue)
 						{
@@ -442,7 +443,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTTimeline_ImportCommandData(TPtr<TLAsset
 					if(DataTypeRef == TLBinary::GetDataTypeRef<TColour>())
 					{
 						// Raw Colour format so import as a TColour
-						TagImportResult = TLFile::ImportBinaryData( *pChildTag, *pCommandChildData, DataTypeRef );
+						TagImportResult = TLFile::ImportBinaryData( pChildTag->GetDataString(), *pCommandChildData, DataTypeRef );
 					}
 					else if( (DataTypeRef == TLBinary::GetDataTypeRef<TColour24>()) ||
 							 (DataTypeRef == TLBinary::GetDataTypeRef<TColour32>()) ||
@@ -452,7 +453,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTTimeline_ImportCommandData(TPtr<TLAsset
 						// Alternative colour format format
 						// Import the data
 						TBinary Data;
-						TagImportResult = TLFile::ImportBinaryData( *pChildTag, Data, DataTypeRef );
+						TagImportResult = TLFile::ImportBinaryData( pChildTag->GetDataString(), Data, DataTypeRef );
 
 						if(TagImportResult == SyncTrue)
 						{
@@ -522,7 +523,7 @@ SyncBool TLFileSys::TFileTimeline::ImporTTimeline_ImportCommandData(TPtr<TLAsset
 				}
 				else
 				{
-					TagImportResult = TLFile::ImportBinaryData( *pChildTag, *pCommandChildData, DataTypeRef );
+					TagImportResult = TLFile::ImportBinaryData( pChildTag->GetDataString(), *pCommandChildData, DataTypeRef );
 				}
 
 				if(TagImportResult != SyncTrue)

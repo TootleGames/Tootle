@@ -3,12 +3,13 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="PCLibRelease"
+	OutputDirectory="$(ProjectDir)..\..\Lib\"
 	>
 	<Tool
 		Name="VCCLCompilerTool"
 		InlineFunctionExpansion="2"
-		FavorSizeOrSpeed="1"
 		PreprocessorDefinitions="_LIB;NDEBUG"
+		BasicRuntimeChecks="3"
 		RuntimeLibrary="2"
 		DebugInformationFormat="3"
 	/>

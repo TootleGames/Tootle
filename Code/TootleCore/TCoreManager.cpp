@@ -594,15 +594,14 @@ Bool TCoreManager::CheckManagersInErrorState()
 		const TPtr<TManager>& pManager = m_Managers.ElementAtConst(uIndex);
 		if(pManager->GetState() == TLManager::S_Error)
 		{
-			TLDebug_Print("Manager is in error state");
-			TString ManagerName;
-			pManager->GetManagerRef().GetString(ManagerName);
-			TLDebug_Print(ManagerName);
-			return TRUE;
+			TDebugString Debug_String;
+			Debug_String << "Manager " << pManager->GetManagerRef() << " is in error state.";
+			TLDebug_Break( Debug_String );
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-------------------------------------------

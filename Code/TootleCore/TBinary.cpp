@@ -7,6 +7,34 @@
 
 
 //-----------------------------------------------------------
+//	get the size of a type from a ref - like sizeof() for a ref
+//-----------------------------------------------------------
+u32	TLBinary::GetDataTypeSize(TRefRef TypeRef)
+{
+	//	gr: see if we can find some way to automate this in TLBinary_DeclareDataTypeRef...
+#define case_TLBinary_TypeToSize(PodType)	\
+case TLBinary_TypeRef(PodType):			return GetDataTypeSize<TLBinary_TypeRef(PodType)>();	\
+case TLBinary_TypeNRef(Type2,PodType):	return GetDataTypeSize<TLBinary_TypeNRef(Type2,PodType)>();	\
+case TLBinary_TypeNRef(Type3,PodType):	return GetDataTypeSize<TLBinary_TypeNRef(Type3,PodType)>();	\
+case TLBinary_TypeNRef(Type4,PodType):	return GetDataTypeSize<TLBinary_TypeNRef(Type4,PodType)>();	
+	
+	switch ( TypeRef.GetData() )
+	{
+			case_TLBinary_TypeToSize( float );
+			case_TLBinary_TypeToSize( u8 );
+			case_TLBinary_TypeToSize( u16 );
+			case_TLBinary_TypeToSize( u32 );
+	}
+	
+#undef case_TLBinary_TypeToSize
+	
+	TDebugString Debug_String;
+	Debug_String << TypeRef << " is an unhandled case";
+	TLDebug_Break( Debug_String );
+	return 0;
+}
+
+//-----------------------------------------------------------
 //	read data into address
 //-----------------------------------------------------------
 Bool TBinary::ReadData(u8* pData,u32 Length,Bool CutData)

@@ -30,7 +30,7 @@ public:
 	TScreenManager(TRefRef ManagerRef);
 	
 	const TLMaths::TAngle&		GetScreenAngle();			//	returns the screen angle for the FIRST screen. this is just to make it easier and saves us fetching the right screen
-	TPtr<TLRender::TScreen>&	GetDefaultScreen()	{	return GetInstanceArray().ElementAt( 0 );	}	//	returns the default (first) screen
+	TPtr<TLRender::TScreen>&	GetDefaultScreen();			//	returns the default (first) screen
 	
 	TPtr<TRenderTarget>&		GetRenderTarget(TRefRef RenderTargetRef);							//	find the specified render target in all our screens
 	TPtr<TRenderTarget>&		GetRenderTarget(TRefRef RenderTargetRef,TPtr<TScreen>& pScreen);	//	find the specified render target in all our screens - also sets the screen pointer
@@ -47,3 +47,13 @@ protected:
 	virtual TScreen*			CreateObject(TRefRef InstanceRef,TRefRef TypeRef);
 };
 
+
+
+
+//-------------------------------------------------
+//	returns the default (first) screen
+//-------------------------------------------------
+FORCEINLINE TPtr<TLRender::TScreen>& TLRender::TScreenManager::GetDefaultScreen()			
+{
+	return (GetInstanceArray().GetSize() > 0) ? GetInstanceArray().ElementAt( 0 ) : TLPtr::GetNullPtr<TLRender::TScreen>();
+}

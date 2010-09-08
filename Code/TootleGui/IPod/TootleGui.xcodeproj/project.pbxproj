@@ -36,6 +36,8 @@
 		BFC7AC981156C86B00FFFC81 /* TOpenglCanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFC7AC7F1156C86B00FFFC81 /* TOpenglCanvas.cpp */; };
 		BFC7AC991156C86B00FFFC81 /* TControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFC7AC801156C86B00FFFC81 /* TControl.cpp */; };
 		BFC7AC9A1156C86B00FFFC81 /* TControl.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC7AC811156C86B00FFFC81 /* TControl.h */; };
+		BFF8EDE6122CE8F600E54EDB /* TMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFF8EDE4122CE8F600E54EDB /* TMenu.cpp */; };
+		BFF8EDE7122CE8F600E54EDB /* TMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF8EDE5122CE8F600E54EDB /* TMenu.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,6 +108,8 @@
 		BFC7AD091156C89800FFFC81 /* MacWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacWindow.mm; path = ../Mac/MacWindow.mm; sourceTree = SOURCE_ROOT; };
 		BFC7AD0A1156C89800FFFC81 /* MacWindowDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacWindowDelegate.h; path = ../Mac/MacWindowDelegate.h; sourceTree = SOURCE_ROOT; };
 		BFC7AD0B1156C89800FFFC81 /* MacWindowDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacWindowDelegate.mm; path = ../Mac/MacWindowDelegate.mm; sourceTree = SOURCE_ROOT; };
+		BFF8EDE4122CE8F600E54EDB /* TMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TMenu.cpp; path = ../TMenu.cpp; sourceTree = SOURCE_ROOT; };
+		BFF8EDE5122CE8F600E54EDB /* TMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TMenu.h; path = ../TMenu.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +155,8 @@
 		84C109450F0A789D00B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				BFF8EDE4122CE8F600E54EDB /* TMenu.cpp */,
+				BFF8EDE5122CE8F600E54EDB /* TMenu.h */,
 				BFC7ACA01156C89700FFFC81 /* PC */,
 				BFC7ACCF1156C89800FFFC81 /* Mac */,
 				BFC7AC421156C86A00FFFC81 /* IPod */,
@@ -268,6 +274,7 @@
 				BFC7AC961156C86B00FFFC81 /* TOpenglCanvas.h in Headers */,
 				BFC7AC9A1156C86B00FFFC81 /* TControl.h in Headers */,
 				BF8FB6C0118B9B17005391AF /* IPodView.h in Headers */,
+				BFF8EDE7122CE8F600E54EDB /* TMenu.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,6 +332,7 @@
 				BFC7AC971156C86B00FFFC81 /* TTree.cpp in Sources */,
 				BFC7AC981156C86B00FFFC81 /* TOpenglCanvas.cpp in Sources */,
 				BFC7AC991156C86B00FFFC81 /* TControl.cpp in Sources */,
+				BFF8EDE6122CE8F600E54EDB /* TMenu.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -15,45 +15,18 @@
 
 
 
-Bool TLFileSys::Platform::GetAssetDirectory(TTempString& AssetDir)
+Bool TLFileSys::Platform::GetAssetDirectory(TString& AssetDir)
 {
+	if ( !GetApplicationURL(AssetDir) )
+		return false;
 	
-	TTempString applicationdir;
-	
-	if(GetApplicationURL(applicationdir))
-	{
-		applicationdir.Append("/Assets/");
-		AssetDir =  applicationdir;
-		
-		return TRUE;
-	}	
-	
-	return FALSE;
-	
+	AssetDir << "/Assets/";
+	return true;
 }
 
 
-Bool TLFileSys::Platform::GetAssetSubDirectory(TTempString& AssetDir, const TTempString& Subdirectory)
-{
-	// Get the subdirectory requested.
-	TTempString tmpassetdir;
-	
-	if(GetAssetDirectory(tmpassetdir))
-	{
-		tmpassetdir.Append(Subdirectory);
-		tmpassetdir.Append("/");
-		
-		AssetDir = tmpassetdir;
-		
-		return TRUE;
-		
-	}
-	
-	return FALSE;
-}
 
-
-Bool TLFileSys::Platform::GetUserDirectory(TTempString& UserDir)
+Bool TLFileSys::Platform::GetUserDirectory(TString& UserDir)
 {
 	// Get the 'Documents' path for the user directory.
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES); 
@@ -70,20 +43,16 @@ Bool TLFileSys::Platform::GetUserDirectory(TTempString& UserDir)
 	return TRUE;
 }		
 
-Bool TLFileSys::Platform::GetApplicationURL(TTempString& url)
+Bool TLFileSys::Platform::GetApplicationURL(TString& url)
 {
 	NSBundle* bundle = [NSBundle mainBundle];
-	
-	if(bundle)
-	{
-		NSString* bundlepath = [bundle bundlePath];
+	if ( !bundle )
+		return false;
+
+	NSString* bundlePath = [bundle bundlePath];
+	url << bundlePath;
 		
-		const char* pApplicationDir = (const char*)[bundlepath UTF8String];
-		url = pApplicationDir;
-		
-		return TRUE;
-		
-	}
-	
-	return FALSE;
+//		const char* pApplicationDir = (const char*)[bundlepath UTF8String];
+//		url = pApplicationDir;
+	return true;
 }

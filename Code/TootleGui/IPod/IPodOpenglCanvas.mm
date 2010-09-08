@@ -45,7 +45,7 @@ TRef AllocTouchRef(UITouch* pTouch)
 	return g_UniqueRef;
 }
 
-TRef FreeTouchRef(UITouch* pTouch)
+void FreeTouchRef(UITouch* pTouch)
 {
 	//	remove the existing key
 	g_TouchTable.Remove( pTouch );
@@ -64,7 +64,7 @@ TPtr<TLGui::TOpenglCanvas> TLGui::CreateOpenglCanvas(TWindow& Parent,TRefRef Ref
 
 
 TLGui::Platform::OpenglCanvas::OpenglCanvas(TLGui::TWindow& Parent,TRefRef ControlRef) :
-	TLGui::TOpenglCanvas	( Parent, ControlRef ),
+	TLGui::TOpenglCanvas	( ControlRef ),
 	m_pView					( NULL )
 {
 	//Create the OpenGL drawing view and add it to the window programatically
@@ -152,7 +152,17 @@ void TLGui::Platform::OpenglCanvas::EndRender()
 }
 
 
-
+//------------------------------------------------------
+//	canvas(renderable area) size
+//------------------------------------------------------
+Type2<u16> TLGui::Platform::OpenglCanvas::GetSize() const
+{
+	if ( !m_pView )
+		return Type2<u16>(0,0);
+	
+	CGRect ViewFrame = [m_pView frame];
+	return Type2<u16>( ViewFrame.size.width, ViewFrame.size.height );
+}
 
 
 

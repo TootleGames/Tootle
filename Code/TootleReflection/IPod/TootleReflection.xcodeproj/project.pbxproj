@@ -18,6 +18,10 @@
 		BF44EF0B1184DC2D00FE77CE /* TGraphTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44EF051184DC2D00FE77CE /* TGraphTree.h */; };
 		BF44EF0C1184DC2D00FE77CE /* TLReflection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF44EF061184DC2D00FE77CE /* TLReflection.cpp */; };
 		BF44EF0D1184DC2D00FE77CE /* TLReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44EF071184DC2D00FE77CE /* TLReflection.h */; };
+		BFF8ECBA122CE7F200E54EDB /* TAssetTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF8ECB6122CE7F200E54EDB /* TAssetTree.h */; };
+		BFF8ECBB122CE7F200E54EDB /* TAssetTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFF8ECB7122CE7F200E54EDB /* TAssetTree.cpp */; };
+		BFF8ECBC122CE7F200E54EDB /* TDataTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFF8ECB8122CE7F200E54EDB /* TDataTree.cpp */; };
+		BFF8ECBD122CE7F200E54EDB /* TDataTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF8ECB9122CE7F200E54EDB /* TDataTree.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +40,10 @@
 		BF8FC0AF118C9AB4005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
 		BF8FC0BC118C9AED005391AF /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF8FC0CB118C9B2F005391AF /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		BFF8ECB6122CE7F200E54EDB /* TAssetTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAssetTree.h; path = ../../TootleReflection/TAssetTree.h; sourceTree = SOURCE_ROOT; };
+		BFF8ECB7122CE7F200E54EDB /* TAssetTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAssetTree.cpp; path = ../../TootleReflection/TAssetTree.cpp; sourceTree = SOURCE_ROOT; };
+		BFF8ECB8122CE7F200E54EDB /* TDataTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TDataTree.cpp; path = ../../TootleReflection/TDataTree.cpp; sourceTree = SOURCE_ROOT; };
+		BFF8ECB9122CE7F200E54EDB /* TDataTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDataTree.h; path = ../../TootleReflection/TDataTree.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +87,10 @@
 		84C109450F0A789D00B2DF7A /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				BFF8ECB6122CE7F200E54EDB /* TAssetTree.h */,
+				BFF8ECB7122CE7F200E54EDB /* TAssetTree.cpp */,
+				BFF8ECB8122CE7F200E54EDB /* TDataTree.cpp */,
+				BFF8ECB9122CE7F200E54EDB /* TDataTree.h */,
 				BF44EF021184DC2D00FE77CE /* TFileServer.cpp */,
 				BF44EF031184DC2D00FE77CE /* TFileServer.h */,
 				BF44EF041184DC2D00FE77CE /* TGraphTree.cpp */,
@@ -109,6 +121,8 @@
 				BF44EF091184DC2D00FE77CE /* TFileServer.h in Headers */,
 				BF44EF0B1184DC2D00FE77CE /* TGraphTree.h in Headers */,
 				BF44EF0D1184DC2D00FE77CE /* TLReflection.h in Headers */,
+				BFF8ECBA122CE7F200E54EDB /* TAssetTree.h in Headers */,
+				BFF8ECBD122CE7F200E54EDB /* TDataTree.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -158,6 +172,8 @@
 				BF44EF081184DC2D00FE77CE /* TFileServer.cpp in Sources */,
 				BF44EF0A1184DC2D00FE77CE /* TGraphTree.cpp in Sources */,
 				BF44EF0C1184DC2D00FE77CE /* TLReflection.cpp in Sources */,
+				BFF8ECBB122CE7F200E54EDB /* TAssetTree.cpp in Sources */,
+				BFF8ECBC122CE7F200E54EDB /* TDataTree.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

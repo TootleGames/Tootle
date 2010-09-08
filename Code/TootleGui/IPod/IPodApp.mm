@@ -72,9 +72,13 @@
 // Sleep Mode
 - (void)applicationWillResignActive:(NSNotification *)aNotification 
 {
+	//	gr: in IOS 4, this function is called when we press home. But I kinda need the test game to close so I can try a different one.
+	[self Terminate];
+/*
 	//TODO: Enter a sleep mode with minimal updates occuring
 	// switch off render etc
 	TLCore::g_pCoreManager->Enable(FALSE);
+ */
 }
 
 // Active mode

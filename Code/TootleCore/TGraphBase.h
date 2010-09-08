@@ -63,6 +63,8 @@ public:
 	virtual Bool				RemoveNode(TRefRef NodeRef)=0;										//	remove an array of nodes by their ref
 	virtual Bool				RemoveChildren(TRefRef NodeRef)=0;									//	remove all children from this node
 	virtual TRef				GetFreeNodeRef(TRefRef BaseRef=TRef())=0;							//	find an unused ref for a node - returns the ref
+	virtual bool				RenameNode(TRefRef NodeRef,TRefRef NewNodeRef);		//	rename a node
+	virtual bool				ChangeNodeType(TRefRef NodeRef,TRefRef TypeRef);	//	re-instance a node with a different type
 
 	FORCEINLINE Bool			ImportScheme(const TLAsset::TScheme* pScheme,TRefRef ParentNodeRef,Bool StrictNodeRefs=TRUE,TBinaryTree* pCommonInitData=NULL)		{	return pScheme ? ImportScheme( *pScheme, ParentNodeRef, StrictNodeRefs, pCommonInitData ) : FALSE;	}
 	Bool						ImportScheme(const TLAsset::TScheme& Scheme,TRefRef ParentNodeRef,Bool StrictNodeRefs=TRUE,TBinaryTree* pCommonInitData=NULL);		//	import scheme into this graph
@@ -73,7 +75,8 @@ public:
 	//	gr: exposed for the scheme editor...
 	virtual TLGraph::TGraphNodeBase*	FindNodeBase(TRefRef NodeRef) = 0;
 	virtual TLGraph::TGraphNodeBase*	GetRootNodeBase() = 0;
-
+	TRef								GetRootNodeRef();
+	
 private:
 	Bool						ImportSchemeNode(TLAsset::TSchemeNode& SchemeNode,TRefRef ParentRef,TArray<TRef>& ImportedNodes,Bool StrictNodeRefs,TBinaryTree* pCommonInitData);	//	import scheme node (tree) into this graph
 	Bool						ReimportSchemeNode(TLAsset::TSchemeNode& SchemeNode,TRefRef ParentRef,Bool StrictNodeRefs,Bool AddMissingNodes,Bool RemoveUnknownNodes,TBinaryTree* pCommonInitData);		//	re-init and restore node tree
@@ -95,6 +98,7 @@ public:
 	virtual TRefRef				GetSubscriberRef() const				{	return GetNodeRef();	}
 	FORCEINLINE TRefRef			GetNodeRef() const						{	return m_NodeRef; }
 	FORCEINLINE TRefRef			GetNodeTypeRef() const					{	return m_NodeTypeRef; }
+	FORCEINLINE TTypedRef		GetNodeAndTypeRef() const				{	return TTypedRef( m_NodeRef, m_NodeTypeRef );	}
 
 	//	gr: just realised... this is wrong. why would we check our parent's type?
 	Bool						IsKindOf(TRefRef TypeRef) const			{	return (GetNodeTypeRef() == TypeRef) ? TRUE : IsParentKindOf( TypeRef );	}
@@ -102,17 +106,18 @@ public:
 	
 	virtual void				UpdateNodeData();						//	overload this to make sure all properties on your node (that aren't stored/read directly out of the data) is up to date and reayd for export
 	virtual TBinaryTree&		GetNodeData()							{	return m_NodeData;	}	//	overload this to handle UpdateData for specific nodes
-
+	virtual void				OnPropertyChanged(TRefRef DataRef=TRef());	//	notify that data has changed, this is mostly just for reflection, but may get called a lot so subscription filtering might be required again...
+	
 	//	gr: big hack here! instead... use node data? it's more class based than instance based... cant think of a great solution right now...
 	//	Will remove this at somepoint for some other interface, ie. when looking at audio graph, something will be rendering debug-style
 	//	nodes, so we'd use them
-	virtual TRef				GetRenderNodeRef() const				{	return TRef();	}	//	get a render node ref to represent this node. used in the scheme editor as the widget node. 
+	virtual TRef					GetRenderNodeRef() const				{	return TRef();	}	//	get a render node ref to represent this node. used in the scheme editor as the widget node. 
 	
-	//	gr: exposed for the scheme editor...
-	virtual void					GetChildrenBase(TPointerArray<TGraphNodeBase>& ChildNodes) = 0;
-	void							GetChildren(THeapArray<TRef>& ChildNodeRefs,Bool Recursive=FALSE);		//	get array of children's refs. if recursive will go through the whole tree
-	FORCEINLINE void				GetChildrenTree(THeapArray<TRef>& ChildNodeRefs)						{	GetChildren( ChildNodeRefs, TRUE );	}
+	virtual void					GetChildrenBase(TArray<TGraphNodeBase*>& ChildNodes) = 0;
+	void							GetChildren(TArray<TRef>& ChildNodeRefs,Bool Recursive=FALSE);		//	get array of children's refs. if recursive will go through the whole tree
+	FORCEINLINE void				GetChildrenTree(TArray<TRef>& ChildNodeRefs)						{	GetChildren( ChildNodeRefs, TRUE );	}
 	virtual const TGraphNodeBase*	GetParentBase() const = 0;
+	bool							HasChildren() const;
 	
 protected:
 	virtual void					Initialise(TLMessaging::TMessage& Message);				//	[soon to be] only called once for initialisation after being added to the graph. Does an initialising call to SetProperty to replace the legacy usage

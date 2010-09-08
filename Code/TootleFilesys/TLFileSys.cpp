@@ -36,30 +36,27 @@ namespace TLFileSys
 	TPtr<TLFileSys::TFileSysFactory>	g_pFactory;		//	factory for filesystems
 	TPtr<TLFileSys::TFileFactory>		g_pFileFactory;	//	factory for all the files we have, seperated from individual file systems now
 	
-	
-	namespace Platform
-	{
-		Bool GetAssetDirectory(TTempString& AssetDir);
-		Bool GetAssetSubDirectory(TTempString& AssetDir, const TTempString& Subdirectory);
-		
-		Bool GetUserDirectory(TTempString& UserDir);
-	}
-
 }
 
-Bool TLFileSys::GetAssetDirectory(TTempString& AssetDir)
+Bool TLFileSys::GetAssetDirectory(TString& AssetDir)
 {
 	return Platform::GetAssetDirectory(AssetDir);
 }
 
-Bool TLFileSys::GetAssetSubDirectory(TTempString& AssetDir, const TTempString& Subdirectory)
+Bool TLFileSys::GetAssetSubDirectory(TString& AssetDir, const TString& Subdirectory)
 {
-	return Platform::GetAssetSubDirectory(AssetDir, Subdirectory);
+	// Get the subdirectory requested.
+	AssetDir.Empty();
+	if ( !GetAssetDirectory(AssetDir) )
+		return false;
+
+	AssetDir << Subdirectory << '/';
+	return true;
 }
 
 
 
-Bool TLFileSys::GetUserDirectory(TTempString& UserDir)
+Bool TLFileSys::GetUserDirectory(TString& UserDir)
 {
 	return Platform::GetUserDirectory(UserDir);
 }
@@ -240,7 +237,7 @@ void TLFileSys::GetFileList(TArray<TRef>& FileList)
 //----------------------------------------------------------
 Bool TLFileSys::GetParentDir(TString& Directory)
 {
-	char BackSlash = '\\';
+	char BackSlash = '/';
 	char ForwardSlash = '\\';
 
 	//	get the last (non terminator) char

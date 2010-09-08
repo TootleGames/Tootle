@@ -119,7 +119,6 @@ protected:
 	typedef TFlags<InvalidateFlags> TInvalidateFlags;
 
 public:
-	//	gr: not actually a class...
 	class RenderFlags
 	{
 	public:
@@ -150,7 +149,7 @@ public:
 			Debug_LocalBoundsBox,		//	render our local bounds box
 			Debug_LocalBoundsSphere,	//	render our local bounds sphere
 			Debug_Datums,				//	render all our datums (includes bounds)
-
+			
 			//	now deprecated - we know the local -> world datum conversion works
 			Debug_WorldBoundsBox = Debug_LocalBoundsBox,
 			Debug_WorldBoundsSphere = Debug_LocalBoundsSphere,
@@ -182,7 +181,7 @@ public:
 	FORCEINLINE const TFlags<RenderFlags::Flags>&	GetRenderFlags() const				{	return m_RenderFlags;	}
 	void									ClearDebugRenderFlags();
 	FORCEINLINE Bool						IsEnabled() const							{	return m_RenderFlags( RenderFlags::Enabled );	}
-	FORCEINLINE void						SetEnabled(Bool Enabled)					{	m_RenderFlags.Set( RenderFlags::Enabled, Enabled );	}
+	FORCEINLINE void						SetEnabled(Bool Enabled)					{	m_RenderFlags.Set( RenderFlags::Enabled, Enabled );	OnPropertyChanged(Properties::Enabled);	OnPropertyChanged(Properties::RenderFlags);	}
 
 	FORCEINLINE void						SetAlpha(float Alpha)						{	if ( m_Colour.GetAlphaf() != Alpha )	{	m_Colour.GetAlphaf() = Alpha;	OnColourChanged();	}	}
 	FORCEINLINE float						GetAlpha() const							{	return m_Colour.GetAlphaf();	}
@@ -274,8 +273,8 @@ public:
 	FORCEINLINE TLMaths::TQuadTreeNode*		GetRenderZoneNode(TRefRef RenderTargetRef)	{	TLMaths::TQuadTreeNode** ppZoneNode = m_RenderZoneNodes.Find( RenderTargetRef );		return ppZoneNode ? (*ppZoneNode) : NULL;	}
 	FORCEINLINE bool						SetRenderZoneNode(TRefRef RenderTargetRef,TLMaths::TQuadTreeNode* pRenderZoneNode)	{	return m_RenderZoneNodes.Add( RenderTargetRef, pRenderZoneNode ) != NULL;	}
 
-	FORCEINLINE Bool			operator<(TRefRef NodeRef) const			{	return GetNodeRef() < NodeRef;	}
-	FORCEINLINE Bool			operator==(TRefRef NodeRef) const			{	return GetNodeRef() == NodeRef;	}
+	FORCEINLINE Bool						operator<(TRefRef NodeRef) const			{	return GetNodeRef() < NodeRef;	}
+	FORCEINLINE Bool						operator==(TRefRef NodeRef) const			{	return GetNodeRef() == NodeRef;	}
 	FORCEINLINE Bool						operator==(const TRenderNode& That) const				{	return GetNodeRef() == That.GetNodeRef();	}
 	FORCEINLINE Bool						operator<(const TSorter<TRenderNode*,TRef>& That) const	{	return GetNodeRef() < That.This()->GetNodeRef();	}
 	FORCEINLINE Bool						operator<(const TSorter<TRenderNode,TRef>& That) const	{	return GetNodeRef() < That->GetNodeRef();	}
@@ -288,8 +287,8 @@ protected:
 
 	Bool									CreateChildNode(TBinaryTree& ChildInitData);	//	create a child node from plain data
 
-	FORCEINLINE void						OnMeshRefChanged()							{	this->UnsubscribeFrom( m_pMeshCache );	m_pMeshCache = NULL;	OnMeshChanged();	}
-	FORCEINLINE void						OnTextureRefChanged()						{	this->UnsubscribeFrom( m_pTextureCache );	m_pTextureCache = NULL;	}
+	FORCEINLINE void						OnMeshRefChanged()							{	this->UnsubscribeFrom( m_pMeshCache );	m_pMeshCache = NULL;	OnMeshChanged();	OnPropertyChanged( Properties::Mesh );	}
+	FORCEINLINE void						OnTextureRefChanged()						{	this->UnsubscribeFrom( m_pTextureCache );	m_pTextureCache = NULL;	OnPropertyChanged( Properties::Texture );	}
 	void									OnAttachDatumChanged();						//	called when attach datum needs repositioning
 	//void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags=TInvalidateFlags(InvalidateLocalBounds,InvalidateWorldBounds,InvalidateWorldPos,InvalidateParents,InvalidateChildren));	//	set all bounds as invalid
 	void									SetBoundsInvalid(const TInvalidateFlags& InvalidateFlags);
@@ -381,6 +380,8 @@ FORCEINLINE void TLRender::TRenderNode::OnColourChanged()
 	{
 		m_RenderFlags.Set( RenderFlags::UseNodeColour );
 	}
+	OnPropertyChanged( Properties::RenderFlags );
+	OnPropertyChanged( Properties::Colour );
 }
 
 
@@ -424,6 +425,8 @@ FORCEINLINE void TLRender::TRenderNode::OnTransformChanged(u8 TransformChangedBi
 	if ( TransformChangedBits != 0x0 )
 	{
 		Bool TranslateChanged = (TransformChangedBits & TLMaths_TransformBitTranslate) != 0x0;
+		Bool ScaleChanged = (TransformChangedBits & TLMaths_TransformBitScale) != 0x0;
+		Bool RotationChanged = (TransformChangedBits & TLMaths_TransformBitRotation) != 0x0;
 		SetBoundsInvalid( TInvalidateFlags( 
 							//HasChildren() ? InvalidateLocalBounds : InvalidateDummy, //	gr: not needed?
 							TranslateChanged ? InvalidateWorldPos : InvalidateDummy,				//	world pos must have changed - may be able to reduce this to just Translate changes
@@ -432,6 +435,10 @@ FORCEINLINE void TLRender::TRenderNode::OnTransformChanged(u8 TransformChangedBi
 							InvalidateChildWorldBounds,		//	invalidate the children's world bounds
 							InvalidateChildWorldPos		//	invalidate the children's world pos too
 						) );	
+
+		if ( TranslateChanged )	OnPropertyChanged( Properties::Translation );
+		if ( ScaleChanged )		OnPropertyChanged( Properties::Scale );
+		if ( RotationChanged )	OnPropertyChanged( Properties::Rotation );
 	}
 }
 

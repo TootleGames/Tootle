@@ -11,6 +11,7 @@
 #include <TootleMaths/TSphere.h>
 #include <TootleMaths/TLine.h>
 #include <TootleCore/TBinary.h>
+#include <TootleCore/TColour.h>
 
 
 namespace TLAsset

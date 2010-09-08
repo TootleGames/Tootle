@@ -173,6 +173,7 @@ void TLPhysics::TPhysicsgraph::OnNodeAdded(TLPhysics::TPhysicsNode& Node,Bool Se
 	{
 		TLMessaging::TMessage Message( TRef_Static(N,o,d,e,A), GetGraphRef());
 		Message.Write( Node.GetNodeRef() );
+		Message.ExportData( TRef_Static4(N,o,d,e), Node.GetNodeRef() );
 
 		PublishMessage(Message);
 	}

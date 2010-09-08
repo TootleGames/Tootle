@@ -3,12 +3,13 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="PC"
-	OutputDirectory="$(ProjectDir)..\..\Lib\"
 	IntermediateDirectory="$(ConfigurationName)"
 	>
 	<Tool
 		Name="VCCLCompilerTool"
 		Optimization="0"
+		InlineFunctionExpansion="0"
+		EnableIntrinsicFunctions="true"
 		FavorSizeOrSpeed="1"
 		AdditionalIncludeDirectories="$(ProjectDir)..\..\"
 		PreprocessorDefinitions="TL_USER_$(RemoteMachine);WIN32;TL_TARGET_PC"

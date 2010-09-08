@@ -10,6 +10,7 @@
 #include <TootleCore/TPtr.h>
 #include <TootleCore/TEventChannel.h> 
 #include <TootleCore/TLCore.h>
+#include <TootleGui/TLGui.h>
 
 
 // DirectX buffer sizes for each device type
@@ -62,18 +63,7 @@ namespace TLInput
 	const float AXIS_SCALE				= 1000.0f;
 };
 
-namespace Win32
-{
-	extern HWND g_HWnd;
-}
 
-namespace TLGui
-{
-	namespace Platform
-	{
-		extern HINSTANCE g_HInstance;
-	}
-}
 
 using namespace TLInput;
 
@@ -99,7 +89,7 @@ SyncBool Platform::DirectX::Init()
 	if(g_pTLDirectInputInterface)
 		return SyncTrue;
 
-	HINSTANCE hInstance = TLGui::Platform::g_HInstance;
+	HINSTANCE hInstance = static_cast<HINSTANCE>( TLGui::Platform::g_HInstance );
 	if ( !hInstance )
 	{
 		TLDebug_Break("Program instance handle expected (Setup in main)");
@@ -499,11 +489,11 @@ BOOL CALLBACK Platform::DirectX::CreateDevice(const DIDEVICEINSTANCE* pdidInstan
 	{
 		case DI8DEVTYPE_MOUSE:
 			refDeviceType = TLInput::MouseRef;
-			bProcessDevice = TRUE;
+			bProcessDevice = false;
 			break;
 		case DI8DEVTYPE_KEYBOARD:
 			refDeviceType = TLInput::KeyboardRef;
-			bProcessDevice = TRUE;
+			bProcessDevice = false;
 			break;
 		case DI8DEVTYPE_GAMEPAD:
 			refDeviceType = TLInput::GamepadRef;
@@ -516,7 +506,7 @@ BOOL CALLBACK Platform::DirectX::CreateDevice(const DIDEVICEINSTANCE* pdidInstan
 			// Neither are actually usable via DirectX unfortunately as they never provide any buttons or axes.
 			// I *believe* under Vista a Wiimote should function correctly as a gamepad but at this time I am using
 			// WinXP. I will look into alternatives using a Wiimote library of some sort that I have come across
-			// but these have drawback sin that most are for windows only so wouldn't work on the Max. :(
+			// but these have drawback sin that most are for windows only so wouldn't work on the Mac. :(
 		case DI8DEVTYPE_DEVICE:
 			refDeviceType = TLInput::GamepadRef;
 			bProcessDevice = TRUE;
@@ -660,8 +650,13 @@ Bool Platform::DirectX::InitialiseDevice(TPtr<TInputDevice> pDevice, const LPDIR
 	//	gr: to continue using directx we'll need to assign the "main" TLGui::Window 
 	//	or something as the "directx" window. This doesn't bode well for multiple render
 	//	windows. Or handling(ignoring) input when a different window is open...
-	HWND hWnd = Win32::g_HWnd;
-
+/*
+	TLRender::TScreenManager* pScreenManager = TLRender::g_pScreenManager;
+	TLRender::TScreen* pScreen = pScreenManager ? pScreenManager->GetDefaultScreen() : NULL;
+	TLGui::TWindow* pWindow = pScreen->GetWindow() : NULL;
+	HWND hWnd = pWindow ? pWindow->GetHandle() : NULL;
+*/
+	HWND hWnd = NULL;
 	if ( hWnd != NULL )	//	gr: I'm sure this should be INVALID_HANDLE...
 	{
 		TLDebug_Print("No win32 window created for directx to get exclusivity on...");
@@ -820,7 +815,10 @@ Bool Platform::DirectX::UpdateDevice(TInputDevice& Device)
 	TPtr<TLInputDirectXDevice>& pTLDirectInputDevice = g_TLDirectInputDevices.FindPtr(DeviceID);
 
 	if ( !pTLDirectInputDevice )
-		return FALSE;
+	{
+		//	gr: return true to allow update of our new gui devices
+		return true;
+	}
 
 	Bool bResult = FALSE;
 
@@ -837,7 +835,9 @@ Bool Platform::DirectX::UpdateDevice(TInputDevice& Device)
 			break;
 	}
 
-	return bResult;
+	//	gr: return true to allow update of our new gui devices
+	//return bResult;
+	return true;
 }
 
 

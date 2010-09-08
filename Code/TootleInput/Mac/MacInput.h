@@ -39,7 +39,6 @@ namespace TLInput
 		void		RemoveAllDevices();
 		
 		Bool			UpdateDevice(TInputDevice& Device);
-		int2			GetCursorPosition(u8 uIndex);				
 		
 		SyncBool		CreateVirtualDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef);
 		SyncBool		RemoveVirtualDevice(TRefRef InstanceRef);

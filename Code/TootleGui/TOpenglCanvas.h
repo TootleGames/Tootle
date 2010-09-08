@@ -15,9 +15,12 @@
 class TLGui::TOpenglCanvas : public TLGui::TControl
 {
 public:
-	TOpenglCanvas(TWindow& Parent,TRefRef ControlRef);
+	TOpenglCanvas(TRefRef ControlRef);
 
-	virtual Bool	BeginRender()=0;		//	set as current opengl canvas before rendering. If this fails we cannot draw to it
-	virtual void	EndRender()=0;			//	flip buffers after drawing
+	virtual Bool		BeginRender()=0;			//	set as current opengl canvas before rendering. If this fails we cannot draw to it
+	virtual void		EndRender()=0;				//	flip buffers after drawing
+	
+	virtual Type2<u16>	GetSize() const=0;			//	canvas(renderable area) size
+	void				OnResized()					{}//	called when the render size changes
 };
 

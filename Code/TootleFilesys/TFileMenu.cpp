@@ -153,7 +153,7 @@ SyncBool TLFileSys::TFileMenu::ImportMenuItem(TPtr<TXmlTag>& pTag,TPtr<TLAsset::
 	//	command ref
 	pString = pTag->GetProperty("CommandRef");
 	if ( pString )
-		pItem->SetMenuCommand( TRef(*pString) );
+		pItem->SetCommand( TRef(*pString) );
 
 	//	nextmenu
 	pString = pTag->GetProperty("NextMenu");

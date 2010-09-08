@@ -1,9 +1,12 @@
 #include "PCTime.h"
+#include "../TString.h"
+#include "../TCoreManager.h"
 #include <mmsystem.h>
 #include <ctime>
-#include "../TString.h"
 
-#include "../TCoreManager.h"
+#pragma comment(lib,"winmm.lib")
+
+
 
 namespace TLTime
 {

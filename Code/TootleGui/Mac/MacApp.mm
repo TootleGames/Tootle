@@ -4,13 +4,7 @@
 #include <TootleCore/TLTime.h>
 #include <TootleCore/PC/PCDebug.h>
 
-#if defined(TL_ENABLE_WX)
-#include "wxWidgets/App.h"
-#endif
-
-
 //	include NSApp, NSArray etc
-#if !defined(TL_ENABLE_WX)
 #include <TootleInput/Mac/MacInput.h>
 #import <IOKit/IOKitLib.h>
 #import <IOKit/hid/IOHIDManager.h>
@@ -19,11 +13,9 @@
 #include <TootleCore/TLMemory.h> // TEMP
 #import "MacWindowDelegate.h"
 #import <Cocoa/Cocoa.h>
-#endif
 
 
 
-#if !defined(TL_ENABLE_WX)
 
 @implementation TootleNSApplicationDelegate
 
@@ -138,7 +130,6 @@
 @end
 
 
-#endif //!defined(TL_ENABLE_WX)
-
+#endif 
 
 

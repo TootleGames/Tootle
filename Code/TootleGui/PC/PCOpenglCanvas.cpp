@@ -1,15 +1,8 @@
 #include "PCOpenglCanvas.h"
 #include "PCWindow.h"
 
-#if defined(TL_ENABLE_WX)
-//	wx gui implementation
-#include "wxWidgets/Window.h"
-#include "wxWidgets/OpenglCanvas.h"
-#include "wxWidgets/Tree.h"
-#else
 //	my old win32 implementaation
 #include "PCWinWindow.h"
-#endif
 
 
 //	gr: once the opengl context has been created we need to initialise opengl
@@ -29,7 +22,7 @@ TPtr<TLGui::TOpenglCanvas> TLGui::CreateOpenglCanvas(TWindow& Parent,TRefRef Ref
 
 
 TLGui::Platform::OpenglCanvas::OpenglCanvas(TLGui::TWindow& Parent,TRefRef ControlRef) :
-	TLGui::TOpenglCanvas	( Parent, ControlRef ),
+	TLGui::TOpenglCanvas	( ControlRef ),
 	m_HDC					( NULL ),
 	m_HGLRC					( NULL )
 {
@@ -98,6 +91,8 @@ bool TLGui::Platform::OpenglCanvas::InitContext(Win32::GWindow& Window)
 		return false;
 	}
 
+	//	store size
+	m_Size = Window.m_ClientSize;
 
 	//	if multisample is supported, use a multisample pixelformat
 //	SyncBool MultisampleSupport = OpenglExtensions::IsHardwareSupported(OpenglExtensions::GHardware_ARBMultiSample);
@@ -181,14 +176,4 @@ void TLGui::Platform::OpenglCanvas::EndRender()
 
 	//	flip buffers
 	SwapBuffers( m_HDC );
-/*
-	//	post-draw make sure the swap interval is limited/not limited
-	if ( OpenglExtensions::IsHardwareEnabled( OpenglExtensions::GHardware_SwapInterval ) )
-	{
-		if ( GetFlag( TScreen::Flag_SyncFrameRate ) )
-			OpenglExtensions::glSwapIntervalEXT()( 1 );
-		else
-			OpenglExtensions::glSwapIntervalEXT()( 0 );
-	}
-*/
 }

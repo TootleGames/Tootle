@@ -13,6 +13,10 @@
 		BF3DA52A1178FB8700EBD76C /* TGraphTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BF3DA5241178FB8700EBD76C /* TGraphTree.h */; };
 		BF3DA52B1178FB8700EBD76C /* TLReflection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF3DA5251178FB8700EBD76C /* TLReflection.cpp */; };
 		BF3DA52C1178FB8700EBD76C /* TLReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = BF3DA5261178FB8700EBD76C /* TLReflection.h */; };
+		BFC48BFF11FD913F00A50F6D /* TDataTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BF08C63411E7E756007969BF /* TDataTree.h */; };
+		BFC48C0011FD914300A50F6D /* TDataTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF08C63311E7E756007969BF /* TDataTree.cpp */; };
+		BFF8EB7C122C38F300E54EDB /* TAssetTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF8EB78122C38F300E54EDB /* TAssetTree.h */; };
+		BFF8EB7D122C38F300E54EDB /* TAssetTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFF8EB79122C38F300E54EDB /* TAssetTree.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +45,8 @@
 
 /* Begin PBXFileReference section */
 		8418EEAF0F4DAB4500B956C9 /* libTootleReflection.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleReflection.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF08C63311E7E756007969BF /* TDataTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TDataTree.cpp; path = ../TDataTree.cpp; sourceTree = SOURCE_ROOT; };
+		BF08C63411E7E756007969BF /* TDataTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDataTree.h; path = ../TDataTree.h; sourceTree = SOURCE_ROOT; };
 		BF3DA5211178FB8700EBD76C /* TFileServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TFileServer.cpp; path = ../../../../Tootle/Code/TootleReflection/TFileServer.cpp; sourceTree = SOURCE_ROOT; };
 		BF3DA5221178FB8700EBD76C /* TFileServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TFileServer.h; path = ../../../../Tootle/Code/TootleReflection/TFileServer.h; sourceTree = SOURCE_ROOT; };
 		BF3DA5231178FB8700EBD76C /* TGraphTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGraphTree.cpp; path = ../../../../Tootle/Code/TootleReflection/TGraphTree.cpp; sourceTree = SOURCE_ROOT; };
@@ -52,6 +58,8 @@
 		BF6FBB5711775B8F00490A7B /* TootleNetwork.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TootleNetwork.xcodeproj; path = ../../../../Tootle/Code/TootleNetwork/Mac/TootleNetwork.xcodeproj; sourceTree = SOURCE_ROOT; };
 		BF89CB8D1109988B009C2101 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF89CB8E1109988B009C2101 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		BFF8EB78122C38F300E54EDB /* TAssetTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAssetTree.h; path = ../../TootleReflection/TAssetTree.h; sourceTree = SOURCE_ROOT; };
+		BFF8EB79122C38F300E54EDB /* TAssetTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAssetTree.cpp; path = ../../TootleReflection/TAssetTree.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +104,10 @@
 		8418F0250F4DB80400B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				BFF8EB78122C38F300E54EDB /* TAssetTree.h */,
+				BFF8EB79122C38F300E54EDB /* TAssetTree.cpp */,
+				BF08C63311E7E756007969BF /* TDataTree.cpp */,
+				BF08C63411E7E756007969BF /* TDataTree.h */,
 				BF3DA5211178FB8700EBD76C /* TFileServer.cpp */,
 				BF3DA5221178FB8700EBD76C /* TFileServer.h */,
 				BF3DA5231178FB8700EBD76C /* TGraphTree.cpp */,
@@ -149,6 +161,8 @@
 				BF3DA5281178FB8700EBD76C /* TFileServer.h in Headers */,
 				BF3DA52A1178FB8700EBD76C /* TGraphTree.h in Headers */,
 				BF3DA52C1178FB8700EBD76C /* TLReflection.h in Headers */,
+				BFC48BFF11FD913F00A50F6D /* TDataTree.h in Headers */,
+				BFF8EB7C122C38F300E54EDB /* TAssetTree.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +250,8 @@
 				BF3DA5271178FB8700EBD76C /* TFileServer.cpp in Sources */,
 				BF3DA5291178FB8700EBD76C /* TGraphTree.cpp in Sources */,
 				BF3DA52B1178FB8700EBD76C /* TLReflection.cpp in Sources */,
+				BFC48C0011FD914300A50F6D /* TDataTree.cpp in Sources */,
+				BFF8EB7D122C38F300E54EDB /* TAssetTree.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

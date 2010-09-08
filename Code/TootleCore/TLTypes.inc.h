@@ -15,7 +15,7 @@ namespace TLMaths
 //	forward declarations
 namespace TLDebug
 {
-	extern Bool		CheckIndex(int Index,int Max);
+	extern Bool		CheckIndex(s32 Index,u32 Max);
 };
 
 
@@ -30,7 +30,7 @@ public:
 	Type2()								: x(0), y(0)				{	};
 	explicit Type2(const TYPE& a)		: x(a), y(a)				{	};
 	Type2(const TYPE& a, const TYPE& b)	: x(a), y(b)				{	};
-	template<typename OTHERTYPE> Type2(const Type2<OTHERTYPE>& t) : x(t.x), y(t.y)	{	};
+	template<typename OTHERTYPE> Type2(const Type2<OTHERTYPE>& t) : x((TYPE)t.x), y((TYPE)t.y)	{	};
 
 	FORCEINLINE static u32		GetSize() 									{	return 2;	}
 	FORCEINLINE void			Set(const TYPE& a, const TYPE& b)			{	x = a;	y = b;	};

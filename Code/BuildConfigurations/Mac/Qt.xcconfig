@@ -12,6 +12,7 @@ QT_LDFLAGS = -headerpad_max_install_names -L/Library/Frameworks -F/Library/Frame
 QT_HEADER_SEARCH_PATHS = /Library/Frameworks/QtCore.framework/Versions/4/Headers /usr/include/QtCore /Library/Frameworks/QtGui.framework/Versions/4/Headers /usr/include/QtGui /Library/Frameworks/QtOpenGL.framework/Versions/4/Headers /usr/include/QtOpenGL /usr/include /System/Library/Frameworks/OpenGL.framework/Versions/A/Headers /System/Library/Frameworks/AGL.framework/Headers . . /usr/local/include /System/Library/Frameworks/CarbonCore.framework/Headers /usr/local/Qt4.6/mkspecs/macx-xcode
 QT_LIBRARY_SEARCH_PATHS = /Library/Frameworks /System/Library/Frameworks/
 
+//	gr: remove these!
 MACOSX_DEPLOYMENT_TARGET = 10.4
 COPY_PHASE_STRIP = NO
 DYLIB_COMPATIBILITY_VERSION = 1.0

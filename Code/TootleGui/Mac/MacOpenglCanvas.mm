@@ -2,12 +2,6 @@
 #include "MacWindow.h"
 #import "MacView.h"	//	cocoa opengl NSView implementation
 
-#if defined(TL_ENABLE_WX)
-//	wx gui implementation
-#include "wxWidgets/Window.h"
-#include "wxWidgets/OpenglCanvas.h"
-#include "wxWidgets/Tree.h"
-#else
 //	mac cocoa includes, NSApp, NSArray etc
 #include <TootleInput/Mac/MacInput.h>
 #import <IOKit/IOKitLib.h>
@@ -16,7 +10,6 @@
 #import <Appkit/Appkit.h>
 #include <TootleCore/TLMemory.h> // TEMP
 #import "MacWindowDelegate.h"
-#endif
 
 
 

@@ -22,6 +22,13 @@
 #include <TootleFileSys/TFileAsset.h>
 #include <TootleFileSys/TLFileSys.h>
 
+
+#if defined(TL_TARGET_PC)
+	#pragma comment(lib,"../../../Tootle/Code/Lib/libpng.lib")
+	#pragma comment(lib,"../../../Tootle/Code/Lib/zlib.lib")
+#endif
+
+
 namespace TLAsset
 {
 	TPtr<TLAsset::TAssetManager>		g_pManager;

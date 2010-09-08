@@ -11,11 +11,19 @@
 #include <TootleCore/TRef.h>
 #include <TootleCore/TPtr.h>
 
+
+namespace TLMessaging
+{
+	class TPublisher;
+}
+
 namespace TLGui
 {
 	//	generic types
 	class TControl;			//	an OS control inside a window
 	class TWindow;			//	a OS window. 
+	class TMenuWrapper;		//	manages link between a menu controller and a menu attached to a window (not OS specialised)
+	class TMenuHandler;		//	OS menu handler - try and merge menu wrapper and handler?
 	
 	//	control types
 	class TOpenglCanvas;	//	opengl area - maybe rename this to "RenderCanvas" to cope with directx's requirements etc
@@ -25,8 +33,9 @@ namespace TLGui
 	SyncBool				Init();		//	lib init
 	SyncBool				Shutdown();	//	lib init
 
-	const TString&			GetAppExe();
-	void					SetAppExe(const TString& NewExePath);
+	DEPRECATED TString		GetAppExe();
+	const TString&			GetAppPath();
+	void					SetAppPath(const TString& Path);
 	bool					OnCommandLine(const TString& CommandLine,int& Result);	//	handle command line params - if true is returned, return Result from main
 
 	//	factory style wrappers. Temporary implementation until I decide how data/factory driven I want this to be	
@@ -35,17 +44,17 @@ namespace TLGui
 	TPtr<TTree>				CreateTree(TWindow& Parent,TRefRef Ref,TPtr<TTreeItem>& pRootItem,const TArray<TRef>& Columns);	//	render[0] = ItemData[ column[0] ]
 	
 	//	some hacky global functions
-	int2					GetDefaultScreenMousePosition(u8 MouseIndex);	//	get the cursor position in the default screen's client space
+	DEPRECATED int2			GetDefaultScreenMousePosition();	//	get the cursor position in the default screen's client space
 
 	namespace Platform
 	{
-		class Window;	//	os-specific window (non-wx!)
-
 		SyncBool		Init();
 		SyncBool		Shutdown();
-		int2			GetScreenMousePosition(TLGui::TWindow& Window,u8 MouseIndex);
 		void			GetDesktopSize(Type4<s32>& DesktopSize);	//	get the desktop dimensions. note: need a window so we can decide which desktop?	
+
+#if defined(TL_TARGET_PC)
+		extern void*	g_HInstance;	//	HINSTANCE
+#endif
 	}
 };
-
 

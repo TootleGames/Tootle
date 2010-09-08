@@ -29,10 +29,13 @@ public:
 	virtual Bool			IsVisible() const;
 	virtual void			Show();
 	
-	virtual void			SetSize(const int2& WidthHeight);	//	set the CLIENT SIZE ("content" in os x) of the window
-	virtual int2			GetSize();							//	get the CLIENT SIZE ("content" in os x) of the window
-	virtual void			SetPosition(const int2& xy);		//	set the top-left position of the window frame
+	virtual void			SetSize(const Type2<u16>& WidthHeight);	//	set the client size of the window (game doesn't care about the real size, only the client size)
+	virtual Type2<u16>		GetSize();								//	get the client size of the window
+	virtual void			SetPosition(const Type2<u16>& xy);		//	set the window's top left position
+	virtual Type2<u16>		GetPosition() const;					//	get the window's top left position
 	
+	virtual void*			GetHandle() const;
+
 public:	//	access for anything that explicitly casts a window to this type
 	TPtr<Win32::GWinControl>	m_pWindow;
 };

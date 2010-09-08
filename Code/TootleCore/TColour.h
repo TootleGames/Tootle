@@ -12,6 +12,7 @@
 #include "TLTypes.h"
 #include "TLMaths.h"
 #include "TFixedArray.h"
+#include "TBinary.h"
 
 class TColour;			//	128bit float RGBA colour (4x float)
 class TColour24;		//	24 bit RGB colour (u8's)
@@ -350,8 +351,15 @@ FORCEINLINE TColour64& TColour64::operator=(const TColour64& Colour)		{	m_Rgba.S
 
 
 
+#define TLBinary_TypeRef_TColour				TRef_Static4(C,o,l,f)
+#define TLBinary_TypeRef_TColour24				TRef_Static5(C,o,l,TWO,FOUR)
+#define TLBinary_TypeRef_TColour32				TRef_Static5(C,o,l,THREE,TWO)
+#define TLBinary_TypeRef_TColour64				TRef_Static5(C,o,l,SIX,FOUR)
 
-
+TLBinary_DeclareDataTypeRef( TColour,				TLBinary_TypeRef(TColour) );
+TLBinary_DeclareDataTypeRef( TColour24,				TLBinary_TypeRef(TColour24) );
+TLBinary_DeclareDataTypeRef( TColour32,				TLBinary_TypeRef(TColour32) );
+TLBinary_DeclareDataTypeRef( TColour64,				TLBinary_TypeRef(TColour64) );
 
 TLCore_DeclareIsDataType( TColour );
 TLCore_DeclareIsDataType( TColour24 );

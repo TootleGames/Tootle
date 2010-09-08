@@ -25,11 +25,18 @@ namespace TLGui
 class TLGui::TControl
 {
 public:
-	TControl(TWindow& Parent,TRefRef ControlRef);
+	TControl(TRefRef ControlRef);
+	virtual ~TControl()	{}
+
+	virtual bool			Initialise(TWindow& Parent);			//	initialise - this is seperated from the constructor so we can use virtual functions
+	bool					HasInitialised() const					{	return m_pParent != NULL;	}
+	TRefRef					GetRef() const							{	return m_ControlRef;	}
+	TWindow&				GetParentWindow()						{	return *m_pParent;	}
 	
-	inline Bool		operator==(TRefRef ControlRef) const		{	return m_ControlRef == ControlRef;	}
+	inline bool				operator==(TRefRef ControlRef) const	{	return m_ControlRef == ControlRef;	}
 	
 private:
-	TRef	m_ControlRef;
+	TRef			m_ControlRef;
+	TWindow*		m_pParent;			//	should we allow this? currently just used to see if the control has been initialised
 };
 

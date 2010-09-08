@@ -8,23 +8,32 @@
  */
 #include "OpenglCanvas.h"
 #include "Window.h"
+#include <TootleRender/TLRender.h>
 
 
 
-/*
 
-Qt::OpenglCanvas::OpenglCanvas(TLGui::TWindow& Parent,TRefRef ControlRef) :
-	TLGui::TOpenglCanvas	( Parent, ControlRef ),
-	QGLWidget				( static_cast<Qt::TWindow&>( Parent ) )
+Qt::TOpenglCanvas::TOpenglCanvas(TRefRef ControlRef) :
+	TLGui::TOpenglCanvas	( ControlRef )
 {
 }
 
+
+bool Qt::TOpenglCanvas::Initialise(TLGui::TWindow& Parent)
+{
+	QGLWidget::setParent( static_cast<Qt::TWindow*>( &Parent ) );
+
+	//	catch mouse move's (this can be captured by parent)
+	setMouseTracking( true );
+	
+	return TLGui::TOpenglCanvas::Initialise( Parent );
+}
 
 
 //------------------------------------------------------
 //	set as current opengl canvas. If this fails we cannot draw to it
 //------------------------------------------------------
-Bool Qt::OpenglCanvas::BeginRender()
+Bool Qt::TOpenglCanvas::BeginRender()
 {
 	QGLWidget::makeCurrent();
 	
@@ -34,18 +43,18 @@ Bool Qt::OpenglCanvas::BeginRender()
 //------------------------------------------------------
 //	flip buffer at end of render
 //------------------------------------------------------
-void Qt::OpenglCanvas::EndRender()
+void Qt::TOpenglCanvas::EndRender()
 {
-	SwapBuffers();
+	QGLWidget::swapBuffers();
 }
 
 
 //------------------------------------------------------
 //	init opengl state
 //------------------------------------------------------
-void Qt::OpenglCanvas::initializeGL()					
+void Qt::TOpenglCanvas::initializeGL()					
 {
 	TLRender::Opengl::Init();	
 }	
 
-*/
+

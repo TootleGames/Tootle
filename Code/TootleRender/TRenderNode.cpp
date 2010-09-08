@@ -775,10 +775,12 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 		OnTransformChanged(TransformChangedBits);
 
 	//	line width
-	Message.ImportData( Properties::LineWidth, m_LineWidth );
+	if ( Message.ImportData( Properties::LineWidth, m_LineWidth ) )
+		OnPropertyChanged( Properties::LineWidth );
 
 	//	point sprite size
-	Message.ImportData( Properties::PointSize, m_PointSpriteSize );
+	if ( Message.ImportData( Properties::PointSize, m_PointSpriteSize ) )
+		OnPropertyChanged( Properties::PointSize );
 
 	//	mesh
 	if ( Message.ImportData( Properties::Mesh, m_MeshRef ) )
@@ -816,6 +818,7 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 		// Set the flags as a raw value.  Saves cycling through a load of 
 		// flag indices but should generally only be used for exporting and re-import
 		m_RenderFlags.SetData(RenderFlags);
+		OnPropertyChanged( Properties::RenderFlags );
 	}
 	else
 	{
@@ -845,6 +848,8 @@ void TLRender::TRenderNode::SetProperty(TLMessaging::TMessage& Message)
 			}
 			FlagChildren.Empty();
 		}
+
+		OnPropertyChanged( Properties::RenderFlags );
 	}
 
 	//	import colour
@@ -963,38 +968,38 @@ Bool TLRender::TRenderNode::SetWorldTransformOld(Bool SetPosOld,Bool SetTransfor
 void TLRender::TRenderNode::UpdateNodeData()
 {
 	//	gr: i wonder if the type should be stored in itself, as (for editor-style reflection at least) it cannot be changed
-	GetNodeData().RemoveChild("MeshRef");
-	GetNodeData().ExportData("MeshRef", m_MeshRef);
+	GetNodeData().RemoveChild( Properties::Mesh );
+	GetNodeData().ExportData( Properties::Mesh , m_MeshRef);
 
 	// Export transform info
-	GetNodeData().RemoveChild(TRef_Static(T,r,a,n,s));
-	GetNodeData().RemoveChild(TRef_Static(S,c,a,l,e));
-	GetNodeData().RemoveChild(TRef_Static(R,o,t,a,t));
+	GetNodeData().RemoveChild( Properties::Translation );
+	GetNodeData().RemoveChild( Properties::Scale );
+	GetNodeData().RemoveChild( Properties::Rotation );
 	m_Transform.ExportData(GetNodeData());
 
-	GetNodeData().RemoveChild("Texture");
-	GetNodeData().ExportData("Texture", m_TextureRef);
+	GetNodeData().RemoveChild( Properties::Texture );
+	GetNodeData().ExportData( Properties::Texture, m_TextureRef);
 
-	GetNodeData().RemoveChild("Colour");
-	GetNodeData().ExportData("Colour", m_Colour);
+	GetNodeData().RemoveChild( Properties::Colour );
+	GetNodeData().ExportData( Properties::Colour , m_Colour);
 
-	GetNodeData().RemoveChild("AttachDatum");
+	GetNodeData().RemoveChild( Properties::AttachDatum );
 
 	TRef AttachDatum = GetAttachDatum();
 	if(AttachDatum.IsValid())
-		GetNodeData().ExportData("AttachDatum", AttachDatum);
+		GetNodeData().ExportData( Properties::AttachDatum , AttachDatum);
 
-	GetNodeData().RemoveChild("LineWidth");
-	GetNodeData().ExportData("LineWidth", m_LineWidth );
+	GetNodeData().RemoveChild( Properties::LineWidth );
+	GetNodeData().ExportData( Properties::LineWidth, m_LineWidth );
 
 	//	point sprite size
-	GetNodeData().RemoveChild("PointSize");
-	GetNodeData().ExportData("PointSize", m_PointSpriteSize );
+	GetNodeData().RemoveChild( Properties::PointSize );
+	GetNodeData().ExportData( Properties::PointSize, m_PointSpriteSize );
 
 	// Export renderflags as a single value rathe than individual bit's
 	//NOTE: No need to do the 'enable' as that is stored in the render flags
-	GetNodeData().RemoveChild("RFlags");
-	GetNodeData().ExportData("RFlags", m_RenderFlags.GetData());
+	GetNodeData().RemoveChild( Properties::RenderFlags );
+	GetNodeData().ExportData(Properties::RenderFlags, m_RenderFlags.GetData());
 }
 
 

@@ -392,6 +392,34 @@ void TInputManager::CheckForDeviceChanges()
 	}
 }
 
+
+
+TLInput::TInputDevice* TInputManager::CreateDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef)
+{
+	//	existing instance
+	if ( GetInstance( InstanceRef ) )
+		return NULL;
+	
+	//	create new instance
+	TInputDevice* pNewDevice = GetInstance( InstanceRef, true, DeviceTypeRef );
+	return pNewDevice;
+}
+
+
+//-------------------------------------------------------
+//	post device-creation, call this once your sensors have been setup
+//-------------------------------------------------------
+void TInputManager::OnDeviceCreated(TLInput::TInputDevice& Device)
+{
+	//	notify that we created a new device
+	TLMessaging::TMessage Message("DeviceChanged");
+	Message.ExportData("State", TRef("ADDED"));
+	Message.ExportData("DEVID", Device.GetDeviceRef() );
+	Message.ExportData("TYPE", Device.GetDeviceType() );	
+	PublishMessage(Message);
+}
+
+
 Bool TInputManager::CreateVirtualDevice(TRefRef InstanceRef, TRefRef DeviceTypeRef)
 {
 	// Check to see if the device already exists.  If so return false.
