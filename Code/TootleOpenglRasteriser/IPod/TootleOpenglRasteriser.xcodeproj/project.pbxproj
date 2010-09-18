@@ -1,0 +1,255 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		84DE371B0F13630600608F8C /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84DE371A0F13630600608F8C /* OpenGL.framework */; };
+		BF206C02123FB50F00B5C7CC /* IPodOpengl.h in Headers */ = {isa = PBXBuildFile; fileRef = BF206BBD123FB50C00B5C7CC /* IPodOpengl.h */; };
+		BF206C03123FB50F00B5C7CC /* IPodOpengl.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF206BBE123FB50C00B5C7CC /* IPodOpengl.mm */; };
+		BF206C04123FB50F00B5C7CC /* TLOpengl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF206BC2123FB50C00B5C7CC /* TLOpengl.cpp */; };
+		BF206C05123FB50F00B5C7CC /* OpenglRasteriser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF206BC3123FB50C00B5C7CC /* OpenglRasteriser.cpp */; };
+		BF206C06123FB50F00B5C7CC /* TLOpengl.h in Headers */ = {isa = PBXBuildFile; fileRef = BF206BC4123FB50C00B5C7CC /* TLOpengl.h */; };
+		BF206C07123FB50F00B5C7CC /* OpenglRasteriser.h in Headers */ = {isa = PBXBuildFile; fileRef = BF206BC5123FB50C00B5C7CC /* OpenglRasteriser.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		84C10AE80F0A7E3B00B2DF7A /* libTootleOpenglRasteriser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleOpenglRasteriser.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		84DE371A0F13630600608F8C /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
+		BF206BBD123FB50C00B5C7CC /* IPodOpengl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPodOpengl.h; sourceTree = "<group>"; };
+		BF206BBE123FB50C00B5C7CC /* IPodOpengl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPodOpengl.mm; sourceTree = "<group>"; };
+		BF206BC2123FB50C00B5C7CC /* TLOpengl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLOpengl.cpp; path = ../TLOpengl.cpp; sourceTree = SOURCE_ROOT; };
+		BF206BC3123FB50C00B5C7CC /* OpenglRasteriser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OpenglRasteriser.cpp; path = ../OpenglRasteriser.cpp; sourceTree = SOURCE_ROOT; };
+		BF206BC4123FB50C00B5C7CC /* TLOpengl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLOpengl.h; path = ../TLOpengl.h; sourceTree = SOURCE_ROOT; };
+		BF206BC5123FB50C00B5C7CC /* OpenglRasteriser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenglRasteriser.h; path = ../OpenglRasteriser.h; sourceTree = SOURCE_ROOT; };
+		BF206BEB123FB50E00B5C7CC /* MacOpengl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacOpengl.cpp; sourceTree = "<group>"; };
+		BF206BEC123FB50E00B5C7CC /* MacOpengl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacOpengl.h; sourceTree = "<group>"; };
+		BF206BFE123FB50E00B5C7CC /* PCOpengl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PCOpengl.cpp; sourceTree = "<group>"; };
+		BF206BFF123FB50E00B5C7CC /* PCOpengl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PCOpengl.h; sourceTree = "<group>"; };
+		BF206C00123FB50E00B5C7CC /* PCOpenglExt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PCOpenglExt.cpp; sourceTree = "<group>"; };
+		BF206C01123FB50F00B5C7CC /* PCOpenglExt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PCOpenglExt.h; sourceTree = "<group>"; };
+		BF8FC203118CAA40005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
+		BF8FC204118CAA5A005391AF /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF8FC205118CAA5A005391AF /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		84C10AE60F0A7E3B00B2DF7A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84DE371B0F13630600608F8C /* OpenGL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		84C109070F0A779700B2DF7A = {
+			isa = PBXGroup;
+			children = (
+				84DE37190F1362E700608F8C /* Frameworks */,
+				84C10B230F0A7E7D00B2DF7A /* Build Configurations */,
+				84C10AED0F0A7E4E00B2DF7A /* Source Code */,
+				84C10AE90F0A7E3B00B2DF7A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		84C10AE90F0A7E3B00B2DF7A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84C10AE80F0A7E3B00B2DF7A /* libTootleOpenglRasteriser.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84C10AED0F0A7E4E00B2DF7A /* Source Code */ = {
+			isa = PBXGroup;
+			children = (
+				BF206BA8123FB50B00B5C7CC /* IPod */,
+				BF206BC2123FB50C00B5C7CC /* TLOpengl.cpp */,
+				BF206BC3123FB50C00B5C7CC /* OpenglRasteriser.cpp */,
+				BF206BC4123FB50C00B5C7CC /* TLOpengl.h */,
+				BF206BC5123FB50C00B5C7CC /* OpenglRasteriser.h */,
+				BF206BC6123FB50C00B5C7CC /* Mac */,
+				BF206BF6123FB50E00B5C7CC /* PC */,
+			);
+			name = "Source Code";
+			sourceTree = "<group>";
+		};
+		84C10B230F0A7E7D00B2DF7A /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				BF8FC204118CAA5A005391AF /* LibDebug.xcconfig */,
+				BF8FC205118CAA5A005391AF /* LibRelease.xcconfig */,
+				BF8FC203118CAA40005391AF /* BuildConfigurations */,
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+		84DE37190F1362E700608F8C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				84DE371A0F13630600608F8C /* OpenGL.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BF206BA8123FB50B00B5C7CC /* IPod */ = {
+			isa = PBXGroup;
+			children = (
+				BF206BBD123FB50C00B5C7CC /* IPodOpengl.h */,
+				BF206BBE123FB50C00B5C7CC /* IPodOpengl.mm */,
+			);
+			name = IPod;
+			sourceTree = "<group>";
+		};
+		BF206BC6123FB50C00B5C7CC /* Mac */ = {
+			isa = PBXGroup;
+			children = (
+				BF206BEB123FB50E00B5C7CC /* MacOpengl.cpp */,
+				BF206BEC123FB50E00B5C7CC /* MacOpengl.h */,
+			);
+			name = Mac;
+			path = ../Mac;
+			sourceTree = SOURCE_ROOT;
+		};
+		BF206BF6123FB50E00B5C7CC /* PC */ = {
+			isa = PBXGroup;
+			children = (
+				BF206BFE123FB50E00B5C7CC /* PCOpengl.cpp */,
+				BF206BFF123FB50E00B5C7CC /* PCOpengl.h */,
+				BF206C00123FB50E00B5C7CC /* PCOpenglExt.cpp */,
+				BF206C01123FB50F00B5C7CC /* PCOpenglExt.h */,
+			);
+			name = PC;
+			path = ../PC;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		84C10AE40F0A7E3B00B2DF7A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF206C02123FB50F00B5C7CC /* IPodOpengl.h in Headers */,
+				BF206C06123FB50F00B5C7CC /* TLOpengl.h in Headers */,
+				BF206C07123FB50F00B5C7CC /* OpenglRasteriser.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		84C10AE70F0A7E3B00B2DF7A /* TootleOpenglRasteriser */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84C10AEC0F0A7E3B00B2DF7A /* Build configuration list for PBXNativeTarget "TootleOpenglRasteriser" */;
+			buildPhases = (
+				84C10AE40F0A7E3B00B2DF7A /* Headers */,
+				84C10AE50F0A7E3B00B2DF7A /* Sources */,
+				84C10AE60F0A7E3B00B2DF7A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleOpenglRasteriser;
+			productName = TootleRender;
+			productReference = 84C10AE80F0A7E3B00B2DF7A /* libTootleOpenglRasteriser.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		84C109090F0A779700B2DF7A /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 84C1090C0F0A779700B2DF7A /* Build configuration list for PBXProject "TootleOpenglRasteriser" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 0;
+			mainGroup = 84C109070F0A779700B2DF7A;
+			productRefGroup = 84C10AE90F0A7E3B00B2DF7A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				84C10AE70F0A7E3B00B2DF7A /* TootleOpenglRasteriser */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		84C10AE50F0A7E3B00B2DF7A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF206C03123FB50F00B5C7CC /* IPodOpengl.mm in Sources */,
+				BF206C04123FB50F00B5C7CC /* TLOpengl.cpp in Sources */,
+				BF206C05123FB50F00B5C7CC /* OpenglRasteriser.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		84C1090A0F0A779700B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF8FC204118CAA5A005391AF /* LibDebug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		84C1090B0F0A779700B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF8FC205118CAA5A005391AF /* LibRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		84C10AEA0F0A7E3B00B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Mac/build/Debug\"",
+				);
+			};
+			name = Debug;
+		};
+		84C10AEB0F0A7E3B00B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Mac/build/Debug\"",
+				);
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		84C1090C0F0A779700B2DF7A /* Build configuration list for PBXProject "TootleOpenglRasteriser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C1090A0F0A779700B2DF7A /* Debug */,
+				84C1090B0F0A779700B2DF7A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84C10AEC0F0A7E3B00B2DF7A /* Build configuration list for PBXNativeTarget "TootleOpenglRasteriser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C10AEA0F0A7E3B00B2DF7A /* Debug */,
+				84C10AEB0F0A7E3B00B2DF7A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 84C109090F0A779700B2DF7A /* Project object */;
+}

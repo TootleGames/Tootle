@@ -91,6 +91,7 @@ public:
 
 	FORCEINLINE void			Set(float r,float g,float b,float a)	{	m_Rgba.Set( r,g,b,a );	Limit();	}
 	FORCEINLINE void			Set(u8 r,u8 g,u8 b,u8 a)				{	m_Rgba.Set( TLColour::MakeComponentf(r), TLColour::MakeComponentf(g), TLColour::MakeComponentf(b), TLColour::MakeComponentf(a) );	}
+	FORCEINLINE void			SetOpaque()								{	GetAlphaf() = 1.f;	}
 
 	FORCEINLINE TColour&		operator=(const u32& rgba)				{	Set( TLColour::GetComponent8(rgba,0), TLColour::GetComponent8(rgba,1), TLColour::GetComponent8(rgba,2), TLColour::GetComponent8(rgba,3) );	return *this;	}
 	FORCEINLINE TColour&		operator=(const TColour& Colour);
@@ -356,12 +357,8 @@ FORCEINLINE TColour64& TColour64::operator=(const TColour64& Colour)		{	m_Rgba.S
 #define TLBinary_TypeRef_TColour32				TRef_Static5(C,o,l,THREE,TWO)
 #define TLBinary_TypeRef_TColour64				TRef_Static5(C,o,l,SIX,FOUR)
 
-TLBinary_DeclareDataTypeRef( TColour,				TLBinary_TypeRef(TColour) );
-TLBinary_DeclareDataTypeRef( TColour24,				TLBinary_TypeRef(TColour24) );
-TLBinary_DeclareDataTypeRef( TColour32,				TLBinary_TypeRef(TColour32) );
-TLBinary_DeclareDataTypeRef( TColour64,				TLBinary_TypeRef(TColour64) );
+TLBinary_DeclareDataTypeRef( TColour );
+TLBinary_DeclareDataTypeRef( TColour24 );
+TLBinary_DeclareDataTypeRef( TColour32 );
+TLBinary_DeclareDataTypeRef( TColour64 );
 
-TLCore_DeclareIsDataType( TColour );
-TLCore_DeclareIsDataType( TColour24 );
-TLCore_DeclareIsDataType( TColour32 );
-TLCore_DeclareIsDataType( TColour64 );

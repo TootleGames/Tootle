@@ -14,9 +14,18 @@
 namespace TLAsset
 {
 	class TAtlas;
+	
+	//	todo: merge these
 	class TAtlasGlyph;
+	class TSpriteGlyph;	
 };
 
+
+class TLAsset::TSpriteGlyph
+{
+public:
+	
+};
 
 
 

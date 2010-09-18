@@ -38,4 +38,4 @@ private:
 
 
 #define TLBinary_TypeRef_TAxisAngle				TRef_Static5(A,x,i,s,A)
-TLBinary_DeclareDataTypeRef( TLMaths::TAxisAngle,	TLBinary_TypeRef(TAxisAngle) );
+TLBinary_DeclareDataTypeWithRef( TLMaths::TAxisAngle,	TLBinary_TypeRef(TAxisAngle) );

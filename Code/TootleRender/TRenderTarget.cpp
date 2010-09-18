@@ -3,10 +3,6 @@
 #include "TScreenManager.h"
 #include "TRenderGraph.h"
 
-//	include platform specific render code for glTranslate etc
-//	this kinda code will move to the rasteriser (as will these includes)
-#include PLATFORMHEADER(Render.h)
-
 #if defined(TL_USER_GRAHAM)
 	#define VERIFY_MESH_BEFORE_DRAW
 #endif
@@ -39,7 +35,6 @@ TLRender::TRenderTarget::TRenderTarget(const TRef& Ref) :
 	m_Debug_VertexCount	( 0 ),
 	m_Debug_NodeCount	( 0 ),
 	m_Debug_NodeCulledCount	( 0 ),
-	m_pCameraMatrix		( NULL ),
 	m_ScreenZ			( 0 ),
 	m_pRootQuadTreeZone	( NULL )
 {
@@ -57,94 +52,11 @@ TLRender::TRenderTarget::TRenderTarget(const TRef& Ref) :
 
 
 
-//------------------------------------------------------------
-//	dont allow render without a camera
-//------------------------------------------------------------
-Bool TLRender::TRenderTarget::BeginDraw(const Type4<s32>& RenderTargetMaxSize,const Type4<s32>& ViewportMaxSize,const TScreen& Screen)			
-{
-	m_Debug_NodeCount = 0;
-	m_Debug_NodeCulledCount = 0;
-
-	//	render target disabled
-	if ( !GetFlags()(Flag_Enabled) )
-		return FALSE;
-
-	//	need a camera
-	if ( !m_pCamera )
-		return FALSE;
-	TCamera& Camera = *m_pCamera;
-
-	//	get the size... fails if it's too small to be of any use
-	Type4<s32> RenderTargetSize;
-	GetSize( RenderTargetSize, RenderTargetMaxSize );
-	if ( RenderTargetSize.Width() <= 2 || RenderTargetSize.Height() <= 2 )
-		return FALSE;
-
-	//	if we have no root render node, and not going to be clearing the screen, skip render
-	Bool WillClear = GetFlags()( Flag_ClearColour ) && (m_ClearColour.IsVisible());
-	if ( !WillClear )
-	{
-		//	won't be clearing, so if we're missing our root node/have none, skip rendering
-		if ( !m_RootRenderNodeRef.IsValid() )
-			return FALSE;
-
-		TRenderNode* pRootRenderNode = GetRootRenderNode();
-		if ( !pRootRenderNode )
-		{
-			TDebugString Debug_String;
-			Debug_String << "Warning: render target (" << GetRef() << ") missing root render target node (" << m_RootRenderNodeRef << ")";
-			TLDebug_Print( Debug_String );
-			return FALSE;
-		}
-	}
-
-	//	clean post render list
-	m_TempPostRenderList.Empty();
-
-	//	setup viewport and sissor outside the viewport
-	const TLMaths::TBox2D& ViewportBox = Camera.GetViewportBox();
-	if ( !ViewportBox.IsValid() )
-	{
-		TLDebug_Break("Viewport box should be valid");
-		return FALSE;
-	}
-	//	gr: store a integer box for these?
-	glViewport( (s32)ViewportBox.GetLeft(), (s32)ViewportBox.GetTop(), (s32)ViewportBox.GetWidth(), (s32)ViewportBox.GetHeight() );
-	Opengl::Debug_CheckForError();
-
-	//	gr: todo; cache current scissor box
-	const TLMaths::TBox2D& ScissorBox = Camera.GetScissorBox();
-	if ( !ScissorBox.IsValid() )
-	{
-		TLDebug_Break("Scissor box should be valid");
-		return FALSE;
-	}
-	Opengl::EnableScissor( TRUE );
-	Opengl::SetScissor( (u32)ScissorBox.GetLeft(), (u32)ScissorBox.GetTop(), (u32)ScissorBox.GetWidth(), (u32)ScissorBox.GetHeight() );
-	Opengl::Debug_CheckForError();
-
-	//	do projection vs orthographic setup
-	if ( Camera.IsOrtho() )
-	{
-		if ( !BeginOrthoDraw( static_cast<TLRender::TOrthoCamera&>(Camera), Screen.GetScreenShape() ) )
-			return FALSE;
-	}
-	else
-	{
-		if ( !BeginProjectDraw( static_cast<TLRender::TProjectCamera&>(Camera), Screen.GetScreenShape() ) )
-			return FALSE;
-	}
-
-	//	overloaded code should do platform specific stuff now
-
-	return TRUE;	
-}
-
 
 //------------------------------------------------------------
 //	start render process
 //------------------------------------------------------------
-void TLRender::TRenderTarget::Draw()
+void TLRender::TRenderTarget::Draw(TLRaster::TRasteriser& Rasteriser)
 {
 	s32 StartingSceneCount = m_Debug_SceneCount;
 
@@ -152,7 +64,7 @@ void TLRender::TRenderTarget::Draw()
 #ifndef TLRENDER_DISABLE_CLEAR
 	if ( m_pRenderNodeClear )
 	{
-		DrawNode( *m_pRenderNodeClear, NULL, NULL, TColour( 1.f, 1.f, 1.f, 1.f ), NULL );
+		DrawNode( Rasteriser, *m_pRenderNodeClear, NULL, NULL, TColour( 1.f, 1.f, 1.f, 1.f ), NULL );
 	}
 #endif
 
@@ -177,7 +89,7 @@ void TLRender::TRenderTarget::Draw()
 		TRenderNode* pRootRenderNode = GetRootRenderNode();
 		if ( pRootRenderNode )
 		{
-			DrawNode( *pRootRenderNode, NULL, NULL, TColour( 1.f, 1.f, 1.f, 1.f ), m_pRootQuadTreeZone ? m_pCamera.GetObjectPointer() : NULL );
+			DrawNode( Rasteriser, *pRootRenderNode, NULL, NULL, TColour( 1.f, 1.f, 1.f, 1.f ), m_pRootQuadTreeZone ? m_pCamera.GetObjectPointer() : NULL );
 		}
 	}
 
@@ -188,119 +100,6 @@ void TLRender::TRenderTarget::Draw()
 		m_Debug_SceneCount = 0;
 	}
 }
-
-
-//-------------------------------------------------------
-//
-//-------------------------------------------------------
-void TLRender::TRenderTarget::EndDraw()			
-{
-	if ( GetCamera()->IsOrtho() )
-	{
-		EndOrthoDraw();
-	}
-	else
-	{
-		EndProjectDraw();
-	}
-
-	//	clean post render list
-	m_TempPostRenderList.Empty();
-
-
-	//	print out node/culled count
-#ifdef DEBUG_NODE_RENDERED_COUNT
-	TTempString DebugString("RenderTarget ");
-	GetRef().GetString( DebugString );
-	DebugString.Appendf(" rendered %d nodes (%d culled)", m_Debug_NodeCount, m_Debug_NodeCulledCount );
-	TLDebug_Print( DebugString );
-#endif
-
-#if defined(DEBUG_DRAW_RENDERZONES)||defined(DEBUG_DRAW_FRUSTUM)
-	if ( !GetCamera()->IsOrtho() && m_pRootQuadTreeZone )
-	{
-		BeginSceneReset();
-
-#ifdef DEBUG_DRAW_RENDERZONES
-		Debug_DrawZone( m_pRootQuadTreeZone, 0.f, m_pCamera.GetObjectPointer() );
-#endif
-
-#ifdef DEBUG_DRAW_FRUSTUM
-		TProjectCamera* pCamera = GetCamera().GetObjectPointer<TProjectCamera>();
-		pCamera->CalcFrustum();
-
-		//	really quick bodge
-		Opengl::SetLineWidth( 2.f );
-		Opengl::EnableDepthRead( FALSE );
-		Opengl::EnableAlpha( FALSE );
-		Opengl::Unbind();
-
-		TFixedArray<float3,8>& FrustumOblongCorners = pCamera->m_FrustumOblong.GetBoxCorners();
-
-		//	calc the shape for the zone from the frustum
-		TLMaths::TBox2D FrustumBox;
-		float WorldDepth = 0.f;
-		float ViewDepth = pCamera->GetPosition().z + WorldDepth;
-		pCamera->GetWorldFrustumPlaneBox2D( ViewDepth, FrustumBox );
-		TFixedArray<float3,4> FrustumBoxCorners;
-		FrustumBox.GetBoxCorners( FrustumBoxCorners, WorldDepth );
-
-		//	green for oblong frustum
-		Opengl::SetSceneColour( TColour( 0.f, 1.f, 0.f, 1.f ) );
-		glBegin(GL_LINE_LOOP);
-		{
-			glVertex3fv( FrustumOblongCorners.ElementAt(4) );
-			glVertex3fv( FrustumOblongCorners.ElementAt(5) );
-			glVertex3fv( FrustumOblongCorners.ElementAt(6) );
-			glVertex3fv( FrustumOblongCorners.ElementAt(7) );
-		}
-		glEnd();
-
-		//	red for 2D box frustum
-		Opengl::SetSceneColour( TColour( 1.f, 0.f, 0.f, 1.f ) );
-		glBegin(GL_LINE_LOOP);
-		{
-			glVertex3fv( FrustumBoxCorners.ElementAt(0) );
-			glVertex3fv( FrustumBoxCorners.ElementAt(1) );
-			glVertex3fv( FrustumBoxCorners.ElementAt(2) );
-			glVertex3fv( FrustumBoxCorners.ElementAt(3) );
-		}
-		glEnd();
-
-
-		/*
-
-		TLMaths::TBoxOB PlaneBox;
-		float worldz = 0.f;
-		float viewz = pCamera->GetPosition().z + worldz;
-		pCamera->GetPlaneBox( viewz, PlaneBox );
-		TLMaths::TBox2D Box;
-		Box.Accumulate( PlaneBox.GetBoxCorners() );
-
-		TArray<float2> BoxCorners;
-		Box.GetBoxCorners( BoxCorners );
-		Opengl::EnableAlpha( TRUE );
-		glBegin(GL_QUADS);
-		{
-			glColor4f( 0.f, 1.f, 0.f, 0.5f );
-
-			//	front
-			glVertex3fv( BoxCorners[0].xyz( worldz ) );
-			glVertex3fv( BoxCorners[1].xyz( worldz ) );
-			glVertex3fv( BoxCorners[3].xyz( worldz ) );
-			glVertex3fv( BoxCorners[2].xyz( worldz ) );
-		}
-		glEnd();
-		*/
-#endif
-
-
-
-		EndScene();
-	}
-#endif
-}
-
 
 //-------------------------------------------------------------
 //	get the render target's dimensions. we need the screen in case dimensions are max's
@@ -606,7 +405,7 @@ Bool TLRender::TRenderTarget::IsZoneVisible(TLMaths::TQuadTreeNode* pCameraZoneN
 //---------------------------------------------------------------
 //	render a render node
 //---------------------------------------------------------------
-Bool TLRender::TRenderTarget::DrawNode(TRenderNode& RenderNode,TRenderNode* pParentRenderNode,const TLMaths::TTransform* pSceneTransform,TColour SceneColour,TLMaths::TQuadTreeNode* pCameraZoneNode)
+Bool TLRender::TRenderTarget::DrawNode(TLRaster::TRasteriser& Rasteriser,TRenderNode& RenderNode,TRenderNode* pParentRenderNode,const TLMaths::TTransform* pSceneTransform,TColour SceneColour,TLMaths::TQuadTreeNode* pCameraZoneNode)
 {
 	const TFlags<TRenderNode::RenderFlags::Flags>& RenderNodeRenderFlags = RenderNode.GetRenderFlags();
 
@@ -689,41 +488,33 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode& RenderNode,TRenderNode* pPar
 		}
 	}
 
-	//	start new scene if we change the transform of the current scene
-	if ( NodeTrans )
-	{
-		if ( ResetScene || DEBUG_ALWAYS_RESET_SCENE )
-		{
-			BeginSceneReset();
-
-			//	transform scene by node's transofrm
-			Opengl::SceneTransform( SceneTransform );
-		}
-		else
-		{
-			BeginScene();
-	
-			//	transform scene by node's transofrm
-			Opengl::SceneTransform( NodeTransform );
-		}
-	}
-
 	//	count node as rendered
 	m_Debug_NodeCount++;
 
-	//	list of nodes to render afterwards, but not stored in the tree - debug etc
-	TPtrArray<TRenderNode>& PostRenderList = m_TempPostRenderList;
-	s32 FirstRenderNodeListIndex = PostRenderList.GetSize();
-
-	//	do pre-render routine of the render object
-	if ( RenderNode.Draw( this, pParentRenderNode, PostRenderList ) )
+	//	get raster data from node
 	{
-		//	get mesh
-		TLAsset::TMesh* pMeshAsset = RenderNode.GetMeshAsset();
+		TFixedArray<TLRaster::TRasterData,20> MeshRenderData;
+		TFixedArray<TLRaster::TRasterSpriteData,20> SpriteRenderData;
+		TPtrArray<TLAsset::TMesh> TemporaryMeshes;
 
-		//	draw mesh!
-		DrawMeshWrapper( pMeshAsset, RenderNode, SceneColour, PostRenderList );
+		//	generic render of the node
+		const TLRaster::TRasterData* pMainRaster = RenderNode.Render( MeshRenderData, SpriteRenderData, SceneColour );
+
+		//	render debug stuff on the node
+		#if defined(_DEBUG)
+		{
+			RenderNode.Debug_Render( MeshRenderData, SpriteRenderData, pMainRaster, TemporaryMeshes );
+		}
+		#endif //	_DEBUG
+
+		//	render this raster data
+		Rasteriser.Render( MeshRenderData );
+		Rasteriser.Render( SpriteRenderData );
+
+		//	send temporary meshes to the rasteriser so they're still valid until the rasteriser is finished
+		Rasteriser.StoreTemporaryMeshes( TemporaryMeshes );
 	}
+
 
 	//	if this render node is in a zone under the camera's zone, then we KNOW the child nodes are going to be visible, so we dont need to provide the camera's
 	//	render zone. Will just mean we can skip render zone checks
@@ -751,7 +542,6 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode& RenderNode,TRenderNode* pPar
 		}
 	}
 
-
 	//	process children
 	TPointerArray<TLRender::TRenderNode>& NodeChildren = RenderNode.GetChildren();
 	u32 ChildCount = NodeChildren.GetSize();
@@ -766,447 +556,16 @@ Bool TLRender::TRenderTarget::DrawNode(TRenderNode& RenderNode,TRenderNode* pPar
 			TLRender::TRenderNode* pChild = NodeChildren[c];
 
 			//	draw child
-			DrawNode( *pChild, &RenderNode, &ChildSceneTransform, SceneColour, pChildCameraZoneNode );
+			DrawNode( Rasteriser, *pChild, &RenderNode, &ChildSceneTransform, SceneColour, pChildCameraZoneNode );
 		}
 
 		RenderNode.PostDrawChildren( *this );
-	}
-
-	//	draw our post-render nodes, deleting them as we go
-	for ( s32 n=PostRenderList.GetLastIndex();	n>=FirstRenderNodeListIndex;	n-- )
-	{
-		//	gr: this MUST NOT be a reference. we need to make a new TPtr to keep the reference
-		//		counting going. if DrawNode below empties the PostRenderList then this REFERENCE
-		//		will be null'd
-		//TPtr<TLRender::TRenderNode>& pChild = PostRenderList[c];
-		TPtr<TLRender::TRenderNode> pChild = PostRenderList[n];
-
-		//	draw child
-		DrawNode( *pChild, &RenderNode, &SceneTransform, SceneColour, pChildCameraZoneNode );
-
-		//	remove from list
-		PostRenderList.RemoveAt(n);
-	}
-	
-
-	//	clean up/restore scene
-	if ( NodeTrans )
-	{
-		EndScene();
 	}
 
 	return TRUE;
 }
 
 
-//-------------------------------------------------------------
-//	
-//-------------------------------------------------------------
-void TLRender::TRenderTarget::DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRenderNode& RenderNode, TColour SceneColour,TPtrArray<TRenderNode>& PostRenderList)
-{
-#ifdef _DEBUG
-	TFlags<TRenderNode::RenderFlags::Flags> RenderNodeRenderFlags = RenderNode.GetRenderFlags();
-
-	//	modify render object flags for debug stuff
-	RenderNodeRenderFlags.Set( Debug_ForceRenderFlagsOn() );
-	RenderNodeRenderFlags.Clear( Debug_ForceRenderFlagsOff() );
-
-	//	render everything's bound box
-	//RenderNodeRenderFlags.Set( TRenderNode::RenderFlags::Debug_WorldBoundsBox );
-
-#else
-	TFlags<TRenderNode::RenderFlags::Flags>& RenderNodeRenderFlags = RenderNode.GetRenderFlags();
-#endif
-
-	//	mesh renders
-	if ( pMesh && !pMesh->IsEmpty() )
-	{
-		//	do first non-wireframe render
-		#ifdef _DEBUG
-		if ( !RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_Wireframe ) )
-		#endif
-		{
-			Bool HasAlpha = pMesh->HasAlpha();
-
-			//	grab texture as required
-			TLAsset::TTexture* pTexture = NULL;
-			//if ( RenderNode.HasTexture() )
-			if ( RenderNode.GetTextureRef().IsValid() )
-			{
-				pTexture = RenderNode.GetTextureAsset();
-
-				//	missing texture - try and use debug one
-				if ( !pTexture )
-					pTexture = TLAsset::GetAsset<TLAsset::TTexture>("d_texture");
-			}
-
-			//	enable alpha if texture is alpha'd
-			if ( pTexture )
-				HasAlpha |= pTexture->HasAlphaChannel();
-
-			//	get add blend mode
-			Bool AddBlending = RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::AddBlending );
-			HasAlpha |= AddBlending;
-
-			//	make sure wireframe is off
-			Opengl::EnableWireframe(FALSE);
-
-			//	set the scene colour, and force enable alpha if the mesh needs it
-			Opengl::SetSceneColour( SceneColour, HasAlpha, AddBlending );
-
-			DrawMesh( *pMesh, pTexture, RenderNode, RenderNodeRenderFlags, HasAlpha );
-		}
-
-		//	render wireframe and/or outline
-		#ifdef _DEBUG
-		{
-			if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_Outline ) || RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_Wireframe ) )
-			{
-				//	setup specific params
-				Opengl::EnableWireframe(TRUE);
-				
-				if ( !RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_ColourWireframe ) )
-					Opengl::SetSceneColour( TColour( 1.f, 1.f, 1.f, 1.f ) );
-
-				Opengl::SetLineWidth( 1.f );
-
-				TFlags<TRenderNode::RenderFlags::Flags> WireframeRenderFlags = RenderNodeRenderFlags;
-				WireframeRenderFlags.Clear( TRenderNode::RenderFlags::UseVertexColours );
-				WireframeRenderFlags.Clear( TRenderNode::RenderFlags::UseMeshLineWidth );
-				WireframeRenderFlags.Clear( TRenderNode::RenderFlags::DepthRead );
-
-				DrawMesh( *pMesh, NULL, RenderNode, WireframeRenderFlags, FALSE );
-			}
-		}
-		#endif
-	}
-
-
-	//	non-mesh debug renders
-	#ifdef _DEBUG
-	{
-		//	render a cross at 0,0,0 (center of node)
-		if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_Position ) )
-		{
-			//	setup specific params
-			Opengl::EnableWireframe( FALSE );
-			Opengl::SetLineWidth( 2.f );
-			Opengl::EnableAlpha( FALSE );
-
-			//	get the debug cross
-			TLAsset::TMesh* pMesh = TLAsset::GetAsset<TLAsset::TMesh>("d_cross");
-			if ( pMesh )
-				DrawMesh( *pMesh, NULL, RenderNode, RenderNodeRenderFlags, FALSE );
-		}
-
-
-		//	get a list of datums to debug-render
-#ifdef DEBUG_RENDER_DATUMS_IN_WORLD
-		TPtrArray<TLMaths::TShape> RenderDatums;
-#else
-		TFixedArray<const TLMaths::TShape*,100> RenderDatums;
-#endif
-
-		if ( DEBUG_RENDER_ALL_DATUMS || RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_Datums ) )
-		{
-#ifdef DEBUG_RENDER_DATUMS_IN_WORLD
-			RenderNode.GetWorldDatums( RenderDatums, FALSE, DEBUG_DATUMS_FORCE_RECALC );
-#else
-			RenderNode.GetLocalDatums( RenderDatums );
-#endif
-		}
-		else
-		{
-			for ( u32 i=0;	i<RenderNode.Debug_GetDebugRenderDatums().GetSize();	i++ )
-			{
-			#ifdef DEBUG_RENDER_DATUMS_IN_WORLD
-				TPtr<TLMaths::TShape> pDatum = RenderNode.GetWorldDatum( RenderNode.Debug_GetDebugRenderDatums()[i], FALSE, DEBUG_DATUMS_FORCE_RECALC );
-			#else
-				const TLMaths::TShape* pDatum = RenderNode.GetLocalDatum( RenderNode.Debug_GetDebugRenderDatums()[i] );
-			#endif
-				RenderDatums.Add( pDatum );
-			}
-
-			//	add flagged datums
-		#ifdef DEBUG_RENDER_DATUMS_IN_WORLD
-			if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsBox ) )
-				RenderDatums.Add( RenderNode.GetWorldDatum( TLRender_TRenderNode_DatumBoundsBox, FALSE, DEBUG_DATUMS_FORCE_RECALC ) );
-
-			if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsSphere ) )
-				RenderDatums.Add( RenderNode.GetWorldDatum( TLRender_TRenderNode_DatumBoundsSphere, FALSE, DEBUG_DATUMS_FORCE_RECALC ) );
-		#else
-			if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsBox ) )
-				RenderDatums.Add( RenderNode.GetLocalDatum( TLRender_TRenderNode_DatumBoundsBox ) );
-
-			if ( RenderNodeRenderFlags.IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsSphere ) )
-				RenderDatums.Add( RenderNode.GetLocalDatum( TLRender_TRenderNode_DatumBoundsSphere ) );
-		#endif
-		}
-
-		//	setup scene if we have some datums to render
-		if ( RenderDatums.GetSize())
-		{
-			TFlags<TRenderNode::RenderFlags::Flags> DebugDatumRenderFlags = RenderNode.GetRenderFlags();
-			DebugDatumRenderFlags.Set( TRenderNode::RenderFlags::Debug_Wireframe );
-			DebugDatumRenderFlags.Set( TRenderNode::RenderFlags::Debug_Outline );
-			DebugDatumRenderFlags.Clear( TRenderNode::RenderFlags::DepthRead );
-		
-			Opengl::EnableWireframe(TRUE);
-			Opengl::SetSceneColour( TColour( 1.f, 1.f, 1.f, 1.f ) );
-			Opengl::SetLineWidth( 1.f );
-
-			for ( u32 i=0;	i<RenderDatums.GetSize();	i++ )
-			{
-				const TLMaths::TShape* pDatum = RenderDatums[i];
-				if ( pDatum )
-				{
-#ifdef DEBUG_RENDER_DATUMS_IN_WORLD
-					DrawMeshShape( *pDatum, RenderNode, DebugDatumRenderFlags, TRUE );
-#else
-					DrawMeshShape( *pDatum, RenderNode, DebugDatumRenderFlags, FALSE );
-#endif
-				}
-			}
-		}
-	}
-	#endif
-}
-
-
-//-------------------------------------------------------------
-//	render mesh asset
-//-------------------------------------------------------------
-void TLRender::TRenderTarget::DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset::TTexture* pTexture,TRenderNode& RenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags,Bool HasAlpha)
-{
-	//	don't draw invalid meshes
-#if defined(VERIFY_MESH_BEFORE_DRAW)
-	if ( !Mesh.Debug_Verify() )
-		return;
-#endif
-	
-	const TArray<float3>& Vertexes = Mesh.GetVertexes();
-
-	//	pre-render shaders/effects
-	//	gr: todo: refactor this so it's not node dependent so we can move it to the rasteriser
-	TPtrArray<TEffect>& Effects = RenderNode.GetEffects();
-	for ( u32 e=0;	e<Effects.GetSize();	e++ )
-	{
-		TEffect& Effect = *Effects[e];
-		if ( !Effect.PreRender() )
-			return;
-	}
-
-	//	bind vertex data
-	Opengl::BindVertexes( &Vertexes );
-
-	//	ignore UV vertex data if flag is not set or if we have no texture
-	if ( pTexture && RenderFlags( TRenderNode::RenderFlags::UseVertexUVs ) )
-	{
-		Opengl::BindUVs( Mesh.GetUVsNotEmpty() );
-	}
-	else
-	{
-		Opengl::BindUVs( NULL );
-	}
-
-
-	//	ignore colour vertex data if flag is not set
-	if ( RenderFlags( TRenderNode::RenderFlags::UseVertexColours ) )
-	{
-		enum TColourMode
-		{
-			Colour_TColour,
-			Colour_TColour24,
-			Colour_TColour32,
-			Colour_TColour64
-		};
-
-		//	pick most-desired mode
-		TColourMode ColourMode = HasAlpha ? Colour_TColour32 : Colour_TColour24;
-		if ( RenderFlags( TRenderNode::RenderFlags::UseFloatColours ) )
-			ColourMode = Colour_TColour;
-
-		//	force colour modes
-		#ifdef FORCE_COLOUR
-			ColourMode = FORCE_COLOUR;
-		#endif
-		
-		//	bind to colours
-		if ( ColourMode == Colour_TColour24 )
-		{
-			const TArray<TColour24>* pColours24 = Mesh.GetColours24NotEmpty();
-			if ( pColours24 )
-				Opengl::BindColours( pColours24 );
-			else
-				ColourMode = Colour_TColour;
-		}
-		else if ( ColourMode == Colour_TColour32 )
-		{
-			const TArray<TColour32>* pColours32 = Mesh.GetColours32NotEmpty();
-			if ( pColours32 )
-				Opengl::BindColours( pColours32 );
-			else
-				ColourMode = Colour_TColour;
-		}
-		else if ( ColourMode == Colour_TColour64 )
-		{
-			const TArray<TColour64>* pColours64 = Mesh.GetColours64NotEmpty();
-			if ( pColours64 )
-				Opengl::BindColours( pColours64 );
-			else
-				ColourMode = Colour_TColour;
-		}
-
-		//	do float mode last in case we had to resort to it from lack of colours
-		if ( ColourMode == Colour_TColour )
-		{
-			//	gr: always have float colours (if any at all)
-			Opengl::BindColours( Mesh.GetColoursNotEmpty() );
-		}
-	}
-	else
-	{
-		Opengl::BindColoursNull();
-	}
-
-
-	//	bind texture
-	Opengl::BindTexture( pTexture );
-
-	//	enable/disable depth test
-	Opengl::EnableDepthRead( RenderFlags( TRenderNode::RenderFlags::DepthRead ) );
-
-	//	enable/disable depth writing
-	Opengl::EnableDepthWrite( RenderFlags( TRenderNode::RenderFlags::DepthWrite ) );
-
-
-	const TArray<TLAsset::TMesh::Triangle>* pTriangles	= Mesh.GetTrianglesNotEmpty();
-	const TArray<TLAsset::TMesh::Tristrip>* pTristrips	= Mesh.GetTristripsNotEmpty();
-	const TArray<TLAsset::TMesh::Trifan>* pTrifans			= Mesh.GetTrifansNotEmpty();
-	const TArray<TLAsset::TMesh::Line>* pLines				= Mesh.GetLinesNotEmpty();
-	const TArray<TLAsset::TMesh::Linestrip>* pLinestrips	= Mesh.GetLinestripsNotEmpty();
-
-
-	//	setup line width if required
-	if ( (pLines || pLinestrips) && RenderFlags( TRenderNode::RenderFlags::UseMeshLineWidth ) ) 
-	{
-		float LineWidth = RenderNode.GetLineWidth();
-		if ( LineWidth < 1.f )
-		{
-			//	convert world-space line width to pixel size
-			const float3& NodePos = RenderNode.GetWorldPosConst();
-			LineWidth = GetCamera()->GetScreenSizeFromWorldSize( Mesh.GetLineWidth(), NodePos.z );
-
-			//	min width
-			if ( LineWidth < 1.f )
-				LineWidth = 1.f;
-		}
-		
-		Opengl::SetLineWidth( LineWidth );
-	}
-		
-	//	draw primitives
-	if ( pTriangles )
-		Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeTriangle(), *pTriangles );
-	if ( pTristrips )
-		Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeTristrip(), *pTristrips );
-	if ( pTrifans )
-		Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeTrifan(), *pTrifans );
-	if ( pLinestrips )
-		Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeLinestrip(), *pLinestrips );
-	if ( pLines )
-		Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeLine(), *pLines );
-	
-	//	draw points like a primitive
-	if ( RenderFlags( TRenderNode::RenderFlags::Debug_Points ) )
-	{
-		Opengl::SetPointSize( 8.f );
-		Opengl::EnablePointSprites(FALSE);
-		Opengl::DrawPrimitivePoints( &Vertexes );
-	}
-
-	//	draw points as point sprites
-	if ( RenderFlags( TRenderNode::RenderFlags::UsePointSprites ) )
-	{
-		//	convert world-space point size to pixel size
-		const float3& NodePos = RenderNode.GetWorldPosConst();
-		float PointSize = GetCamera()->GetScreenSizeFromWorldSize( RenderNode.GetPointSpriteSize(), NodePos.z );
-
-/*
-		static PFNGLPOINTPARAMETERFARBPROC  glPointParameterfARB  = NULL;
-		static PFNGLPOINTPARAMETERFVARBPROC glPointParameterfvARB = NULL;
-		if ( !glPointParameterfARB || !glPointParameterfvARB )
-		{
-			glPointParameterfARB  = (PFNGLPOINTPARAMETERFARBPROC)wglGetProcAddress("glPointParameterfARB");
-			glPointParameterfvARB = (PFNGLPOINTPARAMETERFVARBPROC)wglGetProcAddress("glPointParameterfvARB");
-		}
-		
-		float quadratic[] =  { 1.0f, 0.0f, 0.01f };
-		glPointParameterfvARB( GL_POINT_DISTANCE_ATTENUATION_ARB, quadratic );
-
-		// Query for the max point size supported by the hardware
-		float maxSize = 0.0f;
-		glGetFloatv( GL_POINT_SIZE_MAX_ARB, &maxSize );
-		glPointParameterfARB( GL_POINT_FADE_THRESHOLD_SIZE_ARB, 60.0f );
-
-		glPointParameterfARB( GL_POINT_SIZE_MIN_ARB, 1.f );
-		glPointParameterfARB( GL_POINT_SIZE_MAX_ARB, maxSize );
-		*/
-
-		//	enable point sprites
-		Opengl::EnablePointSprites(TRUE);
-
-		//	set point-size UV mapping (otherwise will just be uv's of 0,0)
-		//	gr: only change this if we have a texture - saves a state change
-		if ( pTexture )
-			Opengl::EnablePointSizeUVMapping(TRUE); 
-
-		//	clamp size
-		Opengl::ClampPointSpriteSize( PointSize );
-		Opengl::SetPointSize( PointSize );
-
-		//	draw points
-		Opengl::DrawPrimitivePoints( &Vertexes );
-
-		//	undo texture env changes
-		if ( pTexture )
-			Opengl::EnablePointSizeUVMapping(FALSE); 
-		
-	}
-
-	//	finish effects
-	for ( u32 e=0;	e<Effects.GetSize();	e++ )
-	{
-		TEffect& Effect = *Effects[e];
-		Effect.PostRender();
-	}
-}
-
-
-
-void TLRender::TRenderTarget::DrawMeshShape(const TLMaths::TShape& Shape,TRenderNode& RenderNode,const TFlags<TLRender::TRenderNode::RenderFlags::Flags>& RenderFlags,Bool ResetScene)
-{
-	if ( !Shape.IsValid() )
-		return;
-
-	//	save off current render state
-	if ( ResetScene )
-		BeginSceneReset();
-	else
-		BeginScene();
-		
-	//	possible a little expensive... generate a mesh for the bounds...
-	TLAsset::TMesh ShapeMesh("Bounds");
-	ShapeMesh.GenerateShape( Shape );
-
-	//	then render our temporary mesh
-	DrawMesh( ShapeMesh, NULL, RenderNode, RenderFlags, FALSE );
-
-	//	when using a temporary mesh, make sure all vertex caches are unbound/uncached
-	Opengl::Unbind();
-
-	EndScene();
-}
 
 //-------------------------------------------------------------
 //	
@@ -1242,7 +601,7 @@ void TLRender::TRenderTarget::SetRootQuadTreeZone(TLMaths::TQuadTreeZone* pQuadT
 //--------------------------------------------------
 //	
 //--------------------------------------------------
-void TLRender::TRenderTarget::Debug_DrawZone(TLMaths::TQuadTreeZone& Zone,float zDepth,TLMaths::TQuadTreeNode* pCameraZoneNode)
+void TLRender::TRenderTarget::Debug_DrawZone(TLRaster::TRasteriser& Rasteriser,TLMaths::TQuadTreeZone& Zone,float zDepth,TLMaths::TQuadTreeNode* pCameraZoneNode)
 {
 	TRenderNode TempRenderNode("xxx");
 	TempRenderNode.SetMeshRef("d_quad");
@@ -1269,12 +628,12 @@ void TLRender::TRenderTarget::Debug_DrawZone(TLMaths::TQuadTreeZone& Zone,float 
 	TempRenderNode.SetTranslate( ZoneBox.GetMin().xyz(zDepth) );
 	TempRenderNode.SetScale( ZoneBox.GetSize().xyz(1.f) );
 
-	DrawNode( TempRenderNode, NULL, NULL, TColour(1.f,1.f,1.f,1.f), NULL );
+	DrawNode( Rasteriser, TempRenderNode, NULL, NULL, TColour(1.f,1.f,1.f,1.f), NULL );
 
 	for ( u32 z=0;	z<Zone.GetChildZones().GetSize();	z++ )
 	{
 		TLMaths::TQuadTreeZone& ChildZone = *(Zone.GetChildZones().ElementAt(z));
-		Debug_DrawZone( ChildZone, zDepth + 0.01f, pCameraZoneNode );
+		Debug_DrawZone( Rasteriser, ChildZone, zDepth + 0.01f, pCameraZoneNode );
 	}
 	
 }

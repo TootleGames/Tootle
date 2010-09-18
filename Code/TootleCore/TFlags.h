@@ -48,6 +48,7 @@ public:
 
 	//	accessor - m_Flags(FlagIndex) == Bool
 	FORCEINLINE Bool				operator()(const FLAGTYPE& FlagIndex) const		{	return IsSet( FlagIndex );	}
+	FORCEINLINE Bool				operator&(const FLAGTYPE& FlagIndex) const		{	return IsSet( FlagIndex );	}
 
 
 protected:

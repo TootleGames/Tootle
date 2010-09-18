@@ -21,11 +21,6 @@ namespace TLColour
 }
 
 
-
-//	gr: do not use this on ipod!
-//USE_OPENGL_MATRIX_MULT
-
-
 //-------------------------------------------------------------
 //	maths system init, just seeds random number
 //-------------------------------------------------------------

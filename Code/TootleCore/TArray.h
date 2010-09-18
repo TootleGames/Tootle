@@ -168,6 +168,51 @@ FORCEINLINE void TLArray::Debug::PrintSizeWarning(const TArray<ARRAYTYPE>& Dummy
 }
 */
 
+
+template<typename TYPE,typename STORAGETYPE=u32,class SORTPOLICY=TSortPolicyNone<TYPE> >
+class TInPlaceArray : public TArray<TYPE>
+{
+private:
+	typedef TArray<TYPE> TSuper;
+	typedef TInPlaceArray<TYPE,STORAGETYPE,SORTPOLICY> TThis;
+public:
+	TInPlaceArray(TYPE* pData,STORAGETYPE DataSize,STORAGETYPE* pSizeCounter) :
+		m_pData		( pData ),
+		m_DataSize	( DataSize ),
+		m_pSize		( pSizeCounter )
+	{
+	}
+	//	gr: not worked out how to return a const TInplaceArray yet
+	TInPlaceArray(const TYPE* pData,STORAGETYPE DataSize,const STORAGETYPE* pSizeCounter) :
+		m_pData		( const_cast<TYPE*>(pData) ),
+		m_DataSize	( DataSize ),
+		m_pSize		( const_cast<STORAGETYPE*>(pSizeCounter) )
+	{
+	}
+	
+	virtual u32				GetSize() const			{	return m_pSize ? (*m_pSize) : GetAllocSize();	}
+	virtual TYPE*			GetData()				{	return m_pData;	}
+	virtual const TYPE*		GetData() const			{	return m_pData;	}
+	
+	virtual u32				GetAllocSize() const	{	return m_DataSize;	}
+	virtual bool			SetAllocSize(u32 Size)	{	return Size <= GetAllocSize();	}
+	
+	FORCEINLINE TThis&		operator=(const TArray<TYPE>& Array)	{	TSuper::Copy( Array );		return *this;	}
+	
+protected:
+	virtual void			DoSetSize(u32 Size)		{	if ( m_pSize )	*m_pSize = Size;	}
+	
+	virtual TSortPolicy<TYPE>&			GetSortPolicy()				{	return m_SortPolicy;	}
+	virtual const TSortPolicy<TYPE>&	GetSortPolicy() const		{	return m_SortPolicy;	}
+	
+private:
+	TYPE*			m_pData;		//	data
+	STORAGETYPE		m_DataSize;		//	size of buffer
+	STORAGETYPE*	m_pSize;		//	size counter if applicable
+	SORTPOLICY		m_SortPolicy;	//	
+};
+	
+
 //----------------------------------------------------------
 //	gr: this is the new dynamically allocated array!
 //----------------------------------------------------------

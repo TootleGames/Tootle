@@ -11,9 +11,7 @@
 
 #include <TootleCore/TLCore.h>
 #include <TootleCore/TString.h>
-
-#include <OpenGL/gl.h>
-#include <OpenGL/glext.h>
+#include <TootleOpenglRasteriser/TLOpengl.h>
 
 //	gr: once the opengl context has been created we need to initialise opengl
 //	this will move to the rasteriser, but will still need to be called from here.

@@ -71,18 +71,6 @@ TPtr<TLGui::TOpenglCanvas> TLGui::CreateOpenglCanvas(TWindow& Parent,TRefRef Ref
 }
 
 
-//---------------------------------------------------------------
-//	get the cursor position in the default screen's client space
-//---------------------------------------------------------------
-int2 TLGui::Platform::GetScreenMousePosition(TLGui::TWindow& Window,u8 MouseIndex)
-{
-	//	cast the window to a QT window
-	Qt::TWindow& QtWindow = static_cast<Qt::TWindow&>( Window );
-	const Type2<u16>& LastMousePos = QtWindow.GetLastMousePos();
-	return int2( LastMousePos );
-}
-
-
 //----------------------------------------------------------
 //	get the desktop dimensions. note: need a window so we can decide which desktop?
 //----------------------------------------------------------

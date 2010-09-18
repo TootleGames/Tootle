@@ -54,7 +54,7 @@ void Qt::TOpenglCanvas::EndRender()
 //------------------------------------------------------
 void Qt::TOpenglCanvas::initializeGL()					
 {
-	TLRender::Opengl::Init();	
+	//TLRender::Opengl::Init();	
 }	
 
 

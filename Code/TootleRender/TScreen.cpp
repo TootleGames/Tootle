@@ -2,9 +2,7 @@
 #include "TRenderTarget.h"
 #include "TRenderNodeText.h"
 #include "TRenderGraph.h"
-
-#include PLATFORMHEADER(RenderTarget.h)
-
+#include <TootleOpenglRasteriser/OpenglRasteriser.h>
 
 
 
@@ -33,9 +31,9 @@ TLRender::TScreen::~TScreen()
 }
 
 
-//---------------------------------------------------------
-//	do screen initialisation
-//---------------------------------------------------------
+//----------------------------------------------------------
+//	create window
+//----------------------------------------------------------
 SyncBool TLRender::TScreen::Init()
 {
 	//	already initialised with window
@@ -59,8 +57,14 @@ SyncBool TLRender::TScreen::Init()
 	//	create opengl canvas
 	m_pCanvas = TLGui::CreateOpenglCanvas( *m_pWindow, GetRef() );
 	if ( !m_pCanvas )
+		return SyncFalse;
+	
+	//	create rasteriser to go with the canvas
+	m_pRasteriser = new TLRaster::OpenglRasteriser();
+	if ( !m_pRasteriser || !m_pRasteriser->Initialise() )
 	{
-		m_pWindow = NULL;
+		m_pRasteriser = NULL;
+		m_pCanvas = NULL;
 		return SyncFalse;
 	}
 	
@@ -70,18 +74,8 @@ SyncBool TLRender::TScreen::Init()
 	// Subscirbe to the window
 	SubscribeTo(m_pWindow);
 	
-	/*
-	 #ifdef _DEBUG
-	 //	create a debug render target
-	 if ( !m_DebugRenderTarget.IsValid() )
-	 {
-	 CreateDebugRenderTarget();
-	 }
-	 #endif
-	 */
 	return SyncTrue;
 }
-
 
 
 //---------------------------------------------------------
@@ -147,20 +141,16 @@ SyncBool TLRender::TScreen::Shutdown()
 }
 
 	
+
 //---------------------------------------------------------
 //	render the render targets
 //---------------------------------------------------------
 void TLRender::TScreen::Draw()
 {
-	if ( !m_pCanvas )
+	//	get the rasteriser
+	if ( !m_pRasteriser )
 		return;
-	
-	//	setup context/canvas in case of first render, and set current
-	if ( !m_pCanvas->BeginRender() )
-		return;
-	
-	Type4<s32> RenderTargetMaxSize = GetRenderTargetMaxSize();
-	Type4<s32> ViewportMaxSize = GetViewportSize();
+	TLRaster::TRasteriser& Rasteriser = *m_pRasteriser;
 
 	//	render each render target in z order
 	m_RenderTargets.Sort();
@@ -171,21 +161,24 @@ void TLRender::TScreen::Draw()
 		if ( !pRenderTarget )
 			continue;
 
-		//	begin draw of render target
-		if ( !pRenderTarget->BeginDraw( RenderTargetMaxSize, ViewportMaxSize, *this ) )
+		//	check is enabled
+		TRenderTarget& RenderTarget = *pRenderTarget;
+		if ( !RenderTarget.IsEnabled() )
 			continue;
 
-		//	draw
-		pRenderTarget->Draw();
-
-		//	cleanup draw
-		pRenderTarget->EndDraw();
-	}	
-
-	//	unbind data
-	TLRender::Opengl::Unbind();
+		//	get the size... fails if it's too small to be of any use
+		Type4<s32> RenderTargetSize;
+		if ( !GetRenderTargetSize( RenderTargetSize, RenderTarget ) )
+			continue;
 	
-	//	flip buffers
+		//	draw the render target's data into the rasteriser (this traverses the render tree)
+		RenderTarget.Draw( Rasteriser );
+	
+		//	rasterise the rasterer
+		Rasteriser.Rasterise( RenderTarget, *this );
+	}	
+	
+	//	flip buffers - gr: this should be in the rasteriser?
 	m_pCanvas->EndRender();
 }
 
@@ -197,7 +190,7 @@ TPtr<TLRender::TRenderTarget> TLRender::TScreen::CreateRenderTarget(TRefRef Targ
 		return NULL;
 
 	// Create a new render target and add it to the list
-	TPtr<TLRender::TRenderTarget> pRenderTarget = new TLRender::Platform::RenderTarget(TargetRef);
+	TPtr<TLRender::TRenderTarget> pRenderTarget = new TRenderTarget(TargetRef);
 
 	if(!pRenderTarget)
 		return NULL;

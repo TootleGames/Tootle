@@ -27,10 +27,6 @@
 		8418EF8D0F4DAD2200B956C9 /* TScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EF770F4DAD2200B956C9 /* TScreen.h */; };
 		8418EF8E0F4DAD2200B956C9 /* TScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8418EF780F4DAD2200B956C9 /* TScreenManager.cpp */; };
 		8418EF8F0F4DAD2200B956C9 /* TScreenManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418EF790F4DAD2200B956C9 /* TScreenManager.h */; };
-		8418F1AD0F4DBB9300B956C9 /* MacRender.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F1A10F4DBB9300B956C9 /* MacRender.h */; };
-		8418F1AF0F4DBB9300B956C9 /* MacRenderTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 8418F1A30F4DBB9300B956C9 /* MacRenderTarget.h */; };
-		8440DBE51055622D0045E57E /* MacRender.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8440DBDF1055622D0045E57E /* MacRender.mm */; };
-		8440DBE61055622D0045E57E /* MacRenderTarget.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8440DBE01055622D0045E57E /* MacRenderTarget.mm */; };
 		84829C541164EC5A0000C579 /* TEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84829C521164EC5A0000C579 /* TEffect.cpp */; };
 		84829C551164EC5A0000C579 /* TEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 84829C531164EC5A0000C579 /* TEffect.h */; };
 		848F0943119AE052009D8C1E /* TRenderNodeSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 848F0941119AE052009D8C1E /* TRenderNodeSprite.cpp */; };
@@ -54,8 +50,6 @@
 		84B6069E104FFD2B0022E5BC /* TScreenShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B6068D104FFD2B0022E5BC /* TScreenShape.h */; };
 		BF3DA2171178CBAE00EBD76C /* TRasteriser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF3DA2151178CBAE00EBD76C /* TRasteriser.cpp */; };
 		BF3DA2181178CBAE00EBD76C /* TRasteriser.h in Headers */ = {isa = PBXBuildFile; fileRef = BF3DA2161178CBAE00EBD76C /* TRasteriser.h */; };
-		BF3DA2811178D43600EBD76C /* GLRasteriser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF3DA27F1178D43600EBD76C /* GLRasteriser.cpp */; };
-		BF3DA2821178D43600EBD76C /* GLRasteriser.h in Headers */ = {isa = PBXBuildFile; fileRef = BF3DA2801178D43600EBD76C /* GLRasteriser.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,10 +98,6 @@
 		8418EF770F4DAD2200B956C9 /* TScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TScreen.h; path = ../TScreen.h; sourceTree = SOURCE_ROOT; };
 		8418EF780F4DAD2200B956C9 /* TScreenManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TScreenManager.cpp; path = ../TScreenManager.cpp; sourceTree = SOURCE_ROOT; };
 		8418EF790F4DAD2200B956C9 /* TScreenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TScreenManager.h; path = ../TScreenManager.h; sourceTree = SOURCE_ROOT; };
-		8418F1A10F4DBB9300B956C9 /* MacRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacRender.h; sourceTree = "<group>"; };
-		8418F1A30F4DBB9300B956C9 /* MacRenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacRenderTarget.h; sourceTree = "<group>"; };
-		8440DBDF1055622D0045E57E /* MacRender.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacRender.mm; sourceTree = "<group>"; };
-		8440DBE01055622D0045E57E /* MacRenderTarget.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacRenderTarget.mm; sourceTree = "<group>"; };
 		84829C521164EC5A0000C579 /* TEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TEffect.cpp; path = ../TEffect.cpp; sourceTree = SOURCE_ROOT; };
 		84829C531164EC5A0000C579 /* TEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TEffect.h; path = ../TEffect.h; sourceTree = SOURCE_ROOT; };
 		848F0941119AE052009D8C1E /* TRenderNodeSprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeSprite.cpp; path = ../TRenderNodeSprite.cpp; sourceTree = SOURCE_ROOT; };
@@ -130,22 +120,10 @@
 		84B6068C104FFD2B0022E5BC /* TRenderNodeTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeTimeline.h; path = ../TRenderNodeTimeline.h; sourceTree = SOURCE_ROOT; };
 		84B6068D104FFD2B0022E5BC /* TScreenShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TScreenShape.h; path = ../TScreenShape.h; sourceTree = SOURCE_ROOT; };
 		BF05BC97112D351D009D5085 /* TootleGui.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TootleGui.xcodeproj; path = ../../TootleGui/Mac/TootleGui.xcodeproj; sourceTree = SOURCE_ROOT; };
-		BF05BCA7112D3595009D5085 /* PCOpenglExt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCOpenglExt.cpp; path = ../PC/PCOpenglExt.cpp; sourceTree = SOURCE_ROOT; };
-		BF05BCA8112D3595009D5085 /* PCOpenglExt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCOpenglExt.h; path = ../PC/PCOpenglExt.h; sourceTree = SOURCE_ROOT; };
-		BF05BCA9112D3595009D5085 /* PCRender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCRender.cpp; path = ../PC/PCRender.cpp; sourceTree = SOURCE_ROOT; };
-		BF05BCAA112D3595009D5085 /* PCRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCRender.h; path = ../PC/PCRender.h; sourceTree = SOURCE_ROOT; };
-		BF05BCAB112D3595009D5085 /* PCRenderTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCRenderTarget.cpp; path = ../PC/PCRenderTarget.cpp; sourceTree = SOURCE_ROOT; };
-		BF05BCAC112D3595009D5085 /* PCRenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCRenderTarget.h; path = ../PC/PCRenderTarget.h; sourceTree = SOURCE_ROOT; };
-		BF05BCC0112D35B8009D5085 /* IPodRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodRender.h; path = ../IPod/IPodRender.h; sourceTree = SOURCE_ROOT; };
-		BF05BCC1112D35B8009D5085 /* IPodRender.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodRender.mm; path = ../IPod/IPodRender.mm; sourceTree = SOURCE_ROOT; };
-		BF05BCC2112D35B8009D5085 /* IPodRenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodRenderTarget.h; path = ../IPod/IPodRenderTarget.h; sourceTree = SOURCE_ROOT; };
-		BF05BCC3112D35B8009D5085 /* IPodRenderTarget.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodRenderTarget.mm; path = ../IPod/IPodRenderTarget.mm; sourceTree = SOURCE_ROOT; };
 		BF3C2544110704AE0000951F /* Tootle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Tootle.xcconfig; path = ../../BuildConfigurations/Tootle.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF3C2545110704BE0000951F /* Mac.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Mac.xcconfig; path = ../../BuildConfigurations/Mac/Mac.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF3DA2151178CBAE00EBD76C /* TRasteriser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRasteriser.cpp; path = ../../../../Tootle/Code/TootleRender/TRasteriser.cpp; sourceTree = SOURCE_ROOT; };
 		BF3DA2161178CBAE00EBD76C /* TRasteriser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRasteriser.h; path = ../../../../Tootle/Code/TootleRender/TRasteriser.h; sourceTree = SOURCE_ROOT; };
-		BF3DA27F1178D43600EBD76C /* GLRasteriser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLRasteriser.cpp; path = ../../../../Tootle/Code/TootleRender/Opengl/GLRasteriser.cpp; sourceTree = SOURCE_ROOT; };
-		BF3DA2801178D43600EBD76C /* GLRasteriser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLRasteriser.h; path = ../../../../Tootle/Code/TootleRender/Opengl/GLRasteriser.h; sourceTree = SOURCE_ROOT; };
 		BF89CBF011099A8B009C2101 /* Lib.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Lib.xcconfig; path = ../../BuildConfigurations/Mac/Lib.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF89CBF111099A8B009C2101 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF89CBF211099A8B009C2101 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -201,9 +179,6 @@
 				BF3DA2161178CBAE00EBD76C /* TRasteriser.h */,
 				84829C521164EC5A0000C579 /* TEffect.cpp */,
 				84829C531164EC5A0000C579 /* TEffect.h */,
-				BF05BD57112E8650009D5085 /* Opengl */,
-				BF05BCA1112D357B009D5085 /* IPod */,
-				BF05BCA0112D3574009D5085 /* PC */,
 				84B6067D104FFD2B0022E5BC /* TRenderNodeDebugMesh.cpp */,
 				84B6067E104FFD2B0022E5BC /* TRenderNodeDebugMesh.h */,
 				84B6067F104FFD2B0022E5BC /* TRenderNodeParticle.cpp */,
@@ -221,7 +196,6 @@
 				84B6068B104FFD2B0022E5BC /* TRenderNodeTimeline.cpp */,
 				84B6068C104FFD2B0022E5BC /* TRenderNodeTimeline.h */,
 				84B6068D104FFD2B0022E5BC /* TScreenShape.h */,
-				8418EF900F4DAD2700B956C9 /* Mac */,
 				8418EF640F4DAD2200B956C9 /* TCamera.cpp */,
 				8418EF650F4DAD2200B956C9 /* TCamera.h */,
 				8418EF660F4DAD2200B956C9 /* TLRender.cpp */,
@@ -260,56 +234,12 @@
 			name = "Build Configurations";
 			sourceTree = "<group>";
 		};
-		8418EF900F4DAD2700B956C9 /* Mac */ = {
-			isa = PBXGroup;
-			children = (
-				8440DBDF1055622D0045E57E /* MacRender.mm */,
-				8440DBE01055622D0045E57E /* MacRenderTarget.mm */,
-				8418F1A10F4DBB9300B956C9 /* MacRender.h */,
-				8418F1A30F4DBB9300B956C9 /* MacRenderTarget.h */,
-			);
-			name = Mac;
-			sourceTree = "<group>";
-		};
 		BF05BC98112D351D009D5085 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				BF05BC9C112D351D009D5085 /* libTootleGui.a */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		BF05BCA0112D3574009D5085 /* PC */ = {
-			isa = PBXGroup;
-			children = (
-				BF05BCA7112D3595009D5085 /* PCOpenglExt.cpp */,
-				BF05BCA8112D3595009D5085 /* PCOpenglExt.h */,
-				BF05BCA9112D3595009D5085 /* PCRender.cpp */,
-				BF05BCAA112D3595009D5085 /* PCRender.h */,
-				BF05BCAB112D3595009D5085 /* PCRenderTarget.cpp */,
-				BF05BCAC112D3595009D5085 /* PCRenderTarget.h */,
-			);
-			name = PC;
-			sourceTree = "<group>";
-		};
-		BF05BCA1112D357B009D5085 /* IPod */ = {
-			isa = PBXGroup;
-			children = (
-				BF05BCC0112D35B8009D5085 /* IPodRender.h */,
-				BF05BCC1112D35B8009D5085 /* IPodRender.mm */,
-				BF05BCC2112D35B8009D5085 /* IPodRenderTarget.h */,
-				BF05BCC3112D35B8009D5085 /* IPodRenderTarget.mm */,
-			);
-			name = IPod;
-			sourceTree = "<group>";
-		};
-		BF05BD57112E8650009D5085 /* Opengl */ = {
-			isa = PBXGroup;
-			children = (
-				BF3DA27F1178D43600EBD76C /* GLRasteriser.cpp */,
-				BF3DA2801178D43600EBD76C /* GLRasteriser.h */,
-			);
-			name = Opengl;
 			sourceTree = "<group>";
 		};
 		BFBA3B0C119F2FF700B86151 /* Products */ = {
@@ -337,8 +267,6 @@
 				8418EF8B0F4DAD2200B956C9 /* TRenderTarget.h in Headers */,
 				8418EF8D0F4DAD2200B956C9 /* TScreen.h in Headers */,
 				8418EF8F0F4DAD2200B956C9 /* TScreenManager.h in Headers */,
-				8418F1AD0F4DBB9300B956C9 /* MacRender.h in Headers */,
-				8418F1AF0F4DBB9300B956C9 /* MacRenderTarget.h in Headers */,
 				84B6068F104FFD2B0022E5BC /* TRenderNodeDebugMesh.h in Headers */,
 				84B60691104FFD2B0022E5BC /* TRenderNodeParticle.h in Headers */,
 				84B60693104FFD2B0022E5BC /* TRenderNodePathNetwork.h in Headers */,
@@ -350,7 +278,6 @@
 				84B6069E104FFD2B0022E5BC /* TScreenShape.h in Headers */,
 				84829C551164EC5A0000C579 /* TEffect.h in Headers */,
 				BF3DA2181178CBAE00EBD76C /* TRasteriser.h in Headers */,
-				BF3DA2821178D43600EBD76C /* GLRasteriser.h in Headers */,
 				848F0944119AE052009D8C1E /* TRenderNodeSprite.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -444,11 +371,8 @@
 				84B60698104FFD2B0022E5BC /* TRenderNodeScrollableView.cpp in Sources */,
 				84B6069A104FFD2B0022E5BC /* TRenderNodeSwoosh.cpp in Sources */,
 				84B6069C104FFD2B0022E5BC /* TRenderNodeTimeline.cpp in Sources */,
-				8440DBE51055622D0045E57E /* MacRender.mm in Sources */,
-				8440DBE61055622D0045E57E /* MacRenderTarget.mm in Sources */,
 				84829C541164EC5A0000C579 /* TEffect.cpp in Sources */,
 				BF3DA2171178CBAE00EBD76C /* TRasteriser.cpp in Sources */,
-				BF3DA2811178D43600EBD76C /* GLRasteriser.cpp in Sources */,
 				848F0943119AE052009D8C1E /* TRenderNodeSprite.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

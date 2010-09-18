@@ -34,11 +34,6 @@ namespace TLRender
 	class TScreen;
 	class TCamera;
 	class TRenderNode;
-
-	namespace Platform
-	{
-		class RenderTarget;
-	}
 }
 
 
@@ -62,9 +57,7 @@ public:
 	TRenderTarget(TRefRef Ref=TRef());
 	~TRenderTarget()							{	}
 
-	virtual Bool			BeginDraw(const Type4<s32>& RenderTargetMaxSize,const Type4<s32>& ViewportMaxSize,const TScreen& Screen);
-	virtual void			Draw();	
-	virtual void			EndDraw();
+	virtual void			Draw(TLRaster::TRasteriser& Rasteriser);	
 
 	const TRef&				GetRef() const								{	return m_Ref;	}
 
@@ -115,29 +108,18 @@ public:
 	FORCEINLINE Bool		operator==(const u8& ZOrder) const					{	return GetScreenZ() == ZOrder;	}
 
 protected:
-	Bool							DrawNode(TRenderNode& RenderNode,TRenderNode* pParentRenderNode,const TLMaths::TTransform* pSceneTransform,TColour SceneColour,TLMaths::TQuadTreeNode* pCameraZoneNode);	//	render a render object
-	void							DrawMeshWrapper(const TLAsset::TMesh* pMesh,TRenderNode& RenderNode, TColour SceneColour,TPtrArray<TRenderNode>& PostRenderList);	
-	void							DrawMesh(const TLAsset::TMesh& Mesh,const TLAsset::TTexture* pTexture,TRenderNode& RenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags,Bool HasAlpha);
-	void							DrawMeshShape(const TLMaths::TShape& Shape,TRenderNode& RenderNode,const TFlags<TRenderNode::RenderFlags::Flags>& RenderFlags,Bool ResetScene);
-
-	virtual Bool					BeginProjectDraw(TLRender::TProjectCamera& Camera,TScreenShape ScreenShape)	{	return TRUE;	}	//	setup projection mode
-	virtual void					EndProjectDraw()																{	}
-	virtual Bool					BeginOrthoDraw(TLRender::TOrthoCamera& Camera,TScreenShape ScreenShape)		{	return TRUE;	}	//	setup ortho projection mode
-	virtual void					EndOrthoDraw()																	{	}
-
+	Bool							DrawNode(TLRaster::TRasteriser& Rasteriser,TRenderNode& RenderNode,TRenderNode* pParentRenderNode,const TLMaths::TTransform* pSceneTransform,TColour SceneColour,TLMaths::TQuadTreeNode* pCameraZoneNode);	//	render a render object
 	SyncBool						IsRenderNodeVisible(TRenderNode& RenderNode,TLMaths::TQuadTreeNode*& pRenderZoneNode,TLMaths::TQuadTreeNode* pCameraZoneNode,const TLMaths::TTransform* pSceneTransform,Bool& RenderNodeIsInsideCameraZone);	//	check zone of node against camera's zone to determine visibility. if no scene transform is provided then we only do quick tests with no calculations. This can result in a SyncWait returned which means we need to do calculations to make sure of visibility
 	Bool							IsZoneVisible(TLMaths::TQuadTreeNode* pCameraZoneNode,TLMaths::TQuadTreeZone* pZone,TLMaths::TQuadTreeNode* pZoneNode,Bool& RenderNodeIsInsideCameraZone);
 
 	void							OnSizeChanged();		//	do any recalculations we need to when the render target's size changes
 
-	void							Debug_DrawZone(TLMaths::TQuadTreeZone& Zone,float z,TLMaths::TQuadTreeNode* pCameraZoneNode);
+	void							Debug_DrawZone(TLRaster::TRasteriser& Rasteriser,TLMaths::TQuadTreeZone& Zone,float z,TLMaths::TQuadTreeNode* pCameraZoneNode);
 
 protected:
 	TRef							m_Ref;					//	render target ref
 	Type4<s32>						m_Size;					//	pos + w + h. negative numbers mean min/max's
 	TPtr<TCamera>					m_pCamera;				//	camera 
-	TLMaths::TTransform				m_CameraTransform;		//	camera transform applied on every scene reset - so its the modelview transform
-	const TLMaths::TMatrix*			m_pCameraMatrix;		//	now matrix is out of TTransform - we might still need this matrix for the look-at orientation. This pointer should be used if valid, it's a pointer to the camera's lookat matrix
 
 	TColour							m_ClearColour;			//	clear colour
 	TFlags<Flags>					m_Flags;				//	render target flags

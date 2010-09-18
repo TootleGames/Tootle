@@ -1,0 +1,435 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8434CB8E100DBB910063673E /* TRenderNodeScrollableView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8434CB8C100DBB910063673E /* TRenderNodeScrollableView.cpp */; };
+		8434CB8F100DBB910063673E /* TRenderNodeScrollableView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8434CB8D100DBB910063673E /* TRenderNodeScrollableView.h */; };
+		843B55590FB2F0E4004FAC36 /* TRenderNodeSwoosh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 843B55570FB2F0E4004FAC36 /* TRenderNodeSwoosh.cpp */; };
+		843B555A0FB2F0E4004FAC36 /* TRenderNodeSwoosh.h in Headers */ = {isa = PBXBuildFile; fileRef = 843B55580FB2F0E4004FAC36 /* TRenderNodeSwoosh.h */; };
+		8446D005103B515C00DFD24F /* TScreenShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 8446D004103B515C00DFD24F /* TScreenShape.h */; };
+		8450984310219F3C00B78F2B /* TRenderNodeParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8450984110219F3C00B78F2B /* TRenderNodeParticle.cpp */; };
+		8450984410219F3C00B78F2B /* TRenderNodeParticle.h in Headers */ = {isa = PBXBuildFile; fileRef = 8450984210219F3C00B78F2B /* TRenderNodeParticle.h */; };
+		8461BD700F582DA300ED9509 /* TRenderNodeDebugMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8461BD6E0F582DA300ED9509 /* TRenderNodeDebugMesh.cpp */; };
+		8461BD710F582DA300ED9509 /* TRenderNodeDebugMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 8461BD6F0F582DA300ED9509 /* TRenderNodeDebugMesh.h */; };
+		8461C13F0F5C1B6300ED9509 /* TRenderNodePathNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8461C13D0F5C1B6300ED9509 /* TRenderNodePathNetwork.cpp */; };
+		8461C1400F5C1B6300ED9509 /* TRenderNodePathNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 8461C13E0F5C1B6300ED9509 /* TRenderNodePathNetwork.h */; };
+		8477D5B00F697E0F0023454C /* TRenderNodeQuadTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8477D5AE0F697E0F0023454C /* TRenderNodeQuadTree.cpp */; };
+		8477D5B10F697E0F0023454C /* TRenderNodeQuadTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 8477D5AF0F697E0F0023454C /* TRenderNodeQuadTree.h */; };
+		847F01C10F69040E00121D77 /* TRenderNodePhysicsNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 847F01BF0F69040E00121D77 /* TRenderNodePhysicsNode.cpp */; };
+		847F01C20F69040E00121D77 /* TRenderNodePhysicsNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 847F01C00F69040E00121D77 /* TRenderNodePhysicsNode.h */; };
+		84ADBE73101877FA0090EAFB /* TRenderNodeTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ADBE71101877FA0090EAFB /* TRenderNodeTimeline.cpp */; };
+		84ADBE74101877FA0090EAFB /* TRenderNodeTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 84ADBE72101877FA0090EAFB /* TRenderNodeTimeline.h */; };
+		84C10B020F0A7E6000B2DF7A /* TCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AEE0F0A7E6000B2DF7A /* TCamera.cpp */; };
+		84C10B030F0A7E6000B2DF7A /* TCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AEF0F0A7E6000B2DF7A /* TCamera.h */; };
+		84C10B040F0A7E6000B2DF7A /* TLRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AF00F0A7E6000B2DF7A /* TLRender.cpp */; };
+		84C10B050F0A7E6000B2DF7A /* TLRender.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AF10F0A7E6000B2DF7A /* TLRender.h */; };
+		84C10B060F0A7E6000B2DF7A /* TRendergraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AF20F0A7E6000B2DF7A /* TRendergraph.cpp */; };
+		84C10B070F0A7E6000B2DF7A /* TRendergraph.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AF30F0A7E6000B2DF7A /* TRendergraph.h */; };
+		84C10B080F0A7E6000B2DF7A /* TRenderNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AF40F0A7E6000B2DF7A /* TRenderNode.cpp */; };
+		84C10B090F0A7E6000B2DF7A /* TRenderNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AF50F0A7E6000B2DF7A /* TRenderNode.h */; };
+		84C10B0A0F0A7E6000B2DF7A /* TRenderNodeClear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AF60F0A7E6000B2DF7A /* TRenderNodeClear.cpp */; };
+		84C10B0B0F0A7E6000B2DF7A /* TRenderNodeClear.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AF70F0A7E6000B2DF7A /* TRenderNodeClear.h */; };
+		84C10B0E0F0A7E6000B2DF7A /* TRenderNodeText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AFA0F0A7E6000B2DF7A /* TRenderNodeText.cpp */; };
+		84C10B0F0F0A7E6000B2DF7A /* TRenderNodeText.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AFB0F0A7E6000B2DF7A /* TRenderNodeText.h */; };
+		84C10B100F0A7E6000B2DF7A /* TRenderTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AFC0F0A7E6000B2DF7A /* TRenderTarget.cpp */; };
+		84C10B110F0A7E6000B2DF7A /* TRenderTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AFD0F0A7E6000B2DF7A /* TRenderTarget.h */; };
+		84C10B120F0A7E6000B2DF7A /* TScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10AFE0F0A7E6000B2DF7A /* TScreen.cpp */; };
+		84C10B130F0A7E6000B2DF7A /* TScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10AFF0F0A7E6000B2DF7A /* TScreen.h */; };
+		84C10B140F0A7E6000B2DF7A /* TScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C10B000F0A7E6000B2DF7A /* TScreenManager.cpp */; };
+		84C10B150F0A7E6000B2DF7A /* TScreenManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C10B010F0A7E6000B2DF7A /* TScreenManager.h */; };
+		84CDC2771197FC5C002649F4 /* TRenderNodeSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84CDC2751197FC5C002649F4 /* TRenderNodeSprite.cpp */; };
+		84CDC2781197FC5C002649F4 /* TRenderNodeSprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 84CDC2761197FC5C002649F4 /* TRenderNodeSprite.h */; };
+		84DE344B0F12AA6C00608F8C /* TRenderNodeTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DE34490F12AA6C00608F8C /* TRenderNodeTile.cpp */; };
+		84DE344C0F12AA6C00608F8C /* TRenderNodeTile.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DE344A0F12AA6C00608F8C /* TRenderNodeTile.h */; };
+		84DE371B0F13630600608F8C /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84DE371A0F13630600608F8C /* OpenGL.framework */; };
+		BF44EEC41184D89B00FE77CE /* IPodRender.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44EEBD1184D89B00FE77CE /* IPodRender.h */; };
+		BF44EEC51184D89B00FE77CE /* IPodRender.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF44EEBE1184D89B00FE77CE /* IPodRender.mm */; };
+		BF44EEC61184D89B00FE77CE /* IPodRenderTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44EEBF1184D89B00FE77CE /* IPodRenderTarget.h */; };
+		BF44EEC71184D89B00FE77CE /* IPodRenderTarget.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF44EEC01184D89B00FE77CE /* IPodRenderTarget.mm */; };
+		BF44EED21184D8D500FE77CE /* GLRasteriser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF44EECE1184D8D500FE77CE /* GLRasteriser.cpp */; };
+		BF44EED31184D8D500FE77CE /* GLRasteriser.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44EECF1184D8D500FE77CE /* GLRasteriser.h */; };
+		BF44EED41184D8D500FE77CE /* TRasteriser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF44EED01184D8D500FE77CE /* TRasteriser.cpp */; };
+		BF44EED51184D8D500FE77CE /* TRasteriser.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44EED11184D8D500FE77CE /* TRasteriser.h */; };
+		BF44F1B81184F96B00FE77CE /* TEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF44F1B61184F96B00FE77CE /* TEffect.cpp */; };
+		BF44F1B91184F96B00FE77CE /* TEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = BF44F1B71184F96B00FE77CE /* TEffect.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		8434CB8C100DBB910063673E /* TRenderNodeScrollableView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeScrollableView.cpp; path = ../TRenderNodeScrollableView.cpp; sourceTree = SOURCE_ROOT; };
+		8434CB8D100DBB910063673E /* TRenderNodeScrollableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeScrollableView.h; path = ../TRenderNodeScrollableView.h; sourceTree = SOURCE_ROOT; };
+		843B55570FB2F0E4004FAC36 /* TRenderNodeSwoosh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeSwoosh.cpp; path = ../TRenderNodeSwoosh.cpp; sourceTree = SOURCE_ROOT; };
+		843B55580FB2F0E4004FAC36 /* TRenderNodeSwoosh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeSwoosh.h; path = ../TRenderNodeSwoosh.h; sourceTree = SOURCE_ROOT; };
+		8446D004103B515C00DFD24F /* TScreenShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TScreenShape.h; path = ../TScreenShape.h; sourceTree = SOURCE_ROOT; };
+		8450984110219F3C00B78F2B /* TRenderNodeParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeParticle.cpp; path = ../TRenderNodeParticle.cpp; sourceTree = SOURCE_ROOT; };
+		8450984210219F3C00B78F2B /* TRenderNodeParticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeParticle.h; path = ../TRenderNodeParticle.h; sourceTree = SOURCE_ROOT; };
+		8461BD6E0F582DA300ED9509 /* TRenderNodeDebugMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeDebugMesh.cpp; path = ../TRenderNodeDebugMesh.cpp; sourceTree = SOURCE_ROOT; };
+		8461BD6F0F582DA300ED9509 /* TRenderNodeDebugMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeDebugMesh.h; path = ../TRenderNodeDebugMesh.h; sourceTree = SOURCE_ROOT; };
+		8461C13D0F5C1B6300ED9509 /* TRenderNodePathNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodePathNetwork.cpp; path = ../TRenderNodePathNetwork.cpp; sourceTree = SOURCE_ROOT; };
+		8461C13E0F5C1B6300ED9509 /* TRenderNodePathNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodePathNetwork.h; path = ../TRenderNodePathNetwork.h; sourceTree = SOURCE_ROOT; };
+		8477D5AE0F697E0F0023454C /* TRenderNodeQuadTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeQuadTree.cpp; path = ../TRenderNodeQuadTree.cpp; sourceTree = SOURCE_ROOT; };
+		8477D5AF0F697E0F0023454C /* TRenderNodeQuadTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeQuadTree.h; path = ../TRenderNodeQuadTree.h; sourceTree = SOURCE_ROOT; };
+		847F01BF0F69040E00121D77 /* TRenderNodePhysicsNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodePhysicsNode.cpp; path = ../TRenderNodePhysicsNode.cpp; sourceTree = SOURCE_ROOT; };
+		847F01C00F69040E00121D77 /* TRenderNodePhysicsNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodePhysicsNode.h; path = ../TRenderNodePhysicsNode.h; sourceTree = SOURCE_ROOT; };
+		84ADBE71101877FA0090EAFB /* TRenderNodeTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeTimeline.cpp; path = ../TRenderNodeTimeline.cpp; sourceTree = SOURCE_ROOT; };
+		84ADBE72101877FA0090EAFB /* TRenderNodeTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeTimeline.h; path = ../TRenderNodeTimeline.h; sourceTree = SOURCE_ROOT; };
+		84C10AE80F0A7E3B00B2DF7A /* libTootleRender.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleRender.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		84C10AEE0F0A7E6000B2DF7A /* TCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TCamera.cpp; path = ../TCamera.cpp; sourceTree = SOURCE_ROOT; };
+		84C10AEF0F0A7E6000B2DF7A /* TCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCamera.h; path = ../TCamera.h; sourceTree = SOURCE_ROOT; };
+		84C10AF00F0A7E6000B2DF7A /* TLRender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLRender.cpp; path = ../TLRender.cpp; sourceTree = SOURCE_ROOT; };
+		84C10AF10F0A7E6000B2DF7A /* TLRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLRender.h; path = ../TLRender.h; sourceTree = SOURCE_ROOT; };
+		84C10AF20F0A7E6000B2DF7A /* TRendergraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRendergraph.cpp; path = ../TRendergraph.cpp; sourceTree = SOURCE_ROOT; };
+		84C10AF30F0A7E6000B2DF7A /* TRendergraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRendergraph.h; path = ../TRendergraph.h; sourceTree = SOURCE_ROOT; };
+		84C10AF40F0A7E6000B2DF7A /* TRenderNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNode.cpp; path = ../TRenderNode.cpp; sourceTree = SOURCE_ROOT; };
+		84C10AF50F0A7E6000B2DF7A /* TRenderNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNode.h; path = ../TRenderNode.h; sourceTree = SOURCE_ROOT; };
+		84C10AF60F0A7E6000B2DF7A /* TRenderNodeClear.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeClear.cpp; path = ../TRenderNodeClear.cpp; sourceTree = SOURCE_ROOT; };
+		84C10AF70F0A7E6000B2DF7A /* TRenderNodeClear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeClear.h; path = ../TRenderNodeClear.h; sourceTree = SOURCE_ROOT; };
+		84C10AFA0F0A7E6000B2DF7A /* TRenderNodeText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeText.cpp; path = ../TRenderNodeText.cpp; sourceTree = SOURCE_ROOT; };
+		84C10AFB0F0A7E6000B2DF7A /* TRenderNodeText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeText.h; path = ../TRenderNodeText.h; sourceTree = SOURCE_ROOT; };
+		84C10AFC0F0A7E6000B2DF7A /* TRenderTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderTarget.cpp; path = ../TRenderTarget.cpp; sourceTree = SOURCE_ROOT; };
+		84C10AFD0F0A7E6000B2DF7A /* TRenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderTarget.h; path = ../TRenderTarget.h; sourceTree = SOURCE_ROOT; };
+		84C10AFE0F0A7E6000B2DF7A /* TScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TScreen.cpp; path = ../TScreen.cpp; sourceTree = SOURCE_ROOT; };
+		84C10AFF0F0A7E6000B2DF7A /* TScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TScreen.h; path = ../TScreen.h; sourceTree = SOURCE_ROOT; };
+		84C10B000F0A7E6000B2DF7A /* TScreenManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TScreenManager.cpp; path = ../TScreenManager.cpp; sourceTree = SOURCE_ROOT; };
+		84C10B010F0A7E6000B2DF7A /* TScreenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TScreenManager.h; path = ../TScreenManager.h; sourceTree = SOURCE_ROOT; };
+		84CDC2751197FC5C002649F4 /* TRenderNodeSprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeSprite.cpp; path = ../TRenderNodeSprite.cpp; sourceTree = SOURCE_ROOT; };
+		84CDC2761197FC5C002649F4 /* TRenderNodeSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeSprite.h; path = ../TRenderNodeSprite.h; sourceTree = SOURCE_ROOT; };
+		84DE34490F12AA6C00608F8C /* TRenderNodeTile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeTile.cpp; path = ../TRenderNodeTile.cpp; sourceTree = SOURCE_ROOT; };
+		84DE344A0F12AA6C00608F8C /* TRenderNodeTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeTile.h; path = ../TRenderNodeTile.h; sourceTree = SOURCE_ROOT; };
+		84DE371A0F13630600608F8C /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
+		BF44EEBD1184D89B00FE77CE /* IPodRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodRender.h; path = ../../../../Tootle/Code/TootleRender/IPod/IPodRender.h; sourceTree = SOURCE_ROOT; };
+		BF44EEBE1184D89B00FE77CE /* IPodRender.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodRender.mm; path = ../../../../Tootle/Code/TootleRender/IPod/IPodRender.mm; sourceTree = SOURCE_ROOT; };
+		BF44EEBF1184D89B00FE77CE /* IPodRenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPodRenderTarget.h; path = ../../../../Tootle/Code/TootleRender/IPod/IPodRenderTarget.h; sourceTree = SOURCE_ROOT; };
+		BF44EEC01184D89B00FE77CE /* IPodRenderTarget.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IPodRenderTarget.mm; path = ../../../../Tootle/Code/TootleRender/IPod/IPodRenderTarget.mm; sourceTree = SOURCE_ROOT; };
+		BF44EECE1184D8D500FE77CE /* GLRasteriser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLRasteriser.cpp; path = ../../../../Tootle/Code/TootleRender/Opengl/GLRasteriser.cpp; sourceTree = SOURCE_ROOT; };
+		BF44EECF1184D8D500FE77CE /* GLRasteriser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLRasteriser.h; path = ../../../../Tootle/Code/TootleRender/Opengl/GLRasteriser.h; sourceTree = SOURCE_ROOT; };
+		BF44EED01184D8D500FE77CE /* TRasteriser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRasteriser.cpp; path = ../../../../Tootle/Code/TootleRender/TRasteriser.cpp; sourceTree = SOURCE_ROOT; };
+		BF44EED11184D8D500FE77CE /* TRasteriser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRasteriser.h; path = ../../../../Tootle/Code/TootleRender/TRasteriser.h; sourceTree = SOURCE_ROOT; };
+		BF44F1B61184F96B00FE77CE /* TEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TEffect.cpp; path = ../../../../Tootle/Code/TootleRender/TEffect.cpp; sourceTree = SOURCE_ROOT; };
+		BF44F1B71184F96B00FE77CE /* TEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TEffect.h; path = ../../../../Tootle/Code/TootleRender/TEffect.h; sourceTree = SOURCE_ROOT; };
+		BF8FC203118CAA40005391AF /* BuildConfigurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildConfigurations; path = ../../../../Tootle/Code/BuildConfigurations; sourceTree = SOURCE_ROOT; };
+		BF8FC204118CAA5A005391AF /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BF8FC205118CAA5A005391AF /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../../../Tootle/Code/BuildConfigurations/IPod/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		BFC7ABB21156697F00FFFC81 /* MacRenderTarget.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacRenderTarget.mm; path = ../Mac/MacRenderTarget.mm; sourceTree = SOURCE_ROOT; };
+		BFC7ABB31156697F00FFFC81 /* MacRender.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MacRender.mm; path = ../Mac/MacRender.mm; sourceTree = SOURCE_ROOT; };
+		BFC7ABB41156697F00FFFC81 /* MacRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacRender.h; path = ../Mac/MacRender.h; sourceTree = SOURCE_ROOT; };
+		BFC7ABB51156697F00FFFC81 /* MacRenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacRenderTarget.h; path = ../Mac/MacRenderTarget.h; sourceTree = SOURCE_ROOT; };
+		BFC7ABB61156697F00FFFC81 /* PCOpenglExt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCOpenglExt.cpp; path = ../PC/PCOpenglExt.cpp; sourceTree = SOURCE_ROOT; };
+		BFC7ABB71156697F00FFFC81 /* PCRender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCRender.cpp; path = ../PC/PCRender.cpp; sourceTree = SOURCE_ROOT; };
+		BFC7ABB81156697F00FFFC81 /* PCRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCRender.h; path = ../PC/PCRender.h; sourceTree = SOURCE_ROOT; };
+		BFC7ABB91156697F00FFFC81 /* PCRenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCRenderTarget.h; path = ../PC/PCRenderTarget.h; sourceTree = SOURCE_ROOT; };
+		BFC7ABBA1156697F00FFFC81 /* PCRenderTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCRenderTarget.cpp; path = ../PC/PCRenderTarget.cpp; sourceTree = SOURCE_ROOT; };
+		BFC7ABBB1156697F00FFFC81 /* PCOpenglExt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCOpenglExt.h; path = ../PC/PCOpenglExt.h; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		84C10AE60F0A7E3B00B2DF7A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84DE371B0F13630600608F8C /* OpenGL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		84C109070F0A779700B2DF7A = {
+			isa = PBXGroup;
+			children = (
+				84DE37190F1362E700608F8C /* Frameworks */,
+				84C10B230F0A7E7D00B2DF7A /* Build Configurations */,
+				84C10AED0F0A7E4E00B2DF7A /* Source Code */,
+				84C10AE90F0A7E3B00B2DF7A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		84C10AE90F0A7E3B00B2DF7A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84C10AE80F0A7E3B00B2DF7A /* libTootleRender.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84C10AED0F0A7E4E00B2DF7A /* Source Code */ = {
+			isa = PBXGroup;
+			children = (
+				84CDC2751197FC5C002649F4 /* TRenderNodeSprite.cpp */,
+				84CDC2761197FC5C002649F4 /* TRenderNodeSprite.h */,
+				BF44F1B61184F96B00FE77CE /* TEffect.cpp */,
+				BF44F1B71184F96B00FE77CE /* TEffect.h */,
+				BF44EECD1184D8D500FE77CE /* Opengl */,
+				BF44EED01184D8D500FE77CE /* TRasteriser.cpp */,
+				BF44EED11184D8D500FE77CE /* TRasteriser.h */,
+				BF44EE9B1184D89B00FE77CE /* IPod */,
+				BFC7ABB11156696400FFFC81 /* PC */,
+				BFC7ABB01156696000FFFC81 /* Mac */,
+				8446D004103B515C00DFD24F /* TScreenShape.h */,
+				8450984110219F3C00B78F2B /* TRenderNodeParticle.cpp */,
+				8450984210219F3C00B78F2B /* TRenderNodeParticle.h */,
+				84ADBE71101877FA0090EAFB /* TRenderNodeTimeline.cpp */,
+				84ADBE72101877FA0090EAFB /* TRenderNodeTimeline.h */,
+				8434CB8C100DBB910063673E /* TRenderNodeScrollableView.cpp */,
+				8434CB8D100DBB910063673E /* TRenderNodeScrollableView.h */,
+				843B55570FB2F0E4004FAC36 /* TRenderNodeSwoosh.cpp */,
+				843B55580FB2F0E4004FAC36 /* TRenderNodeSwoosh.h */,
+				8477D5AE0F697E0F0023454C /* TRenderNodeQuadTree.cpp */,
+				8477D5AF0F697E0F0023454C /* TRenderNodeQuadTree.h */,
+				847F01BF0F69040E00121D77 /* TRenderNodePhysicsNode.cpp */,
+				847F01C00F69040E00121D77 /* TRenderNodePhysicsNode.h */,
+				8461C13D0F5C1B6300ED9509 /* TRenderNodePathNetwork.cpp */,
+				8461C13E0F5C1B6300ED9509 /* TRenderNodePathNetwork.h */,
+				8461BD6E0F582DA300ED9509 /* TRenderNodeDebugMesh.cpp */,
+				8461BD6F0F582DA300ED9509 /* TRenderNodeDebugMesh.h */,
+				84DE34490F12AA6C00608F8C /* TRenderNodeTile.cpp */,
+				84DE344A0F12AA6C00608F8C /* TRenderNodeTile.h */,
+				84C10AEE0F0A7E6000B2DF7A /* TCamera.cpp */,
+				84C10AEF0F0A7E6000B2DF7A /* TCamera.h */,
+				84C10AF00F0A7E6000B2DF7A /* TLRender.cpp */,
+				84C10AF10F0A7E6000B2DF7A /* TLRender.h */,
+				84C10AF20F0A7E6000B2DF7A /* TRendergraph.cpp */,
+				84C10AF30F0A7E6000B2DF7A /* TRendergraph.h */,
+				84C10AF40F0A7E6000B2DF7A /* TRenderNode.cpp */,
+				84C10AF50F0A7E6000B2DF7A /* TRenderNode.h */,
+				84C10AF60F0A7E6000B2DF7A /* TRenderNodeClear.cpp */,
+				84C10AF70F0A7E6000B2DF7A /* TRenderNodeClear.h */,
+				84C10AFA0F0A7E6000B2DF7A /* TRenderNodeText.cpp */,
+				84C10AFB0F0A7E6000B2DF7A /* TRenderNodeText.h */,
+				84C10AFC0F0A7E6000B2DF7A /* TRenderTarget.cpp */,
+				84C10AFD0F0A7E6000B2DF7A /* TRenderTarget.h */,
+				84C10AFE0F0A7E6000B2DF7A /* TScreen.cpp */,
+				84C10AFF0F0A7E6000B2DF7A /* TScreen.h */,
+				84C10B000F0A7E6000B2DF7A /* TScreenManager.cpp */,
+				84C10B010F0A7E6000B2DF7A /* TScreenManager.h */,
+			);
+			name = "Source Code";
+			sourceTree = "<group>";
+		};
+		84C10B230F0A7E7D00B2DF7A /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				BF8FC204118CAA5A005391AF /* LibDebug.xcconfig */,
+				BF8FC205118CAA5A005391AF /* LibRelease.xcconfig */,
+				BF8FC203118CAA40005391AF /* BuildConfigurations */,
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+		84DE37190F1362E700608F8C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				84DE371A0F13630600608F8C /* OpenGL.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BF44EE9B1184D89B00FE77CE /* IPod */ = {
+			isa = PBXGroup;
+			children = (
+				BF44EEBD1184D89B00FE77CE /* IPodRender.h */,
+				BF44EEBE1184D89B00FE77CE /* IPodRender.mm */,
+				BF44EEBF1184D89B00FE77CE /* IPodRenderTarget.h */,
+				BF44EEC01184D89B00FE77CE /* IPodRenderTarget.mm */,
+			);
+			name = IPod;
+			path = ../../../../Tootle/Code/TootleRender/IPod;
+			sourceTree = SOURCE_ROOT;
+		};
+		BF44EECD1184D8D500FE77CE /* Opengl */ = {
+			isa = PBXGroup;
+			children = (
+				BF44EECE1184D8D500FE77CE /* GLRasteriser.cpp */,
+				BF44EECF1184D8D500FE77CE /* GLRasteriser.h */,
+			);
+			name = Opengl;
+			path = ../../../../Tootle/Code/TootleRender/Opengl;
+			sourceTree = SOURCE_ROOT;
+		};
+		BFC7ABB01156696000FFFC81 /* Mac */ = {
+			isa = PBXGroup;
+			children = (
+				BFC7ABB21156697F00FFFC81 /* MacRenderTarget.mm */,
+				BFC7ABB31156697F00FFFC81 /* MacRender.mm */,
+				BFC7ABB41156697F00FFFC81 /* MacRender.h */,
+				BFC7ABB51156697F00FFFC81 /* MacRenderTarget.h */,
+			);
+			name = Mac;
+			sourceTree = "<group>";
+		};
+		BFC7ABB11156696400FFFC81 /* PC */ = {
+			isa = PBXGroup;
+			children = (
+				BFC7ABB61156697F00FFFC81 /* PCOpenglExt.cpp */,
+				BFC7ABB71156697F00FFFC81 /* PCRender.cpp */,
+				BFC7ABB81156697F00FFFC81 /* PCRender.h */,
+				BFC7ABB91156697F00FFFC81 /* PCRenderTarget.h */,
+				BFC7ABBA1156697F00FFFC81 /* PCRenderTarget.cpp */,
+				BFC7ABBB1156697F00FFFC81 /* PCOpenglExt.h */,
+			);
+			name = PC;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		84C10AE40F0A7E3B00B2DF7A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C10B030F0A7E6000B2DF7A /* TCamera.h in Headers */,
+				84C10B050F0A7E6000B2DF7A /* TLRender.h in Headers */,
+				84C10B070F0A7E6000B2DF7A /* TRendergraph.h in Headers */,
+				84C10B090F0A7E6000B2DF7A /* TRenderNode.h in Headers */,
+				84C10B0B0F0A7E6000B2DF7A /* TRenderNodeClear.h in Headers */,
+				84C10B0F0F0A7E6000B2DF7A /* TRenderNodeText.h in Headers */,
+				84C10B110F0A7E6000B2DF7A /* TRenderTarget.h in Headers */,
+				84C10B130F0A7E6000B2DF7A /* TScreen.h in Headers */,
+				84C10B150F0A7E6000B2DF7A /* TScreenManager.h in Headers */,
+				84DE344C0F12AA6C00608F8C /* TRenderNodeTile.h in Headers */,
+				8461BD710F582DA300ED9509 /* TRenderNodeDebugMesh.h in Headers */,
+				8461C1400F5C1B6300ED9509 /* TRenderNodePathNetwork.h in Headers */,
+				847F01C20F69040E00121D77 /* TRenderNodePhysicsNode.h in Headers */,
+				8477D5B10F697E0F0023454C /* TRenderNodeQuadTree.h in Headers */,
+				843B555A0FB2F0E4004FAC36 /* TRenderNodeSwoosh.h in Headers */,
+				8434CB8F100DBB910063673E /* TRenderNodeScrollableView.h in Headers */,
+				84ADBE74101877FA0090EAFB /* TRenderNodeTimeline.h in Headers */,
+				8450984410219F3C00B78F2B /* TRenderNodeParticle.h in Headers */,
+				8446D005103B515C00DFD24F /* TScreenShape.h in Headers */,
+				BF44EEC41184D89B00FE77CE /* IPodRender.h in Headers */,
+				BF44EEC61184D89B00FE77CE /* IPodRenderTarget.h in Headers */,
+				BF44EED31184D8D500FE77CE /* GLRasteriser.h in Headers */,
+				BF44EED51184D8D500FE77CE /* TRasteriser.h in Headers */,
+				BF44F1B91184F96B00FE77CE /* TEffect.h in Headers */,
+				84CDC2781197FC5C002649F4 /* TRenderNodeSprite.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		84C10AE70F0A7E3B00B2DF7A /* TootleRender */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84C10AEC0F0A7E3B00B2DF7A /* Build configuration list for PBXNativeTarget "TootleRender" */;
+			buildPhases = (
+				84C10AE40F0A7E3B00B2DF7A /* Headers */,
+				84C10AE50F0A7E3B00B2DF7A /* Sources */,
+				84C10AE60F0A7E3B00B2DF7A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleRender;
+			productName = TootleRender;
+			productReference = 84C10AE80F0A7E3B00B2DF7A /* libTootleRender.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		84C109090F0A779700B2DF7A /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 84C1090C0F0A779700B2DF7A /* Build configuration list for PBXProject "TootleRender" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 0;
+			mainGroup = 84C109070F0A779700B2DF7A;
+			productRefGroup = 84C10AE90F0A7E3B00B2DF7A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				84C10AE70F0A7E3B00B2DF7A /* TootleRender */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		84C10AE50F0A7E3B00B2DF7A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C10B020F0A7E6000B2DF7A /* TCamera.cpp in Sources */,
+				84C10B040F0A7E6000B2DF7A /* TLRender.cpp in Sources */,
+				84C10B060F0A7E6000B2DF7A /* TRendergraph.cpp in Sources */,
+				84C10B080F0A7E6000B2DF7A /* TRenderNode.cpp in Sources */,
+				84C10B0A0F0A7E6000B2DF7A /* TRenderNodeClear.cpp in Sources */,
+				84C10B0E0F0A7E6000B2DF7A /* TRenderNodeText.cpp in Sources */,
+				84C10B100F0A7E6000B2DF7A /* TRenderTarget.cpp in Sources */,
+				84C10B120F0A7E6000B2DF7A /* TScreen.cpp in Sources */,
+				84C10B140F0A7E6000B2DF7A /* TScreenManager.cpp in Sources */,
+				84DE344B0F12AA6C00608F8C /* TRenderNodeTile.cpp in Sources */,
+				8461BD700F582DA300ED9509 /* TRenderNodeDebugMesh.cpp in Sources */,
+				8461C13F0F5C1B6300ED9509 /* TRenderNodePathNetwork.cpp in Sources */,
+				847F01C10F69040E00121D77 /* TRenderNodePhysicsNode.cpp in Sources */,
+				8477D5B00F697E0F0023454C /* TRenderNodeQuadTree.cpp in Sources */,
+				843B55590FB2F0E4004FAC36 /* TRenderNodeSwoosh.cpp in Sources */,
+				8434CB8E100DBB910063673E /* TRenderNodeScrollableView.cpp in Sources */,
+				84ADBE73101877FA0090EAFB /* TRenderNodeTimeline.cpp in Sources */,
+				8450984310219F3C00B78F2B /* TRenderNodeParticle.cpp in Sources */,
+				BF44EEC51184D89B00FE77CE /* IPodRender.mm in Sources */,
+				BF44EEC71184D89B00FE77CE /* IPodRenderTarget.mm in Sources */,
+				BF44EED21184D8D500FE77CE /* GLRasteriser.cpp in Sources */,
+				BF44EED41184D8D500FE77CE /* TRasteriser.cpp in Sources */,
+				BF44F1B81184F96B00FE77CE /* TEffect.cpp in Sources */,
+				84CDC2771197FC5C002649F4 /* TRenderNodeSprite.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		84C1090A0F0A779700B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF8FC204118CAA5A005391AF /* LibDebug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		84C1090B0F0A779700B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF8FC205118CAA5A005391AF /* LibRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		84C10AEA0F0A7E3B00B2DF7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		84C10AEB0F0A7E3B00B2DF7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		84C1090C0F0A779700B2DF7A /* Build configuration list for PBXProject "TootleRender" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C1090A0F0A779700B2DF7A /* Debug */,
+				84C1090B0F0A779700B2DF7A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84C10AEC0F0A7E3B00B2DF7A /* Build configuration list for PBXNativeTarget "TootleRender" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C10AEA0F0A7E3B00B2DF7A /* Debug */,
+				84C10AEB0F0A7E3B00B2DF7A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 84C109090F0A779700B2DF7A /* Project object */;
+}

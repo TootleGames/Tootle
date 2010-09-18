@@ -2,6 +2,7 @@
 #include "TLMemory.h"
 #include "TRef.h"
 #include "TString.h"
+#include "TColour.h"
 
 
 
@@ -22,11 +23,50 @@ case TLBinary_TypeNRef(Type4,PodType):	return GetDataTypeSize<TLBinary_TypeNRef(
 	{
 			case_TLBinary_TypeToSize( float );
 			case_TLBinary_TypeToSize( u8 );
+			case_TLBinary_TypeToSize( s8 );
 			case_TLBinary_TypeToSize( u16 );
+			case_TLBinary_TypeToSize( s16 );
 			case_TLBinary_TypeToSize( u32 );
+			case_TLBinary_TypeToSize( s32 );
 	}
 	
 #undef case_TLBinary_TypeToSize
+	
+	TDebugString Debug_String;
+	Debug_String << TypeRef << " is an unhandled case";
+	TLDebug_Break( Debug_String );
+	return 0;
+}
+
+
+//-----------------------------------------------------------
+//	get the number of elements of a type from a ref - like sizeofarray() for a ref
+//-----------------------------------------------------------
+u32	TLBinary::GetDataTypeElementCount(TRefRef TypeRef)
+{
+	//	gr: see if we can find some way to automate this in TLBinary_DeclareDataTypeRef...
+#define case_TLBinary_TypeToElementCount(PodType)	\
+case TLBinary_TypeRef(PodType):			return GetDataTypeElementCount<TLBinary_TypeRef(PodType)>();	\
+case TLBinary_TypeNRef(Type2,PodType):	return GetDataTypeElementCount<TLBinary_TypeNRef(Type2,PodType)>();	\
+case TLBinary_TypeNRef(Type3,PodType):	return GetDataTypeElementCount<TLBinary_TypeNRef(Type3,PodType)>();	\
+case TLBinary_TypeNRef(Type4,PodType):	return GetDataTypeElementCount<TLBinary_TypeNRef(Type4,PodType)>();	
+	
+	switch ( TypeRef.GetData() )
+	{
+		case_TLBinary_TypeToElementCount( float );
+		case_TLBinary_TypeToElementCount( u8 );
+		case_TLBinary_TypeToElementCount( s8 );
+		case_TLBinary_TypeToElementCount( u16 );
+		case_TLBinary_TypeToElementCount( s16 );
+		case_TLBinary_TypeToElementCount( u32 );
+		case_TLBinary_TypeToElementCount( s32 );
+		case TLBinary_TypeRef(TColour24):	return GetDataTypeElementCount<TLBinary_TypeRef(TColour24)>();
+		case TLBinary_TypeRef(TColour32):	return GetDataTypeElementCount<TLBinary_TypeRef(TColour32)>();
+		case TLBinary_TypeRef(TColour64):	return GetDataTypeElementCount<TLBinary_TypeRef(TColour64)>();
+		case TLBinary_TypeRef(TColour):		return GetDataTypeElementCount<TLBinary_TypeRef(TColour)>();
+	}
+	
+#undef case_TLBinary_TypeToElementCount
 	
 	TDebugString Debug_String;
 	Debug_String << TypeRef << " is an unhandled case";

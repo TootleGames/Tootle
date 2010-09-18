@@ -351,6 +351,8 @@ void TRenderNodeScrollableView::PreDrawChildren(TLRender::TRenderTarget& RenderT
 		OnRenderTargetRefChange( &RenderTarget );
 	}
 
+#pragma message("gr: this all needs reworking as the new rasteriser isn't immediate. We need to put this into another fake render target or something similar")
+/*
 	// Enable scissoring
 	//Opengl::EnableScissor(TRUE);
 
@@ -378,6 +380,8 @@ void TRenderNodeScrollableView::PreDrawChildren(TLRender::TRenderTarget& RenderT
 		SceneTransform.Transform( m_ScrollTransform );
 		Opengl::SceneTransform( m_ScrollTransform );
 	}
+ */
+
 }
 
 void TRenderNodeScrollableView::PostDrawChildren(TLRender::TRenderTarget& RenderTarget)

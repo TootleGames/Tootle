@@ -123,66 +123,6 @@
 	</References>
 	<Files>
 		<Filter
-			Name="PC Source files"
-			>
-			<File
-				RelativePath=".\PCOpenglExt.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\PCOpenglExt.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\PCRender.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PCRender.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PCRenderTarget.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PCRenderTarget.h"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="IPod"
 			>
 			<File
@@ -428,18 +368,6 @@
 						Name="VCCustomBuildTool"
 					/>
 				</FileConfiguration>
-			</File>
-		</Filter>
-		<Filter
-			Name="Opengl"
-			>
-			<File
-				RelativePath="..\Opengl\GLRasteriser.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\Opengl\GLRasteriser.h"
-				>
 			</File>
 		</Filter>
 		<File

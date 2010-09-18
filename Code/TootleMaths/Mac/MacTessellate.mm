@@ -7,7 +7,7 @@
 
 
 //	gr: for now it requires opengl headers for the glut tesselation
-#include <TootleRender/Mac/MacRender.h>
+#include <TootleOpenglRasteriser/Mac/MacOpengl.h>
 #include <OpenGL/glu.h>
 
 

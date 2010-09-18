@@ -1,4 +1,4 @@
-#include "IPodRender.h"
+#include "IPadRender.h"
 #include "../TLRender.h"
 
 #import <OpenGLES/EAGL.h>

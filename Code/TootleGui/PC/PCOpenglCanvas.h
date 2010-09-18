@@ -6,15 +6,8 @@
 #pragma once
 #include "../TOpenglCanvas.h"
 #include "PCWinWindow.h"	//	need to include for HDC etc
+#include <TootleOpenglRasteriser/TLOpengl.h>
 
-
-//	include opengl stuff
-#pragma comment( lib, "Opengl32.lib" )
-#pragma comment( lib, "glu32.lib" )
-
-#include "gl.h"
-#include "glext.h"
-#include "wglext.h"
 
 
 namespace TLGui

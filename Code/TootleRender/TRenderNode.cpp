@@ -10,6 +10,8 @@
 //	if not defined we only do a box test if the current one is up to date (i.e. something else needed it so it's calculated)
 #define RECALC_BOX_FOR_RENDERZONE_TEST
 
+#define DEBUG_RENDER_ALL_DATUMS false
+
 
 
 void Debug_PrintInvalidate(const TLRender::TRenderNode* pObject,const char* pSpaceType,const char* pShapeType)
@@ -1323,3 +1325,165 @@ Bool TLRender::TRenderNode::GetLocalPos(float3& LocalPos,const float3& WorldPos)
 	return TRUE;
 }
 
+
+//---------------------------------------------------------------
+//	Render function. Make up RasterData's and add them to the list. Return a pointer to the main raster data created if applicable
+//---------------------------------------------------------------
+const TLRaster::TRasterData* TLRender::TRenderNode::Render(TArray<TLRaster::TRasterData>& MeshRasterData,TArray<TLRaster::TRasterSpriteData>& SpriteRasterData,const TColour& SceneColour)
+{
+	TLAsset::TMesh* pMesh = GetMeshAsset();
+	if ( !pMesh )
+		return NULL;
+
+	//	build rasteriser data
+	TLRaster::TRasterData& RasterData = *MeshRasterData.AddNew();
+	RasterData.Init();
+
+	//	setup texture
+	if ( GetTextureRef().IsValid() )
+	{
+		RasterData.m_Material.m_pTexture = GetTextureAsset();
+
+		//	missing texture - try and use debug one
+		if ( !RasterData.m_Material.m_pTexture  )
+			RasterData.m_Material.m_pTexture = TLAsset::GetAsset<TLAsset::TTexture>("d_texture");
+	}
+
+	//	setup material
+	RasterData.m_Material.m_Colour = SceneColour;
+	RasterData.m_Material.m_LineWidth = 1.f;
+
+	//	set blend mode
+	if ( GetRenderFlags().IsSet( TRenderNode::RenderFlags::AddBlending ) )
+		RasterData.m_Material.m_BlendMode = TLRaster::TBlendMode::Add;
+	
+	//	get desired colour mode
+	TLRaster::TColourMode ColourMode = TLRaster::ColourNone;
+	#ifdef FORCE_COLOUR
+		ColourMode = FORCE_COLOUR;
+	#else
+		ColourMode = pMesh->HasAlpha() ? TLRaster::Colour32 : TLRaster::Colour24;
+		if ( GetRenderFlags().IsSet( TRenderNode::RenderFlags::UseFloatColours ) )
+			ColourMode = TLRaster::ColourF;
+	#endif
+
+	//	setup from mesh
+	RasterData.Set(*pMesh,ColourMode);
+	RasterData.m_pEffects = &GetEffects();
+	RasterData.m_Transform = GetWorldTransform();
+
+	//	setup flags
+	if ( !GetRenderFlags().IsSet(TRenderNode::RenderFlags::DepthRead) )
+		RasterData.m_Flags.Set( TLRaster::TRasterData::Flags::NoDepthRead );
+	
+	if ( !GetRenderFlags().IsSet( TRenderNode::RenderFlags::DepthWrite ) )
+		RasterData.m_Flags.Set( TLRaster::TRasterData::Flags::NoDepthWrite );
+
+	return &RasterData;
+}
+
+
+//----------------------------------------------------------------------------//
+//	render debug raster data
+//----------------------------------------------------------------------------//
+void TLRender::TRenderNode::Debug_Render(TArray<TLRaster::TRasterData>& MeshRenderData,TArray<TLRaster::TRasterSpriteData>& RasterSpriteData,const TLRaster::TRasterData* pMainRaster,TPtrArray<TLAsset::TMesh>& TemporaryMeshes)
+{
+	//	render a wireframe version
+	if ( pMainRaster && GetRenderFlags().IsSet( TRenderNode::RenderFlags::Debug_Wireframe ) )
+	{
+		TLRaster::TRasterData& RasterData = *MeshRenderData.AddNew();
+		RasterData.SetWireframe(false);
+		RasterData.SetDebug();
+	}
+
+	//	render a cross at 0,0,0 (center of node)
+	if ( GetRenderFlags().IsSet( TRenderNode::RenderFlags::Debug_Position ) )
+	{
+		const TLAsset::TMesh* pMesh = TLAsset::GetAsset<TLAsset::TMesh>("d_cross");
+		if ( pMesh )
+		{
+			TLRaster::TRasterData& RasterData = *MeshRenderData.AddNew();
+			RasterData.Set( *pMesh, TLRaster::ColourF );
+			RasterData.m_Material.m_LineWidth = 2.f;
+			RasterData.SetDebug();
+		}
+	}
+
+	//	get a list of datums to debug-render
+#ifdef DEBUG_RENDER_DATUMS_IN_WORLD
+	TPtrArray<TLMaths::TShape> RenderDatums;
+#else
+	TFixedArray<const TLMaths::TShape*,100> RenderDatums;
+#endif
+
+	if ( DEBUG_RENDER_ALL_DATUMS || GetRenderFlags().IsSet( TRenderNode::RenderFlags::Debug_Datums ) )
+	{
+#ifdef DEBUG_RENDER_DATUMS_IN_WORLD
+		GetWorldDatums( RenderDatums, FALSE, DEBUG_DATUMS_FORCE_RECALC );
+#else
+		GetLocalDatums( RenderDatums );
+#endif
+	}
+	else
+	{
+		for ( u32 i=0;	i<Debug_GetDebugRenderDatums().GetSize();	i++ )
+		{
+		#ifdef DEBUG_RENDER_DATUMS_IN_WORLD
+			TPtr<TLMaths::TShape> pDatum = GetWorldDatum( Debug_GetDebugRenderDatums()[i], FALSE, DEBUG_DATUMS_FORCE_RECALC );
+		#else
+			const TLMaths::TShape* pDatum = GetLocalDatum( Debug_GetDebugRenderDatums()[i] );
+		#endif
+			RenderDatums.Add( pDatum );
+		}
+
+		//	add flagged datums
+	#ifdef DEBUG_RENDER_DATUMS_IN_WORLD
+		if ( GetRenderFlags().IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsBox ) )
+			RenderDatums.Add( GetWorldDatum( TLRender_TRenderNode_DatumBoundsBox, FALSE, DEBUG_DATUMS_FORCE_RECALC ) );
+
+		if ( GetRenderFlags().IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsSphere ) )
+			RenderDatums.Add( GetWorldDatum( TLRender_TRenderNode_DatumBoundsSphere, FALSE, DEBUG_DATUMS_FORCE_RECALC ) );
+	#else
+		if ( GetRenderFlags().IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsBox ) )
+			RenderDatums.Add( GetLocalDatum( TLRender_TRenderNode_DatumBoundsBox ) );
+
+		if ( GetRenderFlags().IsSet( TRenderNode::RenderFlags::Debug_LocalBoundsSphere ) )
+			RenderDatums.Add( GetLocalDatum( TLRender_TRenderNode_DatumBoundsSphere ) );
+	#endif
+	}
+
+	//	setup scene if we have some datums to render
+	if ( RenderDatums.GetSize())
+	{
+		TLRaster::TRasterData DatumRasterData;
+		DatumRasterData.SetWireframe();
+		DatumRasterData.SetDepthRead(false);
+		DatumRasterData.SetDebug();
+
+		for ( u32 i=0;	i<RenderDatums.GetSize();	i++ )
+		{
+			const TLMaths::TShape* pDatum = RenderDatums[i];
+			if ( pDatum && pDatum->IsValid() )
+			{
+#ifdef DEBUG_RENDER_DATUMS_IN_WORLD
+				bool InWorldSpace = true;
+#else
+				bool InWorldSpace = false;
+#endif
+				//	possibly a little expensive... generate a mesh for the bounds...
+				TPtr<TLAsset::TMesh> pShapeMesh = new TLAsset::TMesh("Datum");
+				TemporaryMeshes.Add( pShapeMesh );
+				pShapeMesh->GenerateShape( *pDatum );
+
+				//	set transform
+				if ( InWorldSpace )
+					DatumRasterData.SetTransformNone();
+				else
+					DatumRasterData.SetTransform( GetWorldTransform() );
+
+				//	add to render list
+				MeshRenderData.Add( DatumRasterData );
+			}
+		}
+	}
+}

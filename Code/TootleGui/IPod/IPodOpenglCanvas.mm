@@ -98,10 +98,7 @@ TLGui::Platform::OpenglCanvas::OpenglCanvas(TLGui::TWindow& Parent,TRefRef Contr
 //	[m_pView initOpenGLContext];
 	
 	//	context has been initialised (successfully?) so init opengl	
-	if ( TLRender::Opengl::Init() != SyncTrue )
-	{
-		TLDebug_Break("Failed to init opengl");
-	}
+	//	todo:
 }
 
 

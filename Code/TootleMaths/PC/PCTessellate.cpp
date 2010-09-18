@@ -7,7 +7,7 @@
 
 
 //	gr: for now it requires opengl headers for the glut tesselation
-#include <TootleRender/PC/PCRender.h>
+#include <TootleOpenglRasteriser/PC/PCOpengl.h>
 #include <gl/glu.h>
 
 #if defined __APPLE_CC__ && __APPLE_CC__ < 5465

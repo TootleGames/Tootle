@@ -39,5 +39,5 @@ private:
 };
 
 #define TLBinary_TypeRef_TEuler					TRef_Static5(E,u,l,e,r)
-TLBinary_DeclareDataTypeRef( TLMaths::TEuler,		TLBinary_TypeRef(TEuler) );
+TLBinary_DeclareDataTypeWithRef( TLMaths::TEuler,		TLBinary_TypeRef(TEuler) );
 

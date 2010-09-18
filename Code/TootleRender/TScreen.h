@@ -15,6 +15,7 @@
 #include <TootleCore/TFlags.h>
 #include "TRenderTarget.h"		//	gr: needed to include the array type because of templated destructor... would be good to find a way to avoid that
 //#include "TLRender.h"		//	gr: needed to include the array type because of templated destructor... would be good to find a way to avoid that
+#include "TRasteriser.h"		//	gr: needed to include the array type because of templated destructor... would be good to find a way to avoid that
 #include <TootleGui/TWindow.h>
 #include <TootleGui/TOpenglCanvas.h>
 
@@ -115,6 +116,7 @@ protected:
 	TRef							m_DebugRenderTarget;		//	debug render target
 	TKeyArray<TRef,TRef>			m_DebugRenderText;			//	keyed list of debug strings -> render nodes
 
+	TPtr<TLRaster::TRasteriser>		m_pRasteriser;				//	rasteriser (tied to the canvas - maybe it should be owned and created by the canvas?)
 	TPtr<TLGui::TWindow>			m_pWindow;					//	window for the screen which contains the canvas (todo; remove this and just have the screen work from a canvas - move window construction external)
 	TPtr<TLGui::TOpenglCanvas>		m_pCanvas;					//	canvas we render to. todo; when rasterisation goes in, the rasteriser will instance a base RasterCanvas type
 };

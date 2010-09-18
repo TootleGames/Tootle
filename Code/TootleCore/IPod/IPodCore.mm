@@ -13,7 +13,7 @@
 #import <TootleAsset/TAsset.h>
 #import <TootleInput/Ipod/IPodInput.h>
 #import <QuartzCore/QuartzCore.h>
-#import <OpenGLES/EAGLDrawable.h>
+//#import <OpenGLES/EAGLDrawable.h>	//	gr: work out what uses this and move it!
 
 #import <UIKit/UIDevice.h>
 

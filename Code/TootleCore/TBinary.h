@@ -21,39 +21,51 @@ namespace TLBinary
 	//	... probably rarely used but in TLBinary::GetSizeOf() stops any potential code-errors
 	template<u32 TYPEREF>
 	FORCEINLINE u32		GetDataTypeSize()					{	return 0;	}
-	u32					GetDataTypeSize(TRefRef);
+	u32					GetDataTypeSize(TRefRef TypeRef);
+	
+	//	get number of elements in this type ref
+	template<u32 TYPEREF>
+	FORCEINLINE u32		GetDataTypeElementCount()					{	return 0;	}
+	u32					GetDataTypeElementCount(TRefRef TypeRef);
 	
 	//	same as above but ability to use a variable for the TYPE instead of explicitly using <XYZ>
 	template<typename TYPE>
 	FORCEINLINE TRef	GetDataTypeRef(const TYPE& Var)		{	return GetDataTypeRef<TYPE>();	}
 
+	#define TLBinary_Private_DeclareDataTypeRef(ELEMENTTYPE,TYPE,TYPEREF,ELEMENTCOUNT)		\
+		namespace TLBinary										\
+		{														\
+			template<> FORCEINLINE TRef	GetDataTypeRef<TYPE>()				{	return TYPEREF;	}	\
+			template<> FORCEINLINE u32	GetDataTypeSize<TYPEREF>()			{	return sizeof(TYPE);	}	\
+			template<> FORCEINLINE u32	GetDataTypeElementCount<TYPEREF>()	{	return ELEMENTCOUNT;	}	\
+		}
+	
+	#define TLBinary_Private_DeclareDataTypeRefNoSize(ELEMENTTYPE,TYPE,TYPEREF)		\
+		namespace TLBinary									\
+		{													\
+			template<> FORCEINLINE TRef	GetDataTypeRef<TYPE>()		{	return TYPEREF;	}	\
+		}
+	
 	//	simple macro to associate type with ref by specialising the GetDataTypeRef template.
 	//	if you don't specify this then it's likely your data will lose its type information when writing OUT to say XML
-	#define TLBinary_DeclareDataTypeRef(TYPE,TYPEREF)		\
-		namespace TLBinary									\
-		{													\
-			template<> FORCEINLINE TRef	GetDataTypeRef<TYPE>()		{	return TYPEREF;	}	\
-			template<> FORCEINLINE u32	GetDataTypeSize<TYPEREF>()	{	return sizeof(TYPE);	}	\
-		}
+	#define TLBinary_DeclareDataTypeRef(TYPE)		\
+		TLBinary_Private_DeclareDataTypeRef( TYPE, TYPE,		TLBinary_TypeRef( TYPE ), 1 );			\
 	
-	#define TLBinary_DeclareDataTypeRefNoSize(TYPE,TYPEREF)		\
-		namespace TLBinary									\
-		{													\
-			template<> FORCEINLINE TRef	GetDataTypeRef<TYPE>()		{	return TYPEREF;	}	\
-		}
-	
+	#define TLBinary_DeclareDataTypeWithRef(TYPE,TYPEREF)		\
+		TLBinary_Private_DeclareDataTypeRef( TYPE, TYPE,		TYPEREF, 1 );			\
+
 	//	another one to do TYPE and TYPE2,TYPE3,TYPE4
 	#define TLBinary_DeclareDataTypeRefAll(TYPE)	\
-		TLBinary_DeclareDataTypeRef( TYPE,			TLBinary_TypeRef( TYPE ) );			\
-		TLBinary_DeclareDataTypeRef( Type2<TYPE>,	TLBinary_TypeNRef( Type2, TYPE ) );	\
-		TLBinary_DeclareDataTypeRef( Type3<TYPE>,	TLBinary_TypeNRef( Type3, TYPE ) );	\
-		TLBinary_DeclareDataTypeRef( Type4<TYPE>,	TLBinary_TypeNRef( Type4, TYPE ) );	
-	
+		TLBinary_Private_DeclareDataTypeRef( TYPE, TYPE,		TLBinary_TypeRef( TYPE ), 1 );			\
+		TLBinary_Private_DeclareDataTypeRef( TYPE, Type2<TYPE>,	TLBinary_TypeNRef( Type2, TYPE ), 2 );	\
+		TLBinary_Private_DeclareDataTypeRef( TYPE, Type3<TYPE>,	TLBinary_TypeNRef( Type3, TYPE ), 3 );	\
+		TLBinary_Private_DeclareDataTypeRef( TYPE, Type4<TYPE>,	TLBinary_TypeNRef( Type4, TYPE ), 4 );	
+
 	#define TLBinary_DeclareDataTypeRefAllNoSize(TYPE)	\
-		TLBinary_DeclareDataTypeRefNoSize( TYPE,			TLBinary_TypeRef( TYPE ) );			\
-		TLBinary_DeclareDataTypeRefNoSize( Type2<TYPE>,	TLBinary_TypeNRef( Type2, TYPE ) );	\
-		TLBinary_DeclareDataTypeRefNoSize( Type3<TYPE>,	TLBinary_TypeNRef( Type3, TYPE ) );	\
-		TLBinary_DeclareDataTypeRefNoSize( Type4<TYPE>,	TLBinary_TypeNRef( Type4, TYPE ) );	
+		TLBinary_Private_DeclareDataTypeRefNoSize( TYPE, TYPE,			TLBinary_TypeRef( TYPE ) );			\
+		TLBinary_Private_DeclareDataTypeRefNoSize( TYPE, Type2<TYPE>,	TLBinary_TypeNRef( Type2, TYPE ) );	\
+		TLBinary_Private_DeclareDataTypeRefNoSize( TYPE, Type3<TYPE>,	TLBinary_TypeNRef( Type3, TYPE ) );	\
+		TLBinary_Private_DeclareDataTypeRefNoSize( TYPE, Type4<TYPE>,	TLBinary_TypeNRef( Type4, TYPE ) );	
 	
 	//	gr: accessor to get a define of a TRef for a type. You need to use these for case statements, plus it helps to pre-compile refs more
 	#define TLBinary_TypeRef(Type)				TLBinary_TypeRef_##Type
