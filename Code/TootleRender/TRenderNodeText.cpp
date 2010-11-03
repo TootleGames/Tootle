@@ -263,22 +263,8 @@ Bool TLRender::TRenderNodeText::SetTextBox(const TLMaths::TShape& Shape)
 //--------------------------------------------------------------------
 Bool TLRender::TRenderNodeText::Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList)
 {
-	//	setup glyphs if they are out of date
-	if ( !m_GlyphsValid )
-	{
-		TLMaths::TBox2D TextBounds;
-		if ( SetGlyphs(TextBounds) )
-		{
-			//	nothing to align if no text
-			if ( GetString().GetLength() > 0 )
-				RealignGlyphs( TextBounds );
-
-			m_GlyphsValid = TRUE;
-		}
-	}
-
-	//	dont render if glyphs out of date
-	return m_GlyphsValid;
+	TLDebug_Break("no longer called");
+	return true;
 }
 
 
@@ -615,33 +601,34 @@ void TLRender::TRenderNodeTextureText::Initialise(TLMessaging::TMessage& Message
 //--------------------------------------------------------
 Bool TLRender::TRenderNodeTextureText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 {
-	//	 create mesh
-	if ( !m_pMesh )
-	{
-		m_pMesh = new TLAsset::TMesh("TxText");
-		m_pMesh->SetLoadingState( TLAsset::LoadingState_Loaded );
-	}
-
 	//	grab atlas asset
 	TLAsset::TAtlas* pAtlasAsset = GetFontRef().IsValid() ? TLAsset::GetAsset<TLAsset::TAtlas>( GetFontRef() ) : NULL;
 	if ( !pAtlasAsset )
 		return FALSE;
 
-	TLAsset::TAtlas& Atlas = *pAtlasAsset;
+	//	setup material
+	m_Material.Init();
+	m_Material.m_Colour = GetColour();
+	m_Material.m_BlendMode = TLRaster::TBlendMode::Alpha;
+	m_Material.m_Texture = pAtlasAsset->GetTextureRef();
 
-	//	current triangle index - maybe different from number of chars in the string because of missing glyphs
-	u32 TriangleIndex = 0;
-	TArray<TLAsset::TMesh::Triangle>& Triangles = m_pMesh->GetTriangles();
+	
+	TLAsset::TAtlas& Atlas = *pAtlasAsset;
 
 	//	relative to parent so start at 0,0,0
 	//	gr: just stored as a transform to ease some other things
 	TLMaths::TTransform GlyphTransform;
 	GlyphTransform.SetTranslate( float3( 0,0,0 ) );
 
+	//	rebuild sprites
+	m_Sprites.Empty();
+	
 	//	setup geometry - currently rebuild the entire string
 	for ( u32 i=0;	i<m_Text.GetLength();	i++ )
 	{
-	//	check for line feed
+		char Debug_Char = m_Text[i];
+		
+		//	check for line feed
 		if ( m_Text[i] == '\n' )
 		{
 			const TLAsset::TAtlasGlyph* pGlyph = Atlas.GetGlyph('A');
@@ -664,67 +651,55 @@ Bool TLRender::TRenderNodeTextureText::SetGlyphs(TLMaths::TBox2D& TextBounds)
 			continue;
 		}
 
-		//	calculate the positioned box for this glyph
-		TLMaths::TBox2D ThisGlyphBox = pGlyph->m_GlyphBox;
-		ThisGlyphBox.Transform( GlyphTransform );
+		//	get sprite
+		TLRaster::TRasterSpriteData* pSpriteData = m_Sprites.AddNew();
+		if ( !pSpriteData )
+			continue;
+		pSpriteData->Init();
+		pSpriteData->m_Material = m_Material;
+		TLAsset::TSpriteGlyph& Sprite = pSpriteData->m_Sprite;
+		Sprite = pGlyph->m_Sprite;
 
 		//	accumulate this into the overall box
-		TextBounds.Accumulate( ThisGlyphBox );
-
-		TFixedArray<float3,4> VertPositions;
-		VertPositions.Add( float3( ThisGlyphBox.GetLeft(), ThisGlyphBox.GetTop(), 0.f ) );
-		VertPositions.Add( float3( ThisGlyphBox.GetRight(), ThisGlyphBox.GetTop(), 0.f ) );
-		VertPositions.Add( float3( ThisGlyphBox.GetRight(), ThisGlyphBox.GetBottom(), 0.f ) );
-		VertPositions.Add( float3( ThisGlyphBox.GetLeft(), ThisGlyphBox.GetBottom(), 0.f ) );
-		
-		TFixedArray<const float2*,4> VertUVs;
-		VertUVs.Add( &pGlyph->GetUV_TopLeft() );
-		VertUVs.Add( &pGlyph->GetUV_TopRight() );
-		VertUVs.Add( &pGlyph->GetUV_BottomRight() );
-		VertUVs.Add( &pGlyph->GetUV_BottomLeft() );
-
-		//	add new vertex/triangle
-		if ( TriangleIndex >= Triangles.GetSize() )
-		{
-			TFixedArray<u16,4> Vertexes;
-			Vertexes.Add( m_pMesh->AddVertex( VertPositions[0], NULL, VertUVs[0] ) );
-			Vertexes.Add( m_pMesh->AddVertex( VertPositions[1], NULL, VertUVs[1] ) );
-			Vertexes.Add( m_pMesh->AddVertex( VertPositions[2], NULL, VertUVs[2] ) );
-			Vertexes.Add( m_pMesh->AddVertex( VertPositions[3], NULL, VertUVs[3] ) );
-			Triangles.Add( TLAsset::TMesh::Triangle( Vertexes[0], Vertexes[1], Vertexes[2] ) );
-			Triangles.Add( TLAsset::TMesh::Triangle( Vertexes[2], Vertexes[3], Vertexes[0] ) );
-		}
-		else
-		{
-			//	modify existing verts
-			TLAsset::TMesh::Triangle& TriangleA = Triangles[TriangleIndex];		//	0 1 2
-			m_pMesh->GetVertex( TriangleA.x ) = VertPositions[0];
-			m_pMesh->GetVertex( TriangleA.y ) = VertPositions[1];
-			m_pMesh->GetVertex( TriangleA.z ) = VertPositions[2];
-			m_pMesh->GetVertexUV( TriangleA.x ) = *VertUVs[0];
-			m_pMesh->GetVertexUV( TriangleA.y ) = *VertUVs[1];
-			m_pMesh->GetVertexUV( TriangleA.z ) = *VertUVs[2];
-			TLAsset::TMesh::Triangle& TriangleB = Triangles[TriangleIndex+1];	//	2 3 0
-			m_pMesh->GetVertex( TriangleB.y ) = VertPositions[3];
-			m_pMesh->GetVertexUV( TriangleB.y ) = *VertUVs[3];
-		}
+		TextBounds.Accumulate( Sprite.m_Vertexes[0].m_Position );
+		TextBounds.Accumulate( Sprite.m_Vertexes[1].m_Position );
+		TextBounds.Accumulate( Sprite.m_Vertexes[2].m_Position );
+		TextBounds.Accumulate( Sprite.m_Vertexes[3].m_Position );
 
 		//	move position along
 		GlyphTransform.GetTranslate().x += pGlyph->m_SpacingBox.GetWidth();
-
-		//	move to next triangles
-		TriangleIndex += 2;
+		Sprite.Transform( GlyphTransform );
+		Sprite.Transform( GetWorldTransform() );
 	}
-
-	//	cull unwanted triangles & vertexes
-	while ( Triangles.GetLastIndex() >= (s32)TriangleIndex )
-	{
-		m_pMesh->RemoveTriangle( Triangles.GetLastIndex(), true, true );
-	}
-
-	//	geometry changed - invalidate bounds
-	m_pMesh->SetBoundsInvalid();
 
 	return TRUE;
+}
+
+//-------------------------------------------------
+//	
+//-------------------------------------------------
+const TLRaster::TRasterData* TLRender::TRenderNodeTextureText::Render(TArray<TLRaster::TRasterData>& MeshRasterData,TArray<TLRaster::TRasterSpriteData>& SpriteRasterData,const TColour& SceneColour)
+{
+	//	setup glyphs if they are out of date
+	if ( !m_GlyphsValid )
+	{
+		TLMaths::TBox2D TextBounds;
+		if ( SetGlyphs(TextBounds) )
+		{
+			//	nothing to align if no text
+			if ( GetString().GetLength() > 0 )
+				RealignGlyphs( TextBounds );
+			
+			m_GlyphsValid = TRUE;
+		}
+	}
+	
+	if ( m_Sprites.IsEmpty() )
+		return NULL;
+	
+	s32 Index = SpriteRasterData.Add( m_Sprites );
+	
+	//return &SpriteRasterData[Index];
+	return NULL;
 }
 

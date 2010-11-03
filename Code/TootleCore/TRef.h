@@ -29,6 +29,7 @@
 #include "TArray.h"
 #include "TString.h" //gr: crap, but need to include this for the << template specialisation, wonder if I can declare it to get around this....ß
 
+
 class TString;
 class TRef;
 class TTypedRef;
@@ -298,5 +299,3 @@ template<> FORCEINLINE TString& operator<<(TString& String,const Type4<TTypedRef
 
 template<> FORCEINLINE void operator>>(const TString& String,TRef& Ref)			{	Ref = String;	}
 template<> FORCEINLINE void operator>>(const TString& String,TTypedRef& Ref)	{	Ref = String;	}	
-
-

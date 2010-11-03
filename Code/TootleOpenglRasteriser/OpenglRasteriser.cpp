@@ -280,6 +280,10 @@ void TLRaster::OpenglRasteriser::Flush()
 //----------------------------------------------------------------------------//
 void TLRaster::OpenglRasteriser::Rasterise(const TRasterData& Data)
 {
+	//	no vertexes... maybe allow this to render if the effect produces a vertex buffer
+	if ( Data.GetVertexCount() == 0 )
+		return;
+	
 	//	pre-process effects
 	u32 EffectCount = Data.m_pEffects ? Data.m_pEffects->GetSize() : 0;
 	for ( u32 e=0;	e<EffectCount;	e++ )
@@ -289,19 +293,31 @@ void TLRaster::OpenglRasteriser::Rasterise(const TRasterData& Data)
 		if ( !Effect.PreRender() )
 			return;
 	}
+	
+//#define DEBUG_WIREFRAME
 
 	//	set scene transform
 	glPushMatrix();
 	Opengl::SceneTransform( Data.m_Transform );
+	Opengl::Debug_CheckForError();
 	
 	//	bind material
-	Opengl::BindTexture( Data.m_Material.m_pTexture );
+#if defined(DEBUG_WIREFRAME)
+	Opengl::BindTexture( TRef() );
+#else
+	Opengl::BindTexture( Data.m_Material.m_Texture );
+#endif
 	Opengl::SetLineWidth( Data.m_Material.m_LineWidth );
+	Opengl::Debug_CheckForError();
 
 	//	bind flags
 	Opengl::EnableWireframe( (Data.m_Flags & TRasterData::Flags::Wireframe ) != 0x0 );
+#if defined(DEBUG_WIREFRAME)
+	Opengl::EnableWireframe( true );
+#endif
 	Opengl::EnableDepthRead( (Data.m_Flags & TRasterData::Flags::NoDepthRead ) == 0x0 );
 	Opengl::EnableDepthWrite( (Data.m_Flags & TRasterData::Flags::NoDepthWrite ) == 0x0 );
+	Opengl::Debug_CheckForError();
 
 	//	hacky method to unbind elements for now
 	bool BoundPositionElement = false;
@@ -317,12 +333,17 @@ void TLRaster::OpenglRasteriser::Rasterise(const TRasterData& Data)
 		if ( !Opengl::BindVertexElement( VertexElement ) )
 			continue;
 		
-		BoundPositionElement |= ( VertexElement.m_ElementType == TLRaster::TVertexElementType::Position );
-		BoundNormalElement |= ( VertexElement.m_ElementType == TLRaster::TVertexElementType::Normal );
-		BoundColourElement |= ( VertexElement.m_ElementType == TLRaster::TVertexElementType::Colour );
-		BoundTexCoordElement |= ( VertexElement.m_ElementType == TLRaster::TVertexElementType::TexCoord );
+		BoundPositionElement |= ( VertexElement.m_Member.m_Ref == TLRaster::TVertexElementType::Position );
+		BoundNormalElement |= ( VertexElement.m_Member.m_Ref == TLRaster::TVertexElementType::Normal );
+		BoundColourElement |= ( VertexElement.m_Member.m_Ref == TLRaster::TVertexElementType::Colour );
+		BoundTexCoordElement |= ( VertexElement.m_Member.m_Ref == TLRaster::TVertexElementType::TexCoord );
 	}
 
+#if defined(DEBUG_WIREFRAME)
+	BoundColourElement = false;
+	BoundTexCoordElement = false;
+#endif
+		
 	//	unbind elements we didn't bind
 	if ( !BoundPositionElement )	
 		Opengl::Unbind( TLRaster::TVertexElementType::Position );
@@ -339,32 +360,43 @@ void TLRaster::OpenglRasteriser::Rasterise(const TRasterData& Data)
 	//	bind colour and alpha settings
 	Opengl::SetBlendMode( Data.m_Material.m_BlendMode );
 	Opengl::SetSceneColour( Data.m_Material.m_Colour );
+	Opengl::Debug_CheckForError();
+
 
 	//	draw primitives
-	if ( Data.m_pTriangles )	Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeTriangle(), *Data.m_pTriangles );
-	if ( Data.m_pTristrips )	Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeTristrip(), *Data.m_pTristrips );
-	if ( Data.m_pTrifans )		Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeTrifan(), *Data.m_pTrifans );
-	if ( Data.m_pLinestrips )	Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeLinestrip(), *Data.m_pLinestrips );
-	if ( Data.m_pLines )		Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeLine(), *Data.m_pLines );
-	
+	if ( Data.m_pTriangles )	Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeTriangle(), Data.m_pTriangles.GetArray() );
+	if ( Data.m_pTristrips )	Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeTristrip(), Data.m_pTristrips.GetArray() );
+	if ( Data.m_pTrifans )		Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeTrifan(), Data.m_pTrifans.GetArray() );
+	if ( Data.m_pLinestrips )	Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeLinestrip(), Data.m_pLinestrips.GetArray() );
+	if ( Data.m_pLines )		Opengl::DrawPrimitives( Opengl::Platform::GetPrimTypeLine(), Data.m_pLines.GetArray() );
+	Opengl::Debug_CheckForError();
+
+#if defined(DEBUG_WIREFRAME)
+	if ( true )
+#else
 	if ( Data.m_Flags & TRasterData::Flags::DrawPoints )
+#endif
 	{
 		Opengl::EnablePointSprites(false);
-		Opengl::SetPointSize( Data.m_Material.m_PointSize );
-		TLDebug_Break("todo: positions are gone, need to fetch the position vertex element and iterate");
-		//Opengl::DrawPrimitivePoints( Data.m_pPositons );
+	//	Opengl::SetPointSize( Data.m_Material.m_PointSize );
+#if defined(DEBUG_WIREFRAME)
+		Opengl::SetPointSize( 6.f );
+#endif
+		Opengl::Debug_CheckForError();
+		Opengl::DrawPrimitivePoints( Data.GetVertexCount() );
+		Opengl::Debug_CheckForError();
 	}
 
-	if ( Data.m_Flags & TRasterData::Flags::PointSprites && Data.m_Material.m_pTexture )
+	if ( Data.m_Flags & TRasterData::Flags::PointSprites && Data.m_Material.m_Texture.IsValid() )
 	{
 		Opengl::EnablePointSprites(true);
 		Opengl::EnablePointSizeUVMapping(true);
 		float PointSize = Data.m_Material.m_PointSize;
 		Opengl::ClampPointSpriteSize( PointSize );
 		Opengl::SetPointSize( PointSize );
-		TLDebug_Break("todo: positions are gone, need to fetch the position vertex element and iterate");
-		//Opengl::DrawPrimitivePoints( Data.m_pPositons );
+		Opengl::DrawPrimitivePoints( Data.GetVertexCount() );
 		Opengl::EnablePointSizeUVMapping(false); 
+		Opengl::Debug_CheckForError();
 	}
 
 	//	finish effects
@@ -376,6 +408,7 @@ void TLRaster::OpenglRasteriser::Rasterise(const TRasterData& Data)
 	}
 	
 	glPopMatrix();
+	Opengl::Debug_CheckForError();
 }
 
 
@@ -406,10 +439,11 @@ bool TLRaster::OpenglRasteriser::AllocSpriteTriangles(u32 MaxSpriteCount)
 
 		//	add first triangle
 		Type3<u16>& TriangleTop = *m_SpriteTriangles.AddNew();
-		Type3<u16>& TriangleBottom = *m_SpriteTriangles.AddNew();
 		TriangleTop.x = VertexIndex+0;	//	top left
 		TriangleTop.y = VertexIndex+1;	//	top right
 		TriangleTop.z = VertexIndex+2;	//	bottom right
+
+		Type3<u16>& TriangleBottom = *m_SpriteTriangles.AddNew();
 		TriangleBottom.x = VertexIndex+2;	//	bottom right
 		TriangleBottom.y = VertexIndex+3;	//	bottom left
 		TriangleBottom.z = VertexIndex+0;	//	top left
@@ -430,8 +464,6 @@ void TLRaster::OpenglRasteriser::ResolveSprites()
 	if ( SpriteCount == 0 )
 		return;
 
-	TLDebug_Break("todo: struct array definitions as vertex definitions");
-	/*
 	//	pre-alloc the triangle buffer. As we share this with all the raster datas we cannot allow
 	//	the allocated address to change, so we have to pre-alloc ALL the potential triangles early
 	if ( !AllocSpriteTriangles(SpriteCount) )
@@ -452,15 +484,20 @@ void TLRaster::OpenglRasteriser::ResolveSprites()
 	m_RasterSpriteData.Sort();
 
 	//	get vertex definition for sprites
-	const TLAsset::TVertexDef& SpriteVertexDefinition = TLAsset::TSpriteVertex::GetVertexDefinition();
+	const TLStruct::TDef& SpriteVertexDefinition = TLAsset::TSpriteVertex::GetVertexDef();
 
 	//	store prev material so we know when to split a new batch
 	TMaterial* pLastMaterial = NULL;
 	TRasterData* pRasterData = NULL;
+
+
 	for ( u32 s=0;	s<SpriteCount;	s++ )
 	{
 		TRasterSpriteData& RasterSprite = m_RasterSpriteData[s];
 		
+		//	add sprite to the array
+		s32 NewSpriteDataIndex = m_Sprites.Add( RasterSprite.m_Sprite );
+
 		//	if this is a new batch then make a new raster data
 		if ( !pLastMaterial || !(*pLastMaterial == RasterSprite.m_Material) )
 		{
@@ -468,18 +505,28 @@ void TLRaster::OpenglRasteriser::ResolveSprites()
 			//	out of mem
 			if ( !pRasterData )
 				break;
-
+			
 			//	setup raster data
 			pRasterData->Init();
-			pRasterData->Set( SpriteVertexDefinition, (const u8*)&m_Sprites[s] );
+			const TLAsset::TSpriteGlyph& FirstSprite = m_Sprites[NewSpriteDataIndex];
+			pRasterData->Set( SpriteVertexDefinition, reinterpret_cast<const u8*>( &FirstSprite ) );
 			pRasterData->SetMaterial( RasterSprite.m_Material );
 			pLastMaterial = &RasterSprite.m_Material;
+			
+			//	point the triangle geometry at the first triangle for batch... which is always zero
+			u32 TriangleIndex = 0;
+			const TLAsset::TMesh::Triangle& SpriteTriangle = m_SpriteTriangles[TriangleIndex];
+			//const TLAsset::TMesh::Triangle& SpriteTriangle2 = m_SpriteTriangles[TriangleIndex + 1];
+			pRasterData->m_pTriangles = TArrayInPlace<TLAsset::TMesh::Triangle>( &SpriteTriangle, 0 ); 
 		}
+		
+		//	increase number of vertexes used in this raster packet
+		pRasterData->m_VertexCount += RasterSprite.GetVertexCount();
 
-		//	add sprite to the array
-		m_Sprites.Add( RasterSprite.m_Sprite );
+		//	and number of triangles
+		pRasterData->m_pTriangles.m_Size += 2;
 	}
-*/
+
 }
 
 

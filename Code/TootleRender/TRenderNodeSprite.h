@@ -26,6 +26,8 @@ protected:
 	virtual void	Initialise(TLMessaging::TMessage& Message);
 	virtual void	SetProperty(TLMessaging::TMessage& Message);
 
+	virtual const TLRaster::TRasterData*	Render(TArray<TLRaster::TRasterData>& MeshRasterData,TArray<TLRaster::TRasterSpriteData>& SpriteRasterData,const TColour& SceneColour);	//	Render function. Make up RasterData's and add them to the list. Return a pointer to the main raster data created if applicable
+
 private:
 	bool			CreateEffect();
 

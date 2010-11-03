@@ -28,6 +28,10 @@ case TLBinary_TypeNRef(Type4,PodType):	return GetDataTypeSize<TLBinary_TypeNRef(
 			case_TLBinary_TypeToSize( s16 );
 			case_TLBinary_TypeToSize( u32 );
 			case_TLBinary_TypeToSize( s32 );
+			case_TLBinary_TypeToSize( TRef );
+			case_TLBinary_TypeToSize( TColour24 );
+			case_TLBinary_TypeToSize( TColour32 );
+			case_TLBinary_TypeToSize( TColour64 );
 	}
 	
 #undef case_TLBinary_TypeToSize

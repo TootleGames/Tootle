@@ -53,20 +53,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		BF05BC9B112D351D009D5085 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BF05BC97112D351D009D5085 /* TootleGui.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8418EEAF0F4DAB4500B956C9;
-			remoteInfo = TootleGui;
-		};
-		BF05BC9D112D3529009D5085 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BF05BC97112D351D009D5085 /* TootleGui.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8418EEAE0F4DAB4500B956C9;
-			remoteInfo = TootleGui;
-		};
 		BFBA3B0F119F2FF700B86151 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFBA3B0B119F2FF700B86151 /* TootleCore.xcodeproj */;
@@ -119,7 +105,6 @@
 		84B6068B104FFD2B0022E5BC /* TRenderNodeTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRenderNodeTimeline.cpp; path = ../TRenderNodeTimeline.cpp; sourceTree = SOURCE_ROOT; };
 		84B6068C104FFD2B0022E5BC /* TRenderNodeTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TRenderNodeTimeline.h; path = ../TRenderNodeTimeline.h; sourceTree = SOURCE_ROOT; };
 		84B6068D104FFD2B0022E5BC /* TScreenShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TScreenShape.h; path = ../TScreenShape.h; sourceTree = SOURCE_ROOT; };
-		BF05BC97112D351D009D5085 /* TootleGui.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TootleGui.xcodeproj; path = ../../TootleGui/Mac/TootleGui.xcodeproj; sourceTree = SOURCE_ROOT; };
 		BF3C2544110704AE0000951F /* Tootle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Tootle.xcconfig; path = ../../BuildConfigurations/Tootle.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF3C2545110704BE0000951F /* Mac.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Mac.xcconfig; path = ../../BuildConfigurations/Mac/Mac.xcconfig; sourceTree = SOURCE_ROOT; };
 		BF3DA2151178CBAE00EBD76C /* TRasteriser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TRasteriser.cpp; path = ../../../../Tootle/Code/TootleRender/TRasteriser.cpp; sourceTree = SOURCE_ROOT; };
@@ -147,7 +132,6 @@
 			isa = PBXGroup;
 			children = (
 				BFBA3B0B119F2FF700B86151 /* TootleCore.xcodeproj */,
-				BF05BC97112D351D009D5085 /* TootleGui.xcodeproj */,
 				8418EF630F4DAD0A00B956C9 /* Build Configurations */,
 				8418EF620F4DAD0300B956C9 /* SourceCode */,
 				8418EF610F4DACFB00B956C9 /* Frameworks */,
@@ -234,14 +218,6 @@
 			name = "Build Configurations";
 			sourceTree = "<group>";
 		};
-		BF05BC98112D351D009D5085 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				BF05BC9C112D351D009D5085 /* libTootleGui.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		BFBA3B0C119F2FF700B86151 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -296,7 +272,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				BF05BC9E112D3529009D5085 /* PBXTargetDependency */,
 			);
 			name = TootleRender;
 			productName = TootleRender;
@@ -319,10 +294,6 @@
 					ProductGroup = BFBA3B0C119F2FF700B86151 /* Products */;
 					ProjectRef = BFBA3B0B119F2FF700B86151 /* TootleCore.xcodeproj */;
 				},
-				{
-					ProductGroup = BF05BC98112D351D009D5085 /* Products */;
-					ProjectRef = BF05BC97112D351D009D5085 /* TootleGui.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -332,13 +303,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		BF05BC9C112D351D009D5085 /* libTootleGui.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libTootleGui.a;
-			remoteRef = BF05BC9B112D351D009D5085 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		BFBA3B10119F2FF700B86151 /* libTootleCore.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -378,14 +342,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		BF05BC9E112D3529009D5085 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = TootleGui;
-			targetProxy = BF05BC9D112D3529009D5085 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		8418ECF90F4DA63E00B956C9 /* Debug */ = {

@@ -119,7 +119,7 @@ protected:
 	TLMaths::TTransform		m_BaseTransform;		//	this is the "offset" transform. whenever the local transform is set it's copied here, then the alignment transform is put on top
 	TLMaths::TTransform		m_AlignmentTransform;	//	transform for the alignment
 
-private:
+protected:
 	Bool					m_GlyphsValid;			//	if TRUE we need to re-generate glyphs
 };
 
@@ -148,13 +148,15 @@ class TLRender::TRenderNodeTextureText : public TLRender::TRenderNodeText
 public:
 	TRenderNodeTextureText(TRefRef RenderNodeRef,TRefRef TypeRef);
 
+	virtual const TLRaster::TRasterData*	Render(TArray<TLRaster::TRasterData>& MeshRasterData,TArray<TLRaster::TRasterSpriteData>& SpriteRasterData,const TColour& SceneColour);	//	Render function. Make up RasterData's and add them to the list. Return a pointer to the main raster data created if applicable
+	
 protected:
 	virtual Bool					SetGlyphs(TLMaths::TBox2D& TextBounds);	//	setup geometry
-	virtual TLAsset::TMesh*			GetMeshAsset()							{	return m_pMesh.GetObjectPointer();	}
 	virtual void					Initialise(TLMessaging::TMessage& Message);
 
 protected:
-	TPtr<TLAsset::TMesh>					m_pMesh;				//	mesh with our "sprites" in. Created manually so can be a TPtr
+	TLRaster::TMaterial						m_Material;	//	in case we have zero sprites we need to store the material somewhere!
+	THeapArray<TLRaster::TRasterSpriteData>	m_Sprites;	//	pre-rendered text sprites
 };
 
 

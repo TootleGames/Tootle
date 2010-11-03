@@ -89,12 +89,12 @@ public:
 	//	member manipulation
 	bool							HasMember(TRefRef MemberType) const		{	return m_Members.Exists(MemberType);	}
 	const TLStruct::TMember*		GetMember(TRefRef MemberType) const		{	return m_Members.Find(MemberType);	}		//	note: lack of validity checking here!
-/*
-	const TLStruct::TMember&					GetMember(TRef MemberType) const		{	return *GetMemberPointer(MemberType);	}		//	note: lack of validity checking here!
+
+//	const TLStruct::TMember&					GetMember(TRef MemberType) const		{	return *GetMemberPointer(MemberType);	}		//	note: lack of validity checking here!
 	const TKeyArray<TRef,TLStruct::TMember>&	GetMembers() const						{	return m_Members;	}
-*/
+
 	TLStruct::TMember*						AddMember(TRefRef Member,TRefRef Type);		//	add member to definition
-	TLStruct::TMember*						AddMember(const TLStruct::TMember& Member);	//	add member to definition
+	TLStruct::TMember*						AddMember(const TLStruct::TMember& Member,bool AdjustStrides);	//	add member to definition
 
 /*
 	void									AddMember(TRef MemberType,const TLStruct::TMember& Member)					{	m_Members.Add( MemberType, Member );	}
@@ -161,6 +161,8 @@ public:
 	
 	template<typename TYPE>	void			SetAll(TRefRef Member,const TYPE& Value);
 	
+	const TLStruct::TDef&	GetDefinition() const							{	return m_Definition;	}
+
 	bool			Debug_VerifyIsStruct(const TStruct*& pStruct) const		{	return true;	}	//	todo
 	
 public:	//	definition access
@@ -174,11 +176,11 @@ public:	//	definition access
 	
 private:
 	void			ReAlignData(const TLStruct::TMember& NewMember);	//	realign data when a member has been added
-	TStruct*		GetStructAtDataIndex(u32 DataIndex)					{	return const_cast<TStruct*>( GetStructAtDataIndex( DataIndex ) );	}
+	TStruct*		GetStructAtDataIndex(u32 DataIndex)					{	return const_cast<TStruct*>( const_cast<const TStructArray*>(this)->GetStructAtDataIndex( DataIndex ) );	}
 	const TStruct*	GetStructAtDataIndex(u32 DataIndex) const;
 	u32				GetStructDataIndex(const TStruct* pStruct) const;
 	u32				GetStructDataIndex(u32 StructIndex) const;
-	void*			GetElement(const TLStruct::TMember* pMember,TStruct* pStruct,TRefRef ExpectedType)	{	return const_cast<void*>( GetElement( pMember, pStruct, ExpectedType ) );	}
+	void*			GetElement(const TLStruct::TMember* pMember,TStruct* pStruct,TRefRef ExpectedType)	{	return const_cast<void*>( const_cast<const TStructArray*>(this)->GetElement( pMember, pStruct, ExpectedType ) );	}
 	const void*		GetElement(const TLStruct::TMember* pMember,const TStruct* pStruct,TRefRef ExpectedType) const;
 
 private:
@@ -498,7 +500,7 @@ FORCEINLINE void TStructArray::SetAll(TRefRef Member,const TYPE& Value)
 template<class VERTEXTYPE,typename MEMBERTYPE>
 bool TStructArray::AddMember(TRefRef Member,MEMBERTYPE VERTEXTYPE::* pVertexMember)
 {
-	u32 OldStructSize = m_Definition.GetStructSize();
+	//u32 OldStructSize = m_Definition.GetStructSize();
 
 	//	make up new member info
 	TLStruct::TMember NewMember;
@@ -514,10 +516,20 @@ bool TStructArray::AddMember(TRefRef Member,MEMBERTYPE VERTEXTYPE::* pVertexMemb
 	NewMember.m_Type = TLBinary::GetDataTypeRef<MEMBERTYPE>();
 	
 	//	calc stride
-	NewMember.m_Stride = sizeof(VERTEXTYPE) - sizeof(MEMBERTYPE);
+	u32 VertexTypeSize = sizeof(VERTEXTYPE);
+	u32 MemberTypeSize = sizeof(MEMBERTYPE);
+	
+	//	err, not possible, but check anyway
+	if ( MemberTypeSize > VertexTypeSize )
+	{
+		TLDebug_Break("Vertex member is bigger than size of the vertex?");
+		return false;
+	}
+	
+	NewMember.m_Stride = VertexTypeSize - MemberTypeSize;
 
 	//	attempt add
-	TLStruct::TMember* pNewMember = m_Definition.AddMember( NewMember );
+	TLStruct::TMember* pNewMember = m_Definition.AddMember( NewMember, false );
 	if ( !pNewMember )
 		return false;
 

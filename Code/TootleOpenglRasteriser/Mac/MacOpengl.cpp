@@ -32,14 +32,15 @@ Bool Opengl::Platform::Debug_CheckForError()
 		return FALSE;
 	
 	//	check for a GLError
-	u16 Error = glGetError();
+	GLenum Error = glGetError();
 	
 	//	no error
 	if ( Error == GL_NO_ERROR )
 		return FALSE;
 	
 	//	get error index
-	TString ErrorString("Opengl error 0x%x: ");
+	TDebugString ErrorString;
+	ErrorString << "Opengl error " << Error << "; ";
 	
 	const char* pErrorString = NULL;
 	switch ( Error )

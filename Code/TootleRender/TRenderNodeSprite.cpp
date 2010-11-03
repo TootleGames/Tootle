@@ -62,3 +62,17 @@ void TLRender::TRenderNodeSprite::SetProperty(TLMessaging::TMessage& Message)
 	TLRender::TRenderNode::SetProperty(Message);
 }
 
+
+const TLRaster::TRasterData* TLRender::TRenderNodeSprite::Render(TArray<TLRaster::TRasterData>& MeshRasterData,TArray<TLRaster::TRasterSpriteData>& SpriteRasterData,const TColour& SceneColour)
+{
+	TLRaster::TRasterSpriteData& Sprite = *SpriteRasterData.AddNew();
+	Sprite.Init();
+	
+	Sprite.m_Material.m_Texture = GetTextureRef();
+	Sprite.m_Material.m_Colour = GetColour();
+	
+	Sprite.m_Sprite.Transform( GetWorldTransform() );
+	
+	return NULL;
+}
+

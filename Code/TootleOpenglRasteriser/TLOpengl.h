@@ -44,8 +44,9 @@ namespace Opengl
 	FORCEINLINE Bool		BindColoursNull()										{	return BindColours( (const TArray<TColour>*)NULL );	}	//	wrapper for ambigious use of NULL
 	Bool					BindUVs(const TArray<float2>* pUVs);
 	Bool					BindTexture(const TLAsset::TTexture* pTexture);			//	bind texture - returns FALSE if no texture is bound (either fail or expected)
+	Bool					BindTexture(TRefRef Texture);							//	bind texture - returns FALSE if no texture is bound (either fail or expected)
 	void					Unbind();												//	unbind all verts/colours etc
-	void					Unbind(const TLRaster::TVertexElementType::Type& Element);		//	unbind this vertex element
+	void					Unbind(TRefRef Element);								//	unbind this vertex element
 	bool					BindVertexElement(const TLRaster::TVertexElement& Element);		//	bind this vertex element
 	
 	//	gr: don't expose this when moved into rasteriser as the rasteriser could call this directly
@@ -55,7 +56,7 @@ namespace Opengl
 	template<class TYPE>
 	FORCEINLINE void		DrawPrimitives(u16 GLPrimType,const TArray<TYPE>& PrimitivesArray);			//	wrapper to pull out the index data for different types
 	FORCEINLINE void		DrawPrimitives(u16 GLPrimType,const TArray<THeapArray<u16> >& PrimitivesArray);	//	specialisation for arrays of u16s (ie. strips)
-	void					DrawPrimitivePoints(const TArray<float3>* pVertexes);
+	void					DrawPrimitivePoints(u16 VertexCount);
 
 	void					TextureTransform(const TLMaths::TTransform& Transform);				//	texture matrix transform
 	void					SceneReset();														//	reset scene
@@ -285,6 +286,10 @@ void Opengl::SetClearColour(const TColour& Colour)
 void Opengl::SetLineWidth(float Width)
 {
 	static float g_SceneLineWidth = 1.f;
+	
+	//	opengl min is... I don't know, but it's more than zero...
+	if ( Width < 1.f )
+		Width = 1.f;
 	
 	if ( g_SceneLineWidth != Width )
 	{

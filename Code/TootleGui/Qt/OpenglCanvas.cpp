@@ -25,7 +25,7 @@ bool Qt::TOpenglCanvas::Initialise(TLGui::TWindow& Parent)
 
 	//	catch mouse move's (this can be captured by parent)
 	setMouseTracking( true );
-	
+
 	return TLGui::TOpenglCanvas::Initialise( Parent );
 }
 
@@ -35,7 +35,7 @@ bool Qt::TOpenglCanvas::Initialise(TLGui::TWindow& Parent)
 //------------------------------------------------------
 Bool Qt::TOpenglCanvas::BeginRender()
 {
-	QGLWidget::makeCurrent();
+	MakeCurrent();
 	
 	return TRUE;
 }

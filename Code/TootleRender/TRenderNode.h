@@ -218,10 +218,10 @@ public:
 
 	//	overloaded render routine for generic stuff. if this returns TRUE then continue with default RenderNode rendering - 
 	//	if FALSE presumed we are doing psuedo rendering ourselves (creating RenderNodes and rendering them to the render target)
-	virtual Bool							Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList);	//	pre-draw routine for a render object
+	DEPRECATED virtual Bool					Draw(TRenderTarget* pRenderTarget,TRenderNode* pParent,TPtrArray<TRenderNode>& PostRenderList);	//	pre-draw routine for a render object
 
-	const TLRaster::TRasterData*			Render(TArray<TLRaster::TRasterData>& MeshRasterData,TArray<TLRaster::TRasterSpriteData>& SpriteRasterData,const TColour& SceneColour);	//	Render function. Make up RasterData's and add them to the list. Return a pointer to the main raster data created if applicable
-	void									Debug_Render(TArray<TLRaster::TRasterData>& MeshRenderData,TArray<TLRaster::TRasterSpriteData>& RasterSpriteData,const TLRaster::TRasterData* pMainRaster,TPtrArray<TLAsset::TMesh>& TemporaryMeshes);	//	render debug raster data
+	virtual const TLRaster::TRasterData*	Render(TArray<TLRaster::TRasterData>& MeshRasterData,TArray<TLRaster::TRasterSpriteData>& SpriteRasterData,const TColour& SceneColour);	//	Render function. Make up RasterData's and add them to the list. Return a pointer to the main raster data created if applicable
+	virtual void							Debug_Render(TArray<TLRaster::TRasterData>& MeshRenderData,TArray<TLRaster::TRasterSpriteData>& RasterSpriteData,const TLRaster::TRasterData* pMainRaster,TPtrArray<TLAsset::TMesh>& TemporaryMeshes);	//	render debug raster data
 
 	virtual void							PreDrawChildren(TLRender::TRenderTarget& RenderTarget,TLMaths::TTransform& SceneTransform)	{}	//	only called if we HAVE children
 	virtual void							PostDrawChildren(TLRender::TRenderTarget& RenderTarget)										{}	//	only called if we HAVE children

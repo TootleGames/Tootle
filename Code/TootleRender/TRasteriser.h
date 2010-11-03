@@ -11,7 +11,7 @@
 #include <TootleAsset/TTexture.h>
 #include <TootleRender/TEffect.h>
 
-
+#define MAX_VERTEX_ELEMENTS		5	//	this can just be any arbritry number
 
 namespace TLRender
 {
@@ -29,17 +29,16 @@ namespace TLRaster
 	class TMaterial;			//	runtime material data
 	class TVertexElement;		//	runtime vertex reference
 	
+#define TVertexElementType_Position	TRef_Static3(P,o,s)
+#define TVertexElementType_Normal	TRef_Static4(N,o,r,m)
+#define TVertexElementType_Colour	TRef_Static3(C,o,l)
+#define TVertexElementType_TexCoord	TRef_Static3(U,V,ZERO)
 	namespace TVertexElementType
 	{
-		enum Type
-		{
-			Position,
-			Normal,
-			Colour,
-			TexCoord,
-			
-			_Max,
-		};
+		static const TRef	Position	= TVertexElementType_Position;
+		static const TRef	Normal		= TVertexElementType_Normal;
+		static const TRef	Colour		= TVertexElementType_Colour;
+		static const TRef	TexCoord	= TVertexElementType_TexCoord;
 	}
 	
 	enum TColourMode
@@ -77,7 +76,7 @@ public:
 
 	void						Init();				//	initialise to default setup
 
-	bool						HasAlpha() const	{	return (m_BlendMode != TBlendMode::Opaque) || m_Colour.IsTransparent() || (m_pTexture && m_pTexture->HasAlphaChannel());	}
+	bool						HasAlpha() const	{	return (m_BlendMode != TBlendMode::Opaque) || m_Colour.IsTransparent();	}
 
 	FORCEINLINE bool			operator<(const TMaterial& That) const
 	{
@@ -88,8 +87,8 @@ public:
 			return false;
 
 		//	sort by texture first
-		if ( m_pTexture != That.m_pTexture )
-			return m_pTexture < That.m_pTexture;
+		if ( m_Texture != That.m_Texture )
+			return m_Texture < That.m_Texture;
 
 		//	equal materials
 		return false;
@@ -98,7 +97,7 @@ public:
 	FORCEINLINE bool			operator==(const TMaterial& That) const
 	{
 		return ( m_BlendMode == That.m_BlendMode &&
-				m_pTexture == That.m_pTexture &&
+				m_Texture == That.m_Texture &&
 				m_Colour == That.m_Colour &&
 				m_PointSize == That.m_PointSize &&
 				m_LineWidth == That.m_LineWidth );
@@ -107,14 +106,14 @@ public:
 	FORCEINLINE bool			operator!=(const TMaterial& That) const
 	{
 		return ( m_BlendMode != That.m_BlendMode ||
-				m_pTexture != That.m_pTexture ||
+				m_Texture != That.m_Texture ||
 				m_Colour != That.m_Colour ||
 				m_PointSize != That.m_PointSize ||
 				m_LineWidth != That.m_LineWidth );
 	}
 	
 public:
-	const TLAsset::TTexture*	m_pTexture;		//	texture
+	TRef						m_Texture;		//	texture
 	TColour						m_Colour;		//	accumulated scene colour (usually)
 	TBlendMode::Type			m_BlendMode;	//	blend mode
 	float						m_PointSize;	//	pixel-size of points on the mesh
@@ -132,9 +131,9 @@ public:
 	bool							IsValid() const			{	return m_pData.m_void!=NULL;	}
 	void							SetInvalid()			{	m_pData.m_void = NULL;	}
 
-//	bool							Set(const TLAsset::TVertexDef& VertexDef,const u8* pVertexData,TLVertexElement::Type Element) const;	//	set up data from a vertex definition
-	template<typename TYPE> void	Set(const TArray<TYPE>* pData,TVertexElementType::Type ElementType);	//	old style mesh usage
-	template<typename TYPE> void	Set(const TArray<TYPE>& Data,TVertexElementType::Type ElementType)		{	Set( &Data, ElementType );	}
+	void							Set(const TLStruct::TMember& Member,const u8* pVertexData);
+	template<typename TYPE> void	Set(const TArray<TYPE>* pData,TRefRef ElementType);		//	old style mesh usage
+	template<typename TYPE> void	Set(const TArray<TYPE>& Data,TRefRef ElementType)		{	Set( &Data, ElementType );	}
 
 public:
 	union
@@ -151,10 +150,13 @@ public:
 		TColour32 const*	m_TColour32;		
 		TColour const*		m_TColour;		
 	} m_pData;						//	pointer to the data in acceptable pod formats
-	
+
+	TLStruct::TMember		m_Member;		//	data mapping to the data pointer for this element
+	/*
 	TVertexElementType::Type	m_ElementType;	//	type of element - position, normal etc
 	u8							m_Stride;		//	gap between element-end and next element start
 	TRef						m_DataType;		//	type, eg. float3
+	 */
 };
 
 
@@ -162,13 +164,52 @@ public:
 //	old style mesh usage
 //----------------------------------------------------------------------------//
 template<typename TYPE>
-void TLRaster::TVertexElement::Set(const TArray<TYPE>* pData,TVertexElementType::Type ElementType)
+void TLRaster::TVertexElement::Set(const TArray<TYPE>* pData,TRefRef ElementType)
 {
 	m_pData.m_void = (pData && pData->GetSize()) ? pData->GetData() : NULL;
-	m_ElementType = ElementType;
-	m_Stride = 0;
-	m_DataType = TLBinary::GetDataTypeRef<TYPE>();
+
+	m_Member.m_Ref = ElementType;
+	m_Member.m_Type = TLBinary::GetDataTypeRef<TYPE>();
+	m_Member.m_Offset = 0;
+	m_Member.m_Stride = 0;
 }
+
+
+//-----------------------------------------------------------
+//	not a proper TInPlaceArray but similar, more like... InPlaceArrayData ?
+//-----------------------------------------------------------
+template<typename TYPE>
+class TArrayInPlace
+{
+public:
+	TArrayInPlace() :
+		m_pData	( NULL ),
+		m_Size	( 0 )
+	{
+	}
+	TArrayInPlace(const TYPE* pData,u32 Size) :
+		m_pData	( pData ),
+		m_Size	( Size )
+	{
+	}
+	TArrayInPlace(const TArray<TYPE>& Array) :
+		m_pData	( Array.GetData() ),
+		m_Size	( Array.GetSize() )
+	{
+	}
+	TArrayInPlace(const TArray<TYPE>* pArray) :
+		m_pData	( pArray ? pArray->GetData() : NULL ),
+		m_Size	( pArray ? pArray->GetSize() : 0 )
+	{
+	}
+	
+	inline TInPlaceArray<TYPE>	GetArray() const	{	return TInPlaceArray<TYPE>( m_pData, m_Size );	}
+	inline operator				bool() const		{	return (m_pData != NULL);	}
+	
+public:
+	const TYPE*	m_pData;
+	u32			m_Size;
+};
 
 
 //----------------------------------------------------------------------------//
@@ -199,12 +240,13 @@ public:
 	void		SetMaterial(const TMaterial& Material);			//	set material
 	void		SetWireframe(bool ResetColour=true);			//	setup raster data to render wireframe data
 	void		SetDebug();										//	setup raster data as debug data
-//	void		Set(const TLAsset::TVertexDef& VertexDefinition,const u8* pVertexData,u32 ElementMask=0xffffffff);	//	setup geometry from a vertex definition
+	void		Set(const TLStruct::TDef& VertexDefinition,const u8* pVertexData,u32 ElementMask=0xffffffff);	//	setup geometry from a vertex definition
 	void		Set(const TLAsset::TMesh& Mesh,TColourMode DesiredColourType);	//	setup geometry info from mesh
 	void		SetDepthRead(bool DepthRead)					{	DepthRead ? m_Flags.Clear(Flags::NoDepthRead) : m_Flags.Set(Flags::NoDepthRead);	}
 	void		SetTransformNone()								{	m_Transform.SetInvalid();	}
 	void		SetTransform(const TLMaths::TTransform& Transform)	{	m_Transform = Transform;	}
 	
+	u16									GetVertexCount() const		{	return m_VertexCount;	}
 	TInPlaceArray<TVertexElement>		GetVertexElements()			{	return TInPlaceArray<TVertexElement>( m_VertexElements, sizeofarray(m_VertexElements), &m_VertexElementCount );	}
 	const TInPlaceArray<TVertexElement>	GetVertexElements() const	{	return TInPlaceArray<TVertexElement>( m_VertexElements, sizeofarray(m_VertexElements), &m_VertexElementCount );	}
 	
@@ -228,15 +270,15 @@ public:
 
 	//	vertex data
 	u32								m_VertexCount;
-	TVertexElement					m_VertexElements[TLRaster::TVertexElementType::_Max];	
+	TVertexElement					m_VertexElements[MAX_VERTEX_ELEMENTS];	
 	u32								m_VertexElementCount;
 
 	//	primitive data
-	const TArray<TLAsset::TMesh::Triangle>*		m_pTriangles;
-	const TArray<TLAsset::TMesh::Tristrip>*		m_pTristrips;
-	const TArray<TLAsset::TMesh::Trifan>*		m_pTrifans;
-	const TArray<TLAsset::TMesh::Line>*			m_pLines;
-	const TArray<TLAsset::TMesh::Linestrip>*	m_pLinestrips;
+	TArrayInPlace<TLAsset::TMesh::Triangle>		m_pTriangles;
+	TArrayInPlace<TLAsset::TMesh::Tristrip>		m_pTristrips;
+	TArrayInPlace<TLAsset::TMesh::Trifan>		m_pTrifans;
+	TArrayInPlace<TLAsset::TMesh::Line>			m_pLines;
+	TArrayInPlace<TLAsset::TMesh::Linestrip>	m_pLinestrips;
 };
 
 
@@ -253,6 +295,8 @@ public:
 class TLRaster::TRasterSpriteData
 {
 public:
+	FORCEINLINE void		Init()											{	m_Material.Init();	m_Sprite.SetDefault();	}	//	initialise to a default sprite, 0..1 w/h and full texture mapping
+	FORCEINLINE u16			GetVertexCount() const							{	return m_Sprite.GetVertexCount();	}
 	inline bool				operator<(const TRasterSpriteData& That) const	{	return m_Material < That.m_Material;	}
 	FORCEINLINE bool		operator==(const TRasterSpriteData& That) const	{	return this == &That;	}	//	gr: don't think a proper contents check is required...
 

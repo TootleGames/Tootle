@@ -9,22 +9,26 @@
 TEST(TLStructArray_PlainTest)
 {
 	TStructArray a;
+
 	u8 u = 128;
 	u8 u2 = 129;
 	float f = 1234.56f;
 	float f2 = 99.99f;
-	
+
 	//	should be empty
 	CHECK( a.GetSize() == 0 );
 
 	//	simple u8 and float test
 	CHECK( a.AddMember<u8>("u8") );
+	CHECK( a.GetSize() == 0 );
+
 	TStructArray::TStruct* pStruct0 = a.Add("u8",u);
 	CHECK( pStruct0 != NULL );
 	CHECK( a.GetSize() == 1 );
 	CHECK( a.GetElement<u8>("u8",0u) == u );
 	CHECK( a.GetElement<u8>("u8",pStruct0) == u );
 
+	
 	//	add another member
 	CHECK( a.AddMember<float>("float") );	
 	pStruct0 = NULL;	//	now invalid!
@@ -38,45 +42,60 @@ TEST(TLStructArray_PlainTest)
 
 	//	add another float
 	TStructArray::TStruct* pStruct1 = a.Add("float",f2);
+	CHECK( a.GetSize() == 2 );
 	CHECK( a.GetElement<u8>("u8",1) == TLMemory::Debug_AllocPattern );
 	CHECK( pStruct1 );
 	CHECK( a.GetElement<float>("float",1) == a.GetElement<float>("float",pStruct1) );
-	CHECK( a.GetElement<u8>("u8",1) == a.GetElement<float>("u8",pStruct1) );
+	CHECK( a.GetElement<u8>("u8",1) == a.GetElement<u8>("u8",pStruct1) );
 	a.GetElement<u8>("u8",1) = u2;
 	CHECK( a.GetElement<u8>("u8",1) == u2 );
+
 }
 
+
+class TestStruct
+{
+public:
+	TestStruct()						{}
+	TestStruct(u16 a,float b,TRef c) :
+		m_16	( a ),
+		m_f		( b ),
+		m_Ref	( c )
+	{
+	}		
+	
+public:
+	u16		m_16;
+	float	m_f;
+	TRef	m_Ref;
+};
 
 
 TEST(TLStructArray_StructTest)
 {
-	class TestStruct
-	{
-	public:
-		TestStruct()						{}
-		TestStruct(u16 a,float b,TRef c) :
-			m_16	( a ),
-			m_f		( b ),
-			m_Ref	( c )
-		{
-		}		
-
-	public:
-		u16		m_16;
-		float	m_f;
-		TRef	m_Ref;
-	};
-
 	TStructArray a;
+	TestStruct aTestStruct;
 
 	//	should be empty
 	CHECK( a.GetSize() == 0 );
-	
+	CHECK( a.GetDefinition().GetStructSize() == 0 );
+/*
 	//	add members
-//	a.AddMember( TRef("m_16"), &TestStruct::m_16 );
-//	a.AddMember( "m_f", TestStruct::m_f );
-//	a.AddMember( "m_Ref", TestStruct::m_Ref );
+	a.AddMember( "m_u16", &TestStruct::m_16 );
+	CHECK( a.GetDefinition().GetStructSize() == sizeof(TestStruct) );
+	CHECK( a.GetDefinition().GetMember("m_u16")->m_Offset == 0 );
+	CHECK( a.GetDefinition().GetMember("m_u16")->GetTypeSize() == sizeof(aTestStruct.m_16) );
+	
+	a.AddMember( "m_f", &TestStruct::m_f );
+	CHECK( a.GetDefinition().GetStructSize() == sizeof(TestStruct) );
+	CHECK( a.GetDefinition().GetMember("m_f")->m_Offset == sizeof(aTestStruct.m_16) );
+	CHECK( a.GetDefinition().GetMember("m_f")->GetTypeSize() == sizeof(aTestStruct.m_f) );
 
+	a.AddMember( "m_Ref", &TestStruct::m_Ref );
+	CHECK( a.GetDefinition().GetStructSize() == sizeof(TestStruct) );
+	CHECK( a.GetDefinition().GetMember("m_Ref")->m_Offset == sizeof(aTestStruct.m_16) + sizeof(aTestStruct.m_f) );
+	CHECK( a.GetDefinition().GetMember("m_Ref")->GetTypeSize() == sizeof(aTestStruct.m_Ref) );
+*/
 	//	should be empty
 	CHECK( a.GetSize() == 0 );
 
@@ -271,8 +290,12 @@ bool TLStruct::TDef::RemoveVertex(u32 VertexIndex,const TArray<u8>& VertexData)
 //----------------------------------------------------------------------------//
 u32 TLStruct::TDef::GetStructCount(const TStructData& StructData,u32 StructSize)
 {
+	//	don't mod zero!
+	if ( StructSize == 0 )
+		return 0;
+
 	u32 DataSize = StructData.GetSize();
-	
+
 #if defined(TLSTRUCT_CHECK_ALIGNMENT)
 	if ( DataSize % StructSize != 0 )
 	{
@@ -280,8 +303,8 @@ u32 TLStruct::TDef::GetStructCount(const TStructData& StructData,u32 StructSize)
 		return 0;
 	}
 #endif
-	
-	return (StructSize==0) ? 0 : DataSize / StructSize;
+
+	return DataSize / StructSize;
 }
 
 
@@ -314,14 +337,17 @@ void TStructArray::ReAlignData(const TLStruct::TMember& NewMember)
 		TLDebug_Break( Debug_String );
 		return;
 	}
+	
+	//	little buffer to make the inserting easier
+	TFixedArray<u8,32> InsertBuffer( MemberSize, TLMemory::Debug_AllocPattern );
 
 	//	re-align data to fit in gap by pushing in the space for our new element for each vertex
 	//	we go backwards so it's easy to calculate the offset
-	s32 StructDataIndex = OldStructSize * (StructCount-1) + NewMember.m_Offset;	//	index = data start of a struct + element offset
+	s32 StructDataIndex = OldStructSize * (StructCount-1);	//	index = data start of a struct
 	for ( ;	StructDataIndex>=0;	StructDataIndex-=OldStructSize )
 	{
 		//m_Data.ShiftArray( StructDataIndex, MemberSize );
-		m_Data.InsertAt( StructDataIndex, TLMemory::Debug_AllocPattern, MemberSize );
+		m_Data.InsertAt( StructDataIndex + NewMember.m_Offset, InsertBuffer );
 	}
 }
 
@@ -345,7 +371,7 @@ bool TStructArray::AddMember(TRefRef Member,TRefRef Type)
 //----------------------------------------------------------------------------//
 //	add member to definition
 //----------------------------------------------------------------------------//
-TLStruct::TMember* TLStruct::TDef::AddMember(const TLStruct::TMember& Member)
+TLStruct::TMember* TLStruct::TDef::AddMember(const TLStruct::TMember& Member,bool AdjustStrides)
 {
 	//	check a member with this ref doesn't already exist
 	if ( HasMember( Member.m_Ref ) )
@@ -366,11 +392,16 @@ TLStruct::TMember* TLStruct::TDef::AddMember(const TLStruct::TMember& Member)
 		return NULL;
 	}
 
-	//	update the stride on all the other elements
-	for ( u32 e=0;	e<m_Members.GetSize();	e++ )
+	//	we don't want to adjust strides when based on a struct... maybe can calculate this?
+	//	or just recalculate strides...
+	if ( AdjustStrides )
 	{
-		TLStruct::TMember& OtherMember = m_Members.GetItemAt(e);
-		OtherMember.m_Stride += TypeSize;
+		//	update the stride on all the other elements
+		for ( u32 e=0;	e<m_Members.GetSize();	e++ )
+		{
+			TLStruct::TMember& OtherMember = m_Members.GetItemAt(e);
+			OtherMember.m_Stride += TypeSize;
+		}
 	}
 
 	//	now add in this new info for completeness
@@ -398,7 +429,7 @@ TLStruct::TMember* TLStruct::TDef::AddMember(TRefRef Member,TRefRef Type)
 	NewMember.m_Type = Type;
 	NewMember.m_Stride = GetStructSize();		//	the stride is the rest of the struct (maybe we can get rid of this)
 
-	return AddMember( NewMember );
+	return AddMember( NewMember, true );
 }
 
 
@@ -426,7 +457,7 @@ const TStructArray::TStruct* TStructArray::GetStructAtDataIndex(u32 DataIndex) c
 	u32 StructSize = m_Definition.GetStructSize();
 	if ( StructSize == 0 )
 		return NULL;
-
+	
 #if defined(DEBUG_CHECK_INDEXES)
 	if ( DataIndex % StructSize != 0 )
 	{
@@ -435,9 +466,8 @@ const TStructArray::TStruct* TStructArray::GetStructAtDataIndex(u32 DataIndex) c
 	}
 #endif
 	
-	return &m_Data[ DataIndex / StructSize ];	
+	return &m_Data[ DataIndex ];	
 }
-
 
 const void* TStructArray::GetElement(const TLStruct::TMember* pMember,const TStructArray::TStruct* pStruct,TRefRef ExpectedType) const
 {

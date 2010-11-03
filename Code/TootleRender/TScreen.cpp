@@ -53,13 +53,14 @@ SyncBool TLRender::TScreen::Init()
 	WindowDimensions.zw() = m_pWindow->GetSize();
 	GetCenteredSize( WindowDimensions );
 	m_pWindow->SetPosition( WindowDimensions.xy() );
-	
+
 	//	create opengl canvas
 	m_pCanvas = TLGui::CreateOpenglCanvas( *m_pWindow, GetRef() );
 	if ( !m_pCanvas )
 		return SyncFalse;
 	
 	//	create rasteriser to go with the canvas
+	m_pCanvas->MakeCurrent();
 	m_pRasteriser = new TLRaster::OpenglRasteriser();
 	if ( !m_pRasteriser || !m_pRasteriser->Initialise() )
 	{

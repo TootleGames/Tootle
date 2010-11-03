@@ -82,9 +82,9 @@ public:
 	FORCEINLINE TYPE&		ElementRandom()							{	return ElementAt( GetRandomIndex() );	}
 	FORCEINLINE const TYPE&	ElementRandomConst() const				{	return ElementAtConst( GetRandomIndex() );	}
 
-	s32						Add(const TYPE& val,u32 Count=1);		//	add an element onto the end of the list
+	s32						Add(const TYPE& val,u32 Count=1);		//	add an element onto the end of the list. returns index of FIRST element added
 	FORCEINLINE s32			AddUnique(const TYPE& val)				{	s32 Index = FindIndex( val );	return (Index == -1) ? Add( val ) : Index;	}
-	s32						Add(const TYPE* pData,u32 Length=1);	//	add a number of elements onto the end of the list
+	s32						Add(const TYPE* pData,u32 Length=1);	//	add a number of elements onto the end of the list. returns index of FIRST element added
 	template<class ARRAYTYPE>
 	s32						Add(const TArray<ARRAYTYPE>& Array);	//	add a whole array of this type onto the end of the list
 //	template<> s32			Add(const TArrayType& Array)			{	return Add( Array.GetData(), Array.GetSize() );	}
@@ -176,14 +176,14 @@ private:
 	typedef TArray<TYPE> TSuper;
 	typedef TInPlaceArray<TYPE,STORAGETYPE,SORTPOLICY> TThis;
 public:
-	TInPlaceArray(TYPE* pData,STORAGETYPE DataSize,STORAGETYPE* pSizeCounter) :
+	TInPlaceArray(TYPE* pData,STORAGETYPE DataSize,STORAGETYPE* pSizeCounter=NULL) :
 		m_pData		( pData ),
 		m_DataSize	( DataSize ),
 		m_pSize		( pSizeCounter )
 	{
 	}
 	//	gr: not worked out how to return a const TInplaceArray yet
-	TInPlaceArray(const TYPE* pData,STORAGETYPE DataSize,const STORAGETYPE* pSizeCounter) :
+	TInPlaceArray(const TYPE* pData,STORAGETYPE DataSize,const STORAGETYPE* pSizeCounter=NULL) :
 		m_pData		( const_cast<TYPE*>(pData) ),
 		m_DataSize	( DataSize ),
 		m_pSize		( const_cast<STORAGETYPE*>(pSizeCounter) )

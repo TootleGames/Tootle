@@ -35,6 +35,7 @@ public:
 	virtual Bool		BeginRender();
 	virtual void		EndRender();
 	virtual Type2<u16>	GetSize() const					{	return m_Size;	}	//	canvas(renderable area) size
+	virtual bool		MakeCurrent()					{	QGLWidget::makeCurrent();	return true;	}	//	make this canvas' context 
 
 	//	widget virtual
 	//	The initialization of OpenGL rendering state, etc. should be done by overriding the initializeGL() function, rather than in the constructor of your QGLWidget subclass.

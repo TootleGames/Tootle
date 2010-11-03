@@ -16,6 +16,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		BF1160451261FDEE007B4B82 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF1160411261FDEE007B4B82 /* TootleRender.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8418EE6B0F4DAB0400B956C9;
+			remoteInfo = TootleRender;
+		};
 		BF1C6D0B12394BBB00E5DA71 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BF1C6D0712394BBB00E5DA71 /* TootleCore.xcodeproj */;
@@ -27,6 +34,7 @@
 
 /* Begin PBXFileReference section */
 		8418EE6B0F4DAB0400B956C9 /* libTootleOpenglRasteriser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleOpenglRasteriser.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF1160411261FDEE007B4B82 /* TootleRender.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TootleRender.xcodeproj; path = ../../TootleRender/Mac/TootleRender.xcodeproj; sourceTree = SOURCE_ROOT; };
 		BF1C6CCD1239488C00E5DA71 /* OpenglRasteriser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenglRasteriser.h; path = ../OpenglRasteriser.h; sourceTree = SOURCE_ROOT; };
 		BF1C6CCE1239488C00E5DA71 /* TLOpengl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLOpengl.h; path = ../TLOpengl.h; sourceTree = SOURCE_ROOT; };
 		BF1C6CCF1239488C00E5DA71 /* TLOpengl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLOpengl.cpp; path = ../TLOpengl.cpp; sourceTree = SOURCE_ROOT; };
@@ -63,6 +71,7 @@
 		8418ECF60F4DA63E00B956C9 = {
 			isa = PBXGroup;
 			children = (
+				BF1160411261FDEE007B4B82 /* TootleRender.xcodeproj */,
 				BF1C6D0712394BBB00E5DA71 /* TootleCore.xcodeproj */,
 				8418EF630F4DAD0A00B956C9 /* Build Configurations */,
 				8418EF620F4DAD0300B956C9 /* SourceCode */,
@@ -143,6 +152,14 @@
 			name = IPod;
 			sourceTree = "<group>";
 		};
+		BF1160421261FDEE007B4B82 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BF1160461261FDEE007B4B82 /* libTootleRender.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		BF1C6D0812394BBB00E5DA71 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -200,6 +217,10 @@
 					ProductGroup = BF1C6D0812394BBB00E5DA71 /* Products */;
 					ProjectRef = BF1C6D0712394BBB00E5DA71 /* TootleCore.xcodeproj */;
 				},
+				{
+					ProductGroup = BF1160421261FDEE007B4B82 /* Products */;
+					ProjectRef = BF1160411261FDEE007B4B82 /* TootleRender.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -209,6 +230,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		BF1160461261FDEE007B4B82 /* libTootleRender.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libTootleRender.a;
+			remoteRef = BF1160451261FDEE007B4B82 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		BF1C6D0C12394BBB00E5DA71 /* libTootleCore.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;

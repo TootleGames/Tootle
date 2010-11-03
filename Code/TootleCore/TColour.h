@@ -352,13 +352,28 @@ FORCEINLINE TColour64& TColour64::operator=(const TColour64& Colour)		{	m_Rgba.S
 
 
 
-#define TLBinary_TypeRef_TColour				TRef_Static4(C,o,l,f)
-#define TLBinary_TypeRef_TColour24				TRef_Static5(C,o,l,TWO,FOUR)
-#define TLBinary_TypeRef_TColour32				TRef_Static5(C,o,l,THREE,TWO)
-#define TLBinary_TypeRef_TColour64				TRef_Static5(C,o,l,SIX,FOUR)
+#define TLBinary_TypeRef_TColour			TRef_Static4(C,o,l,f)
+#define TLBinary_TypeRef_Type2_TColour		TRef_Static(C,o,l,f,TWO)
+#define TLBinary_TypeRef_Type3_TColour		TRef_Static(C,o,l,f,THREE)
+#define TLBinary_TypeRef_Type4_TColour		TRef_Static(C,o,l,f,FOUR)
+TLBinary_DeclareDataTypeRefAll( TColour );
 
-TLBinary_DeclareDataTypeRef( TColour );
-TLBinary_DeclareDataTypeRef( TColour24 );
-TLBinary_DeclareDataTypeRef( TColour32 );
-TLBinary_DeclareDataTypeRef( TColour64 );
+#define TLBinary_TypeRef_TColour24				TRef_Static5(C,o,l,TWO,FOUR)
+#define TLBinary_TypeRef_Type2_TColour24		TRef_Static(C,l,TWO,FOUR,TWO)
+#define TLBinary_TypeRef_Type3_TColour24		TRef_Static(C,l,TWO,FOUR,THREE)
+#define TLBinary_TypeRef_Type4_TColour24		TRef_Static(C,l,TWO,FOUR,FOUR)
+TLBinary_DeclareDataTypeRefAll( TColour24 );
+
+
+#define TLBinary_TypeRef_TColour32				TRef_Static5(C,o,l,THREE,TWO)
+#define TLBinary_TypeRef_Type2_TColour32		TRef_Static(C,l,THREE,TWO,TWO)
+#define TLBinary_TypeRef_Type3_TColour32		TRef_Static(C,l,THREE,TWO,THREE)
+#define TLBinary_TypeRef_Type4_TColour32		TRef_Static(C,l,THREE,TWO,FOUR)
+TLBinary_DeclareDataTypeRefAll( TColour32 );
+
+#define TLBinary_TypeRef_TColour64				TRef_Static5(C,o,l,SIX,FOUR)
+#define TLBinary_TypeRef_Type2_TColour64		TRef_Static(C,l,SIX,FOUR,TWO)
+#define TLBinary_TypeRef_Type3_TColour64		TRef_Static(C,l,SIX,FOUR,THREE)
+#define TLBinary_TypeRef_Type4_TColour64		TRef_Static(C,l,SIX,FOUR,FOUR)
+TLBinary_DeclareDataTypeRefAll( TColour64 );
 

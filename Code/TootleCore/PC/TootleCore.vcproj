@@ -977,6 +977,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TLBinary.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TLCore.cpp"
 			>
 		</File>
@@ -1101,6 +1105,18 @@
 			>
 		</File>
 		<File
+			RelativePath="..\TSmallObject.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TSmallObjectAllocator.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TSmallObjectAllocator.h"
+			>
+		</File>
+		<File
 			RelativePath="..\TStateMachine.cpp"
 			>
 		</File>
@@ -1114,6 +1130,14 @@
 		</File>
 		<File
 			RelativePath="..\TString.h"
+			>
+		</File>
+		<File
+			RelativePath="..\TStructArray.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\TStructArray.h"
 			>
 		</File>
 		<File

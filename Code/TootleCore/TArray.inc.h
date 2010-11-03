@@ -33,7 +33,7 @@ s32 TArray<TYPE>::Add(const TYPE& val,u32 Count)
 	//	update sort policy
 	GetSortPolicy().OnAdded( *this, NewIndex, Count );
 
-	return GetLastIndex();
+	return NewIndex;
 }
 
 

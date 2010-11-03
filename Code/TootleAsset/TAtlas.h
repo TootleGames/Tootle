@@ -9,6 +9,8 @@
 #include "TAsset.h"
 #include <TootleCore/TKeyArray.h>
 #include <TootleMaths/TBox.h>
+#include <TootleCore/TStructArray.h>
+#include <TootleCore/TTransform.h>
 
 
 namespace TLAsset
@@ -18,15 +20,36 @@ namespace TLAsset
 	//	todo: merge these
 	class TAtlasGlyph;
 	class TSpriteGlyph;	
+	class TSpriteVertex;
+};
+
+
+class TLAsset::TSpriteVertex
+{
+private:
+	static TLStruct::TDef			GetInitVertexDef();	//	generate vertex definition
+public:
+	static const TLStruct::TDef&	GetVertexDef()		{	static TLStruct::TDef g_Def = GetInitVertexDef();	return g_Def;	}
+	
+public:
+	float3	m_Position;
+	float2	m_TexCoord;
 };
 
 
 class TLAsset::TSpriteGlyph
 {
 public:
+	FORCEINLINE u16			GetVertexCount() const		{	return 4;	}
+
+	FORCEINLINE void		SetDefault();				//	setup default sprite, 0..1 in w/h/u/v
+	FORCEINLINE void		Transform(const TLMaths::TTransform& Transform);
 	
+public:
+	TSpriteVertex			m_Vertexes[4];
 };
 
+TLCore_DeclareIsDataType( TLAsset::TSpriteGlyph );
 
 
 class TLAsset::TAtlasGlyph
@@ -56,6 +79,8 @@ public:
 	
 	//	gr: change this to an origin point (for lead-in) and some spacing w/h
 	TLMaths::TBox2D			m_SpacingBox;	//	size of the glyph irrelavant of geometry - lead in/leadout/offset etc
+	
+	TSpriteGlyph			m_Sprite;		//	
 };
 
 TLCore_DeclareIsDataType( TLAsset::TAtlasGlyph );
@@ -87,4 +112,39 @@ protected:
 	TKeyArray<u16,TAtlasGlyph>	m_Glyphs;			//	key array to glyph info
 	TRef						m_TextureRef;		//	originally assigned texture - assume the texture map only works with the one texture
 };
+
+
+
+
+//---------------------------------------------------
+//	setup default sprite, 0..1 in w/h/u/v
+//---------------------------------------------------
+void TLAsset::TSpriteGlyph::SetDefault()
+{
+	//	todo: memcpy this from some default
+	
+	m_Vertexes[0].m_Position = float3( 0.f, 0.f, 0.f );
+	m_Vertexes[0].m_TexCoord = float2( 0.f, 0.f );
+	
+	m_Vertexes[1].m_Position = float3( 1.f, 0.f, 0.f );
+	m_Vertexes[1].m_TexCoord = float2( 1.f, 0.f );
+	
+	m_Vertexes[2].m_Position = float3( 1.f, 1.f, 0.f );
+	m_Vertexes[2].m_TexCoord = float2( 1.f, 1.f );
+	
+	m_Vertexes[3].m_Position = float3( 0.f, 1.f, 0.f );
+	m_Vertexes[3].m_TexCoord = float2( 0.f, 1.f );
+}
+
+
+void TLAsset::TSpriteGlyph::Transform(const TLMaths::TTransform& Transform)
+{
+	if ( Transform.HasAnyTransform() )
+	{
+		Transform.Transform( m_Vertexes[0].m_Position );
+		Transform.Transform( m_Vertexes[1].m_Position );
+		Transform.Transform( m_Vertexes[2].m_Position );
+		Transform.Transform( m_Vertexes[3].m_Position );
+	}
+}
 

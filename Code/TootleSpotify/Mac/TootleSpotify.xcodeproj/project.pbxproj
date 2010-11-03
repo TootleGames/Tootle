@@ -1,0 +1,203 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BF43DD2612494674006A17E9 /* TLSpotify.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF43DD2412494674006A17E9 /* TLSpotify.cpp */; };
+		BF43DD2712494674006A17E9 /* TLSpotify.h in Headers */ = {isa = PBXBuildFile; fileRef = BF43DD2512494674006A17E9 /* TLSpotify.h */; };
+		BF43DD2912494CA9006A17E9 /* libspotify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF43DD2812494CA9006A17E9 /* libspotify.framework */; };
+		BF6FBAB41177393C00490A7B /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6FBAB31177393C00490A7B /* CoreFoundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		8418EE7C0F4DAB1500B956C9 /* libTootleSpotify.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTootleSpotify.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF43DD2412494674006A17E9 /* TLSpotify.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLSpotify.cpp; path = ../TLSpotify.cpp; sourceTree = SOURCE_ROOT; };
+		BF43DD2512494674006A17E9 /* TLSpotify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLSpotify.h; path = ../TLSpotify.h; sourceTree = SOURCE_ROOT; };
+		BF43DD2812494CA9006A17E9 /* libspotify.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libspotify.framework; path = /Users/graham/Tootle/Tootle/Code/TootleSpotify/LibSpotify/libspotify.framework; sourceTree = "<absolute>"; };
+		BF6FBAB31177393C00490A7B /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
+		BFC7A3991155686B00FFFC81 /* LibRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibRelease.xcconfig; path = ../../BuildConfigurations/Mac/LibRelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		BFC7A39B1155686B00FFFC81 /* LibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = LibDebug.xcconfig; path = ../../BuildConfigurations/Mac/LibDebug.xcconfig; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8418EE7A0F4DAB1500B956C9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF6FBAB41177393C00490A7B /* CoreFoundation.framework in Frameworks */,
+				BF43DD2912494CA9006A17E9 /* libspotify.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8418ECF60F4DA63E00B956C9 = {
+			isa = PBXGroup;
+			children = (
+				8418EFD00F4DB77900B956C9 /* Build Configurations */,
+				8418EFCF0F4DB77100B956C9 /* Source Code */,
+				8418EFCE0F4DB76A00B956C9 /* Frameworks */,
+				8418ED0E0F4DA70B00B956C9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8418ED0E0F4DA70B00B956C9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8418EE7C0F4DAB1500B956C9 /* libTootleSpotify.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8418EFCE0F4DB76A00B956C9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BF6FBAB31177393C00490A7B /* CoreFoundation.framework */,
+				BF43DD2812494CA9006A17E9 /* libspotify.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8418EFCF0F4DB77100B956C9 /* Source Code */ = {
+			isa = PBXGroup;
+			children = (
+				BF43DD2412494674006A17E9 /* TLSpotify.cpp */,
+				BF43DD2512494674006A17E9 /* TLSpotify.h */,
+			);
+			name = "Source Code";
+			sourceTree = "<group>";
+		};
+		8418EFD00F4DB77900B956C9 /* Build Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				BFC7A3991155686B00FFFC81 /* LibRelease.xcconfig */,
+				BFC7A39B1155686B00FFFC81 /* LibDebug.xcconfig */,
+			);
+			name = "Build Configurations";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		8418EE780F4DAB1500B956C9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF43DD2712494674006A17E9 /* TLSpotify.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		8418EE7B0F4DAB1500B956C9 /* TootleSpotify */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8418EE810F4DAB1800B956C9 /* Build configuration list for PBXNativeTarget "TootleSpotify" */;
+			buildPhases = (
+				8418EE780F4DAB1500B956C9 /* Headers */,
+				8418EE790F4DAB1500B956C9 /* Sources */,
+				8418EE7A0F4DAB1500B956C9 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TootleSpotify;
+			productName = TootleNetwork;
+			productReference = 8418EE7C0F4DAB1500B956C9 /* libTootleSpotify.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8418ECF80F4DA63E00B956C9 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 8418ECFB0F4DA63E00B956C9 /* Build configuration list for PBXProject "TootleSpotify" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 0;
+			mainGroup = 8418ECF60F4DA63E00B956C9;
+			productRefGroup = 8418ED0E0F4DA70B00B956C9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8418EE7B0F4DAB1500B956C9 /* TootleSpotify */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8418EE790F4DAB1500B956C9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF43DD2612494674006A17E9 /* TLSpotify.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		8418ECF90F4DA63E00B956C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BFC7A39B1155686B00FFFC81 /* LibDebug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		8418ECFA0F4DA63E00B956C9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BFC7A3991155686B00FFFC81 /* LibRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		8418EE7D0F4DAB1600B956C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../LibSpotify\"",
+				);
+			};
+			name = Debug;
+		};
+		8418EE7E0F4DAB1600B956C9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../LibSpotify\"",
+				);
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8418ECFB0F4DA63E00B956C9 /* Build configuration list for PBXProject "TootleSpotify" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8418ECF90F4DA63E00B956C9 /* Debug */,
+				8418ECFA0F4DA63E00B956C9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8418EE810F4DAB1800B956C9 /* Build configuration list for PBXNativeTarget "TootleSpotify" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8418EE7D0F4DAB1600B956C9 /* Debug */,
+				8418EE7E0F4DAB1600B956C9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8418ECF80F4DA63E00B956C9 /* Project object */;
+}

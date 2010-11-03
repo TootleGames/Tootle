@@ -107,7 +107,7 @@ void TLRaster::TRasterData::SetWireframe(bool ResetColour)
 	GetVertexElements().Remove( TLVertexElement::COL64 );
 	GetVertexElements().Remove( TLVertexElement::COLF );
 	*/
-	m_Material.m_pTexture = NULL;
+	m_Material.m_Texture = TRef();
 }
 
 
@@ -120,12 +120,25 @@ void TLRaster::TRasterData::SetDebug()
 	//	later to render last, no depth etc
 }
 
-/*
+
 //----------------------------------------------------------------------------//
 //	setup geometry from a vertex definition
 //----------------------------------------------------------------------------//
-void TLRaster::TRasterData::Set(const TLAsset::TVertexDef& VertexDefinition,const u8* pVertexData,u32 ElementMask=0xffffffff)
+void TLRaster::TRasterData::Set(const TLStruct::TDef& VertexDefinition,const u8* pVertexData,u32 ElementMask)
 {
+	TInPlaceArray<TVertexElement> VertexElements = GetVertexElements();
+	
+	for ( u32 e=0;	e<VertexDefinition.GetMembers().GetSize();	e++ )
+	{
+		const TLStruct::TMember& Member = VertexDefinition.GetMembers().GetItemAt(e);
+		TVertexElement* pVertexElement = VertexElements.AddNew();
+		if ( !pVertexElement )
+			break;
+		
+		pVertexElement->Set( Member, pVertexData );
+	}
+	
+	/*
 	//	loop through elements and add
 	TArray<TVertexElement::Type>& DefElements = VertexDefinition.GetElements();
 	TInPlaceArray<TRasterVertexElements> RasterElements = GetVertexElements();
@@ -154,8 +167,9 @@ void TLRaster::TRasterData::Set(const TLAsset::TVertexDef& VertexDefinition,cons
 			continue;
 		}
 	}
+	 */
 }
-*/
+
 
 //----------------------------------------------------------------------------//
 //	setup geometry info from mesh
@@ -214,25 +228,15 @@ void TLRaster::TRasterData::Set(const TLAsset::TMesh& Mesh,TColourMode DesiredCo
 	m_pLinestrips	= Mesh.GetLinestripsNotEmpty();
 }
 
-/*
 
-bool TLRaster::TVertexElement::Set(const TLAsset::TVertexDef& VertexDef,const u8* pVertexData,TVertexElement::Type Element)
+
+void TLRaster::TVertexElement::Set(const TLStruct::TMember& Member,const u8* pVertexData)
 {
-	//	don't have this element
-	if ( !VertexDef.HasElement(Element) )
-	{
-		SetInvalid();
-		return false;
-	}
+	//	calc data offset to first element
+	m_pData.m_u8 = pVertexData + Member.m_Offset;
 
-	//	calc data offset
-	m_pData = pVertexData + VertexDef.m_Info[Element].m_Offset;
-	m_Stride = VertexDef.m_Info[Element].m_Stride;
-	m_Elements = VertexDef.m_Info[Element].m_Elements;
-	m_DataType = VertexDef.m_Info[Element].m_Type;
-	return true;
+	m_Member = Member;
 }
-*/
 
 
 //----------------------------------------------------------------------------//

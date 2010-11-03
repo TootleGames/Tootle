@@ -13,25 +13,25 @@
 	#define DEBUG_CHECK_PRIMITIVE_INDEXES	//	check indexes of all the primitives are within bound vertex range
 #endif
 
-
-//	gr: added this to check if it was the cause of a crash on iphone, but it's not. Colour format was the problem
-//#define REBIND_DATA	//	if defined then we re-bind data even if its the same pointer as was used before
-
+//	if not defined, we don't rebind texture if we don't need to
+//#define ALWAYS_REBIND_TEXTURE
 
 namespace Opengl
 {
+#if defined(ALWAYS_REBIND_TEXTURE)
 	u32							g_BoundTextureIndex = 0;						//	currently bound texture
+#endif
 	TKeyArray<TRef,u32>			g_TextureIndexes;								//	Texture Asset Ref -> gl Texture index lookup table
 
 	void				GetOpenglFilterTypes(TArray<u32>& OpenglFilters,Bool MinLinearFilter,Bool MagLinearFilter,Bool MipMapEnabled);	//	get opengl filter type from asset filter type
 	void				BindTextureIndex(u32 TextureIndex);					//	set current texture - no change if same as currently bound texture
-	void				UnbindTextureIndex(u32 TextureIndex);				//	unbind texture index if it's currently bound
+	void				UnbindTextureIndex(u32 TextureIndex)				{	BindTextureIndex(0);	}
 	u32					UploadTexture(const TLAsset::TTexture& Texture);		//	generate opengl texture ID for this asset - if a texture already has an entry it will be destroyed and re-created
 	Bool				DestroyTexture(TRefRef TextureRef);					//	destroy opengl texture by texture reference
 	Bool				DestroyTexture(u32& TextureIndex);					//	destroy opengl texture
 	u32					GetTextureIndex(TRefRef TextureRef);				//	search the texture lookup table for the correct texture ID for this asset
 	bool				GetDataType(TRefRef DataTypeRef,u16& OpenglType,u16& OpenglElementCount);	//	get opengl data type (eg. GL_FLOAT) from Data Type Ref
-	u16					GetVertexElementType(TLRaster::TVertexElementType::Type ElementType);
+	GLenum				GetVertexElementType(TRefRef ElementType);
 }
 
 
@@ -41,6 +41,7 @@ namespace Opengl
 //---------------------------------------------------
 bool Opengl::Init()
 {
+	Debug_CheckForError();		
 	//	gr: should check for an active context here (the caller should have created 
 	//		a context and made it current. Otherwise the commands below will fail
 	
@@ -67,6 +68,7 @@ bool Opengl::Init()
 	glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
 	//glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL );
 	//glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND );
+	Debug_CheckForError();		
 	
 	if ( !Opengl::Platform::Init() )
 		return false;
@@ -104,18 +106,18 @@ void Opengl::Shutdown()
 //-----------------------------------------------------------
 //	draw vertexes as points
 //-----------------------------------------------------------
-void Opengl::DrawPrimitivePoints(const TArray<float3>* pVertexes)
+void Opengl::DrawPrimitivePoints(u16 VertexCount)
 {
 	//	have a static array of indexes and grow it as required
 	static THeapArray<u16> g_AllPoints;
 
 	//	grow index array as required
-	if ( g_AllPoints.GetSize() < pVertexes->GetSize() )
+	if ( g_AllPoints.GetSize() < VertexCount )
 	{
 		u32 OldSize = g_AllPoints.GetSize();
 		
 		//	alloc points
-		g_AllPoints.SetSize( pVertexes->GetSize() );
+		g_AllPoints.SetSize( VertexCount );
 
 		//	set new entries
 		for ( u32 i=OldSize;	i<g_AllPoints.GetSize();	i++ )
@@ -123,7 +125,7 @@ void Opengl::DrawPrimitivePoints(const TArray<float3>* pVertexes)
 	}
 
 	//	draw points
-	DrawPrimitives( Platform::GetPrimTypePoint(), pVertexes->GetSize(), g_AllPoints.GetData() );
+	DrawPrimitives( Platform::GetPrimTypePoint(), VertexCount, g_AllPoints.GetData() );
 }
 
 
@@ -232,23 +234,24 @@ void Opengl::GetOpenglFilterTypes(TArray<u32>& OpenglFilters,Bool MinLinearFilte
 //---------------------------------------------------
 void Opengl::BindTextureIndex(u32 TextureIndex)
 {
-	if ( TextureIndex != g_BoundTextureIndex )
-	{
-		glBindTexture( GL_TEXTURE_2D, TextureIndex );
-		g_BoundTextureIndex = TextureIndex;
-	}
-}
-
-//---------------------------------------------------
-//	unbind texture index if it's currently bound
-//---------------------------------------------------
-void Opengl::UnbindTextureIndex(u32 TextureIndex)
-{
+#if defined(ALWAYS_REBIND_TEXTURE)
+	//	already bound
 	if ( TextureIndex == g_BoundTextureIndex )
-	{
-		glBindTexture( GL_TEXTURE_2D, 0 );
-		g_BoundTextureIndex = 0;
-	}
+		return;
+#endif
+	
+	//	enable/disable texturing
+	if ( TextureIndex == 0 )
+		glDisable( GL_TEXTURE_2D );
+	else
+		glEnable( GL_TEXTURE_2D );
+
+	//	bind/unbind
+	glBindTexture( GL_TEXTURE_2D, TextureIndex );
+	Debug_CheckForError();
+#if defined(ALWAYS_REBIND_TEXTURE)
+	g_BoundTextureIndex = TextureIndex;
+#endif
 }
 
 
@@ -314,7 +317,8 @@ u32 Opengl::UploadTexture(const TLAsset::TTexture& Texture)
 	u32 SourceColourFormat = Texture.HasAlphaChannel() ? GL_RGBA : GL_RGB;
 	u32 DestinationColourFormat = Texture.HasAlphaChannel() ? GL_RGBA : GL_RGB;
 	glTexImage2D( GL_TEXTURE_2D, 0, SourceColourFormat, Texture.GetWidth(), Texture.GetHeight(), 0, DestinationColourFormat, GL_UNSIGNED_BYTE, Texture.GetPixelData(0) );
-
+	Debug_CheckForError();
+	
 	//	generate mip maps
 	if ( Texture.IsMipMapEnabled() )
 	{
@@ -407,31 +411,34 @@ Bool Opengl::BindTexture(const TLAsset::TTexture* pTexture)
 			TextureIndex = UploadTexture( *pTexture );
 		}
 	}
-
-	//	no change to binding
-	if ( TextureIndex == g_BoundTextureIndex )
-		return (TextureIndex!=0);
-
-	//	unbinding texture
-	if ( TextureIndex == 0 )
-	{
-		//	unbind
-		BindTextureIndex(0);
-
-		//	disable texturing
-		glDisable( GL_TEXTURE_2D );
-		return FALSE;
-	}
-
-	//	binding texture
+	
 	BindTextureIndex( TextureIndex );
-
-	//	enable texturing
-	glEnable( GL_TEXTURE_2D );
-
-	return TRUE;
+	return (TextureIndex!=0);
 }
 
+
+//---------------------------------------------------
+//	bind texture - returns FALSE if no texture is bound (either fail or expected)
+//---------------------------------------------------
+Bool Opengl::BindTexture(TRefRef Texture)
+{
+	//	look up texture index
+	u32 TextureIndex = 0;
+	if ( Texture.IsValid() )
+	{
+		TextureIndex = GetTextureIndex( Texture );
+
+		//	isn't one... need to upload texture
+		if ( TextureIndex == 0 )
+		{
+			const TLAsset::TTexture* pTexture = TLAsset::GetAsset<TLAsset::TTexture>( Texture );
+			return BindTexture( pTexture );
+		}
+	}
+	
+	BindTextureIndex( TextureIndex );
+	return (TextureIndex!=0);
+}
 
 
 
@@ -584,26 +591,30 @@ Bool Opengl::BindVertexes(const TArray<float3>* pVertexes)
 }
 
 
-u16 Opengl::GetVertexElementType(TLRaster::TVertexElementType::Type ElementType)
+GLenum Opengl::GetVertexElementType(TRefRef ElementType)
 {
-	switch ( ElementType )
+	switch ( ElementType.GetData() )
 	{
-		case TLRaster::TVertexElementType::Position:	return GL_VERTEX_ARRAY;
-		case TLRaster::TVertexElementType::Normal:		return GL_NORMAL_ARRAY;
-		case TLRaster::TVertexElementType::Colour:		return GL_COLOR_ARRAY;
-		case TLRaster::TVertexElementType::TexCoord:	return GL_TEXTURE_COORD_ARRAY;
+		case TVertexElementType_Position:	return GL_VERTEX_ARRAY;
+		case TVertexElementType_Normal:		return GL_NORMAL_ARRAY;
+		case TVertexElementType_Colour:		return GL_COLOR_ARRAY;
+		case TVertexElementType_TexCoord:	return GL_TEXTURE_COORD_ARRAY;
 		default:
-			TLDebug_Break("Unknwon vertex element type");
+		{
+			TDebugString Debug_String;
+			Debug_String << "Unknwon vertex element type " << ElementType;
+			TLDebug_Break( Debug_String );
 			return 0;
+		}
 	}
 }	
 
 //-----------------------------------------------------------
 //	unbind this vertex element
 //-----------------------------------------------------------
-void Opengl::Unbind(const TLRaster::TVertexElementType::Type& Element)
+void Opengl::Unbind(TRefRef Element)
 {
-	u16 ElementTypegl = GetVertexElementType( Element );
+	GLenum ElementTypegl = GetVertexElementType( Element );
 	if ( ElementTypegl == 0x0 )
 		return;
 	
@@ -617,7 +628,7 @@ void Opengl::Unbind(const TLRaster::TVertexElementType::Type& Element)
 //-----------------------------------------------------------
 bool Opengl::BindVertexElement(const TLRaster::TVertexElement& Element)
 {
-	u16 ElementTypegl = GetVertexElementType( Element.m_ElementType );
+	GLenum ElementTypegl = GetVertexElementType( Element.m_Member.m_Ref );
 	if ( ElementTypegl == 0x0 )
 		return false;
 	
@@ -632,7 +643,7 @@ bool Opengl::BindVertexElement(const TLRaster::TVertexElement& Element)
 	//	get the opengl type
 	u16 ElementDataTypegl = 0x0;
 	u16 ElementCountgl = 0;
-	if ( !GetDataType( Element.m_DataType, ElementDataTypegl, ElementCountgl ) )
+	if ( !GetDataType( Element.m_Member.m_Type, ElementDataTypegl, ElementCountgl ) )
 	{
 		glDisableClientState( ElementTypegl );
 		Debug_CheckForError();
@@ -641,26 +652,27 @@ bool Opengl::BindVertexElement(const TLRaster::TVertexElement& Element)
 	
 	//	enable and bind element
 	glEnableClientState( ElementTypegl );
+	Debug_CheckForError();
 		
 	//	bind
-	switch ( Element.m_ElementType )
+	switch ( Element.m_Member.m_Ref.GetData() )
 	{
-		case TLRaster::TVertexElementType::Position:
-			glVertexPointer( ElementCountgl, ElementDataTypegl, Element.m_Stride, Element.m_pData.m_void );
+		case TVertexElementType_Position:
+			glVertexPointer( ElementCountgl, ElementDataTypegl, Element.m_Member.GetStructSize(), Element.m_pData.m_void );
 			break;
 			
-		case TLRaster::TVertexElementType::Normal:
+		case TVertexElementType_Normal:
 			if ( ElementCountgl != 3 )
 				TLDebug_Break("Normal vertex element must have elements parts");
-			glNormalPointer( ElementDataTypegl, Element.m_Stride, Element.m_pData.m_void );
+			glNormalPointer( ElementDataTypegl, Element.m_Member.GetStructSize(), Element.m_pData.m_void );
 			break;
 			
-		case TLRaster::TVertexElementType::Colour:
-			glColorPointer( ElementCountgl, ElementDataTypegl, Element.m_Stride, Element.m_pData.m_void );
+		case TVertexElementType_Colour:
+			glColorPointer( ElementCountgl, ElementDataTypegl, Element.m_Member.GetStructSize(), Element.m_pData.m_void );
 			break;
 			
-		case TLRaster::TVertexElementType::TexCoord:
-			glTexCoordPointer( ElementCountgl, ElementDataTypegl, Element.m_Stride, Element.m_pData.m_void );
+		case TVertexElementType_TexCoord:
+			glTexCoordPointer( ElementCountgl, ElementDataTypegl, Element.m_Member.GetStructSize(), Element.m_pData.m_void );
 			break;
 			
 		default:

@@ -13,6 +13,8 @@
 		BF3DA52A1178FB8700EBD76C /* TGraphTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BF3DA5241178FB8700EBD76C /* TGraphTree.h */; };
 		BF3DA52B1178FB8700EBD76C /* TLReflection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF3DA5251178FB8700EBD76C /* TLReflection.cpp */; };
 		BF3DA52C1178FB8700EBD76C /* TLReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = BF3DA5261178FB8700EBD76C /* TLReflection.h */; };
+		BF43DCBB12493078006A17E9 /* TEditAssetWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = BF43DCB912493078006A17E9 /* TEditAssetWindow.h */; };
+		BF43DCBC12493078006A17E9 /* TEditAssetWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF43DCBA12493078006A17E9 /* TEditAssetWindow.cpp */; };
 		BFC48BFF11FD913F00A50F6D /* TDataTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BF08C63411E7E756007969BF /* TDataTree.h */; };
 		BFC48C0011FD914300A50F6D /* TDataTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF08C63311E7E756007969BF /* TDataTree.cpp */; };
 		BFF8EB7C122C38F300E54EDB /* TAssetTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF8EB78122C38F300E54EDB /* TAssetTree.h */; };
@@ -53,6 +55,8 @@
 		BF3DA5241178FB8700EBD76C /* TGraphTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGraphTree.h; path = ../../../../Tootle/Code/TootleReflection/TGraphTree.h; sourceTree = SOURCE_ROOT; };
 		BF3DA5251178FB8700EBD76C /* TLReflection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TLReflection.cpp; path = ../../../../Tootle/Code/TootleReflection/TLReflection.cpp; sourceTree = SOURCE_ROOT; };
 		BF3DA5261178FB8700EBD76C /* TLReflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TLReflection.h; path = ../../../../Tootle/Code/TootleReflection/TLReflection.h; sourceTree = SOURCE_ROOT; };
+		BF43DCB912493078006A17E9 /* TEditAssetWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TEditAssetWindow.h; path = ../TEditAssetWindow.h; sourceTree = SOURCE_ROOT; };
+		BF43DCBA12493078006A17E9 /* TEditAssetWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TEditAssetWindow.cpp; path = ../TEditAssetWindow.cpp; sourceTree = SOURCE_ROOT; };
 		BF6A7FF81103603100199EB7 /* TootleCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TootleCore.xcodeproj; path = ../../TootleCore/Mac/TootleCore.xcodeproj; sourceTree = SOURCE_ROOT; };
 		BF6A7FFE1103604300199EB7 /* TootleGui.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TootleGui.xcodeproj; path = ../../TootleGui/Mac/TootleGui.xcodeproj; sourceTree = SOURCE_ROOT; };
 		BF6FBB5711775B8F00490A7B /* TootleNetwork.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TootleNetwork.xcodeproj; path = ../../../../Tootle/Code/TootleNetwork/Mac/TootleNetwork.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -104,6 +108,8 @@
 		8418F0250F4DB80400B956C9 /* Source Code */ = {
 			isa = PBXGroup;
 			children = (
+				BF43DCB912493078006A17E9 /* TEditAssetWindow.h */,
+				BF43DCBA12493078006A17E9 /* TEditAssetWindow.cpp */,
 				BFF8EB78122C38F300E54EDB /* TAssetTree.h */,
 				BFF8EB79122C38F300E54EDB /* TAssetTree.cpp */,
 				BF08C63311E7E756007969BF /* TDataTree.cpp */,
@@ -163,6 +169,7 @@
 				BF3DA52C1178FB8700EBD76C /* TLReflection.h in Headers */,
 				BFC48BFF11FD913F00A50F6D /* TDataTree.h in Headers */,
 				BFF8EB7C122C38F300E54EDB /* TAssetTree.h in Headers */,
+				BF43DCBB12493078006A17E9 /* TEditAssetWindow.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -252,6 +259,7 @@
 				BF3DA52B1178FB8700EBD76C /* TLReflection.cpp in Sources */,
 				BFC48C0011FD914300A50F6D /* TDataTree.cpp in Sources */,
 				BFF8EB7D122C38F300E54EDB /* TAssetTree.cpp in Sources */,
+				BF43DCBC12493078006A17E9 /* TEditAssetWindow.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

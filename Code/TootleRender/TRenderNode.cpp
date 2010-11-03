@@ -1342,11 +1342,7 @@ const TLRaster::TRasterData* TLRender::TRenderNode::Render(TArray<TLRaster::TRas
 	//	setup texture
 	if ( GetTextureRef().IsValid() )
 	{
-		RasterData.m_Material.m_pTexture = GetTextureAsset();
-
-		//	missing texture - try and use debug one
-		if ( !RasterData.m_Material.m_pTexture  )
-			RasterData.m_Material.m_pTexture = TLAsset::GetAsset<TLAsset::TTexture>("d_texture");
+		RasterData.m_Material.m_Texture = GetTextureRef();
 	}
 
 	//	setup material

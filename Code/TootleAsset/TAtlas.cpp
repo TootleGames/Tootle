@@ -1,7 +1,21 @@
 #include "TAtlas.h"
 #include <TootleCore/TBinaryTree.h>
+#include <TootleRender/TRasteriser.h>		//	required for vertex element type names
 
 
+//-------------------------------------------------------
+//	generate vertex definition
+//-------------------------------------------------------
+TLStruct::TDef TLAsset::TSpriteVertex::GetInitVertexDef()
+{
+	//	make up a struct array (that's the interface to make up this stuff) then copy the definition
+	TStructArray Array;
+	Array.AddMember( TVertexElementType_Position, &TLAsset::TSpriteVertex::m_Position ); 
+	Array.AddMember( TVertexElementType_TexCoord, &TLAsset::TSpriteVertex::m_TexCoord ); 
+	return Array.GetDefinition();
+}
+
+	
 //-------------------------------------------------------
 //	setup a glyph from a UV box
 //-------------------------------------------------------
@@ -26,10 +40,32 @@ TLAsset::TAtlasGlyph::TAtlasGlyph(const TLMaths::TBox2D& UVBox,const Type2<u16>&
 //-------------------------------------------------------
 Bool TLAsset::TAtlasGlyph::ImportData(TBinaryTree& Data)
 {
-	if ( !Data.Read( m_UVs ) )			return FALSE;
-	if ( !Data.Read( m_GlyphBox ) )		return FALSE;
-	if ( !Data.Read( m_SpacingBox ) )	return FALSE;
+	//	old format
+	if ( Data.GetSizeUnread() > 0 )
+	{
+		if ( !Data.Read( m_UVs ) )			return FALSE;
+		if ( !Data.Read( m_GlyphBox ) )		return FALSE;
+		if ( !Data.Read( m_SpacingBox ) )	return FALSE;
+	}
+	
+	//	new format!
+	Data.ImportData("Uvs", m_UVs );
+	Data.ImportData("GlyBox", m_GlyphBox );
+	Data.ImportData("SpcBox", m_SpacingBox );
 
+	//if ( !Data.ImportData("Sprite",m_Sprite ) )
+	{
+		//	generate sprite data
+		m_Sprite.m_Vertexes[0].m_TexCoord = m_UVs[0];
+		m_Sprite.m_Vertexes[1].m_TexCoord = m_UVs[1];
+		m_Sprite.m_Vertexes[2].m_TexCoord = m_UVs[2];
+		m_Sprite.m_Vertexes[3].m_TexCoord = m_UVs[3];
+		m_Sprite.m_Vertexes[0].m_Position = m_GlyphBox.GetTopLeft();
+		m_Sprite.m_Vertexes[1].m_Position = m_GlyphBox.GetTopRight();
+		m_Sprite.m_Vertexes[2].m_Position = m_GlyphBox.GetBottomRight();
+		m_Sprite.m_Vertexes[3].m_Position = m_GlyphBox.GetBottomLeft();
+	}
+	
 	return TRUE;
 }
 
@@ -39,9 +75,10 @@ Bool TLAsset::TAtlasGlyph::ImportData(TBinaryTree& Data)
 //-------------------------------------------------------
 void TLAsset::TAtlasGlyph::ExportData(TBinaryTree& Data)
 {
-	Data.Write( m_UVs );
-	Data.Write( m_GlyphBox );
-	Data.Write( m_SpacingBox );
+	Data.ExportData("Uvs", m_UVs );
+	Data.ExportData("GlyBox", m_GlyphBox );
+	Data.ExportData("SpcBox", m_SpacingBox );
+	Data.ExportData("Sprite", m_Sprite );
 }
 
 
